@@ -1,112 +1,132 @@
-Return-Path: <linux-kernel+bounces-696617-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-696623-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 32AB7AE2989
-	for <lists+linux-kernel@lfdr.de>; Sat, 21 Jun 2025 16:43:42 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 16D50AE29A2
+	for <lists+linux-kernel@lfdr.de>; Sat, 21 Jun 2025 16:54:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D84A11898021
-	for <lists+linux-kernel@lfdr.de>; Sat, 21 Jun 2025 14:43:53 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7CD263A888C
+	for <lists+linux-kernel@lfdr.de>; Sat, 21 Jun 2025 14:53:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3DDC31F5435;
-	Sat, 21 Jun 2025 14:43:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="b+zbLIzO"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6EBE120C010;
+	Sat, 21 Jun 2025 14:54:06 +0000 (UTC)
+Received: from smtp-out.kfki.hu (smtp-out.kfki.hu [148.6.0.49])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9D4711F3FF8
-	for <linux-kernel@vger.kernel.org>; Sat, 21 Jun 2025 14:43:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0B2B4E56A;
+	Sat, 21 Jun 2025 14:54:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.6.0.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750517008; cv=none; b=uwsYp5Kw38IEyJDs45nBjDng0qwLv6FtHJMQWboWBVdRpJaqtS5HPJpTbQbED8iJl8jIWo5f60050a10ERvSBwJs7cUenCAojwDoQMbyUxoci7zLfO3UibRt1lqJ7G8qx3W3t1vbVr906l+AuMaeZB1ZfiTQsB+C9j+YfJXrngg=
+	t=1750517646; cv=none; b=VJo3PnYorZ+o49RdaRkn7knnRe7ceqV+3EHVziRGhGVxcJUNlhc5F3LNtax5YBXzAoVroyTKWr1A6z0y9rYAgnGQKWRhqB2nHvRsbasffls4RDVK+66Fc/D0JYpO8Ud7WkePMp05wiSnqGv6X3u6al/hvnqXdSjniIL12x6IhI4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750517008; c=relaxed/simple;
-	bh=QA1Q+5+OWk/IBpt41mmGU0DCfYU/ArkXG9Bg8q8JztA=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=YomQc99nI/Jgce5M0hH+VHdcqgdYzvXJFLKOcVXIpYKy6bPVOROJBmduQrCGzEWno0cMWR3fbV6C42Q0wt14Fa1Kpi9+COa486LkT7DMHyTiX7t+ZtsTtScFZKI+z1TZzIJUH6oKKrAXNy5XRtcl3CGtB2GZyz5SdPWnyIaOut8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=b+zbLIzO; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 28B6BC4CEEF;
-	Sat, 21 Jun 2025 14:43:26 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1750517008;
-	bh=QA1Q+5+OWk/IBpt41mmGU0DCfYU/ArkXG9Bg8q8JztA=;
-	h=Date:From:To:Cc:Subject:From;
-	b=b+zbLIzO0J43borKo00gg/t7mXtKgxU+nMX3NcYdJjwofllG/aH0hfnNLZSfe4eDd
-	 4hgyW6f5NPADqWQ3g+72XTI2wfFeR8c3/OXS86H9cbGMdj+xZm3fQCvN0Ov+OXd2xQ
-	 FfhGj/k2ry7Hq4N+roflpX09RICkA2+g+AtSKK5QpHS63DkznSNG0ZtBC/vAx5PRH3
-	 790rsxUf5i+6y3eFLOLUiKgwvIy73he1HYs1nWptwJiDsL/x9XwgU/SFQuI+w+N0Dk
-	 ZSnGWWax9t6Ba354tWmpiWrTIrEhJQu+M7LYpgGxTpOvl2g1ADEjFvTdDvPPKilHrR
-	 9nLfN0P2nQv6Q==
-Date: Sat, 21 Jun 2025 22:43:23 +0800
-From: Gao Xiang <xiang@kernel.org>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: linux-erofs@lists.ozlabs.org, LKML <linux-kernel@vger.kernel.org>,
-	Tatsuyuki Ishi <ishitatsuyuki@google.com>,
-	Hongbo Li <lihongbo22@huawei.com>, Chao Yu <chao@kernel.org>
-Subject: [GIT PULL] erofs fixes for 6.16-rc3
-Message-ID: <aFbFC3q0SNO7ZkQi@debian>
-Mail-Followup-To: Linus Torvalds <torvalds@linux-foundation.org>,
-	linux-erofs@lists.ozlabs.org, LKML <linux-kernel@vger.kernel.org>,
-	Tatsuyuki Ishi <ishitatsuyuki@google.com>,
-	Hongbo Li <lihongbo22@huawei.com>, Chao Yu <chao@kernel.org>
+	s=arc-20240116; t=1750517646; c=relaxed/simple;
+	bh=Q8FDZihT0rIgE8dqYjKRtD5Nrn5OypH+gWUtZ6hkqw4=;
+	h=Date:From:To:cc:Subject:In-Reply-To:Message-ID:References:
+	 MIME-Version:Content-Type; b=BcnvKc+yXJiV/ofT9HkFfjNUC4hgukTrwhRFnaiUTrF/sFU/5081C/M43U4eVRYaBsrcEcJm2TbTiW8/6CnyTfO7076bx4dD6KLtm3+usu7ciNbrUnK0OCpODCNok44FH+94IJEUTtZv5Eqn0JHQKIVXbG+1+Tpi11HONEsqhxA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=netfilter.org; spf=pass smtp.mailfrom=netfilter.org; arc=none smtp.client-ip=148.6.0.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=netfilter.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=netfilter.org
+Received: from localhost (localhost [127.0.0.1])
+	by smtp0.kfki.hu (Postfix) with ESMTP id 4bPcZb0xXWz3sb80;
+	Sat, 21 Jun 2025 16:45:11 +0200 (CEST)
+X-Virus-Scanned: Debian amavis at smtp0.kfki.hu
+Received: from smtp0.kfki.hu ([127.0.0.1])
+ by localhost (smtp0.kfki.hu [127.0.0.1]) (amavis, port 10026) with ESMTP
+ id Yr-XXvThqecK; Sat, 21 Jun 2025 16:45:09 +0200 (CEST)
+Received: from mentat.rmki.kfki.hu (unknown [148.6.192.8])
+	(Authenticated sender: kadlecsik.jozsef@wigner.hu)
+	by smtp0.kfki.hu (Postfix) with ESMTPSA id 4bPcZY1q8fz3sb7s;
+	Sat, 21 Jun 2025 16:45:09 +0200 (CEST)
+Received: by mentat.rmki.kfki.hu (Postfix, from userid 1000)
+	id 1C0ED140EA3; Sat, 21 Jun 2025 16:45:09 +0200 (CEST)
+Received: from localhost (localhost [127.0.0.1])
+	by mentat.rmki.kfki.hu (Postfix) with ESMTP id 17F4F140184;
+	Sat, 21 Jun 2025 16:45:09 +0200 (CEST)
+Date: Sat, 21 Jun 2025 16:45:09 +0200 (CEST)
+From: Jozsef Kadlecsik <kadlec@netfilter.org>
+To: RubenKelevra <rubenkelevra@gmail.com>
+cc: Pablo Neira Ayuso <pablo@netfilter.org>, netfilter-devel@vger.kernel.org, 
+    coreteam@netfilter.org, netdev@vger.kernel.org, 
+    linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] netfilter: ipset: fix typo in hash size macro
+In-Reply-To: <20250620092053.180550-1-rubenkelevra@gmail.com>
+Message-ID: <11f4f9cd-e818-099e-b8b2-782608862eb5@netfilter.org>
+References: <20250619151029.97870-1-rubenkelevra@gmail.com> <20250620092053.180550-1-rubenkelevra@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/mixed; boundary="8323329-1275113213-1750517109=:3235"
 
-Hi Linus,
+  This message is in MIME format.  The first part should be readable text,
+  while the remaining parts are likely unreadable without MIME-aware tools.
 
-Could you consider those fixes for 6.16-rc3?
+--8323329-1275113213-1750517109=:3235
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
 
-A few miscellaneous fixes are as shown below..
+Hello,
 
-Thanks,
-Gao Xiang
+On Fri, 20 Jun 2025, RubenKelevra wrote:
 
-The following changes since commit 19272b37aa4f83ca52bdf9c16d5d81bdd1354494:
+> Rename IPSET_MIMINAL_HASHSIZE =E2=86=92 IPSET_MINIMAL_HASHSIZE in
+> ip_set_hash_gen.h, matching the header typo-fix.
+>=20
+> Signed-off-by: RubenKelevra <rubenkelevra@gmail.com>
 
-  Linux 6.16-rc1 (2025-06-08 13:44:43 -0700)
+Patch is applied in the ipset git tree, thank you.
 
-are available in the Git repository at:
+Best regards,
+Jozsef
+> ---
+>  include/linux/netfilter/ipset/ip_set_hash.h | 2 +-
+>  net/netfilter/ipset/ip_set_hash_gen.h       | 4 ++--
+>  2 files changed, 3 insertions(+), 3 deletions(-)
+>=20
+> diff --git a/include/linux/netfilter/ipset/ip_set_hash.h b/include/linu=
+x/netfilter/ipset/ip_set_hash.h
+> index 838abab672af1..56e883661f857 100644
+> --- a/include/linux/netfilter/ipset/ip_set_hash.h
+> +++ b/include/linux/netfilter/ipset/ip_set_hash.h
+> @@ -6,7 +6,7 @@
+> =20
+> =20
+>  #define IPSET_DEFAULT_HASHSIZE		1024
+> -#define IPSET_MIMINAL_HASHSIZE		64
+> +#define IPSET_MINIMAL_HASHSIZE		64
+>  #define IPSET_DEFAULT_MAXELEM		65536
+>  #define IPSET_DEFAULT_PROBES		4
+>  #define IPSET_DEFAULT_RESIZE		100
+> diff --git a/net/netfilter/ipset/ip_set_hash_gen.h b/net/netfilter/ipse=
+t/ip_set_hash_gen.h
+> index 5251524b96afa..785d109645fed 100644
+> --- a/net/netfilter/ipset/ip_set_hash_gen.h
+> +++ b/net/netfilter/ipset/ip_set_hash_gen.h
+> @@ -1543,8 +1543,8 @@ IPSET_TOKEN(HTYPE, _create)(struct net *net, stru=
+ct ip_set *set,
+> =20
+>  	if (tb[IPSET_ATTR_HASHSIZE]) {
+>  		hashsize =3D ip_set_get_h32(tb[IPSET_ATTR_HASHSIZE]);
+> -		if (hashsize < IPSET_MIMINAL_HASHSIZE)
+> -			hashsize =3D IPSET_MIMINAL_HASHSIZE;
+> +		if (hashsize < IPSET_MINIMAL_HASHSIZE)
+> +			hashsize =3D IPSET_MINIMAL_HASHSIZE;
+>  	}
+> =20
+>  	if (tb[IPSET_ATTR_MAXELEM])
+> --=20
+> 2.49.0
+>=20
+>=20
 
-  git://git.kernel.org/pub/scm/linux/kernel/git/xiang/erofs.git tags/erofs-for-6.16-rc3-fixes
-
-for you to fetch changes up to 417b8af2e30d7f131682a893ad79c506fd39c624:
-
-  erofs: remove a superfluous check for encoded extents (2025-06-20 23:41:12 +0800)
-
-----------------------------------------------------------------
-Changes since the last update:
-
- - Use the mounter’s credentials for file-backed mounts to resolve
-   Android SELinux permission issues;
-
- - Remove the unused trace event `erofs_destroy_inode`;
-
- - Error out on crafted out-of-file-range encoded extents;
-
- - Remove an incorrect check for encoded extents.
-
-----------------------------------------------------------------
-Gao Xiang (3):
-      erofs: remove unused trace event erofs_destroy_inode
-      erofs: refuse crafted out-of-file-range encoded extents
-      erofs: remove a superfluous check for encoded extents
-
-Tatsuyuki Ishi (1):
-      erofs: impersonate the opener's credentials when accessing backing file
-
- fs/erofs/fileio.c            |  3 +++
- fs/erofs/zmap.c              | 10 ++++------
- include/trace/events/erofs.h | 18 ------------------
- 3 files changed, 7 insertions(+), 24 deletions(-)
-
+--=20
+E-mail : kadlec@netfilter.org, kadlec@blackhole.kfki.hu, kadlecsik.jozsef=
+@wigner.hu
+Address: Wigner Research Centre for Physics
+         H-1525 Budapest 114, POB. 49, Hungary
+--8323329-1275113213-1750517109=:3235--
 
