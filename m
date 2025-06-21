@@ -1,138 +1,136 @@
-Return-Path: <linux-kernel+bounces-696613-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-696615-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2BA0AAE2980
-	for <lists+linux-kernel@lfdr.de>; Sat, 21 Jun 2025 16:33:37 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 02C87AE2984
+	for <lists+linux-kernel@lfdr.de>; Sat, 21 Jun 2025 16:38:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B3EF61668BB
-	for <lists+linux-kernel@lfdr.de>; Sat, 21 Jun 2025 14:33:37 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9319D1770DB
+	for <lists+linux-kernel@lfdr.de>; Sat, 21 Jun 2025 14:38:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0C0FF7262C;
-	Sat, 21 Jun 2025 14:33:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4822115C158;
+	Sat, 21 Jun 2025 14:38:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="aDGn0nXZ"
-Received: from mail-pg1-f180.google.com (mail-pg1-f180.google.com [209.85.215.180])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=collabora.com header.i=nicolas.frattaroli@collabora.com header.b="KJdnA9/h"
+Received: from sender4-pp-f112.zoho.com (sender4-pp-f112.zoho.com [136.143.188.112])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0D2704C79
-	for <linux-kernel@vger.kernel.org>; Sat, 21 Jun 2025 14:33:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.180
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750516410; cv=none; b=hCeL8OoUzUO/vkMyBk17gd5k+Fr2NA05ARKQ+r0IZkDVC8xyHQalgb5w1hWP5flwH3E4pu/OhBHSkHNrmT4mIzQoq+jNFqav0MEIrKIc1F/FtTLNnX6gXrawEJ7yBS7rF2Uv+sMxnp8f6w7cAcukEoVCD+DTsIKGfM0p5KpIvOE=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750516410; c=relaxed/simple;
-	bh=I6d8/1VZec4f5AQUip3+X2NfvIMT+90kg5qi0SN+OVc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=vBCxVw3nCoBkEEh1i1s1OiAQdK6R+qE/9o0yDJolx2Qrm228t7O0aj5L8APvQUKFxefmnMCBVGlMADfqj0Qv4b12BxBIedN4RRGfDHPH/07nmBDOF9cLLVy1Y8YzyLKCpMyOTBq9I3UIXPUds9Ky7pqfTKOdT8gvMAYCLq1d9vc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=aDGn0nXZ; arc=none smtp.client-ip=209.85.215.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pg1-f180.google.com with SMTP id 41be03b00d2f7-b31bca0a32bso1979877a12.2
-        for <linux-kernel@vger.kernel.org>; Sat, 21 Jun 2025 07:33:28 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1750516408; x=1751121208; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=rpcV6fctoPHKkMmJOO7gDCJf9UFeAem7Es9ZNVW1blc=;
-        b=aDGn0nXZIXlCHFBCmoCXqvqtK1pTT+YlIZh70mn8K/zH/+WGTOrRdBaSqUWep7Ac4E
-         UTKpgZ+XqERV5PbWeEz+/UGJoPMsHtsjNIE0EgOO/MUi0K+C3o5F/aKEKKz1HjpLlmjo
-         7ZR4bW5IyVFHdRmAEGUyZTsZecrAWHoG4a8lhq9eUzMrtPKSUi3vnmpil1AbQkCRWJ2L
-         SWfotqjiAv1F8qZZsKwLV3cGqPxKkybq3I7YITy1g4aCs4iKhoKW1pEjJ66GS3q4nBqI
-         Qvrsv7w9ZPVUwpTTGRO/2LHsahd2N0ph2xFPE9osMpelI98Y2WuXUwYgjRWJNcZMryVs
-         b1pg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1750516408; x=1751121208;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=rpcV6fctoPHKkMmJOO7gDCJf9UFeAem7Es9ZNVW1blc=;
-        b=mB3PZrnBWuSXY7T45GEZhcTP106ZkkQM0joowc4uZHsUXnN3bnaKWngaAvDkrU6COx
-         r5mwrXONB5hbg2eteQO4dRzUA/73Ir2C7cO7/G9J15Il91sHI/CcZbm/e9i3RFaHBRcp
-         lYsosGzrJX9WqjUVp5aHkw+DiMQ+2an1cGdAUjpVNXiuRCexKSm0huSvnNP6fgahOkG2
-         kPU43FhD2dp4yAEiFxhN4OwxJWdiYlwEfZ4oYoinvfnjr5V39SkhILYEFiDsWMlOxJBS
-         8PLepBkva66TBGP0nw1AwqpGjbaSi/+nOCh0/SklIBO3GkKEf8DVyf8j7ZRoyNBc+INe
-         6kvQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXrJqxvbII1AIItScmT7BhFtoLD7b0lkqTpaXeJXc/2yGsMVZeOoNgDiw99BSnCxrFky3J2Gn9cTKMQxOM=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxQSH6R1UUFk+giI8+KaTMdveRq9C6OloJ6HBH7pTMb5ERH2f3u
-	Ch+EIXxK/uG5fzg1Vf3hxwBOnUEHftu5lQu7s4OwNwxc6H2SnXTYGRvuPoqXQA==
-X-Gm-Gg: ASbGnctK5VSZRQwi6qRbakMJ1R1JNKd+qCYs9o+LHlx1pBNx7rJfFrWssVmRmEUU83k
-	pBe8dlzVUSmvzVFCs2nfQ4VSWdVTufavFDNBLeY7H8Cazc5q8sK9DA/6i863eegf16U36UVOIjB
-	XIKm/G9KlQATvC0YjktKmlu3xfnA5NrPwWahh12ZpZQuEqISSIebkomqg4VgbP5vSSzqGFYXB1Y
-	93mi4G7u2mnYySFP/UxfZhXSvCqZCaYOiuYuwSBT//ptlUP7Cw7cjrhpfTtDSAYTXX4W5JOFtKF
-	OMa2MRr5EfQcOXZ9cJ0dZicBOq8Fr82csKNtcmTEpJxIfxs5aQrctlY6rR6xcR5qcu8KIpnf
-X-Google-Smtp-Source: AGHT+IEa1dzclDb2tuusdyRFUEN+RVm3ocXALNNj4v2dS5L9ixXeDKVBkqE/mg1/e/SCGi0mCloBfg==
-X-Received: by 2002:a17:90b:3505:b0:312:959:dc49 with SMTP id 98e67ed59e1d1-3159d642a58mr10688811a91.13.1750516408260;
-        Sat, 21 Jun 2025 07:33:28 -0700 (PDT)
-Received: from localhost ([216.228.127.128])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-3159df93ad9sm3999598a91.21.2025.06.21.07.33.27
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 21 Jun 2025 07:33:27 -0700 (PDT)
-Date: Sat, 21 Jun 2025 10:33:25 -0400
-From: Yury Norov <yury.norov@gmail.com>
-To: Yunhui Cui <cuiyunhui@bytedance.com>
-Cc: linux@rasmusvillemoes.dk, paul.walmsley@sifive.com, palmer@dabbelt.com,
-	aou@eecs.berkeley.edu, alex@ghiti.fr,
-	linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org,
-	dennis@kernel.org, tj@kernel.org, cl@gentwo.org, linux-mm@kvack.org
-Subject: Re: [PATCH RFC 1/2] riscv: remove irqflags.h inclusion in
- asm/bitops.h
-Message-ID: <aFbCtb2oWxPbq1SN@yury>
-References: <20250618034328.21904-1-cuiyunhui@bytedance.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 08D17BA34;
+	Sat, 21 Jun 2025 14:38:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.112
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1750516703; cv=pass; b=ZkWbyyNMkviWZTg+rkJR+iwdHlE2BtGRlFBDbtAPoi4qx0uag228Ym0rextAHI0jvITZwp+WJJqdJ8inOi1m51H8NdAZLKadomslJszU8LNJD25cEHVI6tyWDYSK0nfzOiSMPR0th9UJZWIikCQs2AcCJEsTLNwpYgDroG7A5E4=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1750516703; c=relaxed/simple;
+	bh=KEIBruMPUKuXnhfiCepavy4B+j9uXiGFYVTGgN5MHxI=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=D7qN5wvvkom2pWx0fDwBhcgsDYmDgKEyfcGFmPMXNZFmCtO85rlStmbv5B7Li71BGsSzlUYNG0pTBM/9KyQbMwJH/N8b7imy8iKAQrc3hHbThglxGH3E5OvA6Vo+rGR9Nzx/0UoCoJhnBFqnLS8LqeozK+HQvWQJ/QTcQ6HED6Q=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=nicolas.frattaroli@collabora.com header.b=KJdnA9/h; arc=pass smtp.client-ip=136.143.188.112
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+ARC-Seal: i=1; a=rsa-sha256; t=1750516684; cv=none; 
+	d=zohomail.com; s=zohoarc; 
+	b=bsonAPj5BW6bDAR1EZrw/fVDrU9F2d/Q0GQs9/xpvo68z0VSER97k6FKXL3X4JhuHN79s10SjALfyd/wtaRiNqM83VdJTRgCvI6IoTo4gyRC2ucGIpuDaeTBvri9qs8eBqMTq6Ib42r2QC0BYg9B37PpULwX5EV6WwyQcyzWl3U=
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
+	t=1750516684; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:MIME-Version:Message-ID:Subject:Subject:To:To:Message-Id:Reply-To; 
+	bh=Cznoi6wyY4gO6EMxLblj8iGeR4EkxP9PchzAUeg4/vI=; 
+	b=WBmIIjCgr3e6HnMUXuMkWCP5gJyhzanzmqsuHxiJjisAj0E2M7aVqf/5SrFYjgEim+yIaxph54HaWzIOsyhv2DiQraoSI1mQc1nV8AVNAP+mJ82blsPbdviiayQXDL1XKTzK5sSgosAjYZf53pIXcpEES2hu/bdKP2yO2k87sWs=
+ARC-Authentication-Results: i=1; mx.zohomail.com;
+	dkim=pass  header.i=collabora.com;
+	spf=pass  smtp.mailfrom=nicolas.frattaroli@collabora.com;
+	dmarc=pass header.from=<nicolas.frattaroli@collabora.com>
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1750516684;
+	s=zohomail; d=collabora.com; i=nicolas.frattaroli@collabora.com;
+	h=From:From:Date:Date:Subject:Subject:MIME-Version:Content-Type:Content-Transfer-Encoding:Message-Id:Message-Id:To:To:Cc:Cc:Reply-To;
+	bh=Cznoi6wyY4gO6EMxLblj8iGeR4EkxP9PchzAUeg4/vI=;
+	b=KJdnA9/hgN9EDXgZOUpXJ3P066Rpf975uZPAN6QLw8niW4iK6Q4oGYP+4Pwj2qNZ
+	35t8bETwer7OwJbwgziDOoS9wr//9TcZnuHl43Zc/RA2S+oUEDy0kfUZILtpuKxWRnM
+	eBmeOmU95CYSeukn5hKNp9HtSXryMTB4ZapqBN1A=
+Received: by mx.zohomail.com with SMTPS id 1750516683302154.92519442089372;
+	Sat, 21 Jun 2025 07:38:03 -0700 (PDT)
+From: Nicolas Frattaroli <nicolas.frattaroli@collabora.com>
+Date: Sat, 21 Jun 2025 16:37:55 +0200
+Subject: [PATCH] arm64: dts: rockchip: enable PCIe on ROCK 4D
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250618034328.21904-1-cuiyunhui@bytedance.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20250621-rk3576-rock4d-pcie-v1-1-2b33c9f12955@collabora.com>
+X-B4-Tracking: v=1; b=H4sIAMLDVmgC/y3MQQrCMBCF4auUWTuQRJNgryJd1HTUoTSpk1QKp
+ Xc3WJf/g/dtkEmYMrTNBkIfzpxiDX1qILz6+CTkoTYYZaxyRqOMZ+sdSgrjZcA5MKFV2hnrvPJ
+ XB/U4Cz14/aG37mih91Ltcoxw7zNhSNPEpW0irQX/voJu379/kYW+lQAAAA==
+X-Change-ID: 20250621-rk3576-rock4d-pcie-501625670796
+To: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, Heiko Stuebner <heiko@sntech.de>
+Cc: kernel@collabora.com, devicetree@vger.kernel.org, 
+ linux-arm-kernel@lists.infradead.org, linux-rockchip@lists.infradead.org, 
+ linux-kernel@vger.kernel.org, 
+ Nicolas Frattaroli <nicolas.frattaroli@collabora.com>
+X-Mailer: b4 0.14.2
 
-On Wed, Jun 18, 2025 at 11:43:27AM +0800, Yunhui Cui wrote:
-> The arch/riscv/include/asm/bitops.h does not functionally require
-> including /linux/irqflags.h. Additionally, adding
-> arch/riscv/include/asm/percpu.h causes a circular inclusion:
-> kernel/bounds.c
-> ->include/linux/log2.h
-> ->include/linux/bitops.h
-> ->arch/riscv/include/asm/bitops.h
-> ->include/linux/irqflags.h
-> ->include/linux/find.h
-> ->return val ? __ffs(val) : size;
-> ->arch/riscv/include/asm/bitops.h
-> 
-> The compilation log is as follows:
-> CC      kernel/bounds.s
-> In file included from ./include/linux/bitmap.h:11,
->                from ./include/linux/cpumask.h:12,
->                from ./arch/riscv/include/asm/processor.h:55,
->                from ./arch/riscv/include/asm/thread_info.h:42,
->                from ./include/linux/thread_info.h:60,
->                from ./include/asm-generic/preempt.h:5,
->                from ./arch/riscv/include/generated/asm/preempt.h:1,
->                from ./include/linux/preempt.h:79,
->                from ./arch/riscv/include/asm/percpu.h:8,
->                from ./include/linux/irqflags.h:19,
->                from ./arch/riscv/include/asm/bitops.h:14,
->                from ./include/linux/bitops.h:68,
->                from ./include/linux/log2.h:12,
->                from kernel/bounds.c:13:
-> ./include/linux/find.h: In function 'find_next_bit':
-> ./include/linux/find.h:66:30: error: implicit declaration of function '__ffs' [-Wimplicit-function-declaration]
->    66 |                 return val ? __ffs(val) : size;
->       |                              ^~~~~
-> 
-> Signed-off-by: Yunhui Cui <cuiyunhui@bytedance.com>
+The RADXA ROCK 4D board has a PCIe controller connected to a flat flex
+connector, compatible with the one the RPi5 uses.
 
-Is this patch a prerequisite for #2 or it fixes build on master for
-you?
+Enable the associated combphy and pcie controller node, as well as add
+the remaining pinctrl definition for the reset.
 
-If fixes broken build, I'll take it and send an -rc pull request.
-Otherwise, please work with RISC-V maintainers to move them together.
+Signed-off-by: Nicolas Frattaroli <nicolas.frattaroli@collabora.com>
+---
+ arch/arm64/boot/dts/rockchip/rk3576-rock-4d.dts | 15 +++++++++++++++
+ 1 file changed, 15 insertions(+)
 
-Thanks,
-Yury
+diff --git a/arch/arm64/boot/dts/rockchip/rk3576-rock-4d.dts b/arch/arm64/boot/dts/rockchip/rk3576-rock-4d.dts
+index 6756403111e704cad42f6674d5ab55eb0306f1e3..0388d72076bf79ee4f20ac1d3bc04fe1859f857b 100644
+--- a/arch/arm64/boot/dts/rockchip/rk3576-rock-4d.dts
++++ b/arch/arm64/boot/dts/rockchip/rk3576-rock-4d.dts
+@@ -194,6 +194,10 @@ vcc_5v0_sys: regulator-vcc-5v0-sys {
+ 	};
+ };
+ 
++&combphy0_ps {
++	status = "okay";
++};
++
+ &combphy1_psu {
+ 	status = "okay";
+ };
+@@ -652,6 +656,14 @@ rgmii_phy0: ethernet-phy@1 {
+ 	};
+ };
+ 
++&pcie0 {
++	pinctrl-names = "default";
++	pinctrl-0 = <&pcie_reset>;
++	reset-gpios = <&gpio2 RK_PB4 GPIO_ACTIVE_HIGH>;
++	vpcie3v3-supply = <&vcc_3v3_pcie>;
++	status = "okay";
++};
++
+ &pinctrl {
+ 	hym8563 {
+ 		hym8563_int: hym8563-int {
+@@ -678,6 +690,9 @@ pcie {
+ 		pcie_pwren: pcie-pwren {
+ 			rockchip,pins = <2 RK_PD3 RK_FUNC_GPIO &pcfg_pull_none>;
+ 		};
++		pcie_reset: pcie-reset {
++			rockchip,pins = <2 RK_PB4 RK_FUNC_GPIO &pcfg_pull_none>;
++		};
+ 	};
+ 
+ 	usb {
+
+---
+base-commit: db1774a51d78a34dafe9221298b94116a7f5d5ef
+change-id: 20250621-rk3576-rock4d-pcie-501625670796
+
+Best regards,
+-- 
+Nicolas Frattaroli <nicolas.frattaroli@collabora.com>
+
 
