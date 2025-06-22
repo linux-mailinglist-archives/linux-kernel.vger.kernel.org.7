@@ -1,163 +1,199 @@
-Return-Path: <linux-kernel+bounces-697269-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-697270-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2B11EAE3218
-	for <lists+linux-kernel@lfdr.de>; Sun, 22 Jun 2025 22:53:21 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 03549AE321B
+	for <lists+linux-kernel@lfdr.de>; Sun, 22 Jun 2025 22:53:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id EC03D188DF35
-	for <lists+linux-kernel@lfdr.de>; Sun, 22 Jun 2025 20:53:36 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7F74B16E8D7
+	for <lists+linux-kernel@lfdr.de>; Sun, 22 Jun 2025 20:53:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B1AB41FAC29;
-	Sun, 22 Jun 2025 20:53:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ED5421FBEA9;
+	Sun, 22 Jun 2025 20:53:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=earth.li header.i=@earth.li header.b="DfX1QEZH"
-Received: from the.earth.li (the.earth.li [93.93.131.124])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="EPCofERL"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F356C30E841;
-	Sun, 22 Jun 2025 20:53:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=93.93.131.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 20AED1E8356;
+	Sun, 22 Jun 2025 20:53:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750625591; cv=none; b=hwQ/IfCi+E+oChrAiBxXXhtYhUOOv1jDyP6dQprxhcp7eZ0NnLk/3Fm77N0eAPCXidXoTcck4h8pwGOgi2rreuE2XLsAZYJjgVpQtsdC8Cp3RTIvRYJS6dXK4VIsqJRQc+N6BAt/4zVNXcOXBV8W8B8mLGYBz4x7sLe31Mv3cQ0=
+	t=1750625624; cv=none; b=V8W4FvpsDJ9Xr+M0uWjmLH9PmjDXOs94/RO+XXb+GkSDaswS85xazHEQ9GcNDCYZm0XN9aoJL/4SldegM9bFyaI4njiY+WVEIp0Stmtk2+IVx+67KYkB5PM9HE5WxtrJya6FkGGTAWrt6yxYc6S+pF2c1VIhjP7U0cEa545Ka9g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750625591; c=relaxed/simple;
-	bh=JJyj3mo8oKEq4wZ4Dv10w5hdo1/sXliZGlZgrk5/K3M=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=fr49PyM4HDV8TiijttvDVzvmOtVyz5Jz3YWwj6+2C71yQQ5fL2lWJGDPyBwjNfwU5q9DZIiwoYHe5ziMro2Gvy59y/oaK8zdF1Enx8zcWP5UHUadeY46X7v8tEYPSEOWiGWRqhKxJdv3TeqKSdHDLNQx6ORdhy3+JZ8WG+dcHc4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=earth.li; spf=pass smtp.mailfrom=earth.li; dkim=pass (2048-bit key) header.d=earth.li header.i=@earth.li header.b=DfX1QEZH; arc=none smtp.client-ip=93.93.131.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=earth.li
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=earth.li
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=earth.li;
-	s=the; h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:Subject:
-	Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
-	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
-	:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
-	List-Post:List-Owner:List-Archive;
-	bh=D3O7Y2Dq8XWvhCk7TsV976q3evuoHtvC9Y/E+MQrHn0=; b=DfX1QEZH7Ptiv4qhoqSdtKXqHM
-	4F2V7bhJK9praia6z+rjV6ZwRHSca9SoGMQltZQyPL1Jtkx4qhNGRGoDYCsKki3FmIt36pOsbca5H
-	3zjlSuLg4ywuLP11REUXei4kDqJIkuA6WQmGzRxdwoXxRo6v0BII2atdPP45KVg7uibZtusFz44RE
-	RpkR+0s4Kw3RmeV2yLEAnpMB/DmBJZLebSdTtJVlFfvrtAXDuvyXkTEmRVyK+nH9v1Znus2YB4asX
-	WR4+urJs73PoSq2X9Tn68D8LW5HEZCBcVdZI6woRQZB6AhZoA4787IWl/cteC6l18ANXQsMmhRwd/
-	BnbD8Sew==;
-Received: from noodles by the.earth.li with local (Exim 4.96)
-	(envelope-from <noodles@earth.li>)
-	id 1uTRgQ-00GUWB-1U;
-	Sun, 22 Jun 2025 21:52:58 +0100
-Date: Sun, 22 Jun 2025 21:52:58 +0100
-From: Jonathan McDowell <noodles@earth.li>
-To: "Orlov, Ivan" <iorlov@amazon.co.uk>
-Cc: "peterhuewe@gmx.de" <peterhuewe@gmx.de>,
-	"jarkko@kernel.org" <jarkko@kernel.org>,
-	"jgg@ziepe.ca" <jgg@ziepe.ca>,
-	"linux-integrity@vger.kernel.org" <linux-integrity@vger.kernel.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"Woodhouse, David" <dwmw@amazon.co.uk>
-Subject: Re: [PATCH v2] tpm: Fix the timeout & use ktime
-Message-ID: <aFhtKrWTDzZbpTSh@earth.li>
-References: <20250620180828.98413-1-iorlov@amazon.com>
+	s=arc-20240116; t=1750625624; c=relaxed/simple;
+	bh=ETNTMcoDtb6Zz4KxYImd27LRIowUhqZRAL6C5iDjpvI=;
+	h=Mime-Version:Content-Type:Date:Message-Id:Cc:Subject:From:To:
+	 References:In-Reply-To; b=ImG51mziBapldBnlRzwl7uY+nNi3z/0cg2VpWUoEUm9uQsZtKnlaLPOe7N4ICZcJtgH4BZwFs54ahyrtDxgThvwGqFgD94udlMs/mNf34C1Xg6RuOvSAdl74fbON+rO8Aho9q1HX4gsMqXUKBQPEEEPdyv9ct5bJTaGh77Cy0Dc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=EPCofERL; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4DF8AC4CEE3;
+	Sun, 22 Jun 2025 20:53:40 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1750625623;
+	bh=ETNTMcoDtb6Zz4KxYImd27LRIowUhqZRAL6C5iDjpvI=;
+	h=Date:Cc:Subject:From:To:References:In-Reply-To:From;
+	b=EPCofERLyS7eERNMKxP4WuVN8DKo9AGNz11NJl3+zmRyK88oSu3ABuLtMvJ+A0L7s
+	 3SecOZvoKdcvbqKKKb8uCOirLGkklN3Xh4Eaba8c/djwHYjOJNvCvrFIOv5gdUMCDO
+	 lAdjrwJz7LE5lg/CHrP679FVcqyf7PCI1Dq4CLhzvwra2C5xMWZwyIiuNdtjynqTUE
+	 kyzxc9IHjLn5XiEnHDFOUQzM22Qcq9oVHuHNwjZGYF2gOPUyoZk4wDg46Jqz7tDDxv
+	 74gaFXW3L2qbBtsMPg9axVYUark9zZW+mac1kVLb7orRd6XtAiKJ8JTeOq7JWSl7Vv
+	 /AEr7AkHBqgjQ==
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii; format=flowed
-Content-Disposition: inline
-In-Reply-To: <20250620180828.98413-1-iorlov@amazon.com>
+Mime-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Date: Sun, 22 Jun 2025 22:53:38 +0200
+Message-Id: <DATCZMJJ1SQT.24OPC80MXN1E5@kernel.org>
+Cc: "Miguel Ojeda" <ojeda@kernel.org>, "Alex Gaynor"
+ <alex.gaynor@gmail.com>, "Boqun Feng" <boqun.feng@gmail.com>, "Gary Guo"
+ <gary@garyguo.net>, =?utf-8?q?Bj=C3=B6rn_Roy_Baron?=
+ <bjorn3_gh@protonmail.com>, "Andreas Hindborg" <a.hindborg@kernel.org>,
+ "Alice Ryhl" <aliceryhl@google.com>, "Trevor Gross" <tmgross@umich.edu>,
+ "Greg Kroah-Hartman" <gregkh@linuxfoundation.org>, "Rafael J. Wysocki"
+ <rafael@kernel.org>, "Thomas Gleixner" <tglx@linutronix.de>, "Bjorn
+ Helgaas" <bhelgaas@google.com>, =?utf-8?q?Krzysztof_Wilczy=C5=84ski?=
+ <kwilczynski@kernel.org>, <linux-kernel@vger.kernel.org>,
+ <rust-for-linux@vger.kernel.org>, <linux-pci@vger.kernel.org>
+Subject: Re: [PATCH v4 4/6] rust: irq: add support for threaded IRQs and
+ handlers
+From: "Benno Lossin" <lossin@kernel.org>
+To: "Danilo Krummrich" <dakr@kernel.org>, "Daniel Almeida"
+ <daniel.almeida@collabora.com>
+X-Mailer: aerc 0.20.1
+References: <20250608-topics-tyr-request_irq-v4-0-81cb81fb8073@collabora.com> <20250608-topics-tyr-request_irq-v4-4-81cb81fb8073@collabora.com> <aEbTOhdfmYmhPiiS@pollux> <5B3865E5-E343-4B5D-9BF7-7B9086AA9857@collabora.com> <aEckTQ2F-s1YfUdu@pollux.localdomain>
+In-Reply-To: <aEckTQ2F-s1YfUdu@pollux.localdomain>
 
-On Fri, Jun 20, 2025 at 06:08:31PM +0000, Orlov, Ivan wrote:
->The current implementation of timeout detection works in the following
->way:
+On Mon Jun 9, 2025 at 8:13 PM CEST, Danilo Krummrich wrote:
+> On Mon, Jun 09, 2025 at 01:24:40PM -0300, Daniel Almeida wrote:
+>> > On 9 Jun 2025, at 09:27, Danilo Krummrich <dakr@kernel.org> wrote:
+>> >> +#[pin_data]
+>> >> +pub struct ThreadedRegistration<T: ThreadedHandler + 'static> {
+>> >> +    inner: Devres<RegistrationInner>,
+>> >> +
+>> >> +    #[pin]
+>> >> +    handler: T,
+>> >> +
+>> >> +    /// Pinned because we need address stability so that we can pass=
+ a pointer
+>> >> +    /// to the callback.
+>> >> +    #[pin]
+>> >> +    _pin: PhantomPinned,
+>> >> +}
+>> >=20
+>> > Most of the code in this file is a duplicate of the non-threaded regis=
+tration.
+>> >=20
+>> > I think this would greatly generalize with specialization and an Handl=
+erInternal
+>> > trait.
+>> >=20
+>> > Without specialization I think we could use enums to generalize.
+>> >=20
+>> > The most trivial solution would be to define the Handler trait as
+>> >=20
+>> > trait Handler {
+>> >   fn handle(&self);
+>> >   fn handle_threaded(&self) {};
+>> > }
+>> >=20
+>> > but that's pretty dodgy.
+>>=20
+>> A lot of the comments up until now have touched on somehow having thread=
+ed and
+>> non-threaded versions implemented together. I personally see no problem =
+in
+>> having things duplicated here, because I think it's easier to reason abo=
+ut what
+>> is going on this way. Alice has expressed a similar view in a previous i=
+teration.
+>>=20
+>> Can you expand a bit more on your suggestion? Perhaps there's a clean wa=
+y to do
+>> it (without macros and etc), but so far I don't see it.
 >
->1. Read completion status. If completed, return the data
->2. Sleep for some time (usleep_range)
->3. Check for timeout using current jiffies value. Return an error if
->   timed out
->4. Goto 1
+> I think with specialization it'd be trivial to generalize, but this isn't
+> stable yet. The enum approach is probably unnecessarily complicated, so I=
+ agree
+> to leave it as it is.
 >
->usleep_range doesn't guarantee it's always going to wake up strictly in
->(min, max) range, so such a situation is possible:
+> Maybe a comment that this can be generalized once we get specialization w=
+ould be
+> good?
 >
->1. Driver reads completion status. No completion yet
->2. Process sleeps indefinitely. In the meantime, TPM responds
->3. We check for timeout without checking for the completion again.
->   Result is lost.
+>> >> +impl<T: ThreadedHandler + 'static> ThreadedRegistration<T> {
+>> >> +    /// Registers the IRQ handler with the system for the given IRQ =
+number.
+>> >> +    pub(crate) fn register<'a>(
+>> >> +        dev: &'a Device<Bound>,
+>> >> +        irq: u32,
+>> >> +        flags: Flags,
+>> >> +        name: &'static CStr,
+>> >> +        handler: T,
+>> >> +    ) -> impl PinInit<Self, Error> + 'a {
+>> >=20
+>> > What happens if `dev`  does not match `irq`? The caller is responsible=
+ to only
+>> > provide an IRQ number that was obtained from this device.
+>> >=20
+>> > This should be a safety requirement and a type invariant.
+>>=20
+>> This iteration converted register() from pub to pub(crate). The idea was=
+ to
+>> force drivers to use the accessors. I assumed this was enough to make th=
+e API
+>> safe, as the few users in the kernel crate (i.e.: so far platform and pc=
+i)
+>> could be manually checked for correctness.
+>>=20
+>> To summarize my point, there is still the possibility of misusing this f=
+rom the
+>> kernel crate itself, but that is no longer possible from a driver's
+>> perspective.
 >
->Such a situation also happens for the guest VMs: if vCPU goes to sleep
->and doesn't get scheduled for some time, the guest TPM driver will
->timeout instantly after waking up without checking for the completion
->(which may already be in place).
+> Correct, you made Registration::new() crate private, such that drivers ca=
+n't
+> access it anymore. But that doesn't make the function safe by itself. It'=
+s still
+> unsafe to be used from platform::Device and pci::Device.
 >
->Perform the completion check once again after exiting the busy loop in
->order to give the device the last chance to send us some data.
+> While that's fine, we can't ignore it and still have to add the correspon=
+ding
+> safety requirements to Registration::new().
 >
->Since now we check for completion in two places, extract this check into
->a separate function.
->
->Signed-off-by: Ivan Orlov <iorlov@amazon.com>
->---
->V1 -> V2:
->- Exclude the jiffies -> ktime change from the patch
->- Instead of recording the time before checking for completion, check
->  for completion once again after leaving the loop
->
-> drivers/char/tpm/tpm-interface.c | 17 +++++++++++++++--
-> 1 file changed, 15 insertions(+), 2 deletions(-)
->
->diff --git a/drivers/char/tpm/tpm-interface.c b/drivers/char/tpm/tpm-interface.c
->index 8d7e4da6ed53..6960ee2798e1 100644
->--- a/drivers/char/tpm/tpm-interface.c
->+++ b/drivers/char/tpm/tpm-interface.c
->@@ -82,6 +82,13 @@ static bool tpm_chip_req_canceled(struct tpm_chip *chip, u8 status)
-> 	return chip->ops->req_canceled(chip, status);
-> }
->
->+static bool tpm_transmit_completed(struct tpm_chip *chip)
->+{
->+	u8 status_masked = tpm_chip_status(chip) & chip->ops->req_complete_mask;
->+
->+	return status_masked == chip->ops->req_complete_val;
->+}
->+
-> static ssize_t tpm_try_transmit(struct tpm_chip *chip, void *buf, size_t bufsiz)
-> {
-> 	struct tpm_header *header = buf;
->@@ -129,8 +136,7 @@ static ssize_t tpm_try_transmit(struct tpm_chip *chip, void *buf, size_t bufsiz)
-> 	stop = jiffies + tpm_calc_ordinal_duration(chip, ordinal);
-> 	do {
-> 		u8 status = tpm_chip_status(chip);
->-		if ((status & chip->ops->req_complete_mask) ==
->-		    chip->ops->req_complete_val)
->+		if (tpm_transmit_completed(chip))
-> 			goto out_recv;
+> I think there is a way to make this interface safe as well -- this is als=
+o
+> something that Benno would be great to have a look at.
 
-The only thing I'd point out here is we end up doing a double status 
-read one after the other (once here, once in tpm_transmit_completed), 
-and I'm pretty sure I've seen instances where that caused a problem.
+Finally had some time to look through this thread, thought I needed a
+whole lot of context, but turns out the question is simple :)
 
-> 		if (tpm_chip_req_canceled(chip, status)) {
->@@ -142,6 +148,13 @@ static ssize_t tpm_try_transmit(struct tpm_chip *chip, void *buf, size_t bufsiz)
-> 		rmb();
-> 	} while (time_before(jiffies, stop));
+Your idea looks sound :)
+
+---
+Cheers,
+Benno
+
+> I'm thinking of something like
 >
->+	/*
->+	 * Check for completion one more time, just in case the device reported
->+	 * it while the driver was sleeping in the busy loop above.
->+	 */
->+	if (tpm_transmit_completed(chip))
->+		goto out_recv;
->+
-> 	tpm_chip_cancel(chip);
-> 	dev_err(&chip->dev, "Operation Timed out\n");
-> 	return -ETIME;
+> 	/// # Invariant
+> 	///
+> 	/// `=C3=ACrq` is the number of an interrupt source of `dev`.
+> 	struct IrqRequest<'a> {
+> 	   dev: &'a Device<Bound>,
+> 	   irq: u32,
+> 	}
+>
+> and from the caller you could create an instance like this:
+>
+> 	// INVARIANT: [...]
+> 	let req =3D IrqRequest { dev, irq };
+>
+> I'm not sure whether this needs an unsafe constructor though.
 
-J.
-
--- 
-She's the one for me. She's all I really need, oh yeah.
-This .sig brought to you by the letter K and the number  3
-Product of the Republic of HuggieTag
 
