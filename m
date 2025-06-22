@@ -1,143 +1,122 @@
-Return-Path: <linux-kernel+bounces-697190-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-697188-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E067DAE3139
-	for <lists+linux-kernel@lfdr.de>; Sun, 22 Jun 2025 19:48:21 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1D208AE3132
+	for <lists+linux-kernel@lfdr.de>; Sun, 22 Jun 2025 19:40:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 14CBE3AF6C2
-	for <lists+linux-kernel@lfdr.de>; Sun, 22 Jun 2025 17:47:57 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 217207A5586
+	for <lists+linux-kernel@lfdr.de>; Sun, 22 Jun 2025 17:39:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2243E1AD3FA;
-	Sun, 22 Jun 2025 17:48:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B7C291F3FF8;
+	Sun, 22 Jun 2025 17:40:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="SwQpx9qS"
-Received: from mail-ej1-f53.google.com (mail-ej1-f53.google.com [209.85.218.53])
+	dkim=pass (2048-bit key) header.d=daynix-com.20230601.gappssmtp.com header.i=@daynix-com.20230601.gappssmtp.com header.b="qkUd7OyY"
+Received: from mail-qt1-f176.google.com (mail-qt1-f176.google.com [209.85.160.176])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3CAC83C0C
-	for <linux-kernel@vger.kernel.org>; Sun, 22 Jun 2025 17:48:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 824645258
+	for <linux-kernel@vger.kernel.org>; Sun, 22 Jun 2025 17:40:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750614496; cv=none; b=KmYFjPYEStvkhsMeDzpzkF8P8wJl9STqsaINK5FH42AVR42chi3UsNOwnETLf8W1h7oklSFNq+mYwu5Uds4mJwPcTcMAri6wAO4CgZvLlUvrIUsO7WRJZ74dL7jAGh8tKZvOloU6YXvbEKlH8g6+G5Ukx5/wkR3JQa0VHLHeUEU=
+	t=1750614016; cv=none; b=ILhP0zMshn64ulAF+LDbxxh3khW2Du0ja0u02S68ffhkRGgd2ED9LJqKcAtq72jr+t3DaUXPajGPTks4L/eO6TydynOCk61J8yUpSGL7w3RWFEmgc5Hi8ZdZxCPM3xyXPdH0CC2R6IntB5Sdu6y+9R5wHOn8KuMdDJ1UqJdYFeM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750614496; c=relaxed/simple;
-	bh=Vu/cjXBuEzCHpIce+L0jRe+1E1hqsjb10YN0nM4h560=;
+	s=arc-20240116; t=1750614016; c=relaxed/simple;
+	bh=JBS6katIuy9abXAwM/EgfQ0vNXuWJoKtGDCgsMvppwk=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=F44eyaU2dFwFJzaIcsegvsKm5AlsaBJsavgU/XPsHvqI3LfWZWqlm/JSqobxSfomjCAxi/osyahcYj9OvYg9oBT3pn24Zdcr32sjTHN2tlDdv71eH7Qd4TtusQqgPpc7N8jVo3rSyyUvTra2Ns/b9cVvqXfZZA4FTCjS3xbRPmE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=SwQpx9qS; arc=none smtp.client-ip=209.85.218.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
-Received: by mail-ej1-f53.google.com with SMTP id a640c23a62f3a-ad883afdf0cso704442166b.0
-        for <linux-kernel@vger.kernel.org>; Sun, 22 Jun 2025 10:48:13 -0700 (PDT)
+	 To:Cc:Content-Type; b=Y29TKvgOW9pgvJnQsG/rgwOQBwPr6OcEapfAU6YUw3Udmh7F1fMhuytEn45o2VLcm9coNrVJ/NQvtTjQ/H/3OxlrQ2L0TSb5OSmS2VrvRnzFzMYVPbzCVVnzzPtoe0MImW5iygXM9ZBLtcnKnjaQgi1FI0xyyeUh5uCIzo1Hsng=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=daynix.com; spf=pass smtp.mailfrom=daynix.com; dkim=pass (2048-bit key) header.d=daynix-com.20230601.gappssmtp.com header.i=@daynix-com.20230601.gappssmtp.com header.b=qkUd7OyY; arc=none smtp.client-ip=209.85.160.176
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=daynix.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=daynix.com
+Received: by mail-qt1-f176.google.com with SMTP id d75a77b69052e-4a77ea7ed49so22259941cf.0
+        for <linux-kernel@vger.kernel.org>; Sun, 22 Jun 2025 10:40:14 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google; t=1750614492; x=1751219292; darn=vger.kernel.org;
+        d=daynix-com.20230601.gappssmtp.com; s=20230601; t=1750614013; x=1751218813; darn=vger.kernel.org;
         h=cc:to:subject:message-id:date:from:in-reply-to:references
          :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=Fg9hmyFycp3ZDNw8sLAPP4qprGRUQKA22JNcWYg14/Y=;
-        b=SwQpx9qSEe0O7ZBjAneeLC2oDS+f6nvRO6jwr2wHQODvsPCZKOYRLIifHMDju5Luxo
-         h4++BoyUtgzDyNUE2YwteRcwZEZ9XbhluvGHrdIzltvDHOdJre096rw432WcC6yNzFeH
-         cLlIu1Zb5GqNU8RzuuRrEe6d8Mifx1NmTbdH8=
+        bh=JBS6katIuy9abXAwM/EgfQ0vNXuWJoKtGDCgsMvppwk=;
+        b=qkUd7OyYEjZA3lCPXBJ2EiCNjnegCHE58l9b9rp5DFzG3W534etSXmVuSkC8fyOX4c
+         2yXHCPoFE9XUeoh2ixdyCTqX7bI9GOse/fsmLV6qJoRGE96GFREHnOSrl+e4eNkhdO/e
+         czNg7xL88rWOvVdDmnkcZTQZYyKdCzp/YSWikP66SQS0kZ9xReRjfOGgQZo1rgXHZX4D
+         mJ/syG00Vo7x1P8mvuc3go99/o9iGFJ5Vu0DgzaT6F+YbQX9l79sDDxhucVD+ydqscaa
+         GNPKD6NQHuoo2Q2R9qwfIH+XxEBc29Snrqnx5KKh3LB9JOBRq/BFyRUoKcQxK5o37gs2
+         v3Hg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1750614492; x=1751219292;
+        d=1e100.net; s=20230601; t=1750614013; x=1751218813;
         h=cc:to:subject:message-id:date:from:in-reply-to:references
          :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=Fg9hmyFycp3ZDNw8sLAPP4qprGRUQKA22JNcWYg14/Y=;
-        b=kZrvhrRClBwJE6rflw9incKn4tHDBvfXxa6IKDBUyGId7pts1zGU+HJVfN8D7iTZit
-         /S2wa/LSJpx/p8cJibG6uG6mDR4TTV0XsQq9WSRSzKwdj2rlJKlsvuGHM8LqZmvM7wXP
-         lpE+y2kWhg5WnCMeLQsaV2tbjVwbBxTOQywrwwITb0vtho3Vc3b8qKJDkJhm2U9BDqZu
-         BkTvJJeTtMjbMM0neQVw1/ICXk6i8GO7DI7bd9tu2fP0HX7+vitEISCkIE2IAB+xu2Pq
-         PJNRESeHNC+NKtDxH9dUy5xyIlhoAMhVgJ8V0xUdVAd+wkL3XolDxgwhr8XJfDvh0E5s
-         HbQw==
-X-Forwarded-Encrypted: i=1; AJvYcCUGaHie8Zejw+3dC62aCak/mozioR43FXBF6MWXK+SVFdCFVcB1p8cmMQjNkBzWP6paXN2BpeFHpda5Y3Y=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzwOmW7hmjclPKhCIjHDQIC3V6QsMAEcHGJhq4DzxJgj/GdTifs
-	IIzzptP/73MrHWYMb+hm/fvIEB9o50OaGSY4SFG9nJu++RnaiRXJwFiq3Y+QKZazUFAoSUC5fld
-	QukRzFyo=
-X-Gm-Gg: ASbGncvVljpz2g7bgKshNQ8bdXbTq0TKWl9ZTVE9taV7h4TGr4gx359N0tn146Hyg7Q
-	wHr1E/75Q16ZUoRN45U/oDCay/gnpcFCr4DR29PmByp8dedj58FuDt7zZGtrnFwc56TqmeNzH23
-	wkx0cGs0eQsQj/M59oDuVnkJ/Tr++KedCa9qF+mIMMtdmFPHVh+LIc/vfXV74pl69QaKxYRwTyc
-	tiWylnSq1OuiSCvdqVsdwravym2/dUOCX3szYva1Ak7WaLgYB/D76nxs6UTrTdN6zfi9Xc9EM3b
-	hZiDtk/7yKrd2kcItA1XyUZ76OZofmh8+zGeIzmBuHNGLh6vTE5i4UJKEe6eUw2sFGt6X6cVpJQ
-	C7PQd09owZDgB3ofnfj1VtDFK9jPJF61+JS2osaMYRCpISzw=
-X-Google-Smtp-Source: AGHT+IHe1QKN9nZk6kyweJpNtVf9w1JPX3nSidu/gDQx5HhTDpVLF0+WO8gnJFoxaZeihU24EvfS/w==
-X-Received: by 2002:a17:906:6a19:b0:ad8:9466:3344 with SMTP id a640c23a62f3a-ae057b98feamr944882866b.43.1750614492418;
-        Sun, 22 Jun 2025 10:48:12 -0700 (PDT)
-Received: from mail-ej1-f49.google.com (mail-ej1-f49.google.com. [209.85.218.49])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ae053ecbf36sm574290066b.53.2025.06.22.10.48.11
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sun, 22 Jun 2025 10:48:12 -0700 (PDT)
-Received: by mail-ej1-f49.google.com with SMTP id a640c23a62f3a-addda47ebeaso730909066b.1
-        for <linux-kernel@vger.kernel.org>; Sun, 22 Jun 2025 10:48:11 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCUrv3vvJ+yC0sxwXbd1tfRRADF6THUYdRwOzB3FcB8LS97JCfgEPZB3xvHyistvBzjaWQ0aBdSbrmyXfOw=@vger.kernel.org
-X-Received: by 2002:a05:6402:13cb:b0:600:1167:7333 with SMTP id
- 4fb4d7f45d1cf-60a1ccb4175mr8817971a12.10.1750614017461; Sun, 22 Jun 2025
- 10:40:17 -0700 (PDT)
+        bh=JBS6katIuy9abXAwM/EgfQ0vNXuWJoKtGDCgsMvppwk=;
+        b=Ss08o7hAaErUjawww59bh6LQ9oziul4ceeTmzU+sPHWt2h5ZoZKIiJHPR2xHlLv2+e
+         snKFdxwqh9tK+deqkChngaSQiN04FhmIeB02ARbG/ts3fHt4ILyjdlwchSwpe5rHmXjS
+         y5dymOBj47q0EqHTbTG+2uiozO7BIm7vBRBeSydGlnPJ4WbSPS/YAq2CFc/SV8qmhNVY
+         NyOTMYsh7NFv4zZPP55UZyU/jFTXeFrFu3Ji/paYZfvj2Aeh/UH4QPTF08OXmgCs1R2p
+         BiJXvwwDG4/3ZXwJj7CkJA1oxwfJ0GEgyugdXU/Eris5sFIlS5/C+u1XoO8FKsxJvydZ
+         ZQ4g==
+X-Forwarded-Encrypted: i=1; AJvYcCU2O9B6RT51e7wD2zFTVDdtTHuLmiZcd+BVEfjDvWWlDweTfoVXp9jWbRG0jlY+1DS/Lj++TudRGh2wX6U=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw/LnhODq1+8cvW35Btg7tfqs+kb1b58XqlMIFbkpm8ZlX7KYZy
+	IODOufAKhJCs/Ig9SBYgSqDBXy1QVWMGe3DdRfXhyhjo/KMwXUi2okPD8Sgemf2CjMOF3nlWrgJ
+	pj8L25uWdWGjV/59JULuX+oS9l163PlryvjiMLYtrng==
+X-Gm-Gg: ASbGncs1i5pISiZKGcAcMaPBJF2seU4bkcvUJy7sCdCUfFpr+NDUV3OYUdZgLgDLlT8
+	vRzak+HlJD7BGc2qC1M9ZU31t2xyeMpmHuWic0iZGV1IGq3kNOGbCeOlC2c5c5l31ojmPKkTton
+	fLLBWcyUzPtdAf+sYjUqFMo3U48KAt4tzdF8hRjPCxXgMWyif69YibAde28e9kGSHGRABQl3T5w
+	B0wHlwYzFEnm3YX
+X-Google-Smtp-Source: AGHT+IGAQVA4j9B6bOXEQavSPQk4pUsTIQfktiOkSDRcEtYWtj2nMKnJm6GAf6TwLLKYEA7597CW46OoVjUcTVc0rKg=
+X-Received: by 2002:ac8:5707:0:b0:494:b247:4ddb with SMTP id
+ d75a77b69052e-4a77c2d6173mr135279261cf.4.1750614013493; Sun, 22 Jun 2025
+ 10:40:13 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <cover.1750585239.git.christophe.leroy@csgroup.eu>
- <9dfb66c94941e8f778c4cabbf046af2a301dd963.1750585239.git.christophe.leroy@csgroup.eu>
- <20250622181351.08141b50@pumpkin>
-In-Reply-To: <20250622181351.08141b50@pumpkin>
-From: Linus Torvalds <torvalds@linux-foundation.org>
-Date: Sun, 22 Jun 2025 10:40:00 -0700
-X-Gmail-Original-Message-ID: <CAHk-=wgvyNdkYHWfL5NxK=k1DCdtyuHCMFZsbQ5FyP3KNvDNPw@mail.gmail.com>
-X-Gm-Features: AX0GCFvQX_rPJUp_TeA-MaZrJuZOHr7f0zzM4dAjSAouwLFkdoxMjL44_Wohcms
-Message-ID: <CAHk-=wgvyNdkYHWfL5NxK=k1DCdtyuHCMFZsbQ5FyP3KNvDNPw@mail.gmail.com>
-Subject: Re: [PATCH 5/5] powerpc: Implement masked user access
-To: David Laight <david.laight.linux@gmail.com>
-Cc: Christophe Leroy <christophe.leroy@csgroup.eu>, Michael Ellerman <mpe@ellerman.id.au>, 
-	Nicholas Piggin <npiggin@gmail.com>, Naveen N Rao <naveen@kernel.org>, 
-	Madhavan Srinivasan <maddy@linux.ibm.com>, Alexander Viro <viro@zeniv.linux.org.uk>, 
-	Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>, Thomas Gleixner <tglx@linutronix.de>, 
-	Ingo Molnar <mingo@redhat.com>, Peter Zijlstra <peterz@infradead.org>, 
-	Darren Hart <dvhart@infradead.org>, Davidlohr Bueso <dave@stgolabs.net>, 
-	Andre Almeida <andrealmeid@igalia.com>, Andrew Morton <akpm@linux-foundation.org>, 
-	Dave Hansen <dave.hansen@linux.intel.com>, linux-kernel@vger.kernel.org, 
-	linuxppc-dev@lists.ozlabs.org, linux-fsdevel@vger.kernel.org, 
-	linux-mm@kvack.org
+References: <20250530-rss-v12-0-95d8b348de91@daynix.com> <20250530-rss-v12-1-95d8b348de91@daynix.com>
+ <CACGkMEufffSj1GQMqwf598__-JgNtXRpyvsLtjSbr3angLmJXg@mail.gmail.com>
+ <95cb2640-570d-4f51-8775-af5248c6bc5a@daynix.com> <CACGkMEu6fZaErFEu7_UFsykXRL7Z+CwmkcxmvJHC+eN_j0pQvg@mail.gmail.com>
+ <4eaa7aaa-f677-4a31-bcc2-badcb5e2b9f6@daynix.com> <CACGkMEu3QH+VdHqQEePYz_z+_bNYswpA-KNxzz0edEOSSkJtWw@mail.gmail.com>
+ <75ef190e-49fc-48aa-abf2-579ea31e4d15@daynix.com> <CACGkMEu2n-O0UtVEmcPkELcg9gpML=m5W=qYPjeEjp3ba73Eiw@mail.gmail.com>
+ <760e9154-3440-464f-9b82-5a0c66f482ee@daynix.com> <CACGkMEtCr65RFB0jeprX3iQ3ke997AWF0FGH6JW_zuJOLqS5uw@mail.gmail.com>
+In-Reply-To: <CACGkMEtCr65RFB0jeprX3iQ3ke997AWF0FGH6JW_zuJOLqS5uw@mail.gmail.com>
+From: Yuri Benditovich <yuri.benditovich@daynix.com>
+Date: Sun, 22 Jun 2025 20:40:02 +0300
+X-Gm-Features: AX0GCFu7f7UEMKygSwaRuFS-QXgCw4dhQ6kVLLsvANPI-_VjCLQSaQpxwUYjwO8
+Message-ID: <CAOEp5OcybMttzRam+RKQHv4KA-zLnxGrL+UApc5KrAG+op9LKg@mail.gmail.com>
+Subject: Re: [PATCH net-next v12 01/10] virtio_net: Add functions for hashing
+To: Jason Wang <jasowang@redhat.com>
+Cc: Akihiko Odaki <akihiko.odaki@daynix.com>, "Michael S. Tsirkin" <mst@redhat.com>, 
+	Jonathan Corbet <corbet@lwn.net>, Willem de Bruijn <willemdebruijn.kernel@gmail.com>, 
+	"David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, 
+	Xuan Zhuo <xuanzhuo@linux.alibaba.com>, Shuah Khan <shuah@kernel.org>, linux-doc@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, netdev@vger.kernel.org, kvm@vger.kernel.org, 
+	virtualization@lists.linux-foundation.org, linux-kselftest@vger.kernel.org, 
+	Andrew Melnychenko <andrew@daynix.com>, Stephen Hemminger <stephen@networkplumber.org>, gur.stavi@huawei.com, 
+	Lei Yang <leiyang@redhat.com>, Simon Horman <horms@kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 
-On Sun, 22 Jun 2025 at 10:13, David Laight <david.laight.linux@gmail.com> wrote:
->
-> Not checking the size is slightly orthogonal.
-> It really just depends on the accesses being 'reasonably sequential'.
-> That is probably always true since access_ok() covers a single copy.
+> Yuri, can you help to clarify this?
 
-It is probably true in practice, but yeah, it's worth thinking about.
-Particularly for various user level structure accesses, we do end up
-often accessing the members individually and thus potentially out of
-order, but as you say "reasonable sequential" is still true: the
-accesses are within a reasonably small offset of each other.
+I see here several questions:
+1. Whether it is ok for the device not to indicate support for XXX_EX hash type?
+- I think, yes (strictly speaking, it was better to test that before
+submitting the patches )
+2. Is it possible that the guest will enable some XXX_EX hash type if
+the device does not indicate that it is supported?
+- No (I think this is part of the spec)
+3. What to do if we migrate between systems with different
+capabilities of hash support/reporting/whatever
+- IMO, at this moment such case should be excluded and only mechanism
+we have for that is the compatible machine version
+- in some future the change of device capabilities can be communicated
+to the driver and _probably_ the driver might be able to communicate
+the change of device capabilities to the OS
+4. Does it make sense to have fine configuration of hash types mask
+via command-line?
+- IMO, no. This would require the user to have too much knowledge
+about RSS internals
 
-And when we have potentially very big accesses with large offsets from
-the beginning (ie things like read/write() calls), we do them
-sequentially.
-
-There *might* be odd ioctls and such that get offsets from user space,
-though. So any conversion to using 'masked_user_access_begin()' needs
-to have at least *some* thought and not be just a mindless conversion
-from access_ok().
-
-We have this same issue in access_ok() itself, and on x86-64 that does
-
-  static inline bool __access_ok(const void __user *ptr, unsigned long size)
-  {
-        if (__builtin_constant_p(size <= PAGE_SIZE) && size <= PAGE_SIZE) {
-                return valid_user_address(ptr);
-        .. do the more careful one that actually uses the 'size' ...
-
-so it turns access_ok() itself into just a simple single-ended
-comparison with the starting address for small sizes, because we know
-it's ok to overflow by a bit (because of how valid_user_address()
-works on x86).
-
-           Linus
+Please let me know if I missed something.
 
