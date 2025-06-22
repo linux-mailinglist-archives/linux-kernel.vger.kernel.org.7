@@ -1,145 +1,166 @@
-Return-Path: <linux-kernel+bounces-697215-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-697216-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 441FAAE31A3
-	for <lists+linux-kernel@lfdr.de>; Sun, 22 Jun 2025 21:10:03 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4EDDDAE31AC
+	for <lists+linux-kernel@lfdr.de>; Sun, 22 Jun 2025 21:13:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7964E3AECC9
-	for <lists+linux-kernel@lfdr.de>; Sun, 22 Jun 2025 19:09:38 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2B77D18906E3
+	for <lists+linux-kernel@lfdr.de>; Sun, 22 Jun 2025 19:13:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 078861F4C97;
-	Sun, 22 Jun 2025 19:09:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D57751FDA6A;
+	Sun, 22 Jun 2025 19:13:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="cSyp5hPp"
-Received: from mail-lj1-f181.google.com (mail-lj1-f181.google.com [209.85.208.181])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=collabora.com header.i=sebastian.reichel@collabora.com header.b="G/MDe6Of"
+Received: from sender4-pp-f112.zoho.com (sender4-pp-f112.zoho.com [136.143.188.112])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A3A7B18B47D
-	for <linux-kernel@vger.kernel.org>; Sun, 22 Jun 2025 19:09:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.181
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750619398; cv=none; b=lAOnK+OwSq7OUb8tF6Hikl+9/30UUUjRJ0oWtx3zWw/7RJqIhXEGe/CdgZ8ADJKO7+k95qzASw7Kr+1w4PZ/qdnr/Aj86AAB5Jgm2r0UTeWQfp+5r97veX9dIkt5UVb70nW6LRSfafGKkfANF8nzb5S7FgIWbaFfGlYWtWrqvfo=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750619398; c=relaxed/simple;
-	bh=7wZfGE+MEZQBeJOYLddgb48d7CwjKjMqK9CFI+98cDU=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=BQTGKUwEDci5cfPECQVwuxkWzulF+7IjcURLNKcgZZe5VC9Jt03xeyphtqdbL3xgQH1o0B0sYVJElFtfZKy6kqkQsQ1xXH3ZjhwSyLKMByQkftBYhnwxmQHjQP7u0PYFvnZ2YbiRHz6yVebW+gtX1NSxeljW25i764dIlNJljFc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=cSyp5hPp; arc=none smtp.client-ip=209.85.208.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lj1-f181.google.com with SMTP id 38308e7fff4ca-32b3b250621so33148131fa.2
-        for <linux-kernel@vger.kernel.org>; Sun, 22 Jun 2025 12:09:56 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1750619395; x=1751224195; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=fPvPC3ewg8btyqEAcdiY9R7W/ks7YLMYkN0QU2bR+1Y=;
-        b=cSyp5hPpxzPzdmZQ/ED9leFeCQtoPetVZuh6I6+qayz4QdUTerIfWCrJ5kSJ1QxH4a
-         3unQBCNqgs95/Y/AZuP/Uk9RCMqhoCDlkVqIxlUrW1QWcB4n0ghRqCxqKHUDr4YSlf4z
-         1a2FX8KlKFrK8ZN4DlqgOOz93woeNCC5kAGl0db7xrc3rSnAkAHWrVXdHKzej9YEuR+o
-         /JBVRNf1Zut+r31gyJa9euZr36rafB5VJTJV1JX9jHst8lqwzvQ/1fC5CtF4z3MEhodn
-         JyKNWqmhqh5KWC3ySs/7zQ/eocI2itIKa3ZTlaW867iuZPnNixiL9ACS/6hhvKIa+fjh
-         BC6w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1750619395; x=1751224195;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=fPvPC3ewg8btyqEAcdiY9R7W/ks7YLMYkN0QU2bR+1Y=;
-        b=JXzYj/vvhXHEliEl48108KeLfLkLhAueESQtJGrbHUGPbfbT0twpv82bNMctx3K2ot
-         HHzCC5/wY5rPoasYcaMkAdkEyw5xPzHu+41/WCx7yvb+hxEJ/cxip52DKlx0zBzzkbCA
-         VXj2q7+iORQvkEJtZDpQ39J3RFs3wsNuFuRPccNRRZtcoZKhbfBGPjSedf1ECGRm1dQ1
-         lJhdD+wWIZC5rD1Zl2eHeYs/hPcKpvhn1enWHZtf6z9Rk1kkF98XIjTkMw1jd/X+WSMF
-         Wp6OTKTqXCBwdFjGWRx6UMhrgpOSHkKJfyZxKVvnyS/xmcS2m62ptxKVA+onjVLw89FE
-         7scQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVh2C2s+8+s0diImjRKG0bWEg+oyPtcXiIqzgHInzGRb4+fFJWtOLE/7Xl3++pFN0SHDwYqxP3cJqpB7zw=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyHhrM8AJSuwpWhVYe6jHTCSfSfzUK1GZvCnjUJTwRYVSIIgOq7
-	J4dSc/jCF0iOttkdu/qMrcwdg+qX6fb5AhnDHwz+yivCd/vZUtoTLAykBMHACRdV4+6nvLe5i4k
-	bxNlPjivZDJljKo4ACJCauprqvIiui28=
-X-Gm-Gg: ASbGncu8nVUl95jV20M/tcqBij+6UbSGlvwWtaptigQaCi9GRDpO+AUfMdxD7ZDnTwi
-	DqdZSI+JKI5MZ+a7BGopdGFJ9lHSJrMqAcdiDpMFop2/1zzttvegK/TpMBk7zSRRrX/kiuq1/9I
-	zrDQ24+Aktmzf6FjZv5ml7lIkANSnf04HSCkikC6WSpA==
-X-Google-Smtp-Source: AGHT+IEP9JF0BFcToEhjegSHbFJk0PTOt+f9xK2X/vV0fQdTfHzEeIN5MYQBuD+Fh/GNwuhplztfeSXfowd92DL5nfA=
-X-Received: by 2002:a2e:a375:0:b0:32a:77a3:877f with SMTP id
- 38308e7fff4ca-32b98e07923mr22842501fa.2.1750619394440; Sun, 22 Jun 2025
- 12:09:54 -0700 (PDT)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E80E718B47D;
+	Sun, 22 Jun 2025 19:13:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.112
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1750619599; cv=pass; b=nh28qV7+oLNhHNvGR/zBuq3IcbbDQ2VaZ0HjuSKLoYemKlx5knY1rTUNRTfO1oUODowzXZh/3berJQTDgmssVeaQOGgql/f4wmEICI7YDH3hrOMfkRr/ky7ixyoDcJj0Li71SzfU3qIPOSD+0KRg4p62MMVwWVh8OPLPOaUGIA0=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1750619599; c=relaxed/simple;
+	bh=FbMp3gjLk5gVyAdfkveNcQgNf6kUDTS/CGT6Y+zSPAA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=aS8YoYrdn7JrbhUAnLFPul36n0N6Q7QsL1yxS8jEihJGI2gWGomFqPPmtQD4cToDE4JYO1Gai2fV4Us31Y/LKF/9cIyklYYtfh2Cf0zPBkb8SFpF+eCbYNgMW+/IMGZ/Mf4JpmBpyY1BBlOg9Y2a0M1rcHXn5aPl+xRhbH3dgTY=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=sebastian.reichel@collabora.com header.b=G/MDe6Of; arc=pass smtp.client-ip=136.143.188.112
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+ARC-Seal: i=1; a=rsa-sha256; t=1750619589; cv=none; 
+	d=zohomail.com; s=zohoarc; 
+	b=SPXiDnQKM1mTIbIh98WRkRaiDN5nBmVz+Hps9oWkEHiesZmBNCK3hNOa6gtzdhx1wVd7wtivbLY/NQkR4oIc62AGerGzlkXNkMX6NYS38F+T1dD30GA9XVj0bhVywNHerbMWVd0PizOO7ZxYOsXsLwhNwVvP6JW6BHe8YqlcJ3I=
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
+	t=1750619589; h=Content-Type:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
+	bh=BlksCamW8VABl/VrrYkbxTiBGyTzRwySRk0D7nJ21so=; 
+	b=jmIjrCvAInyd6lIJxkwsr4ucg4Pp9aP9RPRKbV1Y0VtN8Jh+ZCtJbKfWrM0tzL3/mZSz2iP6z1SQWx8tJiGUHXGNkU6xWuSdCStZ8EWJkBnZdUQX9r+GWoD1goRsf7JeIUR2G1JwbquvskwuGfq/S06vzTowxBDkqPklwCZRx+4=
+ARC-Authentication-Results: i=1; mx.zohomail.com;
+	dkim=pass  header.i=collabora.com;
+	spf=pass  smtp.mailfrom=sebastian.reichel@collabora.com;
+	dmarc=pass header.from=<sebastian.reichel@collabora.com>
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1750619589;
+	s=zohomail; d=collabora.com; i=sebastian.reichel@collabora.com;
+	h=Date:Date:From:From:To:To:Cc:Cc:Subject:Subject:Message-ID:References:MIME-Version:Content-Type:In-Reply-To:Message-Id:Reply-To;
+	bh=BlksCamW8VABl/VrrYkbxTiBGyTzRwySRk0D7nJ21so=;
+	b=G/MDe6OfIfzCVb99o8bb7883Cg9sFVVTb4WIUeFZrU6Hb+twnxcy0i+RkUgM1aTM
+	tbmNtNIJexaQAqa4Oq/B3tjtTAN3yWAdnt8ttG3WVhZKWuEcskJvh4NjlCmg0ap3rRY
+	YjjwKJwWsK8r4SKf7wo/rJr/qq7VwayL82d6JQMo=
+Received: by mx.zohomail.com with SMTPS id 1750619588122328.3230636833241;
+	Sun, 22 Jun 2025 12:13:08 -0700 (PDT)
+Received: by venus (Postfix, from userid 1000)
+	id D616A180958; Sun, 22 Jun 2025 21:13:03 +0200 (CEST)
+Date: Sun, 22 Jun 2025 21:13:03 +0200
+From: Sebastian Reichel <sebastian.reichel@collabora.com>
+To: Casey Connolly <casey.connolly@linaro.org>
+Cc: Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Bjorn Andersson <andersson@kernel.org>, Konrad Dybcio <konradybcio@kernel.org>, 
+	Kees Cook <kees@kernel.org>, "Gustavo A. R. Silva" <gustavoars@kernel.org>, 
+	linux-arm-msm@vger.kernel.org, linux-pm@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-hardening@vger.kernel.org
+Subject: Re: [PATCH 05/11] power: supply: qcom_smbx: allow disabling charging
+Message-ID: <yozzr47ewgi3rtt6hv2si4iivyhhrkaapa7f5vr2mqkt26lfq3@fxt7hqfljbry>
+References: <20250619-smb2-smb5-support-v1-0-ac5dec51b6e1@linaro.org>
+ <20250619-smb2-smb5-support-v1-5-ac5dec51b6e1@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <CA+fCnZeb4eKAf18U7YQEUvS1GVJdC1+gn3PSAS2b4_hnkf8xaw@mail.gmail.com>
- <20250622141142.79332-1-snovitoll@gmail.com> <20250622112014.76bdd8929ecdb1c1fb3015b5@linux-foundation.org>
-In-Reply-To: <20250622112014.76bdd8929ecdb1c1fb3015b5@linux-foundation.org>
-From: Sabyrzhan Tasbolatov <snovitoll@gmail.com>
-Date: Mon, 23 Jun 2025 00:09:37 +0500
-X-Gm-Features: AX0GCFt_VnjkwnxlecvFFQmeMV04Nl7ypc_hhjKQR8oRDBApGtCmD_ujn1PLyAI
-Message-ID: <CACzwLxgSBszyEr4zRqMbnoA0PEnZQNy8_ZKTMtwm-Nkho5MePg@mail.gmail.com>
-Subject: Re: [PATCH v2] mm: unexport globally copy_to_kernel_nofault
-To: Andrew Morton <akpm@linux-foundation.org>
-Cc: andreyknvl@gmail.com, arnd@arndb.de, david@redhat.com, dvyukov@google.com, 
-	elver@google.com, glider@google.com, hch@infradead.org, 
-	kasan-dev@googlegroups.com, linux-kernel@vger.kernel.org, linux-mm@kvack.org, 
-	ryabinin.a.a@gmail.com, vincenzo.frascino@arm.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="anr4msjpopnv2hxv"
+Content-Disposition: inline
+In-Reply-To: <20250619-smb2-smb5-support-v1-5-ac5dec51b6e1@linaro.org>
+X-Zoho-Virus-Status: 1
+X-Zoho-Virus-Status: 1
+X-Zoho-AV-Stamp: zmail-av-1.4.3/250.601.42
+X-ZohoMailClient: External
+
+
+--anr4msjpopnv2hxv
+Content-Type: text/plain; protected-headers=v1; charset=us-ascii
+Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
+Subject: Re: [PATCH 05/11] power: supply: qcom_smbx: allow disabling charging
+MIME-Version: 1.0
 
-On Sun, Jun 22, 2025 at 11:20=E2=80=AFPM Andrew Morton
-<akpm@linux-foundation.org> wrote:
->
-> On Sun, 22 Jun 2025 19:11:42 +0500 Sabyrzhan Tasbolatov <snovitoll@gmail.=
-com> wrote:
->
-> > `copy_to_kernel_nofault()` is an internal helper which should not be
-> > visible to loadable modules =E2=80=93 exporting it would give exploit c=
-ode a
-> > cheap oracle to probe kernel addresses.  Instead, keep the helper
-> > un-exported and compile the kunit case that exercises it only when
-> > `mm/kasan/kasan_test.o` is linked into vmlinux.
->
-> The recent 707f853d7fa3 ("module: Provide
-> EXPORT_SYMBOL_GPL_FOR_MODULES() helper") quietly added a thing which
-> might be useful here.  As far as I understand it, this will permit us
-> to export copy_to_kernel_nofault to kasan_test_c.o and to nothing else.
+Hi,
 
-Thanks for letting me know about this new method.
-I believe, the usage for our case is:
-EXPORT_SYMBOL_GPL_FOR_MODULES(copy_to_kernel_nofault, "kasan_test");
+On Thu, Jun 19, 2025 at 04:55:13PM +0200, Casey Connolly wrote:
+> Hook up USBIN_CMD_IL so that writing "0" to the status register will
+> disable charging, this is useful to let users limit charging
+> automatically.
+>=20
+> Signed-off-by: Casey Connolly <casey.connolly@linaro.org>
+> ---
+>  drivers/power/supply/qcom_smbx.c | 4 ++++
+>  1 file changed, 4 insertions(+)
+>=20
+> diff --git a/drivers/power/supply/qcom_smbx.c b/drivers/power/supply/qcom=
+_smbx.c
+> index b1cb925581ec6b8cfca3897be2de5b00a336c920..fc2a8e20435639a9da4d966c4=
+3271beaeb57a03f 100644
+> --- a/drivers/power/supply/qcom_smbx.c
+> +++ b/drivers/power/supply/qcom_smbx.c
+> @@ -692,8 +692,11 @@ static int smb_set_property(struct power_supply *psy,
+>  {
+>  	struct smb_chip *chip =3D power_supply_get_drvdata(psy);
+> =20
+>  	switch (psp) {
+> +	case POWER_SUPPLY_PROP_STATUS:
+> +		return regmap_update_bits(chip->regmap, chip->base + USBIN_CMD_IL,
+> +					  USBIN_SUSPEND_BIT, !val->intval);
 
->
-> "might".  It depends on how "exploit code" might get hold of the
-> symbol.  Perhaps you/we can discuss this further.  Is the problem that
-> copy_to_kernel_nofault() is non-static?  Or it the problem that
-> "exploit code" is itself a kernel module?
+I planned to pick this, but USBIN_CMD_IL is not defined before the
+smb5 support patch, so this is not bisectable.
 
-I haven't verified this, but theoretically, it's a handy
-=E2=80=9Cwrite-anywhere-safely=E2=80=9D ROP gadget.
-Assume the attacker has already gained an arbitrary RW primitive
-via a UAF/OOB bug. Instead of stitching together
-prepare_kernel_cred() + commit_creds(), which is a common path
-of using exported symbols to achieve privilege escalation.
-This path needs two symbols and register juggling.
-With exported copy_to_kernel_nofault() they can do this:
+Greetings,
 
-/* Pseudocode of exploit for a ROP stage running in kernel context */
-        struct cred *cred =3D leaked_pointer;
-        rop_call(copy_to_kernel_nofault, &cred->uid, &zero, 4)
+-- Sebastian
 
-copy_to_kernel_nofault() disables page-faults around the write,
-so even if cred corupts a guard-page, the write will not crash.
+>  	case POWER_SUPPLY_PROP_CURRENT_MAX:
+>  		return smb_set_current_limit(chip, val->intval);
+>  	default:
+>  		dev_err(chip->dev, "No setter for property: %d\n", psp);
+> @@ -704,8 +707,9 @@ static int smb_set_property(struct power_supply *psy,
+>  static int smb_property_is_writable(struct power_supply *psy,
+>  				     enum power_supply_property psp)
+>  {
+>  	switch (psp) {
+> +	case POWER_SUPPLY_PROP_STATUS:
+>  	case POWER_SUPPLY_PROP_CURRENT_MAX:
+>  		return 1;
+>  	default:
+>  		return 0;
+>=20
+> --=20
+> 2.49.0
+>=20
+>=20
 
->
-> In other words, a fuller investigation of how this export presently benef=
-its
-> exploiters would help us understand how much
-> EXPORT_SYMBOL_GPL_FOR_MODULES() will improve the situation.
->
+--anr4msjpopnv2hxv
+Content-Type: application/pgp-signature; name="signature.asc"
 
-Please let me know if I should send v3 with using
-EXPORT_SYMBOL_GPL_FOR_MODULES(copy_to_kernel_nofault, "kasan_test");
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCgAdFiEE72YNB0Y/i3JqeVQT2O7X88g7+poFAmhYVbQACgkQ2O7X88g7
++ppCqw/+OcaWrJzhVY+NExdI7IZy/LOVP8oXQEayrCtNZZtZsC141P4pgppEL2hP
+aEZf2mnpca/FEW9J5jBlrM/aKTYij2WTV2zTIEK1su0AV+iYKW/ML7jfaM12DMlF
+SS81xydWcsxghzyhRyJ/XSjZmh/GhNsofuyGhWX31SUl3xzlpj9gSunhZYCViSqQ
+RWG+0UkKT9b51KWBppHmg/yZmpCay7rcVsSs2yUDiUn5rAeqcrrn8gGHntDUyiub
+eh1g6Nn6esSBvUGJw3c/r7II/4QD5+Mv8S2t4uMJ2vWFenHlHXWtebnbR/lcpwMG
+VeSQVoBxVuAX6HFCe5oqvVGHgIJPdST+ZMuSQCJOgVPHSe3xThCk5DoKFYHqSizT
+2q2OUeRhNqEs6RtkSikRpCbDQwkpAYdU6CrtOiO3DCZjBxx5C4zBXUz34+h+Q5q/
+Sjf2Ob2+00npB6GKACP4SYnClKGE7HE6iQ0yTTYqo87r3qH0A7Qt8VAcLfpIxVQN
+bfhIe4bqoShXIAToqB4CP6h9euIHguhae0Zs2hK6knRoeE62uRNYYXVJEuYQFoXO
+BpwL/TltLCjlu9/RJT9SM6vaFODBE8CP8Ry41My4dFT3thqikvUrIhjpcmobAXbB
+3ehDyE6JwBzdeq41MffexDLJtBgKsHfyodEuleUbyrYU83uo2i8=
+=nAG6
+-----END PGP SIGNATURE-----
+
+--anr4msjpopnv2hxv--
 
