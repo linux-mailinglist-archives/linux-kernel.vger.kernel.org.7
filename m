@@ -1,198 +1,131 @@
-Return-Path: <linux-kernel+bounces-696950-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-696954-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1098BAE2E93
-	for <lists+linux-kernel@lfdr.de>; Sun, 22 Jun 2025 08:04:29 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7C384AE2E98
+	for <lists+linux-kernel@lfdr.de>; Sun, 22 Jun 2025 08:06:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 336BF3B55FB
-	for <lists+linux-kernel@lfdr.de>; Sun, 22 Jun 2025 06:03:57 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 11A6C17115C
+	for <lists+linux-kernel@lfdr.de>; Sun, 22 Jun 2025 06:06:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A77081C84B9;
-	Sun, 22 Jun 2025 06:02:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EAA91195B37;
+	Sun, 22 Jun 2025 06:03:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="mQArGjLa"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="L8wdi/Dj"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.9])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F23C818FC91;
-	Sun, 22 Jun 2025 06:02:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0C61718FDBD;
+	Sun, 22 Jun 2025 06:03:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.9
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750572172; cv=none; b=Wc3SsWVjDGalomAp3XX/a0WTBGvzvQ0SWDH0SRPIwGnXb8Q+WUBO6CWNXRZixXBoCaqHWMnRSkELMTK6639jFhI+8kDrnaTehQLXZWFBBe0mCW1Zmg7d+Znrn6lECAr/Rir0NJmxNF5Tnctm60ZowyAeK18xmoVFKLDrRHrVBgg=
+	t=1750572200; cv=none; b=JLgCLqQm3rzpc9620KM3LQ8bbJg+9BhuLgk3EPT4aSZrVhNcPEeKFoN5bPrSGgdb56H9QVDi6I0Ib+ysvt3Zf3XNn62xBkFRm+CrhoD9oIwkRXou2mTXNzxdNC3Mhz0QJ02Jd6JPG+h8T8jjTCgXKSJ5i+BEHNYTj8PYmO3UABk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750572172; c=relaxed/simple;
-	bh=Md1fJUprA8k5FhxpqjtZ0V+UUyFkBLNA2WvebeFh5mE=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=pjyrwV2mow2qiAycbhB/ZZnYxeiOYhb+PJl5zcgYlMWZTAg29Q+PzewwvPd7tm/zA1CWcSATPcBOxI0JAjHJpaM0F9hJ30ikxvbRH7WzNnHtMta1uSMaJz8EURHB7SnVjIH2+QHpRvz4mwCBSuZX6BN/2vESOOUq1BSZ/Pfg56c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=mQArGjLa; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6D315C4AF0D;
-	Sun, 22 Jun 2025 06:02:51 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1750572171;
-	bh=Md1fJUprA8k5FhxpqjtZ0V+UUyFkBLNA2WvebeFh5mE=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=mQArGjLaaejKQ7qkesr4qR8Ntss0yynvV7KNysq22XhBGiaUrW8GUnps+QHkQ05hU
-	 /8LyM0iRdS/9RT1lFY3ERLbn56CZga5AmkkeBlEhqXZcvMesY7mOEJYgDX1cRICTKS
-	 Ii//iMqcYP1OvIWbqREDZG1I+xM2sAoG5mFHmrrljlBBSqW/tz7wAxtdBK4Sxi44qi
-	 Fy3Q113CqWiH4/i4XpMZkjjPBV4g1OvRC1wd2TU9fFT99u3naLzeqaLC1GJA8KkR8s
-	 dS4EZNFMfFVxCxOh6VOXbvcFhMgr6qKImCf8rGW/dmn7zu6uFKJZumggw0dIS33XUZ
-	 5tA/k7v9VVdww==
-Received: from mchehab by mail.kernel.org with local (Exim 4.98.2)
-	(envelope-from <mchehab+huawei@kernel.org>)
-	id 1uTDmz-00000000o2y-2rAM;
-	Sun, 22 Jun 2025 08:02:49 +0200
-From: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
-To: Linux Doc Mailing List <linux-doc@vger.kernel.org>,
-	Jonathan Corbet <corbet@lwn.net>
-Cc: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>,
-	"Akira Yokosawa" <akiyks@gmail.com>,
-	"Mauro Carvalho Chehab" <mchehab+huawei@kernel.org>,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH v3 15/15] docs: conf.py: Check Sphinx and docutils version
-Date: Sun, 22 Jun 2025 08:02:44 +0200
-Message-ID: <972673b0a5bf5537d47780d6f8e70ae45456e751.1750571906.git.mchehab+huawei@kernel.org>
-X-Mailer: git-send-email 2.49.0
-In-Reply-To: <cover.1750571906.git.mchehab+huawei@kernel.org>
-References: <cover.1750571906.git.mchehab+huawei@kernel.org>
+	s=arc-20240116; t=1750572200; c=relaxed/simple;
+	bh=6Q8FrnkdsmldV9GcNFIT4wN8l3RVnI5WN8GsaLdbscs=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=I3hMv/CAqC8P3Cq1R2jKf3iGSnJ4R3NFOoWk3tdNQP2RYowsr8QeGAoEEbtYt0MDSuGYPMDONvzfbpdjhDXNeadDx+g6NheaDglqX/mvyHtNfcsdaNfgDL6GNXc06DYboW7LK4PR2v99o+KsO3GwaVppl4faInOWhWmbMCreshE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=L8wdi/Dj; arc=none smtp.client-ip=192.198.163.9
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1750572198; x=1782108198;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=6Q8FrnkdsmldV9GcNFIT4wN8l3RVnI5WN8GsaLdbscs=;
+  b=L8wdi/DjgBkqsUn6VOoMUpREt3Ueq5Xaa97I4q9kIfo7H6zgy5qFsRVF
+   3A80sxjmBVgAAkY4ZzV2Wx11uqohPQANJ5StaRXfXGqZX7ycGLTE2nTVr
+   wb7/usA9SAJKMxQZ0cbtLfkOwfmnpqEAlQaIQvZc56H5kTzxrYSt+n7gv
+   N6fuV59hOiM12mdQUcz7rXyd6sZiDlST0oiSyQ13UVPQsD5fsgSytpuiX
+   ZEPvIuTsU9unMTEhtmSrlEcdhqOZXxUoz3v8pJAFx1+febSv93NrzmFXU
+   WOxkhA2lrU2ZETnX0blqkjNBSWjJlLXriPvqoDd7RVgAfN8s9DmYfokld
+   Q==;
+X-CSE-ConnectionGUID: eGRT+8zxRl2DmD9s3zO9Mg==
+X-CSE-MsgGUID: J0E5uukVQeqNrmxXAX4grQ==
+X-IronPort-AV: E=McAfee;i="6800,10657,11470"; a="63473344"
+X-IronPort-AV: E=Sophos;i="6.16,255,1744095600"; 
+   d="scan'208";a="63473344"
+Received: from fmviesa007.fm.intel.com ([10.60.135.147])
+  by fmvoesa103.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 Jun 2025 23:03:16 -0700
+X-CSE-ConnectionGUID: YCSARsZ5RWG/zST+8dcpBQ==
+X-CSE-MsgGUID: 3MdxRylsSUqbPeP8nS9RvA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.16,255,1744095600"; 
+   d="scan'208";a="150871451"
+Received: from lkp-server01.sh.intel.com (HELO e8142ee1dce2) ([10.239.97.150])
+  by fmviesa007.fm.intel.com with ESMTP; 21 Jun 2025 23:03:10 -0700
+Received: from kbuild by e8142ee1dce2 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1uTDnI-000N5q-1P;
+	Sun, 22 Jun 2025 06:03:08 +0000
+Date: Sun, 22 Jun 2025 14:02:35 +0800
+From: kernel test robot <lkp@intel.com>
+To: Mario Limonciello <superm1@kernel.org>,
+	Bjorn Helgaas <helgaas@kernel.org>
+Cc: oe-kbuild-all@lists.linux.dev, Alex Deucher <alexander.deucher@amd.com>,
+	Christian =?iso-8859-1?Q?K=F6nig?= <christian.koenig@amd.com>,
+	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+	Lukas Wunner <lukas@wunner.de>,
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+	Maxime Ripard <mripard@kernel.org>,
+	Thomas Zimmermann <tzimmermann@suse.de>,
+	David Woodhouse <dwmw2@infradead.org>,
+	Lu Baolu <baolu.lu@linux.intel.com>, Joerg Roedel <joro@8bytes.org>,
+	Will Deacon <will@kernel.org>, Robin Murphy <robin.murphy@arm.com>,
+	Alex Williamson <alex.williamson@redhat.com>,
+	Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>,
+	dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
+	"(open list:INTEL IOMMU (VT-d))" <iommu@lists.linux.dev>,
+	linux-pci@vger.kernel.org, kvm@vger.kernel.org,
+	linux-sound@vger.kernel.org, Daniel Dadap <ddadap@nvidia.com>,
+	Mario Limonciello <mario.limonciello@amd.com>
+Subject: Re: [PATCH v3 6/7] PCI/VGA: Move check for firmware default out of
+ VGA arbiter
+Message-ID: <202506221312.49Fy1aNA-lkp@intel.com>
+References: <20250620024943.3415685-7-superm1@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Sender: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250620024943.3415685-7-superm1@kernel.org>
 
-As reported by Akira, there were incompatibility issues with
-Sphinx and docutils with docutils 0.19. There's already
-a fix for it, but, as there are incompatibility issues with
-different versions, better to add a check to verify if the
-combination is supported/tested.
+Hi Mario,
 
-After check Sphinx release notes, it seems that the
-version compatibility is given by:
+kernel test robot noticed the following build errors:
 
-        =======  ============   ============
-        Sphinx   Min Docutils   Max Docutils
-        Version  Version        Version
-        -------  ------------   ------------
-        3.4.3    >= 0.12.0      < 0.18.0
-        4.0.0    >= 0.12.0      < 0.19.0
-        6.0.0    >= 0.18.0      < 0.20.0
-        7.0.0    >= 0.18.1      < 0.21.0
-        7.2.0    >= 0.18.1      < 0.20.0
-        7.4.0    >= 0.18.1      < 0.21.0
-        8.0.0    >= 0.20.0      < 0.22.0
-        8.2.3    >= 0.20.0      < 0.22.0
-        =======  ============   ============
+[auto build test ERROR on pci/next]
+[also build test ERROR on pci/for-linus tiwai-sound/for-next tiwai-sound/for-linus awilliam-vfio/next awilliam-vfio/for-linus tip/x86/core linus/master v6.16-rc2 next-20250620]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
 
-For now, add a logic inside conf.py to check the above
-compatibility list, emitting warnings if the docutils
-version doesn't match it.
+url:    https://github.com/intel-lab-lkp/linux/commits/Mario-Limonciello/PCI-Add-helper-for-checking-if-a-PCI-device-is-a-display-controller/20250620-105220
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/pci/pci.git next
+patch link:    https://lore.kernel.org/r/20250620024943.3415685-7-superm1%40kernel.org
+patch subject: [PATCH v3 6/7] PCI/VGA: Move check for firmware default out of VGA arbiter
+config: sparc-defconfig (https://download.01.org/0day-ci/archive/20250622/202506221312.49Fy1aNA-lkp@intel.com/config)
+compiler: sparc-linux-gcc (GCC) 15.1.0
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250622/202506221312.49Fy1aNA-lkp@intel.com/reproduce)
 
-This way, when we discover incompatibility issues, we
-can easily adjust the table.
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202506221312.49Fy1aNA-lkp@intel.com/
 
-Signed-off-by: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
----
- Documentation/conf.py | 70 +++++++++++++++++++++++++++++++++++++++++--
- 1 file changed, 67 insertions(+), 3 deletions(-)
+All errors (new ones prefixed by >>):
 
-diff --git a/Documentation/conf.py b/Documentation/conf.py
-index 700516238d3f..df99a4d96b58 100644
---- a/Documentation/conf.py
-+++ b/Documentation/conf.py
-@@ -9,7 +9,11 @@ import os
- import shutil
- import sys
- 
-+import docutils
- import sphinx
-+from sphinx.util import logging
-+
-+logger = logging.getLogger(__name__)
- 
- # If extensions (or modules to document with autodoc) are in another directory,
- # add these directories to sys.path here. If the directory is relative to the
-@@ -21,11 +25,71 @@ from load_config import loadConfig               # pylint: disable=C0413,E0401
- # Minimal supported version
- needs_sphinx = "3.4.3"
- 
--# Get Sphinx version
--major, minor, patch = sphinx.version_info[:3]          # pylint: disable=I1101
-+# Get Sphinx and docutils versions
-+sphinx_ver = sphinx.version_info[:3]          # pylint: disable=I1101
-+docutils_ver = docutils.__version_info__[:3]
-+
-+sphinx_ver_str = ".".join([str(x) for x in sphinx_ver])
-+docutils_ver_str = ".".join([str(x) for x in docutils_ver])
-+
-+# Docutils min/max versions.
-+# The dockutils version check logic is done with:
-+#     ver >= min and ver < max
-+SPHINX_DOCUTILS_VERS = {
-+    (3, 4, 3): {
-+        "min": (0, 12, 0),
-+        "max": (0, 18, 0)
-+    },
-+    (4, 0, 0): {
-+        "min": (0, 12, 0),
-+        "max": (0, 19, 0)
-+    },
-+    (6, 0, 0): {
-+        "min": (0, 18, 0),
-+        "max": (0, 20, 0)
-+    },
-+    (7, 0, 0): {
-+        "min": (0, 18, 1),
-+        "max": (0, 21, 0)
-+    },
-+    (7, 2, 0): {
-+        "min": (0, 18, 1),
-+        "max": (0, 20, 0)
-+    },
-+    (7, 4, 0): {
-+        "min": (0, 18, 1),
-+        "max": (0, 21, 0)
-+    },
-+    (8, 0, 0): {
-+        "min": (0, 20, 0),
-+        "max": (0, 22, 0)
-+    },
-+    (8, 2, 3): {
-+        "min": (0, 20, 0),
-+        "max": (0, 22, 0)
-+    },
-+}
-+
-+du_min = None
-+du_max = None
-+for sp_ver, doc_vers in SPHINX_DOCUTILS_VERS.items():
-+    if sp_ver > sphinx_ver:
-+        break
-+
-+    du_min = doc_vers.get("min")
-+    du_max = doc_vers.get("max")
-+
-+if sphinx_ver > sorted(SPHINX_DOCUTILS_VERS.keys())[-1]:
-+    logger.warning(f"Sphinx version {sphinx_ver_str} is too new and not tested. Doc generation may fail")
-+elif not du_min or not du_max:
-+    logger.warning(f"Sphinx version {sphinx_ver_str} is not tested. Doc generation may fail")
-+elif docutils_ver < du_min:
-+    logger.warning(f"Docutils {docutils_ver_str} is too old for Sphinx {sphinx_ver_str}. Doc generation may fail")
-+elif docutils_ver >= du_max:
-+    logger.warning(f"Docutils {docutils_ver_str} could be too new for Sphinx {sphinx_ver_str}. Doc generation may fail")
- 
- # Include_patterns were added on Sphinx 5.1
--if (major < 5) or (major == 5 and minor < 1):
-+if sphinx_ver < (5, 1, 0):
-     has_include_patterns = False
- else:
-     has_include_patterns = True
+   sparc-linux-ld: drivers/pci/vgaarb.o: in function `vga_arbiter_add_pci_device':
+>> vgaarb.c:(.text+0x14ec): undefined reference to `video_is_primary_device'
+>> sparc-linux-ld: vgaarb.c:(.text+0x174c): undefined reference to `video_is_primary_device'
+
 -- 
-2.49.0
-
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
