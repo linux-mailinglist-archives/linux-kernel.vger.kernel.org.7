@@ -1,131 +1,238 @@
-Return-Path: <linux-kernel+bounces-696954-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-696953-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7C384AE2E98
-	for <lists+linux-kernel@lfdr.de>; Sun, 22 Jun 2025 08:06:12 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8CDE7AE2E97
+	for <lists+linux-kernel@lfdr.de>; Sun, 22 Jun 2025 08:05:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 11A6C17115C
-	for <lists+linux-kernel@lfdr.de>; Sun, 22 Jun 2025 06:06:13 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EA8C63B53D2
+	for <lists+linux-kernel@lfdr.de>; Sun, 22 Jun 2025 06:05:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EAA91195B37;
-	Sun, 22 Jun 2025 06:03:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9D8EA1E5B70;
+	Sun, 22 Jun 2025 06:02:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="L8wdi/Dj"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.9])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Vw3so/bP"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0C61718FDBD;
-	Sun, 22 Jun 2025 06:03:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.9
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 36B13194A6C;
+	Sun, 22 Jun 2025 06:02:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750572200; cv=none; b=JLgCLqQm3rzpc9620KM3LQ8bbJg+9BhuLgk3EPT4aSZrVhNcPEeKFoN5bPrSGgdb56H9QVDi6I0Ib+ysvt3Zf3XNn62xBkFRm+CrhoD9oIwkRXou2mTXNzxdNC3Mhz0QJ02Jd6JPG+h8T8jjTCgXKSJ5i+BEHNYTj8PYmO3UABk=
+	t=1750572172; cv=none; b=fZiSmGM9JBhZ7gQTSU76FBwUrnkMqtZ7h5AaL/22p6C4Coeugf2IkvTKeK7pQZN4PYnVAjytg1ctNva5+oH/zU1he0cYHZKolq9raPCHtds31i4HknGS6FNLKZkN65gdwGpbb8jjR0ex3UP30hLPOQVLnLeynm0+5rRoVwpZhLM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750572200; c=relaxed/simple;
-	bh=6Q8FrnkdsmldV9GcNFIT4wN8l3RVnI5WN8GsaLdbscs=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=I3hMv/CAqC8P3Cq1R2jKf3iGSnJ4R3NFOoWk3tdNQP2RYowsr8QeGAoEEbtYt0MDSuGYPMDONvzfbpdjhDXNeadDx+g6NheaDglqX/mvyHtNfcsdaNfgDL6GNXc06DYboW7LK4PR2v99o+KsO3GwaVppl4faInOWhWmbMCreshE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=L8wdi/Dj; arc=none smtp.client-ip=192.198.163.9
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1750572198; x=1782108198;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=6Q8FrnkdsmldV9GcNFIT4wN8l3RVnI5WN8GsaLdbscs=;
-  b=L8wdi/DjgBkqsUn6VOoMUpREt3Ueq5Xaa97I4q9kIfo7H6zgy5qFsRVF
-   3A80sxjmBVgAAkY4ZzV2Wx11uqohPQANJ5StaRXfXGqZX7ycGLTE2nTVr
-   wb7/usA9SAJKMxQZ0cbtLfkOwfmnpqEAlQaIQvZc56H5kTzxrYSt+n7gv
-   N6fuV59hOiM12mdQUcz7rXyd6sZiDlST0oiSyQ13UVPQsD5fsgSytpuiX
-   ZEPvIuTsU9unMTEhtmSrlEcdhqOZXxUoz3v8pJAFx1+febSv93NrzmFXU
-   WOxkhA2lrU2ZETnX0blqkjNBSWjJlLXriPvqoDd7RVgAfN8s9DmYfokld
-   Q==;
-X-CSE-ConnectionGUID: eGRT+8zxRl2DmD9s3zO9Mg==
-X-CSE-MsgGUID: J0E5uukVQeqNrmxXAX4grQ==
-X-IronPort-AV: E=McAfee;i="6800,10657,11470"; a="63473344"
-X-IronPort-AV: E=Sophos;i="6.16,255,1744095600"; 
-   d="scan'208";a="63473344"
-Received: from fmviesa007.fm.intel.com ([10.60.135.147])
-  by fmvoesa103.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 Jun 2025 23:03:16 -0700
-X-CSE-ConnectionGUID: YCSARsZ5RWG/zST+8dcpBQ==
-X-CSE-MsgGUID: 3MdxRylsSUqbPeP8nS9RvA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.16,255,1744095600"; 
-   d="scan'208";a="150871451"
-Received: from lkp-server01.sh.intel.com (HELO e8142ee1dce2) ([10.239.97.150])
-  by fmviesa007.fm.intel.com with ESMTP; 21 Jun 2025 23:03:10 -0700
-Received: from kbuild by e8142ee1dce2 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1uTDnI-000N5q-1P;
-	Sun, 22 Jun 2025 06:03:08 +0000
-Date: Sun, 22 Jun 2025 14:02:35 +0800
-From: kernel test robot <lkp@intel.com>
-To: Mario Limonciello <superm1@kernel.org>,
-	Bjorn Helgaas <helgaas@kernel.org>
-Cc: oe-kbuild-all@lists.linux.dev, Alex Deucher <alexander.deucher@amd.com>,
-	Christian =?iso-8859-1?Q?K=F6nig?= <christian.koenig@amd.com>,
-	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
-	Lukas Wunner <lukas@wunner.de>,
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	Maxime Ripard <mripard@kernel.org>,
-	Thomas Zimmermann <tzimmermann@suse.de>,
-	David Woodhouse <dwmw2@infradead.org>,
-	Lu Baolu <baolu.lu@linux.intel.com>, Joerg Roedel <joro@8bytes.org>,
-	Will Deacon <will@kernel.org>, Robin Murphy <robin.murphy@arm.com>,
-	Alex Williamson <alex.williamson@redhat.com>,
-	Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>,
-	dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
-	"(open list:INTEL IOMMU (VT-d))" <iommu@lists.linux.dev>,
-	linux-pci@vger.kernel.org, kvm@vger.kernel.org,
-	linux-sound@vger.kernel.org, Daniel Dadap <ddadap@nvidia.com>,
-	Mario Limonciello <mario.limonciello@amd.com>
-Subject: Re: [PATCH v3 6/7] PCI/VGA: Move check for firmware default out of
- VGA arbiter
-Message-ID: <202506221312.49Fy1aNA-lkp@intel.com>
-References: <20250620024943.3415685-7-superm1@kernel.org>
+	s=arc-20240116; t=1750572172; c=relaxed/simple;
+	bh=y8LZ0fXrmuwyAMvRo91pI8wsN2CZiBu2VRksVUBmRVg=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=SrY02Jeetmbo17ktE+82eW6ZZZxNEfBHQY4NJv7gUgUwTh5haQ1bts6WZaNgNX2/yrBsJVEjx07l+YIU1ZtDzhya7y4xO6NX3krqOPzYm+bitUowt/tNU4JFUMhXmGl1AyRLepaTUkSzfRoG7QFXuf8cDrhovAO2S3+NTsv91yk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Vw3so/bP; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 63FF2C113D0;
+	Sun, 22 Jun 2025 06:02:51 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1750572171;
+	bh=y8LZ0fXrmuwyAMvRo91pI8wsN2CZiBu2VRksVUBmRVg=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=Vw3so/bPwOEhGwLSFZuCspsu2IlRTVqzLtH+76kGm0jeLk64auMFqQzTXAnDeknxW
+	 WbZB8oOUKHFyd1Pt9ch2D2PtbhvJuT3hfUdt4UCIHVz/G6zYIWS3fXqQ5H0sbRUzSx
+	 fhSNumtA+gFfRMWmwEKx9xaadN96qFiMnY1nn8goZkWvn7DZz7WzLkhb68RY7f+R/s
+	 4PWV3l5iNu1qEaMj3FG65jWGF2KWTdZTENhiUV8Rl4hWFx4nQpuCQ6AfzeSlMTfRBC
+	 LKmt2l+U6H/drBj0v1oawSSjskWlTIxDp1bpvrnMU3FHdvDIC7b1r7N3nrOvN/XNFD
+	 f1czd59OoyWiA==
+Received: from mchehab by mail.kernel.org with local (Exim 4.98.2)
+	(envelope-from <mchehab+huawei@kernel.org>)
+	id 1uTDmz-00000000o2m-2Va8;
+	Sun, 22 Jun 2025 08:02:49 +0200
+From: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
+To: Linux Doc Mailing List <linux-doc@vger.kernel.org>,
+	Jonathan Corbet <corbet@lwn.net>
+Cc: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>,
+	"Akira Yokosawa" <akiyks@gmail.com>,
+	"Mauro Carvalho Chehab" <mchehab+huawei@kernel.org>,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH v3 12/15] scripts: test_doc_build.py: regroup and rename arguments
+Date: Sun, 22 Jun 2025 08:02:41 +0200
+Message-ID: <acf5e1db38ca6a713c44ceca9db5cdd7d3079c92.1750571906.git.mchehab+huawei@kernel.org>
+X-Mailer: git-send-email 2.49.0
+In-Reply-To: <cover.1750571906.git.mchehab+huawei@kernel.org>
+References: <cover.1750571906.git.mchehab+huawei@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250620024943.3415685-7-superm1@kernel.org>
+Content-Transfer-Encoding: 8bit
+Sender: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
 
-Hi Mario,
+The script now have lots or arguments. Better organize and
+name them, for it to be a little bit more intuitive.
 
-kernel test robot noticed the following build errors:
+Signed-off-by: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
+---
+ scripts/test_doc_build.py | 95 +++++++++++++++++++++++++--------------
+ 1 file changed, 61 insertions(+), 34 deletions(-)
 
-[auto build test ERROR on pci/next]
-[also build test ERROR on pci/for-linus tiwai-sound/for-next tiwai-sound/for-linus awilliam-vfio/next awilliam-vfio/for-linus tip/x86/core linus/master v6.16-rc2 next-20250620]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
-
-url:    https://github.com/intel-lab-lkp/linux/commits/Mario-Limonciello/PCI-Add-helper-for-checking-if-a-PCI-device-is-a-display-controller/20250620-105220
-base:   https://git.kernel.org/pub/scm/linux/kernel/git/pci/pci.git next
-patch link:    https://lore.kernel.org/r/20250620024943.3415685-7-superm1%40kernel.org
-patch subject: [PATCH v3 6/7] PCI/VGA: Move check for firmware default out of VGA arbiter
-config: sparc-defconfig (https://download.01.org/0day-ci/archive/20250622/202506221312.49Fy1aNA-lkp@intel.com/config)
-compiler: sparc-linux-gcc (GCC) 15.1.0
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250622/202506221312.49Fy1aNA-lkp@intel.com/reproduce)
-
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202506221312.49Fy1aNA-lkp@intel.com/
-
-All errors (new ones prefixed by >>):
-
-   sparc-linux-ld: drivers/pci/vgaarb.o: in function `vga_arbiter_add_pci_device':
->> vgaarb.c:(.text+0x14ec): undefined reference to `video_is_primary_device'
->> sparc-linux-ld: vgaarb.c:(.text+0x174c): undefined reference to `video_is_primary_device'
-
+diff --git a/scripts/test_doc_build.py b/scripts/test_doc_build.py
+index 5e905a350bd0..47b4606569f9 100755
+--- a/scripts/test_doc_build.py
++++ b/scripts/test_doc_build.py
+@@ -269,7 +269,7 @@ class SphinxVenv:
+ 
+         ver = ".".join(map(str, cur_ver))
+ 
+-        if not self.first_run and args.wait_input and args.make:
++        if not self.first_run and args.wait_input and args.build:
+             ret = input("Press Enter to continue or 'a' to abort: ").strip().lower()
+             if ret == "a":
+                 print("Aborted.")
+@@ -300,11 +300,11 @@ class SphinxVenv:
+         result = await cmd.run([pip, "freeze"], verbose=False, check=True)
+ 
+         # Pip install succeeded. Write requirements file
+-        if args.write:
++        if args.req_file:
+             with open(req_file, "w", encoding="utf-8") as fp:
+                 fp.write(result.stdout)
+ 
+-        if args.make:
++        if args.build:
+             start_time = time.time()
+ 
+             # Prepare a venv environment
+@@ -317,7 +317,16 @@ class SphinxVenv:
+ 
+             # Test doc build
+             await cmd.run(["make", "cleandocs"], env=env, check=True)
+-            make = ["make"] + args.make_args + ["htmldocs"]
++            make = ["make"]
++
++            if args.output:
++                sphinx_build = os.path.realpath(f"{bin_dir}/sphinx-build")
++                make += [f"O={args.output}", f"SPHINXBUILD={sphinx_build}"]
++
++            if args.make_args:
++                make += args.make_args
++
++            make += args.targets
+ 
+             if args.verbose:
+                 cmd.log(f". {bin_dir}/activate", verbose=True)
+@@ -380,7 +389,7 @@ class SphinxVenv:
+             await self._handle_version(args, fp, cur_ver, cur_requirements,
+                                        python_bin)
+ 
+-        if args.make:
++        if args.build:
+             cmd = AsyncCommands(fp)
+             cmd.log("\nSummary:", verbose=True)
+             for ver, elapsed_time in sorted(self.built_time.items()):
+@@ -407,7 +416,7 @@ This tool allows creating Python virtual environments for different
+ Sphinx versions that are supported by the Linux Kernel build system.
+ 
+ Besides creating the virtual environment, it can also test building
+-the documentation using "make htmldocs".
++the documentation using "make htmldocs" (and/or other doc targets).
+ 
+ If called without "--versions" argument, it covers the versions shipped
+ on major distros, plus the lowest supported version:
+@@ -418,8 +427,8 @@ A typical usage is to run:
+ 
+    {SCRIPT} -m -l sphinx_builds.log
+ 
+-This will create one virtual env for the default version set and do a
+-full htmldocs build for each version, creating a log file with the
++This will create one virtual env for the default version set and run
++"make htmldocs" for each version, creating a log file with the
+ excecuted commands on it.
+ 
+ NOTE: The build time can be very long, specially on old versions. Also, there
+@@ -433,6 +442,15 @@ reduce the number of threads from "-jauto" to, for instance, "-j4":
+ 
+ """
+ 
++MAKE_TARGETS = [
++    "htmldocs",
++    "texinfodocs",
++    "infodocs",
++    "latexdocs",
++    "pdfdocs",
++    "epubdocs",
++    "xmldocs",
++]
+ 
+ async def main():
+     """Main program"""
+@@ -440,32 +458,41 @@ async def main():
+     parser = argparse.ArgumentParser(description=DESCRIPTION,
+                                      formatter_class=argparse.RawDescriptionHelpFormatter)
+ 
+-    parser.add_argument('-V', '--versions', help='Sphinx versions to test',
+-                        nargs="*", default=DEFAULT_VERSIONS_TO_TEST,
+-                        type=parse_version)
+-    parser.add_argument('--min-version', "--min", help='Sphinx minimal version',
+-                        type=parse_version)
+-    parser.add_argument('--max-version', "--max", help='Sphinx maximum version',
+-                        type=parse_version)
+-    parser.add_argument('-a', '--make_args',
+-                        help='extra arguments for make htmldocs, like SPHINXDIRS=netlink/specs',
+-                        nargs="*")
+-    parser.add_argument('-w', '--write', help='write a requirements.txt file',
+-                        action='store_true')
+-    parser.add_argument('-m', '--make',
+-                        help='Make documentation',
+-                        action='store_true')
+-    parser.add_argument('-f', '--full',
+-                        help='Add all (major,minor,latest_patch) version to the version list',
+-                        action='store_true')
+-    parser.add_argument('-i', '--wait-input',
+-                        help='Wait for an enter before going to the next version',
+-                        action='store_true')
+-    parser.add_argument('-v', '--verbose',
+-                        help='Verbose all commands',
+-                        action='store_true')
+-    parser.add_argument('-l', '--log',
+-                        help='Log command output on a file')
++    ver_group = parser.add_argument_group("Version range options")
++
++    ver_group.add_argument('-V', '--versions', nargs="*",
++                           default=DEFAULT_VERSIONS_TO_TEST,type=parse_version,
++                           help='Sphinx versions to test')
++    ver_group.add_argument('--min-version', "--min", type=parse_version,
++                           help='Sphinx minimal version')
++    ver_group.add_argument('--max-version', "--max", type=parse_version,
++                           help='Sphinx maximum version')
++    ver_group.add_argument('-f', '--full', action='store_true',
++                           help='Add all Sphinx (major,minor) supported versions to the version range')
++
++    build_group = parser.add_argument_group("Build options")
++
++    build_group.add_argument('-b', '--build', action='store_true',
++                             help='Build documentation')
++    build_group.add_argument('-a', '--make-args', nargs="*",
++                             help='extra arguments for make, like SPHINXDIRS=netlink/specs',
++                        )
++    build_group.add_argument('-t', '--targets', nargs="+", choices=MAKE_TARGETS,
++                             default=[MAKE_TARGETS[0]],
++                             help="make build targets. Default: htmldocs.")
++    build_group.add_argument("-o", '--output',
++                             help="output directory for the make O=OUTPUT")
++
++    other_group = parser.add_argument_group("Other options")
++
++    other_group.add_argument('-r', '--req-file', action='store_true',
++                             help='write a requirements.txt file')
++    other_group.add_argument('-l', '--log',
++                             help='Log command output on a file')
++    other_group.add_argument('-v', '--verbose', action='store_true',
++                             help='Verbose all commands')
++    other_group.add_argument('-i', '--wait-input', action='store_true',
++                        help='Wait for an enter before going to the next version')
+ 
+     args = parser.parse_args()
+ 
 -- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+2.49.0
+
 
