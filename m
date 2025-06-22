@@ -1,332 +1,160 @@
-Return-Path: <linux-kernel+bounces-697000-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-697002-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 484AFAE2F01
-	for <lists+linux-kernel@lfdr.de>; Sun, 22 Jun 2025 11:18:39 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0E72EAE2F05
+	for <lists+linux-kernel@lfdr.de>; Sun, 22 Jun 2025 11:21:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id EE7927A16B1
-	for <lists+linux-kernel@lfdr.de>; Sun, 22 Jun 2025 09:17:15 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 901671724A2
+	for <lists+linux-kernel@lfdr.de>; Sun, 22 Jun 2025 09:21:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 414021A3150;
-	Sun, 22 Jun 2025 09:18:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 042CD19F40F;
+	Sun, 22 Jun 2025 09:21:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="qYyzFheV"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=analog.com header.i=@analog.com header.b="Icn1diLx"
+Received: from mx0a-00128a01.pphosted.com (mx0a-00128a01.pphosted.com [148.163.135.77])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7CA3B3597E;
-	Sun, 22 Jun 2025 09:18:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A61EF19309C
+	for <linux-kernel@vger.kernel.org>; Sun, 22 Jun 2025 09:21:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.135.77
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750583909; cv=none; b=JCg7tC04Wx5lJK/PVSbKKtmRoIaOVoruYi5iGo+XaWYoB3aeZtr7LgYrTDh1+9dJBRVY+8XwLlViTs0mTbCBsM8c63jEx8NwLrDCnKr/CXdZ7e1r+bJ5xrA64nRIbZDF3B5fFDTJf+xVuMdbRWaTNABzFYg3+Jyaf1mkQNOhszQ=
+	t=1750584100; cv=none; b=hnYt3O3ioRJvcd5/3HyZNMlY5SWXIuEB6ioN877FWQUzMDfBGfJrJzR+BW7DVRR56jVDsnev1jXWu4GG9aiQ2FU/tmYW9q0fyox914NFssgeMmNOGrr5Z4IWYJVKIKQts/o6F39Lc4bLJPZpSQEC2Eh5gCIH2GHPAi7T41dRc7M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750583909; c=relaxed/simple;
-	bh=ULzFgtp1ptoqf68hd35V/2QqP6kNAwJxF5Ov9RkKsBM=;
-	h=Mime-Version:Content-Type:Date:Message-Id:To:Cc:Subject:From:
-	 References:In-Reply-To; b=alcZ3C5FFVMQB5rKGRZIAeEVS+0+49ftHFt0kji7fGTdAg1tIr3EDhPUVQtzEaY7t5QdHi98pEJeB5Nyb1+79DdiX+XXG14mM/l+M7eaR3qZUdQ+RyPQWFnxBJXLwv26JZoX8N3jyEmpmeYbLcc37/TCikwchqr3GKq6lX/e9ig=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=qYyzFheV; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id AE308C4CEE3;
-	Sun, 22 Jun 2025 09:18:25 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1750583909;
-	bh=ULzFgtp1ptoqf68hd35V/2QqP6kNAwJxF5Ov9RkKsBM=;
-	h=Date:To:Cc:Subject:From:References:In-Reply-To:From;
-	b=qYyzFheVetvfQqUiWosGmNIq3UVfBzRF3MEHl5auGlq4V6Qt2c0K3m6tkvazSCbRD
-	 4sKxPDJk6q4J9p9FMDHeWUAigg9do+NGUHL6pV6fBYTCzEw1zTP3nY+3Gg4Q1DmohQ
-	 Fm4rvYsekf+Jg0ZpUhAcziXBinmozhh5CyNdrotVhkrCLfYlyiO34Y5MSBSbfuSSTY
-	 FgdFGIc98bFv+75dGPTjCxVLzqjBn8Xw+IPpDPlwmKLIsufBuBvfrpdX6mu0ozNd3K
-	 zO9viI30JCDnBQ4nwb26mipKnT1yczUP6pHKfT9pHN7pG2KzwwVlG74uxhUipBjCVO
-	 kznLXbYJTpauw==
+	s=arc-20240116; t=1750584100; c=relaxed/simple;
+	bh=ZD2dBMnqv7ukXVZ/q4Quk1gmVKu+daZNR2JC5ty+zKY=;
+	h=From:Subject:Date:Message-ID:MIME-Version:Content-Type:To:CC; b=RUEke6oGb1O24tmL40nJOT6Z3P94e1YL/nAKeiMF8qjF7VbiUxwHO8TVa2fNz6wwNa4jNF4jMsm7Zri9RzpXnK+JaIjGGg1Ot6wvTpNj1DXwL3Xl75Jw33q2YYs1gysFup3SEvl7bVcrzRuhCxkGDAuBD3lXuFrMzFZ71uhRHtU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=analog.com; spf=pass smtp.mailfrom=analog.com; dkim=pass (2048-bit key) header.d=analog.com header.i=@analog.com header.b=Icn1diLx; arc=none smtp.client-ip=148.163.135.77
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=analog.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=analog.com
+Received: from pps.filterd (m0167089.ppops.net [127.0.0.1])
+	by mx0a-00128a01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 55M528BE012266;
+	Sun, 22 Jun 2025 05:21:20 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=analog.com; h=cc
+	:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=DKIM; bh=IzI9E8zeRCOUVGz34LlSmO2mT81
+	aOyrMCdnorg61OSY=; b=Icn1diLx/wdOYQmcUXHfO0YnodWfCSMyYOCUnOJaIeM
+	7aHJ2QOKsT2qckxmmcp4DNuUdH24M28AoTgCtkLEL4CL5SMTEMfZ/4kehm89arER
+	tRLjDO1zQaYiFTFlwKKOe2QMR6Xc1wEXHLNMhuh5GVnyL7ZwDtCHk3nZygmk0tuK
+	KylWv2l38KR30+GDxJPAG3AvbvA0MbH24hKKp6ItFGrJ1Mxh/v98YTOsmxv4uXPl
+	nQvrQiLglnGxNfcyhCgRsxHdGwQovNTP6v2WBNltWjGwBA2cG4V+UF8tAOZekHtb
+	x1mQtdckXxz4vF00GiNClqlLe17PlCuT8Wuicq+WYlQ==
+Received: from nwd2mta3.analog.com ([137.71.173.56])
+	by mx0a-00128a01.pphosted.com (PPS) with ESMTPS id 47dsn7bkpb-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Sun, 22 Jun 2025 05:21:20 -0400 (EDT)
+Received: from ASHBMBX9.ad.analog.com (ASHBMBX9.ad.analog.com [10.64.17.10])
+	by nwd2mta3.analog.com (8.14.7/8.14.7) with ESMTP id 55M9LI9q063063
+	(version=TLSv1/SSLv3 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+	Sun, 22 Jun 2025 05:21:18 -0400
+Received: from ASHBMBX8.ad.analog.com (10.64.17.5) by ASHBMBX9.ad.analog.com
+ (10.64.17.10) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1748.10; Sun, 22 Jun
+ 2025 05:21:18 -0400
+Received: from zeus.spd.analog.com (10.66.68.11) by ashbmbx8.ad.analog.com
+ (10.64.17.5) with Microsoft SMTP Server id 15.2.1748.10 via Frontend
+ Transport; Sun, 22 Jun 2025 05:21:18 -0400
+Received: from HYB-DlYm71t3hSl.ad.analog.com (HYB-DlYm71t3hSl.ad.analog.com [10.32.14.29])
+	by zeus.spd.analog.com (8.15.1/8.15.1) with ESMTP id 55M9Kvw9002297;
+	Sun, 22 Jun 2025 05:21:01 -0400
+From: Jorge Marques <jorge.marques@analog.com>
+Subject: [PATCH v2 0/3] Add helper methods i3c_writel_fifo() and
+ i3c_readl_fifo()
+Date: Sun, 22 Jun 2025 11:18:57 +0200
+Message-ID: <20250622-i3c-writesl-readsl-v2-0-2afd34ec6306@analog.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
-Date: Sun, 22 Jun 2025 11:18:24 +0200
-Message-Id: <DASY7BECFRCT.332X5ZHZMV2W@kernel.org>
-To: =?utf-8?q?Onur_=C3=96zkan?= <work@onurozkan.dev>,
- <linux-kernel@vger.kernel.org>, <rust-for-linux@vger.kernel.org>
-Cc: <ojeda@kernel.org>, <alex.gaynor@gmail.com>, <boqun.feng@gmail.com>,
- <gary@garyguo.net>, <a.hindborg@kernel.org>, <aliceryhl@google.com>,
- <tmgross@umich.edu>, <dakr@kernel.org>, <peterz@infradead.org>,
- <mingo@redhat.com>, <will@kernel.org>, <longman@redhat.com>,
- <felipe_life@live.com>, <daniel@sedlak.dev>, <bjorn3_gh@protonmail.com>
-Subject: Re: [PATCH v5 2/3] implement ww_mutex abstraction for the Rust tree
-From: "Benno Lossin" <lossin@kernel.org>
-X-Mailer: aerc 0.20.1
-References: <20250621184454.8354-1-work@onurozkan.dev>
- <20250621184454.8354-3-work@onurozkan.dev>
-In-Reply-To: <20250621184454.8354-3-work@onurozkan.dev>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAIHKV2gC/6WNTQrCMBSEr1Le2kh+miCuvIe4iMlL+6A2kpSol
+ NzdtAdw42r4BuabFTImwgznboWEhTLFuYE8dOBGOw/IyDcGyaXmRnJGyrFXogXzxBJa3wLlSRm
+ t+rsxGtrwmTDQe5deb41HyktMn/2jyK39qSuCcYbcWuG46H0IFzvbKQ5HFx+w+Yr401Fr/QJoa
+ 4MY+QAAAA==
+X-Change-ID: 20250620-i3c-writesl-readsl-e2836534b665
+To: Alexandre Belloni <alexandre.belloni@bootlin.com>,
+        Frank Li
+	<Frank.Li@nxp.com>,
+        =?utf-8?q?Przemys=C5=82aw_Gaj?= <pgaj@cadence.com>
+CC: <linux-i3c@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
+        Jorge
+ Marques <jorge.marques@analog.com>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1750583937; l=1664;
+ i=jorge.marques@analog.com; s=20250303; h=from:subject:message-id;
+ bh=ZD2dBMnqv7ukXVZ/q4Quk1gmVKu+daZNR2JC5ty+zKY=;
+ b=Jz4FBf6WqiUWhcWD1OhwnUh34Ly7LlDbCBPIMqU09rOK70GkddDhbBR+DNN06KRp37hfrWxb4
+ CPkMAZkudMuBsLkCnJKb8b+C3CRObWnAGs3Tlfv8f4x4sDaAzO1rYP1
+X-Developer-Key: i=jorge.marques@analog.com; a=ed25519;
+ pk=NUR1IZZMH0Da3QbJ2tBSznSPVfRpuoWdhBzKGSpAdbg=
+X-ADIRuleOP-NewSCL: Rule Triggered
+X-Authority-Analysis: v=2.4 cv=GLsIEvNK c=1 sm=1 tr=0 ts=6857cb10 cx=c_pps
+ a=PpDZqlmH/M8setHirZLBMw==:117 a=PpDZqlmH/M8setHirZLBMw==:17
+ a=IkcTkHD0fZMA:10 a=6IFa9wvqVegA:10 a=VwQbUJbxAAAA:8 a=gAnH3GRIAAAA:8
+ a=QMVJh2PuZ69kPaAn0y8A:9 a=QEXdDO2ut3YA:10
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNjIyMDA1NSBTYWx0ZWRfX6y51PVxAHO92
+ W+UqfShEnjRLfq+vEzVqi0QHL/ImB12li6i4Coy4RQrSciM8K7qR5hfH+n8yjwcaT3g7Q1iCKSJ
+ dy0Pr0lemW9IuTqGAD5jcpRcSmiPY3wZWxo/esQs053sbVj0SEgAjZyR8+aAtHB1iuTBB8tMVur
+ uJBIscp/vRDXRBkuOEGjhxvoWI7BI87snkkcFhw2RODCh82ay1Eslnc4KNeObD3aAhF3rVqBOLP
+ fJS9XQz/4jzXaxj65490ODd8o2M776eImj+Ax9lVG5XKsJ1KWXJa8b8IDdTJ/3d4iR4N+0eLB/7
+ qlAIX12lhvP9GXTW6hGBSpfvg75l5d1di5F/aFOEifhSAsixY0PuOw+ZvjKuSvFJm2d/Hy63r0s
+ cdxWlbZqdOQYi9s1g0NxKi0kOM8aGh3tXbC+eV2BBwmtruIlwvEnlpSEIZ3xKvEnU0zBuMwj
+X-Proofpoint-GUID: qYeAfYSnSAjJhuAexrzOA3azL2HTSDmz
+X-Proofpoint-ORIG-GUID: qYeAfYSnSAjJhuAexrzOA3azL2HTSDmz
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.0.736,FMLib:17.12.80.40
+ definitions=2025-06-22_03,2025-06-20_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ impostorscore=0 mlxscore=0 malwarescore=0 mlxlogscore=635 lowpriorityscore=0
+ priorityscore=1501 phishscore=0 clxscore=1015 bulkscore=0 suspectscore=0
+ adultscore=0 spamscore=0 classifier=spam authscore=0 authtc=n/a authcc=
+ route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2505280000
+ definitions=main-2506220055
 
-On Sat Jun 21, 2025 at 8:44 PM CEST, Onur =C3=96zkan wrote:
-> Adds Rust bindings for the kernel's `ww_mutex` infrastructure to enable
-> deadlock-free acquisition of multiple related locks.
->
-> The patch abstracts `ww_mutex.h` header and wraps the existing
-> C `ww_mutex` with three main types:
->     - `WwClass` for grouping related mutexes
->     - `WwAcquireCtx` for tracking lock acquisition context
->     - `WwMutex<T>` for the actual lock
+The i3c abstraction excepts u8 buffers, but some controllers have a bus
+width of 32-bits and don't support flagging valid bytes, so it is
+required to read/write long words and to use memcpy on the remainder of
+the number of bytes by 32-bits to not write/read outside the buffer
+bounds.
 
-Going to repeat my question from the previous version:
+Add two auxiliary methods to include/linux/i3c/master.h and use in the dw
+and cdns i3c controller drivers. The adi controller driver will also use
+these methods.
 
-    I don't know the design of `struct ww_mutex`, but from the code below I
-    gathered that it has some special error return values that signify that
-    one should release other locks.
-   =20
-    Did anyone think about making a more Rusty API that would allow one to
-    try to lock multiple mutexes at the same time (in a specified order) an=
-d
-    if it fails, it would do the resetting automatically?
+Related thread: https://lore.kernel.org/linux-i3c/aFNziEj7j31xy%2FmY@lizhi-Precision-Tower-5810/
 
-I'm not familiar with ww_mutex, so I can't tell if there is something
-good that we could do.
-
-> Signed-off-by: Onur =C3=96zkan <work@onurozkan.dev>
-> ---
->  rust/kernel/error.rs              |   1 +
->  rust/kernel/sync/lock.rs          |   1 +
->  rust/kernel/sync/lock/ww_mutex.rs | 421 ++++++++++++++++++++++++++++++
->  3 files changed, 423 insertions(+)
->  create mode 100644 rust/kernel/sync/lock/ww_mutex.rs
-
-Thanks for splitting the tests into its own patch, but I still think
-it's useful to do the abstractions for `ww_class`, `ww_acquire_ctx` and
-`ww_mutex` separately.
-
-> +/// Create static [`WwClass`] instances.
-> +///
-> +/// # Examples
-> +///
-> +/// ```
-> +/// use kernel::{c_str, define_ww_class};
-> +///
-> +/// define_ww_class!(WOUND_WAIT_GLOBAL_CLASS, wound_wait, c_str!("wound_=
-wait_global_class"));
-> +/// define_ww_class!(WAIT_DIE_GLOBAL_CLASS, wait_die, c_str!("wait_die_g=
-lobal_class"));
-> +/// ```
-> +#[macro_export]
-> +macro_rules! define_ww_class {
-> +    ($name:ident, wound_wait, $class_name:expr) =3D> {
-> +        static $name: $crate::sync::lock::ww_mutex::WwClass =3D
-> +            { $crate::sync::lock::ww_mutex::WwClass::new($class_name, fa=
-lse) };
-> +    };
-> +    ($name:ident, wait_die, $class_name:expr) =3D> {
-> +        static $name: $crate::sync::lock::ww_mutex::WwClass =3D
-> +            { $crate::sync::lock::ww_mutex::WwClass::new($class_name, tr=
-ue) };
-> +    };
-> +}
-
-I really don't see the value in having a macro here. The user can just
-declare the static themselves.
-
-> +
-> +/// A group of mutexes that can participate in deadlock avoidance togeth=
-er.
-
-This isn't a group of mutexes, but rather a class that can be used to
-group mutexes together.
-
-> +///
-> +/// All mutexes that might be acquired together should use the same clas=
-s.
-> +///
-> +/// # Examples
-> +///
-> +/// ```
-> +/// use kernel::sync::lock::ww_mutex::WwClass;
-> +/// use kernel::c_str;
-> +/// use pin_init::stack_pin_init;
-> +///
-> +/// stack_pin_init!(let _wait_die_class =3D WwClass::new_wait_die(c_str!=
-("graphics_buffers")));
-> +/// stack_pin_init!(let _wound_wait_class =3D WwClass::new_wound_wait(c_=
-str!("memory_pools")));
-> +///
-> +/// # Ok::<(), Error>(())
-> +/// ```
-> +#[pin_data]
-> +pub struct WwClass {
-> +    #[pin]
-> +    inner: Opaque<bindings::ww_class>,
-> +}
-> +
-> +// SAFETY: [`WwClass`] is set up once and never modified. It's fine to s=
-hare it across threads.
-> +unsafe impl Sync for WwClass {}
-> +// SAFETY: Doesn't hold anything thread-specific. It's safe to send to o=
-ther threads.
-> +unsafe impl Send for WwClass {}
-> +
-> +macro_rules! ww_class_init_helper {
-> +    ($name:expr, $is_wait_die:expr) =3D> {
-> +        Opaque::new(bindings::ww_class {
-> +            stamp: bindings::atomic_long_t { counter: 0 },
-> +            acquire_name: $name.as_char_ptr(),
-> +            mutex_name: $name.as_char_ptr(),
-> +            is_wait_die: $is_wait_die as u32,
-> +            // TODO: Replace with `bindings::lock_class_key::default()` =
-once stabilized for `const`.
-> +            //
-> +            // SAFETY: This is always zero-initialized when defined with=
- `DEFINE_WD_CLASS`
-> +            // globally on C side.
-> +            //
-> +            // Ref: <https://git.kernel.org/pub/scm/linux/kernel/git/tor=
-valds/linux.git/tree/include/linux/ww_mutex.h?h=3Dv6.16-rc2#n85>
-> +            acquire_key: unsafe { core::mem::zeroed() },
-> +            // TODO: Replace with `bindings::lock_class_key::default()` =
-once stabilized for `const`.
-> +            //
-> +            // SAFETY: This is always zero-initialized when defined with=
- `DEFINE_WD_CLASS`
-> +            // globally on C side.
-> +            //
-> +            // Ref: <https://git.kernel.org/pub/scm/linux/kernel/git/tor=
-valds/linux.git/tree/include/linux/ww_mutex.h?h=3Dv6.16-rc2#n85>
-> +            mutex_key: unsafe { core::mem::zeroed() },
-> +        })
-> +    };
-> +}
-
-Is this really needed? Can't we do without this macro?
-
-> +
-> +impl WwClass {
-> +    /// Creates a [`WwClass`].
-> +    ///
-> +    /// It's `pub` only so it can be used by the `define_ww_class!` macr=
-o.
-> +    ///
-> +    /// You should not use this function directly. Use the `define_ww_cl=
-ass!`
-> +    /// macro or call [`WwClass::new_wait_die`] or [`WwClass::new_wound_=
-wait`] instead.
-> +    pub const fn new(name: &'static CStr, is_wait_die: bool) -> Self {
-
-This doesn't work together with `#[pin_data]`, you shouldn't return it
-by-value if it is supposed to be pin-initialized.
-
-Is this type address sensitive? If yes, this function needs to be
-`unsafe`, if no, then we can remove `#[pin_data]`.
-
-> +        WwClass {
-> +            inner: ww_class_init_helper!(name, is_wait_die),
-> +        }
-> +    }
-> +
-> +    /// Creates wait-die [`WwClass`].
-> +    pub fn new_wait_die(name: &'static CStr) -> impl PinInit<Self> {
-> +        pin_init!(WwClass {
-> +            inner: ww_class_init_helper!(name, true),
-> +        })
-
-This can just be `new(name, true)` instead.
-
-> +    }
-> +
-> +    /// Creates wound-wait [`WwClass`].
-> +    pub fn new_wound_wait(name: &'static CStr) -> impl PinInit<Self> {
-> +        pin_init!(WwClass {
-> +            inner: ww_class_init_helper!(name, false),
-> +        })
-
-Ditto with `false`.
-
-> +    }
-> +}
-> +
-> +/// An acquire context is used to group multiple mutex acquisitions toge=
-ther
-> +/// for deadlock avoidance. It must be used when acquiring multiple mute=
-xes
-> +/// of the same class.
-
-The first paragraph will be displayed by rustdoc in several summary
-views, so it should be a single short sentence.
-
-> +///
-> +/// # Examples
-> +///
-> +/// ```
-> +/// use kernel::sync::lock::ww_mutex::{WwClass, WwAcquireCtx, WwMutex};
-> +/// use kernel::c_str;
-> +/// use kernel::alloc::KBox;
-> +/// use pin_init::stack_pin_init;
-> +///
-> +/// stack_pin_init!(let class =3D WwClass::new_wound_wait(c_str!("my_cla=
-ss")));
-> +///
-> +/// // Create mutexes.
-> +/// stack_pin_init!(let mutex1 =3D WwMutex::new(1, &class));
-> +/// stack_pin_init!(let mutex2 =3D WwMutex::new(2, &class));
-
-I don't think it makes sense to have examples using mutexes that are on
-the stack. Please use `Arc` instead.
-
-> +///
-> +/// // Create acquire context for deadlock avoidance.
-> +/// let mut ctx =3D KBox::pin_init(WwAcquireCtx::new(&class), GFP_KERNEL=
-)?;
-> +///
-> +/// // Acquire multiple locks safely.
-> +/// let guard1 =3D mutex1.lock(Some(&ctx))?;
-> +/// let guard2 =3D mutex2.lock(Some(&ctx))?;
-> +///
-> +/// // Mark acquisition phase as complete.
-> +/// ctx.as_mut().done();
-> +///
-> +/// # Ok::<(), Error>(())
-> +/// ```
-> +#[pin_data(PinnedDrop)]
-> +pub struct WwAcquireCtx<'a> {
-> +    #[pin]
-> +    inner: Opaque<bindings::ww_acquire_ctx>,
-> +    _p: PhantomData<&'a WwClass>,
-> +}
-
-> +// SAFETY: [`WwMutex`] can be shared between threads.
-> +unsafe impl<T: ?Sized + Send> Send for WwMutex<'_, T> {}
-> +// SAFETY: [`WwMutex`] can be safely accessed from multiple threads conc=
-urrently.
-> +unsafe impl<T: ?Sized + Sync> Sync for WwMutex<'_, T> {}
-> +
-> +impl<'ww_class, T> WwMutex<'ww_class, T> {
-> +    /// Creates `Self` with calling `ww_mutex_init` inside.
-> +    pub fn new(t: T, ww_class: &'ww_class WwClass) -> impl PinInit<Self>=
- {
-> +        let raw_ptr =3D ww_class.inner.get();
-
-s/raw_ptr/class/
-
-> +        pin_init!(WwMutex {
-> +            mutex <- Opaque::ffi_init(|slot: *mut bindings::ww_mutex| {
-> +                // SAFETY: The caller guarantees that `ww_class` remains=
- valid.
-
-The caller doesn't need to guarantees that (and in fact they don't),
-because it's a reference that lives until `'ww_class` which is captured
-by `Self`. So the borrow checker guarantees that the class remains
-valid.
+Signed-off-by: Jorge Marques <jorge.marques@analog.com>
+---
+Changes in v2:
+- Rename to i3c_readl_fifo() and i3c_writel_fifo()
+- Change type u8 *bytes to void *bytes
+- Move methods to internals.h
+- Reword commit messages to include new names and ().
+- Fixup dw read fifo address (master -> master->reg)
+- Link to v1: https://lore.kernel.org/r/20250620-i3c-writesl-readsl-v1-0-e0aa1c014dff@analog.com
 
 ---
-Cheers,
-Benno
+Jorge Marques (3):
+      i3c: master: Add inline i3c_readl_fifo() and i3c_writel_fifo()
+      i3c: master: cdns: Use i3c_master_writesl() and i3c_master_readsl()
+      i3c: master: dw: Use i3c_master_writesl() and i3c_master_readsl()
 
-> +                unsafe { bindings::ww_mutex_init(slot, raw_ptr) }
-> +            }),
-> +            data: UnsafeCell::new(t),
-> +            _p: PhantomData,
-> +        })
-> +    }
-> +}
+ drivers/i3c/internals.h              | 37 ++++++++++++++++++++++++++++++++++++
+ drivers/i3c/master/dw-i3c-master.c   | 25 ++++--------------------
+ drivers/i3c/master/i3c-master-cdns.c | 25 +++++-------------------
+ 3 files changed, 46 insertions(+), 41 deletions(-)
+---
+base-commit: 51963783b876a2f493a3eac0ea9eba271cb6809a
+change-id: 20250620-i3c-writesl-readsl-e2836534b665
+
+Best regards,
+-- 
+Jorge Marques <jorge.marques@analog.com>
+
+
 
