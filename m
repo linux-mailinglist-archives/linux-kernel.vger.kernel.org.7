@@ -1,358 +1,163 @@
-Return-Path: <linux-kernel+bounces-697115-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-697112-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6357FAE3037
-	for <lists+linux-kernel@lfdr.de>; Sun, 22 Jun 2025 15:43:38 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 6C2F6AE302E
+	for <lists+linux-kernel@lfdr.de>; Sun, 22 Jun 2025 15:42:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C0E31189154E
-	for <lists+linux-kernel@lfdr.de>; Sun, 22 Jun 2025 13:43:51 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2976A1890EF3
+	for <lists+linux-kernel@lfdr.de>; Sun, 22 Jun 2025 13:43:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6A5A61EE7A1;
-	Sun, 22 Jun 2025 13:43:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8A78C1E32D7;
+	Sun, 22 Jun 2025 13:42:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Ov07dk9i"
-Received: from mail-ed1-f48.google.com (mail-ed1-f48.google.com [209.85.208.48])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="XAabTcoh"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D76BC1E1DE7;
-	Sun, 22 Jun 2025 13:43:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E9C741DE3D9;
+	Sun, 22 Jun 2025 13:42:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750599790; cv=none; b=OuJ3KE7eJysqJg6Zi/XYJ0Z4Er0njs+ZO+iZ5dPLuwBvEkke/kFaKelZS9DLpZTV6aQWTAOcYe00sDnU0vkCFZADiM0ImqFdgog+zkg1psReTWCGL93Cp2Y3zlIjB4tZc/WRQxyo8VzjS1ceQAsnDw09aWqKONMOP8ypAqAH95M=
+	t=1750599768; cv=none; b=KjXrCJUY9v0HoL5Y4GfETO6c/7ptP/o8YkHQQoRj6ikLnA7YVD7KmVlxKBMUtTetXcSUItl8jXtkKws0lfsPJt1GnxZykFDM9OHW0CT25uWx5akwi/4yHHQQHTDOL8j6+NlWzNP6woPPIO94PCb8OiDGmND3asWzJgwirDUcERo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750599790; c=relaxed/simple;
-	bh=DcAbh50nJ/9+gl7gbnxkWQz+6p4e4XzKjPqGtKppBoU=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=njsFpiGoHGJJwqThMaUeaVQQfhNz7I3azng54cJx++quIKa11HeFSctRstjfOPlDNoK2vPWv3jZjaqCP+dxp5q/S1NiLEyavlWuMpdJvFRl+kEN6+ybDph5zjaXuU7rM3+Ks/GIBGzRyOCItqZmFvAvg4R81I4EMl8+W0es71mg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Ov07dk9i; arc=none smtp.client-ip=209.85.208.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f48.google.com with SMTP id 4fb4d7f45d1cf-606b6dbe316so6470898a12.3;
-        Sun, 22 Jun 2025 06:43:08 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1750599787; x=1751204587; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=CKxND9wDhUqTTJe60cYRYDByv8VnJJT28t+GbpuOw+w=;
-        b=Ov07dk9ibMvwXbBuSomem/2yRePWXGi7pf1JxvCxPBCuZHp8MCErnOXEueN1R5ExsI
-         bRzP+N1PrhNxRjf7oaUF6h0MY14QzKEOiOqx24yb1HIcvkDNdgr15ET5ecdHBGQ23bH5
-         vRScPSoh+xS7nCUFIPdDi6UBaOeGES7+lHyNhWxQkOdrATSZH6FzjvHfS430b65oasRM
-         IZS4KpELDLaBg4rAytY3iO6K6a67RLyuQv3Vz7/Q0TV0lDfRDrFEoSNuFQl+NP2T9cva
-         zPjzIYdxhG0QF+4bf7IqowzBznJAeq0EYKKqpRh0gU11RtZjvLzv1NpdfOJnrz13ziqE
-         Ew/Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1750599787; x=1751204587;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=CKxND9wDhUqTTJe60cYRYDByv8VnJJT28t+GbpuOw+w=;
-        b=NZy1RRyjrTM8npRtHszW+2URs3OQ2NRgdayHdbCl3t/JER6u2lmSzT6wg2S8O6L6/9
-         OwU8VQREUksE3H8G4vcb1H+0EjD9dDvFEUzIVD3faj4cl5r60+dWu5wmEfFW+5E7hD1B
-         fsoZGa29BUqi3/icSywo1jn7izpPtTOwdVfZaLfPYgOjEXoAba/4Zl9+A8i7dY524gbk
-         EByP4DDECZL9PE7ANhGx9QoMs5XsJr/oLJKyh8+o6TqnWDDGPylEinEE+x++xIpUwJLL
-         xDpX8Xf4HlyjC0mn81HWcyOyDyNNSo34Pnmxsm7PAjcdGkQraWy/2eY5c06vJF2fj7MQ
-         DXyQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVtEfbjbD0X77CrDEgJ9xMpAKsjMIR9CULpGE5pmfZcQH3GYAthPOYiwS/ESXi66X4USIIbkOJur2cU@vger.kernel.org, AJvYcCW+x296bnlGUq49caZWU+ssZrBl238gHrkJw6DsQniKSTfW/SEXTnNIwkMYG6vLtYeWtPe2Z489JuFqhEsM@vger.kernel.org, AJvYcCWz0990XIh1wSRsE0MAmLT77cn8+hEen99ndhqKS6NeoCZLYjwOywv4Ac6DtmUw9Zyq4jKS2QFLP5XU6QqsuA==@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz9bs72ke41ElzA8fYo0VjgidIfTALh5mXrwlF1xIG86hPjq9AX
-	/B17LtH1jFn+FnkjzaxF6xYYPRnPaP/jPJUo+D+3I8vcApkZFfFQTz9Y7drrNQw=
-X-Gm-Gg: ASbGncuWa7V7ar/DTGGsjm7WYs6e3Kwcm37+kn2aJdYtzq78KN61d2baCwtakvT7AVG
-	O/FIfwqmwsCG3DZYiWx8IeRaSWp7+/MajCOYNNBOUJaPbN3WzA8XdNhZhDsXxlXI75IEDqxtpS6
-	hV2n1Ocjcd6BCuGlg7R0kggRAof3z2L4Hv+31+VZyzzk6snE5Seup71bsIyLC9ancuH5HuJwJhZ
-	lI3887i4sQV++Y6eRPFF/qjHorc1WUSsij23kN2NLPVAaQeWYAaH3lDEVNSXEtPU8Y31oL7vXtC
-	DWNzfO+4F4IdN/Q88AwS4Vd2pTpQz3HBK9y4K68pOw4DUBB+ldPYbjdeuO6s2yv6epgqXp7h+nk
-	RBmY=
-X-Google-Smtp-Source: AGHT+IHeC3wpaGuXsxsGS1ou5yDXSrA2CWtnGo1/tOsnyk09UcUcyVKGoDq84C/WLDo5IEQIppyBxQ==
-X-Received: by 2002:a05:6402:2355:b0:5f6:fab2:9128 with SMTP id 4fb4d7f45d1cf-60a1d16761dmr8484214a12.19.1750599786714;
-        Sun, 22 Jun 2025 06:43:06 -0700 (PDT)
-Received: from alex-x1.localdomain ([84.226.118.249])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-60a18cb9e5dsm4654457a12.53.2025.06.22.06.43.06
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 22 Jun 2025 06:43:06 -0700 (PDT)
-From: Aleksandrs Vinarskis <alex.vinarskis@gmail.com>
-To: Bjorn Andersson <bjorn.andersson@oss.qualcomm.com>,
-	Aleksandrs Vinarskis <alex.vinarskis@gmail.com>,
-	linux-arm-msm@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Cc: Bjorn Andersson <andersson@kernel.org>,
-	Konrad Dybcio <konradybcio@kernel.org>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>
-Subject: [PATCH v1 2/2] arm64: dts: qcom: x1-asus-zenbook: support sound
-Date: Sun, 22 Jun 2025 15:40:01 +0200
-Message-ID: <20250622134301.10403-3-alex.vinarskis@gmail.com>
-X-Mailer: git-send-email 2.45.2
-In-Reply-To: <20250622134301.10403-1-alex.vinarskis@gmail.com>
-References: <20250622134301.10403-1-alex.vinarskis@gmail.com>
+	s=arc-20240116; t=1750599768; c=relaxed/simple;
+	bh=Tv9mUPVVn7wQLIbUJ6oRa4Si03XNjcQob/mp6dyG+Ac=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=qrtM4+yS8E/e1jLoqIgtsCoZrx+RhCAUbs2weSXsd0AZoujuXJ846QRtEMcvhOwDPQj+I/UdTpXXwUR4rTRVngB2PVWa5cPN0Jg8FU5fqszBFZFMHE9JDPpJpRqsq13iORWT7X8PVBebpaw1GguH5IbmOFDQ29UqplH7ntrEjNA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=XAabTcoh; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9508BC4CEE3;
+	Sun, 22 Jun 2025 13:42:44 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1750599767;
+	bh=Tv9mUPVVn7wQLIbUJ6oRa4Si03XNjcQob/mp6dyG+Ac=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=XAabTcoh1vT1auSju+Pvv9KuHnnwaONSYzlckp5tnYftYZWUc3gOVZ6kg3vTu5t41
+	 jRP53C+9A+mz9B6V64IsPVxDkZ2tEj4D99VmiU6bLPPGKmrpleLGVaXWd6IJz7cUuY
+	 +/REKvMW0WFWg07AVzCT29VnoTQFVeVoaq0yDSzm+v/5eJ5rFeg/+dF2eTGDTuef6p
+	 P/X4jIAnyxDiaDtbL4eF4kn6Ap0obN4qMrw7jwqh7t8I+er+EclyW/2l95FJXWMtb/
+	 O+i7EdZzFzAFsnC8ZtMwdMwlRRjdF68zZlHuj99wthAQUsVjdPKqMpdqXCsf14/8tX
+	 cl7CKj5Cw8WLQ==
+Date: Sun, 22 Jun 2025 14:42:40 +0100
+From: Jonathan Cameron <jic23@kernel.org>
+To: Gustavo Silva <gustavograzs@gmail.com>
+Cc: Alex Lanzano <lanzano.alex@gmail.com>, David Lechner
+ <dlechner@baylibre.com>, Nuno =?UTF-8?B?U8Oh?= <nuno.sa@analog.com>, Andy
+ Shevchenko <andy@kernel.org>, linux-iio@vger.kernel.org,
+ linux-kernel@vger.kernel.org, Lothar Rubusch <l.rubusch@gmail.com>
+Subject: Re: [PATCH v3 3/3] iio: imu: bmi270: add support for motion events
+Message-ID: <20250622144240.02845c0a@jic23-huawei>
+In-Reply-To: <20250616-bmi270-events-v3-3-16e37588604f@gmail.com>
+References: <20250616-bmi270-events-v3-0-16e37588604f@gmail.com>
+	<20250616-bmi270-events-v3-3-16e37588604f@gmail.com>
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.48; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-Works:
-* Both speakers
-* Both MICs
-* Headphones jack, L/R channels
-* Headphones jack, MIC
+On Mon, 16 Jun 2025 20:53:11 -0300
+Gustavo Silva <gustavograzs@gmail.com> wrote:
 
-Now working/untested:
-* Sound over DisplayPort
-* Sound over HDMI
+> Any-motion event can be enabled on a per-axis basis and triggers a
+> combined event when motion is detected on any axis.
+> 
+> No-motion event is triggered if the rate of change on all axes falls
+> below a specified threshold for a configurable duration. A fake channel
+> is used to report this event.
+> 
+> Threshold and duration can be configured from userspace.
+> 
+> Signed-off-by: Gustavo Silva <gustavograzs@gmail.com>
 
-Signed-off-by: Aleksandrs Vinarskis <alex.vinarskis@gmail.com>
----
- .../boot/dts/qcom/x1-asus-zenbook-a14.dtsi    | 194 ++++++++++++++++++
- 1 file changed, 194 insertions(+)
+Hi Gustavo,
 
-diff --git a/arch/arm64/boot/dts/qcom/x1-asus-zenbook-a14.dtsi b/arch/arm64/boot/dts/qcom/x1-asus-zenbook-a14.dtsi
-index c8d6d66d05c8..80cd3613c5b8 100644
---- a/arch/arm64/boot/dts/qcom/x1-asus-zenbook-a14.dtsi
-+++ b/arch/arm64/boot/dts/qcom/x1-asus-zenbook-a14.dtsi
-@@ -22,6 +22,32 @@ aliases {
- 		serial1 = &uart14;
- 	};
- 
-+	wcd938x: audio-codec {
-+		compatible = "qcom,wcd9385-codec";
-+
-+		pinctrl-0 = <&wcd_default>;
-+		pinctrl-names = "default";
-+
-+		qcom,micbias1-microvolt = <1800000>;
-+		qcom,micbias2-microvolt = <1800000>;
-+		qcom,micbias3-microvolt = <1800000>;
-+		qcom,micbias4-microvolt = <1800000>;
-+		qcom,mbhc-buttons-vthreshold-microvolt = <75000 150000 237000 500000 500000 500000 500000 500000>;
-+		qcom,mbhc-headset-vthreshold-microvolt = <1700000>;
-+		qcom,mbhc-headphone-vthreshold-microvolt = <50000>;
-+		qcom,rx-device = <&wcd_rx>;
-+		qcom,tx-device = <&wcd_tx>;
-+
-+		reset-gpios = <&tlmm 191 GPIO_ACTIVE_LOW>;
-+
-+		vdd-buck-supply = <&vreg_l15b_1p8>;
-+		vdd-rxtx-supply = <&vreg_l15b_1p8>;
-+		vdd-io-supply = <&vreg_l15b_1p8>;
-+		vdd-mic-bias-supply = <&vreg_bob1>;
-+
-+		#sound-dai-cells = <1>;
-+	};
-+
- 	gpio-keys {
- 		compatible = "gpio-keys";
- 
-@@ -149,6 +175,88 @@ linux,cma {
- 		};
- 	};
- 
-+	sound {
-+		compatible = "qcom,x1e80100-sndcard";
-+		model = "X1E80100-ASUS-Zenbook-A14";
-+		audio-routing = "SpkrLeft IN", "WSA WSA_SPK1 OUT",
-+				"SpkrRight IN", "WSA WSA_SPK2 OUT",
-+				"IN1_HPHL", "HPHL_OUT",
-+				"IN2_HPHR", "HPHR_OUT",
-+				"AMIC2", "MIC BIAS2",
-+				"VA DMIC0", "MIC BIAS1",
-+				"VA DMIC1", "MIC BIAS1",
-+				"VA DMIC0", "VA MIC BIAS1",
-+				"VA DMIC1", "VA MIC BIAS1",
-+				"TX SWR_INPUT1", "ADC2_OUTPUT";
-+
-+		va-dai-link {
-+			link-name = "VA Capture";
-+
-+			cpu {
-+				sound-dai = <&q6apmbedai VA_CODEC_DMA_TX_0>;
-+			};
-+
-+			codec {
-+				sound-dai = <&lpass_vamacro 0>;
-+			};
-+
-+			platform {
-+				sound-dai = <&q6apm>;
-+			};
-+		};
-+
-+		wcd-capture-dai-link {
-+			link-name = "WCD Capture";
-+
-+			cpu {
-+				sound-dai = <&q6apmbedai TX_CODEC_DMA_TX_3>;
-+			};
-+
-+			codec {
-+				sound-dai = <&wcd938x 1>, <&swr2 1>,
-+					    <&lpass_txmacro 0>;
-+			};
-+
-+			platform {
-+				sound-dai = <&q6apm>;
-+			};
-+		};
-+
-+		wcd-playback-dai-link {
-+			link-name = "WCD Playback";
-+
-+			cpu {
-+				sound-dai = <&q6apmbedai RX_CODEC_DMA_RX_0>;
-+			};
-+
-+			codec {
-+				sound-dai = <&wcd938x 0>, <&swr1 0>,
-+					    <&lpass_rxmacro 0>;
-+			};
-+
-+			platform {
-+				sound-dai = <&q6apm>;
-+			};
-+		};
-+
-+		wsa-dai-link {
-+			link-name = "WSA Playback";
-+
-+			cpu {
-+				sound-dai = <&q6apmbedai WSA_CODEC_DMA_RX_0>;
-+			};
-+
-+			codec {
-+				sound-dai = <&left_spkr>, <&right_spkr>,
-+					    <&swr0 0>, <&lpass_wsamacro 0>;
-+			};
-+
-+			platform {
-+				sound-dai = <&q6apm>;
-+			};
-+		};
-+	};
-+
- 	vreg_edp_3p3: regulator-edp-3p3 {
- 		compatible = "regulator-fixed";
- 
-@@ -372,6 +480,13 @@ vreg_bob2: bob2 {
- 			regulator-initial-mode = <RPMH_REGULATOR_MODE_HPM>;
- 		};
- 
-+		vreg_l1b_1p8: ldo1 {
-+			regulator-name = "vreg_l1b_1p8";
-+			regulator-min-microvolt = <1800000>;
-+			regulator-max-microvolt = <1800000>;
-+			regulator-initial-mode = <RPMH_REGULATOR_MODE_HPM>;
-+		};
-+
- 		vreg_l2b_3p0: ldo2 {
- 			regulator-name = "vreg_l2b_3p0";
- 			regulator-min-microvolt = <3072000>;
-@@ -843,6 +958,24 @@ keyboard@15 {
- 	};
- };
- 
-+&lpass_tlmm {
-+	spkr_01_sd_n_active: spkr-01-sd-n-active-state {
-+		pins = "gpio12";
-+		function = "gpio";
-+		drive-strength = <16>;
-+		bias-disable;
-+		output-low;
-+	};
-+};
-+
-+&lpass_vamacro {
-+	pinctrl-0 = <&dmic01_default>;
-+	pinctrl-names = "default";
-+
-+	vdd-micb-supply = <&vreg_l1b_1p8>;
-+	qcom,dmic-sample-rate = <4800000>;
-+};
-+
- &mdss {
- 	status = "okay";
- };
-@@ -1045,6 +1178,59 @@ &spi10 {
- 	/* Unknown device */
- };
- 
-+&swr0 {
-+	status = "okay";
-+
-+	pinctrl-0 = <&wsa_swr_active>, <&spkr_01_sd_n_active>;
-+	pinctrl-names = "default";
-+
-+	/* WSA8845, Left Speaker */
-+	left_spkr: speaker@0,0 {
-+		compatible = "sdw20217020400";
-+		reg = <0 0>;
-+		reset-gpios = <&lpass_tlmm 12 GPIO_ACTIVE_LOW>;
-+		#sound-dai-cells = <0>;
-+		sound-name-prefix = "SpkrLeft";
-+		vdd-1p8-supply = <&vreg_l15b_1p8>;
-+		vdd-io-supply = <&vreg_l12b_1p2>;
-+		qcom,port-mapping = <1 2 3 7 10 13>;
-+	};
-+
-+	/* WSA8845, Right Speaker */
-+	right_spkr: speaker@0,1 {
-+		compatible = "sdw20217020400";
-+		reg = <0 1>;
-+		reset-gpios = <&lpass_tlmm 12 GPIO_ACTIVE_LOW>;
-+		#sound-dai-cells = <0>;
-+		sound-name-prefix = "SpkrRight";
-+		vdd-1p8-supply = <&vreg_l15b_1p8>;
-+		vdd-io-supply = <&vreg_l12b_1p2>;
-+		qcom,port-mapping = <4 5 6 7 11 13>;
-+	};
-+};
-+
-+&swr1 {
-+	status = "okay";
-+
-+	/* WCD9385 RX */
-+	wcd_rx: codec@0,4 {
-+		compatible = "sdw20217010d00";
-+		reg = <0 4>;
-+		qcom,rx-port-mapping = <1 2 3 4 5>;
-+	};
-+};
-+
-+&swr2 {
-+	status = "okay";
-+
-+	/* WCD9385 TX */
-+	wcd_tx: codec@0,3 {
-+		compatible = "sdw20217010d00";
-+		reg = <0 3>;
-+		qcom,tx-port-mapping = <2 2 3 4>;
-+	};
-+};
-+
- &tlmm {
- 	gpio-reserved-ranges = <44 4>,  /* SPI11, TZ Protected */
- 			       <90 1>;	/* Unknown, TZ Protected */
-@@ -1175,6 +1361,14 @@ usb1_pwr_3p3_reg_en: usb1-pwr-3p3-reg-en-state {
- 		bias-disable;
- 	};
- 
-+	wcd_default: wcd-reset-n-active-state {
-+		pins = "gpio191";
-+		function = "gpio";
-+		drive-strength = <16>;
-+		bias-disable;
-+		output-low;
-+	};
-+
- 	wcn_bt_en: wcn-bt-en-state {
- 		pins = "gpio116";
- 		function = "gpio";
--- 
-2.45.2
+Main question in here is about the scaling of the motion threshold.
+It seems to be based on units of g.  We use m/s^2 for IIO acceleration channels
+and also the expectation is that threshold events match scaling of the main channels
+(_scale applies to them).  Hence here we will need to do something a little
+fiddly to maintain the threshold scale if the main channel scaling changes.
+
+I'd missed this on earlier reviews but came to see that we have rubbish documentation
+on this aspect when looking at some other changes recently.
+
+I need to find time to both fix up the ABI docs and write a lot more explanatory
+text around events. Sadly neither is appropriate activity for a sleepy Sunday afternoon!
+
+Jonathan
+
+
+> @@ -114,6 +134,10 @@
+>  #define BMI270_STEP_COUNTER_FACTOR			20
+>  #define BMI270_STEP_COUNTER_MAX				20460
+>  
+> +#define BMI270_INT_MICRO_TO_RAW(val, val2, scale) ((val) * (scale) + \
+> +						  ((val2) * (scale)) / MEGA)
+> +#define BMI270_RAW_TO_MICRO(raw, scale) ((((raw) % (scale)) * MEGA) / scale)
+
+I'm struggling a bit with what this is doing.  Perhaps a comment?
+
+
+
+
+> @@ -827,6 +977,20 @@ static int bmi270_read_avail(struct iio_dev *indio_dev,
+>  	}
+>  }
+>  
+> +static IIO_CONST_ATTR(in_accel_value_available, "[0.0 0.00049 1.0]");
+This aligns with below.  Scaling definitely shouldn't be in g and is likely more
+complex because of the relationship expected with the overall channels scaling
+controls.
+
+> @@ -848,21 +1016,58 @@ static int bmi270_read_event_config(struct iio_dev *indio_dev,
+>  				    enum iio_event_direction dir)
+>  {
+
+
+> +	switch (info) {
+> +	case IIO_EV_INFO_VALUE:
+> +		ret = bmi270_read_feature_reg(data, reg, &regval);
+> +		if (ret)
+> +			return ret;
+> +
+> +		raw = FIELD_GET(BMI270_FEAT_MOTION_THRESHOLD_MSK, regval);
+> +		*val = raw / BMI270_MOTION_THRES_SCALE;
+> +		*val2 = BMI270_RAW_TO_MICRO(raw, BMI270_MOTION_THRES_SCALE);
+
+Why this particular scaling? Is effectively just dividing 1g / number of
+values and hence providing a scaling to g?
+
+Full scale is described as being 1G.
+As this device is providing _RAW data for the relevant channels I'd
+expect this to be scaled to match that. That will be a little fiddly here as
+this is apparently always 0-1g whereas the scaling of the channel varies.
+Thus irritatingly we'd need to adjust the scaling of this so it remains
+consistent as the full scale changes.
+
+The events ABI documentation is rather weak / wrong on this as it refers to
+both _input_ and _raw_ thresholds whereas the true ABI just has one with
+the scaling always being to match _raw if that is present. So _threshold * _scale
+should be in the standards base units of m/s^2.
+
+
+> +		return IIO_VAL_INT_PLUS_MICRO;
+> +	case IIO_EV_INFO_PERIOD:
+> +		ret = bmi270_read_feature_reg(data, reg, &regval);
+> +		if (ret)
+> +			return ret;
+> +
+> +		raw = FIELD_GET(BMI270_FEAT_MOTION_DURATION_MSK, regval);
+> +		*val = raw / BMI270_MOTION_DURAT_SCALE;
+> +		*val2 = BMI270_RAW_TO_MICRO(raw, BMI270_MOTION_DURAT_SCALE);
+> +		return IIO_VAL_INT_PLUS_MICRO;
+> +	default:
+> +		return -EINVAL;
+> +	}
 
 
