@@ -1,53 +1,78 @@
-Return-Path: <linux-kernel+bounces-697001-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-697006-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id C408CAE2F04
-	for <lists+linux-kernel@lfdr.de>; Sun, 22 Jun 2025 11:21:11 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E5F35AE2F0A
+	for <lists+linux-kernel@lfdr.de>; Sun, 22 Jun 2025 11:23:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 159BF3A383A
-	for <lists+linux-kernel@lfdr.de>; Sun, 22 Jun 2025 09:20:47 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 32B0F3ACD5F
+	for <lists+linux-kernel@lfdr.de>; Sun, 22 Jun 2025 09:22:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2F2641A2389;
-	Sun, 22 Jun 2025 09:21:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9C5C21B423B;
+	Sun, 22 Jun 2025 09:22:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="kegJ5IWp"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Lm7xo8PL"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.21])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 87E2E1422AB
-	for <linux-kernel@vger.kernel.org>; Sun, 22 Jun 2025 09:21:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6682A1A2389;
+	Sun, 22 Jun 2025 09:22:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.21
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750584066; cv=none; b=Ji8zpA8N0R7ePDtprDUTsneNjHg99vg9WZGGaPDEOQl6z94n5D6BaFMAEMMq1erOzVtx463GZWwkHDkNLVYdg8HZLqz4bz9ztBXyZFkz58jO+m3SK8cu2RyX5Y/GalcSF6BYZxxcin1sKGppV623nHJEraEstxAbpZ1GVm8Q5NI=
+	t=1750584153; cv=none; b=QB4gtOKSsIx9tOtvYKh17WiuSxKM3QJX4c3pyOg5F4KBOJU+t6JcaA0yaD5mURlVqH58StOgt/I6q3e/Q6fhnXGEOnd1Gly9CXqiQRS/yiK/hqub/Eg/KCCLusMDyVSprnhvg6tqbilrvnyjUBR7AYlXgG51W8Z1xucr5l5Pl0c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750584066; c=relaxed/simple;
-	bh=uPCcKNw39APpT9a5z3o0j5VJKViLZ8IDLffZEb2tfXM=;
+	s=arc-20240116; t=1750584153; c=relaxed/simple;
+	bh=cNpoVNKfaRvJYkUqsAXIJEOXd4xAotnHUkbzDkwbB50=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=S9CRqKWndAfNjnU16E3GhG+CKUcqLcYY+4u9l3U4vVBbMULv5gUsOP3TAxEeXEjNAH5v1uHBWCCGdOX8Eps8vDphTtcBXFm5rfevQLsJTStotVGxTTRwQFy71Qwk5oBRKKgPBI4UQu8bIBf5P9dgjsHbJwU2/kuEjiPIhyY3WeI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=kegJ5IWp; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C7268C4CEE3;
-	Sun, 22 Jun 2025 09:21:05 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1750584066;
-	bh=uPCcKNw39APpT9a5z3o0j5VJKViLZ8IDLffZEb2tfXM=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=kegJ5IWpXcDRd1UwtFqP2+A0jM15+/hg8c9fffQ64MytrZRt9jb+buiXC7nJp5WHM
-	 94uDkOyH3H73bfffR0aW2fzB+hDt3vqP6L6HAHi0K0xFVTuQwkbPRqATAy7rdxlzI8
-	 GCNT12jA0SIbqtrP/0ynnfWJ8xVP2FiZSrDy1JnY=
-Date: Sun, 22 Jun 2025 11:21:03 +0200
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To: "Usyskin, Alexander" <alexander.usyskin@intel.com>
-Cc: "Abliyev, Reuven" <reuven.abliyev@intel.com>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: Re: [char-misc-next 1/3] mei: refcount mei_device
-Message-ID: <2025062232-ion-onstage-fbd4@gregkh>
-References: <20250618095433.3943546-1-alexander.usyskin@intel.com>
- <20250618095433.3943546-2-alexander.usyskin@intel.com>
- <2025062107-riding-stress-48a4@gregkh>
- <CY5PR11MB6366721138AC774A10698250ED7EA@CY5PR11MB6366.namprd11.prod.outlook.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=Pbw+NLUlUsq3Q8v6Zu4VX1uuIGb3QNSQf4LmKZQYiWkLCfnv9t1IxsQyowdE8jQcie1iuyb9bZl+nvUyUzzFsG3jxEudzZYeJ0QQ2N5CnzEOVAYYpwMrq4dUUU7dvZ43uQ8XTJqJuPx3wDi9r7iWNCQWhoXNUwDuBCCQoVXqgGQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Lm7xo8PL; arc=none smtp.client-ip=198.175.65.21
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1750584151; x=1782120151;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=cNpoVNKfaRvJYkUqsAXIJEOXd4xAotnHUkbzDkwbB50=;
+  b=Lm7xo8PLBsK/3z67PJtmABN5/FtGpzO3Ipnl+TC+aXNPu+lK5FOEelCX
+   9pjkeyKCwUtEY5yGpjzjBeuIIIYw4X17NPSGI7oom+ete8zPTvs8QWgVe
+   Puqu5xSeUZWVVe0YaoInx6SqqNTL248JWlT8gjYYcNKqzOlXhmTlv4S9u
+   W4g099cF6gKEbSYK9cpt9gwpDbmqTCw6t4uNVLx2gTJwWUmZ9JKEO2gNC
+   eYDlG9OLbeJRHk7gLVZD5aQuTIFCN3jWJpFr2+f2kWsiJZSgQFZCYenRO
+   7NoMbRAJaROp2GEnYpp2kTAJzf630hxdT/14fyNlZuJ+TLBkxALibMe+Y
+   Q==;
+X-CSE-ConnectionGUID: USR3Zs3QS5KCnTXMMNf60A==
+X-CSE-MsgGUID: 5QJSkoOZTTq4F8CSYeAtxw==
+X-IronPort-AV: E=McAfee;i="6800,10657,11470"; a="52670865"
+X-IronPort-AV: E=Sophos;i="6.16,256,1744095600"; 
+   d="scan'208";a="52670865"
+Received: from fmviesa004.fm.intel.com ([10.60.135.144])
+  by orvoesa113.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 22 Jun 2025 02:22:30 -0700
+X-CSE-ConnectionGUID: QbvLu81GQNq0qwqKXna+9Q==
+X-CSE-MsgGUID: kb6lFv/uTTGwjZ2nqcNSug==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.16,256,1744095600"; 
+   d="scan'208";a="156809187"
+Received: from lkp-server01.sh.intel.com (HELO e8142ee1dce2) ([10.239.97.150])
+  by fmviesa004.fm.intel.com with ESMTP; 22 Jun 2025 02:22:26 -0700
+Received: from kbuild by e8142ee1dce2 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1uTGu8-000NB0-0y;
+	Sun, 22 Jun 2025 09:22:24 +0000
+Date: Sun, 22 Jun 2025 17:22:10 +0800
+From: kernel test robot <lkp@intel.com>
+To: Tao Chen <chen.dylane@linux.dev>, ast@kernel.org, daniel@iogearbox.net,
+	john.fastabend@gmail.com, andrii@kernel.org, martin.lau@linux.dev,
+	eddyz87@gmail.com, song@kernel.org, yonghong.song@linux.dev,
+	kpsingh@kernel.org, sdf@fomichev.me, haoluo@google.com,
+	jolsa@kernel.org
+Cc: oe-kbuild-all@lists.linux.dev, bpf@vger.kernel.org,
+	linux-kernel@vger.kernel.org, Tao Chen <chen.dylane@linux.dev>
+Subject: Re: [PATCH bpf-next] bpf: Add load_time in bpf_prog fdinfo
+Message-ID: <202506221641.xWzKiW3U-lkp@intel.com>
+References: <20250620051017.111559-1-chen.dylane@linux.dev>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -56,87 +81,35 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <CY5PR11MB6366721138AC774A10698250ED7EA@CY5PR11MB6366.namprd11.prod.outlook.com>
+In-Reply-To: <20250620051017.111559-1-chen.dylane@linux.dev>
 
-On Sun, Jun 22, 2025 at 09:14:10AM +0000, Usyskin, Alexander wrote:
-> > Subject: Re: [char-misc-next 1/3] mei: refcount mei_device
-> > 
-> > On Wed, Jun 18, 2025 at 12:54:31PM +0300, Alexander Usyskin wrote:
-> > > mei_device lifetime is managed by devm procedure of parent device.
-> > > But such memory is freed on device_del.
-> > > Mei_device object is used by client object that may be alive after
-> > > parent device is removed.
-> > > It may lead to use-after-free if discrete graphics driver
-> > > unloads mei_gsc auxiliary device while user-space holds
-> > > open handle to mei character device.
-> > >
-> > > Replace devm lifetime management with reference counting
-> > > to eliminate the use-after-free.
-> > 
-> > Overall, I like the end result, but note that if you just apply this
-> > patch then:
-> > 
-> > > --- a/drivers/misc/mei/mei_dev.h
-> > > +++ b/drivers/misc/mei/mei_dev.h
-> > > @@ -474,6 +474,8 @@ struct mei_dev_timeouts {
-> > >   * @cdev        : character device
-> > >   * @minor       : minor number allocated for device
-> > >   *
-> > > + * @refcnt      : struct reference count
-> > > + *
-> > >   * @write_list  : write pending list
-> > >   * @write_waiting_list : write completion list
-> > >   * @ctrl_wr_list : pending control write list
-> > > @@ -560,6 +562,8 @@ struct mei_device {
-> > >  	struct cdev cdev;
-> > >  	int minor;
-> > >
-> > > +	struct kref refcnt;
-> > > +
-> > >  	struct list_head write_list;
-> > >  	struct list_head write_waiting_list;
-> > >  	struct list_head ctrl_wr_list;
-> > 
-> > You now have 2 reference counts controling the lifespan of this
-> > structure, and it will be a mess.
-> > 
-> 
-> It is about cdev? But static cdev (like before third patch) is not refcounted.
-> What is the second reference counter?
+Hi Tao,
 
-Yes, it is cdev, that is a reference counted object.
+kernel test robot noticed the following build errors:
 
-> > Yes, you clean it up in the last patch, so overall it's ok, this is just
-> > a worrying step.
-> > 
-> > Also, why are you using a kref?  Why not use the real struct device if
-> > you want to have a reference counted device structure?  That is what
-> > should be happening here, what's wrong with the struct device * that you
-> > already have?  Why not have that take over ownership instead of making a
-> > newer intermediate reference counted object?
-> > 
-> 
-> The device *dev in mei_device is the parent device.
+[auto build test ERROR on bpf-next/master]
 
-Ah, how about naming it "parent"?
+url:    https://github.com/intel-lab-lkp/linux/commits/Tao-Chen/bpf-Add-load_time-in-bpf_prog-fdinfo/20250620-131249
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/bpf/bpf-next.git master
+patch link:    https://lore.kernel.org/r/20250620051017.111559-1-chen.dylane%40linux.dev
+patch subject: [PATCH bpf-next] bpf: Add load_time in bpf_prog fdinfo
+config: m68k-randconfig-r123-20250622 (https://download.01.org/0day-ci/archive/20250622/202506221641.xWzKiW3U-lkp@intel.com/config)
+compiler: m68k-linux-gcc (GCC) 8.5.0
+reproduce: (https://download.01.org/0day-ci/archive/20250622/202506221641.xWzKiW3U-lkp@intel.com/reproduce)
 
-> On auxiliary bus it can be removed while driver is still active.
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202506221641.xWzKiW3U-lkp@intel.com/
 
-That's not ok.
+All errors (new ones prefixed by >>):
 
-> The device_del removes all memory allocated with devm_*.
-> I can't find a way how to keep driver private memory alive
-> till last reference to parent device still held.
+   m68k-linux-ld: kernel/bpf/syscall.o: in function `bpf_prog_show_fdinfo':
+>> syscall.c:(.text+0x1088): undefined reference to `__udivdi3'
+   m68k-linux-ld: drivers/clocksource/timer-tegra186.o: in function `tegra186_wdt_get_timeleft':
+   timer-tegra186.c:(.text+0x130): undefined reference to `__udivdi3'
 
-Make it a real device please.
-
-> This why I've resorted to manual kref.
-> I'm feeling that I'm missing something here.
-> Is there any other way to do it?
-
-Yes, make it a real device.
-
-thanks,
-
-greg k-h
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
