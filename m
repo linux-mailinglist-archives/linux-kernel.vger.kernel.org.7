@@ -1,135 +1,141 @@
-Return-Path: <linux-kernel+bounces-697040-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-697033-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id A187CAE2F67
-	for <lists+linux-kernel@lfdr.de>; Sun, 22 Jun 2025 12:37:57 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id D70E4AE2F56
+	for <lists+linux-kernel@lfdr.de>; Sun, 22 Jun 2025 12:21:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D34323B1E41
-	for <lists+linux-kernel@lfdr.de>; Sun, 22 Jun 2025 10:37:32 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8586A7A7937
+	for <lists+linux-kernel@lfdr.de>; Sun, 22 Jun 2025 10:19:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E1E551D5141;
-	Sun, 22 Jun 2025 10:37:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=antgroup.com header.i=@antgroup.com header.b="TUEyoQZM"
-Received: from out187-16.us.a.mail.aliyun.com (out187-16.us.a.mail.aliyun.com [47.90.187.16])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EA2C1167DB7
-	for <linux-kernel@vger.kernel.org>; Sun, 22 Jun 2025 10:37:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=47.90.187.16
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 39E561D63CD;
+	Sun, 22 Jun 2025 10:20:41 +0000 (UTC)
+Received: from pegase1.c-s.fr (pegase1.c-s.fr [93.17.236.30])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5B3D51422AB;
+	Sun, 22 Jun 2025 10:20:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=93.17.236.30
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750588671; cv=none; b=OhIBuaNVj72qlaTd86YFZnCZ2eyxDDX3IMO+qhwRzgr4s4gZBCGETEtjL+s0mkPUFNbCcbLmrBcRS1EeYtwSO/Shkc2l10LA1vnO2uvnHHl+EvmI7zxszhCwzduw14269U4cQT6muqJ6Vl8gNDlNSHxZ5IXzoCnc9T5me8etX+c=
+	t=1750587640; cv=none; b=pxEnSG9Lptp3i6OrCIRNpmDN4C2nFsNQW1Xg8j4wMKg8D5jBvxK3v6sKkywvV+G9nDYsEQRYqdUiosDmbotMeoHT8XrQmEI7ZD5frCbI5QCu2/ehEsczQclE9SHqULrTjJY6ewXkGTgrQ3Cij08GBwH9Aio4gihSpD+SJ48LUG4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750588671; c=relaxed/simple;
-	bh=qg1XKwHQlbCxjbJcFtDomYFzmaLIf8X48YrHz/fk7xA=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=lEhOdOgomP9bOiTVZFN6NhVvKv3FLsJ/Zk1uYTrcCuLw3Cqu8xiiTxXsqunCtKbUFM3G76tNFK7PEgH5dOn3vJDPsMVvbDVCwEJyU4POtc3tzQ+QoNYZwItTJ/v/eouVtFL8NGkt1pVDxY+1kZ6TkWv1wXNYbR09Cw9bc7JhGJI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=antgroup.com; spf=pass smtp.mailfrom=antgroup.com; dkim=pass (1024-bit key) header.d=antgroup.com header.i=@antgroup.com header.b=TUEyoQZM; arc=none smtp.client-ip=47.90.187.16
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=antgroup.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=antgroup.com
-DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
-	d=antgroup.com; s=default;
-	t=1750588655; h=From:To:Subject:Date:Message-ID:MIME-Version;
-	bh=/7LRzQ8TWi10km0kHT15tcByLrhCWbZ/e1nFzvxOMgw=;
-	b=TUEyoQZMMe5oNICC+Bq0gTmUuoJQLAPgu0NjAxSz7/tR/crhl8F0GorSVgdOFrBtmhD+YpDQtifquqBWT3SYYCsxOMGJZxaRC4L1GxZVfU/ZFW87//Q1UDPfFzXa2b0W+gingeJJlwtCcYPSFeUNXAz0mAOWQmyCOgrFBSOyEPA=
-Received: from localhost(mailfrom:henry.hj@antgroup.com fp:SMTPD_---.dTG5la5_1750584990 cluster:ay29)
-          by smtp.aliyun-inc.com;
-          Sun, 22 Jun 2025 17:36:30 +0800
-From: "Henry Huang" <henry.hj@antgroup.com>
-To: changwoo@igalia.com,
-	arighi@nvidia.com,
-	tj@kernel.org,
-	void@manifault.com
-Cc: "=?UTF-8?B?6LCI6Ym06ZSL?=" <henry.tjf@antgroup.com>,
-  "=?UTF-8?B?WWFuIFlhbihjYWlsaW5nKQ==?=" <yanyan.yan@antgroup.com>,
-   <linux-kernel@vger.kernel.org>,
-   <sched-ext@lists.linux.dev>,
-  "Henry Huang" <henry.hj@antgroup.com>
-Subject: [PATCH v1] sched_ext: include SCX_OPS_TRACK_MIGRATION
-Date: Sun, 22 Jun 2025 17:36:21 +0800
-Message-ID: <20250622093621.1669-2-henry.hj@antgroup.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20250622093621.1669-1-henry.hj@antgroup.com>
-References: <20250622093621.1669-1-henry.hj@antgroup.com>
+	s=arc-20240116; t=1750587640; c=relaxed/simple;
+	bh=HySJmJimN0Mbor6aO2XQhe3eawUJ2DpD2MDAE2rsTBw=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=b3/YrTDGvGEX+vD4wdm3XF7tLG6j+VK1TjmI8Q+uQeEnDof8jmztxfNNN5LkH2QBAPiKT+6qK/viZP5CF0qe84RcmVlBzYOnYq/TT5/fqJfoBXnqhKOZbUJLZu9JiC6NZ1YULHlfH6u3oaZeJV/7eKXCoSTvEoI1aaFfeV3VHR8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=csgroup.eu; spf=pass smtp.mailfrom=csgroup.eu; arc=none smtp.client-ip=93.17.236.30
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=csgroup.eu
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=csgroup.eu
+Received: from localhost (mailhub3.si.c-s.fr [192.168.12.233])
+	by localhost (Postfix) with ESMTP id 4bQ62n4sxNz9sWb;
+	Sun, 22 Jun 2025 11:52:49 +0200 (CEST)
+X-Virus-Scanned: amavisd-new at c-s.fr
+Received: from pegase1.c-s.fr ([192.168.12.234])
+	by localhost (pegase1.c-s.fr [127.0.0.1]) (amavisd-new, port 10024)
+	with ESMTP id pIyFw4tvJjvf; Sun, 22 Jun 2025 11:52:49 +0200 (CEST)
+Received: from messagerie.si.c-s.fr (messagerie.si.c-s.fr [192.168.25.192])
+	by pegase1.c-s.fr (Postfix) with ESMTP id 4bQ62n3Qplz9sTD;
+	Sun, 22 Jun 2025 11:52:49 +0200 (CEST)
+Received: from localhost (localhost [127.0.0.1])
+	by messagerie.si.c-s.fr (Postfix) with ESMTP id 6704E8B765;
+	Sun, 22 Jun 2025 11:52:49 +0200 (CEST)
+X-Virus-Scanned: amavisd-new at c-s.fr
+Received: from messagerie.si.c-s.fr ([127.0.0.1])
+	by localhost (messagerie.si.c-s.fr [127.0.0.1]) (amavisd-new, port 10023)
+	with ESMTP id SWopfc0YWtyj; Sun, 22 Jun 2025 11:52:49 +0200 (CEST)
+Received: from PO20335.idsi0.si.c-s.fr (unknown [192.168.235.99])
+	by messagerie.si.c-s.fr (Postfix) with ESMTP id 6A6848B763;
+	Sun, 22 Jun 2025 11:52:48 +0200 (CEST)
+From: Christophe Leroy <christophe.leroy@csgroup.eu>
+To: Michael Ellerman <mpe@ellerman.id.au>,
+	Nicholas Piggin <npiggin@gmail.com>,
+	Naveen N Rao <naveen@kernel.org>,
+	Madhavan Srinivasan <maddy@linux.ibm.com>,
+	Alexander Viro <viro@zeniv.linux.org.uk>,
+	Christian Brauner <brauner@kernel.org>,
+	Jan Kara <jack@suse.cz>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Ingo Molnar <mingo@redhat.com>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Darren Hart <dvhart@infradead.org>,
+	Davidlohr Bueso <dave@stgolabs.net>,
+	"Andre Almeida" <andrealmeid@igalia.com>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	David Laight <david.laight.linux@gmail.com>,
+	Dave Hansen <dave.hansen@linux.intel.com>,
+	Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Christophe Leroy <christophe.leroy@csgroup.eu>,
+	linux-kernel@vger.kernel.org,
+	linuxppc-dev@lists.ozlabs.org,
+	linux-fsdevel@vger.kernel.org,
+	linux-mm@kvack.org
+Subject: [PATCH 0/5] powerpc: Implement masked user access
+Date: Sun, 22 Jun 2025 11:52:38 +0200
+Message-ID: <cover.1750585239.git.christophe.leroy@csgroup.eu>
+X-Mailer: git-send-email 2.49.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1750585958; l=2465; i=christophe.leroy@csgroup.eu; s=20211009; h=from:subject:message-id; bh=HySJmJimN0Mbor6aO2XQhe3eawUJ2DpD2MDAE2rsTBw=; b=avw+yxifZez04tL6hY4uI10f64fY7knh0RlaYqBAin24xTC5w1XQBwEkR2nEsI8dapqkvp3tb 3bSsrPI4uwKB/yFAZpo4xgJKt+m/LB7sfSbDkCIdrD3prqpxjkg79xc
+X-Developer-Key: i=christophe.leroy@csgroup.eu; a=ed25519; pk=HIzTzUj91asvincQGOFx6+ZF5AoUuP9GdOtQChs7Mm0=
 Content-Transfer-Encoding: 8bit
 
-For some BPF-schedulers, they should do something when
-task is doing migration, such as updating per-cpu map.
-If SCX_OPS_TRACK_MIGRATION is set, runnable/quiescent
-would be called whether task is doing migration or not.
+Masked user access avoids the address/size verification by access_ok().
+Allthough its main purpose is to skip the speculation in the
+verification of user address and size hence avoid the need of spec
+mitigation, it also has the advantage to reduce the amount of
+instructions needed so it also benefits to platforms that don't
+need speculation mitigation, especially when the size of the copy is
+not know at build time.
 
-Signed-off-by: Henry Huang <henry.hj@antgroup.com>
----
- kernel/sched/ext.c | 18 ++++++++++++++++--
- 1 file changed, 16 insertions(+), 2 deletions(-)
+Unlike x86_64 which masks the address to 'all bits set' when the
+user address is invalid, here the address is set to an address in
+the gap. It avoids relying on the zero page to catch offseted
+accesses. On book3s/32 it makes sure the opening remains on user
+segment. The overcost is a single instruction in the masking.
 
-diff --git a/kernel/sched/ext.c b/kernel/sched/ext.c
-index b498d86..9b05bb9 100644
---- a/kernel/sched/ext.c
-+++ b/kernel/sched/ext.c
-@@ -161,6 +161,12 @@ enum scx_ops_flags {
- 	SCX_OPS_BUILTIN_IDLE_PER_NODE	= 1LLU << 6,
- 
- 	/*
-+	 * If set, runnable/quiescent ops would be called whether the task is
-+	 * doing migration or not.
-+	 */
-+	SCX_OPS_TRACK_MIGRATION		= 1LLU << 7,
-+
-+	/*
- 	 * CPU cgroup support flags
- 	 */
- 	SCX_OPS_HAS_CGROUP_WEIGHT	= 1LLU << 16,	/* DEPRECATED, will be removed on 6.18 */
-@@ -172,6 +178,7 @@ enum scx_ops_flags {
- 					  SCX_OPS_ALLOW_QUEUED_WAKEUP |
- 					  SCX_OPS_SWITCH_PARTIAL |
- 					  SCX_OPS_BUILTIN_IDLE_PER_NODE |
-+					  SCX_OPS_TRACK_MIGRATION |
- 					  SCX_OPS_HAS_CGROUP_WEIGHT,
- 
- 	/* high 8 bits are internal, don't include in SCX_OPS_ALL_FLAGS */
-@@ -2390,7 +2397,8 @@ static void enqueue_task_scx(struct rq *rq, struct task_struct *p, int enq_flags
- 	rq->scx.nr_running++;
- 	add_nr_running(rq, 1);
- 
--	if (SCX_HAS_OP(sch, runnable) && !task_on_rq_migrating(p))
-+	if (SCX_HAS_OP(sch, runnable) &&
-+	    ((sch->ops.flags & SCX_OPS_TRACK_MIGRATION) || !task_on_rq_migrating(p)))
- 		SCX_CALL_OP_TASK(sch, SCX_KF_REST, runnable, rq, p, enq_flags);
- 
- 	if (enq_flags & SCX_ENQ_WAKEUP)
-@@ -2482,7 +2490,8 @@ static bool dequeue_task_scx(struct rq *rq, struct task_struct *p, int deq_flags
- 		SCX_CALL_OP_TASK(sch, SCX_KF_REST, stopping, rq, p, false);
- 	}
- 
--	if (SCX_HAS_OP(sch, quiescent) && !task_on_rq_migrating(p))
-+	if (SCX_HAS_OP(sch, quiescent) &&
-+	    ((sch->ops.flags & SCX_OPS_TRACK_MIGRATION) || !task_on_rq_migrating(p)))
- 		SCX_CALL_OP_TASK(sch, SCX_KF_REST, quiescent, rq, p, deq_flags);
- 
- 	if (deq_flags & SCX_DEQ_SLEEP)
-@@ -5495,6 +5504,11 @@ static int validate_ops(struct scx_sched *sch, const struct sched_ext_ops *ops)
- 		return -EINVAL;
- 	}
- 
-+	if ((ops->flags & SCX_OPS_TRACK_MIGRATION) && (!ops->runnable || !ops->quiescent)) {
-+		scx_error(sch, "SCX_OPS_TRACK_MIGRATION requires ops.runnable() and ops.quiescent() to be implemented");
-+		return -EINVAL;
-+	}
-+
- 	if (ops->flags & SCX_OPS_HAS_CGROUP_WEIGHT)
- 		pr_warn("SCX_OPS_HAS_CGROUP_WEIGHT is deprecated and a noop\n");
- 
+First patch adds masked_user_read_access_begin() and
+masked_user_write_access_begin() to match with user_read_access_end()
+and user_write_access_end().
+
+Second patch adds speculation barrier to copy_from_user_iter() so that
+the barrier in powerpc raw_copy_from_user() which is redundant with
+the one in copy_from_user() can be removed.
+
+Third patch removes the redundant barrier_nospec() in
+raw_copy_from_user().
+
+Fourth patch removes the unused size parameter when enabling/disabling
+user access.
+
+Last patch implements masked user access.
+
+Christophe Leroy (5):
+  uaccess: Add masked_user_{read/write}_access_begin
+  uaccess: Add speculation barrier to copy_from_user_iter()
+  powerpc: Remove unused size parametre to KUAP enabling/disabling
+    functions
+  powerpc: Move barrier_nospec() out of allow_read_{from/write}_user()
+  powerpc: Implement masked user access
+
+ arch/powerpc/Kconfig                         |   2 +-
+ arch/powerpc/include/asm/book3s/32/kup.h     |   2 +-
+ arch/powerpc/include/asm/book3s/64/kup.h     |   4 +-
+ arch/powerpc/include/asm/kup.h               |  24 ++--
+ arch/powerpc/include/asm/nohash/32/kup-8xx.h |   2 +-
+ arch/powerpc/include/asm/nohash/kup-booke.h  |   2 +-
+ arch/powerpc/include/asm/uaccess.h           | 140 ++++++++++++++++---
+ fs/select.c                                  |   2 +-
+ include/linux/uaccess.h                      |   8 ++
+ kernel/futex/futex.h                         |   4 +-
+ lib/iov_iter.c                               |   7 +
+ lib/strncpy_from_user.c                      |   2 +-
+ lib/strnlen_user.c                           |   2 +-
+ 13 files changed, 158 insertions(+), 43 deletions(-)
+
 -- 
-Henry
+2.49.0
 
 
