@@ -1,150 +1,188 @@
-Return-Path: <linux-kernel+bounces-697021-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-697022-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C7ECEAE2F36
-	for <lists+linux-kernel@lfdr.de>; Sun, 22 Jun 2025 11:42:00 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id A9913AE2F38
+	for <lists+linux-kernel@lfdr.de>; Sun, 22 Jun 2025 11:42:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 64B27170B46
-	for <lists+linux-kernel@lfdr.de>; Sun, 22 Jun 2025 09:42:01 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 064B83A7578
+	for <lists+linux-kernel@lfdr.de>; Sun, 22 Jun 2025 09:41:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1023C2040B2;
-	Sun, 22 Jun 2025 09:38:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BC4F21C3306;
+	Sun, 22 Jun 2025 09:40:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=denx.de header.i=@denx.de header.b="JRM3ovc+"
-Received: from mx.denx.de (mx.denx.de [89.58.32.78])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="fKELVF+4"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DF9CC1FDA69;
-	Sun, 22 Jun 2025 09:38:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=89.58.32.78
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 08F7D1684AC;
+	Sun, 22 Jun 2025 09:40:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750585127; cv=none; b=HSFqiTIB3dTycMZCUGE8VqTNob2HFL7eXiojmOV9oOMU/Jqx2wSZOBJl1/mNa0ZDl+lLVJQ5d/mnfPvwi1XU/T0tPYS8wpj0L4AENIGPIa1LLdByt9lAR0Q2rDn1Tv2WCXskVY3W91T8QAyU3AzxuZzJe5zhnq/pYZoLfKrAD5g=
+	t=1750585223; cv=none; b=eRULDiMPACG3vUyktWADueCznKugAB//LmudIMAy0myq08S9rhtuo9QW29WUarZmSxnL8SU9O1QRm5KGUm3jBW7c4gO/wqe/b6dB4TeVW5XE4ut65qAP6+roUbMLxjtKnH5f7BG6RM6QcMmYAIh0iurS+JUqY37NmpvSw/3C9yA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750585127; c=relaxed/simple;
-	bh=w+9Zz/maLZOCfyzq5ecNHc15YUjK0oZBdek1Odu3i3w=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=eQ2o85i/67mkt+C4HQbstFLjM5pCOQ/OejWIE5qD5iqi2/vI6edxUbLlZePGQF8rdDE2KQCAeTOFkJwuTCtKBBAN0v6DVPG+JP/dBktyyng6VIfWFzEu271OMViGB209Itw/bd18MWl16TjJ/J/Bk5ECpMkNwAQCcM/TaI8FwtE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=denx.de; spf=pass smtp.mailfrom=denx.de; dkim=pass (2048-bit key) header.d=denx.de header.i=@denx.de header.b=JRM3ovc+; arc=none smtp.client-ip=89.58.32.78
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=denx.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=denx.de
-Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 7FD9510244BF2;
-	Sun, 22 Jun 2025 11:38:41 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=denx.de; s=mx-20241105;
-	t=1750585122; h=from:subject:date:message-id:to:cc:mime-version:
-	 content-transfer-encoding:in-reply-to:references;
-	bh=0J6sP6tuhkeNsgGHXnz/XLjxm37eMGq6rw4h946l49U=;
-	b=JRM3ovc+hIbDdMdu2fkWGw5FrIgY5IhBOTxwnKNf2gQqh1wKdyBnEYl3Io3uDvFQciFPO7
-	YCo1eZJbrc3dwwat0bGxxmDqqMAp109yphdNKYlMzvhvzjahLYSQGJ2hq0gJmZEMGJgR7T
-	RbEmY55J+rrj5KccpP/cWsbeRlZIve07oeieou7TavBDsXgo9UPyTDD5S0qHLlZADHt48k
-	oENWUuWDTyKd4NvZcumiMJHZbS/e7nC6tducxVptke232pNrvK635+IF4T73yE/a2jdr89
-	Iw4d4YYb0e94zoQKL0AhgHq4v31Bf+/BLjxI7+2D9g60joefGcC/7AH2WtIl6w==
-From: Lukasz Majewski <lukma@denx.de>
-To: Andrew Lunn <andrew+netdev@lunn.ch>,
-	davem@davemloft.net,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>,
-	Paolo Abeni <pabeni@redhat.com>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Shawn Guo <shawnguo@kernel.org>
-Cc: Sascha Hauer <s.hauer@pengutronix.de>,
-	Pengutronix Kernel Team <kernel@pengutronix.de>,
-	Fabio Estevam <festevam@gmail.com>,
-	Richard Cochran <richardcochran@gmail.com>,
-	netdev@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	imx@lists.linux.dev,
-	linux-arm-kernel@lists.infradead.org,
-	Stefan Wahren <wahrenst@gmx.net>,
-	Simon Horman <horms@kernel.org>,
-	Lukasz Majewski <lukma@denx.de>
-Subject: [net-next v13 11/11] ARM: mxs_defconfig: Enable CONFIG_FEC_MTIP_L2SW to support MTIP L2 switch
-Date: Sun, 22 Jun 2025 11:37:56 +0200
-Message-Id: <20250622093756.2895000-12-lukma@denx.de>
-X-Mailer: git-send-email 2.39.5
-In-Reply-To: <20250622093756.2895000-1-lukma@denx.de>
-References: <20250622093756.2895000-1-lukma@denx.de>
+	s=arc-20240116; t=1750585223; c=relaxed/simple;
+	bh=2PvGyhBNJOYYKz82MkvYSvuhzzQS3gt4dm7Pv4qlSRI=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=kz+Lw2E9cYkLvHS8yxLMLEBcrUya4a/J1S+fKXISx47r4JXIqmGG+ifDZc7Gzk0YfpYpYe1j6DBP8nWbjXR1cz59NVKXywwfBRa39+2z8r8DCAtT7hcbvgm7urNFSPZFF47Xh4SyOmx3itC77nylzlx0CtRVe4FfoFJuTsEBMC4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=fKELVF+4; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 89A24C4CEE3;
+	Sun, 22 Jun 2025 09:40:22 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1750585222;
+	bh=2PvGyhBNJOYYKz82MkvYSvuhzzQS3gt4dm7Pv4qlSRI=;
+	h=From:To:Cc:Subject:Date:From;
+	b=fKELVF+4zfEd9G7cAQIXffYaT/RZwTypLG0lVIqxGUooEwm+/TYM+o8ZDOIb1to0F
+	 IkPpr0nSg0BI+Q3+c9MgLfqz95MFH9HYOQSOUmoZc35sS5duTJCLVfc4wB12ZS7zXT
+	 Nvdghk9sAOzwgl9A4Upq68wR5OcHkg3jgeVZqvGFXQ4yCnHxFx4U7mD/IBqY6M+LZu
+	 6DPsTWn4yGn3xfLOG4LiEOhbpcWI7iSjX5edPeT2mnv3AHFAEQLd7kYY3mNNkmcYJO
+	 7+5Nm9tYEQlTIB4tgU7pTGklWV+QgURC+Q8XBwF5f83RtHTQ/oODjvseaRPz48LkUM
+	 GCdyNQDkx/J5A==
+Received: from mchehab by mail.kernel.org with local (Exim 4.98.2)
+	(envelope-from <mchehab+huawei@kernel.org>)
+	id 1uTHBS-00000000qhs-0vKv;
+	Sun, 22 Jun 2025 11:40:18 +0200
+From: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
+To: Jonathan Corbet <corbet@lwn.net>,
+	Linux Doc Mailing List <linux-doc@vger.kernel.org>
+Cc: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>,
+	"Mauro Carvalho Chehab" <mchehab+huawei@kernel.org>,
+	Akira Yokosawa <akiyks@gmail.com>,
+	Kees Cook <mchehab+huawei@kernel.org>,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH] docs: sphinx: add missing SPDX tags
+Date: Sun, 22 Jun 2025 11:39:53 +0200
+Message-ID: <1a62226c5fe524eb87bdb80b33bc7ec880a68880.1750585188.git.mchehab+huawei@kernel.org>
+X-Mailer: git-send-email 2.49.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
-X-Last-TLS-Session-Version: TLSv1.3
+Sender: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
 
-This patch enables support for More Than IP L2 switch available on some
-imx28[7] devices.
+Several Sphinx extensions and tools are missing SPDX tags.
+Add them.
 
-Moreover, it also enables CONFIG_SWITCHDEV and CONFIG_BRIDGE required
-by this driver for correct operation.
-
-Signed-off-by: Lukasz Majewski <lukma@denx.de>
-Reviewed-by: Stefan Wahren <wahrenst@gmx.net>
+Signed-off-by: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
 ---
-Changes for v4:
-- New patch
+ Documentation/sphinx/cdomain.py           | 1 +
+ Documentation/sphinx/kernel_include.py    | 1 +
+ Documentation/sphinx/kerneldoc.py         | 1 +
+ Documentation/sphinx/kfigure.py           | 1 +
+ Documentation/sphinx/load_config.py       | 1 +
+ Documentation/sphinx/min_requirements.txt | 1 +
+ Documentation/sphinx/parse-headers.pl     | 5 ++++-
+ Documentation/sphinx/requirements.txt     | 1 +
+ Documentation/sphinx/rstFlatTable.py      | 1 +
+ 9 files changed, 12 insertions(+), 1 deletion(-)
 
-Changes for v5:
-- Apply this patch on top of patch, which updates mxs_defconfig to
-  v6.15-rc1
-- Add more verbose commit message with explanation why SWITCHDEV and
-  BRIDGE must be enabled as well
-
-Changes for v6:
-- None
-
-Changes for v7:
-- None
-
-Changes for v8:
-- None
-
-Changes for v9:
-- None
-
-Changes for v10:
-- None
-
-Changes for v11:
-- None
-
-Changes for v12:
-- None
-
-Changes for v13:
-- None
----
- arch/arm/configs/mxs_defconfig | 3 +++
- 1 file changed, 3 insertions(+)
-
-diff --git a/arch/arm/configs/mxs_defconfig b/arch/arm/configs/mxs_defconfig
-index b1a31cb914c8..ef4556222274 100644
---- a/arch/arm/configs/mxs_defconfig
-+++ b/arch/arm/configs/mxs_defconfig
-@@ -34,6 +34,8 @@ CONFIG_IP_PNP_DHCP=y
- CONFIG_SYN_COOKIES=y
- # CONFIG_INET_DIAG is not set
- # CONFIG_IPV6 is not set
-+CONFIG_BRIDGE=y
-+CONFIG_NET_SWITCHDEV=y
- CONFIG_CAN=m
- # CONFIG_WIRELESS is not set
- CONFIG_DEVTMPFS=y
-@@ -52,6 +54,7 @@ CONFIG_EEPROM_AT24=y
- CONFIG_SCSI=y
- CONFIG_BLK_DEV_SD=y
- CONFIG_NETDEVICES=y
-+CONFIG_FEC_MTIP_L2SW=y
- CONFIG_ENC28J60=y
- CONFIG_ICPLUS_PHY=y
- CONFIG_MICREL_PHY=y
+diff --git a/Documentation/sphinx/cdomain.py b/Documentation/sphinx/cdomain.py
+index e8ea80d4324c..3dc285dc70f5 100644
+--- a/Documentation/sphinx/cdomain.py
++++ b/Documentation/sphinx/cdomain.py
+@@ -1,4 +1,5 @@
+ # -*- coding: utf-8; mode: python -*-
++# SPDX-License-Identifier: GPL-2.0
+ # pylint: disable=W0141,C0113,C0103,C0325
+ """
+     cdomain
+diff --git a/Documentation/sphinx/kernel_include.py b/Documentation/sphinx/kernel_include.py
+index 8db176045bc5..1e566e87ebcd 100755
+--- a/Documentation/sphinx/kernel_include.py
++++ b/Documentation/sphinx/kernel_include.py
+@@ -1,5 +1,6 @@
+ #!/usr/bin/env python3
+ # -*- coding: utf-8; mode: python -*-
++# SPDX-License-Identifier: GPL-2.0
+ # pylint: disable=R0903, C0330, R0914, R0912, E0401
+ 
+ """
+diff --git a/Documentation/sphinx/kerneldoc.py b/Documentation/sphinx/kerneldoc.py
+index b818d4c77924..51a2793dc8e2 100644
+--- a/Documentation/sphinx/kerneldoc.py
++++ b/Documentation/sphinx/kerneldoc.py
+@@ -1,4 +1,5 @@
+ # coding=utf-8
++# SPDX-License-Identifier: MIT
+ #
+ # Copyright © 2016 Intel Corporation
+ #
+diff --git a/Documentation/sphinx/kfigure.py b/Documentation/sphinx/kfigure.py
+index f1a7f13c9c60..ad495c0da270 100644
+--- a/Documentation/sphinx/kfigure.py
++++ b/Documentation/sphinx/kfigure.py
+@@ -1,4 +1,5 @@
+ # -*- coding: utf-8; mode: python -*-
++# SPDX-License-Identifier: GPL-2.0
+ # pylint: disable=C0103, R0903, R0912, R0915
+ """
+     scalable figure and image handling
+diff --git a/Documentation/sphinx/load_config.py b/Documentation/sphinx/load_config.py
+index ec50e1ee5223..1afb0c97f06b 100644
+--- a/Documentation/sphinx/load_config.py
++++ b/Documentation/sphinx/load_config.py
+@@ -1,4 +1,5 @@
+ # -*- coding: utf-8; mode: python -*-
++# SPDX-License-Identifier: GPL-2.0
+ # pylint: disable=R0903, C0330, R0914, R0912, E0401
+ 
+ import os
+diff --git a/Documentation/sphinx/min_requirements.txt b/Documentation/sphinx/min_requirements.txt
+index 52d9f27010e8..96b5e0bfa3d7 100644
+--- a/Documentation/sphinx/min_requirements.txt
++++ b/Documentation/sphinx/min_requirements.txt
+@@ -1,3 +1,4 @@
++# SPDX-License-Identifier: GPL-2.0
+ alabaster >=0.7,<0.8
+ docutils>=0.15,<0.18
+ jinja2>=2.3,<3.1
+diff --git a/Documentation/sphinx/parse-headers.pl b/Documentation/sphinx/parse-headers.pl
+index b063f2f1cfb2..7b1458544e2e 100755
+--- a/Documentation/sphinx/parse-headers.pl
++++ b/Documentation/sphinx/parse-headers.pl
+@@ -1,4 +1,7 @@
+ #!/usr/bin/env perl
++# SPDX-License-Identifier: GPL-2.0
++# Copyright (c) 2016 by Mauro Carvalho Chehab <mchehab@kernel.org>.
++
+ use strict;
+ use Text::Tabs;
+ use Getopt::Long;
+@@ -391,7 +394,7 @@ Report bugs to Mauro Carvalho Chehab <mchehab@kernel.org>
+ 
+ =head1 COPYRIGHT
+ 
+-Copyright (c) 2016 by Mauro Carvalho Chehab <mchehab+samsung@kernel.org>.
++Copyright (c) 2016 by Mauro Carvalho Chehab <mchehab@kernel.org>.
+ 
+ License GPLv2: GNU GPL version 2 <https://gnu.org/licenses/gpl.html>.
+ 
+diff --git a/Documentation/sphinx/requirements.txt b/Documentation/sphinx/requirements.txt
+index 5017f307c8a4..76b4255061d0 100644
+--- a/Documentation/sphinx/requirements.txt
++++ b/Documentation/sphinx/requirements.txt
+@@ -1,3 +1,4 @@
++# SPDX-License-Identifier: GPL-2.0
+ alabaster
+ Sphinx
+ pyyaml
+diff --git a/Documentation/sphinx/rstFlatTable.py b/Documentation/sphinx/rstFlatTable.py
+index 180fbb50c337..3d19569e5728 100755
+--- a/Documentation/sphinx/rstFlatTable.py
++++ b/Documentation/sphinx/rstFlatTable.py
+@@ -1,5 +1,6 @@
+ #!/usr/bin/env python3
+ # -*- coding: utf-8; mode: python -*-
++# SPDX-License-Identifier: GPL-2.0
+ # pylint: disable=C0330, R0903, R0912
+ 
+ """
 -- 
-2.39.5
+2.49.0
 
 
