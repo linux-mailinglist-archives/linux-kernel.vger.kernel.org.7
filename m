@@ -1,178 +1,119 @@
-Return-Path: <linux-kernel+bounces-697108-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-697113-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1CCDBAE3020
-	for <lists+linux-kernel@lfdr.de>; Sun, 22 Jun 2025 15:40:10 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id A5E44AE3031
+	for <lists+linux-kernel@lfdr.de>; Sun, 22 Jun 2025 15:43:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A4F7C16FCFC
-	for <lists+linux-kernel@lfdr.de>; Sun, 22 Jun 2025 13:40:10 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id CE8B71891149
+	for <lists+linux-kernel@lfdr.de>; Sun, 22 Jun 2025 13:43:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2A8FC1E1DE0;
-	Sun, 22 Jun 2025 13:40:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5A2621E5205;
+	Sun, 22 Jun 2025 13:43:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ZmWPqyh1"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="BoIS3GA1"
+Received: from mail-ed1-f52.google.com (mail-ed1-f52.google.com [209.85.208.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 719301DE3AC;
-	Sun, 22 Jun 2025 13:40:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 18E011DE3D9;
+	Sun, 22 Jun 2025 13:43:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750599603; cv=none; b=ZIH0BedIvOduo2stExyWO5sYV3QY9l1KtjJXcLQbpWm2bfb0sO6C06KFIf5Q6VJf4OSPSJWyLODm4mas5Qd89RsnW5kDCcVtCF8bue+OoLXFrzoP6QPf7vtyJ1N3nNzjq3UvZV+FkAr5AJWWELHIoFckk1ykWiECyeVuLcQeekY=
+	t=1750599788; cv=none; b=aQICsTaeIuYxen3c+iI/ZKwrMzo/u5/Amr/SWwo7hVolqocee/MlxvaRcJdRyMr+P88LYdWB9/Tbbu8Xiluwujvd35wTJtRH7FzkUqumIhNS6wleLpkf/8mj/RXNw0+sQbGn1SaGdbG17iaLq/KAtCSQh/39C6FIBoePY4ts5fA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750599603; c=relaxed/simple;
-	bh=diw1gDUh3SnWwKE6aIZJAx5qoa+BAbsc1mkKUgL3k5Q=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=spWAbyxMyzH3qjaoUdN90+qnGFFQYCV06hWy9/B7U9OVvPNf7h4WhS6ZC1YZXhbn1P+5mqqVwH7hcFp1CZuwW0gY9D2IqNR2QNEcnFiBFZqivLvus0zx1H6B3c4GEdJantZRmslBP5qh+fp/cF7LnzFsts+x1LF1K+GiKZ8CaAI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ZmWPqyh1; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPS id 09640C4CEE3;
-	Sun, 22 Jun 2025 13:40:03 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1750599603;
-	bh=diw1gDUh3SnWwKE6aIZJAx5qoa+BAbsc1mkKUgL3k5Q=;
-	h=From:Date:Subject:To:Cc:Reply-To:From;
-	b=ZmWPqyh1qqtDzx7vmqYTPoj/Hnb3q8qPCAhMzq7skUMzPUymnBwuGJvUQyhG/jpLX
-	 8/zyog1YlYrS741gKGZg6UYxoVlnT47mRN7sF+kBY5+O3WaphQyq+04hmf8ero4lFS
-	 AjLZhAemnJ57vRhKbiwu2FEGzSKixlH4hL3pBjOrHshCjjhZx7ius/ZtnKY6vxTqkq
-	 kWy5Mr+FlPfbw1XE3WTGWFZICmQFQMV04umI9DoNKd1YGZzqTrlDVK6pUQpcOBCJVZ
-	 F+H1deEeBzjGRo/XsmGr1nLz1jW/udBrEibWTcBfpfEvQpeN2D47bDIttyxvKaDTm/
-	 hJNIocq0MHUvg==
-Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F32DAC77B7F;
-	Sun, 22 Jun 2025 13:40:02 +0000 (UTC)
-From: Dominique Martinet via B4 Relay <devnull+asmadeus.codewreck.org@kernel.org>
-Date: Sun, 22 Jun 2025 22:39:56 +0900
-Subject: [PATCH v3] net/9p: Fix buffer overflow in USB transport layer
+	s=arc-20240116; t=1750599788; c=relaxed/simple;
+	bh=Mi7EbXJYwTfH182hrH2FJtHRM03mQEHRNxZoyWO337U=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=bSCAdJzT+FnlvZBPKnpvh6e/gmZHwLEN2zbNTssM2HjV5EzgUmRL6JvenBlQtz57eiSzkBlCzeizLdRGxIh3aE73Z3hsZuv4NjikbEL/ZguA5k2wDWsl0dwAawCNnVtQFBeJ/mDQNUJYpA13XlKt+rcGSn+0M7Qq2kGFt309BCk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=BoIS3GA1; arc=none smtp.client-ip=209.85.208.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ed1-f52.google.com with SMTP id 4fb4d7f45d1cf-6077dea37easo6338765a12.3;
+        Sun, 22 Jun 2025 06:43:06 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1750599785; x=1751204585; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=WZj5o7l4DsZDoAa+GaV62W37tm18RdoNakKUCj7Ro8M=;
+        b=BoIS3GA1Vl+zS+UjNK90pT3HmQBQ8eI+uTl/OhYrj4gbUs/gBNeB115hDBDvnmUCMf
+         TvDX+hadVgJeB416CHRNLYP/Qq/PihBEu3plR/UaWdLYOi0w1UapVEsLP4tOW89nOK8I
+         CCQlUojNcns4Yy8DvgxLXt+0PVoprYR6IwgE7m82ZeHLnq7dLp69/AdQIiQ00mac3Gdv
+         jkQ5uZMj14FDJYOgkgDdKf6w2bntwqNFHksrNSwl9X3wPrfxmHG1mVEDzFLtzLf4y74Q
+         2viKatfmCHjyJ0qKNYNLnfiCsRZpfvpuNmTa7dXE2zsgVZCibRyuelYlvgVXpbAUmqXJ
+         yC9g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1750599785; x=1751204585;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=WZj5o7l4DsZDoAa+GaV62W37tm18RdoNakKUCj7Ro8M=;
+        b=qHVgGmPAzdJJf5l4HPWSag44tmrEN2jYDeNyLSw1rUeXga4jZton6oRyKeq4eslbmA
+         UaKHVMktTjJ1r5l9Dlzi4tHtJNoh7sLSbO6oAD2NjzAdt8updcngIX2oL60nTST13IiQ
+         57f2nQstTPTY/sHo7/JtJZHt6zzobt2imcDb1rSB51Dx+j5ybgQsZx2usN5rJd9+rRHr
+         bRGMj6v1rkqZr5QfNB70xietg/UOjLhUC0HEVxSkbsKbrqlLv1BXHradoGgZBL8WqZyo
+         QguklqsiOw6tW0RnN+Ald5rnhMo7k+qE8DNv5xlx/EXSgzguQBkg003hjv1/KJZiEoZb
+         DIvg==
+X-Forwarded-Encrypted: i=1; AJvYcCVElmE4q45nfuBb5x/6Tyx5gD6FLbREVOeVeRgMKu1huAOdiRD6ZPkUIJaa5F6lRyjxN5e9PKkjbW/1@vger.kernel.org, AJvYcCWY02IHTwaTd0dEjkv9IjPZdeW4/+8LlpRfucNRlQBYqbhDcNb8nt2rO3yLa22Y70lIDvIeubEkHpPPXecoRw==@vger.kernel.org, AJvYcCWYpyKpORRHHnSXP9d7f8nSXKEIXpnhQfumXDKZ4GZID/vDNB8IjThh9sqfuwcr1hDqKx2d8S8K+7yelWup@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzx3ziO9hsjsj7CuLbGjbRqhk03L6Zifs+HajDwG44BnWbajLgm
+	OvkZNG1FkgrYj9i7+0T59O8sZTuDMnf+KmcC0WiGCTyud/jujbU5c6Y=
+X-Gm-Gg: ASbGncv3/9dmbsMOqSD98EaX1wqM4UUVBVukmbfuscw2rXgjvZoJkuv4zQEHsNplODM
+	fCqiQetXPIe/usHBR5157MyWTj2CPyhKEoscNpmUcWWGNrOfZtw6mz9LXrvisgoyWdVtpo78UKF
+	jxu/GcWQNjNJvt7VPOaC8w9QEAFIuEmDCwehnjGfc72oqoebArz/PbBGXnD3cJezhyDzy6QoF2s
+	4Bjykq2wEM8IG+UtGekaEZn/H6/RFIBdGMrfVVjV8RvoPYyNyZIt3VDcsUPBw4unRUPp9hyFbFk
+	9WvcRdYZIx4UgPYO75Yk2S8LgLe5ixDazUlje0G7qlR7VeXbfJP6ZZDb5nx3vRpM1yFWMxblU86
+	FhAM=
+X-Google-Smtp-Source: AGHT+IEgfGyHvmCU634nEZQA9Y91tsbXZK1bPtGknigRwAMNLAh6lnz3IVeeuN4PtLNR45cQzJO4SA==
+X-Received: by 2002:a05:6402:5207:b0:601:31e6:698d with SMTP id 4fb4d7f45d1cf-60a1d18e136mr6698120a12.23.1750599784894;
+        Sun, 22 Jun 2025 06:43:04 -0700 (PDT)
+Received: from alex-x1.localdomain ([84.226.118.249])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-60a18cb9e5dsm4654457a12.53.2025.06.22.06.43.04
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 22 Jun 2025 06:43:04 -0700 (PDT)
+From: Aleksandrs Vinarskis <alex.vinarskis@gmail.com>
+To: Bjorn Andersson <bjorn.andersson@oss.qualcomm.com>,
+	Aleksandrs Vinarskis <alex.vinarskis@gmail.com>,
+	linux-arm-msm@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Cc: Bjorn Andersson <andersson@kernel.org>,
+	Konrad Dybcio <konradybcio@kernel.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>
+Subject: [PATCH v1 0/2] Asus Zenbook A14 improvements
+Date: Sun, 22 Jun 2025 15:39:59 +0200
+Message-ID: <20250622134301.10403-1-alex.vinarskis@gmail.com>
+X-Mailer: git-send-email 2.45.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250622-9p-usb_overflow-v3-1-ab172691b946@codewreck.org>
-X-B4-Tracking: v=1; b=H4sIAKsHWGgC/22OzQ6CMBAGX8X0bEl/oAZPvIchppQFVoGSVouG8
- O4W4sGDx9lk5tuFeHAInpwPC3EQ0KMdI8jjgZhOjy1QrCMTwUTGlGA0n+jTV1cbwDW9nanIqsZ
- kkFfQSBKtyUGDr714KSN36B/WvfeBwLfrt8UVlyKTeaJkKlPKaa1H9DeMo0U7aOwTYweyJYL40
- f68EES0mVBGcZabk+aFsTXMDsw9sa4l5bquH0JV0cjpAAAA
-X-Change-ID: 20250620-9p-usb_overflow-25bfc5e9bef3
-To: Eric Van Hensbergen <ericvh@kernel.org>, 
- Latchesar Ionkov <lucho@ionkov.net>, 
- Christian Schoenebeck <linux_oss@crudebyte.com>, 
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
- Michael Grzeschik <m.grzeschik@pengutronix.de>
-Cc: stable@vger.kernel.org, Yuhao Jiang <danisjiang@gmail.com>, 
- security@kernel.org, v9fs@lists.linux.dev, linux-kernel@vger.kernel.org, 
- Dominique Martinet <asmadeus@codewreck.org>
-X-Mailer: b4 0.15-dev-7be4f
-X-Developer-Signature: v=1; a=openpgp-sha256; l=3088;
- i=asmadeus@codewreck.org; h=from:subject:message-id;
- bh=uRA+tj1CGV3hDEWLR7ul9klUmiXd1el2FvT0X0zpwug=;
- b=owEBbQKS/ZANAwAKAatOm+xqmOZwAcsmYgBoWAexM97EqqDps4uLE21H9hDjaDGpdSirjktFo
- j7iGJVVIYmJAjMEAAEKAB0WIQT8g9txgG5a3TOhiE6rTpvsapjmcAUCaFgHsQAKCRCrTpvsapjm
- cEMWD/44v6jhy3s94nL9wsfiMpO26Of4JpPM+LjflzPMLbWWJAVoQnS7qsy/Kb7napyi4cki2X/
- jPPBfmt11kd5SWWGD1V07N/EMB1E2RwLAdWIroP+QUmOC1xjJ+zy+z3MUIp6fVFQX8NMWnKprLD
- XJdy8jSwcLjJDP51zZvqXttcYffvn5f/ph9fIeMNBUbpJ7aqYldW9afXD43//fpcy0qCR8Q1PrQ
- AhUlIZGuuzGcxTJhmsDietbjMz6uXDwyghu6N2G2X0oo5C6jT3HjAJ7B1kaUTUHNB7DKT0dX0yq
- OT962DE2EQTUaPOAH+n6HescgdUK7pktU6EKzdiUwSQCakTN7LophVtJiBbSILAvo9QdBCHHq0u
- N3/tD3evkVq2Y/hSSkUy9T5xuHv+IufLlhX0R0sQUKeAtzel53p+TeEIkp9aW/D6cLd/NZS6LjD
- ZWZao9VlbAoy7KRVFyiqDQ9MfMM8P65j0vVVBwGnwlFgQTwwyikmaIkYZQDkH0hCmuls98byVlB
- M/sIcbUGpbpVhS6R+Kdc+amkjT+uUpj2d7T0GdsmsQnr6XAZOy2JP9xHMX0UWu2kAqvyatDA6SB
- m0rrjgfsOpiSZJ3NUXL/o4l/S5Jf7eqP70mGqeoLNyq3dQd0zfGRovnTxumXni1CHPs0HwakhM0
- WHRuZ6CViWFMsPg==
-X-Developer-Key: i=asmadeus@codewreck.org; a=openpgp;
- fpr=B894379F662089525B3FB1B9333F1F391BBBB00A
-X-Endpoint-Received: by B4 Relay for asmadeus@codewreck.org/default with
- auth_id=435
-X-Original-From: Dominique Martinet <asmadeus@codewreck.org>
-Reply-To: asmadeus@codewreck.org
+Content-Transfer-Encoding: 8bit
 
-From: Dominique Martinet <asmadeus@codewreck.org>
+First round of improvements for Asus Zenbook A14 which has just landed
+to linux-next.
 
-A buffer overflow vulnerability exists in the USB 9pfs transport layer
-where inconsistent size validation between packet header parsing and
-actual data copying allows a malicious USB host to overflow heap buffers.
+* First patch updates DTs from v5 to v7 that was mailed earlier. Fixes
+  GPU enable and mistake in firmware path for Purwa/X1P
+* Second patch adds audio support. Audioreach topology and Alsa UCM
+  configs were already merged [1],[2].
 
-The issue occurs because:
-- usb9pfs_rx_header() validates only the declared size in packet header
-- usb9pfs_rx_complete() uses req->actual (actual received bytes) for
-memcpy
+[1] https://github.com/linux-msm/audioreach-topology/commit/952d16b16c4ee23578c001c97a31540c61315a0c
+[2] https://github.com/alsa-project/alsa-ucm-conf/commit/87a48b90213106f6e310dd611590e6a608ae6596
 
-This allows an attacker to craft packets with small declared size
-(bypassing validation) but large actual payload (triggering overflow
-in memcpy).
+Aleksandrs Vinarskis (2):
+  arm64: dts: qcom: x1-asus-zenbook: fixup GPU nodes
+  arm64: dts: qcom: x1-asus-zenbook: support sound
 
-Add validation in usb9pfs_rx_complete() to ensure req->actual does not
-exceed the buffer capacity before copying data.
+ .../boot/dts/qcom/x1-asus-zenbook-a14.dtsi    | 198 +++++++++++++++++-
+ .../dts/qcom/x1e80100-asus-zenbook-a14.dts    |   4 +
+ .../dts/qcom/x1p42100-asus-zenbook-a14.dts    |   6 +-
+ 3 files changed, 203 insertions(+), 5 deletions(-)
 
-Reported-by: Yuhao Jiang <danisjiang@gmail.com>
-Closes: https://lkml.kernel.org/r/20250616132539.63434-1-danisjiang@gmail.com
-Fixes: a3be076dc174 ("net/9p/usbg: Add new usb gadget function transport")
-Cc: stable@vger.kernel.org
-Signed-off-by: Dominique Martinet <asmadeus@codewreck.org>
----
-(still not actually tested, can't get dummy_hcd/gt to create a device
-listed by p9_fwd.py/useable in qemu, I give up..)
-
-Changes in v3:
-- fix typo s/req_sizel/req_size/ -- sorry for that, module wasn't
-  built...
-- Link to v2: https://lore.kernel.org/r/20250620-9p-usb_overflow-v2-1-026c6109c7a1@codewreck.org
-
-Changes in v2:
-- run through p9_client_cb() on error
-- Link to v1: https://lore.kernel.org/r/20250616132539.63434-1-danisjiang@gmail.com
----
- net/9p/trans_usbg.c | 16 +++++++++++++---
- 1 file changed, 13 insertions(+), 3 deletions(-)
-
-diff --git a/net/9p/trans_usbg.c b/net/9p/trans_usbg.c
-index 6b694f117aef296a66419fed5252305e7a1d0936..468f7e8f0277b9ae5f1bb3c94c649fca97d28857 100644
---- a/net/9p/trans_usbg.c
-+++ b/net/9p/trans_usbg.c
-@@ -231,6 +231,8 @@ static void usb9pfs_rx_complete(struct usb_ep *ep, struct usb_request *req)
- 	struct f_usb9pfs *usb9pfs = ep->driver_data;
- 	struct usb_composite_dev *cdev = usb9pfs->function.config->cdev;
- 	struct p9_req_t *p9_rx_req;
-+	unsigned int req_size = req->actual;
-+	int status = REQ_STATUS_RCVD;
- 
- 	if (req->status) {
- 		dev_err(&cdev->gadget->dev, "%s usb9pfs complete --> %d, %d/%d\n",
-@@ -242,11 +244,19 @@ static void usb9pfs_rx_complete(struct usb_ep *ep, struct usb_request *req)
- 	if (!p9_rx_req)
- 		return;
- 
--	memcpy(p9_rx_req->rc.sdata, req->buf, req->actual);
-+	if (req_size > p9_rx_req->rc.capacity) {
-+		dev_err(&cdev->gadget->dev,
-+			"%s received data size %u exceeds buffer capacity %zu\n",
-+			ep->name, req_size, p9_rx_req->rc.capacity);
-+		req_size = 0;
-+		status = REQ_STATUS_ERROR;
-+	}
- 
--	p9_rx_req->rc.size = req->actual;
-+	memcpy(p9_rx_req->rc.sdata, req->buf, req_size);
- 
--	p9_client_cb(usb9pfs->client, p9_rx_req, REQ_STATUS_RCVD);
-+	p9_rx_req->rc.size = req_size;
-+
-+	p9_client_cb(usb9pfs->client, p9_rx_req, status);
- 	p9_req_put(usb9pfs->client, p9_rx_req);
- 
- 	complete(&usb9pfs->received);
-
----
-base-commit: 74b4cc9b8780bfe8a3992c9ac0033bf22ac01f19
-change-id: 20250620-9p-usb_overflow-25bfc5e9bef3
-
-Best regards,
 -- 
-Dominique Martinet <asmadeus@codewreck.org>
-
+2.45.2
 
 
