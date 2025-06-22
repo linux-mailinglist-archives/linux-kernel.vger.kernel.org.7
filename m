@@ -1,114 +1,96 @@
-Return-Path: <linux-kernel+bounces-697321-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-697323-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id C7188AE32C4
-	for <lists+linux-kernel@lfdr.de>; Mon, 23 Jun 2025 00:21:01 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 64F96AE32CE
+	for <lists+linux-kernel@lfdr.de>; Mon, 23 Jun 2025 00:30:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D49E63B0230
-	for <lists+linux-kernel@lfdr.de>; Sun, 22 Jun 2025 22:20:36 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C86C73B0E47
+	for <lists+linux-kernel@lfdr.de>; Sun, 22 Jun 2025 22:29:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D637021B9C8;
-	Sun, 22 Jun 2025 22:20:54 +0000 (UTC)
-Received: from mail-0201.mail-europe.com (mail-0201.mail-europe.com [51.77.79.158])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E0F5921CA02;
+	Sun, 22 Jun 2025 22:29:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="coGzih47"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DB32513B58B
-	for <linux-kernel@vger.kernel.org>; Sun, 22 Jun 2025 22:20:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=51.77.79.158
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3EDDB183CA6;
+	Sun, 22 Jun 2025 22:29:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750630854; cv=none; b=b64Di+bXFAviaX6dAfTKDBiuFbNb0ZLsBYaC4ZTFuhBD5SEW1CTlQRKt924tZTsQzzp5ah32wk4yrcLDu+V4DnNxgyLDcZaGBPKN0Eyc6yjansYx2NzWZjH2s1Eb07uvy4+/5LjlzFG3kuDrwIlccD5B3jLs69ozlrYK11rAyOQ=
+	t=1750631398; cv=none; b=QLPLZCLoq3xysulMRnwqNoUYuPQ618dY9g2aKXgg7cExelMitrixFoGVgK9xX7Z5uKzYArzMjfDzyPy71G3tYOMbUhNRSSx1cWUGdE5FeM0gpVn4bbStoe8GL9HK5kMVOlRQfKv8yDqvc1SyGnmG1h7QrHDssTPDsmapLHIfvfU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750630854; c=relaxed/simple;
-	bh=8JSWOuPp4RuighhEQQ5Du79ImNxOBkHNxQNl5DwJpc8=;
-	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=TKCLLW1P/RicQdTrO0/sklgx0UxhCaz06EycwuGejjdDjf3M3XCNGwfssfgERXEN6Sy00HOl767NBwgVz+0bb70UM/CCd9vyZbvBP2iokUqokLeAPksHgxe1MOlj5fZ2nBcQaJEOxDzbMiZ3tWUahNkOl0JEhqU4BgFgxBL9k1E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=antoniohickey.com; spf=pass smtp.mailfrom=antoniohickey.com; arc=none smtp.client-ip=51.77.79.158
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=antoniohickey.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=antoniohickey.com
-Date: Sun, 22 Jun 2025 22:20:30 +0000
-To: tamird@gmail.com
-From: Antonio Hickey <contact@antoniohickey.com>
-Cc: a.hindborg@kernel.org, alex.gaynor@gmail.com, aliceryhl@google.com, bjorn3_gh@protonmail.com, boqun.feng@gmail.com, contact@antoniohickey.com, dakr@kernel.org, danielstonecote@gmail.com, gary@garyguo.net, linux-kernel@vger.kernel.org, lossin@kernel.org, ojeda@kernel.org, rust-for-linux@vger.kernel.org, tmgross@umich.edu
-Subject: Re: [PATCH v3 1/2] rust: kernel: create `overflow_assert!` macro
-Message-ID: <20250622222023.29071-1-contact@antoniohickey.com>
-In-Reply-To: <CAJ-ks9n1SqM_1xAstHQpp8Z7-2JSTkp9zUn8kwZA7OAAqWxQ6Q@mail.gmail.com>
-References: <20250621230231.100181-1-contact@antoniohickey.com> <20250621230231.100181-2-contact@antoniohickey.com> <CAJ-ks9n1SqM_1xAstHQpp8Z7-2JSTkp9zUn8kwZA7OAAqWxQ6Q@mail.gmail.com>
-Feedback-ID: 144211621:user:proton
-X-Pm-Message-ID: c64cd4cacca331b94f78d7d2dee124279bb9238b
+	s=arc-20240116; t=1750631398; c=relaxed/simple;
+	bh=OYu+AAgQhYC87NCbElQfdkmObnYbtApn+25dtMrUN0U=;
+	h=Mime-Version:Content-Type:Date:Message-Id:Cc:Subject:From:To:
+	 References:In-Reply-To; b=rmmJ6TClMM/QzVVEmRt7wwgW7qqIMiizBNwcTxb9EeclO1FWsu7LvVAPEPFbUyPUqfR2TGDfEMbAiZsd8QeR1V9NyYaHQWPIQQPzJUVAH0BT+1m3+bXBgb2c092npeCfVIDzBbd5Q2MBue3vKNAj2D9LlL5oPD1+yLKyVC8/bVk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=coGzih47; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 82A84C4CEE3;
+	Sun, 22 Jun 2025 22:29:54 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1750631398;
+	bh=OYu+AAgQhYC87NCbElQfdkmObnYbtApn+25dtMrUN0U=;
+	h=Date:Cc:Subject:From:To:References:In-Reply-To:From;
+	b=coGzih47BfetxAdLNbHQqy1DJXPtnmoVvGRkqITYjWychHIFjmPRbjc2dYVjxMpEP
+	 ld1gurh4xqFu/SCFBY11uiNNLXipApZK0ZZqIkQkr3dfXAZcDcR4fm0O8VM6pSymSC
+	 F/pyeoddxP0JYuzvOqn7f121WNLQJlhwdJ1OsuLtloclCRwId3VyJTtAwky46AXJPw
+	 TLDD4JkGRtqg8VM6Z9Cg7Lizc38IfXDLyHWqkTeTVtbrwHX34fnUriqvgZXvMtWFBj
+	 h/Ek9QR1nVjl/SyEOb/fxtQvvxp7l/L4M+Nw4juWXydoVxxrSSra+MUlQFD6jSeguP
+	 jGm04KNrW+5pg==
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Mime-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Date: Mon, 23 Jun 2025 00:29:52 +0200
+Message-Id: <DATF1BEX3XN4.LCZYZASKZA9P@kernel.org>
+Cc: <gregkh@linuxfoundation.org>, <rafael@kernel.org>, <ojeda@kernel.org>,
+ <alex.gaynor@gmail.com>, <boqun.feng@gmail.com>, <gary@garyguo.net>,
+ <bjorn3_gh@protonmail.com>, <a.hindborg@kernel.org>,
+ <aliceryhl@google.com>, <tmgross@umich.edu>, <david.m.ertman@intel.com>,
+ <ira.weiny@intel.com>, <leon@kernel.org>, <kwilczynski@kernel.org>,
+ <bhelgaas@google.com>, <rust-for-linux@vger.kernel.org>,
+ <linux-kernel@vger.kernel.org>, <linux-pci@vger.kernel.org>
+Subject: Re: [PATCH v2 4/4] rust: devres: implement register_release()
+From: "Benno Lossin" <lossin@kernel.org>
+To: "Danilo Krummrich" <dakr@kernel.org>
+X-Mailer: aerc 0.20.1
+References: <20250622164050.20358-1-dakr@kernel.org>
+ <20250622164050.20358-5-dakr@kernel.org>
+ <DATCV8XFK7TO.2MYZKKA28JEQV@kernel.org> <aFhxtv5tOavHP0N-@pollux>
+ <aFh0p5p_89025kcg@pollux>
+In-Reply-To: <aFh0p5p_89025kcg@pollux>
 
-On Sun 22 Jun 13:48, Tamir Duberstein wrote:
-> On Sat, Jun 21, 2025 at 7:06=E2=80=AFPM Antonio Hickey
-> <contact@antoniohickey.com> wrote:
-> > +//! Overflow assert.
->=20
-> s/assert/assertion/
->=20
-> AFAIK the standard library always uses assertion where a noun is
-> needed, and assert where a verb is needed.
->=20
+On Sun Jun 22, 2025 at 11:24 PM CEST, Danilo Krummrich wrote:
+> On Sun, Jun 22, 2025 at 11:12:28PM +0200, Danilo Krummrich wrote:
+>> On Sun, Jun 22, 2025 at 10:47:55PM +0200, Benno Lossin wrote:
+>> > And maybe a closure design is better, depending on how much code is
+>> > usually run in `release`, if it's a lot, then we should use the trait
+>> > design. If it's only 1-5 lines, then a closure would also be fine. I
+>> > don't have a strong preference, but if it's mostly one liners, then
+>> > closures would be better.
+>>=20
+>> It should usually be rather short, so probably makes sense.
+>
+> Quickly tried how it turns out with a closure: The only way I know to cap=
+ture
+> the closure within the
+>
+> 	unsafe extern "C" fn callback<P>(ptr: *mut kernel::ffi::c_void)
+>
+> is with another dynamic allocation, which isn't worth it.
+>
+> Unless there's another way I'm not aware of, I'd keep the Release trait.
 
-Reasonable, I'll fix this verbage in my next version.
+Ah right that makes sens.
 
-> > +/// Verifies at runtime that an expression is within an expected bound=
-.
-> > +///
-> > +/// This macro is only active when `CONFIG_RUST_OVERFLOW_CHECKS` is en=
-abled.
-> > +///
-> > +/// # Examples
-> > +///
-> > +/// ```
-> > +/// overflow_assert!(3 <=3D 10);
-> > +/// overflow_assert!(5 <=3D 5);
-> > +///
-> > +/// const X: u8 =3D 5;
-> > +/// overflow_assert!(X + 3 < 10);
-> > +///
-> > +/// const fn f(x: i32) -> i32 {
-> > +///     x + 1
-> > +/// }
-> > +/// overflow_assert!(f(40) < 42);
-> > +/// ```
-> > +#[macro_export]
-> > +macro_rules! overflow_assert {
-> > +    ($cond:expr) =3D> {
-> > +        if cfg!(CONFIG_RUST_OVERFLOW_CHECKS) {
-> > +            ::core::assert!(
-> > +                $cond,
-> > +                concat!("overflow assertion failed: ", stringify!($con=
-d))
->=20
-> Can we still allow the caller to pass additional arguments to the
-> macro, so that the overflowing value can be emitted? Alternatively if
-> the expectation is that this macro is always used with a comparison
-> operator perhaps we could have `overflow_assert_lt` and
-> `overflow_assert_le` which provide panic messages containing the
-> operand values?
->=20
-
-Me and Miguel discussed the `overflow_assert_le` and other variants in=20
-my previous v2 patch set[1]. We decided it would be best to just start=20
-with a more flexable general expression based variant of the macro for=20
-now, and consider other variants later.=20
-
-I agree we should expand this into more specific variants, so it would
-document the intent of the assertions even more clearly.
-
-[1] Link to Miguel's comment on a `overflow_assert_le` variant:
-https://lore.kernel.org/all/CANiq72mvu54B=3DU+YCUmbFctj_wXgF5zjeE-BB-vHVnAP=
-+3mPcQ@mail.gmail.com/
-
-Thanks
-
+---
+Cheers,
+Benno
 
