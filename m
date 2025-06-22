@@ -1,100 +1,106 @@
-Return-Path: <linux-kernel+bounces-697288-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-697317-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 06891AE324D
-	for <lists+linux-kernel@lfdr.de>; Sun, 22 Jun 2025 23:20:31 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2D6F9AE329D
+	for <lists+linux-kernel@lfdr.de>; Sun, 22 Jun 2025 23:59:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A2FC316F5A0
-	for <lists+linux-kernel@lfdr.de>; Sun, 22 Jun 2025 21:20:31 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5E8A83AFBF4
+	for <lists+linux-kernel@lfdr.de>; Sun, 22 Jun 2025 21:58:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1C7501F8690;
-	Sun, 22 Jun 2025 21:20:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2CB49219E8C;
+	Sun, 22 Jun 2025 21:59:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="FBBw85tE"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (4096-bit key) header.d=crudebyte.com header.i=@crudebyte.com header.b="mJYQMNfa"
+Received: from kylie.crudebyte.com (kylie.crudebyte.com [5.189.157.229])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 738BFEAC6;
-	Sun, 22 Jun 2025 21:20:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B423D1F875A;
+	Sun, 22 Jun 2025 21:59:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=5.189.157.229
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750627222; cv=none; b=OB7lpaRAtXIUN3QjSMbhNZRjCQVSGL85IES9iIcBXTv+lv9n5DyJA8sNzrY0hZDx9caF4hT3K7286aNe7C85i01l5C8AIWXoefmf5r4G0mpN0oOtQf9mkW4zoCVqqV6+iEUM3mcAZ/QMyr6U0YR7QvyTr7dIAufN57D33h/VB9k=
+	t=1750629549; cv=none; b=pruHQVVYcEny6phdtMGbjVv+frJgQEFTuO8g9csO79IUQziyMz5hlpCGjVIhIArLPy1UIyT1Ifkb8VtuwIxwClWSzIkzIQ/DjGcf29h3Rd/dYhTvxZh8vU7SZWRh0Z5HsfRiFkYOlroQxLiZHRJ+zHPyVJ4DltjoAwDd7q9t9+g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750627222; c=relaxed/simple;
-	bh=n1un8LAYZ6VeYz6wNJyRD1+u/gnG9pv0/DxIgQjx3Fs=;
-	h=Mime-Version:Content-Type:Date:Message-Id:Cc:Subject:From:To:
-	 References:In-Reply-To; b=QAxhtyASvmbi+/oRkgbrrrzLJYmXrktYAPB3tvJFhar40jREZiO19gzgqzSZZpIu0z/D1628F7+xkg4wNQRWerZOcgJtGwSBSp7zCUiD+EiRpCaafcozKHOJa98i7/ntNmaeZA6R7Sn2JxeISbb6UG+8Oe69/W3A7HCRbczgqUA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=FBBw85tE; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8FD49C4CEE3;
-	Sun, 22 Jun 2025 21:20:18 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1750627222;
-	bh=n1un8LAYZ6VeYz6wNJyRD1+u/gnG9pv0/DxIgQjx3Fs=;
-	h=Date:Cc:Subject:From:To:References:In-Reply-To:From;
-	b=FBBw85tEc8o85lloEK/qjVQthBWpAc8hGQynNvRYx98B1vqCUycAVH2QmzK6iWElx
-	 ds19XoZXoWHHMgfY/YqKz4hxP5RzSi2wB/uGdgtVNxP83scx2l0fwagiMzzyrIjUbh
-	 Ud1TOcfPrGoQ4ln2Epq1fBqEHIREHPRCkE7PCsTfO1gYiE3wtRutKDcAK8JVG3cIfY
-	 Q1j/YlOIPaM0OPnEhPXdekr7J441FyoOEoPV0QPbyuWvbPjPjv4WMLDsDE3zOsqrbp
-	 14ATcRYdOz6BdQyZRiTusAe7ZRzvETuG2Xfe29SxxKZATzsWs/70amKPWdbpM0/o2p
-	 IIOqgvLrhOHug==
+	s=arc-20240116; t=1750629549; c=relaxed/simple;
+	bh=2OABZ5Aau9KbgR1Zm+cB9UU2hHSzuwXcK9yvNTrNohU=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=jPcFPqrIC7z//KJwDBhZ70QdgVXWqRniHwv+mdbdr42UixAXSLt12fCRi+qV2st+zj5KR7j0VnJv3TSMk/WXVQh6iE+0vTb3HC01y2EzXZbKZnL1Uw2ZRn4NZ5/qJXeNJHzw4w/xCnSjBEbKq7fcYcQ38tT/RBWss5by6vyJ8Zk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=crudebyte.com; spf=pass smtp.mailfrom=crudebyte.com; dkim=pass (4096-bit key) header.d=crudebyte.com header.i=@crudebyte.com header.b=mJYQMNfa; arc=none smtp.client-ip=5.189.157.229
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=crudebyte.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=crudebyte.com
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=crudebyte.com; s=kylie; h=Content-Type:Content-Transfer-Encoding:
+	MIME-Version:References:In-Reply-To:Message-ID:Date:Subject:Cc:To:From:
+	Content-ID:Content-Description;
+	bh=pKwgu71A+gqWy3XaAtAsQgfZgUfP6EO1C/JNbWXZpdQ=; b=mJYQMNfazdYdrhU6fsqcc9pJkr
+	ZMTjB3bZrpa4YZuawBirr5X73xMo3cJy4Raz1AAm/SsDWDxRLPBW75g12fA3Eivbgez+AOuEFudxD
+	HFz1zaIXPSBXXu4JQIb1UcrWmSXR7SVayg8MpLoKQGeyCknhWJChf6zZWesbjee8emHW3LPtCJC7B
+	lWklikeu+O6o4z/I6Fnza534h+xPMQYicGF8Uh4Mtx3JbbBLqzMEvUAFbnwOEj6u8d93Vbl6yyxtB
+	yM3bf6M9JJzrD8KoPpF5YchEtGqoDu1i1K2rn/WjtifgfyG8DK/9TUsgV+rNcK8klosf3PNQruNEP
+	qK3pm7uFp6WK2pGTVDx7NjwUbqfyYNjoEoi/3mf0kJY0cIb25+9y8YAxV7sl9XqlSunqdJewTA9Bi
+	YMA54MYUJJe/SohLUOKv5ZG/Ormy/sApm/mizPUzyqgBAyDA3RPLXOe5NZz1mjMJP1wkML7YYP2Hq
+	EmoGn2eoXveWWydSdzjd6zDfZI7J2rAMd765bQ9znOnqlWXJUrkOzuQBxnp89cLbG/IE5gOq13sO2
+	WUYijHXfyGAEdtpfbyiy6Ps5X1aRFr5YuAYqCCtlL6BPodCGZwXzC4WmU0FwfTGSU5gefy8Yl85QB
+	S2F2XQ4oXLLSKypN9whWapn+fM7Hes2Zl7cnSqcMc=;
+From: Christian Schoenebeck <linux_oss@crudebyte.com>
+To: asmadeus@codewreck.org
+Cc: Kees Cook <kees@kernel.org>,
+ Dominique Martinet via B4 Relay <devnull+asmadeus.codewreck.org@kernel.org>,
+ Eric Van Hensbergen <ericvh@kernel.org>, Latchesar Ionkov <lucho@ionkov.net>,
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ Michael Grzeschik <m.grzeschik@pengutronix.de>, stable@vger.kernel.org,
+ Yuhao Jiang <danisjiang@gmail.com>, security@kernel.org,
+ v9fs@lists.linux.dev, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v3] net/9p: Fix buffer overflow in USB transport layer
+Date: Sun, 22 Jun 2025 23:20:21 +0200
+Message-ID: <2332540.nosMkMiWtC@silver>
+In-Reply-To: <aFhqAergj6LowmyE@codewreck.org>
+References:
+ <20250622-9p-usb_overflow-v3-1-ab172691b946@codewreck.org>
+ <659844BA-48EF-47E1-8D66-D4CA98359BBF@kernel.org>
+ <aFhqAergj6LowmyE@codewreck.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
-Date: Sun, 22 Jun 2025 23:20:17 +0200
-Message-Id: <DATDK117JU2W.3QRBUS95CFSAJ@kernel.org>
-Cc: <gregkh@linuxfoundation.org>, <rafael@kernel.org>, <ojeda@kernel.org>,
- <alex.gaynor@gmail.com>, <boqun.feng@gmail.com>, <gary@garyguo.net>,
- <bjorn3_gh@protonmail.com>, <a.hindborg@kernel.org>,
- <aliceryhl@google.com>, <tmgross@umich.edu>, <david.m.ertman@intel.com>,
- <ira.weiny@intel.com>, <leon@kernel.org>, <kwilczynski@kernel.org>,
- <bhelgaas@google.com>, <rust-for-linux@vger.kernel.org>,
- <linux-kernel@vger.kernel.org>, <linux-pci@vger.kernel.org>
-Subject: Re: [PATCH v2 4/4] rust: devres: implement register_release()
-From: "Benno Lossin" <lossin@kernel.org>
-To: "Danilo Krummrich" <dakr@kernel.org>
-X-Mailer: aerc 0.20.1
-References: <20250622164050.20358-1-dakr@kernel.org>
- <20250622164050.20358-5-dakr@kernel.org>
- <DATCV8XFK7TO.2MYZKKA28JEQV@kernel.org> <aFhxtv5tOavHP0N-@pollux>
-In-Reply-To: <aFhxtv5tOavHP0N-@pollux>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
 
-On Sun Jun 22, 2025 at 11:12 PM CEST, Danilo Krummrich wrote:
-> On Sun, Jun 22, 2025 at 10:47:55PM +0200, Benno Lossin wrote:
->> On Sun Jun 22, 2025 at 6:40 PM CEST, Danilo Krummrich wrote:
->> > +impl<T: Release> Release for crate::sync::ArcBorrow<'_, T> {
->> > +    fn release(&self) {
->> > +        self.deref().release();
->> > +    }
->> > +}
->> > +
->> > +impl<T: Release> Release for Pin<&'_ T> {
->>=20
->> You don't need the `'_` here.
->>=20
->> > +    fn release(&self) {
->> > +        self.deref().release();
->> > +    }
->> > +}
->>=20
->> I still think we're missing a `impl<T: Release> Release for &T`.
->
-> Yeah, I really thought the compile can figure this one out.
+On Sunday, June 22, 2025 10:39:29 PM CEST asmadeus@codewreck.org wrote:
+[...]
+> (... And this made me realize commit 60ece0833b6c ("net/9p: allocate
+> appropriate reduced message buffers") likely broke everything for
+> 9p/rdma 3 years ago, as rdma is swapping buffers around...
+> I guess it doesn't have (m)any users...)
 
-To me it makes perfect sense that it doesn't work, since `T: Release`,
-but `&T: Release` is not satisfied.
+That patch contains an RDMA exception:
 
-Also a funny note: if you add the impl any number of `&` before the `T`
-will implement `Release` :)
+@@ -645,9 +664,18 @@ p9_client_rpc(struct p9_client *c, int8_t type, const char *fmt, ...)
+        int sigpending, err;
+        unsigned long flags;
+        struct p9_req_t *req;
++       /* Passing zero for tsize/rsize to p9_client_prepare_req() tells it to
++        * auto determine an appropriate (small) request/response size
++        * according to actual message data being sent. Currently RDMA
++        * transport is excluded from this response message size optimization,
++        * as it would not cope with it, due to its pooled response buffers
++        * (using an optimized request size for RDMA as well though).
++        */
++       const uint tsize = 0;
++       const uint rsize = c->trans_mod->pooled_rbuffers ? c->msize : 0;
+ 
+        va_start(ap, fmt);
+-       req = p9_client_prepare_req(c, type, c->msize, c->msize, fmt, ap);
++       req = p9_client_prepare_req(c, type, tsize, rsize, fmt, ap);
+        va_end(ap);
+        if (IS_ERR(req))
+                return req;
 
----
-Cheers,
-Benno
+/Christian
+
+
 
