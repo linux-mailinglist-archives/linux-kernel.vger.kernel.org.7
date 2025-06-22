@@ -1,88 +1,88 @@
-Return-Path: <linux-kernel+bounces-697302-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-697303-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1B1C9AE326A
-	for <lists+linux-kernel@lfdr.de>; Sun, 22 Jun 2025 23:35:20 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id D6C3FAE326B
+	for <lists+linux-kernel@lfdr.de>; Sun, 22 Jun 2025 23:35:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AA97016F404
-	for <lists+linux-kernel@lfdr.de>; Sun, 22 Jun 2025 21:35:20 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D10301889ADC
+	for <lists+linux-kernel@lfdr.de>; Sun, 22 Jun 2025 21:35:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F299A223704;
-	Sun, 22 Jun 2025 21:33:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B22A621C178;
+	Sun, 22 Jun 2025 21:33:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="JilzLc1W"
-Received: from mail-pf1-f181.google.com (mail-pf1-f181.google.com [209.85.210.181])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="NEFy63Ox"
+Received: from mail-pl1-f178.google.com (mail-pl1-f178.google.com [209.85.214.178])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F41CD223714
-	for <linux-kernel@vger.kernel.org>; Sun, 22 Jun 2025 21:33:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C37FE21B9E5
+	for <linux-kernel@vger.kernel.org>; Sun, 22 Jun 2025 21:33:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750628021; cv=none; b=IWRpI014SOFMZ2cbBmhkRNmJADjZ13/HOIGkvjynOv14DA5ovK6z8HUKFmHgFMzHOKnp9gpiRJDDsDuc14zDuX4J24da9MxM0gUmdHOFNEVjfyAfvQwo7VxF5qvuQa7+iChKvijZqcX8GlR2stLNSIB6Njgj9jZH/JGuErKHbE4=
+	t=1750628024; cv=none; b=VQn6rACVCaBFCvitp5Zc8r8SP/axceJ3H9/BwtPbsHogMuGaHfFCmEOEy9cCvWAGy4nM0up5bpG7mzLHMUnxoI0TpAxIAIh9MmyzRj5a8DAom8pZGC6AptxSKStao+yFIw1Bde6bWoFIcMjWKDd/szSgB1EibnbHlbOrueT3Eqc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750628021; c=relaxed/simple;
-	bh=A+kgl3pP41bBhorqPw1acgSIN74xjFREHN1mNj1smKY=;
+	s=arc-20240116; t=1750628024; c=relaxed/simple;
+	bh=kvY4llqgRsxBvMcZ/CXo6FHDMPIg9Hmu3RD2Lrj2HZo=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=GHACaWq2qwOaDzCVaGN9U1b54mParFAemihsXQhI/Xuaw8qEKbaAknvekSl/+qyWzi5lBZT5GAnqHRpfdJpgt0oUresrQ1NpCBNUvva8avk7oFcX9pf28+x+ckZy6QTKcsRyBp28+/JVmX0qVpV/7Ysf9+6KtPTvAPr55GNPfj8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=JilzLc1W; arc=none smtp.client-ip=209.85.210.181
+	 MIME-Version; b=Elp/G9vXs7hK89cUf83/zyN3/CfIA+1WrN/HuonGp4gViLMCQ2jfdOF09up1njA6zhlTu3epAA7o3KKKxXs0jcq4pekurmIqpZqP2tMMsp2WTADrjOc63V8YJOl7/CUM7xAnN+M7CUE1cViC0eljpTNjvv1RTeQ4+S0gJTk0VV4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=NEFy63Ox; arc=none smtp.client-ip=209.85.214.178
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f181.google.com with SMTP id d2e1a72fcca58-73972a54919so2704332b3a.3
-        for <linux-kernel@vger.kernel.org>; Sun, 22 Jun 2025 14:33:39 -0700 (PDT)
+Received: by mail-pl1-f178.google.com with SMTP id d9443c01a7336-2360ff7ac1bso23572925ad.3
+        for <linux-kernel@vger.kernel.org>; Sun, 22 Jun 2025 14:33:42 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1750628019; x=1751232819; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1750628022; x=1751232822; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=sL9evNGVpzgjwGis6FRx6Ny95Jmdu1Zd+5bgNtHIJLs=;
-        b=JilzLc1WGX7ntYoHlbH3LVerlsvB564y5ADXapLhkLwjhyYb6WMQtb+VsODGc9enwm
-         HZyEeunRgdRQafjPJ1pdjGEbFe8xZGht6XHbg8odAFLdl5Ttbu/GXg7MNKC7hZHad98g
-         cTDkBu9uceGMED9yqZrZXqKEvirssjYjQg9nPDhq49/20Qwdnngi72S0bw2VOwSq6Obh
-         Y6LYOwsEbWuTU2FTpzQR1pRKuzheLfQA0DmYuj6V0ikuMXgdcsFeJfuTrkQ3U01gmHGS
-         a7hMhdlVa1pOY4nO1G7kfxqLyweECFoSrVdhal6Cm5Fo+IZsEj01dbD+8uVyUYHhj1La
-         8rYw==
+        bh=SfaLR+xtvYbSj0Yj5pLhRxT8PrYzixVb/sw/K5Eb4uM=;
+        b=NEFy63Ox7cJimbNq08CkoIAWsWlLyYxxmlgx1BP/kbwV24ZownW8YdXy2Lqcm6itgH
+         hiMQkLmegJ7LGwH4p+Myj3xoqYXZTE5rJ7v+cCgL1jvEYV//wzZ72dhGwHx5EfkzAd64
+         4Z7mBC1qJcO7TtTNcUO1EY70Fih25P9qKTL5aEur0dlUlYi2FHU8rldGqK3LfMqcrQek
+         6p7rPHwbAjAfMt0Be3NZvRuGw3aGegpcerFsSDGdY1HLTiKJB7viuY6Nx1AFgWPHRQ6O
+         8ps4eipGckoO+fgrnsSZoTktyGS9Vjj2umK123nYo4GpqpcH84+g1E58j3EWf+xHCEFo
+         eC7g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1750628019; x=1751232819;
+        d=1e100.net; s=20230601; t=1750628022; x=1751232822;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=sL9evNGVpzgjwGis6FRx6Ny95Jmdu1Zd+5bgNtHIJLs=;
-        b=p6azmWEhlSKI7r8r6Q/j9BOFDaPsQc9IIvBQeNZWQj+5LMZQqx6T8p24w2T3bx761m
-         JokroOoGxKiq8R1TcvSCrImg2oUkRz8A6/rOHGtT+kS76tWD4ez+otGI68ch/UaROszp
-         EDQnd2ecpEtjivSfg5ONZyA/WGenKTEGmk3eMlL3kILocRWEumcUBBvJqywdjCqcZbse
-         LBDkEGfvUiM5JEsFKeI+dm8NHqbXrOY/iZSX1K+iBbiSYrFxlwUr3XJ+Wp/O8U4obXQC
-         LXaeBZaPyRRCtiSUH59DYv+aFiSkSSRMRCPCnGA2PKT4LM73zk2yxIpNFpRr6su5vqwd
-         AAKw==
-X-Forwarded-Encrypted: i=1; AJvYcCWqfZyL3tIS+4CAXuqBBUxbFswWVQUVj6dSciVClur7FNkfkh7PMyLe4d1cdjoaQUld3d9S1cAkn4OcuXw=@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywv1jF7wzjKRi+n/rFGIt43H241jrnOu1gk6DMn5e7M4cMBVgEe
-	wIFN8afOi+xbkSXH7gZUZ+HgwGmP9hJ62iQy+1jdWjpEYYFNbcja9pf7
-X-Gm-Gg: ASbGncvIxev5EcD1FQBPLWu6IrrXMloWUitvrdgnDTT1VXYFtj7M7PjIFx9htnkxBGU
-	tgE99ORQZBiGLZgYODS/EsK7Yu4EJCz3+SXh+EVxxkYCkxSAAK0PjLpCR67EQXEUgzKNk3Tj3Nq
-	xh5jga47CSmibqEAB7m3Wr6lqDC65MUbgvMXg1jstYw9zSIPZS/EaZNGkcZsqzln18qc7kOkX5L
-	vDNA9djKohMxcj0jExhDiO237UFhFjyGKgvGtwQXbPgkhifTpwkAYUGfxaNuPp9HKJJWTUt29uF
-	snTYeWMBp7PixDW++W4mpbA7kJNqR/qN2I47oplgQQPybPnNGqSYtz4kUvN+eFATtpC37JBxd6z
-	vm0rXasisbqtUKktSnwMkyCPg6fLCGE2G
-X-Google-Smtp-Source: AGHT+IHnCoh0OAe4axWmL20FoXf5VObbkWOWaaYc43C4lAvRwQcH0SlNZZ/I60fw+XEGmY114DRcGQ==
-X-Received: by 2002:a05:6a00:238c:b0:746:2a0b:3dc8 with SMTP id d2e1a72fcca58-7490dac586emr14075135b3a.17.1750628019333;
-        Sun, 22 Jun 2025 14:33:39 -0700 (PDT)
+        bh=SfaLR+xtvYbSj0Yj5pLhRxT8PrYzixVb/sw/K5Eb4uM=;
+        b=d0rQcYpCkx5g6L82l0cnVNkTynZ02o5D51pYf5e3GPKeVxTCcvkaToGSjSPUjMD1Y3
+         IgxFJbsCSx20xGVljI74bZqVM7WY6qZi7nB1jU496Eju9wIFQcbNW0nmReYO3fHFJswP
+         6ymGn9etOT1uTwssriM0CX8nZJVb4twaAYXb2hn3m85rmvxk8QS2eq3pw+byb7dx8UEh
+         GBwlK16HatJ6Y9L4PoJfj0cPsQZrnMPXm64yDq3pmQLpKLENcYgpTyL2zqFQNQz0F2Yw
+         Aql/6QIfxgZddIrq/d7Mcf22tgUXa7WHuRgxpQ7oR99RXs/4cYGeDEL6+yH5Oo1wvGhx
+         gxWA==
+X-Forwarded-Encrypted: i=1; AJvYcCWd+9SSR/itT0le5mz+X8U81aTS2rkAfVtYCeLuaA4YeERducWSapW8b2OjnEHSIvqn3NC0doUrhn3B69Q=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwkP89P7WmBC+DlwLhyXykPHxtLTymyOQAsc1qVcy3xylRqq5hV
+	szQNDDocxxK+WtQEN05W0RcsYOrSQe2eMtTKmM9vkzpNXLhXkcoquV5o
+X-Gm-Gg: ASbGnctNPpZsJFgXEHzu9x2x9GlynDgW7n4iGs1onerM0MVQPVIoH/Q8fFHlcHT6CtP
+	66pcZBMgIEO6sxSh2es60oHccXR202fEFp7csmQggXcL+p7mEZbFcX5SERGMfa+EQUNtmCp2gI9
+	3PSkuqt8QB0F3cYAMNwyNIXKRoSrxo7Al81hl+pjwLgUqFatjdKiQ5ZBOy0LIJ40Ouaoj0SResM
+	x1+q8bxkcNXxsKLvUq0zUnARym0Yp0YiP7aDM+fGNh2yau1mmc6rZlFuX9x8D03295Rfn/zvEbT
+	zUUT0rcvoUGwSRK16PLBqMUeUl+Il5HE6IIRBvWvkSrMcvzs/mtwd9triyo+HWc82ecZbJ758bc
+	N+LWegIpj7sO9qCPzRYRf0bGI6l3s8VMS
+X-Google-Smtp-Source: AGHT+IE2X/a6jjB1EnFZZyhowFHSJjm1zCMXjlA1XnMsjL3oMDjBlwH6AM3zKhRsmJ9nHB3vT4YZVg==
+X-Received: by 2002:a17:902:e889:b0:235:f51f:c9e4 with SMTP id d9443c01a7336-237d980b75bmr163794955ad.12.1750628021956;
+        Sun, 22 Jun 2025 14:33:41 -0700 (PDT)
 Received: from ikb-h07-29-noble.in.iijlab.net ([202.214.97.5])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7490a6c8c80sm6802898b3a.177.2025.06.22.14.33.38
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-237d83cf981sm68073275ad.59.2025.06.22.14.33.41
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 22 Jun 2025 14:33:38 -0700 (PDT)
+        Sun, 22 Jun 2025 14:33:41 -0700 (PDT)
 Received: by ikb-h07-29-noble.in.iijlab.net (Postfix, from userid 1010)
-	id A45F3EF1EB8; Mon, 23 Jun 2025 06:33:36 +0900 (JST)
+	id 5EFA2EF1EBA; Mon, 23 Jun 2025 06:33:38 +0900 (JST)
 From: Hajime Tazaki <thehajime@gmail.com>
 To: linux-um@lists.infradead.org
 Cc: thehajime@gmail.com,
 	ricarkol@google.com,
 	Liam.Howlett@oracle.com,
 	linux-kernel@vger.kernel.org
-Subject: [PATCH v10 10/13] um: nommu: a work around for MMU dependency to PCI driver
-Date: Mon, 23 Jun 2025 06:33:08 +0900
-Message-ID: <b7c74ee793ac4a5c301ebca27f8d58990625638b.1750594487.git.thehajime@gmail.com>
+Subject: [PATCH v10 11/13] um: change machine name for uname output
+Date: Mon, 23 Jun 2025 06:33:09 +0900
+Message-ID: <a0ad90a5ce95e8d34c6c5855cff701bdd51dea5a.1750594487.git.thehajime@gmail.com>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <cover.1750594487.git.thehajime@gmail.com>
 References: <cover.1750594487.git.thehajime@gmail.com>
@@ -94,50 +94,46 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-The commit 8fe743b5eba0 ("PCI: Add CONFIG_MMU dependency") restricts the
-PCI base driver to depend on MMU.  While nommu UML _can_ implement PCI
-drivers over PCI devices (e.g., virtio-pci), the current nommu UML
-doesn't implement it.
-
-But without PCI drivers kunit complains as config for kunit
-(arch_uml.config) defines the dependency to PCI drivers.
-
-This commit fixes the issue of this compile failures when building PCI
-drivers with nommu UML.  In particular, the fix is to undefine the
-constant PCI_IOBASE to be able to bypass pci_unmap_iospace() call.
-
-When we will support PCI drivers for nommu UML, we will refactor this
-code.
+This commit tries to display MMU/!MMU mode from the output of uname(2)
+so that users can distinguish which mode of UML is running right now.
 
 Signed-off-by: Hajime Tazaki <thehajime@gmail.com>
 ---
- arch/um/include/asm/dma.h | 13 +++++++++++++
- 1 file changed, 13 insertions(+)
+ arch/um/Makefile        | 6 ++++++
+ arch/um/os-Linux/util.c | 3 ++-
+ 2 files changed, 8 insertions(+), 1 deletion(-)
 
-diff --git a/arch/um/include/asm/dma.h b/arch/um/include/asm/dma.h
-index fdc53642c718..643d74555671 100644
---- a/arch/um/include/asm/dma.h
-+++ b/arch/um/include/asm/dma.h
-@@ -4,6 +4,19 @@
+diff --git a/arch/um/Makefile b/arch/um/Makefile
+index 5371c9a1b11e..9bc8fc149514 100644
+--- a/arch/um/Makefile
++++ b/arch/um/Makefile
+@@ -153,6 +153,12 @@ export CFLAGS_vmlinux := $(LINK-y) $(LINK_WRAPS) $(LD_FLAGS_CMDLINE) $(CC_FLAGS_
+ CLEAN_FILES += linux x.i gmon.out
+ MRPROPER_FILES += $(HOST_DIR)/include/generated
  
- #include <asm/io.h>
- 
-+/**
-+ * now the PCI core driver depends on CONFIG_MMU in linus tree, nommu
-+ * UML cannot build with PCI but without PCI kunit doesn't build due
-+ * to the dependency to the CONFIG_VIRTIO_UML.
-+ *
-+ * This is a workaround to silence build failures on kunit, which is
-+ * valid until nommu UML supports PCI drivers (e.g., virtio-pci) in a
-+ * future.
-+ */
-+#ifndef CONFIG_MMU
-+#undef PCI_IOBASE
-+#endif
++ifeq ($(CONFIG_MMU),y)
++UTS_MACHINE := "um"
++else
++UTS_MACHINE := "um\(nommu\)"
++endif
 +
- extern unsigned long uml_physmem;
+ archclean:
+ 	@find . \( -name '*.bb' -o -name '*.bbg' -o -name '*.da' \
+ 		-o -name '*.gcov' \) -type f -print | xargs rm -f
+diff --git a/arch/um/os-Linux/util.c b/arch/um/os-Linux/util.c
+index 4193e04d7e4a..20421e9f0f77 100644
+--- a/arch/um/os-Linux/util.c
++++ b/arch/um/os-Linux/util.c
+@@ -65,7 +65,8 @@ void setup_machinename(char *machine_out)
+ 	}
+ # endif
+ #endif
+-	strcpy(machine_out, host.machine);
++	strcat(machine_out, "/");
++	strcat(machine_out, host.machine);
+ }
  
- #define MAX_DMA_ADDRESS (uml_physmem)
+ void setup_hostinfo(char *buf, int len)
 -- 
 2.43.0
 
