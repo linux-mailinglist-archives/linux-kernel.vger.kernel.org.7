@@ -1,297 +1,156 @@
-Return-Path: <linux-kernel+bounces-697037-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-697029-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2DE38AE2F5E
-	for <lists+linux-kernel@lfdr.de>; Sun, 22 Jun 2025 12:21:59 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9074BAE2F4B
+	for <lists+linux-kernel@lfdr.de>; Sun, 22 Jun 2025 12:12:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 853783A62EA
-	for <lists+linux-kernel@lfdr.de>; Sun, 22 Jun 2025 10:21:32 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 193E01709DC
+	for <lists+linux-kernel@lfdr.de>; Sun, 22 Jun 2025 10:12:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3D0D7433A0;
-	Sun, 22 Jun 2025 10:21:00 +0000 (UTC)
-Received: from pegase1.c-s.fr (pegase1.c-s.fr [93.17.236.30])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E504A1B423D;
-	Sun, 22 Jun 2025 10:20:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=93.17.236.30
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DEF651C3039;
+	Sun, 22 Jun 2025 10:11:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=analog.com header.i=@analog.com header.b="NNWP7lmz"
+Received: from mx0b-00128a01.pphosted.com (mx0a-00128a01.pphosted.com [148.163.135.77])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 91ECC19342F
+	for <linux-kernel@vger.kernel.org>; Sun, 22 Jun 2025 10:11:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.135.77
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750587659; cv=none; b=SfGkU/yCPbKB9luTpnZzCl7PYrdsdDfCq5jrsNzddnghB4kokwuTCuos2qu2B8LDz3+DmvU0Gk7Df/kJhzI4nITAOzKVorDLjsCLJeMvZF0eCncSva/dE6rdJXUaYse3wKLpvXsNOu8v86Wzo9Qbzec3JwDRvshl3ibfPIwtBDs=
+	t=1750587116; cv=none; b=ouGPxiSXJYA/0EskeQTr54XeiWoaSErF+UVLFC+opDRCnuiVJZCL9D1ehFv8FYwfve/G+1icFN4xrN3HVgQmk8LjxoQwGaZOVPtMUd4YYgbT2Vv4YZm3GrrXGEAMW/f3npwpOIzWCL19t0qPnewigNNm+rnvil9MZnayHR7MOU8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750587659; c=relaxed/simple;
-	bh=qYAjfl18Jby7CwcbCS7uFbA23zIiub7HvvgW5b+LR8Q=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=RvaM/RRUxz3lS+DhNwhB8O0X9PV5ie3w/lb/BgWjwHOxJ+xXqv/wpR6bOFEyfiHfIIXUGergLZ/x5lk6eDSNxRHhvv7nAMkSwvZhw2WtV+IpiU6RBqWFWFI7GJ4/6L5MEI9pf6g1Nlcb6zTc5+Rw3i5HpYVRplVWljYDTtzvEEk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=csgroup.eu; spf=pass smtp.mailfrom=csgroup.eu; arc=none smtp.client-ip=93.17.236.30
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=csgroup.eu
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=csgroup.eu
-Received: from localhost (mailhub3.si.c-s.fr [192.168.12.233])
-	by localhost (Postfix) with ESMTP id 4bQ62t64q5z9sgR;
-	Sun, 22 Jun 2025 11:52:54 +0200 (CEST)
-X-Virus-Scanned: amavisd-new at c-s.fr
-Received: from pegase1.c-s.fr ([192.168.12.234])
-	by localhost (pegase1.c-s.fr [127.0.0.1]) (amavisd-new, port 10024)
-	with ESMTP id NPMK_hjCi9xN; Sun, 22 Jun 2025 11:52:54 +0200 (CEST)
-Received: from messagerie.si.c-s.fr (messagerie.si.c-s.fr [192.168.25.192])
-	by pegase1.c-s.fr (Postfix) with ESMTP id 4bQ62t4rxQz9sfF;
-	Sun, 22 Jun 2025 11:52:54 +0200 (CEST)
-Received: from localhost (localhost [127.0.0.1])
-	by messagerie.si.c-s.fr (Postfix) with ESMTP id 9B88E8B764;
-	Sun, 22 Jun 2025 11:52:54 +0200 (CEST)
-X-Virus-Scanned: amavisd-new at c-s.fr
-Received: from messagerie.si.c-s.fr ([127.0.0.1])
-	by localhost (messagerie.si.c-s.fr [127.0.0.1]) (amavisd-new, port 10023)
-	with ESMTP id s3blMO_cBix6; Sun, 22 Jun 2025 11:52:54 +0200 (CEST)
-Received: from PO20335.idsi0.si.c-s.fr (unknown [192.168.235.99])
-	by messagerie.si.c-s.fr (Postfix) with ESMTP id 437548B763;
-	Sun, 22 Jun 2025 11:52:53 +0200 (CEST)
-From: Christophe Leroy <christophe.leroy@csgroup.eu>
-To: Michael Ellerman <mpe@ellerman.id.au>,
-	Nicholas Piggin <npiggin@gmail.com>,
-	Naveen N Rao <naveen@kernel.org>,
-	Madhavan Srinivasan <maddy@linux.ibm.com>,
-	Alexander Viro <viro@zeniv.linux.org.uk>,
-	Christian Brauner <brauner@kernel.org>,
-	Jan Kara <jack@suse.cz>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Ingo Molnar <mingo@redhat.com>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Darren Hart <dvhart@infradead.org>,
-	Davidlohr Bueso <dave@stgolabs.net>,
-	"Andre Almeida" <andrealmeid@igalia.com>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	David Laight <david.laight.linux@gmail.com>,
-	Dave Hansen <dave.hansen@linux.intel.com>,
-	Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Christophe Leroy <christophe.leroy@csgroup.eu>,
-	linux-kernel@vger.kernel.org,
-	linuxppc-dev@lists.ozlabs.org,
-	linux-fsdevel@vger.kernel.org,
-	linux-mm@kvack.org
-Subject: [PATCH 5/5] powerpc: Implement masked user access
-Date: Sun, 22 Jun 2025 11:52:43 +0200
-Message-ID: <9dfb66c94941e8f778c4cabbf046af2a301dd963.1750585239.git.christophe.leroy@csgroup.eu>
-X-Mailer: git-send-email 2.49.0
-In-Reply-To: <cover.1750585239.git.christophe.leroy@csgroup.eu>
-References: <cover.1750585239.git.christophe.leroy@csgroup.eu>
+	s=arc-20240116; t=1750587116; c=relaxed/simple;
+	bh=jp4Pc36CSzzbXk6//MSHa6/dTKprXrPi4ybd/MOxNs8=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-ID:To:CC; b=L7WBnvcg35Sx3TbCCru2qmO4eJ4yX/s13m1OA69ArJNYKqUBy1Xc76yU3O5QoFtQe8e3ILuUFrFyU4QNKiT8zNjUPFt9XeYNrrIFn7AckMZeggvi0CKffw0mFo1GuKYji0v+R4Wjuppl8p6uLcTaBuaX+yf1JQuqZy3CMbsOsJc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=analog.com; spf=pass smtp.mailfrom=analog.com; dkim=pass (2048-bit key) header.d=analog.com header.i=@analog.com header.b=NNWP7lmz; arc=none smtp.client-ip=148.163.135.77
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=analog.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=analog.com
+Received: from pps.filterd (m0375855.ppops.net [127.0.0.1])
+	by mx0b-00128a01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 55M73GhH024701;
+	Sun, 22 Jun 2025 06:11:47 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=analog.com; h=cc
+	:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=DKIM; bh=HmyiwALc0RdYP7RT1cFme6Z39pm
+	6ZOABZng/wTl/QrU=; b=NNWP7lmzUFqtKr1BGBLyBDWx9ikpYcHoteqeVxLa/EB
+	kC/ld//1Qy1dkLdTd/CxnaUVCVgsvzB0OJHBckxJaf2ZXiinkZm8/5mulPqVs3pq
+	6b1XyCX2sV3W6OTDS7R5wv/oDKHpTcYnPcVKvdtENl7qEClWZNFyDvAyvPtgw+yN
+	iDQUnZ3t9TrHE8h//4/4fLhv2MGQyV1THbNqGoGCdv71qsHrc9WWSND/D9Vj0NKA
+	NxzNsTmcgviP94LcJH/+OsC9DTR/GOLTfyANdiycEomc2wCQk5qeRKEXamekrtjl
+	P7YAkR9olWX0SNLZFMA5AN9Wb1fC413IaKYyRNeQRIw==
+Received: from nwd2mta3.analog.com ([137.71.173.56])
+	by mx0b-00128a01.pphosted.com (PPS) with ESMTPS id 47ed3qgdmd-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Sun, 22 Jun 2025 06:11:46 -0400 (EDT)
+Received: from ASHBMBX9.ad.analog.com (ASHBMBX9.ad.analog.com [10.64.17.10])
+	by nwd2mta3.analog.com (8.14.7/8.14.7) with ESMTP id 55MABjKp001647
+	(version=TLSv1/SSLv3 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+	Sun, 22 Jun 2025 06:11:45 -0400
+Received: from ASHBCASHYB5.ad.analog.com (10.64.17.133) by
+ ASHBMBX9.ad.analog.com (10.64.17.10) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1748.10; Sun, 22 Jun 2025 06:11:45 -0400
+Received: from ASHBMBX8.ad.analog.com (10.64.17.5) by
+ ASHBCASHYB5.ad.analog.com (10.64.17.133) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1748.10; Sun, 22 Jun 2025 06:11:45 -0400
+Received: from zeus.spd.analog.com (10.66.68.11) by ashbmbx8.ad.analog.com
+ (10.64.17.5) with Microsoft SMTP Server id 15.2.1748.10 via Frontend
+ Transport; Sun, 22 Jun 2025 06:11:45 -0400
+Received: from HYB-DlYm71t3hSl.ad.analog.com (HYB-DlYm71t3hSl.ad.analog.com [10.32.14.29])
+	by zeus.spd.analog.com (8.15.1/8.15.1) with ESMTP id 55MABXwc012869;
+	Sun, 22 Jun 2025 06:11:37 -0400
+From: Jorge Marques <jorge.marques@analog.com>
+Date: Sun, 22 Jun 2025 12:11:07 +0200
+Subject: [PATCH] i3c: master: Initialize ret in i3c_i2c_notifier_call()
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1750585959; l=7393; i=christophe.leroy@csgroup.eu; s=20211009; h=from:subject:message-id; bh=qYAjfl18Jby7CwcbCS7uFbA23zIiub7HvvgW5b+LR8Q=; b=detE8VsRyRW16C7FKw7YfeTCPzD9KbeI1xJBtx/L1fEZ2e90YcB368xGnwXVIdeqLMLnDjpxY Tph1QADOh/aDelxyXJVKuTKJ0HVilE7dg2yH+ubXhNEGZOguGh1XLt3
-X-Developer-Key: i=christophe.leroy@csgroup.eu; a=ed25519; pk=HIzTzUj91asvincQGOFx6+ZF5AoUuP9GdOtQChs7Mm0=
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-ID: <20250622-i3c-master-ret-uninitialized-v1-1-aabb5625c932@analog.com>
+X-B4-Tracking: v=1; b=H4sIALrWV2gC/x3MQQrCMBAF0KuUWTvQTGmsXkW6CM2oHzTKJBVp6
+ N0NLt/mVcpq0EznrpLpBxmv1OAOHS33kG7KiM0kvYy9F2EMCz9DLmpsWnhNSCgID2wa2XnxY5z
+ CdHQnasXb9Irvv7/M+/4Dnue0S24AAAA=
+X-Change-ID: 20250622-i3c-master-ret-uninitialized-16265d8a8719
+To: Alexandre Belloni <alexandre.belloni@bootlin.com>,
+        Frank Li
+	<Frank.Li@nxp.com>
+CC: <linux-i3c@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
+        "Jorge
+ Marques" <jorge.marques@analog.com>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1750587066; l=1178;
+ i=jorge.marques@analog.com; s=20250303; h=from:subject:message-id;
+ bh=jp4Pc36CSzzbXk6//MSHa6/dTKprXrPi4ybd/MOxNs8=;
+ b=EWFuffKP2SgBONBC/1+34P/8TeIH1cTd9XrcGP6BRucKlus/qcH+2WqQHOhfGt2UKAdBiaX9S
+ MI3t9BigKTRC4TV/YQCNmyiFgLYV1IN/X+eMMLAOrQkNnd3EvfasftP
+X-Developer-Key: i=jorge.marques@analog.com; a=ed25519;
+ pk=NUR1IZZMH0Da3QbJ2tBSznSPVfRpuoWdhBzKGSpAdbg=
+X-ADIRuleOP-NewSCL: Rule Triggered
+X-Authority-Analysis: v=2.4 cv=HZYUTjE8 c=1 sm=1 tr=0 ts=6857d6e2 cx=c_pps
+ a=PpDZqlmH/M8setHirZLBMw==:117 a=PpDZqlmH/M8setHirZLBMw==:17
+ a=IkcTkHD0fZMA:10 a=6IFa9wvqVegA:10 a=gAnH3GRIAAAA:8 a=DsFxo23woeNpobuw7SsA:9
+ a=QEXdDO2ut3YA:10
+X-Proofpoint-GUID: BzeJCCSOoZQnRUJYl4w3ElJy4EZX4lhE
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNjIyMDA2MSBTYWx0ZWRfX56W7FFsZgIM8
+ P8KptipaSDUwci68GFNtte7NS6mnGRGS1AP+gijqBYIh00HecAWhewZccaWuXvoTpnWt9xg8MYr
+ KZYM5Pnrq/edYtsjdD40jM8OY3DuremXbfFNcMGicRKhp4nhKQ0eQHd2iqF/HrhvO+W1BF45nHv
+ LI3AdqtuV+iMzO6mrEwt9wZsErwHpSkgQak2HUPHt34tiqVCcgZU30sYsygZ17bQdiF7eyt6x8k
+ /4/Be/NdOpwkxghbbLU6XXu9PeEDee2RTAvfJwtjSXAsnFaqzNo1ftFXHoC11Keg5sHgA9BXviw
+ VhwgepaXY+mZLtlYLXSNSrgy0GLHeMBBioZENCqD0cPceAiBCZLt67WoTOORSuPtxoyP0uxCv0e
+ /tcVAiuuS2ZAb0oYILRw9yPryiYf1ULfc337shbsIo/13tgfjvpU+5LDiCNfq2+Gj7NV4G9Q
+X-Proofpoint-ORIG-GUID: BzeJCCSOoZQnRUJYl4w3ElJy4EZX4lhE
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.0.736,FMLib:17.12.80.40
+ definitions=2025-06-22_03,2025-06-20_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ mlxlogscore=999 bulkscore=0 malwarescore=0 spamscore=0 priorityscore=1501
+ mlxscore=0 impostorscore=0 adultscore=0 clxscore=1015 suspectscore=0
+ phishscore=0 lowpriorityscore=0 classifier=spam authscore=0 authtc=n/a
+ authcc= route=outbound adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2505280000 definitions=main-2506220061
 
-Masked user access avoids the address/size verification by access_ok().
-Allthough its main purpose is to skip the speculation in the
-verification of user address and size hence avoid the need of spec
-mitigation, it also has the advantage to reduce the amount of
-instructions needed so it also benefits to platforms that don't
-need speculation mitigation, especially when the size of the copy is
-not know at build time.
+Set ret to -EINVAL if i3c_i2c_notifier_call() receives an invalid
+action, resolving uninitialized warning.
 
-So implement masked user access on powerpc. The only requirement is
-to have memory gap that faults between the top user space and the
-real start of kernel area. On 64 bits platform it is easy, bit 0 is
-always 0 for user addresses and always 1 for kernel addresses and
-user addresses stop long before the end of the area. On 32 bits it
-is more tricky. It theory user space can go up to 0xbfffffff while
-kernel will usually start at 0xc0000000. So a gap needs to be added
-inbetween. Allthough in theory a single 4k page would suffice, it
-is easier and more efficient to enforce a 128k gap below kernel,
-as it simplifies the masking.
-
-Unlike x86_64 which masks the address to 'all bits set' when the
-user address is invalid, here the address is set to an address is
-the gap. It avoids relying on the zero page to catch offseted
-accesses.
-
-e500 has the isel instruction which allows selecting one value or
-the other without branch and that instruction is not speculative, so
-use it. Allthough GCC usually generates code using that instruction,
-it is safer to use inline assembly to be sure. The result is:
-
-  14:	3d 20 bf fe 	lis     r9,-16386
-  18:	7c 03 48 40 	cmplw   r3,r9
-  1c:	7c 69 18 5e 	iselgt  r3,r9,r3
-
-On other ones, when kernel space is over 0x80000000 and user space
-is below, the logic in mask_user_address_simple() leads to a
-3 instruction sequence:
-
-  14:	7c 69 fe 70 	srawi   r9,r3,31
-  18:	7c 63 48 78 	andc    r3,r3,r9
-  1c:	51 23 00 00 	rlwimi  r3,r9,0,0,0
-
-This is the default on powerpc 8xx.
-
-When the limit between user space and kernel space is not 0x80000000,
-mask_user_address_32() is used and a 6 instructions sequence is
-generated:
-
-  24:	54 69 7c 7e 	srwi    r9,r3,17
-  28:	21 29 57 ff 	subfic  r9,r9,22527
-  2c:	7d 29 fe 70 	srawi   r9,r9,31
-  30:	75 2a b0 00 	andis.  r10,r9,45056
-  34:	7c 63 48 78 	andc    r3,r3,r9
-  38:	7c 63 53 78 	or      r3,r3,r10
-
-The constraint is that TASK_SIZE be aligned to 128K in order to get
-the most optimal number of instructions.
-
-When CONFIG_PPC_BARRIER_NOSPEC is not defined, fallback on the
-test-based masking as it is quicker than the 6 instructions sequence
-but not necessarily quicker than the 3 instructions sequences above.
-
-On 64 bits, kernel is always above 0x8000000000000000 and user always
-below, which leads to a 4 instructions sequence:
-
-  80:	7c 69 1b 78 	mr      r9,r3
-  84:	7c 63 fe 76 	sradi   r3,r3,63
-  88:	7d 29 18 78 	andc    r9,r9,r3
-  8c:	79 23 00 4c 	rldimi  r3,r9,0,1
-
-Signed-off-by: Christophe Leroy <christophe.leroy@csgroup.eu>
+Signed-off-by: Jorge Marques <jorge.marques@analog.com>
 ---
- arch/powerpc/Kconfig               |   2 +-
- arch/powerpc/include/asm/uaccess.h | 100 +++++++++++++++++++++++++++++
- 2 files changed, 101 insertions(+), 1 deletion(-)
+If a invalid action was passed to i3c_i2c_notifier_call(), uninitialized
+would be returned. Add a default option in the switch case to set it as
+-EINVAL; I didn't set at the variable definition for readability
+purpose. The warning was caught by smatch.
+---
+ drivers/i3c/master.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
-diff --git a/arch/powerpc/Kconfig b/arch/powerpc/Kconfig
-index c3e0cc83f120..c26a39b4504a 100644
---- a/arch/powerpc/Kconfig
-+++ b/arch/powerpc/Kconfig
-@@ -1303,7 +1303,7 @@ config TASK_SIZE
- 	hex "Size of user task space" if TASK_SIZE_BOOL
- 	default "0x80000000" if PPC_8xx
- 	default "0xb0000000" if PPC_BOOK3S_32 && EXECMEM
--	default "0xc0000000"
-+	default "0xbffe0000"
+diff --git a/drivers/i3c/master.c b/drivers/i3c/master.c
+index fd81871609d95bc082bd401681e7e132ea74f8a7..68b8ea9174b984a6c89b389c4b3a9669239def70 100644
+--- a/drivers/i3c/master.c
++++ b/drivers/i3c/master.c
+@@ -2467,6 +2467,8 @@ static int i3c_i2c_notifier_call(struct notifier_block *nb, unsigned long action
+ 	case BUS_NOTIFY_DEL_DEVICE:
+ 		ret = i3c_master_i2c_detach(adap, client);
+ 		break;
++	default:
++		ret = -EINVAL;
+ 	}
+ 	i3c_bus_maintenance_unlock(&master->bus);
  
- config MODULES_SIZE_BOOL
- 	bool "Set custom size for modules/execmem area"
-diff --git a/arch/powerpc/include/asm/uaccess.h b/arch/powerpc/include/asm/uaccess.h
-index 89d53d4c2236..19743ee80523 100644
---- a/arch/powerpc/include/asm/uaccess.h
-+++ b/arch/powerpc/include/asm/uaccess.h
-@@ -2,6 +2,8 @@
- #ifndef _ARCH_POWERPC_UACCESS_H
- #define _ARCH_POWERPC_UACCESS_H
- 
-+#include <linux/sizes.h>
-+
- #include <asm/processor.h>
- #include <asm/page.h>
- #include <asm/extable.h>
-@@ -455,6 +457,104 @@ user_write_access_begin(const void __user *ptr, size_t len)
- #define user_write_access_begin	user_write_access_begin
- #define user_write_access_end		prevent_current_write_to_user
- 
-+/*
-+ * Masking the user address is an alternative to a conditional
-+ * user_access_begin that can avoid the fencing. This only works
-+ * for dense accesses starting at the address.
-+ */
-+static inline void __user *mask_user_address_simple(const void __user *ptr)
-+{
-+	unsigned long addr = (unsigned long)ptr;
-+	unsigned long mask = (unsigned long)((long)addr >> (BITS_PER_LONG - 1));
-+
-+	addr = ((addr & ~mask) & (~0UL >> 1)) | (mask & (1UL << (BITS_PER_LONG - 1)));
-+
-+	return (void __user *)addr;
-+}
-+
-+static inline void __user *mask_user_address_e500(const void __user *ptr)
-+{
-+	unsigned long addr;
-+
-+	asm("cmplw %1, %2; iselgt %0, %2, %1" : "=r"(addr) : "r"(ptr), "r"(TASK_SIZE): "cr0");
-+
-+	return (void __user *)addr;
-+}
-+
-+/* Make sure TASK_SIZE is a multiple of 128K for shifting by 17 to the right */
-+static inline void __user *mask_user_address_32(const void __user *ptr)
-+{
-+	unsigned long addr = (unsigned long)ptr;
-+	unsigned long mask = (unsigned long)((long)((TASK_SIZE >> 17) - 1 - (addr >> 17)) >> 31);
-+
-+	addr = (addr & ~mask) | (TASK_SIZE & mask);
-+
-+	return (void __user *)addr;
-+}
-+
-+static inline void __user *mask_user_address_fallback(const void __user *ptr)
-+{
-+	unsigned long addr = (unsigned long)ptr;
-+
-+	return (void __user *)(addr < TASK_SIZE ? addr : TASK_SIZE);
-+}
-+
-+static inline void __user *mask_user_address(const void __user *ptr)
-+{
-+#ifdef MODULES_VADDR
-+	const unsigned long border = MODULES_VADDR;
-+#else
-+	const unsigned long border = PAGE_OFFSET;
-+#endif
-+	BUILD_BUG_ON(TASK_SIZE_MAX & (SZ_128K - 1));
-+	BUILD_BUG_ON(TASK_SIZE_MAX + SZ_128K > border);
-+	BUILD_BUG_ON(TASK_SIZE_MAX & 0x8000000000000000ULL);
-+	BUILD_BUG_ON(IS_ENABLED(CONFIG_PPC64) && !(PAGE_OFFSET & 0x8000000000000000ULL));
-+
-+	if (IS_ENABLED(CONFIG_PPC64))
-+		return mask_user_address_simple(ptr);
-+	if (IS_ENABLED(CONFIG_E500))
-+		return mask_user_address_e500(ptr);
-+	if (TASK_SIZE <= SZ_2G && border >= SZ_2G)
-+		return mask_user_address_simple(ptr);
-+	if (IS_ENABLED(CONFIG_PPC_BARRIER_NOSPEC))
-+		return mask_user_address_32(ptr);
-+	return mask_user_address_fallback(ptr);
-+}
-+
-+static inline void __user *masked_user_access_begin(const void __user *p)
-+{
-+	void __user *ptr = mask_user_address(p);
-+
-+	might_fault();
-+	allow_read_write_user(ptr, ptr);
-+
-+	return ptr;
-+}
-+#define masked_user_access_begin masked_user_access_begin
-+
-+static inline void __user *masked_user_read_access_begin(const void __user *p)
-+{
-+	void __user *ptr = mask_user_address(p);
-+
-+	might_fault();
-+	allow_read_from_user(ptr);
-+
-+	return ptr;
-+}
-+#define masked_user_read_access_begin masked_user_read_access_begin
-+
-+static inline void __user *masked_user_write_access_begin(const void __user *p)
-+{
-+	void __user *ptr = mask_user_address(p);
-+
-+	might_fault();
-+	allow_write_to_user(ptr);
-+
-+	return ptr;
-+}
-+#define masked_user_write_access_begin masked_user_write_access_begin
-+
- #define unsafe_get_user(x, p, e) do {					\
- 	__long_type(*(p)) __gu_val;				\
- 	__typeof__(*(p)) __user *__gu_addr = (p);		\
+
+---
+base-commit: 19272b37aa4f83ca52bdf9c16d5d81bdd1354494
+change-id: 20250622-i3c-master-ret-uninitialized-16265d8a8719
+
+Best regards,
 -- 
-2.49.0
+Jorge Marques <jorge.marques@analog.com>
+
 
 
