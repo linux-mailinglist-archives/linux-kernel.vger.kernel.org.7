@@ -1,104 +1,74 @@
-Return-Path: <linux-kernel+bounces-697205-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-697207-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8470BAE316F
-	for <lists+linux-kernel@lfdr.de>; Sun, 22 Jun 2025 20:44:20 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id E7B3FAE318E
+	for <lists+linux-kernel@lfdr.de>; Sun, 22 Jun 2025 20:48:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4DB437A2FDA
-	for <lists+linux-kernel@lfdr.de>; Sun, 22 Jun 2025 18:42:57 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8C6BA18905E3
+	for <lists+linux-kernel@lfdr.de>; Sun, 22 Jun 2025 18:48:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 908891F560D;
-	Sun, 22 Jun 2025 18:44:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D9C6C1885B8;
+	Sun, 22 Jun 2025 18:48:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=lwn.net header.i=@lwn.net header.b="FAWSSrtr"
-Received: from ms.lwn.net (ms.lwn.net [45.79.88.28])
+	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="soA1+CDj"
+Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [62.89.141.173])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 33A6514A62B;
-	Sun, 22 Jun 2025 18:44:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.79.88.28
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 598D923BE
+	for <linux-kernel@vger.kernel.org>; Sun, 22 Jun 2025 18:48:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.89.141.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750617852; cv=none; b=kv79bsvSOe8qDSg5lB/kL3UT2OYEvf9ZDj9EtU2jtAg4906trQtTXkqzJwDNFWfRTUwrgYp9T4W2s6UaZymRpK9NAkee/8bm+Y/ltSmtJe5mMrn6N4Q6xVWa5TdPXc0ljoWaiX9ZzNr/hYGtk3h+gFx0yojbLH4F5/AtyylTRbM=
+	t=1750618100; cv=none; b=Y8DWBKKxJtX2hq2QnVBoZar+Ryal8bF/0/8dxzLW3uD3egXiUUC6wS/NYDpuT1dKuRIK67TFE/9Ovg0+nolEiCazcaQsyFekDw8ATvicnjnrC4jctkuuC8NVKE2sTlcebO8BCo17GAXV2xVAi4wsspDWl2KHooOuy0s5ewjZY7w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750617852; c=relaxed/simple;
-	bh=jQPMbjL3fFFGkQL8I+x5O/PvFKVwP7m5RVQT4xh0ld8=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=bo19sU00zMcgX/iggUNkTFoz/OYla4draN+qDBHEx0JrWGrM65VS1K5ASqkXXz/nEYjEGqqkgypGjJZnZUdGUxHK/ipO68CfQkQhmR0KxssHOGDpzOj4+Xm0Ro9SF2S4JxWrZeN0ZCWcd3D/VW/2GxmnPju5OLuXApaqvgh0w2M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lwn.net; spf=pass smtp.mailfrom=lwn.net; dkim=pass (2048-bit key) header.d=lwn.net header.i=@lwn.net header.b=FAWSSrtr; arc=none smtp.client-ip=45.79.88.28
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lwn.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lwn.net
-DKIM-Filter: OpenDKIM Filter v2.11.0 ms.lwn.net 27EFE41AD8
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=lwn.net; s=20201203;
-	t=1750617849; bh=xCaxUsriRbQpVDTX0sL0HK9i8FWV8424VECT54piz+4=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
-	b=FAWSSrtrwgcAl0g9Vx65LWJaiJAOoACdTinV4E2tivSqXzpUZUQr8bHqk/UPFicok
-	 2235P+zBbi3u70iJ6KvOhC6j0KXF8ff2rOs9zJD4l6lrgzb8PwZC1ZGnRbTnjjGBwK
-	 hx5l2zKQZA+133b33FXoPEh+OhNdq4Mtpf90CjrOkgcWoP7jkd2RTfTjWnQou6JLEy
-	 4vpF4pZVY8D02qhUAe3irln+/pLh1toxQh/1OI+ZbHzQWmK6RHfBoxalXCddvSfIxp
-	 cDvIYk4N/VAOwy1BrfnmQf4OIcp7LRqQiw8eBFfOrj17cwx27WbSmxhwl+A8eVb2ON
-	 NmFKGJZNIeoOA==
-Received: from localhost (unknown [IPv6:2601:280:4600:2da9:67c:16ff:fe81:5f9b])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by ms.lwn.net (Postfix) with ESMTPSA id 27EFE41AD8;
-	Sun, 22 Jun 2025 18:44:09 +0000 (UTC)
-From: Jonathan Corbet <corbet@lwn.net>
-To: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
-Cc: Linux Doc Mailing List <linux-doc@vger.kernel.org>,
- linux-kernel@vger.kernel.org, Akira Yokosawa <akiyks@gmail.com>
-Subject: Re: [PATCH 0/6] Some improvements for the doc build system
-In-Reply-To: <20250622060015.76a0b29a@foz.lan>
-References: <cover.1750406900.git.mchehab+huawei@kernel.org>
- <87ldpkdgv6.fsf@trenco.lwn.net> <20250622060015.76a0b29a@foz.lan>
-Date: Sun, 22 Jun 2025 12:44:08 -0600
-Message-ID: <874iw7boqv.fsf@trenco.lwn.net>
+	s=arc-20240116; t=1750618100; c=relaxed/simple;
+	bh=BeFCmiexWtXDWj0JyuSEEstUnBHLQ6oqRi6Y+iYqq8s=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=f8v1zyRErxuPSQlvZ4Qjb4EMYie5IHhAGrHWxYlUdLFxNhba3irW14dZA3G1mX42WyWsYWuVMU3bo4rebqh2dvTFzo76p0nWu3hLAlX1AUKlXbE0K/tDZnsJOP7BRCFmv/JpzLUJU9z+ZrUWAhmXLNwoGA2t+v1i287VCRAK6H4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk; spf=none smtp.mailfrom=ftp.linux.org.uk; dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b=soA1+CDj; arc=none smtp.client-ip=62.89.141.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ftp.linux.org.uk
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=linux.org.uk; s=zeniv-20220401; h=Sender:In-Reply-To:Content-Type:
+	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=BeFCmiexWtXDWj0JyuSEEstUnBHLQ6oqRi6Y+iYqq8s=; b=soA1+CDjd7eXcoY5q5ES03zzKI
+	2QTi+9lWKmY/5piWbvwlxTS/jXjAX6WRvoAUg6CKijG1a6lEHSrqgk4MmhxVoYDv0uox9ScF2MebG
+	oKAgDTxYfbYSGmMpIqrGVEKOvcwCNYXaV1yXjuVxR2jlSxr9Su4QC+JidT/HhP/K4BGDjt2V7P8Ep
+	qGg/FSQTYRVFY7is48y+68vRfqRmwDwLrYEg1a0dmUrOddUi5drPhboMZ8mNbGYjFe0e/pIz2XyjS
+	nA4TnxuY4WfMX2qZYI/RuANtU4gIGRrm2jiq0Yhu6X6o2at+ZmccXMqtQKuzlKZ8OUUmG6znq4J2L
+	sYcmgppg==;
+Received: from viro by zeniv.linux.org.uk with local (Exim 4.98.2 #2 (Red Hat Linux))
+	id 1uTPjj-0000000FZLt-0bK3;
+	Sun, 22 Jun 2025 18:48:15 +0000
+Date: Sun, 22 Jun 2025 19:48:15 +0100
+From: Al Viro <viro@zeniv.linux.org.uk>
+To: Amir Mohammad Jahangirzad <a.jahangirzad@gmail.com>
+Cc: hubcap@omnibond.com, martin@omnibond.com, devel@lists.orangefs.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] fs/orangefs: use snprintf() instead of sprintf()
+Message-ID: <20250622184815.GW1880847@ZenIV>
+References: <20250608163559.36401-1-a.jahangirzad@gmail.com>
+ <CADf5TKvyKvaP3eZUR81ND6JQUfVqUEroCrXp=joZ8GHdu2EBbA@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CADf5TKvyKvaP3eZUR81ND6JQUfVqUEroCrXp=joZ8GHdu2EBbA@mail.gmail.com>
+Sender: Al Viro <viro@ftp.linux.org.uk>
 
-Mauro Carvalho Chehab <mchehab+huawei@kernel.org> writes:
+On Sun, Jun 22, 2025 at 10:09:58PM +0330, Amir Mohammad Jahangirzad wrote:
 
-> Em Sat, 21 Jun 2025 13:39:09 -0600
-> Jonathan Corbet <corbet@lwn.net> escreveu:
->
->> OK, I've applied it, but ... someday, I think the test_doc_build tool
->> should be properly documented and put somewhere under tools/testing.
->
-> I added a better documentation for the tool at the v2.
->
-> With regards to move to tools, I'm not certain about it as I can see
-> advantages and disadvantages. 
->
-> Creating a new directory to have just one tool on it seems overkill
-> to me. Also, it is easier to type "scripts/..." than 
-> "tools/testing/build/..." :-)
->
-> There is another aspect: while doing conf.py and Documentation/Makefile
-> cleanup, I noticed that there are still lots of hacks inside them,
-> that are there from the early days when we adopted Sphinx. Perhaps
-> it could make sense to move part of the logic there to this new
-> build tool, which could, for instance, replace the logic inside
-> scripts/sphinx-pre-install and get rid of some magic at the Makefile
-> like the one which handles SPHINXDIRS.
->
-> So, at least for now, I would prefer to keep it under scripts.
+> > Replace sprintf() with snprintf() for copying the debug string
+> > into a temporary buffer, using ORANGEFS_MAX_DEBUG_STRING_LEN as
+> > the maximum size to ensure safe formatting and prevent memory
+> > corruption in edge cases.
 
-I pretty strongly disagree ... scripts/ is a dumping ground, nobody
-really knows what all that stuff there is, nobody is responsible for it.
-Something under tools/ would be more evident as to its purpose and
-maintainership.  We could maybe just do tools/docs/ and move things like
-sphinx-pre-install there as well...
-
-Anyway, I won't try to hold up this work based on that, but now you know
-how I feel...:)
-
-jon
+Out of curiosity - have you actually looked at the format used there?
 
