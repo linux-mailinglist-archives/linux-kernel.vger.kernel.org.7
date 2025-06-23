@@ -1,112 +1,124 @@
-Return-Path: <linux-kernel+bounces-697663-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-697665-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id B7528AE3711
-	for <lists+linux-kernel@lfdr.de>; Mon, 23 Jun 2025 09:36:11 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 63C11AE370B
+	for <lists+linux-kernel@lfdr.de>; Mon, 23 Jun 2025 09:35:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 55EF83B397B
-	for <lists+linux-kernel@lfdr.de>; Mon, 23 Jun 2025 07:34:52 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0347816C0CB
+	for <lists+linux-kernel@lfdr.de>; Mon, 23 Jun 2025 07:35:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7481C1FF7BC;
-	Mon, 23 Jun 2025 07:33:30 +0000 (UTC)
-Received: from mail-il1-f200.google.com (mail-il1-f200.google.com [209.85.166.200])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D8293200BA1;
+	Mon, 23 Jun 2025 07:33:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="gxoLlVjq"
+Received: from mail-lf1-f53.google.com (mail-lf1-f53.google.com [209.85.167.53])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 988B51F4C96
-	for <linux-kernel@vger.kernel.org>; Mon, 23 Jun 2025 07:33:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.200
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7D6FA1F791C
+	for <linux-kernel@vger.kernel.org>; Mon, 23 Jun 2025 07:33:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750664010; cv=none; b=ltmt9202yVrceX2jIcBXHQ+yqKTATlUWsSOnTSs3g9agz2MHpMZ3Z1Bw2QZbXsWND9flRjJfL8ikoMrqZk4cMznknSyDG59lxqZYlGqgBbdQihjpTuxeC8R63hSdKz2YI+06G5j+8p/sRY0cfaPxQHFRIOjhJLF6PWAQKVAVHPk=
+	t=1750664035; cv=none; b=KSY19CSrgGghMPWDc/DOU3dGm+2ogzZz612YjynrDcYtMK8ZIe6xQ3iuW1zkbOVb6cgF4i1JRuq/3svL617aHGf+H9gUOrgc/T0Pyo0D2JzZ+StL8HL3CZ2IdjBxHaXyUJBUg35hSeH4nCbv/pNA2zBF8jVwInUvN9cSAvpPIoc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750664010; c=relaxed/simple;
-	bh=C182m/rz1UPG0iEbuQXqOKb8RATmTTbJJWsx8hEEoYE=;
-	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=OGmEKD2ZbO6VkUJ0lcbHcThYMNn0NImOi9EfpXsQjKQBGDgp4eHYmCpoE3uapYyCDqyZF9E7fvxPoG1TY/tV3jMpsPxHr1ibD/8gAgK9UOFx6deYHxKXpg5z2qiK70PNzya60/vI5DqbWVKh9pkQgLoGH8jsrZtVq+EjbjORfSQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.200
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f200.google.com with SMTP id e9e14a558f8ab-3ddcfea00afso53704055ab.0
-        for <linux-kernel@vger.kernel.org>; Mon, 23 Jun 2025 00:33:28 -0700 (PDT)
+	s=arc-20240116; t=1750664035; c=relaxed/simple;
+	bh=hZqwKFrQ22pH+J6FCqtPgcrjFb7CkKy8B23+PKK0y8Q=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=OUP6HJ3+NF1JAoHicQ1s71aJUocxcAI7x0vo1dJKoCgJwlncxpK/ROKt0dpliYBOvDzwAOnXmIg2U/4hXYqpd71VBS5XbqvLPHIV+FXDwHQILRL4isSEKd/1YhsAGCOz7jgfCtzNwP4bs5ELfSA6C2qQ/naUy5fRVezI/OFhVfU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=gxoLlVjq; arc=none smtp.client-ip=209.85.167.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
+Received: by mail-lf1-f53.google.com with SMTP id 2adb3069b0e04-5533303070cso3632170e87.2
+        for <linux-kernel@vger.kernel.org>; Mon, 23 Jun 2025 00:33:53 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1750664032; x=1751268832; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=e/FmDVYFDGwW5KMGc8hcV6hExdC2WI6OVDkBnOBtebc=;
+        b=gxoLlVjq7UAq81SKleh0Z67563NNike1VukXSYueZBWksTROPOITfzXDsexJQXB7UE
+         gsSWZFUfYxakoUtIqjb1aOGlpIX5thWlq2hFxnjFf1d85FzqvnA5k7EgOqcmAU50coQT
+         G71FSEG7TNaIaHswOgiYYAUYzg/UhHfuG7ZwWrJW5Cuwi2v7YjFM9wF6iIGt4Q9fKot8
+         zoNnFnIhFB677I+/avdqujD4Y+n2+vjYzpg8QYb11ZyFWvjEHsZxUI5nhT2M/22yp8gU
+         Q7JrCPV0+FvEhPMegJ0Xd7sE1yQ3oObfTAxeLviSNoMa4ZbHlgvTe25pMdutOaL9b8Rt
+         EK+A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1750664008; x=1751268808;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=MkMtL8g74a4Ffmhl6B5oXdv1PjxK6Sl/F2gvamq9vEg=;
-        b=ZA72ffMh6CCRe1Zn29U2NboiQ0GTInqBPQPWWajBiEWM5ma4aBhdmNUN6TdWxvZw1P
-         4rbDVCVNB56v+pGxLKdhpkwmoTG45JT8VqIKYNlrBZMrZLuwDPp8Dm6jEQVt4hEaqUAI
-         XiLb9CfWSTe9pYF68YRro5utv/aMiVXhYDXtzwZJcZykMMekedvLgDQFCkWja08J88fn
-         cuj4B3/T381voRayZLaVCNr06IQx1DiuanGO7uamCsxTtK4whlMA35rWMFLO4BwtdsdD
-         YX1gq/iimMaSYhIQUIj3j/xUNboRz6khe3I8/tb/o9uN+eBgMPHJ6WllSn++0GXih3XS
-         PKTA==
-X-Forwarded-Encrypted: i=1; AJvYcCVqa3PfSXeZvBz9tt7q/khmtVuUzRdpiVwTMr7LtKDAlfkijjBoXvQaBgdjObXKNgK7HhdKprGcd4H9z5s=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxokiKVUYZaEIjxd4wvq+KvReucCcc9eqD2srl8mqycba5FJfnr
-	I6NKMH6JlzzTTbtWcHaHGPm/Zb+wat+LvYGhCoziZcoZK3Mk6xGaRhvTw82C/t+LwIaZF6+NPk8
-	DOhQSi3q1DkDKQ9r27+d7SVVWVT4LypRTvIkGKVUcqHyp68xbAT0BQVyUMFE=
-X-Google-Smtp-Source: AGHT+IGipjIMu2zGQY/dXl184ZjlYL/NTmVFjjQurXDO4+Cjbp8YEaSAClEOfMM09VkC4i7+TBYhCnS6kVgWJ0Ry7yqtXpOuaA72
+        d=1e100.net; s=20230601; t=1750664032; x=1751268832;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=e/FmDVYFDGwW5KMGc8hcV6hExdC2WI6OVDkBnOBtebc=;
+        b=bIlN/Map47sjNQexQZv1InUFb1OwmKQHpfxow9WbeoLKKN/EJt0QYsRJ/20wDmdPlj
+         2gtlqhOBNeYmnkQIUhWy5QHAmhrIdQJ7THTH5Ohd4DhgaLe7/zQ4z6PAEsfYHjnxbAee
+         5rRCkwbbi0spvFX5Iwd4LSb7g9lu7VCz9vxDEuIt0XUr35FbvF4IgEp0f5NXx1XAEnfE
+         GYnrP2w9qFHYkN106fmJ3mIKMdIK9T6bC0kBn0XJuajxc6YE80QVNTXpbDopAgKkupqM
+         MPl1Jv/EqCPp5Y12eITpZNWzWinkqLceFSHsBwCTwYEvzYMAG2rMkx0eOyIq5pgu0VBv
+         yvzw==
+X-Forwarded-Encrypted: i=1; AJvYcCWdZR2w0C6IWdGVUNdG10yXTHhQfffISYXCDW8o3wUaKdf2z41GBYIM6KF6eWcIdtn72dFjcpllZeo/aGI=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwaA8ZpXmqSvEPqZpkQHHSRVuab4eWUiiv/a5q8+SN4PnxKGvDO
+	u5b7pO8K4C34po/vTsBZPFXxpSZdOu56JUMgOGQ+W7ac0JZ+T1Lnw+HUzH7bySE0goEblunttsR
+	fzlf++L5vSisy5HnUN4XnXRAaykIyHIXAnD0cn+FANA==
+X-Gm-Gg: ASbGnctqJxxSLhiKti/tjl5/5gqC8/CWFLL8pqi7rlLhBkmTeIkgkyXqEb5dXYC0I6B
+	WEwtZ8sp3lhPZi0bamhlReStIAs+o5cjSnHBLF6gj3uBbR3rKBeAeeYHU0NqsD8nZW317wk9pQ4
+	UleYwbkGkXPzejhfWakrEXHdNzBHSGfNuc11FMYPy5Ywmqw40TnUYH5JooWdiL3R2CeI9sh1yi5
+	w==
+X-Google-Smtp-Source: AGHT+IHXbQ1G61S6XTmap3R9KFxqdYburMPb7gYbxhsdAd+vhJ5pZrPzhPGsI5r9CHk6R8GllO6W7NbS7Xfzhgc6R0U=
+X-Received: by 2002:a05:6512:1153:b0:553:a4a8:b860 with SMTP id
+ 2adb3069b0e04-553e3af3b66mr3432565e87.0.1750664031428; Mon, 23 Jun 2025
+ 00:33:51 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:228e:b0:3dd:b5fd:aafd with SMTP id
- e9e14a558f8ab-3de38c1d5b1mr143371705ab.2.1750664007722; Mon, 23 Jun 2025
- 00:33:27 -0700 (PDT)
-Date: Mon, 23 Jun 2025 00:33:27 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <68590347.a00a0220.2e5631.0013.GAE@google.com>
-Subject: [syzbot] Monthly kernfs report (Jun 2025)
-From: syzbot <syzbot+list5b38c06be0691d28aa6c@syzkaller.appspotmail.com>
-To: gregkh@linuxfoundation.org, linux-kernel@vger.kernel.org, 
-	syzkaller-bugs@googlegroups.com, tj@kernel.org
+References: <20250610-gpiochip-set-rv-soc-v1-0-1a0c36c9deed@linaro.org>
+In-Reply-To: <20250610-gpiochip-set-rv-soc-v1-0-1a0c36c9deed@linaro.org>
+From: Bartosz Golaszewski <brgl@bgdev.pl>
+Date: Mon, 23 Jun 2025 09:33:40 +0200
+X-Gm-Features: AX0GCFvZI7j6aCfaYMvSqKv_YVgtIm3etGx79fDwp0jhT33AUgmaBnK_549jfVI
+Message-ID: <CAMRc=McVV=VBw0DRiz-4tTjh7ZtRLWg=N_LQ2-7O1sKyW30rxw@mail.gmail.com>
+Subject: Re: [PATCH 0/2] soc: use new GPIO line value setter callbacks
+To: Qiang Zhao <qiang.zhao@nxp.com>, Christophe Leroy <christophe.leroy@csgroup.eu>, 
+	Linus Walleij <linus.walleij@linaro.org>, Bartosz Golaszewski <brgl@bgdev.pl>, 
+	Geert Uytterhoeven <geert+renesas@glider.be>, Magnus Damm <magnus.damm@gmail.com>
+Cc: linuxppc-dev@lists.ozlabs.org, linux-arm-kernel@lists.infradead.org, 
+	linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org, 
+	linux-renesas-soc@vger.kernel.org, 
+	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hello kernfs maintainers/developers,
+On Tue, Jun 10, 2025 at 2:38=E2=80=AFPM Bartosz Golaszewski <brgl@bgdev.pl>=
+ wrote:
+>
+> Commit 98ce1eb1fd87e ("gpiolib: introduce gpio_chip setters that return
+> values") added new line setter callbacks to struct gpio_chip. They allow
+> to indicate failures to callers. We're in the process of converting all
+> GPIO controllers to using them before removing the old ones. This series
+> converts all GPIO chips implemented under drivers/soc/.
+>
+> Signed-off-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+> ---
+> Bartosz Golaszewski (2):
+>       soc: fsl: qe: use new GPIO line value setter callbacks
+>       soc: renesas: pwc-rzv2m: use new GPIO line value setter callbacks
+>
+>  drivers/soc/fsl/qe/gpio.c       | 6 ++++--
+>  drivers/soc/renesas/pwc-rzv2m.c | 8 +++++---
+>  2 files changed, 9 insertions(+), 5 deletions(-)
+> ---
+> base-commit: 19272b37aa4f83ca52bdf9c16d5d81bdd1354494
+> change-id: 20250523-gpiochip-set-rv-soc-14e1d9414f70
+>
+> Best regards,
+> --
+> Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+>
 
-This is a 31-day syzbot report for the kernfs subsystem.
-All related reports/information can be found at:
-https://syzkaller.appspot.com/upstream/s/kernfs
+I see Geert queued patch 2/2, who would take patch 1/2?
 
-During the period, 3 new issues were detected and 0 were fixed.
-In total, 22 issues are still open and 23 have already been fixed.
-
-Some of the still happening issues:
-
-Ref  Crashes Repro Title
-<1>  406     Yes   WARNING in kernfs_remove_by_name_ns (3)
-                   https://syzkaller.appspot.com/bug?extid=93cbdd0ab421adc5275d
-<2>  383     Yes   WARNING in kernfs_get (5)
-                   https://syzkaller.appspot.com/bug?extid=2f44671e54488d20f0e6
-<3>  347     No    possible deadlock in lookup_slow (3)
-                   https://syzkaller.appspot.com/bug?extid=65459fd3b61877d717a3
-<4>  108     Yes   INFO: task hung in kernfs_dop_revalidate (4)
-                   https://syzkaller.appspot.com/bug?extid=da20d108162166514db6
-<5>  66      Yes   INFO: task hung in kernfs_add_one
-                   https://syzkaller.appspot.com/bug?extid=e4804edf2708e8b7d2a5
-<6>  47      Yes   possible deadlock in kernfs_iop_getattr
-                   https://syzkaller.appspot.com/bug?extid=4bb2305559463e8f6a2a
-<7>  29      Yes   WARNING in kernfs_new_node (3)
-                   https://syzkaller.appspot.com/bug?extid=306212936b13e520679d
-<8>  26      No    possible deadlock in kernfs_fop_readdir
-                   https://syzkaller.appspot.com/bug?extid=8fd10d8928ed1f715290
-<9>  26      Yes   possible deadlock in walk_component (4)
-                   https://syzkaller.appspot.com/bug?extid=b4567a8b2d2ad5f9dd06
-<10> 22      Yes   INFO: task hung in kernfs_remove_by_name_ns (2)
-                   https://syzkaller.appspot.com/bug?extid=6d5664213a6db9a5a72c
-
----
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
-
-To disable reminders for individual bugs, reply with the following command:
-#syz set <Ref> no-reminders
-
-To change bug's subsystems, reply with:
-#syz set <Ref> subsystems: new-subsystem
-
-You may send multiple commands in a single email message.
+Bart
 
