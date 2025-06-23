@@ -1,492 +1,139 @@
-Return-Path: <linux-kernel+bounces-697568-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-697570-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id C7274AE35E3
-	for <lists+linux-kernel@lfdr.de>; Mon, 23 Jun 2025 08:40:17 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9FBE0AE35E8
+	for <lists+linux-kernel@lfdr.de>; Mon, 23 Jun 2025 08:40:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 59EAB7A7B2B
-	for <lists+linux-kernel@lfdr.de>; Mon, 23 Jun 2025 06:38:54 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D0A9B3B1BA1
+	for <lists+linux-kernel@lfdr.de>; Mon, 23 Jun 2025 06:40:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6CE2A1EC018;
-	Mon, 23 Jun 2025 06:39:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0959F1E8348;
+	Mon, 23 Jun 2025 06:40:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="JS4OWkcr"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="lLtJ9a0M"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.8])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 83798136348;
-	Mon, 23 Jun 2025 06:39:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C1D451E5B90;
+	Mon, 23 Jun 2025 06:40:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.8
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750660765; cv=none; b=PGr6ejATyhhYdJatO5NCQIU5DFb1A+uDVv4EXG0iKgz4X8JRwpDYQHZIWpLhNTffVNgXtGSntehxBEexYQpbMbg96XPso21eWqbhYxf+SYfybHdGB5a+JtdxEKj6ndLovdgT4ZA50ClK2wHADCJjsZs7z3vgJaenwR6Rrq7XK60=
+	t=1750660803; cv=none; b=VxQK2DdYzlKqllOHkJCaOsVm1HZ6Q23nHXxmRZdOso08zcXpK15C36klrwp/DN8EytnMsNYj2ei9oR36Pmeoo0fNlbu/94locA9lApeNyO7sWVCf1IZilA4nJorJhJQeo8PmFyKVfgQfQeyor40RJvHsmNQJqar6mxvzMXJQmtg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750660765; c=relaxed/simple;
-	bh=RcUGPc+CuikCuze+InFNKjdzSi3ukfT0DGxKJP07Vco=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=IhZKRHsc8Ky1gF32cKjbJPRQaN7NcNK3FGeolarsoty/nYZmhkRy5qC7RGtiilcHxgUvFSICKWuTufl3Ax6tDL/yDQBldLmyE3FiuB7pnOENxENtYN5tfRFP0MLdUm11nqcg0Ucs60rX+SDDZby7vgnvTTflN4ZqNROVdfMJ4TM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=JS4OWkcr; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2CFC3C4CEED;
-	Mon, 23 Jun 2025 06:39:23 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1750660765;
-	bh=RcUGPc+CuikCuze+InFNKjdzSi3ukfT0DGxKJP07Vco=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=JS4OWkcr+Irv3m69dm0SIirYZcN8qYX4Raz0oEZuTcWU3LSFA48MZ2hE5ZZ7Z8Mzj
-	 glhLBrzjLqTfwyl1w1yVWDRQ+Kb4p0VOOe4K4Fu95z18RExJIkyrFYFEnxOPF3vAGf
-	 YE0+Q61os1v7R6WR/XNquj1xAyiIshjbkafrKBqJ3ElfdMACYwKksEHb1MaqLABfAl
-	 vKyLw9r2n2OYkNRFLGDJMUS2Rx5z4QpEMIdlHLjVXvyXHgI+fFuFEDSM1uEhUf9+8c
-	 +BAHbXwCbvOBpBrMzZDVsuuqKNTzFK7fxlf0uDm7b5KVjPKT3g4WuT7eG/EQWVl9OI
-	 Le+0JbRKhrdMw==
-From: Song Liu <song@kernel.org>
-To: bpf@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-security-module@vger.kernel.org
-Cc: kernel-team@meta.com,
-	andrii@kernel.org,
-	eddyz87@gmail.com,
-	ast@kernel.org,
-	daniel@iogearbox.net,
-	martin.lau@linux.dev,
-	viro@zeniv.linux.org.uk,
-	brauner@kernel.org,
-	jack@suse.cz,
-	kpsingh@kernel.org,
-	mattbobrowski@google.com,
-	amir73il@gmail.com,
-	gregkh@linuxfoundation.org,
-	tj@kernel.org,
-	daan.j.demeyer@gmail.com,
-	Song Liu <song@kernel.org>
-Subject: [PATCH v3 bpf-next 4/4] selftests/bpf: Add tests for bpf_cgroup_read_xattr
-Date: Sun, 22 Jun 2025 23:38:54 -0700
-Message-ID: <20250623063854.1896364-5-song@kernel.org>
-X-Mailer: git-send-email 2.47.1
-In-Reply-To: <20250623063854.1896364-1-song@kernel.org>
-References: <20250623063854.1896364-1-song@kernel.org>
+	s=arc-20240116; t=1750660803; c=relaxed/simple;
+	bh=AkQsXjCKBE0FDDEmr6BLKHKqMfKtoslc3CQ/TntZLjM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=jSrhaCIx+J6lYR+DMWRFUShBNmtjmMB/ctSHwA3wKNVqqNX7goi61tUyobTeHUHebEvZE1f2d74eGp0qw8zpTpRpR7snwV40p0ooohFPiqtgYwgPRprTcmVtVSjOsjf7sq9zGKALQI5VHllpMgxfD3z4DXo/9dGYVK0Y3859+7g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=lLtJ9a0M; arc=none smtp.client-ip=192.198.163.8
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1750660802; x=1782196802;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:content-transfer-encoding:in-reply-to;
+  bh=AkQsXjCKBE0FDDEmr6BLKHKqMfKtoslc3CQ/TntZLjM=;
+  b=lLtJ9a0MEi9Dh4GmsXcMPQl7l3SpB9RD0Gfe2e2la1kjykNAjZDpe541
+   nFda4sSWTPXFfSyiibHfRBvgLG3Kdh6pqufXgceasXbikyABgptd34vMP
+   eafSWf0r21kbXL1CzpQrJ5fsctyAxO23lJ2OQfn1GRqfebTFe7Vj+JF+8
+   mmUNFfAZOclph47RSHvxv+R/efBQ82DBgK7FfQZZI6mAWWWOZeTBgHiF7
+   dMFhG2jY4T87XGEKZ7u9lkDg4RUGYQ9GLLDbOa/s2CJn223fFxnzbf3ti
+   X6aK98oygqyPMwW7SQi4SrKThyTXrost6mJSEr7oCNw8gy1QOs/TJnXu9
+   g==;
+X-CSE-ConnectionGUID: 5pEVYpVESHq7OztEm5I9lQ==
+X-CSE-MsgGUID: BWLAIfykSU+obN33FZjohw==
+X-IronPort-AV: E=McAfee;i="6800,10657,11472"; a="70422079"
+X-IronPort-AV: E=Sophos;i="6.16,258,1744095600"; 
+   d="scan'208";a="70422079"
+Received: from fmviesa001.fm.intel.com ([10.60.135.141])
+  by fmvoesa102.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 22 Jun 2025 23:40:01 -0700
+X-CSE-ConnectionGUID: Ri1QsT2OQQW8b4ytEfKyjw==
+X-CSE-MsgGUID: gI6CSArtRD2oNNdTMqXLHQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.16,258,1744095600"; 
+   d="scan'208";a="182378616"
+Received: from smile.fi.intel.com ([10.237.72.52])
+  by fmviesa001.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 22 Jun 2025 23:39:59 -0700
+Received: from andy by smile.fi.intel.com with local (Exim 4.98.2)
+	(envelope-from <andriy.shevchenko@linux.intel.com>)
+	id 1uTaqR-000000095Kk-3mBi;
+	Mon, 23 Jun 2025 09:39:55 +0300
+Date: Mon, 23 Jun 2025 09:39:55 +0300
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To: Jonathan Cameron <jic23@kernel.org>
+Cc: Andy Shevchenko <andy.shevchenko@gmail.com>,
+	Jean-Baptiste Maneyrol <Jean-Baptiste.Maneyrol@tdk.com>,
+	Jonathan Cameron <Jonathan.Cameron@huawei.com>,
+	"linux-iio@vger.kernel.org" <linux-iio@vger.kernel.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	David Lechner <dlechner@baylibre.com>,
+	Nuno =?iso-8859-1?Q?S=E1?= <nuno.sa@analog.com>,
+	Andy Shevchenko <andy@kernel.org>
+Subject: Re: [PATCH v1 1/1] iio: imu: inv_icm42600: Convert to uXX and sXX
+ integer types
+Message-ID: <aFj2u3Tv4o72Hqi8@smile.fi.intel.com>
+References: <20250616090423.575736-1-andriy.shevchenko@linux.intel.com>
+ <FR3P281MB1757C6A610D39EA737A19EFBCE70A@FR3P281MB1757.DEUP281.PROD.OUTLOOK.COM>
+ <CAHp75Ve68H448v3Tgv930yoMYCCKVC3kefuP+Rermj7SaiP41g@mail.gmail.com>
+ <FR3P281MB175775DBE90C5469637F3C66CE73A@FR3P281MB1757.DEUP281.PROD.OUTLOOK.COM>
+ <CAHp75Ve0aQLaRS1-J5WoCxUAfX+Y=s2oj4ZkVvUG1XysXopZxw@mail.gmail.com>
+ <20250621181339.0331ab8b@jic23-huawei>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <20250621181339.0331ab8b@jic23-huawei>
+Organization: Intel Finland Oy - BIC 0357606-4 - c/o Alberga Business Park, 6
+ krs, Bertel Jungin Aukio 5, 02600 Espoo
 
-Add tests for different scenarios with bpf_cgroup_read_xattr:
-1. Read cgroup xattr from bpf_cgroup_from_id;
-2. Read cgroup xattr from bpf_cgroup_ancestor;
-3. Read cgroup xattr from css_iter;
-4. Use bpf_cgroup_read_xattr in LSM hook security_socket_connect.
-5. Use bpf_cgroup_read_xattr in cgroup program.
+On Sat, Jun 21, 2025 at 06:13:39PM +0100, Jonathan Cameron wrote:
+> On Tue, 17 Jun 2025 21:33:46 +0300
+> Andy Shevchenko <andy.shevchenko@gmail.com> wrote:
+> > On Tue, Jun 17, 2025 at 5:43 PM Jean-Baptiste Maneyrol
+> > <Jean-Baptiste.Maneyrol@tdk.com> wrote:
+> > > >From: Andy Shevchenko <andy.shevchenko@gmail.com>
+> > > >Sent: Monday, June 16, 2025 16:33
 
-Signed-off-by: Song Liu <song@kernel.org>
----
- .../testing/selftests/bpf/bpf_experimental.h  |   3 +
- .../selftests/bpf/prog_tests/cgroup_xattr.c   | 145 ++++++++++++++++
- .../selftests/bpf/progs/cgroup_read_xattr.c   | 158 ++++++++++++++++++
- .../selftests/bpf/progs/read_cgroupfs_xattr.c |  60 +++++++
- 4 files changed, 366 insertions(+)
- create mode 100644 tools/testing/selftests/bpf/prog_tests/cgroup_xattr.c
- create mode 100644 tools/testing/selftests/bpf/progs/cgroup_read_xattr.c
- create mode 100644 tools/testing/selftests/bpf/progs/read_cgroupfs_xattr.c
+...
 
-diff --git a/tools/testing/selftests/bpf/bpf_experimental.h b/tools/testing/selftests/bpf/bpf_experimental.h
-index 5e512a1d09d1..da7e230f2781 100644
---- a/tools/testing/selftests/bpf/bpf_experimental.h
-+++ b/tools/testing/selftests/bpf/bpf_experimental.h
-@@ -596,4 +596,7 @@ extern int bpf_iter_dmabuf_new(struct bpf_iter_dmabuf *it) __weak __ksym;
- extern struct dma_buf *bpf_iter_dmabuf_next(struct bpf_iter_dmabuf *it) __weak __ksym;
- extern void bpf_iter_dmabuf_destroy(struct bpf_iter_dmabuf *it) __weak __ksym;
- 
-+extern int bpf_cgroup_read_xattr(struct cgroup *cgroup, const char *name__str,
-+				 struct bpf_dynptr *value_p) __weak __ksym;
-+
- #endif
-diff --git a/tools/testing/selftests/bpf/prog_tests/cgroup_xattr.c b/tools/testing/selftests/bpf/prog_tests/cgroup_xattr.c
-new file mode 100644
-index 000000000000..87978a0f7eb7
---- /dev/null
-+++ b/tools/testing/selftests/bpf/prog_tests/cgroup_xattr.c
-@@ -0,0 +1,145 @@
-+// SPDX-License-Identifier: GPL-2.0-only
-+/* Copyright (c) 2025 Meta Platforms, Inc. and affiliates. */
-+
-+#include <errno.h>
-+#include <fcntl.h>
-+#include <sys/stat.h>
-+#include <string.h>
-+#include <unistd.h>
-+#include <sys/socket.h>
-+#include <sys/xattr.h>
-+
-+#include <test_progs.h>
-+
-+#include "read_cgroupfs_xattr.skel.h"
-+#include "cgroup_read_xattr.skel.h"
-+
-+#define CGROUP_FS_ROOT "/sys/fs/cgroup/"
-+#define CGROUP_FS_PARENT CGROUP_FS_ROOT "foo/"
-+#define CGROUP_FS_CHILD CGROUP_FS_PARENT "bar/"
-+
-+static int move_pid_to_cgroup(const char *cgroup_folder, pid_t pid)
-+{
-+	char filename[128];
-+	char pid_str[64];
-+	int procs_fd;
-+	int ret;
-+
-+	snprintf(filename, sizeof(filename), "%scgroup.procs", cgroup_folder);
-+	snprintf(pid_str, sizeof(pid_str), "%d", pid);
-+
-+	procs_fd = open(filename, O_WRONLY | O_APPEND);
-+	if (!ASSERT_OK_FD(procs_fd, "open"))
-+		return -1;
-+
-+	ret = write(procs_fd, pid_str, strlen(pid_str));
-+	close(procs_fd);
-+	if (!ASSERT_GT(ret, 0, "write cgroup.procs"))
-+		return -1;
-+	return 0;
-+}
-+
-+static void reset_cgroups_and_lo(void)
-+{
-+	rmdir(CGROUP_FS_CHILD);
-+	rmdir(CGROUP_FS_PARENT);
-+	system("ip addr del 1.1.1.1/32 dev lo");
-+	system("ip link set dev lo down");
-+}
-+
-+static const char xattr_value_a[] = "bpf_selftest_value_a";
-+static const char xattr_value_b[] = "bpf_selftest_value_b";
-+static const char xattr_name[] = "user.bpf_test";
-+
-+static int setup_cgroups_and_lo(void)
-+{
-+	int err;
-+
-+	err = mkdir(CGROUP_FS_PARENT, 0755);
-+	if (!ASSERT_OK(err, "mkdir 1"))
-+		goto error;
-+	err = mkdir(CGROUP_FS_CHILD, 0755);
-+	if (!ASSERT_OK(err, "mkdir 2"))
-+		goto error;
-+
-+	err = setxattr(CGROUP_FS_PARENT, xattr_name, xattr_value_a,
-+		       strlen(xattr_value_a) + 1, 0);
-+	if (!ASSERT_OK(err, "setxattr 1"))
-+		goto error;
-+
-+	err = setxattr(CGROUP_FS_CHILD, xattr_name, xattr_value_b,
-+		       strlen(xattr_value_b) + 1, 0);
-+	if (!ASSERT_OK(err, "setxattr 2"))
-+		goto error;
-+
-+	err = system("ip link set dev lo up");
-+	if (!ASSERT_OK(err, "lo up"))
-+		goto error;
-+
-+	err = system("ip addr add 1.1.1.1 dev lo");
-+	if (!ASSERT_OK(err, "lo addr v4"))
-+		goto error;
-+
-+	err = write_sysctl("/proc/sys/net/ipv4/ping_group_range", "0 0");
-+	if (!ASSERT_OK(err, "write_sysctl"))
-+		goto error;
-+
-+	return 0;
-+error:
-+	reset_cgroups_and_lo();
-+	return err;
-+}
-+
-+static void test_read_cgroup_xattr(void)
-+{
-+	struct sockaddr_in sa4 = {
-+		.sin_family = AF_INET,
-+		.sin_addr.s_addr = htonl(INADDR_LOOPBACK),
-+	};
-+	struct read_cgroupfs_xattr *skel = NULL;
-+	pid_t pid = gettid();
-+	int sock_fd = -1;
-+	int connect_fd = -1;
-+
-+	if (!ASSERT_OK(setup_cgroups_and_lo(), "setup_cgroups_and_lo"))
-+		return;
-+	if (!ASSERT_OK(move_pid_to_cgroup(CGROUP_FS_CHILD, pid),
-+		       "move_pid_to_cgroup"))
-+		goto out;
-+
-+	skel = read_cgroupfs_xattr__open_and_load();
-+	if (!ASSERT_OK_PTR(skel, "read_cgroupfs_xattr__open_and_load"))
-+		goto out;
-+
-+	skel->bss->target_pid = pid;
-+
-+	if (!ASSERT_OK(read_cgroupfs_xattr__attach(skel), "read_cgroupfs_xattr__attach"))
-+		goto out;
-+
-+	sock_fd = socket(AF_INET, SOCK_DGRAM, IPPROTO_ICMP);
-+	if (!ASSERT_OK_FD(sock_fd, "sock create"))
-+		goto out;
-+
-+	connect_fd = connect(sock_fd, &sa4, sizeof(sa4));
-+	if (!ASSERT_OK_FD(connect_fd, "connect 1"))
-+		goto out;
-+	close(connect_fd);
-+
-+	ASSERT_TRUE(skel->bss->found_value_a, "found_value_a");
-+	ASSERT_TRUE(skel->bss->found_value_b, "found_value_b");
-+
-+out:
-+	close(connect_fd);
-+	close(sock_fd);
-+	read_cgroupfs_xattr__destroy(skel);
-+	move_pid_to_cgroup(CGROUP_FS_ROOT, pid);
-+	reset_cgroups_and_lo();
-+}
-+
-+void test_cgroup_xattr(void)
-+{
-+	RUN_TESTS(cgroup_read_xattr);
-+
-+	if (test__start_subtest("read_cgroupfs_xattr"))
-+		test_read_cgroup_xattr();
-+}
-diff --git a/tools/testing/selftests/bpf/progs/cgroup_read_xattr.c b/tools/testing/selftests/bpf/progs/cgroup_read_xattr.c
-new file mode 100644
-index 000000000000..092db1d0435e
---- /dev/null
-+++ b/tools/testing/selftests/bpf/progs/cgroup_read_xattr.c
-@@ -0,0 +1,158 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/* Copyright (c) 2025 Meta Platforms, Inc. and affiliates. */
-+
-+#include <vmlinux.h>
-+#include <bpf/bpf_tracing.h>
-+#include <bpf/bpf_helpers.h>
-+#include <bpf/bpf_core_read.h>
-+#include "bpf_experimental.h"
-+#include "bpf_misc.h"
-+
-+char _license[] SEC("license") = "GPL";
-+
-+char value[16];
-+
-+static __always_inline void read_xattr(struct cgroup *cgroup)
-+{
-+	struct bpf_dynptr value_ptr;
-+
-+	bpf_dynptr_from_mem(value, sizeof(value), 0, &value_ptr);
-+	bpf_cgroup_read_xattr(cgroup, "user.bpf_test",
-+			      &value_ptr);
-+}
-+
-+SEC("lsm.s/socket_connect")
-+__success
-+int BPF_PROG(trusted_cgroup_ptr_sleepable)
-+{
-+	u64 cgrp_id = bpf_get_current_cgroup_id();
-+	struct cgroup *cgrp;
-+
-+	cgrp = bpf_cgroup_from_id(cgrp_id);
-+	if (!cgrp)
-+		return 0;
-+
-+	read_xattr(cgrp);
-+	bpf_cgroup_release(cgrp);
-+	return 0;
-+}
-+
-+SEC("lsm/socket_connect")
-+__success
-+int BPF_PROG(trusted_cgroup_ptr_non_sleepable)
-+{
-+	u64 cgrp_id = bpf_get_current_cgroup_id();
-+	struct cgroup *cgrp;
-+
-+	cgrp = bpf_cgroup_from_id(cgrp_id);
-+	if (!cgrp)
-+		return 0;
-+
-+	read_xattr(cgrp);
-+	bpf_cgroup_release(cgrp);
-+	return 0;
-+}
-+
-+SEC("lsm/socket_connect")
-+__success
-+int BPF_PROG(use_css_iter_non_sleepable)
-+{
-+	u64 cgrp_id = bpf_get_current_cgroup_id();
-+	struct cgroup_subsys_state *css;
-+	struct cgroup *cgrp;
-+
-+	cgrp = bpf_cgroup_from_id(cgrp_id);
-+	if (!cgrp)
-+		return 0;
-+
-+	bpf_for_each(css, css, &cgrp->self, BPF_CGROUP_ITER_ANCESTORS_UP)
-+		read_xattr(css->cgroup);
-+
-+	bpf_cgroup_release(cgrp);
-+	return 0;
-+}
-+
-+SEC("lsm.s/socket_connect")
-+__failure __msg("expected an RCU CS")
-+int BPF_PROG(use_css_iter_sleepable_missing_rcu_lock)
-+{
-+	u64 cgrp_id = bpf_get_current_cgroup_id();
-+	struct cgroup_subsys_state *css;
-+	struct cgroup *cgrp;
-+
-+	cgrp = bpf_cgroup_from_id(cgrp_id);
-+	if (!cgrp)
-+		return 0;
-+
-+	bpf_for_each(css, css, &cgrp->self, BPF_CGROUP_ITER_ANCESTORS_UP)
-+		read_xattr(css->cgroup);
-+
-+	bpf_cgroup_release(cgrp);
-+	return 0;
-+}
-+
-+SEC("lsm.s/socket_connect")
-+__success
-+int BPF_PROG(use_css_iter_sleepable_with_rcu_lock)
-+{
-+	u64 cgrp_id = bpf_get_current_cgroup_id();
-+	struct cgroup_subsys_state *css;
-+	struct cgroup *cgrp;
-+
-+	bpf_rcu_read_lock();
-+	cgrp = bpf_cgroup_from_id(cgrp_id);
-+	if (!cgrp)
-+		goto out;
-+
-+	bpf_for_each(css, css, &cgrp->self, BPF_CGROUP_ITER_ANCESTORS_UP)
-+		read_xattr(css->cgroup);
-+
-+	bpf_cgroup_release(cgrp);
-+out:
-+	bpf_rcu_read_unlock();
-+	return 0;
-+}
-+
-+SEC("lsm/socket_connect")
-+__success
-+int BPF_PROG(use_bpf_cgroup_ancestor)
-+{
-+	u64 cgrp_id = bpf_get_current_cgroup_id();
-+	struct cgroup *cgrp, *ancestor;
-+
-+	cgrp = bpf_cgroup_from_id(cgrp_id);
-+	if (!cgrp)
-+		return 0;
-+
-+	ancestor = bpf_cgroup_ancestor(cgrp, 1);
-+	if (!ancestor)
-+		goto out;
-+
-+	read_xattr(cgrp);
-+	bpf_cgroup_release(ancestor);
-+out:
-+	bpf_cgroup_release(cgrp);
-+	return 0;
-+}
-+
-+SEC("cgroup/sendmsg4")
-+__success
-+int BPF_PROG(cgroup_skb)
-+{
-+	u64 cgrp_id = bpf_get_current_cgroup_id();
-+	struct cgroup *cgrp, *ancestor;
-+
-+	cgrp = bpf_cgroup_from_id(cgrp_id);
-+	if (!cgrp)
-+		return 0;
-+
-+	ancestor = bpf_cgroup_ancestor(cgrp, 1);
-+	if (!ancestor)
-+		goto out;
-+
-+	read_xattr(cgrp);
-+	bpf_cgroup_release(ancestor);
-+out:
-+	bpf_cgroup_release(cgrp);
-+	return 0;
-+}
-diff --git a/tools/testing/selftests/bpf/progs/read_cgroupfs_xattr.c b/tools/testing/selftests/bpf/progs/read_cgroupfs_xattr.c
-new file mode 100644
-index 000000000000..855f85fc5522
---- /dev/null
-+++ b/tools/testing/selftests/bpf/progs/read_cgroupfs_xattr.c
-@@ -0,0 +1,60 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/* Copyright (c) 2025 Meta Platforms, Inc. and affiliates. */
-+
-+#include <vmlinux.h>
-+#include <bpf/bpf_tracing.h>
-+#include <bpf/bpf_helpers.h>
-+#include <bpf/bpf_core_read.h>
-+#include "bpf_experimental.h"
-+
-+char _license[] SEC("license") = "GPL";
-+
-+pid_t target_pid = 0;
-+
-+char xattr_value[64];
-+static const char expected_value_a[] = "bpf_selftest_value_a";
-+static const char expected_value_b[] = "bpf_selftest_value_b";
-+bool found_value_a;
-+bool found_value_b;
-+
-+SEC("lsm.s/socket_connect")
-+int BPF_PROG(test_socket_connect)
-+{
-+	u64 cgrp_id = bpf_get_current_cgroup_id();
-+	struct cgroup_subsys_state *css, *tmp;
-+	struct bpf_dynptr value_ptr;
-+	struct cgroup *cgrp;
-+
-+	if ((bpf_get_current_pid_tgid() >> 32) != target_pid)
-+		return 0;
-+
-+	bpf_rcu_read_lock();
-+	cgrp = bpf_cgroup_from_id(cgrp_id);
-+	if (!cgrp) {
-+		bpf_rcu_read_unlock();
-+		return 0;
-+	}
-+
-+	css = &cgrp->self;
-+	bpf_dynptr_from_mem(xattr_value, sizeof(xattr_value), 0, &value_ptr);
-+	bpf_for_each(css, tmp, css, BPF_CGROUP_ITER_ANCESTORS_UP) {
-+		int ret;
-+
-+		ret = bpf_cgroup_read_xattr(tmp->cgroup, "user.bpf_test",
-+					    &value_ptr);
-+		if (ret < 0)
-+			continue;
-+
-+		if (ret == sizeof(expected_value_a) &&
-+		    !bpf_strncmp(xattr_value, sizeof(expected_value_a), expected_value_a))
-+			found_value_a = true;
-+		if (ret == sizeof(expected_value_b) &&
-+		    !bpf_strncmp(xattr_value, sizeof(expected_value_b), expected_value_b))
-+			found_value_b = true;
-+	}
-+
-+	bpf_rcu_read_unlock();
-+	bpf_cgroup_release(cgrp);
-+
-+	return 0;
-+}
+> > > it is good for me if we can add Cc to stable.
+> > > I don't know if I need to add the Cc tag here or when a fixed patch will
+> > > require the rework. In doubt, here it is.
+> > >
+> > > Acked-by: Jean-Baptiste Maneyrol <jean-baptiste.maneyrol@tdk.com>
+> > > Cc: stable@vger.kernel.org  
+> > 
+> > It makes no sense here. This is a standalone change. It's not part of
+> > any "fixes" series. You need to attach this patch to your series as
+> > patch 1 and mark Cc stable all of the patches.
+> 
+> I think this is hypothetical at the moment as the only series outstanding
+> is the WOM one which isn't a fix.  So I don't think this patch will
+> ever end up carrying a stable tag.  However, first time we get a fix
+> that needs it, if Greg etc don't sort it out anyway (they often do!)
+> then a simple mail to stable@vger.kernel.org to tell them to pick this
+> and the fix will resolve it.
+> 
+> For now I'll queue this patch up and ask for a rebase on the WOM
+> series on top of it.
+> 
+> It crossed with David's series doing {} to replace explicit memsets
+> so needed a tiny bit of hand tweaking.
+> Pushed out as testing for 0-day to look at.
+
+Thanks, Jonathan!
+
 -- 
-2.47.1
+With Best Regards,
+Andy Shevchenko
+
 
 
