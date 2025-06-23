@@ -1,117 +1,141 @@
-Return-Path: <linux-kernel+bounces-697661-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-697691-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 18FF1AE370C
-	for <lists+linux-kernel@lfdr.de>; Mon, 23 Jun 2025 09:35:50 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id EF117AE3756
+	for <lists+linux-kernel@lfdr.de>; Mon, 23 Jun 2025 09:49:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BEC763A8B05
-	for <lists+linux-kernel@lfdr.de>; Mon, 23 Jun 2025 07:34:35 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AD6FA1724B8
+	for <lists+linux-kernel@lfdr.de>; Mon, 23 Jun 2025 07:48:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B206E218580;
-	Mon, 23 Jun 2025 07:33:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="Mtian0T9"
-Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C6A6B2248BE;
+	Mon, 23 Jun 2025 07:47:06 +0000 (UTC)
+Received: from szxga06-in.huawei.com (szxga06-in.huawei.com [45.249.212.32])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 832F31F8733;
-	Mon, 23 Jun 2025 07:33:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 26BFD20298D;
+	Mon, 23 Jun 2025 07:47:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.32
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750663989; cv=none; b=Xlfm/bKAJoyEz4yccAB2FZEgXaWchjhVwsaI1r8U2Y2Mv6FCitqGCYVHm8cBVjTgz7XCX7TusBouJNUjsp+20lcTfqEnE7zz8oJMRiSTMuyUJa6V3yjC5l4ODFhThdq343yhWSoJyVAa8i6CoKBfycH2ELeEUFdF3nxjho7m9as=
+	t=1750664826; cv=none; b=XQmajQA5wiibVPUqTu9vGauRVMbh7rmKPQ48G4Esc1IpHHEjsSu4cmj/0NnW6I/aO/czusra+s0hVPQHwyuJ17af59rUS5NzRgU1KY1Fv8fYbpzRe7WeXzZYB5q9dKjDVRWt2wU/YgDp5ghtxeg4/2jbVM+cC6LAiypnrNwxncE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750663989; c=relaxed/simple;
-	bh=UayubYFz5rJKfTFo7YJBUpKr2fJ6BCeCBp0NkuGx4oY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=WAEeTQoNi/IkEh+FybVHpG9ccu+AC/jpkAiNdwatSvxB2T41cetN8mw+Eyu0eLSITVEOrn9C/s/p8KjJ6l2fg7NMAlqzNAqsLR8JcxTJrPMPALF2JNxOFafNMslxo4I9KwDqBwsygiGq8kVlt69w5VX38zUPNXpX/GNuz/ji9qo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=Mtian0T9; arc=none smtp.client-ip=213.167.242.64
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
-Received: from ideasonboard.com (mob-5-90-136-88.net.vodafone.it [5.90.136.88])
-	by perceval.ideasonboard.com (Postfix) with ESMTPSA id 7CD6A42B;
-	Mon, 23 Jun 2025 09:32:43 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-	s=mail; t=1750663963;
-	bh=UayubYFz5rJKfTFo7YJBUpKr2fJ6BCeCBp0NkuGx4oY=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=Mtian0T95yK+3hjMa53YLyq/MPgfzriYR7LJNGhIEZEg1sqOvdp+P7W0uHB8LxVxL
-	 6flQ2G0eVMN9gDaB1huau+Wry4fPMqTFkG2i03m7YG+01e402gGtWlhrsLWpFZc2B6
-	 /RuwSol7spkqGDK6ng+rfpJUicAVNJrZN2yBig8Q=
-Date: Mon, 23 Jun 2025 09:32:56 +0200
-From: Jacopo Mondi <jacopo.mondi@ideasonboard.com>
-To: Zhang Shurong <zhang_shurong@foxmail.com>
-Cc: jacopo@jmondi.org, mchehab@kernel.org, u.kleine-koenig@pengutronix.de, 
-	hverkuil@xs4all.nl, linux-media@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3] media: rj54n1cb0c: Fix memleak in rj54n1_probe()
-Message-ID: <vlkde3efn6rvcu7qppql263mst25ioym24q2o2gcxjf4z6er2e@m4wyclvott4b>
-References: <tencent_A9851A542D89AE1B94DA80AD2CB0280F5907@qq.com>
+	s=arc-20240116; t=1750664826; c=relaxed/simple;
+	bh=hSJ7W6iMQ4xKe7LZ1zPyhGNnD5O5rE8E3Ff+PUcoFOs=;
+	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=c+mGQJUwD3S4a7QJDRXqvoBkWE9eugOCwsKt4fpnMfgRHjPASYwSuE/r4Yx1ILxjwWXOYAwbXoZO/Al0+jgAHKCPJ5NNs8PDBV1ZyhTbLm38lZh6cX25gqo5EDpBJZuZI+F/LaWepnRZjLGB2yKrn+N8UuAeJ28Bq1qqcZP4FTc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.32
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.88.163])
+	by szxga06-in.huawei.com (SkyGuard) with ESMTP id 4bQgDF0gRhz2QVJ9;
+	Mon, 23 Jun 2025 15:47:57 +0800 (CST)
+Received: from dggpemf500013.china.huawei.com (unknown [7.185.36.188])
+	by mail.maildlp.com (Postfix) with ESMTPS id 526CB18005F;
+	Mon, 23 Jun 2025 15:47:02 +0800 (CST)
+Received: from huawei.com (10.175.112.188) by dggpemf500013.china.huawei.com
+ (7.185.36.188) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Mon, 23 Jun
+ 2025 15:47:01 +0800
+From: Baokun Li <libaokun1@huawei.com>
+To: <linux-ext4@vger.kernel.org>
+CC: <tytso@mit.edu>, <jack@suse.cz>, <adilger.kernel@dilger.ca>,
+	<ojaswin@linux.ibm.com>, <linux-kernel@vger.kernel.org>,
+	<yi.zhang@huawei.com>, <yangerkun@huawei.com>, <libaokun1@huawei.com>,
+	<stable@vger.kernel.org>
+Subject: [PATCH v2 09/16] ext4: fix zombie groups in average fragment size lists
+Date: Mon, 23 Jun 2025 15:32:57 +0800
+Message-ID: <20250623073304.3275702-10-libaokun1@huawei.com>
+X-Mailer: git-send-email 2.46.1
+In-Reply-To: <20250623073304.3275702-1-libaokun1@huawei.com>
+References: <20250623073304.3275702-1-libaokun1@huawei.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <tencent_A9851A542D89AE1B94DA80AD2CB0280F5907@qq.com>
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: kwepems200001.china.huawei.com (7.221.188.67) To
+ dggpemf500013.china.huawei.com (7.185.36.188)
 
-Hi Zhang
+Groups with no free blocks shouldn't be in any average fragment size list.
+However, when all blocks in a group are allocated(i.e., bb_fragments or
+bb_free is 0), we currently skip updating the average fragment size, which
+means the group isn't removed from its previous s_mb_avg_fragment_size[old]
+list.
 
-On Mon, Jun 23, 2025 at 10:26:04AM +0800, Zhang Shurong wrote:
-> rj54n1_probe() won't clean all the allocated resources in fail
-> path, which may causes the memleaks. Add v4l2_ctrl_handler_free() to
-> prevent memleak.
->
-> Fixes: f187352dcd45 ("media: i2c: Copy rj54n1cb0c soc_camera sensor driver")
+This created "zombie" groups that were always skipped during traversal as
+they couldn't satisfy any block allocation requests, negatively impacting
+traversal efficiency.
 
-No empty line between this two I think
+Therefore, when a group becomes completely free, bb_avg_fragment_size_order
+is now set to -1. If the old order was not -1, a removal operation is
+performed; if the new order is not -1, an insertion is performed.
 
->
-> Signed-off-by: Zhang Shurong <zhang_shurong@foxmail.com>
-> ---
-> Changes in v2:
-> - Fixed compile error
-> Changes in v3:
-> - Fixed coding style warnings identified by scripts/checkpatch.pl
-> ---
->  drivers/media/i2c/rj54n1cb0c.c | 4 +++-
->  1 file changed, 3 insertions(+), 1 deletion(-)
->
-> diff --git a/drivers/media/i2c/rj54n1cb0c.c b/drivers/media/i2c/rj54n1cb0c.c
-> index b7ca39f63dba..a2fe906408c5 100644
-> --- a/drivers/media/i2c/rj54n1cb0c.c
-> +++ b/drivers/media/i2c/rj54n1cb0c.c
-> @@ -1330,8 +1330,10 @@ static int rj54n1_probe(struct i2c_client *client)
->  	v4l2_ctrl_new_std(&rj54n1->hdl, &rj54n1_ctrl_ops,
->  			V4L2_CID_AUTO_WHITE_BALANCE, 0, 1, 1, 1);
->  	rj54n1->subdev.ctrl_handler = &rj54n1->hdl;
+Fixes: 196e402adf2e ("ext4: improve cr 0 / cr 1 group scanning")
+CC: stable@vger.kernel.org
+Signed-off-by: Baokun Li <libaokun1@huawei.com>
+---
+ fs/ext4/mballoc.c | 36 ++++++++++++++++++------------------
+ 1 file changed, 18 insertions(+), 18 deletions(-)
 
-Could you move this after the  below check ?
+diff --git a/fs/ext4/mballoc.c b/fs/ext4/mballoc.c
+index 94950b07a577..e6d6c2da3c6e 100644
+--- a/fs/ext4/mballoc.c
++++ b/fs/ext4/mballoc.c
+@@ -841,30 +841,30 @@ static void
+ mb_update_avg_fragment_size(struct super_block *sb, struct ext4_group_info *grp)
+ {
+ 	struct ext4_sb_info *sbi = EXT4_SB(sb);
+-	int new_order;
++	int new, old;
+ 
+-	if (!test_opt2(sb, MB_OPTIMIZE_SCAN) || grp->bb_fragments == 0)
++	if (!test_opt2(sb, MB_OPTIMIZE_SCAN))
+ 		return;
+ 
+-	new_order = mb_avg_fragment_size_order(sb,
+-					grp->bb_free / grp->bb_fragments);
+-	if (new_order == grp->bb_avg_fragment_size_order)
++	old = grp->bb_avg_fragment_size_order;
++	new = grp->bb_fragments == 0 ? -1 :
++	      mb_avg_fragment_size_order(sb, grp->bb_free / grp->bb_fragments);
++	if (new == old)
+ 		return;
+ 
+-	if (grp->bb_avg_fragment_size_order != -1) {
+-		write_lock(&sbi->s_mb_avg_fragment_size_locks[
+-					grp->bb_avg_fragment_size_order]);
++	if (old >= 0) {
++		write_lock(&sbi->s_mb_avg_fragment_size_locks[old]);
+ 		list_del(&grp->bb_avg_fragment_size_node);
+-		write_unlock(&sbi->s_mb_avg_fragment_size_locks[
+-					grp->bb_avg_fragment_size_order]);
+-	}
+-	grp->bb_avg_fragment_size_order = new_order;
+-	write_lock(&sbi->s_mb_avg_fragment_size_locks[
+-					grp->bb_avg_fragment_size_order]);
+-	list_add_tail(&grp->bb_avg_fragment_size_node,
+-		&sbi->s_mb_avg_fragment_size[grp->bb_avg_fragment_size_order]);
+-	write_unlock(&sbi->s_mb_avg_fragment_size_locks[
+-					grp->bb_avg_fragment_size_order]);
++		write_unlock(&sbi->s_mb_avg_fragment_size_locks[old]);
++	}
++
++	grp->bb_avg_fragment_size_order = new;
++	if (new >= 0) {
++		write_lock(&sbi->s_mb_avg_fragment_size_locks[new]);
++		list_add_tail(&grp->bb_avg_fragment_size_node,
++				&sbi->s_mb_avg_fragment_size[new]);
++		write_unlock(&sbi->s_mb_avg_fragment_size_locks[new]);
++	}
+ }
+ 
+ /*
+-- 
+2.46.1
 
-> -	if (rj54n1->hdl.error)
-> +	if (rj54n1->hdl.error) {
-> +		v4l2_ctrl_handler_free(&rj54n1->hdl);
->  		return rj54n1->hdl.error;
-
-There already is a label "err_free_ctrl" you could jump to with
-
-                ret = rj54n1->hdl.error;
-                goto err_free_ctrl;
-
-Doesn't make much difference, so I guess it's up to what you like the
-best here.
-
-Thanks
-  j
-
-> +	}
->
->  	rj54n1->clk_div		= clk_div;
->  	rj54n1->rect.left	= RJ54N1_COLUMN_SKIP;
-> --
-> 2.39.5
->
 
