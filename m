@@ -1,141 +1,128 @@
-Return-Path: <linux-kernel+bounces-697622-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-697625-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id ED6FDAE368B
-	for <lists+linux-kernel@lfdr.de>; Mon, 23 Jun 2025 09:17:23 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 10615AE3690
+	for <lists+linux-kernel@lfdr.de>; Mon, 23 Jun 2025 09:18:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 28C723ACD7D
-	for <lists+linux-kernel@lfdr.de>; Mon, 23 Jun 2025 07:16:59 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B204D16DA8B
+	for <lists+linux-kernel@lfdr.de>; Mon, 23 Jun 2025 07:18:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 55D5D1F2BAE;
-	Mon, 23 Jun 2025 07:17:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EBA881F4C96;
+	Mon, 23 Jun 2025 07:18:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Wizj2PU2"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.17])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="RDkjBxt2"
+Received: from mail-pf1-f171.google.com (mail-pf1-f171.google.com [209.85.210.171])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B806EC2FA;
-	Mon, 23 Jun 2025 07:17:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.17
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D1BD7188CC9;
+	Mon, 23 Jun 2025 07:18:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750663037; cv=none; b=pgSqQ1zKwmuo9o367xwuKNmZkYFsk/cjE5dVyvsVHn9CiyGRgwiTrVWd7Hl5SqHGBNL5hMvoW33mel0dZm+1He34ivokO8rP4Ixlvd+I8L+WLbjAtEiGUyMUt0Rko5EIe/O38Zp6vJg1xaP8ZfVbKxzvc6WTaY+1z9UHox3SsLw=
+	t=1750663107; cv=none; b=EhRRMPU+u6OXrEYD209LDzuG+9mOv5YjNeUcphYcsYOjyFN8keZ428zFatswKM67gY1xWx34wOsWBP3Oa1sJWQX6s1E9pqjGIAjXJ4/eXHLcXSeN1jUVB8uQObeY1xl2MdQ92v3XCvNPQRhf4RjhBvev/eWSH6TEUyejXJELODg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750663037; c=relaxed/simple;
-	bh=Jw8wpXNfGQO8GLwLn1ZOFZeP1vBXCVLhyyP9zZ92GDg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=XQxNz3rAoKqRpGmlwZTJ71or09jwwZwTSIcxHaQel5yLno94P1yZDmFhOtEd65hLRwo4HEoBltA9Mgjol5b3BG4XaBnzDKPYCRwwInvBtI719IGRiUUbwQq3UIyCPkL00J/OkCbZKtzVnzl9nBFNc6Ursf5ElhZHrK8myP251Dw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Wizj2PU2; arc=none smtp.client-ip=192.198.163.17
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1750663036; x=1782199036;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=Jw8wpXNfGQO8GLwLn1ZOFZeP1vBXCVLhyyP9zZ92GDg=;
-  b=Wizj2PU2x7Iu6F3fYQL4pRt55u1e/AO4xAJTtslSTtWcWAA/jQ1XV97P
-   yqwSjwLkEXx+LEv76IHlLWX3O6s0QFEIFOwy2RozQWCwo06zbymtd7znd
-   Qp9aXRWmh1lVpBfokthCoqvxumQFGsAHV90nJoXTnFWUMluoPqWn4dBWu
-   OZOGFOwX2Qb7XEosb+4zRy3BtS8S4jecc7Xvkzp2dGnDrhpMcs7Zpj8vn
-   rAxEaJVE2e6QKbcuHoTmShleltTzCbz7e2gpwkqMThZzboAAHsj65W0+u
-   Q2mo0scVwrKX2gm8d/Dx3L23tfKa2ZXyUmmqOCHcggILZkmuHe1rS5fQX
-   A==;
-X-CSE-ConnectionGUID: DZVAw/9bRqeWn3oBaZBvRA==
-X-CSE-MsgGUID: UOc6iR4SQJWpu+q8o1MERA==
-X-IronPort-AV: E=McAfee;i="6800,10657,11472"; a="52787527"
-X-IronPort-AV: E=Sophos;i="6.16,258,1744095600"; 
-   d="scan'208";a="52787527"
-Received: from orviesa002.jf.intel.com ([10.64.159.142])
-  by fmvoesa111.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 23 Jun 2025 00:17:15 -0700
-X-CSE-ConnectionGUID: o1MCT5QVS+Wv4S6yRCuloA==
-X-CSE-MsgGUID: UEiemObAS0S1apvQ/tmVDQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.16,258,1744095600"; 
-   d="scan'208";a="182560803"
-Received: from smile.fi.intel.com ([10.237.72.52])
-  by orviesa002.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 23 Jun 2025 00:17:13 -0700
-Received: from andy by smile.fi.intel.com with local (Exim 4.98.2)
-	(envelope-from <andriy.shevchenko@intel.com>)
-	id 1uTbQT-000000095oN-2ZW8;
-	Mon, 23 Jun 2025 10:17:09 +0300
-Date: Mon, 23 Jun 2025 10:17:09 +0300
-From: Andy Shevchenko <andriy.shevchenko@intel.com>
-To: Jiri Slaby <jirislaby@kernel.org>
-Cc: Andy Shevchenko <andy.shevchenko@gmail.com>,
-	"Maciej S. Szmigiero" <mail@maciej.szmigiero.name>,
-	Ilpo =?iso-8859-1?Q?J=E4rvinen?= <ilpo.jarvinen@linux.intel.com>,
-	gregkh@linuxfoundation.org, linux-serial@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 30/33] serial: 8250: invert
- serial8250_register_8250_port() CIR condition
-Message-ID: <aFj_dax6Gb9HrGyV@smile.fi.intel.com>
-References: <20250611100319.186924-1-jirislaby@kernel.org>
- <20250611100319.186924-31-jirislaby@kernel.org>
- <aFJTQqVvmLBvrVRA@black.fi.intel.com>
- <dfb7552f-9163-4334-b137-1bf69fbdef5b@maciej.szmigiero.name>
- <aFcDOx1bdB34I5hS@surfacebook.localdomain>
- <9c3d387c-0ee1-4f53-b4fe-2c2783e5650c@kernel.org>
+	s=arc-20240116; t=1750663107; c=relaxed/simple;
+	bh=bfUMCr6XTkaXfPV88r2OXrvZVyVPwnJMX/p5wxpGtYk=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=EBVXRqT04LR29+frY+SuRevT6PkL7bkMrj/AbcrAky3ciSTEcyK1FPB7FjJr6zC+/btvwkAdTTTKw81WOj3Lj8H7gxMWffR0CmyUWdFtWfEEAt9HE2qQvY8Ydi3I02FXTL29jWepsAGtgGO1S1YdOH4rY+9GV8jH/8rnrtgRcMY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=RDkjBxt2; arc=none smtp.client-ip=209.85.210.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f171.google.com with SMTP id d2e1a72fcca58-747fc7506d4so2866810b3a.0;
+        Mon, 23 Jun 2025 00:18:25 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1750663105; x=1751267905; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=R6rUZtQwP9+H10UZcQReROjXeGg/7uqmxlCLekV3/XI=;
+        b=RDkjBxt2p/S+MzjFvA98BeBdKY44YLoXIX+Fp2L8kWrS5UXtdKbUHJgFoSEW/jQyD+
+         q8Ld1zIeBF2Ckv7iWgdOgc1X0vUqtJ5rHFSgvqEaJBoKgXV4yI2mte+7klHnjz+vAMAN
+         ZhMUPLtWyijXzAbTje9UCS4Dwlr4Mq5JwxRF06m0T7eKhDSI3voqdwwc/jbJm7gKc7bZ
+         DtmnMmTH1Q/GOnbptU34vVoIiJ/9uPjTOkSmrybL8So68XnYh6/Ax1CE7P6MJ2eafY1T
+         dDaz518do8Md/1mHRt2ITKiDSDuA1G67fqZn7BM5gIpoNCmNBmgOrdmz0YIZgJJvRAnY
+         xA3w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1750663105; x=1751267905;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=R6rUZtQwP9+H10UZcQReROjXeGg/7uqmxlCLekV3/XI=;
+        b=pIyftfKbkY7ZkbvCkD/hhz6tWQIKtdy+ywh6/v9eJvc43+Z4AEJ7CBVUr/HfWhnIt1
+         5gUOg94DDlF7OM3Pxp/hCYWFe1Ufh+0+hMUZrGBvX5KIOFc3mYXgxc31ByUzQbP3+olm
+         x5r1U1X9VYs9gKMOblNWoHEdtwA5if+cOlZ0OzA04TrZJzc1C6byHFrMyRAGIP43EKA9
+         f3aJR952Kzjuu/OehyPlhfMXxk7i8uX+2LboXGCCWpAwWOg4KJXrXVIM41qDh8U7zEUJ
+         Gi9fcDAHu26DyeNG6lYfM7JV3u3jaK5mxnYywYUuSRAzKgTexWFhjHh79nL6rb1QaMjg
+         g/5w==
+X-Forwarded-Encrypted: i=1; AJvYcCVBGKU5oeaATNlDfrVhBOJIKvVOAGZs4ac9RoqfCORRBUUHCDvuHHbUzLW10BipRD8HPkywL/lpyUlFxBo=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxPRoPmb3tX9MP8VKQ/Db4u5z67hFcJFNGwqzSck/GWSERoZFt1
+	lWIpOqxNQ79kPFh3O6M94TkKFJWhjTC3rwJXQU1PmLzMgM4xdYGHuPRT+HoUiw==
+X-Gm-Gg: ASbGncu+RrsNUFQhTbaLA9FZopGh33EYulIr6aCCIDUFAYY+9h3Dx3q2bM0TKbb0W6K
+	Ya5G36kW0X0iNusPELlybsvX3C8HwCFF+XHcw4IbvwWj/tCarxMAc0SSuTaj2s0ZMzGiZzHemtZ
+	eLwate7a39H8hpxa+wu0Y9IK+eE/N+NO7h+yqWjl0W2OeTTOB1s3Zuhrt5G8HGw3PUG57mDZm13
+	DmKPRjG7VIzp7Zo+idTL7izpS4pihGCNfBQfl7EMBC1Jx2fs+q6YDiVBObkiDwZ879pf+mBE5BP
+	u+MPidsT3gSAAKrCbIs5trtTgreIXRWfHxOoMHL5jDXPD4oBeBYfxHBOTE5cCw/YhkxM76duPnI
+	lY7xxK7y7PRI7FrizLfWUDEtr0C9KMSdILEf9cLAofNYEJ20EEAC7iNQA/xMKnSPz+A==
+X-Google-Smtp-Source: AGHT+IELCG0XKxyqJSPKZRUMNeN57yP3nv+AqM7T3oI1JFwo/g42qVKHmZkkw8RyiH51vjUitYdWMQ==
+X-Received: by 2002:a05:6a20:ce4f:b0:1f5:a3e8:64c1 with SMTP id adf61e73a8af0-22025ea3dedmr18169695637.0.1750663105023;
+        Mon, 23 Jun 2025 00:18:25 -0700 (PDT)
+Received: from cs00-MS-7C09.. (2001-b400-e358-921b-7902-4a20-67b4-38da.emome-ip6.hinet.net. [2001:b400:e358:921b:7902:4a20:67b4:38da])
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-b31f119e4e8sm7234892a12.26.2025.06.23.00.18.23
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 23 Jun 2025 00:18:24 -0700 (PDT)
+From: hsyemail2@gmail.com
+X-Google-Original-From: syhuang3@nuvoton.com
+To: Johan Hovold <johan@kernel.org>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: linux-usb@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Sheng-Yuan Huang <syhuang3@nuvoton.com>
+Subject: [PATCH v3 0/1] USB: serial: nct_usb_serial: add support for Nuvoton USB adapter
+Date: Mon, 23 Jun 2025 15:17:12 +0800
+Message-ID: <20250623071713.12814-1-syhuang3@nuvoton.com>
+X-Mailer: git-send-email 2.43.0
+In-Reply-To: <2ff4dd60-7579-40ce-a4e5-3ad846659f9c@suse.com>
+References: <2ff4dd60-7579-40ce-a4e5-3ad846659f9c@suse.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <9c3d387c-0ee1-4f53-b4fe-2c2783e5650c@kernel.org>
-Organization: Intel Finland Oy - BIC 0357606-4 - c/o Alberga Business Park, 6
- krs, Bertel Jungin Aukio 5, 02600 Espoo
+Content-Transfer-Encoding: 8bit
 
-On Mon, Jun 23, 2025 at 09:05:46AM +0200, Jiri Slaby wrote:
-> On 21. 06. 25, 21:08, Andy Shevchenko wrote:
-> > Fri, Jun 20, 2025 at 11:48:09PM +0200, Maciej S. Szmigiero kirjoitti:
-> > > On 18.06.2025 07:48, Andy Shevchenko wrote:
-> > > > On Wed, Jun 11, 2025 at 12:03:16PM +0200, Jiri Slaby (SUSE) wrote:
+From: Sheng-Yuan Huang <syhuang3@nuvoton.com>
 
-...
+Hi everyone,
 
-> > > > > +	if (uart->port.type == PORT_8250_CIR) {
-> > > > > +		ret = -ENODEV;
-> > > > > +		goto unlock;
-> > > > > +	}
-> > > > 
-> > > > > +	if (up->port.flags & UPF_FIXED_TYPE)
-> > > > > +		uart->port.type = up->port.type;
-> > > > 
-> > > > > +	if (uart->port.type != PORT_8250_CIR) {
-> > > > 
-> > > > I admit that there tons of mysterious ways of UART initialisation, but can you
-> > > > elaborate how this is not a always-true conditional?
-> > > 
-> > > Careful here, someone had an idea in the past that this is indeed
-> > > a dead code/branch and ended causing a regression [1].
-> 
-> Right, I was confused too, but then I noticed there is:
->   uart->port.type = up->port.type;
-> in between the tests.
-> 
-> > > It would definitely make sense to add a comment describing the code
-> > > flow there though as it proven to bewilder people.
-> > 
-> > Yes, this is my point between the lines. I left the code that may affect the
-> > type change and the second check needs a comment explaining these cases, if any.
-> > "If any" defines "always-true" or not conditional. W//o a comment this code
-> > tends to be updated again and lead to a regression.
-> 
-> ACK, I will.
+This patchset is a revised version of the previous submission and
+includes changes based on Oliver's comments. Thank you for the
+detailed review and valuable suggestions.
 
-Thanks!
+The main updates are listed below:
 
-Looking at the code again, I think it deserves actually two comments, on top of
-each of the checks against PORT_8250_CIR.
+- All endianness concerns have been addressed by removing bitfields and
+  using explicit byte order conversions.
+- Command definitions have been changed from enums to "#define"
+  constants as requested.
+- Error handling has been improved, including proper checks in
+  nct_vendor_read() and nct_set_baud().
+- Cleaned up unnecessary code and improved function structure in
+  several places, such as nct_vendor_write(), nct_rx_throttle(), and
+  nct_rx_unthrottle().
+
+Sheng-Yuan Huang (1):
+  USB: serial: nct_usb_serial: add support for Nuvoton USB adapter
+
+ drivers/usb/serial/Kconfig          |   10 +
+ drivers/usb/serial/Makefile         |    1 +
+ drivers/usb/serial/nct_usb_serial.c | 1553 +++++++++++++++++++++++++++
+ 3 files changed, 1564 insertions(+)
+ create mode 100644 drivers/usb/serial/nct_usb_serial.c
 
 -- 
-With Best Regards,
-Andy Shevchenko
-
+2.43.0
 
 
