@@ -1,107 +1,118 @@
-Return-Path: <linux-kernel+bounces-699262-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-699264-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id BA207AE57C4
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Jun 2025 01:15:21 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id DBBEEAE57C6
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Jun 2025 01:15:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4BFF31C25D81
-	for <lists+linux-kernel@lfdr.de>; Mon, 23 Jun 2025 23:15:14 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D3C1E4C80C9
+	for <lists+linux-kernel@lfdr.de>; Mon, 23 Jun 2025 23:15:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CAC90229B0D;
-	Mon, 23 Jun 2025 23:14:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1849322D9E7;
+	Mon, 23 Jun 2025 23:15:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="kMx7Wr4f"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=fb.com header.i=@fb.com header.b="giJ15HuI"
+Received: from mx0a-00082601.pphosted.com (mx0a-00082601.pphosted.com [67.231.145.42])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1D927229B16;
-	Mon, 23 Jun 2025 23:14:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E3C047262F
+	for <linux-kernel@vger.kernel.org>; Mon, 23 Jun 2025 23:15:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=67.231.145.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750720489; cv=none; b=cqQdnTORY9devEwbqKWJvPBhq05/8I8aBYiYSPeHrZugQ3fw39I7/54z3nXjzG3yBV2/mz99gHlL5NafUSWrSAl70PtBYbEIHr4QSSmjrbw8KWvPjVGNs/OFcYbBB4LRJELmQdUNnyyRB4M2p5Tc+oZf9tzEFm3zTo8a0Fy+7fk=
+	t=1750720509; cv=none; b=lv0NNGlkroN5LN3YyCdwsAWXyQw24qxMLyTByD8aqiEIOci2IR6AaNOF3UthPEqba8xG3lB98RJxBJoQ55U0xCsA7m/J5Gx41U/9qvL1tL+NxxEwp7HodCfgdQ/bVxgSuYO3T/GQe/Hynbba/7N38CnuRLZ0WJ1rGh31iaIuJI4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750720489; c=relaxed/simple;
-	bh=6LzesJl0kmLg/Yoa6T382QmQxVwEVUfX/TAiShEDAEk=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition:In-Reply-To; b=d0XE20wF3ozcv8vQt4vvCu7MajwhsT3jZUZBkB9dvWvLuhz8/D2TooaTW3S5PpNHWlf/9CAdj/YUmHToP9VZlzCPW3dBCcg2EJiI2fMOGruVCM7vshsvJixVDxiHvmwQrXgb2JAfECukiHQz2QBNZtjZD+BIygXyXI5Dplb+pwk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=kMx7Wr4f; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 72C9BC4CEEA;
-	Mon, 23 Jun 2025 23:14:48 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1750720488;
-	bh=6LzesJl0kmLg/Yoa6T382QmQxVwEVUfX/TAiShEDAEk=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:From;
-	b=kMx7Wr4fbnk/OW/YvdljcMwfmBjZhDh0Q/9ALni+SFRZvk8ogsIogtkBFck15xHZs
-	 oKelFlmsXQgR7XLJoiMShq98NGyWzsGi7AuplNLuw0GdmkYKB7U4Rxnj+60kW6CDHi
-	 W0YJVlA5fFOMFPdnbucDFKkLuR8ILnblAy0jY/4Sc9O1jG7MfuQ3oxjwOYrwAhpMMZ
-	 4ALzWQ/bHaLnLeUJqada7xvk/desc+kQCG5Tq8tbdpbxpNb9qk0XliDwBklYtFLk/2
-	 FzxBBOzRttdHDDi9xHVtjWYATXb7IrOzaj6ybNDVcb4CLu1oU4tNuFtGpBMu7lbZyf
-	 SANU2FJJvYBvw==
-Date: Mon, 23 Jun 2025 18:14:47 -0500
-From: Bjorn Helgaas <helgaas@kernel.org>
-To: Andrea della Porta <andrea.porta@suse.com>
-Cc: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Florian Fainelli <florian.fainelli@broadcom.com>,
-	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>,
-	Lorenzo Pieralisi <lpieralisi@kernel.org>,
-	Krzysztof Wilczynski <kw@linux.com>,
-	Bjorn Helgaas <bhelgaas@google.com>,
-	Linus Walleij <linus.walleij@linaro.org>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Will Deacon <will@kernel.org>, Bartosz Golaszewski <brgl@bgdev.pl>,
-	Derek Kiernan <derek.kiernan@amd.com>,
-	Dragan Cvetic <dragan.cvetic@amd.com>,
-	Arnd Bergmann <arnd@arndb.de>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Saravana Kannan <saravanak@google.com>, linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org,
-	linux-gpio@vger.kernel.org, Masahiro Yamada <masahiroy@kernel.org>,
-	Stefan Wahren <wahrenst@gmx.net>,
-	Herve Codina <herve.codina@bootlin.com>,
-	Luca Ceresoli <luca.ceresoli@bootlin.com>,
-	Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
-	Andrew Lunn <andrew@lunn.ch>, Phil Elwell <phil@raspberrypi.com>,
-	Dave Stevenson <dave.stevenson@raspberrypi.com>,
-	kernel-list@raspberrypi.com, Matthias Brugger <mbrugger@suse.com>
-Subject: Re: [PATCH v2 stblinux/next 2/2] clk: rp1: Implement remaining clock
- tree
-Message-ID: <20250623231447.GA1450188@bhelgaas>
+	s=arc-20240116; t=1750720509; c=relaxed/simple;
+	bh=nLbF7yQZl/o06wcIrZqIvhQsJtF3U4tJXhrfUtwcMHo=;
+	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=q/ny2lZRzCEt3HEZo8xiiE9Wbp6YUqtves7IQsvsAOeqJpZNoKitEXsR1t5ZIqpgIa6MAjMzb086qHoU+/dWV+qTSQgQpjP/l09v48eE2cN25Ylds0MhEDwQc8Xuc2aJE8C7Rgiuqu/Md5r8mAQ5oW2N87Mq969gZ6+hpM5ML+Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=fb.com; spf=pass smtp.mailfrom=meta.com; dkim=pass (1024-bit key) header.d=fb.com header.i=@fb.com header.b=giJ15HuI; arc=none smtp.client-ip=67.231.145.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=fb.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=meta.com
+Received: from pps.filterd (m0109333.ppops.net [127.0.0.1])
+	by mx0a-00082601.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 55NMC6hn022325
+	for <linux-kernel@vger.kernel.org>; Mon, 23 Jun 2025 16:15:07 -0700
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fb.com; h=cc
+	:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=facebook; bh=4
+	9LAPUm1quHKTZyBFpiWIXjpujPBXo76XLo5wjg6XF4=; b=giJ15HuIb5xCux+0v
+	LsYXt+PINlimWeuf73u+4a6rQlcvtKzdPVUUFOXp0W3/CHOdCyHBES+H1YuBL3MR
+	Cf8h1BLSUKGyrqGWNfLHRCr6GuBYfL0X1sLy13mBmb5b0kCTZInPJKKCuXNC1t4+
+	eyXMvcMIOMk62jnFHdvV2pIXCs=
+Received: from maileast.thefacebook.com ([163.114.135.16])
+	by mx0a-00082601.pphosted.com (PPS) with ESMTPS id 47f8f1c90c-5
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Mon, 23 Jun 2025 16:15:07 -0700 (PDT)
+Received: from twshared21625.15.frc2.facebook.com (2620:10d:c0a8:fe::f072) by
+ mail.thefacebook.com (2620:10d:c0a9:6f::237c) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.2.1748.24; Mon, 23 Jun 2025 23:15:05 +0000
+Received: by devgpu004.nha5.facebook.com (Postfix, from userid 199522)
+	id 270981258C2; Mon, 23 Jun 2025 16:14:52 -0700 (PDT)
+From: Alex Mastro <amastro@fb.com>
+To: Alex Williamson <alex.williamson@redhat.com>
+CC: Alex Mastro <amastro@fb.com>, <peterx@redhat.com>, <kbusch@kernel.org>,
+        <kvm@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        Jason Gunthorpe
+	<jgg@ziepe.ca>
+Subject: Re: [PATCH] vfio/pci: print vfio-device name to fdinfo
+Date: Mon, 23 Jun 2025 16:14:48 -0700
+Message-ID: <20250623231450.1326244-1-amastro@fb.com>
+X-Mailer: git-send-email 2.47.1
+In-Reply-To: <20250623161831.12109402.alex.williamson@redhat.com>
+References:
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <17e5c6e0c085cfa0bf4b63b639cdc92c6a4c1418.1750714412.git.andrea.porta@suse.com>
+Content-Transfer-Encoding: quoted-printable
+X-FB-Internal: Safe
+Content-Type: text/plain
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNjIzMDE2MCBTYWx0ZWRfX9hemdqS7PCJk C4XWP06d5nEQPliXybUIjD/vNknxCcqr74YeGsaJw7jAOqbGaGjactHkpQ0O1+EzaZLlid3a1QB EaB0sTDezXNtORCGOie8lJHhebikFjOrAr+DljlFZav+vDR+JjGN4qMv1KY/1Zchmg2D3NxeOGD
+ O4wKYVBevUsKAYcD3T5Tceb9NS+usXfQCKTYIT2luJJlhBSBSWCvTtNpaKCkBIifL5QwquCDKkx 2oSoJdpTe7RDdyMV/78wWsUwnXruDV/HaH+wdpVlB8qxBrPwtWcZ9P+5H1rgbcF8eIdxg5uYFpT V0T959c13hSJL+LPK8+oeWKWciQ8GLK0P+pCwv5tfQe1IsmLwNzgagZy5FuAJemXvtTNPsHQ03I
+ fncnLmnPwxMALuFvbDuCMReNED7PwYG7sU41MYrfzbql3zBDnIONJSfRVjYky9kxcB4MmusJ
+X-Proofpoint-GUID: co_qvqbx123SztknLw8xzZAvY6jAvjAD
+X-Authority-Analysis: v=2.4 cv=GeIXnRXL c=1 sm=1 tr=0 ts=6859dffb cx=c_pps a=MfjaFnPeirRr97d5FC5oHw==:117 a=MfjaFnPeirRr97d5FC5oHw==:17 a=6IFa9wvqVegA:10 a=20KFwNOVAAAA:8 a=pQO_QLq9p-wijE2fh-sA:9
+X-Proofpoint-ORIG-GUID: co_qvqbx123SztknLw8xzZAvY6jAvjAD
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.7,FMLib:17.12.80.40
+ definitions=2025-06-23_07,2025-06-23_07,2025-03-28_01
 
-On Mon, Jun 23, 2025 at 11:46:28PM +0200, Andrea della Porta wrote:
-> The RP1 clock generator driver currently defines only the fundamental
-> clocks such as the front PLLs for system, audio and video subsystems
-> and the ethernet clock.
-> 
-> Add the remaining clocks to the tree so as to be completed, which means
-> that the following RP1 peripherals could now consume their specific clocks
-> and be enabled to work (provided that the relevant driver changes for each
-> specific peripheral, if any, are committed):
-> 
-> - ADC
-> - Audio IN/OUT
-> - DMA controller
-> - I2S
-> - MIPI DPI/DSI
-> - PWM
-> - SDIO
-> - UART
-> - Video Encoder
+Hi Alex, thanks for the prompt feedback.
 
-Thanks for this detail, that's exactly what I hoped for!
+On Mon, 23 Jun 2025 16:18:31 -0600 Alex Williamson <alex.williamson@redha=
+t.com> wrote:
+> TBH, I don't think we need a callback, just use dev_name() in
+> vfio_main.  The group interface always requires the name, in some cases
+> it can require further information, but we seem to have forgotten that
+> in the cdev interface anyway :-\
+
+Sounds good -- I'll follow up on this in v2.
+
+> > +#include <linux/seq_file.h>
+>=20
+> Only where we're doing the seq_print do we need to include this.
+
+Ah, I only added it due to the direct reference to `struct seq_file *` in=
+ this
+file, but will keep this in mind. I do see that it's transitively visible=
+ via
+vfio.h's include.
+
+> I think you're missing an update to Documentation/filesystems/proc.rst
+> as well.
+
+TIL about this documentation (section 3.8), but it looks to be focused mo=
+re on
+common fs/* pieces like eventfd, signalfd, and such. I didn't see any dri=
+vers/*
+precedence, but would not be opposed to being the first. Do you think it =
+still
+makes sense to add there?
+
+Thanks,
+Alex
 
