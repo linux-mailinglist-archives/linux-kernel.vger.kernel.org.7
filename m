@@ -1,171 +1,172 @@
-Return-Path: <linux-kernel+bounces-699093-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-699095-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id F0E4FAE4DA4
-	for <lists+linux-kernel@lfdr.de>; Mon, 23 Jun 2025 21:33:28 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5177DAE4DAA
+	for <lists+linux-kernel@lfdr.de>; Mon, 23 Jun 2025 21:37:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9498D189F388
-	for <lists+linux-kernel@lfdr.de>; Mon, 23 Jun 2025 19:33:44 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 721103B7D37
+	for <lists+linux-kernel@lfdr.de>; Mon, 23 Jun 2025 19:36:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 919EE25D55D;
-	Mon, 23 Jun 2025 19:33:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 148952D4B7E;
+	Mon, 23 Jun 2025 19:37:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="YIPLhfDC"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="niKVLOnG"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.19])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 27B19155C87
-	for <linux-kernel@vger.kernel.org>; Mon, 23 Jun 2025 19:33:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F24ED25F785;
+	Mon, 23 Jun 2025 19:37:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.19
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750707201; cv=none; b=dT2EiQs5TZDU+0JHFMvjEYW4e/aU/x5+HmMTTkMXzBklf1uYogBBS420mbIJSMcgGLyeEuAo5T009lgmp6jbFd/dGLp95dTfFq6N9HaviB7e6ETwvRvy3HZyIIayV0ZG4/bg588HCtkxBF8mclt0O9KQd6Ae3U/EBWOKMUkRVSo=
+	t=1750707429; cv=none; b=S4b//n5m/n+xjo7vjwBQzut2uGTta3JsInK1Nzp+/sd2A+JoGsEcyXSvTtkC+qpUsQSrId1lIcMmTbppYem5q7dGme4vE4m+eiLUXAJYsmeoipUxLAhKrixJa4ptCuTSfJQEpV2hoiR669ChP+UWnLpTxKZATXbAYWNik6wgeGc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750707201; c=relaxed/simple;
-	bh=9lI7R1yfwUd2UlvrSSL+OT1wwUYl6AKg0CDx6r/ek9E=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=rQkx4jNjjx3X+M41UnJqgmsw2Vt+ghLnh6Ly87suqz/E3JiecgMkGfRCFoxSPuqOzGPHluMUmESU60NT88qik4YRdaaLdd3fstHwY6gLM2KJvpXT8lJt9hH8RQDENTwvK4B82YaDgv2b2nrPUuXxQNvM/HIdee5uC8jRZD4kVtw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=YIPLhfDC; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1750707199;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=K0/+8NFujf4JTzwsWWkGjCoD10GFomMmDwt15P0EBbo=;
-	b=YIPLhfDCq9rK9VkoV6LbjROTMA+g7EVq8Uf435x/wA8/WDlUL3NSwWkSwK/rUFjfiOV/F9
-	xxzUdx1ST5BJjfpi90WVdGEh7yWixQvDCL9mVBqXYT7yydoe5QMjqF6GmyDrz6ijCaxZNp
-	Q+bN7U6gtm/e0ZB0al9lkCSFDVc2iy8=
-Received: from mail-wr1-f69.google.com (mail-wr1-f69.google.com
- [209.85.221.69]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-453-derhAhf6PA-D3MyNvTACmA-1; Mon, 23 Jun 2025 15:33:17 -0400
-X-MC-Unique: derhAhf6PA-D3MyNvTACmA-1
-X-Mimecast-MFC-AGG-ID: derhAhf6PA-D3MyNvTACmA_1750707197
-Received: by mail-wr1-f69.google.com with SMTP id ffacd0b85a97d-3a4f3796779so2227049f8f.1
-        for <linux-kernel@vger.kernel.org>; Mon, 23 Jun 2025 12:33:17 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1750707196; x=1751311996;
-        h=content-transfer-encoding:in-reply-to:organization:autocrypt
-         :content-language:from:references:cc:to:subject:user-agent
-         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=K0/+8NFujf4JTzwsWWkGjCoD10GFomMmDwt15P0EBbo=;
-        b=sqzUCRahb/FvDO0xAnfyyNFMkkCoA381JTekcRP+seOBfx7XOfUT/US5gMUJUeRJFa
-         bAAD/BZK3A/UQW8zD4tNgrF/UTatMrL8G4orfBzAcUAk1I+2LokbBSWfuRAHgUFS92MC
-         sNevWA/jQDOpdvSsvz90gGsBmY2X7toZAWEyE0yDY4TR3uO4QmSUEUM+RDZBvVF1R7bW
-         jkbVD4wT5fQm6nnT2WWUa1Idg2GVK4mz5qxb8weJBCpY0t6ENxC+vUZQskIlS9hNnbOi
-         RVCWT9aDg1cEE6K32gS+qFeb7QZvjd41lC+w+Z6MG8YKY4uBYUh3bkxvESP0HMGnj/RV
-         CPSw==
-X-Forwarded-Encrypted: i=1; AJvYcCVOBIoYPylvUT79smDLPO7bQK5Csij6JHMG7HvtyyWoz86WOHe6Yq3dYs3JseDrrefUGnXJ0EELznFFyMA=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwDD1NjgRGEfd9QB0lsa0xRz+ptUBU9dF2m+aDG2q4PXDMvX2W2
-	ipBWS8vNUVQzw8mxYjfSB2Yt+s6osEgiMx6dWHXvdxwHiSUOWIPDK5KaZukJw7Ex/4jdpa4gYa7
-	7uYL2lpDLDY3gNec7lAJvp8wmo6uMp+1WmBpa9xJw+knzlbnokKPG7PST/bmrbobwBdmuLpzQRb
-	ci
-X-Gm-Gg: ASbGncts1GxeOyyAz8RRr7NTlSu1g17srNnpYYFfQtzU53pB1O3TT+Lk48lPXJhCZfH
-	E7IHN2bEt6UzoruyRGXKgSOEsvVcvuvnKJ9zWnoZUQKhsJYDSdF1qevb7RpMG/XTCLz6FjDJ6eU
-	jP2Wm5XQ6AEZCNjP+6R+NFqkJdno9EXp5bfDVL65/BhLZ9v10iOUpZmlOt0UD+Ol3TD4moEULJB
-	ZKO+gjt0BmdjgmL/StKlgL9Y/Qly60VF9HIyjqpsWKka1pMNH3yd/TlikwDwe8CAyeC22bapH43
-	giEPGqhvpKXeiLJtLAHRseeZDIUQYPFNBWuTXuScx4/fWdl1W2q62yZvoO0KrgkQtty+MqslM7S
-	UWxEHZz4UXFJRFS2ciFwKuzVUU/1XKYppAEKjpnPHCvALSAMr7A==
-X-Received: by 2002:a05:6000:23c2:b0:3a5:2ef8:34f9 with SMTP id ffacd0b85a97d-3a6d12fc23bmr8367469f8f.27.1750707196522;
-        Mon, 23 Jun 2025 12:33:16 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IEwjq0vsrWg8eKGsSx4TLrqrpk9YypvFu3BPs38tM7cfCERusESM5p0aomG/RrEUVRCb5Wepw==
-X-Received: by 2002:a05:6000:23c2:b0:3a5:2ef8:34f9 with SMTP id ffacd0b85a97d-3a6d12fc23bmr8367453f8f.27.1750707196086;
-        Mon, 23 Jun 2025 12:33:16 -0700 (PDT)
-Received: from ?IPV6:2003:d8:2f4e:fd00:8e13:e3b5:90c8:1159? (p200300d82f4efd008e13e3b590c81159.dip0.t-ipconnect.de. [2003:d8:2f4e:fd00:8e13:e3b5:90c8:1159])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4535eac8edbsm153409965e9.24.2025.06.23.12.33.15
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 23 Jun 2025 12:33:15 -0700 (PDT)
-Message-ID: <04013158-841d-48cc-9687-6c6e75fe65d1@redhat.com>
-Date: Mon, 23 Jun 2025 21:33:14 +0200
+	s=arc-20240116; t=1750707429; c=relaxed/simple;
+	bh=v0l/kSzCzkRAEF3IzVpd0mV4Pu1tdJw3rT6WoxwZPY4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=bMgHBiwVTQTdxSnKWcU9VsymSDfqlUhnwDI1/jcH0YoqyKw6c1+7RZt5o2eCyrXDSpsYSX8eOuQrHh7Z86jt4pyzeuEsP3aR8E84vEQKfZmdTysb3xgxj2PAMzDWY9+bonL7wQBemD2nejRGc/DStJiYPDlyfW+xpbFiv57uvYg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=niKVLOnG; arc=none smtp.client-ip=198.175.65.19
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1750707427; x=1782243427;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=v0l/kSzCzkRAEF3IzVpd0mV4Pu1tdJw3rT6WoxwZPY4=;
+  b=niKVLOnGwHimya2jYC3V8sq7P24vcy7aAh1qXfvXrA71BgIaVgL+hkLo
+   WKb1wf/PqFfzwZtBI7J/Y7o8f/Mu/pVE8qgAMc4d5PySQovf1jKe0Zk0S
+   woc+UfGjlsaTBIK8KatsESA1fAfgWJW+SvMRXBsmI+Y9E/+Uo64XcR7td
+   8YyYblPN1TqDBCpJQV+pJ5EmFu/l+cEfSrmWCLzsf3DimH4BMod9H8beH
+   CZfORE302AJCvsJBBKHy3QnHakm6ghvzv0LeDA8+MBK9RrCxOyzOOT/ML
+   aOZ3akLLsIKzmBS6us/LEd0uAX6oIGW/uehTzRd78z1AZGX+i6/UstgCC
+   w==;
+X-CSE-ConnectionGUID: ilQYy/3nSpqfJjcpBScBSQ==
+X-CSE-MsgGUID: 4O8AYm+jSMiJIdhgOwo9Pg==
+X-IronPort-AV: E=McAfee;i="6800,10657,11473"; a="52800151"
+X-IronPort-AV: E=Sophos;i="6.16,259,1744095600"; 
+   d="scan'208";a="52800151"
+Received: from fmviesa006.fm.intel.com ([10.60.135.146])
+  by orvoesa111.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 23 Jun 2025 12:37:07 -0700
+X-CSE-ConnectionGUID: cTsP7YDzSFigZVnd5INv8Q==
+X-CSE-MsgGUID: EQwVesj3QDCai1JUp/ZuUg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.16,259,1744095600"; 
+   d="scan'208";a="151840786"
+Received: from lkp-server01.sh.intel.com (HELO e8142ee1dce2) ([10.239.97.150])
+  by fmviesa006.fm.intel.com with ESMTP; 23 Jun 2025 12:37:04 -0700
+Received: from kbuild by e8142ee1dce2 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1uTmyU-000PGg-0D;
+	Mon, 23 Jun 2025 19:37:02 +0000
+Date: Tue, 24 Jun 2025 03:36:23 +0800
+From: kernel test robot <lkp@intel.com>
+To: jackysliu <1972843537@qq.com>, skashyap@marvell.com
+Cc: oe-kbuild-all@lists.linux.dev, jhasan@marvell.com,
+	GR-QLogic-Storage-Upstream@marvell.com,
+	James.Bottomley@hansenpartnership.com, martin.petersen@oracle.com,
+	linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org,
+	jackysliu <1972843537@qq.com>
+Subject: Re: [PATCH] scsi: qedf: Fix a possible memory leak in
+ qedf_prepare_sb()
+Message-ID: <202506240340.fv6cXpyc-lkp@intel.com>
+References: <tencent_3C5078D216712F6F21FC8792FADED59A3D09@qq.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] mm/zswap: export zswap API to modules
-To: Matthew Wilcox <willy@infradead.org>,
- Vitaly Wool <vitaly.wool@konsulko.se>
-Cc: linux-mm@kvack.org, akpm@linux-foundation.org,
- linux-kernel@vger.kernel.org, Igor Belousov <igor.b@beldev.am>
-References: <20250620193552.2772125-1-vitaly.wool@konsulko.se>
- <aFW6xI4m15JepI8Y@casper.infradead.org>
-From: David Hildenbrand <david@redhat.com>
-Content-Language: en-US
-Autocrypt: addr=david@redhat.com; keydata=
- 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
- WNyWQQ==
-Organization: Red Hat
-In-Reply-To: <aFW6xI4m15JepI8Y@casper.infradead.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <tencent_3C5078D216712F6F21FC8792FADED59A3D09@qq.com>
 
-On 20.06.25 21:47, Matthew Wilcox wrote:
-> On Fri, Jun 20, 2025 at 09:35:52PM +0200, Vitaly Wool wrote:
->> There is no reason to not let modules use zswap capabilies to
->> densely store unused pages in RAM. This will allow to remove some
->> homebrew solutions for e.g. GPU drivers in favor of plainly using
->> zswap pool.
-> 
-> I really think these should be _GPL exports.  And I'm not sure why the
-> GPU drivers are using "homebrew solutions" instead of using the shmem
-> APIs which work whether zswap is configured in or not.
+Hi jackysliu,
 
-In particular, because zswap is tightly glued to actual swap code (e.g., 
-swap_writeout()), and we should review first if any such GPU user should 
-really be talking to zswap directly.
+kernel test robot noticed the following build warnings:
+
+[auto build test WARNING on jejb-scsi/for-next]
+[also build test WARNING on mkp-scsi/for-next linus/master v6.16-rc3 next-20250623]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
+
+url:    https://github.com/intel-lab-lkp/linux/commits/jackysliu/scsi-qedf-Fix-a-possible-memory-leak-in-qedf_prepare_sb/20250617-180032
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/jejb/scsi.git for-next
+patch link:    https://lore.kernel.org/r/tencent_3C5078D216712F6F21FC8792FADED59A3D09%40qq.com
+patch subject: [PATCH] scsi: qedf: Fix a possible memory leak in qedf_prepare_sb()
+config: i386-randconfig-141-20250623 (https://download.01.org/0day-ci/archive/20250624/202506240340.fv6cXpyc-lkp@intel.com/config)
+compiler: gcc-12 (Debian 12.2.0-14) 12.2.0
+
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202506240340.fv6cXpyc-lkp@intel.com/
+
+New smatch warnings:
+drivers/scsi/qedf/qedf_main.c:2814 qedf_prepare_sb() warn: inconsistent indenting
+
+Old smatch warnings:
+drivers/scsi/qedf/qedf_main.c:2816 qedf_prepare_sb() warn: inconsistent indenting
+
+vim +2814 drivers/scsi/qedf/qedf_main.c
+
+  2773	
+  2774	static int qedf_prepare_sb(struct qedf_ctx *qedf)
+  2775	{
+  2776		int id;
+  2777		struct qedf_fastpath *fp;
+  2778		int ret;
+  2779	
+  2780		qedf->fp_array =
+  2781		    kcalloc(qedf->num_queues, sizeof(struct qedf_fastpath),
+  2782			GFP_KERNEL);
+  2783	
+  2784		if (!qedf->fp_array) {
+  2785			QEDF_ERR(&(qedf->dbg_ctx), "fastpath array allocation "
+  2786				  "failed.\n");
+  2787			return -ENOMEM;
+  2788		}
+  2789	
+  2790		for (id = 0; id < qedf->num_queues; id++) {
+  2791			fp = &(qedf->fp_array[id]);
+  2792			fp->sb_id = QEDF_SB_ID_NULL;
+  2793			fp->sb_info = kcalloc(1, sizeof(*fp->sb_info), GFP_KERNEL);
+  2794			if (!fp->sb_info) {
+  2795				QEDF_ERR(&(qedf->dbg_ctx), "SB info struct "
+  2796					  "allocation failed.\n");
+  2797				goto err;
+  2798			}
+  2799			ret = qedf_alloc_and_init_sb(qedf, fp->sb_info, id);
+  2800			if (ret) {
+  2801				QEDF_ERR(&(qedf->dbg_ctx), "SB allocation and "
+  2802					  "initialization failed.\n");
+  2803				goto err;
+  2804			}
+  2805			fp->sb_id = id;
+  2806			fp->qedf = qedf;
+  2807			fp->cq_num_entries =
+  2808			    qedf->global_queues[id]->cq_mem_size /
+  2809			    sizeof(struct fcoe_cqe);
+  2810		}
+  2811	err:
+  2812	for (int i = 0; i < id; i++) {
+  2813		fp = &qedf->fp_array[i];
+> 2814	if (fp->sb_info) {
+  2815		qedf_free_sb(qedf, fp->sb_info);
+  2816	kfree(fp->sb_info);
+  2817	fp->sb_info = NULL;
+  2818	}
+  2819	}
+  2820	kfree(qedf->fp_array);
+  2821	qedf->fp_array = NULL;
+  2822	return -ENOMEM;
+  2823	}
+  2824	
 
 -- 
-Cheers,
-
-David / dhildenb
-
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
