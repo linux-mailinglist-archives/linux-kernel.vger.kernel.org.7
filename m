@@ -1,275 +1,210 @@
-Return-Path: <linux-kernel+bounces-698998-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-699000-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id F015EAE4C93
-	for <lists+linux-kernel@lfdr.de>; Mon, 23 Jun 2025 20:12:43 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8A28EAE4C95
+	for <lists+linux-kernel@lfdr.de>; Mon, 23 Jun 2025 20:13:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9B460189D695
-	for <lists+linux-kernel@lfdr.de>; Mon, 23 Jun 2025 18:12:59 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id EEB117A6B32
+	for <lists+linux-kernel@lfdr.de>; Mon, 23 Jun 2025 18:11:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2D5172D4B57;
-	Mon, 23 Jun 2025 18:12:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D15552D320D;
+	Mon, 23 Jun 2025 18:12:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="FMaFAK8c"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.19])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="dqPwdO6R"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 68F3F2D323E
-	for <linux-kernel@vger.kernel.org>; Mon, 23 Jun 2025 18:11:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.19
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 545671DACB1
+	for <linux-kernel@vger.kernel.org>; Mon, 23 Jun 2025 18:12:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750702321; cv=none; b=OVC3VUggzcOcV1iJ9ptvVK999N0r49+VBBwr9+ydL0foSYzBissNzote5NJOgNhN9aDfw9ISCr/dI+Ca/Dq9RCMCY/O6ZWfSGTBEIfY8gHlw6uicZg+TJSKTrH0jghdATtrjrzsd7+r5UYQCWvYtzNaSrHFD/CBKQuSp3nhxuao=
+	t=1750702367; cv=none; b=nMqKg4KQ1tE1N/B79g4KGrQNR49gCJqdbHUkm/TJ9YncYPNhqNZsWxSko37A8bOJWQH8EVUDd33SZ5BtuTNxnriMf/Jf4yhTW+aTc3w0H2PlbDLHXF1MZtj33LjSAVoUjQ9b0xF/AKKmrs9z6g98eBCFyEON5Fau2YjRcde415k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750702321; c=relaxed/simple;
-	bh=va0T8ulaBQpx4skDDCdaq0VuEfDt2Nf05jRRXs/fYRM=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=pxeYMzNxFj7ZcVW7E2fB4OSMibBiyZZkmGjz3mtrn2nCgk1vbPdzHUH+k6QUm85x4MULyrqmEep1DIzZ7SsXKmEpHY/lq9mol6fORRIl9ONHm3Qsqx5zoOs6XBbXr0nPls0PeaIjNO/HpLVywAjV2a07TR6lUiCZzGHYOup/vYA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=FMaFAK8c; arc=none smtp.client-ip=198.175.65.19
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1750702318; x=1782238318;
-  h=date:from:to:cc:subject:message-id:mime-version;
-  bh=va0T8ulaBQpx4skDDCdaq0VuEfDt2Nf05jRRXs/fYRM=;
-  b=FMaFAK8cWatOoVvoLYyHVDA4dZ6KmPzZaA4DolVaG8DobrcbwvJ/aObZ
-   w3CTstdtTTemBuPj4DZ1qP3EBkkPsq5g+D+sVXzFOscmg/MD6jVepYFRu
-   4kMXqoBmqszkHC06QUiddjpYXvAS1Mjh83pq0sttoepjIBFw+RPHfWnFN
-   mzf0J/F7M1mZabCKlTj2C8RAeqSA3/UdQPN1Cy9TbMNLDU1MDaPRpiz3B
-   FQS2pTIMPlm0sOjCRe5cZEQlRAUKdWW69nYyH8ndI54IQG/yQsflVLnNr
-   nXVElVHLEnPY7t6tiqsTJ+1NoW6vTSDL10PctC3dy2s3QMNSeLicQfYsZ
-   A==;
-X-CSE-ConnectionGUID: Tlky1P/kRLexAWEM3CzjEw==
-X-CSE-MsgGUID: sjSKviPsSz6dJBm4Vgt3lQ==
-X-IronPort-AV: E=McAfee;i="6800,10657,11473"; a="52792481"
-X-IronPort-AV: E=Sophos;i="6.16,259,1744095600"; 
-   d="scan'208";a="52792481"
-Received: from orviesa010.jf.intel.com ([10.64.159.150])
-  by orvoesa111.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 23 Jun 2025 11:11:58 -0700
-X-CSE-ConnectionGUID: BNoo/FlWSBapBZMOSEaj4w==
-X-CSE-MsgGUID: ElLQ73gwTyeTkjDOyInlrA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.16,259,1744095600"; 
-   d="scan'208";a="151092981"
-Received: from lkp-server01.sh.intel.com (HELO e8142ee1dce2) ([10.239.97.150])
-  by orviesa010.jf.intel.com with ESMTP; 23 Jun 2025 11:11:56 -0700
-Received: from kbuild by e8142ee1dce2 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1uTle6-000PCC-0I;
-	Mon, 23 Jun 2025 18:11:54 +0000
-Date: Tue, 24 Jun 2025 02:11:49 +0800
-From: kernel test robot <lkp@intel.com>
-To: Eric Biggers <ebiggers@google.com>
-Cc: oe-kbuild-all@lists.linux.dev, linux-kernel@vger.kernel.org,
-	Herbert Xu <herbert@gondor.apana.org.au>
-Subject: crypto/testmgr.c:2994:1: warning: the frame size of 1032 bytes is
- larger than 1024 bytes
-Message-ID: <202506240244.cOarmYVt-lkp@intel.com>
+	s=arc-20240116; t=1750702367; c=relaxed/simple;
+	bh=ZhXES0ZbSeNJ1gyds2iF0Qt0L9e6b4laYLr8B95hYoA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=uVxWXQI+78/By5Mz9pyZGDQZ4kMKN+X7ebntsLLOMfR77OHE/qYT5kNqCVITakFBcAs/njATmYI8GFgLZCJKdAtC14zqEYoyh9jdJwsy6qUjumTUg/4PjCVs200gdMoftXJ9xMpMHyzlKifpQlkbj0ljuSlZ0Dy4CuWhxz+NmN0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=dqPwdO6R; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1750702361;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=Iav4YsZh0lX7sUJ5ofhiLBwN9GmAGN5M/lgmtGwU0kw=;
+	b=dqPwdO6RgoXNENwtjBmYSlleDe1x2YVRFMqyTYsfiH2MAyJvqBZrDfsgtS8lmOcghDdhNw
+	GyXDAeoDmKIX8bW+r0dLJe8+zfhh6p8uC/t7DtgrrEV2koHYBwJULJoZyVt9UXRpu80RrO
+	pxEa71rVaLqDqlaXm3REJRMAbbWhHiE=
+Received: from mail-qk1-f198.google.com (mail-qk1-f198.google.com
+ [209.85.222.198]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-392-ZOd13lPbPIO56wJOMz9pMg-1; Mon, 23 Jun 2025 14:12:39 -0400
+X-MC-Unique: ZOd13lPbPIO56wJOMz9pMg-1
+X-Mimecast-MFC-AGG-ID: ZOd13lPbPIO56wJOMz9pMg_1750702359
+Received: by mail-qk1-f198.google.com with SMTP id af79cd13be357-7d3dcac892bso697796385a.1
+        for <linux-kernel@vger.kernel.org>; Mon, 23 Jun 2025 11:12:39 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1750702359; x=1751307159;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Iav4YsZh0lX7sUJ5ofhiLBwN9GmAGN5M/lgmtGwU0kw=;
+        b=WhSB/C1cU/ZobuAX2ZqU7Kiv9TNmvu5IigMuMPz1SF2aa+8fW+b921KgHukp8WIw5r
+         6SB2e6TNHaDrKpShCWiKtMskvYknDEegMttiNVMz8uUTQm0a+YOib9dBGabZhxs1WGuM
+         eX8DKM0QGchuzsUrKKuD41iUDXQeqe73ztw3M2fQ0O3f9hWe7LiAIcyYpe/zAC3qce9Q
+         mQftwjQl+2laHLAJ+q9YxmejJ9A7xeMi594/VNNZj5tsJg5/2sOyxdjDjtoZsx6JruTL
+         BNy+G6Fl7+kOIoHwP3I7LIvfvXBwG8sGS7OzT6shRUTmC83w2PW016Zi2O4EK/8or1h5
+         +FDw==
+X-Forwarded-Encrypted: i=1; AJvYcCVRmkBiVsdwTuT9NYPXWTiz9BpJRiypiR7Zzb7DjnlfRcUNynwwkoCBhgmGCe8QTXSy3N/dX3L84nThWtU=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzDc+nlSFdPwiS12pGkp8P6OthhcbRzn/rCjhexkhMmdoN7Ii5e
+	mfYR+FKNZ1ohpfLfPAUXe2nwxQY4LRb2SOQe/QJljnyCpYKDpFEq8StL4ulFTxeKO6w16oTmCwu
+	xJqcqGNIz5nbdpMXxHbytVcIF8ukz6VMjNa47zOLwdvgnULE4YZBZxy+FfE0hNlf90Q==
+X-Gm-Gg: ASbGncu2VbTIsT/LaIh0uulBkGdSsOMV0UHcLahQJ10fKBbFz6qJmiwJPoe/MBiH+L0
+	ylest1KZHUYBE3UubckYPpjQD6Hntlc0Bk7JKQfjPlGuzudEYr0Er07QdUOUoz7uMIiDjzMeS31
+	dI+ZeK2Iv/JgHOMnkhkJZidgFefJjKSRIo/IFDyZP17T8dcDvVGGhK1asaecVDyNoAPuNvJv7cX
+	671on/GZLfo/IuSZMOA98FHFlMdPFkXAqkoPY0n+XyVC1ZRlkmtWxhty+k1Kz/JAauB+zQEwiYg
+	aPakm8hAXIX2Gg==
+X-Received: by 2002:a05:620a:838a:b0:7d3:910e:4a76 with SMTP id af79cd13be357-7d41ec19ed4mr68830785a.7.1750702359204;
+        Mon, 23 Jun 2025 11:12:39 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IEgT47ZCKXFLELEORYNnyqp2jHGSbfohR2YiK4ItxepExn16fOZExu87ZTR5++yYdLc7Raq8w==
+X-Received: by 2002:a05:620a:838a:b0:7d3:910e:4a76 with SMTP id af79cd13be357-7d41ec19ed4mr68825685a.7.1750702358681;
+        Mon, 23 Jun 2025 11:12:38 -0700 (PDT)
+Received: from x1.local ([85.131.185.92])
+        by smtp.gmail.com with ESMTPSA id af79cd13be357-7d3f99efa3esm415953685a.75.2025.06.23.11.12.37
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 23 Jun 2025 11:12:38 -0700 (PDT)
+Date: Mon, 23 Jun 2025 14:12:34 -0400
+From: Peter Xu <peterx@redhat.com>
+To: kernel test robot <lkp@intel.com>
+Cc: linux-mm@kvack.org, linux-kernel@vger.kernel.org,
+	oe-kbuild-all@lists.linux.dev,
+	Nikita Kalyazin <kalyazin@amazon.com>,
+	Hugh Dickins <hughd@google.com>, Oscar Salvador <osalvador@suse.de>,
+	Michal Hocko <mhocko@suse.com>,
+	David Hildenbrand <david@redhat.com>,
+	Muchun Song <muchun.song@linux.dev>,
+	Andrea Arcangeli <aarcange@redhat.com>,
+	Ujwal Kundur <ujwal.kundur@gmail.com>,
+	Suren Baghdasaryan <surenb@google.com>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Vlastimil Babka <vbabka@suse.cz>,
+	"Liam R . Howlett" <Liam.Howlett@oracle.com>,
+	James Houghton <jthoughton@google.com>,
+	Mike Rapoport <rppt@kernel.org>,
+	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
+	Axel Rasmussen <axelrasmussen@google.com>
+Subject: Re: [PATCH 4/4] mm: Apply vm_uffd_ops API to core mm
+Message-ID: <aFmZEtZWtnFCj3gm@x1.local>
+References: <20250620190342.1780170-5-peterx@redhat.com>
+ <202506230216.JVgQj2Si-lkp@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
+In-Reply-To: <202506230216.JVgQj2Si-lkp@intel.com>
 
-tree:   https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git master
-head:   86731a2a651e58953fc949573895f2fa6d456841
-commit: 40b9969796bfa49ed1b0f7ddc254f48cb2ac6d2c crypto: testmgr - replace CRYPTO_MANAGER_DISABLE_TESTS with CRYPTO_SELFTESTS
-date:   6 weeks ago
-config: s390-allyesconfig (https://download.01.org/0day-ci/archive/20250624/202506240244.cOarmYVt-lkp@intel.com/config)
-compiler: s390-linux-gcc (GCC) 15.1.0
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250624/202506240244.cOarmYVt-lkp@intel.com/reproduce)
+On Mon, Jun 23, 2025 at 03:09:13AM +0800, kernel test robot wrote:
+> Hi Peter,
+> 
+> kernel test robot noticed the following build warnings:
+> 
+> [auto build test WARNING on next-20250620]
+> [cannot apply to akpm-mm/mm-everything linus/master v6.16-rc2 v6.16-rc1 v6.15 v6.16-rc2]
+> [If your patch is applied to the wrong git tree, kindly drop us a note.
+> And when submitting patch, we suggest to use '--base' as documented in
+> https://git-scm.com/docs/git-format-patch#_base_tree_information]
+> 
+> url:    https://github.com/intel-lab-lkp/linux/commits/Peter-Xu/mm-Introduce-vm_uffd_ops-API/20250621-030557
+> base:   next-20250620
+> patch link:    https://lore.kernel.org/r/20250620190342.1780170-5-peterx%40redhat.com
+> patch subject: [PATCH 4/4] mm: Apply vm_uffd_ops API to core mm
+> config: i386-randconfig-061-20250622 (https://download.01.org/0day-ci/archive/20250623/202506230216.JVgQj2Si-lkp@intel.com/config)
+> compiler: gcc-11 (Debian 11.3.0-12) 11.3.0
+> reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250623/202506230216.JVgQj2Si-lkp@intel.com/reproduce)
+> 
+> If you fix the issue in a separate patch/commit (i.e. not just a new version of
+> the same patch/commit), kindly add following tags
+> | Reported-by: kernel test robot <lkp@intel.com>
+> | Closes: https://lore.kernel.org/oe-kbuild-all/202506230216.JVgQj2Si-lkp@intel.com/
+> 
+> sparse warnings: (new ones prefixed by >>)
+>    mm/shmem.c: note: in included file (through include/linux/shmem_fs.h):
+> >> include/linux/userfaultfd_k.h:90:17: sparse: sparse: cast from restricted uffd_flags_t
+> --
+>    mm/hugetlb.c:669:12: sparse: sparse: context imbalance in 'allocate_file_region_entries' - wrong count at exit
+>    mm/hugetlb.c:740:13: sparse: sparse: context imbalance in 'region_add' - wrong count at exit
+>    mm/hugetlb.c:807:13: sparse: sparse: context imbalance in 'region_chg' - wrong count at exit
+>    mm/hugetlb.c:5798:20: sparse: sparse: context imbalance in 'move_huge_pte' - different lock contexts for basic block
+>    mm/hugetlb.c: note: in included file:
+>    include/linux/mm.h:1391:22: sparse: sparse: context imbalance in 'hugetlb_wp' - unexpected unlock
+>    mm/hugetlb.c: note: in included file (through include/linux/hugetlb.h, include/linux/migrate.h):
+> >> include/linux/userfaultfd_k.h:90:17: sparse: sparse: cast from restricted uffd_flags_t
+> >> include/linux/userfaultfd_k.h:90:17: sparse: sparse: cast from restricted uffd_flags_t
+> --
+>    mm/userfaultfd.c:270:9: sparse: sparse: context imbalance in 'mfill_atomic_install_pte' - different lock contexts for basic block
+>    mm/userfaultfd.c:412:9: sparse: sparse: context imbalance in 'mfill_atomic_pte_zeropage' - different lock contexts for basic block
+>    mm/userfaultfd.c:498:9: sparse: sparse: context imbalance in 'mfill_atomic_pte_poison' - different lock contexts for basic block
+>    mm/userfaultfd.c: note: in included file:
+> >> include/linux/userfaultfd_k.h:90:17: sparse: sparse: cast from restricted uffd_flags_t
+> >> include/linux/userfaultfd_k.h:90:17: sparse: sparse: cast from restricted uffd_flags_t
+> >> include/linux/userfaultfd_k.h:90:17: sparse: sparse: cast from restricted uffd_flags_t
+> >> include/linux/userfaultfd_k.h:90:17: sparse: sparse: cast from restricted uffd_flags_t
+> >> include/linux/userfaultfd_k.h:90:17: sparse: sparse: cast from restricted uffd_flags_t
+> >> include/linux/userfaultfd_k.h:90:17: sparse: sparse: cast from restricted uffd_flags_t
+> >> include/linux/userfaultfd_k.h:90:17: sparse: sparse: cast from restricted uffd_flags_t
+> >> include/linux/userfaultfd_k.h:90:17: sparse: sparse: cast from restricted uffd_flags_t
+> >> include/linux/userfaultfd_k.h:90:17: sparse: sparse: cast from restricted uffd_flags_t
+> >> include/linux/userfaultfd_k.h:90:17: sparse: sparse: cast from restricted uffd_flags_t
+> >> include/linux/userfaultfd_k.h:90:17: sparse: sparse: cast from restricted uffd_flags_t
+> >> include/linux/userfaultfd_k.h:90:17: sparse: sparse: cast from restricted uffd_flags_t
+> >> include/linux/userfaultfd_k.h:90:17: sparse: sparse: cast from restricted uffd_flags_t
+> >> include/linux/userfaultfd_k.h:90:17: sparse: sparse: cast from restricted uffd_flags_t
+> >> include/linux/userfaultfd_k.h:90:17: sparse: sparse: cast from restricted uffd_flags_t
+> >> include/linux/userfaultfd_k.h:90:17: sparse: sparse: cast from restricted uffd_flags_t
+> >> include/linux/userfaultfd_k.h:90:17: sparse: sparse: cast from restricted uffd_flags_t
+> >> include/linux/userfaultfd_k.h:90:17: sparse: sparse: cast from restricted uffd_flags_t
+> >> include/linux/userfaultfd_k.h:90:17: sparse: sparse: cast from restricted uffd_flags_t
+> >> include/linux/userfaultfd_k.h:90:17: sparse: sparse: cast from restricted uffd_flags_t
+>    mm/userfaultfd.c: note: in included file (through include/linux/rbtree.h, include/linux/mm_types.h, include/linux/mmzone.h, ...):
+>    include/linux/rcupdate.h:871:25: sparse: sparse: context imbalance in 'move_pages_pte' - unexpected unlock
+> 
+> vim +90 include/linux/userfaultfd_k.h
+> 
+>     87	
+>     88	static inline enum mfill_atomic_mode uffd_flags_get_mode(uffd_flags_t flags)
+>     89	{
+>   > 90		return (enum mfill_atomic_mode)(flags & MFILL_ATOMIC_MODE_MASK);
+>     91	}
+>     92	
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202506240244.cOarmYVt-lkp@intel.com/
+Sigh.. I thought the cast would helped to tell sparse on this.  Looks like
+I need __force..
 
-All warnings (new ones prefixed by >>):
+I'll squash below change when repost:
 
-   crypto/testmgr.c: In function 'test_skcipher_vec_cfg':
->> crypto/testmgr.c:2994:1: warning: the frame size of 1032 bytes is larger than 1024 bytes [-Wframe-larger-than=]
-    2994 | }
-         | ^
-   crypto/testmgr.c: In function 'test_aead_vec_cfg':
-   crypto/testmgr.c:2240:1: warning: the frame size of 1144 bytes is larger than 1024 bytes [-Wframe-larger-than=]
-    2240 | }
-         | ^
+diff --git a/include/linux/userfaultfd_k.h b/include/linux/userfaultfd_k.h
+index 6064f9542d5b..6c5ca68204dd 100644
+--- a/include/linux/userfaultfd_k.h
++++ b/include/linux/userfaultfd_k.h
+@@ -87,7 +87,7 @@ extern vm_fault_t handle_userfault(struct vm_fault *vmf, unsigned long reason);
 
+ static inline enum mfill_atomic_mode uffd_flags_get_mode(uffd_flags_t flags)
+ {
+-       return (enum mfill_atomic_mode)(flags & MFILL_ATOMIC_MODE_MASK);
++       return (__force enum mfill_atomic_mode)(flags & MFILL_ATOMIC_MODE_MASK);
+ }
 
-vim +2994 crypto/testmgr.c
-
-1aa4ecd95d8d67 Herbert Xu      2008-08-17  2838  
-6e5972fa4a0db6 Eric Biggers    2020-10-26  2839  static int test_skcipher_vec_cfg(int enc, const struct cipher_testvec *vec,
-951d13328a8a36 Eric Biggers    2019-04-11  2840  				 const char *vec_name,
-4e7babba30d820 Eric Biggers    2019-01-31  2841  				 const struct testvec_config *cfg,
-4e7babba30d820 Eric Biggers    2019-01-31  2842  				 struct skcipher_request *req,
-4e7babba30d820 Eric Biggers    2019-01-31  2843  				 struct cipher_test_sglists *tsgls)
-da7f033ddc9fde Herbert Xu      2008-07-31  2844  {
-4e7babba30d820 Eric Biggers    2019-01-31  2845  	struct crypto_skcipher *tfm = crypto_skcipher_reqtfm(req);
-4e7babba30d820 Eric Biggers    2019-01-31  2846  	const unsigned int alignmask = crypto_skcipher_alignmask(tfm);
-4e7babba30d820 Eric Biggers    2019-01-31  2847  	const unsigned int ivsize = crypto_skcipher_ivsize(tfm);
-6e5972fa4a0db6 Eric Biggers    2020-10-26  2848  	const char *driver = crypto_skcipher_driver_name(tfm);
-4e7babba30d820 Eric Biggers    2019-01-31  2849  	const u32 req_flags = CRYPTO_TFM_REQ_MAY_BACKLOG | cfg->req_flags;
-4e7babba30d820 Eric Biggers    2019-01-31  2850  	const char *op = enc ? "encryption" : "decryption";
-4e7babba30d820 Eric Biggers    2019-01-31  2851  	DECLARE_CRYPTO_WAIT(wait);
-4e7babba30d820 Eric Biggers    2019-01-31  2852  	u8 _iv[3 * (MAX_ALGAPI_ALIGNMASK + 1) + MAX_IVLEN];
-4e7babba30d820 Eric Biggers    2019-01-31  2853  	u8 *iv = PTR_ALIGN(&_iv[0], 2 * (MAX_ALGAPI_ALIGNMASK + 1)) +
-4e7babba30d820 Eric Biggers    2019-01-31  2854  		 cfg->iv_offset +
-4e7babba30d820 Eric Biggers    2019-01-31  2855  		 (cfg->iv_offset_relative_to_alignmask ? alignmask : 0);
-4e7babba30d820 Eric Biggers    2019-01-31  2856  	struct kvec input;
-4e7babba30d820 Eric Biggers    2019-01-31  2857  	int err;
-08d6af8c160b6b Jussi Kivilinna 2012-09-21  2858  
-4e7babba30d820 Eric Biggers    2019-01-31  2859  	/* Set the key */
-4e7babba30d820 Eric Biggers    2019-01-31  2860  	if (vec->wk)
-4e7babba30d820 Eric Biggers    2019-01-31  2861  		crypto_skcipher_set_flags(tfm, CRYPTO_TFM_REQ_FORBID_WEAK_KEYS);
-da7f033ddc9fde Herbert Xu      2008-07-31  2862  	else
-4e7babba30d820 Eric Biggers    2019-01-31  2863  		crypto_skcipher_clear_flags(tfm,
-4e7babba30d820 Eric Biggers    2019-01-31  2864  					    CRYPTO_TFM_REQ_FORBID_WEAK_KEYS);
-fd8c37c72d60c7 Eric Biggers    2019-12-01  2865  	err = do_setkey(crypto_skcipher_setkey, tfm, vec->key, vec->klen,
-fd8c37c72d60c7 Eric Biggers    2019-12-01  2866  			cfg, alignmask);
-4e7babba30d820 Eric Biggers    2019-01-31  2867  	if (err) {
-5283a8ee9badf6 Eric Biggers    2019-04-11  2868  		if (err == vec->setkey_error)
-4e7babba30d820 Eric Biggers    2019-01-31  2869  			return 0;
-951d13328a8a36 Eric Biggers    2019-04-11  2870  		pr_err("alg: skcipher: %s setkey failed on test vector %s; expected_error=%d, actual_error=%d, flags=%#x\n",
-951d13328a8a36 Eric Biggers    2019-04-11  2871  		       driver, vec_name, vec->setkey_error, err,
-5283a8ee9badf6 Eric Biggers    2019-04-11  2872  		       crypto_skcipher_get_flags(tfm));
-4e7babba30d820 Eric Biggers    2019-01-31  2873  		return err;
-4e7babba30d820 Eric Biggers    2019-01-31  2874  	}
-5283a8ee9badf6 Eric Biggers    2019-04-11  2875  	if (vec->setkey_error) {
-951d13328a8a36 Eric Biggers    2019-04-11  2876  		pr_err("alg: skcipher: %s setkey unexpectedly succeeded on test vector %s; expected_error=%d\n",
-951d13328a8a36 Eric Biggers    2019-04-11  2877  		       driver, vec_name, vec->setkey_error);
-4e7babba30d820 Eric Biggers    2019-01-31  2878  		return -EINVAL;
-da7f033ddc9fde Herbert Xu      2008-07-31  2879  	}
-da7f033ddc9fde Herbert Xu      2008-07-31  2880  
-4e7babba30d820 Eric Biggers    2019-01-31  2881  	/* The IV must be copied to a buffer, as the algorithm may modify it */
-4e7babba30d820 Eric Biggers    2019-01-31  2882  	if (ivsize) {
-4e7babba30d820 Eric Biggers    2019-01-31  2883  		if (WARN_ON(ivsize > MAX_IVLEN))
-4e7babba30d820 Eric Biggers    2019-01-31  2884  			return -EINVAL;
-730f67d8b826d9 Eric Biggers    2024-12-27  2885  		if (vec->iv)
-4e7babba30d820 Eric Biggers    2019-01-31  2886  			memcpy(iv, vec->iv, ivsize);
-da7f033ddc9fde Herbert Xu      2008-07-31  2887  		else
-4e7babba30d820 Eric Biggers    2019-01-31  2888  			memset(iv, 0, ivsize);
-4e7babba30d820 Eric Biggers    2019-01-31  2889  	} else {
-4e7babba30d820 Eric Biggers    2019-01-31  2890  		iv = NULL;
-08d6af8c160b6b Jussi Kivilinna 2012-09-21  2891  	}
-da7f033ddc9fde Herbert Xu      2008-07-31  2892  
-4e7babba30d820 Eric Biggers    2019-01-31  2893  	/* Build the src/dst scatterlists */
-4e7babba30d820 Eric Biggers    2019-01-31  2894  	input.iov_base = enc ? (void *)vec->ptext : (void *)vec->ctext;
-4e7babba30d820 Eric Biggers    2019-01-31  2895  	input.iov_len = vec->len;
-4e7babba30d820 Eric Biggers    2019-01-31  2896  	err = build_cipher_test_sglists(tsgls, cfg, alignmask,
-4e7babba30d820 Eric Biggers    2019-01-31  2897  					vec->len, vec->len, &input, 1);
-4e7babba30d820 Eric Biggers    2019-01-31  2898  	if (err) {
-951d13328a8a36 Eric Biggers    2019-04-11  2899  		pr_err("alg: skcipher: %s %s: error preparing scatterlists for test vector %s, cfg=\"%s\"\n",
-951d13328a8a36 Eric Biggers    2019-04-11  2900  		       driver, op, vec_name, cfg->name);
-4e7babba30d820 Eric Biggers    2019-01-31  2901  		return err;
-da7f033ddc9fde Herbert Xu      2008-07-31  2902  	}
-da7f033ddc9fde Herbert Xu      2008-07-31  2903  
-4e7babba30d820 Eric Biggers    2019-01-31  2904  	/* Do the actual encryption or decryption */
-4e7babba30d820 Eric Biggers    2019-01-31  2905  	testmgr_poison(req->__ctx, crypto_skcipher_reqsize(tfm));
-4e7babba30d820 Eric Biggers    2019-01-31  2906  	skcipher_request_set_callback(req, req_flags, crypto_req_done, &wait);
-4e7babba30d820 Eric Biggers    2019-01-31  2907  	skcipher_request_set_crypt(req, tsgls->src.sgl_ptr, tsgls->dst.sgl_ptr,
-4e7babba30d820 Eric Biggers    2019-01-31  2908  				   vec->len, iv);
-6570737c7fa047 Eric Biggers    2019-03-12  2909  	if (cfg->nosimd)
-6570737c7fa047 Eric Biggers    2019-03-12  2910  		crypto_disable_simd_for_test();
-6570737c7fa047 Eric Biggers    2019-03-12  2911  	err = enc ? crypto_skcipher_encrypt(req) : crypto_skcipher_decrypt(req);
-6570737c7fa047 Eric Biggers    2019-03-12  2912  	if (cfg->nosimd)
-6570737c7fa047 Eric Biggers    2019-03-12  2913  		crypto_reenable_simd_for_test();
-6570737c7fa047 Eric Biggers    2019-03-12  2914  	err = crypto_wait_req(err, &wait);
-8a826a34a52eef Boris Brezillon 2015-06-16  2915  
-fa353c99174e83 Eric Biggers    2019-01-31  2916  	/* Check that the algorithm didn't overwrite things it shouldn't have */
-fa353c99174e83 Eric Biggers    2019-01-31  2917  	if (req->cryptlen != vec->len ||
-fa353c99174e83 Eric Biggers    2019-01-31  2918  	    req->iv != iv ||
-fa353c99174e83 Eric Biggers    2019-01-31  2919  	    req->src != tsgls->src.sgl_ptr ||
-fa353c99174e83 Eric Biggers    2019-01-31  2920  	    req->dst != tsgls->dst.sgl_ptr ||
-fa353c99174e83 Eric Biggers    2019-01-31  2921  	    crypto_skcipher_reqtfm(req) != tfm ||
-fa353c99174e83 Eric Biggers    2019-01-31  2922  	    req->base.complete != crypto_req_done ||
-fa353c99174e83 Eric Biggers    2019-01-31  2923  	    req->base.flags != req_flags ||
-fa353c99174e83 Eric Biggers    2019-01-31  2924  	    req->base.data != &wait) {
-951d13328a8a36 Eric Biggers    2019-04-11  2925  		pr_err("alg: skcipher: %s %s corrupted request struct on test vector %s, cfg=\"%s\"\n",
-951d13328a8a36 Eric Biggers    2019-04-11  2926  		       driver, op, vec_name, cfg->name);
-fa353c99174e83 Eric Biggers    2019-01-31  2927  		if (req->cryptlen != vec->len)
-fa353c99174e83 Eric Biggers    2019-01-31  2928  			pr_err("alg: skcipher: changed 'req->cryptlen'\n");
-fa353c99174e83 Eric Biggers    2019-01-31  2929  		if (req->iv != iv)
-fa353c99174e83 Eric Biggers    2019-01-31  2930  			pr_err("alg: skcipher: changed 'req->iv'\n");
-fa353c99174e83 Eric Biggers    2019-01-31  2931  		if (req->src != tsgls->src.sgl_ptr)
-fa353c99174e83 Eric Biggers    2019-01-31  2932  			pr_err("alg: skcipher: changed 'req->src'\n");
-fa353c99174e83 Eric Biggers    2019-01-31  2933  		if (req->dst != tsgls->dst.sgl_ptr)
-fa353c99174e83 Eric Biggers    2019-01-31  2934  			pr_err("alg: skcipher: changed 'req->dst'\n");
-fa353c99174e83 Eric Biggers    2019-01-31  2935  		if (crypto_skcipher_reqtfm(req) != tfm)
-fa353c99174e83 Eric Biggers    2019-01-31  2936  			pr_err("alg: skcipher: changed 'req->base.tfm'\n");
-fa353c99174e83 Eric Biggers    2019-01-31  2937  		if (req->base.complete != crypto_req_done)
-fa353c99174e83 Eric Biggers    2019-01-31  2938  			pr_err("alg: skcipher: changed 'req->base.complete'\n");
-fa353c99174e83 Eric Biggers    2019-01-31  2939  		if (req->base.flags != req_flags)
-fa353c99174e83 Eric Biggers    2019-01-31  2940  			pr_err("alg: skcipher: changed 'req->base.flags'\n");
-fa353c99174e83 Eric Biggers    2019-01-31  2941  		if (req->base.data != &wait)
-fa353c99174e83 Eric Biggers    2019-01-31  2942  			pr_err("alg: skcipher: changed 'req->base.data'\n");
-fa353c99174e83 Eric Biggers    2019-01-31  2943  		return -EINVAL;
-fa353c99174e83 Eric Biggers    2019-01-31  2944  	}
-fa353c99174e83 Eric Biggers    2019-01-31  2945  	if (is_test_sglist_corrupted(&tsgls->src)) {
-951d13328a8a36 Eric Biggers    2019-04-11  2946  		pr_err("alg: skcipher: %s %s corrupted src sgl on test vector %s, cfg=\"%s\"\n",
-951d13328a8a36 Eric Biggers    2019-04-11  2947  		       driver, op, vec_name, cfg->name);
-fa353c99174e83 Eric Biggers    2019-01-31  2948  		return -EINVAL;
-fa353c99174e83 Eric Biggers    2019-01-31  2949  	}
-fa353c99174e83 Eric Biggers    2019-01-31  2950  	if (tsgls->dst.sgl_ptr != tsgls->src.sgl &&
-fa353c99174e83 Eric Biggers    2019-01-31  2951  	    is_test_sglist_corrupted(&tsgls->dst)) {
-951d13328a8a36 Eric Biggers    2019-04-11  2952  		pr_err("alg: skcipher: %s %s corrupted dst sgl on test vector %s, cfg=\"%s\"\n",
-951d13328a8a36 Eric Biggers    2019-04-11  2953  		       driver, op, vec_name, cfg->name);
-fa353c99174e83 Eric Biggers    2019-01-31  2954  		return -EINVAL;
-fa353c99174e83 Eric Biggers    2019-01-31  2955  	}
-fa353c99174e83 Eric Biggers    2019-01-31  2956  
-5283a8ee9badf6 Eric Biggers    2019-04-11  2957  	/* Check for success or failure */
-5283a8ee9badf6 Eric Biggers    2019-04-11  2958  	if (err) {
-5283a8ee9badf6 Eric Biggers    2019-04-11  2959  		if (err == vec->crypt_error)
-5283a8ee9badf6 Eric Biggers    2019-04-11  2960  			return 0;
-951d13328a8a36 Eric Biggers    2019-04-11  2961  		pr_err("alg: skcipher: %s %s failed on test vector %s; expected_error=%d, actual_error=%d, cfg=\"%s\"\n",
-951d13328a8a36 Eric Biggers    2019-04-11  2962  		       driver, op, vec_name, vec->crypt_error, err, cfg->name);
-5283a8ee9badf6 Eric Biggers    2019-04-11  2963  		return err;
-5283a8ee9badf6 Eric Biggers    2019-04-11  2964  	}
-5283a8ee9badf6 Eric Biggers    2019-04-11  2965  	if (vec->crypt_error) {
-951d13328a8a36 Eric Biggers    2019-04-11  2966  		pr_err("alg: skcipher: %s %s unexpectedly succeeded on test vector %s; expected_error=%d, cfg=\"%s\"\n",
-951d13328a8a36 Eric Biggers    2019-04-11  2967  		       driver, op, vec_name, vec->crypt_error, cfg->name);
-5283a8ee9badf6 Eric Biggers    2019-04-11  2968  		return -EINVAL;
-5283a8ee9badf6 Eric Biggers    2019-04-11  2969  	}
-5283a8ee9badf6 Eric Biggers    2019-04-11  2970  
-4e7babba30d820 Eric Biggers    2019-01-31  2971  	/* Check for the correct output (ciphertext or plaintext) */
-4e7babba30d820 Eric Biggers    2019-01-31  2972  	err = verify_correct_output(&tsgls->dst, enc ? vec->ctext : vec->ptext,
-4e7babba30d820 Eric Biggers    2019-01-31  2973  				    vec->len, 0, true);
-4e7babba30d820 Eric Biggers    2019-01-31  2974  	if (err == -EOVERFLOW) {
-951d13328a8a36 Eric Biggers    2019-04-11  2975  		pr_err("alg: skcipher: %s %s overran dst buffer on test vector %s, cfg=\"%s\"\n",
-951d13328a8a36 Eric Biggers    2019-04-11  2976  		       driver, op, vec_name, cfg->name);
-4e7babba30d820 Eric Biggers    2019-01-31  2977  		return err;
-8a826a34a52eef Boris Brezillon 2015-06-16  2978  	}
-4e7babba30d820 Eric Biggers    2019-01-31  2979  	if (err) {
-951d13328a8a36 Eric Biggers    2019-04-11  2980  		pr_err("alg: skcipher: %s %s test failed (wrong result) on test vector %s, cfg=\"%s\"\n",
-951d13328a8a36 Eric Biggers    2019-04-11  2981  		       driver, op, vec_name, cfg->name);
-4e7babba30d820 Eric Biggers    2019-01-31  2982  		return err;
-da7f033ddc9fde Herbert Xu      2008-07-31  2983  	}
-da7f033ddc9fde Herbert Xu      2008-07-31  2984  
-4e7babba30d820 Eric Biggers    2019-01-31  2985  	/* If applicable, check that the algorithm generated the correct IV */
-8efd972ef96a3f Eric Biggers    2019-02-14  2986  	if (vec->iv_out && memcmp(iv, vec->iv_out, ivsize) != 0) {
-951d13328a8a36 Eric Biggers    2019-04-11  2987  		pr_err("alg: skcipher: %s %s test failed (wrong output IV) on test vector %s, cfg=\"%s\"\n",
-951d13328a8a36 Eric Biggers    2019-04-11  2988  		       driver, op, vec_name, cfg->name);
-4e7babba30d820 Eric Biggers    2019-01-31  2989  		hexdump(iv, ivsize);
-4e7babba30d820 Eric Biggers    2019-01-31  2990  		return -EINVAL;
-4e7babba30d820 Eric Biggers    2019-01-31  2991  	}
-da7f033ddc9fde Herbert Xu      2008-07-31  2992  
-4e7babba30d820 Eric Biggers    2019-01-31  2993  	return 0;
-4e7babba30d820 Eric Biggers    2019-01-31 @2994  }
-da7f033ddc9fde Herbert Xu      2008-07-31  2995  
-
-:::::: The code at line 2994 was first introduced by commit
-:::::: 4e7babba30d820c4195b1d58cf51dce3c22ecf2b crypto: testmgr - convert skcipher testing to use testvec_configs
-
-:::::: TO: Eric Biggers <ebiggers@google.com>
-:::::: CC: Herbert Xu <herbert@gondor.apana.org.au>
+ static inline bool uffd_flags_mode_is(uffd_flags_t flags, enum mfill_atomic_mode expected)
 
 -- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+Peter Xu
+
 
