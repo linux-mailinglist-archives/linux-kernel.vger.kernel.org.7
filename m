@@ -1,153 +1,112 @@
-Return-Path: <linux-kernel+bounces-698092-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-698101-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id E1509AE3D04
-	for <lists+linux-kernel@lfdr.de>; Mon, 23 Jun 2025 12:44:21 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4B8E4AE3D27
+	for <lists+linux-kernel@lfdr.de>; Mon, 23 Jun 2025 12:47:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id EEAB21897B73
-	for <lists+linux-kernel@lfdr.de>; Mon, 23 Jun 2025 10:43:56 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E85F07A66B5
+	for <lists+linux-kernel@lfdr.de>; Mon, 23 Jun 2025 10:46:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0C5BA243968;
-	Mon, 23 Jun 2025 10:40:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 94E1B233D8E;
+	Mon, 23 Jun 2025 10:47:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="Qt/lZXde"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	dkim=pass (2048-bit key) header.d=wp.pl header.i=@wp.pl header.b="I4M6r+xV"
+Received: from mx4.wp.pl (mx4.wp.pl [212.77.101.11])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F3A4D1A2390
-	for <linux-kernel@vger.kernel.org>; Mon, 23 Jun 2025 10:40:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1501B230BF8
+	for <linux-kernel@vger.kernel.org>; Mon, 23 Jun 2025 10:47:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.77.101.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750675234; cv=none; b=IH2S0jm7WVD6CNrDij5FmHPmEr/uwRSQCw0HIhzlzGg7+OFGkwcOxxSYikOpk6tLeZa6ug7Vbo0PWGxwcPqwHwfWiIAPNVW2nlXtmq1JNJO9biEoBtUZJYwUo4o1ao5rqVQE4wVkXJLeNm7gFC9LxyXOj7BrETaEOF55V62JKPI=
+	t=1750675647; cv=none; b=tkUhubk0eOtq/s148rD/biSgXDM3lU6/sxq4AnbMI6hy/Y9xjicAPInjpb38AuVZegoQZuuOk0iIfEdhkOMyjhVvmRNbc9fbepf+vkrXSSHutPS+Jxd2A4xHUMFHXlpjEdHSK+DIeLZiC5wVRqSO72ggTSogr4wfliwbGRjra7Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750675234; c=relaxed/simple;
-	bh=KHd7ek7wScTW5BMWrwQrgcBrFmEZsNhi4ty1GF+C6vM=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=YoDVuAroqQxcjitetzVvUhLqP6EQf8ody6PjhrSX8DHXPL/LTon0rys4wiBGlW3elFWJvVKonUYOAZu8tcRP2UYDjqfcgmqUWzdps8VQUd7TbZ3oB55PmQjYhm/QHhdNmKvavIwJPZaFRtjWIm94m+rc1sI7nSFZjBU71OA4hFY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=Qt/lZXde; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279868.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 55N9pIAu027634
-	for <linux-kernel@vger.kernel.org>; Mon, 23 Jun 2025 10:40:32 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	AFgHeL5Gs2jCvYUfdp7Tl3i7xt8xQpcA+8DI3691EVc=; b=Qt/lZXdeRPNUExJj
-	j+lB6sPYre8ajxlImVPVvMvbl2W52LDb+cwMZK6R6+PNFfcjvriqrcBacV6UlgQ4
-	sbbFc3isdWkysM6FOYcWGkkM9wKU4cfTwCHo47uV67BKzjJoGGGDxRMDtfCufzHE
-	WJy7SsIOdvK/VJeHLE2O6pH5qRp07Q0Qq7gVbVvRikkejd5mzE/ukmstEKp+u4vS
-	ybMSNzI0YnG3YoqffjtXsdF+tpNBtVsIbrIuPBLQx7CKB3xvB54rhenRmYMCtLMZ
-	mp6Mvm3Nq5qG9KIBSAilLmo2n7n76Lzk6TvbVPlEVDxtl/NVdVn8q7zJKIhFcXLL
-	uxMl0Q==
-Received: from mail-qk1-f197.google.com (mail-qk1-f197.google.com [209.85.222.197])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 47eccdje5w-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Mon, 23 Jun 2025 10:40:30 +0000 (GMT)
-Received: by mail-qk1-f197.google.com with SMTP id af79cd13be357-7d21080c26fso106787685a.1
-        for <linux-kernel@vger.kernel.org>; Mon, 23 Jun 2025 03:40:30 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1750675224; x=1751280024;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=AFgHeL5Gs2jCvYUfdp7Tl3i7xt8xQpcA+8DI3691EVc=;
-        b=ui3TJ6qkBNs3quwz4th+id0ULC+43Hh7PqF9f6iABKZY3n/pHEo4LZEe+XYYlIVto0
-         4LbAUNE+/1YAbUQRZ2J3NlZLnzGoxSfuZUzmqJ1v9VYSBtfMNd3lDyfK3HUv/iRl/m6o
-         4t9LiXsHHba3W9mhLicNFSTdP1Y68ydq0YIiznaYwROPMhGxawYv/skRgmtpl92VvAOT
-         43+IX7z0eRwNt61TqDj5qIlh1KyTmmvfxr/wCW0811Ik0aOT0vzyhOuAMwxumezohBHk
-         rB6ASTyrNFJ6KF6rxrMlwcjaxyrt3M/gomjyDjUUjHjpHHBEOK0C3fwxxMKbwtJzWAvq
-         Aglg==
-X-Forwarded-Encrypted: i=1; AJvYcCUX7vnKeglDECQ+xHIlAK6TYw4TkwDSG/pMkBsBb/VtqF4UHPx6lQfE62piWCPWItuy3VSq+9qSYTwjNkc=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzJJ5R3Gi9jgYaLi/45fsDeLQ9+lwsRs9LeWaap2HBK+yLkFidp
-	B5e4VD2ApArZ+ETYX7/G/cWoQUrMdbSMHKGdLDcBAZDIFzhORcid0709etJkDo+QN1VyT4WlnWs
-	001l4HJYlzljW+qbSt9sSqbEAsT7OcwY8j2yOevm5mSeobUEdnUmQTvdYaVwziULAqiw=
-X-Gm-Gg: ASbGncv0eltPP9ZplqF1U/8rqG0p7sBzIL/62ogMpsOaBZoCnmqZ/BbfQqn3o8sojPk
-	lYjWBJxS4AN1LIj5iSumLocAQHkSVqMQl46AbGugO/Htk2AYo9S9urJCsRnq3ffFZ4mLRe1Gt+i
-	bA5+yYgQ4iJVfj0jUpDbxOopM0xbJJf3+BGUpRsA9WuJ3U8sv4EsGwNhoDZjbxJtMD2MH5xwCb1
-	s7xxw1db2Seh85WEHND3IQ5RPT8uCLwvvTGUAd06BibDUQpBbdH5tw3fsWBYLiwDBZGh59pBP9B
-	9wZ+BQF9/7A2zl5fKpVfdkREMAkuUt3HlHjNIqvQdBd+vuH3x6jh1+51DUniPRO5MdtbN6HMxPC
-	j5zM=
-X-Received: by 2002:a05:622a:1aa0:b0:47a:e6e1:c071 with SMTP id d75a77b69052e-4a77a21e46dmr74611151cf.7.1750675223936;
-        Mon, 23 Jun 2025 03:40:23 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IF2f1QQK1CX9KeTJNYGyibcvCyULu4j7WMWuIlqzfC1HVlyjzcYFejOgtkDsDfuQaX9s7pQDA==
-X-Received: by 2002:a05:622a:1aa0:b0:47a:e6e1:c071 with SMTP id d75a77b69052e-4a77a21e46dmr74611001cf.7.1750675223466;
-        Mon, 23 Jun 2025 03:40:23 -0700 (PDT)
-Received: from [192.168.143.225] (078088045245.garwolin.vectranet.pl. [78.88.45.245])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ae0a18d9887sm3419866b.11.2025.06.23.03.40.21
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 23 Jun 2025 03:40:23 -0700 (PDT)
-Message-ID: <c198b946-0599-4254-8ad6-3d897e047928@oss.qualcomm.com>
-Date: Mon, 23 Jun 2025 12:40:20 +0200
+	s=arc-20240116; t=1750675647; c=relaxed/simple;
+	bh=wLnOGCdWaS9KuZAxZN8hKqMIXqmfIXzXpGPVcbUS5KU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=BkpiWD29MVpph2N3MB+I6VRXZve24rs76T4XNQQze7MO8JBDBxDzs3Mj8+rA1u+3NRnwBxz7hdmGfz1x0bZWbQbwUyHeDcAxP3Wzat9dPTbhIR3LoUrfIudOmfAt7yA7sIWEHFYShVWx4z/4I8tLHIr+dCVcYcV/31T3p28r9bI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=wp.pl; spf=pass smtp.mailfrom=wp.pl; dkim=pass (2048-bit key) header.d=wp.pl header.i=@wp.pl header.b=I4M6r+xV; arc=none smtp.client-ip=212.77.101.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=wp.pl
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wp.pl
+Received: (wp-smtpd smtp.wp.pl 24439 invoked from network); 23 Jun 2025 12:40:43 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wp.pl; s=20241105;
+          t=1750675244; bh=p/cwLwgpPW01+hT2S2XgzDpwrmukQ4xw8AL6TKybcos=;
+          h=From:To:Cc:Subject;
+          b=I4M6r+xVf3coRo5EOOcBbwo9qjmbqTyYy96IFVJNwsRUepWOAgRbPfwbo/Q/xP8yi
+           qm12o3Rsp5cOUqW56Ic0h87o06crHCGduhHFNN8lXpTSGMdafnITsrWO9ck9S+NxyM
+           p7rnmudTdUw/tHZiy12/9zQmkhDL3SfeQkxH86uLNL9iyV3TZKrY5XmHy/lln0ZkyH
+           CS0SlOiucHblHmaOIpkbfbw/i24fC/Wp9ersnXnHTQcAYlBoK9x0gpR/e20MPY5tfC
+           yd/7oTW+WYGFx8LfaIGxTAc8ce9xg8mWUX4HHG4rZ/5GaNXlr5i49w4NUdzx/m63Df
+           mYEFaPta7lUSw==
+Received: from 89-64-9-92.dynamic.play.pl (HELO localhost) (stf_xl@wp.pl@[89.64.9.92])
+          (envelope-sender <stf_xl@wp.pl>)
+          by smtp.wp.pl (WP-SMTPD) with ECDHE-RSA-AES256-GCM-SHA384 encrypted SMTP
+          for <arnd@kernel.org>; 23 Jun 2025 12:40:43 +0200
+Date: Mon, 23 Jun 2025 12:40:43 +0200
+From: Stanislaw Gruszka <stf_xl@wp.pl>
+To: Arnd Bergmann <arnd@kernel.org>
+Cc: Nathan Chancellor <nathan@kernel.org>, Arnd Bergmann <arnd@arndb.de>,
+	Nick Desaulniers <nick.desaulniers+lkml@gmail.com>,
+	Bill Wendling <morbo@google.com>,
+	Justin Stitt <justinstitt@google.com>,
+	Johannes Berg <johannes.berg@intel.com>,
+	linux-wireless@vger.kernel.org, linux-kernel@vger.kernel.org,
+	llvm@lists.linux.dev
+Subject: Re: [PATCH] wifi: iwlegacy: work around excessive stack usage on
+ clang/kasan
+Message-ID: <20250623104043.GA2260@wp.pl>
+References: <20250620113946.3987160-1-arnd@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 3/5] ARM: dts: qcom: msm8960: disable gsbi1 and gsbi5
- nodes in msm8960 dtsi
-To: Antony Kurniawan Soemardi <linux@smankusors.com>,
-        Bjorn Andersson <andersson@kernel.org>,
-        Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>
-Cc: linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Max Shevchenko <wctrl@proton.me>,
-        Rudraksha Gupta <guptarud@gmail.com>
-References: <20250623-msm8960-sdcard-v2-0-340a5e8f7df0@smankusors.com>
- <20250623-msm8960-sdcard-v2-3-340a5e8f7df0@smankusors.com>
-Content-Language: en-US
-From: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-In-Reply-To: <20250623-msm8960-sdcard-v2-3-340a5e8f7df0@smankusors.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Authority-Analysis: v=2.4 cv=LOVmQIW9 c=1 sm=1 tr=0 ts=68592f1f cx=c_pps
- a=50t2pK5VMbmlHzFWWp8p/g==:117 a=FpWmc02/iXfjRdCD7H54yg==:17
- a=IkcTkHD0fZMA:10 a=6IFa9wvqVegA:10 a=wxLWbCv9AAAA:8 a=EUspDBNiAAAA:8
- a=qfpFch6WGoqHJWfhXuAA:9 a=QEXdDO2ut3YA:10 a=IoWCM6iH3mJn3m4BftBB:22
- a=QJY96suAAestDpCc5Gi9:22
-X-Proofpoint-GUID: TPoozl5pnlOwOu4Z9WQiVdt7Cl4BRRch
-X-Proofpoint-ORIG-GUID: TPoozl5pnlOwOu4Z9WQiVdt7Cl4BRRch
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNjIzMDA2NCBTYWx0ZWRfXzQ/w6Vfv24Gl
- YJ/rJyi27l0bX4oQMKCnpG7HFHadNknU0/RLjdU3zk47NPJbdZ+PvceveiEc0cF4/cTwhxBOg9f
- Azg1cVQnKuQEofUHH3yz5rbqm+EkwtZ4DeVYQWYI2KF5O0fxL/+ARFvoXOefmOL4QNysp6zpvkV
- 7O1Mh+xe2RUACRTbSXcfop5FJt2iql3MnLlqvNK+6uRU87zBXCR0kwIvhtfDlGxudD4p4NCttN4
- MtkX7Q1scAerSoNE7lSTGwcDqgCaXp0+JayTouWvzuBuLacTE81e8vgA3BuvM/Ck3IPFNgrY+U9
- jyKSC9cQshjuKpAHOsBhyTDvuv/2SGyXEbqMiaLc6Pg7Pgx+0Yn0QcmRHiUp6qEnqAYQtFJt3Iu
- y5QzlZDe28TBL0v9zAn50HJYAbV8M33vHZYQqAdsKuh4ZbALtesEj4yx5Ja6ANzJw3lmLICy
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.0.736,FMLib:17.12.80.40
- definitions=2025-06-23_03,2025-06-23_02,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- clxscore=1015 bulkscore=0 adultscore=0 mlxlogscore=884 phishscore=0
- lowpriorityscore=0 priorityscore=1501 impostorscore=0 spamscore=0
- suspectscore=0 malwarescore=0 mlxscore=0 classifier=spam authscore=0
- authtc=n/a authcc= route=outbound adjust=0 reason=mlx scancount=1
- engine=8.19.0-2505280000 definitions=main-2506230064
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250620113946.3987160-1-arnd@kernel.org>
+X-WP-MailID: dd6ab97b8af3c8994fd33ebc0b60180e
+X-WP-AV: skaner antywirusowy Poczty Wirtualnej Polski
+X-WP-SPAM: NO 0000002 [cVH0]                               
 
-On 6/22/25 8:26 PM, Antony Kurniawan Soemardi wrote:
-> Not all devices use gsbi1 and gsbi5, so these nodes should be disabled
-> in the SoC dtsi, following the existing pattern used for gsbi3. The
-> upstream samsung-expressatt and msm8960-cdp devices already have status
-> "okay" for these nodes, so this change should not break existing
-> functionality.
+On Fri, Jun 20, 2025 at 01:39:42PM +0200, Arnd Bergmann wrote:
+> From: Arnd Bergmann <arnd@arndb.de>
 > 
-> This eliminates the following error messages when gsbi nodes are not
-> configured in the board's device tree:
-> [    1.109723] gsbi 16000000.gsbi: missing mode configuration
-> [    1.109797] gsbi 16000000.gsbi: probe with driver gsbi failed with error -22
+> In some rare randconfig builds, I seem to trigger a bug in clang where
+> it unrolls a loop but then runs out of registers, which then get
+> spilled to the stack:
 > 
-> (Note: Xperia SP doesn't use gsbi5)
+> net/wireless/intel/iwlegacy/4965-rs.c:2262:1: error: stack frame size (1696) exceeds limit (1280) in 'il4965_rs_rate_init' [-Werror,-Wframe-larger-than]
 > 
-> Signed-off-by: Antony Kurniawan Soemardi <linux@smankusors.com>
+> This seems to be the same one I saw in the omapdrm driver, and there is
+> an easy workaround by not inlining the il4965_rs_rate_scale_clear_win
+> function.
+> 
+> Link: https://github.com/llvm/llvm-project/issues/143908
+> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+Acked-by: Stanislaw Gruszka <stf_xl@wp.pl>
+
 > ---
-
-Reviewed-by: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-
-Konrad
+>  drivers/net/wireless/intel/iwlegacy/4965-rs.c | 3 ++-
+>  1 file changed, 2 insertions(+), 1 deletion(-)
+> 
+> diff --git a/drivers/net/wireless/intel/iwlegacy/4965-rs.c b/drivers/net/wireless/intel/iwlegacy/4965-rs.c
+> index 0e5130d1fccd..031d88bf6393 100644
+> --- a/drivers/net/wireless/intel/iwlegacy/4965-rs.c
+> +++ b/drivers/net/wireless/intel/iwlegacy/4965-rs.c
+> @@ -203,7 +203,8 @@ il4965_rs_extract_rate(u32 rate_n_flags)
+>  	return (u8) (rate_n_flags & 0xFF);
+>  }
+>  
+> -static void
+> +/* noinline works around https://github.com/llvm/llvm-project/issues/143908 */
+> +static noinline_for_stack void
+>  il4965_rs_rate_scale_clear_win(struct il_rate_scale_data *win)
+>  {
+>  	win->data = 0;
+> -- 
+> 2.39.5
+> 
 
