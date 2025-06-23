@@ -1,268 +1,273 @@
-Return-Path: <linux-kernel+bounces-699271-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-699276-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id DD797AE57DE
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Jun 2025 01:19:55 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id CC043AE57EC
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Jun 2025 01:21:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 878F5188488A
-	for <lists+linux-kernel@lfdr.de>; Mon, 23 Jun 2025 23:20:11 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 847D1188CEDA
+	for <lists+linux-kernel@lfdr.de>; Mon, 23 Jun 2025 23:21:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 633CB22A7F9;
-	Mon, 23 Jun 2025 23:19:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1903E22CBC6;
+	Mon, 23 Jun 2025 23:21:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=dabbelt-com.20230601.gappssmtp.com header.i=@dabbelt-com.20230601.gappssmtp.com header.b="wRNpBRF9"
-Received: from mail-pf1-f178.google.com (mail-pf1-f178.google.com [209.85.210.178])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="ME2kDLoS"
+Received: from NAM11-BN8-obe.outbound.protection.outlook.com (mail-bn8nam11on2045.outbound.protection.outlook.com [40.107.236.45])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8AE3122A1E6
-	for <linux-kernel@vger.kernel.org>; Mon, 23 Jun 2025 23:19:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.178
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750720789; cv=none; b=UGQGVktjcHD3IXuwALpM/15q//pc2fJpv5RqyOqRwYtD1Y7q0ciBuexuzEckt6t4bu5goXfAcqAOu6+3wDJs0V0L0/sKq8lz7Wnr6MKh9GASHrlnZVpAgnHnU3mTVXjTepWdciZaTsXTFR4wCqXgMToFeGOPIa5S7tFnZK3s+04=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750720789; c=relaxed/simple;
-	bh=SqCa7T/OWKo0ERBeVEeW9q0S7iyfTdGOPEG3rQz8UM8=;
-	h=Date:Subject:In-Reply-To:CC:From:To:Message-ID:Mime-Version:
-	 Content-Type; b=mQjdlnOl+FnA186mcQHnaIBZZTe2FVUD8dUP7Ey/hb6A+T5oNMjQAc+gFGj+Z2D5/XbUpGfqJThgqwImgRxRPeaHab27JAf397I5sCvw3BwY0taiAzUoEIDvhFvj1IB6wYaRlENUFUr4MNpd1R/Z2bv5tY9aBNjMoa9rNbDCIJo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=dabbelt.com; spf=pass smtp.mailfrom=dabbelt.com; dkim=pass (2048-bit key) header.d=dabbelt-com.20230601.gappssmtp.com header.i=@dabbelt-com.20230601.gappssmtp.com header.b=wRNpBRF9; arc=none smtp.client-ip=209.85.210.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=dabbelt.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=dabbelt.com
-Received: by mail-pf1-f178.google.com with SMTP id d2e1a72fcca58-747fc77bb2aso3810973b3a.3
-        for <linux-kernel@vger.kernel.org>; Mon, 23 Jun 2025 16:19:47 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=dabbelt-com.20230601.gappssmtp.com; s=20230601; t=1750720787; x=1751325587; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:to:from:cc
-         :in-reply-to:subject:date:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=gw6GoMqApL8OI1pFqF47hahg0MqEAjgMuBlQV9Gc5uY=;
-        b=wRNpBRF9iYJ4RkuGEfWAQaLSAEK/RfA79Dj9rlZp5U2hN1CFH0/XLZQr6w3Yom8Vwp
-         Dp03+cts/N0nMvUCpuAq/EfdnYMbi2WFaQXkt3h1yN84mHjoEL+zHYUI03XVSM4IcEpe
-         rMhs89OkTWNQ1GYu5sbVLl3/0okSoP5fz7Isxsk6UkyAw6jo4BGebCEJ47ojOBfEFH/E
-         VMaybaIXTnMCRim6RQMUpNOGtjWhQ/nl89WO1BWdJRFpNmXuPqcvzGtwvwTJP5m9NF3f
-         S1vrnXKCqRNfg2H3QC8SRcMA9wGU0nyorPHzyA0AvjvtUPNdxwoVZT3+MhQg5tcVxHua
-         nzrw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1750720787; x=1751325587;
-        h=content-transfer-encoding:mime-version:message-id:to:from:cc
-         :in-reply-to:subject:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=gw6GoMqApL8OI1pFqF47hahg0MqEAjgMuBlQV9Gc5uY=;
-        b=DVhI6kI6hnD/e9yeUdkMbaJHeOvq+MEybvSe9w3mG5BX7cuOPPKEKg4P7koNw8/0rw
-         iTO5a8dDBDjGBvuOI4WCsDL4VBRXOZ1NSBYtPp3Lwb3zL2STKY7KhfoOHD3SjY9uBTCN
-         A7hr30EoFio4T+uoiy9JAMztlo7f5s1gH6r3xCYXzhSm+XQYEfgijow6aKENAkjMIagt
-         Uog7hXKHFuY3RUIR1eNng0SRkPGHVv2TOwp0EFV45FVQ0iIMFfqurJ6aEV3LfPSFdi1J
-         zHzW5zxjsZa0gLiS/+Lwh2270AlROoqWGaaRIDkQRW8Ir1WMW08Zyni43IgsRAqrqOnn
-         JQ9Q==
-X-Forwarded-Encrypted: i=1; AJvYcCXGJ9l5WnpeXs7BBW8v/6MpOdi0pWdFslizLNCy8yHJNnAl3HHGRi6ycA5t3oFN9cTG06r31QiiyE0a9iU=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwAO8dGfLxsk+rwkqiTPvPxo4HzdbxkuwtPFpmDUP/DV0igrcxI
-	OHFcgVvo75WsKio2y3yF3UGhVwyP1o/+iVeZ8SvIxFBMn/zR3AJ2/4i5cVgBFW3c0B4=
-X-Gm-Gg: ASbGncuuLa0HDGB5BhD5z7akEDrNJP2HYP+dROS8StqFF3/6q6dObJNH/QlTDklcg2r
-	y8ik7xg8sh+6nkplRdyelKh5t8/pGhFACrzEblaTKB4j5tLageLfM7o9PsEC1oD6azEf/Mlg/6y
-	3GuDiwqHZzUNc/vYAIMDnQPLT0ZiKksDX/vP2yLlb9wG/zthKK4NDby9FTMe7I0dHowqRu9i6U9
-	gdstHs6iRnm9IkHKMtN+Ky+6YZmsbnmEhBSyHl8XrlDBojcsSVgBUNhHBF3kPV1dSmI1vigFSoB
-	a5TXl6s5QTZ6OLqMhH8i2vkzs1L5qdUYkO6CtYtUyDiwv4sHplX7NMhtHUt/
-X-Google-Smtp-Source: AGHT+IECSVjx/mmkypzRcN8ZzuvF0xqk1KDzf8++bj1/I4kCpcXXhWVnUjiOYCJWPfh8V+CjlVYRLg==
-X-Received: by 2002:a05:6a00:14c1:b0:742:4545:2d2b with SMTP id d2e1a72fcca58-7490d66537fmr24687533b3a.3.1750720786597;
-        Mon, 23 Jun 2025 16:19:46 -0700 (PDT)
-Received: from localhost ([2620:10d:c090:500::4:8d10])
-        by smtp.gmail.com with UTF8SMTPSA id d2e1a72fcca58-749c8850c86sm234745b3a.112.2025.06.23.16.19.45
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 23 Jun 2025 16:19:46 -0700 (PDT)
-Date: Mon, 23 Jun 2025 16:19:46 -0700 (PDT)
-X-Google-Original-Date: Mon, 23 Jun 2025 16:19:42 PDT (-0700)
-Subject:     Re: [PATCH V8 2/3] riscv: mm: Add soft-dirty page tracking support
-In-Reply-To: <20250619065232.1786470-3-zhangchunyan@iscas.ac.cn>
-CC: Paul Walmsley <paul.walmsley@sifive.com>, aou@eecs.berkeley.edu,
-  Alexandre Ghiti <alex@ghiti.fr>, akpm@linux-foundation.org, linux-riscv@lists.infradead.org, debug@rivosinc.com,
-  Vedvyas Shanbhogue <ved@rivosinc.com>, linux-kernel@vger.kernel.org, zhang.lyra@gmail.com
-From: Palmer Dabbelt <palmer@dabbelt.com>
-To: zhangchunyan@iscas.ac.cn
-Message-ID: <mhng-2543F392-0764-425E-ACB2-C897B7834C6C@palmerdabbelt-mac>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7901622A804;
+	Mon, 23 Jun 2025 23:21:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.236.45
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1750720883; cv=fail; b=S6kx+JoMKhEuKmMWW2W/xminNO8aZLe3wTHWaoEZoHE7BH9pHdvkYUMFDFnDOjNp6gSiKWbtPjL0RSGaJWQdd5IaEhyR2AEIysOl0bCDPPeC54/xhv60Y5JxX9533fFWX0+l66IPGsWjOqG78GFwkR9SB7VJLrWpDFCcrlDWHCw=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1750720883; c=relaxed/simple;
+	bh=YMOTWK5e7fokOajhUrdoZ8SL/k+gDHjg/rQb+jthGiU=;
+	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=nIvk7Cr1f5rBx8N1f+MqyduJAyVjzd9r0puwsXZz03DFD9oYDpbEQ0WPHsUN2vkOT+uU+0FgL3K8OU2+8uSh3Qf+rJA11/n8QSSI682W551Rnz14nsuIQxZnC9K+FsLJEGl+DGopHBULf7QHOE2nlUtrsYUH9wsiJmuoJWlHQYo=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=ME2kDLoS; arc=fail smtp.client-ip=40.107.236.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=AXpQSWVBCOKZyg4MOqBmH+j7MvtyZo3paEtBhyklqU2UidEbt/8ZpNIa/lchNdJCXvuQ0dGuXRocfzq+QxEhGZZJh4pvpS/qs6ubhdM10SpxJtq6StNv60JhptqmagHNeL0B0FKJkQYZA/g3oD6MemsN3PCzGc9I0eWsKByrF5CW96CpoTSeCfbipN5QmTQkW1ANrhGT9uj7SkrjWRwCzIpX7t1Ujyc7v1W0oeSUJenbWL2VbRhJM2XAffULOKw0LMXNxYMSJ/Jkd8FlMYiJd66S2pmfOI/5j62CC8sG34jfcQ/ppxXF0LTtfQHlp5ujcHLo64qyymVf4mlWyWONwQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=uWkUJUmgoY5V9ArOfQyyN1ubHcC1nIhujDYZtR2i6AI=;
+ b=rSV/+dMknrq899kfu3jgKpj8RwHnpD/e+0rUtOvl4ZEmXxFeiAoWjQ7gAc90E6WH0bRKcK2XyBdF2ahn9EfLSV3ZtZADgNtQfD8Rb8wHyGjGXM9j/i38cviUNx8XvGXzdhySu7QJJc0KzwFPeg89+wo4wTjfVieepBYk5Xa1gt/pOmsEEpQ7R3nM68VctezrJnrBUQanMXWKaqh9tmCgiqmZYIpnMKxux/VcoLfeANgpgxcanK1gRvSuy5elrDZASxYD3eJNECbCmTPpkBnB7SO4REbWfOjbFhPmWHV0rtnAgK69fI8+Txh/fdOmyqAta61rgZnvqLeycOVp5z94Ow==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
+ header.d=amd.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=uWkUJUmgoY5V9ArOfQyyN1ubHcC1nIhujDYZtR2i6AI=;
+ b=ME2kDLoSwDry5PCqUaykztH5Mrd069hOJWL0EYStiALo6ioXdZ1yFUSqp+rNFP8x/9Ds/jxLMrDowKGB3EiW81X3F8JaUG/Dx4lexlWiyRWrmf83nDLLnQrUWnbFJq5rjROJVs5H21Oi/CC5pdey3gkAAJVolpEXfdwW86fDJxg=
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=amd.com;
+Received: from CY5PR12MB6429.namprd12.prod.outlook.com (2603:10b6:930:3b::16)
+ by SA1PR12MB9001.namprd12.prod.outlook.com (2603:10b6:806:387::5) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8857.23; Mon, 23 Jun
+ 2025 23:21:17 +0000
+Received: from CY5PR12MB6429.namprd12.prod.outlook.com
+ ([fe80::1b40:2f7f:a826:3fa0]) by CY5PR12MB6429.namprd12.prod.outlook.com
+ ([fe80::1b40:2f7f:a826:3fa0%6]) with mapi id 15.20.8857.026; Mon, 23 Jun 2025
+ 23:21:17 +0000
+Message-ID: <aa7c7270-e870-4613-b447-b2d4a2b8e892@amd.com>
+Date: Mon, 23 Jun 2025 19:21:13 -0400
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 RESEND] media: i2c: Add OV05C10 camera sensor driver
+Content-Language: en-GB
+To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Cc: Sakari Ailus <sakari.ailus@linux.intel.com>, Hao Yao <hao.yao@intel.com>,
+ Pratap Nirujogi <pratap.nirujogi@amd.com>, mchehab@kernel.org,
+ hverkuil@xs4all.nl, bryan.odonoghue@linaro.org, krzk@kernel.org,
+ dave.stevenson@raspberrypi.com, hdegoede@redhat.com,
+ jai.luthra@ideasonboard.com, tomi.valkeinen@ideasonboard.com,
+ linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
+ benjamin.chan@amd.com, bin.du@amd.com, grosikop@amd.com, king.li@amd.com,
+ dantony@amd.com, vengutta@amd.com, dongcheng.yan@intel.com,
+ jason.z.chen@intel.com, jimmy.su@intel.com, Svetoslav.Stoilov@amd.com,
+ Yana.Zheleva@amd.com
+References: <20250609194321.1611419-1-pratap.nirujogi@amd.com>
+ <6a49eb11-d434-4315-8ee9-0f8aa7347de2@intel.com>
+ <aEygCdk-zEqRwfoF@kekkonen.localdomain>
+ <3e8364e8-22e4-42ad-a0f0-017f86fd6bf9@amd.com>
+ <20250623120929.GE826@pendragon.ideasonboard.com>
+ <aFlU-E_GCHWBXErq@kekkonen.localdomain>
+ <20250623134200.GB29597@pendragon.ideasonboard.com>
+ <b6425dbe-44e6-47b4-a06b-b9a172a8cac4@amd.com>
+ <20250623220612.GB15951@pendragon.ideasonboard.com>
+From: "Nirujogi, Pratap" <pnirujog@amd.com>
+In-Reply-To: <20250623220612.GB15951@pendragon.ideasonboard.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: BY5PR16CA0012.namprd16.prod.outlook.com
+ (2603:10b6:a03:1a0::25) To CY5PR12MB6429.namprd12.prod.outlook.com
+ (2603:10b6:930:3b::16)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0 (MHng)
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 8bit
+MIME-Version: 1.0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: CY5PR12MB6429:EE_|SA1PR12MB9001:EE_
+X-MS-Office365-Filtering-Correlation-Id: cb5cfcfc-42b8-49f0-b701-08ddb2aca7a1
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|1800799024|376014|7416014;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?dW1QK3dKcWxxSkg3dGdkWktGTWRJRERjOTBwTjFTOGpxWTFEVjdBOXVjSUV0?=
+ =?utf-8?B?NGltZUtJSWRRVzQ1aVk0b3B0TzFBTkRUdXJXenR6dlkwMi9XbzZlck8vTXFX?=
+ =?utf-8?B?SzlhTU91NnZ6RXE3TUJibER5eE5HZGhNTVJWUXhQZE5RSUxLNUYwYXF1VTF0?=
+ =?utf-8?B?ZWVtcDROd3V6R3plRDk5dkpHYmxWenl5YjgzQ1hMZFI5MFl6QkM0azFoTE5N?=
+ =?utf-8?B?dVBZQVh4NFR2RDNUdkhwN3BZRStjditRNWVWQnpuTjdQSnBxR1NCZ3ZrcGZC?=
+ =?utf-8?B?L0hIWVlRcGNra3pJMXVxMG5zVGJFNjlhWEJVckdBQkp3V01rOTR4MEtKSjN6?=
+ =?utf-8?B?dlQ4aTZydHhFdWJZU1ZmQzdhRkIrbHpvbU8rZzVRYzkxNHBsRDNCQjhhQXdk?=
+ =?utf-8?B?czdFVktROEpzb0RMUXVvaXN1bkJ5aGVNYzlKMjgyMEhpQ0V1Y0txZmoxdmt3?=
+ =?utf-8?B?MnNFd09LYmNFbXRlbDh5Q3hmZ01SVUhyNlBGT1JuOE1sNUlwUGpGMTBYd1Jk?=
+ =?utf-8?B?bVBuckM1VUZsRDN6Rzhtb0hSNWNtUldnaUVkK3lrdWRvaGpMQWNKYlI0ZGRS?=
+ =?utf-8?B?VEpoNkYrMFVsdjladFFmRDYrYmRxM1JrclVQelVNNXN3Y2lTa2Fjb3FoVHlD?=
+ =?utf-8?B?bFRmWm9PS0VKU1BPR0MyWHcrRkFFNlN1UmpZY1IyMFY0ZVJJcEsyZmZLcW00?=
+ =?utf-8?B?TU4wU0kxVGp2UmMrSk43MUkxckJGL3o5NTYwWS9iZDZUd05mQ25qeFpoSWhE?=
+ =?utf-8?B?RWxhOWpBaCtvUlpDMENGVHArNGQ3dFlEcStlRCtZQ2ovMy85cExGTTh3SVlR?=
+ =?utf-8?B?dVlDQ3ozUkkwYjE5c2daVHNnYUNqcHptdFpRMEU4K3VpQ0ZqUytJQnJ1QW8r?=
+ =?utf-8?B?RDRCK2t0WGpLQTZnZHZCR0lGbUFFQVpST2QwMmF3SHcvUnZsRW1CN0tzY05S?=
+ =?utf-8?B?NnMwdFRoQk9xdDJLMDJwZTRsVlJlY2tvd0hDY2dVbHE3TmdNM0pkN3dJcG4y?=
+ =?utf-8?B?eEwvZWxsT2g1NTdUTUFId0lhUXNsYlc5Z3ZpRVJPS3BhNHZJRVRWTU5WS0Fk?=
+ =?utf-8?B?RGF1V2xNVXBKV2k5ZGdZZmdObHozY0tLaVpVMHIzYWc4U0ZnNE1lSHExRlUy?=
+ =?utf-8?B?VVJlVFFuY20vVWlOZmtzeElQT1JuUGdLWmJkYzBTc1B4ejcyWk1DQW4vbWg2?=
+ =?utf-8?B?V3JTdnQ5ODQrai9Sb3pPZHduUFJTVE9kWG04bU9rN1N6bHpzNCtFdlNRa2tL?=
+ =?utf-8?B?elBwdXY4akVUb000ZmJtakFNb0Q5bnRIVnZxTk9VRlhLcmI2QTlLRmszOXAx?=
+ =?utf-8?B?MXNZQWJ4dzZTN09JaEJYOTRHU2xxZWF5TzFEZW5Xa3JuQzA2RjlUZDhzU0xl?=
+ =?utf-8?B?OGNxWW96eVdvaUk1RCtqVitaVndXRytLemlsaFNkejBUK3R2Y0ZydGswWmRu?=
+ =?utf-8?B?d2Y1Um5WZWIrMi9pMkt2TTQzNUx6cndCR2NHTDJ1UitqbTdpZDNFRnVCU2o0?=
+ =?utf-8?B?bXJkck5XOXM2dS9NTFl3ajVSc2JrK0lkZWg2NDV5cUxQbTVMTktiODhwRk0r?=
+ =?utf-8?B?MVl2dkltRjBiWnM2VVVOY0Y4aXptMjV5dktnSHpuUmROdzhWdnhOVWE2Um1Z?=
+ =?utf-8?B?Yk5Cd2QyUU01N3AxZHBhTlFOS1A4VzMrSllxNllQekl1SUNWNXRMU1JGYkdi?=
+ =?utf-8?B?ckNuZDM5Nk45TVFGcXRjWkR4UnM3OXhqSGxpR29COUU1b2NzdmxIQjlVMnQ4?=
+ =?utf-8?B?andUaFVkWnpKc05CTldIRk9oa3U2bStwNkF3b2lsZjB5ZHJlTkp6ZUZhVWtK?=
+ =?utf-8?B?cXFqbElHQis5RUxHcGY4OGFzSGNROS9WeGhoa1JWVjQwdzlzZGNBQ1gxWU1u?=
+ =?utf-8?B?WjF0UHBFL1pMcWhQQ2VIQ1FXaDVaSFVxbWJ2OEVTdE95M0t1ZnU2MmhDRCs1?=
+ =?utf-8?Q?WwObHdCZKzw=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CY5PR12MB6429.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(376014)(7416014);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?Z0NVWnFFTFJ5ZHJDUHc1ZTlnMjQzWE9EWE9WbDRud1Q1WUErT0RoTEV5QnFH?=
+ =?utf-8?B?YUh0cVZnbTRoTDNBa05VdE56bDJkWnZ2MWVGbGJPR3Z2SHNkREVML0IrUTlQ?=
+ =?utf-8?B?OGZpOVRwTURxeEVSUWV1VXNhTGRWamNGQ20yNS93cFNncGladXpQTDlxTjh5?=
+ =?utf-8?B?cStQUjgydjdORzJIT1dwMEsvWE50WUdXVWExYnoweVRMbmdDeTBpMzZMUkxi?=
+ =?utf-8?B?QTFzVnpZMG9BYWhvSVR0K0xDSFVrZFRjWXEvUVNWZnhFV0M1elJpM2xucFVG?=
+ =?utf-8?B?SlFzLzlFenI2RUpIREtWNmNnaDdKYW5WSlZDSHJWZUpMcVJNcnJ0YzFGLzFH?=
+ =?utf-8?B?Q2dqdlJlVks5elhwVkFaTUkwZ1V5TTd0Z29pYUFRWWJXMldJWXZlM0gyVUtv?=
+ =?utf-8?B?NDdjYjVGb1dvSDZKQUk0N2R2b3N2QnZLaGNSTlNkNGxKeUpFUDZtS2IyaXY4?=
+ =?utf-8?B?T1RqZDdsU0pQaEhWK1ZGVy9Ka01uNXREQzhqT3NXUDNHSGJxYzgxK01zSEVo?=
+ =?utf-8?B?cExidWo2eC9wQXcwZkl4VEtBK3lSYmFKRkdURmNJaWRqZmdva1BFZzhWbkZ1?=
+ =?utf-8?B?T2Rwc3BkR1hzemlyZVNqNjZLVjBJOFQzcVVwZFJoTzRHVThLV3dEZmQvNDZh?=
+ =?utf-8?B?ZzNEdDdndGVRRUdWamRkR1ZQODc2aHZSZEwrdXhLd1F3VTJsYUNkZEt3Q29U?=
+ =?utf-8?B?NkVkKzRLVVhSbU1qamtQeUdSdUt1LzJvZUlmL2hJYUoreExIY2g1ZzJ2Z3pB?=
+ =?utf-8?B?aXgyUTlNRExBQlF2YTlHNHFsYXl2ejBvNm5HUzZKM0xKOTZ6VjQrWVI1bzho?=
+ =?utf-8?B?SkV2SnlKUG5sQVgzMjJUNDJxaFFId1k4a0NPSjZ3N2NVOFlTblZWb2pYY3Qw?=
+ =?utf-8?B?Y3hmSEJIWGpYQXpGVERJdWZ4WXByQUk0RG1QWi9IaHJHTGZzUVVjYklaVHZ1?=
+ =?utf-8?B?dDh2bG9FZ3VXRmJuVzlnenlvdURnaldORU5aODZIM0JQQUpNd0JyVzJaTUhP?=
+ =?utf-8?B?OFRxVklUb2xneUkrMmQ1a21KT1dLc0dlWlZBMFNVZ2MrcGYzMkV6ZDFjL29C?=
+ =?utf-8?B?NFVZdXNIeG5XOGkyUmxtUWxjWk9LZUllUllrY3FsK2dvbFNuTjREaStVeUhK?=
+ =?utf-8?B?VFpTNFAxSFJ4aC9GaWNIM25kdHoxSlYydzd0OGNmaVZFWVZTY3I1TitQeUYv?=
+ =?utf-8?B?Y2o2d2hMeFJDaUg5SldaQTkvR0diN3JoY1JyeGVPVnh6SUN1RDZNZDhKcnNK?=
+ =?utf-8?B?ZnkvVjlYUWMzU2Q3cjMrL3FUVWVnVkdSeE45SU5wMmgrMVdzWlhYVnRDK2VD?=
+ =?utf-8?B?MDNNd2FVY2JDcWhodXdvaWU3VGFvTDJTSDgyd0NvWkxCV1lXSTJpVDRHM0Fl?=
+ =?utf-8?B?RmRaZzJReU9aVUJPNkFSRS81YmRYQWJ4QkJES3FXWFhmSkwyenBOZE5lMGZH?=
+ =?utf-8?B?clN2VXNxMlA3bGkxMEdzSkt3OU9DcVBOUXpaOEdqZEgrUS80bjFkSk13MHht?=
+ =?utf-8?B?ZmlSYjJHK3Q3VUkzRWJOZVVrUjYvVWQycTZhbXZqTU5lc2UvbER6dVJ6WUFY?=
+ =?utf-8?B?dGFPNkpNU0Jodm4wdTdyUHQxQ1FPcy9laStYSkZyd3RONFJzKzBGM05ncGR5?=
+ =?utf-8?B?ZFU4UFlGUU53eGVJcDArNEYwTkM0aU9tTW5CM05WWlZUYS8rdkhyUXFZZzZh?=
+ =?utf-8?B?RmZ1QkdWSnZLTzVCaUxlYnJqSEdMTTRCR1c3c3FHWDV4b0xSd0MvTi9xTTJJ?=
+ =?utf-8?B?ZXhwYSs1Sk9XY2pyYWdYb29FekZxNnZWK05vRzh3WmY1dmY3VzZrRElMM3Vw?=
+ =?utf-8?B?dHJRSGU0Tnl5MFZhMktiL3RBSkg3VzVsU2g3RmluRTJtVDZ5ZlA0SEJKYVBI?=
+ =?utf-8?B?ckR1RW5KSUVFQXRIamt4Wm4zanI5ZEpsTG52YVdPSFRpQjU4aVVRcjVsNE55?=
+ =?utf-8?B?THlxd2lKeHRhdEtQbEgyZHkvbzB4UWpaY21nbVZ0RHVUdWVwSjZ6WERIaFJ3?=
+ =?utf-8?B?UGJPVmhpWDVraDdoc0RJeWk5T0EyVkNiMTBPU1p6bE94SmQ2ODhmY2U5eXJr?=
+ =?utf-8?B?OFRFWUM1NFN4c2Q0SHQvYW1jVzlTUVM0ZVBWT1NkY0M2QjY2clFvV3FUUWZS?=
+ =?utf-8?Q?UmrhfOsv6+27BmMEEdohyM9M0?=
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: cb5cfcfc-42b8-49f0-b701-08ddb2aca7a1
+X-MS-Exchange-CrossTenant-AuthSource: CY5PR12MB6429.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 23 Jun 2025 23:21:17.5050
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: T4LAnDlZKfKvwGHzmsEtDi+Ojur+6FeJDOts5N86aO8jP25yozHQwtXdMkwQie1pFk4PZK6IdHbTHnF82DDFsw==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SA1PR12MB9001
 
-On Wed, 18 Jun 2025 23:52:31 PDT (-0700), zhangchunyan@iscas.ac.cn wrote:
-> The Svrsw60t59b extension allows to free the PTE reserved bits 60 and 59
-> for software, this patch uses bit 59 for soft-dirty.
->
-> To add swap PTE soft-dirty tracking, we borrow bit 3 which is available
-> for swap PTEs on RISC-V systems.
->
-> Signed-off-by: Chunyan Zhang <zhangchunyan@iscas.ac.cn>
-> ---
->  arch/riscv/Kconfig                    |  1 +
->  arch/riscv/include/asm/pgtable-bits.h | 19 +++++++
->  arch/riscv/include/asm/pgtable.h      | 71 ++++++++++++++++++++++++++-
->  3 files changed, 89 insertions(+), 2 deletions(-)
->
-> diff --git a/arch/riscv/Kconfig b/arch/riscv/Kconfig
-> index 01e4c15bee12..5c787c09f4dc 100644
-> --- a/arch/riscv/Kconfig
-> +++ b/arch/riscv/Kconfig
-> @@ -141,6 +141,7 @@ config RISCV
->  	select HAVE_ARCH_MMAP_RND_COMPAT_BITS if COMPAT
->  	select HAVE_ARCH_RANDOMIZE_KSTACK_OFFSET
->  	select HAVE_ARCH_SECCOMP_FILTER
-> +	select HAVE_ARCH_SOFT_DIRTY if 64BIT && MMU && RISCV_ISA_SVRSW60T59B
->  	select HAVE_ARCH_STACKLEAK
->  	select HAVE_ARCH_THREAD_STRUCT_WHITELIST
->  	select HAVE_ARCH_TRACEHOOK
-> diff --git a/arch/riscv/include/asm/pgtable-bits.h b/arch/riscv/include/asm/pgtable-bits.h
-> index a8f5205cea54..a6fa871dc19e 100644
-> --- a/arch/riscv/include/asm/pgtable-bits.h
-> +++ b/arch/riscv/include/asm/pgtable-bits.h
-> @@ -20,6 +20,25 @@
->
->  #define _PAGE_SPECIAL   (1 << 8)    /* RSW: 0x1 */
->  #define _PAGE_DEVMAP    (1 << 9)    /* RSW, devmap */
-> +
-> +#ifdef CONFIG_MEM_SOFT_DIRTY
-> +
-> +/* ext_svrsw60t59b: bit 59 for software dirty tracking */
-> +#define _PAGE_SOFT_DIRTY						\
-> +	((riscv_has_extension_unlikely(RISCV_ISA_EXT_SVRSW60T59B)) ?	\
-> +	 (1UL << 59) : 0)
+On 6/23/2025 6:06 PM, Laurent Pinchart wrote:
+> Caution: This message originated from an External Source. Use proper caution when opening attachments, clicking links, or responding.
+> 
+> 
+> On Mon, Jun 23, 2025 at 05:55:14PM -0400, Nirujogi, Pratap wrote:
+>> On 6/23/2025 9:42 AM, Laurent Pinchart wrote:
+>>> On Mon, Jun 23, 2025 at 01:22:00PM +0000, Sakari Ailus wrote:
+>>>> On Mon, Jun 23, 2025 at 03:09:29PM +0300, Laurent Pinchart wrote:
+>>>>> On Mon, Jun 16, 2025 at 07:12:28PM -0400, Nirujogi, Pratap wrote:
+>>>>>> On 6/13/2025 6:02 PM, Sakari Ailus wrote:
+>>>>>>> On Fri, Jun 13, 2025 at 12:55:46PM +0800, Hao Yao wrote:
+>>>>>>>> Hi Pratap,
+>>>>>>>>
+>>>>>>>> Thanks for your patch.
+>>>>>>>>
+>>>>>>>> This patch is written for your camera sensor module, which seems very
+>>>>>>>> different from those already applied on Dell laptops (some of "Dell Pro"
+>>>>>>>> series). Looking into the driver, I think this version will break the
+>>>>>>>> devices using ov05c10 sensor.
+>>>>>>>
+>>>>>>> There never was such a driver in upstream so nothing breaks. However, in
+>>>>>>> order to support these, could you check what would it take to support them
+>>>>>>> using this driver and post patches, please?
+>>>>>>>
+>>>>>>>> I think this patch is better to be validated on existing devices, but please
+>>>>>>>> do some fixes before we can do validation. Please check my comments inline.
+>>>>>>>>
+>>>>>>>> On 2025/6/10 03:42, Pratap Nirujogi wrote:
+>>>>>>>>> Add driver for OmniVision 5.2M OV05C10 sensor. This driver
+>>>>>>>>> supports only the full size normal 2888x1808@30fps 2-lane
+>>>>>>>>> sensor profile.
+>>>>>>>>>
+>>>>>>>>> Co-developed-by: Venkata Narendra Kumar Gutta <vengutta@amd.com>
+>>>>>>>>> Signed-off-by: Venkata Narendra Kumar Gutta <vengutta@amd.com>
+>>>>>>>>> Co-developed-by: Bin Du <bin.du@amd.com>
+>>>>>>>>> Signed-off-by: Bin Du <bin.du@amd.com>
+>>>>>>>>> Signed-off-by: Pratap Nirujogi <pratap.nirujogi@amd.com>
+>>>>>
+>>>>> [snip]
+>>>>>
+>>>>>>>> Hi Sakari,
+>>>>>>>>
+>>>>>>>> Seems there are already several camera sensors using page-based registers.
+>>>>>>>> Is it a good idea to add page support in CCI interface?
+>>>>>>>
+>>>>>>> Sounds like a good idea as such but I'm not sure how common this really is,
+>>>>>>> I think I've seen a few Omnivision sensors doing this. If implemented, I
+>>>>>>> think it would be nice if the page could be encoded in the register address
+>>>>>>> which V4L2 CCI would store and switch page if needed only. This would
+>>>>>>> require serialising accesses, too. There's some room in CCI register raw
+>>>>>>> value space so this could be done without even changing that, say, with
+>>>>>>> 8-bit page and 8-bit register address.
+>>>>>>
+>>>>>> Hi Sakari, thank you for sharing your insights and guiding us. Could you
+>>>>>> please suggest if we should take up this work implementing the helpers
+>>>>>> in CCI and submit the patch or is it okay to leave it as-is for now and
+>>>>>> take care of updating in future once the implementation is ready.
+>>>>>
+>>>>> I think it can live in the driver for now. Given that the device uses
+>>>>> only 8 bits of register address, I would store the page number in bits
+>>>>> 15:8 instead of bits 31:24, as the CCI helpers do not make bits 27:24
+>>>>> available for driver-specific purpose.
+>>>>
+>>>> I'd use the CCI private bits, the driver uses page numbers up to 4 so 4
+>>>> bits are plenty for that. If we add pages to CCI later, this may be
+>>>> refactored then.
+>>>
+>>> That works too.
+>>
+>> Thanks for your support. We will add the page number in the register
+>> address 15:8 or 11:8 and will update the implementation accordingly in
+>> the next version.
+> 
+> The CCI private bits are bits 31:28.
+> 
+Thanks. Will use the CCI private bits 31:28 instead of bits 15:8 / 11:8
 
-I haven't fully followed the code paths here, but it looks like we'll 
-unconditionally enable VM_SOFTDIRTY and thus allow 
-vma_soft_dirty_enabled() to return true even when we don't have support 
-in hardware.
+Thanks,
+Pratap
 
-I'm not exactly sure what could go wrong there, but it seems like at 
-least userspace could be told that soft dirty is around and thus get 
-confused.  It also looks like debug_vm_pgtable() will start failing 
-tests on these systems, which will probably trigger some bug reports.
+> --
+> Regards,
+> 
+> Laurent Pinchart
 
-At a bare minimum someone who understands the core MM code should look 
-here.  Maybe the best way to do that is to convert those static 
-CONFIG_MEM_SOFT_DIRTY checks to some sort of arch-implemented callback 
-so this can be dynamic, and then see what people say?
-
-> +/*
-> + * Bit 3 is always zero for swap entry computation, so we
-> + * can borrow it for swap page soft-dirty tracking.
-> + */
-> +#define _PAGE_SWP_SOFT_DIRTY						\
-> +	((riscv_has_extension_unlikely(RISCV_ISA_EXT_SVRSW60T59B)) ?	\
-> +	 _PAGE_EXEC : 0)
-> +#else
-> +#define _PAGE_SOFT_DIRTY	0
-> +#define _PAGE_SWP_SOFT_DIRTY	0
-> +#endif /* CONFIG_MEM_SOFT_DIRTY */
-> +
->  #define _PAGE_TABLE     _PAGE_PRESENT
->
->  /*
-> diff --git a/arch/riscv/include/asm/pgtable.h b/arch/riscv/include/asm/pgtable.h
-> index a11816bbf9e7..efc2da97f124 100644
-> --- a/arch/riscv/include/asm/pgtable.h
-> +++ b/arch/riscv/include/asm/pgtable.h
-> @@ -434,7 +434,7 @@ static inline pte_t pte_mkwrite_novma(pte_t pte)
->
->  static inline pte_t pte_mkdirty(pte_t pte)
->  {
-> -	return __pte(pte_val(pte) | _PAGE_DIRTY);
-> +	return __pte(pte_val(pte) | _PAGE_DIRTY | _PAGE_SOFT_DIRTY);
->  }
->
->  static inline pte_t pte_mkclean(pte_t pte)
-> @@ -467,6 +467,38 @@ static inline pte_t pte_mkhuge(pte_t pte)
->  	return pte;
->  }
->
-> +#ifdef CONFIG_HAVE_ARCH_SOFT_DIRTY
-> +static inline bool pte_soft_dirty(pte_t pte)
-> +{
-> +	return !!(pte_val(pte) & _PAGE_SOFT_DIRTY);
-> +}
-> +
-> +static inline pte_t pte_mksoft_dirty(pte_t pte)
-> +{
-> +	return __pte(pte_val(pte) | _PAGE_SOFT_DIRTY);
-> +}
-> +
-> +static inline pte_t pte_clear_soft_dirty(pte_t pte)
-> +{
-> +	return __pte(pte_val(pte) & ~(_PAGE_SOFT_DIRTY));
-> +}
-> +
-> +static inline bool pte_swp_soft_dirty(pte_t pte)
-> +{
-> +	return !!(pte_val(pte) & _PAGE_SWP_SOFT_DIRTY);
-> +}
-> +
-> +static inline pte_t pte_swp_mksoft_dirty(pte_t pte)
-> +{
-> +	return __pte(pte_val(pte) | _PAGE_SWP_SOFT_DIRTY);
-> +}
-> +
-> +static inline pte_t pte_swp_clear_soft_dirty(pte_t pte)
-> +{
-> +	return __pte(pte_val(pte) & ~(_PAGE_SWP_SOFT_DIRTY));
-> +}
-> +#endif /* CONFIG_HAVE_ARCH_SOFT_DIRTY */
-> +
->  #ifdef CONFIG_RISCV_ISA_SVNAPOT
->  #define pte_leaf_size(pte)	(pte_napot(pte) ?				\
->  					napot_cont_size(napot_cont_order(pte)) :\
-> @@ -819,6 +851,40 @@ static inline pud_t pud_mkspecial(pud_t pud)
->  }
->  #endif
->
-> +#ifdef CONFIG_HAVE_ARCH_SOFT_DIRTY
-> +static inline bool pmd_soft_dirty(pmd_t pmd)
-> +{
-> +	return pte_soft_dirty(pmd_pte(pmd));
-> +}
-> +
-> +static inline pmd_t pmd_mksoft_dirty(pmd_t pmd)
-> +{
-> +	return pte_pmd(pte_mksoft_dirty(pmd_pte(pmd)));
-> +}
-> +
-> +static inline pmd_t pmd_clear_soft_dirty(pmd_t pmd)
-> +{
-> +	return pte_pmd(pte_clear_soft_dirty(pmd_pte(pmd)));
-> +}
-> +
-> +#ifdef CONFIG_ARCH_ENABLE_THP_MIGRATION
-> +static inline bool pmd_swp_soft_dirty(pmd_t pmd)
-> +{
-> +	return pte_swp_soft_dirty(pmd_pte(pmd));
-> +}
-> +
-> +static inline pmd_t pmd_swp_mksoft_dirty(pmd_t pmd)
-> +{
-> +	return pte_pmd(pte_swp_mksoft_dirty(pmd_pte(pmd)));
-> +}
-> +
-> +static inline pmd_t pmd_swp_clear_soft_dirty(pmd_t pmd)
-> +{
-> +	return pte_pmd(pte_swp_clear_soft_dirty(pmd_pte(pmd)));
-> +}
-> +#endif /* CONFIG_ARCH_ENABLE_THP_MIGRATION */
-> +#endif /* CONFIG_HAVE_ARCH_SOFT_DIRTY */
-> +
->  static inline void set_pmd_at(struct mm_struct *mm, unsigned long addr,
->  				pmd_t *pmdp, pmd_t pmd)
->  {
-> @@ -1005,7 +1071,8 @@ static inline pud_t pud_modify(pud_t pud, pgprot_t newprot)
->   *
->   * Format of swap PTE:
->   *	bit            0:	_PAGE_PRESENT (zero)
-> - *	bit       1 to 3:       _PAGE_LEAF (zero)
-> + *	bit       1 to 2:	(zero)
-> + *	bit            3:	_PAGE_SWP_SOFT_DIRTY
->   *	bit            5:	_PAGE_PROT_NONE (zero)
->   *	bit            6:	exclusive marker
->   *	bits      7 to 11:	swap type
 
