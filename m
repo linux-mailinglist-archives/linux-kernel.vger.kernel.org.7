@@ -1,137 +1,105 @@
-Return-Path: <linux-kernel+bounces-697818-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-697827-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id E314BAE3906
-	for <lists+linux-kernel@lfdr.de>; Mon, 23 Jun 2025 10:53:33 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 1DB47AE391D
+	for <lists+linux-kernel@lfdr.de>; Mon, 23 Jun 2025 10:55:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3C3E73B68F4
-	for <lists+linux-kernel@lfdr.de>; Mon, 23 Jun 2025 08:52:40 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BFB783B7C42
+	for <lists+linux-kernel@lfdr.de>; Mon, 23 Jun 2025 08:54:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9632823A9BE;
-	Mon, 23 Jun 2025 08:51:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="BIiQhLsi"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.14])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5276D23026B;
+	Mon, 23 Jun 2025 08:54:21 +0000 (UTC)
+Received: from smtpbgbr2.qq.com (smtpbgbr2.qq.com [54.207.22.56])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 73850239E6F;
-	Mon, 23 Jun 2025 08:51:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.14
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 84CA422FE0A;
+	Mon, 23 Jun 2025 08:54:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=54.207.22.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750668678; cv=none; b=tPJOECwuGIRUSOYjROzkfH9LLQ2JvHZA9IPpCWmT42QQg309Y8HSVaGk0BC/DCMUGBUdo7a61pnITLxfgjXTx0+mJeZ2aLI4KfQpsTADi5ru8ZmGdwVTRAXgN80Tx+MXuEOaKFP4Bh1InNp5ybxZcsI5OLES6x7uY6cF3yIWgeU=
+	t=1750668861; cv=none; b=gAz4oJdLse4yiuXvwrC2IaOfWBQasmWSmxIhXjA2amaxm8PztF9xg/ulbs7PAExenli7MG0acYmpwOQCDAXhgCaeZ4LFQ2tfVnYr0QyFEGpB3YGVJ7s1lDsA7hQFUbWkx+t2c2Nt6SKb+O+3pKstS//xWwxkYWpneWdLoYQNWdE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750668678; c=relaxed/simple;
-	bh=pUTt++AaA3xZ/EEgqLRC2Xe4dn+oIgpfZgMfM0kN/E8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=YKZ8yX3P719LbIok3cVDcteSbOivrj3y7cyfi+nDNf2D9/CYkS6FVlWkaRmtlZHOZSJ2e2RstwzJW4/yb/qEm+uJtRSQ8aNTw1+U57LebvPDwjMX4nUEpnc0/Y+kvnNjCG37YM4mCLCQkGx84rYyD3OQoGvvT/fDGktS4BlGHsg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=BIiQhLsi; arc=none smtp.client-ip=192.198.163.14
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1750668676; x=1782204676;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:content-transfer-encoding:in-reply-to;
-  bh=pUTt++AaA3xZ/EEgqLRC2Xe4dn+oIgpfZgMfM0kN/E8=;
-  b=BIiQhLsiYLuxF6QuwZssbMClSGBXAU7peMcjJS4hZmY3CFogGfPlb+tA
-   GMEXHPIeKhrIcq+B46CD5d2tLZbzbQsl4UTYUNLAo1sGHtrmt0wUxuy3H
-   okPl5ugECqM3faBpOVjU5ldnCsGyBfgeBslbpecNCIymsAYXTnoq0uvLO
-   p17qzi+ULd7m1aiDXYdXKwnsZFPwhAbOLj4YsROK1QVfnIPvk847LxxlE
-   0teRv/1bwBrlPhPOoXYjYgxznydxvzZcy350nR6ufg8eGSbgATouTxlM5
-   gKprfSme8M6y09ww7u2SMsa/NgouB0XV+l6N0vh12a//xlgWJshgd4x/x
-   w==;
-X-CSE-ConnectionGUID: YqwTBZYhQUSNcDv22eOGkg==
-X-CSE-MsgGUID: p/xq9Lk7QxCm80nuP3RjrQ==
-X-IronPort-AV: E=McAfee;i="6800,10657,11472"; a="52941050"
-X-IronPort-AV: E=Sophos;i="6.16,258,1744095600"; 
-   d="scan'208";a="52941050"
-Received: from orviesa002.jf.intel.com ([10.64.159.142])
-  by fmvoesa108.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 23 Jun 2025 01:51:14 -0700
-X-CSE-ConnectionGUID: STb68b2sR9CARqb+WPZ4jQ==
-X-CSE-MsgGUID: 4MpMhRkRQBOcrFkdNlGbmw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.16,258,1744095600"; 
-   d="scan'208";a="182578435"
-Received: from smile.fi.intel.com ([10.237.72.52])
-  by orviesa002.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 23 Jun 2025 01:51:08 -0700
-Received: from andy by smile.fi.intel.com with local (Exim 4.98.2)
-	(envelope-from <andriy.shevchenko@linux.intel.com>)
-	id 1uTctL-00000009788-3ffU;
-	Mon, 23 Jun 2025 11:51:03 +0300
-Date: Mon, 23 Jun 2025 11:51:03 +0300
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To: Jassi Brar <jassisinghbrar@gmail.com>
-Cc: Anup Patel <apatel@ventanamicro.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	"Rafael J . Wysocki" <rafael@kernel.org>,
-	Mika Westerberg <mika.westerberg@linux.intel.com>,
-	Linus Walleij <linus.walleij@linaro.org>,
-	Bartosz Golaszewski <brgl@bgdev.pl>,
-	Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= <ukleinek@kernel.org>,
-	Palmer Dabbelt <palmer@dabbelt.com>,
-	Paul Walmsley <paul.walmsley@sifive.com>,
-	Len Brown <lenb@kernel.org>, Sunil V L <sunilvl@ventanamicro.com>,
-	Rahul Pathak <rpathak@ventanamicro.com>,
-	Leyfoon Tan <leyfoon.tan@starfivetech.com>,
-	Atish Patra <atish.patra@linux.dev>,
-	Andrew Jones <ajones@ventanamicro.com>,
-	Samuel Holland <samuel.holland@sifive.com>,
-	Anup Patel <anup@brainfault.org>, linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-riscv@lists.infradead.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v6 00/23] Linux SBI MPXY and RPMI drivers
-Message-ID: <aFkVdzxl5GhV_etE@smile.fi.intel.com>
-References: <20250618121358.503781-1-apatel@ventanamicro.com>
- <CABb+yY1UAwQiLCFY0Om1wsG+Hf_MobLfrEMx8JVdvoehVZ-g0A@mail.gmail.com>
+	s=arc-20240116; t=1750668861; c=relaxed/simple;
+	bh=dnRZoYhTiLx6mP17snlGpXsJ4rO4wTDqx7YoKhd07FA=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=DHT8jbwn5NT8y2iHeAqmrxyjYgk9hkF/1YdWryrSm3bIr6uH6IsT4MPX1K/uFYZh96X5n/onSUkBM2s/ByYfHmg0RZbQyLO3Ofp5TzIF847R2ByHPrKedjwdCh9niow1jf8+4gHUCZghyk2HJPuat3NDgNH1tiYE1RHj3v2beig=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=chenxiaosong.com; spf=pass smtp.mailfrom=chenxiaosong.com; arc=none smtp.client-ip=54.207.22.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=chenxiaosong.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chenxiaosong.com
+X-QQ-mid: esmtpsz20t1750668727t4d83c62a
+X-QQ-Originating-IP: gyIRPxu7pnQLRfC/m8i/nC3NTJCG8EuNVauDHQpuNl0=
+Received: from [192.168.3.231] ( [116.128.244.171])
+	by bizesmtp.qq.com (ESMTP) with 
+	id ; Mon, 23 Jun 2025 16:52:05 +0800 (CST)
+X-QQ-SSF: 0000000000000000000000000000000
+X-QQ-GoodBg: 0
+X-BIZMAIL-ID: 6986087831248753503
+Message-ID: <E5A6E17D75867EA8+e74cfa32-ffd5-48b5-b5a4-b89b85f66866@chenxiaosong.com>
+Date: Mon, 23 Jun 2025 16:52:05 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
+User-Agent: Mozilla Thunderbird
+Subject: Re: [RFC PATCH] nfsd: convert the nfsd_users to atomic_t
+To: NeilBrown <neilb@suse.de>
+Cc: chuck.lever@oracle.com, jlayton@kernel.org, okorniev@redhat.com,
+ Dai.Ngo@oracle.com, tom@talpey.com, linux-nfs@vger.kernel.org,
+ linux-kernel@vger.kernel.org, huhai@kylinos.cn,
+ ChenXiaoSong <chenxiaosong@kylinos.cn>
+References: <20250618104123.398603-1-chenxiaosong@chenxiaosong.com>
+ <175042051171.608730.8613669948428192921@noble.neil.brown.name>
+From: ChenXiaoSong <chenxiaosong@chenxiaosong.com>
+In-Reply-To: <175042051171.608730.8613669948428192921@noble.neil.brown.name>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <CABb+yY1UAwQiLCFY0Om1wsG+Hf_MobLfrEMx8JVdvoehVZ-g0A@mail.gmail.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - c/o Alberga Business Park, 6
- krs, Bertel Jungin Aukio 5, 02600 Espoo
+X-QQ-SENDSIZE: 520
+Feedback-ID: esmtpsz:chenxiaosong.com:qybglogicsvrsz:qybglogicsvrsz4a-0
+X-QQ-XMAILINFO: Nkqq4bFvvULWBJ+c/T9TltPLkYKl82R8WOPDta8KcHFNjrKLmLx+0EDf
+	aN2mxMzB7zv2jWAps1FXhuIAGMxiVvvwDNG3os03+EQW9+qgHeOn9981u/ZKRC96pmW2w7n
+	SOKhQWGTSYCJKDC4s2zD4gHO686e5qaSPRxw8/u6KgtRWbd4FHcqS04hESx+oBi9CsyMswt
+	ldXbs+p4Fn3QcpZBlV8qJLBzjcbX5oswb7Pz3TN1One61tH6Mu7VCu+5qYyYWOvyP4bAIQM
+	lyzXeh+R/bp3WC6uJJBRQvtt5wRrj3A1CoMsXcfRLxNyGc9GuTcRG6b7/XnCzo+0PH+JOxT
+	iF1vC1XkT2cFuubAQXrj+C/rb5BIXwKx9mJHMgI2a4NFpd7sI1d1mesCHxGJXNJ86riarul
+	ImLfchm1Zv0HCtOLevbxy3IEOIPi3Fy+1evht/5Ck1jej96mu1epB7WoUG8G0Bata34q5/J
+	OSlo/34NqtRftSIshMFfy3IH7F0nLYgB07342PNqFMTNwtpqymAnRencQKu7adE0q/mqvnk
+	5v4uPORREztebYgCtJ9qz/TfpPnxpwE6sZQadSKt+CMA+3qfzktNbSK9Ms4DiHkyrodJTyC
+	kIkug8qJVeD6d+LQVq//PUHcQissNpmgzumohhXBRPQWMxb1BmSGcFHuGnQJFuJMaDX9hf4
+	smaOllXVta3hf57h0x/NpNl11RLDB8d8fgmnBcoyUE2FWbPOcB7ju/ThHMr3bJ006qvQQOt
+	3Xu/TIz2ZcC2SkEAI+Ez87KjndzGYVQpBvDK+kKS/bx6ccjRkjge6lZccTdWekfZpwnO01Y
+	0TAqGUjlzeMRluv/fh6p/21T5b3RJn1I1FMO60FkxXPklVtX2TptS49kMsHqnX1Nh73ZnVc
+	1p7ucMxcAjLbUogFKVpSo5t+moVhxPswc/SLxMOeAo68E0nIkYxKihEBFZ8jbBEr2b7xzCb
+	yLe1zixJV9yWrw3ZV6qLN9C6CEuekdfBcVjYWfa+E9HCCXe0+X5kQBzlB/1hQTo8MVcX/IX
+	xKr9fKuw==
+X-QQ-XMRINFO: OD9hHCdaPRBwq3WW+NvGbIU=
+X-QQ-RECHKSPAM: 0
 
-On Sun, Jun 22, 2025 at 11:26:21AM -0500, Jassi Brar wrote:
-> On Wed, Jun 18, 2025 at 7:14 AM Anup Patel <apatel@ventanamicro.com> wrote:
-> >
-> > The SBI v3.0 (MPXY extension) [1] and RPMI v1.0 [2] specifications
-> > are frozen and in public review at the RISC-V International.
-> >
-> > Currently, most of the RPMI and MPXY drivers are in OpenSBI whereas
-> > Linux only has SBI MPXY mailbox controller driver, RPMI clock driver
-> > and RPMI system MSI driver This series also includes ACPI support
-> > for SBI MPXY mailbox controller and RPMI system MSI drivers.
-> >
-> > These patches can be found in the riscv_sbi_mpxy_mailbox_v6 branch
-> > at: https://github.com/avpatel/linux.git
-> >
-> > To test these patches, boot Linux on "virt,rpmi=on,aia=aplic-imsic"
-> > machine with OpenSBI and QEMU from the dev-upstream branch at:
-> > https://github.com/ventanamicro/opensbi.git
-> > https://github.com/ventanamicro/qemu.git
+It seems this patch (or patchset) could resolve the issue.
 
-> I am ok with the mailbox patches. How are these to be picked into
-> mailbox and other subsystems? Maybe sculpt out a separate patchset for
-> the mailbox?
+Thanks for your reply.
+ChenXiaoSong.
 
-I have questions / comments to the series, it's just too long to do it
-in one go.
-
--- 
-With Best Regards,
-Andy Shevchenko
-
+在 2025/6/20 19:55, NeilBrown 写道:
+> The only possible cause that I can find for this crash is that the nfsd
+> thread must have still been running when nfsd_shutdown_net() and then
+> nfsd_shutdown_generic() were called resulting in the workqueue being
+> destroyed.
+> 
+> The threads will all have been signalled with SIGKILL, but there was no
+> mechanism to wait for the threads to complete.
+> 
+> This was changed in
+> 
+> Commit: 3409e4f1e8f2 ("NFSD: Make it possible to use svc_set_num_threads_sync")
+> 
+> Sync then threads were stopped synchronously so they were certainly all
+> stopped before the workqueue was removed.
+> 
+> NeilBrown
+> 
 
 
