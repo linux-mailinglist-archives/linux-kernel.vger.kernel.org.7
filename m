@@ -1,143 +1,176 @@
-Return-Path: <linux-kernel+bounces-697752-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-697759-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 57F61AE3830
-	for <lists+linux-kernel@lfdr.de>; Mon, 23 Jun 2025 10:17:36 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 99023AE384D
+	for <lists+linux-kernel@lfdr.de>; Mon, 23 Jun 2025 10:23:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BF6A83A8166
-	for <lists+linux-kernel@lfdr.de>; Mon, 23 Jun 2025 08:17:07 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BC0263A7A19
+	for <lists+linux-kernel@lfdr.de>; Mon, 23 Jun 2025 08:23:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9257E21CA07;
-	Mon, 23 Jun 2025 08:17:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 97C9F1D86DC;
+	Mon, 23 Jun 2025 08:23:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Ks/h/Npi"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.19])
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="ac5AeUxp"
+Received: from mailout2.w1.samsung.com (mailout2.w1.samsung.com [210.118.77.12])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2660A4409;
-	Mon, 23 Jun 2025 08:17:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.19
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 993901A8F60
+	for <linux-kernel@vger.kernel.org>; Mon, 23 Jun 2025 08:23:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.118.77.12
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750666640; cv=none; b=Q7yZ04clbAgOXvRp0tPYv+wiKlygoWY/xdab4JhkYkM43yf1TnNF/s7yeTtWFRC7KX4zBoF/HzPlGPqb3TDwDdm6b+2/n3aVJHvG2uyYOiQ09lFTc3OGjYRjOEHPN3eC0a45BMKey14mfDp8/SrEu6TAGCyRwFFPYKe5QRnZeHc=
+	t=1750667003; cv=none; b=OiqGAhTX6NuwtAqEcog+DWhoI0XUgyCNR7l+d05X0CfPp/LQAIZW5uphy6OmKEwPQEmCGgDGW/Z/wBSPg7NZBjximVkUFzI1TxzwZsmqLDkcdyUz143a6frt/cAiuCHwqrD1E3ewdnX5JhRmKq5LOJ4NmQ01LSj+uDGV3j+ULsY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750666640; c=relaxed/simple;
-	bh=3C1C5syECeHn+sxB4B/MNopaQHu7zY8lfXLdxTcq1ks=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=UJU/9abDXQQn1R0Rjnq9Cj/bRUrHGqAMyEiYVogGmSWjtskmEQxjPsFBZIub/G6Jl9PFU8xFddFc8MT/orZKPTkDK8ktvC3nYErte+8kYoOqg75Otiby1YHEa4pmQ1gkclO3rYX6unmvq0IqnVXE/+EXQTMsf/ApZv73fd85pbE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Ks/h/Npi; arc=none smtp.client-ip=198.175.65.19
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1750666638; x=1782202638;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=3C1C5syECeHn+sxB4B/MNopaQHu7zY8lfXLdxTcq1ks=;
-  b=Ks/h/Npi2/5zOyXe6eTCe6EUpzGoRxtKfN+vqWCUL+/elCbPRP+hCYtx
-   6pv+AhcL+m+OTWk2hvP9kWRe+DByHMSjSPg1mVOi018xVQaIO5jZGqBEO
-   P7tiEPCWFyE50eFX+KRMboE1HeOQaVieX0N9UTiVrpiPkyepvDZkDgjT2
-   QWDXQ5Ic5HM0RIbEthNPd78//YrBhpwVd149tzBgU+lCxdYZvb3zrC8g0
-   HPT+khGIJYkZP4yM9+nF9m91D68eHkoozsZgleP3+Q8RcUqIOP8GsHt35
-   odbb71qZaincMdLNixl5F+42duQVaNzV4uLnvO273vyrwt42JLIXNR4IJ
-   Q==;
-X-CSE-ConnectionGUID: CbKVdD19ToiYt3SSMLnweg==
-X-CSE-MsgGUID: 3lhFvzK+T+6tqpRXOp5Emw==
-X-IronPort-AV: E=McAfee;i="6800,10657,11472"; a="52732704"
-X-IronPort-AV: E=Sophos;i="6.16,258,1744095600"; 
-   d="scan'208";a="52732704"
-Received: from orviesa004.jf.intel.com ([10.64.159.144])
-  by orvoesa111.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 23 Jun 2025 01:17:17 -0700
-X-CSE-ConnectionGUID: 8g6RJxTKTPCtjzq50ZA/yw==
-X-CSE-MsgGUID: vpuqvzhrQi6SNRUSArfXVQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.16,258,1744095600"; 
-   d="scan'208";a="156074558"
-Received: from black.fi.intel.com ([10.237.72.28])
-  by orviesa004.jf.intel.com with ESMTP; 23 Jun 2025 01:17:04 -0700
-Received: by black.fi.intel.com (Postfix, from userid 1000)
-	id 6F573108; Mon, 23 Jun 2025 11:17:02 +0300 (EEST)
-Date: Mon, 23 Jun 2025 11:17:02 +0300
-From: "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>
-To: Borislav Petkov <bp@alien8.de>
-Cc: Andy Lutomirski <luto@kernel.org>, 
-	Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, 
-	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org, "H. Peter Anvin" <hpa@zytor.com>, 
-	Peter Zijlstra <peterz@infradead.org>, Ard Biesheuvel <ardb@kernel.org>, 
-	"Paul E. McKenney" <paulmck@kernel.org>, Josh Poimboeuf <jpoimboe@kernel.org>, 
-	Xiongwei Song <xiongwei.song@windriver.com>, Xin Li <xin3.li@intel.com>, 
-	"Mike Rapoport (IBM)" <rppt@kernel.org>, Brijesh Singh <brijesh.singh@amd.com>, 
-	Michael Roth <michael.roth@amd.com>, Tony Luck <tony.luck@intel.com>, 
-	Alexey Kardashevskiy <aik@amd.com>, Alexander Shishkin <alexander.shishkin@linux.intel.com>, 
-	Jonathan Corbet <corbet@lwn.net>, Sohil Mehta <sohil.mehta@intel.com>, 
-	Ingo Molnar <mingo@kernel.org>, Pawan Gupta <pawan.kumar.gupta@linux.intel.com>, 
-	Daniel Sneddon <daniel.sneddon@linux.intel.com>, Kai Huang <kai.huang@intel.com>, 
-	Sandipan Das <sandipan.das@amd.com>, Breno Leitao <leitao@debian.org>, 
-	Rick Edgecombe <rick.p.edgecombe@intel.com>, Alexei Starovoitov <ast@kernel.org>, 
-	Hou Tao <houtao1@huawei.com>, Juergen Gross <jgross@suse.com>, 
-	Vegard Nossum <vegard.nossum@oracle.com>, Kees Cook <kees@kernel.org>, Eric Biggers <ebiggers@google.com>, 
-	Jason Gunthorpe <jgg@ziepe.ca>, "Masami Hiramatsu (Google)" <mhiramat@kernel.org>, 
-	Andrew Morton <akpm@linux-foundation.org>, Luis Chamberlain <mcgrof@kernel.org>, 
-	Yuntao Wang <ytcoode@gmail.com>, Rasmus Villemoes <linux@rasmusvillemoes.dk>, 
-	Christophe Leroy <christophe.leroy@csgroup.eu>, Tejun Heo <tj@kernel.org>, Changbin Du <changbin.du@huawei.com>, 
-	Huang Shijie <shijie@os.amperecomputing.com>, Geert Uytterhoeven <geert+renesas@glider.be>, 
-	Namhyung Kim <namhyung@kernel.org>, Arnaldo Carvalho de Melo <acme@redhat.com>, 
-	linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-efi@vger.kernel.org, 
-	linux-mm@kvack.org, Yian Chen <yian.chen@intel.com>
-Subject: Re: [PATCHv6 01/16] x86/cpu: Enumerate the LASS feature bits
-Message-ID: <tmd5llufitosphzhiik2tlemjuwyi7xkcjlhbqhibrgjjhsqcj@b3xtgub42p45>
-References: <20250620135325.3300848-1-kirill.shutemov@linux.intel.com>
- <20250620135325.3300848-2-kirill.shutemov@linux.intel.com>
- <20250620163504.GCaFWNuI-8QFqAM0yI@fat_crate.local>
- <6y2iqv6c2idn7yebaec7tyhzl5zcsrwqq4lcsokumlqeophzaf@ljnmxorblgcj>
- <20250620182943.GDaFWolxhwogB2tTxb@fat_crate.local>
+	s=arc-20240116; t=1750667003; c=relaxed/simple;
+	bh=zFqOr7aypHQwZqL3LEpcklbve06QiGNwRDJNLk+st5g=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:From:In-Reply-To:
+	 Content-Type:References; b=gS8EHZHWxqR4rQKZFzODByLJwSzB9L6QpIhKU0qGqFrsWdktb+ixfqIJPOZr99gBExSiu9lZBhoBDVYa3ejEgosVKlODKWgrHmfcPM6nrlcoQoMthJpOxiTWLENtrwmih41s5wNaG/q74HbjWefR/l4T+dFuIvRJ20hjOsrn7dQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=ac5AeUxp; arc=none smtp.client-ip=210.118.77.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
+Received: from eucas1p1.samsung.com (unknown [182.198.249.206])
+	by mailout2.w1.samsung.com (KnoxPortal) with ESMTP id 20250623081738euoutp0254a6017ea2fb539016d2b4c167fb7260~Lngz7hMiU0085800858euoutp02i
+	for <linux-kernel@vger.kernel.org>; Mon, 23 Jun 2025 08:17:38 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.w1.samsung.com 20250623081738euoutp0254a6017ea2fb539016d2b4c167fb7260~Lngz7hMiU0085800858euoutp02i
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+	s=mail20170921; t=1750666658;
+	bh=luih2Qz/UMZ7UffUnmmhtm7LsPOMkm5qz+Oj9g8WGgY=;
+	h=Date:Subject:To:Cc:From:In-Reply-To:References:From;
+	b=ac5AeUxpahWu90BTdcQapKbM9aqN2n+swpFoyZNux/AMIjF1AoxaMEu6TC+F6O00G
+	 CbxTpQZx0/KGn24mBo75GFfhnJyXQpHwqTYXvdPIp1/fnN37faT4e/cFAaJl3GpaWy
+	 iPWHF/N4W8h/wcDf/tQOa6QvN+MDrwEIuSD2NECo=
+Received: from eusmtip2.samsung.com (unknown [203.254.199.222]) by
+	eucas1p1.samsung.com (KnoxPortal) with ESMTPA id
+	20250623081738eucas1p125d25f5119cb753f78f01734b92487d6~LngzPqk8C1864418644eucas1p15;
+	Mon, 23 Jun 2025 08:17:38 +0000 (GMT)
+Received: from [192.168.1.44] (unknown [106.210.136.40]) by
+	eusmtip2.samsung.com (KnoxPortal) with ESMTPA id
+	20250623081736eusmtip220e776f7d400c05e225edcce1c52eacc~LngyLH4rO2642326423eusmtip20;
+	Mon, 23 Jun 2025 08:17:36 +0000 (GMT)
+Message-ID: <12eed587-a8f3-4a67-8808-5e32617ded93@samsung.com>
+Date: Mon, 23 Jun 2025 10:17:36 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250620182943.GDaFWolxhwogB2tTxb@fat_crate.local>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v5 0/8] Add TH1520 GPU support with power sequencing
+To: Drew Fustini <drew@pdp7.com>
+Cc: Guo Ren <guoren@kernel.org>, Fu Wei <wefu@redhat.com>, Rob Herring
+	<robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+	<conor+dt@kernel.org>, Bartosz Golaszewski <brgl@bgdev.pl>, Philipp Zabel
+	<p.zabel@pengutronix.de>, Frank Binns <frank.binns@imgtec.com>, Matt Coster
+	<matt.coster@imgtec.com>, Maarten Lankhorst
+	<maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>,
+	Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>,
+	Simona Vetter <simona@ffwll.ch>, Paul Walmsley <paul.walmsley@sifive.com>,
+	Palmer Dabbelt <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>,
+	Alexandre Ghiti <alex@ghiti.fr>, Ulf Hansson <ulf.hansson@linaro.org>, Marek
+	Szyprowski <m.szyprowski@samsung.com>, linux-riscv@lists.infradead.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-pm@vger.kernel.org, dri-devel@lists.freedesktop.org, Krzysztof
+	Kozlowski <krzysztof.kozlowski@linaro.org>
+Content-Language: en-US
+From: Michal Wilczynski <m.wilczynski@samsung.com>
+In-Reply-To: <aFNrRtbWzeRa7GmQ@x1>
+Content-Transfer-Encoding: 7bit
+X-CMS-MailID: 20250623081738eucas1p125d25f5119cb753f78f01734b92487d6
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+X-RootMTR: 20250618102225eucas1p129b1172bf54521c1eb0f718cb31af468
+X-EPHeader: CA
+X-CMS-RootMailID: 20250618102225eucas1p129b1172bf54521c1eb0f718cb31af468
+References: <CGME20250618102225eucas1p129b1172bf54521c1eb0f718cb31af468@eucas1p1.samsung.com>
+	<20250618-apr_14_for_sending-v5-0-27ed33ea5c6f@samsung.com>
+	<aFNrRtbWzeRa7GmQ@x1>
 
-On Fri, Jun 20, 2025 at 08:29:43PM +0200, Borislav Petkov wrote:
-> On Fri, Jun 20, 2025 at 08:33:36PM +0300, Kirill A. Shutemov wrote:
-> > What is current policy around it ?
-> 
-> Documentation/arch/x86/cpuinfo.rst
-> 
-> > I think it is useful to advertise security features in cpuinfo.
-> 
-> Because who's going to consume them?
-> 
-> Don't get me wrong - I am trying to see whether the whole use case for this is
-> well thought out. Because it becomes an ABI.
-> 
-> But if no one is going to use it, why bother?
-> 
-> Arguably, for this thing the argument would be - as it is put in that file
-> above:
-> 
-> "So, the current use of /proc/cpuinfo is to show features which the
-> kernel has *enabled* and *supports*."
-> 
-> as it has been enabled by machinery.
-> 
-> So that's ok. I'm just making sure we're on the same page and you're not
-> aiming at something completely different with this.
 
-What about this:
 
-LASS provides protection against a class of speculative attacks, such as
-SLAM[1]. Add the "lass" flag to /proc/cpuinfo to indicate that the feature
-is supported by hardware and enabled by the kernel. This allows userspace
-to determine if the setup is secure against such attacks.
+On 6/19/25 03:43, Drew Fustini wrote:
+> On Wed, Jun 18, 2025 at 12:22:06PM +0200, Michal Wilczynski wrote:
+>> This patch series introduces support for the Imagination IMG BXM-4-64
+>> GPU found on the T-HEAD TH1520 SoC. A key aspect of this support is
+>> managing the GPU's complex power-up and power-down sequence, which
+>> involves multiple clocks and resets.
+>>
+>> The TH1520 GPU requires a specific sequence to be followed for its
+>> clocks and resets to ensure correct operation. Initial discussions and
+>> an earlier version of this series explored managing this via the generic
+>> power domain (genpd) framework. However, following further discussions
+>> with kernel maintainers [1], the approach has been reworked to utilize
+>> the dedicated power sequencing (pwrseq) framework.
+>>
+>> This revised series now employs a new pwrseq provider driver
+>> (pwrseq-thead-gpu.c) specifically for the TH1520 GPU. This driver
+>> encapsulates the SoC specific power sequence details. The Imagination
+>> GPU driver (pvr_device.c) is updated to act as a consumer of this power
+>> sequencer, requesting the "gpu-power" target. The sequencer driver,
+>> during its match phase with the GPU device, acquires the necessary clock
+>> and reset handles from the GPU device node to perform the full sequence.
+>>
+>> This approach aligns with the goal of abstracting SoC specific power
+>> management details away from generic device drivers and leverages the
+>> pwrseq framework as recommended.
+>>
+>> The series is structured as follows:
+>>
+>> Patch 1: Introduces the pwrseq-thead-gpu auxiliary driver to manage the
+>>          GPU's power-on/off sequence.
+>> Patch 2: Adds device tree bindings for the gpu-clkgen reset to the
+>>          existing thead,th1520-aon binding.
+>> Patch 3: Extends the pm-domains driver to detect the gpu-clkgen reset
+>>          and spawn the pwrseq-thead-gpu auxiliary driver.
+>> Patch 4: Updates the Imagination DRM driver to utilize the pwrseq
+>>          framework for TH1520 GPU power management.
+>> Patch 5: Adds the thead,th1520-gpu compatible string to the PowerVR GPU
+>>          device tree bindings.
+>> Patch 6: Adds the gpu-clkgen reset property to the aon node in the
+>>          TH1520 device tree source.
+>> Patch 7: Adds the device tree node for the IMG BXM-4-64 GPU and its
+>>          required fixed-clock.
+>> Patch 8: Enables compilation of the Imagination PowerVR driver on the
+>>          RISC-V architecture.
+>>
+>> This patchset finishes the work started in bigger series [2] by adding
+>> all remaining GPU power sequencing piece. After this patchset the GPU
+>> probes correctly.
+> 
+> The powevr probe complains:
+> 
+> [    1.060383] powervr ffef400000.gpu: Direct firmware load for powervr/rogue_36.52.104.182_v1.fw failed with error -2
+> 
+> Where is the correct place to get the firmware?
 
-[1] https://download.vusec.net/papers/slam_sp24.pdf
+Hi,
 
+Apologies for the late reply, it was a long weekend in Poland and I was
+away without access to e-mail.
+
+This is the Imagination repository that hosts the firmware [1].
+Admittedly I'm not using the newest firmware blobs available, as per
+discussion here [2] I downloaded mine last year so haven't tested the
+new ones yet.
+
+For my own testing, I  embed the firmware directly into the kernel to
+avoid issues with the initramfs. If you're compiling your own kernel,
+you can do this with the following configuration options:
+
+CONFIG_EXTRA_FIRMWARE="powervr/rogue_36.52.104.182_v1.fw"
+CONFIG_EXTRA_FIRMWARE_DIR="/home/local_user"
+
+[1] - https://gitlab.freedesktop.org/imagination/linux-firmware/-/tree/powervr/powervr?ref_type=heads
+[2] - https://gitlab.freedesktop.org/imagination/linux-firmware/-/issues/2#note_2642740
+
+> 
+> Thanks,
+> Drew
+> 
+
+Best regards,
 -- 
-  Kiryl Shutsemau / Kirill A. Shutemov
+Michal Wilczynski <m.wilczynski@samsung.com>
 
