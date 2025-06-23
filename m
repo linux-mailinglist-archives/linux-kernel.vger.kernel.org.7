@@ -1,216 +1,174 @@
-Return-Path: <linux-kernel+bounces-698566-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-698568-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id AC299AE46B4
-	for <lists+linux-kernel@lfdr.de>; Mon, 23 Jun 2025 16:28:45 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B8B4CAE467A
+	for <lists+linux-kernel@lfdr.de>; Mon, 23 Jun 2025 16:21:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D2224446CF6
-	for <lists+linux-kernel@lfdr.de>; Mon, 23 Jun 2025 14:19:43 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E67D57ACDDB
+	for <lists+linux-kernel@lfdr.de>; Mon, 23 Jun 2025 14:19:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F093319CC37;
-	Mon, 23 Jun 2025 14:17:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9CAD4254873;
+	Mon, 23 Jun 2025 14:18:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="gz2WrE8Z"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="BP+uuzVd"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.9])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 778146EB79
-	for <linux-kernel@vger.kernel.org>; Mon, 23 Jun 2025 14:17:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8B08E2512DE
+	for <linux-kernel@vger.kernel.org>; Mon, 23 Jun 2025 14:18:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.9
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750688276; cv=none; b=FXTrNYmcjof4qrSmMY5wfxhaHHEXFnriGJBVZZI1+9vNghq+erBqnKLXgP8bLLnPJylr2ROnOGPhWo0O3RcbNa/7Cd/ietIgD/LQfcSzWyquNJ0tSMDVBSkmaHIIELK2kGOOhcfgT8FWTwXH9nN6jIFuDV1+BAMFfTmCIuT2n9o=
+	t=1750688313; cv=none; b=jAI8Sv4EjvgSnMW9fz3HLNWjlJuUTgoLruis6gEPqNEeWU0lRTA+27wdKDp1qxPTdCAe5DCxxFGA657IEMrjvJUTsL181YWTPk0i1l8giY7eBpPkVQPX1m3ZOsNqDKRuT9LtMsg/G3ICFYvHdcT1nh+7ybdtKTPkumvtBuD6Oh0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750688276; c=relaxed/simple;
-	bh=y9FLq6e7Df41x768C3DaE7ioc295ESzZDb/ud7F+0J8=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=lF9pc/bVyq7CU1KOBFoGUVrURe8XZHivyMCjwaCqicHK52DnEN9UWUlisVAPp6TPvRkTXD7YswdhCa3Q6kRamSB1EVoUmeWpTXYm4terr/gBrMWTHWE3E/EiS5rLFT/bf4jMjfIXfE1xL5Nea2o06FeZHlUrm+S2Ms4WiI8prvw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=gz2WrE8Z; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1750688273;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=AT6z0J+Z7BRb7a4a/ZOwq8sPn4rNW6on998iWVe3KsU=;
-	b=gz2WrE8ZQlyWY9i0qziyrr5pihC8kPY32CtYWuW03wSWbVnrf9H/nPpbgcGbZtDKxCpzcn
-	gjNbIJ/Q+lVbuapcf3sZB6v6eOM4Qu3z6OgzfA+hJ08xqBTfRc3g+L52BLzCMdY8cItMfY
-	puNCBnZjszVQJqJf60q4av/4cvuGvq0=
-Received: from mail-wm1-f69.google.com (mail-wm1-f69.google.com
- [209.85.128.69]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-644-zkc6EQcVNSO4UcSHZuX31A-1; Mon, 23 Jun 2025 10:17:52 -0400
-X-MC-Unique: zkc6EQcVNSO4UcSHZuX31A-1
-X-Mimecast-MFC-AGG-ID: zkc6EQcVNSO4UcSHZuX31A_1750688271
-Received: by mail-wm1-f69.google.com with SMTP id 5b1f17b1804b1-450de98b28eso23595975e9.0
-        for <linux-kernel@vger.kernel.org>; Mon, 23 Jun 2025 07:17:52 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1750688271; x=1751293071;
-        h=content-transfer-encoding:in-reply-to:organization:autocrypt
-         :content-language:from:references:cc:to:subject:user-agent
-         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=AT6z0J+Z7BRb7a4a/ZOwq8sPn4rNW6on998iWVe3KsU=;
-        b=clFrxzfnrHY7SC/zU+4nsm3kq9at7oe4LhM8w6semfVg1PGLh3zbYfBK2zZ2KonTmc
-         vqxADjV2LVj11vz7vNw2BlhEFGDh+vWiauZJ1BOzIq2elBddku0XSEoxc+9m4ke7C43A
-         ClYAJJZECVHU/lZIXx9ANSz7iB80n42qJp7VYPOGLKJ77V2AODl/UX+qUukqbkXRJAp1
-         GsU66St/fs8KlnaSEOyeqrk2DbR8YsOyMPohV3BINMNfgArHc+VpAnpjyzruA+ovWgCW
-         qmgPukt/pYk09CQrf8/wggUUR65fPpCpaoMvuIOlfb+J/qI4B93X2oPoJVWXxP77WV+K
-         eD6g==
-X-Forwarded-Encrypted: i=1; AJvYcCVZlVaD/Y+sFXRCBVQcmMEnMZ8nhlR4q0lrYl63rY/iP2t8hAIkZkuOYSRk1+P0r2r5xpRlrFF8NCWfRpE=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz5qYA0KLHJLyuXMvsQJVqLEr89Zy69l+cHRDvCaEWQIgqH6sJT
-	tVSp7CGneTS9wnTokMGn2sPhraQVfxjQk/9efsS1M25aHi16F7qV2MyfKfBuAxjbERXBpvVT09S
-	L0cJHDsHsKd05URNsPUJNFAlVRJ2LvjTxge2I/U1CAwHgFg9wJbUopge9isq3aj35+g==
-X-Gm-Gg: ASbGnctFhVx+FAM4b72jACNVwLIpV8uyTtdiAFke/abBg2wMxEwF3xlMa1FqS+CjK9F
-	Hgnd1CA4O6P5SW/9TUS7WuFKMQaoLTCCNNZx0NOuZp5cEoxm/v4KjXe0Pjwp8BZ/TQf8v98pwHV
-	V8kD+mfqEEZ+r+fs+6TZ+9B2wWOnGWuWYwp4ui9IgQScG1VS/x6MG9pgxV8po262nPX/ZQZ9vvj
-	FxN0v4Uv2NyiiHc3Pp92uQ/etUc9DlJWY2nGfECon/CmTcqj2XqyEnWdcZcrd0qc44WzpHXJVNr
-	Cjm95+m/iw9BxFBwZxXZlolukqPCvwtWbrUpL7bbLGP4FsknWgyFktUIzOxU+INTJKnaxp1S4/M
-	5uE/X6p6Vp0BzN1qNBSO2EXEXHar9s9T7/5yc10fnrNfHB6dMVg==
-X-Received: by 2002:a05:6000:2913:b0:3a4:d685:3de7 with SMTP id ffacd0b85a97d-3a6d2799e03mr8524047f8f.8.1750688270937;
-        Mon, 23 Jun 2025 07:17:50 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IGVEYbdHympic4C845xjbGIaDAfJ4O6TUpDQzaRepXXtAy+1Ld3k5fQBQt9u4TU2HYvxvW5QQ==
-X-Received: by 2002:a05:6000:2913:b0:3a4:d685:3de7 with SMTP id ffacd0b85a97d-3a6d2799e03mr8524018f8f.8.1750688270392;
-        Mon, 23 Jun 2025 07:17:50 -0700 (PDT)
-Received: from ?IPV6:2003:d8:2f4e:fd00:8e13:e3b5:90c8:1159? (p200300d82f4efd008e13e3b590c81159.dip0.t-ipconnect.de. [2003:d8:2f4e:fd00:8e13:e3b5:90c8:1159])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4535eac8bb6sm147000545e9.25.2025.06.23.07.17.46
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 23 Jun 2025 07:17:49 -0700 (PDT)
-Message-ID: <18ef9a51-c029-40a8-b9e4-60c46c83ccef@redhat.com>
-Date: Mon, 23 Jun 2025 16:17:46 +0200
+	s=arc-20240116; t=1750688313; c=relaxed/simple;
+	bh=iGpVZjmUMX0RfaMUsfu3n4YNfr73p2VaBaGKXJgmVWI=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=iAUW/USz3BDiMKFTCMJMN1gztV3KME6p+T/C/Fj7vf3KI1RMYaybg0bIl0ymfRfnc5ITv4/GUNxv1SAw0uND84cxVQd/iUeo6dz1nLhuw64fbto3LBC1GFa11j8ClfQ8vsO7SFFWK3QCqNSmlpk2euS0tMCJwr5DKox0nyk491g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=BP+uuzVd; arc=none smtp.client-ip=198.175.65.9
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1750688311; x=1782224311;
+  h=date:from:to:cc:subject:message-id:mime-version;
+  bh=iGpVZjmUMX0RfaMUsfu3n4YNfr73p2VaBaGKXJgmVWI=;
+  b=BP+uuzVdC7hZ00A9KmCDuq44WlA/jd2fqkVIDg7W5p92rZXRbUa9CTzW
+   v80LrbtzsVqgTMDjlYG/4PDeEW6PUwB7LvA+oZzBfdUa+4AAwrMlBxuES
+   b9ly1P1kEYIvNF7i+jIVKP3MxE8pdzx2aS0pd703yNwT1xT4iUIri+IbW
+   EH65egDSZj1gdfVG9JS/Qey7hpNAv93NxynyrFnKpS5zgr/WOMkQucQ1w
+   jXWszk1gr/uyFqHsTAVL/fqFc3zh+A/MCXpQdDRiFtAclk/ygqGcvSWzT
+   wlKCN6ScF/fwTXEi0JZFwVcrXs0ODrxLr7Tv9RSE+D7N6Jz16wkzxiR2P
+   A==;
+X-CSE-ConnectionGUID: j66/EOcMT+2+4kV60O5FHA==
+X-CSE-MsgGUID: O6xiPWF3Ruq2e/eB2RQZfA==
+X-IronPort-AV: E=McAfee;i="6800,10657,11473"; a="75430594"
+X-IronPort-AV: E=Sophos;i="6.16,258,1744095600"; 
+   d="scan'208";a="75430594"
+Received: from orviesa008.jf.intel.com ([10.64.159.148])
+  by orvoesa101.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 23 Jun 2025 07:18:30 -0700
+X-CSE-ConnectionGUID: MEJxLyWcTdefusaIHYJYDw==
+X-CSE-MsgGUID: u/EE1Aa/S42Bd1d2lddT5Q==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.16,258,1744095600"; 
+   d="scan'208";a="152132332"
+Received: from lkp-server01.sh.intel.com (HELO e8142ee1dce2) ([10.239.97.150])
+  by orviesa008.jf.intel.com with ESMTP; 23 Jun 2025 07:18:29 -0700
+Received: from kbuild by e8142ee1dce2 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1uTi0A-000Ozm-0E;
+	Mon, 23 Jun 2025 14:18:26 +0000
+Date: Mon, 23 Jun 2025 22:17:48 +0800
+From: kernel test robot <lkp@intel.com>
+To: Jason Gunthorpe <jgg@nvidia.com>
+Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
+	linux-kernel@vger.kernel.org, Will Deacon <will@kernel.org>,
+	Nicolin Chen <nicolinc@nvidia.com>
+Subject: drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3.c:2048:12: warning: stack
+ frame size (1184) exceeds limit (1024) in 'arm_smmu_atc_inv_master'
+Message-ID: <202506232202.d7l6AowE-lkp@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 2/3] mm: update core kernel code to use vm_flags_t
- consistently
-To: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
- Andrew Morton <akpm@linux-foundation.org>
-Cc: Russell King <linux@armlinux.org.uk>,
- Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>,
- Madhavan Srinivasan <maddy@linux.ibm.com>,
- Michael Ellerman <mpe@ellerman.id.au>, Nicholas Piggin <npiggin@gmail.com>,
- Christophe Leroy <christophe.leroy@csgroup.eu>,
- "David S . Miller" <davem@davemloft.net>,
- Andreas Larsson <andreas@gaisler.com>, Jarkko Sakkinen <jarkko@kernel.org>,
- Dave Hansen <dave.hansen@linux.intel.com>,
- Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
- Borislav Petkov <bp@alien8.de>, "H . Peter Anvin" <hpa@zytor.com>,
- Andy Lutomirski <luto@kernel.org>, Peter Zijlstra <peterz@infradead.org>,
- Alexander Viro <viro@zeniv.linux.org.uk>,
- Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
- Kees Cook <kees@kernel.org>, Peter Xu <peterx@redhat.com>,
- Zi Yan <ziy@nvidia.com>, Baolin Wang <baolin.wang@linux.alibaba.com>,
- "Liam R . Howlett" <Liam.Howlett@oracle.com>, Nico Pache
- <npache@redhat.com>, Ryan Roberts <ryan.roberts@arm.com>,
- Dev Jain <dev.jain@arm.com>, Barry Song <baohua@kernel.org>,
- Xu Xin <xu.xin16@zte.com.cn>, Chengming Zhou <chengming.zhou@linux.dev>,
- Hugh Dickins <hughd@google.com>, Vlastimil Babka <vbabka@suse.cz>,
- Mike Rapoport <rppt@kernel.org>, Suren Baghdasaryan <surenb@google.com>,
- Michal Hocko <mhocko@suse.com>, Rik van Riel <riel@surriel.com>,
- Harry Yoo <harry.yoo@oracle.com>, Dan Williams <dan.j.williams@intel.com>,
- Matthew Wilcox <willy@infradead.org>, Steven Rostedt <rostedt@goodmis.org>,
- Masami Hiramatsu <mhiramat@kernel.org>,
- Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
- Jason Gunthorpe <jgg@ziepe.ca>, John Hubbard <jhubbard@nvidia.com>,
- Muchun Song <muchun.song@linux.dev>, Oscar Salvador <osalvador@suse.de>,
- Jann Horn <jannh@google.com>, Pedro Falcato <pfalcato@suse.de>,
- Johannes Weiner <hannes@cmpxchg.org>, Qi Zheng <zhengqi.arch@bytedance.com>,
- Shakeel Butt <shakeel.butt@linux.dev>, linux-arm-kernel@lists.infradead.org,
- linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
- kvm@vger.kernel.org, sparclinux@vger.kernel.org, linux-sgx@vger.kernel.org,
- linux-fsdevel@vger.kernel.org, linux-mm@kvack.org, nvdimm@lists.linux.dev,
- linux-trace-kernel@vger.kernel.org
-References: <cover.1750274467.git.lorenzo.stoakes@oracle.com>
- <d1588e7bb96d1ea3fe7b9df2c699d5b4592d901d.1750274467.git.lorenzo.stoakes@oracle.com>
-From: David Hildenbrand <david@redhat.com>
-Content-Language: en-US
-Autocrypt: addr=david@redhat.com; keydata=
- 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
- WNyWQQ==
-Organization: Red Hat
-In-Reply-To: <d1588e7bb96d1ea3fe7b9df2c699d5b4592d901d.1750274467.git.lorenzo.stoakes@oracle.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-On 18.06.25 21:42, Lorenzo Stoakes wrote:
-> The core kernel code is currently very inconsistent in its use of
-> vm_flags_t vs. unsigned long. This prevents us from changing the type of
-> vm_flags_t in the future and is simply not correct, so correct this.
-> 
-> While this results in rather a lot of churn, it is a critical pre-requisite
-> for a future planned change to VMA flag type.
-> 
-> Additionally, update VMA userland tests to account for the changes.
-> 
-> To make review easier and to break things into smaller parts, driver and
-> architecture-specific changes is left for a subsequent commit.
-> 
-> The code has been adjusted to cascade the changes across all calling code
-> as far as is needed.
-> 
-> We will adjust architecture-specific and driver code in a subsequent patch.
-> 
-> Overall, this patch does not introduce any functional change.
-> 
-> Signed-off-by: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
-> ---
+tree:   https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git master
+head:   86731a2a651e58953fc949573895f2fa6d456841
+commit: 6de80d619203c672e5c011e8715bd965d27b69cf iommu/arm-smmu-v3: Add struct arm_smmu_impl_ops
+date:   10 months ago
+config: arm64-allmodconfig (https://download.01.org/0day-ci/archive/20250623/202506232202.d7l6AowE-lkp@intel.com/config)
+compiler: clang version 19.1.7 (https://github.com/llvm/llvm-project cd708029e0b2869e80abe31ddb175f7c35361f90)
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250623/202506232202.d7l6AowE-lkp@intel.com/reproduce)
 
-Probably some cases might sneak in in the meantime :)
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202506232202.d7l6AowE-lkp@intel.com/
 
-Acked-by: David Hildenbrand <david@redhat.com>
+All warnings (new ones prefixed by >>):
+
+   In file included from drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3.c:12:
+   In file included from include/linux/acpi.h:39:
+   In file included from include/acpi/acpi_io.h:7:
+   In file included from arch/arm64/include/asm/acpi.h:14:
+   In file included from include/linux/memblock.h:12:
+   In file included from include/linux/mm.h:2228:
+   include/linux/vmstat.h:500:43: warning: arithmetic between different enumeration types ('enum zone_stat_item' and 'enum numa_stat_item') [-Wenum-enum-conversion]
+     500 |         return vmstat_text[NR_VM_ZONE_STAT_ITEMS +
+         |                            ~~~~~~~~~~~~~~~~~~~~~ ^
+     501 |                            item];
+         |                            ~~~~
+   include/linux/vmstat.h:507:43: warning: arithmetic between different enumeration types ('enum zone_stat_item' and 'enum numa_stat_item') [-Wenum-enum-conversion]
+     507 |         return vmstat_text[NR_VM_ZONE_STAT_ITEMS +
+         |                            ~~~~~~~~~~~~~~~~~~~~~ ^
+     508 |                            NR_VM_NUMA_EVENT_ITEMS +
+         |                            ~~~~~~~~~~~~~~~~~~~~~~
+   include/linux/vmstat.h:514:36: warning: arithmetic between different enumeration types ('enum node_stat_item' and 'enum lru_list') [-Wenum-enum-conversion]
+     514 |         return node_stat_name(NR_LRU_BASE + lru) + 3; // skip "nr_"
+         |                               ~~~~~~~~~~~ ^ ~~~
+   include/linux/vmstat.h:519:43: warning: arithmetic between different enumeration types ('enum zone_stat_item' and 'enum numa_stat_item') [-Wenum-enum-conversion]
+     519 |         return vmstat_text[NR_VM_ZONE_STAT_ITEMS +
+         |                            ~~~~~~~~~~~~~~~~~~~~~ ^
+     520 |                            NR_VM_NUMA_EVENT_ITEMS +
+         |                            ~~~~~~~~~~~~~~~~~~~~~~
+   include/linux/vmstat.h:528:43: warning: arithmetic between different enumeration types ('enum zone_stat_item' and 'enum numa_stat_item') [-Wenum-enum-conversion]
+     528 |         return vmstat_text[NR_VM_ZONE_STAT_ITEMS +
+         |                            ~~~~~~~~~~~~~~~~~~~~~ ^
+     529 |                            NR_VM_NUMA_EVENT_ITEMS +
+         |                            ~~~~~~~~~~~~~~~~~~~~~~
+   drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3.c:2066:5: warning: stack frame size (1232) exceeds limit (1024) in 'arm_smmu_atc_inv_domain' [-Wframe-larger-than]
+    2066 | int arm_smmu_atc_inv_domain(struct arm_smmu_domain *smmu_domain,
+         |     ^
+   drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3.c:2141:13: warning: stack frame size (1216) exceeds limit (1024) in '__arm_smmu_tlb_inv_range' [-Wframe-larger-than]
+    2141 | static void __arm_smmu_tlb_inv_range(struct arm_smmu_cmdq_ent *cmd,
+         |             ^
+   drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3.c:1259:28: warning: stack frame size (1232) exceeds limit (1024) in 'arm_smmu_alloc_cd_ptr' [-Wframe-larger-than]
+    1259 | static struct arm_smmu_cd *arm_smmu_alloc_cd_ptr(struct arm_smmu_master *master,
+         |                            ^
+   drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3.c:1320:13: warning: stack frame size (1184) exceeds limit (1024) in 'arm_smmu_cd_writer_sync_entry' [-Wframe-larger-than]
+    1320 | static void arm_smmu_cd_writer_sync_entry(struct arm_smmu_entry_writer *writer)
+         |             ^
+>> drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3.c:2048:12: warning: stack frame size (1184) exceeds limit (1024) in 'arm_smmu_atc_inv_master' [-Wframe-larger-than]
+    2048 | static int arm_smmu_atc_inv_master(struct arm_smmu_master *master,
+         |            ^
+   10 warnings generated.
+
+
+vim +/arm_smmu_atc_inv_master +2048 drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3.c
+
+9ce27afc0830fc drivers/iommu/arm-smmu-v3.c                 Jean-Philippe Brucker 2019-04-17  2047  
+1d5f34f0002f9f drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3.c Jason Gunthorpe       2024-06-25 @2048  static int arm_smmu_atc_inv_master(struct arm_smmu_master *master,
+1d5f34f0002f9f drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3.c Jason Gunthorpe       2024-06-25  2049  				   ioasid_t ssid)
+9ce27afc0830fc drivers/iommu/arm-smmu-v3.c                 Jean-Philippe Brucker 2019-04-17  2050  {
+9ce27afc0830fc drivers/iommu/arm-smmu-v3.c                 Jean-Philippe Brucker 2019-04-17  2051  	int i;
+9e773aee8c3e1b drivers/iommu/arm-smmu-v3.c                 Rob Herring           2020-02-24  2052  	struct arm_smmu_cmdq_ent cmd;
+93f9f7958f12a1 drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3.c Zhen Lei              2021-08-17  2053  	struct arm_smmu_cmdq_batch cmds;
+9ce27afc0830fc drivers/iommu/arm-smmu-v3.c                 Jean-Philippe Brucker 2019-04-17  2054  
+1d5f34f0002f9f drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3.c Jason Gunthorpe       2024-06-25  2055  	arm_smmu_atc_inv_to_cmd(ssid, 0, 0, &cmd);
+9ce27afc0830fc drivers/iommu/arm-smmu-v3.c                 Jean-Philippe Brucker 2019-04-17  2056  
+56ae8866f3b408 drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3.c Nicolin Chen          2024-08-29  2057  	arm_smmu_cmdq_batch_init(master->smmu, &cmds);
+cdf315f907d46a drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3.c Jean-Philippe Brucker 2021-04-01  2058  	for (i = 0; i < master->num_streams; i++) {
+cdf315f907d46a drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3.c Jean-Philippe Brucker 2021-04-01  2059  		cmd.atc.sid = master->streams[i].id;
+eff19474b1bd60 drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3.c Zhen Lei              2021-08-11  2060  		arm_smmu_cmdq_batch_add(master->smmu, &cmds, &cmd);
+9ce27afc0830fc drivers/iommu/arm-smmu-v3.c                 Jean-Philippe Brucker 2019-04-17  2061  	}
+9ce27afc0830fc drivers/iommu/arm-smmu-v3.c                 Jean-Philippe Brucker 2019-04-17  2062  
+eff19474b1bd60 drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3.c Zhen Lei              2021-08-11  2063  	return arm_smmu_cmdq_batch_submit(master->smmu, &cmds);
+9ce27afc0830fc drivers/iommu/arm-smmu-v3.c                 Jean-Philippe Brucker 2019-04-17  2064  }
+9ce27afc0830fc drivers/iommu/arm-smmu-v3.c                 Jean-Philippe Brucker 2019-04-17  2065  
+
+:::::: The code at line 2048 was first introduced by commit
+:::::: 1d5f34f0002f9f56d0ca153022cfdead07d45dc6 iommu/arm-smmu-v3: Thread SSID through the arm_smmu_attach_*() interface
+
+:::::: TO: Jason Gunthorpe <jgg@nvidia.com>
+:::::: CC: Will Deacon <will@kernel.org>
 
 -- 
-Cheers,
-
-David / dhildenb
-
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
