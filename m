@@ -1,133 +1,130 @@
-Return-Path: <linux-kernel+bounces-697911-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-697897-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id B56EFAE3A67
-	for <lists+linux-kernel@lfdr.de>; Mon, 23 Jun 2025 11:32:11 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 76D1CAE3A03
+	for <lists+linux-kernel@lfdr.de>; Mon, 23 Jun 2025 11:27:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4E12A1727B6
-	for <lists+linux-kernel@lfdr.de>; Mon, 23 Jun 2025 09:32:12 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0FBBA1723B8
+	for <lists+linux-kernel@lfdr.de>; Mon, 23 Jun 2025 09:27:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 231982417C6;
-	Mon, 23 Jun 2025 09:30:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BA98F233722;
+	Mon, 23 Jun 2025 09:27:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b="Z+2q4qKV"
-Received: from mx07-00178001.pphosted.com (mx07-00178001.pphosted.com [185.132.182.106])
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="ESdAMab6"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B4A9923E324;
-	Mon, 23 Jun 2025 09:30:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.132.182.106
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1C886AD51;
+	Mon, 23 Jun 2025 09:27:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750671012; cv=none; b=pWR98jYrsXFaWSDIYIydkLONaCkg9uA6z+pgu5l+KU96svIL9BeBhjd6nQzBuOOjObZ3Qn37Dho3ls+vec8Xebsk5x5/kOmhHPNoUujgQsh0APAz87HgDum13mFgxvoLkpX0o60aMWVtRopgrcW2pGfj8fNz+TF+cKsnKfN8sQw=
+	t=1750670856; cv=none; b=DKlgXi1TJs+cIae6qn8oMVVsALbVplvkzxnkHhIo2q07j7NOncWzlOxXDOULblMulFVTvDwJKErg2Lpd93aVEolx84wh/W0ZOkHJDEUKr4XhqB+cK5KgUdr6vf7Ay5vI+aVHfyfrNjmGsanHfcYT4Brs4U/7DMq+d5xgTByfqcI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750671012; c=relaxed/simple;
-	bh=C7EnqfKQQ5fQB9pf3iXHh9xmgRkHyNyUGfDlPdr64AQ=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-ID:References:
-	 In-Reply-To:To:CC; b=JXTzVchCktEcPVc67rtchVjTnZ19bMpf4nn/bZqfJtJsKbTY9zIhwfWErlhEYJtO2CgNHl67YYtJ7OzvXERbTlzRzjnL+i6Iepdg7pBANj4ptPObwqetEBaof9vUetXo+RxUTpPC+kqNQW3BAVpjOQz7hV6ebq/CFQe4aNQASBg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com; spf=pass smtp.mailfrom=foss.st.com; dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b=Z+2q4qKV; arc=none smtp.client-ip=185.132.182.106
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=foss.st.com
-Received: from pps.filterd (m0369458.ppops.net [127.0.0.1])
-	by mx07-00178001.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 55N9ACnK010876;
-	Mon, 23 Jun 2025 11:29:52 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foss.st.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=selector1; bh=
-	qLs/ihWxyBQGt91t9+rNI5uJsOv140RQYF6cNc+ahBI=; b=Z+2q4qKV4f0Z8LEW
-	m4tCtpd19msC3UE1sCaRH7+UOcDnCAJE5ykaAVF1M8mC8hToHLPqcp4VCPtVhGqz
-	lnBET+Scj9UquCsRusQn2PLbkzvB2a5MulzLsUMyY0QvSOGpQ/fKuJMStQAgb9Zw
-	W+Yvk4xgWyWbVYyGbqbhnLZKCeglJqRDHBiQcHgLSg+xiBSbdvAPCOsirlCKL4uK
-	0/hISR+Y6bJJ/qUiiF4BTmTZON7bshzt7i5rOxbCkKQfFQoEcE0v9fzw83w8oPGO
-	EVQO1hZxBg44ggyVbzhRmPhcAf3ybjAaroSPf4BgV+JzADBgSfNFba57mcefpez2
-	OJb4qA==
-Received: from beta.dmz-ap.st.com (beta.dmz-ap.st.com [138.198.100.35])
-	by mx07-00178001.pphosted.com (PPS) with ESMTPS id 47e6a6cjq9-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 23 Jun 2025 11:29:52 +0200 (MEST)
-Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
-	by beta.dmz-ap.st.com (STMicroelectronics) with ESMTP id C789240058;
-	Mon, 23 Jun 2025 11:28:41 +0200 (CEST)
-Received: from Webmail-eu.st.com (shfdag1node2.st.com [10.75.129.70])
-	by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id 0C6135C3DEC;
-	Mon, 23 Jun 2025 11:27:33 +0200 (CEST)
-Received: from localhost (10.252.18.29) by SHFDAG1NODE2.st.com (10.75.129.70)
- with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Mon, 23 Jun
- 2025 11:27:32 +0200
-From: =?utf-8?q?Cl=C3=A9ment_Le_Goffic?= <clement.legoffic@foss.st.com>
-Date: Mon, 23 Jun 2025 11:27:18 +0200
-Subject: [PATCH 13/13] arm64: dts: st: support ddrperfm on stm32mp257f-ev1
+	s=arc-20240116; t=1750670856; c=relaxed/simple;
+	bh=q7oJSYwirHOOEYci9Vsvx/PmgyNKO2aIYxM5EObmOXw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=tnF6T446Vvq07QfK9yCXrVMCnOpuk+p88oR7iAuv6rObr3OBgk9Y77lc6R6zVxhzUCzScQD4tZ9NsBLCupOXtCGM7xiwiyaCVpLu04ufkMlN4drsxyVckrw/CGBHon7gewE+X3JJHZFHoHDy+OYFEBeuGkmUB++17qdOGy6akFM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=ESdAMab6; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2E27AC4CEEA;
+	Mon, 23 Jun 2025 09:27:35 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1750670855;
+	bh=q7oJSYwirHOOEYci9Vsvx/PmgyNKO2aIYxM5EObmOXw=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=ESdAMab6d81Q7RX3glu6wx3ZVAyvGuwGx2KY6WmdSSL8+XN1BsnMjO2aoYzE2lJVR
+	 ovIRp100yEvaP4BmfymeewpZ3CzCyIEQOmeZOWJOBo5SV+snCnawcHDRp3jvrOWUlq
+	 D1Vi/z0hA0EN7pKwY86DHDDBEg4AsxxnDUHItF3k=
+Date: Mon, 23 Jun 2025 11:27:33 +0200
+From: Greg KH <gregkh@linuxfoundation.org>
+To: Pranav Tyagi <pranav.tyagi03@gmail.com>
+Cc: dave@stgolabs.net, jonathan.cameron@huawei.com, dave.jiang@intel.com,
+	alison.schofield@intel.com, vishal.l.verma@intel.com,
+	ira.weiny@intel.com, dan.j.williams@intel.com, ming.li@zohomail.com,
+	rrichter@amd.com, jeff.johnson@oss.qualcomm.com,
+	peterz@infradead.org, linux-cxl@vger.kernel.org,
+	linux-kernel@vger.kernel.org, skhan@linuxfoundation.org,
+	linux-kernel-mentees@lists.linux.dev
+Subject: Re: [PATCH] cxl/port: automate cleanup with __free()
+Message-ID: <2025062343-brilliant-laziness-e2cf@gregkh>
+References: <20250623091929.366357-1-pranav.tyagi03@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-Message-ID: <20250623-ddrperfm-upstream-v1-13-7dffff168090@foss.st.com>
-References: <20250623-ddrperfm-upstream-v1-0-7dffff168090@foss.st.com>
-In-Reply-To: <20250623-ddrperfm-upstream-v1-0-7dffff168090@foss.st.com>
-To: Will Deacon <will@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
-        Rob
- Herring <robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor
- Dooley <conor+dt@kernel.org>,
-        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-        Alexandre Torgue <alexandre.torgue@foss.st.com>,
-        Philipp Zabel
-	<p.zabel@pengutronix.de>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Gatien Chevallier
-	<gatien.chevallier@foss.st.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Gabriel Fernandez
-	<gabriel.fernandez@foss.st.com>
-CC: <linux-arm-kernel@lists.infradead.org>, <linux-perf-users@vger.kernel.org>,
-        <devicetree@vger.kernel.org>,
-        <linux-stm32@st-md-mailman.stormreply.com>,
-        <linux-kernel@vger.kernel.org>, <linux-doc@vger.kernel.org>,
-        <linux-clk@vger.kernel.org>,
-        =?utf-8?q?Cl=C3=A9ment_Le_Goffic?= <clement.legoffic@foss.st.com>
-X-Mailer: b4 0.15-dev-c25d1
-X-ClientProxiedBy: SHFCAS1NODE1.st.com (10.75.129.72) To SHFDAG1NODE2.st.com
- (10.75.129.70)
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.0.736,FMLib:17.12.80.40
- definitions=2025-06-23_03,2025-06-23_02,2025-03-28_01
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250623091929.366357-1-pranav.tyagi03@gmail.com>
 
-Configure DDRPERFM node on stm32mp257f-ev1 board.
-Disable the node as DDRPERFM will produce an error message if it's clock
-(shared with the DDRCTRL on STM32MP25x) is secured by common bootloaders.
+On Mon, Jun 23, 2025 at 02:49:29PM +0530, Pranav Tyagi wrote:
+> Use the scope based resource management (defined in linux/cleanup.h) to
+> automate the lifetime control of struct cxl_endpoint_decoder. This
+> eliminates the explicit kfree() call and makes the code more robust and
+> maintainable in presence of early returns.
+> 
+> Signed-off-by: Pranav Tyagi <pranav.tyagi03@gmail.com>
+> ---
+>  drivers/cxl/core/port.c | 6 +++---
+>  1 file changed, 3 insertions(+), 3 deletions(-)
+> 
+> diff --git a/drivers/cxl/core/port.c b/drivers/cxl/core/port.c
+> index eb46c6764d20..c35946882b20 100644
+> --- a/drivers/cxl/core/port.c
+> +++ b/drivers/cxl/core/port.c
+> @@ -10,6 +10,7 @@
+>  #include <linux/slab.h>
+>  #include <linux/idr.h>
+>  #include <linux/node.h>
+> +#include <linux/cleanup.h>
+>  #include <cxl/einj.h>
+>  #include <cxlmem.h>
+>  #include <cxlpci.h>
+> @@ -1888,14 +1889,14 @@ EXPORT_SYMBOL_NS_GPL(cxl_switch_decoder_alloc, "CXL");
+>   */
+>  struct cxl_endpoint_decoder *cxl_endpoint_decoder_alloc(struct cxl_port *port)
+>  {
+> -	struct cxl_endpoint_decoder *cxled;
+>  	struct cxl_decoder *cxld;
+>  	int rc;
+>  
+>  	if (!is_cxl_endpoint(port))
+>  		return ERR_PTR(-EINVAL);
+>  
+> -	cxled = kzalloc(sizeof(*cxled), GFP_KERNEL);
+> +	struct cxl_endpoint_decoder *cxled __free(kfree) =
+> +		kzalloc(sizeof(*cxled), GFP_KERNEL);
+>  	if (!cxled)
+>  		return ERR_PTR(-ENOMEM);
+>  
+> @@ -1904,7 +1905,6 @@ struct cxl_endpoint_decoder *cxl_endpoint_decoder_alloc(struct cxl_port *port)
+>  	cxld = &cxled->cxld;
+>  	rc = cxl_decoder_init(port, cxld);
+>  	if (rc)	 {
+> -		kfree(cxled);
+>  		return ERR_PTR(rc);
+>  	}
+>  
+> -- 
+> 2.49.0
 
-Signed-off-by: Clément Le Goffic <clement.legoffic@foss.st.com>
----
- arch/arm64/boot/dts/st/stm32mp257f-ev1.dts | 5 +++++
- 1 file changed, 5 insertions(+)
+Note, I can't speak for the maintainers of this subsystem, but
+generally, making changes like this for no real good reason, for code
+that has been around for years, is really not needed at all.
 
-diff --git a/arch/arm64/boot/dts/st/stm32mp257f-ev1.dts b/arch/arm64/boot/dts/st/stm32mp257f-ev1.dts
-index 2f561ad40665..a48fb7b33198 100644
---- a/arch/arm64/boot/dts/st/stm32mp257f-ev1.dts
-+++ b/arch/arm64/boot/dts/st/stm32mp257f-ev1.dts
-@@ -123,6 +123,11 @@ csi_source: endpoint {
- 	};
- };
- 
-+&ddrperfm {
-+	st,dram-type = <2>;
-+	status = "disabled";
-+};
-+
- &dcmipp {
- 	status = "okay";
- 	port {
+If you fix a bug with it, sure, but changes for the sake of "let's use
+this new feature" in here really might not be necessary.
 
--- 
-2.43.0
+Why not add cleanup.h support to code paths that actually fix existing
+bugs instead?
 
+Also, you have added some coding style errors to the code now with this
+patch, which also is generally not considered a good idea :)
+
+thanks,
+
+greg k-h
 
