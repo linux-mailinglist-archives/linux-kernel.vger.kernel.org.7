@@ -1,65 +1,65 @@
-Return-Path: <linux-kernel+bounces-697912-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-697910-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id E996EAE3A7D
-	for <lists+linux-kernel@lfdr.de>; Mon, 23 Jun 2025 11:33:46 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 99586AE3A68
+	for <lists+linux-kernel@lfdr.de>; Mon, 23 Jun 2025 11:32:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3DFA73A9416
-	for <lists+linux-kernel@lfdr.de>; Mon, 23 Jun 2025 09:32:07 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3CA621893D82
+	for <lists+linux-kernel@lfdr.de>; Mon, 23 Jun 2025 09:32:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4FB46243964;
-	Mon, 23 Jun 2025 09:30:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 36316238140;
+	Mon, 23 Jun 2025 09:30:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b="8A0DskKk"
-Received: from mx07-00178001.pphosted.com (mx07-00178001.pphosted.com [185.132.182.106])
+	dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b="DWsfMiFo"
+Received: from mx07-00178001.pphosted.com (mx08-00178001.pphosted.com [91.207.212.93])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B565423E32B;
-	Mon, 23 Jun 2025 09:30:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.132.182.106
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7558623D288;
+	Mon, 23 Jun 2025 09:30:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.207.212.93
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750671013; cv=none; b=tKeG2kHpfJjCR2S9PPpbKvA5EQnVi3GUMMoADcnHjND7hm4IZHguS2mPXb2Oyh8UhC+mQFx6uMVHkGv6H28B8Cdf0q6SticNSfJB8OIJa7yEYwtsuuOtRBQqLpd5CDzF4ufKZydGWO2R/3w44WuF87PMCkGBU5HIGLXT/VF5umM=
+	t=1750671012; cv=none; b=t/xntdDGbtS04y3qTidhdWc9XFtLjgxsVQc0pJQFtjfSLaXk8AY8ZHirngf8K46BPFSNEx3xG4uOw+rmPeTLGEXSfs+Fa90+6tvYqJEekE1RQmWCAV3zkwK48lPMTYHmBRO5QTCQmDy4sBIa4jVGIGxX3bA/SNNOVtdu7BIjQwU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750671013; c=relaxed/simple;
-	bh=C0WdASPsfx2IuYJ8dqSeb8f+42+4JKByOc7VnceNLwo=;
+	s=arc-20240116; t=1750671012; c=relaxed/simple;
+	bh=2uEtFVwi+wdX8OeRQHgPRlqO3x1jsKN8u5e4kKD7Awk=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-ID:References:
-	 In-Reply-To:To:CC; b=ASk8lasRs3FMFo5iys4uTOFYXaRg3WHClY5XuZ6H6Thejb++Kmp+wkdYXnOj5qFXQI9SxwccWo6hegdr5BPBHesbSmqEDzF0IjbEW2KLoKSXQvPsZt3mtsLKqC5B4SDFL5rl4WlLUDdu04x9TV7Pr5GxxxODYOZL9qZxOmPNu6w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com; spf=pass smtp.mailfrom=foss.st.com; dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b=8A0DskKk; arc=none smtp.client-ip=185.132.182.106
+	 In-Reply-To:To:CC; b=UngBTZxVV9NNdteKB5qWlBKfKavOZ0gdZP2JEFKUjFeILYC8xY2LGvZFfAp7ile8mCkUGNZWKLbbKuLegzJRB1SZ9hHZ3muDcLLkLdmrM9p7mCcnzDWNK3oM7Ic8pjQCctwNub6bAJzQ89WEXX2BXh4Ia2/Cq2w7uHtlLLSIN2Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com; spf=pass smtp.mailfrom=foss.st.com; dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b=DWsfMiFo; arc=none smtp.client-ip=91.207.212.93
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=foss.st.com
-Received: from pps.filterd (m0241204.ppops.net [127.0.0.1])
-	by mx07-00178001.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 55N6FIfA015580;
+Received: from pps.filterd (m0046660.ppops.net [127.0.0.1])
+	by mx07-00178001.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 55N98YXc008317;
 	Mon, 23 Jun 2025 11:29:52 +0200
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foss.st.com; h=
 	cc:content-transfer-encoding:content-type:date:from:in-reply-to
 	:message-id:mime-version:references:subject:to; s=selector1; bh=
-	4UBGOUpuPOeKtQ2u8AmnXlBkDE/8J7UlX6pI6buIBoY=; b=8A0DskKkVRd4jcDB
-	kIqXuPfJA3i+Z70bOMyPkcoWwUjmMgHsriIQlswxSPPxWhpVfVJtT4SpmSXCJ2g2
-	eJLSSvnd1AsIHQyHH3VqGqj9Wny+vLIO5SiqR+1iXD1kubeMmgGL32K9D2Y9PcoB
-	xVUZPHxvIsoQT4dEONQtAleMRDFTt/WmOO5tGlw4JNZRyK/ubRZ+YGeMFZizEAb7
-	VtrqSZw1+GBgBhRWOL/CuhR37PkRDDunHtA/SsxA/Ovu0W5Ye3v+7rv0mG28n//D
-	Xad3FLCfbS5MvHotgd+W0WgA0rDrYSSRQ68hdIvHHvuZC/taa8D2kNlAFiBJm+7L
-	K3h3aQ==
+	W7lja2ibWXfiVo4eDJLx4tgeIggbs4JL9GjrFt29DoI=; b=DWsfMiFo4XQf8nGM
+	8e4pmvL84fmFcsCdJfZSvho2FjPkbkXoQXX1/+kM8iqHuMhgQl7ypn4hSUR8wtTl
+	7Z0AzEVeEeNRSmpZ4Eo1Yg+23Ek9jsPTFZRdTdfoEjoH8Wb3Ng0mzR09CTVwgFoc
+	NNC24WJ8JLQ4z6ZIybVGbNfNtUgYrwSFO0+pnVUCVemT2I6i7yWP/QZPJqFEQYXa
+	Qh7h2H8lcEWJB70J8+jxPuqzetxWLU8/7UfSVWMASAvGO2FIuZEdd7XY945MbgqV
+	6vWP5gJbsag46UkQcBV0Z0lM8ByFQ4Q0rduFcsieVJ4m3sThPPBwyo7V3LB1rbqu
+	yNPkhg==
 Received: from beta.dmz-ap.st.com (beta.dmz-ap.st.com [138.198.100.35])
-	by mx07-00178001.pphosted.com (PPS) with ESMTPS id 47dm3372qg-1
+	by mx07-00178001.pphosted.com (PPS) with ESMTPS id 47dhvbevd8-1
 	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
 	Mon, 23 Jun 2025 11:29:52 +0200 (MEST)
 Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
-	by beta.dmz-ap.st.com (STMicroelectronics) with ESMTP id 539DD40053;
-	Mon, 23 Jun 2025 11:28:34 +0200 (CEST)
+	by beta.dmz-ap.st.com (STMicroelectronics) with ESMTP id E9D8340044;
+	Mon, 23 Jun 2025 11:28:33 +0200 (CEST)
 Received: from Webmail-eu.st.com (shfdag1node2.st.com [10.75.129.70])
-	by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id 8C1135C3DDD;
-	Mon, 23 Jun 2025 11:27:26 +0200 (CEST)
+	by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id 845475C3DD2;
+	Mon, 23 Jun 2025 11:27:27 +0200 (CEST)
 Received: from localhost (10.252.18.29) by SHFDAG1NODE2.st.com (10.75.129.70)
  with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Mon, 23 Jun
- 2025 11:27:26 +0200
+ 2025 11:27:27 +0200
 From: =?utf-8?q?Cl=C3=A9ment_Le_Goffic?= <clement.legoffic@foss.st.com>
-Date: Mon, 23 Jun 2025 11:27:11 +0200
-Subject: [PATCH 06/13] perf: stm32: introduce DDRPERFM driver
+Date: Mon, 23 Jun 2025 11:27:12 +0200
+Subject: [PATCH 07/13] Documentation: perf: stm32: add ddrperfm support
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -68,7 +68,7 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
-Message-ID: <20250623-ddrperfm-upstream-v1-6-7dffff168090@foss.st.com>
+Message-ID: <20250623-ddrperfm-upstream-v1-7-7dffff168090@foss.st.com>
 References: <20250623-ddrperfm-upstream-v1-0-7dffff168090@foss.st.com>
 In-Reply-To: <20250623-ddrperfm-upstream-v1-0-7dffff168090@foss.st.com>
 To: Will Deacon <will@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
@@ -101,965 +101,118 @@ X-Proofpoint-Virus-Version: vendor=baseguard
  engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.0.736,FMLib:17.12.80.40
  definitions=2025-06-23_03,2025-06-23_02,2025-03-28_01
 
-Introduce the driver for the DDR Performance Monitor available on
-STM32MPU SoC.
+The DDRPERFM is the DDR Performance Monitor embedded in STM32MPU SoC.
 
-On STM32MP2 platforms, the DDRPERFM allows to monitor up to 8 DDR events
-that come from the DDR Controller such as read or write events.
-
-On STM32MP1 platforms, the DDRPERFM cannot monitor any event on any
-counter, there is a notion of set of events.
-Events from different sets cannot be monitored at the same time.
-The first chosen event selects the set.
-The set is coded in the first two bytes of the config value which is on 4
-bytes.
-
-On STM32MP25x series, the DDRPERFM clock is shared with the DDR controller
-and may be secured by bootloaders.
-Access controllers allow to check access to a resource. Use the access
-controller defined in the devicetree to know about the access to the
-DDRPERFM clock.
+This documentation introduces the DDRPERFM, the stm32-ddr-pmu driver
+supporting it and how to use it with the perf tool.
 
 Signed-off-by: Clément Le Goffic <clement.legoffic@foss.st.com>
 ---
- drivers/perf/Kconfig         |  11 +
- drivers/perf/Makefile        |   1 +
- drivers/perf/stm32_ddr_pmu.c | 893 +++++++++++++++++++++++++++++++++++++++++++
- 3 files changed, 905 insertions(+)
+ Documentation/admin-guide/perf/index.rst         |  1 +
+ Documentation/admin-guide/perf/stm32-ddr-pmu.rst | 86 ++++++++++++++++++++++++
+ 2 files changed, 87 insertions(+)
 
-diff --git a/drivers/perf/Kconfig b/drivers/perf/Kconfig
-index 278c929dc87a..5118535134ee 100644
---- a/drivers/perf/Kconfig
-+++ b/drivers/perf/Kconfig
-@@ -198,6 +198,17 @@ config QCOM_L3_PMU
- 	   Adds the L3 cache PMU into the perf events subsystem for
- 	   monitoring L3 cache events.
- 
-+config STM32_DDR_PMU
-+	tristate "STM32 DDR PMU"
-+	depends on ARCH_STM32 || COMPILE_TEST
-+	default m
-+	help
-+	  Provides support for the DDR performance monitor on STM32MPU platforms.
-+	  The monitor provides counters for memory related events.
-+	  It allows developers to analyze and optimize DDR performance.
-+	  Enabling this feature is useful for performance tuning and debugging memory
-+	  subsystem issues on supported hardware.
-+
- config THUNDERX2_PMU
- 	tristate "Cavium ThunderX2 SoC PMU UNCORE"
- 	depends on ARCH_THUNDER2 || COMPILE_TEST
-diff --git a/drivers/perf/Makefile b/drivers/perf/Makefile
-index de71d2574857..7f83b50feb71 100644
---- a/drivers/perf/Makefile
-+++ b/drivers/perf/Makefile
-@@ -20,6 +20,7 @@ obj-$(CONFIG_RISCV_PMU) += riscv_pmu.o
- obj-$(CONFIG_RISCV_PMU_LEGACY) += riscv_pmu_legacy.o
- obj-$(CONFIG_RISCV_PMU_SBI) += riscv_pmu_sbi.o
- obj-$(CONFIG_STARFIVE_STARLINK_PMU) += starfive_starlink_pmu.o
-+obj-$(CONFIG_STM32_DDR_PMU) += stm32_ddr_pmu.o
- obj-$(CONFIG_THUNDERX2_PMU) += thunderx2_pmu.o
- obj-$(CONFIG_XGENE_PMU) += xgene_pmu.o
- obj-$(CONFIG_ARM_SPE_PMU) += arm_spe_pmu.o
-diff --git a/drivers/perf/stm32_ddr_pmu.c b/drivers/perf/stm32_ddr_pmu.c
+diff --git a/Documentation/admin-guide/perf/index.rst b/Documentation/admin-guide/perf/index.rst
+index 072b510385c4..33aedc4ee5c3 100644
+--- a/Documentation/admin-guide/perf/index.rst
++++ b/Documentation/admin-guide/perf/index.rst
+@@ -29,3 +29,4 @@ Performance monitor support
+    cxl
+    ampere_cspmu
+    mrvl-pem-pmu
++   stm32-ddr-pmu
+diff --git a/Documentation/admin-guide/perf/stm32-ddr-pmu.rst b/Documentation/admin-guide/perf/stm32-ddr-pmu.rst
 new file mode 100644
-index 000000000000..c0bce1f446a0
+index 000000000000..5b02bf44dd7a
 --- /dev/null
-+++ b/drivers/perf/stm32_ddr_pmu.c
-@@ -0,0 +1,893 @@
-+// SPDX-License-Identifier: GPL-2.0-only
-+/*
-+ * Copyright (C) 2025, STMicroelectronics - All Rights Reserved
-+ * Author: Clément Le Goffic <clement.legoffic@foss.st.com> for STMicroelectronics.
-+ */
-+
-+#include <linux/bus/stm32_firewall_device.h>
-+#include <linux/clk.h>
-+#include <linux/hrtimer.h>
-+#include <linux/module.h>
-+#include <linux/of_platform.h>
-+#include <linux/perf_event.h>
-+#include <linux/reset.h>
-+
-+#define DRIVER_NAME		"stm32_ddr_pmu"
-+
-+/*
-+ * The PMU is able to freeze all counters and generate an interrupt when there
-+ * is a counter overflow. But, relying on this means that we lose all the
-+ * events that occur between the freeze and the interrupt handler execution.
-+ * So we use a polling mechanism to avoid this lost of information.
-+ * The fastest counter can overflow in ~7s @600MHz (that is the maximum DDR
-+ * frequency supported on STM32MP257), so we poll in 3.5s intervals to ensure
-+ * we don't reach this limit.
-+ */
-+#define POLL_MS			3500
-+
-+#define DDRPERFM_CTRL		0x000
-+#define DDRPERFM_CFG		0x004
-+#define DDRPERFM_STATUS		0x008
-+#define DDRPERFM_CLR		0x00C
-+#define DDRPERFM_TCNT		0x020
-+#define DDRPERFM_EVCNT(X)	(0x030 + 8 * (X))
-+
-+#define DDRPERFM_MP2_CFG0	0x010
-+#define DDRPERFM_MP2_CFG1	0x014
-+#define DDRPERFM_MP2_CFG5	0x024
-+#define DDRPERFM_MP2_DRAMINF	0x028
-+#define DDRPERFM_MP2_EVCNT(X)	(0x040 + 4 * (X))
-+#define DDRPERFM_MP2_TCNT	0x060
-+#define DDRPERFM_MP2_STATUS	0x080
-+
-+#define MP1_STATUS_BUSY		BIT(16)
-+#define MP2_STATUS_BUSY		BIT(31)
-+
-+#define CTRL_START		BIT(0)
-+#define CTRL_STOP		BIT(1)
-+
-+#define CFG_SEL_MSK		GENMASK(17, 16)
-+#define CFG_SEL_SHIFT		16
-+#define CFG_EN_MSK		GENMASK(3, 0)
-+
-+#define MP1_CLR_CNT		GENMASK(3, 0)
-+#define MP1_CLR_TIME		BIT(31)
-+#define MP2_CLR_CNT		GENMASK(7, 0)
-+#define MP2_CLR_TIME		BIT(8)
-+
-+/* 4 event counters plus 1 dedicated to time */
-+#define MP1_CNT_NB		(4 + 1)
-+/* Index of the time dedicated counter */
-+#define MP1_TIME_CNT_IDX	4
-+
-+/* 8 event counters plus 1 dedicated to time */
-+#define MP2_CNT_NB		(8 + 1)
-+/* Index of the time dedicated counter */
-+#define MP2_TIME_CNT_IDX	8
-+/* 4 event counters per register */
-+#define MP2_CNT_SEL_PER_REG	4
-+
-+/* Arbitrary value used to identify a time event */
-+#define TIME_CNT		64
-+
-+struct stm32_ddr_pmu_reg {
-+	unsigned int reg;
-+	u32 mask;
-+};
-+
-+struct stm32_ddr_cnt {
-+	int idx;
-+	struct perf_event *evt;
-+	struct list_head cnt_list;
-+};
-+
-+struct stm32_ddr_pmu_regspec {
-+	const struct stm32_ddr_pmu_reg stop;
-+	const struct stm32_ddr_pmu_reg start;
-+	const struct stm32_ddr_pmu_reg enable;
-+	const struct stm32_ddr_pmu_reg status;
-+	const struct stm32_ddr_pmu_reg clear_cnt;
-+	const struct stm32_ddr_pmu_reg clear_time;
-+	const struct stm32_ddr_pmu_reg cfg;
-+	const struct stm32_ddr_pmu_reg cfg0;
-+	const struct stm32_ddr_pmu_reg cfg1;
-+	const struct stm32_ddr_pmu_reg dram_inf;
-+	const struct stm32_ddr_pmu_reg counter_time;
-+	const struct stm32_ddr_pmu_reg counter_evt[];
-+};
-+
-+struct stm32_ddr_pmu {
-+	struct pmu pmu;
-+	void __iomem *membase;
-+	struct device *dev;
-+	struct clk *clk;
-+	const struct stm32_ddr_pmu_cfg *cfg;
-+	struct hrtimer hrtimer;
-+	ktime_t poll_period;
-+	int selected_set;
-+	u32 dram_type;
-+	struct list_head counters[];
-+};
-+
-+struct stm32_ddr_pmu_cfg {
-+	const struct stm32_ddr_pmu_regspec *regs;
-+	const struct attribute_group **attribute;
-+	u32 counters_nb;
-+	u32 evt_counters_nb;
-+	u32 time_cnt_idx;
-+	struct stm32_ddr_cnt * (*get_counter)(struct stm32_ddr_pmu *p, struct perf_event *e);
-+};
-+
-+#define EVENT_NUMBER(group, index)	(((group) << 8) | (index))
-+#define GROUP_VALUE(event_number)		((event_number) >> 8)
-+#define EVENT_INDEX(event_number)	((event_number) & 0xFF)
-+
-+/* MP1 ddrperfm events */
-+enum stm32_ddr_pmu_events_mp1 {
-+	PERF_OP_IS_RD			= EVENT_NUMBER(0, 0),
-+	PERF_OP_IS_WR			= EVENT_NUMBER(0, 1),
-+	PERF_OP_IS_ACTIVATE		= EVENT_NUMBER(0, 2),
-+	CTL_IDLE			= EVENT_NUMBER(0, 3),
-+	PERF_HPR_REQ_WITH_NO_CREDIT	= EVENT_NUMBER(1, 0),
-+	PERF_LPR_REQ_WITH_NO_CREDIT	= EVENT_NUMBER(1, 1),
-+	CACTIVE_DDRC			= EVENT_NUMBER(1, 3),
-+	PERF_OP_IS_ENTER_POWERDOWN	= EVENT_NUMBER(2, 0),
-+	PERF_OP_IS_REFRESH		= EVENT_NUMBER(2, 1),
-+	PERF_SELFRESH_MODE		= EVENT_NUMBER(2, 2),
-+	DFI_LP_REQ			= EVENT_NUMBER(2, 3),
-+	PERF_HPR_XACT_WHEN_CRITICAL	= EVENT_NUMBER(3, 0),
-+	PERF_LPR_XACT_WHEN_CRITICAL	= EVENT_NUMBER(3, 1),
-+	PERF_WR_XACT_WHEN_CRITICAL	= EVENT_NUMBER(3, 2),
-+	DFI_LP_REQ_SCND			= EVENT_NUMBER(3, 3),
-+};
-+
-+/* MP2 ddrperfm events */
-+enum stm32_ddr_pmu_events_mp2 {
-+	DFI_IS_ACT			= EVENT_NUMBER(0, 0),
-+	DFI_IS_PREPB			= EVENT_NUMBER(0, 1),
-+	DFI_IS_PREAB			= EVENT_NUMBER(0, 2),
-+	DFI_IS_RD			= EVENT_NUMBER(0, 3),
-+	DFI_IS_RDA			= EVENT_NUMBER(0, 4),
-+	DFI_IS_WR			= EVENT_NUMBER(0, 6),
-+	DFI_IS_WRA			= EVENT_NUMBER(0, 7),
-+	DFI_IS_MWR			= EVENT_NUMBER(0, 9),
-+	DFI_IS_MWRA			= EVENT_NUMBER(0, 10),
-+	DFI_IS_MRW			= EVENT_NUMBER(0, 12),
-+	DFI_IS_MRR			= EVENT_NUMBER(0, 13),
-+	DFI_IS_REFPB			= EVENT_NUMBER(0, 14),
-+	DFI_IS_REFAB			= EVENT_NUMBER(0, 15),
-+	DFI_IS_MPC			= EVENT_NUMBER(0, 16),
-+	PERF_OP_IS_ACT			= EVENT_NUMBER(0, 32),
-+	PERF_OP_IS_RD_MP2		= EVENT_NUMBER(0, 33),
-+	PERF_OP_IS_WR_MP2		= EVENT_NUMBER(0, 34),
-+	PERF_OP_IS_MWR			= EVENT_NUMBER(0, 35),
-+	PERF_OP_IS_REF			= EVENT_NUMBER(0, 36),
-+	PERF_OP_IS_CRIT_REF		= EVENT_NUMBER(0, 37),
-+	PERF_OP_IS_SPEC_REF		= EVENT_NUMBER(0, 38),
-+	PERF_OP_IS_ZQCAL		= EVENT_NUMBER(0, 39),
-+	PERF_OP_IS_ENTER_POWDN		= EVENT_NUMBER(0, 40),
-+	PERF_OP_IS_ENTER_SELFREF	= EVENT_NUMBER(0, 41),
-+	PERF_OP_IS_PRE			= EVENT_NUMBER(0, 42),
-+	PERF_OP_IS_PRE_FOR_RDWR		= EVENT_NUMBER(0, 43),
-+	PERF_OP_IS_PRE_FOR_OTHERS	= EVENT_NUMBER(0, 44),
-+	PERF_OP_IS_RD_ACTIVATE		= EVENT_NUMBER(0, 45),
-+	PERF_HPR_REQ_WITH_NOCREDIT	= EVENT_NUMBER(0, 48),
-+	PERF_LPR_REQ_WITH_NOCREDIT	= EVENT_NUMBER(0, 49),
-+	PERF_HPR_XACT_WHEN_CRITICAL_MP2	= EVENT_NUMBER(0, 50),
-+	PERF_LPR_XACT_WHEN_CRITICAL_MP2	= EVENT_NUMBER(0, 51),
-+	PERF_WR_XACT_WHEN_CRITICAL_MP2	= EVENT_NUMBER(0, 52),
-+	PERF_RDWR_TRANSITIONS		= EVENT_NUMBER(0, 53),
-+	PERF_WAR_HAZARD			= EVENT_NUMBER(0, 54),
-+	PERF_RAW_HAZARD			= EVENT_NUMBER(0, 55),
-+	PERF_WAW_HAZARD			= EVENT_NUMBER(0, 56),
-+	PERF_RANK			= EVENT_NUMBER(0, 58),
-+	PERF_READ_BYPASS		= EVENT_NUMBER(0, 59),
-+	PERF_ACT_BYPASS			= EVENT_NUMBER(0, 60),
-+	PERF_WINDOW_LIMIT_REACHED_RD	= EVENT_NUMBER(0, 61),
-+	PERF_WINDOW_LIMIT_REACHED_WR	= EVENT_NUMBER(0, 62),
-+	NO_EVENT			= EVENT_NUMBER(0, 63),
-+};
-+
-+static struct stm32_ddr_pmu *to_stm32_ddr_pmu(struct pmu *p)
-+{
-+	return container_of(p, struct stm32_ddr_pmu, pmu);
-+}
-+
-+static struct stm32_ddr_pmu *hrtimer_to_stm32_ddr_pmu(struct hrtimer *h)
-+{
-+	return container_of(h, struct stm32_ddr_pmu, hrtimer);
-+}
-+
-+static void stm32_ddr_start_counters(struct stm32_ddr_pmu *pmu)
-+{
-+	const struct stm32_ddr_pmu_regspec *r = pmu->cfg->regs;
-+
-+	writel_relaxed(r->start.mask, pmu->membase + r->start.reg);
-+}
-+
-+static void stm32_ddr_stop_counters(struct stm32_ddr_pmu *pmu)
-+{
-+	const struct stm32_ddr_pmu_regspec *r = pmu->cfg->regs;
-+
-+	writel_relaxed(r->stop.mask, pmu->membase + r->stop.reg);
-+}
-+
-+static void stm32_ddr_clear_time_counter(struct stm32_ddr_pmu *pmu)
-+{
-+	const struct stm32_ddr_pmu_regspec *r = pmu->cfg->regs;
-+
-+	writel_relaxed(r->clear_time.mask, pmu->membase + r->clear_time.reg);
-+}
-+
-+static void stm32_ddr_clear_event_counter(struct stm32_ddr_pmu *pmu, struct stm32_ddr_cnt *counter)
-+{
-+	const struct stm32_ddr_pmu_regspec *r = pmu->cfg->regs;
-+
-+	writel_relaxed(r->clear_cnt.mask & BIT(counter->idx), pmu->membase + r->clear_cnt.reg);
-+}
-+
-+static void stm32_ddr_clear_counter(struct stm32_ddr_pmu *pmu, struct stm32_ddr_cnt *counter)
-+{
-+	const struct stm32_ddr_pmu_regspec *r = pmu->cfg->regs;
-+	u32 status = readl_relaxed(pmu->membase + r->status.reg);
-+
-+	if (counter->idx == pmu->cfg->time_cnt_idx)
-+		stm32_ddr_clear_time_counter(pmu);
-+	else
-+		stm32_ddr_clear_event_counter(pmu, counter);
-+
-+	if (status & r->status.mask)
-+		dev_err(pmu->dev, "Failed to clear counter %i because the PMU is busy\n",
-+			counter->idx);
-+}
-+
-+static void stm32_ddr_counter_enable(struct stm32_ddr_pmu *pmu, struct stm32_ddr_cnt *counter)
-+{
-+	const struct stm32_ddr_pmu_regspec *r = pmu->cfg->regs;
-+	u32 val = readl_relaxed(pmu->membase + r->enable.reg);
-+
-+	val |= BIT(counter->idx);
-+	writel_relaxed(val, pmu->membase + r->enable.reg);
-+}
-+
-+static void stm32_ddr_counter_disable(struct stm32_ddr_pmu *pmu, struct stm32_ddr_cnt *counter)
-+{
-+	const struct stm32_ddr_pmu_regspec *r = pmu->cfg->regs;
-+	u32 val = readl_relaxed(pmu->membase + r->enable.reg);
-+
-+	val &= ~BIT(counter->idx);
-+	writel_relaxed(val, pmu->membase + r->enable.reg);
-+}
-+
-+static int stm32_ddr_sel_evnt(struct stm32_ddr_pmu *pmu, struct stm32_ddr_cnt *counter)
-+{
-+	const struct stm32_ddr_pmu_regspec *r = pmu->cfg->regs;
-+	u32 cnt_sel_val;
-+
-+	u32 group_val = GROUP_VALUE(counter->evt->attr.config);
-+	u32 evt_val = EVENT_INDEX(counter->evt->attr.config);
-+
-+	if (pmu->selected_set != -1 && pmu->selected_set != group_val) {
-+		dev_err(pmu->dev, "Selected events are from different set\n");
-+		return -EINVAL;
-+	}
-+	pmu->selected_set = group_val;
-+
-+	if (pmu->cfg->regs->cfg.reg) {
-+		cnt_sel_val = readl_relaxed(pmu->membase + r->cfg.reg);
-+		cnt_sel_val &= ~CFG_SEL_MSK;
-+		cnt_sel_val |= (CFG_SEL_MSK & (group_val << CFG_SEL_SHIFT));
-+		writel_relaxed(cnt_sel_val, pmu->membase + r->cfg.reg);
-+
-+		return 0;
-+	}
-+
-+	/* We assume cfg0 and cfg1 are filled in the match data */
-+	u32 cnt_idx = counter->idx;
-+	u32 cnt_sel_evt_reg = r->cfg0.reg;
-+
-+	if (!(cnt_idx < MP2_CNT_SEL_PER_REG)) {
-+		cnt_sel_evt_reg = r->cfg1.reg;
-+		cnt_idx -= MP2_CNT_SEL_PER_REG;
-+	}
-+
-+	cnt_sel_val = readl_relaxed(pmu->membase + cnt_sel_evt_reg);
-+	cnt_sel_val &= ~GENMASK(8 * cnt_idx + 7, 8 * cnt_idx);
-+	cnt_sel_val |= evt_val << (8 * cnt_idx);
-+
-+	writel_relaxed(cnt_sel_val, pmu->membase + cnt_sel_evt_reg);
-+
-+	return 0;
-+}
-+
-+static struct stm32_ddr_cnt *stm32_ddr_pmu_get_event_counter_mp1(struct stm32_ddr_pmu *pmu,
-+								 struct perf_event *event)
-+{
-+	u32 config = event->attr.config;
-+	u32 event_idx = EVENT_INDEX(config);
-+	struct stm32_ddr_cnt *cnt;
-+
-+	cnt = kzalloc(sizeof(*cnt), GFP_KERNEL);
-+	if (!cnt)
-+		return ERR_PTR(-ENOMEM);
-+
-+	cnt->evt = event;
-+	cnt->idx = event_idx;
-+	event->pmu_private = cnt;
-+	list_add(&cnt->cnt_list, &pmu->counters[event_idx]);
-+
-+	return cnt;
-+}
-+
-+static struct stm32_ddr_cnt *stm32_ddr_pmu_get_event_counter_mp2(struct stm32_ddr_pmu *pmu,
-+								 struct perf_event *event)
-+{
-+	struct stm32_ddr_cnt *cnt;
-+	int idx = -1;
-+
-+	/* Loop on all the counters except TIME_CNT_IDX */
-+	for (int i = 0; i < pmu->cfg->evt_counters_nb; i++) {
-+		u64 config;
-+
-+		if (list_empty(&pmu->counters[i])) {
-+			idx = i;
-+			continue;
-+		}
-+		config = list_first_entry(&pmu->counters[i], struct stm32_ddr_cnt,
-+					  cnt_list)->evt->attr.config;
-+		if (config == event->attr.config) {
-+			idx = i;
-+			break;
-+		}
-+	}
-+
-+	if (idx == -1)
-+		return ERR_PTR(-ENOENT);
-+
-+	cnt = kzalloc(sizeof(*cnt), GFP_KERNEL);
-+	if (!cnt)
-+		return ERR_PTR(-ENOMEM);
-+
-+	cnt->evt = event;
-+	cnt->idx = idx;
-+	event->pmu_private = cnt;
-+
-+	list_add(&cnt->cnt_list, &pmu->counters[idx]);
-+
-+	return cnt;
-+}
-+
-+static inline struct stm32_ddr_cnt *stm32_get_event_counter(struct stm32_ddr_pmu *pmu,
-+							    struct perf_event *event)
-+{
-+	return pmu->cfg->get_counter(pmu, event);
-+}
-+
-+static int stm32_ddr_pmu_get_counter(struct stm32_ddr_pmu *pmu, struct perf_event *event)
-+{
-+	u32 time_cnt_idx = pmu->cfg->time_cnt_idx;
-+	u32 config = event->attr.config;
-+	struct stm32_ddr_cnt *cnt;
-+
-+	if (!pmu || !event)
-+		return -EINVAL;
-+
-+	pmu->selected_set = GROUP_VALUE(config);
-+
-+	if (config == TIME_CNT) {
-+		cnt = kzalloc(sizeof(*cnt), GFP_KERNEL);
-+		if (!cnt)
-+			return -ENOMEM;
-+
-+		cnt->evt = event;
-+		cnt->idx = time_cnt_idx;
-+		event->pmu_private = cnt;
-+		list_add(&cnt->cnt_list, &pmu->counters[time_cnt_idx]);
-+
-+		return 0;
-+	}
-+
-+	cnt = stm32_get_event_counter(pmu, event);
-+	if (IS_ERR(cnt))
-+		return PTR_ERR(cnt);
-+
-+	if (list_count_nodes(&cnt->cnt_list) == 1) {
-+		stm32_ddr_stop_counters(pmu);
-+		stm32_ddr_sel_evnt(pmu, cnt);
-+		stm32_ddr_counter_enable(pmu, cnt);
-+		stm32_ddr_start_counters(pmu);
-+	}
-+
-+	return 0;
-+}
-+
-+static void stm32_ddr_pmu_free_counter(struct stm32_ddr_pmu *pmu,
-+				       struct stm32_ddr_cnt *counter)
-+{
-+	size_t count = list_count_nodes(&counter->cnt_list);
-+
-+	if (counter->evt->attr.config != TIME_CNT && count == 1)
-+		stm32_ddr_counter_disable(pmu, counter);
-+
-+	list_del(&counter->cnt_list);
-+	kfree(counter);
-+}
-+
-+static void stm32_ddr_pmu_event_update_list(struct stm32_ddr_pmu *pmu, struct list_head *list)
-+{
-+	struct stm32_ddr_cnt *counter = list_first_entry(list, struct stm32_ddr_cnt, cnt_list);
-+	const struct stm32_ddr_pmu_regspec *r = pmu->cfg->regs;
-+	u32 val;
-+
-+	if (counter->evt->attr.config != TIME_CNT)
-+		val = readl_relaxed(pmu->membase + r->counter_evt[counter->idx].reg);
-+	else
-+		val = readl_relaxed(pmu->membase + r->counter_time.reg);
-+
-+	stm32_ddr_clear_counter(pmu, counter);
-+
-+	list_for_each_entry(counter, list, cnt_list)
-+		local64_add(val, &counter->evt->count);
-+}
-+
-+static void stm32_ddr_pmu_event_read(struct perf_event *event)
-+{
-+	struct stm32_ddr_pmu *pmu = to_stm32_ddr_pmu(event->pmu);
-+	struct stm32_ddr_cnt *cnt = event->pmu_private;
-+
-+	hrtimer_start(&pmu->hrtimer, pmu->poll_period, HRTIMER_MODE_REL_PINNED);
-+
-+	stm32_ddr_stop_counters(pmu);
-+
-+	stm32_ddr_pmu_event_update_list(pmu, &pmu->counters[cnt->idx]);
-+
-+	stm32_ddr_start_counters(pmu);
-+}
-+
-+static void stm32_ddr_pmu_event_start(struct perf_event *event, int flags)
-+{
-+	struct stm32_ddr_pmu *pmu = to_stm32_ddr_pmu(event->pmu);
-+	struct stm32_ddr_cnt *counter = event->pmu_private;
-+	struct hw_perf_event *hw = &event->hw;
-+
-+	if (WARN_ON_ONCE(!(hw->state & PERF_HES_STOPPED)))
-+		return;
-+
-+	if (flags & PERF_EF_RELOAD)
-+		WARN_ON_ONCE(!(hw->state & PERF_HES_UPTODATE));
-+
-+	stm32_ddr_stop_counters(pmu);
-+
-+	if (list_count_nodes(&counter->cnt_list) == 1)
-+		stm32_ddr_clear_counter(pmu, counter);
-+	else
-+		stm32_ddr_pmu_event_update_list(pmu, &pmu->counters[counter->idx]);
-+
-+	stm32_ddr_start_counters(pmu);
-+	local64_set(&hw->prev_count, 0);
-+	hw->state = 0;
-+}
-+
-+static void stm32_ddr_pmu_event_stop(struct perf_event *event, int flags)
-+{
-+	struct hw_perf_event *hw = &event->hw;
-+
-+	if (WARN_ON_ONCE(hw->state & PERF_HES_STOPPED))
-+		return;
-+
-+	hw->state |= PERF_HES_STOPPED;
-+
-+	if (flags & PERF_EF_UPDATE) {
-+		stm32_ddr_pmu_event_read(event);
-+		hw->state |= PERF_HES_UPTODATE;
-+	}
-+}
-+
-+static int stm32_ddr_pmu_event_add(struct perf_event *event, int flags)
-+{
-+	struct stm32_ddr_pmu *pmu = to_stm32_ddr_pmu(event->pmu);
-+	int ret;
-+
-+	clk_enable(pmu->clk);
-+
-+	hrtimer_start(&pmu->hrtimer, pmu->poll_period, HRTIMER_MODE_REL_PINNED);
-+
-+	ret = stm32_ddr_pmu_get_counter(pmu, event);
-+	if (ret)
-+		return ret;
-+
-+	event->hw.state = PERF_HES_STOPPED | PERF_HES_UPTODATE;
-+
-+	if (flags & PERF_EF_START)
-+		stm32_ddr_pmu_event_start(event, flags);
-+
-+	return 0;
-+}
-+
-+static void stm32_ddr_pmu_event_del(struct perf_event *event, int flags)
-+{
-+	struct stm32_ddr_pmu *pmu = to_stm32_ddr_pmu(event->pmu);
-+	struct stm32_ddr_cnt *counter = event->pmu_private;
-+	bool events = true;
-+
-+	stm32_ddr_pmu_event_stop(event, PERF_EF_UPDATE);
-+
-+	stm32_ddr_pmu_free_counter(pmu, counter);
-+
-+	for (int i = 0; i < pmu->cfg->counters_nb; i++)
-+		events = !list_empty(&pmu->counters[i]);
-+
-+	/* If there is activity nothing to do */
-+	if (events)
-+		return;
-+
-+	hrtimer_cancel(&pmu->hrtimer);
-+	stm32_ddr_stop_counters(pmu);
-+
-+	pmu->selected_set = -1;
-+
-+	clk_disable(pmu->clk);
-+}
-+
-+static int stm32_ddr_pmu_event_init(struct perf_event *event)
-+{
-+	if (event->attr.type != event->pmu->type)
-+		return -ENOENT;
-+
-+	if (is_sampling_event(event) || event->attach_state & PERF_ATTACH_TASK)
-+		return -EINVAL;
-+
-+	return 0;
-+}
-+
-+static enum hrtimer_restart stm32_ddr_pmu_poll(struct hrtimer *hrtimer)
-+{
-+	struct stm32_ddr_pmu *pmu = hrtimer_to_stm32_ddr_pmu(hrtimer);
-+
-+	stm32_ddr_stop_counters(pmu);
-+
-+	for (int i = 0; i < MP2_CNT_NB; i++)
-+		if (!list_empty(&pmu->counters[i]))
-+			stm32_ddr_pmu_event_update_list(pmu, &pmu->counters[i]);
-+
-+	if (list_empty(&pmu->counters[pmu->cfg->time_cnt_idx]))
-+		stm32_ddr_clear_time_counter(pmu);
-+
-+	stm32_ddr_start_counters(pmu);
-+
-+	hrtimer_forward_now(hrtimer, pmu->poll_period);
-+
-+	return HRTIMER_RESTART;
-+}
-+
-+static ssize_t stm32_ddr_pmu_sysfs_show(struct device *dev, struct device_attribute *attr,
-+					char *buf)
-+{
-+	struct perf_pmu_events_attr *pmu_attr;
-+
-+	pmu_attr = container_of(attr, struct perf_pmu_events_attr, attr);
-+
-+	return sysfs_emit(buf, "event=0x%02llx\n", pmu_attr->id);
-+}
-+
-+#define STM32_DDR_PMU_EVENT_ATTR(_name, _id)			\
-+	PMU_EVENT_ATTR_ID(_name, stm32_ddr_pmu_sysfs_show, _id)
-+
-+static struct attribute *stm32_ddr_pmu_events_attrs_mp[] = {
-+	STM32_DDR_PMU_EVENT_ATTR(perf_op_is_rd, PERF_OP_IS_RD),
-+	STM32_DDR_PMU_EVENT_ATTR(perf_op_is_wr, PERF_OP_IS_WR),
-+	STM32_DDR_PMU_EVENT_ATTR(perf_op_is_activate, PERF_OP_IS_ACTIVATE),
-+	STM32_DDR_PMU_EVENT_ATTR(ctl_idle, CTL_IDLE),
-+	STM32_DDR_PMU_EVENT_ATTR(perf_hpr_req_with_no_credit, PERF_HPR_REQ_WITH_NO_CREDIT),
-+	STM32_DDR_PMU_EVENT_ATTR(perf_lpr_req_with_no_credit, PERF_LPR_REQ_WITH_NO_CREDIT),
-+	STM32_DDR_PMU_EVENT_ATTR(cactive_ddrc, CACTIVE_DDRC),
-+	STM32_DDR_PMU_EVENT_ATTR(perf_op_is_enter_powerdown, PERF_OP_IS_ENTER_POWERDOWN),
-+	STM32_DDR_PMU_EVENT_ATTR(perf_op_is_refresh, PERF_OP_IS_REFRESH),
-+	STM32_DDR_PMU_EVENT_ATTR(perf_selfresh_mode, PERF_SELFRESH_MODE),
-+	STM32_DDR_PMU_EVENT_ATTR(dfi_lp_req, DFI_LP_REQ),
-+	STM32_DDR_PMU_EVENT_ATTR(perf_hpr_xact_when_critical, PERF_HPR_XACT_WHEN_CRITICAL),
-+	STM32_DDR_PMU_EVENT_ATTR(perf_lpr_xact_when_critical, PERF_LPR_XACT_WHEN_CRITICAL),
-+	STM32_DDR_PMU_EVENT_ATTR(perf_wr_xact_when_critical, PERF_WR_XACT_WHEN_CRITICAL),
-+	STM32_DDR_PMU_EVENT_ATTR(dfi_lp_req_cpy, DFI_LP_REQ),  /* Suffixed '_cpy' to allow the
-+								* choice between sets 2 and 3
-+								*/
-+	STM32_DDR_PMU_EVENT_ATTR(time_cnt, TIME_CNT),
-+	NULL,
-+};
-+
-+static struct attribute_group stm32_ddr_pmu_events_attrs_group_mp = {
-+	.name = "events",
-+	.attrs = stm32_ddr_pmu_events_attrs_mp,
-+};
-+
-+static struct attribute *stm32_ddr_pmu_events_attrs_mp2[] = {
-+	STM32_DDR_PMU_EVENT_ATTR(dfi_is_act, DFI_IS_ACT),
-+	STM32_DDR_PMU_EVENT_ATTR(dfi_is_prepb, DFI_IS_PREPB),
-+	STM32_DDR_PMU_EVENT_ATTR(dfi_is_preab, DFI_IS_PREAB),
-+	STM32_DDR_PMU_EVENT_ATTR(dfi_is_rd, DFI_IS_RD),
-+	STM32_DDR_PMU_EVENT_ATTR(dfi_is_rda, DFI_IS_RDA),
-+	STM32_DDR_PMU_EVENT_ATTR(dfi_is_wr, DFI_IS_WR),
-+	STM32_DDR_PMU_EVENT_ATTR(dfi_is_wra, DFI_IS_WRA),
-+	STM32_DDR_PMU_EVENT_ATTR(dfi_is_mwr, DFI_IS_MWR),
-+	STM32_DDR_PMU_EVENT_ATTR(dfi_is_mwra, DFI_IS_MWRA),
-+	STM32_DDR_PMU_EVENT_ATTR(dfi_is_mrw, DFI_IS_MRW),
-+	STM32_DDR_PMU_EVENT_ATTR(dfi_is_mrr, DFI_IS_MRR),
-+	STM32_DDR_PMU_EVENT_ATTR(dfi_is_refpb, DFI_IS_REFPB),
-+	STM32_DDR_PMU_EVENT_ATTR(dfi_is_refab, DFI_IS_REFAB),
-+	STM32_DDR_PMU_EVENT_ATTR(dfi_is_mpc, DFI_IS_MPC),
-+	STM32_DDR_PMU_EVENT_ATTR(perf_op_is_act, PERF_OP_IS_ACT),
-+	STM32_DDR_PMU_EVENT_ATTR(perf_op_is_rd, PERF_OP_IS_RD),
-+	STM32_DDR_PMU_EVENT_ATTR(perf_op_is_wr, PERF_OP_IS_WR),
-+	STM32_DDR_PMU_EVENT_ATTR(perf_op_is_mwr, PERF_OP_IS_MWR),
-+	STM32_DDR_PMU_EVENT_ATTR(perf_op_is_ref, PERF_OP_IS_REF),
-+	STM32_DDR_PMU_EVENT_ATTR(perf_op_is_crit_ref, PERF_OP_IS_CRIT_REF),
-+	STM32_DDR_PMU_EVENT_ATTR(perf_op_is_spec_ref, PERF_OP_IS_SPEC_REF),
-+	STM32_DDR_PMU_EVENT_ATTR(perf_op_is_zqcal, PERF_OP_IS_ZQCAL),
-+	STM32_DDR_PMU_EVENT_ATTR(perf_op_is_enter_powdn, PERF_OP_IS_ENTER_POWDN),
-+	STM32_DDR_PMU_EVENT_ATTR(perf_op_is_enter_selfref, PERF_OP_IS_ENTER_SELFREF),
-+	STM32_DDR_PMU_EVENT_ATTR(perf_op_is_pre, PERF_OP_IS_PRE),
-+	STM32_DDR_PMU_EVENT_ATTR(perf_op_is_pre_for_rdwr, PERF_OP_IS_PRE_FOR_RDWR),
-+	STM32_DDR_PMU_EVENT_ATTR(perf_op_is_pre_for_others, PERF_OP_IS_PRE_FOR_OTHERS),
-+	STM32_DDR_PMU_EVENT_ATTR(perf_op_is_rd_activate, PERF_OP_IS_RD_ACTIVATE),
-+	STM32_DDR_PMU_EVENT_ATTR(perf_hpr_req_with_nocredit, PERF_HPR_REQ_WITH_NOCREDIT),
-+	STM32_DDR_PMU_EVENT_ATTR(perf_lpr_req_with_nocredit, PERF_LPR_REQ_WITH_NOCREDIT),
-+	STM32_DDR_PMU_EVENT_ATTR(perf_hpr_xact_when_critical, PERF_HPR_XACT_WHEN_CRITICAL),
-+	STM32_DDR_PMU_EVENT_ATTR(perf_lpr_xact_when_critical, PERF_LPR_XACT_WHEN_CRITICAL),
-+	STM32_DDR_PMU_EVENT_ATTR(perf_wr_xact_when_critical, PERF_WR_XACT_WHEN_CRITICAL),
-+	STM32_DDR_PMU_EVENT_ATTR(perf_rdwr_transitions, PERF_RDWR_TRANSITIONS),
-+	STM32_DDR_PMU_EVENT_ATTR(perf_war_hazard, PERF_WAR_HAZARD),
-+	STM32_DDR_PMU_EVENT_ATTR(perf_raw_hazard, PERF_RAW_HAZARD),
-+	STM32_DDR_PMU_EVENT_ATTR(perf_waw_hazard, PERF_WAW_HAZARD),
-+	STM32_DDR_PMU_EVENT_ATTR(perf_rank, PERF_RANK),
-+	STM32_DDR_PMU_EVENT_ATTR(perf_read_bypass, PERF_READ_BYPASS),
-+	STM32_DDR_PMU_EVENT_ATTR(perf_act_bypass, PERF_ACT_BYPASS),
-+	STM32_DDR_PMU_EVENT_ATTR(perf_window_limit_reached_rd, PERF_WINDOW_LIMIT_REACHED_RD),
-+	STM32_DDR_PMU_EVENT_ATTR(perf_window_limit_reached_wr, PERF_WINDOW_LIMIT_REACHED_WR),
-+	STM32_DDR_PMU_EVENT_ATTR(time_cnt, TIME_CNT),
-+	NULL
-+};
-+
-+static struct attribute_group stm32_ddr_pmu_events_attrs_group_mp2 = {
-+	.name = "events",
-+	.attrs = stm32_ddr_pmu_events_attrs_mp2,
-+};
-+
-+PMU_FORMAT_ATTR(event, "config:0-8");
-+
-+static struct attribute *stm32_ddr_pmu_format_attrs[] = {
-+	&format_attr_event.attr,
-+	NULL,
-+};
-+
-+static const struct attribute_group stm32_ddr_pmu_format_attr_group = {
-+	.name = "format",
-+	.attrs = stm32_ddr_pmu_format_attrs,
-+};
-+
-+static const struct attribute_group *stm32_ddr_pmu_attr_groups_mp1[] = {
-+	&stm32_ddr_pmu_events_attrs_group_mp,
-+	&stm32_ddr_pmu_format_attr_group,
-+	NULL,
-+};
-+
-+static const struct attribute_group *stm32_ddr_pmu_attr_groups_mp2[] = {
-+	&stm32_ddr_pmu_events_attrs_group_mp2,
-+	&stm32_ddr_pmu_format_attr_group,
-+	NULL,
-+};
-+
-+static int stm32_ddr_pmu_device_probe(struct platform_device *pdev)
-+{
-+	struct stm32_firewall firewall;
-+	struct stm32_ddr_pmu *pmu;
-+	struct reset_control *rst;
-+	struct resource *res;
-+	int ret;
-+
-+	pmu = devm_kzalloc(&pdev->dev, struct_size(pmu, counters, MP2_CNT_NB), GFP_KERNEL);
-+	if (!pmu)
-+		return -ENOMEM;
-+
-+	platform_set_drvdata(pdev, pmu);
-+	pmu->dev = &pdev->dev;
-+
-+	pmu->cfg = device_get_match_data(&pdev->dev);
-+
-+	pmu->membase = devm_platform_get_and_ioremap_resource(pdev, 0, &res);
-+	if (IS_ERR(pmu->membase))
-+		return PTR_ERR(pmu->membase);
-+
-+	if (of_property_present(pmu->dev->of_node, "access-controllers")) {
-+		ret = stm32_firewall_get_firewall(pmu->dev->of_node, &firewall, 1);
-+		if (ret) {
-+			dev_err(pmu->dev, "Failed to get firewall\n");
-+			return ret;
-+		}
-+		ret = stm32_firewall_grant_access_by_id(&firewall, firewall.firewall_id);
-+		if (ret) {
-+			dev_err(pmu->dev, "Failed to grant access\n");
-+			return ret;
-+		}
-+	}
-+
-+	if (of_property_present(pmu->dev->of_node, "clocks")) {
-+		pmu->clk = devm_clk_get_prepared(pmu->dev, NULL);
-+		if (IS_ERR(pmu->clk)) {
-+			dev_err(pmu->dev, "Failed to get clock\n");
-+			return PTR_ERR(pmu->clk);
-+		}
-+	}
-+
-+	clk_enable(pmu->clk);
-+
-+	if (of_property_present(pdev->dev.of_node, "resets")) {
-+		rst = devm_reset_control_get(&pdev->dev, NULL);
-+		if (IS_ERR(rst)) {
-+			dev_err(&pdev->dev, "Failed to get reset\n");
-+			ret = PTR_ERR(rst);
-+			goto err_clk;
-+		}
-+		reset_control_assert(rst);
-+		reset_control_deassert(rst);
-+	}
-+
-+	pmu->poll_period = ms_to_ktime(POLL_MS);
-+	hrtimer_setup(&pmu->hrtimer, stm32_ddr_pmu_poll, CLOCK_MONOTONIC, HRTIMER_MODE_REL);
-+
-+	for (int i = 0; i < MP2_CNT_NB; i++)
-+		INIT_LIST_HEAD(&pmu->counters[i]);
-+
-+	pmu->selected_set = -1;
-+
-+	pmu->pmu = (struct pmu) {
-+		.task_ctx_nr = perf_invalid_context,
-+		.start = stm32_ddr_pmu_event_start,
-+		.stop = stm32_ddr_pmu_event_stop,
-+		.add = stm32_ddr_pmu_event_add,
-+		.del = stm32_ddr_pmu_event_del,
-+		.read = stm32_ddr_pmu_event_read,
-+		.event_init = stm32_ddr_pmu_event_init,
-+		.attr_groups = pmu->cfg->attribute,
-+		.module = THIS_MODULE,
-+	};
-+
-+	ret = perf_pmu_register(&pmu->pmu, DRIVER_NAME, -1);
-+	if (ret) {
-+		dev_err(&pdev->dev, "Couldn't register DDRPERFM driver as a PMU\n");
-+		goto err_clk;
-+	}
-+
-+	if (pmu->cfg->regs->dram_inf.reg) {
-+		ret = of_property_read_u32(pdev->dev.of_node, "st,dram-type", &pmu->dram_type);
-+		if (ret) {
-+			dev_err(&pdev->dev, "Missing device-tree property 'st,dram-type'\n");
-+			perf_pmu_unregister(&pmu->pmu);
-+
-+			return ret;
-+		}
-+
-+		writel_relaxed(pmu->dram_type, pmu->membase + pmu->cfg->regs->dram_inf.reg);
-+	}
-+
-+	clk_disable(pmu->clk);
-+
-+	return 0;
-+
-+err_clk:
-+	clk_disable_unprepare(pmu->clk);
-+
-+	return ret;
-+}
-+
-+static void stm32_ddr_pmu_device_remove(struct platform_device *pdev)
-+{
-+	struct stm32_ddr_pmu *stm32_ddr_pmu = platform_get_drvdata(pdev);
-+
-+	perf_pmu_unregister(&stm32_ddr_pmu->pmu);
-+}
-+
-+static int __maybe_unused stm32_ddr_pmu_device_resume(struct device *dev)
-+{
-+	struct stm32_ddr_pmu *pmu = dev_get_drvdata(dev);
-+
-+	clk_enable(pmu->clk);
-+	writel_relaxed(pmu->dram_type, pmu->membase + pmu->cfg->regs->dram_inf.reg);
-+	clk_disable(pmu->clk);
-+
-+	return 0;
-+}
-+
-+static const struct stm32_ddr_pmu_regspec stm32_ddr_pmu_regspec_mp1 = {
-+	.stop =		{ DDRPERFM_CTRL, CTRL_STOP },
-+	.start =	{ DDRPERFM_CTRL, CTRL_START },
-+	.enable =	{ DDRPERFM_CFG },
-+	.cfg =		{ DDRPERFM_CFG },
-+	.status =	{ DDRPERFM_STATUS, MP1_STATUS_BUSY },
-+	.clear_cnt =	{ DDRPERFM_CLR, MP1_CLR_CNT},
-+	.clear_time =	{ DDRPERFM_CLR, MP1_CLR_TIME},
-+	.counter_time =	{ DDRPERFM_TCNT },
-+	.counter_evt =	{
-+				{ DDRPERFM_EVCNT(0) },
-+				{ DDRPERFM_EVCNT(1) },
-+				{ DDRPERFM_EVCNT(2) },
-+				{ DDRPERFM_EVCNT(3) },
-+	},
-+};
-+
-+static const struct stm32_ddr_pmu_regspec stm32_ddr_pmu_regspec_mp2 = {
-+	.stop =		{ DDRPERFM_CTRL, CTRL_STOP },
-+	.start =	{ DDRPERFM_CTRL, CTRL_START },
-+	.status =	{ DDRPERFM_MP2_STATUS, MP2_STATUS_BUSY },
-+	.clear_cnt =	{ DDRPERFM_CLR, MP2_CLR_CNT},
-+	.clear_time =	{ DDRPERFM_CLR, MP2_CLR_TIME},
-+	.cfg0 =		{ DDRPERFM_MP2_CFG0 },
-+	.cfg1 =		{ DDRPERFM_MP2_CFG1 },
-+	.enable =	{ DDRPERFM_MP2_CFG5 },
-+	.dram_inf =	{ DDRPERFM_MP2_DRAMINF },
-+	.counter_time =	{ DDRPERFM_MP2_TCNT },
-+	.counter_evt =	{
-+				{ DDRPERFM_MP2_EVCNT(0) },
-+				{ DDRPERFM_MP2_EVCNT(1) },
-+				{ DDRPERFM_MP2_EVCNT(2) },
-+				{ DDRPERFM_MP2_EVCNT(3) },
-+				{ DDRPERFM_MP2_EVCNT(4) },
-+				{ DDRPERFM_MP2_EVCNT(5) },
-+				{ DDRPERFM_MP2_EVCNT(6) },
-+				{ DDRPERFM_MP2_EVCNT(7) },
-+	},
-+};
-+
-+static const struct stm32_ddr_pmu_cfg stm32_ddr_pmu_cfg_mp1 = {
-+	.regs = &stm32_ddr_pmu_regspec_mp1,
-+	.attribute = stm32_ddr_pmu_attr_groups_mp1,
-+	.counters_nb = MP1_CNT_NB,
-+	.evt_counters_nb = MP1_CNT_NB - 1, /* Time counter is not an event counter */
-+	.time_cnt_idx = MP1_TIME_CNT_IDX,
-+	.get_counter = stm32_ddr_pmu_get_event_counter_mp1,
-+};
-+
-+static const struct stm32_ddr_pmu_cfg stm32_ddr_pmu_cfg_mp2 = {
-+	.regs = &stm32_ddr_pmu_regspec_mp2,
-+	.attribute = stm32_ddr_pmu_attr_groups_mp2,
-+	.counters_nb = MP2_CNT_NB,
-+	.evt_counters_nb = MP2_CNT_NB - 1, /* Time counter is an event counter */
-+	.time_cnt_idx = MP2_TIME_CNT_IDX,
-+	.get_counter = stm32_ddr_pmu_get_event_counter_mp2,
-+};
-+
-+static const struct dev_pm_ops stm32_ddr_pmu_pm_ops = {
-+	SET_SYSTEM_SLEEP_PM_OPS(NULL, stm32_ddr_pmu_device_resume)
-+};
-+
-+static const struct of_device_id stm32_ddr_pmu_of_match[] = {
-+	{
-+		.compatible = "st,stm32mp131-ddr-pmu",
-+		.data = &stm32_ddr_pmu_cfg_mp1
-+	},
-+	{
-+		.compatible = "st,stm32mp151-ddr-pmu",
-+		.data = &stm32_ddr_pmu_cfg_mp1
-+	},
-+	{
-+		.compatible = "st,stm32mp251-ddr-pmu",
-+		.data = &stm32_ddr_pmu_cfg_mp2
-+	},
-+	{ },
-+};
-+MODULE_DEVICE_TABLE(of, stm32_ddr_pmu_of_match);
-+
-+static struct platform_driver stm32_ddr_pmu_driver = {
-+	.driver = {
-+		.name = DRIVER_NAME,
-+		.pm = &stm32_ddr_pmu_pm_ops,
-+		.of_match_table = of_match_ptr(stm32_ddr_pmu_of_match),
-+	},
-+	.probe = stm32_ddr_pmu_device_probe,
-+	.remove = stm32_ddr_pmu_device_remove,
-+};
-+
-+module_platform_driver(stm32_ddr_pmu_driver);
-+
-+MODULE_AUTHOR("Clément Le Goffic");
-+MODULE_DESCRIPTION("STMicroelectronics STM32 DDR performance monitor driver");
-+MODULE_LICENSE("GPL");
++++ b/Documentation/admin-guide/perf/stm32-ddr-pmu.rst
+@@ -0,0 +1,86 @@
++.. SPDX-License-Identifier: GPL-2.0
++
++========================================
++STM32 DDR Performance Monitor (DDRPERFM)
++========================================
++
++The DDRPERFM is the DDR Performance Monitor embedded in STM32MPU SoC.
++The DDR controller provides events to DDRPERFM, once selected they are counted in the DDRPERFM
++peripheral.
++
++In MP1 family, the DDRPERFM is able to count 4 different events at the same time.
++However, the 4 events must belong to the same set.
++One hardware counter is dedicated to the time counter, `time_cnt`.
++
++In MP2 family, the DDRPERFM is able to select between 44 different DDR events.
++As for MP1, there is a dedicated hardware counter for the time.
++It is incremented every 4 DDR clock cycles.
++All the other counters can be freely allocated to count any other DDR event.
++
++The stm32-ddr-pmu driver relies on the perf PMU framework to expose the counters via sysfs:
++
++On MP1:
++
++    .. code-block:: bash
++
++        $ ls /sys/bus/event_source/devices/stm32_ddr_pmu/events/
++        cactive_ddrc                 perf_lpr_req_with_no_credit  perf_op_is_wr
++        ctl_idle                     perf_lpr_xact_when_critical  perf_selfresh_mode
++        dfi_lp_req                   perf_op_is_activate          perf_wr_xact_when_critical
++        dfi_lp_req_cpy               perf_op_is_enter_powerdown   time_cnt
++        perf_hpr_req_with_no_credit  perf_op_is_rd
++        perf_hpr_xact_when_critical  perf_op_is_refresh
++
++On MP2:
++
++    .. code-block:: bash
++
++        $ ls /sys/bus/event_source/devices/stm32_ddr_pmu/events/
++        dfi_is_act       perf_hpr_req_with_nocredit   perf_op_is_spec_ref
++        dfi_is_mpc       perf_hpr_xact_when_critical  perf_op_is_wr
++        dfi_is_mrr       perf_lpr_req_with_nocredit   perf_op_is_zqcal
++        dfi_is_mrw       perf_lpr_xact_when_critical  perf_rank
++        dfi_is_mwr       perf_op_is_act               perf_raw_hazard
++        dfi_is_mwra      perf_op_is_crit_ref          perf_rdwr_transitions
++        dfi_is_preab     perf_op_is_enter_powdn       perf_read_bypass
++        dfi_is_prepb     perf_op_is_enter_selfref     perf_war_hazard
++        dfi_is_rd        perf_op_is_mwr               perf_waw_hazard
++        dfi_is_rda       perf_op_is_pre               perf_window_limit_reached_rd
++        dfi_is_refab     perf_op_is_pre_for_others    perf_window_limit_reached_wr
++        dfi_is_refpb     perf_op_is_pre_for_rdwr      perf_wr_xact_when_critical
++        dfi_is_wr        perf_op_is_rd                time_cnt
++        dfi_is_wra       perf_op_is_rd_activate
++        perf_act_bypass  perf_op_is_ref
++
++
++The perf PMU framework is usually invoked via the 'perf stat' tool.
++
++
++Example:
++
++    .. code-block:: bash
++
++        $ perf stat --timeout 60000 -e stm32_ddr_pmu/dfi_is_act/,\
++        > stm32_ddr_pmu/dfi_is_rd/,\
++        > stm32_ddr_pmu/dfi_is_wr/,\
++        > stm32_ddr_pmu/dfi_is_refab/,\
++        > stm32_ddr_pmu/dfi_is_mrw/,\
++        > stm32_ddr_pmu/dfi_is_rda/,\
++        > stm32_ddr_pmu/dfi_is_wra/,\
++        > stm32_ddr_pmu/dfi_is_mrr/,\
++        > stm32_ddr_pmu/time_cnt/ \
++        > -a sleep 5
++
++         Performance counter stats for 'system wide':
++
++                    481025      stm32_ddr_pmu/dfi_is_act/
++                    732166      stm32_ddr_pmu/dfi_is_rd/
++                    144926      stm32_ddr_pmu/dfi_is_wr/
++                    644154      stm32_ddr_pmu/dfi_is_refab/
++                         0      stm32_ddr_pmu/dfi_is_mrw/
++                         0      stm32_ddr_pmu/dfi_is_rda/
++                         0      stm32_ddr_pmu/dfi_is_wra/
++                         0      stm32_ddr_pmu/dfi_is_mrr/
++                 752347686      stm32_ddr_pmu/time_cnt/
++
++               5.014910750 seconds time elapsed
 
 -- 
 2.43.0
