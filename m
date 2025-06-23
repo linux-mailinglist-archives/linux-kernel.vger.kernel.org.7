@@ -1,144 +1,161 @@
-Return-Path: <linux-kernel+bounces-699289-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-699290-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 24C9BAE5815
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Jun 2025 01:37:03 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 31E80AE581B
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Jun 2025 01:38:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5C7313B220E
-	for <lists+linux-kernel@lfdr.de>; Mon, 23 Jun 2025 23:36:21 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 95A5C7B580B
+	for <lists+linux-kernel@lfdr.de>; Mon, 23 Jun 2025 23:36:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 672B322A80D;
-	Mon, 23 Jun 2025 23:36:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 702CE22DA06;
+	Mon, 23 Jun 2025 23:37:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=stgolabs.net header.i=@stgolabs.net header.b="YYCy+M/P"
-Received: from panther.cherry.relay.mailchannels.net (panther.cherry.relay.mailchannels.net [23.83.223.141])
+	dkim=pass (2048-bit key) header.d=zytor.com header.i=@zytor.com header.b="jyILhge1"
+Received: from mail.zytor.com (terminus.zytor.com [198.137.202.136])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1F8F7146A66
-	for <linux-kernel@vger.kernel.org>; Mon, 23 Jun 2025 23:36:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=23.83.223.141
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750721801; cv=pass; b=MwCyn5L13aF7TJm4J9f6hAzATGx/a7WlYEnMJrrLqSM7rt6t+Kc0zMMub1Q61W7WAnJs8WGXOdHIASKc24v6qzsyq0oG4nZ9i79Lqga4nrVMMZLwd5STLVAS+iM68zxEV4PVT/YKyQ+ujZpt71eCSqD/7MzM80QvJ/26+N+lIok=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750721801; c=relaxed/simple;
-	bh=CE2mHNZ+9Eog2dFdWpwOrrjyyGkcpM9V9hpM7yzG+E4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=FyFzV1udtYwOS20KIP4qXajrv6D/SE+0vWnPdRo0wgZd0C2OYfrFWwibcLCI4DLcIqhFoLKNMHq2Mye8drWjgy8WK+JupuIIEzVHDARyeJRfvhUUf3juc3/3N2Ut3HxUoMKMjqXbpa84dMI0s+ztrzXjdbHAOE9YXVyZ73yG0dY=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=stgolabs.net; spf=pass smtp.mailfrom=stgolabs.net; dkim=pass (2048-bit key) header.d=stgolabs.net header.i=@stgolabs.net header.b=YYCy+M/P; arc=pass smtp.client-ip=23.83.223.141
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=stgolabs.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=stgolabs.net
-X-Sender-Id: dreamhost|x-authsender|dave@stgolabs.net
-Received: from relay.mailchannels.net (localhost [127.0.0.1])
-	by relay.mailchannels.net (Postfix) with ESMTP id A0D1B8450F6;
-	Mon, 23 Jun 2025 23:36:33 +0000 (UTC)
-Received: from pdx1-sub0-mail-a262.dreamhost.com (trex-green-0.trex.outbound.svc.cluster.local [100.108.88.53])
-	(Authenticated sender: dreamhost)
-	by relay.mailchannels.net (Postfix) with ESMTPA id 31072844C67;
-	Mon, 23 Jun 2025 23:36:33 +0000 (UTC)
-ARC-Seal: i=1; s=arc-2022; d=mailchannels.net; t=1750721793; a=rsa-sha256;
-	cv=none;
-	b=ivaUBsjtTbFvqsZZ3zABvVqqFNtEFPUW8hlSIdfDF2SsKzUfEhXMJh1kWAqVCX34EYmtYt
-	soFAjMRbyu4cInZZEe6AWqTDl133QifvHb//IlJLS2oe4ReqhlLbHxKis897NFWfe3yj5f
-	p0yTfBGF0l0j2GR9R91Xh5MSXcEFEBx78OUR8NbzcYOh0o2J0mQonAd/t/AwX5eGkfKc77
-	Yui3QLQ43pkn/78Ej8sFX9TSFnCocvyNHxHsin1Bnsk7btuN/zzWZwyIyKokUjG04gm+NF
-	sQfQzV4Sk56kA2WwQpQCe3uJcOCe63CF+6WsiYK+8UrXCL9mqL+B51OOp800lw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed;
- d=mailchannels.net;
-	s=arc-2022; t=1750721793;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references:dkim-signature;
-	bh=OQyAC5Zwg9VOAoEoP5oerQJSnLa4XNp2rsgYqfm0n0Y=;
-	b=OvB9uYJT8ebCAZ97f8O0O35OWyFw1TNoI2deW2RV8cI2YpES1MqpEepU6XEqQYGRY7NXJd
-	OuDTrGNmrdOsy+uz8ywDyqpEmYhgKpChw4p0nOu0GbIWWLKkjEY1DXhKls1LUHICoE0xXp
-	FeRWujjuFbYPSzvJDTv2QnMaxDz6EfGdL/Xa30S8X1tL+PSVVUS30Q52VYlSD3L/h2VDuM
-	svzRe2RRM/TNqYbnHFqRr0daQZ0nKqjoirLVMS0XBG10rmENf7Bhw37wHzrlA+JtEsgHWq
-	DoIOi9jkWeBHpt1/Xa4yVkD/VNteKBXqlpZy2er+AnuhgnCpgsbnA0AdJyAfSQ==
-ARC-Authentication-Results: i=1;
-	rspamd-6597f9cdc7-tzmdw;
-	auth=pass smtp.auth=dreamhost smtp.mailfrom=dave@stgolabs.net
-X-Sender-Id: dreamhost|x-authsender|dave@stgolabs.net
-X-MC-Relay: Neutral
-X-MailChannels-SenderId: dreamhost|x-authsender|dave@stgolabs.net
-X-MailChannels-Auth-Id: dreamhost
-X-Slimy-Juvenile: 562a32f86304b267_1750721793479_2456449309
-X-MC-Loop-Signature: 1750721793479:2756345217
-X-MC-Ingress-Time: 1750721793479
-Received: from pdx1-sub0-mail-a262.dreamhost.com (pop.dreamhost.com
- [64.90.62.162])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384)
-	by 100.108.88.53 (trex/7.1.3);
-	Mon, 23 Jun 2025 23:36:33 +0000
-Received: from offworld (syn-076-167-199-067.res.spectrum.com [76.167.199.67])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (P-256) server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: dave@stgolabs.net)
-	by pdx1-sub0-mail-a262.dreamhost.com (Postfix) with ESMTPSA id 4bR4Gm3W1sz9v;
-	Mon, 23 Jun 2025 16:36:32 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=stgolabs.net;
-	s=dreamhost; t=1750721792;
-	bh=OQyAC5Zwg9VOAoEoP5oerQJSnLa4XNp2rsgYqfm0n0Y=;
-	h=Date:From:To:Cc:Subject:Content-Type;
-	b=YYCy+M/PJOzIJse6rDHHkkQvVR/gdqh61FsOaFOZrONM4ymwcVRIxBwjlBT9jIk5C
-	 ZT8tVlBNo84xY4dNmwxNwYL4+N2DQfYbLMhR0PSEL8AqYCCcYLJWLGfxezgNg2EKGA
-	 +8Z51B+nRl74CNRicejw9UjlHRnS6/g2QRFBx+fYO+ndRymNArIIZzIi5L+uAZ7Yw+
-	 Ilci6qzCU5zD67JFWoGP1/QHmTCl3SaHEQtRhH+PWF9u+sSngi7JBGFCTGgNIsyFMD
-	 dq9ZfFdQuw/D+Fh9PNnuOmOi5Ez6SuaFGHRNbOcYlWQmYexvEGb9exuN3QBcyrtqje
-	 vZwo8seBqWEmg==
-Date: Mon, 23 Jun 2025 16:36:28 -0700
-From: Davidlohr Bueso <dave@stgolabs.net>
-To: Andrew Morton <akpm@linux-foundation.org>
-Cc: mhocko@kernel.org, hannes@cmpxchg.org, roman.gushchin@linux.dev,
-	shakeel.butt@linux.dev, yosryahmed@google.com, linux-mm@kvack.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 2/4] mm/memcg: make memory.reclaim interface generic
-Message-ID: <20250623233628.kv4c4k74rdpfek7x@offworld>
-Mail-Followup-To: Andrew Morton <akpm@linux-foundation.org>,
-	mhocko@kernel.org, hannes@cmpxchg.org, roman.gushchin@linux.dev,
-	shakeel.butt@linux.dev, yosryahmed@google.com, linux-mm@kvack.org,
-	linux-kernel@vger.kernel.org
-References: <20250623185851.830632-1-dave@stgolabs.net>
- <20250623185851.830632-3-dave@stgolabs.net>
- <20250623144528.19721543236d8a0165df4cad@linux-foundation.org>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EA94D22173D;
+	Mon, 23 Jun 2025 23:37:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.136
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1750721870; cv=none; b=jo7gfFT+rJkz6xc8ogj0BGgVqHyRE9dMpPgWtu7ls04Y31702VgADUEhyvHCyo6TB8DLJdb22oBDRzQI6MjdqHA35WGvNCk6IxB6qsgIpYjh3ByMjo7iVD0EgxOVSwVbaWRFD3FBxKVG8NCeyeC+XW3Tlvzzrn9LYH8+WWK6uws=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1750721870; c=relaxed/simple;
+	bh=4IQtmiTnjaNxG4Vd/OylPOVdcycefppT12bFqblU+kU=;
+	h=Date:From:To:CC:Subject:In-Reply-To:References:Message-ID:
+	 MIME-Version:Content-Type; b=E4pVRnZPdbUYneSMG/5Z7Kt0yPT2AiB2+x/dY7lxztkIh+BuA7Wykw0sY9XDZRm16q7knDi7Rem+zY5Ymk0wTqtoEpjeMuI4as0Cz+cLbkc5zuP9OScSjwb9EQZfL5H/YPw5lBV8p9b9yZ0EWVaBgaa9AOzTKxgN4ZEDan4Wi/s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zytor.com; spf=pass smtp.mailfrom=zytor.com; dkim=pass (2048-bit key) header.d=zytor.com header.i=@zytor.com header.b=jyILhge1; arc=none smtp.client-ip=198.137.202.136
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zytor.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zytor.com
+Received: from [127.0.0.1] (c-76-133-66-138.hsd1.ca.comcast.net [76.133.66.138])
+	(authenticated bits=0)
+	by mail.zytor.com (8.18.1/8.17.1) with ESMTPSA id 55NNaXe21125411
+	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NO);
+	Mon, 23 Jun 2025 16:36:34 -0700
+DKIM-Filter: OpenDKIM Filter v2.11.0 mail.zytor.com 55NNaXe21125411
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zytor.com;
+	s=2025062101; t=1750721797;
+	bh=b0SnNTpTmp8KAx7qFKJDLHDogIjzK3DQTJWcnHQWcHw=;
+	h=Date:From:To:CC:Subject:In-Reply-To:References:From;
+	b=jyILhge1PoHKMdmYcXFHg1mzoZJxnqCkIDylkzKB+ztz7NhHsWT3ZILfet5+kWdTr
+	 YCOO6t2eA63gasI5gjhWLxorZE/MVgh8GTB3qwoHoMGJ3CUcdt0FJBUvPXuJ9GYXGO
+	 FCfNB9UAChC8/1oDUYhxVCD2lkM/Gc6AaQ52PpyZd0xvIdN1wUqNInxnncT2Io4wNi
+	 GEJJTnm09CgtWNLpxlEghDmGkmK985effkl8N7Tqu1uk0vRokAwqLb4Z0YtptrLUqw
+	 69LXd2R92o9+ilfzSYsXEHX17qO9FxCiLIWxLFNslsiMA4ni6zVIegpkMp/E6csVhi
+	 EL5RF1EpjMuZQ==
+Date: Mon, 23 Jun 2025 16:36:32 -0700
+From: "H. Peter Anvin" <hpa@zytor.com>
+To: "Luck, Tony" <tony.luck@intel.com>, "Hansen, Dave" <dave.hansen@intel.com>,
+        "Mehta, Sohil" <sohil.mehta@intel.com>,
+        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
+        Dave Hansen <dave.hansen@linux.intel.com>
+CC: Jonathan Corbet <corbet@lwn.net>, Ingo Molnar <mingo@kernel.org>,
+        Pawan Gupta <pawan.kumar.gupta@linux.intel.com>,
+        Daniel Sneddon <daniel.sneddon@linux.intel.com>,
+        "Huang, Kai" <kai.huang@intel.com>,
+        Sandipan Das <sandipan.das@amd.com>, Breno Leitao <leitao@debian.org>,
+        "Edgecombe, Rick P" <rick.p.edgecombe@intel.com>,
+        Alexei Starovoitov <ast@kernel.org>, Hou Tao <houtao1@huawei.com>,
+        Juergen Gross <jgross@suse.com>,
+        Vegard Nossum <vegard.nossum@oracle.com>, Kees Cook <kees@kernel.org>,
+        Eric Biggers <ebiggers@google.com>, Jason Gunthorpe <jgg@ziepe.ca>,
+        "Masami Hiramatsu (Google)" <mhiramat@kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Luis Chamberlain <mcgrof@kernel.org>, Yuntao Wang <ytcoode@gmail.com>,
+        Rasmus Villemoes <linux@rasmusvillemoes.dk>,
+        Christophe Leroy <christophe.leroy@csgroup.eu>,
+        Tejun Heo <tj@kernel.org>, Changbin Du <changbin.du@huawei.com>,
+        Huang Shijie <shijie@os.amperecomputing.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Namhyung Kim <namhyung@kernel.org>,
+        Arnaldo Carvalho de Melo <acme@redhat.com>,
+        "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-efi@vger.kernel.org" <linux-efi@vger.kernel.org>,
+        "linux-mm@kvack.org" <linux-mm@kvack.org>,
+        Yian Chen <yian.chen@intel.com>, Andy Lutomirski <luto@kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
+        Borislav Petkov <bp@alien8.de>, "x86@kernel.org" <x86@kernel.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Ard Biesheuvel <ardb@kernel.org>,
+        "Paul E. McKenney" <paulmck@kernel.org>,
+        Josh Poimboeuf <jpoimboe@kernel.org>,
+        Xiongwei Song <xiongwei.song@windriver.com>,
+        "Li, Xin3" <xin3.li@intel.com>,
+        "Mike Rapoport (IBM)" <rppt@kernel.org>,
+        Brijesh Singh <brijesh.singh@amd.com>,
+        Michael Roth <michael.roth@amd.com>,
+        Alexey Kardashevskiy <aik@amd.com>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>
+Subject: RE: [PATCHv6 01/16] x86/cpu: Enumerate the LASS feature bits
+User-Agent: K-9 Mail for Android
+In-Reply-To: <DS7PR11MB607789E9CDFF5C4DC1461015FC79A@DS7PR11MB6077.namprd11.prod.outlook.com>
+References: <20250620135325.3300848-1-kirill.shutemov@linux.intel.com> <20250620135325.3300848-2-kirill.shutemov@linux.intel.com> <248e272c-79ec-4c11-a3a8-dff1de2147c0@intel.com> <adaf2d81-75b5-4f02-99ea-03ea0f1a5a96@intel.com> <SJ1PR11MB6083AE2EF85FB5D2FE39D4F0FC79A@SJ1PR11MB6083.namprd11.prod.outlook.com> <8f0913d7-9e77-41e0-91e2-17ca2454b296@intel.com> <DS7PR11MB607789E9CDFF5C4DC1461015FC79A@DS7PR11MB6077.namprd11.prod.outlook.com>
+Message-ID: <299ED4FB-6949-4E7E-82D4-94E2E9F0A0B5@zytor.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii; format=flowed
-Content-Disposition: inline
-In-Reply-To: <20250623144528.19721543236d8a0165df4cad@linux-foundation.org>
-User-Agent: NeoMutt/20220429
+Content-Type: text/plain;
+ charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 
-On Mon, 23 Jun 2025, Andrew Morton wrote:
-
->On Mon, 23 Jun 2025 11:58:49 -0700 Davidlohr Bueso <dave@stgolabs.net> wrote:
->
->> This adds a general call for both parsing as well as the
->> common reclaim semantics. memcg is still the only user and
->> no change in semantics.
+On June 23, 2025 4:13:34 PM PDT, "Luck, Tony" <tony=2Eluck@intel=2Ecom> wro=
+te:
+>> >> Logically there are two completely different things:
+>> >>
+>> >>       1=2E Touching userspace
+>> >>       2=2E Touching the lower half of the address space
+>> >>
+>> >> If it's only userspace in the lower half of the address space, then
+>> >> there's no controversy=2E But the problem obviously occurs when you =
+want
+>> >> to touch kernel mappings in the lower half of the address space=2E
+>> >
+>> > Why does the kernel create the mappings to poke kernel text
+>> > for ALTERNATIVE patching in the lower half of the address space?
+>> >
+>> > Instead of special "we really to want to access the lower addresses"
+>> > code, wouldn't it be easier to map the "poke" virtual addresses in no=
+rmal
+>> > kernel upper-half space?
 >>
->> +int user_proactive_reclaim(char *buf,
->> +			   struct mem_cgroup *memcg, pg_data_t *pgdat);
+>> The upper half of the address space is shared kernel space, right? Ever=
+y
+>> PGD has identical contents in the upper half=2E So if we create a mappi=
+ng
+>> there,everybody get access to it=2E Every mm can access it=2E Every
+>> *process* can access it=2E It still has kernel permissions of course, b=
+ut
+>> it's still a place that everybody can get at=2E
+>>
+>> The lower half is *ONLY* accessible to the local mm=2E In this case, on=
+ly
+>> the text poking mm=2E It's a natural, safe, place to create a mapping t=
+hat
+>> you want to be private and not be exploited=2E
+>>
+>> So, doing it in the upper half is risky=2E
+>>
+>> If we *wanted*, we could have a non-shared PGD entry in the top half of
+>> the address space=2E But we'd need to reserve its address space and all
+>> that jazz=2E I'm not sure it's any better than just disabling LASS
+>> enforcement for a moment=2E
 >
->Feeling nitty, is this a good name for it?  It's hard to imagine what a
->function called "user_proactive_reclaim" actually does.
+>Maybe it=E2=80=99s a thing to put on the list for "when x86 drops support=
+ for 32-bit"=2E
+>
+>Reserving a PGD entry in the kernel half of the address space for
+>local CPU use would be practical then=2E Perhaps there might be other
+>uses too=2E
+>
+>-Tony
+>
 
-I'm open to another name, sure. But imo the chosen one is actually pretty
-descriptive: you know it's coming from userspace (justifying the 'buf'),
-you know this is not about memory pressure and the memcg/pgdat parameters
-tell the possible interfaces. Would prefixing a 'do_' be any better?
-
->That it isn't documented isn't helpful either!
-
-I had done this but felt rather redundant and unnecessary, and further
-don't expect for it go gain any other users. But ok, will add.
-
-Thanks,
-Davidlohr
+Are we actually doing patching on more than one CPU at a time?
 
