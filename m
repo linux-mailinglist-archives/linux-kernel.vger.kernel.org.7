@@ -1,176 +1,132 @@
-Return-Path: <linux-kernel+bounces-697759-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-697755-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 99023AE384D
-	for <lists+linux-kernel@lfdr.de>; Mon, 23 Jun 2025 10:23:30 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 92117AE383A
+	for <lists+linux-kernel@lfdr.de>; Mon, 23 Jun 2025 10:18:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BC0263A7A19
-	for <lists+linux-kernel@lfdr.de>; Mon, 23 Jun 2025 08:23:05 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 30939168D61
+	for <lists+linux-kernel@lfdr.de>; Mon, 23 Jun 2025 08:18:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 97C9F1D86DC;
-	Mon, 23 Jun 2025 08:23:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AF0F81FF1B2;
+	Mon, 23 Jun 2025 08:18:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="ac5AeUxp"
-Received: from mailout2.w1.samsung.com (mailout2.w1.samsung.com [210.118.77.12])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="RDfO1x/A"
+Received: from mail-ej1-f50.google.com (mail-ej1-f50.google.com [209.85.218.50])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 993901A8F60
-	for <linux-kernel@vger.kernel.org>; Mon, 23 Jun 2025 08:23:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.118.77.12
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8B4FF211F;
+	Mon, 23 Jun 2025 08:18:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750667003; cv=none; b=OiqGAhTX6NuwtAqEcog+DWhoI0XUgyCNR7l+d05X0CfPp/LQAIZW5uphy6OmKEwPQEmCGgDGW/Z/wBSPg7NZBjximVkUFzI1TxzwZsmqLDkcdyUz143a6frt/cAiuCHwqrD1E3ewdnX5JhRmKq5LOJ4NmQ01LSj+uDGV3j+ULsY=
+	t=1750666732; cv=none; b=Y7BDjN8GBf9sZhVgOk5KtM5LflRxhp6hG+otYyPLk2ENVWM+1sDHKdXmx8hioWTyQgDzs/RW3Jf7RyQqCPl8b26oDdfFDrG+zJqC5qIvapbULNKIu18cjlZPJgoGniSKmYl451xoz0HjTyKVkkZbQ5mEQfN4pFoNG9gpmU9gipg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750667003; c=relaxed/simple;
-	bh=zFqOr7aypHQwZqL3LEpcklbve06QiGNwRDJNLk+st5g=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:From:In-Reply-To:
-	 Content-Type:References; b=gS8EHZHWxqR4rQKZFzODByLJwSzB9L6QpIhKU0qGqFrsWdktb+ixfqIJPOZr99gBExSiu9lZBhoBDVYa3ejEgosVKlODKWgrHmfcPM6nrlcoQoMthJpOxiTWLENtrwmih41s5wNaG/q74HbjWefR/l4T+dFuIvRJ20hjOsrn7dQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=ac5AeUxp; arc=none smtp.client-ip=210.118.77.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
-Received: from eucas1p1.samsung.com (unknown [182.198.249.206])
-	by mailout2.w1.samsung.com (KnoxPortal) with ESMTP id 20250623081738euoutp0254a6017ea2fb539016d2b4c167fb7260~Lngz7hMiU0085800858euoutp02i
-	for <linux-kernel@vger.kernel.org>; Mon, 23 Jun 2025 08:17:38 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.w1.samsung.com 20250623081738euoutp0254a6017ea2fb539016d2b4c167fb7260~Lngz7hMiU0085800858euoutp02i
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-	s=mail20170921; t=1750666658;
-	bh=luih2Qz/UMZ7UffUnmmhtm7LsPOMkm5qz+Oj9g8WGgY=;
-	h=Date:Subject:To:Cc:From:In-Reply-To:References:From;
-	b=ac5AeUxpahWu90BTdcQapKbM9aqN2n+swpFoyZNux/AMIjF1AoxaMEu6TC+F6O00G
-	 CbxTpQZx0/KGn24mBo75GFfhnJyXQpHwqTYXvdPIp1/fnN37faT4e/cFAaJl3GpaWy
-	 iPWHF/N4W8h/wcDf/tQOa6QvN+MDrwEIuSD2NECo=
-Received: from eusmtip2.samsung.com (unknown [203.254.199.222]) by
-	eucas1p1.samsung.com (KnoxPortal) with ESMTPA id
-	20250623081738eucas1p125d25f5119cb753f78f01734b92487d6~LngzPqk8C1864418644eucas1p15;
-	Mon, 23 Jun 2025 08:17:38 +0000 (GMT)
-Received: from [192.168.1.44] (unknown [106.210.136.40]) by
-	eusmtip2.samsung.com (KnoxPortal) with ESMTPA id
-	20250623081736eusmtip220e776f7d400c05e225edcce1c52eacc~LngyLH4rO2642326423eusmtip20;
-	Mon, 23 Jun 2025 08:17:36 +0000 (GMT)
-Message-ID: <12eed587-a8f3-4a67-8808-5e32617ded93@samsung.com>
-Date: Mon, 23 Jun 2025 10:17:36 +0200
+	s=arc-20240116; t=1750666732; c=relaxed/simple;
+	bh=lCK854TgRqv39ZVQ7Izhf1FWljjyyVyW8qjFDJ2regY=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=qbjOG/OwE4x7hE3rIYUI3c15lTIQN5atPUFB/Su+wf6SKfDh7eUrWcZwj3+m4Cs+IaDcWO2NKcUnYFEnq8cDJvwowVyKy5AQut8uksVFK6M6yh6K7eWH/FDXi/WTmtT9NsONeWQZiHA06TH3GwVXhXEbBrGda45c7tXgId/oris=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=RDfO1x/A; arc=none smtp.client-ip=209.85.218.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f50.google.com with SMTP id a640c23a62f3a-ad8a8da2376so609596066b.3;
+        Mon, 23 Jun 2025 01:18:50 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1750666729; x=1751271529; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=Gwx8N1prAjZlb2ymIsmsbUe/fl2ghoNiNQjIjRYyjWA=;
+        b=RDfO1x/AEljEzhgDjHWFG9lPS2VhewfdT+Y69CQ+blJqxCKO9Sfg1xD5mDeutY1uzJ
+         asu1EpriX3x4PRt+AQOyE4OAPl4CEn/Lmf2/BNT6AEwlB4CqR5XpU6nLAr25bvd0Yfsl
+         ZA+vxFh/2xlLj/YeWAQLsWIxnzClrAbHLQbTs8qsshLik7YTk1i8e3/1K/vl3imp6SpA
+         1uk24m9NtgOVVLbBQ5Y2hWcdUmtliurkr+YXl1QVTc6rN5ptDWZjGMII9k8S1H3pCYJ8
+         nZTjnfNMSTK642QEkXv4nnqz/YaE0Xod+n04t+mkzPO5yCYfxyWpjzwpUtqPllh/2Asj
+         yVBw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1750666729; x=1751271529;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=Gwx8N1prAjZlb2ymIsmsbUe/fl2ghoNiNQjIjRYyjWA=;
+        b=s+5bLJ5pphjNeN4kVehMlkMtysopwhMS4AUn4rxe9MVjUOCwtPI5BDVHD0OF8Luh2F
+         t2BoNFOYfML/N0tAtQJvD/A2QhDSUUxhDSWcNOFraYSA/bz2gKNjE3VTz2PCUcty1WBl
+         2lSvJe2IthXTgc3dwp7EKpNVodqWs3aSt8vyF7y951PSNSx9Re5HhDXsDheIzl/6ozq6
+         E2DJdiEGG76diNjKQOF646I2q7NJ6X1X3vRqETX11AOiS7Rt4w3ON3iYJSBRyaHsav2p
+         OlbeZXMJ0zpEymXS0NDtPUNb2h3atSvsZ6rMtn5/XlOfW/sWvOmZtqHBuqbP1dKvnvvl
+         g2dw==
+X-Forwarded-Encrypted: i=1; AJvYcCUb8xAQrCiA3Scu7ItspCPnNfu4jP1r5PpdnulQd9DCSUCyV/NhzLbdk7r7wMtQQ7zD/sGQjqEQfEQ=@vger.kernel.org, AJvYcCVX61tr6qJ4853OVHE4GA329hWT0mLNUbpfPySV7kMXl4FeNJSDXVnqbs6S9diXfngq1MpA5G5KHZXuxFYd@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw9DBqtlFYtAPTmylAi8hsNMVNTVZPgp+1rOHA2QrDdr86pxr1s
+	w9XID5CxcP00A/Azb2yrb/mJy+PccO43kjvKSP4hgT8xeYnPRcs3UIYo
+X-Gm-Gg: ASbGncuA86QxuU9O1LmJniJNOZrQxYlG2hQhPyR9FlEoIuzALmQcUb33vCS3LhO5iNb
+	w/snRD1Q9I1TBTs7gszTBDm8jK1CJPbAKVXWNgU5wp0MR4BhZT9iw6lnK5DqAy6aHhm84TZAfm1
+	SyIN/wzJEqERvFLNH4WCVKyUzZ2WtbUGEtcy6bRSwn2x2BeumZwQG276XC85iasCiuPlGD2t7DI
+	mJFKF+YzA/k395LihyqFrAZ1dA1UAeK/Xeip6uUlTP+khHNyuCJ1JdIb0kquIHRW2rSa1cmRqdE
+	Vd92RfkioqFPHfpklCQhcVyiu3oPJDxl3mGu08t9zOlwLBfyOZX4uIxTZ4+pDDSkQP54qLBSPzx
+	0
+X-Google-Smtp-Source: AGHT+IGnko2iUfz77f98BBimqLt0TFCYQBHgyYvKFbjRTMvtzWLPW4CMLACqj3r7KnSwqczuloUYVw==
+X-Received: by 2002:a17:907:3f8b:b0:ad8:a515:767f with SMTP id a640c23a62f3a-ae057ca667amr995584766b.51.1750666728427;
+        Mon, 23 Jun 2025 01:18:48 -0700 (PDT)
+Received: from localhost.localdomain ([41.79.198.24])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ae053e7f2cesm680467166b.10.2025.06.23.01.18.46
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 23 Jun 2025 01:18:48 -0700 (PDT)
+From: Khalid Ali <khaliidcaliy@gmail.com>
+X-Google-Original-From: Khalid Ali <khaliidcaliy@gmail.com
+To: tglx@linutronix.de,
+	mingo@redhat.com,
+	bp@alien8.de,
+	dave.hansen@linux.intel.com,
+	ubizjak@gmail.com
+Cc: x86@kernel.org,
+	hpa@zytor.com,
+	linux-efi@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Khalid Ali <khaliidcaliy@gmail.com>
+Subject: [PATCH v1 1/3] x86/boot: Recieve boot_param from RDI Instead of RSI
+Date: Mon, 23 Jun 2025 08:17:50 +0000
+Message-ID: <20250623081803.1340-1-khaliidcaliy@gmail.com>
+X-Mailer: git-send-email 2.49.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v5 0/8] Add TH1520 GPU support with power sequencing
-To: Drew Fustini <drew@pdp7.com>
-Cc: Guo Ren <guoren@kernel.org>, Fu Wei <wefu@redhat.com>, Rob Herring
-	<robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
-	<conor+dt@kernel.org>, Bartosz Golaszewski <brgl@bgdev.pl>, Philipp Zabel
-	<p.zabel@pengutronix.de>, Frank Binns <frank.binns@imgtec.com>, Matt Coster
-	<matt.coster@imgtec.com>, Maarten Lankhorst
-	<maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>,
-	Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>,
-	Simona Vetter <simona@ffwll.ch>, Paul Walmsley <paul.walmsley@sifive.com>,
-	Palmer Dabbelt <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>,
-	Alexandre Ghiti <alex@ghiti.fr>, Ulf Hansson <ulf.hansson@linaro.org>, Marek
-	Szyprowski <m.szyprowski@samsung.com>, linux-riscv@lists.infradead.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-pm@vger.kernel.org, dri-devel@lists.freedesktop.org, Krzysztof
-	Kozlowski <krzysztof.kozlowski@linaro.org>
-Content-Language: en-US
-From: Michal Wilczynski <m.wilczynski@samsung.com>
-In-Reply-To: <aFNrRtbWzeRa7GmQ@x1>
-Content-Transfer-Encoding: 7bit
-X-CMS-MailID: 20250623081738eucas1p125d25f5119cb753f78f01734b92487d6
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-X-RootMTR: 20250618102225eucas1p129b1172bf54521c1eb0f718cb31af468
-X-EPHeader: CA
-X-CMS-RootMailID: 20250618102225eucas1p129b1172bf54521c1eb0f718cb31af468
-References: <CGME20250618102225eucas1p129b1172bf54521c1eb0f718cb31af468@eucas1p1.samsung.com>
-	<20250618-apr_14_for_sending-v5-0-27ed33ea5c6f@samsung.com>
-	<aFNrRtbWzeRa7GmQ@x1>
+Content-Transfer-Encoding: 8bit
 
+From: Khalid Ali <khaliidcaliy@gmail.com>
 
+Adjust the kernel entry point to recieve arguments from RDI instead of
+RSI.
 
-On 6/19/25 03:43, Drew Fustini wrote:
-> On Wed, Jun 18, 2025 at 12:22:06PM +0200, Michal Wilczynski wrote:
->> This patch series introduces support for the Imagination IMG BXM-4-64
->> GPU found on the T-HEAD TH1520 SoC. A key aspect of this support is
->> managing the GPU's complex power-up and power-down sequence, which
->> involves multiple clocks and resets.
->>
->> The TH1520 GPU requires a specific sequence to be followed for its
->> clocks and resets to ensure correct operation. Initial discussions and
->> an earlier version of this series explored managing this via the generic
->> power domain (genpd) framework. However, following further discussions
->> with kernel maintainers [1], the approach has been reworked to utilize
->> the dedicated power sequencing (pwrseq) framework.
->>
->> This revised series now employs a new pwrseq provider driver
->> (pwrseq-thead-gpu.c) specifically for the TH1520 GPU. This driver
->> encapsulates the SoC specific power sequence details. The Imagination
->> GPU driver (pvr_device.c) is updated to act as a consumer of this power
->> sequencer, requesting the "gpu-power" target. The sequencer driver,
->> during its match phase with the GPU device, acquires the necessary clock
->> and reset handles from the GPU device node to perform the full sequence.
->>
->> This approach aligns with the goal of abstracting SoC specific power
->> management details away from generic device drivers and leverages the
->> pwrseq framework as recommended.
->>
->> The series is structured as follows:
->>
->> Patch 1: Introduces the pwrseq-thead-gpu auxiliary driver to manage the
->>          GPU's power-on/off sequence.
->> Patch 2: Adds device tree bindings for the gpu-clkgen reset to the
->>          existing thead,th1520-aon binding.
->> Patch 3: Extends the pm-domains driver to detect the gpu-clkgen reset
->>          and spawn the pwrseq-thead-gpu auxiliary driver.
->> Patch 4: Updates the Imagination DRM driver to utilize the pwrseq
->>          framework for TH1520 GPU power management.
->> Patch 5: Adds the thead,th1520-gpu compatible string to the PowerVR GPU
->>          device tree bindings.
->> Patch 6: Adds the gpu-clkgen reset property to the aon node in the
->>          TH1520 device tree source.
->> Patch 7: Adds the device tree node for the IMG BXM-4-64 GPU and its
->>          required fixed-clock.
->> Patch 8: Enables compilation of the Imagination PowerVR driver on the
->>          RISC-V architecture.
->>
->> This patchset finishes the work started in bigger series [2] by adding
->> all remaining GPU power sequencing piece. After this patchset the GPU
->> probes correctly.
-> 
-> The powevr probe complains:
-> 
-> [    1.060383] powervr ffef400000.gpu: Direct firmware load for powervr/rogue_36.52.104.182_v1.fw failed with error -2
-> 
-> Where is the correct place to get the firmware?
+Signed-off-by: Khalid Ali <khaliidcaliy@gmail.com>
+---
+ arch/x86/kernel/head_64.S | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-Hi,
-
-Apologies for the late reply, it was a long weekend in Poland and I was
-away without access to e-mail.
-
-This is the Imagination repository that hosts the firmware [1].
-Admittedly I'm not using the newest firmware blobs available, as per
-discussion here [2] I downloaded mine last year so haven't tested the
-new ones yet.
-
-For my own testing, I  embed the firmware directly into the kernel to
-avoid issues with the initramfs. If you're compiling your own kernel,
-you can do this with the following configuration options:
-
-CONFIG_EXTRA_FIRMWARE="powervr/rogue_36.52.104.182_v1.fw"
-CONFIG_EXTRA_FIRMWARE_DIR="/home/local_user"
-
-[1] - https://gitlab.freedesktop.org/imagination/linux-firmware/-/tree/powervr/powervr?ref_type=heads
-[2] - https://gitlab.freedesktop.org/imagination/linux-firmware/-/issues/2#note_2642740
-
-> 
-> Thanks,
-> Drew
-> 
-
-Best regards,
+diff --git a/arch/x86/kernel/head_64.S b/arch/x86/kernel/head_64.S
+index dfb5390e5c9a..d24fea15b6a6 100644
+--- a/arch/x86/kernel/head_64.S
++++ b/arch/x86/kernel/head_64.S
+@@ -43,7 +43,7 @@ SYM_CODE_START_NOALIGN(startup_64)
+ 	 * for us.  These identity mapped page tables map all of the
+ 	 * kernel pages and possibly all of memory.
+ 	 *
+-	 * %RSI holds the physical address of the boot_params structure
++	 * %RDI holds the physical address of the boot_params structure
+ 	 * provided by the bootloader. Preserve it in %R15 so C function calls
+ 	 * will not clobber it.
+ 	 *
+@@ -56,7 +56,7 @@ SYM_CODE_START_NOALIGN(startup_64)
+ 	 * compiled to run at we first fixup the physical addresses in our page
+ 	 * tables and then reload them.
+ 	 */
+-	mov	%rsi, %r15
++	mov	%rdi, %r15
+ 
+ 	/* Set up the stack for verify_cpu() */
+ 	leaq	__top_init_kernel_stack(%rip), %rsp
 -- 
-Michal Wilczynski <m.wilczynski@samsung.com>
+2.49.0
+
 
