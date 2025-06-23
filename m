@@ -1,56 +1,54 @@
-Return-Path: <linux-kernel+bounces-698969-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-698971-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id BB3BDAE4C48
-	for <lists+linux-kernel@lfdr.de>; Mon, 23 Jun 2025 19:59:59 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6F3BAAE4C4C
+	for <lists+linux-kernel@lfdr.de>; Mon, 23 Jun 2025 20:00:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7E59F189F904
-	for <lists+linux-kernel@lfdr.de>; Mon, 23 Jun 2025 18:00:15 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 73D8317E1F0
+	for <lists+linux-kernel@lfdr.de>; Mon, 23 Jun 2025 18:00:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 238E82D3221;
-	Mon, 23 Jun 2025 17:59:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="DN7stiM4"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DB8781D61BB;
+	Mon, 23 Jun 2025 18:00:40 +0000 (UTC)
+Received: from bmailout1.hostsharing.net (bmailout1.hostsharing.net [83.223.95.100])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 72AD022F77F;
-	Mon, 23 Jun 2025 17:59:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 814474A24;
+	Mon, 23 Jun 2025 18:00:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=83.223.95.100
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750701596; cv=none; b=QkdtZrZZT9Z3g8ZdpiZt4Bfcf+nAOK4qEOrLHjBnxMNoZD4fCCYwNmx2FXaqW8KLTl9PWtekWrMYFBMDELtFiRni15QXYgPjBFg4GWDGQInLIRWvyHMsyuaVkzKKFTn72r6wDppQgtiwNqULWrkK3qIcolXcqCq8pLxsZMicss4=
+	t=1750701640; cv=none; b=fX9X7sc6w+VALqRs/RIq7aPbCcDgrJPPSRC9EvJyCtZwvyTDRjFCtlRHWvZCI/e5KlOgXp7MHYFuHgcMuyqIP+60IiCl3oznsqmOvxKlxbRa+DeFGZxcBq5BR8QSWDLTZicGdger2To605EV+7FUbJgDGntZK/kHKqyrqLOn98Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750701596; c=relaxed/simple;
-	bh=K0mHJOlQlG9yt7f6lU81M46kiooSYMEJTNVD2Qvh1zU=;
+	s=arc-20240116; t=1750701640; c=relaxed/simple;
+	bh=2Zb/X76hGLMtOvc73fPeJAQeukskv+DbhVHnOwqWSw8=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=NyAVp1au7RnKtD0+rX/rWq8Lg/PKEvYk4WYhEr7xf8oKcgwQklOQKuQ3LatQsxUm9PhQe/q5edMd8HMHcyAwkRriMgAp/uNvqEhMan9ptxPoahw79KvD/2VfZLdnnecFaahxTPS7a4kW96uu2Cp3KwU6DPFwp5oBiOIr/wV+j4c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=DN7stiM4; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id CA533C4CEEA;
-	Mon, 23 Jun 2025 17:59:55 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1750701595;
-	bh=K0mHJOlQlG9yt7f6lU81M46kiooSYMEJTNVD2Qvh1zU=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=DN7stiM43vCCxWcthoQVOYUWGMoSnFGlUp8V3bImSr7UozuoLwGVelALc/977XUYp
-	 cx++WF/vNR5m7dE34CFFSuOOiqEV67yevGYOD6eY5B9xcLOcouxKg7qzZS3hrhjEow
-	 CI2B9X2/OX1Aknk7vcF0iD6WMwCvW/0btCJqYT73rEKjQmcDHk0sM1eKxW+tivyJbK
-	 NvjPcTm26dqBNUGR48hwWjzOM1FgeTWiABPJ4Li2tTp4V/S4EQy/QSUcKH5Bf5z45I
-	 y9ejVfG/+cvWncN+Agl9sWYOKSN1HXOEwpkL3D88axogp1WmY/1/8s51kpLqb7P5Z5
-	 hcU8L35NIkZcA==
-Date: Mon, 23 Jun 2025 07:59:54 -1000
-From: Tejun Heo <tj@kernel.org>
-To: Henry Huang <henry.hj@antgroup.com>
-Cc: changwoo@igalia.com, arighi@nvidia.com, void@manifault.com,
-	=?utf-8?B?6LCI6Ym06ZSL?= <henry.tjf@antgroup.com>,
-	"Yan Yan(cailing)" <yanyan.yan@antgroup.com>,
-	linux-kernel@vger.kernel.org, sched-ext@lists.linux.dev
-Subject: Re: [PATCH v3] sched_ext: Implement SCX_OPS_TRACK_MIGRATION
-Message-ID: <aFmWGi8n1ndB1K_M@slm.duckdns.org>
-References: <20250623063033.76808-1-henry.hj@antgroup.com>
- <20250623063033.76808-2-henry.hj@antgroup.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=L4x6VznUkUU4b2lHbYFhRiQ6QmRF6ycFI9I/H+ErO/kS2ZDtUWtKJoogb0VZf0OANZco4ycG9jDpq7lNz04rvNLllTAUU3DOcw33CwvCYBBsMoFa0X3lOR7fDXHOFKkrtBiFNwNWV0Ura4hNzGLD7yjbTeLhuYuQnKpHi3n+zgI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=wunner.de; spf=none smtp.mailfrom=h08.hostsharing.net; arc=none smtp.client-ip=83.223.95.100
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=wunner.de
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=h08.hostsharing.net
+Received: from h08.hostsharing.net (h08.hostsharing.net [IPv6:2a01:37:1000::53df:5f1c:0])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256
+	 client-signature RSA-PSS (4096 bits) client-digest SHA256)
+	(Client CN "*.hostsharing.net", Issuer "RapidSSL TLS RSA CA G1" (verified OK))
+	by bmailout1.hostsharing.net (Postfix) with ESMTPS id 55FE22C0666B;
+	Mon, 23 Jun 2025 20:00:35 +0200 (CEST)
+Received: by h08.hostsharing.net (Postfix, from userid 100393)
+	id 50A523B45B8; Mon, 23 Jun 2025 20:00:35 +0200 (CEST)
+Date: Mon, 23 Jun 2025 20:00:35 +0200
+From: Lukas Wunner <lukas@wunner.de>
+To: Hongbo Yao <andy.xu@hj-micro.com>
+Cc: bhelgaas@google.com, linux-pci@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	peter.du@hj-micro.com, jemma.zhang@hj-micro.com
+Subject: Re: [RFC PATCH] PCI: pciehp: Replace fixed delay with polling for
+ slot power-off
+Message-ID: <aFmWQ4atT8roSr6I@wunner.de>
+References: <20250619093228.283171-1-andy.xu@hj-micro.com>
+ <aFP598Yyl0el1uKh@wunner.de>
+ <b95a60f8-0e1d-4c81-8d5a-e2ea7d083780@hj-micro.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -59,28 +57,18 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250623063033.76808-2-henry.hj@antgroup.com>
+In-Reply-To: <b95a60f8-0e1d-4c81-8d5a-e2ea7d083780@hj-micro.com>
 
-Hello,
+On Fri, Jun 20, 2025 at 01:54:05PM +0800, Hongbo Yao wrote:
+> The affected hardware configuration:
+>  - Host system: Arm Neoverse N2 based server
+>  - Multi-host OCP card: Mellanox Technologies MT2910 Family [ConnectX-7]
 
-On Mon, Jun 23, 2025 at 02:30:33PM +0800, Henry Huang wrote:
-> For some BPF-schedulers, they should do something when
-> task is doing migration, such as updating per-cpu map.
-> If SCX_OPS_TRACK_MIGRATION is set, runnable/quiescent
-> would be called whether task is doing migration or not.
+Thanks for providing context for this patch submission.
+When respinning, please make sure to include the information above
+(as well as all the information in your e-mail) in the commit message.
 
-It's rather odd to invoke runnable/quiescent on these transitions as the
-runnable state isn't actually changing and the events end up triggering for
-all the migration operations that SCX does internally.
+Thanks,
 
-In the head message (BTW, if it's just a single patch, it'd be better to
-include all the context in the patch description), you said that this is
-needed to udpate percpu data structures when tasks migrate. Wouldn't you be
-able to do that by tracking whether the current CPU is different from the
-previous one from ops.running()?
-
-Thanks.
-
--- 
-tejun
+Lukas
 
