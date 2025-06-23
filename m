@@ -1,123 +1,93 @@
-Return-Path: <linux-kernel+bounces-697376-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-697377-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9E978AE335D
-	for <lists+linux-kernel@lfdr.de>; Mon, 23 Jun 2025 03:41:31 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A86F6AE335F
+	for <lists+linux-kernel@lfdr.de>; Mon, 23 Jun 2025 03:42:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 508EF1890A22
-	for <lists+linux-kernel@lfdr.de>; Mon, 23 Jun 2025 01:41:45 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4825616E890
+	for <lists+linux-kernel@lfdr.de>; Mon, 23 Jun 2025 01:42:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D26163C463;
-	Mon, 23 Jun 2025 01:41:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0F38628691;
+	Mon, 23 Jun 2025 01:42:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="jU/eD3/c"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="MyDlJKPo"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 20B743594E;
-	Mon, 23 Jun 2025 01:41:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C165D2CCC1
+	for <linux-kernel@vger.kernel.org>; Mon, 23 Jun 2025 01:42:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750642873; cv=none; b=LQgMXv8jU3vv5nJ7L2RK308KGLKSKGoQKowuPFOGNYRV05ea/pA7pXQyu+8Q2bLCoBbzICteJTl/kTIzJYYP0nTbzexy1pLnScQOZC2iralCrItW/3+Ds8RPr6fcf8V1/aCBHNWE16C/fjmT2Euo5907VrU7sR+hwmm70i4RZRM=
+	t=1750642926; cv=none; b=lMjBP24/sNEJx3zE6l9w+Zqn4yS7BExeBdBZ2hy7PFC5i+rOg1OEDNszEIGqi/KlC4lOUAsNjmHLPrHkYcCqNVL8VgvumoumV4gltFfViq3fVOatqaIIgQmIAbek0yKxG48N1E2gdCQ5lGEMFQ1pS587QFv4f5enqjMu+qJRUXA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750642873; c=relaxed/simple;
-	bh=GwUwxWdMp0XZ+wpJpAi6zlmRSeGSCHcbjbf16KjNBNE=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=auTA4TOBXTkZOy0ur21vwV2UKLI3vmZUCT+t+DbQ+6uS7S0mbmsdWYL0GYzXwGnxDJqr+ou40LoqYEHA8oxan28HUEWkawy4DIvhlAUR63twVWSbtAL0wZCGm3RTtwVkuWmjJPVdIyU6xGTTM8CpTl57pQzJkC2xvY7GL41vx2o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=jU/eD3/c; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPS id B9781C4CEF1;
-	Mon, 23 Jun 2025 01:41:12 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1750642872;
-	bh=GwUwxWdMp0XZ+wpJpAi6zlmRSeGSCHcbjbf16KjNBNE=;
-	h=From:Date:Subject:References:In-Reply-To:To:Cc:Reply-To:From;
-	b=jU/eD3/cUIQlnwfl7erFLn43vsy7aIdRMjlaKq2XYLgSa08Et+bcgYq7CM+siiln7
-	 4XBHJ8X/yQghMW6PkHlkaIoW178oHbQ0gYW1LP1BK0kdWDbmnfGlsJlrMyd1o/GPhJ
-	 mi90c2lbrGxzNsIRDZ298uftAUDb2vsmwr1wiDJ5lbqpB9ODn7tw7Z3nzDfiwMyTEy
-	 z9uDm7u9Bb/bjhjpchxNg01OmGkbtL8IDEUfxWamKgvNq3ALxBs9uzsHipi11MjWYa
-	 b+FXHpu9xFggh/eiaREN7F9M6XC+0e6RNRsglEXOHSeU4X0SEHyUpaYPhqVtsXiR4l
-	 Us3bhpTDelC0Q==
-Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AD028C7EE2E;
-	Mon, 23 Jun 2025 01:41:12 +0000 (UTC)
-From: Abhinav Saxena via B4 Relay <devnull+xandfury.gmail.com@kernel.org>
-Date: Sun, 22 Jun 2025 19:41:08 -0600
-Subject: [PATCH 2/2] selinux: add capability checks for TIOCSTI ioctl
+	s=arc-20240116; t=1750642926; c=relaxed/simple;
+	bh=tZ6ACI6+qkNKJDG4TzvggulCC/YlI2a5QfoP3IGsyo4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=hpsJKI3wNARsirb3Mg7Zd6oOA2bF2pUtHmxmRuhcAtQatyA1M1tQZtQnrwq4vbLXAiXAZMqys0otyoWG4+cI9a/jOT03TCXXhWbg6hADQACP3WXAYeUw4wWjja9LGvXTX8zL8ry8/9GoysqGklk8bkACTAmDRvmLQ3vnT/KXeWo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=MyDlJKPo; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1750642923;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=RppXmlqXYtwn2IaAFW7C4LW7Gma4dq2BWE+LoO6fA+c=;
+	b=MyDlJKPo1NLF5NPML/2webfZyMfPtFC9tH9nsl1nvnyjnuAnyJjRUsSHnFL9ZYlk2AjNmN
+	+M/hMC1p83ZJPAkqocm4+CbhID4liGvkq4xXEpCiVTEBEnDYr3JJE0trWoj87T31OyHcGr
+	pnQKEyN2U9cSg180Xq5Odnz+c1bAWuU=
+Received: from mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-245-dTIQymJAPtKYuuZPn-qi2Q-1; Sun,
+ 22 Jun 2025 21:42:02 -0400
+X-MC-Unique: dTIQymJAPtKYuuZPn-qi2Q-1
+X-Mimecast-MFC-AGG-ID: dTIQymJAPtKYuuZPn-qi2Q_1750642921
+Received: from mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.12])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 611DF19560BA;
+	Mon, 23 Jun 2025 01:42:01 +0000 (UTC)
+Received: from fedora (unknown [10.72.116.88])
+	by mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id B2A9619560AF;
+	Mon, 23 Jun 2025 01:41:58 +0000 (UTC)
+Date: Mon, 23 Jun 2025 09:41:53 +0800
+From: Ming Lei <ming.lei@redhat.com>
+To: Caleb Sander Mateos <csander@purestorage.com>
+Cc: linux-block@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] ublk: update UBLK_F_SUPPORT_ZERO_COPY comment in UAPI
+ header
+Message-ID: <aFiw4eaajxKEOVa7@fedora>
+References: <20250621171015.354932-1-csander@purestorage.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250622-toicsti-bug-v1-2-f374373b04b2@gmail.com>
-References: <20250622-toicsti-bug-v1-0-f374373b04b2@gmail.com>
-In-Reply-To: <20250622-toicsti-bug-v1-0-f374373b04b2@gmail.com>
-To: Shuah Khan <shuah@kernel.org>, Nathan Chancellor <nathan@kernel.org>, 
- Nick Desaulniers <nick.desaulniers+lkml@gmail.com>, 
- Bill Wendling <morbo@google.com>, Justin Stitt <justinstitt@google.com>, 
- Paul Moore <paul@paul-moore.com>, 
- Stephen Smalley <stephen.smalley.work@gmail.com>, 
- Ondrej Mosnacek <omosnace@redhat.com>
-Cc: linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org, 
- llvm@lists.linux.dev, selinux@vger.kernel.org, 
- Abhinav Saxena <xandfury@gmail.com>, kees@kernel.org, 
- linux-hardening@vger.kernel.org
-X-Mailer: b4 0.13.0
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1750642871; l=1144;
- i=xandfury@gmail.com; s=20250614; h=from:subject:message-id;
- bh=9xfet8eJ550FD+VM4prV+To9hyXpve5cMIcZSM+Qk2A=;
- b=SQIsAKbA8SKDUapSB53NnqV1+vuTG67yN3OYPZcmhoo4CkyOtvXIDJQMRp85oqR4lSeRdKT33
- 9NDAdlYpoPKANhU+NvIgbA2O4rLmWXT2mW9vzKhRmETKULSXGOPqSeK
-X-Developer-Key: i=xandfury@gmail.com; a=ed25519;
- pk=YN6w7WNet8skqvMWxhG5BlAmtd1SQmo8If6Mofh4k44=
-X-Endpoint-Received: by B4 Relay for xandfury@gmail.com/20250614 with
- auth_id=436
-X-Original-From: Abhinav Saxena <xandfury@gmail.com>
-Reply-To: xandfury@gmail.com
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250621171015.354932-1-csander@purestorage.com>
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.12
 
-From: Abhinav Saxena <xandfury@gmail.com>
+On Sat, Jun 21, 2025 at 11:10:14AM -0600, Caleb Sander Mateos wrote:
+> UBLK_F_SUPPORT_ZERO_COPY has a very old comment describing the initial
+> idea for how zero-copy would be implemented. The actual implementation
+> added in commit 1f6540e2aabb ("ublk: zc register/unregister bvec") uses
+> io_uring registered buffers rather than shared memory mapping.
+> Remove the inaccurate remarks about mapping ublk request memory into the
+> ublk server's address space and requiring 4K block size. Replace them
+> with a description of the current zero-copy mechanism.
+> 
+> Signed-off-by: Caleb Sander Mateos <csander@purestorage.com>
 
-The TIOCSTI ioctl currently only checks the current process's
-credentials, creating a TOCTOU vulnerability where an unprivileged
-process can open a TTY fd and pass it to a privileged process via
-SCM_RIGHTS.
+Reviewed-by: Ming Lei <ming.lei@redhat.com>
 
-Fix by requiring BOTH the file opener (file->f_cred) AND the current
-process to have CAP_SYS_ADMIN. This prevents privilege escalation
-while ensuring legitimate use cases continue to work.
-
-Link: https://github.com/KSPP/linux/issues/156
-
-Signed-off-by: Abhinav Saxena <xandfury@gmail.com>
----
- security/selinux/hooks.c | 6 ++++++
- 1 file changed, 6 insertions(+)
-
-diff --git a/security/selinux/hooks.c b/security/selinux/hooks.c
-index 595ceb314aeb..a628551873ab 100644
---- a/security/selinux/hooks.c
-+++ b/security/selinux/hooks.c
-@@ -3847,6 +3847,12 @@ static int selinux_file_ioctl(struct file *file, unsigned int cmd,
- 					    CAP_OPT_NONE, true);
- 		break;
- 
-+	case TIOCSTI:
-+		if (!file_ns_capable(file, &init_user_ns, CAP_SYS_ADMIN) ||
-+		    !capable(CAP_SYS_ADMIN))
-+			error = -EPERM;
-+		break;
-+
- 	case FIOCLEX:
- 	case FIONCLEX:
- 		if (!selinux_policycap_ioctl_skip_cloexec())
-
--- 
-2.43.0
-
+thanks,
+Ming
 
 
