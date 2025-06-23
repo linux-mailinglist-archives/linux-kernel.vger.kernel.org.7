@@ -1,90 +1,108 @@
-Return-Path: <linux-kernel+bounces-698487-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-698489-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id DE5F2AE4583
-	for <lists+linux-kernel@lfdr.de>; Mon, 23 Jun 2025 15:55:16 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id CD02DAE45B9
+	for <lists+linux-kernel@lfdr.de>; Mon, 23 Jun 2025 16:00:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 212201776CD
-	for <lists+linux-kernel@lfdr.de>; Mon, 23 Jun 2025 13:50:18 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2D80A3BF261
+	for <lists+linux-kernel@lfdr.de>; Mon, 23 Jun 2025 13:51:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5888A2581;
-	Mon, 23 Jun 2025 13:50:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F053125392C;
+	Mon, 23 Jun 2025 13:51:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="EhcjVy3U"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="lYilbP7G"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B62B5252910;
-	Mon, 23 Jun 2025 13:50:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 02FB72517AF;
+	Mon, 23 Jun 2025 13:51:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750686611; cv=none; b=MXl9c59Xt02JP7+zV5C7zu+gPlhk2sYICa/eJBHK7xvATiu7tu7Dt9KxaIXlJ3CZYlEnr3/Icujp1sn3painUwZnCBKihz3KJC/RApxz82nXRR9fZZElCnFnYX+j8D7ByLh0tpllOeueVYCeNslH5ufkB2Bt1YZ02pgmc5sWZFY=
+	t=1750686690; cv=none; b=Iq8giOfaERyVyRmt4onR5kyS7MrgIqNG2AF16N91/usOzqiAsNcm8SBuq77IhASygeT5Tlad2WlY8sqXyl1AWFkoYkjVOnAE/PJbqfOlybH8GORgxpGJ1sbg9OT5WHaFkSQO14anROSlo77OroIjYC1GgoGFIu2tqGy4oL9+jn8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750686611; c=relaxed/simple;
-	bh=wOX12vfAsyg5x5J9yrKvyS2XrSu5UlromoWB1H8zCw0=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=liLGPipOhp6X0Fr8he/SuH8tTOnXb07gsMOn/uV1qFc0dDKNmhnHxSePdGYIC+tgiXm9gkSmtXZVoPlL6DSJy++Yc0+EWUILZCc4NUOvV3qNEB7Yn7pnsU/fqPppi2GW2jTqzQDQQLLgPeJEZfN5zUPC5Y4JX+ASL4UNJxwoPFU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=EhcjVy3U; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5401FC4CEEA;
-	Mon, 23 Jun 2025 13:50:08 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1750686609;
-	bh=wOX12vfAsyg5x5J9yrKvyS2XrSu5UlromoWB1H8zCw0=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=EhcjVy3UzoTz85oSXtrE8rYR/2ZcQjBfEXc78FoQkTalgZ8irsX0jTxHKffxx60y2
-	 uBgMVpRp7Mzjt7A7hN1Jakh3pCtIxf9Rsx/UVdTRJl+HKJ+r5wVWBlnwoSNVLVTPQh
-	 To9NTYT9Mn3NHNDKSLIZnv+fyzfnNntkHcFQn92SQNrnd7iQwPlWbmvzPC69rzNbXt
-	 t+aoIsWK2reFVP953fT2ofSn+nprkQ3jDXoPkLnvLXCoR5iB/6bvoeg9hHzkIJwIsc
-	 CQosSekcocs5wjEJGFhLpUcxRRWldtGwzIKTBXnJfQQ1649qyQuAj4M65lT5JCP6K4
-	 Ig3Ml52aOMdaQ==
-From: Chuck Lever <cel@kernel.org>
-To: Christoph Hellwig <hch@infradead.org>,
-	Jeff Layton <jlayton@kernel.org>,
-	NeilBrown <neil@brown.name>,
-	Olga Kornievskaia <okorniev@redhat.com>,
-	Dai Ngo <Dai.Ngo@oracle.com>,
-	Tom Talpey <tom@talpey.com>,
-	Sergey Bashirov <sergeybashirov@gmail.com>
-Cc: Chuck Lever <chuck.lever@oracle.com>,
-	linux-nfs@vger.kernel.org,
+	s=arc-20240116; t=1750686690; c=relaxed/simple;
+	bh=bHjuyxyVFG9+AyPuWhaES1ZkDT6p8+wUC4f3Czki77Q=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=XUEXUE31b6pujoq160x1KMgwL3Zb8OEVc32tqrN8L8em68cx5IqlaB4ZCgv3z/zqy7qp05clbvZpX5HS6+TV2GeXW+1GjZbgXNnmbUisrI/rTkqeXGaMnYw9gFu5bjuJ8OrHJyYiwjFbq9Bf+xPR4OFV5Ggdvpz17EgLGDHjj9E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=lYilbP7G; arc=none smtp.client-ip=198.175.65.18
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1750686689; x=1782222689;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=bHjuyxyVFG9+AyPuWhaES1ZkDT6p8+wUC4f3Czki77Q=;
+  b=lYilbP7GOxn7gTE1jms0Y3FlFFjwxZOSzELl+fJUdr6KwlQiwqv6zY+c
+   hDTlZQSiU9PfT5ArUYiBAoCEoyoZWelAmMaPNAKtvrxS7/Wv+RfeE9gd1
+   f0V8SA4MTF/FnkQdgY95UqvTloK0A1HYM2aac2eVDFbTJvBRkcd2kEY4L
+   IxBuZ3GyQr6enWX7n7/wPRa0jp7FHs2WlPNF80l15gS/yZp+CPpvI1h9r
+   81HgI8E1d2Y2UvQ+O7IZ0Ro5FLu7VTmQqyogXhG3p56z1/tHUnYkhsmRs
+   Cg9AZT2e73bCl0FCM7fgx0607CzALH8V+mxdKNmjy1Kot0TK4FNU4RHja
+   w==;
+X-CSE-ConnectionGUID: cUSjIrQyR7+1NW++HXxszQ==
+X-CSE-MsgGUID: KTOF+NEtQYC+AE8F6bG7wg==
+X-IronPort-AV: E=McAfee;i="6800,10657,11473"; a="53026070"
+X-IronPort-AV: E=Sophos;i="6.16,258,1744095600"; 
+   d="scan'208";a="53026070"
+Received: from fmviesa006.fm.intel.com ([10.60.135.146])
+  by orvoesa110.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 23 Jun 2025 06:51:28 -0700
+X-CSE-ConnectionGUID: XtPNOqXPT5iWcczWtHU+sQ==
+X-CSE-MsgGUID: wDB0R4TWRWqjzgSR8T5uxw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.16,258,1744095600"; 
+   d="scan'208";a="151755623"
+Received: from johunt-mobl9.ger.corp.intel.com (HELO mdjait-mobl.intel.com) ([10.245.244.100])
+  by fmviesa006-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 23 Jun 2025 06:51:25 -0700
+From: Mehdi Djait <mehdi.djait@linux.intel.com>
+To: sakari.ailus@linux.intel.com,
+	laurent.pinchart@ideasonboard.com,
+	hverkuil@xs4all.nl
+Cc: tomi.valkeinen@ideasonboard.com,
+	jacopo.mondi@ideasonboard.com,
+	kieran.bingham@ideasonboard.com,
+	mchehab@kernel.org,
+	michael.riesch@collabora.com,
+	nicolas.dufresne@collabora.com,
+	linux-media@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
-	Konstantin Evtushenko <koevtushenko@yandex.com>
-Subject: Re: [PATCH v4 0/2] nfsd: Implement large extent array support in pNFS
-Date: Mon, 23 Jun 2025 09:50:04 -0400
-Message-ID: <175068659324.1133799.8695446940765961429.b4-ty@oracle.com>
+	Mehdi Djait <mehdi.djait@linux.intel.com>
+Subject: [PATCH v1 1/2] media: uapi: videodev2: Fix comment for 12-bit packed Bayer formats
+Date: Mon, 23 Jun 2025 15:51:15 +0200
+Message-ID: <20250623135116.93787-1-mehdi.djait@linux.intel.com>
 X-Mailer: git-send-email 2.49.0
-In-Reply-To: <20250621165409.147744-1-sergeybashirov@gmail.com>
-References: <20250621165409.147744-1-sergeybashirov@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
 
-From: Chuck Lever <chuck.lever@oracle.com>
+For 12-bit packed Bayer formats: every two consecutive samples are
+packed into three bytes. Fix the corresponding comment.
 
-On Sat, 21 Jun 2025 19:52:43 +0300, Sergey Bashirov wrote:
-> This series is the result of splitting the patch v3. Removing dprintk is
-> now done in a separate cleanup commit. No additional changes.
-> 
-> Prerequisite patch: [v3] nfsd: Use correct error code when decoding extents
-> 
-> 
+Signed-off-by: Mehdi Djait <mehdi.djait@linux.intel.com>
+---
+ include/uapi/linux/videodev2.h | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Applied to nfsd-testing, thanks!
-
-[1/2] nfsd: Drop dprintk in blocklayout xdr functions
-      commit: 46e337cf767d14baf8738393adb9816f7d7b7db0
-[2/2] nfsd: Implement large extent array support in pNFS
-      commit: 49ccb2bd38c6cb6d713faee9bb958a3abcf76e28
-
---
-Chuck Lever
+diff --git a/include/uapi/linux/videodev2.h b/include/uapi/linux/videodev2.h
+index 9e3b366d5fc7..421cc0d22ed7 100644
+--- a/include/uapi/linux/videodev2.h
++++ b/include/uapi/linux/videodev2.h
+@@ -726,7 +726,7 @@ struct v4l2_pix_format {
+ #define V4L2_PIX_FMT_SGBRG12 v4l2_fourcc('G', 'B', '1', '2') /* 12  GBGB.. RGRG.. */
+ #define V4L2_PIX_FMT_SGRBG12 v4l2_fourcc('B', 'A', '1', '2') /* 12  GRGR.. BGBG.. */
+ #define V4L2_PIX_FMT_SRGGB12 v4l2_fourcc('R', 'G', '1', '2') /* 12  RGRG.. GBGB.. */
+-	/* 12bit raw bayer packed, 6 bytes for every 4 pixels */
++	/* 12bit raw bayer packed, 3 bytes for every 2 pixels */
+ #define V4L2_PIX_FMT_SBGGR12P v4l2_fourcc('p', 'B', 'C', 'C')
+ #define V4L2_PIX_FMT_SGBRG12P v4l2_fourcc('p', 'G', 'C', 'C')
+ #define V4L2_PIX_FMT_SGRBG12P v4l2_fourcc('p', 'g', 'C', 'C')
+-- 
+2.49.0
 
 
