@@ -1,74 +1,74 @@
-Return-Path: <linux-kernel+bounces-697574-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-697577-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id AB988AE35EF
-	for <lists+linux-kernel@lfdr.de>; Mon, 23 Jun 2025 08:41:43 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 6BA86AE35F4
+	for <lists+linux-kernel@lfdr.de>; Mon, 23 Jun 2025 08:42:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D69593AF969
-	for <lists+linux-kernel@lfdr.de>; Mon, 23 Jun 2025 06:41:17 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B42EA3A1D6A
+	for <lists+linux-kernel@lfdr.de>; Mon, 23 Jun 2025 06:41:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8FBDB1E7648;
-	Mon, 23 Jun 2025 06:41:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 658561F150B;
+	Mon, 23 Jun 2025 06:41:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="mvpire8q"
-Received: from mx0b-00069f02.pphosted.com (mx0b-00069f02.pphosted.com [205.220.177.32])
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="F0jmll2U"
+Received: from mx0a-00069f02.pphosted.com (mx0a-00069f02.pphosted.com [205.220.165.32])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8256C1DFDAB;
-	Mon, 23 Jun 2025 06:41:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.177.32
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4B3B31E520D;
+	Mon, 23 Jun 2025 06:41:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.165.32
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750660891; cv=none; b=SFwAhZHf3kOqBKfhcsf4WAr6HhF/9qXK1KTg095iWZ9CgklBMUuI3e0fbstroGBpQu5Ju4teU4oRsKe6DKDOSj2q2gr2RP+5limANLlVXYAl0c1UerjigbN2juPRHVzxZAwLUylpXjQRjjm51P8YzSKN7I9C/sJ+wiDOlaInXNs=
+	t=1750660893; cv=none; b=PpGfj2bvMxjIsXvjA3lpU2CFYrBMNPMdYZK4CC0PI8h0j30xCWDUrN9kvxzFuRwz2HuTPnk8Ujw7WwpV2ayUyE/pRgPzK61q9Y6Ro5vDzL8wc46peH5bvtLg721HAcxYPFoMp3uMkPCNMAdp+96Y68xTVBeUwzw31oVdwV2jjV4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750660891; c=relaxed/simple;
-	bh=hqf53sChU4p2obNB+5lGs4Glo3hO2GltGF04zEjaMw8=;
+	s=arc-20240116; t=1750660893; c=relaxed/simple;
+	bh=Bh8zJoSzitJzgrrl2hvmxkah85zlAPrmB0CgiRoF9UM=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=ltNB1vlDhNVS5txWJ/LCNkT655BlissZNtzGY4/5KIMxbbXQonHopxEQR/LlihONue87u0TVvxDOK8T/Jj2LrlQNtjnzriS8i25mkyQtoU7w846AMdJgTvcZNObU1GovcC49wIQjpjZ1bW6q7vgeco/E54SkXZtXZB5b+oXVuag=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=mvpire8q; arc=none smtp.client-ip=205.220.177.32
+	 MIME-Version; b=iHjvmXTR6nt55gx2gQpWC4LLinXyUQuTVieD4pj9WF/mP1FuinvUCLGthHfM47k5eNQ0sqfP1h2QoEeSGt+h/M4p092T0M33SqHsqhmgFrkwJxJ/ZdykSgMAFwp28H7WrIQ0uI2VaLeIiJsoyw1tijT2Kh+gCt239nUqVWgkdOs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=F0jmll2U; arc=none smtp.client-ip=205.220.165.32
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oracle.com
-Received: from pps.filterd (m0246630.ppops.net [127.0.0.1])
-	by mx0b-00069f02.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 55N0RYBm014906;
+Received: from pps.filterd (m0246617.ppops.net [127.0.0.1])
+	by mx0b-00069f02.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 55N0SfFZ017235;
 	Mon, 23 Jun 2025 06:41:13 GMT
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=cc
 	:content-transfer-encoding:date:from:in-reply-to:message-id
-	:mime-version:references:subject:to; s=corp-2025-04-25; bh=6RhxZ
-	4NYWYnwNolnd/NRWxzQE99/+94N9JG71P7TUE0=; b=mvpire8qocfQxGZYV83O8
-	LEFoW+HP9PU2z0v951boOFJXoBz7EiYyhnZyqPfwx+5rqYTHwrDo/QOm0O5aRbvV
-	cm3b5Hxoe4AFiGdTVblNhhm4yaCPgrB21t9r4smSLZpVzfSKbyZPCnsK1g9HDV8c
-	JArcdrrJXHssHGSwaeZJ/liYc4uOVegTLIaOBg2JMFervDFY3d3Uwb3rwO8TYrqT
-	WSL4nDmmQWWgNufx3N4Jufjo/Y+nHeX1TGdhCpzkWFvSoNEsSn4Blg45E/qi28ng
-	rq9iIy6npQrPhYCEs7+A6cvevA1098SRCkR7r8eP4H9OoJ677VvIvIr51ujZ+Pgv
-	g==
+	:mime-version:references:subject:to; s=corp-2025-04-25; bh=YeAqG
+	FD/xlXxbKWQdmK2afim53mngK1HgVKCLss+cJE=; b=F0jmll2UlwZjKGWtK2e7Q
+	j0yuIPhG5FMD32loIVNYBbC6ozJ/OmiPCP9r4s3OIafIT7FtNwBbfcBY/QiHOKlY
+	Y8/Z3REKY3xTyzHPQbjAMRUKmnDoS9T3I7CIon5s5HEAS24NiSSnMTFm1p09qob9
+	U95nEIpawSCDUmO/lwkOrRIIrpRQ3wv5Cro6JQfwxe9PMpwxVAujvNeBuYkD7rhx
+	KtefKrRWsDbdfDxZL3R6i8vnHu6dof+tM3um50h//OUwfe0X06j0xhwEB+WoA2+p
+	OfUHmpmugFq58xw1iZE22Bntip6phqK4XgKs8cAs0pDyf0xmdno1e5LGVpSDGqNd
+	Q==
 Received: from phxpaimrmta01.imrmtpd1.prodappphxaev1.oraclevcn.com (phxpaimrmta01.appoci.oracle.com [138.1.114.2])
-	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 47egt18wjd-1
+	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 47ds8y20gk-1
 	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Mon, 23 Jun 2025 06:41:12 +0000 (GMT)
+	Mon, 23 Jun 2025 06:41:13 +0000 (GMT)
 Received: from pps.filterd (phxpaimrmta01.imrmtpd1.prodappphxaev1.oraclevcn.com [127.0.0.1])
-	by phxpaimrmta01.imrmtpd1.prodappphxaev1.oraclevcn.com (8.18.1.2/8.18.1.2) with ESMTP id 55N4xtJR030685;
+	by phxpaimrmta01.imrmtpd1.prodappphxaev1.oraclevcn.com (8.18.1.2/8.18.1.2) with ESMTP id 55N4kieW028823;
 	Mon, 23 Jun 2025 06:41:12 GMT
 Received: from pps.reinject (localhost [127.0.0.1])
-	by phxpaimrmta01.imrmtpd1.prodappphxaev1.oraclevcn.com (PPS) with ESMTPS id 47ehpnfduc-1
+	by phxpaimrmta01.imrmtpd1.prodappphxaev1.oraclevcn.com (PPS) with ESMTPS id 47ehpnfduq-1
 	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
 	Mon, 23 Jun 2025 06:41:12 +0000
 Received: from phxpaimrmta01.imrmtpd1.prodappphxaev1.oraclevcn.com (phxpaimrmta01.imrmtpd1.prodappphxaev1.oraclevcn.com [127.0.0.1])
-	by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 55N6fAjs006422;
-	Mon, 23 Jun 2025 06:41:11 GMT
+	by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 55N6fAju006422;
+	Mon, 23 Jun 2025 06:41:12 GMT
 Received: from ca-dev110.us.oracle.com (ca-dev110.us.oracle.com [10.129.136.45])
-	by phxpaimrmta01.imrmtpd1.prodappphxaev1.oraclevcn.com (PPS) with ESMTP id 47ehpnfdt5-2;
-	Mon, 23 Jun 2025 06:41:11 +0000
+	by phxpaimrmta01.imrmtpd1.prodappphxaev1.oraclevcn.com (PPS) with ESMTP id 47ehpnfdt5-3;
+	Mon, 23 Jun 2025 06:41:12 +0000
 From: Alok Tiwari <alok.a.tiwari@oracle.com>
 To: linux-nvme@lists.infradead.org, kbusch@kernel.org, axboe@kernel.dk,
         hch@lst.de, sagi@grimberg.me, kch@nvidia.com, nilay@linux.ibm.com,
         corbet@lwn.net
 Cc: alok.a.tiwari@oracle.com, linux-doc@vger.kernel.org,
         linux-kernel@vger.kernel.org
-Subject: [PATCH 2/5] nvme: Fix incorrect variable in io cqes error message
-Date: Sun, 22 Jun 2025 23:40:20 -0700
-Message-ID: <20250623064036.4187788-3-alok.a.tiwari@oracle.com>
+Subject: [PATCH 3/5] nvmet: Remove redundant assignment of error code in nvmet_ns_enable()
+Date: Sun, 22 Jun 2025 23:40:21 -0700
+Message-ID: <20250623064036.4187788-4-alok.a.tiwari@oracle.com>
 X-Mailer: git-send-email 2.46.0
 In-Reply-To: <20250623064036.4187788-2-alok.a.tiwari@oracle.com>
 References: <20250623064036.4187788-2-alok.a.tiwari@oracle.com>
@@ -86,34 +86,36 @@ X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 mlxscore=0 spamsc
  malwarescore=0 phishscore=0 suspectscore=0 adultscore=0 mlxlogscore=999
  classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2505160000
  definitions=main-2506230038
-X-Proofpoint-GUID: 5JJfxtA_z4WTFMur-lkmZnxXOu7cA198
-X-Proofpoint-ORIG-GUID: 5JJfxtA_z4WTFMur-lkmZnxXOu7cA198
-X-Authority-Analysis: v=2.4 cv=cpebk04i c=1 sm=1 tr=0 ts=6858f709 cx=c_pps a=XiAAW1AwiKB2Y8Wsi+sD2Q==:117 a=XiAAW1AwiKB2Y8Wsi+sD2Q==:17 a=6IFa9wvqVegA:10 a=yPCof4ZbAAAA:8 a=SRTLixNVdz0Y03tMcBAA:9
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNjIzMDAzOCBTYWx0ZWRfX9r2QIbbfzSIE tNa1wAJozabi5VEgMP0o3GWt54ulo6PJ92UmZmyFcjMqtne9K0Dr/W3K7F7/0ACLJimedeKcW+W V5FzUDQR1LEP7QyeCeqgi7qd3RVC0vrZdVwWtTPDSL5lgX9Y6Xt7Pcta0dtihOk7geEO1XQ2UzU
- x95LqDgnujCHOd8r5fBa+RGalBhCRKWnn1e3/jf9zHwECBA6OF1emKiJLnh174DcAlIlhg79jpX mM64ro5tpXxBRWOjd919B2zpgYW4ji35/OKcLBT7sfJ3bnEzHAPdwqwRz3n2RMccUExoRJWAOyV CCNQBVo3dV2bqyoAg9C2CJ0JLSlb6WzRB+OZ0ar3pwxx/ivOYvmEtGwueDLVYhUTVAbahVB3Djf
- 0RyfpQl5cPDIh9mBem5HbPZz6d0yxhIDd465qIR/1Lj7WMZbU/lhWVsstAudVk0B2Hv5BvqV
+X-Proofpoint-ORIG-GUID: H2xUzxREbbDoLv2D2P7rMubS6q-x5DV_
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNjIzMDAzOCBTYWx0ZWRfXz5dJ+iFtdUsQ SuZU4GAsiKOiLnzjVarCnsG3+dvxdUisoLQUxt+OjLdV+ol4VmXIPq6VaM2pbFufiUjIpxj+fg7 mpmGbD3X35NAjIwnURuUmjFGD/clEql5kBWKe/AkWXhV9f9NFPasdYSl3TpI9OJnp17cjoifnfA
+ TIsu3TAwJSvMfuv5VP0v4Rs1j13j5pH1G6XXl8hrk0ZxfvJyZrtva1AfqCKYpPwC/UnUuI6tl+y o9Li/Ed9a0BaAr6+dfTE/Bl/zGWZmuEHBI9opvgrP7GeXNNJzbiU7XPL1FBIU4xgaxknS07pfoJ 561FKGeuFs1ccTZoa7agLmUvXNQ5TlFLEfXt1M/SgwEx7q8E6ZBWDwKPRvPTOCdljr+h6iwm5Jj
+ 4FuxC2n68lrMPJPdQ+hlYnIA5PJd/tZJwTGQmVsOPMKRmva0wVFP5ShdACoaSF3zfNyJMInm
+X-Proofpoint-GUID: H2xUzxREbbDoLv2D2P7rMubS6q-x5DV_
+X-Authority-Analysis: v=2.4 cv=PqSTbxM3 c=1 sm=1 tr=0 ts=6858f709 cx=c_pps a=XiAAW1AwiKB2Y8Wsi+sD2Q==:117 a=XiAAW1AwiKB2Y8Wsi+sD2Q==:17 a=6IFa9wvqVegA:10 a=yPCof4ZbAAAA:8 a=hQNXMjqaqMWDSZxnGksA:9
 
-Corrected the error log to print ctrl->io_cqes instead of
-incorrectly using ctrl->io_sqes for the io cqes size check.
+removing the unnecessary ret = -EMFILE; assignment since it is
+immediately overwritten by the result of nvmet_bdev_ns_enable()
+The initial value(-EMFILE) is redundant because it has no effect
+on the code logic or outcome.
 
 Signed-off-by: Alok Tiwari <alok.a.tiwari@oracle.com>
 ---
- drivers/nvme/target/pci-epf.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/nvme/target/core.c | 2 --
+ 1 file changed, 2 deletions(-)
 
-diff --git a/drivers/nvme/target/pci-epf.c b/drivers/nvme/target/pci-epf.c
-index a4295a5b8d280..44288d8f5aa11 100644
---- a/drivers/nvme/target/pci-epf.c
-+++ b/drivers/nvme/target/pci-epf.c
-@@ -1860,7 +1860,7 @@ static int nvmet_pci_epf_enable_ctrl(struct nvmet_pci_epf_ctrl *ctrl)
- 	ctrl->io_cqes = 1UL << nvmet_cc_iocqes(ctrl->cc);
- 	if (ctrl->io_cqes < sizeof(struct nvme_completion)) {
- 		dev_err(ctrl->dev, "Unsupported I/O CQES %zu (need %zu)\n",
--			ctrl->io_sqes, sizeof(struct nvme_completion));
-+			ctrl->io_cqes, sizeof(struct nvme_completion));
- 		goto err;
- 	}
+diff --git a/drivers/nvme/target/core.c b/drivers/nvme/target/core.c
+index 175c5b6d4dd58..884286f90688a 100644
+--- a/drivers/nvme/target/core.c
++++ b/drivers/nvme/target/core.c
+@@ -581,8 +581,6 @@ int nvmet_ns_enable(struct nvmet_ns *ns)
+ 	if (ns->enabled)
+ 		goto out_unlock;
  
+-	ret = -EMFILE;
+-
+ 	ret = nvmet_bdev_ns_enable(ns);
+ 	if (ret == -ENOTBLK)
+ 		ret = nvmet_file_ns_enable(ns);
 -- 
 2.46.0
 
