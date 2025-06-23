@@ -1,102 +1,136 @@
-Return-Path: <linux-kernel+bounces-697610-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-697595-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 046BAAE3666
-	for <lists+linux-kernel@lfdr.de>; Mon, 23 Jun 2025 08:59:22 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 67A9AAE3634
+	for <lists+linux-kernel@lfdr.de>; Mon, 23 Jun 2025 08:50:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 288C91886CE8
-	for <lists+linux-kernel@lfdr.de>; Mon, 23 Jun 2025 06:59:20 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6DEEF3B2250
+	for <lists+linux-kernel@lfdr.de>; Mon, 23 Jun 2025 06:50:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 875511EDA14;
-	Mon, 23 Jun 2025 06:58:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2ACEC1EDA02;
+	Mon, 23 Jun 2025 06:50:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (4096-bit key) header.d=prolan.hu header.i=@prolan.hu header.b="imtNwEFH"
-Received: from fw2.prolan.hu (fw2.prolan.hu [193.68.50.107])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="GlK8D3GF"
+Received: from mail-pl1-f181.google.com (mail-pl1-f181.google.com [209.85.214.181])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CB76518E1F;
-	Mon, 23 Jun 2025 06:58:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.68.50.107
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1C91545948;
+	Mon, 23 Jun 2025 06:50:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750661937; cv=none; b=KDhWUQWGP+nMERmog1QMtH8zmSR7lbSJuJxmvbDIAAHHtFGwPz5RGQLddPgcPj59vMcA3q4ov5Pet4J7zhoyknU3//t02gNed+MyJ330SjvhHylU3stkbsMKQSOFOYiagy/mrbjjFoHFD0NmvW6En9PezQnAwGZzT2Bq2bTneWM=
+	t=1750661419; cv=none; b=QAxg/kzs2mZidgMGsPADpOhGn38kVmxpdpqFGS/feEeq8+7Ic+XF/cBXqEX6PzfTrukEdyZFrP7gInF61177Emu40C+S7P1b7FZ/gzCy0m1lBZB1hRb1oUuw3m/R2cEKpYvViSLN6GP4bwGwQ9+iLmjDBB+75SrU1uQirpcsxAQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750661937; c=relaxed/simple;
-	bh=AscXhx0QcJCjy/07ldN8aACQDcs08qv16ppqJ9DFbMQ=;
-	h=Message-ID:Date:MIME-Version:From:Subject:To:CC:References:
-	 In-Reply-To:Content-Type; b=lBXo8bO8zYN1ZMrsTOIs3/TVDxKFJ6N8s6Bjs2AbKbYU17Zcs9Hxz3fNcvDrZg59AoWSOOsL7ICCXw0KWXPzI0fT3sX9hdYds7aOzgw08bHVdXfYpLjKxnttJU9LNvgzBxDppEcsXQCv6OpMfktR8LOFjqcUOhQTR4LsxHlw4EY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=prolan.hu; spf=pass smtp.mailfrom=prolan.hu; dkim=pass (4096-bit key) header.d=prolan.hu header.i=@prolan.hu header.b=imtNwEFH; arc=none smtp.client-ip=193.68.50.107
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=prolan.hu
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=prolan.hu
-Received: from proxmox-mailgw.intranet.prolan.hu (localhost.localdomain [127.0.0.1])
-	by proxmox-mailgw.intranet.prolan.hu (Proxmox) with ESMTP id 73421A0119;
-	Mon, 23 Jun 2025 08:49:59 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=prolan.hu; h=cc
-	:cc:content-transfer-encoding:content-type:content-type:date
-	:from:from:in-reply-to:message-id:mime-version:references
-	:reply-to:subject:subject:to:to; s=mail; bh=YKFIq1SeVmM/nBqAQ3Bj
-	uEtsh4GpEB7ByrAjwhyB/2E=; b=imtNwEFHZ1G6j/wXqaZupldLTlUOBRXeZcu9
-	dKO87/+hT9P0E8cDlJbdqiJA1S084NfwPEAmp51c+m5EcHRDQNccQ070em3DAqz4
-	mDci5IxTlmfQmdP2V/FxdJTh4+2WFYCAEgpeYnNpJsky327SbuI3JfWq1g908ctD
-	C4kchLcNUWPuY/BhxRUWdCM5t2TkkGAbjv8rOYmJJT6zfj6pCKxG4j5jdFfzqJkF
-	+u/kq6+jUwG+AjrGb/RGB/cSgKXtk4vp5q4YbMz1Q1TFrAYOKqiZdSCCfOVV1WH2
-	rvWTiH/+mx/RlFIyvHBUohT6qyMbeMffVunIedKI+GOU7U2gAGdh60hFLVJQaSDm
-	8x+5WiN3uEkLWtJd+Fg56iycMzwEChLRLriTqwLrn8rWsHA9Rj6hn5j3UnyjzRJo
-	v2rg9mqJfFZ1jEV+dpCHhqgWzg+fsaAHFz/+qOuOIh/duflf7Wo6mJ04wQLimZGg
-	R4vnafT1UZMAyC5NtEogpEiZbOfa5G7LHWvz3S8PPRM2IgmdU5ZYyzVxe7eFKT3B
-	dSeGLkyxFh8Nf9dXQz7prL2WKI2n9RJuICACV6MHv4U+ImbhWz2JNi4svKvhBh6Q
-	PE6qUlCn+nLtFQ+uW/Fhv/B4aXQbYVvIAksX6mKhyZIBMorFlmAPTwXzuRgpCh9f
-	HuYzF3k=
-Message-ID: <c6500082-565a-4b00-ae27-4d943586e58b@prolan.hu>
-Date: Mon, 23 Jun 2025 08:49:58 +0200
+	s=arc-20240116; t=1750661419; c=relaxed/simple;
+	bh=gUcXvmQE/4OGkPu+1pWmspRNi25l7Kd4ITJO6J0F8GA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=p2DIq7u59DG/rwfvTVqwU2Uq6gh7bFqEuKT27QkeR6bMw7RhaylvEMvMuqv+sG+cOd3n0w7nQYrLMyRZ20tbPBp2nyU1vL8NoFptR14fpEk1QyMPrpRNRwXNJOM9yk393ljyhsi2Zv165AZeKvc0Kkre+rtgtFjV+vAKr/MlHyk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=GlK8D3GF; arc=none smtp.client-ip=209.85.214.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f181.google.com with SMTP id d9443c01a7336-23649faf69fso37294875ad.0;
+        Sun, 22 Jun 2025 23:50:17 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1750661417; x=1751266217; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=6pa7zdu2J08RltO7Fc5iu0znoovQ/LLzNNFFw4lTRcE=;
+        b=GlK8D3GFcNXZDm9E3k4FYOSrVnN5AodXcozFb20PrZ7nfTMFRoVgkoD0pkWZKa/IzW
+         hig7tpryYAmj3dmPJj/Xq6UEYpD8qsFeCBot+a1BpvtYlQ5nyYQ2O0aPszQwFBK0JZaY
+         Czju5YNxN63Eac/lzwJB5CXe9NJvrwfGfWQ5ibhM9Zag30GjdGrqfqZD5FLLPZidLT12
+         hSi4hhkpqFm/sCpcoKlyOE6NiYzPBP+lH1Yakhx3KQInj2S2mGneWbGaIBoDewEMJW6g
+         crH0H09CNeyQyoH2tZ9Tv4MhWBbPZOE3CgZPQwMim+t/a9gehmAcJahsgZA7tRTuaB/1
+         uvQA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1750661417; x=1751266217;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=6pa7zdu2J08RltO7Fc5iu0znoovQ/LLzNNFFw4lTRcE=;
+        b=n1otBr/lKcgM6jlQCN94mx265+Q3/zgGG6uRIfMVNvSsK1b/CcJsbPmSg3ggKPN6Xr
+         rjK6KO+7yxL7DzfJk+Edby0gE/BnqqGmNWbyxdvFIMz4rCEJmrW3dLA8ZMmjVDeEUZyO
+         zO2/ZGPWWn1GYtOlWbiQh+oOxosq4VKxucHOWcuDhgm9vfmQWkdChmMhBxpJ4H3FzP08
+         vmEuTWbGIYUuIAAkk6KdwLYGO61xu677wiC0gQkeroXULs+L61d/6uisYyidsrhfBOVE
+         mK3VDN3W18mhQUGpqjR67+zP8F60kbdb2X243mpxvzEUAnJxqA70xrRnUTv/snaZnKeO
+         hxFg==
+X-Forwarded-Encrypted: i=1; AJvYcCVzT0EICf6d1r6hzt3vDyCcTOyyPDEjNhR6A5WHOJ3zabpELdRPDKjDNzPMjKBQeaCqRUqcRXlOgaat@vger.kernel.org, AJvYcCWaNf9NBKDZVBEHlX/vG6NGf6EwOitpzQhe0eEjSWzOrU0Yl8md8STxbS8/hQASZyLJvEc/8oHH@vger.kernel.org, AJvYcCXo/b0FKcTBjK04A8CZxJd8YesM8c/okEU5Fud6xLy50pWY4hRSarmUJJf9ugGAqeUnSdJM6qMN+njbLV7P@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw0pcj76bZ8nrNJPwvQtA2bExfWubf112ZTLenCiGnQCnQaKLoj
+	pJxbVfrC9yTj8cKOVYg183dZtDdZVVwL2oK1yjgYTqdstJ5+a1zwifo9
+X-Gm-Gg: ASbGncuzEruJsS82cxSd5+DXltY2ff+vW6DH4q0DSDTdA/h4dvwEghxuWVjbC9hDYKf
+	lVSs4fAZn3oU8O7Nj6W0EwudNjayXYTHz8vVlt7NCk/CRT2wCYmE+iskmyK2iHnnujuhKsDWUHo
+	49lcZCP+d+ghsuumFJLbGEelvtRxShk/x/wDjPZXtqlJVe4ceghzV5D35kvyNwsi2PIK8hFeCjM
+	ix2jeIRgEOCNOB9MSuWJEUoA5+CtCYmTjLTrOe5OgnuySDxWbO1jS4Apf12SXshWsxuFt9k9vK4
+	KS+L9IB39CwDeE9p+nxF8AdjeJzUblBd7eJEhV5zo1MWe9/+6Tu6kwAlHUxhgg==
+X-Google-Smtp-Source: AGHT+IHpm5rL2B+2lf3y7D/IeDkqmgR4hxP+AbO8ivmJka/IKdtwO1eRP/D1h74sTcLcDtCuBLdozA==
+X-Received: by 2002:a17:902:ce85:b0:234:aa98:7d41 with SMTP id d9443c01a7336-237d9ab0977mr168116245ad.42.1750661417171;
+        Sun, 22 Jun 2025 23:50:17 -0700 (PDT)
+Received: from localhost ([2001:19f0:ac00:4eb8:5400:5ff:fe30:7df3])
+        by smtp.gmail.com with UTF8SMTPSA id d9443c01a7336-237f7f87676sm17710635ad.122.2025.06.22.23.50.16
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 22 Jun 2025 23:50:16 -0700 (PDT)
+Date: Mon, 23 Jun 2025 14:50:08 +0800
+From: Inochi Amaoto <inochiama@gmail.com>
+To: Maud Spierings <maud_spierings@murena.io>, inochiama@gmail.com
+Cc: alex@ghiti.fr, alexander.sverdlin@gmail.com, andrew+netdev@lunn.ch, 
+	aou@eecs.berkeley.edu, conor+dt@kernel.org, conor.dooley@microchip.com, 
+	davem@davemloft.net, devicetree@vger.kernel.org, dlan@gentoo.org, edumazet@google.com, 
+	huangze@whut.edu.cn, krzk+dt@kernel.org, kuba@kernel.org, 
+	linux-kernel@vger.kernel.org, linux-riscv@lists.infradead.org, looong.bin@gmail.com, 
+	netdev@vger.kernel.org, pabeni@redhat.com, palmer@dabbelt.com, paul.walmsley@sifive.com, 
+	richardcochran@gmail.com, robh@kernel.org, sophgo@lists.linux.dev, 
+	thomas.bonnefille@bootlin.com, unicorn_wang@outlook.com, yu.yuan@sjtu.edu.cn
+Subject: Re: [PATCH net-next RFC v2 1/4] dt-bindings: net: Add support for
+ Sophgo CV1800 dwmac
+Message-ID: <2rqpe3f54peuuslzu2mtbqt2ee7atoa6j6xiudxrway32vzmui@2apefxcrdhpi>
+References: <20250623003049.574821-2-inochiama@gmail.com>
+ <4cb09d05-d1f2-4d34-b3f7-be523b900a9e@murena.io>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-From: =?UTF-8?B?Q3PDs2vDoXMgQmVuY2U=?= <csokas.bence@prolan.hu>
-Subject: Re: [PATCH v10] dma-engine: sun4i: Simplify error handling in probe()
-To: Vinod Koul <vkoul@kernel.org>
-CC: <dmaengine@vger.kernel.org>, Chen-Yu Tsai <wens@kernel.org>, "Jernej
- Skrabec" <jernej.skrabec@gmail.com>, Chen-Yu Tsai <wens@csie.org>, "Julian
- Calaby" <julian.calaby@gmail.com>, Samuel Holland <samuel@sholland.org>,
-	<linux-kernel@vger.kernel.org>, <linux-sunxi@lists.linux.dev>,
-	<linux-arm-kernel@lists.infradead.org>
-References: <20250610075315.397810-1-csokas.bence@prolan.hu>
-Content-Language: en-US
-In-Reply-To: <20250610075315.397810-1-csokas.bence@prolan.hu>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: sinope.intranet.prolan.hu (10.254.0.237) To
- ATLAS.intranet.prolan.hu (10.254.0.229)
-X-EsetResult: clean, is OK
-X-EsetId: 37303A296767155D6D7366
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <4cb09d05-d1f2-4d34-b3f7-be523b900a9e@murena.io>
 
-
-On 2025. 06. 10. 9:53, Bence Csókás wrote:
-> Clean up error handling by using devm functions and dev_err_probe(). This
-> should make it easier to add new code, as we can eliminate the "goto
-> ladder" in sun4i_dma_probe().
+On Mon, Jun 23, 2025 at 08:40:35AM +0200, Maud Spierings wrote:
+> Inochi sent:> The GMAC IP on CV1800 series SoC is a standard Synopsys
+> > DesignWare MAC (version 3.70a).
+> > 
+> > Add necessary compatible string for this device.
+> > 
+> > Signed-off-by: Inochi Amaoto <inochiama@gmail.com>
+> > Acked-by: Conor Dooley <conor.dooley@microchip.com>
+> > ---
+> >  .../bindings/net/sophgo,cv1800b-dwmac.yaml    | 113 ++++++++++++++++++
+> >  1 file changed, 113 insertions(+)
+> >  create mode 100644 Documentation/devicetree/bindings/net/sophgo,cv1800b-dwmac.yaml
+> > 
+> > diff --git a/Documentation/devicetree/bindings/net/sophgo,cv1800b-dwmac.yaml b/Documentation/devicetree/bindings/net/sophgo,cv1800b-dwmac.yaml
+> > new file mode 100644
+> > index 000000000000..2821cca26487
+> > --- /dev/null
+> > +++ b/Documentation/devicetree/bindings/net/sophgo,cv1800b-dwmac.yaml
+> > @@ -0,0 +1,113 @@
+> > +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+> > +%YAML 1.2
+> > +---
+> > +$id: http://devicetree.org/schemas/net/sophgo,cv1800b-dwmac.yaml#
+> > +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> > +
+> > +title: Sophgo SG2044 DWMAC glue layer
 > 
-> Suggested-by: Chen-Yu Tsai <wens@kernel.org>
-> Reviewed-by: Jernej Skrabec <jernej.skrabec@gmail.com>
-> Acked-by: Chen-Yu Tsai <wens@csie.org>
-> Reviewed-by: Julian Calaby <julian.calaby@gmail.com>
-> Signed-off-by: Bence Csókás <csokas.bence@prolan.hu>
-> ---
+> This looks like a copy paste error
+> 
+> kind regards,
+> Maud
+> 
 
-Vinod, is there a problem with this patch? I'd love to hear your 
-thoughts, because it has been practically unchanged since March, and 
-only minor changes since the first submission last December. I can keep 
-rebasing it ad nauseum every time you push to dma/next, but I think we 
-both have a better use of our time. So, if you see anything that should 
-prevent this from being merged, please tell me.
+Yeah, I will fix this in the next version.
 
-Thanks,
-Bence
-
+Regards,
+Inochi
 
