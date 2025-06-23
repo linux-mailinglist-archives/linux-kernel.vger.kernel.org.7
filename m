@@ -1,116 +1,135 @@
-Return-Path: <linux-kernel+bounces-698840-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-698831-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D5302AE4AAF
-	for <lists+linux-kernel@lfdr.de>; Mon, 23 Jun 2025 18:24:57 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id D1DDDAE4ADE
+	for <lists+linux-kernel@lfdr.de>; Mon, 23 Jun 2025 18:29:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1577E7A4278
-	for <lists+linux-kernel@lfdr.de>; Mon, 23 Jun 2025 16:22:30 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 010671B6541C
+	for <lists+linux-kernel@lfdr.de>; Mon, 23 Jun 2025 16:22:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 32AF12D2380;
-	Mon, 23 Jun 2025 16:16:49 +0000 (UTC)
-Received: from mail-m155101.qiye.163.com (mail-m155101.qiye.163.com [101.71.155.101])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6A8642C1593;
+	Mon, 23 Jun 2025 16:11:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="VXucbGkE"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6A79D2BD03C;
-	Mon, 23 Jun 2025 16:16:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=101.71.155.101
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C0E992BD030;
+	Mon, 23 Jun 2025 16:11:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750695408; cv=none; b=YX3QaztNQNkJV+MK6D4xHBqNFtgJ2w4s1UzcAYXuLxoUrdeHkZ033t7yjt5bfCb0nG8IMg79yScW+1k+iXvj+1Kj03OtzUToWx4H+Xf2dBbK8AZ4lOpNTu+z6BOp2h75bgerpTb5iaF2/HpHallJ8zjLz5qDBn7HXGNCaka7UJk=
+	t=1750695085; cv=none; b=kJjzn8TXsNrsS62hV1KD1X2C8bs7mNqtVxPSyQjcClXDemoM25I2s8spUVOzV/8c7b+aEd6XDLXKHitKXdjCoyKsUxQyVGjoGuojWlYqYboOyoHZH86oc5EG0+UV5LDkKCvkHvQgDDnyzj/qS2l7o/kOkH58ZPQn+PQigheMhwI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750695408; c=relaxed/simple;
-	bh=jQ4xlqhFn0ZfFN9Q4Ia5pnIE8D84XwipZ3o6gw4E4A0=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=kBwbQywHSV1zLQCTl34yuZCw1j1WkwbDUShXLqbBgM1YiY6SsKRt1tzJO5pzNZAq0N8G5d3kd9KpUeBuuuPTjMk9+769H7Vw2HDfc6REtcpjZOJH6UBvdHNouXiXSTrmO8UqVEMKpwBnZmMm/Hda8oJD10gWZUuVeFlqe2kRAgk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=whut.edu.cn; spf=pass smtp.mailfrom=whut.edu.cn; arc=none smtp.client-ip=101.71.155.101
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=whut.edu.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=whut.edu.cn
-Received: from [127.0.0.1] (gy-adaptive-ssl-proxy-1-entmail-virt204.gy.ntes [27.18.107.46])
-	by smtp.qiye.163.com (Hmail) with ESMTP id 19a4befb5;
-	Tue, 24 Jun 2025 00:11:26 +0800 (GMT+08:00)
-From: Ze Huang <huangze@whut.edu.cn>
-Date: Tue, 24 Jun 2025 00:11:14 +0800
-Subject: [PATCH 2/2] pinctrl: canaan: k230: Fix order of DT parse and
- pinctrl register
+	s=arc-20240116; t=1750695085; c=relaxed/simple;
+	bh=IUYvpZ+ytSupZSeQlCRhk7wKjG6mSWXDR1Nvlgj2a34=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=cfCotaqosu1cpmfTvVWUBjzBMkd8KxOy/EpQV4JpD++jU+At05lNhDCh2gb2pVxiK28HfsXFBuMNqMX7TuaiBDX1K9K4akmKr8WKMlcCrrX5q+ikbNp1UfbiScakV2Ul5DHnkb9LogDPbF55KJzqVr5ES9itucX+Hl9xvhABI1w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=VXucbGkE; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5C7A9C4CEEA;
+	Mon, 23 Jun 2025 16:11:23 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1750695085;
+	bh=IUYvpZ+ytSupZSeQlCRhk7wKjG6mSWXDR1Nvlgj2a34=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=VXucbGkECU7PMaTgXBhhzpEfsdm2C84REPuHXDqbL6WNaS+JmWisVcs0s9GB//pjc
+	 qAFrpF7tqNwtEPSg6gwB6j153VMRvVbQwmlPLlb6RcaXWI5eltJkVfHEavnDRUKHc+
+	 pexJO/Qy+OgCYdcuEzp+Qs5zKQ9/SI8+kNhSVVGJOuim45hz66dDtcFc0mU6dtbn9f
+	 lymiXGkJsHy431kypdPwunoYhheynrfTt706WP9MkqfvU5x5+cx+Z6vhef+wcyK8Dr
+	 iDFRJaZ3RvgBpY/Xqjpe96KdS/qRRxbh5OuRyFnlhynxmqfHWZtejsrbYqblwWg+ld
+	 sofDknXAkoDaA==
+Message-ID: <2bae7e94-3b97-4bde-9c92-e34670792355@kernel.org>
+Date: Mon, 23 Jun 2025 18:11:21 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v1 1/3] dt-bindings: memory-controllers: add StarFive
+ JH7110 SoC DMC
+To: Conor Dooley <conor@kernel.org>
+Cc: E Shattow <e@freeshell.de>, linux-kernel@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-riscv@lists.infradead.org,
+ Rob Herring <robh@kernel.org>, Conor Dooley <conor+dt@kernel.org>
+References: <20250606130253.1105273-1-e@freeshell.de>
+ <20250606130253.1105273-2-e@freeshell.de>
+ <79d84bc5-1b39-433d-afc3-b6ca84f274f0@kernel.org>
+ <20250623-enamel-discourse-3d28517e01d4@spud>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 a/A=
+In-Reply-To: <20250623-enamel-discourse-3d28517e01d4@spud>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
-Message-Id: <20250624-k230-return-check-v1-2-6b4fc5ba0c41@whut.edu.cn>
-References: <20250624-k230-return-check-v1-0-6b4fc5ba0c41@whut.edu.cn>
-In-Reply-To: <20250624-k230-return-check-v1-0-6b4fc5ba0c41@whut.edu.cn>
-To: Linus Walleij <linus.walleij@linaro.org>, 
- Ze Huang <18771902331@163.com>
-Cc: linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, 
- Ze Huang <huangze@whut.edu.cn>, Yao Zi <ziyao@disroot.org>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1750695080; l=1474;
- i=huangze@whut.edu.cn; s=20250325; h=from:subject:message-id;
- bh=jQ4xlqhFn0ZfFN9Q4Ia5pnIE8D84XwipZ3o6gw4E4A0=;
- b=BW1xbdBcCeD5Ugnf74Fpk3TlQf9LeMPCirXZrokIrdcxVtCpIQPuI38jU2pfVWCVvYQvexL9R
- pTPyVkKl+cDDl7U7cGDYoKbaJG2DhGhQ7ylQ5UkFX4ruRoAhQAVyj1K
-X-Developer-Key: i=huangze@whut.edu.cn; a=ed25519;
- pk=C3zfn/kH6oMJickaXBa8dxTZO68EBiD93F+tAenboRA=
-X-HM-Spam-Status: e1kfGhgUHx5ZQUpXWQgPGg8OCBgUHx5ZQUlOS1dZFg8aDwILHllBWSg2Ly
-	tZV1koWUFITzdXWS1ZQUlXWQ8JGhUIEh9ZQVkZTEodVkJNQxlDH0NMHU0aSFYeHw5VEwETFhoSFy
-	QUDg9ZV1kYEgtZQVlJTFVKQ1VKS0xVT01ZV1kWGg8SFR0UWUFZT0tIVUpLSEpOTEpVSktLVUpCS0
-	tZBg++
-X-HM-Tid: 0a979d8f087203a1kunm95855067303c24
-X-HM-MType: 10
-X-HM-Sender-Digest: e1kMHhlZQR0aFwgeV1kSHx4VD1lBWUc6Myo6Dio*STExLCIcTU4yTjER
-	GFEaFBxVSlVKTE5LTUJOS0NCSkpPVTMWGhIXVRMOGhUcAR47DBMOD1UeHw5VGBVFWVdZEgtZQVlJ
-	TFVKQ1VKS0xVT01ZV1kIAVlBSU1LSDcG
 
-Move DT parse before pinctrl register. This ensures that device tree
-parsing is done before calling devm_pinctrl_register() to prevent using
-uninitialized pin resources.
+On 23/06/2025 17:56, Conor Dooley wrote:
+> On Mon, Jun 23, 2025 at 08:45:04AM +0200, Krzysztof Kozlowski wrote:
+>> On 06/06/2025 15:02, E Shattow wrote:
+>>> Document bindings for the JH7110 SoC DMC as implemented in downstream
+>>> U-Boot driver starfive_ddr.c
+>>
+>> Heh, I totally missed "downstream"... We do not add bindings for
+>> downstream. We do not care about downstream, so I should not spend my
+>> time on this.
+>>
+>> Do not send code for downstream.
+> 
+> I think that's either an accident or poor wording, there's a user for
+> this in mainline U-Boot.
 
-Fixes: 545887eab6f6 ("pinctrl: canaan: Add support for k230 SoC")
-Reported-by: Yao Zi <ziyao@disroot.org>
-Signed-off-by: Ze Huang <huangze@whut.edu.cn>
----
- drivers/pinctrl/pinctrl-k230.c | 7 +++++--
- 1 file changed, 5 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/pinctrl/pinctrl-k230.c b/drivers/pinctrl/pinctrl-k230.c
-index 4976308e62372c744738dd8372e73b2494e38e0b..d716f23d837f7a70993a75346561ef0b1e07c3eb 100644
---- a/drivers/pinctrl/pinctrl-k230.c
-+++ b/drivers/pinctrl/pinctrl-k230.c
-@@ -590,6 +590,7 @@ static int k230_pinctrl_probe(struct platform_device *pdev)
- 	struct device *dev = &pdev->dev;
- 	struct k230_pinctrl *info;
- 	struct pinctrl_desc *pctl;
-+	int ret;
- 
- 	info = devm_kzalloc(dev, sizeof(*info), GFP_KERNEL);
- 	if (!info)
-@@ -615,13 +616,15 @@ static int k230_pinctrl_probe(struct platform_device *pdev)
- 		return dev_err_probe(dev, PTR_ERR(info->regmap_base),
- 				     "failed to init regmap\n");
- 
-+	ret = k230_pinctrl_parse_dt(pdev, info);
-+	if (ret)
-+		return ret;
-+
- 	info->pctl_dev = devm_pinctrl_register(dev, pctl, info);
- 	if (IS_ERR(info->pctl_dev))
- 		return dev_err_probe(dev, PTR_ERR(info->pctl_dev),
- 				     "devm_pinctrl_register failed\n");
- 
--	k230_pinctrl_parse_dt(pdev, info);
--
- 	return 0;
- }
- 
+OK, then my review stays. Commit msg should be rephrased.
 
--- 
-2.50.0
+In future: bindings always should be accepted prior other project starts
+accepting drivers (just in case if you plan to play Uno card called:
+"but my driver is like that").
 
+Best regards,
+Krzysztof
 
