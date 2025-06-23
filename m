@@ -1,141 +1,86 @@
-Return-Path: <linux-kernel+bounces-698193-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-698195-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E3FC4AE3E7C
-	for <lists+linux-kernel@lfdr.de>; Mon, 23 Jun 2025 13:49:36 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id C7FA0AE3E87
+	for <lists+linux-kernel@lfdr.de>; Mon, 23 Jun 2025 13:50:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8281B1672AE
-	for <lists+linux-kernel@lfdr.de>; Mon, 23 Jun 2025 11:49:37 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D043C1882753
+	for <lists+linux-kernel@lfdr.de>; Mon, 23 Jun 2025 11:50:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A9F1E2405E8;
-	Mon, 23 Jun 2025 11:49:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BB4F32417C3;
+	Mon, 23 Jun 2025 11:50:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="CiacpnM3"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="h+9Z7d1M"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F3B272907;
-	Mon, 23 Jun 2025 11:49:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1D2F223182D;
+	Mon, 23 Jun 2025 11:50:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750679367; cv=none; b=bJ+PNHYgguiqOXuDiWlX+rjXJ8I/CKe+L7uG+yl/x2EdUeCv699tC5z4UmN8QUVoihJ3olS2ZvNpyTKS0NG4f/Uyl4oOGKJr8Ig8sghU/j8qAMGzZJZIGLbrlcINgVglUFH7LoVcFUAGJ+EHXJeOX5BDiTZS+JyGQVgA4GvmQz8=
+	t=1750679427; cv=none; b=CPxoIpOhcYViD7s8rdnQG0HHsJ/9YleooR6IQYtB3RE0lMb/fkApbN/Vo2hvSE7VVr63QfeToCGol5hFSLzrHV8/W9ozeTDKf99eluNc8YqfDGnEkuNK2NGsZ79fx2V4jtXCvqDA8KpWuwmZo3RTDTRg6ZPPWqKlDZBow6v/4d0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750679367; c=relaxed/simple;
-	bh=8Trw3txrBdR13Nl/jH8oEvluQUWTm9KCCcSHmJZ68+M=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=dkQpRpmxHnn3PHKxLqIgx64ZHiy1cM15igIyy1s/7Ukum3Oc5lrqmZ9O+W4yl1DI+LCm5rCfRwLimrG+N65P6L5IawSrIrwaVQ8y9UKG1E3RrakAe6+JONqknghOgIcjiLFu900KsYZrLgG3LTvgWt7gzd9BZrKLEM25+M8s3AQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=CiacpnM3; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4FB11C4CEEA;
-	Mon, 23 Jun 2025 11:49:23 +0000 (UTC)
+	s=arc-20240116; t=1750679427; c=relaxed/simple;
+	bh=ActTs+qIg1fuo+yvfrQokf0GdyTmEgBrTcnMxW4n8hE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=qeldqlhG+S9DfMyJMas9x8z4+OtzhjU3F0lLLXxdrubiZYEleGHQd2KobErIKdT9weOEpJrni+RBFGU6O/7InLc4UvtHuNhgr4tdJuNMKmeT5f+NDQpj4F7wIBJODSmoTEs6NvXsphK61ljxsV4Om2lSCEc+d0A2TW5X0r5dbXw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=h+9Z7d1M; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0A998C4CEEA;
+	Mon, 23 Jun 2025 11:50:22 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1750679366;
-	bh=8Trw3txrBdR13Nl/jH8oEvluQUWTm9KCCcSHmJZ68+M=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=CiacpnM3uFYiYKEJOiqajM/Uo8dZ5SJ7+xEvBNfDQaoO0tAyPYEui7zW+JncD1dhu
-	 L2rcPWP336C6tMmAuE6x7g79HZVJbG95yiPWp7NkLA6yxrmUsEwgU3oH1y2GZ7hh0P
-	 eUenP0jM4LHNc2/7B4z7NEF64u+NxZ/6oiMJIFkHWi7GYqvX7gKEtn9ghf6SwMAW41
-	 gaEC0y3ml5449Lju0nIVzrJ/O5sW4kvBARKjYtoii/k1K/SGH90TB8E77lV1QhKPvq
-	 SCWkdVkEGvNS6lPNmXPdbMjDLd6NfTStL74tVKaDn07mRmC7LC7rHcA5hvDWxQxtP8
-	 C+mTnnErlBiZQ==
-Message-ID: <cbd6b7e3-850a-4bde-a1f9-393c291c1ee3@kernel.org>
-Date: Mon, 23 Jun 2025 13:49:21 +0200
+	s=k20201202; t=1750679426;
+	bh=ActTs+qIg1fuo+yvfrQokf0GdyTmEgBrTcnMxW4n8hE=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=h+9Z7d1MZYThb4BzC0sAtbzRCw2VDvjT/N1z/g0j1L4XdAT9UD9UR9CI4vA1PqZ5d
+	 iGYoetZQ/yTHvVS/ZbgCV6707ruW7FBquAvH6tcQoSWF2XFrUnDMGJMCgs7XIUu9av
+	 IW6kGBVeQp+V6IAsL2X2DmlZmt0mQSHqNqldozuJBHnoxS1YBLvZwo6zykE9RHGPma
+	 8A2ALmHgOibmvUFWhU2se6YH/2X7g0d4AEwslixKX3ozxncqxUV7LI6NVwu8sBM6CW
+	 pnMROxuJ9XK7frRtRVaXfpg0WDw1+6Qf/CU+MVYTl3En2FaWP3alBcvmhfe/8c8H6k
+	 3Qy8HKIFSuqRA==
+Date: Mon, 23 Jun 2025 13:50:20 +0200
+From: Christian Brauner <brauner@kernel.org>
+To: David Howells <dhowells@redhat.com>
+Cc: Andrew Lunn <andrew@lunn.ch>, Eric Dumazet <edumazet@google.com>, 
+	"David S. Miller" <davem@davemloft.net>, Jakub Kicinski <kuba@kernel.org>, 
+	David Hildenbrand <david@redhat.com>, John Hubbard <jhubbard@nvidia.com>, 
+	Christoph Hellwig <hch@infradead.org>, willy@infradead.org, Al Viro <viro@zeniv.linux.org.uk>, 
+	Miklos Szeredi <mszeredi@redhat.com>, torvalds@linux-foundation.org, netdev@vger.kernel.org, 
+	linux-mm@kvack.org, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: AF_UNIX/zerocopy/pipe/vmsplice/splice vs FOLL_PIN
+Message-ID: <20250623-absetzbar-barzahlung-3d124847a2b4@brauner>
+References: <1069540.1746202908@warthog.procyon.org.uk>
+ <165f5d5b-34f2-40de-b0ec-8c1ca36babe8@lunn.ch>
+ <0aa1b4a2-47b2-40a4-ae14-ce2dd457a1f7@lunn.ch>
+ <1015189.1746187621@warthog.procyon.org.uk>
+ <1021352.1746193306@warthog.procyon.org.uk>
+ <2135907.1747061490@warthog.procyon.org.uk>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 1/5] media: dt-bindings: venus: Add qcm2290 dt schema
-To: Jorge Ramirez-Ortiz <jorge.ramirez@oss.qualcomm.com>,
- quic_vgarodia@quicinc.com, quic_dikshita@quicinc.com,
- bryan.odonoghue@linaro.org, mchehab@kernel.org, robh@kernel.org,
- krzk+dt@kernel.org, conor+dt@kernel.org, andersson@kernel.org,
- konradybcio@kernel.org
-Cc: linux-arm-msm@vger.kernel.org, linux-media@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20250623105107.3461661-1-jorge.ramirez@oss.qualcomm.com>
- <20250623105107.3461661-2-jorge.ramirez@oss.qualcomm.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 a/A=
-In-Reply-To: <20250623105107.3461661-2-jorge.ramirez@oss.qualcomm.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <2135907.1747061490@warthog.procyon.org.uk>
 
-On 23/06/2025 12:51, Jorge Ramirez-Ortiz wrote:
-> Add a schema for the venus video encoder/decoder on the qcm2290.
+On Mon, May 12, 2025 at 03:51:30PM +0100, David Howells wrote:
+> I'm looking at how to make sendmsg() handle page pinning - and also working
+> towards supporting the page refcount eventually being removed and only being
+> available with certain memory types.
 > 
-> Signed-off-by: Jorge Ramirez-Ortiz <jorge.ramirez@oss.qualcomm.com>
-> ---
-Don't send multiple versions per day and allow other to actually perform
-review of your patchset instead of sending for every little thing.
+> One of the outstanding issues is in sendmsg().  Analogously with DIO writes,
+> sendmsg() should be pinning memory (FOLL_PIN/GUP) rather than simply getting
+> refs on it before it attaches it to an sk_buff.  Without this, if memory is
+> spliced into an AF_UNIX socket and then the process forks, that memory gets
+> attached to the child process, and the child can alter the data, probably by
+> accident, if the memory is on the stack or in the heap.
+> 
+> Further, kernel services can use MSG_SPLICE_PAGES to attach memory directly to
+> an AF_UNIX pipe (though I'm not sure if anyone actually does this).
 
-<form letter>
-This is a friendly reminder during the review process.
-
-It looks like you received a tag and forgot to add it.
-
-If you do not know the process, here is a short explanation:
-Please add Acked-by/Reviewed-by/Tested-by tags when posting new versions
-of patchset, under or above your Signed-off-by tag, unless patch changed
-significantly (e.g. new properties added to the DT bindings). Tag is
-"received", when provided in a message replied to you on the mailing
-list. Tools like b4 can help here. However, there's no need to repost
-patches *only* to add the tags. The upstream maintainer will do that for
-tags received on the version they apply.
-
-Please read:
-https://elixir.bootlin.com/linux/v6.12-rc3/source/Documentation/process/submitting-patches.rst#L577
-
-If a tag was not added on purpose, please state why and what changed.
-</form letter>
-
-Best regards,
-Krzysztof
+I would possible be interested in using this for the coredump af_unix socket.
 
