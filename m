@@ -1,88 +1,125 @@
-Return-Path: <linux-kernel+bounces-699113-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-699116-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id D3471AE4E03
-	for <lists+linux-kernel@lfdr.de>; Mon, 23 Jun 2025 22:17:40 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id F16A4AE4E07
+	for <lists+linux-kernel@lfdr.de>; Mon, 23 Jun 2025 22:18:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F2CB43B52BC
-	for <lists+linux-kernel@lfdr.de>; Mon, 23 Jun 2025 20:17:15 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 752373B5875
+	for <lists+linux-kernel@lfdr.de>; Mon, 23 Jun 2025 20:18:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DB05229CB2D;
-	Mon, 23 Jun 2025 20:17:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0FEC22D542C;
+	Mon, 23 Jun 2025 20:18:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Mu1cCDHA"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=weissschuh.net header.i=@weissschuh.net header.b="ZUb9f1TE"
+Received: from todd.t-8ch.de (todd.t-8ch.de [159.69.126.157])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 45BC819049B
-	for <linux-kernel@vger.kernel.org>; Mon, 23 Jun 2025 20:17:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 81D9E19049B;
+	Mon, 23 Jun 2025 20:18:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.69.126.157
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750709855; cv=none; b=Qx8V4McH6WOjjoOxl64AbQcrEEXhM+DFZKUc0VsURngPyW5p8YfBbY6JmRss/bqUINK69nCQ890/jS9Q/nyekA2/W1ClJElGy0AEVwwVCN2GGc0bYRfsL4YHmKZQN9Xt7zZ3LeNrdUEWmUp69rjHaWda8L+azObnFp25eSbOBJc=
+	t=1750709909; cv=none; b=H4Khl0vOPzH/Gz+T1GHSlbnDUwd75DJCQXhYiRXr3ez6KgCEsC9yha7FQ3loEs7GPSVyb5uF5PuG37jS4eqZj1ahRB+qtnendzyjE1cJVsD4ugcyINJZMvTOBKkyP7HwxkKNSyJOA+L3jUvIR+Hh7CaJsmI/Y0jz39g8krs4ExM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750709855; c=relaxed/simple;
-	bh=S3mCB0xVZb/vXWoFlWi/0lOsSNVNPOPbtuCqr58c+kM=;
+	s=arc-20240116; t=1750709909; c=relaxed/simple;
+	bh=kuRHvIv37fumvM6+OPh0zwBgnRBW+kKD/tEayVDgNAc=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=d1kdWTHUOXbXJYtJOsCY06WCB63q5HFz3bx18BDeu/lGYUb/RD1l51r+twfD4k2H2p+G4xlAvX0zsAOjYUyik8w7m4XuW8wZdpiw7il57gzTezkAJWobs5H70zFZ8Ivdq3oiPfNWOKu041J1cHX7crrobyim+XdwVPDxU+yiCz8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Mu1cCDHA; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9B7AAC4CEEA;
-	Mon, 23 Jun 2025 20:17:34 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1750709854;
-	bh=S3mCB0xVZb/vXWoFlWi/0lOsSNVNPOPbtuCqr58c+kM=;
+	 Content-Type:Content-Disposition:In-Reply-To; b=o99VMS7T03GH57/TsYyoYw6dLIIG8NmHBvcn2nF/uEEovV54pEVhNuUSja+ewZjsEXeGxe9THYsCqGIL1lW9zxIsM5m7Oq3N0y2E3AKw2auvbJ9/+x1NdYwtsKH3HeRKIGt7jWtbphWklXhWys7hJidh1KM3bfbz0nAK7enm/tk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=weissschuh.net; spf=pass smtp.mailfrom=weissschuh.net; dkim=pass (1024-bit key) header.d=weissschuh.net header.i=@weissschuh.net header.b=ZUb9f1TE; arc=none smtp.client-ip=159.69.126.157
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=weissschuh.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=weissschuh.net
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=weissschuh.net;
+	s=mail; t=1750709900;
+	bh=kuRHvIv37fumvM6+OPh0zwBgnRBW+kKD/tEayVDgNAc=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=Mu1cCDHAbRCCbXYAK1kx09K+UvrzNBJHOYq2doZFvKQtkv0H0OgU/I4H9OYgmKWLY
-	 acvfDDFuRArOrS0Rpesnme4qngxDirQSUS926NhgRvHO/CugIOt+9wW5riHx0PaYm2
-	 /t9mZmyL6lTCNeNBooQ/0zitY1wM41VOZ4Kv/4xK+2g6IUwFQwVnFRRBXoeqxaOojJ
-	 K1Io3+ZLtmzI6DpxkM7KE9mEpgnUMt11DzEmgK511ugEG6ech4BRh9agA3bJSu4ZqH
-	 f3uMDXEKzU+2Ai8c1Rnjosl6R2mK/9uF0eaVAHqhEeUYzKA9sm2k4xzIYdRIMU+ssI
-	 WXAzzdGPOhjuA==
-Date: Mon, 23 Jun 2025 10:17:33 -1000
-From: Tejun Heo <tj@kernel.org>
-To: Joel Fernandes <joelagnelf@nvidia.com>
-Cc: linux-kernel@vger.kernel.org, Ingo Molnar <mingo@redhat.com>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Juri Lelli <juri.lelli@redhat.com>,
-	Vincent Guittot <vincent.guittot@linaro.org>,
-	Dietmar Eggemann <dietmar.eggemann@arm.com>,
-	Steven Rostedt <rostedt@goodmis.org>,
-	Ben Segall <bsegall@google.com>, Mel Gorman <mgorman@suse.de>,
-	Valentin Schneider <vschneid@redhat.com>,
-	Daniel Bristot de Oliveira <bristot@kernel.org>,
-	David Vernet <void@manifault.com>, Andrea Righi <arighi@nvidia.com>,
-	Changwoo Min <changwoo@igalia.com>
-Subject: Re: [PATCH v5 03/14] sched/deadline: Clear the defer params
-Message-ID: <aFm2XaQurEXOGfCp@slm.duckdns.org>
-References: <20250620203234.3349930-1-joelagnelf@nvidia.com>
- <20250620203234.3349930-4-joelagnelf@nvidia.com>
+	b=ZUb9f1TE39uqGs5GA06UbSLPT04PnfAdKoL5LvjX9J8jxHZlkbekwOAfcCLuEPZIF
+	 CKLFOwfQCySaDPvZeHFBSZnhBbTxsvh1Op9W40QgxpJed6O+h7nNSb75UeHG2oJySy
+	 XiUtCCnVXki32nEg5jQF7W4IIGZDfDEopxUPxUx4=
+Date: Mon, 23 Jun 2025 22:18:19 +0200
+From: Thomas =?utf-8?Q?Wei=C3=9Fschuh?= <linux@weissschuh.net>
+To: Willy Tarreau <w@1wt.eu>
+Cc: Shuah Khan <shuah@kernel.org>, linux-kselftest@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, Mark Brown <broonie@kernel.org>
+Subject: Re: [PATCH 3/4] selftests/nolibc: rename Makefile
+Message-ID: <0084290f-49b5-4599-953e-0db6bf46e32c@t-8ch.de>
+References: <20250620-nolibc-selftests-v1-0-f6b2ce7c5071@weissschuh.net>
+ <20250620-nolibc-selftests-v1-3-f6b2ce7c5071@weissschuh.net>
+ <20250621041421.GA26603@1wt.eu>
+ <20db87b0-05ff-476b-a58f-d0945bfacf20@t-8ch.de>
+ <20250621084739.GC26934@1wt.eu>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20250620203234.3349930-4-joelagnelf@nvidia.com>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20250621084739.GC26934@1wt.eu>
 
-On Fri, Jun 20, 2025 at 04:32:18PM -0400, Joel Fernandes wrote:
-> diff --git a/kernel/sched/deadline.c b/kernel/sched/deadline.c
-> index ad45a8fea245..ae15ec6294cf 100644
-> --- a/kernel/sched/deadline.c
-> +++ b/kernel/sched/deadline.c
-> @@ -3431,6 +3431,9 @@ static void __dl_clear_params(struct sched_dl_entity *dl_se)
->  	dl_se->dl_non_contending	= 0;
->  	dl_se->dl_overrun		= 0;
->  	dl_se->dl_server		= 0;
-> +	dl_se->dl_defer			= 0;
-> +	dl_se->dl_defer_running	= 0;
-> +	dl_se->dl_defer_armed	= 0;
+On 2025-06-21 10:47:39+0200, Willy Tarreau wrote:
+> On Sat, Jun 21, 2025 at 10:34:38AM +0200, Thomas Weißschuh wrote:
+> > On 2025-06-21 06:14:21+0200, Willy Tarreau wrote:
+> > > Hi Thomas,
+> > > 
+> > > On Fri, Jun 20, 2025 at 11:39:32PM +0200, Thomas Weißschuh wrote:
+> > > > The nolibc tests are not real kselftests, they work differently and
+> > > > provide a different interface. Users trying to use them like real
+> > > > selftests may be confused and the tests are not executed by CI systems.
+> > > > 
+> > > > To make space for an integration with the kselftest framework, move the
+> > > > custom tests out of the way.
+> > > > The custom tests are still useful to keep as they provide functionality
+> > > > not provided by kselftests.
+> > > 
+> > > I'm wondering, what prevents us from merging the new rules into the
+> > > current makefile instead of renaming it, especially considering the
+> > > fact that we initially took care of not confiscating the "all" target ?
+> > 
+> > We'll have conflicts around CFLAGS, the nolibc-test target and probably
+> > other things.
+> 
+> OK I understand.
+> 
+> > It will also make everything harder to understand and may
+> > break unexpectedly in the future.
+> > 
+> > > I'm asking because: 
+> > > 
+> > >   $ make -f Makefile.nolibc help
+> > > 
+> > > is clearly less convenient and intuitive than:
+> > > 
+> > >   $ make help
+> > 
+> > Is your issue specifically with the help target?
+> 
+> Not just but that's an entry point. Admittedly it's not a big problem,
+> I was merely asking if there was a real reason for splitting them apart
+> or if it was just to keep the stuff clean.
+> 
+> > We should be able to show the help message from the main Makefile with a
+> > hint to the Makefile.nolibc.
+> 
+> I thought about it as well, we could have a help target in the main
+> makefile that just emits "Please run make -f Makefile.nolibc with the
+> following targets:", and then runs "make -f Makefile.nolibc help".
 
-Match indentations?
+I'll do that.
 
--- 
-tejun
+> > Another, more general, possibility would be to move the special Makefile
+> > to tools/testing/nolibc/ and keep only the selftest parts in
+> > tools/testing/selftests/nolibc/.
+> 
+> I hadn't thought about this, but that could indeed make sense. Let's see
+> later how it goes and let's not add burden about this for now. Please just
+> keep your patch as-is.
+
+Sounds good. Could you give a formal Ack for the patch/series?
+
+
+Thomas
 
