@@ -1,159 +1,160 @@
-Return-Path: <linux-kernel+bounces-697896-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-697903-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 48AC9AE3A00
-	for <lists+linux-kernel@lfdr.de>; Mon, 23 Jun 2025 11:27:02 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 88326AE3A47
+	for <lists+linux-kernel@lfdr.de>; Mon, 23 Jun 2025 11:30:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B4AA77A3FDD
-	for <lists+linux-kernel@lfdr.de>; Mon, 23 Jun 2025 09:25:38 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0DCB63B2884
+	for <lists+linux-kernel@lfdr.de>; Mon, 23 Jun 2025 09:29:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 98EA72367A8;
-	Mon, 23 Jun 2025 09:26:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E7A02238C12;
+	Mon, 23 Jun 2025 09:30:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="qw+aUfQS"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b="bNwUveSW"
+Received: from mx07-00178001.pphosted.com (mx07-00178001.pphosted.com [185.132.182.106])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F1CEC17996;
-	Mon, 23 Jun 2025 09:26:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6FB77233722;
+	Mon, 23 Jun 2025 09:29:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.132.182.106
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750670809; cv=none; b=MwG30LZz3PINL0lgKCQU5V0/D+ri+I7k0Zqyu3pkztQwZL3FnjkbVESXMnBtoJpjPUDe2IqorpH6e8thPNdiicqNY6JmiqOgeZuzy5jikQSLGoX8Z+Ej8pxH+X80bq57iH0qgPnpTJ3ii6PmdzRnJqEboGvueqYZ3kKl5dECN0o=
+	t=1750671001; cv=none; b=DBzdGqASlas4401QN7fEGHul/lEm47gOqxFtw2JHAns29uOWJrs1julwzomEEF8Z5/UeLVHllMP6FDXgw8vXtE/+jZIluWf9hAFyCe/n8nGs+ZsIoHUV0pUqa4Cnnl92v7DX6QBBnviq0R1bvbnrg4QUoy4va6ueOElNHx6+kA0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750670809; c=relaxed/simple;
-	bh=WefXIWazEPskl9B0X1xFtEXjeBSL+nY1ELytivVzN98=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=DJ+zAqC8CzetOTfF5KGBYyfESC4rRcXZ51gL++SDH1B6VCFBpBwP1HIFz+OEX8KrSzVOfbJtIwffBgQhKcZTjB4Dy6LaisJwDljjmNRHkIz8z5TDCRdM1sWGXdaH6OaPbjUv83c/A0gpba5fxgFq8cATm9TSYlVOYN3QP2/WRFw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=qw+aUfQS; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A007EC4CEEA;
-	Mon, 23 Jun 2025 09:26:43 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1750670808;
-	bh=WefXIWazEPskl9B0X1xFtEXjeBSL+nY1ELytivVzN98=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=qw+aUfQSuKHEk4enVIrEz606dRtP6XgNppP2YO4INXtXX0fpKl7h4u8sf/OIVdZnD
-	 NV0a4MPutrCtYNNsfopZKOvqLp1uChhTnXU/ifibAjQcX5+vHM+wZYC5u2QZdbBUbG
-	 hqLK7QSB1BRJ/asx988F/PfQIVQ/RY4GUmm1JFsgN4/Mo8DqYKJQw5At6VHOYn0S0c
-	 /UfP5gASQorEsfU+ZD4hXDXpdiSjND8/UoejeEyZYy69Ux4hUolfJth5AbnALTSJow
-	 usdestU/sQ5azXOngEas1a3myuz4c299HGo5Yyo31BePXHs+oevsQhp/8PUPfwE+Tz
-	 /Jbrjo0uFvWOw==
-Date: Mon, 23 Jun 2025 11:26:41 +0200
-From: Lorenzo Pieralisi <lpieralisi@kernel.org>
-To: Thomas Gleixner <tglx@linutronix.de>
-Cc: Marc Zyngier <maz@kernel.org>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Will Deacon <will@kernel.org>, Arnd Bergmann <arnd@arndb.de>,
-	Sascha Bischoff <sascha.bischoff@arm.com>,
-	Jonathan Cameron <Jonathan.Cameron@huawei.com>,
-	Timothy Hayes <timothy.hayes@arm.com>,
-	Bjorn Helgaas <bhelgaas@google.com>,
-	"Liam R. Howlett" <Liam.Howlett@oracle.com>,
-	Peter Maydell <peter.maydell@linaro.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Jiri Slaby <jirislaby@kernel.org>,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-pci@vger.kernel.org
-Subject: Re: [PATCH v5 24/27] irqchip/gic-v5: Add GICv5 ITS support
-Message-ID: <aFkd0cigSKOSqUQI@lpieralisi>
-References: <20250618-gicv5-host-v5-0-d9e622ac5539@kernel.org>
- <20250618-gicv5-host-v5-24-d9e622ac5539@kernel.org>
- <87y0tmp6gn.ffs@tglx>
+	s=arc-20240116; t=1750671001; c=relaxed/simple;
+	bh=WR2nn99oRtkTnSZ2SlyuWLFzELsSDiZdzTX63mcOHA8=;
+	h=From:Subject:Date:Message-ID:MIME-Version:Content-Type:To:CC; b=YkzSGv9kxO+V6y4lBSQYPMXdO3PWFSjl+7Iqq7EqYTjHCc1jPehrPetxxlwE6bECNSfcs26l8/rHQCcLXPN7lGdFZNXGqtaH+L1+7fpyEYMmb/kPqLpkDo2SmyKCfd9gpWpc2UkbOabEneh4NRbna8t9vblIbOC+lhIVNSFanso=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com; spf=pass smtp.mailfrom=foss.st.com; dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b=bNwUveSW; arc=none smtp.client-ip=185.132.182.106
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=foss.st.com
+Received: from pps.filterd (m0369458.ppops.net [127.0.0.1])
+	by mx07-00178001.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 55N8swqj011088;
+	Mon, 23 Jun 2025 11:29:39 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foss.st.com; h=
+	cc:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=selector1; bh=pfOir4ecl8ee1I6IoTA4SW
+	3MSW1FhLPJ2AAoMv1lBVo=; b=bNwUveSWYjtHQBMM1/hOzqx9Bp3NwBCqXHAS17
+	u2MrUumsYbWgSla4q2Tr4pGCMTEgkVYf0RGA7w5gRYirFmSJPVDAA2+BhN+LnIB7
+	A/8hxo/dpj0CWns3PcmKSI+nmua27t8nSThbmPScY/mSgmUA60s/uocEu0XAnM30
+	aQdmyQs5HQnxzvKEJD2RTdHmfpgbLf2uzC4nmXHamdn+Eh8BKuPVXZEnm+x9r0GN
+	Co6WwTrVngV20SkVlI3WqjpYhQkBNhods3Sv6G7BngPq0RfMsa5xVK2+J37dLDmQ
+	3gXRBC4rndYYEM2vbEd33SCdg9PizR/HG/NzPuW+jw9rJ88w==
+Received: from beta.dmz-ap.st.com (beta.dmz-ap.st.com [138.198.100.35])
+	by mx07-00178001.pphosted.com (PPS) with ESMTPS id 47e6a6cjpb-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 23 Jun 2025 11:29:39 +0200 (MEST)
+Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
+	by beta.dmz-ap.st.com (STMicroelectronics) with ESMTP id 25F6640049;
+	Mon, 23 Jun 2025 11:28:30 +0200 (CEST)
+Received: from Webmail-eu.st.com (shfdag1node2.st.com [10.75.129.70])
+	by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id C65DE562948;
+	Mon, 23 Jun 2025 11:27:20 +0200 (CEST)
+Received: from localhost (10.252.18.29) by SHFDAG1NODE2.st.com (10.75.129.70)
+ with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Mon, 23 Jun
+ 2025 11:27:20 +0200
+From: =?utf-8?q?Cl=C3=A9ment_Le_Goffic?= <clement.legoffic@foss.st.com>
+Subject: [PATCH 00/13] Introduce STM32 DDR PMU for STM32MP platforms
+Date: Mon, 23 Jun 2025 11:27:05 +0200
+Message-ID: <20250623-ddrperfm-upstream-v1-0-7dffff168090@foss.st.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <87y0tmp6gn.ffs@tglx>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+X-B4-Tracking: v=1; b=H4sIAOkdWWgC/x3MQQqAIBBA0avErBNMMKGrRAvLsWahyVgRiHdPW
+ r7F/wUyMmGGqSvA+FCmMzYMfQfbYeOOglwzKKm01GoUznFC9kHcKV+MNojVS+O1MUY7C61LjJ7
+ e/zkvtX6z1g3LYwAAAA==
+X-Change-ID: 20250526-ddrperfm-upstream-bf07f57775da
+To: Will Deacon <will@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+        Rob
+ Herring <robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor
+ Dooley <conor+dt@kernel.org>,
+        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+        Alexandre Torgue <alexandre.torgue@foss.st.com>,
+        Philipp Zabel
+	<p.zabel@pengutronix.de>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Gatien Chevallier
+	<gatien.chevallier@foss.st.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Gabriel Fernandez
+	<gabriel.fernandez@foss.st.com>
+CC: <linux-arm-kernel@lists.infradead.org>, <linux-perf-users@vger.kernel.org>,
+        <devicetree@vger.kernel.org>,
+        <linux-stm32@st-md-mailman.stormreply.com>,
+        <linux-kernel@vger.kernel.org>, <linux-doc@vger.kernel.org>,
+        <linux-clk@vger.kernel.org>,
+        =?utf-8?q?Cl=C3=A9ment_Le_Goffic?= <clement.legoffic@foss.st.com>
+X-Mailer: b4 0.15-dev-c25d1
+X-ClientProxiedBy: SHFCAS1NODE1.st.com (10.75.129.72) To SHFDAG1NODE2.st.com
+ (10.75.129.70)
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.0.736,FMLib:17.12.80.40
+ definitions=2025-06-23_03,2025-06-23_02,2025-03-28_01
 
-On Fri, Jun 20, 2025 at 09:18:32PM +0200, Thomas Gleixner wrote:
+This patch series introduces the DDR Performance Monitor (DDRPERFM) support for
+STM32MP platforms.
 
-[...]
+The series firstly improves the STM32MP25 RCC driver to make it usable
+as an access controller, needed for driver probe.
 
-> > + * Taken from msi_lib_irq_domain_select(). The only difference is that
-> > + * we have to match the fwspec->fwnode parent against the domain->fwnode
-> > + * in that in GICv5 the ITS domain is represented by the ITS fwnode but
-> > + * the MSI controller (ie the ITS frames) are ITS child nodes.
-> > + */
-> > +static int gicv5_its_irq_domain_select(struct irq_domain *d, struct irq_fwspec *fwspec,
-> > +				       enum irq_domain_bus_token bus_token)
-> > +{
-> > +	const struct msi_parent_ops *ops = d->msi_parent_ops;
-> > +	u32 busmask = BIT(bus_token);
-> > +
-> > +	if (!ops)
-> > +		return 0;
-> > +
-> > +	if (fwnode_get_parent(fwspec->fwnode) != d->fwnode ||
-> > +	    fwspec->param_count != 0)
-> > +		return 0;
-> 
-> Just add a MSI flag and set it in parent_ops::required_flags and extend
+It also includes the addition of device tree bindings, the HDP driver,
+documentation and updates to the device tree files for
+STM32MP13, STM32MP15 and STM32MP25 SoCs.
+The series also updates the MAINTAINERS file to include myself as the
+maintainer for the STM32 DDR PMU driver.
 
-I added that but it does not work (not if we use d->flags as below), it works
-if I add it as an
+Signed-off-by: Clément Le Goffic <clement.legoffic@foss.st.com>
+---
+Clément Le Goffic (13):
+      bus: firewall: move stm32_firewall header file in include folder
+      dt-bindings: stm32: stm32mp25: add `access-controller-cell` property
+      clk: stm32mp25: add firewall grant_access ops
+      arm64: dts: st: set rcc as an access-controller
+      dt-bindings: perf: stm32: introduce DDRPERFM dt-bindings
+      perf: stm32: introduce DDRPERFM driver
+      Documentation: perf: stm32: add ddrperfm support
+      MAINTAINERS: add myself as STM32 DDR PMU maintainer
+      ARM: dts: stm32: add ddrperfm on stm32mp131
+      ARM: dts: stm32: add ddrperfm on stm32mp151
+      arm64: dts: st: add ddrperfm on stm32mp251
+      arm64: dts: st: support ddrperfm on stm32mp257f-dk
+      arm64: dts: st: support ddrperfm on stm32mp257f-ev1
 
-IRQ_DOMAIN_FLAG_*
+ Documentation/admin-guide/perf/index.rst           |   1 +
+ Documentation/admin-guide/perf/stm32-ddr-pmu.rst   |  86 ++
+ .../bindings/clock/st,stm32mp25-rcc.yaml           |   6 +
+ .../devicetree/bindings/perf/st,stm32-ddr-pmu.yaml |  93 +++
+ MAINTAINERS                                        |   7 +
+ arch/arm/boot/dts/st/stm32mp131.dtsi               |   7 +
+ arch/arm/boot/dts/st/stm32mp151.dtsi               |   7 +
+ arch/arm64/boot/dts/st/stm32mp251.dtsi             |   8 +
+ arch/arm64/boot/dts/st/stm32mp257f-dk.dts          |   5 +
+ arch/arm64/boot/dts/st/stm32mp257f-ev1.dts         |   5 +
+ drivers/bus/stm32_etzpc.c                          |   3 +-
+ drivers/bus/stm32_firewall.c                       |   3 +-
+ drivers/bus/stm32_rifsc.c                          |   3 +-
+ drivers/clk/stm32/clk-stm32mp25.c                  |  40 +-
+ drivers/perf/Kconfig                               |  11 +
+ drivers/perf/Makefile                              |   1 +
+ drivers/perf/stm32_ddr_pmu.c                       | 893 +++++++++++++++++++++
+ {drivers => include/linux}/bus/stm32_firewall.h    |   0
+ 18 files changed, 1172 insertions(+), 7 deletions(-)
+---
+base-commit: 86731a2a651e58953fc949573895f2fa6d456841
+change-id: 20250526-ddrperfm-upstream-bf07f57775da
 
-and set it in irq_domain_info in the msi_create_parent_irq_domain()
-call in the GICv5 ITS driver when creating the domain.
+Best regards,
+-- 
+Clément Le Goffic <clement.legoffic@foss.st.com>
 
-> the lib with
-> 
->         struct fwnode_handle *fwh;
-> 
->         fwh = d->flags & MAGIC ? fwnode_get_parent(fwspec->fwnode) : fwspec->fwnode;
-
-Here we are using the domain flags and I think that's what we want.
-
-If I go with parent_ops flag, I believe here we need to use the parent
-msi_domain_info::flags - I don't think that's what we want.
-
-It is a property of the IRQ domain so I think that adding an
-
-IRQ_DOMAIN_FLAG_FWNODE_PARENT
-
-is the best option.
-
-Please let me know.
-
-Thanks,
-Lorenzo
-
-> 
-> No?
-> 
-> > diff --git a/drivers/irqchip/irq-gic-v5.c b/drivers/irqchip/irq-gic-v5.c
-> > index c2e7ba7e38f7..4a0990f46358 100644
-> > --- a/drivers/irqchip/irq-gic-v5.c
-> > +++ b/drivers/irqchip/irq-gic-v5.c
-> > @@ -57,12 +57,12 @@ static void release_lpi(u32 lpi)
-> >  	ida_free(&lpi_ida, lpi);
-> >  }
-> >  
-> > -static int gicv5_alloc_lpi(void)
-> > +int gicv5_alloc_lpi(void)
-> >  {
-> >  	return alloc_lpi();
-> >  }
-> >  
-> > -static void gicv5_free_lpi(u32 lpi)
-> > +void gicv5_free_lpi(u32 lpi)
-> >  {
-> >  	release_lpi(lpi);
-> >  }
-> 
-> Just make them global right away when you implement them. No point for
-> this kind of churn.
-> 
-> Thanks,
-> 
->         tglx
 
