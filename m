@@ -1,139 +1,129 @@
-Return-Path: <linux-kernel+bounces-697356-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-697362-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 301B0AE3318
-	for <lists+linux-kernel@lfdr.de>; Mon, 23 Jun 2025 02:31:04 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 82981AE3329
+	for <lists+linux-kernel@lfdr.de>; Mon, 23 Jun 2025 02:39:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id EA3AC7A6217
-	for <lists+linux-kernel@lfdr.de>; Mon, 23 Jun 2025 00:29:40 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 48AB9188FC78
+	for <lists+linux-kernel@lfdr.de>; Mon, 23 Jun 2025 00:39:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 08E1E8836;
-	Mon, 23 Jun 2025 00:30:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9F760A933;
+	Mon, 23 Jun 2025 00:39:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=treblig.org header.i=@treblig.org header.b="n+BXlPrF"
-Received: from mx.treblig.org (mx.treblig.org [46.235.229.95])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="cR4a9IRp"
+Received: from mail-pj1-f54.google.com (mail-pj1-f54.google.com [209.85.216.54])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B6498163
-	for <linux-kernel@vger.kernel.org>; Mon, 23 Jun 2025 00:30:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.229.95
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 775BC2F29
+	for <linux-kernel@vger.kernel.org>; Mon, 23 Jun 2025 00:39:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750638656; cv=none; b=BObGFuh8nbUVyc57te1NqtsXfhjAwy9bGXSVNOut4XlSCIARREIt4QDO3ff7tTPdkoHy94Bu3ZSrqHl7cUbHK0FFTeIqRt1mmIjEbAen1SHZn14+wT85/TbTZlL2CcPN5SqNc1sJIBZZL3ZQo5CQa6onXQ6OTqFe366SuJia7c0=
+	t=1750639168; cv=none; b=UPeb5EZK9cfVEh+YBxOYlipePrDPj+V0b64k4NcYf8fZq6QALM45Zs1kE4JSHEY0lxIb00uMInwAQF8g+Hf3seEyo6DXIPssa47opWafK59k/2UtBUDhyY786xO+RR4cvvlGblepXrYb+cPW9FlpHtdqq+olpGxc4ll1NVK0hFQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750638656; c=relaxed/simple;
-	bh=VJ5uVGW3ooWdvgXb8H2VawI1elr7LbExj+xCw4nXvds=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=psJRq5T0Tsyl+hY1Wg7RUVTctUjKEWuJ+vKnlrAYDQ9eWMxqQjmx4b40ID/CC5CX3G2SQLHs+uI4vI2FKabSrqZfiIwRcI1E+UKNmF4Ge/bV1Xo4Jvu8dLsZrcL0uaj31auzGaj86swI4oYKPPTLS9TFSqz3v/2i3FpVmhSX6xk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=treblig.org; spf=pass smtp.mailfrom=treblig.org; dkim=pass (2048-bit key) header.d=treblig.org header.i=@treblig.org header.b=n+BXlPrF; arc=none smtp.client-ip=46.235.229.95
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=treblig.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=treblig.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=treblig.org
-	; s=bytemarkmx; h=MIME-Version:Message-ID:Date:Subject:From:Content-Type:From
-	:Subject; bh=GJaZfg7ZMejN72SAwKwElZbqYTJF+EisEMMeQVeAzc8=; b=n+BXlPrFOiYAGS6p
-	pSgEAdvHzxg70cadiD7swB30nAMrOBYgF2SGGKNb/2MohzghnfVZNh+gvIleHsGIWKTsJLKOaGB92
-	NPp0e81pfAt2GFtLJqZw7n/nhqcBjaU0ZIBHbd0lRxztef18UL5Q/LpAd6u2T5UtAA0+uTFMXrVZA
-	vIFm/O6UJ/LQ3EV6wj4wIiZeu1qzfCDCejSYxbuSTvO8lwc0sD8TxmaZk40LMqkwNUDPTR1K8jbHX
-	yWTIaW/UdmEMxU/M61XNhm/w1sZXENIHfDmPOTlw7lPiFGB0nozooASBNM/Oiu8PZSIXEu8H6knKs
-	syeLh40YRxSbO0JlQQ==;
-Received: from localhost ([127.0.0.1] helo=dalek.home.treblig.org)
-	by mx.treblig.org with esmtp (Exim 4.96)
-	(envelope-from <linux@treblig.org>)
-	id 1uTV5F-00B9h0-20;
-	Mon, 23 Jun 2025 00:30:49 +0000
-From: linux@treblig.org
-To: tj@kernel.org,
-	jiangshanlai@gmail.com
-Cc: ebiggers@google.com,
-	linux-kernel@vger.kernel.org,
-	"Dr. David Alan Gilbert" <linux@treblig.org>
-Subject: [PATCH] workqueue: Remove unused work_on_cpu_safe
-Date: Mon, 23 Jun 2025 01:30:49 +0100
-Message-ID: <20250623003049.349200-1-linux@treblig.org>
-X-Mailer: git-send-email 2.49.0
+	s=arc-20240116; t=1750639168; c=relaxed/simple;
+	bh=jtNOJngJoBLgvYCX7nmdLlEpEGpjf7HgKEm+BRvuGAo=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=pxFlOmtFkq2TkAwOLMy07vPDYKI9n+VznwVwNMAVKnwQPK9bbDNZgVsbbjj58pAyVFfXMEMsYrek2T8VdW+XKwSsDlb7lewMv7e4eC0sJnRu3hcbGnOl1oPluj6pLJPSWYGXR9a9NccnylYr/12hTSJU+FIVVAyiPQef5a1YoeE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=cR4a9IRp; arc=none smtp.client-ip=209.85.216.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pj1-f54.google.com with SMTP id 98e67ed59e1d1-3139027b825so2679490a91.0
+        for <linux-kernel@vger.kernel.org>; Sun, 22 Jun 2025 17:39:26 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1750639165; x=1751243965; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:sender:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=1CcQGXn95YN4kqRLmGGJq78o+QgH8CBAG+ZCKLPSsNY=;
+        b=cR4a9IRpwkoYUbKN2RMa2rQiyQRCBvia5cEgl87x6EimsCCW6uZNi6WD5MDmVcnyct
+         63XxAoVyH0cSyMlfkHvXijWLz/9sTzGSxI2X+bBTkjSeZ+s1TgcqWPVJgOja8kWrjRMw
+         cO/Chf9PItcp+xhhs7cLSBpzttAsoB7PGlwEfvglLET6TWJAu6Z/LvkWoy8BY1gJbkun
+         Uj4Rk1bhMuuJBhjPJbkXDlMtK8LARPwC/FORMAB/Q3giZ18qLBet3VmHzKP+g04Xii3/
+         itQyfS5rNz2lbXz+1jV3l2VHN19Elc3P4jmH56Nmrt+qnF5U81KzCvCBfBwRNNaHIg4X
+         TYVA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1750639165; x=1751243965;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:sender:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=1CcQGXn95YN4kqRLmGGJq78o+QgH8CBAG+ZCKLPSsNY=;
+        b=N5EpwDs97W1FHpkp4K1gcFpnk91yTS4ejZM535KUFAZI0qae2ziH6PQ31Kmnil9Kl9
+         kUe+TPq/mEHZbjXK/2aORFaodhND75/i7mq+C6Yyumm7+Gyai0TXk7STkwcy4OpOHOfq
+         3ncG0sJlaU25pq720gWBVKb1CwN1OW7f9oVjJSPqoij8G1pNl0l9CZWPfCT2HcK6iq7M
+         MT+DA2qFc5gRb+NBZOVu+dUHptNcki4DukOt98GUSnELhxYiQvhKuCLOS14Sdx80d4zV
+         sXJq0FyrU0fE8OQr+nZ5RSfAkWb1YuEzCDk00+rJZzu93JiI2EocbX4Z3/ZK2SkTb41i
+         PaAQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVwMmBXPPYrMuWDO7Z3Z2PUEAEc0hH3l9t29joP9MCQVNcEJ+g1SLkBZyaWtCQKLFsaZZt0oSPL/3dY9N0=@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywnv/4TOhcWL/GhodSPYn4K3VIZFrf3+/nGl0HX+bjdtlvKVmpM
+	k/bN2oJC1G/1JGCBRywkGRd5OtGLqf7R2VSvMwXMGq6f1pz4eVviL1hN
+X-Gm-Gg: ASbGncsVqwzC1ftrHB/ZlbcYSxLgbAR9fytDDOnSu3LBaXw/l939CGtJBi/BhS2dzes
+	a8GgI/4L1Y14GSzKK4ZapARO2mpoGUMiEICl0iJVOOlkdA7Wi3Oxlu0+/4ELFR++luS9OcG+fGN
+	Xwjz+1LVa6THAS18MdT5jSAd0UiAxba1Gvjobbf3FKMKXtrGt21rR+ni9CTKPPDk2sauSOOEBBR
+	TgA5Qc+4ZHNL7nmm8N3/PUPCK5UZ2dL8d6yLJt1vJJGICR9/rq5rU9lqvXvl77ZHGJc4laTEo6O
+	q52qjEiAX8p+OcnHg7bbKl7ePV+iufVMRRFbIAJ1wXqUBtdU1Aoms70TkruEdttR9VnUjVLLdFg
+	=
+X-Google-Smtp-Source: AGHT+IGOciCKMqMGYJOZ0jRU90QGJbnFfhCdDzsV32W4ieI/kX14WMkUTKYzK5wjkTM7nT7ZDP0DEg==
+X-Received: by 2002:a17:90b:1e53:b0:313:31ca:a69 with SMTP id 98e67ed59e1d1-3159d8c8f6cmr19982476a91.18.1750639165479;
+        Sun, 22 Jun 2025 17:39:25 -0700 (PDT)
+Received: from server.roeck-us.net ([2600:1700:e321:62f0:da43:aeff:fecc:bfd5])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-3158a12c9b9sm10171086a91.0.2025.06.22.17.39.24
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 22 Jun 2025 17:39:24 -0700 (PDT)
+Sender: Guenter Roeck <groeck7@gmail.com>
+Date: Sun, 22 Jun 2025 17:39:22 -0700
+From: Guenter Roeck <linux@roeck-us.net>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Pratyush Yadav <pratyush@kernel.org>,
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+	Alexander Usyskin <alexander.usyskin@intel.com>,
+	Miquel Raynal <miquel.raynal@bootlin.com>
+Subject: Re: Linux 6.16-rc1
+Message-ID: <2e7b74ad-b308-46af-9edb-59c0ce416d89@roeck-us.net>
+References: <CAHk-=wiiqYoM_Qdr3L15BqJUyRi6JjR02HSovwwz+BXy7DdVeA@mail.gmail.com>
+ <241b0829-5fec-4d88-866a-ba59e2ca748e@roeck-us.net>
+ <CAHk-=whDM950+cCgmNH2edB2edCaktdpvBLGjFESAZfYZ3ZpRQ@mail.gmail.com>
+ <mafs08qlluuvj.fsf@kernel.org>
+ <CAHk-=wjYB7tvFoqsL3aED9YZ2eusi9dMc=ckPzF-dnrRsERBUA@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAHk-=wjYB7tvFoqsL3aED9YZ2eusi9dMc=ckPzF-dnrRsERBUA@mail.gmail.com>
 
-From: "Dr. David Alan Gilbert" <linux@treblig.org>
+On Sat, Jun 21, 2025 at 08:59:46AM -0700, Linus Torvalds wrote:
+> On Sat, 21 Jun 2025 at 05:44, Pratyush Yadav <pratyush@kernel.org> wrote:
+> >
+> > I don't have much idea of how people use qemu for testing, but since you
+> > say this is important for testing workloads, I can take a deeper dive
+> > next week and have an answer by -rc4.
+> 
+> Thanks. I'm not sure *how* important this is, but if it affects
+> Guenter's test coverage, I assume it affects others too.
+> 
+> But it's not entirely clear how much it *does* affect Guenter. He says
+> five failed tests, but those are all accounted for by the master
+> device thing.
+> 
+> Guenter, maybe you can clarify?
+> 
 
-The last use of the work_on_cpu_safe() macro was removed recently by
-commit 9cda46babdfe ("crypto: n2 - remove Niagara2 SPU driver")
+Sorry for the delay; I was travelling.
 
-Remove it, and the work_on_cpu_safe_key() function it calls.
+I modified qemu to make the flash type configurable, so it is not a problem
+for me. However, anyone using upstream qemu will see the problem. My qemu patch
+adding the option to configure the flash type was rejected, so those affected
+will have to wait for a proper qemu fix.
 
-Signed-off-by: Dr. David Alan Gilbert <linux@treblig.org>
----
- include/linux/workqueue.h | 13 -------------
- kernel/workqueue.c        | 25 -------------------------
- 2 files changed, 38 deletions(-)
+I would suggest to not make any changes in the kernel: The qemu problems should be
+fixed in qemu. I only brought this up to raise awareness that there is a qemu related
+problem, not to ask for a change in the Linux kernel.
 
-diff --git a/include/linux/workqueue.h b/include/linux/workqueue.h
-index 6e30f275da77..3bf65b8e14cc 100644
---- a/include/linux/workqueue.h
-+++ b/include/linux/workqueue.h
-@@ -840,19 +840,6 @@ long work_on_cpu_key(int cpu, long (*fn)(void *),
- 	work_on_cpu_key(_cpu, _fn, _arg, &__key);	\
- })
- 
--long work_on_cpu_safe_key(int cpu, long (*fn)(void *),
--			  void *arg, struct lock_class_key *key);
--
--/*
-- * A new key is defined for each caller to make sure the work
-- * associated with the function doesn't share its locking class.
-- */
--#define work_on_cpu_safe(_cpu, _fn, _arg)		\
--({							\
--	static struct lock_class_key __key;		\
--							\
--	work_on_cpu_safe_key(_cpu, _fn, _arg, &__key);	\
--})
- #endif /* CONFIG_SMP */
- 
- #ifdef CONFIG_FREEZER
-diff --git a/kernel/workqueue.c b/kernel/workqueue.c
-index 97f37b5bae66..ade5c1152822 100644
---- a/kernel/workqueue.c
-+++ b/kernel/workqueue.c
-@@ -6770,31 +6770,6 @@ long work_on_cpu_key(int cpu, long (*fn)(void *),
- 	return wfc.ret;
- }
- EXPORT_SYMBOL_GPL(work_on_cpu_key);
--
--/**
-- * work_on_cpu_safe_key - run a function in thread context on a particular cpu
-- * @cpu: the cpu to run on
-- * @fn:  the function to run
-- * @arg: the function argument
-- * @key: The lock class key for lock debugging purposes
-- *
-- * Disables CPU hotplug and calls work_on_cpu(). The caller must not hold
-- * any locks which would prevent @fn from completing.
-- *
-- * Return: The value @fn returns.
-- */
--long work_on_cpu_safe_key(int cpu, long (*fn)(void *),
--			  void *arg, struct lock_class_key *key)
--{
--	long ret = -ENODEV;
--
--	cpus_read_lock();
--	if (cpu_online(cpu))
--		ret = work_on_cpu_key(cpu, fn, arg, key);
--	cpus_read_unlock();
--	return ret;
--}
--EXPORT_SYMBOL_GPL(work_on_cpu_safe_key);
- #endif /* CONFIG_SMP */
- 
- #ifdef CONFIG_FREEZER
--- 
-2.49.0
-
+Guenter
 
