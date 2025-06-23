@@ -1,94 +1,116 @@
-Return-Path: <linux-kernel+bounces-697393-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-697396-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id F1C37AE338B
-	for <lists+linux-kernel@lfdr.de>; Mon, 23 Jun 2025 04:15:58 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8357DAE3395
+	for <lists+linux-kernel@lfdr.de>; Mon, 23 Jun 2025 04:32:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2092516C879
-	for <lists+linux-kernel@lfdr.de>; Mon, 23 Jun 2025 02:15:59 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0F98D3A6E36
+	for <lists+linux-kernel@lfdr.de>; Mon, 23 Jun 2025 02:32:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0540319CC11;
-	Mon, 23 Jun 2025 02:15:53 +0000 (UTC)
-Received: from sgoci-sdnproxy-4.icoremail.net (sgoci-sdnproxy-4.icoremail.net [129.150.39.64])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2D70712B93;
-	Mon, 23 Jun 2025 02:15:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=129.150.39.64
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7791619ABC3;
+	Mon, 23 Jun 2025 02:32:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=foxmail.com header.i=@foxmail.com header.b="w1PyRO60"
+Received: from out162-62-58-216.mail.qq.com (out162-62-58-216.mail.qq.com [162.62.58.216])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8457F450FE;
+	Mon, 23 Jun 2025 02:32:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=162.62.58.216
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750644952; cv=none; b=rfbTpac7wZZ8Lp4A33oyjK35K+35/mM8z4hJVORDWPCGwFCbNtkO9ShhoUZZ6vvST5FsYDMy0cXPfcQs0h+oa8YTlYqUKDG/gHMW/PGzkP/6eGu+PMk+a/I2XwDjG9P1IMAG0I4Tbt3F9ofMqhLWF6GJViUsdO4WJi+/QO0GGNs=
+	t=1750645951; cv=none; b=PV/6GbCgX9jZFqN0vrH679ZZfJkzGjL4uf6pLXtwGvj/s1970uJJFB0jpPZAu4hlu202MEEtF/JkbOGfPBASyt+s1HT+ahlW+MCQVcUt6oKppQEA1Z9Cmz2XlagtM4EWfrhAf1OfykfUL+/vxwxytxPt024NH3l95kUWfgAJLqM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750644952; c=relaxed/simple;
-	bh=FYlDwP+smyf3rsCxko6A7zYwiH1HKxhsQ2wL5hAyWK4=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=DUNZlHSNw66y5Omw5pE9fNMPpEpD88nN+6c+ULD3WorSM/FExZb6pb83OKEUE3kfRVPtpyi9Me+mWfTzVbmzndASOQaVtAj9jB6u3Nztx3tVpEuL0Jf5Av+uV3xfNnxv2HQwG5t4LtvTC8eTw/EADMpKU2GI+0RSRQ0GSR/o7ns=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=hust.edu.cn; spf=pass smtp.mailfrom=hust.edu.cn; arc=none smtp.client-ip=129.150.39.64
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=hust.edu.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=hust.edu.cn
-Received: from hust.edu.cn (unknown [172.16.0.52])
-	by app2 (Coremail) with SMTP id HwEQrADHNu2quFhonvaoAQ--.32471S2;
-	Mon, 23 Jun 2025 10:15:06 +0800 (CST)
-Received: from [10.12.169.104] (unknown [10.12.169.104])
-	by gateway (Coremail) with SMTP id _____wC3T1OnuFhoH6uEAA--.41132S2;
-	Mon, 23 Jun 2025 10:15:04 +0800 (CST)
-Message-ID: <1740aa21-7d5f-4d03-b45b-61149dfa475a@hust.edu.cn>
-Date: Mon, 23 Jun 2025 10:15:03 +0800
+	s=arc-20240116; t=1750645951; c=relaxed/simple;
+	bh=I3IwtnwfiJJKXZ5Hkkf154DD2eNcuoNBv5UjoiVoioI=;
+	h=Message-ID:From:To:Cc:Subject:Date:MIME-Version; b=p1pplG0ALJfmp2s43cB8HM6omaC7QVHgGu8Q4CLmrDpviq8QJmw11s6dL+u2AJxeMCPmMjLuW1GzCRwxzvFDr99I2dPE7TJR6XYMxL9H//uynZPhM2U2PSxP8u0e2hv2I9i1bi3xk9mtoHTM3gTdv7hNcvbAUBA4zm+YYfu/aCY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foxmail.com; spf=pass smtp.mailfrom=foxmail.com; dkim=pass (1024-bit key) header.d=foxmail.com header.i=@foxmail.com header.b=w1PyRO60; arc=none smtp.client-ip=162.62.58.216
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foxmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=foxmail.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foxmail.com;
+	s=s201512; t=1750645936;
+	bh=Q7aC4c4TDIl4ETvPWSjXBXjWnAW8+l3VAH/BNluf1jI=;
+	h=From:To:Cc:Subject:Date;
+	b=w1PyRO60+2c7MuCo7mN+goQa/ez65g/COIgCoeaGQex+WpnZY3TMbGu/2J9LBlKzy
+	 bYvmTY4jX31/gO6SSF0fT5+YJhffm0txMopO64isMTHePJaze87fXpOPjeyoFses1g
+	 IPLVXzkGpEPCVpIl4z59lbIdXterXfLjIjtSWovU=
+Received: from KernelDevBox.byted.org ([115.190.40.15])
+	by newxmesmtplogicsvrszc13-0.qq.com (NewEsmtp) with SMTP
+	id 685B8C50; Mon, 23 Jun 2025 10:26:05 +0800
+X-QQ-mid: xmsmtpt1750645565tpzus0yxd
+Message-ID: <tencent_A9851A542D89AE1B94DA80AD2CB0280F5907@qq.com>
+X-QQ-XMAILINFO: OUUkXTc+3Jyn75R45GuDWrKXbZu/1fRI2Vz8/6oCEMCh+bptW9kxi4nedxP5Qx
+	 FEJ+1Pn+t8x2NBB83d7Osu0RvGvy4PkYMwjq+dk3xVMHRKM8LQz0t0t3lbwI28DL4/B0uMdVyYxf
+	 mNNGd4lwg+eHthufqkV5cVNxTwn4wb6ZpTTo5cz1jI8/Drb63PozFbBcTUpHpw+FBMhbiDdeksjr
+	 yMOGR80HbDl+DrFouJRWyeCwi5wAHcf5m9btem39fST0+rqNUdGlmhVkHEZV9Cnvr7CK8Z/n9ag6
+	 7TQPXZIelCCt1+wzLQSDt+mcpJXRTz2ZJV2oEfqgcS7r2/NIlB4ispBPphOqnnnriAGjCwK2LJVL
+	 v2e3F5hYDvQRGWOUIXl9Y/3G8NJLqtjIiACXHGv2hJz3X0S20ILQSwhUJUtd4rAu5bDoautrG1rG
+	 +aLd/KLPNOjgSYnQcRpC0HOd/3YIa8qXmUmkGw2pJ3b9I4JGfPYwklukFeLdzZujiPWDcl/z9rXG
+	 dmRyVkIHRyjpiKCukQXQVz8M36XCG66XzdibgQbNskRk+zXMbqxkqygvG0CsfjvijvzGolBreXR5
+	 I8gOqM5hwpmKRLdf9dTQTpe6hZEOPMZvAdoW81ivCeZ8Fg9biSgRXpFtsjnxn2Tbf50xqzP3P51/
+	 Um9xJE4o522a+PakwEJsNWwYUwG2PgAoa4eetS6i/7CD9HiKXSEV4CgNDwqMJ/G6teBkvzSR3vqb
+	 V/h1m/eMqmOwjkUMr8jPKRkc3TWNYQZLINWgg66e7pGs7YU8HmeOJlTsx2sXejzz8/oVojAqJ/BS
+	 3cLpKhDlSIILLE24kL1RFU5t2XHFfI8ky4Jz771xlw47SMNISXL8FXLlGWhJpNIEnT3qeknqy1mz
+	 VwVMrQBJVwizewPYkcUUwYuB4hDpc9e+dYVEbf1AyuMAV6zusWij9VBps8XpbEk15XuRVBmuuWrR
+	 vuY+MrJhLOaptnBphBqXI/+L67+B2HoL9jmKBw1wpy4UUOjpwiurSi9mlZMeMDeBd/ze81vQNCpx
+	 z3Jo3fTESaE1McqGd92xVJThiLVzQ+XVBi6vdlAbRt7wZfv64MA3BIhBUgvsymRpZF0WSU5B5RV7
+	 QOGFD3z9bLacnDW2x4ih/fU9v1jQ==
+X-QQ-XMRINFO: NI4Ajvh11aEj8Xl/2s1/T8w=
+From: Zhang Shurong <zhang_shurong@foxmail.com>
+To: jacopo@jmondi.org
+Cc: mchehab@kernel.org,
+	u.kleine-koenig@pengutronix.de,
+	hverkuil@xs4all.nl,
+	linux-media@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Zhang Shurong <zhang_shurong@foxmail.com>
+Subject: [PATCH v3] media: rj54n1cb0c: Fix memleak in rj54n1_probe()
+Date: Mon, 23 Jun 2025 10:26:04 +0800
+X-OQ-MSGID: <20250623022604.469797-1-zhang_shurong@foxmail.com>
+X-Mailer: git-send-email 2.39.5
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2] mm/balloon_compaction: update Chinese docs for
- movable_ops
-To: Nick Huang <sef1548@gmail.com>
-Cc: akpm@linux-foundation.org, alexs@kernel.org, corbet@lwn.net,
- david@redhat.com, linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-mm@kvack.org, si.yanteng@linux.dev, vishal.moola@gmail.com,
- wangkefeng.wang@huawei.com
-References: <20250622004249.9083-1-sef1548@gmail.com>
- <20250622133308.13413-1-sef1548@gmail.com>
-From: Dongliang Mu <dzm91@hust.edu.cn>
-In-Reply-To: <20250622133308.13413-1-sef1548@gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-CM-TRANSID:HwEQrADHNu2quFhonvaoAQ--.32471S2
-Authentication-Results: app2; spf=neutral smtp.mail=dzm91@hust.edu.cn;
-X-Coremail-Antispam: 1UD129KBjDUn29KB7ZKAUJUUUUU529EdanIXcx71UUUUU7v73
-	VFW2AGmfu7bjvjm3AaLaJ3UjIYCTnIWjp_UUUOp7k0a2IF6F4UM7kC6x804xWl1xkIjI8I
-	6I8E6xAIw20EY4v20xvaj40_Wr0E3s1l8cAvFVAK0II2c7xJM28CjxkF64kEwVA0rcxSw2
-	x7M28EF7xvwVC0I7IYx2IY67AKxVWDJVCq3wA2z4x0Y4vE2Ix0cI8IcVCY1x0267AKxVW8
-	Jr0_Cr1UM28EF7xvwVC2z280aVAFwI0_GcCE3s1l84ACjcxK6I8E87Iv6xkF7I0E14v26r
-	xl6s0DM2vYz4IE04k24VAvwVAKI4IrM2AIxVAIcxkEcVAq07x20xvEncxIr21l57IF6xkI
-	12xvs2x26I8E6xACxx1l5I8CrVACY4xI64kE6c02F40Ex7xfMcIj64x0Y40En7xvr7AKxV
-	W8Jr0_Cr1UMcIj6x8ErcxFaVAv8VW8uFyUJr1UMcIj6xkF7I0En7xvr7AKxVW8Jr0_Cr1U
-	McvjeVCFs4IE7xkEbVWUJVW8JwACjcxG0xvEwIxGrwCF04k20xvY0x0EwIxGrwCF04k20x
-	vE74AGY7Cv6cx26r4fZr1UJr1l4c8EcI0En4kS14v26r126r1DMxAqzxv26xkF7I0En4kS
-	14v26r126r1DMxC20s026xCaFVCjc4AY6r1j6r4UMxCIbckI1I0E14v26r126r1DMI8I3I
-	0E5I8CrVAFwI0_Jr0_Jr4lx2IqxVCjr7xvwVAFwI0_JrI_JrWlx4CE17CEb7AF67AKxVWU
-	tVW8ZwCIc40Y0x0EwIxGrwCI42IY6xIIjxv20xvE14v26r1I6r4UMIIF0xvE2Ix0cI8IcV
-	CY1x0267AKxVWUJVW8JwCI42IY6xAIw20EY4v20xvaj40_Jr0_JF4lIxAIcVC2z280aVAF
-	wI0_Jr0_Gr1lIxAIcVC2z280aVCY1x0267AKxVWUJVW8JbIYCTnIWIevJa73UjIFyTuYvj
-	xUsrWFUUUUU
-X-CM-SenderInfo: asqsiiirqrkko6kx23oohg3hdfq/
+Content-Transfer-Encoding: 8bit
 
+rj54n1_probe() won't clean all the allocated resources in fail
+path, which may causes the memleaks. Add v4l2_ctrl_handler_free() to
+prevent memleak.
 
-On 6/22/25 9:33 PM, Nick Huang wrote:
-> This patch is identical to v1, with the only change being the addition
-> of a missing Signed-off-by line.
->
-> Sorry for the oversight in the previous submission.
+Fixes: f187352dcd45 ("media: i2c: Copy rj54n1cb0c soc_camera sensor driver")
 
-When you have a new patch, you'd better submit it with a full code 
-change other than explanation.
+Signed-off-by: Zhang Shurong <zhang_shurong@foxmail.com>
+---
+Changes in v2:
+- Fixed compile error
+Changes in v3:
+- Fixed coding style warnings identified by scripts/checkpatch.pl
+---
+ drivers/media/i2c/rj54n1cb0c.c | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
-You could check any v2 patch in the LKML for further reference.
-
-Dongliang Mu
-
->
-> Signed-off-by: Nick Huang <sef1548@gmail.com>
+diff --git a/drivers/media/i2c/rj54n1cb0c.c b/drivers/media/i2c/rj54n1cb0c.c
+index b7ca39f63dba..a2fe906408c5 100644
+--- a/drivers/media/i2c/rj54n1cb0c.c
++++ b/drivers/media/i2c/rj54n1cb0c.c
+@@ -1330,8 +1330,10 @@ static int rj54n1_probe(struct i2c_client *client)
+ 	v4l2_ctrl_new_std(&rj54n1->hdl, &rj54n1_ctrl_ops,
+ 			V4L2_CID_AUTO_WHITE_BALANCE, 0, 1, 1, 1);
+ 	rj54n1->subdev.ctrl_handler = &rj54n1->hdl;
+-	if (rj54n1->hdl.error)
++	if (rj54n1->hdl.error) {
++		v4l2_ctrl_handler_free(&rj54n1->hdl);
+ 		return rj54n1->hdl.error;
++	}
+ 
+ 	rj54n1->clk_div		= clk_div;
+ 	rj54n1->rect.left	= RJ54N1_COLUMN_SKIP;
+-- 
+2.39.5
 
 
