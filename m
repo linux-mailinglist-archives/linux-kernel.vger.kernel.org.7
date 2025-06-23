@@ -1,121 +1,193 @@
-Return-Path: <linux-kernel+bounces-697642-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-697658-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5A28FAE36C8
-	for <lists+linux-kernel@lfdr.de>; Mon, 23 Jun 2025 09:29:20 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6E311AE3701
+	for <lists+linux-kernel@lfdr.de>; Mon, 23 Jun 2025 09:34:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id F28307A2FCE
-	for <lists+linux-kernel@lfdr.de>; Mon, 23 Jun 2025 07:27:55 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 003D7171AFA
+	for <lists+linux-kernel@lfdr.de>; Mon, 23 Jun 2025 07:34:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 69DDB1F582B;
-	Mon, 23 Jun 2025 07:29:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0C2B7221F17;
+	Mon, 23 Jun 2025 07:32:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="IiwqaWvc"
-Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
+	dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b="sNHI+Joc"
+Received: from mx07-00178001.pphosted.com (mx07-00178001.pphosted.com [185.132.182.106])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3B5831DF977;
-	Mon, 23 Jun 2025 07:29:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 670DA1FECAF;
+	Mon, 23 Jun 2025 07:32:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.132.182.106
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750663749; cv=none; b=MmybN9LnyROu2UBLCQdGVWllY7zWjquU5CHePKk/Wcq+m8YADiVa2NCQSKYT7Jkn6tOQTgVE/Kfjj1XJgQnsF6frCnHlX00Hv0lmBkaIoX5UPY1dVXSdsYhGyPZ+w3LCORxDQaipjXtySSjng32k5TphPBz8/x7rvNuiiiC+BE0=
+	t=1750663977; cv=none; b=O6kE5yUp04mFppyq2JR00A29KQ+t3sNOpu+OtIqHfRBa+BQGGcISun8S6F8lyKbMNo5JdX2V1wmekEmYxMox0uswY++LvKWk7Ubg3sTfG2AZkhe50w9fqhqcqHf1uAvLAPFZZavsVX+WyCjW93O3Lg9ltqINrV/dBoHpQbGfLS8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750663749; c=relaxed/simple;
-	bh=iEb75kedDK9jzJl5dTiD94gugQWpx62MxDwqDUBI3/0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=bRmWqG1RDHDBNJGHTuwtCfKfF9IOOs8UAGXrafKwnbXKEyi/LVqiXc/lT3Z01iENSMQgquHZ5Ap0zcvXgQ+7Ytu90C+dNTshJ/2ZsMJ/230nbMErI4Z42gcs96g+7frFewMhqt5lHju3P49vKyoLqa4542ysKHNKMLjlMYNPrY8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=IiwqaWvc; arc=none smtp.client-ip=90.155.50.34
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Transfer-Encoding:
-	Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:
-	Sender:Reply-To:Content-ID:Content-Description;
-	bh=y8zZNptWeMcyuRRjVCidTkh+/C4Axx/FweDvXPEv1zk=; b=IiwqaWvc+U6spOy3Zsyt06wiOm
-	rnwmhnqbMfi3rXuLXuOIZQ2DUpsNCTb1wkO9OOTruAdnln1AkvA36Yv8iDk0WL/vu7nH/M8xhgw6U
-	FUG7ulpXfAziDBWBw1kbWKEgR9BYsP9uhcl6y8PceslBg+PhLOo0r2DhU98cdbxVkd767+U21KLjl
-	9eSmlYLDOqetEiohs81QqJ3b+UekKJaLkGCyli4A9QfP+Dq5vrsfRsPbPGlWLNzp7DzvCD0z/ZOvl
-	kTTMiQINJw5BD6C7vRnb+rUQEKLp/IxnbPIwGO5dZju63GKyvAe2UjGavyvCA76dz6QbOhf1EloGG
-	jqzmOT0w==;
-Received: from 77-249-17-252.cable.dynamic.v4.ziggo.nl ([77.249.17.252] helo=noisy.programming.kicks-ass.net)
-	by casper.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
-	id 1uTbbo-00000002gbf-0CZN;
-	Mon, 23 Jun 2025 07:28:52 +0000
-Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
-	id F16C3301C34; Mon, 23 Jun 2025 09:28:50 +0200 (CEST)
-Date: Mon, 23 Jun 2025 09:28:50 +0200
-From: Peter Zijlstra <peterz@infradead.org>
-To: "Mi, Dapeng" <dapeng1.mi@linux.intel.com>
-Cc: Ingo Molnar <mingo@redhat.com>,
-	Arnaldo Carvalho de Melo <acme@kernel.org>,
-	Namhyung Kim <namhyung@kernel.org>, Ian Rogers <irogers@google.com>,
-	Adrian Hunter <adrian.hunter@intel.com>,
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-	Kan Liang <kan.liang@linux.intel.com>,
-	Andi Kleen <ak@linux.intel.com>,
-	Eranian Stephane <eranian@google.com>, linux-kernel@vger.kernel.org,
-	linux-perf-users@vger.kernel.org, Dapeng Mi <dapeng1.mi@intel.com>
-Subject: Re: [Patch v4 07/13] perf/x86/intel: Allocate arch-PEBS buffer and
- initialize PEBS_BASE MSR
-Message-ID: <20250623072850.GN1613200@noisy.programming.kicks-ass.net>
-References: <20250620103909.1586595-1-dapeng1.mi@linux.intel.com>
- <20250620103909.1586595-8-dapeng1.mi@linux.intel.com>
- <20250621092001.GT1613376@noisy.programming.kicks-ass.net>
- <8f6effaf-0a4b-411e-8e12-57f3c83069c2@linux.intel.com>
+	s=arc-20240116; t=1750663977; c=relaxed/simple;
+	bh=lZAmebscBQ8MX02hjVnAxNLQv0xvYWt7K93oblYTI5Q=;
+	h=From:Subject:Date:Message-ID:MIME-Version:Content-Type:To:CC; b=A4BX/288+ekBH2x/WleIUVMxhgESW9zufpeKk0ydIIyhjCLbXXm+Mtl+ZhbUFMw+7AqIVNO+qi+qf7xipgoKi8Mxl14d+w/zAXC8xP5yyw2AYZIORe/xC+kiokoqfcV76YRm/JltcXoovPYEeJWJKLGGhWZE2r68Fqdt7bo240c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com; spf=pass smtp.mailfrom=foss.st.com; dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b=sNHI+Joc; arc=none smtp.client-ip=185.132.182.106
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=foss.st.com
+Received: from pps.filterd (m0288072.ppops.net [127.0.0.1])
+	by mx07-00178001.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 55N5XHLY031861;
+	Mon, 23 Jun 2025 09:32:41 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foss.st.com; h=
+	cc:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=selector1; bh=9H1lc3RXGVHF2geyU88kye
+	jPbwZf42Tzp+LcwADoOnQ=; b=sNHI+JocG7GuQFGF/zcLKISfCOzxtPok4o7Ltc
+	931IDUk1ilDObUqR5IbtIR0/tXDMW8AF0HdXqOquq4jeOS09roGhFhW+eA2v7cy1
+	Hm/1cE2hBKmJxFzPVXjPviZyiiuGXhxV7vMhHPhzs4xBz5JyAfQ9Nq1wRIwy13Yb
+	ARom9b1U0SCHNmr3hST3a3uwNH5Ta/Jrtz/vDDD1AC9loxQ/3fZD0L9AfH82RoOB
+	9L4yZ9LGDSNvK866fPlXqQ5Gkdu268tc5nCBUX0fhgsD3/StyoCw08eNVJxvVTbm
+	dd55uHekR1zlZCSCVLGACVv+UObZS8EO3QTPOExW+vTFG2vQ==
+Received: from beta.dmz-ap.st.com (beta.dmz-ap.st.com [138.198.100.35])
+	by mx07-00178001.pphosted.com (PPS) with ESMTPS id 47dj5ner7y-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 23 Jun 2025 09:32:41 +0200 (MEST)
+Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
+	by beta.dmz-ap.st.com (STMicroelectronics) with ESMTP id 08BD340050;
+	Mon, 23 Jun 2025 09:31:36 +0200 (CEST)
+Received: from Webmail-eu.st.com (shfdag1node2.st.com [10.75.129.70])
+	by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id EF75EB52731;
+	Mon, 23 Jun 2025 09:29:40 +0200 (CEST)
+Received: from localhost (10.252.18.29) by SHFDAG1NODE2.st.com (10.75.129.70)
+ with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Mon, 23 Jun
+ 2025 09:29:40 +0200
+From: =?utf-8?q?Cl=C3=A9ment_Le_Goffic?= <clement.legoffic@foss.st.com>
+Subject: [PATCH v6 0/8] Introduce HDP support for STM32MP platforms
+Date: Mon, 23 Jun 2025 09:29:10 +0200
+Message-ID: <20250623-hdp-upstream-v6-0-387536f08398@foss.st.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <8f6effaf-0a4b-411e-8e12-57f3c83069c2@linux.intel.com>
+X-B4-Tracking: v=1; b=H4sIAEYCWWgC/23NQW7DIBCF4atErEsEAzMxXfUeVReYgZpFYgtcq
+ 1Xku5dEqpI4Xb6Rvn/OosaSYxWvu7Mocck1j6c26GUnwuBPn1FmbluAAlQAVg48ya+pziX6oyS
+ AiOy19S6JRqYSU/6+5t4/2h5yncfyc60v+nL9C+FjaNFSScfKukBojPJvaax1X+d9GI/iklrgx
+ hHUhkPjaBL1XY8phe6Zm3tuNtw03jMFr52zRP98t/e823Db+CG63ngGZYifOd446e13bJwSU1I
+ cEA7hka/r+gvxdvc0pgEAAA==
+X-Change-ID: 20250224-hdp-upstream-622e5da14a9f
+To: Linus Walleij <linus.walleij@linaro.org>, Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>,
+        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+        Alexandre Torgue
+	<alexandre.torgue@foss.st.com>,
+        Bartosz Golaszewski <brgl@bgdev.pl>,
+        Antonio
+ Borneo <antonio.borneo@foss.st.com>
+CC: <linux-kernel@vger.kernel.org>, <linux-gpio@vger.kernel.org>,
+        <devicetree@vger.kernel.org>,
+        <linux-stm32@st-md-mailman.stormreply.com>,
+        <linux-arm-kernel@lists.infradead.org>,
+        =?utf-8?q?Cl=C3=A9ment_Le_Goffic?=
+	<clement.legoffic@foss.st.com>,
+        Krzysztof Kozlowski
+	<krzysztof.kozlowski@linaro.org>
+X-Mailer: b4 0.15-dev-c25d1
+X-ClientProxiedBy: SHFCAS1NODE1.st.com (10.75.129.72) To SHFDAG1NODE2.st.com
+ (10.75.129.70)
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.0.736,FMLib:17.12.80.40
+ definitions=2025-06-23_02,2025-06-20_01,2025-03-28_01
 
-On Mon, Jun 23, 2025 at 09:17:23AM +0800, Mi, Dapeng wrote:
-> 
-> On 6/21/2025 5:20 PM, Peter Zijlstra wrote:
-> > On Fri, Jun 20, 2025 at 10:39:03AM +0000, Dapeng Mi wrote:
-> >
-> >> diff --git a/arch/x86/events/intel/ds.c b/arch/x86/events/intel/ds.c
-> >> index b6eface4dccd..72b925b8c482 100644
-> >> --- a/arch/x86/events/intel/ds.c
-> >> +++ b/arch/x86/events/intel/ds.c
-> >> @@ -625,13 +625,22 @@ static int alloc_pebs_buffer(int cpu)
-> >>  	int max, node = cpu_to_node(cpu);
-> >>  	void *buffer, *insn_buff, *cea;
-> >>  
-> >> -	if (!x86_pmu.ds_pebs)
-> >> +	if (!intel_pmu_has_pebs())
-> >>  		return 0;
-> >>  
-> >> -	buffer = dsalloc_pages(bsiz, GFP_KERNEL, cpu);
-> >> +	/*
-> >> +	 * alloc_pebs_buffer() could be called by init_arch_pebs_buf_on_cpu()
-> >> +	 * which is in atomic context.
-> >> +	 */
-> >> +	buffer = dsalloc_pages(bsiz, preemptible() ? GFP_KERNEL : GFP_ATOMIC, cpu);
-> >>  	if (unlikely(!buffer))
-> >>  		return -ENOMEM;
-> > Here we go again.. that is CPU_STARTING context, that has IRQs disabled
-> > and as such no allocation is allowed. Not even GFP_ATOMIC -- this will
-> > break PREEMPT_RT.
-> 
-> Thanks. So we could have to follow what current legacy PEBS does and defer
-> the PEBS buffer allocation until creating perf events
-> (x86_reserve_hardware()).�
+This patch series introduces the Hardware Debug Port (HDP) support for
+STM32MP platforms.
 
-The normal way to do this kind of thing is allocate in prepare, use in
-starting, and the reverse on down, stop using in dying and free in dead.
+It includes updates to the mmio gpio driver, the addition of device tree
+bindings, the HDP driver, and updates to the device tree files for
+STM32MP13, STM32MP15,
+and STM32MP25 SoCs.
+The series also updates the MAINTAINERS file to include myself as the
+maintainer for the STM32 HDP driver and adds the necessary
+pinmux configurations for HDP pins on STM32MP157C-DK2 as example.
 
-Specifically we have the callbacks:
+Signed-off-by: Clément Le Goffic <clement.legoffic@foss.st.com>
+---
+Changes in v6:
+- Add Krzysztof Kozlowski's 'Reviewd-by' trailer on bindings.
+- Remove gpio mmio patch as taken by Bartosz Golaszewski:
+  https://lore.kernel.org/all/175031700235.8154.11042956002137082224.b4-ty@linaro.org/
+- Link to v5: https://lore.kernel.org/r/20250613-hdp-upstream-v5-0-6fd6f0dc527c@foss.st.com
 
-CPUHP_PERF_X86_PREPARE  -> x86_pmu.cpu_prepare()   / x86_pmu.cpu_dead()
-CPUHP_PERF_X86_STARTING -> x86_pmu.cpu_starting()  / x86_pmu.cpu_dying()
+Changes in v5:
+- (Better) Change the bindings file name:
+  's/st,stm32-pinctrl-hdp.yaml/st,stm32-hdp.yaml/g'
+- Remove Krzysztof Kozlowski's 'Reviewed-by' trailer on bindings.
+- Add Linus Walleij's 'Reviewed-by' trailers.
+- Refine SoC dtsi patch's commit message to explain the need of keeping
+  the HDP node disabled.
+- Link to v4: https://lore.kernel.org/r/20250528-hdp-upstream-v4-0-7e9b3ad2036d@foss.st.com
 
-to arrange for just such a setup.
+Changes in v4:
+- 's/Add/add/g' in MAINTAINERS commit message.
+- Fix the (wrong) status update for the thermal node in stm32mp131.dtsi
+  file.
+- Do not enable HDP by default during compile testing.
+- Change the bindings file name:
+  's/st,stm32-pinctrl-hdp.yaml/st,stm32-hdp.yaml/g'
+- Add Krzysztof Kozlowski's 'Reviewd-by' trailer on bindings.
+- Link to v3: https://lore.kernel.org/r/20250523-hdp-upstream-v3-0-bd6ca199466a@foss.st.com
+
+Changes in v3:
+- Use `bgpio_init()` function:
+    - Add add patch to create the `BGPIOF_NO_INPUT` flag needed for the
+     `bgpio_setup_direction()` used in `bgpio_init()`
+    - Remove `stm32_hdp_gpio_get` and `stm32_hdp_gpio_set`
+- Use `static` pm ops
+- Update bindings:
+    - add pattern instruction for pin values
+    - remove function's maxItems to use `function: true`
+    - fix the compatible in the exemples
+- Link to v2: https://lore.kernel.org/r/20250520-hdp-upstream-v2-0-53f6b8b5ffc8@foss.st.com
+
+Changes in v2:
+- Remove bindings header files with function name as #define
+- Add match_data with function name for three compatible:
+  "st,stm32mp131-hdp", "st,stm32mp151-hdp" and "st,stm32mp251-hdp".
+- Rework a bit the driver to use match_data.
+- Remove the use of `dev_err_probe(` in the resume ops.
+- Remove `MODULE_ALIAS(`.
+- Remove the vertical bar in bindings description paragraph.
+- Fix an error in the `pinctrl-0` parameter of the binding example, it
+  was refering a node that wasn't existing.
+- Use uppercase pin names.
+- Link to v1: https://lore.kernel.org/r/20250225-hdp-upstream-v1-0-9d049c65330a@foss.st.com
+
+---
+Clément Le Goffic (8):
+      dt-bindings: pinctrl: stm32: Introduce HDP
+      pinctrl: stm32: Introduce HDP driver
+      MAINTAINERS: add Clément Le Goffic as STM32 HDP maintainer
+      ARM: dts: stm32: add Hardware debug port (HDP) on stm32mp13
+      ARM: dts: stm32: add Hardware debug port (HDP) on stm32mp15
+      ARM: dts: stm32: add Hardware debug port (HDP) on stm32mp25
+      ARM: dts: stm32: add alternate pinmux for HDP pin and add HDP pinctrl node
+      ARM: dts: stm32: add Hardware debug port (HDP) on stm32mp157c-dk2 board
+
+ .../devicetree/bindings/pinctrl/st,stm32-hdp.yaml  | 187 ++++++
+ MAINTAINERS                                        |   6 +
+ arch/arm/boot/dts/st/stm32mp131.dtsi               |   7 +
+ arch/arm/boot/dts/st/stm32mp15-pinctrl.dtsi        |  25 +
+ arch/arm/boot/dts/st/stm32mp151.dtsi               |   7 +
+ arch/arm/boot/dts/st/stm32mp157c-dk2.dts           |   6 +
+ arch/arm64/boot/dts/st/stm32mp251.dtsi             |   7 +
+ drivers/pinctrl/stm32/Kconfig                      |  14 +
+ drivers/pinctrl/stm32/Makefile                     |   1 +
+ drivers/pinctrl/stm32/pinctrl-stm32-hdp.c          | 720 +++++++++++++++++++++
+ 10 files changed, 980 insertions(+)
+---
+base-commit: cc42860b8789f3aac4e42cc223f8e8325a3cfa33
+change-id: 20250224-hdp-upstream-622e5da14a9f
+
+Best regards,
+-- 
+Clément Le Goffic <clement.legoffic@foss.st.com>
+
 
