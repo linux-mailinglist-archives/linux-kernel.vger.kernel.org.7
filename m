@@ -1,133 +1,154 @@
-Return-Path: <linux-kernel+bounces-698872-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-698875-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6E08CAE4B14
-	for <lists+linux-kernel@lfdr.de>; Mon, 23 Jun 2025 18:38:14 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 74B91AE4B1B
+	for <lists+linux-kernel@lfdr.de>; Mon, 23 Jun 2025 18:38:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F098C16A1CD
-	for <lists+linux-kernel@lfdr.de>; Mon, 23 Jun 2025 16:38:05 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 479713B35C4
+	for <lists+linux-kernel@lfdr.de>; Mon, 23 Jun 2025 16:38:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D1FE529B771;
-	Mon, 23 Jun 2025 16:37:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 313B32BD01A;
+	Mon, 23 Jun 2025 16:38:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=stgolabs.net header.i=@stgolabs.net header.b="rbXYSI+c"
-Received: from frog.ash.relay.mailchannels.net (frog.ash.relay.mailchannels.net [23.83.222.63])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="B6D3KXE7"
+Received: from mail-il1-f175.google.com (mail-il1-f175.google.com [209.85.166.175])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 22C07277813
-	for <linux-kernel@vger.kernel.org>; Mon, 23 Jun 2025 16:37:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=23.83.222.63
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750696672; cv=pass; b=Bfk0LHshBrWtsrNtQkTHBci8tXu4wgIExQ7gdxwRx2HbCZDmWL4sDvRMU4jI2B7GMhqIo+3QwyTZOte5w4ROU1tGvccmMTrM4bMI7o6Vzb3qb3ie5Ngzfhsk9V0dwKopKzbU/3c0Du1rOvCTxE22VlSCIn2useDWt9Ti+XCtg5U=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750696672; c=relaxed/simple;
-	bh=F9f9rrcSqXCHq/D5i1TfPTmVWWcxuSa12Xech6gShKE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=IGUKbUnQTElPY0Vb07wEGU6JYolojfgxKN6bCf8cKRptgNqhcUOBWxOoeeHYeq4BWBs/SPWGoRTW12PK5nPYq27IrlkHgAN5HDTGush6zWI6MZEcmHtnI1ikek3e485k75+8Q9Jx4gMQ/Wz2t9SatK5kqgpOPKCBJtDicFjFAu8=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=stgolabs.net; spf=pass smtp.mailfrom=stgolabs.net; dkim=pass (2048-bit key) header.d=stgolabs.net header.i=@stgolabs.net header.b=rbXYSI+c; arc=pass smtp.client-ip=23.83.222.63
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=stgolabs.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=stgolabs.net
-X-Sender-Id: dreamhost|x-authsender|dave@stgolabs.net
-Received: from relay.mailchannels.net (localhost [127.0.0.1])
-	by relay.mailchannels.net (Postfix) with ESMTP id DC81A16638A;
-	Mon, 23 Jun 2025 16:37:48 +0000 (UTC)
-Received: from pdx1-sub0-mail-a231.dreamhost.com (100-108-116-219.trex-nlb.outbound.svc.cluster.local [100.108.116.219])
-	(Authenticated sender: dreamhost)
-	by relay.mailchannels.net (Postfix) with ESMTPA id DBD53164BA3;
-	Mon, 23 Jun 2025 16:37:47 +0000 (UTC)
-ARC-Seal: i=1; s=arc-2022; d=mailchannels.net; t=1750696667; a=rsa-sha256;
-	cv=none;
-	b=oSeHRW5bHTv4OYZC0vr6G1aBsJGWFCdd3I8D6AC3niXg4PjIeS0+OwDQvbdQZ0N5A2ca58
-	JJ0fTi0p++w0wP5ZgBL4qzAPo82rMRkD+tjJmVeKnOG410xPQuY3v6QqFMWJTMci69gikS
-	Kmlk/YDokVbYUp2npIDt6JAOJSPxbgNf6dqBJTvM/SF6WGFirQRfHyau23u7B/1KdysXe8
-	idR02tc4MqxPO1b3XsEEydpTlHbr9XTzFJmVvLnP9nQnygmywjFzMGhzFx5vy1aifQy5M+
-	UmZla6SCowy2KO708WWFpr/KJpnEPhYPHIgZ+JDuwy39o9/NwlcLjgH2qQYZsg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed;
- d=mailchannels.net;
-	s=arc-2022; t=1750696667;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references:dkim-signature;
-	bh=F9f9rrcSqXCHq/D5i1TfPTmVWWcxuSa12Xech6gShKE=;
-	b=DlzCAuTCNTtWPiLP4JT3YxYSRs7oOlaXUYm9drUcbOH+hL4s3A8DHcM+8c337ohz6OpzSE
-	9J4umRrIC3DCxCGaG+Pgbkm54/T3YqjTaB3j2x5Nzk45+DswnttEBagyAddiZYZyxRNLj3
-	SbgFEerb+gsnBtGrh7zblrHKH1VA9SPCs3hh9v//F6Tn3MCRPx5EpAIUWnqheVuFHPhq5y
-	y/D8cE8fdG9jkGUtQUAzb0dkhHc2sBBz2thCs7gXMKS32ypvIh5MCPf36JgdLEqGOWBrqW
-	soWBFKLMHAjyxpvqZrFUBvMDi4YDeawg8JmD/g6tqjLM0JKUpuApioCt3ATHFw==
-ARC-Authentication-Results: i=1;
-	rspamd-6597f9cdc7-7kqxh;
-	auth=pass smtp.auth=dreamhost smtp.mailfrom=dave@stgolabs.net
-X-Sender-Id: dreamhost|x-authsender|dave@stgolabs.net
-X-MC-Relay: Neutral
-X-MailChannels-SenderId: dreamhost|x-authsender|dave@stgolabs.net
-X-MailChannels-Auth-Id: dreamhost
-X-Language-Tank: 2cfaeedf74dc8afe_1750696668669_2787627355
-X-MC-Loop-Signature: 1750696668669:579541687
-X-MC-Ingress-Time: 1750696668669
-Received: from pdx1-sub0-mail-a231.dreamhost.com (pop.dreamhost.com
- [64.90.62.162])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384)
-	by 100.108.116.219 (trex/7.0.3);
-	Mon, 23 Jun 2025 16:37:48 +0000
-Received: from offworld (syn-076-167-199-067.res.spectrum.com [76.167.199.67])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (P-256) server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: dave@stgolabs.net)
-	by pdx1-sub0-mail-a231.dreamhost.com (Postfix) with ESMTPSA id 4bQtzb2CLrzGm;
-	Mon, 23 Jun 2025 09:37:47 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=stgolabs.net;
-	s=dreamhost; t=1750696667;
-	bh=F9f9rrcSqXCHq/D5i1TfPTmVWWcxuSa12Xech6gShKE=;
-	h=Date:From:To:Cc:Subject:Content-Type;
-	b=rbXYSI+cKHpCxHvyJaklRGJ6ew53ZGS1mAhaDuDayLEXPwLwvpWEVZt+ibuQh5m0k
-	 kCqtsI/65flngJ4m6FoegPEPNtftu1X3CxPE0jjVj8mJeXpS2hdNyY1TSUePPMcskp
-	 I0nCM2KvmQZrqFdltEGH54knylREai+9Gvs/rfRan2YbsPwfFJfEzd6BmJd06z+XUB
-	 orn/nbzHY2BWQDzewbWjyKUEoHlCpvtZl5rv9hmHxqAoPQDhvytevkMKtS52WNfCYc
-	 eySYvsAVKRRjalJ5dx0BxgyTbSyVyqrIHmPapOjsRzgLl8vAC0AK54tC1IzFlsZWvD
-	 84pIFt24F8f0w==
-Date: Mon, 23 Jun 2025 09:37:43 -0700
-From: Davidlohr Bueso <dave@stgolabs.net>
-To: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-Cc: linux-kernel@vger.kernel.org,
-	=?utf-8?B?QW5kcsOvwr/CvQ==?= Almeida <andrealmeid@igalia.com>,
-	Calvin Owens <calvin@wbinvd.org>,
-	Darren Hart <dvhart@infradead.org>, Ingo Molnar <mingo@redhat.com>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Thomas Gleixner <tglx@linutronix.de>
-Subject: Re: [PATCH] futex: Initialize futex_phash_new during fork().
-Message-ID: <20250623163743.ocimtxqdrwnkffjv@offworld>
-References: <20250623083408.jTiJiC6_@linutronix.de>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F0F28299A8C
+	for <linux-kernel@vger.kernel.org>; Mon, 23 Jun 2025 16:37:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.175
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1750696679; cv=none; b=LtTf+6WkrU8kSRFtT+tABkBN2HOGEvPug9NHcobn2qdI8ZGGGoXeuMKFyOeffyrf2pBfkiK3dmwfGedXWNPXowb9hQTqfWhjyxXAHEJQMF39HuPs5chXchmpLm9438DqwZ8IY2/BxaVdvXvZuTTlG/qSy1eQHOiV8KubvyV9+Eo=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1750696679; c=relaxed/simple;
+	bh=JS1FG2qENkQ353/qm/Vo5hQuv0HIVwdvuruB5QR/gzY=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=aVyjDJc5y3CQYBVoNHOzIzm0GX0HdtBvKvRH08BWDzTfxW7b0DZOn4kBdLBcHmXTmt2iyr91M0RZVsMcrogboISEQvacwnlncOc3KK2gkIkYf7RS3ogQ8W9pGLYLOcIINK3ZfkVuowdjtVqnSrziAOr6uAam9HHpqC09ES2lEt8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=B6D3KXE7; arc=none smtp.client-ip=209.85.166.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-il1-f175.google.com with SMTP id e9e14a558f8ab-3ddc99e0b77so2935ab.0
+        for <linux-kernel@vger.kernel.org>; Mon, 23 Jun 2025 09:37:57 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1750696677; x=1751301477; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=ri3+Ap4cqoeDbRAUlcrZd437nBvU+XraT/8Lh4iGeK0=;
+        b=B6D3KXE76BIQVNqRZxqzThbRtp42uPjlR5m8BSm5LHuALEPl9XbKFwNYU8vsCVLhb0
+         2tmz7/W59rjp5YJublF2o/0rXjl5PNDa2+iIDhvVpM4ZgfET0eGLASPLtrgUpP6XQCtk
+         T5AWPvPQqM4bKiiZVcSqIRc4jjJvRECd4W4l7Mo5/V0jZy8jAMdAfLGp8BjADQWXFF8L
+         1jIudAeHFR/LIBLuzw+Q7HvJZAvZp9Yk8ekG8A7h7fs8td7/ev5Wleu+iSvTISxokzju
+         vVhLM/JFaAgTzNt5pTy+Ts6HuaAS92Z/09SLc9pYWEofCWMhKRywlQhGPAHSc9VX+H5M
+         BeMA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1750696677; x=1751301477;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=ri3+Ap4cqoeDbRAUlcrZd437nBvU+XraT/8Lh4iGeK0=;
+        b=ff/01j3yZVNjILbLB62QTpEvxQNwXvF8sOf00OYVlX/rbX1rX/tBYO3RMH8BL0gaeQ
+         4EMe0g7+hUakHnPfMQye6w0UKAXwtFSGJjUeVLgnCkn74NPg2fPuTtFk9SFghq2fah+t
+         nYk08isgUGsVKBhoqs+/eqf/K5atuUKHSf5hA0bSuQHoKPepr81V1k+pKVetLB/2FHdA
+         V5ZiTKrAGFlk3QlaZYrHNkvUkjFV+0UvLqwRoU+YU8z2T1F4dbkENjFfX7qmLM0tHBVL
+         DaQQbCMuOnG8ebkjtrGY7vnvtxbY79ry/5LTbwyLXoEtTsKh5Si6N9ozLbb8gVBnDf63
+         wI1A==
+X-Forwarded-Encrypted: i=1; AJvYcCXppJxHUBBh7yznEI5XJ0Xx2yPKF2JNf4dSq+89Irvir5cZBDFV4MZ8pzHUkIOiiZfgsCHxcU4q6cz4/1s=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyhufiivM6KHkU4IrYcJKWXmbGJkygPUhxtpCfAO6nFQG3TjdU9
+	+9MUZr155pIhmudK3iVPdu6WS7/hPZmt5SPTYjwnsBqH2Gx9GsuXkK7h+Q3YaQ44H1rH1SxGGH3
+	jND0KDMr4OvoQ8jyXLvArwh7tSfnkaScNh3RQQ/8u
+X-Gm-Gg: ASbGncuaUys5iJ8qe4Q4Ym53iGHm+Dn/x/fusbeZfP/PkSO5BqD4UoZawcxnXOqBtyY
+	fcnfxVxh8TegWveTx0x8YZtZxwf/DEjLFBFkkn/2scnplTojviLqXINWBencuNzv+GiZ09xoWeF
+	kNMWl+ZY/wiZt6DoBqr7ZaN4yceuy2x68Gx4UMNI2k+3PWLwQgpqTElAu/OnPUWtUB8egQXozr
+X-Google-Smtp-Source: AGHT+IGdxgr8P+XalPte1GIMEXQlB83/Ff2yJxb0FI5ykWekoHN3CN4Qry4jy0ooIKs9GE80H/Wjo6lwAjGkNsxfkb4=
+X-Received: by 2002:a05:6e02:3c06:b0:3dd:a7f3:a229 with SMTP id
+ e9e14a558f8ab-3df0703957amr6032785ab.4.1750696676770; Mon, 23 Jun 2025
+ 09:37:56 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii; format=flowed
-Content-Disposition: inline
-In-Reply-To: <20250623083408.jTiJiC6_@linutronix.de>
-User-Agent: NeoMutt/20220429
+References: <e3751a74be34bbf3781c4644f518702a7270220b.1749785642.git.collin.funk1@gmail.com>
+ <20cce2b1-eaad-4565-817b-b094aecee0a5@linaro.org> <874iwa71mo.fsf@gmail.com> <6f524405-a9a7-45c4-bf4d-9ae33e52bfbc@linaro.org>
+In-Reply-To: <6f524405-a9a7-45c4-bf4d-9ae33e52bfbc@linaro.org>
+From: Ian Rogers <irogers@google.com>
+Date: Mon, 23 Jun 2025 09:37:44 -0700
+X-Gm-Features: AX0GCFvasLURCKicqFzCPNy0SCLEOxEQZz8PHex8H2GTWGdkfSVmQ_yM79QpXxY
+Message-ID: <CAP-5=fVoya-X+BBBuVwZQ527WKyGwC8tirk=gj37t2H_BBmwVg@mail.gmail.com>
+Subject: Re: [PATCH] perf build: Specify that spellcheck should use the bash dialect.
+To: James Clark <james.clark@linaro.org>
+Cc: Collin Funk <collin.funk1@gmail.com>, linux-perf-users@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, Peter Zijlstra <peterz@infradead.org>, 
+	Ingo Molnar <mingo@redhat.com>, Arnaldo Carvalho de Melo <acme@kernel.org>, Namhyung Kim <namhyung@kernel.org>, 
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>, Jiri Olsa <jolsa@kernel.org>, 
+	Adrian Hunter <adrian.hunter@intel.com>, "Liang, Kan" <kan.liang@linux.intel.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Mon, 23 Jun 2025, Sebastian Andrzej Siewior wrote:
+On Mon, Jun 23, 2025 at 1:10=E2=80=AFAM James Clark <james.clark@linaro.org=
+> wrote:
+>
+>
+>
+> On 20/06/2025 6:40 pm, Collin Funk wrote:
+> > Hi James,
+> >
+> > James Clark <james.clark@linaro.org> writes:
+> >
+> >> If we're enforcing bash style with static analysis shouldn't we also
+> >> change all the hashbangs to bash? Recently there have been changes to
+> >> change sh to bash in some of the tests so presumably the hard rule for
+> >> sh is no more?
+> >>
+> >> In the past I've had to replace bashisms that didn't work in sh but it
+> >> would be nice to have only one language to write tests in. I doubt
+> >> anyone running the tests today is running somewhere without bash, or
+> >> that changing it will break anything. If anything it will fix more
+> >> bashisms that have already been written.
+> >>
+> >> Just for reference there are 34 #!/bin/bash and 42 #!/bin/sh in
+> >> tools/perf/tests
+> >
+> > That sounds reasonable to me. Writing portable shell is a hassle and if
+> > we already assume a working /bin/bash in some places, I don't see a
+> > reason not to use it for the others.
+> >
+> > Regarding this patch, shellcheck will use the file extension or shebang
+> > only if it does not find a 'shell' directive in a .shellcheckrc. So tha=
+t
+> > change will still require this patch.
+> >
+> > I saw it was used in other places, so I assumed this patch was fine:
+> >
+> > $ find tools/perf -name Build | xargs grep bash
+> > tools/perf/Build:     $(Q)$(call echo-cmd,test)shellcheck -s bash -a -S=
+ warning "$<" > $@ || (cat $@ && rm $@ && false)
+> > tools/perf/trace/beauty/Build:        $(Q)$(call echo-cmd,test)shellche=
+ck -s bash -a -S warning "$<" > $@ || (cat $@ && rm $@ && false)
+> >
+> > Collin
+>
+> In that case:
+>
+> Reviewed-by: James Clark <james.clark@linaro.org>
+>
+> And I'll send the bulk hashbang change separately.
 
->During a hash resize operation the new private hash is stored in
->mm_struct::futex_phash_new if the current hash can not be immediately
->replaced.
->
->The new hash must not be copied during fork() into the new task. Doing
->so will lead to a double-free of the memory by the two tasks.
->
->Initialize the mm_struct::futex_phash_new during fork().
->
->Reported-by: Calvin Owens <calvin@wbinvd.org>
->Closes: https://lore.kernel.org/all/aFBQ8CBKmRzEqIfS@mozart.vkv.me/
->Tested-by: Calvin Owens <calvin@wbinvd.org>
->Fixes: bd54df5ea7cad ("futex: Allow to resize the private local hash")
->Signed-off-by: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+I've no objection to switching to using bash globally. It seems
+sub-optimal that we've copy-pasted the shellcheck command across many
+different Build files and that this patch will cause the
+tools/perf/tests/Build one to differ. My preference would be to have a
+global definition probably in Makefile.perf, then use it consistently.
+Alternative all shellcheck invocations can pass "-s bash" for the sake
+of consistency.  Fwiw, I think the 'tools/arch/x86/tools/gen-insn-*'
+which is to some extent taken from the kernel's 'arch/x86/tools' is
+okay with the change too.
 
-Reviewed-by: Davidlohr Bueso <dave@stgolabs.net>
+Thanks,
+Ian
 
