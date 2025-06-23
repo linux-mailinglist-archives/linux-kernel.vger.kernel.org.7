@@ -1,78 +1,90 @@
-Return-Path: <linux-kernel+bounces-699095-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-699097-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5177DAE4DAA
-	for <lists+linux-kernel@lfdr.de>; Mon, 23 Jun 2025 21:37:23 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B5110AE4DAF
+	for <lists+linux-kernel@lfdr.de>; Mon, 23 Jun 2025 21:38:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 721103B7D37
-	for <lists+linux-kernel@lfdr.de>; Mon, 23 Jun 2025 19:36:58 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A7B057A3BBA
+	for <lists+linux-kernel@lfdr.de>; Mon, 23 Jun 2025 19:37:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 148952D4B7E;
-	Mon, 23 Jun 2025 19:37:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4C48429DB78;
+	Mon, 23 Jun 2025 19:38:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="niKVLOnG"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.19])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gourry.net header.i=@gourry.net header.b="UKrNLTBK"
+Received: from mail-qt1-f180.google.com (mail-qt1-f180.google.com [209.85.160.180])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F24ED25F785;
-	Mon, 23 Jun 2025 19:37:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.19
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 47B0524679C
+	for <linux-kernel@vger.kernel.org>; Mon, 23 Jun 2025 19:38:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750707429; cv=none; b=S4b//n5m/n+xjo7vjwBQzut2uGTta3JsInK1Nzp+/sd2A+JoGsEcyXSvTtkC+qpUsQSrId1lIcMmTbppYem5q7dGme4vE4m+eiLUXAJYsmeoipUxLAhKrixJa4ptCuTSfJQEpV2hoiR669ChP+UWnLpTxKZATXbAYWNik6wgeGc=
+	t=1750707521; cv=none; b=DvqU7Y66TyDTkfgdMwaRu3cZX42gH3BUdprLFBgu5e6AIRZmbrF3B+E89J3gwmF0+gQqUImE65Zadug1894HX3e5q3J4YXVy6xTP89Wmg/ZXHiVYcFhE8qsWMLCywTC9YGmCsE9RF4/0KukauWX+T+kb+8R3C59uLKvFVjIqcIs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750707429; c=relaxed/simple;
-	bh=v0l/kSzCzkRAEF3IzVpd0mV4Pu1tdJw3rT6WoxwZPY4=;
+	s=arc-20240116; t=1750707521; c=relaxed/simple;
+	bh=SUcO28iflARfNEkJ1ohNxfXTZlHppMemTQUfxW2VsWA=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=bMgHBiwVTQTdxSnKWcU9VsymSDfqlUhnwDI1/jcH0YoqyKw6c1+7RZt5o2eCyrXDSpsYSX8eOuQrHh7Z86jt4pyzeuEsP3aR8E84vEQKfZmdTysb3xgxj2PAMzDWY9+bonL7wQBemD2nejRGc/DStJiYPDlyfW+xpbFiv57uvYg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=niKVLOnG; arc=none smtp.client-ip=198.175.65.19
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1750707427; x=1782243427;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=v0l/kSzCzkRAEF3IzVpd0mV4Pu1tdJw3rT6WoxwZPY4=;
-  b=niKVLOnGwHimya2jYC3V8sq7P24vcy7aAh1qXfvXrA71BgIaVgL+hkLo
-   WKb1wf/PqFfzwZtBI7J/Y7o8f/Mu/pVE8qgAMc4d5PySQovf1jKe0Zk0S
-   woc+UfGjlsaTBIK8KatsESA1fAfgWJW+SvMRXBsmI+Y9E/+Uo64XcR7td
-   8YyYblPN1TqDBCpJQV+pJ5EmFu/l+cEfSrmWCLzsf3DimH4BMod9H8beH
-   CZfORE302AJCvsJBBKHy3QnHakm6ghvzv0LeDA8+MBK9RrCxOyzOOT/ML
-   aOZ3akLLsIKzmBS6us/LEd0uAX6oIGW/uehTzRd78z1AZGX+i6/UstgCC
-   w==;
-X-CSE-ConnectionGUID: ilQYy/3nSpqfJjcpBScBSQ==
-X-CSE-MsgGUID: 4O8AYm+jSMiJIdhgOwo9Pg==
-X-IronPort-AV: E=McAfee;i="6800,10657,11473"; a="52800151"
-X-IronPort-AV: E=Sophos;i="6.16,259,1744095600"; 
-   d="scan'208";a="52800151"
-Received: from fmviesa006.fm.intel.com ([10.60.135.146])
-  by orvoesa111.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 23 Jun 2025 12:37:07 -0700
-X-CSE-ConnectionGUID: cTsP7YDzSFigZVnd5INv8Q==
-X-CSE-MsgGUID: EQwVesj3QDCai1JUp/ZuUg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.16,259,1744095600"; 
-   d="scan'208";a="151840786"
-Received: from lkp-server01.sh.intel.com (HELO e8142ee1dce2) ([10.239.97.150])
-  by fmviesa006.fm.intel.com with ESMTP; 23 Jun 2025 12:37:04 -0700
-Received: from kbuild by e8142ee1dce2 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1uTmyU-000PGg-0D;
-	Mon, 23 Jun 2025 19:37:02 +0000
-Date: Tue, 24 Jun 2025 03:36:23 +0800
-From: kernel test robot <lkp@intel.com>
-To: jackysliu <1972843537@qq.com>, skashyap@marvell.com
-Cc: oe-kbuild-all@lists.linux.dev, jhasan@marvell.com,
-	GR-QLogic-Storage-Upstream@marvell.com,
-	James.Bottomley@hansenpartnership.com, martin.petersen@oracle.com,
-	linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org,
-	jackysliu <1972843537@qq.com>
-Subject: Re: [PATCH] scsi: qedf: Fix a possible memory leak in
- qedf_prepare_sb()
-Message-ID: <202506240340.fv6cXpyc-lkp@intel.com>
-References: <tencent_3C5078D216712F6F21FC8792FADED59A3D09@qq.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=cGflDKLNya3z5SoqBNT6cc8wfky8OfBlBdDChJSaibdKzdfNQ/nymZ74XKZOG2h4/vveAYUD5++CMyI09SBIodMeyUPUz9bDqAumms3Tcx7hyolX7TK0B5+EIKGqDuZZQGJPWUUZ0oS7kta3QnGjS5nqbTRRkQS3X9qSx1tfJK4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=gourry.net; spf=pass smtp.mailfrom=gourry.net; dkim=pass (2048-bit key) header.d=gourry.net header.i=@gourry.net header.b=UKrNLTBK; arc=none smtp.client-ip=209.85.160.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=gourry.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gourry.net
+Received: by mail-qt1-f180.google.com with SMTP id d75a77b69052e-4a43d2d5569so60904571cf.0
+        for <linux-kernel@vger.kernel.org>; Mon, 23 Jun 2025 12:38:40 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gourry.net; s=google; t=1750707519; x=1751312319; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=OsDFFNadcPKAi2oIob212fTkg2LjML9Ql3EAFUmRUHU=;
+        b=UKrNLTBKpKaBUnh67CB1fjxxDLLpBBJlH4ElR3+LebtbPOMtxAbxqW26OWB+e8SP2L
+         KVPA79/UvnxJA3fZbbSpnRubrOl8CNTMFKiSMwYErojpdX7zkAehNdYqX1IHR2qqPATG
+         RlHJiwR761EFYXGQeWKYmSeJRqjcAOmhCEHXjNOgNZ5Qf5uYZxWsg4FODA2L7825WcOJ
+         Ly64cwO9fd1+/gqx4mSqg37XmJBuwiY85PdfkqGdsQ1IJ4YG4S0zNRCipCSGdtIwOhfw
+         7PY09QP2KZI+hI8ebYuo5IAmL2vwWP+p84ULiykV/nibuLmzSBotCriXKBk8Y8UWEwh5
+         meLA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1750707519; x=1751312319;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=OsDFFNadcPKAi2oIob212fTkg2LjML9Ql3EAFUmRUHU=;
+        b=tnZAOzr8zXpPE+SIh4uJ/S4IW/Dj9806F1A/giYPC58+5XWIH/vUYqPmtmbP1gxImn
+         H315o4peiOHySg/kdBgPnhuCOSe8NsOtQBO+REuRqQ+hEeZc6Qwmpw/PMke5gv3Y7v9K
+         MUjkGutXil77dt6CEbrzX7IpGxWRpBgO/K5n91/jX8Zq7Yag+hVAYLImp9JRXzRoJSMl
+         uekG/yUcfVBKq5b2NKOYJztCFFNEG6521cdEe77RCwRvxn+6/gP0lZnmGxHrulstOb76
+         b/cWG3a31rEonzXRphLW2oQDTkqcL6+pU4OdGsv6BVnCD3mN3oJtZJ7uSv1CfssURPKr
+         QyvQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVjglHgdGJQIMjTighO7lld4Kkijsdehil+iAjuATz0sFIWq+rUVA5klZSvZNkY5D5HBePP9j/7aDgKrT4=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwUKWa7/+7ND78njNsY5nUeoOu0DACmEFBkV9YyzzEjFM7iyI1Y
+	/RTSKrnaPmpjaQztQ7Er+89e0KcBFgraokC26BrBHb6EJG1eI0VYmWGxwD84/1WKFkI=
+X-Gm-Gg: ASbGncvKJQY7B9BuSXxNBOlMSFzrChxmH5Ol+d1E5JpQh5SSSDjlA2eLv2vfi34DQ1l
+	PmUX9YCj+elv7Wy5ad1h8HZWO3h5z1dOtHAihkvORSJ6/NCqz25439B7i78RWpLbtkWqm2er1SK
+	dAp0T7Mt9OBcaU8IVgXlOMT6AMJRLe3kZTPRUVUkc05cJyUdSakH+g0vh/iLqDfk2GzIWrqcfN4
+	dxJcUtOdwe5ycCVV1L5Sa5UaUcxntHECMfgYqJy0XRiGOoRb0o4+Z5WQARn6M1/hPeUYFuYjDh2
+	xyiatoKnIhU4pyWaMwFJk1KZGK6hUFyNFnUR1Tz2P9Cw1f306FB8weJJAA==
+X-Google-Smtp-Source: AGHT+IGEe4owoKuwDVOewVa/4Edect3j8Yf80FLCWoMblOwP+OBaPb93AZugTiBwPwwRicj7AyEi8w==
+X-Received: by 2002:a05:622a:13cf:b0:4a5:8387:8b9f with SMTP id d75a77b69052e-4a77a24bc82mr181710941cf.15.1750707519236;
+        Mon, 23 Jun 2025 12:38:39 -0700 (PDT)
+Received: from gourry-fedora-PF4VCD3F ([2620:10d:c091:400::5:e19e])
+        by smtp.gmail.com with ESMTPSA id d75a77b69052e-4a779e956bcsm41726641cf.74.2025.06.23.12.38.38
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 23 Jun 2025 12:38:38 -0700 (PDT)
+Date: Mon, 23 Jun 2025 14:38:36 -0500
+From: Gregory Price <gourry@gourry.net>
+To: David Hildenbrand <david@redhat.com>
+Cc: Bijan Tabatabai <bijan311@gmail.com>, damon@lists.linux.dev,
+	linux-mm@kvack.org, linux-kernel@vger.kernel.org, sj@kernel.org,
+	akpm@linux-foundation.org, ziy@nvidia.com, matthew.brost@intel.com,
+	joshua.hahnjy@gmail.com, rakie.kim@sk.com, byungchul@sk.com,
+	ying.huang@linux.alibaba.com, apopple@nvidia.com,
+	bijantabatab@micron.com, venkataravis@micron.com,
+	emirakhur@micron.com, ajayjoshi@micron.com, vtavarespetr@micron.com
+Subject: Re: [RFC PATCH v2 1/2] mm/mempolicy: Expose get_il_weight() to MM
+Message-ID: <aFmtPIAYnp4oeAZ1@gourry-fedora-PF4VCD3F>
+References: <20250620180458.5041-1-bijan311@gmail.com>
+ <20250620180458.5041-2-bijan311@gmail.com>
+ <0067568e-a604-46d3-96fd-41b62968a90e@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -81,92 +93,19 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <tencent_3C5078D216712F6F21FC8792FADED59A3D09@qq.com>
+In-Reply-To: <0067568e-a604-46d3-96fd-41b62968a90e@redhat.com>
 
-Hi jackysliu,
+On Mon, Jun 23, 2025 at 09:14:34PM +0200, David Hildenbrand wrote:
+> > +u8 get_il_weight(int node)
+> 
+> The function name is shockingly confusing when used outside this file. Do we
+> have some namespace to at least highlight what this is about?
+> 
+> node_interleave_weight() might be a lot clearer?
+> 
 
-kernel test robot noticed the following build warnings:
+this is fair and my fault as I didn't consider whether it'd ever be used
+outside mempolicy.  So i agree it should be renamed or wrapped.
 
-[auto build test WARNING on jejb-scsi/for-next]
-[also build test WARNING on mkp-scsi/for-next linus/master v6.16-rc3 next-20250623]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
-
-url:    https://github.com/intel-lab-lkp/linux/commits/jackysliu/scsi-qedf-Fix-a-possible-memory-leak-in-qedf_prepare_sb/20250617-180032
-base:   https://git.kernel.org/pub/scm/linux/kernel/git/jejb/scsi.git for-next
-patch link:    https://lore.kernel.org/r/tencent_3C5078D216712F6F21FC8792FADED59A3D09%40qq.com
-patch subject: [PATCH] scsi: qedf: Fix a possible memory leak in qedf_prepare_sb()
-config: i386-randconfig-141-20250623 (https://download.01.org/0day-ci/archive/20250624/202506240340.fv6cXpyc-lkp@intel.com/config)
-compiler: gcc-12 (Debian 12.2.0-14) 12.2.0
-
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202506240340.fv6cXpyc-lkp@intel.com/
-
-New smatch warnings:
-drivers/scsi/qedf/qedf_main.c:2814 qedf_prepare_sb() warn: inconsistent indenting
-
-Old smatch warnings:
-drivers/scsi/qedf/qedf_main.c:2816 qedf_prepare_sb() warn: inconsistent indenting
-
-vim +2814 drivers/scsi/qedf/qedf_main.c
-
-  2773	
-  2774	static int qedf_prepare_sb(struct qedf_ctx *qedf)
-  2775	{
-  2776		int id;
-  2777		struct qedf_fastpath *fp;
-  2778		int ret;
-  2779	
-  2780		qedf->fp_array =
-  2781		    kcalloc(qedf->num_queues, sizeof(struct qedf_fastpath),
-  2782			GFP_KERNEL);
-  2783	
-  2784		if (!qedf->fp_array) {
-  2785			QEDF_ERR(&(qedf->dbg_ctx), "fastpath array allocation "
-  2786				  "failed.\n");
-  2787			return -ENOMEM;
-  2788		}
-  2789	
-  2790		for (id = 0; id < qedf->num_queues; id++) {
-  2791			fp = &(qedf->fp_array[id]);
-  2792			fp->sb_id = QEDF_SB_ID_NULL;
-  2793			fp->sb_info = kcalloc(1, sizeof(*fp->sb_info), GFP_KERNEL);
-  2794			if (!fp->sb_info) {
-  2795				QEDF_ERR(&(qedf->dbg_ctx), "SB info struct "
-  2796					  "allocation failed.\n");
-  2797				goto err;
-  2798			}
-  2799			ret = qedf_alloc_and_init_sb(qedf, fp->sb_info, id);
-  2800			if (ret) {
-  2801				QEDF_ERR(&(qedf->dbg_ctx), "SB allocation and "
-  2802					  "initialization failed.\n");
-  2803				goto err;
-  2804			}
-  2805			fp->sb_id = id;
-  2806			fp->qedf = qedf;
-  2807			fp->cq_num_entries =
-  2808			    qedf->global_queues[id]->cq_mem_size /
-  2809			    sizeof(struct fcoe_cqe);
-  2810		}
-  2811	err:
-  2812	for (int i = 0; i < id; i++) {
-  2813		fp = &qedf->fp_array[i];
-> 2814	if (fp->sb_info) {
-  2815		qedf_free_sb(qedf, fp->sb_info);
-  2816	kfree(fp->sb_info);
-  2817	fp->sb_info = NULL;
-  2818	}
-  2819	}
-  2820	kfree(qedf->fp_array);
-  2821	qedf->fp_array = NULL;
-  2822	return -ENOMEM;
-  2823	}
-  2824	
-
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+~Gregory
 
