@@ -1,92 +1,132 @@
-Return-Path: <linux-kernel+bounces-697884-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-697882-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id C96E6AE39D8
-	for <lists+linux-kernel@lfdr.de>; Mon, 23 Jun 2025 11:21:22 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id A3480AE39DA
+	for <lists+linux-kernel@lfdr.de>; Mon, 23 Jun 2025 11:21:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CEE3F164282
-	for <lists+linux-kernel@lfdr.de>; Mon, 23 Jun 2025 09:21:22 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3B23D3ABED7
+	for <lists+linux-kernel@lfdr.de>; Mon, 23 Jun 2025 09:20:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F3CAE23505D;
-	Mon, 23 Jun 2025 09:21:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=hmeau.com header.i=@hmeau.com header.b="ZJYwCt/1"
-Received: from abb.hmeau.com (abb.hmeau.com [144.6.53.87])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 106AB230268;
+	Mon, 23 Jun 2025 09:20:54 +0000 (UTC)
+Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BAA5119F40F;
-	Mon, 23 Jun 2025 09:21:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=144.6.53.87
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 90B1822FF59;
+	Mon, 23 Jun 2025 09:20:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750670472; cv=none; b=gr36ckNd5q6+JTCow9vwA7B7s6D/MV9sGbaXGPNxDIqeGIYowZ/aq8/OSUAIO5N8VN81KLG+Ug1EzFbFmQGk3kv9Z++TH8e5FEEWA5+MkYP80yOyy5zk+pYcEFZFSk4FTEMPyo8Fos+jY7xsnakNekcaJJPakAbq8Qqz2+hDve8=
+	t=1750670453; cv=none; b=LghFUpfI8a2HfAqAIMgdSj719uTcNPahOznUUhjvc6pOEyxj+SO+BdS4zO9dXMkStAP5zl9yx/YxrOAhPegY6BpgXCpk5t1FDzJRFECaSE5rIiB62uWeaWtkQrjyj40Pqme7otCy0OKzJVq4iRxfkBCtWS6oX/M8K97t/AY7lG8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750670472; c=relaxed/simple;
-	bh=xB38TcCLu3+82uTnlKr9eJXWn6quvpnALLWg8EhWsvE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=TTSDYZtzcEGtEQNnJm7zGYHJewHaGDF7tQGwydbbNXxCGEHFd59P7ysZiJIukJ+tAJE0TITEsVUVsZtrlPzhD7BKgRs//HnZoCjQ8Mf67R9lrqSRFlxirTd/rcXXl83OlJAHZp8qzPU3m+gZDqjTfMC7aPjb/DcvUDUulaWLtCQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gondor.apana.org.au; spf=pass smtp.mailfrom=gondor.apana.org.au; dkim=pass (2048-bit key) header.d=hmeau.com header.i=@hmeau.com header.b=ZJYwCt/1; arc=none smtp.client-ip=144.6.53.87
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gondor.apana.org.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gondor.apana.org.au
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=hmeau.com;
-	s=formenos; h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:
-	Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
-	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
-	:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
-	List-Post:List-Owner:List-Archive;
-	bh=rrj7xmeWsaYEs+b59Xu6ZhIhwnsn9oGNVVzm3qZFXi0=; b=ZJYwCt/1YSfPxxVhxjKWB5BxOO
-	ZAY7XWLF8weWu3UurufpNuaixzvetK4o0XWh7va0R8iMcPAZSyOlxqfJCZdOAT62qt+mAQunHTizW
-	y/+D7kFK7guYgtJB4AfxwGRyNtDEAV376su7sXi8gt2L4aGMLuRCEdWC13p+1irpsPaB1bONFJjXq
-	Lkm1hKS+drGd7lZvgsM4zmcaSHMhBqnb+OybTs/MA/TN7MO40Pjs0r0nd9wNISca9IKNH8gaGGxw2
-	BhHijgJARQmkI+aVisswgpr6ozSdO9P/eRKZ5O427pnL4rOumoxAGlRpnreoAgAsoxawYN72LZCcx
-	lRkbnyVA==;
-Received: from loth.rohan.me.apana.org.au ([192.168.167.2])
-	by formenos.hmeau.com with smtp (Exim 4.96 #2 (Debian))
-	id 1uTd6d-000FYl-1G;
-	Mon, 23 Jun 2025 17:20:44 +0800
-Received: by loth.rohan.me.apana.org.au (sSMTP sendmail emulation); Mon, 23 Jun 2025 17:20:43 +0800
-Date: Mon, 23 Jun 2025 17:20:43 +0800
-From: Herbert Xu <herbert@gondor.apana.org.au>
-To: linux@treblig.org
-Cc: arei.gonglei@huawei.com, mst@redhat.com, jasowang@redhat.com,
-	xuanzhuo@linux.alibaba.com, eperezma@redhat.com,
-	davem@davemloft.net, virtualization@lists.linux.dev,
-	linux-crypto@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] virtio-crypto: Remove unused virtcrypto functions
-Message-ID: <aFkcawtiloUrjm3I@gondor.apana.org.au>
-References: <20250614000505.596563-1-linux@treblig.org>
+	s=arc-20240116; t=1750670453; c=relaxed/simple;
+	bh=yPNVRmb7MDtEqXGhH5b4pWnQ1vD1JGAVWJ7awgEhwaA=;
+	h=Date:From:To:CC:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=kPKdNQ5TADArJ3SGAODo0VuQBUA5bmresn0ITGCx+DyVDiRPYf1JnVPSSTHcXrfivD0ILvpAVpw8iMwL/wUDuFmnvt5H1Hh5EDYCnwnF6RuzOQnmOouohFIjkCMLr1f6yIwmT1DcgDaBA77iywrTVkEd4KWM+lA8jPqNtPltVYA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.18.186.31])
+	by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4bQjGZ5D7Fz6M539;
+	Mon, 23 Jun 2025 17:20:06 +0800 (CST)
+Received: from frapeml500008.china.huawei.com (unknown [7.182.85.71])
+	by mail.maildlp.com (Postfix) with ESMTPS id 3519F1402E9;
+	Mon, 23 Jun 2025 17:20:49 +0800 (CST)
+Received: from localhost (10.203.177.66) by frapeml500008.china.huawei.com
+ (7.182.85.71) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.39; Mon, 23 Jun
+ 2025 11:20:48 +0200
+Date: Mon, 23 Jun 2025 10:20:47 +0100
+From: Jonathan Cameron <Jonathan.Cameron@huawei.com>
+To: Neeraj Kumar <s.neeraj@samsung.com>
+CC: <dan.j.williams@intel.com>, <dave@stgolabs.net>, <dave.jiang@intel.com>,
+	<alison.schofield@intel.com>, <vishal.l.verma@intel.com>,
+	<ira.weiny@intel.com>, <a.manzanares@samsung.com>, <nifan.cxl@gmail.com>,
+	<anisa.su@samsung.com>, <vishak.g@samsung.com>, <krish.reddy@samsung.com>,
+	<arun.george@samsung.com>, <alok.rathore@samsung.com>,
+	<neeraj.kernel@gmail.com>, <linux-kernel@vger.kernel.org>,
+	<linux-cxl@vger.kernel.org>, <nvdimm@lists.linux.dev>,
+	<gost.dev@samsung.com>, <cpgs@samsung.com>
+Subject: Re: [RFC PATCH 13/20] cxl/mem: Refactor cxl pmem region
+ auto-assembling
+Message-ID: <20250623102047.000020fc@huawei.com>
+In-Reply-To: <1213349904.281750165205974.JavaMail.epsvc@epcpadp1new>
+References: <20250617123944.78345-1-s.neeraj@samsung.com>
+	<CGME20250617124043epcas5p21e5b77aa3a6acfa7e01847ffd58350ed@epcas5p2.samsung.com>
+	<1213349904.281750165205974.JavaMail.epsvc@epcpadp1new>
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.42; x86_64-w64-mingw32)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250614000505.596563-1-linux@treblig.org>
+Content-Type: text/plain; charset="US-ASCII"
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: lhrpeml500011.china.huawei.com (7.191.174.215) To
+ frapeml500008.china.huawei.com (7.182.85.71)
 
-On Sat, Jun 14, 2025 at 01:05:05AM +0100, linux@treblig.org wrote:
-> From: "Dr. David Alan Gilbert" <linux@treblig.org>
+On Tue, 17 Jun 2025 18:09:37 +0530
+Neeraj Kumar <s.neeraj@samsung.com> wrote:
+
+> In 84ec985944ef3, For cxl pmem region auto-assembly after endpoint port
+> probing, cxl_nvd presence was required. And for cxl region persistency,
+> region creation happens during nvdimm_probe which need the completion
+> of endpoint probe.
 > 
-> virtcrypto_devmgr_get_first() and virtcrypto_dev_in_use() were added in
-> 2016 by
-> commit dbaf0624ffa5 ("crypto: add virtio-crypto driver")
+> It is therefore refactored cxl pmem region auto-assembly after endpoint
+> probing to cxl mem probing
 > 
-> but have remained unused.
-> 
-> Remove them.
-> 
-> Signed-off-by: Dr. David Alan Gilbert <linux@treblig.org>
+> Signed-off-by: Neeraj Kumar <s.neeraj@samsung.com>
+For ordering requirements this needs more eyes.  I've never cared that
+much about he persistency and auto assembly code so not something I have
+a good mental model of!
+
+
 > ---
->  drivers/crypto/virtio/virtio_crypto_common.h |  2 --
->  drivers/crypto/virtio/virtio_crypto_mgr.c    | 36 --------------------
->  2 files changed, 38 deletions(-)
+>  drivers/cxl/core/port.c | 38 ++++++++++++++++++++++++++++++++++++++
+>  drivers/cxl/cxl.h       |  1 +
+>  drivers/cxl/mem.c       | 27 ++++++++++++++++++---------
+>  drivers/cxl/port.c      | 38 --------------------------------------
+>  4 files changed, 57 insertions(+), 47 deletions(-)
 
-Patch applied.  Thanks.
--- 
-Email: Herbert Xu <herbert@gondor.apana.org.au>
-Home Page: http://gondor.apana.org.au/~herbert/
-PGP Key: http://gondor.apana.org.au/~herbert/pubkey.txt
+> diff --git a/drivers/cxl/mem.c b/drivers/cxl/mem.c
+> index 2f03a4d5606e..aaea4eb178ef 100644
+> --- a/drivers/cxl/mem.c
+> +++ b/drivers/cxl/mem.c
+
+> @@ -180,6 +171,24 @@ static int cxl_mem_probe(struct device *dev)
+>  			return rc;
+>  	}
+>  
+> +	if (resource_size(&cxlds->pmem_res) && IS_ENABLED(CONFIG_CXL_PMEM)) {
+> +		rc = devm_cxl_add_nvdimm(parent_port, cxlmd);
+> +		if (rc) {
+> +			if (rc == -ENODEV)
+> +				dev_info(dev, "PMEM disabled by platform\n");
+> +			return rc;
+> +		}
+> +	}
+> +
+> +	/*
+> +	 * Now that all endpoint decoders are successfully enumerated, try to
+> +	 * assemble region autodiscovery from committed decoders.
+> +	 * Earlier it was part of cxl_endpoint_port_probe, So moved it here
+
+I would drop this history statement. Good to have in the patch description
+but no point in keeping it in the code. Just state what the requirements
+are now.
+
+> +	 * as cxl_nvd of the memdev needs to be available during the pmem
+> +	 * region auto-assembling
+> +	 */
+> +	cxl_region_discovery(cxlmd->endpoint);
+> +
+>  	/*
+>  	 * The kernel may be operating out of CXL memory on this device,
+
+
+
 
