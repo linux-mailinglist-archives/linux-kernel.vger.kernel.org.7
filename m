@@ -1,112 +1,170 @@
-Return-Path: <linux-kernel+bounces-698704-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-698708-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id D7F8DAE4865
-	for <lists+linux-kernel@lfdr.de>; Mon, 23 Jun 2025 17:24:36 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id C0329AE4863
+	for <lists+linux-kernel@lfdr.de>; Mon, 23 Jun 2025 17:23:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 72DCB3AF094
-	for <lists+linux-kernel@lfdr.de>; Mon, 23 Jun 2025 15:22:24 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 76277164470
+	for <lists+linux-kernel@lfdr.de>; Mon, 23 Jun 2025 15:23:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4C03A28A1FE;
-	Mon, 23 Jun 2025 15:22:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B4B4828BA81;
+	Mon, 23 Jun 2025 15:23:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="mjsgMC/x"
-Received: from mail-oo1-f52.google.com (mail-oo1-f52.google.com [209.85.161.52])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="M2fAiRSo"
+Received: from mail-pl1-f180.google.com (mail-pl1-f180.google.com [209.85.214.180])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 372DC286D4E
-	for <linux-kernel@vger.kernel.org>; Mon, 23 Jun 2025 15:22:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.161.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C2669288539
+	for <linux-kernel@vger.kernel.org>; Mon, 23 Jun 2025 15:23:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750692153; cv=none; b=eruFy9mp8IppF4v6Q91NwyxPU+uLYm+6rxoKk9DKjuj7jvUgvbWmZZgaZ+UvuVHbJv/SAcxkPASUHFwSMPvnJtgwtHBKJ4u1VMOx8n4westVzclMmouwm8EiJ1AA4CLUPLKwqcTQrf7VRf2aPgq1TSDNMck1FKQ+3qdjzLmIRgs=
+	t=1750692211; cv=none; b=ja581wW3i2OvXlK4wkaaSk3gnmmOaULidJIrM/QrVFbBlXUx8d5nsvicNAnCRkoNCbyeqhrwo78GeAA6xcUP4exf9czJyzQ+6cSYAhIfcKxtB5NFFHCh0syI6B7aRKFwXxzO41aONrsToFc7iJx+xS0Hy7Z5V1h/woNmU58swAE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750692153; c=relaxed/simple;
-	bh=hC9peFQk5TvNNRSqpIuY+epye1/M+kNum1ROmrB5xQQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=f42W7HyPAiZ90y8lQT0qtF0mO1lrKb3ag1U90vpSWjtsu5ZJOhRSWgl37ekOpVYgm/dsawbaizik0Z7XeMhB5zGAlUXt/oU/OmTW5dziW8uHCt0g7D+0YFVjSIvr1qEzIrVdySfYbPt/LH+taGpZmIVKQS453jZigE6wamifOfk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=mjsgMC/x; arc=none smtp.client-ip=209.85.161.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-oo1-f52.google.com with SMTP id 006d021491bc7-6065251725bso3206583eaf.1
-        for <linux-kernel@vger.kernel.org>; Mon, 23 Jun 2025 08:22:31 -0700 (PDT)
+	s=arc-20240116; t=1750692211; c=relaxed/simple;
+	bh=SVVhYZvptRHvWy6ECNSSMwCz2nb8b9mlJe/B4F5PLGo=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=JClCziweZbJnWLUibjGlWAoH2QAyUPwNgu3QVLd6BIiDHNkqHftlp/SQJjQ2XDbRzoLwSM1Isp4k0aZOUNPppd8xILwAYJpt1fUPpxs7CaQw83ERdD3m/4zD1gRwe+tfSx0f+bdEl/w0ZhFB0WpTcWfLnH+xJw/mEMayTPo+fn8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=M2fAiRSo; arc=none smtp.client-ip=209.85.214.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-pl1-f180.google.com with SMTP id d9443c01a7336-235e389599fso347485ad.0
+        for <linux-kernel@vger.kernel.org>; Mon, 23 Jun 2025 08:23:28 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1750692151; x=1751296951; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=bTZ19GRi4KU0H2wNqBnaKkKrv7m6rpdyKuL2QkFh6uQ=;
-        b=mjsgMC/xD/7Nu42Lgf44FhzejT4T/f/JDGVCRMV/3hizQOfqv7Nmnrf3s4Rh8gb/Pw
-         CSExBLuoDGt4qh+QwFjy6n+w8gZHLhfIZ+085HpT06uJXGwug8J5FM0ialJCKFEblggE
-         kd/2/mOPQrPieF6u53cs3Z39hf4GQBu5a6f8JhvMjLATQ6dy+WLiMfyS+zqZCR/c4K2f
-         pH+1R5JQxEi+SbAdVLFp2Z5dkaHoRGMRs+fN8sPYHgVEB+49h6TWu+TJ6ncozrliVymC
-         LmJli29nXUns52jR4ZM6KmXDAeA6TtEhO1MGsL9ikZCuXSJGzfSZW2DPDyNdUbc7a5II
-         g/gA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1750692151; x=1751296951;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+        d=google.com; s=20230601; t=1750692208; x=1751297008; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=bTZ19GRi4KU0H2wNqBnaKkKrv7m6rpdyKuL2QkFh6uQ=;
-        b=GIob+P4+wdeRtWGm3/0zTxQobWClSiAyYL6HSPtKNCLMVTv7Z47CzbImgL1Yy1tZCB
-         h51HLO/TQ5m9bRyVoQy4he81xM6LgNuCUtwBRIhu5YOJGpLEmXp7d64LbxouPkoj4dYP
-         Khmck/kqqRTF8rVWlt5UT+3lr26w/TXabw6z/Gkk0bWKqwWUUVMwvreMqNfgfZ4GpoqM
-         Q34//kktYuAtzm4/WhHeL4KGLwmRqp6zWozrQZ3+gQIqjhOZhPalHM09fcIX9xk6M6RP
-         6okcfFr6QpEsAuV4wwD25whs4/KbLHKpZceEnONIbNVIcUqUf1M6qjW7gyE9X6cALqkc
-         k2Lg==
-X-Forwarded-Encrypted: i=1; AJvYcCXYPVG5Kc+QLUrFvxvCxrPR4PLFfPaHytzc0JoMelAc+shodbMIkgAUcyv83RyDEZ5gplmAefGYxxLCcvM=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwK9wkf4uf2lnQDS8HK+Xz+MNo8+DQKId68vHfsq3kXpEgO88UP
-	RZzSQYrRrULt1PB2qjiExaWJ+6yPxqtGemK5MV5LHpPcxmQUAVT2vMlPZP94y0YwNTg=
-X-Gm-Gg: ASbGncuUAg9RmXDtG11Sk3LUmeD5n0DlTzdRbyOkEaO19LnAntc1lfxPEZn7lJgCddE
-	TkPGxh/wNoRxeuZ85P/x6ryXmxv/t8WisCC7Ej2Bh/b1uRGR0Ci/UW9gmHnocDc31OP9KVmHecv
-	ACDs/2acPy8p/UPbEg6+l/+YooECkcVdE1Hf0BnMDMEgdTvLSgYfwpf++lRDflTHBMlaszRHDVq
-	qZs6GvRTgWsYcfGUgmGLjqBug1Tl74F+QQZ7Gzp5jKHakpYzZfcLrULS4Uflu/QsjJ3mji4nSUR
-	x4UjduBGQZQ3VA3Vt0Nu4Vp+U66DbWeiMpA6kiOAer9Trq1WW5iLt4uf7NchXrSe1/VWxA==
-X-Google-Smtp-Source: AGHT+IFkGyVDoc+8SQ8rASYfcEKGGB/Oc5hw+KdWNqGCuf0XX49CDwKCA3KtlNIgbDKU0n0iNbw/gw==
-X-Received: by 2002:a05:6870:392c:b0:2ea:8091:41f2 with SMTP id 586e51a60fabf-2eeee55c8cemr8102044fac.19.1750692151278;
-        Mon, 23 Jun 2025 08:22:31 -0700 (PDT)
-Received: from localhost ([2603:8080:b800:f700:8c3f:8b5f:5c74:76a9])
-        by smtp.gmail.com with ESMTPSA id 586e51a60fabf-2ee8a8e5eb3sm1697426fac.32.2025.06.23.08.22.28
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 23 Jun 2025 08:22:29 -0700 (PDT)
-Date: Mon, 23 Jun 2025 18:22:25 +0300
-From: Dan Carpenter <dan.carpenter@linaro.org>
-To: Baoquan He <bhe@redhat.com>
-Cc: Su Hui <suhui@nfschina.com>, akpm@linux-foundation.org,
-	vgoyal@redhat.com, dyoung@redhat.com, kexec@lists.infradead.org,
-	linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-	kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH] fs/proc/vmcore: a few cleanups for vmcore_add_device_dump
-Message-ID: <d60db71a-0b4f-4e7d-8c06-7493934aa507@suswa.mountain>
-References: <20250623104704.3489471-1-suhui@nfschina.com>
- <aFlmfdajTOP5Ik9f@MiWiFi-R3L-srv>
+        bh=+xKVYEt/1XAG/rDm3Qsq30ciDg7bGFCanzViwOcaGes=;
+        b=M2fAiRSoRH/yEdLHXPLjY01Lk434/zOqJuhTtvLt/PGncXuYdFn0pnNo5R5p8pa51K
+         dG/o7RKcjFrPYeLEWOeWiU3vRY3Qjhnz8YTOv89PeS4c6CW5VgelMUbaE0y6tAtBqK+7
+         dMFk9raViN9EBYvKHeAv+GMEBaaynaeTnLaaD24lSJ/kqmsxu+J/eN3kRAUm0T9Ql4b0
+         LOYM2wK0xF8Wfdsumxuj9ALp6UX+9kFxvagvawHuGOsGGAhLdmCDvVvjYmQTbCFljVNM
+         prM6N4aWWOR+7OteVl26UjBjUjyqerKXt9kinX4mkTWZ4vwiUOLKCXMS6icTgzU+0Wpf
+         BriQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1750692208; x=1751297008;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=+xKVYEt/1XAG/rDm3Qsq30ciDg7bGFCanzViwOcaGes=;
+        b=Jx1bRYpX8PYGquhtG5aCGkEZmGhaHS5Uu9JtIDfBPid6yUZZYY+vMxkl8mujjCFN5u
+         0Cu+O2X5YRhYKcdI37jHb2tu2P/3YI+/r1Og4Pq4Y5GUg9XzFqrss/6KW1WS5G0jnIJx
+         F2eM/Je3UCuraNf0e7P+3ewMyEhBksk4v6VeySBnfglvb8quz/MNqp8jOMupGPU3sUrl
+         vOaNhuYS6BHnwIakm/xnL5NiAZ7D74rkWccHSwg5rbSVHVMs77XtEBGWZhD0pwhrU1tc
+         P921gwk7uEi+9kT4pVWRXj9bfVw9ZWUekH4fRQth6/+LGttyo8H9Kju6eWKhgo7nuaen
+         44tw==
+X-Forwarded-Encrypted: i=1; AJvYcCXYPAZAAi0X+2Kbf1IC5Xzzh9IUOOZod5qmAOkD6hlu2VHKliO9gUrRK+rNIxYvkJaCaKhtzob496LsFXw=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwntETS7mTdtsRwwEUHNy/nviCECqgKOF5Rp1QQrZpwvE8DVCnb
+	siqaMj7K5TDmVD6eyx+fC46pX0aMkFHWZJJKTGgJ0DmUu5knth3y3r+0DVRH75ZNXftBBt6MxML
+	g8SAJaHm8UxNKK9NRnYEjHzrs8f/kkfl44b98SBSC
+X-Gm-Gg: ASbGncux0QA245aXstyLwizE+vxAqnum0bj79SdAyfHp+jHsuWzp14Hp4muJgJunyQw
+	6algP1Mf/babDfBvucL7fRV2cqFFsnJOhV0xal5FyxbLALgynnZmWSRJiKjoQalVO+TzMoPRLMX
+	r/pWiI/wd9QiD/DZu0rsIbjKjXhqlZV4utR0Mo3yaGx521dabtunw=
+X-Google-Smtp-Source: AGHT+IGKDqfw73zBONPMhWTBZq5sn8fIPJr6XNb97m1huHThSghMFLDPcjpDBONMI3PYmS2dmvUHHdzvcgJaT8blGQg=
+X-Received: by 2002:a17:902:ecd2:b0:235:e1e4:efc4 with SMTP id
+ d9443c01a7336-237e47a607dmr4681835ad.14.1750692207615; Mon, 23 Jun 2025
+ 08:23:27 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <aFlmfdajTOP5Ik9f@MiWiFi-R3L-srv>
+References: <20250623092350.3261118-2-gprocida@google.com>
+In-Reply-To: <20250623092350.3261118-2-gprocida@google.com>
+From: Sami Tolvanen <samitolvanen@google.com>
+Date: Mon, 23 Jun 2025 08:22:50 -0700
+X-Gm-Features: AX0GCFsxTT0ix79BDZcTXttlcbRoLHw5kXN43iSZKxn3LLTNwWtw8gubZbmerQY
+Message-ID: <CABCJKucSF7O8m6-QM4-J7-qTNTvFFax3=_v_kFy_3qRZZ6ym_Q@mail.gmail.com>
+Subject: Re: [PATCH] gendwarfksyms: make -T symtypes output be in name order
+To: Giuliano Procida <gprocida@google.com>
+Cc: Masahiro Yamada <masahiroy@kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
+	linux-kbuild@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Mon, Jun 23, 2025 at 10:36:45PM +0800, Baoquan He wrote:
-> On 06/23/25 at 06:47pm, Su Hui wrote:
-> > There are three cleanups for vmcore_add_device_dump(). Adjust data_size's
-> > type from 'size_t' to 'unsigned int' for the consistency of data->size.
-> 
-> It's unclear to me why size_t is not suggested here. Isn't it assigned
-> a 'sizeof() + data->size' in which size_t should be used?
+Hi Giuliano,
 
-Yeah...  That's a good point.  People should generally default to size_t
-for sizes.  It really does prevent a lot of integer overflow bugs.  In
-this case data->size is not controlled by the user, but if it were
-then that would be an integer overflow on 32bit systems and not on
-64bit systems, until we start declaring sizes as unsigned int and
-then all the 32bit bugs start affecting everyone.
+On Mon, Jun 23, 2025 at 2:26=E2=80=AFAM Giuliano Procida <gprocida@google.c=
+om> wrote:
+>
+> When writing symtypes information, we iterate through the entire hash
+> table containing type expansions. The key order varies unpredictably
+> as new entries are added, making it harder to compare symtypes between
+> builds.
+>
+> Resolve this by sorting the type expansions by name before output.
+>
+> Signed-off-by: Giuliano Procida <gprocida@google.com>
+> ---
+>  scripts/gendwarfksyms/types.c | 29 ++++++++++++++++++++++++++---
+>  1 file changed, 26 insertions(+), 3 deletions(-)
+>
+> diff --git a/scripts/gendwarfksyms/types.c b/scripts/gendwarfksyms/types.=
+c
+> index 7bd459ea6c59..51c1471e8684 100644
+> --- a/scripts/gendwarfksyms/types.c
+> +++ b/scripts/gendwarfksyms/types.c
+> @@ -6,6 +6,8 @@
+>  #define _GNU_SOURCE
+>  #include <inttypes.h>
+>  #include <stdio.h>
+> +#include <stdlib.h>
+> +#include <string.h>
+>  #include <zlib.h>
+>
+>  #include "gendwarfksyms.h"
+> @@ -179,20 +181,41 @@ static int type_map_get(const char *name, struct ty=
+pe_expansion **res)
+>         return -1;
+>  }
+>
+> +static int cmp_expansion_name(const void *p1, const void *p2)
+> +{
+> +       struct type_expansion *const *e1 =3D p1;
+> +       struct type_expansion *const *e2 =3D p2;
+> +
+> +       return strcmp((*e1)->name, (*e2)->name);
+> +}
+> +
+>  static void type_map_write(FILE *file)
+>  {
+>         struct type_expansion *e;
+>         struct hlist_node *tmp;
+> +       struct type_expansion **es;
+> +       size_t count =3D 0;
+> +       size_t i =3D 0;
+>
+>         if (!file)
+>                 return;
+>
+> -       hash_for_each_safe(type_map, e, tmp, hash) {
+> -               checkp(fputs(e->name, file));
+> +       hash_for_each_safe(type_map, e, tmp, hash)
+> +               ++count;
+> +       es =3D xmalloc(count * sizeof(struct type_expansion *));
+> +       hash_for_each_safe(type_map, e, tmp, hash)
+> +               es[i++] =3D e;
+> +
+> +       qsort(es, count, sizeof(struct type_expansion *), cmp_expansion_n=
+ame);
+> +
+> +       for (i =3D 0; i < count; ++i) {
+> +               checkp(fputs(es[i]->name, file));
+>                 checkp(fputs(" ", file));
+> -               type_list_write(&e->expanded, file);
+> +               type_list_write(&es[i]->expanded, file);
+>                 checkp(fputs("\n", file));
+>         }
+> +
+> +       free(es);
 
-regards,
-dan carpenter
+Looks like a nice improvement. Thanks for the patch!
 
+Reviewed-by: Sami Tolvanen <samitolvanen@google.com>
+
+Sami
 
