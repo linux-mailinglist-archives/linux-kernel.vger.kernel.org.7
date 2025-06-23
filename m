@@ -1,177 +1,109 @@
-Return-Path: <linux-kernel+bounces-698657-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-698659-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4226AAE47E0
-	for <lists+linux-kernel@lfdr.de>; Mon, 23 Jun 2025 17:07:34 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4859CAE47F0
+	for <lists+linux-kernel@lfdr.de>; Mon, 23 Jun 2025 17:09:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D7E44189D61C
-	for <lists+linux-kernel@lfdr.de>; Mon, 23 Jun 2025 15:05:37 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1C0D9444851
+	for <lists+linux-kernel@lfdr.de>; Mon, 23 Jun 2025 15:05:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1F71D270542;
-	Mon, 23 Jun 2025 15:05:02 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 11D04267729;
-	Mon, 23 Jun 2025 15:04:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B630F26FA56;
+	Mon, 23 Jun 2025 15:05:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="OTrAWlXE"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1E53D72624
+	for <linux-kernel@vger.kernel.org>; Mon, 23 Jun 2025 15:05:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750691101; cv=none; b=iNjl7cngb7/vd7VbHHDCAuoEiq4nfaDFsvlq3wJVyEJsWOhSRsnf80foSs3eij+XOSppRFKo/xWZJLKL4PK0iytr6HTeI4abwIojc/RcGcIVZ5PG3Vo4Nl4VYZasn+0V4oyyUkwwnVzyUuZ/xVYUXyM3EUVbJV8Ygb3FU2nOlTI=
+	t=1750691149; cv=none; b=ggybbGI2QTpaQyhwNkufKKqLQOHrEVvoyLEOdPkawj8sHh1smoMGKw4gNdiYaVabNET/BXRqSzgTFtV2dStD09VaaqVb7kWJeMWsgGzz4DoLekis7zBf1wW58l2Mp08mBFnV8WKw4FMGpceEqq8n3lf6twMc/zOMPadLcGX8KrA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750691101; c=relaxed/simple;
-	bh=ELdPHZlUVrZOe8aVsLYXCzrpwY4IxMXCXJiok5DsVeE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=a6qaFqFTBMLQGK9hisjMuztrP0qmEjJ2xvsYr0Ro+9Q3H/LQiqCXaujSyk9tEZU8g5P5/t5sXrKrNWRsR5oG4I5NQzugNMxO5XKSMyrVCdWg+oNNBFfqZKIYTeiTNd4SOFzvGAiTOYP+hI+TKFPc+PkE8d/JJn1A1URxLNMRXJc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 4ACC0113E;
-	Mon, 23 Jun 2025 08:04:41 -0700 (PDT)
-Received: from pluto (usa-sjc-mx-foss1.foss.arm.com [172.31.20.19])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id C39EF3F58B;
-	Mon, 23 Jun 2025 08:04:57 -0700 (PDT)
-Date: Mon, 23 Jun 2025 16:04:55 +0100
-From: Cristian Marussi <cristian.marussi@arm.com>
-To: Peng Fan <peng.fan@oss.nxp.com>
-Cc: Dhruva Gole <d-gole@ti.com>, Sudeep Holla <sudeep.holla@arm.com>,
-	Cristian Marussi <cristian.marussi@arm.com>,
-	arm-scmi@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	Ranjani Vaidyanathan <ranjani.vaidyanathan@nxp.com>,
-	Chuck Cannon <chuck.cannon@nxp.com>, Peng Fan <peng.fan@nxp.com>
-Subject: Re: [PATCH 2/2] firmware: arm_scmi: power_control: Set
- SCMI_SYSPOWER_IDLE in pm resume
-Message-ID: <aFltF1xqRDnyyngE@pluto>
-References: <20250620-scmi-pm-v1-0-c2f02cae5122@nxp.com>
- <20250620-scmi-pm-v1-2-c2f02cae5122@nxp.com>
- <20250623125750.kzwndmcf5yo3siao@lcpd911>
- <20250623142957.GA10415@nxa18884-linux>
+	s=arc-20240116; t=1750691149; c=relaxed/simple;
+	bh=BGLolw1OHDgzRQRSVHu6bP4bOR6UGr5oa1nQhRO9Iaw=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=CC4/na7ZbeC7QhfOyiwO+/3opUV1W55cMLoAmW4ITyoWpW/R1NvkY9PtVpaehlPhsIODfgGpjkA3BdokzqjikkgNZial04VByO6UwK5/2rRB8KTRPjdC7Q+3We+I2FEVOGl0CMzvw7m44XeZONy1LXc3UwUPuOTB4ILKcvezESs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=OTrAWlXE; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8B6ADC4CEF1
+	for <linux-kernel@vger.kernel.org>; Mon, 23 Jun 2025 15:05:48 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1750691148;
+	bh=BGLolw1OHDgzRQRSVHu6bP4bOR6UGr5oa1nQhRO9Iaw=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=OTrAWlXEqER8s3fC4Du+FufM0rb+0d3QzuwEPOc4CJXzSfmjasZZ0ZsHWFO0/AwQ7
+	 FrD9jn3Os70jLcwO5aKeSHj/NptmgTU3xti52bRB3i87HIz40JN5NOPfaabNtcvPGO
+	 dnQiuT04RZGtmk6+j++4ofRjOHbxdM5nS/36PTBReW3K3eY81Hr9cak63vuV9rKvi6
+	 x8yEWO9STV4Iq3thvAPbMVb1Kn0jesEjSjJWORdp5ZTYX9/kFB0VA61JPaqrNtC/TO
+	 /CGHkgJajmn94S+iZC1XjDXeF643pJX2DecLrk0BTQpIrCyF0c4jTsZ3igwgnn3ZdY
+	 NFq0RntRhHmWg==
+Received: by mail-ej1-f41.google.com with SMTP id a640c23a62f3a-adfb562266cso778032966b.0
+        for <linux-kernel@vger.kernel.org>; Mon, 23 Jun 2025 08:05:48 -0700 (PDT)
+X-Gm-Message-State: AOJu0YwJud2iT3yDLLYdudcIBfJZGmng2QlwQ0COmex/YUCmOG8u9e+A
+	U9Xjz3cl9o8zIHQ5wdd+6sqkGac6kzWY+UQnljuG4kvGsqnFSDCHTPHjKHAVEXpUCJ0peXl94kw
+	vo4dsIoDfXw2X5NbIHEQdv4GONT3JUg==
+X-Google-Smtp-Source: AGHT+IG9p6Zu6Fd7+Bcgke2KZ+yJ3wzAadO6WtoYXMwwtd3LyCC7cV0CYf90lekWfovyEwjPUV+MirJCAoH2Y7zt/0k=
+X-Received: by 2002:a17:906:9c82:b0:ad8:93c0:27a5 with SMTP id
+ a640c23a62f3a-ae05792716emr1179556166b.5.1750691147064; Mon, 23 Jun 2025
+ 08:05:47 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250623142957.GA10415@nxa18884-linux>
+References: <20250613130356.8080-1-james.morse@arm.com>
+In-Reply-To: <20250613130356.8080-1-james.morse@arm.com>
+From: Rob Herring <robh@kernel.org>
+Date: Mon, 23 Jun 2025 10:05:35 -0500
+X-Gmail-Original-Message-ID: <CAL_JsqKD7yOxSnfnah2gE0EodtQ4KyJ2_qXmMu2oK9i6numzwA@mail.gmail.com>
+X-Gm-Features: Ac12FXwzawAJxW0H6SL7NFHDsYDzMvsMRRXGyNtOlEIdLWJc6ed_7vQOPGHyLBs
+Message-ID: <CAL_JsqKD7yOxSnfnah2gE0EodtQ4KyJ2_qXmMu2oK9i6numzwA@mail.gmail.com>
+Subject: Re: [PATCH 0/5] cacheinfo: Set cache 'id' based on DT data
+To: James Morse <james.morse@arm.com>
+Cc: linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, "Rafael J . Wysocki" <rafael@kernel.org>, sudeep.holla@arm.com, 
+	Ben Horgan <ben.horgan@arm.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Mon, Jun 23, 2025 at 10:29:57PM +0800, Peng Fan wrote:
-> On Mon, Jun 23, 2025 at 06:27:50PM +0530, Dhruva Gole wrote:
-> >On Jun 20, 2025 at 11:37:14 +0800, Peng Fan (OSS) wrote:
-> >> From: Peng Fan <peng.fan@nxp.com>
-> >> 
-> >> When two consecutive suspend message send to the Linux agent, Linux will
-> >> suspend and wake up. The exepcted behaviour should be suspend, wake up
-> >
-> >I am first trying to gather more context of the issue at hand here,
-> >Why and who is sending 2 consecutive suspend messages to Linux?
-> 
-> Currently in my test, it is SCMI platform send two suspend messages.
-> But in real cases, other high priviledge agents could send suspend messages
-> to linux agent.
-
-Dont really understand this...a high-privileged supervisor agent would
-anyway send a suspend/shutdown request to the SCMI server which in turn
-should be able to filter out such spurious requests...or such suspend
-request from the supervisor to the agent comes through other non-SCMI
-means ?
-
-> 
-> One agent may wrongly send two suspend messages by user or the agent is hacked.
+On Fri, Jun 13, 2025 at 8:04=E2=80=AFAM James Morse <james.morse@arm.com> w=
+rote:
 >
+> This series adds support for cache-ids to device-tree systems.
+> These values are exposed to user-space via
+> /sys/devices/system/cpu/cpuX/cache/indexY/id
+> and are used to identify caches and their associated CPUs by kernel inter=
+faces
+> such as resctrl.
+>
+> Resctrl anticipates cache-ids are unique for a given cache level, but may
+> be sparse. See Documentation/filesystems/resctrl.rst's "Cache IDs" sectio=
+n.
+>
+> Another user is PCIe's cache-steering hints, where an id provided by the
+> hardware would be needed. Today this expects a platform specific ACPI hoo=
+k
+> the program that value into the PCIe root port registers. If DT platforms
+> are ever supported, it will likely need a kernel driver to convert the
+> user-space cache-id to whatever hardware value is needed.
+>
+> Rob H previously preferred to generate a cache-id from the information DT
+> already has. (Rob: does the PCIe cache-steering use-case change this?)
 
-An agent is NOT capable to send direct notification to another agent...
-....notifcation are sent via the P2A channels which means that the server is
-in charge to send notifs...other agents can cause notifs to be sent NOT
-send them directly...so that the server can filter-out any hacked
-request... 
+I don't think so because who knows what values the PCI root port
+needs. It's never going to be the cache id directly since that is per
+level. So we'd need some sort of mapping. That's going to be something
+like this:
 
-> >
-> >Just quoting the cover letter:
-> >
-> >> When testing on i.MX95, two consecutive suspend message send to the Linux
-> >> agent, Linux will suspend(by the 1st suspend message) and wake up(by the
-> >> 2nd suspend message).
-> >> 
-> >> The ARM SCMI spec does not allow for filtering of which messages an agent
-> >> wants to get on the system power protocol. To i.MX95, as we use mailbox
-> >> to receive message, and the mailbox supports wake up, so linux will also
-> >> get a repeated suspend message. This will cause Linux to wake (and should
-> >> then go back into suspend).
-> >
-> >When you say mailbox supports wake up you mean the mailbox IP in your
-> >SoC actually gets some sort of wake interrupt that triggers a wakeup?
-> 
-> There is no dedicated wake interrupt  for mailbox.
-> 
-> The interrupt is the doorbell for processing notification, and this
-> interrupt could also wakeup Linux.
-> 
-> >Is this wakeup sent to the SM then to be processed further and trigger a
-> >linux wakeup?
-> 
-> No. As above, the mailbox received a doorbell notification interrupt.
-> 
-> >
-> ><or> the mailbox directly wakes up linux, ie. triggers a resume flow but
-> >then you are saying it was an unintentional wakeup so you want to
-> >suspend linux again?
-> 
-> Right.
-> 
-> This just seems like the wakeup routing is
-> >incorrect and the system is going through a who resume and then suspend
-> >cycle without a good reason?
-> >
-> >Why and when in this flow is linux ending up with a duplicate suspend message is
-> >something I still don't follow.
-> 
-> Other agents could send duplicated suspend messages, right?
-> We could not expect other agents always behave correctly.
-> 
+Userspace level+id -> DT cache node -> PCI RP value
 
-Absolutely, BUT SCMI is a client/server system and the server is in
-charge to filter-out such requests, since each agent has its own dedicated
-channel and it is identified by the server as agent_X with capabilities_X
-from the channel it speaks from (i.e. an agent cannot spoof its identify)
+So the first translation is the same as you have here. The 2nd
+translation might be something we put in DT or could be in PCI host
+bridge driver.
 
-...and the server is the ultimate judge/aribter of any request so that
-it can drop any unreasonable request...we should NOT delegate such
-self-protection mechanisms to the agents...
-
-> >
-> >Could you point us to any flow diagrams or software sequences that we
-> >could review?
-> 
-> Not sure what kind diagram or sequences you wanna. It is just one agent
-> wrongly send duplicate suspend message to Linux agent. And Linux agent
-> should suspend again.
-> 
-> One more example is
-> Linux suspended, other agent send reboot linux message, Linux should
-> wakeup and reboot itself.
-
-Yes...another privileged agent request a Reboot for agent_X (SYSPOWER_STATE+_SET)
-to the server and the server in turn sends a Reboot notification to the
-suspended agent_X , which is woken up by the notification and proceeds
-with a graceful shutdown/reboot...if this does NOT happen it is
-definitely a bug..
-
-> 
-> Same to suspend
-> Linux suspended, other agent send suspend Linux message, Linux wakeup
-> and suspend again.
-
-In theory yes, it should work like this, BUT better if the 2nd message
-never come (as explained above)...if this happens, I would say log this
-as a warning too because it is not a normal scenario...i.e. if you
-receive multuple suspend to the same agent from the same server...
-...something is wrong...I agree Linux should survive (and suspend back)
-BUT should not be allowed at first (filtered-out) 
-
-Thanks,
-Cristian
+Rob
 
