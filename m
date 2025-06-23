@@ -1,143 +1,154 @@
-Return-Path: <linux-kernel+bounces-699211-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-699213-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9E1FFAE559B
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Jun 2025 00:12:57 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3D415AE55A7
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Jun 2025 00:13:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E9D1C4C36B0
-	for <lists+linux-kernel@lfdr.de>; Mon, 23 Jun 2025 22:12:17 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 834651BC60F5
+	for <lists+linux-kernel@lfdr.de>; Mon, 23 Jun 2025 22:13:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2CB69227EA7;
-	Mon, 23 Jun 2025 22:11:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 90AAD229B16;
+	Mon, 23 Jun 2025 22:12:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="JF4oI6hP"
-Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="Mj9cOBzy"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 101A6B676;
-	Mon, 23 Jun 2025 22:11:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4878AC2E0
+	for <linux-kernel@vger.kernel.org>; Mon, 23 Jun 2025 22:12:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750716709; cv=none; b=nWrdxp0vCQ10z76HDE7DH4NyXt5xa3pt2k7AKmwz1rVMM/Kbzl7GOzbJe9glU0sGYdTEeiLoOxq7SD6JZUQgshnZUxIS9hPbGl/TfXn5YNTTmfShlaYOD5CqEdoaEHLGzHVIUMhNVXV1S9Z6Ml3EmDfJzperIjkC1gnXNpaww4M=
+	t=1750716752; cv=none; b=oap+zMFS+6JXmOhyNBvMl1u/I8X9qCwN+St+WoF0pCdjTIeG94A93B6pBD+y0Wx9ygQ45YwduFknffZzQEyJSMCefiLXmohKTIUSV8gPvZjIkiakXVEiqCtlyZ2QB+klsEhzgTqHxDBKL/frc8t/db7yX+bix6gHvenV3wa+QRE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750716709; c=relaxed/simple;
-	bh=XD+vw5mO+DY47wvWtjz1cFGmYT2c5lM1NjyZ/CthM8E=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=TQJNVCeVtkBG0GoT805WwrLY+EWDVkpPyMI2CSmPgKVjEAAhskaS08bFKTffMXgxzjWv62GJcz2UKTnQBMl5oNInUy3rmVHrZFD87dKhkweERY5zvtuSydCEXaRLM2LTMupZsVpk4mRPsp5U+c3h/vTL+nmdPAjXJzHNa+3AlpA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=JF4oI6hP; arc=none smtp.client-ip=213.167.242.64
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
-Received: from pendragon.ideasonboard.com (81-175-209-231.bb.dnainternet.fi [81.175.209.231])
-	by perceval.ideasonboard.com (Postfix) with UTF8SMTPSA id C82386F3;
-	Tue, 24 Jun 2025 00:11:28 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-	s=mail; t=1750716689;
-	bh=XD+vw5mO+DY47wvWtjz1cFGmYT2c5lM1NjyZ/CthM8E=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=JF4oI6hPbInP5IZ8nfk6sl1DCD81/qcBsclJ/A4IBNSdN214kS+lRFlVOwdvl1pym
-	 SEtlh/8UbWabQ+V2joXGkJs2g/U0QOpqYFQ99/gfZlYA5/GX7KdtsPs3Uerh0uo6uC
-	 MqEhPvqLn40oPiEFvjvyUr8CQk4fPCjo3tw1FM5c=
-Date: Tue, 24 Jun 2025 01:11:25 +0300
-From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-To: "Nirujogi, Pratap" <pnirujog@amd.com>
-Cc: Sakari Ailus <sakari.ailus@iki.fi>,
-	Sakari Ailus <sakari.ailus@linux.intel.com>,
-	Hao Yao <hao.yao@intel.com>,
-	Pratap Nirujogi <pratap.nirujogi@amd.com>, mchehab@kernel.org,
-	hverkuil@xs4all.nl, bryan.odonoghue@linaro.org, krzk@kernel.org,
-	dave.stevenson@raspberrypi.com, hdegoede@redhat.com,
-	jai.luthra@ideasonboard.com, tomi.valkeinen@ideasonboard.com,
-	linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
-	benjamin.chan@amd.com, bin.du@amd.com, grosikop@amd.com,
-	king.li@amd.com, dantony@amd.com, vengutta@amd.com,
-	dongcheng.yan@intel.com, jason.z.chen@intel.com, jimmy.su@intel.com,
-	Svetoslav.Stoilov@amd.com, Yana.Zheleva@amd.com
-Subject: Re: [PATCH v3 RESEND] media: i2c: Add OV05C10 camera sensor driver
-Message-ID: <20250623221125.GC15951@pendragon.ideasonboard.com>
-References: <20250609194321.1611419-1-pratap.nirujogi@amd.com>
- <6a49eb11-d434-4315-8ee9-0f8aa7347de2@intel.com>
- <aEygCdk-zEqRwfoF@kekkonen.localdomain>
- <20250614225257.GO10542@pendragon.ideasonboard.com>
- <aFk6K4mYtq24MnNj@valkosipuli.retiisi.eu>
- <20250623120613.GB19319@pendragon.ideasonboard.com>
- <1ca1c306-ab79-4a4e-a8a8-1e1f691ae720@amd.com>
+	s=arc-20240116; t=1750716752; c=relaxed/simple;
+	bh=oXHPOR7TLuVJiF4AJ1mPKl17xpepxUuTb87IIvlShAg=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=ICRqlfXHy4k8rDM82Onc+6bXmy7zh+ODYy/zCJvtX8B3tQqOd+jIcrB+bPRpxZvxHn9iyd24c8hj9YczLTLcuX8mwyc7+zI51+q1MJey5rNkaWms6BvYp1n5GGdV7i4M4LQg/DXZjwdUnB9RiiZdXKM0KXFNHOFwtHCsGCLDlwY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=Mj9cOBzy; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279863.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 55NHuKEJ025855
+	for <linux-kernel@vger.kernel.org>; Mon, 23 Jun 2025 22:12:30 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	lg9kP05buSmu9VAI3g+rOYfzC3a3xuABElAlMyKM+8Q=; b=Mj9cOBzyXlMx7w8I
+	ndTERVXglPq09GszZZa54iNttLwY2cFab5mLBJAzDkOmNLrGUN8Knz0U7Pa9RKV3
+	2GNJgFpeVJjXTqzclyYHH7Kus4Wh830nKVPglYDCA7SkHPO3SI9+uxKL7lv+AO54
+	GEJEDAxWx8pkErm8QCnZ/sKtKxj9bPHKz7mj1MBtK5+J1InR1JY4vRcqFOveotuv
+	tRyaKszm8mUOqHVAKXrcyQZkOJEB9XiSpJU7qiTRQCfAbsFALg7Mzp4xc+rx6gUW
+	fDAWzvXf2uImKflF+6tqu6OrCsQvmhMNxah2fUfKXSWh4XIEpEZKfBhED7t4++Hk
+	YG9ZyA==
+Received: from mail-qk1-f200.google.com (mail-qk1-f200.google.com [209.85.222.200])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 47emcmkq91-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Mon, 23 Jun 2025 22:12:30 +0000 (GMT)
+Received: by mail-qk1-f200.google.com with SMTP id af79cd13be357-7d40d2308a4so296622985a.0
+        for <linux-kernel@vger.kernel.org>; Mon, 23 Jun 2025 15:12:30 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1750716749; x=1751321549;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=lg9kP05buSmu9VAI3g+rOYfzC3a3xuABElAlMyKM+8Q=;
+        b=GjlSTOOjf1x8tufxamUttO0bAqpcmchMiMwGkXGryD8h4qBWwrtp7JKk/bKf/TO+T1
+         nLSBZ3FJcNFirE+P3uvD7tbbV4Jz36Qxpsgf6qg0a/G7SuI4jRwkwFcyHTkV/J+o7x92
+         7YiAOcJGgovqEuQTbGYQzU/uIXc9FpaAqBaSsU8/wyU9BLQoI/vlolL6EQlKWkj3dWtu
+         Z4wBorIMlQO5XUBm9tH4V0sADmThMhu8BdGr6JabcPRIKZQCIMqj5aIwCtVInca7z6EC
+         vh23ndyuGCurrQkZpceDMAd2RbY58asp7cICTjdhyDKaaYDgJWKr57dDCQE3ErFehQvg
+         D0Yg==
+X-Forwarded-Encrypted: i=1; AJvYcCWqdOCoC7OMXDEIrcIWn+1XbcXsIXpeitjtXc18NbPRAUeKulTlcBreADZgLorTiTF4XHCTL5Apoyc5+cQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxBAPafUMMM6xxZkWlX1+VRlmtv4CKu4NfGtQEu+y+3dbWddZfY
+	AOqtoBQuJVR3yUOTSrUUWo+VrHyXgFyAu8jyDQTFAQvLK4dMNAw7pH+mwDnAmJvMiDt5Nh7SXUB
+	0/sVE6Ht2ofZZeKTQhNRblcHB3aNTVeEqrysMto1zO8zZR91/5EoyqS8jJy3nzfPqwis=
+X-Gm-Gg: ASbGnctYAjUtz5bLz5HfJIle1hewVfg4HzYCwBru++0qQ9lA0HUalcnsuUd5sR2RhEf
+	9zvMcdUPG5B966JKX20m6DjA8DU6LJcO0UVMfyBaL8cKE//BolPk3mHZWVZKaHY3eWr/tbtZ6UV
+	amTVu3cwlWt/ibvJgkxveIBHjy38zPcad315Z052tzcC+G8Y8+7XSwA6pw4yq71Axe8hkotBcTe
+	9If+UO8iTrdyE4PJRI89+8mMR9LZVpYIdwD7ffPlPvELgxwrdUwmobfBC8Z+PkImTvFUew4imMA
+	aQTsSVZZF/KkgNakS6xBmpA8xWAoii8IbyU/YdU+tbXq576bsPvE5gEbQ4d3kufk62HKvomeeas
+	=
+X-Received: by 2002:a05:620a:4720:b0:7c5:9788:1762 with SMTP id af79cd13be357-7d3f9938cfbmr2031239785a.45.1750716748701;
+        Mon, 23 Jun 2025 15:12:28 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IG3fWlse6jUFEkXEfv8g/TYyqD1B6IL/3srb6MgVSJ90D+r/uAFrwOBMHUObcgRjBtB9QiUcA==
+X-Received: by 2002:a05:620a:4720:b0:7c5:9788:1762 with SMTP id af79cd13be357-7d3f9938cfbmr2031235585a.45.1750716748280;
+        Mon, 23 Jun 2025 15:12:28 -0700 (PDT)
+Received: from [10.132.167.252] (37-33-208-94.bb.dnainternet.fi. [37.33.208.94])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-553e41d806dsm1579546e87.241.2025.06.23.15.12.26
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 23 Jun 2025 15:12:27 -0700 (PDT)
+Message-ID: <d48a235d-aad8-4978-b4c4-ed0b3fce14b1@oss.qualcomm.com>
+Date: Tue, 24 Jun 2025 01:12:25 +0300
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <1ca1c306-ab79-4a4e-a8a8-1e1f691ae720@amd.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH RESEND] drm/bridge-connector: Fix bridge in
+ drm_connector_hdmi_audio_init()
+To: Chaoyi Chen <kernel@airkyi.com>, Andrzej Hajda <andrzej.hajda@intel.com>,
+        Neil Armstrong <neil.armstrong@linaro.org>,
+        Robert Foss <rfoss@kernel.org>,
+        Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
+        Jonas Karlman <jonas@kwiboo.se>,
+        Jernej Skrabec <jernej.skrabec@gmail.com>,
+        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+        Maxime Ripard <mripard@kernel.org>,
+        Thomas Zimmermann <tzimmermann@suse.de>,
+        David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>
+Cc: dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
+        Chaoyi Chen <chaoyi.chen@rock-chips.com>
+References: <20250620011616.118-1-kernel@airkyi.com>
+Content-Language: en-US
+From: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
+In-Reply-To: <20250620011616.118-1-kernel@airkyi.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Proofpoint-GUID: lG_m-UEDJ8OckZojy75CsKNfkuMBc6cb
+X-Proofpoint-ORIG-GUID: lG_m-UEDJ8OckZojy75CsKNfkuMBc6cb
+X-Authority-Analysis: v=2.4 cv=J+eq7BnS c=1 sm=1 tr=0 ts=6859d14e cx=c_pps
+ a=hnmNkyzTK/kJ09Xio7VxxA==:117 a=D+sM+DASzikqaCSeXxPSkA==:17
+ a=IkcTkHD0fZMA:10 a=6IFa9wvqVegA:10 a=s8YR1HE3AAAA:8 a=EUspDBNiAAAA:8
+ a=sDl0zNJMTKjEBXQ_4tMA:9 a=QEXdDO2ut3YA:10 a=PEH46H7Ffwr30OY-TuGO:22
+ a=jGH_LyMDp9YhSvY-UuyI:22
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNjIzMDE1MSBTYWx0ZWRfX5edK0oRMtdvv
+ qmQSuRj7okV+GzuqpYtOUDI9ha5mp0csFBz8y+hxtMdue/dtY3QmzMapw3WOmwjwiEWwjGNaU0t
+ arhohaFrjtNf0mN4vfG5StsF7sw1Vd8M7tDA2XarjndtBqKvJU6tFx9Esb6Nj0dl+6s/5COE8WZ
+ r6suCE8yJ2ncRq/YctFw+XGtzOaBEayKcHARktXcY5ypYafIOWjzQtxAV6ssI4BVytZbB78gQD2
+ 6LXUTHNWUkyko7cRcRirgXGZcbKAAgKgrYcG8KbAR7m6/370tSLQ3xOat0MK5vOL4IIVSEzLPCO
+ rSKXTfNOyCSRtqg+DoP3trX3vZvUTtjr4rQXMxEAQRcLWP1RsNpP3xDWIEg6x8Mh/mPd29iialG
+ goi1dIQcAPMWlanBSsOWOCpmLxbp+nHh5XlTUyjY8eLF/mYUb0BeMZrUMqmNJBy0LIejLM7H
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.7,FMLib:17.12.80.40
+ definitions=2025-06-23_07,2025-06-23_07,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ bulkscore=0 mlxlogscore=999 adultscore=0 impostorscore=0 clxscore=1015
+ spamscore=0 malwarescore=0 phishscore=0 priorityscore=1501 suspectscore=0
+ mlxscore=0 lowpriorityscore=0 classifier=spam authscore=0 authtc=n/a authcc=
+ route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2505280000
+ definitions=main-2506230151
 
-On Mon, Jun 23, 2025 at 05:53:44PM -0400, Nirujogi, Pratap wrote:
-> On 6/23/2025 8:06 AM, Laurent Pinchart wrote:
-> > On Mon, Jun 23, 2025 at 11:27:39AM +0000, Sakari Ailus wrote:
-> >> On Sun, Jun 15, 2025 at 01:52:57AM +0300, Laurent Pinchart wrote:
-> >>>>>> +#define OV05C10_REF_CLK                      (24 * HZ_PER_MHZ)
-> >>>>>
-> >>>>> Seems your module use 24 MHz clock input. The Dell's modules always use
-> >>>>> 19.2MHz, which means your the PLL settings will not work on Dell's.
-> >>>>
-> >>>> This is ok as further work. Please send a patch. :-)
-> >>>
-> >>> The patch should calculate PLL configuration dynamically, perhaps using
-> >>> the ccs-pll calculator if applicable.
-> >>
-> >> As much as I do like your suggestion, I don't think it's really feasible to
-> >> often do this for Omnivision sensors (most others largely do just work
-> >> without much hassle wrt. PLL, as long as a PLL calculator exists). This
-> >> sensor's PLL tree is different from CCS and badly documented, as expected.
-> > 
-> > How much do we know about the PLL structure ?
+On 20/06/2025 04:16, Chaoyi Chen wrote:
+> From: Chaoyi Chen <chaoyi.chen@rock-chips.com>
 > 
-> sorry to inform we don't have much details, we've consulted with the 
-> sensor vendor, but they are not willing to share specifics regarding the 
-> PLL calculations, register details, or configuration settings. They have 
-> recommended reaching out to them directly for any PLL configurations 
-> required for the modes we intend to support.
+> The bridge used in drm_connector_hdmi_audio_init() does not correctly
+> point to the required audio bridge, which lead to incorrect audio
+> configuration input.
+> 
+> Fixes: 231adeda9f67 ("drm/bridge-connector: hook DisplayPort audio support")
+> Signed-off-by: Chaoyi Chen <chaoyi.chen@rock-chips.com>
+> ---
+>   drivers/gpu/drm/display/drm_bridge_connector.c | 7 +++++--
+>   1 file changed, 5 insertions(+), 2 deletions(-)
 
-Do you have access to the sensor datasheet ?
-
-> >>>>> Seems there are already several camera sensors using page-based registers.
-> >>>>> Is it a good idea to add page support in CCI interface?
-> >>>>
-> >>>> Sounds like a good idea as such but I'm not sure how common this really is,
-> >>>> I think I've seen a few Omnivision sensors doing this. If implemented, I
-> >>>> think it would be nice if the page could be encoded in the register address
-> >>>> which V4L2 CCI would store and switch page if needed only. This would
-> >>>> require serialising accesses, too. There's some room in CCI register raw
-> >>>> value space so this could be done without even changing that, say, with
-> >>>> 8-bit page and 8-bit register address.
-> >>>
-> >>> Ack. I've worked on a driver for the AP1302 external ISP, which also
-> >>> uses pages registers. The full address space spans 32 bits though, but
-> >>> fortunately the driver doesn't need to access anything above 0x00ffffff.
-> >>
-> >> 0xffffff?
-> > 
-> > Yes.
-> > 
-> >> The current CCI register addresses are limited to 16 bits. To
-> >> support that, we'd need to use u64 most likely.
-> > 
-> > I handled it in the ap1302 driver, by using bits 31:24 of address to
-> > store a 8 bits page value. It's a hack as the CCI helper currently only
-> > allocates 4 bits of the address to driver-specific purpose.
-> > 
-> >> For 16-bit register
-> >> addresses and 8-bit values which probably are the most common, that starts
-> >> to appear a bit wasteful.
-> > 
-> > It is wasteful, I don't want to turn the register address to a 64-bit
-> > value.
+Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
 
 -- 
-Regards,
-
-Laurent Pinchart
+With best wishes
+Dmitry
 
