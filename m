@@ -1,99 +1,80 @@
-Return-Path: <linux-kernel+bounces-698458-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-698463-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 54BE6AE4441
-	for <lists+linux-kernel@lfdr.de>; Mon, 23 Jun 2025 15:41:43 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2008DAE44D1
+	for <lists+linux-kernel@lfdr.de>; Mon, 23 Jun 2025 15:46:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E84D43B3CDB
-	for <lists+linux-kernel@lfdr.de>; Mon, 23 Jun 2025 13:33:25 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 61F6D3BB0F1
+	for <lists+linux-kernel@lfdr.de>; Mon, 23 Jun 2025 13:34:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8231C254855;
-	Mon, 23 Jun 2025 13:33:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="LyJy9G/i"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8BF46256C9B;
+	Mon, 23 Jun 2025 13:34:15 +0000 (UTC)
+Received: from szxga02-in.huawei.com (szxga02-in.huawei.com [45.249.212.188])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E61E92F24
-	for <linux-kernel@vger.kernel.org>; Mon, 23 Jun 2025 13:33:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BF78E4C6E;
+	Mon, 23 Jun 2025 13:34:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.188
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750685582; cv=none; b=IMfFaPSLGoffehivlvz6vRaEkKpv8hyFhOktn4FSikc0ej0sC2LI1dFrIunlCVvAiwfYud/V/J7Hh4TAPcYf/szkdjQHIPtNyvR5wyBBlowRqTwRzW/GSzdFmwHMpJj24nA0VsP29C/zlWxUZfAC+qAatkqXFajOds7HZCoA9ng=
+	t=1750685655; cv=none; b=Y8aPM9ciSI//h0goYWgKEnrZgEztPSypz+6zyjHV0J66Bjkmh9HPaMOLkBpxWoUtQ+a+pl1QGJ4E++psAX8y5l4mHdwo25fLgtrCSubERh9/GljfXPwPaLJQBMAOrzkY+0MAFX6vP1cB8GblfXIYJeOKvXcpuaGaYEQrzw6pU3Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750685582; c=relaxed/simple;
-	bh=XnDQyvsf65cmQSAtLv1zcelfA5SwFSMQkFj+f3CyjXo=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=eeDPbcA6Ou1bwS6ycMxId9bkrfkbu8C5Y9gfikx4HLmvw0wqgv9V6pFrr3nPJtY2kHnp60ol2jjSpeL6bZl3DoQvzGdS08HKSgBDy3GPU5FmrO7PXzXVmLO4YK9gefrmqR/JgJvwwdn0eOsixV9sxrlcevKb58aAhKpUOdFmx7Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=LyJy9G/i; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 90DD3C4CEF2;
-	Mon, 23 Jun 2025 13:33:00 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1750685581;
-	bh=XnDQyvsf65cmQSAtLv1zcelfA5SwFSMQkFj+f3CyjXo=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
-	b=LyJy9G/i4fBVOIIf9I9yRb+SyiR6vlRICkEfaYyRdlJrAVfWHJyAGUP7yS/xUlQf/
-	 lgPdmayOi3Mg4xk24ikxsmgH7P8Z+h7ktA47s77y58A+B3dr6kF44N8o7cPqafKhPK
-	 yIWjSBaEiPdmuZ4orn5IgPbu/6DgnE9l8kkrBnwJnqOCFqz5z9hYb94bqKnAUsNz8W
-	 6TLdtAnGBMeps9GHgc804vGu68GZkQi0O9MC1nEO4gQfz+wT35L1rptvZ3pEmv1mpX
-	 YEpKZx/VUN9+MVfbbdlGiDhk5zAokFbhlcONt+6s85KNvLLmf6APgQmagvmI/dST2e
-	 65Kzr2vUHQLXg==
-From: Mark Brown <broonie@kernel.org>
-To: Liam Girdwood <lgirdwood@gmail.com>, 
- Martijn de Gouw <martijn.de.gouw@prodrive-technologies.com>, 
- Primoz Fiser <primoz.fiser@norik.com>
-Cc: Joy Zou <joy.zou@nxp.com>, linux-kernel@vger.kernel.org
-In-Reply-To: <20250618063339.2508893-1-primoz.fiser@norik.com>
-References: <20250618063339.2508893-1-primoz.fiser@norik.com>
-Subject: Re: [PATCH] regulator: pca9450: Support PWM mode also for pca9451a
-Message-Id: <175068558032.58081.3489129245775741886.b4-ty@kernel.org>
-Date: Mon, 23 Jun 2025 14:33:00 +0100
+	s=arc-20240116; t=1750685655; c=relaxed/simple;
+	bh=Sla9I5RfkvIfh9gnzAx8StDl6+TRHmUENk4QlnEG5i0=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=PRvNp0fLkQK9vLuve6FCopz0NHCp9xR4JCHFvoe0FVkR/CK1w6YWUr3xEL7K/vbc6aTiUUmVDP5qPi09i/F3IoFLDzAR5YyhuVNRwT7MzrLVMl6q1oIaje2mU6X3OwGcBtHmyP6BZwIGwigBmQHGwJUabBdKkKBZOQxB/AxV1KQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.188
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.88.105])
+	by szxga02-in.huawei.com (SkyGuard) with ESMTP id 4bQppj3VpyzTgm4;
+	Mon, 23 Jun 2025 21:29:49 +0800 (CST)
+Received: from kwepemh100008.china.huawei.com (unknown [7.202.181.93])
+	by mail.maildlp.com (Postfix) with ESMTPS id 2B8BA1402DB;
+	Mon, 23 Jun 2025 21:34:08 +0800 (CST)
+Received: from localhost.localdomain (10.50.165.33) by
+ kwepemh100008.china.huawei.com (7.202.181.93) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.11; Mon, 23 Jun 2025 21:34:07 +0800
+From: Lifeng Zheng <zhenglifeng1@huawei.com>
+To: <rafael@kernel.org>, <viresh.kumar@linaro.org>, <ionela.voinescu@arm.com>
+CC: <linux-kernel@vger.kernel.org>, <linux-pm@vger.kernel.org>,
+	<linuxarm@huawei.com>, <jonathan.cameron@huawei.com>,
+	<zhanjie9@hisilicon.com>, <lihuisong@huawei.com>, <yubowen8@huawei.com>,
+	<zhenglifeng1@huawei.com>
+Subject: [PATCH 0/7] cpufreq: Some optimizations for cpufreq.c.
+Date: Mon, 23 Jun 2025 21:33:55 +0800
+Message-ID: <20250623133402.3120230-1-zhenglifeng1@huawei.com>
+X-Mailer: git-send-email 2.33.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Mailer: b4 0.15-dev-08c49
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: kwepems200001.china.huawei.com (7.221.188.67) To
+ kwepemh100008.china.huawei.com (7.202.181.93)
 
-On Wed, 18 Jun 2025 08:33:39 +0200, Primoz Fiser wrote:
-> Previous commit 548d770c330c ("regulator: pca9450: Add support for mode
-> operations") added support for setting forced PWM mode on the buck
-> regulators for pca9450a and pca9450bc parts. However part pca9451a also
-> supports this feature, thus add support for it.
-> 
-> 
+This patch series makes some minor optimizations for cpufreq.c to make
+codes cleaner.
 
-Applied to
+Lifeng Zheng (7):
+  cpufreq: Disable cpufreq-based invariance when fail to register driver
+  cpufreq: Init policy->rwsem before it may be possibly used
+  cpufreq: Contain scaling_cur_freq.attr in cpufreq_attrs
+  cpufreq: Remove duplicate check in __cpufreq_offline()
+  cpufreq: Move the check of cpufreq_driver->get into
+    cpufreq_verify_current_freq()
+  cpufreq: Refactor code about starting governor in cpufreq_set_policy()
+  cpufreq: Exit governor when failed to start old governor
 
-   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/regulator.git for-next
+ drivers/cpufreq/cpufreq.c | 53 +++++++++++++++++++++------------------
+ 1 file changed, 28 insertions(+), 25 deletions(-)
 
-Thanks!
-
-[1/1] regulator: pca9450: Support PWM mode also for pca9451a
-      commit: 19cbc930c209d59a2c9828de4c7b767e9f14667e
-
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent to Linus during
-the next merge window (or sooner if it is a bug fix), however if
-problems are discovered then the patch may be dropped or reverted.
-
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
-
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
-
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
-
-Thanks,
-Mark
+-- 
+2.33.0
 
 
