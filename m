@@ -1,111 +1,137 @@
-Return-Path: <linux-kernel+bounces-697809-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-697818-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id BBCE1AE38FB
-	for <lists+linux-kernel@lfdr.de>; Mon, 23 Jun 2025 10:51:45 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id E314BAE3906
+	for <lists+linux-kernel@lfdr.de>; Mon, 23 Jun 2025 10:53:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F290E3B4E2F
-	for <lists+linux-kernel@lfdr.de>; Mon, 23 Jun 2025 08:51:11 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3C3E73B68F4
+	for <lists+linux-kernel@lfdr.de>; Mon, 23 Jun 2025 08:52:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EF59223278D;
-	Mon, 23 Jun 2025 08:51:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9632823A9BE;
+	Mon, 23 Jun 2025 08:51:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Z4Dj7kc/"
-Received: from mail-oo1-f47.google.com (mail-oo1-f47.google.com [209.85.161.47])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="BIiQhLsi"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.14])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E82EC231A3B;
-	Mon, 23 Jun 2025 08:51:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.161.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 73850239E6F;
+	Mon, 23 Jun 2025 08:51:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.14
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750668665; cv=none; b=SzJPTESUC5BghQY29s8M6y6Rg9PJ4Kn6POxpPfFnKhbYSbw/uA4wLM0SCKZN+ntC3fZ69pB0NWG8SrdufKg0nuluZ61xlAkkiTrsWpY42vIxh5dNVyotVYSwHWcZIv5uxoypapvic8Rov87st8jVR1Tuw/fwOXxOZt/jXtdM5kI=
+	t=1750668678; cv=none; b=tPJOECwuGIRUSOYjROzkfH9LLQ2JvHZA9IPpCWmT42QQg309Y8HSVaGk0BC/DCMUGBUdo7a61pnITLxfgjXTx0+mJeZ2aLI4KfQpsTADi5ru8ZmGdwVTRAXgN80Tx+MXuEOaKFP4Bh1InNp5ybxZcsI5OLES6x7uY6cF3yIWgeU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750668665; c=relaxed/simple;
-	bh=8maWd3GbIDtbZMp4bY3DiJ/4Wgbk557AhCCKytKsNJQ=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=ekNfEtRndNnXzUrQ2s/4fMJMTfrGXSClslV06WA+7YuaxoQHfNZNObfwFw8RCkrLe7yZGg3nt3UXqVmY96IepzA3+YWAOTBqmo6RNwBvaYNlRv3xmBn6sbp17+5JqRnS/q67JLYLsjTlD4n5gsXJAmTqjXID8UTwrApESxkN1cM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Z4Dj7kc/; arc=none smtp.client-ip=209.85.161.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-oo1-f47.google.com with SMTP id 006d021491bc7-60ef6bf2336so2801668eaf.0;
-        Mon, 23 Jun 2025 01:51:03 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1750668663; x=1751273463; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=8maWd3GbIDtbZMp4bY3DiJ/4Wgbk557AhCCKytKsNJQ=;
-        b=Z4Dj7kc/TN8YDoHmKHot6daZb81OXR2qewPz4JvPSGwCdLvXGs0lNll1h5NVdZH/W9
-         uVaSlBZw0dZFSRO0M58H7i77vLAXsunwNSOXhuL4Few4AMnJTBuwC/HR+pz494jc/SQr
-         O6kngvnk6DqZbi9Tc7hTSvA3LsL2u1iaZVy744OUj/Lm/FtFMHOZX7YdKdlSMiddt22V
-         Kf7xWT+1FfxQhB2g3doydgcS1W5vO1g1hHmQ9KogIbvgjMfv6kNA+HSbIdhD1IEL+tEv
-         y8/0iftoljcnbbAhw5qSyzmzCoczmL3YJfqsV1RvxGidkI+0Hivaeab3bS1tErrbpmrf
-         TLVQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1750668663; x=1751273463;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=8maWd3GbIDtbZMp4bY3DiJ/4Wgbk557AhCCKytKsNJQ=;
-        b=FcdAfJ1aVpxAxyI7XUp2l9jlBetAbBx2A19puZRiYkFWT4biWmRlU0C4n5g75FgE6t
-         CuZwnM+u/gTkBDxb4lct96hJs9Ni8FiJBoFd3JHPECsaGBpwriLhuvMRmo8OERPgEXuP
-         TPJZy+V3kV0K2gbTlkB+vbrKJJgWUbb63T/b2clxP0FGWpCZgmBVf0hwvyLGwyOLnWk9
-         DcMYp+NdZZW1ckG7ngz+xcw+Hs49EyZlYWG7OFZKaxjC17u90+eO/BkrQVTaZ7ZxhSIl
-         3Ugv0XbOlcCLM7yIL+nQ0NNa3sPME6ML8r7IWcwrHnLtV3S3C6wo7YmyK0pEQrPrPvQz
-         VPzA==
-X-Forwarded-Encrypted: i=1; AJvYcCVX7aVtD+IUEwdIF80l/xHK6edqNJjZDKp0dkBW2EnacAtCRo8RsIWkv3xTZcvX5ep3SpdvL5p3maQ=@vger.kernel.org, AJvYcCWVNhK8voA8YowSQtOz8Zy1IgsLPCfJrIlaYmyzYEoWdLiOdMU+JQPsAsdOSGKXI0idn98H/vWMmpWyqDhx@vger.kernel.org
-X-Gm-Message-State: AOJu0YzsjwIny8tfiZLEzrP5IIwcj4JxE9Rr7h9S9iwCmML/zlBCYqLA
-	k5t7g8nbM+DLn6+TfMuOk2163SSRS51rjXQH5RP/OO0QTXL2AsNjX92LS4B3g38ZFB4LRVbBNjs
-	ZI0oQydYP9TB++SR9/pnLLfvTfWs03eY=
-X-Gm-Gg: ASbGncvPW/AFEyv4adwBOtvvWcB5VPFDYB/cX2C7u42M28uIDyknJwPsxhAo7SyR2xg
-	ntf4ZE9+2ysoLUeBhd4GuFAGDH48JCeUbO6xJfnFndc3muQzIA8tE11aj0aXf3LMsXYmygg8tuA
-	Df6PQcO0MV7jKLsN31HnzdLjmMM1qA6VPE7f6y2gZuDbEy
-X-Google-Smtp-Source: AGHT+IGubb7AAzvDBnlc+GagJPnVEYecGav/59sbAeJr04T8DTe5mwGsrPrxzbFHF3J31UjQsnvPTGgJQyCGahFrqD8=
-X-Received: by 2002:a05:6820:178e:b0:611:67d6:b141 with SMTP id
- 006d021491bc7-61167d6b47dmr6598972eaf.2.1750668662936; Mon, 23 Jun 2025
- 01:51:02 -0700 (PDT)
+	s=arc-20240116; t=1750668678; c=relaxed/simple;
+	bh=pUTt++AaA3xZ/EEgqLRC2Xe4dn+oIgpfZgMfM0kN/E8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=YKZ8yX3P719LbIok3cVDcteSbOivrj3y7cyfi+nDNf2D9/CYkS6FVlWkaRmtlZHOZSJ2e2RstwzJW4/yb/qEm+uJtRSQ8aNTw1+U57LebvPDwjMX4nUEpnc0/Y+kvnNjCG37YM4mCLCQkGx84rYyD3OQoGvvT/fDGktS4BlGHsg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=BIiQhLsi; arc=none smtp.client-ip=192.198.163.14
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1750668676; x=1782204676;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:content-transfer-encoding:in-reply-to;
+  bh=pUTt++AaA3xZ/EEgqLRC2Xe4dn+oIgpfZgMfM0kN/E8=;
+  b=BIiQhLsiYLuxF6QuwZssbMClSGBXAU7peMcjJS4hZmY3CFogGfPlb+tA
+   GMEXHPIeKhrIcq+B46CD5d2tLZbzbQsl4UTYUNLAo1sGHtrmt0wUxuy3H
+   okPl5ugECqM3faBpOVjU5ldnCsGyBfgeBslbpecNCIymsAYXTnoq0uvLO
+   p17qzi+ULd7m1aiDXYdXKwnsZFPwhAbOLj4YsROK1QVfnIPvk847LxxlE
+   0teRv/1bwBrlPhPOoXYjYgxznydxvzZcy350nR6ufg8eGSbgATouTxlM5
+   gKprfSme8M6y09ww7u2SMsa/NgouB0XV+l6N0vh12a//xlgWJshgd4x/x
+   w==;
+X-CSE-ConnectionGUID: YqwTBZYhQUSNcDv22eOGkg==
+X-CSE-MsgGUID: p/xq9Lk7QxCm80nuP3RjrQ==
+X-IronPort-AV: E=McAfee;i="6800,10657,11472"; a="52941050"
+X-IronPort-AV: E=Sophos;i="6.16,258,1744095600"; 
+   d="scan'208";a="52941050"
+Received: from orviesa002.jf.intel.com ([10.64.159.142])
+  by fmvoesa108.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 23 Jun 2025 01:51:14 -0700
+X-CSE-ConnectionGUID: STb68b2sR9CARqb+WPZ4jQ==
+X-CSE-MsgGUID: 4MpMhRkRQBOcrFkdNlGbmw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.16,258,1744095600"; 
+   d="scan'208";a="182578435"
+Received: from smile.fi.intel.com ([10.237.72.52])
+  by orviesa002.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 23 Jun 2025 01:51:08 -0700
+Received: from andy by smile.fi.intel.com with local (Exim 4.98.2)
+	(envelope-from <andriy.shevchenko@linux.intel.com>)
+	id 1uTctL-00000009788-3ffU;
+	Mon, 23 Jun 2025 11:51:03 +0300
+Date: Mon, 23 Jun 2025 11:51:03 +0300
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To: Jassi Brar <jassisinghbrar@gmail.com>
+Cc: Anup Patel <apatel@ventanamicro.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	"Rafael J . Wysocki" <rafael@kernel.org>,
+	Mika Westerberg <mika.westerberg@linux.intel.com>,
+	Linus Walleij <linus.walleij@linaro.org>,
+	Bartosz Golaszewski <brgl@bgdev.pl>,
+	Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= <ukleinek@kernel.org>,
+	Palmer Dabbelt <palmer@dabbelt.com>,
+	Paul Walmsley <paul.walmsley@sifive.com>,
+	Len Brown <lenb@kernel.org>, Sunil V L <sunilvl@ventanamicro.com>,
+	Rahul Pathak <rpathak@ventanamicro.com>,
+	Leyfoon Tan <leyfoon.tan@starfivetech.com>,
+	Atish Patra <atish.patra@linux.dev>,
+	Andrew Jones <ajones@ventanamicro.com>,
+	Samuel Holland <samuel.holland@sifive.com>,
+	Anup Patel <anup@brainfault.org>, linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-riscv@lists.infradead.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v6 00/23] Linux SBI MPXY and RPMI drivers
+Message-ID: <aFkVdzxl5GhV_etE@smile.fi.intel.com>
+References: <20250618121358.503781-1-apatel@ventanamicro.com>
+ <CABb+yY1UAwQiLCFY0Om1wsG+Hf_MobLfrEMx8JVdvoehVZ-g0A@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250622004249.9083-1-sef1548@gmail.com> <b16a1df5-0b81-4600-bd68-2d261d2a3780@redhat.com>
-In-Reply-To: <b16a1df5-0b81-4600-bd68-2d261d2a3780@redhat.com>
-From: Nick Huang <sef1548@gmail.com>
-Date: Mon, 23 Jun 2025 16:50:53 +0800
-X-Gm-Features: Ac12FXzCrW7v0PHfUCkkPv--UV6Xl1-d-xmIC8tIsL81PPD570oq4ubQFpg3Ojw
-Message-ID: <CABZAGRGvf9Ge5EvMgFP3FUHt2QOpq6xXe9nB4=it9zb+V1DNwg@mail.gmail.com>
-Subject: Re: [PATCH] mm/balloon_compaction: update Chinese docs for movable_ops
-To: David Hildenbrand <david@redhat.com>
-Cc: alexs@kernel.org, si.yanteng@linux.dev, dzm91@hust.edu.cn, corbet@lwn.net, 
-	akpm@linux-foundation.org, wangkefeng.wang@huawei.com, vishal.moola@gmail.com, 
-	linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-mm@kvack.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CABb+yY1UAwQiLCFY0Om1wsG+Hf_MobLfrEMx8JVdvoehVZ-g0A@mail.gmail.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - c/o Alberga Business Park, 6
+ krs, Bertel Jungin Aukio 5, 02600 Espoo
 
-David Hildenbrand <david@redhat.com> =E6=96=BC 2025=E5=B9=B46=E6=9C=8823=E6=
-=97=A5 =E9=80=B1=E4=B8=80 =E4=B8=8B=E5=8D=884:08=E5=AF=AB=E9=81=93=EF=BC=9A
->
-> On 22.06.25 02:42, Nick Huang wrote:
-> > Remove Non-LRU Page Migration and Add Movable_ops Page Migration
+On Sun, Jun 22, 2025 at 11:26:21AM -0500, Jassi Brar wrote:
+> On Wed, Jun 18, 2025 at 7:14 AM Anup Patel <apatel@ventanamicro.com> wrote:
 > >
->
-> I'm afraid most people you CC on Chinese doc updates will not be able to
-> help in any reasonable way.
->
-> --
-> Cheers,
->
-> David / dhildenb
+> > The SBI v3.0 (MPXY extension) [1] and RPMI v1.0 [2] specifications
+> > are frozen and in public review at the RISC-V International.
+> >
+> > Currently, most of the RPMI and MPXY drivers are in OpenSBI whereas
+> > Linux only has SBI MPXY mailbox controller driver, RPMI clock driver
+> > and RPMI system MSI driver This series also includes ACPI support
+> > for SBI MPXY mailbox controller and RPMI system MSI drivers.
+> >
+> > These patches can be found in the riscv_sbi_mpxy_mailbox_v6 branch
+> > at: https://github.com/avpatel/linux.git
+> >
+> > To test these patches, boot Linux on "virt,rpmi=on,aia=aplic-imsic"
+> > machine with OpenSBI and QEMU from the dev-upstream branch at:
+> > https://github.com/ventanamicro/opensbi.git
+> > https://github.com/ventanamicro/qemu.git
 
-How can I fix these things?
+> I am ok with the mailbox patches. How are these to be picked into
+> mailbox and other subsystems? Maybe sculpt out a separate patchset for
+> the mailbox?
+
+I have questions / comments to the series, it's just too long to do it
+in one go.
+
+-- 
+With Best Regards,
+Andy Shevchenko
 
 
---=20
-Regards,
-Nick Huang
 
