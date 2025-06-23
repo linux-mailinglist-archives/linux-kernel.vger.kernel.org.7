@@ -1,197 +1,207 @@
-Return-Path: <linux-kernel+bounces-698882-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-698884-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4A06AAE4B5B
-	for <lists+linux-kernel@lfdr.de>; Mon, 23 Jun 2025 18:48:24 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B1168AE4B3C
+	for <lists+linux-kernel@lfdr.de>; Mon, 23 Jun 2025 18:43:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9C76A18845E7
-	for <lists+linux-kernel@lfdr.de>; Mon, 23 Jun 2025 16:42:59 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CF25E3ADF62
+	for <lists+linux-kernel@lfdr.de>; Mon, 23 Jun 2025 16:43:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B3887299A87;
-	Mon, 23 Jun 2025 16:42:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0FC0529AB1E;
+	Mon, 23 Jun 2025 16:43:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Kephd5QN"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.14])
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=couthit.com header.i=@couthit.com header.b="JUd/y+n4"
+Received: from server.couthit.com (server.couthit.com [162.240.164.96])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 485F529A308;
-	Mon, 23 Jun 2025 16:42:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.14
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1775327D776;
+	Mon, 23 Jun 2025 16:43:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=162.240.164.96
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750696959; cv=none; b=F356pcY9iId0ATQoLbdKEPRY0dVMZQ3o56/0+90WUC4/w1xaI1bwt9hGO4QUFWsxMCop2ToTrjaRR5PrCzU05l7Lu3uNHoxVfZag/L3svKMxKv1FnaXhDEvhIKCS5nIbOUEaLrcmmxwO5zMGtJJIHqALriwpdTE67AduQRM6ecQ=
+	t=1750697022; cv=none; b=s/PC8FjOudKvfRQPlHbjc44ArwID/JS9ReXl4Rsml0ht0tILf2cggtK7kxzBi5I/mC7BZtbXsbpCTRZ2sR7UKtMEaxlD6Ho+d4Z8QwdM5fHbd6UhgpW5sR8ak5Z6Mm7R3p+1jjSgP3e/taz4qxx+qcDU72RxBObmjhKJFo6yD7E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750696959; c=relaxed/simple;
-	bh=7PCPpTV0y/NGn/GCwR088rcKYN5qhi35it4rqyTNwmk=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=V01qySxhXTQr5h+cEKfE6gqupNmhG8IP0Rn889my1zeEXVvKh9h5V1l/Xqk7T2XddektGMhOCbOwFesopXpRLAne3IVULBXGZthyDkwNXU9PHLzYYr/pZ5Ef/RrqNhSt0ZktxgVEGcrcbf3XZs2v/M4H/Xa2q2Q6YyTUQwhdM+w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Kephd5QN; arc=none smtp.client-ip=192.198.163.14
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1750696957; x=1782232957;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=7PCPpTV0y/NGn/GCwR088rcKYN5qhi35it4rqyTNwmk=;
-  b=Kephd5QN5y/4aCSyuew7mM0/PC4a+j4/ny/+lgeNO5IQrHzyTK9XJHXZ
-   JjmCs+OqbdjHUF0bwY5pRLd67VwVZZUhT6QMZhgSYEGmaKDKvuQUS2gPO
-   IxSG0XxKnAdLUjBIOELpurczYDqsWier1whJ+fmuWZilx2RadSj3/NdGE
-   VtmMwaFAivSYw6yQtdEZTKCWGeAw+C8KSj5cZlLi51NHfGBlT+x6ThdEq
-   jvv2iPlHoMX6kzWIl21ZTYdpyuCjvzmOJtEsV/zsx0TgDObii8+SUtYL+
-   m7tVeP3IRjA7qG0kj/mDa1jVJCRnAkGle2VkxJSzeG2SfpRGCc2Ilep6X
-   g==;
-X-CSE-ConnectionGUID: tQTMdpc8TgmSzKlpCbGuxQ==
-X-CSE-MsgGUID: 88YC6uO9SuOyLP+0P/qqZQ==
-X-IronPort-AV: E=McAfee;i="6800,10657,11473"; a="52987554"
-X-IronPort-AV: E=Sophos;i="6.16,259,1744095600"; 
-   d="scan'208";a="52987554"
-Received: from orviesa007.jf.intel.com ([10.64.159.147])
-  by fmvoesa108.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 23 Jun 2025 09:42:36 -0700
-X-CSE-ConnectionGUID: wP8ReU9mTgeiKtlhP7Ezjg==
-X-CSE-MsgGUID: 7sDrrq8VQyugcQX4yfbZog==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.16,259,1744095600"; 
-   d="scan'208";a="151823015"
-Received: from tjmaciei-mobl5.ger.corp.intel.com (HELO [10.125.108.165]) ([10.125.108.165])
-  by orviesa007-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 23 Jun 2025 09:42:35 -0700
-Message-ID: <8f0913d7-9e77-41e0-91e2-17ca2454b296@intel.com>
-Date: Mon, 23 Jun 2025 09:42:34 -0700
+	s=arc-20240116; t=1750697022; c=relaxed/simple;
+	bh=ZXTdfeb26uaNXAv97gaN9xQM3pNDrS6rzxQ8R7JlYqI=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=Vhx4UhR7VbVwv/WosyeOgOefVL3HbHUhWolfSGTBenYTR9Q+qxPZyFEwTvfVwV9KMXa9rQRmdotKJyGhlFqWw6Cm/CeITlEqitJphs7AUbEaLJoHsRcOa/htQqnpGw4xf7SgRqhdhPRLiB3oiXqLnlim8YJFpLZehqeK1K6zbtw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=couthit.com; spf=pass smtp.mailfrom=couthit.com; dkim=pass (2048-bit key) header.d=couthit.com header.i=@couthit.com header.b=JUd/y+n4; arc=none smtp.client-ip=162.240.164.96
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=couthit.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=couthit.com
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=couthit.com
+	; s=default; h=Content-Transfer-Encoding:MIME-Version:References:In-Reply-To:
+	Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:
+	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+	:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
+	List-Post:List-Owner:List-Archive;
+	bh=tPDgy8YT+1r/YyiodNlgBj8cY39Os8WV0X93E3xwm5c=; b=JUd/y+n4SZQwzXuqbLKWWc6kw5
+	QtT/TTbu8cS2Pd8Vnik0hg6kMwz0svBZJnHSL7woL+BHFWPYYBeEXtSaoD6uDSQZGt9IobqRpc0qH
+	J37z0ntkRiC0o+Ott7LMM+7vUBB5uTQaNA9VtdoRxiWM6o6wFZojNqJl0ah8xPrHjFpFem1AxMLKQ
+	iuBsJZqTUhjHWrMeOGjcpsT2JE2/c09x7a4/XeBS1OHUQqRTlwP4MNEUJqqJaFQvHa3UzY4h2+P1l
+	jOYG2dQ/3oYYkbIYB8QYDhSvptm3Pul6opqAgpBzMdvQCn2y6IYu9OiMx7p0tzWYD5OhtwmYZJHZx
+	LeG0XqlA==;
+Received: from [122.175.9.182] (port=13719 helo=cypher.couthit.local)
+	by server.couthit.com with esmtpa (Exim 4.98.1)
+	(envelope-from <parvathi@couthit.com>)
+	id 1uTkGd-00000006VGn-0xuV;
+	Mon, 23 Jun 2025 12:43:35 -0400
+From: Parvathi Pudi <parvathi@couthit.com>
+To: danishanwar@ti.com,
+	rogerq@kernel.org,
+	andrew+netdev@lunn.ch,
+	davem@davemloft.net,
+	edumazet@google.com,
+	kuba@kernel.org,
+	pabeni@redhat.com,
+	robh@kernel.org,
+	krzk+dt@kernel.org,
+	conor+dt@kernel.org,
+	ssantosh@kernel.org,
+	richardcochran@gmail.com,
+	s.hauer@pengutronix.de,
+	m-karicheri2@ti.com,
+	glaroque@baylibre.com,
+	afd@ti.com,
+	saikrishnag@marvell.com,
+	m-malladi@ti.com,
+	jacob.e.keller@intel.com,
+	diogo.ivo@siemens.com,
+	javier.carrasco.cruz@gmail.com,
+	horms@kernel.org,
+	s-anna@ti.com,
+	basharath@couthit.com,
+	parvathi@couthit.com
+Cc: linux-arm-kernel@lists.infradead.org,
+	netdev@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	pratheesh@ti.com,
+	prajith@ti.com,
+	vigneshr@ti.com,
+	praneeth@ti.com,
+	srk@ti.com,
+	rogerq@ti.com,
+	krishna@couthit.com,
+	pmohan@couthit.com,
+	mohan@couthit.com
+Subject: [PATCH net-next v9 09/11] net: ti: prueth: Adds power management support for PRU-ICSS
+Date: Mon, 23 Jun 2025 22:12:34 +0530
+Message-Id: <20250623164236.255083-10-parvathi@couthit.com>
+X-Mailer: git-send-email 2.34.1
+In-Reply-To: <20250623135949.254674-1-parvathi@couthit.com>
+References: <20250623135949.254674-1-parvathi@couthit.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCHv6 01/16] x86/cpu: Enumerate the LASS feature bits
-To: "Luck, Tony" <tony.luck@intel.com>, "Mehta, Sohil"
- <sohil.mehta@intel.com>, "Kirill A. Shutemov"
- <kirill.shutemov@linux.intel.com>, Dave Hansen <dave.hansen@linux.intel.com>
-Cc: Jonathan Corbet <corbet@lwn.net>, Ingo Molnar <mingo@kernel.org>,
- Pawan Gupta <pawan.kumar.gupta@linux.intel.com>,
- Daniel Sneddon <daniel.sneddon@linux.intel.com>,
- "Huang, Kai" <kai.huang@intel.com>, Sandipan Das <sandipan.das@amd.com>,
- Breno Leitao <leitao@debian.org>,
- "Edgecombe, Rick P" <rick.p.edgecombe@intel.com>,
- Alexei Starovoitov <ast@kernel.org>, Hou Tao <houtao1@huawei.com>,
- Juergen Gross <jgross@suse.com>, Vegard Nossum <vegard.nossum@oracle.com>,
- Kees Cook <kees@kernel.org>, Eric Biggers <ebiggers@google.com>,
- Jason Gunthorpe <jgg@ziepe.ca>,
- "Masami Hiramatsu (Google)" <mhiramat@kernel.org>,
- Andrew Morton <akpm@linux-foundation.org>,
- Luis Chamberlain <mcgrof@kernel.org>, Yuntao Wang <ytcoode@gmail.com>,
- Rasmus Villemoes <linux@rasmusvillemoes.dk>,
- Christophe Leroy <christophe.leroy@csgroup.eu>, Tejun Heo <tj@kernel.org>,
- Changbin Du <changbin.du@huawei.com>,
- Huang Shijie <shijie@os.amperecomputing.com>,
- Geert Uytterhoeven <geert+renesas@glider.be>,
- Namhyung Kim <namhyung@kernel.org>,
- Arnaldo Carvalho de Melo <acme@redhat.com>,
- "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>,
- "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
- "linux-efi@vger.kernel.org" <linux-efi@vger.kernel.org>,
- "linux-mm@kvack.org" <linux-mm@kvack.org>, Yian Chen <yian.chen@intel.com>,
- Andy Lutomirski <luto@kernel.org>, Thomas Gleixner <tglx@linutronix.de>,
- Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
- "x86@kernel.org" <x86@kernel.org>, "H. Peter Anvin" <hpa@zytor.com>,
- Peter Zijlstra <peterz@infradead.org>, Ard Biesheuvel <ardb@kernel.org>,
- "Paul E. McKenney" <paulmck@kernel.org>, Josh Poimboeuf
- <jpoimboe@kernel.org>, Xiongwei Song <xiongwei.song@windriver.com>,
- "Li, Xin3" <xin3.li@intel.com>, "Mike Rapoport (IBM)" <rppt@kernel.org>,
- Brijesh Singh <brijesh.singh@amd.com>, Michael Roth <michael.roth@amd.com>,
- Alexey Kardashevskiy <aik@amd.com>,
- Alexander Shishkin <alexander.shishkin@linux.intel.com>
-References: <20250620135325.3300848-1-kirill.shutemov@linux.intel.com>
- <20250620135325.3300848-2-kirill.shutemov@linux.intel.com>
- <248e272c-79ec-4c11-a3a8-dff1de2147c0@intel.com>
- <adaf2d81-75b5-4f02-99ea-03ea0f1a5a96@intel.com>
- <SJ1PR11MB6083AE2EF85FB5D2FE39D4F0FC79A@SJ1PR11MB6083.namprd11.prod.outlook.com>
-From: Dave Hansen <dave.hansen@intel.com>
-Content-Language: en-US
-Autocrypt: addr=dave.hansen@intel.com; keydata=
- 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
-In-Reply-To: <SJ1PR11MB6083AE2EF85FB5D2FE39D4F0FC79A@SJ1PR11MB6083.namprd11.prod.outlook.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - server.couthit.com
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - couthit.com
+X-Get-Message-Sender-Via: server.couthit.com: authenticated_id: parvathi@couthit.com
+X-Authenticated-Sender: server.couthit.com: parvathi@couthit.com
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
 
-On 6/23/25 09:25, Luck, Tony wrote:
->>> functions. But, the difference in usage between both of them seems very
->>> subtle. Could this be easily misused?
->>
->> Logically there are two completely different things:
->>
->>       1. Touching userspace
->>       2. Touching the lower half of the address space
->>
->> If it's only userspace in the lower half of the address space, then
->> there's no controversy. But the problem obviously occurs when you want
->> to touch kernel mappings in the lower half of the address space.
-> 
-> Why does the kernel create the mappings to poke kernel text
-> for ALTERNATIVE patching in the lower half of the address space?
-> 
-> Instead of special "we really to want to access the lower addresses"
-> code, wouldn't it be easier to map the "poke" virtual addresses in normal
-> kernel upper-half space?
+From: Roger Quadros <rogerq@ti.com>
 
-The upper half of the address space is shared kernel space, right? Every
-PGD has identical contents in the upper half. So if we create a mapping
-there,everybody get access to it. Every mm can access it. Every
-*process* can access it. It still has kernel permissions of course, but
-it's still a place that everybody can get at.
+Changes for supporting the sleep/resume feature for PRU-ICSS.
 
-The lower half is *ONLY* accessible to the local mm. In this case, only
-the text poking mm. It's a natural, safe, place to create a mapping that
-you want to be private and not be exploited.
+PRU-ICSS will be kept in IDLE mode for optimal power consumption by Linux
+power management subsystem and will be resumed when it is required.
 
-So, doing it in the upper half is risky.
+Signed-off-by: Roger Quadros <rogerq@ti.com>
+Signed-off-by: Andrew F. Davis <afd@ti.com>
+Signed-off-by: Basharath Hussain Khaja <basharath@couthit.com>
+Signed-off-by: Parvathi Pudi <parvathi@couthit.com>
+---
+ drivers/net/ethernet/ti/icssm/icssm_prueth.c | 58 ++++++++++++++++++++
+ 1 file changed, 58 insertions(+)
 
-If we *wanted*, we could have a non-shared PGD entry in the top half of
-the address space. But we'd need to reserve its address space and all
-that jazz. I'm not sure it's any better than just disabling LASS
-enforcement for a moment.
+diff --git a/drivers/net/ethernet/ti/icssm/icssm_prueth.c b/drivers/net/ethernet/ti/icssm/icssm_prueth.c
+index 3b90c9f7b76d..299bfd35077e 100644
+--- a/drivers/net/ethernet/ti/icssm/icssm_prueth.c
++++ b/drivers/net/ethernet/ti/icssm/icssm_prueth.c
+@@ -2324,6 +2324,63 @@ static void icssm_prueth_remove(struct platform_device *pdev)
+ 		pru_rproc_put(prueth->pru1);
+ }
+ 
++#ifdef CONFIG_PM_SLEEP
++static int icssm_prueth_suspend(struct device *dev)
++{
++	struct prueth *prueth = dev_get_drvdata(dev);
++	struct net_device *ndev;
++	int i, ret;
++
++	for (i = 0; i < PRUETH_NUM_MACS; i++) {
++		ndev = prueth->registered_netdevs[i];
++
++		if (!ndev)
++			continue;
++
++		if (netif_running(ndev)) {
++			netif_device_detach(ndev);
++			ret = icssm_emac_ndo_stop(ndev);
++			if (ret < 0) {
++				netdev_err(ndev, "failed to stop: %d", ret);
++				return ret;
++			}
++		}
++	}
++
++	return 0;
++}
++
++static int icssm_prueth_resume(struct device *dev)
++{
++	struct prueth *prueth = dev_get_drvdata(dev);
++	struct net_device *ndev;
++	int i, ret;
++
++	for (i = 0; i < PRUETH_NUM_MACS; i++) {
++		ndev = prueth->registered_netdevs[i];
++
++		if (!ndev)
++			continue;
++
++		if (netif_running(ndev)) {
++			ret = icssm_emac_ndo_open(ndev);
++			if (ret < 0) {
++				netdev_err(ndev, "failed to start: %d", ret);
++				return ret;
++			}
++			netif_device_attach(ndev);
++		}
++	}
++
++	return 0;
++}
++
++#endif /* CONFIG_PM_SLEEP */
++
++static const struct dev_pm_ops prueth_dev_pm_ops = {
++	SET_SYSTEM_SLEEP_PM_OPS(icssm_prueth_suspend, icssm_prueth_resume)
++};
++
+ /* AM57xx SoC-specific firmware data */
+ static struct prueth_private_data am57xx_prueth_pdata = {
+ 	.driver_data = PRUSS_AM57XX,
+@@ -2349,6 +2406,7 @@ static struct platform_driver prueth_driver = {
+ 	.driver = {
+ 		.name = "prueth",
+ 		.of_match_table = prueth_dt_match,
++		.pm = &prueth_dev_pm_ops,
+ 	},
+ };
+ module_platform_driver(prueth_driver);
+-- 
+2.34.1
+
 
