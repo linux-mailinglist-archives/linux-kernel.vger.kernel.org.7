@@ -1,240 +1,212 @@
-Return-Path: <linux-kernel+bounces-698638-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-698634-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8724DAE47B0
-	for <lists+linux-kernel@lfdr.de>; Mon, 23 Jun 2025 16:59:53 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id AB691AE4780
+	for <lists+linux-kernel@lfdr.de>; Mon, 23 Jun 2025 16:55:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B45ED16E6FF
-	for <lists+linux-kernel@lfdr.de>; Mon, 23 Jun 2025 14:56:13 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3B8FF7A26E3
+	for <lists+linux-kernel@lfdr.de>; Mon, 23 Jun 2025 14:53:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6B45B253F30;
-	Mon, 23 Jun 2025 14:55:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="SozZaton"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.15])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ED30A253F30;
+	Mon, 23 Jun 2025 14:55:02 +0000 (UTC)
+Received: from www262.sakura.ne.jp (www262.sakura.ne.jp [202.181.97.72])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C08A6267700;
-	Mon, 23 Jun 2025 14:55:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.15
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9AD6E17A319;
+	Mon, 23 Jun 2025 14:54:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.181.97.72
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750690534; cv=none; b=bVh1MyttiKooMOGEIcG3kLmk5/pW9lasEDD5az4nU9QLWsbuV+x0Raew92IAJXbesnhOmYEog8FNDUcfAeS6+gbEMkLxTjbAZEn7IAvDhp3Nta3u/hiAQs/9RmSPwvz67x12xfh36hm3Il6vG6nknl6aZpVXWWIAqmg1UYmamik=
+	t=1750690502; cv=none; b=RDRBA4iRxaVWFWn1qhdmrfFpwSHbm8+u4wcEouElz980UdpTB1x/RNU8CnkI2RUU0ST3aaSMy6xru4o9+ERqqKpDuZmlvXvTIZUptaU/f4c7lqKNVXnhIYpn/9U1/4++dYaZkPIawUxkt5KJlw6xhoOSDuT5cK8lhmJkdsHO8zo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750690534; c=relaxed/simple;
-	bh=gszoEZ/bHkrFTTc3IzYuM4m4Ycm6E1VSniTVLUWbC0I=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=HSTUXZ4uhhUZwWwV6imj2Ng/PkS4t015f/tzaxJUq5U4jFSs9WXDEjXo3qTLhzDC3EUKZWDxc4RuQGZE1AIw+Y8WBjOIb4ava92C6ebZl/Uw6hecojAgz7T/ujx2eHdsnU7KWFNQPEKPJUPLHr/BSmYD6px6ZPuG07TmHmnelmM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=SozZaton; arc=none smtp.client-ip=192.198.163.15
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1750690533; x=1782226533;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=gszoEZ/bHkrFTTc3IzYuM4m4Ycm6E1VSniTVLUWbC0I=;
-  b=SozZatonz5IC6KTnNz1eYoxlSq99K+gs5Ex36Iiv0a9HrYbaH4KGvult
-   Dc12MhB862G49BES/63yPnjSWenrZWfvYGXzmAV1jIENRwX3u4GK+seAQ
-   QuB+tMGt3tgKgE6oJJ/qLbLGbhMLN8/+BYDe/crAsjB1uqFIU4Tm3Wzko
-   mvlQ59fszYmGDZBJJljBjBQPzZnPmWdt2kyeGJohhMgpI+hyaMghWsFjn
-   heuUPvtsnPf273wfn4Uch4erPoe5KUBkBj45tuPsH7ciBldLdrEeAp6uE
-   BeEIQj9a0GS1Tg9w//yWsI6GQIXmV4DqX9wQCe4Loy8YozylMYNp++8Hp
-   g==;
-X-CSE-ConnectionGUID: nLhdkNukQN+y+kSFxR/KOg==
-X-CSE-MsgGUID: LYqF57++TFq5jGeNPXfMhw==
-X-IronPort-AV: E=McAfee;i="6800,10657,11473"; a="53042732"
-X-IronPort-AV: E=Sophos;i="6.16,258,1744095600"; 
-   d="scan'208";a="53042732"
-Received: from orviesa003.jf.intel.com ([10.64.159.143])
-  by fmvoesa109.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 23 Jun 2025 07:55:32 -0700
-X-CSE-ConnectionGUID: IDXBrUhASwOrAxLiN9UO2g==
-X-CSE-MsgGUID: i9GOdjm+QLG4QDGi+dI36A==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.16,258,1744095600"; 
-   d="scan'208";a="155997410"
-Received: from fdefranc-mobl3.ger.corp.intel.com (HELO fdefranc-mobl3.intel.com) ([10.245.246.11])
-  by ORVIESA003-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 23 Jun 2025 07:55:24 -0700
-From: "Fabio M. De Francesco" <fabio.m.de.francesco@linux.intel.com>
-To: linux-cxl@vger.kernel.org
-Cc: "Rafael J . Wysocki" <rafael@kernel.org>,
-	Len Brown <lenb@kernel.org>,
-	Davidlohr Bueso <dave@stgolabs.net>,
-	Jonathan Cameron <jonathan.cameron@huawei.com>,
-	Dave Jiang <dave.jiang@intel.com>,
-	Alison Schofield <alison.schofield@intel.com>,
-	Vishal Verma <vishal.l.verma@intel.com>,
-	Ira Weiny <ira.weiny@intel.com>,
-	Dan Williams <dan.j.williams@intel.com>,
-	Mahesh J Salgaonkar <mahesh@linux.ibm.com>,
-	Oliver O'Halloran <oohall@gmail.com>,
-	Bjorn Helgaas <bhelgaas@google.com>,
-	Tony Luck <tony.luck@intel.com>,
-	Borislav Petkov <bp@alien8.de>,
-	linux-acpi@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linuxppc-dev@lists.ozlabs.org,
-	linux-pci@vger.kernel.org,
-	linux-edac@vger.kernel.org,
-	"Fabio M. De Francesco" <fabio.m.de.francesco@linux.intel.com>,
-	Kuppuswamy Sathyanarayanan <sathyanarayanan.kuppuswamy@linux.intel.com>
-Subject: [PATCH 3/3 v4] ACPI: extlog: Trace CPER CXL Protocol Error Section
-Date: Mon, 23 Jun 2025 16:54:20 +0200
-Message-ID: <20250623145453.1046660-4-fabio.m.de.francesco@linux.intel.com>
-X-Mailer: git-send-email 2.49.0
-In-Reply-To: <20250623145453.1046660-1-fabio.m.de.francesco@linux.intel.com>
-References: <20250623145453.1046660-1-fabio.m.de.francesco@linux.intel.com>
+	s=arc-20240116; t=1750690502; c=relaxed/simple;
+	bh=neJ53zTqVIf2HXeu7VaFVXtQeMPgtZV6OqaLCTC6XUY=;
+	h=Message-ID:Date:MIME-Version:From:To:Subject:Content-Type; b=sedRFv+fccbdD2h+DmmrykXeS2T+sRlqsdBGM2agUYvFO4BS33MMAopxYr/58C0e3rU5WFOw0ipayn1Pk8J2TKesEzipwQiKkFL53EWc5Iki95pdFz1twhzUwDBLc59Hk1u+zp+gkP79kedIJQS/x+CdNQ7b7qoFQdvBM1HrDPQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=I-love.SAKURA.ne.jp; spf=pass smtp.mailfrom=I-love.SAKURA.ne.jp; arc=none smtp.client-ip=202.181.97.72
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=I-love.SAKURA.ne.jp
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=I-love.SAKURA.ne.jp
+Received: from www262.sakura.ne.jp (localhost [127.0.0.1])
+	by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTP id 55NEsKbf098991;
+	Mon, 23 Jun 2025 23:54:20 +0900 (JST)
+	(envelope-from penguin-kernel@I-love.SAKURA.ne.jp)
+Received: from [192.168.1.6] (M106072142033.v4.enabler.ne.jp [106.72.142.33])
+	(authenticated bits=0)
+	by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTPSA id 55NEsKIL098986
+	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NO);
+	Mon, 23 Jun 2025 23:54:20 +0900 (JST)
+	(envelope-from penguin-kernel@I-love.SAKURA.ne.jp)
+Message-ID: <29348724-639c-443d-bbce-65c3a0a13a38@I-love.SAKURA.ne.jp>
+Date: Mon, 23 Jun 2025 23:54:20 +0900
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Content-Language: en-US
+From: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
+To: Mark Fasheh <mark@fasheh.com>, Joel Becker <jlbec@evilplan.org>,
+        Joseph Qi <joseph.qi@linux.alibaba.com>, ocfs2-devel@lists.linux.dev,
+        LKML <linux-kernel@vger.kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>
+Subject: [PATCH] ocfs2: embed actual values into ocfs2_sysfile_lock_key names
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Virus-Status: clean
+X-Anti-Virus-Server: fsav304.rs.sakura.ne.jp
 
-When Firmware First is enabled, BIOS handles errors first and then it makes
-them available to the kernel via the Common Platform Error Record (CPER)
-sections (UEFI 2.10 Appendix N). Linux parses the CPER sections via one of
-two similar paths, either ELOG or GHES. The errors managed by ELOG are
-signaled to the BIOS by the I/O Machine Check Architecture (I/O MCA).
+Since lockdep_set_class() uses stringified key name via macro, calling
+lockdep_set_class() with an array causes lockdep warning messages to
+report variable name than actual index number.
 
-Currently, ELOG and GHES show some inconsistencies in how they report to
-userspace via trace events.
+Change ocfs2_init_locked_inode() to pass actual index number for better
+readability of lockdep reports. This patch does not change behavior.
 
-Therefore, make the two mentioned paths act similarly by tracing the CPER
-CXL Protocol Error Section (UEFI v2.10, Appendix N.2.13).
 
-Cc: Dan Williams <dan.j.williams@intel.com>
-Reviewed-by: Kuppuswamy Sathyanarayanan <sathyanarayanan.kuppuswamy@linux.intel.com>
-Signed-off-by: Fabio M. De Francesco <fabio.m.de.francesco@linux.intel.com>
+Before:
+
+  Chain exists of:
+    &ocfs2_sysfile_lock_key[args->fi_sysfile_type] --> jbd2_handle --> &oi->ip_xattr_sem
+
+   Possible unsafe locking scenario:
+
+         CPU0                    CPU1
+         ----                    ----
+    lock(&oi->ip_xattr_sem);
+                                 lock(jbd2_handle);
+                                 lock(&oi->ip_xattr_sem);
+    lock(&ocfs2_sysfile_lock_key[args->fi_sysfile_type]);
+
+   *** DEADLOCK ***
+
+After:
+
+  Chain exists of:
+    &ocfs2_sysfile_lock_key[EXTENT_ALLOC_SYSTEM_INODE] --> jbd2_handle --> &oi->ip_xattr_sem
+
+   Possible unsafe locking scenario:
+
+         CPU0                    CPU1
+         ----                    ----
+    lock(&oi->ip_xattr_sem);
+                                 lock(jbd2_handle);
+                                 lock(&oi->ip_xattr_sem);
+    lock(&ocfs2_sysfile_lock_key[EXTENT_ALLOC_SYSTEM_INODE]);
+
+   *** DEADLOCK ***
+
+
+Signed-off-by: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
 ---
- drivers/acpi/acpi_extlog.c | 62 ++++++++++++++++++++++++++++++++++++++
- drivers/cxl/core/ras.c     |  6 ++++
- include/cxl/event.h        |  2 ++
- 3 files changed, 70 insertions(+)
+ fs/ocfs2/inode.c | 70 +++++++++++++++++++++++++++++++++++++++++++++---
+ 1 file changed, 66 insertions(+), 4 deletions(-)
 
-diff --git a/drivers/acpi/acpi_extlog.c b/drivers/acpi/acpi_extlog.c
-index cefe8d2d8affc..9a37b08aacfea 100644
---- a/drivers/acpi/acpi_extlog.c
-+++ b/drivers/acpi/acpi_extlog.c
-@@ -12,6 +12,7 @@
- #include <linux/ratelimit.h>
- #include <linux/edac.h>
- #include <linux/ras.h>
-+#include <cxl/event.h>
- #include <acpi/ghes.h>
- #include <asm/cpu.h>
- #include <asm/mce.h>
-@@ -160,6 +161,60 @@ static void extlog_print_pcie(struct cper_sec_pcie *pcie_err,
- 	pci_dev_put(pdev);
- }
+diff --git a/fs/ocfs2/inode.c b/fs/ocfs2/inode.c
+index 12e5d1f73325..14bf440ea4df 100644
+--- a/fs/ocfs2/inode.c
++++ b/fs/ocfs2/inode.c
+@@ -50,8 +50,6 @@ struct ocfs2_find_inode_args
+ 	unsigned int	fi_sysfile_type;
+ };
  
-+static void
-+extlog_cxl_cper_handle_prot_err(struct cxl_cper_sec_prot_err *prot_err,
-+				int severity)
-+{
-+	struct cxl_cper_prot_err_work_data wd;
-+	u8 *dvsec_start, *cap_start;
-+
-+	if (!(prot_err->valid_bits & PROT_ERR_VALID_AGENT_ADDRESS)) {
-+		pr_warn_ratelimited("CXL CPER invalid agent type\n");
-+		return;
-+	}
-+
-+	if (!(prot_err->valid_bits & PROT_ERR_VALID_ERROR_LOG)) {
-+		pr_warn_ratelimited("CXL CPER invalid protocol error log\n");
-+		return;
-+	}
-+
-+	if (prot_err->err_len != sizeof(struct cxl_ras_capability_regs)) {
-+		pr_warn_ratelimited("CXL CPER invalid RAS Cap size (%u)\n",
-+				    prot_err->err_len);
-+		return;
-+	}
-+
-+	if ((prot_err->agent_type == RCD || prot_err->agent_type == DEVICE ||
-+	     prot_err->agent_type == LD || prot_err->agent_type == FMLD) &&
-+	    !(prot_err->valid_bits & PROT_ERR_VALID_SERIAL_NUMBER))
-+		pr_warn_ratelimited(FW_WARN
-+				    "CXL CPER no device serial number\n");
-+
-+	switch (prot_err->agent_type) {
-+	case RCD:
-+	case DEVICE:
-+	case LD:
-+	case FMLD:
-+	case RP:
-+	case DSP:
-+	case USP:
-+		memcpy(&wd.prot_err, prot_err, sizeof(wd.prot_err));
-+
-+		dvsec_start = (u8 *)(prot_err + 1);
-+		cap_start = dvsec_start + prot_err->dvsec_len;
-+
-+		memcpy(&wd.ras_cap, cap_start, sizeof(wd.ras_cap));
-+		wd.severity = cper_severity_to_aer(severity);
+-static struct lock_class_key ocfs2_sysfile_lock_key[NUM_SYSTEM_INODES];
+-
+ static int ocfs2_read_locked_inode(struct inode *inode,
+ 				   struct ocfs2_find_inode_args *args);
+ static int ocfs2_init_locked_inode(struct inode *inode, void *opaque);
+@@ -250,14 +248,77 @@ static int ocfs2_find_actor(struct inode *inode, void *opaque)
+ static int ocfs2_init_locked_inode(struct inode *inode, void *opaque)
+ {
+ 	struct ocfs2_find_inode_args *args = opaque;
++#ifdef CONFIG_LOCKDEP
++	static struct lock_class_key ocfs2_sysfile_lock_key[NUM_SYSTEM_INODES];
+ 	static struct lock_class_key ocfs2_quota_ip_alloc_sem_key,
+ 				     ocfs2_file_ip_alloc_sem_key;
++#endif
+ 
+ 	inode->i_ino = args->fi_ino;
+ 	OCFS2_I(inode)->ip_blkno = args->fi_blkno;
+-	if (args->fi_sysfile_type != 0)
++#ifdef CONFIG_LOCKDEP
++	switch (args->fi_sysfile_type) {
++	case BAD_BLOCK_SYSTEM_INODE:
++		break;
++	case GLOBAL_INODE_ALLOC_SYSTEM_INODE:
++		lockdep_set_class(&inode->i_rwsem,
++				  &ocfs2_sysfile_lock_key[GLOBAL_INODE_ALLOC_SYSTEM_INODE]);
++		break;
++	case SLOT_MAP_SYSTEM_INODE:
++		lockdep_set_class(&inode->i_rwsem,
++				  &ocfs2_sysfile_lock_key[SLOT_MAP_SYSTEM_INODE]);
++		break;
++	case HEARTBEAT_SYSTEM_INODE:
++		lockdep_set_class(&inode->i_rwsem,
++				  &ocfs2_sysfile_lock_key[HEARTBEAT_SYSTEM_INODE]);
++		break;
++	case GLOBAL_BITMAP_SYSTEM_INODE:
++		lockdep_set_class(&inode->i_rwsem,
++				  &ocfs2_sysfile_lock_key[GLOBAL_BITMAP_SYSTEM_INODE]);
++		break;
++	case USER_QUOTA_SYSTEM_INODE:
++		lockdep_set_class(&inode->i_rwsem,
++				  &ocfs2_sysfile_lock_key[USER_QUOTA_SYSTEM_INODE]);
++		break;
++	case GROUP_QUOTA_SYSTEM_INODE:
++		lockdep_set_class(&inode->i_rwsem,
++				  &ocfs2_sysfile_lock_key[GROUP_QUOTA_SYSTEM_INODE]);
++		break;
++	case ORPHAN_DIR_SYSTEM_INODE:
++		lockdep_set_class(&inode->i_rwsem,
++				  &ocfs2_sysfile_lock_key[ORPHAN_DIR_SYSTEM_INODE]);
++		break;
++	case EXTENT_ALLOC_SYSTEM_INODE:
+ 		lockdep_set_class(&inode->i_rwsem,
+-			&ocfs2_sysfile_lock_key[args->fi_sysfile_type]);
++				  &ocfs2_sysfile_lock_key[EXTENT_ALLOC_SYSTEM_INODE]);
++		break;
++	case INODE_ALLOC_SYSTEM_INODE:
++		lockdep_set_class(&inode->i_rwsem,
++				  &ocfs2_sysfile_lock_key[INODE_ALLOC_SYSTEM_INODE]);
++		break;
++	case JOURNAL_SYSTEM_INODE:
++		lockdep_set_class(&inode->i_rwsem,
++				  &ocfs2_sysfile_lock_key[JOURNAL_SYSTEM_INODE]);
++		break;
++	case LOCAL_ALLOC_SYSTEM_INODE:
++		lockdep_set_class(&inode->i_rwsem,
++				  &ocfs2_sysfile_lock_key[LOCAL_ALLOC_SYSTEM_INODE]);
++		break;
++	case TRUNCATE_LOG_SYSTEM_INODE:
++		lockdep_set_class(&inode->i_rwsem,
++				  &ocfs2_sysfile_lock_key[TRUNCATE_LOG_SYSTEM_INODE]);
++		break;
++	case LOCAL_USER_QUOTA_SYSTEM_INODE:
++		lockdep_set_class(&inode->i_rwsem,
++				  &ocfs2_sysfile_lock_key[LOCAL_USER_QUOTA_SYSTEM_INODE]);
++		break;
++	case LOCAL_GROUP_QUOTA_SYSTEM_INODE:
++		lockdep_set_class(&inode->i_rwsem,
++				  &ocfs2_sysfile_lock_key[LOCAL_GROUP_QUOTA_SYSTEM_INODE]);
 +		break;
 +	default:
-+		pr_err_ratelimited("CXL CPER reserved agent type: %d\n",
-+				   prot_err->agent_type);
-+		return;
++		WARN_ONCE(1, "Unknown sysfile type %d\n", args->fi_sysfile_type);
 +	}
-+
-+	cxl_cper_ras_handle_prot_err(&wd);
-+}
-+
- static int extlog_print(struct notifier_block *nb, unsigned long val,
- 			void *data)
- {
-@@ -211,6 +266,12 @@ static int extlog_print(struct notifier_block *nb, unsigned long val,
- 			if (gdata->error_data_length >= sizeof(*mem))
- 				trace_extlog_mem_event(mem, err_seq, fru_id, fru_text,
- 						       (u8)gdata->error_severity);
-+		} else if (guid_equal(sec_type, &CPER_SEC_CXL_PROT_ERR)) {
-+			struct cxl_cper_sec_prot_err *prot_err =
-+				acpi_hest_get_payload(gdata);
-+
-+			extlog_cxl_cper_handle_prot_err(prot_err,
-+							gdata->error_severity);
- 		} else if (guid_equal(sec_type, &CPER_SEC_PCIE)) {
- 			struct cper_sec_pcie *pcie_err = acpi_hest_get_payload(gdata);
+ 	if (args->fi_sysfile_type == USER_QUOTA_SYSTEM_INODE ||
+ 	    args->fi_sysfile_type == GROUP_QUOTA_SYSTEM_INODE ||
+ 	    args->fi_sysfile_type == LOCAL_USER_QUOTA_SYSTEM_INODE ||
+@@ -267,6 +328,7 @@ static int ocfs2_init_locked_inode(struct inode *inode, void *opaque)
+ 	else
+ 		lockdep_set_class(&OCFS2_I(inode)->ip_alloc_sem,
+ 				  &ocfs2_file_ip_alloc_sem_key);
++#endif
  
-@@ -378,3 +439,4 @@ module_exit(extlog_exit);
- MODULE_AUTHOR("Chen, Gong <gong.chen@intel.com>");
- MODULE_DESCRIPTION("Extended MCA Error Log Driver");
- MODULE_LICENSE("GPL");
-+MODULE_IMPORT_NS("CXL");
-diff --git a/drivers/cxl/core/ras.c b/drivers/cxl/core/ras.c
-index 485a831695c70..56db290c88d35 100644
---- a/drivers/cxl/core/ras.c
-+++ b/drivers/cxl/core/ras.c
-@@ -98,6 +98,12 @@ static void cxl_cper_handle_prot_err(struct cxl_cper_prot_err_work_data *data)
- 		cxl_cper_trace_uncorr_prot_err(pdev, data->ras_cap);
+ 	return 0;
  }
- 
-+void cxl_cper_ras_handle_prot_err(struct cxl_cper_prot_err_work_data *wd)
-+{
-+	cxl_cper_handle_prot_err(wd);
-+}
-+EXPORT_SYMBOL_NS_GPL(cxl_cper_ras_handle_prot_err, "CXL");
-+
- static void cxl_cper_prot_err_work_fn(struct work_struct *work)
- {
- 	struct cxl_cper_prot_err_work_data wd;
-diff --git a/include/cxl/event.h b/include/cxl/event.h
-index f9ae1796da85f..aef906e260330 100644
---- a/include/cxl/event.h
-+++ b/include/cxl/event.h
-@@ -285,4 +285,6 @@ static inline int cxl_cper_prot_err_kfifo_get(struct cxl_cper_prot_err_work_data
- }
- #endif
- 
-+void cxl_cper_ras_handle_prot_err(struct cxl_cper_prot_err_work_data *wd);
-+
- #endif /* _LINUX_CXL_EVENT_H */
 -- 
 2.49.0
+
 
 
