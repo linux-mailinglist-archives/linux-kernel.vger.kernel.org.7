@@ -1,129 +1,130 @@
-Return-Path: <linux-kernel+bounces-698183-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-698173-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id AC8D3AE3E5E
-	for <lists+linux-kernel@lfdr.de>; Mon, 23 Jun 2025 13:46:26 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2BBF6AE3E2D
+	for <lists+linux-kernel@lfdr.de>; Mon, 23 Jun 2025 13:43:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6EDC71895D08
-	for <lists+linux-kernel@lfdr.de>; Mon, 23 Jun 2025 11:46:42 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3AA9F166FF5
+	for <lists+linux-kernel@lfdr.de>; Mon, 23 Jun 2025 11:43:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1AC8524DD02;
-	Mon, 23 Jun 2025 11:44:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2B60924169A;
+	Mon, 23 Jun 2025 11:42:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="GBjkxg3M"
-Received: from mailout1.w1.samsung.com (mailout1.w1.samsung.com [210.118.77.11])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="vJQ3ID8q"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C9BAF24A054
-	for <linux-kernel@vger.kernel.org>; Mon, 23 Jun 2025 11:44:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.118.77.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 79A7B219A86;
+	Mon, 23 Jun 2025 11:42:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750679083; cv=none; b=giOpNkoDaUA5zgMfayQmEK/qgJoKgFO6ZcbW+n/hdAw7OIEKgqEaZTWyIcBe8nkfF/rDOgdjPCmrVCE7SRQvGjFomhO7PQfdWp8THeuC/pn3eOLmoBoCBH8PVVRW8AIdVVaA1IDSz4yoPlA7BLttHRW9W7YprjemXHzPD96fBUU=
+	t=1750678972; cv=none; b=IpNIuk6TnkIv5b1Hk0+jyaVJMu+ysc1KaaqKgUJgpZtJ6czm7uneD3XnvfpFPAjetvhhEfYGHqcLEQDrfB38BMUMH4EfhfDr9w/dutAqmdGcUb5k/GDU8txfWwaxIILLSHTU6hbgLj0oXOhrXyfqllNbCumL9In3FNx4rJfA/WE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750679083; c=relaxed/simple;
-	bh=oVmwQA6F6QTA0R2pHFq2o0VrSqHHHQvjR4J1YN0e9Dk=;
-	h=From:Date:Subject:MIME-Version:Message-Id:In-Reply-To:To:Cc:
-	 Content-Type:References; b=ePoRsa8w4DqSyl4OM7q6qlf7xcZKzPVW0dSpfsV1f6gXWWvs2o6DrRadIa99vjnRQhtpRrXQNEYdgKP3BiL4AnQm57+000bnX21u9kMXZdKpja4AEc4qDEXzCgEWai7vIBs50z12oXHf40/RgQI9ioDlQvNeg7zNYJTd2Gxsd9I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=GBjkxg3M; arc=none smtp.client-ip=210.118.77.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
-Received: from eucas1p2.samsung.com (unknown [182.198.249.207])
-	by mailout1.w1.samsung.com (KnoxPortal) with ESMTP id 20250623114440euoutp01181be2527edd3c447e0ca8601c9dfff2~LqVkj9CDb0074900749euoutp01f
-	for <linux-kernel@vger.kernel.org>; Mon, 23 Jun 2025 11:44:40 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.w1.samsung.com 20250623114440euoutp01181be2527edd3c447e0ca8601c9dfff2~LqVkj9CDb0074900749euoutp01f
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-	s=mail20170921; t=1750679080;
-	bh=4KBq3towXlALkf8L/GsfuKalsYvwb01P2yDpfTNY1cI=;
-	h=From:Date:Subject:In-Reply-To:To:Cc:References:From;
-	b=GBjkxg3MAq3D58gQ8N/ItNYBQCNLtIS29fEK6dzMtcX8eduMhpT8NZ1Haq4IYNEia
-	 j0nXsRIMcRoFcfLPInVN2YGLeBcAjf1BbMkHE9UflGMuiuG93LtsaFq5UEE29K8oos
-	 YwvjKwmxSfZCSdBMo04ouyK8TVW1eLhrR79up1z4=
-Received: from eusmtip1.samsung.com (unknown [203.254.199.221]) by
-	eucas1p1.samsung.com (KnoxPortal) with ESMTPA id
-	20250623114439eucas1p17e4405b95a5693a972bf40a3b3ecdc11~LqVj7QSKC0446204462eucas1p1-;
-	Mon, 23 Jun 2025 11:44:39 +0000 (GMT)
-Received: from AMDC4942.eu.corp.samsungelectronics.net (unknown
-	[106.210.136.40]) by eusmtip1.samsung.com (KnoxPortal) with ESMTPA id
-	20250623114438eusmtip1bc757cb4b724f616bacd29cae7402150~LqVi6EDxK1647616476eusmtip1i;
-	Mon, 23 Jun 2025 11:44:38 +0000 (GMT)
-From: Michal Wilczynski <m.wilczynski@samsung.com>
-Date: Mon, 23 Jun 2025 13:42:46 +0200
-Subject: [PATCH v6 8/8] drm/imagination: Enable PowerVR driver for RISC-V
+	s=arc-20240116; t=1750678972; c=relaxed/simple;
+	bh=2m5CfZQaw2dv5R3Bx1BYdCmiNkSM8d2I9a7oqNpDaJg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=FbTP4YF6ZYZt0fjClHQyHa244UnULPiiqT4GISgFYXkxynPwAdroTL4toWMOpF+ausimBsaTlpPTowoGkElsnh4Ib59IKIoMItdeC+tIBGAf1oHe2LUmwuK1A2HBdS/OdZf1jYbklFKcg/hmQAzJBgU5J5ts2pCLATRD9s32Lo8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=vJQ3ID8q; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 68E13C4CEEA;
+	Mon, 23 Jun 2025 11:42:51 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1750678972;
+	bh=2m5CfZQaw2dv5R3Bx1BYdCmiNkSM8d2I9a7oqNpDaJg=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=vJQ3ID8qLCiFR8Pxde6rF2KJJUAOZVH8hsgrPoPWLp9XsVub8YquvV1sgl7Xc7+ep
+	 owTauxF/ndQDiCzVeTf2yjAcNYDE/pW79OdZKaH6JbutbKuWrCSeGIi/Joi25lDODC
+	 uBi3KqSVZav3oTXjLfjJadHCrwVa2fHUmhMBabGYPVDhK2i1vkp/9Tmg72GCOdjQn8
+	 1la1NsNuC4JyZ59DCFc9mXQT/RJHTgQrYRjZA5yhQMrCbFzuvCAbURgwj65ULx4ayz
+	 E2Pi5T2PJt/7QLTKK7VUDglj7VtKrzyylDa9NGdbCYpWq1IBICjrRHHdWc/z9tCqyJ
+	 8ZOHbkT/1SwBg==
+Date: Mon, 23 Jun 2025 05:42:50 -0600
+From: Manivannan Sadhasivam <mani@kernel.org>
+To: Richard Zhu <hongxing.zhu@nxp.com>
+Cc: frank.li@nxp.com, l.stach@pengutronix.de, lpieralisi@kernel.org, 
+	kwilczynski@kernel.org, robh@kernel.org, bhelgaas@google.com, shawnguo@kernel.org, 
+	s.hauer@pengutronix.de, kernel@pengutronix.de, festevam@gmail.com, 
+	linux-pci@vger.kernel.org, linux-arm-kernel@lists.infradead.org, imx@lists.linux.dev, 
+	linux-kernel@vger.kernel.org, Tim Harvey <tharvey@gateworks.com>
+Subject: Re: [PATCH v3 1/2] PCI: imx6: Remove apps_reset toggle in
+ _core_reset functions
+Message-ID: <kjsaipr2xq777dmiv2ac7qzrxw47nevc75j7ryma32vsnyr2le@mrwurn6rgnac>
+References: <20250616085742.2684742-1-hongxing.zhu@nxp.com>
+ <20250616085742.2684742-2-hongxing.zhu@nxp.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250623-apr_14_for_sending-v6-8-6583ce0f6c25@samsung.com>
-In-Reply-To: <20250623-apr_14_for_sending-v6-0-6583ce0f6c25@samsung.com>
-To: Drew Fustini <drew@pdp7.com>, Guo Ren <guoren@kernel.org>,  Fu Wei
-	<wefu@redhat.com>, Rob Herring <robh@kernel.org>,  Krzysztof Kozlowski
-	<krzk+dt@kernel.org>,  Conor Dooley <conor+dt@kernel.org>,  Michal
-	Wilczynski <m.wilczynski@samsung.com>,  Bartosz Golaszewski <brgl@bgdev.pl>,
-	Philipp Zabel <p.zabel@pengutronix.de>,  Frank Binns
-	<frank.binns@imgtec.com>, Matt Coster <matt.coster@imgtec.com>,  Maarten
-	Lankhorst <maarten.lankhorst@linux.intel.com>,  Maxime Ripard
-	<mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,  David Airlie
-	<airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,  Paul Walmsley
-	<paul.walmsley@sifive.com>,  Palmer Dabbelt <palmer@dabbelt.com>, Albert Ou
-	<aou@eecs.berkeley.edu>,  Alexandre Ghiti <alex@ghiti.fr>, Ulf Hansson
-	<ulf.hansson@linaro.org>,  Marek Szyprowski <m.szyprowski@samsung.com>
-Cc: linux-riscv@lists.infradead.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org, 
-	dri-devel@lists.freedesktop.org,  Bartosz Golaszewski
-	<bartosz.golaszewski@linaro.org>
-X-Mailer: b4 0.15-dev
-X-CMS-MailID: 20250623114439eucas1p17e4405b95a5693a972bf40a3b3ecdc11
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-X-RootMTR: 20250623114439eucas1p17e4405b95a5693a972bf40a3b3ecdc11
-X-EPHeader: CA
-X-CMS-RootMailID: 20250623114439eucas1p17e4405b95a5693a972bf40a3b3ecdc11
-References: <20250623-apr_14_for_sending-v6-0-6583ce0f6c25@samsung.com>
-	<CGME20250623114439eucas1p17e4405b95a5693a972bf40a3b3ecdc11@eucas1p1.samsung.com>
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20250616085742.2684742-2-hongxing.zhu@nxp.com>
 
-Several RISC-V boards feature Imagination GPUs that are compatible with
-the PowerVR driver. An example is the IMG BXM-4-64 GPU on the Lichee Pi
-4A board. This commit adjusts the driver's Kconfig dependencies to allow
-the PowerVR driver to be compiled on the RISC-V architecture.
+On Mon, Jun 16, 2025 at 04:57:41PM +0800, Richard Zhu wrote:
+> apps_reset is LTSSM_EN on i.MX7, i.MX8MQ, i.MX8MM and i.MX8MP platforms.
+> Since the assertion/de-assertion of apps_reset(LTSSM_EN bit) had been
+> wrappered in imx_pcie_ltssm_enable() and imx_pcie_ltssm_disable();
+> 
 
-By enabling compilation on RISC-V, we expand support for these GPUs,
-providing graphics acceleration capabilities and enhancing hardware
-compatibility on RISC-V platforms.
+What about other i.MX chipsets like 6Q and its cousins? Wouldn't this change
+affect them since they treat 'apps_reset' differently?
 
-Add a dependency on MMU to fix a build warning on RISC-V configurations
-without an MMU.
+- Mani
 
-Reviewed-by: Ulf Hansson <ulf.hansson@linaro.org>
-Reviewed-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-Signed-off-by: Michal Wilczynski <m.wilczynski@samsung.com>
----
- drivers/gpu/drm/imagination/Kconfig | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
-
-diff --git a/drivers/gpu/drm/imagination/Kconfig b/drivers/gpu/drm/imagination/Kconfig
-index 5f9fff43d6baadc42ebf48d91729bfbf27e06caa..a7da858a5b301e8f088e3e22f5641feb2e078681 100644
---- a/drivers/gpu/drm/imagination/Kconfig
-+++ b/drivers/gpu/drm/imagination/Kconfig
-@@ -3,9 +3,10 @@
- 
- config DRM_POWERVR
- 	tristate "Imagination Technologies PowerVR (Series 6 and later) & IMG Graphics"
--	depends on ARM64
-+	depends on (ARM64 || RISCV)
- 	depends on DRM
- 	depends on PM
-+	depends on MMU
- 	select DRM_EXEC
- 	select DRM_GEM_SHMEM_HELPER
- 	select DRM_SCHED
+> Remove apps_reset toggle in imx_pcie_assert_core_reset() and
+> imx_pcie_deassert_core_reset() functions. Use imx_pcie_ltssm_enable()
+> and imx_pcie_ltssm_disable() to configure apps_reset directly.
+> 
+> Fix fail to enumerate reliably PI7C9X2G608GP (hotplug) at i.MX8MM, which
+> reported By Tim.
+> 
+> Reported-by: Tim Harvey <tharvey@gateworks.com>
+> Closes: https://lore.kernel.org/all/CAJ+vNU3ohR2YKTwC4xoYrc1z-neDoH2TTZcMHDy+poj9=jSy+w@mail.gmail.com/
+> Fixes: ef61c7d8d032 ("PCI: imx6: Deassert apps_reset in imx_pcie_deassert_core_reset()")
+> Signed-off-by: Richard Zhu <hongxing.zhu@nxp.com>
+> Reviewed-by: Frank Li <Frank.Li@nxp.com>
+> ---
+>  drivers/pci/controller/dwc/pci-imx6.c | 5 +++--
+>  1 file changed, 3 insertions(+), 2 deletions(-)
+> 
+> diff --git a/drivers/pci/controller/dwc/pci-imx6.c b/drivers/pci/controller/dwc/pci-imx6.c
+> index 9754cc6e09b9..f5f2ac638f4b 100644
+> --- a/drivers/pci/controller/dwc/pci-imx6.c
+> +++ b/drivers/pci/controller/dwc/pci-imx6.c
+> @@ -860,7 +860,6 @@ static int imx95_pcie_core_reset(struct imx_pcie *imx_pcie, bool assert)
+>  static void imx_pcie_assert_core_reset(struct imx_pcie *imx_pcie)
+>  {
+>  	reset_control_assert(imx_pcie->pciephy_reset);
+> -	reset_control_assert(imx_pcie->apps_reset);
+>  
+>  	if (imx_pcie->drvdata->core_reset)
+>  		imx_pcie->drvdata->core_reset(imx_pcie, true);
+> @@ -872,7 +871,6 @@ static void imx_pcie_assert_core_reset(struct imx_pcie *imx_pcie)
+>  static int imx_pcie_deassert_core_reset(struct imx_pcie *imx_pcie)
+>  {
+>  	reset_control_deassert(imx_pcie->pciephy_reset);
+> -	reset_control_deassert(imx_pcie->apps_reset);
+>  
+>  	if (imx_pcie->drvdata->core_reset)
+>  		imx_pcie->drvdata->core_reset(imx_pcie, false);
+> @@ -1247,6 +1245,9 @@ static int imx_pcie_host_init(struct dw_pcie_rp *pp)
+>  		}
+>  	}
+>  
+> +	/* Make sure that PCIe LTSSM is cleared */
+> +	imx_pcie_ltssm_disable(dev);
+> +
+>  	ret = imx_pcie_deassert_core_reset(imx_pcie);
+>  	if (ret < 0) {
+>  		dev_err(dev, "pcie deassert core reset failed: %d\n", ret);
+> -- 
+> 2.37.1
+> 
 
 -- 
-2.34.1
-
+மணிவண்ணன் சதாசிவம்
 
