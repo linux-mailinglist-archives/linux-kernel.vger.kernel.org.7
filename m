@@ -1,80 +1,80 @@
-Return-Path: <linux-kernel+bounces-699295-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-699297-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 74937AE5827
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Jun 2025 01:49:27 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 933ADAE582B
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Jun 2025 01:50:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 01F197ABE89
-	for <lists+linux-kernel@lfdr.de>; Mon, 23 Jun 2025 23:48:03 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 340484A70C0
+	for <lists+linux-kernel@lfdr.de>; Mon, 23 Jun 2025 23:50:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E3B0A22DA06;
-	Mon, 23 Jun 2025 23:49:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="WaE4FWW8"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C433B22D785;
+	Mon, 23 Jun 2025 23:49:46 +0000 (UTC)
+Received: from r3-25.sinamail.sina.com.cn (r3-25.sinamail.sina.com.cn [202.108.3.25])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 471EE1AD3FA;
-	Mon, 23 Jun 2025 23:49:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4370B23315A
+	for <linux-kernel@vger.kernel.org>; Mon, 23 Jun 2025 23:49:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.108.3.25
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750722556; cv=none; b=cArkgrK3jqUr8kOp6SBTMDCorWZF848VHvhMF6AuOW26j8GoHjExr26tzR6dw+5waWPEURM0QjDC2MD6f0+GLD26DV22DxKk2wXl6Rmt4cnlHhneSFD3Njr1hdu2oX68PkEvsHKu43k32jZ9kU/g0nc3yxf/bgb8LV7NLrd6AR0=
+	t=1750722586; cv=none; b=e84LYYtQjJnrvfTOl0yPE5iHmR3JG4zHIpb2w591RodF6WwmwJqRm5ipqE1awVZ6MdS9vVOsq5GoNzDZNsFaKwC9cxyGLX1s8lGIEgUUYlh3x2tRatuQ5Nu4WzKIwO3dWu0f+SaW7+dm1JpU/FrAogM8WHgfxbK8r1qYM5QhNWM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750722556; c=relaxed/simple;
-	bh=5zjktm3bvgS8F32IewejBkzrMzWz2OzlZ2/SPTwAo2I=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=W7eUB5dk/GXCnhvTHBop7vNXs9/SPIhemKACa9Umhp4Legq7aqdc4ENr8RYHnTo7QAo9M3SPv7d2j4lKJrzqvq9gcQjrCMFHyooeupoRgzNQMVXAUzLW6ldSB8afKpWVpo0mCwPeoEC6uPtgxJVTb9+mzE882JdE36m8UOtjRkI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=WaE4FWW8; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 429CEC4CEEA;
-	Mon, 23 Jun 2025 23:49:14 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1750722554;
-	bh=5zjktm3bvgS8F32IewejBkzrMzWz2OzlZ2/SPTwAo2I=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=WaE4FWW8lym7mVGZ9H6p/bRfhAc72NL/jCKb0eIhPocmVuUsign6EGcu4mUj6Xj0K
-	 rX0brAiOwrxV2hcUEbkv3C7xVsEbD8bvjjvHLol43dqE/fi9TJsoxbkH7Qo+QUaT8F
-	 F5mSwgN0fOZWgV+fo8Pk+G4S58n1r/P3ksWK5uwGzxHclWPhLDVCWfPxXiSwm82xgI
-	 EhnfJPOPulffCsg+VRoSFHlebaGOaCnHu17Bb6MyqqiIFhEU0qbnmzH1w54+kfoFhw
-	 sxo4g9yN6ZKZJRHnNryCe7Hl0MhHUfuEXNFpqx10woDSGA1eOMpJx1hO0C71GlV9Kz
-	 aJm7fw4AmHLMQ==
-Date: Mon, 23 Jun 2025 16:49:13 -0700
-From: Jakub Kicinski <kuba@kernel.org>
-To: Oleksij Rempel <o.rempel@pengutronix.de>
-Cc: "David S. Miller" <davem@davemloft.net>, Eric Dumazet
- <edumazet@google.com>, Paolo Abeni <pabeni@redhat.com>, Woojung Huh
- <woojung.huh@microchip.com>, Andrew Lunn <andrew+netdev@lunn.ch>, Russell
- King <rmk+kernel@armlinux.org.uk>, Thangaraj Samynathan
- <Thangaraj.S@microchip.com>, Rengarajan Sundararajan
- <Rengarajan.S@microchip.com>, kernel@pengutronix.de,
- linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
- UNGLinuxDriver@microchip.com, Phil Elwell <phil@raspberrypi.org>, Maxime
- Chevallier <maxime.chevallier@bootlin.com>, Simon Horman <horms@kernel.org>
-Subject: Re: [PATCH net-next v1 1/1] net: usb: lan78xx: annotate checksum
- assignment to silence sparse warnings
-Message-ID: <20250623164913.474be2b3@kernel.org>
-In-Reply-To: <20250620084618.1857662-1-o.rempel@pengutronix.de>
-References: <20250620084618.1857662-1-o.rempel@pengutronix.de>
+	s=arc-20240116; t=1750722586; c=relaxed/simple;
+	bh=zYYNL9ZNBTW71CWEJ+bmm+yGMH+6jAUFzhqfzIy/SGY=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=J0S/ZmO7pdXnnNWxLu2PML8bGS3InFmRVwTYRO5Sy1gxFWdfBsXHBBk3p7t2FDbJvHzrR5kwS0FRMqqamEnKaCbLaU2MqsaqhRr8rRgifRe1G6SCyexMK3Zh7hJpVz1xMuvQ6ZNMsaG3xZIIYC2HbDku2cPRKRtIIi1whwGt8n0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sina.com; spf=pass smtp.mailfrom=sina.com; arc=none smtp.client-ip=202.108.3.25
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sina.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sina.com
+X-SMAIL-HELO: localhost.localdomain
+Received: from unknown (HELO localhost.localdomain)([114.249.58.236])
+	by sina.com (10.54.253.31) with ESMTP
+	id 6859E80A0000487F; Mon, 24 Jun 2025 07:49:32 +0800 (CST)
+X-Sender: hdanton@sina.com
+X-Auth-ID: hdanton@sina.com
+Authentication-Results: sina.com;
+	 spf=none smtp.mailfrom=hdanton@sina.com;
+	 dkim=none header.i=none;
+	 dmarc=none action=none header.from=hdanton@sina.com
+X-SMAIL-MID: 4108076816599
+X-SMAIL-UIID: 2E0F3B67F8E34F5C99B00B8BEA120525-20250624-074932-1
+From: Hillf Danton <hdanton@sina.com>
+To: Marco Crivellari <marco.crivellari@suse.com>
+Cc: linux-kernel@vger.kernel.org,
+	Tejun Heo <tj@kernel.org>,
+	Frederic Weisbecker <frederic@kernel.org>,
+	Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
+	Michal Hocko <mhocko@suse.com>
+Subject: Re: [PATCH v5 1/3] Workqueue: add system_percpu_wq and system_dfl_wq
+Date: Tue, 24 Jun 2025 07:49:19 +0800
+Message-ID: <20250623234920.1531-1-hdanton@sina.com>
+In-Reply-To: <20250614133531.76742-2-marco.crivellari@suse.com>
+References: <20250614133531.76742-1-marco.crivellari@suse.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-On Fri, 20 Jun 2025 10:46:18 +0200 Oleksij Rempel wrote:
-> -		skb->csum = ntohs((u16)(rx_cmd_b >> RX_CMD_B_CSUM_SHIFT_));
-> +		__be16 csum_raw;
-> +
-> +		csum_raw = (__force __be16)(rx_cmd_b >> RX_CMD_B_CSUM_SHIFT_);
-> +		skb->csum = (__force __wsum)ntohs(csum_raw);
+On Sat, 14 Jun 2025 15:35:29 +0200 Marco Crivellari wrote:
+> @@ -7829,10 +7833,11 @@ void __init workqueue_init_early(void)
+>  	}
+>  
+>  	system_wq = alloc_workqueue("events", 0, 0);
+> +	system_percpu_wq = alloc_workqueue("events", 0, 0);
 
-You can avoid the __force __be16 if you switch the variable to be u16
-and then htons instead of ntohs
--- 
-pw-bot: cr
+Different workqueue names are prefered until system_wq is cut off.
+
+>  	system_highpri_wq = alloc_workqueue("events_highpri", WQ_HIGHPRI, 0);
+>  	system_long_wq = alloc_workqueue("events_long", 0, 0);
+> -	system_unbound_wq = alloc_workqueue("events_unbound", WQ_UNBOUND,
+> -					    WQ_MAX_ACTIVE);
+> +	system_unbound_wq = alloc_workqueue("events_unbound", WQ_UNBOUND, WQ_MAX_ACTIVE);
+> +	system_dfl_wq = alloc_workqueue("events_unbound", WQ_UNBOUND, WQ_MAX_ACTIVE);
+
+Ditto
 
