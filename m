@@ -1,191 +1,143 @@
-Return-Path: <linux-kernel+bounces-697858-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-697860-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E3A95AE3987
-	for <lists+linux-kernel@lfdr.de>; Mon, 23 Jun 2025 11:10:12 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1D30BAE398C
+	for <lists+linux-kernel@lfdr.de>; Mon, 23 Jun 2025 11:11:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A9A217A3AD9
-	for <lists+linux-kernel@lfdr.de>; Mon, 23 Jun 2025 09:08:49 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E745A189640C
+	for <lists+linux-kernel@lfdr.de>; Mon, 23 Jun 2025 09:11:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C5DF9231843;
-	Mon, 23 Jun 2025 09:10:03 +0000 (UTC)
-Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 98C7F233151;
+	Mon, 23 Jun 2025 09:11:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="VPJiVphB"
+Received: from mail-wm1-f42.google.com (mail-wm1-f42.google.com [209.85.128.42])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1F2C6230BDC;
-	Mon, 23 Jun 2025 09:10:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 621B0230BFB;
+	Mon, 23 Jun 2025 09:11:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750669803; cv=none; b=BOb/HElozobQGSVJHCMeUDZkirCiR7QjG3BsGfL3kOH68xAcqbSUO7H2DBbMGysQGf7MnvhmLNIC7bWCUM7tQw6uu4dnX7SeiR/RzfFalovw3tIYJNzF42lm3k5g1uvWG/Emxw5gsJgVCWfRpOr8ebf83l8lO2fElbFBL0FaqNk=
+	t=1750669870; cv=none; b=B258clcwxfuaAanw+Kto0jFoOZTaSvAdgQQRYehWdNW/TodfbDtEY6twXt3zJznJavCODHaBG2DQ38mMV+lF/3OhqLjm3pxXfMRx6Nq2sRZlxhkNCJBBkFFNjn5U6xeSa/3oDfSZUbNZCiUQnb8/NwqTB4/nVFbup80gnt281Qw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750669803; c=relaxed/simple;
-	bh=+zBnHfXEZAo3hfysRCCYnWMP6NBVypQZJ+axJ70u0jQ=;
-	h=Date:From:To:CC:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=aUfy3vbgaWJiKueWN5A15200Q1Ljzh36vvfqQMkfG6c5Edc+hZpLAoL9hqwFYbJwr9tfBED0/BhrBAbzfGOT2FLnDJrEjLSt/FMJvIL03BN509Fa+fHbGZvmctmIop7eVfn2I8dhGdUUpOApNQufGbBi83zp2PzxSjH+vXpgRTY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.18.186.31])
-	by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4bQj043sS6z6HJqB;
-	Mon, 23 Jun 2025 17:07:32 +0800 (CST)
-Received: from frapeml500008.china.huawei.com (unknown [7.182.85.71])
-	by mail.maildlp.com (Postfix) with ESMTPS id 2B7C21402E9;
-	Mon, 23 Jun 2025 17:09:59 +0800 (CST)
-Received: from localhost (10.203.177.66) by frapeml500008.china.huawei.com
- (7.182.85.71) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.39; Mon, 23 Jun
- 2025 11:09:58 +0200
-Date: Mon, 23 Jun 2025 10:09:57 +0100
-From: Jonathan Cameron <Jonathan.Cameron@huawei.com>
-To: Neeraj Kumar <s.neeraj@samsung.com>
-CC: <dan.j.williams@intel.com>, <dave@stgolabs.net>, <dave.jiang@intel.com>,
-	<alison.schofield@intel.com>, <vishal.l.verma@intel.com>,
-	<ira.weiny@intel.com>, <a.manzanares@samsung.com>, <nifan.cxl@gmail.com>,
-	<anisa.su@samsung.com>, <vishak.g@samsung.com>, <krish.reddy@samsung.com>,
-	<arun.george@samsung.com>, <alok.rathore@samsung.com>,
-	<neeraj.kernel@gmail.com>, <linux-kernel@vger.kernel.org>,
-	<linux-cxl@vger.kernel.org>, <nvdimm@lists.linux.dev>,
-	<gost.dev@samsung.com>, <cpgs@samsung.com>
-Subject: Re: [RFC PATCH 06/20] nvdimm/region_label: Add region label
- deletion routine
-Message-ID: <20250623100957.000032a2@huawei.com>
-In-Reply-To: <1256440269.161750165204630.JavaMail.epsvc@epcpadp1new>
-References: <20250617123944.78345-1-s.neeraj@samsung.com>
-	<CGME20250617124022epcas5p2441d6c5dfaeceb744b5fc00add7ceae0@epcas5p2.samsung.com>
-	<1256440269.161750165204630.JavaMail.epsvc@epcpadp1new>
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.42; x86_64-w64-mingw32)
+	s=arc-20240116; t=1750669870; c=relaxed/simple;
+	bh=jgDGs6S8aBeEsYJh3stb90SoB64xktcDYB4e9GaxcnA=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=PPnbaig+RukTqxLYpUeSLDBIJWkmbL1lASyQGjHNKrE4bQZJNX4Te+sSOqwcAg2hVl0MJps5Zkrg3n9/LIAFqYHcSWfQtp5OZ0tnauL46pqb21TkK2Xmi0wkAcb2NQDVzzqgdJIg2ZzR2J12ttt7PKOIXTDcVgZPPrHQ9lJK22I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=VPJiVphB; arc=none smtp.client-ip=209.85.128.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f42.google.com with SMTP id 5b1f17b1804b1-45306976410so1101615e9.3;
+        Mon, 23 Jun 2025 02:11:08 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1750669867; x=1751274667; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=Gz8t2oZkkwfZO8pX28gYQB4KOa728jeU/jhzTTj6UZc=;
+        b=VPJiVphBewlnR0xYbCOAeTl9zCUO3DuySWECRKIUqhZ62uKm4T0FWDjFUoonP/jD7L
+         82tEmvn/M1Qlu5fToAo3DlNuHxglWk/SQpFojYDo/5Fmg5LzV+a355rqhQ9bKjDganKo
+         t5tdfbfdgitsNTCzEgqBQg8B3gR7pRP6FxHOYVSF2nhFjarX1qJwdsR+Lf9pQUzVgxU4
+         OFKZtAyfm+5m55E6rYIGnHXipLdPO0ggZpC/alUX6UbhWvVENZESw3S5X2P1B9LRxe6h
+         mDlUjmzXUxmj82eWg7ScYJ5Ra4ilG6M8cpr4KVuXXefRMtuGJZ8uBFg/ROESjDHyuNz8
+         G1Wg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1750669867; x=1751274667;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=Gz8t2oZkkwfZO8pX28gYQB4KOa728jeU/jhzTTj6UZc=;
+        b=T69WchcJgR/6fvHBTi6ckHR4jVbhCZ0tMkxc52wzUMEFXvKHQ5TAZmCEx/R2fMFB6V
+         2iJKHPtUMQ+R32hcEox4MF0LEvNoLRl3uBO0yXJN+QJn54fELQR5YkKzGrOlONOJmkG6
+         oD2y9DnHcBPcub45guZGSAhOsAjKdYWexBX1o/iRH22b+78r2jZjDzotJr0Xw+KmlGGt
+         /Wzep2nsEkIfIg/ZjAcsPYtZDDLI7f7GP8OAk7bslKYFYW5fHdCBvdHNZxtGgiwsQhXt
+         xZTu4PqfkP6hnaMK/XRv/i6pmv4mFcFrnPTJ+5iTpMDBpjVl+HOUQlIm+mlixdKvT4W8
+         SirQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVwx9Sp4+NLT1uLKA3pYHTUYCPgw0/fZ7C8PG98/7oTYNmT/Rvnc6T6AeQlmK2TUfOwmkKKsckSibZLfQuo@vger.kernel.org, AJvYcCXg+6ZJrLIHl8t4Px5Zr3O/T0zVhc3cEZNBkGvgFKoHAECPtmGDVJKtrroDjnwpI9Rrf/WDpEh+ksabgXU=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzZFah9Zq7/dKVLv9DA/75RpP38/edNkgMQEQqItD6vAnB/Bp4D
+	CXp0g56Qom9gFTOUJ8LSgq62tHJO13XyWpBJcsxb2u/plJ2piNMr7diN
+X-Gm-Gg: ASbGncvMZ5oZDrxXO7kW8EnjGnae1lsOx9UXMcuzfMEjxLo8RnwnE+9nJNq0B5sVWkw
+	hOIiHvz3os5XleyygzQ3cYB7Mgy8PVSU9vIemuqPf24/CL5zSTb/6MS920eu0Wrzt5ZmYfeHH5K
+	USYzaOdaDTHxsknARcHNo/XUXDZQxghgRJNLeBmfILHMo6Xz3NrF+PjZiXPiBmRErQM2/65NZjU
+	oVn0E/XO7sr10mIXK5+vG1O1XJzU84rezfjQ+s53S8FhQEfoIRbID5oqOnal91WB0OGM/R+HW30
+	5Y8Wx6XlZNPnDzSFwoQX9lYVW54BBkF4WpGILXBlshJGXiBEhaE+KdEXKOOdLHuND4K1l28LODD
+	D9pSQxQcv2zowTOMQ2zucx8UqOA==
+X-Google-Smtp-Source: AGHT+IGDWWZaT403xBnNIukKkNikvHSsmJYoL9MI3srvKJv2z/ou2KLsn00R7ev+p8rY646+IShMCw==
+X-Received: by 2002:a05:600c:4685:b0:442:e608:12a6 with SMTP id 5b1f17b1804b1-453653d3d5cmr41354345e9.1.1750669866408;
+        Mon, 23 Jun 2025 02:11:06 -0700 (PDT)
+Received: from thomas-precision3591.imag.fr ([2001:660:5301:24:9a26:612f:7b52:ee76])
+        by smtp.googlemail.com with ESMTPSA id 5b1f17b1804b1-4536466596asm107683615e9.0.2025.06.23.02.11.05
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 23 Jun 2025 02:11:06 -0700 (PDT)
+From: Thomas Fourier <fourier.thomas@gmail.com>
+To: 
+Cc: Thomas Fourier <fourier.thomas@gmail.com>,
+	Corentin Labbe <clabbe.montjoie@gmail.com>,
+	Herbert Xu <herbert@gondor.apana.org.au>,
+	"David S. Miller" <davem@davemloft.net>,
+	Chen-Yu Tsai <wens@csie.org>,
+	Jernej Skrabec <jernej.skrabec@gmail.com>,
+	Samuel Holland <samuel@sholland.org>,
+	Ovidiu Panait <ovidiu.panait.oss@gmail.com>,
+	Andre Przywara <andre.przywara@arm.com>,
+	linux-crypto@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-sunxi@lists.linux.dev,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH] crypto: sun8i-ce: Fix `dma_unmap_sg()` nents value
+Date: Mon, 23 Jun 2025 11:10:06 +0200
+Message-ID: <20250623091009.65436-2-fourier.thomas@gmail.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="US-ASCII"
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: lhrpeml500011.china.huawei.com (7.191.174.215) To
- frapeml500008.china.huawei.com (7.182.85.71)
+Content-Transfer-Encoding: 8bit
 
-On Tue, 17 Jun 2025 18:09:30 +0530
-Neeraj Kumar <s.neeraj@samsung.com> wrote:
+The `dma_unmap_sg()` functions should be called with the same nents as the
+`dma_map_sg()`, not the value the map function returned.
 
-> Added cxl v2.1 format region label deletion routine. This function is
-> used to delete region label from LSA
-> 
-> Signed-off-by: Neeraj Kumar <s.neeraj@samsung.com>
-> ---
->  drivers/nvdimm/label.c          | 75 ++++++++++++++++++++++++++++++---
->  drivers/nvdimm/label.h          |  6 +++
->  drivers/nvdimm/namespace_devs.c | 12 ++++++
->  drivers/nvdimm/nd.h             |  9 ++++
->  include/linux/libnvdimm.h       |  1 +
->  5 files changed, 98 insertions(+), 5 deletions(-)
-> 
-> diff --git a/drivers/nvdimm/label.c b/drivers/nvdimm/label.c
-> index 7f33d14ce0ef..9381c50086fc 100644
-> --- a/drivers/nvdimm/label.c
-> +++ b/drivers/nvdimm/label.c
-> @@ -1034,7 +1034,8 @@ static int init_labels(struct nd_mapping *nd_mapping, int num_labels)
->  	return max(num_labels, old_num_labels);
->  }
->  
-> -static int del_labels(struct nd_mapping *nd_mapping, uuid_t *uuid)
-> +static int del_labels(struct nd_mapping *nd_mapping, uuid_t *uuid,
-> +		enum label_type ltype)
->  {
->  	struct nvdimm_drvdata *ndd = to_ndd(nd_mapping);
->  	struct nd_label_ent *label_ent, *e;
-> @@ -1058,8 +1059,18 @@ static int del_labels(struct nd_mapping *nd_mapping, uuid_t *uuid)
->  		if (!nd_label)
->  			continue;
->  		active++;
-> -		if (!nsl_uuid_equal(ndd, &nd_label->ns_label, uuid))
-> -			continue;
-> +
-> +		if (ltype == NS_LABEL_TYPE) {
+Fixes: 0605fa0f7826 ("crypto: sun8i-ce - split into prepare/run/unprepare")
+Signed-off-by: Thomas Fourier <fourier.thomas@gmail.com>
+---
+ drivers/crypto/allwinner/sun8i-ce/sun8i-ce-cipher.c | 12 ++++++------
+ 1 file changed, 6 insertions(+), 6 deletions(-)
 
-Perhaps a switch is more appropriate here.
-
-> +			if (!nsl_uuid_equal(ndd, &nd_label->ns_label, uuid))
-> +				continue;
-> +		} else if (ltype == RG_LABEL_TYPE) {
-> +			if (!nsl_uuid_equal(ndd, &nd_label->ns_label, uuid))
-> +				continue;
-> +		} else {
-> +			dev_err(ndd->dev, "Invalid label type\n");
-> +			return 0;
-> +		}
-> +
->  		active--;
->  		slot = to_slot(ndd, nd_label);
->  		nd_label_free_slot(ndd, slot);
-
-> @@ -1259,6 +1271,59 @@ int nd_pmem_region_label_update(struct nd_region *nd_region)
->  	return 0;
->  }
->  
-> +int nd_pmem_region_label_delete(struct nd_region *nd_region)
-> +{
-> +	int i, rc;
-> +	struct nd_interleave_set *nd_set = nd_region->nd_set;
-> +	struct nd_label_ent *label_ent;
-> +	bool is_non_rgl = false;
-> +	int ns_region_cnt = 0;
-> +
-> +	for (i = 0; i < nd_region->ndr_mappings; i++) {
-> +		struct nd_mapping *nd_mapping = &nd_region->mapping[i];
-> +		struct nvdimm_drvdata *ndd = to_ndd(nd_mapping);
-> +
-> +		/* Find non cxl format supported ndr_mappings */
-> +		if (!ndd->cxl)
-> +			is_non_rgl = true;
-> +
-> +		/* Find if any NS label using this region */
-> +		mutex_lock(&nd_mapping->lock);
-> +		list_for_each_entry(label_ent, &nd_mapping->labels, list) {
-> +			if (!label_ent->label)
-> +				continue;
-> +
-> +			/* Check if any available NS labels has same
-
-Looks like wrong style for multiline comments in this file.
-
-			/*
-			 * Check ...
-
-> +			 * region_uuid in LSA
-> +			 */
-> +			if (nsl_region_uuid_equal(&label_ent->label->ns_label,
-> +						  &nd_set->uuid))
-> +				ns_region_cnt++;
-> +		}
-> +		mutex_unlock(&nd_mapping->lock);
-> +	}
-> +
-> +	if (is_non_rgl) {
-> +		dev_dbg(&nd_region->dev, "Region label deletion unsupported\n");
-> +		return -EINVAL;
-
-Why not bail out where you originally detect that above?
-
-> +	}
-> +
-> +	if (ns_region_cnt) {
-> +		dev_dbg(&nd_region->dev, "Region/Namespace label in use\n");
-> +		return -EBUSY;
-> +	}
-> +
-> +	for (i = 0; i < nd_region->ndr_mappings; i++) {
-> +		struct nd_mapping *nd_mapping = &nd_region->mapping[i];
-> +
-> +		rc = del_labels(nd_mapping, &nd_set->uuid, RG_LABEL_TYPE);
-> +		if (rc)
-> +			return rc;
-> +	}
-> +
-> +	return 0;
-> +}
+diff --git a/drivers/crypto/allwinner/sun8i-ce/sun8i-ce-cipher.c b/drivers/crypto/allwinner/sun8i-ce/sun8i-ce-cipher.c
+index f9cf00d690e2..ce9d071f5693 100644
+--- a/drivers/crypto/allwinner/sun8i-ce/sun8i-ce-cipher.c
++++ b/drivers/crypto/allwinner/sun8i-ce/sun8i-ce-cipher.c
+@@ -326,8 +326,8 @@ static void sun8i_ce_cipher_unprepare(struct crypto_engine *engine,
+ 	struct sun8i_ce_flow *chan;
+ 	struct ce_task *cet;
+ 	unsigned int ivsize, offset;
+-	int nr_sgs = rctx->nr_sgs;
+-	int nr_sgd = rctx->nr_sgd;
++	int ns = sg_nents_for_len(areq->src, areq->cryptlen);
++	int nd = sg_nents_for_len(areq->dst, areq->cryptlen);
+ 	int flow;
+ 
+ 	flow = rctx->flow;
+@@ -336,11 +336,11 @@ static void sun8i_ce_cipher_unprepare(struct crypto_engine *engine,
+ 	ivsize = crypto_skcipher_ivsize(tfm);
+ 
+ 	if (areq->src == areq->dst) {
+-		dma_unmap_sg(ce->dev, areq->src, nr_sgs, DMA_BIDIRECTIONAL);
++		dma_unmap_sg(ce->dev, areq->src, ns, DMA_BIDIRECTIONAL);
+ 	} else {
+-		if (nr_sgs > 0)
+-			dma_unmap_sg(ce->dev, areq->src, nr_sgs, DMA_TO_DEVICE);
+-		dma_unmap_sg(ce->dev, areq->dst, nr_sgd, DMA_FROM_DEVICE);
++		if (rctx->nr_sgs > 0)
++			dma_unmap_sg(ce->dev, areq->src, ns, DMA_TO_DEVICE);
++		dma_unmap_sg(ce->dev, areq->dst, nd, DMA_FROM_DEVICE);
+ 	}
+ 
+ 	if (areq->iv && ivsize > 0) {
+-- 
+2.43.0
 
 
