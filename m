@@ -1,153 +1,201 @@
-Return-Path: <linux-kernel+bounces-698541-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-698551-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4827BAE4614
-	for <lists+linux-kernel@lfdr.de>; Mon, 23 Jun 2025 16:12:51 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E5F1FAE4674
+	for <lists+linux-kernel@lfdr.de>; Mon, 23 Jun 2025 16:20:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B0FCA18949F6
-	for <lists+linux-kernel@lfdr.de>; Mon, 23 Jun 2025 14:12:28 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 44345175641
+	for <lists+linux-kernel@lfdr.de>; Mon, 23 Jun 2025 14:15:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6DD6081741;
-	Mon, 23 Jun 2025 14:12:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1C406145355;
+	Mon, 23 Jun 2025 14:14:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="kr0iazZv"
-Received: from mail-wr1-f46.google.com (mail-wr1-f46.google.com [209.85.221.46])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="n0zf6cHg"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E98307DA7F
-	for <linux-kernel@vger.kernel.org>; Mon, 23 Jun 2025 14:12:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E368A15B971
+	for <linux-kernel@vger.kernel.org>; Mon, 23 Jun 2025 14:14:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750687925; cv=none; b=JJkwZwnwBoAVj4hm/X1STZErYSQuoYC9DnHHFFbLqCYxf4MJaSed9L4M4TdffcDZJdCgTh7HI63B7DjfRyEuCJHSpG4U3lmnw0NzcVQnWoci4l/SBECg7UQh22CBP2ocgnQj6FC8nR2vvETFv1aoMqhACX6mjo3ukEkZuXq01fk=
+	t=1750688053; cv=none; b=EesGCIY67GQ8Qd4mmd/OJe2gr7RPvOEXqn0EbTflkCeOPdNHfD0PnID8xlNHFgHsa9YOCHYh9mS8rSUbVhHoPnldwAa7tf4kcewk/LXlcxVnUinvSYuCiXUnl8g98C9LoF+1jtBZfqTOEmHdiKb68Fs6mTzjwh7waCTRlV9zIog=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750687925; c=relaxed/simple;
-	bh=sAJGL/AFF0QyWNLpODxJUNG0qnCygtD/QajB6OeKDTI=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=iuKAU3ieV1Eog2AtVIkrvWbRvAwdT7txCQwLFIgdLJR4oFyI4T+vi0FRUxlpOB0S98fYWzqsc4sQT3HvskSfKoTb3/Hf8iat3VV8BFWerIxflCe2RTybgf/5Y5WKbi65Yq9gUipbKcww0CPAuVtLp16sf1xEBCSWcXhOXGVl9/4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=kr0iazZv; arc=none smtp.client-ip=209.85.221.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wr1-f46.google.com with SMTP id ffacd0b85a97d-3a507e88b0aso3596533f8f.1
-        for <linux-kernel@vger.kernel.org>; Mon, 23 Jun 2025 07:12:03 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1750687922; x=1751292722; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=04zirTBW4ONaae9PYnnFEhRuzM6dzMMflL0XU/SMCpw=;
-        b=kr0iazZvcf2+sgH1Om2HhASA+yqPhpXC3yfK35BGSxpEfW8PpRfNuyUIUbG/0jWcBE
-         5lik1eYJGmlNA4GczWbEiLmlSb0APKm7iVcquu0R0xBVF+rejTpnZTp5yOvMdnq3u/tj
-         Bs2knCvSvrAsq65GHNCaICRV1EH2H8DH85m5EZSqirMVW8PvozFnO40yMF4SSUDiKh31
-         6aGhZVjWCHcbdvGCcGTC2s1SOB8vT+rfmLuVdoUtZzaisVEVUdfZtbPByqYTNs/nWiuG
-         S/7ec9nhA4CkdDULJ3vQ58oEXrfKAWrutD3UFnrdMgfQvtp6KGtzyoYGwGO1VXojo0td
-         RHvA==
+	s=arc-20240116; t=1750688053; c=relaxed/simple;
+	bh=Rp6x6KxtK4aGFpq43ixsYLX8y1+s/PNcztPAPycm16U=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=hHTXl3cKBmgPesgkdSOsqXOkWq/qRv9PSk/TFytZBORYnCQdF1+HJsMfyY8CG1fVBAewBVNVHQF10AKBY0v1iNK2qVFoAsxkZS2rA4wMifPb7C6F4S9Sr9MlFLYNXxRWZTpOluqf1cIlApcoefJnkbxCMTYqEbm8rNyG6pIx3PY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=n0zf6cHg; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279865.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 55N9vSNO013999
+	for <linux-kernel@vger.kernel.org>; Mon, 23 Jun 2025 14:14:11 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=qcppdkim1; bh=bJuDNW+sOIaFWmexDpUOQY
+	PnvJ+qO7KFFcDuPlTFSvg=; b=n0zf6cHgUqWyvZSX6hwY35G+LbOQnAVdV0ufkN
+	/BTw8wrgP3ATupnsVy4EScZWUiPpMYNOQtw1QUh6DMWlX/pV6nCl0yJXFFL71xMa
+	2WdP9z9FXY+g95e09Tuo9ecq7w0fPZFWnEIvWZ0qSDYj8C/7p7aNCDopm07nDVDC
+	LKw4OC6mxmonhzJ3GLvJfEgL1GePXOI07E0EWxDic6zzmvjhEYgTyXbP43rJuhgR
+	FU1PLczN/zCMVmuWpOa+Q0HsOjlJKQIhNZdSs7RvTKITfnmUCL0qv8XxVDXb0Yvf
+	BIjbaKdyrJt6dRDGdaiFbNGqZ4HvZkiIorTBNQyyWxQLu0Zg==
+Received: from mail-pj1-f72.google.com (mail-pj1-f72.google.com [209.85.216.72])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 47evc5j0y6-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Mon, 23 Jun 2025 14:14:10 +0000 (GMT)
+Received: by mail-pj1-f72.google.com with SMTP id 98e67ed59e1d1-3138e64b3f1so5306727a91.3
+        for <linux-kernel@vger.kernel.org>; Mon, 23 Jun 2025 07:14:10 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1750687922; x=1751292722;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=04zirTBW4ONaae9PYnnFEhRuzM6dzMMflL0XU/SMCpw=;
-        b=DI9TU49KMx1QPvmzIepTbOVtkqh78tDy39wj0AfA7mIl59uSSECioRi6lsEOzekqhL
-         xjPaLvijVO7D2DrDygWgMVdvGJ0Robcrf/03tAvrLMzTsnkzoZeh6SMIrhuDP1rjn53n
-         NlhXI+qa7plV8XN8QnzgTcNjqAI5PXh9L320nnjuMdWoesHQLl6PezA8vyHXIfCg/YKw
-         YXr7SyZ8eThUc4ZofgcgEG3QjiPULBCgArh0iD62R+DlKWxlzmasEG3A8Z0nFnum7koU
-         sPRfEEXGRrfBDxcBPc0QHZoicl0XLJpzoQp4fcgscC9EDFeVwqswMkMe5A3mBOkunWZr
-         +o2w==
-X-Forwarded-Encrypted: i=1; AJvYcCW04t4u4CJSUnOXcl432DYmhSOXwKxRKcdxKjGbzTl1DXChbblLUqcGqhCmHOazIcpreGwljO9gmR40Amg=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwIv1x02hcDogCJcxOhlwJguEwefr1+WUKhNo6zZ6UIn1D0pD4i
-	Xqbi7IFyTg+2OfaUiyF1dpbbBbfCemuZxXP737xY9gmNtAmfxNGhQqnGE5tck/sT55w=
-X-Gm-Gg: ASbGncvKgbnCzPyXRx0rc4khoWwwiSW3zLFwpv9KRZR0t5DUR+TiHDb6s1uVsoPZESz
-	ZKMbnY1M0pYWGoVOlErByvbW/AEp8cao3v3Qz6DIoj3hfRecGEZiFFA6/RNJAhqzI9tVZ8n3Zzw
-	xPPZ+u7m/xXkbWd8c+4jPoAR2iX/2RGUHi3fW5JiPD/QEKsmaHpDqLzQ6niONP626ropv/45u9T
-	6CJGoXnWaqHrvNd+KVNe4Tax6PlBbHw1vvlCmig30ETgJHD8yNmyP+OkvZMCx4nYVp8NEO3MFZD
-	/1F07YzPIlXcI8Y/cA/sUXJlLFBz2JMPwU4lmy8zGsV/cE4gvQXxrM3yG2GX0yj6uog=
-X-Google-Smtp-Source: AGHT+IEhFlx8KN+2GKnsD98crsVUfyaoX0mNgBuFWPQFhXzUxCR/Zb/phFY++YIze2FMTwcJnIQdhA==
-X-Received: by 2002:a05:6000:4109:b0:3a4:f892:de7f with SMTP id ffacd0b85a97d-3a6d13071e8mr9361649f8f.36.1750687922230;
-        Mon, 23 Jun 2025 07:12:02 -0700 (PDT)
-Received: from [192.168.1.3] ([37.18.136.128])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3a6d1188804sm9526600f8f.79.2025.06.23.07.12.00
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 23 Jun 2025 07:12:01 -0700 (PDT)
-Message-ID: <e8c28a7e-bc08-4c50-96ca-afe62cfcf9fd@linaro.org>
-Date: Mon, 23 Jun 2025 15:12:00 +0100
+        d=1e100.net; s=20230601; t=1750688050; x=1751292850;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=bJuDNW+sOIaFWmexDpUOQYPnvJ+qO7KFFcDuPlTFSvg=;
+        b=CrdbI1ftOtsO8T06WSR3JWbMSYWiO9UV9zXBEV/UgHiNXanhacu1Jum3BkAJjQHrVK
+         zXeD33FAI3tjChiVQ/ZG/Ws2YIcEfhmgIb/GKRStGD2HAAeQjiufjv6NypzEUjYzvCmq
+         fd2WHQcn0s6+dILPiTNPMmF16KS9PlvO09zvf0DPWvX3odBxfmLU/SQkFLD/UtKGQOzI
+         Hi7H+SDmhBiQsmNjIH6NoBszHqZZJLd1IsxUIc4o9wjup++3aE/XeDH3nwmfvSBtR5H/
+         M5942ovPts0/3PWTL1qfiXhSUzHAp7ItfWLKhLr2/hK5atxF6Ovvu5ze2OZypsXnOMCe
+         WKIg==
+X-Forwarded-Encrypted: i=1; AJvYcCVYS6aeW4HCgvwJn91WmtGLaw/Edt6XOkKCsJ/qUg8E8/WXDeKIArR/e+JgmP4mfqy4y0NQGKBzMClkzm0=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy2BvZz0Fv6aATc2LJj+61AG58AZuO6h4jdrhAFtBvGdNQCTMSS
+	vsyp9hPwLEAgX5RpyTy2v27C/XL2UhN7nyDq57Ud9AR1+B0s6ntrwpRPsEEQi5i59WLvis9CqrM
+	g1I6v07vJ5j79Ii/QYEtCFJGR8jt/FKv0EIgBGjM94mc+NiAVgtzE5aUsH3mUTqyc1xA=
+X-Gm-Gg: ASbGnctk+aLwWUcoiWlLBhd2bjmFDnDQcKp+60/F9A5dNdfXP5SIRC4LzisKPOokdUR
+	JlzNmOodkiv9nN5cUB1wKGBixgrENjsUBrccPoyJqRnrS9DsFXIY1NphI79oj+e+mTk4XhFcjyl
+	NTtBRAPunf3D/oHDSKxpXMATV2b85waLYvz/0n+3YR45M+oqwPRKhGbpf0lwPIW2qUpl46ADmOE
+	nq+sPAM4QF+MzfTR+01VjFynTa/ItXwQsrQIsU74Pbzz6X0LGSPY29bqvt3ahhIOr+aAfm6KlQq
+	u2f0TmVUPIRUGs61WKJX0IUwK6kt+wit
+X-Received: by 2002:a17:90b:3d10:b0:312:1b53:5e9f with SMTP id 98e67ed59e1d1-3159d8d80f9mr20426434a91.24.1750688050056;
+        Mon, 23 Jun 2025 07:14:10 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IH9J7ED3U9fTLEsv4tSvQ6M5GTXVIyg9vk4m45JNqQJMWlwWEhhOz4sDmwr32GURMlMnchErQ==
+X-Received: by 2002:a17:90b:3d10:b0:312:1b53:5e9f with SMTP id 98e67ed59e1d1-3159d8d80f9mr20426392a91.24.1750688049594;
+        Mon, 23 Jun 2025 07:14:09 -0700 (PDT)
+Received: from [10.213.111.143] ([202.46.23.25])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-3159df71c4bsm8112049a91.2.2025.06.23.07.14.01
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 23 Jun 2025 07:14:09 -0700 (PDT)
+From: Akhil P Oommen <akhilpo@oss.qualcomm.com>
+Subject: [PATCH v4 0/4] Support for Adreno X1-45 GPU
+Date: Mon, 23 Jun 2025 19:42:05 +0530
+Message-Id: <20250623-x1p-adreno-v4-0-d2575c839cbb@oss.qualcomm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v1] perf test: Replace grep perl regexp with awk
-To: Chun-Tse Shao <ctshao@google.com>
-Cc: wy.shih90@gmail.com, Ian Rogers <irogers@google.com>,
- peterz@infradead.org, mingo@redhat.com, acme@kernel.org,
- namhyung@kernel.org, mark.rutland@arm.com,
- alexander.shishkin@linux.intel.com, jolsa@kernel.org,
- adrian.hunter@intel.com, kan.liang@linux.intel.com, tmricht@linux.ibm.com,
- leo.yan@arm.com, atrajeev@linux.vnet.ibm.com,
- linux-perf-users@vger.kernel.org,
- "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-References: <20250620174034.819894-1-ctshao@google.com>
-Content-Language: en-US
-From: James Clark <james.clark@linaro.org>
-In-Reply-To: <20250620174034.819894-1-ctshao@google.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIALZgWWgC/3XOzWrDMAwH8FcJPs9BsvPh9NT3GDv4Q1kNa9zaq
+ ekoefc56Q4pbBfBX0g/6cESRU+JHaoHi5R98mEqoXmrmD3p6ZO4dyUzAaKFDiS/44VrF2kKXOD
+ gtBhdY3XDysIl0ujvG/b+8cyRrrdizs8mMzoRt+F89vOhyl2NHY8W2Tp88mkO8Xt7JOM2/Xuz3
+ 9/MyIFrRVrBKA0qcwwp1deb/lrZupRNy2InIL4Ioggt9M0AvSFj3D+C3AkCXgS5Cp0clIVeWWz
+ /EJZl+QGBoqXIXAEAAA==
+X-Change-ID: 20250603-x1p-adreno-219da2fd4ca4
+To: Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>,
+        Rob Clark <robin.clark@oss.qualcomm.com>, Sean Paul <sean@poorly.run>,
+        Konrad Dybcio <konradybcio@kernel.org>,
+        Dmitry Baryshkov <lumag@kernel.org>,
+        Abhinav Kumar <abhinav.kumar@linux.dev>,
+        Jessica Zhang <jessica.zhang@oss.qualcomm.com>,
+        Marijn Suijten <marijn.suijten@somainline.org>,
+        David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+        Bjorn Andersson <andersson@kernel.org>, Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>, Viresh Kumar <vireshk@kernel.org>,
+        Nishanth Menon <nm@ti.com>, Stephen Boyd <sboyd@kernel.org>
+Cc: linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        linux-arm-msm@vger.kernel.org, dri-devel@lists.freedesktop.org,
+        freedreno@lists.freedesktop.org, devicetree@vger.kernel.org,
+        linux-pm@vger.kernel.org, Akhil P Oommen <akhilpo@oss.qualcomm.com>,
+        Jens Glathe <jens.glathe@oldschoolsolutions.biz>,
+        Viresh Kumar <viresh.kumar@linaro.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+        Aleksandrs Vinarskis <alex.vinarskis@gmail.com>,
+        Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>,
+        Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1750688040; l=2002;
+ i=akhilpo@oss.qualcomm.com; s=20240726; h=from:subject:message-id;
+ bh=Rp6x6KxtK4aGFpq43ixsYLX8y1+s/PNcztPAPycm16U=;
+ b=yvWYMl8LTmjh2jAlMPFUt8F6zsyk5RJJACb/bjP/3PKp2regoKw8/xBSRUgguHhfRnFJvEpUx
+ +vyFBQMYNQ8DwPNqtHOWOD77DxcUrX1e+sk1sWuRAJ1KuMtyhLhozQ1
+X-Developer-Key: i=akhilpo@oss.qualcomm.com; a=ed25519;
+ pk=lmVtttSHmAUYFnJsQHX80IIRmYmXA4+CzpGcWOOsfKA=
+X-Proofpoint-GUID: XbbK30ZWIpaCRkQ4UmBqSuvKF9CTIiB6
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNjIzMDA4NCBTYWx0ZWRfXzu1MhCOFXUwb
+ F6syOFfO1mMAh+b9AzWOW5VkU1Nm45ERKf59+yJFV7FLkdHpWf/uaf++Iy5J0k3UR+FZ+oMVKtT
+ oQP4tQcplVwqNPM8kMy9cEtN53PcrySt0TmSo2r4zKFnOBtrTsBnXFhtSiAtdKjUuxrhQAGdUS3
+ zQxPqQwbpsOVaXDz3VmeD4d47125hEbEmqodNj4XH9dNmqGxHOMyOL5s5Wa2df2f6pSsN3gMgFy
+ YPAh7WwmKFeZ9Q+Svw/P5ANlPsrkh4erZs3uPduUwoVEbnapRx2p71uamvbsTMlC1vm5MLElMf+
+ M3amfcoPNvp8zXM5n4m34HmXAdFbOJjtUb3sEvOZ4VtQiyV1OkEwvNsYEor+OEZqBOHHYLU3YvQ
+ 1HvfNBe0uFw7VPSA1Po6tpH0ZXxAo09DOu1oGKvOQqUV65mixLA9v4S5wtBO/3+fn3Znt4rF
+X-Authority-Analysis: v=2.4 cv=caHSrmDM c=1 sm=1 tr=0 ts=68596132 cx=c_pps
+ a=RP+M6JBNLl+fLTcSJhASfg==:117 a=ZePRamnt/+rB5gQjfz0u9A==:17
+ a=IkcTkHD0fZMA:10 a=6IFa9wvqVegA:10 a=VwQbUJbxAAAA:8 a=EUspDBNiAAAA:8
+ a=vb8sKYNj6oKrwasmUUsA:9 a=QEXdDO2ut3YA:10 a=iS9zxrgQBfv6-_F4QbHw:22
+X-Proofpoint-ORIG-GUID: XbbK30ZWIpaCRkQ4UmBqSuvKF9CTIiB6
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.7,FMLib:17.12.80.40
+ definitions=2025-06-23_04,2025-06-23_05,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ impostorscore=0 mlxlogscore=999 suspectscore=0 priorityscore=1501
+ lowpriorityscore=0 bulkscore=0 adultscore=0 mlxscore=0 spamscore=0
+ malwarescore=0 phishscore=0 clxscore=1015 classifier=spam authscore=0
+ authtc=n/a authcc= route=outbound adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2505280000 definitions=main-2506230084
 
+Add support for X1-45 GPU found in X1P41200 chipset (8 cpu core
+version). X1-45 is a smaller version of X1-85 with lower core count and
+smaller memories. From UMD perspective, this is similar to "FD735"
+present in Mesa.
 
+Tested Glmark & Vkmark on Debian Gnome desktop.
 
-On 20/06/2025 6:40 pm, Chun-Tse Shao wrote:
-> perl is not universal on all machines and should be replaced with awk,
-> which is much more common.
-> 
-> Before:
->    $ perf test "probe libc's inet_pton & backtrace it with ping" -v
->    --- start ---
->    test child forked, pid 145431
->    grep: Perl matching not supported in a --disable-perl-regexp build
-> 
->    FAIL: could not add event
->    ---- end(-1) ----
->    121: probe libc's inet_pton & backtrace it with ping                 : FAILED!
-> After:
->    $ perf test "probe libc's inet_pton & backtrace it with ping" -v
->    121: probe libc's inet_pton & backtrace it with ping                 : Ok
-> 
-> Suggested-by: Ian Rogers <irogers@google.com>
-> Signed-off-by: Chun-Tse Shao <ctshao@google.com>
-> ---
->   tools/perf/tests/shell/record+probe_libc_inet_pton.sh | 3 ++-
->   1 file changed, 2 insertions(+), 1 deletion(-)
-> 
-> diff --git a/tools/perf/tests/shell/record+probe_libc_inet_pton.sh b/tools/perf/tests/shell/record+probe_libc_inet_pton.sh
-> index c4bab5b5cc59..aaa5ee06ae18 100755
-> --- a/tools/perf/tests/shell/record+probe_libc_inet_pton.sh
-> +++ b/tools/perf/tests/shell/record+probe_libc_inet_pton.sh
-> @@ -23,7 +23,8 @@ event_pattern='probe_libc:inet_pton(\_[[:digit:]]+)?'
->   add_libc_inet_pton_event() {
-> 
->   	event_name=$(perf probe -f -x $libc -a inet_pton 2>&1 | tail -n +2 | head -n -5 | \
-> -			grep -P -o "$event_pattern(?=[[:space:]]\(on inet_pton in $libc\))")
-> +			awk -v ep="$event_pattern" -v l="$libc" '$0 ~ ep && $0 ~ \
-> +			("\\(on inet_pton in " l "\\)") {print $1}')
-> 
->   	if [ $? -ne 0 ] || [ -z "$event_name" ] ; then
->   		printf "FAIL: could not add event\n"
-> --
-> 2.50.0.rc2.701.gf1e915cc24-goog
-> 
+I think Bjorn can pick the DT patch and Rob Clark can pick up the rest.
 
-Minor nit: the underscore in event_pattern (not shown in the diff) never 
-needed to be escaped.
+Signed-off-by: Akhil P Oommen <akhilpo@oss.qualcomm.com>
+---
+Changes in v4:
+- Reorder the new entry in defconfig (Krzysztof)
+- Link to v3: https://lore.kernel.org/r/20250620-x1p-adreno-v3-0-56398c078c15@oss.qualcomm.com
 
-But now we're using awk it gives a warning so we should remove it in 
-case anyone is searching through the output:
+Changes in v3:
+- Rebased on v6.16-rc1
+- Fixed speedbin table in drm/msm
+- Corrected the regex for the adreno opp node (Krzysztof)
+- Replace underscore with hyphen in DT node names (Krzysztof)
+- Link to v2: https://lore.kernel.org/r/20250611-x1p-adreno-v2-0-5074907bebbd@oss.qualcomm.com
 
-   awk: warning: escape sequence `\_' treated as plain `_'
+Changes in v2:
+- Skip 'delete-property' wherever it is unnecessary (Dmitry)
+- Reorder dt nodes alphabetically (Konrad)
+- A new patch#1 to fix the dtbs_check error
+- Link to v1: https://lore.kernel.org/r/20250607-x1p-adreno-v1-0-a8ea80f3b18b@oss.qualcomm.com
 
-Reviewed-by: James Clark <james.clark@linaro.org>
+---
+Akhil P Oommen (4):
+      dt-bindings: opp: adreno: Update regex of OPP entry
+      arm64: defconfig: Enable X1P42100 GPUCC driver
+      drm/msm/adreno: Add Adreno X1-45 support
+      arm64: dts: qcom: Add GPU support to X1P42100 SoC
+
+ .../bindings/opp/opp-v2-qcom-adreno.yaml           |   2 +-
+ arch/arm64/boot/dts/qcom/x1e80100.dtsi             |   7 ++
+ arch/arm64/boot/dts/qcom/x1p42100-crd.dts          |   4 +
+ arch/arm64/boot/dts/qcom/x1p42100.dtsi             | 120 ++++++++++++++++++++-
+ arch/arm64/configs/defconfig                       |   1 +
+ drivers/gpu/drm/msm/adreno/a6xx_catalog.c          |  39 +++++++
+ 6 files changed, 170 insertions(+), 3 deletions(-)
+---
+base-commit: d9946fe286439c2aeaa7953b8c316efe5b83d515
+change-id: 20250603-x1p-adreno-219da2fd4ca4
+
+Best regards,
+-- 
+Akhil P Oommen <akhilpo@oss.qualcomm.com>
 
 
