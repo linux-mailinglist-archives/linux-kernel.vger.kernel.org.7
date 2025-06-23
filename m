@@ -1,123 +1,215 @@
-Return-Path: <linux-kernel+bounces-698521-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-698523-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 37505AE45FE
-	for <lists+linux-kernel@lfdr.de>; Mon, 23 Jun 2025 16:09:18 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id E7C95AE4606
+	for <lists+linux-kernel@lfdr.de>; Mon, 23 Jun 2025 16:09:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 75C62165362
-	for <lists+linux-kernel@lfdr.de>; Mon, 23 Jun 2025 14:03:40 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C45A6172DAD
+	for <lists+linux-kernel@lfdr.de>; Mon, 23 Jun 2025 14:04:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 398D97263D;
-	Mon, 23 Jun 2025 14:03:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4197917A314;
+	Mon, 23 Jun 2025 14:04:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=cmpxchg-org.20230601.gappssmtp.com header.i=@cmpxchg-org.20230601.gappssmtp.com header.b="aCKMsV68"
-Received: from mail-qv1-f45.google.com (mail-qv1-f45.google.com [209.85.219.45])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="RPAKZYjO"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1A477163
-	for <linux-kernel@vger.kernel.org>; Mon, 23 Jun 2025 14:03:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C8ED376C61
+	for <linux-kernel@vger.kernel.org>; Mon, 23 Jun 2025 14:04:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750687412; cv=none; b=dBMYhO5OZe4qt71iIjuPFPf+WIi89i22+LxuYNcJn3qg2VaSnrIMMBut/tIoq3cnXv8ElrhfBlFa+vkPD3458F0sULRjVi1088MljAmwwyjE3VJFnjj4GmfFCelNgqGBd3OgLFFYpNew0Mg661f6+Gf34th2xffAy5cTtQ8qeSI=
+	t=1750687450; cv=none; b=SJtUIozL24G4yKllonI5VrxwzTsT2CJozTGMws6eOW/d5RvO1eyUvE34hRu4vWeo7TvUdmc6Adp+dxEtK0tF73FNKeqK4nMwn7yBKoLp7kdX3rZWkuUdf25J0M8ZpgptwsA/syxQ4Gy/4M/EjeeNjWfCFigasZCqPsuY4VG4Nt8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750687412; c=relaxed/simple;
-	bh=vx1K4qKQZ1DteZ5J0H6N54934o4J8mjSRBbMleFn/9Q=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=fV7urBHCUxTFzGJrxVh8KS7wdoYqsgKaZdiAfjrnq2o9sgGVIOe8DjlHcLk0YWEVYwuqNcQNSdXtR2Jt/7098C4Db6RaQm0fL5N9n0MgxT1WIBonyTednJD0dmgsBRJT8Oxj83HYQatuAEyyAJsUVg+dDZQF3ItIF2U+t4U5HRk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=cmpxchg.org; spf=pass smtp.mailfrom=cmpxchg.org; dkim=pass (2048-bit key) header.d=cmpxchg-org.20230601.gappssmtp.com header.i=@cmpxchg-org.20230601.gappssmtp.com header.b=aCKMsV68; arc=none smtp.client-ip=209.85.219.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=cmpxchg.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cmpxchg.org
-Received: by mail-qv1-f45.google.com with SMTP id 6a1803df08f44-6fad4e6d949so22460396d6.0
-        for <linux-kernel@vger.kernel.org>; Mon, 23 Jun 2025 07:03:29 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=cmpxchg-org.20230601.gappssmtp.com; s=20230601; t=1750687409; x=1751292209; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=oHQvKS3TWKn2OxZSW1oU1l5YoOyNfHzqUoMyvQKiXDk=;
-        b=aCKMsV68qMXBc1IMOcZWSdZ5FDIZgx1wX0QgtCB0tcTP0jmOuRVN1m3Pel+iRQm6aZ
-         QzPAyZP2UqTnLxvpKxdp3M+5PnNHDvbgdFxmJYB9ooDJOAJgRmKgpsjxSEsDEwa1CRws
-         a+pST7SPp/aqrwCo4Dd28XS741kdcbxMdTtkR5DAnhkmxOh3oq6sootQSms17SibLlcq
-         k8XmZUMY293CfEkvMaq2vFC0VqLOpJOtAjPEmnmi5feo1W1Q9FXEam5NTf6w0GrIFx8R
-         /6wKyrOorWt3AYp99h6GG+PSSaM3eo1/lwYUlxzDXTBC7xIHXIfpA7i7LIgwzmpavvji
-         4VIQ==
+	s=arc-20240116; t=1750687450; c=relaxed/simple;
+	bh=X4Hd5ZWrXPSq1/1WLrzOgIiIZXd5j48jrptWBaZiW1k=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=NfUMM1jTw+AVazC9VVab328uU8CogwUYIvlNL4HkOnUgEMfWmobdZd9qhbtI/NOUkK2XFtFeg70MAxh4meVSiS+InZrjiUv0YIWInx+L8dyVR6CYjXLXOzu1bCdYYYpkFGe4k6ZurR94q2oMUqS9egH1u20kaD+9UDiFmjAr8a0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=RPAKZYjO; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1750687447;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=KrBCINyJrvJ9eCzCevXV0ad1ST03SBH5k2o0Hivm01s=;
+	b=RPAKZYjOLx/Vh4WZCsoHzhCpYOsRjJvuJ89NtXxIPVJMRS8rL1jjIiTGLBZP8Fqm5zCg5X
+	SrwEUrHI2BNqocTzqx1OLLtzW+DTUBgShOrV9p/zMydlKsjkqLepzsR7VCoJRH09NPvAmA
+	ezbU9yvUQDbHU0DgqCdT3jz6fF1CDtw=
+Received: from mail-wm1-f70.google.com (mail-wm1-f70.google.com
+ [209.85.128.70]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-359-eZS87SkZOWy-p6FKAUP9PQ-1; Mon, 23 Jun 2025 10:04:06 -0400
+X-MC-Unique: eZS87SkZOWy-p6FKAUP9PQ-1
+X-Mimecast-MFC-AGG-ID: eZS87SkZOWy-p6FKAUP9PQ_1750687445
+Received: by mail-wm1-f70.google.com with SMTP id 5b1f17b1804b1-450d64026baso26125435e9.1
+        for <linux-kernel@vger.kernel.org>; Mon, 23 Jun 2025 07:04:05 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1750687409; x=1751292209;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=oHQvKS3TWKn2OxZSW1oU1l5YoOyNfHzqUoMyvQKiXDk=;
-        b=oQI51B7eNT2kiley4EKVUTwfYAnD9I3GyjlDh9VBL8B/GbCyEBMuU4Fr01yWGgrgFq
-         7ZEt+1bwTsnJJiGHkXJb4tvnhUSJcJu3jXb0ASm57LOmXSaE1oRd6t22BElU39UiPaHv
-         BF9OkiLByJHEdMdc8afbiqGPaps8PVU9lfER294ckzNNedccaixtPY2J3+MR6lxCGuKV
-         AAnOW/TwCfVHdvcu2vnc5shhiRcxT+aHzUBdz9QxfYC+2kmNBwoKmduiIOjE2ksRU9P7
-         CF1KwJVCKe1OU+dNAfrtDH97gSTDiSdoVjW+tcARYM2rqBrWRjPGu377BJ5WTVe6nAOQ
-         WqSg==
-X-Forwarded-Encrypted: i=1; AJvYcCVNtUkxKJPXsBaPZRuuQqn6/0xd3FQ7t5kknHW0iy8gV3IvNunR4ij4vb2ml3OhbBVpuu7k8JAaNdkidmQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzaLzBbCJSaXOHawPJmcEioWxnJH+b6NdzArMoGHKy0e66VHmyn
-	RYAAc1aG5mjwmnbHub7H6qoF2+FMgg+hEaiCMaxXh+p7ld8TkqHpiAP7QERWmuz8q43hGIVMyu4
-	lF6kA5cM=
-X-Gm-Gg: ASbGnct/WyLAlCrScGGBpHVPPjgMaTzq6uOl/bsAEy5Fl0bu+TCuszsyLqoKliyP7K6
-	rJwL+W7+LiHqM1ko/vLDj20XJWG1sPomh8umwomI9xbZcPQDwv8+WY9R3ys4WH+BYztEac74gLf
-	tnddgTqW4SGiZ96IHGwG1iqbqiOIY142B0wpLZa7Ws1ervjQmpiFfj2DyebzmzBm9iBp8XPJ5mF
-	JkCoS2oMqUhhCN/brNFZmmLcEAjzhOUsnR20Ez7uvTX4ULSNpWGOosNesWHED/+FjPOYpLEeGiz
-	QoUQ6P3jZ8Ih152uBhon0MkKHT8JPdEi/XsebV5e1n3HhNbfGJLtba/vcbUvNy1fIuX2gIb9FGc
-	qohDmnf2VofiU21UKNLA=
-X-Google-Smtp-Source: AGHT+IHV2G54kD9pRv09My18az6RnUtamNkzetpd9U2aimjaqJNjn9lxVwmwJSl2uRadS7czP/BLFg==
-X-Received: by 2002:a05:6214:568e:b0:6e8:ddf6:d136 with SMTP id 6a1803df08f44-6fd0a5dd8fdmr213376516d6.45.1750687408570;
-        Mon, 23 Jun 2025 07:03:28 -0700 (PDT)
-Received: from localhost (syn-067-251-217-001.res.spectrum.com. [67.251.217.1])
-        by smtp.gmail.com with UTF8SMTPSA id 6a1803df08f44-6fd095c7fe4sm45030926d6.121.2025.06.23.07.03.27
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 23 Jun 2025 07:03:27 -0700 (PDT)
-Date: Mon, 23 Jun 2025 16:03:21 +0200
-From: Johannes Weiner <hannes@cmpxchg.org>
-To: Tejun Heo <tj@kernel.org>
-Cc: Jemmy Wong <jemmywong512@gmail.com>,
-	Michal =?iso-8859-1?Q?Koutn=FD?= <mkoutny@suse.com>,
-	Waiman Long <longman@redhat.com>, cgroups@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v1 0/3] cgroup: Add lock guard support
-Message-ID: <20250623140321.GA3372@cmpxchg.org>
-References: <20250606161841.44354-1-jemmywong512@gmail.com>
- <2dd7rwkxuirjqpxzdvplt26vgfydomu56j3dkmr37765zk67pd@aou7jw4d6wtq>
- <9BDD726A-2EAE-46C3-9D00-004E051B8F5B@gmail.com>
- <aFYeU_dL0VOvyeYs@slm.duckdns.org>
+        d=1e100.net; s=20230601; t=1750687445; x=1751292245;
+        h=content-transfer-encoding:in-reply-to:organization:autocrypt
+         :content-language:from:references:cc:to:subject:user-agent
+         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=KrBCINyJrvJ9eCzCevXV0ad1ST03SBH5k2o0Hivm01s=;
+        b=PZSxyww4Q67PSoucPpuVA/+3a6JI3GDUSlHxxQttJhBWbJl25CEh5gVXERPSTo28ib
+         nn9y4VI3z0CA8CX4dOIK4GfK/IlrcHKM38Q56HTcNC2ILvH5/Wmr+wkc3FPxR60kIKiZ
+         GsWGYeFvy3E8RjSh/aTBI1Su+Dh0VZSJb7zKqUrjEjOzNL8YEPiDhqhMPWacbuNFksUz
+         caeu35Nj2BMK70+0RtszThdFIeH9tmae7ITzeQTGkGHi1G8GgcPKg6cjtEI7AwXGE4fY
+         VYq+tXuGBTjCVnrCQSX0j3Ln6HAAbmV7Rm4p2e39kBC9Su2orgP67Tol92nGfeSikaGP
+         Vxkg==
+X-Gm-Message-State: AOJu0YyMXrF8huAuykfYpSbaOc84t61v2kjEo/y1umIUN7yHuLQJ89n7
+	jKX6Ga73oOj9us0syP0l/KRB+aDKlR3u/Arc1EFf7ptXFfP+6TGR7zF7kgfKTvihgA72LY4DzgI
+	fNMPpF1NVrsPvSWfmLg4HvY+AvY8gzgwAoIlfHpSkb1VYMdA2wymE1yIjo+14901N/w==
+X-Gm-Gg: ASbGnctrbLZLDXl8h4PDTD7zJrTJpCmVJAlCNaIEjtUjGuttXLCWI9cXSfXM8tAMlM1
+	FyuiqB3AsczH+hvtj6c4Ba+t3NCWQbjKGZe0gn/7khBp0iwPZ2vWe8EIukZY98iGmHk7zgWoIcl
+	y3eZv8rlHtTo6gmyzPaIvagVoMRbYp+un0jAL6l9SU5Y947UQlObXkH8YsQ/obPiqPC94n/NgjT
+	SwrCOjxH5PnmkTE9KtsrLsB+ufiXDLTkFceyVgaoIdd+GGbZnwSUXtuGXjw9K8ESFql9wnCsMZS
+	mp3DdGvKR4sM4T9PfjXdev1TF5k7TS2p6ZiB3L3ZVglVi+Bkio2FajoTGJjOF1L1oiSdo56LpH1
+	XxzOLqvV2XfNOvfPAdI2mkMxsx1HQ7vrDHEvmNrgKeynfi0Rc/g==
+X-Received: by 2002:a05:600c:4ec6:b0:43d:94:2d1e with SMTP id 5b1f17b1804b1-453659c5990mr113650955e9.13.1750687444787;
+        Mon, 23 Jun 2025 07:04:04 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IE95nNZ86PnFHeg7VNuUAm+n3H3UxcLPVNTcJDICuroThLIfwHolxnqvCNMi52XcHJ4LMneaQ==
+X-Received: by 2002:a05:600c:4ec6:b0:43d:94:2d1e with SMTP id 5b1f17b1804b1-453659c5990mr113650125e9.13.1750687444093;
+        Mon, 23 Jun 2025 07:04:04 -0700 (PDT)
+Received: from ?IPV6:2003:d8:2f4e:fd00:8e13:e3b5:90c8:1159? (p200300d82f4efd008e13e3b590c81159.dip0.t-ipconnect.de. [2003:d8:2f4e:fd00:8e13:e3b5:90c8:1159])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-453755e7d1dsm29688075e9.10.2025.06.23.07.04.01
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 23 Jun 2025 07:04:03 -0700 (PDT)
+Message-ID: <c88c29d2-d887-4c5a-8b4e-0cf30e71d596@redhat.com>
+Date: Mon, 23 Jun 2025 16:04:01 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <aFYeU_dL0VOvyeYs@slm.duckdns.org>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH RFC 01/14] mm/memory: drop highest_memmap_pfn sanity check
+ in vm_normal_page()
+To: Oscar Salvador <osalvador@suse.de>
+Cc: linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+ linux-mm@kvack.org, nvdimm@lists.linux.dev,
+ Andrew Morton <akpm@linux-foundation.org>, Juergen Gross <jgross@suse.com>,
+ Stefano Stabellini <sstabellini@kernel.org>,
+ Oleksandr Tyshchenko <oleksandr_tyshchenko@epam.com>,
+ Dan Williams <dan.j.williams@intel.com>, Alistair Popple
+ <apopple@nvidia.com>, Matthew Wilcox <willy@infradead.org>,
+ Jan Kara <jack@suse.cz>, Alexander Viro <viro@zeniv.linux.org.uk>,
+ Christian Brauner <brauner@kernel.org>, Zi Yan <ziy@nvidia.com>,
+ Baolin Wang <baolin.wang@linux.alibaba.com>,
+ Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
+ "Liam R. Howlett" <Liam.Howlett@oracle.com>, Nico Pache <npache@redhat.com>,
+ Ryan Roberts <ryan.roberts@arm.com>, Dev Jain <dev.jain@arm.com>,
+ Barry Song <baohua@kernel.org>, Vlastimil Babka <vbabka@suse.cz>,
+ Mike Rapoport <rppt@kernel.org>, Suren Baghdasaryan <surenb@google.com>,
+ Michal Hocko <mhocko@suse.com>, Jann Horn <jannh@google.com>,
+ Pedro Falcato <pfalcato@suse.de>
+References: <20250617154345.2494405-1-david@redhat.com>
+ <20250617154345.2494405-2-david@redhat.com>
+ <aFVZCvOpIpBGAf9w@localhost.localdomain>
+From: David Hildenbrand <david@redhat.com>
+Content-Language: en-US
+Autocrypt: addr=david@redhat.com; keydata=
+ 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
+ WNyWQQ==
+Organization: Red Hat
+In-Reply-To: <aFVZCvOpIpBGAf9w@localhost.localdomain>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Fri, Jun 20, 2025 at 04:52:03PM -1000, Tejun Heo wrote:
-> On Fri, Jun 20, 2025 at 06:45:54PM +0800, Jemmy Wong wrote:
-> ...
-> > > Tejun:
-> > >> There are no practical benefits to converting the code base at this point.
-> > > 
-> > > I'd expect future backports (into such code) to be more robust wrt
-> > > pairing errors.
-> > > At the same time this is also my biggest concern about this change, the
-> > > wide-spread diff would make current backporting more difficult.  (But
-> > > I'd counter argue that one should think forward here.)
+On 20.06.25 14:50, Oscar Salvador wrote:
+> On Tue, Jun 17, 2025 at 05:43:32PM +0200, David Hildenbrand wrote:
+>> In 2009, we converted a VM_BUG_ON(!pfn_valid(pfn)) to the current
+>> highest_memmap_pfn sanity check in commit 22b31eec63e5 ("badpage:
+>> vm_normal_page use print_bad_pte"), because highest_memmap_pfn was
+>> readily available.
+>>
+>> Nowadays, this is the last remaining highest_memmap_pfn user, and this
+>> sanity check is not really triggering ... frequently.
+>>
+>> Let's convert it to VM_WARN_ON_ONCE(!pfn_valid(pfn)), so we can
+>> simplify and get rid of highest_memmap_pfn. Checking for
+>> pfn_to_online_page() might be even better, but it would not handle
+>> ZONE_DEVICE properly.
+>>
+>> Do the same in vm_normal_page_pmd(), where we don't even report a
+>> problem at all ...
+>>
+>> What might be better in the future is having a runtime option like
+>> page-table-check to enable such checks dynamically on-demand. Something
+>> for the future.
+>>
+>> Signed-off-by: David Hildenbrand <david@redhat.com>
 > 
-> Well, I'm not necessarily against it but I generally dislike wholesale
-> cleanups which create big patch application boundaries. If there are enough
-> practical benefits, sure, we should do it, but when it's things like this -
-> maybe possibly it's a bit better in the long term - the calculus isn't clear
-> cut. People can argue these things to high heavens on abstract grounds, but
-> if you break it down to practical gains vs. costs, it's not a huge
-> difference.
-> 
-> But, again, I'm not against it. Johannes, any second thoughts?
 
-Yeah, letting the primitives get used organically in new code and
-patches sounds better to me than retrofitting it into an existing
-function graph that wasn't designed with these in mind.
+Hi Oscar,
+
+> I'm confused, I'm missing something here.
+> Before this change we would return NULL if e.g: pfn > highest_memmap_pfn, but
+> now we just print the warning and call pfn_to_page() anyway.
+> AFAIK, pfn_to_page() doesn't return NULL?
+
+You're missing that vm_normal_page_pmd() was created as a copy from 
+vm_normal_page() [history of the sanity check above], but as we don't 
+have (and shouldn't have ...) print_bad_pmd(), we made the code look 
+like this would be something that can just happen.
+
+"
+Do the same in vm_normal_page_pmd(), where we don't even report a
+problem at all ...
+"
+
+So we made something that should never happen a runtime sanity check 
+without ever reporting a problem ...
+
+-- 
+Cheers,
+
+David / dhildenb
+
 
