@@ -1,58 +1,59 @@
-Return-Path: <linux-kernel+bounces-698975-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-698977-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8D5BFAE4C50
-	for <lists+linux-kernel@lfdr.de>; Mon, 23 Jun 2025 20:02:27 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 61A9BAE4C54
+	for <lists+linux-kernel@lfdr.de>; Mon, 23 Jun 2025 20:02:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3C8003BC409
-	for <lists+linux-kernel@lfdr.de>; Mon, 23 Jun 2025 18:01:53 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2DDE23BF115
+	for <lists+linux-kernel@lfdr.de>; Mon, 23 Jun 2025 18:02:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 197442D3A7D;
-	Mon, 23 Jun 2025 18:01:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 143602D4B66;
+	Mon, 23 Jun 2025 18:01:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=collabora.com header.i=daniel.almeida@collabora.com header.b="ARPuBqwK"
+	dkim=pass (1024-bit key) header.d=collabora.com header.i=daniel.almeida@collabora.com header.b="RRjlCR/8"
 Received: from sender4-pp-f112.zoho.com (sender4-pp-f112.zoho.com [136.143.188.112])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D87F82D3A66;
-	Mon, 23 Jun 2025 18:01:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AD1912D3A88;
+	Mon, 23 Jun 2025 18:01:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.112
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750701715; cv=pass; b=uQgrSKmNxj9mVgDdQVvHejRabNzBEJLD3MpI71ci7+Z8igo0oWjGBsqrFRWV4eUbozQhzu25WUlfUSwoMVgUkNZvB6SK8oAD0lc4A0uyPCIz3LCA4LLosCur/4s959Tvu5ay4cEUd4GtsDar8JZHWzQ1fngGSPPFWU3+hOvhjdI=
+	t=1750701718; cv=pass; b=Y1w8ut4rGExk92LH7+kB8PlW+53zqcft22duVhoqBIGN9C0hE/RvavcJ4LDfiBaaAuQ5JFU3M4VjmPwUREQWEkIwaFkHqtIoEmr0DAhMQIA3qaIHroCu8/DlHJfSidDNW2vW5cL4H3eMrCIXoDTjEGEPB92n56HPv3xHyRwwkDY=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750701715; c=relaxed/simple;
-	bh=jD0Bs8pEGYPz7Co3uofmKUKddNMzKnpOUNwkMt5xm9U=;
+	s=arc-20240116; t=1750701718; c=relaxed/simple;
+	bh=gqe57Gt1/AsaP6Lk5heZxUpWQuZW+wILnzh1U51++LM=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=PA9Dohf3aicmQsJvlleyDHfc2SUiL29YILW89BQ9hkICVjEVKBDC7zUPYGWsVH0vavryKfKmy+OgoqSGSW/g5SCOy5/cbp6pRt4ecTUbrTid/P2YmeVHlFo9Qz//RVfki7OercFrvUbNZB7cTvQEnfmI/9ch/hKfwjHxqOd+fdE=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=daniel.almeida@collabora.com header.b=ARPuBqwK; arc=pass smtp.client-ip=136.143.188.112
+	 In-Reply-To:To:Cc; b=f3cNFzlVnqVbZdcpAM8074tUDx18hHoQ0Y8vIQslEzODN23IroKHGvcgDFkcdhndjFhTuwLSfN2K9Yvav3Uv8U+9lsqrnUj6lZB59OygyUcyTgxBbtmtoD2Qp8eOEoqW1KhU0+SzKpNvNk4azkqsfu/tG9sgcIlTUDCyWgFQVKI=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=daniel.almeida@collabora.com header.b=RRjlCR/8; arc=pass smtp.client-ip=136.143.188.112
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-ARC-Seal: i=1; a=rsa-sha256; t=1750701695; cv=none; 
+ARC-Seal: i=1; a=rsa-sha256; t=1750701701; cv=none; 
 	d=zohomail.com; s=zohoarc; 
-	b=iCbDQEXnNosRGbP0xeH85y5jc+bx0dqN7yojPmAU8guMR1lCQVLk7W4KJQTtGKGRCbIlchq5m96sQ4Z+E7gWQPlN7qlbcrE2cshfuyYzed+jQNoEgP4OzQuWDp1ZnF38TNRvxEMpXO99NVLOcRIxiWfiNNQ2JjoE5Qaa/BqSn1I=
+	b=MDBUR8mBLdfEVJLUYH8B5d7EBXYmhP7VisxJK/KGxbXGkkRZwLlzyCSFil3PZp83KzbQqDD1Xw00SauYwPco5RQK8jJEz/KkFnzD2yspK8ZHV3zb773au1PTjYeW2JRKCYP8G+OXDMvDEEy+cPNAFfzm1cmFnc0DaKeqeKUYGBo=
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
-	t=1750701695; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
-	bh=jXtQ5usej9364YkX/FNJQWmiFrppYRFaFOduw0COy+E=; 
-	b=O75osqKpFlXyhx55p9bA92Lmx2PRQHYafUC4sTMRb26Bc2mCz64fnTuzCaK6k97tqc7Uv3laoMr5Xt+Hp5Jcr07bScx8GzreercMyHJmb9utiCPGPDgiNtrI9NIm9k0ezEpE5QnhtzJBhqf9Aj/qnefYAQLEDXhEruhnNymkCek=
+	t=1750701701; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
+	bh=U3Ka0jrgiaMi7VcajGGF4TMYKe+38iCUzYIMv0gB1Jg=; 
+	b=PjR483IaUJzQzlGXWo47yHyBZpX88sjQdtAY46Oha/b+9WLQeM5YWB87iHEXKs6rAdmjzSWXP7RFqEcH3zhfKmrCBJTPRNfF6AskGsOhRjFICjSm8C4EyI5oatEGqEEKN5Mzq5T4pBdX4wdEoSi+uFvYkEWjyCzCaFhhQxDBJ3c=
 ARC-Authentication-Results: i=1; mx.zohomail.com;
 	dkim=pass  header.i=collabora.com;
 	spf=pass  smtp.mailfrom=daniel.almeida@collabora.com;
 	dmarc=pass header.from=<daniel.almeida@collabora.com>
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1750701695;
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1750701701;
 	s=zohomail; d=collabora.com; i=daniel.almeida@collabora.com;
 	h=From:From:Date:Date:Subject:Subject:MIME-Version:Content-Type:Content-Transfer-Encoding:Message-Id:Message-Id:References:In-Reply-To:To:To:Cc:Cc:Reply-To;
-	bh=jXtQ5usej9364YkX/FNJQWmiFrppYRFaFOduw0COy+E=;
-	b=ARPuBqwKaL1kv2BvRx7u3jqemRHU0i3CqMBHAz9L84PeoZclRCUm1bSSRzF5WFl6
-	S5XnP3NfFhQIIOC+Y0I+l+idutSIwbggiLYye+HnJLgYaZTo9t6VuCkMe+/FQhogQEM
-	aH+QexbBxGDIYitpCkTj/SBmwymcppWuwPBdxc7I=
-Received: by mx.zohomail.com with SMTPS id 1750701693614683.6155317146832;
-	Mon, 23 Jun 2025 11:01:33 -0700 (PDT)
+	bh=U3Ka0jrgiaMi7VcajGGF4TMYKe+38iCUzYIMv0gB1Jg=;
+	b=RRjlCR/8UBAHXkO4S5PG0/5PuvhkozwmF8Pe+I9DbBMtGbzYdDfbiI9JwI1as1jl
+	TjtV1SbTUcqEzYE+ubUYZFzr2QLz6U3fsA4wjhR8DrKLAXLd+AGxYTkJ7aIunYoeiC+
+	kWOHlujIXDwcpos0nONSWeO5J3jqTczhcppI4RRo=
+Received: by mx.zohomail.com with SMTPS id 1750701698231550.6081453967741;
+	Mon, 23 Jun 2025 11:01:38 -0700 (PDT)
 From: Daniel Almeida <daniel.almeida@collabora.com>
-Date: Mon, 23 Jun 2025 15:01:00 -0300
-Subject: [PATCH v10 3/4] rust: platform: add resource accessors
+Date: Mon, 23 Jun 2025 15:01:01 -0300
+Subject: [PATCH v10 4/4] rust: platform: allow ioremap of platform
+ resources
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -61,7 +62,7 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20250623-topics-tyr-platform_iomem-v10-3-ed860a562940@collabora.com>
+Message-Id: <20250623-topics-tyr-platform_iomem-v10-4-ed860a562940@collabora.com>
 References: <20250623-topics-tyr-platform_iomem-v10-0-ed860a562940@collabora.com>
 In-Reply-To: <20250623-topics-tyr-platform_iomem-v10-0-ed860a562940@collabora.com>
 To: Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, 
@@ -82,72 +83,158 @@ Cc: linux-kernel@vger.kernel.org, rust-for-linux@vger.kernel.org,
 X-Mailer: b4 0.14.2
 X-ZohoMailClient: External
 
-A previous patch has exposed the abstractions struct resource.
+The preceding patches added support for resources, and for a general
+IoMem abstraction, but thus far there is no way to access said IoMem
+from drivers, as its creation is unsafe and depends on a resource that
+must be acquired from some device first.
 
-Now make it possible to retrieve resources from platform devices in Rust
-using either a name or an index.
+Now, allow the ioremap of platform resources themselves, thereby making
+the IoMem available to platform drivers.
 
 Signed-off-by: Daniel Almeida <daniel.almeida@collabora.com>
 ---
- rust/kernel/platform.rs | 38 ++++++++++++++++++++++++++++++++++++++
- 1 file changed, 38 insertions(+)
+ rust/kernel/platform.rs | 120 +++++++++++++++++++++++++++++++++++++++++++++++-
+ 1 file changed, 118 insertions(+), 2 deletions(-)
 
 diff --git a/rust/kernel/platform.rs b/rust/kernel/platform.rs
-index 5b21fa517e55348582622ec10471918919502959..0eedb8239fec31df7ab64dc68d220c9d965f1f21 100644
+index 0eedb8239fec31df7ab64dc68d220c9d965f1f21..5e787cf85f41722837bb34a6620c92d13d55625b 100644
 --- a/rust/kernel/platform.rs
 +++ b/rust/kernel/platform.rs
-@@ -7,6 +7,7 @@
+@@ -5,9 +5,14 @@
+ //! C header: [`include/linux/platform_device.h`](srctree/include/linux/platform_device.h)
+ 
  use crate::{
-     bindings, container_of, device, driver,
+-    bindings, container_of, device, driver,
++    bindings, container_of, device,
++    devres::Devres,
++    driver,
      error::{to_result, Result},
-+    io::Resource,
+-    io::Resource,
++    io::{
++        mem::{ExclusiveIoMem, IoMem},
++        Resource,
++    },
      of,
      prelude::*,
      str::CStr,
-@@ -188,6 +189,43 @@ impl<Ctx: device::DeviceContext> Device<Ctx> {
-     fn as_raw(&self) -> *mut bindings::platform_device {
-         self.0.get()
+@@ -228,6 +233,117 @@ pub fn resource_by_name(&self, name: &CStr) -> Option<&Resource> {
      }
-+
-+    /// Returns the resource at `index`, if any.
-+    pub fn resource_by_index(&self, index: u32) -> Option<&Resource> {
-+        // SAFETY: `self.as_raw()` returns a valid pointer to a `struct platform_device`.
-+        let resource = unsafe {
-+            bindings::platform_get_resource(self.as_raw(), bindings::IORESOURCE_MEM, index)
-+        };
-+
-+        if resource.is_null() {
-+            return None;
-+        }
-+
-+        // SAFETY: `resource` is a valid pointer to a `struct resource` as
-+        // returned by `platform_get_resource`.
-+        Some(unsafe { Resource::as_ref(resource) })
-+    }
-+
-+    /// Returns the resource with a given `name`, if any.
-+    pub fn resource_by_name(&self, name: &CStr) -> Option<&Resource> {
-+        // SAFETY: `self.as_raw()` returns a valid pointer to a `struct
-+        // platform_device` and `name` points to a valid C string.
-+        let resource = unsafe {
-+            bindings::platform_get_resource_byname(
-+                self.as_raw(),
-+                bindings::IORESOURCE_MEM,
-+                name.as_char_ptr(),
-+            )
-+        };
-+
-+        if resource.is_null() {
-+            return None;
-+        }
-+
-+        // SAFETY: `resource` is a valid pointer to a `struct resource` as
-+        // returned by `platform_get_resource`.
-+        Some(unsafe { Resource::as_ref(resource) })
-+    }
  }
  
++impl Device<device::Bound> {
++    /// Maps a platform resource where the size is known at compile time.
++    ///
++    /// This uses the
++    /// [`ioremap()`](https://docs.kernel.org/driver-api/device-io.html#getting-access-to-the-device)
++    /// C API.
++    ///
++    /// # Examples
++    ///
++    /// ```no_run
++    /// # use kernel::{bindings, c_str, platform, of, device::Core};
++    /// # struct SampleDriver;
++    ///
++    /// impl platform::Driver for SampleDriver {
++    ///    # type IdInfo = ();
++    ///    # const OF_ID_TABLE: Option<of::IdTable<Self::IdInfo>> = None;
++    ///
++    ///    fn probe(
++    ///       pdev: &platform::Device<Core>,
++    ///       info: Option<&Self::IdInfo>,
++    ///    ) -> Result<Pin<KBox<Self>>> {
++    ///       let offset = 0; // Some offset.
++    ///
++    ///       // If the size is known at compile time, use [`Self::iomap_resource_sized`].
++    ///       //
++    ///       // No runtime checks will apply when reading and writing.
++    ///       let resource = pdev.resource_by_index(0).ok_or(ENODEV)?;
++    ///       let iomem = pdev.iomap_resource_sized::<42>(&resource)?;
++    ///       let io = iomem.access(pdev.as_ref())?;
++    ///
++    ///       // Read and write a 32-bit value at `offset`.
++    ///       let data = io.read32_relaxed(offset);
++    ///
++    ///       io.write32_relaxed(data, offset);
++    ///
++    ///       # Ok(KBox::new(SampleDriver, GFP_KERNEL)?.into())
++    ///     }
++    /// }
++    /// ```
++    pub fn iomap_resource_sized<const SIZE: usize>(
++        &self,
++        resource: &Resource,
++    ) -> Result<Devres<IoMem<SIZE>>> {
++        IoMem::new(resource, self.as_ref())
++    }
++
++    /// Same as [`Self::iomap_resource_sized`] but with exclusive access to the
++    /// underlying region.
++    ///
++    /// This uses the
++    /// [`ioremap()`](https://docs.kernel.org/driver-api/device-io.html#getting-access-to-the-device)
++    /// C API.
++    pub fn iomap_resource_exclusive_sized<const SIZE: usize>(
++        &self,
++        resource: &Resource,
++    ) -> Result<Devres<ExclusiveIoMem<SIZE>>> {
++        ExclusiveIoMem::new(resource, self.as_ref())
++    }
++
++    /// Maps a platform resource through `iomap()`.
++    ///
++    /// This uses the
++    /// [`ioremap()`](https://docs.kernel.org/driver-api/device-io.html#getting-access-to-the-device)
++    /// C API.
++    ///
++    /// # Examples
++    ///
++    /// ```no_run
++    /// # use kernel::{bindings, c_str, platform, of, device::Core};
++    /// # struct SampleDriver;
++    ///
++    /// impl platform::Driver for SampleDriver {
++    ///    # type IdInfo = ();
++    ///    # const OF_ID_TABLE: Option<of::IdTable<Self::IdInfo>> = None;
++    ///
++    ///    fn probe(
++    ///       pdev: &platform::Device<Core>,
++    ///       info: Option<&Self::IdInfo>,
++    ///    ) -> Result<Pin<KBox<Self>>> {
++    ///       let offset = 0; // Some offset.
++    ///
++    ///       // Unlike [`Self::iomap_resource_sized`], here the size of the memory region
++    ///       // is not known at compile time, so only the `try_read*` and `try_write*`
++    ///       // family of functions should be used, leading to runtime checks on every
++    ///       // access.
++    ///       let resource = pdev.resource_by_index(0).ok_or(ENODEV)?;
++    ///       let iomem = pdev.iomap_resource(&resource)?;
++    ///       let io = iomem.access(pdev.as_ref())?;
++    ///
++    ///       let data = io.try_read32_relaxed(offset)?;
++    ///
++    ///       io.try_write32_relaxed(data, offset)?;
++    ///
++    ///       # Ok(KBox::new(SampleDriver, GFP_KERNEL)?.into())
++    ///     }
++    /// }
++    /// ```
++    pub fn iomap_resource(&self, resource: &Resource) -> Result<Devres<IoMem<0>>> {
++        self.iomap_resource_sized::<0>(resource)
++    }
++
++    /// Same as [`Self::iomap_resource`] but with exclusive access to the underlying
++    /// region.
++    pub fn iomap_resource_exclusive(
++        &self,
++        resource: &Resource,
++    ) -> Result<Devres<ExclusiveIoMem<0>>> {
++        self.iomap_resource_exclusive_sized::<0>(resource)
++    }
++}
++
  // SAFETY: `Device` is a transparent wrapper of a type that doesn't depend on `Device`'s generic
+ // argument.
+ kernel::impl_device_context_deref!(unsafe { Device });
 
 -- 
 2.50.0
