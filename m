@@ -1,142 +1,156 @@
-Return-Path: <linux-kernel+bounces-698009-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-698011-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1D0F7AE3BC0
-	for <lists+linux-kernel@lfdr.de>; Mon, 23 Jun 2025 12:08:33 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 93391AE3BC5
+	for <lists+linux-kernel@lfdr.de>; Mon, 23 Jun 2025 12:09:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id EF3191885327
-	for <lists+linux-kernel@lfdr.de>; Mon, 23 Jun 2025 10:08:41 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 132BA1886CD0
+	for <lists+linux-kernel@lfdr.de>; Mon, 23 Jun 2025 10:09:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0DBE4239581;
-	Mon, 23 Jun 2025 10:08:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="alt1eMxf"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.21])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6B33A23A9B0;
+	Mon, 23 Jun 2025 10:08:34 +0000 (UTC)
+Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 20AA51DA23;
-	Mon, 23 Jun 2025 10:08:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.21
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6E494239E84;
+	Mon, 23 Jun 2025 10:08:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750673297; cv=none; b=lNc6W8lyouuB1gKYEZVCFrd+EKbnLYF0cDpRHcTThTYepHCeBdc7cg8dR85cfshDPUeDTdY37RUM6kOEr9VnalMn4a0DkiP/GpapBIDUaubrsivuQxQynft2mbIHvflH7K7R8W1iAo94+SNWP5S+JdmZTzl2/LtvzsroZhLH2Zw=
+	t=1750673314; cv=none; b=XmBEIxgOmwSxAqnwJ7+5ifCJR5GG/kyYhqfpRnlCA0aI8aGKd6Bm3Z6NYuq+JhPWdfPs+8g7ezBm4cJy+xpUYGvpnOb5Zxbs0a0GvsaHEAL9iyVyZQGLcNhzG9GolVn2bbi+x90LKiUoVQIX8ANuuMN3B8+edZEcUZEUsUDKCFg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750673297; c=relaxed/simple;
-	bh=dix0Yhu3c8boRB+3OYeK+56zmV1v3N5vctgiK7sTU9I=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=BqPrlurj8c0bunqZM3zazBahB5kz2h2CHHLuI04fLRzJbzeUevEgTkkT0b7oWQ04ECouMVYZurocxDQ8USoXJZYc0tPCmwDbKWyKeaST3w1w+R8DNu6yaTEaeobAkmLCOBFaY2/273tA4/e2iGCXuGPhXkf/DZaIML+MqO5d3/A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=alt1eMxf; arc=none smtp.client-ip=198.175.65.21
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1750673295; x=1782209295;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:content-transfer-encoding:in-reply-to;
-  bh=dix0Yhu3c8boRB+3OYeK+56zmV1v3N5vctgiK7sTU9I=;
-  b=alt1eMxfR2YNfH5FQ56VKCliDoU79taO9Lity1B5H2xxOyw/XlIXyGEo
-   Ss7paGoKhbalhHDwxEmQeKKGFxbrzhI7hWisttGmQ0kiKFILHu53YdHiz
-   QVkrKaCDasyWi71GkCgOjhrx5YjOvXuYgFRq+q+ZwKhQkNTCq2R5XH+zi
-   Eeo+VpJsFQWdWAjqwsxVIW1BQ4EU6JO2Vei39/6UjFQraQsCZrBc39W0Z
-   JY46Vo1lBVuG4pn3Hecu9+Aw9kYvEONj1CYKJCaGXuiwMNfDDBZ++atRn
-   rS2d37B+106vjNpwLkILGSL6AYnAFA2ve3znfQbTxV/j5DVBAUMzvr7H7
-   w==;
-X-CSE-ConnectionGUID: 2Gf7c0wYTqyHCGSS0nPGrw==
-X-CSE-MsgGUID: TWdwYcYMRU6yGlqQZV63Fw==
-X-IronPort-AV: E=McAfee;i="6800,10657,11472"; a="52740974"
-X-IronPort-AV: E=Sophos;i="6.16,258,1744095600"; 
-   d="scan'208";a="52740974"
-Received: from fmviesa002.fm.intel.com ([10.60.135.142])
-  by orvoesa113.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 23 Jun 2025 03:08:14 -0700
-X-CSE-ConnectionGUID: b1RtfYh9QqGx1/7cVXdpcA==
-X-CSE-MsgGUID: lQO2/vW8TGuyVMaj/z1Yig==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.16,258,1744095600"; 
-   d="scan'208";a="175160611"
-Received: from abityuts-desk.ger.corp.intel.com (HELO kekkonen.fi.intel.com) ([10.245.244.8])
-  by fmviesa002-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 23 Jun 2025 03:08:11 -0700
-Received: from kekkonen.localdomain (localhost [127.0.0.1])
-	by kekkonen.fi.intel.com (Postfix) with ESMTP id 42C691201F7;
-	Mon, 23 Jun 2025 13:08:07 +0300 (EEST)
-Date: Mon, 23 Jun 2025 10:08:07 +0000
-Organization: Intel Finland Oy - BIC 0357606-4 - c/o Alberga Business Park, 6 krs, Bertel Jungin Aukio 5, 02600 Espoo
-From: Sakari Ailus <sakari.ailus@linux.intel.com>
-To: Heiko Stuebner <heiko@sntech.de>
-Cc: Olivier Benjamin <olivier.benjamin@bootlin.com>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Jacopo Mondi <jacopo.mondi@ideasonboard.com>,
-	Nicholas Roth <nicholas@rothemail.net>,
-	Mauro Carvalho Chehab <mchehab@kernel.org>,
-	Shawn Guo <shawnguo@kernel.org>,
-	Sascha Hauer <s.hauer@pengutronix.de>,
-	Pengutronix Kernel Team <kernel@pengutronix.de>,
-	Fabio Estevam <festevam@gmail.com>,
-	Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
-	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org,
-	linux-media@vger.kernel.org, Krzysztof Kozlowski <krzk@kernel.org>,
-	imx@lists.linux.dev, ~diederik/pine64-discuss@lists.sr.ht,
-	Dragan Simic <dsimic@manjaro.org>, Ondrej Jirman <megi@xff.cz>
-Subject: Re: [PATCH v4 0/4] Describe the cameras in the PinePhone Pro dts
-Message-ID: <aFknh7weIKoGKajQ@kekkonen.localdomain>
-References: <20250620-camera-v4-0-0201a8ed5fae@bootlin.com>
- <aFj4kAXEhrR4Wbnz@kekkonen.localdomain>
- <13788127.uLZWGnKmhe@phil>
+	s=arc-20240116; t=1750673314; c=relaxed/simple;
+	bh=rxytXpv5wo27moJlcA5NuL2zOOMcZuDo39JoSMJKbhc=;
+	h=Date:From:To:CC:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=vD3PnhWvcZmUZ5ZYs/7+JuTL5YyUVgVGyZwQTTnI+3Y9wyxiVJP9g4EkWijD4Qi2bBlc9mQTWotRVLHwaPKig5BTaNgyCEt4/pb8HjvxYCdErjWIsFzHnGXAAEM9EpSXCdRthpflLYGiaaHseNAM9A11763LKs+PR6enoIDUNfA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.18.186.216])
+	by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4bQkHC3zccz6HJrx;
+	Mon, 23 Jun 2025 18:05:43 +0800 (CST)
+Received: from frapeml500008.china.huawei.com (unknown [7.182.85.71])
+	by mail.maildlp.com (Postfix) with ESMTPS id 3CAAA1402EA;
+	Mon, 23 Jun 2025 18:08:10 +0800 (CST)
+Received: from localhost (10.203.177.66) by frapeml500008.china.huawei.com
+ (7.182.85.71) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.39; Mon, 23 Jun
+ 2025 12:08:09 +0200
+Date: Mon, 23 Jun 2025 11:08:08 +0100
+From: Jonathan Cameron <Jonathan.Cameron@huawei.com>
+To: Dan Williams <dan.j.williams@intel.com>
+CC: <linux-cxl@vger.kernel.org>, <linux-kernel@vger.kernel.org>, Linus
+ Torvalds <torvalds@linux-foundation.org>, Peter Zijlstra
+	<peterz@infradead.org>, Davidlohr Bueso <dave@stgolabs.net>, Dave Jiang
+	<dave.jiang@intel.com>, Alison Schofield <alison.schofield@intel.com>, Vishal
+ Verma <vishal.l.verma@intel.com>, Ira Weiny <ira.weiny@intel.com>
+Subject: Re: [PATCH v2 2/8] cxl/mbox: Convert poison list mutex to ACQUIRE()
+Message-ID: <20250623110808.00003fcb@huawei.com>
+In-Reply-To: <20250619050416.782871-3-dan.j.williams@intel.com>
+References: <20250619050416.782871-1-dan.j.williams@intel.com>
+	<20250619050416.782871-3-dan.j.williams@intel.com>
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.42; x86_64-w64-mingw32)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <13788127.uLZWGnKmhe@phil>
+Content-Type: text/plain; charset="US-ASCII"
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: lhrpeml100011.china.huawei.com (7.191.174.247) To
+ frapeml500008.china.huawei.com (7.182.85.71)
 
-Hi Heiko,
+On Wed, 18 Jun 2025 22:04:10 -0700
+Dan Williams <dan.j.williams@intel.com> wrote:
 
-On Mon, Jun 23, 2025 at 12:05:22PM +0200, Heiko Stuebner wrote:
-> Hi,
+> Towards removing all explicit unlock calls in the CXL subsystem, convert
+> the conditional poison list mutex to use a conditional lock guard.
 > 
-> Am Montag, 23. Juni 2025, 08:47:44 Mitteleuropäische Sommerzeit schrieb Sakari Ailus:
-> > Hi Olivier,
-> > 
-> > On Fri, Jun 20, 2025 at 05:21:31PM +0200, Olivier Benjamin wrote:
-> > > This series adds support for the Pine64 PinePhone Pro's rear and front
-> > > cameras in Device Tree.
-> > > This is based on some of Ondrej Jirman's patches hosted in his tree at
-> > > https://codeberg.org/megi/linux, but I have also fully reviewed and
-> > > re-written the code from the RK3399 datasheet, the PinePhone Pro
-> > > schematic, and the IMX258-0AQH5 software reference manual.
-> > > 
-> > > I have tested these changes on my PinePhone Pro and am able to take
-> > > photos from both cameras using libcamera's cam.
-> > > 
-> > > This series has raised a question about the proper label name for the
-> > > front/user camera and rear/world camera for phones.
-> > > This series is using "ucam" and "wcam", which is used in a few other
-> > > Rockship DTBs:
-> > >  - arch/arm64/boot/dts/rockchip/px30-evb.dts
-> > >  - rk3399-gru-scarlet.dtsi
-> > > 
-> > > Signed-off-by: Olivier Benjamin <olivier.benjamin@bootlin.com>
-> > 
-> > Thanks for the patches.
-> > 
-> > I've picked the first two in the set, presumably the rest will be merged
-> > via another tree?
+> Rename the lock to have the compiler validate that all existing call sites
+> are converted.
 > 
-> correct, and with the first two being applied, I can now also safely pick
-> the other two :-)
+> Cc: Linus Torvalds <torvalds@linux-foundation.org>
+> Cc: Peter Zijlstra <peterz@infradead.org>
+> Cc: Davidlohr Bueso <dave@stgolabs.net>
+> Cc: Jonathan Cameron <jonathan.cameron@huawei.com>
+> Cc: Dave Jiang <dave.jiang@intel.com>
+> Cc: Alison Schofield <alison.schofield@intel.com>
+> Cc: Vishal Verma <vishal.l.verma@intel.com>
+> Cc: Ira Weiny <ira.weiny@intel.com>
+> Signed-off-by: Dan Williams <dan.j.williams@intel.com>
 
-Once in my tree, they'll next end up to the media committers' tree and
-after some time you should be able to find them in linux-next. This process
-will take some time. Just FYI.
+One trivial inline. Either way
 
--- 
-Sakari Ailus
+Reviewed-by: Jonathan Cameron <jonathan.cameron@huawei.com>
+
+> ---
+>  drivers/cxl/core/mbox.c | 7 +++----
+>  drivers/cxl/cxlmem.h    | 4 ++--
+>  2 files changed, 5 insertions(+), 6 deletions(-)
+> 
+> diff --git a/drivers/cxl/core/mbox.c b/drivers/cxl/core/mbox.c
+> index 2689e6453c5a..81b21effe8cf 100644
+> --- a/drivers/cxl/core/mbox.c
+> +++ b/drivers/cxl/core/mbox.c
+> @@ -1401,8 +1401,8 @@ int cxl_mem_get_poison(struct cxl_memdev *cxlmd, u64 offset, u64 len,
+>  	int nr_records = 0;
+>  	int rc;
+>  
+> -	rc = mutex_lock_interruptible(&mds->poison.lock);
+> -	if (rc)
+> +	ACQUIRE(mutex_intr, lock)(&mds->poison.mutex);
+
+I'd slightly prefer the 'canonical' style from the cleanup.h docs in previous patch.
+
+	rc = ACQUIRE_ERR(mutex_intr, &lock);
+	if (rc)
+		return rc;
+
+> +	if ((rc = ACQUIRE_ERR(mutex_intr, &lock)))
+>  		return rc;
+>  
+>  	po = mds->poison.list_out;
+> @@ -1437,7 +1437,6 @@ int cxl_mem_get_poison(struct cxl_memdev *cxlmd, u64 offset, u64 len,
+>  		}
+>  	} while (po->flags & CXL_POISON_FLAG_MORE);
+>  
+> -	mutex_unlock(&mds->poison.lock);
+>  	return rc;
+>  }
+>  EXPORT_SYMBOL_NS_GPL(cxl_mem_get_poison, "CXL");
+> @@ -1473,7 +1472,7 @@ int cxl_poison_state_init(struct cxl_memdev_state *mds)
+>  		return rc;
+>  	}
+>  
+> -	mutex_init(&mds->poison.lock);
+> +	mutex_init(&mds->poison.mutex);
+>  	return 0;
+>  }
+>  EXPORT_SYMBOL_NS_GPL(cxl_poison_state_init, "CXL");
+> diff --git a/drivers/cxl/cxlmem.h b/drivers/cxl/cxlmem.h
+> index 551b0ba2caa1..f5b20641e57c 100644
+> --- a/drivers/cxl/cxlmem.h
+> +++ b/drivers/cxl/cxlmem.h
+> @@ -254,7 +254,7 @@ enum security_cmd_enabled_bits {
+>   * @max_errors: Maximum media error records held in device cache
+>   * @enabled_cmds: All poison commands enabled in the CEL
+>   * @list_out: The poison list payload returned by device
+> - * @lock: Protect reads of the poison list
+> + * @mutex: Protect reads of the poison list
+>   *
+>   * Reads of the poison list are synchronized to ensure that a reader
+>   * does not get an incomplete list because their request overlapped
+> @@ -265,7 +265,7 @@ struct cxl_poison_state {
+>  	u32 max_errors;
+>  	DECLARE_BITMAP(enabled_cmds, CXL_POISON_ENABLED_MAX);
+>  	struct cxl_mbox_poison_out *list_out;
+> -	struct mutex lock;  /* Protect reads of poison list */
+> +	struct mutex mutex;  /* Protect reads of poison list */
+>  };
+>  
+>  /*
+
 
