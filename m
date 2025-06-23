@@ -1,141 +1,119 @@
-Return-Path: <linux-kernel+bounces-698001-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-698006-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0A589AE3BA3
-	for <lists+linux-kernel@lfdr.de>; Mon, 23 Jun 2025 12:05:55 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id B1999AE3BBA
+	for <lists+linux-kernel@lfdr.de>; Mon, 23 Jun 2025 12:08:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8889C17668A
-	for <lists+linux-kernel@lfdr.de>; Mon, 23 Jun 2025 10:05:13 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0C2977AD215
+	for <lists+linux-kernel@lfdr.de>; Mon, 23 Jun 2025 10:04:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7D1CA23A9B0;
-	Mon, 23 Jun 2025 10:04:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C58AA238C21;
+	Mon, 23 Jun 2025 10:05:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ventanamicro.com header.i=@ventanamicro.com header.b="Hi/ggJub"
-Received: from mail-wr1-f42.google.com (mail-wr1-f42.google.com [209.85.221.42])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b="L86h1ro2"
+Received: from gloria.sntech.de (gloria.sntech.de [185.11.138.130])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2C2DA2A1C9
-	for <linux-kernel@vger.kernel.org>; Mon, 23 Jun 2025 10:04:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BC11BB663;
+	Mon, 23 Jun 2025 10:05:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.11.138.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750673074; cv=none; b=XWjWs1c/fJg+ID8QUeejRZfq7hgPGRWsQAcSNBkrn1YSeWdburNk8i8rYddeg3ecko5Bw0glPipLjhQgwZehWBUO/zHG01B3ZcTqS2N1y2d3UFcmAq7cmG28qijokXM+3lGHqGMLFyDNUW/1/Mv3wHFMeoTfWCmsS/MYr0rnNcI=
+	t=1750673135; cv=none; b=Lv2KkVPW+vN/B8ltHY1DUztU/geiNAJqdcswuFsdSHX8Xo8plX94t/JfrovGopa2mFMmJHk1kjKhkDRvGpyDfN+NZejym2YoJTIOEJWt64b4N+NsmDnUenjV8SXez3vpLH/Ik5MNF8F97Gzk/W7lT13E/EN1wuMCEiDXs4evjp8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750673074; c=relaxed/simple;
-	bh=JQDW2gTsoLVK187JuY0wEWiF6jBFSRBP7iPLXBKcrBk=;
-	h=Mime-Version:Content-Type:Date:Message-Id:Subject:Cc:To:From:
-	 References:In-Reply-To; b=hvRJedT+nxUwZ83TXUS2hXIqlphFzH7nTLBRMikv4kgSqyJmy1iRbd7VR4voPuI1c7Att872SstQn6SZyY5TCYSlLkz5EU1EUYkB67giFzOdoipPkVXWcwQDD0qxZ5r7C6FPE6s9hiezFImBIfV7cIDfcyqDku0/k1QmW2iobOU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ventanamicro.com; spf=pass smtp.mailfrom=ventanamicro.com; dkim=pass (2048-bit key) header.d=ventanamicro.com header.i=@ventanamicro.com header.b=Hi/ggJub; arc=none smtp.client-ip=209.85.221.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ventanamicro.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ventanamicro.com
-Received: by mail-wr1-f42.google.com with SMTP id ffacd0b85a97d-3a4e575db1aso189470f8f.2
-        for <linux-kernel@vger.kernel.org>; Mon, 23 Jun 2025 03:04:32 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ventanamicro.com; s=google; t=1750673071; x=1751277871; darn=vger.kernel.org;
-        h=in-reply-to:references:from:to:cc:subject:message-id:date
-         :content-transfer-encoding:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=q72uVLN6Dd/lEgG34G+gl19V3OHTLM7bT/jbIRgpIbI=;
-        b=Hi/ggJub9mtTLPb6UUgm9Vo42fb7WIis5vUo0kXcUjBHUkbFxRTD/vhqYcPpUnhy+o
-         wTr3QviXRYrpVLK2XD08TuOEe+zK+K5FSahT89tah/UT52xMQBV/RJVNX66q70gKbgEU
-         J9QMW0XFECw191RawhilpSlavFToBKgxTs+f5mrvK5twmrNfkLZ6IXlPgB3Y+0Zx5O2X
-         FeSCTvlU6haoQVGfe/lKHXLoPnMbpm9gSMnFVS9jC7NeDSZzd9CSkHNn33lZPhBpZ3QF
-         +jBPidHflxTiYZJZ0OiMw8yQPySeQ3OdmDNsVwk4NNk9kQS7znPBt8EO5uNs0qhBIqqQ
-         Vozw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1750673071; x=1751277871;
-        h=in-reply-to:references:from:to:cc:subject:message-id:date
-         :content-transfer-encoding:mime-version:x-gm-message-state:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=q72uVLN6Dd/lEgG34G+gl19V3OHTLM7bT/jbIRgpIbI=;
-        b=vDf0uDDCWVMR4h6lkZCx4tJ9oVB/AdgQfevEUOKdyr7tmSeEichI3ZgONCUEFuOkD3
-         wuLXfdaEWMmAmIVR9olus79E1rI70IIC2hjE45wdHsJUKxbeM8oIGGh2mRqLbBVJQs6G
-         QaqCl5QCd/1nL16n/cLo3w6AthKkwdVIXCjvj2Xnr/68tsvMNL94UqLZkiquFBg6Xm6W
-         o92LPncjJLVIeJGHqJZ6I/W5aX5LQypVK6Lhfw6H43mSbE2QSF4mXwuhyxN9NyOl/aVd
-         dtXP3wF84n4DxcDYWaJSF2IWDcvK+/ELIX7m+uonDpW+57BRzLXHauGZv/8TNMueYgOp
-         wdOA==
-X-Forwarded-Encrypted: i=1; AJvYcCXg6DZDGI8UeJi/KJ4MqdB8c01TmzRxppY3az5CBdL4aWzIK/SqJb7jVa1L8fw2Tk8na0unNPrwceCM2xs=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyMbvplDkCig/wK8U/hXnTE1j9AVnAqNap3J9SgziOPiEwlTED/
-	cJ5c4llHlQ92FJFsl89gz1ZnKFO94wE8o3Cwbv+bQdv26v3wilKazlxxyBf2H9adKdeNB3RjgkY
-	UMWTn/LY=
-X-Gm-Gg: ASbGnctfHCysbsS8WSGWUYqRu+ZG5SsYru4cMtThC6gx9WS+s8YLncpSKgMhDbAlhsw
-	8Mx7sxvf/FO/CO7f1NAVNIiumHC2gKxCQLTQG2oNAAX+i25wOlbEr1fCo5LjBMT5M+jdMVjkIhZ
-	YIYlGx5rU/3ucFl9c5q1iZMlckRESKcLREUxWmiJqFSEtIll9B3rjxB7/XzimUQnyxFJz+kWcoT
-	BGY1aQ4Com6GMVWAJPEa8C/ypi/4Xnz8zvFFWAMTxa09EjcleBR+7qdR2rsWrDB7e2mLu0YllJ0
-	N5hqlc6shlFN3sat0sM5OEPxOIji4K3BmmHckkUMjTtauovuI4DlfxYL8AomstD8Rio=
-X-Google-Smtp-Source: AGHT+IFs2pQCa+3bKTkdor2w3FPfdSYUbedMYRtHjGttAZlhUfRN/r/Qxtzp7NLRxL4SrXakOUW0PA==
-X-Received: by 2002:a05:6000:24c8:b0:3a4:e193:e6e7 with SMTP id ffacd0b85a97d-3a6d12e995amr3291773f8f.5.1750673071422;
-        Mon, 23 Jun 2025 03:04:31 -0700 (PDT)
-Received: from localhost ([2a02:8308:a00c:e200:8947:973b:de:93b7])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3a6d0f19f9esm9077130f8f.39.2025.06.23.03.04.30
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 23 Jun 2025 03:04:31 -0700 (PDT)
+	s=arc-20240116; t=1750673135; c=relaxed/simple;
+	bh=vr/v7+HNQA9PBO0CTD04rUzWOcoal2+aqe6MzSRZyaA=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=hbwjEjoMcDo8kWNV01BgbX55KvWBmNP3tZjFuPWeTZhdO8MQQ8brXH1MaGIc8SwPIQftMm3beYyUogNn6tD/lE/KhOJEZo80sENPQEqXfHOPgncII+WQjTKML+PW3wNcqzjBAV19fz6vkgWhHjrgvHETadrZtGjl8bhqr6Rr920=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de; spf=pass smtp.mailfrom=sntech.de; dkim=pass (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b=L86h1ro2; arc=none smtp.client-ip=185.11.138.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sntech.de
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sntech.de;
+	s=gloria202408; h=Content-Type:Content-Transfer-Encoding:MIME-Version:
+	References:In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Reply-To;
+	bh=CwBZWncXMFHUNfKxRF00wCCVLbZJy1TDoDay/M48Z+I=; b=L86h1ro29XqjaL+eCgRkkXLern
+	75+0ic4ZPZQA9jgsZHU+m6s6A2g1sjBn8ch86nVuI/mPsm+t10x6oPsYBhqLPIQIrNtzVhkQykPlD
+	GS6K5lvxSgSfYFgxVCGxHbCyZJr9sJG8cHlMxOsXGWp3xZSWPA+YRD0J0ug3eUzpFk8RG8q4SVWqQ
+	TOR2KrK1AeFq1O+2IjRT6Sxz8JfV9KsVPDxIse6QRLv8ohmlIyxP9kaPKQw4t3nnlQoZnyzyHIkQL
+	h6O0JmWJF9FZOYiJ72bt6fz7XaHXYoqvT90EPSJ6+HRhkGFcR9xFgmumcVFR0doDchPrQUOcr2uVj
+	k3uVs64Q==;
+Received: from [185.15.108.45] (helo=phil.localnet)
+	by gloria.sntech.de with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.94.2)
+	(envelope-from <heiko@sntech.de>)
+	id 1uTe3H-00084G-Br; Mon, 23 Jun 2025 12:05:23 +0200
+From: Heiko Stuebner <heiko@sntech.de>
+To: Olivier Benjamin <olivier.benjamin@bootlin.com>,
+ Sakari Ailus <sakari.ailus@linux.intel.com>
+Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>,
+ Jacopo Mondi <jacopo.mondi@ideasonboard.com>,
+ Nicholas Roth <nicholas@rothemail.net>,
+ Mauro Carvalho Chehab <mchehab@kernel.org>, Shawn Guo <shawnguo@kernel.org>,
+ Sascha Hauer <s.hauer@pengutronix.de>,
+ Pengutronix Kernel Team <kernel@pengutronix.de>,
+ Fabio Estevam <festevam@gmail.com>,
+ Thomas Petazzoni <thomas.petazzoni@bootlin.com>, devicetree@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-rockchip@lists.infradead.org,
+ linux-kernel@vger.kernel.org, linux-media@vger.kernel.org,
+ Krzysztof Kozlowski <krzk@kernel.org>, imx@lists.linux.dev,
+ ~diederik/pine64-discuss@lists.sr.ht, Dragan Simic <dsimic@manjaro.org>,
+ Ondrej Jirman <megi@xff.cz>
+Subject: Re: [PATCH v4 0/4] Describe the cameras in the PinePhone Pro dts
+Date: Mon, 23 Jun 2025 12:05:22 +0200
+Message-ID: <13788127.uLZWGnKmhe@phil>
+In-Reply-To: <aFj4kAXEhrR4Wbnz@kekkonen.localdomain>
+References:
+ <20250620-camera-v4-0-0201a8ed5fae@bootlin.com>
+ <aFj4kAXEhrR4Wbnz@kekkonen.localdomain>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
+MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
-Date: Mon, 23 Jun 2025 12:04:30 +0200
-Message-Id: <DATTT5U64J4L.3UTDRVT2YP7GT@ventanamicro.com>
-Subject: Re: [External] Re: [PATCH] RISC-V: KVM: Delegate illegal
- instruction fault
-Cc: <anup@brainfault.org>, <atish.patra@linux.dev>,
- <paul.walmsley@sifive.com>, <palmer@dabbelt.com>, <aou@eecs.berkeley.edu>,
- <alex@ghiti.fr>, <kvm@vger.kernel.org>, <kvm-riscv@lists.infradead.org>,
- <linux-riscv@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
- "linux-riscv" <linux-riscv-bounces@lists.infradead.org>
-To: "Xu Lu" <luxu.kernel@bytedance.com>
-From: =?utf-8?q?Radim_Kr=C4=8Dm=C3=A1=C5=99?= <rkrcmar@ventanamicro.com>
-References: <20250620091720.85633-1-luxu.kernel@bytedance.com>
- <DARCHDIZG7IP.2VTEVNMVX8R1E@ventanamicro.com>
- <CAPYmKFvcnDJWXAUEX8oY6seQrgwKiZjDqrJ_R2rJ4kWq7RQUSg@mail.gmail.com>
-In-Reply-To: <CAPYmKFvcnDJWXAUEX8oY6seQrgwKiZjDqrJ_R2rJ4kWq7RQUSg@mail.gmail.com>
+Content-Type: text/plain; charset="utf-8"
 
-2025-06-22T18:11:49+08:00, Xu Lu <luxu.kernel@bytedance.com>:
-> Hi Radim,
->
-> On Fri, Jun 20, 2025 at 8:04=E2=80=AFPM Radim Kr=C4=8Dm=C3=A1=C5=99 <rkrc=
-mar@ventanamicro.com> wrote:
->>
->> 2025-06-20T17:17:20+08:00, Xu Lu <luxu.kernel@bytedance.com>:
->> > Delegate illegal instruction fault to VS mode in default to avoid such
->> > exceptions being trapped to HS and redirected back to VS.
->> >
->> > Signed-off-by: Xu Lu <luxu.kernel@bytedance.com>
->> > ---
->> > diff --git a/arch/riscv/include/asm/kvm_host.h b/arch/riscv/include/as=
-m/kvm_host.h
->> > @@ -48,6 +48,7 @@
->> > +                                      BIT(EXC_INST_ILLEGAL)    | \
->>
->> You should also remove the dead code in kvm_riscv_vcpu_exit.
->
-> I only want to delegate it by default. And KVM may still want to
-> delegate different exceptions for different VMs like what it does for
-> EXC_BREAKPOINT.
+Hi,
 
-(I think we could easily reintroduce the code if KVM wants to do that in
- the future.  I also think that it's bad that this patch is doing an
- observable change without userspace involvement -- the counting of KVM
- SBI PMU events, but others will probably disagree with me on this.)
+Am Montag, 23. Juni 2025, 08:47:44 Mitteleurop=C3=A4ische Sommerzeit schrie=
+b Sakari Ailus:
+> Hi Olivier,
+>=20
+> On Fri, Jun 20, 2025 at 05:21:31PM +0200, Olivier Benjamin wrote:
+> > This series adds support for the Pine64 PinePhone Pro's rear and front
+> > cameras in Device Tree.
+> > This is based on some of Ondrej Jirman's patches hosted in his tree at
+> > https://codeberg.org/megi/linux, but I have also fully reviewed and
+> > re-written the code from the RK3399 datasheet, the PinePhone Pro
+> > schematic, and the IMX258-0AQH5 software reference manual.
+> >=20
+> > I have tested these changes on my PinePhone Pro and am able to take
+> > photos from both cameras using libcamera's cam.
+> >=20
+> > This series has raised a question about the proper label name for the
+> > front/user camera and rear/world camera for phones.
+> > This series is using "ucam" and "wcam", which is used in a few other
+> > Rockship DTBs:
+> >  - arch/arm64/boot/dts/rockchip/px30-evb.dts
+> >  - rk3399-gru-scarlet.dtsi
+> >=20
+> > Signed-off-by: Olivier Benjamin <olivier.benjamin@bootlin.com>
+>=20
+> Thanks for the patches.
+>=20
+> I've picked the first two in the set, presumably the rest will be merged
+> via another tree?
 
->                 So maybe it is better to reserve these codes?
+correct, and with the first two being applied, I can now also safely pick
+the other two :-)
 
-Possibly, the current is acceptable if you have considered the
-implications on PMU events.
+Thanks a lot
+Heiko
 
->> And why not delegate the others as well?
->> (EXC_LOAD_MISALIGNED, EXC_STORE_MISALIGNED, EXC_LOAD_ACCESS,
->>  EXC_STORE_ACCESS, and EXC_INST_ACCESS.)
->
-> Thanks for the reminder. I will have a test and resend the patch if it wo=
-rks.
 
-The misaligned exceptions are already being worked on, so don't waste
-your time on them, sorry.
+
 
