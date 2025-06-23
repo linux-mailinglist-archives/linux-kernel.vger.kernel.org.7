@@ -1,212 +1,172 @@
-Return-Path: <linux-kernel+bounces-697735-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-697724-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 99CB4AE37FD
-	for <lists+linux-kernel@lfdr.de>; Mon, 23 Jun 2025 10:11:16 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 683A4AE37CC
+	for <lists+linux-kernel@lfdr.de>; Mon, 23 Jun 2025 10:05:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C1E003A6273
-	for <lists+linux-kernel@lfdr.de>; Mon, 23 Jun 2025 08:10:31 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 16254188AC0C
+	for <lists+linux-kernel@lfdr.de>; Mon, 23 Jun 2025 08:05:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 11E5C21B9F6;
-	Mon, 23 Jun 2025 08:10:07 +0000 (UTC)
-Received: from relmlie5.idc.renesas.com (relmlor1.renesas.com [210.160.252.171])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 283B620E005;
-	Mon, 23 Jun 2025 08:10:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.160.252.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D18A813AA2A;
+	Mon, 23 Jun 2025 08:05:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="pwY4oUm0"
+Received: from mout.web.de (mout.web.de [212.227.17.12])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B64A952F88;
+	Mon, 23 Jun 2025 08:05:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.17.12
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750666206; cv=none; b=BPREDsTH0PrlAHrHgyaGys1eDN0m3qmL2bK6yW7dcO3uGuPlWoe2r5aIIPiGv9YeeoIUcsr6E32C68NR3sLQ95Mic+DnNO5O95Is88qVLppaIFaShnQc2dPDlOVHpF0dJ4zBDYAovcQ1lkEEpuKGYlyGvJCg8Jj5MY3apFln6QU=
+	t=1750665935; cv=none; b=q2GlslfkYv3BY9Jy+uCMrK1VCzHpx7waUEEOdc0Yh1hlsSWefZnwF0NFTN6piQ90/QmZ4lSLochualE22Fls62iRIyV2B7jG9pB1l0xpyi3D0dvbpjqc8zS7h3U+K5bV0TzrDTzIlmllZkXDy8aWs7HsV37bwLRlyueXv/wsLwY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750666206; c=relaxed/simple;
-	bh=LHjaOxQCCmOqCb0BNa1AEbs2pvRMQ7V7oDWIHuI2aYQ=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=nVZrIx3XsHr5WetrDvu1LhcUJMbDRNXjNup8A3uindje19wXDn2b3r88Wx7/iiLiSkmLOiuN4tPhgyvCodWEBnjmd1f9/UH7Ult8/oNnEW9EGAeHEWZ0Z+o0LyAZPrf6RhXdxUyl3tGddwUBh17dzaTBTmHWoSJWtsYX6UPIOTs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=bp.renesas.com; spf=pass smtp.mailfrom=bp.renesas.com; arc=none smtp.client-ip=210.160.252.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=bp.renesas.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bp.renesas.com
-X-CSE-ConnectionGUID: pDikAHcWRF+Tj0fp5tqWNw==
-X-CSE-MsgGUID: FLrClAvMQmefBEod9XJgmA==
-Received: from unknown (HELO relmlir5.idc.renesas.com) ([10.200.68.151])
-  by relmlie5.idc.renesas.com with ESMTP; 23 Jun 2025 17:04:55 +0900
-Received: from ubuntu.adwin.renesas.com (unknown [10.226.93.157])
-	by relmlir5.idc.renesas.com (Postfix) with ESMTP id 1603E400F744;
-	Mon, 23 Jun 2025 17:04:50 +0900 (JST)
-From: John Madieu <john.madieu.xa@bp.renesas.com>
-To: geert+renesas@glider.be,
-	magnus.damm@gmail.com,
-	robh@kernel.org,
-	krzk+dt@kernel.org,
-	conor+dt@kernel.org,
-	mturquette@baylibre.com,
-	sboyd@kernel.org,
-	richardcochran@gmail.com
-Cc: linux-renesas-soc@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-clk@vger.kernel.org,
-	netdev@vger.kernel.org,
-	biju.das.jz@bp.renesas.com,
-	John Madieu <john.madieu.xa@bp.renesas.com>
-Subject: [PATCH v3 3/3] arm64: dts: renesas: rzg3e-smarc-som: Enable eth{0-1} (GBETH) interfaces
-Date: Mon, 23 Jun 2025 10:04:05 +0200
-Message-ID: <20250623080405.355083-4-john.madieu.xa@bp.renesas.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20250623080405.355083-1-john.madieu.xa@bp.renesas.com>
-References: <20250623080405.355083-1-john.madieu.xa@bp.renesas.com>
+	s=arc-20240116; t=1750665935; c=relaxed/simple;
+	bh=NPasebUaAcEImAJDpuMO6PZ8PRDkik1d/ZK9eOZPx6o=;
+	h=Message-ID:Date:MIME-Version:Subject:From:To:References:Cc:
+	 In-Reply-To:Content-Type; b=becDANpBcKlUN9QKtAzeS5xdyltOvV6Fl6v493vfEJPKnW6KdWSbnZwCG8o6b2Yws/3mMtl3NMF9Zil8hIb1SierEbNEnsjvGf+xTslfDRGgYDuFgEMBszCYKQ2LgpyrTufaRtWejWj+2u/7KGl9zQMXdK+5zIJiouUeZeoS6OA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=pwY4oUm0; arc=none smtp.client-ip=212.227.17.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
+	s=s29768273; t=1750665924; x=1751270724; i=markus.elfring@web.de;
+	bh=0CeWndhcNIl5hI2uPV3nNRmJbfN7h9Zt3nquQBuC0Ks=;
+	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:Subject:From:To:
+	 References:Cc:In-Reply-To:Content-Type:Content-Transfer-Encoding:
+	 cc:content-transfer-encoding:content-type:date:from:message-id:
+	 mime-version:reply-to:subject:to;
+	b=pwY4oUm0X8NLIU2rLJHYOoeWIpzQNf5qCqhTTVP+/0t+SwnpoGtMiQS+cjGJG3yl
+	 9KYRljd48Y9R3tmcF5zDL7m/5Za2HgbU2CsF7lkxpveecz2Li7LPtnFvi0qCJ51Tj
+	 oz7BCFvEmJuF4IFJHmz+lledSN5tJhNccU/nQGx3TVfVR6xeBlPZFR4N0v7VEyOGw
+	 HSB3GGBSryU/H0Gm4fjEjBreuTlPvKFBzLtbbl+I1ljcqaK/MdUPbcPeadICNzP6W
+	 Q1KXSHMJA9cuK/OlV1b/gml0aSHLZqaftG2JlPNtPeyRHHN/Hy0Q3T/8JadmbBSYB
+	 J3r+OMzPQUd9TYpALg==
+X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
+Received: from [192.168.178.29] ([94.31.92.229]) by smtp.web.de (mrweb105
+ [213.165.67.124]) with ESMTPSA (Nemesis) id 1MyNwk-1ufvs81wrc-016rg7; Mon, 23
+ Jun 2025 10:05:24 +0200
+Message-ID: <481faa1d-7171-4657-8dc0-c37b153e6eaa@web.de>
+Date: Mon, 23 Jun 2025 10:05:15 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: Passing code replacements by APIs (for SmPL)?
+From: Markus Elfring <Markus.Elfring@web.de>
+To: cocci@inria.fr, kernel-janitors@vger.kernel.org
+References: <2dc257b4-d310-47dd-90ea-9b081727be2a@web.de>
+Content-Language: en-GB, de-DE
+Cc: LKML <linux-kernel@vger.kernel.org>
+In-Reply-To: <2dc257b4-d310-47dd-90ea-9b081727be2a@web.de>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Provags-ID: V03:K1:MilD3xF2BpV/G3Yl0V/B62GKXM0vi87bwwAPv1k71aM7uonjTxf
+ PhxboLO9VVpPUpcnZqXhJYsAgvJdnDeh1acHJpa/x/ivXWPw7S+rDhi9Eqkrj8dY/6KCM2d
+ lvjBKEuQzUK+GEnxp6HcjWivJetfPN85vbnIkTkMbuYFJUmdDu+4MthYi3OAfFuEHiBlIXF
+ I2NpZ9guKyRzxxUOYgwsw==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:fvz84xA5Omc=;U5cZQXExZgzxEV8r85OjEiAl5V8
+ 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
+ glpj8URqhziWtOBq8rHVNGSZIN+lPTl2RI/ofg==
 
-Enable the Gigabit Ethernet Interfaces (GBETH) populated on the RZ/G3E SMARC EVK
+> Desirable source code adjustments can also be generated into SmPL script variants.
 
-Reviewed-by: Biju Das <biju.das.jz@bp.renesas.com>
-Tested-by: Biju Das <biju.das.jz@bp.renesas.com>
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Signed-off-by: John Madieu <john.madieu.xa@bp.renesas.com>
----
+Will any more software users get further development ideas from an SmPL script
+like the following?
 
-Changes:
 
-v2:
-No changes but resending without dt-bindings patch
+// See also:
+// https://elixir.bootlin.com/linux/v6.16-rc2/source/include/uapi/linux/usb/ch9.h#L472-L678
+@initialize:python@
+@@
+import sys
+x = {}
 
-v3:
-Updates mdio separately, based on phandles instead of node redefinition
+def store_data(action, input, code):
+    """Add information to an internal data structure."""
+    x[code] = (action, input)
 
- .../boot/dts/renesas/rzg3e-smarc-som.dtsi     | 98 +++++++++++++++++++
- 1 file changed, 98 insertions(+)
+@find@
+expression e;
+identifier action, input;
+type input_type, return_type != void;
+@@
+ static inline return_type action(input_type input)
+ {
+ return e;
+ }
 
-diff --git a/arch/arm64/boot/dts/renesas/rzg3e-smarc-som.dtsi b/arch/arm64/boot/dts/renesas/rzg3e-smarc-som.dtsi
-index f99a09d04ddd..2281ec05c1f5 100644
---- a/arch/arm64/boot/dts/renesas/rzg3e-smarc-som.dtsi
-+++ b/arch/arm64/boot/dts/renesas/rzg3e-smarc-som.dtsi
-@@ -26,6 +26,8 @@ / {
- 	compatible = "renesas,rzg3e-smarcm", "renesas,r9a09g047e57", "renesas,r9a09g047";
- 
- 	aliases {
-+		ethernet0 = &eth0;
-+		ethernet1 = &eth1;
- 		i2c2 = &i2c2;
- 		mmc0 = &sdhi0;
- 		mmc2 = &sdhi2;
-@@ -77,6 +79,24 @@ &audio_extal_clk {
- 	clock-frequency = <48000000>;
- };
- 
-+&eth0 {
-+	phy-handle = <&phy0>;
-+	phy-mode = "rgmii-id";
-+
-+	pinctrl-0 = <&eth0_pins>;
-+	pinctrl-names = "default";
-+	status = "okay";
-+};
-+
-+&eth1 {
-+	phy-handle = <&phy1>;
-+	phy-mode = "rgmii-id";
-+
-+	pinctrl-0 = <&eth1_pins>;
-+	pinctrl-names = "default";
-+	status = "okay";
-+};
-+
- &gpu {
- 	status = "okay";
- 	mali-supply = <&reg_vdd0p8v_others>;
-@@ -102,7 +122,85 @@ raa215300: pmic@12 {
- 	};
- };
- 
-+&mdio0 {
-+	phy0: ethernet-phy@7 {
-+		compatible = "ethernet-phy-id0022.1640",
-+			     "ethernet-phy-ieee802.3-c22";
-+		reg = <7>;
-+		interrupts-extended = <&icu 3 IRQ_TYPE_LEVEL_LOW>;
-+		rxc-skew-psec = <1400>;
-+		txc-skew-psec = <1400>;
-+		rxdv-skew-psec = <0>;
-+		txdv-skew-psec = <0>;
-+		rxd0-skew-psec = <0>;
-+		rxd1-skew-psec = <0>;
-+		rxd2-skew-psec = <0>;
-+		rxd3-skew-psec = <0>;
-+		txd0-skew-psec = <0>;
-+		txd1-skew-psec = <0>;
-+		txd2-skew-psec = <0>;
-+		txd3-skew-psec = <0>;
-+	};
-+};
-+
-+&mdio1 {
-+	phy1: ethernet-phy@7 {
-+		compatible = "ethernet-phy-id0022.1640",
-+			     "ethernet-phy-ieee802.3-c22";
-+		reg = <7>;
-+		interrupts-extended = <&icu 16 IRQ_TYPE_LEVEL_LOW>;
-+		rxc-skew-psec = <1400>;
-+		txc-skew-psec = <1400>;
-+		rxdv-skew-psec = <0>;
-+		txdv-skew-psec = <0>;
-+		rxd0-skew-psec = <0>;
-+		rxd1-skew-psec = <0>;
-+		rxd2-skew-psec = <0>;
-+		rxd3-skew-psec = <0>;
-+		txd0-skew-psec = <0>;
-+		txd1-skew-psec = <0>;
-+		txd2-skew-psec = <0>;
-+		txd3-skew-psec = <0>;
-+	};
-+};
-+
- &pinctrl {
-+	eth0_pins: eth0 {
-+		pinmux = <RZG3E_PORT_PINMUX(A, 1, 1)>, /* MDC */
-+			 <RZG3E_PORT_PINMUX(A, 0, 1)>, /* MDIO */
-+			 <RZG3E_PORT_PINMUX(C, 2, 15)>, /* PHY_INTR (IRQ2) */
-+			 <RZG3E_PORT_PINMUX(C, 1, 1)>, /* RXD3 */
-+			 <RZG3E_PORT_PINMUX(C, 0, 1)>, /* RXD2 */
-+			 <RZG3E_PORT_PINMUX(B, 7, 1)>, /* RXD1 */
-+			 <RZG3E_PORT_PINMUX(B, 6, 1)>, /* RXD0 */
-+			 <RZG3E_PORT_PINMUX(B, 0, 1)>, /* RXC */
-+			 <RZG3E_PORT_PINMUX(A, 2, 1)>, /* RX_CTL */
-+			 <RZG3E_PORT_PINMUX(B, 5, 1)>, /* TXD3 */
-+			 <RZG3E_PORT_PINMUX(B, 4, 1)>, /* TXD2 */
-+			 <RZG3E_PORT_PINMUX(B, 3, 1)>, /* TXD1 */
-+			 <RZG3E_PORT_PINMUX(B, 2, 1)>, /* TXD0 */
-+			 <RZG3E_PORT_PINMUX(B, 1, 1)>, /* TXC */
-+			 <RZG3E_PORT_PINMUX(A, 3, 1)>; /* TX_CTL */
-+	};
-+
-+	eth1_pins: eth1 {
-+		pinmux = <RZG3E_PORT_PINMUX(D, 1, 1)>, /* MDC */
-+			 <RZG3E_PORT_PINMUX(D, 0, 1)>, /* MDIO */
-+			 <RZG3E_PORT_PINMUX(F, 2, 15)>, /* PHY_INTR (IRQ15) */
-+			 <RZG3E_PORT_PINMUX(F, 1, 1)>, /* RXD3 */
-+			 <RZG3E_PORT_PINMUX(F, 0, 1)>, /* RXD2 */
-+			 <RZG3E_PORT_PINMUX(E, 7, 1)>, /* RXD1 */
-+			 <RZG3E_PORT_PINMUX(E, 6, 1)>, /* RXD0 */
-+			 <RZG3E_PORT_PINMUX(E, 0, 1)>, /* RXC */
-+			 <RZG3E_PORT_PINMUX(D, 2, 1)>, /* RX_CTL */
-+			 <RZG3E_PORT_PINMUX(E, 5, 1)>, /* TXD3 */
-+			 <RZG3E_PORT_PINMUX(E, 4, 1)>, /* TXD2 */
-+			 <RZG3E_PORT_PINMUX(E, 3, 1)>, /* TXD1 */
-+			 <RZG3E_PORT_PINMUX(E, 2, 1)>, /* TXD0 */
-+			 <RZG3E_PORT_PINMUX(E, 1, 1)>, /* TXC */
-+			 <RZG3E_PORT_PINMUX(D, 3, 1)>; /* TX_CTL */
-+	};
-+
- 	i2c2_pins: i2c {
- 		pinmux = <RZG3E_PORT_PINMUX(3, 4, 1)>, /* SCL2 */
- 			 <RZG3E_PORT_PINMUX(3, 5, 1)>; /* SDA2 */
--- 
-2.25.1
+@script:python collection@
+action << find.action;
+input << find.input;
+code << find.e;
+@@
+store_data(action, input, code)
 
+@finalize:python@
+@@
+if x:
+   sys.stdout.write("@replacements@\nconst struct usb_endpoint_descriptor *epd;\n@@\n(\n")
+   sys.stdout.write("|\n".join("-{}\n+{}({})\n".format(key, value[0], value[1])
+                    for key, value in x.items()))
+   sys.stdout.write(")\n")
+else:
+   sys.stderr.write("No result for this analysis!\n")
+
+
+
+Would you become interested to convert contents from any header (or source) files
+into more advanced transformation approaches?
+
+Regards,
+Markus
 
