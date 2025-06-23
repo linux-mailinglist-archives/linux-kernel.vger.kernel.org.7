@@ -1,101 +1,111 @@
-Return-Path: <linux-kernel+bounces-698524-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-698518-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 42147AE45E2
-	for <lists+linux-kernel@lfdr.de>; Mon, 23 Jun 2025 16:04:59 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1B7F7AE45CB
+	for <lists+linux-kernel@lfdr.de>; Mon, 23 Jun 2025 16:02:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E3F6D7A35C2
-	for <lists+linux-kernel@lfdr.de>; Mon, 23 Jun 2025 14:03:35 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 81BFF7ADB3A
+	for <lists+linux-kernel@lfdr.de>; Mon, 23 Jun 2025 14:00:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C54A476C61;
-	Mon, 23 Jun 2025 14:04:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2D192253359;
+	Mon, 23 Jun 2025 14:01:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=glxys.nl header.i=@glxys.nl header.b="Y14YDZCO"
-Received: from mail.postale.io (mail.postale.io [3.136.239.197])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="lyy7E898"
+Received: from mail-lf1-f46.google.com (mail-lf1-f46.google.com [209.85.167.46])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 88B2A70808;
-	Mon, 23 Jun 2025 14:04:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=3.136.239.197
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D50A06EB79;
+	Mon, 23 Jun 2025 14:01:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750687490; cv=none; b=RruAEQtsAwv9jtxm0UpxMS/mxzrOUjtYQyY5RiEkF7UvbfyjknppdVi7mxWo4IbVmKmwexuNdMgguZAW0j1f3CiLDPUwkVMDpVyvvknWAxx3nBGHiXHp6sgj5JWVRwAYMSo9JHIfnimj4/baX4dsQDykJvBoeeJD9cLqRH6a6mM=
+	t=1750687271; cv=none; b=kdQJPHiNnsy7S1y0d72z81RNWM9cQrINT33faQ+JpM+z2jmGEuLl52en7HxNCBa8bPJ4dXzaeO284fBIdOmDt70R9s6MUVWPfXkScZq/3uAQ05QLqv1B2hBwimt5aD2ZNC6Ye/NWDM3mnCz7kLyNhthbEdUkr+quc36wDXLpJy4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750687490; c=relaxed/simple;
-	bh=6XQlyCUS2gWhobrzOHN+QuiHbimv1iGT1sT3DR9O7do=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=MDVeOYF/yMPGDGpa8rhoGEVC7yP4kLL9iSc5m05U52pf0FO8fhOW00affiDp477dpfk1P67n2zRpjHrei/8mzhtGTdgQwgTehsJq1MSlQyrLO0s0QwVW+zUo8+Ehy7XcXyCfay1WaS8VBaPZBRUb5vzAGcXlnMHi638MYR/q2BA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=glxys.nl; spf=pass smtp.mailfrom=glxys.nl; dkim=pass (1024-bit key) header.d=glxys.nl header.i=@glxys.nl header.b=Y14YDZCO; arc=none smtp.client-ip=3.136.239.197
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=glxys.nl
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=glxys.nl
-Authentication-Results: mail.postale.io;
-	auth=pass (plain)
-From: GalaxySnail <me@glxys.nl>
-To: linux-sound@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org,
-	patches@opensource.cirrus.com,
-	David Rhodes <david.rhodes@cirrus.com>,
-	Richard Fitzgerald <rf@opensource.cirrus.com>,
-	Jaroslav Kysela <perex@perex.cz>,
-	Takashi Iwai <tiwai@suse.com>,
-	GalaxySnail <me@glxys.nl>
-Subject: [PATCH] ALSA: hda: add MODULE_FIRMWARE for cs35l41/cs35l56
-Date: Mon, 23 Jun 2025 22:00:31 +0800
-Message-ID: <20250623140030.1539477-2-me@glxys.nl>
-X-Mailer: git-send-email 2.50.0
+	s=arc-20240116; t=1750687271; c=relaxed/simple;
+	bh=Eio71w/pYJ//+HPI/HFvrWn6wFXbMzWKf+fC/EVlazI=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=oSIdstz/tHkMDAbHfxbfQEetvitA2dM9rX2oadC2CaykRVxuudsvKnqIMvb8dPoHCGlh0Kux4MAwYKMtH/WlU7SMZiOSO109Q3CCcp2mkI3RtUNXWF0galV6HjOOk8DSo7aFuV7DMYsPKLs0WTVdVfYLF6cYWmzl6ppWTX7Xb30=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=lyy7E898; arc=none smtp.client-ip=209.85.167.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lf1-f46.google.com with SMTP id 2adb3069b0e04-553dceb342fso3450255e87.0;
+        Mon, 23 Jun 2025 07:01:09 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1750687268; x=1751292068; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Eio71w/pYJ//+HPI/HFvrWn6wFXbMzWKf+fC/EVlazI=;
+        b=lyy7E898qrSpZg0SnZTPADmkhYdf/Nrek8mUh3bgr8+GIBGrIRvkKJWKA5889NwqQJ
+         +Oyfl9S6g+92HAe2a9QBW8TCe9M577yM9zrV02dUAxtw/UPmv8tnx2ExZlMNPw/XhLAu
+         UIu9UPYcUyeY1GYU/uV9AdzeGN/zkgOBy0emg3y0JAOPiFTUf7gYgPOw3+LpH1Dp1Vk8
+         o3IiuAEnB5XmqAImbKY/mvOsR1qdMHZTctU5sovh/dxPHTwYWzTopYMcLOSIsbdfXb4J
+         tvmn1qDWyszdD+pvboJ0lp7x46Iw0kwJ4GoJoL2gwDhuz/5c6Z5OPUs8bbPdvADcv0N4
+         pCyw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1750687268; x=1751292068;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=Eio71w/pYJ//+HPI/HFvrWn6wFXbMzWKf+fC/EVlazI=;
+        b=RP1o8lqyop/WL1ahHg2RHgIcG0LNPK5bVqb/hj5ntq0y8A2Et1YjvAtvMxNNqpflfn
+         ydHK7h5GoxsNm8ljzw7ZiZBDNwb73OUeZoPu9KJPluf6CmDQ1KTOWvEeeS5eY/dK8eek
+         EYRO+i5U2gUGp/gEkO+MECA/UrXgZ9iBOB+r25vuByBuRHHVN/hPnIHBFlQ8EoxajaTL
+         A8sXKjO2rdv6DSewgSeOLQQcTwplwXE7fhGvxJeozjXRWiwQC89tG7nDsDwjs4j3uQxD
+         ogMo1pfInVIfJL959boX78+9vcPhmjdNLAKXR8AZfMCUOjmvKowg7ZfJaHq8jUeDvAHD
+         7Cww==
+X-Forwarded-Encrypted: i=1; AJvYcCUNcOkhzz8f/t3/JDVUie8FKF5u8BpQ5vaHdEyGEugSStbp4LqNdWpIAEkUya8/Gaj5snkXTWUHO1+CSyyk@vger.kernel.org, AJvYcCWn5TdHC5yeJ2hclu6EFUqSBJk4e3Iu0Yq2dBSQ3Vqi2dFP2vaTmBLn27ZuxwZi1SD3Tyc/nGF8iXwi@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzv2/08zdAZAcg2H76N5ZgSov0rspkEVFWB2PVoUQvCbiuNnpjZ
+	fnZNYSUS86xs3TeEPtdLAdJX5L1o+mIWnb/+p7tYQsdcXXfoVI+SNCVknBAAOR1BXvDT4vgmrp8
+	mA9WuX9RoNTvFKWIWTvxpkrswKFzzYjo=
+X-Gm-Gg: ASbGncv5PpBe1rYnek4uLH1xqLmYJlTOEJF0cHqekjDrow4vmN/VMWua2G79KwUWYej
+	Upc3Txu7xsxDpMJPOWQYJuX47QoJ41bO84bzZBXDLeEfiXNTO9hohZPE8/7GCegYgdmHhSGoC2L
+	2UKp9g4QG7WMh84GYUYJCG4rdje6hrMqCnOxEq7OOfB25g+CliCGwUK/4U3g1VMmrasYzmjalAJ
+	m0=
+X-Google-Smtp-Source: AGHT+IGR9uZU02Z1imHj7MAxQiJrfcrFgQl4Iwi1qMx4X/39RI/yLTLvi2E9TpExz966iw2AnrUaGavuIu6muZwN6T8=
+X-Received: by 2002:a05:6512:3ca6:b0:553:24f4:872a with SMTP id
+ 2adb3069b0e04-553e3bf9f18mr3657639e87.40.1750687266759; Mon, 23 Jun 2025
+ 07:01:06 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Received: from localhost (Unknown [127.0.0.1])
-	by mail.postale.io  with ESMTPSA id 5CC59E4A-8D82-4B56-8B77-D53E820242D0.1
-	envelope-from <me@glxys.nl>
-	tls TLS_AES_256_GCM_SHA384 (authenticated bits=0);
-	Mon, 23 Jun 2025 14:03:36 +0000
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-	d=glxys.nl; s=s20221125375;
-	h=from:subject:date:message-id:to:cc:mime-version;
-	bh=6XQlyCUS2gWhobrzOHN+QuiHbimv1iGT1sT3DR9O7do=;
-	b=Y14YDZCOBVYiDFAkgbiEVh4f5FvBEPBUuQiMGmEkuHuZTOnZIuvRfUHJwNDXfDKLFeijAmCa7n
-	pAr9tCkO6JdOraQrX8W9LoWUcBsA/J6ZH2xMb71fRjVSKte8fcyX54rcSgdOIUcSmQxpBlBZyqZD
-	UC3s0QciOJLBy1H/M2ygA=
+References: <20250620122353.150700-1-goran.radni@gmail.com>
+ <20250620122353.150700-4-goran.radni@gmail.com> <aFVz48C3d+HHVHvv@lizhi-Precision-Tower-5810>
+ <00cf9c47-e101-4335-b918-f0b3a3c71de9@gmail.com>
+In-Reply-To: <00cf9c47-e101-4335-b918-f0b3a3c71de9@gmail.com>
+From: Fabio Estevam <festevam@gmail.com>
+Date: Mon, 23 Jun 2025 11:00:55 -0300
+X-Gm-Features: AX0GCFty6Y9honVX8KF-AR5BMA9uPsSpLblXjl7-3v4sjeMadYrJm6ZLkkE2tuQ
+Message-ID: <CAOMZO5B39pBzWuXBoo5=eqQzZLxS3zBxCJw_GBYmABKT_cdQww@mail.gmail.com>
+Subject: Re: [PATCH v3 3/3] arm64: dts: imx8mp: Add initial support for
+ Ultratronik imx8mp-ultra-mach-sbc board
+To: Goran Radenovic <goran.radni@gmail.com>
+Cc: Frank Li <Frank.li@nxp.com>, Shawn Guo <shawnguo@kernel.org>, 
+	Sascha Hauer <s.hauer@pengutronix.de>, Pengutronix Kernel Team <kernel@pengutronix.de>, 
+	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	=?UTF-8?B?QsO2cmdlIFN0csO8bXBmZWw=?= <boerge.struempfel@gmail.com>, 
+	imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org, 
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-add firmware information in the .modinfo section, so that userspace
-tools can find out firmware required by cs35l41/cs32l56 kernel module
+On Mon, Jun 23, 2025 at 10:17=E2=80=AFAM Goran Radenovic <goran.radni@gmail=
+.com> wrote:
 
-Signed-off-by: GalaxySnail <me@glxys.nl>
----
- sound/pci/hda/cs35l41_hda.c | 2 ++
- sound/pci/hda/cs35l56_hda.c | 4 ++++
- 2 files changed, 6 insertions(+)
+> I was using git send-email, and I did not notice any problems with
+> dry-run. I have 3 patches and a cover letter. All were marked correctly
+> v3 0/3 - v3 3/3.
+> Everything looks fine here:
+> https://lore.kernel.org/all/20250620122353.150700-1-goran.radni@gmail.com=
+/
+> Or am I missing something completely?
 
-diff --git a/sound/pci/hda/cs35l41_hda.c b/sound/pci/hda/cs35l41_hda.c
-index d5bc81099d0d..90e994b79481 100644
---- a/sound/pci/hda/cs35l41_hda.c
-+++ b/sound/pci/hda/cs35l41_hda.c
-@@ -2085,3 +2085,5 @@ MODULE_IMPORT_NS("SND_SOC_CS_AMP_LIB");
- MODULE_AUTHOR("Lucas Tanure, Cirrus Logic Inc, <tanureal@opensource.cirrus.com>");
- MODULE_LICENSE("GPL");
- MODULE_IMPORT_NS("FW_CS_DSP");
-+MODULE_FIRMWARE("cirrus/cs35l41-*.wmfw")
-+MODULE_FIRMWARE("cirrus/cs35l41-*.bin")
-diff --git a/sound/pci/hda/cs35l56_hda.c b/sound/pci/hda/cs35l56_hda.c
-index 3f2fd32f4ad9..c393fc0c7339 100644
---- a/sound/pci/hda/cs35l56_hda.c
-+++ b/sound/pci/hda/cs35l56_hda.c
-@@ -1122,3 +1122,7 @@ MODULE_IMPORT_NS("SND_SOC_CS_AMP_LIB");
- MODULE_AUTHOR("Richard Fitzgerald <rf@opensource.cirrus.com>");
- MODULE_AUTHOR("Simon Trimmer <simont@opensource.cirrus.com>");
- MODULE_LICENSE("GPL");
-+MODULE_FIRMWARE("cirrus/cs35l54-*.wmfw")
-+MODULE_FIRMWARE("cirrus/cs35l54-*.bin")
-+MODULE_FIRMWARE("cirrus/cs35l56-*.wmfw")
-+MODULE_FIRMWARE("cirrus/cs35l56-*.bin")
--- 
-2.50.0
+I only received the patch 3/3 in my Inbox.
 
+It seems you missed copying everyone on the three patches.
 
