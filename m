@@ -1,130 +1,175 @@
-Return-Path: <linux-kernel+bounces-698159-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-698161-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7EC66AE3DF9
-	for <lists+linux-kernel@lfdr.de>; Mon, 23 Jun 2025 13:33:32 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id B86E7AE3E04
+	for <lists+linux-kernel@lfdr.de>; Mon, 23 Jun 2025 13:34:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4A93D1894AF7
-	for <lists+linux-kernel@lfdr.de>; Mon, 23 Jun 2025 11:33:48 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DD03C3B39E2
+	for <lists+linux-kernel@lfdr.de>; Mon, 23 Jun 2025 11:34:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 85059242913;
-	Mon, 23 Jun 2025 11:33:20 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 30E151E3DCD;
-	Mon, 23 Jun 2025 11:33:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3220A244EA0;
+	Mon, 23 Jun 2025 11:34:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=apitzsch.eu header.i=@apitzsch.eu header.b="MuSaY5n7"
+Received: from www637.your-server.de (www637.your-server.de [168.119.26.117])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6380121ABCB;
+	Mon, 23 Jun 2025 11:34:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=168.119.26.117
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750678400; cv=none; b=sSHr0DKaQMSvCrvbZGX+vJK+LCTaygozefEdCKXn+A90+EI59W7Q6y/JIrzftDfoxOzB9oeP8RWP27/Y53CthpIXjnBTH4CZbFOnfz99LPi5GBEBknYWyJcCh0DbmT8cOqRWly7ocXYY1gX8LkTvq37qWzR0MspdiPzEfocuSyM=
+	t=1750678459; cv=none; b=CAZmeAH26IImRXqklhp4jkOwQU3tQ+OYupINxuTb3KP+Q6HycCJYIN/GV550leeGGYnSav6yp7aEqJL1AFmUqVvyzOGxMcqgzGWh09IJFSp3WyPFBocdfpyOXxK1BUU0F21j04h0VmG+Egh4DOu+W5vvn/V7v8NzPXZ03nwxkpA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750678400; c=relaxed/simple;
-	bh=4Byfl6XKyk9PR8pgbpDrhICsoDtDHYLEMWWU/ZfABpQ=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=WFFOAX5sBw7ZitT8FFS/rxyQmfgqjM001vTetZnawD+2toYhsyJT/ek0jnS5NWN7d9NRb8uZSkeufffqT0KIypWoJXlJbtqZseeEFRRYe8ZAwccECwkVOnshmYSmLu+AMpHM4sNPlrxsMhAKR7dSrOaLMQpT3uJXGS46o4pOeGw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 43268113E;
-	Mon, 23 Jun 2025 04:32:58 -0700 (PDT)
-Received: from [10.57.29.116] (unknown [10.57.29.116])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 3092E3F66E;
-	Mon, 23 Jun 2025 04:33:12 -0700 (PDT)
-Message-ID: <9f80f7c4-01a3-4a03-94dc-2a19136707f8@arm.com>
-Date: Mon, 23 Jun 2025 12:33:03 +0100
+	s=arc-20240116; t=1750678459; c=relaxed/simple;
+	bh=tKcDIsLtDkJF8WnaZ9J4aPyfYmz76ZwgpoDVX5vadBE=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=TkOk6uKYAxjbKDJovvJxT+laZL2a0nEpZmySzLPOJTpxLv4xClmC4B3dLyutK3rxJ2Wq0PqCsvYWU4g2+9ENQxzHP048uoVmrl/j30i9NwxQ2L+62JDUKJn5xnP52VaWsFA7QvyhDH+0LowqcAjrgt1CT/BTwxjzIx7QRkI9jZM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=apitzsch.eu; spf=pass smtp.mailfrom=apitzsch.eu; dkim=pass (2048-bit key) header.d=apitzsch.eu header.i=@apitzsch.eu header.b=MuSaY5n7; arc=none smtp.client-ip=168.119.26.117
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=apitzsch.eu
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=apitzsch.eu
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=apitzsch.eu
+	; s=default2410; h=MIME-Version:Content-Transfer-Encoding:Content-Type:
+	References:In-Reply-To:Date:Cc:To:From:Subject:Message-ID:Sender:Reply-To:
+	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+	Resent-To:Resent-Cc:Resent-Message-ID;
+	bh=tKcDIsLtDkJF8WnaZ9J4aPyfYmz76ZwgpoDVX5vadBE=; b=MuSaY5n74FI9fcbi6OCoUj2h6L
+	HCrKEel8kuCKkMraPu6hSn0aioGtpsMeoANQbEi05Fy14IFgoJxbT7PHgS6iFy7ZJivHtKa4vmOfX
+	HDb0aXCeQfAiJYqvkMaOHH9ltryHJpRUusEren5v5dZSFUhDP1ljSp16R4mwckW8/iWrkBrAaoxmm
+	Eiub8zq0wzFE0V6X1IHwxYyQvrPlmFgkVxQ6tzL3rrCUdxb6aJp3xgCC8LzbiTmDpF6vRsg7Xcjmw
+	LDFkgdZ4J9+rgAiSwtMQ0Il/O0WdaM4Nl4BeAB1cPWbqn33xIxk1SHbfUqSIX5+C1FkqG2JJ2FPF/
+	eUNcZ1Uw==;
+Received: from sslproxy01.your-server.de ([78.46.139.224])
+	by www637.your-server.de with esmtpsa  (TLS1.3) tls TLS_AES_256_GCM_SHA384
+	(Exim 4.96.2)
+	(envelope-from <git@apitzsch.eu>)
+	id 1uTfR8-000P6I-1o;
+	Mon, 23 Jun 2025 13:34:07 +0200
+Received: from localhost ([127.0.0.1])
+	by sslproxy01.your-server.de with esmtpsa  (TLS1.3) tls TLS_AES_256_GCM_SHA384
+	(Exim 4.96)
+	(envelope-from <git@apitzsch.eu>)
+	id 1uTfR7-0002er-0U;
+	Mon, 23 Jun 2025 13:34:06 +0200
+Message-ID: <46a681a84a7493e2d0a6d3a4eedb6c86ccd9903f.camel@apitzsch.eu>
+Subject: Re: [PATCH RESEND v4 0/5] media: i2c: imx214: Add support for more
+ clock frequencies
+From: =?ISO-8859-1?Q?Andr=E9?= Apitzsch <git@apitzsch.eu>
+To: Sakari Ailus <sakari.ailus@linux.intel.com>
+Cc: Ricardo Ribalda <ribalda@kernel.org>, Mauro Carvalho Chehab
+	 <mchehab@kernel.org>, Rob Herring <robh@kernel.org>, Krzysztof Kozlowski
+	 <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, Shawn Guo
+	 <shawnguo@kernel.org>, Sascha Hauer <s.hauer@pengutronix.de>, Pengutronix
+ Kernel Team <kernel@pengutronix.de>, Fabio Estevam <festevam@gmail.com>, 
+	~postmarketos/upstreaming@lists.sr.ht, phone-devel@vger.kernel.org, 
+	linux-media@vger.kernel.org, linux-kernel@vger.kernel.org, Laurent Pinchart
+	 <laurent.pinchart@ideasonboard.com>, devicetree@vger.kernel.org, 
+	imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org, Ricardo Ribalda
+	 <ribalda@chromium.org>, Conor Dooley <conor.dooley@microchip.com>
+Date: Mon, 23 Jun 2025 13:34:03 +0200
+In-Reply-To: <aFj5QnPBO0We5SBQ@kekkonen.localdomain>
+References: <20250621-imx214_ccs_pll-v4-0-12178e5eb989@apitzsch.eu>
+	 <aFj5QnPBO0We5SBQ@kekkonen.localdomain>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.56.2 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 11/11] arm64: defconfig: Enable Apple Silicon drivers
-To: Sven Peter <sven@kernel.org>
-Cc: asahi@lists.linux.dev, Stephen Boyd <sboyd@kernel.org>,
- Alyssa Rosenzweig <alyssa@rosenzweig.io>, Janne Grunau <j@jannau.net>,
- linux-arm-kernel@lists.infradead.org, linux-pm@vger.kernel.org,
- Srinivas Kandagatla <srini@kernel.org>, linux-kernel@vger.kernel.org,
- Viresh Kumar <viresh.kumar@linaro.org>, Neal Gompa <neal@gompa.dev>,
- linux-clk@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>,
- linux-i2c@vger.kernel.org, Takashi Iwai <tiwai@suse.com>,
- Liam Girdwood <lgirdwood@gmail.com>, =?UTF-8?Q?Martin_Povi=C5=A1er?=
- <povik+lin@cutebit.org>, Joerg Roedel <joro@8bytes.org>,
- "Rafael J. Wysocki" <rafael@kernel.org>, Jaroslav Kysela <perex@perex.cz>,
- Mark Brown <broonie@kernel.org>, iommu@lists.linux.dev,
- linux-input@vger.kernel.org, dmaengine@vger.kernel.org,
- linux-sound@vger.kernel.org, Vinod Koul <vkoul@kernel.org>,
- Dmitry Torokhov <dmitry.torokhov@gmail.com>,
- Ulf Hansson <ulf.hansson@linaro.org>,
- Michael Turquette <mturquette@baylibre.com>,
- Andi Shyti <andi.shyti@kernel.org>, Will Deacon <will@kernel.org>
-References: <20250612-apple-kconfig-defconfig-v1-0-0e6f9cb512c1@kernel.org>
- <20250612-apple-kconfig-defconfig-v1-11-0e6f9cb512c1@kernel.org>
- <2e022f4e-4c87-4da1-9d02-f7a3ae7c5798@arm.com>
- <d5a616f3-67a3-4504-904e-6cec503ab157@kernel.org>
-From: Robin Murphy <robin.murphy@arm.com>
-Content-Language: en-GB
-In-Reply-To: <d5a616f3-67a3-4504-904e-6cec503ab157@kernel.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+X-Virus-Scanned: Clear (ClamAV 1.0.7/27678/Mon Jun 23 10:34:34 2025)
 
-On 2025-06-21 5:01 pm, Sven Peter wrote:
-> On 13.06.25 18:50, Robin Murphy wrote:
->> On 2025-06-12 10:11 pm, Sven Peter wrote:
->>> Enable drivers for hardware present on Apple Silicon machines.
->>> The power domain and interrupt driver should be built-it since these are
->>> critical for the system to boot, the rest can be build as modules.
->>
->> Nit: I'd be tempted to put this patch first, just in case anyone 
->> bisecting with "make defconfig" in their process lands in the middle 
->> and suddenly loses some drivers (although arguably them going from 
->> "=y" to "=m" could still be a surprise, but at least a bit less so).
-> 
-> Ah, that's a good point that I hadn't even thought about.
-> Now that most of these have already been merged into different trees 
-> that ship has sailed though.
+Hi Sakari,
 
-Yeah, like I say it's only minor and rather contrived anyway. Not a big 
-worry.
+Am Montag, dem 23.06.2025 um 06:50 +0000 schrieb Sakari Ailus:
+> Hi Andr=C3=A9,
+>=20
+> On Sat, Jun 21, 2025 at 11:37:24AM +0200, Andr=C3=A9 Apitzsch via B4 Rela=
+y
+> wrote:
+> > The imx214 driver currently supports only a 24 MHz external clock.
+> > But
+> > there are devices, like Qualcomm-MSM8916-based phones, which cannot
+> > provide this frequency. To make the sensor usable by those devices,
+> > add
+> > support for additional clock frequencies.
+> >=20
+> > This series supersedes
+> > https://lore.kernel.org/linux-media/20250308-imx214_clk_freq-v1-0-467a4=
+c083c35@apitzsch.eu/
+>=20
+> Is there a difference in this set from the v4 you posted previously?
 
->> [...]
->>> @@ -1504,6 +1520,7 @@ CONFIG_ARCH_TEGRA_194_SOC=y
->>>   CONFIG_ARCH_TEGRA_234_SOC=y
->>>   CONFIG_TI_PRUSS=m
->>>   CONFIG_OWL_PM_DOMAINS=y
->>> +CONFIG_APPLE_PMGR_PWRSTATE=y
->>
->> If this is critical for any Apple platform to work then it would 
->> probably make sense to explicitly select it from ARCH_APPLE, as is 
->> done for APPLE_AIC...
-> 
-> 
-> Documentation/kbuild/kconfig-language.rst:
-> 
->    select should be used with care. select will force a symbol to a value
->    without visiting the dependencies. By abusing select you are able to
->    select a symbol FOO even if FOO depends on BAR that is not set. In
->    general use select only for non-visible symbols (no prompts anywhere)
->    and for symbols with no dependencies. That will limit the usefulness
->    but on the other hand avoid the illegal configurations all over.
-> 
-> 
-> That's probably fine for APPLE_AIC which only depends on ARM64 (and 
-> ARCH_APPLE) which is guaranteed to be set when ARCH_APPLE is set anyway.
-> APPLE_PMGR_PWRSTATE also has an additional dependency on PM so it should 
-> probably remain in defconfig and not use select.
+There is no difference to the v4 posted previously. This is a resend
+because there was no activity in the original v4.
 
-Sorry if the implication wasn't clear, but I did mean "select it" in the 
-sense of "select it and all of its necessary dependencies in a manner 
-that works correctly". The same argument applies all the way down - if a 
-!PM config will not be able to boot on ARCH_APPLE platforms due to 
-forcibly deselecting APPLE_PMGR_PWRSTATE, then there is little point in 
-permitting that combination. Which of course the user would already have 
-to disable at least ARCH_MXC, ARCH_ROCKCHIP, ARCH_TEGRA and 
-ARCH_VEXPRESS to achieve in the first place ;)
-
-Thanks,
-Robin.
+Best regards,
+Andr=C3=A9
+>=20
+> >=20
+> > Signed-off-by: Andr=C3=A9 Apitzsch <git@apitzsch.eu>
+> > ---
+> > Changes in v4:
+> > - Add missing colon to error message
+> > - Add A-b, R-b tags
+> > - Link to v3:
+> > https://lore.kernel.org/r/20250521-imx214_ccs_pll-v3-0-bfb4a2b53d14@api=
+tzsch.eu
+> >=20
+> > Changes in v3:
+> > - Limit range of pll_ip_clk_freq_hz (Sakari)
+> > - Drop unneeded 'ret'
+> > - Use pll.pixel_rate_csi for bit rate calculation
+> > - Add patch that deprecates the clock-frequency property
+> > - Link to v2:
+> > https://lore.kernel.org/r/20250505-imx214_ccs_pll-v2-0-f50452061ff1@api=
+tzsch.eu
+> >=20
+> > Changes in v2:
+> > - Add A-b tags
+> > - Switch to v4l2_ctrl_s_ctrl_int64() to acquire the control handler
+> > mutex
+> > - Add error handling for v4l2_ctrl_s_ctrl_int64() and
+> > =C2=A0 imx214_pll_update()
+> > - Replace "read clock frequency from dt" patch by "remove hard-
+> > coded
+> > =C2=A0 external clock frequency" patch
+> > - Link to v1:
+> > =C2=A0
+> > https://lore.kernel.org/r/20250415-imx214_ccs_pll-v1-0-d3d7748e5fbd@api=
+tzsch.eu
+> >=20
+> > ---
+> > Andr=C3=A9 Apitzsch (5):
+> > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 media: i2c: imx214: Reorder imx214_parse=
+_fwnode call
+> > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 media: i2c: imx214: Prepare for variable=
+ clock frequency
+> > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 media: i2c: imx214: Make use of CCS PLL =
+calculator
+> > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 media: dt-bindings: sony,imx214: Depreca=
+te property clock-
+> > frequency
+> > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 media: i2c: imx214: Remove hard-coded ex=
+ternal clock
+> > frequency
+> >=20
+> > =C2=A0.../devicetree/bindings/media/i2c/sony,imx214.yaml |=C2=A0 29 ++-
+> > =C2=A0drivers/media/i2c/Kconfig=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 |=C2=A0=C2=A0 1 +
+> > =C2=A0drivers/media/i2c/imx214.c=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 | 263
+> > ++++++++++++++++-----
+> > =C2=A03 files changed, 217 insertions(+), 76 deletions(-)
+> > ---
+> > base-commit: 176e917e010cb7dcc605f11d2bc33f304292482b
+> > change-id: 20250406-imx214_ccs_pll-e4aed0e9e532
+> >=20
+> > Best regards,
 
