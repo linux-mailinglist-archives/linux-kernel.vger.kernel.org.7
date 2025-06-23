@@ -1,141 +1,128 @@
-Return-Path: <linux-kernel+bounces-698863-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-698865-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9120FAE4B08
-	for <lists+linux-kernel@lfdr.de>; Mon, 23 Jun 2025 18:33:53 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 86746AE4B09
+	for <lists+linux-kernel@lfdr.de>; Mon, 23 Jun 2025 18:34:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B2CED3A3542
-	for <lists+linux-kernel@lfdr.de>; Mon, 23 Jun 2025 16:31:22 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AB8583A6BA7
+	for <lists+linux-kernel@lfdr.de>; Mon, 23 Jun 2025 16:32:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EB2C329ACC4;
-	Mon, 23 Jun 2025 16:31:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CBCA629B796;
+	Mon, 23 Jun 2025 16:32:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="qHnlrAH6"
-Received: from mail-wr1-f48.google.com (mail-wr1-f48.google.com [209.85.221.48])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="CFgpsTas"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9C08C188735
-	for <linux-kernel@vger.kernel.org>; Mon, 23 Jun 2025 16:31:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 05B5129B23E;
+	Mon, 23 Jun 2025 16:32:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750696298; cv=none; b=XwORPOWL+Hw3Lu7gyAEmsZBtomxyPWQDNzJNFeH7JeyHiqUWLhX/P9nKOjwmD2HQPCVL+00S1yYYOchuhxM5xGR8wX3HzO+qX5dzonwSkrZw1/WQBzaXHRiEFLTMls0vEyjMyQwVhvVOu/RNf9WXdUJXW/OWGL2Zr/S45/9FNes=
+	t=1750696340; cv=none; b=XXDFhOT5KnvxGvShnLFHBXB+PcLbOs44szJQjMlaNxY6gxpHtfxGNPN+Fa3z9OEADHrw3MYVXcpEHYTPLsO0BzebQ795Bup/ZoyYD8Pms+StzLNFONDhlSsK9shLjhnliiutoEyzautXk/FSD0ydzj6kseSqOl4lzy8qBeNEzOs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750696298; c=relaxed/simple;
-	bh=8KsekKS5aRcVIvVUBtntQtfWkhVyoUlhEiE174K9srA=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=NTO8CFJpN/RopgTzAqaOR4dsJHQVoRN6LxVpPBHGPW0OiIglBiWnGNxWZE2Kfud/UmrTNyOpfJuMT4maumiT7tNYUTw+w+zjKcwC7THHhQaIKbEvq8c4mRZhuQdVESkL+LpQjHxNX1QJblwRZSeq4wcsS4XLpTcfyghPmfuwh3c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=qHnlrAH6; arc=none smtp.client-ip=209.85.221.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wr1-f48.google.com with SMTP id ffacd0b85a97d-3a536ecbf6fso2471564f8f.2
-        for <linux-kernel@vger.kernel.org>; Mon, 23 Jun 2025 09:31:35 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1750696294; x=1751301094; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=0j8AmL2vgCPrh67szF4XCY9cmGpFOza5ajW2zlzTb44=;
-        b=qHnlrAH65AWvyLf+ffRGDHFQlQ8UXXXXodW7rITXKEKgsBWRUUJ01Pt101tLfNdNgz
-         druRmSX5U+bCqNoLkySpbRnNjBEvGhtqWEA6sZgE3faNVC1MOopFIt7aJgpedENnbgA+
-         vLhT/oF+iV4NNJl7ZENbUwAqvYWH3iddwhnanR5l4wIgKj8vv6iI+GCZR6dQ89GS88lQ
-         4HUQJcYLu1l64TswOFIPMbymXvof9EgYaCIw8NBp8I3/Eqx4VOXqXjnURJXJZOFsUk3g
-         05y1QuuzYM81dH5UL1YrQufYoHDEwKgH0zffz4y/y13dXfC9GgNjUFU4R5cTo53tNQSx
-         Q+yw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1750696294; x=1751301094;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=0j8AmL2vgCPrh67szF4XCY9cmGpFOza5ajW2zlzTb44=;
-        b=hzwoePU9YAn+p7Q57kh4mKmQeJ1NavWNYXtQY5eJWuQJNMuy5fONq8EHN6xCSUuur9
-         UskcMnt6poTLbKsosg5+fpJt6KvqhNv2iw8wrQIfKDCOpW1NGQLyj5bkr7DpTyhmZbEe
-         jQ2VPuWV9Sl5lIUn9nG0K5641HD5wh6uOkqLpVRSrLTSIJZjVHuHboyje0hAT/qIjYfq
-         o30ZgIOiOriY7qDrnxeiVGhEyifmKwoCuYEXVg02UnJ0wKiJGazKmatrYBWnaLSSY3Rl
-         nBn9E5r1bCwIUVgKiXIg+Qwb94wATfhPUnH/fLYifNmWNUIYzHWt4xd32WJtLDRbgMv3
-         EfuQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUZZzylIVW4GI5POD+MfTRx9DtBrHbgqnDDX2fn9ytn8aYyhwDSgdEcB3dc6eMaIYKu3IyhE6GkMJLDzUM=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy0Hjl197QK5x3ajS6FRtU0L73hsuQM8p7/gz0nNZlJ9PR+Qhbb
-	9+vZkELwedl+7Nq7H5dtgYqc3+SMkSUgO2I9UiWQpwcGgGGX60lPNsY669psV9RxnZY=
-X-Gm-Gg: ASbGncuzlslAaxeFlUw3ikOR2V8pcm/5YVpk39bZXH1Oe15gVYvaNBpRoxc2V/m29sp
-	E9gRuaLZkt7p3F+I9LMtJVbDN6I4j1dX2uSutPeHOnkrkIyM6cPM+geWQLh9ySDXy8xiIvJBnwi
-	V1+gsw5nOdreUvOSBPGGcB02l9HPedyQvfu582s28uYAgw0E1HKyq060AsLCWcmPtqSmbZD3QVB
-	LREl0I+P1GQqevSVQfkIVZKS45MUbttKfm3/ijwMz3F2O7siBLOYWNHTKdyxOPomKPGRGe7hvGI
-	9E42nCzoXlagZ76DtDtgbyVbUmi/jyK8ZK/QBcryA2w35l5g7fyeEjiAYSahBSeMC4fJRSXNP80
-	=
-X-Google-Smtp-Source: AGHT+IFtp9SY06hL7tr/NWr3bIhdcZjACNg+h+Rg5V3jKzfHdcvWGYIa/oooWJLbVLfw9PBe9ecQTg==
-X-Received: by 2002:adf:9dc8:0:b0:3a3:63d3:369a with SMTP id ffacd0b85a97d-3a6d130ace1mr9778129f8f.25.1750696293870;
-        Mon, 23 Jun 2025 09:31:33 -0700 (PDT)
-Received: from [192.168.1.159] ([213.240.182.16])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3a6d1187cf0sm9786922f8f.71.2025.06.23.09.31.32
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 23 Jun 2025 09:31:33 -0700 (PDT)
-Message-ID: <48c87af4-7d42-4283-b407-697b78d5b913@linaro.org>
-Date: Mon, 23 Jun 2025 18:31:32 +0200
+	s=arc-20240116; t=1750696340; c=relaxed/simple;
+	bh=c1X7juEAfPFJyjaQ2dW3jcLwq1NCy79mFr5ClLmV4Q0=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=jncGQSJ6Z51B1WHmoaaAvREBvKpFtyikgT5g+PzYDwgQ4NiIrbnVcZhbuGFmWOAsN7AprlajZLA1kysHJLCF8y83xVzY1DXvHnOM6LAM9GOJOtJstuEcuZD5qT8VEkLwSn4MT3HqVDgW1IzNoenjdCpWGNQhvikbJFvOWa9CnRY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=CFgpsTas; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 305B2C4CEEA;
+	Mon, 23 Jun 2025 16:32:19 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1750696339;
+	bh=c1X7juEAfPFJyjaQ2dW3jcLwq1NCy79mFr5ClLmV4Q0=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=CFgpsTasSqg1WzEPpW8ZmXLDXRFw9X8Hb7poFk8AAGOr3bWkdncyLWwKU8M15xtq2
+	 /OumMWNwLKXPsaVeXq5qnHeS6jGPcWdmDywYRHEbPKngYIyxZXZspmm4T1V5nAx3FD
+	 W/EuY+mayFNeOyJqSrFdMF67x/cUS1fpnBBv2gSJrJxhYFLRXNa3yF9/m/foOeA3PT
+	 b7bPbrY63PVxXMgFpZC/3ktbcTfBsUOM429QgWsq4LCcHYLPWdtUIh3oTmkd4qTvwJ
+	 XNG9fcgfZcYivraeoSFZCnWM+4uip0g6Jc4zuKEb5sBhgQUgYB1iz1iG9Zu4uRQtlC
+	 U0EhKGySj/J7w==
+From: SeongJae Park <sj@kernel.org>
+To: Bijan Tabatabai <bijan311@gmail.com>
+Cc: SeongJae Park <sj@kernel.org>,
+	damon@lists.linux.dev,
+	linux-mm@kvack.org,
+	linux-kernel@vger.kernel.org,
+	akpm@linux-foundation.org,
+	david@redhat.com,
+	ziy@nvidia.com,
+	matthew.brost@intel.com,
+	joshua.hahnjy@gmail.com,
+	rakie.kim@sk.com,
+	byungchul@sk.com,
+	gourry@gourry.net,
+	ying.huang@linux.alibaba.com,
+	apopple@nvidia.com,
+	bijantabatab@micron.com,
+	venkataravis@micron.com,
+	emirakhur@micron.com,
+	ajayjoshi@micron.com,
+	vtavarespetr@micron.com
+Subject: Re: [RFC PATCH v2 0/2] mm/damon/paddr: Allow interleaving in migrate_{hot,cold} actions
+Date: Mon, 23 Jun 2025 09:32:16 -0700
+Message-Id: <20250623163217.41814-1-sj@kernel.org>
+X-Mailer: git-send-email 2.39.5
+In-Reply-To: <CAMvvPS6yuosvLxUn8+GnGJdqE2LnfGgur0x0hTM6nqmBpU-q9Q@mail.gmail.com>
+References: 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] MAINTAINERS: rectify file entry in QUALCOMM SMB CHARGER
- DRIVER
-To: Lukas Bulwahn <lbulwahn@redhat.com>,
- Sebastian Reichel <sebastian.reichel@collabora.com>,
- linux-arm-msm@vger.kernel.org, linux-pm@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org,
- Lukas Bulwahn <lukas.bulwahn@redhat.com>
-References: <20250623081240.149446-1-lukas.bulwahn@redhat.com>
-Content-Language: en-US
-From: Casey Connolly <casey.connolly@linaro.org>
-In-Reply-To: <20250623081240.149446-1-lukas.bulwahn@redhat.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
+On Mon, 23 Jun 2025 09:39:48 -0500 Bijan Tabatabai <bijan311@gmail.com> wrote:
 
-
-On 6/23/25 10:12, Lukas Bulwahn wrote:
-> From: Lukas Bulwahn <lukas.bulwahn@redhat.com>
+> On Sat, Jun 21, 2025 at 12:36 PM SeongJae Park <sj@kernel.org> wrote:
+> >
+> > On Fri, 20 Jun 2025 16:13:24 -0700 SeongJae Park <sj@kernel.org> wrote:
+> >
+> > > On Fri, 20 Jun 2025 16:47:26 -0500 Bijan Tabatabai <bijan311@gmail.com> wrote:
+[...]
+> > I just posted an RFC for this:
+> > https://lore.kernel.org/20250621173131.23917-1-sj@kernel.org
+> >
+> > Note that I didn't run exhaustive tests with it, so it may have silly bugs.  I
+> > believe it could let you knwo what I'm thinking better than my cheap talks,
+> > though ;)
 > 
-> Commit 4deeea4b0741  ("MAINTAINERS: add myself as smbx charger driver
-> maintainer") adds the section QUALCOMM SMB CHARGER DRIVER in MAINTAINERS,
-> including a file entry pointing to qcom_smbx_charger.c. Within the same
-> patch series, the commit 5ec53bcc7fce ("power: supply: pmi8998_charger:
-> rename to qcom_smbx") renames qcom_pmi8998_charger.c to qcom_smbx.c and not
-> to qcom_smbx_charger.c, though. Note that the commit message clearly
-> indicates the intentional removal of the "_charger" suffix.
-> 
-> Refer to the intended file.
+> I only skimmed through it, but this looks good to me, thanks for
+> throwing this together! I'll probe more when I use these patches for
+> the next revision.
 
-oh dear, thanks for catching this!
+Great, please feel free to add comments there.
 
 > 
-> Signed-off-by: Lukas Bulwahn <lukas.bulwahn@redhat.com>
+> I'll try to reply in that thread as well, but it was only sent to my
+> work email. I'll try to set up my work Outlook client to work with the
+> mailing list format,
 
-Acked-by: Casey connolly <casey.connolly@linaro.org>
+I'm sorry to hear that.  I personally gave up working with my Outlook client
+and using a tool named hkml[1].  I started developing it for my personal use
+but now it is aimed to help contributors for DAMON and Linux kernel in general.
+So, if you are interested, please feel free to try it and submit bug reports :)
 
-> ---
->   MAINTAINERS | 2 +-
->   1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/MAINTAINERS b/MAINTAINERS
-> index 41f13ccef4c8..c76ea415c56f 100644
-> --- a/MAINTAINERS
-> +++ b/MAINTAINERS
-> @@ -20612,7 +20612,7 @@ M:	Casey Connolly <casey.connolly@linaro.org>
->   L:	linux-arm-msm@vger.kernel.org
->   S:	Maintained
->   F:	Documentation/devicetree/bindings/power/supply/qcom,pmi8998-charger.yaml
-> -F:	drivers/power/supply/qcom_smbx_charger.c
-> +F:	drivers/power/supply/qcom_smbx.c
->   
->   QUALCOMM QSEECOM DRIVER
->   M:	Maximilian Luz <luzmaximilian@gmail.com>
+> but in the future, could you also CC my personal
+> email (bijan311@gmail.com)?
 
--- 
-Casey (she/they)
+Sure, I will Cc your personal email together from next time.
 
+> Gmail just makes formatting for the
+> mailing list easier for me.
+
+Right, Gmail is better than Outlook.  To me, hkml is even better than Gmail,
+though ;)
+
+[1] https://github.com/sjp38/hackermail
+
+
+Thanks,
+SJ
+
+[...]
 
