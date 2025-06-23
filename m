@@ -1,113 +1,125 @@
-Return-Path: <linux-kernel+bounces-699098-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-698980-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id EBD1DAE4DB4
-	for <lists+linux-kernel@lfdr.de>; Mon, 23 Jun 2025 21:40:52 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id EF930AE4C58
+	for <lists+linux-kernel@lfdr.de>; Mon, 23 Jun 2025 20:06:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 882A4178D6C
-	for <lists+linux-kernel@lfdr.de>; Mon, 23 Jun 2025 19:40:53 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F15B53B87AB
+	for <lists+linux-kernel@lfdr.de>; Mon, 23 Jun 2025 18:05:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7D9B52D3A7C;
-	Mon, 23 Jun 2025 19:40:45 +0000 (UTC)
-Received: from mail-m155101.qiye.163.com (mail-m155101.qiye.163.com [101.71.155.101])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 97E2F2701BA;
+	Mon, 23 Jun 2025 18:05:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="DTZNCX/Z"
+Received: from mail-il1-f180.google.com (mail-il1-f180.google.com [209.85.166.180])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9765F19C554;
-	Mon, 23 Jun 2025 19:40:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=101.71.155.101
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 97CCD3D3B8
+	for <linux-kernel@vger.kernel.org>; Mon, 23 Jun 2025 18:05:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750707645; cv=none; b=jPJeD1xEQUKbTQeIqMfMvfAB4nJ+kuAiZlF/r9Uk2Kge82aqnKUgwHcTzj7QzL46jI7qkzDFL3PCB8geGolUoJkKEUDWAygllaPtbdhZqG15wbYT5OjKCMcYpHZiJN9xprCgFUrvO7N4ro5BMdXpw0r3S98r3BjFmI+6QTgNhBw=
+	t=1750701955; cv=none; b=IitfwSQhv1L8bo5CT1UUhvCfGU6CbE9BbTOfAi2lWqa/sio+fgFBSJldOh3Bpti6fDF9ZJTf1dSyoedNAsG7PYcfRb3pNz9Ez+Zg3x64QXMFJNMeJWkQmtZrlKVISgYHP8k3YUox4dmMCvnT7XT+lnw2GIWVcRwCjj1/wX7vpDw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750707645; c=relaxed/simple;
-	bh=oeVpu5QnQ6dzADH8jDwya/HzQz1GbvZCFygSNBb/pdc=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=PNSfi45b9/gFkd3GjJiawHICv17k2RIcB7AvKoAtUOFaOBiRX7HuYy/DPIqFS55PKsgAlyfqHGguqjoMdn2cS/EiZiEreVPLvCp79P4NoY8tcNJaCiybZcruFzx906W7WjB+0AK4v3/t/kGMqV7Zp16P6bfuIIf+jDb8SEJPpTI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=whut.edu.cn; spf=pass smtp.mailfrom=whut.edu.cn; arc=none smtp.client-ip=101.71.155.101
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=whut.edu.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=whut.edu.cn
-Received: from [127.0.0.1] (gy-adaptive-ssl-proxy-1-entmail-virt204.gy.ntes [27.18.107.46])
-	by smtp.qiye.163.com (Hmail) with ESMTP id 19a4befb4;
-	Tue, 24 Jun 2025 00:11:23 +0800 (GMT+08:00)
-From: Ze Huang <huangze@whut.edu.cn>
-Date: Tue, 24 Jun 2025 00:11:13 +0800
-Subject: [PATCH 1/2] pinctrl: canaan: k230: add NULL check in DT parse
+	s=arc-20240116; t=1750701955; c=relaxed/simple;
+	bh=uB9Xm6eaRNihSSkT6yK/cq6q91QMQcRLKlFVMK316kU=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=FZmvp2/aaxTSyxeFAs5HKGzXjcX16zA2I1xrKGuyxesvdOhbDqXXzs+PGGYeHDjKN26HF8vzljjNUiS+Bcq7hHpSLjZndWfoVNWMBWR0Tz001nt8f2W1u/x6Vhxw3l2ZCmAGxgHGdKYM5mRxXGwYc2tW6wL9nNMaD+h1Go7Kh7s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=DTZNCX/Z; arc=none smtp.client-ip=209.85.166.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-il1-f180.google.com with SMTP id e9e14a558f8ab-3ddd1a3e659so16235ab.1
+        for <linux-kernel@vger.kernel.org>; Mon, 23 Jun 2025 11:05:53 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1750701952; x=1751306752; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=CLS7bcTJVBZve2BcOYUtDe8oViGu/YRD7NKWZ/1+BTI=;
+        b=DTZNCX/ZAoiVonbCRXFZ+QjQooP4kyVhexgtt7UT8hUKeLeaB+2+tdAa8u9q3R2NY/
+         m/wiVDUK5vY70tlXTepkGvYIg1A/07iqe/Na67yAsMAXr8qjHH7knpWUIwryP/JnU9L8
+         mooelJtUUpU4+deE+uNoXCuSFScDNA1wJn7ZC/gKglzPFlLCi0UaXsgMjh1PjCglJXQf
+         gtihMOY4o4wgvvmcGgdz9cCg6wsFjPlTuIlmTJdXDoC80iTfbwWNlOrvA13a4xjtNVp/
+         PbJzCThPBhw+zrM2FNeqM5slQr//l4H4aPiWv7Wun9lbCCO6S2cupBWkXtk4mH0qFfk0
+         yx1w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1750701952; x=1751306752;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=CLS7bcTJVBZve2BcOYUtDe8oViGu/YRD7NKWZ/1+BTI=;
+        b=lKuoq8RNk3QSRp/h2788HywMNYQaKRTegkegwDn4Xn2Yq87Uz2PJRvyvufWZVlzMiG
+         D5/6IFD9Um7HHqyC/TY9zLFqm+fmZFpaF712EbAzW5pbKrrTU0cu9+qjQfXpny/O/CFG
+         TgmJttoBSs4fQtgqSRW7yg9J07nVVGIYNjNrb6pdnWi4asV8faQpMRDpfXR+eeD/xe2U
+         3TstDVleGTC5+zOxgurZfLqWU6+sOJ9dmF9xL8mmp0TRnzQDYV4itg45WJL5ZLKuS0u3
+         RaB4vvlTt2apmncukezn/PnYUjtWKiwLIen1PTdxJDiXrBVsptPd8XD599Polrma+m/7
+         40Vw==
+X-Forwarded-Encrypted: i=1; AJvYcCUbBgckCUpcpA0NI3NR4wBSBOy/x0Pf4M4istj1gvK8bs2JUood7YAbQ3kTR2Hhikz3MbP5pmNxl/MJMuQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzPqI/N2GOcl6FMg56IKcFFISIVLT1NE3YPiTmG67eclENhbpwC
+	tyxRQQejax7S9vjAE7/kyk9+stDkk3yxPZMmfU9G++tuqw/645GYAkBSL3lsXiZ/qnqgDGyDsb1
+	M3/RrNweZ8sm4ET73q684c4585Sgna3iOS986zaT+
+X-Gm-Gg: ASbGncuaM+JHiB5JnidSfKE0q+A2bJPt42MjuwKqSkevzM5jlUyOm6TNLFNszHcS6h5
+	JrzM2o5jBfg/FiNLFAzFLHSb77PNhmdhVCckhRHC1lYRSz5cJbBNYMvWyrxFec+FNJPU+Wvkr9x
+	YDxulBHfG6exK+qV0bN7WZfD/xRYo9Kh2DT0kWbstMvRJ80pbMgrVMxG1Qn6BZJrIX+O2sHlSd
+X-Google-Smtp-Source: AGHT+IFoPkNVe4Q2bVoIHmMNhdShHH6deoeW7JgoeZ5gaNh6f1dgwmJRG0/F7F+VMSx2Mmh2gTW3sdf91IuPyKpMs74=
+X-Received: by 2002:a05:6e02:1b0e:b0:3dd:ed9e:a53f with SMTP id
+ e9e14a558f8ab-3df070326dcmr6234545ab.10.1750701952276; Mon, 23 Jun 2025
+ 11:05:52 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250624-k230-return-check-v1-1-6b4fc5ba0c41@whut.edu.cn>
-References: <20250624-k230-return-check-v1-0-6b4fc5ba0c41@whut.edu.cn>
-In-Reply-To: <20250624-k230-return-check-v1-0-6b4fc5ba0c41@whut.edu.cn>
-To: Linus Walleij <linus.walleij@linaro.org>, 
- Ze Huang <18771902331@163.com>
-Cc: linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, 
- Ze Huang <huangze@whut.edu.cn>, Yao Zi <ziyao@disroot.org>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1750695080; l=1429;
- i=huangze@whut.edu.cn; s=20250325; h=from:subject:message-id;
- bh=oeVpu5QnQ6dzADH8jDwya/HzQz1GbvZCFygSNBb/pdc=;
- b=08O/OJqdhaptAZ8XPC9n41X9RUWWU9Fh8iHKgm7F4Qnc13ZXjUaSiy3wtcUfSlAafuPFJNgbo
- X42nDIwQZHLDjrU7DXAfzUtPZrSv+1sHvXbgEa8zvjK2qvdjbIb+EUm
-X-Developer-Key: i=huangze@whut.edu.cn; a=ed25519;
- pk=C3zfn/kH6oMJickaXBa8dxTZO68EBiD93F+tAenboRA=
-X-HM-Spam-Status: e1kfGhgUHx5ZQUpXWQgPGg8OCBgUHx5ZQUlOS1dZFg8aDwILHllBWSg2Ly
-	tZV1koWUFITzdXWS1ZQUlXWQ8JGhUIEh9ZQVlCHUNPVk4YTk4ZTUNNS0lMHlYeHw5VEwETFhoSFy
-	QUDg9ZV1kYEgtZQVlJTFVKQ1VKS0xVT01ZV1kWGg8SFR0UWUFZT0tIVUpLSEpOTEpVSktLVUpCS0
-	tZBg++
-X-HM-Tid: 0a979d8efcb603a1kunm95855067303bfd
-X-HM-MType: 10
-X-HM-Sender-Digest: e1kMHhlZQR0aFwgeV1kSHx4VD1lBWUc6N1E6Exw6IjE1EiICCE8DTj03
-	Gi4KFEtVSlVKTE5LTUJOS0NOQk5OVTMWGhIXVRMOGhUcAR47DBMOD1UeHw5VGBVFWVdZEgtZQVlJ
-	TFVKQ1VKS0xVT01ZV1kIAVlBSU5PSzcG
+References: <20250619002034.97007-1-irogers@google.com> <aFW4VJtk96JD865U@google.com>
+ <CAP-5=fUpnW1DE68pMW0q3vMT+n6d5SeNkwXd45XLaf01-eP47A@mail.gmail.com> <aFmSuSyZ1ZNT94Tq@x1>
+In-Reply-To: <aFmSuSyZ1ZNT94Tq@x1>
+From: Ian Rogers <irogers@google.com>
+Date: Mon, 23 Jun 2025 11:05:41 -0700
+X-Gm-Features: AX0GCFuWZKcC5pRfc9BZ8I6NY9sP1wGLxCTxil3Ood7reBNkagEFXiDzqyyZ-wc
+Message-ID: <CAP-5=fXms87LVH-Y5V3OpVbwUjY=hWAe0NTX4uKQf1q3Ax-WSA@mail.gmail.com>
+Subject: Re: [PATCH v2 1/2] perf test workload noploop: Name the noploop process
+To: Arnaldo Carvalho de Melo <acme@kernel.org>
+Cc: Namhyung Kim <namhyung@kernel.org>, Sebastian Andrzej Siewior <bigeasy@linutronix.de>, 
+	Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, 
+	Mark Rutland <mark.rutland@arm.com>, 
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>, Jiri Olsa <jolsa@kernel.org>, 
+	Adrian Hunter <adrian.hunter@intel.com>, Kan Liang <kan.liang@linux.intel.com>, 
+	linux-kernel@vger.kernel.org, linux-perf-users@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Add a NULL check for the return value of of_get_property() when
-retrieving the "pinmux" property in the group parser. This avoids
-a potential NULL pointer dereference if the property is missing
-from the device tree node.
+On Mon, Jun 23, 2025 at 10:45=E2=80=AFAM Arnaldo Carvalho de Melo
+<acme@kernel.org> wrote:
+>
+> On Mon, Jun 23, 2025 at 08:12:47AM -0700, Ian Rogers wrote:
+> > On Fri, Jun 20, 2025 at 12:36=E2=80=AFPM Namhyung Kim <namhyung@kernel.=
+org> wrote:
+> > > I'm afraid it'd introduce a build failure on musl.  Please see
+>
+> > > https://lore.kernel.org/linux-perf-users/20250611092542.F4ooE2FL@linu=
+tronix.de/
+>
+> > > I think <sys/prctl.h> would be enough.
+>
+> > we could do that but in the glibc man page it says:
+> > https://man7.org/linux/man-pages/man2/prctl.2.html
+> > ```
+> > #include <linux/prctl.h>  /* Definition of PR_* constants */
+> > #include <sys/prctl.h>
+> > ```
+>
+> > It'd be nice to think musl was slowly getting fixed. I notice we're
+>
+> Sebastian reported on the musl libc, its maintainer replied:
+>
+> https://www.openwall.com/lists/musl/2025/06/12/11
 
-Also fix a typo ("sintenel") in the device ID match table comment,
-correcting it to "sentinel".
+Ugh. I'm not sure how we're expected to resolve this and have glibc
+and musl be happy without basically not trusting libc.
 
-Fixes: 545887eab6f6 ("pinctrl: canaan: Add support for k230 SoC")
-Reported-by: Yao Zi <ziyao@disroot.org>
-Signed-off-by: Ze Huang <huangze@whut.edu.cn>
----
- drivers/pinctrl/pinctrl-k230.c | 6 +++++-
- 1 file changed, 5 insertions(+), 1 deletion(-)
-
-diff --git a/drivers/pinctrl/pinctrl-k230.c b/drivers/pinctrl/pinctrl-k230.c
-index a9b4627b46b01237801103df566b9391f8be21b8..4976308e62372c744738dd8372e73b2494e38e0b 100644
---- a/drivers/pinctrl/pinctrl-k230.c
-+++ b/drivers/pinctrl/pinctrl-k230.c
-@@ -477,6 +477,10 @@ static int k230_pinctrl_parse_groups(struct device_node *np,
- 	grp->name = np->name;
- 
- 	list = of_get_property(np, "pinmux", &size);
-+	if (!list) {
-+		dev_err(dev, "failed to get pinmux property\n");
-+		return -EINVAL;
-+	}
- 	size /= sizeof(*list);
- 
- 	grp->num_pins = size;
-@@ -623,7 +627,7 @@ static int k230_pinctrl_probe(struct platform_device *pdev)
- 
- static const struct of_device_id k230_dt_ids[] = {
- 	{ .compatible = "canaan,k230-pinctrl", },
--	{ /* sintenel */ }
-+	{ /* sentinel */ }
- };
- MODULE_DEVICE_TABLE(of, k230_dt_ids);
- 
-
--- 
-2.50.0
-
+Thanks,
+Ian
 
