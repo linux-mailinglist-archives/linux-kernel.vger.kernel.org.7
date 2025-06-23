@@ -1,482 +1,116 @@
-Return-Path: <linux-kernel+bounces-697917-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-697898-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CFDCBAE3A7F
-	for <lists+linux-kernel@lfdr.de>; Mon, 23 Jun 2025 11:34:07 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id A2EB9AE3A04
+	for <lists+linux-kernel@lfdr.de>; Mon, 23 Jun 2025 11:28:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D420716722A
-	for <lists+linux-kernel@lfdr.de>; Mon, 23 Jun 2025 09:33:44 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6CA5E18923D1
+	for <lists+linux-kernel@lfdr.de>; Mon, 23 Jun 2025 09:28:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5C2F2239072;
-	Mon, 23 Jun 2025 09:30:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="M9FPXBtl"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.16])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6BE4323184F;
+	Mon, 23 Jun 2025 09:28:05 +0000 (UTC)
+Received: from mail-il1-f199.google.com (mail-il1-f199.google.com [209.85.166.199])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 011B8190679;
-	Mon, 23 Jun 2025 09:30:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=198.175.65.16
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750671045; cv=fail; b=YbcRYSuDR0ryfpScUIXl1v5MIGls8ubfyGtaQyEA/vQpKiv4IwhP7Dud1ria+vWtycMEmKuF+F23DnPFnxiRInmsUx8hfhtSFYhSpjYQA6oZUlhM/8uhRgS9VLUyhMqKo8VP0eqFndjv4UFy6ZKxQSkQUy3pUWZKKj34gP9x3W4=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750671045; c=relaxed/simple;
-	bh=B8JLbodgnKn0q49ilDFu+HWlJ1JR2K5RIyvht0D/tlw=;
-	h=Date:From:To:CC:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=jqWFQuwGM8tu0QHJjHXjsvm4NQKUn1yqc5pHj7u64nA25P8I0BtIk6a91ttGscKGNFdTkZ5BLvNSAbVJB0xZ+sL1d4kFVjjZn6wjcF4kMLRy/27Uo7JxjHSF1m4jyHZc2S5rXj8m2P2GpyHwsta4ekSjQ1HjIFH0m7zY8Gw+5PY=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=M9FPXBtl; arc=fail smtp.client-ip=198.175.65.16
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1750671044; x=1782207044;
-  h=date:from:to:cc:subject:message-id:reply-to:references:
-   in-reply-to:mime-version;
-  bh=B8JLbodgnKn0q49ilDFu+HWlJ1JR2K5RIyvht0D/tlw=;
-  b=M9FPXBtlplyxdtMY+ajsBE86FLTUL9ofYu0TtLAjTM2aWt3OltnokzyX
-   tQTVpsan1+qBsz3B/qTKv/6Ngp3v/zRtjOHjp/zK0FHUEMHGzndHIRAdW
-   qpaYJLETPxofz0wHLwEJOD5lyB25g63/gZPQ4G6NGP2FcYmji4VmxEB6M
-   Y2/dput1MwNBB//M/EEbl/FbSjrdrtdQr6Yck6MhP8whk2R0+BkIXHwih
-   Ej2Lroz+Mt1FXu6dnJSUSSDLB5sRd4mrF77f1g3633NLPEmrytes/nSEj
-   qJ4NeB1fx8ss9/D2L5LGg4yZEoSDki7G4ctsGyWk31j3AENTtzip5IWr3
-   A==;
-X-CSE-ConnectionGUID: 3llKfAFMR5qL6lyuW8S+mw==
-X-CSE-MsgGUID: KsIwcV4TS2GYNNswYmY7CQ==
-X-IronPort-AV: E=McAfee;i="6800,10657,11472"; a="52957438"
-X-IronPort-AV: E=Sophos;i="6.16,258,1744095600"; 
-   d="scan'208";a="52957438"
-Received: from fmviesa002.fm.intel.com ([10.60.135.142])
-  by orvoesa108.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 23 Jun 2025 02:30:43 -0700
-X-CSE-ConnectionGUID: yIJIb7vIQ5GSwdjwlc1ZBw==
-X-CSE-MsgGUID: EbGIpWR0RaOVYKonS8nkEg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.16,258,1744095600"; 
-   d="scan'208";a="175153615"
-Received: from orsmsx901.amr.corp.intel.com ([10.22.229.23])
-  by fmviesa002.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 23 Jun 2025 02:30:41 -0700
-Received: from ORSMSX901.amr.corp.intel.com (10.22.229.23) by
- ORSMSX901.amr.corp.intel.com (10.22.229.23) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.25; Mon, 23 Jun 2025 02:30:40 -0700
-Received: from ORSEDG902.ED.cps.intel.com (10.7.248.12) by
- ORSMSX901.amr.corp.intel.com (10.22.229.23) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.25 via Frontend Transport; Mon, 23 Jun 2025 02:30:40 -0700
-Received: from NAM11-BN8-obe.outbound.protection.outlook.com (40.107.236.49)
- by edgegateway.intel.com (134.134.137.112) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.25; Mon, 23 Jun 2025 02:30:40 -0700
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=GCKWPWLwK3QmENN4vRHkRDDyIjdfFS6CRQQHnS7gbPICh8HbAqdUzMs0TuELZaH7iIlCfxp0FTC44lWiL1Mf9qpD7cmdZsrbvQqj6xrfmT1MFXRfAatNC4dhlgnfzhxaYJTJNDP+CAXbdYcqEHw2aE3Fddab3xa7KtuhfCN5Kxos8DgRhTx+6XpWMAnk5pNN7xJSZ+UjSuR5iQbucIE+SCOpAjBNpM8yAS5GCJLQ/JqzCwkg+DZ0jxJ0LVlJSn6rbkx1vBmAXl+jwRAxh+17ckrvgAQ58rldAc45hMqzBE2l1aFAYYsCpuv4WONsf+9qS+4A/z6FuaZFEQGIc0B3kQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=+KQrrlZc9eiOtHtM23iAjpCG1QAdFmat6PmAWZX/MoA=;
- b=MlOkGujyYWuR73b0kyPU2oDk+aVuJhhyy7jVNSvwbaRzDmWNEWHI2IdGbECbH77W6/JVqEldsKIb0bVpl24Bj2H8yfOYrByiNy/8Uu3EQmGGyas5kAxPxx0XyHy550E2mNeasWNkpwHHFRQBIEWwE6YWdEy3RcUQNq0and3hHzXtgLuxq4Nn+DF08Ao54HmzGbGJGgNWT9TyfwIVo1IJuLrCAzmjGDpvWbW8TNyiaF8wJL6IztPr4cof/NGCRPHTxQHe/Hn7H0yXHRu7enLXA0VEkEUyoWfFHcN+/SnXMIA24eFv6iAneYMHlNodKXDJzrMHkuENhb0gHSH/6RXO1g==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
- dkim=pass header.d=intel.com; arc=none
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=intel.com;
-Received: from DS7PR11MB5966.namprd11.prod.outlook.com (2603:10b6:8:71::6) by
- SA3PR11MB8002.namprd11.prod.outlook.com (2603:10b6:806:2f6::9) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.8857.29; Mon, 23 Jun 2025 09:30:08 +0000
-Received: from DS7PR11MB5966.namprd11.prod.outlook.com
- ([fe80::e971:d8f4:66c4:12ca]) by DS7PR11MB5966.namprd11.prod.outlook.com
- ([fe80::e971:d8f4:66c4:12ca%5]) with mapi id 15.20.8857.025; Mon, 23 Jun 2025
- 09:30:07 +0000
-Date: Mon, 23 Jun 2025 17:27:34 +0800
-From: Yan Zhao <yan.y.zhao@intel.com>
-To: "Edgecombe, Rick P" <rick.p.edgecombe@intel.com>
-CC: "quic_eberman@quicinc.com" <quic_eberman@quicinc.com>, "Li, Xiaoyao"
-	<xiaoyao.li@intel.com>, "Shutemov, Kirill" <kirill.shutemov@intel.com>,
-	"Hansen, Dave" <dave.hansen@intel.com>, "david@redhat.com"
-	<david@redhat.com>, "thomas.lendacky@amd.com" <thomas.lendacky@amd.com>,
-	"vbabka@suse.cz" <vbabka@suse.cz>, "tabba@google.com" <tabba@google.com>,
-	"Du, Fan" <fan.du@intel.com>, "linux-kernel@vger.kernel.org"
-	<linux-kernel@vger.kernel.org>, "seanjc@google.com" <seanjc@google.com>,
-	"Weiny, Ira" <ira.weiny@intel.com>, "pbonzini@redhat.com"
-	<pbonzini@redhat.com>, "binbin.wu@linux.intel.com"
-	<binbin.wu@linux.intel.com>, "Yamahata, Isaku" <isaku.yamahata@intel.com>,
-	"michael.roth@amd.com" <michael.roth@amd.com>, "ackerleytng@google.com"
-	<ackerleytng@google.com>, "Peng, Chao P" <chao.p.peng@intel.com>,
-	"kvm@vger.kernel.org" <kvm@vger.kernel.org>, "Annapurve, Vishal"
-	<vannapurve@google.com>, "jroedel@suse.de" <jroedel@suse.de>, "Miao, Jun"
-	<jun.miao@intel.com>, "Li, Zhiquan1" <zhiquan1.li@intel.com>,
-	"pgonda@google.com" <pgonda@google.com>, "x86@kernel.org" <x86@kernel.org>
-Subject: Re: [RFC PATCH 08/21] KVM: TDX: Increase/decrease folio ref for huge
- pages
-Message-ID: <aFkeBtuNBN1RrDAJ@yzhao56-desk.sh.intel.com>
-Reply-To: Yan Zhao <yan.y.zhao@intel.com>
-References: <aCVZIuBHx51o7Pbl@yzhao56-desk.sh.intel.com>
- <diqzfrgfp95d.fsf@ackerleytng-ctop.c.googlers.com>
- <aEEEJbTzlncbRaRA@yzhao56-desk.sh.intel.com>
- <CAGtprH_Vj=KS0BmiX=P6nUTdYeAZhNEyjrRFXVK0sG=k4gbBMg@mail.gmail.com>
- <aE/q9VKkmaCcuwpU@yzhao56-desk.sh.intel.com>
- <9169a530e769dea32164c8eee5edb12696646dfb.camel@intel.com>
- <aFDHF51AjgtbG8Lz@yzhao56-desk.sh.intel.com>
- <6afbee726c4d8d95c0d093874fb37e6ce7fd752a.camel@intel.com>
- <aFIGFesluhuh2xAS@yzhao56-desk.sh.intel.com>
- <0072a5c0cf289b3ba4d209c9c36f54728041e12d.camel@intel.com>
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-In-Reply-To: <0072a5c0cf289b3ba4d209c9c36f54728041e12d.camel@intel.com>
-X-ClientProxiedBy: SI2PR01CA0008.apcprd01.prod.exchangelabs.com
- (2603:1096:4:191::10) To DS7PR11MB5966.namprd11.prod.outlook.com
- (2603:10b6:8:71::6)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 745E119CCEC
+	for <linux-kernel@vger.kernel.org>; Mon, 23 Jun 2025 09:28:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.199
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1750670885; cv=none; b=TI5n9WAtCWCOzlQQW3fVvOC5WZ223Io4T0bf7F30Qx3Datg7Kjg7iy4TAL0LPNhLm0/Mck+2nXKDC30v13g8q+MvCGQ1HCsB+dVoqG0p7r+9McwXS8ZiHMBIchodfpopJLYSTxpMHBrf6TvJHmJV3ievzVbkmqTd68iKBEhSJbQ=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1750670885; c=relaxed/simple;
+	bh=kWp+U3SeloDqZK9P9oT/FPSgJQMzRGNUhDhwOD1oUrg=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=dTLUdso+3fEU7UXiSiRqyGrAZC4gKQcVRn3qifUuF3UxDbzCWMuHoaNvjoh7u4yAdhJrIETdQ1nKOw11TEhk3VQ0F+v49jd4FsFkbXI/TxkjFKFUt4YNPwC8MVH1rlmKWg4Pwg+tyAxj6IvRN9l7k+cjg8HUC437ANDJPxOcAcE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.199
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f199.google.com with SMTP id e9e14a558f8ab-3ddcfea00afso54835325ab.0
+        for <linux-kernel@vger.kernel.org>; Mon, 23 Jun 2025 02:28:03 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1750670882; x=1751275682;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=nGmrMuMpdWZSYI6DROsbSwsitajxWTPLRmdhRxd70Ck=;
+        b=hOK/NqJrUDkERBaG5qljrBoyxsYd+xLGNF/ORNCPW51els9Rgm0WyBIRJLxmLqY8B9
+         L6L7b3TOlSTD2vy278ta9bx/jGBLVoqlssAJWI0vrnRkLHreMPIg00gz/vGXC4l3hwi6
+         gs0L/BoDCrJyRBxZHE/fhXD9kf7t35SQNDEvdRVVAj4V8Zu2qoWYTx12jawAR+MmGoN3
+         xISEWe82rFWHDssoMZVAcdupzlavkAu+8uojBAtCQ473iMR44xdHd2ub1ROCzJmUIpUU
+         HnWb9Wa4EM1k6ja/JVs/g62NKS4Pd5/x1eHFmQ0yawEvZrsLKA5M7xnqnOYnxuFTBJiC
+         38Uw==
+X-Gm-Message-State: AOJu0Yymdehr1sUhspgMj2cqbehew/ssrtFC27RL0rzRC4SQ5F8n860f
+	Y8KoG8cbxlc5K0A4+2prfDMSd504Von5AMweiVy3DnmB0ALBO8fKzVgazRzip7k70AmWLEZDhZT
+	bNSB0KwmbpT210YSOSI1IKFJO8TMAIB+RXtEgRrTIK/II99girFNVC16hjso=
+X-Google-Smtp-Source: AGHT+IGimlpY+7tSSY+1JTQhrY5dOIclOv4Tu1SBePPsf/BpXwQGY+lAQZ/rfHBqJT/niL8nivob/UMAXKd4YdavUUCDDT4E/Vr/
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DS7PR11MB5966:EE_|SA3PR11MB8002:EE_
-X-MS-Office365-Filtering-Correlation-Id: 088400f7-62d2-4dd8-a644-08ddb2388ad2
-X-LD-Processed: 46c98d88-e344-4ed4-8496-4ed7712e255d,ExtAddr
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|376014|7416014|1800799024;
-X-Microsoft-Antispam-Message-Info: =?us-ascii?Q?Zu3svrs0rDJQEjWWzKNDJVcid+iuNwY1rMduHXRRp6449+d4ms4V3hnX2Etr?=
- =?us-ascii?Q?nxSEczNH8MWcTw+ZCDgfkZyb1yymTQoOmixbQv7v2cdlSBXZaE3YoPnx+oYG?=
- =?us-ascii?Q?Jn2hkBBxSXRmb3uVDP2xnR1cYI6mAvyXJggLAcGH9N5qC0PIFyqdjhJW/zfJ?=
- =?us-ascii?Q?oR7IH5aF9lgTtl/cfm4aCOlJZ2tpGWDNjowUftplvHJXxQCZu/G8R7p6L60d?=
- =?us-ascii?Q?TpGH1dyUPvkN/XYkfZh3a7i28B6HrQBGnsXlrZbTWGENM9E/ysAjRQHbTWO5?=
- =?us-ascii?Q?R3u6NdyejxwcSOIINaELBjQEldB5h8e9yQSFRABf/2H4iPEm/IfVurgBbTI+?=
- =?us-ascii?Q?lhc/gHjfyfvtgwJcZKJJT98xE7qVSouBiDRNFGSRM0EA0xyXkV9/yCFKSKzA?=
- =?us-ascii?Q?e4Z0apX5RNLFA80DRKCpDeIvq/eC8NcRYW95nx3tCGGMpxIchgnZwkEz7fVE?=
- =?us-ascii?Q?gYVs+uQZSZIe71l/d5QnAIAD+xYlKYXkkoFz+EWMb7LtFgVdA1lblWqZAZI8?=
- =?us-ascii?Q?akrtqbARckwO6TziWZn7WyPJBKUHK2NGkPVdDt1KlmX3RFyB+2uYWZO8+B2F?=
- =?us-ascii?Q?JmyoLt6WuaePT7qWWra3HN9iQ/B1Cc4niTTRKG0dj8mtiDN/97IW39IXrOC3?=
- =?us-ascii?Q?/a0NNqpbFLNtYGKZSBLujtBvHA50DpR7MnYdJlV6lKjp3p2bLwkIRHvIS2QW?=
- =?us-ascii?Q?701YJ+sBk86j+6Bi/Rp0cFdCpGS9/2A9eWXtErHRwYmpro5HTnWdEI38xtYm?=
- =?us-ascii?Q?0IxFgDUatqx5DRrLcOEQjeaSXIVG2Qb2wXUNo7e5K8VxcbrBxCUi1zEjTR5y?=
- =?us-ascii?Q?fByp9Kuw3XmZwM0sKiJVn7Ow6TnG+7AIPoaInUderu5WbGblKyQxrm/ZnMq+?=
- =?us-ascii?Q?mhdnww1LodBnbkAyx+aJTcBmRuFTbUQTuYLozJd5qNOYMGxp2dpndgK2/ot/?=
- =?us-ascii?Q?CpB+SjnCB2wpiMZ1EQxF5i72bql+NBlpjU2CfUjjqetChsWbdbvwCN7k9zZ2?=
- =?us-ascii?Q?7q0Ti1YlWwb3OXYdtllcFMXBPl4lJ5sIUej3ycAC1Tn4TMsGQBiB6ulysH8X?=
- =?us-ascii?Q?iSRQlPYZGcK3c/QJkxjGe20rG4cPNHYoW3HVB14fPgAYe1oap6dyAj3AqvZU?=
- =?us-ascii?Q?xoWYD8UApIi381VD87FPk91kmDd0EH56C6DxlxZmbVMuPbBXeaO22U8c41Rg?=
- =?us-ascii?Q?x/FCtHPisowW/dAOUTI1AX+vDY4Ni0BwsBsxvMVuwGwbYnJGWqIoO5TZMbr7?=
- =?us-ascii?Q?d05dnZebv+lv5Y73wDGns2kppET1Q69cH+rXe8l2C7b+ebzZTyvq/aBQUHKv?=
- =?us-ascii?Q?cLh77UE0BnuDKC9Ix3SgQ8U7QXJVlGd/GkVu63HnT+SprrJHtL2QGkCRgTY+?=
- =?us-ascii?Q?K5+aigtqrDv69HuFhhayswdK5QGM?=
-X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DS7PR11MB5966.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(376014)(7416014)(1800799024);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?ShbcJX1vj1FcJwF4rq/Aix7tDXfFkLVbh7i70K5suyEF7xQfH5q/t33uNnOq?=
- =?us-ascii?Q?QByQRM5dngAV/L27fFHlbOg2NPD6Jr5ReiPNSIVx5VzMgMB7zOYoCeNPPNzx?=
- =?us-ascii?Q?69e/2BevahL0TksoIQSbv6EimMdHS9H4gvnFz8SYw1oy3r3lEFeIFHrcFPMG?=
- =?us-ascii?Q?yjr8W4Hr7Zf9I6IQppGt2YZyrOXZMPX1zCjoeiWmEOqTD80bS7CZ7/bZ7LjV?=
- =?us-ascii?Q?vwYrNBxKLByv58YZU/KqdYfyICoeSND9WbAMqNSNMpQ5i5XKhiTdsezr9eep?=
- =?us-ascii?Q?U9IfhVBYykHdqU9YyuERhZDETrzHotlVfV0NQZRLeQmRB1465EL64fbB4+I/?=
- =?us-ascii?Q?5+h1Qtdk2HcwnGmlKlfhMB/R69YbU36I+bNoGaYYYFbwBSiSnyl4TLlkzMj2?=
- =?us-ascii?Q?EdyVKp33NF4AR4VXNONXxgf7DXFb9Niz4N6xZ2uIWrscGzAX884trSlXBDwj?=
- =?us-ascii?Q?fhplvR1Ielm/m8LdjoGBjV596rSigBZeXSWZJJG+9b46+9W00ldcRo1ONtnS?=
- =?us-ascii?Q?Ix/R/WkDYqzcQTvgCPY3HhUfbnpQpHLIA6zvDAWOaUeqHGnuxwzqU36SOPXj?=
- =?us-ascii?Q?dWUU+6deiodGFjR1rLMXQIQmaolSy5W8tZBgYxxKliyDHLxJteIzdmrIPsHQ?=
- =?us-ascii?Q?lXl4yaRzhh2wZGRbPAwCsdvpD717c7WtJ5YfF3plpSPFeGrTbdzCKbUcsemY?=
- =?us-ascii?Q?j7wdPHZ0Z+WiGqECGXYN9hCAHMf+CJf+AOt6APLJ2PXqxsagrwap6C8upf1E?=
- =?us-ascii?Q?cq4SwYYz9W+0Ma8k1E4271eazx+5O2VJr0311dkZvaYq5Y1FTYkEY6y4ea7q?=
- =?us-ascii?Q?LmUV5uz0OrSbX1WXRXJ6KH1ryq4Y7twSswnehMyYmhsSjGtYBBR1HMS6kWEi?=
- =?us-ascii?Q?F0Dittz2RXG3EZTOZAt5A0kAkDB8LLY4BkZLw8IaA4qjDJt9urR3a4wLK5Gi?=
- =?us-ascii?Q?QyT2yXsbgvhmHLF75U0HyGXeLcfA7sH3oWhDEwJEwWKoorB4rkJG2ooM+Gel?=
- =?us-ascii?Q?+cIL9TdKp/tpU7OtCzSr1DUjsW83Mwrowchr4mFav9G9+LEKMnL3peFdtiJV?=
- =?us-ascii?Q?L4TNKvx8ddvpnh771izmzknBOQX2H04ZPXD14VuAQaMDtxzYyWKPFqUWztb8?=
- =?us-ascii?Q?PiCVH4e1gCRX4+ifTbK52/2alO8HCmbZq3rq5zyn03g2XQKKcnhiFNpYgeMC?=
- =?us-ascii?Q?zhDm8a78h/hTINpbOyVtxrA20Z6md4QzBExKLr6MQRjaif1+y1jM/UtCc1I9?=
- =?us-ascii?Q?GB8YmPMiko3i6Gol1UJ1JJscPRe5++H5gHaKWdh1lfRt5bZMWMjU9bN0tX1s?=
- =?us-ascii?Q?01rr6cT5dH3hbnbJcUluOpnBGfy0FzUM0jMXVV9LOYAdoBRNDG/45g/O7clg?=
- =?us-ascii?Q?gkdL/UIr60y+4NPAp4Qu7BvOe0kefaQ1v7pbWvxr+fFhK+D2U73Y4Gui/Tx+?=
- =?us-ascii?Q?Qg26nJ3ca//2vMX7eVZaIdpLJH5AcSLANDs91Phg2rsLEZy8Lh/JhXpbIGRR?=
- =?us-ascii?Q?TEjm+THu/Jn6mG3ZRjnxkZsS0pktaVuMyAaWANvbleSQOUNdpFWi1xhsYuy1?=
- =?us-ascii?Q?XIFcHvPczO63u9rkFKhNbY0l7VBkqVGuY9l0zbyi?=
-X-MS-Exchange-CrossTenant-Network-Message-Id: 088400f7-62d2-4dd8-a644-08ddb2388ad2
-X-MS-Exchange-CrossTenant-AuthSource: DS7PR11MB5966.namprd11.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 23 Jun 2025 09:30:07.9072
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: J4oysNlxpCjHqJBBdf6Qu0vbpZJBF4b/13JTXNVebU3pz0BlQc6GWZorbAOBJ30lNb8txTA3pnLadkbv1TS0Gg==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SA3PR11MB8002
-X-OriginatorOrg: intel.com
+X-Received: by 2002:a05:6e02:1546:b0:3dd:c78c:ec3e with SMTP id
+ e9e14a558f8ab-3de38cc5e7fmr141650165ab.22.1750670882622; Mon, 23 Jun 2025
+ 02:28:02 -0700 (PDT)
+Date: Mon, 23 Jun 2025 02:28:02 -0700
+In-Reply-To: <20250623085022.3182174-1-lizhi.xu@windriver.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <68591e22.a00a0220.34b642.0006.GAE@google.com>
+Subject: Re: [syzbot] [kernel?] KMSAN: kernel-infoleak in vmci_host_unlocked_ioctl
+ (3)
+From: syzbot <syzbot+9b9124ae9b12d5af5d95@syzkaller.appspotmail.com>
+To: linux-kernel@vger.kernel.org, lizhi.xu@windriver.com, 
+	syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-On Wed, Jun 18, 2025 at 08:41:38AM +0800, Edgecombe, Rick P wrote:
-> On Wed, 2025-06-18 at 08:19 +0800, Yan Zhao wrote:
-> > > I don't think a potential bug in KVM is a good enough reason. If we are
-> > > concerned can we think about a warning instead?
-> > > 
-> > > We had talked enhancing kasan to know when a page is mapped into S-EPT in
-> > > the
-> > > past. So rather than design around potential bugs we could focus on having a
-> > > simpler implementation with the infrastructure to catch and fix the bugs.
-> > However, if failing to remove a guest private page would only cause memory
-> > leak,
-> > it's fine. 
-> > If TDX does not hold any refcount, guest_memfd has to know that which private
-> > page is still mapped. Otherwise, the page may be re-assigned to other kernel
-> > components while it may still be mapped in the S-EPT.
-> 
-> KASAN detects use-after-free's like that. However, the TDX module code is not
-> instrumented. It won't check against the KASAN state for it's accesses.
-> 
-> I had a brief chat about this with Dave and Kirill. A couple ideas were
-> discussed. One was to use page_ext to keep a flag that says the page is in-use
-Thanks!
+Hello,
 
-To use page_ext, should we introduce a new flag PAGE_EXT_FIRMWARE_IN_USE,
-similar to PAGE_EXT_YOUNG?
+syzbot has tested the proposed patch but the reproducer is still triggering an issue:
+KMSAN: kernel-infoleak in vmci_host_unlocked_ioctl
 
-Due to similar issues as those with normal page/folio flags (see the next
-comment for details), TDX needs to set PAGE_EXT_FIRMWARE_IN_USE on a
-page-by-page basis rather than folio-by-folio.
+=====================================================
+BUG: KMSAN: kernel-infoleak in instrument_copy_to_user include/linux/instrumented.h:114 [inline]
+BUG: KMSAN: kernel-infoleak in _inline_copy_to_user include/linux/uaccess.h:196 [inline]
+BUG: KMSAN: kernel-infoleak in _copy_to_user+0xcc/0x120 lib/usercopy.c:26
+ instrument_copy_to_user include/linux/instrumented.h:114 [inline]
+ _inline_copy_to_user include/linux/uaccess.h:196 [inline]
+ _copy_to_user+0xcc/0x120 lib/usercopy.c:26
+ copy_to_user include/linux/uaccess.h:225 [inline]
+ vmci_host_do_receive_datagram drivers/misc/vmw_vmci/vmci_host.c:442 [inline]
+ vmci_host_unlocked_ioctl+0x1d6f/0x52d0 drivers/misc/vmw_vmci/vmci_host.c:942
+ vfs_ioctl fs/ioctl.c:51 [inline]
+ __do_sys_ioctl fs/ioctl.c:907 [inline]
+ __se_sys_ioctl+0x239/0x400 fs/ioctl.c:893
+ __x64_sys_ioctl+0x97/0xe0 fs/ioctl.c:893
+ x64_sys_call+0x1ebe/0x3db0 arch/x86/include/generated/asm/syscalls_64.h:17
+ do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
+ do_syscall_64+0xd9/0x210 arch/x86/entry/syscall_64.c:94
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
 
-Additionally, it seems reasonable for guest_memfd not to copy the
-PAGE_EXT_FIRMWARE_IN_USE flag when splitting a huge folio?
-(in __folio_split() --> split_folio_to_order(), PAGE_EXT_YOUNG and
-PAGE_EXT_IDLE are copied to the new folios though).
+Local variable filename created at:
+ ima_file_mprotect+0x78/0x800 security/integrity/ima/ima_main.c:500
+ security_file_mprotect+0x141/0x590 security/security.c:3012
 
-Furthermore, page_ext uses extra memory. With CONFIG_64BIT, should we instead
-introduce a PG_firmware_in_use in page flags, similar to PG_young and PG_idle?
+Bytes 28-31 of 40 are uninitialized
+Memory access of size 40 starts at ffff888021ad2880
+Data copied to user address 000000000000a4bf
 
-> by the TDX module. There was also some discussion of using a normal page flag,
-> and that the reserved page flag might prevent some of the MM operations that
-> would be needed on guestmemfd pages. I didn't see the problem when I looked.
-> 
-> For the solution, basically the SEAMCALL wrappers set a flag when they hand a
-> page to the TDX module, and clear it when they successfully reclaim it via
-> tdh_mem_page_remove() or tdh_phymem_page_reclaim(). Then if the page makes it
-> back to the page allocator, a warning is generated.
-After some testing, to use a normal page flag, we may need to set it on a
-page-by-page basis rather than folio-by-folio. See "Scheme 1".
-And guest_memfd may need to selectively copy page flags when splitting huge
-folios. See "Scheme 2".
-
-Scheme 1: Set/unset page flag on folio-by-folio basis, i.e.
-        - set folio reserved at tdh_mem_page_aug(), tdh_mem_page_add(),
-        - unset folio reserved after a successful tdh_mem_page_remove() or
-          tdh_phymem_page_reclaim().
-
-        It has problem in following scenario:
-        1. tdh_mem_page_aug() adds a 2MB folio. It marks the folio as reserved
-	   via "folio_set_reserved(page_folio(page))"
-
-        2. convert a 4KB page of the 2MB folio to shared.
-        2.1 tdh_mem_page_demote() is executed first.
-       
-        2.2 tdh_mem_page_remove() then removes the 4KB mapping.
-            "folio_clear_reserved(page_folio(page))" clears reserved flag for
-            the 2MB folio while the rest 511 pages are still mapped in the
-            S-EPT.
-
-        2.3. guest_memfd splits the 2MB folio into 512 4KB folios.
+CPU: 1 UID: 0 PID: 6749 Comm: syz.0.16 Not tainted 6.16.0-rc3-syzkaller-g86731a2a651e-dirty #0 PREEMPT(undef) 
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 05/07/2025
+=====================================================
 
 
-Scheme 2: Set/unset page flag on page-by-page basis, i.e.
-        - set page flag reserved at tdh_mem_page_aug(), tdh_mem_page_add(),
-        - unset page flag reserved after a successful tdh_mem_page_remove() or
-          tdh_phymem_page_reclaim().
+Tested on:
 
-        It has problem in following scenario:
-        1. tdh_mem_page_aug() adds a 2MB folio. It marks pages as reserved by
-           invoking "SetPageReserved()" on each page.
-           As the folio->flags equals to page[0]->flags, folio->flags is also
-	   with reserved set.
+commit:         86731a2a Linux 6.16-rc3
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=112fdb0c580000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=595d344ff0b23ac5
+dashboard link: https://syzkaller.appspot.com/bug?extid=9b9124ae9b12d5af5d95
+compiler:       Debian clang version 20.1.6 (++20250514063057+1e4d39e07757-1~exp1~20250514183223.118), Debian LLD 20.1.6
+patch:          https://syzkaller.appspot.com/x/patch.diff?x=16bff370580000
 
-        2. convert a 4KB page of the 2MB folio to shared. say, it's page[4].
-        2.1 tdh_mem_page_demote() is executed first.
-       
-        2.2 tdh_mem_page_remove() then removes the 4KB mapping.
-            "ClearPageReserved()" clears reserved flag of page[4] of the 2MB
-            folio.
-
-        2.3. guest_memfd splits the 2MB folio into 512 4KB folios.
-             In guestmem_hugetlb_split_folio(), "p->flags = folio->flags" marks
-             page[4]->flags as reserved again as page[0] is still reserved.
-
-            (see the code in https://lore.kernel.org/all/2ae41e0d80339da2b57011622ac2288fed65cd01.1747264138.git.ackerleytng@google.com/
-            for (i = 1; i < orig_nr_pages; ++i) {
-                struct page *p = folio_page(folio, i);
-
-                /* Copy flags from the first page to split pages. */
-                p->flags = folio->flags;
-
-                p->mapping = NULL;
-                clear_compound_head(p);
-            }
-            )
-
-I'm not sure if "p->flags = folio->flags" can be removed. Currently flag like
-PG_unevictable is preserved via this step.
-
-If we selectively copy flags, we may need to implement the following changes to
-prevent the page from being available to the page allocator. Otherwise, the
-"HugePages_Free" count will not decrease, and the same huge folio will continue
-to be recycled (i.e., being allocated and consumed by other VMs).
-
-diff --git a/mm/swap.c b/mm/swap.c
-index 2747230ced89..72d8c53e2321 100644
---- a/mm/swap.c
-+++ b/mm/swap.c
-@@ -98,8 +98,36 @@ static void page_cache_release(struct folio *folio)
-                unlock_page_lruvec_irqrestore(lruvec, flags);
- }
-
-+static inline bool folio_is_reserved(struct folio *folio)
-+{
-+       long nr_pages = folio_nr_pages(folio);
-+       long i;
-+
-+       for (i = 0; i < nr_pages; i++) {
-+               if (!PageReserved(folio_page(folio, i)))
-+                       continue;
-+
-+               return true;
-+       }
-+
-+       return false;
-+}
-+
- static void free_typed_folio(struct folio *folio)
- {
-@@ -118,6 +146,13 @@ static void free_typed_folio(struct folio *folio)
-
- void __folio_put(struct folio *folio)
- {
-+       if (folio_is_reserved(folio)) {
-+               VM_WARN_ON_FOLIO(folio_is_reserved(folio), folio);
-+               return;
-+       }
-+
-        if (unlikely(folio_is_zone_device(folio))) {
-                free_zone_device_folio(folio);
-                return;
-@@ -986,6 +1021,12 @@ void folios_put_refs(struct folio_batch *folios, unsigned int *refs)
-                if (!folio_ref_sub_and_test(folio, nr_refs))
-                        continue;
-
-+               if (folio_is_reserved(folio)) {
-+                       VM_WARN_ON_FOLIO(folio_is_reserved(folio), folio);
-+                       continue;
-+               }
-+
-                if (unlikely(folio_has_type(folio))) {
-                        /* typed folios have their own memcg, if any */
-                        if (lruvec) {
-
-
-Besides, guest_memfd needs to reject converting to shared when a page is still
-mapped in S-EPT.
-
-diff --git a/virt/kvm/guest_memfd.c b/virt/kvm/guest_memfd.c
-index d71653e7e51e..6449151a3a69 100644
---- a/virt/kvm/guest_memfd.c
-+++ b/virt/kvm/guest_memfd.c
-@@ -553,6 +553,41 @@ static void kvm_gmem_convert_invalidate_end(struct inode *inode,
-                kvm_gmem_invalidate_end(gmem, invalidate_start, invalidate_end);
- }
-
-+static bool kvm_gmem_has_invalid_folio(struct address_space *mapping, pgoff_t start,
-+                                       size_t nr_pages)
-+{
-+       pgoff_t index = start, end = start + nr_pages;
-+       bool ret = false;
-+
-+       while (index < end) {
-+               struct folio *f;
-+               long i = 0, nr;
-+
-+               f = filemap_get_folio(mapping, index);
-+               if (IS_ERR(f))
-+                       continue;
-+
-+               if (f->index < start)
-+                       i = start - f->index;
-+
-+               nr = folio_nr_pages(f);
-+               if (f->index + folio_nr_pages(f) > end)
-+                       nr -= f->index + folio_nr_pages(f) - end;
-+
-+               for (; i < nr; i++) {
-+                       if (PageReserved(folio_page(f, i))) {
-+                               ret = true;
-+                               folio_put(f);
-+                               goto out;
-+                       }
-+               }
-+               index += folio_nr_pages(f);
-+               folio_put(f);
-+       }
-+out:
-+       return ret;
-+}
- static int kvm_gmem_convert_should_proceed(struct inode *inode,
-                                           struct conversion_work *work,
-                                           bool to_shared, pgoff_t *error_index)
-@@ -572,6 +607,12 @@ static int kvm_gmem_convert_should_proceed(struct inode *inode,
-                        if (ret)
-                                return ret;
-                        kvm_gmem_zap(gmem, work->start, work_end, KVM_FILTER_PRIVATE);
-+
-+                       if (kvm_gmem_has_invalid_folio(inode->i_mapping, work->start,
-+                                                      work->nr_pages)) {
-+                               ret = -EFAULT;
-+                       }
-+
-                }
-        } else {
-                unmap_mapping_pages(inode->i_mapping, work->start,
-
-
-
-> Also it was mentioned that SGX did have a similar issue to what is being worried
-> about here:
-> https://lore.kernel.org/linux-sgx/aCYey1W6i7i3yPLL@gmail.com/T/#m86c8c4cf0e6b9a653bf0709a22bb360034a24d95
-> 
-> > 
-> > 
-> > > > 
-> > > > > > 
-> > > > > > This would allow guest_memfd to maintain an internal reference count
-> > > > > > for
-> > > > > > each
-> > > > > > private GFN. TDX would call guest_memfd_add_page_ref_count() for
-> > > > > > mapping
-> > > > > > and
-> > > > > > guest_memfd_dec_page_ref_count() after a successful unmapping. Before
-> > > > > > truncating
-> > > > > > a private page from the filemap, guest_memfd could increase the real
-> > > > > > folio
-> > > > > > reference count based on its internal reference count for the private
-> > > > > > GFN.
-> > > > > 
-> > > > > What does this get us exactly? This is the argument to have less error
-> > > > > prone
-> > > > > code that can survive forgetting to refcount on error? I don't see that
-> > > > > it
-> > > > > is an
-> > > > > especially special case.
-> > > > Yes, for a less error prone code.
-> > > > 
-> > > > If this approach is considered too complex for an initial implementation,
-> > > > using
-> > > > tdx_hold_page_on_error() is also a viable option.
-> > > 
-> > > I'm saying I don't think it's not a good enough reason. Why is it different
-> > > then
-> > > other use-after free bugs? I feel like I'm missing something.
-> > By tdx_hold_page_on_error(), it could be implememented as on removal failure,
-> > invoke a guest_memfd interface to let guest_memfd know exact ranges still
-> > being
-> > under use by the TDX module due to unmapping failures.
-> > Do you think it's ok?
-> 
-> Either way is ok to me. It seems like we have three ok solutions. But the tone
-> of the thread is that we are solving some deep problem. Maybe I'm missing
-> something.
 
