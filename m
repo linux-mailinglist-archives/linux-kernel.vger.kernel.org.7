@@ -1,176 +1,189 @@
-Return-Path: <linux-kernel+bounces-698843-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-698845-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6CC35AE4ABF
-	for <lists+linux-kernel@lfdr.de>; Mon, 23 Jun 2025 18:26:37 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 700B1AE4AC5
+	for <lists+linux-kernel@lfdr.de>; Mon, 23 Jun 2025 18:27:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 39A824A00A2
-	for <lists+linux-kernel@lfdr.de>; Mon, 23 Jun 2025 16:24:32 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E401B4A1550
+	for <lists+linux-kernel@lfdr.de>; Mon, 23 Jun 2025 16:24:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D21192BDC16;
-	Mon, 23 Jun 2025 16:18:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2044C2D29DD;
+	Mon, 23 Jun 2025 16:18:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="lerfOSub"
-Received: from mail-yw1-f176.google.com (mail-yw1-f176.google.com [209.85.128.176])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="ok3fQtyN"
+Received: from mail-pg1-f202.google.com (mail-pg1-f202.google.com [209.85.215.202])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 991E629B768
-	for <linux-kernel@vger.kernel.org>; Mon, 23 Jun 2025 16:18:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CC1562BE7BE
+	for <linux-kernel@vger.kernel.org>; Mon, 23 Jun 2025 16:18:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.202
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750695512; cv=none; b=n/XdxKE5JpWxzkQUEjoEIVqn0UKI9JgFQcPHRu9xc1BTpCIDNxxK+pDOKEZ/46qVhBs6mbxISumr4Ea8WWO+ACjacOpdNBya8bAX6Vd6Zhix/5V0o7krTOpYBJnRs9QlrAAo686ZFwBlPEnnstQLP2ttPA8/B6TViHPaKBHxyAo=
+	t=1750695529; cv=none; b=ErlUZSm1zk0mhpW8QWlZWWl+1ccB/L57tXJJb1LReLFQ0kVC+KyZZlu7W2DvdG41t47qE1aB440vpUjjvBbByVvLQFFFuIymMjPznjIbG3vha/RcWxC8FlMV7/0NJVbjDlh1LCdypwilNv+pHSx8RHGzNCEw8Xp6gOW1OPAL6pM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750695512; c=relaxed/simple;
-	bh=D4WLrHGnbg5kQBLxjiDdwVBzN+WA89TBg1nQYbaMm5w=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ksly93Dl99DDvCzlkedl6emi/H5Pk6ZZjOM6u8JXAKSyQXdDhuHMYeYLO05CYafJkGJcWNeb7Dxdx23JYABjPcwJFA5Swpx4mdEJNgq9fzaz2ue/j8GRj2qfaeLJ/kbyB4H2nb7lwHdtxTPDQhsccVl01v+Y/oKnjFtJfNKMYrs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=lerfOSub; arc=none smtp.client-ip=209.85.128.176
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-yw1-f176.google.com with SMTP id 00721157ae682-70e75f30452so31301117b3.2
-        for <linux-kernel@vger.kernel.org>; Mon, 23 Jun 2025 09:18:30 -0700 (PDT)
+	s=arc-20240116; t=1750695529; c=relaxed/simple;
+	bh=EDHaxySB1XyXigRSYjSRI7C2L41azpKZfXI/ttcEEo0=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=Kf6DFmtonUY/KwiqnOmUMVtENyJllPhQw1ijnUc3+4YhFPcRqxsco06MxI/Ma2Ki7HIgQYlsumwu9ex7FWOlcR+1HvSZt+yK2QNcXVrERLNzloHXHfgTKZn+XmMYQ25NjdzVZ58FNI9uvGmMmu4FyQd+upCKWxDKXquTCEpryFA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=ok3fQtyN; arc=none smtp.client-ip=209.85.215.202
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
+Received: by mail-pg1-f202.google.com with SMTP id 41be03b00d2f7-b2c36951518so5571828a12.2
+        for <linux-kernel@vger.kernel.org>; Mon, 23 Jun 2025 09:18:47 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1750695509; x=1751300309; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=ueQ2+ddYRZVXMhlg0x6j6v5Cyj80tFqJK0UcyfKVqeo=;
-        b=lerfOSubnzZg7fGFZ5QLc94onSz10qxebXmaSOc/eOV7A0MIrVILU8fCYFwFieVwHX
-         SDZdPxWjh1K7r117f+vndlkAnOTHb0st4Ap1AX028svtwEXK939O2qCiGkDP78amTR5T
-         uwHzjWHSBgAqbcUPHYUeUxHEFdQO+FxIqFQRP/Rc0aHK9pvydgAojI8LO3q4RDlNH1Iq
-         lJccM6d4Y0qpDpxkMYJljfGbTOgthIHPxUbHOWIjXSbgX95quHlp4v/YZZ07L9Gcv8CH
-         zomttamvOFejZ8UKudm+KUTvBCa8rVFCPQBl12+9+cuB0zduzsrCL+2DrLtowJtXeScV
-         MeNA==
+        d=google.com; s=20230601; t=1750695527; x=1751300327; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:from:to:cc:subject:date:message-id:reply-to;
+        bh=OOkpzMlhlXRiMCNdOIvauV/qFub0T/UowmpNSsYnBL4=;
+        b=ok3fQtyNSBcUqCubl+Lz2K0WlkXRHfvXkDzsv/rGPc7b1ghBZc+p2/IYP5cwxthWEF
+         rn9Nx0bpDO/K7E5va/IkUeW7tpTJQRbe8DqDFP82HxyTTPe3V7zV1t4l1fRs7My5LtUZ
+         /N9Nb91DUny3N/8MFK1qTU2RDH/8yUB5FgZpPcNRA9KKcfenjfcGv5MLYK/uyv/4KHOe
+         uZBvN7FLoX6qDzVaWmrIv9G2J+CnrEA1/EoVwApG8Yiu7ECmgLE+Dozn58L9acBrfRgv
+         H2zfUsJvp12C6RwZraUq4sT2GdVHQ/tNTT8Jz52AIWTtUtdQvQ9iSQvYzGczv+DFnr7I
+         rerg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1750695509; x=1751300309;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=ueQ2+ddYRZVXMhlg0x6j6v5Cyj80tFqJK0UcyfKVqeo=;
-        b=EPOExArCxMRudd3cXQQ8v7hsB1yvwhC1kVl6CJyMZCFAY92+kGcU+AZWFKeEu+ccjL
-         J8oYz5uvYqqDWw3aDEA9WDZ8Sy5oq9X/3zOGZW7FiZO2dfahXleanaE9hvsl5re0T4TU
-         UuoSYdyxusPIw0fQfyjYIB0MIxo9pqxCXcO1DUKDSXAbrpAQ0vGyFG4ApDP90PX6k4hV
-         te1dHrB2BTa/Dq3Z81btepZ4/Hzs+FO3ocHVlsT/ry6C5DGhiC8eS8l15GYL0/Ixcw03
-         tYU2Q+YwiyD46pz/yeK/YYOc80sFxa5s6K1j1R0tgHsOxYmR3dugtfkYqjXMZB6NNkqK
-         xyAg==
-X-Gm-Message-State: AOJu0YzOwaxkop9Stu20QYxnjG0P8yiBk9lsgSbmryYJ4CZKfVytJKI6
-	HruRO4eX0+P/SHesJVZgE5yy5LO6P6Q6Az6/FlcsfzulSP+8+HVBqMqk
-X-Gm-Gg: ASbGncs3ImbgiqTXxdl1NJYzq3A1A/5d8ALqXON+XdkT6aEUeDwQS9f9uDlWoRjyBlo
-	UPHOn6BfqTz5gD92g8N35/bxn5uwddqZoE+aWd+8XiWmoRyzRlDyflwb8fbjEse/HaBjhLBCNMS
-	Pm0tTxbpHytXzdyFziYZxWPirwtXV0xR3gnnrld555FnOF8+T6ZCfplCGAeZklf3qmABGgTec4r
-	7+eKSOhz8TpCKELteCm6+8IOn8xt7hnXsC+9TEbmwLSY9hThZQMWNl7Nusq6oToyl+Ek5b5q1+w
-	wgJRgS5xDoQzeuPF/16mQx7Uu7JMTdVzJg4VAb+sPAOlqkn47yVr3A1HFczYTg60A5/fK55KUVn
-	JhgiB/zvXiNYkL2viYkifd3IewuQa3/4q
-X-Google-Smtp-Source: AGHT+IEtXTUpnDlA/7jvmi1OzCLNIUdT6JuNcqhGJ2TfN3D2syY9DgJVjqdHAJ+nZh5fXIcDrMxfYg==
-X-Received: by 2002:a05:690c:67c6:b0:710:ea78:8ff with SMTP id 00721157ae682-712c651757dmr189161687b3.23.1750695509428;
-        Mon, 23 Jun 2025 09:18:29 -0700 (PDT)
-Received: from localhost (c-73-224-175-84.hsd1.fl.comcast.net. [73.224.175.84])
-        by smtp.gmail.com with ESMTPSA id 00721157ae682-712c4b9725esm16298767b3.70.2025.06.23.09.18.28
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 23 Jun 2025 09:18:28 -0700 (PDT)
-Date: Mon, 23 Jun 2025 12:18:28 -0400
-From: Yury Norov <yury.norov@gmail.com>
-To: Shaopeng Tan <tan.shaopeng@jp.fujitsu.com>
-Cc: linux-kernel@vger.kernel.org,
-	Rasmus Villemoes <linux@rasmusvillemoes.dk>,
-	Reinette Chatre <reinette.chatre@intel.com>,
-	James Morse <james.morse@arm.com>,
-	Dave Martin <dave.martin@arm.com>, fenghuay@nvidia.com
-Subject: Re: [PATCH v2] cpumask: Remove unnecessary cpumask_nth_andnot()
-Message-ID: <aFl-VCOMa7N6AtmF@yury>
-References: <20250623074650.3534184-1-tan.shaopeng@jp.fujitsu.com>
+        d=1e100.net; s=20230601; t=1750695527; x=1751300327;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=OOkpzMlhlXRiMCNdOIvauV/qFub0T/UowmpNSsYnBL4=;
+        b=mtdApbpgs+ISEGL1b6qD0c84Cbc5BlO64pwTQmYTy6ZnMFJPB87oAZCRA/1217ICV7
+         GVTYCcqyeWA+rOm7Ej2mD9AllfbHcZsKoyqO6fSkksOecSYn48GKIvp/t7KmGlRvFdwr
+         JOMiCNsxtpTYUO/ithYoLHatyGrGbFPPwL9YJ0Jj5bPdhNW6N3nwmKVIV7SN1kFwgtWK
+         0G3ucUsVw+ShcLWjPYykrT4OMONHzrzcyayq2CRD8vjxqe8kSFkRXq7IpJOrjzjTnA+H
+         Jf8gtz6Tf6AaeggZmnB23WAVn/otMLogMPFgAnBl9pZlWG5Iy32wMaEfgm1ULMf3ZhcU
+         TInw==
+X-Forwarded-Encrypted: i=1; AJvYcCV/UrljV2iTOSzJYLCrqL10JlHexVdbKmu1gJdXmxH5l5MC8TQ26Qd6l2dmh8CYkgIh2EiCPQeB96m/lN8=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxEyxsQqlvEriuvHFxNRfZGoY/NUxJ2auRMioDTCJ+kTGYDVJd+
+	0GFEy0Xh3nQnDsNFOMctri/ZB3FnPe9UwYaeQOQ52xdI7bwBOhU5hbyox0Bf8802zVFWL8Ffr62
+	x90qoEw==
+X-Google-Smtp-Source: AGHT+IENQipggL2SOcRyFklB3/6faa8uHHLu36CbWgSZEypv6kRSEUBRnwpSzpoNeCEIYgBhsThVyFLxqUA=
+X-Received: from pfug19.prod.google.com ([2002:a05:6a00:793:b0:749:8f7:e14e])
+ (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a05:6a20:c992:b0:21f:5c9d:498e
+ with SMTP id adf61e73a8af0-22026d32fe2mr19839452637.7.1750695527173; Mon, 23
+ Jun 2025 09:18:47 -0700 (PDT)
+Date: Mon, 23 Jun 2025 09:18:45 -0700
+In-Reply-To: <pxtvegopzsyhn7lelksclxiiee7tumppu76553rax7octqpy7i@giclgo667htf>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250623074650.3534184-1-tan.shaopeng@jp.fujitsu.com>
+Mime-Version: 1.0
+References: <20250611224604.313496-2-seanjc@google.com> <20250611224604.313496-22-seanjc@google.com>
+ <pxtvegopzsyhn7lelksclxiiee7tumppu76553rax7octqpy7i@giclgo667htf>
+Message-ID: <aFl-ZYyf9guxSkHE@google.com>
+Subject: Re: [PATCH v3 20/62] KVM: SVM: Add a comment to explain why
+ avic_vcpu_blocking() ignores IRQ blocking
+From: Sean Christopherson <seanjc@google.com>
+To: Naveen N Rao <naveen@kernel.org>
+Cc: Marc Zyngier <maz@kernel.org>, Oliver Upton <oliver.upton@linux.dev>, 
+	Paolo Bonzini <pbonzini@redhat.com>, Joerg Roedel <joro@8bytes.org>, 
+	David Woodhouse <dwmw2@infradead.org>, Lu Baolu <baolu.lu@linux.intel.com>, 
+	linux-arm-kernel@lists.infradead.org, kvmarm@lists.linux.dev, 
+	kvm@vger.kernel.org, iommu@lists.linux.dev, linux-kernel@vger.kernel.org, 
+	Sairaj Kodilkar <sarunkod@amd.com>, Vasant Hegde <vasant.hegde@amd.com>, 
+	Maxim Levitsky <mlevitsk@redhat.com>, Joao Martins <joao.m.martins@oracle.com>, 
+	Francesco Lavra <francescolavra.fl@gmail.com>, David Matlack <dmatlack@google.com>
+Content-Type: text/plain; charset="us-ascii"
 
-On Mon, Jun 23, 2025 at 04:46:45PM +0900, Shaopeng Tan wrote:
-> Commit 94f753143028("x86/resctrl: Optimize cpumask_any_housekeeping()")
-> switched the only user of cpumask_nth_andnot() to other cpumask
-> functions, but left the function cpumask_nth_andnot() unused.
-> This makes function find_nth_andnot_bit() unused as well. Delete them.
+On Mon, Jun 23, 2025, Naveen N Rao wrote:
+> On Wed, Jun 11, 2025 at 03:45:23PM -0700, Sean Christopherson wrote:
+> > Add a comment to explain why KVM clears IsRunning when putting a vCPU,
+> > even though leaving IsRunning=1 would be ok from a functional perspective.
+> > Per Maxim's experiments, a misbehaving VM could spam the AVIC doorbell so
+> > fast as to induce a 50%+ loss in performance.
+> > 
+> > Link: https://lore.kernel.org/all/8d7e0d0391df4efc7cb28557297eb2ec9904f1e5.camel@redhat.com
+> > Cc: Maxim Levitsky <mlevitsk@redhat.com>
+> > Signed-off-by: Sean Christopherson <seanjc@google.com>
+> > ---
+> >  arch/x86/kvm/svm/avic.c | 31 ++++++++++++++++++-------------
+> >  1 file changed, 18 insertions(+), 13 deletions(-)
+> > 
+> > diff --git a/arch/x86/kvm/svm/avic.c b/arch/x86/kvm/svm/avic.c
+> > index bf8b59556373..3cf929ac117f 100644
+> > --- a/arch/x86/kvm/svm/avic.c
+> > +++ b/arch/x86/kvm/svm/avic.c
+> > @@ -1121,19 +1121,24 @@ void avic_vcpu_blocking(struct kvm_vcpu *vcpu)
+> >  	if (!kvm_vcpu_apicv_active(vcpu))
+> >  		return;
+> >  
+> > -       /*
+> > -        * Unload the AVIC when the vCPU is about to block, _before_
+> > -        * the vCPU actually blocks.
+> > -        *
+> > -        * Any IRQs that arrive before IsRunning=0 will not cause an
+> > -        * incomplete IPI vmexit on the source, therefore vIRR will also
+> > -        * be checked by kvm_vcpu_check_block() before blocking.  The
+> > -        * memory barrier implicit in set_current_state orders writing
+> > -        * IsRunning=0 before reading the vIRR.  The processor needs a
+> > -        * matching memory barrier on interrupt delivery between writing
+> > -        * IRR and reading IsRunning; the lack of this barrier might be
+> > -        * the cause of errata #1235).
+> > -        */
+> > +	/*
+> > +	 * Unload the AVIC when the vCPU is about to block, _before_ the vCPU
+> > +	 * actually blocks.
+> > +	 *
+> > +	 * Note, any IRQs that arrive before IsRunning=0 will not cause an
+> > +	 * incomplete IPI vmexit on the source; kvm_vcpu_check_block() handles
+> > +	 * this by checking vIRR one last time before blocking.  The memory
+> > +	 * barrier implicit in set_current_state orders writing IsRunning=0
+> > +	 * before reading the vIRR.  The processor needs a matching memory
+> > +	 * barrier on interrupt delivery between writing IRR and reading
+> > +	 * IsRunning; the lack of this barrier might be the cause of errata #1235).
+> > +	 *
+> > +	 * Clear IsRunning=0 even if guest IRQs are disabled, i.e. even if KVM
+> > +	 * doesn't need to detect events for scheduling purposes.  The doorbell
 > 
-> Signed-off-by: Shaopeng Tan <tan.shaopeng@jp.fujitsu.com>
+> Nit: just IsRunning (you can drop the =0 part).
 
-Applied in bitmap-for-next. Thanks!
+Hmm, not really.  It could be:
 
-> ---
->  include/linux/cpumask.h | 16 ----------------
->  include/linux/find.h    | 27 ---------------------------
->  2 files changed, 43 deletions(-)
+	/* Note, any IRQs that arrive while IsRunning is set will not cause an
+
+or
+
+	/* Note, any IRQs that arrive while IsRunning=1 will not cause an
+
+but that's just regurgitating the spec.  The slightly more interesting scenario
+that's being described here is what will happen if an IRQ arrives _just_ before
+the below code toggle IsRunning from 1 => 0.
+
+> Trying to understand the significance of IRQs being disabled here. Is 
+> that a path KVM tries to optimize?
+
+Yep.  KVM doesn't need a notification for the undelivered (virtual) IRQ, because
+it won't be handled by the vCPU until the vCPU enables IRQs, and thus it's not a
+valid wake event for the vCPU.
+
+So, *if* spurious doorbells didn't affect performance or functionality, then
+ideally KVM would leave IsRunning=1, e.g. so that the IOMMU doesn't need to
+generate GA log events, and so that other vCPUs aren't forced to VM-Exit when
+sending an IPI.  Unfortunately, spurious doorbells are quite intrusive, and so
+KVM "needs" to clear IsRunning.
+
+> Theoretically, it looks like we want to clear IsRunning regardless of whether
+> the vCPU is blocked so as to prevent the guest from spamming the host with
+> AVIC doorbells -- compared to always keeping IsRunning set so as to speed up
+> VM entry/exit.
+
+Yep, exactly.
+
+> > +	 * used to signal running vCPUs cannot be blocked, i.e. will perturb the
+> > +	 * CPU and cause noisy neighbor problems if the VM is sending interrupts
+> > +	 * to the vCPU while it's scheduled out.
+> > +	 */
+> >  	avic_vcpu_put(vcpu);
+> >  }
 > 
-> diff --git a/include/linux/cpumask.h b/include/linux/cpumask.h
-> index 7ae80a7ca81e..498790f74fa8 100644
-> --- a/include/linux/cpumask.h
-> +++ b/include/linux/cpumask.h
-> @@ -546,22 +546,6 @@ unsigned int cpumask_nth_and(unsigned int cpu, const struct cpumask *srcp1,
->  				small_cpumask_bits, cpumask_check(cpu));
->  }
->  
-> -/**
-> - * cpumask_nth_andnot - get the Nth cpu set in 1st cpumask, and clear in 2nd.
-> - * @srcp1: the cpumask pointer
-> - * @srcp2: the cpumask pointer
-> - * @cpu: the Nth cpu to find, starting from 0
-> - *
-> - * Return: >= nr_cpu_ids if such cpu doesn't exist.
-> - */
-> -static __always_inline
-> -unsigned int cpumask_nth_andnot(unsigned int cpu, const struct cpumask *srcp1,
-> -							const struct cpumask *srcp2)
-> -{
-> -	return find_nth_andnot_bit(cpumask_bits(srcp1), cpumask_bits(srcp2),
-> -				small_cpumask_bits, cpumask_check(cpu));
-> -}
-> -
->  /**
->   * cpumask_nth_and_andnot - get the Nth cpu set in 1st and 2nd cpumask, and clear in 3rd.
->   * @srcp1: the cpumask pointer
-> diff --git a/include/linux/find.h b/include/linux/find.h
-> index 5a2c267ea7f9..dc93fc35dcac 100644
-> --- a/include/linux/find.h
-> +++ b/include/linux/find.h
-> @@ -267,33 +267,6 @@ unsigned long find_nth_and_bit(const unsigned long *addr1, const unsigned long *
->  	return __find_nth_and_bit(addr1, addr2, size, n);
->  }
->  
-> -/**
-> - * find_nth_andnot_bit - find N'th set bit in 2 memory regions,
-> - *			 flipping bits in 2nd region
-> - * @addr1: The 1st address to start the search at
-> - * @addr2: The 2nd address to start the search at
-> - * @size: The maximum number of bits to search
-> - * @n: The number of set bit, which position is needed, counting from 0
-> - *
-> - * Returns the bit number of the N'th set bit.
-> - * If no such, returns @size.
-> - */
-> -static __always_inline
-> -unsigned long find_nth_andnot_bit(const unsigned long *addr1, const unsigned long *addr2,
-> -				unsigned long size, unsigned long n)
-> -{
-> -	if (n >= size)
-> -		return size;
-> -
-> -	if (small_const_nbits(size)) {
-> -		unsigned long val =  *addr1 & (~*addr2) & GENMASK(size - 1, 0);
-> -
-> -		return val ? fns(val, n) : size;
-> -	}
-> -
-> -	return __find_nth_andnot_bit(addr1, addr2, size, n);
-> -}
-> -
->  /**
->   * find_nth_and_andnot_bit - find N'th set bit in 2 memory regions,
->   *			     excluding those set in 3rd region
-> -- 
-> 2.43.5
+> Otherwise, this LGTM.
+> Acked-by: Naveen N Rao (AMD) <naveen@kernel.org>
+> 
+> 
+> Thanks,
+> Naveen
+> 
 
