@@ -1,45 +1,64 @@
-Return-Path: <linux-kernel+bounces-698686-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-698682-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5AAD9AE483C
-	for <lists+linux-kernel@lfdr.de>; Mon, 23 Jun 2025 17:19:32 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id CCC6BAE4854
+	for <lists+linux-kernel@lfdr.de>; Mon, 23 Jun 2025 17:22:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3EA633BAC63
-	for <lists+linux-kernel@lfdr.de>; Mon, 23 Jun 2025 15:16:04 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 22554188AF11
+	for <lists+linux-kernel@lfdr.de>; Mon, 23 Jun 2025 15:15:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B679D28C021;
-	Mon, 23 Jun 2025 15:14:48 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CD8F728A726;
-	Mon, 23 Jun 2025 15:14:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BE26F283FCD;
+	Mon, 23 Jun 2025 15:14:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="OmCoXbQf"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 12E8024169B;
+	Mon, 23 Jun 2025 15:14:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750691688; cv=none; b=lnbBim8ay6CSvKUbUspG9S0xvspte9Ebo2sk+ErXGEzQrI7TxJviI0+1FPyt4IKUrzvMXyrey/KccQdo7WnHxUL3X1+6Xvu7pl/1Be3zv7+OaYEkhP0ijRZkx+c2dfKpyprXI9bjVnWfKr2WQqAHbJ/+DhPxpytxpdyUHkVqmnI=
+	t=1750691682; cv=none; b=EDC1kz8YAHsUEmGfY97wo4TMxYSuCHxXDWx68GVCktKk7ILSRrTRi5aTUv2NVhMEtj4409qEC8p2jegZPwRpW9dflbm7Jglb+tgLfHysKmXhEH/3lx+FcqzZA+S0udVzzUYWciQNtFUxwZSRZaqCGHI8rjjB3Nc4hk+DyC1KCyw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750691688; c=relaxed/simple;
-	bh=E9Fv6toRxKhDNaubeqQOetAlmqCsc7p7O2VyjX35bVI=;
+	s=arc-20240116; t=1750691682; c=relaxed/simple;
+	bh=XSDrVBVnhyxYp1JMKvQx3EG0b0XeZk8MBikoZoNvSPA=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=IN2KK1LAqVLfTh1fKT/b+r67GFE2nc/atPxqmJvD0j1KneaGkHf94jps2bufEY39SyNCcyGyESqIDxGezcaKRwm/Xsrptm4YVcE9SGsav4TqbdUoE9OA7Gcdcn9wyMeFhvqIY0S5gw2L/s0f80LTE17m4tQjTi/kOVdJ8jYjnwg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 0C832113E;
-	Mon, 23 Jun 2025 08:14:27 -0700 (PDT)
-Received: from e133380.arm.com (e133380.arm.com [10.1.197.52])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 0F7973F58B;
-	Mon, 23 Jun 2025 08:14:43 -0700 (PDT)
-Date: Mon, 23 Jun 2025 16:14:33 +0100
-From: Dave Martin <Dave.Martin@arm.com>
-To: Su Hui <suhui@nfschina.com>
-Cc: tony.luck@intel.com, reinette.chatre@intel.com, james.morse@arm.com,
-	linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH] fs/resctrl: using guard to simplify lock/unlock code
-Message-ID: <aFlvTt+GGSIqgOKH@e133380.arm.com>
-References: <20250623112540.3581675-1-suhui@nfschina.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=gTt5US/p+FpBDBl5nTTkrAobqpG3uNMKJUEOyigjsSyRlVHa5iMda7eTIGtL0glqRn8VeICOxvjihT6DmmWz+Op1Mk3AFaFUFxYOvDBoJHLqqbgGAr7AIQWWHrY78csfa8xfifd/y2R5px5pZYJClQa3idZdx55/evQ3cFTqkus=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=OmCoXbQf; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2742EC4CEEA;
+	Mon, 23 Jun 2025 15:14:37 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1750691681;
+	bh=XSDrVBVnhyxYp1JMKvQx3EG0b0XeZk8MBikoZoNvSPA=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=OmCoXbQf/tjUIpINpxj6vwdUqDZybUpwjdWVlsS76SySfStDAGZ61o1ANRZoqQjPG
+	 8PB+6z/OaL3uYgFT3hzwwpRGKnIvCLqf1FLbvHBugmzjEoSWyBnDNLNnVnK18oEqQo
+	 NJPa/wbKeZsV6TTtEDYn2s+KrdSCTmNs6ejzDIQC/vtygeq6/S4gez8uy6/kyvlHLD
+	 SGGhZr2G7/86WqxshFSb/HYHgENdhplZMRLtlRMIQDJfa5WqDGYugWqqCT0YdUJ2l4
+	 ap8E3G7oamo2KDrBMaPSTGXdgJWyPgcjLr6F3YDdKQW8I82pgl//a8FozORPIpQJlA
+	 rEGxf3sYaX2sA==
+Date: Mon, 23 Jun 2025 17:14:35 +0200
+From: Lorenzo Pieralisi <lpieralisi@kernel.org>
+To: Sascha Bischoff <Sascha.Bischoff@arm.com>
+Cc: "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>,
+	"kvmarm@lists.linux.dev" <kvmarm@lists.linux.dev>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"kvm@vger.kernel.org" <kvm@vger.kernel.org>, nd <nd@arm.com>,
+	"maz@kernel.org" <maz@kernel.org>,
+	"oliver.upton@linux.dev" <oliver.upton@linux.dev>,
+	Joey Gouly <Joey.Gouly@arm.com>,
+	Suzuki Poulose <Suzuki.Poulose@arm.com>,
+	"yuzenghui@huawei.com" <yuzenghui@huawei.com>,
+	"will@kernel.org" <will@kernel.org>,
+	"tglx@linutronix.de" <tglx@linutronix.de>,
+	Timothy Hayes <Timothy.Hayes@arm.com>
+Subject: Re: [PATCH 2/5] irqchip/gic-v5: Populate struct gic_kvm_info
+Message-ID: <aFlvW2FNCyCi3h3Y@lpieralisi>
+References: <20250620160741.3513940-1-sascha.bischoff@arm.com>
+ <20250620160741.3513940-3-sascha.bischoff@arm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -48,213 +67,111 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250623112540.3581675-1-suhui@nfschina.com>
+In-Reply-To: <20250620160741.3513940-3-sascha.bischoff@arm.com>
 
-Hi,
-
-On Mon, Jun 23, 2025 at 07:25:41PM +0800, Su Hui wrote:
-> Using guard() to replace *unlock* label. guard() is better than goto
-> unlock patterns and is more concise. No functional changes.
+On Fri, Jun 20, 2025 at 04:07:51PM +0000, Sascha Bischoff wrote:
+> Populate the gic_kvm_info struct based on support for
+> FEAT_GCIE_LEGACY.  The struct is used by KVM to probe for a compatible
+> GIC.
 > 
-> Signed-off-by: Su Hui <suhui@nfschina.com>
-
-How were these cases chosen?
-
-I notice that this patch only handles some straightforward mutex_unlock()
-cases.  There are other opportunities in some places -- particularly
-alloc/free patterns.
-
-
-Overall, I'm not totally convinced that backporting the guard()
-infrastructure into code that wasn't originally written to use it is
-always worthwhile.
-
-If the code is simple, there is not much benefit.  Otherwise, there is
-a significant chance of unintentionally changing the behaviour of the
-code (though the exercise may be useful if it identifies actual bugs).
-
-Either way, such changes will get in the way of people who are rebasing
-on top of this code.
-
-[continues below ...]
-
+> Co-authored-by: Timothy Hayes <timothy.hayes@arm.com>
+> Signed-off-by: Timothy Hayes <timothy.hayes@arm.com>
+> Signed-off-by: Sascha Bischoff <sascha.bischoff@arm.com>
 > ---
->  fs/resctrl/monitor.c  | 25 ++++++++-----------------
->  fs/resctrl/rdtgroup.c | 29 +++++++++--------------------
->  2 files changed, 17 insertions(+), 37 deletions(-)
+>  drivers/irqchip/irq-gic-v5.c          | 34 +++++++++++++++++++++++++++
+>  include/linux/irqchip/arm-vgic-info.h |  4 ++++
+>  2 files changed, 38 insertions(+)
 > 
-> diff --git a/fs/resctrl/monitor.c b/fs/resctrl/monitor.c
-> index f5637855c3ac..12e999eb7ed8 100644
-> --- a/fs/resctrl/monitor.c
-> +++ b/fs/resctrl/monitor.c
-> @@ -769,10 +769,10 @@ static int dom_data_init(struct rdt_resource *r)
->  	u32 idx_limit = resctrl_arch_system_num_rmid_idx();
->  	u32 num_closid = resctrl_arch_get_num_closid(r);
->  	struct rmid_entry *entry = NULL;
-> -	int err = 0, i;
-> +	int i;
->  	u32 idx;
+> diff --git a/drivers/irqchip/irq-gic-v5.c b/drivers/irqchip/irq-gic-v5.c
+> index 28853d51a2ea..6aecd2343fee 100644
+> --- a/drivers/irqchip/irq-gic-v5.c
+> +++ b/drivers/irqchip/irq-gic-v5.c
+> @@ -13,6 +13,7 @@
 >  
-> -	mutex_lock(&rdtgroup_mutex);
-> +	guard(mutex)(&rdtgroup_mutex);
->  	if (IS_ENABLED(CONFIG_RESCTRL_RMID_DEPENDS_ON_CLOSID)) {
->  		u32 *tmp;
+>  #include <linux/irqchip.h>
+>  #include <linux/irqchip/arm-gic-v5.h>
+> +#include <linux/irqchip/arm-vgic-info.h>
 >  
-> @@ -783,10 +783,8 @@ static int dom_data_init(struct rdt_resource *r)
->  		 * use.
->  		 */
->  		tmp = kcalloc(num_closid, sizeof(*tmp), GFP_KERNEL);
-> -		if (!tmp) {
-> -			err = -ENOMEM;
-> -			goto out_unlock;
-> -		}
-> +		if (!tmp)
-> +			return -ENOMEM;
->  
->  		closid_num_dirty_rmid = tmp;
+>  #include <asm/cpufeature.h>
+>  #include <asm/exception.h>
+> @@ -1049,6 +1050,37 @@ static void gicv5_set_cpuif_idbits(void)
 >  	}
-> @@ -797,8 +795,7 @@ static int dom_data_init(struct rdt_resource *r)
->  			kfree(closid_num_dirty_rmid);
->  			closid_num_dirty_rmid = NULL;
->  		}
-> -		err = -ENOMEM;
-> -		goto out_unlock;
-> +		return -ENOMEM;
->  	}
->  
->  	for (i = 0; i < idx_limit; i++) {
-> @@ -819,18 +816,15 @@ static int dom_data_init(struct rdt_resource *r)
->  	entry = __rmid_entry(idx);
->  	list_del(&entry->list);
->  
-> -out_unlock:
-> -	mutex_unlock(&rdtgroup_mutex);
-> -
-> -	return err;
-> +	return 0;
 >  }
 >  
->  static void dom_data_exit(struct rdt_resource *r)
->  {
-> -	mutex_lock(&rdtgroup_mutex);
-> +	guard(mutex)(&rdtgroup_mutex);
->  
->  	if (!r->mon_capable)
-> -		goto out_unlock;
+> +#ifdef CONFIG_KVM
+> +static struct gic_kvm_info gic_v5_kvm_info __initdata;
+> +
+> +static bool gicv5_cpuif_has_gcie_legacy(void)
+
+__init ?
+
+> +{
+> +	u64 idr0 = read_sysreg_s(SYS_ICC_IDR0_EL1);
+> +
+> +	return !!FIELD_GET(ICC_IDR0_EL1_GCIE_LEGACY, idr0);
+> +}
+> +
+> +static void __init gic_of_setup_kvm_info(struct device_node *node)
+> +{
+> +	gic_v5_kvm_info.type = GIC_V5;
+> +	gic_v5_kvm_info.has_gcie_v3_compat = gicv5_cpuif_has_gcie_legacy();
+> +
+> +	/* GIC Virtual CPU interface maintenance interrupt */
+> +	gic_v5_kvm_info.no_maint_irq_mask = false;
+> +	gic_v5_kvm_info.maint_irq = irq_of_parse_and_map(node, 0);
+> +	if (!gic_v5_kvm_info.maint_irq) {
+> +		pr_warn("cannot find GICv5 virtual CPU interface maintenance interrupt\n");
 > +		return;
->  
->  	if (IS_ENABLED(CONFIG_RESCTRL_RMID_DEPENDS_ON_CLOSID)) {
->  		kfree(closid_num_dirty_rmid);
-> @@ -839,9 +833,6 @@ static void dom_data_exit(struct rdt_resource *r)
->  
->  	kfree(rmid_ptrs);
->  	rmid_ptrs = NULL;
-> -
-> -out_unlock:
-> -	mutex_unlock(&rdtgroup_mutex);
->  }
->  
->  static struct mon_evt llc_occupancy_event = {
-> diff --git a/fs/resctrl/rdtgroup.c b/fs/resctrl/rdtgroup.c
-> index 77d08229d855..73bc1ab05b5e 100644
-> --- a/fs/resctrl/rdtgroup.c
-> +++ b/fs/resctrl/rdtgroup.c
-> @@ -916,14 +916,13 @@ int proc_resctrl_show(struct seq_file *s, struct pid_namespace *ns,
->  		      struct pid *pid, struct task_struct *tsk)
+> +	}
+> +
+> +	vgic_set_kvm_info(&gic_v5_kvm_info);
+> +}
+> +#else
+> +static void __init gic_of_setup_kvm_info(struct device_node *node)
+
+static inline
+
+Thanks,
+Lorenzo
+
+> +{
+> +}
+> +#endif // CONFIG_KVM
+> +
+>  static int __init gicv5_of_init(struct device_node *node, struct device_node *parent)
 >  {
->  	struct rdtgroup *rdtg;
-> -	int ret = 0;
+>  	int ret = gicv5_irs_of_probe(node);
+> @@ -1081,6 +1113,8 @@ static int __init gicv5_of_init(struct device_node *node, struct device_node *pa
 >  
-> -	mutex_lock(&rdtgroup_mutex);
-> +	guard(mutex)(&rdtgroup_mutex);
+>  	gicv5_irs_its_probe();
 >  
->  	/* Return empty if resctrl has not been mounted. */
->  	if (!resctrl_mounted) {
->  		seq_puts(s, "res:\nmon:\n");
-> -		goto unlock;
-> +		return 0;
->  	}
+> +	gic_of_setup_kvm_info(node);
+> +
+>  	return 0;
+>  out_int:
+>  	gicv5_cpu_disable_interrupts();
+> diff --git a/include/linux/irqchip/arm-vgic-info.h b/include/linux/irqchip/arm-vgic-info.h
+> index a75b2c7de69d..ca1713fac6e3 100644
+> --- a/include/linux/irqchip/arm-vgic-info.h
+> +++ b/include/linux/irqchip/arm-vgic-info.h
+> @@ -15,6 +15,8 @@ enum gic_type {
+>  	GIC_V2,
+>  	/* Full GICv3, optionally with v2 compat */
+>  	GIC_V3,
+> +	/* Full GICv5, optionally with v3 compat */
+> +	GIC_V5,
+>  };
 >  
->  	list_for_each_entry(rdtg, &rdt_all_groups, rdtgroup_list) {
-> @@ -952,17 +951,13 @@ int proc_resctrl_show(struct seq_file *s, struct pid_namespace *ns,
->  			break;
->  		}
->  		seq_putc(s, '\n');
-> -		goto unlock;
-> +		return 0;
->  	}
->  	/*
->  	 * The above search should succeed. Otherwise return
->  	 * with an error.
->  	 */
-> -	ret = -ENOENT;
-> -unlock:
-> -	mutex_unlock(&rdtgroup_mutex);
-> -
-> -	return ret;
-> +	return -ENOENT;
->  }
->  #endif
+>  struct gic_kvm_info {
+> @@ -34,6 +36,8 @@ struct gic_kvm_info {
+>  	bool		has_v4_1;
+>  	/* Deactivation impared, subpar stuff */
+>  	bool		no_hw_deactivation;
+> +	/* v3 compat support (GICv5 hosts, only) */
+> +	bool		has_gcie_v3_compat;
+>  };
 >  
-> @@ -4132,11 +4127,11 @@ int resctrl_online_mon_domain(struct rdt_resource *r, struct rdt_mon_domain *d)
->  {
->  	int err;
->  
-> -	mutex_lock(&rdtgroup_mutex);
-> +	guard(mutex)(&rdtgroup_mutex);
->  
->  	err = domain_setup_mon_state(r, d);
->  	if (err)
-> -		goto out_unlock;
-> +		return err;
->  
->  	if (resctrl_is_mbm_enabled()) {
->  		INIT_DELAYED_WORK(&d->mbm_over, mbm_handle_overflow);
-> @@ -4156,10 +4151,7 @@ int resctrl_online_mon_domain(struct rdt_resource *r, struct rdt_mon_domain *d)
->  	if (resctrl_mounted && resctrl_arch_mon_capable())
->  		mkdir_mondata_subdir_allrdtgrp(r, d);
->  
-> -out_unlock:
-> -	mutex_unlock(&rdtgroup_mutex);
-> -
-> -	return err;
-> +	return 0;
->  }
->  
->  void resctrl_online_cpu(unsigned int cpu)
-> @@ -4202,7 +4194,7 @@ void resctrl_offline_cpu(unsigned int cpu)
->  	struct rdt_mon_domain *d;
->  	struct rdtgroup *rdtgrp;
->  
-> -	mutex_lock(&rdtgroup_mutex);
-> +	guard(mutex)(&rdtgroup_mutex);
->  	list_for_each_entry(rdtgrp, &rdt_all_groups, rdtgroup_list) {
->  		if (cpumask_test_and_clear_cpu(cpu, &rdtgrp->cpu_mask)) {
->  			clear_childcpus(rdtgrp, cpu);
-> @@ -4211,7 +4203,7 @@ void resctrl_offline_cpu(unsigned int cpu)
->  	}
->  
->  	if (!l3->mon_capable)
-> -		goto out_unlock;
-> +		return;
->  
->  	d = get_mon_domain_from_cpu(cpu, l3);
->  	if (d) {
-> @@ -4225,9 +4217,6 @@ void resctrl_offline_cpu(unsigned int cpu)
->  			cqm_setup_limbo_handler(d, 0, cpu);
->  		}
->  	}
-> -
-> -out_unlock:
-> -	mutex_unlock(&rdtgroup_mutex);
->  }
-
-[...]
-
-FWIW, this patch looks OK though, and the diffstat looks reasonable.
-Since this code was recently moved into fs/, diff context noise may be
-less of a concern.
-
-Cheers
----Dave
+>  #ifdef CONFIG_KVM
+> -- 
+> 2.34.1
 
