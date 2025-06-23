@@ -1,129 +1,116 @@
-Return-Path: <linux-kernel+bounces-697362-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-697364-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 82981AE3329
-	for <lists+linux-kernel@lfdr.de>; Mon, 23 Jun 2025 02:39:34 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 63597AE333A
+	for <lists+linux-kernel@lfdr.de>; Mon, 23 Jun 2025 03:11:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 48AB9188FC78
-	for <lists+linux-kernel@lfdr.de>; Mon, 23 Jun 2025 00:39:50 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A540D188C3CC
+	for <lists+linux-kernel@lfdr.de>; Mon, 23 Jun 2025 01:11:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9F760A933;
-	Mon, 23 Jun 2025 00:39:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B7CEDC2E0;
+	Mon, 23 Jun 2025 01:11:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="cR4a9IRp"
-Received: from mail-pj1-f54.google.com (mail-pj1-f54.google.com [209.85.216.54])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=rock-chips.com header.i=@rock-chips.com header.b="HcUQYdC1"
+Received: from mail-m19731118.qiye.163.com (mail-m19731118.qiye.163.com [220.197.31.118])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 775BC2F29
-	for <linux-kernel@vger.kernel.org>; Mon, 23 Jun 2025 00:39:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6AAFB4A1A;
+	Mon, 23 Jun 2025 01:10:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.197.31.118
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750639168; cv=none; b=UPeb5EZK9cfVEh+YBxOYlipePrDPj+V0b64k4NcYf8fZq6QALM45Zs1kE4JSHEY0lxIb00uMInwAQF8g+Hf3seEyo6DXIPssa47opWafK59k/2UtBUDhyY786xO+RR4cvvlGblepXrYb+cPW9FlpHtdqq+olpGxc4ll1NVK0hFQ=
+	t=1750641061; cv=none; b=JCaHf+cZXYGS+YDBICkcOpYDHNDNHXYoJX33NISxUMGRpcy3jWgwU1WyBon5BNtWHZ48BZkKs3mwMcG/pR++zuYn23a05fqUTcgfUrllg70dj+kYzQVDLTNt5U9oQMFwVt71hB9ei451Bq7+wKC6zcrvR+pboFy2J/tbrHmHk3w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750639168; c=relaxed/simple;
-	bh=jtNOJngJoBLgvYCX7nmdLlEpEGpjf7HgKEm+BRvuGAo=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=pxFlOmtFkq2TkAwOLMy07vPDYKI9n+VznwVwNMAVKnwQPK9bbDNZgVsbbjj58pAyVFfXMEMsYrek2T8VdW+XKwSsDlb7lewMv7e4eC0sJnRu3hcbGnOl1oPluj6pLJPSWYGXR9a9NccnylYr/12hTSJU+FIVVAyiPQef5a1YoeE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=cR4a9IRp; arc=none smtp.client-ip=209.85.216.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f54.google.com with SMTP id 98e67ed59e1d1-3139027b825so2679490a91.0
-        for <linux-kernel@vger.kernel.org>; Sun, 22 Jun 2025 17:39:26 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1750639165; x=1751243965; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:sender:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=1CcQGXn95YN4kqRLmGGJq78o+QgH8CBAG+ZCKLPSsNY=;
-        b=cR4a9IRpwkoYUbKN2RMa2rQiyQRCBvia5cEgl87x6EimsCCW6uZNi6WD5MDmVcnyct
-         63XxAoVyH0cSyMlfkHvXijWLz/9sTzGSxI2X+bBTkjSeZ+s1TgcqWPVJgOja8kWrjRMw
-         cO/Chf9PItcp+xhhs7cLSBpzttAsoB7PGlwEfvglLET6TWJAu6Z/LvkWoy8BY1gJbkun
-         Uj4Rk1bhMuuJBhjPJbkXDlMtK8LARPwC/FORMAB/Q3giZ18qLBet3VmHzKP+g04Xii3/
-         itQyfS5rNz2lbXz+1jV3l2VHN19Elc3P4jmH56Nmrt+qnF5U81KzCvCBfBwRNNaHIg4X
-         TYVA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1750639165; x=1751243965;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:sender:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=1CcQGXn95YN4kqRLmGGJq78o+QgH8CBAG+ZCKLPSsNY=;
-        b=N5EpwDs97W1FHpkp4K1gcFpnk91yTS4ejZM535KUFAZI0qae2ziH6PQ31Kmnil9Kl9
-         kUe+TPq/mEHZbjXK/2aORFaodhND75/i7mq+C6Yyumm7+Gyai0TXk7STkwcy4OpOHOfq
-         3ncG0sJlaU25pq720gWBVKb1CwN1OW7f9oVjJSPqoij8G1pNl0l9CZWPfCT2HcK6iq7M
-         MT+DA2qFc5gRb+NBZOVu+dUHptNcki4DukOt98GUSnELhxYiQvhKuCLOS14Sdx80d4zV
-         sXJq0FyrU0fE8OQr+nZ5RSfAkWb1YuEzCDk00+rJZzu93JiI2EocbX4Z3/ZK2SkTb41i
-         PaAQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVwMmBXPPYrMuWDO7Z3Z2PUEAEc0hH3l9t29joP9MCQVNcEJ+g1SLkBZyaWtCQKLFsaZZt0oSPL/3dY9N0=@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywnv/4TOhcWL/GhodSPYn4K3VIZFrf3+/nGl0HX+bjdtlvKVmpM
-	k/bN2oJC1G/1JGCBRywkGRd5OtGLqf7R2VSvMwXMGq6f1pz4eVviL1hN
-X-Gm-Gg: ASbGncsVqwzC1ftrHB/ZlbcYSxLgbAR9fytDDOnSu3LBaXw/l939CGtJBi/BhS2dzes
-	a8GgI/4L1Y14GSzKK4ZapARO2mpoGUMiEICl0iJVOOlkdA7Wi3Oxlu0+/4ELFR++luS9OcG+fGN
-	Xwjz+1LVa6THAS18MdT5jSAd0UiAxba1Gvjobbf3FKMKXtrGt21rR+ni9CTKPPDk2sauSOOEBBR
-	TgA5Qc+4ZHNL7nmm8N3/PUPCK5UZ2dL8d6yLJt1vJJGICR9/rq5rU9lqvXvl77ZHGJc4laTEo6O
-	q52qjEiAX8p+OcnHg7bbKl7ePV+iufVMRRFbIAJ1wXqUBtdU1Aoms70TkruEdttR9VnUjVLLdFg
-	=
-X-Google-Smtp-Source: AGHT+IGOciCKMqMGYJOZ0jRU90QGJbnFfhCdDzsV32W4ieI/kX14WMkUTKYzK5wjkTM7nT7ZDP0DEg==
-X-Received: by 2002:a17:90b:1e53:b0:313:31ca:a69 with SMTP id 98e67ed59e1d1-3159d8c8f6cmr19982476a91.18.1750639165479;
-        Sun, 22 Jun 2025 17:39:25 -0700 (PDT)
-Received: from server.roeck-us.net ([2600:1700:e321:62f0:da43:aeff:fecc:bfd5])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-3158a12c9b9sm10171086a91.0.2025.06.22.17.39.24
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 22 Jun 2025 17:39:24 -0700 (PDT)
-Sender: Guenter Roeck <groeck7@gmail.com>
-Date: Sun, 22 Jun 2025 17:39:22 -0700
-From: Guenter Roeck <linux@roeck-us.net>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Pratyush Yadav <pratyush@kernel.org>,
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-	Alexander Usyskin <alexander.usyskin@intel.com>,
-	Miquel Raynal <miquel.raynal@bootlin.com>
-Subject: Re: Linux 6.16-rc1
-Message-ID: <2e7b74ad-b308-46af-9edb-59c0ce416d89@roeck-us.net>
-References: <CAHk-=wiiqYoM_Qdr3L15BqJUyRi6JjR02HSovwwz+BXy7DdVeA@mail.gmail.com>
- <241b0829-5fec-4d88-866a-ba59e2ca748e@roeck-us.net>
- <CAHk-=whDM950+cCgmNH2edB2edCaktdpvBLGjFESAZfYZ3ZpRQ@mail.gmail.com>
- <mafs08qlluuvj.fsf@kernel.org>
- <CAHk-=wjYB7tvFoqsL3aED9YZ2eusi9dMc=ckPzF-dnrRsERBUA@mail.gmail.com>
+	s=arc-20240116; t=1750641061; c=relaxed/simple;
+	bh=rwqqDu0KtBplQp8EOinHmccqzODA49z/gqlStx52Hzw=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=WR9lNbMpRkfqjVR4yEDu2faqt4uVMhtgVv6qXT7WXAAt9kU/kJRK0lDs6Xqn8PBYOooDr0REjADJUE5PNWc61+VJGHcQLB4KjvsNeP0FdlDCogjoqYzwUj/Z1I6oAWgP5UqYgOUxlGOuhYvWTExQMJqa09Uxi5cN37weIeEdT/c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rock-chips.com; spf=pass smtp.mailfrom=rock-chips.com; dkim=pass (1024-bit key) header.d=rock-chips.com header.i=@rock-chips.com header.b=HcUQYdC1; arc=none smtp.client-ip=220.197.31.118
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rock-chips.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rock-chips.com
+Received: from xxm-vm.localdomain (unknown [58.22.7.114])
+	by smtp.qiye.163.com (Hmail) with ESMTP id 1988856fd;
+	Mon, 23 Jun 2025 09:05:38 +0800 (GMT+08:00)
+From: Simon Xue <xxm@rock-chips.com>
+To: joro@8bytes.org,
+	will@kernel.org,
+	heiko@sntech.de
+Cc: robin.murphy@arm.com,
+	iommu@lists.linux.dev,
+	linux-arm-kernel@lists.infradead.org,
+	linux-rockchip@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	stable@vger.kernel.org,
+	Simon Xue <xxm@rock-chips.com>
+Subject: [PATCH v2] iommu/rockchip: prevent iommus dead loop when two masters share one IOMMU
+Date: Mon, 23 Jun 2025 09:05:32 +0800
+Message-Id: <20250623010532.584409-1-xxm@rock-chips.com>
+X-Mailer: git-send-email 2.34.1
+In-Reply-To: <20250620073945.572523-1-xxm@rock-chips.com>
+References: <20250620073945.572523-1-xxm@rock-chips.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAHk-=wjYB7tvFoqsL3aED9YZ2eusi9dMc=ckPzF-dnrRsERBUA@mail.gmail.com>
+Content-Transfer-Encoding: 8bit
+X-HM-Spam-Status: e1kfGhgUHx5ZQUpXWQgPGg8OCBgUHx5ZQUlOS1dZFg8aDwILHllBWSg2Ly
+	tZV1koWUFDSUNOT01LS0k3V1ktWUFJV1kPCRoVCBIfWUFZGR9KHlZLTkNPSE4ZTExPHktWFRQJFh
+	oXVRMBExYaEhckFA4PWVdZGBILWUFZTkNVSUlVTFVKSk9ZV1kWGg8SFR0UWUFZT0tIVUpLSU9PT0
+	hVSktLVUpCS0tZBg++
+X-HM-Tid: 0a979a51c11e03ackunmb9b4d7f71b74391
+X-HM-MType: 1
+X-HM-Sender-Digest: e1kMHhlZQR0aFwgeV1kSHx4VD1lBWUc6Nj46Agw5NjEwSy45CB0hHgki
+	Ey0aCRdVSlVKTE5LTU9LTEhCQ0lJVTMWGhIXVQMDFjsJFBgQVhgTEgsIVRgUFkVZV1kSC1lBWU5D
+	VUlJVUxVSkpPWVdZCAFZQUlKTkg3Bg++
+DKIM-Signature:a=rsa-sha256;
+	b=HcUQYdC1n/fdfPwVzWQh5u9nT6IAJItWvktXDa+TMc5smGT+z3y3P+xgxIedR+wOHJy4zDL+gnyEikwHSvyT3oerFWtW+N7XEHoZG/IGDlWMN1id+/67ObSAEIbLcgToHcdUhKq8fLnWSgbgfKEtLNvq8Cry/gPy1kS8SZSimg0=; s=default; c=relaxed/relaxed; d=rock-chips.com; v=1;
+	bh=j/L7z1+3IqwV7z6y8V8VJRap9OXNheZ0n7phc+aB5uM=;
+	h=date:mime-version:subject:message-id:from;
 
-On Sat, Jun 21, 2025 at 08:59:46AM -0700, Linus Torvalds wrote:
-> On Sat, 21 Jun 2025 at 05:44, Pratyush Yadav <pratyush@kernel.org> wrote:
-> >
-> > I don't have much idea of how people use qemu for testing, but since you
-> > say this is important for testing workloads, I can take a deeper dive
-> > next week and have an answer by -rc4.
-> 
-> Thanks. I'm not sure *how* important this is, but if it affects
-> Guenter's test coverage, I assume it affects others too.
-> 
-> But it's not entirely clear how much it *does* affect Guenter. He says
-> five failed tests, but those are all accounted for by the master
-> device thing.
-> 
-> Guenter, maybe you can clarify?
-> 
+When two masters share an IOMMU, calling ops->of_xlate during
+the second master's driver init may overwrite iommu->domain set
+by the first. This causes the check if (iommu->domain == domain)
+in rk_iommu_attach_device() to fail, resulting in the same
+iommu->node being added twice to &rk_domain->iommus, which can
+lead to an infinite loop in subsequent &rk_domain->iommus operations.
 
-Sorry for the delay; I was travelling.
+Fixes: 25c2325575cc ("iommu/rockchip: Add missing set_platform_dma_ops callback")
 
-I modified qemu to make the flash type configurable, so it is not a problem
-for me. However, anyone using upstream qemu will see the problem. My qemu patch
-adding the option to configure the flash type was rejected, so those affected
-will have to wait for a proper qemu fix.
+Signed-off-by: Simon Xue <xxm@rock-chips.com>
+Reviewed-by: Robin Murphy <robin.murphy@arm.com>
 
-I would suggest to not make any changes in the kernel: The qemu problems should be
-fixed in qemu. I only brought this up to raise awareness that there is a qemu related
-problem, not to ask for a change in the Linux kernel.
+v2:
+   No functional changes.
+---
+ drivers/iommu/rockchip-iommu.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-Guenter
+diff --git a/drivers/iommu/rockchip-iommu.c b/drivers/iommu/rockchip-iommu.c
+index 22f74ba33a0e..e6bb3c784017 100644
+--- a/drivers/iommu/rockchip-iommu.c
++++ b/drivers/iommu/rockchip-iommu.c
+@@ -1157,7 +1157,6 @@ static int rk_iommu_of_xlate(struct device *dev,
+ 		return -ENOMEM;
+ 
+ 	data->iommu = platform_get_drvdata(iommu_dev);
+-	data->iommu->domain = &rk_identity_domain;
+ 	dev_iommu_priv_set(dev, data);
+ 
+ 	platform_device_put(iommu_dev);
+@@ -1195,6 +1194,8 @@ static int rk_iommu_probe(struct platform_device *pdev)
+ 	if (!iommu)
+ 		return -ENOMEM;
+ 
++	iommu->domain = &rk_identity_domain;
++
+ 	platform_set_drvdata(pdev, iommu);
+ 	iommu->dev = dev;
+ 	iommu->num_mmu = 0;
+-- 
+2.34.1
+
 
