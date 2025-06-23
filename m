@@ -1,113 +1,131 @@
-Return-Path: <linux-kernel+bounces-698341-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-698340-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id F0D76AE40C0
-	for <lists+linux-kernel@lfdr.de>; Mon, 23 Jun 2025 14:43:00 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 4A37BAE40B9
+	for <lists+linux-kernel@lfdr.de>; Mon, 23 Jun 2025 14:42:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DB1523AD9F7
-	for <lists+linux-kernel@lfdr.de>; Mon, 23 Jun 2025 12:37:20 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C494F3AC8C7
+	for <lists+linux-kernel@lfdr.de>; Mon, 23 Jun 2025 12:37:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 51B1A24A07C;
-	Mon, 23 Jun 2025 12:37:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="OMnUmRp7"
-Received: from mail-pg1-f182.google.com (mail-pg1-f182.google.com [209.85.215.182])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 52790248F7C;
-	Mon, 23 Jun 2025 12:37:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 33EFE248886;
+	Mon, 23 Jun 2025 12:37:17 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B5198242927
+	for <linux-kernel@vger.kernel.org>; Mon, 23 Jun 2025 12:37:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750682239; cv=none; b=SHgR660rNVQx5kzf3RZS1OwQotaPk5dOt9RauRyM3xTFNh537gMFUEX3ZDBWMDC8LtM+zioYH5yZhraYx1XG2liDIvdYmIppjr/Qmx0on76oMaNOBzIGvqBsulwD5LNXZu6omsYyv+4q3PfqYYl9cwKNE/LMGVBIsEso8xh3wBM=
+	t=1750682236; cv=none; b=OdvVx/WSTN4ySwVHr+ZcA4gubgl7WN9nr0pnIJvT//3JkN86lfjFUyjdhYUaHVDgSn45jjDU0TEe+va8cVgNrUtOF/yZ7NasyU5kIAFpvJXREtISvOwURwz4wG4IGLPt5y1aj3Ecp1NLqeJehFBFAD7sUCCM98ZIxuxbzKeIrlw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750682239; c=relaxed/simple;
-	bh=6djygWjjisSGtthFe/KFX8iwdEpK803K6qgoaBiMTBQ=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=WJDT10t1qMWvIisLgHzkTW2GCah4XZrVaRMOSP9XpyX9U9cK6flHCjDZ9vXaTsi5bwOZn49b3JiIqfgAOqcLsijASRutVaqMFynPp0LHGU7QjDdO4cnXPy5bP+Jfi4NV5ma/Rfkh0zewFe464bGOlNc95/vJNOH/8wfcaHx3sEk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=OMnUmRp7; arc=none smtp.client-ip=209.85.215.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pg1-f182.google.com with SMTP id 41be03b00d2f7-b26fabda6d9so772669a12.1;
-        Mon, 23 Jun 2025 05:37:18 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1750682237; x=1751287037; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=6djygWjjisSGtthFe/KFX8iwdEpK803K6qgoaBiMTBQ=;
-        b=OMnUmRp7elb7qhH5crJ/bib2o0kS0gpIDjhWPl5ts8raFemRHG5ZBeTrVlNopX3Fd+
-         dRlR/j1BrPPwBUCRW6KdCuVJh7F3gLvJGQr0IJ4thBRK+k/KKtksmUw3r5Mg5LCuXJ56
-         f3Q21OJU6AHCBCQ5fZFxgg150WZSDdcx4LtPbOtMaw7TPiQvOycGC4MxFx42wIf7IBU3
-         Ji8kM9aJIlTwaXWyzFrNfzzKmwyCOfa7wbZqdPJxPCJeMzG5N7zeW7P14jWLpjMbZgB6
-         Rs6/c6osJkuJI0pdij1v3kmidBkE+e6hZDTOLgnGJEZjTIHrJsW8eyOSYghQVZlYd0ps
-         UWgw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1750682237; x=1751287037;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=6djygWjjisSGtthFe/KFX8iwdEpK803K6qgoaBiMTBQ=;
-        b=vUORCchyEvskN92s0hWZi1aZWz2kiKiCnwTEAAEv7d/QujMyknAZkSaPOZXtH5rges
-         OinZtE8zZS36c6q05zYeBcgXM+j9/jyEy1RdcCdHWXfJ3c/ehoLSQatbJmZ25ls0Br1A
-         Vr7rE4CRQhPE3VRggAbxAmAyblOBw6hK5FTWbt4gDgVx60JwHgfLwVrPyKXlXQ471r3X
-         iUp1Xh9PdfGRSxulI6Lb2Bu0+3N7UTeIQGFviqafJoKP5dANJiLN8Za+RRcsZxRDvUsq
-         2U/ob5EemgvkVKeO3AMerinesCQvwP95hZEH6TXGoVOQc01fv7a5AKOr3JWhxzLe3pvr
-         6IPg==
-X-Forwarded-Encrypted: i=1; AJvYcCU+eD5iqIjMT0lmIVEOFQmQIb+1qB6dbyBCmcWA43UxgGay/RzunzRKZwNlCPks621zbYd6UN1SNudBVRvqFT4=@vger.kernel.org, AJvYcCUe/F1TpmOe4Z3nEcpMICoBMUSYU8jeVLlsfZSLwyMP08d9/OA+/yj5SxSBLR+lFwQ6IJ35g6oCLj2ftA/x@vger.kernel.org, AJvYcCVLDy87ucDC6G7y2yKyQ3C9AhmcDgnPtGPlQVb0ePl3i8IUc5S9rCfc+sCJxnR+qqTFk+y+DI3r68bOzR4=@vger.kernel.org, AJvYcCX3OZsphVQbJmLf5XXO902AhdpbIOMvHq0dE+jQMomWFGw/cbG2sM/S/LH+u93J7yfSMUVbPRv9UjL+PP72Uw==@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzav3xluMr4TkUMDwf+E5SXBqD1Ot1qD01CHtgSw5YxenGWGs/T
-	BJbOqiy2qgzl7PmLY10Dmmu0X4tyepg3ppAgPPArEV1maNh+zO0136g5NmQWiFioEDRi1saM9jW
-	sSleQGb4MFVVHFzepDdX5cZHMKmz35f4erriFLZlHxQ==
-X-Gm-Gg: ASbGnctfNiKrXzm5gd2ROXBV/wMq17qheARdwaVDGj2B94wDQwSPZ/sSnt687jQzgG3
-	3N4XA1V4E2dTt5fKamXl7mf1ZM0EbfsRWRX/94yikT4LcdFVqOYxa3Ehb5Q4za9pBQ8RU+Nozcr
-	vWWga2h5Z5xXRVHIJWBIS8+NinF4pDQPLJXW7ejQXgn6yLPueguTEr3g==
-X-Google-Smtp-Source: AGHT+IHj4Vc3q5Tm73gXKkrqpOdUoFXibUWEB+aaKFTc2msTk+p2ncYTBtc78U549+h3Sla50NrSjaTYFBnaq75wZA8=
-X-Received: by 2002:a17:90b:5828:b0:311:488:f506 with SMTP id
- 98e67ed59e1d1-3159d8dfcfemr6489570a91.6.1750682237514; Mon, 23 Jun 2025
- 05:37:17 -0700 (PDT)
+	s=arc-20240116; t=1750682236; c=relaxed/simple;
+	bh=bzDDsQlEQ3ji0eAAI8fReYnoA4MrDe23c5ZxGbpgVe4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Vojw0gxgNWE8G4C42Ubx4mQjpaM0AeuBkKER5GhN/aDb0qFeetCyS7VAAv2KRo60D8l2VhRC5T73pCdtDgpcUmIbjhfwfdSYodiUCksNStRnPF6wHJxRJy7M39fR/tVKIT1EOcnDqro7bK4kbXNlIGqd+lZsdYPEL+GJTXh+1eI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 9E20B113E;
+	Mon, 23 Jun 2025 05:36:55 -0700 (PDT)
+Received: from [10.1.29.169] (XHFQ2J9959.cambridge.arm.com [10.1.29.169])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id F129F3F58B;
+	Mon, 23 Jun 2025 05:37:12 -0700 (PDT)
+Message-ID: <107bfdb7-c8f5-45fa-872e-3e6928dc8025@arm.com>
+Date: Mon, 23 Jun 2025 13:37:11 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250612-module-params-v3-v13-0-bc219cd1a3f8@kernel.org>
- <20250612-module-params-v3-v13-2-bc219cd1a3f8@kernel.org> <COU2bqJOzCHRf6g4rwFpu2NY3wLY0G0AmNjRaU9aGEqu1HaPZ5X4KzfDT_CEB3Okh5BV50sJS10sKhmtHut8ew==@protonmail.internalid>
- <DAQJCUE1C2JE.204A8IS7LBIVZ@kernel.org> <87ikkq648o.fsf@kernel.org>
- <smOfUo2mEmQu-lykKKMiNOUWq2ze6p_CoEEpgGE0dtAnoJDGEpvQMkP1q-n13MiUxLK1xAiM-4QLsivPrG57sg==@protonmail.internalid>
- <DARCZYNPIJVZ.3JJSZ6PSAEMEC@kernel.org> <877c126bce.fsf@kernel.org> <DATW0XWNN45X.1L2WMZ41JJ5O8@kernel.org>
-In-Reply-To: <DATW0XWNN45X.1L2WMZ41JJ5O8@kernel.org>
-From: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
-Date: Mon, 23 Jun 2025 14:37:05 +0200
-X-Gm-Features: Ac12FXzd4fB_ylukQug0_-S4aWsl7Va8G7w5RrcYN_9qD3AkvAN8eEjNhJmevGI
-Message-ID: <CANiq72nV3QzpRZTyDTv7Qx-c83jeayUY3nnvhpbtOYXf47EgJA@mail.gmail.com>
-Subject: Re: [PATCH v13 2/6] rust: introduce module_param module
-To: Benno Lossin <lossin@kernel.org>
-Cc: Andreas Hindborg <a.hindborg@kernel.org>, Miguel Ojeda <ojeda@kernel.org>, 
-	Alex Gaynor <alex.gaynor@gmail.com>, Boqun Feng <boqun.feng@gmail.com>, 
-	Gary Guo <gary@garyguo.net>, =?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
-	Alice Ryhl <aliceryhl@google.com>, Masahiro Yamada <masahiroy@kernel.org>, 
-	Nathan Chancellor <nathan@kernel.org>, Luis Chamberlain <mcgrof@kernel.org>, 
-	Danilo Krummrich <dakr@kernel.org>, Nicolas Schier <nicolas.schier@linux.dev>, 
-	Trevor Gross <tmgross@umich.edu>, Adam Bratschi-Kaye <ark.email@gmail.com>, rust-for-linux@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-kbuild@vger.kernel.org, 
-	Petr Pavlu <petr.pavlu@suse.com>, Sami Tolvanen <samitolvanen@google.com>, 
-	Daniel Gomez <da.gomez@samsung.com>, Simona Vetter <simona.vetter@ffwll.ch>, 
-	Greg KH <gregkh@linuxfoundation.org>, Fiona Behrens <me@kloenk.dev>, 
-	Daniel Almeida <daniel.almeida@collabora.com>, linux-modules@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] mm/vmalloc: leave lazy MMU mode on PTE mapping error
+Content-Language: en-GB
+To: Alexander Gordeev <agordeev@linux.ibm.com>,
+ Dan Carpenter <dan.carpenter@linaro.org>,
+ Andrew Morton <akpm@linux-foundation.org>
+Cc: linux-mm@kvack.org, linux-kernel@vger.kernel.org
+References: <20250623075721.2817094-1-agordeev@linux.ibm.com>
+From: Ryan Roberts <ryan.roberts@arm.com>
+In-Reply-To: <20250623075721.2817094-1-agordeev@linux.ibm.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Mon, Jun 23, 2025 at 1:48=E2=80=AFPM Benno Lossin <lossin@kernel.org> wr=
-ote:
->
-> Another way would be to use a `Once`-like type (does that exist on the C
-> side?) so a type that can be initialized once and then never changes.
+On 23/06/2025 08:57, Alexander Gordeev wrote:
+> Function vmap_pages_pte_range() enters the lazy MMU mode,
+> but fails to leave it in case an error is encountered.
+> 
+> Reported-by: kernel test robot <lkp@intel.com>
+> Reported-by: Dan Carpenter <dan.carpenter@linaro.org>
+> Closes: https://lore.kernel.org/r/202506132017.T1l1l6ME-lkp@intel.com/
+> Fixes: 44562c71e2cf ("mm/vmalloc: Enter lazy mmu mode while manipulating vmalloc ptes")
+> Signed-off-by: Alexander Gordeev <agordeev@linux.ibm.com>
 
-There are `DO_ONCE{,_SLEEPABLE,_LITE}`.
+Ouch, sorry about that! The patch looks good to me so:
 
-Cheers,
-Miguel
+Reviewed-by: Ryan Roberts <ryan.roberts@arm.com>
+
+I wonder an aditional Fixes: should be added for Commit 2ba3e6947aed
+("mm/vmalloc: track which page-table levels were modified") though? That's the
+one that added the "*mask |= PGTBL_PTE_MODIFIED;" which would have also been
+skipped if an error occured before this patch.
+
+Thanks,
+Ryan
+
+
+> ---
+>  mm/vmalloc.c | 22 +++++++++++++++-------
+>  1 file changed, 15 insertions(+), 7 deletions(-)
+> 
+> diff --git a/mm/vmalloc.c b/mm/vmalloc.c
+> index ab986dd09b6a..6dbcdceecae1 100644
+> --- a/mm/vmalloc.c
+> +++ b/mm/vmalloc.c
+> @@ -514,6 +514,7 @@ static int vmap_pages_pte_range(pmd_t *pmd, unsigned long addr,
+>  		unsigned long end, pgprot_t prot, struct page **pages, int *nr,
+>  		pgtbl_mod_mask *mask)
+>  {
+> +	int err = 0;
+>  	pte_t *pte;
+>  
+>  	/*
+> @@ -530,12 +531,18 @@ static int vmap_pages_pte_range(pmd_t *pmd, unsigned long addr,
+>  	do {
+>  		struct page *page = pages[*nr];
+>  
+> -		if (WARN_ON(!pte_none(ptep_get(pte))))
+> -			return -EBUSY;
+> -		if (WARN_ON(!page))
+> -			return -ENOMEM;
+> -		if (WARN_ON(!pfn_valid(page_to_pfn(page))))
+> -			return -EINVAL;
+> +		if (WARN_ON(!pte_none(ptep_get(pte)))) {
+> +			err = -EBUSY;
+> +			break;
+> +		}
+> +		if (WARN_ON(!page)) {
+> +			err = -ENOMEM;
+> +			break;
+> +		}
+> +		if (WARN_ON(!pfn_valid(page_to_pfn(page)))) {
+> +			err = -EINVAL;
+> +			break;
+> +		}
+>  
+>  		set_pte_at(&init_mm, addr, pte, mk_pte(page, prot));
+>  		(*nr)++;
+> @@ -543,7 +550,8 @@ static int vmap_pages_pte_range(pmd_t *pmd, unsigned long addr,
+>  
+>  	arch_leave_lazy_mmu_mode();
+>  	*mask |= PGTBL_PTE_MODIFIED;
+> -	return 0;
+> +
+> +	return err;
+>  }
+>  
+>  static int vmap_pages_pmd_range(pud_t *pud, unsigned long addr,
+
 
