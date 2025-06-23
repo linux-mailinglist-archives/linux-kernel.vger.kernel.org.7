@@ -1,102 +1,138 @@
-Return-Path: <linux-kernel+bounces-697920-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-697922-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id A0D9DAE3A89
-	for <lists+linux-kernel@lfdr.de>; Mon, 23 Jun 2025 11:34:34 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 532B4AE3A8F
+	for <lists+linux-kernel@lfdr.de>; Mon, 23 Jun 2025 11:35:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D466B188ABCE
-	for <lists+linux-kernel@lfdr.de>; Mon, 23 Jun 2025 09:34:38 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 968081627B8
+	for <lists+linux-kernel@lfdr.de>; Mon, 23 Jun 2025 09:35:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F241423BCF5;
-	Mon, 23 Jun 2025 09:31:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DE5CC23D2A3;
+	Mon, 23 Jun 2025 09:32:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="V8bbwTY9"
-Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="G84qEQZf"
+Received: from mail-pl1-f170.google.com (mail-pl1-f170.google.com [209.85.214.170])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5ACB2239E8A;
-	Mon, 23 Jun 2025 09:31:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BC67B2376E0
+	for <linux-kernel@vger.kernel.org>; Mon, 23 Jun 2025 09:32:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750671092; cv=none; b=FpvkZPx9F5oT24kmDnu72hyPIBdpDaoyzOOJyAQBUwhlfuEJQX7MY02AyxZYgrBe2GCqiRmKp/pJbLTKRq2jSx73wom7cJ3gfKqmH5Uak1aSpUdsDqJdmId2BeYZJeqfyH0U0Uw+T1YJZk39U0imHk/aQZX/k7rQTMA0RlChmzM=
+	t=1750671126; cv=none; b=ZFqoYP51M2fZ9JHOkUzV+0JeHzwQgi5jh5gYIlYF8ZJCoLmcq8Mb5LFPUo3pdISPZrjUyJ0ss3txgvYSbkbqlCM3TWXY5Aw9pNBDqxtlAjBlcgthU/L4O+5b4sR+Q5Z3dgaKkrR4tKrzgOVZmEH+yrsPQVk1epDxysiibDCD+xo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750671092; c=relaxed/simple;
-	bh=JaT2s8sZCiv76xiTzrJooBxZJYaZSavMoRgZIB0v8Mw=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=kPtszRqNzrqwtNY0nLlVevSRiBegmRTpR869TquMIAR5YZ1Z17gi1OnTqNNZg8OXN2G/mFw9IWkK8+CA+pX02e5o+mvxbhtuuD73zvpW5AmrebP6SdwicD802e6D5/EAjFlQ1allVKWnf+Z8m4WQwfzCn8qfgST0b/FJanOvhPw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=V8bbwTY9; arc=none smtp.client-ip=148.251.105.195
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1750671088;
-	bh=JaT2s8sZCiv76xiTzrJooBxZJYaZSavMoRgZIB0v8Mw=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=V8bbwTY9p4Qb0yiujQohkXGHiM8iQRUGkFFJ9UUyQtYLEU3HGjM1ZSmTb/N3Dysn5
-	 Zxk8e8CXXsX2AYWNi7dB59K3eiPQj8ln4KPD9pYmRV3wpSriIJvSJ6thH2erf1QSw9
-	 2Ki7ciAd8Y/fCc7yvLVFktNpegGnpBhzvPLwV62PLY6PNJv4fgjnGxF068GzpQVUC+
-	 R40CN5Poejkjfv2xrMlEMxS6gBjqItwX5OekjaTu6XQUIwzJ7uaSm+THljd9S2HbGN
-	 pyekTCUxXJ9dSFoLoiXlG8lBh4ylv1xqlqqjNhdDTnGnfV87+WaaxEOKYnsYMyi6oc
-	 Sw03x2XUuTRJA==
-Received: from [192.168.1.100] (2-237-20-237.ip236.fastwebnet.it [2.237.20.237])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: kholk11)
-	by bali.collaboradmins.com (Postfix) with ESMTPSA id 19FF117E05BD;
-	Mon, 23 Jun 2025 11:31:27 +0200 (CEST)
-Message-ID: <a2e006c6-89d8-4997-a759-a461bcf891ea@collabora.com>
-Date: Mon, 23 Jun 2025 11:31:26 +0200
+	s=arc-20240116; t=1750671126; c=relaxed/simple;
+	bh=e/g0Sw988PkQY/FzMC4b4/0FPylfUMJyAuwwfoFlbSk=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=DJv9qBlH5HL1vtUBGCVQH/OkgOe89eDIwWYwYIB+8GdtheDjIygORMnpEtoBI3bm7PYTrkhxokd1xfkmc788I4TbXaj/xYli0ubeKm5B29Ot90d8hx2bEhDXureqll+1pTcGzIf+t2LTGsDSbneP62VL8ad2PqyKiPKYQ8mmMNo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=G84qEQZf; arc=none smtp.client-ip=209.85.214.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f170.google.com with SMTP id d9443c01a7336-2350fc2591dso32825235ad.1
+        for <linux-kernel@vger.kernel.org>; Mon, 23 Jun 2025 02:32:04 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1750671124; x=1751275924; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=B+nyQWkVcjVEgS4bxefq4bC2m0gmMPDc+2UfUzc21zA=;
+        b=G84qEQZfcSVQB6hay7i9zEien1kz0aznvTW+A9KtiNs2OxgEQMiCJxLEIoIpuZmzn9
+         tJUr7gE5tqMDEUZCqIJG5SKbTY/3MJMqyhrVyLGYruJvhGkoFmIG1Aw0MWTKLXEi7xoG
+         eJgRpTUjv4Hl1J3UPl7H11isAgP5NLDNUEo1SKFH61varJ0AWJDFn9etlWqxKqeJPFX7
+         IbqqfgXSW4F3iIejxRWvsA6Nc9WVVjHvbOP2fHSzdpxE+7331V4gatEYxy4BzUrogYrB
+         tURBrkH3NYAxUP2AilmXvi+90Lkwu6747BywvwaZGEQ8fn4WoTfQt7cnD3Mi/o9tbI+2
+         j8cw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1750671124; x=1751275924;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=B+nyQWkVcjVEgS4bxefq4bC2m0gmMPDc+2UfUzc21zA=;
+        b=rIU+J7k2CaHJfUBhg2L0n7/skce2KAs4qnmqlDPtXgmRNvtjQRxz/TCBBNpZnf4KSt
+         ucAAuAylExLy9AkdrdOXTrm/SViyNHADKGBehRE+x7kbNavy3Bi/xU0XSyaEOWxlhN/X
+         2EQDBnIGVH3YjLXWVMAzCrIX5XGvppx5S+L8N4KMKYdT2eb2JcW5PAI+AySezBWL4cN0
+         OS4TLcGa9+AX2siuzXUurM8b100Bk4s2Vx9GbePB/jLCF8iwna4Ls+pD46ZV7lf7uup8
+         Vm4iJiVk4r2vny7pGVflrxJbbMdfq0yxnhyHTSt/0Vwf1b+84ikrd4TP7ZKfv2vdKT8l
+         uMTw==
+X-Gm-Message-State: AOJu0YwcEns7Dt6JFxPjSLYPZolz3vpm18KICofKsqOmL9oa1o3SNAGz
+	X9QaNPU/ElhyuzEGxnKCdpYjXMhHplAGEJM4jUbBtHguab0hwuT/enZF
+X-Gm-Gg: ASbGncv0dTW1hXfCogumZkXy1XQ0nPN1KrzziO2ziOF/UI31i+VaPmVX63r8XzyJuId
+	oNCgnFzSrxVLSbw7dF4w7FQ7U5M93KyF+nptGomdGxQoX0A4Mz929kxZ02bSpdVQuy5IZkMuPco
+	11Xml3Ke/enoamG8fR7yBBfQQqPDm99A+TjJsA7YwiwSvYl/Vw3HPSsZ+H0nPix/KZWE8EZiCu5
+	zGI5niKBTEKDhDWs+wrLXP3MfClnF/NekzskphofWqnwtOKdBtEcgGW5qTm7UqcVbsqFvIl8H+S
+	J+vK29pH5Im1HKeFY3AfhZ9mCgQMTRUmsbCmuxvBcgOzIfah5uUm/tnXSrTVGOVXj85h/kuKey4
+	tTB7M5Ibb5ztJR0bMgsJ4
+X-Google-Smtp-Source: AGHT+IH/bqmQDqcW/+Z7MmvgNwzAepK1hHloqm3RJJAUvU+vHjwX5usRhqfmpL3kIUkImEu9SE5H6g==
+X-Received: by 2002:a17:902:e54e:b0:215:6c5f:d142 with SMTP id d9443c01a7336-237db0d5a62mr153654585ad.20.1750671123939;
+        Mon, 23 Jun 2025 02:32:03 -0700 (PDT)
+Received: from localhost.localdomain ([180.101.244.64])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-237d869fbfcsm81271235ad.194.2025.06.23.02.31.58
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 23 Jun 2025 02:32:02 -0700 (PDT)
+From: Tianxiang Peng <luminosity1999@gmail.com>
+X-Google-Original-From: Tianxiang Peng <txpeng@tencent.com>
+To: puwen@hygon.cn,
+	tglx@linutronix.de,
+	mingo@redhat.com,
+	bp@alien8.de,
+	hpa@zytor.com,
+	x86@kernel.org
+Cc: linux-kernel@vger.kernel.org,
+	Tianxiang Peng <txpeng@tencent.com>,
+	Hui Li <caelli@tencent.com>
+Subject: [PATCH RESEND] x86/cpu/hygon: fix missing resctrl_cpu_detect() in bsp_init helper
+Date: Mon, 23 Jun 2025 17:31:53 +0800
+Message-ID: <20250623093153.3016937-1-txpeng@tencent.com>
+X-Mailer: git-send-email 2.43.5
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v5 12/13] arm64: dts: mediatek: mt7988a-bpi-r4: add sfp
- cages and link to gmac
-To: Frank Wunderlich <linux@fw-web.de>,
- MyungJoo Ham <myungjoo.ham@samsung.com>,
- Kyungmin Park <kyungmin.park@samsung.com>,
- Chanwoo Choi <cw00.choi@samsung.com>, Georgi Djakov <djakov@kernel.org>,
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, Andrew Lunn <andrew@lunn.ch>,
- Vladimir Oltean <olteanv@gmail.com>, "David S. Miller"
- <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
- Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
- Matthias Brugger <matthias.bgg@gmail.com>
-Cc: Frank Wunderlich <frank-w@public-files.de>,
- Jia-Wei Chang <jia-wei.chang@mediatek.com>,
- Johnson Wang <johnson.wang@mediatek.com>, =?UTF-8?B?QXLEsW7DpyDDnE5BTA==?=
- <arinc.unal@arinc9.com>, Landen Chao <Landen.Chao@mediatek.com>,
- DENG Qingfang <dqfext@gmail.com>, Sean Wang <sean.wang@mediatek.com>,
- Daniel Golle <daniel@makrotopia.org>, Lorenzo Bianconi <lorenzo@kernel.org>,
- Felix Fietkau <nbd@nbd.name>, linux-pm@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- netdev@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-mediatek@lists.infradead.org
-References: <20250620083555.6886-1-linux@fw-web.de>
- <20250620083555.6886-13-linux@fw-web.de>
-From: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
-Content-Language: en-US
-In-Reply-To: <20250620083555.6886-13-linux@fw-web.de>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-Il 20/06/25 10:35, Frank Wunderlich ha scritto:
-> From: Frank Wunderlich <frank-w@public-files.de>
-> 
-> Add SFP cages to Bananapi-R4 board. The 2.5g phy variant only contains the
-> wan-SFP, so add this to common dtsi and the lan-sfp only to the dual-SFP
-> variant.
-> 
-> Signed-off-by: Daniel Golle <daniel@makrotopia.org>
-> Signed-off-by: Frank Wunderlich <frank-w@public-files.de>
+Since upstream commit 923f3a2b48bdccb6a1d1f0dd48de03de7ad936d9
+("x86/resctrl: Query LLC monitoring properties once during boot"),
+resctrl_cpu_detect() has been moved from common cpu initialization
+code to vendor-specific bsp init helper, while hygon didn't put
+that call in their code.
 
-Reviewed-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+This triggers div-zero fault during early booting stage on our
+machines with X86_FEATURE_CQM* supported, where
+get_rdt_mon_resources() tries to calculate mon_l3_config with
+uninitialized boot_cpu_data.x86_cache_occ_scale.
 
+Fix the missing resctrl_cpu_detect() in hygon bsp init helper.
+
+Signed-off-by: Tianxiang Peng <txpeng@tencent.com>
+Reviewed-by: Hui Li <caelli@tencent.com>
+---
+ arch/x86/kernel/cpu/hygon.c | 3 +++
+ 1 file changed, 3 insertions(+)
+
+diff --git a/arch/x86/kernel/cpu/hygon.c b/arch/x86/kernel/cpu/hygon.c
+index 9f914bf80180..5f73bad0b9fd 100644
+--- a/arch/x86/kernel/cpu/hygon.c
++++ b/arch/x86/kernel/cpu/hygon.c
+@@ -16,6 +16,7 @@
+ #include <asm/page.h>
+ #include <linux/module.h>
+ #include <linux/init.h>
++#include <asm/resctrl.h>
+ 
+ #ifdef CONFIG_X86_64
+ # include <asm/set_memory.h>
+@@ -271,6 +272,8 @@ static void bsp_init_hygon(struct cpuinfo_x86 *c)
+ 			x86_amd_ls_cfg_ssbd_mask = 1ULL << 10;
+ 		}
+ 	}
++
++	resctrl_cpu_detect(c);
+ }
+ 
+ static void early_init_hygon(struct cpuinfo_x86 *c)
+-- 
+2.43.5
 
 
