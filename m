@@ -1,224 +1,247 @@
-Return-Path: <linux-kernel+bounces-698265-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-698269-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3AFF0AE3F6E
-	for <lists+linux-kernel@lfdr.de>; Mon, 23 Jun 2025 14:15:20 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7BE7AAE3F5C
+	for <lists+linux-kernel@lfdr.de>; Mon, 23 Jun 2025 14:13:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 459D83BE18E
-	for <lists+linux-kernel@lfdr.de>; Mon, 23 Jun 2025 12:10:36 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 919C0189A3D9
+	for <lists+linux-kernel@lfdr.de>; Mon, 23 Jun 2025 12:12:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8307C262FC4;
-	Mon, 23 Jun 2025 12:02:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7C3AC24DD13;
+	Mon, 23 Jun 2025 12:02:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="Sn9zTKy0"
-Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
+	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="l3+UqK+K"
+Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 05076264A60;
-	Mon, 23 Jun 2025 12:02:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7DD352673AA
+	for <linux-kernel@vger.kernel.org>; Mon, 23 Jun 2025 12:02:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750680129; cv=none; b=ctqMz09seuvnvyM46NlSLfsFf33nSHnHdapclIxPZr/xWxJil1VBWJdKSrkRYn3nRQPTb1PLUw+BNG8bqchkxOJN/7DFkbKpKNUlWdGBq7lHUhKoIsjTQk/G7i4RpQ2391xUlPzNc5kSrzWK/J8hAGQboDSwt9T3hMUiDXJH7B4=
+	t=1750680133; cv=none; b=WfrYTOf7wK0PqSVd4F8aEfta7X8UJygiP4KaexGZ86SBxBHTiLSPFdetZXCtD+z6k+3oPpByHbzIhZS4j32BNKG0SUAlT8iBBzCIqKVNLwPcoUtbP3H0Wc1lhu4MD5c6MotPkGggPYQtUwfZQDbg83lktXQSiPaVI9Us++mv7Zw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750680129; c=relaxed/simple;
-	bh=kS1FKeIiY4VaHPD7evpKdiT1ch7pGWqfaXruUb6PTY8=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=SlzVv0dkezsZuRm5xUx6IqG71mRe7TxTjUPFKUZz+WPMKpB7o6i2/EEeh+jnNWq6UuO+CYmCFdImnN0FX9GXsUZYtU0DVAMzmkPRFwfzHOaip9Q2YTZT4fIzVviGoGzasbdj6KDAqgWSSd+iPW0GKProdCjqoLsCovcCtN06Fb0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=Sn9zTKy0; arc=none smtp.client-ip=148.251.105.195
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1750680126;
-	bh=kS1FKeIiY4VaHPD7evpKdiT1ch7pGWqfaXruUb6PTY8=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=Sn9zTKy0w+DK2Q2Qiti3CtuaLd4wdZtctGm+tkfpTp/UB/zVsBkieH/VCrfVMChbI
-	 w8gPupRTvNXljb6+ZNfKFfXjbpmbBt49XMyIghOuYSTuQHmZfGdiQXjcOEZrjXlpBR
-	 OLOyvD4Kq09UEZ3HlCpf3xgLR2NKCdjfmOaVgmaYhNEA9yTAoolMbo8oCmh+VueC2c
-	 jcRGVCu+sJ6nbc4zK+gDvy4TeNu1i5bp7+rLqCcDPoOVsBrZXTpgrzjCxhj1G6OGxv
-	 hj7BvLEJcxvlWNecj9/2hecMzavd/AORlHc5hNlDToiOYAx3QSmr8wtb5OoGJYEFut
-	 rZ9JR7x2sC+MQ==
-Received: from IcarusMOD.eternityproject.eu (2-237-20-237.ip236.fastwebnet.it [2.237.20.237])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: kholk11)
-	by bali.collaboradmins.com (Postfix) with ESMTPSA id A0CD617E35D3;
-	Mon, 23 Jun 2025 14:02:05 +0200 (CEST)
-From: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
-To: linux-mediatek@lists.infradead.org
-Cc: robh@kernel.org,
-	krzk+dt@kernel.org,
-	conor+dt@kernel.org,
-	matthias.bgg@gmail.com,
-	angelogioacchino.delregno@collabora.com,
-	ulf.hansson@linaro.org,
-	y.oudjana@protonmail.com,
-	fshao@chromium.org,
-	wenst@chromium.org,
-	lihongbo22@huawei.com,
-	mandyjh.liu@mediatek.com,
-	mbrugger@suse.com,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-pm@vger.kernel.org,
-	kernel@collabora.com
-Subject: [PATCH v1 08/13] pmdomain: mediatek: Add support for secure HWCCF infra power on
-Date: Mon, 23 Jun 2025 14:01:49 +0200
-Message-ID: <20250623120154.109429-9-angelogioacchino.delregno@collabora.com>
-X-Mailer: git-send-email 2.49.0
-In-Reply-To: <20250623120154.109429-1-angelogioacchino.delregno@collabora.com>
-References: <20250623120154.109429-1-angelogioacchino.delregno@collabora.com>
+	s=arc-20240116; t=1750680133; c=relaxed/simple;
+	bh=eRambE0IBM8lNOiYCxa2v73RenBHpxNaK9LeTRHj+AE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=WWS9xltaE0ZUMdSB3vMRPxf/m1SseKoaCj6H+xgMdqWx0uB2qNT1tb8NBQxfkIeZQEkuch+NIYw3j0trkoWUITKBwfHuWpm3CA5rQkNr6APREXTp+lIIvOyNdPvyDz7Rdp4ZGZNLho4BXH03ZMCGheVPBQBAUNwm+AfRxBdRpYw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=l3+UqK+K; arc=none smtp.client-ip=213.167.242.64
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
+Received: from pendragon.ideasonboard.com (81-175-209-231.bb.dnainternet.fi [81.175.209.231])
+	by perceval.ideasonboard.com (Postfix) with UTF8SMTPSA id 92EE9D77;
+	Mon, 23 Jun 2025 14:01:52 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
+	s=mail; t=1750680112;
+	bh=eRambE0IBM8lNOiYCxa2v73RenBHpxNaK9LeTRHj+AE=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=l3+UqK+KWz4sGVgbakoiaVTmeJjO6bv7sXCPr3994UjbHOvGFinjekByWnIlIIumD
+	 +BmzInw6CZif2voQk9KtawqU16spy5+mpeD40aBE/SyXqRYhqI8UICjQ5GYPwjil1u
+	 ma5r9yxK0Rwf+4UrnD8DVxcX7FJsCvlwyvj05Q4Q=
+Date: Mon, 23 Jun 2025 15:01:49 +0300
+From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+To: Dharma Balasubiramani <dharma.b@microchip.com>
+Cc: Manikandan Muralidharan <manikandan.m@microchip.com>,
+	Andrzej Hajda <andrzej.hajda@intel.com>,
+	Neil Armstrong <neil.armstrong@linaro.org>,
+	Robert Foss <rfoss@kernel.org>, Jonas Karlman <jonas@kwiboo.se>,
+	Jernej Skrabec <jernej.skrabec@gmail.com>,
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+	Maxime Ripard <mripard@kernel.org>,
+	Thomas Zimmermann <tzimmermann@suse.de>,
+	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+	dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
+	Sandeep Sheriker M <sandeep.sheriker@microchip.com>
+Subject: Re: [PATCH v2] drm/bridge: microchip-lvds: fix bus format mismatch
+ with VESA displays
+Message-ID: <20250623120149.GA19319@pendragon.ideasonboard.com>
+References: <20250623-microchip-lvds-v2-1-8ecbabc6abc4@microchip.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20250623-microchip-lvds-v2-1-8ecbabc6abc4@microchip.com>
 
-Some SoCs, like the MediaTek Dimensity 9400 (MT6991), have granular
-power controls and will disable power to the infracfg to save power
-when the platform is in deeper sleep states (or when no IP in the
-the infracfg macro-block is in use).
+Hi Dharma,
 
-These chips also cannot control the infracfg power states directly
-via AP register writes as those are protected by the secure world.
+Thank you for the patch.
 
-Add a new MTK_SCPD_INFRA_PWR_CTL cap and, if present, make a call
-to the secure world to poweron the infracfg block, as the HWV IP
-resides in there, when executing HWV domains power sequences.
+On Mon, Jun 23, 2025 at 04:20:20PM +0530, Dharma Balasubiramani wrote:
+> From: Sandeep Sheriker M <sandeep.sheriker@microchip.com>
+> 
+> The LVDS controller was hardcoded to JEIDA mapping, which leads to
+> distorted output on panels expecting VESA mapping.
+> 
+> Update the driver to dynamically select the appropriate mapping and
+> pixel size based on the panel's advertised media bus format. This
+> ensures compatibility with both JEIDA and VESA displays.
+> 
+> Modernize the bridge ops to use atomic_enable/disable, and retrieve
+> the bus format from the connector via the atomic bridge state.
+> 
+> Signed-off-by: Sandeep Sheriker M <sandeep.sheriker@microchip.com>
+> Signed-off-by: Dharma Balasubiramani <dharma.b@microchip.com>
+> ---
+> Note: Tested the changes on newvision 10.1 VESA display.
+> 
+> Changes in v2:
+> - Switch to atomic bridge functions
+> - Drop custom connector creation
+> - Use drm_atomic_get_new_connector_for_encoder()
+> - Link to v1: https://lore.kernel.org/r/20250618-microchip-lvds-v1-1-1eae5acd7a82@microchip.com
+> ---
+>  drivers/gpu/drm/bridge/microchip-lvds.c | 64 +++++++++++++++++++++++++++------
+>  1 file changed, 54 insertions(+), 10 deletions(-)
+> 
+> diff --git a/drivers/gpu/drm/bridge/microchip-lvds.c b/drivers/gpu/drm/bridge/microchip-lvds.c
+> index 9f4ff82bc6b4..b71478aa36e9 100644
+> --- a/drivers/gpu/drm/bridge/microchip-lvds.c
+> +++ b/drivers/gpu/drm/bridge/microchip-lvds.c
+> @@ -11,6 +11,7 @@
+>  #include <linux/component.h>
+>  #include <linux/delay.h>
+>  #include <linux/jiffies.h>
+> +#include <linux/media-bus-format.h>
+>  #include <linux/mfd/syscon.h>
+>  #include <linux/of_graph.h>
+>  #include <linux/pinctrl/devinfo.h>
+> @@ -41,9 +42,11 @@
+>  
+>  /* Bitfields in LVDSC_CFGR (Configuration Register) */
+>  #define LVDSC_CFGR_PIXSIZE_24BITS	0
+> +#define LVDSC_CFGR_PIXSIZE_18BITS	1
 
-Signed-off-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
----
- drivers/pmdomain/mediatek/mtk-pm-domains.c | 40 ++++++++++++++++++++--
- drivers/pmdomain/mediatek/mtk-pm-domains.h |  1 +
- 2 files changed, 39 insertions(+), 2 deletions(-)
+#define LVDSC_CFGR_PIXSIZE_18BITS	BIT(0)
 
-diff --git a/drivers/pmdomain/mediatek/mtk-pm-domains.c b/drivers/pmdomain/mediatek/mtk-pm-domains.c
-index 977e4e7de831..101ce20d5be4 100644
---- a/drivers/pmdomain/mediatek/mtk-pm-domains.c
-+++ b/drivers/pmdomain/mediatek/mtk-pm-domains.c
-@@ -15,6 +15,7 @@
- #include <linux/regmap.h>
- #include <linux/regulator/consumer.h>
- #include <linux/soc/mediatek/infracfg.h>
-+#include <linux/soc/mediatek/mtk_sip_svc.h>
- 
- #include "mt6735-pm-domains.h"
- #include "mt6795-pm-domains.h"
-@@ -51,6 +52,8 @@
- #define PWR_RTFF_SAVE_FLAG		BIT(27)
- #define PWR_RTFF_UFS_CLK_DIS		BIT(28)
- 
-+#define MTK_SIP_KERNEL_HWCCF_CONTROL	MTK_SIP_SMC_CMD(0x540)
-+
- struct scpsys_domain {
- 	struct generic_pm_domain genpd;
- 	const struct scpsys_domain_data *data;
-@@ -116,6 +119,15 @@ static bool scpsys_hwv_domain_is_enable_done(struct scpsys_domain *pd)
- 	return (val[0] & mask) && (val[1] & mask) && !(val[2] & mask);
- }
- 
-+static int scpsys_sec_infra_power_on(bool on)
-+{
-+	struct arm_smccc_res res;
-+	unsigned long cmd = on ? 1 : 0;
-+
-+	arm_smccc_smc(MTK_SIP_KERNEL_HWCCF_CONTROL, cmd, 0, 0, 0, 0, 0, 0, &res);
-+	return res.a0;
-+}
-+
- static int scpsys_sram_enable(struct scpsys_domain *pd)
- {
- 	u32 expected_ack, pdn_ack = pd->data->sram_pdn_ack_bits;
-@@ -291,9 +303,15 @@ static int scpsys_hwv_power_on(struct generic_pm_domain *genpd)
- 	u32 val;
- 	int ret;
- 
-+	if (MTK_SCPD_CAPS(pd, MTK_SCPD_INFRA_PWR_CTL)) {
-+		ret = scpsys_sec_infra_power_on(true);
-+		if (ret)
-+			return ret;
-+	}
-+
- 	ret = scpsys_regulator_enable(pd->supply);
- 	if (ret)
--		return ret;
-+		goto err_infra;
- 
- 	ret = clk_bulk_prepare_enable(pd->num_clks, pd->clks);
- 	if (ret)
-@@ -344,6 +362,9 @@ static int scpsys_hwv_power_on(struct generic_pm_domain *genpd)
- 	/* It's done! Disable the HWV low power subsystem clocks */
- 	clk_bulk_disable_unprepare(pd->num_subsys_clks, pd->subsys_clks);
- 
-+	if (MTK_SCPD_CAPS(pd, MTK_SCPD_INFRA_PWR_CTL))
-+		scpsys_sec_infra_power_on(false);
-+
- 	return 0;
- 
- err_disable_subsys_clks:
-@@ -352,6 +373,9 @@ static int scpsys_hwv_power_on(struct generic_pm_domain *genpd)
- 	clk_bulk_disable_unprepare(pd->num_clks, pd->clks);
- err_reg:
- 	scpsys_regulator_disable(pd->supply);
-+err_infra:
-+	if (MTK_SCPD_CAPS(pd, MTK_SCPD_INFRA_PWR_CTL))
-+		scpsys_sec_infra_power_on(false);
- 	return ret;
- };
- 
-@@ -363,9 +387,15 @@ static int scpsys_hwv_power_off(struct generic_pm_domain *genpd)
- 	u32 val;
- 	int ret;
- 
-+	if (MTK_SCPD_CAPS(pd, MTK_SCPD_INFRA_PWR_CTL)) {
-+		ret = scpsys_sec_infra_power_on(true);
-+		if (ret)
-+			return ret;
-+	}
-+
- 	ret = clk_bulk_prepare_enable(pd->num_subsys_clks, pd->subsys_clks);
- 	if (ret)
--		return ret;
-+		goto err_infra;
- 
- 	/* Make sure the HW Voter is idle and able to accept commands */
- 	ret = regmap_read_poll_timeout_atomic(scpsys->base, hwv->done, val,
-@@ -407,10 +437,16 @@ static int scpsys_hwv_power_off(struct generic_pm_domain *genpd)
- 
- 	scpsys_regulator_disable(pd->supply);
- 
-+	if (MTK_SCPD_CAPS(pd, MTK_SCPD_INFRA_PWR_CTL))
-+		scpsys_sec_infra_power_on(false);
-+
- 	return 0;
- 
- err_disable_subsys_clks:
- 	clk_bulk_disable_unprepare(pd->num_subsys_clks, pd->subsys_clks);
-+err_infra:
-+	if (MTK_SCPD_CAPS(pd, MTK_SCPD_INFRA_PWR_CTL))
-+		scpsys_sec_infra_power_on(false);
- 	return ret;
- };
- 
-diff --git a/drivers/pmdomain/mediatek/mtk-pm-domains.h b/drivers/pmdomain/mediatek/mtk-pm-domains.h
-index 6fe06c4a06e1..8adf23d4d0f9 100644
---- a/drivers/pmdomain/mediatek/mtk-pm-domains.h
-+++ b/drivers/pmdomain/mediatek/mtk-pm-domains.h
-@@ -16,6 +16,7 @@
- #define MTK_SCPD_SRAM_PDN_INVERTED	BIT(9)
- #define MTK_SCPD_MODEM_PWRSEQ		BIT(10)
- #define MTK_SCPD_SKIP_RESET_B		BIT(11)
-+#define MTK_SCPD_INFRA_PWR_CTL		BIT(12)
- #define MTK_SCPD_CAPS(_scpd, _x)	((_scpd)->data ?		\
- 					 (_scpd)->data->caps & (_x) :	\
- 					 (_scpd)->hwv_data->caps & (_x))
+>  #define LVDSC_CFGR_DEN_POL_HIGH		0
+>  #define LVDSC_CFGR_DC_UNBALANCED	0
+>  #define LVDSC_CFGR_MAPPING_JEIDA	BIT(6)
+> +#define LVDSC_CFGR_MAPPING_VESA		0
+>  
+>  /*Bitfields in LVDSC_SR */
+>  #define LVDSC_SR_CS	BIT(0)
+
+I think you can drop the panel field of the mchp_lvds structure in the
+same patch.
+
+> @@ -76,9 +79,10 @@ static inline void lvds_writel(struct mchp_lvds *lvds, u32 offset, u32 val)
+>  	writel_relaxed(val, lvds->regs + offset);
+>  }
+>  
+> -static void lvds_serialiser_on(struct mchp_lvds *lvds)
+> +static void lvds_serialiser_on(struct mchp_lvds *lvds, u32 bus_format)
+>  {
+>  	unsigned long timeout = jiffies + msecs_to_jiffies(LVDS_POLL_TIMEOUT_MS);
+> +	u8 map, pix_size;
+>  
+>  	/* The LVDSC registers can only be written if WPEN is cleared */
+>  	lvds_writel(lvds, LVDSC_WPMR, (LVDSC_WPMR_WPKEY_PSSWD &
+> @@ -93,11 +97,24 @@ static void lvds_serialiser_on(struct mchp_lvds *lvds)
+>  		usleep_range(1000, 2000);
+>  	}
+>  
+> +	switch (bus_format) {
+> +	case MEDIA_BUS_FMT_RGB666_1X7X3_SPWG:
+> +		map = LVDSC_CFGR_MAPPING_JEIDA;
+> +		pix_size = LVDSC_CFGR_PIXSIZE_18BITS;
+> +		break;
+> +	case MEDIA_BUS_FMT_RGB888_1X7X4_SPWG:
+> +		map = LVDSC_CFGR_MAPPING_VESA;
+> +		pix_size = LVDSC_CFGR_PIXSIZE_24BITS;
+> +		break;
+> +	default:
+> +		map = LVDSC_CFGR_MAPPING_JEIDA;
+> +		pix_size = LVDSC_CFGR_PIXSIZE_24BITS;
+> +		break;
+> +	}
+> +
+>  	/* Configure the LVDSC */
+> -	lvds_writel(lvds, LVDSC_CFGR, (LVDSC_CFGR_MAPPING_JEIDA |
+> -				LVDSC_CFGR_DC_UNBALANCED |
+> -				LVDSC_CFGR_DEN_POL_HIGH |
+> -				LVDSC_CFGR_PIXSIZE_24BITS));
+> +	lvds_writel(lvds, LVDSC_CFGR, (map | LVDSC_CFGR_DC_UNBALANCED |
+> +		    LVDSC_CFGR_DEN_POL_HIGH | pix_size));
+
+You can drop the inner parentheses.
+
+>  
+>  	/* Enable the LVDS serializer */
+>  	lvds_writel(lvds, LVDSC_CR, LVDSC_CR_SER_EN);
+> @@ -113,7 +130,8 @@ static int mchp_lvds_attach(struct drm_bridge *bridge,
+>  				 bridge, flags);
+>  }
+>  
+> -static void mchp_lvds_enable(struct drm_bridge *bridge)
+> +static void mchp_lvds_atomic_pre_enable(struct drm_bridge *bridge,
+> +					struct drm_atomic_state *state)
+>  {
+>  	struct mchp_lvds *lvds = bridge_to_lvds(bridge);
+>  	int ret;
+> @@ -129,11 +147,35 @@ static void mchp_lvds_enable(struct drm_bridge *bridge)
+>  		dev_err(lvds->dev, "failed to get pm runtime: %d\n", ret);
+>  		return;
+>  	}
+> +}
+> +
+> +static void mchp_lvds_atomic_enable(struct drm_bridge *bridge,
+> +				    struct drm_atomic_state *state)
+> +{
+> +	struct mchp_lvds *lvds = bridge_to_lvds(bridge);
+> +	struct drm_connector *connector;
+> +
+> +	/* default to jeida-24 */
+> +	u32 bus_format = MEDIA_BUS_FMT_RGB888_1X7X4_JEIDA;
+> +
+> +	connector = drm_atomic_get_new_connector_for_encoder(state, bridge->encoder);
+> +	if (connector && connector->display_info.num_bus_formats)
+> +		bus_format = connector->display_info.bus_formats[0];
+> +
+> +	lvds_serialiser_on(lvds, bus_format);
+> +}
+> +
+> +static void mchp_lvds_atomic_disable(struct drm_bridge *bridge,
+> +				     struct drm_atomic_state *state)
+> +{
+> +	struct mchp_lvds *lvds = bridge_to_lvds(bridge);
+>  
+> -	lvds_serialiser_on(lvds);
+> +	/* Turn off the serialiser */
+> +	lvds_writel(lvds, LVDSC_CR, 0);
+>  }
+>  
+> -static void mchp_lvds_disable(struct drm_bridge *bridge)
+> +static void mchp_lvds_atomic_post_disable(struct drm_bridge *bridge,
+> +					  struct drm_atomic_state *state)
+>  {
+>  	struct mchp_lvds *lvds = bridge_to_lvds(bridge);
+>  
+> @@ -143,8 +185,10 @@ static void mchp_lvds_disable(struct drm_bridge *bridge)
+>  
+>  static const struct drm_bridge_funcs mchp_lvds_bridge_funcs = {
+>  	.attach = mchp_lvds_attach,
+> -	.enable = mchp_lvds_enable,
+> -	.disable = mchp_lvds_disable,
+> +	.atomic_pre_enable = mchp_lvds_atomic_pre_enable,
+> +	.atomic_enable = mchp_lvds_atomic_enable,
+> +	.atomic_disable = mchp_lvds_atomic_disable,
+> +	.atomic_post_disable = mchp_lvds_atomic_post_disable,
+>  };
+>  
+>  static int mchp_lvds_probe(struct platform_device *pdev)
+> 
+> ---
+> base-commit: 4325743c7e209ae7845293679a4de94b969f2bef
+> change-id: 20250618-microchip-lvds-b7151d96094a
+
 -- 
-2.49.0
+Regards,
 
+Laurent Pinchart
 
