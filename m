@@ -1,247 +1,176 @@
-Return-Path: <linux-kernel+bounces-698644-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-698646-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id B64B9AE47AE
-	for <lists+linux-kernel@lfdr.de>; Mon, 23 Jun 2025 16:59:46 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 51B15AE47C9
+	for <lists+linux-kernel@lfdr.de>; Mon, 23 Jun 2025 17:04:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2CEE17A707A
-	for <lists+linux-kernel@lfdr.de>; Mon, 23 Jun 2025 14:58:23 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AF6DD168976
+	for <lists+linux-kernel@lfdr.de>; Mon, 23 Jun 2025 15:00:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 181B3267700;
-	Mon, 23 Jun 2025 14:59:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BE0A5267729;
+	Mon, 23 Jun 2025 15:00:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="gQIQitU6"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.15])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="NFbxM4Mm";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="aiS8aqnd";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="NFbxM4Mm";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="aiS8aqnd"
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C118D78F5E;
-	Mon, 23 Jun 2025 14:59:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.15
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AF7DC1A42C4
+	for <linux-kernel@vger.kernel.org>; Mon, 23 Jun 2025 15:00:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750690778; cv=none; b=dPnnBDykf4h9v2yb0EqbrBa2e3VwE8U89G1oFRcwT+rOJliKmfp+ueLOSzS3Cu3d8vJMLnGzypVX4fH90YcJDfDxS0+DeBB3+49UHFXmgAm3nW2k5U6TTghPY0QMwHdK3veE4jAM4cf+a0EZneeVfr7GeZ4vBcdwSb2nBvlThIo=
+	t=1750690818; cv=none; b=c0AR2y6QTk8clwv2hTr1lLEzsIbAlQVqowBsFdjN+iSE7fwdxlubOWs5DLPLotqZb3hG7UNZvzE0QIPonTGSUFLwHsEU2cCFg0t6xMiZK8D6UwyxZgeMXyoiN3ane4xZIBnEV06wgcjrzG3KnZJARopifdHxVQV7hpbz5zr5lFU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750690778; c=relaxed/simple;
-	bh=1gQR+7ppPqLmDzPW8pQde6K5GiVPwdBj7HlNy1QF6RY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=rV0+mOTttsWQitPPpzXfT+Y95SFm2UPM2zOnIA7UcHoWzKZhN32qMjT9koklPLqEfB73ZW6NkNHHgP9E4A/+H1wO9GwsIjDngvIY8FFazODnwmAfgFd6OVL4lKG0nJiHSVyVnMCjZf3CR9uojfqp+r2oiE7YHW8D6bEMIr/sygY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=gQIQitU6; arc=none smtp.client-ip=192.198.163.15
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1750690777; x=1782226777;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=1gQR+7ppPqLmDzPW8pQde6K5GiVPwdBj7HlNy1QF6RY=;
-  b=gQIQitU6fPikJXdMV4NYIoMtwbnO1NRbdQE0lvDxYv0FQF/JZR27rQCA
-   OXas4SbaObHDKA8ixrOqtsiru5zj0EpXoor0egCf1lswpYvDl7tt9K9lZ
-   K8eUbTgVM4uY0SknCVXZtT/50MdWBXogrfy2gjfCL6vUbGttzlg2tI1eH
-   IcytAmrTAKsXkHlGNvOcjCeTF4i23k08ovJM9HiwFhksgSwGbvVxTmM+d
-   tAD7v7tWj3qCampuQ6LpWwxxyoy9X2u2IXkvAK2tOEKdsKRgnI/0tRIxX
-   MBXvicPxA19r2g7colfXtGbveGwSCLLahXdrydFEGVMV6e6reMyfg0cNw
-   Q==;
-X-CSE-ConnectionGUID: 4kUsllYVSkq6AZzGDkg4qw==
-X-CSE-MsgGUID: rVVanHbiRBGCfATmsuljtA==
-X-IronPort-AV: E=McAfee;i="6800,10657,11473"; a="53043251"
-X-IronPort-AV: E=Sophos;i="6.16,258,1744095600"; 
-   d="scan'208";a="53043251"
-Received: from fmviesa006.fm.intel.com ([10.60.135.146])
-  by fmvoesa109.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 23 Jun 2025 07:59:36 -0700
-X-CSE-ConnectionGUID: D0GH7/nBTZOm9NGfxdjruQ==
-X-CSE-MsgGUID: VVcyVcPuTiS2pHCroFKYjg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.16,258,1744095600"; 
-   d="scan'208";a="151771362"
-Received: from msatwood-mobl.amr.corp.intel.com (HELO [10.125.108.178]) ([10.125.108.178])
-  by fmviesa006-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 23 Jun 2025 07:59:35 -0700
-Message-ID: <c98590aa-1ad8-48f7-8dfb-a343987d769c@intel.com>
-Date: Mon, 23 Jun 2025 07:59:34 -0700
+	s=arc-20240116; t=1750690818; c=relaxed/simple;
+	bh=b6mLJw07SveUta9rL9RSJrviZyUT2fQ1QlImKLULcBg=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=HzHkAP8zrZZec65tjKExSioYD/OSqhaKNGfElvBPb11SXSZUuetFobFYrp2yV2EdBwYyAwYTZs4L7u8q8mi4uMJGWMYKHaNgE8QhirKqoDS1VnsmDhwhWX/kCKz2trlCyC5N/7AXTaAMk8zaKFlT7WxT22ZnNfNLA0qJcrn+7MA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=NFbxM4Mm; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=aiS8aqnd; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=NFbxM4Mm; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=aiS8aqnd; arc=none smtp.client-ip=195.135.223.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
+Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id C7E712116A;
+	Mon, 23 Jun 2025 15:00:07 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1750690807; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=tDAheB8HKXSBTKXzf4KhIkVIPjs5JJHYVKDov+chU7g=;
+	b=NFbxM4MmfAnUG8P8y8n6s1PwrS8TThGx1CmWS1wYQyf+x6hVGI3sU9aF93VF4pPBeYGTh9
+	4dLcMmH9iQhwSn43oTdKtIRTZ4eaDeBSYkPx5kjk+veQxdZ/sOOqJ7eAJxIOqlF8UvsaEs
+	KNwwvRBhwMjtt83CyGtkrmz4kLvX52w=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1750690807;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=tDAheB8HKXSBTKXzf4KhIkVIPjs5JJHYVKDov+chU7g=;
+	b=aiS8aqndVTp0VN0TMFSDhmvxzLhv/M4GZqXs2fxifoR0v/eVC9bhVlnfPiPlSJ9iSw6oLb
+	b1zqf04Zh5jlp5AQ==
+Authentication-Results: smtp-out1.suse.de;
+	none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1750690807; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=tDAheB8HKXSBTKXzf4KhIkVIPjs5JJHYVKDov+chU7g=;
+	b=NFbxM4MmfAnUG8P8y8n6s1PwrS8TThGx1CmWS1wYQyf+x6hVGI3sU9aF93VF4pPBeYGTh9
+	4dLcMmH9iQhwSn43oTdKtIRTZ4eaDeBSYkPx5kjk+veQxdZ/sOOqJ7eAJxIOqlF8UvsaEs
+	KNwwvRBhwMjtt83CyGtkrmz4kLvX52w=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1750690807;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=tDAheB8HKXSBTKXzf4KhIkVIPjs5JJHYVKDov+chU7g=;
+	b=aiS8aqndVTp0VN0TMFSDhmvxzLhv/M4GZqXs2fxifoR0v/eVC9bhVlnfPiPlSJ9iSw6oLb
+	b1zqf04Zh5jlp5AQ==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id B27DE13A27;
+	Mon, 23 Jun 2025 15:00:07 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id bK4+K/drWWi8cQAAD6G6ig
+	(envelope-from <vbabka@suse.cz>); Mon, 23 Jun 2025 15:00:07 +0000
+From: Vlastimil Babka <vbabka@suse.cz>
+Subject: [PATCH RFC 0/2] madvise anon_name cleanups
+Date: Mon, 23 Jun 2025 16:59:49 +0200
+Message-Id: <20250623-anon_name_cleanup-v1-0-04c94384046f@suse.cz>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 5/8] cxl/region: Split commit_store() into __commit()
- and queue_reset() helpers
-To: Dan Williams <dan.j.williams@intel.com>, linux-cxl@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org, Davidlohr Bueso <dave@stgolabs.net>,
- Jonathan Cameron <jonathan.cameron@huawei.com>,
- Alison Schofield <alison.schofield@intel.com>,
- Vishal Verma <vishal.l.verma@intel.com>, Ira Weiny <ira.weiny@intel.com>
-References: <20250619050416.782871-1-dan.j.williams@intel.com>
- <20250619050416.782871-6-dan.j.williams@intel.com>
-Content-Language: en-US
-From: Dave Jiang <dave.jiang@intel.com>
-In-Reply-To: <20250619050416.782871-6-dan.j.williams@intel.com>
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAOVrWWgC/6tWKk4tykwtVrJSqFYqSi3LLM7MzwNyDHUUlJIzE
+ vPSU3UzU4B8JSMDI1MDMyNj3cS8/Lz4vMTc1PjknNTEvNIC3VQLyyQzC3MDY4vUFCWgvoKi1LT
+ MCrCZ0UpBbs5KsbW1AHnnaNZoAAAA
+X-Change-ID: 20250623-anon_name_cleanup-e89b687038ed
+To: Andrew Morton <akpm@linux-foundation.org>, 
+ "Liam R. Howlett" <Liam.Howlett@oracle.com>, 
+ Lorenzo Stoakes <lorenzo.stoakes@oracle.com>, 
+ David Hildenbrand <david@redhat.com>, Jann Horn <jannh@google.com>, 
+ Mike Rapoport <rppt@kernel.org>, Suren Baghdasaryan <surenb@google.com>, 
+ Michal Hocko <mhocko@suse.com>, Colin Cross <ccross@google.com>
+Cc: linux-mm@kvack.org, linux-kernel@vger.kernel.org, 
+ Vlastimil Babka <vbabka@suse.cz>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1228; i=vbabka@suse.cz;
+ h=from:subject:message-id; bh=b6mLJw07SveUta9rL9RSJrviZyUT2fQ1QlImKLULcBg=;
+ b=owEBbQGS/pANAwAIAbvgsHXSRYiaAcsmYgBoWWvuzK6pYrbaSf/zdilKEC8ENpGdZ2IAkMxYw
+ 9xBOSRc28OJATMEAAEIAB0WIQR7u8hBFZkjSJZITfG74LB10kWImgUCaFlr7gAKCRC74LB10kWI
+ mkEGB/0Uk2kzosGBMO8qEJj38dnyqb9vMfmxg1zrE/Ae2p1QZSKxtq/Az6MqA0LJYI0J4LKNJeW
+ rAfAfTgjp6WimTGdBQSXoZHl3kRS5IK2lMP35rYVwFRAwUcHIUeW8kOS3IUPlUfdPRjW2mqJ18w
+ Ga2MuhvtkUdK7ED6VNbT1GvcLto8CwQLMh++ZlRNRaeeIiC/1L8DMtiyzXQU3K11R5KLNzOKAcg
+ yB6T/OXZEIqyRLXSdTCXY31uVxgTFCZ0iUoNtUTf/lv+BNtXFxCfKuZyaid06Kxo0OWDnKxQTXO
+ yXNYb7eikTcd7+Q5BQ3KkDwtfX1bg2IlsFHAR4C1mr3J1H+U
+X-Developer-Key: i=vbabka@suse.cz; a=openpgp;
+ fpr=A940D434992C2E8E99103D50224FA7E7CC82A664
+X-Spamd-Result: default: False [-4.30 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	MID_RHS_MATCH_FROM(0.00)[];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	ARC_NA(0.00)[];
+	RCPT_COUNT_TWELVE(0.00)[12];
+	RCVD_TLS_ALL(0.00)[];
+	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	FROM_HAS_DN(0.00)[];
+	TO_DN_SOME(0.00)[];
+	FROM_EQ_ENVFROM(0.00)[];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	RCVD_COUNT_TWO(0.00)[2];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo,suse.cz:email,suse.cz:mid]
+X-Spam-Level: 
+X-Spam-Flag: NO
+X-Spam-Score: -4.30
 
+While reviewing Lorenzo's madvise cleanups I've noticed that we can
+handle anon_name in madvise code much better, so sending that as patch
+1. Initially I wanted to do first move the existing logic from
+   madvise_vma_behavior() to madvise_update_vma() as a separate patch
+before the actual simplification but that would require adding
+anon_vma_name_put() in error handling paths only to be removed again, so
+it's a single patch to avoid churn.
 
+It's also an opportunity to move some mm code from prctl under mm,
+hence patch 2. It's RFC to see if people agree on where patch 2 moves
+things, or have better ideas.
 
-On 6/18/25 10:04 PM, Dan Williams wrote:
-> The complexity of dropping the lock is removed in favor of splitting commit
-> operations to a helper, and leaving all the complexities of "decommit" for
-> commit_store() to coordinate the different locking contexts.
-> 
-> The CPU cache-invalidation in the decommit path is solely handled now by
-> cxl_region_decode_reset(). Previously the CPU caches were being needlessly
-> flushed twice in the decommit path where the first flush had no guarantee
-> that the memory would not be immediately re-dirtied.
-> 
-> Cc: Davidlohr Bueso <dave@stgolabs.net>
-> Cc: Jonathan Cameron <jonathan.cameron@huawei.com>
-> Cc: Dave Jiang <dave.jiang@intel.com>
-> Cc: Alison Schofield <alison.schofield@intel.com>
-> Cc: Vishal Verma <vishal.l.verma@intel.com>
-> Cc: Ira Weiny <ira.weiny@intel.com>
-> Signed-off-by: Dan Williams <dan.j.williams@intel.com>
+Based on mm-new.
 
-Reviewed-by: Dave Jiang <dave.jiang@intel.com>
-> ---
->  drivers/cxl/core/region.c | 99 +++++++++++++++++++++++++++------------
->  1 file changed, 70 insertions(+), 29 deletions(-)
-> 
-> diff --git a/drivers/cxl/core/region.c b/drivers/cxl/core/region.c
-> index 6e5e1460068d..3a77aec2c447 100644
-> --- a/drivers/cxl/core/region.c
-> +++ b/drivers/cxl/core/region.c
-> @@ -349,30 +349,42 @@ static int cxl_region_decode_commit(struct cxl_region *cxlr)
->  	return rc;
->  }
->  
-> -static ssize_t commit_store(struct device *dev, struct device_attribute *attr,
-> -			    const char *buf, size_t len)
-> +static int queue_reset(struct cxl_region *cxlr)
->  {
-> -	struct cxl_region *cxlr = to_cxl_region(dev);
->  	struct cxl_region_params *p = &cxlr->params;
-> -	bool commit;
-> -	ssize_t rc;
-> +	int rc;
->  
-> -	rc = kstrtobool(buf, &commit);
-> +	rc = down_write_killable(&cxl_region_rwsem);
->  	if (rc)
->  		return rc;
->  
-> +	/* Already in the requested state? */
-> +	if (p->state < CXL_CONFIG_COMMIT)
-> +		goto out;
-> +
-> +	p->state = CXL_CONFIG_RESET_PENDING;
-> +
-> +out:
-> +	up_write(&cxl_region_rwsem);
-> +
-> +	return rc;
-> +}
-> +
-> +static int __commit(struct cxl_region *cxlr)
-> +{
-> +	struct cxl_region_params *p = &cxlr->params;
-> +	int rc;
-> +
->  	rc = down_write_killable(&cxl_region_rwsem);
->  	if (rc)
->  		return rc;
->  
->  	/* Already in the requested state? */
-> -	if (commit && p->state >= CXL_CONFIG_COMMIT)
-> -		goto out;
-> -	if (!commit && p->state < CXL_CONFIG_COMMIT)
-> +	if (p->state >= CXL_CONFIG_COMMIT)
->  		goto out;
->  
->  	/* Not ready to commit? */
-> -	if (commit && p->state < CXL_CONFIG_ACTIVE) {
-> +	if (p->state < CXL_CONFIG_ACTIVE) {
->  		rc = -ENXIO;
->  		goto out;
->  	}
-> @@ -385,31 +397,60 @@ static ssize_t commit_store(struct device *dev, struct device_attribute *attr,
->  	if (rc)
->  		goto out;
->  
-> -	if (commit) {
-> -		rc = cxl_region_decode_commit(cxlr);
-> -		if (rc == 0)
-> -			p->state = CXL_CONFIG_COMMIT;
-> -	} else {
-> -		p->state = CXL_CONFIG_RESET_PENDING;
-> -		up_write(&cxl_region_rwsem);
-> -		device_release_driver(&cxlr->dev);
-> -		down_write(&cxl_region_rwsem);
-> -
-> -		/*
-> -		 * The lock was dropped, so need to revalidate that the reset is
-> -		 * still pending.
-> -		 */
-> -		if (p->state == CXL_CONFIG_RESET_PENDING) {
-> -			cxl_region_decode_reset(cxlr, p->interleave_ways);
-> -			p->state = CXL_CONFIG_ACTIVE;
-> -		}
-> -	}
-> +	rc = cxl_region_decode_commit(cxlr);
-> +	if (rc == 0)
-> +		p->state = CXL_CONFIG_COMMIT;
->  
->  out:
->  	up_write(&cxl_region_rwsem);
->  
-> +	return rc;
-> +}
-> +
-> +static ssize_t commit_store(struct device *dev, struct device_attribute *attr,
-> +			    const char *buf, size_t len)
-> +{
-> +	struct cxl_region *cxlr = to_cxl_region(dev);
-> +	struct cxl_region_params *p = &cxlr->params;
-> +	bool commit;
-> +	ssize_t rc;
-> +
-> +	rc = kstrtobool(buf, &commit);
->  	if (rc)
->  		return rc;
-> +
-> +	if (commit) {
-> +		rc = __commit(cxlr);
-> +		if (rc)
-> +			return rc;
-> +		return len;
-> +	}
-> +
-> +	rc = queue_reset(cxlr);
-> +	if (rc)
-> +		return rc;
-> +
-> +	/*
-> +	 * Unmap the region and depend the reset-pending state to ensure
-> +	 * it does not go active again until post reset
-> +	 */
-> +	device_release_driver(&cxlr->dev);
-> +
-> +	/*
-> +	 * With the reset pending take cxl_region_rwsem unconditionally
-> +	 * to ensure the reset gets handled before returning.
-> +	 */
-> +	guard(rwsem_write)(&cxl_region_rwsem);
-> +
-> +	/*
-> +	 * Revalidate that the reset is still pending in case another
-> +	 * thread already handled this reset.
-> +	 */
-> +	if (p->state == CXL_CONFIG_RESET_PENDING) {
-> +		cxl_region_decode_reset(cxlr, p->interleave_ways);
-> +		p->state = CXL_CONFIG_ACTIVE;
-> +	}
-> +
->  	return len;
->  }
->  
+Signed-off-by: Vlastimil Babka <vbabka@suse.cz>
+---
+Vlastimil Babka (2):
+      mm, madvise: simplify anon_name handling
+      mm, madvise: move prctl_set_vma() to mm/madvise.c
+
+ include/linux/mm.h | 13 ++++----
+ kernel/sys.c       | 64 ------------------------------------
+ mm/madvise.c       | 96 +++++++++++++++++++++++++++++++++++++++---------------
+ 3 files changed, 76 insertions(+), 97 deletions(-)
+---
+base-commit: 4216fd45fc9156da0ee33fcb25cc0a5265049e32
+change-id: 20250623-anon_name_cleanup-e89b687038ed
+
+Best regards,
+-- 
+Vlastimil Babka <vbabka@suse.cz>
 
 
