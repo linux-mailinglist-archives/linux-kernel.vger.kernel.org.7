@@ -1,148 +1,123 @@
-Return-Path: <linux-kernel+bounces-697803-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-697813-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8E09DAE38EF
-	for <lists+linux-kernel@lfdr.de>; Mon, 23 Jun 2025 10:50:30 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id AD354AE38FF
+	for <lists+linux-kernel@lfdr.de>; Mon, 23 Jun 2025 10:52:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1352C7A549B
-	for <lists+linux-kernel@lfdr.de>; Mon, 23 Jun 2025 08:49:07 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D70D51732F5
+	for <lists+linux-kernel@lfdr.de>; Mon, 23 Jun 2025 08:52:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5C25822FAFD;
-	Mon, 23 Jun 2025 08:50:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 11496230BD0;
+	Mon, 23 Jun 2025 08:51:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="iPA/bL2e"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.9])
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="Nw4EAU7C"
+Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 61A0C14D2A0;
-	Mon, 23 Jun 2025 08:50:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.9
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6F2892367A6
+	for <linux-kernel@vger.kernel.org>; Mon, 23 Jun 2025 08:51:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750668621; cv=none; b=amI2hz5h2qepeMYxYIHm8g5Gwj5Y5p7oo7ouurBNGJMj4fIwDEsiyiC9FB5A3cTT3QaZKdaN/xU3n8Mh19qZaE2fQS1CTg28AsdngjRFvnMEzar3iQA1CqFFFYxxPz2uVKwBiZnd/EWQybo7eyMIJVxOmM/3uIqL7ueXo+XEu00=
+	t=1750668671; cv=none; b=I8OocmNg801cRqt4Zc0I1CJGHhgxKGd+e3IsdZ6ARqbWiKPR1eSpmGBMSb/ee8tgaf9G/WbXniP7z+ZX1oksaZCcZICforntwqsUkVIbEL7gPtx1QsCSjXrGi7DOkfO+ufCs0DmSHHANn8LJn8w5jCkVK5StGEPpz3+xGxeb7jA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750668621; c=relaxed/simple;
-	bh=jrawT35wmhyz3NLgVIcmL35vMqmLA5Yl2YnxxrpMy/I=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=brafasYk21KPvc+Bl2zyZInPjgGuKZAvGnGBbYE8xnCuPPDK+LHXBZ8suwqfENpIL3LcgJL/fG58cxe7P7YnSggoUE0BLRQY9L+dMhDO7zr9Wb9gMMSx8D7dmpIaYxcVMrGhrSan/Ow2t/oILLXOVg6a+FP0GEmIgOkGpnq0txE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=iPA/bL2e; arc=none smtp.client-ip=198.175.65.9
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1750668621; x=1782204621;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=jrawT35wmhyz3NLgVIcmL35vMqmLA5Yl2YnxxrpMy/I=;
-  b=iPA/bL2eeVYKrTeegYxom4paT2gkbmXLnMwDsr1DviFCTZSwmYTTzkDV
-   uBxu2uhHZGx/9LO0ZwysxU6+01l2uEj7zFpdVNmoXj3hOGZiqZ6/iBEWn
-   qsn2HEaxvBg8wNm2z6+Ok7/M+Ci7g2Cr3HZcxlNicNivTw+lLmED74wG8
-   49rVp8T/KnmX9H2Wp12+dN7Iy73FhY4ScFcxdZ+gR5tO8NfBsXtbmc8dC
-   U8Tqud1VZOjNYeDebPjWu9RBrPu22cPOb0ovUsqLpj+TlTnw6gA1sBvT7
-   EiPAuzcADaVyzniuKjnogWf2Zuu8D1ldWhkIfBOHyoPo2NtUwUKTdNfKF
-   w==;
-X-CSE-ConnectionGUID: AkJlYKrpTaqygxNliF5Hbg==
-X-CSE-MsgGUID: s/uVrWQjS0GndbglYhm9lA==
-X-IronPort-AV: E=McAfee;i="6800,10657,11472"; a="75398344"
-X-IronPort-AV: E=Sophos;i="6.16,258,1744095600"; 
-   d="scan'208";a="75398344"
-Received: from fmviesa010.fm.intel.com ([10.60.135.150])
-  by orvoesa101.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 23 Jun 2025 01:50:20 -0700
-X-CSE-ConnectionGUID: +8bXJz6LSx2prqvi2Q9vlA==
-X-CSE-MsgGUID: fQBw2f/FTBCnoy7g9ZEzxQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.16,258,1744095600"; 
-   d="scan'208";a="152213190"
-Received: from smile.fi.intel.com ([10.237.72.52])
-  by fmviesa010.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 23 Jun 2025 01:50:14 -0700
-Received: from andy by smile.fi.intel.com with local (Exim 4.98.2)
-	(envelope-from <andriy.shevchenko@linux.intel.com>)
-	id 1uTcsT-0000000977T-3KBo;
-	Mon, 23 Jun 2025 11:50:09 +0300
-Date: Mon, 23 Jun 2025 11:50:09 +0300
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To: Anup Patel <apatel@ventanamicro.com>
-Cc: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Jassi Brar <jassisinghbrar@gmail.com>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	"Rafael J . Wysocki" <rafael@kernel.org>,
-	Mika Westerberg <mika.westerberg@linux.intel.com>,
-	Linus Walleij <linus.walleij@linaro.org>,
-	Bartosz Golaszewski <brgl@bgdev.pl>,
-	Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= <ukleinek@kernel.org>,
-	Palmer Dabbelt <palmer@dabbelt.com>,
-	Paul Walmsley <paul.walmsley@sifive.com>,
-	Len Brown <lenb@kernel.org>, Sunil V L <sunilvl@ventanamicro.com>,
-	Rahul Pathak <rpathak@ventanamicro.com>,
-	Leyfoon Tan <leyfoon.tan@starfivetech.com>,
-	Atish Patra <atish.patra@linux.dev>,
-	Andrew Jones <ajones@ventanamicro.com>,
-	Samuel Holland <samuel.holland@sifive.com>,
-	Anup Patel <anup@brainfault.org>, linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-riscv@lists.infradead.org,
+	s=arc-20240116; t=1750668671; c=relaxed/simple;
+	bh=+dyykSKpkvAg1cHrSs79NNyyF4y8YNApu5EJxpATbO4=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=u5HazpBacIQ1FQJJci1g22Lndi7Cn0EiOWFAniWz7Btf+Laf7ddvZpX50iQom2DY0k9acMEL1s00mDl9biBmDfzA2w1nnUqCkUzlP656mq3dwRKQSa+imbxPfXeit9057G64y43oYiQLn0xkIIsgkj9HbskotiRRu2VQEBRUshA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=Nw4EAU7C; arc=none smtp.client-ip=148.251.105.195
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+	s=mail; t=1750668667;
+	bh=+dyykSKpkvAg1cHrSs79NNyyF4y8YNApu5EJxpATbO4=;
+	h=From:To:Cc:Subject:Date:From;
+	b=Nw4EAU7CFQonoVgTc0cjbGdIeOE5CEJA0kHu40whVXl4H9hnPxs9xjLT5GzltAZ8Z
+	 MwYLkul8+HL6oJkRlrcphhDVQyA0NIdl4kZi+9x0LNVdIHCTttG6MznvsC7kZHqNk2
+	 6809ieKwKVP03rPQcgog2ERXPyUzDTjY3429AgMW2e1+2IF+Lqo0x6Jr35R4E4LMst
+	 Ma6fagq1XfoG40RJDNh+ZbHmeTiNPcz3IHjst5zbnapg5jeGzH8zhV2N30lb3GpIKP
+	 6Saj8VMJEAATaQ07RgJa3MCNf7wFlw1HK1Iio8ylYesHaEAYQfm2bRtS4jV+uqOmNp
+	 cjkR4pBlHETJA==
+Received: from debian.. (unknown [171.76.82.69])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: vignesh)
+	by bali.collaboradmins.com (Postfix) with ESMTPSA id 52F9D17E0CE6;
+	Mon, 23 Jun 2025 10:51:04 +0200 (CEST)
+From: Vignesh Raman <vignesh.raman@collabora.com>
+To: dri-devel@lists.freedesktop.org
+Cc: daniels@collabora.com,
+	daniel@fooishbar.org,
+	helen.fornazier@gmail.com,
+	airlied@gmail.com,
+	simona.vetter@ffwll.ch,
+	robdclark@gmail.com,
+	robin.clark@oss.qualcomm.com,
+	guilherme.gallo@collabora.com,
+	sergi.blanch.torne@collabora.com,
+	valentine.burley@collabora.com,
+	lumag@kernel.org,
+	dmitry.baryshkov@oss.qualcomm.com,
+	quic_abhinavk@quicinc.com,
+	mripard@kernel.org,
+	maarten.lankhorst@linux.intel.com,
+	tzimmermann@suse.de,
 	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v6 06/23] mailbox: Add RISC-V SBI message proxy (MPXY)
- based mailbox driver
-Message-ID: <aFkVQTSCSkvBhzgC@smile.fi.intel.com>
-References: <20250618121358.503781-1-apatel@ventanamicro.com>
- <20250618121358.503781-7-apatel@ventanamicro.com>
+Subject: [PATCH v4 0/2] drm/ci: Add devicetree validation and KUnit tests
+Date: Mon, 23 Jun 2025 14:20:26 +0530
+Message-ID: <20250623085033.39680-1-vignesh.raman@collabora.com>
+X-Mailer: git-send-email 2.47.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250618121358.503781-7-apatel@ventanamicro.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - c/o Alberga Business Park, 6
- krs, Bertel Jungin Aukio 5, 02600 Espoo
+Content-Transfer-Encoding: 8bit
 
-On Wed, Jun 18, 2025 at 05:43:41PM +0530, Anup Patel wrote:
-> Add a mailbox controller driver for the new SBI message proxy extension
-> which is part of the SBI v3.0 specification.
+Add jobs to validate devicetrees and run KUnit tests.
 
-...
+Pipeline link,
+https://gitlab.freedesktop.org/vigneshraman/msm/-/pipelines/1455734
 
-> +static void mpxy_mbox_remove(struct platform_device *pdev)
-> +{
-> +	struct mpxy_mbox *mbox = platform_get_drvdata(pdev);
+Link to v1,
+https://lore.kernel.org/all/20250327160117.945165-1-vignesh.raman@collabora.com/
 
-> +	if (mbox->msi_count)
+Link to v2,
+https://lore.kernel.org/all/20250409061543.311184-1-vignesh.raman@collabora.com/
 
-I'm still not convinced we need this check _here_.
-Can it be rather a separate patch to add it inside
-the below call?
+Link to v3,
+https://lore.kernel.org/r/20250417030439.737924-1-vignesh.raman@collabora.com
 
-> +		platform_device_msi_free_irqs_all(mbox->dev);
-> +}
+MR,
+https://gitlab.freedesktop.org/drm/msm/-/merge_requests/173
 
-...
+This series depends on,
+https://lore.kernel.org/all/20250514050340.1418448-1-vignesh.raman@collabora.com/
+https://gitlab.freedesktop.org/drm/msm/-/merge_requests/169
 
-> +static const struct of_device_id mpxy_mbox_of_match[] = {
-> +	{.compatible = "riscv,sbi-mpxy-mbox", },
+Vignesh Raman (2):
+  drm/ci: Add jobs to validate devicetrees
+  drm/ci: Add jobs to run KUnit tests
 
-Missing space and unneeded inner comma.
-
-> +	{}
-> +};
-
-...
-
-> --- a/include/linux/byteorder/generic.h
-> +++ b/include/linux/byteorder/generic.h
-
-This is good change, but deserves to be in a separate patch.
-I will Ack/Review it as soon as it appears to be so.
+ drivers/gpu/drm/ci/check-devicetrees.yml | 50 ++++++++++++++++++++++++
+ drivers/gpu/drm/ci/dt-binding-check.sh   | 19 +++++++++
+ drivers/gpu/drm/ci/dtbs-check.sh         | 22 +++++++++++
+ drivers/gpu/drm/ci/gitlab-ci.yml         |  4 ++
+ drivers/gpu/drm/ci/kunit.sh              | 16 ++++++++
+ drivers/gpu/drm/ci/kunit.yml             | 37 ++++++++++++++++++
+ drivers/gpu/drm/ci/setup-llvm-links.sh   | 13 ++++++
+ 7 files changed, 161 insertions(+)
+ create mode 100644 drivers/gpu/drm/ci/check-devicetrees.yml
+ create mode 100755 drivers/gpu/drm/ci/dt-binding-check.sh
+ create mode 100755 drivers/gpu/drm/ci/dtbs-check.sh
+ create mode 100755 drivers/gpu/drm/ci/kunit.sh
+ create mode 100644 drivers/gpu/drm/ci/kunit.yml
+ create mode 100755 drivers/gpu/drm/ci/setup-llvm-links.sh
 
 -- 
-With Best Regards,
-Andy Shevchenko
-
+2.47.2
 
 
