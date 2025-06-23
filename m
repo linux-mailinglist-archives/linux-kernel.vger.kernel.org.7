@@ -1,141 +1,116 @@
-Return-Path: <linux-kernel+bounces-699157-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-699160-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 664D8AE4F39
-	for <lists+linux-kernel@lfdr.de>; Mon, 23 Jun 2025 23:13:33 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B6E98AE4F81
+	for <lists+linux-kernel@lfdr.de>; Mon, 23 Jun 2025 23:16:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 135911B6095C
-	for <lists+linux-kernel@lfdr.de>; Mon, 23 Jun 2025 21:13:49 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8E66D3A4B7D
+	for <lists+linux-kernel@lfdr.de>; Mon, 23 Jun 2025 21:16:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AA70821FF50;
-	Mon, 23 Jun 2025 21:13:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A33BC22333B;
+	Mon, 23 Jun 2025 21:16:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="O3MVLPR6"
-Received: from mail-pl1-f176.google.com (mail-pl1-f176.google.com [209.85.214.176])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=weissschuh.net header.i=@weissschuh.net header.b="jX3d7/df"
+Received: from todd.t-8ch.de (todd.t-8ch.de [159.69.126.157])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AD5451F582A
-	for <linux-kernel@vger.kernel.org>; Mon, 23 Jun 2025 21:13:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 74DFD7482;
+	Mon, 23 Jun 2025 21:16:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.69.126.157
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750713208; cv=none; b=o5b9pViOf+xuwsIDjjaxAGJmri/l614Os1aXYL1gyZ3dX+GGErMVIQJutZSMmGu1L2r/N9A7KNYXkevOSwD5f3JSlnGI14lzjIvMn5LPpOYerrv3i564szrvNYH38yatlFXQami23vhhZs0u8hcqMTsnzKcX/gMuh7xGGYJ3LAg=
+	t=1750713373; cv=none; b=FDzt0rkeVAByOotls3nXRe3V4rQrzw+MuEJjb+a8X+4MO5bpFCVHhpOqzG4P2yjniu6GkytR/y83fF4vCzRspPMB3ecEc0G1tFNvY6mxDexgnlwysnHGZYqV8HZM2sGsaElqw9CEU0kbRxeMiBRkKwWj3FyVs1953Rc9IxA1X0k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750713208; c=relaxed/simple;
-	bh=VWVsRSpyp9om8/0KWgL7tdZWKKjdTWeTGhICGGbTzpE=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=COYsElXniVfk36UtkYg1vJn/OQ2fMn0xzBGQpp+Rt6XQCMrj9s2lESkkPawDZUzL9I27fKI3aXNyZgNuM8gG3IQPpI7b76q6EALoQfZ25pOZljJgiThQQ7L93YyvP05DEmB1kir0d/TpLRi+8sAEns9XB5xh1w3WbOsHugLe+h4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=O3MVLPR6; arc=none smtp.client-ip=209.85.214.176
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f176.google.com with SMTP id d9443c01a7336-235ef29524fso9506895ad.1
-        for <linux-kernel@vger.kernel.org>; Mon, 23 Jun 2025 14:13:26 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1750713206; x=1751318006; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=3qSuUz61O9R9DWRc6hYpmGsRWTEUvwzmHUEHSLXNcDM=;
-        b=O3MVLPR670k+1He66AaFNXCYA36ywtvi8l3DF4vkIzuQx8oKRVqoq2ryuPii8AcTCv
-         T94cZ4JO+//W4cMjY50l+/FQczCCmGNGndqV5M0RRzXkBcNAubU9hHPsLAt3ZwbwDdLp
-         Q0GhlZVaD2WqGUa3UCYPsPwrbOXng0kZO+oLWNY1iOft469101m4wYiBaFCx7DBkslL4
-         5vo7y4dtyllsJhp0fJ+464pa4drL9FFXIKTYAlkYH7GnU5sdyceTj7PLdL2jB6ZkzJZU
-         Tvc9m4uy4gepOp1kEkYQcVRpUWAk+Iri66D+izK22bMkFc+aDZRQSFZVQGLyWcg+bVQy
-         kTow==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1750713206; x=1751318006;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=3qSuUz61O9R9DWRc6hYpmGsRWTEUvwzmHUEHSLXNcDM=;
-        b=SMnmeCV9MD4Cp29Q8SgPlczfE6dlj4Xd7T8ZMkkCZ7WZgE8x51FVaEG0NJiwdHbwGP
-         rMYF23JBACrGBtGW9URHrYbUKhFrdgtbdRAEQ346JZmKhyHIfzC99QM+G0BQp/WJAgd0
-         6iSRMODibvRpuC2x8nGzgy5ERmNmARedA3iaJDyOYiEeSW9KHE/I3H8OEcloUM8rwTfD
-         CGMCn5VWdHzarDcz9Ebbu5GpShDU70GiNTJ0yJaarj8h0GaK86eO8yJR9seRF0EQoqme
-         itt9lvW1R+s2vAa/GIOP/N81xAtL8cXro+vpw/5kAh9mo5zm27RZOGrqvaI4Czj0hJbG
-         g1lQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUVwS7qNInxk02NKVHyqE4nvOt0GlIi7Refgsg8auQ0W/di1+AIe3HKGLkrAC1aDRzB7yNManE5EXrEy0Q=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx++gfArkH9Mj/Q2Q55IgoWTkQArHsNMkFE5sd/4xqBcHsmtbUJ
-	ekRQhbqwpItV7Wbt8YeTQY5uT9Ljis4xrEj/phf7huXhbTJieNI1wsBzAEPmaIp8AbdWrcI2JCM
-	F8LZPK/XHRDRgKtjRCDmWySITubj7MwI=
-X-Gm-Gg: ASbGncsRPUg0jF7dN55GvT873S3+JFwdBwcpsy+13qDN4x7nXEwENULfQmV27RolsG2
-	Epyq/3IP4dsOI2cZEahIchitOYh4vcbKBmFqtJmXV3iLOWzciq5nNt8E+72gYsISvGYg65FfT13
-	3ev6BRlnzA11SeuARaB9JZl80937RdPG9T2erp5P9dDor6
-X-Google-Smtp-Source: AGHT+IE4UEnMX4SHARtfc4Pz4EoCInMw0dZNhxIqb0vDlTIdHbQL8/0EkXkglubtJGt+k6Z/YskFdgQuNYDNBIIoMDU=
-X-Received: by 2002:a17:90b:1cc3:b0:312:25dd:1c8a with SMTP id
- 98e67ed59e1d1-3159d62a650mr8145127a91.2.1750713205892; Mon, 23 Jun 2025
- 14:13:25 -0700 (PDT)
+	s=arc-20240116; t=1750713373; c=relaxed/simple;
+	bh=mReunKrDQiUV3XucmZjbudcrS3Iw4bTLeGQ493YHQFM=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=YGwLqwObACFKJWwufAFDmR3Zm4C2KCb/tv5knGmbd+9oGd4CdV1CxaGvudTm2M/ga7+uE9FixOtX2HGBm70f5cOU3hRRBJX9jHWVZqvhC/JyfM5VPypd2q4Sj4TdzFYYXXRsCKbeRjnvPIirBHHrRn7jIcFrH8Hh1YiTsn5oQWw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=weissschuh.net; spf=pass smtp.mailfrom=weissschuh.net; dkim=pass (1024-bit key) header.d=weissschuh.net header.i=@weissschuh.net header.b=jX3d7/df; arc=none smtp.client-ip=159.69.126.157
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=weissschuh.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=weissschuh.net
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=weissschuh.net;
+	s=mail; t=1750713368;
+	bh=mReunKrDQiUV3XucmZjbudcrS3Iw4bTLeGQ493YHQFM=;
+	h=From:Subject:Date:To:Cc:From;
+	b=jX3d7/df8FemTAtygubH6RArueyel+Q7287+MgF+jUcmAQbQH9xUumJ1YE7gY+v4y
+	 oGMTlCF2Dcwejz9Ie1CkbK5NZ7m0fvCTNGavV8kS85i1QIcGeAPKyD9InXjs2w2qfn
+	 zcwIMo1lIxAegE1IkEsPGAb1uPBJkZb7w/muLOrU=
+From: =?utf-8?q?Thomas_Wei=C3=9Fschuh?= <linux@weissschuh.net>
+Subject: [PATCH v2 0/3] tools/nolibc: add support for SuperH
+Date: Mon, 23 Jun 2025 23:15:51 +0200
+Message-Id: <20250623-nolibc-sh-v2-0-0f5b4b303025@weissschuh.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250616160908.26333-1-tiwai@suse.de>
-In-Reply-To: <20250616160908.26333-1-tiwai@suse.de>
-From: Alex Deucher <alexdeucher@gmail.com>
-Date: Mon, 23 Jun 2025 17:13:14 -0400
-X-Gm-Features: AX0GCFsFFe-2LvssttCw1mdTW5tv9Wrcql7NeIfnrDmK15SQFUge-Z5vCU9SLEE
-Message-ID: <CADnq5_MWVPJ5XXS_78Kv5ZRPUZe7vFtMYomcun5mKePBhMX2UA@mail.gmail.com>
-Subject: Re: [PATCH RESEND] drm/amd/display: Add sanity checks for drm_edid_raw()
-To: Takashi Iwai <tiwai@suse.de>
-Cc: amd-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org, 
-	linux-kernel@vger.kernel.org, Harry Wentland <harry.wentland@amd.com>, 
-	Leo Li <sunpeng.li@amd.com>, Alex Deucher <alexander.deucher@amd.com>, 
-	=?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+X-B4-Tracking: v=1; b=H4sIAAfEWWgC/03MQQ6CMBCF4auQWVvTViHginsYFk472ElMazqIG
+ sLdrbhx+b+8fAsIZSaBU7VAppmFUyxhdxW4cIlXUuxLg9W21rVtVUw3RqckqBaPdEBsaXQI5X/
+ PNPJrs85D6cAypfze6Nl815/S6O5PmY3SqvPOo8GmQaz7J7GIuPAI+0gTDOu6fgBYPH0UpwAAA
+ A==
+X-Change-ID: 20250528-nolibc-sh-8b4e3bb8efcb
+To: Yoshinori Sato <ysato@users.sourceforge.jp>, 
+ Rich Felker <dalias@libc.org>, 
+ John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>, 
+ Willy Tarreau <w@1wt.eu>, Shuah Khan <shuah@kernel.org>
+Cc: linux-sh@vger.kernel.org, linux-kselftest@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, 
+ =?utf-8?q?Thomas_Wei=C3=9Fschuh?= <linux@weissschuh.net>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1750713367; l=1510;
+ i=linux@weissschuh.net; s=20221212; h=from:subject:message-id;
+ bh=mReunKrDQiUV3XucmZjbudcrS3Iw4bTLeGQ493YHQFM=;
+ b=sF7fULqfhzxtVrensZNZAGrvYD1xeyEhBy6vlt0lzWqZMq+u7ZSwXnhvuKZiqHIECux9QqKsQ
+ rg47X/XNYx9C/yT4LH/N7WpsAVMH5sqFK583WXH8HOGfXUf/EG0djCh
+X-Developer-Key: i=linux@weissschuh.net; a=ed25519;
+ pk=KcycQgFPX2wGR5azS7RhpBqedglOZVgRPfdFSPB1LNw=
 
-Applied.  Thanks!
+Add support for SuperH/"sh" to nolibc.
+Only sh4 is tested for now.
 
-Alex
+This is only tested on QEMU so far.
+Additional testing would be very welcome.
+Test instructions:
+$ cd tools/testings/selftests/nolibc/
+$ make -f Makefile.nolibc ARCH=sh CROSS_COMPILE=sh4-linux- nolibc-test
+$ file nolibc-test
+nolibc-test: ELF 32-bit LSB executable, Renesas SH, version 1 (SYSV), statically linked, not stripped
+$ ./nolibc-test
+Running test 'startup'
+0 argc = 1                                                        [OK]
+...
+Total number of errors: 0
+Exiting with status 0
 
-On Mon, Jun 16, 2025 at 12:09=E2=80=AFPM Takashi Iwai <tiwai@suse.de> wrote=
-:
->
-> When EDID is retrieved via drm_edid_raw(), it doesn't guarantee to
-> return proper EDID bytes the caller wants: it may be either NULL (that
-> leads to an Oops) or with too long bytes over the fixed size raw_edid
-> array (that may lead to memory corruption).  The latter was reported
-> actually when connected with a bad adapter.
->
-> Add sanity checks for drm_edid_raw() to address the above corner
-> cases, and return EDID_BAD_INPUT accordingly.
->
-> Fixes: 48edb2a4256e ("drm/amd/display: switch amdgpu_dm_connector to use =
-struct drm_edid")
-> Link: https://bugzilla.suse.com/show_bug.cgi?id=3D1236415
-> Signed-off-by: Takashi Iwai <tiwai@suse.de>
-> ---
->
-> Just resent, as the previous submission seems overlooked
->
->  drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm_helpers.c | 4 ++++
->  1 file changed, 4 insertions(+)
->
-> diff --git a/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm_helpers.c b/=
-drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm_helpers.c
-> index d4395b92fb85..9e3e51a2dc49 100644
-> --- a/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm_helpers.c
-> +++ b/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm_helpers.c
-> @@ -1029,6 +1029,10 @@ enum dc_edid_status dm_helpers_read_local_edid(
->                         return EDID_NO_RESPONSE;
->
->                 edid =3D drm_edid_raw(drm_edid); // FIXME: Get rid of drm=
-_edid_raw()
-> +               if (!edid ||
-> +                   edid->extensions >=3D sizeof(sink->dc_edid.raw_edid) =
-/ EDID_LENGTH)
-> +                       return EDID_BAD_INPUT;
-> +
->                 sink->dc_edid.length =3D EDID_LENGTH * (edid->extensions =
-+ 1);
->                 memmove(sink->dc_edid.raw_edid, (uint8_t *)edid, sink->dc=
-_edid.length);
->
-> --
-> 2.49.0
->
+Signed-off-by: Thomas Weißschuh <linux@weissschuh.net>
+---
+Changes in v2:
+- Rebase onto latest nolibc-next
+- Pick up Ack from Willy
+- Provide some test instructions
+- Link to v1: https://lore.kernel.org/r/20250609-nolibc-sh-v1-0-9dcdb1b66bb5@weissschuh.net
+
+---
+Thomas Weißschuh (3):
+      selftests/nolibc: fix EXTRACONFIG variables ordering
+      selftests/nolibc: use file driver for QEMU serial
+      tools/nolibc: add support for SuperH
+
+ tools/include/nolibc/arch-sh.h                 | 162 +++++++++++++++++++++++++
+ tools/include/nolibc/arch.h                    |   2 +
+ tools/testing/selftests/nolibc/Makefile.nolibc |  15 ++-
+ tools/testing/selftests/nolibc/run-tests.sh    |   3 +-
+ 4 files changed, 177 insertions(+), 5 deletions(-)
+---
+base-commit: eb135311083100b6590a7545618cd9760d896a86
+change-id: 20250528-nolibc-sh-8b4e3bb8efcb
+
+Best regards,
+-- 
+Thomas Weißschuh <linux@weissschuh.net>
+
 
