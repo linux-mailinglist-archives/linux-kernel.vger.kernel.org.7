@@ -1,95 +1,132 @@
-Return-Path: <linux-kernel+bounces-697552-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-697554-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id DC6DEAE35B1
-	for <lists+linux-kernel@lfdr.de>; Mon, 23 Jun 2025 08:28:23 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 72EADAE35B3
+	for <lists+linux-kernel@lfdr.de>; Mon, 23 Jun 2025 08:28:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A40011891ECB
-	for <lists+linux-kernel@lfdr.de>; Mon, 23 Jun 2025 06:28:39 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3EE2D170060
+	for <lists+linux-kernel@lfdr.de>; Mon, 23 Jun 2025 06:28:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 19D701DF98B;
-	Mon, 23 Jun 2025 06:28:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 054391E130F;
+	Mon, 23 Jun 2025 06:28:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="oRnFs++g"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="PTvIPolL"
+Received: from mail-pf1-f182.google.com (mail-pf1-f182.google.com [209.85.210.182])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 65A861A072C;
-	Mon, 23 Jun 2025 06:28:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F242C1A072C
+	for <linux-kernel@vger.kernel.org>; Mon, 23 Jun 2025 06:28:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750660096; cv=none; b=T9t+9RburUzqmfyZ1AYyoVNIT60YulFiLyp78ecc7LeQYQ7wK0VUYYi6j8MVbAbQaIvjCHW7p6zNiacbjTXvMM1s39Dv/fyC2xurVaMYVj9bb9WAmmiiaTKLhIbeFMdlwcAvqOjF+8DvTDCxlJHJZTZCSkeUFSw09QL2iWbIgOQ=
+	t=1750660116; cv=none; b=QBQHNjrw7wmU6y7IG7HUWYPFewugUMLoU5TpfJzj0qU+RYQiMQqvh0Yn2VKGq/awYwSlFHTnHHlpTXb57xrkuYBe4iz7k2+4EavfPWG1F4/i1relansqfK5jeaYM7/ETjRRvKkYhzMtNcGSODjygOGeLKZSH10+efSlKn2iSyg8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750660096; c=relaxed/simple;
-	bh=HagfiHIsWhwV2eaS8RFEYMwbq2J6hxG1xCpPj6Ss2ew=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=hTRI5ls0RzVrEIDZHcOqevy6QYk458zRLo1LbP+3blb//qOAVaKJxnwClJQJaahwemJTCyTqXwf5PWS5dGUnGEkLiU6n9zr3dnCzBBhrT8t1l0i9tmWsMOrVBxal6s4YGvX9gDAOlS2csPe41WIgIkennHnNIosdQxS0MC+698U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=oRnFs++g; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 90DECC4CEED;
-	Mon, 23 Jun 2025 06:28:14 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1750660094;
-	bh=HagfiHIsWhwV2eaS8RFEYMwbq2J6hxG1xCpPj6Ss2ew=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=oRnFs++gnVEAvl7o7Ruxy8QBPqaKMkhUB7gQkDl+ezSTSZ+zUvWqDcRY0prZIy4sC
-	 8Mc3a0ffakJzlX376fFqrGTmzQ2vT2UXdvDLoaK5BXFqo7EOhOFAxwZC8M3HnAZL0X
-	 j56JDN34QgevP+OcQPRvKX8eNK9RtBv6xZXjlit8=
-Date: Mon, 23 Jun 2025 08:28:12 +0200
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To: Huacai Chen <chenhuacai@kernel.org>
-Cc: Huacai Chen <chenhuacai@loongson.cn>, Sasha Levin <sashal@kernel.org>,
-	Xuerui Wang <kernel@xen0n.name>, stable@vger.kernel.org,
-	ziyao@disroot.org, linux-kernel@vger.kernel.org,
-	loongarch@lists.linux.dev
-Subject: Re: [PATCH for 6.1/6.6] platform/loongarch: laptop: Fix build error
- due to backport
-Message-ID: <2025062349-proximity-trapeze-24c6@gregkh>
-References: <20250622110148.3108758-1-chenhuacai@loongson.cn>
- <2025062206-roundish-thumb-a20e@gregkh>
- <CAAhV-H4S=z5O0+pq-x9X4-VjYsJQVxib+V-35g50WeaivryHLA@mail.gmail.com>
+	s=arc-20240116; t=1750660116; c=relaxed/simple;
+	bh=X4WbRbv6V8tJvEZsdEmMNwzMuyBL5gd4aHLej9qzEkQ=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=LpMKOejop+3e+iip0mPCTH4qytzvF524j2ICU2EXcUTuCuLhn+4dqigAtPlYQxsgeeyo+zjsqLkPL1Bq+rxjkA3A/8Q3gJ4DBEkG6Yb/FA07CC9w/XaIMN3eX/DpfuYvlnwiRq1GSq0XbhKhqz5u9NrmLDptV+0w+d3iUTFRWd4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=PTvIPolL; arc=none smtp.client-ip=209.85.210.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
+Received: by mail-pf1-f182.google.com with SMTP id d2e1a72fcca58-7425bd5a83aso3164256b3a.0
+        for <linux-kernel@vger.kernel.org>; Sun, 22 Jun 2025 23:28:34 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google; t=1750660114; x=1751264914; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=ef8y9arEtvADIssXnSG8QzYyNlDrX8DLCib5+r60jY8=;
+        b=PTvIPolLcrUWSW1TJ47Ipfa3Tu2DZ0yYiCaqtJKjCurfss8sbs3WsX/GFAUtgdLxeA
+         6ux3AZyuO3WyVm8hFlZdPhnIO/X5/+l5NlJncMo3fvSjwr+JLB/2UeYU5jDmJgJnxW61
+         beIwfiQVM0rMnq0PG4of2/JmNnoob0wLOnWeY=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1750660114; x=1751264914;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=ef8y9arEtvADIssXnSG8QzYyNlDrX8DLCib5+r60jY8=;
+        b=IyPxgx/n/iAU5KEbRd7h4HGh0Aq+9ouo1PzmZpZZGqqIAB/4BgSZcqsNRYjXvWVRKA
+         W0TYN2rN2d3twoMn0YcZ+JXT2LZeugM/9pW9IYWvpMlPlqegwnfqJJx6pLhNk7HuCyi/
+         pZ6N/EXsF9W915+AgK7QWS0ytoAfZTB16v/VFWiH0Jp9fMGo6l4UuVjbwdoymdYu7m/K
+         NxdwPE8TdpJY11+fpzprNYTe2YyRxLIaa6ooWXMCSvUvGw1mG3S5dCMsvub52Mu6bCgf
+         zRd8CmPwFjowsp9rvGqi0Mk0ouAtmARMN90AzBsSwOKYRMTX4S7KoAk8911tsXsNVmAa
+         QLnw==
+X-Forwarded-Encrypted: i=1; AJvYcCXF1qhfcPs3968dnHX8JDEs18A/ZP3JLndbl16POOF9LrT8almW22EJabgc2E+fDV2/T1CqCNOYA4QaJ5E=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwF9/zUWBFYeTNh07Om/g+WXxcN11xrdl0KEGxr+r1bGc3R/daP
+	bK6gbcxFQ3cV0690NUG15aYvTi/Ec3QTWIav8fvt+CfurVGayRoAePcgOuvOy/qtgQ==
+X-Gm-Gg: ASbGncttyLDWD1bohchG3t0yEajB9HnZPaqEA2D86cqYAWeHQtZ4O1HCWNj4YC4siRw
+	O9wTCf0ynqjPKfxSmDYCdqm+EDhbJ2o8i+FwkpLDhRiI8gKiHizWDni+rDDG/omXPVUg4/ON+8Y
+	KagsDHtXIlvzggRI2ajCEE+VrEihQ6IxigEwt73FkJd9WpN3aITQ+iy6kDXSxFW3AyKWHeQ93er
+	GxZLtrrsaG5tuQTq5TxB8yX5X/jTjMJzHyOddYXGOtQonxahJM+Onuaf3+cJZN1zSIfwZNZYsIa
+	ERhoPYFwJcBgb2M0yR9KLWfbhH374OvLuyqoG66eo5Urds5WFMLGGIEGg4Q/AzswnJQHdm/lW6U
+	KPEqzR2kXN0r9Fm8H9rk=
+X-Google-Smtp-Source: AGHT+IEAVhYgLoxjThogzhEx3EDspeWzMpdRDrKx/Ae1I3gcYnaBxInqM8htlNBllHYNChl04jM4Vg==
+X-Received: by 2002:a05:6a00:2d06:b0:748:68dd:eb8c with SMTP id d2e1a72fcca58-7490d7a9aa3mr16464197b3a.23.1750660114254;
+        Sun, 22 Jun 2025 23:28:34 -0700 (PDT)
+Received: from naoyatezuka1.tok.corp.google.com ([2401:fa00:8f:203:6507:6b94:dd66:3c4a])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7490a6d1eccsm7315291b3a.180.2025.06.22.23.28.32
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 22 Jun 2025 23:28:33 -0700 (PDT)
+From: Naoya Tezuka <naoyatezuka@chromium.org>
+To: Kees Cook <kees@kernel.org>,
+	Tony Luck <tony.luck@intel.com>,
+	"Guilherme G . Piccoli" <gpiccoli@igalia.com>
+Cc: Tzung-Bi Shih <tzungbi@kernel.org>,
+	linux-hardening@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Naoya Tezuka <naoyatezuka@chromium.org>
+Subject: [PATCH v2] pstore/ram: Validate ECC parameters against Reed-Solomon constraint
+Date: Mon, 23 Jun 2025 15:28:27 +0900
+Message-ID: <20250623062827.133373-1-naoyatezuka@chromium.org>
+X-Mailer: git-send-email 2.50.0.rc2.701.gf1e915cc24-goog
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAAhV-H4S=z5O0+pq-x9X4-VjYsJQVxib+V-35g50WeaivryHLA@mail.gmail.com>
 
-On Sun, Jun 22, 2025 at 09:11:44PM +0800, Huacai Chen wrote:
-> On Sun, Jun 22, 2025 at 9:10 PM Greg Kroah-Hartman
-> <gregkh@linuxfoundation.org> wrote:
-> >
-> > On Sun, Jun 22, 2025 at 07:01:48PM +0800, Huacai Chen wrote:
-> > > In 6.1/6.6 there is no BACKLIGHT_POWER_ON definition so a build error
-> > > occurs due to recently backport:
-> > >
-> > >   CC      drivers/platform/loongarch/loongson-laptop.o
-> > > drivers/platform/loongarch/loongson-laptop.c: In function 'laptop_backlight_register':
-> > > drivers/platform/loongarch/loongson-laptop.c:428:23: error: 'BACKLIGHT_POWER_ON' undeclared (first use in this function)
-> > >   428 |         props.power = BACKLIGHT_POWER_ON;
-> > >       |                       ^~~~~~~~~~~~~~~~~~
-> > >
-> > > Use FB_BLANK_UNBLANK instead which has the same meaning.
-> > >
-> > > Signed-off-by: Huacai Chen <chenhuacai@loongson.cn>
-> > > ---
-> > >  drivers/platform/loongarch/loongson-laptop.c | 2 +-
-> > >  1 file changed, 1 insertion(+), 1 deletion(-)
-> >
-> > What commit id is this fixing?
-> 
-> commit 53c762b47f726e4079a1f06f684bce2fc0d56fba upstream.
+The Reed-Solomon library enforces the constraint `n <= 2^m - 1` via a
+BUG_ON() [1], where `n` is `block_size + ecc_size` and `m` is `symsize`
+for the pstore RAM backend. A driver providing invalid parameters can
+trigger this, leading to a kernel panic. For more details on the theory
+behind, see [2].
 
-Great, can you resend this with a proper Fixes: tag so I don't have to
-manually add it myself?
+This issue was discovered during developing chromeos_pstore driver.
+Link: https://lore.kernel.org/lkml/20250610050458.4014083-1-naoyatezuka@chromium.org/
 
-thanks,
+Add a check to validate this constraint before initializing Reed-Solomon
+codec. On failure, return -EINVAL to prevent the panic.
 
-greg k-h
+[1] https://elixir.bootlin.com/linux/v6.15/source/lib/reed_solomon/decode_rs.c#L43
+[2] https://www.cs.cmu.edu/~guyb/realworld/reedsolomon/reed_solomon_codes.html
+
+Signed-off-by: Naoya Tezuka <naoyatezuka@chromium.org>
+---
+ fs/pstore/ram_core.c | 8 ++++++++
+ 1 file changed, 8 insertions(+)
+
+diff --git a/fs/pstore/ram_core.c b/fs/pstore/ram_core.c
+index f1848cdd6d34..c7a2ff9c5a6c 100644
+--- a/fs/pstore/ram_core.c
++++ b/fs/pstore/ram_core.c
+@@ -212,6 +212,14 @@ static int persistent_ram_init_ecc(struct persistent_ram_zone *prz,
+ 		return -EINVAL;
+ 	}
+ 
++	if (prz->ecc_info.block_size + prz->ecc_info.ecc_size >
++	    (1 << prz->ecc_info.symsize) - 1) {
++		pr_err("%s: invalid ecc parameters (block_size = %d, ecc_size = %d, symsize = %d\n",
++		       __func__, prz->ecc_info.block_size,
++		       prz->ecc_info.ecc_size, prz->ecc_info.symsize);
++		return -EINVAL;
++	}
++
+ 	prz->buffer_size -= ecc_total;
+ 	prz->par_buffer = buffer->data + prz->buffer_size;
+ 	prz->par_header = prz->par_buffer +
+-- 
+2.50.0.rc2.701.gf1e915cc24-goog
+
 
