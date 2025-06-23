@@ -1,111 +1,208 @@
-Return-Path: <linux-kernel+bounces-699097-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-699099-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B5110AE4DAF
-	for <lists+linux-kernel@lfdr.de>; Mon, 23 Jun 2025 21:38:51 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3399DAE4DB7
+	for <lists+linux-kernel@lfdr.de>; Mon, 23 Jun 2025 21:41:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A7B057A3BBA
-	for <lists+linux-kernel@lfdr.de>; Mon, 23 Jun 2025 19:37:26 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D32B11898213
+	for <lists+linux-kernel@lfdr.de>; Mon, 23 Jun 2025 19:41:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4C48429DB78;
-	Mon, 23 Jun 2025 19:38:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 807D72BE7AB;
+	Mon, 23 Jun 2025 19:41:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gourry.net header.i=@gourry.net header.b="UKrNLTBK"
-Received: from mail-qt1-f180.google.com (mail-qt1-f180.google.com [209.85.160.180])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="p34EjPDP"
+Received: from mail-il1-f181.google.com (mail-il1-f181.google.com [209.85.166.181])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 47B0524679C
-	for <linux-kernel@vger.kernel.org>; Mon, 23 Jun 2025 19:38:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4560929B8EA
+	for <linux-kernel@vger.kernel.org>; Mon, 23 Jun 2025 19:41:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750707521; cv=none; b=DvqU7Y66TyDTkfgdMwaRu3cZX42gH3BUdprLFBgu5e6AIRZmbrF3B+E89J3gwmF0+gQqUImE65Zadug1894HX3e5q3J4YXVy6xTP89Wmg/ZXHiVYcFhE8qsWMLCywTC9YGmCsE9RF4/0KukauWX+T+kb+8R3C59uLKvFVjIqcIs=
+	t=1750707683; cv=none; b=RiFsydb2bbOqAxox/N3N2fVMv673irhnTA+s21QMxngoJpFJnm30LI/iuZQf9zGCV/YLxnZ0Mk1IzLVfAjOXeGOD5DIj7yMlNKkm943WpVZahZXQoiRj/O4n7wyXSbqaotcFb179y7+a2kePbx1ryxoXm4LtQXoQ8gDJDtXTcKA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750707521; c=relaxed/simple;
-	bh=SUcO28iflARfNEkJ1ohNxfXTZlHppMemTQUfxW2VsWA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=cGflDKLNya3z5SoqBNT6cc8wfky8OfBlBdDChJSaibdKzdfNQ/nymZ74XKZOG2h4/vveAYUD5++CMyI09SBIodMeyUPUz9bDqAumms3Tcx7hyolX7TK0B5+EIKGqDuZZQGJPWUUZ0oS7kta3QnGjS5nqbTRRkQS3X9qSx1tfJK4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=gourry.net; spf=pass smtp.mailfrom=gourry.net; dkim=pass (2048-bit key) header.d=gourry.net header.i=@gourry.net header.b=UKrNLTBK; arc=none smtp.client-ip=209.85.160.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=gourry.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gourry.net
-Received: by mail-qt1-f180.google.com with SMTP id d75a77b69052e-4a43d2d5569so60904571cf.0
-        for <linux-kernel@vger.kernel.org>; Mon, 23 Jun 2025 12:38:40 -0700 (PDT)
+	s=arc-20240116; t=1750707683; c=relaxed/simple;
+	bh=iMGsYFOOHTXgUhc1EmfJa0MhbGIbQ3Gg+V9HhqPsKeU=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=twh+jNGiZRLuFd5w2m+E/5sr0dMCAqVpirpd8kJZXMe2ZY2iT7/tyVmnM1gSFaL8TnhkJ0/qNi7wva/PymaHtjEG5hydh5OzmAXchL2uA5KlWFx7TYxGcznTKtPvscVdYnHWfzJn3FkOEsq/nXXZ+yWw5aDKh/FGygD2xcM7xNw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=p34EjPDP; arc=none smtp.client-ip=209.85.166.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-il1-f181.google.com with SMTP id e9e14a558f8ab-3ddc99e0b77so41835ab.0
+        for <linux-kernel@vger.kernel.org>; Mon, 23 Jun 2025 12:41:22 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gourry.net; s=google; t=1750707519; x=1751312319; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=OsDFFNadcPKAi2oIob212fTkg2LjML9Ql3EAFUmRUHU=;
-        b=UKrNLTBKpKaBUnh67CB1fjxxDLLpBBJlH4ElR3+LebtbPOMtxAbxqW26OWB+e8SP2L
-         KVPA79/UvnxJA3fZbbSpnRubrOl8CNTMFKiSMwYErojpdX7zkAehNdYqX1IHR2qqPATG
-         RlHJiwR761EFYXGQeWKYmSeJRqjcAOmhCEHXjNOgNZ5Qf5uYZxWsg4FODA2L7825WcOJ
-         Ly64cwO9fd1+/gqx4mSqg37XmJBuwiY85PdfkqGdsQ1IJ4YG4S0zNRCipCSGdtIwOhfw
-         7PY09QP2KZI+hI8ebYuo5IAmL2vwWP+p84ULiykV/nibuLmzSBotCriXKBk8Y8UWEwh5
-         meLA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1750707519; x=1751312319;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+        d=google.com; s=20230601; t=1750707681; x=1751312481; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=OsDFFNadcPKAi2oIob212fTkg2LjML9Ql3EAFUmRUHU=;
-        b=tnZAOzr8zXpPE+SIh4uJ/S4IW/Dj9806F1A/giYPC58+5XWIH/vUYqPmtmbP1gxImn
-         H315o4peiOHySg/kdBgPnhuCOSe8NsOtQBO+REuRqQ+hEeZc6Qwmpw/PMke5gv3Y7v9K
-         MUjkGutXil77dt6CEbrzX7IpGxWRpBgO/K5n91/jX8Zq7Yag+hVAYLImp9JRXzRoJSMl
-         uekG/yUcfVBKq5b2NKOYJztCFFNEG6521cdEe77RCwRvxn+6/gP0lZnmGxHrulstOb76
-         b/cWG3a31rEonzXRphLW2oQDTkqcL6+pU4OdGsv6BVnCD3mN3oJtZJ7uSv1CfssURPKr
-         QyvQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVjglHgdGJQIMjTighO7lld4Kkijsdehil+iAjuATz0sFIWq+rUVA5klZSvZNkY5D5HBePP9j/7aDgKrT4=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwUKWa7/+7ND78njNsY5nUeoOu0DACmEFBkV9YyzzEjFM7iyI1Y
-	/RTSKrnaPmpjaQztQ7Er+89e0KcBFgraokC26BrBHb6EJG1eI0VYmWGxwD84/1WKFkI=
-X-Gm-Gg: ASbGncvKJQY7B9BuSXxNBOlMSFzrChxmH5Ol+d1E5JpQh5SSSDjlA2eLv2vfi34DQ1l
-	PmUX9YCj+elv7Wy5ad1h8HZWO3h5z1dOtHAihkvORSJ6/NCqz25439B7i78RWpLbtkWqm2er1SK
-	dAp0T7Mt9OBcaU8IVgXlOMT6AMJRLe3kZTPRUVUkc05cJyUdSakH+g0vh/iLqDfk2GzIWrqcfN4
-	dxJcUtOdwe5ycCVV1L5Sa5UaUcxntHECMfgYqJy0XRiGOoRb0o4+Z5WQARn6M1/hPeUYFuYjDh2
-	xyiatoKnIhU4pyWaMwFJk1KZGK6hUFyNFnUR1Tz2P9Cw1f306FB8weJJAA==
-X-Google-Smtp-Source: AGHT+IGEe4owoKuwDVOewVa/4Edect3j8Yf80FLCWoMblOwP+OBaPb93AZugTiBwPwwRicj7AyEi8w==
-X-Received: by 2002:a05:622a:13cf:b0:4a5:8387:8b9f with SMTP id d75a77b69052e-4a77a24bc82mr181710941cf.15.1750707519236;
-        Mon, 23 Jun 2025 12:38:39 -0700 (PDT)
-Received: from gourry-fedora-PF4VCD3F ([2620:10d:c091:400::5:e19e])
-        by smtp.gmail.com with ESMTPSA id d75a77b69052e-4a779e956bcsm41726641cf.74.2025.06.23.12.38.38
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 23 Jun 2025 12:38:38 -0700 (PDT)
-Date: Mon, 23 Jun 2025 14:38:36 -0500
-From: Gregory Price <gourry@gourry.net>
-To: David Hildenbrand <david@redhat.com>
-Cc: Bijan Tabatabai <bijan311@gmail.com>, damon@lists.linux.dev,
-	linux-mm@kvack.org, linux-kernel@vger.kernel.org, sj@kernel.org,
-	akpm@linux-foundation.org, ziy@nvidia.com, matthew.brost@intel.com,
-	joshua.hahnjy@gmail.com, rakie.kim@sk.com, byungchul@sk.com,
-	ying.huang@linux.alibaba.com, apopple@nvidia.com,
-	bijantabatab@micron.com, venkataravis@micron.com,
-	emirakhur@micron.com, ajayjoshi@micron.com, vtavarespetr@micron.com
-Subject: Re: [RFC PATCH v2 1/2] mm/mempolicy: Expose get_il_weight() to MM
-Message-ID: <aFmtPIAYnp4oeAZ1@gourry-fedora-PF4VCD3F>
-References: <20250620180458.5041-1-bijan311@gmail.com>
- <20250620180458.5041-2-bijan311@gmail.com>
- <0067568e-a604-46d3-96fd-41b62968a90e@redhat.com>
+        bh=3zk9ihzHt4ymgY4hQ9m9EOxwRSHSo8NZIfJoNEn5vFo=;
+        b=p34EjPDPLmSThlvGfHq+JVoRzyvbhdR2axKC94Y9Q44R2DTlDQyB+IanMfUqcp4N+L
+         +xMCfEZQKqzYR2X8GYfraS4kbKNvWQsrJHDz+6B7vkdgMFa5Hr2nImWi1xwA1yz0G/3P
+         4T08WCVJ95dyba53ijCpHls5xLQdz0oPvvHJECoWpSd16ve7f5g+gjEpXzjgdDkWJ9yO
+         ycnwP4+icXwSu7EsEO5CPYcaCVAGVDGEKfGrHHVOXJKKRD8epaD1Vf/MMmlYBchJ3czr
+         3OjSGendzhMpuCO35NytZ29N6OHiDZquft0xM01A2yiemM2kjZzirxe1Nq5KSvPt0vaM
+         PQgQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1750707681; x=1751312481;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=3zk9ihzHt4ymgY4hQ9m9EOxwRSHSo8NZIfJoNEn5vFo=;
+        b=rKNs+n0MMeIzFt3GM/28K3NB7rfrNVXDOBaiX8QbVBRm9i356G21Nxp0DImY05kj+E
+         tAZPuB4PgU61h7r/5UhmfnkcYPnsos6u4If9qejC2F/B63jhPiPsVjXJpGgZRbsQaP/k
+         WF4McaYq3j/1r/618k7fRBVtUbx89QqNpBPuG5lzvgl++JSadcRNBoXGvmFzI053b8U9
+         0NxW/XfKFe0+tfK5UnTstFkst7v5cJCyDPvsYuPRbxnAvxBmK9dos73B1GHiH++rt5og
+         Hz+FwDy++OGniFZxKSf2WxeYRnDR/V/CoSmCkaD1wHVJnNmICb3UJTelEG5Vev6PMpGX
+         QpCw==
+X-Forwarded-Encrypted: i=1; AJvYcCUDO+S4JQrIrwyFM+fv6suxEkfyoIpbjZrT2p1IzpMcBixQnSnK1yt4AVQxouyU8409gn/bRR7PcMWyKJo=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyhYc7Iiv6CMM9VHEC+J2oJNWYFWiMKpZK+NhyW5E8NSeL7PGmK
+	u/pzT+C7RLv/t4JJB4glYGh8q3L4UukwYaFGwQ+tjIq/3mN0AJgL9l3n8A8f9wxf5ymiGcmtgrC
+	68OVkqhAIy4JJURvPx6YEWUrV9DSaSYba76MDGf+D
+X-Gm-Gg: ASbGnctQq5+tcB0SmB6L3uATUTWeOKSWoyjwSt9SQAns4tjpa1zVJ28v7LksJLSqblc
+	t7GNn96MRzJntBaArmUFl2BsEcR+Eg6xqOcRbiQAM3BSABpxcOM/zJAIgk5h6BTl937qfJnvVai
+	LufZJfdCAR+UCYMhexA2Rq46YBoiCvjBK8nwsOt7PbcAqA6VjXLy8/H8mZNuI2vluy9Zn9eDmk
+X-Google-Smtp-Source: AGHT+IG/D002ZXhBmor4Jkf1l95o1PH0CZ7lfyIJhkwW05dqyb6Hr6w8Sd1w/kgXb9JdUgTcgdFi2igihz2BvD3i5/E=
+X-Received: by 2002:a05:6e02:380e:b0:3dd:e7c7:36d7 with SMTP id
+ e9e14a558f8ab-3df295dd9b6mr385555ab.10.1750707681160; Mon, 23 Jun 2025
+ 12:41:21 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <0067568e-a604-46d3-96fd-41b62968a90e@redhat.com>
+References: <20250619002034.97007-1-irogers@google.com> <aFW4VJtk96JD865U@google.com>
+ <CAP-5=fUpnW1DE68pMW0q3vMT+n6d5SeNkwXd45XLaf01-eP47A@mail.gmail.com>
+ <aFmSuSyZ1ZNT94Tq@x1> <CAP-5=fXms87LVH-Y5V3OpVbwUjY=hWAe0NTX4uKQf1q3Ax-WSA@mail.gmail.com>
+ <aFmZl-SUT85Im8BJ@google.com> <aFmooVYz-6p1DTSv@x1>
+In-Reply-To: <aFmooVYz-6p1DTSv@x1>
+From: Ian Rogers <irogers@google.com>
+Date: Mon, 23 Jun 2025 12:41:09 -0700
+X-Gm-Features: AX0GCFtplY2rDb1iYH1sFfYL42uEWA0pe4BQUs2pMBKx9sZ6VV3mFntvdxW5JEU
+Message-ID: <CAP-5=fVGPKOVc7WA=VygSE3BKN90tSpLPhkaupX_fUboBcyHPg@mail.gmail.com>
+Subject: Re: [PATCH v2 1/2] perf test workload noploop: Name the noploop process
+To: Arnaldo Carvalho de Melo <acme@kernel.org>
+Cc: Namhyung Kim <namhyung@kernel.org>, Sebastian Andrzej Siewior <bigeasy@linutronix.de>, 
+	Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, 
+	Mark Rutland <mark.rutland@arm.com>, 
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>, Jiri Olsa <jolsa@kernel.org>, 
+	Adrian Hunter <adrian.hunter@intel.com>, Kan Liang <kan.liang@linux.intel.com>, 
+	linux-kernel@vger.kernel.org, linux-perf-users@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Mon, Jun 23, 2025 at 09:14:34PM +0200, David Hildenbrand wrote:
-> > +u8 get_il_weight(int node)
-> 
-> The function name is shockingly confusing when used outside this file. Do we
-> have some namespace to at least highlight what this is about?
-> 
-> node_interleave_weight() might be a lot clearer?
-> 
+On Mon, Jun 23, 2025 at 12:19=E2=80=AFPM Arnaldo Carvalho de Melo
+<acme@kernel.org> wrote:
+>
+> On Mon, Jun 23, 2025 at 11:14:47AM -0700, Namhyung Kim wrote:
+> > On Mon, Jun 23, 2025 at 11:05:41AM -0700, Ian Rogers wrote:
+> > > On Mon, Jun 23, 2025 at 10:45=E2=80=AFAM Arnaldo Carvalho de Melo <ac=
+me@kernel.org> wrote:
+> > > > On Mon, Jun 23, 2025 at 08:12:47AM -0700, Ian Rogers wrote:
+> > > > > On Fri, Jun 20, 2025 at 12:36=E2=80=AFPM Namhyung Kim <namhyung@k=
+ernel.org> wrote:
+> > > > > > I'm afraid it'd introduce a build failure on musl.  Please see
+>
+> > > > > > https://lore.kernel.org/linux-perf-users/20250611092542.F4ooE2F=
+L@linutronix.de/
+>
+> > > > > > I think <sys/prctl.h> would be enough.
+>
+> > > > > we could do that but in the glibc man page it says:
+> > > > > https://man7.org/linux/man-pages/man2/prctl.2.html
+> > > > > ```
+> > > > > #include <linux/prctl.h>  /* Definition of PR_* constants */
+> > > > > #include <sys/prctl.h>
+> > > > > ```
+>
+> > > > > It'd be nice to think musl was slowly getting fixed. I notice we'=
+re
+>
+> > > > Sebastian reported on the musl libc, its maintainer replied:
+>
+> > > > https://www.openwall.com/lists/musl/2025/06/12/11
+>
+> > > Ugh. I'm not sure how we're expected to resolve this and have glibc
+> > > and musl be happy without basically not trusting libc.
+>
+> > Maybe pthread_setname_np()?  It seems musl also implemented it.
+>
+> =E2=AC=A2 [acme@toolbx perf-tools-next]$ git diff
+> diff --git a/tools/perf/tests/workloads/noploop.c b/tools/perf/tests/work=
+loads/noploop.c
+> index 8b954d4660833a2f..656e472e618822a3 100644
+> --- a/tools/perf/tests/workloads/noploop.c
+> +++ b/tools/perf/tests/workloads/noploop.c
+> @@ -1,9 +1,8 @@
+>  /* SPDX-License-Identifier: GPL-2.0 */
+> +#include <pthread.h>
+>  #include <stdlib.h>
+>  #include <signal.h>
+>  #include <unistd.h>
+> -#include <linux/prctl.h>
+> -#include <sys/prctl.h>
+>  #include <linux/compiler.h>
+>  #include "../tests.h"
+>
+> @@ -18,7 +17,7 @@ static int noploop(int argc, const char **argv)
+>  {
+>         int sec =3D 1;
+>
+> -       prctl(PR_SET_NAME, "perf-noploop");
+> +       pthread_setname_np(pthread_self(), "perf-noploop");
+>         if (argc > 0)
+>                 sec =3D atoi(argv[0]);
+>
+> =E2=AC=A2 [acme@toolbx perf-tools-next]$
+>
+> =E2=AC=A2 [acme@toolbx perf-tools-next]$ perf test -w noploop &
+> [1] 1179763
+> =E2=AC=A2 [acme@toolbx perf-tools-next]$ ps
+>     PID TTY          TIME CMD
+>    3935 pts/1    00:00:00 bash
+>    4053 pts/1    00:00:00 toolbox
+>    4222 pts/1    00:00:28 podman
+>  971900 pts/1    00:00:00 bash
+> 1100453 pts/1    00:00:00 tail
+> 1160346 pts/1    00:00:00 bash
+> 1179763 pts/1    00:00:00 perf-noploop
+> 1179765 pts/1    00:00:00 ps
+> =E2=AC=A2 [acme@toolbx perf-tools-next]$
+>
+> And then on one of the Alpine Linux containers:
+>
+> make: Leaving directory '/tmp/perf-6.16.0-rc3/tools/perf'
+> /tmp/perf-6.16.0-rc3 $ cat /etc/os-release
+> NAME=3D"Alpine Linux"
+> ID=3Dalpine
+> VERSION_ID=3D3.18.12
+> PRETTY_NAME=3D"Alpine Linux v3.18"
+> HOME_URL=3D"https://alpinelinux.org/"
+> BUG_REPORT_URL=3D"https://gitlab.alpinelinux.org/alpine/aports/-/issues"
+> /tmp/perf-6.16.0-rc3 $ tools/perf/perf test -w noploop &
+> /tmp/perf-6.16.0-rc3 $ ps
+> PID   USER     TIME  COMMAND
+>     1 toolsbui  0:00 /bin/sh
+>  5693 toolsbui  0:00 {perf-noploop} tools/perf/perf test -w noploop
+>  5694 toolsbui  0:00 ps
+> /tmp/perf-6.16.0-rc3 $
+> [1]+  Done                       tools/perf/perf test -w noploop
+> /tmp/perf-6.16.0-rc3
+>
+> There are more direct use of prctl() to set the name in tools/perf/,
+> using pthread_setname_np() seems cleaner :-)
 
-this is fair and my fault as I didn't consider whether it'd ever be used
-outside mempolicy.  So i agree it should be renamed or wrapped.
+Yeah, I wanted to set the program name rather than a thread name for
+the sake of seeing the process name in ps - hence reaching for prctl.
+PR_SET_NAME is documented as setting the thread name and so no
+difference to pthread_setname_np. It's still frustrating to get bogged
+down in working around musl when typing the literal code from the
+prctl man page. Do you need me to re-send the patch?
 
-~Gregory
+Thanks,
+Ian
+
+> - Arnaldo
 
