@@ -1,235 +1,192 @@
-Return-Path: <linux-kernel+bounces-699065-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-699067-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6234BAE4D5C
-	for <lists+linux-kernel@lfdr.de>; Mon, 23 Jun 2025 21:11:42 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id D3A90AE4D63
+	for <lists+linux-kernel@lfdr.de>; Mon, 23 Jun 2025 21:12:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B9B0C17D43A
-	for <lists+linux-kernel@lfdr.de>; Mon, 23 Jun 2025 19:11:41 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7D524189F110
+	for <lists+linux-kernel@lfdr.de>; Mon, 23 Jun 2025 19:12:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EBDCC29DB7F;
-	Mon, 23 Jun 2025 19:11:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 850662D4B79;
+	Mon, 23 Jun 2025 19:12:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="bP2UoJnw"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="fBWcktR8"
+Received: from mx0a-00069f02.pphosted.com (mx0a-00069f02.pphosted.com [205.220.165.32])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AB899246BCF
-	for <linux-kernel@vger.kernel.org>; Mon, 23 Jun 2025 19:11:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 02CE92727FD;
+	Mon, 23 Jun 2025 19:12:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.165.32
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750705866; cv=none; b=MP+UIOF/xNFzgkYyT+2aa1WsVl6EBwzT29+RFZIQrEH2QYxjL2qD++GOokL3n2k5ttqMF0afKdCDkj3rO/My6xS6yuY6VFS53Y/5UaAluAxdin0dgaBdC8N4KKrnSvBNDfJY4o7PAtKQN3nGPLPVWwZ9DxPRe1mIyyF1AbhA2Hk=
+	t=1750705950; cv=none; b=YkrIibZDRVZKmBl79SY+Y19kAl2fjEyBZU2TLxONR9Zld3q1vFJAT08Txxt7JOSakEKulC3dXrAcaAknOG/e8J+OkbM/fxJ2nFhBsbtcxno7JOxCgh+HgvHedTKfdPYLQzJ4365nPVRHIiWDM8LNzb8DMCQetgt1vmB3FnNAVmU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750705866; c=relaxed/simple;
-	bh=FnwEMjoH/B5fSHq8g0xbQl+3hwzrIE2FIRhlGQaXCYg=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=WumHdPX11a6zx2DH0cDkWHQH5uOM7nVw8q9ZatWuMJJEpBoKakqJuH9bi2MklAtikhwqOcc6UPPU5IOniawXTT1RlauvWL+lwp7ye4fUQrrzgL+byGMhbwxPT43ZquA13eVnjeznjAPB9O4jCIN0JvZ0MactG/QYLHobOLxIPGk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=bP2UoJnw; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1750705859;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=EkCPga5/TapIbxLySEkQMLdlOYU3/68AZVl+2XQoNiQ=;
-	b=bP2UoJnwHgIRRcZUYPmJzoBywx6Qpm/RIfwzCLA8bIGziqt8JT7VYeLEcgfHU/iz64YKjg
-	Lvb35wvT+xCByhgOcGnMhQkmm4uJ4P4zev3MCTeK1ar86G8oqWLHMzg6yjZXzD39lREKj/
-	EPyBJeGCEuJmCAV81mG4qNLdks+X/UM=
-Received: from mail-wr1-f71.google.com (mail-wr1-f71.google.com
- [209.85.221.71]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-622-8TXKaiwTOg6bUc8nSuNSjg-1; Mon, 23 Jun 2025 15:10:58 -0400
-X-MC-Unique: 8TXKaiwTOg6bUc8nSuNSjg-1
-X-Mimecast-MFC-AGG-ID: 8TXKaiwTOg6bUc8nSuNSjg_1750705857
-Received: by mail-wr1-f71.google.com with SMTP id ffacd0b85a97d-3a523ce0bb2so2525247f8f.0
-        for <linux-kernel@vger.kernel.org>; Mon, 23 Jun 2025 12:10:57 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1750705857; x=1751310657;
-        h=content-transfer-encoding:in-reply-to:organization:autocrypt
-         :content-language:from:references:cc:to:subject:user-agent
-         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=EkCPga5/TapIbxLySEkQMLdlOYU3/68AZVl+2XQoNiQ=;
-        b=hBWaxoG2Ezy81cXOrFtON5DwGvF546JtReuxYVUTcvazgw1EBGbk5wFjRIE7jiFV5n
-         Hx9C4gibgRuQQH0Q7GqmuDAByVe2sVhs3p0YG8c69rHLZBTateR2lHWWEg0OHCfY6K9i
-         J10BNBFCZbc6pUhrzntA+WmzwXWtO05jUDKvPUmZ0aFg2mCYbrTVE4FfUlB/sgKpYvzF
-         O67HUzVzvAF45EwzVljgxy0/WVm3Bpa3CSsALPZh+dgY+zzavbr2ogPDBa+oL+7hWFEE
-         oUFpU2Sw9uaoR7/v65FFb6g7NcWu2H9ynIVW/hFnsby2D+KudAeH0kFs0YajEHY78MVl
-         qoSA==
-X-Forwarded-Encrypted: i=1; AJvYcCXYWaKYsZMx/moOmYUeI5DiBlSSXixiWLICKhoCN1sEWBGqmdFFDiOaKNTOaE849E6w4uFGiwWcBj62rII=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxUkctVsZA4iFipAYE/I6A//FJNz5dyc0Uvbx8VXzbX2uVn39LS
-	O56QpeTtAbX2CG267EqrlozD2xa1xEQy9MZM/Ij8tyn6iumIQ+wLHnMbuZEUq+xSQDlhqD23waO
-	AeSCZGNZmG1tARTZr75P6bNosuf9IyEb3dF/oKDBIWSe0QQD2jMkmXACzkAzakSYcmA==
-X-Gm-Gg: ASbGnctI5K9ndQeyClMQf7yEw6UcUvhytuKEp50/O/Mivvv+K7Lp+YYmevDmZSsTDDO
-	AZgl1T7E6eAmAeTfqZfb+ZbmiKctw2tpSMyRRreiqTM+Zchh3ngNvoutpzFMI+QXPz41CegrEzA
-	1iz5c21o9x0NoYXI9JjA77cjNe4q1q82bWteOblLF5fhV0z0LLpmDGSLMIYxkdxaqLNQfj0H9Ts
-	O8ETuOE9kOOhwwk/cXEQ9XRGzFYQz41PFaSaYuBypMM86+fT52tvKvjb6zwZ0VJnLB+h/PjL3hg
-	ICqksjqo/38JJF5zVssqtHVctVW6yBxCekTj2zidrKbiDvRlxoCYlRXltOlUKrcAGh7UfcDs09u
-	KqdjpWUgh2Og8oWimg8Gjw9aTgZWAEPubHW6rp19W3Z1iRiSwVg==
-X-Received: by 2002:a05:6000:400a:b0:3a4:f379:65b6 with SMTP id ffacd0b85a97d-3a6d12e826bmr11610828f8f.46.1750705856682;
-        Mon, 23 Jun 2025 12:10:56 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IEFPmuk1i7Yng45pkzrJpObYOYnIk4IOsdaeo0NKamf/9tdOuIgBToSFd5SDYluP8KKRNQwHQ==
-X-Received: by 2002:a05:6000:400a:b0:3a4:f379:65b6 with SMTP id ffacd0b85a97d-3a6d12e826bmr11610815f8f.46.1750705856263;
-        Mon, 23 Jun 2025 12:10:56 -0700 (PDT)
-Received: from ?IPV6:2003:d8:2f4e:fd00:8e13:e3b5:90c8:1159? (p200300d82f4efd008e13e3b590c81159.dip0.t-ipconnect.de. [2003:d8:2f4e:fd00:8e13:e3b5:90c8:1159])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3a6d117c3f7sm10304885f8f.63.2025.06.23.12.10.54
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 23 Jun 2025 12:10:55 -0700 (PDT)
-Message-ID: <9bd91df8-e548-4ecc-bd30-f1ab611ecf4c@redhat.com>
-Date: Mon, 23 Jun 2025 21:10:54 +0200
+	s=arc-20240116; t=1750705950; c=relaxed/simple;
+	bh=RdggrAt2yYgHrCd62EHlXKceXTIAXB4Ir7vZpqfo490=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=mWfIOEIjHgtGRnPZjd/w6SiEvwC2va08e0r4B8S5Zq159HCEH3+qyD8HVBXPypuLNx4+XV2TSF2O5exVJg5f3GO1x8MVBEOxhj8K6SzTuEtpuP2lO2jo0Xn26YF7Di7NhfEq7Yrj1PqqzwU03POAma7m5eU8v9VP539T6dsjvHc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=fBWcktR8; arc=none smtp.client-ip=205.220.165.32
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oracle.com
+Received: from pps.filterd (m0246627.ppops.net [127.0.0.1])
+	by mx0b-00069f02.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 55NGXxxi001720;
+	Mon, 23 Jun 2025 19:12:25 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=cc
+	:content-transfer-encoding:date:from:message-id:mime-version
+	:subject:to; s=corp-2025-04-25; bh=y98GQGHSKG5hc43qPhCGbhubyGowZ
+	oek17bECxnnf40=; b=fBWcktR88KCuUdEcYAowh6PWNVi1A70oitpF7oz0kERyD
+	s4KZtEe5fS6FroFsdaVdkzh2eMoHWEPKyDoWvrLnVJmNcTGuKF5Z7C+amPsuw2gY
+	8ZSZJliZJj8ILHD27Xnkiuxmf8vN2SqSK4B8rzbMWa5GuXc13xn1rMr0IEOHhXjm
+	4d7ze9jUiZRgNILjUNpb1b7IrltJX1L03ML25m0D2GdoZrxYnqO4x5KOqU7LVz6K
+	dotiH6Bk8X+SlB28B5aehk6Qq1DDd55N54FEA7ufpLbctOQO0bdVJBrB18GEaUxt
+	rzzLKHxTlaM3Rypa6K3jBm2uGcTQFjyijNELPRWNg==
+Received: from iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com (iadpaimrmta01.appoci.oracle.com [130.35.100.223])
+	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 47ds7uugf7-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Mon, 23 Jun 2025 19:12:24 +0000 (GMT)
+Received: from pps.filterd (iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com [127.0.0.1])
+	by iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com (8.18.1.2/8.18.1.2) with ESMTP id 55NIjeET038894;
+	Mon, 23 Jun 2025 19:12:22 GMT
+Received: from pps.reinject (localhost [127.0.0.1])
+	by iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com (PPS) with ESMTPS id 47ehr3qwvr-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Mon, 23 Jun 2025 19:12:22 +0000
+Received: from iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com (iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com [127.0.0.1])
+	by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 55NJBsPM037652;
+	Mon, 23 Jun 2025 19:12:22 GMT
+Received: from ca-dev110.us.oracle.com (ca-dev110.us.oracle.com [10.129.136.45])
+	by iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com (PPS) with ESMTP id 47ehr3qwvb-1;
+	Mon, 23 Jun 2025 19:12:22 +0000
+From: Alok Tiwari <alok.a.tiwari@oracle.com>
+To: pbonzini@redhat.com, corbet@lwn.net, kvm@vger.kernel.org,
+        linux-doc@vger.kernel.org
+Cc: alok.a.tiwari@oracle.com, linux-kernel@vger.kernel.org
+Subject: [PATCH next] Documentation: KVM: fix reference for kvm_ppc_resize_hpt and various typos
+Date: Mon, 23 Jun 2025 12:11:47 -0700
+Message-ID: <20250623191152.44118-1-alok.a.tiwari@oracle.com>
+X-Mailer: git-send-email 2.46.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [RFC PATCH 1/1] mm/debug_vm_pgtable: Use a swp_entry_t input
- value for swap tests
-To: Gerald Schaefer <gerald.schaefer@linux.ibm.com>,
- Andrew Morton <akpm@linux-foundation.org>,
- Anshuman Khandual <anshuman.khandual@arm.com>
-Cc: Matthew Wilcox <willy@infradead.org>, LKML
- <linux-kernel@vger.kernel.org>, linux-mm <linux-mm@kvack.org>
-References: <20250623184321.927418-1-gerald.schaefer@linux.ibm.com>
- <20250623184321.927418-2-gerald.schaefer@linux.ibm.com>
-From: David Hildenbrand <david@redhat.com>
-Content-Language: en-US
-Autocrypt: addr=david@redhat.com; keydata=
- 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
- WNyWQQ==
-Organization: Red Hat
-In-Reply-To: <20250623184321.927418-2-gerald.schaefer@linux.ibm.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.7,FMLib:17.12.80.40
+ definitions=2025-06-23_05,2025-06-23_07,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 spamscore=0 bulkscore=0 mlxscore=0
+ adultscore=0 mlxlogscore=999 suspectscore=0 malwarescore=0 phishscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2505160000
+ definitions=main-2506230123
+X-Proofpoint-GUID: Wb1bCTVf9O-FdttwSNE3QwfcLxufiVJy
+X-Authority-Analysis: v=2.4 cv=CeII5Krl c=1 sm=1 tr=0 ts=6859a718 b=1 cx=c_pps a=zPCbziy225d3KhSqZt3L1A==:117 a=zPCbziy225d3KhSqZt3L1A==:17 a=6IFa9wvqVegA:10 a=yPCof4ZbAAAA:8 a=zi7eKOD_ebcX24jqmWgA:9 cc=ntf awl=host:13206
+X-Proofpoint-ORIG-GUID: Wb1bCTVf9O-FdttwSNE3QwfcLxufiVJy
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNjIzMDEyMyBTYWx0ZWRfX+OYpCfb891dj gmFNOkYZk4Mpntjg6yFrXqwhTmCt9voEZcI9YYkfRqfBJIyyCjEQeQso59aER7hwG03cjYeo1qm oSHXifj2FvSW/yIsvlYuLlsW+Fxdu73x84dE5w/jpCjo+WGAgIuaSzokFaDDkU1HqNxFt1dagU/
+ f/7XOGuCdf9oGg/HE7FY25eTiTBwy8Akdh4FncX4fLb+k46kQ6Ru+WpwDCIEWIJ8u9a22U7ZBkG xbGLYtDwGuZJJQz82wHWnWAksRkMNsf61wgCkObqGfiF7b1OoUukD9rbc4yw/KJWsp8mxBwqCmF A1upSey9zSTpALroxxkuHwJv01Xsx/IhWVtR53EtY1vF7uewbf+xNbn1/XYVYo4APAgjpLXuNTJ
+ 9eIomI9Vx3qRZB2hljzdwBrgpXgFZ3Yeu3TnTBo/lI5kRgLv1DgEmebpIbmJ48iXJ/yUsjDS
 
-On 23.06.25 20:43, Gerald Schaefer wrote:
-> The various __pte/pmd_to_swp_entry and __swp_entry_to_pte/pmd helper
-> functions are expected to operate on swapped PTE/PMD entries, not on
-> present and mapped entries.
-> 
-> Reflect this in the swap tests by using a swp_entry_t as input value,
-> similar to how it is already done in pte_swap_exclusive_tests().
-> Move the swap entry creation to init_args() and store it in args, so
-> it can also be used in other functions.
-> 
-> The pte/pmd_swap_tests() are also changed to compare entries instead of
-> pfn values, because pte/pmd_pfn() helpers are not expected to operate on
-> swapped entries. E.g. on s390, pmd_pfn() needs different shifts for leaf
-> (large) and non-leaf PMDs.
-> 
-> Also update documentation, to reflect that the helpers operate on
-> swapped and not mapped entries, and use correct names, i.e.
-> __swp_to_pte/pmd_entry -> __swp_entry_to_pte/pmd.
-> 
-> For consistency, also change pte/pmd_swap_soft_dirty_tests() to use
-> args->swp_entry instead of a present and mapped PTE/PMD.
-> 
-> Signed-off-by: Gerald Schaefer <gerald.schaefer@linux.ibm.com>
-> ---
->   Documentation/mm/arch_pgtable_helpers.rst |  8 ++--
->   mm/debug_vm_pgtable.c                     | 55 ++++++++++++++---------
->   2 files changed, 38 insertions(+), 25 deletions(-)
-> 
-> diff --git a/Documentation/mm/arch_pgtable_helpers.rst b/Documentation/mm/arch_pgtable_helpers.rst
-> index af245161d8e7..e2ac76202a85 100644
-> --- a/Documentation/mm/arch_pgtable_helpers.rst
-> +++ b/Documentation/mm/arch_pgtable_helpers.rst
-> @@ -242,13 +242,13 @@ SWAP Page Table Helpers
->   ========================
->   
->   +---------------------------+--------------------------------------------------+
-> -| __pte_to_swp_entry        | Creates a swapped entry (arch) from a mapped PTE |
-> +| __pte_to_swp_entry        | Creates a swap entry (arch) from a swapped PTE   |
+Fix the incorrect reference to struct kvm_reinject_control and replace
+it with the correct struct kvm_ppc_resize_hpt in the documentation of
+the HPT resize ioctl.
 
-Maybe something like:
+Also correct several minor typos throughout api.rst, including grammar
+issues, capitalization (e.g., "SError"), and punctuation fixes.
 
-"from a swap (!none && !present) PTE"
+Signed-off-by: Alok Tiwari <alok.a.tiwari@oracle.com>
+---
+ Documentation/virt/kvm/api.rst | 20 ++++++++++----------
+ 1 file changed, 10 insertions(+), 10 deletions(-)
 
-or short
-
-"swap PTE".
-
-"swapped" might be misleading.
-
-Same for the other cases below.
-
->   +---------------------------+--------------------------------------------------+
-> -| __swp_to_pte_entry        | Creates a mapped PTE from a swapped entry (arch) |
-> +| __swp_entry_to_pte        | Creates a swapped PTE from a swap entry (arch)   |
->   +---------------------------+--------------------------------------------------+
-> -| __pmd_to_swp_entry        | Creates a swapped entry (arch) from a mapped PMD |
-> +| __pmd_to_swp_entry        | Creates a swap entry (arch) from a swapped PMD   |
->   +---------------------------+--------------------------------------------------+
-> -| __swp_to_pmd_entry        | Creates a mapped PMD from a swapped entry (arch) |
-> +| __swp_entry_to_pmd        | Creates a swapped PMD from a swap entry (arch)   |
->   +---------------------------+--------------------------------------------------+
->   | is_migration_entry        | Tests a migration (read or write) swapped entry  |
->   +-------------------------------+----------------------------------------------+
-> diff --git a/mm/debug_vm_pgtable.c b/mm/debug_vm_pgtable.c
-> index 7731b238b534..3b0f83ed6c2e 100644
-> --- a/mm/debug_vm_pgtable.c
-> +++ b/mm/debug_vm_pgtable.c
-> @@ -73,6 +73,8 @@ struct pgtable_debug_args {
->   	unsigned long		fixed_pud_pfn;
->   	unsigned long		fixed_pmd_pfn;
->   	unsigned long		fixed_pte_pfn;
-> +
-> +	swp_entry_t		swp_entry;
->   };
->   
-
-Nothing else jumped at me, so LGTM.
-
+diff --git a/Documentation/virt/kvm/api.rst b/Documentation/virt/kvm/api.rst
+index f0d961436d0f..04ac699e7885 100644
+--- a/Documentation/virt/kvm/api.rst
++++ b/Documentation/virt/kvm/api.rst
+@@ -88,7 +88,7 @@ the VM is shut down.
+ =============
+ 
+ As of Linux 2.6.22, the KVM ABI has been stabilized: no backward
+-incompatible change are allowed.  However, there is an extension
++incompatible changes are allowed.  However, there is an extension
+ facility that allows backward-compatible extensions to the API to be
+ queried and used.
+ 
+@@ -1198,7 +1198,7 @@ pending until the guest takes the exception by unmasking PSTATE.A.
+ 
+ Running the VCPU may cause it to take a pending SError, or make an access that
+ causes an SError to become pending. The event's description is only valid while
+-the VPCU is not running.
++the VCPU is not running.
+ 
+ This API provides a way to read and write the pending 'event' state that is not
+ visible to the guest. To save, restore or migrate a VCPU the struct representing
+@@ -1293,7 +1293,7 @@ ARM64:
+ User space may need to inject several types of events to the guest.
+ 
+ Set the pending SError exception state for this VCPU. It is not possible to
+-'cancel' an Serror that has been made pending.
++'cancel' an SError that has been made pending.
+ 
+ If the guest performed an access to I/O memory which could not be handled by
+ userspace, for example because of missing instruction syndrome decode
+@@ -1832,7 +1832,7 @@ emulate them efficiently. The fields in each entry are defined as follows:
+          the values returned by the cpuid instruction for
+          this function/index combination
+ 
+-x2APIC (CPUID leaf 1, ecx[21) and TSC deadline timer (CPUID leaf 1, ecx[24])
++x2APIC (CPUID leaf 1, ecx[21]) and TSC deadline timer (CPUID leaf 1, ecx[24])
+ may be returned as true, but they depend on KVM_CREATE_IRQCHIP for in-kernel
+ emulation of the local APIC.  TSC deadline timer support is also reported via::
+ 
+@@ -3215,8 +3215,8 @@ default-sized hash table (16 MB).
+ 
+ If this ioctl is called when a hash table has already been allocated,
+ with a different order from the existing hash table, the existing hash
+-table will be freed and a new one allocated.  If this is ioctl is
+-called when a hash table has already been allocated of the same order
++table will be freed and a new one allocated. If this ioctl is called
++when a hash table has already been allocated of the same order
+ as specified, the kernel will clear out the existing hash table (zero
+ all HPTEs).  In either case, if the guest is using the virtualized
+ real-mode area (VRMA) facility, the kernel will re-create the VMRA
+@@ -4427,7 +4427,7 @@ base 2 of the page size in the bottom 6 bits.
+ :Returns: 0 on successful completion,
+ 	 >0 if a new HPT is being prepared, the value is an estimated
+          number of milliseconds until preparation is complete,
+-         -EFAULT if struct kvm_reinject_control cannot be read,
++         -EFAULT if struct kvm_ppc_resize_hpt cannot be read,
+ 	 -EINVAL if the supplied shift or flags are invalid,
+ 	 -ENOMEM if unable to allocate the new HPT,
+ 
+@@ -4481,7 +4481,7 @@ ones will monitor preparation until it completes or fails.
+ :Returns: 0 on successful completion,
+          -EFAULT if struct kvm_reinject_control cannot be read,
+ 	 -EINVAL if the supplied shift or flags are invalid,
+-	 -ENXIO is there is no pending HPT, or the pending HPT doesn't
++	 -ENXIO if there is no pending HPT, or the pending HPT doesn't
+          have the requested size,
+ 	 -EBUSY if the pending HPT is not fully prepared,
+ 	 -ENOSPC if there was a hash collision when moving existing
+@@ -8884,7 +8884,7 @@ This capability indicates that KVM supports steal time accounting.
+ When steal time accounting is supported it may be enabled with
+ architecture-specific interfaces.  This capability and the architecture-
+ specific interfaces must be consistent, i.e. if one says the feature
+-is supported, than the other should as well and vice versa.  For arm64
++is supported, then the other should as well and vice versa.  For arm64
+ see Documentation/virt/kvm/devices/vcpu.rst "KVM_ARM_VCPU_PVTIME_CTRL".
+ For x86 see Documentation/virt/kvm/x86/msr.rst "MSR_KVM_STEAL_TIME".
+ 
+@@ -8924,7 +8924,7 @@ KVM_EXIT_X86_WRMSR exit notifications.
+ 
+ :Architectures: x86
+ 
+-This capability indicates that KVM supports that accesses to user defined MSRs
++This capability indicates that KVM supports accesses to user defined MSRs
+ may be rejected. With this capability exposed, KVM exports new VM ioctl
+ KVM_X86_SET_MSR_FILTER which user space can call to specify bitmaps of MSR
+ ranges that KVM should deny access to.
 -- 
-Cheers,
-
-David / dhildenb
+2.46.0
 
 
