@@ -1,226 +1,159 @@
-Return-Path: <linux-kernel+bounces-698077-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-698046-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 72546AE3CEF
-	for <lists+linux-kernel@lfdr.de>; Mon, 23 Jun 2025 12:42:08 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 67142AE3C5D
+	for <lists+linux-kernel@lfdr.de>; Mon, 23 Jun 2025 12:30:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4260617705B
-	for <lists+linux-kernel@lfdr.de>; Mon, 23 Jun 2025 10:39:35 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8CBF43A908D
+	for <lists+linux-kernel@lfdr.de>; Mon, 23 Jun 2025 10:30:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 52F1625DD1C;
-	Mon, 23 Jun 2025 10:31:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2ED641E130F;
+	Mon, 23 Jun 2025 10:30:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="EdwuI3RH"
-Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b="RUMaKSb4"
+Received: from mail-pg1-f178.google.com (mail-pg1-f178.google.com [209.85.215.178])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BB67625D1FE;
-	Mon, 23 Jun 2025 10:31:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D52BD23315E
+	for <linux-kernel@vger.kernel.org>; Mon, 23 Jun 2025 10:30:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750674670; cv=none; b=ZSqGeAUJWEt5tugseEyDe0ni3GpUV5oB2uDOAyPkVynObPd55HwSeBQJrhS79jO/iqOLpbM99hPWipBkZtm7NfDuVfRcb/3h2p6wSqfx1CH8TyBS6BZk6gGbLmmwPjo+Ghw5OXJ3NPo2x9Jy8sMD9sRbHRTPRUTYee08+IHRrM0=
+	t=1750674613; cv=none; b=ZwZW42vONiDJRM21vttzYwp7Aknr7q3H/J4YftP3FOnqO+4uaQOOX9p4IrhPD63vNMuC3KLW0BZ6uyUnxKUz+YDALSSnGitTXtJ2VhsMwZFEB2W911sFi0DzsMToQLbouPVpZzN3SvW3LHpCaoXTrHBfhvOWAGaEsF38HxOebuY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750674670; c=relaxed/simple;
-	bh=dJ5sI20tp1diFS6ne8k9ATvo0R0aRFweq4g1hPQN7tc=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=HM8o9Cxq/G5Eg9H8g16sXsNKVQ/fHoBxLJrCtF4Qd1/8QjMAQmtjJR1lto5LXANt76q+iZijXk9GEtup4M1cN52zF+vPgRqvOaQkHQUe4tmRG5ZxacH0y08qEvGoTMYCwKiIiZsmgpbQSLg9XfaUYWYXbNRz/P4fIhCrIXWMtgU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=EdwuI3RH; arc=none smtp.client-ip=148.251.105.195
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1750674667;
-	bh=dJ5sI20tp1diFS6ne8k9ATvo0R0aRFweq4g1hPQN7tc=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=EdwuI3RHPSaWXVGlwOKWMiXklZfBngTs/iIh/+CMyUWzLjO7WZpnWLgcFAA4VcxfP
-	 pGqrXE3EEq2sfPyp9BMMA8LQZv8KY5rqFIRl6GYnv1u4ftDIkROpmdgUJVl3JR3nIN
-	 7NCZCqor4k7gsTSLN4CdCoB7vT5Yi4SROa2wD4pqouD3KobSyJq0CC5YCcZ1ZtdBLI
-	 /k5ABruNxpzvy7euyBpvWjIEKP09qaNkhb64zveXU+hYPhZY5V6ExRD8HHrVPV1ACA
-	 ZB1Dco7EecSLEuPgl6FZfNy/M638hR4lU18u8N/D1hQIAB27iYWEsilH8GhMvxAl4w
-	 gOlsmGWsuym4g==
-Received: from laura.lan (unknown [IPv6:2001:b07:646b:e2:e046:b666:1d47:e832])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: laura.nao)
-	by bali.collaboradmins.com (Postfix) with ESMTPSA id EAD1417E0FDB;
-	Mon, 23 Jun 2025 12:31:05 +0200 (CEST)
-From: Laura Nao <laura.nao@collabora.com>
-To: mturquette@baylibre.com,
-	sboyd@kernel.org,
-	robh@kernel.org,
-	krzk+dt@kernel.org,
-	conor+dt@kernel.org,
-	matthias.bgg@gmail.com,
-	angelogioacchino.delregno@collabora.com,
-	p.zabel@pengutronix.de,
-	richardcochran@gmail.com
-Cc: guangjie.song@mediatek.com,
-	wenst@chromium.org,
-	linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-mediatek@lists.infradead.org,
-	netdev@vger.kernel.org,
-	kernel@collabora.com,
-	Laura Nao <laura.nao@collabora.com>
-Subject: [PATCH 30/30] clk: mediatek: mt8196: Add UFS and PEXTP0/1 reset controllers
-Date: Mon, 23 Jun 2025 12:29:40 +0200
-Message-Id: <20250623102940.214269-31-laura.nao@collabora.com>
-X-Mailer: git-send-email 2.39.5
-In-Reply-To: <20250623102940.214269-1-laura.nao@collabora.com>
-References: <20250623102940.214269-1-laura.nao@collabora.com>
+	s=arc-20240116; t=1750674613; c=relaxed/simple;
+	bh=15q1L8C4ZgBW7rR9Tk0j0vLXF86Ag6TO7eVagqgQQ0Y=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=eMGj+q3XoUWeAIKEFOxrZUwzuV3IZ8TmhjWQuGyV/Nqeu5zPMYEvm7G0RQ3J0RDlAzos56+MEiBTHD87GoQ8fdtNulsEnGFffAUbWgK8s4PITK+nsPQLawhpPy7hY23Q7FiywqIZ7kXFxFaHERBJQ0Hb2bWOoY773SMW39vXInQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com; spf=pass smtp.mailfrom=bytedance.com; dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b=RUMaKSb4; arc=none smtp.client-ip=209.85.215.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bytedance.com
+Received: by mail-pg1-f178.google.com with SMTP id 41be03b00d2f7-b31d489a76dso3338275a12.1
+        for <linux-kernel@vger.kernel.org>; Mon, 23 Jun 2025 03:30:11 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=bytedance.com; s=google; t=1750674611; x=1751279411; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=S2Xh6Dpoc9NJla9DLdZ/WLUd9H1GHAIOhYhI+2Em4eg=;
+        b=RUMaKSb4NPfcCoqRmbjrw7DoNO7P3hcwf/eU+8PiSTHvM2yRCo450Af5dQe8qVtbu1
+         unpqKnRykrdoQL3p8X7j1iTGmzD8q/LF6zmAwE7ftuCe5mBXmaHEdVtYoeSg78V40QEm
+         16CrARRWNZE0CaRbtlwKrMXaQRmM1tq7S0ad1rvPOTA/k1JkbK04y406/NFcj0fY6Bqd
+         h78dJhTthOpk522xDMoEpfAfA3Th7k7F50hqpqM1PxNbxZDlOHx2KlT/EEFLTDlyP0sO
+         SvA5vYzLrfIgi1TN9PD3b2ILlHyeh9oElYhcq1O/ES3Yi+y7JBd4w1THVTIc39xXfNrK
+         uhEw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1750674611; x=1751279411;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=S2Xh6Dpoc9NJla9DLdZ/WLUd9H1GHAIOhYhI+2Em4eg=;
+        b=koZM6hJSvmsxIUwUR7UKrBeU2RneapBFh82cY/yrSek/4uSklaaebXZl1vbOSeme/L
+         hPMS8aPI/9XH7+dhyu7G1szcBRY/kLEf8Ou66iVpcB+qs0X2WE6Nbhpru9HxAnCQsT/o
+         qeJcFeocXEBVv9Ninz6UMqHCKrwb2duSrKe2Sl54WtsMByeZSN9cBBGQo40cKkXiiTfC
+         w7rA+l0hZWE7MG7cOxZ0I7afEsnVTDnt7DVe5lVqgb2E92XzcjWhn5yQZqRE7BhH4L8l
+         YEPA/69iKU8VKmAEXyMj3CV2NA75ehKtrfVdv9AsAvfU7PNaswfJmhpTbHiNn/wVt96d
+         gG/Q==
+X-Forwarded-Encrypted: i=1; AJvYcCWaMpsegEQ6ymaiI3HXSnO0I97JZVVEq7Snti3brCU9DghiBitJIetxZlLZDdaf9Vp05emGxzOGEOGhXvI=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyTVX+p61snyY2EQ7dJtUbO17y7lsk/g3GSuDcfLDSt1inuHoOk
+	pmP4GxmMXIRQUN9KB1fTtyUy85ONmOC3guFEkR/6cnHBZYwqEmYYd2EEfCwAV5p+8RAl9gya5ZY
+	7BqEvK7utDU9V8u5G/P4BPQaHu6sudEH3CI0pAVEEplXoFkmQ4xPVLhWcHtVw
+X-Gm-Gg: ASbGncvtSvhTftqkqIQtEFjHLR/E+phC9m8DriPabf7R6O7NEbV7FLvkxEyRGVFEDeG
+	qC2NdMpjyjcdOiu8pEJkMODtFhWnqcKOIN469vKSc0tCpzQl9BOHhVM4U7w9ZogF/vRC82jM17C
+	BNk/LrnJ3IsEm99vZBiPSH2Mbi0xkLkPubVM6dbnx6FhKYW8uGVduN61aV
+X-Google-Smtp-Source: AGHT+IHUUgFd5CAVoui8WeB8d4VDjaMayhZu3ZI45zZpLWDJx7B3fRr4MhP36Fw+gyvFSnnTysBzyBVcg3Vlfp8B2jA=
+X-Received: by 2002:a17:90b:5690:b0:312:f0d0:bc4 with SMTP id
+ 98e67ed59e1d1-3159d626112mr16340875a91.5.1750674610724; Mon, 23 Jun 2025
+ 03:30:10 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20250620091720.85633-1-luxu.kernel@bytedance.com>
+ <DARCHDIZG7IP.2VTEVNMVX8R1E@ventanamicro.com> <CAPYmKFvcnDJWXAUEX8oY6seQrgwKiZjDqrJ_R2rJ4kWq7RQUSg@mail.gmail.com>
+ <DATTT5U64J4L.3UTDRVT2YP7GT@ventanamicro.com>
+In-Reply-To: <DATTT5U64J4L.3UTDRVT2YP7GT@ventanamicro.com>
+From: Xu Lu <luxu.kernel@bytedance.com>
+Date: Mon, 23 Jun 2025 18:29:59 +0800
+X-Gm-Features: AX0GCFtfoIOnfs7J2STs_OR-jY-38t6kH55fmz7DcsUlJBJ7-TA3sUK7F3GCaB8
+Message-ID: <CAPYmKFtyJ-6N8ArP04QJNMFC3ScRnvp_9rijufQEnJRz4UrBQQ@mail.gmail.com>
+Subject: Re: [External] Re: [PATCH] RISC-V: KVM: Delegate illegal instruction fault
+To: =?UTF-8?B?UmFkaW0gS3LEjW3DocWZ?= <rkrcmar@ventanamicro.com>
+Cc: anup@brainfault.org, atish.patra@linux.dev, paul.walmsley@sifive.com, 
+	palmer@dabbelt.com, aou@eecs.berkeley.edu, alex@ghiti.fr, kvm@vger.kernel.org, 
+	kvm-riscv@lists.infradead.org, linux-riscv@lists.infradead.org, 
+	linux-kernel@vger.kernel.org, 
+	linux-riscv <linux-riscv-bounces@lists.infradead.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-From: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+Hi Radim,
 
-Add definitions to register the reset controllers found in the
-UFS and PEXTP clock controllers.
+On Mon, Jun 23, 2025 at 6:04=E2=80=AFPM Radim Kr=C4=8Dm=C3=A1=C5=99 <rkrcma=
+r@ventanamicro.com> wrote:
+>
+> 2025-06-22T18:11:49+08:00, Xu Lu <luxu.kernel@bytedance.com>:
+> > Hi Radim,
+> >
+> > On Fri, Jun 20, 2025 at 8:04=E2=80=AFPM Radim Kr=C4=8Dm=C3=A1=C5=99 <rk=
+rcmar@ventanamicro.com> wrote:
+> >>
+> >> 2025-06-20T17:17:20+08:00, Xu Lu <luxu.kernel@bytedance.com>:
+> >> > Delegate illegal instruction fault to VS mode in default to avoid su=
+ch
+> >> > exceptions being trapped to HS and redirected back to VS.
+> >> >
+> >> > Signed-off-by: Xu Lu <luxu.kernel@bytedance.com>
+> >> > ---
+> >> > diff --git a/arch/riscv/include/asm/kvm_host.h b/arch/riscv/include/=
+asm/kvm_host.h
+> >> > @@ -48,6 +48,7 @@
+> >> > +                                      BIT(EXC_INST_ILLEGAL)    | \
+> >>
+> >> You should also remove the dead code in kvm_riscv_vcpu_exit.
+> >
+> > I only want to delegate it by default. And KVM may still want to
+> > delegate different exceptions for different VMs like what it does for
+> > EXC_BREAKPOINT.
+>
+> (I think we could easily reintroduce the code if KVM wants to do that in
+>  the future.  I also think that it's bad that this patch is doing an
+>  observable change without userspace involvement -- the counting of KVM
+>  SBI PMU events, but others will probably disagree with me on this.)
+>
+> >                 So maybe it is better to reserve these codes?
+>
+> Possibly, the current is acceptable if you have considered the
+> implications on PMU events.
 
-Signed-off-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
-Signed-off-by: Laura Nao <laura.nao@collabora.com>
----
- drivers/clk/mediatek/clk-mt8196-pextp.c  | 36 ++++++++++++++++++++++++
- drivers/clk/mediatek/clk-mt8196-ufs_ao.c | 25 ++++++++++++++++
- 2 files changed, 61 insertions(+)
+So maybe it comes back to our discussion on the difference between vs
+insn fault and illegal insn fault again~ In my personal opinion, it
+seems to be a waste of CPU resources to trap illegal instruction to
+HS-mode hypervisor, which does nothing but redirect it back to VS-mode
+guest kernel. I think it is OK (and maybe it should) to record 0
+illegal instruction exits in KVM PMU. If someone wants illegal insn to
+trigger an vcpu exit, then an ioctl can be provided to remove the
+delegation like what KVM_SET_GUEST_DEBUG does.
 
-diff --git a/drivers/clk/mediatek/clk-mt8196-pextp.c b/drivers/clk/mediatek/clk-mt8196-pextp.c
-index 938100e4836b..9a7623bf2b1c 100644
---- a/drivers/clk/mediatek/clk-mt8196-pextp.c
-+++ b/drivers/clk/mediatek/clk-mt8196-pextp.c
-@@ -6,6 +6,7 @@
-  *                    Laura Nao <laura.nao@collabora.com>
-  */
- #include <dt-bindings/clock/mediatek,mt8196-clock.h>
-+#include <dt-bindings/reset/mediatek,mt8196-resets.h>
- #include <linux/clk-provider.h>
- #include <linux/module.h>
- #include <linux/of_device.h>
-@@ -13,6 +14,9 @@
- 
- #include "clk-gate.h"
- #include "clk-mtk.h"
-+#include "reset.h"
-+
-+#define MT8196_PEXTP_RST0_SET_OFFSET	0x8
- 
- static const struct mtk_gate_regs pext_cg_regs = {
- 	.set_ofs = 0x18,
-@@ -41,9 +45,25 @@ static const struct mtk_gate pext_clks[] = {
- 	GATE_PEXT(CLK_PEXT_PEXTP_VLP_AO_P0_LP, "pext_pextp_vlp_ao_p0_lp", "clk26m", 19),
- };
- 
-+static u16 pext_rst_ofs[] = { MT8196_PEXTP_RST0_SET_OFFSET };
-+
-+static u16 pext_rst_idx_map[] = {
-+	[MT8196_PEXTP0_RST0_PCIE0_MAC] = 0,
-+	[MT8196_PEXTP0_RST0_PCIE0_PHY] = 1,
-+};
-+
-+static const struct mtk_clk_rst_desc pext_rst_desc = {
-+	.version = MTK_RST_SET_CLR,
-+	.rst_bank_ofs = pext_rst_ofs,
-+	.rst_bank_nr = ARRAY_SIZE(pext_rst_ofs),
-+	.rst_idx_map = pext_rst_idx_map,
-+	.rst_idx_map_nr = ARRAY_SIZE(pext_rst_idx_map),
-+};
-+
- static const struct mtk_clk_desc pext_mcd = {
- 	.clks = pext_clks,
- 	.num_clks = ARRAY_SIZE(pext_clks),
-+	.rst_desc = &pext_rst_desc,
- };
- 
- static const struct mtk_gate pext1_clks[] = {
-@@ -69,9 +89,25 @@ static const struct mtk_gate pext1_clks[] = {
- 	GATE_PEXT(CLK_PEXT1_PEXTP_VLP_AO_P2_LP, "pext1_pextp_vlp_ao_p2_lp", "clk26m", 27),
- };
- 
-+static u16 pext1_rst_idx_map[] = {
-+	[MT8196_PEXTP1_RST0_PCIE1_MAC] = 0,
-+	[MT8196_PEXTP1_RST0_PCIE1_PHY] = 1,
-+	[MT8196_PEXTP1_RST0_PCIE2_MAC] = 8,
-+	[MT8196_PEXTP1_RST0_PCIE2_PHY] = 9,
-+};
-+
-+static const struct mtk_clk_rst_desc pext1_rst_desc = {
-+	.version = MTK_RST_SET_CLR,
-+	.rst_bank_ofs = pext_rst_ofs,
-+	.rst_bank_nr = ARRAY_SIZE(pext_rst_ofs),
-+	.rst_idx_map = pext1_rst_idx_map,
-+	.rst_idx_map_nr = ARRAY_SIZE(pext1_rst_idx_map),
-+};
-+
- static const struct mtk_clk_desc pext1_mcd = {
- 	.clks = pext1_clks,
- 	.num_clks = ARRAY_SIZE(pext1_clks),
-+	.rst_desc = &pext1_rst_desc,
- };
- 
- static const struct of_device_id of_match_clk_mt8196_pextp[] = {
-diff --git a/drivers/clk/mediatek/clk-mt8196-ufs_ao.c b/drivers/clk/mediatek/clk-mt8196-ufs_ao.c
-index 49f4f4af7f41..858706b3ba6f 100644
---- a/drivers/clk/mediatek/clk-mt8196-ufs_ao.c
-+++ b/drivers/clk/mediatek/clk-mt8196-ufs_ao.c
-@@ -6,6 +6,7 @@
-  *                    Laura Nao <laura.nao@collabora.com>
-  */
- #include <dt-bindings/clock/mediatek,mt8196-clock.h>
-+#include <dt-bindings/reset/mediatek,mt8196-resets.h>
- #include <linux/clk-provider.h>
- #include <linux/module.h>
- #include <linux/of_device.h>
-@@ -14,6 +15,9 @@
- #include "clk-gate.h"
- #include "clk-mtk.h"
- 
-+#define MT8196_UFSAO_RST0_SET_OFFSET	0x48
-+#define MT8196_UFSAO_RST1_SET_OFFSET	0x148
-+
- static const struct mtk_gate_regs ufsao0_cg_regs = {
- 	.set_ofs = 0x108,
- 	.clr_ofs = 0x10c,
-@@ -59,9 +63,30 @@ static const struct mtk_gate ufsao_clks[] = {
- 	GATE_UFSAO1(CLK_UFSAO_PHY_SAP, "ufsao_phy_sap", "clk26m", 8),
- };
- 
-+static u16 ufsao_rst_ofs[] = {
-+	MT8196_UFSAO_RST0_SET_OFFSET,
-+	MT8196_UFSAO_RST1_SET_OFFSET
-+};
-+
-+static u16 ufsao_rst_idx_map[] = {
-+	[MT8196_UFSAO_RST0_UFS_MPHY] = 8,
-+	[MT8196_UFSAO_RST1_UFS_UNIPRO] = 1 * RST_NR_PER_BANK + 0,
-+	[MT8196_UFSAO_RST1_UFS_CRYPTO] = 1 * RST_NR_PER_BANK + 1,
-+	[MT8196_UFSAO_RST1_UFSHCI] = 1 * RST_NR_PER_BANK + 2,
-+};
-+
-+static const struct mtk_clk_rst_desc ufsao_rst_desc = {
-+	.version = MTK_RST_SET_CLR,
-+	.rst_bank_ofs = ufsao_rst_ofs,
-+	.rst_bank_nr = ARRAY_SIZE(ufsao_rst_ofs),
-+	.rst_idx_map = ufsao_rst_idx_map,
-+	.rst_idx_map_nr = ARRAY_SIZE(ufsao_rst_idx_map),
-+};
-+
- static const struct mtk_clk_desc ufsao_mcd = {
- 	.clks = ufsao_clks,
- 	.num_clks = ARRAY_SIZE(ufsao_clks),
-+	.rst_desc = &ufsao_rst_desc,
- };
- 
- static const struct of_device_id of_match_clk_mt8196_ufs_ao[] = {
--- 
-2.39.5
+>
+> >> And why not delegate the others as well?
+> >> (EXC_LOAD_MISALIGNED, EXC_STORE_MISALIGNED, EXC_LOAD_ACCESS,
+> >>  EXC_STORE_ACCESS, and EXC_INST_ACCESS.)
+> >
+> > Thanks for the reminder. I will have a test and resend the patch if it =
+works.
+>
+> The misaligned exceptions are already being worked on, so don't waste
+> your time on them, sorry.
 
+Thanks for the reminder too. I did not consider this before. I will
+leave the MISALIGNED faults alone.
+
+Best Regards,
+
+Xu Lu
 
