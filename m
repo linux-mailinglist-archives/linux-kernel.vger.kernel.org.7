@@ -1,115 +1,100 @@
-Return-Path: <linux-kernel+bounces-698502-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-698500-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5F118AE45C2
-	for <lists+linux-kernel@lfdr.de>; Mon, 23 Jun 2025 16:01:14 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8F56EAE459A
+	for <lists+linux-kernel@lfdr.de>; Mon, 23 Jun 2025 15:57:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 01C8F16FCAE
-	for <lists+linux-kernel@lfdr.de>; Mon, 23 Jun 2025 13:56:40 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 173A51885A56
+	for <lists+linux-kernel@lfdr.de>; Mon, 23 Jun 2025 13:56:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 261EB253F03;
-	Mon, 23 Jun 2025 13:56:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9672225393C;
+	Mon, 23 Jun 2025 13:55:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="XApXZgei"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.9])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="a7FxlE2m"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 698D823E344;
-	Mon, 23 Jun 2025 13:56:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.9
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E6F811957FF;
+	Mon, 23 Jun 2025 13:55:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750686991; cv=none; b=c5/E60ec8dBcn/f2LAw5ftRHuO9fylOAJRAOXYscOT3gn55PGDnVSfTq+haUuT2Al7C350TNtYiPNmZsspHeyMfH1UndBPSYpsmXrb900yr+065Bwu4NH52atzhMjvfPtM1JHIf8SpO2pZJS3adrWXr2iAZv9+2zXcK/FeI3Uco=
+	t=1750686944; cv=none; b=NLDEul7fagYw2fzrk+rYh4DV8+Pr+KUDIa5U1I3uylaCUlMVkk+kIL3uw8plbIbgIAKBr2REE7lJ6Uz29Hx/94U85o8kKaHsyT/tBkJayTX/iUPywD4mR0Nz2f5SPxUkCT5H40PmgLhxoU30WTdfcq15F4Lq8TkIA54nVr24Lqo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750686991; c=relaxed/simple;
-	bh=BTYyyGYNVnjSCNBgeNkFIdfjEBcqf+09SP/3DndyJ+8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=S4fYeZ3ssL3QFuwTbI4bhxcaaNwkpwbUWM3FzhXjDxjsf7MCBV4d3+vt4OzJK04RZROiTj+d1DcxBKBA6nlm14uxO9Of0HVcD50j2juZIGIr02DubQMnfEOGdHtXAUJn2j5vt4T/SNFGR+NTihBUOAF7ArcuqZid5+QDbvxFmw4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=XApXZgei; arc=none smtp.client-ip=198.175.65.9
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1750686989; x=1782222989;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=BTYyyGYNVnjSCNBgeNkFIdfjEBcqf+09SP/3DndyJ+8=;
-  b=XApXZgeiVfowjuRzJTgoCfXdkVx8oramMgTANMGEPi/DXsFt1DNUVKuA
-   X0Ed1MyNaB2XXUfaSPmbpa9XBtc69WDYfRvIeEUJcWpX9gbplVt540QdO
-   4AuIFpbDBl3O+QqRo8q8Q7D1G8wnAFSQPCWb4Mq/Nc/Rt6sFPwZAS0SoB
-   A8H5tQcqpn0cyo27zdNS4D6pMtV8kobRdB0tRrzy5LopbSEsbq8A+h8Xh
-   rfhZdn0bKaewU/aRpj/h/f+p1surjiHcJsl+8nuvASWWpPOABT16Xz30t
-   rCOCHs//tT5zpC/3vFSEXKv35Kt8nr9r3epzpsDbb8fOQGbMkyda+rPC1
-   Q==;
-X-CSE-ConnectionGUID: wFTS6WrYR1uftpdojCU5vg==
-X-CSE-MsgGUID: PvmxDSX5TZ2R1aVbUCdeug==
-X-IronPort-AV: E=McAfee;i="6800,10657,11473"; a="75428941"
-X-IronPort-AV: E=Sophos;i="6.16,258,1744095600"; 
-   d="scan'208";a="75428941"
-Received: from fmviesa009.fm.intel.com ([10.60.135.149])
-  by orvoesa101.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 23 Jun 2025 06:56:28 -0700
-X-CSE-ConnectionGUID: vV3UJ73dRKevd5zXEFEfSA==
-X-CSE-MsgGUID: +HErZaZ4Q0S7IuRdDW+3CQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.16,258,1744095600"; 
-   d="scan'208";a="151901679"
-Received: from lkp-server01.sh.intel.com (HELO e8142ee1dce2) ([10.239.97.150])
-  by fmviesa009.fm.intel.com with ESMTP; 23 Jun 2025 06:56:25 -0700
-Received: from kbuild by e8142ee1dce2 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1uThep-000OyM-0V;
-	Mon, 23 Jun 2025 13:56:23 +0000
-Date: Mon, 23 Jun 2025 21:55:33 +0800
-From: kernel test robot <lkp@intel.com>
-To: David Lechner <dlechner@baylibre.com>,
-	Michael Hennerich <Michael.Hennerich@analog.com>,
-	Jonathan Cameron <jic23@kernel.org>,
-	Nuno =?iso-8859-1?Q?S=E1?= <nuno.sa@analog.com>,
-	Andy Shevchenko <andy@kernel.org>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>, Mark Brown <broonie@kernel.org>
-Cc: oe-kbuild-all@lists.linux.dev, linux-iio@vger.kernel.org,
-	linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-spi@vger.kernel.org, David Lechner <dlechner@baylibre.com>
-Subject: Re: [PATCH 8/9] iio: adc: ad_sigma_delta: add SPI offload support
-Message-ID: <202506232119.aLbzgQow-lkp@intel.com>
-References: <20250620-iio-adc-ad7173-add-spi-offload-support-v1-8-0766f6297430@baylibre.com>
+	s=arc-20240116; t=1750686944; c=relaxed/simple;
+	bh=/Ag7v6ZQya0VRiBpyA8Kql7m+wSMLKuyVmJ/dONXjk0=;
+	h=Mime-Version:Content-Type:Date:Message-Id:Cc:Subject:From:To:
+	 References:In-Reply-To; b=Rz3saIYFB+ZYLq+0tk+dNR3btC2jdPe+0Bk9eIfbOK+JxPWq5K01/Dht3JM3+uVevQlujkLBJkQcEGdwwpwVvYa5+IFjc7d1oBdJr4TxsDEP0EQYQxKg13QoUEDxtWGmpxmVspZevnaamWWin3mqNc9UEdpGmegw9gpbTHAzdtY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=a7FxlE2m; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A6BEDC4CEEA;
+	Mon, 23 Jun 2025 13:55:38 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1750686943;
+	bh=/Ag7v6ZQya0VRiBpyA8Kql7m+wSMLKuyVmJ/dONXjk0=;
+	h=Date:Cc:Subject:From:To:References:In-Reply-To:From;
+	b=a7FxlE2m6dWEXl7rt1U2aYfWkWlTwLI8NBLXC2n7o0SJ+xDRD4qW8s45fryqENIE7
+	 l1Ja7J4V5t5yI25UFpZvujNYCN49P/h/xRUgLW6/gY0p7D9d6+b8CeV/JEEAOGd+Cw
+	 HwTNuuTLNOlztLTUqeYxnDOfdDwkjjIdk4F+689dFI52lJ1bPKv79DstmE1P1QT1eS
+	 vvhhtVrdgQYph8EASW3Rkmk/LiDICnYpk5P+TOWY8t661kV7tGhvKjhRJtzr7OSI9J
+	 Paqp8TdJmnFYrZJAHrBem8KY7SmzLtww+o8W6F9f9ZUWciQuKogif9JYza+AhlC6rs
+	 kzV4/msZzJGmw==
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250620-iio-adc-ad7173-add-spi-offload-support-v1-8-0766f6297430@baylibre.com>
+Mime-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Date: Mon, 23 Jun 2025 15:55:36 +0200
+Message-Id: <DATYQ3ZIFGZO.1CLIKLTTO2YM3@kernel.org>
+Cc: "Andreas Hindborg" <a.hindborg@kernel.org>, "Miguel Ojeda"
+ <ojeda@kernel.org>, "Alex Gaynor" <alex.gaynor@gmail.com>, "Boqun Feng"
+ <boqun.feng@gmail.com>, "Gary Guo" <gary@garyguo.net>,
+ =?utf-8?q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, "Alice Ryhl"
+ <aliceryhl@google.com>, "Masahiro Yamada" <masahiroy@kernel.org>, "Nathan
+ Chancellor" <nathan@kernel.org>, "Luis Chamberlain" <mcgrof@kernel.org>,
+ "Danilo Krummrich" <dakr@kernel.org>, "Nicolas Schier"
+ <nicolas.schier@linux.dev>, "Trevor Gross" <tmgross@umich.edu>, "Adam
+ Bratschi-Kaye" <ark.email@gmail.com>, <rust-for-linux@vger.kernel.org>,
+ <linux-kernel@vger.kernel.org>, <linux-kbuild@vger.kernel.org>, "Petr
+ Pavlu" <petr.pavlu@suse.com>, "Sami Tolvanen" <samitolvanen@google.com>,
+ "Daniel Gomez" <da.gomez@samsung.com>, "Simona Vetter"
+ <simona.vetter@ffwll.ch>, "Greg KH" <gregkh@linuxfoundation.org>, "Fiona
+ Behrens" <me@kloenk.dev>, "Daniel Almeida" <daniel.almeida@collabora.com>,
+ <linux-modules@vger.kernel.org>
+Subject: Re: [PATCH v13 2/6] rust: introduce module_param module
+From: "Benno Lossin" <lossin@kernel.org>
+To: "Miguel Ojeda" <miguel.ojeda.sandonis@gmail.com>
+X-Mailer: aerc 0.20.1
+References: <20250612-module-params-v3-v13-0-bc219cd1a3f8@kernel.org>
+ <20250612-module-params-v3-v13-2-bc219cd1a3f8@kernel.org>
+ <COU2bqJOzCHRf6g4rwFpu2NY3wLY0G0AmNjRaU9aGEqu1HaPZ5X4KzfDT_CEB3Okh5BV50sJS10sKhmtHut8ew==@protonmail.internalid> <DAQJCUE1C2JE.204A8IS7LBIVZ@kernel.org> <87ikkq648o.fsf@kernel.org> <smOfUo2mEmQu-lykKKMiNOUWq2ze6p_CoEEpgGE0dtAnoJDGEpvQMkP1q-n13MiUxLK1xAiM-4QLsivPrG57sg==@protonmail.internalid> <DARCZYNPIJVZ.3JJSZ6PSAEMEC@kernel.org> <877c126bce.fsf@kernel.org> <DATW0XWNN45X.1L2WMZ41JJ5O8@kernel.org> <CANiq72nV3QzpRZTyDTv7Qx-c83jeayUY3nnvhpbtOYXf47EgJA@mail.gmail.com>
+In-Reply-To: <CANiq72nV3QzpRZTyDTv7Qx-c83jeayUY3nnvhpbtOYXf47EgJA@mail.gmail.com>
 
-Hi David,
+On Mon Jun 23, 2025 at 2:37 PM CEST, Miguel Ojeda wrote:
+> On Mon, Jun 23, 2025 at 1:48=E2=80=AFPM Benno Lossin <lossin@kernel.org> =
+wrote:
+>>
+>> Another way would be to use a `Once`-like type (does that exist on the C
+>> side?) so a type that can be initialized once and then never changes.
+>
+> There are `DO_ONCE{,_SLEEPABLE,_LITE}`.
 
-kernel test robot noticed the following build errors:
+Thanks for the pointer, it is pretty much exactly what the `Once` type
+in Rust is.
 
-[auto build test ERROR on d02f330b0c78bcf76643fbb7d3215a58b181f829]
+It's not exactly what I'm thinking of in this case, but since it is
+implemented with static key, maybe we can do something similar with a
+static key? So switch the return value of the `ModuleParamAccess::read`
+function depending on weather the module parameters have been written
+and while they haven't just return a dummy value and WARN.
 
-url:    https://github.com/intel-lab-lkp/linux/commits/David-Lechner/iio-adc-ad_sigma_delta-sort-includes/20250621-063127
-base:   d02f330b0c78bcf76643fbb7d3215a58b181f829
-patch link:    https://lore.kernel.org/r/20250620-iio-adc-ad7173-add-spi-offload-support-v1-8-0766f6297430%40baylibre.com
-patch subject: [PATCH 8/9] iio: adc: ad_sigma_delta: add SPI offload support
-config: x86_64-buildonly-randconfig-001-20250621 (https://download.01.org/0day-ci/archive/20250623/202506232119.aLbzgQow-lkp@intel.com/config)
-compiler: gcc-12 (Debian 12.2.0-14) 12.2.0
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250623/202506232119.aLbzgQow-lkp@intel.com/reproduce)
+Thoughts @Andreas?
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202506232119.aLbzgQow-lkp@intel.com/
-
-All errors (new ones prefixed by >>, old ones prefixed by <<):
-
->> ERROR: modpost: module ad_sigma_delta uses symbol devm_iio_dmaengine_buffer_setup_with_handle from namespace IIO_DMAENGINE_BUFFER, but does not import it.
-
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+---
+Cheers,
+Benno
 
