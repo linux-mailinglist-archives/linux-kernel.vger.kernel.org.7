@@ -1,199 +1,118 @@
-Return-Path: <linux-kernel+bounces-697820-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-697804-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 37B04AE390A
-	for <lists+linux-kernel@lfdr.de>; Mon, 23 Jun 2025 10:53:57 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 37ECBAE38F1
+	for <lists+linux-kernel@lfdr.de>; Mon, 23 Jun 2025 10:50:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F41AB162092
-	for <lists+linux-kernel@lfdr.de>; Mon, 23 Jun 2025 08:53:27 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D92567A83CA
+	for <lists+linux-kernel@lfdr.de>; Mon, 23 Jun 2025 08:49:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 402DF23BF8F;
-	Mon, 23 Jun 2025 08:51:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="dnQvm03S"
-Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7912222F77F;
+	Mon, 23 Jun 2025 08:50:45 +0000 (UTC)
+Received: from mail-il1-f199.google.com (mail-il1-f199.google.com [209.85.166.199])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7D46323A9BD
-	for <linux-kernel@vger.kernel.org>; Mon, 23 Jun 2025 08:51:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 98A3922F74B
+	for <linux-kernel@vger.kernel.org>; Mon, 23 Jun 2025 08:50:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.199
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750668680; cv=none; b=mkf/2XCYqaRfR5H7+Il7Ipn43x06COWjvlxA2efvQ5StKIZnFu8yVteYOQYMSobfXJrNqF1ytMKw1p2HyBFPz1S9ucBpvg7YgE0vRF2xqQH3yaTH5QVNu29oBRGp5ipkC8PKvL0rEpXhKdfXYMuu2YirZ9+iZFx4kijCuRbX90U=
+	t=1750668645; cv=none; b=bBwYrazwqWvKYTDwthhp65i86E/9WrKgw86Rtkd18AxApH/RKPsllNDoFYuygNeCmAO4Rkh1vmUaTER+gSztwLrV+eN+mINvfAGjuSYVwAKMNzUt5/2rcK0suPYEiJFhwE7MHDDpriFbFfaD3wOHGQnymb7LGfC4YDRRvisGE1s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750668680; c=relaxed/simple;
-	bh=HXv3ywqM7Aj12ZBMV6/lmyFntJo5E+cB5OfRef713dA=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=AyYSFSj6di5n/SvHM8yPp+bNTbn0mFie+dC76TE9J49C7PQ6cfCSwireXTssaoB7cmJc6j1LLQ/ODNe4jgIM8pyqHwX1SEHbBdpPYjUAJo0NGKuW5LdTyf7oZDtbot72SrBsrcYf/mYq6dyVvUUANF/Hco4LivZf/EdPy5y1cZ4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=dnQvm03S; arc=none smtp.client-ip=148.251.105.195
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1750668674;
-	bh=HXv3ywqM7Aj12ZBMV6/lmyFntJo5E+cB5OfRef713dA=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=dnQvm03SmRwfQLzuXKDbQK294lOcDH2bypPfCvGuZTYqt5mMbYYqOygWs+zwtxZkL
-	 T+VM1x/JMqk16jJmJl53RGBWZ0oE3Ug1JEwoyN12uVNYJqORYlFqtQ7iGcAp+aKN2q
-	 InVzxbAXjb3uLIBw2f+l0wl/Gh5JAvNdrZ8vcJ8bqG/bEuFY2ewWAAsdvg7kZj6vz4
-	 RWWrSvEq+YKTAawymhMDvHvHN/uSV8rRojnwvjKlfc/UCuH1M+pNBQfTuzFlZ2Ci7H
-	 UxvDLL5TXsrjuQDbEofE/prHPeDdMace168S3wuYsTlKG7PrAJoOBifdtxI7fXmNTh
-	 pThLEFKtln54w==
-Received: from debian.. (unknown [171.76.82.69])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: vignesh)
-	by bali.collaboradmins.com (Postfix) with ESMTPSA id 8E67F17E1560;
-	Mon, 23 Jun 2025 10:51:11 +0200 (CEST)
-From: Vignesh Raman <vignesh.raman@collabora.com>
-To: dri-devel@lists.freedesktop.org
-Cc: daniels@collabora.com,
-	daniel@fooishbar.org,
-	helen.fornazier@gmail.com,
-	airlied@gmail.com,
-	simona.vetter@ffwll.ch,
-	robdclark@gmail.com,
-	robin.clark@oss.qualcomm.com,
-	guilherme.gallo@collabora.com,
-	sergi.blanch.torne@collabora.com,
-	valentine.burley@collabora.com,
-	lumag@kernel.org,
-	dmitry.baryshkov@oss.qualcomm.com,
-	quic_abhinavk@quicinc.com,
-	mripard@kernel.org,
-	maarten.lankhorst@linux.intel.com,
-	tzimmermann@suse.de,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH v4 2/2] drm/ci: Add jobs to run KUnit tests
-Date: Mon, 23 Jun 2025 14:20:28 +0530
-Message-ID: <20250623085033.39680-3-vignesh.raman@collabora.com>
-X-Mailer: git-send-email 2.47.2
-In-Reply-To: <20250623085033.39680-1-vignesh.raman@collabora.com>
-References: <20250623085033.39680-1-vignesh.raman@collabora.com>
+	s=arc-20240116; t=1750668645; c=relaxed/simple;
+	bh=4YaijbhSu8B0AGBXcXAD2zOe37QdUotg4qUZE4CIqyo=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=jdDSilTWVtq0C8Ej51MxgL6eru1dvLH9pk6hB4QwXsCMbGvlRy/bejIkp2kFk4Vtk27TIG4hULHG6ZXN9Y06ya2eAsjATt27Blim+iWPwYUkOHbsdK2RVHSMN6PDvgeytCpQ+yJWWHv8BghFvo6JfxmcnzEC3976uTnM5GQuXko=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.199
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f199.google.com with SMTP id e9e14a558f8ab-3ddd03db24dso35332835ab.2
+        for <linux-kernel@vger.kernel.org>; Mon, 23 Jun 2025 01:50:43 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1750668643; x=1751273443;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=34ldYHHob+9En/WL6nat24QJCBcVNGF+83H/uFKv9oM=;
+        b=GEpdw9reakADPq1aCTmv8TmdIyCi/5z7C8OqiomtPd8x1Es8byAmGAWZXF6I5cEUA7
+         /BIGeaMq8rxO+e666Dzopa3Rp2+u5qN2PAnEc7ZVTFf11lFY+N1Ak0HU+0rZfSqxjk8b
+         rdTnEhttYxW3rDwV+adfV4fciNfjZQNN3iotQabX8EGbzDqD8f7nld+oh+cZqBs8Hhba
+         uujdVuN/cLPD52xcAOCZdS76k47ByXMF4sOUk6HX2p4lpm+ToVYazzc8YCZSJ5BempIB
+         KwO4NuquLIB9TyJgskgL2ew9JFwzXq8/+f9UltPO3jBRd5Sa0U+jsbPW3BiXntl3Cw9v
+         nIKA==
+X-Gm-Message-State: AOJu0YwPoLDOVf5Rnn0Uazi+WrYi6YwmmPJ9mCBTdpsmNtX3Br1yU+0b
+	bDoIYPtmn8fPbMtw6tIexObD5rgoPqpJyYTJ7cby1r4HkgTrplyadtGVlnOa8EdJ5fl7V0/gBDq
+	im9BnhYXVOhKL97VxiEFJBQkrUzK+S8Wyvian4uf5yNYQIT4u+Ypjg7yPsLc=
+X-Google-Smtp-Source: AGHT+IHBZon5hMxFnLrwoIptmH1v3GN6tu9FG2k8qVP4HgdwUbebTjlxHcEY2mnaSfu3E4NR0m46o5qiL8cQZAwP/xu2wq0cP1B4
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+X-Received: by 2002:a05:6e02:3499:b0:3de:119f:5261 with SMTP id
+ e9e14a558f8ab-3de38c1c019mr170616185ab.3.1750668642801; Mon, 23 Jun 2025
+ 01:50:42 -0700 (PDT)
+Date: Mon, 23 Jun 2025 01:50:42 -0700
+In-Reply-To: <6854a3e6.a00a0220.137b3.0022.GAE@google.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <68591562.050a0220.d71a0.0005.GAE@google.com>
+Subject: Re: [syzbot] Re: [syzbot] [kernel?] KMSAN: kernel-infoleak in
+ vmci_host_unlocked_ioctl (3)
+From: syzbot <syzbot+9b9124ae9b12d5af5d95@syzkaller.appspotmail.com>
+To: linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-Add jobs to run KUnit tests using tools/testing/kunit/kunit.py tool.
+For archival purposes, forwarding an incoming command email to
+linux-kernel@vger.kernel.org.
 
-Signed-off-by: Vignesh Raman <vignesh.raman@collabora.com>
-Acked-by: Helen Koike <helen.fornazier@gmail.com>
-Reviewed-by: Maxime Ripard <mripard@kernel.org>
----
+***
 
-v4:
-  - The minimum supported version of LLVM for building x86 kernels is 15.0.0
-    (See https://lore.kernel.org/all/20250220-x86-bump-min-llvm-for-stackp-v1-1-ecb3c906e790@kernel.org/).
-    Use the mesa-ci containers, where LLVM_VERSION is defined at the container
-    level and is currently set to 19. Use this llvm version for compilation.
-  
-v3:
-  - Add KUnit tests to the kunit stage.
+Subject: Re: [syzbot] [kernel?] KMSAN: kernel-infoleak in vmci_host_unlocked_ioctl (3)
+Author: lizhi.xu@windriver.com
 
-v2:
-  - Use LLVM/Clang instead of GCC to avoid architecture-specific
-    toolchains for cross-compiling.
+#syz test
 
----
- drivers/gpu/drm/ci/gitlab-ci.yml |  2 ++
- drivers/gpu/drm/ci/kunit.sh      | 16 ++++++++++++++
- drivers/gpu/drm/ci/kunit.yml     | 37 ++++++++++++++++++++++++++++++++
- 3 files changed, 55 insertions(+)
- create mode 100755 drivers/gpu/drm/ci/kunit.sh
- create mode 100644 drivers/gpu/drm/ci/kunit.yml
-
-diff --git a/drivers/gpu/drm/ci/gitlab-ci.yml b/drivers/gpu/drm/ci/gitlab-ci.yml
-index 1dddda3d24c8..6f9b7beddcb3 100644
---- a/drivers/gpu/drm/ci/gitlab-ci.yml
-+++ b/drivers/gpu/drm/ci/gitlab-ci.yml
-@@ -111,6 +111,7 @@ include:
-   - drivers/gpu/drm/ci/build.yml
-   - drivers/gpu/drm/ci/test.yml
-   - drivers/gpu/drm/ci/check-devicetrees.yml
-+  - drivers/gpu/drm/ci/kunit.yml
-   - 'https://gitlab.freedesktop.org/gfx-ci/lab-status/-/raw/main/lab-status.yml'
+diff --git a/drivers/misc/vmw_vmci/vmci_host.c b/drivers/misc/vmw_vmci/vmci_host.c
+index b64944367ac5..30c60a00d3ae 100644
+--- a/drivers/misc/vmw_vmci/vmci_host.c
++++ b/drivers/misc/vmw_vmci/vmci_host.c
+@@ -426,8 +426,12 @@ static int vmci_host_do_receive_datagram(struct vmci_host_dev *vmci_host_dev,
+ 		return -EINVAL;
+ 	}
  
+-	if (copy_from_user(&recv_info, uptr, sizeof(recv_info)))
+-		return -EFAULT;
++	mutex_lock(&vmci_host_dev->lock);
++
++	if (copy_from_user(&recv_info, uptr, sizeof(recv_info))) {
++		retval = -EFAULT;
++		goto out;
++	}
  
-@@ -122,6 +123,7 @@ stages:
-   - build-for-tests
-   - build-only
-   - static-checks
-+  - kunit
-   - code-validation
-   - amdgpu
-   - i915
-diff --git a/drivers/gpu/drm/ci/kunit.sh b/drivers/gpu/drm/ci/kunit.sh
-new file mode 100755
-index 000000000000..7a1052fd3f17
---- /dev/null
-+++ b/drivers/gpu/drm/ci/kunit.sh
-@@ -0,0 +1,16 @@
-+#!/bin/bash
-+# SPDX-License-Identifier: MIT
+ 	size = recv_info.len;
+ 	recv_info.result = vmci_ctx_dequeue_datagram(vmci_host_dev->context,
+@@ -437,11 +441,17 @@ static int vmci_host_do_receive_datagram(struct vmci_host_dev *vmci_host_dev,
+ 		void __user *ubuf = (void __user *)(uintptr_t)recv_info.addr;
+ 		retval = copy_to_user(ubuf, dg, VMCI_DG_SIZE(dg));
+ 		kfree(dg);
+-		if (retval != 0)
+-			return -EFAULT;
++		if (retval != 0) {
++			retval = -EFAULT;
++			goto out;
++		}
+ 	}
+ 
+-	return copy_to_user(uptr, &recv_info, sizeof(recv_info)) ? -EFAULT : 0;
++	retval = copy_to_user(uptr, &recv_info, sizeof(recv_info)) ? -EFAULT : 0;
 +
-+set -euxo pipefail
-+
-+: "${KERNEL_ARCH:?ERROR: KERNEL_ARCH must be set}"
-+: "${LLVM_VERSION:?ERROR: LLVM_VERSION must be set}"
-+
-+./drivers/gpu/drm/ci/setup-llvm-links.sh
-+
-+export PATH="/usr/bin:$PATH"
-+
-+./tools/testing/kunit/kunit.py run \
-+  --arch "${KERNEL_ARCH}" \
-+  --make_options LLVM=1 \
-+  --kunitconfig=drivers/gpu/drm/tests
-diff --git a/drivers/gpu/drm/ci/kunit.yml b/drivers/gpu/drm/ci/kunit.yml
-new file mode 100644
-index 000000000000..0d5b2c4433d2
---- /dev/null
-+++ b/drivers/gpu/drm/ci/kunit.yml
-@@ -0,0 +1,37 @@
-+.kunit-packages: &kunit-packages
-+  - apt-get update -qq
-+  # Minimum supported version of LLVM for building x86 kernels is 15.0.0.
-+  # In mesa-ci containers, LLVM_VERSION is defined as a container-level property and is currently set to 19.
-+  - apt-get install -y --no-install-recommends clang-${LLVM_VERSION} lld-${LLVM_VERSION} llvm-${LLVM_VERSION}
-+
-+.kunit-base:
-+  stage: kunit
-+  timeout: "30m"
-+  variables:
-+    GIT_DEPTH: 1
-+  script:
-+    - drivers/gpu/drm/ci/kunit.sh
-+
-+kunit:arm32:
-+  extends:
-+    - .build:arm32
-+    - .kunit-base
-+  before_script:
-+    - *kunit-packages
-+    - apt-get install -y --no-install-recommends qemu-system-arm
-+
-+kunit:arm64:
-+  extends:
-+    - .build:arm64
-+    - .kunit-base
-+  before_script:
-+    - *kunit-packages
-+    - apt-get install -y --no-install-recommends qemu-system-aarch64
-+
-+kunit:x86_64:
-+  extends:
-+    - .build:x86_64
-+    - .kunit-base
-+  before_script:
-+    - *kunit-packages
-+    - apt-get install -y --no-install-recommends qemu-system-x86
--- 
-2.47.2
-
++out:
++	mutex_unlock(&vmci_host_dev->lock);
++	return retval;
+ }
+ 
+ static int vmci_host_do_alloc_queuepair(struct vmci_host_dev *vmci_host_dev,
 
