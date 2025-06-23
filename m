@@ -1,138 +1,112 @@
-Return-Path: <linux-kernel+bounces-697922-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-697924-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 532B4AE3A8F
-	for <lists+linux-kernel@lfdr.de>; Mon, 23 Jun 2025 11:35:13 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id CBE70AE3A95
+	for <lists+linux-kernel@lfdr.de>; Mon, 23 Jun 2025 11:35:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 968081627B8
-	for <lists+linux-kernel@lfdr.de>; Mon, 23 Jun 2025 09:35:07 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 183A3188E61D
+	for <lists+linux-kernel@lfdr.de>; Mon, 23 Jun 2025 09:35:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DE5CC23D2A3;
-	Mon, 23 Jun 2025 09:32:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 50CC8242D65;
+	Mon, 23 Jun 2025 09:32:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="G84qEQZf"
-Received: from mail-pl1-f170.google.com (mail-pl1-f170.google.com [209.85.214.170])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="TAQWskkO"
+Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BC67B2376E0
-	for <linux-kernel@vger.kernel.org>; Mon, 23 Jun 2025 09:32:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 100DE219301
+	for <linux-kernel@vger.kernel.org>; Mon, 23 Jun 2025 09:32:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750671126; cv=none; b=ZFqoYP51M2fZ9JHOkUzV+0JeHzwQgi5jh5gYIlYF8ZJCoLmcq8Mb5LFPUo3pdISPZrjUyJ0ss3txgvYSbkbqlCM3TWXY5Aw9pNBDqxtlAjBlcgthU/L4O+5b4sR+Q5Z3dgaKkrR4tKrzgOVZmEH+yrsPQVk1epDxysiibDCD+xo=
+	t=1750671141; cv=none; b=iUcF7hS3v2kPu0oAb3kw1zsT0GGzgsQdpVyPOzaMMuiOBCeWPL+UqJAAIISVcoexPzPMoJW33mlP81hAJIOxy+8X5CMZMXgF1arYXAKyHALFfBfGv4E++ZbJNhKE5UX3n5vXIMWDr7VZnlnGNA7tHnNPz/jw+EKshj07QoaHmMw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750671126; c=relaxed/simple;
-	bh=e/g0Sw988PkQY/FzMC4b4/0FPylfUMJyAuwwfoFlbSk=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=DJv9qBlH5HL1vtUBGCVQH/OkgOe89eDIwWYwYIB+8GdtheDjIygORMnpEtoBI3bm7PYTrkhxokd1xfkmc788I4TbXaj/xYli0ubeKm5B29Ot90d8hx2bEhDXureqll+1pTcGzIf+t2LTGsDSbneP62VL8ad2PqyKiPKYQ8mmMNo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=G84qEQZf; arc=none smtp.client-ip=209.85.214.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f170.google.com with SMTP id d9443c01a7336-2350fc2591dso32825235ad.1
-        for <linux-kernel@vger.kernel.org>; Mon, 23 Jun 2025 02:32:04 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1750671124; x=1751275924; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=B+nyQWkVcjVEgS4bxefq4bC2m0gmMPDc+2UfUzc21zA=;
-        b=G84qEQZfcSVQB6hay7i9zEien1kz0aznvTW+A9KtiNs2OxgEQMiCJxLEIoIpuZmzn9
-         tJUr7gE5tqMDEUZCqIJG5SKbTY/3MJMqyhrVyLGYruJvhGkoFmIG1Aw0MWTKLXEi7xoG
-         eJgRpTUjv4Hl1J3UPl7H11isAgP5NLDNUEo1SKFH61varJ0AWJDFn9etlWqxKqeJPFX7
-         IbqqfgXSW4F3iIejxRWvsA6Nc9WVVjHvbOP2fHSzdpxE+7331V4gatEYxy4BzUrogYrB
-         tURBrkH3NYAxUP2AilmXvi+90Lkwu6747BywvwaZGEQ8fn4WoTfQt7cnD3Mi/o9tbI+2
-         j8cw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1750671124; x=1751275924;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=B+nyQWkVcjVEgS4bxefq4bC2m0gmMPDc+2UfUzc21zA=;
-        b=rIU+J7k2CaHJfUBhg2L0n7/skce2KAs4qnmqlDPtXgmRNvtjQRxz/TCBBNpZnf4KSt
-         ucAAuAylExLy9AkdrdOXTrm/SViyNHADKGBehRE+x7kbNavy3Bi/xU0XSyaEOWxlhN/X
-         2EQDBnIGVH3YjLXWVMAzCrIX5XGvppx5S+L8N4KMKYdT2eb2JcW5PAI+AySezBWL4cN0
-         OS4TLcGa9+AX2siuzXUurM8b100Bk4s2Vx9GbePB/jLCF8iwna4Ls+pD46ZV7lf7uup8
-         Vm4iJiVk4r2vny7pGVflrxJbbMdfq0yxnhyHTSt/0Vwf1b+84ikrd4TP7ZKfv2vdKT8l
-         uMTw==
-X-Gm-Message-State: AOJu0YwcEns7Dt6JFxPjSLYPZolz3vpm18KICofKsqOmL9oa1o3SNAGz
-	X9QaNPU/ElhyuzEGxnKCdpYjXMhHplAGEJM4jUbBtHguab0hwuT/enZF
-X-Gm-Gg: ASbGncv0dTW1hXfCogumZkXy1XQ0nPN1KrzziO2ziOF/UI31i+VaPmVX63r8XzyJuId
-	oNCgnFzSrxVLSbw7dF4w7FQ7U5M93KyF+nptGomdGxQoX0A4Mz929kxZ02bSpdVQuy5IZkMuPco
-	11Xml3Ke/enoamG8fR7yBBfQQqPDm99A+TjJsA7YwiwSvYl/Vw3HPSsZ+H0nPix/KZWE8EZiCu5
-	zGI5niKBTEKDhDWs+wrLXP3MfClnF/NekzskphofWqnwtOKdBtEcgGW5qTm7UqcVbsqFvIl8H+S
-	J+vK29pH5Im1HKeFY3AfhZ9mCgQMTRUmsbCmuxvBcgOzIfah5uUm/tnXSrTVGOVXj85h/kuKey4
-	tTB7M5Ibb5ztJR0bMgsJ4
-X-Google-Smtp-Source: AGHT+IH/bqmQDqcW/+Z7MmvgNwzAepK1hHloqm3RJJAUvU+vHjwX5usRhqfmpL3kIUkImEu9SE5H6g==
-X-Received: by 2002:a17:902:e54e:b0:215:6c5f:d142 with SMTP id d9443c01a7336-237db0d5a62mr153654585ad.20.1750671123939;
-        Mon, 23 Jun 2025 02:32:03 -0700 (PDT)
-Received: from localhost.localdomain ([180.101.244.64])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-237d869fbfcsm81271235ad.194.2025.06.23.02.31.58
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 23 Jun 2025 02:32:02 -0700 (PDT)
-From: Tianxiang Peng <luminosity1999@gmail.com>
-X-Google-Original-From: Tianxiang Peng <txpeng@tencent.com>
-To: puwen@hygon.cn,
-	tglx@linutronix.de,
-	mingo@redhat.com,
-	bp@alien8.de,
-	hpa@zytor.com,
-	x86@kernel.org
-Cc: linux-kernel@vger.kernel.org,
-	Tianxiang Peng <txpeng@tencent.com>,
-	Hui Li <caelli@tencent.com>
-Subject: [PATCH RESEND] x86/cpu/hygon: fix missing resctrl_cpu_detect() in bsp_init helper
-Date: Mon, 23 Jun 2025 17:31:53 +0800
-Message-ID: <20250623093153.3016937-1-txpeng@tencent.com>
-X-Mailer: git-send-email 2.43.5
+	s=arc-20240116; t=1750671141; c=relaxed/simple;
+	bh=kQE49nKTBmAndtAgPGVMUSkZiQQewT47xPmrNQkhHPs=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=BhLqIGi91UndJb49wsKLoSLFRYdTASArp8GcaItZijI6Nnmq8VgyyKK3d3OUPdmWViGCrp93nBfGIhkSjNA/SLBq1J3Mk6nhUftViFSGaxY/8MOr4HLYtNeVsN/LyndFgdHHy9KDwcE+jpr9PEoXWMecdYaX/wPbdOkw0/P+708=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=TAQWskkO; arc=none smtp.client-ip=65.109.113.108
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
+Received: from localhost (localhost.localdomain [127.0.0.1])
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id 8DF5540E01A0;
+	Mon, 23 Jun 2025 09:32:16 +0000 (UTC)
+X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
+Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
+	header.d=alien8.de
+Received: from mail.alien8.de ([127.0.0.1])
+	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
+	with ESMTP id C30ZnCMKv58n; Mon, 23 Jun 2025 09:32:13 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
+	t=1750671130; bh=Jl+eyy2hyCCx7hrdSazEzNGaXxEOKxdTsYUm4kO5Cpg=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=TAQWskkOCjhNr83H7fuFRMw5FLBGAzGL0dr/oAslRzg1mraj6N1K6RP6bez7/z/cR
+	 xyoML5QoPVHZ/JiTYzxHWk7HlHzgo0jMZWs/gCFgGMCFQ8U1Vvo6+XuLSYgKrcVtuT
+	 gYKsjf0peR6sZ+YFrwb/04OeM2Et8sClxLyXxvtWYTLHiGIECihsSGdlmdb2i/TdNG
+	 JsapLQKxA+2o3nZuKpZ4HUFjBw66JJfGg08tKkVoDZa4OoBgo12THw1Xx/212LqQDZ
+	 jN91xaA4iOBSsFtceUy5fuZGzlmrNdaVOtBMF4xxxWDHHpBIGS8GA6R+2li6XFYrQi
+	 4GpHszekW8AIj6B6XFk2at9kZPvfdgj7kOcy80J1GmwvoW3asC6SAwI/x4aRhW7Koy
+	 zFhQIWkzOZ3pe04nrc3ESYnESr4UF8w3oMJ5sV7a1m2AEXI0J+iiJYUSWUUnDk+h/H
+	 jxGQkWzX6jOrZ/iilZ/FiWNEwCa9gd3g17bAEiSUw3q47HfkZW8ZNVIb7JAEyd+4l7
+	 VXFy+Aj9a/KIjYi3L3nObdlavAi2ak6anrjz/uSz/A7nd28xTCh0sY78hw242pQ5is
+	 njQ/eL6SvN4qBi3+TUFtj4xZNfF9VFtc7aL0oVSU2XkfH6NFSgKx/ASiE9dVrdCfgp
+	 V/3tm10WHJkXroPdkFHBfFzg=
+Received: from zn.tnic (p57969c58.dip0.t-ipconnect.de [87.150.156.88])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
+	(No client certificate requested)
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 0F36040E0200;
+	Mon, 23 Jun 2025 09:32:02 +0000 (UTC)
+Date: Mon, 23 Jun 2025 11:31:56 +0200
+From: Borislav Petkov <bp@alien8.de>
+To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Cc: linux-kernel@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>,
+	Ingo Molnar <mingo@redhat.com>,
+	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
+	"H. Peter Anvin" <hpa@zytor.com>,
+	Daniel =?utf-8?B?RMOtYXo=?= <daniel.diaz@linaro.org>
+Subject: Re: [PATCH v1 1/1] x86/defconfigs: Explicitly unset CONFIG_64BIT in
+ i386_defconfig
+Message-ID: <20250623093156.GBaFkfDAN3bgiyV_IL@fat_crate.local>
+References: <20250623072536.3425344-1-andriy.shevchenko@linux.intel.com>
+ <20250623090642.GAaFkZIq__HR0FJE-0@fat_crate.local>
+ <aFkcf6it0bW36jdw@smile.fi.intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <aFkcf6it0bW36jdw@smile.fi.intel.com>
 
-Since upstream commit 923f3a2b48bdccb6a1d1f0dd48de03de7ad936d9
-("x86/resctrl: Query LLC monitoring properties once during boot"),
-resctrl_cpu_detect() has been moved from common cpu initialization
-code to vendor-specific bsp init helper, while hygon didn't put
-that call in their code.
+On Mon, Jun 23, 2025 at 12:21:03PM +0300, Andy Shevchenko wrote:
+> Ah, this is just a cherry-pick (with fixing conflicts, updated Fixes
+> and removed the last paragraph) of 5y.o. 76366050eb1b ("x86/defconfigs:
+> Explicitly unset CONFIG_64BIT in i386_defconfig"),
 
-This triggers div-zero fault during early booting stage on our
-machines with X86_FEATURE_CQM* supported, where
-get_rdt_mon_resources() tries to calculate mon_l3_config with
-uninitialized boot_cpu_data.x86_cache_occ_scale.
+What?
 
-Fix the missing resctrl_cpu_detect() in hygon bsp init helper.
+A 5yo patch cherrypicked from somewhere has as a Fixes tag a patch from 10
+days ago?!?!
 
-Signed-off-by: Tianxiang Peng <txpeng@tencent.com>
-Reviewed-by: Hui Li <caelli@tencent.com>
----
- arch/x86/kernel/cpu/hygon.c | 3 +++
- 1 file changed, 3 insertions(+)
+> it should be standalone patch. I borrowed the commit message.  So, whatever
+> you prefer: I can send it again as the original one, one of x86 maintainers
+> can do themselves the cherry-picking / conflict resolution, or I can resend
+> it as mine.
 
-diff --git a/arch/x86/kernel/cpu/hygon.c b/arch/x86/kernel/cpu/hygon.c
-index 9f914bf80180..5f73bad0b9fd 100644
---- a/arch/x86/kernel/cpu/hygon.c
-+++ b/arch/x86/kernel/cpu/hygon.c
-@@ -16,6 +16,7 @@
- #include <asm/page.h>
- #include <linux/module.h>
- #include <linux/init.h>
-+#include <asm/resctrl.h>
- 
- #ifdef CONFIG_X86_64
- # include <asm/set_memory.h>
-@@ -271,6 +272,8 @@ static void bsp_init_hygon(struct cpuinfo_x86 *c)
- 			x86_amd_ls_cfg_ssbd_mask = 1ULL << 10;
- 		}
- 	}
-+
-+	resctrl_cpu_detect(c);
- }
- 
- static void early_init_hygon(struct cpuinfo_x86 *c)
+You should do a proper patch as it is done and not do a mish-mash of old and
+new things, clarify with Daniel who's going to be the author and you should
+write a commit message which explains the situation properly, not borrow one.
+
+Thx.
+
 -- 
-2.43.5
+Regards/Gruss,
+    Boris.
 
+https://people.kernel.org/tglx/notes-about-netiquette
 
