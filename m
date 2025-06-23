@@ -1,83 +1,171 @@
-Return-Path: <linux-kernel+bounces-698932-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-698935-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C5ABDAE4BE3
-	for <lists+linux-kernel@lfdr.de>; Mon, 23 Jun 2025 19:30:38 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id B0F26AE4BEA
+	for <lists+linux-kernel@lfdr.de>; Mon, 23 Jun 2025 19:31:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6B21417BD93
-	for <lists+linux-kernel@lfdr.de>; Mon, 23 Jun 2025 17:30:30 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id ED2C03BC494
+	for <lists+linux-kernel@lfdr.de>; Mon, 23 Jun 2025 17:30:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0B8E02BD582;
-	Mon, 23 Jun 2025 17:29:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DC4552BCF46;
+	Mon, 23 Jun 2025 17:30:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Q9KUbU3J"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="C0VhGfuq"
+Received: from mail-lj1-f178.google.com (mail-lj1-f178.google.com [209.85.208.178])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 618CC29DB84;
-	Mon, 23 Jun 2025 17:29:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 51AC4262FC5;
+	Mon, 23 Jun 2025 17:30:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750699745; cv=none; b=WRMh9HwgLVpjqZEvs93Q/RrY6i700KdxI0XUeFO1y4NsWC4FOiSxld8AUwr8kM3Z9c0FH+hDIwIeAYIwAv4nD+cyvnhACWoAsSEjPSCptzoMMRY8UaDKlPpy2Eo9VxBzOzjXglTGZrw3PdF02/tMeo4blNzmj4JSGMV9FvNe6n4=
+	t=1750699829; cv=none; b=qNGCsmEQlVx4E4U2vLDr4XACWVfNMtBSmnkX971iq7isPnf91mVgdrTGEhwcGnukcaLMp0aZQVdKYI8w3ZRl8X1+wqTLeVRBPGgymUWtjYv3QLNcObzPVya8tnZVuK8VyehrekqdcD3Lh/HeqwvwW7FALQCp4Vo8ixrra1Cg3u8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750699745; c=relaxed/simple;
-	bh=a/YjtocPnqP5cP6lzPFnDmdMokR12VJ4uig4PEQI2Is=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=s6muTjdzr6q6V2kDLA8BAAOTUi8SECtaWkYTb/3Nu+VkDPTLokhsh5teJAYU29I5hnydAR/sAAMeSufn1vy6gH2rekO0rIaJBhC5YUpmEkLgF2Qukc6i1AlS9cZe0PYxScD7AJe7pNwBphu33y9Ac/SahwsILQyZv0PBa8wowrc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Q9KUbU3J; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8528CC4CEEA;
-	Mon, 23 Jun 2025 17:29:04 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1750699744;
-	bh=a/YjtocPnqP5cP6lzPFnDmdMokR12VJ4uig4PEQI2Is=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=Q9KUbU3JUzJftUazF3rR0KxqPigegrvt7IVdwW8rJMYaZTfpe+hFnYKpR1m2l169R
-	 QZ0acbY1kXhJxzB/ZSx7AVfH30djPpxItMTZLYXsyrtDiTO3NUQSshA9f5CAeoi+33
-	 wGNjjDcTeM5opLNC/LgkKatnWzNGD2gugxw8pAsvshRTnFbqckuRiAMeHmZAYMWc/4
-	 V6XyHIgswkrmWaJjPb2YXTGIngnEugzbvZWv1Vd+xIxpQWlGIh3/HxKHiXZkHVqKrW
-	 YUluJGBLY9/xoMJQxlFStcPCxNti7nnXe4/Wc8oP6Rsf1zg/j7K/MkfZs31jM4fMaT
-	 fUOsPUg41F5Fg==
-Date: Mon, 23 Jun 2025 10:29:03 -0700
-From: Jakub Kicinski <kuba@kernel.org>
-To: Breno Leitao <leitao@debian.org>
-Cc: Willem de Bruijn <willemdebruijn.kernel@gmail.com>, Andrew Lunn
- <andrew+netdev@lunn.ch>, "David S. Miller" <davem@davemloft.net>, Eric
- Dumazet <edumazet@google.com>, Paolo Abeni <pabeni@redhat.com>, Shuah Khan
- <shuah@kernel.org>, linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
- linux-kselftest@vger.kernel.org, ast@kernel.org
-Subject: Re: [PATCH net-next RFC] selftests: net: add netpoll basic
- functionality test
-Message-ID: <20250623102903.3a58842d@kernel.org>
-In-Reply-To: <aFkbXFvOKeMALwBg@gmail.com>
-References: <20250612-netpoll_test-v1-1-4774fd95933f@debian.org>
-	<684b8e8abb874_dcc45294a5@willemb.c.googlers.com.notmuch>
-	<aEwd9oLRnxna97JK@gmail.com>
-	<20250613174233.0dd5e7c1@kernel.org>
-	<aFUeT8HSPYiDyALB@gmail.com>
-	<20250621065121.78701641@kernel.org>
-	<aFkbXFvOKeMALwBg@gmail.com>
+	s=arc-20240116; t=1750699829; c=relaxed/simple;
+	bh=8jl+9cDrnjJOF5ucS1DvOv8ACv8p486jq1+0Lhyz1t8=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=gsJt2i0XuT4krjuI8ifabFMG1zkveI9kHDS/3S5mnYLKgwXcIPlhjy2lwUeNB8/XhIWcgqRZPcxBA6VBIdqnQ6mEZzE5/MtTQq3alDoxiuMbPP68QAtZw1UBpOXIGst94JMVqt/e2YBTNHKkhD5zc9YqUpsSkC+oXPy9ryH3rtA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=C0VhGfuq; arc=none smtp.client-ip=209.85.208.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lj1-f178.google.com with SMTP id 38308e7fff4ca-32ca160b4bcso20746141fa.3;
+        Mon, 23 Jun 2025 10:30:26 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1750699825; x=1751304625; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=XRx2ygGON68DaC/gtiwKh8VTYLOnLvGNtc5thNaQgcw=;
+        b=C0VhGfuqCEtW3FkltsI9mFA4APzM8H8kyqV+mJSpQVZJ9DPTSd0oNQNSt8zCqs8lMj
+         BDZwmdjNeLUT68ABTVZONxiWeULml06XDf8edqAW7CGvO935Gx5ojw/QM6vWhMzLDrMQ
+         /xWH3iJDhQkn0oTfNoXWb6QOAhQzV4d0jCGro/TwbnWqGUjcrfWdwndhx4o1YKWn8ReK
+         MjmS1y9RQdSsjluNccGNdeQpwiLFQ0PWeFfvMKN+RovVB1QViBi98w7yJOD4vdxLgviX
+         dfpGtvB58o12guttpsTnCQyY9mP6R2aB14uLLr0/OdRlgaZkz2em2u1wa421bjiWllOe
+         whfQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1750699825; x=1751304625;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=XRx2ygGON68DaC/gtiwKh8VTYLOnLvGNtc5thNaQgcw=;
+        b=I3pmocNVhMninZNtVc1MUEGDd9aa7aLXvmRVwmIlrgXXQ6K+yFA2OM7RKWsQCz2lDA
+         +sFQjZRXlSz7xAGgNcQy6Otl7By2edXnZWwl9w2jitkW3iNqpGcgB4068OlMpp0tdXBc
+         ojfTm89sDQxhqTR8crXqB+Vs+hpRTRh/nEJxmfcfHKgQtYFrZ6ugarXai3kDbBJLEd66
+         DLgIhFCulBL4Oog69+LmszeTC7lb4PdfWSdD1pJvtBZLHAcpXL4IbK0se6n+c84m9vZQ
+         6eWdufnnpO7ICx7F+En6rJt99RbzIInqjwk5XSTVQvR9RIjq+TAMfIWVT3w8flNPRaHF
+         YrXA==
+X-Forwarded-Encrypted: i=1; AJvYcCVZgyitISHUacGowx3R7IYvX1RG7zLztYszG5qE+5+Rfv55ylBRq68Ggm4egb7NhKUOOk4tFWDILCHk14nR@vger.kernel.org, AJvYcCXciE5SRowsberDqSI5Y9mvydRhOQV0+ZhVp1sLWgRZYi/dYHTNL5+Cg9PtEMvHgIlYx/iU5BAPD9KIkQYR2ls=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzMkbWjTGjaAqHsvo8yypDHpsKF/belr/aBRzGjjgmOohZmsL06
+	EYbZc9+0WIUJXYK09a1t1h6h3xQjwbiin169r5vdJqy+yD7OKcSOhF5rogTuAOmOA6raeZ8cpGU
+	O/OdLseR+ksfmqMB17rpVyjPZtmDo3jc=
+X-Gm-Gg: ASbGncvUWGRD8N+NVKwB/CNS5av48V5c055GL582tNCC69+Mq0e+jHKP/oVJ20ih6Zk
+	Alw2Zp2SCRs5ShFMWNYWcVEMWmN7+aQJ+LxiLuq/qAajWahtrsjNNAXqjJaiX44a1jsH+B4dRUD
+	SLJgXpvnAMiUJYhAjXI9JNfBqNR5Hx7xKlroNRH09NUg==
+X-Google-Smtp-Source: AGHT+IHyqF/zUWPtp+0ZEzV6kVohh/dVuHVOrwyoaqqRb8CbyietJFOO8QAtGYViBm0uTfYLshN81twTdhq7CL9TmZ8=
+X-Received: by 2002:a2e:bc05:0:b0:32c:a006:2a1d with SMTP id
+ 38308e7fff4ca-32ca0062f65mr19202371fa.4.1750699824943; Mon, 23 Jun 2025
+ 10:30:24 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+References: <20250623102359.2684-1-ot_zhangchao.zhang@mediatek.com>
+ <20250623102359.2684-2-ot_zhangchao.zhang@mediatek.com> <3df0b3f2-0d73-4116-8bbf-37020892e773@kernel.org>
+In-Reply-To: <3df0b3f2-0d73-4116-8bbf-37020892e773@kernel.org>
+From: Luiz Augusto von Dentz <luiz.dentz@gmail.com>
+Date: Mon, 23 Jun 2025 13:30:12 -0400
+X-Gm-Features: AX0GCFsnpLQwwKtnijqZGlv0tstZiyS3XM4yXHsIdV3Lgvijxwc-1eNX5GxkkhQ
+Message-ID: <CABBYNZJ8qJTjyzfZBBCbYCon1zinRbxOmUvvPbheqUNSTh13_Q@mail.gmail.com>
+Subject: Re: [PATCH v4 1/1] Bluetooth: mediatek: add gpio pin to reset bt
+To: Krzysztof Kozlowski <krzk@kernel.org>
+Cc: Zhangchao Zhang <ot_zhangchao.zhang@mediatek.com>, Marcel Holtmann <marcel@holtmann.org>, 
+	Matthias Brugger <matthias.bgg@gmail.com>, 
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, 
+	Sean Wang <sean.wang@mediatek.com>, Deren Wu <deren.Wu@mediatek.com>, 
+	Chris Lu <chris.lu@mediatek.com>, Hao Qin <Hao.qin@mediatek.com>, 
+	linux-bluetooth <linux-bluetooth@vger.kernel.org>, 
+	linux-kernel <linux-kernel@vger.kernel.org>, 
+	linux-arm-kernel <linux-arm-kernel@lists.infradead.org>, 
+	linux-mediatek <linux-mediatek@lists.infradead.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Mon, 23 Jun 2025 02:16:12 -0700 Breno Leitao wrote:
-> So, the selftest for netpoll is already in the mailing list[1], so, we
-> have two options, now:
-> 
->   1) Steal your patch and make [1] depend on it.
->   2) Merge the selftest [1] and, then, steal your patch by adding the
->      bpftrace support in it.
-> 
-> What is your recommendation?
+Hi,
 
-Let's see if [1] gets merged as is, if we need a v2 let's add the
-bpftrace patch?
+On Mon, Jun 23, 2025 at 7:55=E2=80=AFAM Krzysztof Kozlowski <krzk@kernel.or=
+g> wrote:
+>
+> On 23/06/2025 12:23, Zhangchao Zhang wrote:
+> > Makes the platform Bluetooth to be reset by hardware pin,
+> > it provides two methods to do it for mediatek controller,
+> > and it has been tested locally many times and can reset normally.
+> >
+> > When an exception occurs, resetting Bluetooth by hardware pin
+> > is more stable than resetting Bluetooth by software.
+> > If the corresponding pin is not found in dts,
+> > bluetooth can also be reset successfully.
+> >
+> > Co-developed: Hao Qin <hao.qin@mediatek.com>
+> > Co-developed: Chris Lu <chris.lu@mediatek.com>
+> > Co-developed: Jiande Lu <jiande.lu@mediatek.com>
+> > Signed-off-by: Zhangchao Zhang <ot_zhangchao.zhang@mediatek.com>
+> > ---
+> >  drivers/bluetooth/btmtk.c | 69 +++++++++++++++++++++++++++++++++++++++
+> >  drivers/bluetooth/btmtk.h |  5 +++
+> >  2 files changed, 74 insertions(+)
+> >
+> > diff --git a/drivers/bluetooth/btmtk.c b/drivers/bluetooth/btmtk.c
+> > index 4390fd571dbd..3e5f3ca6f0d5 100644
+> > --- a/drivers/bluetooth/btmtk.c
+> > +++ b/drivers/bluetooth/btmtk.c
+> > @@ -6,6 +6,8 @@
+> >  #include <linux/firmware.h>
+> >  #include <linux/usb.h>
+> >  #include <linux/iopoll.h>
+> > +#include <linux/of.h>
+> > +#include <linux/of_gpio.h>
+> >  #include <linux/unaligned.h>
+> >
+> >  #include <net/bluetooth/bluetooth.h>
+> > @@ -109,6 +111,65 @@ static void btmtk_coredump_notify(struct hci_dev *=
+hdev, int state)
+> >       }
+> >  }
+> >
+> > +static void btmtk_reset_by_gpio_work(struct work_struct *work)
+> > +{
+> > +     struct btmtk_reset_gpio *reset_gpio_data =3D
+> > +                     container_of(work, struct btmtk_reset_gpio, reset=
+_work.work);
+> > +
+> > +     gpio_direction_output(reset_gpio_data->gpio_number, 1);
+> > +     kfree(reset_gpio_data);
+> > +}
+> > +
+> > +static int btmtk_reset_by_gpio(struct hci_dev *hdev)
+> > +{
+> > +     struct btmtk_data *data =3D hci_get_priv(hdev);
+> > +     struct btmtk_reset_gpio *reset_gpio_data;
+> > +     struct device_node *node;
+> > +     int reset_gpio_number;
+> > +
+> > +     node =3D of_find_compatible_node(NULL, NULL, "mediatek,usb-blueto=
+oth");
+>
+>
+> Can you finally respond to the comments you got weeks ago at v1?
+>
+> NAK and I will keep NAKing your patches because total disregard to
+> review is not going to make this patch accepted.
+
+Can someone at mediatek respond to Krzysztof, he is the maintainer of
+device tree, so he has the authority to NAK patches so you guys better
+start addressing his requests.
+
+--=20
+Luiz Augusto von Dentz
 
