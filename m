@@ -1,357 +1,236 @@
-Return-Path: <linux-kernel+bounces-698647-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-698653-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 422A9AE47CA
-	for <lists+linux-kernel@lfdr.de>; Mon, 23 Jun 2025 17:04:18 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1F01FAE47D1
+	for <lists+linux-kernel@lfdr.de>; Mon, 23 Jun 2025 17:05:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8F569161FA2
-	for <lists+linux-kernel@lfdr.de>; Mon, 23 Jun 2025 15:00:39 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E3037188248D
+	for <lists+linux-kernel@lfdr.de>; Mon, 23 Jun 2025 15:04:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 55D6A24BC09;
-	Mon, 23 Jun 2025 15:00:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D357F271467;
+	Mon, 23 Jun 2025 15:03:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="FiADIVtw";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="1nhomz7w";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="XfZYKIYa";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="q/6dYMq5"
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b="Nu6QCp8y"
+Received: from mx07-00178001.pphosted.com (mx08-00178001.pphosted.com [91.207.212.93])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 03A1317A318
-	for <linux-kernel@vger.kernel.org>; Mon, 23 Jun 2025 15:00:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4E6DF17A318;
+	Mon, 23 Jun 2025 15:03:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.207.212.93
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750690826; cv=none; b=NHhr9tNOR3J9p/wbu3D4FEUH+Ecn/elqC9wrdfcdhawArRIg7N28X6pHdNbVZY0wdXlXmt7WjmxlC14yEGTf7cdmLKmRyBrFkaQ8gyUvE+PSD9XGEAkpI7BFoy0k7b90KWPVPNBnjh8r0228r/nWEAhZqD+0V1VxgJJ2nHYFmsA=
+	t=1750691009; cv=none; b=bafG76Bmx6/xnH1e9COQDbwCsiIK1shlklTX0hLMCn49AiUJfQreRVS9wYraEqdeG0iC/mrhdao/C81RC2BOIsHorocZRx5BjYZTIY9w9neXvly+brF07Mj3wBfves5fCKHBfrW5JDBX7k7eNQGKFShn0wICWufA0k4tw+2aQL0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750690826; c=relaxed/simple;
-	bh=GgJ5kuwAujTWdPeQXdF9NpyEneY/99+HBlR3VaCg5ms=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=nWYax6bjc9jwLRJDNO3yVFXvm1cB85hhD+0xYqr7FMO7uR4wB3ZM9LNLGIVJCxOfoQSdqe1l5VSs+ZuPJkoLGqtQOk+s9yt+xbaVuGIN/K+nYFeUkIQC4fdz/GXoJAWoYN3lT/svhrfw61VbMY9g9V+PdL/SlTKi0PSabTUHlzw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=FiADIVtw; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=1nhomz7w; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=XfZYKIYa; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=q/6dYMq5; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id F0BC221182;
-	Mon, 23 Jun 2025 15:00:07 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1750690808; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=SakuvdSrh15qJf2+NPBVuCwkmOu0Lr50m1E+QXgt7sQ=;
-	b=FiADIVtwGqMUe0P+Xi47Fpl7eXaYk+2szOI4urofCcxds6R/V+09heXi8JKMGVAhuCgnn7
-	Z2PkzXipR2+2vvV9OzH1KwqmWXl7vs8syZyQNGB3j4kInqyt43M7zzRlNw+ljzO62guXEP
-	p0bf+IY27oG4uG94tvYNhaqJdBRDPtk=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1750690808;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=SakuvdSrh15qJf2+NPBVuCwkmOu0Lr50m1E+QXgt7sQ=;
-	b=1nhomz7wb7klnP/cNZjhmG3Q2w8ut2nPlCVupztIW2zyoZg6+A1m7N3cmBgL2F78xGvI+W
-	pK/bcMPQgs6iGrDw==
-Authentication-Results: smtp-out1.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1750690807; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=SakuvdSrh15qJf2+NPBVuCwkmOu0Lr50m1E+QXgt7sQ=;
-	b=XfZYKIYaqnDs20YYpUVXO12KsMRqL9E8mMmORRnMxHr0HD6DNUGnG7m9XzzDIIJtnNsz2I
-	2XyU5pbhyjWwAxxgSGhWnunsllHzP8fddL91JcZGO7eCb5O86Z0vGN/Nkq1YmxcIEEyW8V
-	imAeYg21FKZLfHg/S0LXMBUrQQ9ml2U=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1750690807;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=SakuvdSrh15qJf2+NPBVuCwkmOu0Lr50m1E+QXgt7sQ=;
-	b=q/6dYMq54I/Pe6U1B64gJvnDlwA7D2/AHyQ7JaLgaOA3psEGP43OFO0M0UFXfR7fdYVO3F
-	ciIXiHghzPg/DJBg==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id D8B1013AC9;
-	Mon, 23 Jun 2025 15:00:07 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id uEKeNPdrWWi8cQAAD6G6ig
-	(envelope-from <vbabka@suse.cz>); Mon, 23 Jun 2025 15:00:07 +0000
-From: Vlastimil Babka <vbabka@suse.cz>
-Date: Mon, 23 Jun 2025 16:59:51 +0200
-Subject: [PATCH RFC 2/2] mm, madvise: move prctl_set_vma() to mm/madvise.c
+	s=arc-20240116; t=1750691009; c=relaxed/simple;
+	bh=QeiW61XUZ8wPwSSHrFB2CHPW35aGsUNu+KPSB46J24M=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=OCUZbqW0O5zt+1UBFe9iDhAfudjyu1AkFZOf5hlc6ODLBxKyXDbXpUFOeI0NrvOuDZQY2YWJyQnq4UwyM4wPjpkZ8I7b6f7HknNsivULLv8PR6DkNcIoB0cbNOSFIYUxIhW3KwM+fl89LNXUDs/JTyavyzJJXbYjhj+JJj4/eVQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com; spf=pass smtp.mailfrom=foss.st.com; dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b=Nu6QCp8y; arc=none smtp.client-ip=91.207.212.93
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=foss.st.com
+Received: from pps.filterd (m0046661.ppops.net [127.0.0.1])
+	by mx07-00178001.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 55NAXGFF012023;
+	Mon, 23 Jun 2025 17:03:07 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foss.st.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=selector1; bh=
+	+4Z6/tJa/UFNSN1pd77M3FYDzdgkVF+SixPAfedgsPY=; b=Nu6QCp8ytKHhSXKA
+	QL5YZ8y8711G6aSBEZyto43QPpTPyx+hWUCox4qJzIbducnaI0nxBMq3KpnvYlKT
+	WrmOYkT3BDOx/68i8YhPBfX97yfqlnOgBnXrbgo/tDClwz0hMj6YBKxnkfNbN6X3
+	Dx61mJ+Uj0AT2Wh+QCz23oaHxPEHb7lmpdNGxbdFfQyCnRcGAy17DlsgVN+SqLH9
+	OydUyEnwZTSc+doNJAd+xQzPeMk4YnO4xfzOr8f6ut8gkiuyFo4KwQg5Vo7tFBYc
+	Oc0zfIxreugZ/MBmOEet/60dUCbp+m8Hf6vMJhqN0D4pKwQiND5vMgqTpuLAdLlk
+	14lVdQ==
+Received: from beta.dmz-ap.st.com (beta.dmz-ap.st.com [138.198.100.35])
+	by mx07-00178001.pphosted.com (PPS) with ESMTPS id 47dkmjg0su-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 23 Jun 2025 17:03:07 +0200 (MEST)
+Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
+	by beta.dmz-ap.st.com (STMicroelectronics) with ESMTP id 5E55540046;
+	Mon, 23 Jun 2025 17:01:50 +0200 (CEST)
+Received: from Webmail-eu.st.com (shfdag1node2.st.com [10.75.129.70])
+	by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id 6C67EB4D1DE;
+	Mon, 23 Jun 2025 17:00:04 +0200 (CEST)
+Received: from [10.252.18.29] (10.252.18.29) by SHFDAG1NODE2.st.com
+ (10.75.129.70) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Mon, 23 Jun
+ 2025 17:00:03 +0200
+Message-ID: <cd7cac7f-e78f-4457-9e42-6290632d9c1c@foss.st.com>
+Date: Mon, 23 Jun 2025 17:00:00 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250623-anon_name_cleanup-v1-2-04c94384046f@suse.cz>
-References: <20250623-anon_name_cleanup-v1-0-04c94384046f@suse.cz>
-In-Reply-To: <20250623-anon_name_cleanup-v1-0-04c94384046f@suse.cz>
-To: Andrew Morton <akpm@linux-foundation.org>, 
- "Liam R. Howlett" <Liam.Howlett@oracle.com>, 
- Lorenzo Stoakes <lorenzo.stoakes@oracle.com>, 
- David Hildenbrand <david@redhat.com>, Jann Horn <jannh@google.com>, 
- Mike Rapoport <rppt@kernel.org>, Suren Baghdasaryan <surenb@google.com>, 
- Michal Hocko <mhocko@suse.com>, Colin Cross <ccross@google.com>
-Cc: linux-mm@kvack.org, linux-kernel@vger.kernel.org, 
- Vlastimil Babka <vbabka@suse.cz>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=openpgp-sha256; l=6289; i=vbabka@suse.cz;
- h=from:subject:message-id; bh=GgJ5kuwAujTWdPeQXdF9NpyEneY/99+HBlR3VaCg5ms=;
- b=owEBbQGS/pANAwAIAbvgsHXSRYiaAcsmYgBoWWv1X4uIKLtSIYHzYzzLjhrnC6u70kUE6f2g/
- lcYXseHi62JATMEAAEIAB0WIQR7u8hBFZkjSJZITfG74LB10kWImgUCaFlr9QAKCRC74LB10kWI
- mvEACACVfDRHAB8UmKGXxmGoefFUbulsxeXJ+OuGoIL5echXIcfuJ8Edpbt9B0/E0/H0TsEj8ym
- CrqxdoEtbjqf0kaGm0aeo/HUMYTta5pPqahyv8ihouVWBJGcq/Ehxrr90O1TuGJslrqGPthoDYl
- 2vvVgEsaGGKVYhD4ftF+vQMyo3DHvB/ng+1FvECw3WD3E0qH9e40JlDMncR+Too20VsHsqeSL7b
- WpCdHexp2rLiCB9wLIAcqZV8t8Sqt/6txea4CaVWM0OzRBB3yTYS7B6j4HdFy5wpKRW0AuL0Kiw
- wLC/J/1VN2RlhBT4Vx+fl8Z031UiGMMGsUNXSDN3vFxi9DPq
-X-Developer-Key: i=vbabka@suse.cz; a=openpgp;
- fpr=A940D434992C2E8E99103D50224FA7E7CC82A664
-X-Spamd-Result: default: False [-8.30 / 50.00];
-	REPLY(-4.00)[];
-	BAYES_HAM(-3.00)[100.00%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	ARC_NA(0.00)[];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	RCVD_TLS_ALL(0.00)[];
-	RCPT_COUNT_TWELVE(0.00)[12];
-	MIME_TRACE(0.00)[0:+];
-	TO_DN_SOME(0.00)[];
-	MID_RHS_MATCH_FROM(0.00)[];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	FROM_HAS_DN(0.00)[];
-	R_RATELIMIT(0.00)[to_ip_from(RL7wgbib1ih6q11z93xiyrfhpt)];
-	FROM_EQ_ENVFROM(0.00)[];
-	RCVD_COUNT_TWO(0.00)[2];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo,suse.cz:email,suse.cz:mid]
-X-Spam-Level: 
-X-Spam-Flag: NO
-X-Spam-Score: -8.30
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 05/13] dt-bindings: perf: stm32: introduce DDRPERFM
+ dt-bindings
+To: Krzysztof Kozlowski <krzk@kernel.org>, Will Deacon <will@kernel.org>,
+        Mark
+ Rutland <mark.rutland@arm.com>, Rob Herring <robh@kernel.org>,
+        Krzysztof
+ Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>,
+        Maxime
+ Coquelin <mcoquelin.stm32@gmail.com>,
+        Alexandre Torgue
+	<alexandre.torgue@foss.st.com>,
+        Philipp Zabel <p.zabel@pengutronix.de>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Gatien Chevallier
+	<gatien.chevallier@foss.st.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Gabriel Fernandez
+	<gabriel.fernandez@foss.st.com>
+CC: <linux-arm-kernel@lists.infradead.org>, <linux-perf-users@vger.kernel.org>,
+        <devicetree@vger.kernel.org>,
+        <linux-stm32@st-md-mailman.stormreply.com>,
+        <linux-kernel@vger.kernel.org>, <linux-doc@vger.kernel.org>,
+        <linux-clk@vger.kernel.org>
+References: <20250623-ddrperfm-upstream-v1-0-7dffff168090@foss.st.com>
+ <20250623-ddrperfm-upstream-v1-5-7dffff168090@foss.st.com>
+ <868b20f0-c1ff-4cd7-91bc-e73069aafa95@kernel.org>
+Content-Language: en-US
+From: Clement LE GOFFIC <clement.legoffic@foss.st.com>
+In-Reply-To: <868b20f0-c1ff-4cd7-91bc-e73069aafa95@kernel.org>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: SHFCAS1NODE1.st.com (10.75.129.72) To SHFDAG1NODE2.st.com
+ (10.75.129.70)
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.7,FMLib:17.12.80.40
+ definitions=2025-06-23_04,2025-06-23_06,2025-03-28_01
 
-Setting anon_name is done via madvise_set_anon_name() and behaves a lot
-of like other madvise operations. However, apparently because madvise()
-has lacked the 4th argument and prctl() not, the userspace entry point
-has been implemented via prctl(PR_SET_VMA, ...) and handled first by
-prctl_set_vma().
+On 6/23/25 11:48, Krzysztof Kozlowski wrote:
+> On 23/06/2025 11:27, Clément Le Goffic wrote:
+>> DDRPERFM is the DDR Performance Monitor embedded in STM32MPU SoC.
+>> It allows to monitor DDR events that come from the DDR Controller
+>> such as read or write events.
+>>
+> 
+> A nit, subject: drop second/last, redundant "bindings". The
+> "dt-bindings" prefix is already stating that these are bindings.
+> See also:
+> https://elixir.bootlin.com/linux/v6.7-rc8/source/Documentation/devicetree/bindings/submitting-patches.rst#L18
+Oops, you're right thank you
 
-Currently prctl_set_vma() lives in kernel/sys.c but it's mm code so move
-it under mm. mm/madvise.c seems to be the most straightforward place as
-that's where madvise_set_anon_name() lives, so we can stop declaring the
-latter in the header and instead declare prctl_set_vma(). It's not ideal
-as prctl is not madvise, but that's the reality we live in, as described
-above.
+>> Signed-off-by: Clément Le Goffic <clement.legoffic@foss.st.com>
+>> ---
+>>   .../devicetree/bindings/perf/st,stm32-ddr-pmu.yaml | 93 ++++++++++++++++++++++
+>>   1 file changed, 93 insertions(+)
+>>
+>> diff --git a/Documentation/devicetree/bindings/perf/st,stm32-ddr-pmu.yaml b/Documentation/devicetree/bindings/perf/st,stm32-ddr-pmu.yaml
+>> new file mode 100644
+>> index 000000000000..35d34782865b
+>> --- /dev/null
+>> +++ b/Documentation/devicetree/bindings/perf/st,stm32-ddr-pmu.yaml
+>> @@ -0,0 +1,93 @@
+>> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+>> +%YAML 1.2
+>> +---
+>> +$id: http://devicetree.org/schemas/perf/st,stm32-ddr-pmu.yaml#
+>> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+>> +
+>> +maintainers:
+>> +  - Clément Le Goffic <clement.legoffic@foss.st.com>
+>> +
+>> +title: STMicroelectronics STM32 DDR Performance Monitor (DDRPERFM)
+>> +
+>> +properties:
+>> +  compatible:
+>> +    enum:
+>> +      - st,stm32mp131-ddr-pmu
+>> +      - st,stm32mp151-ddr-pmu
+> 
+> These are compatible, aren't they?
 
-Signed-off-by: Vlastimil Babka <vbabka@suse.cz>
----
- include/linux/mm.h | 13 +++++------
- kernel/sys.c       | 64 ------------------------------------------------------
- mm/madvise.c       | 59 +++++++++++++++++++++++++++++++++++++++++++++++--
- 3 files changed, 63 insertions(+), 73 deletions(-)
+Yes they are
 
-diff --git a/include/linux/mm.h b/include/linux/mm.h
-index 0e0549f3d681f6c7a78e8dfa341a810e5a8f96c1..1f8c2561c8cf77e9bb695094325401c09c15f3e6 100644
---- a/include/linux/mm.h
-+++ b/include/linux/mm.h
-@@ -4059,14 +4059,13 @@ unsigned long wp_shared_mapping_range(struct address_space *mapping,
- #endif
- 
- #ifdef CONFIG_ANON_VMA_NAME
--int madvise_set_anon_name(struct mm_struct *mm, unsigned long start,
--			  unsigned long len_in,
--			  struct anon_vma_name *anon_name);
-+int prctl_set_vma(unsigned long opt, unsigned long start,
-+		  unsigned long size, unsigned long arg);
- #else
--static inline int
--madvise_set_anon_name(struct mm_struct *mm, unsigned long start,
--		      unsigned long len_in, struct anon_vma_name *anon_name) {
--	return 0;
-+static inline int prctl_set_vma(unsigned long opt, unsigned long start,
-+				unsigned long size, unsigned long arg)
-+{
-+	return -EINVAL;
- }
- #endif
- 
-diff --git a/kernel/sys.c b/kernel/sys.c
-index adc0de0aa364aebb23999f621717a5d32599921c..247d8925daa6fc86134504042832c2164b5d8277 100644
---- a/kernel/sys.c
-+++ b/kernel/sys.c
-@@ -2343,70 +2343,6 @@ int __weak arch_lock_shadow_stack_status(struct task_struct *t, unsigned long st
- 
- #define PR_IO_FLUSHER (PF_MEMALLOC_NOIO | PF_LOCAL_THROTTLE)
- 
--#ifdef CONFIG_ANON_VMA_NAME
--
--#define ANON_VMA_NAME_MAX_LEN		80
--#define ANON_VMA_NAME_INVALID_CHARS	"\\`$[]"
--
--static inline bool is_valid_name_char(char ch)
--{
--	/* printable ascii characters, excluding ANON_VMA_NAME_INVALID_CHARS */
--	return ch > 0x1f && ch < 0x7f &&
--		!strchr(ANON_VMA_NAME_INVALID_CHARS, ch);
--}
--
--static int prctl_set_vma(unsigned long opt, unsigned long addr,
--			 unsigned long size, unsigned long arg)
--{
--	struct mm_struct *mm = current->mm;
--	const char __user *uname;
--	struct anon_vma_name *anon_name = NULL;
--	int error;
--
--	switch (opt) {
--	case PR_SET_VMA_ANON_NAME:
--		uname = (const char __user *)arg;
--		if (uname) {
--			char *name, *pch;
--
--			name = strndup_user(uname, ANON_VMA_NAME_MAX_LEN);
--			if (IS_ERR(name))
--				return PTR_ERR(name);
--
--			for (pch = name; *pch != '\0'; pch++) {
--				if (!is_valid_name_char(*pch)) {
--					kfree(name);
--					return -EINVAL;
--				}
--			}
--			/* anon_vma has its own copy */
--			anon_name = anon_vma_name_alloc(name);
--			kfree(name);
--			if (!anon_name)
--				return -ENOMEM;
--
--		}
--
--		mmap_write_lock(mm);
--		error = madvise_set_anon_name(mm, addr, size, anon_name);
--		mmap_write_unlock(mm);
--		anon_vma_name_put(anon_name);
--		break;
--	default:
--		error = -EINVAL;
--	}
--
--	return error;
--}
--
--#else /* CONFIG_ANON_VMA_NAME */
--static int prctl_set_vma(unsigned long opt, unsigned long start,
--			 unsigned long size, unsigned long arg)
--{
--	return -EINVAL;
--}
--#endif /* CONFIG_ANON_VMA_NAME */
--
- static inline unsigned long get_current_mdwe(void)
- {
- 	unsigned long ret = 0;
-diff --git a/mm/madvise.c b/mm/madvise.c
-index ae29395b4fc7f65a449c5772b1901a90f4195885..4a8e61e2c5025726bc2ce1f323768c5b25cef2c9 100644
---- a/mm/madvise.c
-+++ b/mm/madvise.c
-@@ -31,6 +31,7 @@
- #include <linux/swapops.h>
- #include <linux/shmem_fs.h>
- #include <linux/mmu_notifier.h>
-+#include <linux/prctl.h>
- 
- #include <asm/tlb.h>
- 
-@@ -134,8 +135,8 @@ static int replace_anon_vma_name(struct vm_area_struct *vma,
- 	return 0;
- }
- 
--int madvise_set_anon_name(struct mm_struct *mm, unsigned long start,
--			  unsigned long len_in, struct anon_vma_name *anon_name)
-+static int madvise_set_anon_name(struct mm_struct *mm, unsigned long start,
-+		unsigned long len_in, struct anon_vma_name *anon_name)
- {
- 	unsigned long end;
- 	unsigned long len;
-@@ -165,6 +166,60 @@ int madvise_set_anon_name(struct mm_struct *mm, unsigned long start,
- 	madv_behavior.range.end = end;
- 	return madvise_walk_vmas(&madv_behavior);
- }
-+
-+#define ANON_VMA_NAME_MAX_LEN		80
-+#define ANON_VMA_NAME_INVALID_CHARS	"\\`$[]"
-+
-+static inline bool is_valid_name_char(char ch)
-+{
-+	/* printable ascii characters, excluding ANON_VMA_NAME_INVALID_CHARS */
-+	return ch > 0x1f && ch < 0x7f &&
-+		!strchr(ANON_VMA_NAME_INVALID_CHARS, ch);
-+}
-+
-+int prctl_set_vma(unsigned long opt, unsigned long addr,
-+		  unsigned long size, unsigned long arg)
-+{
-+	struct mm_struct *mm = current->mm;
-+	const char __user *uname;
-+	struct anon_vma_name *anon_name = NULL;
-+	int error;
-+
-+	switch (opt) {
-+	case PR_SET_VMA_ANON_NAME:
-+		uname = (const char __user *)arg;
-+		if (uname) {
-+			char *name, *pch;
-+
-+			name = strndup_user(uname, ANON_VMA_NAME_MAX_LEN);
-+			if (IS_ERR(name))
-+				return PTR_ERR(name);
-+
-+			for (pch = name; *pch != '\0'; pch++) {
-+				if (!is_valid_name_char(*pch)) {
-+					kfree(name);
-+					return -EINVAL;
-+				}
-+			}
-+			/* anon_vma has its own copy */
-+			anon_name = anon_vma_name_alloc(name);
-+			kfree(name);
-+			if (!anon_name)
-+				return -ENOMEM;
-+
-+		}
-+
-+		mmap_write_lock(mm);
-+		error = madvise_set_anon_name(mm, addr, size, anon_name);
-+		mmap_write_unlock(mm);
-+		anon_vma_name_put(anon_name);
-+		break;
-+	default:
-+		error = -EINVAL;
-+	}
-+
-+	return error;
-+}
- #else /* CONFIG_ANON_VMA_NAME */
- static int replace_anon_vma_name(struct vm_area_struct *vma,
- 				 struct anon_vma_name *anon_name)
+>> +      - st,stm32mp251-ddr-pmu
+>> +
+>> +  reg:
+>> +    maxItems: 1
+>> +
+>> +  clocks:
+>> +    description: Reference clock for the DDR Performance Monitor
+> 
+> Drop description, obvious.
 
--- 
-2.50.0
+Ok
+
+> 
+>> +    maxItems: 1
+>> +
+>> +  resets:
+>> +    description: Reset control for the DDR Performance Monitor
+> 
+> Drop description, obvious.
+
+Ok
+
+> 
+> 
+>> +    maxItems: 1
+>> +
+>> +  access-controllers:
+>> +    minItems: 1
+>> +    maxItems: 2
+>> +
+>> +  st,dram-type:
+>> +    description: |
+>> +      This property is used to specify the type of DRAM memory connected to the
+>> +      associated memory controller. It is required for the DDR Performance Monitor
+>> +      to correctly interpret the performance data.
+>> +      0 = LPDDR4,
+>> +      1 = LPDDR3,
+>> +      2 = DDR4,
+>> +      3 = DDR3
+>> +    $ref: /schemas/types.yaml#/definitions/uint32
+> 
+> No, use standard JEDEC memory bindings (memory controllers) if you need
+> to describe the memory, otherwise you duplicate that binding and
+> duplicate the memory information.
+
+Ok didn't know about it, I'll take a look
+
+Best regard,
+Clément
+
+>> +    enum: [0, 1, 2, 3]
+>> +
+>> +required:
+>> +  - compatible
+>> +  - reg
+>> +
+>> +allOf:
+>> +  - if:
+>> +      properties:
+>> +        compatible:
+>> +          contains:
+>> +            enum:
+>> +              - st,stm32mp131-ddr-pmu
+>> +              - st,stm32mp151-ddr-pmu
+>> +    then:
+>> +      required:
+>> +        - clocks
+>> +        - resets
+>> +
+>> +  - if:
+>> +      properties:
+>> +        compatible:
+>> +          contains:
+>> +            const: st,stm32mp251-ddr-pmu
+>> +    then:
+>> +      required:
+>> +        - access-controllers
+>> +        - st,dram-type
+>> +
+>> +additionalProperties: false
+> Best regards,
+> Krzysztof
 
 
