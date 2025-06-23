@@ -1,97 +1,138 @@
-Return-Path: <linux-kernel+bounces-699082-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-699085-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4CCB1AE4D8D
-	for <lists+linux-kernel@lfdr.de>; Mon, 23 Jun 2025 21:24:06 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 20F96AE4D95
+	for <lists+linux-kernel@lfdr.de>; Mon, 23 Jun 2025 21:26:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6C7823B796B
-	for <lists+linux-kernel@lfdr.de>; Mon, 23 Jun 2025 19:23:41 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E581B189D622
+	for <lists+linux-kernel@lfdr.de>; Mon, 23 Jun 2025 19:26:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A7BC6288511;
-	Mon, 23 Jun 2025 19:24:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 37A872D3A83;
+	Mon, 23 Jun 2025 19:26:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="mZ5n5ciB"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="WsWLBibN"
+Received: from mail-ej1-f47.google.com (mail-ej1-f47.google.com [209.85.218.47])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 13D941078F
-	for <linux-kernel@vger.kernel.org>; Mon, 23 Jun 2025 19:24:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 680AD276021
+	for <linux-kernel@vger.kernel.org>; Mon, 23 Jun 2025 19:26:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750706641; cv=none; b=oFlALMIF7MPGPMuc78XH55gnF4FBffWHUzYIAOKjJVSqd89lipZba2ppHoDJ3GTyFRFV/XiaGEBL5SJjs3k2zG133Ru5GvL08w2qFPmzRPxYHlNw2O4FTTzaFW1+XtRBYCoaW/ePSDUqV+zd6Sn5zKP24T3r3/+ZI8fGFF/+NU0=
+	t=1750706768; cv=none; b=Q5ykL+MixPYDUfmkC5zhNYdk/QmTXK3LraOETw+JHtVNLu6XRaLUhPkLEwx0ud6Zf3nInc6XrffUF3o1xruMHf890aGdH+AOwfoYMTKd3iKeMr3atpgLl5r1ZUOhNnMlptR0CZyc0aZnzYntT7u0MFgZ2kkqtF428y9BI/4kWV0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750706641; c=relaxed/simple;
-	bh=eOCCXYnRjmWMp3WxqNOWuw6DWz0xgyxB0iFIx1qsPhQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Nob4KBezyvS7daYv4TwOxO2bx7zv6biujBsHs9WnJSBV7DP+t1Vcm9dy5s2SKfGFjK9j7+BVD2K/WAdY+r47kH84Ar/WXDTkKLrJSxJEx0jbH6jL4LSGO6bJAV4cHU1dx5s/qUMlpAjK6ghyGaDMFbx6kyL4oFdDfJuKLdg3XnM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=mZ5n5ciB; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 88BACC4CEED;
-	Mon, 23 Jun 2025 19:24:00 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1750706640;
-	bh=eOCCXYnRjmWMp3WxqNOWuw6DWz0xgyxB0iFIx1qsPhQ=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=mZ5n5ciBk8TRQH84GlKTNREiepjtLGzN4iTe+nNwEP35llXOP3GOQz5U/9K2dlKzk
-	 +M7WcKB0gG5G0NYvGBlOY862Liz7Op6qCnGEfHMNH5iY8NXDumyB6iExdIwxCV/Fue
-	 8j55zrio10LHWRNtNm4hS7fsX6IrSSjoNA+g1Z16mJnekef7mPaPt/Nz52dYHfci+T
-	 JTh398Ln6a2BpM9YEUykDXaloqwoo2bYz0FgLv9koU8uFTpLHutr9wJUa9YQErEh0r
-	 U1z7D182gEBpZKI/Mfc7i3rioI3nUUDPqdRJM8i+xqLT5dr9+7qZO6l+J5Lu3ZvDe3
-	 2AIt8ZQsgryLQ==
-Date: Mon, 23 Jun 2025 09:23:59 -1000
-From: Tejun Heo <tj@kernel.org>
-To: Marco Crivellari <marco.crivellari@suse.com>
-Cc: Frederic Weisbecker <frederic@kernel.org>, linux-kernel@vger.kernel.org,
-	Lai Jiangshan <jiangshanlai@gmail.com>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
-	Michal Hocko <mhocko@suse.com>
-Subject: Re: [PATCH v5 0/3] Workqueue: add WQ_PERCPU, system_dfl_wq and
- system_percpu_wq
-Message-ID: <aFmpzwNlwP3LVs9O@slm.duckdns.org>
-References: <20250614133531.76742-1-marco.crivellari@suse.com>
- <aFBj9PXQiw-7O6yQ@slm.duckdns.org>
- <aFFozq_dzk8Qn7XN@localhost.localdomain>
- <aFGwmO3cNdR38lo8@slm.duckdns.org>
- <aFG5-qBWHy-LeLGS@slm.duckdns.org>
- <CAAofZF7xVETGVzrpHdMghcGDwNvw3jVumFWwWMqd+tq4Gm+m=Q@mail.gmail.com>
+	s=arc-20240116; t=1750706768; c=relaxed/simple;
+	bh=Tb0ZhRQbmgRVB0YC1b+cooD7cNfiLhIfQGi5uv343BA=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=RXWE/QMPC7V7PeGsGMpQUaZFl0XaCVxBVW7f4I6+dFelYWBP1IDuIG/FT05KYHeWLWt0ST8YFYymfDGgsGUVki0qVTsRfFMAkmXpVK0A5YUtfMSzdzjmA8eSmAkbDcIhH+8TZ0BASk0zNmeROINo5xPQC+TcpxaJEBjFGuJFatU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=WsWLBibN; arc=none smtp.client-ip=209.85.218.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
+Received: by mail-ej1-f47.google.com with SMTP id a640c23a62f3a-ade58ef47c0so927267966b.1
+        for <linux-kernel@vger.kernel.org>; Mon, 23 Jun 2025 12:26:05 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1750706764; x=1751311564; darn=vger.kernel.org;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=X7gDhYwtC9+5bZaRcP33/OCKJG2ETjRJUZEJZituxt8=;
+        b=WsWLBibNuZtBwP2T9rJejvQQgEziLI6Xr3J55XTrz9rsh27JJ0nuuBb4Yx3JbMqFPo
+         OnuIp6LmVdkSxrhXM7Y8Mhkr2kX2MEPtVKx4DyUBFg2owYdD8WhocSA6hC77Fgcpn5SS
+         hlaAKcV9WXOyInfJzZTXDbCyddAdMx6d1NKWKaMN291TRWHWEx8JWohosk4HL0qbOyF2
+         nfgSfDr8F832LQ6S8914YLkauqA3SWzJbEn2Cx31mdY1kSQeqFrAHeYLzZWpk6mvs+x5
+         CBo7t+nNHVChcbZbcz8LHRcVq/oB4SzZuSnv3hRb53bNw/6iAUq5RNuRS2kqBxdq2PiR
+         G8qA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1750706764; x=1751311564;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=X7gDhYwtC9+5bZaRcP33/OCKJG2ETjRJUZEJZituxt8=;
+        b=NhPkwgSzIykz+3extgKt6gZ/GcYbyoaXog3lwudcerLDJBb/b2qqk8fGzInOS+j1Pw
+         0yUsqRViwKIk23W7aklw2YDAsay0lJKP62fkcU9nHvfJeYATX8kTxWIg6BSj3aTSe0lq
+         ETwtDHz0qkoQhgLQ2W2uwaSqctxrMbIY8ztotSBWkv1Pn2uCNpCT8u+0lHZ3ZtKJBXff
+         cmJU9dyb+w00AYZizNdUXhU84duUQkqWSHVitKdeN4Elr7SCg/x6EkUqlRqFUkfM3t2R
+         sNnJGe6Pj9Yw5I3qhpwbWIolVRN0Lu+/qmWErtjAaL/czBms3On8JiApSBwc79Vzh2C+
+         Kp8w==
+X-Forwarded-Encrypted: i=1; AJvYcCXVISMonjbVGI3yknKud3bZ1p2/7uRn5/YRw1q2B9YGDTVAAgoK6Be+mOgRoA0C9lPV88ldH4mNsE0E24w=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzWhIYRKZZ2+XdOyritgZ+4EmxV71W57laqYmkzHziXbrOSIdrF
+	LBalkwNEU1pIZBvw89GjAqhnvhWzXopk7fJbdH2I4YUKC2iLCkI9z0j3nr65c6iv6J8=
+X-Gm-Gg: ASbGnctDfuEbYPjCb79nLTof8Mtj8F6kkh/nOC57C5EPB2tk2LRNdeBrM8xOeZ1CjfZ
+	iCjlct+r7tFH4GNt48M3DgbbL/gY6wfPfzkLeCZb8cjuN3XeN1/IjvK/fg5iOxLlndez2ej3wbF
+	1FdS9REnZIyMoN53fws4d7asaQNRzG0cVFr9DYu2m2PbHQAvxtqLytkmXev0t9WwAP3cWooxamw
+	TpTUkQPacqAu4ovAm/y9C+0u2/jx23zKZHSiIZvbhZGLhdYldkQuBpIp8Ow0QH+P3EdBMUNYa0N
+	8xQImdQC5XjEE1atxJgDKOT2awIaZSfuHzHURcYCUj5nFOfpPHkZ3h7zDCU=
+X-Google-Smtp-Source: AGHT+IHL5tn+SuoHTy4pO9qNuv0L0SBc60HN7s3l6SWa+UkX4X6L0cz5eqQfq8MvHdCXOlz5gSJBgA==
+X-Received: by 2002:a17:907:3da3:b0:ae0:a245:2ff4 with SMTP id a640c23a62f3a-ae0a6fe05efmr82786666b.0.1750706763674;
+        Mon, 23 Jun 2025 12:26:03 -0700 (PDT)
+Received: from localhost ([2001:4090:a244:83c4:9fe4:a128:a20c:8b84])
+        by smtp.gmail.com with UTF8SMTPSA id a640c23a62f3a-ae06b87b31esm564682366b.92.2025.06.23.12.26.02
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 23 Jun 2025 12:26:03 -0700 (PDT)
+From: Markus Schneider-Pargmann <msp@baylibre.com>
+Subject: [PATCH 0/3] clocksource/drivers/timer-ti-dm: Add clocksource and
+ clockevent support
+Date: Mon, 23 Jun 2025 21:24:27 +0200
+Message-Id: <20250623-topic-ti-dm-clkevt-v6-16-v1-0-b00086761ee1@baylibre.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAAofZF7xVETGVzrpHdMghcGDwNvw3jVumFWwWMqd+tq4Gm+m=Q@mail.gmail.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAOupWWgC/x3MTQqAIBBA4avErBtQQ6OuEi3Sphr6RUWC6O5Jy
+ 2/x3gOBPFOAtnjAU+LA55EhywLcMhwzIY/ZoITSwqgK43mxw8g47ui2lVLEZFAatJqMbhpbOyE
+ h55enie9/3fXv+wGJa38xagAAAA==
+X-Change-ID: 20250623-topic-ti-dm-clkevt-v6-16-b5e6599b7c01
+To: Daniel Lezcano <daniel.lezcano@linaro.org>, 
+ Thomas Gleixner <tglx@linutronix.de>
+Cc: Vishal Mahaveer <vishalm@ti.com>, Kevin Hilman <khilman@baylibre.com>, 
+ Dhruva Gole <d-gole@ti.com>, Sebin Francis <sebin.francis@ti.com>, 
+ Kendall Willis <k-willis@ti.com>, Akashdeep Kaur <a-kaur@ti.com>, 
+ linux-kernel@vger.kernel.org, Markus Schneider-Pargmann <msp@baylibre.com>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1104; i=msp@baylibre.com;
+ h=from:subject:message-id; bh=Tb0ZhRQbmgRVB0YC1b+cooD7cNfiLhIfQGi5uv343BA=;
+ b=owGbwMvMwCXWejAsc4KoVzDjabUkhozIVUbRn3O+bP7Tmx/6eddN4xrurw+PKK+d4b1+y9rg/
+ hjndA7+jlIWBjEuBlkxRZbOxNC0//I7jyUvWrYZZg4rE8gQBi5OAZiIfzMjw/Mesx+VS1f8PFI8
+ uSmTr1b2092PCgY7nJk9dZavfBkr9Z/hf1iF05FIo+CA4i0TTycpBvZ8fFOzVZlvxe6Xz/l15af
+ oMgAA
+X-Developer-Key: i=msp@baylibre.com; a=openpgp;
+ fpr=BADD88DB889FDC3E8A3D5FE612FA6A01E0A45B41
 
-Hello,
+Hi,
 
-On Fri, Jun 20, 2025 at 06:13:09PM +0200, Marco Crivellari wrote:
-> Just a quick question Tejun: when do you expect to receive the other patches?
-> Should I wait till the next rc1?
-> 
-> I just want to check the work again, but they are ready.
+this series adds support for both clocksource and clockevent to the TI
+Dual-Mode Timer driver. This can be used as a time source for low power
+modes in which the CPUs are temporarily not running.
 
-So, I can route the patches through the wq tree but I shouldn't do so unless
-subsystem maintainers want to do so for the specific subsystem. Waiting for
-rc1 is an option but not the only one. You can send out subsystem-specific
-patchdes to the subsystem maintainers and me cc'd with:
+The driver looks for two always on timers in the DT to be used for
+clocksource and clockevent. These are then handled as reserved and can
+not be used for normal use.
 
-- Explanation on what's going on and why.
+This series is based on v6.16-rc1.
 
-- What needs to happen if the subsystem wants to route the patch (pull the
-  wq branch with the prep changes).
+Best
+Markus
 
-- Offer the option to route the changes through a wq branch.
+Signed-off-by: Markus Schneider-Pargmann <msp@baylibre.com>
+---
+Markus Schneider-Pargmann (3):
+      clocksource/drivers/timer-ti-dm: Fix property name in comment
+      clocksource/drivers/timer-ti-dm: Add clocksource support
+      clocksource/drivers/timer-ti-dm: Add clockevent support
 
-There are no hard rules on how to do this but it's all about making
-logistics understandable and easy for the involved subsystems.
+ drivers/clocksource/timer-ti-dm-systimer.c |   2 +-
+ drivers/clocksource/timer-ti-dm.c          | 265 ++++++++++++++++++++++++++++-
+ 2 files changed, 265 insertions(+), 2 deletions(-)
+---
+base-commit: 19272b37aa4f83ca52bdf9c16d5d81bdd1354494
+change-id: 20250623-topic-ti-dm-clkevt-v6-16-b5e6599b7c01
 
-Thanks.
-
+Best regards,
 -- 
-tejun
+Markus Schneider-Pargmann <msp@baylibre.com>
+
 
