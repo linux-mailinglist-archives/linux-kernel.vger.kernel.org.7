@@ -1,147 +1,161 @@
-Return-Path: <linux-kernel+bounces-697769-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-697767-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 28648AE3868
-	for <lists+linux-kernel@lfdr.de>; Mon, 23 Jun 2025 10:34:02 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 473F5AE3865
+	for <lists+linux-kernel@lfdr.de>; Mon, 23 Jun 2025 10:32:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BBEF5170015
-	for <lists+linux-kernel@lfdr.de>; Mon, 23 Jun 2025 08:34:02 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1BB8A189056D
+	for <lists+linux-kernel@lfdr.de>; Mon, 23 Jun 2025 08:32:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CF2B322DA0A;
-	Mon, 23 Jun 2025 08:33:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8A8A122DA0A;
+	Mon, 23 Jun 2025 08:32:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="gk3WBZOY"
-Received: from out30-98.freemail.mail.aliyun.com (out30-98.freemail.mail.aliyun.com [115.124.30.98])
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="lkQF8OCx";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="CECKkIHZ"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 45BCA22D4C0
-	for <linux-kernel@vger.kernel.org>; Mon, 23 Jun 2025 08:33:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.98
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5B737211C;
+	Mon, 23 Jun 2025 08:32:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750667637; cv=none; b=rcbUF7tR69DoG5fh62Vw4OPm4KGdc6nuPos7PoV94f+N212U0s1kMzuGR8vqrhty4F819QyqUwye8d1zsbv9QDx9TE40aAlfvj/KvTVr/wa2Qa01Rw2gZUvi0uv4oPfMZAa23eN0z+/Dv8LFCw91jr/fpQBubmVUWR6NjEV7KpQ=
+	t=1750667548; cv=none; b=gwLwrdSCnjw3122DmPIwFQk0k6I59guePh+NlxdOUJhiXChRe8OZWvNZb72+EzvkgnBYH45/BygFiT+1Z/zBiH7V+/uu8QOv0hoQpZwRfEFFdqB9ab2y68OKpGAIC7XmLwI6h8XGT9LVZvr7UnFMedYKvSIhvwVVUcv2utNXuH8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750667637; c=relaxed/simple;
-	bh=byVhKFQO/v8h0OxpqIHQoHA6Sr47BLsD3RuLSxaEr1U=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=SImWAMBDkarWhC5UAq9HLPpkKY2W4zHiKbs6Ah5QtkkkL1zNvDpK0W1VPej1JeRjWczD9PATu2Qs6pp2ORhO1koVg0/bOaANRxjdeKE2GqWemLROeqbf0+EQD9bKR38dLwNXFBCgI5nUC/BAQXzAP+agsR62Gl+53mUnND98wBA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=gk3WBZOY; arc=none smtp.client-ip=115.124.30.98
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
-DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
-	d=linux.alibaba.com; s=default;
-	t=1750667626; h=From:To:Subject:Date:Message-ID:MIME-Version:Content-Type;
-	bh=ZX7qdhMjgfv3zc4V7Ulyef+NQH05BQWEZh5Kr9DfOio=;
-	b=gk3WBZOYcjmfyDn8MqG/Ug91jFTWWSQzYkt4Ns4PRgzidlp6j0CLG2wygukpbNSIfTnzdxbjHu1HpDFKYZaYVWvQpjaCjaCRtvtAuJti6+tBBrKlpArO5LgmA/6zz5aAzE5Os0+LM59o9iuIH6RVHxQMO4F8xUwx/LnPl8fdTgk=
-Received: from localhost(mailfrom:baolin.wang@linux.alibaba.com fp:SMTPD_---0WeVzfkj_1750667308 cluster:ay36)
-          by smtp.aliyun-inc.com;
-          Mon, 23 Jun 2025 16:28:29 +0800
-From: Baolin Wang <baolin.wang@linux.alibaba.com>
-To: akpm@linux-foundation.org,
-	hughd@google.com,
-	david@redhat.com
-Cc: ziy@nvidia.com,
-	lorenzo.stoakes@oracle.com,
-	Liam.Howlett@oracle.com,
-	npache@redhat.com,
-	ryan.roberts@arm.com,
-	dev.jain@arm.com,
-	baohua@kernel.org,
-	baolin.wang@linux.alibaba.com,
-	linux-mm@kvack.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH v3 2/2] mm: shmem: disallow hugepages if the system-wide shmem THP sysfs settings are disabled
-Date: Mon, 23 Jun 2025 16:28:09 +0800
-Message-ID: <52bc87c7dbd362d4d2b7780e66c1536fe99454a0.1750666536.git.baolin.wang@linux.alibaba.com>
-X-Mailer: git-send-email 2.43.5
-In-Reply-To: <cover.1750666536.git.baolin.wang@linux.alibaba.com>
-References: <cover.1750666536.git.baolin.wang@linux.alibaba.com>
+	s=arc-20240116; t=1750667548; c=relaxed/simple;
+	bh=NkTK2xU5GNOOTzt4+4ac7aMoAn+9hIaNTqCBu3oKpbI=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=OUN+8fJUFUMa+k4CuV7UjZOcsp9TQSjYOddRqooKnHDS4Z7qB9M0UyD6K8GkADV+SVe8jiJLygZugd13NJE+4+fRjBSQXr5dOKI2s5Ch4AoA1kCrecigQcVF8MgzZoqB61KTZY/Y3Ub/jRf5SdZLl7tS8FJ8DTIcYcqinvD9VYU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=lkQF8OCx; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=CECKkIHZ; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+From: John Ogness <john.ogness@linutronix.de>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1750667544;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=6TBn4MEBOK0ZmxdXFsUTHmooPn2yAfLFgSEgICXe3Wg=;
+	b=lkQF8OCxmCGCB6iWsrGliKc+7GLLsC5mdKAEbfMLPnyPcZgyYVvBdn14i2CUlL6qLCCM5Q
+	DfgA782HtzGnZt0nxPzgX27haotYmdzZiV3VEfTOSwtmgnwsNsMxx4SFlj2eHQWsThWOOF
+	P7CkXc2yIGGRCnXwG3LyjXSNM+gX6WIp2Aney+BaSdJVu/g3mr+0CoSBlZ9pUKYL1rl89M
+	MsRQltWBKCrAhF6hcm3P62Cj7kIS2r90Sqb9euXnhOXmFmqdY4C4v0sVfp4M0XtlAbkYQ6
+	6+ciq7Nk6N/Fg3hbmYZhlugJ9qCQgIzOeQwk4+uE3LyYTtt9x7xUQHLsYGMP0A==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1750667544;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=6TBn4MEBOK0ZmxdXFsUTHmooPn2yAfLFgSEgICXe3Wg=;
+	b=CECKkIHZGm4M0F5XqJ/bjKbES7SjUlsNHDOD4Vw5cw3bx6wC3oCXUZavDxLcNMs9twGyJq
+	AG4iZr9bntxaYMDA==
+To: yunhui cui <cuiyunhui@bytedance.com>, arnd@arndb.de,
+ andriy.shevchenko@linux.intel.com, benjamin.larsson@genexis.eu,
+ cuiyunhui@bytedance.com, gregkh@linuxfoundation.org,
+ heikki.krogerus@linux.intel.com, ilpo.jarvinen@linux.intel.com,
+ jirislaby@kernel.org, jkeeping@inmusicbrands.com,
+ linux-kernel@vger.kernel.org, linux-serial@vger.kernel.org,
+ markus.mayer@linaro.org, matt.porter@linaro.org, namcao@linutronix.de,
+ paulmck@kernel.org, pmladek@suse.com, schnelle@linux.ibm.com,
+ sunilvl@ventanamicro.com, tim.kryger@linaro.org
+Cc: stable@vger.kernel.org
+Subject: Re: [PATCH v9 2/4] serial: 8250_dw: fix PSLVERR on RX_TIMEOUT
+In-Reply-To: <CAEEQ3w=pUPEVOM4fG6wr06eOD_uO6_ZBzORaG1zhtPswD8HLNQ@mail.gmail.com>
+References: <20250610092135.28738-1-cuiyunhui@bytedance.com>
+ <20250610092135.28738-3-cuiyunhui@bytedance.com>
+ <CAEEQ3w=pUPEVOM4fG6wr06eOD_uO6_ZBzORaG1zhtPswD8HLNQ@mail.gmail.com>
+Date: Mon, 23 Jun 2025 10:38:23 +0206
+Message-ID: <84cyauq2nc.fsf@jogness.linutronix.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
 
-When invoking thp_vma_allowable_orders(), if the TVA_ENFORCE_SYSFS flag is not
-specified, we will ignore the THP sysfs settings. And the MADV_COLLAPSE is an
-example of such a case.
+Hi Yunhui,
 
-The MADV_COLLAPSE will ignore the system-wide shmem THP sysfs settings, which
-means that even though we have disabled the shmem THP configuration, MADV_COLLAPSE
-will still attempt to collapse into a shmem THP. This violates the rule we have
-agreed upon: never means never.
+On 2025-06-23, yunhui cui <cuiyunhui@bytedance.com> wrote:
+>> The DW UART may trigger the RX_TIMEOUT interrupt without data
+>> present and remain stuck in this state indefinitely. The
+>> dw8250_handle_irq() function detects this condition by checking
+>> if the UART_LSR_DR bit is not set when RX_TIMEOUT occurs. When
+>> detected, it performs a "dummy read" to recover the DW UART from
+>> this state.
+>>
+>> When the PSLVERR_RESP_EN parameter is set to 1, reading the UART_RX
+>> while the FIFO is enabled and UART_LSR_DR is not set will generate a
+>> PSLVERR error, which may lead to a system panic. There are two methods
+>> to prevent PSLVERR: one is to check if UART_LSR_DR is set before reading
+>> UART_RX when the FIFO is enabled, and the other is to read UART_RX when
+>> the FIFO is disabled.
+>>
+>> Given these two scenarios, the FIFO must be disabled before the
+>> "dummy read" operation and re-enabled afterward to maintain normal
+>> UART functionality.
+>>
+>> Fixes: 424d79183af0 ("serial: 8250_dw: Avoid "too much work" from bogus rx timeout interrupt")
+>> Signed-off-by: Yunhui Cui <cuiyunhui@bytedance.com>
+>> Cc: stable@vger.kernel.org
+>> ---
+>>  drivers/tty/serial/8250/8250_dw.c | 10 +++++++++-
+>>  1 file changed, 9 insertions(+), 1 deletion(-)
+>>
+>> diff --git a/drivers/tty/serial/8250/8250_dw.c b/drivers/tty/serial/8250/8250_dw.c
+>> index 1902f29444a1c..082b7fcf251db 100644
+>> --- a/drivers/tty/serial/8250/8250_dw.c
+>> +++ b/drivers/tty/serial/8250/8250_dw.c
+>> @@ -297,9 +297,17 @@ static int dw8250_handle_irq(struct uart_port *p)
+>>                 uart_port_lock_irqsave(p, &flags);
+>>                 status = serial_lsr_in(up);
+>>
+>> -               if (!(status & (UART_LSR_DR | UART_LSR_BI)))
+>> +               if (!(status & (UART_LSR_DR | UART_LSR_BI))) {
+>> +                       /* To avoid PSLVERR, disable the FIFO first. */
+>> +                       if (up->fcr & UART_FCR_ENABLE_FIFO)
+>> +                               serial_out(up, UART_FCR, 0);
+>> +
+>>                         serial_port_in(p, UART_RX);
+>>
+>> +                       if (up->fcr & UART_FCR_ENABLE_FIFO)
+>> +                               serial_out(up, UART_FCR, up->fcr);
+>> +               }
+>> +
+>>                 uart_port_unlock_irqrestore(p, flags);
+>>         }
+>>
+>> --
+>> 2.39.5
+>
+> Any comments on this patch?
 
-Another rule for madvise, referring to David's suggestion: “allowing for collapsing
-in a VM without VM_HUGEPAGE in the "madvise" mode would be fine".
+I do not know enough about the hardware. Is a dummy read really the only
+way to exit the RX_TIMEOUT state?
 
-To fix the MADV_COLLAPSE issue for shmem, then the current strategy should be:
+What if there are bytes in the TX-FIFO. Are they in danger of being
+cleared?
 
-For shmem, if none of always, madvise, within_size, and inherit have enabled
-PMD-sized THP, then MADV_COLLAPSE will be prohibited from collapsing PMD-sized THP.
+From [0] I see:
 
-For tmpfs, if the mount option is set with the 'huge=never' parameter, then
-MADV_COLLAPSE will be prohibited from collapsing PMD-sized THP.
+"Writing a "0" to bit 0 will disable the FIFOs, in essence turning the
+ UART into 8250 compatibility mode. In effect this also renders the rest
+ of the settings in this register to become useless. If you write a "0"
+ here it will also stop the FIFOs from sending or receiving data, so any
+ data that is sent through the serial data port may be scrambled after
+ this setting has been changed. It would be recommended to disable FIFOs
+ only if you are trying to reset the serial communication protocol and
+ clearing any working buffers you may have in your application
+ software. Some documentation suggests that setting this bit to "0" also
+ clears the FIFO buffers, but I would recommend explicit buffer clearing
+ instead using bits 1 and 2."
 
-Meanwhile, we should fix the khugepaged selftest for shmem MADV_COLLAPSE by enabling
-shmem THP.
+Have you performed tests where you fill the TX-FIFO and then
+disable/enable the FIFO to see if the TX-bytes survive?
 
-Acked-by: Zi Yan <ziy@nvidia.com>
-Signed-off-by: Baolin Wang <baolin.wang@linux.alibaba.com>
----
- mm/shmem.c                              | 6 +++---
- tools/testing/selftests/mm/khugepaged.c | 2 +-
- 2 files changed, 4 insertions(+), 4 deletions(-)
+John Ogness
 
-diff --git a/mm/shmem.c b/mm/shmem.c
-index 2b19965d27df..e3f51fab2b7d 100644
---- a/mm/shmem.c
-+++ b/mm/shmem.c
-@@ -637,7 +637,7 @@ static unsigned int shmem_huge_global_enabled(struct inode *inode, pgoff_t index
- 		return 0;
- 	if (shmem_huge == SHMEM_HUGE_DENY)
- 		return 0;
--	if (shmem_huge_force || shmem_huge == SHMEM_HUGE_FORCE)
-+	if (shmem_huge == SHMEM_HUGE_FORCE)
- 		return maybe_pmd_order;
- 
- 	/*
-@@ -672,7 +672,7 @@ static unsigned int shmem_huge_global_enabled(struct inode *inode, pgoff_t index
- 
- 		fallthrough;
- 	case SHMEM_HUGE_ADVISE:
--		if (vm_flags & VM_HUGEPAGE)
-+		if (shmem_huge_force || (vm_flags & VM_HUGEPAGE))
- 			return maybe_pmd_order;
- 		fallthrough;
- 	default:
-@@ -1806,7 +1806,7 @@ unsigned long shmem_allowable_huge_orders(struct inode *inode,
- 	/* Allow mTHP that will be fully within i_size. */
- 	mask |= shmem_get_orders_within_size(inode, within_size_orders, index, 0);
- 
--	if (vm_flags & VM_HUGEPAGE)
-+	if (shmem_huge_force || (vm_flags & VM_HUGEPAGE))
- 		mask |= READ_ONCE(huge_shmem_orders_madvise);
- 
- 	if (global_orders > 0)
-diff --git a/tools/testing/selftests/mm/khugepaged.c b/tools/testing/selftests/mm/khugepaged.c
-index 85bfff53dba6..9517ed99c382 100644
---- a/tools/testing/selftests/mm/khugepaged.c
-+++ b/tools/testing/selftests/mm/khugepaged.c
-@@ -502,7 +502,7 @@ static void __madvise_collapse(const char *msg, char *p, int nr_hpages,
- 	printf("%s...", msg);
- 
- 	settings.thp_enabled = THP_ALWAYS;
--	settings.shmem_enabled = SHMEM_NEVER;
-+	settings.shmem_enabled = SHMEM_ALWAYS;
- 	thp_push_settings(&settings);
- 
- 	/* Clear VM_NOHUGEPAGE */
--- 
-2.43.5
-
+[0] https://en.wikibooks.org/wiki/Serial_Programming/8250_UART_Programming
 
