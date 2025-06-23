@@ -1,197 +1,317 @@
-Return-Path: <linux-kernel+bounces-698651-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-698658-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0CDEBAE47C1
-	for <lists+linux-kernel@lfdr.de>; Mon, 23 Jun 2025 17:03:16 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id EA3F8AE47E9
+	for <lists+linux-kernel@lfdr.de>; Mon, 23 Jun 2025 17:08:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 789DD7AA728
-	for <lists+linux-kernel@lfdr.de>; Mon, 23 Jun 2025 15:01:52 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 72CB916DC05
+	for <lists+linux-kernel@lfdr.de>; Mon, 23 Jun 2025 15:05:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CF36826FA5E;
-	Mon, 23 Jun 2025 15:02:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4E84726FDA3;
+	Mon, 23 Jun 2025 15:05:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="f7EhFgg1"
-Received: from mail-ed1-f44.google.com (mail-ed1-f44.google.com [209.85.208.44])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b="bF9yI8JI"
+Received: from mx07-00178001.pphosted.com (mx07-00178001.pphosted.com [185.132.182.106])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 66E2A25E449;
-	Mon, 23 Jun 2025 15:02:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9B3C072624;
+	Mon, 23 Jun 2025 15:05:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.132.182.106
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750690979; cv=none; b=Xg5DpCByB5y+JBN+HbK4eOW5F9N20cF96/o6GjHqbA8s/mDtV9SUj5X4Ouk868TxG4jJ3aw5x4MDkn9/sN/fVETETfqYLS8wb88pfleM/XIGwFKGWf7Ms9cSlayffmNcU1B2CJMSyqSQjZ4ZLxO1gNtXhCRODi57oQLYTOVFars=
+	t=1750691125; cv=none; b=nekQ2cfKj/SamdhfofCRl5iJiiIm8FpyR8e4DYIh9eLOMeHw8itE04cWnrJggAxRhvAtIOmZhClf9P4lBsUcUpPC+BP6y+IepDFQccdLqNYzF6gpEqpYVYsj69QbUK0ELQwlTpjYv5KL7K7MmbN3Dk6983O6UCTPy+YcbUQhqY4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750690979; c=relaxed/simple;
-	bh=FOJL2OjNMuhW48vZHtKj3F+xZx3Pxs2POJzYR2rhh/c=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=QyK/bEKqHdaDkWtKpdPmbqx0073dAD0JB/a9axVNaRl7atkmcWOCFhFo7UVZUnLoVxaR4ca34NNbkzMULCGzuciezqC1nRVQ/qKl3mNRPM94wFm9wzHEajUNcu9byBkd5ixiJHq+FpY5V/hDWoPLYQeNuXetZjrupiJI0UhcGDM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=f7EhFgg1; arc=none smtp.client-ip=209.85.208.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f44.google.com with SMTP id 4fb4d7f45d1cf-601dfef6a8dso6868502a12.1;
-        Mon, 23 Jun 2025 08:02:57 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1750690976; x=1751295776; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=8DVcSJ/dvopLv561u5ZgnhDKEYiQSLuZjoUf/lGc7y8=;
-        b=f7EhFgg14Si7frLBhg8FxRKvhn0x9JAjNs0DgPu8kJzHOHGsfYnUfA7qYIno/SFs/5
-         rkWBzLw5dC0LwlAeHy9Ela12knJ2pKYQOVCNQlUr2LLVLFxFLWFWJR+Txr3EzAmf8stv
-         dv2PZLsIf6j3uOnzUUu159NuquZusc8bOTUXfxNqi4RN8i9Ey4EzqG1S1sy4YvnVTSK2
-         VjW3SxKpSh7Etgt4sG5b4uRW+O6p4plJUkX4B0EN+Eo+NwkEK7Ui8sWnh3OY82GxZjTN
-         Hodm4DrPb+VtSp0xgvFZGnP+UCFrzHyKA3FlW3eY2hKCH1ZiOTFWQzvI60fnJBeTwq9/
-         0LNw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1750690976; x=1751295776;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=8DVcSJ/dvopLv561u5ZgnhDKEYiQSLuZjoUf/lGc7y8=;
-        b=Y2oFzHLsaQIjrhSKccOOmvPxNAIjFWZtPIyN+b6FpLzkVtKnaHKWyg5l9ORnuJw9m8
-         QD/lAkZF+0szofMoi877MSZlcSVO24dVnzfNPmWM0xmw002gRn4qCCkHXHpwSqEbHj0x
-         L0EU4WG6HTjhJYEA16IWIVFIa5JBZzktCKzoPJaYWiC4m3Lmn0bUqY/USPZ/IeK0JlQo
-         RFMQhPjDawCSdDFhXG2Rg9PT1vgxtuzsfbkyHAvgCQ76TWFIbdnDeVFkz2eZfTShBfRd
-         LZ7cF5ChwAfzDDAyXYCJL0f7cV3cbpTLtLHDoMSExhb7DP3Iy8U2w71sAmA8uunvC8zP
-         pWew==
-X-Forwarded-Encrypted: i=1; AJvYcCUm3NVoX1C/xqx5nzIzinW1iK7vHAXccOqtEMxeltheS94io9HMxDhxqCHCLsZTDbWrRFJ1ZFvwq7vE@vger.kernel.org, AJvYcCVZ7mTerGvbA8TpomrWabCcYBvFHDhf3k2f5h4m62V/G0NEd4TLs8i94x5vDM64yqIvi9dAKwBYR4HGo3dG@vger.kernel.org
-X-Gm-Message-State: AOJu0YytY/ReBiJeGSCV8FxWiy4feZNra2z29+2Bl3SxuFI5x3AmxsSS
-	Y7RB5Dz9P4qE9a/XPVdtohZyy9a4P3dtfU/O4pwiNqtnrkaur9RjJQQm
-X-Gm-Gg: ASbGncsCt7mKRexSj3AnhMNo2865vjS+atEqdZEW8EIj2lvCo/HtFJwU0rhFJ0N2Nao
-	44axbuyc9rNmJl2UGRvpQdfg2kghTJuDDaqqHfwDEDqJZjSdyok7CxsFo91W/CSnyNS5OOoEeUc
-	pm0M2KV5V6DJulTLhnrRB5AzakGvipQBwPwSB2zca4a4+tj8B7jB6TVlrvCg+CGuqIG94l1EWXJ
-	OpUt9n6pUfXbXcBrUmrlVGkTTe+ZGvoxkDn0PdS86/jLhfC7qwkj3Lkizbt+OLfIgz85p0prvM+
-	gOvdYm6b3nYM5AGJy0C9TO64TETLaSXCkE6fC9xA4rT9SYbl+dEx0qq2PmxCd6ZrlVSK4pXF7Wz
-	dD/tHUbd5PhJqZ+Lixwjz+KM=
-X-Google-Smtp-Source: AGHT+IFSO4725zW0tfiRfFFvsoN+L2INX8CRqzWeVA5SH7DGUv0pCu2PupV+KgzNzAz1wlydHfE6zg==
-X-Received: by 2002:a17:907:1b1b:b0:ad8:a935:b8eb with SMTP id a640c23a62f3a-ae0579d1abemr1091515466b.3.1750690975318;
-        Mon, 23 Jun 2025 08:02:55 -0700 (PDT)
-Received: from playground.localdomain ([82.79.237.69])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ae054209ad2sm732870766b.148.2025.06.23.08.02.54
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 23 Jun 2025 08:02:54 -0700 (PDT)
-From: Laurentiu Mihalcea <laurentiumihalcea111@gmail.com>
-To: Shawn Guo <shawnguo@kernel.org>,
-	Sascha Hauer <s.hauer@pengutronix.de>,
-	Fabio Estevam <festevam@gmail.com>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>
-Cc: Pengutronix Kernel Team <kernel@pengutronix.de>,
-	imx@lists.linux.dev,
-	linux-arm-kernel@lists.infradead.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH] arm64: dts: imx: add dts for the imx8ulp evk9 board
-Date: Mon, 23 Jun 2025 11:01:46 -0400
-Message-Id: <20250623150146.1398044-1-laurentiumihalcea111@gmail.com>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1750691125; c=relaxed/simple;
+	bh=xGs+xuT9ZbXSNcZb6r49Mqj6bJ/rNc5SZFKZhnRHrMI=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=jGSyEk68e4JebI6fO8yx014JAKcmC900fRYR8h2/x1H3cm571/nPZL9n+ST0GPLGh6kw4TVGxQe7fBfUqhDCm+p2su7Ko3+sLkgOKG5cMRnKSUOXKoCx6G3tMEt3hFYr8OgQXKYOtANeeho7siSAMBkEKSZ93B9aEin0JqIyMLs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com; spf=pass smtp.mailfrom=foss.st.com; dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b=bF9yI8JI; arc=none smtp.client-ip=185.132.182.106
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=foss.st.com
+Received: from pps.filterd (m0369458.ppops.net [127.0.0.1])
+	by mx07-00178001.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 55NDdLVH024335;
+	Mon, 23 Jun 2025 17:05:06 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foss.st.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=selector1; bh=
+	6sv5OcOQ4mLQLuHevh2cUvXQ88huIlXGlWQaz3Py6wY=; b=bF9yI8JIFqs7ioUx
+	YDyxrekrSZ47ndzO65fgYVA9fiqdJhb4A1AjRQpK8A6JPvobiX40RBvpbQICsGZy
+	KBEKyV8Nutp2vooUtufi6oc0aFIm3JnPIyEC0r4FpzFHsn9wPHB3mdk4CC3i0ySp
+	dVG+isuNuslqinodqBJo57SAui7QgB1Bu7WUx+AAYYE7Ei9Zr3IYwwyivPnOgD0g
+	NLyaqsS2+nIOxbGUoSJWY3H5t9f/gQnx84a3CpWq1xyJoKFdEOdehH2E7z2ID5QJ
+	ZCF7Imh3wriuEBkharNBQkUpD7+qm/hJwoArih2kgBsZskd63sl/XG1gzuA/EUtb
+	fL7yXQ==
+Received: from beta.dmz-ap.st.com (beta.dmz-ap.st.com [138.198.100.35])
+	by mx07-00178001.pphosted.com (PPS) with ESMTPS id 47e6a6e021-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 23 Jun 2025 17:05:05 +0200 (MEST)
+Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
+	by beta.dmz-ap.st.com (STMicroelectronics) with ESMTP id 37F7440044;
+	Mon, 23 Jun 2025 17:03:38 +0200 (CEST)
+Received: from Webmail-eu.st.com (shfdag1node2.st.com [10.75.129.70])
+	by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id BAD61B52149;
+	Mon, 23 Jun 2025 17:02:26 +0200 (CEST)
+Received: from [10.252.18.29] (10.252.18.29) by SHFDAG1NODE2.st.com
+ (10.75.129.70) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Mon, 23 Jun
+ 2025 17:02:25 +0200
+Message-ID: <1ff31bd6-08e0-46da-a1b0-c60dbb1e3cb8@foss.st.com>
+Date: Mon, 23 Jun 2025 17:02:22 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 06/13] perf: stm32: introduce DDRPERFM driver
+To: Krzysztof Kozlowski <krzk@kernel.org>, Will Deacon <will@kernel.org>,
+        Mark
+ Rutland <mark.rutland@arm.com>, Rob Herring <robh@kernel.org>,
+        Krzysztof
+ Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>,
+        Maxime
+ Coquelin <mcoquelin.stm32@gmail.com>,
+        Alexandre Torgue
+	<alexandre.torgue@foss.st.com>,
+        Philipp Zabel <p.zabel@pengutronix.de>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Gatien Chevallier
+	<gatien.chevallier@foss.st.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Gabriel Fernandez
+	<gabriel.fernandez@foss.st.com>
+CC: <linux-arm-kernel@lists.infradead.org>, <linux-perf-users@vger.kernel.org>,
+        <devicetree@vger.kernel.org>,
+        <linux-stm32@st-md-mailman.stormreply.com>,
+        <linux-kernel@vger.kernel.org>, <linux-doc@vger.kernel.org>,
+        <linux-clk@vger.kernel.org>
+References: <20250623-ddrperfm-upstream-v1-0-7dffff168090@foss.st.com>
+ <20250623-ddrperfm-upstream-v1-6-7dffff168090@foss.st.com>
+ <9cb1575e-ae27-4a78-adb7-8a9e7072375e@kernel.org>
+Content-Language: en-US
+From: Clement LE GOFFIC <clement.legoffic@foss.st.com>
+In-Reply-To: <9cb1575e-ae27-4a78-adb7-8a9e7072375e@kernel.org>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
 Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: SHFCAS1NODE1.st.com (10.75.129.72) To SHFDAG1NODE2.st.com
+ (10.75.129.70)
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.7,FMLib:17.12.80.40
+ definitions=2025-06-23_04,2025-06-23_06,2025-03-28_01
 
-From: Laurentiu Mihalcea <laurentiu.mihalcea@nxp.com>
+On 6/23/25 11:45, Krzysztof Kozlowski wrote:
+> On 23/06/2025 11:27, Clément Le Goffic wrote:
+>> +	if (of_property_present(pmu->dev->of_node, "access-controllers")) {
+>> +		ret = stm32_firewall_get_firewall(pmu->dev->of_node, &firewall, 1);
+>> +		if (ret) {
+>> +			dev_err(pmu->dev, "Failed to get firewall\n");
+>> +			return ret;
+>> +		}
+>> +		ret = stm32_firewall_grant_access_by_id(&firewall, firewall.firewall_id);
+>> +		if (ret) {
+>> +			dev_err(pmu->dev, "Failed to grant access\n");
+>> +			return ret;
+>> +		}
+>> +	}
+>> +
+>> +	if (of_property_present(pmu->dev->of_node, "clocks")) {
+> 
+> No, don't open-code get clk optional.
 
-Add DTS for the i.MX8ULP EVK9 board.
+Ok
 
-Signed-off-by: Laurentiu Mihalcea <laurentiu.mihalcea@nxp.com>
----
- arch/arm64/boot/dts/freescale/Makefile        |  1 +
- .../boot/dts/freescale/imx8ulp-9x9-evk.dts    | 68 +++++++++++++++++++
- 2 files changed, 69 insertions(+)
- create mode 100644 arch/arm64/boot/dts/freescale/imx8ulp-9x9-evk.dts
+> 
+>> +		pmu->clk = devm_clk_get_prepared(pmu->dev, NULL);
+>> +		if (IS_ERR(pmu->clk)) {
+>> +			dev_err(pmu->dev, "Failed to get clock\n");
+>> +			return PTR_ERR(pmu->clk);
+>> +		}
+>> +	}
+>> +
+>> +	clk_enable(pmu->clk);
+>> +
+>> +	if (of_property_present(pdev->dev.of_node, "resets")) {
+>> +		rst = devm_reset_control_get(&pdev->dev, NULL);
+>> +		if (IS_ERR(rst)) {
+>> +			dev_err(&pdev->dev, "Failed to get reset\n");
+>> +			ret = PTR_ERR(rst);
+>> +			goto err_clk;
+>> +		}
+>> +		reset_control_assert(rst);
+>> +		reset_control_deassert(rst);
+>> +	}
+>> +
+>> +	pmu->poll_period = ms_to_ktime(POLL_MS);
+>> +	hrtimer_setup(&pmu->hrtimer, stm32_ddr_pmu_poll, CLOCK_MONOTONIC, HRTIMER_MODE_REL);
+>> +
+>> +	for (int i = 0; i < MP2_CNT_NB; i++)
+>> +		INIT_LIST_HEAD(&pmu->counters[i]);
+>> +
+>> +	pmu->selected_set = -1;
+>> +
+>> +	pmu->pmu = (struct pmu) {
+>> +		.task_ctx_nr = perf_invalid_context,
+>> +		.start = stm32_ddr_pmu_event_start,
+>> +		.stop = stm32_ddr_pmu_event_stop,
+>> +		.add = stm32_ddr_pmu_event_add,
+>> +		.del = stm32_ddr_pmu_event_del,
+>> +		.read = stm32_ddr_pmu_event_read,
+>> +		.event_init = stm32_ddr_pmu_event_init,
+>> +		.attr_groups = pmu->cfg->attribute,
+>> +		.module = THIS_MODULE,
+>> +	};
+>> +
+>> +	ret = perf_pmu_register(&pmu->pmu, DRIVER_NAME, -1);
+>> +	if (ret) {
+>> +		dev_err(&pdev->dev, "Couldn't register DDRPERFM driver as a PMU\n");
+>> +		goto err_clk;
+>> +	}
+>> +
+>> +	if (pmu->cfg->regs->dram_inf.reg) {
+>> +		ret = of_property_read_u32(pdev->dev.of_node, "st,dram-type", &pmu->dram_type);
+>> +		if (ret) {
+>> +			dev_err(&pdev->dev, "Missing device-tree property 'st,dram-type'\n");
+>> +			perf_pmu_unregister(&pmu->pmu);
+>> +
+>> +			return ret;
+>> +		}
+>> +
+>> +		writel_relaxed(pmu->dram_type, pmu->membase + pmu->cfg->regs->dram_inf.reg);
+>> +	}
+>> +
+>> +	clk_disable(pmu->clk);
+> 
+> Why do you keep clock prepared? This device does not know what sort of
+> clock it gets, so you end up with clock always active for example and
+> this being no-op.
 
-diff --git a/arch/arm64/boot/dts/freescale/Makefile b/arch/arm64/boot/dts/freescale/Makefile
-index 4da7501ece17..4b288b324d38 100644
---- a/arch/arm64/boot/dts/freescale/Makefile
-+++ b/arch/arm64/boot/dts/freescale/Makefile
-@@ -322,6 +322,7 @@ dtb-$(CONFIG_ARCH_MXC) += imx8qxp-mek-pcie-ep.dtb
- dtb-$(CONFIG_ARCH_MXC) += imx8qxp-tqma8xqp-mba8xx.dtb
- dtb-$(CONFIG_ARCH_MXC) += imx8qxp-tqma8xqps-mb-smarc-2.dtb
- dtb-$(CONFIG_ARCH_MXC) += imx8ulp-evk.dtb
-+dtb-$(CONFIG_ARCH_MXC) += imx8ulp-9x9-evk.dtb
- dtb-$(CONFIG_ARCH_MXC) += imx93-9x9-qsb.dtb
- 
- imx93-9x9-qsb-i3c-dtbs += imx93-9x9-qsb.dtb imx93-9x9-qsb-i3c.dtbo
-diff --git a/arch/arm64/boot/dts/freescale/imx8ulp-9x9-evk.dts b/arch/arm64/boot/dts/freescale/imx8ulp-9x9-evk.dts
-new file mode 100644
-index 000000000000..c610ec9aa30e
---- /dev/null
-+++ b/arch/arm64/boot/dts/freescale/imx8ulp-9x9-evk.dts
-@@ -0,0 +1,68 @@
-+// SPDX-License-Identifier: (GPL-2.0+ OR MIT)
-+/*
-+ * Copyright 2025 NXP
-+ */
-+
-+/dts-v1/;
-+
-+#include "imx8ulp-evk.dts"
-+
-+/ {
-+	model = "NXP i.MX8ULP EVK9";
-+};
-+
-+&btcpu {
-+	sound-dai = <&sai6>;
-+};
-+
-+&iomuxc1 {
-+	pinctrl_sai6: sai6grp {
-+		fsl,pins = <
-+			MX8ULP_PAD_PTE10__I2S6_TX_BCLK  0x43
-+			MX8ULP_PAD_PTE11__I2S6_TX_FS    0x43
-+			MX8ULP_PAD_PTE14__I2S6_TXD2     0x43
-+			MX8ULP_PAD_PTE6__I2S6_RXD0      0x43
-+		>;
-+	};
-+};
-+
-+&pinctrl_enet {
-+	fsl,pins = <
-+		MX8ULP_PAD_PTF9__ENET0_MDC		0x43
-+		MX8ULP_PAD_PTF8__ENET0_MDIO             0x43
-+		MX8ULP_PAD_PTF5__ENET0_RXER             0x43
-+		MX8ULP_PAD_PTF6__ENET0_CRS_DV           0x43
-+		MX8ULP_PAD_PTF1__ENET0_RXD0             0x43
-+		MX8ULP_PAD_PTF0__ENET0_RXD1             0x43
-+		MX8ULP_PAD_PTF4__ENET0_TXEN             0x43
-+		MX8ULP_PAD_PTF3__ENET0_TXD0             0x43
-+		MX8ULP_PAD_PTF2__ENET0_TXD1             0x43
-+		MX8ULP_PAD_PTF7__ENET0_REFCLK           0x43
-+		MX8ULP_PAD_PTF10__ENET0_1588_CLKIN      0x43
-+	>;
-+};
-+
-+&pinctrl_usb1 {
-+	fsl,pins = <
-+		MX8ULP_PAD_PTE16__USB0_ID       0x10003
-+		MX8ULP_PAD_PTE18__USB0_OC       0x10003
-+	>;
-+};
-+
-+&pinctrl_usb2 {
-+	fsl,pins = <
-+		MX8ULP_PAD_PTD23__USB1_ID       0x10003
-+		MX8ULP_PAD_PTE20__USB1_OC       0x10003
-+	>;
-+};
-+
-+&sai6 {
-+	pinctrl-names = "default", "sleep";
-+	pinctrl-0 = <&pinctrl_sai6>;
-+	pinctrl-1 = <&pinctrl_sai6>;
-+	assigned-clocks = <&cgc1 IMX8ULP_CLK_SPLL3_PFD1_DIV1>, <&cgc2 IMX8ULP_CLK_SAI6_SEL>;
-+	assigned-clock-parents = <0>, <&cgc1 IMX8ULP_CLK_SPLL3_PFD1_DIV1>;
-+	assigned-clock-rates = <12288000>;
-+	fsl,dataline = <1 0x01 0x04>;
-+	status = "okay";
-+};
--- 
-2.34.1
+Ok will disable_unprepare
+
+>> +
+>> +	return 0;
+>> +
+>> +err_clk:
+>> +	clk_disable_unprepare(pmu->clk);
+>> +
+>> +	return ret;
+>> +}
+>> +
+>> +static void stm32_ddr_pmu_device_remove(struct platform_device *pdev)
+>> +{
+>> +	struct stm32_ddr_pmu *stm32_ddr_pmu = platform_get_drvdata(pdev);
+>> +
+>> +	perf_pmu_unregister(&stm32_ddr_pmu->pmu);
+>> +}
+>> +
+>> +static int __maybe_unused stm32_ddr_pmu_device_resume(struct device *dev)
+>> +{
+>> +	struct stm32_ddr_pmu *pmu = dev_get_drvdata(dev);
+>> +
+>> +	clk_enable(pmu->clk);
+>> +	writel_relaxed(pmu->dram_type, pmu->membase + pmu->cfg->regs->dram_inf.reg);
+>> +	clk_disable(pmu->clk);
+>> +
+>> +	return 0;
+>> +}
+>> +
+>> +static const struct stm32_ddr_pmu_regspec stm32_ddr_pmu_regspec_mp1 = {
+>> +	.stop =		{ DDRPERFM_CTRL, CTRL_STOP },
+>> +	.start =	{ DDRPERFM_CTRL, CTRL_START },
+>> +	.enable =	{ DDRPERFM_CFG },
+>> +	.cfg =		{ DDRPERFM_CFG },
+>> +	.status =	{ DDRPERFM_STATUS, MP1_STATUS_BUSY },
+>> +	.clear_cnt =	{ DDRPERFM_CLR, MP1_CLR_CNT},
+>> +	.clear_time =	{ DDRPERFM_CLR, MP1_CLR_TIME},
+>> +	.counter_time =	{ DDRPERFM_TCNT },
+>> +	.counter_evt =	{
+>> +				{ DDRPERFM_EVCNT(0) },
+>> +				{ DDRPERFM_EVCNT(1) },
+>> +				{ DDRPERFM_EVCNT(2) },
+>> +				{ DDRPERFM_EVCNT(3) },
+>> +	},
+>> +};
+>> +
+>> +static const struct stm32_ddr_pmu_regspec stm32_ddr_pmu_regspec_mp2 = {
+>> +	.stop =		{ DDRPERFM_CTRL, CTRL_STOP },
+>> +	.start =	{ DDRPERFM_CTRL, CTRL_START },
+>> +	.status =	{ DDRPERFM_MP2_STATUS, MP2_STATUS_BUSY },
+>> +	.clear_cnt =	{ DDRPERFM_CLR, MP2_CLR_CNT},
+>> +	.clear_time =	{ DDRPERFM_CLR, MP2_CLR_TIME},
+>> +	.cfg0 =		{ DDRPERFM_MP2_CFG0 },
+>> +	.cfg1 =		{ DDRPERFM_MP2_CFG1 },
+>> +	.enable =	{ DDRPERFM_MP2_CFG5 },
+>> +	.dram_inf =	{ DDRPERFM_MP2_DRAMINF },
+>> +	.counter_time =	{ DDRPERFM_MP2_TCNT },
+>> +	.counter_evt =	{
+>> +				{ DDRPERFM_MP2_EVCNT(0) },
+>> +				{ DDRPERFM_MP2_EVCNT(1) },
+>> +				{ DDRPERFM_MP2_EVCNT(2) },
+>> +				{ DDRPERFM_MP2_EVCNT(3) },
+>> +				{ DDRPERFM_MP2_EVCNT(4) },
+>> +				{ DDRPERFM_MP2_EVCNT(5) },
+>> +				{ DDRPERFM_MP2_EVCNT(6) },
+>> +				{ DDRPERFM_MP2_EVCNT(7) },
+>> +	},
+>> +};
+>> +
+>> +static const struct stm32_ddr_pmu_cfg stm32_ddr_pmu_cfg_mp1 = {
+>> +	.regs = &stm32_ddr_pmu_regspec_mp1,
+>> +	.attribute = stm32_ddr_pmu_attr_groups_mp1,
+>> +	.counters_nb = MP1_CNT_NB,
+>> +	.evt_counters_nb = MP1_CNT_NB - 1, /* Time counter is not an event counter */
+>> +	.time_cnt_idx = MP1_TIME_CNT_IDX,
+>> +	.get_counter = stm32_ddr_pmu_get_event_counter_mp1,
+>> +};
+>> +
+>> +static const struct stm32_ddr_pmu_cfg stm32_ddr_pmu_cfg_mp2 = {
+>> +	.regs = &stm32_ddr_pmu_regspec_mp2,
+>> +	.attribute = stm32_ddr_pmu_attr_groups_mp2,
+>> +	.counters_nb = MP2_CNT_NB,
+>> +	.evt_counters_nb = MP2_CNT_NB - 1, /* Time counter is an event counter */
+>> +	.time_cnt_idx = MP2_TIME_CNT_IDX,
+>> +	.get_counter = stm32_ddr_pmu_get_event_counter_mp2,
+>> +};
+>> +
+>> +static const struct dev_pm_ops stm32_ddr_pmu_pm_ops = {
+>> +	SET_SYSTEM_SLEEP_PM_OPS(NULL, stm32_ddr_pmu_device_resume)
+>> +};
+>> +
+>> +static const struct of_device_id stm32_ddr_pmu_of_match[] = {
+>> +	{
+>> +		.compatible = "st,stm32mp131-ddr-pmu",
+>> +		.data = &stm32_ddr_pmu_cfg_mp1
+>> +	},
+>> +	{
+>> +		.compatible = "st,stm32mp151-ddr-pmu",
+>> +		.data = &stm32_ddr_pmu_cfg_mp1
+> 
+> So devices are compatible, thus express it correctly and drop this.
+> 
+>> +	},
+>> +	{
+>> +		.compatible = "st,stm32mp251-ddr-pmu",
+>> +		.data = &stm32_ddr_pmu_cfg_mp2
+>> +	},
+>> +	{ },
+>> +};
+>> +MODULE_DEVICE_TABLE(of, stm32_ddr_pmu_of_match);
+>> +
+>> +static struct platform_driver stm32_ddr_pmu_driver = {
+>> +	.driver = {
+>> +		.name = DRIVER_NAME,
+>> +		.pm = &stm32_ddr_pmu_pm_ops,
+>> +		.of_match_table = of_match_ptr(stm32_ddr_pmu_of_match),
+> 
+> Drop of_match_ptr, you have here warnings.
+> 
+> 
+> 
+> Best regards,
+> Krzysztof
 
 
