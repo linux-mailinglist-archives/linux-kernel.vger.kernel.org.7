@@ -1,95 +1,114 @@
-Return-Path: <linux-kernel+bounces-698780-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-698782-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5A491AE496E
-	for <lists+linux-kernel@lfdr.de>; Mon, 23 Jun 2025 17:58:45 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9C38FAE4970
+	for <lists+linux-kernel@lfdr.de>; Mon, 23 Jun 2025 17:59:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D3C2C1780A7
-	for <lists+linux-kernel@lfdr.de>; Mon, 23 Jun 2025 15:58:45 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 35E25172175
+	for <lists+linux-kernel@lfdr.de>; Mon, 23 Jun 2025 15:59:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5129C28DB49;
-	Mon, 23 Jun 2025 15:58:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0FE7128E61E;
+	Mon, 23 Jun 2025 15:59:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b="klqEhPVu"
-Received: from pandora.armlinux.org.uk (pandora.armlinux.org.uk [78.32.30.218])
+	dkim=pass (2048-bit key) header.d=acm.org header.i=@acm.org header.b="F2WccYM9"
+Received: from 004.mia.mailroute.net (004.mia.mailroute.net [199.89.3.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 53343253B67;
-	Mon, 23 Jun 2025 15:58:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=78.32.30.218
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BC7B5EAC6;
+	Mon, 23 Jun 2025 15:59:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=199.89.3.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750694316; cv=none; b=iJENpd7gwzQyFU2Cij5jwMXVgIf++D2AvDhXYsYun2xZ1z/qPiLMcGYAvsX68PSVjlwZd13dG6VYel36U+ffnyP9af4fLp0q4fNR9QkeOBIcha7BQA0mne5IwQUcD7KGNSmJxPopgEDFZjkpn/aeXVAqqd8vUDb3vGWA5S3BgUo=
+	t=1750694357; cv=none; b=IHBxYver+PKSJgRlb0po7GHV+6UNLQLWu/03Fg1ncF8AxYvLpEPWMLI4ajqsXx0wt2NmKEf+WxE6rRx9D1Qlck75rB9SU+bJNjAVCvyNgM4kEOyOg5/URl6cmxTBAai1Nxq3vClyYSNW5UJ5nwYvvUSUKpRGVq8LPzW4lRleFq0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750694316; c=relaxed/simple;
-	bh=+gnHtm2Xm/AQkHsS012Lke7TKUT19K3x/CmgqHYwJIQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=VeKtOv8lX0Napozg0B/RnzqXNCVqwyCtWZ/qF5rujhHFbKriYgXq9t6QzeBpkQgdELAu3F9gLz01Hy1qR8WVtvbyw00MDhe7a12b2s7bNjZRznABQBa/Rf8RpwR/M+968Eet11QloVYmP1i7PBHDdFDELbnUAK7pFAuTjD5pfiw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk; spf=none smtp.mailfrom=armlinux.org.uk; dkim=pass (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b=klqEhPVu; arc=none smtp.client-ip=78.32.30.218
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=armlinux.org.uk
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=armlinux.org.uk; s=pandora-2019; h=Sender:In-Reply-To:
-	Content-Transfer-Encoding:Content-Type:MIME-Version:References:Message-ID:
-	Subject:Cc:To:From:Date:Reply-To:Content-ID:Content-Description:Resent-Date:
-	Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-	List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=Z9yxtwVTuu9+nWIOqzKx4H8/wNr3LFIBV48QefUFSGM=; b=klqEhPVuEIx1LkXon5v/AVlYy9
-	97ku757xqnJ+e18+0H74sd4uk9Am5SghuEhZc/eQzJl1t7FYlt1IyB5GDrWDyJ5R7J5WFkK+V7czL
-	Y5HPPYgw2AGwSJxu9ZaWRYEVBDVOErJ78TNLSfNecOJjVZsWQ1RahZC7BxZvZ2srhBXZGil3Oz4Be
-	6FfSeb9ZuzXCJQIEJTiz245LzyADlfZ6KgtcEaOHr9b2rblXSQkGy4LUGtGttl0ZbCe+wgM/E2Hll
-	F7CgLB8HLO0T9RupS6/+x3RdQ4nAAAK8uZWD6D2w18d+7uvWHmff8dvQJYvycl4xSxr+o+lqSFvuR
-	/PA9ybSA==;
-Received: from shell.armlinux.org.uk ([fd8f:7570:feb6:1:5054:ff:fe00:4ec]:40854)
-	by pandora.armlinux.org.uk with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.96)
-	(envelope-from <linux@armlinux.org.uk>)
-	id 1uTjYx-0004Nk-0A;
-	Mon, 23 Jun 2025 16:58:27 +0100
-Received: from linux by shell.armlinux.org.uk with local (Exim 4.96)
-	(envelope-from <linux@shell.armlinux.org.uk>)
-	id 1uTjYv-0003Zp-2S;
-	Mon, 23 Jun 2025 16:58:25 +0100
-Date: Mon, 23 Jun 2025 16:58:25 +0100
-From: "Russell King (Oracle)" <linux@armlinux.org.uk>
-To: Kamil =?iso-8859-1?Q?Hor=E1k?= - 2N <kamilh@axis.com>
-Cc: florian.fainelli@broadcom.com, bcm-kernel-feedback-list@broadcom.com,
-	andrew@lunn.ch, hkallweit1@gmail.com, davem@davemloft.net,
-	edumazet@google.com, kuba@kernel.org, pabeni@redhat.com,
-	krzk+dt@kernel.org, conor+dt@kernel.org, netdev@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	robh@kernel.org
-Subject: Re: [PATCH net-next v2 2/3] net: phy: bcm5481x: Implement MII-Lite
- mode
-Message-ID: <aFl5obpjq8Zvw-gd@shell.armlinux.org.uk>
-References: <20250623151048.2391730-1-kamilh@axis.com>
- <20250623151048.2391730-2-kamilh@axis.com>
+	s=arc-20240116; t=1750694357; c=relaxed/simple;
+	bh=5SNzJG34BaNHLNojkHzQMSWdy62ROpkWI/bAj3LGaNs=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=cziOfDbnfOx4lgx9AiuRQbgE2cAo6NUXy7QBhoh2FGPeh8jH+3UZFhjAfbuwuf+3D7XXrkFDtLV4hPTuaJ8UEaI8iNcIqzbOmhNLsOt/GJJin2e5M1G3ey8Mx4nAW8Sj49laad68+eI7kNU0UiQPUad5f9r3UgIR7isr665zUIY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=acm.org; spf=pass smtp.mailfrom=acm.org; dkim=pass (2048-bit key) header.d=acm.org header.i=@acm.org header.b=F2WccYM9; arc=none smtp.client-ip=199.89.3.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=acm.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=acm.org
+Received: from localhost (localhost [127.0.0.1])
+	by 004.mia.mailroute.net (Postfix) with ESMTP id 4bQt7655b9zm0yQh;
+	Mon, 23 Jun 2025 15:59:14 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=acm.org; h=
+	content-transfer-encoding:content-type:content-type:in-reply-to
+	:from:from:content-language:references:subject:subject
+	:user-agent:mime-version:date:date:message-id:received:received;
+	 s=mr01; t=1750694353; x=1753286354; bh=cbVOYUXSPTzoe7vacJFqcLVK
+	J0SLk5Eu0pKoTubhiBY=; b=F2WccYM9LmTeP2k0Z0w2XDnB7cpL69LkjZMkl9wX
+	yGN8+V9fDrUXIjMIj9uLk/Wf3fxM61hm0vidTq+oV7dxnHlfPzeGSt7O4JkoZLgz
+	8X4X9OdVhJ+yB5dTLmbvq9h39SfSiNwGMoH+bQd6etHKsxoO2w0HEnwx9DyFocD/
+	pL0/qJN3jA598mmusewlpUFJORHeHj0PibGbMfSaKiCy5/FHRiw1yUHkJ1LEZJBI
+	KmbZqQKP0qaBs7xNfSR3o4mLqQWP7neYPNoosdYFOGk1rRIHfrSUpR9AcY6BYDFF
+	7nmzngznJxwSX/ppZmFHHdcw9vqMnMjK9ml/v5LsWVY9HQ==
+X-Virus-Scanned: by MailRoute
+Received: from 004.mia.mailroute.net ([127.0.0.1])
+ by localhost (004.mia [127.0.0.1]) (mroute_mailscanner, port 10029) with LMTP
+ id pphezMWeszEu; Mon, 23 Jun 2025 15:59:13 +0000 (UTC)
+Received: from [100.66.154.22] (unknown [104.135.204.82])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: bvanassche@acm.org)
+	by 004.mia.mailroute.net (Postfix) with ESMTPSA id 4bQt6z4zdPzm0yt2;
+	Mon, 23 Jun 2025 15:59:06 +0000 (UTC)
+Message-ID: <57435584-b04e-4de6-908c-018fe48ad0ac@acm.org>
+Date: Mon, 23 Jun 2025 08:59:05 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20250623151048.2391730-2-kamilh@axis.com>
-Sender: Russell King (Oracle) <linux@armlinux.org.uk>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2] scsi: scsi_devinfo: remove redundant 'found'
+To: mrigendrachaubey <mrigendra.chaubey@gmail.com>,
+ James.Bottomley@HansenPartnership.com, martin.petersen@oracle.com
+Cc: linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20250622055709.7893-1-mrigendra.chaubey@gmail.com>
+Content-Language: en-US
+From: Bart Van Assche <bvanassche@acm.org>
+In-Reply-To: <20250622055709.7893-1-mrigendra.chaubey@gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Mon, Jun 23, 2025 at 05:10:46PM +0200, Kamil Horák - 2N wrote:
-> +	priv->mii_lite_mode = of_property_read_bool(np, "mii-lite-mode");
+On 6/21/25 10:57 PM, mrigendrachaubey wrote:
+> Remove the unnecessary 'found' flag in scsi_devinfo_lookup_by_key().
+> The loop can return the matching entry directly when found, and fall
+> through to return ERR_PTR(-EINVAL) otherwise.
+> 
+> Signed-off-by: mrigendrachaubey <mrigendra.chaubey@gmail.com>
+> ---
+>   drivers/scsi/scsi_devinfo.c | 11 +++--------
+>   1 file changed, 3 insertions(+), 8 deletions(-)
+> 
+> diff --git a/drivers/scsi/scsi_devinfo.c b/drivers/scsi/scsi_devinfo.c
+> index a348df895dca..e364829b6079 100644
+> --- a/drivers/scsi/scsi_devinfo.c
+> +++ b/drivers/scsi/scsi_devinfo.c
+> @@ -269,17 +269,12 @@ static struct {
+>   static struct scsi_dev_info_list_table *scsi_devinfo_lookup_by_key(int key)
+>   {
+>   	struct scsi_dev_info_list_table *devinfo_table;
+> -	int found = 0;
+>   
+>   	list_for_each_entry(devinfo_table, &scsi_dev_info_list, node)
+> -		if (devinfo_table->key == key) {
+> -			found = 1;
+> -			break;
+> -		}
+> -	if (!found)
+> -		return ERR_PTR(-EINVAL);
+> +		if (devinfo_table->key == key)
+> +			return devinfo_table;
+>   
+> -	return devinfo_table;
+> +	return ERR_PTR(-EINVAL);
+>   }
 
-Do we really want a property for this, or is it really a separate
-interface mode? Should we introduce PHY_INTERFACE_MODE_MII_LITE ?
+Reviewed-by: Bart Van Assche <bvanassche@acm.org>
 
-> +	if (!phy_interface_is_rgmii(phydev) ||
-> +	    phydev->interface == PHY_INTERFACE_MODE_MII) {
-
-Same comment on this as in patch 1.
-
--- 
-RMK's Patch system: https://www.armlinux.org.uk/developer/patches/
-FTTP is here! 80Mbps down 10Mbps up. Decent connectivity at last!
 
