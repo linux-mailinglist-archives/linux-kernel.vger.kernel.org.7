@@ -1,71 +1,73 @@
-Return-Path: <linux-kernel+bounces-698235-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-698236-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1BF48AE3F16
-	for <lists+linux-kernel@lfdr.de>; Mon, 23 Jun 2025 14:06:30 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id D484FAE3F1E
+	for <lists+linux-kernel@lfdr.de>; Mon, 23 Jun 2025 14:07:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0867116D486
-	for <lists+linux-kernel@lfdr.de>; Mon, 23 Jun 2025 12:04:51 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 33F2F17798C
+	for <lists+linux-kernel@lfdr.de>; Mon, 23 Jun 2025 12:05:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7F5BF257AF9;
-	Mon, 23 Jun 2025 12:00:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2167225A2B4;
+	Mon, 23 Jun 2025 12:01:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="j1CsyIVi"
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="DDknmJwh"
 Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3E8D3256C83;
-	Mon, 23 Jun 2025 12:00:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E188D2459D5;
+	Mon, 23 Jun 2025 12:01:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750680058; cv=none; b=UeXxtICJSXe50FPbxefJ3XADVZRQWh4gnaONMA5RaYjcM/mmSAPIucxM+1cCoGpWjyENW1hz3YOhfuGjz/Z5Rn7v+N/1HgMP7qbu/StYoIoUWldHkFZKl3WxZeyO/HUrFS3rBFHFlT78Q/zw0wrn6UgD+dxnWpWdJbJBPmHujZg=
+	t=1750680068; cv=none; b=IhVma2vrdF3OmTWkGsR4OO2uHyE8AP+VYmeCOKLacU7Edi5dCEGws5KsH7syDMj9GOBbSCgmahTyA5jOLdslAKr2RE08L5Lt99kyuOtQhM1Up4xPNo3vEdlPHl55toKXf8e0sFaUWWBB+BK98YqTYbkdAerOHNWzJ8jhzkLT7ZA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750680058; c=relaxed/simple;
-	bh=ynNjCYWY9OpY9ODTpNTte5w8auGVt0pVguNPVv+omyg=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=XXqiMLa+8PxjGHLr70T2U9Oq8ljOI/g1h+tk+eWPEapapimNIRO1JCc0dpA2VdLwYLufA43SVoRkY8GLCayXs807s/QanJco0S/ntpiP7zg7SwYDKf6+mFLO2nQSn7mJzQ+q1PqDDnUKUsCeLSNTPRVzoRn+NQiY2TyEVHJe388=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=j1CsyIVi; arc=none smtp.client-ip=148.251.105.195
+	s=arc-20240116; t=1750680068; c=relaxed/simple;
+	bh=uyxGJ86xnKrIwF7mL8C2j+/YYGNG0EkD6tb5xhkwxoQ=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=nQQhw942oebFa49zj3339CFGVx2MEwkSB8J8X4sX2zoMMqD401DQoBGNib6WQ6PQoIhSDFcVddMWRa6W4BcuXDtCNFmmCAlJ/2jabcW9irq+bn7MhRgexeFXif9OM2z8gDNgARMrZ7pnbwMrDWKaYIpmhg8sjD8VTbfDnFdQH34=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=DDknmJwh; arc=none smtp.client-ip=148.251.105.195
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1750680055;
-	bh=ynNjCYWY9OpY9ODTpNTte5w8auGVt0pVguNPVv+omyg=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=j1CsyIVi8GkACgQWt4etOQ6+2ZM59CLWcjCwtsjqc6aYtESU+UTJYdZ7KCquEZ+tP
-	 LQ70CnzSstnsvQWWTCR19wiLb3HhiruYlKMrbwfopokkLIR7hw9PGzvv1AokKclvWZ
-	 piB9ubabBIeJewMJXHK2SkyzlLJlIG+FyzVXYiAwPYtxkjM11wlC10F9dLt9sfYx7X
-	 N6kOqybP+V7OwvppH88qsLwLlz/+zm6hvWC8T8jJZ0YJq6YI78FUj51Qa8y8SrG3YY
-	 c5oLkEulVi0Us1UX25x9J7G9xSoL+y6FLCzoSrVUQqPLCxmGzIxfUHgTLGu6Xs1ina
-	 5koqsw5zldT0A==
+	s=mail; t=1750680065;
+	bh=uyxGJ86xnKrIwF7mL8C2j+/YYGNG0EkD6tb5xhkwxoQ=;
+	h=From:To:Cc:Subject:Date:From;
+	b=DDknmJwhqFXhqysH7Akq9OflP9CRiXHFN6wZrgjG7h+RGO/ZMncB+dzJQi/+cLLCD
+	 3mPyEl7anqpRGqnVJCy4Cu7yshGGt9btPE3lgZ/nBUzYxol6DseoFli5FxBEbQXE2K
+	 mCduWnubROoSHnA3aebwNy/HCJIKBLrRP34fNN+uRXfuPBlRbhzifsH6onxqv4vvP2
+	 UMb/EVBSmOyPPCzvXgTB+QP9ViJnbh2KvKhVxOk1MqUW6/4ZZw9xbjSDnCpapVHhiV
+	 h6w87+pFekxKXWwnG9b/TD9C01ZvrgahEQsYFTET5Q6rkH8C7ir4LNYoPUqoxk+vQv
+	 +4NB+L/BiD/WA==
 Received: from IcarusMOD.eternityproject.eu (2-237-20-237.ip236.fastwebnet.it [2.237.20.237])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
 	(No client certificate requested)
 	(Authenticated sender: kholk11)
-	by bali.collaboradmins.com (Postfix) with ESMTPSA id 16F1F17E156E;
-	Mon, 23 Jun 2025 14:00:55 +0200 (CEST)
+	by bali.collaboradmins.com (Postfix) with ESMTPSA id 9B4BD17E090E;
+	Mon, 23 Jun 2025 14:01:04 +0200 (CEST)
 From: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
-To: sboyd@kernel.org
-Cc: robh@kernel.org,
+To: jianjun.wang@mediatek.com
+Cc: ryder.lee@mediatek.com,
+	bhelgaas@google.com,
+	lpieralisi@kernel.org,
+	kwilczynski@kernel.org,
+	manivannan.sadhasivam@linaro.org,
+	robh@kernel.org,
 	krzk+dt@kernel.org,
 	conor+dt@kernel.org,
 	matthias.bgg@gmail.com,
 	angelogioacchino.delregno@collabora.com,
-	hsin-hsiung.wang@mediatek.com,
-	linux-kernel@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
+	linux-pci@vger.kernel.org,
 	linux-mediatek@lists.infradead.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
 	kernel@collabora.com
-Subject: [PATCH v1 5/5] spmi: mtk-pmif: Add support for MT8196 SPMI Controller
-Date: Mon, 23 Jun 2025 14:00:47 +0200
-Message-ID: <20250623120047.108961-6-angelogioacchino.delregno@collabora.com>
+Subject: [PATCH v1 0/3] mediatek-gen3: Add support for MT8196/MT6991
+Date: Mon, 23 Jun 2025 14:00:55 +0200
+Message-ID: <20250623120058.109036-1-angelogioacchino.delregno@collabora.com>
 X-Mailer: git-send-email 2.49.0
-In-Reply-To: <20250623120047.108961-1-angelogioacchino.delregno@collabora.com>
-References: <20250623120047.108961-1-angelogioacchino.delregno@collabora.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -74,43 +76,28 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Add support for the SPMI controller found in the MT8196 SoC:
-this supports SPMI 2.0 and features two SPMI buses.
+This series adds (at least partial) support for the MediaTek MT8196
+Chromebook SoC and for the MT6991 Dimensity 9400 Smartphone SoC's
+PCI-Express controller.
 
-Signed-off-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
----
- drivers/spmi/spmi-mtk-pmif.c | 11 +++++++++++
- 1 file changed, 11 insertions(+)
+Some strange PEXTP settings were omitted, as the intention is to find
+a way to set those bits *outside* of the PCI-Express driver itself as
+the downstream implementation is using ugly syscons to make the PCIe
+controller driver to change bits inside of a clock controller.
 
-diff --git a/drivers/spmi/spmi-mtk-pmif.c b/drivers/spmi/spmi-mtk-pmif.c
-index ad7b0cc9cdaa..719753651234 100644
---- a/drivers/spmi/spmi-mtk-pmif.c
-+++ b/drivers/spmi/spmi-mtk-pmif.c
-@@ -636,6 +636,14 @@ static const struct pmif_data mt8195_pmif_arb = {
- 	.soc_chan = 2,
- };
- 
-+static const struct pmif_data mt8196_pmif_arb = {
-+	.regs = mt8195_regs,
-+	.spmimst_regs = mt8195_spmi_regs,
-+	.soc_chan = 2,
-+	.spmi_ver = 2,
-+	.num_spmi_buses = 2,
-+};
-+
- static int mtk_spmi_irq_init(struct device_node *node,
- 			     const struct pmif_data *pdata,
- 			     struct pmif_bus *pbus)
-@@ -834,6 +842,9 @@ static const struct of_device_id mtk_spmi_match_table[] = {
- 	}, {
- 		.compatible = "mediatek,mt8195-spmi",
- 		.data = &mt8195_pmif_arb,
-+	}, {
-+		.compatible = "mediatek,mt8196-spmi",
-+		.data = &mt8196_pmif_arb,
- 	}, {
- 		/* sentinel */
- 	},
+In the meanwhile, this is a set of clean changes that are required for
+the controller inside those SoCs in *any* case; further development
+will occur, with high hopes to find a solution outside of this driver.
+
+AngeloGioacchino Del Regno (3):
+  PCI: mediatek-gen3: Implement sys clock ready time setting
+  dt-bindings: PCI: mediatek-gen3: Add support for MT6991/MT8196
+  PCI: mediatek-gen3: Add support for MediaTek MT8196 SoC
+
+ .../bindings/pci/mediatek-pcie-gen3.yaml      | 35 +++++++++++++++++++
+ drivers/pci/controller/pcie-mediatek-gen3.c   | 24 +++++++++++++
+ 2 files changed, 59 insertions(+)
+
 -- 
 2.49.0
 
