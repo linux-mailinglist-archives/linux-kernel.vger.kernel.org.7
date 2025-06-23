@@ -1,190 +1,173 @@
-Return-Path: <linux-kernel+bounces-698384-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-698390-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 625BEAE4138
-	for <lists+linux-kernel@lfdr.de>; Mon, 23 Jun 2025 14:54:42 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 51C59AE4142
+	for <lists+linux-kernel@lfdr.de>; Mon, 23 Jun 2025 14:57:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 89984188349C
-	for <lists+linux-kernel@lfdr.de>; Mon, 23 Jun 2025 12:53:54 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id EBE3E1883CDF
+	for <lists+linux-kernel@lfdr.de>; Mon, 23 Jun 2025 12:57:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5CB0524DCFC;
-	Mon, 23 Jun 2025 12:53:18 +0000 (UTC)
-Received: from relay8-d.mail.gandi.net (relay8-d.mail.gandi.net [217.70.183.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 97458246BAC;
+	Mon, 23 Jun 2025 12:56:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=rjwysocki.net header.i=@rjwysocki.net header.b="WpukxuGX"
+Received: from cloudserver094114.home.pl (cloudserver094114.home.pl [79.96.170.134])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3A49C23ED56;
-	Mon, 23 Jun 2025 12:53:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 41CA5248864;
+	Mon, 23 Jun 2025 12:56:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=79.96.170.134
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750683197; cv=none; b=luEwPvDd8bjKM5/U36H+xqJqEUsic7K7M/FvXIJ3+5fpDGIQDxSHqX3VzEsOLYj49R3FV+YeOHgLpwin1vgYFl10OTgjft8DnzA1ErYDI63YzWMbgb3QWARFS4IqiZEDr1N1S9nmTmIBnoQmGh5OkB6gdPyLH7CUzghIFu9IvxM=
+	t=1750683362; cv=none; b=DYWfLc0Rt8z9NpNeOtc17ylad5J1qLH056MBPIbSs3ELzCj9oHPEDhb0q6GURc8+il/T4VNK+jpkbivhS21ldevTzhfOnw91mEa+pXITS59hNwkUDKg5dZBIOjIL+p6u474I2Ls8ihzdrDSiYr87MpGKpPTXsqylZVE0j1ETg3o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750683197; c=relaxed/simple;
-	bh=8se5YPln/DXgqu+xjzAPHvxG2uWSb27S0x9TuNNRnhA=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=VoqjTjAh7U5uCTMeTYPoZQs70VhJqnO5MzBODQJFkdE8cYLMo979evBd7HziUY9Iow1gxfs6d7jLIyac2qccOk0Bae6qBYajgF8kLAPjUdn0uq6BtfK4cjCmww9mRAe5irbn9NbLI9mKl66b2cgfcoJFbQJgkfkdqiLTYml1TF4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ghiti.fr; spf=pass smtp.mailfrom=ghiti.fr; arc=none smtp.client-ip=217.70.183.201
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ghiti.fr
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ghiti.fr
-Received: by mail.gandi.net (Postfix) with ESMTPSA id E3B8E44418;
-	Mon, 23 Jun 2025 12:53:06 +0000 (UTC)
-Message-ID: <eb8f5a3b-edee-4525-be69-7a4ad55168a2@ghiti.fr>
-Date: Mon, 23 Jun 2025 14:53:06 +0200
+	s=arc-20240116; t=1750683362; c=relaxed/simple;
+	bh=Ax8aQ2NjFoOjDcQXfzwTWZgwIji8dQElW+Qucx0Pg5I=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=gDuun/KQ1yOFwuKsg+RhtWYCMOsgp0/mOYO/gZCRirklprgWU/WfRCTEYoyXJSgUZ8Occ32ChLhSSgKOaoDso54fTm1szNCfWbFs0XG4EoDtToeOAvE5c4kuiSeYJFs0fSn311WZy++HY2XIvHCrOqeuA789k4ApadWG3kAZa8s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rjwysocki.net; spf=pass smtp.mailfrom=rjwysocki.net; dkim=pass (2048-bit key) header.d=rjwysocki.net header.i=@rjwysocki.net header.b=WpukxuGX; arc=none smtp.client-ip=79.96.170.134
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rjwysocki.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rjwysocki.net
+Received: from kreacher.localnet (unknown [5.63.189.50])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by cloudserver094114.home.pl (Postfix) with ESMTPSA id 50E1F66E274;
+	Mon, 23 Jun 2025 14:55:51 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=rjwysocki.net;
+	s=dkim; t=1750683351;
+	bh=Ax8aQ2NjFoOjDcQXfzwTWZgwIji8dQElW+Qucx0Pg5I=;
+	h=From:Subject:Date;
+	b=WpukxuGXiNn5ikO43ypmn5Dhg878AUNNHgFo4SFYN4kRQqkrlCWXpNHux9S48aLua
+	 zIGa2ZtASJBEEA3BMQWFqHtaVNKJ40ugq5P/umjitwbVZrB2cTaLtFtMIKNreWfWxE
+	 uOemzog4KCyc1Im5omVlU7cm8z2vpTrKnQdeVkimL90jZ0DvdXiCiATDYhgtR6KcV9
+	 oucC4smrB0bWkTD4n5PLqXatf6Nesnz8/HkG2yWxbXkLWGfK7cGH7uykOB4e/N0i4U
+	 zmMSK8tnu7gc77YwpHhgXwNkaA22ZXfMHyfs5954zeLR43v24/3mE1dImKNTGCWbOw
+	 N/ErhEwTxyyVQ==
+From: "Rafael J. Wysocki" <rjw@rjwysocki.net>
+To: Linux PM <linux-pm@vger.kernel.org>
+Cc: LKML <linux-kernel@vger.kernel.org>,
+ Mario Limonciello <mario.limonciello@amd.com>,
+ Chris Bainbridge <chris.bainbridge@gmail.com>,
+ Ulf Hansson <ulf.hansson@linaro.org>, Saravana Kannan <saravanak@google.com>,
+ Sudeep Holla <sudeep.holla@arm.com>
+Subject:
+ [RFT][PATCH v4 1/2] PM: sleep: Make async resume handle consumers like
+ children
+Date: Mon, 23 Jun 2025 14:54:39 +0200
+Message-ID: <3378088.aeNJFYEL58@rjwysocki.net>
+In-Reply-To: <5011988.GXAFRqVoOG@rjwysocki.net>
+References: <5011988.GXAFRqVoOG@rjwysocki.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v1 1/7] riscv: helper to parse hart index
-To: Vladimir Kondratiev <vladimir.kondratiev@mobileye.com>,
- Thomas Gleixner <tglx@linutronix.de>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Paul Walmsley <paul.walmsley@sifive.com>,
- Palmer Dabbelt <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>,
- Anup Patel <anup@brainfault.org>, Chen Wang <unicorn_wang@outlook.com>,
- Inochi Amaoto <inochiama@gmail.com>, Sunil V L <sunilvl@ventanamicro.com>,
- "Rafael J . Wysocki" <rafael.j.wysocki@intel.com>,
- Ryo Takakura <takakura@valinux.co.jp>
-Cc: linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
- linux-riscv@lists.infradead.org, sophgo@lists.linux.dev
-References: <20250609134749.1453835-1-vladimir.kondratiev@mobileye.com>
- <20250609134749.1453835-2-vladimir.kondratiev@mobileye.com>
-Content-Language: en-US
-From: Alexandre Ghiti <alex@ghiti.fr>
-In-Reply-To: <20250609134749.1453835-2-vladimir.kondratiev@mobileye.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-GND-State: clean
-X-GND-Score: -100
-X-GND-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtddvgddujedtjecutefuodetggdotefrodftvfcurfhrohhfihhlvgemucfitefpfffkpdcuggftfghnshhusghstghrihgsvgenuceurghilhhouhhtmecufedtudenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujfgurhepkfffgggfuffvvehfhfgjtgfgsehtkeertddtvdejnecuhfhrohhmpeetlhgvgigrnhgurhgvucfihhhithhiuceorghlvgigsehghhhithhirdhfrheqnecuggftrfgrthhtvghrnhepieffvdeiveeuhfegvddvuefhveejhfffudffhfdufeeuudegtdfguddthfetledvnecuffhomhgrihhnpehgihhthhhusgdrtghomhenucfkphepvddttddumeekiedumeeffeekvdemvghfledtmedvieeijeemvgejvgdtmeehudeltdemfhgvtdehnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehinhgvthepvddttddumeekiedumeeffeekvdemvghfledtmedvieeijeemvgejvgdtmeehudeltdemfhgvtdehpdhhvghloheplgfkrfggieemvddttddumeekiedumeeffeekvdemvghfledtmedvieeijeemvgejvgdtmeehudeltdemfhgvtdehngdpmhgrihhlfhhrohhmpegrlhgvgiesghhhihhtihdrfhhrpdhnsggprhgtphhtthhopedukedprhgtphhtthhopehvlhgrughimhhirhdrkhhonhgurhgrthhivghvsehmohgsihhlvgihvgdrtghomhdprhgtphhtthhopehtghhlgieslhhinhhuthhrohhnihigrdguvgdpr
- hgtphhtthhopehrohgshheskhgvrhhnvghlrdhorhhgpdhrtghpthhtohepkhhriihkodgutheskhgvrhhnvghlrdhorhhgpdhrtghpthhtoheptghonhhorhdoughtsehkvghrnhgvlhdrohhrghdprhgtphhtthhopehprghulhdrfigrlhhmshhlvgihsehsihhfihhvvgdrtghomhdprhgtphhtthhopehprghlmhgvrhesuggrsggsvghlthdrtghomhdprhgtphhtthhopegrohhusegvvggtshdrsggvrhhkvghlvgihrdgvughu
-X-GND-Sasl: alex@ghiti.fr
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="UTF-8"
+X-CLIENT-IP: 5.63.189.50
+X-CLIENT-HOSTNAME: 5.63.189.50
+X-VADE-SPAMSTATE: clean
+X-VADE-SPAMCAUSE: dmFkZTGbsflNZg5WlL1okd/rknFH3L9TOvw1i1+BFVQgEjWPACFv7scvKhz9Lxr8KFtFY1/6oLlmNLGKeOm6MiwNWEiDb2QqV30VfAg39R9JTe6j4le2ApJYOuj7glc2VGRiXJjVqORc7lqRIRGBoDDSMffnRX6Jo05mAodd6PSkis+iuUYcebzak/RQKaE9dZC9q5Joz9Z5qFETF/XfZ/sg1H3WtrMe+sDRi0dujNVP0mv8kRxi9pi5Avrg5/T2dhxFe8BzwTug8heoDwNIJ012V85iKjqq7snsgqEfidxfEif7MuFGW3WvnrhmGnKSJsgAZS38L9g4Roltro/4goJ5Gd/bGH78NhaRwPJWefSGY+nyuByiXeUipsOU0LIWlEBPGwJ1Q/bPcBeGNtQkMahjoYHML4Vod74d1dq1+CJhGyR3EyafplNEiHo5JDYtRpbubD7yHfC3EmWLafo49sB5BUQ0jJM86Kl+Ttl9h7zDC7hLm6BEh1k10tSS4SAj30t9F3VaHndMhI21dFesyJ5Y+XIgpFSDtRkVPMUyxnyEUi/BL/B9nikrBnAeEFNe9dk5MaHpZWjFWuNjVOhOAb9f+ksFADTLyOm8xXoZ0jxtedWv4Pv9XE1W1NBDgT0O4jIbdWJkrW1YP6r7jFg7UIxm2uwTv2pN9NpvEqfW1iuDXz4iOA
+X-DCC--Metrics: v370.home.net.pl 1024; Body=7 Fuz1=7 Fuz2=7
 
-Hi Vladimir,
+From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
 
-On 6/9/25 15:47, Vladimir Kondratiev wrote:
-> RISC-V APLIC specification defines "hart index" in [1]
-> And similar definitions found for ACLINT in [2]
->
-> Quote from [1]:
->
-> Within a given interrupt domain, each of the domain’s harts has a unique
-> index number in the range 0 to 2^14 − 1 (= 16,383). The index number a
-> domain associates with a hart may or may not have any relationship to the
-> unique hart identifier (“hart ID”) that the RISC-V Privileged
-> Architecture assigns to the hart. Two different interrupt domains may
-> employ entirely different index numbers for the same set of harts.
->
-> Further, [1] says in "4.5 Memory-mapped control region for an
-> interrupt domain":
->
-> The array of IDC structures may include some for potential hart index
-> numbers that are not actual hart index numbers in the domain.
-> For example, the first IDC structure is always for hart index 0, but 0 is
-> not necessarily a valid index number for any hart in the domain.
->
-> Support arbitrary hart indices specified in an optional property
-> "riscv,hart-indexes" which is specified as an array of u32 elements, one
-> per interrupt target, listing hart indexes in the same order as in
-> "interrupts-extended". If this property is not specified, fallback to use
-> logical hart indices within the domain.
->
-> If property not exist, fall back to logical hart indexes
+Avoid starting "async" resume processing upfront for devices that have
+suppliers and start "async" resume processing for a device's consumers
+right after resuming the device itself.
 
+Suggested-by: Saravana Kannan <saravanak@google.com>
+Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+---
 
-does not
+v3 -> v4: Rebase and update the changelog.
 
+---
+ drivers/base/power/main.c |   36 ++++++++++++++++++++++++++++--------
+ 1 file changed, 28 insertions(+), 8 deletions(-)
 
->
-> Link: https://github.com/riscv/riscv-aia [1]
-> Link: https://github.com/riscvarchive/riscv-aclint [2]
-> Signed-off-by: Vladimir Kondratiev <vladimir.kondratiev@mobileye.com>
-> ---
->   arch/riscv/include/asm/irq.h |  2 ++
->   arch/riscv/kernel/irq.c      | 34 ++++++++++++++++++++++++++++++++++
->   2 files changed, 36 insertions(+)
->
-> diff --git a/arch/riscv/include/asm/irq.h b/arch/riscv/include/asm/irq.h
-> index 7b038f3b7cb0..59c975f750c9 100644
-> --- a/arch/riscv/include/asm/irq.h
-> +++ b/arch/riscv/include/asm/irq.h
-> @@ -22,6 +22,8 @@ void arch_trigger_cpumask_backtrace(const cpumask_t *mask, int exclude_cpu);
->   void riscv_set_intc_hwnode_fn(struct fwnode_handle *(*fn)(void));
->   
->   struct fwnode_handle *riscv_get_intc_hwnode(void);
-> +int riscv_get_hart_index(struct fwnode_handle *fwnode, u32 logical_index,
-> +			 u32 *hart_index);
->   
->   #ifdef CONFIG_ACPI
->   
-> diff --git a/arch/riscv/kernel/irq.c b/arch/riscv/kernel/irq.c
-> index 9ceda02507ca..efdf505bb776 100644
-> --- a/arch/riscv/kernel/irq.c
-> +++ b/arch/riscv/kernel/irq.c
-> @@ -32,6 +32,40 @@ struct fwnode_handle *riscv_get_intc_hwnode(void)
->   }
->   EXPORT_SYMBOL_GPL(riscv_get_intc_hwnode);
->   
-> +/**
-> + * riscv_get_hart_index() - get hart index for interrupt delivery
-> + * @fwnode: interrupt controller node
-> + * @logical_index: index within the "interrupts-extended" property
-> + * @hart_index: filled with the hart index to use
-> + *
-> + * Risc-V uses term "hart index" for its interrupt controllers, for the
-
-
-s/Risc-V/RISC-V
-
-
-> + * purpose of the interrupt routing to destination harts.
-> + * It may be arbitrary numbers assigned to each destination hart in context
-> + * of the particular interrupt domain.
-> + *
-> + * These numbers encoded in the optional property "riscv,hart-indexes"
-> + * that should contain hart index for each interrupt destination in the same
-> + * order as in the "interrupts-extended" property. If this property
-> + * not exist, it assumed equal to the logical index, i.e. index within the
-> + * "interrupts-extended" property.
-> + *
-> + * Return: error code
+--- a/drivers/base/power/main.c
++++ b/drivers/base/power/main.c
+@@ -647,14 +647,27 @@
+ 	/*
+ 	 * Start processing "async" children of the device unless it's been
+ 	 * started already for them.
+-	 *
+-	 * This could have been done for the device's "async" consumers too, but
+-	 * they either need to wait for their parents or the processing has
+-	 * already started for them after their parents were processed.
+ 	 */
+ 	device_for_each_child(dev, func, dpm_async_with_cleanup);
+ }
+ 
++static void dpm_async_resume_subordinate(struct device *dev, async_func_t func)
++{
++	struct device_link *link;
++	int idx;
++
++	dpm_async_resume_children(dev, func);
++
++	idx = device_links_read_lock();
++
++	/* Start processing the device's "async" consumers. */
++	list_for_each_entry_rcu(link, &dev->links.consumers, s_node)
++		if (READ_ONCE(link->status) != DL_STATE_DORMANT)
++			dpm_async_with_cleanup(link->consumer, func);
++
++	device_links_read_unlock(idx);
++}
++
+ static void dpm_clear_async_state(struct device *dev)
+ {
+ 	reinit_completion(&dev->power.completion);
+@@ -663,7 +676,14 @@
+ 
+ static bool dpm_root_device(struct device *dev)
+ {
+-	return !dev->parent;
++	lockdep_assert_held(&dpm_list_mtx);
++
++	/*
++	 * Since this function is required to run under dpm_list_mtx, the
++	 * list_empty() below will only return true if the device's list of
++	 * consumers is actually empty before calling it.
++	 */
++	return !dev->parent && list_empty(&dev->links.suppliers);
+ }
+ 
+ static void async_resume_noirq(void *data, async_cookie_t cookie);
+@@ -752,7 +772,7 @@
+ 		pm_dev_err(dev, state, async ? " async noirq" : " noirq", error);
+ 	}
+ 
+-	dpm_async_resume_children(dev, async_resume_noirq);
++	dpm_async_resume_subordinate(dev, async_resume_noirq);
+ }
+ 
+ static void async_resume_noirq(void *data, async_cookie_t cookie)
+@@ -895,7 +915,7 @@
+ 		pm_dev_err(dev, state, async ? " async early" : " early", error);
+ 	}
+ 
+-	dpm_async_resume_children(dev, async_resume_early);
++	dpm_async_resume_subordinate(dev, async_resume_early);
+ }
+ 
+ static void async_resume_early(void *data, async_cookie_t cookie)
+@@ -1071,7 +1091,7 @@
+ 		pm_dev_err(dev, state, async ? " async" : "", error);
+ 	}
+ 
+-	dpm_async_resume_children(dev, async_resume);
++	dpm_async_resume_subordinate(dev, async_resume);
+ }
+ 
+ static void async_resume(void *data, async_cookie_t cookie)
 
 
-This does not add a lot of value, maybe something like that "Return: 0 
-on success, a negative error code otherwise"?
-
-
-> + */
-> +int riscv_get_hart_index(struct fwnode_handle *fwnode, u32 logical_index,
-> +			 u32 *hart_index)
-> +{
-> +	static const char *prop_hart_index = "riscv,hart-indexes";
-> +	struct device_node *np = to_of_node(fwnode);
-> +
-> +	if (!np || !of_property_present(np, prop_hart_index)) {
-> +		*hart_index = logical_index;
-> +		return 0;
-> +	}
-> +
-> +	return of_property_read_u32_index(np, prop_hart_index,
-> +					  logical_index, hart_index);
-> +}
-> +
->   #ifdef CONFIG_IRQ_STACKS
->   #include <asm/irq_stack.h>
->   
-
-
-With those nits above fixed, you can add:
-
-Acked-by: Alexandre Ghiti <alexghiti@rivosinc.com>
-
-Thanks,
-
-Alex
 
 
