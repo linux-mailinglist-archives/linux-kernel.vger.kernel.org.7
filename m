@@ -1,81 +1,118 @@
-Return-Path: <linux-kernel+bounces-697601-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-697603-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9C485AE3648
-	for <lists+linux-kernel@lfdr.de>; Mon, 23 Jun 2025 08:51:57 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id DA971AE364C
+	for <lists+linux-kernel@lfdr.de>; Mon, 23 Jun 2025 08:52:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D300E1892CF6
-	for <lists+linux-kernel@lfdr.de>; Mon, 23 Jun 2025 06:52:06 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 03B6D1892ACE
+	for <lists+linux-kernel@lfdr.de>; Mon, 23 Jun 2025 06:52:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0C9CF1EDA12;
-	Mon, 23 Jun 2025 06:51:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8B8F61EFF9B;
+	Mon, 23 Jun 2025 06:51:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="vHyvQ1Y7"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="XNPOTc5w"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.21])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 69FEF1EB1AA;
-	Mon, 23 Jun 2025 06:51:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 50EFDBA2E;
+	Mon, 23 Jun 2025 06:51:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.21
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750661485; cv=none; b=XO5zzz509HDbSxQ17dfOxH32Sj9ztjfPrfdWrEZIj7W2kft6VCzEgD34zWFBqs4Xh9QZhYMWUa6q6v8pwETthSivvxKiENozqRKkT81jD8rzj57ulQ5PSkv9k3iu4QrfACnRAFV7wjGSxh6TWBy7wvEBAhA9bIZU9n06Yf0N0DE=
+	t=1750661505; cv=none; b=ZzeAalv0dpcGVFFkpy5n2RDEOKB2OMCgyKDVjrahkc/c0UxAUyuia+5lZ8dupIzHgiqkV3IZBIZY60QzgnPq5LkZcnKcVF+NxDHkBJr7W5MzSXqDIiDGYdGz1pR+W4bLbOfot9kSsAlHyh82N1edIoxWZSD5i9P7IfTYixX27u4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750661485; c=relaxed/simple;
-	bh=3rEMRYah93mGUefKqSUQRKBAf5nYYuCEhyzSDEkvYBg=;
+	s=arc-20240116; t=1750661505; c=relaxed/simple;
+	bh=BfCjIpMptWB6njP/yypWFTaa8isoACoKePFM94OtggE=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=n4xcj83JB6CrY2as4H6JzkGdg1J42/NosDj1hFJuCsR/Wh7hjc9frIEhqcgplVojiYnfmWIHmLt3aE7YRFGD+w2mG7GuD+KsS8w70espQvVU9hcgfq6fd67Z/Nt7mTGcVHsq12wkeBFQU+it+kbcW41a2kLGEmz528F251eZ2rk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=vHyvQ1Y7; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 24F2AC4CEED;
-	Mon, 23 Jun 2025 06:51:23 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1750661484;
-	bh=3rEMRYah93mGUefKqSUQRKBAf5nYYuCEhyzSDEkvYBg=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=vHyvQ1Y7KMyEOE2C/oVSj0RiDPxiLweJnqnJNLW4V1I9dYpHhG2EnK6Ot180aHplb
-	 yaGDnVOnYnkWlCl2j60Zd4rWLsUP9r/zZcTkushy8qODpa2OxpzbwT0eer5TKD10Sb
-	 IVNF63pSQrBcBcCT1+hIO5kgnsOzRXr9o+mi2iV0MSHqoaRaLbs1nKUC/qLrwZKx9g
-	 swseds+OAHAeFojuqglBPLa/4DbXatWSw6c52BqJCxUS/TNDyza0BLfUiFUMoRMUfP
-	 cbcf/AYUFqhuhHc2VJEqdF+ISDjnx48c5zpyDYzY2D4iXJT92jLiBz9wb66IZErq7Z
-	 Au3IL0u8YewYw==
-Date: Mon, 23 Jun 2025 08:51:22 +0200
-From: Krzysztof Kozlowski <krzk@kernel.org>
-To: Goran =?utf-8?B?UmHEkWVub3ZpxIc=?= <goran.radni@gmail.com>
-Cc: Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Shawn Guo <shawnguo@kernel.org>, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3 2/3] dt-bindings: arm: imx8mp: Add Ultratronik
- Ultra-MACH SBC
-Message-ID: <nsbpnxfbypj3nmivzj25wfuq774jf3sd2o3iekf3jwlojnhde7@2v2wkqmdmyee>
-References: <20250620122353.150700-1-goran.radni@gmail.com>
- <20250620122353.150700-3-goran.radni@gmail.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=dcvL1Rmdqc2Zhl4QiAJMIPCYSz42nP6FniIiVZTsguRFSlf506Oo7Zv5yhtC3OML+RYj57xnvGVQafMBg45m59Jtj6NwC6wFYOGG8Suqoxj/IKGkmk4NgDrAPsw6hgqKjj2fAJ0WE2B/wWoxW8tRcaEJtt37DQryeRzZI9RzAUE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=XNPOTc5w; arc=none smtp.client-ip=198.175.65.21
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1750661505; x=1782197505;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=BfCjIpMptWB6njP/yypWFTaa8isoACoKePFM94OtggE=;
+  b=XNPOTc5wMEonmcv9AlvMX3Yeop96sjCUkJWDGKJFmyuFQr6VVu2jT2Lf
+   yHm9X3gYaZ3HX5Tx/NatUuBP8LIexbUSQf6SEYIxmU933iV0rdKgPUOu1
+   GSxa1NlZ2MaP2EcdDmOrH0+0+1DYa56E6IO/1rpxt/RoZfjBQoeoSwZlH
+   PwBVY6l9W4unMGpyzhAWahUngsHp9Ehetrdr0T0EP5taqoGMSFZT3T2bz
+   btv01JXZJHJVzEnaWfs45CR30VhUhN47VUIG80Uqc7OXEhNQGeznc/znl
+   d4RJOCkEySgHK5Jpv9gstv6eW5TjXBcG6ptnyFWJ5Gz9vV7QRamBCALOp
+   A==;
+X-CSE-ConnectionGUID: QfDt6B47T4CAgrsKIEHS6Q==
+X-CSE-MsgGUID: EAhzDa+nROSuvjD3R3H+nA==
+X-IronPort-AV: E=McAfee;i="6800,10657,11472"; a="52722374"
+X-IronPort-AV: E=Sophos;i="6.16,258,1744095600"; 
+   d="scan'208";a="52722374"
+Received: from fmviesa006.fm.intel.com ([10.60.135.146])
+  by orvoesa113.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 22 Jun 2025 23:51:44 -0700
+X-CSE-ConnectionGUID: bvMYzSWRRf+P8QJ+/9HKvA==
+X-CSE-MsgGUID: B5I016lYSpyUI8zT8Y0hMA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.16,258,1744095600"; 
+   d="scan'208";a="151656980"
+Received: from smile.fi.intel.com ([10.237.72.52])
+  by fmviesa006.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 22 Jun 2025 23:51:39 -0700
+Received: from andy by smile.fi.intel.com with local (Exim 4.98.2)
+	(envelope-from <andriy.shevchenko@intel.com>)
+	id 1uTb1k-000000095TZ-4BkS;
+	Mon, 23 Jun 2025 09:51:37 +0300
+Date: Mon, 23 Jun 2025 09:51:36 +0300
+From: Andy Shevchenko <andriy.shevchenko@intel.com>
+To: David Lechner <dlechner@baylibre.com>
+Cc: Michael Hennerich <Michael.Hennerich@analog.com>,
+	Jonathan Cameron <jic23@kernel.org>,
+	Nuno =?iso-8859-1?Q?S=E1?= <nuno.sa@analog.com>,
+	Andy Shevchenko <andy@kernel.org>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>, Mark Brown <broonie@kernel.org>,
+	linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-spi@vger.kernel.org
+Subject: Re: [PATCH 2/9] iio: adc: ad_sigma_delta: use u8 instead of uint8_t
+Message-ID: <aFj5eEvn2uw_HSl0@smile.fi.intel.com>
+References: <20250620-iio-adc-ad7173-add-spi-offload-support-v1-0-0766f6297430@baylibre.com>
+ <20250620-iio-adc-ad7173-add-spi-offload-support-v1-2-0766f6297430@baylibre.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20250620122353.150700-3-goran.radni@gmail.com>
+In-Reply-To: <20250620-iio-adc-ad7173-add-spi-offload-support-v1-2-0766f6297430@baylibre.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - c/o Alberga Business Park, 6
+ krs, Bertel Jungin Aukio 5, 02600 Espoo
 
-On Fri, Jun 20, 2025 at 02:23:50PM +0200, Goran Ra=C4=91enovi=C4=87 wrote:
-> Document the Ultratronik Ultra-MACH SBC, based on the NXP i.MX8MP SoC.
->=20
-> This board is manufactured by Ultratronik GmbH and uses the compatible
-> string "ux,imx8mp-ultra-mach-sbc".
->=20
-> Signed-off-by: Goran Ra=C4=91enovi=C4=87 <goran.radni@gmail.com>
-> ---
->  Documentation/devicetree/bindings/arm/fsl.yaml | 1 +
->  1 file changed, 1 insertion(+)
+On Fri, Jun 20, 2025 at 05:20:08PM -0500, David Lechner wrote:
+> Replace uint8_t with u8 in the ad_sigma_delta driver.
+> 
+> Technically, uint8_t comes from the C standard library, while u8 is a
+> Linux kernel type. Since we don't use the C standard library in the
+> kernel, we should use the kernel types instead.
 
-Acked-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+...
 
-Best regards,
-Krzysztof
+>  	unsigned int reset_length = sigma_delta->info->num_resetclks;
+> -	uint8_t *buf;
+> +	u8 *buf;
+>  	unsigned int size;
+>  	int ret;
+
+Wondering if in the cases like this we may make it to be reversed xmas tree.
+
+	unsigned int reset_length = sigma_delta->info->num_resetclks;
+	unsigned int size;
+	u8 *buf;
+	int ret;
+
+-- 
+With Best Regards,
+Andy Shevchenko
+
 
 
