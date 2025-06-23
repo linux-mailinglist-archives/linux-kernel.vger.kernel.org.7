@@ -1,201 +1,233 @@
-Return-Path: <linux-kernel+bounces-698567-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-698569-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 58276AE4677
-	for <lists+linux-kernel@lfdr.de>; Mon, 23 Jun 2025 16:20:57 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8B775AE46BC
+	for <lists+linux-kernel@lfdr.de>; Mon, 23 Jun 2025 16:30:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 557967AB78C
-	for <lists+linux-kernel@lfdr.de>; Mon, 23 Jun 2025 14:19:17 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 72208178099
+	for <lists+linux-kernel@lfdr.de>; Mon, 23 Jun 2025 14:21:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BC6CB252900;
-	Mon, 23 Jun 2025 14:18:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 871C7253F13;
+	Mon, 23 Jun 2025 14:19:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="gn0zpM9w"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="JZnNZp+L"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0397E24C669
-	for <linux-kernel@vger.kernel.org>; Mon, 23 Jun 2025 14:18:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C96A3145355
+	for <linux-kernel@vger.kernel.org>; Mon, 23 Jun 2025 14:19:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750688311; cv=none; b=foe8+oZXd3wTcshgT6OFfdcnMECVJokCS9FmBmbu/WIWH+E3RV+cFoifrR7s9tb0JngOuxLseD4h0KYTF32zxh6iBsFvnZzzqT1/P/rF0SXCmpna9vBKW1iIgSNgpPW6OfCKohzGI/ZTMobyoQUwjA6dBm8XFHZ14sdIuQr8jyk=
+	t=1750688352; cv=none; b=LzI3dkb5/nDotMzDtH981TL6RqF3imOA9FovBpAPh90Zs2j1VmXNhSJ0RUcPwyU0c3c8qYUnANfmIMxdUV9o//9zP2gZgt0AYUVCBuwI1LKrqDwzdMW2bWTzDa9Xto9VvZV3nKH+WwdEFjtivLj3afNx+X2AyoN2hNkNJ448h5c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750688311; c=relaxed/simple;
-	bh=caQm6ngs7yNTOaYxRDz/8Ky9hmDEYM20hlOrP4oS8Lw=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=jcdmYUsUyIlrQVFVHITzl8WlVs51GSvTM6VOn43yKV5NkTDeVoNw/anB1rBjd7ZqumMMqqt/N3LrzbEE1b+NMJnkuwP1WVVrMBZdeZvB82mN/jfLWDyreuRrq9XTepipgxlIg+PvQdbFsYaFGhuWCUnpVGdq3pytAp+FFgsYMiU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=gn0zpM9w; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1750688308;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=eTcutzrxaAuUOyNoy2cKMup7mulTM3ZpC6LFf2Ay4G8=;
-	b=gn0zpM9w+hsrYIPR8UGJynqzNnqF6PyZX2dTk5I3Ytn8zJ5+y2bYCZhjfdY9B1tctOt6Dr
-	9qa8zjBiiMt7sFRrH6b+XY/tCimC2IGZpmmyKXKnu8wM8d2tuYy9f695bM1EribJgiZWIT
-	WAPp+nCJWJuFwaNIr34Ux//XHjTPBbg=
-Received: from mail-wm1-f69.google.com (mail-wm1-f69.google.com
- [209.85.128.69]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-369-VlYNYTj6NfyNhXF4QxdFzw-1; Mon, 23 Jun 2025 10:18:26 -0400
-X-MC-Unique: VlYNYTj6NfyNhXF4QxdFzw-1
-X-Mimecast-MFC-AGG-ID: VlYNYTj6NfyNhXF4QxdFzw_1750688305
-Received: by mail-wm1-f69.google.com with SMTP id 5b1f17b1804b1-453018b4ddeso27168435e9.3
-        for <linux-kernel@vger.kernel.org>; Mon, 23 Jun 2025 07:18:26 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1750688305; x=1751293105;
-        h=content-transfer-encoding:in-reply-to:organization:autocrypt
-         :content-language:from:references:cc:to:subject:user-agent
-         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=eTcutzrxaAuUOyNoy2cKMup7mulTM3ZpC6LFf2Ay4G8=;
-        b=s6TjiL/JSh7ho2HYdmw+J7GoyK6H+426fa7X7EFUss2T7/Nzch+LNKTNQrsQk9BfJz
-         oGGd7G71gv2GSm8XtR3/YL0D+d/09MLvSFfnxNmYyfcf4z1fo4fYqwmfRduHApn/V5pT
-         +W+FCA41hFctsqq4ci5nxzgWjPZ6i/zaXSO7/rUKdFAQGLmq/3e0wwT/CcHAvS0SMcYJ
-         sDtMXerAe8/qMBf8AgFMfXFyLJW9exWR7LLFEiAHBFiLOHwm+/Vtj73oCr4pqZxcGIm7
-         /owUfXB0znKhzm6N41g43Y5HC15jWxz5TWkcWnuExzA3s+8+89h4LN4iqtGRZYJMZw4m
-         IUwQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWCirRIfNv7zzHVcyHQitKjgac8JQ3fNsIulhOGngDPnirG0OnoG/lhaR6VtAq0jUFZTQEgS62lkg41rsM=@vger.kernel.org
-X-Gm-Message-State: AOJu0YziVTRh4fRfVWOZ9r0oScXvguAqgx34ZvWkxF5j6x84yYclshRs
-	+HhKOYxDQ7PpF6RbXHCfKdkGPYsKZLiHTkk8AIr/ZZgc2+wwW1qF7HuzXbVnVNIv0Aj2n8CGDTZ
-	wJdWAFZnSXyulwVeGDUGzyqmXrVpGpAtYIMDgAr9dYRbDUxt/7iHLQfPsZIZfEhAl8g==
-X-Gm-Gg: ASbGnctlAniXTq6MVdZ0u7ASz5P8hIaby1efyjuu6IjacHFclNHGdCS0/H4gBjErDts
-	NFg7jqeklHWzH+FObZEUkcd07LGQEgaTpBkJnHifchnJH/c3DdLOzNDXpadUGxymbPwAG5MO4tO
-	VtQ0F/pJbn7K/7ZfoBoKRWPGT0bfoyC3C5MLP7gqlsJiyPmboz6rWPa0ICAMnR+76pLaSAtV6S1
-	vNacngzbhbu4S9mpdVY92n9TSbcFkmkSwgUwtETPYZmAyExjYmJxzX063xcc2ktJxQhHfCqaYkN
-	rXg11nnHNepR+s/3cbMl0tfWUOLqgms4cS4d/I3T5I2wsA4exp38BM2aGqiC56nvousno6UGLir
-	SaqAa86Me4cfz2kl+R+fBbah5bTaaQGHZlvR1uyKHoQuqhiO56w==
-X-Received: by 2002:a05:600c:c3db:b0:450:d3b9:a5fc with SMTP id 5b1f17b1804b1-453655c2b88mr64884385e9.27.1750688304716;
-        Mon, 23 Jun 2025 07:18:24 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IG3GfvVpO2Rh0X7lgF/+7vi5AEgx9LbhZSf69sunaiR0l7CJHPVzAX4/2QUR1+R4uUN63whfg==
-X-Received: by 2002:a05:600c:c3db:b0:450:d3b9:a5fc with SMTP id 5b1f17b1804b1-453655c2b88mr64883595e9.27.1750688304244;
-        Mon, 23 Jun 2025 07:18:24 -0700 (PDT)
-Received: from ?IPV6:2003:d8:2f4e:fd00:8e13:e3b5:90c8:1159? (p200300d82f4efd008e13e3b590c81159.dip0.t-ipconnect.de. [2003:d8:2f4e:fd00:8e13:e3b5:90c8:1159])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4535e97b501sm144130925e9.2.2025.06.23.07.18.20
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 23 Jun 2025 07:18:23 -0700 (PDT)
-Message-ID: <f34f65ee-f6cd-41b7-b5f6-3fe4cd13a687@redhat.com>
-Date: Mon, 23 Jun 2025 16:18:20 +0200
+	s=arc-20240116; t=1750688352; c=relaxed/simple;
+	bh=fVhp0kk7yln1GhbmDbmrjitgG6RCsk2hQ/F1Nvr6mtQ=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=iUjQb7rmIDwB2Ww+jheGuDmuocrZSEPniQ3ALZlEkFD9+gq01/yKeoapn+I8/DCD8g843XFWFFSa5b9tTn9/HS5Q0yQ4DLZYWzZTc66AYqer1ceM6HxR3fuTRvPFYmdpmNlzxjlrhN9IRcilcBpE4FRsLdxkDUYcZqDVjTVkwt4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=JZnNZp+L; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 51009C4CEF1
+	for <linux-kernel@vger.kernel.org>; Mon, 23 Jun 2025 14:19:12 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1750688352;
+	bh=fVhp0kk7yln1GhbmDbmrjitgG6RCsk2hQ/F1Nvr6mtQ=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=JZnNZp+LLaJ8KO9x57Tz/ajV6KNYO9yexAuAR2XDfO3FnBSTEJy1LAEHQAEE5PU3v
+	 IKuE08Arh1w6G5+Dp93vf0uq+M0OaaSBUvYMMGXYIp/OvXyRZPjVdvpeCK1PzC4hws
+	 D+SQrWRLeAeh73wOUaqE7aQ8CBqTCY6vllWRZlB9gyqFja2uLt/azBgVmT5BBRg8gJ
+	 zN0LCza166nQXqN0ZpKe3RUiuLlvtLCWQQqZsQ5zxn8LzyQgHfcHZ21aZMi9Kiuivt
+	 BKTyoxUZyYLWxGSyLwHwVA1eyTRF6iSBFqjUybBiggvs8EJmVnUa3IIefyAX2iB5Z2
+	 FqHgeS5/ZAOxg==
+Received: by mail-ej1-f50.google.com with SMTP id a640c23a62f3a-ad8a6c202ffso806303166b.3
+        for <linux-kernel@vger.kernel.org>; Mon, 23 Jun 2025 07:19:12 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCW+TEsgBY4ymiSwldDhV8vG223GLnaoKQGe2rBB+zGfkaGp4ZOyWH1W0eWHzy/GVzVq7eRHoV1gpTEklHA=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwyekQSP23s0EmmJd933SPtOTWm8o7hkDUKxs5bfTnTcBjjIGwQ
+	uDDnnzFjA2XcqpYLC68gv2CO4plU5un23JWblOAOCKu9L1pnzXIXSTRcPTyNuRJaiaEekrDABFD
+	RKL8oj+uwiJm15mYnlUnP1ItWJ8S5nQ==
+X-Google-Smtp-Source: AGHT+IGeXE26nG6p38Uwsxy/FoXelv+Ic5l+L6Q9K3HztXzstCPX04+L+Jc0Grcp9OXJDzvM7GKtblQieEdXimJfEws=
+X-Received: by 2002:a17:907:7b96:b0:ad8:a41a:3cba with SMTP id
+ a640c23a62f3a-ae057bc88cemr1354358566b.43.1750688350806; Mon, 23 Jun 2025
+ 07:19:10 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 3/3] mm: update architecture and driver code to use
- vm_flags_t
-To: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
- Andrew Morton <akpm@linux-foundation.org>
-Cc: Russell King <linux@armlinux.org.uk>,
- Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>,
- Madhavan Srinivasan <maddy@linux.ibm.com>,
- Michael Ellerman <mpe@ellerman.id.au>, Nicholas Piggin <npiggin@gmail.com>,
- Christophe Leroy <christophe.leroy@csgroup.eu>,
- "David S . Miller" <davem@davemloft.net>,
- Andreas Larsson <andreas@gaisler.com>, Jarkko Sakkinen <jarkko@kernel.org>,
- Dave Hansen <dave.hansen@linux.intel.com>,
- Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
- Borislav Petkov <bp@alien8.de>, "H . Peter Anvin" <hpa@zytor.com>,
- Andy Lutomirski <luto@kernel.org>, Peter Zijlstra <peterz@infradead.org>,
- Alexander Viro <viro@zeniv.linux.org.uk>,
- Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
- Kees Cook <kees@kernel.org>, Peter Xu <peterx@redhat.com>,
- Zi Yan <ziy@nvidia.com>, Baolin Wang <baolin.wang@linux.alibaba.com>,
- "Liam R . Howlett" <Liam.Howlett@oracle.com>, Nico Pache
- <npache@redhat.com>, Ryan Roberts <ryan.roberts@arm.com>,
- Dev Jain <dev.jain@arm.com>, Barry Song <baohua@kernel.org>,
- Xu Xin <xu.xin16@zte.com.cn>, Chengming Zhou <chengming.zhou@linux.dev>,
- Hugh Dickins <hughd@google.com>, Vlastimil Babka <vbabka@suse.cz>,
- Mike Rapoport <rppt@kernel.org>, Suren Baghdasaryan <surenb@google.com>,
- Michal Hocko <mhocko@suse.com>, Rik van Riel <riel@surriel.com>,
- Harry Yoo <harry.yoo@oracle.com>, Dan Williams <dan.j.williams@intel.com>,
- Matthew Wilcox <willy@infradead.org>, Steven Rostedt <rostedt@goodmis.org>,
- Masami Hiramatsu <mhiramat@kernel.org>,
- Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
- Jason Gunthorpe <jgg@ziepe.ca>, John Hubbard <jhubbard@nvidia.com>,
- Muchun Song <muchun.song@linux.dev>, Oscar Salvador <osalvador@suse.de>,
- Jann Horn <jannh@google.com>, Pedro Falcato <pfalcato@suse.de>,
- Johannes Weiner <hannes@cmpxchg.org>, Qi Zheng <zhengqi.arch@bytedance.com>,
- Shakeel Butt <shakeel.butt@linux.dev>, linux-arm-kernel@lists.infradead.org,
- linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
- kvm@vger.kernel.org, sparclinux@vger.kernel.org, linux-sgx@vger.kernel.org,
- linux-fsdevel@vger.kernel.org, linux-mm@kvack.org, nvdimm@lists.linux.dev,
- linux-trace-kernel@vger.kernel.org
-References: <cover.1750274467.git.lorenzo.stoakes@oracle.com>
- <b6eb1894abc5555ece80bb08af5c022ef780c8bc.1750274467.git.lorenzo.stoakes@oracle.com>
-From: David Hildenbrand <david@redhat.com>
-Content-Language: en-US
-Autocrypt: addr=david@redhat.com; keydata=
- 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
- WNyWQQ==
-Organization: Red Hat
-In-Reply-To: <b6eb1894abc5555ece80bb08af5c022ef780c8bc.1750274467.git.lorenzo.stoakes@oracle.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+References: <20250613130356.8080-1-james.morse@arm.com> <20250613130356.8080-2-james.morse@arm.com>
+ <20250617170323.00006688@huawei.com>
+In-Reply-To: <20250617170323.00006688@huawei.com>
+From: Rob Herring <robh@kernel.org>
+Date: Mon, 23 Jun 2025 09:18:59 -0500
+X-Gmail-Original-Message-ID: <CAL_Jsq+vA1AR+P0se3njU-_P0cjBM1h-4YGAShFZ-gy53SkZfw@mail.gmail.com>
+X-Gm-Features: Ac12FXyYCMsH7OEBDSoHPIw_JXHCyml3peBYjUguFKyZJOLaAbRm95SwgGPeNzY
+Message-ID: <CAL_Jsq+vA1AR+P0se3njU-_P0cjBM1h-4YGAShFZ-gy53SkZfw@mail.gmail.com>
+Subject: Re: [PATCH 1/5] cacheinfo: Set cache 'id' based on DT data
+To: Jonathan Cameron <Jonathan.Cameron@huawei.com>
+Cc: James Morse <james.morse@arm.com>, linux-kernel@vger.kernel.org, 
+	linux-arm-kernel@lists.infradead.org, 
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, "Rafael J . Wysocki" <rafael@kernel.org>, sudeep.holla@arm.com, 
+	Ben Horgan <ben.horgan@arm.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 18.06.25 21:42, Lorenzo Stoakes wrote:
-> In future we intend to change the vm_flags_t type, so it isn't correct for
-> architecture and driver code to assume it is unsigned long. Correct this
-> assumption across the board.
-> 
-> Overall, this patch does not introduce any functional change.
-> 
-> Signed-off-by: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
-> ---
+On Tue, Jun 17, 2025 at 11:03=E2=80=AFAM Jonathan Cameron
+<Jonathan.Cameron@huawei.com> wrote:
+>
+> On Fri, 13 Jun 2025 13:03:52 +0000
+> James Morse <james.morse@arm.com> wrote:
+>
+> > From: Rob Herring <robh@kernel.org>
+> >
+> > Use the minimum CPU h/w id of the CPUs associated with the cache for th=
+e
+> > cache 'id'. This will provide a stable id value for a given system. As
+> > we need to check all possible CPUs, we can't use the shared_cpu_map
+> > which is just online CPUs. As there's not a cache to CPUs mapping in DT=
+,
+> > we have to walk all CPU nodes and then walk cache levels.
+>
+> Is it ok for these to match for different levels?  I've no idea for
+> these use cases.
 
-Acked-by: David Hildenbrand <david@redhat.com>
+Yes. The 'id' is per level, not globally unique.
 
--- 
-Cheers,
+> >
+> > The cache_id exposed to user-space has historically been 32 bits, and
+> > is too late to change. Give up on assigning cache-id's if a CPU h/w
+> > id greater than 32 bits is found.
+> >
+> > Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+> > Cc: "Rafael J. Wysocki" <rafael@kernel.org>
+> > Signed-off-by: Rob Herring <robh@kernel.org>
+> > [ ben: converted to use the __free cleanup idiom ]
+> > Signed-off-by: Ben Horgan <ben.horgan@arm.com>
+> > [ morse: Add checks to give up if a value larger than 32 bits is seen. =
+]
+> > Signed-off-by: James Morse <james.morse@arm.com>
+>
+> Hi James, Rob,
+>
+> Mainly a couple of questions for Rob on the fun of scoped cleanup being
+> used for some of the iterators in a similar fashion to already
+> done for looping over child nodes etc.
+>
+> > ---
+> > Use as a 32bit value has been seen in DPDK patches here:
+> > http://inbox.dpdk.org/dev/20241021015246.304431-2-wathsala.vithanage@ar=
+m.com/
+> > ---
+> >  drivers/base/cacheinfo.c | 33 +++++++++++++++++++++++++++++++++
+> >  1 file changed, 33 insertions(+)
+> >
+> > diff --git a/drivers/base/cacheinfo.c b/drivers/base/cacheinfo.c
+> > index cf0d455209d7..9888d87840a2 100644
+> > --- a/drivers/base/cacheinfo.c
+> > +++ b/drivers/base/cacheinfo.c
+> > @@ -8,6 +8,7 @@
+> >  #define pr_fmt(fmt) KBUILD_MODNAME ": " fmt
+> >
+> >  #include <linux/acpi.h>
+> > +#include <linux/bitfield.h>
+> >  #include <linux/bitops.h>
+> >  #include <linux/cacheinfo.h>
+> >  #include <linux/compiler.h>
+> > @@ -183,6 +184,37 @@ static bool cache_node_is_unified(struct cacheinfo=
+ *this_leaf,
+> >       return of_property_read_bool(np, "cache-unified");
+> >  }
+> >
+> > +static void cache_of_set_id(struct cacheinfo *this_leaf, struct device=
+_node *np)
+> > +{
+> > +     struct device_node *cpu;
+> > +     u32 min_id =3D ~0;
+> > +
+> > +     for_each_of_cpu_node(cpu) {
+>
+> Rob is it worth a scoped variant of this one?  I've come across
+> this a few times recently and it irritates me but I didn't feel
+> there were necessarily enough cases to bother.  With one more
+> maybe it is time to do it (maybe 10+ from a quick look)_.
 
-David / dhildenb
+My question on all of these (though more so for drivers), is why are
+we parsing CPU nodes again? Ideally, we'd parse the CPU and cache
+nodes only once and the kernel would provide the necessary info.
 
+Take drivers/clk/mvebu/ap-cpu-clk.c for example. The code there really
+just needs to know if there are 2 or 4 possible CPUs or what is the
+max physical CPU id (If CPU #1 could be not present).
+
+> > +             struct device_node *cache_node __free(device_node) =3D of=
+_find_next_cache_node(cpu);
+> > +             u64 id =3D of_get_cpu_hwid(cpu, 0);
+> > +
+> > +             if (FIELD_GET(GENMASK_ULL(63, 32), id)) {
+> > +                     of_node_put(cpu);
+> > +                     return;
+> > +             }
+> > +             while (1) {
+>
+> for_each_of_cache_node_scoped() perhaps?  With the find already defined t=
+his would end
+> up something like the following.  Modeled on for_each_child_of_node_scope=
+d.
+
+That seems like an invitation for someone to parse the cache nodes
+themselves rather than use cacheinfo. Plus, there are multiple ways we
+could iterate over cache nodes. Is it just ones associated with a CPU
+or all cache nodes or all cache nodes at a level?
+
+That being said, I do find the current loop a bit odd with setting
+'prev' pointer which is then never explicitly used. We're still having
+to worry about refcounting, but handling it in a less obvious way.
+
+>         #define for_each_of_cache_node_scoped(cpu, cache) \
+>                 for (struct device_node *cache __free(device_node) =3D \
+>                      of_find_next_cache_node(cpu); cache !=3D NULL; \
+>                      cache =3D of_find_next_cache_node(cache))
+>
+>         for_each_of_cpu_node_scoped(cpu) {
+>                 u64 id =3D of_get_cpu_hwid(cpu, 0);
+>
+>                 if (FIELD_GET(GENMASK_ULL(63, 32), id))
+>                         return;
+>                 for_each_of_cache_node_scoped(cpu, cache_node) {
+>                         if (cache_node =3D=3D np) {
+>                                 min_id =3D min(min_id, id);
+>                                 break;
+>                         }
+>                 }
+>         }
+>
+> > +                     if (!cache_node)
+> > +                             break;
+> > +                     if (cache_node =3D=3D np && id < min_id) {
+>
+> Why do you carry on if id >=3D min_id?  Id isn't changing.  For that
+> matter why not do this check before iterating the caches at all?
+
+You're right, no need. There's no need to handle the id in the loop at
+all, we just need to match the cache node. So perhaps just a helper:
+
+static bool match_cache_node(struct device_node *cpu, const struct
+device_node *cache_node)
+{
+  for (struct device_node *cache __free(device_node) =3D
+        of_find_next_cache_node(cpu); cache !=3D NULL;
+        cache =3D of_find_next_cache_node(cache)) {
+    if (cache =3D=3D cache_node)
+      return true;
+  }
+  return false;
+}
+
+And then the cpu loop would have:
+
+if (match_cache_node(cpu, cache_node))
+  min_id =3D min(min_id, id);
+
+Rob
 
