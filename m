@@ -1,148 +1,115 @@
-Return-Path: <linux-kernel+bounces-698029-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-698031-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A5C81AE3C1E
-	for <lists+linux-kernel@lfdr.de>; Mon, 23 Jun 2025 12:21:36 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3A69EAE3C25
+	for <lists+linux-kernel@lfdr.de>; Mon, 23 Jun 2025 12:22:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B965016BA3A
-	for <lists+linux-kernel@lfdr.de>; Mon, 23 Jun 2025 10:21:36 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D34FB1893125
+	for <lists+linux-kernel@lfdr.de>; Mon, 23 Jun 2025 10:23:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 106D023ABA8;
-	Mon, 23 Jun 2025 10:21:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D534423ABB9;
+	Mon, 23 Jun 2025 10:22:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="MeIChkIN"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="a7gPq/Ad"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.17])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5BF7F1EF394
-	for <linux-kernel@vger.kernel.org>; Mon, 23 Jun 2025 10:21:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CE6C023A566;
+	Mon, 23 Jun 2025 10:22:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.17
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750674087; cv=none; b=gyXt86K4iBmOrSbzIO3jE1oKOVAZa7CtOb2HMRANVrmpZykETiy1cBVfhq6CuKyifvoZc6lrfz/kI6EocBaKKpcy6JFHRqQ+m7xhFs8C8WixxcqBCuS/ox9r4AzRdW3fXTocTyYIJvJ76RI7mqa5k7HGs9gKMU3JwFh8bcAkQ4U=
+	t=1750674159; cv=none; b=FQl/kWiTB4kh3zmWFb/z+0tq1fdVTP96VJg6q2Aq3xvx8c+tbaGS+ZuZIXV+yEZ2F3Av8jPaD5p0c9QkT8ouhJPvGfTwI/NSPZJMWmZ45kp/e7tSc0xomFJy+b4KA6QQMoWWKQxMlGfL/sE5r5V80WVc1tbHDfo5MRTARGEUqP8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750674087; c=relaxed/simple;
-	bh=CadnOnqUrP01j9sf1g6sUWHOFqKProxbSycYgQcVmxM=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=YMNLODUsyJYUGfDoQXV8A2L0C2AZgV7b1zl0XT3F4rfh2sPmr1vWFkpgfyjgzQM5Hs2SVKDKQ6OsaoBeo07oH1TTioVT1s1fSdAQjCqTQ9d6FKCRDs4lxikjYl8E2Z0VrGIOS+iRgap6iRFWCWvZpNVuEHGOIVHyCsOJQ6UZeHE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=MeIChkIN; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1750674083;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=0lgw/bD4SindaQDwTXpeWQKLQPGV/k/mx1XMIx/reNQ=;
-	b=MeIChkIN5mc9k0qLQ4zz/42LFZIUspwtuzfbWwT6CVQrEwM+5hCN8j5uDPLN1PsF0W37tJ
-	SOUsdn0eclikM/i7IOyx7+jMyYYfClPQpCMP+488KxB7UiFWvoRa5IftHbyvPoK8P+qhmU
-	pe+02ONbknHgKmx9lxQ71m9/DV0TeQA=
-Received: from mail-yw1-f198.google.com (mail-yw1-f198.google.com
- [209.85.128.198]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-372-TQRNAiUjPxGrnMx_4DTxhg-1; Mon, 23 Jun 2025 06:21:22 -0400
-X-MC-Unique: TQRNAiUjPxGrnMx_4DTxhg-1
-X-Mimecast-MFC-AGG-ID: TQRNAiUjPxGrnMx_4DTxhg_1750674081
-Received: by mail-yw1-f198.google.com with SMTP id 00721157ae682-707cf1b0ecbso53642217b3.2
-        for <linux-kernel@vger.kernel.org>; Mon, 23 Jun 2025 03:21:21 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1750674081; x=1751278881;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=0lgw/bD4SindaQDwTXpeWQKLQPGV/k/mx1XMIx/reNQ=;
-        b=I4hSTgRPAdx7ByPHTTfTjM8xAU8Sx4b//bvm1OHxqhf/F8qeK1YRBI9j+POMm/hysv
-         ktrB236T9FAEEQ2mkWKhYJoPwoC7BJDPAU5mRmVSzxK8OH7Sh573ACv2PUoskA9KpnU3
-         qCFeuXOspZmpcx15Yd+dOcBM9HcPRbzdIEgbuVRP9l21j+4rVaIlmCZE8nR77mDdoI8j
-         9atU3YYl/MWqNO8R1d2ftDaRhjaU6M6AuTNjbYOz7kvyN31oyKSeu5US/H0njZMZqj8n
-         M5afI1/TyTQvkO/vhR29+kQ9Vr+DNF/Y/aAvOaKyI6bLCYCLbqPmmUwXetkFExtm5riZ
-         szNA==
-X-Forwarded-Encrypted: i=1; AJvYcCUdsr2RHjlHNDT8E9OtiI3u+JJJFLc7LYE/zWZ5e97QEfhazRLF4Oqx7PGFE070Kffg9Rgx6PF4GRQE0S8=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxp2Xtbuk6hIUZ9GKGe245CxvShh2deAvpBcuEIXosX0s5P4qs1
-	2ChSOUkulBrls2Ioy10TXBP7AhUHBaJRIG8jxaEt+3vozDv/9VKrW2RheoIPtapSLTGHJB/tSmK
-	S3ichvbpddilxy9MqGrFyavtbPXeYz6ZIz8dt1pTpsi5Ad1fp9gffMWDCCsPpTioDIFC1TQDS0V
-	sQXhQQBs4mKA/epOkhJAIuUUjcbcdgWV3X+o1EDbAsyEWf7ZC+MCYchw==
-X-Gm-Gg: ASbGncuDPEIdFj8HSFKTijbuBDA2C8so6QEAo6Bg64KAwoJ4khaK22vNJSh+aSb0BQ5
-	0aapoPSvXaJrPmvz4Ay29bGdTW4mW5gl4hmjSLWtQBotQsYhe6WHXpQbLTX789qRe1mzxJFiASc
-	8X1yc=
-X-Received: by 2002:a05:690c:6f93:b0:711:7128:114f with SMTP id 00721157ae682-712c63c5613mr173777247b3.12.1750674081365;
-        Mon, 23 Jun 2025 03:21:21 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IFFiDnn92RagGTfufzHsxHhTXMUufsWyR4eKoIQO45W2ta/mlkrX/GRWBBKswWX0hUbhvXY3gbxHPfx0i3Xsoc=
-X-Received: by 2002:a05:690c:6f93:b0:711:7128:114f with SMTP id
- 00721157ae682-712c63c5613mr173777017b3.12.1750674081105; Mon, 23 Jun 2025
- 03:21:21 -0700 (PDT)
+	s=arc-20240116; t=1750674159; c=relaxed/simple;
+	bh=K6ejdeVWXNi1Joy2ps0u8ylB95bhYC8uYvSwet/9+BE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=WR4GJTDpWZfTXzGZQNRoH2oJwdpBr+zew1lNT/zIplt1BBEXCCYO/CpuRTJoC1LNXwatTx8SbdbhK+3BWCcXFBE4HeM6HghV3bnrYH7UOL/pu9M4XYBeGq+Vg7oO4NU/0wJJjQPZf/mIfLH+vlB8zOlwIWLPLUz5sNoxZL8o0FI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=a7gPq/Ad; arc=none smtp.client-ip=198.175.65.17
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1750674158; x=1782210158;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=K6ejdeVWXNi1Joy2ps0u8ylB95bhYC8uYvSwet/9+BE=;
+  b=a7gPq/AdOGVeoJAyfWTAhY3lWb27RHkgb9ARYAM4uGSBQepJUdr9D4Mx
+   F9ZcPPB34bPdIoopiAZN8JmeOLzs3WswxHtJh6fnWScWjpH563yaJhCPl
+   M5W8phRXrg3LtX8+oE+O1qh55nskrdPz1uAlpPEjIVSlF6zHQSAtqxr+v
+   N8UBaaaf0JIqmwCjSaSFmQpNvmQKqT+tfFAr7iMUkocrVXagdUQc5f/QL
+   jfewUipcTQ5Gp4T262dXub9ghmc/H4EL9rFAKjVh+yEVVB0441hGFDd5W
+   lAZ2Hs96ecLtVP2OtJLNIsza095m17Ygi6YucRv5f/40cs1QSw5WxiKOj
+   g==;
+X-CSE-ConnectionGUID: 7Wut/jhIR92lJbJVNBbYWQ==
+X-CSE-MsgGUID: 55iaybUMRKS5ibYLwXrYUw==
+X-IronPort-AV: E=McAfee;i="6800,10657,11472"; a="52845552"
+X-IronPort-AV: E=Sophos;i="6.16,258,1744095600"; 
+   d="scan'208";a="52845552"
+Received: from orviesa009.jf.intel.com ([10.64.159.149])
+  by orvoesa109.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 23 Jun 2025 03:22:38 -0700
+X-CSE-ConnectionGUID: dT4HYpINQ0Kj6SeQmv7yIQ==
+X-CSE-MsgGUID: zwKtq7p2QqG19IGXrl0TUw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.16,258,1744095600"; 
+   d="scan'208";a="151331475"
+Received: from lkp-server01.sh.intel.com (HELO e8142ee1dce2) ([10.239.97.150])
+  by orviesa009.jf.intel.com with ESMTP; 23 Jun 2025 03:22:34 -0700
+Received: from kbuild by e8142ee1dce2 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1uTeJs-000Nwk-0T;
+	Mon, 23 Jun 2025 10:22:32 +0000
+Date: Mon, 23 Jun 2025 18:21:52 +0800
+From: kernel test robot <lkp@intel.com>
+To: David Lechner <dlechner@baylibre.com>,
+	Michael Hennerich <Michael.Hennerich@analog.com>,
+	Jonathan Cameron <jic23@kernel.org>,
+	Nuno =?iso-8859-1?Q?S=E1?= <nuno.sa@analog.com>,
+	Andy Shevchenko <andy@kernel.org>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>, Mark Brown <broonie@kernel.org>
+Cc: oe-kbuild-all@lists.linux.dev, linux-iio@vger.kernel.org,
+	linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-spi@vger.kernel.org, David Lechner <dlechner@baylibre.com>
+Subject: Re: [PATCH 8/9] iio: adc: ad_sigma_delta: add SPI offload support
+Message-ID: <202506231738.CgeNexV4-lkp@intel.com>
+References: <20250620-iio-adc-ad7173-add-spi-offload-support-v1-8-0766f6297430@baylibre.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250618114409.179601-1-d.privalov@omp.ru>
-In-Reply-To: <20250618114409.179601-1-d.privalov@omp.ru>
-From: Miklos Szeredi <mszeredi@redhat.com>
-Date: Mon, 23 Jun 2025 12:21:09 +0200
-X-Gm-Features: AX0GCFvydjAk0H9SdIviYpopwIHMR0R5bzlGmZzRGrpaLGnO5vBQo-A0rDztVy8
-Message-ID: <CAOssrKddunTkNzY1ydgg-rpi1aTuq-ghgJcVuQOXnK1GH5HCtg@mail.gmail.com>
-Subject: Re: [PATCH 5.10/5.15 1/1] fuse: don't increment nlink in link()
-To: "d.privalov" <d.privalov@omp.ru>
-Cc: stable@vger.kernel.org, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
-	Marcel Holtmann <marcel@holtmann.org>, Johan Hedberg <johan.hedberg@gmail.com>, 
-	"David S. Miller" <davem@davemloft.net>, Jakub Kicinski <kuba@kernel.org>, linux-bluetooth@vger.kernel.org, 
-	netdev@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	lvc-project@linuxtesting.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250620-iio-adc-ad7173-add-spi-offload-support-v1-8-0766f6297430@baylibre.com>
 
-On Wed, Jun 18, 2025 at 2:00=E2=80=AFPM d.privalov <d.privalov@omp.ru> wrot=
-e:
->
-> From: Miklos Szeredi <mszeredi@redhat.com>
->
-> commit 97f044f690bac2b094bfb7fb2d177ef946c85880 upstream.
->
-> The fuse_iget() call in create_new_entry() already updated the inode with
-> all the new attributes and incremented the attribute version.
->
-> Incrementing the nlink will result in the wrong count.  This wasn't notic=
-ed
-> because the attributes were invalidated right after this.
->
-> Updating ctime is still needed for the writeback case when the ctime is n=
-ot
-> refreshed.
->
-> Signed-off-by: Miklos Szeredi <mszeredi@redhat.com>
-> Signed-off-by: Dmitriy Privalov <d.privalov@omp.ru>
-> ---
->  fs/fuse/dir.c | 29 ++++++++++-------------------
->  1 file changed, 10 insertions(+), 19 deletions(-)
->
-> diff --git a/fs/fuse/dir.c b/fs/fuse/dir.c
-> index 4488a53a192d..7055fdc1b8ce 100644
-> --- a/fs/fuse/dir.c
-> +++ b/fs/fuse/dir.c
-> @@ -807,7 +807,7 @@ void fuse_flush_time_update(struct inode *inode)
->         mapping_set_error(inode->i_mapping, err);
->  }
->
-> -void fuse_update_ctime(struct inode *inode)
-> +static void fuse_update_ctime_in_cache(struct inode *inode)
->  {
+Hi David,
 
-Backport is wrong.  In the original patch we have
+kernel test robot noticed the following build warnings:
 
--       fuse_invalidate_attr(inode);
+[auto build test WARNING on d02f330b0c78bcf76643fbb7d3215a58b181f829]
 
-And that line comes from 371e8fd02969 ("fuse: move
-fuse_invalidate_attr() into fuse_update_ctime()") in v5.16.
+url:    https://github.com/intel-lab-lkp/linux/commits/David-Lechner/iio-adc-ad_sigma_delta-sort-includes/20250621-063127
+base:   d02f330b0c78bcf76643fbb7d3215a58b181f829
+patch link:    https://lore.kernel.org/r/20250620-iio-adc-ad7173-add-spi-offload-support-v1-8-0766f6297430%40baylibre.com
+patch subject: [PATCH 8/9] iio: adc: ad_sigma_delta: add SPI offload support
+config: x86_64-buildonly-randconfig-004-20250621 (https://download.01.org/0day-ci/archive/20250623/202506231738.CgeNexV4-lkp@intel.com/config)
+compiler: gcc-12 (Debian 12.2.0-14) 12.2.0
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250623/202506231738.CgeNexV4-lkp@intel.com/reproduce)
 
-The fix is to not introduce fuse_update_ctime_in_cache(), because
-fuse_update_ctime() is already doing that.
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202506231738.CgeNexV4-lkp@intel.com/
 
-Thanks,
-Miklos
+All warnings (new ones prefixed by >>, old ones prefixed by <<):
 
+>> WARNING: modpost: module ad_sigma_delta uses symbol devm_iio_dmaengine_buffer_setup_with_handle from namespace IIO_DMAENGINE_BUFFER, but does not import it.
+
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
