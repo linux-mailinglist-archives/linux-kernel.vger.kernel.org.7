@@ -1,172 +1,142 @@
-Return-Path: <linux-kernel+bounces-697731-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-697736-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 657C2AE37E6
-	for <lists+linux-kernel@lfdr.de>; Mon, 23 Jun 2025 10:10:06 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id DCA56AE37FE
+	for <lists+linux-kernel@lfdr.de>; Mon, 23 Jun 2025 10:11:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C172B164932
-	for <lists+linux-kernel@lfdr.de>; Mon, 23 Jun 2025 08:09:56 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 85CB71894967
+	for <lists+linux-kernel@lfdr.de>; Mon, 23 Jun 2025 08:11:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8C746202C2D;
-	Mon, 23 Jun 2025 08:09:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B3EDE21B8F6;
+	Mon, 23 Jun 2025 08:10:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="h3PKdooL"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="FPyizjS+"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5F399AD51
-	for <linux-kernel@vger.kernel.org>; Mon, 23 Jun 2025 08:09:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0CD2820E005;
+	Mon, 23 Jun 2025 08:10:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750666190; cv=none; b=K5Zdjyzhu3n8aPxVHukYyJpJ0bNlAIfBuje2izHS0bXsA8cG18UfahQV8bMjJxXXrnYmQn80UnMlJbysOCbGurgjhBSQIFuNyXoLgm3g2mYP8dy1HifMgUYq3ROLQO4atgl6RuRHRBUVFPUnc/scpdBEjLMXRFCMSpnI7G4fDVQ=
+	t=1750666213; cv=none; b=QvxNO+vyfvJ+i5gax1TLAldYlDEKfj0f8Orma/wfggHzOM4ybc9gSnTjqMVvyCymOFAFWBnvRI+pEumwhpLt41KGM/Zcrunh6d1PCJFOBO9IlEUWjIxqR6chosadT9OFaLyD5JsTgjf24KfBHbJ0dMbcQ0VZHwCLftaO85x8gIE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750666190; c=relaxed/simple;
-	bh=0yMGnrPd5ZqhsjAB8urReSlL1tD3LiTLVK8tC2OU5bg=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=GW5OK1DGd8FSSdoUv7KUtDY8li+WoiNmovCwYMT5BmKZgoaG2KFTDOoTTx3EHP+LErmZjYmKhKFmncEKw4CCD0eFbloc2eEkj0VOTazAwt6XkTfR2/00ZuMEo4Qq4x1M34FnAbmmlMLbNPWRpvcUXUIYyvHPkdSMzBWBZoyzyKI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=h3PKdooL; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1750666188;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=ZoLkNCOIuM5JEq5J9oMA6vdOX/Go0Smb3Cqjl+UXzmI=;
-	b=h3PKdooLWExd8pAu8E2XspGHjCRzADjkOsxqb7QnXXQ3gT+PEln7ODpJQpjmUPvtThUI3/
-	DgJRJjImSJ7tm82wsmRUTc+65AUqSOP9kaBdHDXe5ov0yopdhXdIsjIqpKs8xaSUTM3gtS
-	wxKTStPhmKocsYpytxLHifU/788IFRw=
-Received: from mail-wr1-f71.google.com (mail-wr1-f71.google.com
- [209.85.221.71]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-173-DF320_daM3ylAnbJL-yyMQ-1; Mon, 23 Jun 2025 04:09:46 -0400
-X-MC-Unique: DF320_daM3ylAnbJL-yyMQ-1
-X-Mimecast-MFC-AGG-ID: DF320_daM3ylAnbJL-yyMQ_1750666185
-Received: by mail-wr1-f71.google.com with SMTP id ffacd0b85a97d-3a578958000so1301529f8f.3
-        for <linux-kernel@vger.kernel.org>; Mon, 23 Jun 2025 01:09:46 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1750666185; x=1751270985;
-        h=content-transfer-encoding:in-reply-to:organization:autocrypt
-         :content-language:from:references:cc:to:subject:user-agent
-         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=ZoLkNCOIuM5JEq5J9oMA6vdOX/Go0Smb3Cqjl+UXzmI=;
-        b=wY9JR6aMDkFxca48wlX/NqRcY3nJC/KdhraJJOGP8385vatRiRaxDBBtGlcyN+ZGK0
-         QReMPN3O6V0Yx8DZgRslQM8hnrb3BHKteOgzMyXk/8HewOC+YsCeLGd4yoNNJxKoVFF9
-         ietGbJyDveMR9pnhnyRCtX+zbmyQ8/GXUl/8PZDhXbck8LExl16ptmn1SSk3erc2XL6Y
-         AkJahaWfeoYdlysPkEgM3rN65OXVf11IFfRDNWdr9oz3Rdz/lNJwAXr6ofYDfz3XbKR5
-         ZOFJk24S23ZhnGieRstCdv/SDZlO22EX/7dSgB13cxqj2itQ2Ve9kWeJ4lWMFJn9Athy
-         XRtw==
-X-Forwarded-Encrypted: i=1; AJvYcCU8YvmJoNwnLOXUokWhRuyEh55jmCySuUFYgo/qwx3eUtHPVu0qqEnENelev64M/E2PsZqsrEJh66ibSsc=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw4PKduAudLUGl3/oxKiywPHLqdu/2EG2JCnNxcmOt1bHkjYLZT
-	4mEXTlH3v22O1gZfU2vyvaQVFQRifu8K/sLKKoQqa1QJbF9VHBkgR11JZ8ueuqQhDkfdZQ0y+WQ
-	61pD+8hVxZgNGn7L6GP7NboJc2EOUPoqLU/Q54M+u3GzS80kIVl363OkNq7YxJRt70Q==
-X-Gm-Gg: ASbGncuuvNYcEll16A0K9fszdyWb2GodTjv8CVTaOIc9ZompyOX9ZE+xhvTV5W8pn9b
-	/R3u7RYbhLRx8l183D5xNN+FN16X9AItKV6E30Rl/uNJlqZw6vfezG861BeSGpKeMkzEohvRpVC
-	jkxc8AnMLsmYSxiuhCrs5iSoasFIk12ZAgvSCWxrrY/3Hfm4QE9Tt1z1UA1NCFDVyIirVnBRHJt
-	JRaj6nZ6Mr8R5JZpY1SL11ZYe2j/fpGPJTn42V1MDJf0hUWUZNYlwexoqLsHhCHI5PW2uyEiJ56
-	Gh0uDNqI7Cql8XffvVLfQEeWPLjSagixikbB4aaXd3oZ1m5OC1fX+eBZA6Zn+NCdwX0xHN0+Gzc
-	HRnDTrtyeH8b5YviFQQAzmhIMGet9PwybtMS8yDo3iMXd9wUPNg==
-X-Received: by 2002:a05:6000:4618:b0:3a4:f918:9db9 with SMTP id ffacd0b85a97d-3a6d12d52d0mr8203109f8f.32.1750666185358;
-        Mon, 23 Jun 2025 01:09:45 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IFE5NMbzGns4Ud1DK8X95jr6pyg7YsHTa6Knp0H71wmbZQUUlCQ20bRY4JdQU2MDB76jFyjdw==
-X-Received: by 2002:a05:6000:4618:b0:3a4:f918:9db9 with SMTP id ffacd0b85a97d-3a6d12d52d0mr8203084f8f.32.1750666184934;
-        Mon, 23 Jun 2025 01:09:44 -0700 (PDT)
-Received: from ?IPV6:2003:d8:2f4e:fd00:8e13:e3b5:90c8:1159? (p200300d82f4efd008e13e3b590c81159.dip0.t-ipconnect.de. [2003:d8:2f4e:fd00:8e13:e3b5:90c8:1159])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4536470903asm103919615e9.40.2025.06.23.01.09.43
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 23 Jun 2025 01:09:44 -0700 (PDT)
-Message-ID: <aac5662d-b764-426c-a763-79053ecea1a5@redhat.com>
-Date: Mon, 23 Jun 2025 10:09:43 +0200
+	s=arc-20240116; t=1750666213; c=relaxed/simple;
+	bh=9UFfyxd2/b0B8guWxRhS4jzpop1VBAtfJC/n8ZrMlz0=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=NrtcQIWvqgCxvEwzMscU1w33uGBG/9LwMIRMMOf8nkaCu0lKFECuLaZrmDV8TE0f/7aOGS7/B25SMcs8O7CFHKbzcjbTfztkqsUZ94HB7myqGVBca4WCC9GPnsI1fnTV3DSEL7Vc7D0HSY1Dx+BeLyxRsHROqTSto129n7P01e8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=FPyizjS+; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B3567C4CEF6;
+	Mon, 23 Jun 2025 08:10:12 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1750666212;
+	bh=9UFfyxd2/b0B8guWxRhS4jzpop1VBAtfJC/n8ZrMlz0=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=FPyizjS+kcmIUJdWgcX2yl5zU254/yT6y9fjJUzpsifXgAnOShDwKyuJa4Js7vi6W
+	 zazBcrc0dYF8VXhdBegmcqBrmW1sl2Nf5iN3Bt7q3b09z5Hc4I/fsUApQDMUEtyvgR
+	 qYZh/NvbVWnUkXlGpie58LgqMjIp5PK/aylLBDdOXl+GRF9Io3SHZUlg4exAjSJE1y
+	 WGQ2Lcmy5+iEuBtlqRQP2yX5Jxwkx84cyHIo/ueCHQzIzaAqdw6KZjo2WwKsY3JnOa
+	 RAMl+h2/8oJbez+mhgDxWQaHL8xNwejWoG/c5NKrt0bkO2HoxXIiGwJizb4iWRPcy6
+	 oEfBdbY9XjECQ==
+Received: by mail-ed1-f42.google.com with SMTP id 4fb4d7f45d1cf-606b6dbe316so7437069a12.3;
+        Mon, 23 Jun 2025 01:10:12 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCUBAIp/pkrxelHGqrawKzqEdG6xX1r2ehxVsvBiRvyX5znf+AoRre5Povtps7JT/Rn/D55OFBfG@vger.kernel.org, AJvYcCVsFl+ZS/Xsx5kGEEXiNAUveWPcHvlnOuS7WS5AE+drJhQd4VIzeTSM2tJK1l01hXfer+fdPnyCaCo8i5k=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz9XiUBfK+Mv+nRjP1DVWlhS1vnmqrqw9ksY9CJnYXQYKq+GPOR
+	sgz4J//5lSLw6JDS8Sf4MLvtgkyJJjx1VzuOdBhW/w5NQ1PJnJ5aY3ugkGJsqq/Y7chQxMDE4Jv
+	FSZ9Cqx6BHJn0YWodsxUvCUUIpg+ZKRs=
+X-Google-Smtp-Source: AGHT+IHVdXyQlxhUp2FRWU2idWY08CpHAI24CMuWlAmuGlq5qpodHyK+J3UrpjCva/pQR3fAFOc/BUmGTDLPAKsXno4=
+X-Received: by 2002:a05:6402:84c:b0:609:d20b:1af5 with SMTP id
+ 4fb4d7f45d1cf-60a1cd1a81amr10778001a12.2.1750666209246; Mon, 23 Jun 2025
+ 01:10:09 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2] mm: unexport globally copy_to_kernel_nofault
-To: Sabyrzhan Tasbolatov <snovitoll@gmail.com>, andreyknvl@gmail.com
-Cc: akpm@linux-foundation.org, arnd@arndb.de, dvyukov@google.com,
- elver@google.com, glider@google.com, hch@infradead.org,
- kasan-dev@googlegroups.com, linux-kernel@vger.kernel.org,
- linux-mm@kvack.org, ryabinin.a.a@gmail.com, vincenzo.frascino@arm.com
-References: <CA+fCnZeb4eKAf18U7YQEUvS1GVJdC1+gn3PSAS2b4_hnkf8xaw@mail.gmail.com>
- <20250622141142.79332-1-snovitoll@gmail.com>
-From: David Hildenbrand <david@redhat.com>
-Content-Language: en-US
-Autocrypt: addr=david@redhat.com; keydata=
- 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
- WNyWQQ==
-Organization: Red Hat
-In-Reply-To: <20250622141142.79332-1-snovitoll@gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+References: <20250622110148.3108758-1-chenhuacai@loongson.cn>
+ <2025062206-roundish-thumb-a20e@gregkh> <CAAhV-H4S=z5O0+pq-x9X4-VjYsJQVxib+V-35g50WeaivryHLA@mail.gmail.com>
+ <2025062349-proximity-trapeze-24c6@gregkh> <CAAhV-H7r-X-t0_i-x=oy2Gin4-ZMhSVwXtcaygZdJ1_J-zD3dg@mail.gmail.com>
+ <2025062339-till-sloping-58b2@gregkh>
+In-Reply-To: <2025062339-till-sloping-58b2@gregkh>
+From: Huacai Chen <chenhuacai@kernel.org>
+Date: Mon, 23 Jun 2025 16:09:56 +0800
+X-Gmail-Original-Message-ID: <CAAhV-H4Ntk0mdXGrvLPvwKmW2ROgyH7gnaSjYFgpDzg-d-hSfQ@mail.gmail.com>
+X-Gm-Features: Ac12FXzYxecj6L72SAnsBRFC2YxdneMCN2Ajasq-9wTeF6WqfrpvimZYH9Axjt0
+Message-ID: <CAAhV-H4Ntk0mdXGrvLPvwKmW2ROgyH7gnaSjYFgpDzg-d-hSfQ@mail.gmail.com>
+Subject: Re: [PATCH for 6.1/6.6] platform/loongarch: laptop: Fix build error
+ due to backport
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: Huacai Chen <chenhuacai@loongson.cn>, Sasha Levin <sashal@kernel.org>, 
+	Xuerui Wang <kernel@xen0n.name>, stable@vger.kernel.org, ziyao@disroot.org, 
+	linux-kernel@vger.kernel.org, loongarch@lists.linux.dev
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 22.06.25 16:11, Sabyrzhan Tasbolatov wrote:
-> `copy_to_kernel_nofault()` is an internal helper which should not be
-> visible to loadable modules – exporting it would give exploit code a
-> cheap oracle to probe kernel addresses.  Instead, keep the helper
-> un-exported and compile the kunit case that exercises it only when
-> `mm/kasan/kasan_test.o` is linked into vmlinux.
-> 
-> Fixes: ca79a00bb9a8 ("kasan: migrate copy_user_test to kunit")
-> Suggested-by: Christoph Hellwig <hch@infradead.org>
-> Suggested-by: Marco Elver <elver@google.com>
-> Reviewed-by: Andrey Konovalov <andreyknvl@gmail.com>
-> Signed-off-by: Sabyrzhan Tasbolatov <snovitoll@gmail.com>
-> ---
+On Mon, Jun 23, 2025 at 4:03=E2=80=AFPM Greg Kroah-Hartman
+<gregkh@linuxfoundation.org> wrote:
+>
+> On Mon, Jun 23, 2025 at 02:36:18PM +0800, Huacai Chen wrote:
+> > On Mon, Jun 23, 2025 at 2:28=E2=80=AFPM Greg Kroah-Hartman
+> > <gregkh@linuxfoundation.org> wrote:
+> > >
+> > > On Sun, Jun 22, 2025 at 09:11:44PM +0800, Huacai Chen wrote:
+> > > > On Sun, Jun 22, 2025 at 9:10=E2=80=AFPM Greg Kroah-Hartman
+> > > > <gregkh@linuxfoundation.org> wrote:
+> > > > >
+> > > > > On Sun, Jun 22, 2025 at 07:01:48PM +0800, Huacai Chen wrote:
+> > > > > > In 6.1/6.6 there is no BACKLIGHT_POWER_ON definition so a build=
+ error
+> > > > > > occurs due to recently backport:
+> > > > > >
+> > > > > >   CC      drivers/platform/loongarch/loongson-laptop.o
+> > > > > > drivers/platform/loongarch/loongson-laptop.c: In function 'lapt=
+op_backlight_register':
+> > > > > > drivers/platform/loongarch/loongson-laptop.c:428:23: error: 'BA=
+CKLIGHT_POWER_ON' undeclared (first use in this function)
+> > > > > >   428 |         props.power =3D BACKLIGHT_POWER_ON;
+> > > > > >       |                       ^~~~~~~~~~~~~~~~~~
+> > > > > >
+> > > > > > Use FB_BLANK_UNBLANK instead which has the same meaning.
+> > > > > >
+> > > > > > Signed-off-by: Huacai Chen <chenhuacai@loongson.cn>
+> > > > > > ---
+> > > > > >  drivers/platform/loongarch/loongson-laptop.c | 2 +-
+> > > > > >  1 file changed, 1 insertion(+), 1 deletion(-)
+> > > > >
+> > > > > What commit id is this fixing?
+> > > >
+> > > > commit 53c762b47f726e4079a1f06f684bce2fc0d56fba upstream.
+> > >
+> > > Great, can you resend this with a proper Fixes: tag so I don't have t=
+o
+> > > manually add it myself?
+> > Upstream kernel doesn't need to be fixed, and for 6.1/6.6, the commits
+> > need to be fixed are in linux-stable-rc.git[1][2] rather than
+> > linux-stable.git now.
+> >
+> > I don't know your policy about stable branch maintenance, one of the
+> > alternatives is modify [1][2] directly. And if you prefer me to resend
+> > this patch, I think the commit id is not the upstream id, but the ids
+> > in [1][2]?
+> >
+> > [1]https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-=
+rc.git/commit/?h=3Dqueue/6.1&id=3Df78d337c63e738ebd556bf67472b2b5c5d8e9a1c
+> > [2]https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-=
+rc.git/commit/?h=3Dqueue/6.6&id=3D797cbc5bc7e7a9cd349b5c54c6128a4077b9a8c6
+>
+> What we should do is just drop those patches from the 6.1.y and 6.6.y
+> queues, I'll go do that now, and wait for you to submit a working
+> version of this patch for those branches, so that we do not have any
+> build breakages anywhere.
+>
+> Can you submit the updated patches for that now?
+OK, will do.
 
-Acked-by: David Hildenbrand <david@redhat.com>
-
--- 
-Cheers,
-
-David / dhildenb
-
+>
+> thanks,
+>
+> greg k-h
 
