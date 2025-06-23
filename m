@@ -1,117 +1,151 @@
-Return-Path: <linux-kernel+bounces-698393-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-698404-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id A94F8AE4165
-	for <lists+linux-kernel@lfdr.de>; Mon, 23 Jun 2025 14:59:45 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C5512AE4174
+	for <lists+linux-kernel@lfdr.de>; Mon, 23 Jun 2025 15:00:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 979333A61C1
-	for <lists+linux-kernel@lfdr.de>; Mon, 23 Jun 2025 12:57:24 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id F3A087A86BD
+	for <lists+linux-kernel@lfdr.de>; Mon, 23 Jun 2025 12:58:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0F3A324EAB2;
-	Mon, 23 Jun 2025 12:56:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BA33D248862;
+	Mon, 23 Jun 2025 12:58:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Q7Wp+d/s"
-Received: from mail-lf1-f50.google.com (mail-lf1-f50.google.com [209.85.167.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="ZQh8aRsL"
+Received: from lelvem-ot01.ext.ti.com (lelvem-ot01.ext.ti.com [198.47.23.234])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C732224DD0F;
-	Mon, 23 Jun 2025 12:56:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 719A724C06A;
+	Mon, 23 Jun 2025 12:58:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.23.234
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750683407; cv=none; b=WN8xOvCACw9cNjnGw6xVsyBIOuxzumeVKqxVlpwxs2yXub+W7PMXJfgbsWZo66FpJJxJYu6/weudt0BuGtIh+iNmYtCtrJwqB8+85H1VwhsTpRRNJiG34SA09CVidgZew+fwAWCDFr3XKjK6tkb/d7aT9U6ZWoyBEOKZ/cBOYrY=
+	t=1750683486; cv=none; b=YMKE53ftBR++usSimNB8B6ITK3P4DUoTcdi/RuGxG8GZAhJR1W9McDDsFj+66XagO+OdesWQlqt0k51mPq94OqY7ocb3oDjhlCzswgn/ewF+F4rqyP/dtQyiDmwrw4WE2I5prbc6nas9yFMiLLzkHVoIoy4NXtUR+QZ3TvzNkqQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750683407; c=relaxed/simple;
-	bh=7n4fuwiYJUTibWNIDCfCMV6f+zSGKadvPylADSrSODI=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=mqVrpvGSpbha4srJ9rBlQGmQCNvzcDw0/SCjK4U6WsBlZ+XmxLFQQstdD/IGyiNh3ljVelOL8lGYpLYW0C97fNSF87ZWx6W2P/iuDdlMkn6YPCLlQnxYlYQGjx+ccG3DXW/+Rvnc/BiE4hGn1xf+T5t4MEseAFR5Clauu33DNS0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Q7Wp+d/s; arc=none smtp.client-ip=209.85.167.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lf1-f50.google.com with SMTP id 2adb3069b0e04-54e98f73850so3591600e87.1;
-        Mon, 23 Jun 2025 05:56:45 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1750683404; x=1751288204; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=8/PYDyDKGZYKEGjVXXHlyij22R64l8wztxMeZv4XmnE=;
-        b=Q7Wp+d/sE4YVPl1V62uzQbfTm5BJkbN9IG3EyVo8oMQ2TFzvo9edQ4Wg9vAHUD2o0o
-         ikip2CydU0wkQNwKI1UHjn5kGZWK9I65MALDWkCnLRvDRiG+4/LcRNVi+3yXWRoxzgg2
-         s6Np22jYOzXM5b7zqer9o1xHebXyV2mrbowX78bQSYHpG/D975bSMngMjXURGNdlZn/g
-         BjkRp3GWjCSEw8zsAA+7QzupsicmhZxZDci79VYJ0ZJW0c1VmsUqjZmET9F7aVbcV9uA
-         ENNiohvOgckeyJzInKkATZPCx5jnOt7+oHpUg9437RLag313cAxUc6xs5OFWowpCQlC2
-         P9Hg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1750683404; x=1751288204;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=8/PYDyDKGZYKEGjVXXHlyij22R64l8wztxMeZv4XmnE=;
-        b=Ow8tDL2yeEdeNfYEe3C3lWz87uVHq490c/2C7RG5rW9ks2FM8zo7EysMGF+XJjEZ1/
-         fqpFMoP2mQEMoos+sTWhUFsn8HpBY8Z6X2KwRfzXFk2mGx4h+Fx1cN4vu40uMnf5caaE
-         12owkSicceQutx1qJNvN6c88MKZpiwFQwYatyaHOlaJ2fH4si7khDSkay+HEAqMHniEc
-         lzBKZS4o8i2i28lO4q7Xxb3sw9Buh50EoLp/qpxZyDUi0MaMSNkgNmWp4cEEh/nI9pC7
-         f3corirLMnw1BzVH5eCTTQxbpQnYOywnPUmWU1OUY7AsLv04xrjBMHVIUrpIxSrbttWx
-         3wPw==
-X-Forwarded-Encrypted: i=1; AJvYcCVIm+UrywZpowmE0ot1tzfm2LMNBpbNx2uE+b0cpNlY9iThqGOf+NCmN/QFnefbNdxPxU5EJq7DmZkP@vger.kernel.org, AJvYcCWBoghLT+Z8ZbPLlt/Kf/DQAJAfoGHvFw9oycTDKi19SEQuZCWkiU4ryCTLpmUSxX1cWlWG0WCyZFpLg+iL@vger.kernel.org, AJvYcCXfAzLgE8Ly6VytGEDSJ3bf9EL82a11JPHXevpgJkMXDPXyUAUwDsxQ/wI3YovT04jy26Zk5IMF@vger.kernel.org
-X-Gm-Message-State: AOJu0YycCCjPHFbRTeHrNeGvcN884BqEEqPdU8XI9ZHpDtc5Ng+uW9/P
-	I27HMzgXmQYU+yzfPYoU4fjDtNTtjmGbY6oiVzM6O0hZTdGbOwvJMlR/m98xR6PQ2g5m9OQL27O
-	VS9dUpimfFkqiT/hFz4iEqd6ydg+PhqY=
-X-Gm-Gg: ASbGnctNd0sh9hxxT+/b+j+ViSP7OCwgyXmWWJQuvOPQBh66POh1OPXm3Tdup1ITr6W
-	nX0rL21cQGCeezra2YnTa3W2rG9xx/k5MZcXj7G7oppg3Gw6St3Zp+3hyYkrF2ZKMPZtdeS4dnx
-	OlIgSgjzA3BPP+yUUeQeNSR8/Is7pgM+b7PQIwdeZwSG7E6flMLV58WZkZiNF/L1039oszvI2Dg
-	dM=
-X-Google-Smtp-Source: AGHT+IHVX0GlIPq3TBaQtLm46YetyZZ0s+N9/Y4hGKlfh5oMqO78Ds4mOXk6wiprWLKaWnye4Cex5x6r2Jq+usWNPy8=
-X-Received: by 2002:a05:6512:159d:b0:553:ceed:c85f with SMTP id
- 2adb3069b0e04-553e3bb4cbbmr3113374e87.21.1750683403609; Mon, 23 Jun 2025
- 05:56:43 -0700 (PDT)
+	s=arc-20240116; t=1750683486; c=relaxed/simple;
+	bh=2uRzPBv8XmRl6PL+xwcMHqnVmSrlShU09YdB9fiVk9E=;
+	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=RY2xdP0bk0zh5fDkUOEVW0tJ4WvTXnOb0uyAX8yBOe1bNrVFAs+SR35fHSw9PHdjFA3QGrFQ/1KDV8uUNUZFVy4pumBY4+Rjb2TJdPK7u0d25dSJvnov27aZmocxlIbijph/4SskUG2HQrSOlCYuWUTYxCT4om6UN/buVASjPeY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=ZQh8aRsL; arc=none smtp.client-ip=198.47.23.234
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
+Received: from fllvem-sh03.itg.ti.com ([10.64.41.86])
+	by lelvem-ot01.ext.ti.com (8.15.2/8.15.2) with ESMTP id 55NCvqqj889428;
+	Mon, 23 Jun 2025 07:57:52 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+	s=ti-com-17Q1; t=1750683472;
+	bh=31eJ+AWxiGbYg4zWcNeGQWhipTSARDm8us14p739GWk=;
+	h=Date:From:To:CC:Subject:References:In-Reply-To;
+	b=ZQh8aRsLTZ/HYz2VBgn6xeYDbBaWGyxFZ+DW2pnNvEuJU+xN3NQc2XRrk02KGFRJH
+	 tfX+was6O/v15f66++Jd9mNJsouyAMIfmP6L7W8qMUS5yw9P/A+XUdTDLtRiH2J3mo
+	 R6we3XetfvJ4kAUNJjOc90HYbls0wo8xKgb7ScUc=
+Received: from DFLE114.ent.ti.com (dfle114.ent.ti.com [10.64.6.35])
+	by fllvem-sh03.itg.ti.com (8.18.1/8.18.1) with ESMTPS id 55NCvppg3243449
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-SHA256 bits=128 verify=FAIL);
+	Mon, 23 Jun 2025 07:57:52 -0500
+Received: from DFLE109.ent.ti.com (10.64.6.30) by DFLE114.ent.ti.com
+ (10.64.6.35) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.55; Mon, 23
+ Jun 2025 07:57:51 -0500
+Received: from lelvem-mr05.itg.ti.com (10.180.75.9) by DFLE109.ent.ti.com
+ (10.64.6.30) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.55 via
+ Frontend Transport; Mon, 23 Jun 2025 07:57:51 -0500
+Received: from localhost (lcpd911.dhcp.ti.com [172.24.227.226])
+	by lelvem-mr05.itg.ti.com (8.18.1/8.18.1) with ESMTP id 55NCvoeg4136274;
+	Mon, 23 Jun 2025 07:57:51 -0500
+Date: Mon, 23 Jun 2025 18:27:50 +0530
+From: Dhruva Gole <d-gole@ti.com>
+To: "Peng Fan (OSS)" <peng.fan@oss.nxp.com>
+CC: Sudeep Holla <sudeep.holla@arm.com>,
+        Cristian Marussi
+	<cristian.marussi@arm.com>,
+        <arm-scmi@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>,
+        Ranjani Vaidyanathan <ranjani.vaidyanathan@nxp.com>,
+        Chuck Cannon
+	<chuck.cannon@nxp.com>, Peng Fan <peng.fan@nxp.com>
+Subject: Re: [PATCH 2/2] firmware: arm_scmi: power_control: Set
+ SCMI_SYSPOWER_IDLE in pm resume
+Message-ID: <20250623125750.kzwndmcf5yo3siao@lcpd911>
+References: <20250620-scmi-pm-v1-0-c2f02cae5122@nxp.com>
+ <20250620-scmi-pm-v1-2-c2f02cae5122@nxp.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250623095732.2139853-1-joy.zou@nxp.com> <20250623095732.2139853-9-joy.zou@nxp.com>
-In-Reply-To: <20250623095732.2139853-9-joy.zou@nxp.com>
-From: Fabio Estevam <festevam@gmail.com>
-Date: Mon, 23 Jun 2025 09:56:31 -0300
-X-Gm-Features: AX0GCFuGOUHw2mx0QPMnuqMm-hZkSD1S0Ck80ClMf9fqxc9r2EVikPukaYObI_I
-Message-ID: <CAOMZO5AzU03qEg80vhyU=CrgVgYt+rn=WQ7SphtADxOc5eG5tQ@mail.gmail.com>
-Subject: Re: [PATCH v6 8/9] pmdomain: imx93-blk-ctrl: mask DSI and PXP PD
- domain register on i.MX91
-To: Joy Zou <joy.zou@nxp.com>
-Cc: robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org, 
-	shawnguo@kernel.org, s.hauer@pengutronix.de, catalin.marinas@arm.com, 
-	will@kernel.org, andrew+netdev@lunn.ch, davem@davemloft.net, 
-	edumazet@google.com, kuba@kernel.org, pabeni@redhat.com, 
-	mcoquelin.stm32@gmail.com, alexandre.torgue@foss.st.com, 
-	ulf.hansson@linaro.org, richardcochran@gmail.com, kernel@pengutronix.de, 
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, imx@lists.linux.dev, 
-	linux-arm-kernel@lists.infradead.org, netdev@vger.kernel.org, 
-	linux-stm32@st-md-mailman.stormreply.com, linux-pm@vger.kernel.or, 
-	frank.li@nxp.com, ye.li@nxp.com, ping.bai@nxp.com, aisheng.dong@nxp.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+In-Reply-To: <20250620-scmi-pm-v1-2-c2f02cae5122@nxp.com>
+X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
 
-On Mon, Jun 23, 2025 at 7:00=E2=80=AFAM Joy Zou <joy.zou@nxp.com> wrote:
+On Jun 20, 2025 at 11:37:14 +0800, Peng Fan (OSS) wrote:
+> From: Peng Fan <peng.fan@nxp.com>
+> 
+> When two consecutive suspend message send to the Linux agent, Linux will
+> suspend and wake up. The exepcted behaviour should be suspend, wake up
 
-> +static const struct imx93_blk_ctrl_data imx91_media_blk_ctl_dev_data =3D=
- {
-> +       .domains =3D imx93_media_blk_ctl_domain_data,
-> +       .skip_mask =3D BIT(IMX93_MEDIABLK_PD_MIPI_DSI) | BIT(IMX93_MEDIAB=
-LK_PD_PXP),
-> +       .num_domains =3D ARRAY_SIZE(imx93_media_blk_ctl_domain_data),
-> +       .clk_names =3D (const char *[]){ "axi", "apb", "nic", },
-> +       .num_clks =3D 3,
+I am first trying to gather more context of the issue at hand here,
+Why and who is sending 2 consecutive suspend messages to Linux?
 
-Instead of hardcoding the number of clocks, what about using
-ARRAY_SIZE() instead?
+Just quoting the cover letter:
 
-Like it was done here:
+> When testing on i.MX95, two consecutive suspend message send to the Linux
+> agent, Linux will suspend(by the 1st suspend message) and wake up(by the
+> 2nd suspend message).
+> 
+> The ARM SCMI spec does not allow for filtering of which messages an agent
+> wants to get on the system power protocol. To i.MX95, as we use mailbox
+> to receive message, and the mailbox supports wake up, so linux will also
+> get a repeated suspend message. This will cause Linux to wake (and should
+> then go back into suspend).
 
-https://lore.kernel.org/linux-arm-kernel/20250619062108.2016511-1-xiaolei.w=
-ang@windriver.com/
+When you say mailbox supports wake up you mean the mailbox IP in your
+SoC actually gets some sort of wake interrupt that triggers a wakeup?
+Is this wakeup sent to the SM then to be processed further and trigger a
+linux wakeup?
+
+<or> the mailbox directly wakes up linux, ie. triggers a resume flow but
+then you are saying it was an unintentional wakeup so you want to
+suspend linux again? This just seems like the wakeup routing is
+incorrect and the system is going through a who resume and then suspend
+cycle without a good reason?
+
+Why and when in this flow is linux ending up with a duplicate suspend message is
+something I still don't follow.
+
+Could you point us to any flow diagrams or software sequences that we
+could review?
+
+> and suspend again.
+> 
+> The ARM SCMI spec does not allow for filtering of which messages an agent
+> wants to get on the system power protocol. To i.MX95, as we use mailbox
+> to receive message, and the mailbox supports wake up, so linux will also
+> get a repeated suspend message. This will cause Linux to wake (and should
+> then go back into suspend).
+> 
+> In current driver, the state is set back to SCMI_SYSPOWER_IDLE after
+> pm_suspend finish, however the workqueue could be scheduled after
+> thaw_kernel_threads. So the 2nd suspend will return early with
+> "Transition already in progress...ignore", and leave Linux in wakeup
+> state.
+> 
+> So set SCMI_SYSPOWER_IDLE in device resume phase before workqueue
+> is scheduled to make the 2nd suspend message could suspend Linux again.
+> 
+> Signed-off-by: Peng Fan <peng.fan@nxp.com>
+> ---
+>  drivers/firmware/arm_scmi/scmi_power_control.c | 24 +++++++++++++++++++-----
+>  1 file changed, 19 insertions(+), 5 deletions(-)
+> 
+[...]
+
+-- 
+Best regards,
+Dhruva Gole
+Texas Instruments Incorporated
 
