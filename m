@@ -1,191 +1,112 @@
-Return-Path: <linux-kernel+bounces-698188-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-698027-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8D4B4AE3E6B
-	for <lists+linux-kernel@lfdr.de>; Mon, 23 Jun 2025 13:47:57 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 096F4AE3C16
+	for <lists+linux-kernel@lfdr.de>; Mon, 23 Jun 2025 12:20:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 69E8E1897A79
-	for <lists+linux-kernel@lfdr.de>; Mon, 23 Jun 2025 11:48:05 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 96E6A169FF2
+	for <lists+linux-kernel@lfdr.de>; Mon, 23 Jun 2025 10:20:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 73598248898;
-	Mon, 23 Jun 2025 11:46:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="RGCfOQeJ";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="YaW3yg9M";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="RGCfOQeJ";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="YaW3yg9M"
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5FE0C248867
-	for <linux-kernel@vger.kernel.org>; Mon, 23 Jun 2025 11:46:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 452FF1EF394;
+	Mon, 23 Jun 2025 10:20:39 +0000 (UTC)
+Received: from pegase1.c-s.fr (pegase1.c-s.fr [93.17.236.30])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D77DC238C27;
+	Mon, 23 Jun 2025 10:20:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=93.17.236.30
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750679178; cv=none; b=iZEzJ/tsSYNVHCiMWfpQpFscKwYdjoOmqQRPxYSj50XNsToqoWQ8jOQWhEhEVRY7cbHSwWR9F5NQX7HrEPq+KtR5pk7HXsLF2X+LPUsNDLy57dzbM/1yyvPoq/oErrNfZqzXplmZYSmAe7lLLgQ6y+Uk9+cw1p8KrIdXp3QwJ+w=
+	t=1750674038; cv=none; b=H/VjfC4HODWrEydKgMCpdwgbNMNSCYoWJay1zrahpwxJ+J9m7OAKp4kqzfBddoZYR/ALZ6MxUTcVBojl9gNyuopsUYl/iv5Piqb1jNTsj92WiPUOaX07Pu7HLOHGB8+pRh58J+pLw4Mc0jnBXBTeL+mEuWmD+YIoa8Do9G6CTj0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750679178; c=relaxed/simple;
-	bh=KVCn3pmMJ5yCE9/Zk+aqhDjnGhs1KKfsE2Frela8LbQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=rc3IA/dC9DHSDWhtPuxu1PklepUetc3WoGQgJ7+4De1a1i0USG0Mk2enu+2m5bpjkzYsL/SPNj9BShtg2arXfIZyWKvu5+zfxPgUbt7qy+Vks9ACmidW9A7YSS7ay5z6zdGfjZZwYpy9/uKU+FZT7FRClw3zmtnmTHsbgPtM/sY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=RGCfOQeJ; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=YaW3yg9M; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=RGCfOQeJ; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=YaW3yg9M; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id 9A4D91F457;
-	Mon, 23 Jun 2025 11:46:09 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1750679169; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=85n04soQnTCspGUaqCxhy29BgIf3j4nlIk46T5YAzUY=;
-	b=RGCfOQeJLcVCKlFWzY+AutjvAGUSCzMHSsj2mDWzbWFGuAQUK8Z9lqIDNxllMbX2iwMXmO
-	r0miBWkH81zwzfSaJv03zEz8MWROtaYAmZeZl19ya6bM1oWPqIf5QSzG6Ov0t5uht/5mxU
-	Mrs7X8TYW0qK9U2RWJueh4e57l0FRCk=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1750679169;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=85n04soQnTCspGUaqCxhy29BgIf3j4nlIk46T5YAzUY=;
-	b=YaW3yg9MuMH/odDJ2AOLcTGXzwtGwQ9tacQ/LyfLJ1OVSHcwQhg2BfFD+YDaR1EHtmgfdF
-	O4y47yPQWsoxh0Cg==
-Authentication-Results: smtp-out2.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1750679169; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=85n04soQnTCspGUaqCxhy29BgIf3j4nlIk46T5YAzUY=;
-	b=RGCfOQeJLcVCKlFWzY+AutjvAGUSCzMHSsj2mDWzbWFGuAQUK8Z9lqIDNxllMbX2iwMXmO
-	r0miBWkH81zwzfSaJv03zEz8MWROtaYAmZeZl19ya6bM1oWPqIf5QSzG6Ov0t5uht/5mxU
-	Mrs7X8TYW0qK9U2RWJueh4e57l0FRCk=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1750679169;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=85n04soQnTCspGUaqCxhy29BgIf3j4nlIk46T5YAzUY=;
-	b=YaW3yg9MuMH/odDJ2AOLcTGXzwtGwQ9tacQ/LyfLJ1OVSHcwQhg2BfFD+YDaR1EHtmgfdF
-	O4y47yPQWsoxh0Cg==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 62D3813A27;
-	Mon, 23 Jun 2025 11:46:09 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id O55gFoE+WWgRNQAAD6G6ig
-	(envelope-from <jack@suse.cz>); Mon, 23 Jun 2025 11:46:09 +0000
-Received: by quack3.suse.cz (Postfix, from userid 1000)
-	id 0D650A29FA; Mon, 23 Jun 2025 09:38:53 +0200 (CEST)
-Date: Mon, 23 Jun 2025 09:38:53 +0200
-From: Jan Kara <jack@suse.cz>
-To: Zhang Yi <yi.zhang@huaweicloud.com>
-Cc: Jan Kara <jack@suse.cz>, linux-ext4@vger.kernel.org, 
-	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, tytso@mit.edu, 
-	adilger.kernel@dilger.ca, ojaswin@linux.ibm.com, yi.zhang@huawei.com, libaokun1@huawei.com, 
-	yukuai3@huawei.com, yangerkun@huawei.com
-Subject: Re: [PATCH v2 2/6] ext4: fix stale data if it bail out of the
- extents mapping loop
-Message-ID: <cqhltjvxmmbv4fafoc6gb4lisd63osqw44njmxjvmpgqzkqn3g@ncworvfx7iys>
-References: <20250611111625.1668035-1-yi.zhang@huaweicloud.com>
- <20250611111625.1668035-3-yi.zhang@huaweicloud.com>
- <m5drn6xauyaksmui7b3vpua24ttgmjnwsi3sgavpelxlcwivsw@6bpmobqvpw7f>
- <14966764-5bbc-48a9-9d56-841255cfe3c6@huaweicloud.com>
- <ygdwliycwt52ngkl2o4lia3hzyug3zzvc2hdacbdi3lvbzne7l@l7ub66fvqym6>
- <49596299-8cd5-4b43-ba32-cf2b404236a7@huaweicloud.com>
+	s=arc-20240116; t=1750674038; c=relaxed/simple;
+	bh=p8PQUdRYWUOPl4Z/9qK7If5y4/ivYQHU9/Nwzq6Obcg=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=P2F62AfA4KYWR//0NsHgvvFK1Y1pdrjL94e9zgn3ZotLnITqItE8JPJ0paYMmimXqROmbmv7W6AoVps+dOgR0kYJr/pb79bCRtylBavBFgAD1yN7yD5786TZwFTcVO4kCeMHJxtF23tl0tdZRdyZih9Xyhw38zRZmb3M75waYU0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=csgroup.eu; spf=pass smtp.mailfrom=csgroup.eu; arc=none smtp.client-ip=93.17.236.30
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=csgroup.eu
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=csgroup.eu
+Received: from localhost (mailhub3.si.c-s.fr [192.168.12.233])
+	by localhost (Postfix) with ESMTP id 4bQk294JMVz9skH;
+	Mon, 23 Jun 2025 11:54:25 +0200 (CEST)
+X-Virus-Scanned: amavisd-new at c-s.fr
+Received: from pegase1.c-s.fr ([192.168.12.234])
+	by localhost (pegase1.c-s.fr [127.0.0.1]) (amavisd-new, port 10024)
+	with ESMTP id 2L25sduycuWc; Mon, 23 Jun 2025 11:54:25 +0200 (CEST)
+Received: from messagerie.si.c-s.fr (messagerie.si.c-s.fr [192.168.25.192])
+	by pegase1.c-s.fr (Postfix) with ESMTP id 4bQk293bFcz9sgs;
+	Mon, 23 Jun 2025 11:54:25 +0200 (CEST)
+Received: from localhost (localhost [127.0.0.1])
+	by messagerie.si.c-s.fr (Postfix) with ESMTP id 743568B764;
+	Mon, 23 Jun 2025 11:54:25 +0200 (CEST)
+X-Virus-Scanned: amavisd-new at c-s.fr
+Received: from messagerie.si.c-s.fr ([127.0.0.1])
+	by localhost (messagerie.si.c-s.fr [127.0.0.1]) (amavisd-new, port 10023)
+	with ESMTP id a4DFXxeF3oKN; Mon, 23 Jun 2025 11:54:25 +0200 (CEST)
+Received: from [10.25.207.146] (unknown [10.25.207.146])
+	by messagerie.si.c-s.fr (Postfix) with ESMTP id 1FD2B8B763;
+	Mon, 23 Jun 2025 11:54:25 +0200 (CEST)
+Message-ID: <c6eece57-8767-4435-beda-c9f399e3fa80@csgroup.eu>
+Date: Mon, 23 Jun 2025 11:54:24 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <49596299-8cd5-4b43-ba32-cf2b404236a7@huaweicloud.com>
-X-Spamd-Result: default: False [-3.80 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	MID_RHS_NOT_FQDN(0.50)[];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	ARC_NA(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	MISSING_XM_UA(0.00)[];
-	RCPT_COUNT_TWELVE(0.00)[12];
-	RCVD_COUNT_THREE(0.00)[3];
-	FROM_HAS_DN(0.00)[];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	FROM_EQ_ENVFROM(0.00)[];
-	TO_DN_SOME(0.00)[];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	RCVD_TLS_LAST(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo,suse.com:email]
-X-Spam-Level: 
-X-Spam-Flag: NO
-X-Spam-Score: -3.80
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 0/2] soc: use new GPIO line value setter callbacks
+To: Bartosz Golaszewski <brgl@bgdev.pl>, Qiang Zhao <qiang.zhao@nxp.com>,
+ Linus Walleij <linus.walleij@linaro.org>,
+ Geert Uytterhoeven <geert+renesas@glider.be>,
+ Magnus Damm <magnus.damm@gmail.com>
+Cc: linuxppc-dev@lists.ozlabs.org, linux-arm-kernel@lists.infradead.org,
+ linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org,
+ linux-renesas-soc@vger.kernel.org,
+ Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+References: <20250610-gpiochip-set-rv-soc-v1-0-1a0c36c9deed@linaro.org>
+ <CAMRc=McVV=VBw0DRiz-4tTjh7ZtRLWg=N_LQ2-7O1sKyW30rxw@mail.gmail.com>
+Content-Language: fr-FR
+From: Christophe Leroy <christophe.leroy@csgroup.eu>
+In-Reply-To: <CAMRc=McVV=VBw0DRiz-4tTjh7ZtRLWg=N_LQ2-7O1sKyW30rxw@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-On Sat 21-06-25 12:42:11, Zhang Yi wrote:
-> On 2025/6/20 23:21, Jan Kara wrote:
-> > I suspect you thought that the failure to extend transaction in the middle
-> > of order 0 folio should not happen because you reserve credits for full
-> > page worth of writeback? But those credits could be exhaused by the time we
-> > get to mapping third folio because mpage_map_one_extent() only ensures
-> > there are credits for mapping one extent.
+Hi,
+
+
+Le 23/06/2025 à 09:33, Bartosz Golaszewski a écrit :
+> On Tue, Jun 10, 2025 at 2:38 PM Bartosz Golaszewski <brgl@bgdev.pl> wrote:
+>>
+>> Commit 98ce1eb1fd87e ("gpiolib: introduce gpio_chip setters that return
+>> values") added new line setter callbacks to struct gpio_chip. They allow
+>> to indicate failures to callers. We're in the process of converting all
+>> GPIO controllers to using them before removing the old ones. This series
+>> converts all GPIO chips implemented under drivers/soc/.
+>>
+>> Signed-off-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+>> ---
+>> Bartosz Golaszewski (2):
+>>        soc: fsl: qe: use new GPIO line value setter callbacks
+>>        soc: renesas: pwc-rzv2m: use new GPIO line value setter callbacks
+>>
+>>   drivers/soc/fsl/qe/gpio.c       | 6 ++++--
+>>   drivers/soc/renesas/pwc-rzv2m.c | 8 +++++---
+>>   2 files changed, 9 insertions(+), 5 deletions(-)
+>> ---
+>> base-commit: 19272b37aa4f83ca52bdf9c16d5d81bdd1354494
+>> change-id: 20250523-gpiochip-set-rv-soc-14e1d9414f70
+>>
+>> Best regards,
+>> --
+>> Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+>>
 > 
-> Ooops, you are right. Sorry, it was my mistake.
-> 
-> > 
-> > And I think reserving credits for just one extent is fine even from the
-> > beginning (as I wrote in my comment to patch 4). We just need to handle
-> > this partial case 
-> 
-> Yeah.
-> 
-> > which should be possible by just leaving
-> > mpd->first_page untouched and leave unlocking to
-> > mpage_release_unused_pages(). 
-> 
-> I was going to use this solution, but it breaks the semantics of the
-> mpage_release_unused_pages() and trigger BUG_ON(folio_test_writeback(folio))
-> in this function. I don't want to drop this BUG_ON since I think it's
-> somewhat useful.
+> I see Geert queued patch 2/2, who would take patch 1/2?
 
-Oh, right. Well, we could modify the BUG_ON to:
 
-	/*
-	 * first_page folio can be under writeback if we need to restart
-         * transaction to map more
-	 */
-	BUG_ON((invalidate || folio->inode > mpd->first_page) && folio_test_writeback(folio));
+It is in my pipe for v6.17 but if someone else wants to take it I can 
+Ack it instead.
 
-> > But I can be missing some effects, the writeback code is really complex...
-> 
-> Indeed, I was confused by this code for a long time. Thank you a lot for
-> patiently correcting my mistakes in my patch.
-
-Thank you for taking time to properly fix these issues :)
-
-> > BTW long-term the code may be easier to follow if we replace
-> > mpd->first_page and mpd->next_page with logical block based or byte based
-> > indexing. Now when we have large order folios, page is not that important
-> > concept for writeback anymore.
-> 
-> I suppose we should do this conversion now.
-
-Yes or this... I guess it would be more obvious what's going on this way.
-
-								Honza
--- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+Christophe
 
