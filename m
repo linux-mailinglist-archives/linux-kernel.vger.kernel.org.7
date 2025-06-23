@@ -1,137 +1,118 @@
-Return-Path: <linux-kernel+bounces-697723-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-697783-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id DECBDAE37C8
-	for <lists+linux-kernel@lfdr.de>; Mon, 23 Jun 2025 10:05:12 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id E6B5FAE389D
+	for <lists+linux-kernel@lfdr.de>; Mon, 23 Jun 2025 10:39:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0BF733A7364
-	for <lists+linux-kernel@lfdr.de>; Mon, 23 Jun 2025 08:04:48 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 993933B5802
+	for <lists+linux-kernel@lfdr.de>; Mon, 23 Jun 2025 08:37:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 48B3220B21F;
-	Mon, 23 Jun 2025 08:05:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 27EBD22DF9A;
+	Mon, 23 Jun 2025 08:38:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=rivosinc-com.20230601.gappssmtp.com header.i=@rivosinc-com.20230601.gappssmtp.com header.b="hlIr0+xG"
-Received: from mail-pl1-f171.google.com (mail-pl1-f171.google.com [209.85.214.171])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=rock-chips.com header.i=@rock-chips.com header.b="N2o1DUUN"
+Received: from mail-m15566.qiye.163.com (mail-m15566.qiye.163.com [101.71.155.66])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0C819205AB8
-	for <linux-kernel@vger.kernel.org>; Mon, 23 Jun 2025 08:04:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D4CE122DA0A
+	for <linux-kernel@vger.kernel.org>; Mon, 23 Jun 2025 08:38:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=101.71.155.66
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750665899; cv=none; b=nvh5vIKs4B9zWGiooa5LPIFVNWNC7E6waIQ9QDb+CtzcH2Vc4QRIp2hessAeGc4AxN/7B+7oSGQfyVnDSajjJVrlhPwybVe1WTNhZPyw9dzuTEtIMFLccoLPf/scEYMwU9NjQtbxzGWC35TJcku6qHLlKhL6oF7ajklLuOBMw7g=
+	t=1750667896; cv=none; b=fJeacMcBdw+WvicKLBNaMUfgyzfzXJoz2aFEWEXnmaWqcc4VVXOXoQrMqod30n9yp8IqlbOe816HNm3DwviMpyrO6zbkBwjLOUuXE4YRvnltt2mrLCxaaryUQ4A7vKCq1eVeJIyj0UY3hihUM9d8zdQGnq1zuYkZhhJbAlJDdos=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750665899; c=relaxed/simple;
-	bh=G1w0adoxO+ajxlGkY1rIijF7bO7HKR5s4V4mGepiLAg=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=fqvzZ8jEJBeKVcHPknHNv2181FVnssFzeN1GAnopebMjA7B+bfdKDPfMjjhIB6kDy+3s+CdPrQGD/bgi6VfofiQnTybpal0HtHGouhi/rDHncslIluq7ndMIcWcmkaGi3cGuJa/ltcsyvgnch0+P6MsOHBC4XzJtjVXb8XLccZ0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rivosinc.com; spf=pass smtp.mailfrom=rivosinc.com; dkim=pass (2048-bit key) header.d=rivosinc-com.20230601.gappssmtp.com header.i=@rivosinc-com.20230601.gappssmtp.com header.b=hlIr0+xG; arc=none smtp.client-ip=209.85.214.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rivosinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rivosinc.com
-Received: by mail-pl1-f171.google.com with SMTP id d9443c01a7336-23633a6ac50so53045325ad.2
-        for <linux-kernel@vger.kernel.org>; Mon, 23 Jun 2025 01:04:57 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=rivosinc-com.20230601.gappssmtp.com; s=20230601; t=1750665897; x=1751270697; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=4vmYNde3494s1oZAkDWHVWSrNdQuXQcEtL0WwaKvH1w=;
-        b=hlIr0+xGB14mwjiEXA1GHSOqonDemjrupW/YtxymfiQuoHKBs13aFZNwFSuIz+wYO2
-         9UDbsuw5/rxifbu4pD04jD3VXm1UyxqaQw8f/REsRRPqFEQDlAg/WH0gS9MXfnbIn6sv
-         Y1tvmZQ/Qa3V6d9mRJ04yJolXqaOeZJ8mragNHy0c0CQknPCdKTWGqZpYodPD4vwEZsj
-         wXjohd06RXos8QZM71VsBImA/OKRY7opwiVO6xR4Zphj0HTDCzC9N6VivNesaflLCsnG
-         qhyRLuBFN2n7qj+27IBQV1VUvBpJ171FXM7cc0ujx2U6lGuWJoYTvRfEHa6uzqEJXEMb
-         W8uA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1750665897; x=1751270697;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=4vmYNde3494s1oZAkDWHVWSrNdQuXQcEtL0WwaKvH1w=;
-        b=fHXdZvlvwXL08g2AVs9xd3b9TG7/0amyrBv+rgSjWFxRGgiilqCjDxxiE7NMWCY2WZ
-         B4rMvNaKvt2HjjYsffGOQrG0yD9HWudFRavAlYams6doBlOgA3DW7dNV89kEG7DjZCov
-         T4KZI7bBMZ9GXI/65atlVi+xUeps27zdMisX7trxJbn36wwEQbttWSBQx4tkfGUtSMh1
-         VqwLBbpdDLlpvM7JrSg8+pl4vD2dUGCHSe3I7/KeoPQTUnGGUZUqFMnHSdBHa32P0Kc8
-         EuWUW2yzRooaCHOsneBN9HNIAnOTUZPHGXybyQUZMC9Xv13o1Un1b5LKFo5nb4wXCQNh
-         iybg==
-X-Forwarded-Encrypted: i=1; AJvYcCVpqGd3o12mIwfUyVds9I1dXsJTP7qzJKxys6Di9/D6dr7k17roKiLTTK8Z0zJ+XiD5wMHnPJeUPOE/JH0=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwONlYLYDO6/9OqyNvbaQGTFJXM4aAcGr4N7yF3sQptSfhPmMX8
-	nKiUyADq0FCbb1t3zkluwOWMaUU/+EyauHlggAZGwt9nHVydfyQh2FN1ozwq9IThAkw=
-X-Gm-Gg: ASbGnctopzqDuLUJGl/sXufa3CFTQ84be2lXRW4oMjwUp7C7G9ra/1ae0ZLfnRD4sOi
-	oUjpjLwKYIOp7MJ5rcQbJT7nFXzRrmDatH7rejYy12M0xFB1uqjPDgDyXMD63B3vIKdZlBaFT5S
-	+0l/APR10DqDx+We0RFKJ6pZ8jen+/0b0YZ6fpa9JVeOcvtNdX6lFZ85Evr3Cuk5bn6YeaE4oIJ
-	MxE2Rs6E6WHqtrFwR/dCfRdeS3clo3fpeZpx5hhV2uegdkEacSpdaXSMcq6ymziu0BUi0N1QKh4
-	2Ssm0MJp2JgVkYm5yXV9g12sy/wbI+RTbsx5Zl/Sz0XH87IGbcoKCqBzQkmy5mBHrrsSL4EErJI
-	KGWxaPttVKd1OSZ6YxSycZFbbB8JWBnA=
-X-Google-Smtp-Source: AGHT+IGAu8sRN9d6YginLzXnR26SBrwXTWtMoIeqalY4gdd+wB4xJaqi8iWblIrCKepqAoQGghGYIw==
-X-Received: by 2002:a17:903:4b30:b0:234:8c3d:2912 with SMTP id d9443c01a7336-237d96b6361mr175973175ad.11.1750665897172;
-        Mon, 23 Jun 2025 01:04:57 -0700 (PDT)
-Received: from ?IPV6:2a01:e0a:e17:9700:16d2:7456:6634:9626? ([2a01:e0a:e17:9700:16d2:7456:6634:9626])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-237d867f8d0sm78007835ad.175.2025.06.23.01.04.49
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 23 Jun 2025 01:04:56 -0700 (PDT)
-Message-ID: <1d9ad2a8-6ab5-4f5e-b514-4a902392e074@rivosinc.com>
-Date: Mon, 23 Jun 2025 10:04:45 +0200
+	s=arc-20240116; t=1750667896; c=relaxed/simple;
+	bh=GEGAcyCqUXkwXqEOUaiQZ782N2IguRzssxIsxDn790c=;
+	h=Date:From:To:Cc:Subject:References:Mime-Version:Message-ID:
+	 Content-Type; b=Wk4FvBc8rdMgSRXlHGxcc8C/8nLQSMVcOgXFF6pWqjpomHE9xoCXsgyTSrPuiiZyOt0mteouRvFG5Z4azutJDMR+byuHPRir8FXmOkSO11f72pS46x4zXkwnGWM2ldXlvebsFo4Pgj4Co/AGTy8B0yKLZYRl6HevhJNimQdQDOg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rock-chips.com; spf=pass smtp.mailfrom=rock-chips.com; dkim=pass (1024-bit key) header.d=rock-chips.com header.i=@rock-chips.com header.b=N2o1DUUN; arc=none smtp.client-ip=101.71.155.66
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rock-chips.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rock-chips.com
+Received: from DESKTOP-SN9UGS1 (unknown [58.22.7.114])
+	by smtp.qiye.163.com (Hmail) with ESMTP id 1987adbf8;
+	Mon, 23 Jun 2025 08:41:44 +0800 (GMT+08:00)
+Date: Mon, 23 Jun 2025 08:41:44 +0800
+From: "xxm@rock-chips.com" <xxm@rock-chips.com>
+To: robin.murphy <robin.murphy@arm.com>, 
+	joro <joro@8bytes.org>, 
+	will <will@kernel.org>, 
+	heiko <heiko@sntech.de>
+Cc: iommu <iommu@lists.linux.dev>, 
+	linux-arm-kernel <linux-arm-kernel@lists.infradead.org>, 
+	linux-rockchip <linux-rockchip@lists.infradead.org>, 
+	linux-kernel <linux-kernel@vger.kernel.org>
+Subject: =?utf-8?B?5Zue5aSNOiBSZTogW1BBVENIXSBpb21tdS9yb2NrY2hpcDogcHJldmVudCBpb21tdXMgZGVhZCBsb29wIHdoZW4gdHdvIG1hc3RlcnMgc2hhcmUgb25lIElPTU1V?=
+References: <20250620073945.572523-1-xxm@rock-chips.com>, 
+	<340d76b8-c3a6-4116-ae51-ac4e4ee6a994@arm.com>
+X-Priority: 3
+X-Has-Attach: no
+X-Mailer: Foxmail 7.2.25.301[cn]
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] RISC-V: KVM: Delegate illegal instruction fault
-To: =?UTF-8?B?UmFkaW0gS3LEjW3DocWZ?= <rkrcmar@ventanamicro.com>,
- Xu Lu <luxu.kernel@bytedance.com>, anup@brainfault.org,
- atish.patra@linux.dev, paul.walmsley@sifive.com, palmer@dabbelt.com,
- aou@eecs.berkeley.edu, alex@ghiti.fr
-Cc: kvm@vger.kernel.org, kvm-riscv@lists.infradead.org,
- linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org,
- linux-riscv <linux-riscv-bounces@lists.infradead.org>
-References: <20250620091720.85633-1-luxu.kernel@bytedance.com>
- <DARCHDIZG7IP.2VTEVNMVX8R1E@ventanamicro.com>
-Content-Language: en-US
-From: =?UTF-8?B?Q2zDqW1lbnQgTMOpZ2Vy?= <cleger@rivosinc.com>
-In-Reply-To: <DARCHDIZG7IP.2VTEVNMVX8R1E@ventanamicro.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Mime-Version: 1.0
+Message-ID: <202506230841445347043@rock-chips.com>
+Content-Type: text/plain;
+	charset="utf-8"
+Content-Transfer-Encoding: base64
+X-HM-Spam-Status: e1kfGhgUHx5ZQUpXWQgPGg8OCBgUHx5ZQUlOS1dZFg8aDwILHllBWSg2Ly
+	tZV1koWUFDSUNOT01LS0k3V1ktWUFJV1kPCRoVCBIfWUFZGUNJHlYYTRpLTRpNGE5LTUhWFRQJFh
+	oXVRMBExYaEhckFA4PWVdZGBILWUFZTkNVSUlVTFVKSk9ZV1kWGg8SFR0UWUFZT0tIVUpLSU9PT0
+	hVSktLVUpCS0tZBg++
+X-HM-Tid: 0a979a3bddab03ackunma08b86cd1b6046a
+X-HM-MType: 1
+X-HM-Sender-Digest: e1kMHhlZQR0aFwgeV1kSHx4VD1lBWUc6OE06KTo5DDEzCi4ITxUaIj8w
+	TREKFC1VSlVKTE5LTUhCSEtOSkpNVTMWGhIXVQMDFjsJFBgQVhgTEgsIVRgUFkVZV1kSC1lBWU5D
+	VUlJVUxVSkpPWVdZCAFZQU9LSEM3Bg++
+DKIM-Signature:a=rsa-sha256;
+	b=N2o1DUUNJO2OZFiwUvHWww+EiZsX+VCs5xwPWdyLGqmb85zvdLqcAyX3wORnh97ayVcJS8XqvgdxHGsTMvo/LyW3xVIfCYFaL2K562aV7T8kfOQOAcngWGBBxdoduI4KKC0AwwBExjvatfGbxKbnEPYBCXDj00RlYD0jS4CU4a8=; s=default; c=relaxed/relaxed; d=rock-chips.com; v=1;
+	bh=GEGAcyCqUXkwXqEOUaiQZ782N2IguRzssxIsxDn790c=;
+	h=date:mime-version:subject:message-id:from;
 
-
-
-On 20/06/2025 14:04, Radim Krčmář wrote:
-> 2025-06-20T17:17:20+08:00, Xu Lu <luxu.kernel@bytedance.com>:
->> Delegate illegal instruction fault to VS mode in default to avoid such
->> exceptions being trapped to HS and redirected back to VS.
->>
->> Signed-off-by: Xu Lu <luxu.kernel@bytedance.com>
->> ---
->> diff --git a/arch/riscv/include/asm/kvm_host.h b/arch/riscv/include/asm/kvm_host.h
->> @@ -48,6 +48,7 @@
->> +					 BIT(EXC_INST_ILLEGAL)    | \
-> 
-> You should also remove the dead code in kvm_riscv_vcpu_exit.
-> 
-> And why not delegate the others as well?
-> (EXC_LOAD_MISALIGNED, EXC_STORE_MISALIGNED, EXC_LOAD_ACCESS,
->  EXC_STORE_ACCESS, and EXC_INST_ACCESS.)
-
-Currently, OpenSBI does not delegate misaligned exception by default and
-handles misaligned access by itself, this is (partially) why we added
-the FWFT SBI extension to request such delegation. Since some supervisor
-software expect that default, they do not have code to handle misaligned
-accesses emulation. So they should not be delegated by default.
-
-Thanks,
-
-Clément
-
-> 
-> Thanks.
-> 
-> _______________________________________________
-> linux-riscv mailing list
-> linux-riscv@lists.infradead.org
-> http://lists.infradead.org/mailman/listinfo/linux-riscv
+SGkgUm9iaW4sCgoKPk9uIDIwMjUtMDYtMjAgODozOSBhbSwgU2ltb24gWHVlIHdyb3RlOgoKCgo+
+PiBXaGVuIHR3byBtYXN0ZXJzIHNoYXJlIGFuIElPTU1VLCBjYWxsaW5nIG9wcy0+b2ZfeGxhdGUg
+ZHVyaW5nCgoKCj4+IHRoZSBzZWNvbmQgbWFzdGVyJ3MgZHJpdmVyIGluaXQgbWF5IG92ZXJ3cml0
+ZSBpb21tdS0+ZG9tYWluIHNldAoKCgo+PiBieSB0aGUgZmlyc3QuIFRoaXMgY2F1c2VzIHRoZSBj
+aGVjayBpZiAoaW9tbXUtPmRvbWFpbiA9PSBkb21haW4pCgoKCj4+IGluIHJrX2lvbW11X2F0dGFj
+aF9kZXZpY2UoKSB0byBmYWlsLCByZXN1bHRpbmcgaW4gdGhlIHNhbWUKCgoKPj4gaW9tbXUtPm5v
+ZGUgYmVpbmcgYWRkZWQgdHdpY2UgdG8gJnJrX2RvbWFpbi0+aW9tbXVzLCB3aGljaCBjYW4KCgoK
+Pj4gbGVhZCB0byBhbiBpbmZpbml0ZSBsb29wIGluIHN1YnNlcXVlbnQgJnJrX2RvbWFpbi0+aW9t
+bXVzIG9wZXJhdGlvbnMuCgoKCj4KCgoKPkluZGVlZCB0aGlzIGlzIGEgcHJvcGVydHkgb2YgdGhl
+IElPTU1VIGluc3RhbmNlIGl0c2VsZiBzbyBpdCByZWFsbHkgCgoKCj5zaG91bGQgYmUgaW5pdGlh
+bGlzZWQgYmVmb3JlIHJlZ2lzdHJhdGlvbiwgaXJyZXNwZWN0aXZlIG9mIGNsaWVudCAKCgoKPmRl
+dmljZXMuIEZXSVcsIGlmIGl0J3MgcG9zc2libGUgdG8gdGFrZSBhbiB1bmV4cGVjdGVkIAoKCgo+
+UktfTU1VX0lSUV9QQUdFX0ZBVUxUIGltbWVkaWF0ZWx5IGFmdGVyIHJlcXVlc3RpbmcgdGhlIElS
+USAoZS5nLiBpbiBhIAoKCgo+a2R1bXAga2VybmVsIGFmdGVyIGEgY3Jhc2ggd2l0aCB0aGUgaGFy
+ZHdhcmUgc3RpbGwgcnVubmluZykgdGhlbiBJIHRoaW5rIAoKCgo+dGhlIGN1cnJlbnQgY29kZSBj
+b3VsZCBwcm9iYWJseSBlbmQgdXAgZGVyZWZlcmVuY2luZyBOVUxMIGluIAoKCgo+cmVwb3J0X2lv
+bW11X2ZhdWx0KCkgYXMgd2VsbC4KCgpUaGFua3MgIGZvciB5b3VyIHJldmlldyBhbmQgY2xlYXIg
+ZXhwbGFuYXRpb24sIEkgd2lsbCBhZGQgdGhlIGluZm9ybWF0aW9uIGFzIHlvdSBzdWdnZXN0ZWQu
+CgpTaW1vbiBYdWUKCj4KCgoKPlJldmlld2VkLWJ5OiBSb2JpbiBNdXJwaHkgPHJvYmluLm11cnBo
+eUBhcm0uY29tPgoKCgo+CgoKCj5BbmQgcHJvYmFibHkgYWxzbzoKCgoKPgoKCgo+Q2M6IHN0YWJs
+ZUB2Z2VyLmtlcm5lbC5vcmcKCgoKPkZpeGVzOiAyNWMyMzI1NTc1Y2MgKCJpb21tdS9yb2NrY2hp
+cDogQWRkIG1pc3Npbmcgc2V0X3BsYXRmb3JtX2RtYV9vcHMgCgoKCj5jYWxsYmFjayIpCgoKCj4K
+CgoKPlRoYW5rcywKCgoKPlJvYmluLgoKCgo+CgoKCj4+IFNpZ25lZC1vZmYtYnk6IFNpbW9uIFh1
+ZSA8eHhtQHJvY2stY2hpcHMuY29tPgoKCgo+PiAtLS0KCgoKPj7CoMKgIGRyaXZlcnMvaW9tbXUv
+cm9ja2NoaXAtaW9tbXUuYyB8IDMgKystCgoKCj4+wqDCoCAxIGZpbGUgY2hhbmdlZCwgMiBpbnNl
+cnRpb25zKCspLCAxIGRlbGV0aW9uKC0pCgoKCj4+IAoKCgo+PiBkaWZmIC0tZ2l0IGEvZHJpdmVy
+cy9pb21tdS9yb2NrY2hpcC1pb21tdS5jIGIvZHJpdmVycy9pb21tdS9yb2NrY2hpcC1pb21tdS5j
+CgoKCj4+IGluZGV4IDIyZjc0YmEzM2EwZS4uZTZiYjNjNzg0MDE3IDEwMDY0NAoKCgo+PiAtLS0g
+YS9kcml2ZXJzL2lvbW11L3JvY2tjaGlwLWlvbW11LmMKCgoKPj4gKysrIGIvZHJpdmVycy9pb21t
+dS9yb2NrY2hpcC1pb21tdS5jCgoKCj4+IEBAIC0xMTU3LDcgKzExNTcsNiBAQCBzdGF0aWMgaW50
+IHJrX2lvbW11X29mX3hsYXRlKHN0cnVjdCBkZXZpY2UgKmRldiwKCgoKPj7CoMKgIAkJcmV0dXJu
+IC1FTk9NRU07CgoKCj4+wqDCoCAKCgoKPj7CoMKgIAlkYXRhLT5pb21tdSA9IHBsYXRmb3JtX2dl
+dF9kcnZkYXRhKGlvbW11X2Rldik7CgoKCj4+IC0JZGF0YS0+aW9tbXUtPmRvbWFpbiA9ICZya19p
+ZGVudGl0eV9kb21haW47CgoKCj4+wqDCoCAJZGV2X2lvbW11X3ByaXZfc2V0KGRldiwgZGF0YSk7
+CgoKCj4+wqDCoCAKCgoKPj7CoMKgIAlwbGF0Zm9ybV9kZXZpY2VfcHV0KGlvbW11X2Rldik7CgoK
+Cj4+IEBAIC0xMTk1LDYgKzExOTQsOCBAQCBzdGF0aWMgaW50IHJrX2lvbW11X3Byb2JlKHN0cnVj
+dCBwbGF0Zm9ybV9kZXZpY2UgKnBkZXYpCgoKCj4+wqDCoCAJaWYgKCFpb21tdSkKCgoKPj7CoMKg
+IAkJcmV0dXJuIC1FTk9NRU07CgoKCj4+wqDCoCAKCgoKPj4gKwlpb21tdS0+ZG9tYWluID0gJnJr
+X2lkZW50aXR5X2RvbWFpbjsKCgoKPj4gKwoKCgo+PsKgwqAgCXBsYXRmb3JtX3NldF9kcnZkYXRh
+KHBkZXYsIGlvbW11KTsKCgoKPj7CoMKgIAlpb21tdS0+ZGV2ID0gZGV2OwoKCgo+PsKgwqAgCWlv
+bW11LT5udW1fbW11ID0gMDsKCgoKPgoKCgo+CgoK
 
 
