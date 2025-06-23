@@ -1,97 +1,122 @@
-Return-Path: <linux-kernel+bounces-698310-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-698352-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8D0D0AE405E
-	for <lists+linux-kernel@lfdr.de>; Mon, 23 Jun 2025 14:33:32 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 43061AE40AC
+	for <lists+linux-kernel@lfdr.de>; Mon, 23 Jun 2025 14:41:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 64CA53A6008
-	for <lists+linux-kernel@lfdr.de>; Mon, 23 Jun 2025 12:28:11 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6EB467A1FEB
+	for <lists+linux-kernel@lfdr.de>; Mon, 23 Jun 2025 12:39:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5C91E242D65;
-	Mon, 23 Jun 2025 12:28:22 +0000 (UTC)
-Received: from mxhk.zte.com.cn (mxhk.zte.com.cn [160.30.148.34])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3001A248861;
+	Mon, 23 Jun 2025 12:41:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b="HfohYgU3"
+Received: from out203-205-221-233.mail.qq.com (out203-205-221-233.mail.qq.com [203.205.221.233])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 148A124293F;
-	Mon, 23 Jun 2025 12:28:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=160.30.148.34
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8B24424502E
+	for <linux-kernel@vger.kernel.org>; Mon, 23 Jun 2025 12:40:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.205.221.233
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750681701; cv=none; b=T5V7VYAHLdGCnQWoMgB1SW5dAFYy2fUJHf/nsUa2pfZ29utJjv/nmlUJHTY78SBxanX2SsX6on75gGeGJPDSnkqdyg3JX1oM+0ZDIwHHdtgJ/gpbsEhXhB6woudef4xv+yD4XitJxWevbyCVJVUNtJ9dUJOh8sX6NjZGkyV74Ao=
+	t=1750682463; cv=none; b=Tn/vEib5fy91RLUoExXlt0mVzIKEbzBZiO21mr/qTnQXZP3r4ZKOsGZpgbrmgOSSx/4cDX1xt/eZG2OY005cMqxhK1QqU6rvHrlIA3403jRjohLaXHq1BcTNJ41LYi1orgcDnCtP/cSWvx7x7M9enbOe72ye7OIWfK39e9+Olas=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750681701; c=relaxed/simple;
-	bh=p6zkyi7mfGGhWfH9ZVP49rp2AGQ3CMoXQdfVucu5/RU=;
-	h=Date:Message-ID:Mime-Version:From:To:Cc:Subject:Content-Type; b=nh8f/kHuhd/ZTykcSqVh9Yq6ImnvqkAgW3buyKxD7Hu/09B3rCyQ6L31cRsKJHDch2rNMWu93H/5fScnLlNyViO45BcTxUl0C27iTeP77R7wLjUJlnPtbxf72puBIBOmelBXpRqVZRO9lmze17n/tUIOCXtIIaRSylerGEnaCYQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zte.com.cn; spf=pass smtp.mailfrom=zte.com.cn; arc=none smtp.client-ip=160.30.148.34
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zte.com.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zte.com.cn
-Received: from mse-fl1.zte.com.cn (unknown [10.5.228.132])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by mxhk.zte.com.cn (FangMail) with ESMTPS id 4bQnRg5GWnz5FHRw;
-	Mon, 23 Jun 2025 20:28:15 +0800 (CST)
-Received: from njy2app03.zte.com.cn ([10.40.13.14])
-	by mse-fl1.zte.com.cn with SMTP id 55NCSAs6046267;
-	Mon, 23 Jun 2025 20:28:10 +0800 (+08)
-	(envelope-from long.yunjian@zte.com.cn)
-Received: from mapi (njy2app02[null])
-	by mapi (Zmail) with MAPI id mid201;
-	Mon, 23 Jun 2025 20:28:14 +0800 (CST)
-Date: Mon, 23 Jun 2025 20:28:14 +0800 (CST)
-X-Zmail-TransId: 2afa6859485effffffffac9-64105
-X-Mailer: Zmail v1.0
-Message-ID: <20250623202814633ukJqUDLU7BRlLLhvWkbD7@zte.com.cn>
+	s=arc-20240116; t=1750682463; c=relaxed/simple;
+	bh=iT7GdTDdx4RD8WRLUiWXNcmgn8JzC6wcwrzqArxQ1I0=;
+	h=Message-ID:From:To:Cc:Subject:Date:In-Reply-To:References:
+	 MIME-Version; b=ZhJAHf7ku/IIydfPcsdX7mE+vnNA6HZF9+jUHWsLz2IGWgbDLP7m4z7wkFOtUeqjVK0P6WlAnOHvINYbe2KabFzolLX4XLuQBJZXk3ruik6EdFliGa66vZDc8C7g/E42eYthCPl+gfytCsNuzE86KcS4YnqKLOVj/7ce6QzABgk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com; spf=pass smtp.mailfrom=qq.com; dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b=HfohYgU3; arc=none smtp.client-ip=203.205.221.233
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=qq.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qq.com; s=s201512;
+	t=1750682149; bh=eSKOfPTjF7Oxq7Sj+6l3Lp4+ZX2TRn/tyuWF2vbR4ow=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References;
+	b=HfohYgU3iw2o58u4i8QoMVpI/jatXbktixVWtjUPKQQ9NJ/9X7+xZzRI+iyhSPUj9
+	 Vk/0GC/Uctk9XRk758DzNWxQfAdB23XOO3atpBiv2Nr5OJGCLxwoqMecIR6kkiz4gr
+	 HHT63GUdiyzxiBWW8Cm8s5COpz/GJV6wSVs49DBY=
+Received: from pek-lxu-l1.corp.ad.wrs.com ([111.198.228.63])
+	by newxmesmtplogicsvrszb21-0.qq.com (NewEsmtp) with SMTP
+	id 765A8659; Mon, 23 Jun 2025 20:29:37 +0800
+X-QQ-mid: xmsmtpt1750681777tkp2ub4qz
+Message-ID: <tencent_C2882DF56C089420E9D2EC4ECD707B926F0A@qq.com>
+X-QQ-XMAILINFO: Nq1uWKlIb9DMYa5VezLUI+0Tn1gGXrMs0ALXkf3CDcisCrk+X9opP1XBNy3wIV
+	 EnFl2XXBq7BmlgSedqAhztQZZ4XaZl6kD7cpml5W2+b8Qag7gQypSipsmckiHGjcoPYyuVGcWE8x
+	 vM8rbRKjPxZZQPHCWX3JQhjA4HTHqDV0i7W6wtiAWEJ+187PLgBQi62XMlqKM8KXwKZDvLEJ5xF1
+	 dQC6F/acp4rbyCCcc4jTF6uIoB9EXBDzseSOVy4rQ15Q85sbl9uHfj1WhXdsModXRU22hEWfUCmy
+	 oX9iuF/FQOlxRHuCLUS51mH/jCri2hGvghLA17OxB4GXPXPjT/SVftx6ZUhTBfy68KjOklgt30No
+	 MgXsBSYYgO8moknWnjWmzOOAh4tnkpgaIs6IUOHIe/sLItnpydCvNw4yn6KoF+mp1MjdPnti21AU
+	 wUPbdsbvUaVpOKHZ2bYc2M9k82kF9ugxUCm2/hw81ZckoxBofDewxv9V4F/XRze1xPt9Dy6P2Z6x
+	 6NfnKDv00h55Iud/1g8NF6uxDni3Raq0piopYx47WLwmtSaOCwgpGxjBx0ixwrvaepWEQoQuFt5c
+	 f2Iksub3nM+1Xw/o4+3pYpKd+8n11DrvCgq+ZZU8PtLXGIum4CXsP1SPVtnjWbSuT8vTY6JncT3U
+	 qRRS50ZO1ee5du87Z3X6nA4sM/yfRPVCWX4SpxnfwHA7lS2svO2AGi0UfbnFE1tbw/KqhSDvd9B7
+	 JkH6XwMByB1Pq7hymFx3ypMVhU4QTi0LlwG1KhJelZgzMNF9qS/3f6ZSa0Qjnu/WZN1A8JcZq3Ms
+	 wl+yRxsV5UbN5SohWLXgPD+4I8S+EcR8kVZUxXSNeudRzljYgEaOMFgOgcOLzdoU/ldd6PjtC0VG
+	 79waVzQZBV9x8Vvnf/DxsVxVFUxKEZgmjAdDwq2/12NqoXKzgXY170C8peKPiKdCg+QfX5BlPRBv
+	 /5/IVlgxw=
+X-QQ-XMRINFO: OD9hHCdaPRBwq3WW+NvGbIU=
+From: Edward Adam Davis <eadavis@qq.com>
+To: syzbot+9b9124ae9b12d5af5d95@syzkaller.appspotmail.com
+Cc: linux-kernel@vger.kernel.org,
+	syzkaller-bugs@googlegroups.com
+Subject: Re: [syzbot] [kernel?] KMSAN: kernel-infoleak in vmci_host_unlocked_ioctl (3)
+Date: Mon, 23 Jun 2025 20:29:37 +0800
+X-OQ-MSGID: <20250623122936.3597388-2-eadavis@qq.com>
+X-Mailer: git-send-email 2.49.0
+In-Reply-To: <6854a3e6.a00a0220.137b3.0022.GAE@google.com>
+References: <6854a3e6.a00a0220.137b3.0022.GAE@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-From: <long.yunjian@zte.com.cn>
-To: <mani@kernel.org>
-Cc: <fang.yumeng@zte.com.cn>, <mhi@lists.linux.dev>,
-        <linux-arm-msm@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <mou.yi@zte.com.cn>, <xu.lifeng1@zte.com.cn>,
-        <ouyang.maochun@zte.com.cn>
-Subject: =?UTF-8?B?W1BBVENIXSBidXM6IG1oaTogaG9zdDogVXNlIHN0cl90cnVlX2ZhbHNlKCkgaGVscGVy?=
-Content-Type: text/plain;
-	charset="UTF-8"
-X-MAIL:mse-fl1.zte.com.cn 55NCSAs6046267
-X-Fangmail-Anti-Spam-Filtered: true
-X-Fangmail-MID-QID: 6859485F.000/4bQnRg5GWnz5FHRw
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 
-From: Yumeng Fang <fang.yumeng@zte.com.cn>
+#syz test
 
-Remove hard-coded strings by using the str_true_false() helper.
+diff --git a/drivers/misc/vmw_vmci/vmci_host.c b/drivers/misc/vmw_vmci/vmci_host.c
+index b64944367ac5..4e500a8924c2 100644
+--- a/drivers/misc/vmw_vmci/vmci_host.c
++++ b/drivers/misc/vmw_vmci/vmci_host.c
+@@ -293,6 +293,8 @@ static int vmci_host_get_version(struct vmci_host_dev *vmci_host_dev,
+ #define vmci_ioctl_err(fmt, ...)	\
+ 	pr_devel("%s: " fmt, ioctl_name, ##__VA_ARGS__)
+ 
++static DEFINE_MUTEX(init_rec_mutex);
++
+ static int vmci_host_do_init_context(struct vmci_host_dev *vmci_host_dev,
+ 				     const char *ioctl_name,
+ 				     void __user *uptr)
+@@ -922,7 +924,9 @@ static long vmci_host_unlocked_ioctl(struct file *filp,
+ 
+ 	struct vmci_host_dev *vmci_host_dev = filp->private_data;
+ 	void __user *uptr = (void __user *)ioarg;
++	int ret = 0;
+ 
++	mutex_lock(&init_rec_mutex);
+ 	switch (iocmd) {
+ 	case IOCTL_VMCI_INIT_CONTEXT:
+ 		VMCI_DO_IOCTL(INIT_CONTEXT, init_context);
+@@ -957,13 +961,16 @@ static long vmci_host_unlocked_ioctl(struct file *filp,
+ 
+ 	case IOCTL_VMCI_VERSION:
+ 	case IOCTL_VMCI_VERSION2:
+-		return vmci_host_get_version(vmci_host_dev, iocmd, uptr);
++		ret = vmci_host_get_version(vmci_host_dev, iocmd, uptr);
+ 
+ 	default:
+ 		pr_devel("%s: Unknown ioctl (iocmd=%d)\n", __func__, iocmd);
+-		return -EINVAL;
++		ret -EINVAL;
+ 	}
+ 
++	mutex_unlock(&init_rec_mutex);
++	return ret;
++
+ #undef VMCI_DO_IOCTL
+ }
+ 
 
-Signed-off-by: Yumeng Fang <fang.yumeng@zte.com.cn>
----
- drivers/bus/mhi/host/debugfs.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
-
-diff --git a/drivers/bus/mhi/host/debugfs.c b/drivers/bus/mhi/host/debugfs.c
-index cfec7811dfbb..39e45748a24c 100644
---- a/drivers/bus/mhi/host/debugfs.c
-+++ b/drivers/bus/mhi/host/debugfs.c
-@@ -10,6 +10,7 @@
- #include <linux/list.h>
- #include <linux/mhi.h>
- #include <linux/module.h>
-+#include <linux/string_choices.h>
- #include "internal.h"
-
- static int mhi_debugfs_states_show(struct seq_file *m, void *d)
-@@ -22,7 +23,7 @@ static int mhi_debugfs_states_show(struct seq_file *m, void *d)
- 		   mhi_is_active(mhi_cntrl) ? "Active" : "Inactive",
- 		   mhi_state_str(mhi_cntrl->dev_state),
- 		   TO_MHI_EXEC_STR(mhi_cntrl->ee),
--		   mhi_cntrl->wake_set ? "true" : "false");
-+		   str_true_false(mhi_cntrl->wake_set));
-
- 	/* counters */
- 	seq_printf(m, "M0: %u M2: %u M3: %u", mhi_cntrl->M0, mhi_cntrl->M2,
--- 
-2.25.1
 
