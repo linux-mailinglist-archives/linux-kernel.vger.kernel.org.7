@@ -1,152 +1,102 @@
-Return-Path: <linux-kernel+bounces-697594-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-697610-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0D1EFAE362F
-	for <lists+linux-kernel@lfdr.de>; Mon, 23 Jun 2025 08:49:48 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 046BAAE3666
+	for <lists+linux-kernel@lfdr.de>; Mon, 23 Jun 2025 08:59:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E7D333B2584
-	for <lists+linux-kernel@lfdr.de>; Mon, 23 Jun 2025 06:49:20 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 288C91886CE8
+	for <lists+linux-kernel@lfdr.de>; Mon, 23 Jun 2025 06:59:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3CAC41F03D9;
-	Mon, 23 Jun 2025 06:49:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 875511EDA14;
+	Mon, 23 Jun 2025 06:58:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Reo5hLSe"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (4096-bit key) header.d=prolan.hu header.i=@prolan.hu header.b="imtNwEFH"
+Received: from fw2.prolan.hu (fw2.prolan.hu [193.68.50.107])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8E4C81624D5;
-	Mon, 23 Jun 2025 06:49:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CB76518E1F;
+	Mon, 23 Jun 2025 06:58:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.68.50.107
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750661368; cv=none; b=HFh3rUe4TZATd8c8a10V/Uku5WSeXt+Z0e1BNaSU5hsiACx0vYZZlXsOTWxu/c0gX8txL1Y0U3T5kwjNdPlZO31DZxls+pvUNKTAyOGQKWr6Nx3GrBJIogreiP3UJ7jvhs2ucs/mXw4tQYvwpEgiZ1CNtjQY1SQ0KXXdrGO2gZA=
+	t=1750661937; cv=none; b=KDhWUQWGP+nMERmog1QMtH8zmSR7lbSJuJxmvbDIAAHHtFGwPz5RGQLddPgcPj59vMcA3q4ov5Pet4J7zhoyknU3//t02gNed+MyJ330SjvhHylU3stkbsMKQSOFOYiagy/mrbjjFoHFD0NmvW6En9PezQnAwGZzT2Bq2bTneWM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750661368; c=relaxed/simple;
-	bh=r9Scpc1y8oJqW4ki1b+GiwK273muM/HU6bqva5wjWW8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=U0hfKl9S+gfigLrJxdiRSnLeQtNq7BifefFio6H5AU88S7IR1/hoHNRy1INj/eVZ0oBtemY9nOtBw3M1BQULTbooyOuMlQtJbdVaNIUOVKTxrCFxMj3xEgL7s180QQSBkYgdKnh8/ECbdpKqjMOJ/+8y+Ltre+d670czx6rUiik=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Reo5hLSe; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A1310C4CEEF;
-	Mon, 23 Jun 2025 06:49:27 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1750661368;
-	bh=r9Scpc1y8oJqW4ki1b+GiwK273muM/HU6bqva5wjWW8=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=Reo5hLSe/U1rF9RuZzNW2HAPmWlHsw75zDA4E9EJZ4CHd1N6CD0yi1jYLiIWjjjZg
-	 cS5or16waGa2Abl8GElKRO34Nvj0oBa1vVkX8OpIgZv8CpiUc/Go3s+Bw1FsDTBOC9
-	 IJMjK8F3vkEYzed9jRWeIFyTrqBiaUsb5tPNuCf5CpKe0xJ+JaGD7l7osRt4CLdWGF
-	 06VNojU6DZZV4Se9G6Z7OQ3jTfkOz8FofW6jMjxBhziH3qVB7UlVQ6PTWx3wXdDdiy
-	 tumRgV0cTeXEYZtIDL49sxr9SmCr6aDoxZpkA8pPq0VoOnnQe+J47AVXS3Jp1fBmKB
-	 Fl8U4or6V6aZQ==
-Date: Mon, 23 Jun 2025 08:49:25 +0200
-From: Krzysztof Kozlowski <krzk@kernel.org>
-To: Frank Li <Frank.li@nxp.com>
-Cc: Hongxing Zhu <hongxing.zhu@nxp.com>, 
-	"l.stach@pengutronix.de" <l.stach@pengutronix.de>, "lpieralisi@kernel.org" <lpieralisi@kernel.org>, 
-	"kwilczynski@kernel.org" <kwilczynski@kernel.org>, "mani@kernel.org" <mani@kernel.org>, 
-	"robh@kernel.org" <robh@kernel.org>, "krzk+dt@kernel.org" <krzk+dt@kernel.org>, 
-	"conor+dt@kernel.org" <conor+dt@kernel.org>, "bhelgaas@google.com" <bhelgaas@google.com>, 
-	"shawnguo@kernel.org" <shawnguo@kernel.org>, "s.hauer@pengutronix.de" <s.hauer@pengutronix.de>, 
-	"kernel@pengutronix.de" <kernel@pengutronix.de>, "festevam@gmail.com" <festevam@gmail.com>, 
-	"linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>, 
-	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, 
-	"imx@lists.linux.dev" <imx@lists.linux.dev>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v3 1/2] dt-binding: pci-imx6: Add external reference
- clock mode support
-Message-ID: <6ojwsgzi4rrn7zoiktiutdjgaly4uhbe7xc35lafyxgl5yacwv@oajobetnqsps>
-References: <20250620031350.674442-1-hongxing.zhu@nxp.com>
- <20250620031350.674442-2-hongxing.zhu@nxp.com>
- <20250620-honored-versed-donkey-6d7ef4@kuoka>
- <AS8PR04MB8676FBE47C2ECE074E5B14768C7CA@AS8PR04MB8676.eurprd04.prod.outlook.com>
- <130fe1fc-913b-48cf-b2a4-e9c4952354fd@kernel.org>
- <aFVy9OMxL4WXEOzz@lizhi-Precision-Tower-5810>
+	s=arc-20240116; t=1750661937; c=relaxed/simple;
+	bh=AscXhx0QcJCjy/07ldN8aACQDcs08qv16ppqJ9DFbMQ=;
+	h=Message-ID:Date:MIME-Version:From:Subject:To:CC:References:
+	 In-Reply-To:Content-Type; b=lBXo8bO8zYN1ZMrsTOIs3/TVDxKFJ6N8s6Bjs2AbKbYU17Zcs9Hxz3fNcvDrZg59AoWSOOsL7ICCXw0KWXPzI0fT3sX9hdYds7aOzgw08bHVdXfYpLjKxnttJU9LNvgzBxDppEcsXQCv6OpMfktR8LOFjqcUOhQTR4LsxHlw4EY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=prolan.hu; spf=pass smtp.mailfrom=prolan.hu; dkim=pass (4096-bit key) header.d=prolan.hu header.i=@prolan.hu header.b=imtNwEFH; arc=none smtp.client-ip=193.68.50.107
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=prolan.hu
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=prolan.hu
+Received: from proxmox-mailgw.intranet.prolan.hu (localhost.localdomain [127.0.0.1])
+	by proxmox-mailgw.intranet.prolan.hu (Proxmox) with ESMTP id 73421A0119;
+	Mon, 23 Jun 2025 08:49:59 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=prolan.hu; h=cc
+	:cc:content-transfer-encoding:content-type:content-type:date
+	:from:from:in-reply-to:message-id:mime-version:references
+	:reply-to:subject:subject:to:to; s=mail; bh=YKFIq1SeVmM/nBqAQ3Bj
+	uEtsh4GpEB7ByrAjwhyB/2E=; b=imtNwEFHZ1G6j/wXqaZupldLTlUOBRXeZcu9
+	dKO87/+hT9P0E8cDlJbdqiJA1S084NfwPEAmp51c+m5EcHRDQNccQ070em3DAqz4
+	mDci5IxTlmfQmdP2V/FxdJTh4+2WFYCAEgpeYnNpJsky327SbuI3JfWq1g908ctD
+	C4kchLcNUWPuY/BhxRUWdCM5t2TkkGAbjv8rOYmJJT6zfj6pCKxG4j5jdFfzqJkF
+	+u/kq6+jUwG+AjrGb/RGB/cSgKXtk4vp5q4YbMz1Q1TFrAYOKqiZdSCCfOVV1WH2
+	rvWTiH/+mx/RlFIyvHBUohT6qyMbeMffVunIedKI+GOU7U2gAGdh60hFLVJQaSDm
+	8x+5WiN3uEkLWtJd+Fg56iycMzwEChLRLriTqwLrn8rWsHA9Rj6hn5j3UnyjzRJo
+	v2rg9mqJfFZ1jEV+dpCHhqgWzg+fsaAHFz/+qOuOIh/duflf7Wo6mJ04wQLimZGg
+	R4vnafT1UZMAyC5NtEogpEiZbOfa5G7LHWvz3S8PPRM2IgmdU5ZYyzVxe7eFKT3B
+	dSeGLkyxFh8Nf9dXQz7prL2WKI2n9RJuICACV6MHv4U+ImbhWz2JNi4svKvhBh6Q
+	PE6qUlCn+nLtFQ+uW/Fhv/B4aXQbYVvIAksX6mKhyZIBMorFlmAPTwXzuRgpCh9f
+	HuYzF3k=
+Message-ID: <c6500082-565a-4b00-ae27-4d943586e58b@prolan.hu>
+Date: Mon, 23 Jun 2025 08:49:58 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <aFVy9OMxL4WXEOzz@lizhi-Precision-Tower-5810>
+User-Agent: Mozilla Thunderbird
+From: =?UTF-8?B?Q3PDs2vDoXMgQmVuY2U=?= <csokas.bence@prolan.hu>
+Subject: Re: [PATCH v10] dma-engine: sun4i: Simplify error handling in probe()
+To: Vinod Koul <vkoul@kernel.org>
+CC: <dmaengine@vger.kernel.org>, Chen-Yu Tsai <wens@kernel.org>, "Jernej
+ Skrabec" <jernej.skrabec@gmail.com>, Chen-Yu Tsai <wens@csie.org>, "Julian
+ Calaby" <julian.calaby@gmail.com>, Samuel Holland <samuel@sholland.org>,
+	<linux-kernel@vger.kernel.org>, <linux-sunxi@lists.linux.dev>,
+	<linux-arm-kernel@lists.infradead.org>
+References: <20250610075315.397810-1-csokas.bence@prolan.hu>
+Content-Language: en-US
+In-Reply-To: <20250610075315.397810-1-csokas.bence@prolan.hu>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: sinope.intranet.prolan.hu (10.254.0.237) To
+ ATLAS.intranet.prolan.hu (10.254.0.229)
+X-EsetResult: clean, is OK
+X-EsetId: 37303A296767155D6D7366
 
-On Fri, Jun 20, 2025 at 10:40:52AM -0400, Frank Li wrote:
-> On Fri, Jun 20, 2025 at 03:08:16PM +0200, Krzysztof Kozlowski wrote:
-> > On 20/06/2025 10:26, Hongxing Zhu wrote:
-> > >> -----Original Message-----
-> > >> From: Krzysztof Kozlowski <krzk@kernel.org>
-> > >> Sent: 2025=E5=B9=B46=E6=9C=8820=E6=97=A5 15:53
-> > >> To: Hongxing Zhu <hongxing.zhu@nxp.com>
-> > >> Cc: Frank Li <frank.li@nxp.com>; l.stach@pengutronix.de;
-> > >> lpieralisi@kernel.org; kwilczynski@kernel.org; mani@kernel.org;
-> > >> robh@kernel.org; krzk+dt@kernel.org; conor+dt@kernel.org;
-> > >> bhelgaas@google.com; shawnguo@kernel.org; s.hauer@pengutronix.de;
-> > >> kernel@pengutronix.de; festevam@gmail.com; linux-pci@vger.kernel.org;
-> > >> linux-arm-kernel@lists.infradead.org; devicetree@vger.kernel.org;
-> > >> imx@lists.linux.dev; linux-kernel@vger.kernel.org
-> > >> Subject: Re: [PATCH v3 1/2] dt-binding: pci-imx6: Add external refer=
-ence clock
-> > >> mode support
-> > >>
-> > >> On Fri, Jun 20, 2025 at 11:13:49AM GMT, Richard Zhu wrote:
-> > >>> On i.MX, the PCIe reference clock might come from either internal
-> > >>> system PLL or external clock source.
-> > >>> Add the external reference clock source for reference clock.
-> > >>>
-> > >>> Signed-off-by: Richard Zhu <hongxing.zhu@nxp.com>
-> > >>> Reviewed-by: Frank Li <Frank.Li@nxp.com>
-> > >>> ---
-> > >>>  Documentation/devicetree/bindings/pci/fsl,imx6q-pcie.yaml | 7 ++++=
-++-
-> > >>>  1 file changed, 6 insertions(+), 1 deletion(-)
-> > >>>
-> > >>> diff --git a/Documentation/devicetree/bindings/pci/fsl,imx6q-pcie.y=
-aml
-> > >>> b/Documentation/devicetree/bindings/pci/fsl,imx6q-pcie.yaml
-> > >>> index ca5f2970f217..c472a5daae6e 100644
-> > >>> --- a/Documentation/devicetree/bindings/pci/fsl,imx6q-pcie.yaml
-> > >>> +++ b/Documentation/devicetree/bindings/pci/fsl,imx6q-pcie.yaml
-> > >>> @@ -219,7 +219,12 @@ allOf:
-> > >>>              - const: pcie_bus
-> > >>>              - const: pcie_phy
-> > >>>              - const: pcie_aux
-> > >>> -            - const: ref
-> > >>> +            - description: PCIe reference clock.
-> > >>> +              oneOf:
-> > >>> +                - description: The controller might be configured
-> > >> clocking
-> > >>> +                    coming in from either an internal system PLL or
-> > >> an
-> > >>> +                    external clock source.
-> > >>> +                  enum: [ref, gio]
-> > >>
-> > >> Internal like within PCIe or coming from other SoC block? What does =
-"gio"
-> > >> mean?
-> > > Internal means that the PCIe reference clock is coming from other
-> > >  internal SoC block, such as system PLL. "gio" is on behalf that the
-> > > reference clock comes form external crystal oscillator.
-> >
-> > Then what does "ref" mean, if gio is the clock supplied externally?
->=20
-> In snps,dw-pcie-common.yaml
->=20
-> 	- description:
->             Generic reference clock. In case if there are several
->             interfaces fed up with a common clock source it's advisable to
->             define it with this name (for instance pipe, core and aux can
->             be connected to a single source of the periodic signal).
->           const: ref
->=20
->         - description: See native 'ref' clock for details.
->           enum: [ gio ]
 
-=2E.. ok, but the rest of description is saying: don't use it.
+On 2025. 06. 10. 9:53, Bence Csókás wrote:
+> Clean up error handling by using devm functions and dev_err_probe(). This
+> should make it easier to add new code, as we can eliminate the "goto
+> ladder" in sun4i_dma_probe().
+> 
+> Suggested-by: Chen-Yu Tsai <wens@kernel.org>
+> Reviewed-by: Jernej Skrabec <jernej.skrabec@gmail.com>
+> Acked-by: Chen-Yu Tsai <wens@csie.org>
+> Reviewed-by: Julian Calaby <julian.calaby@gmail.com>
+> Signed-off-by: Bence Csókás <csokas.bence@prolan.hu>
+> ---
 
-Best regards,
-Krzysztof
+Vinod, is there a problem with this patch? I'd love to hear your 
+thoughts, because it has been practically unchanged since March, and 
+only minor changes since the first submission last December. I can keep 
+rebasing it ad nauseum every time you push to dma/next, but I think we 
+both have a better use of our time. So, if you see anything that should 
+prevent this from being merged, please tell me.
+
+Thanks,
+Bence
 
 
