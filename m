@@ -1,162 +1,126 @@
-Return-Path: <linux-kernel+bounces-698000-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-698002-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0ECC2AE3BAD
-	for <lists+linux-kernel@lfdr.de>; Mon, 23 Jun 2025 12:06:57 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id B6CA0AE3BB0
+	for <lists+linux-kernel@lfdr.de>; Mon, 23 Jun 2025 12:07:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A970D3AAB58
-	for <lists+linux-kernel@lfdr.de>; Mon, 23 Jun 2025 10:04:32 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 82C6B7A9CBB
+	for <lists+linux-kernel@lfdr.de>; Mon, 23 Jun 2025 10:04:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0E3AD1DA23;
-	Mon, 23 Jun 2025 10:03:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=dolcini.it header.i=@dolcini.it header.b="YknfX437"
-Received: from mail11.truemail.it (mail11.truemail.it [217.194.8.81])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C666D23C510;
+	Mon, 23 Jun 2025 10:04:47 +0000 (UTC)
+Received: from cstnet.cn (smtp21.cstnet.cn [159.226.251.21])
+	(using TLSv1.2 with cipher DHE-RSA-AES256-SHA (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 844801A3168
-	for <linux-kernel@vger.kernel.org>; Mon, 23 Jun 2025 10:02:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.194.8.81
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7658F23BF80;
+	Mon, 23 Jun 2025 10:04:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.226.251.21
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750672979; cv=none; b=HG63gM4gu5s4on6iYxCTj+trISrWrqSCGV3iXaaCcFVSd8YvUJEU3nq3+zJVrGyA9fIARaP/baw9MvT1NenOlzdEngLXSeVqyo+iZBITNnup3VeZjHtXykdna7TjqyOGgNGxVRjlL+ABhstPIHztrzSIE+sQF+F9XLMLl/nLKZ0=
+	t=1750673087; cv=none; b=sWC5DeOl8L5JpiNN15L6oCoaivDHV1VuScJOcR+xFfyJx3UK3i/CVwIGtxm45t0Urw2rh49SA5Ma8rcIou/r/ppgvkHqaQR2k3zvlHW2aKJL4YI3IgcWZ529jdbAqaCIQ/K/R7Fd454KhrzR9S9ERQvBCJrohXGgRzZ3X7Lzwrc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750672979; c=relaxed/simple;
-	bh=zwzcoEIkkg26/Ri7aIdMkYDloXpkCtTah/ZbEw9wpqQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=sGqo9sFPRPDffMGNrzVOnquWrWE7rXFsF+5axDBhwNApTHN1wnR0criB0Arb3sWnOHhN6pY6MVB0We4R+DTboOavilisLzxUE9bftyi+stonbNPH/ocOMYSvvL92IhcwSbgq3nBnxSQ1IE60ApaayosPMgaKjEi07xFBn2VyhKE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=dolcini.it; spf=pass smtp.mailfrom=dolcini.it; dkim=pass (2048-bit key) header.d=dolcini.it header.i=@dolcini.it header.b=YknfX437; arc=none smtp.client-ip=217.194.8.81
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=dolcini.it
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=dolcini.it
-Received: from francesco-nb (248.201.173.83.static.wline.lns.sme.cust.swisscom.ch [83.173.201.248])
-	by mail11.truemail.it (Postfix) with ESMTPA id 7A76A1FA8F;
-	Mon, 23 Jun 2025 12:02:53 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=dolcini.it;
-	s=default; t=1750672974;
-	bh=o9gK1oyJAjE6oa76DzirijbCMI6ITVFFKA9WRcVsiT0=; h=From:To:Subject;
-	b=YknfX437HZgovMEl0FLqq8i55sHKy/dG4VIucIsOBk8u3uBSNsAItiKCi5jZr9Qkr
-	 Ne6V6S5/eXWz9kYtVokuXMtXW+KqJBZH+IM8Fr2mdd3tLwmNEWHwsrl1LL4WXiwHDz
-	 nQgvlbBZh8R69LAC5fYhsC09mmJzzrzrKZ6PIrkBxuNLuoBPZoKNNEMnZsPGo+YqdM
-	 UwzUPqZRGxyqafupcruy1tPc/vAGWk4eTUAk0sS7Y1HZ+cz/yF8oI4w00RJVaVhwri
-	 vH2bpx476LPXct4rPIoowpK+n8A3zkYUdjmxzMayQdm8ckWwgC4sXGdXazkOxm6OVj
-	 DHu331xwM3NvA==
-Date: Mon, 23 Jun 2025 12:02:49 +0200
-From: Francesco Dolcini <francesco@dolcini.it>
-To: Marek Szyprowski <m.szyprowski@samsung.com>
-Cc: Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>,
-	Inki Dae <inki.dae@samsung.com>,
-	Jagan Teki <jagan@amarulasolutions.com>,
-	Andrzej Hajda <andrzej.hajda@intel.com>,
-	Neil Armstrong <neil.armstrong@linaro.org>,
-	Robert Foss <rfoss@kernel.org>,
-	Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
-	Jonas Karlman <jonas@kwiboo.se>,
-	Jernej Skrabec <jernej.skrabec@gmail.com>,
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	Maxime Ripard <mripard@kernel.org>,
-	Thomas Zimmermann <tzimmermann@suse.de>,
-	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
-	Aradhya Bhatia <a-bhatia1@ti.com>,
-	Dmitry Baryshkov <lumag@kernel.org>,
-	dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
-	Hiago De Franco <hiagofranco@gmail.com>,
-	Francesco Dolcini <francesco@dolcini.it>
-Subject: Re: [PATCH] drm/bridge: samsung-dsim: Fix init order
-Message-ID: <20250623100249.GA32388@francesco-nb>
-References: <CGME20250619122746eucas1p149ff73e78cb82dc06c19960a2bbd3d89@eucas1p1.samsung.com>
- <20250619-samsung-dsim-fix-v1-1-6b5de68fb115@ideasonboard.com>
- <e23e6192-6e13-41b4-acdd-2593f4f37895@samsung.com>
+	s=arc-20240116; t=1750673087; c=relaxed/simple;
+	bh=vipnkNgUoh8epWZYj8+rXAcynGvmE/NRgqg8z9mtprA=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=fJF09lQ6b0mQuEsog/wD5Lw6kn29+AjmeRga3J7mFpYwuZ0WZ0mi2jHkFzJYb/W3ljXBOYAC+q8MlVO5D88CIpUMnfDMv47JKNyteUEGEAOM18yjzfD6yp+6CaJZiTojBAT9kQxaKbpp3rM7+LFCz5vFiQsKDuieDgHurfObzQg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn; spf=pass smtp.mailfrom=iscas.ac.cn; arc=none smtp.client-ip=159.226.251.21
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=iscas.ac.cn
+Received: from [127.0.0.2] (unknown [210.73.43.2])
+	by APP-01 (Coremail) with SMTP id qwCowAD3ptWtJlloxg+rCA--.29805S2;
+	Mon, 23 Jun 2025 18:04:30 +0800 (CST)
+From: Vivian Wang <wangruikang@iscas.ac.cn>
+Subject: [PATCH 0/3] riscv: dts: spacemit: Add DMA translation buses for K1
+Date: Mon, 23 Jun 2025 18:04:15 +0800
+Message-Id: <20250623-k1-dma-buses-rfc-wip-v1-0-c0144082061f@iscas.ac.cn>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <e23e6192-6e13-41b4-acdd-2593f4f37895@samsung.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAJ8mWWgC/23PTW6DMBAF4KsgrzsIO/wFVVXuUWVhxmMYVeDUQ
+ 2irKHevAXXX5RvJ73t+KKHIJKrLHirSysJhTkG/ZApHOw8E7FJWpjBVUesaPjS4yUJ/FxKIHuG
+ Lb3DqqbGF9mWDrUpPb5E8f++179eUR5YlxJ9dWfV2/Sts/i9cNWjAllCfje991V5Y0EpuMcdZX
+ Z+HEenznhYvB6R6KwQYpomXLlvrPK2NqLc9E4nY/S9d9rrLlTmBMRsubkQ+wJoK65zzTXkuLwP
+ NSwh5iMNbAp+/R12YhioBAAA=
+X-Change-ID: 20250616-k1-dma-buses-rfc-wip-3be7a01f47c8
+To: Yixun Lan <dlan@gentoo.org>, Guodong Xu <guodong@riscstar.com>, 
+ Ze Huang <huangze@whut.edu.cn>, Alex Elder <elder@riscstar.com>, 
+ spacemit@lists.linux.dev, Rob Herring <robh@kernel.org>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, 
+ Paul Walmsley <paul.walmsley@sifive.com>, 
+ Palmer Dabbelt <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>, 
+ Alexandre Ghiti <alex@ghiti.fr>
+Cc: Vivian Wang <uwu@dram.page>, devicetree@vger.kernel.org, 
+ linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org, 
+ Vivian Wang <wangruikang@iscas.ac.cn>
+X-Mailer: b4 0.14.2
+X-CM-TRANSID:qwCowAD3ptWtJlloxg+rCA--.29805S2
+X-Coremail-Antispam: 1UD129KBjvJXoW7Kr1DWF4UAFyfXFyUWw1ftFb_yoW8Ww1kpF
+	WfursxArW3trWIkFs2k3y2vr1rKrsYgF4UWrnrKwn5JFsrZF4qvrWI9r4xCryDXryru342
+	vr1vqr1kWF42ywUanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUU9E14x267AKxVW5JVWrJwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
+	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
+	1l84ACjcxK6xIIjxv20xvE14v26r4j6ryUM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26r4j
+	6F4UM28EF7xvwVC2z280aVAFwI0_GcCE3s1l84ACjcxK6I8E87Iv6xkF7I0E14v26rxl6s
+	0DM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI64kE6c02F40Ex7xfMcIj6xII
+	jxv20xvE14v26r106r15McIj6I8E87Iv67AKxVW8Jr0_Cr1UMcvjeVCFs4IE7xkEbVWUJV
+	W8JwACjcxG0xvY0x0EwIxGrwACjI8F5VA0II8E6IAqYI8I648v4I1lFIxGxcIEc7CjxVA2
+	Y2ka0xkIwI1lc7CjxVAaw2AFwI0_GFv_Wrylc2xSY4AK67AK6r4DMxAIw28IcxkI7VAKI4
+	8JMxC20s026xCaFVCjc4AY6r1j6r4UMI8I3I0E5I8CrVAFwI0_Jr0_Jr4lx2IqxVCjr7xv
+	wVAFwI0_JrI_JrWlx4CE17CEb7AF67AKxVW8ZVWrXwCIc40Y0x0EwIxGrwCI42IY6xIIjx
+	v20xvE14v26r1j6r1xMIIF0xvE2Ix0cI8IcVCY1x0267AKxVW8JVWxJwCI42IY6xAIw20E
+	Y4v20xvaj40_Jr0_JF4lIxAIcVC2z280aVAFwI0_Jr0_Gr1lIxAIcVC2z280aVCY1x0267
+	AKxVW8JVW8JrUvcSsGvfC2KfnxnUUI43ZEXa7VUUnXo7UUUUU==
+X-CM-SenderInfo: pzdqw2pxlnt03j6l2u1dvotugofq/
 
-On Mon, Jun 23, 2025 at 11:34:34AM +0200, Marek Szyprowski wrote:
-> On 19.06.2025 14:27, Tomi Valkeinen wrote:
-> > The commit c9b1150a68d9 ("drm/atomic-helper: Re-order bridge chain
-> > pre-enable and post-disable") changed the order of enable/disable calls.
-> > Previously the calls (on imx8mm) were:
-> >
-> > mxsfb_crtc_atomic_enable()
-> > samsung_dsim_atomic_pre_enable()
-> > samsung_dsim_atomic_enable()
-> >
-> > now the order is:
-> >
-> > samsung_dsim_atomic_pre_enable()
-> > mxsfb_crtc_atomic_enable()
-> > samsung_dsim_atomic_enable()
-> >
-> > On imx8mm (possibly on imx8mp, and other platforms too) this causes two
-> > issues:
-> >
-> > 1. The DSI PLL setup depends on a refclk, but the DSI driver does not
-> > set the rate, just uses it with the rate it has. On imx8mm this refclk
-> > seems to be related to the LCD controller's video clock. So, when the
-> > mxsfb driver sets its video clock, DSI's refclk rate changes.
-> >
-> > Earlier this mxsfb_crtc_atomic_enable() set the video clock, so the PLL
-> > refclk rate was set (and didn't change) in the DSI enable calls. Now the
-> > rate changes between DSI's pre_enable() and enable(), but the driver
-> > configures the PLL in the pre_enable().
-> >
-> > Thus you get a black screen on a modeset. Doing the modeset again works,
-> > as the video clock rate stays the same.
-> >
-> > 2. The image on the screen is shifted/wrapped horizontally. I have not
-> > found the exact reason for this, but the documentation seems to hint
-> > that the LCD controller's pixel stream should be enabled first, before
-> > setting up the DSI. This would match the change, as now the pixel stream
-> > starts only after DSI driver's pre_enable().
-> >
-> > The main function related to this issue is samsung_dsim_init() which
-> > will do the clock and link configuration. samsung_dsim_init() is
-> > currently called from pre_enable(), but it is also called from
-> > samsung_dsim_host_transfer() to set up the link if the peripheral driver
-> > wants to send a DSI command.
-> >
-> > This patch fixes both issues by moving the samsung_dsim_init() call from
-> > pre_enable() to enable().
-> >
-> > However, to deal with the case where the samsung_dsim_init() has already
-> > been called from samsung_dsim_host_transfer() and the refclk rate has
-> > changed, we need to make sure we re-initialize the DSI with the new rate
-> > in enable(). This is achieved by clearing the DSIM_STATE_INITIALIZED
-> > flag and uninitializing the clocks and irqs before calling
-> > samsung_dsim_init().
-> >
-> > Fixes: c9b1150a68d9 ("drm/atomic-helper: Re-order bridge chain pre-enable and post-disable")
-> > Reported-by: Hiago De Franco <hiagofranco@gmail.com>
-> > Signed-off-by: Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>
-> 
-> Seems to be working fine on all my Exynos based boards:
-> 
-> Tested-by: Marek Szyprowski <m.szyprowski@samsung.com>
-> 
-> 
-> BTW, it was a long discussion how to handle the dsim initialization and 
-> we agreed to keep calling samsung_dsim_init() on first dsi transfer for 
-> Exynos case and from pre-enable for others:
-> 
-> https://lore.kernel.org/all/20221209152343.180139-11-jagan@amarulasolutions.com/
-> 
-> I'm not sure if changing this won't break again something, especially 
-> the boards with DSI bridge or panel controlled via I2C instead of the 
-> DSI commands. This has to be tested on the all supported variants of 
-> this hardware.
+The SpacemiT K1 has various static translations of DMA accesses. This
+series adds all the DMA translation bus nodes and also moves existing
+nodes as necessary.
 
-FWIW, DSI bridges (LT8912B and SN65DSI83) controlled over I2C were
-tested fine with this patch on both NXP i.MX8MP and 8MM (see Hiago
-tested-by).
+According to SpacemiT DT maintainer Yixun Lan [1], it's preferable from
+a SoC DT maintainer's perspective to have this done at once instead of
+spreading these changes into various driver series. Once this is merged,
+life will be easier for future users of the buses.
 
+This series contains no bindings changes.
 
-Francesco
+Patch 3 moves the eMMC node added in [1].
+
+These patches can also be pulled from:
+
+https://github.com/dramforever/linux/tree/k1/dma-ranges/v1
+
+[1]: https://lore.kernel.org/r/20250623070147-GYA193822@gentoo
+[2]: https://lore.kernel.org/r/20250523-22-k1-sdhci-v1-1-6e0adddf7494@gentoo.org
+
+---
+Changes since RFC
+- Reworded patch messages
+- Also moved existing nodes under relevant buses
+- Link to RFC: https://lore.kernel.org/r/20250617-k1-dma-buses-rfc-wip-v1-1-c8ec192fbf58@iscas.ac.cn
+
+---
+Vivian Wang (3):
+      riscv: dts: spacemit: Add DMA translation buses for K1
+      riscv: dts: spacemit: Move UARTs under dma-bus for K1
+      riscv: dts: spacemit: Move eMMC under storage-bus for K1
+
+ arch/riscv/boot/dts/spacemit/k1.dtsi | 314 +++++++++++++++++++++--------------
+ 1 file changed, 189 insertions(+), 125 deletions(-)
+---
+base-commit: d9946fe286439c2aeaa7953b8c316efe5b83d515
+change-id: 20250616-k1-dma-buses-rfc-wip-3be7a01f47c8
+prerequisite-message-id: <20250523-22-k1-sdhci-v1-1-6e0adddf7494@gentoo.org>
+prerequisite-patch-id: 53fc23b06e26ab0ebb2c52ee09f4b2cffab889e2
+
+Best regards,
+-- 
+Vivian "dramforever" Wang
 
 
