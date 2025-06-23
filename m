@@ -1,317 +1,113 @@
-Return-Path: <linux-kernel+bounces-699088-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-699083-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1789DAE4D9A
-	for <lists+linux-kernel@lfdr.de>; Mon, 23 Jun 2025 21:27:21 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 0B868AE4D8F
+	for <lists+linux-kernel@lfdr.de>; Mon, 23 Jun 2025 21:25:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6BD573ADCEB
-	for <lists+linux-kernel@lfdr.de>; Mon, 23 Jun 2025 19:26:20 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 266443B91FA
+	for <lists+linux-kernel@lfdr.de>; Mon, 23 Jun 2025 19:24:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7ED522D3A83;
-	Mon, 23 Jun 2025 19:26:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AF86B299A90;
+	Mon, 23 Jun 2025 19:25:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="GMcHEavG"
-Received: from mail-ej1-f45.google.com (mail-ej1-f45.google.com [209.85.218.45])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="MZeSXzSg"
+Received: from mail-lj1-f175.google.com (mail-lj1-f175.google.com [209.85.208.175])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3C82F2D4B40
-	for <linux-kernel@vger.kernel.org>; Mon, 23 Jun 2025 19:26:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 87C1C1E1DFE;
+	Mon, 23 Jun 2025 19:25:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750706774; cv=none; b=bucloVS1wuxGySV8nBOZNC4MWwCV3LoIZ4NYKh07FIHSAkvhUdcZowWJGThL3GHQGJHCyDQexoU7ad+8TIeBD/dk5d4hs7Fz/pBreTaVaShYoo+gMdMBXWO/Ak4oMKb4g1/qW55X2wg1Bw6LZ0NzIkbtpMk9hj7mQChjrmeYOvU=
+	t=1750706707; cv=none; b=q2Hu+R+GGrlkIxEOlsKNo/4y0r/B9sSGrjOBdSqB7NXelG+xp7ckInHZKuoiop3DgSBS2HIW3500QUjGQGAjgN8OFBblxllxNatgRDz1WJh8oD6+AMBZ0aV6kdTtcQbM7+geR4tWifahpyj5/jWnNpgQFclwcRda85wc2cpmHME=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750706774; c=relaxed/simple;
-	bh=XwwMkrgJbQ+iphWDh7a1A3iYblM9/iVX+IUeIy/8wrc=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=QCTQHSocVfFLPHHjbuzz7JPvxzE/A9FDWJ/teGY01fLJp7qLspEKTcSm1FjZg6DELeHeZ/jIs5Uz+cK1TRiflzxHEPgqdH4hvEWjpZpYpNf7z9AADzbT9dzvXhGXdjNJ+/enNSCYWu8K0L5SbU9/tjQ8ptCLGLt6Y+aebNH6UHA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=GMcHEavG; arc=none smtp.client-ip=209.85.218.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
-Received: by mail-ej1-f45.google.com with SMTP id a640c23a62f3a-addda47ebeaso952848766b.1
-        for <linux-kernel@vger.kernel.org>; Mon, 23 Jun 2025 12:26:08 -0700 (PDT)
+	s=arc-20240116; t=1750706707; c=relaxed/simple;
+	bh=rOVt0ekDWltweCaLCTF+9Wh1oLMlOw+5K9zPrhbVDr0=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=LjrdszmkQXDFOIjfwZPBF1+2gtu1U2vHtRnn3BKNBTrhSToIV7th9z7oYNyPIfhzMsnq8+wb4OoI1NiguHrUHqUz3GnaIMUwZNVkdJZM1qv3JL7ctNz3RV8CJLS8NkLrI14ckYt9z5LMp+umhMAYhkuQw/h90iUkeYb2AC6dt44=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=MZeSXzSg; arc=none smtp.client-ip=209.85.208.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lj1-f175.google.com with SMTP id 38308e7fff4ca-32b5226e6beso42282541fa.2;
+        Mon, 23 Jun 2025 12:25:05 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1750706767; x=1751311567; darn=vger.kernel.org;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=wHvDFrJ6H1+v1HU0C9Dh3b9mcZBS7rbiWmZCIgdgUQQ=;
-        b=GMcHEavG7nqxHVl7o/7fX7lO+e+q28z0dzSxgpSnFTM+IiW1BVrisBrFW+YOgVc4Mg
-         XcviGwuiWwiHTNulfqqKRc9gPei6Jr0F8Q+pfJryttL7+X6rCiB7WEHVGUqZL1SCVk6l
-         tPOJKQ6FQOTogZtK6/g4gYZbcYu3lNYV3pq8nxMa+hpSEaFeARRzkQHr34PeBzkdxay3
-         VGtKvEjFOQPBEopzWAx6UfSlaDoHy/tyng9biIP/KfqVxhdaDvkr7z5ZU9lua4pbsTX8
-         gvHNe88H/jHXVWFc6qtlFHiZdOpTiSY3PIAHcrLRhDCuBkJzLEobiKVMYpInx+29YoWJ
-         glmQ==
+        d=gmail.com; s=20230601; t=1750706703; x=1751311503; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=1mZHTt0VM9DkazGbD62GtKPk6Iel2GLHMmH+VCvcXL8=;
+        b=MZeSXzSgTDvShlCVZPJLHVwoXVl3hb0n8V3UxTjCVe/pjKaoneKsKfGrwlO198XGmS
+         FtCLv5PkGXhSJTR7GLPgEaauPKuFZUxMYURuwXLfWlS/I+PrFvQtWuW0+RPw1GAd5n0H
+         gCf0W7vaebtrLFRsLCyTZF7hUCiQrX9aR1gBNq4Qg1hhC6czXRf5E/+wJmB/60TAb4aR
+         abSGpSv54J4ZDWPldcJSmYZtwZnsn2N8Es9hoY9+RLSa6zL7LXMCw+ELTzgpMyqjDyiX
+         Yh3veQt7nW5Jz40+zcnMdZAW3yuTZ/tGPB8/fS+k+LSYegZMC/oLT1gOu5wLGTdBgmyd
+         aBHA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1750706767; x=1751311567;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
+        d=1e100.net; s=20230601; t=1750706703; x=1751311503;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=wHvDFrJ6H1+v1HU0C9Dh3b9mcZBS7rbiWmZCIgdgUQQ=;
-        b=Wa4yrKyQOcO4ICvK9jNze4m5e5dO4nu1vTZbS6VcCizFj9nKkw6Ud32Ny5Dtr88AJT
-         SkTMke6+qzUbXBW83S409M2Inbt46DECFpg/+OfGHfUu9ahwz4mtnNvxGkAiKLKEMeOT
-         9xF2KKGlVk4FXbFVNX0fe7twydauhndvyqaKuiyWcMHg7Y2NEMSN5DDLjsry76MVVjLp
-         axTuHCKm+5TP+ksl7d3MwYEhLb8BI0LHFNN1/PpVQDgJNvqBZPUjSbU5ixkVffwxQH9Q
-         WJVk0to3CBgjWwJP9Yq9gUD+KSfgjP9GhtWSCpIvajXBFS7jE8AOpQjGyxh+8BY62XiI
-         0dpw==
-X-Forwarded-Encrypted: i=1; AJvYcCVo2v996vODTtEaodJwLR0ZvEZJ3dC52Gw2WNsnYh52kPdpfvPGLvPhX5gCBdfJVZtZiK7GMCPfSQxbwYQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxTdQlwcn1mLLVcd2l+4sEdcJz0LKI9bxsQ1+jXN3yY7r/OdbAg
-	YDz6fo0ophYxKzDj5c/lSWZbtQiqaRVauW5dnG1rdusi1lM5QPfv7BySX6TJEedSIrQ=
-X-Gm-Gg: ASbGncvetmIbWxL1JRQQqCUZEfgwuRrUnaksv0KU+AHaoFDmLKT2eyTDMNnI+kZES6D
-	4Cpnf32Fax9vqgWBUzV4oZKlvD4ae0rX2qtNJBiU0mhdvOQ2G2i1RvKKthWWogJYVk+tlameFpV
-	WlBGG5nqT2YW3alqgYfFL52AzSZUG27g5KIUf59n77Pj8HTpG/Mj6PnHUL/THF5uS6gVkF3ZyW8
-	X83BIwoKYXf/n8LFVWos07mCuos3ZUuzWp+5X+tNtDofstnZnvYI6GOIU5+sZuEm7W2zGizIMGB
-	EUQo1A/VumNUBJrg3CNT46cIM2d8+98Sb2AHhr98NCfwRBERrlHqJgNBpUw/8Gf8VkLqHg==
-X-Google-Smtp-Source: AGHT+IGSavjgIZ9sXrSj5rozKvqmWef3mvFzR/a5f+aszpHgcxKWhvv9wF7jXblJfFcjqdtuPSj0KA==
-X-Received: by 2002:a17:907:c0e:b0:adf:f883:aa78 with SMTP id a640c23a62f3a-ae0578d5db5mr1417258966b.10.1750706767405;
-        Mon, 23 Jun 2025 12:26:07 -0700 (PDT)
-Received: from localhost ([2001:4090:a244:83c4:9fe4:a128:a20c:8b84])
-        by smtp.gmail.com with UTF8SMTPSA id a640c23a62f3a-ae09d72008dsm113675466b.55.2025.06.23.12.26.06
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 23 Jun 2025 12:26:06 -0700 (PDT)
-From: Markus Schneider-Pargmann <msp@baylibre.com>
-Date: Mon, 23 Jun 2025 21:24:30 +0200
-Subject: [PATCH 3/3] clocksource/drivers/timer-ti-dm: Add clockevent
- support
+        bh=1mZHTt0VM9DkazGbD62GtKPk6Iel2GLHMmH+VCvcXL8=;
+        b=oBNRGDZ7nH1R/YLFF2GwXy0PI14BBorFRclTsdb9VNX8ixkh3/yDIbn1qdkZ6FbWzO
+         Mpd2uiIBF6Y/vs5xRW/dUJ8Uf0bHHYkvkA5IaxJQbuubw7oZdlWSmdVIzx+jUbldieH3
+         Z8Z6w0ADrYmjRo3Jpp7LWCnhvDh12Ch2idgVnkd9HBB4CSSZGkp2szKtEp7DphoBjZH0
+         VKPdUfMiAwiy7MMh8fgEjBnlgQ87yLgy8AuIanEUAU4XSDeYjjvXKG6jsz/t/iHwRh/K
+         Q3BEpL1K634oo4ccEnz4IK1fBsimoaUFIaAhiTwJIHQ7aEpgkfQXDvlnJu9ge8zvnWWw
+         H1UA==
+X-Forwarded-Encrypted: i=1; AJvYcCURGpH8VW/w1afEYrrGGnYBNk7vmiLcTsYEhnIfrfccKD/ESLgIXX/hDKYBrWk1ToXE/9fXzBs3SJMLkGzO@vger.kernel.org, AJvYcCVljOXxK0zPoRbt22KifmsCq/0341DE99fA8CBMrDlrM2itrTInD32FPLXonRA9KHr4mHGXwcQr+Co=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyvFUxf9yj8mQbe3um3xexSAJdF4W6sTPdoORvI5MYVcXMKCJuV
+	MBUtORK63Ycp8PQ6xMuJof4Oma+JbWNMRkaMbBVK2FMpupKSgFmRanbfTPGGbD2NUYjwQ/yblCf
+	TKZC3rHtc0LJmBZlfbuRNC7eRyOQ/Cf2z
+X-Gm-Gg: ASbGncvlKbP+P4USrkTLzTMu+kt93Q8H7sg/oprT5xxz8o04OxjvqdN9soW+MTfTAHY
+	ZDcdvaVA2H7yDT+E78jSxaCUn6H8r6HN2h3IAxORVlFvDHR4lbmbCA7U92v5t1OqFI5fZ/KK2pi
+	pB9MRuo+3St7uaVEFzdBGnexzAGxhDRNXiZMsyLzkR9nqdJrhPKOlJH/+jqA==
+X-Google-Smtp-Source: AGHT+IFu4u+dDHVpx6K5Dqdz4Es5UYLRw4rVmbwNsUoycKCYN/tcUUjEKpxREGNOK9tzL5Mv7yvKdx8FgUcK6Jhmag4=
+X-Received: by 2002:a2e:aa26:0:b0:32a:7122:58c9 with SMTP id
+ 38308e7fff4ca-32b98e90beamr22406861fa.5.1750706703061; Mon, 23 Jun 2025
+ 12:25:03 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250623-topic-ti-dm-clkevt-v6-16-v1-3-b00086761ee1@baylibre.com>
-References: <20250623-topic-ti-dm-clkevt-v6-16-v1-0-b00086761ee1@baylibre.com>
-In-Reply-To: <20250623-topic-ti-dm-clkevt-v6-16-v1-0-b00086761ee1@baylibre.com>
-To: Daniel Lezcano <daniel.lezcano@linaro.org>, 
- Thomas Gleixner <tglx@linutronix.de>
-Cc: Vishal Mahaveer <vishalm@ti.com>, Kevin Hilman <khilman@baylibre.com>, 
- Dhruva Gole <d-gole@ti.com>, Sebin Francis <sebin.francis@ti.com>, 
- Kendall Willis <k-willis@ti.com>, Akashdeep Kaur <a-kaur@ti.com>, 
- linux-kernel@vger.kernel.org, Markus Schneider-Pargmann <msp@baylibre.com>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=openpgp-sha256; l=6658; i=msp@baylibre.com;
- h=from:subject:message-id; bh=XwwMkrgJbQ+iphWDh7a1A3iYblM9/iVX+IUeIy/8wrc=;
- b=owGbwMvMwCXWejAsc4KoVzDjabUkhozIVa6b1nHzFvuuE5l2+5prcPXkp5q3yh2MGFZ+WHPW1
- Saj5zZTRykLgxgXg6yYIktnYmjaf/mdx5IXLdsMM4eVCWQIAxenAEzE/AfDX6E1+z8zFzyLjt+6
- LT/HZ73Djvd790Xl2bw12OkofXWpQwDD/4zX57jMvaZ0/TL8+/xAoJ7y91nz+Walxq8XNxU3n3/
- jORsA
-X-Developer-Key: i=msp@baylibre.com; a=openpgp;
- fpr=BADD88DB889FDC3E8A3D5FE612FA6A01E0A45B41
+References: <860684c8-a985-47bc-af30-3370f203e80d@zytor.com> <20250623183917.13132-1-khaliidcaliy@gmail.com>
+In-Reply-To: <20250623183917.13132-1-khaliidcaliy@gmail.com>
+From: Brian Gerst <brgerst@gmail.com>
+Date: Mon, 23 Jun 2025 15:24:50 -0400
+X-Gm-Features: AX0GCFvdbqcIgfbSMyoSfml-UrzHEltzomya8JZlsvay0B7QWNTyIi4zg08_Wb8
+Message-ID: <CAMzpN2jP_rtFjvL3NQLcwFCgY8uwbJvqbup-KFHVaaSh-oRCcQ@mail.gmail.com>
+Subject: Re: [PATCH v1 0/3] x86/boot: Supply boot_param in rdi instead of rsi
+ from startup_64()
+To: Khalid Ali <khaliidcaliy@gmail.com>
+Cc: hpa@zytor.com, tglx@linutronix.de, mingo@redhat.com, bp@alien8.de, 
+	dave.hansen@linux.intel.com, ubizjak@gmail.com, x86@kernel.org, 
+	linux-efi@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Add support for using the TI Dual-Mode Timer for clockevents. The second
-always on device with the "ti,timer-alwon" property is selected to be
-used for clockevents. The first one is used as clocksource.
+On Mon, Jun 23, 2025 at 2:40=E2=80=AFPM Khalid Ali <khaliidcaliy@gmail.com>=
+ wrote:
+>
+> > This is also invoked by some external bootloaders that boot the ELF
+> > image directly, even though this is strongly discouraged.
+> >
+> > Therefore this patchset is NAKed with extreme prejudice.
+>
+> Thanks both of you peter and brian,
+>
+> however, the boot protocol document saying "%rsi must hold the base addre=
+ss of the struct boot_params",
+> it doesn't mention why. Maybe the document needs update to justify the re=
+asons. I wouldn't have known it
+> if you didn't tell me, so this shouldn't confuse anyone else.
 
-This allows clockevents to be setup independently of the CPU.
+The use of RSI was inherited from the 32-bit kernel, but the real
+reason is lost to history.  It's just always been that way and there
+is no compelling reason to change it.
 
-Signed-off-by: Markus Schneider-Pargmann <msp@baylibre.com>
----
- drivers/clocksource/timer-ti-dm.c | 138 ++++++++++++++++++++++++++++++++++++--
- 1 file changed, 133 insertions(+), 5 deletions(-)
 
-diff --git a/drivers/clocksource/timer-ti-dm.c b/drivers/clocksource/timer-ti-dm.c
-index 085609ba2d249dcc8f53c8aaa831d8fbe69b3753..a17e3e81508793a46cdee815bde3ad17fedd55e7 100644
---- a/drivers/clocksource/timer-ti-dm.c
-+++ b/drivers/clocksource/timer-ti-dm.c
-@@ -21,8 +21,10 @@
- #include <linux/clk.h>
- #include <linux/clk-provider.h>
- #include <linux/clocksource.h>
-+#include <linux/clockchips.h>
- #include <linux/cpu_pm.h>
- #include <linux/module.h>
-+#include <linux/interrupt.h>
- #include <linux/io.h>
- #include <linux/device.h>
- #include <linux/err.h>
-@@ -158,7 +160,14 @@ struct dmtimer_clocksource {
- 	unsigned int loadval;
- };
- 
-+struct omap_dm_timer_clockevent {
-+	struct clock_event_device dev;
-+	struct dmtimer *timer;
-+	u32 period;
-+};
-+
- static resource_size_t omap_dm_timer_clocksource_base;
-+static resource_size_t omap_dm_timer_clockevent_base;
- static void __iomem *omap_dm_timer_sched_clock_counter;
- 
- enum {
-@@ -1091,6 +1100,9 @@ static void omap_dm_timer_find_alwon(void)
- {
- 	struct device_node *np;
- 
-+	if (omap_dm_timer_clocksource_base && omap_dm_timer_clockevent_base)
-+		return;
-+
- 	for_each_matching_node(np, omap_timer_match) {
- 		struct resource res;
- 
-@@ -1103,13 +1115,22 @@ static void omap_dm_timer_find_alwon(void)
- 		if (of_address_to_resource(np, 0, &res))
- 			continue;
- 
--		omap_dm_timer_clocksource_base = res.start;
-+		if (!omap_dm_timer_clocksource_base) {
-+			omap_dm_timer_clocksource_base = res.start;
-+			continue;
-+		}
- 
--		of_node_put(np);
--		return;
-+		if (res.start != omap_dm_timer_clocksource_base) {
-+			omap_dm_timer_clockevent_base = res.start;
-+
-+			of_node_put(np);
-+			return;
-+		}
- 	}
- 
--	omap_dm_timer_clocksource_base = -1;
-+	if (!omap_dm_timer_clocksource_base)
-+		omap_dm_timer_clocksource_base = -1;
-+	omap_dm_timer_clockevent_base = -1;
- }
- 
- static struct dmtimer_clocksource *omap_dm_timer_to_clocksource(struct clocksource *cs)
-@@ -1188,6 +1209,105 @@ static int omap_dm_timer_setup_clocksource(struct dmtimer *timer)
- 	return 0;
- }
- 
-+static struct omap_dm_timer_clockevent *to_dm_timer_clockevent(struct clock_event_device *evt)
-+{
-+	return container_of(evt, struct omap_dm_timer_clockevent, dev);
-+}
-+
-+static int omap_dm_timer_evt_set_next_event(unsigned long cycles,
-+					    struct clock_event_device *evt)
-+{
-+	struct omap_dm_timer_clockevent *clkevt = to_dm_timer_clockevent(evt);
-+	struct dmtimer *timer = clkevt->timer;
-+
-+	dmtimer_write(timer, OMAP_TIMER_COUNTER_REG, 0xffffffff - cycles);
-+	dmtimer_write(timer, OMAP_TIMER_CTRL_REG, OMAP_TIMER_CTRL_ST);
-+
-+	return 0;
-+}
-+
-+static int omap_dm_timer_evt_shutdown(struct clock_event_device *evt)
-+{
-+	struct omap_dm_timer_clockevent *clkevt = to_dm_timer_clockevent(evt);
-+	struct dmtimer *timer = clkevt->timer;
-+
-+	__omap_dm_timer_stop(timer);
-+
-+	return 0;
-+}
-+
-+static int omap_dm_timer_evt_set_periodic(struct clock_event_device *evt)
-+{
-+	struct omap_dm_timer_clockevent *clkevt = to_dm_timer_clockevent(evt);
-+	struct dmtimer *timer = clkevt->timer;
-+
-+	omap_dm_timer_evt_shutdown(evt);
-+
-+	omap_dm_timer_set_load(&timer->cookie, clkevt->period);
-+	dmtimer_write(timer, OMAP_TIMER_COUNTER_REG, clkevt->period);
-+	dmtimer_write(timer, OMAP_TIMER_CTRL_REG,
-+		      OMAP_TIMER_CTRL_AR | OMAP_TIMER_CTRL_ST);
-+
-+	return 0;
-+}
-+
-+static irqreturn_t omap_dm_timer_evt_interrupt(int irq, void *dev_id)
-+{
-+	struct omap_dm_timer_clockevent *clkevt = dev_id;
-+	struct dmtimer *timer = clkevt->timer;
-+
-+	__omap_dm_timer_write_status(timer, OMAP_TIMER_INT_OVERFLOW);
-+
-+	clkevt->dev.event_handler(&clkevt->dev);
-+
-+	return IRQ_HANDLED;
-+}
-+
-+static int omap_dm_timer_setup_clockevent(struct dmtimer *timer)
-+{
-+	struct device *dev = &timer->pdev->dev;
-+	struct omap_dm_timer_clockevent *clkevt;
-+	int ret;
-+
-+	clkevt = devm_kzalloc(dev, sizeof(*clkevt), GFP_KERNEL);
-+	if (!clkevt)
-+		return -ENOMEM;
-+
-+	timer->reserved = 1;
-+	clkevt->timer = timer;
-+
-+	clkevt->dev.name = "omap_dm_timer";
-+	clkevt->dev.features = CLOCK_EVT_FEAT_PERIODIC | CLOCK_EVT_FEAT_ONESHOT;
-+	clkevt->dev.rating = 300;
-+	clkevt->dev.set_next_event = omap_dm_timer_evt_set_next_event;
-+	clkevt->dev.set_state_shutdown = omap_dm_timer_evt_shutdown;
-+	clkevt->dev.set_state_periodic = omap_dm_timer_evt_set_periodic;
-+	clkevt->dev.set_state_oneshot = omap_dm_timer_evt_shutdown;
-+	clkevt->dev.set_state_oneshot_stopped = omap_dm_timer_evt_shutdown;
-+	clkevt->dev.tick_resume = omap_dm_timer_evt_shutdown;
-+	clkevt->dev.cpumask = cpu_possible_mask;
-+	clkevt->period = 0xffffffff - DIV_ROUND_CLOSEST(timer->fclk_rate, HZ);
-+
-+	__omap_dm_timer_init_regs(timer);
-+	__omap_dm_timer_stop(timer);
-+	__omap_dm_timer_enable_posted(timer);
-+
-+	ret = devm_request_irq(dev, timer->irq, omap_dm_timer_evt_interrupt,
-+			       IRQF_TIMER, "omap_dm_timer_clockevent", clkevt);
-+	if (ret) {
-+		dev_err(dev, "Failed to request interrupt: %d\n", ret);
-+		return ret;
-+	}
-+
-+	__omap_dm_timer_int_enable(timer, OMAP_TIMER_INT_OVERFLOW);
-+
-+	clockevents_config_and_register(&clkevt->dev, timer->fclk_rate,
-+					3,
-+					0xffffffff);
-+
-+	return 0;
-+}
-+
- /**
-  * omap_dm_timer_probe - probe function called for every registered device
-  * @pdev:	pointer to current timer platform device
-@@ -1204,7 +1324,7 @@ static int omap_dm_timer_probe(struct platform_device *pdev)
- 	struct resource *res;
- 	int ret;
- 
--	if (!omap_dm_timer_clocksource_base)
-+	if (!omap_dm_timer_clocksource_base || !omap_dm_timer_clockevent_base)
- 		omap_dm_timer_find_alwon();
- 
- 	pdata = of_device_get_match_data(dev);
-@@ -1281,6 +1401,14 @@ static int omap_dm_timer_probe(struct platform_device *pdev)
- 
- 	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
- 
-+	if (omap_dm_timer_clockevent_base && res &&
-+	    res->start == omap_dm_timer_clockevent_base &&
-+	    !IS_ERR_OR_NULL(timer->fclk)) {
-+		ret = omap_dm_timer_setup_clockevent(timer);
-+		if (ret)
-+			return ret;
-+	}
-+
- 	if (omap_dm_timer_clocksource_base && res &&
- 	    res->start == omap_dm_timer_clocksource_base &&
- 	    !IS_ERR_OR_NULL(timer->fclk)) {
-
--- 
-2.49.0
-
+Brian Gerst
 
