@@ -1,89 +1,127 @@
-Return-Path: <linux-kernel+bounces-697636-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-697638-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 819D8AE36BC
-	for <lists+linux-kernel@lfdr.de>; Mon, 23 Jun 2025 09:25:47 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6F6DDAE36BF
+	for <lists+linux-kernel@lfdr.de>; Mon, 23 Jun 2025 09:26:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E3FD3189107E
-	for <lists+linux-kernel@lfdr.de>; Mon, 23 Jun 2025 07:26:02 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3EE0C189268D
+	for <lists+linux-kernel@lfdr.de>; Mon, 23 Jun 2025 07:26:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4E0D71F582A;
-	Mon, 23 Jun 2025 07:25:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D74FF1F4C90;
+	Mon, 23 Jun 2025 07:26:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="sg0HsJvW"
-Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="R+18yoJh"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.12])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 843FA2EAE5;
-	Mon, 23 Jun 2025 07:25:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ADDCE155CBD
+	for <linux-kernel@vger.kernel.org>; Mon, 23 Jun 2025 07:26:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.12
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750663538; cv=none; b=XoUpYl8Jz6+Da4LgAt1cEQemabBfG9wUKm3SIEjn35lkNqaZySZEdMyKU0Am6NO0mKy3hUfNzsSEcfvc5Heh2J/SuRWYS1FOlG/hAXHf1Zoz0BFG922D/s+dO5EGlRflFobj0Oj4TA7xwe7BJKfEFEb4QYv/LBi5ih8HHyA5eyo=
+	t=1750663588; cv=none; b=PAVF9bCQ5yZu3lxkMltnBYTcZAgPWFM7MTb9xZiVTCtyCR62e0LJmHFj3VL3pkwHxnWft165uZklfD2MzaBpHuAvfCv4ZdnJI8b9+I765f6sv3esENVzrs8XFzbHUa5/CrDO65E9BFIIfVogcy3d5Dj+YUbRQ7byP69fyJGy8cU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750663538; c=relaxed/simple;
-	bh=qrWwGHucouDZh2t1tAu8TyL00Fd2aq1gdpXqthU5zy8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=WHEH4tU5EEZPlId95oix84HgwdBv1nb7TQhAG0gpbeuAI7HMC7cbALXT3B1XnK1Y4YDyC6ui5daQodMoaBYpsje0fFR82XbRAA7i3sVoFwm7Vy2vPdh0mTcdKl7A+evN6WZcuBtXV3GXE6EIhLHoZRDmf6YlXube7jDusctH4vA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=sg0HsJvW; arc=none smtp.client-ip=156.67.10.101
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
-	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
-	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
-	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
-	bh=Cd3lQ68F49FcJhWhZAZYZUquvzxLE9gTxVzwWcJXNf8=; b=sg0HsJvWfvJwCHkDvTM+OEva7k
-	6Se526NxBlBc7oZ+nx903RVvTiutVv2rjAd0L7HmnprxnbY5EqljKCYfSxlpSUJ2p+OWlA0aKs4Hs
-	noPlTAhJMeVxLLwK9S0HkDh95hb/a/kZ1e/+iO3V2LL9q0I6LlIUOUvIdK5/DRTCgRLI=;
-Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
-	(envelope-from <andrew@lunn.ch>)
-	id 1uTbXw-00GfJ5-6o; Mon, 23 Jun 2025 09:24:52 +0200
-Date: Mon, 23 Jun 2025 09:24:52 +0200
-From: Andrew Lunn <andrew@lunn.ch>
-To: Inochi Amaoto <inochiama@gmail.com>
-Cc: Andrew Lunn <andrew+netdev@lunn.ch>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Chen Wang <unicorn_wang@outlook.com>,
-	Paul Walmsley <paul.walmsley@sifive.com>,
-	Palmer Dabbelt <palmer@dabbelt.com>,
-	Albert Ou <aou@eecs.berkeley.edu>, Alexandre Ghiti <alex@ghiti.fr>,
-	Richard Cochran <richardcochran@gmail.com>,
-	Alexander Sverdlin <alexander.sverdlin@gmail.com>,
-	Thomas Bonnefille <thomas.bonnefille@bootlin.com>,
-	Yu Yuan <yu.yuan@sjtu.edu.cn>, Ze Huang <huangze@whut.edu.cn>,
-	netdev@vger.kernel.org, devicetree@vger.kernel.org,
-	sophgo@lists.linux.dev, linux-kernel@vger.kernel.org,
-	linux-riscv@lists.infradead.org, Yixun Lan <dlan@gentoo.org>,
-	Longbin Li <looong.bin@gmail.com>
-Subject: Re: [PATCH net-next RFC v2 3/4] riscv: dts: sophgo: Add mdio
- multiplexer device for cv18xx
-Message-ID: <48769988-9ece-41d3-93fe-607061d68fff@lunn.ch>
-References: <20250623003049.574821-1-inochiama@gmail.com>
- <20250623003049.574821-4-inochiama@gmail.com>
+	s=arc-20240116; t=1750663588; c=relaxed/simple;
+	bh=zD1ykV9kZECgcfxM+3m0cJjb31keH4zDxEnCdj41wFo=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=tdZB5T78flewHfC7Gwhi9yAYD+OL7+E4Ldl451zoKBYbz98Bbqe4ytTuoysae5d368PPS1Lueq/vEVKtbk5BS+ksKBb2JFxpaVfr+m8brg4MyFSw3ASgp8kwYrsWUBp68vvNVEjPSXmTs8uL7BkpepA2tm2/AIg6YxkAbjs+uFY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=R+18yoJh; arc=none smtp.client-ip=198.175.65.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1750663586; x=1782199586;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=zD1ykV9kZECgcfxM+3m0cJjb31keH4zDxEnCdj41wFo=;
+  b=R+18yoJhLcpeDqE6/uFYQMVGGO7GAembBJnDi0bl1qDmrZ9IRcWUckCf
+   06tB86TPruyq7V3sXfHHzDlvWH4UywZ1MXKZ+jUfG5rRJTx+JZiTtU8VZ
+   nzmEUboC81kIkbQJW4fS7K3vfnklktlj2FHrKeMMVqT26ZeZHVYOlCVUA
+   xQV20qlWUXZXgy6qnyEL3yhlAPE+MxUvIMhOrFuQhvIFQtPzJp7fH4WJz
+   kd3PEpPZAIBAjgLATDudCASmKfHmvcKhLKI3ZoGh5pLGPuUWh1Y7WfwNP
+   mpnQY2qzYebvTF8Sd15g0YD9bnfJYqHGr51zgLKBPlXZ2b1RyuOL1CYNo
+   g==;
+X-CSE-ConnectionGUID: 6yM+UBUxTUO8cSLoI4BwNQ==
+X-CSE-MsgGUID: A9yO2pxHTpOq+/mfIRc+Jw==
+X-IronPort-AV: E=McAfee;i="6800,10657,11472"; a="64289170"
+X-IronPort-AV: E=Sophos;i="6.16,258,1744095600"; 
+   d="scan'208";a="64289170"
+Received: from fmviesa006.fm.intel.com ([10.60.135.146])
+  by orvoesa104.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 23 Jun 2025 00:26:26 -0700
+X-CSE-ConnectionGUID: 4Za27yxCTE2kmJ8hkBwUsw==
+X-CSE-MsgGUID: cIX5nXMDTqKAKXsbwAIp2A==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.16,258,1744095600"; 
+   d="scan'208";a="151662633"
+Received: from black.fi.intel.com ([10.237.72.28])
+  by fmviesa006.fm.intel.com with ESMTP; 23 Jun 2025 00:26:23 -0700
+Received: by black.fi.intel.com (Postfix, from userid 1003)
+	id 2B60E38C; Mon, 23 Jun 2025 10:26:21 +0300 (EEST)
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+	linux-kernel@vger.kernel.org
+Cc: Thomas Gleixner <tglx@linutronix.de>,
+	Ingo Molnar <mingo@redhat.com>,
+	Borislav Petkov <bp@alien8.de>,
+	Dave Hansen <dave.hansen@linux.intel.com>,
+	x86@kernel.org,
+	"H. Peter Anvin" <hpa@zytor.com>,
+	=?UTF-8?q?Daniel=20D=C3=ADaz?= <daniel.diaz@linaro.org>
+Subject: [PATCH v1 1/1] x86/defconfigs: Explicitly unset CONFIG_64BIT in i386_defconfig
+Date: Mon, 23 Jun 2025 10:25:36 +0300
+Message-ID: <20250623072536.3425344-1-andriy.shevchenko@linux.intel.com>
+X-Mailer: git-send-email 2.47.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250623003049.574821-4-inochiama@gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-> +			external_mdio: mdio@1 {
-> +				#address-cells = <1>;
-> +				#size-cells = <0>;
-> +				reg = <0x80>;
+From: Daniel Díaz <daniel.diaz@linaro.org>
 
-Since reg is 0x80, the normal convention is this is mdio@80.
+A recent refresh of the defconfigs got rid of the following
+(unset) config:
 
-	Andrew
+  # CONFIG_64BIT is not set
+
+Innocuous as it seems, when the config file is saved again the
+behavior is changed so that CONFIG_64BIT=y.
+
+Currently,
+
+  $ make i386_defconfig
+  $ grep CONFIG_64BIT .config
+  CONFIG_64BIT=y
+
+whereas previously (and with this patch):
+
+  $ make i386_defconfig
+  $ grep CONFIG_64BIT .config
+  # CONFIG_64BIT is not set
+
+Fixes: 0e11f689ec03 ("x86/kconfig/32: Refresh defconfig")
+Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+---
+ arch/x86/configs/i386_defconfig | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/arch/x86/configs/i386_defconfig b/arch/x86/configs/i386_defconfig
+index bd182325ebb4..9fc5c2eb58af 100644
+--- a/arch/x86/configs/i386_defconfig
++++ b/arch/x86/configs/i386_defconfig
+@@ -28,6 +28,7 @@ CONFIG_BLK_DEV_INITRD=y
+ CONFIG_KALLSYMS_ALL=y
+ CONFIG_PROFILING=y
+ CONFIG_KEXEC=y
++# CONFIG_64BIT is not set
+ CONFIG_SMP=y
+ CONFIG_HYPERVISOR_GUEST=y
+ CONFIG_PARAVIRT=y
+-- 
+2.47.2
+
 
