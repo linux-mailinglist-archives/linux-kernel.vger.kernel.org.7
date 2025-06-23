@@ -1,215 +1,288 @@
-Return-Path: <linux-kernel+bounces-698523-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-698525-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id E7C95AE4606
-	for <lists+linux-kernel@lfdr.de>; Mon, 23 Jun 2025 16:09:56 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id E915BAE462D
+	for <lists+linux-kernel@lfdr.de>; Mon, 23 Jun 2025 16:14:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C45A6172DAD
-	for <lists+linux-kernel@lfdr.de>; Mon, 23 Jun 2025 14:04:26 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 900A0447661
+	for <lists+linux-kernel@lfdr.de>; Mon, 23 Jun 2025 14:04:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4197917A314;
-	Mon, 23 Jun 2025 14:04:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BB92F78F20;
+	Mon, 23 Jun 2025 14:04:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="RPAKZYjO"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="ffZv9t6C"
+Received: from mail-ej1-f51.google.com (mail-ej1-f51.google.com [209.85.218.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C8ED376C61
-	for <linux-kernel@vger.kernel.org>; Mon, 23 Jun 2025 14:04:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7098C15665C
+	for <linux-kernel@vger.kernel.org>; Mon, 23 Jun 2025 14:04:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750687450; cv=none; b=SJtUIozL24G4yKllonI5VrxwzTsT2CJozTGMws6eOW/d5RvO1eyUvE34hRu4vWeo7TvUdmc6Adp+dxEtK0tF73FNKeqK4nMwn7yBKoLp7kdX3rZWkuUdf25J0M8ZpgptwsA/syxQ4Gy/4M/EjeeNjWfCFigasZCqPsuY4VG4Nt8=
+	t=1750687497; cv=none; b=o5W9xVrRQ4vWI8U/7jF2WMiqa6v9WrbVUEqVtifn732B5cD3VnVD3xe4R4GzlNFX+Q4P4xTE+leXmxwKIFnc/jQIB75Mhpl34XmLZ4Fgt9b0UgVMKcSU8tejfHPDfvK/hdruHjA8C4521aobHU1XSLZrriW6eJnnl3dY2wLImb4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750687450; c=relaxed/simple;
-	bh=X4Hd5ZWrXPSq1/1WLrzOgIiIZXd5j48jrptWBaZiW1k=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=NfUMM1jTw+AVazC9VVab328uU8CogwUYIvlNL4HkOnUgEMfWmobdZd9qhbtI/NOUkK2XFtFeg70MAxh4meVSiS+InZrjiUv0YIWInx+L8dyVR6CYjXLXOzu1bCdYYYpkFGe4k6ZurR94q2oMUqS9egH1u20kaD+9UDiFmjAr8a0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=RPAKZYjO; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1750687447;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=KrBCINyJrvJ9eCzCevXV0ad1ST03SBH5k2o0Hivm01s=;
-	b=RPAKZYjOLx/Vh4WZCsoHzhCpYOsRjJvuJ89NtXxIPVJMRS8rL1jjIiTGLBZP8Fqm5zCg5X
-	SrwEUrHI2BNqocTzqx1OLLtzW+DTUBgShOrV9p/zMydlKsjkqLepzsR7VCoJRH09NPvAmA
-	ezbU9yvUQDbHU0DgqCdT3jz6fF1CDtw=
-Received: from mail-wm1-f70.google.com (mail-wm1-f70.google.com
- [209.85.128.70]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-359-eZS87SkZOWy-p6FKAUP9PQ-1; Mon, 23 Jun 2025 10:04:06 -0400
-X-MC-Unique: eZS87SkZOWy-p6FKAUP9PQ-1
-X-Mimecast-MFC-AGG-ID: eZS87SkZOWy-p6FKAUP9PQ_1750687445
-Received: by mail-wm1-f70.google.com with SMTP id 5b1f17b1804b1-450d64026baso26125435e9.1
-        for <linux-kernel@vger.kernel.org>; Mon, 23 Jun 2025 07:04:05 -0700 (PDT)
+	s=arc-20240116; t=1750687497; c=relaxed/simple;
+	bh=RmiCXxDHhTGbGoBiT3oHockHpnGGspLZPHTDXEctQeA=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=lVw6XJDhAhJQmGLckHB1sU187+HAQPlFnZ0k8YMztmFrZSc9umBvV43oxSPyZK/aXoZU+beU0OxfJH6BVRWsXWnYV/n7vqjfG4hiUjtG7j9Mrgh+A8V5PfQG7CZ4BaghaiAPeUuQoMhjC1RgeFyNWaI8IDWBTlWBQLcTRDT1P+E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=ffZv9t6C; arc=none smtp.client-ip=209.85.218.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
+Received: by mail-ej1-f51.google.com with SMTP id a640c23a62f3a-ad8a6c202ffso803171366b.3
+        for <linux-kernel@vger.kernel.org>; Mon, 23 Jun 2025 07:04:54 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=suse.com; s=google; t=1750687493; x=1751292293; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=vfrBqzsSE7yWX19A0UXME0A5ZkQZKzUcZdws1aPCR9I=;
+        b=ffZv9t6CrlkmIvxYheA/qv9dPROvWIovHQkwU9zIrU9Ywkg2p9F+0L+W6BHddb+QIW
+         drBzkLzHK27yRCmGM2Qw4wwGse6RgpmDz5zrVYcl4rR4lhk/WBuXVUKhGSjwBevI4iHK
+         B5FoMFyd3J2UQ8+kuUio2E71otHmEzv3zy/MiIXTNxSVhz2WXswRBiBEZf5jixmvcBFS
+         RtbEP3UZXlTe3x0RUaY662bExT3tcXvDJSvDtv5BVRdZ28YkuQmHFpiRPWYe4hiYrWtY
+         z7C0JI7kezAwlZBMUmYOBkwRD3uBs27PbqFp+yu3uDT92YI40woMOghlyOZbE0cDia4s
+         U5Eg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1750687445; x=1751292245;
-        h=content-transfer-encoding:in-reply-to:organization:autocrypt
-         :content-language:from:references:cc:to:subject:user-agent
-         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=KrBCINyJrvJ9eCzCevXV0ad1ST03SBH5k2o0Hivm01s=;
-        b=PZSxyww4Q67PSoucPpuVA/+3a6JI3GDUSlHxxQttJhBWbJl25CEh5gVXERPSTo28ib
-         nn9y4VI3z0CA8CX4dOIK4GfK/IlrcHKM38Q56HTcNC2ILvH5/Wmr+wkc3FPxR60kIKiZ
-         GsWGYeFvy3E8RjSh/aTBI1Su+Dh0VZSJb7zKqUrjEjOzNL8YEPiDhqhMPWacbuNFksUz
-         caeu35Nj2BMK70+0RtszThdFIeH9tmae7ITzeQTGkGHi1G8GgcPKg6cjtEI7AwXGE4fY
-         VYq+tXuGBTjCVnrCQSX0j3Ln6HAAbmV7Rm4p2e39kBC9Su2orgP67Tol92nGfeSikaGP
-         Vxkg==
-X-Gm-Message-State: AOJu0YyMXrF8huAuykfYpSbaOc84t61v2kjEo/y1umIUN7yHuLQJ89n7
-	jKX6Ga73oOj9us0syP0l/KRB+aDKlR3u/Arc1EFf7ptXFfP+6TGR7zF7kgfKTvihgA72LY4DzgI
-	fNMPpF1NVrsPvSWfmLg4HvY+AvY8gzgwAoIlfHpSkb1VYMdA2wymE1yIjo+14901N/w==
-X-Gm-Gg: ASbGnctrbLZLDXl8h4PDTD7zJrTJpCmVJAlCNaIEjtUjGuttXLCWI9cXSfXM8tAMlM1
-	FyuiqB3AsczH+hvtj6c4Ba+t3NCWQbjKGZe0gn/7khBp0iwPZ2vWe8EIukZY98iGmHk7zgWoIcl
-	y3eZv8rlHtTo6gmyzPaIvagVoMRbYp+un0jAL6l9SU5Y947UQlObXkH8YsQ/obPiqPC94n/NgjT
-	SwrCOjxH5PnmkTE9KtsrLsB+ufiXDLTkFceyVgaoIdd+GGbZnwSUXtuGXjw9K8ESFql9wnCsMZS
-	mp3DdGvKR4sM4T9PfjXdev1TF5k7TS2p6ZiB3L3ZVglVi+Bkio2FajoTGJjOF1L1oiSdo56LpH1
-	XxzOLqvV2XfNOvfPAdI2mkMxsx1HQ7vrDHEvmNrgKeynfi0Rc/g==
-X-Received: by 2002:a05:600c:4ec6:b0:43d:94:2d1e with SMTP id 5b1f17b1804b1-453659c5990mr113650955e9.13.1750687444787;
-        Mon, 23 Jun 2025 07:04:04 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IE95nNZ86PnFHeg7VNuUAm+n3H3UxcLPVNTcJDICuroThLIfwHolxnqvCNMi52XcHJ4LMneaQ==
-X-Received: by 2002:a05:600c:4ec6:b0:43d:94:2d1e with SMTP id 5b1f17b1804b1-453659c5990mr113650125e9.13.1750687444093;
-        Mon, 23 Jun 2025 07:04:04 -0700 (PDT)
-Received: from ?IPV6:2003:d8:2f4e:fd00:8e13:e3b5:90c8:1159? (p200300d82f4efd008e13e3b590c81159.dip0.t-ipconnect.de. [2003:d8:2f4e:fd00:8e13:e3b5:90c8:1159])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-453755e7d1dsm29688075e9.10.2025.06.23.07.04.01
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 23 Jun 2025 07:04:03 -0700 (PDT)
-Message-ID: <c88c29d2-d887-4c5a-8b4e-0cf30e71d596@redhat.com>
-Date: Mon, 23 Jun 2025 16:04:01 +0200
+        d=1e100.net; s=20230601; t=1750687493; x=1751292293;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=vfrBqzsSE7yWX19A0UXME0A5ZkQZKzUcZdws1aPCR9I=;
+        b=Ilc2FJOCAl+TiaODNlfeSYULkilPowAHsxpYnPNrT/Lv2rKMdADGuEe6qMO7KqMr4t
+         NLmoohufExhrlQlsOePlzhyo1GgE9t0Hu5+u53Q5JG6U3qA2dO1z2VB9VMhoEWegjSx+
+         OS1rWCC+J2J9MmMGQ80GAurUCHiWOQBiaRAJJXIKiopYysesAxcgmtiuCy4argAfYGU7
+         Tg42gvWaPzlFdgUBklmqpQqHZGRkstLCDk89Npy901i2ErJVBxwWSJhiS2EXNyYVzvwv
+         DICo91StKW9jQDg2x+1HkJE3bsDBht+D0n39b/JJSVjlXsfTNS75Rgg/kyIThvPlUKDs
+         IKKQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVXX3sfdGX7hDOIWWYXhmIcBgQ9Fjgew4YMF0nqoGAla7iJB4xyN81GtqcxfFvTIdlM0o6I3DY3gY4lk4Q=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyF954BDml0RuXhFJHGl9lyYcFIKBEwGWXvO2u8fGf1UF2ViZVz
+	njfl1Swe5v5ARadAPoUIpK9xfVBE+Chdiwxjy/hA1XQknHPs0H3QPPggt0qJJ8Z3KvIpkdXSh3m
+	uvC+SyNbsVzPyd0bo1BHOSf1rz7sj2n8+UcKVurhHxg==
+X-Gm-Gg: ASbGncs4/ecrslQZRSsJaAAIvvIo1YLxU5rpbXMipSmW0w5/Az1z9sTKw0njSePc0/0
+	xHQ88paRRw36m9UzoDFMhQuxuzY//6tHyZsz1eehx1MQ4Mfs2qAzpKyDMB3YXVLHbTFyamTPC5X
+	1xWazJ5eKYgzbF4QiUe/an8PasZYq4GHbllhVvmPscvCsD99a/nyFG
+X-Google-Smtp-Source: AGHT+IHi5Ofr1jXDQL9A3pBCC+mfedFK5U5X2wO7Bw3uj1n1UulpZGduhQJr1+fIy7dJghdlKPl7aLvA1ImTJl/KUek=
+X-Received: by 2002:a17:907:dab:b0:ace:c518:1327 with SMTP id
+ a640c23a62f3a-ae0579bc890mr1248239666b.14.1750687492202; Mon, 23 Jun 2025
+ 07:04:52 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH RFC 01/14] mm/memory: drop highest_memmap_pfn sanity check
- in vm_normal_page()
-To: Oscar Salvador <osalvador@suse.de>
-Cc: linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
- linux-mm@kvack.org, nvdimm@lists.linux.dev,
- Andrew Morton <akpm@linux-foundation.org>, Juergen Gross <jgross@suse.com>,
- Stefano Stabellini <sstabellini@kernel.org>,
- Oleksandr Tyshchenko <oleksandr_tyshchenko@epam.com>,
- Dan Williams <dan.j.williams@intel.com>, Alistair Popple
- <apopple@nvidia.com>, Matthew Wilcox <willy@infradead.org>,
- Jan Kara <jack@suse.cz>, Alexander Viro <viro@zeniv.linux.org.uk>,
- Christian Brauner <brauner@kernel.org>, Zi Yan <ziy@nvidia.com>,
- Baolin Wang <baolin.wang@linux.alibaba.com>,
- Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
- "Liam R. Howlett" <Liam.Howlett@oracle.com>, Nico Pache <npache@redhat.com>,
- Ryan Roberts <ryan.roberts@arm.com>, Dev Jain <dev.jain@arm.com>,
- Barry Song <baohua@kernel.org>, Vlastimil Babka <vbabka@suse.cz>,
- Mike Rapoport <rppt@kernel.org>, Suren Baghdasaryan <surenb@google.com>,
- Michal Hocko <mhocko@suse.com>, Jann Horn <jannh@google.com>,
- Pedro Falcato <pfalcato@suse.de>
-References: <20250617154345.2494405-1-david@redhat.com>
- <20250617154345.2494405-2-david@redhat.com>
- <aFVZCvOpIpBGAf9w@localhost.localdomain>
-From: David Hildenbrand <david@redhat.com>
-Content-Language: en-US
-Autocrypt: addr=david@redhat.com; keydata=
- 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
- WNyWQQ==
-Organization: Red Hat
-In-Reply-To: <aFVZCvOpIpBGAf9w@localhost.localdomain>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+References: <20250612084724.3149616-1-neelx@suse.com> <20250620125744.GT4037@twin.jikos.cz>
+In-Reply-To: <20250620125744.GT4037@twin.jikos.cz>
+From: Daniel Vacek <neelx@suse.com>
+Date: Mon, 23 Jun 2025 16:04:39 +0200
+X-Gm-Features: AX0GCFva0Yh7S-w2S6mbYE5090otnPbf9ZE5WT4zU80YuH9-VXYcmO5B_pS6L4Y
+Message-ID: <CAPjX3FdgS4xJBvvsx9zRxiuRm9=5VcTynmtnidga4gcqewLrUw@mail.gmail.com>
+Subject: Re: [PATCH v2] btrfs: index buffer_tree using node size
+To: dsterba@suse.cz
+Cc: Chris Mason <clm@fb.com>, Josef Bacik <josef@toxicpanda.com>, David Sterba <dsterba@suse.com>, 
+	Qu Wenruo <wqu@suse.com>, linux-btrfs@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-On 20.06.25 14:50, Oscar Salvador wrote:
-> On Tue, Jun 17, 2025 at 05:43:32PM +0200, David Hildenbrand wrote:
->> In 2009, we converted a VM_BUG_ON(!pfn_valid(pfn)) to the current
->> highest_memmap_pfn sanity check in commit 22b31eec63e5 ("badpage:
->> vm_normal_page use print_bad_pte"), because highest_memmap_pfn was
->> readily available.
->>
->> Nowadays, this is the last remaining highest_memmap_pfn user, and this
->> sanity check is not really triggering ... frequently.
->>
->> Let's convert it to VM_WARN_ON_ONCE(!pfn_valid(pfn)), so we can
->> simplify and get rid of highest_memmap_pfn. Checking for
->> pfn_to_online_page() might be even better, but it would not handle
->> ZONE_DEVICE properly.
->>
->> Do the same in vm_normal_page_pmd(), where we don't even report a
->> problem at all ...
->>
->> What might be better in the future is having a runtime option like
->> page-table-check to enable such checks dynamically on-demand. Something
->> for the future.
->>
->> Signed-off-by: David Hildenbrand <david@redhat.com>
-> 
+On Fri, 20 Jun 2025 at 14:57, David Sterba <dsterba@suse.cz> wrote:
+>
+> On Thu, Jun 12, 2025 at 10:47:23AM +0200, Daniel Vacek wrote:
+> > So far we are deriving the buffer tree index using the sector size. But each
+> > extent buffer covers multiple sectors. This makes the buffer tree rather sparse.
+> >
+> > For example the typical and quite common configuration uses sector size of 4KiB
+> > and node size of 16KiB. In this case it means the buffer tree is using up to
+> > the maximum of 25% of it's slots. Or in other words at least 75% of the tree
+> > slots are wasted as never used.
+> >
+> > We can score significant memory savings on the required tree nodes by indexing
+> > the tree using the node size instead. As a result far less slots are wasted
+> > and the tree can now use up to all 100% of it's slots this way.
+> >
+> > Note: This works even with unaligned tree blocks as we can still get unique
+> >       index by doing eb->start >> nodesize_shift.
+>
+> Can we have at least some numbers? As we've talked about it and you
+> showed me the number of radix nodes or other internal xarray structures
+> before/after.
 
-Hi Oscar,
+The numbers are in this email thread. Do you mean to put them directly
+into the commit message?
 
-> I'm confused, I'm missing something here.
-> Before this change we would return NULL if e.g: pfn > highest_memmap_pfn, but
-> now we just print the warning and call pfn_to_page() anyway.
-> AFAIK, pfn_to_page() doesn't return NULL?
+> > Signed-off-by: Daniel Vacek <neelx@suse.com>
+> > Reviewed-by: Qu Wenruo <wqu@suse.com>
+> > ---
+> > v2 changes:
+> >  * Note that this is still correct even with unaligned tree blocks.
+> >  * Rename node_bits to nodesize_bits to stay consistent.
+> >  * Move the nodesize_bits member next to nodesize and make it u32.
+> >
+> > ---
+> >  fs/btrfs/disk-io.c   |  1 +
+> >  fs/btrfs/extent_io.c | 30 +++++++++++++++---------------
+> >  fs/btrfs/fs.h        |  3 ++-
+> >  3 files changed, 18 insertions(+), 16 deletions(-)
+> >
+> > diff --git a/fs/btrfs/disk-io.c b/fs/btrfs/disk-io.c
+> > index 0d6ad7512f217..3d465258f15b7 100644
+> > --- a/fs/btrfs/disk-io.c
+> > +++ b/fs/btrfs/disk-io.c
+> > @@ -3396,6 +3396,7 @@ int __cold open_ctree(struct super_block *sb, struct btrfs_fs_devices *fs_device
+> >       fs_info->delalloc_batch = sectorsize * 512 * (1 + ilog2(nr_cpu_ids));
+> >
+> >       fs_info->nodesize = nodesize;
+> > +     fs_info->nodesize_bits = ilog2(nodesize);
+> >       fs_info->sectorsize = sectorsize;
+> >       fs_info->sectorsize_bits = ilog2(sectorsize);
+> >       fs_info->csums_per_leaf = BTRFS_MAX_ITEM_SIZE(fs_info) / fs_info->csum_size;
+> > diff --git a/fs/btrfs/extent_io.c b/fs/btrfs/extent_io.c
+> > index e9ba80a56172d..a55c7c7eb8990 100644
+> > --- a/fs/btrfs/extent_io.c
+> > +++ b/fs/btrfs/extent_io.c
+> > @@ -1774,7 +1774,7 @@ static noinline_for_stack bool lock_extent_buffer_for_io(struct extent_buffer *e
+> >        */
+> >       spin_lock(&eb->refs_lock);
+> >       if (test_and_clear_bit(EXTENT_BUFFER_DIRTY, &eb->bflags)) {
+> > -             XA_STATE(xas, &fs_info->buffer_tree, eb->start >> fs_info->sectorsize_bits);
+> > +             XA_STATE(xas, &fs_info->buffer_tree, eb->start >> fs_info->nodesize_bits);
+> >               unsigned long flags;
+> >
+> >               set_bit(EXTENT_BUFFER_WRITEBACK, &eb->bflags);
+> > @@ -1874,7 +1874,7 @@ static void set_btree_ioerr(struct extent_buffer *eb)
+> >  static void buffer_tree_set_mark(const struct extent_buffer *eb, xa_mark_t mark)
+> >  {
+> >       struct btrfs_fs_info *fs_info = eb->fs_info;
+> > -     XA_STATE(xas, &fs_info->buffer_tree, eb->start >> fs_info->sectorsize_bits);
+> > +     XA_STATE(xas, &fs_info->buffer_tree, eb->start >> fs_info->nodesize_bits);
+> >       unsigned long flags;
+> >
+> >       xas_lock_irqsave(&xas, flags);
+> > @@ -1886,7 +1886,7 @@ static void buffer_tree_set_mark(const struct extent_buffer *eb, xa_mark_t mark)
+> >  static void buffer_tree_clear_mark(const struct extent_buffer *eb, xa_mark_t mark)
+> >  {
+> >       struct btrfs_fs_info *fs_info = eb->fs_info;
+> > -     XA_STATE(xas, &fs_info->buffer_tree, eb->start >> fs_info->sectorsize_bits);
+> > +     XA_STATE(xas, &fs_info->buffer_tree, eb->start >> fs_info->nodesize_bits);
+> >       unsigned long flags;
+> >
+> >       xas_lock_irqsave(&xas, flags);
+> > @@ -1986,7 +1986,7 @@ static unsigned int buffer_tree_get_ebs_tag(struct btrfs_fs_info *fs_info,
+> >       rcu_read_lock();
+> >       while ((eb = find_get_eb(&xas, end, tag)) != NULL) {
+> >               if (!eb_batch_add(batch, eb)) {
+> > -                     *start = ((eb->start + eb->len) >> fs_info->sectorsize_bits);
+> > +                     *start = (eb->start + eb->len) >> fs_info->nodesize_bits;
+>
+> In other places you drop the outer ( ) from the shifts, please keep it
+> if it's there (or add if it's missing).
 
-You're missing that vm_normal_page_pmd() was created as a copy from 
-vm_normal_page() [history of the sanity check above], but as we don't 
-have (and shouldn't have ...) print_bad_pmd(), we made the code look 
-like this would be something that can just happen.
+Right. This happened by the rebase as they were not there before. So
+is this the preferred code style from now on?
 
-"
-Do the same in vm_normal_page_pmd(), where we don't even report a
-problem at all ...
-"
-
-So we made something that should never happen a runtime sanity check 
-without ever reporting a problem ...
-
--- 
-Cheers,
-
-David / dhildenb
-
+> >                       goto out;
+> >               }
+> >       }
+> > @@ -2008,7 +2008,7 @@ static struct extent_buffer *find_extent_buffer_nolock(
+> >               struct btrfs_fs_info *fs_info, u64 start)
+> >  {
+> >       struct extent_buffer *eb;
+> > -     unsigned long index = (start >> fs_info->sectorsize_bits);
+> > +     unsigned long index = start >> fs_info->nodesize_bits;
+> >
+> >       rcu_read_lock();
+> >       eb = xa_load(&fs_info->buffer_tree, index);
+> > @@ -2114,8 +2114,8 @@ void btrfs_btree_wait_writeback_range(struct btrfs_fs_info *fs_info, u64 start,
+> >                                     u64 end)
+> >  {
+> >       struct eb_batch batch;
+> > -     unsigned long start_index = (start >> fs_info->sectorsize_bits);
+> > -     unsigned long end_index = (end >> fs_info->sectorsize_bits);
+> > +     unsigned long start_index = start >> fs_info->nodesize_bits;
+> > +     unsigned long end_index = end >> fs_info->nodesize_bits;
+> >
+> >       eb_batch_init(&batch);
+> >       while (start_index <= end_index) {
+> > @@ -2151,7 +2151,7 @@ int btree_write_cache_pages(struct address_space *mapping,
+> >
+> >       eb_batch_init(&batch);
+> >       if (wbc->range_cyclic) {
+> > -             index = ((mapping->writeback_index << PAGE_SHIFT) >> fs_info->sectorsize_bits);
+> > +             index = (mapping->writeback_index << PAGE_SHIFT) >> fs_info->nodesize_bits;
+> >               end = -1;
+> >
+> >               /*
+> > @@ -2160,8 +2160,8 @@ int btree_write_cache_pages(struct address_space *mapping,
+> >                */
+> >               scanned = (index == 0);
+> >       } else {
+> > -             index = (wbc->range_start >> fs_info->sectorsize_bits);
+> > -             end = (wbc->range_end >> fs_info->sectorsize_bits);
+> > +             index = wbc->range_start >> fs_info->nodesize_bits;
+> > +             end = wbc->range_end >> fs_info->nodesize_bits;
+> >
+> >               scanned = 1;
+> >       }
+> > @@ -3038,7 +3038,7 @@ struct extent_buffer *alloc_test_extent_buffer(struct btrfs_fs_info *fs_info,
+> >       eb->fs_info = fs_info;
+> >  again:
+> >       xa_lock_irq(&fs_info->buffer_tree);
+> > -     exists = __xa_cmpxchg(&fs_info->buffer_tree, start >> fs_info->sectorsize_bits,
+> > +     exists = __xa_cmpxchg(&fs_info->buffer_tree, start >> fs_info->nodesize_bits,
+> >                             NULL, eb, GFP_NOFS);
+> >       if (xa_is_err(exists)) {
+> >               ret = xa_err(exists);
+> > @@ -3355,7 +3355,7 @@ struct extent_buffer *alloc_extent_buffer(struct btrfs_fs_info *fs_info,
+> >  again:
+> >       xa_lock_irq(&fs_info->buffer_tree);
+> >       existing_eb = __xa_cmpxchg(&fs_info->buffer_tree,
+> > -                                start >> fs_info->sectorsize_bits, NULL, eb,
+> > +                                start >> fs_info->nodesize_bits, NULL, eb,
+> >                                  GFP_NOFS);
+> >       if (xa_is_err(existing_eb)) {
+> >               ret = xa_err(existing_eb);
+> > @@ -3458,7 +3458,7 @@ static int release_extent_buffer(struct extent_buffer *eb)
+> >                * in this case.
+> >                */
+> >               xa_cmpxchg_irq(&fs_info->buffer_tree,
+> > -                            eb->start >> fs_info->sectorsize_bits, eb, NULL,
+> > +                            eb->start >> fs_info->nodesize_bits, eb, NULL,
+> >                              GFP_ATOMIC);
+> >
+> >               btrfs_leak_debug_del_eb(eb);
+> > @@ -4300,9 +4300,9 @@ static int try_release_subpage_extent_buffer(struct folio *folio)
+> >  {
+> >       struct btrfs_fs_info *fs_info = folio_to_fs_info(folio);
+> >       struct extent_buffer *eb;
+> > -     unsigned long start = (folio_pos(folio) >> fs_info->sectorsize_bits);
+> > +     unsigned long start = folio_pos(folio) >> fs_info->nodesize_bits;
+> >       unsigned long index = start;
+> > -     unsigned long end = index + (PAGE_SIZE >> fs_info->sectorsize_bits) - 1;
+> > +     unsigned long end = index + (PAGE_SIZE >> fs_info->nodesize_bits) - 1;
+> >       int ret;
+> >
+> >       xa_lock_irq(&fs_info->buffer_tree);
+> > diff --git a/fs/btrfs/fs.h b/fs/btrfs/fs.h
+> > index b239e4b8421cf..fd7cbbe3515d6 100644
+> > --- a/fs/btrfs/fs.h
+> > +++ b/fs/btrfs/fs.h
+> > @@ -781,7 +781,7 @@ struct btrfs_fs_info {
+> >
+> >       struct btrfs_delayed_root *delayed_root;
+> >
+> > -     /* Entries are eb->start / sectorsize */
+> > +     /* Entries are eb->start >> nodesize_bits */
+> >       struct xarray buffer_tree;
+> >
+> >       /* Next backup root to be overwritten */
+> > @@ -813,6 +813,7 @@ struct btrfs_fs_info {
+> >
+> >       /* Cached block sizes */
+> >       u32 nodesize;
+> > +     u32 nodesize_bits;
+> >       u32 sectorsize;
+> >       /* ilog2 of sectorsize, use to avoid 64bit division */
+> >       u32 sectorsize_bits;
+> > --
+> > 2.47.2
+> >
 
