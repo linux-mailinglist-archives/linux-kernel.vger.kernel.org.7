@@ -1,223 +1,121 @@
-Return-Path: <linux-kernel+bounces-697932-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-697934-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id AE837AE3AB1
-	for <lists+linux-kernel@lfdr.de>; Mon, 23 Jun 2025 11:38:00 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 2D40EAE3AB8
+	for <lists+linux-kernel@lfdr.de>; Mon, 23 Jun 2025 11:38:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A34167A301D
-	for <lists+linux-kernel@lfdr.de>; Mon, 23 Jun 2025 09:36:21 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B169C7A7E0D
+	for <lists+linux-kernel@lfdr.de>; Mon, 23 Jun 2025 09:37:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D218123AE96;
-	Mon, 23 Jun 2025 09:34:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2643523E235;
+	Mon, 23 Jun 2025 09:35:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="HPZdwypH"
-Received: from mailout2.w1.samsung.com (mailout2.w1.samsung.com [210.118.77.12])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=disroot.org header.i=@disroot.org header.b="Zj6zhUHv"
+Received: from layka.disroot.org (layka.disroot.org [178.21.23.139])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 345F223A57F
-	for <linux-kernel@vger.kernel.org>; Mon, 23 Jun 2025 09:34:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.118.77.12
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 58AE323D286;
+	Mon, 23 Jun 2025 09:35:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.21.23.139
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750671282; cv=none; b=Z+8IF0J1w9y1VyOB3X9uAYxoxhbJVPykoPAbHNWO0tghGYEtqV+Lh99ddse1OE4S0nJ9PTS4+ynct9TgbceCXHTiMQALB3XCTsb3VBIF+btVOzjI1aODd1ZfZ/nHEW8zwR9FTjBdvWwU2tpfSpzEtdKWhEtQ9XSSJMkdM8qGQFM=
+	t=1750671317; cv=none; b=mcoAc6NOofEkjE5mbTt6mT193fy6SMrCjhtfmLfz+UO2ePtP0cSEJudbycittZJrs79RNBW0MaIrjjYaA8O9XpP+3+zu82Z1860Op/eDOCzfYdbov3iBhE/xIxnuFrnnVZPn4D6ouy4B6fOx68j1quAKuapY9KRdf7YXfe+7SR0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750671282; c=relaxed/simple;
-	bh=685agCI4++ixRlmJi36Svni04jMEUyWIwxO2ujn1yus=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:From:In-Reply-To:
-	 Content-Type:References; b=ajiErgJ0mJb0/UZ52vvUc2QRI5ejLZxhDVhosZtbmjSq8axBbM/i2aaCRBprXobYFo/5VUhC38QisgytykPzuGtTOLUhLYXDN+njEN8jeCydUgDRf+VeZVB19AVJMwe2JhkeZNdqLrA6zgmqDyUdDIEEhJzmnx7EAsOR00N64KE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=HPZdwypH; arc=none smtp.client-ip=210.118.77.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
-Received: from eucas1p1.samsung.com (unknown [182.198.249.206])
-	by mailout2.w1.samsung.com (KnoxPortal) with ESMTP id 20250623093437euoutp025e7dd5f92a9e188d18a244468309ff1c~LokBIvE2h2894328943euoutp02Y
-	for <linux-kernel@vger.kernel.org>; Mon, 23 Jun 2025 09:34:37 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.w1.samsung.com 20250623093437euoutp025e7dd5f92a9e188d18a244468309ff1c~LokBIvE2h2894328943euoutp02Y
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-	s=mail20170921; t=1750671277;
-	bh=nYEpGwnZMbECtjsZvt1Boiv4MwZb6CSkkD5NxWj9A7I=;
-	h=Date:Subject:To:Cc:From:In-Reply-To:References:From;
-	b=HPZdwypHmtuRAUGGskJFy0j8Y3Es2IndsZq6UazKbMHJZ7bIo+0gmI0ivL0slMEAb
-	 BUhYRb8A6YdXGwC8eW91ZsLhjegcoG4YWgyprni0p0JzzG5UitgGh6FWjBo9KVKvcg
-	 3EN87VqTmq3Tx7hBe911DWrhHpeRTsHkjyJ0rKIk=
-Received: from eusmtip2.samsung.com (unknown [203.254.199.222]) by
-	eucas1p1.samsung.com (KnoxPortal) with ESMTPA id
-	20250623093436eucas1p1194fc9459153962b58adee7429703f07~LokAfNQnH1023710237eucas1p1i;
-	Mon, 23 Jun 2025 09:34:36 +0000 (GMT)
-Received: from [106.210.134.192] (unknown [106.210.134.192]) by
-	eusmtip2.samsung.com (KnoxPortal) with ESMTPA id
-	20250623093435eusmtip26281fc2cb3e7c704b4e588b25a4cba1f~Loj-XweoN0371103711eusmtip2i;
-	Mon, 23 Jun 2025 09:34:35 +0000 (GMT)
-Message-ID: <e23e6192-6e13-41b4-acdd-2593f4f37895@samsung.com>
-Date: Mon, 23 Jun 2025 11:34:34 +0200
+	s=arc-20240116; t=1750671317; c=relaxed/simple;
+	bh=da79pZNN2aEY0mj+gSG8wWPoFOyi+E/yZ//aZFT96Bw=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=jmvWcqHsbXPRmtntk97UdUhZMQLfDkJQgiz5/2MsG0+vXtRrx29ZRYXkbvae7WxRFcKCCPX+9hsd1YE/UiB8jkuZ3EbcNDGlzYjnY23lxuUBgpgS8+NVdNQw4A9kw6ThuIo19gBz3q/8zL/xi4mv+dGOUmvsYSqmY54MDog4c0k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=disroot.org; spf=pass smtp.mailfrom=disroot.org; dkim=pass (2048-bit key) header.d=disroot.org header.i=@disroot.org header.b=Zj6zhUHv; arc=none smtp.client-ip=178.21.23.139
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=disroot.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=disroot.org
+Received: from mail01.disroot.lan (localhost [127.0.0.1])
+	by disroot.org (Postfix) with ESMTP id 769C520468;
+	Mon, 23 Jun 2025 11:35:07 +0200 (CEST)
+X-Virus-Scanned: SPAM Filter at disroot.org
+Received: from layka.disroot.org ([127.0.0.1])
+ by localhost (disroot.org [127.0.0.1]) (amavis, port 10024) with ESMTP
+ id R4l370J94e8X; Mon, 23 Jun 2025 11:35:06 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=disroot.org; s=mail;
+	t=1750671306; bh=da79pZNN2aEY0mj+gSG8wWPoFOyi+E/yZ//aZFT96Bw=;
+	h=From:To:Cc:Subject:Date;
+	b=Zj6zhUHvIdxIIr+/UqghypFZfQacduvJ/Rjcm0iWnx/JyYBrzDX40IangFB188PvQ
+	 D8c4MsPYaBfW0tTtR+ZHU/Mx9aW0mO/4CNJIyTQnmhqC85/SlRrsS4VkIFN9A64uI8
+	 NvoFghhfegoY66BhAELo/0HEXo+NcklHZ5CiggTDOfW45z+/99B8nxlp9ZqNclret5
+	 I8oNiV5O22ntmWdj1cwez4e3phUstSoTgbLPcmFaBPxIU4WP+4Zdkgvuui/vb9L8v6
+	 mhXmDyQ0FwO72Yd9orMImzfDRw1CTWjM5tYY0My08GeEKtR4ZTpPTqI8GsCqiFafQp
+	 HcrxM4yruIqqw==
+From: Yao Zi <ziyao@disroot.org>
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Jiri Slaby <jirislaby@kernel.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Lubomir Rintel <lkundrak@v3.sk>
+Cc: devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-serial@vger.kernel.org,
+	Yao Zi <ziyao@disroot.org>,
+	Conor Dooley <conor.dooley@microchip.com>
+Subject: [PATCH v2] dt-bindings: serial: 8250: Make clocks and clock-frequency exclusive
+Date: Mon, 23 Jun 2025 09:34:45 +0000
+Message-ID: <20250623093445.62327-1-ziyao@disroot.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] drm/bridge: samsung-dsim: Fix init order
-To: Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>, Inki Dae
-	<inki.dae@samsung.com>, Jagan Teki <jagan@amarulasolutions.com>, Andrzej
-	Hajda <andrzej.hajda@intel.com>, Neil Armstrong <neil.armstrong@linaro.org>,
-	Robert Foss <rfoss@kernel.org>, Laurent Pinchart
-	<Laurent.pinchart@ideasonboard.com>, Jonas Karlman <jonas@kwiboo.se>, Jernej
-	Skrabec <jernej.skrabec@gmail.com>, Maarten Lankhorst
-	<maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>,
-	Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>,
-	Simona Vetter <simona@ffwll.ch>, Aradhya Bhatia <a-bhatia1@ti.com>, Dmitry
-	Baryshkov <lumag@kernel.org>
-Cc: dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org, Hiago De
-	Franco <hiagofranco@gmail.com>, Francesco Dolcini <francesco@dolcini.it>
-Content-Language: en-US
-From: Marek Szyprowski <m.szyprowski@samsung.com>
-In-Reply-To: <20250619-samsung-dsim-fix-v1-1-6b5de68fb115@ideasonboard.com>
-Content-Transfer-Encoding: 7bit
-X-CMS-MailID: 20250623093436eucas1p1194fc9459153962b58adee7429703f07
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-X-RootMTR: 20250619122746eucas1p149ff73e78cb82dc06c19960a2bbd3d89
-X-EPHeader: CA
-X-CMS-RootMailID: 20250619122746eucas1p149ff73e78cb82dc06c19960a2bbd3d89
-References: <CGME20250619122746eucas1p149ff73e78cb82dc06c19960a2bbd3d89@eucas1p1.samsung.com>
-	<20250619-samsung-dsim-fix-v1-1-6b5de68fb115@ideasonboard.com>
+Content-Transfer-Encoding: 8bit
 
-On 19.06.2025 14:27, Tomi Valkeinen wrote:
-> The commit c9b1150a68d9 ("drm/atomic-helper: Re-order bridge chain
-> pre-enable and post-disable") changed the order of enable/disable calls.
-> Previously the calls (on imx8mm) were:
->
-> mxsfb_crtc_atomic_enable()
-> samsung_dsim_atomic_pre_enable()
-> samsung_dsim_atomic_enable()
->
-> now the order is:
->
-> samsung_dsim_atomic_pre_enable()
-> mxsfb_crtc_atomic_enable()
-> samsung_dsim_atomic_enable()
->
-> On imx8mm (possibly on imx8mp, and other platforms too) this causes two
-> issues:
->
-> 1. The DSI PLL setup depends on a refclk, but the DSI driver does not
-> set the rate, just uses it with the rate it has. On imx8mm this refclk
-> seems to be related to the LCD controller's video clock. So, when the
-> mxsfb driver sets its video clock, DSI's refclk rate changes.
->
-> Earlier this mxsfb_crtc_atomic_enable() set the video clock, so the PLL
-> refclk rate was set (and didn't change) in the DSI enable calls. Now the
-> rate changes between DSI's pre_enable() and enable(), but the driver
-> configures the PLL in the pre_enable().
->
-> Thus you get a black screen on a modeset. Doing the modeset again works,
-> as the video clock rate stays the same.
->
-> 2. The image on the screen is shifted/wrapped horizontally. I have not
-> found the exact reason for this, but the documentation seems to hint
-> that the LCD controller's pixel stream should be enabled first, before
-> setting up the DSI. This would match the change, as now the pixel stream
-> starts only after DSI driver's pre_enable().
->
-> The main function related to this issue is samsung_dsim_init() which
-> will do the clock and link configuration. samsung_dsim_init() is
-> currently called from pre_enable(), but it is also called from
-> samsung_dsim_host_transfer() to set up the link if the peripheral driver
-> wants to send a DSI command.
->
-> This patch fixes both issues by moving the samsung_dsim_init() call from
-> pre_enable() to enable().
->
-> However, to deal with the case where the samsung_dsim_init() has already
-> been called from samsung_dsim_host_transfer() and the refclk rate has
-> changed, we need to make sure we re-initialize the DSI with the new rate
-> in enable(). This is achieved by clearing the DSIM_STATE_INITIALIZED
-> flag and uninitializing the clocks and irqs before calling
-> samsung_dsim_init().
->
-> Fixes: c9b1150a68d9 ("drm/atomic-helper: Re-order bridge chain pre-enable and post-disable")
-> Reported-by: Hiago De Franco <hiagofranco@gmail.com>
-> Signed-off-by: Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>
+The 8250 binding before converting to json-schema states,
 
-Seems to be working fine on all my Exynos based boards:
+  - clock-frequency : the input clock frequency for the UART
+  	or
+  - clocks phandle to refer to the clk used as per Documentation/devicetree
 
-Tested-by: Marek Szyprowski <m.szyprowski@samsung.com>
+for clock-related properties, where "or" indicates these properties
+shouldn't exist at the same time.
 
+Additionally, the behavior of Linux's driver is strange when both clocks
+and clock-frequency are specified: it ignores clocks and obtains the
+frequency from clock-frequency, left the specified clocks unclaimed. It
+may even be disabled, which is undesired most of the time.
 
-BTW, it was a long discussion how to handle the dsim initialization and 
-we agreed to keep calling samsung_dsim_init() on first dsi transfer for 
-Exynos case and from pre-enable for others:
+But "anyOf" doesn't prevent these two properties from coexisting, as it
+considers the object valid as long as there's at LEAST one match.
 
-https://lore.kernel.org/all/20221209152343.180139-11-jagan@amarulasolutions.com/
+Let's switch to "oneOf" and disallows the other property if one exists,
+precisely matching the original binding and avoiding future confusion on
+the driver's behavior.
 
-I'm not sure if changing this won't break again something, especially 
-the boards with DSI bridge or panel controlled via I2C instead of the 
-DSI commands. This has to be tested on the all supported variants of 
-this hardware.
+Fixes: e69f5dc623f9 ("dt-bindings: serial: Convert 8250 to json-schema")
+Signed-off-by: Yao Zi <ziyao@disroot.org>
+Reviewed-by: Conor Dooley <conor.dooley@microchip.com>
+---
 
+Changed from v1:
+- Remove unnecessary allOf blocks
+- Fix grammar issues in the commit message
+- Link to v1: https://lore.kernel.org/all/20250524105602.53949-1-ziyao@disroot.org/
 
-> ---
->   drivers/gpu/drm/bridge/samsung-dsim.c | 29 +++++++++++++++++++----------
->   1 file changed, 19 insertions(+), 10 deletions(-)
->
-> diff --git a/drivers/gpu/drm/bridge/samsung-dsim.c b/drivers/gpu/drm/bridge/samsung-dsim.c
-> index f2f666b27d2d..cec383d8946d 100644
-> --- a/drivers/gpu/drm/bridge/samsung-dsim.c
-> +++ b/drivers/gpu/drm/bridge/samsung-dsim.c
-> @@ -1473,22 +1473,31 @@ static void samsung_dsim_atomic_pre_enable(struct drm_bridge *bridge,
->   	}
->   
->   	dsi->state |= DSIM_STATE_ENABLED;
-> -
-> -	/*
-> -	 * For Exynos-DSIM the downstream bridge, or panel are expecting
-> -	 * the host initialization during DSI transfer.
-> -	 */
-> -	if (!samsung_dsim_hw_is_exynos(dsi->plat_data->hw_type)) {
-> -		ret = samsung_dsim_init(dsi);
-> -		if (ret)
-> -			return;
-> -	}
->   }
->   
->   static void samsung_dsim_atomic_enable(struct drm_bridge *bridge,
->   				       struct drm_atomic_state *state)
->   {
->   	struct samsung_dsim *dsi = bridge_to_dsi(bridge);
-> +	int ret;
-> +
-> +	/*
-> +	 * The DSI bridge may have already been initialized in
-> +	 * samsung_dsim_host_transfer(). It is possible that the refclk rate has
-> +	 * changed after that due to the display controller configuration, and
-> +	 * thus we need to reinitialize the DSI bridge to ensure the correct
-> +	 * clock settings.
-> +	 */
-> +
-> +	if (dsi->state & DSIM_STATE_INITIALIZED) {
-> +		dsi->state &= ~DSIM_STATE_INITIALIZED;
-> +		samsung_dsim_disable_clock(dsi);
-> +		samsung_dsim_disable_irq(dsi);
-> +	}
-> +
-> +	ret = samsung_dsim_init(dsi);
-> +	if (ret)
-> +		return;
->   
->   	samsung_dsim_set_display_mode(dsi);
->   	samsung_dsim_set_display_enable(dsi, true);
->
-> ---
-> base-commit: 7872997c048e989c7689c2995d230fdca7798000
-> change-id: 20250619-samsung-dsim-fix-58c8ec8193e9
->
-> Best regards,
+ Documentation/devicetree/bindings/serial/8250.yaml | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Best regards
+diff --git a/Documentation/devicetree/bindings/serial/8250.yaml b/Documentation/devicetree/bindings/serial/8250.yaml
+index 33d2016b6509..c6bc27709bf7 100644
+--- a/Documentation/devicetree/bindings/serial/8250.yaml
++++ b/Documentation/devicetree/bindings/serial/8250.yaml
+@@ -45,7 +45,7 @@ allOf:
+                   - ns16550
+                   - ns16550a
+     then:
+-      anyOf:
++      oneOf:
+         - required: [ clock-frequency ]
+         - required: [ clocks ]
+ 
 -- 
-Marek Szyprowski, PhD
-Samsung R&D Institute Poland
+2.49.0
 
 
