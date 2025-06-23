@@ -1,212 +1,134 @@
-Return-Path: <linux-kernel+bounces-698812-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-698826-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7FB59AE4A82
-	for <lists+linux-kernel@lfdr.de>; Mon, 23 Jun 2025 18:19:46 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id C2C24AE4A87
+	for <lists+linux-kernel@lfdr.de>; Mon, 23 Jun 2025 18:20:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id DB1571885465
-	for <lists+linux-kernel@lfdr.de>; Mon, 23 Jun 2025 16:13:47 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4A29A3BA77E
+	for <lists+linux-kernel@lfdr.de>; Mon, 23 Jun 2025 16:19:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D7F782D29D1;
-	Mon, 23 Jun 2025 16:08:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E22572DECD9;
+	Mon, 23 Jun 2025 16:10:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="qskRex4K"
-Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
+	dkim=pass (2048-bit key) header.d=zytor.com header.i=@zytor.com header.b="SZ1GzJXM"
+Received: from mail.zytor.com (terminus.zytor.com [198.137.202.136])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 572242D238B;
-	Mon, 23 Jun 2025 16:08:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 317F72DCC03;
+	Mon, 23 Jun 2025 16:10:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.136
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750694896; cv=none; b=kyZBIUCShx+7Q0OSDQXJ9iLFSf/FE4CzPH93f3Pm0xtUoDXdMCoBd//v0R5F/N91mZbMp2ivbS5K9US/8gcVP8OgaDB5fjJbXcKqHRn5StGNcDT0dxNCSRPg2NdZ3LffkgxU0pgI7SIuMdoUExOqEuXonrwWDSeAgqTz3tXiRZA=
+	t=1750695049; cv=none; b=ZxZrmRGBTNKRlMrcD3yooNoVP7v3KY9d2WXx04jRH+nKQjxlN2CrkOFCuUKzwBsA7wKpeefIrmvjDlLvuZOPB+DtJ2oTFKbVDCXz62DfB0CQ4sI61+UVRKJ9BUnReT3LHjwWGvMblJ+vYAe8gbb2VD95C7+J7T8L+Q93R9/NSNg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750694896; c=relaxed/simple;
-	bh=L4p5mXi7DFDYHCSaTVxJNafGXSHDm+zZmxqXO3mMrMY=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=tMaoMw47aS61mFb7tIQV3EeXfS8cdccvs9csO51rnoHg+flc0j+N16r52olC6jxq/YahdnQZuDm1HjWkxJQNm3a8laxI5IOw9KUQCKxrIWAvcUIupCtsDm12IR9XwfCHKXBnQnJT14pSuIyPTHClXor2OT1PoeVHSvPEpInWvFs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=qskRex4K; arc=none smtp.client-ip=148.251.105.195
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1750694892;
-	bh=L4p5mXi7DFDYHCSaTVxJNafGXSHDm+zZmxqXO3mMrMY=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=qskRex4KS5ZZJaJwLsSUyUFsAf1k4QKIQF0MgHltmvgQxKp9+2+d//S4QHw/Q3Uea
-	 fH5rR/de88nZaQ4f5gJfPxOY3WCUTR9TxeZDGtVPKyjxe3mUlsYP53rSeANhyNHMWx
-	 sJjhLlyEn/tOFLFlOzmxpx78ZmDnGHMi3+1Sv+IcPFAsmr5JQfU9A35hwRsdSVKcFd
-	 WPPfDCSNgLWT4agyfvYPfgK/3OyKn/93e+8BFS16TXhP5jA+YBuJ5i8YUB0gBIkOTQ
-	 W8M5WjDI32QzMLnNbwu27TMdzQMSXAh+NWDYDEeUA5iA8oF0YvcR03GFtucqa01Hpz
-	 c40gtzlbT85jw==
-Received: from trenzalore.hitronhub.home (unknown [23.233.251.139])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: detlev)
-	by bali.collaboradmins.com (Postfix) with ESMTPSA id 8969617E37C2;
-	Mon, 23 Jun 2025 18:08:09 +0200 (CEST)
-From: Detlev Casanova <detlev.casanova@collabora.com>
-To: linux-kernel@vger.kernel.org
-Cc: Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Heiko Stuebner <heiko@sntech.de>,
-	Sebastian Reichel <sebastian.reichel@collabora.com>,
-	Cristian Ciocaltea <cristian.ciocaltea@collabora.com>,
-	Alexey Charkov <alchark@gmail.com>,
-	Dragan Simic <dsimic@manjaro.org>,
-	Jianfeng Liu <liujianfeng1994@gmail.com>,
-	Nicolas Frattaroli <nicolas.frattaroli@collabora.com>,
-	Kever Yang <kever.yang@rock-chips.com>,
-	Detlev Casanova <detlev.casanova@collabora.com>,
-	Andy Yan <andy.yan@rock-chips.com>,
-	Frank Wang <frank.wang@rock-chips.com>,
-	devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-rockchip@lists.infradead.org,
-	Ezequiel Garcia <ezequiel@vanguardiasur.com.ar>,
-	Mauro Carvalho Chehab <mchehab@kernel.org>,
-	Hans Verkuil <hverkuil@xs4all.nl>,
-	Ricardo Ribalda <ribalda@chromium.org>,
-	Hans de Goede <hansg@kernel.org>,
-	Yunke Cao <yunkec@google.com>,
-	linux-media@vger.kernel.org,
-	kernel@collabora.com
-Subject: [PATCH 8/8] media: rkvdec: Unstage the driver
-Date: Mon, 23 Jun 2025 12:07:22 -0400
-Message-ID: <20250623160722.55938-9-detlev.casanova@collabora.com>
-X-Mailer: git-send-email 2.50.0
-In-Reply-To: <20250623160722.55938-1-detlev.casanova@collabora.com>
-References: <20250623160722.55938-1-detlev.casanova@collabora.com>
+	s=arc-20240116; t=1750695049; c=relaxed/simple;
+	bh=dS7QgYeAznkgEhzk7h32qFFNi0yjzq3+ztoyxkZ//XI=;
+	h=Date:From:To:CC:Subject:In-Reply-To:References:Message-ID:
+	 MIME-Version:Content-Type; b=KkmOfsxEnX+zFY7ozqQrENFPOunPNJqiRc8LWmzk/ciN22YZcPLKSoqwKX1L6c8aROL8bnf8lcSC6FO/OKgWtTnIyqdqEyRpk/k6pLcFukzIMdywTm4sTIE55X0nqlxUFlGmWXIv5nF2Xra5rIig7KV0xBQgkUGZX868LZDEMe8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zytor.com; spf=pass smtp.mailfrom=zytor.com; dkim=pass (2048-bit key) header.d=zytor.com header.i=@zytor.com header.b=SZ1GzJXM; arc=none smtp.client-ip=198.137.202.136
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zytor.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zytor.com
+Received: from [127.0.0.1] (c-76-133-66-138.hsd1.ca.comcast.net [76.133.66.138])
+	(authenticated bits=0)
+	by mail.zytor.com (8.18.1/8.17.1) with ESMTPSA id 55NGA7TK995696
+	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NO);
+	Mon, 23 Jun 2025 09:10:08 -0700
+DKIM-Filter: OpenDKIM Filter v2.11.0 mail.zytor.com 55NGA7TK995696
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zytor.com;
+	s=2025062101; t=1750695009;
+	bh=5OyKvEljcKH+TeDJlGA4fkMB6CCrF6QEZCXe4uNmwAs=;
+	h=Date:From:To:CC:Subject:In-Reply-To:References:From;
+	b=SZ1GzJXMbd0V6nYkSdQZSdPQcNAKb5MOvCof6U/mOuVB+0QaDBj59VWf5L9cRdgqT
+	 itNQlfH2W269PbEwmkNbvulkUpxD/UUYAf21tFgjmxP08jvyuS59WLfrXO0m+c+x4l
+	 WGgqQOEmbV8yWjnJbwQmrkLJWBOUzH7/BPGJMQ4Y68rNvdHRoftSH09vAnFWX9ThT1
+	 b2fq5G5sXTvRlAM00Jmft2M0hQci085Nr0JAd9nUZ6EHm2uxF9g9YYRyZy+Y40PHfc
+	 dnNB/soxXQbG5F09Aq5J3cTLdmikLWRCSI3dwlJg8OoNQMHVTDWjdoHBDNBYN8PW30
+	 mT6yD9MhrJm5w==
+Date: Mon, 23 Jun 2025 09:10:07 -0700
+From: "H. Peter Anvin" <hpa@zytor.com>
+To: Sean Christopherson <seanjc@google.com>
+CC: Sohil Mehta <sohil.mehta@intel.com>, Xin Li <xin@zytor.com>,
+        x86@kernel.org, linux-kernel@vger.kernel.org,
+        Andy Lutomirski <luto@kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
+        Borislav Petkov <bp@alien8.de>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Adrian Hunter <adrian.hunter@intel.com>,
+        Kan Liang <kan.liang@linux.intel.com>, Tony Luck <tony.luck@intel.com>,
+        Zhang Rui <rui.zhang@intel.com>, Steven Rostedt <rostedt@goodmis.org>,
+        Andrew Cooper <andrew.cooper3@citrix.com>,
+        "Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>,
+        Jacob Pan <jacob.pan@linux.microsoft.com>,
+        Andi Kleen <ak@linux.intel.com>, Kai Huang <kai.huang@intel.com>,
+        Sandipan Das <sandipan.das@amd.com>, linux-perf-users@vger.kernel.org,
+        linux-edac@vger.kernel.org, kvm@vger.kernel.org,
+        linux-pm@vger.kernel.org, linux-trace-kernel@vger.kernel.org
+Subject: =?US-ASCII?Q?Re=3A_=5BPATCH_v7_02/10=5D_x86/fred=3A_Pass_eve?=
+ =?US-ASCII?Q?nt_data_to_the_NMI_entry_point_from_KVM?=
+User-Agent: K-9 Mail for Android
+In-Reply-To: <aFl1PcnVuYuELvRQ@google.com>
+References: <20250612214849.3950094-1-sohil.mehta@intel.com> <20250612214849.3950094-3-sohil.mehta@intel.com> <7525af7f-a817-47d5-91f7-d7702380c85f@zytor.com> <3281866f-2593-464d-a77e-5893b5e7014f@intel.com> <36374100-0587-47f1-9319-6333f6dfe4db@zytor.com> <39987c98-1f63-4a47-b15e-8c78f632da4e@intel.com> <7acedeba-9c90-403c-8985-0247981bf2b5@zytor.com> <aFXsPVIKi6wFUB6x@google.com> <1713a225-44e0-4018-bf5f-64ffd7746167@zytor.com> <aFl1PcnVuYuELvRQ@google.com>
+Message-ID: <D00BE3D4-C710-4304-85D3-B2A091E08035@zytor.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain;
+ charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 
-The TODO list for unstaging being empty, the driver can now be moved to the
-main media folder.
+On June 23, 2025 8:39:41 AM PDT, Sean Christopherson <seanjc@google=2Ecom> =
+wrote:
+>On Fri, Jun 20, 2025, H=2E Peter Anvin wrote:
+>> On 2025-06-20 16:18, Sean Christopherson wrote:
+>> > >=20
+>> > > So I was thinking about this, and wonder: how expensive is it to ge=
+t the
+>> > > event data exit information out of VMX? If it is not very expensive=
+, it
+>> > > would arguably be a good thing to future-proof by fetching that inf=
+ormation,
+>> > > even if it is currently always zero=2E
+>> >=20
+>> > It's trivially easy to do in KVM, and the cost of the VMREAD should b=
+e less than
+>> > 20 cycles=2E  So quite cheap in the grand scheme=2E  If VMREAD is mor=
+e costly than
+>> > that, then we have bigger problems :-)
+>> >=20
+>>=20
+>> LOL=2E Since it is up to you, Paulo, etc=2E to decide how to do the tra=
+deoffs
+>> formaintainability, debuggability and performance in KVM I am guessing =
+this
+>> is a vote in favor? (You can always take it out if it is a performance
+>> problem, until such time that the kernel itself starts consuming this
+>> information for reasons currently unknown=2E)
+>
+>Unless you can pinky swear that vmcs=2EEXIT_QUALIFICATION will provide ev=
+ent data
+>for IRQ exits, then I'd prefer to pass '0' unconditionally=2E  '0' will a=
+lways be
+>safe, if potentially suboptimal=2E  But passing what could in theory be s=
+omething
+>other than FRED-formatted event data could lead to buggy behavior=2E  Per=
+ the FRED
+>spec, Revision 7=2E0, exit-qualification doesn't hold event data for IRQ =
+exits=2E
+>
+>  For some events for which event data is defined (see Section 5=2E2=2E1)=
+, the event
+>  data is saved in the exit-qualification field=2E (This is done for #DB,=
+ #PF, and NMI=2E)
 
-Also add myself as maintainer.
+I agree, let's stick to that for now, since this is a kernel internal inte=
+rface and nothing consumes it=2E After all, it will save a handful of cycle=
+s=2E
 
-Signed-off-by: Detlev Casanova <detlev.casanova@collabora.com>
----
- MAINTAINERS                                               | 8 ++++++++
- drivers/media/platform/rockchip/Kconfig                   | 1 +
- drivers/media/platform/rockchip/Makefile                  | 1 +
- .../media => media/platform/rockchip}/rkvdec/Kconfig      | 0
- .../media => media/platform/rockchip}/rkvdec/Makefile     | 0
- .../platform/rockchip}/rkvdec/rkvdec-h264.c               | 0
- .../platform/rockchip}/rkvdec/rkvdec-regs.h               | 0
- .../media => media/platform/rockchip}/rkvdec/rkvdec-vp9.c | 0
- .../media => media/platform/rockchip}/rkvdec/rkvdec.c     | 0
- .../media => media/platform/rockchip}/rkvdec/rkvdec.h     | 0
- drivers/staging/media/Kconfig                             | 2 --
- drivers/staging/media/Makefile                            | 1 -
- 12 files changed, 10 insertions(+), 3 deletions(-)
- rename drivers/{staging/media => media/platform/rockchip}/rkvdec/Kconfig (100%)
- rename drivers/{staging/media => media/platform/rockchip}/rkvdec/Makefile (100%)
- rename drivers/{staging/media => media/platform/rockchip}/rkvdec/rkvdec-h264.c (100%)
- rename drivers/{staging/media => media/platform/rockchip}/rkvdec/rkvdec-regs.h (100%)
- rename drivers/{staging/media => media/platform/rockchip}/rkvdec/rkvdec-vp9.c (100%)
- rename drivers/{staging/media => media/platform/rockchip}/rkvdec/rkvdec.c (100%)
- rename drivers/{staging/media => media/platform/rockchip}/rkvdec/rkvdec.h (100%)
-
-diff --git a/MAINTAINERS b/MAINTAINERS
-index c3f7fbd0d67af..d05a153c21526 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -21466,6 +21466,14 @@ S:	Maintained
- F:	Documentation/devicetree/bindings/media/rockchip-rga.yaml
- F:	drivers/media/platform/rockchip/rga/
- 
-+ROCKCHIP RKVDEC VIDEO DECODER DRIVER
-+M:	Detlev Casanova <detlev.casanova@collabora.com>
-+L:	linux-media@vger.kernel.org
-+L:	linux-rockchip@lists.infradead.org
-+S:	Maintained
-+F:	Documentation/devicetree/bindings/media/rockchip,vdec.yaml
-+F:	drivers/media/platform/rockchip/rkvdec/
-+
- ROCKCHIP RK3308 INTERNAL AUDIO CODEC
- M:	Luca Ceresoli <luca.ceresoli@bootlin.com>
- S:	Maintained
-diff --git a/drivers/media/platform/rockchip/Kconfig b/drivers/media/platform/rockchip/Kconfig
-index b41d3960c1b41..9bbeec4996aa2 100644
---- a/drivers/media/platform/rockchip/Kconfig
-+++ b/drivers/media/platform/rockchip/Kconfig
-@@ -4,3 +4,4 @@ comment "Rockchip media platform drivers"
- 
- source "drivers/media/platform/rockchip/rga/Kconfig"
- source "drivers/media/platform/rockchip/rkisp1/Kconfig"
-+source "drivers/media/platform/rockchip/rkvdec/Kconfig"
-diff --git a/drivers/media/platform/rockchip/Makefile b/drivers/media/platform/rockchip/Makefile
-index 4f782b876ac9b..286dc5c53f7e1 100644
---- a/drivers/media/platform/rockchip/Makefile
-+++ b/drivers/media/platform/rockchip/Makefile
-@@ -1,3 +1,4 @@
- # SPDX-License-Identifier: GPL-2.0-only
- obj-y += rga/
- obj-y += rkisp1/
-+obj-y += rkvdec/
-diff --git a/drivers/staging/media/rkvdec/Kconfig b/drivers/media/platform/rockchip/rkvdec/Kconfig
-similarity index 100%
-rename from drivers/staging/media/rkvdec/Kconfig
-rename to drivers/media/platform/rockchip/rkvdec/Kconfig
-diff --git a/drivers/staging/media/rkvdec/Makefile b/drivers/media/platform/rockchip/rkvdec/Makefile
-similarity index 100%
-rename from drivers/staging/media/rkvdec/Makefile
-rename to drivers/media/platform/rockchip/rkvdec/Makefile
-diff --git a/drivers/staging/media/rkvdec/rkvdec-h264.c b/drivers/media/platform/rockchip/rkvdec/rkvdec-h264.c
-similarity index 100%
-rename from drivers/staging/media/rkvdec/rkvdec-h264.c
-rename to drivers/media/platform/rockchip/rkvdec/rkvdec-h264.c
-diff --git a/drivers/staging/media/rkvdec/rkvdec-regs.h b/drivers/media/platform/rockchip/rkvdec/rkvdec-regs.h
-similarity index 100%
-rename from drivers/staging/media/rkvdec/rkvdec-regs.h
-rename to drivers/media/platform/rockchip/rkvdec/rkvdec-regs.h
-diff --git a/drivers/staging/media/rkvdec/rkvdec-vp9.c b/drivers/media/platform/rockchip/rkvdec/rkvdec-vp9.c
-similarity index 100%
-rename from drivers/staging/media/rkvdec/rkvdec-vp9.c
-rename to drivers/media/platform/rockchip/rkvdec/rkvdec-vp9.c
-diff --git a/drivers/staging/media/rkvdec/rkvdec.c b/drivers/media/platform/rockchip/rkvdec/rkvdec.c
-similarity index 100%
-rename from drivers/staging/media/rkvdec/rkvdec.c
-rename to drivers/media/platform/rockchip/rkvdec/rkvdec.c
-diff --git a/drivers/staging/media/rkvdec/rkvdec.h b/drivers/media/platform/rockchip/rkvdec/rkvdec.h
-similarity index 100%
-rename from drivers/staging/media/rkvdec/rkvdec.h
-rename to drivers/media/platform/rockchip/rkvdec/rkvdec.h
-diff --git a/drivers/staging/media/Kconfig b/drivers/staging/media/Kconfig
-index b442148543995..b9d52a51841b5 100644
---- a/drivers/staging/media/Kconfig
-+++ b/drivers/staging/media/Kconfig
-@@ -32,8 +32,6 @@ source "drivers/staging/media/max96712/Kconfig"
- 
- source "drivers/staging/media/meson/vdec/Kconfig"
- 
--source "drivers/staging/media/rkvdec/Kconfig"
--
- source "drivers/staging/media/starfive/Kconfig"
- 
- source "drivers/staging/media/sunxi/Kconfig"
-diff --git a/drivers/staging/media/Makefile b/drivers/staging/media/Makefile
-index ad4e9619a9e07..102ca632ddf5c 100644
---- a/drivers/staging/media/Makefile
-+++ b/drivers/staging/media/Makefile
-@@ -4,7 +4,6 @@ obj-$(CONFIG_INTEL_ATOMISP)     += atomisp/
- obj-$(CONFIG_VIDEO_IMX_MEDIA)	+= imx/
- obj-$(CONFIG_VIDEO_MAX96712)	+= max96712/
- obj-$(CONFIG_VIDEO_MESON_VDEC)	+= meson/vdec/
--obj-$(CONFIG_VIDEO_ROCKCHIP_VDEC)	+= rkvdec/
- obj-$(CONFIG_VIDEO_STARFIVE_CAMSS)	+= starfive/
- obj-$(CONFIG_VIDEO_SUNXI)	+= sunxi/
- obj-$(CONFIG_VIDEO_TEGRA)	+= tegra-video/
--- 
-2.50.0
-
+I will still check into the "pinky swear", though=2E
 
