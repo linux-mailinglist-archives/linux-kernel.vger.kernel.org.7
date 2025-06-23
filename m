@@ -1,129 +1,106 @@
-Return-Path: <linux-kernel+bounces-698503-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-698505-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C54F2AE4596
-	for <lists+linux-kernel@lfdr.de>; Mon, 23 Jun 2025 15:57:09 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 3A34AAE45A3
+	for <lists+linux-kernel@lfdr.de>; Mon, 23 Jun 2025 15:57:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id BC37C7A2A40
-	for <lists+linux-kernel@lfdr.de>; Mon, 23 Jun 2025 13:55:31 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 245CD7A5455
+	for <lists+linux-kernel@lfdr.de>; Mon, 23 Jun 2025 13:56:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5D943253F03;
-	Mon, 23 Jun 2025 13:56:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 046CD253F12;
+	Mon, 23 Jun 2025 13:57:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="S2WAVwhs"
-Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="b09dcOmP";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="CsVWcb5X"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1FCD2238C19;
-	Mon, 23 Jun 2025 13:56:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D22A925393A;
+	Mon, 23 Jun 2025 13:57:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750687006; cv=none; b=jVNa7Nr0FZEyfDE9spK7IcBiwLV69B5YOCvQ4ea6fzq+AKCsMI701EjA0IeycjoZ5m5azslZ1FDSq4XvbNBRDiwNpH0PneF1CYVQxAnJ4hZ2G8pHH1aZ59UNBJHW2lX9VdmEOdrabQN79LGoRCzVhiiZA2jAbfqBYjmu1hrE9ns=
+	t=1750687047; cv=none; b=YMjpf9hc6cRQpibCyW/EQiJF9OgZScZrHzqvY6hnvwLP8pb+jCd1gap1m5h/33LDapzzpf6hZlrqBAWPxnIed7R4GKJkfZIE7gMGesk+24UKd/byUQufQ9uzH11madWHkZVtFYg86v2vNHvSXCbluVzDksOP2t20Uk0yYMklrm0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750687006; c=relaxed/simple;
-	bh=VdYEwNBAMTZ0pSc2fxQOVIIsSBavKAllwJm+zu90mIk=;
+	s=arc-20240116; t=1750687047; c=relaxed/simple;
+	bh=P0sFolHUxrVuoCE+6NvZQkcDRze9W1xjSNhVu3bmqhs=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=e4pcjxyyJN+a8e4BflaxJXmjZKIb5K/EK/6QDv27ZdTmqMF5NSpeDNBbBZ1PI5S40IFxkju+xjyO5r6H2GNkqlM07DWp5yCSfMZXWRUQoeP0x1nYqD2L2e5rpbFyA7fVfAvIhudKSyMEq6w7wf6uBIcLrEp49oAiJ/inr08SRTc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=S2WAVwhs; arc=none smtp.client-ip=213.167.242.64
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
-Received: from pendragon.ideasonboard.com (81-175-209-231.bb.dnainternet.fi [81.175.209.231])
-	by perceval.ideasonboard.com (Postfix) with UTF8SMTPSA id 26FF68DB;
-	Mon, 23 Jun 2025 15:56:26 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-	s=mail; t=1750686986;
-	bh=VdYEwNBAMTZ0pSc2fxQOVIIsSBavKAllwJm+zu90mIk=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=S2WAVwhsrrq7E2/0G9PgYgoam7G+lqmrLuCu4o5c++Vydmvy1l0xydtEd3YaTZrGt
-	 h4B3zILGCZ79Xm0M14FFKZzZYw0VJh3dhIm3P4N3csXIIYcRBkPi3k/+zyj7rbX8h7
-	 cbo6noL49DLT7meT53Vfq43dA1pvhAbdG5ZSA1XQ=
-Date: Mon, 23 Jun 2025 16:56:23 +0300
-From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-To: Mehdi Djait <mehdi.djait@linux.intel.com>
-Cc: sakari.ailus@linux.intel.com, hverkuil@xs4all.nl,
-	tomi.valkeinen@ideasonboard.com, jacopo.mondi@ideasonboard.com,
-	kieran.bingham@ideasonboard.com, mchehab@kernel.org,
-	michael.riesch@collabora.com, nicolas.dufresne@collabora.com,
-	linux-media@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v1 2/2] media: v4l2-common: Add the missing Raw Bayer
- pixel formats
-Message-ID: <20250623135623.GC300@pendragon.ideasonboard.com>
-References: <20250623135116.93787-1-mehdi.djait@linux.intel.com>
- <20250623135116.93787-2-mehdi.djait@linux.intel.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=Bp+7IkfZ7zQ5C1o/7d7PCR8LQrdbnsuAn5LS9C3cXkPruBCKrppMS8Uf8WBKELtXQUNM/fm+fjXAzbCuB+2LLRaBp34s1/9MXnAadzbY7tAw+iUf+pG3avk/6Sac+R6Tgykd3Olz2mFeAeXzCAw8ckHJUupaafbK2AjlFeW9PXY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=b09dcOmP; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=CsVWcb5X; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+Date: Mon, 23 Jun 2025 15:57:18 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1750687043;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=Cz2DKQba7gyNT9FBfEsFGB/ebwSNeejJWsxrap/HXEc=;
+	b=b09dcOmPJ9WTZdJ9Kx8pzwR2kDkG7WFul9r4XEla56yKYobxoiK0xLz2r+ipAhcSCCONRf
+	AmLdDXIn7LqLrpjA6Oj/Ys41/BqyAEkGwGzQb/uL0VjQnx/x8D/m0rXi5z6F5IeNG9ObtI
+	bnDw82nlc5hcYDbjka2S/rjj4r1L1I+LvkQ62MzC5hfc2vTbxAjF0mjNfl76tUIVciYoHE
+	+L4QrtVe5ZgkEA8jDkd9oEtBuE02ftphYOI4KERp0tt9+JFNYwDDjW4Yvlu0TXcwMPnR3c
+	emCvFtj4JTGXRFPZSAQ6fdOStyC3u0PVf1cKHf+AhrQeIJN6YGvhJkaHhTXS5Q==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1750687043;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=Cz2DKQba7gyNT9FBfEsFGB/ebwSNeejJWsxrap/HXEc=;
+	b=CsVWcb5Xttzpchn17VPyWnYIsveUNvKtggmh1ypIzkTZDaPBH96sZiLd6BAHgeELRXJK8S
+	BjrZWIEcxbc4dwBw==
+From: Nam Cao <namcao@linutronix.de>
+To: Junxuan Liao <ljx@cs.wisc.edu>
+Cc: linux-trace-kernel@vger.kernel.org, linux-kernel@vger.kernel.org,
+	x86@kernel.org, Thomas Gleixner <tglx@linutronix.de>,
+	Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+	Dave Hansen <dave.hansen@linux.intel.com>,
+	"H. Peter Anvin" <hpa@zytor.com>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	Masami Hiramatsu <mhiramat@kernel.org>,
+	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+	"Paul E. McKenney" <paulmck@kernel.org>
+Subject: Re: [PATCH v3 RESEND] x86/tracing: introduce enter/exit tracepoint
+ pairs for page faults
+Message-ID: <20250623135718.Zc4hKa-u@linutronix.de>
+References: <2dda8c03-072a-43b2-af0c-bb996d64c388@cs.wisc.edu>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250623135116.93787-2-mehdi.djait@linux.intel.com>
+In-Reply-To: <2dda8c03-072a-43b2-af0c-bb996d64c388@cs.wisc.edu>
 
-Hi Mehdi,
-
-Thank you for the patch.
-
-On Mon, Jun 23, 2025 at 03:51:16PM +0200, Mehdi Djait wrote:
-> Add the Raw Bayer pixel formats infos for:
-> 10-bit packed Bayer formats
-> 12-bit packed Bayer formats
-> 14-bit Bayer formats
-> 14-bit packed Bayer formats
-> 16-bit Bayer formats
+On Sun, Jun 15, 2025 at 07:32:00PM -0500, Junxuan Liao wrote:
+> Merge page_fault_{user,kernel}, rename it page_fault_enter, and add
+> page_fault_exit. This pair is useful for measuring page fault handling
+> latencies.
 > 
-> Signed-off-by: Mehdi Djait <mehdi.djait@linux.intel.com>
+> Add a new field to the merged tracepoints to indicate whether the page
+> fault happened in userspace. We no longer need the static key associated,
+> since it was used just to avoid checking user_mode when the tracepoints
+> were disabled.
 
-Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+(I think) this breaks lttng which uses the old tracepoint names [1]. But
+I'm not sure if we should worry about that.
 
-> ---
->  drivers/media/v4l2-core/v4l2-common.c | 20 ++++++++++++++++++++
->  1 file changed, 20 insertions(+)
-> 
-> diff --git a/drivers/media/v4l2-core/v4l2-common.c b/drivers/media/v4l2-core/v4l2-common.c
-> index 9834ce564b0e..9ba782db7b31 100644
-> --- a/drivers/media/v4l2-core/v4l2-common.c
-> +++ b/drivers/media/v4l2-core/v4l2-common.c
-> @@ -335,6 +335,10 @@ const struct v4l2_format_info *v4l2_format_info(u32 format)
->  		{ .format = V4L2_PIX_FMT_SGBRG10,	.pixel_enc = V4L2_PIXEL_ENC_BAYER, .mem_planes = 1, .comp_planes = 1, .bpp = { 2, 0, 0, 0 }, .bpp_div = { 1, 1, 1, 1 }, .hdiv = 1, .vdiv = 1 },
->  		{ .format = V4L2_PIX_FMT_SGRBG10,	.pixel_enc = V4L2_PIXEL_ENC_BAYER, .mem_planes = 1, .comp_planes = 1, .bpp = { 2, 0, 0, 0 }, .bpp_div = { 1, 1, 1, 1 }, .hdiv = 1, .vdiv = 1 },
->  		{ .format = V4L2_PIX_FMT_SRGGB10,	.pixel_enc = V4L2_PIXEL_ENC_BAYER, .mem_planes = 1, .comp_planes = 1, .bpp = { 2, 0, 0, 0 }, .bpp_div = { 1, 1, 1, 1 }, .hdiv = 1, .vdiv = 1 },
-> +		{ .format = V4L2_PIX_FMT_SBGGR10P,	.pixel_enc = V4L2_PIXEL_ENC_BAYER, .mem_planes = 1, .comp_planes = 1, .bpp = { 5, 0, 0, 0 }, .bpp_div = { 4, 1, 1, 1 }, .hdiv = 1, .vdiv = 1 },
-> +		{ .format = V4L2_PIX_FMT_SGBRG10P,	.pixel_enc = V4L2_PIXEL_ENC_BAYER, .mem_planes = 1, .comp_planes = 1, .bpp = { 5, 0, 0, 0 }, .bpp_div = { 4, 1, 1, 1 }, .hdiv = 1, .vdiv = 1 },
-> +		{ .format = V4L2_PIX_FMT_SGRBG10P,	.pixel_enc = V4L2_PIXEL_ENC_BAYER, .mem_planes = 1, .comp_planes = 1, .bpp = { 5, 0, 0, 0 }, .bpp_div = { 4, 1, 1, 1 }, .hdiv = 1, .vdiv = 1 },
-> +		{ .format = V4L2_PIX_FMT_SRGGB10P,	.pixel_enc = V4L2_PIXEL_ENC_BAYER, .mem_planes = 1, .comp_planes = 1, .bpp = { 5, 0, 0, 0 }, .bpp_div = { 4, 1, 1, 1 }, .hdiv = 1, .vdiv = 1 },
->  		{ .format = V4L2_PIX_FMT_SBGGR10ALAW8,	.pixel_enc = V4L2_PIXEL_ENC_BAYER, .mem_planes = 1, .comp_planes = 1, .bpp = { 1, 0, 0, 0 }, .bpp_div = { 1, 1, 1, 1 }, .hdiv = 1, .vdiv = 1 },
->  		{ .format = V4L2_PIX_FMT_SGBRG10ALAW8,	.pixel_enc = V4L2_PIXEL_ENC_BAYER, .mem_planes = 1, .comp_planes = 1, .bpp = { 1, 0, 0, 0 }, .bpp_div = { 1, 1, 1, 1 }, .hdiv = 1, .vdiv = 1 },
->  		{ .format = V4L2_PIX_FMT_SGRBG10ALAW8,	.pixel_enc = V4L2_PIXEL_ENC_BAYER, .mem_planes = 1, .comp_planes = 1, .bpp = { 1, 0, 0, 0 }, .bpp_div = { 1, 1, 1, 1 }, .hdiv = 1, .vdiv = 1 },
-> @@ -347,6 +351,22 @@ const struct v4l2_format_info *v4l2_format_info(u32 format)
->  		{ .format = V4L2_PIX_FMT_SGBRG12,	.pixel_enc = V4L2_PIXEL_ENC_BAYER, .mem_planes = 1, .comp_planes = 1, .bpp = { 2, 0, 0, 0 }, .bpp_div = { 1, 1, 1, 1 }, .hdiv = 1, .vdiv = 1 },
->  		{ .format = V4L2_PIX_FMT_SGRBG12,	.pixel_enc = V4L2_PIXEL_ENC_BAYER, .mem_planes = 1, .comp_planes = 1, .bpp = { 2, 0, 0, 0 }, .bpp_div = { 1, 1, 1, 1 }, .hdiv = 1, .vdiv = 1 },
->  		{ .format = V4L2_PIX_FMT_SRGGB12,	.pixel_enc = V4L2_PIXEL_ENC_BAYER, .mem_planes = 1, .comp_planes = 1, .bpp = { 2, 0, 0, 0 }, .bpp_div = { 1, 1, 1, 1 }, .hdiv = 1, .vdiv = 1 },
-> +		{ .format = V4L2_PIX_FMT_SBGGR12P,	.pixel_enc = V4L2_PIXEL_ENC_BAYER, .mem_planes = 1, .comp_planes = 1, .bpp = { 3, 0, 0, 0 }, .bpp_div = { 2, 1, 1, 1 }, .hdiv = 1, .vdiv = 1 },
-> +		{ .format = V4L2_PIX_FMT_SGBRG12P,	.pixel_enc = V4L2_PIXEL_ENC_BAYER, .mem_planes = 1, .comp_planes = 1, .bpp = { 3, 0, 0, 0 }, .bpp_div = { 2, 1, 1, 1 }, .hdiv = 1, .vdiv = 1 },
-> +		{ .format = V4L2_PIX_FMT_SGRBG12P,	.pixel_enc = V4L2_PIXEL_ENC_BAYER, .mem_planes = 1, .comp_planes = 1, .bpp = { 3, 0, 0, 0 }, .bpp_div = { 2, 1, 1, 1 }, .hdiv = 1, .vdiv = 1 },
-> +		{ .format = V4L2_PIX_FMT_SRGGB12P,	.pixel_enc = V4L2_PIXEL_ENC_BAYER, .mem_planes = 1, .comp_planes = 1, .bpp = { 3, 0, 0, 0 }, .bpp_div = { 2, 1, 1, 1 }, .hdiv = 1, .vdiv = 1 },
-> +		{ .format = V4L2_PIX_FMT_SBGGR14,	.pixel_enc = V4L2_PIXEL_ENC_BAYER, .mem_planes = 1, .comp_planes = 1, .bpp = { 2, 0, 0, 0 }, .bpp_div = { 1, 1, 1, 1 }, .hdiv = 1, .vdiv = 1 },
-> +		{ .format = V4L2_PIX_FMT_SGBRG14,	.pixel_enc = V4L2_PIXEL_ENC_BAYER, .mem_planes = 1, .comp_planes = 1, .bpp = { 2, 0, 0, 0 }, .bpp_div = { 1, 1, 1, 1 }, .hdiv = 1, .vdiv = 1 },
-> +		{ .format = V4L2_PIX_FMT_SGRBG14,	.pixel_enc = V4L2_PIXEL_ENC_BAYER, .mem_planes = 1, .comp_planes = 1, .bpp = { 2, 0, 0, 0 }, .bpp_div = { 1, 1, 1, 1 }, .hdiv = 1, .vdiv = 1 },
-> +		{ .format = V4L2_PIX_FMT_SRGGB14,	.pixel_enc = V4L2_PIXEL_ENC_BAYER, .mem_planes = 1, .comp_planes = 1, .bpp = { 2, 0, 0, 0 }, .bpp_div = { 1, 1, 1, 1 }, .hdiv = 1, .vdiv = 1 },
-> +		{ .format = V4L2_PIX_FMT_SBGGR14P,	.pixel_enc = V4L2_PIXEL_ENC_BAYER, .mem_planes = 1, .comp_planes = 1, .bpp = { 7, 0, 0, 0 }, .bpp_div = { 4, 1, 1, 1 }, .hdiv = 1, .vdiv = 1 },
-> +		{ .format = V4L2_PIX_FMT_SGBRG14P,	.pixel_enc = V4L2_PIXEL_ENC_BAYER, .mem_planes = 1, .comp_planes = 1, .bpp = { 7, 0, 0, 0 }, .bpp_div = { 4, 1, 1, 1 }, .hdiv = 1, .vdiv = 1 },
-> +		{ .format = V4L2_PIX_FMT_SGRBG14P,	.pixel_enc = V4L2_PIXEL_ENC_BAYER, .mem_planes = 1, .comp_planes = 1, .bpp = { 7, 0, 0, 0 }, .bpp_div = { 4, 1, 1, 1 }, .hdiv = 1, .vdiv = 1 },
-> +		{ .format = V4L2_PIX_FMT_SRGGB14P,	.pixel_enc = V4L2_PIXEL_ENC_BAYER, .mem_planes = 1, .comp_planes = 1, .bpp = { 7, 0, 0, 0 }, .bpp_div = { 4, 1, 1, 1 }, .hdiv = 1, .vdiv = 1 },
-> +		{ .format = V4L2_PIX_FMT_SBGGR16,	.pixel_enc = V4L2_PIXEL_ENC_BAYER, .mem_planes = 1, .comp_planes = 1, .bpp = { 2, 0, 0, 0 }, .bpp_div = { 1, 1, 1, 1 }, .hdiv = 1, .vdiv = 1 },
-> +		{ .format = V4L2_PIX_FMT_SGBRG16,	.pixel_enc = V4L2_PIXEL_ENC_BAYER, .mem_planes = 1, .comp_planes = 1, .bpp = { 2, 0, 0, 0 }, .bpp_div = { 1, 1, 1, 1 }, .hdiv = 1, .vdiv = 1 },
-> +		{ .format = V4L2_PIX_FMT_SGRBG16,	.pixel_enc = V4L2_PIXEL_ENC_BAYER, .mem_planes = 1, .comp_planes = 1, .bpp = { 2, 0, 0, 0 }, .bpp_div = { 1, 1, 1, 1 }, .hdiv = 1, .vdiv = 1 },
-> +		{ .format = V4L2_PIX_FMT_SRGGB16,	.pixel_enc = V4L2_PIXEL_ENC_BAYER, .mem_planes = 1, .comp_planes = 1, .bpp = { 2, 0, 0, 0 }, .bpp_div = { 1, 1, 1, 1 }, .hdiv = 1, .vdiv = 1 },
->  	};
->  	unsigned int i;
->  
+Do you plan to add this to other architectures?
 
--- 
-Regards,
+Perhaps it is better to implement the other approach suggested by Frederic
+[2], using trace_user_exit/trace_user_enter? So that more architectures are
+covered, and avoid breaking user tools?
 
-Laurent Pinchart
+(Btw, you would need to rebase this patch. The tracepoint has been moved,
+and the static key has been deleted.)
+
+Best regards,
+Nam
+
+[1] https://github.com/lttng/lttng-modules/blob/master/include/instrumentation/events/arch/x86/exceptions.h#L88C48-L88C63
+[2] https://lore.kernel.org/lkml/Z_mO6_m0bV-Q8NEa@pavilion.home/#t
 
