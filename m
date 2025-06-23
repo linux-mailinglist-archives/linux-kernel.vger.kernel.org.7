@@ -1,55 +1,53 @@
-Return-Path: <linux-kernel+bounces-698945-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-698947-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id BA897AE4C05
-	for <lists+linux-kernel@lfdr.de>; Mon, 23 Jun 2025 19:40:36 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id C9243AE4C0C
+	for <lists+linux-kernel@lfdr.de>; Mon, 23 Jun 2025 19:42:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D54163BB005
-	for <lists+linux-kernel@lfdr.de>; Mon, 23 Jun 2025 17:40:11 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DFA3A3B8E94
+	for <lists+linux-kernel@lfdr.de>; Mon, 23 Jun 2025 17:42:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 165AC2C158F;
-	Mon, 23 Jun 2025 17:40:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4C5DD2D1929;
+	Mon, 23 Jun 2025 17:42:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kwiboo.se header.i=@kwiboo.se header.b="zE9YvuVQ"
-Received: from smtp.forwardemail.net (smtp.forwardemail.net [121.127.44.73])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=zytor.com header.i=@zytor.com header.b="INJYtq8+"
+Received: from mail.zytor.com (terminus.zytor.com [198.137.202.136])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A6D837262F
-	for <linux-kernel@vger.kernel.org>; Mon, 23 Jun 2025 17:40:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=121.127.44.73
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7346F7262F;
+	Mon, 23 Jun 2025 17:42:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.136
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750700430; cv=none; b=V5B5dD8DKe38hoYacg907UAx5gYiBUvq22YS9QRGP3OdnjNyZFXMIaFDQQ8hbeh5D1KCWdiK4D3kIFV4pOpPdvjXiWX4kKq8+GkdH8iZ/kSdeTlenMeoFmVuAGCSwx37alfgT2wxcpLMfBUfqk/lsNXyGpSqbJCaiYZ6P6KYtQs=
+	t=1750700545; cv=none; b=WXAP0VflcHqQr5etGAspvIM24xVqE4qwEfjUgVc6H0BN4OQaGo5GAChmyjHJYRe6rQkWJlpEkDo/03U2TJswI0ZwDzRQyCmCbcr27jFox61BXve7ki9RIzT8gKhdkCBNzrOGqJq9RvWrX+yOIEgONKqVPclKDvdHxRZamRAy1VI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750700430; c=relaxed/simple;
-	bh=IsUNm5zN3nf3/mIsm1o8QkuSZRhfwKwP6g4hYu1alZk=;
+	s=arc-20240116; t=1750700545; c=relaxed/simple;
+	bh=axEzW9nt/oL+Fi2xkmnJyOBnAh9RwvxE5Bx0SrHiF5Q=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=FIdmkZLCf92GYRzeF6vzgxjXp0c6bBODd3oVT9VbQ81WiwdpVDQzlfCUqgdWbiyTMzrea8TmXArscxz0gJHbcgFqJbvW030kEkicoStHG4WLCHU/9rYGgyDaLAPXrWKetjbP3EVqqGlzUSZSs+hGtiPoxHoeR86raWb6B2rvIV8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kwiboo.se; spf=pass smtp.mailfrom=fe-bounces.kwiboo.se; dkim=pass (2048-bit key) header.d=kwiboo.se header.i=@kwiboo.se header.b=zE9YvuVQ; arc=none smtp.client-ip=121.127.44.73
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kwiboo.se
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fe-bounces.kwiboo.se
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kwiboo.se;
- h=Content-Transfer-Encoding: Content-Type: In-Reply-To: From: References:
- Cc: To: Subject: MIME-Version: Date: Message-ID; q=dns/txt;
- s=fe-e1b5cab7be; t=1750700422;
- bh=vlOL8X69KAf43rpa448wfskj/jjDGmOWw431Aoz2DQk=;
- b=zE9YvuVQMYfUB8/mMU1ftphfVL7PQ4O23Kzl4X/4byayXY+3ADO/XnYQYyGSu+inNEEWAXSQh
- R6Opmt4DLXu9ur+B02FqmrqEqqQCYEymNTwPwGCw5w1PKqeRqoNLgbvEgChlljS5p+ADz2Qyjvw
- PGAkTpLYw43PExVBic+Yg5AHoSDnY+hQbgN04bFWhWnrmk80CxHRpgbfbclQU6WUNMMUqLoU0IJ
- EYNIOWQO1Iu9TdxIgi8wYLJa4L9d/Tf8tpQO2po/LqKGwTZSYWTFvib4TC91wOhXEog/9Rd7duM
- XIno9JzUkW5zPGLWSBWCfo+URprblqnS2QFzD1+BeACQ==
-X-Forward-Email-ID: 6859917f54073d00e4b5a183
-X-Forward-Email-Sender: rfc822; jonas@kwiboo.se, smtp.forwardemail.net,
- 121.127.44.73
-X-Forward-Email-Version: 1.0.3
-X-Forward-Email-Website: https://forwardemail.net
-X-Complaints-To: abuse@forwardemail.net
-X-Report-Abuse: abuse@forwardemail.net
-X-Report-Abuse-To: abuse@forwardemail.net
-Message-ID: <dd1d0676-4eaa-4df7-b557-676b3de9a52e@kwiboo.se>
-Date: Mon, 23 Jun 2025 19:40:11 +0200
+	 In-Reply-To:Content-Type; b=SdAQOw4KdQgDMy8i/ip3SPaYPn+LB1XVBsuufwR/3EMdiZkWzsnnavpbTWU6BiABVmo7Y663sxBXbJYrWc874bqcrw4B88ajC+yxC3oKjlCr1wFbJd1aEOrdFHyJ0W6R6tD5Z9xwphfa31WY0JaKlOFX11fydGFS79lZanthsaE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zytor.com; spf=pass smtp.mailfrom=zytor.com; dkim=pass (2048-bit key) header.d=zytor.com header.i=@zytor.com header.b=INJYtq8+; arc=none smtp.client-ip=198.137.202.136
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zytor.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zytor.com
+Received: from [192.168.7.202] ([71.202.166.45])
+	(authenticated bits=0)
+	by mail.zytor.com (8.18.1/8.17.1) with ESMTPSA id 55NHexfC1026354
+	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NO);
+	Mon, 23 Jun 2025 10:41:00 -0700
+DKIM-Filter: OpenDKIM Filter v2.11.0 mail.zytor.com 55NHexfC1026354
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zytor.com;
+	s=2025062101; t=1750700465;
+	bh=BNAyFI+UKuFLDA1Zr6MU3Nac5yHxqIn7Z1w04YN6A8A=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=INJYtq8+lGv/gWk0aoZbIoVbnndeEr6d6p/IrgKHhbAUp/EB67sE6XX/qMcdqbW4+
+	 whysOvvHRz+gpV6v8nXGQGA1exXZpRYHXMbNQYS4C4UXQcE4VYBDNy9t3rw99eFyap
+	 jOg+05HmThPguL2VHM51caspEtm2mbb1xk+R8VTXn3ONfhL5ZjJZ9v58/kqCRkVhg8
+	 bmzYYDh/q2/OMFNWGLztVUCh8diU/ZMkp+spZAQL4XKsY5ceT6jR0lz/xGLfsOUPBf
+	 IrJnSTVlrsLWFA1wi7mJv7OkK3WleEQElo2mMronDFHiMnykDHq5hNW1rQYdD9TD50
+	 R9s5Jzd/4XUqg==
+Message-ID: <73796800-819b-4433-b0ef-db852336d7a4@zytor.com>
+Date: Mon, 23 Jun 2025 10:40:59 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -57,70 +55,134 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/4] arm64: dts: rockchip: list all CPU supplies on ArmSoM
- Sige5
-To: Piotr Oniszczuk <piotr.oniszczuk@gmail.com>,
- Alexey Charkov <alchark@gmail.com>
-Cc: Heiko Stuebner <heiko@sntech.de>,
- Nicolas Frattaroli <nicolas.frattaroli@collabora.com>,
- XiaoDong Huang <derrick.huang@rock-chips.com>, Rob Herring
- <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, devicetree@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-rockchip@lists.infradead.org,
- linux-kernel@vger.kernel.org
-References: <20250603-sige5-updates-v1-0-717e8ce4ab77@gmail.com>
- <3286000.Y6S9NjorxK@phil>
- <CABjd4YyaNF1zosFFi6hEsZanPDxoaa1h4Dpd6uTPRwA3BZn0=w@mail.gmail.com>
- <5897576.DvuYhMxLoT@phil>
- <CABjd4Yy8WeXKmmxh2-TjjF5-ABy-NzzJsWpt1KvSjJqTHh0Xwg@mail.gmail.com>
- <CABjd4Yz4NbqzZH4Qsed3ias56gcga9K6CmYA+BLDBxtbG915Ag@mail.gmail.com>
- <36711B65-DD45-4539-BD9C-0382936FD0A3@gmail.com>
+Subject: Re: [PATCHv6 01/16] x86/cpu: Enumerate the LASS feature bits
+To: "H. Peter Anvin" <hpa@zytor.com>,
+        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>
+Cc: Andy Lutomirski <luto@kernel.org>, Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
+        Peter Zijlstra <peterz@infradead.org>,
+        Ard Biesheuvel <ardb@kernel.org>,
+        "Paul E. McKenney" <paulmck@kernel.org>,
+        Josh Poimboeuf
+ <jpoimboe@kernel.org>,
+        Xiongwei Song <xiongwei.song@windriver.com>,
+        Xin Li <xin3.li@intel.com>, "Mike Rapoport (IBM)" <rppt@kernel.org>,
+        Brijesh Singh <brijesh.singh@amd.com>,
+        Michael Roth <michael.roth@amd.com>, Tony Luck <tony.luck@intel.com>,
+        Alexey Kardashevskiy <aik@amd.com>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Jonathan Corbet <corbet@lwn.net>, Sohil Mehta <sohil.mehta@intel.com>,
+        Ingo Molnar <mingo@kernel.org>,
+        Pawan Gupta <pawan.kumar.gupta@linux.intel.com>,
+        Daniel Sneddon <daniel.sneddon@linux.intel.com>,
+        Kai Huang <kai.huang@intel.com>, Sandipan Das <sandipan.das@amd.com>,
+        Breno Leitao <leitao@debian.org>,
+        Rick Edgecombe
+ <rick.p.edgecombe@intel.com>,
+        Alexei Starovoitov <ast@kernel.org>, Hou Tao <houtao1@huawei.com>,
+        Juergen Gross <jgross@suse.com>,
+        Vegard Nossum <vegard.nossum@oracle.com>, Kees Cook <kees@kernel.org>,
+        Eric Biggers <ebiggers@google.com>, Jason Gunthorpe <jgg@ziepe.ca>,
+        "Masami Hiramatsu (Google)" <mhiramat@kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Luis Chamberlain <mcgrof@kernel.org>, Yuntao Wang <ytcoode@gmail.com>,
+        Rasmus Villemoes <linux@rasmusvillemoes.dk>,
+        Christophe Leroy <christophe.leroy@csgroup.eu>,
+        Tejun Heo <tj@kernel.org>, Changbin Du <changbin.du@huawei.com>,
+        Huang Shijie <shijie@os.amperecomputing.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Namhyung Kim <namhyung@kernel.org>,
+        Arnaldo Carvalho de Melo <acme@redhat.com>, linux-doc@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-efi@vger.kernel.org,
+        linux-mm@kvack.org, Yian Chen <yian.chen@intel.com>
+References: <20250620135325.3300848-1-kirill.shutemov@linux.intel.com>
+ <20250620135325.3300848-2-kirill.shutemov@linux.intel.com>
+ <d3055288-c640-4df3-978e-abb97b1610e7@zytor.com>
+ <tfpekzid4hu4xguq3fetosyltg3owjy2cactqklohfohalhbza@hx7qdrpcymrn>
+ <aa91aadb-758e-42db-86ab-451384e466ed@zytor.com>
+ <D8783A84-119A-4981-9EB1-12C21BB34714@zytor.com>
+ <f04936b7-e1e1-4a63-a907-33315af0dd8f@zytor.com>
 Content-Language: en-US
-From: Jonas Karlman <jonas@kwiboo.se>
-In-Reply-To: <36711B65-DD45-4539-BD9C-0382936FD0A3@gmail.com>
-Content-Type: text/plain; charset=UTF-8
+From: Xin Li <xin@zytor.com>
+Autocrypt: addr=xin@zytor.com; keydata=
+ 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
+ l75w1xInsg==
+In-Reply-To: <f04936b7-e1e1-4a63-a907-33315af0dd8f@zytor.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
 
-On 2025-06-23 17:02, Piotr Oniszczuk wrote:
-> 
-> 
->> Wiadomość napisana przez Alexey Charkov <alchark@gmail.com> w dniu 23 cze 2025, o godz. 15:58:
->>
->> On Mon, Jun 23, 2025 at 1:19 PM Alexey Charkov <alchark@gmail.com> wrote:
+On 6/20/2025 5:50 PM, H. Peter Anvin wrote:
+> On 2025-06-20 17:45, H. Peter Anvin wrote:
 >>>
+>>> But I simply hate adding a disabled feature that depends on !X86_64;
+>>> x86_64 has a broad scope, and new CPU features are often intentionally
+>>> not enabled for 32-bit.
 >>>
+>>> (X86_DISABLED_FEATURE_PCID is the only one before LASS)
 >>
->> Okay, I've bisected this.
+>> More importantly, it is wrong.
 >>
->> TLDR: Linux and u-boot seem to have nothing to do with it, opensource
->> TF-A doesn't work, binary BL31 starting with v1.09 do not work. BL31
->> v1.08 and earlier work fine.
-
-v1.09 added support for 1 GHz hrtimer in addition to the normal 24 MHz
-rate. Mainline U-Boot may only support use of 24 MHz hrtimer, unsure
-what impact the hrtimer rate has. Mixing blobs with/without 1 GHz
-support is known to cause issues. At one point the latest rkbin tree may
-have contained incompatible rk3576 blobs (mixed 1 ghz vs 24 mhz rate).
-
-Did you try with newer blobs, i.e. ddr init v1.09, bl31 v1.19 blobs [1]
-and mainline U-Boot [2] ?
-
-[1] https://github.com/radxa/rkbin/commits/develop-v2025.04/
-[2] https://source.denx.de/u-boot/contributors/kwiboo/u-boot/-/commits/rk3576
-
-Regards,
-Jonas
-
+>> The 32-bit build can depend on this feature not existing, therefore it 
+>> SHOULD be listed as a disabled feature.
+>>
 > 
-> 
-> just fyi: 
-> to confirm: replacing only bl31 to 1.08 makes all good
-> with perf gov. clocks staying on 2200/2300
-> clock estimations are predictable, constant and estimating constantly 2400
-> ux is „like” on 3588
-> 
-> Alexey: many thx for finding root cause component!
->   
->    
+> Ok, that was word salad. What I meant was that the original patch is 
+> correct, and we SHOULD have this as a disabled feature.
+
+Agreed!
+
+> The reason is that it reduces the need to explicitly test for 32/64 bits 
+> for features that don't exist on 32 bits. When they are flagged as 
+> disabled, they get filtered out *at compile time*.
+
+It's better to make it depend on X86_32 directly rather than !X86_64:
+
+config X86_DISABLED_FEATURE_LASS
+	def_bool y
+	depends on X86_32
+
+
+But the disabled feature list due to lack of 32-bit enabling will keep
+growing until we remove 32-bit kernel code.
+
+Wondering should we bother enforcing cpuid_deps[] on 32-bit?
+
+IOW, turn off the feature when its dependency isn’t satisfied on 32b-it;
+don’t just throw a warning and hope for the best.
+
+Thanks!
+     Xin
 
 
