@@ -1,266 +1,120 @@
-Return-Path: <linux-kernel+bounces-699203-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-699208-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 95F9FAE5531
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Jun 2025 00:09:08 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 1512CAE5572
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Jun 2025 00:11:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 91B6E4A5802
-	for <lists+linux-kernel@lfdr.de>; Mon, 23 Jun 2025 22:08:35 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0B5C04C48F0
+	for <lists+linux-kernel@lfdr.de>; Mon, 23 Jun 2025 22:10:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E2F63225A3D;
-	Mon, 23 Jun 2025 22:08:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 84B8F227E8F;
+	Mon, 23 Jun 2025 22:10:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=collabora.com header.i=sebastian.reichel@collabora.com header.b="G9hXsTzR"
-Received: from sender4-pp-f112.zoho.com (sender4-pp-f112.zoho.com [136.143.188.112])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="L7f4xynt"
+Received: from mail-wr1-f43.google.com (mail-wr1-f43.google.com [209.85.221.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E42CC7080E;
-	Mon, 23 Jun 2025 22:08:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.112
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750716504; cv=pass; b=r19VpoOHjotOf3Z1NlTwRHIbQ+oFOoOCymUbZDxp9Aqy6+UbmBtxifLFAdl9axfLNATmgmeSoPY+sV9dyin03zT000h1sx1eZofkN0YrBDi9i5Zlgcsu8OOgKifz+ajVA8ybtZMZ7hj1Ayp6/i5staRffSbMd+fyXJMWHpW089c=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750716504; c=relaxed/simple;
-	bh=JDPs4eXH1GKDynFvyfnMIazD78wsvR6WqglIGDUk0RI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=G+WP2QojV/0OXelSQ5HmUvHHYCiT3EP+jE4BTy2fIZSmZhH1EgNfw9O84bJdcmf5EXgz942cYaqeR/9glLP92rEdQaexaSRahHOeELReguM+8p8LrpMFi9i4x3Sf4D4qk6r5V1Wz0mtxCR/Zjz2h/BzrEXMZIyFVNm8dInoQrRE=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=sebastian.reichel@collabora.com header.b=G9hXsTzR; arc=pass smtp.client-ip=136.143.188.112
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-ARC-Seal: i=1; a=rsa-sha256; t=1750716490; cv=none; 
-	d=zohomail.com; s=zohoarc; 
-	b=YRbDsl6UDTgqiLNXD6FOOYF7QMs4k1Fof/h54LtAlOcWESaMYSLv0M/F82t7uYA6QpZoMMnYJE/YgZfr8vMlH9Vd+wgChJw+EJMJzdusBj8xRYHKg207idBBvxWLdgYinzO655PU+7j83auyS5gYrga4zrqbMtySkmH4zV2kD18=
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
-	t=1750716490; h=Content-Type:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
-	bh=/BXgpXwhzYtQIWwdqXLgsVk4WStiLAj0XHlChIgBw3M=; 
-	b=XL21455Ail7tSBw/eAf7lhtRyw5tOHGFGHcePKq5uYirNsaKLY9L765rFqUF+lsrA4ea/BOgcT3kLz1nL1+zCs6UeBQ1g7Tm65Cnl/DLKnyEjUfJ1gt+an8UNE5c5LtsCzDjAZeO4Awg/m0/Ct5b0PqLZZDmfpXWlszGAVOf4MQ=
-ARC-Authentication-Results: i=1; mx.zohomail.com;
-	dkim=pass  header.i=collabora.com;
-	spf=pass  smtp.mailfrom=sebastian.reichel@collabora.com;
-	dmarc=pass header.from=<sebastian.reichel@collabora.com>
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1750716490;
-	s=zohomail; d=collabora.com; i=sebastian.reichel@collabora.com;
-	h=Date:Date:From:From:To:To:Cc:Cc:Subject:Subject:Message-ID:References:MIME-Version:Content-Type:In-Reply-To:Message-Id:Reply-To;
-	bh=/BXgpXwhzYtQIWwdqXLgsVk4WStiLAj0XHlChIgBw3M=;
-	b=G9hXsTzREqibMweZdE0PXJ/yFt539DBxTgFgiU0D1+YLJudVvNqIYpZXOKMfyPVL
-	2uPPmYL9u5lSzxm3ulNwoQ94vtD1/KZ/SLp76EHW3JwHJCm5a+IvSzg6zRmQqc6jO4q
-	JsvsIvix4nJrXwQ5fb+AN4ZOnLLmpTY628e+Jarc=
-Received: by mx.zohomail.com with SMTPS id 1750716488768202.2640415999;
-	Mon, 23 Jun 2025 15:08:08 -0700 (PDT)
-Received: by venus (Postfix, from userid 1000)
-	id 0B36B180AAB; Tue, 24 Jun 2025 00:08:04 +0200 (CEST)
-Date: Tue, 24 Jun 2025 00:08:03 +0200
-From: Sebastian Reichel <sebastian.reichel@collabora.com>
-To: Amit Sunil Dhamne <amitsd@google.com>
-Cc: Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Badhri Jagan Sridharan <badhri@google.com>, 
-	Heikki Krogerus <heikki.krogerus@linux.intel.com>, "Rafael J. Wysocki" <rafael@kernel.org>, 
-	Len Brown <len.brown@intel.com>, Pavel Machek <pavel@kernel.org>, Kyle Tso <kyletso@google.com>, 
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-usb@vger.kernel.org, 
-	linux-pm@vger.kernel.org
-Subject: Re: [PATCH v2 1/5] dt-bindings: connector: extend ports property to
- model power connections
-Message-ID: <z2wrzts6cgunxs5tc764izvrfi4i2d637zpt6tj5f4piry6j66@cke2yxhih6dg>
-References: <20250507-batt_ops-v2-0-8d06130bffe6@google.com>
- <20250507-batt_ops-v2-1-8d06130bffe6@google.com>
- <20250514194249.GA2881453-robh@kernel.org>
- <b4a22161-8cab-4d76-a4b0-4bfd0d79cdc1@google.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1D3BA21FF2B;
+	Mon, 23 Jun 2025 22:10:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.43
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1750716623; cv=none; b=mxeRq0+DkdhaRgW1xnKWOrrG69cXktnaKG6zETaL8fWuGrMdBNQ3ctGKFbnRHQ4yJt34enM9STJpNe11Dpg2vtGZwyJFs8bgLd7RBIaikE4VjP/NL53COn+/r3itIPRL+psAGvxsRUyVK9V0R9EiZ0nQnUbpa5o0070kMk7NbCI=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1750716623; c=relaxed/simple;
+	bh=rJtgUixg3bc+6Lniu8+P4i4uXvGUZP8yfzVme7m18jg=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=DpL8XaVyc1Sxj3oCKthqiOCFTarbbyecjynEVvK1EIB63jPDSBlRZeuNhiyxe+AwRR0yYbMT9tLZGfZQ3Tn1GeoMTHW7Th4YKCBCNWJ3yTih203XTszhdF0hrhiBWWX2bhFLDKBfzDyCKBggg4iOrj/FvCzaVTMZLYx0prqShdc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=L7f4xynt; arc=none smtp.client-ip=209.85.221.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wr1-f43.google.com with SMTP id ffacd0b85a97d-3a528243636so2859264f8f.3;
+        Mon, 23 Jun 2025 15:10:21 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1750716620; x=1751321420; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=g6osNOP9K2XHQbWWpjHXmBIwvo4RDOmUZ4V/GR1O0W4=;
+        b=L7f4xyntEBP+TYh3bBkYRP1Pdd8lQLVIXmcce5jM+VQuP4n2ODpZcA/R6r886FzaOf
+         yvmAwDv/Af+vXJ4b4sb/NRUWmTzsmcT6iX73cl3ITbH3Gwb78AcE+Gzb7to4CeJ8+fNG
+         GxMsqsNpHlHtYJdE3NqUWdGAIhZyXZ5sVtMiBzEB7NZOooLoCCmBjT2ga07R6OV29kSa
+         fSC+jpt0a4PKe4IIuwJTyupGn8+lU0VJLWScGzkjOCIzgPNoiJzVi2OVq2YkwFsIvtdx
+         4FGB47zO+4iSXiXk5Gd9ystHEKMc3KfgSDqGMPZAVBzY6b+XONVqj+sfFZeRz7KcoJHO
+         ZJig==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1750716620; x=1751321420;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=g6osNOP9K2XHQbWWpjHXmBIwvo4RDOmUZ4V/GR1O0W4=;
+        b=rz9HgzImQT8OeINKD2aCqtNCFb3dY3CnVya7uhGXpuLV/zIvhvu/bxRYLS4sQlJO9u
+         YoUFFr2JazUSSc8rpgaMFuf7MU1WgMEe/hjTB+eR2VA8EPSuovYuBHIW2jdPf2EhppsM
+         WYv6xKMG8fKi5DjUjoV4k8O8UM3owyLfJBqVt9VMfQbCLoUeaDwdPDNFvEhvUv1HYMB+
+         qgEaavFBeGI0QWNHQr/cnRq4jWy9mBQEYHeu5n77eSVXM1RTJqGkGmoc4mON47EGRMpL
+         9QXiJVuM1nYLVYAyBMd1XfLiGQpLZmTA8giHPfRhYXd/Bn39G94GufVijYA/vrf8grfh
+         rLQA==
+X-Forwarded-Encrypted: i=1; AJvYcCWQINpNe7w9z/TETPHwjnc0yMdKInCIJe9vge/WNsCqWJHgpVvYvDEb2POYcUpzGulJZD48GH5yzc9qdwg=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxwPPcXNDG30NetpofSV2NdEfpG7goTCJAjljvxM6tf7/4/7wSp
+	8xHCzI/BWtxJgHKOXTvECM+ocmBBMZPpHCIUBVVBh6un0KZ8pnNhd1qD
+X-Gm-Gg: ASbGnct0PVkvlQqRs+rqbWDxHgfhuYET11S90f6zSCHW1Jp3XyzF8I9OvWmFcbVSghg
+	vrV+5NfBlpxSR7svPMVxzeNuKk4pKqRhqjqCt7T8fbT0veT0je+m0unQsGZncRde2CRAaI9qjui
+	9axW3+gMXsW6ShYIIktvf5OaRI2FsSnvBp4q0zq0VOnJFE0eWXSc+B9r8YtNHmNVFXDuJMDaIgV
+	xMqyemmhMbkiFDDObnd+DRxjE3DppkZDODHV0I+vK39eOZSMQf2Fa3N5PrhIkRY/n6o+qnZkgRk
+	QSY4ASv+22OWfMfIP8s0S3TkihiIh+R+bZsoWA8yp+r29BjMl79/8uoM5YpF
+X-Google-Smtp-Source: AGHT+IEwnihSKaV9MZa8JbefwtxfYi1D+ExJQVtkVsokJq+3Xaa3axXjCwHA/ovAMgIPs5P8j8qYfg==
+X-Received: by 2002:a05:6000:2503:b0:3a5:39d7:3f17 with SMTP id ffacd0b85a97d-3a6d12e68b2mr12366601f8f.47.1750716620193;
+        Mon, 23 Jun 2025 15:10:20 -0700 (PDT)
+Received: from localhost ([87.254.0.133])
+        by smtp.gmail.com with UTF8SMTPSA id ffacd0b85a97d-3a6e8064c61sm250475f8f.36.2025.06.23.15.10.19
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 23 Jun 2025 15:10:19 -0700 (PDT)
+From: Colin Ian King <colin.i.king@gmail.com>
+To: Dave Penkler <dpenkler@gmail.com>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Michael Rubin <matchstick@neverthere.org>,
+	linux-staging@lists.linux.dev
+Cc: kernel-janitors@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH][next] staging: gpib: fix unset padding field copy back to userspace
+Date: Mon, 23 Jun 2025 23:09:58 +0100
+Message-ID: <20250623220958.280424-1-colin.i.king@gmail.com>
+X-Mailer: git-send-email 2.50.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="boxpunqqsxkyyd4w"
-Content-Disposition: inline
-In-Reply-To: <b4a22161-8cab-4d76-a4b0-4bfd0d79cdc1@google.com>
-X-Zoho-Virus-Status: 1
-X-Zoho-Virus-Status: 1
-X-Zoho-AV-Stamp: zmail-av-1.4.3/250.696.82
-X-ZohoMailClient: External
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 
+The introduction of a padding field in the gpib_board_info_ioctl is
+showing up as initialized data on the stack frame being copyied back
+to userspace in function board_info_ioctl. The simplest fix is to
+initialize the entire struct to zero to ensure all unassigned padding
+fields are zero'd before being copied back to userspace.
 
---boxpunqqsxkyyd4w
-Content-Type: text/plain; protected-headers=v1; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-Subject: Re: [PATCH v2 1/5] dt-bindings: connector: extend ports property to
- model power connections
-MIME-Version: 1.0
+Fixes: b8394732ff0c ("staging: gpib: Add bit and byte padding to ioctl structs")
+Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
+---
+ drivers/staging/gpib/common/gpib_os.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Hi,
+diff --git a/drivers/staging/gpib/common/gpib_os.c b/drivers/staging/gpib/common/gpib_os.c
+index a193d64db033..93ef5f6ce249 100644
+--- a/drivers/staging/gpib/common/gpib_os.c
++++ b/drivers/staging/gpib/common/gpib_os.c
+@@ -1774,7 +1774,7 @@ static int query_board_rsv_ioctl(struct gpib_board *board, unsigned long arg)
+ 
+ static int board_info_ioctl(const struct gpib_board *board, unsigned long arg)
+ {
+-	struct gpib_board_info_ioctl info;
++	struct gpib_board_info_ioctl info = { };
+ 	int retval;
+ 
+ 	info.pad = board->pad;
+-- 
+2.50.0
 
-On Tue, May 20, 2025 at 01:10:25PM -0700, Amit Sunil Dhamne wrote:
-> Hi Rob,
->=20
-> Thanks for your response!
->=20
-> On 5/14/25 12:42 PM, Rob Herring wrote:
-> > On Wed, May 07, 2025 at 06:00:22PM -0700, Amit Sunil Dhamne wrote:
-> >> Extend ports property to model power lines going between connector to
-> >> charger or battery/batteries. As an example, connector VBUS can supply
-> >> power in & out of the battery for a DRP.
-> >>
-> >> Additionally, add ports property to maxim,max33359 controller example.
-> >>
-> >> Signed-off-by: Amit Sunil Dhamne <amitsd@google.com>
-> >> ---
-> >>  .../bindings/connector/usb-connector.yaml          | 20 +++++++++++--=
-----
-> >>  .../devicetree/bindings/usb/maxim,max33359.yaml    | 25 +++++++++++++=
-+++++++++
-> >>  2 files changed, 38 insertions(+), 7 deletions(-)
-> >>
-> >> diff --git a/Documentation/devicetree/bindings/connector/usb-connector=
-=2Eyaml b/Documentation/devicetree/bindings/connector/usb-connector.yaml
-> >> index 11e40d225b9f3a0d0aeea7bf764f1c00a719d615..706094f890026d324e6ece=
-8b0c1e831d04d51eb7 100644
-> >> --- a/Documentation/devicetree/bindings/connector/usb-connector.yaml
-> >> +++ b/Documentation/devicetree/bindings/connector/usb-connector.yaml
-> >> @@ -181,16 +181,16 @@ properties:
-> >> =20
-> >>    port:
-> >>      $ref: /schemas/graph.yaml#/properties/port
-> >> -    description: OF graph bindings modeling a data bus to the connect=
-or, e.g.
-> >> -      there is a single High Speed (HS) port present in this connecto=
-r. If there
-> >> -      is more than one bus (several port, with 'reg' property), they =
-can be grouped
-> >> -      under 'ports'.
-> >> +    description: OF graph binding to model a logical connection betwe=
-en a device
-> >> +      and connector. This connection may represent a data bus or powe=
-r line. For
-> >> +      e.g. a High Speed (HS) data port present in this connector or V=
-BUS line.
-> >> +      If there is more than one connection (several port, with 'reg' =
-property),
-> >> +      they can be grouped under 'ports'.
-> > 'port' and 'port@0' are equivalent. So you can't be changing its=20
-> > definition.
->=20
-> Noted!
->=20
->=20
-> > I'm not sure showing a power connection with the graph is the right=20
-> > approach.
->=20
-> I want to provide some more context and rationale behind using this desig=
-n.
->=20
-> From a hardware perspective:
->=20
-> The max77759/max33359 IC has Type-C port controller, charger, fuel gauge
-> (FG) ICs. The Vbus from the connector goes to/from the TCPC and connects
-> with the charger IP via circuitry & from there on to the battery. The FG
-> is connected to the battery in parallel. As it can be seen that while
-> these IPs are interconnected, there's no direct connection of the fuel
-> gauge & the connector.
->=20
-> For this feature, I am interested in getting the reference to the FG. As
-> per graph description: "...These common bindings do not contain any
-> information about the direction or type of the connections, they just
-> map their existence." This works for my case because I just want the
-> connector to be aware of the Fuel gauge device without imposing a
-> specific directionality in terms of power supplier/supplied. This is
-> also the reason why I didn't use
-> "/schemas/power/supply/power-supply.yaml#power-supplies" binding.
->=20
-> > We have a binding for that already with the regulator binding.
->=20
-> I haven't explored the option of using regulator bindings. But in my
-> case I am interested in fuel gauge and unfortunately, they're modeled as
-> power_supply devices.
-
-=46rom hardware point of view there is no direct connection at all
-between the fuel gauge and the connector. The usual hardware
-connection is
-
-connector -> charger -> battery
-
-With the charger potentially supporting reverse operation to provide
-energy from the battery to the connector (with "battery" I assume
-a "smart" battery, so the raw cells and some kind of fuel gauge).
-
-Thus the following example should properly document the hardware
-connections:
-
----------------------------------------
-typec-connector {
-    /* ... */
-};
-
-charger {
-    /* ... */
-    power-supplies =3D <&connector>;
-};
-
-fuel-gauge {
-    /* ... */
-    power-supplies =3D <&charger>;
-};
----------------------------------------
-
-It means instead of the direct graph lookup for the fuel gauge,
-you would need a function walking through the graph build by the
-power-supplies phandles. But it also means that the DT properly
-describes the hardware instead of adding random graph connections.
-
-Greetings,
-
--- Sebastian
-
-> > Perhaps the connector needs to be a supply. It's already using that=20
-> > binding in the supplying power to the connector case.
->=20
-> Want to clarify, in this case you mean
-> /schemas/regulator/regulator.yaml#*-supply$ right?
->=20
-> Adding to my response above, the reason I don't want to impose a
-> directionality in terms of supplier/supplied is that in case of USB Dual
-> Role Port they're dynamic i.e., when USB is source, the power is
-> supplied out of the battery (battery/FG will be supplier) and in case
-> USB is sink, battery is supplied power. Whether the connector port is in
-> source or sink role is determined on a connection to connection basis.
-> Also, the knowledge of the supply direction is of no consequence for
-> this feature.
->=20
->=20
-> Please let me know what you think.
->=20
-> Thanks,
->=20
-> Amit
->=20
->=20
-> > Rob
->=20
-
---boxpunqqsxkyyd4w
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCgAdFiEE72YNB0Y/i3JqeVQT2O7X88g7+poFAmhZ0EAACgkQ2O7X88g7
-+pomEA//YVUVu98W2c34fvdaBGPXhG5LICkMydDQzHm/ycXUSLBKZdQwKFMoVYrs
-GLUUn8a5VFSCBLfcUSUTN889escHyOEwjNVZlQhGhAuwaq3AVlXPR2QchgPm/JXw
-kE9zcBKbzGk9KMPs/MdlGxF4gHJG2RULAQSYo3i6HgVCIKkPIoUYDMbTLOMBedWu
-9kNCd6JQ0w8y/aWEfE17rwkr5wO8/tEurfBri/5NTOYSHvEZOEddKlIwNis/SZR7
-BMYx8aV1cdIo+90sdyvGZdB6LQ1MbV8eI3xDOtp/8kwpvPUWUnlFmm/We1MOvrAH
-uVX1kflR63hKzTxfYFqyyQV2hCBQYGInT3jocBHYhWLOm5kkmGgODpYS3xthlMdO
-7uiP5fbHVW+SZYfkB8bjUlu3lT9IRLuvJ6KvMEBYsxvmMoANl7ZwXHssRqVTGygy
-UbLnHLdMrVgukw6qq6cgFvbN5JygzUAW4c3+1s4s5vQ0g4bAju+Ym8m25h0F5RRo
-ns9HwYaa9G+BtC/uteHyx9j7NjaSNhbmWOvp7cG+b93X7uPE2ljyvYbiPL0IGand
-W6TDVRP4sZTqL64FU/4G/0iHeBkrMc1ou2CxIMRyOLlmUJepLMpjR8aA3asuHQZ4
-iJZJQoFHn0RgQuAjG6wqSZUJXNtCBhPhDMliv811CFrC9L7SB1I=
-=jjhP
------END PGP SIGNATURE-----
-
---boxpunqqsxkyyd4w--
 
