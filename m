@@ -1,74 +1,144 @@
-Return-Path: <linux-kernel+bounces-699184-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-699181-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C47F3AE52AD
-	for <lists+linux-kernel@lfdr.de>; Mon, 23 Jun 2025 23:46:41 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 542C9AE528F
+	for <lists+linux-kernel@lfdr.de>; Mon, 23 Jun 2025 23:45:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 04F9D7AD3B3
-	for <lists+linux-kernel@lfdr.de>; Mon, 23 Jun 2025 21:45:00 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6CBDD443CE7
+	for <lists+linux-kernel@lfdr.de>; Mon, 23 Jun 2025 21:44:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7B9E321B9C9;
-	Mon, 23 Jun 2025 21:45:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D4B05223DEF;
+	Mon, 23 Jun 2025 21:44:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="u2GywUPD"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="Rcj+I9n6"
+Received: from mail-ed1-f54.google.com (mail-ed1-f54.google.com [209.85.208.54])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9E32A223DCE
-	for <linux-kernel@vger.kernel.org>; Mon, 23 Jun 2025 21:45:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BFC57223339
+	for <linux-kernel@vger.kernel.org>; Mon, 23 Jun 2025 21:44:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750715129; cv=none; b=I/r6W3JdMIQ1MARSBnaiLL8/b0pONTsaILxgQuC7FxBU4amf6tbyKV/9FUZlcP5rIIXv+JfB+nCYjmeo8oEq3CEvRGWoQ4r7Faev2lOJM/xTtmvd1yrII+a8bBIm6pw4jUB5b8TDc8AsGjToZH8ikPA+p5jB4V7njikn6CxBogg=
+	t=1750715096; cv=none; b=nL0GCfcTWk7ucW7GbDh682TsqtwMeOSLUGhJHJHHQ0xELoRoOEnHAm3J4prtcQmriMv36m92Ec2sJYomkft7OeHy4Em/Ocq15nio41pUWLyhfRVJeEgth5m5rGVj1/feJRMPKrm4enLEW8J0Tj0+AabdHhpbs6KtuYG8Bq1p8vc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750715129; c=relaxed/simple;
-	bh=18Au9ytDbTibIjuzR4zOqs5nyomtzAl1JtHW6kDieqo=;
-	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
-	 Mime-Version:Content-Type; b=XOrwxT1KF4pIh2UCP53DfJ7S92JfD/Ckz1Muz1UIkQW3RxdHf8W2/H7mXvQe8t54uU9CK483SvHKkT3OUDpkwHM8/iOJhxkMRonPJsfla4A5GprZDOdyWl5OByFr/rHmV6UkEOqGzLpU63INhIVYgpjip2aqrU6RpxhYWR4UX8A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=u2GywUPD; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 13F12C4CEED;
-	Mon, 23 Jun 2025 21:45:29 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linux-foundation.org;
-	s=korg; t=1750715129;
-	bh=18Au9ytDbTibIjuzR4zOqs5nyomtzAl1JtHW6kDieqo=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=u2GywUPDfzXBr8Aait3ggZAvH5UlvPQc0B1F+44f2xxStPUycjvZachm6Yz6/qnMW
-	 1ThmhialQFv94I5jxq4OvSWb3UjEfxhxxKO4twMUTSaDbHzznSXRgcQEFiWdKXT3bV
-	 v5S9DAtOHY8rA9MMn/HvWEVpqW+0MAQRp1FcwGJo=
-Date: Mon, 23 Jun 2025 14:45:28 -0700
-From: Andrew Morton <akpm@linux-foundation.org>
-To: Davidlohr Bueso <dave@stgolabs.net>
-Cc: mhocko@kernel.org, hannes@cmpxchg.org, roman.gushchin@linux.dev,
- shakeel.butt@linux.dev, yosryahmed@google.com, linux-mm@kvack.org,
- linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 2/4] mm/memcg: make memory.reclaim interface generic
-Message-Id: <20250623144528.19721543236d8a0165df4cad@linux-foundation.org>
-In-Reply-To: <20250623185851.830632-3-dave@stgolabs.net>
-References: <20250623185851.830632-1-dave@stgolabs.net>
-	<20250623185851.830632-3-dave@stgolabs.net>
-X-Mailer: Sylpheed 3.7.0 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1750715096; c=relaxed/simple;
+	bh=HqA16LR6HAWvdlEy3wx9eZOBIMB7ZcD4My374Vzpq4U=;
+	h=From:To:Subject:Date:Message-ID:MIME-Version; b=j/FdGYBg5j42cC5XTgoLg87lgv++2f7rgnyNquOE5a2vogVaG21l5sJMohAZ/YqTp6ORl1ffdIF7coaUBZxz+Ows+zjMfNFS56PdzPWGltINb5p5tpSeD0PJzfr597X3QKE7geU82NwjCQ2VljP/H/aul9bWz+gpyeCNh+CuPvc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=Rcj+I9n6; arc=none smtp.client-ip=209.85.208.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
+Received: by mail-ed1-f54.google.com with SMTP id 4fb4d7f45d1cf-6084dfb4cd5so11099388a12.0
+        for <linux-kernel@vger.kernel.org>; Mon, 23 Jun 2025 14:44:53 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=suse.com; s=google; t=1750715092; x=1751319892; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:to
+         :from:from:to:cc:subject:date:message-id:reply-to;
+        bh=tECQ70x1JM1SCckuRST7a9aJYN9UOBuJJP77Z07Vo14=;
+        b=Rcj+I9n6/EFsI+vmFncrrNcRdNIfIA7o5h7TRp/9WTye5ZWZApO66hmwdk2THD9tSw
+         zV90QuwmYmyio1L1m/JvPHuzQYdwpRHUXVmwv85munbhL02OmDrjdj4dDb1HIbCgEc+T
+         W4cwZKnLdaiOmJ1WVsDfFbEADG6msDZ+zGHHU8R2H8qj0Wh8vExF3j4Lvu+cErjGgDlb
+         BfH/3S6/4JuYBszWG6ISV5JQPf9Zu7YkCySy9I80v/ih+KtN+oQDy2Mez+3BY1aJc8Ls
+         xlIerZ3PVudz+L63s/J2AsUM0wgT8295jicFY2Kvid4Rse8NBY8ckObsENKtftBvBQWR
+         4t0g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1750715092; x=1751319892;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:to
+         :from:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=tECQ70x1JM1SCckuRST7a9aJYN9UOBuJJP77Z07Vo14=;
+        b=Yxuwizn5Soes/bPOkemnyEJ0UDndUlHqG4kdv7jZkFeT99dRb3lxrgoThWJzQVh7AI
+         bBXlU+EdwipxzUCXppmfLDX7EkLVJtwLx8ibC0VAXr0z+zyMLw9LHd9uxDZvITBuGmHY
+         pkSwHcHL2G19I9nBV5SnzeNx5HCnRKuVZA/9oSnX+hQo2SIcJhuuyq53dU/OidpF4QjS
+         MBWRwPN0+DyxkuI3w7BEgw357Fs8gFlx2RtI5OAc2yQbyTDbGy/0mi6xq/FycmZUi6vg
+         VJoLNCx2REyw/xISprt4WxgZoOFIrQoczd/vsucHsgQmHo1lIyr7B4pb+ZtyoZP+dUPv
+         S+6g==
+X-Forwarded-Encrypted: i=1; AJvYcCVnQ+EBHMS3O64J2UcR0BOYQcdmtNwUwp0g1dwKTBQNXW/ZnoqpRp3MigrQlF9r9LC6ahG+7pRXCMF4CdM=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxOmZfqOCA+au9ln2Sl282S4UTqfF21vz/tZ48PVqmhuKm7FtPa
+	9MBpSBGMlTbKpulPcs63CVG2V8KYkWH6+xaMBgMetWW3YI/zf5K3fPQ3+9DD6ScnXCM=
+X-Gm-Gg: ASbGncv6AL/GViFQcLQaIP3jqiV0YUPK722s8Gnbl2s2NgcU3Qc5vfdx8qeeGRLgVdB
+	LYMwDqslDswjBpgDOljnHX1MsgVRAlH6PDWOzmdJHUfacYhH/IcZkPqZxJd5Q4aVHXNxZhMkMvn
+	igbfm67SAMfpySUdeo9j1uE/DwuxTbyWGx80Zu/qUkildRUgRifql1UqaeE7KTxDFp1cltqzpcY
+	S+ErBpIgSMl82RJQdbLFWmoV0ucrdHGW5uyWxR7dALxwYPbRatMPF1pKtS0RfrKHojkVXImJfTs
+	sb0hJhzkS7dCwR9YiQmZqGzxW2yH7YBzkhT+ysRigtvqk3rGYtzvQkynRKZGGqNrOECINH+2HH/
+	hRFOZ7tviyY4+Dt/CJMdRZf4opvVWoaKh5e0ZRoPzQAM=
+X-Google-Smtp-Source: AGHT+IFCBGEMw6diC/0MRBmRK+mfhHRRzOPyJ8RG9tL1So/53qQwBJoVq147ne0xzxnIzQxsdYUCdw==
+X-Received: by 2002:a17:906:d7c6:b0:adf:3cb9:e3b9 with SMTP id a640c23a62f3a-ae0a71f4c6fmr113325866b.3.1750715091959;
+        Mon, 23 Jun 2025 14:44:51 -0700 (PDT)
+Received: from localhost (host-79-23-237-223.retail.telecomitalia.it. [79.23.237.223])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ae0540849a5sm778326766b.99.2025.06.23.14.44.50
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 23 Jun 2025 14:44:51 -0700 (PDT)
+From: Andrea della Porta <andrea.porta@suse.com>
+To: Andrea della Porta <andrea.porta@suse.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Florian Fainelli <florian.fainelli@broadcom.com>,
+	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>,
+	Lorenzo Pieralisi <lpieralisi@kernel.org>,
+	Krzysztof Wilczynski <kw@linux.com>,
+	Bjorn Helgaas <bhelgaas@google.com>,
+	Linus Walleij <linus.walleij@linaro.org>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will@kernel.org>,
+	Bartosz Golaszewski <brgl@bgdev.pl>,
+	Derek Kiernan <derek.kiernan@amd.com>,
+	Dragan Cvetic <dragan.cvetic@amd.com>,
+	Arnd Bergmann <arnd@arndb.de>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Saravana Kannan <saravanak@google.com>,
+	linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	linux-pci@vger.kernel.org,
+	linux-gpio@vger.kernel.org,
+	Masahiro Yamada <masahiroy@kernel.org>,
+	Stefan Wahren <wahrenst@gmx.net>,
+	Herve Codina <herve.codina@bootlin.com>,
+	Luca Ceresoli <luca.ceresoli@bootlin.com>,
+	Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+	Andrew Lunn <andrew@lunn.ch>,
+	Phil Elwell <phil@raspberrypi.com>,
+	Dave Stevenson <dave.stevenson@raspberrypi.com>,
+	kernel-list@raspberrypi.com,
+	Matthias Brugger <mbrugger@suse.com>
+Subject: [PATCH v2 stblinux/next 1/2] dt-bindings: clock: rp1: Add missing MIPI DSI defines
+Date: Mon, 23 Jun 2025 23:46:27 +0200
+Message-ID: <c20066500908db854aa4816b40e956296bab526a.1750714412.git.andrea.porta@suse.com>
+X-Mailer: git-send-email 2.44.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 
-On Mon, 23 Jun 2025 11:58:49 -0700 Davidlohr Bueso <dave@stgolabs.net> wrote:
+Declare the positional index for the RP1 MIPI clocks.
 
-> This adds a general call for both parsing as well as the
-> common reclaim semantics. memcg is still the only user and
-> no change in semantics.
-> 
-> +int user_proactive_reclaim(char *buf,
-> +			   struct mem_cgroup *memcg, pg_data_t *pgdat);
+Signed-off-by: Andrea della Porta <andrea.porta@suse.com>
+---
+ include/dt-bindings/clock/raspberrypi,rp1-clocks.h | 4 ++++
+ 1 file changed, 4 insertions(+)
 
-Feeling nitty, is this a good name for it?  It's hard to imagine what a
-function called "user_proactive_reclaim" actually does.
+diff --git a/include/dt-bindings/clock/raspberrypi,rp1-clocks.h b/include/dt-bindings/clock/raspberrypi,rp1-clocks.h
+index 248efb895f35..7915fb8197bf 100644
+--- a/include/dt-bindings/clock/raspberrypi,rp1-clocks.h
++++ b/include/dt-bindings/clock/raspberrypi,rp1-clocks.h
+@@ -58,4 +58,8 @@
+ #define RP1_PLL_VIDEO_PRI_PH		43
+ #define RP1_PLL_AUDIO_TERN		44
+ 
++/* MIPI clocks managed by the DSI driver */
++#define RP1_CLK_MIPI0_DSI_BYTECLOCK	45
++#define RP1_CLK_MIPI1_DSI_BYTECLOCK	46
++
+ #endif
+-- 
+2.35.3
 
-That it isn't documented isn't helpful either!
 
