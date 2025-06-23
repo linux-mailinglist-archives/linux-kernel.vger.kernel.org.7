@@ -1,88 +1,105 @@
-Return-Path: <linux-kernel+bounces-698474-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-698478-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 597F1AE4537
-	for <lists+linux-kernel@lfdr.de>; Mon, 23 Jun 2025 15:49:38 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 72F95AE4543
+	for <lists+linux-kernel@lfdr.de>; Mon, 23 Jun 2025 15:50:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E0620188DE60
-	for <lists+linux-kernel@lfdr.de>; Mon, 23 Jun 2025 13:45:24 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id DB9EB1888846
+	for <lists+linux-kernel@lfdr.de>; Mon, 23 Jun 2025 13:46:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7B74825334B;
-	Mon, 23 Jun 2025 13:45:04 +0000 (UTC)
-Received: from mail-il1-f198.google.com (mail-il1-f198.google.com [209.85.166.198])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B4CE2255F24;
+	Mon, 23 Jun 2025 13:45:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="jfRqoInp"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.10])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A1F5124DD0B
-	for <linux-kernel@vger.kernel.org>; Mon, 23 Jun 2025 13:45:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.198
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7B68A250C06;
+	Mon, 23 Jun 2025 13:45:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.10
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750686304; cv=none; b=L+HmthI3O73faujqgHWkDgnu6w5SE4OYih2bUsdcPfqfv8cXiS4541a6Zi0m6/7XAe0aR5gm0lO6hWIlVYRnROeMFhU3Rr2CK+TUCUFyv4lh4L0S8kZSneAOgfmKLmGO3+ArBy/K2vUr9mfuV8ADOavAfEVuwksxXfdgq0ue84g=
+	t=1750686331; cv=none; b=fyyndAQsJWcnoI5Tk2rEsV8fjOrbYbK2xCXm89A/s0zy0qzcoMVNSgR27Ip+kWeqKKrpdyy79oG1h8s6AsucPPXVg+iqHOZ9Jame4/vK+F353Ykpi/rEZTf+CIyvOQaT/marH6k624RXrmudpWB0nbvWtNgxQXI2Levxc7oBSIs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750686304; c=relaxed/simple;
-	bh=A5GaEWZExJrrCgH5AOTh2LEV1QSCdggk6Ok2ADs3aIo=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=OewzgCfyzkcqp9uJTcsDhMZQxncYt5oHrJs7z8ijiCoBEbUD1vCtfgJnfDP+euQlAhbd375hVX8Z22BzqOp9RpELglkImKS95oaMzaxX7z6bYWZ0Ge5OA3u3DYNoPQ14XMhFh8aBAUnQbmFgyDJybk11DgZTzQyAxpFm03sJaxQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.198
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f198.google.com with SMTP id e9e14a558f8ab-3ddafe52d04so135740765ab.1
-        for <linux-kernel@vger.kernel.org>; Mon, 23 Jun 2025 06:45:02 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1750686302; x=1751291102;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=IKdbYS3JVAu/GQbUNVJCZZBsfueGPkGVSixRPRpLlYk=;
-        b=aSFLKAi7M1Ogj5TZYFBgIXUypygLS35BlRxc5ed7YXnxJuxfJ99HzKkWynVKrm84Ia
-         LvcO0YRSSQyH3ADygGSinVcquUxfWphbO97qpZ5c8Er7z0nVBhYhSQeKq6HQ+zhSKs6O
-         +noXnO6eKmnCeTOskGXdWwAz7zP0GQ12BPjJ3OuVoGb1vRWUbJPwT2M/ZTORW+yloGhu
-         K6P814w/Ro1nvMZCEeQmQrVzX7pU6qAzJuiv6n5WHCXSeo7NZ1gCWMAoH5uMsTM14DDc
-         pHhyBqOkwsM3fA5KddQU90ttunaOL2jzuwws1ZuISh4MrXoTm+xEiK8A7lwhCXZd1S6u
-         qvGA==
-X-Forwarded-Encrypted: i=1; AJvYcCW0x0RVE+0VP32Vc9my6vHXwpjWqonIMWlGjYBBAa0+P7ign9xqYgHycL0LFO1As4HhI3UZEltjC8TcTe4=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzQFNje9dcpKjUk/U9dUDeYEjWJej994bnpConw4yHKxeNANCaO
-	pI43U3F4eA0Bi9mBo7m478hAMJQF9fSne8aZjn/qDnCKBub4R/I+2sgqLczOyJeYk9L1E/M65VL
-	WKA9sqWK9HwSKBtwQ6TiJiIqvLUigJhi5u1hflNa21FMZqLSRkWT+vHmML7g=
-X-Google-Smtp-Source: AGHT+IH4YLFhK4GAum0M6UdBtv+ihwuPUrpqtGN/omSn4BPwa4gz+qsShej5nKRy7BsgislpmHh06I+PtOEnH8945PKjEAXwTe+2
+	s=arc-20240116; t=1750686331; c=relaxed/simple;
+	bh=cRXDOmdhqPhgJle2dQbSYvXJTReLYwhaFxGY9pmm6Zk=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=EEv1Av2Ke3T+X3Zbm8ZHD7aMkkaLcdqV3MYAfr5CxwYIkMTmecrNlO2ZGKQmUtbq9h68hMg3fse+0wEqbunKBvvg4Di21+afqqGRS3SY9njwQwKMgkEdhL9CrCFyfA9BAVAtavGtTEbSeZRb+nKWUya0uOHLLuzOv1wf5cT66P0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=jfRqoInp; arc=none smtp.client-ip=198.175.65.10
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1750686330; x=1782222330;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=cRXDOmdhqPhgJle2dQbSYvXJTReLYwhaFxGY9pmm6Zk=;
+  b=jfRqoInpadg9yrR+OKw8fYb63zv8zTtTP+/9Vx3BVh3G0SiFcF519PzA
+   Id4dcPD4z55K+Co48ujglyqkGffay44e/nuTO63LTeIrWyQ/kikAjruwo
+   Gk378Ye1CuAf4G81PN/ai31woskbplVrMU5JaBth2fH8hBYe23ELRaiG5
+   4OaBVcjN+Cw2c25MlpI7APBsv5iHhqKYyQvv5el5gnbekvCNmxo89voCU
+   tNOr9gauyGXjSZTHVH1zbDf1xDK+eVe/S5WV3jw0iPFsZQpn9n4129eaS
+   JFw+Ds5Nm5PLIqGvQKoiQdCntz0nQ2yqWNQwTctE6cVv6FJXq2s+h+0L+
+   w==;
+X-CSE-ConnectionGUID: tfeMo5TWSjWWlD+bBwvw/w==
+X-CSE-MsgGUID: XJCIXu8AQ/Sm4pKslPL0TQ==
+X-IronPort-AV: E=McAfee;i="6800,10657,11473"; a="70320908"
+X-IronPort-AV: E=Sophos;i="6.16,258,1744095600"; 
+   d="scan'208";a="70320908"
+Received: from orviesa002.jf.intel.com ([10.64.159.142])
+  by orvoesa102.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 23 Jun 2025 06:45:29 -0700
+X-CSE-ConnectionGUID: +TTq4MkgRFqkYtHF9GUaGQ==
+X-CSE-MsgGUID: /0j1rY1/Rly7nyaDIPOgbg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.16,258,1744095600"; 
+   d="scan'208";a="182651859"
+Received: from black.fi.intel.com ([10.237.72.28])
+  by orviesa002.jf.intel.com with ESMTP; 23 Jun 2025 06:45:27 -0700
+Received: by black.fi.intel.com (Postfix, from userid 1003)
+	id 9CD23108; Mon, 23 Jun 2025 16:45:25 +0300 (EEST)
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To: Randolph Ha <rha051117@gmail.com>,
+	Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+	linux-i2c@vger.kernel.org,
+	linux-acpi@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Cc: Wolfram Sang <wsa+renesas@sang-engineering.com>,
+	Mika Westerberg <westeri@kernel.org>
+Subject: [PATCH v1 1/1] i2c: acpi: Replace custom code with device_match_acpi_handle()
+Date: Mon, 23 Jun 2025 16:45:21 +0300
+Message-ID: <20250623134521.158447-1-andriy.shevchenko@linux.intel.com>
+X-Mailer: git-send-email 2.47.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:2188:b0:3dc:875e:ed7e with SMTP id
- e9e14a558f8ab-3de38cc052amr130743005ab.12.1750686301755; Mon, 23 Jun 2025
- 06:45:01 -0700 (PDT)
-Date: Mon, 23 Jun 2025 06:45:01 -0700
-In-Reply-To: <tencent_C2882DF56C089420E9D2EC4ECD707B926F0A@qq.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <68595a5d.a00a0220.2e5631.0024.GAE@google.com>
-Subject: Re: [syzbot] [kernel?] KMSAN: kernel-infoleak in vmci_host_unlocked_ioctl
- (3)
-From: syzbot <syzbot+9b9124ae9b12d5af5d95@syzkaller.appspotmail.com>
-To: eadavis@qq.com, linux-kernel@vger.kernel.org, 
-	syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 
-Hello,
+Since driver core provides a generic device_match_acpi_handle()
+we may replace the custom code with it.
 
-syzbot has tested the proposed patch and the reproducer did not trigger any issue:
+Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+---
+ drivers/i2c/i2c-core-acpi.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Reported-by: syzbot+9b9124ae9b12d5af5d95@syzkaller.appspotmail.com
-Tested-by: syzbot+9b9124ae9b12d5af5d95@syzkaller.appspotmail.com
+diff --git a/drivers/i2c/i2c-core-acpi.c b/drivers/i2c/i2c-core-acpi.c
+index d2499f302b50..3445cc3b476b 100644
+--- a/drivers/i2c/i2c-core-acpi.c
++++ b/drivers/i2c/i2c-core-acpi.c
+@@ -250,7 +250,7 @@ static int i2c_acpi_get_info(struct acpi_device *adev,
+ 
+ 	if (adapter) {
+ 		/* The adapter must match the one in I2cSerialBus() connector */
+-		if (ACPI_HANDLE(&adapter->dev) != lookup.adapter_handle)
++		if (!device_match_acpi_handle(&adapter->dev, lookup.adapter_handle))
+ 			return -ENODEV;
+ 	} else {
+ 		struct acpi_device *adapter_adev;
+-- 
+2.47.2
 
-Tested on:
-
-commit:         86731a2a Linux 6.16-rc3
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=12553b0c580000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=595d344ff0b23ac5
-dashboard link: https://syzkaller.appspot.com/bug?extid=9b9124ae9b12d5af5d95
-compiler:       Debian clang version 20.1.6 (++20250514063057+1e4d39e07757-1~exp1~20250514183223.118), Debian LLD 20.1.6
-patch:          https://syzkaller.appspot.com/x/patch.diff?x=106e3b0c580000
-
-Note: testing is done by a robot and is best-effort only.
 
