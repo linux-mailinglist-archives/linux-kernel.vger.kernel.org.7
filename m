@@ -1,208 +1,104 @@
-Return-Path: <linux-kernel+bounces-697428-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-697426-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 34552AE33F9
-	for <lists+linux-kernel@lfdr.de>; Mon, 23 Jun 2025 05:32:14 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 047FBAE33F2
+	for <lists+linux-kernel@lfdr.de>; Mon, 23 Jun 2025 05:27:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4D13D3A6A1B
-	for <lists+linux-kernel@lfdr.de>; Mon, 23 Jun 2025 03:31:48 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B28E47A6772
+	for <lists+linux-kernel@lfdr.de>; Mon, 23 Jun 2025 03:25:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 832B919CC11;
-	Mon, 23 Jun 2025 03:32:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="PC72J30s"
-Received: from out30-99.freemail.mail.aliyun.com (out30-99.freemail.mail.aliyun.com [115.124.30.99])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 23AF81B0402;
+	Mon, 23 Jun 2025 03:26:58 +0000 (UTC)
+Received: from dggsgout11.his.huawei.com (dggsgout11.his.huawei.com [45.249.212.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3CC7123774;
-	Mon, 23 Jun 2025 03:32:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.99
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6064333E1;
+	Mon, 23 Jun 2025 03:26:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750649525; cv=none; b=CfANIKEzfnLTpAtqaic+44bdhOoArK+Aq9fAVn5lzSizYTcOH0dNy4RQhzRa7iNyQRIboU3e/LSDp/chFkXAn4GJHCcZCUGWJjaH0aibrA6hr1j/EZmW+Tie8feivOQEmTR871ET64KR3CFFQyR4xFUA3L3lFy3woVUTHX7jO/E=
+	t=1750649217; cv=none; b=PptiwfAVMPMYsTx5jZwXBMh5fuq0ebgQZVU1BRwr5bAKb+WVwoYf/AKaT6NFg5XSCnWDbgE0L4JYw3UpxvDntdLDNrpQfmT0Jkkn/15HX29LWfgKwqflPAHnTLE1imVacen7498vhkzxnt1zAFLiPF+Wh+XDQY/OP0SDvaHe1fY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750649525; c=relaxed/simple;
-	bh=ptmrSPw4u/sC94iu8etg+3UM6WuNpNyczzEblTaE4dU=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=APzoNKSjAYNrJGWs74wAU8+xdmCzAX8n1dKggBerUTwbmZS8qulL27cCAZlNRuvVJd+YJHjcJHYV/CjXU1/jLrrho5IJwCzXlcNXRFTx6iRVN7kZ47c3j6ub8ViWqCuW04owve6cL0ZH7k0WwyHHvJUxbx/nkp1k9TfB1FbQ0Js=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=PC72J30s; arc=none smtp.client-ip=115.124.30.99
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
-DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
-	d=linux.alibaba.com; s=default;
-	t=1750649514; h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type;
-	bh=wYHutWc8bo/cobGKcb79yoay4X6hZe8yZdDY2OXxASI=;
-	b=PC72J30s/Chi9U2r21tRhw0CJyKfvnQYy3laKGGYLWBnagJ0qymnlQqx/u9TJHCtAt64Q5ENacqtoYlDMyqkjft5opdps0JwPH329R8h+c0Q2NNjdTpauBMk2eYGkG6FQLI7AfyXLVz8yzOkBmGbc+9cW8f5yX3ZUwhjYDk2aZE=
-Received: from 30.74.144.128(mailfrom:baolin.wang@linux.alibaba.com fp:SMTPD_---0WeSN70M_1750649193 cluster:ay36)
-          by smtp.aliyun-inc.com;
-          Mon, 23 Jun 2025 11:26:33 +0800
-Message-ID: <f90a6072-b75a-40df-a58c-9a98e9ca10ad@linux.alibaba.com>
-Date: Mon, 23 Jun 2025 11:26:32 +0800
+	s=arc-20240116; t=1750649217; c=relaxed/simple;
+	bh=WdmwsV4RrM53+CBdi66ef+Ad/UizQrCayWPkdNZ5Ado=;
+	h=Subject:To:Cc:References:From:Message-ID:Date:MIME-Version:
+	 In-Reply-To:Content-Type; b=STJyxAmpXmXnTGPjdDUD+wqBKd7pnq2ELzfeTnHQHE4KoNGkBtzEngUGLehwc6wdx7bdYfY3/PJcqc/O4gTZkb+WUuIwYJ26Rawp9slpnnpSmxFy8axC4EwwsZjE5LlCzaKSPP0J9fgxn0yggr/1exIBU/I4wynUJ93JasYlMhI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
+Received: from mail.maildlp.com (unknown [172.19.163.235])
+	by dggsgout11.his.huawei.com (SkyGuard) with ESMTPS id 4bQYQt4QtXzYQtxQ;
+	Mon, 23 Jun 2025 11:26:46 +0800 (CST)
+Received: from mail02.huawei.com (unknown [10.116.40.128])
+	by mail.maildlp.com (Postfix) with ESMTP id 8945B1A0C2F;
+	Mon, 23 Jun 2025 11:26:45 +0800 (CST)
+Received: from [10.174.179.143] (unknown [10.174.179.143])
+	by APP4 (Coremail) with SMTP id gCh0CgB3219zyVhohsx9QQ--.62896S3;
+	Mon, 23 Jun 2025 11:26:45 +0800 (CST)
+Subject: Re: [PATCH] md/raid1: change r1conf->r1bio_pool to a pointer type
+To: Wang Jinchao <wangjinchao600@gmail.com>
+Cc: linux-raid@vger.kernel.org, Song Liu <song@kernel.org>,
+ linux-kernel@vger.kernel.org, "yukuai (C)" <yukuai3@huawei.com>
+References: <20250618114120.130584-1-wangjinchao600@gmail.com>
+ <35358897-5009-4843-8234-136bd5756e0b@gmail.com>
+From: Yu Kuai <yukuai1@huaweicloud.com>
+Message-ID: <dd532c80-2597-deff-4a3e-3d8ce88cbc19@huaweicloud.com>
+Date: Mon, 23 Jun 2025 11:26:43 +0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.9.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 1/4] mm/shmem, swap: improve cached mTHP handling and
- fix potential hung
-To: Kairui Song <kasong@tencent.com>, linux-mm@kvack.org
-Cc: Andrew Morton <akpm@linux-foundation.org>, Hugh Dickins
- <hughd@google.com>, Matthew Wilcox <willy@infradead.org>,
- Kemeng Shi <shikemeng@huaweicloud.com>, Chris Li <chrisl@kernel.org>,
- Nhat Pham <nphamcs@gmail.com>, Baoquan He <bhe@redhat.com>,
- Barry Song <baohua@kernel.org>, linux-kernel@vger.kernel.org,
- stable@vger.kernel.org
-References: <20250619175538.15799-1-ryncsn@gmail.com>
- <20250619175538.15799-2-ryncsn@gmail.com>
-From: Baolin Wang <baolin.wang@linux.alibaba.com>
-In-Reply-To: <20250619175538.15799-2-ryncsn@gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+In-Reply-To: <35358897-5009-4843-8234-136bd5756e0b@gmail.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:gCh0CgB3219zyVhohsx9QQ--.62896S3
+X-Coremail-Antispam: 1UD129KBjvdXoWrurWDXr18Gw1DXF1fuFWfXwb_yoWDGrc_CF
+	Wrtay7KF43WFWxJFy2yry3Zwn8trW5AryDZF40qr45X395JFW5Jrn7tr97Wrs3CayrK3Z0
+	kw4UWa17A39aqjkaLaAFLSUrUUUUjb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
+	9fnUUIcSsGvfJTRUUUb4AYFVCjjxCrM7AC8VAFwI0_Jr0_Gr1l1xkIjI8I6I8E6xAIw20E
+	Y4v20xvaj40_Wr0E3s1l1IIY67AEw4v_Jr0_Jr4l8cAvFVAK0II2c7xJM28CjxkF64kEwV
+	A0rcxSw2x7M28EF7xvwVC0I7IYx2IY67AKxVWDJVCq3wA2z4x0Y4vE2Ix0cI8IcVCY1x02
+	67AKxVW8Jr0_Cr1UM28EF7xvwVC2z280aVAFwI0_GcCE3s1l84ACjcxK6I8E87Iv6xkF7I
+	0E14v26rxl6s0DM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI64kE6c02F40E
+	x7xfMcIj6xIIjxv20xvE14v26r1j6r18McIj6I8E87Iv67AKxVWUJVW8JwAm72CE4IkC6x
+	0Yz7v_Jr0_Gr1lF7xvr2IY64vIr41lc7I2V7IY0VAS07AlzVAYIcxG8wCY1x0262kKe7AK
+	xVWUAVWUtwCF04k20xvY0x0EwIxGrwCFx2IqxVCFs4IE7xkEbVWUJVW8JwC20s026c02F4
+	0E14v26r1j6r18MI8I3I0E7480Y4vE14v26r106r1rMI8E67AF67kF1VAFwI0_JF0_Jw1l
+	IxkGc2Ij64vIr41lIxAIcVC0I7IYx2IY67AKxVWUJVWUCwCI42IY6xIIjxv20xvEc7CjxV
+	AFwI0_Jr0_Gr1lIxAIcVCF04k26cxKx2IYs7xG6r1j6r1xMIIF0xvEx4A2jsIE14v26r1j
+	6r4UMIIF0xvEx4A2jsIEc7CjxVAFwI0_Jr0_GrUvcSsGvfC2KfnxnUUI43ZEXa7IU80fO7
+	UUUUU==
+X-CM-SenderInfo: 51xn3trlr6x35dzhxuhorxvhhfrp/
 
-Hi Kairui,
+Hi,
 
-On 2025/6/20 01:55, Kairui Song wrote:
-> From: Kairui Song <kasong@tencent.com>
+在 2025/06/23 11:18, Wang Jinchao 写道:
+> Comparing mempool_create_kmalloc_pool() and mempool_create(), the former 
+> requires the pool element size as a parameter, while the latter uses 
+> r1bio_pool_alloc() to allocate new elements, with the size calculated 
+> based on poolinfo->raid_disks.
+> The key point is poolinfo, which is used for both r1bio_pool and 
+> r1buf_pool.
+> If we change from mempool_create() to mempool_create_kmalloc_pool(), we 
+> would need to introduce a new concept, such as r1bio_pool_size, and 
+> store it somewhere. In this case, the original conf->poolinfo would lose 
+> its meaning and become just r1buf_poolinfo.
+> So I think keeping poolinfo is a better fit for the pool in RAID1.
 > 
-> The current swap-in code assumes that, when a swap entry in shmem
-> mapping is order 0, its cached folios (if present) must be order 0
-> too, which turns out not always correct.
-> 
-> The problem is shmem_split_large_entry is called before verifying the
-> folio will eventually be swapped in, one possible race is:
-> 
->      CPU1                          CPU2
-> shmem_swapin_folio
-> /* swap in of order > 0 swap entry S1 */
->    folio = swap_cache_get_folio
->    /* folio = NULL */
->    order = xa_get_order
->    /* order > 0 */
->    folio = shmem_swap_alloc_folio
->    /* mTHP alloc failure, folio = NULL */
->    <... Interrupted ...>
->                                   shmem_swapin_folio
->                                   /* S1 is swapped in */
->                                   shmem_writeout
->                                   /* S1 is swapped out, folio cached */
->    shmem_split_large_entry(..., S1)
->    /* S1 is split, but the folio covering it has order > 0 now */
-> 
-> Now any following swapin of S1 will hang: `xa_get_order` returns 0,
-> and folio lookup will return a folio with order > 0. The
-> `xa_get_order(&mapping->i_pages, index) != folio_order(folio)` will
-> always return false causing swap-in to return -EEXIST.
-> 
-> And this looks fragile. So fix this up by allowing seeing a larger folio
-> in swap cache, and check the whole shmem mapping range covered by the
-> swapin have the right swap value upon inserting the folio. And drop
-> the redundant tree walks before the insertion.
-> 
-> This will actually improve the performance, as it avoided two redundant
-> Xarray tree walks in the hot path, and the only side effect is that in
-> the failure path, shmem may redundantly reallocate a few folios
-> causing temporary slight memory pressure.
-> 
-> And worth noting, it may seems the order and value check before
-> inserting might help reducing the lock contention, which is not true.
-> The swap cache layer ensures raced swapin will either see a swap cache
-> folio or failed to do a swapin (we have SWAP_HAS_CACHE bit even if
-> swap cache is bypassed), so holding the folio lock and checking the
-> folio flag is already good enough for avoiding the lock contention.
-> The chance that a folio passes the swap entry value check but the
-> shmem mapping slot has changed should be very low.
 
-Thanks for fixing the issue. Sadly, I haven't reproduced this issue from 
-my previous test cases :(
+I said multiple times it's a fixed size and won't change, you don't need
+to store it. Not sure if you get this. :(
 
-And I have a question below.
+conf->r1bio_pool = mempool_create_kmalloc_pool(NR_RAID_BIOS,
+			offsetof(struct r1bio, bios[mddev->raid_disks *2]);
 
-> Cc: stable@vger.kernel.org
-> Fixes: 809bc86517cc ("mm: shmem: support large folio swap out")
-> Signed-off-by: Kairui Song <kasong@tencent.com>
-> Reviewed-by: Kemeng Shi <shikemeng@huaweicloud.com>
-> ---
->   mm/shmem.c | 30 +++++++++++++++++++++---------
->   1 file changed, 21 insertions(+), 9 deletions(-)
-> 
-> diff --git a/mm/shmem.c b/mm/shmem.c
-> index eda35be2a8d9..4e7ef343a29b 100644
-> --- a/mm/shmem.c
-> +++ b/mm/shmem.c
-> @@ -884,7 +884,9 @@ static int shmem_add_to_page_cache(struct folio *folio,
->   				   pgoff_t index, void *expected, gfp_t gfp)
->   {
->   	XA_STATE_ORDER(xas, &mapping->i_pages, index, folio_order(folio));
-> -	long nr = folio_nr_pages(folio);
-> +	unsigned long nr = folio_nr_pages(folio);
-> +	swp_entry_t iter, swap;
-> +	void *entry;
->   
->   	VM_BUG_ON_FOLIO(index != round_down(index, nr), folio);
->   	VM_BUG_ON_FOLIO(!folio_test_locked(folio), folio);
-> @@ -896,14 +898,24 @@ static int shmem_add_to_page_cache(struct folio *folio,
->   
->   	gfp &= GFP_RECLAIM_MASK;
->   	folio_throttle_swaprate(folio, gfp);
-> +	swap = iter = radix_to_swp_entry(expected);
->   
->   	do {
->   		xas_lock_irq(&xas);
-> -		if (expected != xas_find_conflict(&xas)) {
-> -			xas_set_err(&xas, -EEXIST);
-> -			goto unlock;
-> +		xas_for_each_conflict(&xas, entry) {
-> +			/*
-> +			 * The range must either be empty, or filled with
-> +			 * expected swap entries. Shmem swap entries are never
-> +			 * partially freed without split of both entry and
-> +			 * folio, so there shouldn't be any holes.
-> +			 */
-> +			if (!expected || entry != swp_to_radix_entry(iter)) {
-> +				xas_set_err(&xas, -EEXIST);
-> +				goto unlock;
-> +			}
-> +			iter.val += 1 << xas_get_order(&xas);
->   		}
-> -		if (expected && xas_find_conflict(&xas)) {
-> +		if (expected && iter.val - nr != swap.val) {
->   			xas_set_err(&xas, -EEXIST);
->   			goto unlock;
->   		}
-> @@ -2323,7 +2335,7 @@ static int shmem_swapin_folio(struct inode *inode, pgoff_t index,
->   			error = -ENOMEM;
->   			goto failed;
->   		}
-> -	} else if (order != folio_order(folio)) {
-> +	} else if (order > folio_order(folio)) {
->   		/*
->   		 * Swap readahead may swap in order 0 folios into swapcache
->   		 * asynchronously, while the shmem mapping can still stores
-> @@ -2348,15 +2360,15 @@ static int shmem_swapin_folio(struct inode *inode, pgoff_t index,
->   
->   			swap = swp_entry(swp_type(swap), swp_offset(swap) + offset);
->   		}
-> +	} else if (order < folio_order(folio)) {
-> +		swap.val = round_down(swp_type(swap), folio_order(folio));
-
-Why rounding down the swap type? do you mean rounding down the swap offset?
-
->   	}
->   
->   alloced:
->   	/* We have to do this with folio locked to prevent races */
->   	folio_lock(folio);
->   	if ((!skip_swapcache && !folio_test_swapcache(folio)) ||
-> -	    folio->swap.val != swap.val ||
-> -	    !shmem_confirm_swap(mapping, index, swap) ||
-> -	    xa_get_order(&mapping->i_pages, index) != folio_order(folio)) {
-> +	    folio->swap.val != swap.val) {
->   		error = -EEXIST;
->   		goto unlock;
->   	}
+Thanks,
+Kuai
 
 
