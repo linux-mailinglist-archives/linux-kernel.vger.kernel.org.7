@@ -1,126 +1,147 @@
-Return-Path: <linux-kernel+bounces-698140-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-698142-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7EE19AE3DBB
-	for <lists+linux-kernel@lfdr.de>; Mon, 23 Jun 2025 13:14:19 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id D1CA1AE3DC1
+	for <lists+linux-kernel@lfdr.de>; Mon, 23 Jun 2025 13:16:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 30EC318975D7
-	for <lists+linux-kernel@lfdr.de>; Mon, 23 Jun 2025 11:14:31 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A8EE41897615
+	for <lists+linux-kernel@lfdr.de>; Mon, 23 Jun 2025 11:17:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8BB9023D2B6;
-	Mon, 23 Jun 2025 11:14:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7926723F403;
+	Mon, 23 Jun 2025 11:16:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="X5pyvNLK"
-Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7B25119F480;
-	Mon, 23 Jun 2025 11:14:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=13.77.154.182
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="RCTRSHQw"
+Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AE448231C8D
+	for <linux-kernel@vger.kernel.org>; Mon, 23 Jun 2025 11:16:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750677247; cv=none; b=nJHE8u9Cenjp2mWBKW+n+eO6wg3v7RUYmyFwl3CYnXs4wwTEr0IBzUru82OWeBlNzyvVnQ3CJtquOu671pTyneipvuI3jItiTnL6z+iA4gbp7pm6H4k3+0Ua4jHL+z24vpIdafh9gu7n1mrPNkiREesdE9P66trycVJZzqGsSpY=
+	t=1750677399; cv=none; b=Fam25MiFlbVJzTuZ+EUUazoaLnSpkJp6qyBFweFcZogsBhYBswn37tqetdck5JtCrPz0/aaU7ITGq0t6lQ2Ptlq91KQvMSDfrEWgCneJuE4LOfJUS+TCG4iGe/jbWn3B97BlHIejnpyrGkubsVQMjTPjt8dXjcW0bHg+pVWIhMs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750677247; c=relaxed/simple;
-	bh=sIf+y3eps6fWxm877h1GGA65xOw8i21b2qA+L/pYwMk=;
-	h=From:To:Subject:Date:Message-Id; b=qhUWQiqDTtxy9a9AyAIeMcLJupoNBhrSDM8leygn2Ydw7p9d1b/19aUcEKpqm21hAK8JcEAIoz/O+wUtXnYw1uJYoQRR/fNdt17pnAhlfkmxx5pUNM+Ow4PHiobnaFSpFf+6nAHVHATksSnXUSA8M5cLz1douwnHQ7OSeIgntXQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com; spf=pass smtp.mailfrom=linux.microsoft.com; dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b=X5pyvNLK; arc=none smtp.client-ip=13.77.154.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.microsoft.com
-Received: by linux.microsoft.com (Postfix, from userid 1173)
-	id E8E862117FA8; Mon, 23 Jun 2025 04:14:03 -0700 (PDT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com E8E862117FA8
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
-	s=default; t=1750677243;
-	bh=TcrNOqs7qfoyYxnhBaQ5mBizC/Ht7aSG3QI7fMcH/nI=;
-	h=From:To:Subject:Date:From;
-	b=X5pyvNLKwM486Hf5mMXl3Urt2vxVgDmqRII2KqoOYOhubYVWd99oybg9M/sMIYu9n
-	 uLCKkL9jrOr888gxv/5VsDeWBcglceDSErzDWvarqpCJgmLyyiguvUqEKiMHeYWucJ
-	 g/radS4rXH4OxbEo7DgNGIvwQiEk42NHB+rrdMOU=
-From: Erni Sri Satya Vennela <ernis@linux.microsoft.com>
-To: kys@microsoft.com,
-	haiyangz@microsoft.com,
-	wei.liu@kernel.org,
-	decui@microsoft.com,
-	andrew+netdev@lunn.ch,
-	davem@davemloft.net,
-	edumazet@google.com,
-	kuba@kernel.org,
-	pabeni@redhat.com,
-	shradhagupta@linux.microsoft.com,
-	longli@microsoft.com,
-	kotaranov@microsoft.com,
-	lorenzo@kernel.org,
-	shirazsaleem@microsoft.com,
-	ernis@linux.microsoft.com,
-	schakrabarti@linux.microsoft.com,
-	linux-hyperv@vger.kernel.org,
-	netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH net-next] net: mana: Fix build errors when CONFIG_NET_SHAPER is disabled
-Date: Mon, 23 Jun 2025 04:14:01 -0700
-Message-Id: <1750677241-1504-1-git-send-email-ernis@linux.microsoft.com>
-X-Mailer: git-send-email 1.8.3.1
+	s=arc-20240116; t=1750677399; c=relaxed/simple;
+	bh=DYNqBNUlWgKAuEVOS77tdc0ByrFSa87MJlxXA+bR9/8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=iVIgUXk6na8VUfTN7RI7aWHSZVeYbQeOO5qPuTu1f/0QfZAMln6mWtf0y7EBJqt3sOo+j+ZVMexAG4vOkXLun5n0BE/luugaJTrLJDCj3VT5cPfWNSiLkj2kMfhSzxtBifPWg4/AKiHbnODS7pb398LaLJLtgv/ZiPneD5Z6xjs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=RCTRSHQw; arc=none smtp.client-ip=90.155.50.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=FLmwIsPITEhQQnQYQD3b/uMa0DBJuudsbqTBC6gMFw8=; b=RCTRSHQwiDz31/tj4iZJ7P086H
+	4s0nkNqFxwSjdrGYF2J9sV9/831UqffpQhR7DuB8ypTiyeXoHSlqFg3g9si2K5PpSfjtKHimoxf3M
+	dMBTtDd04H4q9+SznOZWZlKUH8SNS37GiD4sOP83eKaLOJtSp9yzbc01sqVsA0v+QEYyoGV/n+22i
+	CYhjkXUYA2OwKdnFp8JO9uXTvpPfVEwwk90w7WR71H6pdgIDJ02h/qog4T7fj9c6Ivj9F+Bk97jaz
+	v2XWaMSpw9k3T1CYMS0rRZOEU6GhGHyGz8m4dXUcjXOfs+8DP18L762VoljhRAzT2roGcaYKAV9OL
+	FMcfLz0A==;
+Received: from 77-249-17-252.cable.dynamic.v4.ziggo.nl ([77.249.17.252] helo=noisy.programming.kicks-ass.net)
+	by casper.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
+	id 1uTfA5-00000003EHW-18yT;
+	Mon, 23 Jun 2025 11:16:29 +0000
+Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
+	id 68B52307E51; Mon, 23 Jun 2025 13:16:28 +0200 (CEST)
+Date: Mon, 23 Jun 2025 13:16:28 +0200
+From: Peter Zijlstra <peterz@infradead.org>
+To: Vincent Guittot <vincent.guittot@linaro.org>
+Cc: mingo@redhat.com, juri.lelli@redhat.com, dietmar.eggemann@arm.com,
+	rostedt@goodmis.org, bsegall@google.com, mgorman@suse.de,
+	vschneid@redhat.com, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 0/4] sched/fair: Manage lag and run to parity with
+ different slices
+Message-ID: <20250623111628.GS1613200@noisy.programming.kicks-ass.net>
+References: <20250613140514.2781138-1-vincent.guittot@linaro.org>
+ <20250617092208.GQ1613376@noisy.programming.kicks-ass.net>
+ <CAKfTPtA-2YjQ-9jgrAZPT6v0R5X04Q5PoZ6Pa0TzAZji3=jiyg@mail.gmail.com>
+ <CAKfTPtCRBMYue3smo-iXEXSzeFGYSJs5mp50zwQZLRvfL-szVg@mail.gmail.com>
+ <20250620084228.GP1613376@noisy.programming.kicks-ass.net>
+ <CAKfTPtAvuuOTmuMpzs8GUpUebL76h7F8zuN1tnJz_KFYxAFN3w@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAKfTPtAvuuOTmuMpzs8GUpUebL76h7F8zuN1tnJz_KFYxAFN3w@mail.gmail.com>
 
-Fix build errors when CONFIG_NET_SHAPER is disabled, including:
+On Fri, Jun 20, 2025 at 12:29:27PM +0200, Vincent Guittot wrote:
 
-drivers/net/ethernet/microsoft/mana/mana_en.c:804:10: error:
-'const struct net_device_ops' has no member named 'net_shaper_ops'
+> yes but at this point any waking up task is either the next running
+> task or enqueued in the rb tree
 
-     804 |         .net_shaper_ops         = &mana_shaper_ops,
+The scenario I was thinking of was something like:
 
-drivers/net/ethernet/microsoft/mana/mana_en.c:804:35: error:
-initialization of 'int (*)(struct net_device *, struct neigh_parms *)'
-from incompatible pointer type 'const struct net_shaper_ops *'
-[-Werror=incompatible-pointer-types]
+A (long slice)
+B (short slice)
+C (short slice)
 
-     804 |         .net_shaper_ops         = &mana_shaper_ops,
+  A wakes up and goes running
 
-Signed-off-by: Erni Sri Satya Vennela <ernis@linux.microsoft.com>
-Reviewed-by: Shradha Gupta <shradhagupta@linux.microsoft.com>
-Fixes: 75cabb46935b ("net: mana: Add support for net_shaper_ops")
-Reported-by: kernel test robot <lkp@intel.com>
-Closes: https://lore.kernel.org/oe-kbuild-all/202506230625.bfUlqb8o-lkp@intel.com/
----
- drivers/net/ethernet/microsoft/mana/mana_en.c | 4 ++++
- 1 file changed, 4 insertions(+)
-
-diff --git a/drivers/net/ethernet/microsoft/mana/mana_en.c b/drivers/net/ethernet/microsoft/mana/mana_en.c
-index 10e766c73fca..a4a18eb02558 100644
---- a/drivers/net/ethernet/microsoft/mana/mana_en.c
-+++ b/drivers/net/ethernet/microsoft/mana/mana_en.c
-@@ -719,6 +719,7 @@ static int mana_change_mtu(struct net_device *ndev, int new_mtu)
- 	return err;
- }
+Since A is the only task around, it gets normal protection
  
-+#if IS_ENABLED(CONFIG_NET_SHAPER)
- static int mana_shaper_set(struct net_shaper_binding *binding,
- 			   const struct net_shaper *shaper,
- 			   struct netlink_ext_ack *extack)
-@@ -790,6 +791,7 @@ static const struct net_shaper_ops mana_shaper_ops = {
- 	.delete = mana_shaper_del,
- 	.capabilities = mana_shaper_cap,
- };
-+#endif
- 
- static const struct net_device_ops mana_devops = {
- 	.ndo_open		= mana_open,
-@@ -801,7 +803,9 @@ static const struct net_device_ops mana_devops = {
- 	.ndo_bpf		= mana_bpf,
- 	.ndo_xdp_xmit		= mana_xdp_xmit,
- 	.ndo_change_mtu		= mana_change_mtu,
-+#if IS_ENABLED(CONFIG_NET_SHAPER)
- 	.net_shaper_ops         = &mana_shaper_ops,
-+#endif
- };
- 
- static void mana_cleanup_port_context(struct mana_port_context *apc)
--- 
-2.34.1
+  B wakes up and doesn't win
 
+So now we have A running with long protection and short task on-rq
+
+  C wakes up ...
+
+Whereas what we would've wanted to end up with for C is A running with
+short protection.
+
+> > Which is why I approached it by moving the protection to after pick;
+> > because then we can directly compare the task we're running to the
+> > best pick -- which includes the tasks that got woken. This gives
+> > check_preempt_wakeup_fair() better chances.
+> 
+> we don't always want to break the run to parity but only when a task
+> wakes up and should preempt current or decrease the run to parity
+> period. Otherwise, the protection applies for a duration that is short
+> enough to stay fair for others
+> 
+> I will see if check_preempt_wakeup_fair can be smarter when deciding
+> to cancel the protection
+
+Thanks. In the above scenario B getting selected when C wakes up would
+be a clue I suppose :-)
+
+> > To be fair, I did not get around to testing the patches much beyond
+> > booting them, so quite possibly they're buggered :-/
+> >
+> > > Also, my patchset take into account the NO_RUN_TO_PARITY case by
+> > > adding a notion of quantum execution time which was missing until now
+> >
+> > Right; not ideal, but I suppose for the people that disable
+> > RUN_TO_PARITY it might make sense. But perhaps there should be a little
+> > more justification for why we bother tweaking a non-default option.
+> 
+> Otherwise disabling RUN_TO_PARITY to check if it's the root cause of a
+> regression or a problem becomes pointless because the behavior without
+> the feature is wrong.
+
+Fair enough.
+
+> And some might not want to run to parity but behave closer to the
+> white paper with a pick after each quantum with quantum being
+> something in the range [0.7ms:2*tick)
+> 
+> >
+> > The problem with usage of normalized_sysctl_ values is that you then get
+> > behavioural differences between 1 and 8 CPUs or so. Also, perhaps its
+> 
+> normalized_sysctl_ values don't scale with the number of CPUs. In this
+> case, it's always 0.7ms which is short enough compare to 1ms tick
+> period to prevent default irq accounting to keep current for another
+> tick
+
+Right; but it not scaling means it is the full slice on UP, half the
+slice on SMP-4 and a third for SMP-8 and up or somesuch.
+
+It probably doesn't matter much, but its weird.
 
