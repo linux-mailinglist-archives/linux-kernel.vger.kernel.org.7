@@ -1,129 +1,94 @@
-Return-Path: <linux-kernel+bounces-698280-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-698283-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 26D39AE3F9C
-	for <lists+linux-kernel@lfdr.de>; Mon, 23 Jun 2025 14:20:30 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id DC7BCAE3F6C
+	for <lists+linux-kernel@lfdr.de>; Mon, 23 Jun 2025 14:15:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 55A3A3BC796
-	for <lists+linux-kernel@lfdr.de>; Mon, 23 Jun 2025 12:14:07 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8DBEA7A2D34
+	for <lists+linux-kernel@lfdr.de>; Mon, 23 Jun 2025 12:13:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3ACF5248868;
-	Mon, 23 Jun 2025 12:06:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EA6902561C5;
+	Mon, 23 Jun 2025 12:06:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="CUBxK4fB"
-Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="bT/LjJgN"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1740F23BF9F;
-	Mon, 23 Jun 2025 12:06:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4BFDB2550A4;
+	Mon, 23 Jun 2025 12:06:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750680396; cv=none; b=Jf3yyz4nHXjjk5SvnWfI+DWN/kgQldO5m906/hTHs4pKK/UtYF4C7638mROeZe0tqi4T9MoNjppKSzR0M+WvlQSQna1Fx8b8My98oFblpRUfm0uENV5yTdIM7pAKkec5VKknSuaGveSxlOrOidJHehR+K1+UFgCZuaGhDiLatJc=
+	t=1750680407; cv=none; b=CwjRgnnhe9Te1TX/UKEJ41Dd9TADouqsGkedtND85An8Azg1+FIpDhwTrnx0RoJEmlHYW3MtmVpnlRY54kL/WqfqRs/w2xnLsgAFCVnRbooaaoeRdP6Pr0vYIxi8VxqtOdkUsY3ZTBvSQ8ppudL2dZtuz+/Hcxe5j27CFuCl6C8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750680396; c=relaxed/simple;
-	bh=tIZ8TwG4xTnOoPl1NIbbops/txuAvWrt9dcWfFv2Um0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=GK3WP7acpDdsK/BZJ30RwFrHOWSPC9bkZsMoH9ykXSyL+Rm8LypfHtOqC2rb5quqVvv1gDr6T6I9eUEI7vFxu29k8gXj29jwOrm2TlUwhpNqVlHQ4UkCrYIb2B6nPL42/guuTUMLi3dp6y+DOXFOe1Dwd89DTZDf0wvZR2UZWX4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=CUBxK4fB; arc=none smtp.client-ip=213.167.242.64
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
-Received: from pendragon.ideasonboard.com (81-175-209-231.bb.dnainternet.fi [81.175.209.231])
-	by perceval.ideasonboard.com (Postfix) with UTF8SMTPSA id 4CF11D77;
-	Mon, 23 Jun 2025 14:06:16 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-	s=mail; t=1750680376;
-	bh=tIZ8TwG4xTnOoPl1NIbbops/txuAvWrt9dcWfFv2Um0=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=CUBxK4fBvoKIphifs0ykjVic5ryHph3gEcvEUdCTHufWhVu4S6QkIoaD/pJ3WXGMH
-	 lnIrMl2jVGPfdisrnM9EzEMqkY8dCVAs0AfJYHxukyU2asSa4rDY9ZV5Bl8vdqMf/x
-	 y+xtjsbtygTe8zJpCOqHTQp3RMyNRTV+KIDckVnQ=
-Date: Mon, 23 Jun 2025 15:06:13 +0300
-From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-To: Sakari Ailus <sakari.ailus@iki.fi>
-Cc: Sakari Ailus <sakari.ailus@linux.intel.com>,
-	Hao Yao <hao.yao@intel.com>,
-	Pratap Nirujogi <pratap.nirujogi@amd.com>, mchehab@kernel.org,
-	hverkuil@xs4all.nl, bryan.odonoghue@linaro.org, krzk@kernel.org,
-	dave.stevenson@raspberrypi.com, hdegoede@redhat.com,
-	jai.luthra@ideasonboard.com, tomi.valkeinen@ideasonboard.com,
-	linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
-	benjamin.chan@amd.com, bin.du@amd.com, grosikop@amd.com,
-	king.li@amd.com, dantony@amd.com, vengutta@amd.com,
-	dongcheng.yan@intel.com, jason.z.chen@intel.com, jimmy.su@intel.com
-Subject: Re: [PATCH v3 RESEND] media: i2c: Add OV05C10 camera sensor driver
-Message-ID: <20250623120613.GB19319@pendragon.ideasonboard.com>
-References: <20250609194321.1611419-1-pratap.nirujogi@amd.com>
- <6a49eb11-d434-4315-8ee9-0f8aa7347de2@intel.com>
- <aEygCdk-zEqRwfoF@kekkonen.localdomain>
- <20250614225257.GO10542@pendragon.ideasonboard.com>
- <aFk6K4mYtq24MnNj@valkosipuli.retiisi.eu>
+	s=arc-20240116; t=1750680407; c=relaxed/simple;
+	bh=OdSD8nYZGOkV8fnciDyV48OQwABe71AhiAIazDnGy0E=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
+	 MIME-Version:Content-Type; b=fuQC6sxbb8JUODvrIKGUnNfbqaZ6xJSYzYGRu1V8afuwlWQQqjyxolrrJQERClsV3l7P+lfEQm885MgQWsEiPlVchhLFZfuA/Kn0v4AydQaxMXb1OZGV9OpgN+7IPpX3hWpBie7mvdh4mps8W/0TvWqhjSkEacUkBO8GPxLV0co=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=bT/LjJgN; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 52F9CC4CEF0;
+	Mon, 23 Jun 2025 12:06:46 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1750680406;
+	bh=OdSD8nYZGOkV8fnciDyV48OQwABe71AhiAIazDnGy0E=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
+	b=bT/LjJgN3A7McGMME8EdhZ6ny6E6SXKCbFxo6o9r8gxql98GAkpTm3cIDX0Y4LkEW
+	 ekp5vNTXTgp1nR5SHWqieiHB3EFNM8Jh3FA6sL1UuPdS4HK/8VVtT7PIlu9+kUDeur
+	 JfdYLSo9Rm3eLbPnrgzlVvTt9j0pklUnGPKAp8W134awIEb04ahcbRzlaMeozQIULH
+	 m0Nt/N3v9ID6m2Dba0/kGWSOP49EV7/bLGUSABuSGKjnEeEKwPC1qP6WLoxAzIlDxT
+	 30y2rM3urJw8AFG2qw3FJ0zRosHFS3C+DJsKr5QNJyaphUnwRlIsMA94wSO/OoYgTI
+	 tJHFLtCTQTmqA==
+From: Manivannan Sadhasivam <mani@kernel.org>
+To: Jon Mason <jdmason@kudzu.us>, Dave Jiang <dave.jiang@intel.com>, 
+ Allen Hubbe <allenbh@gmail.com>, Kishon Vijay Abraham I <kishon@kernel.org>, 
+ Bjorn Helgaas <bhelgaas@google.com>, Frank Li <Frank.Li@nxp.com>, 
+ =?utf-8?q?Krzysztof_Wilczy=C5=84ski?= <kwilczynski@kernel.org>, 
+ =?utf-8?q?Krzysztof_Wilczy=C5=84ski?= <kwilczynski@kernel.org>, 
+ Manivannan Sadhasivam <mani@kernel.org>, 
+ Jerome Brunet <jbrunet@baylibre.com>
+Cc: ntb@lists.linux.dev, linux-pci@vger.kernel.org, 
+ linux-kernel@vger.kernel.org
+In-Reply-To: <20250603-pci-vntb-bar-mapping-v2-0-fc685a22ad28@baylibre.com>
+References: <20250603-pci-vntb-bar-mapping-v2-0-fc685a22ad28@baylibre.com>
+Subject: Re: [PATCH v2 0/3] PCI: endpoint: pci-epf-vntb: allow arbitrary
+ BAR mapping
+Message-Id: <175068040623.12516.4425064763865712731.b4-ty@kernel.org>
+Date: Mon, 23 Jun 2025 06:06:46 -0600
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <aFk6K4mYtq24MnNj@valkosipuli.retiisi.eu>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-Mailer: b4 0.14.2
 
-On Mon, Jun 23, 2025 at 11:27:39AM +0000, Sakari Ailus wrote:
-> On Sun, Jun 15, 2025 at 01:52:57AM +0300, Laurent Pinchart wrote:
-> > > > > +#define OV05C10_REF_CLK			(24 * HZ_PER_MHZ)
-> > > > 
-> > > > Seems your module use 24 MHz clock input. The Dell's modules always use
-> > > > 19.2MHz, which means your the PLL settings will not work on Dell's.
-> > > 
-> > > This is ok as further work. Please send a patch. :-)
-> > 
-> > The patch should calculate PLL configuration dynamically, perhaps using
-> > the ccs-pll calculator if applicable.
+
+On Tue, 03 Jun 2025 19:03:37 +0200, Jerome Brunet wrote:
+> The patchset allows arbitrary BAR mapping for vNTB PCI endpoint function.
 > 
-> As much as I do like your suggestion, I don't think it's really feasible to
-> often do this for Omnivision sensors (most others largely do just work
-> without much hassle wrt. PLL, as long as a PLL calculator exists). This
-> sensor's PLL tree is different from CCS and badly documented, as expected.
-
-How much do we know about the PLL structure ?
-
-> > > > Seems there are already several camera sensors using page-based registers.
-> > > > Is it a good idea to add page support in CCI interface?
-> > > 
-> > > Sounds like a good idea as such but I'm not sure how common this really is,
-> > > I think I've seen a few Omnivision sensors doing this. If implemented, I
-> > > think it would be nice if the page could be encoded in the register address
-> > > which V4L2 CCI would store and switch page if needed only. This would
-> > > require serialising accesses, too. There's some room in CCI register raw
-> > > value space so this could be done without even changing that, say, with
-> > > 8-bit page and 8-bit register address.
-> > 
-> > Ack. I've worked on a driver for the AP1302 external ISP, which also
-> > uses pages registers. The full address space spans 32 bits though, but
-> > fortunately the driver doesn't need to access anything above 0x00ffffff.
+> This was developed for the Renesas platform with requires a mapping that
+> was not possible before:
+> * BAR0 (1MB):  CTRL+SPAD
+> * BAR2 (1MB):  MW0
+> * BAR4 (256B): Doorbell
 > 
-> 0xffffff?
+> [...]
 
-Yes.
+Applied, thanks!
 
-> The current CCI register addresses are limited to 16 bits. To
-> support that, we'd need to use u64 most likely.
+[1/3] PCI: endpoint: pci-epf-vntb: Return an error code on bar init
+      commit: 7ea488cce73263231662e426639dd3e836537068
+[2/3] PCI: endpoint: pci-epf-vntb: Align mw naming with config names
+      commit: a079d83c4afd4896f7f29bd9e807cb382043b360
+[3/3] PCI: endpoint: pci-epf-vntb: Allow BAR assignment via configfs
+      commit: a0cc6e6fd072616315147ac68a12672d5a2fa223
 
-I handled it in the ap1302 driver, by using bits 31:24 of address to
-store a 8 bits page value. It's a hack as the CCI helper currently only
-allocates 4 bits of the address to driver-specific purpose.
-
-> For 16-bit register
-> addresses and 8-bit values which probably are the most common, that starts
-> to appear a bit wasteful.
-
-It is wasteful, I don't want to turn the register address to a 64-bit
-value.
-
+Best regards,
 -- 
-Regards,
+Manivannan Sadhasivam <mani@kernel.org>
 
-Laurent Pinchart
 
