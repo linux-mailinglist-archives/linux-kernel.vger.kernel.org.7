@@ -1,142 +1,145 @@
-Return-Path: <linux-kernel+bounces-697736-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-697738-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id DCA56AE37FE
-	for <lists+linux-kernel@lfdr.de>; Mon, 23 Jun 2025 10:11:23 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id B61C7AE3800
+	for <lists+linux-kernel@lfdr.de>; Mon, 23 Jun 2025 10:11:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 85CB71894967
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7B01B165860
 	for <lists+linux-kernel@lfdr.de>; Mon, 23 Jun 2025 08:11:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B3EDE21B8F6;
-	Mon, 23 Jun 2025 08:10:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3F623221297;
+	Mon, 23 Jun 2025 08:10:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="FPyizjS+"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="XCsQOrTf"
+Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0CD2820E005;
-	Mon, 23 Jun 2025 08:10:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0E633AD51
+	for <linux-kernel@vger.kernel.org>; Mon, 23 Jun 2025 08:10:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750666213; cv=none; b=QvxNO+vyfvJ+i5gax1TLAldYlDEKfj0f8Orma/wfggHzOM4ybc9gSnTjqMVvyCymOFAFWBnvRI+pEumwhpLt41KGM/Zcrunh6d1PCJFOBO9IlEUWjIxqR6chosadT9OFaLyD5JsTgjf24KfBHbJ0dMbcQ0VZHwCLftaO85x8gIE=
+	t=1750666246; cv=none; b=sn2i3EUh3HXPyybHczEpbo44oFvbuLaLmf9t4RE7wHHt9xn6wN68DA8psR+1dsfEUlAsrtD9EJwfeJc2fn7PDwbyV87bnXlatUa0Quok9P5U9yBtoF4VQdd7X1L5/aV8iKI+j0hiAclW/vU470wM1RmZsNeoWOi5WasG6IbxWaI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750666213; c=relaxed/simple;
-	bh=9UFfyxd2/b0B8guWxRhS4jzpop1VBAtfJC/n8ZrMlz0=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=NrtcQIWvqgCxvEwzMscU1w33uGBG/9LwMIRMMOf8nkaCu0lKFECuLaZrmDV8TE0f/7aOGS7/B25SMcs8O7CFHKbzcjbTfztkqsUZ94HB7myqGVBca4WCC9GPnsI1fnTV3DSEL7Vc7D0HSY1Dx+BeLyxRsHROqTSto129n7P01e8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=FPyizjS+; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B3567C4CEF6;
-	Mon, 23 Jun 2025 08:10:12 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1750666212;
-	bh=9UFfyxd2/b0B8guWxRhS4jzpop1VBAtfJC/n8ZrMlz0=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=FPyizjS+kcmIUJdWgcX2yl5zU254/yT6y9fjJUzpsifXgAnOShDwKyuJa4Js7vi6W
-	 zazBcrc0dYF8VXhdBegmcqBrmW1sl2Nf5iN3Bt7q3b09z5Hc4I/fsUApQDMUEtyvgR
-	 qYZh/NvbVWnUkXlGpie58LgqMjIp5PK/aylLBDdOXl+GRF9Io3SHZUlg4exAjSJE1y
-	 WGQ2Lcmy5+iEuBtlqRQP2yX5Jxwkx84cyHIo/ueCHQzIzaAqdw6KZjo2WwKsY3JnOa
-	 RAMl+h2/8oJbez+mhgDxWQaHL8xNwejWoG/c5NKrt0bkO2HoxXIiGwJizb4iWRPcy6
-	 oEfBdbY9XjECQ==
-Received: by mail-ed1-f42.google.com with SMTP id 4fb4d7f45d1cf-606b6dbe316so7437069a12.3;
-        Mon, 23 Jun 2025 01:10:12 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCUBAIp/pkrxelHGqrawKzqEdG6xX1r2ehxVsvBiRvyX5znf+AoRre5Povtps7JT/Rn/D55OFBfG@vger.kernel.org, AJvYcCVsFl+ZS/Xsx5kGEEXiNAUveWPcHvlnOuS7WS5AE+drJhQd4VIzeTSM2tJK1l01hXfer+fdPnyCaCo8i5k=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz9XiUBfK+Mv+nRjP1DVWlhS1vnmqrqw9ksY9CJnYXQYKq+GPOR
-	sgz4J//5lSLw6JDS8Sf4MLvtgkyJJjx1VzuOdBhW/w5NQ1PJnJ5aY3ugkGJsqq/Y7chQxMDE4Jv
-	FSZ9Cqx6BHJn0YWodsxUvCUUIpg+ZKRs=
-X-Google-Smtp-Source: AGHT+IHVdXyQlxhUp2FRWU2idWY08CpHAI24CMuWlAmuGlq5qpodHyK+J3UrpjCva/pQR3fAFOc/BUmGTDLPAKsXno4=
-X-Received: by 2002:a05:6402:84c:b0:609:d20b:1af5 with SMTP id
- 4fb4d7f45d1cf-60a1cd1a81amr10778001a12.2.1750666209246; Mon, 23 Jun 2025
- 01:10:09 -0700 (PDT)
+	s=arc-20240116; t=1750666246; c=relaxed/simple;
+	bh=mdzUxWGAlgUdlftopNXFAG+pMrWImftaux8N3D1ENlw=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=K7LWMWuAO5PTbTbKvIKnTBWn6TYZLZknaVkbMbmCFFQP4p0EFU+0JkN/DnrNy2JC0capr5vSiG1ti7lkxGwiWeyTYi9+8sP1PIEr2HjhkI961+qd3sLBOty8iES8GZm+9TXhaqvMf2+hoJG2r9WPY2r4IS1TMKhyHFxdZHm2pTw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=XCsQOrTf; arc=none smtp.client-ip=148.163.156.1
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0360083.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 55MKhavW002256;
+	Mon, 23 Jun 2025 08:10:12 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
+	:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=pp1; bh=naltRS
+	PeooFBQ+itBg+UsqkNOnzspwDycyWE0Gu1hdM=; b=XCsQOrTf/x/q93YxXcjAZN
+	xGoEQrAmB+1DRAybFfSSEjXa1YVTNB7N/GwBfIb/ksO0tNpWKZ5c3huJ4lwMrBHp
+	vBINapAMYTbWgvqhyZcvyDYbceiBBst6ZhkSYULlLPPfOhikK37vOOgZUxIjcnxR
+	h5jfCb9lcTjDc0i2036cr6cUFfbvJTLBWkM3mRGQkZ1B3z7dU4EG9vI5dwxs4PxE
+	X4gDCU2D8v+5JlymJjnEJWjxVAHTKanRW9BwoGH4ca0adBrz9rV/bmBROCEnEffI
+	0W/PpvXlLNSpuoOVi73jTXB/dTxatgHnOeehdGsGrONxWchyLdCvlVGPKL8PkLhw
+	==
+Received: from pps.reinject (localhost [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 47dm8j04qu-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 23 Jun 2025 08:10:12 +0000 (GMT)
+Received: from m0360083.ppops.net (m0360083.ppops.net [127.0.0.1])
+	by pps.reinject (8.18.0.8/8.18.0.8) with ESMTP id 55N89g95030633;
+	Mon, 23 Jun 2025 08:10:11 GMT
+Received: from ppma22.wdc07v.mail.ibm.com (5c.69.3da9.ip4.static.sl-reverse.com [169.61.105.92])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 47dm8j04qn-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 23 Jun 2025 08:10:11 +0000 (GMT)
+Received: from pps.filterd (ppma22.wdc07v.mail.ibm.com [127.0.0.1])
+	by ppma22.wdc07v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 55N42KGc031277;
+	Mon, 23 Jun 2025 08:10:10 GMT
+Received: from smtprelay05.fra02v.mail.ibm.com ([9.218.2.225])
+	by ppma22.wdc07v.mail.ibm.com (PPS) with ESMTPS id 47e7eyn9xe-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 23 Jun 2025 08:10:10 +0000
+Received: from smtpav02.fra02v.mail.ibm.com (smtpav02.fra02v.mail.ibm.com [10.20.54.101])
+	by smtprelay05.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 55N8A6am37355944
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Mon, 23 Jun 2025 08:10:06 GMT
+Received: from smtpav02.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 0728F20043;
+	Mon, 23 Jun 2025 08:10:06 +0000 (GMT)
+Received: from smtpav02.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 24CEE2006E;
+	Mon, 23 Jun 2025 08:10:03 +0000 (GMT)
+Received: from [9.109.215.252] (unknown [9.109.215.252])
+	by smtpav02.fra02v.mail.ibm.com (Postfix) with ESMTP;
+	Mon, 23 Jun 2025 08:10:02 +0000 (GMT)
+Message-ID: <d916d3ae-afd4-4f07-a6e8-941a71cc039e@linux.ibm.com>
+Date: Mon, 23 Jun 2025 13:40:00 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250622110148.3108758-1-chenhuacai@loongson.cn>
- <2025062206-roundish-thumb-a20e@gregkh> <CAAhV-H4S=z5O0+pq-x9X4-VjYsJQVxib+V-35g50WeaivryHLA@mail.gmail.com>
- <2025062349-proximity-trapeze-24c6@gregkh> <CAAhV-H7r-X-t0_i-x=oy2Gin4-ZMhSVwXtcaygZdJ1_J-zD3dg@mail.gmail.com>
- <2025062339-till-sloping-58b2@gregkh>
-In-Reply-To: <2025062339-till-sloping-58b2@gregkh>
-From: Huacai Chen <chenhuacai@kernel.org>
-Date: Mon, 23 Jun 2025 16:09:56 +0800
-X-Gmail-Original-Message-ID: <CAAhV-H4Ntk0mdXGrvLPvwKmW2ROgyH7gnaSjYFgpDzg-d-hSfQ@mail.gmail.com>
-X-Gm-Features: Ac12FXzYxecj6L72SAnsBRFC2YxdneMCN2Ajasq-9wTeF6WqfrpvimZYH9Axjt0
-Message-ID: <CAAhV-H4Ntk0mdXGrvLPvwKmW2ROgyH7gnaSjYFgpDzg-d-hSfQ@mail.gmail.com>
-Subject: Re: [PATCH for 6.1/6.6] platform/loongarch: laptop: Fix build error
- due to backport
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: Huacai Chen <chenhuacai@loongson.cn>, Sasha Levin <sashal@kernel.org>, 
-	Xuerui Wang <kernel@xen0n.name>, stable@vger.kernel.org, ziyao@disroot.org, 
-	linux-kernel@vger.kernel.org, loongarch@lists.linux.dev
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [RFC PATCH 1/5] cpumask: Introduce cpu parked mask
+To: Yury Norov <yury.norov@gmail.com>, peterz@infradead.org
+Cc: mingo@redhat.com, juri.lelli@redhat.com, vincent.guittot@linaro.org,
+        tglx@linutronix.de, maddy@linux.ibm.com, vschneid@redhat.com,
+        dietmar.eggemann@arm.com, rostedt@goodmis.org, jstultz@google.com,
+        kprateek.nayak@amd.com, huschle@linux.ibm.com, srikar@linux.ibm.com,
+        linux-kernel@vger.kernel.org, linux@rasmusvillemoes.dk
+References: <20250523181448.3777233-1-sshegde@linux.ibm.com>
+ <20250523181448.3777233-2-sshegde@linux.ibm.com> <aDXU6LUlrmBLL3ak@yury>
+From: Shrikanth Hegde <sshegde@linux.ibm.com>
+Content-Language: en-US
+In-Reply-To: <aDXU6LUlrmBLL3ak@yury>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-TM-AS-GCONF: 00
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNjIzMDA0NSBTYWx0ZWRfX4tq3AsMQL8z6 kaDVsrK3HcyBzHjoj7mpjlMglO/WVNYhzLdTzyFGxK46fXSAiya0RUJd1u+m7eiegRD1LbCWXCg ZRSQvbRkkmAHLYncU8QaAeQmYAtUdVj/UIx8IRg97g5NkrvoF7WhnymZ9qSIwd/uy4tRz7X1fkV
+ lTLIZQxlKNp16yVe540E9L0Jkg5Jz5C/w9Prp7nnI5frkgDKougSlerNi2C4sz+UZa8zJACg2Bp jH+i+7IYUfuFnDmgR5LnPCLtirjInDiDBoce1nuJQaBPL6H/xJmpb2SiQDSY4T2Eu5J27RNUndX ClyK/hQ14fIT3LkFeJgQIhhFA/uFhO6VSt1DZQvRMhGNKSEcTOVt6YAt1QzDdQMYEvJ28ozJHf8
+ 3ThRqt2oAn0p6R4b/qJWPYas7BmL+QV7JRSR0wMrKOB35eXKVzdAlBKcmUcXR1DrvNOKGvbE
+X-Proofpoint-GUID: mLLm86scRAN6AfYW4oe3FU6yVKA9Dxw0
+X-Proofpoint-ORIG-GUID: S7c8spHF4EtvPrYPzD7mV-ac27n6-PCg
+X-Authority-Analysis: v=2.4 cv=combk04i c=1 sm=1 tr=0 ts=68590be4 cx=c_pps a=5BHTudwdYE3Te8bg5FgnPg==:117 a=5BHTudwdYE3Te8bg5FgnPg==:17 a=IkcTkHD0fZMA:10 a=6IFa9wvqVegA:10 a=W0WVT37j5QbsdxkpU7oA:9 a=QEXdDO2ut3YA:10 a=zZCYzV9kfG8A:10
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.0.736,FMLib:17.12.80.40
+ definitions=2025-06-23_02,2025-06-20_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 spamscore=0 adultscore=0 mlxlogscore=772 clxscore=1015
+ impostorscore=0 suspectscore=0 mlxscore=0 phishscore=0 lowpriorityscore=0
+ bulkscore=0 classifier=spam authscore=0 authtc=n/a authcc= route=outbound
+ adjust=0 reason=mlx scancount=1 engine=8.19.0-2505280000
+ definitions=main-2506230045
 
-On Mon, Jun 23, 2025 at 4:03=E2=80=AFPM Greg Kroah-Hartman
-<gregkh@linuxfoundation.org> wrote:
->
-> On Mon, Jun 23, 2025 at 02:36:18PM +0800, Huacai Chen wrote:
-> > On Mon, Jun 23, 2025 at 2:28=E2=80=AFPM Greg Kroah-Hartman
-> > <gregkh@linuxfoundation.org> wrote:
-> > >
-> > > On Sun, Jun 22, 2025 at 09:11:44PM +0800, Huacai Chen wrote:
-> > > > On Sun, Jun 22, 2025 at 9:10=E2=80=AFPM Greg Kroah-Hartman
-> > > > <gregkh@linuxfoundation.org> wrote:
-> > > > >
-> > > > > On Sun, Jun 22, 2025 at 07:01:48PM +0800, Huacai Chen wrote:
-> > > > > > In 6.1/6.6 there is no BACKLIGHT_POWER_ON definition so a build=
- error
-> > > > > > occurs due to recently backport:
-> > > > > >
-> > > > > >   CC      drivers/platform/loongarch/loongson-laptop.o
-> > > > > > drivers/platform/loongarch/loongson-laptop.c: In function 'lapt=
-op_backlight_register':
-> > > > > > drivers/platform/loongarch/loongson-laptop.c:428:23: error: 'BA=
-CKLIGHT_POWER_ON' undeclared (first use in this function)
-> > > > > >   428 |         props.power =3D BACKLIGHT_POWER_ON;
-> > > > > >       |                       ^~~~~~~~~~~~~~~~~~
-> > > > > >
-> > > > > > Use FB_BLANK_UNBLANK instead which has the same meaning.
-> > > > > >
-> > > > > > Signed-off-by: Huacai Chen <chenhuacai@loongson.cn>
-> > > > > > ---
-> > > > > >  drivers/platform/loongarch/loongson-laptop.c | 2 +-
-> > > > > >  1 file changed, 1 insertion(+), 1 deletion(-)
-> > > > >
-> > > > > What commit id is this fixing?
-> > > >
-> > > > commit 53c762b47f726e4079a1f06f684bce2fc0d56fba upstream.
-> > >
-> > > Great, can you resend this with a proper Fixes: tag so I don't have t=
-o
-> > > manually add it myself?
-> > Upstream kernel doesn't need to be fixed, and for 6.1/6.6, the commits
-> > need to be fixed are in linux-stable-rc.git[1][2] rather than
-> > linux-stable.git now.
-> >
-> > I don't know your policy about stable branch maintenance, one of the
-> > alternatives is modify [1][2] directly. And if you prefer me to resend
-> > this patch, I think the commit id is not the upstream id, but the ids
-> > in [1][2]?
-> >
-> > [1]https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-=
-rc.git/commit/?h=3Dqueue/6.1&id=3Df78d337c63e738ebd556bf67472b2b5c5d8e9a1c
-> > [2]https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-=
-rc.git/commit/?h=3Dqueue/6.6&id=3D797cbc5bc7e7a9cd349b5c54c6128a4077b9a8c6
->
-> What we should do is just drop those patches from the 6.1.y and 6.6.y
-> queues, I'll go do that now, and wait for you to submit a working
-> version of this patch for those branches, so that we do not have any
-> build breakages anywhere.
->
-> Can you submit the updated patches for that now?
-OK, will do.
 
->
-> thanks,
->
-> greg k-h
+
+On 5/27/25 20:36, Yury Norov wrote:
+> On Fri, May 23, 2025 at 11:44:44PM +0530, Shrikanth Hegde wrote:
+>> CPU is said to be parked, when underlying physical CPU is not
+>> available. This happens when there is contention for CPU resource in
+>> para-virtualized case. One should avoid using these CPUs.
+>>
+>> Build and maintain this state of parked CPUs. Scheduler will use this
+>> information and push the tasks out as soon as it can.
+> 
+> This 'parked' term sounds pretty obscured. Maybe name it in
+> a positive sense, and more explicit, like cpu_paravirt_mask.
+> 
+
+I still dont know a better name. Maybe something like cpu_avoid_mask and
+cpu avoid(cpu)? I would like to retain a notion that these CPU shouldn't be used
+at the moment.
+
+> Also, shouldn't this be conditional on CONFIG_PARAVIRT?
+> 
+
+I moved the uses of it under a static key which should make it a nop for
+others. That keeps code relatively simpler. Hope that's ok.
+
+> Thanks,
+> Yury
+>   
 
