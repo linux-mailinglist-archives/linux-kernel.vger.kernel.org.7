@@ -1,111 +1,153 @@
-Return-Path: <linux-kernel+bounces-698800-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-698803-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id AFD51AE4A0E
-	for <lists+linux-kernel@lfdr.de>; Mon, 23 Jun 2025 18:13:25 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 93846AE4A47
+	for <lists+linux-kernel@lfdr.de>; Mon, 23 Jun 2025 18:15:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2944E18852F1
-	for <lists+linux-kernel@lfdr.de>; Mon, 23 Jun 2025 16:09:07 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A579B1899357
+	for <lists+linux-kernel@lfdr.de>; Mon, 23 Jun 2025 16:10:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 180992BCF7D;
-	Mon, 23 Jun 2025 16:07:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 83F242BE7DB;
+	Mon, 23 Jun 2025 16:07:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="fa1/GkpO"
-Received: from mail-pg1-f182.google.com (mail-pg1-f182.google.com [209.85.215.182])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="mBIu00QN"
+Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F13C929A300;
-	Mon, 23 Jun 2025 16:07:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F38FE2BE7A1;
+	Mon, 23 Jun 2025 16:07:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750694839; cv=none; b=m4lwxgT8fA7qQFfWYXYAmhX9FjqfY9CFe2Ok8KtdVqf8E4NF3fHW24oaA8hOXCK2nG662EZj2tL6uMfhSpajTNLbT4FUUk6GYLP+ak/TvcHyfOnHeZSU94I5Kd7FeMynNTYZLdzNyPa9aI/sKrxbIS4pYnOu+Mx+PX94eXT0r/s=
+	t=1750694867; cv=none; b=CRWeK6pfK2ChQCEAPob/6nFLYuK9YrN/CcAtx7NEvGh6BW0zYy3K7rBIuo5soAR63auP7kS8kK+Af33ltzcJrMJcUts3vlCkHS4hHy5k/MaEpYzFINXyidy7McDhSW1Z+8F4nwRhwB9xNhMIDI9ZOVlMTEluXgeTJNjPMOjtZ9c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750694839; c=relaxed/simple;
-	bh=0tcXdovPS+zbja9QJVEVBxGT38A9W3l9YFmoO5UqOAk=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=sac+ynCOUop2cSaM5Aju2+fGLksCo4htWPfl7QjApdVvtebbNaXWT9pkZAjX5zxk9gIqsaRSApJwgS9HKQssOQHaeYQHM0Vk7n3N8+UAKMfAQ9r1TBXufUUJyLbv2ujKlh2OaPyAl8zQxFDHgOSH8t3/TAYvBVg5dzg7eIT9xMg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=fa1/GkpO; arc=none smtp.client-ip=209.85.215.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pg1-f182.google.com with SMTP id 41be03b00d2f7-b31ca219b97so652340a12.2;
-        Mon, 23 Jun 2025 09:07:16 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1750694836; x=1751299636; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=0tcXdovPS+zbja9QJVEVBxGT38A9W3l9YFmoO5UqOAk=;
-        b=fa1/GkpOkoCsFuKgai6tHv127/vIC+s8HfQlNjMyQxpVR7JO9aJTZSSJX9YXZRRGcL
-         OQUKb1KE8P+q1/L/uhk3kJil2nBHKH/0aa5HNl7BXtjnc3OG166eQjBFddhb+E6QIUmM
-         0GkSVmUV9cQzuxQ8bY1p8Fq+p0Vfz3L4nMflBKHy9D8PLNfzSwKlIZZUmUQHF3OwjMOO
-         jdLFc0ss511VC3T0G607+d27hBUdwTHZE0CUyF7dNOjTXvy4q1X1y19JtM+avfoTww7u
-         bMxh/Njcs2KyFOB064uABJtG5S2xmlaxb55grDZW+GxmQKfDszcFc4RbDiYenFqBAr3n
-         ObBg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1750694836; x=1751299636;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=0tcXdovPS+zbja9QJVEVBxGT38A9W3l9YFmoO5UqOAk=;
-        b=SxDUQq/rR6anXJAVcp9q4CcmWYq1jSFEAgPn1p/OnGxxSYbNF/nzbGubOmTisCHSFX
-         0doliVQknFTXw9r/AQaPQdiRawNnZtIoIomM/gtc8KvLkfjUfx03GotmAPsZhvFGDSI0
-         I3N5fouryfG6NhgTNwXBPlnwIoCCvhg6bsOQLcxmvnMgN1Xfyk8HhPrDf/rxAblcDMqE
-         y4Hmrrw2mvVa00SQF9h79KICz4JShjtmnHhjA55wsTioPaMdxR78r7B9goFmRNtP3ajF
-         3IYKmR8CteY0CJFwy0I0Y/J/LI54LbUJE1VaqA7KpfK3aTshy4g5bi+5CHLB4I1TYzQy
-         ehIA==
-X-Forwarded-Encrypted: i=1; AJvYcCXN5Y2ogQGEV4rxAMxLpEcw2TOhdz+eg3hNDJ+xztVi3sw1DdXy4Hy/Z8dpC+4JGxnhixsQGftg7+O7aFA=@vger.kernel.org, AJvYcCXuZKnsQXUmYUFc0Apuww4QYC6x94ewNMe6YK6MqUMPETnn1QykHed8l/wiQc4JiVVVpSxMRUJY4gfrkst1MGA=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyzsOVzgTrSMzXcDOgOScWoxF3ZugNBgKHK3Odj0ijDfr7zrIXl
-	F402JgzTGbHtSOaynT1qoDGrbCLFpKsvYegqtIjOIqPoQ+Yv/XxTyypuJvN1IDqhd7pXQ59P5Lf
-	PTlyrlGwyWw49lfts7muk8N95yr1CcvI=
-X-Gm-Gg: ASbGncsKwgKrDID8liUqJu/P9DsH2Y51ysI+sz6j9cmX3gj0qsCJOhOOxqV9mITLVQZ
-	PzHupwGtxeDbLBkHU93vMrHTSNm7e4bvGMY91kJFaR1Y6cpKN5GtlLpSO6ZNBIOHtpdjOBiow/Z
-	bTGgEXOWya6XEj6D3h5csiSWPqAcqB65F/ke9lUgGBwfU=
-X-Google-Smtp-Source: AGHT+IH9NL2lR9Uv4yi5aC7j9ur7IZFnZE3iQLVNBw894nkCrk2aK30n5d+w8auc9bWtvBbdzHz7hXqgkVpLEIog/tI=
-X-Received: by 2002:a17:90b:5305:b0:312:e987:11b0 with SMTP id
- 98e67ed59e1d1-3159d8d99d5mr7675733a91.6.1750694836185; Mon, 23 Jun 2025
- 09:07:16 -0700 (PDT)
+	s=arc-20240116; t=1750694867; c=relaxed/simple;
+	bh=potBOdXr8Iz2ioECm7kZqlRyCx32EonrYrShLBe6IA0=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=qcNoea9yr1C7Sx5GcVjNC1gXkCEU1iShuWgZxoFJ0maH23ZtelG10gpzQUKS63iOnPR/+CD0kPSvYLGz+ap+OUnQ9w4Nz+dLsaTm3gKyl8sFvDDo6hR1emSlaLsvirA6eCYiCmNj8mUETKUxyZAKciz6dPF0gzDakQDH1Bwut4Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=mBIu00QN; arc=none smtp.client-ip=148.251.105.195
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+	s=mail; t=1750694864;
+	bh=potBOdXr8Iz2ioECm7kZqlRyCx32EonrYrShLBe6IA0=;
+	h=From:To:Cc:Subject:Date:From;
+	b=mBIu00QNj1CLzYNlx8lmRn1yZwl8BwHb8ZyGA/R4yuut7XODfZQJbiFB5/sbi+fsf
+	 Bw2bOUpqvZIwTHJSLxTO7psFxYAyKq9zqlPFYlWsqqcI6EOOQ25XR3B6Mx83A5djyP
+	 pqjUwjEfK0hZxAVtKN2kPWGVYUiY1CtqITnzUlAvEoFqprNKlGrauXGP33M6h/g/N/
+	 d1I21SWkZYP+XO0+ajKlXWpTutAK1ydowgxxJSE0BudcAIhujvx3qer94e6ZjiWIZO
+	 sTXntA+k5WA8HQsSAaLruG3at6OXYKJSjWOor2i6mSVw+Xg0uniCMrFRJ0XKkY/YML
+	 rKX23HXSQbY5A==
+Received: from trenzalore.hitronhub.home (unknown [23.233.251.139])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: detlev)
+	by bali.collaboradmins.com (Postfix) with ESMTPSA id DBD5C17E0342;
+	Mon, 23 Jun 2025 18:07:40 +0200 (CEST)
+From: Detlev Casanova <detlev.casanova@collabora.com>
+To: linux-kernel@vger.kernel.org
+Cc: Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Heiko Stuebner <heiko@sntech.de>,
+	Sebastian Reichel <sebastian.reichel@collabora.com>,
+	Cristian Ciocaltea <cristian.ciocaltea@collabora.com>,
+	Alexey Charkov <alchark@gmail.com>,
+	Dragan Simic <dsimic@manjaro.org>,
+	Jianfeng Liu <liujianfeng1994@gmail.com>,
+	Nicolas Frattaroli <nicolas.frattaroli@collabora.com>,
+	Kever Yang <kever.yang@rock-chips.com>,
+	Detlev Casanova <detlev.casanova@collabora.com>,
+	Andy Yan <andy.yan@rock-chips.com>,
+	Frank Wang <frank.wang@rock-chips.com>,
+	devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-rockchip@lists.infradead.org,
+	Ezequiel Garcia <ezequiel@vanguardiasur.com.ar>,
+	Mauro Carvalho Chehab <mchehab@kernel.org>,
+	Hans Verkuil <hverkuil@xs4all.nl>,
+	Ricardo Ribalda <ribalda@chromium.org>,
+	Hans de Goede <hansg@kernel.org>,
+	Yunke Cao <yunkec@google.com>,
+	linux-media@vger.kernel.org,
+	kernel@collabora.com
+Subject: [PATCH 0/8] Prepare for new rkvdec variants
+Date: Mon, 23 Jun 2025 12:07:14 -0400
+Message-ID: <20250623160722.55938-1-detlev.casanova@collabora.com>
+X-Mailer: git-send-email 2.50.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250619-nova-frts-v6-0-ecf41ef99252@nvidia.com> <20250619-nova-frts-v6-4-ecf41ef99252@nvidia.com>
-In-Reply-To: <20250619-nova-frts-v6-4-ecf41ef99252@nvidia.com>
-From: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
-Date: Mon, 23 Jun 2025 18:07:04 +0200
-X-Gm-Features: Ac12FXxeFboeOQbrXj_NuX7sHbNjZwJOguO3r6RADbc_AKUo0NVkevTFuXJ8N_8
-Message-ID: <CANiq72moyFrMi--y9ZdZK0EAoG26bTVsAo2O8ETxYHv4v_C6SQ@mail.gmail.com>
-Subject: Re: [PATCH v6 04/24] rust: make ETIMEDOUT error available
-To: Alexandre Courbot <acourbot@nvidia.com>
-Cc: Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, 
-	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
-	=?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
-	Andreas Hindborg <a.hindborg@kernel.org>, Alice Ryhl <aliceryhl@google.com>, 
-	Trevor Gross <tmgross@umich.edu>, Danilo Krummrich <dakr@kernel.org>, David Airlie <airlied@gmail.com>, 
-	Simona Vetter <simona@ffwll.ch>, Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
-	Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, 
-	Benno Lossin <lossin@kernel.org>, John Hubbard <jhubbard@nvidia.com>, Ben Skeggs <bskeggs@nvidia.com>, 
-	Joel Fernandes <joelagnelf@nvidia.com>, Timur Tabi <ttabi@nvidia.com>, 
-	Alistair Popple <apopple@nvidia.com>, linux-kernel@vger.kernel.org, 
-	rust-for-linux@vger.kernel.org, nouveau@lists.freedesktop.org, 
-	dri-devel@lists.freedesktop.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-On Thu, Jun 19, 2025 at 3:24=E2=80=AFPM Alexandre Courbot <acourbot@nvidia.=
-com> wrote:
->
-> We will use this error in the nova-core driver.
->
-> Reviewed-by: Benno Lossin <lossin@kernel.org>
-> Signed-off-by: Alexandre Courbot <acourbot@nvidia.com>
+This patch set introduces the necessary bits for new variants
+implementations that do not modify the driver.
+The driver changes will come in another patch set.
 
-Acked-by: Miguel Ojeda <ojeda@kernel.org>
+The first 4 patches document the device nodes and then add the nodes for
+rk3588 and rk3576. I kept the R-b tag from Conor Dooley as the patch
+didn't change much from [1]. I can remove it if needed.
 
-Cheers,
-Miguel
+Then a new v4l2 control for HEVC is added to be able to send the missing
+RPS information to the driver.
+
+Finally, the driver is unstaged as the TODO points are removed. I added
+myself as maintainer for now as I'll be adding support for several
+variants.
+
+Those 3 parts can be applied separately and do not depend on each other.
+Based on v6.16-rc3.
+
+[1]: https://lore.kernel.org/all/20240620-unsmooth-surfer-b62ed94b4a5e@spud/
+
+Detlev Casanova (8):
+  media: dt-bindings: rockchip: Document RK3588 Video Decoder bindings
+  media: dt-bindings: rockchip: Add RK3576 Video Decoder bindings
+  arm64: dts: rockchip: Add the vdpu381 Video Decoders on RK3588
+  arm64: dts: rockchip: Add the vdpu383 Video Decoder on rk3576
+  media: uapi: HEVC: Add v4l2_ctrl_hevc_ext_sps_rps control
+  media: v4l2-ctrls: Add hevc_ext_sps_rps control
+  media: rkvdec: Remove TODO file
+  media: rkvdec: Unstage the driver
+
+ .../bindings/media/rockchip,vdec.yaml         | 80 ++++++++++++++++++-
+ .../media/v4l/ext-ctrls-codec-stateless.rst   | 73 +++++++++++++++++
+ .../media/v4l/vidioc-queryctrl.rst            |  6 ++
+ MAINTAINERS                                   |  8 ++
+ arch/arm64/boot/dts/rockchip/rk3576.dtsi      | 36 +++++++++
+ arch/arm64/boot/dts/rockchip/rk3588-base.dtsi | 74 +++++++++++++++++
+ drivers/media/platform/rockchip/Kconfig       |  1 +
+ drivers/media/platform/rockchip/Makefile      |  1 +
+ .../platform/rockchip}/rkvdec/Kconfig         |  0
+ .../platform/rockchip}/rkvdec/Makefile        |  0
+ .../platform/rockchip}/rkvdec/rkvdec-h264.c   |  0
+ .../platform/rockchip}/rkvdec/rkvdec-regs.h   |  0
+ .../platform/rockchip}/rkvdec/rkvdec-vp9.c    |  0
+ .../platform/rockchip}/rkvdec/rkvdec.c        |  0
+ .../platform/rockchip}/rkvdec/rkvdec.h        |  0
+ drivers/media/v4l2-core/v4l2-ctrls-core.c     |  9 +++
+ drivers/media/v4l2-core/v4l2-ctrls-defs.c     |  5 ++
+ drivers/staging/media/Kconfig                 |  2 -
+ drivers/staging/media/Makefile                |  1 -
+ drivers/staging/media/rkvdec/TODO             | 11 ---
+ include/uapi/linux/v4l2-controls.h            | 48 +++++++++++
+ include/uapi/linux/videodev2.h                |  1 +
+ 22 files changed, 339 insertions(+), 17 deletions(-)
+ rename drivers/{staging/media => media/platform/rockchip}/rkvdec/Kconfig (100%)
+ rename drivers/{staging/media => media/platform/rockchip}/rkvdec/Makefile (100%)
+ rename drivers/{staging/media => media/platform/rockchip}/rkvdec/rkvdec-h264.c (100%)
+ rename drivers/{staging/media => media/platform/rockchip}/rkvdec/rkvdec-regs.h (100%)
+ rename drivers/{staging/media => media/platform/rockchip}/rkvdec/rkvdec-vp9.c (100%)
+ rename drivers/{staging/media => media/platform/rockchip}/rkvdec/rkvdec.c (100%)
+ rename drivers/{staging/media => media/platform/rockchip}/rkvdec/rkvdec.h (100%)
+ delete mode 100644 drivers/staging/media/rkvdec/TODO
+
+-- 
+2.50.0
+
 
