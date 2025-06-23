@@ -1,189 +1,150 @@
-Return-Path: <linux-kernel+bounces-698684-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-698690-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6EEA8AE4834
-	for <lists+linux-kernel@lfdr.de>; Mon, 23 Jun 2025 17:18:09 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 01CB3AE4844
+	for <lists+linux-kernel@lfdr.de>; Mon, 23 Jun 2025 17:20:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EC43A17E9D6
-	for <lists+linux-kernel@lfdr.de>; Mon, 23 Jun 2025 15:15:46 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9F5BD3B5860
+	for <lists+linux-kernel@lfdr.de>; Mon, 23 Jun 2025 15:17:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 352C3289E0E;
-	Mon, 23 Jun 2025 15:14:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 759A7299A82;
+	Mon, 23 Jun 2025 15:15:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="CqSQS/ja"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="EKYe+ogk"
+Received: from mail-yb1-f174.google.com (mail-yb1-f174.google.com [209.85.219.174])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7AD332853E3;
-	Mon, 23 Jun 2025 15:14:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 190E3298CD5
+	for <linux-kernel@vger.kernel.org>; Mon, 23 Jun 2025 15:15:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750691683; cv=none; b=lKSeraqktOsbLivvDxCwVcoP5z50Q/8imv6izGc9ma2iycsuyuKL5mAOTgqOqrWX2qmx4po5fCWjx+SMI5SAcFdWdI6xy8IkI5bixyXsZo0yr0zCD9+U2Hyk1jIb3zLnxx5TL3W3a8Y+4Tpd/7KYOamZZ/Ty2H0FF5pZviL/xbc=
+	t=1750691753; cv=none; b=Ta4IjR+PKsAWqFvba2zeLeh3B9AcwajS2j4+/lZFZ/aO2koDysZNA37OrQpJ71pqFnwLjZASLdGmFtU+qk2c4Sntaxc2Y0vfpCkvQFVdSMIvVo77m8wM8zjGVGyQfuAUKCLCkXh70oVfWlUbjrNcDD8hIqk0uzzi5Yk2w/RA5Eg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750691683; c=relaxed/simple;
-	bh=bNo4u1rasC/6lBuKSnTXnbSkB3draWhrAu0LbyFSuls=;
-	h=Mime-Version:Content-Type:Date:Message-Id:Cc:Subject:From:To:
-	 References:In-Reply-To; b=QidVDOGN2CK2WpOpzWauIm6fxauDGlsAoJjrHOCnCtyInlX8cQ20WzhK4Q7f38KagGvQVaNHdXXs7DNxiHocV+GBwvSzWih+HWd7+FkghnOTt0RFDGzb/q079WJnl9ISBYzBMbUZc+o9Xx4HwK4k0qQhPGL9EOfZN7HqwBY9m0o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=CqSQS/ja; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6C62EC4CEF0;
-	Mon, 23 Jun 2025 15:14:39 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1750691682;
-	bh=bNo4u1rasC/6lBuKSnTXnbSkB3draWhrAu0LbyFSuls=;
-	h=Date:Cc:Subject:From:To:References:In-Reply-To:From;
-	b=CqSQS/jajiRZQBCwp7ZAuejlTZxBQXyDkZlKW8YldcUOuFYRl52KTHqh2QNDinSBG
-	 4WEjNMxOf5JivIekNJPBLm7smt12WO7PfxFGmZ5bYtJId8XY7CXCw4L98qQSSb3/kN
-	 Uw5pML5L1wgpCeXX0IykE1evSm5DHG6udmrOryMgiLs0p+HlAn0F3cAvsQIa2Ceg3S
-	 nRA4eY116Mr2rmIw6tzc1K1Hnz/IEl/CWJgMUU1D+cVlp1h8ZzSoQAFSwLvSaPtnJm
-	 jrDF1XJ8UQcSOpwfe7Ciz0xM3ADtaS+MoJq+4hOzOMdXqN4F4IBDa4D0JHzkhQymRV
-	 eyKIfUT/9aT3g==
+	s=arc-20240116; t=1750691753; c=relaxed/simple;
+	bh=bqmkafwxydyORUt50Ur58Kwuhlign7ZQjhD916NZCSY=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=MijsEUsNnKp7R+PfKrr3THbIwE0oUZxxMP9pv9HdO/7ThFeQ55PtqTIYM4OjqXR4raGACC3cYHp6p49Qc9iBkIGPdmGeWUoUPm0qCodkZbbkQXS1zVjrqBGkVFpnORXglQDIjDtzi92aLQfOjLwQ9cObP05HTjfUCqjz5ZBYxcQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=EKYe+ogk; arc=none smtp.client-ip=209.85.219.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paul-moore.com
+Received: by mail-yb1-f174.google.com with SMTP id 3f1490d57ef6-e81ec95d944so3475827276.1
+        for <linux-kernel@vger.kernel.org>; Mon, 23 Jun 2025 08:15:51 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=paul-moore.com; s=google; t=1750691751; x=1751296551; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=/cEM3zQRxkyeF8QlajSb8sKwoIOz06mgwPF6H5WCdJ0=;
+        b=EKYe+ogkX/OG1HhZRLqatx3ccfj/tYIE4kgYG87jUjQcRjccTjocq1jB1lMNhHPGRq
+         HVvhKW2AzCeUA37+5GN9cy7gNkL304wcUDb4vveYgRHcavzhBj0zzTNsPzVgzkN9w/Qr
+         9rP7KeS5zvw3CcE/F3eFpK2ztzdW9dtH1C5wQqIBGxvtEY16BLCU7Hd4xNH1G4sF/UDP
+         Nd4/trrkWCsA1EDmITaNhWWuu7U9kcyNbL0Fa1157ez8R0mLwRXlQo3mxf650uauZowL
+         X2mE0QhSiFnr2geIFqOLp1ReIMqydYNmSEM01NEihxVhk4uHmjOEzwe2dFYzOT8gT/KD
+         Ex2w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1750691751; x=1751296551;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=/cEM3zQRxkyeF8QlajSb8sKwoIOz06mgwPF6H5WCdJ0=;
+        b=d6sP7SiJOPGXCRSqHYm6o6u5l3G2IY0gRUay9YFnRBgOSwc7X+vCskDzfe6p5AqMhE
+         AhBEp3NZtsamKZ9LWZLlFiF4tuVNs9p2vsIdPVNLpCFqDF1ynhA3aoUXMuunECy9WA8t
+         r4xqAMrMyyC5TJ9BFpjA/qjjSFIEZc1HfNmp1HQ7RnzcTHa+S0l0yvOSoxlonqCnYDUq
+         1Tlc6QH5oMqN5XFSUlt/SfklNyOUY940pV8R9woPuOs2M3XTqyv4eb4oO3AfwtdGm6D0
+         4Mfw8FSP1iKMvUrTg+kN+lN86uElYBnBG0XqDJbdq6yI2k1tc78F12ukKA0fXLnHnoVj
+         WBGg==
+X-Forwarded-Encrypted: i=1; AJvYcCXVBqkVmXHvII4uQpyZAAOhE74O5gggGhFfevtdHDAtPfmCqfqmnENeEr2apem0r/xbO/XeZD6DVFelDp8=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzzo+dDebtIScrTMeJ/FwliYp3Ndb957UTKLyYFVBAvIUOXq6nB
+	baaS6kexHgsb+ZZ6F17vLMAORBMp9JLv/x77DqinshYEY5cWWSXz2gn0DhlZ2RzqntfWh/dzXT/
+	J4PEbQojtbcuRjS9vrzr52BdsJXygnIEMwJHEs+aM
+X-Gm-Gg: ASbGncsU/TB2hcTlX9LgRb0pohAsxdcd7XxJNedctypVnGd50BuNLf0+x+VodHHW5H5
+	QxQW1xHxtrylN4UB7a63mMgc2Y6VKsmA30ed37yomzWxiXsKW9dzE1nu6qWUMQ+2EOGxrE4Ktvj
+	by3r6hopDGFoZK1KqQ3KLAMIMVldTAWdIOAm8UgsTm9Rs=
+X-Google-Smtp-Source: AGHT+IFZQzn3+JMIyejKC2+W29AQd1WwouaHlQDxuqJsYDQVdOYz9u2SoStqSDrpqsqEky4EPBlD56TODEPQ9GFR58M=
+X-Received: by 2002:a05:690c:9683:b0:6f9:4c00:53ae with SMTP id
+ 00721157ae682-712ca356122mr174541157b3.8.1750691751048; Mon, 23 Jun 2025
+ 08:15:51 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
+MIME-Version: 1.0
+References: <20250622-toicsti-bug-v1-0-f374373b04b2@gmail.com>
+ <20250622-toicsti-bug-v1-2-f374373b04b2@gmail.com> <CAEjxPJ6v12nLFx-x4-=esuPMp7L8UBvTzoj1kkTPcD2mDKKW8w@mail.gmail.com>
+In-Reply-To: <CAEjxPJ6v12nLFx-x4-=esuPMp7L8UBvTzoj1kkTPcD2mDKKW8w@mail.gmail.com>
+From: Paul Moore <paul@paul-moore.com>
+Date: Mon, 23 Jun 2025 11:15:39 -0400
+X-Gm-Features: Ac12FXw75VZJClzZmRv1umOqFnfnvmDMNU_jKRuRdLW4QXd6DpSXCOL2kXN21Os
+Message-ID: <CAHC9VhS8gPQwgesV_0VbUuqxGrADm5uDofM3m=wZuAEgkWi5Hw@mail.gmail.com>
+Subject: Re: [PATCH 2/2] selinux: add capability checks for TIOCSTI ioctl
+To: Stephen Smalley <stephen.smalley.work@gmail.com>
+Cc: xandfury@gmail.com, Shuah Khan <shuah@kernel.org>, 
+	Nathan Chancellor <nathan@kernel.org>, Nick Desaulniers <nick.desaulniers+lkml@gmail.com>, 
+	Bill Wendling <morbo@google.com>, Justin Stitt <justinstitt@google.com>, 
+	Ondrej Mosnacek <omosnace@redhat.com>, linux-kernel@vger.kernel.org, 
+	linux-kselftest@vger.kernel.org, llvm@lists.linux.dev, 
+	selinux@vger.kernel.org, kees@kernel.org, linux-hardening@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
-Date: Mon, 23 Jun 2025 17:14:37 +0200
-Message-Id: <DAU0ELV91E2Q.35FZOII18W44J@kernel.org>
-Cc: =?utf-8?q?Onur_=C3=96zkan?= <work@onurozkan.dev>,
- <linux-kernel@vger.kernel.org>, <rust-for-linux@vger.kernel.org>,
- <ojeda@kernel.org>, <alex.gaynor@gmail.com>, <gary@garyguo.net>,
- <a.hindborg@kernel.org>, <aliceryhl@google.com>, <tmgross@umich.edu>,
- <dakr@kernel.org>, <peterz@infradead.org>, <mingo@redhat.com>,
- <will@kernel.org>, <longman@redhat.com>, <felipe_life@live.com>,
- <daniel@sedlak.dev>, <bjorn3_gh@protonmail.com>
-Subject: Re: [PATCH v5 2/3] implement ww_mutex abstraction for the Rust tree
-From: "Benno Lossin" <lossin@kernel.org>
-To: "Boqun Feng" <boqun.feng@gmail.com>
-X-Mailer: aerc 0.20.1
-References: <20250621184454.8354-1-work@onurozkan.dev>
- <20250621184454.8354-3-work@onurozkan.dev>
- <DASY7BECFRCT.332X5ZHZMV2W@kernel.org> <aFlQ7K_mYYbrG8Cl@Mac.home>
- <DATYHYJVPL3L.3NLMH7PPHYU9@kernel.org> <aFlpFQ4ivKw81d-y@Mac.home>
-In-Reply-To: <aFlpFQ4ivKw81d-y@Mac.home>
 
-On Mon Jun 23, 2025 at 4:47 PM CEST, Boqun Feng wrote:
-> On Mon, Jun 23, 2025 at 03:44:58PM +0200, Benno Lossin wrote:
->> I didn't have a concrete API in mind, but after having read the
->> abstractions more, would this make sense?
->>=20
->>     let ctx: &WwAcquireCtx =3D ...;
->>     let m1: &WwMutex<T> =3D ...;
->>     let m2: &WwMutex<Foo> =3D ...;
->>=20
->>     let (t, foo, foo2) =3D ctx
->>         .begin()
->>         .lock(m1)
->>         .lock(m2)
->>         .lock_with(|(t, foo)| &*foo.other)
->>         .finish();
->>=20
+On Mon, Jun 23, 2025 at 8:39=E2=80=AFAM Stephen Smalley
+<stephen.smalley.work@gmail.com> wrote:
+> On Sun, Jun 22, 2025 at 9:41=E2=80=AFPM Abhinav Saxena via B4 Relay
+> <devnull+xandfury.gmail.com@kernel.org> wrote:
+> >
+> > From: Abhinav Saxena <xandfury@gmail.com>
+> >
+> > The TIOCSTI ioctl currently only checks the current process's
+> > credentials, creating a TOCTOU vulnerability where an unprivileged
+> > process can open a TTY fd and pass it to a privileged process via
+> > SCM_RIGHTS.
+> >
+> > Fix by requiring BOTH the file opener (file->f_cred) AND the current
+> > process to have CAP_SYS_ADMIN. This prevents privilege escalation
+> > while ensuring legitimate use cases continue to work.
+> >
+> > Link: https://github.com/KSPP/linux/issues/156
+> >
+> > Signed-off-by: Abhinav Saxena <xandfury@gmail.com>
+> > ---
+> >  security/selinux/hooks.c | 6 ++++++
+> >  1 file changed, 6 insertions(+)
+> >
+> > diff --git a/security/selinux/hooks.c b/security/selinux/hooks.c
+> > index 595ceb314aeb..a628551873ab 100644
+> > --- a/security/selinux/hooks.c
+> > +++ b/security/selinux/hooks.c
+> > @@ -3847,6 +3847,12 @@ static int selinux_file_ioctl(struct file *file,=
+ unsigned int cmd,
+> >                                             CAP_OPT_NONE, true);
+> >                 break;
+> >
+> > +       case TIOCSTI:
+> > +               if (!file_ns_capable(file, &init_user_ns, CAP_SYS_ADMIN=
+) ||
+> > +                   !capable(CAP_SYS_ADMIN))
+> > +                       error =3D -EPERM;
+> > +               break;
+> > +
 >
-> Cute!
->
-> However, each `.lock()` will need to be polymorphic over a tuple of
-> locks that are already held, right? Otherwise I don't see how
-> `.lock_with()` knows it's already held two locks. That sounds like a
-> challenge for implementation.
+> So, aside from what I said previously, this also will break any
+> existing policies currently controlling TIOCSTI
+> via the selinux ioctl checking in the default case, so at the very
+> least, this would need to be gated by a new
+> SELinux policy capability for compatibility purposes. But I'm still
+> unconvinced that this is the right approach.
 
-I think it's doable if we have=20
+I want to add my voice to the other comments that adding these
+capability checks to the SELinux code and not the main TIOCSTI kernel
+code is not an approach we want to support.  Beyond that, as others
+have already pointed out, I think some additional inspection and
+testing is needed to ensure that the additional capability checks do
+not break existing, valid use cases.
 
-    impl WwActiveCtx {
-        fn begin(&self) -> WwActiveCtx<'_, ()>;
-    }
-
-    struct WwActiveCtx<'a, Locks> {
-        locks: Locks,
-        _ctx: PhantomData<&'a WwAcquireCtx>,
-    }
-
-    impl<'a, Locks> WwActiveCtx<'a, Locks>
-    where
-        Locks: Tuple
-    {
-        fn lock<'b, T>(
-            self,
-            lock: &'b WwMutex<T>,
-        ) -> WwActiveCtx<'a, Locks::Append<WwMutexGuard<'b, T>>>;
-
-        fn lock_with<'b, T>(
-            self,
-            get_lock: impl FnOnce(&Locks) -> &'b WwMutex<T>,
-        ) -> WwActiveCtx<'a, Locks::Append<WwMutexGuard<'b, T>>>;
-        // I'm not 100% sure that the lifetimes will work out...
-
-        fn finish(self) -> Locks;
-    }
-
-    trait Tuple {
-        type Append<T>;
-
-        fn append<T>(self, value: T) -> Self::Append<T>;
-    }
-
-    impl Tuple for () {
-        type Append<T> =3D (T,);
-
-        fn append<T>(self, value: T) -> Self::Append<T> {
-            (value,)
-        }
-    }
-   =20
-    impl<T1> Tuple for (T1,) {
-        type Append<T> =3D (T1, T);
-
-        fn append<T>(self, value: T) -> Self::Append<T> {
-            (self.0, value,)
-        }
-    }
-
-    impl<T1, T2> Tuple for (T1, T2) {
-        type Append<T> =3D (T1, T2, T);
-
-        fn append<T>(self, value: T) -> Self::Append<T> {
-            (self.0, self.1, value,)
-        }
-    }
-
-    /* these can easily be generated by a macro */
-
-> We also need to take into consideration that the user want to drop any
-> lock in the sequence? E.g. the user acquires a, b and c, and then drop
-> b, and then acquires d. Which I think is possible for ww_mutex.
-
-Hmm what about adding this to the above idea?:
-
-    impl<'a, Locks> WwActiveCtx<'a, Locks>
-    where
-        Locks: Tuple
-    {
-        fn custom<L2>(self, action: impl FnOnce(Locks) -> L2) -> WwActiveCt=
-x<'a, L2>;
-    }
-
-Then you can do:
-
-    let (a, c, d) =3D ctx.begin()
-        .lock(a)
-        .lock(b)
-        .lock(c)
-        .custom(|(a, _, c)| (a, c))
-        .lock(d)
-        .finish();
-
->>     let _: &mut T =3D t;
->>     let _: &mut Foo =3D foo;
->>     let _: &mut Foo =3D foo2;
-
-Ah these will actually be `WwMutexGuard<'_, ...>`, but that should be
-expected.
-
----
-Cheers,
-Benno
+--=20
+paul-moore.com
 
