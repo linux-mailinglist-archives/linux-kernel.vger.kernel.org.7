@@ -1,88 +1,61 @@
-Return-Path: <linux-kernel+bounces-698526-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-698530-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 71241AE45EF
-	for <lists+linux-kernel@lfdr.de>; Mon, 23 Jun 2025 16:06:42 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7EC10AE4616
+	for <lists+linux-kernel@lfdr.de>; Mon, 23 Jun 2025 16:13:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E86E11895093
-	for <lists+linux-kernel@lfdr.de>; Mon, 23 Jun 2025 14:05:41 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2BF8F1647F9
+	for <lists+linux-kernel@lfdr.de>; Mon, 23 Jun 2025 14:09:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F345B219A72;
-	Mon, 23 Jun 2025 14:05:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A3B5614A62B;
+	Mon, 23 Jun 2025 14:09:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="OVzSW22R"
-Received: from mail-ej1-f41.google.com (mail-ej1-f41.google.com [209.85.218.41])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="dHdsPhym"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1BFBF15383A
-	for <linux-kernel@vger.kernel.org>; Mon, 23 Jun 2025 14:05:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DE2F078F5E;
+	Mon, 23 Jun 2025 14:09:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750687503; cv=none; b=sy02JQzT/ZUs30RA/fIGPzVa3MyCBqAImudtMiCX2OUYBMpZqSCL0cqL7QRg8Pvmf0vbUK9dA0xpkuWh1vKKo/Okc8hY9gWVD0PnHYStCBc1LYBRfLawfYgUbDxp59Vgf12frS519RSAwAyuUs/q01+wRsFQfgSe80mHECnbVLU=
+	t=1750687745; cv=none; b=KfhX2yV/R2RffX0OOKbs/BXbyVpm24m5FBn3FdYEPyCitlBbvNSA9mXE2EVpxU9exY6HS0ijMlFtR5r4jUnEAv5kwdhAuxiocsFaPA+HdzbtOgpyiA3JTULtAcGaRDkm3tOg5Nf//87V/uhrkksmso+ozzKQn6BeeeXsa9ozon4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750687503; c=relaxed/simple;
-	bh=FfP8tkdvG9UtNgg6dvh/7AgGSsN2krjZSQ2tXWpR92M=;
+	s=arc-20240116; t=1750687745; c=relaxed/simple;
+	bh=sIqaqHwoR/cVtxIhgcxx2ZVcUkiubyrehXo3GcWtKOc=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=A94GVBxC3USpgmqjnlYecDf+XxLolovWVNARVWQkJshOIeSjGfQ59aCsqyJnT/lyizSOVNeXhjjTPY/ReG1wrFHtQbFx4HT1O6m+j4KSDdnYBPwcxeKp+tGySPPXM5LJeEJ4W61d7TLsEWIbh7X0tJkffzBV472JJ/42TnJjD7U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=OVzSW22R; arc=none smtp.client-ip=209.85.218.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
-Received: by mail-ej1-f41.google.com with SMTP id a640c23a62f3a-ad572ba1347so693095466b.1
-        for <linux-kernel@vger.kernel.org>; Mon, 23 Jun 2025 07:05:00 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=suse.com; s=google; t=1750687499; x=1751292299; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=BiwWRM0CdO0mCYDwXynObL1UDQi5thYGbEgLeQCW4C8=;
-        b=OVzSW22RFcDyb49ETz5JqHYi+9L1xano5JpEPzEPtCUxbuUO+UI4Ik9QTTQzuPK2Ze
-         TJjUv+WwTS/W+QhsBUIXHWw/fZioo6pqiFJ8Tgu2WT0Xo8WNO7j+2PQD7QnSYUkQ9ekY
-         caYRjk5BKlJBnz/Ve3MV/UsQPypUY6QqrracznT2HC/NQRxjxP834wtCub0wFbPdpOOS
-         oHAaN9yLI1mR6vggmjkDPDIw7wZqwzbNrhWMq5KnpCGNuzz2rpDmuc4WBgNwMJgpYDvz
-         ijANwa7qpPZeQuXLact/RbiYxT0Ag5CUEGFZ6L/C3bZAfbgKv9yP9wuZ2WYGI23e5hWA
-         jvPg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1750687499; x=1751292299;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=BiwWRM0CdO0mCYDwXynObL1UDQi5thYGbEgLeQCW4C8=;
-        b=VV590E8UyF/meqO/HTLo+HYfeJYPxAQQtZChYWVfE/q8TU8A+wjc3jWHpfPft7PU2N
-         fAnnqXPRGc0inYi90T2Ol+P/cVpz05lxys8PcNKpj/ekGrwtC61cTTrXhwZq8nB/y5Y/
-         LI2sJ+LfdxaeBzloiNXRVQVDiSLuV95e0MAOLI3bjEUVZn7iEO+qfGMWize7VwWmOx3U
-         YhyxiBu/16zQ4hq5GMh5/y5/81IHwdjpPXZQwazOGaKFj2R4mf8OGck71cZgVa0xRRDe
-         223Up7jtELxkxZG1muVKAmWYNnS5oGHshlRjmYPa5n3aiis8sSAx2wSiQKSGGAzQshga
-         3dpQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVjxlsAbHLrDAYQW2q3BA2mZ4sATuEeCKgqRO6UNU81xfI6Y7LYij9aWxLtv/xGdVbHvQag7ovfP+SOZJU=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxXj44RtN/q7eJYRXmvGiakPZmbivJpp/mh/0MVXfOwRyNrzv6x
-	yY8V8a9OnH8D40tYoe6yUIAyLTYF9iyVupRpGvBDLvf5Rk8LyJl65wlzqlzYySq5rGM=
-X-Gm-Gg: ASbGncvJ1T4vFTSpeMTFlJCSnuP7eADeOeYZ+vtVGrvjHT7yuP3SOLUhubK8DV5JhOG
-	HtjHS9x15CBYpvs4zFNMpGvSNsqZpHRurL7o/P9qC7LOKydx4XsKOjafLP7WBGnRxpJvX5B1cSQ
-	KbKn8tF3y/1jQz9uxXIS9ZaJ20ZNO3WZIfaruJjRxTVedAVNfSxReoFlb49HoDQ0vuKsMp2mWjm
-	ebl+84G9MhUkUcGNnUd4jYccdVAZoqHubfNQOgbLuvAxr7HWQcriK7RN/Zlea28SxFOmRoVtEH3
-	dZHQ1l++dXgCSHsCIvxsPi963ovG3MkpY6ILcwfYbG3DUyc0AhCxSAanALDNiYjC
-X-Google-Smtp-Source: AGHT+IEZK+cKcXwj6H745JxNBD6L9r2Ck22uk68tyKhRVlMQYWUpQGiQ1xsjaqcD2gPzsaACfHFbhQ==
-X-Received: by 2002:a17:907:d2c9:b0:adb:1eee:a083 with SMTP id a640c23a62f3a-ae057c8b8aemr1141846566b.47.1750687499027;
-        Mon, 23 Jun 2025 07:04:59 -0700 (PDT)
-Received: from pathway.suse.cz ([176.114.240.130])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ae054080e28sm716407966b.73.2025.06.23.07.04.58
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 23 Jun 2025 07:04:58 -0700 (PDT)
-Date: Mon, 23 Jun 2025 16:04:56 +0200
-From: Petr Mladek <pmladek@suse.com>
-To: Feng Tang <feng.tang@linux.alibaba.com>
-Cc: Andrew Morton <akpm@linux-foundation.org>,
-	Steven Rostedt <rostedt@goodmis.org>,
-	Lance Yang <lance.yang@linux.dev>, Jonathan Corbet <corbet@lwn.net>,
-	linux-kernel@vger.kernel.org, paulmck@kernel.org,
-	john.ogness@linutronix.de
-Subject: Re: [PATCH V2 3/5] sys_info: add help to translate sys_info string
- to bitmap
-Message-ID: <aFlfCCFZQJ9IJm-8@pathway.suse.cz>
-References: <20250616010840.38258-1-feng.tang@linux.alibaba.com>
- <20250616010840.38258-4-feng.tang@linux.alibaba.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=a54f/YTdWB2sid64AGzDYpyRwNPl84i52Rq2NKJK7iDDe/Gv6t7/kAPZuA87AT7Fqvx4lfjmjqx4sO5hvaY1wcZPJ4rr+fvs7qIZT8lj23T3G8MvokgeX9vsS7237mYuufnLW/l4sPfKldD4aEBRmKvJ0RggPquky1j+J2QKfK8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=dHdsPhym; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7D9D1C4CEEA;
+	Mon, 23 Jun 2025 14:08:51 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1750687744;
+	bh=sIqaqHwoR/cVtxIhgcxx2ZVcUkiubyrehXo3GcWtKOc=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=dHdsPhymHpCpP1L1rpiiuVh9anWKDbUGp+dOsOPmO4OQHE+kU+Zi18fE4bLaexYrK
+	 gUoN90qEMebw6mZqVEPlvabq2eThh8jpVLRCedMrM9eSnmX3GOFuVtEOseL+YdN3wn
+	 X8qzapUuQcmNdjX6GIaf4OcqNHI+q8NPq1HMYd9eexsJ6bIMOSDISjUzkr6ThA2YxS
+	 ISPmeyDa0Yn46UlCpcxQuo8fPxQ1748dOTKvenwn7VFifTenNUleH0JxjjCZ6KgFWh
+	 1JCXZsmFMs7pcYZDFQqjcAOKf3JPAOwPWPTW1qjaoHn3i8f4SdJWqCkjKdFaxTYuQu
+	 SKrtpjjYZZkKA==
+Date: Mon, 23 Jun 2025 19:35:32 +0530
+From: Naveen N Rao <naveen@kernel.org>
+To: Sean Christopherson <seanjc@google.com>
+Cc: Marc Zyngier <maz@kernel.org>, Oliver Upton <oliver.upton@linux.dev>, 
+	Paolo Bonzini <pbonzini@redhat.com>, Joerg Roedel <joro@8bytes.org>, 
+	David Woodhouse <dwmw2@infradead.org>, Lu Baolu <baolu.lu@linux.intel.com>, 
+	linux-arm-kernel@lists.infradead.org, kvmarm@lists.linux.dev, kvm@vger.kernel.org, 
+	iommu@lists.linux.dev, linux-kernel@vger.kernel.org, Sairaj Kodilkar <sarunkod@amd.com>, 
+	Vasant Hegde <vasant.hegde@amd.com>, Maxim Levitsky <mlevitsk@redhat.com>, 
+	Joao Martins <joao.m.martins@oracle.com>, Francesco Lavra <francescolavra.fl@gmail.com>, 
+	David Matlack <dmatlack@google.com>
+Subject: Re: [PATCH v3 18/62] KVM: SVM: Disable (x2)AVIC IPI virtualization
+ if CPU has erratum #1235
+Message-ID: <jskiyda3defofthrtniugcdbcoftx4o5yvgt47koswq64qf7d7@2pzrr5v5yssy>
+References: <20250611224604.313496-2-seanjc@google.com>
+ <20250611224604.313496-20-seanjc@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -91,181 +64,74 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250616010840.38258-4-feng.tang@linux.alibaba.com>
+In-Reply-To: <20250611224604.313496-20-seanjc@google.com>
 
-On Mon 2025-06-16 09:08:38, Feng Tang wrote:
-> Bitmap definition is hard to remember and decode. Add sysctl interface
-> to translate human readable string like "tasks,mem,timer,lock,ftrace,..."
-> to bitmap.
+On Wed, Jun 11, 2025 at 03:45:21PM -0700, Sean Christopherson wrote:
+> From: Maxim Levitsky <mlevitsk@redhat.com>
 > 
-> Suggested-by: Petr Mladek <pmladek@suse.com>
-> Signed-off-by: Feng Tang <feng.tang@linux.alibaba.com>
+> Disable IPI virtualization on AMD Family 17h CPUs (Zen2 and Zen1), as
+> hardware doesn't reliably detect changes to the 'IsRunning' bit during ICR
+> write emulation, and might fail to VM-Exit on the sending vCPU, if
+> IsRunning was recently cleared.
+> 
+> The absence of the VM-Exit leads to KVM not waking (or triggering nested
+> VM-Exit) of the target vCPU(s) of the IPI, which can lead to hung vCPUs,
+  ^^^^^^^^^^^
+  VM-Exit of)
+
+> unbounded delays in L2 execution, etc.
+> 
+> To workaround the erratum, simply disable IPI virtualization, which
+> prevents KVM from setting IsRunning and thus eliminates the race where
+> hardware sees a stale IsRunning=1.  As a result, all ICR writes (except
+> when "Self" shorthand is used) will VM-Exit and therefore be correctly
+> emulated by KVM.
+> 
+> Disabling IPI virtualization does carry a performance penalty, but
+> benchmarkng shows that enabling AVIC without IPI virtualization is still
+> much better than not using AVIC at all, because AVIC still accelerates
+> posted interrupts and the receiving end of the IPIs.
+> 
+> Note, when virtualizaing Self-IPIs, the CPU skips reading the physical ID
+	     ^^^^^^^^^^^^^
+	     virtualizing
+
+> table and updates the vIRR directly (because the vCPU is by definition
+> actively running), i.e. Self-IPI isn't susceptible to the erratum *and*
+> is still accelerated by hardware.
+> 
+> Signed-off-by: Maxim Levitsky <mlevitsk@redhat.com>
+> [sean: rebase, massage changelog, disallow user override]
+> Signed-off-by: Sean Christopherson <seanjc@google.com>
 > ---
->  include/linux/sys_info.h |  7 +++
->  lib/sys_info.c           | 97 ++++++++++++++++++++++++++++++++++++++++
->  2 files changed, 104 insertions(+)
+>  arch/x86/kvm/svm/avic.c | 8 ++++++++
+>  1 file changed, 8 insertions(+)
 > 
-> diff --git a/include/linux/sys_info.h b/include/linux/sys_info.h
-> index 79bf4a942e5f..0b49863cd414 100644
-> --- a/include/linux/sys_info.h
-> +++ b/include/linux/sys_info.h
-> @@ -16,5 +16,12 @@
->  #define SYS_SHOW_BLOCKED_TASKS		0x00000080
+> diff --git a/arch/x86/kvm/svm/avic.c b/arch/x86/kvm/svm/avic.c
+> index 48c737e1200a..bf8b59556373 100644
+> --- a/arch/x86/kvm/svm/avic.c
+> +++ b/arch/x86/kvm/svm/avic.c
+> @@ -1187,6 +1187,14 @@ bool avic_hardware_setup(void)
+>  	if (x2avic_enabled)
+>  		pr_info("x2AVIC enabled\n");
 >  
->  extern void sys_show_info(unsigned long info_mask);
-> +extern unsigned long sys_info_parse_param(char *str);
->  
-> +#ifdef CONFIG_SYSCTL
-> +struct ctl_table;
-> +extern int sysctl_sys_info_handler(const struct ctl_table *ro_table, int write,
-> +					  void *buffer, size_t *lenp,
-> +					  loff_t *ppos);
-> +#endif
->  #endif	/* _LINUX_SYS_INFO_H */
-> diff --git a/lib/sys_info.c b/lib/sys_info.c
-> index 90a79b5164c9..9693542435ba 100644
-> --- a/lib/sys_info.c
-> +++ b/lib/sys_info.c
-> @@ -5,6 +5,103 @@
->  #include <linux/console.h>
->  #include <linux/nmi.h>
->  
-> +struct sys_info_name {
-> +	unsigned long bit;
-> +	const char *name;
-> +};
+> +	/*
+> +	 * Disable IPI virtualization for AMD Family 17h CPUs (Zen1 and Zen2)
+> +	 * due to erratum 1235, which results in missed GA log events and thus
+							^^^^^^^^^^^^^
+Not sure I understand the reference to GA log events here -- those are 
+only for device interrupts and not IPIs.
+
+> +	 * missed wake events for blocking vCPUs due to the CPU failing to see
+> +	 * a software update to clear IsRunning.
+> +	 */
+> +	enable_ipiv = enable_ipiv && boot_cpu_data.x86 != 0x17;
 > +
-> +static const char sys_info_avail[] = "tasks,mem,timer,lock,ftrace,all_bt,blocked_tasks";
-> +
-> +static const struct sys_info_name  si_names[] = {
-> +	{ SYS_SHOW_TASK_INFO,	"tasks" },
-> +	{ SYS_SHOW_MEM_INFO,	"mem" },
-> +	{ SYS_SHOW_TIMER_INFO,	"timer" },
 
-I see that the naming is a bit inconsistent in using singulars
-vs. plurals. I suggest to use plulars when it makes sense.
-It means here:
+Apart from the above, this LGTM.
+Acked-by: Naveen N Rao (AMD) <naveen@kernel.org>
 
-	{ SYS_SHOW_TIMERS_INFO,	"timers" },
 
-> +	{ SYS_SHOW_LOCK_INFO,	"lock" },
-
-and here
-
-	{ SYS_SHOW_LOCKS_INFO,	"locks" },
-
-> +	{ SYS_SHOW_FTRACE_INFO, "ftrace" },
-> +	{ SYS_SHOW_ALL_CPU_BT,	"all_bt" },
-> +	{ SYS_SHOW_BLOCKED_TASKS, "blocked_tasks" },
-> +};
-
-[...]
-
-> +#ifdef CONFIG_SYSCTL
-> +int sysctl_sys_info_handler(const struct ctl_table *ro_table, int write,
-> +					  void *buffer, size_t *lenp,
-> +					  loff_t *ppos)
-> +{
-> +	char names[sizeof(sys_info_avail) + 1];
-> +	struct ctl_table table;
-> +	unsigned long *si_bits_global;
-> +	int i, ret, len;
-> +
-> +	si_bits_global = ro_table->data;
-> +
-> +	if (write) {
-> +		unsigned long si_bits;
-> +
-> +		table = *ro_table;
-> +		table.data = names;
-> +		table.maxlen = sizeof(names);
-> +		ret = proc_dostring(&table, write, buffer, lenp, ppos);
-> +		if (ret)
-> +			return ret;
-> +
-> +		si_bits = sys_info_parse_param(names);
-> +		/*
-> +		 * The access to the global value is not synchronized.
-> +		 */
-
-Nit, the comment fits on a single line. I would use:
-
-		/* The access to the global value is not synchronized. */
-
-> +		WRITE_ONCE(*si_bits_global, si_bits);
-> +		return 0;
-> +	} else {
-> +		/* for 'read' operation */
-> +		bool first = true;
-> +		char *buf;
-> +
-> +		buf = names;
-> +		for (i = 0; i < ARRAY_SIZE(si_names); i++) {
-> +			if (*si_bits_global & si_names[i].bit) {
-> +
-> +				if (first) {
-> +					first = false;
-> +				} else {
-> +					*buf = ',';
-> +					buf++;
-> +				}
-> +
-> +				len = strlen(si_names[i].name);
-> +				strncpy(buf, si_names[i].name, len);
-
-I am afraid of a buffer overflow when people add new entry into
-si_names[] table but they forget to update sys_info_avail[] string.
-I would prefer to limit the write to the buffer by the size of the buffer.
-
-Something like (on top of this patch):
-
---- a/lib/sys_info.c
-+++ b/lib/sys_info.c
-@@ -50,7 +50,7 @@ int sysctl_sys_info_handler(const struct ctl_table *ro_table, int write,
- 	char names[sizeof(sys_info_avail) + 1];
- 	struct ctl_table table;
- 	unsigned long *si_bits_global;
--	int i, ret, len;
-+	int i, ret;
- 
- 	si_bits_global = ro_table->data;
- 
-@@ -72,27 +72,18 @@ int sysctl_sys_info_handler(const struct ctl_table *ro_table, int write,
- 		return 0;
- 	} else {
- 		/* for 'read' operation */
--		bool first = true;
--		char *buf;
-+		char *delim = "";
-+		int len = 0;
- 
--		buf = names;
-+		names[0] = '\0';
- 		for (i = 0; i < ARRAY_SIZE(si_names); i++) {
- 			if (*si_bits_global & si_names[i].bit) {
--
--				if (first) {
--					first = false;
--				} else {
--					*buf = ',';
--					buf++;
--				}
--
--				len = strlen(si_names[i].name);
--				strncpy(buf, si_names[i].name, len);
--				buf += len;
-+				len += scnprintf(names + len, sizeof(names) - len,
-+						 "%s%s", delim, si_names[i].name);
-+				delim = ",";
- 			}
- 
- 		}
--		*buf = '\0';
- 
- 		table = *ro_table;
- 		table.data = names;
-
-Best Regards,
-Petr
+- Naveen
 
 
