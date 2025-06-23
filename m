@@ -1,224 +1,398 @@
-Return-Path: <linux-kernel+bounces-697799-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-697801-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9CEF5AE38D5
-	for <lists+linux-kernel@lfdr.de>; Mon, 23 Jun 2025 10:46:31 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 403E4AE38E1
+	for <lists+linux-kernel@lfdr.de>; Mon, 23 Jun 2025 10:47:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A3C133ADC03
-	for <lists+linux-kernel@lfdr.de>; Mon, 23 Jun 2025 08:45:59 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C5F6D172D27
+	for <lists+linux-kernel@lfdr.de>; Mon, 23 Jun 2025 08:47:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3A319226CF5;
-	Mon, 23 Jun 2025 08:46:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3C2BE230268;
+	Mon, 23 Jun 2025 08:47:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Uo5Llaec"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.16])
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=hmeau.com header.i=@hmeau.com header.b="lOa5Tfze"
+Received: from abb.hmeau.com (abb.hmeau.com [144.6.53.87])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CEB752A1D8;
-	Mon, 23 Jun 2025 08:46:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=192.198.163.16
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750668376; cv=fail; b=dBhxpLu5fYtZ8iwKQV3Ux5BNPmHBu33RgFVQG+AW/SA127l3P2vgg2w3D7KOY7UfkI9YrStbC/GErqKEQAn+++Sp5q65n06J1TaYHisVjVTtKjO2F6jIwpktAT4h9y+rOy6+nkYPBxiupFwcygWMFmyYjua2VZOqx6uzEE9UBxQ=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750668376; c=relaxed/simple;
-	bh=dNfJMQd29nA/5rhAY5rS30Zx5Y/fd0M7a3RCTgRi7x0=;
-	h=Message-ID:Date:Subject:To:CC:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=Vs6xirnUCyDw5MrYoJt+33TObTJ0aMH07c5JbDy4ozF5Dcy+IqmfKPsvDXi+Jj5gFjXNweC//1cbtxF0B7Jrd7ZhXZA4rIN6xhOhFy60SX05PaitxKCbPwWYnFyNFZ2ILKIW4v6F8u8YzSEAxX6tcKoT8BScAZBRx3xKUdrYFsM=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Uo5Llaec; arc=fail smtp.client-ip=192.198.163.16
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1750668375; x=1782204375;
-  h=message-id:date:subject:to:cc:references:from:
-   in-reply-to:content-transfer-encoding:mime-version;
-  bh=dNfJMQd29nA/5rhAY5rS30Zx5Y/fd0M7a3RCTgRi7x0=;
-  b=Uo5LlaecomKq9kKgRj6u/bUdX+E/kO67Kr3chFrYBVKzSMWm5uBrApI9
-   nJQVy04hLBzBo+G3it/OWdb7sg08fwCqj+OoN4i+QQqRtfq9QOVyY2xwj
-   0B+ij83CVULV3rjHr/Boj0TxWym/7a8aBAVTyY4Ca0SM5tNd183pgPuOi
-   FDdvxK96j+/oGV1fafUMSqzwwVXpMkokBmBFOa0Rln8xdllFgo5uTUUcv
-   ++A62Xgof3CAnAUXRR1OdDAb0yzE/TIjN3iEt3tWhrItSWXrGMg4r+uFA
-   2mtIYQt/eWt7m2zZtoOK2SfhobO3nvHtbWeqZhkUgyEa9Nwb9rretkEVd
-   g==;
-X-CSE-ConnectionGUID: fXgtd92fT7y+CPrEJb+24Q==
-X-CSE-MsgGUID: Sl9LICrzQpKuAux4JKE10Q==
-X-IronPort-AV: E=McAfee;i="6800,10657,11472"; a="40472365"
-X-IronPort-AV: E=Sophos;i="6.16,258,1744095600"; 
-   d="scan'208";a="40472365"
-Received: from fmviesa002.fm.intel.com ([10.60.135.142])
-  by fmvoesa110.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 23 Jun 2025 01:46:12 -0700
-X-CSE-ConnectionGUID: EDtGheFFQQ6SKvHFhuzOuA==
-X-CSE-MsgGUID: 1NsVrajeROGPZ9ZZJ1M1Ow==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.16,258,1744095600"; 
-   d="scan'208";a="175145454"
-Received: from orsmsx902.amr.corp.intel.com ([10.22.229.24])
-  by fmviesa002.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 23 Jun 2025 01:46:12 -0700
-Received: from ORSMSX902.amr.corp.intel.com (10.22.229.24) by
- ORSMSX902.amr.corp.intel.com (10.22.229.24) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.25; Mon, 23 Jun 2025 01:46:10 -0700
-Received: from ORSEDG901.ED.cps.intel.com (10.7.248.11) by
- ORSMSX902.amr.corp.intel.com (10.22.229.24) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.25 via Frontend Transport; Mon, 23 Jun 2025 01:46:10 -0700
-Received: from NAM10-BN7-obe.outbound.protection.outlook.com (40.107.92.55) by
- edgegateway.intel.com (134.134.137.111) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.25; Mon, 23 Jun 2025 01:46:09 -0700
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=u7GrVj0+cds0g92VJb6tD2eJMP9t2t0x206h4ngt0dbHLtJ3g0NwnD6lXd0oV6UBdvbY1kwtcvIL/KnCSgpmxpNrssXGXwoBHt90BtlK9U0XqpKdusX+5IAccYNqe0uCgrC2HWOyIcuzkG5fDYoBnsKTi3s6GP5mqkcwrmOEVyAjPHB3FchO3+lTRr7ylPNiPPHbGOmEn/0HR5N/3i98Jb1D6Howk0nPQJmKz7X7aMV29bIlWGZGOBoDcia4HfP7dmTR1IXShtiUXduepIDZP1Q6JTm0xAEoL/OHB5kw8qnGXqVfBHdmMvFzqzgQVCcRxj4nKJYie4hAxQvAUN6z9Q==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=HErTDXWAIJIf+Uyp8ubovMqvDwmOsQsrYeEerVe0HtU=;
- b=HBO+Pmk7mw74t2UTq6WgUGqo6r/t6v2nsodPtBI/Wyo751RHaNmipvgkKUkj4D/pr6RTMnsKvToyIZa8muAmuBnF0oBkQuzjOnaH8uw0WurVhGtSeyGBfJxtSXxSDs7pd9Zww7sSu1Tfd1G0LBzMqNShkMPQy9/jv+DH7WTy1ZvWpl3E5mlgNmj+I2yhR+q1BQ950hGcF/lGS/j2j3wieKVfo4/7f1Xg0e+D8KQwflVM+Rm3RKPvKg4Cr3j5CBQF2cOsAHBcGf4/0XqwHzA8pv4Ga74ezJ7bq1NcTcaETLewKEkFruzGyGUI/KL/ODok23VDBoK1hqE5hsebBlmgUw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
- dkim=pass header.d=intel.com; arc=none
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=intel.com;
-Received: from MN6PR11MB8102.namprd11.prod.outlook.com (2603:10b6:208:46d::9)
- by SA1PR11MB5948.namprd11.prod.outlook.com (2603:10b6:806:23c::18) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8857.27; Mon, 23 Jun
- 2025 08:45:40 +0000
-Received: from MN6PR11MB8102.namprd11.prod.outlook.com
- ([fe80::15b2:ee05:2ae7:cfd6]) by MN6PR11MB8102.namprd11.prod.outlook.com
- ([fe80::15b2:ee05:2ae7:cfd6%5]) with mapi id 15.20.8857.026; Mon, 23 Jun 2025
- 08:45:40 +0000
-Message-ID: <3bf6df3b-affe-4f10-8b05-29f3393d19e0@intel.com>
-Date: Mon, 23 Jun 2025 10:45:34 +0200
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/1] check the ioremap return value first (supplementary
- CC)
-To: chuguangqing <chuguangqing@inspur.com>
-CC: <linux-kernel@vger.kernel.org>, <netdev@vger.kernel.org>,
-	<intel-wired-lan@lists.osuosl.org>, Tony Nguyen <anthony.l.nguyen@intel.com>,
-	Andrew Lunn <andrew+netdev@lunn.ch>, "David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, "Paolo
- Abeni" <pabeni@redhat.com>
-References: <9e82a899-7536-49a6-a4c5-c54fa96d8f50@redhat.com>
- <20250619124921.44677-1-chuguangqing@inspur.com>
-From: Przemek Kitszel <przemyslaw.kitszel@intel.com>
-Content-Language: en-US
-In-Reply-To: <20250619124921.44677-1-chuguangqing@inspur.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: DUZP191CA0002.EURP191.PROD.OUTLOOK.COM
- (2603:10a6:10:4f9::12) To MN6PR11MB8102.namprd11.prod.outlook.com
- (2603:10b6:208:46d::9)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EC63A219A91;
+	Mon, 23 Jun 2025 08:47:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=144.6.53.87
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1750668460; cv=none; b=m6a8AiHZq5p/2KhevjEoc87x0sfd0Z9ceZDVSsYwdIdjKE8qbFTMvJC3Cvt5s80i9/YoAw7VToXepl2/oktjO3OJ0KYepe5ariKHxEADlyadzVv16cJct01th7pgCVilQLQ4M8sc22PpUqa0AdwiL9bBZcUNUrNdkUc9JmOMsdM=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1750668460; c=relaxed/simple;
+	bh=hNq4rkHqQ51UkHrC9U41OXCHAhCtKb1Q3dXk8ivWjuw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Fv5oyuGdatxTZcht8KZyUJVLA53kVOdHCpYoWJymaBRWPksnT09QdW2/7A7mhInbBWvShqFy08rP2ClKiMNsyiWJoYU6v0OJJB17yXSU7KAzUe67hdpOpe7AvbuBEtgYkJQRrUIHtUryOsZ7M9Mzmpj3d2xyNMoGTO3PKZq0t9M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gondor.apana.org.au; spf=pass smtp.mailfrom=gondor.apana.org.au; dkim=pass (2048-bit key) header.d=hmeau.com header.i=@hmeau.com header.b=lOa5Tfze; arc=none smtp.client-ip=144.6.53.87
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gondor.apana.org.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gondor.apana.org.au
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=hmeau.com;
+	s=formenos; h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:
+	Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
+	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+	:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
+	List-Post:List-Owner:List-Archive;
+	bh=EPoZSArN2kgtXJzaLg/XSoUgUso/YZ0pGXH57AfX9WI=; b=lOa5TfzeTdW3MDYbj5HP0nHBrz
+	A3uhN4oapCA4E7oxD7OvXaH61r4t1VfnROg0e9Q0k/p4P1wr6PQIdOh3TJySKyKyL41gjrxKLNUFz
+	SodRSxwyRlWAN1LWBMfUJPLR5l5At5SouSBlRcnxtxxpm6T6XqrHwJTKAoTx59nHQirBlbVwXvyTE
+	+CErUbQDFNhmEKY+IDqvuObR6Ew6eKShkUbiKA4OYudD0r/XizQYR22DkUkPsk+dW2YTQsyouJFJB
+	Y8QmOvY0KLegQcrwyIlZG3YumYdErewV2q1kNeJXCdnmXIfW4LsWtjvBOawnFa0SWIBUsqmaVUSnx
+	XHROU5MA==;
+Received: from loth.rohan.me.apana.org.au ([192.168.167.2])
+	by formenos.hmeau.com with smtp (Exim 4.96 #2 (Debian))
+	id 1uTcaP-000F0U-0V;
+	Mon, 23 Jun 2025 16:47:26 +0800
+Received: by loth.rohan.me.apana.org.au (sSMTP sendmail emulation); Mon, 23 Jun 2025 16:47:25 +0800
+Date: Mon, 23 Jun 2025 16:47:25 +0800
+From: Herbert Xu <herbert@gondor.apana.org.au>
+To: Klara Modin <klarasmodin@gmail.com>
+Cc: Andrew Morton <akpm@linux-foundation.org>,
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+	Song Liu <song@kernel.org>, Yu Kuai <yukuai3@huawei.com>,
+	linux-raid@vger.kernel.org
+Subject: [v3 PATCH] lib/raid6: Replace custom zero page with ZERO_PAGE
+Message-ID: <aFkUnXWtxcgOTVkw@gondor.apana.org.au>
+References: <Z9flJNkWQICx0PXk@gondor.apana.org.au>
+ <g7ymicehyrtnmepvpupzpds7yv3v53h3oui4sbcb5njcwsmigq@x5gtxzyw5tc6>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: MN6PR11MB8102:EE_|SA1PR11MB5948:EE_
-X-MS-Office365-Filtering-Correlation-Id: 9944a149-50b6-4c81-4eb5-08ddb23254ea
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|366016|376014;
-X-Microsoft-Antispam-Message-Info: =?utf-8?B?UXoxNk50dzFzOGF2dGNrZzVmMmlDd25Lc2ZJdkNQREFQdlBqaDZSblE3MEky?=
- =?utf-8?B?bWdTUjFQbFBXY05ZcDkwOTBvSzdpMURWWjcyWURLVVFSeS9YRzdRdkRBL1Qy?=
- =?utf-8?B?elJHSjNMQVNMMGZVMU4yOWFZdjZzclJkNVRTMDlRSDFuVUlEbW50SklqQTJn?=
- =?utf-8?B?b245dFBCakJzNmxIamZNb3ZnWXRlQXlGYWF3b29iSkp0a0ZxRkJyaDdaNzU1?=
- =?utf-8?B?K3NpZnEvakxmTVBuV1RMRkN3bFYwRG1QQUJzYjg1UFJMZVl5Z0puQkwrUTBT?=
- =?utf-8?B?SEp3b3dTVjhxbEd5YjkzNFI5QVM4NjhFTWN5OVVaamZGbnZDU0dEUS9GRHdv?=
- =?utf-8?B?K1o0cGRKMHF1S3MraHVVTUoxTVh3WEIrbWc3VDVBN3B1T2JOWmFEVlRzS2FN?=
- =?utf-8?B?Q2hqRzRZWDZFV3V6MXhhU0hodGF5bnVDZnV2NjNOUktLSVF6dURQTVVwdkVI?=
- =?utf-8?B?Z1djaE9WazBzMjR0NkhTRzFZY1hLMFhBbkI3QUxSeDJCbkdCb0JndXZxVmJS?=
- =?utf-8?B?eWRqbkMwcDA3WDBwVGJkRkFJbFEveks2ZFdhS1pzRVZ2MUkvZmNFYkhlRWJT?=
- =?utf-8?B?cytyOWN4ZFNQTjY3MkZSUWJYYXFyNUxRVUF5ZmZYY2hjUzFaZzFLeW5WcjZs?=
- =?utf-8?B?ZVAwc2hqMEZzc2xzcW5HSkRnVms4Snk0RkFtTHREcGMvTmpyL3hpNy91eTk3?=
- =?utf-8?B?R3oxTmdndkwwRmVlVy8vdzRoeExZTFRYV3hKZHpIcGduUWM1dWxxWUdtWEE2?=
- =?utf-8?B?LzBhVWJGZ3h2clUrQ0R1Q1ZWYzcvc2pvZ1VwSG9rc09oTHlhM0JTZkVuYkg4?=
- =?utf-8?B?Z3RjY3phaHd6aWZVSTBlWUVDODM5UER2VW5JcVVxeWpyWG54ZjQ2dE5GUW5o?=
- =?utf-8?B?a0FEU043VkpNVEJ4allUbTQyTzYycmg2V0pnc2tIblAzR01QdUpPSkIrRnlp?=
- =?utf-8?B?b1JEL1ZRRSt2YU1xeFJKWFMvM1lUMUVIRHJ2QzlXRHkwTDNQVHZZVVluWFVj?=
- =?utf-8?B?ZnBPdCt0am1QVUJ4RmpyYUNHazRzb1Zud0xoZEpwQThnYnRBS0Jkb1RZYWJZ?=
- =?utf-8?B?Rk43b3FVLzl5MVBoc210Y0xhUWxDWVJyUEtSK2R6QkpyK1k2VWh3UWZHL3Rv?=
- =?utf-8?B?NkNQNlhpSXVmcEc4WER2L1NVMzk2aTNocFltUm5nNTVSZzI4YzRXNkgvemdh?=
- =?utf-8?B?YWUvZzBpRkpuNmFmN0Y4dkpSNkNMSW1qTks1N2VtSkx1NmRmR3I3RHRaK0Jo?=
- =?utf-8?B?Ulg0ak1CYTk3RGxXNjFsYUZkOFpEeGZVSEppa1pSdkNIV3hiWCtSZk9UY2E1?=
- =?utf-8?B?RUlNbkszSGpTYWNscXIvTWNsbGZxYVd5aGRhREdNOFl2UTVmdzI0eFViaVNZ?=
- =?utf-8?B?SjJDaTJzeCtGSFJ4Q053NjNsTnhWRXBNQlN6Ukw2OGZlaFJraXF6TnVJRnZZ?=
- =?utf-8?B?SkdlYTYyUmpmWUNYQ2JMdjF1NG9BT2FYRzdmaUFrNU1xQVJrelVncHZybFZK?=
- =?utf-8?B?Y1YrVUpSTUVXNVQ1RHlVNm5RMnk4ODZNM3V1Tks5QVZqbUFoMStURkxEMVlT?=
- =?utf-8?B?ZTczVlU3eHh1WStxdDBuZ3grcmg4b3F5dlE3R0kxOFNTdExUcUFRQVhIa0Ji?=
- =?utf-8?B?VTFDZHlKNVFDVHdPci8xb20wazJnc0FucS9xWmdkRkpPdGdkOGpmQnBXMEhx?=
- =?utf-8?B?dWpISHAyelRqTzE5TkVxTHE3K0w0SGc0cjRmS00yZWgweDlVemh0ckdiRDFC?=
- =?utf-8?B?czB3SG0rY0cxUU9vWEZKNUxQaWJaWHVVTjhoSVdlcFlsdGt6RXVtMlFaQ1hB?=
- =?utf-8?Q?5TUGeQQf9Tn87WRw1KuaD64VeMgZlNtwmkCXk=3D?=
-X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:MN6PR11MB8102.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(376014);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?utf-8?B?VmhncWpoWVZ3cU9yWmRjdE9hZE14eFYwWHo5TmNURDJaL2o4eDBKeGhsNTlW?=
- =?utf-8?B?V0VBdHJVQVY0VDVpeUQ3SVJwVTNZb2dkRGtGZnZ6N1dzalAzczFsd3RrNjlG?=
- =?utf-8?B?dUEyb2FXL2xPMDdnU3pkNmQveU9nSEtacEZ6REhWMEh1b0dOQnBma1lvQWJQ?=
- =?utf-8?B?bXRhTVB2ME5DNDdTYVFYUDVtdjNDbENOR25pOEt1V1lnUERsQmtYcVJkVjVp?=
- =?utf-8?B?NktEcE5yNlJJQ0V2bldLalZZaFdURWdFMTNNMU01RHdxZklzNExNSUgwajhJ?=
- =?utf-8?B?TUNEYkt2blBNNUNSYXArMUcrWVorYjZ3YkFRT08xWHJsSnl4cFJmRlpFck16?=
- =?utf-8?B?UXFxQW9tNng5Uyt4N2pWTEtYMU9pNXU0eTFXZjNvcklWMWNscmZua2hLSElR?=
- =?utf-8?B?K1JZdS9GQnlJd1lCQzBTQnlMbTJwWUpaVVJaRGs4UEV5c3k3Q3BsVitQRGR2?=
- =?utf-8?B?aDdJUjM2ckJ1RHIrNlZndWFOUGp3enFPWU5jTVZmY0dUK2hCN2RlV0hLVXdH?=
- =?utf-8?B?MTN3S1gvcC9tM1NNKzRPU3RuSE4wcWxtbjMzVGF1V3BqNXQ1WkRoNXlFZ3J4?=
- =?utf-8?B?aGs0bTU5MnpRY1dnRzhBOFV1ZWlXdFVFY2xQaHNabUtlTFhpRFpEcmNxMXc5?=
- =?utf-8?B?SWZ0Z203MTN5UEppMmxtYTNBY3F2T3lSalRna0lKdXYxZFBZZVBCajU0V0JG?=
- =?utf-8?B?MHM1RGhqVzljUXVVenY3VmdiRnVQc3RYSG9GT1NqVUx3cWE5Rk96dnRGNmxU?=
- =?utf-8?B?WDdXVVg3SkFZa0duVC9OSVhWRTN2U3o0bDF6aE94REZVaERjUm5oRFhGTEZm?=
- =?utf-8?B?bUxHVVpITUcySWxrY29qR3JSM0l6aDhyZUExR3daOEVZa0hTQThldGx4Skts?=
- =?utf-8?B?TFJOb3M2SnBLU2JJZEtIQzhXMzdIT3h3Wlp1SUptUkhScDV1Qm11NGxtc2N3?=
- =?utf-8?B?OWM5ZExqQ2hyTEM0c2V4M0Y1aWEyZ2ZiNlBna0E0TVY5eFB2M1pPbklGdngv?=
- =?utf-8?B?bTJ4bWZmRWhDU3ByMnpVVVZNdEZ6bFpQVTdjL2lITUlVdjZibVBCRHFhck1y?=
- =?utf-8?B?RDRrUVZWeSsyaDZabVJkRkRub29EMEdSQkpuajVpUC9kUGZmTC9wdHZjdkdj?=
- =?utf-8?B?SmlVQW9JdXpyTmJsL2hLZ2RjbmRzZzJFa1lac3J4YlB4eVdnZks3WG1VcW93?=
- =?utf-8?B?dU81L1FxSHg0dlYzUFJFYUNuVGdXa09jaW8vK24rLzFBSU84b1lTUFVWNFFl?=
- =?utf-8?B?Yy9wbGJ2Mlp1VHRYOEQxRHBpNkxrSTU3aExYR2VWUnZCZzR4TlFac0szdVFM?=
- =?utf-8?B?VXlITnpPbUhpc0FDd1F1anZIWDFkSWdPVlFlREE5eHNRSDMvUE9sc3hwM1hF?=
- =?utf-8?B?d212dDd4dTR4Q0hNUSt4amp3blF1RXo0TEJoTmR4TUhqZnBrUUwreTVVVXNz?=
- =?utf-8?B?eEw5cWpUTFh2djNLd2pzbVFSYndVTDBlSzU0SWFqVlR2aTdLRVdMT3dDay9N?=
- =?utf-8?B?OVVDTlhTL1plMUtWWTJkemw2bDhBNTZKOHJ2TXFwbmtyTHFPNWhQZFNuYmo1?=
- =?utf-8?B?MnpyOFFHckJ3ZDBsL0s2UFp5NHJBdEFVUllKa0VZUWhpeUduVFFwN0JLOWc5?=
- =?utf-8?B?a0lQWmVWVEcvd25MRTJQVWRJTlp1dUJIcUIyNUV4cU9mdDA3MUl1dVhVMC9O?=
- =?utf-8?B?TDJzeHNtRUx1cnZ2Tk8yYzJ4OVBrb2tweGxzYWs3ZDNadzNrajBMVmhZSUpD?=
- =?utf-8?B?N1BzU1dLRVUydnVvZlA1Y3EvUHZscnZCV2Q4N0JkZnIzaTNQWTcwNGs2OWhX?=
- =?utf-8?B?RmtOejJFMkNNYjJOejlRaEJBL3JoVnRlVithSjVTUjhnT2cyYjFyS1c3RERZ?=
- =?utf-8?B?c2lubjIyb1RRb2Y3SjdZZnI1ZVBJYVlTUjFNNnB6Q0c1N05RekdVcmlsT0Fo?=
- =?utf-8?B?YXJjQkNiOGViV3VyR0VjdjBYWlZtcURnWnlkYm1FRHExT1FEUzd1ekd5enU1?=
- =?utf-8?B?b09VQWhZdkptVWhURDJYU3p0L1kzSXUxaUVmdWpHaVpnUjNjVzFEcmFDdTBK?=
- =?utf-8?B?NzVLR1BvaUtkeCtuQnpSaFdHYWRIUXJiRlVFd2JnRlZ0djJLVEFYQW8wYmhR?=
- =?utf-8?B?SHdLeU52VDVNNnJ2dVZjWTBwaWNJZXhKVkdYcHRYbjFFNlN2OXN2NnBNdFM0?=
- =?utf-8?Q?WLmtlcymrrIZHVmkz9PTHJU=3D?=
-X-MS-Exchange-CrossTenant-Network-Message-Id: 9944a149-50b6-4c81-4eb5-08ddb23254ea
-X-MS-Exchange-CrossTenant-AuthSource: MN6PR11MB8102.namprd11.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 23 Jun 2025 08:45:40.1074
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: TSyLbG6FTy/AEF9/52xd9ABZZpCNPCXFpPRRzcFuEC3MDK7+VIU0kEqmEx8UNRzfbBcbDCZ3HrKSTh8opm/wXUASgru/rI8qRFME24lZ6SI=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SA1PR11MB5948
-X-OriginatorOrg: intel.com
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <g7ymicehyrtnmepvpupzpds7yv3v53h3oui4sbcb5njcwsmigq@x5gtxzyw5tc6>
 
-On 6/19/25 14:48, chuguangqing wrote:
->   tks to pabeni.
->   cc the relevant ML in the email.
-> 
+On Fri, Jun 20, 2025 at 06:49:51PM +0200, Klara Modin wrote:
+>
+> Note that an RISC-V vector syndrome implementation was added in commit
+> 6093faaf9593 ("raid6: Add RISC-V SIMD syndrome and recovery calculations")
+> which this patch does not change.
 
-Thank you for reaching out with the patch, it is an attempt to
-fix something observable?
+Thank you.  Here is a v3 that includes this:
 
-I have found the original topic via web search [1]. It looks that the
-proposed patch does not change anything - adapter->io_addr was null
-also before the assignment, so it does not hurt as-is. And the check
-afterwards is equally effective for me to prevent subsequent
-dereference.
+---8<---
+Use the system-wide zero page instead of a custom zero page.
 
-[1] https://lkml.org/lkml/2025/6/19/343
+Signed-off-by: Herbert Xu <herbert@gondor.apana.org.au>
 
+diff --git a/crypto/async_tx/async_pq.c b/crypto/async_tx/async_pq.c
+index 5e2b2680d7db..9e4bb7fbde25 100644
+--- a/crypto/async_tx/async_pq.c
++++ b/crypto/async_tx/async_pq.c
+@@ -119,7 +119,7 @@ do_sync_gen_syndrome(struct page **blocks, unsigned int *offsets, int disks,
+ 	for (i = 0; i < disks; i++) {
+ 		if (blocks[i] == NULL) {
+ 			BUG_ON(i > disks - 3); /* P or Q can't be zero */
+-			srcs[i] = (void*)raid6_empty_zero_page;
++			srcs[i] = raid6_get_zero_page();
+ 		} else {
+ 			srcs[i] = page_address(blocks[i]) + offsets[i];
+ 
+diff --git a/crypto/async_tx/async_raid6_recov.c b/crypto/async_tx/async_raid6_recov.c
+index 354b8cd5537f..539ea5b378dc 100644
+--- a/crypto/async_tx/async_raid6_recov.c
++++ b/crypto/async_tx/async_raid6_recov.c
+@@ -414,7 +414,7 @@ async_raid6_2data_recov(int disks, size_t bytes, int faila, int failb,
+ 		async_tx_quiesce(&submit->depend_tx);
+ 		for (i = 0; i < disks; i++)
+ 			if (blocks[i] == NULL)
+-				ptrs[i] = (void *) raid6_empty_zero_page;
++				ptrs[i] = raid6_get_zero_page();
+ 			else
+ 				ptrs[i] = page_address(blocks[i]) + offs[i];
+ 
+@@ -497,7 +497,7 @@ async_raid6_datap_recov(int disks, size_t bytes, int faila,
+ 		async_tx_quiesce(&submit->depend_tx);
+ 		for (i = 0; i < disks; i++)
+ 			if (blocks[i] == NULL)
+-				ptrs[i] = (void*)raid6_empty_zero_page;
++				ptrs[i] = raid6_get_zero_page();
+ 			else
+ 				ptrs[i] = page_address(blocks[i]) + offs[i];
+ 
+diff --git a/include/linux/raid/pq.h b/include/linux/raid/pq.h
+index 72ff44cca864..2467b3be15c9 100644
+--- a/include/linux/raid/pq.h
++++ b/include/linux/raid/pq.h
+@@ -11,8 +11,13 @@
+ #ifdef __KERNEL__
+ 
+ #include <linux/blkdev.h>
++#include <linux/mm.h>
+ 
+-extern const char raid6_empty_zero_page[PAGE_SIZE];
++/* This should be const but the raid6 code is too convoluted for that. */
++static inline void *raid6_get_zero_page(void)
++{
++	return page_address(ZERO_PAGE(0));
++}
+ 
+ #else /* ! __KERNEL__ */
+ /* Used for testing in user space */
+@@ -191,6 +196,11 @@ static inline uint32_t raid6_jiffies(void)
+ 	return tv.tv_sec*1000 + tv.tv_usec/1000;
+ }
+ 
++static inline void *raid6_get_zero_page(void)
++{
++	return raid6_empty_zero_page;
++}
++
+ #endif /* ! __KERNEL__ */
+ 
+ #endif /* LINUX_RAID_RAID6_H */
+diff --git a/lib/raid6/algos.c b/lib/raid6/algos.c
+index 75ce3e134b7c..799e0e5eac26 100644
+--- a/lib/raid6/algos.c
++++ b/lib/raid6/algos.c
+@@ -18,9 +18,6 @@
+ #else
+ #include <linux/module.h>
+ #include <linux/gfp.h>
+-/* In .bss so it's zeroed */
+-const char raid6_empty_zero_page[PAGE_SIZE] __attribute__((aligned(256)));
+-EXPORT_SYMBOL(raid6_empty_zero_page);
+ #endif
+ 
+ struct raid6_calls raid6_call;
+diff --git a/lib/raid6/recov.c b/lib/raid6/recov.c
+index a7c1b2bbe40d..b5e47c008b41 100644
+--- a/lib/raid6/recov.c
++++ b/lib/raid6/recov.c
+@@ -31,10 +31,10 @@ static void raid6_2data_recov_intx1(int disks, size_t bytes, int faila,
+ 	   Use the dead data pages as temporary storage for
+ 	   delta p and delta q */
+ 	dp = (u8 *)ptrs[faila];
+-	ptrs[faila] = (void *)raid6_empty_zero_page;
++	ptrs[faila] = raid6_get_zero_page();
+ 	ptrs[disks-2] = dp;
+ 	dq = (u8 *)ptrs[failb];
+-	ptrs[failb] = (void *)raid6_empty_zero_page;
++	ptrs[failb] = raid6_get_zero_page();
+ 	ptrs[disks-1] = dq;
+ 
+ 	raid6_call.gen_syndrome(disks, bytes, ptrs);
+@@ -72,7 +72,7 @@ static void raid6_datap_recov_intx1(int disks, size_t bytes, int faila,
+ 	/* Compute syndrome with zero for the missing data page
+ 	   Use the dead data page as temporary storage for delta q */
+ 	dq = (u8 *)ptrs[faila];
+-	ptrs[faila] = (void *)raid6_empty_zero_page;
++	ptrs[faila] = raid6_get_zero_page();
+ 	ptrs[disks-1] = dq;
+ 
+ 	raid6_call.gen_syndrome(disks, bytes, ptrs);
+diff --git a/lib/raid6/recov_avx2.c b/lib/raid6/recov_avx2.c
+index 4e8095403ee2..97d598d2535c 100644
+--- a/lib/raid6/recov_avx2.c
++++ b/lib/raid6/recov_avx2.c
+@@ -28,10 +28,10 @@ static void raid6_2data_recov_avx2(int disks, size_t bytes, int faila,
+ 	   Use the dead data pages as temporary storage for
+ 	   delta p and delta q */
+ 	dp = (u8 *)ptrs[faila];
+-	ptrs[faila] = (void *)raid6_empty_zero_page;
++	ptrs[faila] = raid6_get_zero_page();
+ 	ptrs[disks-2] = dp;
+ 	dq = (u8 *)ptrs[failb];
+-	ptrs[failb] = (void *)raid6_empty_zero_page;
++	ptrs[failb] = raid6_get_zero_page();
+ 	ptrs[disks-1] = dq;
+ 
+ 	raid6_call.gen_syndrome(disks, bytes, ptrs);
+@@ -196,7 +196,7 @@ static void raid6_datap_recov_avx2(int disks, size_t bytes, int faila,
+ 	/* Compute syndrome with zero for the missing data page
+ 	   Use the dead data page as temporary storage for delta q */
+ 	dq = (u8 *)ptrs[faila];
+-	ptrs[faila] = (void *)raid6_empty_zero_page;
++	ptrs[faila] = raid6_get_zero_page();
+ 	ptrs[disks-1] = dq;
+ 
+ 	raid6_call.gen_syndrome(disks, bytes, ptrs);
+diff --git a/lib/raid6/recov_avx512.c b/lib/raid6/recov_avx512.c
+index 310c715db313..7986120ca444 100644
+--- a/lib/raid6/recov_avx512.c
++++ b/lib/raid6/recov_avx512.c
+@@ -37,10 +37,10 @@ static void raid6_2data_recov_avx512(int disks, size_t bytes, int faila,
+ 	 */
+ 
+ 	dp = (u8 *)ptrs[faila];
+-	ptrs[faila] = (void *)raid6_empty_zero_page;
++	ptrs[faila] = raid6_get_zero_page();
+ 	ptrs[disks-2] = dp;
+ 	dq = (u8 *)ptrs[failb];
+-	ptrs[failb] = (void *)raid6_empty_zero_page;
++	ptrs[failb] = raid6_get_zero_page();
+ 	ptrs[disks-1] = dq;
+ 
+ 	raid6_call.gen_syndrome(disks, bytes, ptrs);
+@@ -238,7 +238,7 @@ static void raid6_datap_recov_avx512(int disks, size_t bytes, int faila,
+ 	 */
+ 
+ 	dq = (u8 *)ptrs[faila];
+-	ptrs[faila] = (void *)raid6_empty_zero_page;
++	ptrs[faila] = raid6_get_zero_page();
+ 	ptrs[disks-1] = dq;
+ 
+ 	raid6_call.gen_syndrome(disks, bytes, ptrs);
+diff --git a/lib/raid6/recov_loongarch_simd.c b/lib/raid6/recov_loongarch_simd.c
+index 94aeac85e6f7..93dc515997a1 100644
+--- a/lib/raid6/recov_loongarch_simd.c
++++ b/lib/raid6/recov_loongarch_simd.c
+@@ -42,10 +42,10 @@ static void raid6_2data_recov_lsx(int disks, size_t bytes, int faila,
+ 	 * delta p and delta q
+ 	 */
+ 	dp = (u8 *)ptrs[faila];
+-	ptrs[faila] = (void *)raid6_empty_zero_page;
++	ptrs[faila] = raid6_get_zero_page();
+ 	ptrs[disks - 2] = dp;
+ 	dq = (u8 *)ptrs[failb];
+-	ptrs[failb] = (void *)raid6_empty_zero_page;
++	ptrs[failb] = raid6_get_zero_page();
+ 	ptrs[disks - 1] = dq;
+ 
+ 	raid6_call.gen_syndrome(disks, bytes, ptrs);
+@@ -197,7 +197,7 @@ static void raid6_datap_recov_lsx(int disks, size_t bytes, int faila,
+ 	 * Use the dead data page as temporary storage for delta q
+ 	 */
+ 	dq = (u8 *)ptrs[faila];
+-	ptrs[faila] = (void *)raid6_empty_zero_page;
++	ptrs[faila] = raid6_get_zero_page();
+ 	ptrs[disks - 1] = dq;
+ 
+ 	raid6_call.gen_syndrome(disks, bytes, ptrs);
+@@ -316,10 +316,10 @@ static void raid6_2data_recov_lasx(int disks, size_t bytes, int faila,
+ 	 * delta p and delta q
+ 	 */
+ 	dp = (u8 *)ptrs[faila];
+-	ptrs[faila] = (void *)raid6_empty_zero_page;
++	ptrs[faila] = raid6_get_zero_page();
+ 	ptrs[disks - 2] = dp;
+ 	dq = (u8 *)ptrs[failb];
+-	ptrs[failb] = (void *)raid6_empty_zero_page;
++	ptrs[failb] = raid6_get_zero_page();
+ 	ptrs[disks - 1] = dq;
+ 
+ 	raid6_call.gen_syndrome(disks, bytes, ptrs);
+@@ -436,7 +436,7 @@ static void raid6_datap_recov_lasx(int disks, size_t bytes, int faila,
+ 	 * Use the dead data page as temporary storage for delta q
+ 	 */
+ 	dq = (u8 *)ptrs[faila];
+-	ptrs[faila] = (void *)raid6_empty_zero_page;
++	ptrs[faila] = raid6_get_zero_page();
+ 	ptrs[disks - 1] = dq;
+ 
+ 	raid6_call.gen_syndrome(disks, bytes, ptrs);
+diff --git a/lib/raid6/recov_neon.c b/lib/raid6/recov_neon.c
+index 1bfc14174d4d..70e1404c1512 100644
+--- a/lib/raid6/recov_neon.c
++++ b/lib/raid6/recov_neon.c
+@@ -36,10 +36,10 @@ static void raid6_2data_recov_neon(int disks, size_t bytes, int faila,
+ 	 * delta p and delta q
+ 	 */
+ 	dp = (u8 *)ptrs[faila];
+-	ptrs[faila] = (void *)raid6_empty_zero_page;
++	ptrs[faila] = raid6_get_zero_page();
+ 	ptrs[disks - 2] = dp;
+ 	dq = (u8 *)ptrs[failb];
+-	ptrs[failb] = (void *)raid6_empty_zero_page;
++	ptrs[failb] = raid6_get_zero_page();
+ 	ptrs[disks - 1] = dq;
+ 
+ 	raid6_call.gen_syndrome(disks, bytes, ptrs);
+@@ -74,7 +74,7 @@ static void raid6_datap_recov_neon(int disks, size_t bytes, int faila,
+ 	 * Use the dead data page as temporary storage for delta q
+ 	 */
+ 	dq = (u8 *)ptrs[faila];
+-	ptrs[faila] = (void *)raid6_empty_zero_page;
++	ptrs[faila] = raid6_get_zero_page();
+ 	ptrs[disks - 1] = dq;
+ 
+ 	raid6_call.gen_syndrome(disks, bytes, ptrs);
+diff --git a/lib/raid6/recov_rvv.c b/lib/raid6/recov_rvv.c
+index f29303795ccf..5d54c4b437df 100644
+--- a/lib/raid6/recov_rvv.c
++++ b/lib/raid6/recov_rvv.c
+@@ -165,10 +165,10 @@ static void raid6_2data_recov_rvv(int disks, size_t bytes, int faila,
+ 	 * delta p and delta q
+ 	 */
+ 	dp = (u8 *)ptrs[faila];
+-	ptrs[faila] = (void *)raid6_empty_zero_page;
++	ptrs[faila] = raid6_get_zero_page();
+ 	ptrs[disks - 2] = dp;
+ 	dq = (u8 *)ptrs[failb];
+-	ptrs[failb] = (void *)raid6_empty_zero_page;
++	ptrs[failb] = raid6_get_zero_page();
+ 	ptrs[disks - 1] = dq;
+ 
+ 	raid6_call.gen_syndrome(disks, bytes, ptrs);
+@@ -203,7 +203,7 @@ static void raid6_datap_recov_rvv(int disks, size_t bytes, int faila,
+ 	 * Use the dead data page as temporary storage for delta q
+ 	 */
+ 	dq = (u8 *)ptrs[faila];
+-	ptrs[faila] = (void *)raid6_empty_zero_page;
++	ptrs[faila] = raid6_get_zero_page();
+ 	ptrs[disks - 1] = dq;
+ 
+ 	raid6_call.gen_syndrome(disks, bytes, ptrs);
+diff --git a/lib/raid6/recov_s390xc.c b/lib/raid6/recov_s390xc.c
+index 179eec900cea..1d32c01261be 100644
+--- a/lib/raid6/recov_s390xc.c
++++ b/lib/raid6/recov_s390xc.c
+@@ -35,10 +35,10 @@ static void raid6_2data_recov_s390xc(int disks, size_t bytes, int faila,
+ 	   Use the dead data pages as temporary storage for
+ 	   delta p and delta q */
+ 	dp = (u8 *)ptrs[faila];
+-	ptrs[faila] = (void *)raid6_empty_zero_page;
++	ptrs[faila] = raid6_get_zero_page();
+ 	ptrs[disks-2] = dp;
+ 	dq = (u8 *)ptrs[failb];
+-	ptrs[failb] = (void *)raid6_empty_zero_page;
++	ptrs[failb] = raid6_get_zero_page();
+ 	ptrs[disks-1] = dq;
+ 
+ 	raid6_call.gen_syndrome(disks, bytes, ptrs);
+@@ -82,7 +82,7 @@ static void raid6_datap_recov_s390xc(int disks, size_t bytes, int faila,
+ 	/* Compute syndrome with zero for the missing data page
+ 	   Use the dead data page as temporary storage for delta q */
+ 	dq = (u8 *)ptrs[faila];
+-	ptrs[faila] = (void *)raid6_empty_zero_page;
++	ptrs[faila] = raid6_get_zero_page();
+ 	ptrs[disks-1] = dq;
+ 
+ 	raid6_call.gen_syndrome(disks, bytes, ptrs);
+diff --git a/lib/raid6/recov_ssse3.c b/lib/raid6/recov_ssse3.c
+index 4bfa3c6b60de..2e849185c32b 100644
+--- a/lib/raid6/recov_ssse3.c
++++ b/lib/raid6/recov_ssse3.c
+@@ -30,10 +30,10 @@ static void raid6_2data_recov_ssse3(int disks, size_t bytes, int faila,
+ 	   Use the dead data pages as temporary storage for
+ 	   delta p and delta q */
+ 	dp = (u8 *)ptrs[faila];
+-	ptrs[faila] = (void *)raid6_empty_zero_page;
++	ptrs[faila] = raid6_get_zero_page();
+ 	ptrs[disks-2] = dp;
+ 	dq = (u8 *)ptrs[failb];
+-	ptrs[failb] = (void *)raid6_empty_zero_page;
++	ptrs[failb] = raid6_get_zero_page();
+ 	ptrs[disks-1] = dq;
+ 
+ 	raid6_call.gen_syndrome(disks, bytes, ptrs);
+@@ -203,7 +203,7 @@ static void raid6_datap_recov_ssse3(int disks, size_t bytes, int faila,
+ 	/* Compute syndrome with zero for the missing data page
+ 	   Use the dead data page as temporary storage for delta q */
+ 	dq = (u8 *)ptrs[faila];
+-	ptrs[faila] = (void *)raid6_empty_zero_page;
++	ptrs[faila] = raid6_get_zero_page();
+ 	ptrs[disks-1] = dq;
+ 
+ 	raid6_call.gen_syndrome(disks, bytes, ptrs);
+-- 
+Email: Herbert Xu <herbert@gondor.apana.org.au>
+Home Page: http://gondor.apana.org.au/~herbert/
+PGP Key: http://gondor.apana.org.au/~herbert/pubkey.txt
 
