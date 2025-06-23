@@ -1,118 +1,137 @@
-Return-Path: <linux-kernel+bounces-698561-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-698564-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 209C3AE4656
-	for <lists+linux-kernel@lfdr.de>; Mon, 23 Jun 2025 16:18:32 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6B570AE46BF
+	for <lists+linux-kernel@lfdr.de>; Mon, 23 Jun 2025 16:31:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id CFF0B7AAA23
-	for <lists+linux-kernel@lfdr.de>; Mon, 23 Jun 2025 14:17:08 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5715A4459CD
+	for <lists+linux-kernel@lfdr.de>; Mon, 23 Jun 2025 14:18:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F112E253F35;
-	Mon, 23 Jun 2025 14:17:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 68349258CDC;
+	Mon, 23 Jun 2025 14:17:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="GfyUCN2Y"
-Received: from mail-ot1-f43.google.com (mail-ot1-f43.google.com [209.85.210.43])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="PlmE8uPl"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9A136253F13
-	for <linux-kernel@vger.kernel.org>; Mon, 23 Jun 2025 14:17:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 50583257AEE
+	for <linux-kernel@vger.kernel.org>; Mon, 23 Jun 2025 14:17:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750688222; cv=none; b=kS9186aObCta5mpNa4lJx+0SnNmXWi6mc4l7VKCLUjADsPu+qtbYbbTPLinTfQ1FBRLwYxIVwnKZaBZNI7Ro8ooXQkrDXabng2VmgJp+xunp2xfvzJdex7lHaG4optiyujEAZHs+rEYTUigKEwRSe0aNkTtj0i+K3I+0K+6O79s=
+	t=1750688233; cv=none; b=Nu1va0GmQpUphP+aSr7HIPDs0BEpS9+Ch5D5m9nVxUWvC7ldWJkFXEflVavspvioT3DKv0Z5GSK4QW7RUPVqf6Z/eTbW6VNw+bjRUx0za8PKQbvmkLyWBaoWHpETnjnY8/g6P9x1yVr22IB8kvu63/X5OI58q0iD8l7xxPlRI/4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750688222; c=relaxed/simple;
-	bh=4sigOS/urFG8brAKKfv6zzu5o31axp6lF2JzLxHf/DQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=dXcW9v4WevKpbokeg/URDf8Dpw65YlegnwvzgHleeDPbniy2UMW5Bpu//edNk+ef5ZjAnMaeo40ipH1vEZIT88dxmKnen65iZx0fnqs2hffPrICpzCBivEq1bdCuPSeQK/oXv9fhU0fNnJarfesPhI/InnpGBYRB77Rn4SIvcz8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=GfyUCN2Y; arc=none smtp.client-ip=209.85.210.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-ot1-f43.google.com with SMTP id 46e09a7af769-7382a999970so2809922a34.3
-        for <linux-kernel@vger.kernel.org>; Mon, 23 Jun 2025 07:17:00 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1750688220; x=1751293020; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=Sw2KbHBZVpbmJppFl8KBxErcXGguWr7O6NCzbr+d6nk=;
-        b=GfyUCN2YnkmBOxKHtEXURHv8upunjtrvcTe8akfvokanGkwcvAKyqUuYaSm2QNDVyK
-         X++qOv3InLQ7MXqfIrKJWR4iZpPRHDHoafLo8qzQcjEYA38KBjBSj2Hs4kbBUIQovbd+
-         EPbEoxfHvkaLM4KgC9p8U1Ow+fSlhAhR6GYZmvVvmQLSjjcDn8Ppf8rKyYWSI1/f9LmL
-         6xwoOZPlABYYMNx6LATVH7ack5HJcGlRBq+ADoZ84XZ0ni983IM6N/VoM5DG5TJgPaay
-         6b6XPqbXjS5Yi0futCyaE/eafMPwcbEOJ9mgcu1gKsQrVBdWVhKuqk1s8CKBCpZi5U1L
-         U0Sw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1750688220; x=1751293020;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=Sw2KbHBZVpbmJppFl8KBxErcXGguWr7O6NCzbr+d6nk=;
-        b=GpS5unarixhVpU2aUhKoMU7G/Ncvg5R3JnFvoeHOVzce0tvTwZaraQLY6cFGtZNN+T
-         qycxsE4NCh9Hz6o8xzXXZNnzyjgxow/GAqu80Nr5UrL221mLkGcKS2DUUeAcAksq3IYu
-         wgr0xAscGqeY6NA9ZdWMhoOx1OQ8stX3Z4mYId5rzA0MN5e2dy67RWiWcp/V8OSqQYsH
-         YtdJ6fTrmVBimr0tygPZPy4RgKT3XjfS2p9r+JY9/IzxPzy+SVV/sefWCml/EqTqzPWz
-         X70btrvoARl8cbiSBBLZcQsxFxL3H+OL3XtYfh+kzltw1nDAM7lGMQ9P7zw0P9o2cVXG
-         GykA==
-X-Forwarded-Encrypted: i=1; AJvYcCUfG0QNcruUaAtt/p2WlxdWlw39YTqvYPRQtptHDtFDtEVW8zOIISvP8F7ANkPFuyUgl0M79P15FnQpMvQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz9yCihSFzTBeQ7XKcM2K/3KSxUD8fS/krz/4Mf8kFgFLM3nBKf
-	5rSJGbn94WS+2qUY6kvrsqMxbh97UF1CEMKCXx3g1Uta0TttjHkRNbjz+WzXdphyY6g=
-X-Gm-Gg: ASbGncsziA2tzdtpySNcZbE4t2dZ0Pj3NqO1Bt2eh5uovpd305GD+pjYWfN9zeRdjC5
-	29cOcXaUPJ47tKYwne0zC51gUTtPXMApfF9P6bY0k97ydsD7RdyAXKu+jbH3SO37PD1kcwiGTtW
-	OQ4+z8m+k3DjXDZCm+hYGKeISR7A+/BvA/pjrs6yNeuwxHYf1btYElP3j5UNgIEO1c7Sxi/hyuU
-	pJ9wzdnHQVLVVfTjKgm2V4sgSzZwNIKMgrCr3CZwfsYQDjKKingIykM5teQ3kztYjKeeNP4744w
-	A/PZEcBUdkFVH9H+pq7mXC7s92v82x83wEYKO+GwSpS7wTFwdJm0fcPzdeADUuYNGcTSPQ==
-X-Google-Smtp-Source: AGHT+IH/W6bUwoQ/oCDqxzbkBFhhtZ/Fi6LgoZ05YDqiaOhVb1dp7z4SKY54nEy+7+CedB7z2NIslw==
-X-Received: by 2002:a05:6830:668b:b0:73a:96e5:19b9 with SMTP id 46e09a7af769-73a96e5a6ccmr8122051a34.2.1750688219746;
-        Mon, 23 Jun 2025 07:16:59 -0700 (PDT)
-Received: from localhost ([2603:8080:b800:f700:8c3f:8b5f:5c74:76a9])
-        by smtp.gmail.com with ESMTPSA id 46e09a7af769-73a90cbb5ccsm1418904a34.58.2025.06.23.07.16.58
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 23 Jun 2025 07:16:58 -0700 (PDT)
-Date: Mon, 23 Jun 2025 17:16:57 +0300
-From: Dan Carpenter <dan.carpenter@linaro.org>
-To: Andy Shevchenko <andy.shevchenko@gmail.com>
-Cc: Abdelrahman Fekry <abdelrahmanfekry375@gmail.com>, andy@kernel.org,
-	hansg@kernel.org, mchehab@kernel.org, sakari.ailus@linux.intel.com,
-	gregkh@linuxfoundation.org, linux-kernel@vger.kernel.org,
-	linux-media@vger.kernel.org, linux-staging@lists.linux.dev,
-	skhan@linuxfoundation.org, linux-kernel-mentees@lists.linux.dev
-Subject: Re: [PATCH] staging: media: atomisp: Replace scnprintf with
- sysfs_emit in bo_show
-Message-ID: <a2a67998-f67e-4677-a348-780bf640bfc3@suswa.mountain>
-References: <20250621062944.168386-1-abdelrahmanfekry375@gmail.com>
- <CAHp75Ve3PWgkwncVv5tGxzjWkF+Nodtp=Q3dpCejfSRD1BFMig@mail.gmail.com>
+	s=arc-20240116; t=1750688233; c=relaxed/simple;
+	bh=yxh7ilQonYBUqypJb67+dDP3F/Z9G9zjb1heS+hjcYw=;
+	h=From:In-Reply-To:References:To:Cc:Subject:MIME-Version:
+	 Content-Type:Date:Message-ID; b=JBLTB/Byh/NnQjr0TA/Ncfo3aYIVkquY4W5LovdUfXJDUgXCCq/Gz7SliMM8ZY3kfyyDwkL0LXXOvOR538bbtaxK3M+JALlkzcbeEZzrZytFcEndp27nUz1Tjl9DUHWGSgojLE6ivhvUR/KZdHivQ1VAkapjJnJgRGywd30BkUk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=PlmE8uPl; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1750688231;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=DENPfef9k5KPGfxCMnb/tEj2yf0fmCOohO51w/ehSyg=;
+	b=PlmE8uPly3FZbk1cMHFHxY4NGwvHUsMgCnRKNhH56szTBeIBM3LIq+OESpNE6FN/nL2cSe
+	nMjXtpCsIDxE5yrBNu69LYGgwHBzufqNjdO4OQHrTM7WR5rtBh+VpknNH9g9SPzQ0PemvA
+	9anLKm1587K+oHga4ia2fltaaE1gptA=
+Received: from mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-19-rkV28ZGCPsW3UDW4tgao9A-1; Mon,
+ 23 Jun 2025 10:17:08 -0400
+X-MC-Unique: rkV28ZGCPsW3UDW4tgao9A-1
+X-Mimecast-MFC-AGG-ID: rkV28ZGCPsW3UDW4tgao9A_1750688226
+Received: from mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.93])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 8303418011FB;
+	Mon, 23 Jun 2025 14:17:05 +0000 (UTC)
+Received: from warthog.procyon.org.uk (unknown [10.42.28.81])
+	by mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 0A2CB1800284;
+	Mon, 23 Jun 2025 14:16:59 +0000 (UTC)
+Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
+	Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
+	Kingdom.
+	Registered in England and Wales under Company Registration No. 3798903
+From: David Howells <dhowells@redhat.com>
+In-Reply-To: <aFlcPOpajICfVlFE@infradead.org>
+References: <aFlcPOpajICfVlFE@infradead.org> <1069540.1746202908@warthog.procyon.org.uk> <165f5d5b-34f2-40de-b0ec-8c1ca36babe8@lunn.ch> <0aa1b4a2-47b2-40a4-ae14-ce2dd457a1f7@lunn.ch> <1015189.1746187621@warthog.procyon.org.uk> <1021352.1746193306@warthog.procyon.org.uk> <2135907.1747061490@warthog.procyon.org.uk>
+To: Christoph Hellwig <hch@infradead.org>
+Cc: dhowells@redhat.com, Andrew Lunn <andrew@lunn.ch>,
+    Eric Dumazet <edumazet@google.com>,
+    "David
+ S. Miller" <davem@davemloft.net>,
+    Jakub Kicinski <kuba@kernel.org>,
+    David Hildenbrand <david@redhat.com>,
+    John Hubbard <jhubbard@nvidia.com>, willy@infradead.org,
+    Christian Brauner <brauner@kernel.org>,
+    Al Viro <viro@zeniv.linux.org.uk>,
+    Miklos Szeredi <mszeredi@redhat.com>, torvalds@linux-foundation.org,
+    netdev@vger.kernel.org, linux-mm@kvack.org,
+    linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: AF_UNIX/zerocopy/pipe/vmsplice/splice vs FOLL_PIN
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAHp75Ve3PWgkwncVv5tGxzjWkF+Nodtp=Q3dpCejfSRD1BFMig@mail.gmail.com>
+Content-Type: text/plain; charset="us-ascii"
+Content-ID: <1111402.1750688218.1@warthog.procyon.org.uk>
+Date: Mon, 23 Jun 2025 15:16:58 +0100
+Message-ID: <1111403.1750688218@warthog.procyon.org.uk>
+X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.93
 
-On Sat, Jun 21, 2025 at 09:24:40PM +0300, Andy Shevchenko wrote:
-> On Sat, Jun 21, 2025 at 9:30 AM Abdelrahman Fekry
-> >
-> > -       ret = scnprintf(buf, PAGE_SIZE, "type pgnr\n");
-> > -       if (ret <= 0)
-> > -               return 0;
-> > -
-> > -       index1 += ret;
-> > +       offset += sysfs_emit(buf, "type pgnr\n");
+Christoph Hellwig <hch@infradead.org> wrote:
+
+> > The question is what should happen here to a memory span for which the
+> > network layer or pipe driver is not allowed to take reference, but rather
+> > must call a destructor?  Particularly if, say, it's just a small part of a
+> > larger span.
 > 
-> This changes the behaviour in case the sysfs_emit() fails. Not that
-> this is a big issue, but it should be pointed out somewhere.
-> 
-> ...
+> What is a "span" in this context?
 
-Neither scnprintf() nor sysfs_emit() can return negatives.
+In the first case, I was thinking along the lines of a bio_vec that says
+{physaddr,len} defining a "span" of memory.  Basically just a contiguous range
+of physical addresses, if you prefer.
 
-regards,
-dan carpenter
+However, someone can, for example, vmsplice a span of memory into a pipe - say
+they add a whole page, all nicely aligned, but then they splice it out a byte
+at a time into 4096 other pipes.  Each of those other pipes now has a small
+part of a larger span and needs to share the cleanup information.
+
+Now, imagine that a network filesystem writes a message into a TCP socket,
+where that message corresponds to an RPC call request and includes a number of
+kernel buffers that the network layer isn't permitted to look at the refcounts
+on, but rather a destructor must be called.  The request message may transit
+through the loopback driver and get placed on the Rx queue of another TCP
+socket - from whence it may be spliced off into a pipe.
+
+Alternatively, if virtual I/O is involved, this message may get passed down to
+a layer outside of the system (though I don't think this is, in principle, any
+different from DMA being done by a NIC).
+
+And then there's relayfs and fuse, which seem to do weird stuff.
+
+For the splicing of a loop-backed kernel message out of a TCP socket, it might
+make sense just to copy the message at that point.  The problem is that the
+kernel doesn't know what's going to happen next to it.
+
+> In general splice unlike direct I/O relies on page reference counts inside
+> the splice machinery.  But that is configurable through the
+> pipe_buf_operations.  So if you want something to be handled by splice that
+> does not use simple page refcounts you need special pipe_buf_operations for
+> it.  And you'd better have a really good use case for this to be worthwhile.
+
+Yes.  vmsplice, is the equivalent of direct I/O and should really do the same
+pinning thing that, say, write() to an O_DIRECT file does.
+
+David
 
 
