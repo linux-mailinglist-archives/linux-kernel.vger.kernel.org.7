@@ -1,86 +1,47 @@
-Return-Path: <linux-kernel+bounces-697869-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-697872-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 02D60AE39B9
-	for <lists+linux-kernel@lfdr.de>; Mon, 23 Jun 2025 11:17:50 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3A527AE39B8
+	for <lists+linux-kernel@lfdr.de>; Mon, 23 Jun 2025 11:17:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6F6DF3A42DF
-	for <lists+linux-kernel@lfdr.de>; Mon, 23 Jun 2025 09:16:40 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E60B3170D3A
+	for <lists+linux-kernel@lfdr.de>; Mon, 23 Jun 2025 09:17:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B21C32309B3;
-	Mon, 23 Jun 2025 09:16:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2488023536C;
+	Mon, 23 Jun 2025 09:17:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="DfVwM0Dx"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="MUME+Uqq"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 517F621B19D
-	for <linux-kernel@vger.kernel.org>; Mon, 23 Jun 2025 09:16:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 57CA9231836;
+	Mon, 23 Jun 2025 09:17:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750670216; cv=none; b=gl8TqgvBwICaDhDHhiZt03Mi1Fgb7JNwVnvwgDpV56z2mpBAOOPjnP6c45YHS4WdFEZ3wnbykOXaAT3jRy8a6dqFxsQ5fT4Qt1fK52/Pdlc479Mh5XJYAWeve2OworXXklhtdFuKJcoyq4Xos+TtptW7QaRcaP0Tdt1rkMXhlqI=
+	t=1750670230; cv=none; b=q6KZFWQw9K9DvYgJ7KMJy+dAAt8jR7yIbx/Kh2LMlsSZAummbxEmeLvqW8z8oSDb+nUZx4xq8kie9SljyrIvZf9HOqhj2BP+hoS0tGWQR4xZI6IPhW5ksqWaw/emjhbWGM2CGerkNbF6DQslHkIE/qbKKI31aCcOVc05S8EclFY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750670216; c=relaxed/simple;
-	bh=WXi6ciQl/ySvtGGnf6utBqod7v8My4gfOiJugdbgvWQ=;
+	s=arc-20240116; t=1750670230; c=relaxed/simple;
+	bh=lTDfnouWRD6t3V6geE9rp1WNIhalLtWBgQjfMtQEnOE=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=mk9z1Yl2bfzWp8FYSAvKxI4G3XlDu3kh8MucDvpHRszOljMg/uigOxYRiV9BG4haVkCKRP2iibOl4qX4jWiJ6+OvKGjiGzLtbJ6bJVX3/L2YubfCPuoJHj/mms1nD1ClRuVq3s+hlg75PwW9Hv4QfeeGlwFw3bwAKctlfuQ/xeU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=DfVwM0Dx; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1750670214;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=6+CEh7DV/eygJzLS3mmbXc5krbfV2IS8Kf/dZNnKGmA=;
-	b=DfVwM0DxB85sHmmuMDri5bLLSZN3s5ygww/Cd6thw17rc8zirfAiWGMFHEPAaoLyEYAb6+
-	AWmPlSMY6IF1NcdI2m4ZxhTXVFsKX1xgAYNEf+E6b4AN1a4S40yHlHfbWrg2MruiG9OGk4
-	MxY2+Ciw+j/eJZCkgojkzZYIp/iseyk=
-Received: from mail-wm1-f69.google.com (mail-wm1-f69.google.com
- [209.85.128.69]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-639-2xWg9Q__OECP-q0x5pk4qQ-1; Mon, 23 Jun 2025 05:16:46 -0400
-X-MC-Unique: 2xWg9Q__OECP-q0x5pk4qQ-1
-X-Mimecast-MFC-AGG-ID: 2xWg9Q__OECP-q0x5pk4qQ_1750670206
-Received: by mail-wm1-f69.google.com with SMTP id 5b1f17b1804b1-45359bfe631so21406685e9.0
-        for <linux-kernel@vger.kernel.org>; Mon, 23 Jun 2025 02:16:46 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1750670205; x=1751275005;
-        h=content-transfer-encoding:in-reply-to:organization:autocrypt
-         :content-language:from:references:cc:to:subject:user-agent
-         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=6+CEh7DV/eygJzLS3mmbXc5krbfV2IS8Kf/dZNnKGmA=;
-        b=fbS7dgNdRufbg1kixGKTNFPo+Au+KcVFz8cuCaCrK5Udk7lK7QemSZ+sBq5fQ0MSd0
-         amFgQbs9oJQjz6clZ/OfnQjCsDUHybrHFJebHKIUe/4aBvZA98gdA39J809Nh6ecEz2M
-         wuKQOPegWjTJolWiFBMaWf4TdCgDFW4Ur65nczFEfmdzh/F9ANEwC//6Jgx+He2ISodg
-         ywxEATo2N8dZy1hx74SMmw+jBGIFU+nyid7UL9YH72ula+Qt0y2h8xDUHTV67bhJqXLt
-         TewZiO2CSHht1Jr7SW4xGABdTiZV+pPsZF+06bvKwWjFRb+jX0qK7fSHxG7MGe1OGjc0
-         CckQ==
-X-Gm-Message-State: AOJu0YwEFFZh728BqjYU3gtDLKu+RRtLnr2ixn1gwM0luG8P9+fQXY72
-	wCkAt8VvmbU9/EnQ/2lBAjwobbzDMyQaSi/NwaXjsaHVHWk0GDwy9LR4MqKW7tH+5l8phDjScwH
-	t+zMKmDuDAk556mmJM8YLA9NqMNkCDiCVL1ErhmRbcpI5+HLU4f6GTwWfzsmjKl8tbQ==
-X-Gm-Gg: ASbGnct7isXojhnSLIIv768aT0PDEXXAsgbwpg+gQhG9j/vKiUc6yRH6jb6K+7z1/Bn
-	6ru5rDxXNbgsaLvlrB0a7QMDcciwsbi1JhM5Vfc/YFzclREs/NQttrMYeoYsrxGW5ufhU+rivnx
-	m9H1fzX9pkrkc94uool8o6l63ylgvQra6U7TAyeHeSpeNADX4b2OxLYgCOy+trKXdLpfps5Rumc
-	l53FaGlwf25/MQbvyVkTy/VN3zeDeFioQSWyci5TmuWOC70Gn23byzy/TmTc9Q5I9IhXiLjLt1x
-	GfW9pQPyFuiItERHle+cRjCh6HFNA7vjhb91tAt4lmrRHA6i4gItwobBwGTgzqfPVU+29ByLgfs
-	jFx1e8QJvCTpt9QzWQaXgcWLrNBM6bgmWFRaL/1DyZ4scdZiqlQ==
-X-Received: by 2002:a05:600c:c4ac:b0:442:dc75:5625 with SMTP id 5b1f17b1804b1-453659be428mr99470265e9.5.1750670205625;
-        Mon, 23 Jun 2025 02:16:45 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IGSdTrkum0uGk/zLo1y8F4EbYhm1nsGHbNNP/oVrjmhH2urGZHFTnIjPrsPub1P941JC31blw==
-X-Received: by 2002:a05:600c:c4ac:b0:442:dc75:5625 with SMTP id 5b1f17b1804b1-453659be428mr99469955e9.5.1750670205140;
-        Mon, 23 Jun 2025 02:16:45 -0700 (PDT)
-Received: from ?IPV6:2003:d8:2f4e:fd00:8e13:e3b5:90c8:1159? (p200300d82f4efd008e13e3b590c81159.dip0.t-ipconnect.de. [2003:d8:2f4e:fd00:8e13:e3b5:90c8:1159])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-453646fd816sm104134785e9.24.2025.06.23.02.16.43
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 23 Jun 2025 02:16:44 -0700 (PDT)
-Message-ID: <ce5b4b18-9934-41e3-af04-c34653b4b5fa@redhat.com>
-Date: Mon, 23 Jun 2025 11:16:43 +0200
+	 In-Reply-To:Content-Type; b=RFVsJ5rkRmcWsqdZQfCcU1KhuatVvQCEy2tpKWaqJChX5X+ATplg/9HvwYegYcn+6rLPD34pr7r48OesiriaItEaseo98wdDu2bkgzHAlrWb8shAororhcn+8c0cmjinTxZJmuqO2GCxDuGYM2f5W0UiYy6u+PrdYAp1EksnGC8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=MUME+Uqq; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 52D14C4CEEA;
+	Mon, 23 Jun 2025 09:17:07 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1750670229;
+	bh=lTDfnouWRD6t3V6geE9rp1WNIhalLtWBgQjfMtQEnOE=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=MUME+Uqqq7s2+T36iA3RvUi0SBjyyMkJl4SKlUBTXtmPzHi9j5RO+ycfMilJ6C3Uq
+	 1zVHxG+wHBKMObnmE7sQ/Ectd5HvvSM72v/DU8SS7fB8R8/5ntX7X3x4C1+aWSlb2f
+	 +H/czKXjOmY5DiWiZwyUOoQZhJXYNxvsK1ipFnhaP0wHgAMJaOGYUqoZnTihupqz58
+	 6OPULul71gq+mtpKTkoNclWpgN54UN/A44+HHw5XaeTinNqlDII279RmCLCN7e1IGx
+	 URCfyoehLGA9gGBPvJZBTUj0pLiXEkrIatkLzFCBaGQohZtRM8irQBy7nEteiB8887
+	 2SC+iQuUK1JCQ==
+Message-ID: <682a48fc-8451-46e5-b3a8-5ad7c237588e@kernel.org>
+Date: Mon, 23 Jun 2025 11:17:05 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -88,169 +49,217 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH net-next v6 9/9] page_pool: access ->pp_magic through
- struct netmem_desc in page_pool_page_is_pp()
-To: Byungchul Park <byungchul@sk.com>, willy@infradead.org,
- netdev@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org, linux-mm@kvack.org,
- kernel_team@skhynix.com, kuba@kernel.org, almasrymina@google.com,
- ilias.apalodimas@linaro.org, harry.yoo@oracle.com, hawk@kernel.org,
- akpm@linux-foundation.org, davem@davemloft.net, john.fastabend@gmail.com,
- andrew+netdev@lunn.ch, asml.silence@gmail.com, toke@redhat.com,
- tariqt@nvidia.com, edumazet@google.com, pabeni@redhat.com,
- saeedm@nvidia.com, leon@kernel.org, ast@kernel.org, daniel@iogearbox.net,
- lorenzo.stoakes@oracle.com, Liam.Howlett@oracle.com, vbabka@suse.cz,
- rppt@kernel.org, surenb@google.com, mhocko@suse.com, horms@kernel.org,
- linux-rdma@vger.kernel.org, bpf@vger.kernel.org, vishal.moola@gmail.com,
- hannes@cmpxchg.org, ziy@nvidia.com, jackmanb@google.com
-References: <20250620041224.46646-1-byungchul@sk.com>
- <20250620041224.46646-10-byungchul@sk.com>
-From: David Hildenbrand <david@redhat.com>
+Subject: Re: [PATCH v3 2/3] spi: Add Amlogic SPISG driver
+To: xianwei.zhao@amlogic.com, Sunny Luo <sunny.luo@amlogic.com>,
+ Mark Brown <broonie@kernel.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>
+Cc: linux-amlogic@lists.infradead.org, linux-spi@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20250623-spisg-v3-0-c731f57e289c@amlogic.com>
+ <20250623-spisg-v3-2-c731f57e289c@amlogic.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
 Content-Language: en-US
-Autocrypt: addr=david@redhat.com; keydata=
- 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
- WNyWQQ==
-Organization: Red Hat
-In-Reply-To: <20250620041224.46646-10-byungchul@sk.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 a/A=
+In-Reply-To: <20250623-spisg-v3-2-c731f57e289c@amlogic.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On 20.06.25 06:12, Byungchul Park wrote:
-> To simplify struct page, the effort to separate its own descriptor from
-> struct page is required and the work for page pool is on going.
+On 23/06/2025 10:53, Xianwei Zhao via B4 Relay wrote:
+> From: Sunny Luo <sunny.luo@amlogic.com>
 > 
-> To achieve that, all the code should avoid directly accessing page pool
-> members of struct page.
+> Introduced support for the new SPI IP (SPISG) driver. The SPISG is
+> a communication-oriented SPI controller from Amlogic,supporting
+> three operation modes: PIO, block DMA, and scatter-gather DMA.
 > 
-> Access ->pp_magic through struct netmem_desc instead of directly
-> accessing it through struct page in page_pool_page_is_pp().  Plus, move
-> page_pool_page_is_pp() from mm.h to netmem.h to use struct netmem_desc
-> without header dependency issue.
-> 
-> Signed-off-by: Byungchul Park <byungchul@sk.com>
-> Reviewed-by: Toke Høiland-Jørgensen <toke@redhat.com>
-> Reviewed-by: Mina Almasry <almasrymina@google.com>
-> Reviewed-by: Pavel Begunkov <asml.silence@gmail.com>
-> Reviewed-by: Vlastimil Babka <vbabka@suse.cz>
-> Acked-by: Harry Yoo <harry.yoo@oracle.com>
+> Signed-off-by: Sunny Luo <sunny.luo@amlogic.com>
+> Signed-off-by: Xianwei Zhao <xianwei.zhao@amlogic.com>
 > ---
->   include/linux/mm.h   | 12 ------------
->   include/net/netmem.h | 14 ++++++++++++++
->   mm/page_alloc.c      |  1 +
->   3 files changed, 15 insertions(+), 12 deletions(-)
+>  drivers/spi/Kconfig             |   9 +
+>  drivers/spi/Makefile            |   1 +
+>  drivers/spi/spi-amlogic-spisg.c | 876 ++++++++++++++++++++++++++++++++++++++++
+>  3 files changed, 886 insertions(+)
 > 
-> diff --git a/include/linux/mm.h b/include/linux/mm.h
-> index 0ef2ba0c667a..0b7f7f998085 100644
-> --- a/include/linux/mm.h
-> +++ b/include/linux/mm.h
-> @@ -4172,16 +4172,4 @@ int arch_lock_shadow_stack_status(struct task_struct *t, unsigned long status);
->    */
->   #define PP_MAGIC_MASK ~(PP_DMA_INDEX_MASK | 0x3UL)
->   
-> -#ifdef CONFIG_PAGE_POOL
-> -static inline bool page_pool_page_is_pp(struct page *page)
-> -{
-> -	return (page->pp_magic & PP_MAGIC_MASK) == PP_SIGNATURE;
-> -}
-> -#else
-> -static inline bool page_pool_page_is_pp(struct page *page)
-> -{
-> -	return false;
-> -}
-> -#endif
-> -
->   #endif /* _LINUX_MM_H */
-> diff --git a/include/net/netmem.h b/include/net/netmem.h
-> index d49ed49d250b..3d1b1dfc9ba5 100644
-> --- a/include/net/netmem.h
-> +++ b/include/net/netmem.h
-> @@ -56,6 +56,20 @@ NETMEM_DESC_ASSERT_OFFSET(pp_ref_count, pp_ref_count);
->    */
->   static_assert(sizeof(struct netmem_desc) <= offsetof(struct page, _refcount));
->   
-> +#ifdef CONFIG_PAGE_POOL
-> +static inline bool page_pool_page_is_pp(struct page *page)
-> +{
-> +	struct netmem_desc *desc = (struct netmem_desc *)page;
+> diff --git a/drivers/spi/Kconfig b/drivers/spi/Kconfig
+> index c51da3fc3604..e11341df2ecf 100644
+> --- a/drivers/spi/Kconfig
+> +++ b/drivers/spi/Kconfig
+> @@ -99,6 +99,15 @@ config SPI_AMLOGIC_SPIFC_A1
+>  	  This enables master mode support for the SPIFC (SPI flash
+>  	  controller) available in Amlogic A1 (A113L SoC).
+>  
+> +config SPI_AMLOGIC_SPISG
+> +	tristate "Amlogic SPISG controller"
+> +	depends on COMMON_CLK
+> +	depends on ARCH_MESON || COMPILE_TEST
+> +	help
+> +	  This enables master mode support for the SPISG (SPI scatter-gather
+> +	  communication controller), which is available on platforms such as
+> +	  Amlogic A4 SoCs.
 > +
-> +	return (desc->pp_magic & PP_MAGIC_MASK) == PP_SIGNATURE;
-> +}
-> +#else
-> +static inline bool page_pool_page_is_pp(struct page *page)
+>  config SPI_APPLE
+>  	tristate "Apple SoC SPI Controller platform driver"
+>  	depends on ARCH_APPLE || COMPILE_TEST
+> diff --git a/drivers/spi/Makefile b/drivers/spi/Makefile
+> index 4ea89f6fc531..b74e3104d71f 100644
+> --- a/drivers/spi/Makefile
+> +++ b/drivers/spi/Makefile
+> @@ -20,6 +20,7 @@ obj-$(CONFIG_SPI_ALTERA)		+= spi-altera-platform.o
+>  obj-$(CONFIG_SPI_ALTERA_CORE)		+= spi-altera-core.o
+>  obj-$(CONFIG_SPI_ALTERA_DFL)		+= spi-altera-dfl.o
+>  obj-$(CONFIG_SPI_AMLOGIC_SPIFC_A1)	+= spi-amlogic-spifc-a1.o
+> +obj-$(CONFIG_SPI_AMLOGIC_SPISG)		+= spi-amlogic-spisg.o
+>  obj-$(CONFIG_SPI_APPLE)			+= spi-apple.o
+>  obj-$(CONFIG_SPI_AR934X)		+= spi-ar934x.o
+>  obj-$(CONFIG_SPI_ARMADA_3700)		+= spi-armada-3700.o
+> diff --git a/drivers/spi/spi-amlogic-spisg.c b/drivers/spi/spi-amlogic-spisg.c
+> new file mode 100644
+> index 000000000000..2f2982154d49
+> --- /dev/null
+> +++ b/drivers/spi/spi-amlogic-spisg.c
+> @@ -0,0 +1,876 @@
+> +// SPDX-License-Identifier: GPL-2.0+
+> +/*
+> + * Driver for Amlogic SPI communication Scatter-Gather Controller
+> + *
+> + * Copyright (C) 2025 Amlogic, Inc. All rights reserved
+> + *
+> + * Author: Sunny Luo <sunny.luo@amlogic.com>
+> + * Author: Xianwei Zhao <xianwei.zhao@amlogic.com>
+> + */
+> +
+> +#include <linux/bitfield.h>
+> +#include <linux/clk.h>
+> +#include <linux/device.h>
+> +#include <linux/io.h>
+> +#include <linux/kernel.h>
+> +#include <linux/module.h>
+> +#include <linux/of.h>
+> +#include <linux/clk-provider.h>
+> +#include <linux/dma-mapping.h>
+> +#include <linux/pm_runtime.h>
+> +#include <linux/pm_domain.h>
+
+cacheflush
+
+> +#include <linux/platform_device.h>
+> +#include <linux/spi/spi.h>
+> +#include <linux/types.h>
+> +#include <linux/interrupt.h>
+> +#include <linux/reset.h>
+
+So this you take to reset device... but your device does not have any
+resets! Just look at your binding.
+
+> +#include <linux/pinctrl/consumer.h>
+> +#include <linux/delay.h>
+> +#include <linux/cacheflush.h>
+
+Where do you use it?
+
+> +#include <linux/regmap.h>
+
+Actually several other headers looks unused. I am not going to keep
+checking one by one - you should check and do not include irrelevant
+headers.
+
+> +
+> +static int aml_spisg_probe(struct platform_device *pdev)
 > +{
-> +	return false;
-> +}
-> +#endif
+> +	struct spi_controller *ctlr;
+> +	struct spisg_device *spisg;
+> +	struct device *dev = &pdev->dev;
+> +	void __iomem *base;
+> +	int ret, irq;
+> +
+> +	const struct regmap_config aml_regmap_config = {
+> +		.reg_bits = 32,
+> +		.val_bits = 32,
+> +		.reg_stride = 4,
+> +		.max_register = SPISG_MAX_REG,
+> +	};
+> +
+> +	if (of_property_read_bool(dev->of_node, "slave"))
 
-I wonder how helpful this cleanup is long-term.
+"slave" is not a bool. You want to check for child presence, don't you?
+You need to use appropriate API for that otherwise you just add one of
+the issues which was being fixed recently.
 
-page_pool_page_is_pp() is only called from mm/page_alloc.c, right? 
-There, we want to make sure that no pagepool page is ever returned to 
-the buddy.
+> +		ctlr = spi_alloc_target(dev, sizeof(*spisg));
+> +	else
+> +		ctlr = spi_alloc_host(dev, sizeof(*spisg));
+> +	if (!ctlr)
+> +		return dev_err_probe(dev, -ENOMEM, "controller allocation failed\n");
+> +
 
-How reasonable is this sanity check to have long-term? Wouldn't we be 
-able to check that on some higher-level freeing path?
 
-The reason I am commenting is that once we decouple "struct page" from 
-"struct netmem_desc", we'd have to lookup here the corresponding "struct 
-netmem_desc".
 
-... but at that point here (when we free the actual pages), the "struct 
-netmem_desc" would likely already have been freed separately (remember: 
-it will be dynamically allocated).
+> +
+> +static struct platform_driver amlogic_spisg_driver = {
+> +	.probe = aml_spisg_probe,
+> +	.remove = aml_spisg_remove,
+> +	.driver  = {
+> +		.name = "amlogic-spisg",
+> +		.of_match_table = of_match_ptr(amlogic_spisg_of_match),
 
-With that in mind:
+So now you will have warnings... drop of_match_ptr.
 
-1) Is there a higher level "struct netmem_desc" freeing path where we 
-could check that instead, so we don't have to cast from pages to 
-netmem_desc at all.
+Both suggest you send us some old code, instead of working on something
+recent.
 
-2) How valuable are these sanity checks deep in the buddy?
+> +		.pm = &amlogic_spisg_pm_ops,
+> +	},
+> +};
+> +
+> +module_platform_driver(amlogic_spisg_driver);
+> +
+> +MODULE_DESCRIPTION("Amlogic SPI Scatter-Gather Controller driver");
+> +MODULE_AUTHOR("Sunny Luo <sunny.luo@amlogic.com>");
+> +MODULE_LICENSE("GPL");
+> 
 
--- 
-Cheers,
 
-David / dhildenb
-
+Best regards,
+Krzysztof
 
