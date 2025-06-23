@@ -1,78 +1,45 @@
-Return-Path: <linux-kernel+bounces-697737-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-697739-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D85F6AE3801
-	for <lists+linux-kernel@lfdr.de>; Mon, 23 Jun 2025 10:11:48 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2083DAE3806
+	for <lists+linux-kernel@lfdr.de>; Mon, 23 Jun 2025 10:12:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2BED93B0660
-	for <lists+linux-kernel@lfdr.de>; Mon, 23 Jun 2025 08:10:55 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DCA8616890A
+	for <lists+linux-kernel@lfdr.de>; Mon, 23 Jun 2025 08:12:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0E43A1E7C2E;
-	Mon, 23 Jun 2025 08:10:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="PC31B3Gn"
-Received: from mail-wr1-f50.google.com (mail-wr1-f50.google.com [209.85.221.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0D9F221765E;
+	Mon, 23 Jun 2025 08:12:14 +0000 (UTC)
+Received: from szxga02-in.huawei.com (szxga02-in.huawei.com [45.249.212.188])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9356C1531C1
-	for <linux-kernel@vger.kernel.org>; Mon, 23 Jun 2025 08:10:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 76F711531C1;
+	Mon, 23 Jun 2025 08:12:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.188
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750666245; cv=none; b=rXnbKPPImXBy1shP7EyeM8bDQsy4uMd+zVEVOc9+F2k+Im3B89VIXYenPyOPNfxYHz2GsXA6tYPMOdRTVS6FiUtIOy4T8k6pPsBGe/s/X1K1ekN0YDnD6+a2O39Y2mWfHK3TmrjUYWR7/emG53pNAk8NuqnUCGNzMlrCSpDzjOY=
+	t=1750666333; cv=none; b=ieOAfVaHIWX6qU/xb3g+cD6d1B8cRQdnTcerqPrrLgrCRu7Vex+8LJ7MuT9rpbtS5n4nbRiV12ehHob54H4YyYIo85+u839d2OCVHfBgOQiRrbxmhujg14qfvqI2gJgDsAfteUTrK1uyHyj7/jTTmUGnt2Dd5d5XZSIYlH+NG4s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750666245; c=relaxed/simple;
-	bh=FRct19OAbx0JJ/siNE7NxXqvXE/tfxAwAybWkm3Xm2U=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=LNi9il6bJ6EM0GukrI0AKV4zSXij08Bfu0z+chqElYfQLd/qOGEGbAW+MhV0wqTezuF5PFThPAZJB7KEYOhO37pSQxrBiJBsfNu519+meAoeqFTNbG6VG4g34yuJgBfoq8FFalcaIEuL3oSrFScZtZdOdKoulQw5pIxRUGGfrDA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=PC31B3Gn; arc=none smtp.client-ip=209.85.221.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wr1-f50.google.com with SMTP id ffacd0b85a97d-3a6cd1a6fecso3332381f8f.3
-        for <linux-kernel@vger.kernel.org>; Mon, 23 Jun 2025 01:10:43 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1750666242; x=1751271042; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=CdbQQJ+oM3Ao6FCPJJXeLk0AYTnG+ErtpUOCanma8hA=;
-        b=PC31B3GnQG+jsi9XfkD8BzeVf4Y/S1r9/+vlKDxBJiASSpip1EQQNv5LS+QZgXRJeA
-         kWmzSnu+JzRku16GFgT/0aUcsKqeFXOO1uCPuYzD3a9SmsDbaOAJRwK1o803V3wjhm1J
-         BqpwW+W7nETJg1U50YWe7HK7f7fc1aJNpOMLcM66MKpFFZAI/GMYmJoUOdKmUe/FxRxW
-         T0NCI9l7xN7JdDfHbgF+Y5+F1wTXDoVQqwX/eeh0XU0TehbQsfyHisvzfuyxZx4JhtMi
-         oEP0fFb3U9+Rg9DUg2Da5hVsxX7SuyNgUL3XGYXLxhaQ3X9tP+6uYa7RhpV/aF7PlWw4
-         SpGA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1750666242; x=1751271042;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=CdbQQJ+oM3Ao6FCPJJXeLk0AYTnG+ErtpUOCanma8hA=;
-        b=SENWADlDq7BQbO7J+8aDqjOkpVNUQ/v9lKQ9tUIko2J41RuJWHxOhtE6jw/h6UcBzL
-         dV/6NSs/IHE3aWlGG0eYnLipPFo6GALHHujOQziFxsg6dvgDSxa49qUUqphK5RBsWBWi
-         iOlPcLL67nULUTEhFMH8oZeK7DwZ95dp/tvjvgYVV9++GB3Bh91AvQvv5W0dqzXiNvWX
-         0JtlRg7GV4y8/uLaH9Ij+QmoO/l4go/pJFwpevtKs7GSV4Gs+XrJw+dqO5hQVQt7WvTs
-         bNTi6yxvBinh3bSq4xr/WiMhVjp0DtFeckEDyABtH5xQFyKUg8HcBJagoe0b92zVnSuX
-         MKqQ==
-X-Forwarded-Encrypted: i=1; AJvYcCX6AZn0Zx1LbWcMDWmezBShQxNFzA1BgiF79dp8OICSbwZHz6F6DigK9bktKkLggFb9sp08VuezaatzqwE=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx802cANs88R3R5WQ5uekp2LNUxHGuDjRtAMWPMQnmn3EZQ7i1f
-	PJhVa9pFtHhIH2WiwDrIthTY9DkIZILX7GUq4qQSRaRT8MdpqkcTldoYdmMFrZXevI4=
-X-Gm-Gg: ASbGncsA9BkRDN+HwGNt5Z6A4c2OGySEjtADBXmyJT9AwuPjEZJjyI2arnixInrLpPp
-	rISQRQaTsBYqNVFNL3D+JkFTFO66Zg0y0HViJoLSI/t/dtGOZM8wwYwCbSyxsC5h9FPO3kFhKh2
-	aLAI24EWrOZ7C8wYgqYabelNlsjDTrRfKZvg6G5KEekT9XvkPXtjLINmlt/PkVjhV+ftPuNVbg0
-	3hNMarMzCV3lAF+K4NNIocyKRmSgX/Elew5DXfh5GFVRG+1JjEOLZydIc6hmtLlZI16J1+LNBw3
-	DorrUq8qOZCqtLTRvLxFXKd2cxtd7zxp5TKysfW2QVw0zs8uCyHNIPCdiKT871nnmCM=
-X-Google-Smtp-Source: AGHT+IG9/WCgHCRLCRdBfUm5EF+Cuc835GyTFmEmRHyzreAZVR+wonfkISgnq+jwxtYSzmlRlgOmfg==
-X-Received: by 2002:a05:6000:310a:b0:3a5:8cc2:10aa with SMTP id ffacd0b85a97d-3a6d12fbab7mr6880864f8f.32.1750666241927;
-        Mon, 23 Jun 2025 01:10:41 -0700 (PDT)
-Received: from [192.168.1.3] ([37.18.136.128])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3a6d0f17d3bsm8685301f8f.21.2025.06.23.01.10.40
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 23 Jun 2025 01:10:41 -0700 (PDT)
-Message-ID: <6f524405-a9a7-45c4-bf4d-9ae33e52bfbc@linaro.org>
-Date: Mon, 23 Jun 2025 09:10:40 +0100
+	s=arc-20240116; t=1750666333; c=relaxed/simple;
+	bh=hXKhHlHNMk7pOoXGAd2+6KTe9i9btpDxdYwJ8ahEF+I=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=mbe0wOkyeV6YTmPqvwseN55RqoQZ+5B00mIeF1jM5vDzClHgMEMo/Uv+YCcdSQ6MARTuSgdKIFMUOhKUJ9Zd89Min8rFKLjJXSZGyrquv7jC6eeoTGVxrjEOYOylAI3gYG87hRbD8pJ2bH3GXUybipxdrIlFw4aVeMc0Qfn1b9g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.188
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.88.194])
+	by szxga02-in.huawei.com (SkyGuard) with ESMTP id 4bQgkp3x8QztSLy;
+	Mon, 23 Jun 2025 16:10:58 +0800 (CST)
+Received: from dggpemf500013.china.huawei.com (unknown [7.185.36.188])
+	by mail.maildlp.com (Postfix) with ESMTPS id 09C6414027D;
+	Mon, 23 Jun 2025 16:12:08 +0800 (CST)
+Received: from [127.0.0.1] (10.174.177.71) by dggpemf500013.china.huawei.com
+ (7.185.36.188) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Mon, 23 Jun
+ 2025 16:12:06 +0800
+Message-ID: <df82bd94-3fe8-41ab-9a3b-b3fe75bdc0c4@huawei.com>
+Date: Mon, 23 Jun 2025 16:12:06 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -80,66 +47,66 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] perf build: Specify that spellcheck should use the bash
- dialect.
-To: Collin Funk <collin.funk1@gmail.com>
-Cc: linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org,
- Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
- Arnaldo Carvalho de Melo <acme@kernel.org>,
- Namhyung Kim <namhyung@kernel.org>,
- Alexander Shishkin <alexander.shishkin@linux.intel.com>,
- Jiri Olsa <jolsa@kernel.org>, Ian Rogers <irogers@google.com>,
- Adrian Hunter <adrian.hunter@intel.com>,
- "Liang, Kan" <kan.liang@linux.intel.com>
-References: <e3751a74be34bbf3781c4644f518702a7270220b.1749785642.git.collin.funk1@gmail.com>
- <20cce2b1-eaad-4565-817b-b094aecee0a5@linaro.org> <874iwa71mo.fsf@gmail.com>
+Subject: Re: [PATCH v2 4/6] ext4: correct the reserved credits for extent
+ conversion
+To: Zhang Yi <yi.zhang@huaweicloud.com>, <linux-ext4@vger.kernel.org>
+CC: <linux-fsdevel@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+	<tytso@mit.edu>, <adilger.kernel@dilger.ca>, <jack@suse.cz>,
+	<ojaswin@linux.ibm.com>, <yi.zhang@huawei.com>, <yukuai3@huawei.com>,
+	<yangerkun@huawei.com>, Baokun Li <libaokun1@huawei.com>
+References: <20250611111625.1668035-1-yi.zhang@huaweicloud.com>
+ <20250611111625.1668035-5-yi.zhang@huaweicloud.com>
 Content-Language: en-US
-From: James Clark <james.clark@linaro.org>
-In-Reply-To: <874iwa71mo.fsf@gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+From: Baokun Li <libaokun1@huawei.com>
+In-Reply-To: <20250611111625.1668035-5-yi.zhang@huaweicloud.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
 Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: kwepems100002.china.huawei.com (7.221.188.206) To
+ dggpemf500013.china.huawei.com (7.185.36.188)
 
+On 2025/6/11 19:16, Zhang Yi wrote:
+> From: Zhang Yi <yi.zhang@huawei.com>
+>
+> Now, we reserve journal credits for converting extents in only one page
+> to written state when the I/O operation is complete. This is
+> insufficient when large folio is enabled.
+>
+> Fix this by reserving credits for converting up to one extent per block in
+> the largest 2MB folio, this calculation should only involve extents index
+> and leaf blocks, so it should not estimate too many credits.
+>
+> Fixes: 7ac67301e82f ("ext4: enable large folio for regular file")
+> Signed-off-by: Zhang Yi <yi.zhang@huawei.com>
+> Reviewed-by: Jan Kara <jack@suse.cz>
 
+Looks good to me. Feel free to add:
 
-On 20/06/2025 6:40 pm, Collin Funk wrote:
-> Hi James,
-> 
-> James Clark <james.clark@linaro.org> writes:
-> 
->> If we're enforcing bash style with static analysis shouldn't we also
->> change all the hashbangs to bash? Recently there have been changes to
->> change sh to bash in some of the tests so presumably the hard rule for
->> sh is no more?
->>
->> In the past I've had to replace bashisms that didn't work in sh but it
->> would be nice to have only one language to write tests in. I doubt
->> anyone running the tests today is running somewhere without bash, or
->> that changing it will break anything. If anything it will fix more
->> bashisms that have already been written.
->>
->> Just for reference there are 34 #!/bin/bash and 42 #!/bin/sh in
->> tools/perf/tests
-> 
-> That sounds reasonable to me. Writing portable shell is a hassle and if
-> we already assume a working /bin/bash in some places, I don't see a
-> reason not to use it for the others.
-> 
-> Regarding this patch, shellcheck will use the file extension or shebang
-> only if it does not find a 'shell' directive in a .shellcheckrc. So that
-> change will still require this patch.
-> 
-> I saw it was used in other places, so I assumed this patch was fine:
-> 
-> $ find tools/perf -name Build | xargs grep bash
-> tools/perf/Build:	$(Q)$(call echo-cmd,test)shellcheck -s bash -a -S warning "$<" > $@ || (cat $@ && rm $@ && false)
-> tools/perf/trace/beauty/Build:	$(Q)$(call echo-cmd,test)shellcheck -s bash -a -S warning "$<" > $@ || (cat $@ && rm $@ && false)
-> 
-> Collin
+Reviewed-by: Baokun Li <libaokun1@huawei.com>
 
-In that case:
+> ---
+>   fs/ext4/inode.c | 6 +++---
+>   1 file changed, 3 insertions(+), 3 deletions(-)
+>
+> diff --git a/fs/ext4/inode.c b/fs/ext4/inode.c
+> index b51de58518b2..67e37dd546eb 100644
+> --- a/fs/ext4/inode.c
+> +++ b/fs/ext4/inode.c
+> @@ -2848,12 +2848,12 @@ static int ext4_do_writepages(struct mpage_da_data *mpd)
+>   	mpd->journalled_more_data = 0;
+>   
+>   	if (ext4_should_dioread_nolock(inode)) {
+> +		int bpf = ext4_journal_blocks_per_folio(inode);
+>   		/*
+>   		 * We may need to convert up to one extent per block in
+> -		 * the page and we may dirty the inode.
+> +		 * the folio and we may dirty the inode.
+>   		 */
+> -		rsv_blocks = 1 + ext4_chunk_trans_blocks(inode,
+> -						PAGE_SIZE >> inode->i_blkbits);
+> +		rsv_blocks = 1 + ext4_ext_index_trans_blocks(inode, bpf);
+>   	}
+>   
+>   	if (wbc->range_start == 0 && wbc->range_end == LLONG_MAX)
 
-Reviewed-by: James Clark <james.clark@linaro.org>
-
-And I'll send the bulk hashbang change separately.
 
 
