@@ -1,214 +1,537 @@
-Return-Path: <linux-kernel+bounces-697995-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-697983-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2A3DDAE3B90
-	for <lists+linux-kernel@lfdr.de>; Mon, 23 Jun 2025 12:04:13 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id B84A4AE3B66
+	for <lists+linux-kernel@lfdr.de>; Mon, 23 Jun 2025 12:00:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9C75C173541
-	for <lists+linux-kernel@lfdr.de>; Mon, 23 Jun 2025 10:03:33 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id AC77A1897F50
+	for <lists+linux-kernel@lfdr.de>; Mon, 23 Jun 2025 09:59:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CD0CE246BD2;
-	Mon, 23 Jun 2025 10:01:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b="KP4aeoPe"
-Received: from AS8PR03CU001.outbound.protection.outlook.com (mail-westeuropeazon11012040.outbound.protection.outlook.com [52.101.71.40])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C3F8623BD01;
+	Mon, 23 Jun 2025 09:57:52 +0000 (UTC)
+Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 45A5623C8AA;
-	Mon, 23 Jun 2025 10:01:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.71.40
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750672863; cv=fail; b=BDsFO18cQWRIPmdPDxqeZHvY0FrDyXYPewAcZL4+VjWCgyAUycNT7qS9DV8iKGHF77pVoXmP6K70wPZ2opwFRSVqySPQD4Dpikl/SJU9LYJvTwPoEZxJzcgNkVA5zQ7fj35suc2iiEc0XICpzpUS8eKE8GeyT6iWMvT7VXhG54E=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750672863; c=relaxed/simple;
-	bh=CAF9o6KR8IL6dizjhFyRQiVLcyMX9ncxjaTJ1aybzFw=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=R72DqkzmPnEmgo7e37AWRbSVbGep58pPdbaXWvIdqnZTUQrlz8TiJdohgAPVza4TLdjHY7DcESyc0mQdii6t2OjeX3O/qD5LJNOYAxEi3gr/EFOQP7QYaMk2oHW53MV28QxR+OlBp/0OrzF3yFftAS4/6uG6TJsH5IPu8xNdDFQ=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b=KP4aeoPe; arc=fail smtp.client-ip=52.101.71.40
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=BfZtT7BGQCZVktIFgNywjA95ZpGfHkmpqFVOAXwmLcoSC8cQGd+7VcJ2SW7OlPI+lkzwr/Yw0zHzv5EQXaHISeafS2jlMaeqkPq3dV5A4PVMO4r27I2ixyF744wwpCy4Uqr1iQ/gtWo4mPd0/qbRGv/5xQrobC4enbZeSamNW01nL/IBYckFV0dLGlurEfqp6sR3L4x25fxVihmlKxHGtzU1NJ20Xfu1PN55N9EN3paDyOhahbECOE/vQzXxwdDJVRVLnGzODiYdSoWr2zx/SCLcfuabaOcXT0NJab0IjDBirFct4vlhdVj1FWntUuqyTpuC0UGggZchz+r97htM9A==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=m/ewjz9MSfSgcneQZg2VwqmZsMYvUuwnlFGfk/j/pLA=;
- b=WdAJN1k/XyEjH1DQwNRg+ki/axPPaSdl3UoZ9fV6y6NYHgRqsfzaJkXI3da2qQ7kBGfNY+9D2OHK6QMNF/Su0sUS2ycIPOEP9tt8tedTZmL2NK/xnTkU5baYOPqIZj1CknxUBPWSooVQXlELjx6iJiAvC7FU5Zz4RlA+V1UBp9zltK8xkhBtbnm81ncc6+4NyhLyGNMvtCFRTcJj6BsKsTSUg3METlS6HlNUAljfQM0cWbO5jmkxevlywZtxqEJuzRRsy0MjsmSxUJXNq+SfG3PevOoWdKkUUIb0kBjTqnKdaPNzxaofoACu2JtFLM9Ro/XIg1p7VeEexanh3kLlgA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
- header.d=nxp.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=m/ewjz9MSfSgcneQZg2VwqmZsMYvUuwnlFGfk/j/pLA=;
- b=KP4aeoPeCtltReWR34c4NoT7eHVlEWr6c3PAGCpUAnClz+aMfM9xAFN6tLmu+h7C0SL0vnJ/Usete8/TNcrdI3UdUZk2VLt1FnAtSbDF0P1bjE2RlYHDxxBLwe+sAzO7xOPynW3He9Ag0yamP3sMtfYVl7yKioquExpgVDp0WMUj6Ad3VNaFyqD59/Zori8NRMWt8UHFZWSBZRifNfme01Elk0beJiAZFmdKjJLQUi3K4t2V8Uq+a4K2jx4tJTzNi1Di5em9wstLy99Vb5bbDacDNvcsaMRviEjlBo3NxataUAHPcuPQp8WXA3Jgg1VQdEpS1RJbsVAvXszqZpVy+Q==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nxp.com;
-Received: from AS4PR04MB9386.eurprd04.prod.outlook.com (2603:10a6:20b:4e9::8)
- by PAXPR04MB8256.eurprd04.prod.outlook.com (2603:10a6:102:1c6::6) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8857.29; Mon, 23 Jun
- 2025 10:00:58 +0000
-Received: from AS4PR04MB9386.eurprd04.prod.outlook.com
- ([fe80::261e:eaf4:f429:5e1c]) by AS4PR04MB9386.eurprd04.prod.outlook.com
- ([fe80::261e:eaf4:f429:5e1c%7]) with mapi id 15.20.8857.026; Mon, 23 Jun 2025
- 10:00:58 +0000
-From: Joy Zou <joy.zou@nxp.com>
-To: robh@kernel.org,
-	krzk+dt@kernel.org,
-	conor+dt@kernel.org,
-	shawnguo@kernel.org,
-	s.hauer@pengutronix.de,
-	catalin.marinas@arm.com,
-	will@kernel.org,
-	andrew+netdev@lunn.ch,
-	davem@davemloft.net,
-	edumazet@google.com,
-	kuba@kernel.org,
-	pabeni@redhat.com,
-	mcoquelin.stm32@gmail.com,
-	alexandre.torgue@foss.st.com,
-	ulf.hansson@linaro.org,
-	richardcochran@gmail.com,
-	kernel@pengutronix.de,
-	festevam@gmail.com
-Cc: devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	imx@lists.linux.dev,
-	linux-arm-kernel@lists.infradead.org,
-	netdev@vger.kernel.org,
-	linux-stm32@st-md-mailman.stormreply.com,
-	linux-pm@vger.kernel.or,
-	frank.li@nxp.com,
-	ye.li@nxp.com,
-	ping.bai@nxp.com,
-	aisheng.dong@nxp.com
-Subject: [PATCH v6 9/9] net: stmmac: imx: add i.MX91 support
-Date: Mon, 23 Jun 2025 17:57:32 +0800
-Message-Id: <20250623095732.2139853-10-joy.zou@nxp.com>
-X-Mailer: git-send-email 2.37.1
-In-Reply-To: <20250623095732.2139853-1-joy.zou@nxp.com>
-References: <20250623095732.2139853-1-joy.zou@nxp.com>
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: SG2PR04CA0159.apcprd04.prod.outlook.com (2603:1096:4::21)
- To AS4PR04MB9386.eurprd04.prod.outlook.com (2603:10a6:20b:4e9::8)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EF5B322FF37;
+	Mon, 23 Jun 2025 09:57:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1750672672; cv=none; b=dR0Pu9D1K9GWQ+91+k/m3qkWqqFaDm+2op1nPiXDDdFr+vu1aYa34e8cwTZ9y8lDjX3YrbdwuZW2z07fLYim/6ZCaHtV7/u4/hwkUWvD3EvJcVNnAe75fplaMQ5ZXVXZEuVlpCwxlcl/i2uBlqQZsuMBNN4R+B2iSaD1ZjYEQHg=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1750672672; c=relaxed/simple;
+	bh=NsDz0dmPDAlE8/200yhTH0sPFz9rB7VBA8i7dkXdVGw=;
+	h=Date:From:To:CC:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=Z8VtiXWcSUU3v53VB9Kd5aYN4tkGo1uAjv51BU9BgdXKOKIEFNkz1YtZyZ2c7QYhj09EtjfCeKYTbg/885+5iZwRfUr5JO3gX7mgC5AUmvlvDd1Yw0qDWc6m5YMXGASiX+6YcrQ4bP0QeyFlfp4AiA1AYvFiZNyF/ZBXjsTZBnE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.18.186.31])
+	by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4bQk0M2jf2z6L5Hr;
+	Mon, 23 Jun 2025 17:52:51 +0800 (CST)
+Received: from frapeml500008.china.huawei.com (unknown [7.182.85.71])
+	by mail.maildlp.com (Postfix) with ESMTPS id 274311402F4;
+	Mon, 23 Jun 2025 17:57:47 +0800 (CST)
+Received: from localhost (10.203.177.66) by frapeml500008.china.huawei.com
+ (7.182.85.71) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.39; Mon, 23 Jun
+ 2025 11:57:46 +0200
+Date: Mon, 23 Jun 2025 10:57:44 +0100
+From: Jonathan Cameron <Jonathan.Cameron@huawei.com>
+To: Neeraj Kumar <s.neeraj@samsung.com>
+CC: <dan.j.williams@intel.com>, <dave@stgolabs.net>, <dave.jiang@intel.com>,
+	<alison.schofield@intel.com>, <vishal.l.verma@intel.com>,
+	<ira.weiny@intel.com>, <a.manzanares@samsung.com>, <nifan.cxl@gmail.com>,
+	<anisa.su@samsung.com>, <vishak.g@samsung.com>, <krish.reddy@samsung.com>,
+	<arun.george@samsung.com>, <alok.rathore@samsung.com>,
+	<neeraj.kernel@gmail.com>, <linux-kernel@vger.kernel.org>,
+	<linux-cxl@vger.kernel.org>, <nvdimm@lists.linux.dev>,
+	<gost.dev@samsung.com>, <cpgs@samsung.com>
+Subject: Re: [RFC PATCH 00/20] Add CXL LSA 2.1 format support in nvdimm and
+ cxl pmem
+Message-ID: <20250623105744.0000491e@huawei.com>
+In-Reply-To: <20250617180723.00002d13@huawei.com>
+References: <CGME20250617123958epcas5p3a9f00c6a63ddb140714e3d37463ff00e@epcas5p3.samsung.com>
+	<1931444790.41750165203442.JavaMail.epsvc@epcpadp1new>
+	<20250617180723.00002d13@huawei.com>
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.42; x86_64-w64-mingw32)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: AS4PR04MB9386:EE_|PAXPR04MB8256:EE_
-X-MS-Office365-Filtering-Correlation-Id: b4350237-626f-4c0d-0946-08ddb23cd9e8
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|366016|376014|7416014|52116014|1800799024|38350700014|921020;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?+YTwBlmSXIV9iR2qhG/cfpPvmNdVR6XqAb7owT/+zLZho13CcNCg6miYVAVZ?=
- =?us-ascii?Q?hU6diTAAUNWYLaWxjgZaSyFlNOrsZz+4ZOrGlYOpAQpU3zg2wM/12+4ZwKMf?=
- =?us-ascii?Q?FmYM97bbbjdJo4ibM/VNJ+VuJabEqNMBVjoyLoJ24/nG3Le1CfJ+1iut+DmB?=
- =?us-ascii?Q?OF9bBsI6/5gy0u/26N2R12zvd1zqy8s+s+FIWASEEqLG6t8WLPIoTeAEhs1m?=
- =?us-ascii?Q?N+k/Zy+wm4NMCv0VLa2BUb55cqVaF/coUx7SZ6foCyadBXDqJ8ohWmeCQcF4?=
- =?us-ascii?Q?HM6oKo9fDcdIdBNHGjUqybBLqRVC3IrELncB7hGRJwcLw+qJoOi+foROMJin?=
- =?us-ascii?Q?XJzrYWTMX/aJDH+srAAW13b9GgA3kIwzPTwCkoRvwfaEgn+Fh9dbyMMyk4aK?=
- =?us-ascii?Q?OerSWhWW/2uIhjPaohA9DgEZ+ZIYPvYeDEOc1Q3N7QKmGLHlXvNnqKB59wdw?=
- =?us-ascii?Q?45OW2se2gT/ZLQbeFEZmdZQlRUFXE//IODWEaQUb1wPACSHEHggOjJVeY2nM?=
- =?us-ascii?Q?nD0uteuRF9xjrqCNGU6i7IdhGKOn4XNlBkYDJ4Rq+sU8QdQGyH6KW4wavmuh?=
- =?us-ascii?Q?a0OiGE/I4UxLXj/RY5rXchMZex9tM2JdmtCPoIi33zu9PeSo88mv6LyCG2Vn?=
- =?us-ascii?Q?5FRo33PixojoKqQj8ybzkWIhthafGj9+pevwqw0c+P1vwooxzfzillY+nq8n?=
- =?us-ascii?Q?000r2V4qwB1RG58WTyBr6OPJ5GBWjKkRIxYaUOa2+kAvZf8y7lo+NZDuXA1e?=
- =?us-ascii?Q?l6kUE0R2NvA3TKr+7mS4IWtEelvks4GL6aG6uOLe/sDMi+jKIFSj9O6ORiXf?=
- =?us-ascii?Q?jpP3Xfy8bkVaMqVyLsasHkWLMpE0hDiqzsiq8w/xjvSw7ieZ9nnz1rlKQErH?=
- =?us-ascii?Q?eHwog6VsJnEhlVPCUlSU96kmzdBNSKVD4aO464IpES+Q+usRokoWK7gIRpil?=
- =?us-ascii?Q?VASgWI8iA4/48ouVRbKGO8hLVq0csMalliyYJfJRjDlXJthh3zzGon5MJ4Po?=
- =?us-ascii?Q?0CGY8EXy5vcEkGeKl4chkgBhmJ+ppQP7gXWCk4mRU3Jirz5+6nVFg3V67uAD?=
- =?us-ascii?Q?5m88wBvspidQ3l7ExvzCV5JuUMz6zDs0Xb1MtRkK8mWFpj4jwXNdTHg5z14K?=
- =?us-ascii?Q?+IiwhCJpXx1C9FggjBbxnKAznS+3VtcWUlmykBNTS01EUZkw2NPx4V7Oth89?=
- =?us-ascii?Q?a/GsFIV/mokDTfldCPmf3mrKS23Pb20FqcQzF9ZREIVHo2j/dSz+emd4mwar?=
- =?us-ascii?Q?Rc4eteM7ctiM8bbZsLFz/ENgaY9mZnqWs71g3x/2Gd4vhqpezc+0zJ/3WVF0?=
- =?us-ascii?Q?aRWA2monmsAQQyARS9yUXcDJw1XXlyvyneffozAQoAskrCSUFM+2ehJ0GpXS?=
- =?us-ascii?Q?T51TwwTxmd5HSndC101mSYib3TJwYL4H3aN68H3BSXdwtajSxbh+urRtbYsc?=
- =?us-ascii?Q?KSSuP3gfnERs99qMRGfsr6JUnV3YG9GKkALWC/UKc7bT+eRPyls4WUyKxR2g?=
- =?us-ascii?Q?QnjgLdLoemBuZek=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:AS4PR04MB9386.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(376014)(7416014)(52116014)(1800799024)(38350700014)(921020);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?at1nHf99Y9ibBsGeT0Y7mlncllmt8vCJKgYr5FzWFupfKdI46RVrAoKx+rYa?=
- =?us-ascii?Q?jB/x0bSo7RU0xIJ4AmrIIuMVz8ZvaiSf3HlFD0hDi4sfo2MHsYXkFYT8+G35?=
- =?us-ascii?Q?TZCaN8uKbhDX7godKsxpDwjoR3/Hw/UuwDnxfY70AA7R5HE0LXFQUoQaQV4K?=
- =?us-ascii?Q?MckKkslmz28uNcPfIA99bdqFejrkIERzJiDfMu3bhgdtCJqp83LcVr9Hv9xI?=
- =?us-ascii?Q?wOn+YXSoBQ96/LnbVmJDaf3PwNVONrPj9vRhw42W7ZWVK04LVsFsVZCKy1Xr?=
- =?us-ascii?Q?7pcbVUOvTl4sT4DHdHyNx0KrJbJsWPDJUn6WawsUZtqRF26VnslyPgon2Msf?=
- =?us-ascii?Q?mb3clxyEPSJkQu+wQqcIFch49VTdHLS5Hr40l9QxvcsD0xlqOY84qpTMCxkG?=
- =?us-ascii?Q?3OjsFrgWwz5PrGyfEawZTVWVXgyISkPKv9e8Cj5LY2ALUc93WVyLohB7+svY?=
- =?us-ascii?Q?E2wxkHmViJp7cdhAD85j53aFK3TE/vIDcPOzp3Brs6+nj/BW6UIY+9B1nSQ3?=
- =?us-ascii?Q?XzgPeQXlogtD06sQsBry/mVfGLa8luVcBkS9WkklcdL7XT/iwzYt1xNc9iWU?=
- =?us-ascii?Q?wZzaSGEPfcJV72eacGX6pR0tb8D6CM3hew8qOzcSam2ZGbShGYLV+BTWaExd?=
- =?us-ascii?Q?Hvbum9oylah1rWMlIKecN3feYolE8dcpMc64ebKXSppJwAyKHcGIOBEW7r05?=
- =?us-ascii?Q?mwZcJos6+EToiVGyDwLRRuwbQKw8WFYbcTHA8QAmQ3GydVwasVrP4zVMZ2pg?=
- =?us-ascii?Q?UMxCAWP579oVDlvxCjgn9PmXRY33o5EAl0JBgEcHtbULVTMgBWKCM/8lk4Cw?=
- =?us-ascii?Q?/7M6CoC+X+3WIy811VIbpe+YbIomUQm8Mu+cMTdMmpPNwbQmOj8OGiSvg/8x?=
- =?us-ascii?Q?OmZz6urak1Ac/TViZ5yYfbKeEBF2Xu/k0rWhJBMJdIvNU1ejy5Y/FulJXMiP?=
- =?us-ascii?Q?c+qPo2FdZGVIJaF0AfpDwok/Vp2G1j7ba683JCRX2YGz5bQCB9qWa04wTewM?=
- =?us-ascii?Q?o4T4abD620WdC11cJS5DzyCjwEDwCeSXnbGAebprqMr2im5VNjBqTBiuML3n?=
- =?us-ascii?Q?y4LrIjBgvxJq+TLSVqRjH6b8OubY6T94VB4h+xUnPJcx8jJqZCxvYj4+cO86?=
- =?us-ascii?Q?wJzH+ZZIseybBE+bemFp3l3IA6hE/f1NAxq24y9louWRcc20HXTgtABXpLqe?=
- =?us-ascii?Q?p9wGWTMt665YufXaPOJewmihdUAg5ec3VuXzVRKgiUFYGRBs6aTxiAO3e+CB?=
- =?us-ascii?Q?UBeC01NgXrrp9zXhOrF+K0Q3DbdF5UoeeyEMQ7Iwf6784EKtAR2YctCnSTjw?=
- =?us-ascii?Q?yJuYalHgtS1G82VevFntwgTIH/SBR5d51RA0K2Mmqz8oh+EQIRaPzhuvLr5q?=
- =?us-ascii?Q?fpWlAKHQ+zn1TixMXg+Br0WmQ5wtapofGTed8KhJZzwkb1qGYH6bPl5lhMeX?=
- =?us-ascii?Q?jtziokMf6K08P8g2JP+kVuTPoEHFtxOF8qk6JY5BLxa45F2zIbWOE5sOGXPJ?=
- =?us-ascii?Q?tNEANfF51bPkSvfRrL6e7h/mIUhGF0QtUVZHSeMoJqSJCRT12M9bD4z585dM?=
- =?us-ascii?Q?nWWkSNlxHv9URf+p9EiI2+4LBam+idB/6KqLg4yG?=
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: b4350237-626f-4c0d-0946-08ddb23cd9e8
-X-MS-Exchange-CrossTenant-AuthSource: AS4PR04MB9386.eurprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 23 Jun 2025 10:00:58.5152
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: BD18daKdLVC9CQjf9pGgo4kgWm25RUypcHDywIv2IHVTjE26qowbAhxndRcsrjWL
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PAXPR04MB8256
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: quoted-printable
+X-ClientProxiedBy: lhrpeml100011.china.huawei.com (7.191.174.247) To
+ frapeml500008.china.huawei.com (7.182.85.71)
 
-Add i.MX91 specific settings for EQoS.
+On Tue, 17 Jun 2025 18:07:23 +0100
+Jonathan Cameron <Jonathan.Cameron@huawei.com> wrote:
 
-Signed-off-by: Joy Zou <joy.zou@nxp.com>
----
-Changes for v5:
-1. add imx91 support.
----
- drivers/net/ethernet/stmicro/stmmac/dwmac-imx.c | 2 ++
- 1 file changed, 2 insertions(+)
+> On Tue, 17 Jun 2025 18:09:24 +0530
+> Neeraj Kumar <s.neeraj@samsung.com> wrote:
+>=20
+> Hi Neeraj,
+>=20
+> First a process thing. Looks like threading is broken in your patch set.
+> https://lore.kernel.org/linux-cxl/1931444790.41750165203442.JavaMail.epsv=
+c@epcpadp1new/T/#u
+> Lore had a go and seems to have figured out there is a thread for the res=
+t.
+> If you can't fix it locally for your email, look at using the b4 gateway
+> (see the docs for the b4 tool)
+>=20
+> https://git.kernel.org/pub/scm/linux/kernel/git/palmer/b4.git/
+>=20
+> Also, in an RFC the first thing I expect to see if a 'Why this is an RFC =
+statement'
+> vs ready for upstream merge.  What are the questions that need comments or
+> the blockers you know need to be resolved?
+>=20
+> Anyhow, good to see this. Not an area I'm that familiar with but
+> I'll try to take a detailed look a bit later this week.
+>=20
+Whilst I've looked through this series, most of my comments are superficial=
+ 'local'
+stuff.  This needs some attention from those more familiar with the persist=
+ent memory
+flows than I am.
 
-diff --git a/drivers/net/ethernet/stmicro/stmmac/dwmac-imx.c b/drivers/net/ethernet/stmicro/stmmac/dwmac-imx.c
-index 889e2bb6f7f5..54243bacebfd 100644
---- a/drivers/net/ethernet/stmicro/stmmac/dwmac-imx.c
-+++ b/drivers/net/ethernet/stmicro/stmmac/dwmac-imx.c
-@@ -301,6 +301,7 @@ imx_dwmac_parse_dt(struct imx_priv_data *dwmac, struct device *dev)
- 	dwmac->clk_mem = NULL;
- 
- 	if (of_machine_is_compatible("fsl,imx8dxl") ||
-+	    of_machine_is_compatible("fsl,imx91") ||
- 	    of_machine_is_compatible("fsl,imx93")) {
- 		dwmac->clk_mem = devm_clk_get(dev, "mem");
- 		if (IS_ERR(dwmac->clk_mem)) {
-@@ -310,6 +311,7 @@ imx_dwmac_parse_dt(struct imx_priv_data *dwmac, struct device *dev)
- 	}
- 
- 	if (of_machine_is_compatible("fsl,imx8mp") ||
-+	    of_machine_is_compatible("fsl,imx91") ||
- 	    of_machine_is_compatible("fsl,imx93")) {
- 		/* Binding doc describes the propety:
- 		 * is required by i.MX8MP, i.MX93.
--- 
-2.37.1
+Jonathan
+
+> Thanks,
+>=20
+> Jonathan
+>=20
+>=20
+> > Introduction:
+> > =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+> > CXL Persistent Memory (Pmem) devices region, namespace and content must=
+ be
+> > persistent across system reboot. In order to achieve this persistency, =
+it
+> > uses Label Storage Area (LSA) to store respective metadata. During syst=
+em
+> > reboot, stored metadata in LSA is used to bring back the region, namesp=
+ace
+> > and content of CXL device in its previous state.
+> > CXL specification provides Get_LSA (4102h) and Set_LSA (4103h) mailbox
+> > commands to access the LSA area. nvdimm driver is using same commands to
+> > get/set LSA data.
+> >=20
+> > There are three types of LSA format and these are part of following
+> > specifications:=20
+> >  - v1.1: https://pmem.io/documents/NVDIMM_Namespace_Spec.pdf
+> >  - v1.2: https://uefi.org/sites/default/files/resources/UEFI_Spec_2_7.p=
+df
+> >  - v2.1: https://computeexpresslink.org/wp-content/uploads/2024/02/CXL-=
+2.0-Specification.pdf
+> >=20
+> > Basic differences between these LSA formats:
+> >  - v1.1: Support Namespace persistency. Size of Namespace Label is 128 =
+bytes
+> >  - v1.2: Support Namespace persistency. Size of Namespace Label is 256 =
+bytes
+> >  - v2.1: Support Namespace and Region persistency. Size of Namespace and
+> >    Region Label is 256 bytes.
+> >=20
+> > Linux nvdimm driver supports only v1.1 and v1.2 LSA format. CXL pmem de=
+vice
+> > require support of LSA v2.1 format for region and namespace persistency.
+> > Initial support of LSA 2.1 was add in [1].
+> >=20
+> > This patchset adds support of LSA 2.1 in nvdimm and cxl pmem driver.
+> >=20
+> > Patch 1:     Introduce NDD_CXL_LABEL flag and Update cxl label index as=
+ per v2.1
+> > Patch 2-4:   Update namespace label as per v2.1
+> > Patch 5-12:  Introduce cxl region labels and modify existing change acc=
+ordingly
+> > Patch 13:    Refactor cxl pmem region auto assembly
+> > Patch 14-18: Save cxl region info in LSA and region recreation during r=
+eboot
+> > Patch 19:    Segregate out cxl pmem region code from region.c to pmem_r=
+egion.c
+> > Patch 20:    Introduce cxl region addition/deletion attributes
+> >=20
+> >=20
+> > Testing:
+> > =3D=3D=3D=3D=3D=3D=3D=3D
+> > In order to test this patchset, I also added the support of LSA v2.1 fo=
+rmat
+> > in ndctl. ndctl changes are available at [2]. After review, I=E2=80=99l=
+l push in
+> > ndctl repo for community review.
+> >=20
+> > 1. Used Qemu using following CXL topology
+> >    M2=3D"-object memory-backend-file,id=3Dcxl-mem1,share=3Don,mem-path=
+=3D$TMP_DIR/cxltest.raw,size=3D512M \
+> >        -object memory-backend-file,id=3Dcxl-lsa1,share=3Don,mem-path=3D=
+$TMP_DIR/lsa.raw,size=3D1M \
+> >        -object memory-backend-file,id=3Dcxl-mem2,share=3Don,mem-path=3D=
+$TMP_DIR/cxltest2.raw,size=3D512M \
+> >        -object memory-backend-file,id=3Dcxl-lsa2,share=3Don,mem-path=3D=
+$TMP_DIR/lsa2.raw,size=3D1M \
+> >        -device pxb-cxl,bus_nr=3D10,bus=3Dpcie.0,id=3Dcxl.1 \
+> >        -device cxl-rp,port=3D1,bus=3Dcxl.1,id=3Droot_port11,chassis=3D0=
+,slot=3D1 \
+> >        -device cxl-type3,bus=3Droot_port11,memdev=3Dcxl-mem1,lsa=3Dcxl-=
+lsa1,id=3Dcxl-pmem1,sn=3D1 \
+> >        -device cxl-rp,port=3D2,bus=3Dcxl.1,id=3Droot_port12,chassis=3D0=
+,slot=3D2 \
+> >        -device cxl-type3,bus=3Droot_port12,memdev=3Dcxl-mem2,lsa=3Dcxl-=
+lsa2,id=3Dcxl-pmem2,sn=3D2 \
+> >        -M cxl-fmw.0.targets.0=3Dcxl.1,cxl-fmw.0.size=3D4G,cxl-fmw.0.int=
+erleave-granularity=3D8k"
+> >=20
+> > 2. Create cxl region on both devices
+> > 	cxl create-region -d decoder0.0 -m mem0
+> > 	cxl create-region -d decoder0.0 -m mem1
+> >=20
+> > 	root@QEMUCXL6060pmem:~# cxl list
+> > 	[
+> > 	  {
+> > 	    "memdevs":[
+> > 	      {
+> > 	        "memdev":"mem0",
+> > 	        "pmem_size":536870912,
+> > 	        "serial":2,
+> > 	        "host":"0000:0c:00.0",
+> > 	        "firmware_version":"BWFW VERSION 00"
+> > 	      },
+> > 	      {
+> > 	        "memdev":"mem1",
+> > 	        "pmem_size":536870912,
+> > 	        "serial":1,
+> > 	        "host":"0000:0b:00.0",
+> > 	        "firmware_version":"BWFW VERSION 00"
+> > 	      }
+> > 	    ]
+> > 	  },
+> > 	  {
+> > 	    "regions":[
+> > 	      {
+> > 	        "region":"region0",
+> > 	        "resource":45365592064,
+> > 	        "size":536870912,
+> > 	        "type":"pmem",
+> > 	        "interleave_ways":1,
+> > 	        "interleave_granularity":256,
+> > 	        "decode_state":"commit",
+> > 	        "qos_class_mismatch":true
+> > 	      },
+> > 	      {
+> > 	        "region":"region1",
+> > 	        "resource":45902462976,
+> > 	        "size":536870912,
+> > 	        "type":"pmem",
+> > 	        "interleave_ways":1,
+> > 	        "interleave_granularity":256,
+> > 	        "decode_state":"commit",
+> > 	        "qos_class_mismatch":true
+> > 	      }
+> > 	    ]
+> > 	  }
+> > 	]
+> >=20
+> > 3. Re-Start Qemu and we could see cxl region persistency using "cxl lis=
+t"
+> >=20
+> > 4. Create namespace for both regions
+> > 	root@QEMUCXL6060pmem:~# ndctl create-namespace --mode=3Dfsdax --region=
+=3Dregion0 --size=3D128M
+> > 	{
+> > 	  "dev":"namespace0.0",
+> > 	  "mode":"fsdax",
+> > 	  "map":"dev",
+> > 	  "size":"124.00 MiB (130.02 MB)",
+> > 	  "uuid":"3f6dcdc5-d289-4b0c-ad16-82636c82bec1",
+> > 	  "sector_size":512,
+> > 	  "align":2097152,
+> > 	  "blockdev":"pmem0"
+> > 	}
+> > =09
+> > 	root@QEMUCXL6060pmem:~# ndctl create-namespace --mode=3Dfsdax --region=
+=3Dregion1 --size=3D256M
+> > 	{
+> > 	  "dev":"namespace1.0",
+> > 	  "mode":"fsdax",
+> > 	  "map":"dev",
+> > 	  "size":"250.00 MiB (262.14 MB)",
+> > 	  "uuid":"6b9083c9-cb1a-447b-894d-fdfd2f3dbed2",
+> > 	  "sector_size":512,
+> > 	  "align":2097152,
+> > 	  "blockdev":"pmem1"
+> > 	}
+> > =09
+> > 	root@QEMUCXL6060pmem:~# time ndctl create-namespace --mode=3Dfsdax --r=
+egion=3Dregion0 --size=3D256M
+> > 	{
+> > 	  "dev":"namespace0.1",
+> > 	  "mode":"fsdax",
+> > 	  "map":"dev",
+> > 	  "size":"250.00 MiB (262.14 MB)",
+> > 	  "uuid":"c2071802-8c24-4f9c-a6c1-f6bb6589e561",
+> > 	  "sector_size":512,
+> > 	  "align":2097152,
+> > 	  "blockdev":"pmem0.1"
+> > 	}
+> > =09
+> > 	real    0m47.517s
+> > 	user    0m0.209s
+> > 	sys     0m26.879s
+> > 	root@QEMUCXL6060pmem:~# time ndctl create-namespace --mode=3Dfsdax --r=
+egion=3Dregion1 --size=3D128M
+> > 	{
+> > 	  "dev":"namespace1.1",
+> > 	  "mode":"fsdax",
+> > 	  "map":"dev",
+> > 	  "size":"124.00 MiB (130.02 MB)",
+> > 	  "uuid":"13bc8de3-53d3-4c3d-b252-be7efefe80ee",
+> > 	  "sector_size":512,
+> > 	  "align":2097152,
+> > 	  "blockdev":"pmem1.1"
+> > 	}
+> > =09
+> > 	real    0m33.459s
+> > 	user    0m0.243s
+> > 	sys     0m13.590s
+> >=20
+> > 	root@QEMUCXL6060pmem:~# ndctl list
+> > 	[
+> > 	  {
+> > 	    "dev":"namespace1.0",
+> > 	    "mode":"fsdax",
+> > 	    "map":"dev",
+> > 	    "size":262144000,
+> > 	    "uuid":"6b9083c9-cb1a-447b-894d-fdfd2f3dbed2",
+> > 	    "sector_size":512,
+> > 	    "align":2097152,
+> > 	    "blockdev":"pmem1"
+> > 	  },
+> > 	  {
+> > 	    "dev":"namespace1.1",
+> > 	    "mode":"fsdax",
+> > 	    "map":"dev",
+> > 	    "size":130023424,
+> > 	    "uuid":"13bc8de3-53d3-4c3d-b252-be7efefe80ee",
+> > 	    "sector_size":512,
+> > 	    "align":2097152,
+> > 	    "blockdev":"pmem1.1"
+> > 	  },
+> > 	  {
+> > 	    "dev":"namespace0.1",
+> > 	    "mode":"fsdax",
+> > 	    "map":"dev",
+> > 	    "size":262144000,
+> > 	    "uuid":"c2071802-8c24-4f9c-a6c1-f6bb6589e561",
+> > 	    "sector_size":512,
+> > 	    "align":2097152,
+> > 	    "blockdev":"pmem0.1"
+> > 	  },
+> > 	  {
+> > 	    "dev":"namespace0.0",
+> > 	    "mode":"fsdax",
+> > 	    "map":"dev",
+> > 	    "size":130023424,
+> > 	    "uuid":"3f6dcdc5-d289-4b0c-ad16-82636c82bec1",
+> > 	    "sector_size":512,
+> > 	    "align":2097152,
+> > 	    "blockdev":"pmem0"
+> > 	  }
+> > 	]
+> > =09
+> > 5. Re-Start Qemu and we could see
+> > 	- Region persistency using "cxl list"
+> > 	- Namespace persistency using "ndctl list" and cat /proc/iomem
+> >=20
+> > 	root@QEMUCXL6060pmem:~# cat /proc/iomem
+> > =09
+> > 	a90000000-b8fffffff : CXL Window 0
+> > 	  a90000000-aafffffff : Persistent Memory
+> > 	    a90000000-aafffffff : region0
+> > 	      a90000000-a97ffffff : namespace0.0
+> > 	      a98000000-aa7ffffff : namespace0.1
+> > 	  ab0000000-acfffffff : Persistent Memory
+> > 	    ab0000000-acfffffff : region1
+> > 	      ab0000000-abfffffff : namespace1.0
+> > 	      ac0000000-ac7ffffff : namespace1.1
+> > =09
+> >=20
+> > 	- NOTE: We can see some lag in restart, Its WIP
+> >=20
+> > 6. Also verify LSA version using "ndctl read-labels -j nmem0 -u"
+> > 	root@QEMUCXL6060pmem:~# ndctl read-labels -j nmem0
+> > 	{
+> > 	  "dev":"nmem0",
+> > 	  "index":[
+> > 	    {
+> > 	      "signature":"NAMESPACE_INDEX",
+> > 	      "major":2,
+> > 	      "minor":1,
+> > 	      "labelsize":256,
+> > 	      "seq":2,
+> > 	      "nslot":4090
+> > 	    },
+> > 	    {
+> > 	      "signature":"NAMESPACE_INDEX",
+> > 	      "major":2,
+> > 	      "minor":1,
+> > 	      "labelsize":256,
+> > 	      "seq":1,
+> > 	      "nslot":4090
+> > 	    }
+> > 	  ],
+> > 	  "label":[
+> > 	    {
+> > 	      "type":"68bb2c0a-5a77-4937-9f85-3caf41a0f93c",
+> > 	      "uuid":"9a26b9ce-a859-4a63-b1b7-fd176105770d",
+> > 	      "name":"",
+> > 	      "flags":8,
+> > 	      "nrange":1,
+> > 	      "position":0,
+> > 	      "dpa":134217728,
+> > 	      "rawsize":268435456,
+> > 	      "slot":0,
+> > 	      "align":0,
+> > 	      "region_uuid":"de512bdc-9731-4e5f-838c-be2e9b94ea72",
+> > 	      "abstraction_uuid":"266400ba-fb9f-4677-bcb0-968f11d0d225",
+> > 	      "lbasize":512
+> > 	    },
+> > 	    {
+> > 	      "type":"529d7c61-da07-47c4-a93f-ecdf2c06f444",
+> > 	      "uuid":"de512bdc-9731-4e5f-838c-be2e9b94ea72",
+> > 	      "flags":0,
+> > 	      "nlabel":1,
+> > 	      "position":0,
+> > 	      "dpa":0,
+> > 	      "rawsize":536870912,
+> > 	      "hpa":45365592064,
+> > 	      "slot":1,
+> > 	      "interleave granularity":256,
+> > 	      "align":0
+> > 	    },
+> > 	    {
+> > 	      "type":"68bb2c0a-5a77-4937-9f85-3caf41a0f93c",
+> > 	      "uuid":"a90d211a-b28d-48c7-bfe7-99560d3825ef",
+> > 	      "name":"",
+> > 	      "flags":0,
+> > 	      "nrange":1,
+> > 	      "position":0,
+> > 	      "dpa":0,
+> > 	      "rawsize":134217728,
+> > 	      "slot":2,
+> > 	      "align":0,
+> > 	      "region_uuid":"de512bdc-9731-4e5f-838c-be2e9b94ea72",
+> > 	      "abstraction_uuid":"266400ba-fb9f-4677-bcb0-968f11d0d225",
+> > 	      "lbasize":512
+> > 	    },
+> > 	    {
+> > 	      "type":"68bb2c0a-5a77-4937-9f85-3caf41a0f93c",
+> > 	      "uuid":"9a26b9ce-a859-4a63-b1b7-fd176105770d",
+> > 	      "name":"",
+> > 	      "flags":0,
+> > 	      "nrange":1,
+> > 	      "position":0,
+> > 	      "dpa":134217728,
+> > 	      "rawsize":268435456,
+> > 	      "slot":3,
+> > 	      "align":0,
+> > 	      "region_uuid":"de512bdc-9731-4e5f-838c-be2e9b94ea72",
+> > 	      "abstraction_uuid":"266400ba-fb9f-4677-bcb0-968f11d0d225",
+> > 	      "lbasize":512
+> > 	    }
+> > 	  ]
+> > 	}
+> > 	read 1 nmem
+> >=20
+> > 	- NOTE: We have following UUID types as per CXL Spec
+> > 		"type":"529d7c61-da07-47c4-a93f-ecdf2c06f444" is region label
+> > 		"type":"68bb2c0a-5a77-4937-9f85-3caf41a0f93c" is namespace label
+> >=20
+> >=20
+> > Limitation (WIP):
+> > =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+> > Current changes only support interleave way =3D=3D 1
+> >=20
+> > Observation:
+> > =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+> > First time namespace creation using ndctl takes around 10 to 20 second =
+time
+> > while executing "devm_memremap_pages" at [3]
+> >=20
+> > As using this patchset, after auto region creation, namespace creation =
+is
+> > happening in boot sequence (if nvdimm and cxl drivers are static), It is
+> > therefore boot sequence is increased by around 10 to 20 sec.
+> >=20
+> >=20
+> > [1]: https://lore.kernel.org/all/163116432405.2460985.55478673845701234=
+03.stgit@dwillia2-desk3.amr.corp.intel.com/
+> > [2]: https://github.com/neerajoss/ndctl/tree/linux-cxl/CXL_LSA_2.1_Supp=
+ort
+> > [3]: https://elixir.bootlin.com/linux/v6.13.7/source/drivers/nvdimm/pme=
+m.c#L520
+> >=20
+> >=20
+> >=20
+> >=20
+> > Neeraj Kumar (20):
+> >   nvdimm/label: Introduce NDD_CXL_LABEL flag to set cxl label format
+> >   nvdimm/label: Prep patch to accommodate cxl lsa 2.1 support
+> >   nvdimm/namespace_label: Add namespace label changes as per CXL LSAv2.1
+> >   nvdimm/label: CXL labels skip the need for 'interleave-set cookie'
+> >   nvdimm/region_label: Add region label updation routine
+> >   nvdimm/region_label: Add region label deletion routine
+> >   nvdimm/namespace_label: Update namespace init_labels and its region_u=
+uid
+> >   nvdimm/label: Include region label in slot validation
+> >   nvdimm/namespace_label: Skip region label during ns label DPA reserva=
+tion
+> >   nvdimm/region_label: Preserve cxl region information from region label
+> >   nvdimm/region_label: Export routine to fetch region information
+> >   nvdimm/namespace_label: Skip region label during namespace creation
+> >   cxl/mem: Refactor cxl pmem region auto-assembling
+> >   cxl/region: Add cxl pmem region creation routine for region persisten=
+cy
+> >   cxl: Add a routine to find cxl root decoder on cxl bus
+> >   cxl/mem: Preserve cxl root decoder during mem probe
+> >   cxl/pmem: Preserve region information into nd_set
+> >   cxl/pmem: Add support of cxl lsa 2.1 support in cxl pmem
+> >   cxl/pmem_region: Prep patch to accommodate pmem_region attributes
+> >   cxl/pmem_region: Add cxl region label updation and deletion device at=
+tributes
+> >=20
+> >  drivers/cxl/Kconfig             |  12 +
+> >  drivers/cxl/core/Makefile       |   1 +
+> >  drivers/cxl/core/core.h         |   8 +-
+> >  drivers/cxl/core/pmem_region.c  | 325 ++++++++++++++++++++++++++
+> >  drivers/cxl/core/port.c         |  72 +++++-
+> >  drivers/cxl/core/region.c       | 383 +++++++++++++++---------------
+> >  drivers/cxl/cxl.h               |  46 +++-
+> >  drivers/cxl/cxlmem.h            |   1 +
+> >  drivers/cxl/mem.c               |  27 ++-
+> >  drivers/cxl/pmem.c              |  72 +++++-
+> >  drivers/cxl/port.c              |  38 ---
+> >  drivers/nvdimm/dimm.c           |   5 +
+> >  drivers/nvdimm/dimm_devs.c      |  28 +++
+> >  drivers/nvdimm/label.c          | 403 ++++++++++++++++++++++++++++----
+> >  drivers/nvdimm/label.h          |  20 +-
+> >  drivers/nvdimm/namespace_devs.c | 149 ++++++++----
+> >  drivers/nvdimm/nd-core.h        |   2 +
+> >  drivers/nvdimm/nd.h             |  81 ++++++-
+> >  drivers/nvdimm/region_devs.c    |   5 +
+> >  include/linux/libnvdimm.h       |  28 +++
+> >  tools/testing/cxl/Kbuild        |   1 +
+> >  21 files changed, 1364 insertions(+), 343 deletions(-)
+> >  create mode 100644 drivers/cxl/core/pmem_region.c
+> >=20
+> >=20
+> > base-commit: 448a60e85ae2afe2cb760f5d2ed2c8a49d2bd1b4 =20
+>=20
+>=20
 
 
