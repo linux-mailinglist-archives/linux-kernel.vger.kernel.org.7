@@ -1,81 +1,62 @@
-Return-Path: <linux-kernel+bounces-698031-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-698034-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3A69EAE3C25
-	for <lists+linux-kernel@lfdr.de>; Mon, 23 Jun 2025 12:22:46 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 21ED6AE3C2C
+	for <lists+linux-kernel@lfdr.de>; Mon, 23 Jun 2025 12:24:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D34FB1893125
-	for <lists+linux-kernel@lfdr.de>; Mon, 23 Jun 2025 10:23:01 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BA6353AB789
+	for <lists+linux-kernel@lfdr.de>; Mon, 23 Jun 2025 10:23:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D534423ABB9;
-	Mon, 23 Jun 2025 10:22:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BE5B223ABA8;
+	Mon, 23 Jun 2025 10:23:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="a7gPq/Ad"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.17])
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="GSK8HswA"
+Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CE6C023A566;
-	Mon, 23 Jun 2025 10:22:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.17
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6BF5D1519BC
+	for <linux-kernel@vger.kernel.org>; Mon, 23 Jun 2025 10:23:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750674159; cv=none; b=FQl/kWiTB4kh3zmWFb/z+0tq1fdVTP96VJg6q2Aq3xvx8c+tbaGS+ZuZIXV+yEZ2F3Av8jPaD5p0c9QkT8ouhJPvGfTwI/NSPZJMWmZ45kp/e7tSc0xomFJy+b4KA6QQMoWWKQxMlGfL/sE5r5V80WVc1tbHDfo5MRTARGEUqP8=
+	t=1750674233; cv=none; b=pj1MGoPIAzvdUAYLpIsy08JKloG6Jg76U4ODRCL4hXyrq1mUnL+EH6MOzVMC3MGFFAhjFX9fech/xUxkj+pbP2F7zq5kWDTwegYwNw4+U75JxoEPu4CH1U5elGsBA2nYJ0n/SqHreTtZDVvbuTe85ih5YO6bT4EsLBXPP5qmFJY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750674159; c=relaxed/simple;
-	bh=K6ejdeVWXNi1Joy2ps0u8ylB95bhYC8uYvSwet/9+BE=;
+	s=arc-20240116; t=1750674233; c=relaxed/simple;
+	bh=DGHJ3MpEn4g8BovGBGieKyictPMX/wcXwB8JggXAYrg=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=WR4GJTDpWZfTXzGZQNRoH2oJwdpBr+zew1lNT/zIplt1BBEXCCYO/CpuRTJoC1LNXwatTx8SbdbhK+3BWCcXFBE4HeM6HghV3bnrYH7UOL/pu9M4XYBeGq+Vg7oO4NU/0wJJjQPZf/mIfLH+vlB8zOlwIWLPLUz5sNoxZL8o0FI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=a7gPq/Ad; arc=none smtp.client-ip=198.175.65.17
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1750674158; x=1782210158;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=K6ejdeVWXNi1Joy2ps0u8ylB95bhYC8uYvSwet/9+BE=;
-  b=a7gPq/AdOGVeoJAyfWTAhY3lWb27RHkgb9ARYAM4uGSBQepJUdr9D4Mx
-   F9ZcPPB34bPdIoopiAZN8JmeOLzs3WswxHtJh6fnWScWjpH563yaJhCPl
-   M5W8phRXrg3LtX8+oE+O1qh55nskrdPz1uAlpPEjIVSlF6zHQSAtqxr+v
-   N8UBaaaf0JIqmwCjSaSFmQpNvmQKqT+tfFAr7iMUkocrVXagdUQc5f/QL
-   jfewUipcTQ5Gp4T262dXub9ghmc/H4EL9rFAKjVh+yEVVB0441hGFDd5W
-   lAZ2Hs96ecLtVP2OtJLNIsza095m17Ygi6YucRv5f/40cs1QSw5WxiKOj
-   g==;
-X-CSE-ConnectionGUID: 7Wut/jhIR92lJbJVNBbYWQ==
-X-CSE-MsgGUID: 55iaybUMRKS5ibYLwXrYUw==
-X-IronPort-AV: E=McAfee;i="6800,10657,11472"; a="52845552"
-X-IronPort-AV: E=Sophos;i="6.16,258,1744095600"; 
-   d="scan'208";a="52845552"
-Received: from orviesa009.jf.intel.com ([10.64.159.149])
-  by orvoesa109.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 23 Jun 2025 03:22:38 -0700
-X-CSE-ConnectionGUID: dT4HYpINQ0Kj6SeQmv7yIQ==
-X-CSE-MsgGUID: zwKtq7p2QqG19IGXrl0TUw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.16,258,1744095600"; 
-   d="scan'208";a="151331475"
-Received: from lkp-server01.sh.intel.com (HELO e8142ee1dce2) ([10.239.97.150])
-  by orviesa009.jf.intel.com with ESMTP; 23 Jun 2025 03:22:34 -0700
-Received: from kbuild by e8142ee1dce2 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1uTeJs-000Nwk-0T;
-	Mon, 23 Jun 2025 10:22:32 +0000
-Date: Mon, 23 Jun 2025 18:21:52 +0800
-From: kernel test robot <lkp@intel.com>
-To: David Lechner <dlechner@baylibre.com>,
-	Michael Hennerich <Michael.Hennerich@analog.com>,
-	Jonathan Cameron <jic23@kernel.org>,
-	Nuno =?iso-8859-1?Q?S=E1?= <nuno.sa@analog.com>,
-	Andy Shevchenko <andy@kernel.org>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>, Mark Brown <broonie@kernel.org>
-Cc: oe-kbuild-all@lists.linux.dev, linux-iio@vger.kernel.org,
-	linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-spi@vger.kernel.org, David Lechner <dlechner@baylibre.com>
-Subject: Re: [PATCH 8/9] iio: adc: ad_sigma_delta: add SPI offload support
-Message-ID: <202506231738.CgeNexV4-lkp@intel.com>
-References: <20250620-iio-adc-ad7173-add-spi-offload-support-v1-8-0766f6297430@baylibre.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=Xit5L51gL/lPmfZEbsZVEUkLlFgI5gs27rB3pzk8VvpbahWKo20JjAZgHMTX1EBMKrA+9I9MEaDBWgZMtTUr8VT1ZF3eNQtFha7vZ5Zu2CLWS0DjlWyvBuGt7CQ3QSP7SbuYQMA2vFO3NSTZB1aFFNo781OWO9SL3v2afisUk8w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=GSK8HswA; arc=none smtp.client-ip=90.155.50.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=DGHJ3MpEn4g8BovGBGieKyictPMX/wcXwB8JggXAYrg=; b=GSK8HswApL3HeeHq5qCIZ0oEg7
+	FXGl/wOzYXDYqxWOOix1DFPhtXQGv8v82Yera+5ER4cemEeHi8I6LVEYVVdnimg4z81MDFFsFhHxe
+	jW+JwE07ewG3nbjSSzsU2D0clKKJrETHouR35kqo4dNOZ066azAPLLFI2sZOSTrHx4EPfoayuiHBB
+	+LMNVKvM4kx1EfBs5RSVDD/QNpOqugGTYzh0PMPmmYuKYtM1YyXXkEFz7mQxSAwKpUT0HAGWGbAuU
+	1UevnEWcyv2ahbD0csEdMnVLvRfYMrxhyn3E7TqNFrkkGxuhCXVy46ZkssgA+/3qvvX7ktS2rE2zD
+	u/wyINrg==;
+Received: from 77-249-17-252.cable.dynamic.v4.ziggo.nl ([77.249.17.252] helo=noisy.programming.kicks-ass.net)
+	by casper.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
+	id 1uTeKt-0000000378P-0OaL;
+	Mon, 23 Jun 2025 10:23:35 +0000
+Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
+	id 1523C307E51; Mon, 23 Jun 2025 12:23:34 +0200 (CEST)
+Date: Mon, 23 Jun 2025 12:23:34 +0200
+From: Peter Zijlstra <peterz@infradead.org>
+To: Aaron Tomlin <atomlin@atomlin.com>
+Cc: tglx@linutronix.de, mingo@redhat.com, bp@alien8.de,
+	dave.hansen@linux.intel.com, x86@kernel.org, juri.lelli@redhat.com,
+	vincent.guittot@linaro.org, hpa@zytor.com, oleg@redhat.com,
+	dietmar.eggemann@arm.com, rostedt@goodmis.org, bsegall@google.com,
+	mgorman@suse.de, vschneid@redhat.com, linux-kernel@vger.kernel.org
+Subject: Re: [RFC PATCH] sched: idle: Introduce CPU-specific idle=poll
+Message-ID: <20250623102334.GP1613200@noisy.programming.kicks-ass.net>
+References: <20250621235745.3994-1-atomlin@atomlin.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -84,32 +65,21 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250620-iio-adc-ad7173-add-spi-offload-support-v1-8-0766f6297430@baylibre.com>
+In-Reply-To: <20250621235745.3994-1-atomlin@atomlin.com>
 
-Hi David,
+On Sat, Jun 21, 2025 at 07:57:45PM -0400, Aaron Tomlin wrote:
+> Currently, the idle=poll kernel boot parameter applies globally, forcing
+> all CPUs into a shallow polling idle state to ensure ultra-low latency
+> responsiveness. While this is beneficial for extremely latency-sensitive
+> workloads, this global application lacks flexibility and can lead to
+> significant power inefficiency. This is particularly evident in systems
+> with a high CPU count, such as those utilising the
+> Full Dynticks/Adaptive Tick feature (i.e., nohz_full). In such
+> environments, only a subset of CPUs might genuinely require
+> sub-microsecond responsiveness, while others, though active, could
+> benefit from entering deeper idle states to conserve power.
 
-kernel test robot noticed the following build warnings:
-
-[auto build test WARNING on d02f330b0c78bcf76643fbb7d3215a58b181f829]
-
-url:    https://github.com/intel-lab-lkp/linux/commits/David-Lechner/iio-adc-ad_sigma_delta-sort-includes/20250621-063127
-base:   d02f330b0c78bcf76643fbb7d3215a58b181f829
-patch link:    https://lore.kernel.org/r/20250620-iio-adc-ad7173-add-spi-offload-support-v1-8-0766f6297430%40baylibre.com
-patch subject: [PATCH 8/9] iio: adc: ad_sigma_delta: add SPI offload support
-config: x86_64-buildonly-randconfig-004-20250621 (https://download.01.org/0day-ci/archive/20250623/202506231738.CgeNexV4-lkp@intel.com/config)
-compiler: gcc-12 (Debian 12.2.0-14) 12.2.0
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250623/202506231738.CgeNexV4-lkp@intel.com/reproduce)
-
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202506231738.CgeNexV4-lkp@intel.com/
-
-All warnings (new ones prefixed by >>, old ones prefixed by <<):
-
->> WARNING: modpost: module ad_sigma_delta uses symbol devm_iio_dmaengine_buffer_setup_with_handle from namespace IIO_DMAENGINE_BUFFER, but does not import it.
-
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+Can't we already do this at runtime with pmqos? If you set your latency
+demand very low, it should end up picking the poll state, no? And you
+can do this per-cpu.
 
