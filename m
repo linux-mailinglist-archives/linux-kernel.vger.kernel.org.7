@@ -1,238 +1,138 @@
-Return-Path: <linux-kernel+bounces-697586-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-697589-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6070EAE3616
-	for <lists+linux-kernel@lfdr.de>; Mon, 23 Jun 2025 08:45:54 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id A9248AE361E
+	for <lists+linux-kernel@lfdr.de>; Mon, 23 Jun 2025 08:46:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 65CA316FC11
-	for <lists+linux-kernel@lfdr.de>; Mon, 23 Jun 2025 06:45:54 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2CB7D170898
+	for <lists+linux-kernel@lfdr.de>; Mon, 23 Jun 2025 06:46:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EC7A01E5B65;
-	Mon, 23 Jun 2025 06:45:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 031F21EFF80;
+	Mon, 23 Jun 2025 06:45:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=fairphone.com header.i=@fairphone.com header.b="PHZY3hmZ"
-Received: from mail-ej1-f54.google.com (mail-ej1-f54.google.com [209.85.218.54])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="ob1hZlCN"
+Received: from mx0b-00069f02.pphosted.com (mx0b-00069f02.pphosted.com [205.220.177.32])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 754161EF394
-	for <linux-kernel@vger.kernel.org>; Mon, 23 Jun 2025 06:45:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CD3F91E7C11;
+	Mon, 23 Jun 2025 06:45:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.177.32
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750661104; cv=none; b=fsoxygw95o2WvHZmEN0gygSqTUON9pDxNxdwF9goUQ8vFNOqyxUjjL1Tko3dplCxuwBcYBTTVdA8Dwx5peeoeUsr2Z8NGmyuui5YuG6BjXrROlkajjI57BQ47wPv3W2PJeIKaWGaKIUdi5JslbQR5obrz2f/fzqVmSt9341217k=
+	t=1750661141; cv=none; b=lwQpQViklKfxlpAXAJgSCwIMx4PquOyyC8xXF55gjBQYpqm+3Yd49EYW4+9Wer6Oee58gmliv5hHtrFwUUcmJBvxTFJRdX4Pw4rzGhKwMmg7eaKWlVLhmSWIn9Id1QhWCaVTXYmHLDU4V4LxhdwpbfmG1swycBgl8xl1OCUABQ8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750661104; c=relaxed/simple;
-	bh=dQKTaoJFbvazyp9Q1oPhqhjuJEvK2SxhdOtUQkhZwj0=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=PquDkYxNxiiPY22IMuZtrzlxhqG1qpPCXKdQLw5BPLZ0FXQ07UU5OGWlgmE7RGbQFpy8jkv7bkFaUwTCAQXkdwFE3CPCdiDpGgtgvwIBz8SNzkTs4xaYytpDOK/9E62lTy9wWZcSK/5p10UgmWS1nQqqZ//AC22nV1ud7rgxdd8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=fairphone.com; spf=pass smtp.mailfrom=fairphone.com; dkim=pass (2048-bit key) header.d=fairphone.com header.i=@fairphone.com header.b=PHZY3hmZ; arc=none smtp.client-ip=209.85.218.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=fairphone.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fairphone.com
-Received: by mail-ej1-f54.google.com with SMTP id a640c23a62f3a-ad8a8da2376so594782966b.3
-        for <linux-kernel@vger.kernel.org>; Sun, 22 Jun 2025 23:45:02 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=fairphone.com; s=fair; t=1750661101; x=1751265901; darn=vger.kernel.org;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=pA+Rs4BuhZMiD1TZXkrsma5mRVhifaFNd7IRaZKnnaY=;
-        b=PHZY3hmZQn71mQMQSJ2zBh6tgGFCeqIjhjvYBbBSlEknVYr7q3ZBRlViv9fl3hIFrZ
-         AVMlgjTLwtuOtF/TfNWcH+ys9izx8EcFh5+Sf76wmezjhZe/VcaWndiP3o9dzs1ll3/Y
-         i4b5l09UVs+ESttsJgy5tS6+1XJcvrownNcR2MvH9vtfjJpL30Zs6b2jI9apEE9P/vkW
-         YKH0540Yg1QbLbgNB+cULzriOrZaeWBXYzM2qalYG1+iptNu9QGTWPcsxWgQdU4iQb12
-         1f2QejLzVDjfYN3jQxCjWIwk6aa5IBvuJm6UbHdUpaXxG446x/Kz22skauoyivsnt9+n
-         5afg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1750661101; x=1751265901;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=pA+Rs4BuhZMiD1TZXkrsma5mRVhifaFNd7IRaZKnnaY=;
-        b=wWo54QESBokmaOf7yGKvvhnihyw4XC8I8vTI/H9tzc45tuJHpRJq2uG5It9m9LbaFH
-         dInSp0R2MocuknbHr0aqCxhN8vAWOto/XWC2IxUM0qpL4d+4hlzqFW1Ts5hEiVfgML8u
-         xfnM0eGME6Sa+GfhnrYCHV29sh4RxxO2T200Zlcdtn9zxdxG2gUKqId64mUQMEIIgSXF
-         nm8060FydhOUOysILyanw1aWVLn0kVAS8MqYhvo3bQ4hVDWHXuKLwM0CPb3fRsuwQEns
-         OuJVgy0uvhMJGdBJQrewO2v1YJUScZiSXW3utItDfX8IFYhKWv30k4fAZqlm+Y9YgH72
-         FO1g==
-X-Forwarded-Encrypted: i=1; AJvYcCXNw+bO346Ng/iBcwki1W/u9ZqIw0AUJXDkWrhTVMWlxpnoxCzPRK/TC07TqqjMa39xlzujst5S2FhovGA=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzWjKmRBWT1OHDuXuQdGbrnuW2iaawxyuISUG2m50pFLSg1G4n/
-	9WEv5PZ3nYgcAkq2ciXCuB+VgrwHNbjZhpcWGRDGfQuPhEwVgqt9sd0dU2htMl6/ZpY=
-X-Gm-Gg: ASbGncsh0+Vb3M4X+ZfXrDbeLpeZcA4ofjQqBt5MhWrk8fkMkyA5puqSLzPkr6hBihp
-	QxlZsrwdTWbJcvkuEcidajs2dwUzZmvV/y5vmjvmqndhU/P2QShVV6Fxqq5CZyVz+CeHv7kwVQJ
-	gCvWvallMuLXlrp4fSsY57mbzSrFFePoB10f12e8JsP14EB/iVJ3moMR0y+a8ZXqqw+lLwL9wCF
-	wJrQj3QT16/i9wl4rkjQ/WkD9y23RiJavf5Kfay726JEZ3CMAhZGmkn4MkSDoo8cxFg5kK5Oax5
-	nvIYCI5DAujt38wfnlqWHFDI266OcSaNlWaQn3Fk4aV3QvjI4lzj9Q5Jo/s+JlW56BYQLtsMsez
-	3BPp6oTds7KCX/BzurlxrCdd8tGYjxMEU
-X-Google-Smtp-Source: AGHT+IEfG/ia8MXFZvWV63xW+2WDm+wmIGfKUT095APiD93iFktsSDhtmQlj2MFUGu0vl47bkbkh1w==
-X-Received: by 2002:a17:906:6a17:b0:adb:23e0:9297 with SMTP id a640c23a62f3a-ae057a51258mr1096084666b.17.1750661100690;
-        Sun, 22 Jun 2025 23:45:00 -0700 (PDT)
-Received: from otso.local (144-178-202-138.static.ef-service.nl. [144.178.202.138])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ae053ee4ce9sm659258266b.69.2025.06.22.23.44.59
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 22 Jun 2025 23:45:00 -0700 (PDT)
-From: Luca Weiss <luca.weiss@fairphone.com>
-Date: Mon, 23 Jun 2025 08:44:49 +0200
-Subject: [PATCH v2 5/5] fbdev/simplefb: Add support for interconnect paths
+	s=arc-20240116; t=1750661141; c=relaxed/simple;
+	bh=RUyWJknwcbNrB4SUEJysS1JMtz2z6aSBQYuFvoKtpcM=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=N7/kCPsJZg6Xm0Mw49HWl3DCpVoaIMU7oDncWvFVM2CWUzVv64YEvFF2V41naNHpsgElY9wv5ka/eN797sXCb9Lagd0eOkqOgJzy0zvI5hfH38tOGCwJCZ7nZPGR9SUWs4k2DOUDkwsweDE9Ib3U2j9dUJ6HrkMBEWHlb9Vhzi4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=ob1hZlCN; arc=none smtp.client-ip=205.220.177.32
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oracle.com
+Received: from pps.filterd (m0246630.ppops.net [127.0.0.1])
+	by mx0b-00069f02.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 55N0QefF013311;
+	Mon, 23 Jun 2025 06:45:28 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=cc
+	:content-transfer-encoding:date:from:message-id:mime-version
+	:subject:to; s=corp-2025-04-25; bh=TMTr+p8j4YQ2PYbbjdw8+mvac9Gen
+	s2uxW0oUSjKPbQ=; b=ob1hZlCNq0vm4baXhJg8qiSygbQB1eFjpy5BUHjs/qVGE
+	ngWFv2KROGmlLs9bpbGukjcn1BhHgTE2z17Hc0K/T5bP5WMbMIG6yl4QuZ1KJfT1
+	k71rozOcmYVp4i42BPAX+xzXCz6ucNwqfB0wRhMyQKRAtRbDc/M1Hd3R5Jhhmn8x
+	DnE+AUyArf5toMsTUryNlbJ5bVy66OBc73RTPn8dHPP7UUdO3tAACGkxkUJEl1B/
+	OxPogH1SzANMZFEIPQv8vSIukDQ0BEgN53W3b9owpjcSfUsF32G9yBDZDC8fdtMo
+	iE1k+vkaTrTZgiDuTxOk1C16G0C+WcFjRYdFW882Q==
+Received: from iadpaimrmta02.imrmtpd1.prodappiadaev1.oraclevcn.com (iadpaimrmta02.appoci.oracle.com [147.154.18.20])
+	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 47egt18wr1-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Mon, 23 Jun 2025 06:45:28 +0000 (GMT)
+Received: from pps.filterd (iadpaimrmta02.imrmtpd1.prodappiadaev1.oraclevcn.com [127.0.0.1])
+	by iadpaimrmta02.imrmtpd1.prodappiadaev1.oraclevcn.com (8.18.1.2/8.18.1.2) with ESMTP id 55N50REJ025574;
+	Mon, 23 Jun 2025 06:45:27 GMT
+Received: from pps.reinject (localhost [127.0.0.1])
+	by iadpaimrmta02.imrmtpd1.prodappiadaev1.oraclevcn.com (PPS) with ESMTPS id 47ehvufbsb-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Mon, 23 Jun 2025 06:45:27 +0000
+Received: from iadpaimrmta02.imrmtpd1.prodappiadaev1.oraclevcn.com (iadpaimrmta02.imrmtpd1.prodappiadaev1.oraclevcn.com [127.0.0.1])
+	by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 55N6jRRc021681;
+	Mon, 23 Jun 2025 06:45:27 GMT
+Received: from ca-dev110.us.oracle.com (ca-dev110.us.oracle.com [10.129.136.45])
+	by iadpaimrmta02.imrmtpd1.prodappiadaev1.oraclevcn.com (PPS) with ESMTP id 47ehvufbrm-1;
+	Mon, 23 Jun 2025 06:45:27 +0000
+From: Alok Tiwari <alok.a.tiwari@oracle.com>
+To: linux-nvme@lists.infradead.org, kbusch@kernel.org, axboe@kernel.dk,
+        hch@lst.de, sagi@grimberg.me, kch@nvidia.com, nilay@linux.ibm.com,
+        corbet@lwn.net
+Cc: alok.a.tiwari@oracle.com, linux-doc@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH 0/5] nvme: typo and minor cleanup fixes across host and target driver
+Date: Sun, 22 Jun 2025 23:44:53 -0700
+Message-ID: <20250623064456.4188056-1-alok.a.tiwari@oracle.com>
+X-Mailer: git-send-email 2.46.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250623-simple-drm-fb-icc-v2-5-f69b86cd3d7d@fairphone.com>
-References: <20250623-simple-drm-fb-icc-v2-0-f69b86cd3d7d@fairphone.com>
-In-Reply-To: <20250623-simple-drm-fb-icc-v2-0-f69b86cd3d7d@fairphone.com>
-To: Hans de Goede <hdegoede@redhat.com>, 
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
- Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, 
- David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, 
- Javier Martinez Canillas <javierm@redhat.com>, Helge Deller <deller@gmx.de>
-Cc: linux-fbdev@vger.kernel.org, dri-devel@lists.freedesktop.org, 
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
- Luca Weiss <luca.weiss@fairphone.com>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1750661095; l=3530;
- i=luca.weiss@fairphone.com; s=20250611; h=from:subject:message-id;
- bh=dQKTaoJFbvazyp9Q1oPhqhjuJEvK2SxhdOtUQkhZwj0=;
- b=wtrWkFVrQxjznBKN4+vCIM0v5OnZoKSUD8HoOPwct17rZ2GLmAHgCNrxQRvIjIg0dfn6SBO3p
- fX8nbdxIEsCBstf3uSct7cS/lYQd1s5Ww4P7FLDYTDBXJ1Mt6boZXXC
-X-Developer-Key: i=luca.weiss@fairphone.com; a=ed25519;
- pk=O1aw+AAust5lEmgrNJ1Bs7PTY0fEsJm+mdkjExA69q8=
+Content-Transfer-Encoding: 8bit
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.0.736,FMLib:17.12.80.40
+ definitions=2025-06-23_02,2025-06-20_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 mlxscore=0 bulkscore=0 spamscore=0
+ phishscore=0 adultscore=0 malwarescore=0 suspectscore=0 mlxlogscore=999
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2505160000
+ definitions=main-2506230038
+X-Proofpoint-GUID: iyNzwmiBGMLigoRdOXqA8FOH-xWPE-Je
+X-Proofpoint-ORIG-GUID: iyNzwmiBGMLigoRdOXqA8FOH-xWPE-Je
+X-Authority-Analysis: v=2.4 cv=cpebk04i c=1 sm=1 tr=0 ts=6858f808 b=1 cx=c_pps a=e1sVV491RgrpLwSTMOnk8w==:117 a=e1sVV491RgrpLwSTMOnk8w==:17 a=6IFa9wvqVegA:10 a=kdh0kE6_XUOs-LRwJDgA:9 cc=ntf awl=host:14714
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNjIzMDAzOCBTYWx0ZWRfX+wpgd+oGOhAv eeasPhJ7JVIaxFPmv98lu5V8RCMStYixGyB11MrzaMnhJSDTxY29VSqe7nop2VB+rpfHPawXep0 WQFwTHqR2Dm9cDjb9JPusrs9QjqEEu/xGbPGRCYVPFhwjlgmVqOeNJoVruwpHt8r6DyAVREckas
+ D6PCmTZzzuR5VksyQ4sbzZSchKryTV2nWjVSpyvEfjKZuFhq3Se1MrS+9rkYrX07qQ9PzoTAl5d Xm9nxl/cf4ukUN9my+W5xIZxGFlLElX1lVh2vcNwt3tIwO5Jc+a1/ZMeuzUotgK8N0A50GdEPKs SgNr8JUw415LxxbA6QyPFHuFbW+2YuvdI7ypaWZI2dRRIlmsGLn/u9ABnozh+OE3dmQF7jM+t9K
+ KvRO83RY68RO33v2gDSSy6rXwKMnxRZEZdXGQuIh7q0UUjZ04ZOoN5TEWHAgJdETAVufT2CS
 
-Some devices might require keeping an interconnect path alive so that
-the framebuffer continues working. Add support for that by setting the
-bandwidth requirements appropriately for all provided interconnect
-paths.
+Corrected typos and grammatical errors in comments and documentation
+("terminaed" -> "terminated", "limitted" -> "limited",
+"glace" -> "glance" etc.)
 
-Reviewed-by: Thomas Zimmermann <tzimmermann@suse.de>
-Signed-off-by: Luca Weiss <luca.weiss@fairphone.com>
----
- drivers/video/fbdev/simplefb.c | 83 ++++++++++++++++++++++++++++++++++++++++++
- 1 file changed, 83 insertions(+)
+Normalizing hex format output (x%08x -> 0x%08x).
 
-diff --git a/drivers/video/fbdev/simplefb.c b/drivers/video/fbdev/simplefb.c
-index db27d51046af5cc3c46a0bc81ad9d9ed9a0783cc..b7e2f2374e3149866fd6f1803931e7f34dbbd75f 100644
---- a/drivers/video/fbdev/simplefb.c
-+++ b/drivers/video/fbdev/simplefb.c
-@@ -16,6 +16,7 @@
- #include <linux/clk.h>
- #include <linux/errno.h>
- #include <linux/fb.h>
-+#include <linux/interconnect.h>
- #include <linux/io.h>
- #include <linux/module.h>
- #include <linux/of.h>
-@@ -89,6 +90,10 @@ struct simplefb_par {
- 	u32 regulator_count;
- 	struct regulator **regulators;
- #endif
-+#if defined CONFIG_OF && defined CONFIG_INTERCONNECT
-+	unsigned int icc_count;
-+	struct icc_path **icc_paths;
-+#endif
- };
- 
- static void simplefb_clocks_destroy(struct simplefb_par *par);
-@@ -525,6 +530,80 @@ static int simplefb_attach_genpds(struct simplefb_par *par,
- }
- #endif
- 
-+#if defined CONFIG_OF && defined CONFIG_INTERCONNECT
-+/*
-+ * Generic interconnect path handling code.
-+ */
-+static void simplefb_detach_icc(void *res)
-+{
-+	struct simplefb_par *par = res;
-+	int i;
-+
-+	for (i = par->icc_count - 1; i >= 0; i--) {
-+		if (!IS_ERR_OR_NULL(par->icc_paths[i]))
-+			icc_put(par->icc_paths[i]);
-+	}
-+}
-+
-+static int simplefb_attach_icc(struct simplefb_par *par,
-+			       struct platform_device *pdev)
-+{
-+	struct device *dev = &pdev->dev;
-+	int ret, count, i;
-+
-+	count = of_count_phandle_with_args(dev->of_node, "interconnects",
-+							 "#interconnect-cells");
-+	if (count < 0)
-+		return 0;
-+
-+	/* An interconnect path consists of two elements */
-+	if (count % 2) {
-+		dev_err(dev, "invalid interconnects value\n");
-+		return -EINVAL;
-+	}
-+	par->icc_count = count / 2;
-+
-+	par->icc_paths = devm_kcalloc(dev, par->icc_count,
-+				      sizeof(*par->icc_paths),
-+				      GFP_KERNEL);
-+	if (!par->icc_paths)
-+		return -ENOMEM;
-+
-+	for (i = 0; i < par->icc_count; i++) {
-+		par->icc_paths[i] = of_icc_get_by_index(dev, i);
-+		if (IS_ERR_OR_NULL(par->icc_paths[i])) {
-+			ret = PTR_ERR(par->icc_paths[i]);
-+			if (ret == -EPROBE_DEFER)
-+				goto err;
-+			dev_err(dev, "failed to get interconnect path %u: %d\n", i, ret);
-+			continue;
-+		}
-+
-+		ret = icc_set_bw(par->icc_paths[i], 0, UINT_MAX);
-+		if (ret) {
-+			dev_err(dev, "failed to set interconnect bandwidth %u: %d\n", i, ret);
-+			continue;
-+		}
-+	}
-+
-+	return devm_add_action_or_reset(dev, simplefb_detach_icc, par);
-+
-+err:
-+	while (i) {
-+		--i;
-+		if (!IS_ERR_OR_NULL(par->icc_paths[i]))
-+			icc_put(par->icc_paths[i]);
-+	}
-+	return ret;
-+}
-+#else
-+static int simplefb_attach_icc(struct simplefb_par *par,
-+			       struct platform_device *pdev)
-+{
-+	return 0;
-+}
-+#endif
-+
- static int simplefb_probe(struct platform_device *pdev)
- {
- 	int ret;
-@@ -615,6 +694,10 @@ static int simplefb_probe(struct platform_device *pdev)
- 	if (ret < 0)
- 		goto error_regulators;
- 
-+	ret = simplefb_attach_icc(par, pdev);
-+	if (ret < 0)
-+		goto error_regulators;
-+
- 	simplefb_clocks_enable(par, pdev);
- 	simplefb_regulators_enable(par, pdev);
- 
+Improving grammar in explanatory comments for better clarity.
+
+Identifier Correction: Renamed NVME_SC_SELT_TEST_IN_PROGRESS to
+NVME_SC_SELF_TEST_IN_PROGRESS to fix a typographical error and align the
+status code constant with its meaning.
+
+Removed Redundant Assignment: Eliminated an unnecessary initialization
+of an error code variable in nvmet_ns_enable() to clean up unreachable
+or overridden logic.
+
+Error Message Fix: Corrected incorrect variable usage in an error
+message in pci-epf.c.
+
+No functional or behavioral changes are introduced.
+
+Alok Tiwari (5):
+  nvme: Fix multiple spelling and grammar issues in host drivers
+  nvme: Fix incorrect variable in io cqes error message
+  nvmet: Remove redundant assignment of error code in nvmet_ns_enable()
+  nvme: Fix typo in status code constant for self-test in progress
+  docs: nvme: fix grammar in nvme-pci-endpoint-target.rst
+
+ Documentation/nvme/nvme-pci-endpoint-target.rst | 16 ++++++++--------
+ drivers/nvme/host/apple.c                       |  4 ++--
+ drivers/nvme/host/constants.c                   |  4 ++--
+ drivers/nvme/host/core.c                        |  2 +-
+ drivers/nvme/host/fc.c                          | 10 +++++-----
+ drivers/nvme/host/nvme.h                        |  2 +-
+ drivers/nvme/host/pci.c                         |  2 +-
+ drivers/nvme/host/rdma.c                        |  2 +-
+ drivers/nvme/target/core.c                      |  2 --
+ drivers/nvme/target/passthru.c                  |  4 ++--
+ drivers/nvme/target/pci-epf.c                   |  2 +-
+ drivers/nvme/target/zns.c                       |  2 +-
+ include/linux/nvme.h                            |  2 +-
+ 13 files changed, 26 insertions(+), 28 deletions(-)
 
 -- 
-2.50.0
+2.46.0
 
 
