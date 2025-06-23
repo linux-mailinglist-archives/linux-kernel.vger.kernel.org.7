@@ -1,45 +1,45 @@
-Return-Path: <linux-kernel+bounces-697812-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-697814-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id BCD23AE38FE
-	for <lists+linux-kernel@lfdr.de>; Mon, 23 Jun 2025 10:52:14 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A2D0AAE3900
+	for <lists+linux-kernel@lfdr.de>; Mon, 23 Jun 2025 10:52:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CDFE01733DD
-	for <lists+linux-kernel@lfdr.de>; Mon, 23 Jun 2025 08:52:09 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9B4753ACA09
+	for <lists+linux-kernel@lfdr.de>; Mon, 23 Jun 2025 08:52:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3DC46230268;
-	Mon, 23 Jun 2025 08:51:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5539D238C06;
+	Mon, 23 Jun 2025 08:51:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="BIF7OuxA"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="P7LSti+W"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 96FD32367CC
-	for <linux-kernel@vger.kernel.org>; Mon, 23 Jun 2025 08:51:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B6859238144
+	for <linux-kernel@vger.kernel.org>; Mon, 23 Jun 2025 08:51:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750668670; cv=none; b=oKSNosvTHpNJz2OMSP1twOZ1YLsxkztwUO7Im6bJaufbfJQHXIF3dqTB819nwPji44kiomyO2twzj7zBLO28ERDraanduafAOCE61MiJe1gcTqu8gqdqBHiZXOBkk1tHcg7lsqLySpWvY9lq45cke7gYUEUu93VHE/kAc+Xdql0=
+	t=1750668672; cv=none; b=Db9OKuVpBEvFtruRthKjLhiDrrwFjZSWmbVBtB0q8eTbGdWsQ1p2r4H0+p7yb/bfOkCrwd7lSXkr0NBwDdz9NN+1cWNyqA3Cw3c4eHYcm2ve6e9c5rknKIqR0o+YURB+42qmU/kxf3K9PYb8dOGPmxbHngmB0WP1jeQUBbR/N0o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750668670; c=relaxed/simple;
-	bh=Hwrcx7bSN2Q64gKzKoyNC9kLUgY3eRMYO5s66lvzboM=;
+	s=arc-20240116; t=1750668672; c=relaxed/simple;
+	bh=7YK8h6/s6FeL2OpH/wceg6nUbtWI80YOQxmlwFUPtFQ=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=H6ejlt10a2ILpiwrfbuPdg6pxgMjU9SMChrAHkFpkjuTXlEGywPu2RkI+R7ltHsnoEwAfssgkHCM+9g/37IL0IL15AhuXthPnbPAPpY0bIXmV6SpBldvZ3kP6EyPfeV2z/f1J6WzG9QCOrkvdV1+dIWouWzG6MA2u1pNX+7nDxM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=BIF7OuxA; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 00ACAC4CEEA;
-	Mon, 23 Jun 2025 08:51:08 +0000 (UTC)
+	 MIME-Version; b=ZE0pC49PSnvnbNXYZWsuVyXNenEQbG/JDPQUPrXxQu2zl0nyiZM8QESP+ZlNnjplpSwxhOppKiu4EHR7mQEMFCPPm2uOteVs0EqHHx4H42t0fLGF5As049Q0cH9mHECXu2hIjjnKsn7kvzCZolOIBMMjG9k4QwiXE5YgInLU+T4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=P7LSti+W; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id DCC08C4CEF1;
+	Mon, 23 Jun 2025 08:51:10 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1750668670;
-	bh=Hwrcx7bSN2Q64gKzKoyNC9kLUgY3eRMYO5s66lvzboM=;
+	s=k20201202; t=1750668672;
+	bh=7YK8h6/s6FeL2OpH/wceg6nUbtWI80YOQxmlwFUPtFQ=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=BIF7OuxAWbyFWv201CpYKfPznnWRed9DUZ3f9YKrPdFJHRpZxb5fcUA2X1eE1Bykw
-	 NFXrro+S+AacGrYuaMURQwAWcoLsffnsb5zxyIy3JW4r4ehrI/dRo4e1zp7T0Xb5sC
-	 IRIJMWQngY2tkB7mhQOyq3ZlG5mvF6erVLGAUHNo1Pu4/JguoAA0k93H8fGPOL4hHs
-	 JnlJFXUgga49VnUcOH0oyyIBKLw4TRMmvTZuepm/vQAfaqZVRLcbcr3G8qe+yP7faq
-	 X63JTvhjk4uubV9UL7z6Ac9yvhD6T96Ea/HneNp5wNb/VfgtOlzS3smrT9SNDn5pI1
-	 XHe9x61oGu+aw==
+	b=P7LSti+Wyvf3rWuAW4qA+iDZSDkKRFZ3dl6zRQ1SVP5fYK3mgu7netaIUUD6JtTpl
+	 +OrqFtxIRFbXVQGRHx1B/XOPiyTuT1XynbZESeuC7NQ6XLbRyuJ/ZQxh9pqK8pHIdf
+	 98R3acaf4RQhaBuBurJuTDc6KG0bLaaLg9WGWbYAOJDjVJuMcTAby/VndNCeJ/1+eg
+	 q9YJcN4aYEGVRvf42XWK2D8cOqCgi9Qx4KJOCmOwxfWuqo2oa4+nvUffA7LRQPVypV
+	 kzZEqSvm4o20cxBB5vcoTfdqmD2iohkaq2cIheYuolv6xQkS/N9XfD9PP9buuAuiGp
+	 6F7Cf1vMSMJ2g==
 From: Hans de Goede <hansg@kernel.org>
 To: Sakari Ailus <sakari.ailus@linux.intel.com>,
 	Stanislaw Gruszka <stanislaw.gruszka@linux.intel.com>,
@@ -48,9 +48,9 @@ Cc: Hans de Goede <hansg@kernel.org>,
 	Arnd Bergmann <arnd@arndb.de>,
 	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	linux-kernel@vger.kernel.org
-Subject: [PATCH 06/10] mei: vsc: Event notifier fixes
-Date: Mon, 23 Jun 2025 10:50:48 +0200
-Message-ID: <20250623085052.12347-7-hansg@kernel.org>
+Subject: [PATCH 07/10] mei: vsc: Unset the event callback on remove and probe errors
+Date: Mon, 23 Jun 2025 10:50:49 +0200
+Message-ID: <20250623085052.12347-8-hansg@kernel.org>
 X-Mailer: git-send-email 2.49.0
 In-Reply-To: <20250623085052.12347-1-hansg@kernel.org>
 References: <20250623085052.12347-1-hansg@kernel.org>
@@ -62,73 +62,43 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-vsc_tp_register_event_cb() can race with vsc_tp_thread_isr(), add a mutex
-to protect against this.
+Make mei_vsc_remove() properly unset the callback to avoid a dead callback
+sticking around after probe errors or unbinding of the platform driver.
 
-Fixes: 566f5ca97680 ("mei: Add transport driver for IVSC device")
+Fixes: 386a766c4169 ("mei: Add MEI hardware support for IVSC device")
 Signed-off-by: Hans de Goede <hansg@kernel.org>
 ---
- drivers/misc/mei/vsc-tp.c | 12 +++++++++---
- 1 file changed, 9 insertions(+), 3 deletions(-)
+ drivers/misc/mei/platform-vsc.c | 5 +++++
+ 1 file changed, 5 insertions(+)
 
-diff --git a/drivers/misc/mei/vsc-tp.c b/drivers/misc/mei/vsc-tp.c
-index 0feebffabdb3..76a6aa606a26 100644
---- a/drivers/misc/mei/vsc-tp.c
-+++ b/drivers/misc/mei/vsc-tp.c
-@@ -79,9 +79,8 @@ struct vsc_tp {
+diff --git a/drivers/misc/mei/platform-vsc.c b/drivers/misc/mei/platform-vsc.c
+index 1ac85f0251c5..b2b5a20ae3fa 100644
+--- a/drivers/misc/mei/platform-vsc.c
++++ b/drivers/misc/mei/platform-vsc.c
+@@ -380,6 +380,8 @@ static int mei_vsc_probe(struct platform_device *pdev)
+ err_cancel:
+ 	mei_cancel_work(mei_dev);
  
- 	vsc_tp_event_cb_t event_notify;
- 	void *event_notify_context;
--
--	/* used to protect command download */
--	struct mutex mutex;
-+	struct mutex event_notify_mutex;	/* protects event_notify + context */
-+	struct mutex mutex;			/* protects command download */
- };
- 
- /* GPIO resources */
-@@ -113,6 +112,8 @@ static irqreturn_t vsc_tp_thread_isr(int irq, void *data)
- {
- 	struct vsc_tp *tp = data;
- 
-+	guard(mutex)(&tp->event_notify_mutex);
++	vsc_tp_register_event_cb(tp, NULL, NULL);
 +
- 	if (tp->event_notify)
- 		tp->event_notify(tp->event_notify_context);
- 
-@@ -399,6 +400,8 @@ EXPORT_SYMBOL_NS_GPL(vsc_tp_need_read, "VSC_TP");
- int vsc_tp_register_event_cb(struct vsc_tp *tp, vsc_tp_event_cb_t event_cb,
- 			    void *context)
- {
-+	guard(mutex)(&tp->event_notify_mutex);
-+
- 	tp->event_notify = event_cb;
- 	tp->event_notify_context = context;
- 
-@@ -499,6 +502,7 @@ static int vsc_tp_probe(struct spi_device *spi)
- 		return ret;
- 
- 	mutex_init(&tp->mutex);
-+	mutex_init(&tp->event_notify_mutex);
- 
- 	/* only one child acpi device */
- 	ret = acpi_dev_for_each_child(ACPI_COMPANION(dev),
-@@ -523,6 +527,7 @@ static int vsc_tp_probe(struct spi_device *spi)
- err_destroy_lock:
- 	free_irq(spi->irq, tp);
- 
-+	mutex_destroy(&tp->event_notify_mutex);
- 	mutex_destroy(&tp->mutex);
+ 	mei_disable_interrupts(mei_dev);
  
  	return ret;
-@@ -537,6 +542,7 @@ static void vsc_tp_remove(struct spi_device *spi)
+@@ -388,11 +390,14 @@ static int mei_vsc_probe(struct platform_device *pdev)
+ static void mei_vsc_remove(struct platform_device *pdev)
+ {
+ 	struct mei_device *mei_dev = platform_get_drvdata(pdev);
++	struct mei_vsc_hw *hw = mei_dev_to_vsc_hw(mei_dev);
  
- 	free_irq(spi->irq, tp);
+ 	pm_runtime_disable(mei_dev->dev);
  
-+	mutex_destroy(&tp->event_notify_mutex);
- 	mutex_destroy(&tp->mutex);
- }
+ 	mei_stop(mei_dev);
  
++	vsc_tp_register_event_cb(hw->tp, NULL, NULL);
++
+ 	mei_disable_interrupts(mei_dev);
+ 
+ 	mei_deregister(mei_dev);
 -- 
 2.49.0
 
