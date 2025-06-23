@@ -1,284 +1,146 @@
-Return-Path: <linux-kernel+bounces-698471-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-698473-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 26EA5AE450D
-	for <lists+linux-kernel@lfdr.de>; Mon, 23 Jun 2025 15:47:57 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4FE7BAE4520
+	for <lists+linux-kernel@lfdr.de>; Mon, 23 Jun 2025 15:48:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id AB2AF189A42E
-	for <lists+linux-kernel@lfdr.de>; Mon, 23 Jun 2025 13:42:48 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 96167189C837
+	for <lists+linux-kernel@lfdr.de>; Mon, 23 Jun 2025 13:43:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 95D48248F40;
-	Mon, 23 Jun 2025 13:42:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A0FDF253949;
+	Mon, 23 Jun 2025 13:42:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=rivosinc-com.20230601.gappssmtp.com header.i=@rivosinc-com.20230601.gappssmtp.com header.b="MKtZpyZB"
-Received: from mail-pl1-f178.google.com (mail-pl1-f178.google.com [209.85.214.178])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="a/Efor4r"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.12])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 24B141E487
-	for <linux-kernel@vger.kernel.org>; Mon, 23 Jun 2025 13:42:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 56DFB242D90;
+	Mon, 23 Jun 2025 13:42:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.12
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750686139; cv=none; b=FIyqquGcAuE1/ZdRUMxYhp+/0HyBxgDwXz70vBfwnehgVvXz6WJAyYPFIcSWW08SCzR2Tpf85PUzQysPuUoc923/eA5GLCFGV74bToFu4Q001dqQf19SWsS7Ju4HjIA+49LdENz0ZM4AQJkvfwE6jgBUvG9QVbA+rexAskRfmds=
+	t=1750686176; cv=none; b=SVOwdbpsczAl53jBOmi/ohjHo1cR/XC+0ZTuHjX+6OCUyWK2eJtfG3gyVmCSwgQnk9o79Ie1OcJ07fUwxm1ra7IudPE6bItw4WkFBVzONY3e0irG2Z0ZsjrLiYZ6GkbSPve1oeSv+bgLQsjQwpFtFMg53KQa6svFFyww1psRONw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750686139; c=relaxed/simple;
-	bh=CrRsKDVPyJ/LDCb7jZywiywGzx1w9Jk9OLxIhYiBAQM=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=tnAwPr8d3aga8RlwuWjjLjCyUxEcX2HBlc9WUvVt2x7oV9sCm9neOKUvQ7p8n3vooQY86GB/RNqouGTIs5Lt33TsX30BSHKCS6wogdeAPYZmk16pXmI99FnnbmrWSGigM4Bo73kM/hHE0uq/uiNOMklV0llep/6QAgTaXdWZc2s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rivosinc.com; spf=pass smtp.mailfrom=rivosinc.com; dkim=pass (2048-bit key) header.d=rivosinc-com.20230601.gappssmtp.com header.i=@rivosinc-com.20230601.gappssmtp.com header.b=MKtZpyZB; arc=none smtp.client-ip=209.85.214.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rivosinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rivosinc.com
-Received: by mail-pl1-f178.google.com with SMTP id d9443c01a7336-235e1d710d8so56373475ad.1
-        for <linux-kernel@vger.kernel.org>; Mon, 23 Jun 2025 06:42:16 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=rivosinc-com.20230601.gappssmtp.com; s=20230601; t=1750686136; x=1751290936; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=PftUyQ0Msb1KfMfvQtr5afZD4s8ype5Bn31YXQgjZhQ=;
-        b=MKtZpyZB0uYLfZG/Lj82A7B+5fbslP5KwjTiHwxIlVa/dUJF3WAGwO2CIW6oWqSocG
-         mdlDMZhQfFXc6Ei7SK7QEwiYFQ8MFolQGdXKn8GJ4WmusbPvExEiWE3ErYZVWhPooM0H
-         UpbToMbMrhlZqInXPQUN9TxaR0ksvEyZWdD92aPxJhWtXiuHubZfZXgCHg1v1vySZ7MC
-         5mGyTHvYpit1by4rxpcFuMntxnwqHzeqIeHu3rjx2bAq+DYHcBJ/4JcvG6RVHYmi90Av
-         8QWf2lHfqZv33PxyCtrHvHuyO4h9xAdeKZJ7YyN+qQrv8DZGIUrrt/Cud5WWFC/bLJJ3
-         0XUQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1750686136; x=1751290936;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=PftUyQ0Msb1KfMfvQtr5afZD4s8ype5Bn31YXQgjZhQ=;
-        b=X0smPsWQ2nVeLZQqIS870eFU/vIOi8q4w+0lUeXuPf9OettnDTsoESYcWlJ/ppMMKk
-         r24YcYFm36OqVcSAMzFl2M5I6ZuQ2QdKtXCfiLQ+CBeK2rR7UMuA6oSFLcW5T4J4GKzg
-         V39RAB5G3dDk0vwjN3uVSG8a3cexhenyCbnp1hutIG0HjrwFWA9ToPzDfCfZ/CxzM7+R
-         Z4H3395DKGtgoCpUQYdJROSGEJQs94ZylrE6JS+09mx0F0Z7hCxjTSyn4Rc4kKPI6dXp
-         S2hvbsTznDjGJgpENH1aHsq5Nr590tLtN2hODdBn9NTT9PtK3Vu9oPs0nLrnsKdi9N52
-         jawQ==
-X-Forwarded-Encrypted: i=1; AJvYcCV9fGVlsMaUT07y+GvOye0H1evmvt3WkGvUjov9Usb5/obSRS/1TPydRMHiN71U5gRFQ3XUeCBZJFtfeTo=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yyr0Is+yQEOV06iQhhJCZlmkYuuWs5VnDJkmT1inYPr82Haepmz
-	JoyndJVjLAD2qFRBc40LYJO9HdYVR+7t7FtNfKlgzZuh6R724NvDIXXIRICESagB85M=
-X-Gm-Gg: ASbGncu23OKZ6tLtkE+FmtElyfj1t8UyOcvZzoKTDQZRqx8NnCngTqMrrosvIZgtwfv
-	QJ5er3qoET0gS16VSg53xKDTjDJlBxm8Nf9xzwDr0gJTtOZhFcuu4oOfNrkwac3wsVse1hmw0qe
-	cKVaE81Ct80mjPYHYRN7SEk2VSvmE0qZBVgnNor1FaTlm3lu8jImUf216+92yy3Hmh5twPxpmSq
-	53rbN2tV13IeHblEmHH/ckBiv78+WMccD3OEf8C/0Mzxz22up3dqIFDDmMN8GZZ5LAsTTQOMk0x
-	ostXku4ybGP7iZ1OOAdKtfGf9Swt4sIB3mmNBUSZIwyS2QQGvpqHeGhQyKqFQt1kQjQPfxtlFhe
-	Hub0cM/S9THF15q3y5j8TCTOXDrWgtEY=
-X-Google-Smtp-Source: AGHT+IHypS+xDzz1U879jtpZhGUvigf9tfNSNnVtuy85SG8m6dKZiZYIxSM/kZgALCzpYtJTzcvwkQ==
-X-Received: by 2002:a17:903:2f86:b0:235:caa8:1a72 with SMTP id d9443c01a7336-237d98537fbmr178038585ad.30.1750686136362;
-        Mon, 23 Jun 2025 06:42:16 -0700 (PDT)
-Received: from ?IPV6:2a01:e0a:e17:9700:16d2:7456:6634:9626? ([2a01:e0a:e17:9700:16d2:7456:6634:9626])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-3158a23e1a7sm10669858a91.11.2025.06.23.06.42.09
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 23 Jun 2025 06:42:15 -0700 (PDT)
-Message-ID: <b9203c8d-4c34-4eb3-a94f-5455cfc2eb53@rivosinc.com>
-Date: Mon, 23 Jun 2025 15:42:06 +0200
+	s=arc-20240116; t=1750686176; c=relaxed/simple;
+	bh=N/wybOTy4smjB16l7nsGvyZZFI/vEE7f4zQ+AuUb+fM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=pLD2CmAXURN7uMSUIxMErQHR8uz6T6z1zxjmFwbwkE5GyaZQzqqbGerJ+YVWJxk8qsixivP7mIY9/DNJggEsOhplQ3dtw6wsZqHKTFmWYg7ioQjmr1wp/upGyFnQ+Qy7guP56fTny5sabY298iTNMB2E4KFoZFTTqBFbEh4VcYA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=a/Efor4r; arc=none smtp.client-ip=198.175.65.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1750686174; x=1782222174;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=N/wybOTy4smjB16l7nsGvyZZFI/vEE7f4zQ+AuUb+fM=;
+  b=a/Efor4rYKHK2VelsL64z8peMtoPrwYbBp2awiNmg+/leuE9D6W0R81A
+   nyD5P1C38gsaaLV3ZLr06hpbrLfdXjjBFshcV8OC2sJSFbH7FwjkOnO2j
+   SZ3ImvEhF9Hdx9fnZJVRV0qx2tIRohrFtICTbuAuz3WrJ1WBAi5pSe7tW
+   tF3NUNiG7oaeRV3MRbxMAsAI6Z0Vv+lbkFiGzYvmsoZlsc1pTAZwFObvj
+   5wLZKDv0CU6f3BUKxajNjRxSq1U/1RwMSdrB6AmC4x3FuRAjM5iLJ9M5X
+   R9l3tEGMXcNNE4+I62QBnPgE2P/EPUCQnK9/aLNsp6HdP882Tf3uFzP2a
+   g==;
+X-CSE-ConnectionGUID: oMDy6UmdS0a6IzGsLHNfMg==
+X-CSE-MsgGUID: UjkdAvNIRoKLEJOEIj59HQ==
+X-IronPort-AV: E=McAfee;i="6800,10657,11473"; a="64325177"
+X-IronPort-AV: E=Sophos;i="6.16,258,1744095600"; 
+   d="scan'208";a="64325177"
+Received: from fmviesa010.fm.intel.com ([10.60.135.150])
+  by orvoesa104.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 23 Jun 2025 06:42:54 -0700
+X-CSE-ConnectionGUID: sWHx9E82TwqF7r/zmduUmw==
+X-CSE-MsgGUID: A5WspalTSpmZe+o8bh522g==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.16,258,1744095600"; 
+   d="scan'208";a="152286392"
+Received: from black.fi.intel.com ([10.237.72.28])
+  by fmviesa010.fm.intel.com with ESMTP; 23 Jun 2025 06:42:42 -0700
+Received: by black.fi.intel.com (Postfix, from userid 1000)
+	id 2FACC108; Mon, 23 Jun 2025 16:42:41 +0300 (EEST)
+Date: Mon, 23 Jun 2025 16:42:41 +0300
+From: "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>
+To: Borislav Petkov <bp@alien8.de>
+Cc: Andy Lutomirski <luto@kernel.org>, 
+	Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, 
+	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org, "H. Peter Anvin" <hpa@zytor.com>, 
+	Peter Zijlstra <peterz@infradead.org>, Ard Biesheuvel <ardb@kernel.org>, 
+	"Paul E. McKenney" <paulmck@kernel.org>, Josh Poimboeuf <jpoimboe@kernel.org>, 
+	Xiongwei Song <xiongwei.song@windriver.com>, Xin Li <xin3.li@intel.com>, 
+	"Mike Rapoport (IBM)" <rppt@kernel.org>, Brijesh Singh <brijesh.singh@amd.com>, 
+	Michael Roth <michael.roth@amd.com>, Tony Luck <tony.luck@intel.com>, 
+	Alexey Kardashevskiy <aik@amd.com>, Alexander Shishkin <alexander.shishkin@linux.intel.com>, 
+	Jonathan Corbet <corbet@lwn.net>, Sohil Mehta <sohil.mehta@intel.com>, 
+	Ingo Molnar <mingo@kernel.org>, Pawan Gupta <pawan.kumar.gupta@linux.intel.com>, 
+	Daniel Sneddon <daniel.sneddon@linux.intel.com>, Kai Huang <kai.huang@intel.com>, 
+	Sandipan Das <sandipan.das@amd.com>, Breno Leitao <leitao@debian.org>, 
+	Rick Edgecombe <rick.p.edgecombe@intel.com>, Alexei Starovoitov <ast@kernel.org>, 
+	Hou Tao <houtao1@huawei.com>, Juergen Gross <jgross@suse.com>, 
+	Vegard Nossum <vegard.nossum@oracle.com>, Kees Cook <kees@kernel.org>, Eric Biggers <ebiggers@google.com>, 
+	Jason Gunthorpe <jgg@ziepe.ca>, "Masami Hiramatsu (Google)" <mhiramat@kernel.org>, 
+	Andrew Morton <akpm@linux-foundation.org>, Luis Chamberlain <mcgrof@kernel.org>, 
+	Yuntao Wang <ytcoode@gmail.com>, Rasmus Villemoes <linux@rasmusvillemoes.dk>, 
+	Christophe Leroy <christophe.leroy@csgroup.eu>, Tejun Heo <tj@kernel.org>, Changbin Du <changbin.du@huawei.com>, 
+	Huang Shijie <shijie@os.amperecomputing.com>, Geert Uytterhoeven <geert+renesas@glider.be>, 
+	Namhyung Kim <namhyung@kernel.org>, Arnaldo Carvalho de Melo <acme@redhat.com>, 
+	linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-efi@vger.kernel.org, 
+	linux-mm@kvack.org, Yian Chen <yian.chen@intel.com>
+Subject: Re: [PATCHv6 01/16] x86/cpu: Enumerate the LASS feature bits
+Message-ID: <ztkgdk72p2z3q6z4hslfg4gj6pejirh7cnssxhd7u72mo4enn4@viqrwrycderf>
+References: <20250620135325.3300848-1-kirill.shutemov@linux.intel.com>
+ <20250620135325.3300848-2-kirill.shutemov@linux.intel.com>
+ <20250620163504.GCaFWNuI-8QFqAM0yI@fat_crate.local>
+ <6y2iqv6c2idn7yebaec7tyhzl5zcsrwqq4lcsokumlqeophzaf@ljnmxorblgcj>
+ <20250620182943.GDaFWolxhwogB2tTxb@fat_crate.local>
+ <tmd5llufitosphzhiik2tlemjuwyi7xkcjlhbqhibrgjjhsqcj@b3xtgub42p45>
+ <20250623102105.GCaFkqkatFSbyl1YeN@fat_crate.local>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [External] Re: [PATCH] RISC-V: KVM: Delegate illegal instruction
- fault
-To: Xu Lu <luxu.kernel@bytedance.com>
-Cc: =?UTF-8?B?UmFkaW0gS3LEjW3DocWZ?= <rkrcmar@ventanamicro.com>,
- anup@brainfault.org, atish.patra@linux.dev, paul.walmsley@sifive.com,
- palmer@dabbelt.com, aou@eecs.berkeley.edu, alex@ghiti.fr,
- kvm@vger.kernel.org, kvm-riscv@lists.infradead.org,
- linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org,
- linux-riscv <linux-riscv-bounces@lists.infradead.org>
-References: <20250620091720.85633-1-luxu.kernel@bytedance.com>
- <DARCHDIZG7IP.2VTEVNMVX8R1E@ventanamicro.com>
- <1d9ad2a8-6ab5-4f5e-b514-4a902392e074@rivosinc.com>
- <CAPYmKFs7tmMg4VQX=5YFhSzDGxodiBxv+v1SoqwTHvE1Khsr_A@mail.gmail.com>
- <4f47fae6-f516-4b6f-931e-92ee7c406314@rivosinc.com>
- <CAPYmKFvT6HcFByEq+zkh8UBUCyQS_Rv4drnCUU0o-HQ4eScVdA@mail.gmail.com>
-Content-Language: en-US
-From: =?UTF-8?B?Q2zDqW1lbnQgTMOpZ2Vy?= <cleger@rivosinc.com>
-In-Reply-To: <CAPYmKFvT6HcFByEq+zkh8UBUCyQS_Rv4drnCUU0o-HQ4eScVdA@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250623102105.GCaFkqkatFSbyl1YeN@fat_crate.local>
 
-
-
-On 23/06/2025 15:30, Xu Lu wrote:
-> Hi Clément,
+On Mon, Jun 23, 2025 at 12:21:05PM +0200, Borislav Petkov wrote:
+> On Mon, Jun 23, 2025 at 11:17:02AM +0300, Kirill A. Shutemov wrote:
+> > What about this:
+> > 
+> > LASS provides protection against a class of speculative attacks, such as
+> > SLAM[1]. Add the "lass" flag to /proc/cpuinfo to indicate that the feature
+> > is supported by hardware and enabled by the kernel. This allows userspace
+> > to determine if the setup is secure against such attacks.
 > 
-> On Mon, Jun 23, 2025 at 8:35 PM Clément Léger <cleger@rivosinc.com> wrote:
->>
->>
->>
->> On 23/06/2025 14:12, Xu Lu wrote:
->>> Hi Clément,
->>>
->>> On Mon, Jun 23, 2025 at 4:05 PM Clément Léger <cleger@rivosinc.com> wrote:
->>>>
->>>>
->>>>
->>>> On 20/06/2025 14:04, Radim Krčmář wrote:
->>>>> 2025-06-20T17:17:20+08:00, Xu Lu <luxu.kernel@bytedance.com>:
->>>>>> Delegate illegal instruction fault to VS mode in default to avoid such
->>>>>> exceptions being trapped to HS and redirected back to VS.
->>>>>>
->>>>>> Signed-off-by: Xu Lu <luxu.kernel@bytedance.com>
->>>>>> ---
->>>>>> diff --git a/arch/riscv/include/asm/kvm_host.h b/arch/riscv/include/asm/kvm_host.h
->>>>>> @@ -48,6 +48,7 @@
->>>>>> +                                     BIT(EXC_INST_ILLEGAL)    | \
->>>>>
->>>>> You should also remove the dead code in kvm_riscv_vcpu_exit.
->>>>>
->>>>> And why not delegate the others as well?
->>>>> (EXC_LOAD_MISALIGNED, EXC_STORE_MISALIGNED, EXC_LOAD_ACCESS,
->>>>>  EXC_STORE_ACCESS, and EXC_INST_ACCESS.)
->>>>
->>>> Currently, OpenSBI does not delegate misaligned exception by default and
->>>> handles misaligned access by itself, this is (partially) why we added
->>>> the FWFT SBI extension to request such delegation. Since some supervisor
->>>> software expect that default, they do not have code to handle misaligned
->>>> accesses emulation. So they should not be delegated by default.
->>>
->>> It doesn't matter whether these exceptions are delegated in medeleg.
->>
->> Not sure to totally understand, but if the exceptions are not delegated
->> in medeleg, they won't be delegated to VS-mode even though hedeleg bit
->> is set right ? The spec says:
->>
->> A synchronous trap that has been delegated to HS-mode (using medeleg)
->> is further delegated to VS-mode if V=1 before the trap and the
->> corresponding hedeleg bit is set.
+> Yeah, thanks.
 > 
-> Yes, you are right. The illegal insn exception is still trapped in M
-> mode if it is not delegated in medeleg. But delegating it in hedeleg
-> is still useful. The opensbi will check CSR_HEDELEG in the function
-> sbi_trap_redirect. If the exception has been delegated to VS-mode in
-> CSR_HEDLEG, opensbi can directly return back to VS-mode, without the
-> overhead of going back to HS-mode and then going back to VS-mode.
+> I'm still not fully on board with userspace determining whether they're
+> mitigated or not but that's a general problem with our mitigations.
 > 
->>
->>
->>
->>> KVM in HS-mode does not handle illegal instruction or misaligned
->>> access and only redirects them back to VS-mode. Delegating such
->>> exceptions in hedeleg helps save CPU usage even when they are not
->>> delegated in medeleg: opensbi will check whether these exceptions are
->>> delegated to VS-mode and redirect them to VS-mode if possible. There
->>> seems to be no conflicts with SSE implementation. Please correct me if
->>> I missed anything.
->>
->> AFAIU, this means that since medeleg bit for misaligned accesses were
->> not delegated up to the introduction of the FWFT extension, VS-mode
->> generated misaligned accesses were handled by OpenSBI right ? Now that
->> we are requesting openSBI to delegate misaligned accesses, HS-mode
->> handles it's own misaligned accesses through the trap handler. With that
->> configuration, if VS-mode generate a misaligned access, it will end up
->> being redirected to VS-mode and won't be handle by HS-mode.
->>
->> To summarize, prior to FWFT, medeleg wasn't delegating misaligned
->> accesses to S-mode:
->>
->> - VS-mode misaligned access -> trap to M-mode -> OpenSBI handle it ->
->> Back to VS-mode, misaligned access fixed up by OpenSBI
+> Also, I haven't looked at the patchset yet but I think it should be also
+> adding code to bugs.c to make all those vulns which it addresses, report that
+> they're mitigated by LASS now in
 > 
-> Yes, this is what I want the procedure of handling illegal insn
-> exceptions to be. Actually it now behaves as:
+> grep -r . /sys/devices/system/cpu/vulnerabilities/
 > 
-> VS-mode illegal insn exception -> trap to M-mode -> OpenSBI handles it
-> -> Back to HS-mode, does nothing -> Back to VS-mode.
+> output.
 > 
-> I want to avoid going through HS-mode.
-
-Hi Xu,
-
-Yeah, that make sense as well but that should only happen if the VS-mode
-requested misaligned access delegation via KVM SBI FWFT interface. I
-know that currently KVM does do anything useful from the misaligned
-exception except redirecting it to VS-mode but IMHO, that's a regression
-I introduced with FWFT misaligned requested delegation...
-
+> Which makes your cpuinfo flag not really needed as we already have a special
+> method for the mitigations reporting.
 > 
->>
->> Now that Linux uses SBI FWFT to delegates misaligned accesses (without
->> hedeleg being set for misaligned delegation, but that doesn't really
->> matter, the outcome is the same):
->>
->> - VS-mode misaligned access -> trap to HS-mode -> redirection to
->> VS-mode, needs to handle the misaligned access by itself
->>
->>
->> This means that previously, misaligned access were silently fixed up by
->> OpenSBI for VS-mode and now that FWFT is used for delegation, this isn't
->> true anymore. So, old kernel or sueprvisor software that  included code
->> to handle misaligned accesses will crash. Did I missed something ?
-> 
-> Great! You make it very clear! Thanks for your explanation. But even
-> when misalign exceptions are delegated to HS-mode, KVM seems to do
-> nothing but redirect to VS-mode when VM get trapped due to misalign
-> exceptions. 
+> But ok, it has gotten kernel enablement so stating so in cpuinfo is ok.
 
-Exactly, which is why I said that either setting hedeleg by default or
-not will lead to the same outcome, ie: VS-mode needs to handle access by
-itself (which is a regression introduced by FWFT usage).
+Due to SLAM, we decided to postpone LAM enabling, until LASS is landed.
 
+I am not sure if we want to add static
+/sys/devices/system/cpu/vulnerabilities/slam with "Mitigation: LASS".
 
-> So maybe we can directly delegate the misaligned
-> exceptions in hedeleg too before running VCPU and retrieve them after
-> VCPU exists. And then the handling procedure will be:
-> 
-> VS-mode misaligned exception -> trap to VS-mode -> VS handles it ->
-> Back to VU-mode.
+There might be other yet-to-be-discovered speculative attacks that LASS
+mitigates. Security features have to visible to userspace independently of
+known vulnerabilities.
 
-I'd better want to let the HS-mode handle the misaligned accesses if not
-requested via the KVM SBI FWFT interface by VS-mode to keep HS-mode
-expected behavior. As you pointed out, this is not currently the case
-and the misaligned exceptions are directly redirected to VS-mode, this
-differs from what was actually done previously without FWFT (ie OpenSBI
-handles the misaligned access).
-
-To summarize, I think HS-mode should fixup VS-mode misaligned accesses
-unless requested via KVM SBI FWFT interface, in which case it will
-delegates them (which is done by the FWFT series). This would match the
-HS-mode <-> OpenSBI behavior.
-
-Thanks,
-
-Clément
-
-> 
-> Please correct me if I missed anything.
-> 
-> Best Regards,
-> 
-> Xu Lu
-> 
->>
->> Note: this is not directly related to your series but my introduction of
->> FWFT !
->>
->> Thanks,
->>
->> Clément
->>
->>>
->>> Best Regards,
->>> Xu Lu
->>>
->>>>
->>>> Thanks,
->>>>
->>>> Clément
->>>>
->>>>>
->>>>> Thanks.
->>>>>
->>>>> _______________________________________________
->>>>> linux-riscv mailing list
->>>>> linux-riscv@lists.infradead.org
->>>>> http://lists.infradead.org/mailman/listinfo/linux-riscv
->>>>
->>
-
+-- 
+  Kiryl Shutsemau / Kirill A. Shutemov
 
