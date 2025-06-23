@@ -1,135 +1,124 @@
-Return-Path: <linux-kernel+bounces-698831-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-698833-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id D1DDDAE4ADE
-	for <lists+linux-kernel@lfdr.de>; Mon, 23 Jun 2025 18:29:25 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 9CF0DAE4AE8
+	for <lists+linux-kernel@lfdr.de>; Mon, 23 Jun 2025 18:30:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 010671B6541C
-	for <lists+linux-kernel@lfdr.de>; Mon, 23 Jun 2025 16:22:05 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 387E71B6558C
+	for <lists+linux-kernel@lfdr.de>; Mon, 23 Jun 2025 16:22:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6A8642C1593;
-	Mon, 23 Jun 2025 16:11:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5AAA629B8C3;
+	Mon, 23 Jun 2025 16:12:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="VXucbGkE"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="DMI8GYWs"
+Received: from mail-pf1-f179.google.com (mail-pf1-f179.google.com [209.85.210.179])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C0E992BD030;
-	Mon, 23 Jun 2025 16:11:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 65F2329ACD7;
+	Mon, 23 Jun 2025 16:12:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750695085; cv=none; b=kJjzn8TXsNrsS62hV1KD1X2C8bs7mNqtVxPSyQjcClXDemoM25I2s8spUVOzV/8c7b+aEd6XDLXKHitKXdjCoyKsUxQyVGjoGuojWlYqYboOyoHZH86oc5EG0+UV5LDkKCvkHvQgDDnyzj/qS2l7o/kOkH58ZPQn+PQigheMhwI=
+	t=1750695155; cv=none; b=Wbi4OThmkSKeQOew4485wd+P6Yq59NvcC+LUOav0bG17Sno5/Md8iDzhxu8W9aVMAicnYvIL4YkpuKdAuWkxwWKfxhvsdujCwNhOPzvLeys9UgBEJD7a+OxNIcsOjd5bXCjGoDvh9B9vd0WwhC6fo/kJeBx9DqZV2AG2yh85rUM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750695085; c=relaxed/simple;
-	bh=IUYvpZ+ytSupZSeQlCRhk7wKjG6mSWXDR1Nvlgj2a34=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=cfCotaqosu1cpmfTvVWUBjzBMkd8KxOy/EpQV4JpD++jU+At05lNhDCh2gb2pVxiK28HfsXFBuMNqMX7TuaiBDX1K9K4akmKr8WKMlcCrrX5q+ikbNp1UfbiScakV2Ul5DHnkb9LogDPbF55KJzqVr5ES9itucX+Hl9xvhABI1w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=VXucbGkE; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5C7A9C4CEEA;
-	Mon, 23 Jun 2025 16:11:23 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1750695085;
-	bh=IUYvpZ+ytSupZSeQlCRhk7wKjG6mSWXDR1Nvlgj2a34=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=VXucbGkECU7PMaTgXBhhzpEfsdm2C84REPuHXDqbL6WNaS+JmWisVcs0s9GB//pjc
-	 qAFrpF7tqNwtEPSg6gwB6j153VMRvVbQwmlPLlb6RcaXWI5eltJkVfHEavnDRUKHc+
-	 pexJO/Qy+OgCYdcuEzp+Qs5zKQ9/SI8+kNhSVVGJOuim45hz66dDtcFc0mU6dtbn9f
-	 lymiXGkJsHy431kypdPwunoYhheynrfTt706WP9MkqfvU5x5+cx+Z6vhef+wcyK8Dr
-	 iDFRJaZ3RvgBpY/Xqjpe96KdS/qRRxbh5OuRyFnlhynxmqfHWZtejsrbYqblwWg+ld
-	 sofDknXAkoDaA==
-Message-ID: <2bae7e94-3b97-4bde-9c92-e34670792355@kernel.org>
-Date: Mon, 23 Jun 2025 18:11:21 +0200
+	s=arc-20240116; t=1750695155; c=relaxed/simple;
+	bh=oF5OxwaPl8/tUwW6hn/n8Zaw40InOJKWmwFd6oyspzM=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=U0mucaA10/ofIn6OXkbb9ANBgfqMQ5tOYbGLFXSEQGRMJXfN4/1+0elE3RqwNfzjfklh4FwlcLXVPNLxu5/NZ/i+jLl2hkO1AxmSuD6Y5fVjPtOTj465RwSRS1rg56FmlNWUE41J1TDSIDmo/GXVXMuzSMkVJOwMM992eAh8r64=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=DMI8GYWs; arc=none smtp.client-ip=209.85.210.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f179.google.com with SMTP id d2e1a72fcca58-749248d06faso1767486b3a.2;
+        Mon, 23 Jun 2025 09:12:34 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1750695154; x=1751299954; darn=vger.kernel.org;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=8VtcumMQpGWJUhK15pJtoo02/DLnPfbplbsv3dC/LoQ=;
+        b=DMI8GYWsZmMz24REQuyEJJF9lMoZ+sWFvEqf2NGDhLw1UybtMMdqm5lyCPbImi9z3Q
+         jIaWv24vo7+9/jLv04Sv+hAyJppy873mTnjglRM/axCGilPU0+J2FTJ2nu0Gv8SAsHdb
+         dXgEPxzybyh8d2rWcjRWjJcY32dDvhs1QHnoT3k9u/03q0dSh5zHAs974efV6OrVqrCe
+         Uva0+YvP2GoaiNg3kDeMSUbKurEe4jU3fccEHxzf4/K6bfUgxE+xXRQ/O/4D5xmIgeAs
+         egdvYnnmmvzbumzSwGT8CsoUW3HUKleuI+bhgsitEwbTf8uXsLyNk3png8CsLOiDJw3F
+         Ibeg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1750695154; x=1751299954;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=8VtcumMQpGWJUhK15pJtoo02/DLnPfbplbsv3dC/LoQ=;
+        b=JsQKfGf6QviZAwhuSFidWHnHSH1Iw/P0vU9sP5gdkBHQvoadHFfI1G504/NW7EGiLQ
+         bBQntXcuPU/tPfF2tHviQg9OFyy2fblTETYaRiJw/8tL3ZmXL31CY4FBx6Kk24yOB3s4
+         RaFkT6lu371Z1SKrafWIkDq2aNGQMgjUDLiV5S4BPRiNTC3h7tMN9L4/IXUrdPowg6tD
+         rU60IJpNkXiJqtMPa+wh4FDtL0QnVaXiU92SgyUgi+usHlJkvA200w0yhMsH62PbstAJ
+         TNuuAwNsB1Gugqor/TLZePNUKgAK2L0CxVw5TW8gA4gfXzgWT16qgWhguiPIilGj/gX0
+         zKFg==
+X-Forwarded-Encrypted: i=1; AJvYcCUIIC+4yQ5fvsDKSoHMgL6nXSC9SX2vN5iTa8HFtqSl00ojJ1ROUx3Bd1W2z40tPA0AbQL3SVqTJHdH/BHy@vger.kernel.org, AJvYcCV4GBVPJqxKI0WV8jqi0q/EXizHZzY+K83IlWuYiDMkMK9CW9bejI/w3qn+Nm0PPJOYQqkKLuBJngck@vger.kernel.org
+X-Gm-Message-State: AOJu0Yyebn5prWSTnFiuTO9oep29pD9fvibaSCBFmQRbYmjn6XLHq0ND
+	7NNQZHmUu/eySQlgWBUPOihIf4CUYJNv0+Aa+oL7g+eL55U7Ky1SvCzy
+X-Gm-Gg: ASbGncsxOz9cruxs49o2H+kaOB0TIJQpumZPTi68wTSIcVuxHoO1FOxRjsZAhfwzPpc
+	lIXVihbmM85LavZQrbYWtuesSFQKIhD6JgFP1d/93pT5ZQwdEvNUM4Hp4ccUBJAnyZo1iUfCxzk
+	2npcnnXgq29rP1sTDFQSj4bPEwiZqfa1hyERdjCW8G8RcMCrJ+tJIz2xrRSIDxNfzAsJxuJMBXA
+	tFVfbujLOK6NhxQ7ZHQwBUgAxAnuO2FDl/dFhFYcLtqQGslQe0GPmwFS1lp1s6vGdO7/28Uwv3K
+	cvWEEofoy4uhJT7Jws9AT+7wIhTGKCOzaAh/xE8Cyzq7IFTSl92XETMCOhFZVS6qn6mbKfG7SsR
+	TFGXsIlc148NmE6A=
+X-Google-Smtp-Source: AGHT+IHW3hfevuEAc7PYQYSetzR7HrPI8vD9FdBDkz+I2rAyNHC54TdMIOOA/EJsqo1/5/SmxuoIvQ==
+X-Received: by 2002:a05:6a00:3e17:b0:748:ff39:a0ed with SMTP id d2e1a72fcca58-7490d6a2b0bmr17949578b3a.20.1750695153598;
+        Mon, 23 Jun 2025 09:12:33 -0700 (PDT)
+Received: from [10.22.1.180] ([67.159.246.222])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7490a467e6dsm9029608b3a.13.2025.06.23.09.12.30
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 23 Jun 2025 09:12:33 -0700 (PDT)
+From: =?utf-8?q?Jo=C3=A3o_Paulo_Gon=C3=A7alves?= <jpaulo.silvagoncalves@gmail.com>
+Subject: [PATCH 0/2] arm64: dts: ti: k3-am62p|j722s: Add passive trip
+ points
+Date: Mon, 23 Jun 2025 13:12:25 -0300
+Message-Id: <20250623-b4-verdin-am62p-cooling-device-v1-0-cc185ba5843d@toradex.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v1 1/3] dt-bindings: memory-controllers: add StarFive
- JH7110 SoC DMC
-To: Conor Dooley <conor@kernel.org>
-Cc: E Shattow <e@freeshell.de>, linux-kernel@vger.kernel.org,
- devicetree@vger.kernel.org, linux-riscv@lists.infradead.org,
- Rob Herring <robh@kernel.org>, Conor Dooley <conor+dt@kernel.org>
-References: <20250606130253.1105273-1-e@freeshell.de>
- <20250606130253.1105273-2-e@freeshell.de>
- <79d84bc5-1b39-433d-afc3-b6ca84f274f0@kernel.org>
- <20250623-enamel-discourse-3d28517e01d4@spud>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 a/A=
-In-Reply-To: <20250623-enamel-discourse-3d28517e01d4@spud>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+X-B4-Tracking: v=1; b=H4sIAOl8WWgC/x2NQQqDMBQFryJ/7YckxGh7FXGRJk/7oU0kASmId
+ 29wOYuZOamiCCo9u5MKDqmSUwPddxTePm1giY3JKDMopyd+WT5QoiT2X2d2Djl/JG0cmxzAzo4
+ PBKu0mkAtshes8rsH83Jdf+DqMGpwAAAA
+X-Change-ID: 20250618-b4-verdin-am62p-cooling-device-6479ec40108e
+To: Nishanth Menon <nm@ti.com>, Vignesh Raghavendra <vigneshr@ti.com>, 
+ Tero Kristo <kristo@kernel.org>, Rob Herring <robh@kernel.org>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>
+Cc: linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, 
+ =?utf-8?q?Jo=C3=A3o_Paulo_Gon=C3=A7alves?= <joao.goncalves@toradex.com>
+X-Mailer: b4 0.14.2
 
-On 23/06/2025 17:56, Conor Dooley wrote:
-> On Mon, Jun 23, 2025 at 08:45:04AM +0200, Krzysztof Kozlowski wrote:
->> On 06/06/2025 15:02, E Shattow wrote:
->>> Document bindings for the JH7110 SoC DMC as implemented in downstream
->>> U-Boot driver starfive_ddr.c
->>
->> Heh, I totally missed "downstream"... We do not add bindings for
->> downstream. We do not care about downstream, so I should not spend my
->> time on this.
->>
->> Do not send code for downstream.
-> 
-> I think that's either an accident or poor wording, there's a user for
-> this in mainline U-Boot.
+Enable CPU frequency throttling on AM62P/J722S when an alert temperature
+threshold is reached before the critical temperature for shutdown.
 
+Adjust Verdin AM62P thermal threshold accordingly to the SoM
+thermal specification.
 
-OK, then my review stays. Commit msg should be rephrased.
+Signed-off-by: João Paulo Gonçalves <joao.goncalves@toradex.com>
+---
+João Paulo Gonçalves (2):
+      arm64: dts: ti: k3-am62p-j722s: Enable freq throttling on thermal alert
+      arm64: dts: ti: k3-am62p-verdin: Adjust temperature trip points
 
-In future: bindings always should be accepted prior other project starts
-accepting drivers (just in case if you plan to play Uno card called:
-"but my driver is like that").
+ .../boot/dts/ti/k3-am62p-j722s-common-thermal.dtsi | 51 ++++++++++++++++++++++
+ arch/arm64/boot/dts/ti/k3-am62p-verdin.dtsi        | 24 ++++++++++
+ arch/arm64/boot/dts/ti/k3-am62p5.dtsi              |  4 ++
+ arch/arm64/boot/dts/ti/k3-j722s.dtsi               |  4 ++
+ 4 files changed, 83 insertions(+)
+---
+base-commit: 19272b37aa4f83ca52bdf9c16d5d81bdd1354494
+change-id: 20250618-b4-verdin-am62p-cooling-device-6479ec40108e
 
 Best regards,
-Krzysztof
+-- 
+João Paulo Gonçalves <joao.goncalves@toradex.com>
+
 
