@@ -1,225 +1,199 @@
-Return-Path: <linux-kernel+bounces-698911-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-698913-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4FDF2AE4B97
-	for <lists+linux-kernel@lfdr.de>; Mon, 23 Jun 2025 19:05:33 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 3CC25AE4BA2
+	for <lists+linux-kernel@lfdr.de>; Mon, 23 Jun 2025 19:13:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 86B873B7C19
-	for <lists+linux-kernel@lfdr.de>; Mon, 23 Jun 2025 17:05:06 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4AC0A3A523E
+	for <lists+linux-kernel@lfdr.de>; Mon, 23 Jun 2025 17:12:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6DDCC29C353;
-	Mon, 23 Jun 2025 17:05:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DBC2829B8FB;
+	Mon, 23 Jun 2025 17:13:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="JbSGZMR+"
-Received: from mail-ej1-f48.google.com (mail-ej1-f48.google.com [209.85.218.48])
+	dkim=pass (2048-bit key) header.d=innosonix.de header.i=@innosonix.de header.b="XlbTvCNW"
+Received: from mail-wr1-f44.google.com (mail-wr1-f44.google.com [209.85.221.44])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F07D01C07C4;
-	Mon, 23 Jun 2025 17:05:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 111B24A2D
+	for <linux-kernel@vger.kernel.org>; Mon, 23 Jun 2025 17:13:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750698318; cv=none; b=hj4pAN7Q6A4g6NGFyWE7Yy15topesnWvKREf6QVKYxYq5ZgqrK5+aWm3Z5WCzN3+6O8q4gz2H846jDNIRut6Zf+8mXZnnzB+SpQP74IiSuayYhhpqWyIkWgnoXlfTexDykjeZV/E3B4Na9BgBeMnM1h3ObZQjUDFMTXo/JE0wlk=
+	t=1750698788; cv=none; b=oAO53aIez4hizch0CfLoY0+PcsmucOvseg9+Bw6++XMwfU9J8p9g/Prkc1LeJGZYELYatVJY6Zrr37ZjLZ/D0IQFCQ93dhtG3zlUpJ/yUp62/1PDQB/S0PpEeGNXEQ1Qs45zsxHeD095ME5xiNpwuGBAk5HMcHmF3tjsD8npTI4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750698318; c=relaxed/simple;
-	bh=6nZoOQkZs6C4FQYLUnskHM0GHFTQYyosqeO+/BXGQdc=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=eHzgKFfD8Pra6UJpKDrMwWCiNnLtRETUBuCWRNQVtsJ3WWe6BrGVNWwrJ5GQ78Z5Aqs8IBS68GclR1td/d7xLZfdpyA4KmkxJ+YUSf4HKCcZPcizhJf48YNns3uxAfZLdttZvKZ1JFrCnLl5URkPyUSFFqVP3mml3Vjt48SZkzg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=JbSGZMR+; arc=none smtp.client-ip=209.85.218.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f48.google.com with SMTP id a640c23a62f3a-ade48b24c97so777429566b.2;
-        Mon, 23 Jun 2025 10:05:16 -0700 (PDT)
+	s=arc-20240116; t=1750698788; c=relaxed/simple;
+	bh=wv9r1Nau37bZDlcKTni8vX3dpCtckh8QUn8ksWrvjzc=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=C2G6DVXi5EtDhuvd8qAGHS5ikvkAw64aUgPHK1bpgF5+pycWeZtT2aQuLsD1+JlBm2NgMZQBj4bpndKIpXGhpD9HzqAQpgPRlKTQvFexlOmc17mfb/vKEtWS9LaC2t1tqtB1rBgt+THqR87B3zFboH7JC1i7T4mM81EnSToDKZw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=innosonix.de; spf=pass smtp.mailfrom=innosonix.de; dkim=pass (2048-bit key) header.d=innosonix.de header.i=@innosonix.de header.b=XlbTvCNW; arc=none smtp.client-ip=209.85.221.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=innosonix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=innosonix.de
+Received: by mail-wr1-f44.google.com with SMTP id ffacd0b85a97d-3a4eb4dfd8eso630979f8f.2
+        for <linux-kernel@vger.kernel.org>; Mon, 23 Jun 2025 10:13:04 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1750698315; x=1751303115; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=pi3M8vSwwyPlCy0ds+MLiPgrDsER6WDeUbD1bJQq8OE=;
-        b=JbSGZMR+hZdXtyQMne2CDCoNWZQzxY0TJDPU/VdJi7nmNTgcTCbgtgRt+7obTDtTQe
-         ZnvqZAfjSmskm2CSoONCcdllsVZol48CQZJYvSiQ/+4jm7eLUbtDV+RmhpQP4HVVV+cm
-         a2x/NgHG6/KHhGBQeh3PdL9ktBvUQbmIuWK/zoWnhrXjYuJ4qojgfCJuJPE38OWIj1uC
-         Z/MgJSxAPuO6S+avdx0zxBxfuoPZmVBf+6BkXntLyf4zGJUCbWsNbgM2gNDrIVc8SIS5
-         VBwKlvGT/TmzhHVKg1toueJBX0AfXrUI8nNPmU7Sx5KyfohSe/JRNu+MQxk31G7jOPun
-         N7SA==
+        d=innosonix.de; s=google; t=1750698783; x=1751303583; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=fFVerlv1rup6mF5IH5Ew1KKnD+3iU06ke4X3UNXN3IU=;
+        b=XlbTvCNWP9sxrhEyqZdkwkzBAJ5IfMr2HDAC6vLqUiJhCOq6/ggza35dZU8AadHb1M
+         O25xSG6UoxE8uHXQhQgPje7q3AyKGrM/F8gZeR3fHIciwXctD7d1xXL3HJGSDTImaxEM
+         tJ5Hu1T3mGkeAdvxeUQn3os3VaP402tNrHtBPnz8VpA5ebMlmt+aaCwXvGXrHTvFT1hq
+         tQ4wT5bLImPntWE4LTAcVbRZlcGeAC6on6kPEFigEhWpgVHUwtn8CSMYqYM3wg2N1qgz
+         Di/V8qzu4CJsHllODDOayJAzzccR8Zr+Cj7ulL842b8L1kmMYvJR1Af3wlitTSl1rC7g
+         NoYQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1750698315; x=1751303115;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=pi3M8vSwwyPlCy0ds+MLiPgrDsER6WDeUbD1bJQq8OE=;
-        b=ioWaLotzJ5vJIafUZn1rMeLvvLl+EuudI4DTPGf3rda+bOxwTigYyjJt+oJPmnZyvC
-         1sftT9cbDo/0PIGNm77yBNrgDWO33iT43xAAn0nHn7lCVtEtTvzWe+4RjSA1R3Nuek55
-         jlW+Q7leSOzI6oQ9KEIe6TUPJjBok6APlXCoc22JwqVeP8YuyWVwgQkUhoB4n4DP4iTW
-         4+SdHP8+krfYYdef6CfuFsLNgRYnbpZP40sIsIABTOY/98jv1E+ljBPyMLPX9OoP56av
-         mVInY7aV6LrXBRHFZxnVFcD+UcHdotvJDLozEJNBejapDjKCxtli1JXTwg8OssnbJp63
-         Q4lw==
-X-Forwarded-Encrypted: i=1; AJvYcCUeFbpClIPOufHSSFvvxqjkBMV2aa74KZVZQQ9y4Z+I2136XI1yfmo5EhI3IhW8NFJsvXlY08klUi0fhQSN@vger.kernel.org, AJvYcCUqAxhq4hONFmLSja5/30IHB9ORvko+wW8ZaQVstTJiDHLvbzWuonoQsmQEOGqRExDOxCzjOAQp@vger.kernel.org, AJvYcCVBpAkROhg93jcE7WIfU+CQUmbM4slRIwTZa7hARBvXsoDpPpl5URXl4mxxLFV7o5P/X9OYw26pDKI8Dw==@vger.kernel.org, AJvYcCVJ7XFAwzTFQt57RmzUwkHEcPUtiIOWr1ds9iuNsVOyvyjn2ePsoUrOf/zheU6im91H8D4=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwH339qAf779nAfj+DcJ72+IJgMGHbJvO8VQZm1OVJDiCE1zv+R
-	ilvPk9gU4+bxuH/rcGY375lpPykwctLgUrKBnHWYUnHNtkYNFkpnzACt
-X-Gm-Gg: ASbGncsEID06bfKzTmIou2kVVfggWPL+eBxvt9s+xCnhRyaldcrvCnOCOE8nh89Hu16
-	SAOe49r7dsSGancXdZfu2aYG15r42Yc/pHF1i2qRol0hfWdw4IUZjIxN5hVbSWg8YSmUIxpfPhv
-	rqNRmnw5z5A+Q3+QV5S2wQuikXuDtl8mYaqfYZhcvRYUQx0whqwvYLvlsU0LN3maOj0EITOQ79M
-	aEo4LLULiqSuGAk7MEk7DyoCaAUY/Jcx9QUJvF8v2mpmZcHhXI7wbVP5OSGrmu/h5TO85lCATM5
-	E69f5PVBLjUA0kpyoDpcz028Ejl7tFfrRQ6aHGTaUdIJya/VFuCySk34pmHJeCew+j+kpL4bhBA
-	=
-X-Google-Smtp-Source: AGHT+IFkMr16MZMhGYOEMve0k+oWilXDkDPpSQstoYWVNutXXp/lz9Oc+tMJS730MOiqaVVD0hEmBQ==
-X-Received: by 2002:a17:907:3f18:b0:ade:4339:9367 with SMTP id a640c23a62f3a-ae057a222b4mr1293806966b.26.1750698314880;
-        Mon, 23 Jun 2025 10:05:14 -0700 (PDT)
-Received: from ?IPV6:2620:10d:c096:325::2ef? ([2620:10d:c092:600::1:85c4])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ae054082d25sm728555966b.88.2025.06.23.10.05.13
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 23 Jun 2025 10:05:14 -0700 (PDT)
-Message-ID: <41e68e52-5747-4b18-810d-4b20ada01c9a@gmail.com>
-Date: Mon, 23 Jun 2025 18:06:37 +0100
+        d=1e100.net; s=20230601; t=1750698783; x=1751303583;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=fFVerlv1rup6mF5IH5Ew1KKnD+3iU06ke4X3UNXN3IU=;
+        b=iqX61k1ApOurpHuA0fvu/wyZJcX3DBkvxWC75IEVKtizacliuyJpV4I0k9huy2H7HE
+         pRZ/OZBQ9wayW4/EhRGHG+1QKWIurV3j3iAECYNsbFwvalYmvjSN1JIc+8NX98P+qIfN
+         tchD8e8WMfff0cgmTY4Xnxc53nZZWwTMtIHP2oHFucsihG+ujRjBty2DYTpjHa+3x8M9
+         SjPkaRRgS2PSo2VcFz9NIPvBBAxxiH9Q6P5jQqVEZjDb3flpV33NbWpqID1PXq+hUPrn
+         cac2LiN55nr4qgzWCL3HQj7SzhUXh1jYrt2tOToaxetVsBSWJkO2qlMNQCfRuLkSksrS
+         lWEg==
+X-Forwarded-Encrypted: i=1; AJvYcCUHYOSOpMBNt5BtKHO8LDtjHuMMWdcwc3KY6hgdWWYLgTquRsaWDAr4cy9IRJbZJFimB92Pk9x5pr+zexo=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz4zXS+NW+tmioqTq+9GW09SAb49x3fNTm6U2dlRiEOI5Dt9hY0
+	seD9PQJd0RS9PfG23u+NuW0jXFAcHmi/vTA6eMwnO2lKxtCh/rzMaKknEr+aXY8aPMpVvCyaO3U
+	4aom9BEzEHrofY57r2uitHPMNa/bOHGo+bdUgT54sS+9p1RxvmwICIR9LZP4=
+X-Gm-Gg: ASbGncteWECp3wTKSEbORa+zg9hBNdFnWtqYO4xMrkMhohKv00JrX7Y3JdAY5TpE149
+	AKB00MkTH2o3JCkTVR10AGaES1cD3Ncp3zg0PadNsLPaQwP25agxLNl7eCPL3jMWpl1GbI69zao
+	ZLvBNtefDSk5/zIudUompdwFYhBU/Jha1K+J60efz//SrXCTs5h2DXNMFetwXvXOcnrN4upjI/i
+	Ylad2WGgybhxHH4P6BiY7wh5ROCHWBzzIHXVxrVCHNVbeLl6wJ9CvEEQJWjkFVouNwNLRVXEQDz
+	14VPDq6aqFa4gmoPYLOV1I8rDv5rzuPmXaIz4JODtf+L51sIflMPpVKcs6gSOAKf/dA=
+X-Google-Smtp-Source: AGHT+IErer93kOXokwq6+DGSfC4ugUszBo78NJco3EFwM9G1wiRi3El8E+vg0RKm5OXQE67tFwgtNQ==
+X-Received: by 2002:a05:600c:5494:b0:453:590b:d392 with SMTP id 5b1f17b1804b1-453657bf79cmr45941935e9.2.1750698783204;
+        Mon, 23 Jun 2025 10:13:03 -0700 (PDT)
+Received: from steffen-linux.. ([24.134.20.169])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-453646cb57fsm118001245e9.1.2025.06.23.10.13.01
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 23 Jun 2025 10:13:02 -0700 (PDT)
+From: =?UTF-8?q?Steffen=20B=C3=A4tz?= <steffen@innosonix.de>
+To: 
+Cc: =?UTF-8?q?Steffen=20B=C3=A4tz?= <steffen@innosonix.de>,
+	stable@vger.kernel.org,
+	Srinivas Kandagatla <srini@kernel.org>,
+	Shawn Guo <shawnguo@kernel.org>,
+	Sascha Hauer <s.hauer@pengutronix.de>,
+	Pengutronix Kernel Team <kernel@pengutronix.de>,
+	Fabio Estevam <festevam@gmail.com>,
+	Dmitry Baryshkov <lumag@kernel.org>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	imx@lists.linux.dev,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH v3] nvmem: imx-ocotp: fix MAC address byte length
+Date: Mon, 23 Jun 2025 19:09:55 +0200
+Message-ID: <20250623171003.1875027-1-steffen@innosonix.de>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH net-next v6 9/9] page_pool: access ->pp_magic through
- struct netmem_desc in page_pool_page_is_pp()
-To: David Hildenbrand <david@redhat.com>, Zi Yan <ziy@nvidia.com>,
- Byungchul Park <byungchul@sk.com>
-Cc: willy@infradead.org, netdev@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-mm@kvack.org, kernel_team@skhynix.com,
- kuba@kernel.org, almasrymina@google.com, ilias.apalodimas@linaro.org,
- harry.yoo@oracle.com, hawk@kernel.org, akpm@linux-foundation.org,
- davem@davemloft.net, john.fastabend@gmail.com, andrew+netdev@lunn.ch,
- toke@redhat.com, tariqt@nvidia.com, edumazet@google.com, pabeni@redhat.com,
- saeedm@nvidia.com, leon@kernel.org, ast@kernel.org, daniel@iogearbox.net,
- lorenzo.stoakes@oracle.com, Liam.Howlett@oracle.com, vbabka@suse.cz,
- rppt@kernel.org, surenb@google.com, mhocko@suse.com, horms@kernel.org,
- linux-rdma@vger.kernel.org, bpf@vger.kernel.org, vishal.moola@gmail.com,
- hannes@cmpxchg.org, jackmanb@google.com
-References: <20250620041224.46646-1-byungchul@sk.com>
- <20250620041224.46646-10-byungchul@sk.com>
- <ce5b4b18-9934-41e3-af04-c34653b4b5fa@redhat.com>
- <20250623101622.GB3199@system.software.com>
- <460ACE40-9E99-42B8-90F0-2B18D2D8C72C@nvidia.com>
- <a8d40a05-db4c-400f-839b-3c6159a1feab@redhat.com>
-Content-Language: en-US
-From: Pavel Begunkov <asml.silence@gmail.com>
-In-Reply-To: <a8d40a05-db4c-400f-839b-3c6159a1feab@redhat.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 6/23/25 15:58, David Hildenbrand wrote:
-> On 23.06.25 13:13, Zi Yan wrote:
->> On 23 Jun 2025, at 6:16, Byungchul Park wrote:
->>
->>> On Mon, Jun 23, 2025 at 11:16:43AM +0200, David Hildenbrand wrote:
->>>> On 20.06.25 06:12, Byungchul Park wrote:
->>>>> To simplify struct page, the effort to separate its own descriptor from
->>>>> struct page is required and the work for page pool is on going.
->>>>>
->>>>> To achieve that, all the code should avoid directly accessing page pool
->>>>> members of struct page.
->>>>>
->>>>> Access ->pp_magic through struct netmem_desc instead of directly
->>>>> accessing it through struct page in page_pool_page_is_pp().  Plus, move
->>>>> page_pool_page_is_pp() from mm.h to netmem.h to use struct netmem_desc
->>>>> without header dependency issue.
->>>>>
->>>>> Signed-off-by: Byungchul Park <byungchul@sk.com>
->>>>> Reviewed-by: Toke Høiland-Jørgensen <toke@redhat.com>
->>>>> Reviewed-by: Mina Almasry <almasrymina@google.com>
->>>>> Reviewed-by: Pavel Begunkov <asml.silence@gmail.com>
->>>>> Reviewed-by: Vlastimil Babka <vbabka@suse.cz>
->>>>> Acked-by: Harry Yoo <harry.yoo@oracle.com>
->>>>> ---
->>>>>    include/linux/mm.h   | 12 ------------
->>>>>    include/net/netmem.h | 14 ++++++++++++++
->>>>>    mm/page_alloc.c      |  1 +
->>>>>    3 files changed, 15 insertions(+), 12 deletions(-)
->>>>>
->>>>> diff --git a/include/linux/mm.h b/include/linux/mm.h
->>>>> index 0ef2ba0c667a..0b7f7f998085 100644
->>>>> --- a/include/linux/mm.h
->>>>> +++ b/include/linux/mm.h
->>>>> @@ -4172,16 +4172,4 @@ int arch_lock_shadow_stack_status(struct task_struct *t, unsigned long status);
->>>>>     */
->>>>>    #define PP_MAGIC_MASK ~(PP_DMA_INDEX_MASK | 0x3UL)
->>>>>
->>>>> -#ifdef CONFIG_PAGE_POOL
->>>>> -static inline bool page_pool_page_is_pp(struct page *page)
->>>>> -{
->>>>> -     return (page->pp_magic & PP_MAGIC_MASK) == PP_SIGNATURE;
->>>>> -}
->>>>> -#else
->>>>> -static inline bool page_pool_page_is_pp(struct page *page)
->>>>> -{
->>>>> -     return false;
->>>>> -}
->>>>> -#endif
->>>>> -
->>>>>    #endif /* _LINUX_MM_H */
->>>>> diff --git a/include/net/netmem.h b/include/net/netmem.h
->>>>> index d49ed49d250b..3d1b1dfc9ba5 100644
->>>>> --- a/include/net/netmem.h
->>>>> +++ b/include/net/netmem.h
->>>>> @@ -56,6 +56,20 @@ NETMEM_DESC_ASSERT_OFFSET(pp_ref_count, pp_ref_count);
->>>>>     */
->>>>>    static_assert(sizeof(struct netmem_desc) <= offsetof(struct page, _refcount));
->>>>>
->>>>> +#ifdef CONFIG_PAGE_POOL
->>>>> +static inline bool page_pool_page_is_pp(struct page *page)
->>>>> +{
->>>>> +     struct netmem_desc *desc = (struct netmem_desc *)page;
->>>>> +
->>>>> +     return (desc->pp_magic & PP_MAGIC_MASK) == PP_SIGNATURE;
->>>>> +}
->>>>> +#else
->>>>> +static inline bool page_pool_page_is_pp(struct page *page)
->>>>> +{
->>>>> +     return false;
->>>>> +}
->>>>> +#endif
->>>>
->>>> I wonder how helpful this cleanup is long-term.
->>>>
->>>> page_pool_page_is_pp() is only called from mm/page_alloc.c, right?
->>>
->>> Yes.
->>>
->>>> There, we want to make sure that no pagepool page is ever returned to
->>>> the buddy.
->>>>
->>>> How reasonable is this sanity check to have long-term? Wouldn't we be
->>>> able to check that on some higher-level freeing path?
->>>>
->>>> The reason I am commenting is that once we decouple "struct page" from
->>>> "struct netmem_desc", we'd have to lookup here the corresponding "struct
->>>> netmem_desc".
->>>>
->>>> ... but at that point here (when we free the actual pages), the "struct
->>>> netmem_desc" would likely already have been freed separately (remember:
->>>> it will be dynamically allocated).
->>>>
->>>> With that in mind:
->>>>
->>>> 1) Is there a higher level "struct netmem_desc" freeing path where we
->>>> could check that instead, so we don't have to cast from pages to
->>>> netmem_desc at all.
+The commit "13bcd440f2ff nvmem: core: verify cell's raw_len" caused an
+extension of the "mac-address" cell from 6 to 8 bytes due to word_size
+of 4 bytes.
 
-As you said, it's just a sanity check, all page pool pages should
-be freed by the networking code. It checks the ownership with
-netmem_is_pp(), which is basically the same as page_pool_page_is_pp()
-but done though some aliasing.
+Thus, the required byte swap for the mac-address of the full buffer length,
+caused an trucation of the read mac-address.
+From the original address 70:B3:D5:14:E9:0E to 00:00:70:B3:D5:14
 
-static inline bool netmem_is_pp(netmem_ref netmem)
-{
-	return (netmem_get_pp_magic(netmem) & PP_MAGIC_MASK) == PP_SIGNATURE;
-}
+After swapping only the first 6 bytes, the mac-address is correctly passed
+to the upper layers.
 
-I assume there is no point in moving the check to skbuff.c as it
-already does exactly same test, but we can probably just kill it.
+Fixes: 13bcd440f2ff ("nvmem: core: verify cell's raw_len")
+Cc: stable@vger.kernel.org
+Signed-off-by: Steffen B=C3=A4tz <steffen@innosonix.de>
+---
+v3:
+- replace magic number 6 with ETH_ALEN
+- Fix misleading indentation and properly group 'mac-address' statements
+v2:
+- Add Cc: stable@vger.kernel.org as requested by Greg KH's patch bot
+ drivers/nvmem/imx-ocotp-ele.c | 6 +++++-
+ drivers/nvmem/imx-ocotp.c     | 6 +++++-
+ 2 files changed, 10 insertions(+), 2 deletions(-)
 
--- 
-Pavel Begunkov
+diff --git a/drivers/nvmem/imx-ocotp-ele.c b/drivers/nvmem/imx-ocotp-ele.c
+index ca6dd71d8a2e..9ef01c91dfa6 100644
+--- a/drivers/nvmem/imx-ocotp-ele.c
++++ b/drivers/nvmem/imx-ocotp-ele.c
+@@ -12,6 +12,7 @@
+ #include <linux/of.h>
+ #include <linux/platform_device.h>
+ #include <linux/slab.h>
++#include <linux/if_ether.h>	/* ETH_ALEN */
+=20
+ enum fuse_type {
+ 	FUSE_FSB =3D BIT(0),
+@@ -118,9 +119,12 @@ static int imx_ocotp_cell_pp(void *context, const char=
+ *id, int index,
+ 	int i;
+=20
+ 	/* Deal with some post processing of nvmem cell data */
+-	if (id && !strcmp(id, "mac-address"))
++	if (id && !strcmp(id, "mac-address")) {
++		if (bytes > ETH_ALEN)
++			bytes =3D ETH_ALEN;
+ 		for (i =3D 0; i < bytes / 2; i++)
+ 			swap(buf[i], buf[bytes - i - 1]);
++	}
+=20
+ 	return 0;
+ }
+diff --git a/drivers/nvmem/imx-ocotp.c b/drivers/nvmem/imx-ocotp.c
+index 79dd4fda0329..1343cafc37cc 100644
+--- a/drivers/nvmem/imx-ocotp.c
++++ b/drivers/nvmem/imx-ocotp.c
+@@ -23,6 +23,7 @@
+ #include <linux/platform_device.h>
+ #include <linux/slab.h>
+ #include <linux/delay.h>
++#include <linux/if_ether.h>	/* ETH_ALEN */
+=20
+ #define IMX_OCOTP_OFFSET_B0W0		0x400 /* Offset from base address of the
+ 					       * OTP Bank0 Word0
+@@ -227,9 +228,12 @@ static int imx_ocotp_cell_pp(void *context, const char=
+ *id, int index,
+ 	int i;
+=20
+ 	/* Deal with some post processing of nvmem cell data */
+-	if (id && !strcmp(id, "mac-address"))
++	if (id && !strcmp(id, "mac-address")) {
++		if (bytes > ETH_ALEN)
++			bytes =3D ETH_ALEN;
+ 		for (i =3D 0; i < bytes / 2; i++)
+ 			swap(buf[i], buf[bytes - i - 1]);
++	}
+=20
+ 	return 0;
+ }
+--=20
+2.43.0
 
+
+--=20
+
+
+*innosonix GmbH*
+Hauptstr. 35
+96482 Ahorn
+central: +49 9561 7459980
+www.innosonix.de <http://www.innosonix.de>
+
+innosonix GmbH
+Gesch=C3=A4ftsf=C3=BChrer:=20
+Markus B=C3=A4tz, Steffen B=C3=A4tz
+USt.-IdNr / VAT-Nr.: DE266020313
+EORI-Nr.:=20
+DE240121536680271
+HRB 5192 Coburg
+WEEE-Reg.-Nr. DE88021242
 
