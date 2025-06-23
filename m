@@ -1,130 +1,118 @@
-Return-Path: <linux-kernel+bounces-697850-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-697854-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id DD586AE3969
-	for <lists+linux-kernel@lfdr.de>; Mon, 23 Jun 2025 11:05:57 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 00311AE3980
+	for <lists+linux-kernel@lfdr.de>; Mon, 23 Jun 2025 11:09:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B2B93188B5B4
-	for <lists+linux-kernel@lfdr.de>; Mon, 23 Jun 2025 09:06:13 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AD8E23A9B32
+	for <lists+linux-kernel@lfdr.de>; Mon, 23 Jun 2025 09:07:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B4278230BC8;
-	Mon, 23 Jun 2025 09:05:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 721C0230BDC;
+	Mon, 23 Jun 2025 09:07:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="RdwNAsk/"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=fail reason="signature verification failed" (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="MHW35Idm"
+Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0E7F922F74E;
-	Mon, 23 Jun 2025 09:05:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 28799230BCB
+	for <linux-kernel@vger.kernel.org>; Mon, 23 Jun 2025 09:07:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750669546; cv=none; b=bhwUnu2HKOnIDjrN8rz1WI115tFMC5c21iglcR3Knnh1P0FcOePJW0oYa+9dPNM6pNrI3oZoNDfni4ZMNaGnc1MfOnRTpGFKoM/aKnjWyd2mVDOIxlFjmyJFKGkaXorhc+q0nyFUedw1OK6v3dQeubbG5fn7deEaRdXE07NOjrg=
+	t=1750669636; cv=none; b=nJIMTtNOSO08TXD4ospVRvEfwjEkjDfll3Gc0oTxbOsWszG7vloQqbCMLGP38ZPP+NIW2RQwjvZzeONI97+y3dkw0tx1qcYSxF2OnS7EmSJVl0drK1yAJCsEhreEMuv5i2biO0sWLwegWhWei+DkzGOrZMXVOEeI3zRmxgB7Az0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750669546; c=relaxed/simple;
-	bh=UQtpKkCNK/ydA/BGLNBKX3hmfJ58T1rD0l8E43Ckjyw=;
-	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=f+JbKB7kOqhWkX5HbumBMd6+YAYk1+dcEL1kBFx7hYu+1JCOK/5OAU1vYx8I1yFE+Mtk0qnMqaJvFeot5QPTlq25GgR4Pyl3JdgCOWP235915GhOPX8RqiAW20oR1UZkhep+0p+AxhBG5zkvUzzeVKkMS42RIa9k4IAZzmbPbRs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=RdwNAsk/; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D786BC4CEEA;
-	Mon, 23 Jun 2025 09:05:45 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1750669545;
-	bh=UQtpKkCNK/ydA/BGLNBKX3hmfJ58T1rD0l8E43Ckjyw=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=RdwNAsk/8b7WLbAxEMp1SS3DyQKQ4MKz8D03+cE6S+ArTXiVisYG9wF410ACpoqq2
-	 MQjJwmiG0UCQ9jSboMnpuA3UlOnCywiOifZjOSNHRTgkvf03uUhA72Veum88iRVuCc
-	 pNoYneMfGqzCKBbLfvIERKnD3u9We8NU2Hsc5Qeob0BpKl5CP3Fb+csjI7qoTqLJrX
-	 SEpQAmhfLNvjZq/Kxp2DXUduqy0iEmUBWJgmA2rJVx3iXl6keckrbZK9DLhkt/8Tkm
-	 A3bRxUsGauu5MdlqZR9oAfJ6PBMqi45NuQxLLlAwlTf+OdwI4h4zi8yJjOVSuo7LYj
-	 Iye6m91OBcEjw==
-Received: from sofa.misterjones.org ([185.219.108.64] helo=goblin-girl.misterjones.org)
-	by disco-boy.misterjones.org with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.95)
-	(envelope-from <maz@kernel.org>)
-	id 1uTd7X-0097hz-BJ;
-	Mon, 23 Jun 2025 10:05:43 +0100
-Date: Mon, 23 Jun 2025 10:05:42 +0100
-Message-ID: <868qliddzt.wl-maz@kernel.org>
-From: Marc Zyngier <maz@kernel.org>
-To: Oliver Upton <oliver.upton@linux.dev>
-Cc: Raghavendra Rao Ananta <rananta@google.com>,
-	Mingwei Zhang <mizhang@google.com>,
-	linux-arm-kernel@lists.infradead.org,
-	kvmarm@lists.linux.dev,
-	linux-kernel@vger.kernel.org,
-	kvm@vger.kernel.org
-Subject: Re: [PATCH v3 3/4] KVM: arm64: Introduce attribute to control GICD_TYPER2.nASSGIcap
-In-Reply-To: <aFkTDmj9u1ERnvHO@linux.dev>
-References: <20250613155239.2029059-1-rananta@google.com>
-	<20250613155239.2029059-4-rananta@google.com>
-	<87frftfpg7.wl-maz@kernel.org>
-	<aFkTDmj9u1ERnvHO@linux.dev>
-User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI-EPG/1.14.7 (Harue)
- FLIM-LB/1.14.9 (=?UTF-8?B?R29qxY0=?=) APEL-LB/10.8 EasyPG/1.0.0 Emacs/30.1
- (aarch64-unknown-linux-gnu) MULE/6.0 (HANACHIRUSATO)
+	s=arc-20240116; t=1750669636; c=relaxed/simple;
+	bh=IMn1P+Ks/bP+QpJ9jZdSw40fJOriQfWoh50hrGcZl0Y=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=YBBZt7y3sL36tFyzhikQZ0bu7ch2ZUkGppATWIWQ3VIHQFFREaYes9g1vPTaidBrr+iUhH7JAnXZwOxElLd4+0FyLJJ3gSzK4tKju+myEsoYu1hqrKhNgwJ5cB5SsH0OHZDezolCMVKBs7H3I14AJKZb3qSmm84fyFzHj5g3XtU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=fail (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=MHW35Idm reason="signature verification failed"; arc=none smtp.client-ip=65.109.113.108
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
+Received: from localhost (localhost.localdomain [127.0.0.1])
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id 26E8440E019C;
+	Mon, 23 Jun 2025 09:07:03 +0000 (UTC)
+X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
+Authentication-Results: mail.alien8.de (amavisd-new); dkim=fail (4096-bit key)
+	reason="fail (body has been altered)" header.d=alien8.de
+Received: from mail.alien8.de ([127.0.0.1])
+	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
+	with ESMTP id mPTrE7O2tqK2; Mon, 23 Jun 2025 09:06:58 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
+	t=1750669617; bh=lydqhroFjgZ6ZeKfBnx6w6jtbaclgyltyHQ0uhub7Nw=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=MHW35Idmn3yisFD+6SXiKxE3yBRmKHgGHomZ81/Tb7zYJ7Rh7wZDTFtjyvZ8+tYpr
+	 +n/dr7fuQ0yRQ8w0x0vfFeA96lmqNOaZ45dwL5fIXIP8GwYxlsjvnhLLeLzOOXRdIT
+	 cq2X6aS/9WdCBcTpqZOgmYnHvxNDwgrvaj7/jXuRv9SK9PSEEo9v2rlGSGV26vY1NZ
+	 HBQObcQNivBgxEIx0LxusCHvuaVvS1/q6CXaNm8i7wjXlN2yvJUwFUSz9VG616IqlT
+	 HA0a5C3d6x/FzkWRy/w9+52vTU5Pz8KaDj2vPDfE4igmCdvPNkcaByqDhAOJhRzBut
+	 FH/4RvetFQeXJBW/VuWZddqUfYV2kNvXcsaWzKh/9ToxmVFTYxp0uaK4DKUw/ccnLi
+	 RtujHGQT/hUMU5IMCrTSbCH3YGMyNBCO0XBtT5fu4n4FeziMb2XimzeNrdxb5zyjoE
+	 Q+l5rDHc/uWpawTNWU1G5OiS09PsbVeSYMUxrX3SbLLhexAPd6eIMQzr91puLPEZaG
+	 4nTW9WdBKBa2Pm+TGmvONnGLgvKoda0pMMyTlfvAgp+musY+vvRfEnCrYmABBZ8JKE
+	 bYjJOu4qSfyAG3a1z1G+mHxbyRo8rlTOxN8kJZbX4DxPG+vfBTY7P1Fuma/AYEvtO9
+	 Iv+kTFTiClDzA2LoJdDUa/I8=
+Received: from zn.tnic (p57969c58.dip0.t-ipconnect.de [87.150.156.88])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
+	(No client certificate requested)
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id D561A40E00DD;
+	Mon, 23 Jun 2025 09:06:48 +0000 (UTC)
+Date: Mon, 23 Jun 2025 11:06:42 +0200
+From: Borislav Petkov <bp@alien8.de>
+To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Cc: linux-kernel@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>,
+	Ingo Molnar <mingo@redhat.com>,
+	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
+	"H. Peter Anvin" <hpa@zytor.com>,
+	Daniel =?utf-8?B?RMOtYXo=?= <daniel.diaz@linaro.org>
+Subject: Re: [PATCH v1 1/1] x86/defconfigs: Explicitly unset CONFIG_64BIT in
+ i386_defconfig
+Message-ID: <20250623090642.GAaFkZIq__HR0FJE-0@fat_crate.local>
+References: <20250623072536.3425344-1-andriy.shevchenko@linux.intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
-Content-Type: text/plain; charset=US-ASCII
-X-SA-Exim-Connect-IP: 185.219.108.64
-X-SA-Exim-Rcpt-To: oliver.upton@linux.dev, rananta@google.com, mizhang@google.com, linux-arm-kernel@lists.infradead.org, kvmarm@lists.linux.dev, linux-kernel@vger.kernel.org, kvm@vger.kernel.org
-X-SA-Exim-Mail-From: maz@kernel.org
-X-SA-Exim-Scanned: No (on disco-boy.misterjones.org); SAEximRunCond expanded to false
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20250623072536.3425344-1-andriy.shevchenko@linux.intel.com>
+Content-Transfer-Encoding: quoted-printable
 
-On Mon, 23 Jun 2025 09:40:46 +0100,
-Oliver Upton <oliver.upton@linux.dev> wrote:
-> 
-> On Sat, Jun 21, 2025 at 09:50:48AM +0100, Marc Zyngier wrote:
-> > On Fri, 13 Jun 2025 16:52:37 +0100, Raghavendra Rao Ananta <rananta@google.com> wrote:
-> > > @@ -683,8 +714,14 @@ static int vgic_v3_has_attr(struct kvm_device *dev,
-> > >  			return 0;
-> > >  		case KVM_DEV_ARM_VGIC_SAVE_PENDING_TABLES:
-> > >  			return 0;
-> > > +		default:
-> > > +			return -ENXIO;
-> > >  		}
-> > > +	case KVM_DEV_ARM_VGIC_GRP_FEATURES:
-> > > +		return attr->attr != KVM_DEV_ARM_VGIC_FEATURE_nASSGIcap ?
-> > > +		       -ENXIO : 0;
-> > 
-> > Do we really want to advertise KVM_DEV_ARM_VGIC_FEATURE_nASSGIcap even
-> > when we don't have GICv4.1? This seems rather odd. My take on this API
-> > is that this should report whether the feature is configurable, making
-> > it backward compatible with older versions of KVM.
-> 
-> So this was because of me, as I wanted nASSGIcap to behave exactly like
-> the ID registers. I do think exposing the capability unconditionally is
-> useful, as otherwise there's no way to definitively say whether or not
-> the underlying platform supports GICv4.1.
-> 
-> KVM_HAS_DEVICE_ATTR can't be used alone for probing since old kernels
-> use GICv4.1 but don't expose the attribute.
-> 
-> Does that make sense?
+On Mon, Jun 23, 2025 at 10:25:36AM +0300, Andy Shevchenko wrote:
+> From: Daniel D=C3=ADaz <daniel.diaz@linaro.org>
+>=20
+> A recent refresh of the defconfigs got rid of the following
+> (unset) config:
+>=20
+>   # CONFIG_64BIT is not set
+>=20
+> Innocuous as it seems, when the config file is saved again the
+> behavior is changed so that CONFIG_64BIT=3Dy.
+>=20
+> Currently,
+>=20
+>   $ make i386_defconfig
+>   $ grep CONFIG_64BIT .config
+>   CONFIG_64BIT=3Dy
+>=20
+> whereas previously (and with this patch):
+>=20
+>   $ make i386_defconfig
+>   $ grep CONFIG_64BIT .config
+>   # CONFIG_64BIT is not set
+>=20
+> Fixes: 0e11f689ec03 ("x86/kconfig/32: Refresh defconfig")
+> Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 
-My own reasoning is that if we expose the capability, userspace is
-able to use it and rely on it to take effect (VPE allocation error
-notwithstanding). This is not the case with this approach, and that's
-at odds with the other attributes.
+No SOB by Daniel?
 
-But taking a step back: if we want to control the nASSGIcap bit, why
-don't we allow writing to GICD_TYPER2 from userspace? This does
-matches your view that we treat it as an ID register (GICD_TYPER2
-matches this definition if you squint hard enough). It also avoids
-adding new UAPI with unusual semantics.
+--=20
+Regards/Gruss,
+    Boris.
 
-Has this been considered?
-
-Thanks,
-
-	M.
-
--- 
-Without deviation from the norm, progress is not possible.
+https://people.kernel.org/tglx/notes-about-netiquette
 
