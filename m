@@ -1,232 +1,117 @@
-Return-Path: <linux-kernel+bounces-698149-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-698151-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 16205AE3DDD
-	for <lists+linux-kernel@lfdr.de>; Mon, 23 Jun 2025 13:26:17 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 301E3AE3DDF
+	for <lists+linux-kernel@lfdr.de>; Mon, 23 Jun 2025 13:27:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D503018967D7
-	for <lists+linux-kernel@lfdr.de>; Mon, 23 Jun 2025 11:26:32 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C2C3C1720F2
+	for <lists+linux-kernel@lfdr.de>; Mon, 23 Jun 2025 11:27:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5B42823E359;
-	Mon, 23 Jun 2025 11:25:59 +0000 (UTC)
-Received: from mail.nfschina.com (unknown [42.101.60.213])
-	by smtp.subspace.kernel.org (Postfix) with SMTP id 7CA04AD2C;
-	Mon, 23 Jun 2025 11:25:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=42.101.60.213
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C3E9423E359;
+	Mon, 23 Jun 2025 11:26:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="C2KTII+t"
+Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1A7F1231C8D;
+	Mon, 23 Jun 2025 11:26:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750677959; cv=none; b=gyxFhsuiadAWj/xfAoQObkcbkxetojHXhCZZzJeVFhV5FykXYtsKgQMfPCEai+tmTc9nUFXEIsUYQSFxXbgr9Vvhhvacc00dtJxOT3DmaQQQOA/leeLYEaB88eEj3JZSH96WtWcNIGFK8M8Cx2F24L91KMajlnjrvA0iCBSLQFw=
+	t=1750678011; cv=none; b=Gdji8NrYXoZXDwXCvtS98wqDtEUCsiLOs7/UReQ77uGzJzlCndPcVTF9UCsW3CAzN+6Wmm82mNBBmcoouwtrbzd7vkwJ1kJcCBVZnP/zX3a6HxE6W1F84R/KG2//N2zM61TiWmW1Usn1ZLmUfcULU+BbCUr7qhHxSZNDfwU9zkw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750677959; c=relaxed/simple;
-	bh=JqNLDEah2GOKHVU7TafHOvabicOGp61hHYVVC6ESmGw=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=n/m1522fZ4K5gcvp5GMoQnZRYHZ7aFaaHMVcl6H02BQJxSjGyKAqI7j6lKzGYS6niFN8jaiMToQbMTaRkEvsQ9m8NPNedk7GMSxc9o90Mv7eCQR3orXqznhqSUDYQmw9Z9vPP5EZ+K7wg3qCtrkytpCAOad/q+09daeLThY4C2E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=nfschina.com; spf=pass smtp.mailfrom=nfschina.com; arc=none smtp.client-ip=42.101.60.213
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=nfschina.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nfschina.com
-Received: from longsh.shanghai.nfschina.local (unknown [180.167.10.98])
-	by mail.nfschina.com (MailData Gateway V2.8.8) with ESMTPSA id E060E60303EF0;
-	Mon, 23 Jun 2025 19:25:47 +0800 (CST)
-X-MD-Sfrom: suhui@nfschina.com
-X-MD-SrcIP: 180.167.10.98
-From: Su Hui <suhui@nfschina.com>
-To: tony.luck@intel.com,
-	reinette.chatre@intel.com,
-	Dave.Martin@arm.com,
-	james.morse@arm.com
-Cc: Su Hui <suhui@nfschina.com>,
-	linux-kernel@vger.kernel.org,
-	kernel-janitors@vger.kernel.org
-Subject: [PATCH] fs/resctrl: using guard to simplify lock/unlock code
-Date: Mon, 23 Jun 2025 19:25:41 +0800
-Message-Id: <20250623112540.3581675-1-suhui@nfschina.com>
-X-Mailer: git-send-email 2.30.2
+	s=arc-20240116; t=1750678011; c=relaxed/simple;
+	bh=AFKyudrR7+szYWjXjrL9H5jQwyzAn4iMDd/27Hht0Hw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=KOC/UXIPf9eZclFTKH8z7PeL5ASlaWuswt8wRWFXcpweF0bgiPeGKOjx7bXVZ5vwi14kVZnchObVEyFqXTTEZ+3ftptdUbw6FnvFqPHGAYJAT6yS/sbneHaKfLqL2gwEnkucr4Np41KcHDKwa7U6xgyjps1PRaNdkcD5coxIhRA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=C2KTII+t; arc=none smtp.client-ip=65.109.113.108
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
+Received: from localhost (localhost.localdomain [127.0.0.1])
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id A08BB40E01FC;
+	Mon, 23 Jun 2025 11:26:46 +0000 (UTC)
+X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
+Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
+	header.d=alien8.de
+Received: from mail.alien8.de ([127.0.0.1])
+	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
+	with ESMTP id O1-0Nqdl9xpc; Mon, 23 Jun 2025 11:26:43 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
+	t=1750678001; bh=b8YW3wQQJsx2YWUhHESzkkFpIy/unRLxkCns1tBbzj8=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=C2KTII+t5MujHsZ93m7d+MPYpXKuVuKvwYVMea5vJV70q9v48dwSLwUy3m4Y4tQRe
+	 bGc+xBYoN7ORB7HAXP6d5LAY3FAvTkWECoZkxZtQfJg+TCGJQsqF3Y8a5E9zfO8n/B
+	 FjZQWzv8Bd3DKoLexqcCG4GAUwh0mUAARsrFrNO+I9mY8jQqkznvupVwZAQbHIem2w
+	 7WXoCg3inwEGORZ3T+OAFucZXShJMKnkTTdqENJoGHI5ay0xvza8FHoanXXa/jynvy
+	 HOojC6jl/v2rXJkd/wHwtba3Uge690+R25laGv586oeZsABk7X8oMAbvjZBMnwOZr3
+	 jKHyjm6x6mAr6ggmMcwFB5KyDt9RloVV4N3E+d/wSoKZlzn+5WhWa8Jw46sIVoXSii
+	 V4/L7zLZcVONjCRWpCbtEdYxZkUvZmQe9tcVgmevA8/dft1Ue18gH0dYCyfDZlu6Je
+	 P8INwZ86NTFna/2j3/Mlktyt1mpUMjWAu8M6yCQ1m8JXofvcMyLsjYDr3cRsglWHlE
+	 CpVvJJXdWG482S56rwJU281hj0BHoCergidzChMQS7qEmQjVHn5R2Ktt54eX/b7o9H
+	 z15CaYKR/1qutHlFfGHbO5yyO+lHtjI6xGq2hS04kEslK5qAD4lVzc9m1zgEgvH5EE
+	 PrPw2TmfaY6D/dyHVggwZsG4=
+Received: from zn.tnic (p57969c58.dip0.t-ipconnect.de [87.150.156.88])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
+	(No client certificate requested)
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 5868840E00CE;
+	Mon, 23 Jun 2025 11:26:19 +0000 (UTC)
+Date: Mon, 23 Jun 2025 13:26:12 +0200
+From: Borislav Petkov <bp@alien8.de>
+To: Neeraj Upadhyay <Neeraj.Upadhyay@amd.com>
+Cc: linux-kernel@vger.kernel.org, tglx@linutronix.de, mingo@redhat.com,
+	dave.hansen@linux.intel.com, Thomas.Lendacky@amd.com,
+	nikunj@amd.com, Santosh.Shukla@amd.com, Vasant.Hegde@amd.com,
+	Suravee.Suthikulpanit@amd.com, David.Kaplan@amd.com, x86@kernel.org,
+	hpa@zytor.com, peterz@infradead.org, seanjc@google.com,
+	pbonzini@redhat.com, kvm@vger.kernel.org,
+	kirill.shutemov@linux.intel.com, huibo.wang@amd.com,
+	naveen.rao@amd.com, francescolavra.fl@gmail.com,
+	tiala@microsoft.com
+Subject: Re: [RFC PATCH v7 01/37] KVM: lapic: Remove
+ __apic_test_and_{set|clear}_vector()
+Message-ID: <20250623112612.GEaFk51EOLBBvZWWJm@fat_crate.local>
+References: <20250610175424.209796-1-Neeraj.Upadhyay@amd.com>
+ <20250610175424.209796-2-Neeraj.Upadhyay@amd.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20250610175424.209796-2-Neeraj.Upadhyay@amd.com>
 
-Using guard() to replace *unlock* label. guard() is better than goto
-unlock patterns and is more concise. No functional changes.
+On Tue, Jun 10, 2025 at 11:23:48PM +0530, Neeraj Upadhyay wrote:
+> Remove __apic_test_and_set_vector() and __apic_test_and_clear_vector(),
+> because the _only_ register that's safe to modify with a non-atomic
+> operation is ISR, because KVM isn't running the vCPU, i.e. hardware can't
+> service an IRQ or process an EOI for the relevant (virtual) APIC.
+> 
+> No functional change intended.
+> 
+> Suggested-by: Sean Christopherson <seanjc@google.com>
+> [Neeraj: Add "inline" for apic_vector_to_isr()]
+> Signed-off-by: Neeraj Upadhyay <Neeraj.Upadhyay@amd.com>
+> ---
+> Changes since v6:
+> 
+>  - New change.
+> 
+>  arch/x86/kvm/lapic.c | 19 +++++++------------
+>  1 file changed, 7 insertions(+), 12 deletions(-)
 
-Signed-off-by: Su Hui <suhui@nfschina.com>
----
- fs/resctrl/monitor.c  | 25 ++++++++-----------------
- fs/resctrl/rdtgroup.c | 29 +++++++++--------------------
- 2 files changed, 17 insertions(+), 37 deletions(-)
+FWIW: LGTM.
 
-diff --git a/fs/resctrl/monitor.c b/fs/resctrl/monitor.c
-index f5637855c3ac..12e999eb7ed8 100644
---- a/fs/resctrl/monitor.c
-+++ b/fs/resctrl/monitor.c
-@@ -769,10 +769,10 @@ static int dom_data_init(struct rdt_resource *r)
- 	u32 idx_limit = resctrl_arch_system_num_rmid_idx();
- 	u32 num_closid = resctrl_arch_get_num_closid(r);
- 	struct rmid_entry *entry = NULL;
--	int err = 0, i;
-+	int i;
- 	u32 idx;
- 
--	mutex_lock(&rdtgroup_mutex);
-+	guard(mutex)(&rdtgroup_mutex);
- 	if (IS_ENABLED(CONFIG_RESCTRL_RMID_DEPENDS_ON_CLOSID)) {
- 		u32 *tmp;
- 
-@@ -783,10 +783,8 @@ static int dom_data_init(struct rdt_resource *r)
- 		 * use.
- 		 */
- 		tmp = kcalloc(num_closid, sizeof(*tmp), GFP_KERNEL);
--		if (!tmp) {
--			err = -ENOMEM;
--			goto out_unlock;
--		}
-+		if (!tmp)
-+			return -ENOMEM;
- 
- 		closid_num_dirty_rmid = tmp;
- 	}
-@@ -797,8 +795,7 @@ static int dom_data_init(struct rdt_resource *r)
- 			kfree(closid_num_dirty_rmid);
- 			closid_num_dirty_rmid = NULL;
- 		}
--		err = -ENOMEM;
--		goto out_unlock;
-+		return -ENOMEM;
- 	}
- 
- 	for (i = 0; i < idx_limit; i++) {
-@@ -819,18 +816,15 @@ static int dom_data_init(struct rdt_resource *r)
- 	entry = __rmid_entry(idx);
- 	list_del(&entry->list);
- 
--out_unlock:
--	mutex_unlock(&rdtgroup_mutex);
--
--	return err;
-+	return 0;
- }
- 
- static void dom_data_exit(struct rdt_resource *r)
- {
--	mutex_lock(&rdtgroup_mutex);
-+	guard(mutex)(&rdtgroup_mutex);
- 
- 	if (!r->mon_capable)
--		goto out_unlock;
-+		return;
- 
- 	if (IS_ENABLED(CONFIG_RESCTRL_RMID_DEPENDS_ON_CLOSID)) {
- 		kfree(closid_num_dirty_rmid);
-@@ -839,9 +833,6 @@ static void dom_data_exit(struct rdt_resource *r)
- 
- 	kfree(rmid_ptrs);
- 	rmid_ptrs = NULL;
--
--out_unlock:
--	mutex_unlock(&rdtgroup_mutex);
- }
- 
- static struct mon_evt llc_occupancy_event = {
-diff --git a/fs/resctrl/rdtgroup.c b/fs/resctrl/rdtgroup.c
-index 77d08229d855..73bc1ab05b5e 100644
---- a/fs/resctrl/rdtgroup.c
-+++ b/fs/resctrl/rdtgroup.c
-@@ -916,14 +916,13 @@ int proc_resctrl_show(struct seq_file *s, struct pid_namespace *ns,
- 		      struct pid *pid, struct task_struct *tsk)
- {
- 	struct rdtgroup *rdtg;
--	int ret = 0;
- 
--	mutex_lock(&rdtgroup_mutex);
-+	guard(mutex)(&rdtgroup_mutex);
- 
- 	/* Return empty if resctrl has not been mounted. */
- 	if (!resctrl_mounted) {
- 		seq_puts(s, "res:\nmon:\n");
--		goto unlock;
-+		return 0;
- 	}
- 
- 	list_for_each_entry(rdtg, &rdt_all_groups, rdtgroup_list) {
-@@ -952,17 +951,13 @@ int proc_resctrl_show(struct seq_file *s, struct pid_namespace *ns,
- 			break;
- 		}
- 		seq_putc(s, '\n');
--		goto unlock;
-+		return 0;
- 	}
- 	/*
- 	 * The above search should succeed. Otherwise return
- 	 * with an error.
- 	 */
--	ret = -ENOENT;
--unlock:
--	mutex_unlock(&rdtgroup_mutex);
--
--	return ret;
-+	return -ENOENT;
- }
- #endif
- 
-@@ -4132,11 +4127,11 @@ int resctrl_online_mon_domain(struct rdt_resource *r, struct rdt_mon_domain *d)
- {
- 	int err;
- 
--	mutex_lock(&rdtgroup_mutex);
-+	guard(mutex)(&rdtgroup_mutex);
- 
- 	err = domain_setup_mon_state(r, d);
- 	if (err)
--		goto out_unlock;
-+		return err;
- 
- 	if (resctrl_is_mbm_enabled()) {
- 		INIT_DELAYED_WORK(&d->mbm_over, mbm_handle_overflow);
-@@ -4156,10 +4151,7 @@ int resctrl_online_mon_domain(struct rdt_resource *r, struct rdt_mon_domain *d)
- 	if (resctrl_mounted && resctrl_arch_mon_capable())
- 		mkdir_mondata_subdir_allrdtgrp(r, d);
- 
--out_unlock:
--	mutex_unlock(&rdtgroup_mutex);
--
--	return err;
-+	return 0;
- }
- 
- void resctrl_online_cpu(unsigned int cpu)
-@@ -4202,7 +4194,7 @@ void resctrl_offline_cpu(unsigned int cpu)
- 	struct rdt_mon_domain *d;
- 	struct rdtgroup *rdtgrp;
- 
--	mutex_lock(&rdtgroup_mutex);
-+	guard(mutex)(&rdtgroup_mutex);
- 	list_for_each_entry(rdtgrp, &rdt_all_groups, rdtgroup_list) {
- 		if (cpumask_test_and_clear_cpu(cpu, &rdtgrp->cpu_mask)) {
- 			clear_childcpus(rdtgrp, cpu);
-@@ -4211,7 +4203,7 @@ void resctrl_offline_cpu(unsigned int cpu)
- 	}
- 
- 	if (!l3->mon_capable)
--		goto out_unlock;
-+		return;
- 
- 	d = get_mon_domain_from_cpu(cpu, l3);
- 	if (d) {
-@@ -4225,9 +4217,6 @@ void resctrl_offline_cpu(unsigned int cpu)
- 			cqm_setup_limbo_handler(d, 0, cpu);
- 		}
- 	}
--
--out_unlock:
--	mutex_unlock(&rdtgroup_mutex);
- }
- 
- /*
+:-)
+
 -- 
-2.30.2
+Regards/Gruss,
+    Boris.
 
+https://people.kernel.org/tglx/notes-about-netiquette
 
