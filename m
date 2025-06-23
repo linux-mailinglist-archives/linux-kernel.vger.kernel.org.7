@@ -1,63 +1,71 @@
-Return-Path: <linux-kernel+bounces-698186-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-698189-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1C9B9AE3E67
-	for <lists+linux-kernel@lfdr.de>; Mon, 23 Jun 2025 13:47:18 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 77E71AE3E73
+	for <lists+linux-kernel@lfdr.de>; Mon, 23 Jun 2025 13:48:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 49D811747A5
-	for <lists+linux-kernel@lfdr.de>; Mon, 23 Jun 2025 11:47:17 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E65821897B70
+	for <lists+linux-kernel@lfdr.de>; Mon, 23 Jun 2025 11:48:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 17AE2246BAF;
-	Mon, 23 Jun 2025 11:45:55 +0000 (UTC)
-Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8CD022417C6;
+	Mon, 23 Jun 2025 11:47:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="bnO4gPuN"
+Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D204823D2B8
-	for <linux-kernel@vger.kernel.org>; Mon, 23 Jun 2025 11:45:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C27CE1B808;
+	Mon, 23 Jun 2025 11:47:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750679154; cv=none; b=RGePUN8BWcdTW4MCuWI4oV4pnsYHYD1gzrtpsJdQDoZN6wqvJBzfede4xgMoAqEpYiNe+L6j2Rxwk/tjm4bUj6UtZ1VOAUPRzsRZT45JzCyxADfnLR2fbbHhMT6ORDJTHSc3J5fAbFesZ+UoKNUWIh33eaStVLqv4P5z9Gfr/qo=
+	t=1750679242; cv=none; b=gFsHZbo87gpYDeOqiLihE0mRBiVGTXEvNrJyrQ+gnJa5Mzqqw4n4Olx5ojFF8DwSNhU8xR6KtVm4d5Y/I7Gocpf+JFVZh7odGg5IQtlzbD+7iXodpJrDdVC/wNkRMxTE90Jzt9ILK33FqgtOavjBVNE/OBR6+inqG0imp6m9R20=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750679154; c=relaxed/simple;
-	bh=PB88Ag1tjLpD37sBATIJiag40Vpg4EuIEynBTyK6h0k=;
+	s=arc-20240116; t=1750679242; c=relaxed/simple;
+	bh=oHIQGmhVZk1bws7ooyBVG45/Q0gIQsMf18p3cWsR55Q=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=PwcKlRgXiCgxBEQMR22U6riFQB9S1YnyhVdK4B9K/YPliCGzsm7Rce8OJooBZt9d+qyVMdDKyD2lJ9Qr4TI1K0W6ldzB8KhoRehKDou6O+1XlcFnoeH81ud5DK8TboMv1gvOjLw1/NtqChHc5aseDLDLPsjz3x9cc+5PWG5Elp8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
-Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
-	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-	(Exim 4.92)
-	(envelope-from <ore@pengutronix.de>)
-	id 1uTfcM-0001fr-JD; Mon, 23 Jun 2025 13:45:42 +0200
-Received: from pty.whiteo.stw.pengutronix.de ([2a0a:edc0:2:b01:1d::c5])
-	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.96)
-	(envelope-from <ore@pengutronix.de>)
-	id 1uTfcL-004wOX-0Y;
-	Mon, 23 Jun 2025 13:45:41 +0200
-Received: from ore by pty.whiteo.stw.pengutronix.de with local (Exim 4.96)
-	(envelope-from <ore@pengutronix.de>)
-	id 1uTfcL-00DBQG-07;
-	Mon, 23 Jun 2025 13:45:41 +0200
-Date: Mon, 23 Jun 2025 13:45:41 +0200
-From: Oleksij Rempel <o.rempel@pengutronix.de>
-To: Jakub Kicinski <kuba@kernel.org>
-Cc: "David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>, Paolo Abeni <pabeni@redhat.com>,
-	Simon Horman <horms@kernel.org>, kernel@pengutronix.de,
-	linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
-	Maxime Chevallier <maxime.chevallier@bootlin.com>
-Subject: Re: [PATCH net-next v4 0/4] net: selftest: improve test string
- formatting and checksum handling
-Message-ID: <aFk-Za778Bk38Dxn@pengutronix.de>
-References: <20250515083100.2653102-1-o.rempel@pengutronix.de>
- <20250516184510.2b84fab4@kernel.org>
- <aFU9o5F4RG3QVygb@pengutronix.de>
- <20250621064600.035b83b3@kernel.org>
+	 Content-Type:Content-Disposition:In-Reply-To; b=Sl9JllWsHUkbXKEKCS6wietsHBjByi3ldQ8GxlfGO01YpFlKJ8aks6xrB8HVlGlhk/3Ye3QG5GOn5f+LJ8WPenOrRnYmBR/woLVY3v08DT0+vf0VSclxeTzUn+c4cRtwzR/Raiqwwnc22oxP14Qa0/5daXnpqgOlcayvsF69nPg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=bnO4gPuN; arc=none smtp.client-ip=213.167.242.64
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
+Received: from pendragon.ideasonboard.com (81-175-209-231.bb.dnainternet.fi [81.175.209.231])
+	by perceval.ideasonboard.com (Postfix) with UTF8SMTPSA id B07C2198D;
+	Mon, 23 Jun 2025 13:47:01 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
+	s=mail; t=1750679221;
+	bh=oHIQGmhVZk1bws7ooyBVG45/Q0gIQsMf18p3cWsR55Q=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=bnO4gPuNBRCiyLmakXSRcFDiwdhL4FGmCD3/CF2YxwUjHyDOFd/uaOn5dYBqvaFTk
+	 bzzZyvDeqxO0ftEUIKTgViC3lylvEzfyf+XTjhROhYB+inUyHKlSjJaZaIWRtIYTZy
+	 OdjH/PzrwzCKQ3lHlwC11awVPI0dYDESYbEHllww=
+Date: Mon, 23 Jun 2025 14:46:58 +0300
+From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+To: Ricardo Ribalda Delgado <ribalda@kernel.org>
+Cc: =?utf-8?B?QW5kcsOp?= Apitzsch <git@apitzsch.eu>,
+	Sakari Ailus <sakari.ailus@linux.intel.com>,
+	Mauro Carvalho Chehab <mchehab@kernel.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>, Shawn Guo <shawnguo@kernel.org>,
+	Sascha Hauer <s.hauer@pengutronix.de>,
+	Pengutronix Kernel Team <kernel@pengutronix.de>,
+	Fabio Estevam <festevam@gmail.com>,
+	~postmarketos/upstreaming@lists.sr.ht, phone-devel@vger.kernel.org,
+	linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
+	devicetree@vger.kernel.org, imx@lists.linux.dev,
+	linux-arm-kernel@lists.infradead.org,
+	Ricardo Ribalda <ribalda@chromium.org>
+Subject: Re: [PATCH RESEND v4 3/5] media: i2c: imx214: Make use of CCS PLL
+ calculator
+Message-ID: <20250623114658.GB32376@pendragon.ideasonboard.com>
+References: <20250621-imx214_ccs_pll-v4-0-12178e5eb989@apitzsch.eu>
+ <20250621-imx214_ccs_pll-v4-3-12178e5eb989@apitzsch.eu>
+ <20250621181751.GA9125@pendragon.ideasonboard.com>
+ <ed0b8fe3a20111477cafb1de7b399afb99caaa0c.camel@apitzsch.eu>
+ <20250622171320.GA826@pendragon.ideasonboard.com>
+ <CAPybu_2WF=t4jnwsrTSCiSZ4T7Sck4-fCoub33=P_6KvdZ5ePg@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -66,92 +74,245 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20250621064600.035b83b3@kernel.org>
-X-Sent-From: Pengutronix Hildesheim
-X-URL: http://www.pengutronix.de/
-X-Accept-Language: de,en
-X-Accept-Content-Type: text/plain
-X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
-X-SA-Exim-Mail-From: ore@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAPybu_2WF=t4jnwsrTSCiSZ4T7Sck4-fCoub33=P_6KvdZ5ePg@mail.gmail.com>
 
-On Sat, Jun 21, 2025 at 06:46:00AM -0700, Jakub Kicinski wrote:
-> On Fri, 20 Jun 2025 12:53:23 +0200 Oleksij Rempel wrote:
-> > > What device are you talking about? How is this a problem with 
-> > > the selftest and not with the stack? If the test is flaky I'd 
-> > > think real traffic will suffer too. We pass these selftest packets
-> > > thru xmit validation AFAICT, so the stack should compute checksum
-> > > for the if the device can't.
-> > >   
-> > 
-> > Let me first describe the setup where this issue was observed and my findings.
-> > The problem occurs on a system utilizing a Microchip DSA driver with an STMMAC
-> > Ethernet controller attached to the CPU port.
-> > 
-> > In the current selftest implementation, the TCP checksum validation fails,
-> > while the UDP test passes. The existing code prepares the skb for hardware
-> > checksum offload by setting skb->ip_summed = CHECKSUM_PARTIAL. For TCP, it sets
-> > the thdr->check field to the complement of the pseudo-header checksum, and for
-> > UDP, it uses udp4_hwcsum. If I understand it correct, this configuration tells
-> > the kernel that the hardware should perform the checksum calculation.
-> > 
-> > However, during testing, I noticed that "rx-checksumming" is enabled by default
-> > on the CPU port, and this leads to the TCP test failure.  Only after disabling
-> > "rx-checksumming" on the CPU port did the selftest pass. This suggests that the
-> > issue is specifically related to the hardware checksum offload mechanism in
-> > this particular setup. The behavior indicates that something on the path
-> > recalculated the checksum incorrectly.
+Hi Ricardo,
+
+On Mon, Jun 23, 2025 at 11:31:17AM +0200, Ricardo Ribalda Delgado wrote:
+> On Sun, Jun 22, 2025 at 7:13 PM Laurent Pinchart wrote:
+> > On Sun, Jun 22, 2025 at 05:34:56PM +0200, André Apitzsch wrote:
+> > > Am Samstag, dem 21.06.2025 um 21:17 +0300 schrieb Laurent Pinchart:
+> > > > On Sat, Jun 21, 2025 at 11:37:27AM +0200, André Apitzsch via B4 Relay wrote:
+> > > > > From: André Apitzsch <git@apitzsch.eu>
+> > > > >
+> > > > > Calculate PLL parameters based on clock frequency and link
+> > > > > frequency.
+> > > > >
+> > > > > Acked-by: Ricardo Ribalda <ribalda@chromium.org>
+> > > > > Signed-off-by: André Apitzsch <git@apitzsch.eu>
+> > > > > ---
+> > > > >  drivers/media/i2c/Kconfig  |   1 +
+> > > > >  drivers/media/i2c/imx214.c | 213 ++++++++++++++++++++++++++++++++++++---------
+> > > > >  2 files changed, 175 insertions(+), 39 deletions(-)
+> > > > >
+> > > > > diff --git a/drivers/media/i2c/Kconfig b/drivers/media/i2c/Kconfig
+> > > > > index
+> > > > > e68202954a8fd4711d108cf295d5771246fbc406..08db8abeea218080b0bf5bfe6
+> > > > > cf82f1c0b100c4a 100644
+> > > > > --- a/drivers/media/i2c/Kconfig
+> > > > > +++ b/drivers/media/i2c/Kconfig
+> > > > > [..]
+> > > > > @@ -1224,42 +1336,52 @@ static int imx214_parse_fwnode(struct
+> > > > > device *dev)
+> > > > >   if (!endpoint)
+> > > > >   return dev_err_probe(dev, -EINVAL, "endpoint node not found\n");
+> > > > >
+> > > > > - ret = v4l2_fwnode_endpoint_alloc_parse(endpoint, &bus_cfg);
+> > > > > + bus_cfg->bus_type = V4L2_MBUS_CSI2_DPHY;
+> > > > > + ret = v4l2_fwnode_endpoint_alloc_parse(endpoint, bus_cfg);
+> > > > > + fwnode_handle_put(endpoint);
+> > > >
+> > > > ... drop this. Up to you.
+> > > >
+> > > > >   if (ret) {
+> > > > >   dev_err_probe(dev, ret, "parsing endpoint node failed\n");
+> > > > > - goto done;
+> > > > > + goto error;
+> > > >
+> > > > You can return ret here.
+> > > >
+> > > > >   }
+> > > > >
+> > > > >   /* Check the number of MIPI CSI2 data lanes */
+> > > > > - if (bus_cfg.bus.mipi_csi2.num_data_lanes != 4) {
+> > > > > + if (bus_cfg->bus.mipi_csi2.num_data_lanes != 4) {
+> > > > >   ret = dev_err_probe(dev, -EINVAL,
+> > > > >       "only 4 data lanes are currently supported\n");
+> > > > > - goto done;
+> > > > > + goto error;
+> > > > >   }
+> > > > >
+> > > > > - if (bus_cfg.nr_of_link_frequencies != 1)
+> > > > > + if (bus_cfg->nr_of_link_frequencies != 1)
+> > > > >   dev_warn(dev, "Only one link-frequency supported, please review
+> > > > > your DT. Continuing anyway\n");
+> > > >
+> > > > Now that the driver can calculate PLL parameters dynamically, it
+> > > > would be nice to lift this restriction and make the link frequency
+> > > > control writable, in a separate patch on top of this series.
+> > >
+> > > Maybe this could be postponed, as I don't have any use for it at the
+> > > moment and I don't want to further delay this series.
+> >
+> > When I said "on top", I didn't mean in a new version of this series. We
+> > can merge this first, and then lift this restriction. I don't have an
+> > imx214-based device so I can't do it myself and test it :-/
+> >
+> > > > > - for (i = 0; i < bus_cfg.nr_of_link_frequencies; i++) {
+> > > > > - if (bus_cfg.link_frequencies[i] == IMX214_DEFAULT_LINK_FREQ)
+> > > > > + for (i = 0; i < bus_cfg->nr_of_link_frequencies; i++) {
+> > > > > + u64 freq = bus_cfg->link_frequencies[i];
+> > > > > + struct ccs_pll pll;
+> > > > > +
+> > > > > + if (!imx214_pll_calculate(imx214, &pll, freq))
+> > > > >   break;
+> > > > > - if (bus_cfg.link_frequencies[i] ==
+> > > > > -     IMX214_DEFAULT_LINK_FREQ_LEGACY) {
+> > > > > + if (freq == IMX214_DEFAULT_LINK_FREQ_LEGACY) {
+> > > > >   dev_warn(dev,
+> > > > >   "link-frequencies %d not supported, please review your DT.
+> > > > > Continuing anyway\n",
+> > > > >   IMX214_DEFAULT_LINK_FREQ);
+> > > > > + freq = IMX214_DEFAULT_LINK_FREQ;
+> > > > > + if (imx214_pll_calculate(imx214, &pll, freq))
+> > > > > + continue;
+> > > > > + bus_cfg->link_frequencies[i] = freq;
+> > > > >   break;
+> > > > >   }
+> > > >
+> > > > How about separating the IMX214_DEFAULT_LINK_FREQ_LEGACY check from
+> > > > the PLL calculation ? Something like
+> > > >
+> > > >  u64 freq = bus_cfg->link_frequencies[i];
+> > > >  struct ccs_pll pll;
+> > > >
+> > > >  if (freq == IMX214_DEFAULT_LINK_FREQ_LEGACY) {
+> > > >  dev_warn(dev,
+> > > >  "link-frequencies %d not supported, please review your DT.
+> > > > Continuing anyway\n",
+> > > >  IMX214_DEFAULT_LINK_FREQ);
+> > > >  freq = IMX214_DEFAULT_LINK_FREQ;
+> > > >  bus_cfg->link_frequencies[i] = freq;
+> > > >  }
+> > >
+> > > With PLL calculation, 480000000 (=IMX214_DEFAULT_LINK_FREQ_LEGACY)
+> > > might be a valid link frequency explicitly set by the user. I'm not
+> > > sure whether it is a good idea to overwrite the link frequency, before
+> > > trying the PLL calculation. That's why I would keep the code the way it
+> > > is.
+> >
+> > The current code accepts both IMX214_DEFAULT_LINK_FREQ (600 MHz) and
+> > IMX214_DEFAULT_LINK_FREQ_LEGACY (400 MHz), and programs the PLL with (as
+> > far as I understand) a 600 MHz clock frequency in either case. To avoid
+> > a change in behaviour, I think overriding the 400 MHz frequency with 600
+> > MHz in this patch would be best. We could then drop that in a later
+> > patch, possibly by patching the clock frequency in a platform-specific
+> > driver instead of the imx214 driver.
+> >
+> > > >  if (!imx214_pll_calculate(imx214, &pll, freq))
+> > > >  break;
+> > > >
+> > > > It will then become easier to drop this legacy support from the
+> > > > driver. What platform(s) are know to specify an incorrect link
+> > > > frequency ?
+> > >
+> > > I don't know.
+> >
+> > Ricardo, do you have any information about this ?
 > 
-> Interesting, that sounds like the smoking gun. When rx-checksumming 
-> is enabled the packet still reaches the stack right?
-
-No. It looks like this packets are just silently dropped, before they was
-seen by the stack. The only counter which confirms presence of this
-frames is HW specific mmc_rx_tcp_err. But it will be increasing even if
-rx-checksumming is disabled and packets are forwarded to the stack.
-
-> If so does the frame enter the stack with CHECKSUM_COMPLETE or
-> UNNECESSARY?
-
-If rx-checksumming is enabled and packet has supported ethertype,
-then CHECKSUM_UNNECESSARY will be set. Otherwise CHECKSUM_NONE.
-
-> > When examining the loopbacked frames, I observed that the TCP checksum was
-> > incorrect. Upon further investigation, the xmit helper in net/dsa/tag_ksz.c
-> > includes the following:
-> > 
-> > if (skb->ip_summed == CHECKSUM_PARTIAL && skb_checksum_help(skb))
-> >     return NULL;
-> > 
-> > I assume skb_checksum_help() is intended to calculate the proper checksum when
-> > CHECKSUM_PARTIAL is set, indicating that the software should complete the
-> > checksum before handing it to the hardware. My understanding is that the STMMAC
-> > hardware then calculates the checksum for egress frames if CHECKSUM_PARTIAL is
-> > used.
+> This was for a development platform for Qualcomm, think of a pizero
+> like, but with a Snapdragon device.
 > 
-> stmmac shouldn't touch the frame, note that skb_checksum_help() sets
-> skb->ip_summed = CHECKSUM_NONE; so the skb should no longer be considered
-> for csum offload.
+> There was a Qtechnology product based on that platform. I asked them
+> if they could provide me a device for testing, but it has been
+> discontinued and  replaced with something better.
+> 
+> We can start to deprecate the clock quirk if you want.
 
-It looks like skb_checksum_help(), which is used in tag_ksz.c, generates
-a TCP checksum without accounting for the IP pseudo-header. The
-resulting checksum is then incorrect and is filtered out by the STMMAC
-HW on ingress
+That would be great. Thanks for the confirmation.
 
-If I generate the checksum manually by combining the result of
-skb_checksum() with the csum_tcpudp_magic() function - I get a different
-checksum from the skb_checksum_help() result, which is then not dropped
-by STMMAC on ingress.
+By deprecate, do you mean first printing a message for a few kernel
+releases, or can we just drop it in the next version of this patch ?
 
-Should tag_ksz.c use a different helper function instead of
-skb_checksum_help()?
+> > > > >   }
+> > > > >
+> > > > > - if (i == bus_cfg.nr_of_link_frequencies)
+> > > > > + if (i == bus_cfg->nr_of_link_frequencies)
+> > > > >   ret = dev_err_probe(dev, -EINVAL,
+> > > > > -     "link-frequencies %d not supported, please review your DT\n",
+> > > > > -     IMX214_DEFAULT_LINK_FREQ);
+> > > > > +     "link-frequencies %lld not supported, please review your
+> > > > > DT\n",
+> > > > > +     bus_cfg->nr_of_link_frequencies ?
+> > > > > +     bus_cfg->link_frequencies[0] : 0);
+> > > > >
+> > > > > -done:
+> > > > > - v4l2_fwnode_endpoint_free(&bus_cfg);
+> > > > > - fwnode_handle_put(endpoint);
+> > > > > + return 0;
+> > > > > +
+> > > > > +error:
+> > > > > + v4l2_fwnode_endpoint_free(&imx214->bus_cfg);
+> > > > >   return ret;
+> > > > >  }
+> > > > >
+> > > > > @@ -1299,7 +1421,7 @@ static int imx214_probe(struct i2c_client
+> > > > > *client)
+> > > > >   return dev_err_probe(dev, PTR_ERR(imx214->regmap),
+> > > > >        "failed to initialize CCI\n");
+> > > > >
+> > > > > - ret = imx214_parse_fwnode(dev);
+> > > > > + ret = imx214_parse_fwnode(dev, imx214);
+> > > > >   if (ret)
+> > > > >   return ret;
+> > > > >
+> > > > > @@ -1310,7 +1432,9 @@ static int imx214_probe(struct i2c_client
+> > > > > *client)
+> > > > >   * Enable power initially, to avoid warnings
+> > > > >   * from clk_disable on power_off
+> > > > >   */
+> > > > > - imx214_power_on(imx214->dev);
+> > > > > + ret = imx214_power_on(imx214->dev);
+> > > > > + if (ret < 0)
+> > > > > + goto error_fwnode;
+> > > >
+> > > > This change seems to belong to a separate patch.
+> > > >
+> > > > >
+> > > > >   ret = imx214_identify_module(imx214);
+> > > > >   if (ret)
+> > > > > @@ -1341,6 +1465,12 @@ static int imx214_probe(struct i2c_client
+> > > > > *client)
+> > > > >   pm_runtime_set_active(imx214->dev);
+> > > > >   pm_runtime_enable(imx214->dev);
+> > > > >
+> > > > > + ret = imx214_pll_update(imx214);
+> > > > > + if (ret < 0) {
+> > > > > + dev_err_probe(dev, ret, "failed to update PLL\n");
+> > > > > + goto error_subdev_cleanup;
+> > > > > + }
+> > > >
+> > > > I would move this to imx214_ctrls_init().
+> > > >
+> > > > > +
+> > > > >   ret = v4l2_async_register_subdev_sensor(&imx214->sd);
+> > > > >   if (ret < 0) {
+> > > > >   dev_err_probe(dev, ret,
+> > > > > @@ -1366,6 +1496,9 @@ static int imx214_probe(struct i2c_client
+> > > > > *client)
+> > > > >  error_power_off:
+> > > > >   imx214_power_off(imx214->dev);
+> > > > >
+> > > > > +error_fwnode:
+> > > > > + v4l2_fwnode_endpoint_free(&imx214->bus_cfg);
+> > > > > +
+> > > > >   return ret;
+> > > > >  }
+> > > > >
+> > > > > @@ -1378,6 +1511,8 @@ static void imx214_remove(struct i2c_client
+> > > > > *client)
+> > > > >   v4l2_subdev_cleanup(sd);
+> > > > >   media_entity_cleanup(&imx214->sd.entity);
+> > > > >   v4l2_ctrl_handler_free(&imx214->ctrls);
+> > > > > + v4l2_fwnode_endpoint_free(&imx214->bus_cfg);
+> > > > > +
+> > > > >   pm_runtime_disable(&client->dev);
+> > > > >   if (!pm_runtime_status_suspended(&client->dev)) {
+> > > > >   imx214_power_off(imx214->dev);
 
-Best Regards,
-Oleksij
 -- 
-Pengutronix e.K.                           |                             |
-Steuerwalder Str. 21                       | http://www.pengutronix.de/  |
-31137 Hildesheim, Germany                  | Phone: +49-5121-206917-0    |
-Amtsgericht Hildesheim, HRA 2686           | Fax:   +49-5121-206917-5555 |
+Regards,
+
+Laurent Pinchart
 
