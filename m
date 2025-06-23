@@ -1,141 +1,255 @@
-Return-Path: <linux-kernel+bounces-698760-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-698762-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 55B0FAE494A
-	for <lists+linux-kernel@lfdr.de>; Mon, 23 Jun 2025 17:53:03 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C6230AE4919
+	for <lists+linux-kernel@lfdr.de>; Mon, 23 Jun 2025 17:47:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B20991886F15
-	for <lists+linux-kernel@lfdr.de>; Mon, 23 Jun 2025 15:46:52 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 789071795A9
+	for <lists+linux-kernel@lfdr.de>; Mon, 23 Jun 2025 15:47:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2C697276052;
-	Mon, 23 Jun 2025 15:46:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E3926277038;
+	Mon, 23 Jun 2025 15:46:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="TDYCh5y1"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="vW5zFuGC"
+Received: from NAM02-BN1-obe.outbound.protection.outlook.com (mail-bn1nam02on2073.outbound.protection.outlook.com [40.107.212.73])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 807533D994;
-	Mon, 23 Jun 2025 15:46:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750693588; cv=none; b=k8u92AFMPZ42jsGu4SkHEhIifv7DSWSILzfIpI+whZBudArm4ZDn+lkYgTB8p0FU+vSRgmzn+uBFgt33Mox7c6I4YMrc9od6MdkeAryCRwfZHKBt09mS2mPWID/HM8mKaOlYlTJRE9l3uX6i/putxYXT9PviYczcRz2fH932d2A=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750693588; c=relaxed/simple;
-	bh=w/l6L6hU5FHxVqXs8auOKsE8vW000g2m20hcmDTlaS4=;
-	h=Date:Content-Type:MIME-Version:From:Cc:To:In-Reply-To:References:
-	 Message-Id:Subject; b=eDEz+7/FbVQZEV+Yd+79N0aUhaDyNtZyinu1Ru9gie8NsV5JZ2MGb5lmK+VFsReOvAdYcdvlsvcUMWY4VQIoXybjpxfOVA8PDeG0KaGcgBFBFXkcgcrKIFW4Y/YfQeI9AP4AvbeQY2kSDvc0HVSWLdkhqQlrp0ITxXoGMXtz2Pw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=TDYCh5y1; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2ED43C4CEEA;
-	Mon, 23 Jun 2025 15:46:28 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1750693588;
-	bh=w/l6L6hU5FHxVqXs8auOKsE8vW000g2m20hcmDTlaS4=;
-	h=Date:From:Cc:To:In-Reply-To:References:Subject:From;
-	b=TDYCh5y1PNN/APVI70QJMhg3IPnPWxtnrNMNT3jyMDmhR29ZFj7kPz6El99a8Zk39
-	 FokW8n/W5AuT8gt1CDPoabH0V37G1+A2TAN89zwcj3SO46RCaQu/6g8TVLYP+M3VlM
-	 CZbI+Y5KoeOk6VAMmRlzP18A+rg/rfMEDZp7rZFF19c4zpK0AwRGrNgDShwqbMvSNX
-	 7HdsfKABsdhNrPTPnaurf1p0riOeMOsg8n5vSQQhWHDzJr21bJ91FmMjYAxqZt2Z6U
-	 /E4F46TuJgvLxkyCrt1ENlr/91n0qnZJuMeq/xUrrOzox0dlMqRY9T03EzqMYFDa2p
-	 sIDdc/kEAICCA==
-Date: Mon, 23 Jun 2025 10:46:27 -0500
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 810973FB31;
+	Mon, 23 Jun 2025 15:46:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.212.73
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1750693601; cv=fail; b=MfowsViResW73G+XSSPtEnWDdzpfG0OaRMDfIrw5OmBk8U2tJ8C8DKxY66IjxvDvVQjEGuUGJp/mnmUBxVPs2GrWGrOyyMC0a6pKcX4RaijplZCi8jqIOjFk+hZjGEIY+5B8Cw+nc3C6OWHAYVJcUa1BLoC9VICjs7DaoTJiBaU=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1750693601; c=relaxed/simple;
+	bh=dxVrPHeu5U1WaW+StgFSAqONQr7UwL8rST1eTBz5wWo=;
+	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=FIjJYXnTvNBLvLwJWLOpq4DzxoxpOb/zEdKXpzfL/6nqbVFQBrpDayrQuDFpC4x6vb8dDZQctFUiqCdWUdeoqzK1BkZlJ4+v9LnGRGuGot5AmjdzShi3CCUvD0W9lEq6YfGRFamRpfFDHyPgS20BUWaLDFqPEUvkA5hi9QhCuOw=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=vW5zFuGC; arc=fail smtp.client-ip=40.107.212.73
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=NOlnslBnKHeWKjNdf9VL99KTcbxjMpJ5Li4jf8Ohq0QEs0pjhLpv/v6t7IMxY60Zu45290x2+BBn/2M/DA5upipAGLf3qdJw6kU7V85qScrL/dX4oUCkPNowKpwcum9lN3rVxv5nj+iVdpn5pCwPiOTfCE033qGmgSKgX1DAGiTL4v/+cXjzPitGrk57Qj1yLSpQddFsbdRRHqzHTSK2pD70uYQjJx17biU0fKnCg9UL1VYoOps6Co63uI6e6slRc9PkHrmGiIGjThxi3FQkTYHEIB9Vl6WMlh+dhgkH+ZTlhvCggcpu27BUlAEywtKKQf8ScXuj8pltyLgYpOcDrQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=lsWObrc5Ubd9he6KtGqdwaejFhrpz8e45hxao/muxCk=;
+ b=qqkyexIxp1VkbAfwzPJe0tMbLpZTJlR4Qctuy2U3BlNC4VJiXDc+Bh3eJOo72Fzyj2Q2rmyQPS4goeokJEmX/CURxLSPsbk9skC/Amk1WhVH43US4faeKlUB839P7a/VhR0p2XapAL6kF1/zXnOTOzta1ZaJ89o5khiEIrCTidvxDGfFVhIzz7FgPbvDTdlSSr++J2ZiFaVEZbPW7DD0TIK1ruQCCWUWCHPgWrSPADbtgfh325Iq9HQh5/ZUZUu3LGUdITdaZ6L3duQvawbymENzoJOLuq8rGY9lp9IvvK0fP7rXslFx1Tr6R6lMxGkePCobnvcHGPPHW2I2YOoG1g==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
+ header.d=amd.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=lsWObrc5Ubd9he6KtGqdwaejFhrpz8e45hxao/muxCk=;
+ b=vW5zFuGCBXMw2NSxUfK+KjnD7xanzWDZxFNTnYQKlQwPgRmyeHLQWKB8uY3WsU7JlvAMyceZuYbp4vYITNvuAsngAv5GalChAxspRIO7yrCpba7F0RCCSCUwaBq2zvMrD8hlT0qWnW3j4XfP5nbuqZFSChECgh5vG3Y1UgGTdqc=
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=amd.com;
+Received: from PH0PR12MB7982.namprd12.prod.outlook.com (2603:10b6:510:28d::5)
+ by CH2PR12MB4262.namprd12.prod.outlook.com (2603:10b6:610:af::8) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8857.25; Mon, 23 Jun
+ 2025 15:46:36 +0000
+Received: from PH0PR12MB7982.namprd12.prod.outlook.com
+ ([fe80::bfd5:ffcf:f153:636a]) by PH0PR12MB7982.namprd12.prod.outlook.com
+ ([fe80::bfd5:ffcf:f153:636a%5]) with mapi id 15.20.8857.022; Mon, 23 Jun 2025
+ 15:46:36 +0000
+Message-ID: <d4211026-9105-4f7b-8384-300c0a293233@amd.com>
+Date: Mon, 23 Jun 2025 08:46:28 -0700
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH iwl-next,v3 1/2] igc: Relocate RSS field definitions to
+ igc_defines.h
+To: Song Yoong Siang <yoong.siang.song@intel.com>,
+ Tony Nguyen <anthony.l.nguyen@intel.com>,
+ "David S . Miller" <davem@davemloft.net>, Eric Dumazet
+ <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>,
+ Paolo Abeni <pabeni@redhat.com>, Richard Cochran <richardcochran@gmail.com>,
+ Alexei Starovoitov <ast@kernel.org>, Daniel Borkmann <daniel@iogearbox.net>,
+ Jesper Dangaard Brouer <hawk@kernel.org>,
+ John Fastabend <john.fastabend@gmail.com>,
+ Vinicius Costa Gomes <vinicius.gomes@intel.com>,
+ Jonathan Corbet <corbet@lwn.net>,
+ Przemek Kitszel <przemyslaw.kitszel@intel.com>,
+ Shinas Rasheed <srasheed@marvell.com>, Kevin Tian <kevin.tian@intel.com>,
+ Brett Creeley <brett.creeley@amd.com>,
+ Blanco Alcaine Hector <hector.blanco.alcaine@intel.com>,
+ Joshua Hay <joshua.a.hay@intel.com>, Andrew Lunn <andrew+netdev@lunn.ch>,
+ Jacob Keller <jacob.e.keller@intel.com>, Kurt Kanzenbach
+ <kurt@linutronix.de>, Marcin Szycik <marcin.szycik@linux.intel.com>
+Cc: intel-wired-lan@lists.osuosl.org, netdev@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+References: <20250620100251.2791202-1-yoong.siang.song@intel.com>
+ <20250620100251.2791202-2-yoong.siang.song@intel.com>
+Content-Language: en-US
+From: Brett Creeley <bcreeley@amd.com>
+In-Reply-To: <20250620100251.2791202-2-yoong.siang.song@intel.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: YQZPR01CA0046.CANPRD01.PROD.OUTLOOK.COM
+ (2603:10b6:c01:86::25) To PH0PR12MB7982.namprd12.prod.outlook.com
+ (2603:10b6:510:28d::5)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-From: "Rob Herring (Arm)" <robh@kernel.org>
-Cc: linux-arm-msm@vger.kernel.org, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- linux-kernel@vger.kernel.org, Konrad Dybcio <konradybcio@kernel.org>, 
- kernel@oss.qualcomm.com, Conor Dooley <conor+dt@kernel.org>, 
- devicetree@vger.kernel.org, Bjorn Andersson <andersson@kernel.org>
-To: Umang Chheda <umang.chheda@oss.qualcomm.com>
-In-Reply-To: <20250623130420.3981916-1-umang.chheda@oss.qualcomm.com>
-References: <20250623130420.3981916-1-umang.chheda@oss.qualcomm.com>
-Message-Id: <175069348269.3797007.5540625905808833666.robh@kernel.org>
-Subject: Re: [PATCH 0/2] Add support for IQ-8275-evk board
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: PH0PR12MB7982:EE_|CH2PR12MB4262:EE_
+X-MS-Office365-Filtering-Correlation-Id: 3b197182-c996-4b4c-700d-08ddb26d228f
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|376014|366016|7416014|1800799024|921020|7053199007;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?WVBvNFdxOVNPSXErWEhRanlrMzJjazJYcjFUeVZoK0N5ZmtBSy9hVEl2a0VC?=
+ =?utf-8?B?N0gyOVRidnVjZ0hCR1hPOFZzdkVYRDZpUExjWktvWXhpSGo0cFYra0ZwZFpz?=
+ =?utf-8?B?VUNNZWdZK3M5WkY5REpza2o5N092RVVzbC9xK2FwTXBQeC8wRUV4NXViZWI5?=
+ =?utf-8?B?N2hReGsreTRCWThtNlcxb3BZa0lhSlNhV1VEeWhBa01obVVwREgrbnVmV0M5?=
+ =?utf-8?B?anlOUHlMU0ViK0JUOHBST09KTjgxTC96WkI2N1htZ3ZURnplcWxIWEtQNDNY?=
+ =?utf-8?B?S24zenFobVM4Qm56R1ZXSitjbDcxNUU3ZXFnZVFkTUo3ajcwVVovNXBRV0du?=
+ =?utf-8?B?ZXhzSDVSQnljUjFGeGtxSlExRTgyRlVrb2lMZTB2OHJoOVhoWEF3RXpHeG83?=
+ =?utf-8?B?a1lvSjEzRTUwMU1GdGFPaXdIRnV1V2EyVVRDKzljazBtNnliTGliVkZqSUVL?=
+ =?utf-8?B?QTRhQW1wbWZMQUh6eCtvSWxuN2F6NDEydjhIYUdWUVExeDVIY1NRVEhaSFFT?=
+ =?utf-8?B?MGsvb3l0ODBhejdudk1VbG1jYmc4ZzJUbk1wcElTR0daSTZPQnNLYVk1dEQ1?=
+ =?utf-8?B?UEV2cjZZRGwvS2hYYU5EUjNHYUpaNXpjeTJwZy9LSE15eHY0cXV5K2tiQmZm?=
+ =?utf-8?B?MFNhWWNwNkpDK0NCWDZacURneXZINHZsTVpPU3p0NzhLdlJhVEhWeDJ3dVlS?=
+ =?utf-8?B?cEJmUlh0bFFNbUw5dVpRcXlWdjZFZHg3aUE1aGJCS290RWU0MndrVWt0TnU4?=
+ =?utf-8?B?Q1ZXSmNjbndVSjAxOFRTS05sUVV6K3djdGkybXZFeVh3U0hIWXRTSGxldEJv?=
+ =?utf-8?B?em9NR3hvSjNqYllZLzFkODh5VWczOWRwSm9ZWXpvQlg1ay9PdXRPWUVBbzRi?=
+ =?utf-8?B?YVZsWHd2bVNPbHNwMzFoc2IvK1pxVnp3M0pPcWlSUVdNa1YzeDRFK1gvaWdL?=
+ =?utf-8?B?enA5MmVWUkh6Y2drd2U4MnMrVXlDek5raVRwVVNIZG9NTUhCTHdLNGFyNitm?=
+ =?utf-8?B?UXRMVVVacDdDRzYzWjlKZmZWaEoxbUo1QzJhZjU0VzRES1pZS1ZHRWd3TDA5?=
+ =?utf-8?B?WTdaNU5YK3BSVlZYZWR0TjRvYjZJV2VhREFWRUJQbXpkQWhTQ2pWTHJIUWd2?=
+ =?utf-8?B?NXJyL3dPaERIemZoVStIdlFxS0lCVFZrV25ldDAzdC9ZUEZ6dEVxVVNEQVBr?=
+ =?utf-8?B?UGgxNFVNeCtIaktacnhjd1FIZFg5K3dhWDZkYVBQWDRDMU1tYnFPMXE1Sng3?=
+ =?utf-8?B?UU9zNzlLT2VtMDlNV0VvcXQvalo3T1VaeTJrQ2xtVExCQW5ENkVDYTFuS0xv?=
+ =?utf-8?B?OUdqNjc3anB6bW5DSEJWcEZYNUt4UFUxY2swT2xnOGE1UXFxL2toaFI3OGJr?=
+ =?utf-8?B?UHVXMFVmWHEzd2FGUm9uTUlydm91NnVRSHUvZkpoZWxTY3JxVk9PZnRhZ1ZP?=
+ =?utf-8?B?eUo2WFRjeTJBdFdVWjdwUFc5TEViVk1Ba1pQMFJkck13SUFmb0xFdW4wQzRG?=
+ =?utf-8?B?bEkrV0xFa2loelhmajgyOVRGcXUwQjRZay91WFhPYnV3SUNoZkMra05wRVBZ?=
+ =?utf-8?B?UERMUUJBdmV4SDFhZkx4R0ZEendwZGlBMkFMTmlmZ0drY2o2bGt1eWhvMHJ1?=
+ =?utf-8?B?dWFzOVduYmJBL1hSdTVnbUpJVTNLdXJFR3dWZGV5SXh0U3BwN1MwcVpkUS9a?=
+ =?utf-8?B?WVRDbDNvQmdaNVZ2VjVpbVZNRVBJMHp6SlFXdGRsMjVONlBBeW1ycTJzUVhh?=
+ =?utf-8?B?NHV5RDN3RFRnZFF5eFljMEhiTWRSbG5kRlRPQW16bk5kWnFnRmhNbFFQRG1K?=
+ =?utf-8?B?cG1oREhJbXYybVYrcXNwZ2xNNWV5RWdFVGM2QXNKM0kwOWZEWGdDYm1sc1Fp?=
+ =?utf-8?B?QUo0M1JzeHA1TE4vUDRVZjJLMkRCRnFpVWVtQWI2Mmd1Tjc3TGM0ZkF4V0FF?=
+ =?utf-8?B?dWhrcS9xQUtGQm9uckUrUjdjbjVrNkFQM2tMQlVXMEhCRytLdG1xS1ZlWHRo?=
+ =?utf-8?B?UkVIRHBzaSt3PT0=?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PH0PR12MB7982.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(366016)(7416014)(1800799024)(921020)(7053199007);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?YnBrVEpqaCtxSktHcW1yME9OaFR4dHRreXNwQy9NK1hwRnA5Nm9vLzA5OFZD?=
+ =?utf-8?B?ODRMVENxWE5sVFphRjJWQUhlY0F2aHJwWmp3eTBNS1UxbUdsM1hyZ3dwZ2Ix?=
+ =?utf-8?B?VEViZEVlTWJ6MXhSWm5zVEFpdlZUTXNsWmJINiszcnNXSkdhZFo0c1V4Wmpl?=
+ =?utf-8?B?N2NuU2RzcUQrL0hmY0ppVXBBelI3TVNKbnRUK282QjJmL293T1IzOW9UZWJF?=
+ =?utf-8?B?b2NtaGpOM2pCaFQyK2htRkphaVozaUV0MlgvbExMbVRoRlFkM2JrUlJJQkdt?=
+ =?utf-8?B?dHI0S2NYYVVtVDRZcUgvNStvSlZ4WlRBS3lwNWR4cS8vbDJMNlAxb1dOUnkx?=
+ =?utf-8?B?aU9YMmVjdmJHMVFkRTZKL3VZdmJHQzk2azZJWnhSRFBNbmhnVHRSUnJNbFhZ?=
+ =?utf-8?B?dGtjZG1NOXFUSFJFUjNBL2hhWVRHdXNlbTRQOERmaTVZN1lvbmc5cElVbUl5?=
+ =?utf-8?B?WGZzcDhwSS9VbVQrMUp6eTRjUFR6bk9UV1NxK3kzUzloQkhnOWdkWXpod0hJ?=
+ =?utf-8?B?ZUlDZWxlb2dWZ2FjT3Z4SDZmU2F0Z3BvV0hPSUFnU25ILzhOa252U09aTWE5?=
+ =?utf-8?B?UkpHL0JYRWNLMHVsVXZMaDB1TXRsRTJENmdoeEVTNFBGYVBTODFRQkNQdk5S?=
+ =?utf-8?B?Z3ZZL1AwNjlDdDRhNGZFN1IxUy9ZQmhXVDRIMk45RjJ6MmoxUjZHSGw3WEox?=
+ =?utf-8?B?WTJsVEZWdGVtbnZ3NkI5d1dvcXduVkpQcXBmWHFKN2RpRnhsR1cwWWNzWExx?=
+ =?utf-8?B?dkdmUmJVSUxkVUszK09CTFpFT1phREhvWS9wb3BFSGdkRnBHZnlTajVxUUNz?=
+ =?utf-8?B?aklpRHRMY25JS21qVEhRdWxMTFU4aFFLRmhYSSt6bnpuT0VmTDFyUVZUMnRq?=
+ =?utf-8?B?dFpadU82MjVHVFptcGgrR1ZuSXg5WjZ2MFdrNllYZWJwNzdlNUtCVkdUVHdz?=
+ =?utf-8?B?OE5FVDZIZ0dQY3R0bnpSbjVQZTJJNVRrbkFDZFdFNmhQQWMwZElBN25BdFJt?=
+ =?utf-8?B?Y0xteEF2NFlvelJHQTEvUEsrWDNmNWM4aG13Znk0eDdmZGt0bUpFZzk2YVkz?=
+ =?utf-8?B?R0VGS3BNZzlFcVlqaE96YUkvc0pMNjRZY2tNRjdKdmgyS3RoaWRuV0dOU1FM?=
+ =?utf-8?B?NXpoTEZtMUEycklRRjlvb1dpUTh2dy9VcTRyVWozb1BjSnQwSkNYWFpUVkY1?=
+ =?utf-8?B?VklTOWc3VmtBNlRaQ1RrNjI4VVV3aDFBL3ljZ0U2N0lDNDNrMCtZY1RUQTE0?=
+ =?utf-8?B?cjVyQ1Vkem85UzE0cFZJcU12WHR5d2tYTkhTeHBwS1lPdjJpQVk3b2x1WGlH?=
+ =?utf-8?B?WExkQnZHMW1LUWN5b3k0SEhZYzlXRWd5bXZyUnJWaVdhNEZMTnFibGxHZzBt?=
+ =?utf-8?B?eDFSVVRUeUExVWM0TWtlTzlta1RwZ2plK0IyVDhuZ0VZNzBIdktNdytONlQx?=
+ =?utf-8?B?UWpjLzNmUWgyWlUwNUJIdDE2QlJmaUVIclcvWC9lTE4reGJhWlhUaGZrZUFo?=
+ =?utf-8?B?TzhPbmRsWS93N0VDS0VXMmhzZm5jc2hYT0NIU3V0MkVmeFNDNmU3ZDJmdGxN?=
+ =?utf-8?B?aWE3RmxZR3VReXhNWjRMM1ZSMVJRNSs4WmZIUGcramQ1UDg5YmtxaVR5RVA5?=
+ =?utf-8?B?cVZMZUowemlRMFloSzVZV3JTTFJTa29nYlNMNm4xRVBQZHdubklweTVsdFpH?=
+ =?utf-8?B?YTY1RDJSWEd0YW9BNXBCVUs2WWIxNEFtMUxQc1VRQnJaUUFrdUFoTGU0R01Y?=
+ =?utf-8?B?ckIvTUUrRXNnejNvMTl4ZFdrS1NJUDhsVmlwL3AwN0M0RkloeUJqQ2J5RUd2?=
+ =?utf-8?B?aUhBc0s4OUpzaVVkR1pKa0NSL3ZUTm55WkRTOG5TaDV5MmgwV0VITXRBL1hW?=
+ =?utf-8?B?NGRSSUkvdzMrWXIxOXlleWExbUN3N0tRM00wR25aNVNvOVlIQTlUdk84Y3Bw?=
+ =?utf-8?B?cjNvV0UyOTRzT0NBMDRtSEhmdWhQVVBnOTh1anR3aVpIVDVKRWFwa1ZINm4x?=
+ =?utf-8?B?cFR6ZUdaZ25WTGpnYlpUcVVnbVpUSnpGdHAyQzVsN0tHcHRzZHd2SFVBNHpF?=
+ =?utf-8?B?Vy9SL0hxZ2o0WWEwaWpmY2o4Um5ENXNLcnlXZnd6ZDBCaVdSU25CZ0NZQnpu?=
+ =?utf-8?Q?o1I2cctAgeD3s68Ma5rDwkwRi?=
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 3b197182-c996-4b4c-700d-08ddb26d228f
+X-MS-Exchange-CrossTenant-AuthSource: PH0PR12MB7982.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 23 Jun 2025 15:46:35.9833
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: sjK2Ofb9inJMKtd77dMv3sl+HQr27eC0KraSkX51F5zbYOd7157miiiEAco7c87pUeYu/9Yqix6grJA1CRqYrQ==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CH2PR12MB4262
 
 
-On Mon, 23 Jun 2025 18:34:18 +0530, Umang Chheda wrote:
-> This series:
+
+On 6/20/2025 3:02 AM, Song Yoong Siang wrote:
+> Caution: This message originated from an External Source. Use proper caution when opening attachments, clicking links, or responding.
 > 
-> Add support for Qualcomm's IQ-8275-evk board using QCS8275 SOC.
 > 
-> QCS8275 is another SoC under IQ8 series of SoCs. Unlike QCS8300
-> which has safety features, it doesn't have safety features which
-> affects thermal management.
+> Move the RSS field definitions related to IPv4 and IPv6 UDP from igc.h to
+> igc_defines.h to consolidate the RSS field definitions in a single header
+> file, improving code organization and maintainability.
 > 
-> IQ8 EVK board is a single board computer (SBC) that supports various
-> industrial applications, including factory automation, industrial
-> robots, drones, edge AI boxes, machine vision, autonomous mobile
-> robots (AMRs), and industrial gateways.
+> This refactoring does not alter the functionality of the driver but
+> enhances the logical grouping of related constants
 > 
-> Below are detailed informations on IQ-8275-evk HW:
-> ------------------------------------------------------
-> QCS8275 SOM is stacked on top of IQ-8275-evk board.
-> On top of IQ-8275-evk board additional mezzanine boards can be stacked
-> in future.
-> IQ-8275-evk is single board supporting these peripherals:
->   - Storage: 1 × 128 GB UFS, micro-SD card, EEPROMs for MACs,
->     eMMC on mezzanine card
->   - Audio/Video, Camera & Display ports
->   - Connectivity: RJ45 2.5GbE, WLAN/Bluetooth, CAN/CAN-FD
->   - PCIe ports
->   - USB & UART ports
+> Reviewed-by: Kurt Kanzenbach <kurt@linutronix.de>
+> Signed-off-by: Song Yoong Siang <yoong.siang.song@intel.com>
+> ---
+>   drivers/net/ethernet/intel/igc/igc.h         | 4 ----
+>   drivers/net/ethernet/intel/igc/igc_defines.h | 3 +++
+>   2 files changed, 3 insertions(+), 4 deletions(-)
+
+LGTM.
+
+Reviewed-by: Brett Creeley <brett.creeley@amd.com>
+
 > 
-> Currently basic features like DSPs, UFS and 'boot to shell' via
-> uart console are enabled.
+> diff --git a/drivers/net/ethernet/intel/igc/igc.h b/drivers/net/ethernet/intel/igc/igc.h
+> index 1525ae25fd3e..0b35e593d5ee 100644
+> --- a/drivers/net/ethernet/intel/igc/igc.h
+> +++ b/drivers/net/ethernet/intel/igc/igc.h
+> @@ -406,10 +406,6 @@ extern char igc_driver_name[];
+>   #define IGC_FLAG_RSS_FIELD_IPV4_UDP    BIT(6)
+>   #define IGC_FLAG_RSS_FIELD_IPV6_UDP    BIT(7)
 > 
-> Umang Chheda (2):
->   dt-bindings: arm: qcom: Add bindings for IQ8 EVK board
->   arm64: dts: qcom: Add support for QCS8275 IQ8 EVK
+> -#define IGC_MRQC_ENABLE_RSS_MQ         0x00000002
+> -#define IGC_MRQC_RSS_FIELD_IPV4_UDP    0x00400000
+> -#define IGC_MRQC_RSS_FIELD_IPV6_UDP    0x00800000
+> -
+>   /* RX-desc Write-Back format RSS Type's */
+>   enum igc_rss_type_num {
+>          IGC_RSS_TYPE_NO_HASH            = 0,
+> diff --git a/drivers/net/ethernet/intel/igc/igc_defines.h b/drivers/net/ethernet/intel/igc/igc_defines.h
+> index 86b346687196..d80254f2a278 100644
+> --- a/drivers/net/ethernet/intel/igc/igc_defines.h
+> +++ b/drivers/net/ethernet/intel/igc/igc_defines.h
+> @@ -383,11 +383,14 @@
+>   #define IGC_RXDEXT_STATERR_IPE         0x40000000
+>   #define IGC_RXDEXT_STATERR_RXE         0x80000000
 > 
->  .../devicetree/bindings/arm/qcom.yaml         |   7 +
->  arch/arm64/boot/dts/qcom/Makefile             |   1 +
->  .../boot/dts/qcom/qcs8275-iq-8275-evk.dts     | 241 ++++++++++++++++++
->  3 files changed, 249 insertions(+)
->  create mode 100644 arch/arm64/boot/dts/qcom/qcs8275-iq-8275-evk.dts
+> +#define IGC_MRQC_ENABLE_RSS_MQ         0x00000002
+>   #define IGC_MRQC_RSS_FIELD_IPV4_TCP    0x00010000
+>   #define IGC_MRQC_RSS_FIELD_IPV4                0x00020000
+>   #define IGC_MRQC_RSS_FIELD_IPV6_TCP_EX 0x00040000
+>   #define IGC_MRQC_RSS_FIELD_IPV6                0x00100000
+>   #define IGC_MRQC_RSS_FIELD_IPV6_TCP    0x00200000
+> +#define IGC_MRQC_RSS_FIELD_IPV4_UDP    0x00400000
+> +#define IGC_MRQC_RSS_FIELD_IPV6_UDP    0x00800000
 > 
+>   /* Header split receive */
+>   #define IGC_RFCTL_IPV6_EX_DIS  0x00010000
 > --
-> 2.25.1
+> 2.34.1
 > 
-> 
-> 
-
-
-My bot found new DTB warnings on the .dts files added or changed in this
-series.
-
-Some warnings may be from an existing SoC .dtsi. Or perhaps the warnings
-are fixed by another series. Ultimately, it is up to the platform
-maintainer whether these warnings are acceptable or not. No need to reply
-unless the platform maintainer has comments.
-
-If you already ran DT checks and didn't see these error(s), then
-make sure dt-schema is up to date:
-
-  pip3 install dtschema --upgrade
-
-
-This patch series was applied (using b4) to base:
- Base: attempting to guess base-commit...
- Base: tags/v6.16-rc1-5-g700a4c3f95a3 (exact match)
-
-If this is not the correct base, please add 'base-commit' tag
-(or use b4 which does this automatically)
-
-New warnings running 'make CHECK_DTBS=y for arch/arm64/boot/dts/qcom/' for 20250623130420.3981916-1-umang.chheda@oss.qualcomm.com:
-
-arch/arm64/boot/dts/qcom/msm8916-samsung-gt58.dtb: panel@0 (samsung,lsl080al03): 'port' does not match any of the regexes: '^pinctrl-[0-9]+$'
-	from schema $id: http://devicetree.org/schemas/display/panel/samsung,s6d7aa0.yaml#
-
-
-
-
 
 
