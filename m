@@ -1,112 +1,135 @@
-Return-Path: <linux-kernel+bounces-698946-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-698950-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 64449AE4C08
-	for <lists+linux-kernel@lfdr.de>; Mon, 23 Jun 2025 19:41:56 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 888AAAE4C16
+	for <lists+linux-kernel@lfdr.de>; Mon, 23 Jun 2025 19:45:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EFB4917DB23
-	for <lists+linux-kernel@lfdr.de>; Mon, 23 Jun 2025 17:41:56 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 299D3189DFDF
+	for <lists+linux-kernel@lfdr.de>; Mon, 23 Jun 2025 17:45:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2FD4D2D191C;
-	Mon, 23 Jun 2025 17:41:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2B87625CC44;
+	Mon, 23 Jun 2025 17:44:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="JkLc4AK5"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Ycg+u0ZH"
+Received: from mail-ej1-f44.google.com (mail-ej1-f44.google.com [209.85.218.44])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 890827262F;
-	Mon, 23 Jun 2025 17:41:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DEDA229DB7F
+	for <linux-kernel@vger.kernel.org>; Mon, 23 Jun 2025 17:44:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750700509; cv=none; b=g1TEfCGuaXSOhh6ZT0vKvKHNKRfsalmsUOOCj7fqu7nBt2JlNPUaF9t+dYhW86DK2gXojvt/ExcCf7zJoOXxSAQP33pgpoX30IFjtpxzws9T2DssSQEe6ObSIR+X49aMz2NCWBnJD82UO4bm6Di2yig8Tc9QAqQTSXD7bn54oPM=
+	t=1750700691; cv=none; b=GV/cd1ITSIM9F/RUa2eerNwnSttIt3a+INjyBDdGzmwvDmFpMVlHWnum/XNLHXXrLpCwkueDE0/bot+0UnHWxU5prux/aLICHgK0+Z1TQVwcPrNXcQniboF14yllocfvnYZ+KRGp+3r9gyaCxnK5TIlDZfFJnMiOeh7x+eyy1fQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750700509; c=relaxed/simple;
-	bh=xN/A8HvexlN7YR43s6eAIX13svQo3ngl0HP/TpVfgL8=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=hOYg6jvOxOqN17N2iPpBiKYm+czppZbV7ljCtlhMSaI1ehHUv+jOc1AwOBOarVcRovA4EV4SmIsk+f9GgaFickY66fqaXRlBV3OeXAaq+xHK1JiRJUzfLcyRv1ehIJsw4Xl9FiS8g/C0lPG9RY9PRvlP7rVSpyLWSVqK9Q5MGV0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=JkLc4AK5; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 03739C4CEEA;
-	Mon, 23 Jun 2025 17:41:46 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1750700509;
-	bh=xN/A8HvexlN7YR43s6eAIX13svQo3ngl0HP/TpVfgL8=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
-	b=JkLc4AK5rsNIaammDjeW4cmKVnVKAoa2c54D5jWoFfJvWgMWEZBsO6E746V/w2EHR
-	 uW8gGVkIe10A50Dadg5750SaRxEOw6bc7ZZSalsTsbSvAJr3DKikCBQlyVpLrR3rnB
-	 WggFC+r7Tq3wCbGXgAwZ/rLPWsF/J6LW883h+BwV0CfmzrRKjaelkXb/bQW/thljcE
-	 Dwgpd1XRh/1ZbR9NCzkB/5SsCPh7yumJTLdtgGVbONVFll5ikzQ7AqmZSv3dEgX+fV
-	 sNlURWvQXOQF3iXJ7bvYJCAOzae9+86xObv2DzJH8R1nTj0Uv21APn03y1wf9XHz7D
-	 cQfJnitoVHhmg==
-From: Mark Brown <broonie@kernel.org>
-To: lgirdwood@gmail.com, 
- AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
-Cc: robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org, 
- matthias.bgg@gmail.com, linux-kernel@vger.kernel.org, 
- devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
- linux-mediatek@lists.infradead.org, kernel@collabora.com
-In-Reply-To: <20250623120144.109359-1-angelogioacchino.delregno@collabora.com>
-References: <20250623120144.109359-1-angelogioacchino.delregno@collabora.com>
-Subject: Re: [PATCH v1 0/4] regulator: dvfsrc: Add support for MT8196 and
- MT6893
-Message-Id: <175070050673.180798.18078248798013183788.b4-ty@kernel.org>
-Date: Mon, 23 Jun 2025 18:41:46 +0100
+	s=arc-20240116; t=1750700691; c=relaxed/simple;
+	bh=DNLllyIE+e80JQxJ6El3SX56+1A+2Lfbj6TQs5k2QgU=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=nohWoIYN6mogfPNcNXvizSQTSavfSui/mWUIsT+UYSWErrtxln1bZ+gWQF8vuMv8NJAEAyUxO/XV+BsoONRGN4FTzwyExm7CchwHeZ+eZmLip3J2ZRMf0KA5VwJWQiMG89kWu74BeeSP+s5kM26fZy68GrdxjLUC4oOhz7UMSrI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Ycg+u0ZH; arc=none smtp.client-ip=209.85.218.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f44.google.com with SMTP id a640c23a62f3a-adb2bd27c7bso679083466b.2
+        for <linux-kernel@vger.kernel.org>; Mon, 23 Jun 2025 10:44:49 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1750700688; x=1751305488; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=luJxPA1073bgyWK98Ffrv+wfRr9Uy1zh48u5rwJzZIs=;
+        b=Ycg+u0ZHPzwd/AGX1nqETVXmb5dxmQOdLrY8ECaoESZTilBl2s6eD+OlEdfXx5wo3v
+         XG9uAPll50KYgHUrhdgdXNwaz2yJwBQU/vGoyYn2qmQoVHIbn/GKf98E/8VcjwzJSGbs
+         ppFSXMeA7OIjxArZg6MdOYupbo2vXt0Z4Ocm64B/lotD8ZMpRFV8r0eMy/WyRvdP9L+F
+         JW+HgArTk6TFN4CrPyTuAF82skZG5FyPGdMjUyCeb/V+4jCSPL/acMFJtBEH9Ozixbho
+         Qee4PScLrOKJtOpag1aA3epImzVfv28PKPdaTLSYujei8KYi7IitUiwdxwsZ+seV4VMn
+         k6uA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1750700688; x=1751305488;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=luJxPA1073bgyWK98Ffrv+wfRr9Uy1zh48u5rwJzZIs=;
+        b=poBl6s0C8P10Q7dgwWRY2VJkWGyV1duQ+U6rMO8idrLQHqZSjC+gI5AWm+eSUPaaPC
+         rBaS77AnXd/3ILBf4AJIklNOVSJnrzTWMIhooOlv7QZXjfZPRddr6Msz/gtyjy6VcsNv
+         iSQ0AOzuiR1eVYueFcnlcfsonovM4LuPhw2CBJnouIyuDPJrkiNY/tKg0pEd1T2lWFPk
+         1gp2E8dqoDtUebgI038sxLW9D9VwyIQMMBTZpPRutZ5c7TlHKxmuMFdKsHVT4bFKM/xY
+         BM1sw3JvtiJx1AO4CvFeSttyqWhxAbo+PsnSUiLIcRxxTI6avm0v570lIBA9gYuV8kEs
+         1ufQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVSROoLnfVi6IQnXCTPs447tRiA6aHVkxr2QmgtefyCwOJX4/I3munB1QjzkfdbQN569B012dfnzbzBqrg=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwbP55Xm6W0APRzt20T4gyRMup2pR2dZ6+35WSWwphGt6aBr2so
+	I4KpFL50nRUn14lW0iVTv1K4q+mEnMxJwdMZH3G7lmXJyQiTRsglJbGK
+X-Gm-Gg: ASbGncvLua7QLm12W+PTDuNwXM8p6FZ9gOhIiBzBtkJ9RoSr08XkvbXvbaZn6xcLg1b
+	Y9mr1ql7WT+ZVO9QvcNiIs+Hhz6Rwp/eBvVSYaf/PYjQwVZaxH77gn95WkHNpk4RLzgtzOVuD2l
+	OW85MiVhwuRHtojifWxJzsS445PEKy3LllxxxQXDg6ptib71UVgf1zBCv6EsvsrwiIx1UlRziAp
+	NkTkEbwXJk5Z0YfE0RelTqGkqoK2+6GBq7zwOPr1cOKEQfLZa6WhjW77dkZxxmkT+DVE+LMCqKd
+	j8eiNeosuYnsTUMnO/t0s5mAhBoJlgeLbcj3KS/LwXRdRq6Ki/6TQUxEsY4Nmz3Pjb5bWXz4XS5
+	2
+X-Google-Smtp-Source: AGHT+IF2Xs6Hc7KCBwr7AotG8QNRufD4JJZrPsOwMu7GOmTmVHrLXelzUtNdC3h3B+kGcyrmrO4/Mw==
+X-Received: by 2002:a17:907:728a:b0:ad5:3e27:ebc with SMTP id a640c23a62f3a-ae057f3e7d8mr1382084566b.57.1750700687882;
+        Mon, 23 Jun 2025 10:44:47 -0700 (PDT)
+Received: from localhost.localdomain ([41.79.198.24])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ae086eaec9bsm308205966b.177.2025.06.23.10.44.46
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 23 Jun 2025 10:44:47 -0700 (PDT)
+From: Khalid Ali <khaliidcaliy@gmail.com>
+X-Google-Original-From: Khalid Ali <khaliidcaliy@gmail.com
+To: dave.hansen@linux.intel.com,
+	luto@kernel.org,
+	peterz@infradead.org,
+	tglx@linutronix.de,
+	mingo@redhat.com,
+	bp@alien8.de
+Cc: x86@kernel.org,
+	hpa@zytor.com,
+	linux-kernel@vger.kernel.org,
+	Khalid Ali <khaliidcaliy@gmail.com>
+Subject: [PATCH] x86/mm: Inline mm_mangle_tif_spec_bits() and l1d_flush_evaluate()
+Date: Mon, 23 Jun 2025 17:43:25 +0000
+Message-ID: <20250623174355.9421-1-khaliidcaliy@gmail.com>
+X-Mailer: git-send-email 2.49.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Mailer: b4 0.15-dev-08c49
+Content-Transfer-Encoding: 8bit
 
-On Mon, 23 Jun 2025 14:01:40 +0200, AngeloGioacchino Del Regno wrote:
-> This series adds support for the DVFSRC regulators found on the MediaTek
-> MT8196 Chromebook SoC and the (unrelated) MT6893 Dimensity 1200.
-> 
-> AngeloGioacchino Del Regno (4):
->   dt-bindings: regulator: mediatek-dvfsrc: Add MT6893 support
->   regulator: mtk-dvfsrc: Add support for Dimensity 1200 MT6893
->   dt-bindings: regulator: mediatek-dvfsrc: Add MT8196 support
->   regulator: mtk-dvfsrc: Add support for MediaTek MT8196 DVFSRC
-> 
-> [...]
+From: Khalid Ali <khaliidcaliy@gmail.com>
 
-Applied to
+These two functions are called from performance critical path like context
+switch.
 
-   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/regulator.git for-next
+So make sure the compiler optimizes out by inlining. This won't result
+increase of size because these functions only have one call site.
 
-Thanks!
+Signed-off-by: Khalid Ali <khaliidcaliy@gmail.com>
+---
+ arch/x86/mm/tlb.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-[1/4] dt-bindings: regulator: mediatek-dvfsrc: Add MT6893 support
-      commit: a6c05c2e6871c94b349703c1ec8584763797fd8e
-[2/4] regulator: mtk-dvfsrc: Add support for Dimensity 1200 MT6893
-      commit: 7aafbb463be85472dc6db194ab9df45fd497c998
-[3/4] dt-bindings: regulator: mediatek-dvfsrc: Add MT8196 support
-      commit: ae77b8e8b0326818bd170818b37d055aa57a1569
-[4/4] regulator: mtk-dvfsrc: Add support for MediaTek MT8196 DVFSRC
-      commit: 024f39fff6d222cedde361f7fe34d9ba4e6afb92
-
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent to Linus during
-the next merge window (or sooner if it is a bug fix), however if
-problems are discovered then the patch may be dropped or reverted.
-
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
-
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
-
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
-
-Thanks,
-Mark
+diff --git a/arch/x86/mm/tlb.c b/arch/x86/mm/tlb.c
+index 39f80111e6f1..657e8e254b69 100644
+--- a/arch/x86/mm/tlb.c
++++ b/arch/x86/mm/tlb.c
+@@ -624,7 +624,7 @@ static void l1d_flush_force_sigbus(struct callback_head *ch)
+ 	force_sig(SIGBUS);
+ }
+ 
+-static void l1d_flush_evaluate(unsigned long prev_mm, unsigned long next_mm,
++static __always_inline void l1d_flush_evaluate(unsigned long prev_mm, unsigned long next_mm,
+ 				struct task_struct *next)
+ {
+ 	/* Flush L1D if the outgoing task requests it */
+@@ -648,7 +648,7 @@ static void l1d_flush_evaluate(unsigned long prev_mm, unsigned long next_mm,
+ 	}
+ }
+ 
+-static unsigned long mm_mangle_tif_spec_bits(struct task_struct *next)
++static __always_inline unsigned long mm_mangle_tif_spec_bits(struct task_struct *next)
+ {
+ 	unsigned long next_tif = read_task_thread_flags(next);
+ 	unsigned long spec_bits = (next_tif >> TIF_SPEC_IB) & LAST_USER_MM_SPEC_MASK;
+-- 
+2.49.0
 
 
