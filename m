@@ -1,158 +1,163 @@
-Return-Path: <linux-kernel+bounces-698556-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-698559-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 241CAAE4654
-	for <lists+linux-kernel@lfdr.de>; Mon, 23 Jun 2025 16:18:16 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id D5286AE4695
+	for <lists+linux-kernel@lfdr.de>; Mon, 23 Jun 2025 16:24:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id DD833188F4DD
-	for <lists+linux-kernel@lfdr.de>; Mon, 23 Jun 2025 14:17:20 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 414F84A4E87
+	for <lists+linux-kernel@lfdr.de>; Mon, 23 Jun 2025 14:17:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BB17125A341;
-	Mon, 23 Jun 2025 14:14:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2D79A17A319;
+	Mon, 23 Jun 2025 14:15:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="N1WnqFvL"
-Received: from mail-qv1-f45.google.com (mail-qv1-f45.google.com [209.85.219.45])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="O7YKEYrh"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9130825A2CC;
-	Mon, 23 Jun 2025 14:14:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EDEC42CCC1
+	for <linux-kernel@vger.kernel.org>; Mon, 23 Jun 2025 14:15:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750688080; cv=none; b=RQFrA3+Zemm7i2ZNo95xZLscaSVhOPVbKeoUo9z5EbyULTI8Yr9iDrIG50GKd7A23GvbnBEhhrJ7SklDjT/vq/gMARPZthBkh1mx3CsVnjuwHymEJVM6HQwg9nTTBf4ebCn3lqkAvexRAzAsIKtZUQAxt/iMLvjzfmWoPmtCfCI=
+	t=1750688151; cv=none; b=fLhlzMEW/lBuJzmzUT0gD4Q2LZX3OwB+QZMYRIxlPJjfc7qqTjJNVAg6R7AFOZAqYE9fiKdQ114MWyGslZhU9VHqPD+kRdDA1rdMEmXE11He/k2hqdy49ZNl4hCLUFLeUC1gC6Y2Hk1/aBdPuiTlAdFS+4GczuHKRIRFzeqEZnY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750688080; c=relaxed/simple;
-	bh=DrUgJmz9mv9oNuENjezJvKTNsknS0G1u9sssb8hLjWw=;
+	s=arc-20240116; t=1750688151; c=relaxed/simple;
+	bh=EyJToE/pte+ssPp7y/bG1BA6jfNjqT0fWWgQuZcOyUM=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=PULrFJLE185cUl37ZMea0zPnZU5BSoat7lQnO7OQtyX+NVpD6vtVrZKJR9Nb9YTXQtE3d+utuTZj0Cg+xNOT7uuz1RQWKGQ6qm4CO3imXZNx46SctrKV2vR0ra53ncNCs4PY5kLKznjLLbdfzzDpDSHAECJ68LTkQvxBQeTf0do=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=N1WnqFvL; arc=none smtp.client-ip=209.85.219.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qv1-f45.google.com with SMTP id 6a1803df08f44-6faf66905adso23864016d6.2;
-        Mon, 23 Jun 2025 07:14:38 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1750688077; x=1751292877; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=gB5mz+FxMOMtnMLrI/M5PI/QmYx/AfyqX4qBVvMef0s=;
-        b=N1WnqFvLnbBCT0kovRXdy7nzs8hBUdmV00V9WyYO0N2ZeNr41r6eKDRlK9TJl7bo4N
-         VAJBCbizvqCOJoqAGPUWbdQhN1IyxwyAe/fwtL1lXl/3VRx3t3AIL9iHm3E1MNQXdzq8
-         zlabO77362dP4GmMbf3HPxwKvs20ypsnMLCODN6OvfmZCbLJSKZwHKB+LM7WGucjkk9T
-         vQZ8YTtoYDEuhaeAaeZdPj4cuxLKBxM/qbf5ZSXbnF3mNz84ONhRd3Rsd2emaVw81f7a
-         ARYD8w3ua4QB+ykqNZDaGXR1hS+Z8VxP7pcErPSOuG+lMwqpMgurMuAHsLbrlBcULXVd
-         qgnA==
+	 To:Cc:Content-Type; b=PBAJw7jeVs3GIHCVO5+uFA7NoKNr8WCp/+tUYIc+m8j4Jcsmi2lOtCM1nsvZ5icUuc/7IBD9OhYL74ApriOvqH4qdk7ohOEK8Kk5W78ZlP2bXuuDITJZ5aQIG6ZfmLcT6NbDSNDlgkIUwAdbp1MKVsbg1H1vEYAXnNO+7NVnNQo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=O7YKEYrh; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1750688149;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=EyJToE/pte+ssPp7y/bG1BA6jfNjqT0fWWgQuZcOyUM=;
+	b=O7YKEYrhVm3p5nuuNLOHWjmau9wsTIYSDycO8k+H+rWkOJnp5enkAV3sbxnWo1+yrLNNNU
+	oYyM7s23XGWIkJKFq4vJkhULCx7f7nvktE6ve7UpT6yoLtXAmG0aHTRkYqkaqET6YCyVQ+
+	UAQshJi6xWniJG14mthdEW6WbMOPgIA=
+Received: from mail-ej1-f72.google.com (mail-ej1-f72.google.com
+ [209.85.218.72]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-403-cKnyDEU9P9KFoEx6CaiCgw-1; Mon, 23 Jun 2025 10:15:47 -0400
+X-MC-Unique: cKnyDEU9P9KFoEx6CaiCgw-1
+X-Mimecast-MFC-AGG-ID: cKnyDEU9P9KFoEx6CaiCgw_1750688146
+Received: by mail-ej1-f72.google.com with SMTP id a640c23a62f3a-adeaa4cc91eso385596866b.1
+        for <linux-kernel@vger.kernel.org>; Mon, 23 Jun 2025 07:15:47 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1750688077; x=1751292877;
+        d=1e100.net; s=20230601; t=1750688146; x=1751292946;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=gB5mz+FxMOMtnMLrI/M5PI/QmYx/AfyqX4qBVvMef0s=;
-        b=CGwvtkqcXaswxELeW8wVdEKjyu3Oa6FpgNcbbON6Vj70bUQ1FKRU9SGe/h+wjRUKFX
-         9ui8nCl7oyoMhwaZrhaiHd64VCrwk2a0o+2UaxdO/0NyLwkt5sAB5jLhfqgYFl8wRE+C
-         jEvlLK1F7sTPF5jPnxwZpiA/1KF8lQfvk7A7iILFt7SYp+4LfPgcdna90p7lwRqaP4oM
-         pUs6Dw8gdlsvmXa5IO2GOdyXsS35PUX6GYqfqQ8wyenrVBalPynj03lTgqa62yHG18bh
-         dW75o73uSP/0HbwI0tWhJ74S4mF6Vf0h1c11prtHHLTSztl21+mx6wUdC3Mevz8nSIVU
-         26Ag==
-X-Forwarded-Encrypted: i=1; AJvYcCVXYQSD72oRBjhEWqB+CcPsuK6k7JJQFBwtYlqiGNk2ZG3BMJZ7TyNNih80wJ2WPCKeyvcMriQba5ZY@vger.kernel.org, AJvYcCVdFEIZ7cToLgc1KiDtn1Kny63LmjBvPd/FJj1RBOtAsJmDA3aA6B6RU8Q44NTfNVXtqfPkYAcZX4GVNWPW@vger.kernel.org, AJvYcCWdFY9rp5SjiHJ51Qne7CD/JNGVfll/rYeJ5ojqwAPoVff71tgpVtQC5X1iL9As1Wdu2sq0dKjHndC5nk7jbw==@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzt3rut28WZ+S1voJRBn77/7uzB9H0Aplo/FsSbCxN2Ia7V3I/8
-	7EhSLYXHz2efBiVNvjyRQ2CWAVHC0GrlhL8NkqeI0RV+xAC5n+EoUfvlWGpP7oklEGtGv4G3PVc
-	ZjatK78Dp23gnDxD1W055+BvjtPNduMA=
-X-Gm-Gg: ASbGncvUd6FRP6Drv89W6blhoumGOPyqku+oSNe5p+jHsgEn3yStZeknWS3mejWHz12
-	Qe6estXbNZet2DDsMXN6lCN36XQafH7OEFJKF0LxPoCXEA+lxt9AaerYbLbER3BpTZQsK3UQHdX
-	6ptuwG9he2/tXMV7xpOD7F8/qwJEMworYp2H3MkVQMZlyUjvq+HD9XaD9lnEs6cE6a737OLfnjK
-	J39/g==
-X-Google-Smtp-Source: AGHT+IEkXBzeNkvGlr+MIWstDnY8eKrXwYunCgNIcOP48vnJi9qyAPRtIff07B7nuxNo4Y6YB9GTJmQfZ5jk980sLjE=
-X-Received: by 2002:a05:6214:4885:b0:6fb:6778:e205 with SMTP id
- 6a1803df08f44-6fd0a535472mr220001536d6.25.1750688076986; Mon, 23 Jun 2025
- 07:14:36 -0700 (PDT)
+        bh=EyJToE/pte+ssPp7y/bG1BA6jfNjqT0fWWgQuZcOyUM=;
+        b=eu/IAUf+McZfx/b3vtR1fXgNU1/kJGI8T2MBpKp26xB0v7vD/WCSI6gzXjQpWBxsxl
+         Xo79RKvw2gszZtGsarCCmk39rCLz8/v5O4znwM27sMVLlFEdz22BMhR44qMFDivUiDOV
+         izrDBrLUl4r79FyEvM/HB6MgQJpM3+Y451u6jRaa19xDiDO91FL4ivB8PUHjE4wqB2Vo
+         zXvMlPoHZDZqOWU9mu40M3moLfwEqwGvSS++w4WE2gLjcXlqmQPAb84XRGQLastl1lwp
+         EevO9cVjblZ8zojBeYEabVamANV7/QXNY/B+GeVptnre482dHDz5I2pD6gshur3ehVLJ
+         oRlA==
+X-Forwarded-Encrypted: i=1; AJvYcCVSPEUoWdttyem6fmh8uudLjLFPNnsOGqJ5MyxSmgspaS1hCX2VGnmjLg+hOGNZhxVBR7z+286PeljI+3A=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyAON/RUQ/oyQOmXLyyMiJaUWx4bFCmooiYrJYKFIFh1U9l9zc9
+	6nL2biS1T8F2GQV8iD65L1cKCWBkXCOQTWTnPdnyAHpAugnprbPHtWGWar60z9dFqE6WLtEFjmY
+	frikOlVTdeukNkz5ExZyIVarrCZzrTzGxoUc+lN49UJE8vHycdGV8PpW6vPGBknTsM8MUjytiqv
+	lz1Wl7HsmQr9S5pYIwXxhMj/GZIMS2ekTywAuCkA5M
+X-Gm-Gg: ASbGncsbX0viYsHU78DmluIUN3+L6FAvzbqTwbTj0iZ/ZYJ/lOtjCGvcjXMf0jtkab4
+	A3FYcltjay/yVPNjDs660CZRn3BWUKC8npdps4fzLEqLOQE8ZqNG5798CzI30hr29IDVyn1TrEh
+	hgTzPad8/zXSdT8X4HDGonpQDsUJ8eCi1KQQ==
+X-Received: by 2002:a17:907:d86:b0:ad8:5595:ce07 with SMTP id a640c23a62f3a-ae05afc0710mr1078703966b.19.1750688146143;
+        Mon, 23 Jun 2025 07:15:46 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IHoFh+lf9cKfPw5/PaFmRHhpg9V/2Pj3aVIVskh3oL37UFb1YPi0qYcUDrFyqTAiZkD7oZwHlHU31LwMV9DILI=
+X-Received: by 2002:a17:907:d86:b0:ad8:5595:ce07 with SMTP id
+ a640c23a62f3a-ae05afc0710mr1078700866b.19.1750688145716; Mon, 23 Jun 2025
+ 07:15:45 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250623124835.1106414-1-dhowells@redhat.com> <20250623124835.1106414-7-dhowells@redhat.com>
-In-Reply-To: <20250623124835.1106414-7-dhowells@redhat.com>
-From: Steve French <smfrench@gmail.com>
-Date: Mon, 23 Jun 2025 09:14:25 -0500
-X-Gm-Features: Ac12FXxLQPaj9HruER9vjDaDjWQT2gVo6q7LARadtOuRo6Y6TxV_q72wukZRZKQ
-Message-ID: <CAH2r5mv5jjtNJmLAcaa7EbXpftuC04F+b_g6YZxkNDTNYnm7sg@mail.gmail.com>
-Subject: Re: [PATCH 06/11] cifs: Fix prepare_write to negotiate wsize if needed
-To: David Howells <dhowells@redhat.com>
-Cc: Christian Brauner <christian@brauner.io>, Steve French <sfrench@samba.org>, 
-	Paulo Alcantara <pc@manguebit.com>, netfs@lists.linux.dev, linux-cifs@vger.kernel.org, 
-	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	Paulo Alcantara <pc@manguebit.org>
+References: <20250611135644.219127-1-tglozar@redhat.com> <aEmWyPqQw2Ly7Jlu@x1>
+In-Reply-To: <aEmWyPqQw2Ly7Jlu@x1>
+From: Tomas Glozar <tglozar@redhat.com>
+Date: Mon, 23 Jun 2025 16:15:34 +0200
+X-Gm-Features: AX0GCFse79ZjFCqQvREHj8XeqJ7aESkxQmRMY9ubWHRlvs8xYcKjt3uVJs2GtUc
+Message-ID: <CAP4=nvRVG9dxUQRQe13Y9Xyw01epNTpgxDmb3wbi_ZXBkAC_DQ@mail.gmail.com>
+Subject: Re: [PATCH 0/8] rtla/timerlat: Support actions on threshold and on end
+To: Arnaldo Carvalho de Melo <acme@kernel.org>
+Cc: Steven Rostedt <rostedt@goodmis.org>, linux-trace-kernel@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, John Kacur <jkacur@redhat.com>, 
+	Luis Goncalves <lgoncalv@redhat.com>, Chang Yin <cyin@redhat.com>, 
+	Costa Shulyupin <costa.shul@redhat.com>
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-This patch is already merged into mainline.
-
-On Mon, Jun 23, 2025 at 7:50=E2=80=AFAM David Howells <dhowells@redhat.com>=
- wrote:
+st 11. 6. 2025 v 16:46 odes=C3=ADlatel Arnaldo Carvalho de Melo
+<acme@kernel.org> napsal:
 >
-> Fix cifs_prepare_write() to negotiate the wsize if it is unset.
->
-> Fixes: 69c3c023af25 ("cifs: Implement netfslib hooks")
-> Signed-off-by: David Howells <dhowells@redhat.com>
-> Reviewed-by: Paulo Alcantara <pc@manguebit.org>
-> cc: Steve French <sfrench@samba.org>
-> cc: netfs@lists.linux.dev
-> cc: linux-fsdevel@vger.kernel.org
-> cc: linux-cifs@vger.kernel.org
-> ---
->  fs/smb/client/file.c | 8 ++++++--
->  1 file changed, 6 insertions(+), 2 deletions(-)
->
-> diff --git a/fs/smb/client/file.c b/fs/smb/client/file.c
-> index 9835672267d2..e9212da32f01 100644
-> --- a/fs/smb/client/file.c
-> +++ b/fs/smb/client/file.c
-> @@ -52,6 +52,7 @@ static void cifs_prepare_write(struct netfs_io_subreque=
-st *subreq)
->         struct netfs_io_stream *stream =3D &req->rreq.io_streams[subreq->=
-stream_nr];
->         struct TCP_Server_Info *server;
->         struct cifsFileInfo *open_file =3D req->cfile;
-> +       struct cifs_sb_info *cifs_sb =3D CIFS_SB(wdata->rreq->inode->i_sb=
-);
->         size_t wsize =3D req->rreq.wsize;
->         int rc;
->
-> @@ -63,6 +64,10 @@ static void cifs_prepare_write(struct netfs_io_subrequ=
-est *subreq)
->         server =3D cifs_pick_channel(tlink_tcon(open_file->tlink)->ses);
->         wdata->server =3D server;
->
-> +       if (cifs_sb->ctx->wsize =3D=3D 0)
-> +               cifs_negotiate_wsize(server, cifs_sb->ctx,
-> +                                    tlink_tcon(req->cfile->tlink));
-> +
->  retry:
->         if (open_file->invalidHandle) {
->                 rc =3D cifs_reopen_file(open_file, false);
-> @@ -160,10 +165,9 @@ static int cifs_prepare_read(struct netfs_io_subrequ=
-est *subreq)
->         server =3D cifs_pick_channel(tlink_tcon(req->cfile->tlink)->ses);
->         rdata->server =3D server;
->
-> -       if (cifs_sb->ctx->rsize =3D=3D 0) {
-> +       if (cifs_sb->ctx->rsize =3D=3D 0)
->                 cifs_negotiate_rsize(server, cifs_sb->ctx,
->                                      tlink_tcon(req->cfile->tlink));
-> -       }
->
->         rc =3D server->ops->wait_mtu_credits(server, cifs_sb->ctx->rsize,
->                                            &size, &rdata->credits);
->
+> I wouldn't add -A and -N, leaving just the long options, as it documents
+> scripts (and we should have autocomplete as well), leaving the one
+> letter options for things that are used super frequently, which could be
+> these new options, after a while, time will tell :-)
 >
 
+Hmm, my reasoning for those is that one might have multiple actions,
+and the action argument itself is long, so one would get a very long
+command, e.g.:
 
---=20
-Thanks,
+$ rtla timerlat hist -T 10 --on-threshold shell,command=3D"echo
+Threshold" --on-end shell,command=3D"echo Tracing stopped"
 
-Steve
+for the command from the example below. But it's true that this is an
+experimental feature, and I don't even precisely know the direction in
+which I'm going (which is to be determined based on the use of this in
+practice). So your suggestion makes a lot of sense.
+
+>
+> I think having the documentation together with the new options is
+> desirable.
+>
+
+Right, this is a user facing change. I did the documentation
+separately before, but that was for a change in implementation (BPF
+sample collection). Also, I did not have the documentation at the time
+of sending of the patchset ready yet :) I'll add it to the v2.
+
+>
+> so --on-threshold ends up being a list of things to do when the
+> threshold is hit?
+>
+
+Yes, the list is executed in order. Now when I'm looking at the cover
+letter, this is not clear, I'm only talking about the "list" of the
+supported actions (which I perhaps should more accurately call "set").
+
+>
+> That is an interesting example of cross-tool integration using existing
+> mechanisms for detecting special events and asking for hardware tracing
+> snapshots, good stuff!
+>
+
+Thanks!
+
+> At some point we need to have this signalling to not involve userspace,
+> shortcircuiting the snapshot request closer to the event of interest,
+> inside the kernel.
+>
+
+I have a feature in mind for that. We already use a BPF program to
+process the samples [note1], which means that BPF tail call [1] can be
+used to implement in-kernel actions next to userspace ones. Those can
+be built-in BPF programs, or custom BPF programs supplied by the user.
+
+[1] https://docs.ebpf.io/linux/helper-function/bpf_tail_call
+[note1] In BPF mode. However, outside BPF mode, actions are not that
+useful in the first place, as they are only executed when rtla wakes
+up to process samples, incurring up to 1s latency.
+
+Tomas
+
 
