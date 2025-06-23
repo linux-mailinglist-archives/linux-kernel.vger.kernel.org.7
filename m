@@ -1,101 +1,125 @@
-Return-Path: <linux-kernel+bounces-698306-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-698308-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id A3167AE403D
-	for <lists+linux-kernel@lfdr.de>; Mon, 23 Jun 2025 14:30:12 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8C5ABAE4052
+	for <lists+linux-kernel@lfdr.de>; Mon, 23 Jun 2025 14:32:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id CD274188C674
-	for <lists+linux-kernel@lfdr.de>; Mon, 23 Jun 2025 12:25:40 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B138B3A48B1
+	for <lists+linux-kernel@lfdr.de>; Mon, 23 Jun 2025 12:26:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 089872367B3;
-	Mon, 23 Jun 2025 12:25:12 +0000 (UTC)
-Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 65BA4242D74;
+	Mon, 23 Jun 2025 12:26:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="WM9Mlw9n"
+Received: from mail-wm1-f49.google.com (mail-wm1-f49.google.com [209.85.128.49])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8019123C390
-	for <linux-kernel@vger.kernel.org>; Mon, 23 Jun 2025 12:25:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3C05822257B;
+	Mon, 23 Jun 2025 12:26:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750681511; cv=none; b=iLNkbk5psX481jrXD7fSo3LgY8X2HAxsNOT0Pxdj8qZ01iTYJJIDk0UYNd1SG20Xo1DK7ey/KjWhZM+VG9L+XhCpTwxVdIi/6FkMjEO9FyrGcRMNugE2ocuprw1VqwsKuDLrjqrYoRkYiFNVOSc1hOwM2MHDwIgPIe8j8sL64Mk=
+	t=1750681609; cv=none; b=C8cO8VOSipmJnO/J+BMns756ncXdLBqq2R0FE+DS1VIbZTj7K4Dl3Anth6/b78HwHEtlBCTUqvtxV1SwxiK0rZDhjrDzK9+kfy4Vp0VwIRWKG8dA+jZ46xcXK+cgKxsMnsMO5ebJjot9RduuuHutf4ynS7GLTUGDGXhVw6agT7M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750681511; c=relaxed/simple;
-	bh=esObjBxrSfSNguJL1ozbvTSlev1HB7qOsBV2FDiqjMw=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=FD8bqw7t13ZjZvBzU9zjxZgFyz6sIfXugKNOH3n3tTw0ffD1tY0GMpybDjrypnn7RNW9mzRgRJAeg5+jrKJYXRaorrehrj8896KoYI6PXRAH8Wwfqv8pnZ6VvQILg8j+J1tGfGT6JU1H8cO1xKV41Tww4f9szPk7BEee8ob5xUs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
-Received: from ptz.office.stw.pengutronix.de ([2a0a:edc0:0:900:1d::77] helo=[IPv6:::1])
-	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-	(Exim 4.92)
-	(envelope-from <l.stach@pengutronix.de>)
-	id 1uTgEQ-00084L-4d; Mon, 23 Jun 2025 14:25:02 +0200
-Message-ID: <424c7fbf417c6d13c5842d78e83d72f705e021f1.camel@pengutronix.de>
-Subject: Re: [PATCH v2 5/6] drm/etnaviv: Add PPU flop reset
-From: Lucas Stach <l.stach@pengutronix.de>
-To: Gert Wollny <gert.wollny@collabora.com>, Russell King
- <linux+etnaviv@armlinux.org.uk>, Christian Gmeiner
- <christian.gmeiner@gmail.com>
-Cc: etnaviv@lists.freedesktop.org, dri-devel@lists.freedesktop.org, 
+	s=arc-20240116; t=1750681609; c=relaxed/simple;
+	bh=lCMqvQXJ0zXftmACn8xdaAx2uVjeggSEzNAyfh4rhGo=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=W7mkdIuEeItEfx4WRgANHJyvgSZxIVfbnIA9AxnqRgzJgMJRCVTaJ23ZK4E6uVxuEqmes/eQomweVg1whcMSG1K/oN3j7Kef3Ya85ilIn2z8eT8UbkQzqOJxeZhEjlcgAB+TUXRGU0mADu9PKgQ9SZpeXzsske6fZi/zuFPAv7g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=WM9Mlw9n; arc=none smtp.client-ip=209.85.128.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f49.google.com with SMTP id 5b1f17b1804b1-45360a81885so1299465e9.2;
+        Mon, 23 Jun 2025 05:26:47 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1750681606; x=1751286406; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=NR9/FTeBZfjAoPJtsHg0ijiEDXN1eDhcREGD/8jefDQ=;
+        b=WM9Mlw9niaZBjA7OkJpA1TQ8WV9omDM5VwrVe3eKQZoxbfMjoWb57ePFVZsWt7Lf3g
+         GnOaqQe0UNTcf3Q8PS2+l6WypA5+90QNLHj5jI7xsQH159gYeB3ACazEvJblOT0B+9j0
+         QA/WgvQUdlLEgG7AsXdm0r3Sj65NQ7ezCyCIEi2ESnz0+WtZLtOTm4NRaZOfwR1Hjvj5
+         /KfX7CECVWNTj0vr7u7+EhebzZNdEpaRVavP7wPqDzwbvygeDfXJTmG/Oa5qi+mUKSK4
+         vz59llbL7JU3BbLbygPJS1fA19QnYIx+j/FYDFmxszFk0bGM73y8hzW2Xd+i+htCx1Kq
+         Ca0g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1750681606; x=1751286406;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=NR9/FTeBZfjAoPJtsHg0ijiEDXN1eDhcREGD/8jefDQ=;
+        b=U11pN2q2I1AKpDtWRt/UHgnj/LnoHAbn7+saJVLjfEskniSe1rDqX6RMrAnA14fHTB
+         gu/03E2sy6mtGD+1IjAOewiTJK/zK6g0CzSrDd6mXSeCh/Hik/HJMHTzOqGv2g3firrD
+         JoM+//rzXECXRGWzVc0QO0j67NrfjJYC/zPxm3LHT1W9070WT9lgzvMe46atrA/MCL8z
+         sxdzBTVAcsMalAppvfDkADG6Ilp8ScrSIn6gZftvEAVHXnU7xzGfzOuce120KwFfvz+B
+         Le7F97GshtKFaaUQ1FgWcGMuXNVBTN6G5Htt4wBiEo1Fo76qeixxZUMnWhSA/rRPQb+/
+         LP+A==
+X-Forwarded-Encrypted: i=1; AJvYcCUmmLnVz5gj3p3TmhLihHDDHNfLfs1U/rSH4NwBJPTLdcM+SOkUuhzWbjBoYQqNEPgVKC3HHYwDIc7Aq84=@vger.kernel.org, AJvYcCUyvIXsc9/02Fwn0aDv1SC6ncLFbtKSMxoYVUL7QOp3aRNrvJU45wKQj/tZ63lm8KO70zuEl0MF@vger.kernel.org
+X-Gm-Message-State: AOJu0YwAHRvzql/pfl9gF7L7fwWtRz7JrRwFPrSFsvV0azYx56y2scnz
+	veetadwSXBbvYbwaJnP4HV0Th5xndIVrdka1HheWQH4+MU2oZEP58HtL
+X-Gm-Gg: ASbGnct3PrnhEHs2rMJQMj54MP85LLL7ifjJJTglZUDa0xzsZeS0mnxXDcwsWwkRg1p
+	wdEIdmuy5fxSMf9+KNDCBnZyadEGggEhcWl/qvi9ex57pGJ/pWhdPYD8Og+C5DT/eehFy0bIGzt
+	PP4psaRGCCfHYa/Rb27Je+6WH2KSw5VbWQ1xMppCwDPf0BndrP6R9T/x0TW0MGALeDwb0VMPj1Y
+	l0RDr7cVnJ5D07SljbIQhFua8aUkUJatJ6ndLy/efIzEsDz0V3MUcECt0NlxuNv7/DIj0rthcWI
+	i4kcYuyNJm73KiblITMZjTGYNqTp3dX+/FJy1o0sqXFZk9YI0i0ihEk80zADnMB1BdpEBkqkChj
+	TJTa5AGyoveWs5w==
+X-Google-Smtp-Source: AGHT+IEX9C3+931olKDRW+62b8ghcD3np6als1gSZSaeHy7Q5y3LmKGhDxKSJlnDSctSs7kgDpTk7A==
+X-Received: by 2002:a05:600c:1c8f:b0:442:fff5:5185 with SMTP id 5b1f17b1804b1-453659c40b8mr45620765e9.6.1750681606204;
+        Mon, 23 Jun 2025 05:26:46 -0700 (PDT)
+Received: from thomas-precision3591.imag.fr ([2001:660:5301:24:e50:cae5:aec0:9574])
+        by smtp.googlemail.com with ESMTPSA id 5b1f17b1804b1-453647071f4sm109848205e9.34.2025.06.23.05.26.45
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 23 Jun 2025 05:26:45 -0700 (PDT)
+From: Thomas Fourier <fourier.thomas@gmail.com>
+To: 
+Cc: Thomas Fourier <fourier.thomas@gmail.com>,
+	Potnuri Bharat Teja <bharat@chelsio.com>,
+	Andrew Lunn <andrew+netdev@lunn.ch>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>,
+	Paolo Abeni <pabeni@redhat.com>,
+	Santosh Rastapur <santosh@chelsio.com>,
+	Arjun Vynipadath <arjun@chelsio.com>,
+	Michael Werner <werner@chelsio.com>,
+	Ganesh GR <ganeshgr@chelsio.com>,
+	netdev@vger.kernel.org,
 	linux-kernel@vger.kernel.org
-Date: Mon, 23 Jun 2025 14:25:01 +0200
-In-Reply-To: <7c8b78f040d872f7f119f849e7969a7f2a4e9c86.camel@collabora.com>
-References: <20250618204400.21808-1-gert.wollny@collabora.com>
-	 <20250618204400.21808-6-gert.wollny@collabora.com>
-	 <3197df27de7438c67558060414bff16662cb155a.camel@pengutronix.de>
-	 <7c8b78f040d872f7f119f849e7969a7f2a4e9c86.camel@collabora.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.52.4 (3.52.4-2.fc40) 
+Subject: [PATCH net] ethernet: cxgb4: Fix dma_unmap_sg() nents value
+Date: Mon, 23 Jun 2025 14:25:55 +0200
+Message-ID: <20250623122557.116906-2-fourier.thomas@gmail.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-SA-Exim-Connect-IP: 2a0a:edc0:0:900:1d::77
-X-SA-Exim-Mail-From: l.stach@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
+Content-Transfer-Encoding: 8bit
 
-Am Montag, dem 23.06.2025 um 14:05 +0200 schrieb Gert Wollny:
-> On Fri, 2025-06-20 at 22:22 +0200, Lucas Stach wrote:
-> >=20
-> > > @@ -1807,6 +1808,11 @@ static int etnaviv_gpu_bind(struct device
-> > > *dev, struct device *master,
-> > > =C2=A0		ret =3D -ENXIO;
-> > > =C2=A0		goto out_sched;
-> > > =C2=A0	}
-> > > +
-> > > +	if (etnaviv_flop_reset_ppu_require(&gpu->identity) &&
-> > > +	=C2=A0=C2=A0=C2=A0 !priv->flop_reset_data_ppu)
-> > > +		etnaviv_flop_reset_ppu_init(priv);
-> > > +
-> > I don't see why you would need to do this in the bind callback. You
-> > should be able to move this to etnaviv_gpu_init(), so you have the
-> > needed identification data. gpu_init is also executed serially over
-> > all GPUs in the device, so there is no problem with potential races
-> > there.
->=20
-> I moved this here because you wrote before:=20
->=20
-> > But then you should allocate this buffer
-> > in etnaviv_gpu_bind to avoid races between GPUs starting up and=20
-> > trying to allocate this global memory.
->=20
-Yea, sorry about this. I hadn't noticed the dependency on the HW
-identification when I wrote this.
+The dma_unmap_sg() functions should be called with the same nents as the
+dma_map_sg(), not the value the map function returned.
 
-> If etnaviv_gpu_init() is fine, I'll move it there.=20
+Fixes: 8b4e6b3ca2ed ("cxgb4: Add HMA support")
+Signed-off-by: Thomas Fourier <fourier.thomas@gmail.com>
+---
+ drivers/net/ethernet/chelsio/cxgb4/cxgb4_main.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-I'm not saying that I may not again miss some implicit dependency, but
-as far as I can see right now moving it there should be fine.
-gpu_init() fulfills the same properties with regard to init ordering
-between the GPUs as gpu_bind().
+diff --git a/drivers/net/ethernet/chelsio/cxgb4/cxgb4_main.c b/drivers/net/ethernet/chelsio/cxgb4/cxgb4_main.c
+index 51395c96b2e9..73bb1f413761 100644
+--- a/drivers/net/ethernet/chelsio/cxgb4/cxgb4_main.c
++++ b/drivers/net/ethernet/chelsio/cxgb4/cxgb4_main.c
+@@ -3998,7 +3998,7 @@ static void adap_free_hma_mem(struct adapter *adapter)
+ 
+ 	if (adapter->hma.flags & HMA_DMA_MAPPED_FLAG) {
+ 		dma_unmap_sg(adapter->pdev_dev, adapter->hma.sgt->sgl,
+-			     adapter->hma.sgt->nents, DMA_BIDIRECTIONAL);
++			     adapter->hma.sgt->orig_nents, DMA_BIDIRECTIONAL);
+ 		adapter->hma.flags &= ~HMA_DMA_MAPPED_FLAG;
+ 	}
+ 
+-- 
+2.43.0
 
-Regards,
-Lucas
 
