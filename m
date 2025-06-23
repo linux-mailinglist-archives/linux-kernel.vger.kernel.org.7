@@ -1,81 +1,56 @@
-Return-Path: <linux-kernel+bounces-698836-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-698834-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 496F2AE4AAE
-	for <lists+linux-kernel@lfdr.de>; Mon, 23 Jun 2025 18:24:54 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 460C3AE4AFD
+	for <lists+linux-kernel@lfdr.de>; Mon, 23 Jun 2025 18:31:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 246763BC184
-	for <lists+linux-kernel@lfdr.de>; Mon, 23 Jun 2025 16:22:20 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8D0521B628CD
+	for <lists+linux-kernel@lfdr.de>; Mon, 23 Jun 2025 16:22:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 411122C3770;
-	Mon, 23 Jun 2025 16:12:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CB9322C17B6;
+	Mon, 23 Jun 2025 16:12:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="a1boP2I4"
-Received: from mail-pf1-f179.google.com (mail-pf1-f179.google.com [209.85.210.179])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="lbvzN3MM"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 514082C3265;
-	Mon, 23 Jun 2025 16:12:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 34CB729B8E2;
+	Mon, 23 Jun 2025 16:12:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750695162; cv=none; b=UH+Unbb8unD+csqiooIuT29ZzIFWqGdlk/ZqKwMNXf9UxYHVx/J+Sp1aPXW6NJpOHA5KzimsHfO3ZKLWrKMKptFmRhRmH0EGgMyE6uoaSBHC/8E0tpgUzmZrBVDpoyyMiqpEvubMhTKcgYX60j3LXBiliZgZpepcPDLyQyw2ySI=
+	t=1750695159; cv=none; b=gMf6C7scZR9CJmU5hWUVXfcdYKivQmBJmArB3GG+GTRdwuKbH6lOvwlqqFikDLafb6AMjrJa8nc574ZFrwjgbZ1HEGNG5iaTXwHeGuO6N2D1eyi0k/z8M7MjZI5Pgj5E34R+abkpkjTVZkSmG2ukMR9B97GXj60gOtgPXYTLS9o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750695162; c=relaxed/simple;
-	bh=NGNHqVeHxydNd/a2vIf96yJJA/aOVMOt2dlmMgPjKOQ=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=hXX9jvFBsLUSsyzyrvo+jAny8Tly045bIsox21L7+qLIQW6gQhIJgSdaA9FN6ZiiU9tjxu3bw/x3IUCp46NFL5H+ZuWa2XDQ2H6Bcc3ZJRwRO693QssKWKrN/Ff11PAmI6iZ8A01eQTCA4erB1GeFfxtRDICMdvtPS3MtvnY7mo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=a1boP2I4; arc=none smtp.client-ip=209.85.210.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f179.google.com with SMTP id d2e1a72fcca58-7425bd5a83aso3838613b3a.0;
-        Mon, 23 Jun 2025 09:12:41 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1750695160; x=1751299960; darn=vger.kernel.org;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=f78YX8Jv2hkXlixOcjovzULMHQy54ZDO00RkiEOZMLg=;
-        b=a1boP2I4O+S+6yxw1IckzVyj8Gye9uSCo0UqRIPx//MMs/nwnuY6FjvbkpTnhQVY3N
-         o0xIQmMTv6e52BYSWwyVtUZgK9Q5qhpHEKPJSTV+suSS6cWSGn3p6wI6Hp5CRIEgfOuO
-         vbZFClP1Al39gSOBCFINjzb1DadlInC1y3VUzq9Uh+WfaLJvDFwwRyFQ6UftVTCHoZ3g
-         i+cO/NoAclUQ2/UR8kExNLctNNppNALTaFOEFXayB8obPBw2wx+zZS6MT47/JRNjdkkG
-         sxXnvuUAq7PbmS2Vc8vyCv19DBE68tHgqXyFNiV5vl0Y5f3n7q82MkZaD6GbjZDWI38S
-         xtQA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1750695160; x=1751299960;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=f78YX8Jv2hkXlixOcjovzULMHQy54ZDO00RkiEOZMLg=;
-        b=I/+OalDFw12TlTGFtDBlPVPUAKMcl4zufyQHrmjPbZnf+w0tz5pyexle6i5XjBOFY6
-         QoEBQiTE8dV7py3YeVjQLrVo0mBsdHJt9EC9MtAwtI9+Kv4NR/vczQ9maIsMDIgmD6Oc
-         QtMqBvRatA8ZCgxh6K0mqDaeqdqF/fUQS7Pt0kxswjWP1DX4wTJFv6ZcBu9eM7PoZusK
-         +R9XGSmgYmoafuv/5gQAxa4HKHqArfW56pemKfzkH8zmfKm18Rsu8sWhqERy0suGL5do
-         fvoe135j9g/6dCJzZLyV5+SMvX3pzK0Tg/lz/mYzZnVtOfv437gEidb0Z/l2hC8HsfOK
-         /FAw==
-X-Forwarded-Encrypted: i=1; AJvYcCWKepFD5loxVIhGPzHR7dZiuIty9uVpzbR7f+ZP3PmVhC9JAfxvEg0qcMpKRULVDBt2blrcYP+YY/Os@vger.kernel.org, AJvYcCWflq2izVN9/meynruuuaelrKjHqD0yHSzlMEOp9IslicOhvlzYDNlPDxG15OIOQLzQqMkj7X8KZtfItUP3@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz+Oh7ZZXT570WoXM8DDQIfT6yPJyvS766k9kpmYI4vHo8qRFAB
-	rJuyQxUfL83Ahuma3HevYz4JMHy1kC2meozOY//DcJqowOcBiscnd6voZaQKgpTG
-X-Gm-Gg: ASbGncs59NZqg4dmzYwCeTItLdU0ValINP4n/qHUATl0cPt/2wUUlPDZnQZzeUcw89d
-	zXgW65k22//eR/XKaJ9AVJG+hI4zAHSsGes6eECSbhRSKmK422NNIMj0Oad1mTMfDyQ8P+q6oSM
-	eBntguesXfhF5Z5ffcSiUI+ipHRa8PuV0+z0gL05cstKmGjFsJNcKuB5bScr5zjduiES3CpYPZ7
-	7PJxKC/a8D3OmKueuQVcjb7Ky0AkNO/Z1QvpZNErqlhhBNeiOkpoyuaek/2KxKd3M8NLSNoBYxv
-	AdmyDdy4blBllPMd5uABQV+sTMrr27zDvVmJCOiuqcvJBzfL3HUAB0K83ZqQlVF9oO+wr+Xw9u1
-	rUo+sFFb5Y28a5nk=
-X-Google-Smtp-Source: AGHT+IEQFD7ncJGbn/pBz/+p1d4K7L7mh1a5kN90gM3aF97um4Xo6JRQuOcwRlaKlzaUrBNsaYvNLw==
-X-Received: by 2002:a05:6a00:2e18:b0:748:ffaf:9b53 with SMTP id d2e1a72fcca58-7490d723218mr17461031b3a.16.1750695160533;
-        Mon, 23 Jun 2025 09:12:40 -0700 (PDT)
-Received: from [10.22.1.180] ([67.159.246.222])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7490a467e6dsm9029608b3a.13.2025.06.23.09.12.37
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 23 Jun 2025 09:12:40 -0700 (PDT)
-From: =?utf-8?q?Jo=C3=A3o_Paulo_Gon=C3=A7alves?= <jpaulo.silvagoncalves@gmail.com>
-Date: Mon, 23 Jun 2025 13:12:27 -0300
-Subject: [PATCH 2/2] arm64: dts: ti: k3-am62p-verdin: Adjust temperature
- trip points
+	s=arc-20240116; t=1750695159; c=relaxed/simple;
+	bh=ZAnwQDqTESYH6oy4uvfg/zruit4no4oBmPm9404Wxng=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
+	 MIME-Version:Content-Type; b=r84rBIvxcY3va8mj3F5CdzrfZ21qHVeJ0y/sANdDHbe80AngTmuuvoy4llcSZjA8SGDumithIQN4lru7+GRxB4Vg3xJQbty5Y6xiZF7MwbQS2cyGF6jxaqTKv1xg1tkhVG2XqskbtEs0NbfznLNNo8rjW4EK1OncjohCVJS5km0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=lbvzN3MM; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2264AC4CEEA;
+	Mon, 23 Jun 2025 16:12:36 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1750695158;
+	bh=ZAnwQDqTESYH6oy4uvfg/zruit4no4oBmPm9404Wxng=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
+	b=lbvzN3MMztshVTjkgSlF31R0UTLMPY271szcuu4G50fJdgJG5R4REwswZEpGO/45v
+	 InNcpiAM37DYqzvlphdgG7swwHlRhz3LQUM/DV/ryfOhsZQtw4lHKzwYSOGIQd7BHn
+	 ofue4ZxR8Q8vXL4iQ9vgD4vHDiCiISWi/XGrt5Ryhw1KFXp4FOWGwnb/plDDPBHuIb
+	 sg/8+v3MBilMYQ2JS5UL6EzMYjRWwFEBw53QeGaQomkPnb35C0JkVPgymkRZV7OxxR
+	 uP3QEcyTBur2fCGs+EgfjYtpUYXYMZqHbfxFO3x4j7AcpaHkPMiO1ICHBBAmVf2Flf
+	 fCnwB3IOHKopQ==
+From: Mark Brown <broonie@kernel.org>
+To: Liam Girdwood <lgirdwood@gmail.com>, Jaroslav Kysela <perex@perex.cz>, 
+ Takashi Iwai <tiwai@suse.com>, Mark Brown <broonie@kernel.org>
+Cc: Dmitry Baryshkov <lumag@kernel.org>, linux-sound@vger.kernel.org, 
+ linux-kernel@vger.kernel.org
+In-Reply-To: <20250613-asoc-hdmi-eld-logging-v1-1-76d64154d969@kernel.org>
+References: <20250613-asoc-hdmi-eld-logging-v1-1-76d64154d969@kernel.org>
+Subject: Re: [PATCH] ASoC: hdac_hdmi: Rate limit logging on connection and
+ disconnection
+Message-Id: <175069515687.146175.12666282913525155773.b4-ty@kernel.org>
+Date: Mon, 23 Jun 2025 17:12:36 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -83,69 +58,45 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-Message-Id: <20250623-b4-verdin-am62p-cooling-device-v1-2-cc185ba5843d@toradex.com>
-References: <20250623-b4-verdin-am62p-cooling-device-v1-0-cc185ba5843d@toradex.com>
-In-Reply-To: <20250623-b4-verdin-am62p-cooling-device-v1-0-cc185ba5843d@toradex.com>
-To: Nishanth Menon <nm@ti.com>, Vignesh Raghavendra <vigneshr@ti.com>, 
- Tero Kristo <kristo@kernel.org>, Rob Herring <robh@kernel.org>, 
- Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>
-Cc: linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org, 
- linux-kernel@vger.kernel.org, 
- =?utf-8?q?Jo=C3=A3o_Paulo_Gon=C3=A7alves?= <joao.goncalves@toradex.com>
-X-Mailer: b4 0.14.2
+Content-Transfer-Encoding: 7bit
+X-Mailer: b4 0.15-dev-08c49
 
-From: João Paulo Gonçalves <joao.goncalves@toradex.com>
+On Fri, 13 Jun 2025 17:41:04 +0100, Mark Brown wrote:
+> We currently log parse failures for ELD data and some disconnection events
+> as errors without rate limiting. These log messages can be triggered very
+> frequently in some situations, especially ELD parsing when there is nothing
+> connected to a HDMI port which will generate:
+> 
+> hdmi-audio-codec hdmi-audio-codec.1.auto: HDMI: Unknown ELD version 0
+> 
+> [...]
 
-While the TI AM62P supports a junction temperature (Tj) of up to 125°C
-for industrial and automotive parts, Toradex Verdin-AM62P hardware
-lifetime guarantees consider a 105°C Tj. Change the passive trip points
-to 95°C and the critical trip points to 105°C to be compliant with the
-hardware specifications.
+Applied to
 
-Signed-off-by: João Paulo Gonçalves <joao.goncalves@toradex.com>
----
- arch/arm64/boot/dts/ti/k3-am62p-verdin.dtsi | 24 ++++++++++++++++++++++++
- 1 file changed, 24 insertions(+)
+   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git for-next
 
-diff --git a/arch/arm64/boot/dts/ti/k3-am62p-verdin.dtsi b/arch/arm64/boot/dts/ti/k3-am62p-verdin.dtsi
-index 226398c37fa9b348b8ea30e1e21f75e98bd3d60b..7676b24b13f67da81245c023e0fdc27294efec82 100644
---- a/arch/arm64/boot/dts/ti/k3-am62p-verdin.dtsi
-+++ b/arch/arm64/boot/dts/ti/k3-am62p-verdin.dtsi
-@@ -848,6 +848,30 @@ mbox_mcu_r5_0: mbox-mcu-r5-0 {
- 	};
- };
- 
-+&main0_alert {
-+	temperature = <95000>;
-+};
-+
-+&main0_crit {
-+	temperature = <105000>;
-+};
-+
-+&main1_alert {
-+	temperature = <95000>;
-+};
-+
-+&main1_crit {
-+	temperature = <105000>;
-+};
-+
-+&main2_alert {
-+	temperature = <95000>;
-+};
-+
-+&main2_crit {
-+	temperature = <105000>;
-+};
-+
- &main_gpio0 {
- 	gpio-line-names =
- 		"SODIMM_52",
+Thanks!
 
--- 
-2.43.0
+[1/1] ASoC: hdac_hdmi: Rate limit logging on connection and disconnection
+      commit: c4ca928a6db1593802cd945f075a7e21dd0430c1
+
+All being well this means that it will be integrated into the linux-next
+tree (usually sometime in the next 24 hours) and sent to Linus during
+the next merge window (or sooner if it is a bug fix), however if
+problems are discovered then the patch may be dropped or reverted.
+
+You may get further e-mails resulting from automated or manual testing
+and review of the tree, please engage with people reporting problems and
+send followup patches addressing any issues that are reported if needed.
+
+If any updates are required or you are submitting further changes they
+should be sent as incremental updates against current git, existing
+patches will not be replaced.
+
+Please add any relevant lists and maintainers to the CCs when replying
+to this mail.
+
+Thanks,
+Mark
 
 
