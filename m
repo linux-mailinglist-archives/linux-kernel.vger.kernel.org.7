@@ -1,87 +1,77 @@
-Return-Path: <linux-kernel+bounces-699011-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-699009-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id A5F79AE4CB0
-	for <lists+linux-kernel@lfdr.de>; Mon, 23 Jun 2025 20:20:01 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D2D6EAE4CAB
+	for <lists+linux-kernel@lfdr.de>; Mon, 23 Jun 2025 20:19:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C22763B7DBA
-	for <lists+linux-kernel@lfdr.de>; Mon, 23 Jun 2025 18:19:36 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F32A43B7F52
+	for <lists+linux-kernel@lfdr.de>; Mon, 23 Jun 2025 18:18:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A65CD2D3A90;
-	Mon, 23 Jun 2025 18:19:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 941412D3A6B;
+	Mon, 23 Jun 2025 18:19:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=zytor.com header.i=@zytor.com header.b="i1Z1mr4R"
-Received: from mail.zytor.com (terminus.zytor.com [198.137.202.136])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="qUkiFHzD"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1964729CB39;
-	Mon, 23 Jun 2025 18:19:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.136
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E43A123BF9C;
+	Mon, 23 Jun 2025 18:19:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750702788; cv=none; b=OJgK/Prn5ztHn6Z++3pmU6/3o5K9l9AtsY3dxej++919/JtywKOVYmA2448Xk5QFDoJmZZSZ92YEOZ7fgI6JHK6Qh0EuHkPnybjedz4JxmNCLusqA1oqBUGXu1c8mErmbngLiMjrPwx4aEOuqpjxLnmeYx38E9kU54v1hd9/MLg=
+	t=1750702755; cv=none; b=JhXct3AqMlUd0WhKHT12QXGyYtxKCW8AkntLO9PXOQYo3Adri6EEu99QinQM4tfHJogm40U59JVaDwkAJwwiGriwNfjf4MPSkPZsElHlGiHnPifo/LGQ/c5deuVCOA3PRUaFwuaiueeLXINQOqH0IHvd2mVn5KiBf7ySD7A6jCY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750702788; c=relaxed/simple;
-	bh=ESf+LmadPkuTIyz4p6caha2CR4G2QyEwoMSgk144nGg=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=grroFXK2Pcssz/fIA+zr9ePAo2wgxJh4oh7hmPpr77JWY+4H8t3102W9fxE0wZQy1qdub3Om132OUp9I1EMkrysPAfTd42cYK0JSggQXoVCLIHeRa8X4j4YYmsR0tpq/ffLVYGT5hIGTnf4wkpq9Y7o0ujk0ltx9Liy3hNw7g4Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zytor.com; spf=pass smtp.mailfrom=zytor.com; dkim=pass (2048-bit key) header.d=zytor.com header.i=@zytor.com header.b=i1Z1mr4R; arc=none smtp.client-ip=198.137.202.136
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zytor.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zytor.com
-Received: from [IPV6:2601:646:8081:9482:eb50:9bbc:f4fe:cc43] ([IPv6:2601:646:8081:9482:eb50:9bbc:f4fe:cc43])
-	(authenticated bits=0)
-	by mail.zytor.com (8.18.1/8.17.1) with ESMTPSA id 55NIJGD81039127
-	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NO);
-	Mon, 23 Jun 2025 11:19:17 -0700
-DKIM-Filter: OpenDKIM Filter v2.11.0 mail.zytor.com 55NIJGD81039127
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zytor.com;
-	s=2025062101; t=1750702759;
-	bh=GiAXLdNp3nC3MavPq2unzj2t9vG7BnSpq1GDijjcQag=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=i1Z1mr4RnE/r6kjX+XxW5qkUpy/IvwDlsZ6mfEbVtg2BWUoThKbOq++bUIt2VB7aK
-	 2WEmr6DpBGumss8s4LBiupLAhey4HG4h/LgHh6SxBv81tb76MyfOpWkpNPv+4K/okr
-	 +6gZntfXXT6b2hkwbJ5c7nD0cOd+UNM1Hzwn+1A8dIp+rJXFNvyMOiuQx2Ulx5dixd
-	 bnvIMD0641zDsPxh3mWiDLdbA0bUd0JyjxAZkofqZffOnRcsOhEG7zR3ort9EYx7KW
-	 qkwjst0yMz3plYG0XWyGM0NjkCNuCdnq1zarQlduM8t6LJiaK2tk3f6w2E+jdBdyne
-	 ddtK71QhG5sWQ==
-Message-ID: <860684c8-a985-47bc-af30-3370f203e80d@zytor.com>
-Date: Mon, 23 Jun 2025 11:19:11 -0700
+	s=arc-20240116; t=1750702755; c=relaxed/simple;
+	bh=LEHYRu3/7xSfEv3Cjj1c9lr1mtyqcmzcegD0em3dLe0=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=KIo9RO7EETd3mVIahPle7ITaNW0zLmecZDbFIze7sQjZZzRNKkWx3qsAZvDDHkam57AjVQfJ8/gn1xxxmZDToOuV6iYf2UEC5J6NwxCb/rN2AHvgxa5Lf5NBgCAgA0RKtC8RI2nk+ESDOtJZsFE8O+UWEl97GFHCGealXzIZbJQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=qUkiFHzD; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id EBBBAC4CEEA;
+	Mon, 23 Jun 2025 18:19:13 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1750702754;
+	bh=LEHYRu3/7xSfEv3Cjj1c9lr1mtyqcmzcegD0em3dLe0=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=qUkiFHzDWHjmj+7AaeUsqTx6LaoZuR658XBb6spCB6SxnOCXkpftc+SibmM3wglN+
+	 QN2XhAOqBZxJE6F4qsbq9+fd695vXIOL691rtVcf9UkUBHzoTly0p6N5rg71Qz88h4
+	 Ul4Epjty0Hq3du+mSGXA4mApwXSfxSufhbtjuOESEtGKjBdO6qSMrahI59kiBCIjNa
+	 iwpti94HrJG6ghCZnwwNiImkK+sca5EuZuo1//Qj7bQQnZaAH0zRyYhjxAYOdbrlY+
+	 QsNODuefyMv6hG0dz8X7ChbSzexhNTCQzEIxy7k+iRKynQCR7yug/AgTWRgRz+6LbW
+	 LAtAyNtVP0L0Q==
+Date: Mon, 23 Jun 2025 11:19:13 -0700
+From: Jakub Kicinski <kuba@kernel.org>
+To: robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org
+Cc: Matthew Gerlach <matthew.gerlach@altera.com>, andrew+netdev@lunn.ch,
+ davem@davemloft.net, edumazet@google.com, pabeni@redhat.com,
+ maxime.chevallier@bootlin.com, mcoquelin.stm32@gmail.com,
+ alexandre.torgue@foss.st.com, richardcochran@gmail.com,
+ netdev@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-stm32@st-md-mailman.stormreply.com,
+ linux-arm-kernel@lists.infradead.org, Mun Yew Tham
+ <mun.yew.tham@altera.com>
+Subject: Re: [PATCH v6] dt-bindings: net: Convert socfpga-dwmac bindings to
+ yaml
+Message-ID: <20250623111913.1b387b90@kernel.org>
+In-Reply-To: <20250613225844.43148-1-matthew.gerlach@altera.com>
+References: <20250613225844.43148-1-matthew.gerlach@altera.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v1 0/3] x86/boot: Supply boot_param in rdi instead of rsi
- from startup_64()
-To: Khalid Ali <khaliidcaliy@gmail.com>, brgerst@gmail.com, tglx@linutronix.de,
-        mingo@redhat.com, bp@alien8.de, dave.hansen@linux.intel.com,
-        ubizjak@gmail.com
-Cc: x86@kernel.org, linux-efi@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20250623162935.681-1-khaliidcaliy@gmail.com>
-Content-Language: en-US
-From: "H. Peter Anvin" <hpa@zytor.com>
-In-Reply-To: <20250623162935.681-1-khaliidcaliy@gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 
-On 2025-06-23 09:29, Khalid Ali wrote:
->> This was never intended to conform to the C ABI, why is it necessary
->> to change it?
-> 
-> Technically speaking, you are right, however that doesn't mean we can put something where
-> ever we like. We came from C code which is bootloader and we end up to C code, so we should
-> comply the ABI here too.
-> 
+On Fri, 13 Jun 2025 15:58:44 -0700 Matthew Gerlach wrote:
+> Convert the bindings for socfpga-dwmac to yaml. Since the original
+> text contained descriptions for two separate nodes, two separate
+> yaml files were created.
 
-This is also invoked by some external bootloaders that boot the ELF 
-image directly, even though this is strongly discouraged.
-
-Therefore this patchset is NAKed with extreme prejudice.
-
-	-hpa
-
+Hi DT Maintainers! Thanks for reviewing the IPQ5018 bindings!
+In case my pings are helpful, this is the next oldest patch in netdev
+queue. The v4 seem to have gotten some feedback:
+https://lore.kernel.org/all/20250609163725.6075-1-matthew.gerlach@altera.com/
 
