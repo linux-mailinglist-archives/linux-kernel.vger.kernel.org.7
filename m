@@ -1,126 +1,218 @@
-Return-Path: <linux-kernel+bounces-699142-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-699144-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 667CEAE4E58
-	for <lists+linux-kernel@lfdr.de>; Mon, 23 Jun 2025 22:46:38 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 8BA52AE4E5C
+	for <lists+linux-kernel@lfdr.de>; Mon, 23 Jun 2025 22:50:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8C56A3A7389
-	for <lists+linux-kernel@lfdr.de>; Mon, 23 Jun 2025 20:46:10 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9E6973BDF13
+	for <lists+linux-kernel@lfdr.de>; Mon, 23 Jun 2025 20:49:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E452F1E51E1;
-	Mon, 23 Jun 2025 20:46:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 06E872036FE;
+	Mon, 23 Jun 2025 20:50:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="SZy/nLP/"
-Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="TB9qhk5V"
+Received: from mail-pl1-f201.google.com (mail-pl1-f201.google.com [209.85.214.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F2E7F450FE;
-	Mon, 23 Jun 2025 20:46:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C70631F3FF8
+	for <linux-kernel@vger.kernel.org>; Mon, 23 Jun 2025 20:50:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750711589; cv=none; b=WodmqSos63PMhhR/7SONYXPVaqUXq7Abt7Q8YPfAlOQXskYJ2fJ9q0sDHomzuYvAZ2u9z/QWM/gfzztucRnGCHivcWkV7FX1BbGgWWziRzN7DtlufGnY/iokW7GLENR2BDKSfc34SahW5tnr9DuZqmK+xy5Sg+TzTZJLhDOjjlU=
+	t=1750711813; cv=none; b=OiCXuzrSmbhZz1ESGn1R6x9g0qTynH+JCiG45DW/S3lm8H991mN5HOGWMokUAPC/MMguPM8Kc09vIEYGQEl7dAgRJqTOVR+enEJC5MlVSCS47IvRruIBMDSv87iuBqLGInhic6cDWn1RER5DRl91dCAB0CgY4SRch6AxT8G0qqM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750711589; c=relaxed/simple;
-	bh=VdnbWeqI8Ap67iCrQCAySa8md3YMTF7BkfXz/DYRji8=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=oTOB9NcJ7IJlTS/IM1sVQTkRKqDSeI/ydAd/FG1NHekyjzzHHaNSEPh9b7NLL9RYlmi6Q9NfssyTA7qhapRQZdaeDo17b/XxaW+5TaZ+aUPinQ0NvKFw16YoUihzCrAUKnTV3KfOUMS+P1PI4O+BkE85owzIurHFjr7318ssjYg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=SZy/nLP/; arc=none smtp.client-ip=90.155.50.34
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=casper.20170209; h=Content-Transfer-Encoding:Content-Type:
-	In-Reply-To:From:References:Cc:To:Subject:MIME-Version:Date:Message-ID:Sender
-	:Reply-To:Content-ID:Content-Description;
-	bh=fqTupFHdWOP7XknPjNhQ1+otLO26YLnn5ZSEsxhj8Do=; b=SZy/nLP/3c+QnF2BTKRl/kNQxj
-	AvTwWK7ITnnOpj9kUWgxUlM079YiCqRv0XrRCWrbvBJD5o+xeJHfeGBxMjmGCMo5Q9PL2GlbGG1Q0
-	tyK3+41KZT/bFOsIW7hZMPLaFHzdHZlEfm8Y/N/APALXsPWLteRNWbKKDXl0KeGw4XRqdyl5hGbhb
-	Uft+5d1Cn7kgwT7dcOiafFVnKG8KIOukX+wiqgbPtU6v6oHcJoRZVn2DNKyRuoei2Tgadhp9YyK1I
-	hz3maER1osGsNiIUlG6+mCtitDdFDjwIH1BvYjrLeIBXOTb10S6jhTuBoag+fnD+HZgOFi1co54Lt
-	0Df6ep5w==;
-Received: from [50.53.25.54] (helo=[192.168.254.17])
-	by casper.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
-	id 1uTo3Y-00000004ZHA-0h2U;
-	Mon, 23 Jun 2025 20:46:20 +0000
-Message-ID: <ff61ff8e-d20c-444e-988f-6d97a197e070@infradead.org>
-Date: Mon, 23 Jun 2025 13:46:17 -0700
+	s=arc-20240116; t=1750711813; c=relaxed/simple;
+	bh=uz2ElJYIzX/cgxoKu5QBxgP+WP9haMEoF7b6RVX3zZ0=;
+	h=Date:Mime-Version:Message-ID:Subject:From:Cc:Content-Type; b=M6Xs52DXsD3SUw9krzp8N/4vy4HXVatazeFYSupe/50wiIwwwgmYeUQJAOqlGTL5RMde2f6+rrpX6+7AxGa2fg5Ob80eOiWMEXsuNw8Xq8GNryA7YlG0xTdNj0qk13yQsGG0mqq0MUGZYLwwj75Igdclngogh31oCKzmHhhAb8Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--rdbabiera.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=TB9qhk5V; arc=none smtp.client-ip=209.85.214.201
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--rdbabiera.bounces.google.com
+Received: by mail-pl1-f201.google.com with SMTP id d9443c01a7336-235842baba4so40687955ad.3
+        for <linux-kernel@vger.kernel.org>; Mon, 23 Jun 2025 13:50:11 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1750711811; x=1751316611; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:from:subject:message-id:mime-version
+         :date:from:to:cc:subject:date:message-id:reply-to;
+        bh=i1zclfHGYxg3v3CZHfO4BrhgqnbUkfK0CqXRN/pzU0E=;
+        b=TB9qhk5VMjmWqowiWam6wZc28NuyGMUEWHyJeanS6vKx5aHc0cGQ9rZ0xKsCwdx/gp
+         2vRY+C85T9kOLGEuNFk8MEGKNlwLBPzm5WpmXsdoIB1dEf470oOcqjePPk+SUNjUEQCv
+         y0n2bXU3XtfgzozAUm3KJFDiYAPeOOI1RuZs/YTcIoEa+ENmbg55H5ZG6e/zm60kVUFg
+         KYpTIOYCCtaW85+DmpKtNG9wnRCKhOPXKP2Pija0gK3C+kuB7eexAQvuHxVzgoOWL1VW
+         Qjfo4SjPzyJ6G7qLEgs29XabRjQudgwhrY+syiN6iU47uzj9ZWndj7DzlR9khtJVCptl
+         8RSA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1750711811; x=1751316611;
+        h=content-transfer-encoding:cc:from:subject:message-id:mime-version
+         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=i1zclfHGYxg3v3CZHfO4BrhgqnbUkfK0CqXRN/pzU0E=;
+        b=UUwWtd0ZPEvgIefefJKecRW4Hmxf1dQBx2hDUkJ2WfS1LyUo2jqFya3xXrBDxKa6xF
+         QOQUwdTGB98GaKIExwReZIVtSqnTGIozl33a2pOigXfGW5OPy4erYkc8PGW5h97qBnF7
+         55ZqiBpvr5KGPTgkr81pn9Lku960oY/7zumSMQt/hdAmob3VIkX+Fe5Gu6cPCR41UXri
+         RU+i+/tyMLu9QkcO+kbV6q0FcoOc5LyspJLyXyYXc3zsGuxN080BLDF3N7+KNFyb9p24
+         MdHBeeLsxaFnTNZ1x6qK0qtARwSpQ+k0KouKnBinniu+tO2TWvBW5f0nDw9hDe9wb1mC
+         T91w==
+X-Forwarded-Encrypted: i=1; AJvYcCXo8U+LHjOyGEKNRWjIrDM1zb1cEQYvcZVdGzAhKTDKtrICB1ZSWl+Im4vz9W/kzBEPNOwdl+m2IBRhC58=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwM5CT1XjJ1jRnKsiIjkdh/6SddIpl8VCkOJbVS0O7XftLs+9RL
+	WjQC9ecShn/RewaOYdBxegRsZfcSbOyeE7pMyTM4CkaJMsGrq26WvW+cY/airiix7uLvexs99L9
+	HyqAN4kNDiuyLghWmyQ==
+X-Google-Smtp-Source: AGHT+IFDGJLG0QlqDQnT3WtSeQpyn/e6JxnM+cmkts63ncExcI0VOTu4ODfryuTASzY0kSDdxCfdlc9Zebc4m2g=
+X-Received: from pjboi14.prod.google.com ([2002:a17:90b:3a0e:b0:2ff:6132:8710])
+ (user=rdbabiera job=prod-delivery.src-stubby-dispatcher) by
+ 2002:a17:902:ea0c:b0:234:f19a:eead with SMTP id d9443c01a7336-237d991ebf6mr221096795ad.43.1750711811223;
+ Mon, 23 Jun 2025 13:50:11 -0700 (PDT)
+Date: Mon, 23 Jun 2025 20:49:45 +0000
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 4/5] nvme: Fix typo in status code constant for self-test
- in progress
-To: Alok Tiwari <alok.a.tiwari@oracle.com>, linux-nvme@lists.infradead.org,
- kbusch@kernel.org, axboe@kernel.dk, hch@lst.de, sagi@grimberg.me,
- kch@nvidia.com, nilay@linux.ibm.com, corbet@lwn.net
-Cc: linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20250623064036.4187788-2-alok.a.tiwari@oracle.com>
- <20250623064036.4187788-5-alok.a.tiwari@oracle.com>
-Content-Language: en-US
-From: Randy Dunlap <rdunlap@infradead.org>
-In-Reply-To: <20250623064036.4187788-5-alok.a.tiwari@oracle.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Mime-Version: 1.0
+X-Developer-Key: i=rdbabiera@google.com; a=openpgp; fpr=639A331F1A21D691815CE090416E17CA2BBBD5C8
+X-Developer-Signature: v=1; a=openpgp-sha256; l=4465; i=rdbabiera@google.com;
+ h=from:subject; bh=v3QvCmL9HP7IokaiL57iE+36eWNE8t2pZpwDIUWeDHA=;
+ b=owGbwMvMwCFW0bfok0KS4TbG02pJDBmRe18/0r1gp+K6s+xocHazWdbV+nTXNI049hyDvny1e
+ 74vty3tKGVhEONgkBVTZNH1zzO4cSV1yxzOGmOYOaxMIEMYuDgFYCJGfgz/g/Zl2p9XaLy0cF+D
+ 94IqgSrW5ZPOHnXwm7Hi+5ZdF88+c2P47zpz06Q1Jxf7ZX3gke/xux52Wqub/fQEjXsPLzPOVus xZwMA
+X-Mailer: git-send-email 2.50.0.rc2.761.g2dc52ea45b-goog
+Message-ID: <20250623204947.732915-2-rdbabiera@google.com>
+Subject: [PATCH v2] usb: typec: altmodes/displayport: add irq_hpd to sysfs
+From: RD Babiera <rdbabiera@google.com>
+Cc: heikki.krogerus@linux.intel.com, badhri@google.com, 
+	gregkh@linuxfoundation.org, linux-usb@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, RD Babiera <rdbabiera@google.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
+Add irq_hpd sysfs node to displayport driver. This allows the userspace
+to subscribe to irq events similar to how it can subscribe to changes in
+hpd.
 
+irq_hpd is read only and returns the number of irq events generated since
+driver probe. pending_irq_hpd is added so that a sysfs_emit can be
+generated if the HPD high event belonging to the same status message
+is delayed until a successful configuration.
 
-On 6/22/25 11:40 PM, Alok Tiwari wrote:
-> Corrected a typo error in the NVMe status code constant from
-> NVME_SC_SELT_TEST_IN_PROGRESS to NVME_SC_SELF_TEST_IN_PROGRESS to
-> accurately reflect its meaning.
-> 
-> Signed-off-by: Alok Tiwari <alok.a.tiwari@oracle.com>
+Signed-off-by: RD Babiera <rdbabiera@google.com>
+Reviewed-by: Badhri Jagan Sridharan <badhri@google.com>
+---
+Changes since v1:
+* fixed bracket styling error
+---
+ .../testing/sysfs-driver-typec-displayport    | 10 +++++++
+ drivers/usb/typec/altmodes/displayport.c      | 28 +++++++++++++++++++
+ 2 files changed, 38 insertions(+)
 
-Reviewed-by: Randy Dunlap <rdunlap@infradead.org>
+diff --git a/Documentation/ABI/testing/sysfs-driver-typec-displayport b/Doc=
+umentation/ABI/testing/sysfs-driver-typec-displayport
+index 256c87c5219a..314acd54e13e 100644
+--- a/Documentation/ABI/testing/sysfs-driver-typec-displayport
++++ b/Documentation/ABI/testing/sysfs-driver-typec-displayport
+@@ -62,3 +62,13 @@ Description:
+ 			     by VESA DisplayPort Alt Mode on USB Type-C Standard.
+ 			- 0 when HPD=E2=80=99s logical state is low (HPD_Low) as defined by
+ 			     VESA DisplayPort Alt Mode on USB Type-C Standard.
++
++What:		/sys/bus/typec/devices/.../displayport/irq_hpd
++Date:		June 2025
++Contact:	RD Babiera <rdbabiera@google.com>
++Description:
++		IRQ_HPD events are sent over the USB PD protocol in Status Update and
++		Attention messages. IRQ_HPD can only be asserted when HPD is high,
++		and is asserted when an IRQ_HPD has been issued since the last Status
++		Update. This is a read only node that returns the number of IRQ events
++		raised in the driver's lifetime.
+diff --git a/drivers/usb/typec/altmodes/displayport.c b/drivers/usb/typec/a=
+ltmodes/displayport.c
+index b09b58d7311d..7f9f1f98f450 100644
+--- a/drivers/usb/typec/altmodes/displayport.c
++++ b/drivers/usb/typec/altmodes/displayport.c
+@@ -65,6 +65,13 @@ struct dp_altmode {
+ 	enum dp_state state;
+ 	bool hpd;
+ 	bool pending_hpd;
++	u32 irq_hpd_count;
++	/*
++	 * hpd is mandatory for irq_hpd assertion, so irq_hpd also needs its own =
+pending flag if
++	 * both hpd and irq_hpd are asserted in the first Status Update before th=
+e pin assignment
++	 * is configured.
++	 */
++	bool pending_irq_hpd;
+=20
+ 	struct mutex lock; /* device lock */
+ 	struct work_struct work;
+@@ -151,6 +158,7 @@ static int dp_altmode_status_update(struct dp_altmode *=
+dp)
+ {
+ 	bool configured =3D !!DP_CONF_GET_PIN_ASSIGN(dp->data.conf);
+ 	bool hpd =3D !!(dp->data.status & DP_STATUS_HPD_STATE);
++	bool irq_hpd =3D !!(dp->data.status & DP_STATUS_IRQ_HPD);
+ 	u8 con =3D DP_STATUS_CONNECTION(dp->data.status);
+ 	int ret =3D 0;
+=20
+@@ -170,6 +178,8 @@ static int dp_altmode_status_update(struct dp_altmode *=
+dp)
+ 				dp->hpd =3D hpd;
+ 				dp->pending_hpd =3D true;
+ 			}
++			if (dp->hpd && dp->pending_hpd && irq_hpd)
++				dp->pending_irq_hpd =3D true;
+ 		}
+ 	} else {
+ 		drm_connector_oob_hotplug_event(dp->connector_fwnode,
+@@ -177,6 +187,10 @@ static int dp_altmode_status_update(struct dp_altmode =
+*dp)
+ 						      connector_status_disconnected);
+ 		dp->hpd =3D hpd;
+ 		sysfs_notify(&dp->alt->dev.kobj, "displayport", "hpd");
++		if (hpd && irq_hpd) {
++			dp->irq_hpd_count++;
++			sysfs_notify(&dp->alt->dev.kobj, "displayport", "irq_hpd");
++		}
+ 	}
+=20
+ 	return ret;
+@@ -196,6 +210,11 @@ static int dp_altmode_configured(struct dp_altmode *dp=
+)
+ 						connector_status_connected);
+ 		sysfs_notify(&dp->alt->dev.kobj, "displayport", "hpd");
+ 		dp->pending_hpd =3D false;
++		if (dp->pending_irq_hpd) {
++			dp->irq_hpd_count++;
++			sysfs_notify(&dp->alt->dev.kobj, "displayport", "irq_hpd");
++			dp->pending_irq_hpd =3D false;
++		}
+ 	}
+=20
+ 	return dp_altmode_notify(dp);
+@@ -707,10 +726,19 @@ static ssize_t hpd_show(struct device *dev, struct de=
+vice_attribute *attr, char
+ }
+ static DEVICE_ATTR_RO(hpd);
+=20
++static ssize_t irq_hpd_show(struct device *dev, struct device_attribute *a=
+ttr, char *buf)
++{
++	struct dp_altmode *dp =3D dev_get_drvdata(dev);
++
++	return sysfs_emit(buf, "%d\n", dp->irq_hpd_count);
++}
++static DEVICE_ATTR_RO(irq_hpd);
++
+ static struct attribute *displayport_attrs[] =3D {
+ 	&dev_attr_configuration.attr,
+ 	&dev_attr_pin_assignment.attr,
+ 	&dev_attr_hpd.attr,
++	&dev_attr_irq_hpd.attr,
+ 	NULL
+ };
+=20
 
-Thanks.
+base-commit: e04c78d86a9699d136910cfc0bdcf01087e3267e
+--=20
+2.50.0.rc2.761.g2dc52ea45b-goog
 
-> ---
->  drivers/nvme/host/constants.c | 4 ++--
->  include/linux/nvme.h          | 2 +-
->  2 files changed, 3 insertions(+), 3 deletions(-)
-> 
-> diff --git a/drivers/nvme/host/constants.c b/drivers/nvme/host/constants.c
-> index 1a0058be58210..dc90df9e13a21 100644
-> --- a/drivers/nvme/host/constants.c
-> +++ b/drivers/nvme/host/constants.c
-> @@ -133,7 +133,7 @@ static const char * const nvme_statuses[] = {
->  	[NVME_SC_NS_NOT_ATTACHED] = "Namespace Not Attached",
->  	[NVME_SC_THIN_PROV_NOT_SUPP] = "Thin Provisioning Not Supported",
->  	[NVME_SC_CTRL_LIST_INVALID] = "Controller List Invalid",
-> -	[NVME_SC_SELT_TEST_IN_PROGRESS] = "Device Self-test In Progress",
-> +	[NVME_SC_SELF_TEST_IN_PROGRESS] = "Device Self-test In Progress",
->  	[NVME_SC_BP_WRITE_PROHIBITED] = "Boot Partition Write Prohibited",
->  	[NVME_SC_CTRL_ID_INVALID] = "Invalid Controller Identifier",
->  	[NVME_SC_SEC_CTRL_STATE_INVALID] = "Invalid Secondary Controller State",
-> @@ -145,7 +145,7 @@ static const char * const nvme_statuses[] = {
->  	[NVME_SC_BAD_ATTRIBUTES] = "Conflicting Attributes",
->  	[NVME_SC_INVALID_PI] = "Invalid Protection Information",
->  	[NVME_SC_READ_ONLY] = "Attempted Write to Read Only Range",
-> -	[NVME_SC_CMD_SIZE_LIM_EXCEEDED	] = "Command Size Limits Exceeded",
-> +	[NVME_SC_CMD_SIZE_LIM_EXCEEDED] = "Command Size Limits Exceeded",
->  	[NVME_SC_ZONE_BOUNDARY_ERROR] = "Zoned Boundary Error",
->  	[NVME_SC_ZONE_FULL] = "Zone Is Full",
->  	[NVME_SC_ZONE_READ_ONLY] = "Zone Is Read Only",
-> diff --git a/include/linux/nvme.h b/include/linux/nvme.h
-> index b65a1b9f2116c..655d194f8e722 100644
-> --- a/include/linux/nvme.h
-> +++ b/include/linux/nvme.h
-> @@ -2155,7 +2155,7 @@ enum {
->  	NVME_SC_NS_NOT_ATTACHED		= 0x11a,
->  	NVME_SC_THIN_PROV_NOT_SUPP	= 0x11b,
->  	NVME_SC_CTRL_LIST_INVALID	= 0x11c,
-> -	NVME_SC_SELT_TEST_IN_PROGRESS	= 0x11d,
-> +	NVME_SC_SELF_TEST_IN_PROGRESS	= 0x11d,
->  	NVME_SC_BP_WRITE_PROHIBITED	= 0x11e,
->  	NVME_SC_CTRL_ID_INVALID		= 0x11f,
->  	NVME_SC_SEC_CTRL_STATE_INVALID	= 0x120,
-
--- 
-~Randy
 
