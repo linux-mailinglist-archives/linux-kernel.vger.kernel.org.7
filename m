@@ -1,86 +1,122 @@
-Return-Path: <linux-kernel+bounces-697602-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-697608-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id AC75CAE3649
-	for <lists+linux-kernel@lfdr.de>; Mon, 23 Jun 2025 08:52:04 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6C0D5AE365E
+	for <lists+linux-kernel@lfdr.de>; Mon, 23 Jun 2025 08:55:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5C3907A6FBA
-	for <lists+linux-kernel@lfdr.de>; Mon, 23 Jun 2025 06:50:41 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0E8221892531
+	for <lists+linux-kernel@lfdr.de>; Mon, 23 Jun 2025 06:55:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 863A31DE4E6;
-	Mon, 23 Jun 2025 06:51:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 993E71E5734;
+	Mon, 23 Jun 2025 06:55:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="RAJB5ud7"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=uniontech.com header.i=@uniontech.com header.b="GQn21RFN"
+Received: from smtpbgeu1.qq.com (smtpbgeu1.qq.com [52.59.177.22])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B8DA71F03C9;
-	Mon, 23 Jun 2025 06:51:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 21BC81E519
+	for <linux-kernel@vger.kernel.org>; Mon, 23 Jun 2025 06:55:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=52.59.177.22
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750661504; cv=none; b=DRRQEyls0opiaQeP9tFmC6mM55/NOYw9cqOhzhhV/b4raT7LKoVxxGQOCNo7jPLouPxN+4om/rSmUKD38QEuuy7rlw9VxI6Uu+jmU/ZRYWs9sKm5FEc4KBqqDgp7+eGEgFftaIDtONENfLOB246YzEwF4VAi4ytBEJ1CI92WZyA=
+	t=1750661731; cv=none; b=FYUXWRZVY5vZB7IxMwKJhzGECnyi3PX+eB69YLxZUqajkmtVkj2Dzs2tpQZ7gPIQN9x16tPfa5Wif+e6H9zO9X1HcUqQbOWlLil5TfcEJTFvadKqJZ4fYxo73EjRvyb4kHVCUKk6nSlUTKbWhi4RskEH2f1RGYBZNIqXsIeejnU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750661504; c=relaxed/simple;
-	bh=ZuaLAdKRfPAdGUHn3NKcVTxk2HUa+m9Hw4T4abrb8EQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Da4SnbvtXmAk+sN+Pj5OIt7krT31gn2evuQ5qlfQXGkgqWalokBt8Fjkfsdmv+bodCT6PlCg0UsKPbuKWsfDKgHXDBgWOo4EW39ea0ZiWw4LvwApWqTntF7ajgUXVsOhSOnyEhobzrcLhrO5Z4Te8v0iReLx/SC2U01LjbZ+m9E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=RAJB5ud7; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4E22FC4CEED;
-	Mon, 23 Jun 2025 06:51:43 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1750661504;
-	bh=ZuaLAdKRfPAdGUHn3NKcVTxk2HUa+m9Hw4T4abrb8EQ=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=RAJB5ud7df4WHSt3qvvbiMgFs0bU1TsVomAUHTFrZBdRfDtDx2EnPDaWEOu7nONZa
-	 3o1z8AOoPn83Wz4sC6+m9IKd+jWakluYHuiQZKu7puKbRaK/kdXdEQ0dCbSD0TeS1F
-	 qJwGHJ+vhngq6rMp/K823ekkNr3sj3dhJqz30veTxqEku8VGqpM+bN/E9MursykNbQ
-	 CV4KalKsfVQRntrN/eLY5KFze+MWqTiSAHu5G2+fy7qbYu8UGKYRBKd+5041HdO+St
-	 +eizmKWYrJN2X/tDNElbR4Dqy+M+T0joPRk4tGI3+Oe1IZhjVhKPhSYC15o+4qQt+c
-	 kw8/3TvteTbuQ==
-Date: Mon, 23 Jun 2025 06:51:41 +0000
-From: Tzung-Bi Shih <tzungbi@kernel.org>
-To: Naoya Tezuka <naoyatezuka@chromium.org>
-Cc: Kees Cook <kees@kernel.org>, Tony Luck <tony.luck@intel.com>,
-	"Guilherme G . Piccoli" <gpiccoli@igalia.com>,
-	linux-hardening@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2] pstore/ram: Validate ECC parameters against
- Reed-Solomon constraint
-Message-ID: <aFj5faLZXnKKtyxA@google.com>
-References: <20250623062827.133373-1-naoyatezuka@chromium.org>
+	s=arc-20240116; t=1750661731; c=relaxed/simple;
+	bh=dxcNVwVR6Zx8dDzqw0191eOni0v4TAMtcuUZqOOJYXo=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=LJQXNym4jsfo3UIPZ46dwPcZDw79QTnmjwd8qpGSaWeePLijhcCzNPxviuCVEkI3l8Rjn/ISjb1BVsWbrZIJCEhVZumGBsmkBYmhSyot+pIefx+u9Mk3brPwYh4iLpZGj1Y8FEKDy1lE0Y4ZqRMvNCEklPS6BoJ2Ga/G1KfkiY4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=uniontech.com; spf=pass smtp.mailfrom=uniontech.com; dkim=pass (1024-bit key) header.d=uniontech.com header.i=@uniontech.com header.b=GQn21RFN; arc=none smtp.client-ip=52.59.177.22
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=uniontech.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=uniontech.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=uniontech.com;
+	s=onoh2408; t=1750661578;
+	bh=N+KIcwSpqGH09ADYNXYDxVtm3i8+dNv2dHZVtLlc6nQ=;
+	h=From:To:Subject:Date:Message-ID:MIME-Version;
+	b=GQn21RFNWuMIIxXgtzbMkDBjWlEsndqJHXascEA6RO3k2kuYEWCSjY83gxDl23EGm
+	 yYcRf+v4etFOdUnOh6MbdkWM0dNDKXZWn4QBkQ6Wg8EDqiSBZ1BI/y6a8NajVnuXbQ
+	 4PQYPqqyoypko0zhfPVE3IeGTzR/e9+uEBN1a/3c=
+X-QQ-mid: zesmtpip2t1750661534t7ac3a094
+X-QQ-Originating-IP: hyjulawz/JNwhhcU+rOyNTg6JWsTXInQ6W1QxfqTaxU=
+Received: from avenger-e500 ( [localhost])
+	by bizesmtp.qq.com (ESMTP) with 
+	id ; Mon, 23 Jun 2025 14:52:12 +0800 (CST)
+X-QQ-SSF: 0000000000000000000000000000000
+X-QQ-GoodBg: 1
+X-BIZMAIL-ID: 1313754082888159779
+EX-QQ-RecipientCnt: 10
+From: WangYuli <wangyuli@uniontech.com>
+To: mst@redhat.com,
+	jasowang@redhat.com,
+	xuanzhuo@linux.alibaba.com,
+	eperezma@redhat.com
+Cc: virtualization@lists.linux.dev,
+	linux-kernel@vger.kernel.org,
+	zhanjun@uniontech.com,
+	niecheng1@uniontech.com,
+	guanwentao@uniontech.com,
+	WangYuli <wangyuli@uniontech.com>
+Subject: [PATCH] virtio: virtio_dma_buf: fix missing parameter documentation
+Date: Mon, 23 Jun 2025 14:52:10 +0800
+Message-ID: <241C7118259DA110+20250623065210.270237-1-wangyuli@uniontech.com>
+X-Mailer: git-send-email 2.50.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250623062827.133373-1-naoyatezuka@chromium.org>
+Content-Transfer-Encoding: 8bit
+X-QQ-SENDSIZE: 520
+Feedback-ID: zesmtpip:uniontech.com:qybglogicsvrgz:qybglogicsvrgz8a-1
+X-QQ-XMAILINFO: N9ZQ1suYlCRbhmnacNNpHexZYAKF/D+poCgndJbKlS1y9zdpWyNTZ4z+
+	gZcPi/GrfEz1+ZCfZdOIhZUmIUuOvEoAdk2lUfUDTZmyc1R06HkDDcN8N2ccYOI7JLTx0Qy
+	65SQczWJfpwkgVC1mPFsun2sZYP0STTeR5EeFHX/RbshXgL9gsZ8r3WpxC5je008lJYpkMO
+	9JBwux2CQXoJ57zsHqESLBoOtN4PlkNUkkkqHiGGplaScTbMeKEpc//BPwpht44rg+4jwUJ
+	E/uC74By5ywMPCgOGt/6PJpwe8jllm5hH8/6b36eZXQvcEBpazTE8laPSlHKXgTi3kNK33O
+	0Hn4jKZAsmEE6Bn+MV1QktvNlauaJJzBksypHFEjlPve5mKQxn1oDK0ab2L2Hr55upXK6Ph
+	aercUuzM9kEGTQ/+SL9/64lMqV9UgUWPRYU84G5tNOaZn4TFT3nZQjvwKgsHkWngL/rrfp0
+	4nig+PMc5dxnDUOx3Y+BQDWvEajR0+GrhO1YHNQF28luUZkadtHFB0Lfit1cxWCQYP8rmzO
+	32O0Lef39m38WkBCLizvLPuigiA0FhlUiQr5txX8qhAuvaQuGV6dEY4ssjYpkXdJvfp5oOE
+	ulm3FRmha4Ee1hE3L6Uh/btvB2cIy4pvSTEuhZkC83GSPhjVtKTt6tW7wg7QiTIvnk6+vB6
+	FqPSP6yhoCS025ls6txOIzCbzFXJK6JR3IimZI3dK/Ms3HN2cFAMkkO0z0nrfzexTemW31d
+	zk+FP2xJcSkXkcF0oHy0Zd3tmtic8VnkzxRdRTC1ZWyjMRGBVQLKRxVJ/oqWMAAUyz+1UjV
+	g8h1GPV0kcMKgeLJnTv5tZeIDGtyYh9GyiPSw9Q/ZpD6h61E6fWp9n/75FOFK7IsGDgmpwN
+	AMBpXIvXiBJPZxSZq2Q0g8xfKOJuWyY+WAq17G7THECR5s2ZUwUTc3abMr+JSceWHt5yZfH
+	rvKIixvrVz+1SqFilQZ3iS2M5SrHC/lQhxqUxk/HPCQr3xRqv64OSoU7kY5ReduaaV9+CKL
+	j7/MwAjRy6hOrJohI+FSkkC7nacjCv46hr0eqi6w==
+X-QQ-XMRINFO: NyFYKkN4Ny6FSmKK/uo/jdU=
+X-QQ-RECHKSPAM: 0
 
-On Mon, Jun 23, 2025 at 03:28:27PM +0900, Naoya Tezuka wrote:
-> The Reed-Solomon library enforces the constraint `n <= 2^m - 1` via a
-> BUG_ON() [1], where `n` is `block_size + ecc_size` and `m` is `symsize`
-> for the pstore RAM backend. A driver providing invalid parameters can
-> trigger this, leading to a kernel panic. For more details on the theory
-> behind, see [2].
-> 
-> This issue was discovered during developing chromeos_pstore driver.
-> Link: https://lore.kernel.org/lkml/20250610050458.4014083-1-naoyatezuka@chromium.org/
+Add missing parameter documentation for virtio_dma_buf_attach()
+function to fix kernel-doc warnings:
 
-I'd prefer to unify it by using a [3] or at least move the tag to the end of
-commit message.
+Warning: drivers/virtio/virtio_dma_buf.c:41 function parameter 'dma_buf' not described in 'virtio_dma_buf_attach'
+Warning: drivers/virtio/virtio_dma_buf.c:41 function parameter 'attach' not described in 'virtio_dma_buf_attach'
 
-> Add a check to validate this constraint before initializing Reed-Solomon
-> codec. On failure, return -EINVAL to prevent the panic.
-> 
-> [1] https://elixir.bootlin.com/linux/v6.15/source/lib/reed_solomon/decode_rs.c#L43
-> [2] https://www.cs.cmu.edu/~guyb/realworld/reedsolomon/reed_solomon_codes.html
-> 
-> Signed-off-by: Naoya Tezuka <naoyatezuka@chromium.org>
+The function documentation was missing descriptions for both the
+'dma_buf' and 'attach' parameters. Add proper parameter documentation
+following kernel-doc format.
 
-It should preserve my R-b tag as v2 doesn't change too much. Anyway,
-Reviewed-by: Tzung-Bi Shih <tzungbi@kernel.org>
+Signed-off-by: WangYuli <wangyuli@uniontech.com>
+---
+ drivers/virtio/virtio_dma_buf.c | 2 ++
+ 1 file changed, 2 insertions(+)
+
+diff --git a/drivers/virtio/virtio_dma_buf.c b/drivers/virtio/virtio_dma_buf.c
+index 3fe1d03b0645..95c10632f84a 100644
+--- a/drivers/virtio/virtio_dma_buf.c
++++ b/drivers/virtio/virtio_dma_buf.c
+@@ -36,6 +36,8 @@ EXPORT_SYMBOL(virtio_dma_buf_export);
+ 
+ /**
+  * virtio_dma_buf_attach - mandatory attach callback for virtio dma-bufs
++ * @dma_buf: [in] buffer to attach
++ * @attach: [in] attachment structure
+  */
+ int virtio_dma_buf_attach(struct dma_buf *dma_buf,
+ 			  struct dma_buf_attachment *attach)
+-- 
+2.50.0
+
 
