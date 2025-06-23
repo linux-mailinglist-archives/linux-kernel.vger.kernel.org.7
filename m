@@ -1,71 +1,77 @@
-Return-Path: <linux-kernel+bounces-698256-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-698260-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 53461AE3F51
-	for <lists+linux-kernel@lfdr.de>; Mon, 23 Jun 2025 14:12:28 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8A225AE3F61
+	for <lists+linux-kernel@lfdr.de>; Mon, 23 Jun 2025 14:14:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3F498174BF5
-	for <lists+linux-kernel@lfdr.de>; Mon, 23 Jun 2025 12:09:15 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7D0763BC031
+	for <lists+linux-kernel@lfdr.de>; Mon, 23 Jun 2025 12:09:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7FCE325FA2A;
-	Mon, 23 Jun 2025 12:01:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 61E49262FD2;
+	Mon, 23 Jun 2025 12:02:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="qrkE9vPK"
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="ZOcMmHra"
 Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4043F25EF81;
-	Mon, 23 Jun 2025 12:01:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C4E002609F5;
+	Mon, 23 Jun 2025 12:02:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750680115; cv=none; b=AaymrQy/jeQS037OMHBeMEpTQ0L5CJjnbg7og8I95tYKXEVXJeud1mrwMzDdLlCznME8wcA7kc9t8e7Qsk1S53/4dQmK9n6OzrgNEQ8FSOhmtAdv6NytJIyBpKQ7lT005uWg5F+p3JvlshOqmHqdRznt49RWXQNpb0WVrc3KHI8=
+	t=1750680124; cv=none; b=QFm467+Vk3ruG/LEXNo4CE5B9BJb2KxsV7nqTnC36iOeQp2cVH+U3PF1Wjyka6VfMJBWUZ6DF3EvYJcOJqr+283tWfDAlT51n5A9OOo+E6YACuZe9KM9Vjx83Sqc/T5AshA28XS2kEf2AXe9FM/hhFAHpbJ3IARNVLUS0phifCI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750680115; c=relaxed/simple;
-	bh=RvKfNvTGbOQFn1QyzjQzGAKKfTfMoWOIXhrv2ucXpIg=;
+	s=arc-20240116; t=1750680124; c=relaxed/simple;
+	bh=q9K3jmOUIo44g3MRZ+Kf/mQgVXisCXrGe4rgUFmADVM=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=gjS9jGilTazlKmWGYAprmRKv7bdxnhxWBkxzDIeJpfx691uHnFs8TY0TLbuT9ZR7BT9g1YST8BvArnMBE/UDYfM1U14nn1I/8JaEATHzu+XHA6tTCg2D1RqhY4ytG6vjny8u2YnFSVGMdUZeJhHXyWZvbEW+fVSJOd1zLDYRGfE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=qrkE9vPK; arc=none smtp.client-ip=148.251.105.195
+	 MIME-Version; b=oP7ehNcXwMP19lF8WBzRfiBbLGlPlOVKKLe8MTAcj1ybgPdyQYMLYadXrxyIRZgQqeSBTOQHMtEswPlwJsyr/sKdqqKTKZGJKBi7uud5WjFeoylkyNkd6QDMUC84QK4IvdkREVaoCL/WuxMNbMvz2VIZvu80noX/OWc0G6mJ2ak=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=ZOcMmHra; arc=none smtp.client-ip=148.251.105.195
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1750680112;
-	bh=RvKfNvTGbOQFn1QyzjQzGAKKfTfMoWOIXhrv2ucXpIg=;
+	s=mail; t=1750680121;
+	bh=q9K3jmOUIo44g3MRZ+Kf/mQgVXisCXrGe4rgUFmADVM=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=qrkE9vPK0M2IJReSi0i2qt0L0EoPgLB4/3+dbFZL+B1YdmFvQgsZfngaKEQRVciNO
-	 c7+Bq4CFDUSZzEZGj7cScl4v6lHwvPXULkTpp5Z0iyp0HdSbBSsyoydN1QE2A52eti
-	 g/eYvTZfnBfzCP2WMuEnpVcPVSznVEzAZughxssuFaIz1lmZS8bmxQmzJJKsXLvjOj
-	 qIhfarD3iEaPe/OqK+z11hGKXp6NdNY6KJEKuP7w9ZhAq1VZBMcjmZmeIZCh3r2T7I
-	 tc6P9QCPamB9IO86/ZpGfIBlf5TLGCOrP2WtfP2RL6E0oOxQqCT+FDX3lQnaAOK8+9
-	 T8K61Rcc0wa0w==
+	b=ZOcMmHra+kCJo1kxkJy0tNT0PY7RXkrKHXl8QtaD9pB6JVF0Y0jXBadQeDyjfu/2Q
+	 yRmUDiS7MeZhdXgy3VuX/ON+aDpIpgc0+78j0UOO7vdd1hIN/TtJV+xm4axUf50aUf
+	 eCVyj/XRBbj3mz2x2erFnpNNJMBFvCF/q7LziINmoUrKOOLblTR+0WI2VxU8nHonv+
+	 0ErlbguWYdY0isIket2E7PhFRRl5qid5BG340bgXSeDRC4YhQ3vF9ytVMHhw0i7uW6
+	 RsJGxJzECmJbj9MAuJn/Z8BHRfyOtiDmzrim3aM6QWq/Wu8JVN6YCzUMvIDj/+1rN1
+	 n3155XCviRBXQ==
 Received: from IcarusMOD.eternityproject.eu (2-237-20-237.ip236.fastwebnet.it [2.237.20.237])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
 	(No client certificate requested)
 	(Authenticated sender: kholk11)
-	by bali.collaboradmins.com (Postfix) with ESMTPSA id 1E54117E156D;
-	Mon, 23 Jun 2025 14:01:52 +0200 (CEST)
+	by bali.collaboradmins.com (Postfix) with ESMTPSA id 67D7F17E1560;
+	Mon, 23 Jun 2025 14:02:00 +0200 (CEST)
 From: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
-To: lgirdwood@gmail.com
-Cc: broonie@kernel.org,
-	robh@kernel.org,
+To: linux-mediatek@lists.infradead.org
+Cc: robh@kernel.org,
 	krzk+dt@kernel.org,
 	conor+dt@kernel.org,
 	matthias.bgg@gmail.com,
 	angelogioacchino.delregno@collabora.com,
-	linux-kernel@vger.kernel.org,
+	ulf.hansson@linaro.org,
+	y.oudjana@protonmail.com,
+	fshao@chromium.org,
+	wenst@chromium.org,
+	lihongbo22@huawei.com,
+	mandyjh.liu@mediatek.com,
+	mbrugger@suse.com,
 	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
 	linux-arm-kernel@lists.infradead.org,
-	linux-mediatek@lists.infradead.org,
+	linux-pm@vger.kernel.org,
 	kernel@collabora.com
-Subject: [PATCH v1 4/4] regulator: mtk-dvfsrc: Add support for MediaTek MT8196 DVFSRC
+Subject: [PATCH v1 03/13] pmdomain: mediatek: Handle SoCs with inverted SRAM power-down bits
 Date: Mon, 23 Jun 2025 14:01:44 +0200
-Message-ID: <20250623120144.109359-5-angelogioacchino.delregno@collabora.com>
+Message-ID: <20250623120154.109429-4-angelogioacchino.delregno@collabora.com>
 X-Mailer: git-send-email 2.49.0
-In-Reply-To: <20250623120144.109359-1-angelogioacchino.delregno@collabora.com>
-References: <20250623120144.109359-1-angelogioacchino.delregno@collabora.com>
+In-Reply-To: <20250623120154.109429-1-angelogioacchino.delregno@collabora.com>
+References: <20250623120154.109429-1-angelogioacchino.delregno@collabora.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -74,51 +80,97 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-The MediaTek MT8196 Chromebook SoC features one DVFSRC regulator
-with 6 voltage steps.
+Some SoCs, and even some subsystems in the same SoC, may have the
+logic for SRAM power-down inverted, as in, setting the bit means
+"power down" and unsetting means "power up": this is because some
+hardware subsystems use this as a power-lock indication and some
+use this as a power down one (for example, usually, the modem ss
+has it inverted!).
+
+In preparation for adding support for power domains with inverted
+SRAM_PDN bits, add a new MTK_SCPD_SRAM_PDN_INVERTED flag and check
+for it in scpsys_sram_enable() and scpsys_sram_disable().
 
 Signed-off-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
 ---
- drivers/regulator/mtk-dvfsrc-regulator.c | 19 +++++++++++++++++++
- 1 file changed, 19 insertions(+)
+ drivers/pmdomain/mediatek/mtk-pm-domains.c | 27 ++++++++++++++++------
+ drivers/pmdomain/mediatek/mtk-pm-domains.h |  1 +
+ 2 files changed, 21 insertions(+), 7 deletions(-)
 
-diff --git a/drivers/regulator/mtk-dvfsrc-regulator.c b/drivers/regulator/mtk-dvfsrc-regulator.c
-index 5bc4d85517f0..c0c9a6751c26 100644
---- a/drivers/regulator/mtk-dvfsrc-regulator.c
-+++ b/drivers/regulator/mtk-dvfsrc-regulator.c
-@@ -166,6 +166,24 @@ static const struct dvfsrc_regulator_pdata mt8195_data = {
- 	.size = ARRAY_SIZE(mt8195_regulators),
- };
+diff --git a/drivers/pmdomain/mediatek/mtk-pm-domains.c b/drivers/pmdomain/mediatek/mtk-pm-domains.c
+index 8c1b5a4851a1..2a430e7cd353 100644
+--- a/drivers/pmdomain/mediatek/mtk-pm-domains.c
++++ b/drivers/pmdomain/mediatek/mtk-pm-domains.c
+@@ -79,16 +79,23 @@ static bool scpsys_domain_is_on(struct scpsys_domain *pd)
  
-+static const unsigned int mt8196_voltages[] = {
-+	575000,
-+	600000,
-+	650000,
-+	725000,
-+	825000,
-+	875000,
-+};
-+
-+static const struct regulator_desc mt8196_regulators[] = {
-+	MTK_DVFSRC_VREG("dvfsrc-vcore", VCORE, mt8196_voltages),
-+};
-+
-+static const struct dvfsrc_regulator_pdata mt8196_data = {
-+	.descs = mt8196_regulators,
-+	.size = ARRAY_SIZE(mt8196_regulators),
-+};
-+
- static int dvfsrc_vcore_regulator_probe(struct platform_device *pdev)
+ static int scpsys_sram_enable(struct scpsys_domain *pd)
  {
- 	struct regulator_config config = { .dev = &pdev->dev };
-@@ -195,6 +213,7 @@ static const struct of_device_id mtk_dvfsrc_regulator_match[] = {
- 	{ .compatible = "mediatek,mt8183-dvfsrc-regulator", .data = &mt8183_data },
- 	{ .compatible = "mediatek,mt8192-dvfsrc-regulator", .data = &mt6873_data },
- 	{ .compatible = "mediatek,mt8195-dvfsrc-regulator", .data = &mt8195_data },
-+	{ .compatible = "mediatek,mt8196-dvfsrc-regulator", .data = &mt8196_data },
- 	{ /* sentinel */ }
- };
- MODULE_DEVICE_TABLE(of, mtk_dvfsrc_regulator_match);
+-	u32 pdn_ack = pd->data->sram_pdn_ack_bits;
++	u32 expected_ack, pdn_ack = pd->data->sram_pdn_ack_bits;
+ 	struct scpsys *scpsys = pd->scpsys;
+ 	unsigned int tmp;
+ 	int ret;
+ 
+-	regmap_clear_bits(scpsys->base, pd->data->ctl_offs, pd->data->sram_pdn_bits);
++	if (MTK_SCPD_CAPS(pd, MTK_SCPD_SRAM_PDN_INVERTED)) {
++		regmap_set_bits(scpsys->base, pd->data->ctl_offs, pd->data->sram_pdn_bits);
++		expected_ack = pdn_ack;
++	} else {
++		regmap_clear_bits(scpsys->base, pd->data->ctl_offs, pd->data->sram_pdn_bits);
++		expected_ack = 0;
++	}
+ 
+ 	/* Either wait until SRAM_PDN_ACK all 1 or 0 */
+ 	ret = regmap_read_poll_timeout(scpsys->base, pd->data->ctl_offs, tmp,
+-				       (tmp & pdn_ack) == 0, MTK_POLL_DELAY_US, MTK_POLL_TIMEOUT);
++				       (tmp & pdn_ack) == expected_ack,
++				       MTK_POLL_DELAY_US, MTK_POLL_TIMEOUT);
+ 	if (ret < 0)
+ 		return ret;
+ 
+@@ -103,7 +110,7 @@ static int scpsys_sram_enable(struct scpsys_domain *pd)
+ 
+ static int scpsys_sram_disable(struct scpsys_domain *pd)
+ {
+-	u32 pdn_ack = pd->data->sram_pdn_ack_bits;
++	u32 expected_ack, pdn_ack = pd->data->sram_pdn_ack_bits;
+ 	struct scpsys *scpsys = pd->scpsys;
+ 	unsigned int tmp;
+ 
+@@ -113,12 +120,18 @@ static int scpsys_sram_disable(struct scpsys_domain *pd)
+ 		regmap_clear_bits(scpsys->base, pd->data->ctl_offs, PWR_SRAM_ISOINT_B_BIT);
+ 	}
+ 
+-	regmap_set_bits(scpsys->base, pd->data->ctl_offs, pd->data->sram_pdn_bits);
++	if (MTK_SCPD_CAPS(pd, MTK_SCPD_SRAM_PDN_INVERTED)) {
++		regmap_clear_bits(scpsys->base, pd->data->ctl_offs, pd->data->sram_pdn_bits);
++		expected_ack = 0;
++	} else {
++		regmap_set_bits(scpsys->base, pd->data->ctl_offs, pd->data->sram_pdn_bits);
++		expected_ack = pdn_ack;
++	}
+ 
+ 	/* Either wait until SRAM_PDN_ACK all 1 or 0 */
+ 	return regmap_read_poll_timeout(scpsys->base, pd->data->ctl_offs, tmp,
+-					(tmp & pdn_ack) == pdn_ack, MTK_POLL_DELAY_US,
+-					MTK_POLL_TIMEOUT);
++					(tmp & pdn_ack) == expected_ack,
++					MTK_POLL_DELAY_US, MTK_POLL_TIMEOUT);
+ }
+ 
+ static struct regmap *scpsys_bus_protect_get_regmap(struct scpsys_domain *pd,
+diff --git a/drivers/pmdomain/mediatek/mtk-pm-domains.h b/drivers/pmdomain/mediatek/mtk-pm-domains.h
+index 2a71989bc2b4..f7f0a5fb383b 100644
+--- a/drivers/pmdomain/mediatek/mtk-pm-domains.h
++++ b/drivers/pmdomain/mediatek/mtk-pm-domains.h
+@@ -13,6 +13,7 @@
+ #define MTK_SCPD_EXT_BUCK_ISO		BIT(6)
+ #define MTK_SCPD_HAS_INFRA_NAO		BIT(7)
+ #define MTK_SCPD_STRICT_BUS_PROTECTION	BIT(8)
++#define MTK_SCPD_SRAM_PDN_INVERTED	BIT(9)
+ #define MTK_SCPD_CAPS(_scpd, _x)	((_scpd)->data->caps & (_x))
+ 
+ #define SPM_VDE_PWR_CON			0x0210
 -- 
 2.49.0
 
