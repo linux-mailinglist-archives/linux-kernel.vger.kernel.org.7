@@ -1,88 +1,82 @@
-Return-Path: <linux-kernel+bounces-697787-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-697790-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 710B6AE38AB
-	for <lists+linux-kernel@lfdr.de>; Mon, 23 Jun 2025 10:41:42 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 44384AE38B6
+	for <lists+linux-kernel@lfdr.de>; Mon, 23 Jun 2025 10:42:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 152AE188C007
-	for <lists+linux-kernel@lfdr.de>; Mon, 23 Jun 2025 08:41:58 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 503A816B894
+	for <lists+linux-kernel@lfdr.de>; Mon, 23 Jun 2025 08:42:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2585022F77F;
-	Mon, 23 Jun 2025 08:41:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 732C1230BDC;
+	Mon, 23 Jun 2025 08:42:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="GGzIrfET"
-Received: from mail-wr1-f52.google.com (mail-wr1-f52.google.com [209.85.221.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="cOGe51Jl"
+Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E615D22F740;
-	Mon, 23 Jun 2025 08:41:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2FFD920D4F9;
+	Mon, 23 Jun 2025 08:41:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750668093; cv=none; b=Q18H76dPPpIhxztbe01xKYi3NGzo8JiQIVqdkipldHggfbtlJPPusTFQilHOYN4oGmViIqowDNjbjLIng26GlRAdpNVOp8zjILVilD3LAVWHphtlxCxP2/CSziZa/5qyPW6x7eSsqbJynpzUsfFeaYtEsyXICm4AJHvau/RRdzI=
+	t=1750668120; cv=none; b=GfQESBNuYVeLwMs7rRDyFMJKPGZNAUx+deH38TN7u5Q0M73wJC8GJm8YFDqz2Z+DKfsGKRqX4CP1G35o1kfwMirTtiPGQoUlzgrd5e7nQWioZbBoRXbdkSkZQ4DzH2ojq1fpErAGu5N4jYUjSZZECdnVEc0Hs9y9ZCiNJGeTv3M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750668093; c=relaxed/simple;
-	bh=AurJu1LvUTnH1dazNNCf8+VuS1q+nbV1xk4e2/VsAUA=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=jqPJoM6DMud9e0AqCTGABqZRt8WTIdSQgld1H/NmV4MB+6u58x/JCZGYJwmulpN/Wb6PCJ2jkKAODEzut6XKYWbda7DS0lSIRmDIQHWzqN505I9c2NBAD46GmVhRJ7Am+FM/Q/I59oz8r4v7R/QDmWQ9ODBdzLzok7iAdm6SZi4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=GGzIrfET; arc=none smtp.client-ip=209.85.221.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f52.google.com with SMTP id ffacd0b85a97d-3a57ae5cb17so2136218f8f.0;
-        Mon, 23 Jun 2025 01:41:31 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1750668090; x=1751272890; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=hFKfoFX+b0fWpj1OGuQAhMWHq/Trp5Rsum6TUT3TNh8=;
-        b=GGzIrfETEotmfM4+MnXQpLSvkgveLCOR3+ECidmBv3wNIbzqO+4QvtOPBXO8+LDJBb
-         0B7mZSeAMZbtffTOX9Ee8AlRf9jrwgCfkCwZnPUjrvOfJa1IxLe8ecNoG0MTWYe8tl+q
-         wLQ2XMsTCUru9/2teTxcnwuue9IM+wZQT1Nz+IC5bP9IR5GavpQVO7qPcbEx/RZkp28h
-         aZDFhG2DO+2pYv5zpWQD8+CQMxzaOEDDxGbO76S3fbBgdZvRPvRgKewGQ2XuOzSMVPEH
-         wRD7Wgy0X98Z76PEF9ssWbSwiSbcqXbl41lBTWjzkOyQHyAm9ji4OIjIzfRU20ZB28DK
-         /hZg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1750668090; x=1751272890;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=hFKfoFX+b0fWpj1OGuQAhMWHq/Trp5Rsum6TUT3TNh8=;
-        b=lYeUVv+UqxJCrzAL30j1AWQ/K45M+wxJN93SzirWgrdOSSQ+XzqMaqq00YQZaMHVX0
-         KeeksjHMCmwmqEAwqbalYC0MyvEfRgro6kvRuvgBaUpxDEmyaOOWNVmnISkgJDW6ucv/
-         PpowcI+WqoI6rYnKOFHvxJmw1IMLajBI5e6y1gvCQlQTm069AqFqTay0OK0OJfw4FmaW
-         d7FgSW2icaVve66JlYmOidwW8o4dEipNxkd0q6xSAHMu5iGXwl7dTDd6QpAkg9V8J8PQ
-         mEm+ycpOQptReuxY0G77DZ5n6xRoW7JVgVEOIOTRcj6QyyAel+ZEvlil6e+d7nNDBfEj
-         g+wQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVHRFHZS3EVDZRQAoiM20UKKor2H9vPkIgFu1BQ3cH+LSZkRcTpPyXVAy/eVvEon064OCOYeE8lbOIpu/s=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yyfp9XBXbJmgwrSwtXre/mBvJsorMmBiQCeM1K98qmPen4kFQ64
-	HaFGuzGrb6E6OfxSXK7w7N+uDbQBnyOGDMmUFdK1+wpnmpahwGnLvfW4
-X-Gm-Gg: ASbGncvfzrYFRkljG+qKDVVV8eZUonRVOS0cVHF6qXfjjo0iL6d8TJlTL7upEmZY1I4
-	uGo3+xjGb/aHOttB/7O3buxKvX58/H+Fbrjp3HCA0Vf+LwLbhbJ2gN4yFKTUTEai/GgQmL6cTN+
-	TcHbAZlT3C3I9MGaSJAQkH7lAGFj/YzWwdFRt3GGMk28QqE4phcehHU7PKsN4fAfcB6OfTb4Tx9
-	9L3KWA/7ni0T+mycCBwtxmNHWh6EpWNe6cxTv/wYW5j1kwn7VGy8DY8mCLoktECMii8xa8OlONX
-	1i7PWMHaB5YIvhcbiZL3i0pKz32iNWIAoKv4AgFY/DrgL9Irndcrzy5sXjRJ
-X-Google-Smtp-Source: AGHT+IEg+Vrg4q7OXMVziKAkMdGsGKVcz2ch4jcR2RgQa7iyDmfJ9xV9plJ7R+MCae/mqCNaZWsqGg==
-X-Received: by 2002:a05:6000:1a8f:b0:3a4:f52d:8b05 with SMTP id ffacd0b85a97d-3a6d12d5316mr10912719f8f.35.1750668089889;
-        Mon, 23 Jun 2025 01:41:29 -0700 (PDT)
-Received: from localhost ([87.254.0.133])
-        by smtp.gmail.com with UTF8SMTPSA id 5b1f17b1804b1-453646cb5ecsm105878885e9.8.2025.06.23.01.41.29
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 23 Jun 2025 01:41:29 -0700 (PDT)
-From: Colin Ian King <colin.i.king@gmail.com>
-To: Alex Deucher <alexander.deucher@amd.com>,
-	=?UTF-8?q?Christian=20K=C3=B6nig?= <christian.koenig@amd.com>,
-	David Airlie <airlied@gmail.com>,
-	Simona Vetter <simona@ffwll.ch>,
-	Mario Limonciello <mario.limonciello@amd.com>,
-	amd-gfx@lists.freedesktop.org,
-	dri-devel@lists.freedesktop.org
-Cc: kernel-janitors@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH][next] drm/amd: Fix spelling mistake "correctalbe" -> "correctable"
-Date: Mon, 23 Jun 2025 09:41:08 +0100
-Message-ID: <20250623084108.29627-1-colin.i.king@gmail.com>
-X-Mailer: git-send-email 2.50.0
+	s=arc-20240116; t=1750668120; c=relaxed/simple;
+	bh=5kfo0BH1mkNWQLJKnyck8mWUaO6aelbU94wDuwLT/yM=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=twT9+8SjTfYf4nzevafdPpfdrOkxR0asP2ZoFBLTv2Ln1ypruP3otayILf3V8x9Xe+WCrqie/EZw1KemFGbGc/mp8cHH82QTIaXbO1WpJKgiG82VqCi/oTpVFlTdHSwfRFLMB3HZgHJCQAhpvCHSHNp+6htHC+XCFnt+fX/qJIw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=cOGe51Jl; arc=none smtp.client-ip=148.163.158.5
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0356516.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 55MLPWvv021390;
+	Mon, 23 Jun 2025 08:41:46 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
+	:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=pp1; bh=qpbUExTaXqTbf6MIcvkeC4R/iiFB
+	pRT+gOHF099uG3M=; b=cOGe51JloSg+FoN26ba340FSVcUuPI/NRjoKsdhVg/Rs
+	A0d+uxsrQ/nV2arjk/0r7BFFIUTql2zgJx/g3cry7iXBBUS/nNRtmInl2pmWdCoC
+	vjTWw0BmlEi6HIeHzmjjG3L8p8Ds854b5zZZiPoIbmkhLiR1mF79vQPPG9Dx2Re2
+	Xk0wI2sHFvfic1FkFnyBTBAoKC7O0W/VvwrDoiU52It9djhB5uhHLnvH0io6gcyZ
+	VTq3DHJIz8iDiy0ub86GCbX2zAVSTimjh8+ecv4hbr2PgMihn1U74Q3umYmyV0yX
+	u/ya7DBryQX18OJZDas8fKF+xBCg6oRt3WDpbUTDdQ==
+Received: from pps.reinject (localhost [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 47dj5tggt2-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 23 Jun 2025 08:41:46 +0000 (GMT)
+Received: from m0356516.ppops.net (m0356516.ppops.net [127.0.0.1])
+	by pps.reinject (8.18.0.8/8.18.0.8) with ESMTP id 55N8b71N005760;
+	Mon, 23 Jun 2025 08:41:46 GMT
+Received: from ppma12.dal12v.mail.ibm.com (dc.9e.1632.ip4.static.sl-reverse.com [50.22.158.220])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 47dj5tggt1-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 23 Jun 2025 08:41:46 +0000 (GMT)
+Received: from pps.filterd (ppma12.dal12v.mail.ibm.com [127.0.0.1])
+	by ppma12.dal12v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 55N81YSs014988;
+	Mon, 23 Jun 2025 08:41:45 GMT
+Received: from smtprelay07.dal12v.mail.ibm.com ([172.16.1.9])
+	by ppma12.dal12v.mail.ibm.com (PPS) with ESMTPS id 47e72tdg6n-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 23 Jun 2025 08:41:45 +0000
+Received: from smtpav06.dal12v.mail.ibm.com (smtpav06.dal12v.mail.ibm.com [10.241.53.105])
+	by smtprelay07.dal12v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 55N8fiMZ26083946
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Mon, 23 Jun 2025 08:41:44 GMT
+Received: from smtpav06.dal12v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 0ED9258043;
+	Mon, 23 Jun 2025 08:41:44 +0000 (GMT)
+Received: from smtpav06.dal12v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 3F89858055;
+	Mon, 23 Jun 2025 08:41:41 +0000 (GMT)
+Received: from tuxmaker.boeblingen.de.ibm.com (unknown [9.152.85.9])
+	by smtpav06.dal12v.mail.ibm.com (Postfix) with ESMTP;
+	Mon, 23 Jun 2025 08:41:41 +0000 (GMT)
+From: Niklas Schnelle <schnelle@linux.ibm.com>
+Subject: [PATCH v2 0/2] PCI/ERR: s390/pci: Use pci_uevent_ers() in PCI
+ recovery
+Date: Mon, 23 Jun 2025 10:41:31 +0200
+Message-Id: <20250623-add_err_uevents-v2-0-a3a2cf8e711d@linux.ibm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -90,29 +84,91 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIADsTWWgC/2WNwQqDMBAFf0X23IiJqVFP/Y8ioslaF2osiQaL+
+ O9NpbceZ+DN28GjI/RQJzs4DORpthHEJQE9dvaBjExkEJm4ZpIr1hnTonPtigHt4lkxlEYapTG
+ rNMTVy+FA21m8N5FH8svs3udB4F/7awn51wqccZbnpTRFr1Sli9uT7Lql1E+pnidojuP4AIrji
+ pyyAAAA
+X-Change-ID: 20250417-add_err_uevents-6f8d4d7ce09c
+To: Lukas Wunner <lukas@wunner.de>, Bjorn Helgaas <bhelgaas@google.com>,
+        Mahesh J Salgaonkar <mahesh@linux.ibm.com>,
+        =?utf-8?q?Ilpo_J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>,
+        Gerald Schaefer <gerald.schaefer@linux.ibm.com>,
+        Heiko Carstens <hca@linux.ibm.com>, Vasily Gorbik <gor@linux.ibm.com>,
+        Alexander Gordeev <agordeev@linux.ibm.com>,
+        Christian Borntraeger <borntraeger@linux.ibm.com>,
+        Sven Schnelle <svens@linux.ibm.com>,
+        Peter Oberparleiter <oberpar@linux.ibm.com>,
+        Matthew Rosato <mjrosato@linux.ibm.com>,
+        "Oliver O'Halloran" <oohall@gmail.com>, Sinan Kaya <okaya@kernel.org>,
+        Keith Busch <kbusch@kernel.org>
+Cc: linuxppc-dev@lists.ozlabs.org, linux-s390@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org,
+        Niklas Schnelle <schnelle@linux.ibm.com>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1364;
+ i=schnelle@linux.ibm.com; h=from:subject:message-id;
+ bh=5kfo0BH1mkNWQLJKnyck8mWUaO6aelbU94wDuwLT/yM=;
+ b=owGbwMvMwCX2Wz534YHOJ2GMp9WSGDIihZ3laiPOfmQOSOS0MTlSsbjyqsys761M1iGJG44b+
+ fxelRnSUcrCIMbFICumyLKoy9lvXcEU0z1B/R0wc1iZQIYwcHEKwEROP2BkeHnVO+pC2yZWuQUT
+ 0zLuy014p1CWNuXxG5eviz4rVrvJhTP8sz/ctCBtk/tPpph1VpNiDv95ZRiy6H5F3azPJ35wveu
+ 5zwcA
+X-Developer-Key: i=schnelle@linux.ibm.com; a=openpgp;
+ fpr=9DB000B2D2752030A5F72DDCAFE43F15E8C26090
+X-TM-AS-GCONF: 00
+X-Proofpoint-ORIG-GUID: AcD_HppZSu4nM4PO0B1jb-byJ4fHUR0C
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNjIzMDA0OCBTYWx0ZWRfX6ks+F95pPmL/ LSGIKKs0vIGlNF5B+YrOyNhinCINv6vkcKUUMfTBm62UDhgdNFnhbTKaCTAR1LhEPKoDvISDvZM vfEOR9FFrqsvtHMNugnTqjE8JqekjFvENzD8Gr7rnKEmnXnHxlabQMy5Itg7dFEdhyMn4gs8HBP
+ vyWVyBi9eaa866SojvhwFG8L/rHR/4XtNIVG1PZybpoxQfYPzfqFTnEYRRAjb5ltRQXdT74kXXn q7DgePgrF9k1SIO66hE563sxPpG6HVWR0v966cF2aG1hOqqbs/l5QAc860qAzobtcMvr93yhCNQ faWUOEnZDYBA5Z/95YZ8kimZvkhbr5tM4ErKSqT8CLS5dQRzVT50E7ZdNBwvEo67RJ1yrZZVBA2
+ YRI7UdyaFab9YHxoLYQ4GmkCED/z564Sv3csVFFB3aFS3rRxoLaBGdg2KQ+AX9GK5Sqwt2pV
+X-Authority-Analysis: v=2.4 cv=MshS63ae c=1 sm=1 tr=0 ts=6859134a cx=c_pps a=bLidbwmWQ0KltjZqbj+ezA==:117 a=bLidbwmWQ0KltjZqbj+ezA==:17 a=IkcTkHD0fZMA:10 a=6IFa9wvqVegA:10 a=VwQbUJbxAAAA:8 a=VnNF1IyMAAAA:8 a=oL3LmRbi3Aco-JgH8HYA:9 a=QEXdDO2ut3YA:10
+X-Proofpoint-GUID: UyU1r3XkDOk7tLSoBrszmjgcjvKHtE_n
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.0.736,FMLib:17.12.80.40
+ definitions=2025-06-23_02,2025-06-20_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxscore=0 bulkscore=0
+ lowpriorityscore=0 spamscore=0 mlxlogscore=999 impostorscore=0
+ clxscore=1011 phishscore=0 malwarescore=0 suspectscore=0 adultscore=0
+ priorityscore=1501 classifier=spam authscore=0 authtc=n/a authcc=
+ route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2505280000
+ definitions=main-2506230048
 
-There is a spelling mistake in a pr_info message. Fix it.
+Hi All,
 
-Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
+This series adds issuing of uevents during PCI recovery on s390. In
+developing this I noticed that pci_uevent_ers() ignores
+PCI_ERS_RESULT_NEED_RESET which  results in
+AER not generating a uevent at the beginning of recovery if drivers
+request a reset as it uses the result of error_detected() as parameter
+to pci_uevent_ers(). This is fixed in the first patch and relied upon by
+the s390 recovery code as it also uses the result of error_detected().
+
+Thanks,
+Niklas
+
+Signed-off-by: Niklas Schnelle <schnelle@linux.ibm.com>
 ---
- drivers/gpu/drm/amd/amdgpu/amdgpu_drv.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Changes in v2:
+- Add a patch fixing pci_uevent_ers() mistakenly ignoring PCI_ERS_RESULT_NEED_RESET
+- Use the result of error_detected() for initial pci_uevent_ers()
+- Drop fixes tag in s390 patch
+- Rebase and re-test on current master
+- Link to v1: https://lore.kernel.org/r/20250424-add_err_uevents-v1-1-3384d6b779c6@linux.ibm.com
 
-diff --git a/drivers/gpu/drm/amd/amdgpu/amdgpu_drv.c b/drivers/gpu/drm/amd/amdgpu/amdgpu_drv.c
-index 7f8fa69300bf..eaf95ee5148a 100644
---- a/drivers/gpu/drm/amd/amdgpu/amdgpu_drv.c
-+++ b/drivers/gpu/drm/amd/amdgpu/amdgpu_drv.c
-@@ -2281,7 +2281,7 @@ static void amdgpu_init_debug_options(struct amdgpu_device *adev)
- 	}
- 
- 	if (amdgpu_debug_mask & AMDGPU_DEBUG_DISABLE_RAS_CE_LOG) {
--		pr_info("debug: disable kernel logs of correctalbe errors\n");
-+		pr_info("debug: disable kernel logs of correctable errors\n");
- 		adev->debug_disable_ce_logs = true;
- 	}
- }
+---
+Niklas Schnelle (2):
+      PCI/AER: Fix missing uevent on recovery when a reset is requested
+      PCI/ERR: s390/pci: Use pci_uevent_ers() in PCI recovery
+
+ arch/s390/pci/pci_event.c | 3 +++
+ drivers/pci/pci-driver.c  | 3 ++-
+ include/linux/pci.h       | 2 +-
+ 3 files changed, 6 insertions(+), 2 deletions(-)
+---
+base-commit: 86731a2a651e58953fc949573895f2fa6d456841
+change-id: 20250417-add_err_uevents-6f8d4d7ce09c
+
+Best regards,
 -- 
-2.50.0
+Niklas Schnelle
 
 
