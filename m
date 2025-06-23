@@ -1,131 +1,155 @@
-Return-Path: <linux-kernel+bounces-697883-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-697895-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 51F58AE39DB
-	for <lists+linux-kernel@lfdr.de>; Mon, 23 Jun 2025 11:22:05 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id C053CAE39FD
+	for <lists+linux-kernel@lfdr.de>; Mon, 23 Jun 2025 11:26:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1CE983A583B
-	for <lists+linux-kernel@lfdr.de>; Mon, 23 Jun 2025 09:20:56 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EEF283A737B
+	for <lists+linux-kernel@lfdr.de>; Mon, 23 Jun 2025 09:26:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BD3E0233736;
-	Mon, 23 Jun 2025 09:21:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6FF511F1522;
+	Mon, 23 Jun 2025 09:26:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="WPhft0/e"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.17])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="JgUAmWUQ"
+Received: from mail-wm1-f73.google.com (mail-wm1-f73.google.com [209.85.128.73])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3E7F01A3168
-	for <linux-kernel@vger.kernel.org>; Mon, 23 Jun 2025 09:21:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.17
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 09F5A2367A6
+	for <linux-kernel@vger.kernel.org>; Mon, 23 Jun 2025 09:26:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.73
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750670472; cv=none; b=iXMwrl6s5GhPLFIqwNjCUC9jk+hWRNqvtyuqkNRefkOda++/MMABVdzcExp6KDlOThyu4fG2FRZ3fdTerrztm41ABZkIM2TD6iYwo+NWZQ70MH1xVfrXVtBqd3dh6rugsXOib8XjlnJ7ID27RoKuAteWWxJtlOzcnjzgVuyAyg8=
+	t=1750670772; cv=none; b=C+alZ8+T0UWO3JbTBJ/YfX+oF9/O/kiNmyoE0tRDaVS24ZELaXC0JfG4EhRFvP8jqIwSsExLzfHaPnxZnLhQwIuEZgJ+cRAVnS4RCccXBn/73o5WsO/TUYW/8RoExr6Ny06RibgS2g7p3kOKDh5RU6+uEBepXc5TLVQ/ipQk+U8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750670472; c=relaxed/simple;
-	bh=WHuMrT4VV4Bu1Jl7ZtS7maj/zCPsiEJExK/Xuq5G/B4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=jiOo0j1a6j91w0GSg5E/LMw81zBNEQTAsM/YCRwjvGCcse+m61CNNe9B+LwpexT/xKD4nryJ7iea/6zhRtdHriZoQG1aeazD2vQ+oYV1Cp4mmQ64oqT3aumPgraDGiebQq+oofevoR90bE3kIyPrAjPHiC9MNXv1KJ1K1qXy84A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=WPhft0/e; arc=none smtp.client-ip=198.175.65.17
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1750670470; x=1782206470;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:content-transfer-encoding:in-reply-to;
-  bh=WHuMrT4VV4Bu1Jl7ZtS7maj/zCPsiEJExK/Xuq5G/B4=;
-  b=WPhft0/eXQ7q4pXRYCsFsS3P36vfqoAZ0MxXwOajxgf71rxu/WgBp1Le
-   aVJ+VGv2xT/egRhEs2avMx6iTNP9DEU2/XGLoWOCrE7DDrEqb4KyPndzJ
-   e9l6YUHOXUlU0l3cped84mt7/uPXsdyN+Zdwfq2pSkKfmUExoc5IWaAvC
-   UavjoyGe7iNBMiO9/IFQnnB5zfQO70N0b2Jvn1Qgh0boA9/fs5I2R+io5
-   pfN9M8pLJ3AG+wAJz8ywjOxWrUYj74adeNsS5mjPRhOFlMds3g111dsqr
-   iERy0fiDzsZiMtFWA0+PQIo77BUgAkXE3+1zFGbqwtrQZM1N60FfjDlBp
-   w==;
-X-CSE-ConnectionGUID: eyKgD6ZsRfG83hXETxocgQ==
-X-CSE-MsgGUID: DAv+p/d6Q+ehNsko+flAqw==
-X-IronPort-AV: E=McAfee;i="6800,10657,11472"; a="52839482"
-X-IronPort-AV: E=Sophos;i="6.16,258,1744095600"; 
-   d="scan'208";a="52839482"
-Received: from fmviesa010.fm.intel.com ([10.60.135.150])
-  by orvoesa109.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 23 Jun 2025 02:21:10 -0700
-X-CSE-ConnectionGUID: zj72m9qZRfG6/tslyOohHw==
-X-CSE-MsgGUID: 2Y3bHLmbSB+kGoHi9UbV4w==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.16,258,1744095600"; 
-   d="scan'208";a="152218840"
-Received: from smile.fi.intel.com ([10.237.72.52])
-  by fmviesa010.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 23 Jun 2025 02:21:07 -0700
-Received: from andy by smile.fi.intel.com with local (Exim 4.98.2)
-	(envelope-from <andriy.shevchenko@linux.intel.com>)
-	id 1uTdMO-000000097WG-0pHz;
-	Mon, 23 Jun 2025 12:21:04 +0300
-Date: Mon, 23 Jun 2025 12:21:03 +0300
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To: Borislav Petkov <bp@alien8.de>
-Cc: linux-kernel@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>,
-	Ingo Molnar <mingo@redhat.com>,
-	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
-	"H. Peter Anvin" <hpa@zytor.com>,
-	Daniel =?iso-8859-1?Q?D=EDaz?= <daniel.diaz@linaro.org>
-Subject: Re: [PATCH v1 1/1] x86/defconfigs: Explicitly unset CONFIG_64BIT in
- i386_defconfig
-Message-ID: <aFkcf6it0bW36jdw@smile.fi.intel.com>
-References: <20250623072536.3425344-1-andriy.shevchenko@linux.intel.com>
- <20250623090642.GAaFkZIq__HR0FJE-0@fat_crate.local>
+	s=arc-20240116; t=1750670772; c=relaxed/simple;
+	bh=/mSzpNRlNFtyqvYxA/DRD7Gt3GU9kv5v21Eo6mNvjvM=;
+	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=t7g9c6mvk3+vt+pcH4fQN/nLOgLTuQnElQ2cl2CXcUcPmZLvI0h3PBgkSj/QwO4e0k0Bxwz+D/NSrI+B/U2iVnRZTu/qyHUqigWtW2ULJzDOIFWzp4mTOvt/1JzIls3p1ECamvCcVOtuy9PxaC3NV4zN1oZQdxl1qnRPqKYTwYw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--gprocida.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=JgUAmWUQ; arc=none smtp.client-ip=209.85.128.73
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--gprocida.bounces.google.com
+Received: by mail-wm1-f73.google.com with SMTP id 5b1f17b1804b1-450d50eacafso23276775e9.3
+        for <linux-kernel@vger.kernel.org>; Mon, 23 Jun 2025 02:26:10 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1750670769; x=1751275569; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:mime-version:date:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=Pa2ZDWEMmyq3FnjO/079PycJx+3r729iLJomR78p2yI=;
+        b=JgUAmWUQ3bB+QSfOHzpK/WALnO5ddPJFMD/HdvfG4oJ7LnhzKBhsSi4peZ7YR9Ocae
+         exlyObgpkUMTlA+wuI4BMviGrU0keUz6rwAnkUNy6z44PlU6dRq17+SGTLZFfe4bQnbI
+         aObTyO0giApqVnXvZVWJwtxyCQaoQFVYsM0Xm2oIzVA/XLJsdUq/QkpklYdKy98MILdR
+         1XzCRVuzYV54RIEgl1N8zBe+5gSqINZnucOTBxKZ97JzI923achMKrQsAguzsPERTzU7
+         gts3u04WBWuhQX+jyNyYcy/H1z938QypidnEPXx8FMTVLQ1M6brwXj54EwemZhJrI00+
+         tChQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1750670769; x=1751275569;
+        h=cc:to:from:subject:message-id:mime-version:date:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=Pa2ZDWEMmyq3FnjO/079PycJx+3r729iLJomR78p2yI=;
+        b=UyiRlquNvS/TUQL082jHPtCbYFU/JTmoJgiNM+YpDIAqS/ZONl9eg9JY6b4PoNHdxz
+         P6ZyGAYMVnnO8IpWIq9HNxVytOahn4b1ssqth/Wm953cKQy3iSqPwpdtqelaKkViDqFR
+         zEIOWwpjAUKTklIeqLgnBNHoRPx47kQ7zjIxl69uj6WVIOI1jhFjb0BUII6N4japEr+A
+         QeYCreaB/+Vh3WHG7donLGc5o+EzT6Vr8jKYo69mNHoiXrNF7+PGqyeZxWpHDpPBjWE3
+         SWIJuNITL+Hl80+xepm/fup0abUUFkkG/ztHOQ34kfjjFgKM5TUiTVe0TTPdMnIRgaVf
+         GDSw==
+X-Forwarded-Encrypted: i=1; AJvYcCUzCCK5eK4QWcp0aDa5CIEAp4dUhFcdzJWrH6G1LtlmuqZrZeOLGel/GZ4js+6KdWVkh2xlmxCDZPoi04U=@vger.kernel.org
+X-Gm-Message-State: AOJu0YytF1pf68DEGVXVLlrOfO3Zb2EBqA1BKhmDQEmR07PPkNjZsVKs
+	cD2IaR2DyyUoeSKQ9IDxu9yFNuCIWja32RYCErOjegcRY2az8M5AekOAqLH/5+aVwnW8jKJxXVf
+	s5tpIxRRiIUnrzg==
+X-Google-Smtp-Source: AGHT+IHE7/ErI0nHyXwFIqSpDJmkjX2TMJFOBhBRQLErcWtRRel7p7wYqamomiKZmCXLM6/DNtN3nQ3WZ3R3MA==
+X-Received: from wmtk6.prod.google.com ([2002:a05:600c:c4a6:b0:452:f960:4dfc])
+ (user=gprocida job=prod-delivery.src-stubby-dispatcher) by
+ 2002:a05:600c:5490:b0:44b:eb56:1d45 with SMTP id 5b1f17b1804b1-453655c30e4mr127947675e9.15.1750670769334;
+ Mon, 23 Jun 2025 02:26:09 -0700 (PDT)
+Date: Mon, 23 Jun 2025 10:21:47 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20250623090642.GAaFkZIq__HR0FJE-0@fat_crate.local>
-Organization: Intel Finland Oy - BIC 0357606-4 - c/o Alberga Business Park, 6
- krs, Bertel Jungin Aukio 5, 02600 Espoo
+Mime-Version: 1.0
+X-Mailer: git-send-email 2.50.0.rc2.761.g2dc52ea45b-goog
+Message-ID: <20250623092350.3261118-2-gprocida@google.com>
+Subject: [PATCH] gendwarfksyms: make -T symtypes output be in name order
+From: Giuliano Procida <gprocida@google.com>
+To: Sami Tolvanen <samitolvanen@google.com>, Masahiro Yamada <masahiroy@kernel.org>, 
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: Giuliano Procida <gprocida@google.com>, linux-kbuild@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-On Mon, Jun 23, 2025 at 11:06:42AM +0200, Borislav Petkov wrote:
-> On Mon, Jun 23, 2025 at 10:25:36AM +0300, Andy Shevchenko wrote:
-> > From: Daniel Díaz <daniel.diaz@linaro.org>
-> > 
-> > A recent refresh of the defconfigs got rid of the following
-> > (unset) config:
-> > 
-> >   # CONFIG_64BIT is not set
-> > 
-> > Innocuous as it seems, when the config file is saved again the
-> > behavior is changed so that CONFIG_64BIT=y.
-> > 
-> > Currently,
-> > 
-> >   $ make i386_defconfig
-> >   $ grep CONFIG_64BIT .config
-> >   CONFIG_64BIT=y
-> > 
-> > whereas previously (and with this patch):
-> > 
-> >   $ make i386_defconfig
-> >   $ grep CONFIG_64BIT .config
-> >   # CONFIG_64BIT is not set
-> > 
-> > Fixes: 0e11f689ec03 ("x86/kconfig/32: Refresh defconfig")
-> > Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+When writing symtypes information, we iterate through the entire hash
+table containing type expansions. The key order varies unpredictably
+as new entries are added, making it harder to compare symtypes between
+builds.
 
-> No SOB by Daniel?
+Resolve this by sorting the type expansions by name before output.
 
-Ah, this is just a cherry-pick (with fixing conflicts, updated Fixes
-and removed the last paragraph) of 5y.o. 76366050eb1b ("x86/defconfigs:
-Explicitly unset CONFIG_64BIT in i386_defconfig"), it should be standalone
-patch. I borrowed the commit message.  So, whatever you prefer: I can send
-it again as the original one, one of x86 maintainers can do themselves
-the cherry-picking / conflict resolution, or I can resend it as mine.
+Signed-off-by: Giuliano Procida <gprocida@google.com>
+---
+ scripts/gendwarfksyms/types.c | 29 ++++++++++++++++++++++++++---
+ 1 file changed, 26 insertions(+), 3 deletions(-)
 
+diff --git a/scripts/gendwarfksyms/types.c b/scripts/gendwarfksyms/types.c
+index 7bd459ea6c59..51c1471e8684 100644
+--- a/scripts/gendwarfksyms/types.c
++++ b/scripts/gendwarfksyms/types.c
+@@ -6,6 +6,8 @@
+ #define _GNU_SOURCE
+ #include <inttypes.h>
+ #include <stdio.h>
++#include <stdlib.h>
++#include <string.h>
+ #include <zlib.h>
+ 
+ #include "gendwarfksyms.h"
+@@ -179,20 +181,41 @@ static int type_map_get(const char *name, struct type_expansion **res)
+ 	return -1;
+ }
+ 
++static int cmp_expansion_name(const void *p1, const void *p2)
++{
++	struct type_expansion *const *e1 = p1;
++	struct type_expansion *const *e2 = p2;
++
++	return strcmp((*e1)->name, (*e2)->name);
++}
++
+ static void type_map_write(FILE *file)
+ {
+ 	struct type_expansion *e;
+ 	struct hlist_node *tmp;
++	struct type_expansion **es;
++	size_t count = 0;
++	size_t i = 0;
+ 
+ 	if (!file)
+ 		return;
+ 
+-	hash_for_each_safe(type_map, e, tmp, hash) {
+-		checkp(fputs(e->name, file));
++	hash_for_each_safe(type_map, e, tmp, hash)
++		++count;
++	es = xmalloc(count * sizeof(struct type_expansion *));
++	hash_for_each_safe(type_map, e, tmp, hash)
++		es[i++] = e;
++
++	qsort(es, count, sizeof(struct type_expansion *), cmp_expansion_name);
++
++	for (i = 0; i < count; ++i) {
++		checkp(fputs(es[i]->name, file));
+ 		checkp(fputs(" ", file));
+-		type_list_write(&e->expanded, file);
++		type_list_write(&es[i]->expanded, file);
+ 		checkp(fputs("\n", file));
+ 	}
++
++	free(es);
+ }
+ 
+ static void type_map_free(void)
 -- 
-With Best Regards,
-Andy Shevchenko
-
+2.50.0.rc2.761.g2dc52ea45b-goog
 
 
