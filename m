@@ -1,93 +1,95 @@
-Return-Path: <linux-kernel+bounces-699096-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-699055-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id B5757AE4DAD
-	for <lists+linux-kernel@lfdr.de>; Mon, 23 Jun 2025 21:38:17 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id B40C9AE4D42
+	for <lists+linux-kernel@lfdr.de>; Mon, 23 Jun 2025 21:07:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 86FB2189D622
-	for <lists+linux-kernel@lfdr.de>; Mon, 23 Jun 2025 19:38:33 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 50EBF17CA5A
+	for <lists+linux-kernel@lfdr.de>; Mon, 23 Jun 2025 19:07:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0EA9729DB78;
-	Mon, 23 Jun 2025 19:38:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7154A274FD4;
+	Mon, 23 Jun 2025 19:06:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=stgolabs.net header.i=@stgolabs.net header.b="XCN9AQD3"
-Received: from fennec.larch.relay.mailchannels.net (fennec.larch.relay.mailchannels.net [23.83.213.58])
+	dkim=pass (2048-bit key) header.d=stgolabs.net header.i=@stgolabs.net header.b="ZBz5PwGr"
+Received: from siberian.tulip.relay.mailchannels.net (siberian.tulip.relay.mailchannels.net [23.83.218.246])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D152B24679C
-	for <linux-kernel@vger.kernel.org>; Mon, 23 Jun 2025 19:38:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=23.83.213.58
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 47BF51684A4
+	for <linux-kernel@vger.kernel.org>; Mon, 23 Jun 2025 19:06:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=23.83.218.246
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750707491; cv=pass; b=KhoHG+dGqNW6pM09mYPlNK5q2mhtiv6tlgr5p4RLIo1XP06CAr+5GvFYilibaqfEle8Ziry0zjNkjH5U30RgXSuRkQEoaomyNpG1/aWho5hxPUJ1ewL14Pq0nRmL/0IKiaKdnKpu3D0vqFstbX9gzyFtrxhne+8e31m7wLRNldk=
+	t=1750705616; cv=fail; b=HvhJtdIhg5FtaIaSLQFzrxZ6jK6iJk9ZERNA7ZonFeuiTOslB9280jJetCi3NvXrxfxCE+/y61g+mEYjFNsKxhrZzw4MYaTmfknUjK6zsayjtkUdIRW6dSVu1guReNSQlokU9tiiR2HfFM+Mt+14cAeetr6YsIZ+ktQ5a9z7NCc=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750707491; c=relaxed/simple;
-	bh=6nRuOi6oWdKyURJRX/wAN95CmMKxx6Kq0sq6pqGPASM=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=N35cwq/4geGMjwu7kloAwJ1M/IdCprF1RKip1TM0tVB2jUmiQsR51bCjMjSauUs3kY1QmEy75yC02AwpxbK3jwp4Kn3Z7XRaNKpgO9QU1FDXVLkGShqePM6lJ83yeG7vAO0UDiCUKM8TqruiZJHchA7G4qXhea4vUgN5OhTeWf4=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=stgolabs.net; spf=pass smtp.mailfrom=stgolabs.net; dkim=pass (2048-bit key) header.d=stgolabs.net header.i=@stgolabs.net header.b=XCN9AQD3; arc=pass smtp.client-ip=23.83.213.58
+	s=arc-20240116; t=1750705616; c=relaxed/simple;
+	bh=NqL+/tPydRN1T77ryDmxqIgIo9J0G9vNfGyONvs1JH0=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=HNQMg4YzxACqadREw6L+e83PfVGd/GCymCg1PmbgHsCYmbRjTiG+1U37vuSXiRd3atp1PhkuPlvQbDuFSlaKaNlDj9Kx61HZvUx/uRYM7VDd/HJvUK1OREdij9Fh6+/cacJE5s7LCJUcstvoZHwSM6nHUNYw94BSewtr8C5suaY=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=stgolabs.net; spf=pass smtp.mailfrom=stgolabs.net; dkim=pass (2048-bit key) header.d=stgolabs.net header.i=@stgolabs.net header.b=ZBz5PwGr; arc=fail smtp.client-ip=23.83.218.246
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=stgolabs.net
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=stgolabs.net
 X-Sender-Id: dreamhost|x-authsender|dave@stgolabs.net
 Received: from relay.mailchannels.net (localhost [127.0.0.1])
-	by relay.mailchannels.net (Postfix) with ESMTP id 6E430782A7B;
-	Mon, 23 Jun 2025 18:59:41 +0000 (UTC)
-Received: from pdx1-sub0-mail-a316.dreamhost.com (100-98-203-113.trex-nlb.outbound.svc.cluster.local [100.98.203.113])
+	by relay.mailchannels.net (Postfix) with ESMTP id 2298518481C;
+	Mon, 23 Jun 2025 18:59:42 +0000 (UTC)
+Received: from pdx1-sub0-mail-a316.dreamhost.com (trex-green-5.trex.outbound.svc.cluster.local [100.127.221.92])
 	(Authenticated sender: dreamhost)
-	by relay.mailchannels.net (Postfix) with ESMTPA id F064A7829D8;
-	Mon, 23 Jun 2025 18:59:40 +0000 (UTC)
+	by relay.mailchannels.net (Postfix) with ESMTPA id A2E06183477;
+	Mon, 23 Jun 2025 18:59:41 +0000 (UTC)
 ARC-Seal: i=1; s=arc-2022; d=mailchannels.net; t=1750705181; a=rsa-sha256;
 	cv=none;
-	b=sYU4hYBdImNn5u4SLLrP+7ip8X+ajrlAvku2Y//sDIJZWXTDJkddDp9hX14T23ubMOALQV
-	D57rf1O9FH4WD0/lh940JkoOFiO9bEyKLg47ytQ4reT1zDXIzS0ZnKHf9K1JUhMiqMbOae
-	deF/TLUMDXqzjNSq7pNfuQ+9bBIt8tNdy997AN3noszvjRA0anj5fQuYzXxOHhmI7VE4bw
-	IhEeYiutxuVdDA6xcbhf7/OsrvisvrH2mEPhsE/Bxzwu96gxKvq1omT6ouFt2wkkC0XWTo
-	VDpdS5zBtkZcHQbccbkRyOvlW4VRenA0IIi8Hut9333iPcR2pOq5AEoSW67eng==
+	b=igQk+sXvXEfZRbXO1GiaG9ikIY6T9SSzzLUY371IJTma3E94nVeJ4nPNAAQKMZfvqoOrzr
+	ndyjvPDftrK0jRASEVDtBEcDbh5AB+9Nq2plgbbtbuhYLwDubRuR8Zr3blmCdWTkTfzuRt
+	YalOPNC4fgEb9JXkbZ+WUDB65RcNVVXZKh2QPTx8+oHEIoTHz75Bu6ttCbbaRpj9aoAdcJ
+	3SCMtlsVYNM19sJCGKeYzu/pi2QmbBolBClMaOsP+SU+8YtiByBxhyi4ZrHy5YDa5/6ocM
+	Pve+U4qkwWDNiZ/WdQTbArcEONaiAf/zy4a9McNzeF/3CnIcYQ/PA9vMt85TdA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed;
  d=mailchannels.net;
 	s=arc-2022; t=1750705181;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding:dkim-signature;
-	bh=GjPsF5sy2emdaaRkjNXLkiP8YHqZLz2pLKdl2EM4SdQ=;
-	b=mu9K2/m/jSupRlab2efAeI1f90YKnfk77FaIGOUUU8ntZ5jqlUI+N9M2OYylsNVK9qIu7W
-	YQkRzxSYCWiwcHGsGElqHXhd6RSK0421uxCinu7w83ZDMvlUSwy2awugCqrEYWp5xetvcd
-	Pf9Uzj8V8byUnBFBR/nGEK4gwyUmhzkWhiESgcwLb6qNMId6HSv5uZDwiXctjaEWVybwxT
-	md+jLH4YVJTTWARCMJoO8Fm2zTZcHWHhmYdMUg/8izoDlZVu1iznbkxdYC6fQ1eReEGmwj
-	hEtPIUaVmm4M3OawPso54apG/OHw6968iUJmXL/zF0KnGWZ3YFhgmYYNxyYtqg==
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:dkim-signature;
+	bh=iTH9wFB+JBQU6K1w6gktcARkoNkO27ZyKXW1O6cBS8E=;
+	b=Rp0Q4FsYBT427MW5ZH2unCjByT1QYaPtbQWKwRXEcqigEP8ExHEYJK8rWWmUjemrXp+rNf
+	oIfaRdQb7HmUyiHs/1GY8jqCL+fm9dWqWK1TKTR/bRwp3XZ7OUT3cnLCnX66Oi5hkIR9zT
+	wwol7sRdW8HBuVxBqSMrSNFwQFq5Q/XSPx+66amF0+DvB52oxPJk0RUUaaHTi6r4WeYUhX
+	mjXAIAj5L1n9nJCRGD1l76dHbu3eqnwoLFTdAc4OH+OY1aImWeOAitQQBYhiPoZmuMy0nh
+	1cOwILStbQ+IE4qDd2bpF/PQf/0NDuBWHMNYnfQLDC5wxLyxGpb/4t3ZE8HhGw==
 ARC-Authentication-Results: i=1;
-	rspamd-679c59f89-6z8bk;
+	rspamd-679c59f89-c9qk5;
 	auth=pass smtp.auth=dreamhost smtp.mailfrom=dave@stgolabs.net
 X-Sender-Id: dreamhost|x-authsender|dave@stgolabs.net
-X-MC-Relay: Bad
+X-MC-Relay: Neutral
 X-MailChannels-SenderId: dreamhost|x-authsender|dave@stgolabs.net
 X-MailChannels-Auth-Id: dreamhost
-X-Thread-Army: 61843410464b49db_1750705181298_2367094906
-X-MC-Loop-Signature: 1750705181298:2289055330
-X-MC-Ingress-Time: 1750705181297
+X-Abaft-Thoughtful: 4736bec122005e1a_1750705181964_3687824332
+X-MC-Loop-Signature: 1750705181964:3039902206
+X-MC-Ingress-Time: 1750705181964
 Received: from pdx1-sub0-mail-a316.dreamhost.com (pop.dreamhost.com
  [64.90.62.162])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384)
-	by 100.98.203.113 (trex/7.0.3);
+	by 100.127.221.92 (trex/7.0.3);
 	Mon, 23 Jun 2025 18:59:41 +0000
 Received: from offworld.lan (syn-076-167-199-067.res.spectrum.com [76.167.199.67])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
 	(No client certificate requested)
 	(Authenticated sender: dave@stgolabs.net)
-	by pdx1-sub0-mail-a316.dreamhost.com (Postfix) with ESMTPSA id 4bQy7J2NP2zHx;
+	by pdx1-sub0-mail-a316.dreamhost.com (Postfix) with ESMTPSA id 4bQy7J6twXz8Q;
 	Mon, 23 Jun 2025 11:59:40 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=stgolabs.net;
-	s=dreamhost; t=1750705180;
-	bh=GjPsF5sy2emdaaRkjNXLkiP8YHqZLz2pLKdl2EM4SdQ=;
+	s=dreamhost; t=1750705181;
+	bh=vjCLe0lDun0WCvPOxIVngwkUbkxkTJhCtkS4Pw7qan0=;
 	h=From:To:Cc:Subject:Date:Content-Transfer-Encoding;
-	b=XCN9AQD3hqZzSnwdaZRCAiugcOSAqNCXFyncbt0CGmbo3ywJxumcCDb/joeluV+81
-	 BSO/kdPLiYCLh38iuEfhMpXPGnUGhpk/h5e6voeYC0MuZQJBD5OQuXpDe8W9BBress
-	 0bFZwznHZLGGxlbqaJohG2sk0UsGDAAcZPsdWU9oAWuPrSwRi+5p4F6n3+35UblfER
-	 jQ4WSYhEqkz0wUqG1RzAloYMGxhMYaQCOJPWPnvmcW6p/Mmr2tXcluh+0qboU5BGAL
-	 zDaTd1bPc56frnOUbDvQWy/RR7XY6CNQgEkFr/eF35nnC3VXtel+BTN0LnmGzLWqOi
-	 NvwrrmCvVdJug==
+	b=ZBz5PwGro/e3FMWoYszE2Lu6gU9Mc3aLCGFcZpHKPyWnjfqzPeEzp4eHzVTl75Ee+
+	 WZ4W0iqVrU8cX0j+e3r21olSnlijJDGDlj2IJ44D6DvofN7kJFHjjkuu+Yusnw1c2M
+	 LWKeVNDn2YwhwJsXvqVXTz+jb9sHOH5eUOy6WAc76/mNcXCpMVmG2931O2VWs2citu
+	 z3tBa3p7fQOYWmwge4CyNOdEpnc6+QjvIEP2nQA/T/NTfC9WQqcdVhnGw2SxW/FzLf
+	 Xx4yK1Pli3iz6pItYpkE3Ygtsxiac4xU+G+4trkcs5Ar1nhKTdWfrTPNEDRjmEzeUk
+	 /mRqagIGdak9g==
 From: Davidlohr Bueso <dave@stgolabs.net>
 To: akpm@linux-foundation.org
 Cc: mhocko@kernel.org,
@@ -98,10 +100,12 @@ Cc: mhocko@kernel.org,
 	linux-mm@kvack.org,
 	linux-kernel@vger.kernel.org,
 	dave@stgolabs.net
-Subject: [PATCH -next v2 0/4] mm: per-node proactive reclaim
-Date: Mon, 23 Jun 2025 11:58:47 -0700
-Message-Id: <20250623185851.830632-1-dave@stgolabs.net>
+Subject: [PATCH 1/4] mm/vmscan: respect psi_memstall region in node reclaim
+Date: Mon, 23 Jun 2025 11:58:48 -0700
+Message-Id: <20250623185851.830632-2-dave@stgolabs.net>
 X-Mailer: git-send-email 2.39.5
+In-Reply-To: <20250623185851.830632-1-dave@stgolabs.net>
+References: <20250623185851.830632-1-dave@stgolabs.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -110,44 +114,28 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Hello,
+... rather benign but keep proper ending order.
 
-This is a tardy follow up to v1:
-https://lore.kernel.org/linux-mm/20240904162740.1043168-1-dave@stgolabs.net/
+Signed-off-by: Davidlohr Bueso <dave@stgolabs.net>
+---
+ mm/vmscan.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Changes:
- - Not a change perse, but further discussed with mhocko potential usecases
-   to justify upstreaming this interface. Nowadays NUMA represents the common
-   abstraction for memory tiering representing devices of various performance
-   characteristics. This interface makes a lot of sense given memcg's lack
-   of NUMA awareness.
-   
- - Consolidate both memcg and per-node flavors into a common helper. (Yosry)
-
-Patch 1 is a small fixlet independent of the rest of the series.
-Patches 2-3 make some of the machinery more generic.
-Patch 4 adds the sysfs interface (which has further been deemed ok albeit
-not following the one value per file "rule").
-
-Please consider for v6.16.
-
-Thanks!
-
-Davidlohr Bueso (4):
-  mm/vmscan: respect psi_memstall region in node reclaim
-  mm/memcg: make memory.reclaim interface generic
-  mm/vmscan: make __node_reclaim() more generic
-  mm: introduce per-node proactive reclaim interface
-
- Documentation/ABI/stable/sysfs-devices-node |   9 +
- drivers/base/node.c                         |   2 +
- include/linux/swap.h                        |  16 ++
- mm/internal.h                               |   2 +
- mm/memcontrol.c                             |  77 +-------
- mm/vmscan.c                                 | 195 +++++++++++++++++---
- 6 files changed, 201 insertions(+), 100 deletions(-)
-
---
+diff --git a/mm/vmscan.c b/mm/vmscan.c
+index a93a1ba9009e..c13c01eb0b42 100644
+--- a/mm/vmscan.c
++++ b/mm/vmscan.c
+@@ -7653,8 +7653,8 @@ static int __node_reclaim(struct pglist_data *pgdat, gfp_t gfp_mask, unsigned in
+ 	set_task_reclaim_state(p, NULL);
+ 	memalloc_noreclaim_restore(noreclaim_flag);
+ 	fs_reclaim_release(sc.gfp_mask);
+-	psi_memstall_leave(&pflags);
+ 	delayacct_freepages_end();
++	psi_memstall_leave(&pflags);
+ 
+ 	trace_mm_vmscan_node_reclaim_end(sc.nr_reclaimed);
+ 
+-- 
 2.39.5
 
 
