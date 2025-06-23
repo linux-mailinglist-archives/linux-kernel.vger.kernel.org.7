@@ -1,158 +1,251 @@
-Return-Path: <linux-kernel+bounces-698171-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-698175-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id D536CAE3E27
-	for <lists+linux-kernel@lfdr.de>; Mon, 23 Jun 2025 13:42:18 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6EF98AE3E47
+	for <lists+linux-kernel@lfdr.de>; Mon, 23 Jun 2025 13:44:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 77B433AA00E
-	for <lists+linux-kernel@lfdr.de>; Mon, 23 Jun 2025 11:41:51 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F2E9F3AEAA9
+	for <lists+linux-kernel@lfdr.de>; Mon, 23 Jun 2025 11:44:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 564B224169A;
-	Mon, 23 Jun 2025 11:42:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CB0B02451F0;
+	Mon, 23 Jun 2025 11:44:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="TjPZc1tK"
-Received: from mail-wm1-f73.google.com (mail-wm1-f73.google.com [209.85.128.73])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="jB3SvszP"
+Received: from mailout1.w1.samsung.com (mailout1.w1.samsung.com [210.118.77.11])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 37A0A77111
-	for <linux-kernel@vger.kernel.org>; Mon, 23 Jun 2025 11:42:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.73
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C3DCC244661
+	for <linux-kernel@vger.kernel.org>; Mon, 23 Jun 2025 11:44:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.118.77.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750678928; cv=none; b=hVYaBeMzzsa+7l8IANkETR/4rDICtoax5o8tSYwMf77qDw1bI0RWodO05tMw5zJw9grkMVuWFQDRQrdUlZoNeTPl2TgYTpanOJO9cG1K5rYHHSMxg79bXWxlfCcZGYbGnILg9Gv/b8R6/ZEoUUTIHz+y1Dm2UsmnqeeHRp3/AIo=
+	t=1750679075; cv=none; b=prrpB8k3yOmUo/IoUwidHg8BlJ0iHcpIAQalZ/DYRm+OZBdpwE0BmoDEE3PiW/gw3sINhLUvFQoEZLOYcQsUGLBJfxpTzMAd7j/a0L4T1GzTmORnepIyD5+qy2V8tPyHKt0cIHsOOkrhzFcTKXVd4HsQ8yxaQz2v88ZNXca6+8E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750678928; c=relaxed/simple;
-	bh=JWkNAYIXXxAvHocsXw3a5RBhWI73mua+uVzpAKrzxQo=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=JU1la3BamJ268umd3ZlidtOCJ4Z7Wd/sB5lxor5oPbKiec5mpTbocTTGorvK3ewajYPRSyDG4bhRt+CWmWDN0GaxW8i7KplAoaIVVQIEYT9AusFvpL+Ny301pklUcDou+e3/fIUrw6CpUDg49pq/+43uEE05DS9gm4ACotHKCKg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--aliceryhl.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=TjPZc1tK; arc=none smtp.client-ip=209.85.128.73
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--aliceryhl.bounces.google.com
-Received: by mail-wm1-f73.google.com with SMTP id 5b1f17b1804b1-450eaae2934so35108405e9.2
-        for <linux-kernel@vger.kernel.org>; Mon, 23 Jun 2025 04:42:07 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1750678925; x=1751283725; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=gOakrre7l7gSs8tnftFg1umC3O4hex3jEXhe5bAXm4c=;
-        b=TjPZc1tKJMPQH5NNZcbKfcZqaFd8c5WwED8IzY3MsCAQME4R1vaAyUZYRYV8UEzcfY
-         MHbw4M9o13668sXiaTSavIN976kUSPCXSw1L2BFJUOMGWMie0zCE2wslNClSEN9zx3XE
-         FeHBCj3ghC3uqP2qMo4lxRMGl8jFbQSt8Vy4KYBe+9fIyvDKY2CW4yz44lrMwHB7uIq+
-         R9jqnf/D4BFfKA0Rc2QceSVYm1Atdugl1RoqbmQ73hX4aXQsDX9XgJTOt9GnVAjvcbJd
-         Zwqe/0Y1mXzsZGUBPbcoF/jwVlI/DzttLtyxdIfctC0SITgz9hE59RZ7eBRxxV7zIYbM
-         Oq7Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1750678925; x=1751283725;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=gOakrre7l7gSs8tnftFg1umC3O4hex3jEXhe5bAXm4c=;
-        b=NrrZ9NoYyDHsGTfrT8okgxEI7DADcQdusZFk8ilS4cax/FtqqzJ60Iw9o3SJE/Nf60
-         fbH2qAMmfptPZKYcpxmb+5/FfVKMaT9xdIdRt4LBFXW7N8vcqOmBqbaR9GXbcXPlNeRF
-         dzwyGIBh5LscMikpnqR6iVfqPFvgYJ8D7vDDYaxLUtjcckNl4FDqGoiPEdxua0ZsCFgH
-         cShLshNMziDhdAptVgtU6DQddFhGEdA5qsPWGQFsRixWduEM7smmGdDygty+Gm6+s3ub
-         xJOMBpmBnABmxOBiZu5nNbymvjriRlQmM2Xc3/XZqk768Ud9Sy5Dt5XlL4WB+2ReVvFA
-         klaw==
-X-Forwarded-Encrypted: i=1; AJvYcCWv3XQMKW3e+FNfVhqMzHIjLl8+ll3gixBcNThoE5TD8FewIXs/xL2LG0sNVM0dUJZGsG+Y2Ag+UYIuOhw=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwcPsCPdD0ITor6yYbjasXzWvGF3Eol5Pvvk9AOMwfjWQr8STQM
-	uEmr29TZhlNB8za6j3o5YSt34BMWDhbtg4d4UM8+0dGzW5VaBO6h8pbGKn4EtH1Wswji0YtKMsK
-	hLu38KAJjym5bcgWong==
-X-Google-Smtp-Source: AGHT+IFLgU2zCTWelcLduERfWArl79+0ODmzTBoOgn9WbMCJ/VeopIZFCpbEQxpUShrPw9S7d8IZRIEelvQI5Xg=
-X-Received: from wmbfs6.prod.google.com ([2002:a05:600c:3f86:b0:453:ccf:1528])
- (user=aliceryhl job=prod-delivery.src-stubby-dispatcher) by
- 2002:a05:600c:8b14:b0:453:a88:d509 with SMTP id 5b1f17b1804b1-453659ca92cmr134236355e9.10.1750678925797;
- Mon, 23 Jun 2025 04:42:05 -0700 (PDT)
-Date: Mon, 23 Jun 2025 11:42:03 +0000
-In-Reply-To: <20250620-num-v1-2-7ec3d3fb06c9@nvidia.com>
+	s=arc-20240116; t=1750679075; c=relaxed/simple;
+	bh=eDXGpGRaodx8VqB9lhwU9qNbHbgigGxJCf7pqBNLp9s=;
+	h=From:Subject:Date:Message-Id:MIME-Version:To:Cc:Content-Type:
+	 References; b=QOoo2yf2bS9c5u2xfePTKLsku47tYo5wfrvv75+XTw2zv+oqT1Qa5kMbi32FCc9iKOz+068sHL6T0gaeajRb8x8pzlFPZ5QnKJnMmTajGB3x+h68c4Dhn7tZ9XHaT+/jWgeJB8U9yUheXP4bHXy9g1cu28+aVelxxx5lx19Zt1E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=jB3SvszP; arc=none smtp.client-ip=210.118.77.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
+Received: from eucas1p2.samsung.com (unknown [182.198.249.207])
+	by mailout1.w1.samsung.com (KnoxPortal) with ESMTP id 20250623114430euoutp01acb9fc594007a490d108a51a48bea4dc~LqVa635G30074900749euoutp01L
+	for <linux-kernel@vger.kernel.org>; Mon, 23 Jun 2025 11:44:30 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.w1.samsung.com 20250623114430euoutp01acb9fc594007a490d108a51a48bea4dc~LqVa635G30074900749euoutp01L
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+	s=mail20170921; t=1750679070;
+	bh=7rc1fzF0QTmKxkyJFBOrevb3sgychXffT2onchk1Wxw=;
+	h=From:Subject:Date:To:Cc:References:From;
+	b=jB3SvszPClaE6yGDgxOb5xF+XHjVibiu+3rymf4nDAXUu44N8Sd2BdKaoFktZyvm6
+	 vneFX83MvIPkbjZhRUj+gpYU6Tsqp2GXlsXNVPJ58Y6PV4Jx8QyHciiIsr2Oo5QmDD
+	 bSupBZSv5eL66fPcQ7vNcX+04PadNf6r6KtQL9hY=
+Received: from eusmtip1.samsung.com (unknown [203.254.199.221]) by
+	eucas1p1.samsung.com (KnoxPortal) with ESMTPA id
+	20250623114429eucas1p1e74e09e74c5873b2f7f01228073be72a~LqVaD0D3O0450604506eucas1p1l;
+	Mon, 23 Jun 2025 11:44:29 +0000 (GMT)
+Received: from AMDC4942.eu.corp.samsungelectronics.net (unknown
+	[106.210.136.40]) by eusmtip1.samsung.com (KnoxPortal) with ESMTPA id
+	20250623114428eusmtip1e82762bc55e1f3da0e06fca082af295d~LqVY_i1qQ1799017990eusmtip1h;
+	Mon, 23 Jun 2025 11:44:28 +0000 (GMT)
+From: Michal Wilczynski <m.wilczynski@samsung.com>
+Subject: [PATCH v6 0/8] Add TH1520 GPU support with power sequencing
+Date: Mon, 23 Jun 2025 13:42:38 +0200
+Message-Id: <20250623-apr_14_for_sending-v6-0-6583ce0f6c25@samsung.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20250620-num-v1-0-7ec3d3fb06c9@nvidia.com> <20250620-num-v1-2-7ec3d3fb06c9@nvidia.com>
-Message-ID: <aFk9i71j2rKcC6KL@google.com>
-Subject: Re: [PATCH 2/3] rust: num: add the `last_set_bit` operation
-From: Alice Ryhl <aliceryhl@google.com>
-To: Alexandre Courbot <acourbot@nvidia.com>
-Cc: Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, 
-	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
-	"=?utf-8?B?QmrDtnJu?= Roy Baron" <bjorn3_gh@protonmail.com>, Benno Lossin <lossin@kernel.org>, 
-	Andreas Hindborg <a.hindborg@kernel.org>, Trevor Gross <tmgross@umich.edu>, 
-	Danilo Krummrich <dakr@kernel.org>, linux-kernel@vger.kernel.org, 
-	rust-for-linux@vger.kernel.org, nouveau@lists.freedesktop.org
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAK49WWgC/33OzW7DIAzA8VepOI+JL4fQ095jqiJmTMqhpIIt6
+	lTl3Ud6aatlO/4t+WdfWaWSqLL97soKzammKbfoXnYMjz6PxFNozZRQIIw03J/LIM0QpzJUyiH
+	lkcOHdtL20npE1hbPhWK63ND3Q+tjqp9T+b7dmNU6/ZebFRfcCgQflY+uw7fqT/Urj684ndgKz
+	vqOgBabiG5IrwNYY4JzdgMxd6T74xOzIqSdAeylw/AbgUek30SgIcpS0Jo8YBefkWVZfgCXIGA
+	KhQEAAA==
+X-Change-ID: 20250414-apr_14_for_sending-5b3917817acc
+To: Drew Fustini <drew@pdp7.com>, Guo Ren <guoren@kernel.org>,  Fu Wei
+	<wefu@redhat.com>, Rob Herring <robh@kernel.org>,  Krzysztof Kozlowski
+	<krzk+dt@kernel.org>,  Conor Dooley <conor+dt@kernel.org>,  Michal
+	Wilczynski <m.wilczynski@samsung.com>,  Bartosz Golaszewski <brgl@bgdev.pl>,
+	Philipp Zabel <p.zabel@pengutronix.de>,  Frank Binns
+	<frank.binns@imgtec.com>, Matt Coster <matt.coster@imgtec.com>,  Maarten
+	Lankhorst <maarten.lankhorst@linux.intel.com>,  Maxime Ripard
+	<mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,  David Airlie
+	<airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,  Paul Walmsley
+	<paul.walmsley@sifive.com>,  Palmer Dabbelt <palmer@dabbelt.com>, Albert Ou
+	<aou@eecs.berkeley.edu>,  Alexandre Ghiti <alex@ghiti.fr>, Ulf Hansson
+	<ulf.hansson@linaro.org>,  Marek Szyprowski <m.szyprowski@samsung.com>
+Cc: linux-riscv@lists.infradead.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org, 
+	dri-devel@lists.freedesktop.org,  Bartosz Golaszewski
+	<bartosz.golaszewski@linaro.org>,  Krzysztof Kozlowski
+	<krzysztof.kozlowski@linaro.org>
+X-Mailer: b4 0.15-dev
+X-CMS-MailID: 20250623114429eucas1p1e74e09e74c5873b2f7f01228073be72a
+X-Msg-Generator: CA
 Content-Type: text/plain; charset="utf-8"
+X-RootMTR: 20250623114429eucas1p1e74e09e74c5873b2f7f01228073be72a
+X-EPHeader: CA
+X-CMS-RootMailID: 20250623114429eucas1p1e74e09e74c5873b2f7f01228073be72a
+References: <CGME20250623114429eucas1p1e74e09e74c5873b2f7f01228073be72a@eucas1p1.samsung.com>
 
-On Fri, Jun 20, 2025 at 10:14:52PM +0900, Alexandre Courbot wrote:
-> Add an equivalent to the `fls` (Find Last Set bit) C function to Rust
-> unsigned types.
-> 
-> It is to be first used by the nova-core driver.
-> 
-> Signed-off-by: Alexandre Courbot <acourbot@nvidia.com>
+This patch series introduces support for the Imagination IMG BXM-4-64
+GPU found on the T-HEAD TH1520 SoC. A key aspect of this support is
+managing the GPU's complex power-up and power-down sequence, which
+involves multiple clocks and resets.
 
-Reviewed-by: Alice Ryhl <aliceryhl@google.com>
+The TH1520 GPU requires a specific sequence to be followed for its
+clocks and resets to ensure correct operation. Initial discussions and
+an earlier version of this series explored managing this via the generic
+power domain (genpd) framework. However, following further discussions
+with kernel maintainers [1], the approach has been reworked to utilize
+the dedicated power sequencing (pwrseq) framework.
 
->  rust/kernel/num.rs | 38 ++++++++++++++++++++++++++++++++++++++
->  1 file changed, 38 insertions(+)
-> 
-> diff --git a/rust/kernel/num.rs b/rust/kernel/num.rs
-> index 6ecff037893dd25420a6369ea0cd6adbe3460b29..95766201a7cf208989f37ecbc6d54d264385a754 100644
-> --- a/rust/kernel/num.rs
-> +++ b/rust/kernel/num.rs
-> @@ -161,3 +161,41 @@ pub const fn align_up(self, value: $t) -> $t {
->  }
->  
->  power_of_two_impl!(usize, u8, u16, u32, u64, u128);
-> +
-> +macro_rules! impl_last_set_bit {
-> +    ($($t:ty),+) => {
-> +        $(
-> +            ::kernel::macros::paste! {
+This revised series now employs a new pwrseq provider driver
+(pwrseq-thead-gpu.c) specifically for the TH1520 GPU. This driver
+encapsulates the SoC specific power sequence details. The Imagination
+GPU driver (pvr_device.c) is updated to act as a consumer of this power
+sequencer, requesting the "gpu-power" target. The sequencer driver,
+during its match phase with the GPU device, acquires the necessary clock
+and reset handles from the GPU device node to perform the full sequence.
 
-I think this would read slightly nicer with the paste! invocation on the
-outer scope.
+This approach aligns with the goal of abstracting SoC specific power
+management details away from generic device drivers and leverages the
+pwrseq framework as recommended.
 
-$(::kernel::macros::paste! {
-    ...
-})+
+The series is structured as follows:
 
-> +            /// Last Set Bit: return the 1-based index of the last (i.e. most significant) set bit
-> +            /// in `v`.
-> +            ///
-> +            /// Equivalent to the C `fls` function.
-> +            ///
-> +            /// # Examples
-> +            ///
-> +            /// ```
-> +            #[doc = concat!("use kernel::num::last_set_bit_", stringify!($t), ";")]
-> +            ///
-> +            #[doc = concat!("assert_eq!(last_set_bit_", stringify!($t), "(0x0), 0);")]
-> +            #[doc = concat!("assert_eq!(last_set_bit_", stringify!($t), "(0x1), 1);")]
-> +            #[doc = concat!("assert_eq!(last_set_bit_", stringify!($t), "(0x10), 5);")]
-> +            #[doc = concat!("assert_eq!(last_set_bit_", stringify!($t), "(0x1f), 5);")]
-> +            #[doc = concat!(
-> +                "assert_eq!(last_set_bit_",
-> +                stringify!($t),
-> +                "(",
-> +                stringify!($t),
-> +                "::MAX), ",
-> +                stringify!($t), "::BITS);"
-> +            )]
-> +            /// ```
-> +            #[inline(always)]
-> +            pub const fn [<last_set_bit_ $t>](v: $t) -> u32 {
-> +                $t::BITS - v.leading_zeros()
-> +            }
-> +            }
-> +        )+
-> +    };
-> +}
-> +
-> +impl_last_set_bit!(usize, u8, u16, u32, u64, u128);
-> 
-> -- 
-> 2.49.0
-> 
+Patch 1: Introduces the pwrseq-thead-gpu auxiliary driver to manage the
+         GPU's power-on/off sequence.
+Patch 2: Adds device tree bindings for the gpu-clkgen reset to the
+         existing thead,th1520-aon binding.
+Patch 3: Extends the pm-domains driver to detect the gpu-clkgen reset
+         and spawn the pwrseq-thead-gpu auxiliary driver.
+Patch 4: Updates the Imagination DRM driver to utilize the pwrseq
+         framework for TH1520 GPU power management.
+Patch 5: Adds the thead,th1520-gpu compatible string to the PowerVR GPU
+         device tree bindings.
+Patch 6: Adds the gpu-clkgen reset property to the aon node in the
+         TH1520 device tree source.
+Patch 7: Adds the device tree node for the IMG BXM-4-64 GPU and its
+         required fixed-clock.
+Patch 8: Enables compilation of the Imagination PowerVR driver on the
+         RISC-V architecture.
+
+This patchset finishes the work started in bigger series [2] by adding
+all remaining GPU power sequencing piece. After this patchset the GPU
+probes correctly.
+
+This series supersedes the previous genpd based approach. Testing on
+T-HEAD TH1520 SoC indicates the new pwrseq based solution works
+correctly.
+
+Link to v5 of this series - [3].
+
+v6:
+ - check return values from reset_control_assert() and propagate the
+   first error, ensuring all teardown steps are still attempted
+ - the driver now stores a reference to the consumer's device node to
+   ensure it binds to a single, specific device
+ - rename Kconfig option to POWER_SEQUENCING_TH1520_GPU
+ - remove COMPILE_TEST
+
+v5:
+
+- reworked the pwrseq-thead-gpu driver, now using manual resource
+  management in .match and a .remove callback
+- refactored the drm/imagination driver to use function pointers for
+  power management instead of a boolean flag
+- switched the pmdomain driver to use the generic
+  device_property_match_string() helper
+- added MMU and COMPILE_TEST dependencies to Kconfig to fix RISC-V
+  build warnings.
+
+v4:
+
+- the pwrseq driver is now an auxiliary driver with a robust match
+  function based on the power-domains property, spawned from the AON
+  node 
+- Imagination DRM driver now uses of_device_id match data to
+  conditionally probe for the pwrseq, solving the cross platform
+  probe deferral issue
+- add Reviewed-by from Ulf for the entire series
+
+v3:
+
+- re-worked cover letter completely
+- complete architectural rework from using extended genpd callbacks to a
+  dedicated pwrseq provider driver
+- introduced pwrseq-thead-gpu.c and associated DT bindings
+   (thead,th1520-gpu-pwrseq)
+- the Imagination driver now calls devm_pwrseq_get() and uses
+  pwrseq_power_on() / pwrseq_power_off() for the TH1520 GPU
+- removed the platform_resources_managed flag from dev_pm_info and
+  associated logic
+- the new pwrseq driver's match() function now acquires consumer-specific
+  resources (GPU clocks, GPU core reset) directly from the consumer device
+
+v2:
+
+Extended the series by adding two new commits:
+ - introduced a new platform_resources_managed flag in dev_pm_info along
+   with helper functions, allowing drivers to detect when clocks and resets
+   are managed by the platform
+ - updated the DRM Imagination driver to skip claiming clocks when
+   platform_resources_managed is set
+
+Split the original bindings update:
+ - the AON firmware bindings now only add the GPU clkgen reset (the GPU
+   core reset remains handled by the GPU node)
+
+Reworked the TH1520 PM domain driver to:
+ - acquire GPU clocks and reset dynamically using attach_dev/detach_dev
+   callbacks
+ - handle clkgen reset internally, while GPU core reset is obtained from
+   the consumer device node
+ - added a check to enforce that only a single device can be attached to
+   the GPU PM domain
+
+[1] - https://lore.kernel.org/all/CAPDyKFpi6_CD++a9sbGBvJCuBSQS6YcpNttkRQhQMTWy1yyrRg@mail.gmail.com/
+[2] - https://lore.kernel.org/all/20250219140239.1378758-1-m.wilczynski@samsung.com/
+[3] - https://lore.kernel.org/all/20250618-apr_14_for_sending-v5-0-27ed33ea5c6f@samsung.com/
+
+---
+Michal Wilczynski (8):
+      power: sequencing: Add T-HEAD TH1520 GPU power sequencer driver
+      dt-bindings: firmware: thead,th1520: Add resets for GPU clkgen
+      pmdomain: thead: Instantiate GPU power sequencer via auxiliary bus
+      drm/imagination: Use pwrseq for TH1520 GPU power management
+      dt-bindings: gpu: img,powervr-rogue: Add TH1520 GPU compatible
+      riscv: dts: thead: th1520: Add GPU clkgen reset to AON node
+      riscv: dts: thead: th1520: Add IMG BXM-4-64 GPU node
+      drm/imagination: Enable PowerVR driver for RISC-V
+
+ .../bindings/firmware/thead,th1520-aon.yaml        |   7 +
+ .../devicetree/bindings/gpu/img,powervr-rogue.yaml |   9 +-
+ MAINTAINERS                                        |   1 +
+ arch/riscv/boot/dts/thead/th1520.dtsi              |  25 +++
+ drivers/gpu/drm/imagination/Kconfig                |   4 +-
+ drivers/gpu/drm/imagination/pvr_device.c           |  31 ++-
+ drivers/gpu/drm/imagination/pvr_device.h           |  19 ++
+ drivers/gpu/drm/imagination/pvr_drv.c              |  30 ++-
+ drivers/gpu/drm/imagination/pvr_power.c            | 112 ++++++----
+ drivers/gpu/drm/imagination/pvr_power.h            |   6 +
+ drivers/pmdomain/thead/Kconfig                     |   1 +
+ drivers/pmdomain/thead/th1520-pm-domains.c         |  51 +++++
+ drivers/power/sequencing/Kconfig                   |   8 +
+ drivers/power/sequencing/Makefile                  |   1 +
+ drivers/power/sequencing/pwrseq-thead-gpu.c        | 247 +++++++++++++++++++++
+ 15 files changed, 503 insertions(+), 49 deletions(-)
+---
+base-commit: 4774cfe3543abb8ee98089f535e28ebfd45b975a
+change-id: 20250414-apr_14_for_sending-5b3917817acc
+
+Best regards,
+-- 
+Michal Wilczynski <m.wilczynski@samsung.com>
+
 
