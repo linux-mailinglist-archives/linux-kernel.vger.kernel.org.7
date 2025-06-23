@@ -1,46 +1,46 @@
-Return-Path: <linux-kernel+bounces-698315-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-698318-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5887DAE405D
-	for <lists+linux-kernel@lfdr.de>; Mon, 23 Jun 2025 14:33:30 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7AFDAAE4068
+	for <lists+linux-kernel@lfdr.de>; Mon, 23 Jun 2025 14:34:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 00DA916DC8A
-	for <lists+linux-kernel@lfdr.de>; Mon, 23 Jun 2025 12:32:07 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id BF32018943F0
+	for <lists+linux-kernel@lfdr.de>; Mon, 23 Jun 2025 12:32:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AB0C2248F40;
-	Mon, 23 Jun 2025 12:31:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A491724C076;
+	Mon, 23 Jun 2025 12:31:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=icloud.com header.i=@icloud.com header.b="vzHQd/nt"
-Received: from outbound.pv.icloud.com (p-west1-cluster2-host11-snip4-1.eps.apple.com [57.103.64.152])
+	dkim=pass (2048-bit key) header.d=icloud.com header.i=@icloud.com header.b="gKxUeb7v"
+Received: from outbound.pv.icloud.com (p-west1-cluster2-host1-snip4-3.eps.apple.com [57.103.64.174])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BC4B92459F1
-	for <linux-kernel@vger.kernel.org>; Mon, 23 Jun 2025 12:31:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=57.103.64.152
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AEF2C24A067
+	for <linux-kernel@vger.kernel.org>; Mon, 23 Jun 2025 12:31:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=57.103.64.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750681901; cv=none; b=Tdy03OJKsPhHOJdg1FVLvIHnIRW4pVL04r3w5U2MS9Zh78y5M4kGE1ZFgMGSuBGpFS0uQAID3USqJEVDZQbdbX+55RdICf7JGZhiNv6WAkA1w2tRzk9AVTv0gYohAbxAKxryd6FARLSSOBKZi2wnEY93OJOmzbdQgZUFtkoF7jM=
+	t=1750681905; cv=none; b=h7AoE1GlO9dw/upcWwWsmoEZfXtsLLjeEZpnQWjeT4tvRUxz8Y6wh+lUTig5UDHkqy5LcIUeHB1GHmMO5y0Xebna5bIVIcdpggtaeu797imsmiXufImhM24xMq2yDyZUCm22mJQySsrAshMO+i/JwpGDkzz9bUmkB1WlshSkDQQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750681901; c=relaxed/simple;
-	bh=fkwjlgmRRs46qzcBjCAqAA9El9cLBiccykLVz3LbkvI=;
+	s=arc-20240116; t=1750681905; c=relaxed/simple;
+	bh=lSYzmt2e/7sb/9/P+7v+9g2YrTs5nehaODUIs4dbQms=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=AP6hVxG/CO38zjlby0TPem9n4Use8mxMIang0xRtUkC7s6++SyO6Z58aiY8vIjJReLmTra646zi2PjjLvlsGFsPjrW93uL8QMx+M7ndRmFB9xa58h4ubyJhG236JEY3aPQDaI2UU6s3/5xwzHPvs1zfBffshrM4VB37mMVz6+a0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=icloud.com; spf=pass smtp.mailfrom=icloud.com; dkim=pass (2048-bit key) header.d=icloud.com header.i=@icloud.com header.b=vzHQd/nt; arc=none smtp.client-ip=57.103.64.152
+	 In-Reply-To:To:Cc; b=D3Va/V/DztZ/nOVyi6TtwarhdRFblnVJW44MHkXiQx518l4KK+CeKPKYdKZCuUrWBx6Vg9Sregpf/Ln/Eq1yYbzDzjdlfgxRLrauNIKlf5n1cWvPkglZ70yaB1G02VCKH8B8EdPSQ0BWRV3H0lauBge1cQJAQRCywLYKWK5TLqs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=icloud.com; spf=pass smtp.mailfrom=icloud.com; dkim=pass (2048-bit key) header.d=icloud.com header.i=@icloud.com header.b=gKxUeb7v; arc=none smtp.client-ip=57.103.64.174
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=icloud.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=icloud.com
 Received: from outbound.pv.icloud.com (unknown [127.0.0.2])
-	by outbound.pv.icloud.com (Postfix) with ESMTPS id 0231C180377A;
-	Mon, 23 Jun 2025 12:31:35 +0000 (UTC)
-Dkim-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=icloud.com; s=1a1hai; bh=NHgxlTzvgc5QNV7cJrvxK2AUxsXCg2hdL0DYremg4GU=; h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:x-icloud-hme; b=vzHQd/ntnLd5RGHoLoDaLBAFMHWMs5uqVmwQWP2VWMObvDJj7g6i5RO99L7djyucQu1u9Hhk701mwNrorg6eYtWmKNuo7S0JekuK8+m9EcQ9thbVfsnWbQXRAKEnQWAA+KSKXt84GrPOrqTS8TVmVN6JsKdwt0fVpL0kTpn98xo18yo3oS+IuwZIWv48Y5GDy4fZI0nehbg6FVT5Gb6/eRrjTuzfCFCUFIjbb0mpvjJ30URQQhnhFquRaQ85mgminXabHb0R1s7fmQwZHVvcnPTrxIiS1xld0kpoXyyew5FppAHBOSLTFBgcAW6TnO+hyKnHScDfId0cc3yX83y1YQ==
+	by outbound.pv.icloud.com (Postfix) with ESMTPS id F16EC180018F;
+	Mon, 23 Jun 2025 12:31:38 +0000 (UTC)
+Dkim-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=icloud.com; s=1a1hai; bh=mBETXbdc3NL5vO8AwaqSutoRmMvp/eieMDamGyhkfPE=; h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:x-icloud-hme; b=gKxUeb7vm0f1EkbOhG3asREHEMYkIdhl+w/Pn0k9bVzmbyD2xC5Vr87H8UTlXosGCgEG7jUxvi0b9n24n0TqMS+d8MGyZus/nggqUGRFjx0VP4CfN5epxoavMlEx2X9FV28tMsQJFKaidXusbkMQElJ4ev/s5nPtJB7q6agD8kcF0AFD9eoocWrBKCyMR9dROfHyOjY6EunB7xTM/Na6PIjfZbJATFEeEYp2M7PIHQQAE8oS19+R3EWHR9NZul3mbbYSEqco/PSpCh0jMOpJKPybzqvB/Dkg67RLt4v7yPa/GhgJ3oSm2aZ3udNMUo6g2Md9MoHQtktjo0ODlFmp6A==
 Received: from [192.168.1.26] (pv-asmtp-me-k8s.p00.prod.me.com [17.56.9.36])
-	by outbound.pv.icloud.com (Postfix) with ESMTPSA id 69D5318000C0;
-	Mon, 23 Jun 2025 12:31:33 +0000 (UTC)
+	by outbound.pv.icloud.com (Postfix) with ESMTPSA id 739211800EC9;
+	Mon, 23 Jun 2025 12:31:35 +0000 (UTC)
 From: Zijun Hu <zijun_hu@icloud.com>
-Date: Mon, 23 Jun 2025 20:31:16 +0800
-Subject: [PATCH 1/4] Bluetooth: hci_sock: Reset cookie to zero in
- hci_sock_free_cookie()
+Date: Mon, 23 Jun 2025 20:31:17 +0800
+Subject: [PATCH 2/4] Bluetooth: hci_sync: Use bt_dev_err() to log error
+ message in hci_update_event_filter_sync()
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -49,7 +49,7 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20250623-bt_cleanup-v1-1-5d3d171e3822@oss.qualcomm.com>
+Message-Id: <20250623-bt_cleanup-v1-2-5d3d171e3822@oss.qualcomm.com>
 References: <20250623-bt_cleanup-v1-0-5d3d171e3822@oss.qualcomm.com>
 In-Reply-To: <20250623-bt_cleanup-v1-0-5d3d171e3822@oss.qualcomm.com>
 To: Marcel Holtmann <marcel@holtmann.org>, 
@@ -58,51 +58,44 @@ To: Marcel Holtmann <marcel@holtmann.org>,
 Cc: Zijun Hu <zijun_hu@icloud.com>, linux-bluetooth@vger.kernel.org, 
  linux-kernel@vger.kernel.org, Zijun Hu <zijun.hu@oss.qualcomm.com>
 X-Mailer: b4 0.14.2
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNjIzMDA3NSBTYWx0ZWRfXx04nththdni4
- oDtmNzzKPh7cqGrgzbxUUsP7DAvXAajI3fS8bmYuzkNiYccD5cy6J5CtSaiMf++3a+pCC0TMi0w
- WkhWZLHaDdlnMdlmkNQkjX4MQDgVg/Bcyd2zsMNzOGrYbZwSxLdvCYRRn7ZXVWjPcGyb0i+GT3Z
- TLqRQVhrFwEWg6hWVrvaHKMPrqSV++rhBjKMcT1e4dZ5XFjbj8TZDXqAyup0mBut8vOFgE1GYGQ
- JcKqWCELsrDPqnS4xzH3uL4J8iD5HOQTluqUauY65pZlOrvbAPwI1dqnBznxSp63Y6D64N8vw=
-X-Proofpoint-ORIG-GUID: m6KzkSG0Oj9PaEL_VXDLV5ePqEXbUK9x
-X-Proofpoint-GUID: m6KzkSG0Oj9PaEL_VXDLV5ePqEXbUK9x
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNjIzMDA3NSBTYWx0ZWRfX2dWKz4PPiEO7
+ q0RTvO6pviQrBqumA0CJojuBX8ifhdNnBFzdPLjp9IyweNfqQS5+9hE6SgUq4Utte6hEdqgreRg
+ ETs3JvCVyhdEK4hgyzC8lPgq5lzGKnKQqQcRYwkLoqF2L7IIptShR19bDu7pQsIL1j8nXb/8ofF
+ MD9oDM9NrzB7e53qc3ubH9HbCG/Kf1J8Jt4ZnDfdglB8Vu/ctwPb/63HiF/tTqvqgfrR8waabrh
+ EETGzaLhrpgE/gkuyhLSR20fnWWMfmWxCzccuVJxdBoYcPA8uZc4PepkIJUK8vGYr7JaRkmuk=
+X-Proofpoint-GUID: MWi7XUJp5w6K0sA3MrXFrAezW9VDznG6
+X-Proofpoint-ORIG-GUID: MWi7XUJp5w6K0sA3MrXFrAezW9VDznG6
 X-Proofpoint-Virus-Version: vendor=baseguard
  engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.0.736,FMLib:17.12.80.40
  definitions=2025-06-23_03,2025-06-23_02,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0
- adultscore=0 spamscore=0 mlxscore=0 clxscore=1015 mlxlogscore=999
- phishscore=0 malwarescore=0 bulkscore=0 classifier=spam adjust=0 reason=mlx
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 clxscore=1015
+ mlxscore=0 spamscore=0 malwarescore=0 suspectscore=0 adultscore=0
+ phishscore=0 bulkscore=0 mlxlogscore=999 classifier=spam adjust=0 reason=mlx
  scancount=1 engine=8.22.0-2506060001 definitions=main-2506230075
 
 From: Zijun Hu <zijun.hu@oss.qualcomm.com>
 
-Reset cookie value to 0 instead of 0xffffffff in hci_sock_free_cookie()
-since:
-0         :  means cookie has not been assigned yet
-0xffffffff:  means cookie assignment failure
-
-Also fix generating cookie failure with usage shown below:
-hci_sock_gen_cookie(sk)   // generate cookie
-hci_sock_free_cookie(sk)  // free cookie
-hci_sock_gen_cookie(sk)   // Can't generate cookie any more
+Use bt_dev_err() instead of bt_dev_dbg() to log error message in
+hci_update_event_filter_sync().
 
 Signed-off-by: Zijun Hu <zijun.hu@oss.qualcomm.com>
 ---
- net/bluetooth/hci_sock.c | 2 +-
+ net/bluetooth/hci_sync.c | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/net/bluetooth/hci_sock.c b/net/bluetooth/hci_sock.c
-index 428ee5c7de7ea32fea08a2ebcf57e30dee59e3fa..fc866759910d95f40f159cfd63710f4c5e519dfd 100644
---- a/net/bluetooth/hci_sock.c
-+++ b/net/bluetooth/hci_sock.c
-@@ -118,7 +118,7 @@ static void hci_sock_free_cookie(struct sock *sk)
- 	int id = hci_pi(sk)->cookie;
- 
- 	if (id) {
--		hci_pi(sk)->cookie = 0xffffffff;
-+		hci_pi(sk)->cookie = 0;
- 		ida_free(&sock_cookie_ida, id);
- 	}
- }
+diff --git a/net/bluetooth/hci_sync.c b/net/bluetooth/hci_sync.c
+index 6687f2a4d1eb44c154f471ed0c4cad7e8d437c88..9288a2ff5476fba04729799e7b7d8b4d43087e6c 100644
+--- a/net/bluetooth/hci_sync.c
++++ b/net/bluetooth/hci_sync.c
+@@ -6073,7 +6073,7 @@ static int hci_update_event_filter_sync(struct hci_dev *hdev)
+ 						 &b->bdaddr,
+ 						 HCI_CONN_SETUP_AUTO_ON);
+ 		if (err)
+-			bt_dev_dbg(hdev, "Failed to set event filter for %pMR",
++			bt_dev_err(hdev, "Failed to set event filter for %pMR",
+ 				   &b->bdaddr);
+ 		else
+ 			scan = SCAN_PAGE;
 
 -- 
 2.34.1
