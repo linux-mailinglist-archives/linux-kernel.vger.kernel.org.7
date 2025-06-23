@@ -1,120 +1,78 @@
-Return-Path: <linux-kernel+bounces-699208-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-699205-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1512CAE5572
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Jun 2025 00:11:35 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 46E39AE555E
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Jun 2025 00:10:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0B5C04C48F0
-	for <lists+linux-kernel@lfdr.de>; Mon, 23 Jun 2025 22:10:50 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 657724A1854
+	for <lists+linux-kernel@lfdr.de>; Mon, 23 Jun 2025 22:09:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 84B8F227E8F;
-	Mon, 23 Jun 2025 22:10:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E06DA223DFF;
+	Mon, 23 Jun 2025 22:09:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="L7f4xynt"
-Received: from mail-wr1-f43.google.com (mail-wr1-f43.google.com [209.85.221.43])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="taXUf7Nm"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1D3BA21FF2B;
-	Mon, 23 Jun 2025 22:10:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 433E92940B;
+	Mon, 23 Jun 2025 22:09:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750716623; cv=none; b=mxeRq0+DkdhaRgW1xnKWOrrG69cXktnaKG6zETaL8fWuGrMdBNQ3ctGKFbnRHQ4yJt34enM9STJpNe11Dpg2vtGZwyJFs8bgLd7RBIaikE4VjP/NL53COn+/r3itIPRL+psAGvxsRUyVK9V0R9EiZ0nQnUbpa5o0070kMk7NbCI=
+	t=1750716585; cv=none; b=pbQGbV1UJcTsXoE9gw5wggUX/LsycLeQRZksAvnQlmTGNbne7IzYWOfyiDBpMFMVwPKJvVyK/zdem1DQBMIWaEfQG2jmAflN+qXrlQwCgoC6pnw0DhIWHiEXyZHO3gkEUzhAEnn/kc8dcR6OsviyaH9X5+aLAIFN1rnIoKkZcHY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750716623; c=relaxed/simple;
-	bh=rJtgUixg3bc+6Lniu8+P4i4uXvGUZP8yfzVme7m18jg=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=DpL8XaVyc1Sxj3oCKthqiOCFTarbbyecjynEVvK1EIB63jPDSBlRZeuNhiyxe+AwRR0yYbMT9tLZGfZQ3Tn1GeoMTHW7Th4YKCBCNWJ3yTih203XTszhdF0hrhiBWWX2bhFLDKBfzDyCKBggg4iOrj/FvCzaVTMZLYx0prqShdc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=L7f4xynt; arc=none smtp.client-ip=209.85.221.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f43.google.com with SMTP id ffacd0b85a97d-3a528243636so2859264f8f.3;
-        Mon, 23 Jun 2025 15:10:21 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1750716620; x=1751321420; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=g6osNOP9K2XHQbWWpjHXmBIwvo4RDOmUZ4V/GR1O0W4=;
-        b=L7f4xyntEBP+TYh3bBkYRP1Pdd8lQLVIXmcce5jM+VQuP4n2ODpZcA/R6r886FzaOf
-         yvmAwDv/Af+vXJ4b4sb/NRUWmTzsmcT6iX73cl3ITbH3Gwb78AcE+Gzb7to4CeJ8+fNG
-         GxMsqsNpHlHtYJdE3NqUWdGAIhZyXZ5sVtMiBzEB7NZOooLoCCmBjT2ga07R6OV29kSa
-         fSC+jpt0a4PKe4IIuwJTyupGn8+lU0VJLWScGzkjOCIzgPNoiJzVi2OVq2YkwFsIvtdx
-         4FGB47zO+4iSXiXk5Gd9ystHEKMc3KfgSDqGMPZAVBzY6b+XONVqj+sfFZeRz7KcoJHO
-         ZJig==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1750716620; x=1751321420;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=g6osNOP9K2XHQbWWpjHXmBIwvo4RDOmUZ4V/GR1O0W4=;
-        b=rz9HgzImQT8OeINKD2aCqtNCFb3dY3CnVya7uhGXpuLV/zIvhvu/bxRYLS4sQlJO9u
-         YoUFFr2JazUSSc8rpgaMFuf7MU1WgMEe/hjTB+eR2VA8EPSuovYuBHIW2jdPf2EhppsM
-         WYv6xKMG8fKi5DjUjoV4k8O8UM3owyLfJBqVt9VMfQbCLoUeaDwdPDNFvEhvUv1HYMB+
-         qgEaavFBeGI0QWNHQr/cnRq4jWy9mBQEYHeu5n77eSVXM1RTJqGkGmoc4mON47EGRMpL
-         9QXiJVuM1nYLVYAyBMd1XfLiGQpLZmTA8giHPfRhYXd/Bn39G94GufVijYA/vrf8grfh
-         rLQA==
-X-Forwarded-Encrypted: i=1; AJvYcCWQINpNe7w9z/TETPHwjnc0yMdKInCIJe9vge/WNsCqWJHgpVvYvDEb2POYcUpzGulJZD48GH5yzc9qdwg=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxwPPcXNDG30NetpofSV2NdEfpG7goTCJAjljvxM6tf7/4/7wSp
-	8xHCzI/BWtxJgHKOXTvECM+ocmBBMZPpHCIUBVVBh6un0KZ8pnNhd1qD
-X-Gm-Gg: ASbGnct0PVkvlQqRs+rqbWDxHgfhuYET11S90f6zSCHW1Jp3XyzF8I9OvWmFcbVSghg
-	vrV+5NfBlpxSR7svPMVxzeNuKk4pKqRhqjqCt7T8fbT0veT0je+m0unQsGZncRde2CRAaI9qjui
-	9axW3+gMXsW6ShYIIktvf5OaRI2FsSnvBp4q0zq0VOnJFE0eWXSc+B9r8YtNHmNVFXDuJMDaIgV
-	xMqyemmhMbkiFDDObnd+DRxjE3DppkZDODHV0I+vK39eOZSMQf2Fa3N5PrhIkRY/n6o+qnZkgRk
-	QSY4ASv+22OWfMfIP8s0S3TkihiIh+R+bZsoWA8yp+r29BjMl79/8uoM5YpF
-X-Google-Smtp-Source: AGHT+IEwnihSKaV9MZa8JbefwtxfYi1D+ExJQVtkVsokJq+3Xaa3axXjCwHA/ovAMgIPs5P8j8qYfg==
-X-Received: by 2002:a05:6000:2503:b0:3a5:39d7:3f17 with SMTP id ffacd0b85a97d-3a6d12e68b2mr12366601f8f.47.1750716620193;
-        Mon, 23 Jun 2025 15:10:20 -0700 (PDT)
-Received: from localhost ([87.254.0.133])
-        by smtp.gmail.com with UTF8SMTPSA id ffacd0b85a97d-3a6e8064c61sm250475f8f.36.2025.06.23.15.10.19
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 23 Jun 2025 15:10:19 -0700 (PDT)
-From: Colin Ian King <colin.i.king@gmail.com>
-To: Dave Penkler <dpenkler@gmail.com>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Michael Rubin <matchstick@neverthere.org>,
-	linux-staging@lists.linux.dev
-Cc: kernel-janitors@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH][next] staging: gpib: fix unset padding field copy back to userspace
-Date: Mon, 23 Jun 2025 23:09:58 +0100
-Message-ID: <20250623220958.280424-1-colin.i.king@gmail.com>
-X-Mailer: git-send-email 2.50.0
+	s=arc-20240116; t=1750716585; c=relaxed/simple;
+	bh=rUu8xlHqwU/hSh7Cp8o3XVutQ6pIsZ+o4IvVZcJ2wDM=;
+	h=Subject:From:In-Reply-To:References:Message-Id:Date:To:Cc; b=bEH+XN77SDvzMwdQO73SkNBTrtMXrthkKFKw39wWeDS6milVFqUosbv2uJ6CarE+Rk4nd9uJtjwWXI6neK4qiiaZAr6voMZuuRB08V7bXSnXXap6JhkIqAex6o/C1SpBNc2bsDme6UaZzHJh8p6h0EgxUDCEUFNLi7+6+89boQo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=taXUf7Nm; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0A0B3C4CEEA;
+	Mon, 23 Jun 2025 22:09:45 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1750716585;
+	bh=rUu8xlHqwU/hSh7Cp8o3XVutQ6pIsZ+o4IvVZcJ2wDM=;
+	h=Subject:From:In-Reply-To:References:Date:To:Cc:From;
+	b=taXUf7NmTcVt3HY6RUiOW2eqZ7ZRO9FGeOtvzRZbBTTRd3ayggVteDbKSGWidWasy
+	 tVbURBUN9o79c3KdjbTsD/ySt39mtDlWiaZ51zLBspqA/dFUC51RzewO9dWtVxxxVc
+	 s8sDekeP/AcFpf6eeP+lqzgZdhgvO4ATHuX6/hX5exQhzDPprooHaPoGsV2kstD8CW
+	 O0w1q/zo2Vpq4OufkpRY5xjJ+kiSn3/ujsD091EQ08nZwOqG/ziN3Q6SmUmWN6GABq
+	 8SymYb9NOcgvCwiJDXO8sNYdF64LWRl4dQMn0tQbwfUJ/BQFM5StTGproDnfemRk0L
+	 Xjif5KezQd8NQ==
+Received: from [10.30.226.235] (localhost [IPv6:::1])
+	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id 3850739FEB7D;
+	Mon, 23 Jun 2025 22:10:13 +0000 (UTC)
+Subject: Re: [GIT PULL] hotfixes for 6.16-rc4
+From: pr-tracker-bot@kernel.org
+In-Reply-To: <20250622185510.662af99051fedc1815b9de00@linux-foundation.org>
+References: <20250622185510.662af99051fedc1815b9de00@linux-foundation.org>
+X-PR-Tracked-List-Id: <mm-commits.vger.kernel.org>
+X-PR-Tracked-Message-Id: <20250622185510.662af99051fedc1815b9de00@linux-foundation.org>
+X-PR-Tracked-Remote: git://git.kernel.org/pub/scm/linux/kernel/git/akpm/mm tags/mm-hotfixes-stable-2025-06-22-18-52
+X-PR-Tracked-Commit-Id: c742d127d2d831aa83ae2987a508bca2bf0c7736
+X-PR-Merge-Tree: torvalds/linux.git
+X-PR-Merge-Refname: refs/heads/master
+X-PR-Merge-Commit-Id: c06944560a562828d507166b4f87c01c367cc9c1
+Message-Id: <175071661195.3311076.12429089372502858004.pr-tracker-bot@kernel.org>
+Date: Mon, 23 Jun 2025 22:10:11 +0000
+To: Andrew Morton <akpm@linux-foundation.org>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>, linux-mm@kvack.org, mm-commits@vger.kernel.org, linux-kernel@vger.kernel.org
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
 
-The introduction of a padding field in the gpib_board_info_ioctl is
-showing up as initialized data on the stack frame being copyied back
-to userspace in function board_info_ioctl. The simplest fix is to
-initialize the entire struct to zero to ensure all unassigned padding
-fields are zero'd before being copied back to userspace.
+The pull request you sent on Sun, 22 Jun 2025 18:55:10 -0700:
 
-Fixes: b8394732ff0c ("staging: gpib: Add bit and byte padding to ioctl structs")
-Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
----
- drivers/staging/gpib/common/gpib_os.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+> git://git.kernel.org/pub/scm/linux/kernel/git/akpm/mm tags/mm-hotfixes-stable-2025-06-22-18-52
 
-diff --git a/drivers/staging/gpib/common/gpib_os.c b/drivers/staging/gpib/common/gpib_os.c
-index a193d64db033..93ef5f6ce249 100644
---- a/drivers/staging/gpib/common/gpib_os.c
-+++ b/drivers/staging/gpib/common/gpib_os.c
-@@ -1774,7 +1774,7 @@ static int query_board_rsv_ioctl(struct gpib_board *board, unsigned long arg)
- 
- static int board_info_ioctl(const struct gpib_board *board, unsigned long arg)
- {
--	struct gpib_board_info_ioctl info;
-+	struct gpib_board_info_ioctl info = { };
- 	int retval;
- 
- 	info.pad = board->pad;
+has been merged into torvalds/linux.git:
+https://git.kernel.org/torvalds/c/c06944560a562828d507166b4f87c01c367cc9c1
+
+Thank you!
+
 -- 
-2.50.0
-
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/prtracker.html
 
