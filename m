@@ -1,149 +1,208 @@
-Return-Path: <linux-kernel+bounces-698153-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-698156-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 45F7CAE3DE4
-	for <lists+linux-kernel@lfdr.de>; Mon, 23 Jun 2025 13:27:59 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0B64DAE3DEB
+	for <lists+linux-kernel@lfdr.de>; Mon, 23 Jun 2025 13:29:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 70FBE160DEF
-	for <lists+linux-kernel@lfdr.de>; Mon, 23 Jun 2025 11:27:57 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2A7603A6DF4
+	for <lists+linux-kernel@lfdr.de>; Mon, 23 Jun 2025 11:29:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D7FD723F409;
-	Mon, 23 Jun 2025 11:27:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 028A424167F;
+	Mon, 23 Jun 2025 11:29:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=iki.fi header.i=@iki.fi header.b="hxrih/9e"
-Received: from lahtoruutu.iki.fi (lahtoruutu.iki.fi [185.185.170.37])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=soleen-com.20230601.gappssmtp.com header.i=@soleen-com.20230601.gappssmtp.com header.b="fwmfs+fX"
+Received: from mail-qt1-f182.google.com (mail-qt1-f182.google.com [209.85.160.182])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E3083221D9E;
-	Mon, 23 Jun 2025 11:27:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=185.185.170.37
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750678070; cv=pass; b=DatXYKJ57iNnfIS2PC/uhEaXZT3sVTrvaam0Mr12UrqIzJ5z+VI86nV294v7Nm8szU/17UBFZlJboey6WawO2YFo23UMOmScnduScgYrWexPkWD7Q2b7nBhaegnVD03xbnUDse9qZ9YtE9UPyDkh7Fc3BCl9kGsJ/WloHev4C84=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750678070; c=relaxed/simple;
-	bh=pfg5vRQioOluNyG1N0RB42NJFmxziBgtZYFyDan9tFg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=thJAdaClk6EkYR+ldW6WTB0ocMnSJXdnxE04fLGl0n3FaB7vKyj70H2/RpYARm6oZf8FZkwYO28JCTpPLgyGPvSG9iLsMMO8k0ld1j9x6s+22Apx8/F2ey1I1VuxH0Ph+C7fMENn+I50TtwtWThWmYr5pyrQJTON3yiP2oS/ZxQ=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iki.fi; spf=pass smtp.mailfrom=iki.fi; dkim=pass (2048-bit key) header.d=iki.fi header.i=@iki.fi header.b=hxrih/9e; arc=pass smtp.client-ip=185.185.170.37
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iki.fi
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=iki.fi
-Received: from hillosipuli.retiisi.eu (2a00-1190-d1dd-0-127c-61ff-fee2-b97e.v6.cust.suomicom.net [IPv6:2a00:1190:d1dd:0:127c:61ff:fee2:b97e])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: sailus)
-	by lahtoruutu.iki.fi (Postfix) with ESMTPSA id 4bQm5l6HSYz49Q09;
-	Mon, 23 Jun 2025 14:27:39 +0300 (EEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=iki.fi; s=lahtoruutu;
-	t=1750678060;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=h04LSD/eziTW/dAC0CP/1lAMle7TJGTrSi4OGVbgdos=;
-	b=hxrih/9eiXenztQTTOzjuOJ0l/fhfaKTrRcIfbgXD3rp3+kPQ51qbFJr6CIxf0ayLrw19D
-	ij3vPbT7cECG1Jn86RsOeCavtLhPTOchMKUnawsyeCCOoZLMQXdTtM2YwvUqsDNoPj9TdB
-	MFseM3IKNi3menWPWBo/Jfo2+16VSnV4/mAyahh70ghrP5ga2Bb34+b0JejplApAt5sDG6
-	qANe8XDF0fIzCfgaf6akeoLFb2wQECby9XC8wFt6IVQlY/xt/6Pr9iugusr1LJZ46QiWEm
-	zoTxL6VikE312s3U94ljSEzstjxsvxrc/dP/qp6ixQ8TCwA2Du1sji0ZBIHXZA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=iki.fi;
-	s=lahtoruutu; t=1750678060;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=h04LSD/eziTW/dAC0CP/1lAMle7TJGTrSi4OGVbgdos=;
-	b=DRhJCWm+QfhjW0IYAC98Gdxipi5rVuxUR5XNHL1YdC7LEbEV4xr/O5ZF+AEs79T3s+3z/u
-	TzceKpCqmoEVYxAMDQ+kzBheik2heWZhGdoo22XWhrgV+1NVf2dxyJnnu5G33pXJ+1Necq
-	GoJkAOT2oi0sVA7xIHkTwBinOD5MNDIgA7+LIqCyKmVprOa/2VoQiv7/M60WbCOk8dFHZS
-	f4l22EQEozEm69ysSxVOaqS4/vvUGt6rdgmJI5v4oRsTJ3axrMBRDI8+p2Zuzo78gONA71
-	9YAKVQXw3m87YueN1oIzRDzduvRsh/Oh4xoOFaNYMheyQICvlprg2Qnk9rnoUw==
-ARC-Authentication-Results: i=1;
-	ORIGINATING;
-	auth=pass smtp.auth=sailus smtp.mailfrom=sakari.ailus@iki.fi
-ARC-Seal: i=1; s=lahtoruutu; d=iki.fi; t=1750678060; a=rsa-sha256;
-	cv=none;
-	b=A3yJqlwMgxOjLhtfFwTuSjtn6284/LDm/FaCUa0ZN308DdOLJzZ5DPHojjyzzgzNmn5sdL
-	YLyWNDQP6+4uDZThuFayCEfbLem3gD+0dR4rOZ6xb2qpinP7RrjAvO+kK21hoK+YBIpbvl
-	PfQHooe8rNvMRj9BqTv1xXKFNMT+HgDqf2p8ZBIobf6DDDsfCGDeFKaUagb34MRofaXti2
-	g2k0iPswE9/pVEMx0ogqhppyUA59+elZ7Z1xFKI4ROZwPjabd5DcSaHDVZxHS469U8gTk0
-	YDpKTJoOGb4+W7p9LL9phTQya4RYZqGcmH1v7snvucDXoBfkxQsPRisyMEWafA==
-Received: from valkosipuli.retiisi.eu (valkosipuli.local [192.168.4.2])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (prime256v1) server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by hillosipuli.retiisi.eu (Postfix) with ESMTPS id 5C96A634C93;
-	Mon, 23 Jun 2025 14:27:39 +0300 (EEST)
-Date: Mon, 23 Jun 2025 11:27:39 +0000
-From: Sakari Ailus <sakari.ailus@iki.fi>
-To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Cc: Sakari Ailus <sakari.ailus@linux.intel.com>,
-	Hao Yao <hao.yao@intel.com>,
-	Pratap Nirujogi <pratap.nirujogi@amd.com>, mchehab@kernel.org,
-	hverkuil@xs4all.nl, bryan.odonoghue@linaro.org, krzk@kernel.org,
-	dave.stevenson@raspberrypi.com, hdegoede@redhat.com,
-	jai.luthra@ideasonboard.com, tomi.valkeinen@ideasonboard.com,
-	linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
-	benjamin.chan@amd.com, bin.du@amd.com, grosikop@amd.com,
-	king.li@amd.com, dantony@amd.com, vengutta@amd.com,
-	dongcheng.yan@intel.com, jason.z.chen@intel.com, jimmy.su@intel.com
-Subject: Re: [PATCH v3 RESEND] media: i2c: Add OV05C10 camera sensor driver
-Message-ID: <aFk6K4mYtq24MnNj@valkosipuli.retiisi.eu>
-References: <20250609194321.1611419-1-pratap.nirujogi@amd.com>
- <6a49eb11-d434-4315-8ee9-0f8aa7347de2@intel.com>
- <aEygCdk-zEqRwfoF@kekkonen.localdomain>
- <20250614225257.GO10542@pendragon.ideasonboard.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ABA6A17F7
+	for <linux-kernel@vger.kernel.org>; Mon, 23 Jun 2025 11:29:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.182
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1750678189; cv=none; b=Cm71QntvapFnbwnvOTZDY3GBjsh84ZqHu2NvFWrF/QGSjldIAb9MVHkAFtBcpm4DRY+y/Z40cP4deoFGs7ea48BbH9IITkM3ypILM+o54Vxl2ZadMlrdy+am0P+3OJKVk6Jd8WO7N9bwEzIbgVsLaF26kYAgIiWeoMvq8Hfil9E=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1750678189; c=relaxed/simple;
+	bh=EuF8lurL6p/iA8TKALhZ4lhyb4SopomSm3LRQYZ/X1c=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=eVXKMG1hGeeP3X1XunBeCDIBVYK6lsSdu4sY+kRXAJ0M8RNCWVB98IckULBRy1sLGxF9sd8OeuoJ+XDfBMxDhLK69zTFkF8hzYcejv5p6ePJtV68t173vr5GdwYL/+mebhYlpOGvMnXe4MGfWjyrCJBZy3+aHo8qWa4kUPL8P7Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=soleen.com; spf=pass smtp.mailfrom=soleen.com; dkim=pass (2048-bit key) header.d=soleen-com.20230601.gappssmtp.com header.i=@soleen-com.20230601.gappssmtp.com header.b=fwmfs+fX; arc=none smtp.client-ip=209.85.160.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=soleen.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=soleen.com
+Received: by mail-qt1-f182.google.com with SMTP id d75a77b69052e-4a58e0b26c4so74961491cf.3
+        for <linux-kernel@vger.kernel.org>; Mon, 23 Jun 2025 04:29:47 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=soleen-com.20230601.gappssmtp.com; s=20230601; t=1750678186; x=1751282986; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=CId97r6bxGhOkOsNTRpZGo7/FNNKpNsqY9QIA/bl+4Y=;
+        b=fwmfs+fXrDT5GeTfHuVXKHOlb7KfByS6ViIPpsw/93lUsjU3zRFO7hy7fNOCO6xT3L
+         U0kESQ2zpTSShEZTZslLLpKz3PL2NwVZ3kt8jRxaWbJHB9YIlNyp/D/ZCAB04vFp6f9s
+         tgG3c3GgkoJfCxeO/V93m8J2/PUWK3raCIWkt7BGiovvDQneGPE4BvSHT+ZZCD3Fibaf
+         mE3DgfNXk/pt/88r+RBjJ6oFiU1lna/UyXSKeWNhJCs2OGz1kUNTCQrx1sW0hfzN4JdU
+         G1uTsUtMQN30D9sUGfI5ynqLlMHKawWUJ70DBsUqL6bMlbM8ES0/6yoCfGUenJOsI3N8
+         VPpA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1750678186; x=1751282986;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=CId97r6bxGhOkOsNTRpZGo7/FNNKpNsqY9QIA/bl+4Y=;
+        b=NJYCjOFe3tsvP4q7OwUytixY/N5tGUWKL1BJlLMgZZkbtyaBysYJ3eHxNgkWpFlHYD
+         q+75cgsNpJ8kqK7IXfcUXxmZhjK4lVuiDRRyAICVm9mCrEuxwaaA+m7Xo0oblXHGRPxQ
+         fDZHa5DjH4AW45ziFSsHWwgFfxx1P+Nm4ortDpEmVPHNyNw+555Sq2zRWBV1uTTh3P/1
+         wcjSom41g4MtEkYuTukO98xSPVSON32sixAd83oGliD05s370LTK75Isj8V6HNSPOrGo
+         AGiFbOzfvdkv0csUId17yczObhiaB9hTYgoMdoPFCiimiR1ecRxShasAuwgbK9wBtcxt
+         E5Xg==
+X-Forwarded-Encrypted: i=1; AJvYcCW0OlGFysFFQAm03eKy/U14InjY4vcWjtWB9HAu56IjgqgA2zzo+v5BHfB3DYB58kH7Ms1a4mb10LOdJJ0=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwT+OWTung+HCd/kj6L9p8oc6js6HuyYKCP7P/Kpjas6mbt0V/6
+	0Zg2vBGD7Oa1TEHe6d4YUf7ahAI6ZocKm6U5gmQ0qCylTcQLpBU0ENz/dOzQuksx4mAH3kuQ5o6
+	NIINdWiIqzZcfl0zu4e1+ZM1RlRfqKEZOOjjv4pyVCw==
+X-Gm-Gg: ASbGncupekjrdSrsqK4uk/fo8UeYGMpN24RfkPE75zIZ0Meh9PH3vYlvB3ruYzmHYHK
+	6d1V3R9NyUNMVXTDo+vYCgaAW0Hyid1oVhhJE6c6wRkuUWsZ20kM57K65t4sRvYLNE7xjZ1hno3
+	TVd2WTZy12GShTq7SSicjHbAoGCLwQgJzif9qRD8ye
+X-Google-Smtp-Source: AGHT+IGPqAUH/RPykVSVaglFJdihJdozlPbvSoTGsXcR0nXvouD9V9X1wSLeh0iQLT+SzQ72tUMBq5c1jJy1W6hZsnA=
+X-Received: by 2002:ac8:7f92:0:b0:4a4:2c46:26a2 with SMTP id
+ d75a77b69052e-4a77a23acd8mr156063601cf.10.1750678186510; Mon, 23 Jun 2025
+ 04:29:46 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250614225257.GO10542@pendragon.ideasonboard.com>
+References: <mafs0sekfts2i.fsf@kernel.org> <CA+CK2bA7eAB4PvF0RXtt2DJ+FQ4DVV3x1OZrVo4q3EvgowhvJg@mail.gmail.com>
+ <mafs0sek3n0x8.fsf@kernel.org> <20250617152357.GB1376515@ziepe.ca>
+ <CA+CK2bAtO7BA5iptRfA_oa=5sUz_t-0F3Lu8oae1STnijXrPPQ@mail.gmail.com>
+ <mafs05xgtw5wn.fsf@kernel.org> <CA+CK2bDWAPSmTdnD7vw4G00nPsM8R_Zefs_G+9zvSqTJqPb9Lg@mail.gmail.com>
+ <aFLr7RDKraQk8Gvt@kernel.org> <CA+CK2bAnCRu+k=Q78eA4kcAebxA9NgOorhwRqu-WxC913YBsBw@mail.gmail.com>
+ <CA+CK2bB3P1vX658ErkP4_-L6WZSOCcenEwUdX1qS=poDjs=i+A@mail.gmail.com> <aFkDBNpzcCNdqjm8@kernel.org>
+In-Reply-To: <aFkDBNpzcCNdqjm8@kernel.org>
+From: Pasha Tatashin <pasha.tatashin@soleen.com>
+Date: Mon, 23 Jun 2025 07:29:09 -0400
+X-Gm-Features: AX0GCFsAwZj53l7luv9N2S4aDs-8Fu10IYCHZ0Vuqd0BsrZgbB9cxOtR2gLz2-Y
+Message-ID: <CA+CK2bCWqiQ1375oCZ9DCkjAHccWfhYxx4zHHBkY4tgh8G3arw@mail.gmail.com>
+Subject: Re: [RFC v2 05/16] luo: luo_core: integrate with KHO
+To: Mike Rapoport <rppt@kernel.org>
+Cc: Pratyush Yadav <pratyush@kernel.org>, Jason Gunthorpe <jgg@ziepe.ca>, jasonmiu@google.com, 
+	graf@amazon.com, changyuanl@google.com, dmatlack@google.com, 
+	rientjes@google.com, corbet@lwn.net, rdunlap@infradead.org, 
+	ilpo.jarvinen@linux.intel.com, kanie@linux.alibaba.com, ojeda@kernel.org, 
+	aliceryhl@google.com, masahiroy@kernel.org, akpm@linux-foundation.org, 
+	tj@kernel.org, yoann.congal@smile.fr, mmaurer@google.com, 
+	roman.gushchin@linux.dev, chenridong@huawei.com, axboe@kernel.dk, 
+	mark.rutland@arm.com, jannh@google.com, vincent.guittot@linaro.org, 
+	hannes@cmpxchg.org, dan.j.williams@intel.com, david@redhat.com, 
+	joel.granados@kernel.org, rostedt@goodmis.org, anna.schumaker@oracle.com, 
+	song@kernel.org, zhangguopeng@kylinos.cn, linux@weissschuh.net, 
+	linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org, linux-mm@kvack.org, 
+	gregkh@linuxfoundation.org, tglx@linutronix.de, mingo@redhat.com, 
+	bp@alien8.de, dave.hansen@linux.intel.com, x86@kernel.org, hpa@zytor.com, 
+	rafael@kernel.org, dakr@kernel.org, bartosz.golaszewski@linaro.org, 
+	cw00.choi@samsung.com, myungjoo.ham@samsung.com, yesanishhere@gmail.com, 
+	Jonathan.Cameron@huawei.com, quic_zijuhu@quicinc.com, 
+	aleksander.lobakin@intel.com, ira.weiny@intel.com, 
+	andriy.shevchenko@linux.intel.com, leon@kernel.org, lukas@wunner.de, 
+	bhelgaas@google.com, wagi@kernel.org, djeffery@redhat.com, 
+	stuart.w.hayes@gmail.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hi Laurent,
+On Mon, Jun 23, 2025 at 3:32=E2=80=AFAM Mike Rapoport <rppt@kernel.org> wro=
+te:
+>
+> On Wed, Jun 18, 2025 at 01:43:18PM -0400, Pasha Tatashin wrote:
+> > On Wed, Jun 18, 2025 at 1:00=E2=80=AFPM Pasha Tatashin
+> >
+> > So currently, KHO provides the following two types of  internal API:
+> >
+> > Preserve memory and metadata
+> > =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D
+> > kho_preserve_folio() / kho_preserve_phys()
+> > kho_unpreserve_folio() / kho_unpreserve_phys()
+> > kho_restore_folio()
+> >
+> > kho_add_subtree() kho_retrieve_subtree()
+> >
+> > State machine
+> > =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+> > register_kho_notifier() / unregister_kho_notifier()
+> >
+> > kho_finalize() / kho_abort()
+> >
+> > We should remove the "State machine", and only keep the "Preserve
+> > Memory" API functions. At the time these functions are called, KHO
+> > should do the magic of making sure that the memory gets preserved
+> > across the reboot.
+> >
+> > This way, reserve_mem_init() would call: kho_preserve_folio() and
+> > kho_add_subtree() during boot, and be done with it.
+>
+> I agree that there's no need in notifiers.
+>
+> I even have a half cooked patch for this on top of "kho: allow to drive k=
+ho
+> from within kernel"
+>
+> From 02716e4731480bde997a9c1676b7246aa8e358de Mon Sep 17 00:00:00 2001
+> From: "Mike Rapoport (Microsoft)" <rppt@kernel.org>
+> Date: Sun, 22 Jun 2025 14:37:17 +0300
+> Subject: [PATCH] kho: drop notifiers
+>
+> Signed-off-by: Mike Rapoport (Microsoft) <rppt@kernel.org>
+> ---
+>  include/linux/kexec_handover.h   |  27 +-------
+>  kernel/kexec_handover.c          | 114 ++++++++++++++-----------------
+>  kernel/kexec_handover_debug.c    |   3 +-
+>  kernel/kexec_handover_internal.h |   3 +-
+>  mm/memblock.c                    |  56 +++------------
+>  5 files changed, 65 insertions(+), 138 deletions(-)
+>
+> diff --git a/include/linux/kexec_handover.h b/include/linux/kexec_handove=
+r.h
+> index f98565def593..ac9cb6eae71f 100644
+> --- a/include/linux/kexec_handover.h
+> +++ b/include/linux/kexec_handover.h
+> @@ -10,14 +10,7 @@ struct kho_scratch {
+>         phys_addr_t size;
+>  };
+>
+> -/* KHO Notifier index */
+> -enum kho_event {
+> -       KEXEC_KHO_FINALIZE =3D 0,
+> -       KEXEC_KHO_ABORT =3D 1,
+> -};
+> -
+>  struct folio;
+> -struct notifier_block;
+>
+>  #define DECLARE_KHOSER_PTR(name, type) \
+>         union {                        \
+> @@ -36,20 +29,15 @@ struct notifier_block;
+>                 (typeof((s).ptr))((s).phys ? phys_to_virt((s).phys) : NUL=
+L); \
+>         })
+>
+> -struct kho_serialization;
+> -
+>  #ifdef CONFIG_KEXEC_HANDOVER
+>  bool kho_is_enabled(void);
+>
+>  int kho_preserve_folio(struct folio *folio);
+>  int kho_preserve_phys(phys_addr_t phys, size_t size);
+>  struct folio *kho_restore_folio(phys_addr_t phys);
+> -int kho_add_subtree(struct kho_serialization *ser, const char *name, voi=
+d *fdt);
+> +int kho_add_subtree(const char *name, void *fdt);
 
-On Sun, Jun 15, 2025 at 01:52:57AM +0300, Laurent Pinchart wrote:
-> > > > +#define OV05C10_REF_CLK			(24 * HZ_PER_MHZ)
-> > > 
-> > > Seems your module use 24 MHz clock input. The Dell's modules always use
-> > > 19.2MHz, which means your the PLL settings will not work on Dell's.
-> > 
-> > This is ok as further work. Please send a patch. :-)
-> 
-> The patch should calculate PLL configuration dynamically, perhaps using
-> the ccs-pll calculator if applicable.
+For completeness, we also need `void kho_remove_substree(const char
+*name);`, currently, all trees are removed during kho_abort(). Let's
+rebase and include this patch on top of the next version of LUO, that
+we are exchanging off list, and send it together later this week.
 
-As much as I do like your suggestion, I don't think it's really feasible to
-often do this for Omnivision sensors (most others largely do just work
-without much hassle wrt. PLL, as long as a PLL calculator exists). This
-sensor's PLL tree is different from CCS and badly documented, as expected.
-
-> > > Seems there are already several camera sensors using page-based registers.
-> > > Is it a good idea to add page support in CCI interface?
-> > 
-> > Sounds like a good idea as such but I'm not sure how common this really is,
-> > I think I've seen a few Omnivision sensors doing this. If implemented, I
-> > think it would be nice if the page could be encoded in the register address
-> > which V4L2 CCI would store and switch page if needed only. This would
-> > require serialising accesses, too. There's some room in CCI register raw
-> > value space so this could be done without even changing that, say, with
-> > 8-bit page and 8-bit register address.
-> 
-> Ack. I've worked on a driver for the AP1302 external ISP, which also
-> uses pages registers. The full address space spans 32 bits though, but
-> fortunately the driver doesn't need to access anything above 0x00ffffff.
-
-0xffffff? The current CCI register addresses are limited to 16 bits. To
-support that, we'd need to use u64 most likely. For 16-bit register
-addresses and 8-bit values which probably are the most common, that starts
-to appear a bit wasteful.
-
--- 
-Regards,
-
-Sakari Ailus
+Thanks,
+Pasha
 
