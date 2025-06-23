@@ -1,271 +1,250 @@
-Return-Path: <linux-kernel+bounces-698438-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-698527-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0A191AE42D5
-	for <lists+linux-kernel@lfdr.de>; Mon, 23 Jun 2025 15:26:03 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 15F6FAE4617
+	for <lists+linux-kernel@lfdr.de>; Mon, 23 Jun 2025 16:13:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3E8CA17C87F
-	for <lists+linux-kernel@lfdr.de>; Mon, 23 Jun 2025 13:21:05 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5BA193BBAB0
+	for <lists+linux-kernel@lfdr.de>; Mon, 23 Jun 2025 14:05:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5B751253939;
-	Mon, 23 Jun 2025 13:19:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 67D9B70808;
+	Mon, 23 Jun 2025 14:05:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=NXP1.onmicrosoft.com header.i=@NXP1.onmicrosoft.com header.b="xm5kIM4F"
-Received: from OSPPR02CU001.outbound.protection.outlook.com (mail-norwayeastazon11013057.outbound.protection.outlook.com [40.107.159.57])
+	dkim=pass (2048-bit key) header.d=heusel.eu header.i=christian@heusel.eu header.b="KJH38pQM"
+Received: from mout.kundenserver.de (mout.kundenserver.de [212.227.17.10])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D59444C7F;
-	Mon, 23 Jun 2025 13:19:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.159.57
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750684787; cv=fail; b=WRSvfBP+IR8qGDJgwoN7GldYMkshl49DaNgdnedd4Kfs9iY8/4o1QdMdvHAkvso34Xbm/b1+9KyA6GOe9JlXzYng/goUJI10f0Rtt5zU41om3ZrL+B7zVI1XRdUcopUXoNJH5yix8Xt15FWZEYO0iwh4rjP/vc0+jYKlzpoKOgo=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750684787; c=relaxed/simple;
-	bh=e3kd5E+aNoODx3tZdul4FgXbQhTAa6rckTtn8A2sRDY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=eOuGa1tGKtzWn7TAq95xuK1w4PV1hn75Ryx387venpL43gmdgwB1XR2Ujg8fPITiMLeyL1rxMi2XKhOnCD+jiYRZ6rG0cgqWTSJZLtxKvoe30MYcoLtjhGz9vq4esUcWRUmgPR/d8QRoLRyUbCX5Qebs7TDMojrUU//mcmmjxXI=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=oss.nxp.com; spf=pass smtp.mailfrom=oss.nxp.com; dkim=pass (2048-bit key) header.d=NXP1.onmicrosoft.com header.i=@NXP1.onmicrosoft.com header.b=xm5kIM4F; arc=fail smtp.client-ip=40.107.159.57
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=oss.nxp.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.nxp.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=jxSMnVsbcwvM10U5VCgYxG5iDyBrUZ0d6u0BZFkgcJHy7tCE8jAxhxCbSTyRCtYAIYq03ZjVG0eCCLikOH70T3y7ohhwj/X9gjARoJeBD9PzfA4BcRtps8aiDIt7KLVlaMWTwwOapqSzDOrMX5edfXLN6E6Y0DWm6gaDNt50FxsNyOCOjVG8+VWGZkvyrlAPjRd1Q/01Zia7dFIt5xacNypZ5Lh3gm5GcK+SQpEulbbWXtuoK08lCtptYtLVV38MiO8NFwBjGMS4V7wtgI873ZeMQvbfbrk7it/mFxLGwDdO1jZSiia2VsOHGT+eX1DWSoXoPX5AgPT6QSs+hCt/eg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=2N3idTaNphnMlaxEjIl5CKoEY74MHWRk9Spj5X7S/PE=;
- b=sB0le/EmjaeonoX3yG9qLEMqPsyUR9LPYc0Q7M4sLykml8FUDQ3I5CytP4I7SzUxsW77wfJkPvx2Zv1zmEhpLp6RCnoF2nmKIW8Whctm5C9CZkaR0vC/2bPdzywfAW5R84GjBPaXyTHapJpRuhjwywo3lYc7Eplu88+eOu4+3rPxCn43ZCwDpPQxueTJG/YY4I62vQan8WBNqOLPQ3uh+wXEwDzkpYrNPLxyW4M/0eNJndF+oq5MFwWqSqtULN1EJ/gUfkcHB0C6blkNB5sFmfSg6KQ7Jyf01snjn+Byt9aZkHhNNaF3lhKTQjckBTiWj0fvtI+Cd6RNQq8l1/Yibg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=oss.nxp.com; dmarc=pass action=none header.from=oss.nxp.com;
- dkim=pass header.d=oss.nxp.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=NXP1.onmicrosoft.com;
- s=selector1-NXP1-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=2N3idTaNphnMlaxEjIl5CKoEY74MHWRk9Spj5X7S/PE=;
- b=xm5kIM4FjHcob5bUgaHcbPlA3KiOLcmit4MquNpF+p1VcdQ7VB3oQpz1EcjVgupoSyAV3L7zG3rIf/WYU8JLtFe5mKKnly46sJubtaXCO93Bt//T7yQucNjMAMRREv0RevF5Ao4jA9rR51i/M6PPDHO8XUI0Fj1I8uZiYtv0nR8ZxQpad/9ava292USWcp55tq8fGVuGmHi6Ju6d64uauvVb+UaDwvNfFa3kkYO4Ba4qKvgo8d9f1Fg9Bs/H733jsqxC6ii2IQeqHZODEcQhShimmFhL6mupWA5I1czhmF6pDs492jYGp1kq1eq1LSRr9LtXJ6v6cOiXHMymXw39+w==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=oss.nxp.com;
-Received: from PAXPR04MB8459.eurprd04.prod.outlook.com (2603:10a6:102:1da::15)
- by AM8PR04MB7955.eurprd04.prod.outlook.com (2603:10a6:20b:249::10) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8857.28; Mon, 23 Jun
- 2025 13:19:39 +0000
-Received: from PAXPR04MB8459.eurprd04.prod.outlook.com
- ([fe80::165a:30a2:5835:9630]) by PAXPR04MB8459.eurprd04.prod.outlook.com
- ([fe80::165a:30a2:5835:9630%3]) with mapi id 15.20.8857.026; Mon, 23 Jun 2025
- 13:19:38 +0000
-Date: Mon, 23 Jun 2025 22:29:57 +0800
-From: Peng Fan <peng.fan@oss.nxp.com>
-To: Dhruva Gole <d-gole@ti.com>
-Cc: Sudeep Holla <sudeep.holla@arm.com>,
-	Cristian Marussi <cristian.marussi@arm.com>,
-	arm-scmi@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	Ranjani Vaidyanathan <ranjani.vaidyanathan@nxp.com>,
-	Chuck Cannon <chuck.cannon@nxp.com>, Peng Fan <peng.fan@nxp.com>
-Subject: Re: [PATCH 2/2] firmware: arm_scmi: power_control: Set
- SCMI_SYSPOWER_IDLE in pm resume
-Message-ID: <20250623142957.GA10415@nxa18884-linux>
-References: <20250620-scmi-pm-v1-0-c2f02cae5122@nxp.com>
- <20250620-scmi-pm-v1-2-c2f02cae5122@nxp.com>
- <20250623125750.kzwndmcf5yo3siao@lcpd911>
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250623125750.kzwndmcf5yo3siao@lcpd911>
-User-Agent: Mutt/1.10.1 (2018-07-13)
-X-ClientProxiedBy: SI1PR02CA0035.apcprd02.prod.outlook.com
- (2603:1096:4:1f6::8) To PAXPR04MB8459.eurprd04.prod.outlook.com
- (2603:10a6:102:1da::15)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D41F05FEE6;
+	Mon, 23 Jun 2025 14:05:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.17.10
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1750687546; cv=none; b=M3LHEH8S1avemdTTaCJf0XXOHEZ6XhVO1ie/5mKeH+t2Njog88LNfNX4YuEP2NBD/4z5XKW576L5j/zwTZT5N45Ow2UqPjvsByXGaVND07jnw5Ek4vQ+mNt5Ve79DI0GykorkAo3LYRX0dyiscI6xo2wvsgb/bCDWgQMDydTzmo=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1750687546; c=relaxed/simple;
+	bh=ospZQHAx1azzHgqpO0329Qy3iUeVF89ddO9PCGb2UkY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=kZGZC0lzGnESJ2vIQA2jc9/zWuNemopBYTsj7WiQW3Dl+RXhAr2UbbDhN6zTQtOcSKGLqd1CcA1LnFTpxSWwBTB8k8cSE+u6doqBPQafTbIHnEAsPR7zmW03Q/i/VmrssSoEqT9fmAnHHXYh6GQ7CAhkoo4PDsfiX6gutshHR0M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=heusel.eu; spf=pass smtp.mailfrom=heusel.eu; dkim=pass (2048-bit key) header.d=heusel.eu header.i=christian@heusel.eu header.b=KJH38pQM; arc=none smtp.client-ip=212.227.17.10
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=heusel.eu
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=heusel.eu
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=heusel.eu;
+	s=s1-ionos; t=1750687537; x=1751292337; i=christian@heusel.eu;
+	bh=5Onc4Y8lpnattujCyjGKi5wWqwWwEpnJ7+2O5Ajcx7A=;
+	h=X-UI-Sender-Class:Date:From:To:Cc:Subject:Message-ID:References:
+	 MIME-Version:Content-Type:In-Reply-To:cc:
+	 content-transfer-encoding:content-type:date:from:message-id:
+	 mime-version:reply-to:subject:to;
+	b=KJH38pQMZ93/RuQ1fKJUN4BtpisNjlsTcCWghNaotY3knfDCtqsPzZFy1MCGkKl5
+	 UVBMKnEKh6tSeFQxsiC4KhvQP3uD1D/Jp5Jc/ojEhkROkxwdzxt/eTJ19roEwY4dx
+	 RKm0/ZL1FfLnxHN8RZmhmtcq+slfIqBB7Ujtl8S38nibiIRQU+fh0hFlwiPVmrAh/
+	 TZY4nlCSOEAs2fSyT/E+Yykn7O7MRrBnVWJN4VHYUqqeneJLF8CfO6wrwWpvMJgF3
+	 iCQkkbKroV/fr6io2fwjtCLAep2mHniuxL0MUlNeGhwbc5XZrK9TVyUFB44hK9wYm
+	 790NDWsRVn1tMU14qA==
+X-UI-Sender-Class: 55c96926-9e95-11ee-ae09-1f7a4046a0f6
+Received: from localhost ([94.31.75.247]) by mrelayeu.kundenserver.de
+ (mreue109 [212.227.15.183]) with ESMTPSA (Nemesis) id
+ 1Mzhax-1ugfyg2FZh-010Vx6; Mon, 23 Jun 2025 15:50:47 +0200
+Date: Mon, 23 Jun 2025 15:50:45 +0200
+From: Christian Heusel <christian@heusel.eu>
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: stable@vger.kernel.org, patches@lists.linux.dev, 
+	linux-kernel@vger.kernel.org, torvalds@linux-foundation.org, akpm@linux-foundation.org, 
+	linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org, 
+	lkft-triage@lists.linaro.org, pavel@denx.de, jonathanh@nvidia.com, f.fainelli@gmail.com, 
+	sudipm.mukherjee@gmail.com, srw@sladewatkins.net, rwarsow@gmx.de, conor@kernel.org, 
+	hargar@microsoft.com, broonie@kernel.org
+Subject: Re: [PATCH 6.15 000/592] 6.15.4-rc1 review
+Message-ID: <a0ebb389-f088-417b-9fd4-ac8c100d206f@heusel.eu>
+References: <20250623130700.210182694@linuxfoundation.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-Exchange-MessageSentRepresentingType: 1
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: PAXPR04MB8459:EE_|AM8PR04MB7955:EE_
-X-MS-Office365-Filtering-Correlation-Id: e29ae0b2-c9df-4920-df8b-08ddb2589b11
-X-MS-Exchange-SharedMailbox-RoutingAgent-Processed: True
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|1800799024|376014|52116014|366016|38350700014;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?2KoN46U7bGZyYZ7aqJadNdwacGM6Qzdvsn4MTT7F3G49P1MLnveNm9Li/ZFm?=
- =?us-ascii?Q?/ID1f1gn4dUHvFbtUM4vehCkzDFaoLa80BINzlwfPbYwq3YTIRuNuSmMvaY2?=
- =?us-ascii?Q?E3pyFm8leXeMFbm7E0rbpPAxx7nZKMpfl+0NyqTWZKUJ2ttx8e63ERYTMkRo?=
- =?us-ascii?Q?SElE1DBqwjQY9YTeECMOoC7knyyF2KqO4O5Bf9ZuECUajN+mLoD8t1xa2hpN?=
- =?us-ascii?Q?xSXcjr+xSRgj4zh0mPS+uC3cCpR2SQbX/3PgpXui0QKwpz314GR60To8Ncl+?=
- =?us-ascii?Q?iV2P0H9wlPl4wnJf49ltgoUyCk5ljfjqAd9uSvtGCLCgCd84NPQ5xKUGFk+d?=
- =?us-ascii?Q?VcM0cnoPt0z1TjqcX4r3Cg6sypnVV70ASPGEmgAZgsX+w37KgjXd0vd7lvxJ?=
- =?us-ascii?Q?bxNxVOStVlTbgUUs6BlbXDB4e8G6ZJ/03yNv3Yfh4xRGiRYHEvwppfm/s6QT?=
- =?us-ascii?Q?vUe4fJdoaI4FnyB9Qi/nqB/15W+w7Ns5EF5ZlX0MsxYa8Ysc3tbimnE1gg4B?=
- =?us-ascii?Q?OBiMdmcHrtnt1MF8FY/wfcffajWpHYkUgx3C7aZrnFf5O64a9qqpUXdj2Czz?=
- =?us-ascii?Q?6P9+SvHNs2pzbXvX4Ft5lLZ8N3lZNJfKrRV7Uv1J2nP0yd5QBBYFzi/KAVvv?=
- =?us-ascii?Q?d4MkHI1O6aFEmJ1oJ4cS8AkANnAEUcAZ279JTvsF1AKcG7/MX3txlkBGYD1M?=
- =?us-ascii?Q?nHXNhpwmyrxakasLJJ85Kmu20yBOUcYRvKbyXaqu37QvK4iQ3jKZ3JT2CrDK?=
- =?us-ascii?Q?iw0AG325YppGwsxc6xB4SHHKkzO3SOdYk1mXr0O/ozQfOwxb4AEIzpWJXNU4?=
- =?us-ascii?Q?0xO9ouJ90GK6JGIoUnB9EKJx4gd0FCk+qvQoj9mwJO3n2K892vECvq4KGveS?=
- =?us-ascii?Q?yvpEPc9ch9ELMvaA3HUn5WwtZ5/srok+CmfXMQsPkljNhwZaKdkXfi47yXAu?=
- =?us-ascii?Q?FXEsY1svMojvqMRC+B4YRBPkhFbl4RnBHixTNaVtbF7WwfCsGuOTRWdy9ZcS?=
- =?us-ascii?Q?tqs/buWWV1/7QDDbk7ijAb9dTOTEv7pgrQjDUuc+jAfCAZhZ+dY7HdDijOCf?=
- =?us-ascii?Q?HTD6L2fOrlzkLo0PLlKwHOLQ01Gm48D7yXhSobwuBDobK6NvnfEY91ZWrOTV?=
- =?us-ascii?Q?ksbA+VTC/H0EEP39BKuIZ3A17bkXbtnti8yqDFT9t6TE0cXwVZPYmCZ0ttvf?=
- =?us-ascii?Q?i3romzTOtVkm8gWiVGZ6744e9v0r8MnD1rD8xqAWoPsGn0eTbL8C5px37dSg?=
- =?us-ascii?Q?AR83Jd2h6YV15HFV+vRAYPT8u/fIfviNR+9XdnmWgo2AJXGJXxM4Lt1M62AX?=
- =?us-ascii?Q?gpmNrr1saW+ld+6oN/hmYtmUw8RX95SgCWh+xvSt+78vc/gH+ETZoterwaPA?=
- =?us-ascii?Q?xa/+TfUZxeuEmGldhdPsTMNZw3yWddXZRV1cGH9zE3r0Niw+oUqi+jt7ZVXy?=
- =?us-ascii?Q?a1Dw9x+mAl8rkZu+Q1FR0yoBuEtBI8rQg/1ksRO6KwRT9MygldMEDQ=3D=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PAXPR04MB8459.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(376014)(52116014)(366016)(38350700014);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?0v/mRGv86Jfft8myPzW4cjUObj3uEr6EuGbNXeLMS92OR3hGRZ4bcdOn42uk?=
- =?us-ascii?Q?+gelPribg5NAfOLg2PDcAJ/imKb6JaAhoFbb/m6gChsNeFfW2hjADuJH1S4w?=
- =?us-ascii?Q?wSepScBOwZgoLbvzD0fntVznP828FOlKA9ND+TdFhKo61O+KLBBYluwc7OEj?=
- =?us-ascii?Q?/M9EGDf+iwZyu8BMU7R3YianLYPCKYZl6avkl523XSspXj83rXv70o1ycHw3?=
- =?us-ascii?Q?3khzT8+Jl+vz48C9tphCFwk7UqFtTS8qhtW+r+Qgwtupx6kHHIxZia7JjwNM?=
- =?us-ascii?Q?yWvX/EOV3AXM2KNoEOT4fEkGKiaBao00Vf0dIQpsZx1GfiQbOeHtAo82kyWf?=
- =?us-ascii?Q?ud3UAnB69SPGVnayc6NKwByd8YjheiPV+FbuTnhhtbZXLcqBRxHNY86KfYq3?=
- =?us-ascii?Q?vqITyhkczl08wGelqTkMlJeQJPq/Oz/wzVZzVc2HehipQK7x2xzpG1c18haB?=
- =?us-ascii?Q?elqi72TRbZpH6zQgpoS9yDRQav8A1Ta7oX9et/BRrqEiz2X3soVU0b6MbBXy?=
- =?us-ascii?Q?y1hGDxSo9/FDJx+ufvA5ypvl3OSVYFp3knghh1FuDWl0c28wujpldPLc7Z7y?=
- =?us-ascii?Q?KeR25G2T1cEwRmBtwuBQnnOmt0i01owMCeL1VMoXacv1GotHEh111mHVleSi?=
- =?us-ascii?Q?FToV5P/RmFEznD/z1A6plY3wwfTD9DyIRegkNzpVtmC8cwAdfCRrUiR6muq6?=
- =?us-ascii?Q?XEGEoaMgYsDvQ3dXRpI/19V/CqNfwYER+1+b158PwxRVsMTz0xE2iYuSkdI0?=
- =?us-ascii?Q?JFG65Ij0AYIAFL0/i9MC+oQMwYEdlaRXL5EgsyIbidMqSEGpu4+sdv0pufHb?=
- =?us-ascii?Q?tPwCD5+tw02lCozIYEwHGDBa/AcxwcHnoijOzVSKA7Gx/lywEbAyXWB577fz?=
- =?us-ascii?Q?ZjoKM2Gd9NZSmR8zFqntugllfuMuueC00kc8IqJaBvDn8aPB4/aCSqSfhR0J?=
- =?us-ascii?Q?04/bckueXf/YxY2EuPSANcyvgmBgotUKbXIe/FU7JN31f+mtb6GRoxDJOL1t?=
- =?us-ascii?Q?LtILpPU39Lr6MLc6NJRsEPC6JMtPke/KNHhaVHqR8xJbr/NQWVRmixkQkxG2?=
- =?us-ascii?Q?e1rt3fLDZdROycZ4k43ogV+cBNVIwRixahH8AE0CRJW8Ct6ptX+TQ523Inq5?=
- =?us-ascii?Q?wQwVA20LwUJ3Jn8Sx5gqoQKWGPWPvmQCRDElSEdvEAGQz5RlDGYIHEMS6AQe?=
- =?us-ascii?Q?iHqagKk+s77TRf+6U7BLAYHuGJJg/WxSQPtj6uFn8FR21VSLVmYA8GR+nrQd?=
- =?us-ascii?Q?VTpn+v5POXaEGjEQxKIZ6BmNc1yGk2w+cAj7LFql26I3HhoAdfEuvYsdB2rE?=
- =?us-ascii?Q?DZHUY6Is+sz5UXIlu32p3nRmh5BgTvB5OqyYfLH57KOYGkabE1TU02RBmGiW?=
- =?us-ascii?Q?2XbwCQnfBHaJ5X7V/rihlVdABUWxPxGMeneo7dfgEvRQwe42Vq/wovmS/GCc?=
- =?us-ascii?Q?lhGeexNCnuqtsC/RRaJfjX10RqGJ0nr+tHRtG16Asq7ALzHUOOBJDRauYqwB?=
- =?us-ascii?Q?6j5EhbDSTxr3TLbF6Sc40F0daGMlCWVqU579emAzJ0ioo3H43bnBektPtYD2?=
- =?us-ascii?Q?xooDJl9LHQwdxhJgo8VMXvTKwfTMCKOW9VF+NMhL?=
-X-OriginatorOrg: oss.nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: e29ae0b2-c9df-4920-df8b-08ddb2589b11
-X-MS-Exchange-CrossTenant-AuthSource: PAXPR04MB8459.eurprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 23 Jun 2025 13:19:38.7739
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: QXXrA9P6bKI1rOfidpgY4Ga0mkKeWFgnccCyOzuRdl/n6ZjG81WD6Q+v+bZ7Fzz+PWF+fOhocJn+UTpbWaze5w==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM8PR04MB7955
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="bzrlzjrxqd77i3z3"
+Content-Disposition: inline
+In-Reply-To: <20250623130700.210182694@linuxfoundation.org>
+X-Provags-ID: V03:K1:xQORCzsKcY/1G5rTjYyoobOjvK/C4mp5jHpyY05xgU6Q1cU5+rf
+ SdLTMzVMQbqPNHLQSd9PILqzuj1kIEd4kkBfMjYulFb4t0V2tG2jF/0sWWUTqI38ygcKg5t
+ /y4es4dWDGbMZHAEuHjwxJG0te6c91gdeLK2A4K8WATYD2BKmMDe8YPeRSeRJ1DaMmzgZIT
+ lMxq2jG81BTI5GYFyzE2g==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:AJeAl+Q5zUE=;Q/QspzaRZZY1dQGQ5kwICTS3l7L
+ cGRv+pjsh3/3lbDJsqqHQWoJEQ8DM+JR7t4VUkyV3rBKfWR+9j3x/ZHkIFHwAEqTlVAGayGNU
+ cfuUFSnCmDS6TjzYZ967+FCqL/XxQlgCrtWrojD8z/kqaEuMS641cc3bu2FbsfsKpnpMVbTK0
+ eTtIwp0mGyNKbdUiDnXHmQjMISdvPxkUQhaIIq/Gk7L6tXSCMNDclwRULfe+LqiWzgyctqzJD
+ B482PS/pN7D3u6LHzv3K6ecr1kaXh0V7/R0tvUqY4FvPpfHpIGVUf+VasdRiX2zol7cR54VH4
+ rQC0Wa03ouwhh1c4AMaI9Gl651G4VeYW4T5cAK8NXEI4OKQO1Ib8sVBBUELoPsyEzAfGjUvsy
+ 6xsbHP/idDUMZiu2/zsjlaHQxYc96krb55jPnuTadW8kns4wqPyTc0cpyHF0aR/4e0heMe7MV
+ YaQLALcZbag8X554sY7cIUpWHxdwZnypU/fVTT9DgcLvFD/i5QxaiEIym2gRMjq24V+z5GXVB
+ +n77tt7ykN1GjOvZ6hovuHJXBSoUaWmO8aqSrlyLF6ynzrGNP7CGbTEIbGtC50pQDnPfxE2Om
+ M1XO4sxEGlrH8j+dyf/2SIdgS9/vSNiBuWq/gmiCrHatMjW3LurnrTvHUEgGKQg4mX0wd+LSP
+ yHs5aojXiQjc4HyHvy3iKJJYX8MJBRy++uHH2xWAE4BHKoegGizrJSVo17h2zd4ia3IzKc/50
+ p5zKX4NU9MQ7+VyLRH8pEHy42BL+RsB4Iojz4CIswzjbbsuGo3NC5qTUwtpnMXkqKeaR6XPDx
+ rT0CBAAo/bu+oZbokkYfCrhuhQawuWSrOtRBK4OSVnwcR0nCBiRxklVhdv6oWe18b7rudCl42
+ D1QZ54N5wrj6AEXnaLEoYZQyoxB9vkVoSpXpF45JalZdjXDUi6AumOLHCYVif/J1bJy7ePcoQ
+ qsppv/e+6w6gKM8b/cueZf3wwpCvH8rkS8RXr6p8YDief/rSJAKwQWYJjROd0ZsI5hf6ahriN
+ 5UEXvpRRAf0snGsV7dnCTUEcl7IFYokeT8ZmJ3Y35edb6TJfqN4oemUA/6xW0GFxY1rEFSbOP
+ I+9YivKXGPUfN1sRkJ0LbUcgc9/QD4MifsAsfHUk+pyq33gITf3JuId6TfExjqqrTc7qO0oG0
+ xP38FMVRkd8WcEANGrOr7FObjzRkiLwNGuUBYv1Z2NV8KIDEVh6YWjc/AV3LAsFkaCTDRCd7x
+ H+ec+c+XfpWc2Sg8V1zXz2d+no5Ypj3YIdmdbvSWiaKFXCD8DyY/CguBzLp7ZPzvyDVAQfVPw
+ rf+i6WwURNiIkU3LiMGgZxsbMD+QELGk/6ZofU6LNUyJZVQXyOLWKjbF4Z/o/MnWF78VRu27l
+ OR6gj0wGmmRHOQQe+hfaJoK7LE0DekGHbdyuNgN2CPvWzVmfxQ4AczEEwRUKkigeAlOxfTlrS
+ OGCWkbQ==
 
-On Mon, Jun 23, 2025 at 06:27:50PM +0530, Dhruva Gole wrote:
->On Jun 20, 2025 at 11:37:14 +0800, Peng Fan (OSS) wrote:
->> From: Peng Fan <peng.fan@nxp.com>
->> 
->> When two consecutive suspend message send to the Linux agent, Linux will
->> suspend and wake up. The exepcted behaviour should be suspend, wake up
->
->I am first trying to gather more context of the issue at hand here,
->Why and who is sending 2 consecutive suspend messages to Linux?
 
-Currently in my test, it is SCMI platform send two suspend messages.
-But in real cases, other high priviledge agents could send suspend messages
-to linux agent.
+--bzrlzjrxqd77i3z3
+Content-Type: text/plain; protected-headers=v1; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+Subject: Re: [PATCH 6.15 000/592] 6.15.4-rc1 review
+MIME-Version: 1.0
 
-One agent may wrongly send two suspend messages by user or the agent is hacked.
+On 25/06/23 02:59PM, Greg Kroah-Hartman wrote:
+> This is the start of the stable review cycle for the 6.15.4 release.
+> There are 592 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
+>=20
+> Responses should be made by Wed, 25 Jun 2025 13:05:55 +0000.
+> Anything received after that time might be too late.
+>=20
+> The whole patch series can be found in one patch at:
+> 	https://www.kernel.org/pub/linux/kernel/v6.x/stable-review/patch-6.15.4-=
+rc1.gz
+> or in the git tree and branch at:
+> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git=
+ linux-6.15.y
+> and the diffstat can be found below.
+>=20
+> thanks,
+>=20
+> greg k-h
 
->
->Just quoting the cover letter:
->
->> When testing on i.MX95, two consecutive suspend message send to the Linux
->> agent, Linux will suspend(by the 1st suspend message) and wake up(by the
->> 2nd suspend message).
->> 
->> The ARM SCMI spec does not allow for filtering of which messages an agent
->> wants to get on the system power protocol. To i.MX95, as we use mailbox
->> to receive message, and the mailbox supports wake up, so linux will also
->> get a repeated suspend message. This will cause Linux to wake (and should
->> then go back into suspend).
->
->When you say mailbox supports wake up you mean the mailbox IP in your
->SoC actually gets some sort of wake interrupt that triggers a wakeup?
+Hey Greg,
 
-There is no dedicated wake interrupt  for mailbox.
+this stable release candidate does not build for me as-is on x86:
 
-The interrupt is the doorbell for processing notification, and this
-interrupt could also wakeup Linux.
+error[E0432]: unresolved import `crate::sync::Completion`
+  --> rust/kernel/devres.rs:16:22
+   |
+16 |     sync::{rcu, Arc, Completion},
+   |                      ^^^^^^^^^^ no `Completion` in `sync`
 
->Is this wakeup sent to the SM then to be processed further and trigger a
->linux wakeup?
+error[E0412]: cannot find type `Bound` in this scope
+   --> rust/kernel/devres.rs:226:49
+    |
+226 |     pub fn access<'a>(&'a self, dev: &'a Device<Bound>) -> Result<&'a=
+ T> {
+    |                                                 ^^^^^ not found in th=
+is scope
+    |
+help: consider importing this enum
+    |
+8   + use core::range::Bound;
+    |
 
-No. As above, the mailbox received a doorbell notification interrupt.
+error[E0107]: struct takes 0 generic arguments but 1 generic argument was s=
+upplied
+   --> rust/kernel/devres.rs:226:42
+    |
+226 |     pub fn access<'a>(&'a self, dev: &'a Device<Bound>) -> Result<&'a=
+ T> {
+    |                                          ^^^^^^------- help: remove t=
+he unnecessary generics
+    |                                          |
+    |                                          expected 0 generic arguments
+    |
+note: struct defined here, with 0 generic parameters
+   --> rust/kernel/device.rs:45:12
+    |
+45  | pub struct Device(Opaque<bindings::device>);
+    |            ^^^^^^
 
->
-><or> the mailbox directly wakes up linux, ie. triggers a resume flow but
->then you are saying it was an unintentional wakeup so you want to
->suspend linux again?
+error[E0600]: cannot apply unary operator `!` to type `()`
+   --> rust/kernel/devres.rs:172:12
+    |
+172 |         if !inner.data.revoke() {
+    |            ^^^^^^^^^^^^^^^^^^^^ cannot apply unary operator `!`
 
-Right.
+error[E0599]: no method named `access` found for struct `Revocable` in the =
+current scope
+   --> rust/kernel/devres.rs:234:33
+    |
+234 |         Ok(unsafe { self.0.data.access() })
+    |                                 ^^^^^^
+    |
+   ::: rust/kernel/revocable.rs:64:1
+    |
+64  | #[pin_data(PinnedDrop)]
+    | ----------------------- method `access` not found for this struct
+    |
+help: there is a method `try_access` with a similar name
+    |
+234 |         Ok(unsafe { self.0.data.try_access() })
+    |                                 ++++
 
-This just seems like the wakeup routing is
->incorrect and the system is going through a who resume and then suspend
->cycle without a good reason?
->
->Why and when in this flow is linux ending up with a duplicate suspend message is
->something I still don't follow.
+error[E0599]: no method named `try_access_with` found for struct `Revocable=
+` in the current scope
+   --> rust/kernel/devres.rs:244:21
+    |
+244 |         self.0.data.try_access_with(f)
+    |                     ^^^^^^^^^^^^^^^
+    |
+   ::: rust/kernel/revocable.rs:64:1
+    |
+64  | #[pin_data(PinnedDrop)]
+    | ----------------------- method `try_access_with` not found for this s=
+truct
+    |
+help: there is a method `try_access` with a similar name, but with differen=
+t arguments
+   --> rust/kernel/revocable.rs:97:5
+    |
+97  |     pub fn try_access(&self) -> Option<RevocableGuard<'_, T>> {
+    |     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Other agents could send duplicated suspend messages, right?
-We could not expect other agents always behave correctly.
+error[E0308]: mismatched types
+   --> rust/kernel/devres.rs:257:21
+    |
+257 |         if unsafe { self.0.data.revoke_nosync() } {
+    |                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^ expected `bool`, foun=
+d `()`
 
->
->Could you point us to any flow diagrams or software sequences that we
->could review?
+error: aborting due to 7 previous errors
 
-Not sure what kind diagram or sequences you wanna. It is just one agent
-wrongly send duplicate suspend message to Linux agent. And Linux agent
-should suspend again.
+Some errors have detailed explanations: E0107, E0308, E0412, E0432, E0599, =
+E0600.
+For more information about an error, try `rustc --explain E0107`.
+make[2]: *** [rust/Makefile:536: rust/kernel.o] Error 1
+make[1]: *** [/build/linux/src/linux-6.15.3/Makefile:1280: prepare] Error 2
+make: *** [Makefile:248: __sub-make] Error 2
 
-One more example is
-Linux suspended, other agent send reboot linux message, Linux should
-wakeup and reboot itself.
 
-Same to suspend
-Linux suspended, other agent send suspend Linux message, Linux wakeup
-and suspend again.
+--bzrlzjrxqd77i3z3
+Content-Type: application/pgp-signature; name="signature.asc"
 
-Regards,
-Peng
->
->> and suspend again.
->> 
->> The ARM SCMI spec does not allow for filtering of which messages an agent
->> wants to get on the system power protocol. To i.MX95, as we use mailbox
->> to receive message, and the mailbox supports wake up, so linux will also
->> get a repeated suspend message. This will cause Linux to wake (and should
->> then go back into suspend).
->> 
->> In current driver, the state is set back to SCMI_SYSPOWER_IDLE after
->> pm_suspend finish, however the workqueue could be scheduled after
->> thaw_kernel_threads. So the 2nd suspend will return early with
->> "Transition already in progress...ignore", and leave Linux in wakeup
->> state.
->> 
->> So set SCMI_SYSPOWER_IDLE in device resume phase before workqueue
->> is scheduled to make the 2nd suspend message could suspend Linux again.
->> 
->> Signed-off-by: Peng Fan <peng.fan@nxp.com>
->> ---
->>  drivers/firmware/arm_scmi/scmi_power_control.c | 24 +++++++++++++++++++-----
->>  1 file changed, 19 insertions(+), 5 deletions(-)
->> 
->[...]
->
->-- 
->Best regards,
->Dhruva Gole
->Texas Instruments Incorporated
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCgAdFiEEb3ea3iR6a4oPcswTwEfU8yi1JYUFAmhZW7UACgkQwEfU8yi1
+JYV7pBAAoLezFTzYpDLyAa2Xg8+9dwvSN121/S9xM+EPfrq72KeTvU+H0emNmKa+
++nr5DxoIlE5ywlPMu759wMoS0sv2vdCSO4Fo9u0RYLwY8igZO3F7gNCtzLTOl5w3
+m54Dg0zKeKt+YljwZbXOeFiBVW6SGCzBXfRIukYzZU8Lx+6iDfQgAYVuTuBpe8Dg
+RodEzxKyw4W83yxbU9X7h/uNWc3HNmHu+YtPsvEnBLMlIXQ8m/gUSB7nDmLRlLW3
+HoJxDx1122V3vcZKhiNJYVScKqXtYI3jAVuzsnq+5s/HF3IEBQPiVr/ouHO1Lpkx
+JaRt1xv/rpLSAO2M9Zbmhhz7QFj7sJ0WpcIVYnixJQxjSGAL/GQ4cVKGfDVIYPL2
+yQPmI1aVQ7d7pGS5RD64SXXtTrl2+7UAdbvDuFxjTlCeY6ZkGreGuGiy+L4eB9vc
+n9pvVjAJSC6FkE3ICvS3OFxIF2KrSsQS7d3kDQ5GFqoQfVsFJtb0DLsOkhylUitm
+wF3pP+42RKUSPcsEdYJe7PCTAeCAWQVcaBtnM2KjctQGkTW5QcfX0to55W1y9xiM
+upVPaxdCoSUOGlpSYQuapIe39B4VyQad9qN7OdYe/4iJWbbto8rg0IqOS9JYbdJf
+w1/Cv1HYzowFUdxT5TKlPLCPQNaLC9VYSleec/iOUC2ig0VN5MA=
+=Nnoh
+-----END PGP SIGNATURE-----
+
+--bzrlzjrxqd77i3z3--
 
