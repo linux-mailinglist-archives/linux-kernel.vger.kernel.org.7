@@ -1,156 +1,221 @@
-Return-Path: <linux-kernel+bounces-698736-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-698738-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id F1AA8AE48DC
-	for <lists+linux-kernel@lfdr.de>; Mon, 23 Jun 2025 17:38:36 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 33AD3AE4903
+	for <lists+linux-kernel@lfdr.de>; Mon, 23 Jun 2025 17:44:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 285FD445A3F
-	for <lists+linux-kernel@lfdr.de>; Mon, 23 Jun 2025 15:33:25 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id F31F21887362
+	for <lists+linux-kernel@lfdr.de>; Mon, 23 Jun 2025 15:35:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CEF002777E8;
-	Mon, 23 Jun 2025 15:33:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AF98D266EE7;
+	Mon, 23 Jun 2025 15:35:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="ZV3p5fy7"
-Received: from mail-pg1-f169.google.com (mail-pg1-f169.google.com [209.85.215.169])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="YCO4QwhV"
+Received: from mail-wr1-f51.google.com (mail-wr1-f51.google.com [209.85.221.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BD10826B747
-	for <linux-kernel@vger.kernel.org>; Mon, 23 Jun 2025 15:33:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4178835977
+	for <linux-kernel@vger.kernel.org>; Mon, 23 Jun 2025 15:35:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750692820; cv=none; b=NQyThg8o4tEkLd2xAsd9DmTYrQl5hd4aq20W0NFMvvUkpw7MM6kL/PFHTOCcBoYHbBH0EdC+2zjjklZxRuPvtt9A2OpHHmHqXd4NDqXpDuZQVwy2YfuKSjSAKdTnOXJgx/9t/qQlTCDNgQ9u9AYuYcNHMmCGMctFzNjqGN0XuqY=
+	t=1750692933; cv=none; b=pYi3gr0/rAj7sqIell3OdWh1kp5+pOYpyIrBLLLme4WrQ/JRvCDw5qcvJdwLlRHAofHCisOi1CuYizlI1bvhFvXGEsNUvWObQYYElvZl04OlXCJjhoB7Yg06TPm8aykWoPKsPX75SjVeZCJjCkGjcKBaYLiFD0OaVLTDjSYs86U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750692820; c=relaxed/simple;
-	bh=cgiHNz+KjIhdbW4tV9HGnqgWOZePX6Q9ItYQNVKO7/M=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=FGIlxR0O47SLzUPuj8Ri2ju6vOLr0ZlF+mUlDk5vz4NvfpjPhV5mx0sa7N5lCQGjSmJoGNcKuZSA0lj457r6Z4dY/Zmoz/awY2gmW9+KzxWHhixGEqslC/UcQlNOjEg161jOB6kaW+ZZfiXIoUXrnKGkTN/DV+/TzR1QebT1MUw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=ZV3p5fy7; arc=none smtp.client-ip=209.85.215.169
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-pg1-f169.google.com with SMTP id 41be03b00d2f7-b31e0ead80eso2978033a12.0
-        for <linux-kernel@vger.kernel.org>; Mon, 23 Jun 2025 08:33:38 -0700 (PDT)
+	s=arc-20240116; t=1750692933; c=relaxed/simple;
+	bh=EiHCWYnfA84Lwth0NtKhy0RZNL31ktggDzUPPkngdho=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=TrgKto4KJ85r8VghKCkD9Dc9jtlg5h6K99KcOAPc+g8Oxom6aTACZobniPAGYrYTFX9FqCRNyPoEck0C712cFokgF+qrePq9ygkk4by+Jn7TJ0y9giZrxTqtGvMD73ytmItaC4ie875cHcRn8oflqBMqytLHMV5rg4uWqMqOTMc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=YCO4QwhV; arc=none smtp.client-ip=209.85.221.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wr1-f51.google.com with SMTP id ffacd0b85a97d-3a54700a463so2394792f8f.1
+        for <linux-kernel@vger.kernel.org>; Mon, 23 Jun 2025 08:35:30 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1750692818; x=1751297618; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=6/MseeK5NnyJTv2/RCMZEdsiDxqp0eqeEdU8cSmGnt4=;
-        b=ZV3p5fy7RUf11DVPCF8rXoVJupAHktrBoMEXp2+7IMLS4unhU3MZK5clQ/3YfjnvkB
-         R2JcrPFAY4p1osv4I2FFlb9topy8EbhMhTx2/vVt65/yMUXkm4gpJugcbqP7/8KAHEtp
-         KSU0/p55ctyXASJCXl7tdgYJJKVm8p433byw4vNfzfFtYAYr+1rakvf7DZYaPUyvIRTm
-         sjIT38Z96C4biZ+4UFf3MOnX55C6nMLxxF5/0b5pa7lDZBk3CtM5P8HLQwJNV5DZHtxQ
-         T7CiXNsV2/H3hZC591pM7/lo/abfVArDVG2dQ5auzpLCKIyYVGM2tXhKxAzavmg5y9KZ
-         3cKw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1750692818; x=1751297618;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+        d=gmail.com; s=20230601; t=1750692929; x=1751297729; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=6/MseeK5NnyJTv2/RCMZEdsiDxqp0eqeEdU8cSmGnt4=;
-        b=lR/maYMzrZY+7u35BD1GNBpy7h0ASwN/sfAvUyz6MG4ZCs2Tmg769o3BKz4/vtxOHC
-         bZnH02lVXZ5Ml9Yt4Y/mW8oU6IefwowJTMd2/2p+yvnYqGMd+PXIOARBmRdzlQ307pfG
-         IG+sFKXc/d8ofxHZPUORBxOnMy3b/N3UsqZkr2Wfdm5MkgzOw3q+N88FZjoaUKLf8u4/
-         5Ee/GLTzuHjOMJR3I2YW0zxEQ3gafp02Ew1v5e4/0+sFMRdBcPnwd5f4t6D6XM/Wuzs8
-         o497eckv9iaAd1melxeolE/FQZGFqAjmf26cIm8Nqt9+xxnn31sg9KVOSzz7W6a51awI
-         h9tw==
-X-Forwarded-Encrypted: i=1; AJvYcCXGPGWndMWk3ck80i4vBFTPBSl1o94Y8O7RCcnqoAkQvCYFQd6tZpkcNQbsQo/GvaAqlDwySZbF9l1mb4A=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz7W+M8w7Zf2pcFD2s2Pcf60cDpTW/3N6HPNW5QXJKZScBqFGhN
-	vhTv3Xdn09HSmyixDB0HJWTVodMQ4Cr1EeTp1LNbv56VEgC2J9XgsQQ7iydIRwk+nViLmFqgu4x
-	9Ec9iaTQ=
-X-Gm-Gg: ASbGncsg33ytWwJ5tW/nwiVG9ecI3gbI8VTiEcbJf3NOzscszlbNCA28hH4UOWU/J4B
-	obaD/O0YD0IhV5QHBom9PpA7fPrOy0jMm6vK3vFL7Ryl0kWdAph0AhBc4jy1AGN36P2YC/cw4JD
-	wHcDj1NFf0AJv0UFIVYlk/jRsA0zEiP3r57gpWjEbEzKOvTQ4Rlh7wndLRBtouZKNeKLDz0Ersw
-	W6F12jjrExHIHNxoAnMqLPIT3AkOsiIDp2aTus9RoxV+EobUQwAeGy7zYuWlxjeIbldAj0oBRiy
-	XxiOJOeHjZxzYRxwQsdsc4yMIZimPntiyNbik+ar6sR98K6IEDEeJULwyqT0Z33wr5IoTHQEqPU
-	=
-X-Google-Smtp-Source: AGHT+IGlW6SZFB+CKVcOw4nVGRNYqt2n8jING6D9c1KvFeN0p4vGwymPPU85i6F1UgcMhHd0SQP01A==
-X-Received: by 2002:a05:6a20:748c:b0:218:5954:1293 with SMTP id adf61e73a8af0-22026de98cfmr23735448637.34.1750692816228;
-        Mon, 23 Jun 2025 08:33:36 -0700 (PDT)
-Received: from p14s ([2604:3d09:148c:c800:d145:b99:ea4b:a65f])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-b31f126a2aesm8159117a12.67.2025.06.23.08.33.35
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 23 Jun 2025 08:33:35 -0700 (PDT)
-Date: Mon, 23 Jun 2025 09:33:33 -0600
-From: Mathieu Poirier <mathieu.poirier@linaro.org>
-To: Tanmay Shah <tanmay.shah@amd.com>
-Cc: andersson@kernel.org, linux-remoteproc@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3] remoteproc: xlnx: allow single core use in split mode
-Message-ID: <aFlzzSvUsstEQsKP@p14s>
-References: <20250618181933.1253033-1-tanmay.shah@amd.com>
+        bh=huYAT/t42g1dmZnYVcoeWH1YVJvzhdKSFl3csVwzj80=;
+        b=YCO4QwhVDJA665Vzhl3ImTDRPx3DwAPMb7v5VgdmJ/2AJNPrHUKf8fHSvv5k4B6jx1
+         +6taT6m3soKGNTwt4nM999cJ15ZMZw+/nmGqj1EPkuzhbeP6KCndUOJz2NXswLmC42uO
+         8noYXaktdTJeWCRu9nLlYb6rAaiiwNeOHWhez4vKOg2Fa/Oeb/QOtyVt/2ftLRO9N3+D
+         C5CPlIhd6jpSActsyekWc7TOfQDkY7i4gtzhruOtX+GYI+qoOlBWLKytZFpJjx3ZAuUt
+         oLEm5oLoScA1O3jK/PKGh5xfZa0ZXRxc4t0mZAMo6xsmuoIGj8z4+np1VRc/8SpRB9n4
+         IR5w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1750692929; x=1751297729;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=huYAT/t42g1dmZnYVcoeWH1YVJvzhdKSFl3csVwzj80=;
+        b=GooV3eUDEWJtkChjd2eKbfsbfzjyOEYfXc4BWO+iFnFEZa/Gk/ks5LqNz9jppCKJlK
+         oh9eVr88F87GEAtRwJxjQkjX1irR0idt2bgd8zMyAhwwkZRFQPEpSIM7Dwe141ynKrtG
+         Fp1ebfUiphtMyrWE71bvdW0Bh2hKLLpSwoQ/Ldtqx1+AWz29Bro1NRpHm8ccz+FwMHSL
+         JZgNNqSLR2JiZ4hmJ0xNwupR0sveh5eE49gZf+IXyHJ6t8/xC4YIhlbY2QeGxZY3DQZe
+         bDUu4Du2vsQludpsoFIp8vJwGC6kDoMTrJmIJS6ia1vBY55Ugpr7J5/ITvkWjTbVohDO
+         g7lg==
+X-Gm-Message-State: AOJu0Yx6qMVYAVrhWWNlIJT29ttp8GWxlBmoDUbbROai9d1/tjcBp8WE
+	gERsxOOtLTValV9zAi0H3fqBQ7+eCi7U+kXvH6K1BlLblaA3oHrKJUQjiqAsWj7C0ShKaK2t7VW
+	kVhucn7Io8umGCzaV5Mf0IUnKCRErL3JJ0g==
+X-Gm-Gg: ASbGncu5GReGc0WKY2SKVt8rZF9QnKmtt/iU9qOS9ZDREr5gLEcQ83oHK2huJPo08N/
+	ktKKvnXZmJGfYtXrQFJEdQiLov8GBZ83qOTePv7KmryoUBIqjJjkrB48dQjA/MOPc9yLH08Q5rg
+	MhOlM9BUtOnIIKf1fHb67SfddpuYlwBzWHIi01VSxZiQ==
+X-Google-Smtp-Source: AGHT+IFnvY7JUfzEqgX6SMRWf5s6qit7gZXlsaTeTlGUWdJGFASdJH6pfWWpMC2Ui77oa2i2tmlUHC4sNiT2Iumv1Ls=
+X-Received: by 2002:a05:6000:2883:b0:3a6:d93e:526d with SMTP id
+ ffacd0b85a97d-3a6d93e54c8mr6283861f8f.10.1750692929258; Mon, 23 Jun 2025
+ 08:35:29 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250618181933.1253033-1-tanmay.shah@amd.com>
+References: <CAMb39_mAWfeuyDjHR4Ej9fH=PXdH0qUda50R=iqGKVzN1mcHPQ@mail.gmail.com>
+ <48ff3e59-db6f-4870-8f0b-3c49dd4d865e@kernel.org> <CAMb39_nRz-9NemdsASTG_34Lm_6a1uw4qLwkqBdn7FnMmN3O7w@mail.gmail.com>
+ <CAMb39_=0tUsn9u=KB72nT5MUhhdpujsOR1_+yhQTSXbijOM0MQ@mail.gmail.com>
+ <d20cbb64-1eef-4ce5-a2fa-fce9044a50bb@kernel.org> <CAMb39_nh5_DJpv0zEKauMRd1DpW8obpu228gpMVTaE7j3WPikA@mail.gmail.com>
+ <9c40cd6a-b34b-468b-b5c4-6a2cbb7dcdef@kernel.org>
+In-Reply-To: <9c40cd6a-b34b-468b-b5c4-6a2cbb7dcdef@kernel.org>
+From: Walt Holman <waltholman09@gmail.com>
+Date: Mon, 23 Jun 2025 10:35:17 -0500
+X-Gm-Features: Ac12FXxTsrtD-ZYmskmomh3F_QbWpvnVgiKxwvu2DpIjdWepKKapiMCmTDdnhGs
+Message-ID: <CAMb39_mpfdjxAH7jp0s7aedi_CsUOOVSR6x=8NG1ehRwWeQ30w@mail.gmail.com>
+Subject: Re: AMDGPU - Regression: Black screen due to commit 16dc8bc27c2aa3c93905d3e885e27f1e3535f09a
+To: Mario Limonciello <superm1@kernel.org>
+Cc: linux-kernel <linux-kernel@vger.kernel.org>, mario.limonciello@amd.com, 
+	alexander.deucher@amd.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Wed, Jun 18, 2025 at 11:19:33AM -0700, Tanmay Shah wrote:
-> When operating in split mode, it is a valid usecase to have
-> only one core enabled in the cluster. Remove exact core count
-> expecatation from the driver.
-> 
-> Signed-off-by: Tanmay Shah <tanmay.shah@amd.com>
-> ---
-> 
-> Changes in v3:
->   - Fix commit message
->   - Add details about split mode configuration in comment
-> 
-> Change in v2:
->   - limit core_count to max 2
-> 
->  drivers/remoteproc/xlnx_r5_remoteproc.c | 16 ++++++++++------
->  1 file changed, 10 insertions(+), 6 deletions(-)
+On Mon, Jun 23, 2025 at 9:51=E2=80=AFAM Mario Limonciello <superm1@kernel.o=
+rg> wrote:
+>
+> On 6/21/25 2:32 PM, Walt Holman wrote:
+> > On Sat, Jun 21, 2025 at 2:12=E2=80=AFPM Mario Limonciello <superm1@kern=
+el.org> wrote:
+> >>
+> >>
+> >>
+> >> On 6/21/25 11:07 AM, Walt Holman wrote:
+> >>> On Sat, Jun 21, 2025 at 11:03=E2=80=AFAM Walt Holman <waltholman09@gm=
+ail.com> wrote:
+> >>>>
+> >>>> On Sat, Jun 21, 2025 at 10:52=E2=80=AFAM Mario Limonciello <superm1@=
+kernel.org> wrote:
+> >>>>>
+> >>>>>
+> >>>>>
+> >>>>> On 6/21/25 10:18 AM, Walt Holman wrote:
+> >>>>>> Hello,
+> >>>>>>
+> >>>>>> With the latest drm fixes this week on 6.16-rc2, I am experiencing=
+ a
+> >>>>>> black screen instead of the sddm greeter and the GPU appears to be
+> >>>>>> locked up. I can ssh into the laptop and reboot it, but that's abo=
+ut
+> >>>>>> it. I have bisected the commit to commit id:
+> >>>>>> 16dc8bc27c2aa3c93905d3e885e27f1e3535f09a and upon reverting the
+> >>>>>> commit, the system works as normal. The hardware is an Asus Rog
+> >>>>>> Zephyrus G16 with AMD Ryzen AI 9 HX 370 w/ Radeon 890M video. I'm =
+able
+> >>>>>> to test patches etc.. if need be.
+> >>>>>
+> >>>>> Hi there,
+> >>>>>
+> >>>>> By chance do you have an OLED panel?  If so can you please try the =
+patch
+> >>>>> attached to this bug?
+> >>>>>
+> >>>>> https://gitlab.freedesktop.org/drm/amd/-/issues/4338
+> >>>>>
+> >>>>> Thanks,
+> >>>>>
+> >>>>>>
+> >>>>>> 16dc8bc27c2aa3c93905d3e885e27f1e3535f09a is the first bad commit
+> >>>>>> commit 16dc8bc27c2aa3c93905d3e885e27f1e3535f09a (HEAD)
+> >>>>>> Author: Mario Limonciello <mario.limonciello@amd.com>
+> >>>>>> Date:   Thu May 29 09:46:32 2025 -0500
+> >>>>>>
+> >>>>>>        drm/amd/display: Export full brightness range to userspace
+> >>>>>>
+> >>>>>>        [WHY]
+> >>>>>>        Userspace currently is offered a range from 0-0xFF but the =
+PWM is
+> >>>>>>        programmed from 0-0xFFFF.  This can be limiting to some sof=
+tware
+> >>>>>>        that wants to apply greater granularity.
+> >>>>>>
+> >>>>>>        [HOW]
+> >>>>>>        Convert internally to firmware values only when mapping cus=
+tom
+> >>>>>>        brightness curves because these are in 0-0xFF range. Advert=
+ise full
+> >>>>>>        PWM range to userspace.
+> >>>>>>
+> >>>>>>        Cc: Mario Limonciello <mario.limonciello@amd.com>
+> >>>>>>        Cc: Alex Deucher <alexander.deucher@amd.com>
+> >>>>>>        Reviewed-by: Roman Li <roman.li@amd.com>
+> >>>>>>        Signed-off-by: Mario Limonciello <mario.limonciello@amd.com=
+>
+> >>>>>>        Signed-off-by: Alex Hung <alex.hung@amd.com>
+> >>>>>>        Tested-by: Daniel Wheeler <daniel.wheeler@amd.com>
+> >>>>>>        Signed-off-by: Alex Deucher <alexander.deucher@amd.com>
+> >>>>>>        (cherry picked from commit 8dbd72cb790058ce52279af38a43c2b3=
+02fdd3e5)
+> >>>>>>        Cc: stable@vger.kernel.org
+> >>>>>>
+> >>>>>>     drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.c | 41
+> >>>>>> +++++++++++++++++++++++++++--------------
+> >>>>>>     1 file changed, 27 insertions(+), 14 deletions(-)
+> >>>>>>
+> >>>>>
+> >>>>
+> >>>> Yes, I do have an OLED panel and that patch does make it visible
+> >>>> again. It is still very dark, but visible.
+> >>>>
+> >>>> -Walt
+> >>>
+> >>> Upon rebooting again, the display was much brighter and is fine. Just
+> >>> the first boot after that was dark.
+> >>>
+> >>> -Walt
+> >>
+> >> Thanks, this makes sense.  I suspect that because 0 means "off" for yo=
+ur
+> >> panel that the patch you bisected to exposed running at 0 (or near
+> >> enough to 0) that it caused this behavior.
+> >>
+> >> That patch you tested will be upstreamed in a future promotion, and I
+> >> think we can take it in a -fixes PR later in the 6.16 fixes cycle.
+> >>
+> >> But there is one more thing I would like to confirm - on your system c=
+an
+> >> you run with drm.debug=3D0x106 on the kernel command line and share me=
+ the
+> >> output from this debug print?
+> >>
+> >> https://github.com/torvalds/linux/blob/v6.16-rc2/drivers/gpu/drm/amd/d=
+isplay/amdgpu_dm/amdgpu_dm.c#L4933
+> >>
+> >>
+> >>
+> > Hopefully, this is what you need. I grepped dmesg for drm and threw it
+> > into this file attached. Let me know if you need anything else.
+> >
+> > -Walt
+>
+> Thanks I see another problem.  Can you add this patch?
+>
+> https://lore.kernel.org/amd-gfx/20250623144821.745908-1-mario.limonciello=
+@amd.com/T/#u
+>
+> Thanks,
 
-Merged.
+Got it added. Can't say that I notice a big difference, however, the
+login screen may have been a tad brighter. But it's obviously more
+correct now. Thanks,
 
-Thanks,
-Mathieu
-
-> 
-> diff --git a/drivers/remoteproc/xlnx_r5_remoteproc.c b/drivers/remoteproc/xlnx_r5_remoteproc.c
-> index 1af89782e116..5aa3fd1b0530 100644
-> --- a/drivers/remoteproc/xlnx_r5_remoteproc.c
-> +++ b/drivers/remoteproc/xlnx_r5_remoteproc.c
-> @@ -1329,19 +1329,23 @@ static int zynqmp_r5_cluster_init(struct zynqmp_r5_cluster *cluster)
->  
->  	/*
->  	 * Number of cores is decided by number of child nodes of
-> -	 * r5f subsystem node in dts. If Split mode is used in dts
-> -	 * 2 child nodes are expected.
-> +	 * r5f subsystem node in dts.
-> +	 * In split mode maximum two child nodes are expected.
-> +	 * However, only single core can be enabled too.
-> +	 * Driver can handle following configuration in split mode:
-> +	 * 1) core0 enabled, core1 disabled
-> +	 * 2) core0 disabled, core1 enabled
-> +	 * 3) core0 and core1 both are enabled.
-> +	 * For now, no more than two cores are expected per cluster
-> +	 * in split mode.
->  	 * In lockstep mode if two child nodes are available,
->  	 * only use first child node and consider it as core0
->  	 * and ignore core1 dt node.
->  	 */
->  	core_count = of_get_available_child_count(dev_node);
-> -	if (core_count == 0) {
-> +	if (core_count == 0 || core_count > 2) {
->  		dev_err(dev, "Invalid number of r5 cores %d", core_count);
->  		return -EINVAL;
-> -	} else if (cluster_mode == SPLIT_MODE && core_count != 2) {
-> -		dev_err(dev, "Invalid number of r5 cores for split mode\n");
-> -		return -EINVAL;
->  	} else if (cluster_mode == LOCKSTEP_MODE && core_count == 2) {
->  		dev_warn(dev, "Only r5 core0 will be used\n");
->  		core_count = 1;
-> 
-> base-commit: d293da1e4dbebb40560e4c6a417b29ce3393659a
-> -- 
-> 2.34.1
-> 
+-Walt
 
