@@ -1,148 +1,124 @@
-Return-Path: <linux-kernel+bounces-697469-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-697466-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id B460CAE345B
-	for <lists+linux-kernel@lfdr.de>; Mon, 23 Jun 2025 06:48:10 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id E57FEAE3456
+	for <lists+linux-kernel@lfdr.de>; Mon, 23 Jun 2025 06:37:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5A0BB16BE9F
-	for <lists+linux-kernel@lfdr.de>; Mon, 23 Jun 2025 04:48:10 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 74EEB16BF77
+	for <lists+linux-kernel@lfdr.de>; Mon, 23 Jun 2025 04:37:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2BDFD19E7D0;
-	Mon, 23 Jun 2025 04:48:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D5AF81C3C08;
+	Mon, 23 Jun 2025 04:37:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=antgroup.com header.i=@antgroup.com header.b="OcsNdEvv"
-Received: from out0-213.mail.aliyun.com (out0-213.mail.aliyun.com [140.205.0.213])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="Sa27DMsR"
+Received: from mail-pg1-f171.google.com (mail-pg1-f171.google.com [209.85.215.171])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5CFC613C81B
-	for <linux-kernel@vger.kernel.org>; Mon, 23 Jun 2025 04:47:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=140.205.0.213
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D9761167DB7
+	for <linux-kernel@vger.kernel.org>; Mon, 23 Jun 2025 04:37:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750654084; cv=none; b=WXap60UoD55ypme4ikYqfBXM4YVcGSXl99TkQ91QQEjpjRGDJVFPlCstt08GnTtkULWyjZrbqGbsfGR6WcpNr/KQlIwl2U35MlS/uJRmY151C7GFKkWyhDUN/LTKf7KnoYXODyeYi41x0FH+EynzuMLMrM8C4lnF8ZeELtdtb3c=
+	t=1750653460; cv=none; b=ZB33DH0PQtb5Z+RiTpsE9EFaA8UvdsNQ26+gA8Tq/gvvP7aQ4vxqV6CPzTrH5Mwa6y54p0vLTnGSEeZOCEhtQu6jG00gSXHsx8vSK4+uUnatILRNvI7CU1NWEqrkYr/V05M5ErcB29HJVnS0RS0qdMuUnELFITnDlLXQ5SqE9gA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750654084; c=relaxed/simple;
-	bh=9cHvpM1axwIYhbnNRB+6jHu0vrYX5mFE06ZLLk1WCs0=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=nKiiXRWbwh7gH7W7aVZ+7c9mPRUC8YXtrtaV9eg1YBNMW1FmqoSeq6jdF1uJo6N55IRyzMBOQ2+J7c1f5nABT3RVH6ppOajgu9FFmPZdUvzpbVJt6zffTkHcQPLar4upvkhJRYcQw+FR1Ihbfjx66eootm9Z8sZ3Wnorh5GpnMU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=antgroup.com; spf=pass smtp.mailfrom=antgroup.com; dkim=pass (1024-bit key) header.d=antgroup.com header.i=@antgroup.com header.b=OcsNdEvv; arc=none smtp.client-ip=140.205.0.213
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=antgroup.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=antgroup.com
-DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
-	d=antgroup.com; s=default;
-	t=1750654078; h=From:To:Subject:Date:Message-ID:MIME-Version;
-	bh=PTzqJrjXHODj/Wjy6TXN88FHfaVngWzXDhz04YsGoV8=;
-	b=OcsNdEvv1+y88ELZ7P4h+9p6918Akpv9CfBEWEhSL9mYDTwfgRWUWGaYjfs21wiYTlN/XuIz5wNLEhP49hQaQNLRXx/RbiUoA9CvIJyktQSK32zhoN6BAL3nSKbndENmA7Z4OkKqMFvj1WWY6dpcdGQb3zUruEvev+Oz4YEBDtE=
-Received: from localhost(mailfrom:henry.hj@antgroup.com fp:SMTPD_---.dTqDjet_1750653145 cluster:ay29)
-          by smtp.aliyun-inc.com;
-          Mon, 23 Jun 2025 12:32:25 +0800
-From: "Henry Huang" <henry.hj@antgroup.com>
-To: changwoo@igalia.com,
-	arighi@nvidia.com,
-	tj@kernel.org,
-	void@manifault.com
-Cc: "=?UTF-8?B?6LCI6Ym06ZSL?=" <henry.tjf@antgroup.com>,
-  "=?UTF-8?B?WWFuIFlhbihjYWlsaW5nKQ==?=" <yanyan.yan@antgroup.com>,
-   <linux-kernel@vger.kernel.org>,
-   <sched-ext@lists.linux.dev>,
-  "Henry Huang" <henry.hj@antgroup.com>
-Subject: [PATCH v2] sched_ext: include SCX_OPS_TRACK_MIGRATION
-Date: Mon, 23 Jun 2025 12:32:20 +0800
-Message-ID: <20250623043220.63793-2-henry.hj@antgroup.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20250623043220.63793-1-henry.hj@antgroup.com>
-References: <20250623043220.63793-1-henry.hj@antgroup.com>
+	s=arc-20240116; t=1750653460; c=relaxed/simple;
+	bh=cOgznIXCgLqysLpet9MFHyoHFN7Avabq0Wy0lJFm8mA=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=CWiyYJWW8owdnIRNXAKKpp6rMP7CGBGuaYUDY6KWvnFrh3dz8YdcL+zMT6+MXPXwpP+f1RZYmgAW5H2Qkk4nMzVwJ0lWjaYgBq+eLNbU8y5BOaVv18oi21KOWYKSXH7wbas5usdzN4yqQvy+wcjVQg+YPj7PW6Iv4s7t7L0TweA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=Sa27DMsR; arc=none smtp.client-ip=209.85.215.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-pg1-f171.google.com with SMTP id 41be03b00d2f7-b31befde0a0so2257465a12.0
+        for <linux-kernel@vger.kernel.org>; Sun, 22 Jun 2025 21:37:38 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1750653458; x=1751258258; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=8KP8Igk+q7fY8VDRXUq4VehJo2gUDi58j+pU+41ri3k=;
+        b=Sa27DMsRPM+MEYt6f6XAGRf4jHJsa2u9ZSsXVswfw0P50mYDPXmvdQuRYX8ip73fLj
+         AbleuZhXTFBmYU4VajRU3viAw5uDoXqEcmoe1Fir3xjkALSWsCSI0S0ByDPxcE5MKrlN
+         M28sOY5aSPpNmgAQaE9dkjKuIJHFwwMdsF/uvHKW0fRmxOYPRJurPxMTWuWaASRmYMwl
+         I9EX6TyplcRETzopWM4RLwVNtFEvxTw4xTBdMoBC8vxA9ZpayBeAxmqy1TQM70MKfuZY
+         0HjPZeeMxMJjQHDrFY8ZfqXVj/NHxkuSzWRAKi9V0KLuOXvnEBdNxyOFb1QakDmcwT6g
+         ULqA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1750653458; x=1751258258;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=8KP8Igk+q7fY8VDRXUq4VehJo2gUDi58j+pU+41ri3k=;
+        b=NX8TaootdpUX4d6DJdtSNU3rNFbnAiXJQyZFmvCcV5ySCw2+YhCanF+eTzTuIz+UY5
+         42ve3Z1I1OyefqK84U9DZDrKBoSmsZPL2WG5e5w2M2oqQfHCIqYtnnE2nY0Cu4AK29Om
+         YN68tTaeAJWlR/cS9ne4c2eF5JQrg47FNZ5JWWvEI9glnVMq1Fp+FOvn7hkpwTSqSxfP
+         Zq3RczWGCkvXBoler+b21EEwwyX922tpWddlePaf8yR7vsknNxdTHltViSanW9ynjcoK
+         7ggJf7/7oDsrElGnBZDIU2RufkrPG070vidts4GgZcwwaDh2o86xjEHhSAQSN3GrmX0X
+         Q7IA==
+X-Forwarded-Encrypted: i=1; AJvYcCX8CbP7o0SfGBuEbN27i2VfO2VuXkMDgJl5se8xFIR9mTDGRVGUE8WGWwlkt29Nub7Hnl9OnlidWwVs87k=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz9vs8ll6v5Pg53REzEfdHdM4zYyLxJo6OahoPzIK88bgIERWCK
+	/jgp9uaiXRDJyIeT+Cm6cYEQGXLBPkECtK5iHMA05TKYdE6M5VOozoJ0/S/hoK8sjB9i9vi0mX1
+	w9COi18NxTrmYID5VKOki8Gd7TBBvkvmiFLU3oEZ3
+X-Gm-Gg: ASbGncv9XK/9NJjb7fqW0++7OjWmrsjMOvkyOT7t+kqk0ybgfa6nPd6z9PwHyElrov0
+	vPTJbmr1oHCwV6NFjL+vXM8GDkukXxZI6LmBvwcVWFLBB77sPh7Hl/Fy13hR6ivepdXaa6QnZgy
+	4QOXX4TFlTw2l+0iRyxFfwFHvluIFVLUzpx7XMD5i3B8ci9QVrludpWzxHZDh03VtwC0NJAHIPj
+	Q==
+X-Google-Smtp-Source: AGHT+IG7ZR4RTzfI4eW8Wk5suo+PlmHanj0uoAne2qj/e1iSLFamgW/9NahlQ2mX74j1k5jk+ZtdqMODh/hZ0db4g8M=
+X-Received: by 2002:a17:90b:278a:b0:311:e4ff:1810 with SMTP id
+ 98e67ed59e1d1-3159d6260b8mr17347635a91.3.1750653457880; Sun, 22 Jun 2025
+ 21:37:37 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20250620054757.1006729-1-naoyatezuka@chromium.org> <aFjD-D45LkBH_gnA@google.com>
+In-Reply-To: <aFjD-D45LkBH_gnA@google.com>
+From: Naoya Tezuka <naoyatezuka@google.com>
+Date: Mon, 23 Jun 2025 13:37:26 +0900
+X-Gm-Features: AX0GCFuUkLtpz_jSkZCwgozBAPpiL6gVnuxlDzYa0ZunBfSYveHWg_ajz6zzwro
+Message-ID: <CAHYWnBHLhOU+CJC9ViYCntSkercz4hHVnzaeEBeqchKLz7XFNA@mail.gmail.com>
+Subject: Re: [PATCH] pstore/ram: Validate ECC parameters against Reed-Solomon constraint
+To: Tzung-Bi Shih <tzungbi@kernel.org>
+Cc: Naoya Tezuka <naoyatezuka@chromium.org>, Kees Cook <kees@kernel.org>, 
+	Tony Luck <tony.luck@intel.com>, "Guilherme G . Piccoli" <gpiccoli@igalia.com>, 
+	linux-hardening@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-For some BPF-schedulers, they should do something when
-task is doing migration, such as updating per-cpu map.
-If SCX_OPS_TRACK_MIGRATION is set, runnable/quiescent
-would be called whether task is doing migration or not.
+Hi Tzung-Bi and others,
 
-Signed-off-by: Henry Huang <henry.hj@antgroup.com>
----
- kernel/sched/ext.c | 24 ++++++++++++++++++++++--
- 1 file changed, 22 insertions(+), 2 deletions(-)
+I truly appreciate your time and feedback on my patch.
 
-diff --git a/kernel/sched/ext.c b/kernel/sched/ext.c
-index b498d86..42c5251 100644
---- a/kernel/sched/ext.c
-+++ b/kernel/sched/ext.c
-@@ -161,6 +161,12 @@ enum scx_ops_flags {
- 	SCX_OPS_BUILTIN_IDLE_PER_NODE	= 1LLU << 6,
- 
- 	/*
-+	 * If set, runnable/quiescent ops would be called whether the task is
-+	 * doing migration or not.
-+	 */
-+	SCX_OPS_TRACK_MIGRATION		= 1LLU << 7,
-+
-+	/*
- 	 * CPU cgroup support flags
- 	 */
- 	SCX_OPS_HAS_CGROUP_WEIGHT	= 1LLU << 16,	/* DEPRECATED, will be removed on 6.18 */
-@@ -172,6 +178,7 @@ enum scx_ops_flags {
- 					  SCX_OPS_ALLOW_QUEUED_WAKEUP |
- 					  SCX_OPS_SWITCH_PARTIAL |
- 					  SCX_OPS_BUILTIN_IDLE_PER_NODE |
-+					  SCX_OPS_TRACK_MIGRATION |
- 					  SCX_OPS_HAS_CGROUP_WEIGHT,
- 
- 	/* high 8 bits are internal, don't include in SCX_OPS_ALL_FLAGS */
-@@ -2390,7 +2397,11 @@ static void enqueue_task_scx(struct rq *rq, struct task_struct *p, int enq_flags
- 	rq->scx.nr_running++;
- 	add_nr_running(rq, 1);
- 
--	if (SCX_HAS_OP(sch, runnable) && !task_on_rq_migrating(p))
-+	if (task_on_rq_migrating(p))
-+		enq_flags |= ENQUEUE_MIGRATING;
-+
-+	if (SCX_HAS_OP(sch, runnable) &&
-+	    ((sch->ops.flags & SCX_OPS_TRACK_MIGRATION) || !(enq_flags & ENQUEUE_MIGRATING)))
- 		SCX_CALL_OP_TASK(sch, SCX_KF_REST, runnable, rq, p, enq_flags);
- 
- 	if (enq_flags & SCX_ENQ_WAKEUP)
-@@ -2463,6 +2474,9 @@ static bool dequeue_task_scx(struct rq *rq, struct task_struct *p, int deq_flags
- 		return true;
- 	}
- 
-+	if (task_on_rq_migrating(p))
-+		deq_flags |= DEQUEUE_MIGRATING;
-+
- 	ops_dequeue(rq, p, deq_flags);
- 
- 	/*
-@@ -2482,7 +2496,8 @@ static bool dequeue_task_scx(struct rq *rq, struct task_struct *p, int deq_flags
- 		SCX_CALL_OP_TASK(sch, SCX_KF_REST, stopping, rq, p, false);
- 	}
- 
--	if (SCX_HAS_OP(sch, quiescent) && !task_on_rq_migrating(p))
-+	if (SCX_HAS_OP(sch, quiescent) &&
-+	    ((sch->ops.flags & SCX_OPS_TRACK_MIGRATION) || !(deq_flags & DEQUEUE_MIGRATING)))
- 		SCX_CALL_OP_TASK(sch, SCX_KF_REST, quiescent, rq, p, deq_flags);
- 
- 	if (deq_flags & SCX_DEQ_SLEEP)
-@@ -5495,6 +5510,11 @@ static int validate_ops(struct scx_sched *sch, const struct sched_ext_ops *ops)
- 		return -EINVAL;
- 	}
- 
-+	if ((ops->flags & SCX_OPS_TRACK_MIGRATION) && (!ops->runnable || !ops->quiescent)) {
-+		scx_error(sch, "SCX_OPS_TRACK_MIGRATION requires ops.runnable() and ops.quiescent() to be implemented");
-+		return -EINVAL;
-+	}
-+
- 	if (ops->flags & SCX_OPS_HAS_CGROUP_WEIGHT)
- 		pr_warn("SCX_OPS_HAS_CGROUP_WEIGHT is deprecated and a noop\n");
- 
--- 
-Henry
+On Mon, Jun 23, 2025 at 12:03=E2=80=AFPM Tzung-Bi Shih <tzungbi@kernel.org>=
+ wrote:
+>
+> On Fri, Jun 20, 2025 at 02:47:57PM +0900, Naoya Tezuka wrote:
+> > The Reed-Solomon library enforces the constraint `n <=3D 2^m - 1` via a
+> > BUG_ON(), where `n` is `block_size + ecc_size` and `m` is `symsize` for
+>   ^^^^^^^^
+> Better to provide a link, e.g. [1].
+>
+> [1]: https://elixir.bootlin.com/linux/v6.15/source/lib/reed_solomon/decod=
+e_rs.c#L43
 
+You're right, I'll add that link to this `BUG_ON()` in the v2 patch.
+
+>
+> > the pstore RAM backend. A driver providing invalid parameters can trigg=
+er
+> > this, leading to a kernel panic. For more details on the theory behind:
+> > https://www.cs.cmu.edu/~guyb/realworld/reedsolomon/reed_solomon_codes.h=
+tml
+> >
+> > This issue was discovered during develop chromeos_pstore driver:
+>
+> s/develop/developing/.
+
+Thank you for pointing this out. I'll fix the typo in the v2 patch.
+
+Best regards,
+Naoya Tezuka
 
