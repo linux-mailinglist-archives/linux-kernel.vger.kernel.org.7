@@ -1,269 +1,103 @@
-Return-Path: <linux-kernel+bounces-698645-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-698663-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5299DAE47C6
-	for <lists+linux-kernel@lfdr.de>; Mon, 23 Jun 2025 17:03:52 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4F6A5AE480C
+	for <lists+linux-kernel@lfdr.de>; Mon, 23 Jun 2025 17:12:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8B16816CAE2
-	for <lists+linux-kernel@lfdr.de>; Mon, 23 Jun 2025 15:00:16 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 949043A615A
+	for <lists+linux-kernel@lfdr.de>; Mon, 23 Jun 2025 15:09:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4338B25394B;
-	Mon, 23 Jun 2025 15:00:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6E4B027603B;
+	Mon, 23 Jun 2025 15:08:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="LsltKSh7";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="3QGGQPQY";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="LsltKSh7";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="3QGGQPQY"
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=xry111.site header.i=@xry111.site header.b="G7dTtAD4"
+Received: from xry111.site (xry111.site [89.208.246.23])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 96F0A26D4F9
-	for <linux-kernel@vger.kernel.org>; Mon, 23 Jun 2025 15:00:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 30BF725BEE2;
+	Mon, 23 Jun 2025 15:08:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=89.208.246.23
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750690811; cv=none; b=LrQ3N2xFI1QAcdAcB2hBrlhsMaNjSFtaEG5CiHzuDH2PyxObjlB8Cxd19DqY7dsZQTWWzlgZJtLfTFDbrvoQXT37ribC8QVQWBnQ1k23fe/WovBFbidfqtLj4/2bOt6njjPAqmwnD+7F+FZZ1Y15nM0hNuakBQPrX/EScs/6TJM=
+	t=1750691315; cv=none; b=QA0wAazh7PYLnB3s4HRMhcvrv1Te1m4WBFkI+fQ4K+x5kq13YLO6+2M1L0OgLBGd8qS96T2ebbQs1ume/lgD7SBGH1mmLWQWLm4v8ynQzzP5XXfs33zldE7g/aqxPDG1zfsL3oflUJ1Bn/4K43RGdia2ZGK1qWy8mScXgHtPahs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750690811; c=relaxed/simple;
-	bh=4WsgUXbLY0jc0mbRG783m2rvtMBeNkFlZ+M53fOqgQc=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=N/UlH/7QcKgNpTYGkPhaBJe5/3dGnqea121j4uj0gBHcaNYWsryE8ARKUuAuJdvuhEI2PFPFRuj9tAHt8BKHEWO8itkfnTT35/qr7gVMcVM6eLNwmBb8DrjBTN7sCnP6V/dSrxwFyPgzXctKzGDrwl1A3oLWogvgCoV6F748Duo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=LsltKSh7; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=3QGGQPQY; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=LsltKSh7; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=3QGGQPQY; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
+	s=arc-20240116; t=1750691315; c=relaxed/simple;
+	bh=a71/2Ue33rw39RNd+lnzupReDwpTHqZ0pqweFgks0U8=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=WNYKoJ7d+CeUYIibeFkoyzFbbnz9Uscb7Av/idozSQU/eeqDyzoffI8SD+/+/KJ8TKqgLY5CpuBUny0hIB7NfXHyU4g36RxTHP93vgTYEf8Zwz1ZwZ/Qs39Vr5/CTQW1LnDEbbaIU4T4BqBRg8nutGvgy0UUKuwPBvHRqGpoqhI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=xry111.site; spf=pass smtp.mailfrom=xry111.site; dkim=pass (1024-bit key) header.d=xry111.site header.i=@xry111.site header.b=G7dTtAD4; arc=none smtp.client-ip=89.208.246.23
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=xry111.site
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=xry111.site
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=xry111.site;
+	s=default; t=1750690805;
+	bh=jLvrxNOLfc3fbfwBKLMN+s9XeJSBspgyoztJCta+7KA=;
+	h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
+	b=G7dTtAD4paR3Aidw88ZgTEGiysPNxyQQXKctAEaPLfZxvlwHO7cGpnWKpdUBnWpAM
+	 6vzcFS99bQeYkfMVlW0g+8hNJ5v1ucv0o4Eh6B74fR+25YwgjNdBgmMEQbCu0Lbr98
+	 Glur/qvFbunCzQHlj4derg77OyhNbX1HLyIOm8rA=
+Received: from [IPv6:2409:8a4c:e21:5211::e90] (unknown [IPv6:2409:8a4c:e21:5211::e90])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id DE44B21171;
-	Mon, 23 Jun 2025 15:00:07 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1750690807; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=7/Jc4wLf1uWOsp0HxTYybBk/EP+fch0a8kNEf01YT1k=;
-	b=LsltKSh71DUd1V0Wu/8KDakVY1WVlIt5xD3Y97gJP+m4K+U20L3u1CAnSZZBn47m95IKfW
-	DEnz935sWGXUhUypl1o+8KpMKODz9kmk1R3XAKKumaUTLMp/t7P4yorE8/EZUOrWNZfaHF
-	0bmRU0cCsg9dVQvoz2c9V6GjQBI9hno=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1750690807;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=7/Jc4wLf1uWOsp0HxTYybBk/EP+fch0a8kNEf01YT1k=;
-	b=3QGGQPQYlA/R+gdMm5D1wKLHbSkMiEAxL3TKRSFmSaRooBk/hYdp38KCO+d6ot/ASHzlH+
-	C6CvsiMueITxR2Bg==
-Authentication-Results: smtp-out1.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1750690807; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=7/Jc4wLf1uWOsp0HxTYybBk/EP+fch0a8kNEf01YT1k=;
-	b=LsltKSh71DUd1V0Wu/8KDakVY1WVlIt5xD3Y97gJP+m4K+U20L3u1CAnSZZBn47m95IKfW
-	DEnz935sWGXUhUypl1o+8KpMKODz9kmk1R3XAKKumaUTLMp/t7P4yorE8/EZUOrWNZfaHF
-	0bmRU0cCsg9dVQvoz2c9V6GjQBI9hno=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1750690807;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=7/Jc4wLf1uWOsp0HxTYybBk/EP+fch0a8kNEf01YT1k=;
-	b=3QGGQPQYlA/R+gdMm5D1wKLHbSkMiEAxL3TKRSFmSaRooBk/hYdp38KCO+d6ot/ASHzlH+
-	C6CvsiMueITxR2Bg==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id C64F113AC4;
-	Mon, 23 Jun 2025 15:00:07 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id cMwkMPdrWWi8cQAAD6G6ig
-	(envelope-from <vbabka@suse.cz>); Mon, 23 Jun 2025 15:00:07 +0000
-From: Vlastimil Babka <vbabka@suse.cz>
-Date: Mon, 23 Jun 2025 16:59:50 +0200
-Subject: [PATCH RFC 1/2] mm, madvise: simplify anon_name handling
+	 key-exchange ECDHE (prime256v1) server-signature ECDSA (secp384r1) server-digest SHA384)
+	(Client did not present a certificate)
+	(Authenticated sender: xry111@xry111.site)
+	by xry111.site (Postfix) with ESMTPSA id A708A65F62;
+	Mon, 23 Jun 2025 10:59:58 -0400 (EDT)
+Message-ID: <9246b226e356ea0db044a592fed8853dd593f7f7.camel@xry111.site>
+Subject: Re: [PATCH] cpufreq: loongson3: Support older SMC firmware
+From: Xi Ruoyao <xry111@xry111.site>
+To: Yao Zi <ziyao@disroot.org>, Huacai Chen <chenhuacai@kernel.org>, WANG
+ Xuerui <kernel@xen0n.name>, "Rafael J. Wysocki" <rafael@kernel.org>, Viresh
+ Kumar	 <viresh.kumar@linaro.org>
+Cc: Jiaxun Yang <jiaxun.yang@flygoat.com>, Mingcong Bai <jeffbai@aosc.io>, 
+ Kexy Biscuit <kexybiscuit@aosc.io>, loongarch@lists.linux.dev,
+ linux-pm@vger.kernel.org, 	linux-kernel@vger.kernel.org
+Date: Mon, 23 Jun 2025 22:59:50 +0800
+In-Reply-To: <20250623123321.5622-1-ziyao@disroot.org>
+References: <20250623123321.5622-1-ziyao@disroot.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.56.2 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250623-anon_name_cleanup-v1-1-04c94384046f@suse.cz>
-References: <20250623-anon_name_cleanup-v1-0-04c94384046f@suse.cz>
-In-Reply-To: <20250623-anon_name_cleanup-v1-0-04c94384046f@suse.cz>
-To: Andrew Morton <akpm@linux-foundation.org>, 
- "Liam R. Howlett" <Liam.Howlett@oracle.com>, 
- Lorenzo Stoakes <lorenzo.stoakes@oracle.com>, 
- David Hildenbrand <david@redhat.com>, Jann Horn <jannh@google.com>, 
- Mike Rapoport <rppt@kernel.org>, Suren Baghdasaryan <surenb@google.com>, 
- Michal Hocko <mhocko@suse.com>, Colin Cross <ccross@google.com>
-Cc: linux-mm@kvack.org, linux-kernel@vger.kernel.org, 
- Vlastimil Babka <vbabka@suse.cz>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=openpgp-sha256; l=5386; i=vbabka@suse.cz;
- h=from:subject:message-id; bh=4WsgUXbLY0jc0mbRG783m2rvtMBeNkFlZ+M53fOqgQc=;
- b=owEBbQGS/pANAwAIAbvgsHXSRYiaAcsmYgBoWWvx+Oz6hY4snQoKDFRhXbnRE58Be0Ib+D0Ix
- Y1TfxhA9yOJATMEAAEIAB0WIQR7u8hBFZkjSJZITfG74LB10kWImgUCaFlr8QAKCRC74LB10kWI
- mso2CACBbp5TpPZEK987JqU7y7hewVG041bmZcQcTHTMISg3CzJmkx4bR/8VBOHGcmJ6SdycVHG
- /CyS2Pzjq7ZE5ESEltg5jEsEJgL9ApB61yWTKMhL4gUOuwMDBY7oP1d1Rt29fj/4MIHPeUOACWA
- ejdSwt380Vw1BTnL+VzvVvTI7BchJzP6K/tbdJic3NYlg8XH+HPx2nKs4zcKk0V9DRvfEb9h8HB
- 5GNuIG7WmscJyLpg6g69jiUDse+zHfWyBxp3qbu1cfhRs2Zvn0SZR/bbCUOrMeyI6pOgcTnYhVw
- 1RF23CSkMW9Ckr9jkrfXsEIgTaw1D986nFJ10bIm7sZuGcwd
-X-Developer-Key: i=vbabka@suse.cz; a=openpgp;
- fpr=A940D434992C2E8E99103D50224FA7E7CC82A664
-X-Spam-Flag: NO
-X-Spam-Score: -8.30
-X-Spamd-Result: default: False [-8.30 / 50.00];
-	REPLY(-4.00)[];
-	BAYES_HAM(-3.00)[100.00%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	MID_RHS_MATCH_FROM(0.00)[];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	ARC_NA(0.00)[];
-	RCPT_COUNT_TWELVE(0.00)[12];
-	RCVD_TLS_ALL(0.00)[];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	FROM_HAS_DN(0.00)[];
-	TO_DN_SOME(0.00)[];
-	FROM_EQ_ENVFROM(0.00)[];
-	RCVD_COUNT_TWO(0.00)[2];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.cz:mid,suse.cz:email,imap1.dmz-prg2.suse.org:helo]
-X-Spam-Level: 
 
-Since the introduction in 9a10064f5625 ("mm: add a field to store names
-for private anonymous memory") the code to set anon_name on a vma has
-been using madvise_update_vma() to call replace_vma_anon_name(). Since
-the former is called also by a number of other madvise behaviours that
-do not set a new anon_name, they have been passing the existing
-anon_name of the vma to make replace_vma_anon_name() a no-op.
+On Mon, 2025-06-23 at 12:33 +0000, Yao Zi wrote:
 
-This is rather wasteful as it needs anon_vma_name_eq() to determine the
-no-op situations, and checks for when replace_vma_anon_name() is allowed
-(the vma is anon/shmem) duplicate the checks already done earlier in
-madvise_vma_behavior(). It has also lead to commit 942341dcc574 ("mm:
-fix use-after-free when anon vma name is used after vma is freed")
-adding anon_name refcount get/put operations exactly to the cases that
-actually do not change anon_name - just so the replace_vma_anon_name()
-can keep safely determining it has nothing to do.
+/* snip */
 
-The recent madvise cleanups made this suboptimal handling very obvious,
-but happily also allow for an easy fix. madvise_update_vma() now has the
-complete information whether it's been called to set a new anon_name, so
-stop passing it the existing vma's name and doing the refcount get/put
-in its only caller madvise_vma_behavior().
+> -static struct cpufreq_driver loongson3_cpufreq_driver =3D {
+> +static struct cpufreq_driver loongson3_cpufreq_smc0_driver =3D {
+> =C2=A0	.name =3D "loongson3",
 
-In madvise_update_vma() itself, limit calling of replace_anon_vma_name()
-only to cases where we are setting a new name, otherwise we know it's a
-no-op. We can rely solely on the __MADV_SET_ANON_VMA_NAME behaviour and
-can remove the duplicate checks for vma being anon/shmem that were done
-already in madvise_vma_behavior().
+How about using different names for the drivers?
 
-The remaining reason to obtain the vma's existing anon_name is to pass
-it to vma_modify_flags_name() for the splitting and merging to work
-properly. In case of merging, the vma might be freed along with the
-anon_name, but madvise_update_vma() will not access it afterwards so the
-UAF previously fixed by commit 942341dcc574 is not reintroduced.
+> =C2=A0	.flags =3D CPUFREQ_CONST_LOOPS,
+> -	.init =3D loongson3_cpufreq_cpu_init,
+> +	.init =3D loongson3_cpufreq_cpu_smc0_init,
+> =C2=A0	.exit =3D loongson3_cpufreq_cpu_exit,
+> =C2=A0	.online =3D loongson3_cpufreq_cpu_online,
+> =C2=A0	.offline =3D loongson3_cpufreq_cpu_offline,
+> -	.get =3D loongson3_cpufreq_get,
+> -	.target_index =3D loongson3_cpufreq_target,
+> +	.target_index =3D loongson3_cpufreq_smc0_target,
+> +	.verify =3D cpufreq_generic_frequency_table_verify,
+> +	.suspend =3D cpufreq_generic_suspend,
+> +};
+> +
+> +static struct cpufreq_driver loongson3_cpufreq_smc1_driver =3D {
+> +	.name =3D "loongson3",
 
-Signed-off-by: Vlastimil Babka <vbabka@suse.cz>
----
- mm/madvise.c | 37 +++++++++++++------------------------
- 1 file changed, 13 insertions(+), 24 deletions(-)
+Tested on a 3A6000 laptop with the schedutil policy.  On idle one core
+is at 2000MHz and other cores are at 250MHz, when building the kernel
+all cores are at 2000MHz.
 
-diff --git a/mm/madvise.c b/mm/madvise.c
-index 4491bf080f55d6d1aeffb2ff0b8fdd28904af950..ae29395b4fc7f65a449c5772b1901a90f4195885 100644
---- a/mm/madvise.c
-+++ b/mm/madvise.c
-@@ -176,21 +176,25 @@ static int replace_anon_vma_name(struct vm_area_struct *vma,
- }
- #endif /* CONFIG_ANON_VMA_NAME */
- /*
-- * Update the vm_flags on region of a vma, splitting it or merging it as
-- * necessary.  Must be called with mmap_lock held for writing;
-- * Caller should ensure anon_name stability by raising its refcount even when
-- * anon_name belongs to a valid vma because this function might free that vma.
-+ * Update the vm_flags and/or anon_name on region of a vma, splitting it or
-+ * merging it as necessary. Must be called with mmap_lock held for writing.
-  */
- static int madvise_update_vma(vm_flags_t new_flags,
- 		struct madvise_behavior *madv_behavior)
- {
--	int error;
- 	struct vm_area_struct *vma = madv_behavior->vma;
- 	struct madvise_behavior_range *range = &madv_behavior->range;
--	struct anon_vma_name *anon_name = madv_behavior->anon_name;
-+	bool set_new_anon_name = madv_behavior->behavior == __MADV_SET_ANON_VMA_NAME;
-+	struct anon_vma_name *anon_name;
- 	VMA_ITERATOR(vmi, madv_behavior->mm, range->start);
- 
--	if (new_flags == vma->vm_flags && anon_vma_name_eq(anon_vma_name(vma), anon_name))
-+	if (set_new_anon_name)
-+		anon_name = madv_behavior->anon_name;
-+	else
-+		anon_name = anon_vma_name(vma);
-+
-+	if (new_flags == vma->vm_flags && (!set_new_anon_name
-+			|| anon_vma_name_eq(anon_vma_name(vma), anon_name)))
- 		return 0;
- 
- 	vma = vma_modify_flags_name(&vmi, madv_behavior->prev, vma,
-@@ -203,11 +207,8 @@ static int madvise_update_vma(vm_flags_t new_flags,
- 	/* vm_flags is protected by the mmap_lock held in write mode. */
- 	vma_start_write(vma);
- 	vm_flags_reset(vma, new_flags);
--	if (!vma->vm_file || vma_is_anon_shmem(vma)) {
--		error = replace_anon_vma_name(vma, anon_name);
--		if (error)
--			return error;
--	}
-+	if (set_new_anon_name)
-+		return replace_anon_vma_name(vma, anon_name);
- 
- 	return 0;
- }
-@@ -1313,7 +1314,6 @@ static int madvise_vma_behavior(struct madvise_behavior *madv_behavior)
- 	int behavior = madv_behavior->behavior;
- 	struct vm_area_struct *vma = madv_behavior->vma;
- 	vm_flags_t new_flags = vma->vm_flags;
--	bool set_new_anon_name = behavior == __MADV_SET_ANON_VMA_NAME;
- 	struct madvise_behavior_range *range = &madv_behavior->range;
- 	int error;
- 
-@@ -1403,18 +1403,7 @@ static int madvise_vma_behavior(struct madvise_behavior *madv_behavior)
- 	/* This is a write operation.*/
- 	VM_WARN_ON_ONCE(madv_behavior->lock_mode != MADVISE_MMAP_WRITE_LOCK);
- 
--	/*
--	 * madvise_update_vma() might cause a VMA merge which could put an
--	 * anon_vma_name, so we must hold an additional reference on the
--	 * anon_vma_name so it doesn't disappear from under us.
--	 */
--	if (!set_new_anon_name) {
--		madv_behavior->anon_name = anon_vma_name(vma);
--		anon_vma_name_get(madv_behavior->anon_name);
--	}
- 	error = madvise_update_vma(new_flags, madv_behavior);
--	if (!set_new_anon_name)
--		anon_vma_name_put(madv_behavior->anon_name);
- out:
- 	/*
- 	 * madvise() returns EAGAIN if kernel resources, such as
+Tested-by: Xi Ruoyao <xry111@xry111.site>
 
--- 
-2.50.0
-
+--=20
+Xi Ruoyao <xry111@xry111.site>
 
