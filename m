@@ -1,133 +1,87 @@
-Return-Path: <linux-kernel+bounces-699008-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-699011-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D2BBBAE4CA8
-	for <lists+linux-kernel@lfdr.de>; Mon, 23 Jun 2025 20:19:02 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id A5F79AE4CB0
+	for <lists+linux-kernel@lfdr.de>; Mon, 23 Jun 2025 20:20:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EF0D23B7105
-	for <lists+linux-kernel@lfdr.de>; Mon, 23 Jun 2025 18:18:37 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C22763B7DBA
+	for <lists+linux-kernel@lfdr.de>; Mon, 23 Jun 2025 18:19:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AB08C2D323F;
-	Mon, 23 Jun 2025 18:18:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A65CD2D3A90;
+	Mon, 23 Jun 2025 18:19:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b="UQWMLTC/"
-Received: from pandora.armlinux.org.uk (pandora.armlinux.org.uk [78.32.30.218])
+	dkim=pass (2048-bit key) header.d=zytor.com header.i=@zytor.com header.b="i1Z1mr4R"
+Received: from mail.zytor.com (terminus.zytor.com [198.137.202.136])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 13657F4F1;
-	Mon, 23 Jun 2025 18:18:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=78.32.30.218
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1964729CB39;
+	Mon, 23 Jun 2025 18:19:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.136
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750702733; cv=none; b=nkUpR+UJXw5hz85QsUYMoUI1kVIbfi9UGDn8IxJEYNQoi8/Iq+N5o769xTv+LU8TL7boDc8RKG+KagnwFJmOjp/S7/yS0FriZlYTlgGmXD5KP7Gv84MZeK8+EeRdd0msq4H2ATIIwPj5rGOjwcrVUy2e7MFfkEPdPPyP4K5JiNM=
+	t=1750702788; cv=none; b=OJgK/Prn5ztHn6Z++3pmU6/3o5K9l9AtsY3dxej++919/JtywKOVYmA2448Xk5QFDoJmZZSZ92YEOZ7fgI6JHK6Qh0EuHkPnybjedz4JxmNCLusqA1oqBUGXu1c8mErmbngLiMjrPwx4aEOuqpjxLnmeYx38E9kU54v1hd9/MLg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750702733; c=relaxed/simple;
-	bh=LRg203HjqpXqGj5igh6y7EQ9fNWriKYbUf8Swp8VaL4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=DF/HO0TqCbjPeGIJHpCHRuxHSdzTzhuBSulJwYGSxYYW15UxkZ2Cyg/N7AXpmrrf4joSLM2C4KppLv7c7Lw89Zr3xbQYC6PfMuKqWbrpkEU0sAAAKBmkx3GC1frLzJvlHTF53Nj3kl10etVkkxSQB3XzBj4Jo13dKQ8Zb2MOAQo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk; spf=none smtp.mailfrom=armlinux.org.uk; dkim=pass (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b=UQWMLTC/; arc=none smtp.client-ip=78.32.30.218
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=armlinux.org.uk
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=armlinux.org.uk; s=pandora-2019; h=Sender:In-Reply-To:
-	Content-Transfer-Encoding:Content-Type:MIME-Version:References:Message-ID:
-	Subject:Cc:To:From:Date:Reply-To:Content-ID:Content-Description:Resent-Date:
-	Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-	List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=hZucWyu2YRnBxb3pgEyb43gTVvvxosFS8u9z4rrVDbU=; b=UQWMLTC/oqQWY6Y8QHGRiW6Let
-	MsTTOl6+8AX7NRzgreK/WBaxWfpBCMAC58j3Ji5onl7DrWkRUHs9I6DOVUYVhpwx3HKKNeY7ldCzm
-	HjEe58G+pEYDZyBvPunm7cJpOaSpijWYeUMBbOFzNcxpLiKIwxExhI1CUAVSEakXk9TPlo9CJr0yc
-	76q4Cmjw1wpxxtpaOZ1M5sebAis8Vwo8HuSBaWGHkq4bYKMcDErKHlimmi7A9GxuJNHAY0+Qu4F3m
-	d3auJYsAWQuxw41mk5j33oVxOkKpEfgF8AfYrsFKbObbRXDou5fxwIybqYIp+kPfIIXP0uLERRi5b
-	iFhlYgIg==;
-Received: from shell.armlinux.org.uk ([fd8f:7570:feb6:1:5054:ff:fe00:4ec]:55424)
-	by pandora.armlinux.org.uk with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.96)
-	(envelope-from <linux@armlinux.org.uk>)
-	id 1uTlkc-0004Xi-0m;
-	Mon, 23 Jun 2025 19:18:38 +0100
-Received: from linux by shell.armlinux.org.uk with local (Exim 4.96)
-	(envelope-from <linux@shell.armlinux.org.uk>)
-	id 1uTlkY-0003fJ-03;
-	Mon, 23 Jun 2025 19:18:34 +0100
-Date: Mon, 23 Jun 2025 19:18:33 +0100
-From: "Russell King (Oracle)" <linux@armlinux.org.uk>
-To: Andrew Lunn <andrew@lunn.ch>
-Cc: Maxime Chevallier <maxime.chevallier@bootlin.com>,
-	Kamil =?iso-8859-1?Q?Hor=E1k?= - 2N <kamilh@axis.com>,
-	florian.fainelli@broadcom.com,
-	bcm-kernel-feedback-list@broadcom.com, hkallweit1@gmail.com,
-	davem@davemloft.net, edumazet@google.com, kuba@kernel.org,
-	pabeni@redhat.com, krzk+dt@kernel.org, conor+dt@kernel.org,
-	netdev@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, robh@kernel.org
-Subject: Re: [PATCH net-next v2 2/3] net: phy: bcm5481x: Implement MII-Lite
- mode
-Message-ID: <aFmaeY7Ibw5xSEl9@shell.armlinux.org.uk>
-References: <20250623151048.2391730-1-kamilh@axis.com>
- <20250623151048.2391730-2-kamilh@axis.com>
- <20250623175135.5ddee2ea@2a02-8440-d115-be0d-cec0-a2a1-bc3c-622e.rev.sfr.net>
- <8735eb08-92de-4489-9e52-fee91c9ed23e@lunn.ch>
+	s=arc-20240116; t=1750702788; c=relaxed/simple;
+	bh=ESf+LmadPkuTIyz4p6caha2CR4G2QyEwoMSgk144nGg=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=grroFXK2Pcssz/fIA+zr9ePAo2wgxJh4oh7hmPpr77JWY+4H8t3102W9fxE0wZQy1qdub3Om132OUp9I1EMkrysPAfTd42cYK0JSggQXoVCLIHeRa8X4j4YYmsR0tpq/ffLVYGT5hIGTnf4wkpq9Y7o0ujk0ltx9Liy3hNw7g4Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zytor.com; spf=pass smtp.mailfrom=zytor.com; dkim=pass (2048-bit key) header.d=zytor.com header.i=@zytor.com header.b=i1Z1mr4R; arc=none smtp.client-ip=198.137.202.136
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zytor.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zytor.com
+Received: from [IPV6:2601:646:8081:9482:eb50:9bbc:f4fe:cc43] ([IPv6:2601:646:8081:9482:eb50:9bbc:f4fe:cc43])
+	(authenticated bits=0)
+	by mail.zytor.com (8.18.1/8.17.1) with ESMTPSA id 55NIJGD81039127
+	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NO);
+	Mon, 23 Jun 2025 11:19:17 -0700
+DKIM-Filter: OpenDKIM Filter v2.11.0 mail.zytor.com 55NIJGD81039127
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zytor.com;
+	s=2025062101; t=1750702759;
+	bh=GiAXLdNp3nC3MavPq2unzj2t9vG7BnSpq1GDijjcQag=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=i1Z1mr4RnE/r6kjX+XxW5qkUpy/IvwDlsZ6mfEbVtg2BWUoThKbOq++bUIt2VB7aK
+	 2WEmr6DpBGumss8s4LBiupLAhey4HG4h/LgHh6SxBv81tb76MyfOpWkpNPv+4K/okr
+	 +6gZntfXXT6b2hkwbJ5c7nD0cOd+UNM1Hzwn+1A8dIp+rJXFNvyMOiuQx2Ulx5dixd
+	 bnvIMD0641zDsPxh3mWiDLdbA0bUd0JyjxAZkofqZffOnRcsOhEG7zR3ort9EYx7KW
+	 qkwjst0yMz3plYG0XWyGM0NjkCNuCdnq1zarQlduM8t6LJiaK2tk3f6w2E+jdBdyne
+	 ddtK71QhG5sWQ==
+Message-ID: <860684c8-a985-47bc-af30-3370f203e80d@zytor.com>
+Date: Mon, 23 Jun 2025 11:19:11 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <8735eb08-92de-4489-9e52-fee91c9ed23e@lunn.ch>
-Sender: Russell King (Oracle) <linux@armlinux.org.uk>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v1 0/3] x86/boot: Supply boot_param in rdi instead of rsi
+ from startup_64()
+To: Khalid Ali <khaliidcaliy@gmail.com>, brgerst@gmail.com, tglx@linutronix.de,
+        mingo@redhat.com, bp@alien8.de, dave.hansen@linux.intel.com,
+        ubizjak@gmail.com
+Cc: x86@kernel.org, linux-efi@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20250623162935.681-1-khaliidcaliy@gmail.com>
+Content-Language: en-US
+From: "H. Peter Anvin" <hpa@zytor.com>
+In-Reply-To: <20250623162935.681-1-khaliidcaliy@gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Mon, Jun 23, 2025 at 07:55:03PM +0200, Andrew Lunn wrote:
-> On Mon, Jun 23, 2025 at 05:51:35PM +0200, Maxime Chevallier wrote:
-> > Hi Kamil,
-> > 
-> > On Mon, 23 Jun 2025 17:10:46 +0200
-> > Kamil Horák - 2N <kamilh@axis.com> wrote:
-> > 
-> > > From: Kamil Horák (2N) <kamilh@axis.com>
-> > > 
-> > > The Broadcom bcm54810 and bcm54811 PHYs are capable to operate in
-> > > simplified MII mode, without TXER, RXER, CRS and COL signals as defined
-> > > for the MII. While the PHY can be strapped for MII mode, the selection
-> > > between MII and MII-Lite must be done by software.
-> > > The MII-Lite mode can be used with some Ethernet controllers, usually
-> > > those used in automotive applications. The absence of COL signal
-> > > makes half-duplex link modes impossible but does not interfere with
-> > > BroadR-Reach link modes on Broadcom PHYs, because they are full-duplex
-> > > only. The MII-Lite mode can be also used on an Ethernet controller with
-> > > full MII interface by just leaving the input signals (RXER, CRS, COL)
-> > > inactive.
-> > 
-> > I'm following-up to Andrew's suggestion of making it a dedicated
-> > phy-mode. You say that this requires only phy-side configuration,
-> > however you also say that with MII-lite, you can't do half-duplex.
-> > 
-> > Looking at the way we configure the MAC to PHY link, how can the MAC
-> > driver know that HD isn't available if this is a phy-only property ?
+On 2025-06-23 09:29, Khalid Ali wrote:
+>> This was never intended to conform to the C ABI, why is it necessary
+>> to change it?
 > 
-> One would hope that when the PHY is configured to -lite, it changes
-> its abilities register to indicate it does not support half duplex
-> modes? But without looking at the datasheet, i've no idea if it
-> actually does.
+> Technically speaking, you are right, however that doesn't mean we can put something where
+> ever we like. We came from C code which is bootloader and we end up to C code, so we should
+> comply the ABI here too.
 > 
-> There is also an ordering issuer, it needs to be put into -lite mode
-> before phy_probe reads the abilities, which is after the probe()
-> method is called. However, at this point, we don't know the interface
-> mode, that only comes later.
-> 
-> So this gets interesting, and there is no indication in the commit
-> message this has been thought about.
 
-... which is another reaosn for using phylink, because phylink
-restricts the abilities of the PHY (and its advertisement) according
-to the PHY interface mode.
+This is also invoked by some external bootloaders that boot the ELF 
+image directly, even though this is strongly discouraged.
 
--- 
-RMK's Patch system: https://www.armlinux.org.uk/developer/patches/
-FTTP is here! 80Mbps down 10Mbps up. Decent connectivity at last!
+Therefore this patchset is NAKed with extreme prejudice.
+
+	-hpa
+
 
