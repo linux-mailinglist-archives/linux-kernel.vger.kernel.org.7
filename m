@@ -1,93 +1,76 @@
-Return-Path: <linux-kernel+bounces-699119-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-699121-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 77D3BAE4E0E
-	for <lists+linux-kernel@lfdr.de>; Mon, 23 Jun 2025 22:19:47 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 97BC0AE4E13
+	for <lists+linux-kernel@lfdr.de>; Mon, 23 Jun 2025 22:20:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A284C17CC2B
-	for <lists+linux-kernel@lfdr.de>; Mon, 23 Jun 2025 20:19:46 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id ABFE83B5A4D
+	for <lists+linux-kernel@lfdr.de>; Mon, 23 Jun 2025 20:20:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 23D132D5437;
-	Mon, 23 Jun 2025 20:19:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ptEy5oFS"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1C1FB2D5C61;
+	Mon, 23 Jun 2025 20:20:43 +0000 (UTC)
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 756962D12F4;
-	Mon, 23 Jun 2025 20:19:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A301A1F5617;
+	Mon, 23 Jun 2025 20:20:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750709981; cv=none; b=PpilK95NF6w83OIEu67xOpM6V9QcaPDWNUO5eI0BT8usitVwYIVdjnCmWn4Za8+CCRh1pREVne/ZixEyKaJQEAU6PH6dPFajHEXnbR+QRBfspaQryUX6ue15iXKmBhOj8Cui7oAQQR+76DGbdZjTWmXy6GEVDpTIV7RjUfEghZ4=
+	t=1750710042; cv=none; b=KG3qefkrrTAWzSwP0yFBfiURenv9vYyHaox3q16H/PS1dkeJNNH8q36TIpkpLFLpHlXDd1+KIfTQmZCZ1SuSzoa1wYlVVEFWM09V6zqQxeJx7rtnPgl0ib3GTT6Q6xlQKs2EQ3+U3o7g0DK6xESlUGgtNN8yYaT0fD+lPKkIK3I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750709981; c=relaxed/simple;
-	bh=9+JDx6QWgUTXG1BF4D42+O53MQeLmJgUcCobkGA3twU=;
-	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
-	 In-Reply-To:To:Cc; b=lfITfs/BmHHob+p+ITQEgTSVveC1hUUDqTFJcYH2S9VrfHPeSbkdsdE6YHklXEydlUZs1FPXioNcyrVQGVaSXDkMdRY6fuYafbr46DIpaock/xysGUYsfmW49QUbNz8fX9P3JzmW+ms/VNa/Z5PZCLvwSNzKst/+uNdj5PIcXII=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ptEy5oFS; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4136AC4CEED;
-	Mon, 23 Jun 2025 20:19:39 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1750709979;
-	bh=9+JDx6QWgUTXG1BF4D42+O53MQeLmJgUcCobkGA3twU=;
-	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
-	b=ptEy5oFSod82IjZBf8NDr6qTAxQq8KnBa+jgiyPwf3mE0J1MT2K2YJ6GGtCz2wz/Q
-	 CWuOaiYiszTI6SzVIm+FzteMNSW41fT3QF8chG70KFT1MaNigwCGhq81m3eA4ErLds
-	 73FSrQ8OoUSQ0GTCpfK0hvWYN0AfkK0r5wXS2n1TrW0Z8vP0NI/sQixCCMDdJHrjht
-	 AfcMVkwaI7GNWJXanym0+3ltOiY3gOZ59WwK+okPW9uUKAVWq0vp4quWVrArAbbn95
-	 nLNPhnr981WO1GxIrNm2iofxZfX++MXFdMHUXgfZZ2XlaNENSP3V2xSnQ2CVP4zHqR
-	 gB9d5r9H0Yg/A==
-Received: from [10.30.226.235] (localhost [IPv6:::1])
-	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id 710D239FEB7E;
-	Mon, 23 Jun 2025 20:20:07 +0000 (UTC)
-Content-Type: text/plain; charset="utf-8"
+	s=arc-20240116; t=1750710042; c=relaxed/simple;
+	bh=oA0p1uClGqR3l4grX3HCmwZac9lhKQOM+VdvDFnTmjw=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
+	 MIME-Version:Content-Type; b=Mt3pDXfTwXgmkEBFM/kNG2KZEKCiPYW9Gni2Gt43ChiqvoD3QzMHUMFyjiU9ax2R+KvZRV8l/ZLozv8goGpn4ZGNpm83JqhGot7IELqPDtyq5r7a8lFSc3AXKHMkhrhchWkEbqQ2YlX83HUXM9sZU2e/MKaAnePYbgROSH2uWLk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 23EF0C4CEEA;
+	Mon, 23 Jun 2025 20:20:41 +0000 (UTC)
+Received: by venus (Postfix, from userid 1000)
+	id 20D56180AAD; Mon, 23 Jun 2025 22:20:39 +0200 (CEST)
+From: Sebastian Reichel <sebastian.reichel@collabora.com>
+To: Casey Connolly <casey.connolly@linaro.org>, 
+ linux-arm-msm@vger.kernel.org, linux-pm@vger.kernel.org, 
+ Lukas Bulwahn <lbulwahn@redhat.com>
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ Lukas Bulwahn <lukas.bulwahn@redhat.com>
+In-Reply-To: <20250623081240.149446-1-lukas.bulwahn@redhat.com>
+References: <20250623081240.149446-1-lukas.bulwahn@redhat.com>
+Subject: Re: [PATCH] MAINTAINERS: rectify file entry in QUALCOMM SMB
+ CHARGER DRIVER
+Message-Id: <175071003911.362465.10205242431395773807.b4-ty@collabora.com>
+Date: Mon, 23 Jun 2025 22:20:39 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Subject: Re: [PATCH net-next] ethtool: pse-pd: Add missing linux/export.h
- include
-From: patchwork-bot+netdevbpf@kernel.org
-Message-Id: 
- <175071000625.3285687.12745921546977020249.git-patchwork-notify@kernel.org>
-Date: Mon, 23 Jun 2025 20:20:06 +0000
-References: <20250619162547.1989468-1-kory.maincent@bootlin.com>
-In-Reply-To: <20250619162547.1989468-1-kory.maincent@bootlin.com>
-To: Kory Maincent <kory.maincent@bootlin.com>
-Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org, lkp@intel.com,
- thomas.petazzoni@bootlin.com, o.rempel@pengutronix.de, andrew@lunn.ch,
- kuba@kernel.org, davem@davemloft.net, edumazet@google.com, pabeni@redhat.com,
- horms@kernel.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-Mailer: b4 0.14.2
 
-Hello:
 
-This patch was applied to netdev/net-next.git (main)
-by Jakub Kicinski <kuba@kernel.org>:
-
-On Thu, 19 Jun 2025 18:25:47 +0200 you wrote:
-> Fix missing linux/export.h header include in net/ethtool/pse-pd.c to resolve
-> build warning reported by the kernel test robot.
-> 
-> Reported-by: kernel test robot <lkp@intel.com>
-> Closes: https://lore.kernel.org/oe-kbuild-all/202506200024.T3O0FWeR-lkp@intel.com/
-> Signed-off-by: Kory Maincent <kory.maincent@bootlin.com>
+On Mon, 23 Jun 2025 10:12:40 +0200, Lukas Bulwahn wrote:
+> Commit 4deeea4b0741  ("MAINTAINERS: add myself as smbx charger driver
+> maintainer") adds the section QUALCOMM SMB CHARGER DRIVER in MAINTAINERS,
+> including a file entry pointing to qcom_smbx_charger.c. Within the same
+> patch series, the commit 5ec53bcc7fce ("power: supply: pmi8998_charger:
+> rename to qcom_smbx") renames qcom_pmi8998_charger.c to qcom_smbx.c and not
+> to qcom_smbx_charger.c, though. Note that the commit message clearly
+> indicates the intentional removal of the "_charger" suffix.
 > 
 > [...]
 
-Here is the summary with links:
-  - [net-next] ethtool: pse-pd: Add missing linux/export.h include
-    https://git.kernel.org/netdev/net-next/c/96c16c59b705
+Applied, thanks!
 
-You are awesome, thank you!
+[1/1] MAINTAINERS: rectify file entry in QUALCOMM SMB CHARGER DRIVER
+      commit: d375b70a0f47a032813be33493c97133cc080f74
+
+Best regards,
 -- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/patchwork/pwbot.html
-
+Sebastian Reichel <sebastian.reichel@collabora.com>
 
 
