@@ -1,78 +1,109 @@
-Return-Path: <linux-kernel+bounces-699207-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-699209-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 649D2AE5561
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Jun 2025 00:10:44 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 26288AE557E
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Jun 2025 00:11:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2E60D1BC4801
-	for <lists+linux-kernel@lfdr.de>; Mon, 23 Jun 2025 22:10:39 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id ABA6C1BC4F65
+	for <lists+linux-kernel@lfdr.de>; Mon, 23 Jun 2025 22:11:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 564DC22A7E8;
-	Mon, 23 Jun 2025 22:09:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 35B17227BB5;
+	Mon, 23 Jun 2025 22:11:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="PTozAnqg"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="QZGCfpC3"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B74F222A4E5
-	for <linux-kernel@vger.kernel.org>; Mon, 23 Jun 2025 22:09:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 72B8322577C;
+	Mon, 23 Jun 2025 22:11:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750716593; cv=none; b=kWH68qZ76DV424SwV3qdnwOKCXC/8Anftcj/SW+M91rpNu8A7AWHYfr+yevK1yu1U6nDEiHlJN5HxGk0sAeDqEj3KX+TW6qvqNpJzRfFIzTMNNRp2DLnc2ioVj8EoW6hnSnF+8JEU1bCTmCUHgpXJseg4xgJoxSEFjknwWeTybM=
+	t=1750716668; cv=none; b=lW/59aDk3RlyHkOokFsZs5L7OLcwO9pPjj5oq5Ioze7YbKlxgqNBeHezERxWWqNObLNaSfdAOEZCyLyPi3/t/5FGQjgM6C/48DP8eeaDVlN/LYVGUsCl/5FIOo3uzQh4782fL0ji0o5GKBH6MfdugvXUby65o3CYUlIeCFymdRk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750716593; c=relaxed/simple;
-	bh=XHJhIO+Sq7wskSiBWJWy7xT3OdEvJ70rAZtPX8g5+PA=;
-	h=Subject:From:In-Reply-To:References:Message-Id:Date:To:Cc; b=mZttUhbKcsabYUd5vvprGcYDFcu+r9ucVMctJqvMB5TRj/7JZWP2x93P+464+pGkOirVU+XDYCxnair3h8xtY/TLrF3g0vjjZ57+W2pbaZQuxjPhoU64pT8HqXL2XygzeQgAb7ct1Fkydel7vT5Rz0smXaKFFrRYQ775zETCDjo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=PTozAnqg; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 99613C4CEED;
-	Mon, 23 Jun 2025 22:09:53 +0000 (UTC)
+	s=arc-20240116; t=1750716668; c=relaxed/simple;
+	bh=jg97oCJgKWw4G6fFl+eTqGW97MfSzVXs69TgiS2OkNY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=YA+xUykpRyZ0XqqOzhQ5kk7352OpF+CLAbBTlLz361xcMuJ/FEtLzjkQDXMUH58+2W79qiWX8wED0zVCiL+MmFn7hfKsS/hhmFWt2MD/Czme4qcwarevi6acsPn8sy8ykcPq9AjmXPD05ah3TFOLsgBELaruxKIKXBjy2vcYczk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=QZGCfpC3; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 34AB0C4CEEA;
+	Mon, 23 Jun 2025 22:11:08 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1750716593;
-	bh=XHJhIO+Sq7wskSiBWJWy7xT3OdEvJ70rAZtPX8g5+PA=;
-	h=Subject:From:In-Reply-To:References:Date:To:Cc:From;
-	b=PTozAnqgfWMHcbEX8p4aR5vC1fadB8uj3WGhwdfDUFGN0P87Kv/KSiIwQAgyc9D6g
-	 /6/GKFH7S2LUpTwEWc6E6zDubgz52D7NpUtpBM7MCSQ35S01XscZavOBvS3pFN0arf
-	 yIw4DSbps2bIAspHnTeGsmonDyRY+mNHrBpaFRYQ3rmT7NK/D0WWjGdL6+pRtk9FY1
-	 KNqZwitayUACfF0A0UKVsHh54JFi31IjT8JSgjygIRtUiqLOOhr6TiUGU2X/+mu+v1
-	 N3NivpTYBvikv7pEQEwVrt73imadBZWddEv2VG/91fDM8j4Cnf27HHx0S8HstQKK3C
-	 MR3MgYt5CXERA==
-Received: from [10.30.226.235] (localhost [IPv6:::1])
-	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id E794B39FEB7E;
-	Mon, 23 Jun 2025 22:10:21 +0000 (UTC)
-Subject: Re: [GIT PULL] f2fs fixes for 6.16-rc4
-From: pr-tracker-bot@kernel.org
-In-Reply-To: <aFmZKyrDBDzTzs4Q@google.com>
-References: <aFmZKyrDBDzTzs4Q@google.com>
-X-PR-Tracked-List-Id: <linux-kernel.vger.kernel.org>
-X-PR-Tracked-Message-Id: <aFmZKyrDBDzTzs4Q@google.com>
-X-PR-Tracked-Remote: git://git.kernel.org/pub/scm/linux/kernel/git/jaegeuk/f2fs.git tags/f2fs-for-6.16-rc4
-X-PR-Tracked-Commit-Id: ba8dac350faf16afc129ce6303ca4feaf083ccb1
-X-PR-Merge-Tree: torvalds/linux.git
-X-PR-Merge-Refname: refs/heads/master
-X-PR-Merge-Commit-Id: cb0de0e220d2233a84a2ff1afb8ffba7597d02fa
-Message-Id: <175071662074.3311076.9481880447185959769.pr-tracker-bot@kernel.org>
-Date: Mon, 23 Jun 2025 22:10:20 +0000
-To: Jaegeuk Kim <jaegeuk@kernel.org>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Linux F2FS Dev Mailing List <linux-f2fs-devel@lists.sourceforge.net>
+	s=k20201202; t=1750716668;
+	bh=jg97oCJgKWw4G6fFl+eTqGW97MfSzVXs69TgiS2OkNY=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=QZGCfpC3dzw0k497nv4tJ7NUCQ7LKarF4QH8a0Uckvtsu4aimXKHf/LitzMg7K9CK
+	 3snTB2StPQUZtDjzRGvZlf2quCDRZIfPep9f9VPOhlIHNMfB84VeeQqp/kbiJnXLur
+	 QLHPNF0wrsa78ttzPB6V7VaNfLMBTW6Y7x5U0RO3yAWo1PMAaUFRhDjrGzV4YZxvgc
+	 oYBhMxraIsZCEgMRK6atPlAbRah3ipTI512O2KMoaS/ZK4BYwFMVq2TUYhYBb9SttQ
+	 7uN/DgaNtze5XwUvr4fAe4IuwAo+uYH1/g68SNrIimBnnKF2OQLzXzZDqyil8YVMou
+	 D45jtCFwKNLwQ==
+Date: Mon, 23 Jun 2025 12:11:07 -1000
+From: Tejun Heo <tj@kernel.org>
+To: Joel Fernandes <joelagnelf@nvidia.com>
+Cc: linux-kernel@vger.kernel.org, Ingo Molnar <mingo@redhat.com>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Juri Lelli <juri.lelli@redhat.com>,
+	Vincent Guittot <vincent.guittot@linaro.org>,
+	Dietmar Eggemann <dietmar.eggemann@arm.com>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	Ben Segall <bsegall@google.com>, Mel Gorman <mgorman@suse.de>,
+	Valentin Schneider <vschneid@redhat.com>,
+	David Vernet <void@manifault.com>, Andrea Righi <arighi@nvidia.com>,
+	Changwoo Min <changwoo@igalia.com>,
+	Luigi De Matteis <ldematteis123@gmail.com>,
+	sched-ext@lists.linux.dev
+Subject: Re: [PATCH v5 08/14] sched/ext: Add a DL server for sched_ext tasks
+Message-ID: <aFnQ-3L6ixL7nSz0@slm.duckdns.org>
+References: <20250620203234.3349930-1-joelagnelf@nvidia.com>
+ <20250620203234.3349930-9-joelagnelf@nvidia.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250620203234.3349930-9-joelagnelf@nvidia.com>
 
-The pull request you sent on Mon, 23 Jun 2025 18:12:59 +0000:
+On Fri, Jun 20, 2025 at 04:32:23PM -0400, Joel Fernandes wrote:
+> +static struct task_struct *ext_server_pick_task(struct sched_dl_entity *dl_se,
+> +						void *flags)
+> +{
+> +	struct rq_flags *rf = flags;
+> +
+> +	balance_scx(dl_se->rq, dl_se->rq->curr, rf);
+> +	return pick_task_scx(dl_se->rq, rf);
+> +}
+...
+> +void ext_server_init(struct rq *rq)
+> +{
+> +	struct sched_dl_entity *dl_se = &rq->ext_server;
+> +
+> +	init_dl_entity(dl_se);
+> +
+> +	dl_server_init(dl_se, rq, ext_server_has_tasks, ext_server_pick_task);
+> +}
 
-> git://git.kernel.org/pub/scm/linux/kernel/git/jaegeuk/f2fs.git tags/f2fs-for-6.16-rc4
+Needing to pass in @rf to ext_server_pick_task() makes sense as SCX always
+needs to balance first. However, I still don't understand why that
+necessitates adding @rf to sched_class->pick_task(). The existing assumption
+is that ->pick_task() cannot release and regrab the rq lock and that's why
+->balance() exists in the first place. Breaking this can lead to other
+misbehaviors - e.g. if a higher priority class ->pick_task() releases the rq
+lock, a lower one may end up losing a task that its ->balance() saw. This
+can lead to lower priority class's ->pick_task() being called without its
+->balance() being called which can lead to stalls.
 
-has been merged into torvalds/linux.git:
-https://git.kernel.org/torvalds/c/cb0de0e220d2233a84a2ff1afb8ffba7597d02fa
+One thing that confuses me is that all that the patchset needs to do seems
+to be adding @rf to dl_server_pick_f and that seems fine to me. Why is it
+necessary to add @rf to sched_class->pick_task()?
 
-Thank you!
+Thanks.
 
 -- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/prtracker.html
+tejun
 
