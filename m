@@ -1,180 +1,110 @@
-Return-Path: <linux-kernel+bounces-698838-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-698841-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9BF3FAE4AB3
-	for <lists+linux-kernel@lfdr.de>; Mon, 23 Jun 2025 18:25:15 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 52C14AE4ABA
+	for <lists+linux-kernel@lfdr.de>; Mon, 23 Jun 2025 18:26:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4639717493E
-	for <lists+linux-kernel@lfdr.de>; Mon, 23 Jun 2025 16:23:26 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8C56E3AF110
+	for <lists+linux-kernel@lfdr.de>; Mon, 23 Jun 2025 16:23:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A0F2E29CB59;
-	Mon, 23 Jun 2025 16:16:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6A8B72D2387;
+	Mon, 23 Jun 2025 16:16:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="oyWuFtKY"
-Received: from mail-wr1-f46.google.com (mail-wr1-f46.google.com [209.85.221.46])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b="Ok289bH4"
+Received: from esa.microchip.iphmx.com (esa.microchip.iphmx.com [68.232.153.233])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 19F6424BD0C
-	for <linux-kernel@vger.kernel.org>; Mon, 23 Jun 2025 16:16:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3FC8324BD0C;
+	Mon, 23 Jun 2025 16:16:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=68.232.153.233
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750695374; cv=none; b=pm30Ot4cVmjycGKnHwT+hwDqNsXrN2hhysKMFXFEx3OsQ0p/UPLE4/CYp7GzEaakfu7aN8BnZejMFPsYKhyhkwZGGMsj5nhOFteFFB7urkM+b1UBd1Wu/8Od17OPpi7Ehdw3+o0EtkG29eUrCxBhcJx+99rhUscKLU0ti3gw6eE=
+	t=1750695408; cv=none; b=UfPiPC/LIbLOpziTqucZQYAuSj1tD+zaByfYpeShkCNaYqFNb5kd2xEYAPQfbioh0y9N5ED2QqSXEKt0Ajn1ukwis337KHdhfRgtkhkGgJ7rYt1NObE3dQkT3WHrJw1IYkeemIpx8M8L3//bIYWQ2DR9QJSDE1LmCNIVe/zbwcw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750695374; c=relaxed/simple;
-	bh=H/KTCfUC8NzbfsL3wBmW19mD4SmZMmkNhNd2hYhLg6k=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=FaYOoiCtUtifAkQuXaxoB+qBE9WEfB2QcQ2XMJdAOEKLMe8Lj5tWqBSv8TIbl10RHpoQx1m+4RbYar4Hn2CY7MlAS3Fs026FC5s70N8M6ZZk9F96X8yHuyMxloH1Dh03vEFQmcSff8y2hj7tsMn3lSl/g32MLjnf7OhewL03F7k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=oyWuFtKY; arc=none smtp.client-ip=209.85.221.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wr1-f46.google.com with SMTP id ffacd0b85a97d-3a548a73ff2so4101628f8f.0
-        for <linux-kernel@vger.kernel.org>; Mon, 23 Jun 2025 09:16:11 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1750695370; x=1751300170; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=yO1ealRuE4yEPMjJdBgcY0UE9jWW4gYbcYd/I6gI6bg=;
-        b=oyWuFtKYXpxKAyCSDE3bwqiSpBZ/J1ywko3cE7u1CBa7WT1Zn/4WDwjW8RVYFG9qJr
-         LzT+92DM3OAs+/Zd7hWyGmVT35WhQX7NYC2skyduUy22hy/MBNvQITa5JQVsMr0BO8xU
-         +ujK2tTb3hg1lM+aCx5utNoFgqC/GIQi/7D8oNuCVCtdiIqcH+vYW7Ti8omH1ThoBVXa
-         HZLSlc/WRv+LOrhDOOVI38tO7KKcJHNkLcVLYbwc3eRlXOOkckGhR1IaifrD/ajfgpe5
-         53U9DTIpA/7qcvfsOxW42tefe9h40S7w5ZIi3VejMFxcwGYBykzLVSGsGpE8O4+5+b+3
-         dh8Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1750695370; x=1751300170;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=yO1ealRuE4yEPMjJdBgcY0UE9jWW4gYbcYd/I6gI6bg=;
-        b=IQBWGHULdrWOcjjCv21la4tkfYmIt7RFdNFW15AvnEZHZG7zgfRhIYMyUqsGqlBBcU
-         SoaUKtumqBAlAfu94yi2IBg/VgdY0/DWBitgmnlrZE9Pbb3Qb+6KZe34HNlHpzpLkBzF
-         2BkIdKT86IpD1T58EFzfsnrEVIQaYlZuoo/sUn4qyTBVmORZa2RnBW+KC3ISAHKi0gvd
-         aI9U/hJw80Ex7iJOq0LUeMFnZHGbXFOfA5OmGX+uNJ+UWp7siaBFdyHlaDiOggHGLAQH
-         yyub3ikOW1Hov80qJdbhnXDgT+h4rkth7w6wQejrmBiqoBB51Hw8yN/pwA6EJjr4+wNH
-         1D1A==
-X-Forwarded-Encrypted: i=1; AJvYcCVjXUo1I1o0Qpw6HbB6X4sdhZVuO6M0g6QkGR+vPCGhgb14cefRGQ7hs3WScuvsloV+IRL0nzG2jofCxWo=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzHI3kHf8r7j77x+Zp64UbvxsdrDbLYXyg8i/tVgPM3dLTHIP+P
-	1X2O+XdslkziuSiYGJ42uMGg/9gdlLjiqREgslyvLIAJ05/bPPC/jZveOYkmhQrNltc=
-X-Gm-Gg: ASbGncu/WwIRmGncYU+2nzjKE0P4ViHKwyB6Fqmm9/cr0luMuxkG5UuS62klkCmJi1x
-	SE5M+0Ztg4ugM5EOnesWCyOmeou526SWEZJjF11Z5HjpjhC+NubKgZpiCz/XypAcxkKroS1PI63
-	mcNjf7ub+xKa6cFL+TgAoOuiHkWatNbYqQ3pVJG8RyEWR188xvDhNzPkqASyGH24tKYi/v9YceK
-	0nsY4cm40uLV63rT0ciRoo46p89/54aXXpjPu7Kzc7KgQGcJMCIf6ATqTNTEj1CHfTW+RAYy7Ii
-	HardR6zwZVKbrZUAdoARZb/Q4w6csE2fZdOvELxjgL/7LQWpVfq4pcrestoIpG5rNKvgr2uOIA=
-	=
-X-Google-Smtp-Source: AGHT+IG1GltRs/clSARzmRQhvHut60zejlD1k+oWtIeF50l7rVK9RZ/LkGHmFxG9oef8hykFwyx0Kg==
-X-Received: by 2002:a05:6000:2504:b0:3a4:f9e7:2796 with SMTP id ffacd0b85a97d-3a6d12fb64emr12830861f8f.35.1750695370340;
-        Mon, 23 Jun 2025 09:16:10 -0700 (PDT)
-Received: from linaro.org ([2a02:2454:ff21:ef30:b3ca:db17:bc4f:ae5a])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4535eac8c16sm147423325e9.19.2025.06.23.09.16.09
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 23 Jun 2025 09:16:09 -0700 (PDT)
-Date: Mon, 23 Jun 2025 18:16:04 +0200
-From: Stephan Gerhold <stephan.gerhold@linaro.org>
-To: Chaoyi Chen <kernel@airkyi.com>,
-	Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
-Cc: Andrzej Hajda <andrzej.hajda@intel.com>,
-	Neil Armstrong <neil.armstrong@linaro.org>,
-	Robert Foss <rfoss@kernel.org>,
-	Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
-	Jonas Karlman <jonas@kwiboo.se>,
-	Jernej Skrabec <jernej.skrabec@gmail.com>,
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	Maxime Ripard <mripard@kernel.org>,
-	Thomas Zimmermann <tzimmermann@suse.de>,
-	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
-	dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
-	Chaoyi Chen <chaoyi.chen@rock-chips.com>
-Subject: Re: [PATCH RESEND] drm/bridge-connector: Fix bridge in
- drm_connector_hdmi_audio_init()
-Message-ID: <aFl9xBBLwSHxCPMq@linaro.org>
-References: <20250620011616.118-1-kernel@airkyi.com>
+	s=arc-20240116; t=1750695408; c=relaxed/simple;
+	bh=Ur0XOriXT1WlSZ1k17YMUC/sCAmjE++EAq3Cer6GQKI=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=SQzRvZOsNQpuoWaEi9foI7HWW4A6Xsl6Ez85WDe8YBvyf4QvJrlMobfZM7aS/AQ6qzFpLxlKczuf2NpIPv14+SgGwswP4nRMR3Xi2EAMg93Tcoz6MqrXXGy+biPH4WuKxDPhJsKMVcF72uNyVarVWxY4/punCwXi1lri3wSmdqE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com; spf=pass smtp.mailfrom=microchip.com; dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b=Ok289bH4; arc=none smtp.client-ip=68.232.153.233
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=microchip.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=microchip.com; i=@microchip.com; q=dns/txt; s=mchp;
+  t=1750695407; x=1782231407;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=Ur0XOriXT1WlSZ1k17YMUC/sCAmjE++EAq3Cer6GQKI=;
+  b=Ok289bH4Itw6AdHHfh18UBRJ/nhOL4CY/1loDg9Kf3CsAziBw36z6qRr
+   Q6Z+YwbOTvoVSHjhNheCmD6N2Dyx6BlxxYQKL4Zo3yXw/d2Wr2HX0ck3R
+   nt/Lf8+Rp6q8108nv8GAVK3BTLRzgAuoMxJ5gK2c0ZE89B3B7VPgkT0PZ
+   6AIGNpIbAGKCK4z4mNNuWddYSsBWGE0rn/cwEUE/4M2h00om2NFs8vf69
+   XjtWRx7ug5LHxa2eE6lSkmUuR7x4l4AzDkq5hy0tFwtcOolPLPyqOwfdG
+   gSdShPQSVHEMSDqx7raHsdm0hnxgwROH7J2xJe9y0d1yCZC2hhayTxER9
+   Q==;
+X-CSE-ConnectionGUID: YKKdZQvISxa431DUkbBFkA==
+X-CSE-MsgGUID: EAlSJYjtTEK2VZ7v+xC1Ag==
+X-IronPort-AV: E=Sophos;i="6.16,259,1744095600"; 
+   d="scan'208";a="43120166"
+X-Amp-Result: SKIPPED(no attachment in message)
+Received: from unknown (HELO email.microchip.com) ([170.129.1.10])
+  by esa3.microchip.iphmx.com with ESMTP/TLS/ECDHE-RSA-AES128-GCM-SHA256; 23 Jun 2025 09:16:46 -0700
+Received: from chn-vm-ex01.mchp-main.com (10.10.85.143) by
+ chn-vm-ex03.mchp-main.com (10.10.85.151) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.44; Mon, 23 Jun 2025 09:16:37 -0700
+Received: from [10.10.179.162] (10.10.85.11) by chn-vm-ex01.mchp-main.com
+ (10.10.85.143) with Microsoft SMTP Server id 15.1.2507.44 via Frontend
+ Transport; Mon, 23 Jun 2025 09:16:37 -0700
+Message-ID: <0aa6c9a4-4a65-4b55-a180-92c795499384@microchip.com>
+Date: Mon, 23 Jun 2025 09:16:37 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250620011616.118-1-kernel@airkyi.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 0/3] Expose REFCLK for RMII and enable RMII
+To: Andrew Lunn <andrew@lunn.ch>
+CC: <andrew+netdev@lunn.ch>, <davem@davemloft.net>, <edumazet@google.com>,
+	<kuba@kernel.org>, <pabeni@redhat.com>, <robh@kernel.org>,
+	<krzk+dt@kernel.org>, <conor+dt@kernel.org>, <nicolas.ferre@microchip.com>,
+	<claudiu.beznea@tuxon.dev>, <netdev@vger.kernel.org>,
+	<devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+References: <cover.1750346271.git.Ryan.Wanner@microchip.com>
+ <4b1f601d-7a65-4252-8f04-62b5a952c001@lunn.ch>
+From: Ryan Wanner <ryan.wanner@microchip.com>
+Content-Language: en-US
+In-Reply-To: <4b1f601d-7a65-4252-8f04-62b5a952c001@lunn.ch>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
 
-On Fri, Jun 20, 2025 at 09:16:16AM +0800, Chaoyi Chen wrote:
-> From: Chaoyi Chen <chaoyi.chen@rock-chips.com>
+On 6/21/25 00:24, Andrew Lunn wrote:
+> EXTERNAL EMAIL: Do not click links or open attachments unless you know the content is safe
 > 
-> The bridge used in drm_connector_hdmi_audio_init() does not correctly
-> point to the required audio bridge, which lead to incorrect audio
-> configuration input.
+> On Thu, Jun 19, 2025 at 10:04:12AM -0700, Ryan.Wanner@microchip.com wrote:
+>> From: Ryan Wanner <Ryan.Wanner@microchip.com>
+>>
+>> This set allows the REFCLK property to be exposed as a dt-property to
+>> properly reflect the correct RMII layout. RMII can take an external or
+>> internal provided REFCLK, since this is not SoC dependent but board
+>> dependent this must be exposed as a DT property for the macb driver.
 > 
-> Fixes: 231adeda9f67 ("drm/bridge-connector: hook DisplayPort audio support")
-> Signed-off-by: Chaoyi Chen <chaoyi.chen@rock-chips.com>
+> What board is going to use this? Do you have a patch for a .dts file?
 
-Thanks, this patch fixes the following errors for me on a Qualcomm X1
-Elite laptop with v6.16-rc3:
+Our SAMA7D65_curiosity board has a connector that allows us to change
+ethernet phys. Since some of the phys we have provide their own REFCLK
+while others do not, this property needs to be added so we are able to
+use all of these.
 
-[   10.900256] hdmi-audio-codec hdmi-audio-codec.5.auto: hdmi_codec_probe: Invalid parameters
-[   10.901376] hdmi-audio-codec hdmi-audio-codec.4.auto: hdmi_codec_probe: Invalid parameters
-[   10.909627] hdmi-audio-codec hdmi-audio-codec.5.auto: probe with driver hdmi-audio-codec failed with error -22
-[   10.910813] hdmi-audio-codec hdmi-audio-codec.6.auto: hdmi_codec_probe: Invalid parameters
-[   10.918145] hdmi-audio-codec hdmi-audio-codec.4.auto: probe with driver hdmi-audio-codec failed with error -22
-[   10.919296] hdmi-audio-codec hdmi-audio-codec.5.auto: hdmi_codec_probe: Invalid parameters
-[   10.919298] hdmi-audio-codec hdmi-audio-codec.5.auto: probe with driver hdmi-audio-codec failed with error -22
-[   10.928482] hdmi-audio-codec hdmi-audio-codec.6.auto: probe with driver hdmi-audio-codec failed with error -22
-[   10.930742] hdmi-audio-codec hdmi-audio-codec.6.auto: hdmi_codec_probe: Invalid parameters
-[   10.930744] hdmi-audio-codec hdmi-audio-codec.6.auto: probe with driver hdmi-audio-codec failed with error -22
+I do not have an exact .dts patch for this since our default is MPU
+provides the REFCLK, this property will be used with dt-overlays that
+match each phy that is connected.
 
-By de-referencing the "bridge" from the outer scope I think the current
-broken code basically de-references some random out-of-bounds memory.
-This should be fixed ASAP.
-
-Tested-by: Stephan Gerhold <stephan.gerhold@linaro.org>
-
-> ---
->  drivers/gpu/drm/display/drm_bridge_connector.c | 7 +++++--
->  1 file changed, 5 insertions(+), 2 deletions(-)
+Ryan
 > 
-> diff --git a/drivers/gpu/drm/display/drm_bridge_connector.c b/drivers/gpu/drm/display/drm_bridge_connector.c
-> index 7d2e499ea5de..262e93e07a28 100644
-> --- a/drivers/gpu/drm/display/drm_bridge_connector.c
-> +++ b/drivers/gpu/drm/display/drm_bridge_connector.c
-> @@ -708,11 +708,14 @@ struct drm_connector *drm_bridge_connector_init(struct drm_device *drm,
->  	if (bridge_connector->bridge_hdmi_audio ||
->  	    bridge_connector->bridge_dp_audio) {
->  		struct device *dev;
-> +		struct drm_bridge *bridge;
+>         Andrew
 
-This is technically redundant since "bridge" is already defined in the
-top-level of this function and shadowing it (declaring it again) doesn't
-really make it less confusing.
-
-I would suggest either dropping this line and re-assigning the existing
-bridge variable (as it was before commit 231adeda9f67
-("drm/bridge-connector: hook DisplayPort audio support")), or perhaps
-renaming this to
-
-		struct drm_bridge *audio_bridge;
-
-for less confusion.
-
->  
->  		if (bridge_connector->bridge_hdmi_audio)
-> -			dev = bridge_connector->bridge_hdmi_audio->hdmi_audio_dev;
-> +			bridge = bridge_connector->bridge_hdmi_audio;
->  		else
-> -			dev = bridge_connector->bridge_dp_audio->hdmi_audio_dev;
-> +			bridge = bridge_connector->bridge_dp_audio;
-> +
-> +		dev = bridge->hdmi_audio_dev;
-
-The "dev" variable seems pointless now, just inline
-bridge->hdmi_audio_dev in the call below?
-
->  
->  		ret = drm_connector_hdmi_audio_init(connector, dev,
->  						    &drm_bridge_connector_hdmi_audio_funcs,
-
-Thanks,
-Stephan
 
