@@ -1,170 +1,138 @@
-Return-Path: <linux-kernel+bounces-697873-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-697875-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 94EE0AE39C2
-	for <lists+linux-kernel@lfdr.de>; Mon, 23 Jun 2025 11:19:00 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 8A71DAE39C6
+	for <lists+linux-kernel@lfdr.de>; Mon, 23 Jun 2025 11:19:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E97293B31C6
-	for <lists+linux-kernel@lfdr.de>; Mon, 23 Jun 2025 09:17:30 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5E91F3B9CC2
+	for <lists+linux-kernel@lfdr.de>; Mon, 23 Jun 2025 09:18:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8658423182B;
-	Mon, 23 Jun 2025 09:17:47 +0000 (UTC)
-Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D07F3231836;
+	Mon, 23 Jun 2025 09:18:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=hmeau.com header.i=@hmeau.com header.b="drXULibQ"
+Received: from abb.hmeau.com (abb.hmeau.com [144.6.53.87])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C6AC11DDA0C;
-	Mon, 23 Jun 2025 09:17:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C60692940F;
+	Mon, 23 Jun 2025 09:18:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=144.6.53.87
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750670267; cv=none; b=TehgrWhqQh6UtcZgTR5xLXidOZcR7Z6ZAC4fDTJ7LTntUeEw5EhUpHVV+9jStrLTFEaP5o6fiBYt9fnydx1aNwOYn9UYafOUrSEKN6GRE4GjQnyG/erCIUtXb89nUGy8CIu50cEsrJgP5900sKJx0fRFuYd1l7gsAEBr10pT1cw=
+	t=1750670297; cv=none; b=ra3TWF0bM9VoGhzpHFXhT19+zZm0ITmwJCj8PIcVCR18nFEcuVWwIhetM81eqYkQCxg/zwwjOCzQseKUSBE+GEDKtRrgzRYfLbGB5O/DOG4FnaYTZTDrqwwrIuArZkpvcKWRW9rQbiQtL7sWQwt2vNGWLrPJ1d1JD/K76/1wtvo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750670267; c=relaxed/simple;
-	bh=Lz+4noPkADPzOVza6QdPRsZLH7WjZAqND7jwzSRYIug=;
-	h=Date:From:To:CC:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=qkedgW+vnxcKqZao8hjTFYPu6saNEu0kN6cQUYZWtUdTHCPTH14+B9MSv9BLdH4B0FikUSjgdk6KEFLWKv94reu5vGuOrYe6Qdx86k+PC23qxZKx1CH1CAtkkoSF5EJ4Ze7VA8QwN2WXTuvAOthG2bCuR3u5WaI/OYUhvgzSCoo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.18.186.31])
-	by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4bQj90252dz6HJqs;
-	Mon, 23 Jun 2025 17:15:16 +0800 (CST)
-Received: from frapeml500008.china.huawei.com (unknown [7.182.85.71])
-	by mail.maildlp.com (Postfix) with ESMTPS id E5FD81402EF;
-	Mon, 23 Jun 2025 17:17:42 +0800 (CST)
-Received: from localhost (10.203.177.66) by frapeml500008.china.huawei.com
- (7.182.85.71) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.39; Mon, 23 Jun
- 2025 11:17:42 +0200
-Date: Mon, 23 Jun 2025 10:17:40 +0100
-From: Jonathan Cameron <Jonathan.Cameron@huawei.com>
-To: Neeraj Kumar <s.neeraj@samsung.com>
-CC: <dan.j.williams@intel.com>, <dave@stgolabs.net>, <dave.jiang@intel.com>,
-	<alison.schofield@intel.com>, <vishal.l.verma@intel.com>,
-	<ira.weiny@intel.com>, <a.manzanares@samsung.com>, <nifan.cxl@gmail.com>,
-	<anisa.su@samsung.com>, <vishak.g@samsung.com>, <krish.reddy@samsung.com>,
-	<arun.george@samsung.com>, <alok.rathore@samsung.com>,
-	<neeraj.kernel@gmail.com>, <linux-kernel@vger.kernel.org>,
-	<linux-cxl@vger.kernel.org>, <nvdimm@lists.linux.dev>,
-	<gost.dev@samsung.com>, <cpgs@samsung.com>
-Subject: Re: [RFC PATCH 12/20] nvdimm/namespace_label: Skip region label
- during namespace creation
-Message-ID: <20250623101740.00004840@huawei.com>
-In-Reply-To: <2024918163.301750165206130.JavaMail.epsvc@epcpadp1new>
-References: <20250617123944.78345-1-s.neeraj@samsung.com>
-	<CGME20250617124040epcas5p3be044cbdc5b33b0b8465d84870a5b280@epcas5p3.samsung.com>
-	<2024918163.301750165206130.JavaMail.epsvc@epcpadp1new>
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.42; x86_64-w64-mingw32)
+	s=arc-20240116; t=1750670297; c=relaxed/simple;
+	bh=uUCG0PtgoY0CiWy/SYGswt6YhPYBd5m46i/7r2ff9zg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=IJNTSvUTPnxuAXN0FSOLjpdRzi+OlTRu0zxXqF3NCL3fXzrzyBFAfSBGCgMbuFUDnmvevuNDdI2lKtZdnIxyhLRk4Vo6bfVEU/odA6nfU0DeOccq6KDYVE0/uRDYAFzAJThoCyfbhBwmfsH6iqz91imTAe99Lxw0LJyV4GltOGI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gondor.apana.org.au; spf=pass smtp.mailfrom=gondor.apana.org.au; dkim=pass (2048-bit key) header.d=hmeau.com header.i=@hmeau.com header.b=drXULibQ; arc=none smtp.client-ip=144.6.53.87
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gondor.apana.org.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gondor.apana.org.au
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=hmeau.com;
+	s=formenos; h=In-Reply-To:Content-Transfer-Encoding:Content-Type:MIME-Version
+	:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:Content-ID:
+	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+	:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
+	List-Post:List-Owner:List-Archive;
+	bh=34TxypIJyscDJLphDBw7+DPinr1/GPNGSO+jpo8aCL0=; b=drXULibQwGxgidQrP7A6XdplMP
+	YFYg4bPm5y2irU5k0RG2tJU3tjk1xkOdUXoGbpAwV4RRbDVk910WkE8wC58VhuBZRBKmLJQnwnWJj
+	KtYTWmlYqxuQzTjNv8/n8vd4hUySlo5Kksl8XPEGCru9CFj9LyS+36CbPd0cKCDBejg7li2yWTNFj
+	3imYR6R3fVY6gu/hg6Qsj1r/6QEpzZ664vd8QneO6gv+WXT36RFg1EAvXl2/JQRf8QFT4y3drW6M5
+	JI+F1P4YabWroEYJ7GSS+4OdKvlYzmTLaRrsutQBIZLncxkYJ6owHvSvswAE5D/HwmIrY/l6gYVPd
+	OjQP0/3g==;
+Received: from loth.rohan.me.apana.org.au ([192.168.167.2])
+	by formenos.hmeau.com with smtp (Exim 4.96 #2 (Debian))
+	id 1uTd3z-000FU3-1a;
+	Mon, 23 Jun 2025 17:18:00 +0800
+Received: by loth.rohan.me.apana.org.au (sSMTP sendmail emulation); Mon, 23 Jun 2025 17:17:59 +0800
+Date: Mon, 23 Jun 2025 17:17:59 +0800
+From: Herbert Xu <herbert@gondor.apana.org.au>
+To: John Ernberg <john.ernberg@actia.se>
+Cc: Horia =?utf-8?Q?Geant=C4=83?= <horia.geanta@nxp.com>,
+	Pankaj Gupta <pankaj.gupta@nxp.com>,
+	Gaurav Jain <gaurav.jain@nxp.com>,
+	"David S . Miller" <davem@davemloft.net>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>, Shawn Guo <shawnguo@kernel.org>,
+	Sascha Hauer <s.hauer@pengutronix.de>, Peng Fan <peng.fan@nxp.com>,
+	Frank Li <Frank.Li@nxp.com>,
+	Pengutronix Kernel Team <kernel@pengutronix.de>,
+	Fabio Estevam <festevam@gmail.com>,
+	"linux-crypto@vger.kernel.org" <linux-crypto@vger.kernel.org>,
+	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"imx@lists.linux.dev" <imx@lists.linux.dev>,
+	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
+Subject: Re: [PATCH v6 0/4] crypto: caam - iMX8QXP support (and related fixes)
+Message-ID: <aFkbx_39WopOdwdV@gondor.apana.org.au>
+References: <20250611113748.2986988-1-john.ernberg@actia.se>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="US-ASCII"
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: lhrpeml500011.china.huawei.com (7.191.174.215) To
- frapeml500008.china.huawei.com (7.182.85.71)
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20250611113748.2986988-1-john.ernberg@actia.se>
 
-On Tue, 17 Jun 2025 18:09:36 +0530
-Neeraj Kumar <s.neeraj@samsung.com> wrote:
-
-> During namespace creation skip presence of region label if present.
-> Also preserve region label into labels list if present.
+On Wed, Jun 11, 2025 at 11:38:08AM +0000, John Ernberg wrote:
+> This series enables the use of the CAAM (Cryptographic Acceleration and
+> Assurance Module) on the iMX8QXP (and its variants).
 > 
-> Signed-off-by: Neeraj Kumar <s.neeraj@samsung.com>
-> ---
->  drivers/nvdimm/namespace_devs.c | 48 +++++++++++++++++++++++++++++----
->  1 file changed, 43 insertions(+), 5 deletions(-)
+> v6: (detailed changelog in each patch)
+>  - Fix property order in bindings (Frank Li)
+>  - Collect tags
 > 
-> diff --git a/drivers/nvdimm/namespace_devs.c b/drivers/nvdimm/namespace_devs.c
-> index b081661b7aaa..ca8f8546170c 100644
-> --- a/drivers/nvdimm/namespace_devs.c
-> +++ b/drivers/nvdimm/namespace_devs.c
-> @@ -1976,6 +1976,10 @@ static struct device **scan_labels(struct nd_region *nd_region)
->  		if (!nd_label)
->  			continue;
->  
-> +		/* skip region labels if present */
-> +		if (is_region_label(ndd, nd_label))
-> +			continue;
-> +
->  		/* skip labels that describe extents outside of the region */
->  		if (nsl_get_dpa(ndd, &nd_label->ns_label) < nd_mapping->start ||
->  		    nsl_get_dpa(ndd, &nd_label->ns_label) > map_end)
-> @@ -2014,9 +2018,29 @@ static struct device **scan_labels(struct nd_region *nd_region)
->  
->  	if (count == 0) {
->  		struct nd_namespace_pmem *nspm;
-> +		for (i = 0; i < nd_region->ndr_mappings; i++) {
-> +			struct nd_label_ent *le, *e;
-> +			LIST_HEAD(list);
->  
-> -		/* Publish a zero-sized namespace for userspace to configure. */
-> -		nd_mapping_free_labels(nd_mapping);
-> +			nd_mapping = &nd_region->mapping[i];
-> +			if (list_empty(&nd_mapping->labels))
-> +				continue;
-> +
-> +			list_for_each_entry_safe(le, e, &nd_mapping->labels,
-> +						 list) {
-> +				struct nd_lsa_label *nd_label = le->label;
-> +
-> +				/* preserve region labels if present */
-> +				if (is_region_label(ndd, nd_label))
-> +					list_move_tail(&le->list, &list);
-> +			}
-> +
-> +			/* Publish a zero-sized namespace for userspace
+> v5: https://lore.kernel.org/linux-crypto/20250610085110.2295392-1-john.ernberg@actia.se/T
+>  - Fix indentation issues in bindings (Rob Herring's bot)
+>  - Collect tags
+> 
+> v4: https://lore.kernel.org/linux-crypto/20250605132754.1771368-1-john.ernberg@actia.se/T
+>  - Declare more compatibles in bindings (Frank Li)
+>  - Move job-ring compat check under the job-ring subschema (Rob Herring)
+> 
+> v3: https://lore.kernel.org/linux-crypto/20250528144259.2603914-1-john.ernberg@actia.se/T
+>  - Fix devicetree CI detected errors (Rob Herring's bot)
+>  - Declare the compatibles correctly in bindings (Krzysztof Kozlowski)
+> 
+> v2: https://lore.kernel.org/linux-crypto/20250527071552.1424997-1-john.ernberg@actia.se/T
+>  - Clarify in the commit message how the crash fix works (Frank Li)
+>  - Restrict power-domains only for iMX8Q* SoCs in bindings (Frank Li)
+>  - Collect tags
+> 
+> v1: https://lore.kernel.org/linux-crypto/20250523131814.1047662-1-john.ernberg@actia.se/T
+> 
+> Horia Geantă (1):
+>   arm64: dts: freescale: imx8qxp/imx8qm: Add CAAM support
+> 
+> John Ernberg (3):
+>   crypto: caam - Prevent crash on suspend with iMX8QM / iMX8ULP
+>   crypto: caam - Support iMX8QXP and variants thereof
+>   dt-bindings: crypto: fsl,sec-v4.0: Add power domains for iMX8QM and
+>     iMX8QXP
+> 
+>  .../bindings/crypto/fsl,sec-v4.0.yaml         | 41 ++++++++++++++++++-
+>  .../boot/dts/freescale/imx8-ss-security.dtsi  | 38 +++++++++++++++++
+>  arch/arm64/boot/dts/freescale/imx8qm.dtsi     |  1 +
+>  .../dts/freescale/imx8qxp-ss-security.dtsi    | 16 ++++++++
+>  arch/arm64/boot/dts/freescale/imx8qxp.dtsi    |  2 +
+>  drivers/crypto/caam/ctrl.c                    |  7 ++--
+>  drivers/crypto/caam/intern.h                  |  1 +
+>  7 files changed, 102 insertions(+), 4 deletions(-)
+>  create mode 100644 arch/arm64/boot/dts/freescale/imx8-ss-security.dtsi
+>  create mode 100644 arch/arm64/boot/dts/freescale/imx8qxp-ss-security.dtsi
+> 
+> -- 
+> 2.49.0
 
-Comment syntax as before looks to be inconsistent with file.
-
-> +			 * to configure.
-> +			 */
-> +			nd_mapping_free_labels(nd_mapping);
-> +			list_splice_init(&list, &nd_mapping->labels);
-> +		}
->  		nspm = kzalloc(sizeof(*nspm), GFP_KERNEL);
->  		if (!nspm)
->  			goto err;
-> @@ -2028,7 +2052,7 @@ static struct device **scan_labels(struct nd_region *nd_region)
->  	} else if (is_memory(&nd_region->dev)) {
->  		/* clean unselected labels */
->  		for (i = 0; i < nd_region->ndr_mappings; i++) {
-> -			struct list_head *l, *e;
-> +			struct nd_label_ent *le, *e;
->  			LIST_HEAD(list);
->  			int j;
->  
-> @@ -2039,10 +2063,24 @@ static struct device **scan_labels(struct nd_region *nd_region)
->  			}
->  
->  			j = count;
-> -			list_for_each_safe(l, e, &nd_mapping->labels) {
-> +			list_for_each_entry_safe(le, e, &nd_mapping->labels,
-> +						 list) {
-> +				struct nd_lsa_label *nd_label = le->label;
-> +
-> +				/* preserve region labels */
-> +				if (is_region_label(ndd, nd_label)) {
-> +					list_move_tail(&le->list, &list);
-> +					continue;
-> +				}
-> +
-> +				/* Once preserving selected ns label done
-Comment syntax.
-> +				 * break out of loop
-> +				 */
->  				if (!j--)
->  					break;
-> -				list_move_tail(l, &list);
-> +
-> +				/* preserve selected ns label */
-> +				list_move_tail(&le->list, &list);
->  			}
->  			nd_mapping_free_labels(nd_mapping);
->  			list_splice_init(&list, &nd_mapping->labels);
-
+Patches 1-3 applied.  Thanks.
+-- 
+Email: Herbert Xu <herbert@gondor.apana.org.au>
+Home Page: http://gondor.apana.org.au/~herbert/
+PGP Key: http://gondor.apana.org.au/~herbert/pubkey.txt
 
