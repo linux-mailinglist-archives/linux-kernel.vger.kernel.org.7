@@ -1,81 +1,54 @@
-Return-Path: <linux-kernel+bounces-698320-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-698323-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2086DAE4072
-	for <lists+linux-kernel@lfdr.de>; Mon, 23 Jun 2025 14:35:12 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 09927AE407A
+	for <lists+linux-kernel@lfdr.de>; Mon, 23 Jun 2025 14:36:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E2D37164580
-	for <lists+linux-kernel@lfdr.de>; Mon, 23 Jun 2025 12:33:10 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 34799169265
+	for <lists+linux-kernel@lfdr.de>; Mon, 23 Jun 2025 12:33:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BD1D9244698;
-	Mon, 23 Jun 2025 12:31:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DA25324A079;
+	Mon, 23 Jun 2025 12:32:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="F/Uau7QR"
-Received: from mail-wr1-f44.google.com (mail-wr1-f44.google.com [209.85.221.44])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="fRzoI1dl"
+Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 684FD23D2AE
-	for <linux-kernel@vger.kernel.org>; Mon, 23 Jun 2025 12:31:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 825222459F1;
+	Mon, 23 Jun 2025 12:32:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750681914; cv=none; b=pmWeCNvmj7OkbxqEGvhu2i88RcFFi7fFz3ltEgSSS0SEqSTtQIdPVmA6rPhdHYFrIDiJeeYTI/yyfldLyYNlD3Gopn81jvP6uR+JxKbBAfGAEJdXZ6qvywRWMCx4TZUFzxoQkXiWiXmECRdC8w27GFN7IygmLiPkVkae3Fuh3Ts=
+	t=1750681949; cv=none; b=NIZ36Hl3TIMts5cnFf16GuaprRYuh1x6U9HNvVQEKWNn0jxIlhhdv+FfPvJweFg9Gay7yIKK856C4ndTpGHMyBIMyaw8cq7StuaQAuxZF9OQPhihz5zvTK1c+5TKHdVz7zH/YkyAnIWO/rj4tbrfaPnoXsmuGoiwOpRXk30ZaIs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750681914; c=relaxed/simple;
-	bh=TaUyQeKYhgc4zl+3DnQxYD5JvJEoSa1gSj88BTfllVU=;
-	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:References:
-	 In-Reply-To:Content-Type; b=XoV8Nh3KmabYHXBwoOwSdHOrpO3EPKYy0A49K6eQQJbGGf2GSt8ElS5EFfP9s9x7RLwoIyljl7kIjUvwO78CSMrret8JKeOEEwha45iJuRwo890U8K6m9uqXS116NjURPT6Boh9Kuwp4ckCSa8+/1gr0w9EejpP5CjA5/EUf5Mw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=F/Uau7QR; arc=none smtp.client-ip=209.85.221.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wr1-f44.google.com with SMTP id ffacd0b85a97d-3a589d99963so4035220f8f.1
-        for <linux-kernel@vger.kernel.org>; Mon, 23 Jun 2025 05:31:52 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1750681911; x=1751286711; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:organization:autocrypt
-         :content-language:references:cc:to:subject:reply-to:from:user-agent
-         :mime-version:date:message-id:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=5BsUESEJVffI4oZaO5RphZPRSePWRjkMtfmD/4yLa1A=;
-        b=F/Uau7QRViVvv2u0RCnLiOJ5MHkiwVjLVcKlxn8Tyemk96Q6fXuQtBCLtssQx9Pkod
-         RhDGogONkozQvvp6gls2rb/nxYvNNDf5EC3RAjIsMg1lJZb575DxsrSGsWbij+q2EP8Y
-         j3dl85MDGnas41/YmalI0WV+M69aXEU4LZdJlXo+rBkg2yYuajEe4PoSuRjTqbWxhq2K
-         5CX+wu5bXumtD9QhTC3y/bGxb3LyfHzg4Dg/KCXcZPkJpZeFqkvw31wKdac3c4j7KW4K
-         UjSU3VaOMQk9vTuQ9anzxWJluhY2Ci1TuDeruz+vcJ+NIFpoBR5CLvy03CPmf99RU/Eg
-         RjQw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1750681911; x=1751286711;
-        h=content-transfer-encoding:in-reply-to:organization:autocrypt
-         :content-language:references:cc:to:subject:reply-to:from:user-agent
-         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=5BsUESEJVffI4oZaO5RphZPRSePWRjkMtfmD/4yLa1A=;
-        b=ZQEiono7kMqIxRpBgTlOAxy1Kw1DtifDaWKECv7h65l20YrQBd1AgpabcIms8K6/GK
-         6teshZVElsiKlylXATD/X3Rms19b5tup8LTM71lTeGtSj1zrOJpv/xe8UjIxecqHnG/R
-         nx6Q2EifUusRaUTTEHHyVNn4y9K0LEUzE7I/Fhi/hk1q18tjUuvy2f/q0S0XNbKoCiTu
-         pH7bZQ1Uq+XKSrkefFMBcYO6XLcH3Bqgv8FBJjCNQJUq02BTOMggHF7XbOWLhHf0Gmuf
-         y8fFN9hhEhADMcgDRpg5IoG9488WhMxhNjvbkSazrbaowYkEPsNLA2Ho4mvPS3tC53z3
-         2YWw==
-X-Forwarded-Encrypted: i=1; AJvYcCWSmtbcelAdsDEUqh3ERAG2V7g3ImV1sFGB/P7h/nmiS3ncm9ZZ9imD/RDGDFHQeT8yzqY5WAIXCKixw7A=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxJATydLYaxwOEDR85UF5b4nrB0gjRO+sdP0TVAUD+Xw5LYtM7y
-	HjGYtvTbcGp+f3Iuca54wpEBwzK8R8a7hxP3fsLOLTGoSaeAiKODt4Hj+8zu7thVSHo=
-X-Gm-Gg: ASbGncuW264QqZNswM5PM2Ja0n7Dx0L4b2rWEJGjbm3C+vTBTe8JGfkCiXUunekRpRC
-	UWpNkycfmnB40l7iCVBM2r2fc6ftheRd7YGNO0nAet2SK2lEIKyLd4r3RGRhHyuYNS/JvnOq9iU
-	eM06CvM8YoAQEGx9QCL9l6famCp2uiwaHUZJxobKKiwV+M64KEJlhf3hKPH0bMz84Fbkt4pKJOI
-	0gmz8jElyBgutMhhoUYNDyoK7ds16NSOgqE9QKK1O3iVXs+wGtBYhF65CIjlKLVT57nC3WAaFER
-	Zd0QJGJXmPIctuPxuIQM7feLt7ozJJT7ygJMvPbhM6WUd/GsjZF54RaLKH7ZcN9SCXxSQRjnZsP
-	CQrRNCK+U5q6KLuYM7yArcAxbkRl21hq40CteAJE=
-X-Google-Smtp-Source: AGHT+IHaPhLV7BB64wJ54i+PRTDFMAI1xBSKbX9CFXttTtVDg0OzsIpGIzpsgLpaaXop+qHd9i2Kdw==
-X-Received: by 2002:a05:6000:2902:b0:3a4:d367:c591 with SMTP id ffacd0b85a97d-3a6d128a58fmr9608741f8f.10.1750681910714;
-        Mon, 23 Jun 2025 05:31:50 -0700 (PDT)
-Received: from ?IPV6:2a01:e0a:3d9:2080:8c08:7c51:bbb1:5a2d? ([2a01:e0a:3d9:2080:8c08:7c51:bbb1:5a2d])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3a6d0f19e7dsm9599607f8f.38.2025.06.23.05.31.49
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 23 Jun 2025 05:31:50 -0700 (PDT)
-Message-ID: <6070afbd-39f8-4f60-9230-794889e7012e@linaro.org>
-Date: Mon, 23 Jun 2025 14:31:49 +0200
+	s=arc-20240116; t=1750681949; c=relaxed/simple;
+	bh=Hi9Eh4Q8Idz+PcP0DJGiXpcq9TCKuca5A6YCe8h1Q6U=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=PNwPrVsb4F1fcnOPOEC/fGnuJaGqy3yvGGDHdiwPIGUKM/jl0/fM3nFEDf4a4w1Dj8+B0R1Dckwx+S9rhbfkWASfuY4opXC9mqxHKbKzvXeu659pqXRHc4Ivdn1a/VpkizrCe36fiC/SrGVR0Dm8LQrBdfzvB5YtkP/VVlbZKxc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=fRzoI1dl; arc=none smtp.client-ip=148.251.105.195
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+	s=mail; t=1750681945;
+	bh=Hi9Eh4Q8Idz+PcP0DJGiXpcq9TCKuca5A6YCe8h1Q6U=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=fRzoI1dlS3MhNk3kaIep6i4WWNWcAedful78drVRlvm/4Xh1SkS3K+ztOxFgSXAoH
+	 2vbxKawbsztUnl09cPgSt+uFvVJ1tHS6KKrdllwE7bz4z7Nx8fjloQ81iDlj4Xj79Q
+	 /D5ypsq0jDLDquYdSE6sGH6Vs3QoA6d6ufaxnnBWl5rl/oV0zaA/r9/MsmuncGTLQ/
+	 zChQ5ri/Q5UxqkUf8s5FwHisxQIwpUKH8BYjPGN4ASCoS3jQkHgPzClBohAjnAg3zh
+	 ePgONva+hO8UErkrt4zINF+7jcMmK0nTWjXo4ELEAsJk5/M9CCDUjpnlURnSI/Wd6Q
+	 usJOc2BEtxn3w==
+Received: from [192.168.1.100] (2-237-20-237.ip236.fastwebnet.it [2.237.20.237])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits))
+	(No client certificate requested)
+	(Authenticated sender: kholk11)
+	by bali.collaboradmins.com (Postfix) with ESMTPSA id 13E9717E05BD;
+	Mon, 23 Jun 2025 14:32:25 +0200 (CEST)
+Message-ID: <9e8d0dfc-7dc4-461d-afd9-bd381219422f@collabora.com>
+Date: Mon, 23 Jun 2025 14:32:24 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -83,109 +56,62 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-From: Neil Armstrong <neil.armstrong@linaro.org>
-Reply-To: Neil Armstrong <neil.armstrong@linaro.org>
-Subject: Re: [PATCH] drm/bridge: panel: move prepare_prev_first handling to
- drm_panel_bridge_add_typed
-To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
- Andrzej Hajda <andrzej.hajda@intel.com>, Robert Foss <rfoss@kernel.org>,
- Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
- Jonas Karlman <jonas@kwiboo.se>, Jernej Skrabec <jernej.skrabec@gmail.com>,
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
- Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
- David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
- Dave Stevenson <dave.stevenson@raspberrypi.com>,
- Jagan Teki <jagan@amarulasolutions.com>
-Cc: dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
- Svyatoslav Ryhel <clamor95@gmail.com>
-References: <20250220-panel_prev_first-v1-1-b9e787825a1a@linaro.org>
-Content-Language: en-US, fr
-Autocrypt: addr=neil.armstrong@linaro.org; keydata=
- xsBNBE1ZBs8BCAD78xVLsXPwV/2qQx2FaO/7mhWL0Qodw8UcQJnkrWmgTFRobtTWxuRx8WWP
- GTjuhvbleoQ5Cxjr+v+1ARGCH46MxFP5DwauzPekwJUD5QKZlaw/bURTLmS2id5wWi3lqVH4
- BVF2WzvGyyeV1o4RTCYDnZ9VLLylJ9bneEaIs/7cjCEbipGGFlfIML3sfqnIvMAxIMZrvcl9
- qPV2k+KQ7q+aXavU5W+yLNn7QtXUB530Zlk/d2ETgzQ5FLYYnUDAaRl+8JUTjc0CNOTpCeik
- 80TZcE6f8M76Xa6yU8VcNko94Ck7iB4vj70q76P/J7kt98hklrr85/3NU3oti3nrIHmHABEB
- AAHNKk5laWwgQXJtc3Ryb25nIDxuZWlsLmFybXN0cm9uZ0BsaW5hcm8ub3JnPsLAkQQTAQoA
- OwIbIwULCQgHAwUVCgkICwUWAgMBAAIeAQIXgBYhBInsPQWERiF0UPIoSBaat7Gkz/iuBQJk
- Q5wSAhkBAAoJEBaat7Gkz/iuyhMIANiD94qDtUTJRfEW6GwXmtKWwl/mvqQtaTtZID2dos04
- YqBbshiJbejgVJjy+HODcNUIKBB3PSLaln4ltdsV73SBcwUNdzebfKspAQunCM22Mn6FBIxQ
- GizsMLcP/0FX4en9NaKGfK6ZdKK6kN1GR9YffMJd2P08EO8mHowmSRe/ExAODhAs9W7XXExw
- UNCY4pVJyRPpEhv373vvff60bHxc1k/FF9WaPscMt7hlkbFLUs85kHtQAmr8pV5Hy9ezsSRa
- GzJmiVclkPc2BY592IGBXRDQ38urXeM4nfhhvqA50b/nAEXc6FzqgXqDkEIwR66/Gbp0t3+r
- yQzpKRyQif3OwE0ETVkGzwEIALyKDN/OGURaHBVzwjgYq+ZtifvekdrSNl8TIDH8g1xicBYp
- QTbPn6bbSZbdvfeQPNCcD4/EhXZuhQXMcoJsQQQnO4vwVULmPGgtGf8PVc7dxKOeta+qUh6+
- SRh3vIcAUFHDT3f/Zdspz+e2E0hPV2hiSvICLk11qO6cyJE13zeNFoeY3ggrKY+IzbFomIZY
- 4yG6xI99NIPEVE9lNBXBKIlewIyVlkOaYvJWSV+p5gdJXOvScNN1epm5YHmf9aE2ZjnqZGoM
- Mtsyw18YoX9BqMFInxqYQQ3j/HpVgTSvmo5ea5qQDDUaCsaTf8UeDcwYOtgI8iL4oHcsGtUX
- oUk33HEAEQEAAcLAXwQYAQIACQUCTVkGzwIbDAAKCRAWmrexpM/4rrXiB/sGbkQ6itMrAIfn
- M7IbRuiSZS1unlySUVYu3SD6YBYnNi3G5EpbwfBNuT3H8//rVvtOFK4OD8cRYkxXRQmTvqa3
- 3eDIHu/zr1HMKErm+2SD6PO9umRef8V82o2oaCLvf4WeIssFjwB0b6a12opuRP7yo3E3gTCS
- KmbUuLv1CtxKQF+fUV1cVaTPMyT25Od+RC1K+iOR0F54oUJvJeq7fUzbn/KdlhA8XPGzwGRy
- 4zcsPWvwnXgfe5tk680fEKZVwOZKIEuJC3v+/yZpQzDvGYJvbyix0lHnrCzq43WefRHI5XTT
- QbM0WUIBIcGmq38+OgUsMYu4NzLu7uZFAcmp6h8g
-Organization: Linaro
-In-Reply-To: <20250220-panel_prev_first-v1-1-b9e787825a1a@linaro.org>
+Subject: Re: [PATCH v1 0/2] firmware: Add MediaTek TinySYS SCMI Protocol
+To: Cristian Marussi <cristian.marussi@arm.com>
+Cc: robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
+ matthias.bgg@gmail.com, sudeep.holla@arm.com, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-mediatek@lists.infradead.org, arm-scmi@vger.kernel.org,
+ kernel@collabora.com
+References: <20250623120136.109311-1-angelogioacchino.delregno@collabora.com>
+ <aFlFw-AjqxXcIuBO@pluto>
+From: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+Content-Language: en-US
+In-Reply-To: <aFlFw-AjqxXcIuBO@pluto>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 
-On 20/02/2025 16:07, Dmitry Baryshkov wrote:
-> The commit 5ea6b1702781 ("drm/panel: Add prepare_prev_first flag to
-> drm_panel") and commit 0974687a19c3 ("drm/bridge: panel: Set
-> pre_enable_prev_first from drmm_panel_bridge_add") added handling of
-> panel's prepare_prev_first to devm_panel_bridge_add() and
-> drmm_panel_bridge_add(). However if the driver calls
-> drm_panel_bridge_add_typed() directly, then the flag won't be handled
-> and thus the drm_bridge.pre_enable_prev_first will not be set.
+Il 23/06/25 14:17, Cristian Marussi ha scritto:
+> On Mon, Jun 23, 2025 at 02:01:34PM +0200, AngeloGioacchino Del Regno wrote:
+>> This series adds basic support for the MediaTek TinySYS SCMI Protocol,
+>> found on the MediaTek Dimensity 9200, 9300 and 9400, other than on the
+>> MT8196 Chromebook SoC.
+>>
+>> This is used to communicate with the CM_MGR and other MCUs for power
+>> management purposes.
 > 
-> Move prepare_prev_first handling to the drm_panel_bridge_add_typed() so
-> that there is no way to miss the flag.
+> Hi Angelo,
 > 
-> Fixes: 5ea6b1702781 ("drm/panel: Add prepare_prev_first flag to drm_panel")
-> Fixes: 0974687a19c3 ("drm/bridge: panel: Set pre_enable_prev_first from drmm_panel_bridge_add")
-> Reported-by: Svyatoslav Ryhel <clamor95@gmail.com>
-> Closes: https://lore.kernel.org/dri-devel/CAPVz0n3YZass3Bns1m0XrFxtAC0DKbEPiW6vXimQx97G243sXw@mail.gmail.com/
-> Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-> ---
->   drivers/gpu/drm/bridge/panel.c | 5 +----
->   1 file changed, 1 insertion(+), 4 deletions(-)
+> thanks for this.
 > 
-> diff --git a/drivers/gpu/drm/bridge/panel.c b/drivers/gpu/drm/bridge/panel.c
-> index c57036b06493a6922e2cae38bcd1733930ff0073..ed23de0478312a26a5d3434e63bd2fe4a6099bfc 100644
-> --- a/drivers/gpu/drm/bridge/panel.c
-> +++ b/drivers/gpu/drm/bridge/panel.c
-> @@ -302,6 +302,7 @@ struct drm_bridge *drm_panel_bridge_add_typed(struct drm_panel *panel,
->   	panel_bridge->bridge.of_node = panel->dev->of_node;
->   	panel_bridge->bridge.ops = DRM_BRIDGE_OP_MODES;
->   	panel_bridge->bridge.type = connector_type;
-> +	panel_bridge->bridge.pre_enable_prev_first = panel->prepare_prev_first;
->   
->   	drm_bridge_add(&panel_bridge->bridge);
->   
-> @@ -416,8 +417,6 @@ struct drm_bridge *devm_drm_panel_bridge_add_typed(struct device *dev,
->   		return bridge;
->   	}
->   
-> -	bridge->pre_enable_prev_first = panel->prepare_prev_first;
-> -
->   	*ptr = bridge;
->   	devres_add(dev, ptr);
->   
-> @@ -459,8 +458,6 @@ struct drm_bridge *drmm_panel_bridge_add(struct drm_device *drm,
->   	if (ret)
->   		return ERR_PTR(ret);
->   
-> -	bridge->pre_enable_prev_first = panel->prepare_prev_first;
-> -
->   	return bridge;
->   }
->   EXPORT_SYMBOL(drmm_panel_bridge_add);
+> I will do a proper review in the coming days of this series anyway, but
+> upfront for future V2:
 > 
-> ---
-> base-commit: 8936cec5cb6e27649b86fabf383d7ce4113bba49
-> change-id: 20250220-panel_prev_first-fc90c6c8aefa
+> - you should provide some sort of documentation for this new
+>    vendor protocol and its messages, as an example from IMX:
 > 
-> Best regards,
+> 	drivers/firmware/arm_scmi/vendors/imx/imx95.rst
 
-Reviewed-by: Neil Armstrong <neil.armstrong@linaro.org>
+Noted.
+
+> 
+> - where is the SCMI driver that will call all the new vendor ops
+>    defined in: scmi_mtk_protocol.h ?
+
+This was tested with code that is not clean at all (hence I can't push it upstream)
+and well... I didn't think about the fact that, effectively, without an user, this
+code ends up being unused.
+
+I can't promise to send a clean user in this cycle, but I would really appreciate
+if you could still check the protocol code, so that if there's anything that you
+can spot I can fix it while the rest gets done :-)
+
+Thank you,
+Angelo
+
+> 
+> Thanks,
+> Cristian
+
+
 
