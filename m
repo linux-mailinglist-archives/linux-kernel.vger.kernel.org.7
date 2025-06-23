@@ -1,207 +1,112 @@
-Return-Path: <linux-kernel+bounces-698033-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-698035-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6E40BAE3C2B
-	for <lists+linux-kernel@lfdr.de>; Mon, 23 Jun 2025 12:24:01 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 19551AE3C30
+	for <lists+linux-kernel@lfdr.de>; Mon, 23 Jun 2025 12:25:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 64A69174E48
-	for <lists+linux-kernel@lfdr.de>; Mon, 23 Jun 2025 10:23:57 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F33163AB57B
+	for <lists+linux-kernel@lfdr.de>; Mon, 23 Jun 2025 10:24:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 67D0723BD00;
-	Mon, 23 Jun 2025 10:23:46 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3E95923AE96
-	for <linux-kernel@vger.kernel.org>; Mon, 23 Jun 2025 10:23:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 620D323A99E;
+	Mon, 23 Jun 2025 10:25:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b="LNDuy07v"
+Received: from mailgw02.mediatek.com (unknown [210.61.82.184])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 320AC1519BC;
+	Mon, 23 Jun 2025 10:24:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.61.82.184
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750674226; cv=none; b=lCBvj1iCYN9oykei51pfKz7Th3RK/d2mqJhOEm7wRmTkCj6m4nxqV9mYA11vaUUOmLEMdW8Izr3QEMHFeR4riA1cttV7kz3/mHFznZ34rez36U3iPShxFOnqDnP9AMwRHeaOBtK5lrTn/r+ZN4nJXQlFhbmQF8IWRuvRf/yQTsQ=
+	t=1750674302; cv=none; b=n8jbNX+F0gjztN7NOia0OPhMHBVxgqkaYEHvVx9lsZYFyj1rscolIvr0tDxJiEyOg1fbFOXRGLI1VhWK8PdQJ3zwwEHdHD0f+wSg4az9fRF9Ct8fY9SiLUFppUk7P7uRkYaEp78BfN3tuDPDTu+660giLRQB/QqikbD/UdvUr8A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750674226; c=relaxed/simple;
-	bh=poG3/nNgtkjTrd/3HmFbi2XSJJGWBddePF4M9XtxFfM=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=T5SmUcOWTKDyTmfq3Rm8EXQFLiSZbE5d2Zviod3J5gFLYkr3nv1RUnhEEtQQURUma101JOHHxET8AMq6BpzjdUdxWWNx9mBhmO5h3A4t2NnIpDa6KDF2kDFMSTUwNlnGSc2OtduUUVgz49NLYLvfzssb1EYLLl4GBcpX1frbJyM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 59CCD113E;
-	Mon, 23 Jun 2025 03:23:25 -0700 (PDT)
-Received: from [10.57.29.183] (unknown [10.57.29.183])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id EF6CA3F58B;
-	Mon, 23 Jun 2025 03:23:39 -0700 (PDT)
-Message-ID: <a0481aed-825f-4ba9-b112-df7891299015@arm.com>
-Date: Mon, 23 Jun 2025 11:23:36 +0100
+	s=arc-20240116; t=1750674302; c=relaxed/simple;
+	bh=6xsegWb2dWXMVGEgWUNCdQNxL71wJFLz5e3VMtz/wiI=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=Z3kDmE7jr+JpJ8Ckzma7yIp/ch6ldaOpeq3QPPHveCQRS2/KJBD9zhvsHESxQwkKGItBwHKP8ULim/P1o+s2wLSLNUjwNCxQcRzuoXVuhMGNH6BzYQ3eyKcvABU+TWqFA6FR4ZXevCfOsTHRa0NHWJ9Lr/Sb3c64mos18JnzPE4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mediatek.com; spf=pass smtp.mailfrom=mediatek.com; dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b=LNDuy07v; arc=none smtp.client-ip=210.61.82.184
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mediatek.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mediatek.com
+X-UUID: 4daf6b52501c11f0b33aeb1e7f16c2b6-20250623
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=mediatek.com; s=dk;
+	h=Content-Type:Content-Transfer-Encoding:MIME-Version:Message-ID:Date:Subject:CC:To:From; bh=kgQPLojOCvKyYWN1b4NpMo1DPdZByKamqop9i/6TJf4=;
+	b=LNDuy07v2QLU8pRUGgfzV0QQJMKDxE8vO5Mzf9EIlhHzMuMssmmmL5wOyiMPhuRiF8ipuhJ2muHSRXxupKdv2spmNt7ozGoIv4mDbp0f55kQutExrwRsaZ87FmJku2rhFBg4qjVCmdkA5r7Ft4k35w+8J+xFX6islWuCQnriefQ=;
+X-CID-P-RULE: Release_Ham
+X-CID-O-INFO: VERSION:1.3.2,REQID:acd49204-d016-4b36-89b0-258ce6b63b04,IP:0,UR
+	L:0,TC:0,Content:-5,EDM:0,RT:0,SF:0,FILE:0,BULK:0,RULE:Release_Ham,ACTION:
+	release,TS:-5
+X-CID-META: VersionHash:9eb4ff7,CLOUDID:4b7dfc58-abad-4ac2-9923-3af0a8a9a079,B
+	ulkID:nil,BulkQuantity:0,Recheck:0,SF:102,TC:nil,Content:0|50,EDM:-3,IP:ni
+	l,URL:0,File:nil,RT:nil,Bulk:nil,QS:nil,BEC:nil,COL:0,OSI:0,OSA:0,AV:0,LES
+	:1,SPR:NO,DKR:0,DKP:0,BRR:0,BRE:0,ARC:0
+X-CID-BVR: 0
+X-CID-BAS: 0,_,0,_
+X-CID-FACTOR: TF_CID_SPAM_SNR
+X-CID-RHF: D41D8CD98F00B204E9800998ECF8427E
+X-UUID: 4daf6b52501c11f0b33aeb1e7f16c2b6-20250623
+Received: from mtkmbs13n1.mediatek.inc [(172.21.101.193)] by mailgw02.mediatek.com
+	(envelope-from <ot_zhangchao.zhang@mediatek.com>)
+	(Generic MTA with TLSv1.2 ECDHE-RSA-AES256-GCM-SHA384 256/256)
+	with ESMTP id 117142921; Mon, 23 Jun 2025 18:24:54 +0800
+Received: from mtkmbs13n1.mediatek.inc (172.21.101.193) by
+ MTKMBS09N2.mediatek.inc (172.21.101.94) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1258.39; Mon, 23 Jun 2025 18:24:51 +0800
+Received: from mhfsdcap04.gcn.mediatek.inc (10.17.3.154) by
+ mtkmbs13n1.mediatek.inc (172.21.101.73) with Microsoft SMTP Server id
+ 15.2.1258.39 via Frontend Transport; Mon, 23 Jun 2025 18:24:50 +0800
+From: Zhangchao Zhang <ot_zhangchao.zhang@mediatek.com>
+To: Marcel Holtmann <marcel@holtmann.org>, Matthias Brugger
+	<matthias.bgg@gmail.com>, Luiz Von Dentz <luiz.dentz@gmail.com>,
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+CC: Sean Wang <sean.wang@mediatek.com>, Deren Wu <deren.Wu@mediatek.com>,
+	Chris Lu <chris.lu@mediatek.com>, Hao Qin <Hao.qin@mediatek.com>,
+	linux-bluetooth <linux-bluetooth@vger.kernel.org>, linux-kernel
+	<linux-kernel@vger.kernel.org>, linux-arm-kernel
+	<linux-arm-kernel@lists.infradead.org>, linux-mediatek
+	<linux-mediatek@lists.infradead.org>, Zhangchao Zhang
+	<ot_zhangchao.zhang@mediatek.com>
+Subject: [PATCH v4 0/1]  Bluetooth: mediatek: add gpio pin to reset bt 
+Date: Mon, 23 Jun 2025 18:23:58 +0800
+Message-ID: <20250623102359.2684-1-ot_zhangchao.zhang@mediatek.com>
+X-Mailer: git-send-email 2.46.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 6/7] drm/panthor: Support GPU_CONTROL cache flush based
- on feature bit
-To: Karunika Choo <karunika.choo@arm.com>, dri-devel@lists.freedesktop.org
-Cc: nd@arm.com, Boris Brezillon <boris.brezillon@collabora.com>,
- Liviu Dudau <liviu.dudau@arm.com>,
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
- Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
- David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
- linux-kernel@vger.kernel.org
-References: <20250602143216.2621881-1-karunika.choo@arm.com>
- <20250602143216.2621881-7-karunika.choo@arm.com>
-From: Steven Price <steven.price@arm.com>
-Content-Language: en-GB
-In-Reply-To: <20250602143216.2621881-7-karunika.choo@arm.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
 
-On 02/06/2025 15:32, Karunika Choo wrote:
-> As the FLUSH_MEM and FLUSH_PT commands are deprecated in GPUs from
-> Mali-Gx20 onwards, this patch adds support for performing cache
-> maintenance via the FLUSH_CACHES command in GPU_CONTROL, in place of
+Reset Bluetooth using hardware pin via dts
 
-NIT: s/GPU_CONTROL/GPU_COMMAND/ (also in the subject and below).
-GPU_CONTROL is the register page.
+Compared with the previously submitted version, the following
+information are some specific revision histories
 
-> FLUSH_MEM and FLUSH_PT based on PANTHOR_HW_FEATURE_GPU_CTRL_CACHE_FLUSH
-> feature bit.
-> 
-> This patch also enables cache maintenance via GPU_CONTROL for Mali-Gx10
-> and Mali-Gx15 GPUs for consistency.
-> 
-> Signed-off-by: Karunika Choo <karunika.choo@arm.com>
+V3-->V4 modifications:
+Modify dt binding format information and
+the explanation text in the patch
 
-I'm puzzled by this patch. You're introducing a new feature bit which is
-always enabled on all GPUs at the end of the series. I think this should
-be reworked to either:
+V2-->V3 modifications:
+-Changed the capitalization of co-developer names,
+   using the correct capitalization of abbreviations and full
+   name, and corrected obvious spelling errors.
+-Add a revision history.
+-Remove the "BT Driver" in the prefix.
+-Add the bt-binding document, include inforamtion related to reset
+   pin and compatibility matching.
+-Add a comment before the schedule_delayed_work function call,
+   although schedule_delayed_work is asynchronous, there is no risk.
+   Even if it is not completed within 200ms, it will only postpone
+   the subsequent probe and will not have any impact.
+-Add a comment before the btmtk_reset_by_gpio function call,
+   if the compatibility filed or pin cannot be found in the dts
+   files, it can still reset bluetooth using software reset.
 
-a) Remove the feature bit and change all GPUs to the new GPU_COMMAND
-cache flush mechanism. This should allow a minor code cleanup too.
-
-b) Only opt-in new GPUs where FLUSH_MEM/FLUSH_PT are unavailable.
-
-In particular this patch as it stands does two very different things -
-it enables a new feature to be used on the new Gx20-onwards *and*
-changes the existing behaviour on older GPUs (which has the possibility
-of causing regressions).
-
-A third option is of course to split the patch - add the new feature bit
-but don't enable it in the first, and then the second patch is just
-enabling the feature bit for existing GPUs. That makes reverting in case
-of problems nice and easy. But there's also no point having the feature
-bit if we don't expect any users of the old behaviour - so only do that
-if you have good reason to think we're going to add a GPU using the old
-behaviour.
-
-Thanks,
-Steve
-
-> ---
->  drivers/gpu/drm/panthor/panthor_hw.c  |  6 +++++
->  drivers/gpu/drm/panthor/panthor_hw.h  |  6 +++++
->  drivers/gpu/drm/panthor/panthor_mmu.c | 35 +++++++++++++++++++++++++++
->  3 files changed, 47 insertions(+)
-> 
-> diff --git a/drivers/gpu/drm/panthor/panthor_hw.c b/drivers/gpu/drm/panthor/panthor_hw.c
-> index f5127a4b02dc..5ec9d7f28368 100644
-> --- a/drivers/gpu/drm/panthor/panthor_hw.c
-> +++ b/drivers/gpu/drm/panthor/panthor_hw.c
-> @@ -99,9 +99,15 @@ static void panthor_hw_info_init(struct panthor_device *ptdev)
->  static struct panthor_hw panthor_hw_devices[] = {
->  	{
->  		.arch_major = 10,
-> +		.features = {
-> +			BIT(PANTHOR_HW_FEATURE_GPU_CTRL_CACHE_FLUSH)
-> +		},
->  	},
->  	{
->  		.arch_major = 11,
-> +		.features = {
-> +			BIT(PANTHOR_HW_FEATURE_GPU_CTRL_CACHE_FLUSH)
-> +		},
->  	},
->  };
->  
-> diff --git a/drivers/gpu/drm/panthor/panthor_hw.h b/drivers/gpu/drm/panthor/panthor_hw.h
-> index 1a3cbc5589fd..2bb372fe9d4d 100644
-> --- a/drivers/gpu/drm/panthor/panthor_hw.h
-> +++ b/drivers/gpu/drm/panthor/panthor_hw.h
-> @@ -16,6 +16,12 @@ struct panthor_device;
->   * New feature flags will be added with support for newer GPU architectures.
->   */
->  enum panthor_hw_feature {
-> +	/**
-> +	 * @PANTHOR_HW_FEATURE_GPU_CTRL_CACHE_FLUSH: Perform cache maintenance
-> +	 * via GPU_CONTROL.
-> +	 */
-> +	PANTHOR_HW_FEATURE_GPU_CTRL_CACHE_FLUSH,
-> +
->  	/** @PANTHOR_HW_FEATURES_END: Must be last. */
->  	PANTHOR_HW_FEATURES_END
->  };
-> diff --git a/drivers/gpu/drm/panthor/panthor_mmu.c b/drivers/gpu/drm/panthor/panthor_mmu.c
-> index b39ea6acc6a9..f9ccc8627032 100644
-> --- a/drivers/gpu/drm/panthor/panthor_mmu.c
-> +++ b/drivers/gpu/drm/panthor/panthor_mmu.c
-> @@ -29,7 +29,9 @@
->  
->  #include "panthor_device.h"
->  #include "panthor_gem.h"
-> +#include "panthor_gpu.h"
->  #include "panthor_heap.h"
-> +#include "panthor_hw.h"
->  #include "panthor_mmu.h"
->  #include "panthor_regs.h"
->  #include "panthor_sched.h"
-> @@ -568,6 +570,35 @@ static void lock_region(struct panthor_device *ptdev, u32 as_nr,
->  	write_cmd(ptdev, as_nr, AS_COMMAND_LOCK);
->  }
->  
-> +static int mmu_hw_do_flush_on_gpu_ctrl(struct panthor_device *ptdev, int as_nr,
-> +				       u32 op)
-> +{
-> +	const u32 l2_flush_op = CACHE_CLEAN | CACHE_INV;
-> +	u32 lsc_flush_op = 0;
-> +	int ret;
-> +
-> +	if (op == AS_COMMAND_FLUSH_MEM)
-> +		lsc_flush_op = CACHE_CLEAN | CACHE_INV;
-> +
-> +	ret = wait_ready(ptdev, as_nr);
-> +	if (ret)
-> +		return ret;
-> +
-> +	ret = panthor_gpu_flush_caches(ptdev, l2_flush_op, lsc_flush_op, 0);
-> +	if (ret)
-> +		return ret;
-> +
-> +	/*
-> +	 * Explicitly unlock the region as the AS is not unlocked automatically
-> +	 * at the end of the GPU_CONTROL cache flush command, unlike
-> +	 * AS_COMMAND_FLUSH_MEM or AS_COMMAND_FLUSH_PT.
-> +	 */
-> +	write_cmd(ptdev, as_nr, AS_COMMAND_UNLOCK);
-> +
-> +	/* Wait for the unlock command to complete */
-> +	return wait_ready(ptdev, as_nr);
-> +}
-> +
->  static int mmu_hw_do_operation_locked(struct panthor_device *ptdev, int as_nr,
->  				      u64 iova, u64 size, u32 op)
->  {
-> @@ -585,6 +616,10 @@ static int mmu_hw_do_operation_locked(struct panthor_device *ptdev, int as_nr,
->  	if (op != AS_COMMAND_UNLOCK)
->  		lock_region(ptdev, as_nr, iova, size);
->  
-> +	if (panthor_hw_supports(ptdev,PANTHOR_HW_FEATURE_GPU_CTRL_CACHE_FLUSH))
-> +		if (op == AS_COMMAND_FLUSH_MEM || op == AS_COMMAND_FLUSH_PT)
-> +			return mmu_hw_do_flush_on_gpu_ctrl(ptdev, as_nr, op);
-> +
->  	/* Run the MMU operation */
->  	write_cmd(ptdev, as_nr, op);
->  
-
+V2 modifications:
+Modify gpio to GPIO, SW to software,
+and fix other obvious spelling errors.
 
