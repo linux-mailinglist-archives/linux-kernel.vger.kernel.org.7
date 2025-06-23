@@ -1,208 +1,154 @@
-Return-Path: <linux-kernel+bounces-698156-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-698154-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0B64DAE3DEB
-	for <lists+linux-kernel@lfdr.de>; Mon, 23 Jun 2025 13:29:58 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 252C9AE3DE8
+	for <lists+linux-kernel@lfdr.de>; Mon, 23 Jun 2025 13:29:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2A7603A6DF4
-	for <lists+linux-kernel@lfdr.de>; Mon, 23 Jun 2025 11:29:33 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C82021892D55
+	for <lists+linux-kernel@lfdr.de>; Mon, 23 Jun 2025 11:29:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 028A424167F;
-	Mon, 23 Jun 2025 11:29:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D372E23E359;
+	Mon, 23 Jun 2025 11:29:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=soleen-com.20230601.gappssmtp.com header.i=@soleen-com.20230601.gappssmtp.com header.b="fwmfs+fX"
-Received: from mail-qt1-f182.google.com (mail-qt1-f182.google.com [209.85.160.182])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="KKZFyNac"
+Received: from mail-lj1-f181.google.com (mail-lj1-f181.google.com [209.85.208.181])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ABA6A17F7
-	for <linux-kernel@vger.kernel.org>; Mon, 23 Jun 2025 11:29:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 81847221D9E
+	for <linux-kernel@vger.kernel.org>; Mon, 23 Jun 2025 11:29:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750678189; cv=none; b=Cm71QntvapFnbwnvOTZDY3GBjsh84ZqHu2NvFWrF/QGSjldIAb9MVHkAFtBcpm4DRY+y/Z40cP4deoFGs7ea48BbH9IITkM3ypILM+o54Vxl2ZadMlrdy+am0P+3OJKVk6Jd8WO7N9bwEzIbgVsLaF26kYAgIiWeoMvq8Hfil9E=
+	t=1750678170; cv=none; b=vBeiVQsbQQ8Jxbt3M3tMx+I2tavNm77dX/nTrCmzDhnCgzpT2ICgUxmG6BAbJ8XxXZrbTFn+na73RxlHz9ATIbDYUV3GJMNfhDPPLNxTkWrF84OBRJKboPqa5sWMRPGRWyTMkVevdxS3QAZdtU78dlV57Gwr8onqcRIXesA+Ods=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750678189; c=relaxed/simple;
-	bh=EuF8lurL6p/iA8TKALhZ4lhyb4SopomSm3LRQYZ/X1c=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=eVXKMG1hGeeP3X1XunBeCDIBVYK6lsSdu4sY+kRXAJ0M8RNCWVB98IckULBRy1sLGxF9sd8OeuoJ+XDfBMxDhLK69zTFkF8hzYcejv5p6ePJtV68t173vr5GdwYL/+mebhYlpOGvMnXe4MGfWjyrCJBZy3+aHo8qWa4kUPL8P7Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=soleen.com; spf=pass smtp.mailfrom=soleen.com; dkim=pass (2048-bit key) header.d=soleen-com.20230601.gappssmtp.com header.i=@soleen-com.20230601.gappssmtp.com header.b=fwmfs+fX; arc=none smtp.client-ip=209.85.160.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=soleen.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=soleen.com
-Received: by mail-qt1-f182.google.com with SMTP id d75a77b69052e-4a58e0b26c4so74961491cf.3
-        for <linux-kernel@vger.kernel.org>; Mon, 23 Jun 2025 04:29:47 -0700 (PDT)
+	s=arc-20240116; t=1750678170; c=relaxed/simple;
+	bh=wLQFKtSJGzFg4lKtATX7H7j9UPlk+P13KegXT5k15Eo=;
+	h=From:Date:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=TwyVlRKZ6arpAMPLhSlhT0vaDuCr9OZsriEGJV9lKtP+a+N527iINCIrzYWZUkMO7qyPd7/IFHNv7RHjADR5ll7KzSlKg5aVnwIjFGm90XqUrDTfcM2QZmOSNeYD1PPj4RIXoehaNqQxBxwDYVUB3unZz8KQmMBxvRDYo3EisPI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=KKZFyNac; arc=none smtp.client-ip=209.85.208.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lj1-f181.google.com with SMTP id 38308e7fff4ca-32addf54a00so31734031fa.1
+        for <linux-kernel@vger.kernel.org>; Mon, 23 Jun 2025 04:29:28 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=soleen-com.20230601.gappssmtp.com; s=20230601; t=1750678186; x=1751282986; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=CId97r6bxGhOkOsNTRpZGo7/FNNKpNsqY9QIA/bl+4Y=;
-        b=fwmfs+fXrDT5GeTfHuVXKHOlb7KfByS6ViIPpsw/93lUsjU3zRFO7hy7fNOCO6xT3L
-         U0kESQ2zpTSShEZTZslLLpKz3PL2NwVZ3kt8jRxaWbJHB9YIlNyp/D/ZCAB04vFp6f9s
-         tgG3c3GgkoJfCxeO/V93m8J2/PUWK3raCIWkt7BGiovvDQneGPE4BvSHT+ZZCD3Fibaf
-         mE3DgfNXk/pt/88r+RBjJ6oFiU1lna/UyXSKeWNhJCs2OGz1kUNTCQrx1sW0hfzN4JdU
-         G1uTsUtMQN30D9sUGfI5ynqLlMHKawWUJ70DBsUqL6bMlbM8ES0/6yoCfGUenJOsI3N8
-         VPpA==
+        d=gmail.com; s=20230601; t=1750678167; x=1751282967; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:date:from:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=YgfPRIB+BYAuUXDEK/9DOfwH7aJtQFPBBRMLIHLTgX8=;
+        b=KKZFyNacHddMm53yaQUFjAj10PbclA0ZqHQUMuYH1dXqrwEWMVWQLwsNfk0IUIgSCH
+         r1J7F0bZ16ww2e/HhpH90C4mGYP+nlq9OyY5wMrzQOqdFqHVyozJqJ0LuhLsYId00Cfy
+         4xnIc/FWiXzduUOGcWbMpbLQq6D5DjigA36uyxLYdi71uA1QQSdCMZ0XQQHFEH2zqGMA
+         BPxNqnIGKo+Gv9Haf6WyKfiUNdZZ2C6dKP8zL8kNfN/QAopqKto3Ihzr/Hsu5V2fcGKd
+         SapDHJ36DSRzqoJ8zlfzSy7B0qtw4GAC5pNitOnLpdySxyMYHhC2Rwgfwz8xzK1mrr5p
+         2ofw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1750678186; x=1751282986;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=CId97r6bxGhOkOsNTRpZGo7/FNNKpNsqY9QIA/bl+4Y=;
-        b=NJYCjOFe3tsvP4q7OwUytixY/N5tGUWKL1BJlLMgZZkbtyaBysYJ3eHxNgkWpFlHYD
-         q+75cgsNpJ8kqK7IXfcUXxmZhjK4lVuiDRRyAICVm9mCrEuxwaaA+m7Xo0oblXHGRPxQ
-         fDZHa5DjH4AW45ziFSsHWwgFfxx1P+Nm4ortDpEmVPHNyNw+555Sq2zRWBV1uTTh3P/1
-         wcjSom41g4MtEkYuTukO98xSPVSON32sixAd83oGliD05s370LTK75Isj8V6HNSPOrGo
-         AGiFbOzfvdkv0csUId17yczObhiaB9hTYgoMdoPFCiimiR1ecRxShasAuwgbK9wBtcxt
-         E5Xg==
-X-Forwarded-Encrypted: i=1; AJvYcCW0OlGFysFFQAm03eKy/U14InjY4vcWjtWB9HAu56IjgqgA2zzo+v5BHfB3DYB58kH7Ms1a4mb10LOdJJ0=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwT+OWTung+HCd/kj6L9p8oc6js6HuyYKCP7P/Kpjas6mbt0V/6
-	0Zg2vBGD7Oa1TEHe6d4YUf7ahAI6ZocKm6U5gmQ0qCylTcQLpBU0ENz/dOzQuksx4mAH3kuQ5o6
-	NIINdWiIqzZcfl0zu4e1+ZM1RlRfqKEZOOjjv4pyVCw==
-X-Gm-Gg: ASbGncupekjrdSrsqK4uk/fo8UeYGMpN24RfkPE75zIZ0Meh9PH3vYlvB3ruYzmHYHK
-	6d1V3R9NyUNMVXTDo+vYCgaAW0Hyid1oVhhJE6c6wRkuUWsZ20kM57K65t4sRvYLNE7xjZ1hno3
-	TVd2WTZy12GShTq7SSicjHbAoGCLwQgJzif9qRD8ye
-X-Google-Smtp-Source: AGHT+IGPqAUH/RPykVSVaglFJdihJdozlPbvSoTGsXcR0nXvouD9V9X1wSLeh0iQLT+SzQ72tUMBq5c1jJy1W6hZsnA=
-X-Received: by 2002:ac8:7f92:0:b0:4a4:2c46:26a2 with SMTP id
- d75a77b69052e-4a77a23acd8mr156063601cf.10.1750678186510; Mon, 23 Jun 2025
- 04:29:46 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1750678167; x=1751282967;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:date:from
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=YgfPRIB+BYAuUXDEK/9DOfwH7aJtQFPBBRMLIHLTgX8=;
+        b=GRhI5Z+1r+vzRh3A1Vc06+bR+yyS57VNTPNfOOVeBOBNXSmLWjH5OcynBnf543iFTx
+         vsVyZHnX4QRMtWTRSvc9DYSAb+uKma31juCCNiiAZEi7mLDnpjOccBnfLalATgrAii/H
+         PEejn9ABmWs2U/uRLPT7q8T/SkX0Mqh5+4OMj9F511jjC0Xuy2xW8XMELJ3PzVO7E3yf
+         unDzamtykkGTf3DySuX9RXuiNTbPTjBoBGHEcR4ySsCMN2WU8kmJF8rqo8+yIHuGFpLL
+         CZamqVb+KLwCiY56BauNo3iLzupdL7zBU11g4MxSsuuycvM62x/wOgX3d93X20+2N9gN
+         UxNA==
+X-Forwarded-Encrypted: i=1; AJvYcCVyIJ56SVc8a8zxB6mtnlWR5yTyNsf6SC8MuIlkAVUr6dNQkiYxWwOwtlLcboGWiDRSLw5hY0UNYnqXQYk=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzetUGgiBeVjKjOWDrikemh7NFDqttkjzfJr/Y/7zkbnRR1GtwN
+	C20WMOKr5858mHHscthGXm8p/0vEVbZtW+H+EWAiC+qycfnd895ne/tq
+X-Gm-Gg: ASbGnct76ach1WCV9tvd57bdQ0Cqc8WusH2NYp1M34ecE0ViN/GQSM5uXz3zT2Mqa6x
+	v4jyk/AmGc7Wn/zv3lQayCDrVYdK/rza9sOjjLuu3E+a6r2TBhciO3o8I37MogPvVDr6pPscJP3
+	BHalOhuit6KioCxDsv6ReBzuwfirJX4fXPAHNtO5zgWj+p6sG+TvPvrN5G4JbSbJEdWDWkdpyAo
+	N9kbQur5d1kmUSLjAOrl9Y0+EeXfHIqC+ehEaILgzBPPmEgzfdK8wlSQR8zodFIYr5HUjaB6Be+
+	SqJRswQQQH1mLJuNPWF0uzCJjSqcKxthquLeUMqinbQcMcIcDcGkadpjxMM0/W8tz0sVmNs/XJ+
+	IOGyurb8VMcE=
+X-Google-Smtp-Source: AGHT+IE1MZF6wlC72ECSHVOr+2VOUjVmkH4XiG30NEvX7gqf7FRE361lIOqKCXeUz4nUIgSU9qz8Zg==
+X-Received: by 2002:a05:6512:3186:b0:553:34ea:fc41 with SMTP id 2adb3069b0e04-553e3d0ecdcmr3278922e87.56.1750678166243;
+        Mon, 23 Jun 2025 04:29:26 -0700 (PDT)
+Received: from pc636 (host-95-203-1-180.mobileonline.telia.com. [95.203.1.180])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-553e41cc0d4sm1359864e87.197.2025.06.23.04.29.24
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 23 Jun 2025 04:29:25 -0700 (PDT)
+From: Uladzislau Rezki <urezki@gmail.com>
+X-Google-Original-From: Uladzislau Rezki <urezki@pc636>
+Date: Mon, 23 Jun 2025 13:29:22 +0200
+To: Suren Baghdasaryan <surenb@google.com>
+Cc: Uladzislau Rezki <urezki@gmail.com>, Harry Yoo <harry.yoo@oracle.com>,
+	kernel test robot <oliver.sang@intel.com>, oe-lkp@lists.linux.dev,
+	lkp@intel.com, linux-kernel@vger.kernel.org,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Baoquan He <bhe@redhat.com>, Adrian Huang <ahuang12@lenovo.com>,
+	Christop Hellwig <hch@infradead.org>,
+	Mateusz Guzik <mjguzik@gmail.com>, linux-mm@kvack.org,
+	Kent Overstreet <kent.overstreet@linux.dev>
+Subject: Re: Kernel crash due to alloc_tag_top_users() being called when
+ !mem_profiling_support?
+Message-ID: <aFk6krRwyMtbH0y4@pc636>
+References: <202506181351.bba867dd-lkp@intel.com>
+ <aFQaY4Bxle8-GT6O@harry>
+ <aFQnEj0UASzl2Lxa@hyeyoo>
+ <aFUgJgrc_eIHRy5-@pc636>
+ <CAJuCfpHRVq+T8v-7J0kJ=mnbSJYX2kjG_8spgZFdfe4Tzbcs4g@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <mafs0sekfts2i.fsf@kernel.org> <CA+CK2bA7eAB4PvF0RXtt2DJ+FQ4DVV3x1OZrVo4q3EvgowhvJg@mail.gmail.com>
- <mafs0sek3n0x8.fsf@kernel.org> <20250617152357.GB1376515@ziepe.ca>
- <CA+CK2bAtO7BA5iptRfA_oa=5sUz_t-0F3Lu8oae1STnijXrPPQ@mail.gmail.com>
- <mafs05xgtw5wn.fsf@kernel.org> <CA+CK2bDWAPSmTdnD7vw4G00nPsM8R_Zefs_G+9zvSqTJqPb9Lg@mail.gmail.com>
- <aFLr7RDKraQk8Gvt@kernel.org> <CA+CK2bAnCRu+k=Q78eA4kcAebxA9NgOorhwRqu-WxC913YBsBw@mail.gmail.com>
- <CA+CK2bB3P1vX658ErkP4_-L6WZSOCcenEwUdX1qS=poDjs=i+A@mail.gmail.com> <aFkDBNpzcCNdqjm8@kernel.org>
-In-Reply-To: <aFkDBNpzcCNdqjm8@kernel.org>
-From: Pasha Tatashin <pasha.tatashin@soleen.com>
-Date: Mon, 23 Jun 2025 07:29:09 -0400
-X-Gm-Features: AX0GCFsAwZj53l7luv9N2S4aDs-8Fu10IYCHZ0Vuqd0BsrZgbB9cxOtR2gLz2-Y
-Message-ID: <CA+CK2bCWqiQ1375oCZ9DCkjAHccWfhYxx4zHHBkY4tgh8G3arw@mail.gmail.com>
-Subject: Re: [RFC v2 05/16] luo: luo_core: integrate with KHO
-To: Mike Rapoport <rppt@kernel.org>
-Cc: Pratyush Yadav <pratyush@kernel.org>, Jason Gunthorpe <jgg@ziepe.ca>, jasonmiu@google.com, 
-	graf@amazon.com, changyuanl@google.com, dmatlack@google.com, 
-	rientjes@google.com, corbet@lwn.net, rdunlap@infradead.org, 
-	ilpo.jarvinen@linux.intel.com, kanie@linux.alibaba.com, ojeda@kernel.org, 
-	aliceryhl@google.com, masahiroy@kernel.org, akpm@linux-foundation.org, 
-	tj@kernel.org, yoann.congal@smile.fr, mmaurer@google.com, 
-	roman.gushchin@linux.dev, chenridong@huawei.com, axboe@kernel.dk, 
-	mark.rutland@arm.com, jannh@google.com, vincent.guittot@linaro.org, 
-	hannes@cmpxchg.org, dan.j.williams@intel.com, david@redhat.com, 
-	joel.granados@kernel.org, rostedt@goodmis.org, anna.schumaker@oracle.com, 
-	song@kernel.org, zhangguopeng@kylinos.cn, linux@weissschuh.net, 
-	linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org, linux-mm@kvack.org, 
-	gregkh@linuxfoundation.org, tglx@linutronix.de, mingo@redhat.com, 
-	bp@alien8.de, dave.hansen@linux.intel.com, x86@kernel.org, hpa@zytor.com, 
-	rafael@kernel.org, dakr@kernel.org, bartosz.golaszewski@linaro.org, 
-	cw00.choi@samsung.com, myungjoo.ham@samsung.com, yesanishhere@gmail.com, 
-	Jonathan.Cameron@huawei.com, quic_zijuhu@quicinc.com, 
-	aleksander.lobakin@intel.com, ira.weiny@intel.com, 
-	andriy.shevchenko@linux.intel.com, leon@kernel.org, lukas@wunner.de, 
-	bhelgaas@google.com, wagi@kernel.org, djeffery@redhat.com, 
-	stuart.w.hayes@gmail.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAJuCfpHRVq+T8v-7J0kJ=mnbSJYX2kjG_8spgZFdfe4Tzbcs4g@mail.gmail.com>
 
-On Mon, Jun 23, 2025 at 3:32=E2=80=AFAM Mike Rapoport <rppt@kernel.org> wro=
-te:
->
-> On Wed, Jun 18, 2025 at 01:43:18PM -0400, Pasha Tatashin wrote:
-> > On Wed, Jun 18, 2025 at 1:00=E2=80=AFPM Pasha Tatashin
+On Sun, Jun 22, 2025 at 03:54:51PM -0700, Suren Baghdasaryan wrote:
+> On Fri, Jun 20, 2025 at 1:47 AM Uladzislau Rezki <urezki@gmail.com> wrote:
 > >
-> > So currently, KHO provides the following two types of  internal API:
+> > On Fri, Jun 20, 2025 at 12:04:50AM +0900, Harry Yoo wrote:
+> > > On Thu, Jun 19, 2025 at 11:10:43PM +0900, Harry Yoo wrote:
+> > > > On Wed, Jun 18, 2025 at 02:25:37PM +0800, kernel test robot wrote:
+> > > > >
+> > > > > Hello,
+> > > > >
+> > > > > for this change, we reported
+> > > > > "[linux-next:master] [lib/test_vmalloc.c]  7fc85b92db: Mem-Info"
+> > > > > in
+> > > > > https://lore.kernel.org/all/202505071555.e757f1e0-lkp@intel.com/
+> > > > >
+> > > > > at that time, we made some tests with x86_64 config which runs well.
+> > > > >
+> > > > > now we noticed the commit is in mainline now.
+> > > >
+> > > > (Re-sending due to not Ccing people and the list...)
+> > > >
+> > > > Hi, I'm facing the same error on my testing environment.
+> > >
+> > > I should have clarified that the reason the kernel failed to allocate
+> > > memory on my machine was due to running out of memory, not because of the
+> > > vmalloc test module.
+> > >
+> > > But based on the fact that the test case (align_shift_alloc_test) is
+> > > expected to fail, the issue here is not memory allocation failure
+> > > itself, but rather that the kernel crashes when the allocation fails.
+> > >
+> > It looks someone tries to test the CONFIG_TEST_VMALLOC=y as built-in
+> > approach test-cases. Yes, it will trigger a lot of warnings as some
+> > use cases are supposed to be failed. This will trigger a lot of kernel
+> > warnings which can be considered by test-robot or people as problem.
 > >
-> > Preserve memory and metadata
-> > =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D
-> > kho_preserve_folio() / kho_preserve_phys()
-> > kho_unpreserve_folio() / kho_unpreserve_phys()
-> > kho_restore_folio()
-> >
-> > kho_add_subtree() kho_retrieve_subtree()
-> >
-> > State machine
-> > =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
-> > register_kho_notifier() / unregister_kho_notifier()
-> >
-> > kho_finalize() / kho_abort()
-> >
-> > We should remove the "State machine", and only keep the "Preserve
-> > Memory" API functions. At the time these functions are called, KHO
-> > should do the magic of making sure that the memory gets preserved
-> > across the reboot.
-> >
-> > This way, reserve_mem_init() would call: kho_preserve_folio() and
-> > kho_add_subtree() during boot, and be done with it.
->
-> I agree that there's no need in notifiers.
->
-> I even have a half cooked patch for this on top of "kho: allow to drive k=
-ho
-> from within kernel"
->
-> From 02716e4731480bde997a9c1676b7246aa8e358de Mon Sep 17 00:00:00 2001
-> From: "Mike Rapoport (Microsoft)" <rppt@kernel.org>
-> Date: Sun, 22 Jun 2025 14:37:17 +0300
-> Subject: [PATCH] kho: drop notifiers
->
-> Signed-off-by: Mike Rapoport (Microsoft) <rppt@kernel.org>
-> ---
->  include/linux/kexec_handover.h   |  27 +-------
->  kernel/kexec_handover.c          | 114 ++++++++++++++-----------------
->  kernel/kexec_handover_debug.c    |   3 +-
->  kernel/kexec_handover_internal.h |   3 +-
->  mm/memblock.c                    |  56 +++------------
->  5 files changed, 65 insertions(+), 138 deletions(-)
->
-> diff --git a/include/linux/kexec_handover.h b/include/linux/kexec_handove=
-r.h
-> index f98565def593..ac9cb6eae71f 100644
-> --- a/include/linux/kexec_handover.h
-> +++ b/include/linux/kexec_handover.h
-> @@ -10,14 +10,7 @@ struct kho_scratch {
->         phys_addr_t size;
->  };
->
-> -/* KHO Notifier index */
-> -enum kho_event {
-> -       KEXEC_KHO_FINALIZE =3D 0,
-> -       KEXEC_KHO_ABORT =3D 1,
-> -};
-> -
->  struct folio;
-> -struct notifier_block;
->
->  #define DECLARE_KHOSER_PTR(name, type) \
->         union {                        \
-> @@ -36,20 +29,15 @@ struct notifier_block;
->                 (typeof((s).ptr))((s).phys ? phys_to_virt((s).phys) : NUL=
-L); \
->         })
->
-> -struct kho_serialization;
-> -
->  #ifdef CONFIG_KEXEC_HANDOVER
->  bool kho_is_enabled(void);
->
->  int kho_preserve_folio(struct folio *folio);
->  int kho_preserve_phys(phys_addr_t phys, size_t size);
->  struct folio *kho_restore_folio(phys_addr_t phys);
-> -int kho_add_subtree(struct kho_serialization *ser, const char *name, voi=
-d *fdt);
-> +int kho_add_subtree(const char *name, void *fdt);
+> > In this case i can exclude those use cases or even not run at all unless
+> > boot-parameters properly sets if built-in.
+> 
+> Sorry, I'm catching up on my email backlog. IIUC
+> https://lore.kernel.org/all/20250620195305.1115151-1-harry.yoo@oracle.com/
+> addresses this issue. Is my understanding correct?
+> 
+I checked/tested the .config from the test-robot in order to reproduce
+the kernel crash. Unfortunately i can not trigger this. But, people from
+the another thread already confirmed that it solves the crash.
 
-For completeness, we also need `void kho_remove_substree(const char
-*name);`, currently, all trees are removed during kho_abort(). Let's
-rebase and include this patch on top of the next version of LUO, that
-we are exchanging off list, and send it together later this week.
-
-Thanks,
-Pasha
+--
+Uladzislau Rezki
 
