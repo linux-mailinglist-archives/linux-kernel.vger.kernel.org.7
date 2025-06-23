@@ -1,98 +1,151 @@
-Return-Path: <linux-kernel+bounces-698787-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-698789-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1EDFBAE4978
-	for <lists+linux-kernel@lfdr.de>; Mon, 23 Jun 2025 18:01:08 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id B9160AE498C
+	for <lists+linux-kernel@lfdr.de>; Mon, 23 Jun 2025 18:03:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A991617708A
-	for <lists+linux-kernel@lfdr.de>; Mon, 23 Jun 2025 16:01:08 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6E8F27AE28B
+	for <lists+linux-kernel@lfdr.de>; Mon, 23 Jun 2025 16:00:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7236829ACC6;
-	Mon, 23 Jun 2025 16:00:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 339BA299A9E;
+	Mon, 23 Jun 2025 16:01:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="tx1i6ZV5"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=jacekk.info header.i=@jacekk.info header.b="QZHrLMtX"
+Received: from mail-ed1-f53.google.com (mail-ed1-f53.google.com [209.85.208.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D1483299955
-	for <linux-kernel@vger.kernel.org>; Mon, 23 Jun 2025 16:00:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7DB7C7E1
+	for <linux-kernel@vger.kernel.org>; Mon, 23 Jun 2025 16:01:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750694431; cv=none; b=b+UYEQOE0FDFTMycGuKpbab2wtEW2wR3qqgrFHKQEYlNB/q8IVgcq1sY0//480tjt+82nGIq5GJE0A+Ef3a/U2AkUbhWmTMD0uJHx7buVYcG5JX5uQ+rb94+cpxVTVPlhy883SR/lx9fNz54AX1M41rgqBt1VAz4sCKLoeGRgUA=
+	t=1750694483; cv=none; b=d7xtYJUruz25tuu4rFv4KhIMipjxpNRfKHCeOTm+R1/Tk67oIcUYlrCYITuz8pLGLf49AdkTnKhCzntase03/ap/3noU7c3Io8JSAsa960VNeQQ+RsZLvgXUmG+rd+UPkBXHdz03pTzSW/QWkZbltvWWPNQ+sObL8ICDEibzZt8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750694431; c=relaxed/simple;
-	bh=/aUOJv/viu6L1AUibOr3RuEmcn+q750DtLVDPmszDgc=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=aiqMb+0J9JxN+eQWtOixslTmrwNI8g7qFMYU+grGqQpaf3j2/IVo22J0W8Lb3HhxliNLhsqLBAuoysJh6km6FqltBLUtyx4qs6aAeWhr5TmdsGJay2gZRKicvk3OGZq0YZGd9PduG2aMdl955PpuugWpB8fhSvHY/Mfn5DiQMUk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=tx1i6ZV5; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7C48EC4CEEF;
-	Mon, 23 Jun 2025 16:00:30 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1750694431;
-	bh=/aUOJv/viu6L1AUibOr3RuEmcn+q750DtLVDPmszDgc=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
-	b=tx1i6ZV5zyxqyV9XllQV0BVMS5W1QMs5TL38OHLQdoIMR5uZY8SQt3OHTFrTLwrVS
-	 fnk91QOz+5j/WakGql7BRD1Bp+P+MimG7U6hM3oSN/hHfLEbhIWl071CjoDBpNOakh
-	 SrLrsaFJMxEEtpaNsRS7mcJUALcus7xm7aoYcj+VGmcd3UofqWcpVNWv3trEHZFi5x
-	 3CFy8yXR+tpYduzjzkrnrCQYYL6QoYue+e/wxfxj//8vWOkQg2LK390q8/aYiMrHjU
-	 +uME7CsPaP9JyLHxne2WnsgDxMoxKFU+v7mile+TOZkxoygjlLR/L0mEIYoPIQ0/eD
-	 bpU8uR/L7SGPQ==
-From: Mark Brown <broonie@kernel.org>
-To: Yuzuru10 <yuzuru_10@proton.me>
-Cc: tiwai@suse.de, alsa-devel@alsa-project.org, 
- linux-kernel@vger.kernel.org
-In-Reply-To: <20250622225754.20856-1-yuzuru_10@proton.me>
-References: <20250622225754.20856-1-yuzuru_10@proton.me>
-Subject: Re: [PATCH] ASoC: amd: yc: add quirk for Acer Nitro ANV15-41
- internal mic
-Message-Id: <175069443023.140181.7183611735574302998.b4-ty@kernel.org>
-Date: Mon, 23 Jun 2025 17:00:30 +0100
+	s=arc-20240116; t=1750694483; c=relaxed/simple;
+	bh=W2njX0aNcEZksb+ZdOEylLnZ6LAQ8oqd/7eAfvsvd4A=;
+	h=From:Message-ID:Date:MIME-Version:Subject:To:Cc:References:
+	 In-Reply-To:Content-Type; b=OsFXGrYtgFruTnLmYzUbEevmjLxdUDiNRlvHED6qWWfNAkl0t2T0HWr09U72fzVNM0tICxVRnNjSoN29g0wziEekGEiVSkzLWE2T7bfvi3kPtdJEcEAi3UU926kCh5RC2O3xeQ3KR6imxt6epOOnVQBYopZ8ioIgXLJ6OU6j39E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=jacekk.info; spf=pass smtp.mailfrom=jacekk.info; dkim=pass (2048-bit key) header.d=jacekk.info header.i=@jacekk.info header.b=QZHrLMtX; arc=none smtp.client-ip=209.85.208.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=jacekk.info
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=jacekk.info
+Received: by mail-ed1-f53.google.com with SMTP id 4fb4d7f45d1cf-6077dea37easo8313322a12.3
+        for <linux-kernel@vger.kernel.org>; Mon, 23 Jun 2025 09:01:20 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=jacekk.info; s=g2024; t=1750694479; x=1751299279; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:content-language:references
+         :cc:to:subject:user-agent:mime-version:date:message-id:from:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=GV9eywOsXK84WOKUgMvagNTBliIluKm+MCneZcnY37Y=;
+        b=QZHrLMtXg4ohYmdSTDD1Np4AKe4rNiGOBD/zVy2sFwi4GJsSsusAh5tnvWKF+2eVva
+         yq3rRjJ9NpVpDk2p9qlnCCsHX4IH0lWOrtzrBTHw28yuLvJgPIAhEw2epvXwI974LSAZ
+         7PqDVHyirVxVN+rj8rYpsk8MFLeOwPhziQE0oLvWlZlFDEHWuFaKeHM5Av6i2hjbs9qC
+         PYMpYRF5bMWVsWByK6AIeptH7VXDG0RF4ZUXxUdVgqGViud92siPvgsI8Oqa751yyzHr
+         Y83ff7JX87DMlTSAjZFbN0+qohesOhjbXi7SXinXNLWd8e26lkgQXNCM6r3f8Ai+l2Zt
+         r9rQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1750694479; x=1751299279;
+        h=content-transfer-encoding:in-reply-to:content-language:references
+         :cc:to:subject:user-agent:mime-version:date:message-id:from
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=GV9eywOsXK84WOKUgMvagNTBliIluKm+MCneZcnY37Y=;
+        b=XQNb+eAehTZPI2v0rC5AWmOmQnoMufdpFZU7GCT/AchxPykncqAZTlKxC+c8LoJocb
+         E10prW/ajxaQTFShoYDjOgH0UCN4BDAGIfiaTcTpjv0ySXzuUlwFaEpmPqvG+9wWQRn8
+         RjdwZjP0jNE2jHt76+8CnekZ0yCkPuoNxrNX9NpRynsKpOvPYvhUCsm69BBYZvHiqG0A
+         jSPoEYq3l3n3m8iro3HrohxVz2/wo3HUfyrDcBB/qa2spOdWootWahf7NJL03eI8txp2
+         lJEEbct4Stw2Es3hxHAnfNgZnoKS0TBrbdVTSaibNl+/skukwyG/Cb4NS9FcMmemEGM3
+         SrZw==
+X-Forwarded-Encrypted: i=1; AJvYcCX4qo4PoR2T6fj3l2qtPThxfVd2xcKy2A41a5aNc9jqMLUclPcuU5iUCDB6xlghNETQysQ7UqcPNMOG6Wc=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyWguVSwn/WYM5KVwshen3KpxB9Jn3+xOPokhBDUzzgir/uS31h
+	0arXBWPK+y5yVl2KOistd+OZjPIG49jKilJdAMLXO93R7J/DZCz4RB/c4NvtG74VWQ==
+X-Gm-Gg: ASbGncuBS5gTLoCoD5DUj+n2CE/2ifbp5b/HQwykDcYmwIrchEUBtbQUqX9AtTgH+97
+	sJ+6ZnfoZl32WghP44g4W2qEUo4YpktmxkaOBxt+3IGSkHVd5mPBg2zM4RGj0F9rFFpdbZHu2MK
+	m2+GqL0TZLXnSmmJ7uFrqXKcEB8KlPJU3AGP1/OFQBfCSncVN7DSJ/oYZu9IX+ZnNP7iElbT3+G
+	ptGRLbe90Tw+hB9sjp6ZVKqUq38z88RoFbF5SI7B7oDc3lUtd0Hw3fJkPytmvaEqJ+kYdWKFibB
+	MjXqP0bMgxz+2muEFNmMoo1CLvCQ5rTyWWtzFMyX+0scFI2fMmHyBdRx6H16hB80
+X-Google-Smtp-Source: AGHT+IFeFRf7fXY8ItbHGsczF5S/sRpaMQZSC5ENBtBuUJ/TvWbUeEnuAnFx8nQF8fRGIRrYzCtMHw==
+X-Received: by 2002:a05:6402:3493:b0:607:e3ec:f8ea with SMTP id 4fb4d7f45d1cf-60a1cd1a66cmr11552849a12.6.1750694478557;
+        Mon, 23 Jun 2025 09:01:18 -0700 (PDT)
+Received: from [192.168.0.114] ([91.196.212.106])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-60a185449d5sm6231911a12.28.2025.06.23.09.01.17
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 23 Jun 2025 09:01:18 -0700 (PDT)
+From: Jacek Kowalski <jacek@jacekk.info>
+X-Google-Original-From: Jacek Kowalski <Jacek@jacekk.info>
+Message-ID: <b7856437-2c74-4e01-affa-3bbc57ce6c51@jacekk.info>
+Date: Mon, 23 Jun 2025 18:01:16 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+User-Agent: Mozilla Thunderbird
+Subject: [PATCH v2 2/2] e1000e: ignore factory-default checksum value on TGP
+ platform
+To: Tony Nguyen <anthony.l.nguyen@intel.com>,
+ Przemek Kitszel <przemyslaw.kitszel@intel.com>,
+ Andrew Lunn <andrew+netdev@lunn.ch>, "David S. Miller"
+ <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
+ Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>
+Cc: intel-wired-lan@lists.osuosl.org, netdev@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+References: <fe064a2c-31d6-4671-ba30-198d121782d0@jacekk.info>
+Content-Language: en-US
+In-Reply-To: <fe064a2c-31d6-4671-ba30-198d121782d0@jacekk.info>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
-X-Mailer: b4 0.15-dev-08c49
 
-On Sun, 22 Jun 2025 22:58:00 +0000, Yuzuru10 wrote:
-> This patch adds DMI-based quirk for the Acer Nitro ANV15-41,
-> allowing the internal microphone to be detected correctly on
-> machines with "RB" as board vendor.
-> 
-> 
+As described by Vitaly Lifshits:
 
-Applied to
+> Starting from Tiger Lake, LAN NVM is locked for writes by SW, so the
+> driver cannot perform checksum validation and correction. This means
+> that all NVM images must leave the factory with correct checksum and
+> checksum valid bit set.
 
-   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git for-next
+Unfortunately some systems have left the factory with an empty checksum.
+NVM is not modifiable on this platform, hence ignore checksum 0xFFFF on
+Tiger Lake systems to work around this.
 
-Thanks!
+Signed-off-by: Jacek Kowalski <Jacek@jacekk.info>
+Fixes: 4051f68318ca9 ("e1000e: Do not take care about recovery NVM checksum")
+Cc: stable@vger.kernel.org
+---
+v2: new check to fix yet another checksum issue
+ drivers/net/ethernet/intel/e1000e/defines.h | 1 +
+ drivers/net/ethernet/intel/e1000e/nvm.c     | 5 +++++
+ 2 files changed, 6 insertions(+)
 
-[1/1] ASoC: amd: yc: add quirk for Acer Nitro ANV15-41 internal mic
-      commit: 7186b81807b4a08f8bf834b6bdc72d6ed8ba1587
-
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent to Linus during
-the next merge window (or sooner if it is a bug fix), however if
-problems are discovered then the patch may be dropped or reverted.
-
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
-
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
-
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
-
-Thanks,
-Mark
+diff --git a/drivers/net/ethernet/intel/e1000e/defines.h b/drivers/net/ethernet/intel/e1000e/defines.h
+index 8294a7c4f122..01696eb8dace 100644
+--- a/drivers/net/ethernet/intel/e1000e/defines.h
++++ b/drivers/net/ethernet/intel/e1000e/defines.h
+@@ -637,6 +637,7 @@
+ 
+ /* For checksumming, the sum of all words in the NVM should equal 0xBABA. */
+ #define NVM_SUM                    0xBABA
++#define NVM_SUM_FACTORY_DEFAULT    0xFFFF
+ 
+ /* PBA (printed board assembly) number words */
+ #define NVM_PBA_OFFSET_0           8
+diff --git a/drivers/net/ethernet/intel/e1000e/nvm.c b/drivers/net/ethernet/intel/e1000e/nvm.c
+index e609f4df86f4..37cbf9236d84 100644
+--- a/drivers/net/ethernet/intel/e1000e/nvm.c
++++ b/drivers/net/ethernet/intel/e1000e/nvm.c
+@@ -558,6 +558,11 @@ s32 e1000e_validate_nvm_checksum_generic(struct e1000_hw *hw)
+ 		checksum += nvm_data;
+ 	}
+ 
++	if (hw->mac.type == e1000_pch_tgp && checksum == (u16)NVM_SUM_FACTORY_DEFAULT) {
++		e_dbg("Factory-default NVM Checksum on TGP platform - ignoring\n");
++		return 0;
++	}
++
+ 	if (checksum != (u16)NVM_SUM) {
+ 		e_dbg("NVM Checksum Invalid\n");
+ 		return -E1000_ERR_NVM;
+-- 
+2.47.2
 
 
