@@ -1,255 +1,335 @@
-Return-Path: <linux-kernel+bounces-697800-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-697796-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id CF21BAE38DA
-	for <lists+linux-kernel@lfdr.de>; Mon, 23 Jun 2025 10:47:06 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 91DF8AE38C9
+	for <lists+linux-kernel@lfdr.de>; Mon, 23 Jun 2025 10:45:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5913D7A70E5
-	for <lists+linux-kernel@lfdr.de>; Mon, 23 Jun 2025 08:45:43 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 18E643A7806
+	for <lists+linux-kernel@lfdr.de>; Mon, 23 Jun 2025 08:44:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AEA7013635E;
-	Mon, 23 Jun 2025 08:46:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C939A22FAFD;
+	Mon, 23 Jun 2025 08:45:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="RYTdsSNJ"
-Received: from NAM10-MW2-obe.outbound.protection.outlook.com (mail-mw2nam10on2068.outbound.protection.outlook.com [40.107.94.68])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="qSeSVtBe"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 44EEA2EB1D;
-	Mon, 23 Jun 2025 08:46:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.94.68
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750668416; cv=fail; b=hQBSOHmYHzYfgqRPdSEjLQTpuj+v9TKlkuq4as7zL2OhKAFPL8WQVWlipZ7OF4CNevFgwfhLQwuvHOPVDCKJNyGP9PipHJBYOD3M3xRG15722SDlhcCo8eaGy44hIAvuqPn3kaKc1p7Mk9MX6t4qF7FYGos7hlx3Dvo7IDBiE40=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750668416; c=relaxed/simple;
-	bh=nwQ+8lg584dvEjnTwdFm94m9UhO8Lynx8LU7MG3Hvw0=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=iXbxgZFk1kxYE+IZ+wqq1JzRpBBCyFt6vLq43Cc3txUBD65so/SI1o4NTKGJ05UsFdK4oHzk44t4KxfK2BunWZLA+ZnHMFZWK6mdgniwSLbIP1ifcurnB4eyEWyJPPxTSXkhnrsjp0R4aF8Xa3R4AFcjW2YcLI8hLaGasctBdn0=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=RYTdsSNJ; arc=fail smtp.client-ip=40.107.94.68
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=PxwJgkQP5hFj8KCD8rwZBhajV+0w1oUwFwbIsCbWIoxtGONbhvXtmM5oFl0ERs9a8w31raXFMTxoBPxRM5OPR38zF/8941ocirmFVbtME6U0GoWl3AQ9IzwF5umk8D9ksFIOPi3zF+LU2Fz6iTZLdJ6ZbLxuU1sXlp4hVUJuPhUIu7Zt68nXaWuDFzVlpplCCLXE+KxeRrcgAD+ZiSB5rYj9nznISSKqszv5XkImHiMbxUy7t/tmSjkt1Jbl06RNkDUTZpU99UExF96oTdYw7AXE29inB0dJiEz4cFWTKFguFD0RW6ylXwmmUKD6WztQDfvDcQyb5qX2mb/gomNRbg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=8AvGfLf8CHjCBpZVckIRUqBy6B7hYMTL3tIV3NCGpRY=;
- b=aJe3qj1EQP6o09SCBskuUpYBoY4MtZRLRgigx5P+3b20Qdwm6pTmbhqovc5JNG3rYuwI5opgy3oRq9gcWyPW24HUytSGExdvfpf6FcR2VxM37Nad6CcAOJu/cQnWThA9b3Z+8QCvYJlmBR3WSMifaE/hGae3U5BLVT5SGt/8PgHCnv9nh808/bru+jpGEblQzdz6j+7sWaefOV7IvbC8lT0qXt8OIWHCFOFHWoHG909AJl/VZrG03t3So3+YzRaxDuwZvqkvk4wIh2+VXSTq2UcT45bQAe223n3zCrbKndmLXlmTWBQPEn4Bl5lTNdwVyYgwz3prV7lhHm/9HMl0cQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 165.204.84.17) smtp.rcpttodomain=kernel.org smtp.mailfrom=amd.com; dmarc=pass
- (p=quarantine sp=quarantine pct=100) action=none header.from=amd.com;
- dkim=none (message not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=8AvGfLf8CHjCBpZVckIRUqBy6B7hYMTL3tIV3NCGpRY=;
- b=RYTdsSNJTqFsCxP1DJDJzGIDIujGg7cns53jEzLbRNgShuJHsY7QiFfSt7Ia063LJpJ10yx1G/clOnQIUGs3uyE/pETT5lBA0TzEd39cmC0QdKU9lU+sduCtwweWqV0yqlJLi/Qkw+rL+w6V+/Cl2gl2uIIV7Hq+LV+f/ZGQM2Q=
-Received: from BN9PR03CA0954.namprd03.prod.outlook.com (2603:10b6:408:108::29)
- by SJ5PPF7B9E98CB6.namprd12.prod.outlook.com (2603:10b6:a0f:fc02::99a) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8835.28; Mon, 23 Jun
- 2025 08:46:50 +0000
-Received: from BL6PEPF0001AB57.namprd02.prod.outlook.com
- (2603:10b6:408:108:cafe::96) by BN9PR03CA0954.outlook.office365.com
- (2603:10b6:408:108::29) with Microsoft SMTP Server (version=TLS1_3,
- cipher=TLS_AES_256_GCM_SHA384) id 15.20.8746.29 via Frontend Transport; Mon,
- 23 Jun 2025 08:46:50 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
- smtp.mailfrom=amd.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=amd.com;
-Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
- 165.204.84.17 as permitted sender) receiver=protection.outlook.com;
- client-ip=165.204.84.17; helo=SATLEXMB04.amd.com; pr=C
-Received: from SATLEXMB04.amd.com (165.204.84.17) by
- BL6PEPF0001AB57.mail.protection.outlook.com (10.167.241.9) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.20.8880.14 via Frontend Transport; Mon, 23 Jun 2025 08:46:50 +0000
-Received: from vijendar-linux.amd.com (10.180.168.240) by SATLEXMB04.amd.com
- (10.181.40.145) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Mon, 23 Jun
- 2025 03:46:46 -0500
-From: Vijendar Mukunda <Vijendar.Mukunda@amd.com>
-To: <broonie@kernel.org>
-CC: <alsa-devel@alsa-project.org>, <lgirdwood@gmail.com>, <perex@perex.cz>,
-	<tiwai@suse.com>, <Basavaraj.Hiregoudar@amd.com>,
-	<Sunil-kumar.Dommati@amd.com>, <venkataprasad.potturu@amd.com>,
-	<Syed.SabaKareem@amd.com>, <linux-sound@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>, Vijendar Mukunda <Vijendar.Mukunda@amd.com>
-Subject: [PATCH V2] ASoC: amd: ps: fix for soundwire failures during hibernation exit sequence
-Date: Mon, 23 Jun 2025 14:14:55 +0530
-Message-ID: <20250623084630.3100279-1-Vijendar.Mukunda@amd.com>
-X-Mailer: git-send-email 2.45.2
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EF6D81DF75A;
+	Mon, 23 Jun 2025 08:44:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1750668300; cv=none; b=MVCCnedo9TtnporUXKZAA/DjPtQ1l7Y1I4bWIt8SnNNgjGtiiipW/qcyF0IJTmtqDql51hP1xPQwGzN6ISSlGLQ2C6T2L7HkiEpi4HZhe4ta8UJLZ2D8FawzdoScsFTHeJ+CABaJXE9g6heum+YOkZ4TFkWzVZmz4wVay8Bs4Zk=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1750668300; c=relaxed/simple;
+	bh=T+ZvFATpMVmo9JrjrJ0psl5XSDccDVqxEVtTuUwWGYI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=diTywZBxvYm+2XYN7UJeOZfq7d3dv1KuJfcwqX1QTT3OZ7MeAsC5z1lhRVQRx5behlR8JHz/B6OLS4Z0FvZ/LpLy/5AScTJdw4dberrgusUkBmgwgTQ6C+OIOsOlV3JNt2XfK9H4+ds1nsH0cqAEmVLHOMwMwxj28q3NpeNyHew=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=qSeSVtBe; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id EFA2CC4CEED;
+	Mon, 23 Jun 2025 08:44:58 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1750668299;
+	bh=T+ZvFATpMVmo9JrjrJ0psl5XSDccDVqxEVtTuUwWGYI=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=qSeSVtBe24oPA3fxyQOIEjU6APWTd0ILLyIKNoUPlgMC/+0TiNHEq3l3qE3rN+kw6
+	 hXGrKsSt8/wXQNmnNBULq5BmlBb7gqK8KaaJRkfaIG8DlApgOhMO8NIEeYVehCdwM/
+	 eDvCQwA5LefVr1p1ZlFqdla9/blsb+eQQPZwTeuINQmlw2Gkc9FdYvfjvuEra0JcLO
+	 d2ycrAcDI8W0CQSz7WIui8aaKVg02RFR9uxGiYnOEqqjJn3+AQWk80ekdlX/xRUNT+
+	 VvAWhbkaExKX1N5xk2b2sQjKBu5BJNvNKn+dyo1lOdsAhRD5ogrCThLnEQNmWaGQIC
+	 QZ41rtsNkZIPw==
+Date: Mon, 23 Jun 2025 10:44:57 +0200
+From: Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <ukleinek@kernel.org>
+To: Nicolas Frattaroli <nicolas.frattaroli@collabora.com>
+Cc: Linus Walleij <linus.walleij@linaro.org>, 
+	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+	Conor Dooley <conor+dt@kernel.org>, Heiko Stuebner <heiko@sntech.de>, 
+	William Breathitt Gray <wbg@kernel.org>, Sebastian Reichel <sebastian.reichel@collabora.com>, 
+	Kever Yang <kever.yang@rock-chips.com>, Yury Norov <yury.norov@gmail.com>, 
+	Rasmus Villemoes <linux@rasmusvillemoes.dk>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
+	Dave Ertman <david.m.ertman@intel.com>, Ira Weiny <ira.weiny@intel.com>, 
+	Leon Romanovsky <leon@kernel.org>, Lee Jones <lee@kernel.org>, linux-gpio@vger.kernel.org, 
+	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+	linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org, linux-pwm@vger.kernel.org, 
+	linux-iio@vger.kernel.org, kernel@collabora.com, Jonas Karlman <jonas@kwiboo.se>, 
+	Detlev Casanova <detlev.casanova@collabora.com>
+Subject: Re: [PATCH v2 5/7] pwm: Add rockchip PWMv4 driver
+Message-ID: <o5xaoorrqb6a3jwwpdcsowrqbo7owrjzwj4r3laytusms6txdi@ku4bvbynkwh7>
+References: <20250602-rk3576-pwm-v2-0-a6434b0ce60c@collabora.com>
+ <20250602-rk3576-pwm-v2-5-a6434b0ce60c@collabora.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: SATLEXMB04.amd.com (10.181.40.145) To SATLEXMB04.amd.com
- (10.181.40.145)
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: BL6PEPF0001AB57:EE_|SJ5PPF7B9E98CB6:EE_
-X-MS-Office365-Filtering-Correlation-Id: f59ded55-4963-49ca-0b53-08ddb2327efa
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|82310400026|36860700013|1800799024|376014;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?TBBWBkksgzjVgKfaY9/21R+RUdl0xBnWBdZHbZfsodrf8LP64J/pt1Rjtwjh?=
- =?us-ascii?Q?VKJFQosp1ocT7EwGtticx5iyxRMHCbUykxrqmchRn/4aYBdxBkpDGoV9W2fq?=
- =?us-ascii?Q?ZYV7IMTHRMJp3IncYycRKbcSYLT0Kzbq8CvKTlskBcGOdFJbSY04mOXNmyy8?=
- =?us-ascii?Q?aP017z5xrAg8Atv2EajfhACbQs7DMv/Q1cGwOfBgt49q2y6zwkIzj63Z0gey?=
- =?us-ascii?Q?kj4dqyvICqKh8qh6jY2sUDm9RUXr7ep0NNGB/13NLaslyK7ePOZvpOy9+pTG?=
- =?us-ascii?Q?38ErbZg4Ew/18hr297F6GfmPwovvsucpT40O0g3VnlV4qWlRQ5mJ2NR8Rost?=
- =?us-ascii?Q?5BRO6dscIMMAgF+J4rS72EcvVajTin0BCi3MWz2s26TkH5rz+WZKttESWtZW?=
- =?us-ascii?Q?L4KnEGDrApDkk5QxmhBo82OJcykk7uwKwmZOZw+nI7mv9HLXbkX9Ty4Bz1XJ?=
- =?us-ascii?Q?wjaThk/EAfg7aeOIJJREPaZKqVQ823UBhpVnB6FerIPQHU2N3gpPUCmjC6Dc?=
- =?us-ascii?Q?4+mF20Gvjp4OtgCqxhscQ+zaM6Pm4LEelLVaUOkHtxUqeQyGI5NlEn+dZEXk?=
- =?us-ascii?Q?ui0aRprROvnqAnNGEjymYSx0OFTN1/u7k+S7upAtXHIZIHZWYpfXBXsd5wqI?=
- =?us-ascii?Q?NPp8MSzhaEln8WATgqvelIsoj86AEMrhmueQDBLmpDJU0VTNz4akMJIRj1oK?=
- =?us-ascii?Q?apKDkvLETG9tLVgvQ1PH3SF71Ed/DbxDSe0K96vsYXnYPjmZeB7saMI2IPUT?=
- =?us-ascii?Q?YMzdZDVE89PTZ9EWnUY595XJxg9OvJWYH/c6i4L8iGy4cRxL1hQXDDaN3L6E?=
- =?us-ascii?Q?CdPN+hoRE51YtHOLrzV8lq7cV9MorfPDAiW0wl98//VBYOvHWDL9TNcQIBur?=
- =?us-ascii?Q?D7F5utMnz6fH4DUeyP/5+RkFYFyEhQC3h3hnr1gpU+xdKhpgQ1JVbk9NZN4u?=
- =?us-ascii?Q?LABNwckvCUX9gssL87vqjONZpzMmqyot0r5FzNXQX71jSRftGPmmyas3dN0h?=
- =?us-ascii?Q?ohU0KK5+8GnFxSqnKCh1uWVF6KVRWs0aeD1qAWnDOrTigAvOV5vfgBr9b6tS?=
- =?us-ascii?Q?1EZfW9hC+x2YGVNIPbz9dE5NMIFby1oyUSV4cWQIcZrNUAtLlKIzcpM39ZHL?=
- =?us-ascii?Q?h16zc8GHf783XoZ4So/R0vu1kii0Pci7bu9UDkbuUeLiQEGqwel42R/P29mm?=
- =?us-ascii?Q?5NzCg1GDdEenLExmtimt7jKMeCS4LWQYwlZ2JdqxjxUcLbp+c89OxT35UqB0?=
- =?us-ascii?Q?cxvX6IeCFtBLLVJQNhu9vXwhd3j7bnXtLPIkv3kFehOB51VW6c4tTueOsGm/?=
- =?us-ascii?Q?wfzYlBAI/rKtehwhP/TH08PjtDhjgbI22me0mAa7VIV60D94jgAzyA012hA/?=
- =?us-ascii?Q?ckfJbnO8Pr5tmJh0C9yEBVIFb5vZc2g2tx4jXum8LIB/C5q/bfolMtjoOoLZ?=
- =?us-ascii?Q?/FqWeJa3PNW+Svj2kNm5fcPUISEHj6pD8K/+oN2h5EovJQnUp1VJXR+nAhIL?=
- =?us-ascii?Q?pexGmOcZXDfXq98I90AAAVcct/at9AiDhqRZ?=
-X-Forefront-Antispam-Report:
-	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:SATLEXMB04.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(82310400026)(36860700013)(1800799024)(376014);DIR:OUT;SFP:1101;
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 23 Jun 2025 08:46:50.4458
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: f59ded55-4963-49ca-0b53-08ddb2327efa
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[SATLEXMB04.amd.com]
-X-MS-Exchange-CrossTenant-AuthSource:
-	BL6PEPF0001AB57.namprd02.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SJ5PPF7B9E98CB6
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="4g26suiz7oblktsa"
+Content-Disposition: inline
+In-Reply-To: <20250602-rk3576-pwm-v2-5-a6434b0ce60c@collabora.com>
 
-During the hibernate entry sequence, ACP registers will be reset to
-default values and acp ip will be completely powered off including acp
-SoundWire pads. During resume sequence, if acp SoundWire pad keeper enable
-register is not restored along with pad pulldown control register value,
-then SoundWire manager links won't be powered on correctly results in
-peripheral register access failures and completely audio function is
-broken.
 
-Add code to store the acp SoundWire pad keeper enable register and acp pad
-pulldown ctrl register values before entering into suspend state and
-restore the register values during resume sequence based on condition check
-for acp SoundWire pad keeper enable register for ACP6.3, ACP7.0 & ACP7.1
-platforms.
+--4g26suiz7oblktsa
+Content-Type: text/plain; protected-headers=v1; charset=us-ascii
+Content-Disposition: inline
+Subject: Re: [PATCH v2 5/7] pwm: Add rockchip PWMv4 driver
+MIME-Version: 1.0
 
-Fixes: 491628388005 ("ASoC: amd: ps: add callback functions for acp pci driver pm ops")
-Signed-off-by: Vijendar Mukunda <Vijendar.Mukunda@amd.com>
----
+Hello Nicolas,
 
-Changes since v1: removed extra macro ACP_SW_PAD_KEEPER_EN and used
-existing macro ACP_SW0_PAD_KEEPER_EN in the code.
+On Mon, Jun 02, 2025 at 06:19:16PM +0200, Nicolas Frattaroli wrote:
+> +/**
+> + * rockchip_pwm_v4_round_params - convert PWM parameters to hardware
+> + * @rate: PWM clock rate to do the calculations at
+> + * @duty: PWM duty cycle in nanoseconds
+> + * @period: PWM period in nanoseconds
+> + * @offset: PWM offset in nanoseconds
+> + * @out_duty: pointer to where the rounded duty value should be stored
+> + * @out_period: pointer to where the rounded period value should be stored
+> + * @out_offset: pointer to where the rounded offset value should be stored
+> + *
+> + * Convert nanosecond-based duty/period/offset parameters to the PWM hardware's
+> + * native rounded representation in number of cycles at clock rate @rate. Should
+> + * any of the input parameters be out of range for the hardware, the
+> + * corresponding output parameter is the maximum permissible value for said
+> + * parameter with considerations to the others.
+> + */
+> +static void rockchip_pwm_v4_round_params(unsigned long rate, u64 duty,
+> +					u64 period, u64 offset, u32 *out_duty,
+> +					u32 *out_period, u32 *out_offset)
+> +{
+> +	int ret;
+> +
+> +	ret = rockchip_pwm_v4_round_single(rate, period, out_period);
+> +	if (ret)
+> +		*out_period = U32_MAX;
 
- sound/soc/amd/ps/acp63.h     |  4 ++++
- sound/soc/amd/ps/ps-common.c | 18 ++++++++++++++++++
- 2 files changed, 22 insertions(+)
+It's strange to let rockchip_pwm_v4_round_single return failure just to
+reset it to U32_MAX here then. I'd make rockchip_pwm_v4_round_single do:
 
-diff --git a/sound/soc/amd/ps/acp63.h b/sound/soc/amd/ps/acp63.h
-index 85feae45c44c..d7c994e26e4d 100644
---- a/sound/soc/amd/ps/acp63.h
-+++ b/sound/soc/amd/ps/acp63.h
-@@ -334,6 +334,8 @@ struct acp_hw_ops {
-  * @addr: pci ioremap address
-  * @reg_range: ACP reigister range
-  * @acp_rev: ACP PCI revision id
-+ * @acp_sw_pad_keeper_en: store acp SoundWire pad keeper enable register value
-+ * @acp_pad_pulldown_ctrl: store acp pad pulldown control register value
-  * @acp63_sdw0-dma_intr_stat: DMA interrupt status array for ACP6.3 platform SoundWire
-  * manager-SW0 instance
-  * @acp63_sdw_dma_intr_stat: DMA interrupt status array for ACP6.3 platform SoundWire
-@@ -367,6 +369,8 @@ struct acp63_dev_data {
- 	u32 addr;
- 	u32 reg_range;
- 	u32 acp_rev;
-+	u32 acp_sw_pad_keeper_en;
-+	u32 acp_pad_pulldown_ctrl;
- 	u16 acp63_sdw0_dma_intr_stat[ACP63_SDW0_DMA_MAX_STREAMS];
- 	u16 acp63_sdw1_dma_intr_stat[ACP63_SDW1_DMA_MAX_STREAMS];
- 	u16 acp70_sdw0_dma_intr_stat[ACP70_SDW0_DMA_MAX_STREAMS];
-diff --git a/sound/soc/amd/ps/ps-common.c b/sound/soc/amd/ps/ps-common.c
-index 1c89fb5fe1da..7b4966b75dc6 100644
---- a/sound/soc/amd/ps/ps-common.c
-+++ b/sound/soc/amd/ps/ps-common.c
-@@ -160,6 +160,8 @@ static int __maybe_unused snd_acp63_suspend(struct device *dev)
- 
- 	adata = dev_get_drvdata(dev);
- 	if (adata->is_sdw_dev) {
-+		adata->acp_sw_pad_keeper_en = readl(adata->acp63_base + ACP_SW0_PAD_KEEPER_EN);
-+		adata->acp_pad_pulldown_ctrl = readl(adata->acp63_base + ACP_PAD_PULLDOWN_CTRL);
- 		adata->sdw_en_stat = check_acp_sdw_enable_status(adata);
- 		if (adata->sdw_en_stat) {
- 			writel(1, adata->acp63_base + ACP_ZSC_DSP_CTRL);
-@@ -197,6 +199,7 @@ static int __maybe_unused snd_acp63_runtime_resume(struct device *dev)
- static int __maybe_unused snd_acp63_resume(struct device *dev)
- {
- 	struct acp63_dev_data *adata;
-+	u32 acp_sw_pad_keeper_en;
- 	int ret;
- 
- 	adata = dev_get_drvdata(dev);
-@@ -209,6 +212,12 @@ static int __maybe_unused snd_acp63_resume(struct device *dev)
- 	if (ret)
- 		dev_err(dev, "ACP init failed\n");
- 
-+	acp_sw_pad_keeper_en = readl(adata->acp63_base + ACP_SW0_PAD_KEEPER_EN);
-+	dev_dbg(dev, "ACP_SW0_PAD_KEEPER_EN:0x%x\n", acp_sw_pad_keeper_en);
-+	if (!acp_sw_pad_keeper_en) {
-+		writel(adata->acp_sw_pad_keeper_en, adata->acp63_base + ACP_SW0_PAD_KEEPER_EN);
-+		writel(adata->acp_pad_pulldown_ctrl, adata->acp63_base + ACP_PAD_PULLDOWN_CTRL);
-+	}
- 	return ret;
- }
- 
-@@ -408,6 +417,8 @@ static int __maybe_unused snd_acp70_suspend(struct device *dev)
- 
- 	adata = dev_get_drvdata(dev);
- 	if (adata->is_sdw_dev) {
-+		adata->acp_sw_pad_keeper_en = readl(adata->acp63_base + ACP_SW0_PAD_KEEPER_EN);
-+		adata->acp_pad_pulldown_ctrl = readl(adata->acp63_base + ACP_PAD_PULLDOWN_CTRL);
- 		adata->sdw_en_stat = check_acp_sdw_enable_status(adata);
- 		if (adata->sdw_en_stat) {
- 			writel(1, adata->acp63_base + ACP_ZSC_DSP_CTRL);
-@@ -445,6 +456,7 @@ static int __maybe_unused snd_acp70_runtime_resume(struct device *dev)
- static int __maybe_unused snd_acp70_resume(struct device *dev)
- {
- 	struct acp63_dev_data *adata;
-+	u32 acp_sw_pad_keeper_en;
- 	int ret;
- 
- 	adata = dev_get_drvdata(dev);
-@@ -459,6 +471,12 @@ static int __maybe_unused snd_acp70_resume(struct device *dev)
- 	if (ret)
- 		dev_err(dev, "ACP init failed\n");
- 
-+	acp_sw_pad_keeper_en = readl(adata->acp63_base + ACP_SW0_PAD_KEEPER_EN);
-+	dev_dbg(dev, "ACP_SW0_PAD_KEEPER_EN:0x%x\n", acp_sw_pad_keeper_en);
-+	if (!acp_sw_pad_keeper_en) {
-+		writel(adata->acp_sw_pad_keeper_en, adata->acp63_base + ACP_SW0_PAD_KEEPER_EN);
-+		writel(adata->acp_pad_pulldown_ctrl, adata->acp63_base + ACP_PAD_PULLDOWN_CTRL);
-+	}
- 	return ret;
- }
- 
--- 
-2.45.2
+	tmp = mul_u64_u64_div_u64(rate, in_val, NSEC_PER_SEC);
+	if (tmp > U32_MAX)
+		return U32_MAX
+	return tmp;
 
+and then just do
+
+	*out_period = rockchip_pwm_v4_round_single(rate, period);
+	*out_duty = rockchip_pwm_v4_round_single(rate, duty)
+	...
+
+> +
+> +	ret = rockchip_pwm_v4_round_single(rate, duty, out_duty);
+> +	if (ret || *out_duty > *out_period)
+> +		*out_duty = *out_period;
+
+You can assume that .round_wf_tohw() is called only with duty <= period.
+
+> +	ret = rockchip_pwm_v4_round_single(rate, offset, out_offset);
+> +	if (ret || *out_offset > (*out_period - *out_duty))
+> +		*out_offset = *out_period - *out_duty;
+
+Is this a hardware limitation? In general
+
+	.period_length_ns = 1000
+	.duty_length_ns = 600
+	.duty_offset_ns = 600
+
+is a valid waveform.
+
+> +}
+> +
+> +static int rockchip_pwm_v4_round_wf_tohw(struct pwm_chip *chip,
+> +					 struct pwm_device *pwm,
+> +					 const struct pwm_waveform *wf,
+> +					 void *_wfhw)
+> +{
+> +	struct rockchip_pwm_v4 *pc = to_rockchip_pwm_v4(chip);
+> +	struct rockchip_pwm_v4_wf *wfhw = _wfhw;
+> +	unsigned long rate;
+> +	int ret;
+> +
+> +	/* We do not want chosen_clk to change out from under us here */
+> +	ret = mfpwm_acquire(pc->pwmf);
+> +	if (ret)
+> +		return ret;
+> +
+> +	rate = clk_get_rate(pc->pwmf->core);
+> +
+> +	rockchip_pwm_v4_round_params(rate, wf->duty_length_ns,
+> +				     wf->period_length_ns, wf->duty_offset_ns,
+> +				     &wfhw->duty, &wfhw->period, &wfhw->offset);
+> +
+> +	if (wf->period_length_ns > 0)
+> +		wfhw->enable = PWMV4_EN_BOTH_MASK;
+> +	else
+> +		wfhw->enable = 0;
+> +
+> +	dev_dbg(&chip->dev, "tohw: duty = %u, period = %u, offset = %u, rate %lu\n",
+> +		wfhw->duty, wfhw->period, wfhw->offset, rate);
+
+This is more helpful if the input parameters (i.e. wf) is also emitted.
+
+> +	mfpwm_release(pc->pwmf);
+> +	return 0;
+> +}
+> +
+> +static int rockchip_pwm_v4_round_wf_fromhw(struct pwm_chip *chip,
+> +					   struct pwm_device *pwm,
+> +					   const void *_wfhw,
+> +					   struct pwm_waveform *wf)
+> +{
+> +	struct rockchip_pwm_v4 *pc = to_rockchip_pwm_v4(chip);
+> +	const struct rockchip_pwm_v4_wf *wfhw = _wfhw;
+> +	unsigned long rate;
+> +	int ret = 0;
+> +
+> +	/* We do not want chosen_clk to change out from under us here */
+> +	ret = mfpwm_acquire(pc->pwmf);
+> +	if (ret)
+> +		return ret;
+
+Hmm, there is little gain here. Correct me if I'm wrong, but you prevent
+a rate change only until mfpwm_release() is called, so the assertion
+ends before the caller can use the calculated parameters anyhow. So
+maybe drop the acquire/release pair?
+
+> +	rate = clk_get_rate(pc->pwmf->core);
+> +
+> +	if (rockchip_pwm_v4_is_enabled(wfhw->enable)) {
+> +		if (!rate) {
+> +			ret = -EINVAL;
+> +			goto out_mfpwm_release;
+> +		}
+> +		wf->period_length_ns = mul_u64_u64_div_u64(wfhw->period, NSEC_PER_SEC, rate);
+
+(u64)wfhw->period * NSEC_PER_SEC cannot overflow, so a plain
+multiplication and then a division is cheaper here.
+
+> +		wf->duty_length_ns = mul_u64_u64_div_u64(wfhw->duty, NSEC_PER_SEC, rate);
+> +		wf->duty_offset_ns = mul_u64_u64_div_u64(wfhw->offset, NSEC_PER_SEC, rate);
+> +	} else {
+> +		wf->period_length_ns = 0;
+> +		wf->duty_length_ns = 0;
+> +		wf->duty_offset_ns = 0;
+> +	}
+> +
+> +	dev_dbg(&chip->dev, "fromhw: duty = %llu, period = %llu, offset = %llu, rate = %lu\n",
+> +		wf->duty_length_ns, wf->period_length_ns, wf->duty_offset_ns, rate);
+
+As above, please include wfhw in the output.
+
+> +out_mfpwm_release:
+> +	mfpwm_release(pc->pwmf);
+> +	return ret;
+> +}
+> +
+> [...]
+> +static int rockchip_pwm_v4_probe(struct platform_device *pdev)
+> +{
+> +	struct rockchip_mfpwm_func *pwmf = dev_get_platdata(&pdev->dev);
+> +	struct rockchip_pwm_v4 *pc;
+> +	struct pwm_chip *chip;
+> +	struct device *dev = &pdev->dev;
+> +	int ret;
+> +
+> +	chip = devm_pwmchip_alloc(dev, 1, sizeof(*pc));
+> +	if (IS_ERR(chip))
+> +		return PTR_ERR(chip);
+> +
+> +	pc = to_rockchip_pwm_v4(chip);
+> +	pc->pwmf = pwmf;
+> +
+> +	ret = mfpwm_acquire(pwmf);
+> +	if (ret == -EBUSY)
+> +		dev_warn(dev, "pwm hardware already in use, can't check initial state\n");
+> +	else if (ret < 0)
+> +		return dev_err_probe(dev, ret, "couldn't acquire mfpwm in probe\n");
+> +
+> +	if (!rockchip_pwm_v4_on_and_continuous(pc))
+> +		mfpwm_release(pwmf);
+> +	else {
+> +		dev_dbg(dev, "pwm was already on at probe time\n");
+> +		ret = clk_enable(pwmf->core);
+> +		if (ret)
+> +			return dev_err_probe(dev, ret, "enabling pwm clock failed\n");
+> +		ret = clk_rate_exclusive_get(pc->pwmf->core);
+> +		if (ret) {
+> +			clk_disable(pwmf->core);
+> +			return dev_err_probe(dev, ret, "protecting pwm clock failed\n");
+> +		}
+> +	}
+> +
+> +	platform_set_drvdata(pdev, chip);
+> +
+> +	chip->ops = &rockchip_pwm_v4_ops;
+> +
+> +	ret = pwmchip_add(chip);
+> +	if (ret)
+> +		return dev_err_probe(dev, ret, "failed to add PWM chip\n");
+
+I like error messages starting with a capital letter.
+
+> +
+> +	return 0;
+> +}
+> +
+> +static void rockchip_pwm_v4_remove(struct platform_device *pdev)
+> +{
+> +	struct pwm_chip *chip = platform_get_drvdata(pdev);
+> +	struct rockchip_pwm_v4 *pc = to_rockchip_pwm_v4(chip);
+> +
+> +	mfpwm_remove_func(pc->pwmf);
+
+What does this function do? It is not used in .probe()'s error path?!
+
+> +	pwmchip_remove(chip);
+
+Wrong order (I think). If mfpwm_remove_func() affects operation,
+pwmchip_remove() must be called first.
+
+> +}
+> +
+> +static const struct platform_device_id rockchip_pwm_v4_ids[] = {
+> +	{ .name = "pwm-rockchip-v4", },
+> +	{ /* sentinel */ }
+> +};
+> +MODULE_DEVICE_TABLE(platform, rockchip_pwm_v4_ids);
+> +
+> +static struct platform_driver rockchip_pwm_v4_driver = {
+> +	.probe = rockchip_pwm_v4_probe,
+> +	.remove = rockchip_pwm_v4_remove,
+> +	.driver = {
+> +		.name = "pwm-rockchip-v4",
+> +	},
+> +	.id_table = rockchip_pwm_v4_ids,
+> +};
+> +module_platform_driver(rockchip_pwm_v4_driver);
+> +
+> +MODULE_AUTHOR("Nicolas Frattaroli <nicolas.frattaroli@collabora.com>");
+> +MODULE_DESCRIPTION("Rockchip PWMv4 Driver");
+> +MODULE_LICENSE("GPL");
+> +MODULE_IMPORT_NS("ROCKCHIP_MFPWM");
+
+Best regards
+Uwe
+
+--4g26suiz7oblktsa
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEP4GsaTp6HlmJrf7Tj4D7WH0S/k4FAmhZFAYACgkQj4D7WH0S
+/k5t6ggAjmDJYKJYUEg5lEGucA+QTWdT0UbHkO7qf1jcahM1hd34ZOp7tYXkD9wC
+m28YV1gus2tgEIqldCRmqO0y5hJhniDfOJ92BRihB50Bkg1m6hox9P4iqMRPSJnd
+uDnmATiNVdY7Et8MPEe9Y9YDACD2CKfv/DSvUxkp3la1rhIglcTMHfPDFRMnSynw
+WUgyHKQ1hLEokOyBXvXY3wlDZCTpUZQpW5eSVW6p+h+Qj/liLp7CWNbW5myK/H49
+GYN3F/oEPrF+TMASFJkOfQb4Cs+MgPWOhTZfjj693TbWuFxc1p6seTByPZN8h3gg
+8B0jF2BSQvP4BiSbf9asZfRRNTd3DQ==
+=4kAc
+-----END PGP SIGNATURE-----
+
+--4g26suiz7oblktsa--
 
