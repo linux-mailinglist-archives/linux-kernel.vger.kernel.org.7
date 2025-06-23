@@ -1,136 +1,222 @@
-Return-Path: <linux-kernel+bounces-697851-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-697847-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9CF61AE396E
-	for <lists+linux-kernel@lfdr.de>; Mon, 23 Jun 2025 11:06:41 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 811A7AE395A
+	for <lists+linux-kernel@lfdr.de>; Mon, 23 Jun 2025 11:04:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 72A1E18957AA
-	for <lists+linux-kernel@lfdr.de>; Mon, 23 Jun 2025 09:06:57 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E3B9D161A83
+	for <lists+linux-kernel@lfdr.de>; Mon, 23 Jun 2025 09:04:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0280C233149;
-	Mon, 23 Jun 2025 09:06:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CF1C022FE0A;
+	Mon, 23 Jun 2025 09:04:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="HJx862tP"
-Received: from mail-wr1-f46.google.com (mail-wr1-f46.google.com [209.85.221.46])
+	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="Lu4havlq"
+Received: from mail-wm1-f50.google.com (mail-wm1-f50.google.com [209.85.128.50])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C7EB622F74E;
-	Mon, 23 Jun 2025 09:06:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C4F8A1F4281
+	for <linux-kernel@vger.kernel.org>; Mon, 23 Jun 2025 09:04:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750669578; cv=none; b=gA64UtALuF9vKZqRJ0eTBn1i2JHqXPfUUUH9qP9QlObomNXzKP9ArNVak8oKOU1qQS/cuLkaLqFZ8wPMYxJjg9fa9kgxQVR/LD0r8ukXwE+MIW1jty2iO4Hkk3tDm3fpZk7UZXDlA3Yy9sS/K96XaliIZIxD+9/MtF6qQP4Wofk=
+	t=1750669459; cv=none; b=IcbsEmkEVveqeJgkWODgnBf6Nqv/UrWZQPTJcu+7KoCzjCL6Aaszb+9aOajNYlUbApfWjOwDSn2+kf2wt8CROuUeU0OgTEh698Gc1ATFJ9SK/y5Rh+SEVV/GnVfkCHNFHUVGHSWdzZrvcmiViMfssPh+buHk9FYIZ5MMJoRs684=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750669578; c=relaxed/simple;
-	bh=5pF4vDNlHIa6c6oA7h5CZ5pMihTZP50eXtCrfdW6rRE=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=C/CPtJWnRcviTxaxueEnSCiTFWUxwu9jxFlREsFSwPUeZuW5c9cqs8qfUoIaaNvpmP4eWzeD/JkIsVGK/yTGDmmxjOK2W4SOcOrF0Aqu20d/9oz6qWyehOvGbTDUEu1+mr7H8PzKjB770E1mBsD2pxgUeRf+5Ns4+Vfng5wMzpo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=HJx862tP; arc=none smtp.client-ip=209.85.221.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f46.google.com with SMTP id ffacd0b85a97d-3a5257748e1so2470472f8f.2;
-        Mon, 23 Jun 2025 02:06:16 -0700 (PDT)
+	s=arc-20240116; t=1750669459; c=relaxed/simple;
+	bh=SPCcFqbrzfIHwolmZbtkAZSKbGxU/6xQjBXOl8gkX1o=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=YACXCUnTkjFLVXjf/8O3bpaO9gdPzqTMv2BD3Zt5BKkUDPFP9P+OCLZkwZRAmz+4Aj4/fhWr0qw5L5kk7Gr3OVs+7ylE0M3YDD2w7IaG6Ejm2dadbrFbopKT+h3D93gapsy4ndCeOGIUJbOvxNa1ZLOycaVNaeAP6PAKjm3PpNw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=Lu4havlq; arc=none smtp.client-ip=209.85.128.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
+Received: by mail-wm1-f50.google.com with SMTP id 5b1f17b1804b1-450cf0120cdso30555905e9.2
+        for <linux-kernel@vger.kernel.org>; Mon, 23 Jun 2025 02:04:15 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1750669575; x=1751274375; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=kEGfnWR9y2R5Hb4sOmq+4EG1fJXcUTguVBT64eS7amA=;
-        b=HJx862tPfX00iWvHCHVN+dqyfXYxWW+In29gof2cpqdPrRGDfvwx6mdb1F8S2QAHd7
-         RIiO81+qjedALFu/qyeGr1Ut0xsjKry3BaHUSWhIBPMnhAmFvLBCko58c5TvVYdgS8xg
-         DzGMqHxl5J9zf5EoL8+RklYaGK926s0ueqGmfLqAn6akkpXym6ZxFqh4xr99D5NNHD8A
-         /E2SmNy0NQXXctcaGD2ZmHgWcc/EfFdq7UekWrr96BKqjyalrSo8l52wuieHEj8av27b
-         k1TrkDQvD57cvwFd5M9vJ5NKx7E1rEyTdRFJQSEhm1yUfNw0Ijkm1UqpfU8MXmkAALMh
-         Wx5A==
+        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1750669454; x=1751274254; darn=vger.kernel.org;
+        h=mime-version:message-id:date:user-agent:references:in-reply-to
+         :subject:cc:to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=mGJGLljVH09RHHvcPmR2xlgcJlbWSurnIEnT57zI1pg=;
+        b=Lu4havlqx8neoDFi+GQNK9mgC8PgsFG9ODY1HkfyoDzZNnW+/Ko9s11AAt+x/eA3cy
+         vdxfKPI3Q7TJr+9O28HKcUxZOhjBZw+lX0mwqdujgTn2l2MdfjSbbDeEALckuvytS8lT
+         NBFRnuCy+BwN4pETOzGSzxB/bPm7hIrdwTEI8ckukYpPYOzXxPaUjIbmb/BZnHOCyq8D
+         Wd7tciPxbsyuVeakTlVVDBUiSfGezAfj7+Yn5i5ykbjlRRrCAYjtKmU245I3y6qKAStC
+         3p6nuIN3fu8WW05lNSUCoh6DvqtfElkwztRb3BGaIrma37Zhoxc2ebhbOaURrjILYq2i
+         Do9w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1750669575; x=1751274375;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=kEGfnWR9y2R5Hb4sOmq+4EG1fJXcUTguVBT64eS7amA=;
-        b=vspygmw1PQtMTPNHSqXU7KoHKZ1DgOV+R/N5sFLqaB8PBQxOM9M/zwWTF7dZwAJp7B
-         aefYjxP76Rcit/aDWFKsoMIMqDUsnPxsMsEk8II6j4uV4NKQVMND0m1GrM+PnZfn+y/u
-         /EjNo3kDbi999coch2g+HnYlJwdHKnDLpc5nR3pkykIjg0JuHzmLR3EHGLWptFmFR6Yg
-         62oWwM3bE4BaQXZMq+dMmNx1O94Ezt786Zt4xhbv4QDtUk+G81rTSIt1+iwBkZXIMnGm
-         IdltKVCN3j5KhzlwO/GLvZV073P52a4MaCoL1Cq+fdgPo52zjPFjAXNxUTK1BUVn30cP
-         txaQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUiSEUgAu7O0wjoEX/fcVtp+0QGkbXeUpcONg1OR/VEkUvwxuuVZQHGpT4Wh8RvP0LPCt0M3/wGaJ8zGL12hjY=@vger.kernel.org, AJvYcCVcdtyv+E8qXxR3UCDoKA9vNWreTFY600tpzbA1FKE5lc9Hqo2uWEqGFaBOUUwk+WK6RKFTS1TtFF7z4vFL@vger.kernel.org, AJvYcCVwL85wppBzYeAn/gNtw/YiHQX6JCgAIz+HzrvKlUQqj3D/tsEvqmyJEohuYgwb4zlFkbq0k7j38/Uy@vger.kernel.org, AJvYcCWdc+8ZMbvUlZPhdEPd/nONio+rQkmt8GZc53iO0kkfQ3kCs7saiTiJCVEtCk56Q4vbvEPlHGrK3I4PPQ==@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz5caVEzW7IDySNN+50urpgEls4UMhrQZpVxHqxkMiJiieETZC5
-	DO7lSxxc0vWofUuAjBKLGzSVsBscpRYkfhcZIDte0/RVYejG/9tfEwJB
-X-Gm-Gg: ASbGncv09JJ0tCdS94QkFiag18RfM31V1c/NrqSGiWUpwKe3NJ4yUm7z8ZGTE5bq7ej
-	sUJ45BT1bkZRY/r1bHsvw+V9wrGZjccSGGiHLcaE1Mcvp2Y9bPQnZb3RGXmbjmFP4OA++IqllzB
-	ynuM1mut/40YE/+Se12eczmtlZRVNmL72g9oHIfgyRNrZfvISKSHhGoHwr0Abxs4Fz9Rlk5XzMQ
-	F3YaL3O31VCVPywvWmAW+WtZJFRjaU/vdqQ0ZTee4D5/LECXDO0uvXkHynpK418xvdYEQWK+Why
-	ZHaKGhrn7djIg2tM9wkcUFqRZ+kjbIwWX/sAXaD5HjkirmiDdaQ8rjtZBdLrJWyOXvGm
-X-Google-Smtp-Source: AGHT+IE0jNES0f1isvf0t0jssclUaz/qe8sm8GaviZjXBxkREDmbJO8rKf8In2RJvpDsEDCES9npdA==
-X-Received: by 2002:a05:6000:491a:b0:3a5:39e9:928d with SMTP id ffacd0b85a97d-3a6d1166d39mr11221330f8f.0.1750669574903;
-        Mon, 23 Jun 2025 02:06:14 -0700 (PDT)
-Received: from [10.38.1.85] ([188.39.32.4])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-45364705748sm101407075e9.28.2025.06.23.02.06.13
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 23 Jun 2025 02:06:14 -0700 (PDT)
-Message-ID: <4655e2ee-6a5e-4ab5-8adc-4f91acd3d325@gmail.com>
-Date: Mon, 23 Jun 2025 10:03:57 +0100
+        d=1e100.net; s=20230601; t=1750669454; x=1751274254;
+        h=mime-version:message-id:date:user-agent:references:in-reply-to
+         :subject:cc:to:from:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=mGJGLljVH09RHHvcPmR2xlgcJlbWSurnIEnT57zI1pg=;
+        b=XTiw9ZcJpVStpTBWMBUlWiT2AjjJKtALg5jp9RpYXPtmYa9nxomkma6JXFxm8nZwSy
+         4j3pGihan3CTsNxhAMRgkKH1V7aIdoESK/tn02N7jiauHCQHzWFDRuNv+lKxLO7wTiHI
+         Kj3Jk0x0r27/t6u29T73VG0lA3pEa7qniqlTzj/7Igt6I25dk3lbx3PrAmsvck8dIWV/
+         sQUq5HJqnUGsu3fwvKmFLkcVOwg1c0LVg2hPA43E0O5vEs0VJTHyxusiDq1iopbq7jTq
+         Cy34IC7bROkLhzAClLatdpF1hHwdy9r/IGxH1kKtNNCKUwJTTpNqh2Zgu8bZkoj+doey
+         9z1A==
+X-Forwarded-Encrypted: i=1; AJvYcCWE5hsYkC4OvYjWNRdHSyI3oVIz+AcgWz4y6R5iaTbyQo6wVsuiap1wB4WyKoCeKEhk5z84t2NtT2ksmnQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwCleSw+LiJCYITiNj8Ep+PpH7MUBwQfQN25Q8MOmjnT9scVH18
+	7qLuplyFMVkhautui0SRXMqquLuibAzFyoRoybPFUb0/lZirYb3LZr32LbPHhcedeYE=
+X-Gm-Gg: ASbGncvRrQHY52U0JHbahjB1be+LrXYaEloK0SQZGFz08kW36OZLzForTheLE8g6eRH
+	1VLiWZ1z8a4nx2AEZy8c3Fye7nQd+yMBQ5wFaS7UaQkqqctOZdzVKiJUmdtaaUntMJwvKK0/OHD
+	tpa+UZAnX6Os7w4cIE7UvYdpbfCthBCZ7M+m5ar+iUv5zzxftjBNfxDHbbmBxuZbedRnhxcEirs
+	oTAih0F69V8LqXJR6mmqbqF+3Hyj6lXSOuIlDeBUXpBkVpjEq7/pd3fKbfy4CGMKl+sm8OhAMah
+	WcNHuDx58ciuOMGhZ441kP/DGYwacqrRhNarqX9mcs/SoW6M5sA+sJhx4u89
+X-Google-Smtp-Source: AGHT+IHPFVP2GzxWqyLYPOcDDU16rCAlS0TgolK5wkPSR8zZb2Tfrc8wGwUYkTiUhGSu8NLF6anogw==
+X-Received: by 2002:a5d:5f4b:0:b0:3a5:21c8:af31 with SMTP id ffacd0b85a97d-3a6d12a41a1mr9212783f8f.16.1750669453679;
+        Mon, 23 Jun 2025 02:04:13 -0700 (PDT)
+Received: from localhost ([2a01:e0a:3c5:5fb1:dd07:164c:d535:3e5])
+        by smtp.gmail.com with UTF8SMTPSA id ffacd0b85a97d-3a6d117c66esm8705949f8f.47.2025.06.23.02.04.13
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 23 Jun 2025 02:04:13 -0700 (PDT)
+From: Jerome Brunet <jbrunet@baylibre.com>
+To: Frank Li <Frank.li@nxp.com>
+Cc: Vladimir Kondratiev <vladimir.kondratiev@mobileye.com>,  Gregory CLEMENT
+ <gregory.clement@bootlin.com>,  =?utf-8?Q?Th=C3=A9o?= Lebrun
+ <theo.lebrun@bootlin.com>,
+  Michael Turquette <mturquette@baylibre.com>,  Stephen Boyd
+ <sboyd@kernel.org>,  Philipp Zabel <p.zabel@pengutronix.de>,  Abel Vesa
+ <abelvesa@kernel.org>,  Peng Fan <peng.fan@nxp.com>,  Shawn Guo
+ <shawnguo@kernel.org>,  Sascha Hauer <s.hauer@pengutronix.de>,
+  Pengutronix Kernel Team <kernel@pengutronix.de>,  Fabio Estevam
+ <festevam@gmail.com>,  Neil Armstrong <neil.armstrong@linaro.org>,  Kevin
+ Hilman <khilman@baylibre.com>,  Martin Blumenstingl
+ <martin.blumenstingl@googlemail.com>,  linux-mips@vger.kernel.org,
+  linux-clk@vger.kernel.org,  linux-kernel@vger.kernel.org,
+  imx@lists.linux.dev,  linux-arm-kernel@lists.infradead.org,
+  linux-amlogic@lists.infradead.org
+Subject: Re: [PATCH 3/4] clk: clk-imx8mp-audiomix: use the auxiliary device
+ creation helper
+In-Reply-To: <aEmzRrhQC+olmywj@lizhi-Precision-Tower-5810> (Frank Li's message
+	of "Wed, 11 Jun 2025 12:48:06 -0400")
+References: <20250611-clk-aux-v1-0-fb6575ed86a7@baylibre.com>
+	<20250611-clk-aux-v1-3-fb6575ed86a7@baylibre.com>
+	<aEmzRrhQC+olmywj@lizhi-Precision-Tower-5810>
+User-Agent: mu4e 1.12.9; emacs 30.1
+Date: Mon, 23 Jun 2025 11:04:12 +0200
+Message-ID: <1jikkmkewj.fsf@starbuckisacylon.baylibre.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v8 4/9] rust: acpi: add `acpi::DeviceId` abstraction
-To: Danilo Krummrich <dakr@kernel.org>, "Rafael J . Wysocki"
- <rafael@kernel.org>
-Cc: Alex Gaynor <alex.gaynor@gmail.com>,
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- Miguel Ojeda <ojeda@kernel.org>, Rob Herring <robh@kernel.org>,
- Saravana Kannan <saravanak@google.com>, Alex Hung <alex.hung@amd.com>,
- Andrew Morton <akpm@linux-foundation.org>, Jakub Kicinski <kuba@kernel.org>,
- Jonathan Cameron <Jonathan.Cameron@huawei.com>,
- Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
- Mauro Carvalho Chehab <mchehab+huawei@kernel.org>,
- Remo Senekowitsch <remo@buenzli.dev>, Tamir Duberstein <tamird@gmail.com>,
- Viresh Kumar <viresh.kumar@linaro.org>,
- Wedson Almeida Filho <wedsonaf@gmail.com>,
- Xiangfei Ding <dingxiangfei2009@gmail.com>, devicetree@vger.kernel.org,
- linux-acpi@vger.kernel.org, linux-kernel@vger.kernel.org,
- rust-for-linux@vger.kernel.org, =?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?=
- <bjorn3_gh@protonmail.com>, Alice Ryhl <aliceryhl@google.com>,
- Andreas Hindborg <a.hindborg@kernel.org>, Benno Lossin <lossin@kernel.org>,
- Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>,
- Len Brown <lenb@kernel.org>, Trevor Gross <tmgross@umich.edu>
-References: <20250620150914.276272-1-igor.korotin.linux@gmail.com>
- <20250620152425.285683-1-igor.korotin.linux@gmail.com>
- <aFXbcDKP_jw_Sg5k@cassiopeiae>
-Content-Language: en-US
-From: Igor Korotin <igor.korotin.linux@gmail.com>
-In-Reply-To: <aFXbcDKP_jw_Sg5k@cassiopeiae>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain
 
+On Wed 11 Jun 2025 at 12:48, Frank Li <Frank.li@nxp.com> wrote:
 
-
-On 6/20/25 23:06, Danilo Krummrich wrote:
-> On Fri, Jun 20, 2025 at 04:24:25PM +0100, Igor Korotin wrote:
->> `acpi::DeviceId` is an abstraction around `struct acpi_device_id`.
+> On Wed, Jun 11, 2025 at 02:53:58PM +0200, Jerome Brunet wrote:
+>> The auxiliary device creation of this driver is simple enough to
+>> use the available auxiliary device creation helper.
 >>
->> This is used by subsequent patches, in particular the i2c driver
->> abstractions, to create ACPI device ID tables.
-> 
-> I think this should say something like
-> 
-> 	"Enable drivers to build ACPI device ID tables, to be consumed by the
-> 	 corresponding bus abstractions, such as platform or I2C."
-> 
-> instead.
-> 
-> If we agree, I can change it when applying the patch -- no need to resend.
-> 
+>> Use it and remove some boilerplate code.
+>
+> Actaully, you also remove unused struct clk_imx8mp_audiomix_priv *priv
+> at clk_imx8mp_audiomix_reset_controller_register().
+>
+> Please add it into comments.
 
-No objections.
+That's merely a side effect of removing the boilerplate code.
+Like for the other changes of the same kind, I don't think listing the
+symbols removed would be useful to the change description
 
-Thanks
-Igor
+>
+> Reviewed-by: Frank Li <Frank.Li@nxp.com>
+>
+>>
+>> Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
+>> ---
+>>  drivers/clk/imx/clk-imx8mp-audiomix.c | 49 ++++++-----------------------------
+>>  1 file changed, 8 insertions(+), 41 deletions(-)
+>>
+>> diff --git a/drivers/clk/imx/clk-imx8mp-audiomix.c b/drivers/clk/imx/clk-imx8mp-audiomix.c
+>> index 775f62dddb11d8cfd17a4ebf7a677ef399c5e617..765fb1f5bd4fa2b039d7414abd89471438ee41dd 100644
+>> --- a/drivers/clk/imx/clk-imx8mp-audiomix.c
+>> +++ b/drivers/clk/imx/clk-imx8mp-audiomix.c
+>> @@ -230,61 +230,28 @@ struct clk_imx8mp_audiomix_priv {
+>>
+>>  #if IS_ENABLED(CONFIG_RESET_CONTROLLER)
+>>
+>> -static void clk_imx8mp_audiomix_reset_unregister_adev(void *_adev)
+>> +static int clk_imx8mp_audiomix_reset_controller_register(struct device *dev)
+>>  {
+>> -	struct auxiliary_device *adev = _adev;
+>> -
+>> -	auxiliary_device_delete(adev);
+>> -	auxiliary_device_uninit(adev);
+>> -}
+>> -
+>> -static void clk_imx8mp_audiomix_reset_adev_release(struct device *dev)
+>> -{
+>> -	struct auxiliary_device *adev = to_auxiliary_dev(dev);
+>> -
+>> -	kfree(adev);
+>> -}
+>> -
+>> -static int clk_imx8mp_audiomix_reset_controller_register(struct device *dev,
+>> -							 struct clk_imx8mp_audiomix_priv *priv)
+>> -{
+>> -	struct auxiliary_device *adev __free(kfree) = NULL;
+>> -	int ret;
+>> +	struct auxiliary_device *adev;
+>>
+>>  	if (!of_property_present(dev->of_node, "#reset-cells"))
+>>  		return 0;
+>>
+>> -	adev = kzalloc(sizeof(*adev), GFP_KERNEL);
+>> +	adev = devm_auxiliary_device_create(dev, "reset", NULL);
+>>  	if (!adev)
+>> -		return -ENOMEM;
+>> -
+>> -	adev->name = "reset";
+>> -	adev->dev.parent = dev;
+>> -	adev->dev.release = clk_imx8mp_audiomix_reset_adev_release;
+>> -
+>> -	ret = auxiliary_device_init(adev);
+>> -	if (ret)
+>> -		return ret;
+>> +		return -ENODEV;
+>>
+>> -	ret = auxiliary_device_add(adev);
+>> -	if (ret) {
+>> -		auxiliary_device_uninit(adev);
+>> -		return ret;
+>> -	}
+>> -
+>> -	return devm_add_action_or_reset(dev, clk_imx8mp_audiomix_reset_unregister_adev,
+>> -					no_free_ptr(adev));
+>> +	return 0;
+>>  }
+>>
+>>  #else /* !CONFIG_RESET_CONTROLLER */
+>>
+>> -static int clk_imx8mp_audiomix_reset_controller_register(struct device *dev,
+>> -							 struct clk_imx8mp_audiomix_priv *priv)
+>> +static int clk_imx8mp_audiomix_reset_controller_register(struct device *dev)
+>>  {
+>>  	return 0;
+>>  }
+>>
+>> -#endif /* !CONFIG_RESET_CONTROLLER */
+>> +#endif
+>>
+>>  static void clk_imx8mp_audiomix_save_restore(struct device *dev, bool save)
+>>  {
+>> @@ -408,7 +375,7 @@ static int clk_imx8mp_audiomix_probe(struct platform_device *pdev)
+>>  	if (ret)
+>>  		goto err_clk_register;
+>>
+>> -	ret = clk_imx8mp_audiomix_reset_controller_register(dev, priv);
+>> +	ret = clk_imx8mp_audiomix_reset_controller_register(dev);
+>>  	if (ret)
+>>  		goto err_clk_register;
+>>
+>>
+>> --
+>> 2.47.2
+>>
+
+-- 
+Jerome
 
