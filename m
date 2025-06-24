@@ -1,161 +1,177 @@
-Return-Path: <linux-kernel+bounces-699644-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-699646-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8C610AE5D5F
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Jun 2025 09:05:22 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id BA376AE5D62
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Jun 2025 09:05:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B14C91B6780B
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Jun 2025 07:05:36 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0A5FD3ABA1B
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Jun 2025 07:05:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 420242459D5;
-	Tue, 24 Jun 2025 07:04:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 00CCB25486D;
+	Tue, 24 Jun 2025 07:05:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="FZSQcD8M"
-Received: from mail-pg1-f174.google.com (mail-pg1-f174.google.com [209.85.215.174])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="YdCNEjXQ"
+Received: from out-176.mta1.migadu.com (out-176.mta1.migadu.com [95.215.58.176])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 335CC2376EF
-	for <linux-kernel@vger.kernel.org>; Tue, 24 Jun 2025 07:04:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 30BE122258C
+	for <linux-kernel@vger.kernel.org>; Tue, 24 Jun 2025 07:05:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750748697; cv=none; b=YtcDaEKrpuwDJnGi5eJbyZSV35Fm1G/uub7JbUfMZLGOOMoN7Pl6F8Ho1n8WgDS5ecYJ0JRND107HPFGV8b+zjyAUNeexcrCbUdh0dDrghaN4p9ybINBKJtEOpAew+FkmjCWPl6XV4iav+E1rrzQ/Zkc6vNh5XHqiYUqM7qSFf0=
+	t=1750748724; cv=none; b=a94fkCjnZlN8Ufg+7xWwTYzPSBBfmXsQY1jzzZze8a4GXB6MFffnZMm4fGm5pIaBhhZT1SmJb9mgGxa8f5/9nkMO1Q1MsDamvmSkD9j97HuOroFzchc+4a5K9I60BDqvQSASIwo3AZYo6PNozT+qcZqTftM1dvBwkM933VaI7fQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750748697; c=relaxed/simple;
-	bh=WQIe86JuUNhj2gkklQzuWuDuGEmfX2qJAnjURmdjQsM=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=AsCdO+zOKZLbbD/WGdlsg2SeqThqxjd+y5L+xC0b/6UTuWTSbGP9aYS0gM2mSnhrw9kH3LbzDx6+ndUhGgnt6kfHVymuZ7QiDFf1GPMpOgEkZsqK8tO+/Ud6C9wG0bWr7u6udG59pKQtOdAqqa8W8IIrlwD2usCIs6+Uyw4qs64=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=FZSQcD8M; arc=none smtp.client-ip=209.85.215.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pg1-f174.google.com with SMTP id 41be03b00d2f7-b34a6d0c9a3so194397a12.3
-        for <linux-kernel@vger.kernel.org>; Tue, 24 Jun 2025 00:04:54 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1750748694; x=1751353494; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=NFaPEwYqVk8swUeuusja02739T2S2QTaLE27xP5T8F4=;
-        b=FZSQcD8ME2w5VKmeooMc/wLzXIF1QaS6AuHZLMZDiRnWh5KyO6AwKYzYFXPpbhRCK7
-         UaPQsClgQxpMhsYfDA+Ejmm1ckKxbatFMR96b8UOopYRz/Y05HVN5IGRyxwgo0In9Jzq
-         jomJwPthW7Ex8VVccEH2Ymhf9J0TqQEazn0IQ43YzSQ+VOs0YgzxeCK4/va0SingnQRD
-         QraRihidsCkXgk5dr6ooTBJxs4dZg13s1+bucBpyVoyohmWwg20uv6SdEEdWboQftnxG
-         krHdh7tQ4kHZbc27706rK7AjZplwUZGzD+xyPbZ2mvbZ0Tm+KA8KRdC8UvSqU7d1Wg4v
-         n7Wg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1750748694; x=1751353494;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=NFaPEwYqVk8swUeuusja02739T2S2QTaLE27xP5T8F4=;
-        b=f54arSMtMu1dIYLVTrtvZ0G3T/pVO4HIFFS2wawhT4ECl7JiX27bttBS41H8ugRQ3i
-         WAA0IWwSbQNvS1WK/n96ugqDqsPEnzq8aVSNpoqvbL95GMbDgT79+zl9iugaImsNDOoO
-         IZHHcrZZ+Dg3PBWVsikofPMEDpmzjmSXlzDYTLOo1y9yu3d0RmmqO/46Wu44LelwNaqv
-         vbhxbSvfXiucVx+q+JcyP3ZDSz7kA4f2nSSeiWkiUXy1bVkd1n4sTBOf6Zc+foIqOyWL
-         zWWYOMkgDkpqH5OdVNzCHj6mcfYEuNo+c7Q4v4kY5GOdJJtMdDjRotxO0zRv4Y5gOGOj
-         MeXQ==
-X-Gm-Message-State: AOJu0YxCbRk2JWdfCTUtLvcvKBWuOu5Ahj4YAhUiYjsMqiYe4IKT517x
-	nKQqmEem2A3+M2Y0+/ehw5/mcppH3CCEWRJsfQtBm9cF9+YcP6XZNjLy
-X-Gm-Gg: ASbGncuwilWzWsbtPhm1iirLL19mXjHAsgz7TdMZ1dSofjbOcX2JzpRqcqG+HVjSWPD
-	p95lguX+fMMiVh5/p1DKz1capIZPnFjeP9R1gAwxP1+jMuT4IiV37g03PuMCP/MRq5tEZA0yIX5
-	Nz6NIP/C8Ot9TFAqsYaKeJ+A/pU0s38BWry8Zd45nmr04a0XosMDnt5ku7KCrKm4vatfSVVXEdg
-	n9Vo2HcJ00EkbuhlZ1D+evixdkCuMvAYiicxth1y+kyFnTWn2GI1m3y1yt6Nmqws3f61XQ9JIy/
-	plQG56wk7YcUQQ0gdVZIv1iGpFpMc6QuCHYm8Ew2y7fGimVJKPhvH8enVntjvlsb6lsIZgVpHCn
-	mmGoI
-X-Google-Smtp-Source: AGHT+IEhlwIsSspUcRAJkdSSVmCisgdMIL1hyOAtY/muUDQ/EBJGGCf1AuTRLdemhb2h+4QRgwCiMA==
-X-Received: by 2002:a17:90b:3cc5:b0:312:959:dc4d with SMTP id 98e67ed59e1d1-3159d6260efmr25628648a91.7.1750748694011;
-        Tue, 24 Jun 2025 00:04:54 -0700 (PDT)
-Received: from seokw-960QHA.lan ([210.100.209.148])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-3159e06acfesm10479145a91.36.2025.06.24.00.04.51
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 24 Jun 2025 00:04:53 -0700 (PDT)
-From: Ryan Chung <seokwoo.chung130@gmail.com>
-To: jgross@suse.com,
-	sstabellini@kernel.org,
-	oleksandr_tyshchenko@epam.com
-Cc: linux-kernel@vger.kernel.org,
-	linux-kernel-mentees@lists.linux.dev,
-	Ryan Chung <seokwoo.chung130@gmail.com>
-Subject: [PATCH v2] xen-pciback: Replace scnprintf() with sysfs_emit_at()
-Date: Tue, 24 Jun 2025 16:04:42 +0900
-Message-ID: <20250624070443.11740-1-seokwoo.chung130@gmail.com>
-X-Mailer: git-send-email 2.43.0
+	s=arc-20240116; t=1750748724; c=relaxed/simple;
+	bh=uCj01wXJRSXVsrZB3o811ZhTorLLjK4lSt9J6v1K598=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=mr7pfE708T00+ULE5V0kpamYuBD5lqFGEzC8Ve1NwAjtzSuRtX38zNWp+w7CiPXOQrUgJxkHXnTc9WlpWLWAlTJbS/vpeXWLf+0RQgfhtX49JWKO17Iibfm3D2H7E3JsoZAzoNaR+NC66e/qHSYKBUPf+Y+zPd4l7finCFXc1AQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=YdCNEjXQ; arc=none smtp.client-ip=95.215.58.176
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Date: Tue, 24 Jun 2025 00:05:07 -0700
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1750748720;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=Rvl+LfkUxz42F+u2AhuU0DC7MpN+KcVkghfyXMKrAJU=;
+	b=YdCNEjXQf9Nhf5KzU5i8ggHBOyIXgK50+X3MqptwbGqKbrP84GlAPmVg79d0ScGVzHNWqI
+	9KAlGO56nfnuIB3W0BcRK3X5GneOcZB9c6cWMPJsMsmV7O7M5uCWupxxC81piynZV/OZ4M
+	jVC45rQOrDmJbnTY2tgEni5IU6Cvt4M=
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Oliver Upton <oliver.upton@linux.dev>
+To: Colton Lewis <coltonlewis@google.com>
+Cc: kvm@vger.kernel.org, pbonzini@redhat.com, corbet@lwn.net,
+	linux@armlinux.org.uk, catalin.marinas@arm.com, will@kernel.org,
+	maz@kernel.org, joey.gouly@arm.com, suzuki.poulose@arm.com,
+	yuzenghui@huawei.com, mark.rutland@arm.com, shuah@kernel.org,
+	linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, kvmarm@lists.linux.dev,
+	linux-perf-users@vger.kernel.org, linux-kselftest@vger.kernel.org
+Subject: Re: [PATCH v2 07/23] perf: arm_pmuv3: Introduce method to partition
+ the PMU
+Message-ID: <aFpOI7cWTOAIjNjV@linux.dev>
+References: <aFYFqrYRsmCi6oii@linux.dev>
+ <gsntpleu9uvx.fsf@coltonlewis-kvm.c.googlers.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <gsntpleu9uvx.fsf@coltonlewis-kvm.c.googlers.com>
+X-Migadu-Flow: FLOW_OUT
 
-This change uses sysfs_emit() API usage for sysfs 'show'
-functions as recommended from Documentation/filesystems/sysfs.rst.
+On Mon, Jun 23, 2025 at 06:26:42PM +0000, Colton Lewis wrote:
+> Oliver Upton <oliver.upton@linux.dev> writes:
+> 
+> > On Fri, Jun 20, 2025 at 10:13:07PM +0000, Colton Lewis wrote:
+> > > For PMUv3, the register field MDCR_EL2.HPMN partitiones the PMU
+> > > counters into two ranges where counters 0..HPMN-1 are accessible by
+> > > EL1 and, if allowed, EL0 while counters HPMN..N are only accessible by
+> > > EL2.
+> 
+> > > Create module parameters partition_pmu and reserved_guest_counters to
+> > > reserve a number of counters for the guest. These numbers are set at
+> > > boot because the perf subsystem assumes the number of counters will
+> > > not change after the PMU is probed.
+> 
+> > > Introduce the function armv8pmu_partition() to modify the PMU driver's
+> > > cntr_mask of available counters to exclude the counters being reserved
+> > > for the guest and record reserved_guest_counters as the maximum
+> > > allowable value for HPMN.
+> 
+> > > Due to the difficulty this feature would create for the driver running
+> > > at EL1 on the host, partitioning is only allowed in VHE mode. Working
+> > > on nVHE mode would require a hypercall for every counter access in the
+> > > driver because the counters reserved for the host by HPMN are only
+> > > accessible to EL2.
+> 
+> > > Signed-off-by: Colton Lewis <coltonlewis@google.com>
+> > > ---
+> > >   arch/arm/include/asm/arm_pmuv3.h   | 10 ++++
+> > >   arch/arm64/include/asm/arm_pmuv3.h |  5 ++
+> > >   drivers/perf/arm_pmuv3.c           | 95 +++++++++++++++++++++++++++++-
+> > >   include/linux/perf/arm_pmu.h       |  1 +
+> > >   4 files changed, 109 insertions(+), 2 deletions(-)
+> 
+> > > diff --git a/arch/arm/include/asm/arm_pmuv3.h
+> > > b/arch/arm/include/asm/arm_pmuv3.h
+> > > index 2ec0e5e83fc9..9dc43242538c 100644
+> > > --- a/arch/arm/include/asm/arm_pmuv3.h
+> > > +++ b/arch/arm/include/asm/arm_pmuv3.h
+> > > @@ -228,6 +228,11 @@ static inline bool kvm_set_pmuserenr(u64 val)
+> 
+> > >   static inline void kvm_vcpu_pmu_resync_el0(void) {}
+> 
+> > > +static inline bool has_vhe(void)
+> > > +{
+> > > +	return false;
+> > > +}
+> > > +
+> 
+> > This has nothing to do with PMUv3, I'm a bit surprised to see you're
+> > touching 32-bit ARM. Can you just gate the whole partitioning thing on
+> > arm64?
+> 
+> The PMUv3 driver also has to compile on 32-bit ARM.
 
-No functional change intended.
-Signed-off-by: Ryan Chung <seokwoo.chung130@gmail.com>
----
- drivers/xen/xen-pciback/pci_stub.c | 12 ++++++------
- 1 file changed, 6 insertions(+), 6 deletions(-)
+Quite aware.
 
-diff --git a/drivers/xen/xen-pciback/pci_stub.c b/drivers/xen/xen-pciback/pci_stub.c
-index 5c2f829d5b0b..045e74847fe6 100644
---- a/drivers/xen/xen-pciback/pci_stub.c
-+++ b/drivers/xen/xen-pciback/pci_stub.c
-@@ -1261,7 +1261,7 @@ static ssize_t slots_show(struct device_driver *drv, char *buf)
- 		if (count >= PAGE_SIZE)
- 			break;
- 
--		count += scnprintf(buf + count, PAGE_SIZE - count,
-+		count += sysfs_emit_at(buf, count,
- 				   "%04x:%02x:%02x.%d\n",
- 				   pci_dev_id->domain, pci_dev_id->bus,
- 				   PCI_SLOT(pci_dev_id->devfn),
-@@ -1290,7 +1290,7 @@ static ssize_t irq_handlers_show(struct device_driver *drv, char *buf)
- 		if (!dev_data)
- 			continue;
- 		count +=
--		    scnprintf(buf + count, PAGE_SIZE - count,
-+		    sysfs_emit_at(buf, count,
- 			      "%s:%s:%sing:%ld\n",
- 			      pci_name(psdev->dev),
- 			      dev_data->isr_on ? "on" : "off",
-@@ -1375,7 +1375,7 @@ static ssize_t quirks_show(struct device_driver *drv, char *buf)
- 		if (count >= PAGE_SIZE)
- 			goto out;
- 
--		count += scnprintf(buf + count, PAGE_SIZE - count,
-+		count += sysfs_emit_at(buf, count,
- 				   "%02x:%02x.%01x\n\t%04x:%04x:%04x:%04x\n",
- 				   quirk->pdev->bus->number,
- 				   PCI_SLOT(quirk->pdev->devfn),
-@@ -1391,7 +1391,7 @@ static ssize_t quirks_show(struct device_driver *drv, char *buf)
- 			if (count >= PAGE_SIZE)
- 				goto out;
- 
--			count += scnprintf(buf + count, PAGE_SIZE - count,
-+			count += sysfs_emit_at(buf, count,
- 					   "\t\t%08x:%01x:%08x\n",
- 					   cfg_entry->base_offset +
- 					   field->offset, field->size,
-@@ -1462,7 +1462,7 @@ static ssize_t permissive_show(struct device_driver *drv, char *buf)
- 		if (!dev_data || !dev_data->permissive)
- 			continue;
- 		count +=
--		    scnprintf(buf + count, PAGE_SIZE - count, "%s\n",
-+		    sysfs_emit_at(buf, count, "%s\n",
- 			      pci_name(psdev->dev));
- 	}
- 	spin_unlock_irqrestore(&pcistub_devices_lock, flags);
-@@ -1521,7 +1521,7 @@ static ssize_t allow_interrupt_control_show(struct device_driver *drv,
- 		if (!dev_data || !dev_data->allow_interrupt_control)
- 			continue;
- 		count +=
--		    scnprintf(buf + count, PAGE_SIZE - count, "%s\n",
-+		    sysfs_emit_at(buf, count, "%s\n",
- 			      pci_name(psdev->dev));
- 	}
- 	spin_unlock_irqrestore(&pcistub_devices_lock, flags);
--- 
-2.43.0
+> My first series had the partitioning code in arch/arm64 but you asked me
+> to move it to the PMUv3 driver.
+> 
+> How are you suggesting I square those two requirements?
 
+You should try to structure your predicates in such a way that the
+partitioning stuff all resolves to false for 32 bit arm, generally. That
+way we can avoid stubbing out silly things like has_vhe() which doesn't
+make sense in the context of 32 bit.
+
+> > > +static bool partition_pmu __read_mostly;
+> > > +static u8 reserved_guest_counters __read_mostly;
+> > > +
+> > > +module_param(partition_pmu, bool, 0);
+> > > +MODULE_PARM_DESC(partition_pmu,
+> > > +		 "Partition the PMU into host and guest VM counters [y/n]");
+> > > +
+> > > +module_param(reserved_guest_counters, byte, 0);
+> > > +MODULE_PARM_DESC(reserved_guest_counters,
+> > > +		 "How many counters to reserve for guest VMs [0-$NR_COUNTERS]");
+> > > +
+> 
+> > This is confusing and not what we discussed offline.
+> 
+> > Please use a single parameter that describes the number of counters used
+> > by the *host*. This affects the *host* PMU driver, KVM can discover (and
+> > use) the leftovers.
+> 
+> > If the single module parameter goes unspecified the user did not ask for
+> > PMU partitioning.
+> 
+> I understand what we discussed offline, but I had a dilemma.
+> 
+> If we do a single module parameter for number of counters used by the
+> host, then it defaults to 0 if unset and there is no way to distinguish
+> between no partitioning and a request for partitioning reserving 0
+> counters to the host which I also thought you requested. Would you be
+> happy leaving no way to specify that?
+
+You can make the command line use a signed integer for storage and a
+reset value of -1.
+
+-1 would imply default behavior (no partitioning) and a non-negative
+value would imply partitioning.
+
+> In any case, I think the usage is more self explainatory if
+> partitition=[y/n] is a separate bit.
+
+What would be the user's intent of "partition_pmu=n reserved_guest_counters=$X"?
+
+Thanks,
+Oliver
 
