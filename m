@@ -1,141 +1,132 @@
-Return-Path: <linux-kernel+bounces-700925-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-700927-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0A3E9AE6E9D
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Jun 2025 20:28:44 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 420F8AE6EA1
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Jun 2025 20:31:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2BD667A19F8
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Jun 2025 18:27:20 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 88D051BC30FA
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Jun 2025 18:32:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C5D952E764A;
-	Tue, 24 Jun 2025 18:28:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 02FE72E762A;
+	Tue, 24 Jun 2025 18:31:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="cWDVajBX"
-Received: from mout.web.de (mout.web.de [212.227.17.12])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b="frN3BPTD"
+Received: from mail-wr1-f48.google.com (mail-wr1-f48.google.com [209.85.221.48])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8813D230278;
-	Tue, 24 Jun 2025 18:28:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.17.12
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CBB412343CF
+	for <linux-kernel@vger.kernel.org>; Tue, 24 Jun 2025 18:31:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750789706; cv=none; b=ewzOPj39dyOzfw5ThUn8hwJTE6QOK+WZ2te5vAA9SA4DhfUxVWw1zkqubkuIN66BuBrp8pjTDK65RdwwFmloLn1iQ92In0UueM+ARK4UNqL7VRAHaNNfNa5OBQ25ZHQpKRWR8J+/BRQ2jgbstwEUlaEvMd01/ucO+LGqX3t38qY=
+	t=1750789892; cv=none; b=CgQiJpCfuouaDpCQq6JnU2KSq0jDe5olEwB9Ea7NXw8tqutrqYKF5yL1YHbmFx3Jw6PBD5SKGphzYRDPQgIgNiPl/86T3krkDmWaPgaX2LhBsYJ1aYlG5FQCJXsWNmmeRpXKisYNoqvnBIJje2VQYrlMr+q0UEHQAfb3BzeKKmA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750789706; c=relaxed/simple;
-	bh=4y1nE6JPRD/KbbMZsgQNG8J1jgQvkKLfsnhSxTtsBBM=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=XEIRFjD1MFbJt/TbNVAlG8EfaRFAu5wzfrrsneBheA7N0uirvzCIwnwMJgpICF8QjJHH1t4dSgoomlwp6bCBHcdiL2vs8k5Dkpotw4VtZiKQ8DePScqA64DiLBl8KiMfIFB9FN7OaHLYM5OYiaHui++L+gYA8ur7ojrD58rZciQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=cWDVajBX; arc=none smtp.client-ip=212.227.17.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
-	s=s29768273; t=1750789699; x=1751394499; i=markus.elfring@web.de;
-	bh=4y1nE6JPRD/KbbMZsgQNG8J1jgQvkKLfsnhSxTtsBBM=;
-	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:Subject:To:Cc:
-	 References:From:In-Reply-To:Content-Type:
-	 Content-Transfer-Encoding:cc:content-transfer-encoding:
-	 content-type:date:from:message-id:mime-version:reply-to:subject:
-	 to;
-	b=cWDVajBXlEfKKHvl/4Bj1nK4hHE+CJzB5Ao6T0CGVzW7f+uN22oRh/pHaoCje/5O
-	 xB2Ws/IbLXed4yoTl/ukWwFtqSVvClGvGCspJI2J6HusmxNsZ7X5DxRmsR8v6/4iv
-	 CqHI48t/QVH7F2a2Zu0NCGpNtyoAPrxUuo1QxkZ5vzeLjxyieFlUxp4RMuI3FoGF0
-	 zTjlLX2acw03p3KCOMxxha+63OnDOPg6c4LDi3Zfq5CFI5tn0mZghu2j+hu4P6wPO
-	 5xOcfncg5UN9XO4XEGOjMtOgiNl9/CsQtk0WeBW1D3vkfC9Q7BPwYD55to2de2FOQ
-	 xWjaTs0BrmzIs2Ly7g==
-X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
-Received: from [192.168.178.29] ([94.31.69.200]) by smtp.web.de (mrweb106
- [213.165.67.124]) with ESMTPSA (Nemesis) id 1N8Vop-1uqBaE1089-00xbi7; Tue, 24
- Jun 2025 20:28:19 +0200
-Message-ID: <a7a00125-b393-4283-a7dc-6c80ced8e7e6@web.de>
-Date: Tue, 24 Jun 2025 20:28:18 +0200
+	s=arc-20240116; t=1750789892; c=relaxed/simple;
+	bh=oxggGxlEAxQEG8dw/1WSvlADiepky9mdW9MNmieccOM=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=s3SGIGaV93FTztMig4Arbeqk9UU9NM0zZNKnHcLsA1jbRNsd4gzF0+J7m31MLCPbBnAAYg2T9ZORzxQaxdzGNZz1iwtSVCo1Y+io8QSo1E/SY2RDSLFGeFwgZ9hddURIGUYrDZmoE0hmWlCVBDAU9FoZyk2Ultm4NK7NS2Cs2J0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com; spf=fail smtp.mailfrom=broadcom.com; dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b=frN3BPTD; arc=none smtp.client-ip=209.85.221.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=broadcom.com
+Received: by mail-wr1-f48.google.com with SMTP id ffacd0b85a97d-3a4fea34e07so435107f8f.1
+        for <linux-kernel@vger.kernel.org>; Tue, 24 Jun 2025 11:31:30 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=broadcom.com; s=google; t=1750789889; x=1751394689; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=6wcG9j8VdN/npPwgyr0htyxSJI9SVIjp3ma+CA4lJZY=;
+        b=frN3BPTDIdQzrJIYBwis8zfSQMoyLD4EMPu/S6n7IBWNYVWI7rppG0w6NnjxKAagin
+         pG+IFvzB3MiwhZgXdjQ2W3e+oMYDMfoUCs67iH47CDwS2sZcNLmNiV1qX5vD3sUeXdpr
+         IJJVqmxR9tb22c8BoJj7UudPDSjJtzMKTUJZM=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1750789889; x=1751394689;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=6wcG9j8VdN/npPwgyr0htyxSJI9SVIjp3ma+CA4lJZY=;
+        b=WHUkE+iCW+5Q74lJIG1TkkEC1ku0z15QVz+VUXqdfPMz+7RUULPQPJAWDz0m9AKThL
+         zULdjivIFWtn5RsuIl2R3ysoypPHoyUmOSU1BBYPPpXLpJeWfRcQJ2j+RMpJBoqT3bgM
+         wDso3bBpn1UYXX2QYBqtW1cJ9Q8F1cGo5u2GeqQMiRFfulN9VapsICDvag8+Ee00ye0o
+         64OALU5oX8V9XeLdXP6qofRByzXPttSNIDa+5FJjw0DnwSOpOJmz6xWeBp70YIp3u/Iu
+         DiP2pb2gj5qrvPPGuUcjo7GDEQOMgY5N3h9f2tRL3G1Eqcwx5jW2sgaHfgqdoSc9XQub
+         ILrw==
+X-Forwarded-Encrypted: i=1; AJvYcCV0rDCPzZjACRb2i7bhpbM/34kFFsysMijrSoPMSFiyF+Z8Lwie8URprVdFNOIAt+sSd/s9fZRsHC6YwBU=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwcSMgqoL7n4CYthQMuFSrrU561g/Y0QbxSceXp8gSyHzChGo7v
+	YduVPZLQnqtSTJnia9oZDU58TdfYCH0MmOI0dlvPvxzIi4pQaAGVl2NnFbF3qEGvdh352WNUSVX
+	JXlzRj4f3mOCFjWUUm/KPJBEvD9ozXOIDL5Rtb3Cc
+X-Gm-Gg: ASbGncsa04Ii5JE3rc62j8VMaYNxK4pksHYRXpZilYypbn3nYak74NzSO4eBhYZCzLU
+	J/UtZIN6AWNPgr77AKtdl5ZS7K7X2ytSViXVJplRyrh6SoqpYUqJ6zND/175VSC2BmBi34enBJ8
+	k0Ifn1G70RxGxarTKt9BLfZDaDAsWLJRd9xa1oHyv6GqVA
+X-Google-Smtp-Source: AGHT+IHlsJf8+bi5OMmeyYd45t8XxJc7w9Vdsy57udvF0huW0fRWNhgY20XQo1TYvMIZI/PAdLdm921J3sfinlX3PFU=
+X-Received: by 2002:a05:6000:2f83:b0:3a5:2d42:aa25 with SMTP id
+ ffacd0b85a97d-3a6ec4d3cd3mr776826f8f.50.1750789889090; Tue, 24 Jun 2025
+ 11:31:29 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: can: ucan: Use usb_endpoint_type() rather than duplicating its
- implementation
-To: Vincent Mailhol <mailhol.vincent@wanadoo.fr>, linux-can@vger.kernel.org
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org,
- Chen Ni <nichen@iscas.ac.cn>, Marc Kleine-Budde <mkl@pengutronix.de>
-References: <48e217a7-b90e-4af3-b535-812c449dd3ba@web.de>
- <bf5442d1-34e0-495f-8a56-4e47f53ca4ad@wanadoo.fr>
-Content-Language: en-GB, de-DE
-From: Markus Elfring <Markus.Elfring@web.de>
-In-Reply-To: <bf5442d1-34e0-495f-8a56-4e47f53ca4ad@wanadoo.fr>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Provags-ID: V03:K1:eogUSMfdfyL06eIcE6NZ9gO+a3ORUE7w7oP5lfa2WDczCnt4zEm
- 5Kf2pwezQ3oulQ/ZCKtZq83JPUZKAP1sArDiv24iQZ3/029yKPk6uXlb725LDl03es+X0/W
- OUY7UFN5CkGHHSFf2wjNKQOyil8MjvSFlvj3WZFQIahEOEvfqF5+N/8jjS3uAhEglrjTbd5
- zKPTVKqqKp5bEpI8R/yog==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:4pQOt6DRSKA=;xHjH6PFge6TF5DddpSofkhrcTBt
- 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
- bwH4qDLPCVxAE/r1/2Jqr9K52ws/Q==
+References: <aFl7jpCNzscumuN2@debian.debian> <633986ae-75c4-44fa-96f8-2dde00e17530@kernel.org>
+ <CACKFLik8Ve4=eUV=TJMkwkScLN0H80TtiqPUwtuDqNEji+StSQ@mail.gmail.com>
+In-Reply-To: <CACKFLik8Ve4=eUV=TJMkwkScLN0H80TtiqPUwtuDqNEji+StSQ@mail.gmail.com>
+From: Andy Gospodarek <andrew.gospodarek@broadcom.com>
+Date: Tue, 24 Jun 2025 14:31:18 -0400
+X-Gm-Features: Ac12FXzy1JNsBli5zeDTmdvBa1itDipHFkLbZK-3c1TY40dRr2V_CjtW_YzgdDY
+Message-ID: <CACDg6nWEAKWU3s1x+NRU28BcXHK0=yFkAAU4MMkSTgEA9g592w@mail.gmail.com>
+Subject: Re: [PATCH net] bnxt: properly flush XDP redirect lists
+To: Michael Chan <michael.chan@broadcom.com>
+Cc: Jesper Dangaard Brouer <hawk@kernel.org>, Yan Zhai <yan@cloudflare.com>, netdev@vger.kernel.org, 
+	Pavan Chebbi <pavan.chebbi@broadcom.com>, Andrew Lunn <andrew+netdev@lunn.ch>, 
+	"David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, Alexei Starovoitov <ast@kernel.org>, 
+	Daniel Borkmann <daniel@iogearbox.net>, John Fastabend <john.fastabend@gmail.com>, 
+	Stanislav Fomichev <sdf@fomichev.me>, linux-kernel@vger.kernel.org, bpf@vger.kernel.org, 
+	kernel-team@cloudflare.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-> Looking at the helpers in linux/usb/ch9.h,
+On Tue, Jun 24, 2025 at 2:00=E2=80=AFPM Michael Chan <michael.chan@broadcom=
+.com> wrote:
+>
+> On Mon, Jun 23, 2025 at 10:59=E2=80=AFPM Jesper Dangaard Brouer <hawk@ker=
+nel.org> wrote:
+> >
+> > On 23/06/2025 18.06, Yan Zhai wrote:
+> > > We encountered following crash when testing a XDP_REDIRECT feature
+> > > in production:
+> > >
+> > [...]
+> > >
+> > (To Andy + Michael:)
+> > The initial bug was introduced in [1] commit a7559bc8c17c ("bnxt:
+> > support transmit and free of aggregation buffers") in bnxt_rx_xdp()
+> > where case XDP_TX zeros the *event, that also carries the XDP-redirect
+> > indication.
+> > I'm wondering if the driver should not reset the *event value?
+> > (all other drive code paths doesn't)
+>
+> Resetting *event was only correct before XDP_REDIRECT support was added.
+>
+> >
+> >
+> > > We can stably reproduce this crash by returning XDP_TX
+> > > and XDP_REDIRECT randomly for incoming packets in a naive XDP program=
+.
+> > > Properly propagate the XDP_REDIRECT events back fixes the crash.
+>
+> Thanks for the patch.  The fix is similar to edc0140cc3b7 ("bnxt_en:
+> Flush XDP for bnxt_poll_nitroa0()'s NAPI")
+>
+> Somehow the fix was only applied to one chip's poll function and not
+> the other chips' poll functions.
 
-Please take another look at known source code mappings.
+Odd that we missed this back then.  Thanks for the fix for all other device=
+s.
 
-Passing code replacements by APIs (for SmPL)?
-https://lore.kernel.org/cocci/481faa1d-7171-4657-8dc0-c37b153e6eaa@web.de/
-https://sympa.inria.fr/sympa/arc/cocci/2025-06/msg00044.html
-
-
-> it seems that Coccinelle missed many simplifications.
-
-Would such software transformations become better supported anyhow?
-
-Regards,
-Markus
+> Reviewed-by: Michael Chan <michael.chan@broadcom.com>
+Reviewed-by: Andy Gospodarek <gospo@broadcom.com>
 
