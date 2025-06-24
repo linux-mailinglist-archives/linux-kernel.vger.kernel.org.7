@@ -1,56 +1,56 @@
 Return-Path: <linux-kernel+bounces-700746-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6A1B4AE6C32
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Jun 2025 18:14:23 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id AF23AAE6C37
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Jun 2025 18:14:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2A8BA4A0585
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Jun 2025 16:14:18 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5D1C03B1E6D
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Jun 2025 16:13:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 380032E2EF3;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 37CC92E174A;
 	Tue, 24 Jun 2025 16:14:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="HkS9KsuS"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="hloAorf8"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8BE3942056;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8BDFA3595C;
 	Tue, 24 Jun 2025 16:14:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750781643; cv=none; b=H0WH/YRg4evfVlrKsd6WEr1CL4OEGBPpyTzDl007UXSncvKqEsdraT62XdkdosRURry9mlBSuhOK/2p+YZS4sRQbeVzQOSVN/Ms8dNjIug22h95ENc0b49Khj4/v3PZ9Q25d5aD1yVi2wuBgVG8Eg/qD9e5c/WI11CX+gHt82qo=
+	t=1750781643; cv=none; b=Sfkn8HoElQ/j/GI5xENP35jOhngXM3j81PEXdI5sc6DR0x1xo9c+2fttD2mpNnYM4OjxB49SLg5rCh+kmJE44ppdxgnLF9KOBimPDpI1EtYxV75Yofykx4Y3MK/J2IdZeRDcAD8dBvGvreZh6m6BdBmdkHw/tDBzqKLZC6cb++4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1750781643; c=relaxed/simple;
-	bh=WGfcPe2zsB2QJnfR2yO4TD4YNMs3PuEVC8yqrLr7J4I=;
+	bh=+RdBW/rgysCuyXXUZzubKiF57XyQfZ3OaDnudhPV6rA=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=Ikupj/BdKvt/nGGqWdkpswWvdSGH+YnZBB0mMBe3xKwCrqbWu+35RaISbz/zWCE20YslOWdvzs/P/mvl4js8XpOaio74WAF5w7yEy+uwBGfmQuZIZeYvdLk/vieBFVljzfsz6y15kl2ICWSzhr52sW2KtkpSMrAT7p+3dD8QDHk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=HkS9KsuS; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2E452C4AF09;
+	 MIME-Version; b=ZsqKhmSGqSEvnzrMk+oePUMtgwn7ah914XpX5a5Asb3LpR6PcXuIMSnb5ly8wBwFNnlMzm3vvCvRwuGtyZ8688nNHF8/s8RtpMgnaiaxN0tiLUXv1TY1MsCWI4tI1Pz+qvUUIeZIOyDvxOkwEpCRRxuZtAXMInmEYb+M9tb9jx0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=hloAorf8; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 175F3C4CEF1;
 	Tue, 24 Jun 2025 16:14:03 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
 	s=k20201202; t=1750781643;
-	bh=WGfcPe2zsB2QJnfR2yO4TD4YNMs3PuEVC8yqrLr7J4I=;
+	bh=+RdBW/rgysCuyXXUZzubKiF57XyQfZ3OaDnudhPV6rA=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=HkS9KsuSsIiz471dXmVEIiJkUbh3AhNeYT9xO5JUU6+emIDBKVQiexJtPBCDu1AXZ
-	 0VJP8uwz/MubTMGSgBeP1S5J4VsOlJy/BD0Zz0Q90jEHOBJth1VGRaC5TOUHSdJywL
-	 h7Mi9dnflKRYLpHZApTJKDk332P4n897WjFm7hnChbNmdWATMyKX5mtKRD6tpiZkGj
-	 cxm0rxiNW1rtF52I/X2cC+G91FdXgKajgrFywVUTN7nnnAsC0H0fS4/XoB8eUw1V2S
-	 HpQN5iUreeXqnsb7JenxNy70EG3TRfTVie/h6yLdGx5NLg66R0S0asuhPcgDswyl/+
-	 bNOAXz3hbOhuw==
+	b=hloAorf87aI3FQkbu1vkEf5c/MAUD3oWuOsOHfJMMaMuRd2wnb5zpYjrYyca7FYYl
+	 CA0o8sotp5FG1NVZ2H+BZn/TdD/P0PGZu0ASnN8UjZMEv8AfSjvR8Ab4ATaUpL0Wap
+	 t9etOul17EV/g2/FMLjh1+nmCpPJ8yZP7GRdI/YkPTDNFaMZaa+xpdvmNjFdlaPEQs
+	 6j+B6kt7jInQ9emOWuHWjAt/IuM5PdfNJiKUfpi3MATpw5WCS6wkTswVDI8fBBcCLw
+	 9ckXMR6xfHa1aoHpzsUPsZb1JVQ/1l28lH3TpnptsrMyr7n06+EPc2J/C9A8cPSr7i
+	 73BOJMPPSVECQ==
 Received: by paulmck-ThinkPad-P17-Gen-1.home (Postfix, from userid 1000)
-	id 8065BCE0B27; Tue, 24 Jun 2025 09:14:01 -0700 (PDT)
+	id 83409CE0B73; Tue, 24 Jun 2025 09:14:01 -0700 (PDT)
 From: "Paul E. McKenney" <paulmck@kernel.org>
 To: rcu@vger.kernel.org
 Cc: linux-kernel@vger.kernel.org,
 	kernel-team@meta.com,
 	rostedt@goodmis.org,
 	"Paul E. McKenney" <paulmck@kernel.org>
-Subject: [PATCH 1/5] torture: Remove support for SRCU-lite
-Date: Tue, 24 Jun 2025 09:13:56 -0700
-Message-Id: <20250624161400.867880-1-paulmck@kernel.org>
+Subject: [PATCH 2/5] rcutorture: Remove SRCU-lite scenarios
+Date: Tue, 24 Jun 2025 09:13:57 -0700
+Message-Id: <20250624161400.867880-2-paulmck@kernel.org>
 X-Mailer: git-send-email 2.40.1
 In-Reply-To: <e5dd6af2-fdbf-4773-9732-13b84ca13a12@paulmck-laptop>
 References: <e5dd6af2-fdbf-4773-9732-13b84ca13a12@paulmck-laptop>
@@ -62,64 +62,55 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Because SRCU-lite is being replaced by SRCU-fast, this commit removes
-support for SRCU-lite from refscale.c.
+This commit prepares for the removal of SRCU-Lite by removing the SRCU-L
+rcutorture scenario that tests it.
 
 Signed-off-by: Paul E. McKenney <paulmck@kernel.org>
 ---
- kernel/rcu/refscale.c | 32 +-------------------------------
- 1 file changed, 1 insertion(+), 31 deletions(-)
+ tools/testing/selftests/rcutorture/configs/rcu/CFLIST  |  1 -
+ tools/testing/selftests/rcutorture/configs/rcu/SRCU-L  | 10 ----------
+ .../selftests/rcutorture/configs/rcu/SRCU-L.boot       |  3 ---
+ 3 files changed, 14 deletions(-)
+ delete mode 100644 tools/testing/selftests/rcutorture/configs/rcu/SRCU-L
+ delete mode 100644 tools/testing/selftests/rcutorture/configs/rcu/SRCU-L.boot
 
-diff --git a/kernel/rcu/refscale.c b/kernel/rcu/refscale.c
-index f11a7c2af778c..f4b2cea1cce5e 100644
---- a/kernel/rcu/refscale.c
-+++ b/kernel/rcu/refscale.c
-@@ -246,36 +246,6 @@ static const struct ref_scale_ops srcu_fast_ops = {
- 	.name		= "srcu-fast"
- };
- 
--static void srcu_lite_ref_scale_read_section(const int nloops)
--{
--	int i;
--	int idx;
--
--	for (i = nloops; i >= 0; i--) {
--		idx = srcu_read_lock_lite(srcu_ctlp);
--		srcu_read_unlock_lite(srcu_ctlp, idx);
--	}
--}
--
--static void srcu_lite_ref_scale_delay_section(const int nloops, const int udl, const int ndl)
--{
--	int i;
--	int idx;
--
--	for (i = nloops; i >= 0; i--) {
--		idx = srcu_read_lock_lite(srcu_ctlp);
--		un_delay(udl, ndl);
--		srcu_read_unlock_lite(srcu_ctlp, idx);
--	}
--}
--
--static const struct ref_scale_ops srcu_lite_ops = {
--	.init		= rcu_sync_scale_init,
--	.readsection	= srcu_lite_ref_scale_read_section,
--	.delaysection	= srcu_lite_ref_scale_delay_section,
--	.name		= "srcu-lite"
--};
--
- #ifdef CONFIG_TASKS_RCU
- 
- // Definitions for RCU Tasks ref scale testing: Empty read markers.
-@@ -1193,7 +1163,7 @@ ref_scale_init(void)
- 	long i;
- 	int firsterr = 0;
- 	static const struct ref_scale_ops *scale_ops[] = {
--		&rcu_ops, &srcu_ops, &srcu_fast_ops, &srcu_lite_ops, RCU_TRACE_OPS RCU_TASKS_OPS
-+		&rcu_ops, &srcu_ops, &srcu_fast_ops, RCU_TRACE_OPS RCU_TASKS_OPS
- 		&refcnt_ops, &rwlock_ops, &rwsem_ops, &lock_ops, &lock_irq_ops,
- 		&acqrel_ops, &sched_clock_ops, &clock_ops, &jiffies_ops,
- 		&typesafe_ref_ops, &typesafe_lock_ops, &typesafe_seqlock_ops,
+diff --git a/tools/testing/selftests/rcutorture/configs/rcu/CFLIST b/tools/testing/selftests/rcutorture/configs/rcu/CFLIST
+index 45f572570a8c3..98b6175e5aa09 100644
+--- a/tools/testing/selftests/rcutorture/configs/rcu/CFLIST
++++ b/tools/testing/selftests/rcutorture/configs/rcu/CFLIST
+@@ -5,7 +5,6 @@ TREE04
+ TREE05
+ TREE07
+ TREE09
+-SRCU-L
+ SRCU-N
+ SRCU-P
+ SRCU-T
+diff --git a/tools/testing/selftests/rcutorture/configs/rcu/SRCU-L b/tools/testing/selftests/rcutorture/configs/rcu/SRCU-L
+deleted file mode 100644
+index 3b4fa8dbef8a9..0000000000000
+--- a/tools/testing/selftests/rcutorture/configs/rcu/SRCU-L
++++ /dev/null
+@@ -1,10 +0,0 @@
+-CONFIG_RCU_TRACE=n
+-CONFIG_SMP=y
+-CONFIG_NR_CPUS=6
+-CONFIG_HOTPLUG_CPU=y
+-CONFIG_PREEMPT_NONE=y
+-CONFIG_PREEMPT_VOLUNTARY=n
+-CONFIG_PREEMPT=n
+-#CHECK#CONFIG_RCU_EXPERT=n
+-CONFIG_KPROBES=n
+-CONFIG_FTRACE=n
+diff --git a/tools/testing/selftests/rcutorture/configs/rcu/SRCU-L.boot b/tools/testing/selftests/rcutorture/configs/rcu/SRCU-L.boot
+deleted file mode 100644
+index 0207b3138c5be..0000000000000
+--- a/tools/testing/selftests/rcutorture/configs/rcu/SRCU-L.boot
++++ /dev/null
+@@ -1,3 +0,0 @@
+-rcutorture.torture_type=srcu
+-rcutorture.reader_flavor=0x4
+-rcutorture.fwd_progress=3
 -- 
 2.40.1
 
