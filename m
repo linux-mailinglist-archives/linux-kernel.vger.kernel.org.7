@@ -1,127 +1,104 @@
-Return-Path: <linux-kernel+bounces-700436-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-700439-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 74D55AE68A0
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Jun 2025 16:28:46 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0790FAE68B2
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Jun 2025 16:30:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B50DF1888C0D
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Jun 2025 14:24:23 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F2989164325
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Jun 2025 14:24:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A9CF12D29DB;
-	Tue, 24 Jun 2025 14:17:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5CD812D5415;
+	Tue, 24 Jun 2025 14:18:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ODbWwKuU"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="rUks+Jnd"
+Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0B8082D1925;
-	Tue, 24 Jun 2025 14:17:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D67132D540A;
+	Tue, 24 Jun 2025 14:18:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750774667; cv=none; b=Jpp9Pew265XBT9Z9gVNlbTiVdBIu10wd/FnGfsodwIS+JJhVdtypKvuEtvWSa2xPWDbKEILPm+vefuiIdxYAMfRBCLVZjO1eSj6uHPWM91EPv8a8Ie+tAyw7KE3epCIDFYBCwPOCeAkJ5+e14P7saJlD/4am3i1K8W2i1JaMvT4=
+	t=1750774691; cv=none; b=lyF56JiwTmZ9+NbDO925YtlpU7OsHxLoUDROKP8FubxZ4TfVhy2hOr0WTBb5L286gyBypSu1w6T6F3o6xZIsW2WIasfSUDbva12GO5Mn+5EpwPvTe7iFxZTszM1yo6WWqSFdwrfnZDgYAWZYTlRa65+l1D1Bv6ydWA+VT/q67z4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750774667; c=relaxed/simple;
-	bh=iPXrS0IxOWIB10FUvXWR3mcxb3hxp86Xzx4nj+som+g=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=lg3MI/swQUXKTZVVZu2GLNkoW5qQicwB2rXIEQWnba31/4Yv41oHnoc+eCkDXCe/dIhgKubzbCRxPb7pk0BkOcXTKEsIB5k5aHnnjhyH3JNfdior7KEM7CKrqB7ZJe/+GfeGja5n4eSQLoJMsgXxJwUKMxMXtIckJ6Vd4YhrhFE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ODbWwKuU; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPS id 75116C4CEE3;
-	Tue, 24 Jun 2025 14:17:46 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1750774666;
-	bh=iPXrS0IxOWIB10FUvXWR3mcxb3hxp86Xzx4nj+som+g=;
-	h=From:Date:Subject:To:Cc:Reply-To:From;
-	b=ODbWwKuUGhsXKUHDJ5o8DqmBSYfSwD3FH71Qtm5vzP0hchj3mU5VTlieGMnWf8M+7
-	 RM5mTCSAYHngTyUc24iDUesqGKzTBglp4nyw2KTmKkYIczor56fIO5ZiaECpfuvEv6
-	 32SlJUaY0XQ+H+egJ2TEUYN/gfZ2HNWFy584syv3QV7vqxpDcMug8rD/x7odtM/cts
-	 ScpwVEa/tlhx60UbQfSbPMs8255Xp0cZxrUPwkIY+ThqMemzxWnYg+hDG2Z/+CQevX
-	 c8yPCm3ofNF23gJf8PsIoV32QnYXw/0YpZbhH5oAlRilX5FETsqg5P8lrg026yaZqf
-	 IMN0KAL2HhXGQ==
-Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 632BDC77B7F;
-	Tue, 24 Jun 2025 14:17:46 +0000 (UTC)
-From: Daniel Braunwarth via B4 Relay <devnull+daniel.braunwarth.kuka.com@kernel.org>
-Date: Tue, 24 Jun 2025 16:17:33 +0200
-Subject: [PATCH net-next] net: phy: realtek: add error handling to
- rtl8211f_get_wol
+	s=arc-20240116; t=1750774691; c=relaxed/simple;
+	bh=HamFfQTYAw3tgaHc35DT2y7EnBEaF/pUJISbotOSIiA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=kFq1yTOp5U/pmGGdszlxKR9yvi0aJ88hQxnocjaMLFzLmIJv3EPpMc/vzszfNUryBANvnUt1vh8Lx0eNU6aRad63rw3tEdCmWgXYRkCgSYly9HzDaOS8z/cW/Q7ADw5HNGGBzLz+zokLNRxcz4DkYuxRI+S5bc4plCB1DkpejCA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=rUks+Jnd; arc=none smtp.client-ip=90.155.50.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=3M75jWfb216WOXODZaCIr+/xgufHXrDaemvMWPhwVns=; b=rUks+Jnd4nDKeI7pcVJcAxPX/9
+	EVO7M1Q4v3jE949Tyg0JRRMteD8qYmBkKc56jbyJouA7cRoo23e1P6LjS1b02LmcarmMrSfD0O5bp
+	OnP65PXhe9637K/umZcSFe4XWnk+zYlQTyiswkPLTUCraqv9aXGiU4b244nq1diovouBtgV0sQ00T
+	asrCe0KC06qYGERqFS7lPqvF3eL6swKXLgf1p6maB6T5KjYHYt0hGXASv4/J+ggOwOyHNDGdWoNvB
+	yxroEGo6wEI/DNeBlEzq/qTr4eN2MclVN5MZgN9aUMrYpUYaF62p5onmCZGn2KzUuKYC6c1Hn55VZ
+	bKSyL7ZQ==;
+Received: from 77-249-17-252.cable.dynamic.v4.ziggo.nl ([77.249.17.252] helo=noisy.programming.kicks-ass.net)
+	by casper.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
+	id 1uU4TK-00000006n9g-1heH;
+	Tue, 24 Jun 2025 14:18:02 +0000
+Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
+	id 82F9A307E51; Tue, 24 Jun 2025 16:18:01 +0200 (CEST)
+Date: Tue, 24 Jun 2025 16:18:01 +0200
+From: Peter Zijlstra <peterz@infradead.org>
+To: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+Cc: =?iso-8859-1?Q?Cl=E9ment_L=E9ger?= <cleger@rivosinc.com>,
+	Nam Cao <namcao@linutronix.de>,
+	"Maciej W. Rozycki" <macro@orcam.me.uk>,
+	Palmer Dabbelt <palmer@dabbelt.com>,
+	Paul Walmsley <paul.walmsley@sifive.com>, aou@eecs.berkeley.edu,
+	Alexandre Ghiti <alex@ghiti.fr>, clrkwllms@kernel.org,
+	rostedt@goodmis.org, linux-rt-devel@lists.linux.dev,
+	linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] riscv: Enable interrupt during exception handling
+Message-ID: <20250624141801.GV1613200@noisy.programming.kicks-ass.net>
+References: <mhng-60581B88-6FC7-4349-96B6-730D908ABF4A@palmerdabbelt-mac>
+ <alpine.DEB.2.21.2506240303170.61655@angie.orcam.me.uk>
+ <19cf2371-7293-4e71-a17d-669db4c8270a@rivosinc.com>
+ <20250624131730.XqPd1HUR@linutronix.de>
+ <d135d6cc-5117-4b3a-9abe-2e5fd9e3e490@rivosinc.com>
+ <20250624140815.GU1613200@noisy.programming.kicks-ass.net>
+ <20250624141130.gZVv4WnP@linutronix.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250624-realtek_fixes-v1-1-02a0b7c369bc@kuka.com>
-X-B4-Tracking: v=1; b=H4sIAHyzWmgC/x3L4QpAMBSG4VvR+W3FCeFWJK35xolG25KSe7f8f
- Hp7HwrwgkB99pDHJUEOl1DmGZlVuwVK5mTiguui4Up56D1im6zcCKqtLXdsrCl1Rek5Pf6QloE
- conK4I43v+wGPmEg6aQAAAA==
-X-Change-ID: 20250624-realtek_fixes-85f292cfc1a4
-To: Andrew Lunn <andrew@lunn.ch>, Heiner Kallweit <hkallweit1@gmail.com>, 
- Russell King <linux@armlinux.org.uk>, 
- "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
- Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, 
- Jon Hunter <jonathanh@nvidia.com>
-Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org, 
- Daniel Braunwarth <daniel.braunwarth@kuka.com>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1750774665; l=1492;
- i=daniel.braunwarth@kuka.com; s=20250425; h=from:subject:message-id;
- bh=OKIaJlj0nrfTAYstQqag45KapLdQ8tvdEWLzdWiNk5s=;
- b=7mNj/l+AW+0zCELuRDjTpfWfouZu6Wbewt+QQyclvcPC1asqXnBlDWqj8uWlZ3xrwwHxkyl6X
- 715ddpihqjzCJzZ2pU7DE+OnVKEePScwM2ToCPlTdccU66o9FwZwQOW
-X-Developer-Key: i=daniel.braunwarth@kuka.com; a=ed25519;
- pk=fTSYKvKU5SCGGLHVz5NaznQ2MbXNWUZzdqPihgCfYms=
-X-Endpoint-Received: by B4 Relay for daniel.braunwarth@kuka.com/20250425
- with auth_id=388
-X-Original-From: Daniel Braunwarth <daniel.braunwarth@kuka.com>
-Reply-To: daniel.braunwarth@kuka.com
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250624141130.gZVv4WnP@linutronix.de>
 
-From: Daniel Braunwarth <daniel.braunwarth@kuka.com>
+On Tue, Jun 24, 2025 at 04:11:30PM +0200, Sebastian Andrzej Siewior wrote:
+> On 2025-06-24 16:08:15 [+0200], Peter Zijlstra wrote:
+> > > >>
+> > > >> I also had a series which was doing so for misaligned accesses handling,
+> > > >> but after discussion, it was not ok to do so.:
+> > > >>
+> > > >> https://lore.kernel.org/linux-riscv/20250422094419.GC14170@noisy.programming.kicks-ass.net/
+> > > > 
+> > > > If I understand that right, exceptions from kernel should be treated as
+> > > > NMI, so that lockdep can tell us if exception handlers touch locks.
+> > > > 
+> > > > But (conditionally) enabling interrupts does not lose us that benefit. It
+> > > > is still considered NMI by lockdep.
+> > > > 
+> > > > Unless I miss something, the patch is fine as is.
+> > 
+> > I'm confused, you're wanting to conditionally enable interrupts from a
+> > kernel exception while its NMI like? *WHY* ?!
+> 
+> What we want is to enable interrupt handling if it was enabled before
+> the exception occured. So we can send a proper signal on PREEMPT_RT
+> without chocking on spinlock_t/ sighand.
 
-We should check if the WOL settings was successfully read from the PHY.
-
-In case this fails we cannot just use the error code and proceed.
-
-Signed-off-by: Daniel Braunwarth <daniel.braunwarth@kuka.com>
-Reported-by: Jon Hunter <jonathanh@nvidia.com>
-Closes: https://lore.kernel.org/baaa083b-9a69-460f-ab35-2a7cb3246ffd@nvidia.com
----
- drivers/net/phy/realtek/realtek_main.c | 10 ++++++++--
- 1 file changed, 8 insertions(+), 2 deletions(-)
-
-diff --git a/drivers/net/phy/realtek/realtek_main.c b/drivers/net/phy/realtek/realtek_main.c
-index c3dcb62574303374666b46a454cd4e10de455d24..dd0d675149ad7f9730f04ba1aea82e02b15dfb2c 100644
---- a/drivers/net/phy/realtek/realtek_main.c
-+++ b/drivers/net/phy/realtek/realtek_main.c
-@@ -436,9 +436,15 @@ static irqreturn_t rtl8211f_handle_interrupt(struct phy_device *phydev)
- 
- static void rtl8211f_get_wol(struct phy_device *dev, struct ethtool_wolinfo *wol)
- {
-+	int wol_events;
-+
- 	wol->supported = WAKE_MAGIC;
--	if (phy_read_paged(dev, RTL8211F_WOL_SETTINGS_PAGE, RTL8211F_WOL_SETTINGS_EVENTS)
--	    & RTL8211F_WOL_EVENT_MAGIC)
-+
-+	wol_events = phy_read_paged(dev, RTL8211F_WOL_SETTINGS_PAGE, RTL8211F_WOL_SETTINGS_EVENTS);
-+	if (wol_events < 0)
-+		return;
-+
-+	if (wol_events & RTL8211F_WOL_EVENT_MAGIC)
- 		wol->wolopts = WAKE_MAGIC;
- }
- 
-
----
-base-commit: f817b6dd2b62d921a6cdc0a3ac599cd1851f343c
-change-id: 20250624-realtek_fixes-85f292cfc1a4
-
-Best regards,
--- 
-Daniel Braunwarth <daniel.braunwarth@kuka.com>
-
-
+I'm confused, sending signals is for exception from userspace. That has
+nothing to do with exceptions from kernelspace being NMI like.
 
