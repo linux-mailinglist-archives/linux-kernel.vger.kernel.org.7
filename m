@@ -1,108 +1,129 @@
-Return-Path: <linux-kernel+bounces-700831-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-700834-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id F3274AE6D5E
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Jun 2025 19:15:33 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id AAB6CAE6D66
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Jun 2025 19:16:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id BD68D1BC28B8
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Jun 2025 17:15:49 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D33C71BC4A7C
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Jun 2025 17:16:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 80C992E2F19;
-	Tue, 24 Jun 2025 17:15:29 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5E35D22B8A9
-	for <linux-kernel@vger.kernel.org>; Tue, 24 Jun 2025 17:15:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DAE062E6131;
+	Tue, 24 Jun 2025 17:16:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b="J/vRH/+B";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="Obj2wfVK"
+Received: from fhigh-b8-smtp.messagingengine.com (fhigh-b8-smtp.messagingengine.com [202.12.124.159])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 843E629E11A;
+	Tue, 24 Jun 2025 17:16:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.12.124.159
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750785329; cv=none; b=CdSsHD8cZk1Zq3nY0+gZfkuxulyP2n/NXM9nCtmOvmcEjGvVazFvyguqR1plYMlfw1GGMQkmf0CkoxRZ/rWs/zNwPvROeC7CE6op0zk4hJQkQmykqCgNHu1AYPrNOBzF8pRWuKwoodKpXelbCfZOW3hxVehkNh8HwzykmeiKJn8=
+	t=1750785388; cv=none; b=InmasqXGIFRn8AvhfEqkkpN8UcmHuf4FPAdhHDwcKzE/UW/3PL3sOioqzgcdgsGo73pjfDJmGJfw8X9KfrSz2hoAdFAx1mhsLYUwsXH7cJw4hb0/IwBSuIvZ05Dffzmc2i4g6K4zlAfNSodfE9lau0e6o52c9s6oAjODksBJH7w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750785329; c=relaxed/simple;
-	bh=J++vCXdEMdLhhQCO5UEyk2FcYNCV+7ZfNWoyOrnq74c=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=RGHVI94cf66EyikZBDM0VOg/IZ6qz9QisgtFB1D8FLmONJYBB8GD35/8L7gMLpdJIjVAYE4UuPxbIThwKKWK65xKo91+7EeyQJc1bWQng8Z0V0ktwZdlff9W2Lx43uLljBR3NuJuk9CZok47UmuCC/o6/fIDotcSQNEvULk5TJU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id C77C5113E;
-	Tue, 24 Jun 2025 10:15:07 -0700 (PDT)
-Received: from [10.57.29.113] (unknown [10.57.29.113])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id D9A6C3F58B;
-	Tue, 24 Jun 2025 10:15:23 -0700 (PDT)
-Message-ID: <bc1b7891-d2d4-4104-b52d-dfa956e0a6a3@arm.com>
-Date: Tue, 24 Jun 2025 18:15:21 +0100
+	s=arc-20240116; t=1750785388; c=relaxed/simple;
+	bh=Rjqlr72DkilY+EySouYneYmVIUMYqgPm965OFc1l1Ro=;
+	h=MIME-Version:Date:From:To:Cc:Message-Id:In-Reply-To:References:
+	 Subject:Content-Type; b=QqorSmhdJOZjxR4vPbCTFdX5EjD+qFpBv1BpzJzxpN3a1WGaaBwUDpdf/DWrJUwtLts/SIMDJElwgxne8s14JZ+OIxS6k/z1Elxx+MBC0dK67f+cVbsX7fozbBtgMu0Um6A0urEpNPvmphDWJKCX1Re3q8QM6YT5gVQFsWDvVeQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de; spf=pass smtp.mailfrom=arndb.de; dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b=J/vRH/+B; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=Obj2wfVK; arc=none smtp.client-ip=202.12.124.159
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arndb.de
+Received: from phl-compute-05.internal (phl-compute-05.phl.internal [10.202.2.45])
+	by mailfhigh.stl.internal (Postfix) with ESMTP id 6F60E7A007E;
+	Tue, 24 Jun 2025 13:16:25 -0400 (EDT)
+Received: from phl-imap-02 ([10.202.2.81])
+  by phl-compute-05.internal (MEProxy); Tue, 24 Jun 2025 13:16:25 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arndb.de; h=cc
+	:cc:content-transfer-encoding:content-type:content-type:date
+	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to; s=fm1; t=1750785385;
+	 x=1750871785; bh=fctDsDMWHBR/t5waMvZ9RXnK1n58vAkyAk91dxqNlRI=; b=
+	J/vRH/+B8R02a+FvhcVUMNBKlgaeL5+P9Xk2PSTSvXq2ibL8165LyWTrAj55L604
+	erpe0O4BqzRL0GclKDU623GFgdtDZAMtNnV2N2YKYl/zgOg5XtFEb6BhDOtEmbu1
+	8pkdCFnCpiEXFWH+2eHzYyQhso2Lmj1p/0g6LZitcoH3c3hvBg+E5fjZ3TE2RE8C
+	whKJ/78y7lQWpPFqjS0TS/V7F9ZfhB49ekSWvlNIayDy3QR5ErzQNe7K7QOrztOo
+	y7zl9zQ+MyjJZFIKhHodSQGC2FiQj/+CpTvusT0zNn9knmFmGUp/f19ii6FxZvIz
+	Ity3zz6XLtE/Hao34Zge7w==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-transfer-encoding
+	:content-type:content-type:date:date:feedback-id:feedback-id
+	:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to:x-me-proxy
+	:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=1750785385; x=
+	1750871785; bh=fctDsDMWHBR/t5waMvZ9RXnK1n58vAkyAk91dxqNlRI=; b=O
+	bj2wfVKUmfYRuVVsYtFm1ikgl1DbcvQ2OvqySPl1qRHrTf3dgd3KeiXzE6sj665a
+	KxN0gM46dQPZcGZYlAvKEH6/4UH3A1/mK4owct21w/mh0DScuiA6ZeZ7B5rF23Cq
+	6KHW+KrW/dSh8LsUGtgfXe9ADN8ty8Q/BUGz4ntLhP8uw8fktD75ubEuX8evUElz
+	m6a5g3WBx54Icbr2CKXHpb7M+qOyPinCqDSvoMwDVtnkiw+hAFGJzCxIKnB+QR4o
+	xRkgIeQ1W/wtGctOfj+xP5d4vq14VaEh2C7EmuREarsP+Yh2L/VP/2xxQ0D7QkPJ
+	iMBIdV91kCeMd2gtt0HRw==
+X-ME-Sender: <xms:aN1aaKF-va6G3DxzgjEzE95S7xDTEuGvyZ1OunDS8txdPT01f0D1GQ>
+    <xme:aN1aaLWs1Ui1kAyMmK7TAbJ6i83_Gq_CbI3Ael58AOZ8EdY9HgRxvbIUryjoBRF-c
+    8GSQF30QfoVT3ntD0g>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtddvgddvtdegiecutefuodetggdotefrod
+    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpuffrtefokffrpgfnqfghnecuuegr
+    ihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjug
+    hrpefoggffhffvvefkjghfufgtgfesthejredtredttdenucfhrhhomhepfdetrhhnugcu
+    uegvrhhgmhgrnhhnfdcuoegrrhhnugesrghrnhgusgdruggvqeenucggtffrrghtthgvrh
+    hnpefhtdfhvddtfeehudekteeggffghfejgeegteefgffgvedugeduveelvdekhfdvieen
+    ucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpegrrhhnug
+    esrghrnhgusgdruggvpdhnsggprhgtphhtthhopedutddpmhhouggvpehsmhhtphhouhht
+    pdhrtghpthhtohepohhlthgvrghnvhesghhmrghilhdrtghomhdprhgtphhtthhopegsrh
+    hoohhnihgvsehkvghrnhgvlhdrohhrghdprhgtphhtthhopehjrghmvghsrdgtlhgrrhhk
+    sehlihhnrghrohdrohhrghdprhgtphhtthhopehimhigsehlihhsthhsrdhlihhnuhigrd
+    guvghvpdhrtghpthhtohephhgthheslhhsthdruggvpdhrtghpthhtohepfhhrrghnkhdr
+    lhhisehngihprdgtohhmpdhrtghpthhtoheplhgrrhhishgrrdhgrhhighhorhgvsehngi
+    hprdgtohhmpdhrtghpthhtohepvhhlrgguihhmihhrrdholhhtvggrnhesnhigphdrtgho
+    mhdprhgtphhtthhopehlihhnuhigqdhkvghrnhgvlhesvhhgvghrrdhkvghrnhgvlhdroh
+    hrgh
+X-ME-Proxy: <xmx:aN1aaEJ_YSCskkwPh85OvNsuU4L1V4fXX-wBhoNc72LdkR2Ebu5bfw>
+    <xmx:aN1aaEHnkzPmCJrrqgv5VgPtvZCsS6jWraLvZke1fJiW8COaZH7O5g>
+    <xmx:aN1aaAWh7aHfPn6hBdw23I634XZkdbbfnSlw5gDjuMgnxwm9SptVAg>
+    <xmx:aN1aaHOpWrikzgBx6W-q4KTd8cdbJefcL1caipgAhObjUFgjPuw4-Q>
+    <xmx:ad1aaCgMcdFbG-8fjZ1iAQJGCtUh-6AdBbj6_EYekY8R3fWjFTrewGbX>
+Feedback-ID: i56a14606:Fastmail
+Received: by mailuser.phl.internal (Postfix, from userid 501)
+	id CD1C1700068; Tue, 24 Jun 2025 13:16:24 -0400 (EDT)
+X-Mailer: MessagingEngine.com Webmail Interface
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 1/3] iommu: omap: Drop redundant check if
- ti,syscon-mmuconfig exists
-To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
- Joerg Roedel <joro@8bytes.org>, Will Deacon <will@kernel.org>,
- Yong Wu <yong.wu@mediatek.com>, Matthias Brugger <matthias.bgg@gmail.com>,
- AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
-Cc: iommu@lists.linux.dev, linux-kernel@vger.kernel.org,
- linux-mediatek@lists.infradead.org, linux-arm-kernel@lists.infradead.org
-References: <20250624-syscon-phandle-args-iommu-v3-0-1a36487d69b8@linaro.org>
- <20250624-syscon-phandle-args-iommu-v3-1-1a36487d69b8@linaro.org>
-From: Robin Murphy <robin.murphy@arm.com>
-Content-Language: en-GB
-In-Reply-To: <20250624-syscon-phandle-args-iommu-v3-1-1a36487d69b8@linaro.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+X-ThreadId: T588a20d0ffbb3e40
+Date: Tue, 24 Jun 2025 19:16:04 +0200
+From: "Arnd Bergmann" <arnd@arndb.de>
+To: "Frank Li" <Frank.li@nxp.com>, "James Clark" <james.clark@linaro.org>
+Cc: "Vladimir Oltean" <olteanv@gmail.com>, "Mark Brown" <broonie@kernel.org>,
+ "Vladimir Oltean" <vladimir.oltean@nxp.com>,
+ "Larisa Grigore" <larisa.grigore@nxp.com>, "Christoph Hellwig" <hch@lst.de>,
+ linux-spi@vger.kernel.org, imx@lists.linux.dev, linux-kernel@vger.kernel.org
+Message-Id: <290fc244-e88f-47a3-8dd3-0ec27eb5c60b@app.fastmail.com>
+In-Reply-To: <aFrSgJ5xZfccEX9x@lizhi-Precision-Tower-5810>
+References: <20250624-james-nxp-spi-dma-v3-0-e7d574f5f62c@linaro.org>
+ <20250624-james-nxp-spi-dma-v3-3-e7d574f5f62c@linaro.org>
+ <aFrSgJ5xZfccEX9x@lizhi-Precision-Tower-5810>
+Subject: Re: [PATCH v3 3/6] spi: spi-fsl-dspi: Stub out DMA functions
+Content-Type: text/plain
 Content-Transfer-Encoding: 7bit
 
-On 2025-06-24 1:22 pm, Krzysztof Kozlowski wrote:
-> The syscon_regmap_lookup_by_phandle() will fail if property does not
-> exist, so doing of_property_read_bool() earlier is redundant.  Drop that
-> check and move error message to syscon_regmap_lookup_by_phandle() error
-> case while converting it to dev_err_probe().
+On Tue, Jun 24, 2025, at 18:29, Frank Li wrote:
+> On Tue, Jun 24, 2025 at 11:35:33AM +0100, James Clark wrote:
+>> This will allow the build to succeed with !CONFIG_HAS_DMA, either due to
+>> a randconfig build test or when the target only uses one of the non-DMA
+>
+> I supposed you met kbuild error. If yes, can you add kbuild build report
+> tags.
 
-Sure, may as well.
+Actually I would suggest making it a dependency on CONFIG_DMA_ENGINE
+instead of CONFIG_HAS_DMA, since that is the more relevant symbol.
 
-Reviewed-by: Robin Murphy <robin.murphy@arm.com>
+It would also be simpler to enforce this in Kconfig if we only
+care about users that use the DMA support. 
 
-> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-> ---
->   drivers/iommu/omap-iommu.c | 14 +++-----------
->   1 file changed, 3 insertions(+), 11 deletions(-)
-> 
-> diff --git a/drivers/iommu/omap-iommu.c b/drivers/iommu/omap-iommu.c
-> index 3c62337f43c67720a15b67e8b610da7886f6f39c..4448c0a512137c79195112eea25d762266c77bc3 100644
-> --- a/drivers/iommu/omap-iommu.c
-> +++ b/drivers/iommu/omap-iommu.c
-> @@ -1123,23 +1123,15 @@ static int omap_iommu_dra7_get_dsp_system_cfg(struct platform_device *pdev,
->   					      struct omap_iommu *obj)
->   {
->   	struct device_node *np = pdev->dev.of_node;
-> -	int ret;
->   
->   	if (!of_device_is_compatible(np, "ti,dra7-dsp-iommu"))
->   		return 0;
->   
-> -	if (!of_property_read_bool(np, "ti,syscon-mmuconfig")) {
-> -		dev_err(&pdev->dev, "ti,syscon-mmuconfig property is missing\n");
-> -		return -EINVAL;
-> -	}
-> -
->   	obj->syscfg =
->   		syscon_regmap_lookup_by_phandle(np, "ti,syscon-mmuconfig");
-> -	if (IS_ERR(obj->syscfg)) {
-> -		/* can fail with -EPROBE_DEFER */
-> -		ret = PTR_ERR(obj->syscfg);
-> -		return ret;
-> -	}
-> +	if (IS_ERR(obj->syscfg))
-> +		return dev_err_probe(&pdev->dev, PTR_ERR(obj->syscfg),
-> +				     "ti,syscon-mmuconfig property is missing\n");
->   
->   	if (of_property_read_u32_index(np, "ti,syscon-mmuconfig", 1,
->   				       &obj->id)) {
-> 
-
+      Arnd
 
