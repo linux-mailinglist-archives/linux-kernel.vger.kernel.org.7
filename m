@@ -1,228 +1,103 @@
-Return-Path: <linux-kernel+bounces-700608-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-700587-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CB13CAE6AB6
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Jun 2025 17:23:36 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9CEBCAE6A5B
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Jun 2025 17:14:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DF56D4E2962
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Jun 2025 15:18:22 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 125847B7A49
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Jun 2025 15:13:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5C6002F2C4C;
-	Tue, 24 Jun 2025 15:08:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 751C92EA468;
+	Tue, 24 Jun 2025 15:08:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b="IKScVUy9"
-Received: from esa.microchip.iphmx.com (esa.microchip.iphmx.com [68.232.154.123])
+	dkim=pass (1024-bit key) header.d=collabora.com header.i=nfraprado@collabora.com header.b="FtptMFis"
+Received: from sender4-pp-f112.zoho.com (sender4-pp-f112.zoho.com [136.143.188.112])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 206C02F0055;
-	Tue, 24 Jun 2025 15:08:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=68.232.154.123
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750777731; cv=none; b=gSqiLNxjw7NK2hvrp9EMmqETnBKWUybDshSnnXALIYSQmRRQUOmrypfqu4Lqrw8JDmqOgV7h9InMwupEpXqNzbjOBZhjnfgH1YhdFg6526JestrKP/sR9Y+EUl0QPx/ioucxcfCZGp3c+U09+dX9nnu/rxDyRAu2y02rUVZ1Ug4=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750777731; c=relaxed/simple;
-	bh=ZDB97x4hn7BJDJn8U5FbCjOYcfLmkYwWAj8cLLlw6do=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=vB+cYDUPWFjd6oHQ6jfE/sfII0Vm0JdKUjDL0YebtcygUDbk9GgRB0E/G6ZxVVowFXKRwjQU6Tf6eP1In49sWHb7+fdI1THGoow5ULL7mwj5YzlNADutybeAHb4+VYVHWtzmSWy6OdJHXfZ5zM5OKEp6r82aub8fQ7aXKl2SjV0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com; spf=pass smtp.mailfrom=microchip.com; dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b=IKScVUy9; arc=none smtp.client-ip=68.232.154.123
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=microchip.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=microchip.com; i=@microchip.com; q=dns/txt; s=mchp;
-  t=1750777729; x=1782313729;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=ZDB97x4hn7BJDJn8U5FbCjOYcfLmkYwWAj8cLLlw6do=;
-  b=IKScVUy9ua8Zle3HZzypOhLpCtYA4v+K2kUd0uZOngnBnXWmbBRmVFdJ
-   Ifc3beB7+Vmu+3aXxYxjKUpO+4iPwgeqHd2+fCv49lGxulnezfQmJUoj0
-   6fEoFNM51X0xkre9GDFXWGMOqzjsxPjEG61TOVm0bji+dFxcNSesuFkNz
-   WuVgaIT6o1d/ni/Toe9Ud40rGlHR98QVzFmSS9Tn7guFqEzp1PQYZDQKZ
-   hxJ6nQN9MDubLm5gR05/gWm3r/10AR0KsUm7aHFduRersJ4PU+g7u6aO9
-   6PNY0G1OPKBXCDoMwT7HdeHDF1+Qjr8xmdUigUZbIFZKTo4wsyP6c2CA1
-   w==;
-X-CSE-ConnectionGUID: 4+RzxTN1Qsa6vG3Bpty4nA==
-X-CSE-MsgGUID: a6+NAS7ZQ2u5sHoJeOp1aw==
-X-IronPort-AV: E=Sophos;i="6.16,262,1744095600"; 
-   d="scan'208";a="42688178"
-X-Amp-Result: SKIPPED(no attachment in message)
-Received: from unknown (HELO email.microchip.com) ([170.129.1.10])
-  by esa4.microchip.iphmx.com with ESMTP/TLS/ECDHE-RSA-AES128-GCM-SHA256; 24 Jun 2025 08:08:44 -0700
-Received: from chn-vm-ex01.mchp-main.com (10.10.85.143) by
- chn-vm-ex04.mchp-main.com (10.10.85.152) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.44; Tue, 24 Jun 2025 08:08:37 -0700
-Received: from ryan-Precision-3630-Tower.microchip.com (10.10.85.11) by
- chn-vm-ex01.mchp-main.com (10.10.85.143) with Microsoft SMTP Server id
- 15.1.2507.44 via Frontend Transport; Tue, 24 Jun 2025 08:08:37 -0700
-From: <Ryan.Wanner@microchip.com>
-To: <mturquette@baylibre.com>, <sboyd@kernel.org>,
-	<nicolas.ferre@microchip.com>, <alexandre.belloni@bootlin.com>,
-	<claudiu.beznea@tuxon.dev>
-CC: <robh@kernel.org>, <linux-clk@vger.kernel.org>,
-	<linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
-	<varshini.rajendran@microchip.com>
-Subject: [PATCH v2 07/32] clk: at91: clk-master: use clk_parent_data
-Date: Tue, 24 Jun 2025 08:08:04 -0700
-Message-ID: <361fa7d7f1f9579a38a27b7623cfa5c8c92f54d5.1750182562.git.Ryan.Wanner@microchip.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <cover.1750182562.git.Ryan.Wanner@microchip.com>
-References: <cover.1750182562.git.Ryan.Wanner@microchip.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0FD5B2D8796;
+	Tue, 24 Jun 2025 15:08:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.112
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1750777708; cv=pass; b=CJN11n6P7gBHPpOp3jLlF2CZ8TEw7HFoJWeL8o4ME5rsetxTsKk+q1XoAA1IaOXAKKS+PYFXOlCWDW3pqb5f2MvsYxavu8u4QHLj5l2ibjdRCImXTh71nlh0k+941rAjCz/gwrLniMZ1CsuMC+JXRD+fgGUsCQ5y6exTPBqhCSc=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1750777708; c=relaxed/simple;
+	bh=iFbya3akG5s+WS6JIinMfQGqethChzDGcRe3Sr4acZc=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=PT2Zl5qUhYC9Lv2eOUIOXL3U8spbnK1mCycxLJtcwmF+IFfZryZeVY4QNMoZMxwhv/LH5tJWiXwcJSxBxIQ31ofDoWvQHFiGWLbvaG4d4pWeULLiZiofBIe8cbSfBuXJxWNbxQvuC33HFlfcXant53LLVOdyfjb9UDVnvnmMb8U=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=nfraprado@collabora.com header.b=FtptMFis; arc=pass smtp.client-ip=136.143.188.112
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+ARC-Seal: i=1; a=rsa-sha256; t=1750777688; cv=none; 
+	d=zohomail.com; s=zohoarc; 
+	b=j2T9YRPFmYHllAw3Uj+oprvkwNlJuGisTI3I33f9NyyOLPlWD6NhDuy8il1fatk6YzWEAT6XrwlVprtYlftjxk9KXOsWei8/WM3Jt7ueJrqur5UIHs774ZonkCokIsotBBlJA4kWHqrxlsQ/c7E/JH4JKQE0rPpWjI9PNf1xW8s=
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
+	t=1750777688; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
+	bh=iFbya3akG5s+WS6JIinMfQGqethChzDGcRe3Sr4acZc=; 
+	b=h7IxcQ8JPbIC+RE7fTXushzJnYfvEgD8fnuk9Ek59B5Jzz1fUgofQK4SM3ff/+xMIY0rpevizoPXVMBIQJ0JKYpeDAh6oiZD0AxG6tW3hbvbPtaXshOwW54ZZl2eCFnt5w4+LpDIYsNhWD8cCV7Eh2g+WgSa+AdzNWgXGsXtnRE=
+ARC-Authentication-Results: i=1; mx.zohomail.com;
+	dkim=pass  header.i=collabora.com;
+	spf=pass  smtp.mailfrom=nfraprado@collabora.com;
+	dmarc=pass header.from=<nfraprado@collabora.com>
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1750777688;
+	s=zohomail; d=collabora.com; i=nfraprado@collabora.com;
+	h=Message-ID:Subject:Subject:From:From:To:To:Cc:Cc:Date:Date:In-Reply-To:References:Content-Type:Content-Transfer-Encoding:MIME-Version:Message-Id:Reply-To;
+	bh=iFbya3akG5s+WS6JIinMfQGqethChzDGcRe3Sr4acZc=;
+	b=FtptMFisHQLd/sJ12WNGMcjoOI8gkU4MkUTPkZnp2DNG7YTgyEFoITQdqnxu4Wre
+	UYnu71dhwT3nmywqje6WNh6p5cf3qD3zmUCKG3tK3F/VyLInOFxJD9JHoFNLg2FX/Uj
+	9++aNZ2IsPHD1rdDv629KMriuxFmGV+VSst6vEVY=
+Received: by mx.zohomail.com with SMTPS id 1750777687203110.75444813457466;
+	Tue, 24 Jun 2025 08:08:07 -0700 (PDT)
+Message-ID: <639e695859d632c9527d76876df2a48287197fb9.camel@collabora.com>
+Subject: Re: [PATCH v1 0/5] iio: Add support for MT6363/6373 Auxiliary ADC
+From: =?ISO-8859-1?Q?N=EDcolas?= "F. R. A. Prado" <nfraprado@collabora.com>
+To: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, 
+	jic23@kernel.org
+Cc: dlechner@baylibre.com, nuno.sa@analog.com, andy@kernel.org,
+ robh@kernel.org,  krzk+dt@kernel.org, conor+dt@kernel.org,
+ matthias.bgg@gmail.com,  linux-iio@vger.kernel.org,
+ devicetree@vger.kernel.org,  linux-kernel@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org,  linux-mediatek@lists.infradead.org,
+ kernel@collabora.com
+Date: Tue, 24 Jun 2025 11:08:05 -0400
+In-Reply-To: <20250623120028.108809-1-angelogioacchino.delregno@collabora.com>
+References: 
+	<20250623120028.108809-1-angelogioacchino.delregno@collabora.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.46.4-2 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
+X-ZohoMailClient: External
 
-From: Claudiu Beznea <claudiu.beznea@tuxon.dev>
+On Mon, 2025-06-23 at 14:00 +0200, AngeloGioacchino Del Regno wrote:
+> This series adds support for the Auxiliary ADC IP found on the new
+> MediaTek MT6363 and MT6373 PMICs, found on board designs featuring
+> the MT8196 Chromebook SoC or the MT6991 Dimensity 9400 Smartphone
+> SoC.
+>=20
+> AngeloGioacchino Del Regno (5):
+> =C2=A0 dt-bindings: iio: adc: mt6359: Add bindings for MT6363 PMIC AuxADC
+> =C2=A0 dt-bindings: iio: adc: mt6359: Add bindings for MT6373 PMIC AuxADC
+> =C2=A0 iio: adc: mt6359: Add ready register index and mask to channel dat=
+a
+> =C2=A0 iio: adc: mt6359: Add support for MediaTek MT6363 PMIC AUXADC
+> =C2=A0 iio: adc: mt6359: Add support for MediaTek MT6373 PMIC AUXADC
 
-Use struct clk_parent_data instead of struct parent_hw as this leads
-to less usage of __clk_get_hw() in SoC specific clock drivers and simpler
-conversion of existing SoC specific clock drivers from parent_names to
-modern clk_parent_data structures.
+For the entire series:
 
-Signed-off-by: Claudiu Beznea <claudiu.beznea@tuxon.dev>
-[ryan.wanner@microchip.com: Remove SoC specific changes as they will be
-added later. Adjust commit message to reflect the removal of the SoC
-specific changes.]
-Signed-off-by: Ryan Wanner <Ryan.Wanner@microchip.com>
----
- drivers/clk/at91/clk-master.c | 24 ++++++++++++------------
- drivers/clk/at91/pmc.h        |  6 +++---
- 2 files changed, 15 insertions(+), 15 deletions(-)
+Reviewed-by: N=C3=ADcolas F. R. A. Prado <nfraprado@collabora.com>
 
-diff --git a/drivers/clk/at91/clk-master.c b/drivers/clk/at91/clk-master.c
-index 7a544e429d34..cc4f3beb51e5 100644
---- a/drivers/clk/at91/clk-master.c
-+++ b/drivers/clk/at91/clk-master.c
-@@ -473,7 +473,7 @@ static struct clk_hw * __init
- at91_clk_register_master_internal(struct regmap *regmap,
- 		const char *name, int num_parents,
- 		const char **parent_names,
--		struct clk_hw **parent_hws,
-+		struct clk_parent_data *parent_data,
- 		const struct clk_master_layout *layout,
- 		const struct clk_master_characteristics *characteristics,
- 		const struct clk_ops *ops, spinlock_t *lock, u32 flags)
-@@ -485,7 +485,7 @@ at91_clk_register_master_internal(struct regmap *regmap,
- 	unsigned long irqflags;
- 	int ret;
- 
--	if (!name || !num_parents || !(parent_names || parent_hws) || !lock)
-+	if (!name || !num_parents || !(parent_names || parent_data) || !lock)
- 		return ERR_PTR(-EINVAL);
- 
- 	master = kzalloc(sizeof(*master), GFP_KERNEL);
-@@ -494,8 +494,8 @@ at91_clk_register_master_internal(struct regmap *regmap,
- 
- 	init.name = name;
- 	init.ops = ops;
--	if (parent_hws)
--		init.parent_hws = (const struct clk_hw **)parent_hws;
-+	if (parent_data)
-+		init.parent_data = (const struct clk_parent_data *)parent_data;
- 	else
- 		init.parent_names = parent_names;
- 	init.num_parents = num_parents;
-@@ -531,13 +531,13 @@ struct clk_hw * __init
- at91_clk_register_master_pres(struct regmap *regmap,
- 		const char *name, int num_parents,
- 		const char **parent_names,
--		struct clk_hw **parent_hws,
-+		struct clk_parent_data *parent_data,
- 		const struct clk_master_layout *layout,
- 		const struct clk_master_characteristics *characteristics,
- 		spinlock_t *lock)
- {
- 	return at91_clk_register_master_internal(regmap, name, num_parents,
--						 parent_names, parent_hws, layout,
-+						 parent_names, parent_data, layout,
- 						 characteristics,
- 						 &master_pres_ops,
- 						 lock, CLK_SET_RATE_GATE);
-@@ -546,7 +546,7 @@ at91_clk_register_master_pres(struct regmap *regmap,
- struct clk_hw * __init
- at91_clk_register_master_div(struct regmap *regmap,
- 		const char *name, const char *parent_name,
--		struct clk_hw *parent_hw, const struct clk_master_layout *layout,
-+		struct clk_parent_data *parent_data, const struct clk_master_layout *layout,
- 		const struct clk_master_characteristics *characteristics,
- 		spinlock_t *lock, u32 flags, u32 safe_div)
- {
-@@ -560,7 +560,7 @@ at91_clk_register_master_div(struct regmap *regmap,
- 
- 	hw = at91_clk_register_master_internal(regmap, name, 1,
- 					       parent_name ? &parent_name : NULL,
--					       parent_hw ? &parent_hw : NULL, layout,
-+					       parent_data, layout,
- 					       characteristics, ops,
- 					       lock, flags);
- 
-@@ -812,7 +812,7 @@ struct clk_hw * __init
- at91_clk_sama7g5_register_master(struct regmap *regmap,
- 				 const char *name, int num_parents,
- 				 const char **parent_names,
--				 struct clk_hw **parent_hws,
-+				 struct clk_parent_data *parent_data,
- 				 u32 *mux_table,
- 				 spinlock_t *lock, u8 id,
- 				 bool critical, int chg_pid)
-@@ -824,7 +824,7 @@ at91_clk_sama7g5_register_master(struct regmap *regmap,
- 	unsigned int val;
- 	int ret;
- 
--	if (!name || !num_parents || !(parent_names || parent_hws) || !mux_table ||
-+	if (!name || !num_parents || !(parent_names || parent_data) || !mux_table ||
- 	    !lock || id > MASTER_MAX_ID)
- 		return ERR_PTR(-EINVAL);
- 
-@@ -834,8 +834,8 @@ at91_clk_sama7g5_register_master(struct regmap *regmap,
- 
- 	init.name = name;
- 	init.ops = &sama7g5_master_ops;
--	if (parent_hws)
--		init.parent_hws = (const struct clk_hw **)parent_hws;
-+	if (parent_data)
-+		init.parent_data = (const struct clk_parent_data *)parent_data;
- 	else
- 		init.parent_names = parent_names;
- 	init.num_parents = num_parents;
-diff --git a/drivers/clk/at91/pmc.h b/drivers/clk/at91/pmc.h
-index d9a04fddb0b1..54d472276fc9 100644
---- a/drivers/clk/at91/pmc.h
-+++ b/drivers/clk/at91/pmc.h
-@@ -204,14 +204,14 @@ at91_clk_register_sam9x5_main(struct regmap *regmap, const char *name,
- struct clk_hw * __init
- at91_clk_register_master_pres(struct regmap *regmap, const char *name,
- 			      int num_parents, const char **parent_names,
--			      struct clk_hw **parent_hws,
-+			      struct clk_parent_data *parent_data,
- 			      const struct clk_master_layout *layout,
- 			      const struct clk_master_characteristics *characteristics,
- 			      spinlock_t *lock);
- 
- struct clk_hw * __init
- at91_clk_register_master_div(struct regmap *regmap, const char *name,
--			     const char *parent_names, struct clk_hw *parent_hw,
-+			     const char *parent_names, struct clk_parent_data *parent_data,
- 			     const struct clk_master_layout *layout,
- 			     const struct clk_master_characteristics *characteristics,
- 			     spinlock_t *lock, u32 flags, u32 safe_div);
-@@ -220,7 +220,7 @@ struct clk_hw * __init
- at91_clk_sama7g5_register_master(struct regmap *regmap,
- 				 const char *name, int num_parents,
- 				 const char **parent_names,
--				 struct clk_hw **parent_hws, u32 *mux_table,
-+				 struct clk_parent_data *parent_data, u32 *mux_table,
- 				 spinlock_t *lock, u8 id, bool critical,
- 				 int chg_pid);
- 
--- 
-2.43.0
+(as I internally reviewed this before submission)
 
+--=20
+Thanks,
+
+N=C3=ADcolas
 
