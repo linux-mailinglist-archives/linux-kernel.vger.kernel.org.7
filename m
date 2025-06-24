@@ -1,99 +1,140 @@
-Return-Path: <linux-kernel+bounces-699470-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-699474-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D74FCAE5A81
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Jun 2025 05:32:32 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7105EAE5A89
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Jun 2025 05:35:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id ECF6A44457F
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Jun 2025 03:32:07 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 074A64A6404
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Jun 2025 03:35:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BB0DC38FA3;
-	Tue, 24 Jun 2025 03:32:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CDA991C84CF;
+	Tue, 24 Jun 2025 03:35:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="HYQKctI2"
-Received: from out-173.mta0.migadu.com (out-173.mta0.migadu.com [91.218.175.173])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="VSP3bsz6"
+Received: from out-171.mta1.migadu.com (out-171.mta1.migadu.com [95.215.58.171])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5A314EC5
-	for <linux-kernel@vger.kernel.org>; Tue, 24 Jun 2025 03:32:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E4D0A1519BC
+	for <linux-kernel@vger.kernel.org>; Tue, 24 Jun 2025 03:35:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750735947; cv=none; b=eW+F7QB2+z7oDtsiHcZLTRqx0EHw9XznKifUyPASXOIbE0Gi0+jrqaP7ufBK9LYBrZ/xMfu45X2WYBu/thUiui+SZi2paSnIs1Zv/sasyvq1YTA9OGGCzN2WizwI1sRAIqvljKkid8DjFeagVv7k6N5l7Me17wTDEfjAilig/L8=
+	t=1750736116; cv=none; b=VMKVP2CEMQVKAGHUR3FTtkXZVVrabfr+tPq6QFpCoeZxPwZpuo9BWPjmKy0RlFLiZVR6TToeEDUh213bdLN30ZzRlx8tIs7tdkjRUdZtOhWsOT90dsbEQx02IyhNKQ/YTO1H0c84/8K+8DjhMsb12yOKqFlyNz/f3JHyPKO2lI8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750735947; c=relaxed/simple;
-	bh=M6AdOiQsUgSJClzTHfGsZyI4BzAfupJfHcAQ8+AVXU4=;
+	s=arc-20240116; t=1750736116; c=relaxed/simple;
+	bh=hhB7/K8S9WHkb0fZNu77e7zogyDJCakoXoJ2r6mokSE=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=loWhnRRlqnDXLf2ecAlsG4YUDT+AfXw5rtSP1w4ot56CZKqlGt0npFaVMAH+XavTVz1yXKGp+4/VyvswRTVSzSbeDIyrTF8ouLACfqjNEZmF99PRXkrDEB3kg7V8i9zIOSoaQ7P31grXqEU4GhbE0gtL9a5g5nHR231UDKgfPOs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=HYQKctI2; arc=none smtp.client-ip=91.218.175.173
+	 In-Reply-To:Content-Type; b=TgdTxAAlX8lMC8qtM7ORACCAZKnkS1o34HcaYUQeyg5gbuejhSMfpI2ZL3GcHSTQTyI8Qgn/rEO6DpNuij5fF8ooTAE83Rd/HroWfx4Ib69Q03+VOzR6X3FP4px8547et52HAJOqbFuqfUkiNu49tIlWdCsyTfOWfqQhHZLgAQE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=VSP3bsz6; arc=none smtp.client-ip=95.215.58.171
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Message-ID: <78c18dd2-69d4-49f3-a464-b582a00d2f4c@linux.dev>
+Message-ID: <b2d54872-1f09-41cb-9c58-1224bdb40793@linux.dev>
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1750735932;
+	t=1750736112;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=vHvWN0nBK/1iz0XiFx6EVa3LaybalcP67xeWcGnBLH0=;
-	b=HYQKctI2Shhd8seRP+ffCb3LO9nhqD7N5XzbRtBvvmx20rGKyUE0+ZVMEm4lP0TQmosZva
-	2v6HcJeeDP3UogmB/VfE/f86E+/hPeX1FEc1PaIGH+KSe+mwYN3w/eo0D5MSCWCIa7Oj6K
-	gwhXfltsaeBa8rjqYfcS6KrGrnWVVZY=
-Date: Mon, 23 Jun 2025 20:32:07 -0700
+	bh=hZuOLpZ68g5i7iHvT9FAlUSft9dBr5Tjt7zYFAkD4lc=;
+	b=VSP3bsz6NiMLFUIi/hf0SKIpFZtYOxrYazmTwVLoy7kNHJnwmuITH/RXsI5ce2gUmt98sm
+	MbWxufR4ZbZcP6ULYOknO1Qns3aRyWRZvVDFdtM0p7oJ0IW6fiSg94x+b4uOuo82wk6j8g
+	yHiZD5sqxyzHYs4yueDjfRBNs18WdJM=
+Date: Mon, 23 Jun 2025 20:35:04 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Subject: Re: [PATCH v3 01/12] RISC-V: KVM: Check
- kvm_riscv_vcpu_alloc_vector_context() return value
+Subject: Re: [PATCH v3 02/12] RISC-V: KVM: Drop the return value of
+ kvm_riscv_vcpu_aia_init()
 To: Anup Patel <apatel@ventanamicro.com>
 Cc: Palmer Dabbelt <palmer@dabbelt.com>,
  Paul Walmsley <paul.walmsley@sifive.com>, Alexandre Ghiti <alex@ghiti.fr>,
  Andrew Jones <ajones@ventanamicro.com>, Anup Patel <anup@brainfault.org>,
  kvm@vger.kernel.org, kvm-riscv@lists.infradead.org,
- linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org
+ linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org,
+ Nutty Liu <liujingqi@lanxincomputing.com>
 References: <20250618113532.471448-1-apatel@ventanamicro.com>
- <20250618113532.471448-2-apatel@ventanamicro.com>
+ <20250618113532.471448-3-apatel@ventanamicro.com>
 Content-Language: en-US
 X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
 From: Atish Patra <atish.patra@linux.dev>
-In-Reply-To: <20250618113532.471448-2-apatel@ventanamicro.com>
+In-Reply-To: <20250618113532.471448-3-apatel@ventanamicro.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 X-Migadu-Flow: FLOW_OUT
 
 
 On 6/18/25 4:35 AM, Anup Patel wrote:
-> The kvm_riscv_vcpu_alloc_vector_context() does return an error code
-> upon failure so don't ignore this in kvm_arch_vcpu_create().
+> The kvm_riscv_vcpu_aia_init() does not return any failure so drop
+> the return value which is always zero.
 >
+> Reviewed-by: Nutty Liu<liujingqi@lanxincomputing.com>
 > Signed-off-by: Anup Patel <apatel@ventanamicro.com>
 > ---
->   arch/riscv/kvm/vcpu.c | 5 +++--
->   1 file changed, 3 insertions(+), 2 deletions(-)
+>   arch/riscv/include/asm/kvm_aia.h | 2 +-
+>   arch/riscv/kvm/aia_device.c      | 6 ++----
+>   arch/riscv/kvm/vcpu.c            | 4 +---
+>   3 files changed, 4 insertions(+), 8 deletions(-)
 >
+> diff --git a/arch/riscv/include/asm/kvm_aia.h b/arch/riscv/include/asm/kvm_aia.h
+> index 3b643b9efc07..0a0f12496f00 100644
+> --- a/arch/riscv/include/asm/kvm_aia.h
+> +++ b/arch/riscv/include/asm/kvm_aia.h
+> @@ -147,7 +147,7 @@ int kvm_riscv_vcpu_aia_rmw_ireg(struct kvm_vcpu *vcpu, unsigned int csr_num,
+>   
+>   int kvm_riscv_vcpu_aia_update(struct kvm_vcpu *vcpu);
+>   void kvm_riscv_vcpu_aia_reset(struct kvm_vcpu *vcpu);
+> -int kvm_riscv_vcpu_aia_init(struct kvm_vcpu *vcpu);
+> +void kvm_riscv_vcpu_aia_init(struct kvm_vcpu *vcpu);
+>   void kvm_riscv_vcpu_aia_deinit(struct kvm_vcpu *vcpu);
+>   
+>   int kvm_riscv_aia_inject_msi_by_id(struct kvm *kvm, u32 hart_index,
+> diff --git a/arch/riscv/kvm/aia_device.c b/arch/riscv/kvm/aia_device.c
+> index 806c41931cde..b195a93add1c 100644
+> --- a/arch/riscv/kvm/aia_device.c
+> +++ b/arch/riscv/kvm/aia_device.c
+> @@ -509,12 +509,12 @@ void kvm_riscv_vcpu_aia_reset(struct kvm_vcpu *vcpu)
+>   	kvm_riscv_vcpu_aia_imsic_reset(vcpu);
+>   }
+>   
+> -int kvm_riscv_vcpu_aia_init(struct kvm_vcpu *vcpu)
+> +void kvm_riscv_vcpu_aia_init(struct kvm_vcpu *vcpu)
+>   {
+>   	struct kvm_vcpu_aia *vaia = &vcpu->arch.aia_context;
+>   
+>   	if (!kvm_riscv_aia_available())
+> -		return 0;
+> +		return;
+>   
+>   	/*
+>   	 * We don't do any memory allocations over here because these
+> @@ -526,8 +526,6 @@ int kvm_riscv_vcpu_aia_init(struct kvm_vcpu *vcpu)
+>   	/* Initialize default values in AIA vcpu context */
+>   	vaia->imsic_addr = KVM_RISCV_AIA_UNDEF_ADDR;
+>   	vaia->hart_index = vcpu->vcpu_idx;
+> -
+> -	return 0;
+>   }
+>   
+>   void kvm_riscv_vcpu_aia_deinit(struct kvm_vcpu *vcpu)
 > diff --git a/arch/riscv/kvm/vcpu.c b/arch/riscv/kvm/vcpu.c
-> index 303aa0a8a5a1..b467dc1f4c7f 100644
+> index b467dc1f4c7f..f9fb3dbbe0c3 100644
 > --- a/arch/riscv/kvm/vcpu.c
 > +++ b/arch/riscv/kvm/vcpu.c
-> @@ -148,8 +148,9 @@ int kvm_arch_vcpu_create(struct kvm_vcpu *vcpu)
+> @@ -159,9 +159,7 @@ int kvm_arch_vcpu_create(struct kvm_vcpu *vcpu)
+>   	kvm_riscv_vcpu_pmu_init(vcpu);
 >   
->   	spin_lock_init(&vcpu->arch.reset_state.lock);
+>   	/* Setup VCPU AIA */
+> -	rc = kvm_riscv_vcpu_aia_init(vcpu);
+> -	if (rc)
+> -		return rc;
+> +	kvm_riscv_vcpu_aia_init(vcpu);
 >   
-> -	if (kvm_riscv_vcpu_alloc_vector_context(vcpu))
-> -		return -ENOMEM;
-> +	rc = kvm_riscv_vcpu_alloc_vector_context(vcpu);
-> +	if (rc)
-> +		return rc;
->   
->   	/* Setup VCPU timer */
->   	kvm_riscv_vcpu_timer_init(vcpu);
-
-
+>   	/*
+>   	 * Setup SBI extensions
 Reviewed-by: Atish Patra <atishp@rivosinc.com>
-
 
