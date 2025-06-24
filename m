@@ -1,162 +1,142 @@
-Return-Path: <linux-kernel+bounces-699713-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-699715-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id EF871AE5E4C
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Jun 2025 09:45:50 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 68EDFAE5E4F
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Jun 2025 09:46:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9FD091797CB
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Jun 2025 07:45:27 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6F1193A4CC4
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Jun 2025 07:45:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 27B82256C61;
-	Tue, 24 Jun 2025 07:45:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9E6912253EE;
+	Tue, 24 Jun 2025 07:46:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="EN/DqN8S"
-Received: from mail-wr1-f41.google.com (mail-wr1-f41.google.com [209.85.221.41])
+	dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b="ASC9TwPD"
+Received: from mail-lf1-f54.google.com (mail-lf1-f54.google.com [209.85.167.54])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E40102571AD;
-	Tue, 24 Jun 2025 07:45:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 42D0518C00
+	for <linux-kernel@vger.kernel.org>; Tue, 24 Jun 2025 07:46:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750751116; cv=none; b=APJVO3THenDlBdD9HQvqUXGmwb9JLMK4YLpcbYt98iFCcB4PPmakpXU6n7YD5Kp6Gern2CYeTi6fmUaRO1nzJUzrzWuLA+mTatZj9TJpot524V43xRtA3s8lXvbjAIfrUaPdafud8CkWOkVKFLhjqLYizMVTLWLH6m7wTcVWPJU=
+	t=1750751177; cv=none; b=CBIBV+9IkbFcvTHuMuqBMPZk6Ncr+XuXoBXCqBR1slkbrlEem39jLOoJzHJpsDz7AbJsuLWkbjZ+6Cvr1/AuKZQtY75GHoqhwdb44YtkmoyW4Z40z0imRIpOkSUq3/QWnKvh0NCpSb8vTUHlM03D4PfMEtKQLhA4fR2LG0s3VpM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750751116; c=relaxed/simple;
-	bh=OMYfjk/HFBuh+RTKM3jVKi0nByrXItMtgixjn74Xy6A=;
-	h=Message-ID:Date:From:To:Cc:Subject:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=gLv5jK/HO+G+xSEpO/5ujEPW6GS1BlS3JgsGByJ98Bt+XgSenUcrUCNSLCXmbk5yqlWGMGNZlR1rveABJoJRD3KJOSVD0LjIrAoOgJLJqrCR4NkA7HZDjQq4B5qVRtgNKIAwh22hnBgxI0J4U7NZlwJIMQNd1rR+vEiVotzXlQg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=EN/DqN8S; arc=none smtp.client-ip=209.85.221.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f41.google.com with SMTP id ffacd0b85a97d-3a4f72cba73so3931910f8f.1;
-        Tue, 24 Jun 2025 00:45:14 -0700 (PDT)
+	s=arc-20240116; t=1750751177; c=relaxed/simple;
+	bh=6NK3tnnqwOsefuOmMDNLuw610W8Lqq0WNNuq6KVcXpY=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=MqctQjjTiPWbIZmcmKkH3fiX+RI1xiVYLuaP+OtGO1eyC9lxOJyOPFzhmUKs4Hi66cvIcH1775ie13HulSHjF3pLRKtRNZIGySZJb3bgjD8onj7wDULw4Iwcxhuom+EGzJmqRPMnZdEtVNBq6Ph/BKouKE26aPZw5OplBMY5tE0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com; spf=pass smtp.mailfrom=bytedance.com; dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b=ASC9TwPD; arc=none smtp.client-ip=209.85.167.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bytedance.com
+Received: by mail-lf1-f54.google.com with SMTP id 2adb3069b0e04-553dceb345eso5573713e87.1
+        for <linux-kernel@vger.kernel.org>; Tue, 24 Jun 2025 00:46:15 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1750751113; x=1751355913; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:subject:cc:to:from:date:message-id:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=g0Qw5wb1qPbwmyPbsLrs16hi2rdMz6r9QLI+Zkxs80I=;
-        b=EN/DqN8SQPSyhcRP+BHiwZGHKO32f62KZ2sT8LdzHAa/b94z35+3IZGbyHDdyYQbws
-         3akHsaFvQ/cm+2vm039NwWc/xJXzNAKr77EuD9sE73L/CoULckEbSUPhhBa80+GEESda
-         6SxEtLMP6j+O3hhZqQjPNJ0teR1t8Xahx1eOz54pARkv3kQQSOhIDFMsV+XBuGdBR/hP
-         XxnYCFngrcBAx3GApXYpVeVIs3pZ1CxnKT/t4vP9ONDYCI3ereKaGxn7yXCd4FJcJu0A
-         XXywV10AYSN9w5UTBhI62VQsKBSIINZ8CQF1cx3M8BERM+bllgLaKeNV/n+cMy1xwWW8
-         XQDw==
+        d=bytedance.com; s=google; t=1750751173; x=1751355973; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=k+oEhOHHx7fY+nLT2qN0EKVfCmE4uQzy+o05i8qDvec=;
+        b=ASC9TwPD3bTcc8mgJLEIeH8p7PIodYWUYnnYUbYxrLlmaqbH5DH3yEXCH030vTUMxN
+         JHIXhs08YbHPvnESb17/i4/MY0umqbZX9+Ce8lNkE7s9iC/ZlZB5EQlQm+qaSQQOLKoU
+         L6okSLNxxvcjitYT7Km3sGpbOkGYdiSqH86TzXbmZJ3gjLYYUyKA41Ii5uiNuc6ZQg3g
+         5IDo5tdivXSsLLdiYzaCTG8tfdqa5fQ+tpalIZei+0OtjIVe1VqRRpGgblCP/Ee1YpDK
+         nwiLShOgqErCMwdKI3yQuJp2X1R73N2oa7kRf52UA/fUjUu/xc/oe1lMH4qG5UmnL82d
+         +m3A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1750751113; x=1751355913;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:subject:cc:to:from:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=g0Qw5wb1qPbwmyPbsLrs16hi2rdMz6r9QLI+Zkxs80I=;
-        b=TCqD6Rno/nS7iMJ+pJog/SWwz9+Bmi2v72lb4IGXH74vrn+5Yd+PTuQ3avUn49gJs/
-         aAbgnS3hdAbOrK8WasWYvG5DoHGJT7RTMWMg5UrBQh5jQA682NVegTWm7sM9mTV2oHUI
-         ZRtsef8F1Q3FnRWqiPsvDbvl8ZYBX+E2SUXaeN7D1vduImu16HbFZPCiVNuDaB0eT8Z5
-         YQWrgoIGbYCx1o3dIr0Lhq3hpB8BVi/tty3FlGpIpHSeOOE/Be6iHTIGeuiq3+PXDfXv
-         D8SfTTq3aZ0c1bjSnu5cdpoIhzIIVPshM0ICdrdCjnDtqQ+qf+u/+tF8s62aQFn06eeL
-         S9pw==
-X-Forwarded-Encrypted: i=1; AJvYcCV/ogYZ3i8oU54gI012FQFsNllcWdo5FwTSvglUXLgz+mqU46itKc/hJ9LFUg5+znrUheqIhDeFm6Wp@vger.kernel.org, AJvYcCWFYfdeoclyQQjUy2dLW4HS6acw+K4dthQnLdCsICON0boKCJl2c5ToVcOTYeVfrmUS7SPHmqL5u9WbkmM=@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywzq6EBATubhhPmPyil5BCQIPDCnssAHplGc9Q8mqjHi2t1skCY
-	o1R+sEidUjLm2bTk8YORRAYJWsH7zSRCUGlNzIByCHMmpsE1hgy7WHz2qlCXsg==
-X-Gm-Gg: ASbGncsTXTharGMCDpvnilP3eVKsLZ7YKYdpesACncqDX/apDRneYyGeGFnSLPMv3C+
-	u6oqbmEH23QYTOebgOh7AS/s7UcrAOdj/5sxNF44Ir6H+ptLPGu3xn5S1NK/A8YWkDvok0hgqGx
-	a4F0bzT/9HTqaHsdJUAKixpDsgeNGQc6p3Gl4+d7+i9w8P2A7073hUs1piez9Tv+0a6WaydTET0
-	q6QKkB1j9xx1D28kjtN8+04CN5CAslFRvkcGITx7oaJ9yPDpLHnzoT1ZYT7nQyCQYmMMqiPMW60
-	RVImnJb/p+4mzObcuGG3m+MZk6P72u2Ot7HpI54lp3OxB8VK4dQ6t+C6cirP26FwUnx2/KWsn6v
-	zLttqGMDYtFSxkNKmLw==
-X-Google-Smtp-Source: AGHT+IE0gWJM7aSHVAxN1GTQvphCOkft5ulLOzwhDZvQOYQaffQzFyUGVVNZrQjCmYXfWS8WYgK6DQ==
-X-Received: by 2002:a05:6000:2409:b0:3a6:daff:9e5 with SMTP id ffacd0b85a97d-3a6e71c5b54mr1705345f8f.7.1750751112954;
-        Tue, 24 Jun 2025 00:45:12 -0700 (PDT)
-Received: from Ansuel-XPS. (93-34-88-225.ip49.fastwebnet.it. [93.34.88.225])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4536470370fsm132895045e9.29.2025.06.24.00.45.11
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 24 Jun 2025 00:45:11 -0700 (PDT)
-Message-ID: <685a5787.050a0220.20ff0f.fd7a@mx.google.com>
-X-Google-Original-Message-ID: <aFpXhMeTm_7QT8sj@Ansuel-XPS.>
-Date: Tue, 24 Jun 2025 09:45:08 +0200
-From: Christian Marangi <ansuelsmth@gmail.com>
-To: Andy Shevchenko <andy.shevchenko@gmail.com>
-Cc: Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= <ukleinek@kernel.org>,
-	Lukas Wunner <lukas@wunner.de>,
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
-	Herbert Xu <herbert@gondor.apana.org.au>,
-	Andy Shevchenko <andy@kernel.org>,
-	Jonathan Cameron <Jonathan.Cameron@huawei.com>,
-	linux-kernel@vger.kernel.org, linux-pwm@vger.kernel.org
-Subject: Re: [PATCH v15 1/2] math.h: provide rounddown_ull variant for
- rounddown MACRO
-References: <20250623211116.1395-1-ansuelsmth@gmail.com>
- <CAHp75VcWW=RaHS9Yb8BcK2Jt7qtNOQzA3eDOZQ88RQG63981cQ@mail.gmail.com>
+        d=1e100.net; s=20230601; t=1750751173; x=1751355973;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=k+oEhOHHx7fY+nLT2qN0EKVfCmE4uQzy+o05i8qDvec=;
+        b=Y5EEghT2eqeXzOIDOiWtfitosSXzIILy4UNjlKk5HUE3B2aM9rAL1YsZAds2OR0s+5
+         ocJwsjEi+2XW1UxD+ZpMmM5McsZxf9yQd3Y67Vp+Uq8ynSz728ighnU9vmaNpPb0RNzf
+         4k50pXro5BD/B1J0VrmEJ2mnEqpe2wXK3Af6lwXqwsMvtQqlB05Dqo6c/ArDJ+87tOCN
+         aigjMDhIYzLXiz2fVPR9+urlgk3D6O2KOxVmzbS2agwIIhc7B82ptXvdRB3fygFFCk5S
+         A4jFNYAzuaCHayrVkRi4CjwPmxk7vla7n29Q2XCDxLCvezJqNV0SQCUgOveUypaWWuKo
+         LVqg==
+X-Forwarded-Encrypted: i=1; AJvYcCVLTEqDRdhm/A6QvKwQX5z72vgptdD17xHCaHuXNgJo0MynExMA0gxB1LqPq+kkdwJTUlCBTBQV+F1Oahc=@vger.kernel.org
+X-Gm-Message-State: AOJu0YydLhlQkS4eU1gpdtTwgFtDI4KPqo63zN8GFvKOr9HbgMG/cY5D
+	DFyUzzR0q45cU8r0823rCItco8ltund6slcBvBUClm1sFiDI2DjSkfLKNVC3PdbNT42K0oc6LLn
+	Xycol/FyD1dCcneqD7mOuQ7LBttJ2t8B1hVthD4QnFQ==
+X-Gm-Gg: ASbGncu7ugs6cGQ16r6KF/dp2mg8EeWQ88EIXf85OmX3+7g+yCeBNCFyX8HN/x7qMzv
+	o61zxBmM3fji++uBgeSRXzQLHzEqL4+zjK2r222iZOu0I7uSsimjzYoO0q/c1umRfq9qjKBbM9U
+	YwOlK1GdSxIVtyKS6HjcKR9021KUgVHh6vXikuq3FDBw5q0/FHSeeyJ2Ht
+X-Google-Smtp-Source: AGHT+IFeYUZar2HVowmkLYZSd2STiizR8hFaF4uq0hhzYEvud8WPf+pSSuVw8h7oTS5swY4X/pPSyhdh3F2k1DRwzJc=
+X-Received: by 2002:a05:6512:3e04:b0:553:296b:a62 with SMTP id
+ 2adb3069b0e04-553e3b99018mr5116928e87.12.1750751173353; Tue, 24 Jun 2025
+ 00:46:13 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAHp75VcWW=RaHS9Yb8BcK2Jt7qtNOQzA3eDOZQ88RQG63981cQ@mail.gmail.com>
+References: <cover.1750234270.git.hezhongkun.hzk@bytedance.com>
+ <a57jjrtddjc4wjbrrjpyhfdx475zwpuetmkibeorboo7csc7aw@foqsmf5ipr73> <bkql5n7vg7zoxxf3rwfceioenwkifw7iw4tev4jkljzkvpbrci@6uofefhkdzrx>
+In-Reply-To: <bkql5n7vg7zoxxf3rwfceioenwkifw7iw4tev4jkljzkvpbrci@6uofefhkdzrx>
+From: Zhongkun He <hezhongkun.hzk@bytedance.com>
+Date: Tue, 24 Jun 2025 15:45:37 +0800
+X-Gm-Features: Ac12FXz-Z4gUKGi6BIbRPkGEyqVXiKtjI_FOE1Vnun9s2B37mLTDpYjLgI0Qdmw
+Message-ID: <CACSyD1PJ8tGbWpqyCx=dXSgZbhfCuXcKKX6_kmN17F6g+E9m2w@mail.gmail.com>
+Subject: Re: [External] Re: [PATCH 0/2] Postpone memcg reclaim to
+ return-to-user path
+To: Jan Kara <jack@suse.cz>
+Cc: Shakeel Butt <shakeel.butt@linux.dev>, akpm@linux-foundation.org, tytso@mit.edu, 
+	jack@suse.com, hannes@cmpxchg.org, mhocko@kernel.org, muchun.song@linux.dev, 
+	linux-ext4@vger.kernel.org, linux-kernel@vger.kernel.org, linux-mm@kvack.org, 
+	cgroups@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Tue, Jun 24, 2025 at 09:08:32AM +0300, Andy Shevchenko wrote:
-> On Tue, Jun 24, 2025 at 12:11 AM Christian Marangi <ansuelsmth@gmail.com> wrote:
-> >
-> > There is currently a problem with the usage of rounddown MACRO with
-> 
-> rounddown() with
-> 
-> > u64 dividends. This cause compilation error on specific arch where
-> 
-> causes
-> 
-> > 64bit division is done on 32bit system.
-> 
-> on the 32-bit
-> 
-> 
-> > To be more specific GCC try optimize the function and replace it with
-> 
-> to optimize
-> 
-> > __umoddi3 but this is actually not compiled in the kernel.
-> 
-> __umoddi3()
-> 
-> > Example:
-> > pwm-airoha.c:(.text+0x8f8): undefined reference to `__umoddi3'
-> >
-> > To better handle this, introduce a variant of rounddown MACRO,
-> 
-> rounddown(),
-
-For this and the other... Is it correct to use () for MACRO?
-I assume () should be used only for functions.
-
-> 
-> > rounddown_ull that can be used exactly for this scenario.
-> 
-> rounddown_ull()
-> 
-> > rounddown_ull new MACRO use the do_div MACRO that do the heavy work of
-> 
-> The rounddown_ull() is a new macro that uses do_div() to do the heavy work of
-> 
-> > handling internally all the magic for 64bit division on 32bit (and
-> 
-> for the 64-bit divisions on the 32-bit platforms (and
-> 
-> > indirectly fix the compilation error).
-> 
-> ...
-> 
-> > - Add this patch
-> 
-> Why are math64 APIs not usable here?
+On Thu, Jun 19, 2025 at 4:05=E2=80=AFPM Jan Kara <jack@suse.cz> wrote:
 >
+> On Wed 18-06-25 15:37:20, Shakeel Butt wrote:
+> > > This is
+> > > beneficial for users who perform over-max reclaim while holding multi=
+ple
+> > > locks or other resources (especially resources related to file system
+> > > writeback). If a task needs any of these resources, it would otherwis=
+e
+> > > have to wait until the other task completes reclaim and releases the
+> > > resources. Postponing reclaim to the return-to-user path helps avoid =
+this issue.
+> > >
+> > > # Background
+> > >
+> > > We have been encountering an hungtask issue for a long time. Specific=
+ally,
+> > > when a task holds the jbd2 handler
+> >
+> > Can you explain a bit more about jbd2 handler? Is it some global shared
+> > lock or a workqueue which can only run single thread at a time.
+> > Basically is there a way to get the current holder/owner of jbd2 handle=
+r
+> > programmatically?
+>
+> There's a typo in the original email :). It should be "jbd2 handle". And
+> that is just a reference to the currently running transaction in ext4
+> filesystem. There can be always at most one running transaction in ext4
+> filesystem and until the last reference is dropped it cannot commit. This
+> eventually (once the transaction reaches its maximum size) blocks all the
+> other modifications to the filesystem. So it is shared global resource
+> that's held by the process doing reclaim.
+>
+> Since there can be many holders of references to the currently running
+> transaction there's no easy way to iterate processes that are holding the
+> references... That being said ext4 sets current->journal_info when
+> acquiring a journal handle but other filesystems use this field for other
+> purposes so current->journal_info being non-NULL does not mean jbd2 handl=
+e
+> is held.
 
-There isn't a rounddown API for math64.
+Hi Jan,
+Thanks for your feedback and explanations.
 
--- 
-	Ansuel
+>
+>                                                                 Honza
+> --
+> Jan Kara <jack@suse.com>
+> SUSE Labs, CR
 
