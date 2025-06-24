@@ -1,168 +1,164 @@
-Return-Path: <linux-kernel+bounces-699601-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-699599-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 240EAAE5CE0
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Jun 2025 08:35:50 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id B03E7AE5CDB
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Jun 2025 08:35:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 92CDD1B64290
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Jun 2025 06:36:05 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 089EB7AF877
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Jun 2025 06:33:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 25FCC2405E8;
-	Tue, 24 Jun 2025 06:35:40 +0000 (UTC)
-Received: from mail.loongson.cn (mail.loongson.cn [114.242.206.163])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CF60413B284;
-	Tue, 24 Jun 2025 06:35:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=114.242.206.163
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ADA7E23E338;
+	Tue, 24 Jun 2025 06:35:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Dso2UFGV"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EF73E13B284;
+	Tue, 24 Jun 2025 06:35:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750746939; cv=none; b=YT6Vj9+mahAxgaZYBywKbUhFYjkb/U+S7rtWgIPk24uKNwNX+T8NXL/EjGrcQKhScTomrEJB25f0EG91N3KmwC7hm9YEMTWtXGvj1Ev0RxtPV+mRv1n9wmcHI7uiEnrO03feafOozRGjg0xTer63iN3ealv1zLYsRxWAkZOcZlc=
+	t=1750746901; cv=none; b=t3URxUalWY2FT+zEfldKqlL9AND1LCbSSlDuf6HtjD2s6mk3wyN8a/yhjlDc6NayL85XcSJsT733dL+vT3XLfQz+8EioOcu2DeYsi1FN5xuY9uPHAUIyZ1zfyrHKYeNfjdyEcfZFDsAIzw78Q4yq6RwTKK8vlyxv0ObFS1Xj+dQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750746939; c=relaxed/simple;
-	bh=/lYFJDYHmYFQgmRSEXyjjfh598VT71rpReMsxjXzqY4=;
-	h=From:Subject:To:Cc:References:Message-ID:Date:MIME-Version:
-	 In-Reply-To:Content-Type; b=sdS/v4qfj1uqIDU5TJzxH9F0ft1F2HXkxCy7emUD+IRXav5KRtC+pa5qBIYoBLZnyDcVdnDPO6BpYkNBAYFPlpzuPNY3pmB1r2bcnup0ACfDtAxdKr+olQ3n1OyHx4wXvAKrViq3bSt4578677UgoGybetjHMYZoYuYDP6xY1DY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn; spf=pass smtp.mailfrom=loongson.cn; arc=none smtp.client-ip=114.242.206.163
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=loongson.cn
-Received: from loongson.cn (unknown [10.20.42.24])
-	by gateway (Coremail) with SMTP id _____8AxquA2R1poNg0cAQ--.22147S3;
-	Tue, 24 Jun 2025 14:35:34 +0800 (CST)
-Received: from [10.20.42.24] (unknown [10.20.42.24])
-	by front1 (Coremail) with SMTP id qMiowMAxDcUuR1pooWwoAQ--.52280S3;
-	Tue, 24 Jun 2025 14:35:28 +0800 (CST)
-From: Tianyang Zhang <zhangtianyang@loongson.cn>
-Subject: Re: [PATCH v4 0/2] Loongarch irq-redirect supprot
-To: Huacai Chen <chenhuacai@kernel.org>
-Cc: kernel@xen0n.name, corbet@lwn.net, alexs@kernel.org,
- si.yanteng@linux.dev, tglx@linutronix.de, jiaxun.yang@flygoat.com,
- peterz@infradead.org, wangliupu@loongson.cn, lvjianmin@loongson.cn,
- maobibo@loongson.cn, siyanteng@cqsoftware.com.cn, gaosong@loongson.cn,
- yangtiezhu@loongson.cn, loongarch@lists.linux.dev,
- linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
- Super User <root@localhost.localdomain>
-References: <20250610114252.21077-1-zhangtianyang@loongson.cn>
- <CAAhV-H5XB7sVf0UoUmXHDeTXA8tncJhV2LexLgc-Z1Hebsijtw@mail.gmail.com>
-Message-ID: <6d1eba98-e5ae-4f8e-cddc-b6dbdf20f721@loongson.cn>
-Date: Tue, 24 Jun 2025 14:34:45 +0800
-User-Agent: Mozilla/5.0 (X11; Linux mips64; rv:68.0) Gecko/20100101
- Thunderbird/68.7.0
+	s=arc-20240116; t=1750746901; c=relaxed/simple;
+	bh=j7rITJ4juKP2Yy9KV+vQi/jLoYOyZ9Hp6gowzhX2NCE=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=KB4nL7p1ev9UxmFNbIVZUMODLl7wYsWYXCByKeYA/I6+w4vs/QdMtWpK2YvZvOa0iVsHGl3a7YcoWb8+pdz3DphuZXLTuadGi4dpHq/aEUOH0Nn+Tv7UHcsPvfjYWsKHGYO4YZhyjrJleXhwrri3Rl7Nu57uiH0S6qzSwM5S3Nk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Dso2UFGV; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1D9EEC4CEE3;
+	Tue, 24 Jun 2025 06:34:56 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1750746900;
+	bh=j7rITJ4juKP2Yy9KV+vQi/jLoYOyZ9Hp6gowzhX2NCE=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=Dso2UFGVZhSPK07zy48+dT4AVbc5r9e/locALBZ4uLyOSScRY77FhnOFMO1X1KTA3
+	 c28rsXvc3xUg/jEumrqRAF/+zqCI6nV9O3/fk95Z88RePLvJAubIsoRmEPIT38xQRl
+	 gv/H2efAdNwdHip/dmzzoQymVfuqud27Yzjz+On1OILWrBH9jF+iuEX6uvsWHww1VD
+	 H1BF7EIpOajmBdy51aTsWvCcF6m3+vKk2rnsHG/YRz98WjtfKL7g6HXqUGfoq4BacO
+	 U6N5gyiTkfqktcwSFgxju/U1Kgba4hdeHNtPQ40ONFRW7WFj8y0WsJaPBiBpy12ese
+	 eTBodiOpM1vUQ==
+Message-ID: <1f1eb736-5b04-4e59-afb5-9e5925900100@kernel.org>
+Date: Tue, 24 Jun 2025 08:34:55 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <CAAhV-H5XB7sVf0UoUmXHDeTXA8tncJhV2LexLgc-Z1Hebsijtw@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 3/7] dt-bindings: gpio: gpio-cdns: convert to YAML
+To: Harshit Shah <hshah@axiado.com>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Linus Walleij <linus.walleij@linaro.org>,
+ Bartosz Golaszewski <brgl@bgdev.pl>, Arnd Bergmann <arnd@arndb.de>,
+ Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>,
+ Jan Kotas <jank@cadence.com>
+Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-gpio@vger.kernel.org,
+ soc@lists.linux.dev
+References: <20250623-axiado-ax3000-soc-and-evaluation-board-support-v3-0-b3e66a7491f5@axiado.com>
+ <20250623-axiado-ax3000-soc-and-evaluation-board-support-v3-3-b3e66a7491f5@axiado.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
 Content-Language: en-US
-X-CM-TRANSID:qMiowMAxDcUuR1pooWwoAQ--.52280S3
-X-CM-SenderInfo: x2kd0wxwld05hdqjqz5rrqw2lrqou0/
-X-Coremail-Antispam: 1Uk129KBj93XoWxXr43WF15AF1kJF1UGrykJFc_yoW5ZFyxpr
-	WkGrWUGrW3Ar4xCr1qvF1DZFy7Ary8G34Yqr18Wa4DGanxCr1IqF1UWr90grykJrZ5Ar4U
-	Xrn8Xr9rZF1UJacCm3ZEXasCq-sJn29KB7ZKAUJUUUUk529EdanIXcx71UUUUU7KY7ZEXa
-	sCq-sGcSsGvfJ3Ic02F40EFcxC0VAKzVAqx4xG6I80ebIjqfuFe4nvWSU5nxnvy29KBjDU
-	0xBIdaVrnRJUUUPFb4IE77IF4wAFF20E14v26r1j6r4UM7CY07I20VC2zVCF04k26cxKx2
-	IYs7xG6rWj6s0DM7CIcVAFz4kK6r1Y6r17M28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48v
-	e4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Xr0_Ar1l84ACjcxK6xIIjxv20xvEc7CjxVAFwI
-	0_Gr0_Cr1l84ACjcxK6I8E87Iv67AKxVWxJr0_GcWl84ACjcxK6I8E87Iv6xkF7I0E14v2
-	6rxl6s0DM2kKe7AKxVWUtVW8ZwAS0I0E0xvYzxvE52x082IY62kv0487Mc804VCY07AIYI
-	kI8VC2zVCFFI0UMc02F40EFcxC0VAKzVAqx4xG6I80ewAv7VC0I7IYx2IY67AKxVWUtVWr
-	XwAv7VC2z280aVAFwI0_Gr0_Cr1lOx8S6xCaFVCjc4AY6r1j6r4UM4x0Y48IcVAKI48JMx
-	k0xIA0c2IEe2xFo4CEbIxvr21lc7CjxVAaw2AFwI0_Jw0_GFyl42xK82IYc2Ij64vIr41l
-	4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1l4IxYO2xFxVAFwI0_Jw0_GFylx2IqxVAqx4xG67AKxV
-	WUJVWUGwC20s026x8GjcxK67AKxVWUGVWUWwC2zVAF1VAY17CE14v26r4a6rW5MIIYrxkI
-	7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_JFI_Gr1lIxAIcVC0I7IYx2IY6xkF7I0E14v26r
-	4j6F4UMIIF0xvE42xK8VAvwI8IcIk0rVWUJVWUCwCI42IY6I8E87Iv67AKxVW8JVWxJwCI
-	42IY6I8E87Iv6xkF7I0E14v26r4j6r4UJbIYCTnIWIevJa73UjIFyTuYvjxUstxhDUUUU
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 a/A=
+In-Reply-To: <20250623-axiado-ax3000-soc-and-evaluation-board-support-v3-3-b3e66a7491f5@axiado.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Hi, Huacai
+On 23/06/2025 19:28, Harshit Shah wrote:
+> +$id: http://devicetree.org/schemas/gpio/cdns,gpio.yaml#
+> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> +
+> +title: Cadence GPIO Controller
+> +
+> +maintainers:
+> +  - Jan Kotas <jank@cadence.com>
+> +
+> +properties:
+> +  compatible:
+> +    const: cdns,gpio-r1p02
+> +
+> +  reg:
+> +    maxItems: 1
+> +
+> +  clocks:
+> +    maxItems: 1
+> +
+> +  ngpios:
+> +    minimum: 1
+> +    maximum: 32
+> +    description: Number of GPIO lines supported, maximum 32.
 
-在 2025/6/10 下午7:54, Huacai Chen 写道:
-> Hi, Tianyang,
->
-> Have you received my comments in V3?
-> https://lore.kernel.org/loongarch/20250523101833.17940-1-zhangtianyang@loongson.cn/T/#m2883f379ce7eb663f3f3eb4736bf9b071c7fd8ab
+Don't repeat constraints in free form text.
 
-After a few days of effort, I did not let that email reappear in my 
-mailbox... so I am replying to the above email here
+No need to resend just for that.
 
-* Re: [PATCH v3 2/2] irq/irq-loongarch-ir:Add Redirect irqchip support
-   2025-05-23 10:18 ` [PATCH v3 2/2] irq/irq-loongarch-ir:Add Redirect 
-irqchip support Tianyang Zhang
-@ 2025-05-24 14:12   ` Huacai Chen
-   2025-05-25  9:06   ` Thomas Gleixner
-   1 sibling, 0 replies; 7+ messages in thread
-From: Huacai Chen @ 2025-05-24 14:12 UTC (permalink / raw)
-   To: Tianyang Zhang
-   Cc: kernel, corbet, alexs, si.yanteng, tglx, jiaxun.yang, peterz,
-     wangliupu, lvjianmin, maobibo, siyanteng, gaosong, yangtiezhu,
-     loongarch, linux-doc, linux-kernel
+Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+<form letter>
+This is an automated instruction, just in case, because many review tags
+are being ignored. If you know the process, just skip it entirely
+(please do not feel offended by me posting it here - no bad intentions
+intended, no patronizing, I just want to avoid wasted efforts). If you
+do not know the process, here is a short explanation:
 
- >> +
- >> +#define REDIRECT_REG_BASE(reg, node) \
- >> +       (UNCACHE_BASE | redirect_reg_base | (u64)(node) << 
-NODE_ADDRSPACE_SHIFT | (reg))
- > IO_BASE is a little better than UNCACHE_BASE.
+Please add Acked-by/Reviewed-by/Tested-by tags when posting new versions
+of patchset, under or above your Signed-off-by tag, unless patch changed
+significantly (e.g. new properties added to the DT bindings). Tag is
+"received", when provided in a message replied to you on the mailing
+list. Tools like b4 can help here ('b4 trailers -u ...'). However,
+there's no need to repost patches *only* to add the tags. The upstream
+maintainer will do that for tags received on the version they apply.
 
-yes, it is batter, thanks
-
- >> +#define        redirect_reg_queue_head(node) 
-REDIRECT_REG_BASE(LOONGARCH_IOCSR_REDIRECT_CQH, (node))
- >> +#define        redirect_reg_queue_tail(node) 
-REDIRECT_REG_BASE(LOONGARCH_IOCSR_REDIRECT_CQT, (node))
- >> +#define read_queue_head(node)          (*((u32 
-*)(redirect_reg_queue_head(node))))
- >> +#define read_queue_tail(node)          (*((u32 
-*)(redirect_reg_queue_tail(node))))
- >> +#define write_queue_tail(node, val)    (*((u32 
-*)(redirect_reg_queue_tail(node))) = (val))
- >You can use readl() and writel() directly, then you can remove the 
-memory barrier around write_queue_tail().
-
-OK , It is realy a good idea.thanks
-
- >> +static void irde_invlid_entry_node(struct redirect_item *item)
- > s/irde_invlid_entry_node/irde_invalid_entry_node/g
-
-OK , thanks
-
- >> +       avecintc_sync(adata);
- >> +
- >> +       return IRQ_SET_MASK_OK;
- >> +}
- > Have you tried to build with no SMP? This function (and maybe more) 
-should be guarded by CONFIG_SMP.
-
-I did it at the beginning... Okay, I will supplement this test in the 
-current version
-
- >> +static int __init redirect_reg_base_init(void)
- >> +{
- >> +       acpi_status status;
- >> +       uint64_t addr = 0;
- >> +
- >> +       if (acpi_disabled)
- >> +               return 0;
- >> +
- >> +       status = acpi_evaluate_integer(NULL, "\\_SB.NO00", NULL, &addr);
- >> +       if (ACPI_FAILURE(status) || !addr)
- >> +               pr_info("redirect_iocsr_base used default 
-0x1fe00000\n");
- >> +       else
- >> +               redirect_reg_base = addr;
- >> +
- >> +       return 0;
- >> +}
- >> +subsys_initcall_sync(redirect_reg_base_init);
- >Can this function be put at the end of redirect_acpi_init()? It is too
- >late in an initcall() function because the irqchip drivers begin to
- >work before that.
-Ok I got it , thanks
-
-Tianyang
+Full context and explanation:
+https://elixir.bootlin.com/linux/v6.15/source/Documentation/process/submitting-patches.rst#L591
+</form letter>
 
 
+Best regards,
+Krzysztof
 
