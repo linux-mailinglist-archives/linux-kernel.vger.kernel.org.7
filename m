@@ -1,81 +1,81 @@
-Return-Path: <linux-kernel+bounces-699397-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-699408-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 83F5CAE5968
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Jun 2025 03:51:46 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6A361AE597F
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Jun 2025 04:03:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 83DB67AFB7A
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Jun 2025 01:50:22 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id DB2DF1B657B3
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Jun 2025 02:03:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BBDF71DB148;
-	Tue, 24 Jun 2025 01:51:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9CD1A1C6FE9;
+	Tue, 24 Jun 2025 02:03:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=NXP1.onmicrosoft.com header.i=@NXP1.onmicrosoft.com header.b="LndN7vcU"
-Received: from DU2PR03CU002.outbound.protection.outlook.com (mail-northeuropeazon11011014.outbound.protection.outlook.com [52.101.65.14])
+	dkim=pass (2048-bit key) header.d=NXP1.onmicrosoft.com header.i=@NXP1.onmicrosoft.com header.b="THEEGh7X"
+Received: from PA4PR04CU001.outbound.protection.outlook.com (mail-francecentralazon11013044.outbound.protection.outlook.com [40.107.162.44])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 67BF123741;
-	Tue, 24 Jun 2025 01:51:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.65.14
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D4EA99444;
+	Tue, 24 Jun 2025 02:03:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.162.44
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750729894; cv=fail; b=oQLgmBv+RZVGx9eMNlfsFfZNZrkZ5YhYRZFaLhicoxLVMLQA9QK8cUqNK9c4bvilIN5D0fuYb1ILp7F0m4Pbl34RjqRAiiUnD7k9lxKJnxJqaHyJt2+thFKQD4V0r78nKPayXsAEC/50IAXWoDP4uk5NTEatMfi65fFuEIPlAOk=
+	t=1750730609; cv=fail; b=BoF70koHYVnu6Tq7XpYljeYq0EhZ1TX5jLVLgm2NICsyexhkzn9Ybsjx86iI/O+Q9gfJm2oySa6FgKEsbZjQ0Awv/zyfNc2EDNGUN0cjWgOX7x1cRZRKTBMEZTH1hs4xZcZc5FAIzkud0gnRPik3U37dUerY6xytsDmFXgHH02w=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750729894; c=relaxed/simple;
-	bh=sBPdcQO0Mb9jiPG/6uBNjDkSABrS3YpKL+NvhRhWL9Q=;
+	s=arc-20240116; t=1750730609; c=relaxed/simple;
+	bh=0FsueVmC7dm2N395DK9c/m+Z8eHjBdX+q+YdJm2sPQg=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=KDMSphFg2oZrZE2HPkfMyQN4NeJkH0vOkQerwMatIkKeqc42zb88jBpZP/4ky4pD4yPKQcnp7IxBcrzRRz14FqPISm9cXV1ZPjNULEFP89mGrC2haw1247ph3bQwdQAXTkyF3RHW39W+7e5nNb/tFQz+HVHNdCqWBBMRXGIjK1U=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=oss.nxp.com; spf=pass smtp.mailfrom=oss.nxp.com; dkim=pass (2048-bit key) header.d=NXP1.onmicrosoft.com header.i=@NXP1.onmicrosoft.com header.b=LndN7vcU; arc=fail smtp.client-ip=52.101.65.14
+	 Content-Disposition:In-Reply-To:MIME-Version; b=bax1/Y4Ayr+ECj1R5+nJ0kTb4bX1NoMJ0j8V7VQJDo/Ns8FVCUm5vsj+jS9em1BKrXMxZ81haeUS7aP0P735wLPIi3/lS0nPuB2XbYu4Vs4qGuesrsVn/6rGbqOI/fgsQ4w9XbfHjc7PZhSWopwhfWM8ESzc8KOCUHF8pedUX28=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=oss.nxp.com; spf=pass smtp.mailfrom=oss.nxp.com; dkim=pass (2048-bit key) header.d=NXP1.onmicrosoft.com header.i=@NXP1.onmicrosoft.com header.b=THEEGh7X; arc=fail smtp.client-ip=40.107.162.44
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=oss.nxp.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.nxp.com
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=ukCGE+k+buwElj8gXKBrKJh3L7fOhWNJsA+JiW489B++2itRq00Qr+c9JNEXeEDg+hNaKoOeBNDX09sqhdBmh235Y9cwnIqNxQ1iFYW2HN3bHfKI2kadkcVAoly59mrit2xTAC+gi3InofXtZoK3RE4IGuNOxrfm5TwQzdQiGGfiLFhaq4ggV7Q24GapVdQ7Dbj8XUBiWPL3npV48PppFcdE+zE+Li6IC8FKm1abPbrwHwXSAd8+rj79l/RKTzpk78ql5pOYgb0Uex/AoD1s5nG84sw66y6nVuO9D3YKTX8zXn+cmse/XpvwNB+UoClRuTiaUcIsDf2VV7moAf0YhQ==
+ b=McbIorFcW5iQr/glPVn8+74SUxGt4ibxA/VHI0Xl/TCWfsd6QnYt1ftv6FEN9qmX4t9RrYxMaKr4cY8jRa37sZ+d3AnyUh2QEQIFxzNMAv+0kLlDQiXDlU79LPLuNM1pEqUWwx1762d2zA0DSmzOpLEQZYCTmckyoHhCzzplEt18s+oKLzlrAjSGkbd2zO30fzA0EHv6J1FMuiK7l0yBB5cd+9QDIkgfyECh3K87hNTjEpkTUhCssx14bgSWNUojEfPfoCh9renov0yW1OjcPqIsYeSSBHYOBJIVStn9GR9VXX/Ghj+QrSmkk6Zk8qLOGsNTd4B5l/m5qINeLUpUHQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=BIAZLzULSJjZCFqJp6oevgzmaWICfFl/34J8vAzlSqE=;
- b=ipiMEVvTKcXjoFt47YqOOfl1B7btkTDRlJU/lZFb1FdM+xWKeMieLlm4SIZNXrMAgcVgwmLItMpr4g1g4h6eb2rCwzZ4BVZo6l6scNNFfqWn2KmO/DsSev+/GT6s+czLApXow838RdqsdfW4+1+ntz7anqTvR9dRIe8CY+avLOVX8AEDxEcPl1COvUOpS7izZr4tPWU6m4NYHu8eC4toOmsWDI+wUpM4LWGfzG+GQrRkANZ4tsWMsKNzhemLpblISCz/WDdlPJy211LFA1AfMne7PfO++OSiWpOFouBQ+r6OOotPuq1ux8dx/beMKAnmfwqu5s9IE3SUwQkufSA+TQ==
+ bh=HUSqS/ozSQiA5pIwF6lY3g9ZUSGabaHGtU6rgAk+mtU=;
+ b=N7u5g5R3wIqKCiS1wrVv0I7kawUfoZlirwL/wEgstHUhYD+G2BJzm9PByHRu4H8PHAwDBjn0098Iino+2Xhz/TruhreDTPZ5Y70GpqwExH6A6vMqw4SyPttei1PoSuc6yLDzwBzaibT6/husnUray5z7O8+HTdGe1j70rEH2ltMo5bfpBXn2xss04l/p5D49tTqrQKsi7iHZkb0g9qXCHA6tsbsIcPcUwohQdQXkaS+/fChqP8mcOjziVmZqEUiCC4ooswNhegz01BVbYwDGahXmLKcEbH5olpy0P57Gaibu9hF6p/Kg1k8PyjciEzxwTProOpKW+8aMyBEOTIc0mw==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
  smtp.mailfrom=oss.nxp.com; dmarc=pass action=none header.from=oss.nxp.com;
  dkim=pass header.d=oss.nxp.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=NXP1.onmicrosoft.com;
  s=selector1-NXP1-onmicrosoft-com;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=BIAZLzULSJjZCFqJp6oevgzmaWICfFl/34J8vAzlSqE=;
- b=LndN7vcU0hlWFqX3rP65Zeop4PiM29g0hWHqm5GI8rVlLL4etPZhnqdLX7VLuQtNTFeFQ3i/vSsKYa4As1EFj3nbLsU8uLWVyqLQeRfgKXhGyZIhhy+rDPI9D0dQ5rVGZG6JIh572zCVE0RfYHKA3WsRRQi42GgssmhLMAhzSsFmRHxpbY0TIfULII+SfJmBYJZ9s0GqLoFSepJm28/EkJMRZHFx+3Ws7bRwTjQpFxnslJoI0wdUieD1GJVlCNqnC3O3oexSFqbwoIeFz1C92ajKqsNZQoJKXmY0x7oWLcb8EmwHWE7FKG8eF1KMt+TXZHwkgMWpxQ+3LLt5a3N73Q==
+ bh=HUSqS/ozSQiA5pIwF6lY3g9ZUSGabaHGtU6rgAk+mtU=;
+ b=THEEGh7Xs1cXm1Hdu2rdB/9jSZd6rc0AJwyQOA5yKeQ9OW40LvLL6zyFPc4bM4W9BE9+kJ+NWQVsTCzElJs8Kv2IpRHtyXBs2Fh01XQN7ZJPoKzD0cK5cC/DWZs8wKC8eENU4/dyWj90FXSWKqGlBe3j9L193+fY9Qsqfsgu0DZMWicfFLrMd6d2TrZhQYGu1l41mKg5iXSUDWYq8w2w2iWzdAxk/g9pK4XeBnd5TQ5gqk4kSJ++nnEPSlX8/09pG4Xs1B/g+ml5o7JYHTuG3EcVT+mlkFk0/Qd6HmLm21jP8qtVeOKQFKVNWrp706B+0M5/+f8xIv+nn6mipFsvRg==
 Authentication-Results: dkim=none (message not signed)
  header.d=none;dmarc=none action=none header.from=oss.nxp.com;
 Received: from PAXPR04MB8459.eurprd04.prod.outlook.com (2603:10a6:102:1da::15)
- by PR3PR04MB7450.eurprd04.prod.outlook.com (2603:10a6:102:8a::23) with
+ by VI0PR04MB10173.eurprd04.prod.outlook.com (2603:10a6:800:245::10) with
  Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8857.29; Tue, 24 Jun
- 2025 01:51:28 +0000
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8857.27; Tue, 24 Jun
+ 2025 02:03:23 +0000
 Received: from PAXPR04MB8459.eurprd04.prod.outlook.com
  ([fe80::165a:30a2:5835:9630]) by PAXPR04MB8459.eurprd04.prod.outlook.com
  ([fe80::165a:30a2:5835:9630%3]) with mapi id 15.20.8857.026; Tue, 24 Jun 2025
- 01:51:27 +0000
-Date: Tue, 24 Jun 2025 11:01:54 +0800
+ 02:03:23 +0000
+Date: Tue, 24 Jun 2025 11:13:51 +0800
 From: Peng Fan <peng.fan@oss.nxp.com>
-To: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
-Cc: robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
-	matthias.bgg@gmail.com, sudeep.holla@arm.com,
-	cristian.marussi@arm.com, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-mediatek@lists.infradead.org, arm-scmi@vger.kernel.org,
-	kernel@collabora.com
-Subject: Re: [PATCH v1 2/2] firmware: arm_scmi: Add MediaTek TinySYS SCMI
- Protocol support
-Message-ID: <20250624030154.GB10415@nxa18884-linux>
-References: <20250623120136.109311-1-angelogioacchino.delregno@collabora.com>
- <20250623120136.109311-3-angelogioacchino.delregno@collabora.com>
+To: Cristian Marussi <cristian.marussi@arm.com>
+Cc: linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	arm-scmi@vger.kernel.org, sudeep.holla@arm.com,
+	james.quinlan@broadcom.com, f.fainelli@gmail.com,
+	vincent.guittot@linaro.org, etienne.carriere@st.com,
+	michal.simek@amd.com, quic_sibis@quicinc.com,
+	dan.carpenter@linaro.org, d-gole@ti.com, souvik.chakravarty@arm.com
+Subject: Re: [RFC PATCH 1/7] firmware: arm_scmi: Define a common
+ SCMI_MAX_PROTOCOLS value
+Message-ID: <20250624031351.GC10415@nxa18884-linux>
+References: <20250620192813.2463367-1-cristian.marussi@arm.com>
+ <20250620192813.2463367-2-cristian.marussi@arm.com>
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250623120136.109311-3-angelogioacchino.delregno@collabora.com>
+In-Reply-To: <20250620192813.2463367-2-cristian.marussi@arm.com>
 User-Agent: Mutt/1.10.1 (2018-07-13)
-X-ClientProxiedBy: SG2PR02CA0031.apcprd02.prod.outlook.com
- (2603:1096:3:18::19) To PAXPR04MB8459.eurprd04.prod.outlook.com
+X-ClientProxiedBy: SI1PR02CA0016.apcprd02.prod.outlook.com
+ (2603:1096:4:1f4::17) To PAXPR04MB8459.eurprd04.prod.outlook.com
  (2603:10a6:102:1da::15)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -85,297 +85,141 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 X-MS-Exchange-MessageSentRepresentingType: 1
 X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: PAXPR04MB8459:EE_|PR3PR04MB7450:EE_
-X-MS-Office365-Filtering-Correlation-Id: fa728b1d-5b06-4d3e-c399-08ddb2c1a1dc
+X-MS-TrafficTypeDiagnostic: PAXPR04MB8459:EE_|VI0PR04MB10173:EE_
+X-MS-Office365-Filtering-Correlation-Id: 3218b75c-0999-4fd9-10ad-08ddb2c34c90
 X-MS-Exchange-SharedMailbox-RoutingAgent-Processed: True
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
 X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|52116014|1800799024|376014|7416014|366016|7053199007|38350700014;
+	BCL:0;ARA:13230040|52116014|1800799024|7416014|376014|366016|7053199007|38350700014;
 X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?nivwdaTPHFpALkhxTbzvk0JcUmrjqpSCsVCvL/t5G1PdMLn2xqB5a+Cz5QH+?=
- =?us-ascii?Q?4MvCD5yjtPGA4O+F4buKB+p1KYdg38p3ueP4VtOso2RvHoMj84DZsZ1gi2T2?=
- =?us-ascii?Q?eVw/DNhUqB11c2yz7OA8Iys8iPbn+uQHcH3FYkNOltVVs8UsalHGDz7ie1Un?=
- =?us-ascii?Q?qO0wy9+G9/S1eCOVNsWvY1ea/aCgGAnWxLe5fiNRAPFNs2MqIilzHQnFjb+n?=
- =?us-ascii?Q?NlCiIfKDEzEqSP1acVuEuwktjiFr4mq4dRq1fe1c5TIWQL0rmAoau6sLu7g1?=
- =?us-ascii?Q?WWOD1sEpJ4SRuVFNHN8L2PhSJiWymbVOpIrbWLmoyLb0Iz17X4Neu8wzGkhO?=
- =?us-ascii?Q?Zp82dUYyVEKpkc3JLCsb/rkl6gKfOhvKR2Pew+WjfMmUNGGpv62FVdRqKuqY?=
- =?us-ascii?Q?1tAlsVnr2+4nVbvp2xE7qeSGQl7pmeo2tqoIuS/4uaa1gzIYyFucv69hOFm+?=
- =?us-ascii?Q?O2rGt0ZVICkToimCyBxqPmlT/CikkbML6eq+e8PBsPKexN0SBOvXyFYAR4t2?=
- =?us-ascii?Q?h7UdgZSOQ+cM+Ogdo7T/pbHih66vCp0OY7Ky8ApLat4TPo2lG0cmxboyhJXc?=
- =?us-ascii?Q?wFomIc/iWyeHXeHWZKfFRQNuVDALBlijJ7Qgf4lqh6oXg1MLNHsRCwEvDHqZ?=
- =?us-ascii?Q?dCVnssfCGRHX9TMelExrngo5ff/49L4fyz95XQVc8Jk+5erxgfIfmThM0k51?=
- =?us-ascii?Q?UJdtOckvOsVrxUoOx7G7BddNLiSKU9aXcrQaPM1qM0rXhLfrNhI/Pp1cjGab?=
- =?us-ascii?Q?XYOmH3TRs6VtPRgPezmMtjUVe7Ht5ZkIBIx2VtAXjQYtfz+gfVhZaPb4Y3wb?=
- =?us-ascii?Q?15dW+3K4a4WSmm4lalvImHV77PHfxKD8KtbpbcqiyU0mpyY0osju2+us3r2e?=
- =?us-ascii?Q?sHskNDUhniSub4k6tms3G1Mu5pMw6CVZ8r6OfPn3uPe8jEya8GKe0hwJvVWp?=
- =?us-ascii?Q?kY7hwQUSTr+GtVXjR8W7JboiaYOTAKoItDLhx527LbKHjU8DONPGEmhEe8++?=
- =?us-ascii?Q?Gx33ftgvNahJvyAd7rCxBjxKDSQf0mvFIdASrUk9drX2qbmXc1KR3aXhdsMf?=
- =?us-ascii?Q?Lms4kPAz+neCbSwo/7v5SwgNaxdvlB8P/+xmDUxc7PI6lbnBO70J6jCx+Dwo?=
- =?us-ascii?Q?6G90spUggiDe2vOAfM4AiOCPdzdEvSLXOd5anUiYUxDKsYHCIUFt84AWaElg?=
- =?us-ascii?Q?duSMLPh2qlPO3jS5RNMdtOxTlbr0wwjSeCU5Z1n1qOggStbG0guELqyJGHJI?=
- =?us-ascii?Q?ddce4d12JqaJmSM1ZELSeswO38RuXYBxxNk/a/CQmwviD02bU15KnZAbhYBB?=
- =?us-ascii?Q?IJKb3HIw0sTXpuMU8CJQLeewJhrDQs3Z6yM85QdUX8Bd6OyIXkx/z+S5/MO8?=
- =?us-ascii?Q?GzbPIkIQE1kbszWJacXRxLEgDJZ78dn5LHL0kHX6ghtEMk1PeCAj7t3X813t?=
- =?us-ascii?Q?hwn89QL/Xzrbw0DpGpNO3js0kqQYhBR3uyILl3x5t0vV2LpywmLNHw=3D=3D?=
+	=?us-ascii?Q?O4czjrV01sf70n6w7WVcpUcYxlNDCo6vbP0nEvGODSOa29P7673Vp4lVPLM4?=
+ =?us-ascii?Q?gyzmkHb2qdGGbmgyI6iI7uBLLBFoujOXPM8lLq2QeQG/8u36zbJKaTtE7BIr?=
+ =?us-ascii?Q?5JIhsiv4kGQZ6bsJoPAQQuUGDKZzqlHY+UQLIzVu70mBgD3x220Wlgs5dMUD?=
+ =?us-ascii?Q?6pAsXNUGcUFL2YKNGj1SM2Cm3SoEVlkjNtL5kMMItI4/wvi0hq0mRBYWjP5v?=
+ =?us-ascii?Q?S/3VK2AoYWC1a+Axrj7NeDgbKdry+Xft80fqoiRMB2HBNP7PvvqyvYqZgbZR?=
+ =?us-ascii?Q?rKDuFkdilmBs5dqNA9DAZFh8aVrpzXl+pra+LF5md4BF1ueDNd6gM7cagNjC?=
+ =?us-ascii?Q?TQamXtd5s0veLTItQoWUEh6BoVNmz+Ifaqsar94F7vQr2kLiv0XAbqkJ0ToM?=
+ =?us-ascii?Q?U+jt57VEtXlce+n3O5QyF39l0Q9VKM+Yy9n/iX9MY5Kh6LQ+lkJ0frTovDPW?=
+ =?us-ascii?Q?PQG2nnEkWOIPF7QSP2rHu90631DCUcl+NaHoPN4ScHfR1teVzJxs68wpdGqh?=
+ =?us-ascii?Q?+Ruv35Q34DfcFFDmsjuUeT4iFLs7BGe2FPOB0M6It2IEIHd8HOEoo6xK5KAb?=
+ =?us-ascii?Q?uW3jMkzJcA7lxVD+aSIzlBRjUS3l4KfPfV009bOnpsDVfzL5dPstfvdjGKOU?=
+ =?us-ascii?Q?HdxXMeSYVy7e1Azzu6kZQCpFORQyhCi0tl8+njiNH6iKkcKHWP917CQ1c3G6?=
+ =?us-ascii?Q?IussESOd/2lIGviINto/Eo5DtI4Ix8gVuw4eHgw7EktwGaeNgHkGHkK6sV28?=
+ =?us-ascii?Q?1aUZwiSqNp5J4BtnQcU26iRuo8LQfal4CNAXeBEnBeA4svobeR1XUfeIDhZN?=
+ =?us-ascii?Q?AWq/Ymqc+RBoqgoTLAL28xAhtmB+97FQheZ2SX7zsjxW516o4K0aHg9Deh2X?=
+ =?us-ascii?Q?oYvdTUKjdpGNoeFkiBUsJ8PosDWRAoiqJ8t+uynxTUjL3h3PCfXasUOR8oVj?=
+ =?us-ascii?Q?1hzppP+tzuYKRpN8TZiURovd4xyzjEQbfoWmqZHO0yFWVkSq/+cv4D4I6noQ?=
+ =?us-ascii?Q?lE3LGzJVYz2FaEzYxu64dHweiyP4mOzTg2ijqeYLHy4H1FNtjprZanE3PBrf?=
+ =?us-ascii?Q?PYV53/7A9uQB+FEhgrmDjY4fki4c01Ih6ox7iXyWNwXCZPGE13piKiskE12H?=
+ =?us-ascii?Q?3yeVPgZ/EoblE3o35lXSbqBF77JoN/Y0kacGp40KSKIK9dhdGH7d8/Zaum1t?=
+ =?us-ascii?Q?XbO1btTtsX9pS0dCycdLs/yQ1pE0ON+t2pGTqdzVM/zpJKfcsOduTHF3rqZf?=
+ =?us-ascii?Q?rp09mvhiPKnMQpAEom9oyEfVnigBT4zb6HvbbMsgMUe8rYP22t09zvT0/No/?=
+ =?us-ascii?Q?T/sRrZmTqHCZImhIW1Si9H7ImXt0ylW2yOMapcn/3OMf/GIp7/iiMiV964DO?=
+ =?us-ascii?Q?eMAgV/FtLKJnB2VOcL7by48arnpp3MSVFyiIxCZOKWXhHJoi8/W83upQudMD?=
+ =?us-ascii?Q?yT62d0KeH+e3yvhjTZQiIOvNnAFLvsgmfFMKn44HoMcFGmtdqTXPCg=3D=3D?=
 X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PAXPR04MB8459.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(52116014)(1800799024)(376014)(7416014)(366016)(7053199007)(38350700014);DIR:OUT;SFP:1101;
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PAXPR04MB8459.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(52116014)(1800799024)(7416014)(376014)(366016)(7053199007)(38350700014);DIR:OUT;SFP:1101;
 X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
 X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?NDB84CicpdYjN8hxxm57eTQdTdsdg7MHMtYNNnvcTnf05LnUeQ54dHAxlomR?=
- =?us-ascii?Q?w7fP7mokO3F4NGqB/HWLT6nKifIG5HjnVA6WTK1PtoI7tqAHlbFeGav5V3jw?=
- =?us-ascii?Q?Ntwa9RRwDOBAqEWgjlybIkXcByyqFbS9rEDK8QJvO6+Zb3rwW7hv1Dm3zw/k?=
- =?us-ascii?Q?+G0MV6j0NAX8thf7RiTdKfuD6UfBfUp+zm/RihByxf4KK1oMeUg9ePZVGs58?=
- =?us-ascii?Q?HUO3ACMR8xSD27I81qGKymmMoI5oZJhMtiCSexvL5tZ+IiQ0av48TTKskigj?=
- =?us-ascii?Q?msl6NfPf5aZxy2iZFDsMGuC0aifZf3wrZtvO6oniEZbwgDTCwilWFfQYx4oR?=
- =?us-ascii?Q?M0kF/RE028Yihy9KBuXJWyuXtGWKaLg+BajXNSAxckhtTQFaOvCYJPl3XV8v?=
- =?us-ascii?Q?YMQrLx7a7SCRPr0pGQSmJlJScPXYXj5LwcxfLmuvwE2kYiQHkfmtCA1kKFS5?=
- =?us-ascii?Q?cqMfF9JEqNNmKHalrRGgsUS1KyNqz7bYxwFYw0ZLGzWzEz0xHSTt3RZQ2QNs?=
- =?us-ascii?Q?17LAkzDwfjDGBDcNyCYrsT90/y4Rio0JT+jYQCAOWQk7E8yYxtZiwIvkEd0t?=
- =?us-ascii?Q?kI3OED3Bt8jGOnVQqo55lsJxgW6taDDBqprf6HaCthFkB2zjmd9FUz/YtGcL?=
- =?us-ascii?Q?uU0FwBok1pCoyqerNqZR7vzKsTOG0EfH76Q3unEBnghZe16nK7ICw3zEWsGm?=
- =?us-ascii?Q?5sp+hg+eGjgE/6B2zApyQvkXEs8xXGnRV67D7WU3X7CUtj140IXB31yIQax8?=
- =?us-ascii?Q?vhSI1mgq66K0XHPu3JatNKKpff4dy9g/PWAiL4JZZvXkl0mwmMhzuiT/ydIB?=
- =?us-ascii?Q?9MrH/qpMoFs2WE1E3Ehcy6D9ZhzkftA6c1mUvMJfJoJUUkG7EjlSO32NliAW?=
- =?us-ascii?Q?wsC4r93OhpBzoT9Zm2h7Ex4F82EkBOsqMKb8HnKfyn8wAf+Fa3SJPIPAQ1SG?=
- =?us-ascii?Q?0ffgTgWxiesLGfPoO14rUmlYmLMW1uY/zjMdeBeBxKVIpv7at5VVvY1cLwNt?=
- =?us-ascii?Q?/ujZkq99hKthHD67tb7bnz4BIgkUFsncKd/d+aATa2cDeqLbyT++Ds/0W2lB?=
- =?us-ascii?Q?wWqd/da/yH2yKTiqLxRIXhzNlyDU/5X6PaQbTNYOus++dkth0WPfzvyKg7hK?=
- =?us-ascii?Q?Jkpyao2rWQ4KdpqSP15xBgaePzoF1lWfL/Z+kkX48WiNCp1mCxqVMYhWIrXT?=
- =?us-ascii?Q?4lyamFRDUOx1CS3Q+lPot4Fqw6dFuZZ7bwrZUj6AfbdmaoUV2TbgJPPU9A2W?=
- =?us-ascii?Q?MitYRrfAisEcqLkbhb5KpBMkIMI2LpqyNYqRv+EIETQySt9KNno9aOP12mZ9?=
- =?us-ascii?Q?JTW88D47eELk3lcm11O2X4nZpkRtuGPJQJeZEJITHiks4grAYcLnCOGk5vCM?=
- =?us-ascii?Q?LcV8lcEk1beS6G4fEzOlj/oDkTBCGoMtQiKRLUbMV4M7ttJJC113ARbiGTw3?=
- =?us-ascii?Q?1Anr2A403NjJYzJAUWPr12U3zMqxrnLB+1kc5WSPYSZTI1Es+2KW3Yg3g7xD?=
- =?us-ascii?Q?u4xYpdGmjgunLzFHuh6IlpB4GauxuBsMEJX8Uw9Pt1ptkDSxnhxWQWngsIgR?=
- =?us-ascii?Q?0naR1pIfLLado+WBfz2zzAneDJC8icCbjhJgNYLb?=
+	=?us-ascii?Q?XAEr7Sk7WNh5cBnX6SKFInkZlhQ+DLNx8H0QJZ26grE2bhfXbG2aIoXi+Szc?=
+ =?us-ascii?Q?TC25oT9SxYm5cInwpsDZG8W9gWDOuwRDZuZbhsx/NcY5yOP8A0nAEO1wrD8L?=
+ =?us-ascii?Q?kBowt3MC3EmW71uLvQ19h75suRJwH5rzRf9hhTG8357UETY32gbzGuE5Y85g?=
+ =?us-ascii?Q?6OlaRZAgFHEVCSvwpdkgKYnVyRh+JvdsMyksFbJP0Flg6nc12FGhexlxbc//?=
+ =?us-ascii?Q?VbSoHKrC7X2myt13XilS8qKob516oda84ti97A7PXUYChoCuSIQfWmsqK5o4?=
+ =?us-ascii?Q?Vz+tEpGu+AhvT2p8o1YtHvwC5ysEDjpaae81vrOg15O0fzOlEEvXKSG60BWi?=
+ =?us-ascii?Q?W13dc4i5Dn90SaGc6RUkmzNw/wvG7X4MQHgNmnfIIJX0EPPN9j9hdt3T61mn?=
+ =?us-ascii?Q?3FPz/oM2hudwArEbA6/rrq08wbT7M4s3x3wuxzIcySguSGI7pYVyxYdWZ6U8?=
+ =?us-ascii?Q?qs1/VdNOgm6RGpyJPJhqulWshKaMvwY5WIKtTqpOlf4DzBScovsaPOWuwc8R?=
+ =?us-ascii?Q?I/Dcz1DU/h3NgDBrycEA15FkOpz/VZ4yNEdeY6VgBk1EfgiyK8YoqGX8hye2?=
+ =?us-ascii?Q?rqPtXimqeu194WvYC1Mor1a7ULCwGZpVndjnobsuWY6mqzJgYUaj09h//LHd?=
+ =?us-ascii?Q?nTk/NBYbjMao2sUz/6GVEUFDaJgZ30wjeU+8EmxVe10P8AFb7NFW3Crefp8O?=
+ =?us-ascii?Q?Ln/Bh2oeUCEo6BqSZAA6I+AYr2VNa2lTy+SyAx+6X0AfoMerXCGHG7O+/S2s?=
+ =?us-ascii?Q?0pBMphcQVtLqx0fCZFuvG9L7xVYiFL1jf4W0azl/GjrsuDoL2q8EkmXldyct?=
+ =?us-ascii?Q?KJzqjDJBzk0rc37HQ2UOcwmBKrJUb9KwvdiqBvc0Fn6mx2ofr7Q7wIijt30H?=
+ =?us-ascii?Q?/nkEuzPD/bNBJazVCaRpgP63okak88ycowMdgpyVUsR4H+i30mcw4R+097aL?=
+ =?us-ascii?Q?bf05EV9XGIBjFfPiFcKNTDmdR8y/W44S9NtnkinOJsy16uZzIXn5a58wjUSC?=
+ =?us-ascii?Q?iLG9uGJ+NxGzP9uzhmRdQqClWNRPFsSNA5kGAGDy2vYQ509VYmuZ21lV9QXX?=
+ =?us-ascii?Q?Y46wXF9TyJuIWfI9CB95Gc97O2/uHYlBjmkrzRPms+QxhmxLb5p30TWIgM1c?=
+ =?us-ascii?Q?16OpjWwFo8kAawpvyp/q7I2uMy5TbmHUgLZ16xEFULwnvzs9H98GdbghrGUN?=
+ =?us-ascii?Q?zJoMz4JdNA2woKlIT7nhbOWxgx5dAsnxnTdQ480W6vBFZaVHK0Iu+wnYJ3NR?=
+ =?us-ascii?Q?bLDUsYVhsrbGjiBI/G2iMJMDnbgbgMPGVNl2zzJa3Na3cyRHsoivkVmPXknV?=
+ =?us-ascii?Q?LcicqbmbcU7oxHPG91OJc72WkWhwkfRWrfsoizJVdgrxOcJjEUy7La0L0H3T?=
+ =?us-ascii?Q?AVKCqRXQc2ynPby8tOvWl9sTjlqAHaUJJVgnKqr4LgIZZ55AHNpBvPe0tva7?=
+ =?us-ascii?Q?o60Ux0g9s1vUA94S0UYSoJ5LJKaPin6y8xU6LumrOQSpjX0GEfJZBP2cpLOI?=
+ =?us-ascii?Q?LBhNPfVv7MwvRYCRuJhYflO8KEMNyZOpehOZxhlswsBB892AW3DchFRuVvs/?=
+ =?us-ascii?Q?ckDxpNfqZci5eCQB9APd3Ogdm7GQ/LHd1rFhh+ee?=
 X-OriginatorOrg: oss.nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: fa728b1d-5b06-4d3e-c399-08ddb2c1a1dc
+X-MS-Exchange-CrossTenant-Network-Message-Id: 3218b75c-0999-4fd9-10ad-08ddb2c34c90
 X-MS-Exchange-CrossTenant-AuthSource: PAXPR04MB8459.eurprd04.prod.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 24 Jun 2025 01:51:27.7444
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 24 Jun 2025 02:03:23.0508
  (UTC)
 X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
 X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
 X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: s9tj+y9ypGXHjyvXZTXmnRGNUCwsE+d5yJhuK2Jbm6MvRxlj3M5AesbEywo0YnqlnH9PVpNQ+M+Brknfn9FCyA==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PR3PR04MB7450
+X-MS-Exchange-CrossTenant-UserPrincipalName: u7uxdvhf3wgT3711hdpM9QbwjObzWuApE7ia7/VrYeJ04LornWcDTRV0FZ8gUyGdaieBrCBnKGKvb6dIwD2YZQ==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: VI0PR04MB10173
 
-On Mon, Jun 23, 2025 at 02:01:36PM +0200, AngeloGioacchino Del Regno wrote:
->Add a driver for the SCMI protocol extensions for MediaTek TinySYS.
->This is used to communicate with various remote processors in some
->MediaTek SoCs, which mainly handle power management related tasks.
+On Fri, Jun 20, 2025 at 08:28:07PM +0100, Cristian Marussi wrote:
+>Add a common definition of SCMI_MAX_PROTOCOLS and use it all over the
+>SCMI stack.
 >
->Signed-off-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+>Signed-off-by: Cristian Marussi <cristian.marussi@arm.com>
 >---
-> drivers/firmware/arm_scmi/Kconfig             |   1 +
-> drivers/firmware/arm_scmi/Makefile            |   1 +
-> .../arm_scmi/vendors/mediatek/Kconfig         |  16 +
-> .../arm_scmi/vendors/mediatek/Makefile        |   2 +
-> .../arm_scmi/vendors/mediatek/mtk-tinysys.c   | 344 ++++++++++++++++++
-> include/linux/scmi_mtk_protocol.h             |  62 ++++
-> 6 files changed, 426 insertions(+)
-> create mode 100644 drivers/firmware/arm_scmi/vendors/mediatek/Kconfig
-> create mode 100644 drivers/firmware/arm_scmi/vendors/mediatek/Makefile
-> create mode 100644 drivers/firmware/arm_scmi/vendors/mediatek/mtk-tinysys.c
-> create mode 100644 include/linux/scmi_mtk_protocol.h
+> drivers/firmware/arm_scmi/notify.c | 4 +---
+> include/linux/scmi_protocol.h      | 3 +++
+> 2 files changed, 4 insertions(+), 3 deletions(-)
 >
->diff --git a/drivers/firmware/arm_scmi/Kconfig b/drivers/firmware/arm_scmi/Kconfig
->index e3fb36825978..baadf4f7fef6 100644
->--- a/drivers/firmware/arm_scmi/Kconfig
->+++ b/drivers/firmware/arm_scmi/Kconfig
->@@ -84,6 +84,7 @@ config ARM_SCMI_QUIRKS
+>diff --git a/drivers/firmware/arm_scmi/notify.c b/drivers/firmware/arm_scmi/notify.c
+>index e160ecb22948..27a53a6729dd 100644
+>--- a/drivers/firmware/arm_scmi/notify.c
+>+++ b/drivers/firmware/arm_scmi/notify.c
+>@@ -94,8 +94,6 @@
+> #include "common.h"
+> #include "notify.h"
 > 
-> source "drivers/firmware/arm_scmi/transports/Kconfig"
-> source "drivers/firmware/arm_scmi/vendors/imx/Kconfig"
->+source "drivers/firmware/arm_scmi/vendors/mediatek/Kconfig"
+>-#define SCMI_MAX_PROTO		256
+>-
+> #define PROTO_ID_MASK		GENMASK(31, 24)
+> #define EVT_ID_MASK		GENMASK(23, 16)
+> #define SRC_ID_MASK		GENMASK(15, 0)
+>@@ -1652,7 +1650,7 @@ int scmi_notification_init(struct scmi_handle *handle)
+> 	ni->gid = gid;
+> 	ni->handle = handle;
 > 
-> endif #ARM_SCMI_PROTOCOL
+>-	ni->registered_protocols = devm_kcalloc(handle->dev, SCMI_MAX_PROTO,
+>+	ni->registered_protocols = devm_kcalloc(handle->dev, SCMI_MAX_PROTOCOLS,
+> 						sizeof(char *), GFP_KERNEL);
+> 	if (!ni->registered_protocols)
+> 		goto err;
+>diff --git a/include/linux/scmi_protocol.h b/include/linux/scmi_protocol.h
+>index 688466a0e816..6f8d36e1f8fc 100644
+>--- a/include/linux/scmi_protocol.h
+>+++ b/include/linux/scmi_protocol.h
+>@@ -926,8 +926,11 @@ enum scmi_std_protocol {
+> 	SCMI_PROTOCOL_VOLTAGE = 0x17,
+> 	SCMI_PROTOCOL_POWERCAP = 0x18,
+> 	SCMI_PROTOCOL_PINCTRL = 0x19,
+>+	SCMI_PROTOCOL_LAST = 0xff,
+
+The enum says this is std protocol, but 0x80~0xff is for vendor extension.
+It might confuse others to keep "SCMI_PROTOCOL_LAST" here.
+
+> };
 > 
->diff --git a/drivers/firmware/arm_scmi/Makefile b/drivers/firmware/arm_scmi/Makefile
->index 780cd62b2f78..d1b4ec16b8bc 100644
->--- a/drivers/firmware/arm_scmi/Makefile
->+++ b/drivers/firmware/arm_scmi/Makefile
->@@ -13,6 +13,7 @@ scmi-module-objs := $(scmi-driver-y) $(scmi-protocols-y) $(scmi-transport-y)
-> 
-> obj-$(CONFIG_ARM_SCMI_PROTOCOL) += transports/
-> obj-$(CONFIG_ARM_SCMI_PROTOCOL) += vendors/imx/
->+obj-$(CONFIG_ARM_SCMI_PROTOCOL) += vendors/mediatek/
-> 
-> obj-$(CONFIG_ARM_SCMI_PROTOCOL) += scmi-core.o
-> obj-$(CONFIG_ARM_SCMI_PROTOCOL) += scmi-module.o
->diff --git a/drivers/firmware/arm_scmi/vendors/mediatek/Kconfig b/drivers/firmware/arm_scmi/vendors/mediatek/Kconfig
->new file mode 100644
->index 000000000000..8facdcd3819f
->--- /dev/null
->+++ b/drivers/firmware/arm_scmi/vendors/mediatek/Kconfig
->@@ -0,0 +1,16 @@
->+# SPDX-License-Identifier: GPL-2.0-only
->+menu "ARM SCMI MediaTek Vendor Protocols"
->+
->+config MTK_SCMI_TINYSYS
->+	tristate "MediaTek SCMI TinySYS Extension"
->+	depends on ARM_SCMI_PROTOCOL || (COMPILE_TEST && OF)
+>+#define SCMI_MAX_PROTOCOLS	(SCMI_PROTOCOL_LAST + 1)
 
-Should dependency to ARCH_MEDIATEK be added, as below
-ARM_SCMI_PROTOCOL & ARCH_MEDIATEK ?
+How about "#define SCMI_MAX_PROTOCOLS 256" as the line you removed in notify.c.
 
->+	default y if ARCH_MEDIATEK
->+	help
->+	  This enables communication with the MediaTek TinySYS MCU
->+	  to control the power status of various SoC sub-devices
->+	  other than passing other messages for initialization.
->+
->+	  To compile this driver as a module, choose M here: the
->+	  module will be called mtk-tinysys.
->+
->+endmenu
->diff --git a/drivers/firmware/arm_scmi/vendors/mediatek/Makefile b/drivers/firmware/arm_scmi/vendors/mediatek/Makefile
->new file mode 100644
->index 000000000000..dc1ff63c3b69
->--- /dev/null
->+++ b/drivers/firmware/arm_scmi/vendors/mediatek/Makefile
->@@ -0,0 +1,2 @@
->+# SPDX-License-Identifier: GPL-2.0-only
->+obj-$(CONFIG_MTK_SCMI_TINYSYS) += mtk-tinysys.o
->diff --git a/drivers/firmware/arm_scmi/vendors/mediatek/mtk-tinysys.c b/drivers/firmware/arm_scmi/vendors/mediatek/mtk-tinysys.c
->new file mode 100644
->index 000000000000..baeb36493952
->--- /dev/null
->+++ b/drivers/firmware/arm_scmi/vendors/mediatek/mtk-tinysys.c
->@@ -0,0 +1,344 @@
->+// SPDX-License-Identifier: GPL-2.0
->+/*
->+ * System Control and Management Interface (SCMI) MediaTek TinySYS Protocol
->+ *
->+ * Copyright (c) 2021 MediaTek Inc.
->+ * Copyright (c) 2025 Collabora Ltd
->+ *                    AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
->+ */
->+
->+#define pr_fmt(fmt) "SCMI Notifications TinySYS - " fmt
->+
->+#include <linux/bits.h>
->+#include <linux/io.h>
->+#include <linux/module.h>
->+#include <linux/of.h>
->+#include <linux/platform_device.h>
-
-This header is not needed, since no user here.
-I just see i.MX also includes this header, but could be dropped.
-
->+#include <linux/scmi_protocol.h>
->+#include <linux/scmi_mtk_protocol.h>
->+
->+#include "../../protocols.h"
->+#include "../../notify.h"
->+
->+#define SCMI_MTK_CMD_SSPM_QUERY_ALIVE		0xdead
->+
->+enum scmi_mtk_tinysys_protocol_cmd {
->+	MTK_TINYSYS_COMMON_SET = 0x3,
->+	MTK_TINYSYS_COMMON_GET = 0x4,
->+	MTK_TINYSYS_POWER_STATE_NOTIFY = 0x5,
->+	MTK_TINYSYS_SLBC_CTRL = 0x6,
->+};
->+
->+struct scmi_mtk_tinysys_common_get_payld {
->+	__le32 rsvd;
->+	__le32 param[SCMI_MTK_MSG_COMMON_REPLY_BYTES];
->+};
->+
->+struct scmi_mtk_tinysys_common_set_payld {
->+	__le32 rsvd;
->+	__le32 ctrl_id;
->+	__le32 param[SCMI_MTK_MSG_COMMON_PARAM_BYTES];
->+};
->+
->+struct scmi_mtk_tinysys_slbc_payld {
->+	__le32 rsvd;
->+	__le32 cmd;
->+	__le32 arg[SCMI_MTK_MSG_SLBC_PARAM_BYTES];
->+};
->+
->+struct scmi_mtk_tinysys_pwrst_notify {
->+	__le32 rsvd;
-
-Not sure why all upper structure has 'rsvd', meaning reserved?
-
->+	__le32 fid;
->+	__le32 enable;
->+};
->+
->+struct scmi_mtk_tinysys_notify_payld {
->+	__le32 fid;
->+	__le32 param[SCMI_MTK_MSG_NOTIF_ST_BYTES];
->+};
->+
->+struct scmi_mtk_tinysys_protocol_attributes {
->+	__le32 attributes;
->+};
->+
->+struct scmi_mtk_tinysys_info {
->+	int num_domains;
->+};
->+
->+static int scmi_mtk_tinysys_attributes_get(const struct scmi_protocol_handle *ph,
->+					   struct scmi_mtk_tinysys_info *tinfo)
->+{
->+	struct scmi_mtk_tinysys_protocol_attributes *attr;
->+	struct scmi_xfer *t;
->+	int ret;
->+
->+	ret = ph->xops->xfer_get_init(ph, PROTOCOL_ATTRIBUTES, 0, sizeof(*attr), &t);
->+	if (ret)
->+		return ret;
->+
->+	attr = t->rx.buf;
->+
->+	ret = ph->xops->do_xfer(ph, t);
->+	if (!ret) {
->+		attr->attributes = get_unaligned_le32(t->rx.buf);
->+		tinfo->num_domains = attr->attributes;
-
-Not sure the spec use whole 32bits for num_domains, if not, better
-use le32_get_bits to the expect fields
-
->+	}
->+
->+	ph->xops->xfer_put(ph, t);
->+
->+	return ret;
->+}
->+
->+static int scmi_mtk_tinysys_get_num_sources(const struct scmi_protocol_handle *ph)
->+{
->+	struct scmi_mtk_tinysys_info *tinfo = ph->get_priv(ph);
->+
->+	if (!tinfo)
->+		return -EINVAL;
->+
->+	return tinfo->num_domains;
->+}
->+
->+static int scmi_mtk_tinysys_set_notify_enabled(const struct scmi_protocol_handle *ph,
->+					       u8 evt_id, u32 src_id, bool enable)
->+{
->+	struct scmi_mtk_tinysys_pwrst_notify *pwrst_notify;
->+	struct scmi_xfer *t;
->+	int ret;
->+
->+	/* There's only one possible event for now */
->+	if (evt_id != 0)
-
-Use 'evt_id != SCMI_EVENT_MTK_TINYSYS_NOTIFIER' ?
-
->+		return -EINVAL;
->+
-...
->+#endif
->-- 
->2.49.0
->
-
-Regards,
+Regards
 Peng
+
+>+
+> enum scmi_system_events {
+> 	SCMI_SYSTEM_SHUTDOWN,
+> 	SCMI_SYSTEM_COLDRESET,
+>-- 
+>2.47.0
+>
 
