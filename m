@@ -1,129 +1,121 @@
-Return-Path: <linux-kernel+bounces-699675-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-699678-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id A6388AE5DCF
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Jun 2025 09:33:22 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 969DEAE5DDB
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Jun 2025 09:34:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 58B1F3AB688
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Jun 2025 07:32:56 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0FD5C170956
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Jun 2025 07:34:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0572C253F20;
-	Tue, 24 Jun 2025 07:33:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 36798256C6A;
+	Tue, 24 Jun 2025 07:34:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="QZljYiKK"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.13])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=realtek.com header.i=@realtek.com header.b="pxcT+AjY"
+Received: from rtits2.realtek.com.tw (rtits2.realtek.com [211.75.126.72])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EC0A5BA49;
-	Tue, 24 Jun 2025 07:33:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.13
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 719B3252906;
+	Tue, 24 Jun 2025 07:34:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=211.75.126.72
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750750396; cv=none; b=OtpkIJ05bXIK74YmZP7xLp0LkE31tRsUlftGFiP4BL1SJAdfzxOBcNzsRd5ixj/8E4CDwCdHqsRnbt75bTciAS3MSPQevJAzyHhCch7jtEfIzEDhBsh8DGrVyIcSzcJ3toAgYq4OIV3/I2+WnefgEdMqCr/AnArcoayJkp81Ync=
+	t=1750750465; cv=none; b=QsAHx9K2u2CC4ZMygGzazil1T/jjWi/o0740bIDc4YXWV7C+OVDlbCD/oIYepXjo8Ht0FfCxG4fnED96YoT0pL14nh3rAw4NKK4bPHTpPOwdw1M8ojbbUFe9+3vck2BPzIaI34v9js0jnULA4vDFln/V4zvNpNqWvmhbRN7iQhI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750750396; c=relaxed/simple;
-	bh=x0tGnbgqwLjk77W9xb8ogsnnZO9WRIj3MP86BXNQhUo=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=NEDgPsr1Xiur+oq9R/LiXCh0P/yarnXwMBO2VkZvXrBPdZlnj6kVm7NTFTU5QAcwx4xnqcGqwgqRr8BzpQTVVX4vmLWIrlxRK3JXAyL6n6wcBQ2ORnW60rN+qBihAbPFRlrQcpnrhrNzEkKXAjWX7mWQfA6EI+XRxssBQg57Nrk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=QZljYiKK; arc=none smtp.client-ip=198.175.65.13
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1750750396; x=1782286396;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:content-transfer-encoding:in-reply-to;
-  bh=x0tGnbgqwLjk77W9xb8ogsnnZO9WRIj3MP86BXNQhUo=;
-  b=QZljYiKKT9LrDKxN+u5cHr5G0ueaHjZej8HWXAL9r3tJPmcBduvp+Guu
-   UPRBd4HansUVKUFx7f8TNXT9qSlFjbzHwwmdYHPKjOTIogCka2zi61fB4
-   CUoGsjohOrjz7NEoGtUdrLk+y/K/dknPI8D7IPVojVgDwYlZv8zYnkn83
-   QVMrCPzpnXHAt2HNFaIVFadrDMMScPvxeRIXOHNOHJKb3U/mM5gFP13iA
-   ZlQm9IiqydhIhkKp+ESjvgKAE1u0yHzOB82fJn/9QmemQSvmVOeoyaOAo
-   HSNowjyQjPRz4yK0XLactft2VqB0qujboeIbGIWvIKLN7tJ5oNOSeVrrb
-   Q==;
-X-CSE-ConnectionGUID: VQeSogX0Qf+FbDKEkpyvVQ==
-X-CSE-MsgGUID: qLS8Fh7ZSDGDsYILY+EIVQ==
-X-IronPort-AV: E=McAfee;i="6800,10657,11473"; a="64038275"
-X-IronPort-AV: E=Sophos;i="6.16,261,1744095600"; 
-   d="scan'208";a="64038275"
-Received: from orviesa001.jf.intel.com ([10.64.159.141])
-  by orvoesa105.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 24 Jun 2025 00:33:15 -0700
-X-CSE-ConnectionGUID: BZOgtye7QOuK2mwuUCZeqQ==
-X-CSE-MsgGUID: IoL2Bha0Si6j4SRmvQiPVg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.16,261,1744095600"; 
-   d="scan'208";a="189035968"
-Received: from smile.fi.intel.com ([10.237.72.52])
-  by orviesa001.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 24 Jun 2025 00:33:10 -0700
-Received: from andy by smile.fi.intel.com with local (Exim 4.98.2)
-	(envelope-from <andriy.shevchenko@intel.com>)
-	id 1uTy9S-00000009PEv-3F8X;
-	Tue, 24 Jun 2025 10:33:06 +0300
-Date: Tue, 24 Jun 2025 10:33:06 +0300
-From: Andy Shevchenko <andriy.shevchenko@intel.com>
-To: Lothar Rubusch <l.rubusch@gmail.com>
-Cc: lars@metafoo.de, Michael.Hennerich@analog.com, jic23@kernel.org,
-	dlechner@baylibre.com, nuno.sa@analog.com, andy@kernel.org,
-	corbet@lwn.net, linux-iio@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org,
-	eraretuya@gmail.com
-Subject: Re: [PATCH v10 4/7] iio: accel: adxl345: add inactivity feature
-Message-ID: <aFpUsv5fWYJk4vxW@smile.fi.intel.com>
-References: <20250622155010.164451-1-l.rubusch@gmail.com>
- <20250622155010.164451-5-l.rubusch@gmail.com>
- <aFkh-E1dG__p_G4m@smile.fi.intel.com>
- <CAFXKEHan_7+BVshb12JZLH8CJtSPuwv=H_vC2kUWkS411wsqaA@mail.gmail.com>
+	s=arc-20240116; t=1750750465; c=relaxed/simple;
+	bh=4L4p8mzQIrawtPvkgMyDPHn1DG4pqUKquaAb1QnlhgU=;
+	h=From:To:CC:Subject:In-Reply-To:References:MIME-Version:
+	 Content-Type:Message-ID:Date; b=PtcLUkvlsaeWHli6FHiKPfgWDVE5h7+uj9lMd0nwsxgH3mHtmYusf4Y+UDzUUEKHdOwvITHjYOtogkdU/3K8d8FzgXN7yzGmIo8KqtwMTDYqLBJawBD7N0zGIG0wxWFHc7errkVcVDne5ZslakxuH5hZHmNw/e+BJhpQ7vZF2jI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=realtek.com; spf=pass smtp.mailfrom=realtek.com; dkim=pass (2048-bit key) header.d=realtek.com header.i=@realtek.com header.b=pxcT+AjY; arc=none smtp.client-ip=211.75.126.72
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=realtek.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=realtek.com
+X-SpamFilter-By: ArmorX SpamTrap 5.80 with qID 55O7X4Qp83232313, This message is accepted by code: ctloc85258
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=realtek.com; s=dkim;
+	t=1750750385; bh=+E+259xMEjdlVbAqk5TSc75UapVAIhlftohVhdBf7Hw=;
+	h=From:To:CC:Subject:In-Reply-To:References:MIME-Version:
+	 Content-Type:Message-ID:Date;
+	b=pxcT+AjYRzNsJxtH/yCu7DK16gT7BoQXfkbldezyvQBXBdrsgtB1qXtGoVWYAUpJw
+	 FWgUUQwFDd9m8stUZG7tQfN9nX/VCvB3BUaaHQiLu17i9tjGJxO5J7Pquu2OhrVxFX
+	 bsRWECyw3Y/RXbVqT2lOcJ9KC/ctn4CikLNdAVrHp2AfemKnaO3AMoC6fp41CVj9+Y
+	 MyDPg8MIJcpMtCsaFEcY+KA6l6IHGmnGNF23lrH8h/1ZnCozOp/is1XvlBtHGfQpwM
+	 x5jJsoCf88BY1q+TOK73fkbaHBgxv1LB91LpgAfpAaLmYpyGp4PAPhnXLOAqPCqXfJ
+	 M7fuOIIVyWMrQ==
+Received: from mail.realtek.com (rtexh36506.realtek.com.tw[172.21.6.27])
+	by rtits2.realtek.com.tw (8.15.2/3.13/5.93) with ESMTPS id 55O7X4Qp83232313
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Tue, 24 Jun 2025 15:33:05 +0800
+Received: from RTEXDAG02.realtek.com.tw (172.21.6.101) by
+ RTEXH36506.realtek.com.tw (172.21.6.27) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.1.2507.39; Tue, 24 Jun 2025 15:33:18 +0800
+Received: from [127.0.1.1] (172.21.69.94) by RTEXDAG02.realtek.com.tw
+ (172.21.6.101) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.35; Tue, 24 Jun
+ 2025 15:33:17 +0800
+From: Ping-Ke Shih <pkshih@realtek.com>
+To: Daniil Dulov <d.dulov@aladdin.ru>, Ping-Ke Shih <pkshih@realtek.com>
+CC: Daniil Dulov <d.dulov@aladdin.ru>, Hin-Tak Leung <hintak.leung@gmail.com>,
+        Larry Finger <Larry.Finger@lwfinger.net>,
+        "John W. Linville"
+	<linville@tuxdriver.com>,
+        <linux-wireless@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <lvc-project@linuxtesting.org>
+Subject: Re: [PATCH v2] rtl818x: Kill URBs before clearing tx status queue
+In-Reply-To: <20250617135634.21760-1-d.dulov@aladdin.ru>
+References: <20250617135634.21760-1-d.dulov@aladdin.ru>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAFXKEHan_7+BVshb12JZLH8CJtSPuwv=H_vC2kUWkS411wsqaA@mail.gmail.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - c/o Alberga Business Park, 6
- krs, Bertel Jungin Aukio 5, 02600 Espoo
+Content-Type: text/plain
+Message-ID: <08206e08-f59f-4819-91c1-14e871fde06f@RTEXDAG02.realtek.com.tw>
+Date: Tue, 24 Jun 2025 15:33:17 +0800
+X-ClientProxiedBy: RTEXMBS02.realtek.com.tw (172.21.6.95) To
+ RTEXDAG02.realtek.com.tw (172.21.6.101)
 
-On Mon, Jun 23, 2025 at 11:06:44PM +0200, Lothar Rubusch wrote:
-> On Mon, Jun 23, 2025 at 11:44 AM Andy Shevchenko
-> <andriy.shevchenko@intel.com> wrote:
+Daniil Dulov <d.dulov@aladdin.ru> wrote:
 
-...
-
-> > > +     case ADXL345_INACTIVITY:
-> > > +             en = FIELD_GET(ADXL345_INACT_X_EN, axis_ctrl) |
-> > > +                     FIELD_GET(ADXL345_INACT_Y_EN, axis_ctrl) |
-> > > +                     FIELD_GET(ADXL345_INACT_Z_EN, axis_ctrl);
-> >
-> > As I pointed out earlier. the indentation is supposed to be on the same colomn
-> > for 'F' letters.
-> >
+> In rtl8187_stop() move the call of usb_kill_anchored_urbs() before clearing
+> b_tx_status.queue. This change prevents callbacks from using already freed
+> skb due to anchor was not killed before freeing such skb.
 > 
-> Let me allow a stupid question, when you mean on the same column, the
-> above is wrong? Can you give me an example here how to fix it?
+>  BUG: kernel NULL pointer dereference, address: 0000000000000080
+>  #PF: supervisor read access in kernel mode
+>  #PF: error_code(0x0000) - not-present page
+>  PGD 0 P4D 0
+>  Oops: Oops: 0000 [#1] SMP NOPTI
+>  CPU: 7 UID: 0 PID: 0 Comm: swapper/7 Not tainted 6.15.0 #8 PREEMPT(voluntary)
+>  Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 0.0.0 02/06/2015
+>  RIP: 0010:ieee80211_tx_status_irqsafe+0x21/0xc0 [mac80211]
+>  Call Trace:
+>   <IRQ>
+>   rtl8187_tx_cb+0x116/0x150 [rtl8187]
+>   __usb_hcd_giveback_urb+0x9d/0x120
+>   usb_giveback_urb_bh+0xbb/0x140
+>   process_one_work+0x19b/0x3c0
+>   bh_worker+0x1a7/0x210
+>   tasklet_action+0x10/0x30
+>   handle_softirqs+0xf0/0x340
+>   __irq_exit_rcu+0xcd/0xf0
+>   common_interrupt+0x85/0xa0
+>   </IRQ>
+> 
+> Tested on RTL8187BvE device.
+> 
+> Found by Linux Verification Center (linuxtesting.org) with SVACE.
+> 
+> Fixes: c1db52b9d27e ("rtl8187: Use usb anchor facilities to manage urbs")
+> Signed-off-by: Daniil Dulov <d.dulov@aladdin.ru>
+> Reviewed-by: Ping-Ke Shih <pkshih@realtek.com>
 
-Your mail client mangles the original text (TABs) and it's most likely
-impossible to see on your side what I meant (I already answered once with
-the example).
+1 patch(es) applied to rtw-next branch of rtw.git, thanks.
 
-Here is the example, use https://lore.kernel.org/linux-iio to see it via Web
+16d8fd74dbfc wifi: rtl818x: Kill URBs before clearing tx status queue
 
-		en = FIELD_GET(ADXL345_INACT_X_EN, axis_ctrl) |
-		     FIELD_GET(ADXL345_INACT_Y_EN, axis_ctrl) |
-		     FIELD_GET(ADXL345_INACT_Z_EN, axis_ctrl);
-
-All 'F' letters occupy the same (by number) column in the sequential lines.
-
-P.S.
-Also you seems ignored my ask to remove the context you are not replying to.
-
--- 
-With Best Regards,
-Andy Shevchenko
-
+---
+https://github.com/pkshih/rtw.git
 
 
