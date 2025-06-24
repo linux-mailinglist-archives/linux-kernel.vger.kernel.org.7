@@ -1,388 +1,151 @@
-Return-Path: <linux-kernel+bounces-700503-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-700463-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 470AAAE699C
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Jun 2025 16:53:14 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id DA779AE6900
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Jun 2025 16:38:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 96A6F1C24FFE
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Jun 2025 14:45:22 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id CDCFE189ECA2
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Jun 2025 14:33:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 78C342F2C7E;
-	Tue, 24 Jun 2025 14:34:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DEF852D540D;
+	Tue, 24 Jun 2025 14:32:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="njPcV2WS"
-Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="gfntUD1N"
+Received: from mail-wm1-f47.google.com (mail-wm1-f47.google.com [209.85.128.47])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 773302F19B8;
-	Tue, 24 Jun 2025 14:34:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9D2F22D12E0
+	for <linux-kernel@vger.kernel.org>; Tue, 24 Jun 2025 14:32:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750775651; cv=none; b=iYuhsWdRLhPX1VoGHL/mDZVDmFxNlMqNQPOW6eWbUGC9X3vjMmgHLbvA+v8r7/oLbrFEqc0WGWwh8MeS6SgdPFLcyMxRW+/oY+8l5E8xFDSbVkDyRF9QW9uAel0ovAfGv07V2zED0KnFueMQtCtjwMTA/hGZtqYPqBpf3G4FtjM=
+	t=1750775553; cv=none; b=mv4M3Zylo1Pyn057P84cOJXIoithV+QfRAh2FTRQvMbJe91VNIvYDXKrCMJJcZKlaKrou+S6cWazPKM8QcC07FeYswQe+DAsOXsEg/K35tqgDpwrPkvEL0yAc1251+7VSvtD0KpqzBD/q2fKcPwG9OGZrOQCX2nTB1MPcXu2CY0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750775651; c=relaxed/simple;
-	bh=/96BnuoGCVZ8rZue5kL+ylO9FAj55XWaSZhIgWZo+/o=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=eMrSIfS3uD7WFdb5TrvgGdSq3XInu1szLdFUHOYVAacSkvwwnkeTZGThPocBVsSBZTwVWWWXyYDm53kDUyg9Q8lPEA1Dmv8+O6PZH8pvMXthMZQ4Uw/5dB5zN+L5ZnBs8PDnpMV92USTIRye6WgV3+Y7CcjDcFUTEu7UWCCR2mI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=njPcV2WS; arc=none smtp.client-ip=148.251.105.195
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1750775648;
-	bh=/96BnuoGCVZ8rZue5kL+ylO9FAj55XWaSZhIgWZo+/o=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=njPcV2WS5L4I5aZ6/m+94X5xQt0c4i9CEm6GQ1A4XSFCi5mj4AkjYwO+LomEsc2ec
-	 1d+M67IgK57/LL+7FN3dfJU/LqSNy1464UO/AoKsiLw6p0lP9bXkjfHEESPfZJysmr
-	 Xhwa7t5znydyx/Gbzc2eLhKwuOhTKJKYJSFyw3qo1V4zWC1MpVTphPsPJime7zV7L/
-	 qg2d44e/8iuS95h7arvP/LaqPEU8U8vHSgBlvI0F0x0tCS/Ge1pJiUXedkr0bMsYIR
-	 V68cp3W2iPqr2u24JVBz3B/JfuVQXBhTsbBSSapUQ0TWnx8f+uhAxgeljU57KVqkRA
-	 ut2AbOIkWCVOQ==
-Received: from laura.lan (unknown [IPv6:2001:b07:646b:e2:d2c7:2075:2c3c:38e5])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: laura.nao)
-	by bali.collaboradmins.com (Postfix) with ESMTPSA id E35C517E0DE3;
-	Tue, 24 Jun 2025 16:34:06 +0200 (CEST)
-From: Laura Nao <laura.nao@collabora.com>
-To: mturquette@baylibre.com,
-	sboyd@kernel.org,
-	robh@kernel.org,
-	krzk+dt@kernel.org,
-	conor+dt@kernel.org,
-	matthias.bgg@gmail.com,
-	angelogioacchino.delregno@collabora.com,
-	p.zabel@pengutronix.de,
-	richardcochran@gmail.com
-Cc: guangjie.song@mediatek.com,
-	wenst@chromium.org,
-	linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-mediatek@lists.infradead.org,
-	netdev@vger.kernel.org,
-	kernel@collabora.com,
-	Laura Nao <laura.nao@collabora.com>
-Subject: [PATCH v2 28/29] clk: mediatek: Add MT8196 vdecsys clock support
+	s=arc-20240116; t=1750775553; c=relaxed/simple;
+	bh=U3pCKeQXh5fWKdCNbSY0Rxi1y5sm9Avd5lYpt9VNji4=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
+	 In-Reply-To:To:Cc; b=OJq8nWKGBahOM5Ts0Y11wLs48sUzkfWitDIdzzeIQppf8Kt0vkKv3kBLDCbOzcLWr1yi+5/hCDowbziPL6jcPnvN/rAhg84aPzSCyNtn0QILgfzg8SVp9uIng/BSMJk4qWnCYOrMry3aXDldIqWPKm8lkSbqvLWUlc0kzs/dlp4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=gfntUD1N; arc=none smtp.client-ip=209.85.128.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
+Received: by mail-wm1-f47.google.com with SMTP id 5b1f17b1804b1-4530921461aso4861635e9.0
+        for <linux-kernel@vger.kernel.org>; Tue, 24 Jun 2025 07:32:31 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1750775550; x=1751380350; darn=vger.kernel.org;
+        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
+         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=mVbEF9kewOwZre8oZmBAEAxpHXBpu+7cKLNa/Clhms0=;
+        b=gfntUD1NxyMAnr1/8FpEG7i+eIdBCnXkjI3xKUfh7UoAUEguUt8fEF6LSNf5wo9N3j
+         TCoOopXkv24Lvxl94wZ4Hv4sdIRHZZSt3ITrOOZfZ1DNTJ0Z0B0v/yx9yDYeO1mgefIY
+         LEj9WH9cex8aVra0Tec6cGH7AYYuZGKrSgHFmHUCr8Z6ZclosDh/UxdxrTo/K0nKfigN
+         ++KKdfS0JWNlowmsg1o6xcNE51zhwVZ7sMW7pq1wXEg9G7onQulMk5//4htJ7KwxznYR
+         o3u5wFXpSG9NKlYdyj22/aS6JudAyuZ99ocQtvfRFDSedvMIZJLtwOgcmBwTI2orItqZ
+         uMeg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1750775550; x=1751380350;
+        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
+         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=mVbEF9kewOwZre8oZmBAEAxpHXBpu+7cKLNa/Clhms0=;
+        b=e/7G7fVNbuStYECfDzT8lTDQqdWu+2UOWLGnViRkCwDIWj965uiEo0lcTJ9FCQaRse
+         ey0PtzXqTDdR2M2Bts+RgzrX1WlEub8G/gh/+UZDOA3Il+gJ2UNFbYtYSsCILCQzx2+R
+         RzyihztkLSytj0MSIii650zRZaCQzHdeMXDm3Vp27Mi+3+fl4RBRp31udcooh26HKiRN
+         bMfHF+rhGfrT4x5t1V2kisf6bDYXyLiIVpfXvZCN7p3BmIo9uIgPLru/PTjoNqqdkB8E
+         ziA+ywqSuqDXRitwfi2loYK2f+sNBoymPy/5g0KW7l64vzJkh9vwRS0/PEaRMBQJdwKM
+         4NWQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVr+dz2S+4jSIoUokccvMLuZEvUysifjzQ4Jk/eSisOoJjOtQAfsDlWHb0Qpar74LJAcPEkAzLHJ3zzaN8=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyjwrqDl4KBdZMtvPYAiHm9WpSVdculOmQ4ercvlmfLJlvJtREK
+	JLTonS4stdLf53cXSLDOu1H8MicZIzEIkMv+DqechAzzWffFJaJA1obV0V2WlcDsLIs=
+X-Gm-Gg: ASbGncvGftO1WON4cm7hruMLacga2l3XomWIp+Vk583vFOWcm+gduK3s176huZB3QUK
+	9Sbltr1u3volrTjiEvG52MLbfhwi7cl3HRwQHRcmhbDKzY8z8p+3gLHdDLLIfLnNYwJeMsQlSod
+	Y3UPGhq73C+kA5zb9S2v6eD2kXUUPliJpgwDf3AOPkGC+0DSlbHhld9QjoQ2HtaU7mwToXLyzDx
+	F9RMHhtDT8xAkPsZVkNlE2i2BZ+YoXEQVr+D8gf2WG+qxD+Gv9qlxTLaZaYGRqT/r0jW8rrWDQM
+	eyNi8Y4In2K4VJ9Bn8J3ahqug5EVw4HA+GqMGyz0rX0J/kAoVce8vUHpv7w8GqXI2R4=
+X-Google-Smtp-Source: AGHT+IGqsN8V2Kqq4ukhS8ZiL+K2QB+8bClwqfh0d/aBfYgnP752Jp9v7Ul1nPRg7YWzqlJ9R0sP7w==
+X-Received: by 2002:a05:600c:468e:b0:442:d5dd:5b4b with SMTP id 5b1f17b1804b1-453656bab67mr174529765e9.31.1750775549662;
+        Tue, 24 Jun 2025 07:32:29 -0700 (PDT)
+Received: from [127.0.1.1] ([2a01:cb1d:dc:7e00:34d2:109c:3293:19e9])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4535ead2a84sm178512935e9.32.2025.06.24.07.32.28
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 24 Jun 2025 07:32:29 -0700 (PDT)
+From: Bartosz Golaszewski <brgl@bgdev.pl>
 Date: Tue, 24 Jun 2025 16:32:19 +0200
-Message-Id: <20250624143220.244549-29-laura.nao@collabora.com>
-X-Mailer: git-send-email 2.39.5
-In-Reply-To: <20250624143220.244549-1-laura.nao@collabora.com>
-References: <20250624143220.244549-1-laura.nao@collabora.com>
+Subject: [PATCH 2/5] pwrseq: extend build coverage for pwrseq drivers with
+ COMPILE_TEST=y
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20250624-pwrseq-match-defines-v1-2-a59d90a951f1@linaro.org>
+References: <20250624-pwrseq-match-defines-v1-0-a59d90a951f1@linaro.org>
+In-Reply-To: <20250624-pwrseq-match-defines-v1-0-a59d90a951f1@linaro.org>
+To: Drew Fustini <drew@pdp7.com>, Guo Ren <guoren@kernel.org>, 
+ Fu Wei <wefu@redhat.com>, Bartosz Golaszewski <brgl@bgdev.pl>, 
+ Ulf Hansson <ulf.hansson@linaro.org>, 
+ Michal Wilczynski <m.wilczynski@samsung.com>
+Cc: linux-riscv@lists.infradead.org, linux-pm@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, 
+ Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1253;
+ i=bartosz.golaszewski@linaro.org; h=from:subject:message-id;
+ bh=2ehPYsnzhfIr+Sl5KtygAfKZml3wCVfX6aGvffUmSwc=;
+ b=owEBbQKS/ZANAwAKARGnLqAUcddyAcsmYgBoWrb5/ZD6cGNe0SODQu8G6MTV2TyemaIWJGr8n
+ IbX+Krmp36JAjMEAAEKAB0WIQQWnetsC8PEYBPSx58Rpy6gFHHXcgUCaFq2+QAKCRARpy6gFHHX
+ cnh4D/0eF9mZsgltwhV+c03clkM4zPTtNKVX04B9cuU4X5DVbI0KgJvcPhVe6Z+gnMMDNlUlWkW
+ v3r86iHn4p+K9ChVY/FfX7chS7YFtby/vtXUUaD4Ktefsyi05sD+gd1HoVKfGlZ8e5AnXrPvPIW
+ c/6JzP64+G7QUnMKONgwaPVAhCAv9Rx/ty4eoj5WZokPtwhxAYxG2BqkKUMpOq0wRVRLx7M9vYb
+ rOPr5v8vQBIacA9NxL/nQpr+6J1YMSBsIGbcASAf6EwdhZ4IgwsN1jvuIVm+IHsN/jy7DbpHys+
+ B0ZIwglXIdg+432uOpCtZyS5twVOHuM512PaIhGWsJuFemzx2DAO2gixScYleFb322TqpVg8wxz
+ /WcQCk8ojYAM2AICYS6E/YKWUvPjuQtJFpQKGTk1HX1PMcqjp1DkIvvBQRmfOTS/KxsROJcFutJ
+ CrJVNlzROukJYtbFWCKqBNvG0MHBRhmSIdyLZdVnqj8Rz2dWYxnxZsMxJBlKz3olyZL21dNHYtR
+ mIBQywymAMf7dYb1RrNaN10rF464jtFrMvoVaJ8haulYyjKw77wMRY91WreQLs0LMVKPsuhID0b
+ DS7Aa5GzGBI1qsnh4zmgeDUqOxLcw9hgbytxNMlSH88ooZpYC8gIsnIRSwCm3lv8up+Eh7m4pmC
+ lvBl8uUD1T+K8Vw==
+X-Developer-Key: i=bartosz.golaszewski@linaro.org; a=openpgp;
+ fpr=169DEB6C0BC3C46013D2C79F11A72EA01471D772
 
-Add support for the MT8196 vdecsys clock controller, which provides
-clock gate control for the video decoder.
+From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
 
-Reviewed-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
-Signed-off-by: Laura Nao <laura.nao@collabora.com>
+Enable building the pwrseq drivers with COMPILE_TEST enabled. This makes
+it easier to build-test them.
+
+Signed-off-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
 ---
- drivers/clk/mediatek/Kconfig           |   7 +
- drivers/clk/mediatek/Makefile          |   1 +
- drivers/clk/mediatek/clk-mt8196-vdec.c | 253 +++++++++++++++++++++++++
- 3 files changed, 261 insertions(+)
- create mode 100644 drivers/clk/mediatek/clk-mt8196-vdec.c
+ drivers/power/sequencing/Kconfig | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/clk/mediatek/Kconfig b/drivers/clk/mediatek/Kconfig
-index 6bcefb782b9c..fc20942a547e 100644
---- a/drivers/clk/mediatek/Kconfig
-+++ b/drivers/clk/mediatek/Kconfig
-@@ -1124,6 +1124,13 @@ config COMMON_CLK_MT8196_UFSSYS
+diff --git a/drivers/power/sequencing/Kconfig b/drivers/power/sequencing/Kconfig
+index 0f118d57c1ceddc03954c006f99b5990acf546d4..280f92beb5d0ed524e67a28d1c5dd264bbd6c87e 100644
+--- a/drivers/power/sequencing/Kconfig
++++ b/drivers/power/sequencing/Kconfig
+@@ -16,7 +16,7 @@ if POWER_SEQUENCING
+ config POWER_SEQUENCING_QCOM_WCN
+ 	tristate "Qualcomm WCN family PMU driver"
+ 	default m if ARCH_QCOM
+-	depends on OF
++	depends on OF || COMPILE_TEST
  	help
- 	  This driver supports MediaTek MT8196 ufssys clocks.
+ 	  Say Y here to enable the power sequencing driver for Qualcomm
+ 	  WCN Bluetooth/WLAN chipsets.
+@@ -29,7 +29,7 @@ config POWER_SEQUENCING_QCOM_WCN
  
-+config COMMON_CLK_MT8196_VDECSYS
-+	tristate "Clock driver for MediaTek MT8196 vdecsys"
-+	depends on COMMON_CLK_MT8196
-+	default m
-+	help
-+	  This driver supports MediaTek MT8196 vdecsys clocks.
-+
- config COMMON_CLK_MT8365
- 	tristate "Clock driver for MediaTek MT8365"
- 	depends on ARCH_MEDIATEK || COMPILE_TEST
-diff --git a/drivers/clk/mediatek/Makefile b/drivers/clk/mediatek/Makefile
-index e3fa5cc2163a..5d3b68649a53 100644
---- a/drivers/clk/mediatek/Makefile
-+++ b/drivers/clk/mediatek/Makefile
-@@ -172,6 +172,7 @@ obj-$(CONFIG_COMMON_CLK_MT8196_MMSYS) += clk-mt8196-disp0.o clk-mt8196-disp1.o c
- 					 clk-mt8196-ovl0.o clk-mt8196-ovl1.o
- obj-$(CONFIG_COMMON_CLK_MT8196_PEXTPSYS) += clk-mt8196-pextp.o
- obj-$(CONFIG_COMMON_CLK_MT8196_UFSSYS) += clk-mt8196-ufs_ao.o
-+obj-$(CONFIG_COMMON_CLK_MT8196_VDECSYS) += clk-mt8196-vdec.o
- obj-$(CONFIG_COMMON_CLK_MT8365) += clk-mt8365-apmixedsys.o clk-mt8365.o
- obj-$(CONFIG_COMMON_CLK_MT8365_APU) += clk-mt8365-apu.o
- obj-$(CONFIG_COMMON_CLK_MT8365_CAM) += clk-mt8365-cam.o
-diff --git a/drivers/clk/mediatek/clk-mt8196-vdec.c b/drivers/clk/mediatek/clk-mt8196-vdec.c
-new file mode 100644
-index 000000000000..9de07a6c0db7
---- /dev/null
-+++ b/drivers/clk/mediatek/clk-mt8196-vdec.c
-@@ -0,0 +1,253 @@
-+// SPDX-License-Identifier: GPL-2.0-only
-+/*
-+ * Copyright (c) 2025 MediaTek Inc.
-+ *                    Guangjie Song <guangjie.song@mediatek.com>
-+ * Copyright (c) 2025 Collabora Ltd.
-+ *                    Laura Nao <laura.nao@collabora.com>
-+ */
-+
-+#include "clk-gate.h"
-+#include "clk-mtk.h"
-+
-+#include <dt-bindings/clock/mediatek,mt8196-clock.h>
-+#include <linux/clk-provider.h>
-+#include <linux/module.h>
-+#include <linux/of_device.h>
-+#include <linux/platform_device.h>
-+
-+static const struct mtk_gate_regs vde20_cg_regs = {
-+	.set_ofs = 0x0,
-+	.clr_ofs = 0x4,
-+	.sta_ofs = 0x0,
-+};
-+
-+static const struct mtk_gate_regs vde20_hwv_regs = {
-+	.set_ofs = 0x0088,
-+	.clr_ofs = 0x008c,
-+	.sta_ofs = 0x2c44,
-+};
-+
-+static const struct mtk_gate_regs vde21_cg_regs = {
-+	.set_ofs = 0x200,
-+	.clr_ofs = 0x204,
-+	.sta_ofs = 0x200,
-+};
-+
-+static const struct mtk_gate_regs vde21_hwv_regs = {
-+	.set_ofs = 0x0080,
-+	.clr_ofs = 0x0084,
-+	.sta_ofs = 0x2c40,
-+};
-+
-+static const struct mtk_gate_regs vde22_cg_regs = {
-+	.set_ofs = 0x8,
-+	.clr_ofs = 0xc,
-+	.sta_ofs = 0x8,
-+};
-+
-+static const struct mtk_gate_regs vde22_hwv_regs = {
-+	.set_ofs = 0x0078,
-+	.clr_ofs = 0x007c,
-+	.sta_ofs = 0x2c3c,
-+};
-+
-+#define GATE_HWV_VDE20(_id, _name, _parent, _shift) {	\
-+		.id = _id,				\
-+		.name = _name,				\
-+		.parent_name = _parent,			\
-+		.regs = &vde20_cg_regs,			\
-+		.hwv_regs = &vde20_hwv_regs,		\
-+		.shift = _shift,			\
-+		.ops = &mtk_clk_gate_hwv_ops_setclr_inv,\
-+		.flags = CLK_OPS_PARENT_ENABLE,		\
-+	}
-+
-+#define GATE_HWV_VDE21(_id, _name, _parent, _shift) {	\
-+		.id = _id,				\
-+		.name = _name,				\
-+		.parent_name = _parent,			\
-+		.regs = &vde21_cg_regs,			\
-+		.hwv_regs = &vde21_hwv_regs,		\
-+		.shift = _shift,			\
-+		.ops = &mtk_clk_gate_hwv_ops_setclr_inv,\
-+		.flags = CLK_OPS_PARENT_ENABLE,		\
-+	}
-+
-+#define GATE_HWV_VDE22(_id, _name, _parent, _shift) {	\
-+		.id = _id,				\
-+		.name = _name,				\
-+		.parent_name = _parent,			\
-+		.regs = &vde22_cg_regs,			\
-+		.hwv_regs = &vde22_hwv_regs,		\
-+		.shift = _shift,			\
-+		.ops = &mtk_clk_gate_hwv_ops_setclr_inv,\
-+		.flags = CLK_OPS_PARENT_ENABLE |	\
-+			 CLK_IGNORE_UNUSED,		\
-+	}
-+
-+static const struct mtk_gate vde2_clks[] = {
-+	/* VDE20 */
-+	GATE_HWV_VDE20(CLK_VDE2_VDEC_CKEN, "vde2_vdec_cken", "vdec", 0),
-+	GATE_HWV_VDE20(CLK_VDE2_VDEC_ACTIVE, "vde2_vdec_active", "vdec", 4),
-+	GATE_HWV_VDE20(CLK_VDE2_VDEC_CKEN_ENG, "vde2_vdec_cken_eng", "vdec", 8),
-+	/* VDE21 */
-+	GATE_HWV_VDE21(CLK_VDE2_LAT_CKEN, "vde2_lat_cken", "vdec", 0),
-+	GATE_HWV_VDE21(CLK_VDE2_LAT_ACTIVE, "vde2_lat_active", "vdec", 4),
-+	GATE_HWV_VDE21(CLK_VDE2_LAT_CKEN_ENG, "vde2_lat_cken_eng", "vdec", 8),
-+	/* VDE22 */
-+	GATE_HWV_VDE22(CLK_VDE2_LARB1_CKEN, "vde2_larb1_cken", "vdec", 0),
-+};
-+
-+static const struct mtk_clk_desc vde2_mcd = {
-+	.clks = vde2_clks,
-+	.num_clks = ARRAY_SIZE(vde2_clks),
-+	.need_runtime_pm = true,
-+};
-+
-+static const struct mtk_gate_regs vde10_hwv_regs = {
-+	.set_ofs = 0x00a0,
-+	.clr_ofs = 0x00a4,
-+	.sta_ofs = 0x2c50,
-+};
-+
-+static const struct mtk_gate_regs vde11_cg_regs = {
-+	.set_ofs = 0x1e0,
-+	.clr_ofs = 0x1e0,
-+	.sta_ofs = 0x1e0,
-+};
-+
-+static const struct mtk_gate_regs vde11_hwv_regs = {
-+	.set_ofs = 0x00b0,
-+	.clr_ofs = 0x00b4,
-+	.sta_ofs = 0x2c58,
-+};
-+
-+static const struct mtk_gate_regs vde12_cg_regs = {
-+	.set_ofs = 0x1ec,
-+	.clr_ofs = 0x1ec,
-+	.sta_ofs = 0x1ec,
-+};
-+
-+static const struct mtk_gate_regs vde12_hwv_regs = {
-+	.set_ofs = 0x00a8,
-+	.clr_ofs = 0x00ac,
-+	.sta_ofs = 0x2c54,
-+};
-+
-+static const struct mtk_gate_regs vde13_cg_regs = {
-+	.set_ofs = 0x200,
-+	.clr_ofs = 0x204,
-+	.sta_ofs = 0x200,
-+};
-+
-+static const struct mtk_gate_regs vde13_hwv_regs = {
-+	.set_ofs = 0x0098,
-+	.clr_ofs = 0x009c,
-+	.sta_ofs = 0x2c4c,
-+};
-+
-+static const struct mtk_gate_regs vde14_hwv_regs = {
-+	.set_ofs = 0x0090,
-+	.clr_ofs = 0x0094,
-+	.sta_ofs = 0x2c48,
-+};
-+
-+#define GATE_HWV_VDE10(_id, _name, _parent, _shift) {	\
-+		.id = _id,				\
-+		.name = _name,				\
-+		.parent_name = _parent,			\
-+		.regs = &vde20_cg_regs,			\
-+		.hwv_regs = &vde10_hwv_regs,		\
-+		.shift = _shift,			\
-+		.ops = &mtk_clk_gate_hwv_ops_setclr_inv,\
-+		.flags = CLK_OPS_PARENT_ENABLE,		\
-+	}
-+
-+#define GATE_HWV_VDE11(_id, _name, _parent, _shift) {		\
-+		.id = _id,					\
-+		.name = _name,					\
-+		.parent_name = _parent,				\
-+		.regs = &vde11_cg_regs,				\
-+		.hwv_regs = &vde11_hwv_regs,			\
-+		.shift = _shift,				\
-+		.ops = &mtk_clk_gate_hwv_ops_setclr_inv,	\
-+		.flags = CLK_OPS_PARENT_ENABLE,			\
-+	}
-+
-+#define GATE_HWV_VDE12(_id, _name, _parent, _shift) {		\
-+		.id = _id,					\
-+		.name = _name,					\
-+		.parent_name = _parent,				\
-+		.regs = &vde12_cg_regs,				\
-+		.hwv_regs = &vde12_hwv_regs,			\
-+		.shift = _shift,				\
-+		.ops = &mtk_clk_gate_hwv_ops_setclr_inv,	\
-+		.flags = CLK_OPS_PARENT_ENABLE			\
-+	}
-+
-+#define GATE_HWV_VDE13(_id, _name, _parent, _shift) {	\
-+		.id = _id,				\
-+		.name = _name,				\
-+		.parent_name = _parent,			\
-+		.regs = &vde13_cg_regs,			\
-+		.hwv_regs = &vde13_hwv_regs,		\
-+		.shift = _shift,			\
-+		.ops = &mtk_clk_gate_hwv_ops_setclr_inv,\
-+		.flags = CLK_OPS_PARENT_ENABLE,		\
-+	}
-+
-+#define GATE_HWV_VDE14(_id, _name, _parent, _shift) {	\
-+		.id = _id,				\
-+		.name = _name,				\
-+		.parent_name = _parent,			\
-+		.regs = &vde22_cg_regs,			\
-+		.hwv_regs = &vde14_hwv_regs,		\
-+		.shift = _shift,			\
-+		.ops = &mtk_clk_gate_hwv_ops_setclr_inv,\
-+		.flags = CLK_OPS_PARENT_ENABLE |	\
-+			 CLK_IGNORE_UNUSED,		\
-+	}
-+
-+static const struct mtk_gate vde1_clks[] = {
-+	/* VDE10 */
-+	GATE_HWV_VDE10(CLK_VDE1_VDEC_CKEN, "vde1_vdec_cken", "vdec", 0),
-+	GATE_HWV_VDE10(CLK_VDE1_VDEC_ACTIVE, "vde1_vdec_active", "vdec", 4),
-+	GATE_HWV_VDE10(CLK_VDE1_VDEC_CKEN_ENG, "vde1_vdec_cken_eng", "vdec", 8),
-+	/* VDE11 */
-+	GATE_HWV_VDE11(CLK_VDE1_VDEC_SOC_IPS_EN, "vde1_vdec_soc_ips_en", "vdec", 0),
-+	/* VDE12 */
-+	GATE_HWV_VDE12(CLK_VDE1_VDEC_SOC_APTV_EN, "vde1_aptv_en", "ck_tck_26m_mx9_ck", 0),
-+	GATE_HWV_VDE12(CLK_VDE1_VDEC_SOC_APTV_TOP_EN, "vde1_aptv_topen", "ck_tck_26m_mx9_ck", 1),
-+	/* VDE13 */
-+	GATE_HWV_VDE13(CLK_VDE1_LAT_CKEN, "vde1_lat_cken", "vdec", 0),
-+	GATE_HWV_VDE13(CLK_VDE1_LAT_ACTIVE, "vde1_lat_active", "vdec", 4),
-+	GATE_HWV_VDE13(CLK_VDE1_LAT_CKEN_ENG, "vde1_lat_cken_eng", "vdec", 8),
-+	/* VDE14 */
-+	GATE_HWV_VDE14(CLK_VDE1_LARB1_CKEN, "vde1_larb1_cken", "vdec", 0),
-+};
-+
-+static const struct mtk_clk_desc vde1_mcd = {
-+	.clks = vde1_clks,
-+	.num_clks = ARRAY_SIZE(vde1_clks),
-+	.need_runtime_pm = true,
-+};
-+
-+static const struct of_device_id of_match_clk_mt8196_vdec[] = {
-+	{ .compatible = "mediatek,mt8196-vdecsys", .data = &vde2_mcd },
-+	{ .compatible = "mediatek,mt8196-vdecsys-soc", .data = &vde1_mcd },
-+	{ /* sentinel */ }
-+};
-+MODULE_DEVICE_TABLE(of, of_match_clk_mt8196_vdec);
-+
-+static struct platform_driver clk_mt8196_vdec_drv = {
-+	.probe = mtk_clk_simple_probe,
-+	.remove = mtk_clk_simple_remove,
-+	.driver = {
-+		.name = "clk-mt8196-vdec",
-+		.of_match_table = of_match_clk_mt8196_vdec,
-+	},
-+};
-+module_platform_driver(clk_mt8196_vdec_drv);
-+
-+MODULE_DESCRIPTION("MediaTek MT8196 Video Decoders clocks driver");
-+MODULE_LICENSE("GPL");
+ config POWER_SEQUENCING_TH1520_GPU
+ 	tristate "T-HEAD TH1520 GPU power sequencing driver"
+-	depends on ARCH_THEAD && AUXILIARY_BUS
++	depends on (ARCH_THEAD && AUXILIARY_BUS) || COMPILE_TEST
+ 	help
+ 	  Say Y here to enable the power sequencing driver for the TH1520 SoC
+ 	  GPU. This driver handles the complex clock and reset sequence
+
 -- 
-2.39.5
+2.48.1
 
 
