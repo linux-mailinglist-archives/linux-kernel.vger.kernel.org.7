@@ -1,189 +1,241 @@
-Return-Path: <linux-kernel+bounces-700333-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-700335-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7CD59AE66F7
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Jun 2025 15:48:46 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 350FFAE6703
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Jun 2025 15:50:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 446435A23B3
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Jun 2025 13:48:21 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E54B8168948
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Jun 2025 13:49:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6257B2BEC24;
-	Tue, 24 Jun 2025 13:48:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A0C21299A85;
+	Tue, 24 Jun 2025 13:48:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="l2IDPw0z"
-Received: from mail-wm1-f43.google.com (mail-wm1-f43.google.com [209.85.128.43])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="i1IPhwkK"
+Received: from mail-pl1-f179.google.com (mail-pl1-f179.google.com [209.85.214.179])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7D1AC28F528
-	for <linux-kernel@vger.kernel.org>; Tue, 24 Jun 2025 13:48:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7B7FA3FB1B;
+	Tue, 24 Jun 2025 13:48:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750772913; cv=none; b=QBRE2615QHARttC9vVTPSTW4uqZNlXABnmboWx0+AsNSHmZM4hFD4ECoLHy3rL7gwqtHWZLyYRiczDqK1BxHj0zE7RpzXAgnR9u2fTWnLWDHlxwBDXnTYgPQh43s4N7zcIN9vpr/iHpP+It71bPqyIkNxps1dGHdjsHygLs2im0=
+	t=1750772933; cv=none; b=RZXD3qFZlKUGeCUOQR9ptxtKTcJ5IS0rCXmEEo4nL7PSbvALJBMPDcPWfBjYMzP/unS+8P1Fq8+oDgs3NMJN/BJywPgHmyTQaXryTCCCDSzP7UAEY6IinXPL4l7D4dEm26N4+lJcm8hueXN1Oq/hW52Xhj0Pj2lUvEA+mbJgTd0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750772913; c=relaxed/simple;
-	bh=0JSun8YMBB7AW9rZu25FKkVf1C+gvp+ffT6j4LJGL+Y=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=iJeOPR9x2eAheElP8YDq5wurAk+yxJAdfdfYFLPFx8i3lQy7EQwtrYqp9L3ny/4EEk3T2UZhmIbtwcZNR8E2LI4BpxxwrDRBVL8hATWGNs2r95AzXP7uYObUQ44Th8IcHOGrCUylNVrcNg4SpVwuoxs8UuEXSl5h5RkPCNwew6w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=l2IDPw0z; arc=none smtp.client-ip=209.85.128.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wm1-f43.google.com with SMTP id 5b1f17b1804b1-45310223677so40757755e9.0
-        for <linux-kernel@vger.kernel.org>; Tue, 24 Jun 2025 06:48:30 -0700 (PDT)
+	s=arc-20240116; t=1750772933; c=relaxed/simple;
+	bh=xGrATvnsr2No50uFgmrozZRPjRz6yymAT4fJabipdgA=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=VW5jEznIe1ihcxs14Z7eRYDWcffelF55bA92oXmsYfA8M8a2TbmtZGMQvDl1UJf5uPs7CWIEpaEulwYwA2qQZmgZHQ24umdzUcZ7VUPRb3XL5AMbC9kFU9KhV64NsCHDjgvhfG275b2oRXp0gBZS46Pl5jqVCqnf777msTaKtZE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=i1IPhwkK; arc=none smtp.client-ip=209.85.214.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f179.google.com with SMTP id d9443c01a7336-234fcadde3eso74447355ad.0;
+        Tue, 24 Jun 2025 06:48:50 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1750772909; x=1751377709; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=sOKIm9/dJcTZ6ipUeMx8GILyup6CNf+4evU6I00WnKE=;
-        b=l2IDPw0zaMLGLAXW+R85DFetR9Im+G9Qnu3UDtKt0FujuMRwlqYdUkIDqLdM5a0G0F
-         dMLwuB+VI++cuWWk/vUBkn2A1nqim1Ms49CrgdxOt6TI5EPIqg28CKYvlW9vH2m6nzge
-         Erhx3td6KcPKxSb4oX+I0ekql/JvUZ5UsOztksn8tEH72NaNk+Hm30NmaI1eGadPFqeu
-         z+ZaCf6WJEloeO0WJUfZCi2QIdDu+J8fSK838o/s3T+/v+DwPrN6raLCNToF62zWqBhK
-         Qz7uXldge6fjQh3cVb6MJfPQGwCYeHZM4E97cbVQdbGSdC+DOoWcUf2NeKI9a9BFYKSo
-         AXWQ==
+        d=gmail.com; s=20230601; t=1750772929; x=1751377729; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=Hk6pB62R8/rFBBcS2uuP0R5gJUE79987GNhPqNjMRo8=;
+        b=i1IPhwkK9mwyu6TEcCvAvAE9lJxIyPzJ3p6KXhlbkGhYr4rVBUyEIYKfUOq5iEcFl8
+         msYHqZkTwWr47gHiG13WM9E+CyGTUBiSuIYVLEdfxzclEU6KwzirqwQH9YB1h4B31TL4
+         h5A6ZVENJmLTY0mVRLz2hzWGr/aV1iKJXbcqPVgbQ2j0nAuN2+6LBkp0Li6MXFZVMdme
+         4mcc7tW22Q+K8USeFyCakVVuEoqbo/Z/ATFGg2CHbURCdcdDMydH5wCrVpau9EUoPUyZ
+         sdEyRp+jxnSJJLXMfg5vJYHKUp10Ts9mA4zFz1xy7n26rPgqCPgMwnKS8L3mSGTPbap9
+         5G9Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1750772909; x=1751377709;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=sOKIm9/dJcTZ6ipUeMx8GILyup6CNf+4evU6I00WnKE=;
-        b=o9GzUEDuM7l37chAqLTfFkX3U8nDKHjxgWwR9cQTL9h3l5s8NHkt7t5x6b72g05AL5
-         MmIvRV6CpbHoRE3YFf4tAFRnht6wBZU7xDVEvdjZgT8GTG0Q9NrhM5z5+O4gXOzNSUaZ
-         MdrB/NC/jK8zxO+O4cvuGMbKykWe+r0cdmytowreKkRpV8TNdXosy49BXjBlN12wkyQE
-         OeYmR+YZW0kCchbxwF05qO1ry/2RhTJytsK1m+DrPpqpzqVYa9PPP1qopKOKoZdWlx6I
-         njvFOsujPH7WOGgu/OVCSSPSEm2LRU+EhulXW4wpdMC1u7k+gTAS6J0NhetOX/MfRb1g
-         UY7Q==
-X-Forwarded-Encrypted: i=1; AJvYcCX61ywiYxMLZ80p+V/VWMRmLR3NPfK7huxZV7fq5lOYsJv2OU9fKJsdqS0I5VwyPdvYTss0vZelXLsuZWo=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyBH0WWJs9k392BKKzMy2oIB33Gi/5EBcj+CFChs672T1dukNXZ
-	oYtqRZCNYdJsn0T6UipxHXqhrrnzp2Dtbz49SDnQoF7taM1JLc8H6TDhndYMutF2lj8=
-X-Gm-Gg: ASbGncu8dJfvy7XN0KeZ3GBEli6n4Jf/kpFveAa0LHcBOwQPlOtBqkSdrXP04qH4nlj
-	ov+8/qxzeM+WTMeFA4eyiq8lqgNl6z3od2/Pma4v+2CZ31P7Oo021w/6d6riNmvnH+dHESRTEnd
-	hOM/gbwfhl5FGjpqPPOFPdiR0cV0dCUg6ZAdxFVcgF633SREIRsctrUzO7/ryUYhyMAfhl57/68
-	gEecR2oWoNXH9/L5hcbcFbc27fTPwdVsTeS5GZXUWgR+l3hI8OpSMfj6tdRBFxhjVHAraKyQsrz
-	BWsbPhBaBwFWgTjJmHdQLFWLj4gEj1kb05eQytxPjsZpb0EnliLMmJZJVZYyou6yJdjTaSiKLwf
-	wtHy+zqojSvW3HZX+5xm67zpu
-X-Google-Smtp-Source: AGHT+IHZM/Db3rJ671u0WvDIe/VvY5UdAh5v59kB6hTOoptlOF4+lnhl6a+lk700LR1ins07EJj9kg==
-X-Received: by 2002:a05:600c:34c4:b0:450:30e4:bdf6 with SMTP id 5b1f17b1804b1-453659dccb8mr147036145e9.19.1750772908848;
-        Tue, 24 Jun 2025 06:48:28 -0700 (PDT)
-Received: from mai.linaro.org (146725694.box.freepro.com. [130.180.211.218])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-453646cb5ecsm147323495e9.8.2025.06.24.06.48.27
+        d=1e100.net; s=20230601; t=1750772929; x=1751377729;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=Hk6pB62R8/rFBBcS2uuP0R5gJUE79987GNhPqNjMRo8=;
+        b=fWHjXppvqeQsosI+fDIj/3zZ1+xsvCJIx/5ZPGEAaTlV0SpP3t4WflHY0aX7DhhHpe
+         ozsqZZ5d70i2t+YMUJTrW6Z4ubhk0lqcWZ0mvzuoaQoPOBj6cwncXyNXleaOAppHCj4d
+         4s6lvErzn7gOdPncpisWSRVtXV2h404m0aGSA+TT+cTkrqHDJ0XrV1hwV0To7aM2BG91
+         Qr93aujPu3mecxMjj+AhJIVDVBUqyuCA+wvwT/nARkD4AW9dhAFSMCd+XUvTKUvmk5YI
+         B2SAEp53U7k39Yr3gDuAz6YPm7ZflJgri1w8PZGetfviq23Ym+sMMVKcQ5WNW5B1zWtM
+         gudg==
+X-Forwarded-Encrypted: i=1; AJvYcCW/e1t059AXH9vnfkkC88LuiNhL4FQD6y7rYS9/CuZcSBUfCS79cI1oQG2juJWSbJsNNJPvCQ5U@vger.kernel.org, AJvYcCXqZm3NMkEjLLLfXCuPrk5D9KaoOKkIXJdjsCWCZiG2NuqXpTG8kQQ9r+ujgm+x3P8IQ4yBR24sixbpToM=@vger.kernel.org
+X-Gm-Message-State: AOJu0YytNz9JRyu6NGbKOv+utuyF7N8BYZAXKvSAdiiIT7OpLYXdCqhL
+	zJIpJd9y3WyJOM4qJpX3vplAX0hg4kfV/ekfAN0shpHEPCUwUPd7GNcuJeSQSf5X
+X-Gm-Gg: ASbGnctQjet29JN1r4541cZiRvSeOpyWzIgORX/4AeyTbjY734J2FxRkybR8XTVjkzK
+	x1v1TqsiRthPowH3Q9ZGZag9YB2p0SWEnUeUVsrirDM98HJ7iATHT9uLxKWU26UFQslX6fkIcXP
+	wBs+7DCKbZeL1xsnsAmLMZ032pgaE6AH62TlapyORbRA7NOGBTtsBpCsFpoI/UHHQP3KmRyt/Ie
+	OS/l43515h7fZSbVMTvLX4cxI+gH+/CU1XLQOh0NV1NNWU3asZkenJgaPHn86CdoK0VmJk4hvf9
+	CydquybKj3bqA8aq7Jh3qJ3+i2c+w191DAZ/uZF93i0eDqTBJSCWKFfnw8K9BSLixbs5yDx8lzB
+	RpPAyycs=
+X-Google-Smtp-Source: AGHT+IElliQeDtJFb0sxRL7fqhBF58Qku40qz2wb/HqE9C6if71wyFRvz5Gor/lVluwB88KvtwlGPg==
+X-Received: by 2002:a17:903:94b:b0:234:d292:be83 with SMTP id d9443c01a7336-237d9778c65mr279303895ad.10.1750772929068;
+        Tue, 24 Jun 2025 06:48:49 -0700 (PDT)
+Received: from manjaro.domain.name ([2401:4900:1c67:6116:afb5:b6ab:2dc8:4a21])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-237d8729490sm114526515ad.236.2025.06.24.06.48.45
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 24 Jun 2025 06:48:28 -0700 (PDT)
-Date: Tue, 24 Jun 2025 15:48:26 +0200
-From: Daniel Lezcano <daniel.lezcano@linaro.org>
-To: Will McVicker <willmcvicker@google.com>
-Cc: Catalin Marinas <catalin.marinas@arm.com>,
-	Will Deacon <will@kernel.org>, Thomas Gleixner <tglx@linutronix.de>,
-	Krzysztof Kozlowski <krzk@kernel.org>,
-	Alim Akhtar <alim.akhtar@samsung.com>,
-	Rob Herring <robh@kernel.org>,
-	Saravana Kannan <saravanak@google.com>,
-	Donghoon Yu <hoony.yu@samsung.com>,
-	Hosung Kim <hosung0.kim@samsung.com>, kernel-team@android.com,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	John Stultz <jstultz@google.com>,
-	Youngmin Nam <youngmin.nam@samsung.com>,
-	Peter Griffin <peter.griffin@linaro.org>,
-	Tudor Ambarus <tudor.ambarus@linaro.org>,
-	=?iso-8859-1?Q?Andr=E9?= Draszik <andre.draszik@linaro.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org
-Subject: Re: [PATCH v4 5/6] clocksource/drivers/exynos_mct: Add module support
-Message-ID: <aFqsqr7i7cdR5-I0@mai.linaro.org>
-References: <20250620181719.1399856-1-willmcvicker@google.com>
- <20250620181719.1399856-6-willmcvicker@google.com>
+        Tue, 24 Jun 2025 06:48:48 -0700 (PDT)
+From: Pranav Tyagi <pranav.tyagi03@gmail.com>
+To: linux-xfs@vger.kernel.org,
+	stable@vger.kernel.org
+Cc: djwong@kernel.org,
+	leah.rumancik@gmail.com,
+	gregkh@linuxfoundation.org,
+	linux-kernel@vger.kernel.org,
+	skhan@linuxfoundation.org,
+	linux-kernel-mentees@lists.linux.dev,
+	Guo Xuenan <guoxuenan@huawei.com>,
+	Pranav Tyagi <pranav.tyagi03@gmail.com>
+Subject: [PATCH 5.15.y] xfs: fix super block buf log item UAF during force shutdown
+Date: Tue, 24 Jun 2025 19:18:40 +0530
+Message-ID: <20250624134840.47853-1-pranav.tyagi03@gmail.com>
+X-Mailer: git-send-email 2.49.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <20250620181719.1399856-6-willmcvicker@google.com>
 
-On Fri, Jun 20, 2025 at 11:17:08AM -0700, Will McVicker wrote:
-> From: Donghoon Yu <hoony.yu@samsung.com>
-> 
-> On Arm64 platforms the Exynos MCT driver can be built as a module. On
-> boot (and even after boot) the arch_timer is used as the clocksource and
-> tick timer. Once the MCT driver is loaded, it can be used as the wakeup
-> source for the arch_timer.
-> 
-> Signed-off-by: Donghoon Yu <hoony.yu@samsung.com>
-> Signed-off-by: Youngmin Nam <youngmin.nam@samsung.com>
-> [original commit from https://android.googlesource.com/kernel/gs/+/8a52a8288ec7d88ff78f0b37480dbb0e9c65bbfd]
-> Reviewed-by: Youngmin Nam <youngmin.nam@samsung.com>
-> Tested-by: Youngmin Nam <youngmin.nam@samsung.com>
-> Signed-off-by: Will McVicker <willmcvicker@google.com>
-> ---
+From: Guo Xuenan <guoxuenan@huawei.com>
 
-...
+[ Upstream commit 575689fc0ffa6c4bb4e72fd18e31a6525a6124e0 ]
 
-> -static int __init mct_init_spi(struct device_node *np)
+xfs log io error will trigger xlog shut down, and end_io worker call
+xlog_state_shutdown_callbacks to unpin and release the buf log item.
+The race condition is that when there are some thread doing transaction
+commit and happened not to be intercepted by xlog_is_shutdown, then,
+these log item will be insert into CIL, when unpin and release these
+buf log item, UAF will occur. BTW, add delay before `xlog_cil_commit`
+can increase recurrence probability.
 
-__init_or_module
+The following call graph actually encountered this bad situation.
+fsstress                    io end worker kworker/0:1H-216
+                            xlog_ioend_work
+                              ->xlog_force_shutdown
+                                ->xlog_state_shutdown_callbacks
+                                  ->xlog_cil_process_committed
+                                    ->xlog_cil_committed
+                                      ->xfs_trans_committed_bulk
+->xfs_trans_apply_sb_deltas             ->li_ops->iop_unpin(lip, 1);
+  ->xfs_trans_getsb
+    ->_xfs_trans_bjoin
+      ->xfs_buf_item_init
+        ->if (bip) { return 0;} //relog
+->xlog_cil_commit
+  ->xlog_cil_insert_items //insert into CIL
+                                           ->xfs_buf_ioend_fail(bp);
+                                             ->xfs_buf_ioend
+                                               ->xfs_buf_item_done
+                                                 ->xfs_buf_item_relse
+                                                   ->xfs_buf_item_free
 
-> +static int mct_init_spi(struct device_node *np)
->  {
->  	return mct_init_dt(np, MCT_INT_SPI);
->  }
->  
-> -static int __init mct_init_ppi(struct device_node *np)
-> +static int mct_init_ppi(struct device_node *np)
->  {
->  	return mct_init_dt(np, MCT_INT_PPI);
->  }
-> -TIMER_OF_DECLARE(exynos4210, "samsung,exynos4210-mct", mct_init_spi);
-> -TIMER_OF_DECLARE(exynos4412, "samsung,exynos4412-mct", mct_init_ppi);
+when cil push worker gather percpu cil and insert super block buf log item
+into ctx->log_items then uaf occurs.
 
-Are you sure this is not going to hurt the ARM platforms ? Here the
-timer is enabled very early in the boot process while with this change
-the timer will be available later.
+==================================================================
+BUG: KASAN: use-after-free in xlog_cil_push_work+0x1c8f/0x22f0
+Write of size 8 at addr ffff88801800f3f0 by task kworker/u4:4/105
 
-> +static int exynos4_mct_probe(struct platform_device *pdev)
-> +{
-> +	struct device *dev = &pdev->dev;
-> +	int (*mct_init)(struct device_node *np);
-> +
-> +	mct_init = of_device_get_match_data(dev);
-> +	if (!mct_init)
-> +		return -EINVAL;
-> +
-> +	return mct_init(dev->of_node);
-> +}
-> +
-> +static const struct of_device_id exynos4_mct_match_table[] = {
-> +	{ .compatible = "samsung,exynos4210-mct", .data = &mct_init_spi, },
-> +	{ .compatible = "samsung,exynos4412-mct", .data = &mct_init_ppi, },
-> +	{}
-> +};
-> +MODULE_DEVICE_TABLE(of, exynos4_mct_match_table);
-> +
-> +static struct platform_driver exynos4_mct_driver = {
-> +	.probe		= exynos4_mct_probe,
-> +	.driver		= {
-> +		.name	= "exynos-mct",
-> +		.of_match_table = exynos4_mct_match_table,
-> +	},
-> +};
-> +module_platform_driver(exynos4_mct_driver);
-> +
-> +MODULE_DESCRIPTION("Exynos Multi Core Timer Driver");
-> +MODULE_LICENSE("GPL");
-> -- 
-> 2.50.0.rc2.761.g2dc52ea45b-goog
-> 
+CPU: 0 PID: 105 Comm: kworker/u4:4 Tainted: G W
+6.1.0-rc1-00001-g274115149b42 #136
+Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS
+1.13.0-1ubuntu1.1 04/01/2014
+Workqueue: xfs-cil/sda xlog_cil_push_work
+Call Trace:
+ <TASK>
+ dump_stack_lvl+0x4d/0x66
+ print_report+0x171/0x4a6
+ kasan_report+0xb3/0x130
+ xlog_cil_push_work+0x1c8f/0x22f0
+ process_one_work+0x6f9/0xf70
+ worker_thread+0x578/0xf30
+ kthread+0x28c/0x330
+ ret_from_fork+0x1f/0x30
+ </TASK>
 
+Allocated by task 2145:
+ kasan_save_stack+0x1e/0x40
+ kasan_set_track+0x21/0x30
+ __kasan_slab_alloc+0x54/0x60
+ kmem_cache_alloc+0x14a/0x510
+ xfs_buf_item_init+0x160/0x6d0
+ _xfs_trans_bjoin+0x7f/0x2e0
+ xfs_trans_getsb+0xb6/0x3f0
+ xfs_trans_apply_sb_deltas+0x1f/0x8c0
+ __xfs_trans_commit+0xa25/0xe10
+ xfs_symlink+0xe23/0x1660
+ xfs_vn_symlink+0x157/0x280
+ vfs_symlink+0x491/0x790
+ do_symlinkat+0x128/0x220
+ __x64_sys_symlink+0x7a/0x90
+ do_syscall_64+0x35/0x80
+ entry_SYSCALL_64_after_hwframe+0x63/0xcd
+
+Freed by task 216:
+ kasan_save_stack+0x1e/0x40
+ kasan_set_track+0x21/0x30
+ kasan_save_free_info+0x2a/0x40
+ __kasan_slab_free+0x105/0x1a0
+ kmem_cache_free+0xb6/0x460
+ xfs_buf_ioend+0x1e9/0x11f0
+ xfs_buf_item_unpin+0x3d6/0x840
+ xfs_trans_committed_bulk+0x4c2/0x7c0
+ xlog_cil_committed+0xab6/0xfb0
+ xlog_cil_process_committed+0x117/0x1e0
+ xlog_state_shutdown_callbacks+0x208/0x440
+ xlog_force_shutdown+0x1b3/0x3a0
+ xlog_ioend_work+0xef/0x1d0
+ process_one_work+0x6f9/0xf70
+ worker_thread+0x578/0xf30
+ kthread+0x28c/0x330
+ ret_from_fork+0x1f/0x30
+
+The buggy address belongs to the object at ffff88801800f388
+ which belongs to the cache xfs_buf_item of size 272
+The buggy address is located 104 bytes inside of
+ 272-byte region [ffff88801800f388, ffff88801800f498)
+
+The buggy address belongs to the physical page:
+page:ffffea0000600380 refcount:1 mapcount:0 mapping:0000000000000000
+index:0xffff88801800f208 pfn:0x1800e
+head:ffffea0000600380 order:1 compound_mapcount:0 compound_pincount:0
+flags: 0x1fffff80010200(slab|head|node=0|zone=1|lastcpupid=0x1fffff)
+raw: 001fffff80010200 ffffea0000699788 ffff88801319db50 ffff88800fb50640
+raw: ffff88801800f208 000000000015000a 00000001ffffffff 0000000000000000
+page dumped because: kasan: bad access detected
+
+Memory state around the buggy address:
+ ffff88801800f280: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+ ffff88801800f300: fb fb fb fc fc fc fc fc fc fc fc fc fc fc fc fc
+>ffff88801800f380: fc fa fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+                                                             ^
+ ffff88801800f400: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+ ffff88801800f480: fb fb fb fc fc fc fc fc fc fc fc fc fc fc fc fc
+==================================================================
+Disabling lock debugging due to kernel taint
+
+[ Backport to 5.15: context cleanly applied with no semantic changes.
+Build-tested. ]
+
+Signed-off-by: Guo Xuenan <guoxuenan@huawei.com>
+Reviewed-by: Darrick J. Wong <djwong@kernel.org>
+Signed-off-by: Darrick J. Wong <djwong@kernel.org>
+Signed-off-by: Pranav Tyagi <pranav.tyagi03@gmail.com>
+---
+ fs/xfs/xfs_buf_item.c | 2 ++
+ 1 file changed, 2 insertions(+)
+
+diff --git a/fs/xfs/xfs_buf_item.c b/fs/xfs/xfs_buf_item.c
+index b1ab100c09e1..ffe318eb897f 100644
+--- a/fs/xfs/xfs_buf_item.c
++++ b/fs/xfs/xfs_buf_item.c
+@@ -1017,6 +1017,8 @@ xfs_buf_item_relse(
+ 	trace_xfs_buf_item_relse(bp, _RET_IP_);
+ 	ASSERT(!test_bit(XFS_LI_IN_AIL, &bip->bli_item.li_flags));
+ 
++	if (atomic_read(&bip->bli_refcount))
++		return;
+ 	bp->b_log_item = NULL;
+ 	xfs_buf_rele(bp);
+ 	xfs_buf_item_free(bip);
 -- 
+2.49.0
 
- <http://www.linaro.org/> Linaro.org │ Open source software for ARM SoCs
-
-Follow Linaro:  <http://www.facebook.com/pages/Linaro> Facebook |
-<http://twitter.com/#!/linaroorg> Twitter |
-<http://www.linaro.org/linaro-blog/> Blog
 
