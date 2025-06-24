@@ -1,136 +1,147 @@
-Return-Path: <linux-kernel+bounces-701011-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-701013-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E00B6AE6F92
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Jun 2025 21:30:24 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 967A9AE6F97
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Jun 2025 21:31:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3984C179FFD
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Jun 2025 19:30:25 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DE11A17235E
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Jun 2025 19:31:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ECA6D2E6123;
-	Tue, 24 Jun 2025 19:30:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0BD812E7F39;
+	Tue, 24 Jun 2025 19:30:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=jacekk.info header.i=@jacekk.info header.b="WwWGq90+"
-Received: from mail-ed1-f44.google.com (mail-ed1-f44.google.com [209.85.208.44])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="mcuSwWV/"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7832A2E7631
-	for <linux-kernel@vger.kernel.org>; Tue, 24 Jun 2025 19:30:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5238D29E0E6;
+	Tue, 24 Jun 2025 19:30:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750793418; cv=none; b=RZrCP3639xhVdP5MB4Qkv/faqG2nY4nkXQBVuqeU9rZWE6ZFbHb8mhDSMOcf3OcS2m/7sVXhXoX+ybMBPpypBEpHGVl0lGFQNTY1QBcQFESqF7liYWAVt0RYBNB5Zj77SthcQfOUnniBeecGCk1ryWgzzi6HyxrTjnHHCHiwZrg=
+	t=1750793449; cv=none; b=kxliRNsYbsUREdw5EwrapDJ+f1QqMuCfZmfqP3W2EHahold31jr7lNn1j13LGB745LufbPmrlwAahM4e60qwX4uaYrObgb6Ad2oH/nPA3a03fCqDAATndX8FCGruIq3jLZM02ig+QNf+M254AIHdpqabqISLUWajmn4l9yO9C8c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750793418; c=relaxed/simple;
-	bh=95kehBe6R8bMjrNG+/GmoU/BYyhXXB9zEn8fo8sl8ZI=;
-	h=From:Message-ID:Date:MIME-Version:Subject:To:Cc:References:
-	 In-Reply-To:Content-Type; b=qjjSeQKFJ830349aZCWRVbmFEASNWdV3xHteQ+yodYnsaXAgY+Fsjib3pXF/l+/K2N6P1Ds1uIPWpeSkcArwrxeYF6/MMKMN87pB0OpyiG4xUkGrP7ur3DBtz6G0VzXmhtA+AGcpz2Y+j+Vtt+hnnJq2lct3UGamqUW5uTkF6Ww=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=jacekk.info; spf=pass smtp.mailfrom=jacekk.info; dkim=pass (2048-bit key) header.d=jacekk.info header.i=@jacekk.info header.b=WwWGq90+; arc=none smtp.client-ip=209.85.208.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=jacekk.info
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=jacekk.info
-Received: by mail-ed1-f44.google.com with SMTP id 4fb4d7f45d1cf-6088d856c6eso1629589a12.0
-        for <linux-kernel@vger.kernel.org>; Tue, 24 Jun 2025 12:30:16 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=jacekk.info; s=g2024; t=1750793415; x=1751398215; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:content-language:references
-         :cc:to:subject:user-agent:mime-version:date:message-id:from:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=DMpQ9unMD0vkQzXMI0Rh2M7VMEt4C5NAu9LffZ9WmFQ=;
-        b=WwWGq90+NSP3pMUXWJTHWFBjb9IxxAz9wfcjmlwmX+PN0gUzGfjuVwzRv9cL0IWx9g
-         MypweQy2BgApDjzcxRKA0f3DP137QcuiKxUWO7RoPoj2V4JRJUL80+erUWDytYnN2ZEe
-         EX2roreARQ9ECqljy+IdEQHVJTV06M6+f3vF2xtOkUXUG5UwcL6UcBpBBmGPBpJllvfa
-         YKXfnueHEUe2cKiY7RNRzWSnKrdS/JuewkkUYZudpURCZqMsEzOXs5NrmTh6jE2D4tYD
-         j5eoklTgiED1xWlW2YnnUYp7Z+5f7GJ87mI0ml+j7F+5Q4jyc/vskeQGVh5TMBrY1p2H
-         nboA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1750793415; x=1751398215;
-        h=content-transfer-encoding:in-reply-to:content-language:references
-         :cc:to:subject:user-agent:mime-version:date:message-id:from
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=DMpQ9unMD0vkQzXMI0Rh2M7VMEt4C5NAu9LffZ9WmFQ=;
-        b=B5ITivj1QJIcwXNUzsv+6z1moB7yPQ2uo79iajW4+x9K1/RAt95k5HTw4S5BfA3LGe
-         6hTJ46MYCHRs5tWHIOR70Tiyc0zp15Ecuu/nHSbEd8W99J8p0jgQ7TzZO6gWQsFGbAsg
-         zTz3qzXA7TtOlOxDpEiqo4B2/TJtv0ZR5lK8S0hMRuR9kYf9yzKHNCkPyqfO5KKCFJpe
-         9zobEOETq+5Mjn7+a9hQJ8nyQjJsfdx15p9jbGb2tQAPSulcTbU2j8G3S/yfTehTj98r
-         ksNbWxaqsbHviQo/cXkf+a5VhhrXpE31wsxxqeVK5UQvDx4RpnD+TBi+cFcUd4X1EJ2g
-         P+0Q==
-X-Forwarded-Encrypted: i=1; AJvYcCVGMYUTkCcGGvhygtVq05ZTwOja1DHRfJ5t+idBCFtDU5dHzojWnDqfMWq9Vu91Ro/3iyCr1OLIN2mZQik=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxFEYdU6Lk6NQbpJXMp0t0hg1bpf8tthNuPuHkExyHeLqHZaH4D
-	hbk2f+FA9wXyMw9P1gqAmYAAiXn0B0zpV4rz5uGFn4SdJzliM+UB/UBFVctqDfE9IQ==
-X-Gm-Gg: ASbGncus73nuhpw06meVmAHvr3I/+UDJ83jLHaDtyi0QzZJFhlQ+YUzbUN1wZEjjK61
-	wCBJ0AW7ncF+WVVaF+tSgGVXgzMGifp0+ug8HrYNwUFC9bpVpvQYURYyhDqbx8iOom/pfnqMNtG
-	S7S7g4WQ5lX8pbqP2UzjPwvzkWQG+qdKksZFW70Fg7HA5FgeDsumsXaMTb+YEJWhWtt7lsPxwxb
-	2HrKzbLp9dxUkIqKGtUWylu+XsEzm6lExlGOyVeD/8ABKRlDIuUJdJEmTvs3RRLPW9BiGJlkQhn
-	C8qeI6yZWl9t2Uc5aGgUr2c4Q3k0gZ2YeiBt2rbN3vHMUL0ETutUc6qGWrmxx/7M
-X-Google-Smtp-Source: AGHT+IFezbP2szbIE/wQs/O6ve43dXVC5PTJwpz2lY37bdKGvUZx8jqZCzVi52lj1/qGG/hdQGvRXg==
-X-Received: by 2002:a05:6402:3482:b0:606:a26c:6f46 with SMTP id 4fb4d7f45d1cf-60c4dcd1340mr327a12.19.1750793414839;
-        Tue, 24 Jun 2025 12:30:14 -0700 (PDT)
-Received: from [192.168.0.114] ([91.196.212.106])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-60c2f46820asm1455544a12.47.2025.06.24.12.30.14
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 24 Jun 2025 12:30:14 -0700 (PDT)
-From: Jacek Kowalski <jacek@jacekk.info>
-X-Google-Original-From: Jacek Kowalski <Jacek@jacekk.info>
-Message-ID: <9aaa80eb-91bd-4b44-814a-65f740f00d5a@jacekk.info>
-Date: Tue, 24 Jun 2025 21:30:13 +0200
+	s=arc-20240116; t=1750793449; c=relaxed/simple;
+	bh=Qp571uapnnFBFDqcHgQJKSYw6G8t5M3Gr0gR6Fk0TTk=;
+	h=Mime-Version:Content-Type:Date:Message-Id:Cc:Subject:From:To:
+	 References:In-Reply-To; b=EkD+vVZotPj0VYHsLE4zTrYdlvOLUtswoW5sSXqWQNtvgXeuDY63+olr9ceHerLveI5GnFoL0kYv5nRlUM/lbez9psXTWC/AF81I2XjQncQXEX0lx94Xr7Tn7ZmZBrMDYyk0R1jK+mCAO2S2NLkEs8oEqADvRS6qq4+lnTMLAhQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=mcuSwWV/; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id AD43FC4CEE3;
+	Tue, 24 Jun 2025 19:30:45 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1750793448;
+	bh=Qp571uapnnFBFDqcHgQJKSYw6G8t5M3Gr0gR6Fk0TTk=;
+	h=Date:Cc:Subject:From:To:References:In-Reply-To:From;
+	b=mcuSwWV/L+sQMMr/zxlwNaOcO6gU+Bh6G4VhIEtmTfO5j9TYyV8S5SFRxc2M5Uk8V
+	 qQMWzk1Ckr/n4pUBpksOqZq37+0FgADWSsX1FDCkD9R7HvDqXD5TXrsYkPMCP3GtXd
+	 53XTMhHpO1EcB+6coc5l0iIlNIWmQd8LgAwUZZ7CbIizf5ulJu1ZqahvfFKbjMizH7
+	 //rurPBDnShlwk0hj2KNZDudju5sv6dvL3t9NP8CeOJW2y6nukAgJDhHsGtC7fG0Dy
+	 p5skh8uv+ojS0eu2E1KLyEl+2Ir9GjUeZjLPBlSjmOS7ZVsfsNbixUzr54YSJzPilR
+	 VSqLfgCGbfdHQ==
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: [PATCH 2/4] e1000e: drop checksum constant cast to u16 in comparisons
-To: Tony Nguyen <anthony.l.nguyen@intel.com>,
- Przemek Kitszel <przemyslaw.kitszel@intel.com>,
- Andrew Lunn <andrew+netdev@lunn.ch>, "David S. Miller"
- <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
- Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
- Simon Horman <horms@kernel.org>
-Cc: intel-wired-lan@lists.osuosl.org, netdev@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <46b2b70d-bf53-4b0a-a9f3-dfd8493295b9@jacekk.info>
-Content-Language: en-US
-In-Reply-To: <46b2b70d-bf53-4b0a-a9f3-dfd8493295b9@jacekk.info>
+Mime-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Date: Tue, 24 Jun 2025 21:30:42 +0200
+Message-Id: <DAV0H83BZO0K.376YKJOOGL48H@kernel.org>
+Cc: <linux-kernel@vger.kernel.org>, <rust-for-linux@vger.kernel.org>
+Subject: Re: [PATCH v5 1/2] rust: regulator: add a bare minimum regulator
+ abstraction
+From: "Benno Lossin" <lossin@kernel.org>
+To: "Daniel Almeida" <daniel.almeida@collabora.com>, "Miguel Ojeda"
+ <ojeda@kernel.org>, "Alex Gaynor" <alex.gaynor@gmail.com>, "Boqun Feng"
+ <boqun.feng@gmail.com>, "Gary Guo" <gary@garyguo.net>,
+ =?utf-8?q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, "Benno Lossin"
+ <benno.lossin@proton.me>, "Andreas Hindborg" <a.hindborg@kernel.org>,
+ "Alice Ryhl" <aliceryhl@google.com>, "Trevor Gross" <tmgross@umich.edu>,
+ "Danilo Krummrich" <dakr@kernel.org>, "Boris Brezillon"
+ <boris.brezillon@collabora.com>, "Sebastian Reichel"
+ <sebastian.reichel@collabora.com>, "Liam Girdwood" <lgirdwood@gmail.com>,
+ "Mark Brown" <broonie@kernel.org>
+X-Mailer: aerc 0.20.1
+References: <20250623-topics-tyr-regulator-v5-0-99069658cb54@collabora.com>
+ <20250623-topics-tyr-regulator-v5-1-99069658cb54@collabora.com>
+ <63C9EBE0-771F-411E-93E0-B22DFDCB960D@collabora.com>
+In-Reply-To: <63C9EBE0-771F-411E-93E0-B22DFDCB960D@collabora.com>
 
-Signed-off-by: Jacek Kowalski <Jacek@jacekk.info>
-Suggested-by: Simon Horman <horms@kernel.org>
+On Tue Jun 24, 2025 at 7:31 PM CEST, Daniel Almeida wrote:
+> Hi,
+>
+>> +    /// Attempts to convert the regulator to an enabled state.
+>> +    pub fn try_into_enabled(mut self) -> Result<Regulator<Enabled>, Err=
+or<Disabled>> {
+>> +        self.enable_internal()
+>> +            .map(|()| Regulator {
+>> +                inner: self.inner,
+>> +                _phantom: PhantomData,
+>> +            })
+>> +            .map_err(|error| Error {
+>> +                error,
+>> +                regulator: self,
+>> +            })
+>> +    }
+>> +}
+>> +
+>> +impl Regulator<Enabled> {
+>> +    /// Obtains a [`Regulator`] instance from the system and enables it=
+.
+>> +    ///
+>> +    /// This is equivalent to calling `regulator_get_enable()` in the C=
+ API.
+>> +    pub fn get(dev: &Device, name: &CStr) -> Result<Self> {
+>> +        Regulator::<Disabled>::get_internal(dev, name)?
+>> +            .try_into_enabled()
+>> +            .map_err(|error| error.error)
+>> +    }
+>
+> I just realized that this is a bug.
+>
+> The pre-typestate code was using ManuallyDrop<T> here, and it was forgott=
+en on
+> the newer versions. This means that the destructor for self runs here, wh=
+ich
+> decreases the refcount by calling regulator_put().
+
+Yeah that is correct.
+
+> My proposed solution is:
+>
+>     /// Attempts to convert the regulator to an enabled state.
+>     pub fn try_into_enabled(mut self) -> Result<Regulator<Enabled>, Error=
+<Disabled>> {
+>         // We will be transferring the ownership of our regulator_get() c=
+ount to Regulator<Enabled>
+>         let mut regulator =3D ManuallyDrop::new(self);
+>
+>         regulator.enable_internal()
+>             .map(|()| Regulator {
+>                 inner: regulator.inner,
+
+This will only work if the type of `inner` implements `Copy`. I forgot
+if it does.
+
+>                 _phantom: PhantomData,
+>             })
+>             .map_err(|error| Error {
+>                 error,
+>                 regulator: ManuallyDrop::into_inner(regulator),
+>             })
+>     }
+> }
+>
+>
+>
+> Alex, Benno, thoughts?
+
+Looks correct.
+
 ---
- drivers/net/ethernet/intel/e1000e/ethtool.c | 2 +-
- drivers/net/ethernet/intel/e1000e/nvm.c     | 2 +-
- 2 files changed, 2 insertions(+), 2 deletions(-)
-
-diff --git a/drivers/net/ethernet/intel/e1000e/ethtool.c b/drivers/net/ethernet/intel/e1000e/ethtool.c
-index 9364bc2b4eb1..80435577dc0d 100644
---- a/drivers/net/ethernet/intel/e1000e/ethtool.c
-+++ b/drivers/net/ethernet/intel/e1000e/ethtool.c
-@@ -959,7 +959,7 @@ static int e1000_eeprom_test(struct e1000_adapter *adapter, u64 *data)
- 	}
- 
- 	/* If Checksum is not Correct return error else test passed */
--	if ((checksum != (u16)NVM_SUM) && !(*data))
-+	if ((checksum != NVM_SUM) && !(*data))
- 		*data = 2;
- 
- 	return *data;
-diff --git a/drivers/net/ethernet/intel/e1000e/nvm.c b/drivers/net/ethernet/intel/e1000e/nvm.c
-index 56f2434bd00a..d1bc69984d71 100644
---- a/drivers/net/ethernet/intel/e1000e/nvm.c
-+++ b/drivers/net/ethernet/intel/e1000e/nvm.c
-@@ -563,7 +563,7 @@ s32 e1000e_validate_nvm_checksum_generic(struct e1000_hw *hw)
- 		return 0;
- 	}
- 
--	if (checksum != (u16)NVM_SUM) {
-+	if (checksum != NVM_SUM) {
- 		e_dbg("NVM Checksum Invalid\n");
- 		return -E1000_ERR_NVM;
- 	}
--- 
-2.47.2
-
+Cheers,
+Benno
 
