@@ -1,106 +1,113 @@
-Return-Path: <linux-kernel+bounces-700366-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-700378-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id A9455AE67A5
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Jun 2025 16:00:42 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7ED54AE67B8
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Jun 2025 16:04:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7A3021884EE0
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Jun 2025 13:59:13 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B04C11628D2
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Jun 2025 14:02:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 929132D3209;
-	Tue, 24 Jun 2025 13:54:41 +0000 (UTC)
-Received: from mail-il1-f199.google.com (mail-il1-f199.google.com [209.85.166.199])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6E8632C3268;
+	Tue, 24 Jun 2025 14:02:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b="Y8h1iAiG"
+Received: from out203-205-221-242.mail.qq.com (out203-205-221-242.mail.qq.com [203.205.221.242])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 965612D2382
-	for <linux-kernel@vger.kernel.org>; Tue, 24 Jun 2025 13:54:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.199
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8438D2C158B
+	for <linux-kernel@vger.kernel.org>; Tue, 24 Jun 2025 14:02:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.205.221.242
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750773281; cv=none; b=LgmeYIATunnuo/23N613z+AsdSKx5ehUuEV13MLmICqUd0kjZs8g2mQApTYFaHpps9CH7ovY78QJBxGiCUVvtiyPDY+OWNL911hFS9A6EPZjobSvdh1oPPrYHIfS67dxhJbN/UIUr7jJfU08PCottDZVHPIZGBlCdtMAKghHwIM=
+	t=1750773754; cv=none; b=gaZmDJhJY6tZpLp2T7aAPc5Gw1OKVFUwL/f/Sn4u9LGqBog75G7r12hbJTii+uZx4wpGw+uL4V+whJBjFa1+832R5LIbol5PFwklVVCXj/Z5tZ0oFGJQX7NFF857b7V2kXMRuB3COBNcrjWjr+Jlcxj9ezkEdVL1689O1GpCVRo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750773281; c=relaxed/simple;
-	bh=3Ikgk0RNP5wa3So5Pmyi/a9XYoPgLZ2K6YsEYknW44Q=;
-	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=PNZIC9yomrityWRTR3G7CXBDxbm11LIH+qhkPrth2XyMIYEpo1XYtvBBEtoTh3gkd9eYm/SbMJMKVD/oThDURfe3eyE2nBscCUWcUchyx3IKuA6T0uXZC8lCVrls3Z5gTF8ap5u4JaE9Q4urBiJXwa+WRYWdRWnkVM0gIpqxM8s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.199
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f199.google.com with SMTP id e9e14a558f8ab-3ddc0a6d4bdso63844245ab.0
-        for <linux-kernel@vger.kernel.org>; Tue, 24 Jun 2025 06:54:36 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1750773275; x=1751378075;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=ZBXips4retRQqXhq1myZCY5WlzB3Lt/qf8dWq6m6RAY=;
-        b=pwknkt84yyYF3MSjep8DKruQo26pJf/e/PUawNj7f0JdtNLxqNr4vHjDjuVicBvUqt
-         Nr9m0Yolc41tCoenAb1lzToxxiDz1wiLm8NoiKYeQ5+ZLknj7tAIr3qEHeOmPx5k+B8B
-         oeUbtmbxLy8MfaEQ/TwHefw2vwsnr3NdFQGLfw3hjwN6Uh9zjG833PfEOW8xQPSNwoeS
-         /VhioXEkRDhg9CMPwnxwkASsByWJIyHmR23NzTxnqDtoX8nftvEeOzm+vIUrTnmYBicG
-         YmhTCEvtd+CEZ+BdjXkICsRYJj5f13vgICUAIFqtToUR5VRB5KTMCXR3VhozOqZYQmet
-         qaOw==
-X-Forwarded-Encrypted: i=1; AJvYcCVMs7QOCd782RWAHJXUwPfttDGVJTHfUQrFzgZcP+iVJM0OJen5Ct99TpjcBbWDyPyAACDavi9Q9IJu7EI=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzqqhsGo3BamoFSrDXW5ps/LpWoP54om+QzMxMFuPd0wmsAkgd7
-	FYe8TJT5iXX4HVoH6xeAVDPG3eiAUAIrg3OAW3nVjIZfQVBmY+SA/kMgsyLtZ4C1vGshg/Nlem+
-	iy8kVQo3CgRaHLfNxnAYIwNdBQTDMFtcdCs2fhuJ5BOXCPz3cbc0MnJmhRzs=
-X-Google-Smtp-Source: AGHT+IEVg2HvxdBGC3Z/CBq8bM8i5YneZA1frF9U7XjXN6p8SYXDUtPCPRRVRtHnZ/73111tUo16X4wxoV8SUQBmEz72MtlJRJC5
+	s=arc-20240116; t=1750773754; c=relaxed/simple;
+	bh=F81MkQGwFJzCnvHxH0OXEMF+pgVliNXtH0SLmFjk75c=;
+	h=Message-ID:From:To:Cc:Subject:Date:In-Reply-To:References:
+	 MIME-Version; b=K/B+ge2ETsCBxwqnKey2QxC08zzODuh+ANKaofPi+Xyq2ByDlUMkfRkXikv7nuJOtEkMKcni8nH6buK0qLbHe3kbXVVPfjXKiJsaG8BP36TYAHaYyrI8K/MxdxFaVFn04xnTaAko2UQTp5NsqIOCBoVzgPC8x+jtaQavgFksFhE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com; spf=pass smtp.mailfrom=qq.com; dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b=Y8h1iAiG; arc=none smtp.client-ip=203.205.221.242
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=qq.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qq.com; s=s201512;
+	t=1750773741; bh=t60h/E1hMd521+buKWx/qNzgsjnZi8H0bTEIedjzT0Q=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References;
+	b=Y8h1iAiGLH6BrDLiAhcw/omLO+z6CzN+WZU0m6SDYAOoJKNje07sv+lkvBHglm8/b
+	 gijFpofGG3MQKX5N4T7ueGCZzgUmo3lu0jfMYbGATfoZ57QBNe78j9CNqTAZHKBQ8d
+	 mjJ2mSyU0ygxk/rfn0qwuVSwSGvt5ZR1GTrQnLTc=
+Received: from pek-lxu-l1.corp.ad.wrs.com ([111.198.228.63])
+	by newxmesmtplogicsvrsza36-0.qq.com (NewEsmtp) with SMTP
+	id E0BB2C8C; Tue, 24 Jun 2025 21:56:11 +0800
+X-QQ-mid: xmsmtpt1750773371tnfh3idsj
+Message-ID: <tencent_86C09604E922EC06CE1479EA6C582EC56C0A@qq.com>
+X-QQ-XMAILINFO: NQR8mRxMnur93WNAedUAiGvMbVKd9ddk0WL+cXr91gLps5VvHIHXyL8b9iu4PM
+	 Jvp7hUj/62Rleh9ZbvhkdYMTDjZnaJ0p33neXFXYTMnoPTXdx6UfXV7Hg6qEWvvMNOe4AmKLOp0q
+	 XwwTfHDnKl9p2w7V2LkXl0XPia7LDE/0nFOrPPQUIulCFghNM4ZCAm9R6XgmslCjg864NeV7ybgO
+	 8HWR4ld0DTy+V36yvdqcyEPDLoR5XtQaYI9f6phza6o+OG/i4/pNSKbbwDknWqoAAOKHRnwgm/lK
+	 TXWB5lacjjEsTtuTDu3j+1DMNhv+pWLLDhG4+6pex0gi9sndJnjliO/iyW1Ix9YtWWKh44t9i770
+	 V7Xw8j9NX0pBIdhPAPz0F8RNMLhN9oJeHcUbyGO/apphViixji2jLonlgDctVdvt8QYPZZKsMgWU
+	 lFGBp/BaLzpaljDFmINXFkzapqW4YZj5MfnJZQP5C3GvyQtbFzt46D4CWzfrGwk1W9dgNv8+kvUi
+	 oSO7eR78tRjpbiTFdjKBxCzYTuDxO2pBRuVaZRWH5nHeKGXD+4uDD3nWqFw0rD1xgHZstxTRWLxZ
+	 Q8MlhU093+WSuP8FQbxtxnVw5uKblAcgdSh53OmGBprply6nqdCmgnH73Ch5ObpkXSBaSH4ihsy7
+	 ourTExfnHszXNdknQuBb/yydiF2Fe1MFO6OHGK+5YuoGGuOBiGWXM+lAegE0l8zQnUftE4DxPtzf
+	 R4F0ypglCRfFuA2HFEZ5FZCIwwHn7iZZVgGpPK/PFFHUS/h4+LFeGT38lxP900SQw/02CjR9I5E5
+	 tsjil+xCUke4v8hW4/lTqRJeD/SiNv/0bPxRCoUtBEeUTs/50yjc2CKn1HpBm6f4+lByyiRxJQYp
+	 NHGhhd0WWntPLx55Waht26RoFKjP4blY1XBuYEffaP0SEfCpGDUCPAVXVNdoDs/p5ebHsLXHLx
+X-QQ-XMRINFO: MSVp+SPm3vtS1Vd6Y4Mggwc=
+From: Edward Adam Davis <eadavis@qq.com>
+To: syzbot+fa90fcaa28f5cd4b1fc1@syzkaller.appspotmail.com
+Cc: linux-kernel@vger.kernel.org,
+	syzkaller-bugs@googlegroups.com
+Subject: Re: [syzbot] [btrfs?] possible deadlock in btrfs_read_chunk_tree
+Date: Tue, 24 Jun 2025 21:56:11 +0800
+X-OQ-MSGID: <20250624135610.295300-2-eadavis@qq.com>
+X-Mailer: git-send-email 2.49.0
+In-Reply-To: <685aa401.050a0220.2303ee.0009.GAE@google.com>
+References: <685aa401.050a0220.2303ee.0009.GAE@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:230a:b0:3db:7c22:303c with SMTP id
- e9e14a558f8ab-3de38c34e96mr189511225ab.8.1750773275504; Tue, 24 Jun 2025
- 06:54:35 -0700 (PDT)
-Date: Tue, 24 Jun 2025 06:54:35 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <685aae1b.a00a0220.34b642.0032.GAE@google.com>
-Subject: [syzbot] Monthly udf report (Jun 2025)
-From: syzbot <syzbot+liste67dd1bee815523507c3@syzkaller.appspotmail.com>
-To: jack@suse.com, linux-kernel@vger.kernel.org, 
-	syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 
-Hello udf maintainers/developers,
+#syz test
 
-This is a 31-day syzbot report for the udf subsystem.
-All related reports/information can be found at:
-https://syzkaller.appspot.com/upstream/s/udf
+diff --git a/fs/btrfs/super.c b/fs/btrfs/super.c
+index 237e60b53192..c2ce1eb53ad7 100644
+--- a/fs/btrfs/super.c
++++ b/fs/btrfs/super.c
+@@ -1864,11 +1864,10 @@ static int btrfs_get_tree_super(struct fs_context *fc)
+ 	fs_devices = device->fs_devices;
+ 	fs_info->fs_devices = fs_devices;
+ 
++	mutex_unlock(&uuid_mutex);
+ 	sb = sget_fc(fc, btrfs_fc_test_super, set_anon_super_fc);
+-	if (IS_ERR(sb)) {
+-		mutex_unlock(&uuid_mutex);
++	if (IS_ERR(sb))
+ 		return PTR_ERR(sb);
+-	}
+ 
+ 	set_device_specific_options(fs_info);
+ 
+@@ -1887,6 +1886,7 @@ static int btrfs_get_tree_super(struct fs_context *fc)
+ 		 * But the fs_info->fs_devices is not opened, we should not let
+ 		 * btrfs_free_fs_context() to close them.
+ 		 */
++		mutex_lock(&uuid_mutex);
+ 		fs_info->fs_devices = NULL;
+ 		mutex_unlock(&uuid_mutex);
+ 
+@@ -1906,6 +1906,7 @@ static int btrfs_get_tree_super(struct fs_context *fc)
+ 		 */
+ 		ASSERT(fc->s_fs_info == NULL);
+ 
++		mutex_lock(&uuid_mutex);
+ 		ret = btrfs_open_devices(fs_devices, mode, sb);
+ 		mutex_unlock(&uuid_mutex);
+ 		if (ret < 0) {
 
-During the period, 1 new issues were detected and 0 were fixed.
-In total, 7 issues are still open and 36 have already been fixed.
-
-Some of the still happening issues:
-
-Ref Crashes Repro Title
-<1> 11896   Yes   WARNING in udf_truncate_extents
-                  https://syzkaller.appspot.com/bug?extid=43fc5ba6dcb33e3261ca
-<2> 1142    Yes   WARNING in __udf_add_aext (3)
-                  https://syzkaller.appspot.com/bug?extid=799a0e744ac47f928024
-<3> 443     Yes   possible deadlock in udf_free_blocks
-                  https://syzkaller.appspot.com/bug?extid=d472c32c5dd4cd2fb5c5
-<4> 71      Yes   WARNING in udf_setsize (2)
-                  https://syzkaller.appspot.com/bug?extid=db6df8c0f578bc11e50e
-<5> 23      Yes   KASAN: use-after-free Read in udf_update_tag
-                  https://syzkaller.appspot.com/bug?extid=8743fca924afed42f93e
-<6> 3       Yes   WARNING in udf_expand_dir_adinicb (2)
-                  https://syzkaller.appspot.com/bug?extid=545e45805722d117958f
-<7> 1       Yes   WARNING in udf_fiiter_add_entry
-                  https://syzkaller.appspot.com/bug?extid=969e250fc7983fc7417c
-
----
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
-
-To disable reminders for individual bugs, reply with the following command:
-#syz set <Ref> no-reminders
-
-To change bug's subsystems, reply with:
-#syz set <Ref> subsystems: new-subsystem
-
-You may send multiple commands in a single email message.
 
