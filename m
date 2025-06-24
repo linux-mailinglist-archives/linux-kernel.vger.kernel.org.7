@@ -1,89 +1,71 @@
-Return-Path: <linux-kernel+bounces-700000-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-700016-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 33954AE6295
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Jun 2025 12:36:50 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 972AFAE62BE
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Jun 2025 12:42:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 51A587B53C4
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Jun 2025 10:35:09 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AE52B3B2A10
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Jun 2025 10:41:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 00B692882AD;
-	Tue, 24 Jun 2025 10:36:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DF2F326B2AC;
+	Tue, 24 Jun 2025 10:41:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="JU4LZVID"
-Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Lo61+Wpa"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.16])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 33EEB284B2E;
-	Tue, 24 Jun 2025 10:36:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9861C28466F;
+	Tue, 24 Jun 2025 10:41:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.16
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750761366; cv=none; b=GG1GuN8UswmRHmbezmYjMVxEoacDuyr/UKQIBudmQU4vDg3DG3YIvCFrEP7OBj2o5Qt8XVbQKK5danQOfgjCEYYwj2LNEMJu/REYoAcZrYh+mr0Ph6SsiUvHEFY5oejGS0Dhm2mcG7kK9parWcAXWTA8lmqF4Apr5LRPivFoE5s=
+	t=1750761713; cv=none; b=hwIPKSsReP576RVVOP2zrs2nfwecI+M2+jPCtT+UctBJDoXrHV1fpsGgfiGmOyoMoLZIKUe7Ma6CMDofKHCm+H5lNnJU12vWefqnfKU0gvRb+ae2MBm5P6ecSqSOzgwbeSyF3yS2n63jUTgcHihKgRLli/p6BO5CAxxjyLjMlD0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750761366; c=relaxed/simple;
-	bh=8lP/P121+jxwfTv9os6PlhkSCltscahIQUsXTlEA+Xo=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=l1swswe8RvD7xg6mQgw6E6hgSDmt4an4ZOvABKLqbqb2ZmPG1Gu7YLmk65CT/YRjie5byT1EDOS5SAaG7tmeUTNDoz/LuJL10aKUZRGRDxY2lPdC8NmX1J8x09jNjY4T864RXZwuOw5BTNapswQH7FEqZDKjjDNveGy9xdzClWs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=JU4LZVID; arc=none smtp.client-ip=148.163.156.1
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0360083.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 55O2xRhm023976;
-	Tue, 24 Jun 2025 10:35:51 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
-	:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=pp1; bh=9I+Jrr
-	BWMzV3J3ZToe/bX1BNuNOGD46znaROuagAJYU=; b=JU4LZVIDcdRHmAtfCDMtZR
-	wo7TP8q9FEmkOJpL1m1rPnox5bLFoUwTGlinIqlxNLsClw4l0Rf6qyudNhgeS4BV
-	5oCgFjscQqrKDvC/4Nnr7VFB8s8wn8IHn/6CAiTPj5czT7PXzO49ftqG+noCVboz
-	uJthBn1D9wZS0/YtqKVkh65lA6hKBdcl8r+Nq49l0z0u8iSrAZyoxVs8ktezrQm5
-	632AQL1put359hG2N7DDGNaBicYvcH/fmWfs343llM+Kgu+WHdNVpGOMzJr06nhH
-	jlhC5SQbe1m92h39LkxjDWG+IYoXzNuDpoQCTNNBoPgwikHzTnKR5dI1tUqhjI5g
-	==
-Received: from ppma13.dal12v.mail.ibm.com (dd.9e.1632.ip4.static.sl-reverse.com [50.22.158.221])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 47dm8j806m-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 24 Jun 2025 10:35:50 +0000 (GMT)
-Received: from pps.filterd (ppma13.dal12v.mail.ibm.com [127.0.0.1])
-	by ppma13.dal12v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 55O75qSs003970;
-	Tue, 24 Jun 2025 10:35:49 GMT
-Received: from smtprelay03.fra02v.mail.ibm.com ([9.218.2.224])
-	by ppma13.dal12v.mail.ibm.com (PPS) with ESMTPS id 47e99kk8ww-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 24 Jun 2025 10:35:49 +0000
-Received: from smtpav06.fra02v.mail.ibm.com (smtpav06.fra02v.mail.ibm.com [10.20.54.105])
-	by smtprelay03.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 55OAZmdV57278972
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Tue, 24 Jun 2025 10:35:48 GMT
-Received: from smtpav06.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 28F6E20049;
-	Tue, 24 Jun 2025 10:35:48 +0000 (GMT)
-Received: from smtpav06.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id B2FFB20040;
-	Tue, 24 Jun 2025 10:35:47 +0000 (GMT)
-Received: from thinkpad-T15 (unknown [9.87.159.139])
-	by smtpav06.fra02v.mail.ibm.com (Postfix) with SMTP;
-	Tue, 24 Jun 2025 10:35:47 +0000 (GMT)
-Date: Tue, 24 Jun 2025 12:35:45 +0200
-From: Gerald Schaefer <gerald.schaefer@linux.ibm.com>
-To: Anshuman Khandual <anshuman.khandual@arm.com>
-Cc: Andrew Morton <akpm@linux-foundation.org>,
-        Matthew Wilcox
- <willy@infradead.org>,
-        David Hildenbrand <david@redhat.com>,
-        LKML
- <linux-kernel@vger.kernel.org>, linux-mm <linux-mm@kvack.org>,
-        linux-s390@vger.kernel.org
-Subject: Re: [RFC PATCH 0/1] mm/debug_vm_pgtable: Use a swp_entry_t input
- value for swap tests
-Message-ID: <20250624123545.354f8d73@thinkpad-T15>
-In-Reply-To: <9e220213-0d4a-4e61-b8cc-45ea21b073a6@arm.com>
-References: <20250623184321.927418-1-gerald.schaefer@linux.ibm.com>
-	<9e220213-0d4a-4e61-b8cc-45ea21b073a6@arm.com>
-X-Mailer: Claws Mail 4.3.1 (GTK 3.24.43; x86_64-redhat-linux-gnu)
+	s=arc-20240116; t=1750761713; c=relaxed/simple;
+	bh=K/6nYeBo/6GMRm/IJUluTXarB6TXhlyTShmGZg83qWE=;
+	h=From:Date:To:cc:Subject:In-Reply-To:Message-ID:References:
+	 MIME-Version:Content-Type; b=Cf/WonWyU9bJ8hhq+8IpJOp+WXOr6eQHnWfVqbBlMkmF2z4+nC5IclA6aY5xNfvNO0GVGZSWo4i7nf2qIuNVUY4k4+OrjEbVgMQo/IF5DXZ6BZnqJ3ufixR6NHnH84BrEVbHXvSrH9GvdJe2JWC4epRIOOUHELMEGk15yZBjnXg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Lo61+Wpa; arc=none smtp.client-ip=198.175.65.16
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1750761711; x=1782297711;
+  h=from:date:to:cc:subject:in-reply-to:message-id:
+   references:mime-version;
+  bh=K/6nYeBo/6GMRm/IJUluTXarB6TXhlyTShmGZg83qWE=;
+  b=Lo61+WpaeIm/kV3D1KRFGlJPvGy7APcRPa0Wps9go/hmsMtp6fIhqjeS
+   5XbWeLfisqUrTr+IaqWnbeHiBDrWho9BJ1e2Yix73ZZ8wXDC8GzVR2ZO2
+   VJlhQQsW8jVdTlqUYAtSDyzwJrEdUqRzfCErslZ8WJWaHzeAsqGDf0QTX
+   SKpCM3z1i4793AWPiPkH30psLHZ3A6xFc4jA5gdn/W2RrI0S5qE6qCVNo
+   6ljBhbsFlpUEBjImdaWxfdPblaeBh/tKyqvn6+ca6P+DHrbA2gcRtvRG7
+   iIzqIkGPkJycf88T8WcpqHAgkqq3OGsPLiXO/y6RU7QToiBqP8jCEFKAX
+   A==;
+X-CSE-ConnectionGUID: mXSlqwPYSKWtSl1RuZW4tg==
+X-CSE-MsgGUID: cY7QUJpVSQGuYE6jt9Sl8g==
+X-IronPort-AV: E=McAfee;i="6800,10657,11473"; a="53090922"
+X-IronPort-AV: E=Sophos;i="6.16,261,1744095600"; 
+   d="scan'208";a="53090922"
+Received: from fmviesa006.fm.intel.com ([10.60.135.146])
+  by orvoesa108.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 24 Jun 2025 03:36:03 -0700
+X-CSE-ConnectionGUID: eTgT9tTeQLSNO23lmfZECQ==
+X-CSE-MsgGUID: rXky3VK0QF+HIv5mLeALbA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.16,261,1744095600"; 
+   d="scan'208";a="152007753"
+Received: from ijarvine-mobl1.ger.corp.intel.com (HELO localhost) ([10.245.245.16])
+  by fmviesa006-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 24 Jun 2025 03:36:00 -0700
+From: =?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
+Date: Tue, 24 Jun 2025 13:35:57 +0300 (EEST)
+To: Xiang Shen <turyshen@gmail.com>
+cc: Hans de Goede <hansg@kernel.org>, acelan.kao@canonical.com, 
+    platform-driver-x86@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] platform/x86: intel-vbtn: Fix code style issues
+In-Reply-To: <hlsev7jydwejtdlyay6e6f53yorf2aguhxykscuukqfxugg7ff@hmmpcg7s4sx6>
+Message-ID: <83b27cc9-3544-4fd5-4ece-a46f422ec6fe@linux.intel.com>
+References: <20250620003849.54442-1-turyshen@gmail.com> <fdb9c21f-aada-498a-92ec-bc48aceeb76e@kernel.org> <hlsev7jydwejtdlyay6e6f53yorf2aguhxykscuukqfxugg7ff@hmmpcg7s4sx6>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -91,139 +73,127 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-X-TM-AS-GCONF: 00
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNjI0MDA4NyBTYWx0ZWRfX2dn/UD0vb3yy UVcEch4gAS8kZtdwopacMfio22ULIzZ8V8fIj6xNL/MMAKtRib1ToG7qrwhbmxQBAyi0miBicVk dRF6mvPg6vn9tKeXNzCtipsVF1zq0YYup4s3pRAJZKUDgKJhcc0nBQbEhWuhXPbzSNxY+4BuLEF
- +aKbhAgrKQnaCVqZCt5WmEXCJhq9JVqnHuw549IEqiRtFX0HiLI6NPWQZ80o7OuRe/g1flfeDVU 3tb1qrhBnAZfY18CaVE/AjVuCQJinluwPq9XgoA49WElCqNFcQDhzFn/klQQuVJjf3hwxf2F7zM vk0l43gQtHMaQ7ljuz8pYhg5UKLmVUUkX3xExEp+OCWi0QCzmBN6VYJCxiK0TcXSiQ7HJC2A0eR
- ISxznmt6A4+fG5LDTNCJqgwC221usMY3GdSDQIUnpsJRW8FtIpE1wHpjtMJCjGHNHHummrwF
-X-Proofpoint-GUID: umY9LuCWRT_4Z46m74en7xSK2Owj1ieb
-X-Proofpoint-ORIG-GUID: umY9LuCWRT_4Z46m74en7xSK2Owj1ieb
-X-Authority-Analysis: v=2.4 cv=combk04i c=1 sm=1 tr=0 ts=685a7f86 cx=c_pps a=AfN7/Ok6k8XGzOShvHwTGQ==:117 a=AfN7/Ok6k8XGzOShvHwTGQ==:17 a=kj9zAlcOel0A:10 a=6IFa9wvqVegA:10 a=7CQSdrXTAAAA:8 a=XP1gfaMLOQXsyWrxb4UA:9 a=CjuIK1q_8ugA:10
- a=a-qgeE7W1pNrGK8U0ZQC:22
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.7,FMLib:17.12.80.40
- definitions=2025-06-24_04,2025-06-23_07,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 spamscore=0 adultscore=0 mlxlogscore=999 clxscore=1011
- impostorscore=0 suspectscore=0 mlxscore=0 phishscore=0 lowpriorityscore=0
- bulkscore=0 classifier=spam authscore=0 authtc=n/a authcc= route=outbound
- adjust=0 reason=mlx scancount=1 engine=8.19.0-2505280000
- definitions=main-2506240087
 
-On Tue, 24 Jun 2025 13:20:42 +0530
-Anshuman Khandual <anshuman.khandual@arm.com> wrote:
-
-> Hello Gerald,
-> 
-> On 24/06/25 12:13 AM, Gerald Schaefer wrote:
-> > Hi,
+On Sun, 22 Jun 2025, Xiang Shen wrote:
+> On Fri, Jun 20, 2025 at 12:00:03PM +1000, Hans de Goede wrote:
+> > On 20-Jun-25 2:38 AM, Xiang Shen wrote:
+> > > Fix checkpatch code style errors:
+> > > 
+> > > ERROR: do not use assignment in if condition
+> > > +	if ((ke = sparse_keymap_entry_from_scancode(priv->buttons_dev, event))) {
+> > > 
+> > > ERROR: do not use assignment in if condition
+> > > +	} else if ((ke = sparse_keymap_entry_from_scancode(priv->switches_dev, event))) {
+> > > 
+> > > Signed-off-by: Xiang Shen <turyshen@gmail.com>
 > > 
-> > currently working on enabling THP_SWAP and THP_MIGRATION support for s390,
-> > and stumbling over the WARN_ON(args->fixed_pmd_pfn != pmd_pfn(pmd)) in
-> > debug_vm_pgtable pmd_swap_tests(). The problem is that pmd_pfn() on s390
-> > will use different shift values for leaf (large) and non-leaf PMDs. And
-> > when used on swapped PMDs, for which pmd_leaf() will always return false
-> > because !pmd_present(), the result is not really well defined.  
-> 
-> Just curious - pmd_pfn() would have otherwise worked on leaf PMD entries ?
-> Because the PMD swap entries are not leaf entries as pmd_present() returns
-> negative, pmd_pfn() does not work on those ?
-
-Yes, but there are actually two problems with this. The initial pmd that
-is created with pfn_pmd() is already not leaf/large, but present, so
-pmd_pfn() would already not work correctly on s390.
-
-Later, after the __pmd_to_swp_entry() / __swp_entry_to_pmd() cycle, the
-present bit got removed because of how those helpers will be implemented
-for s390. Now it is neither large nor present, and pmd_pfn() will be
-extra confused.
-
-IOW, even if we could implement those helpers as simple no-ops similar
-to other archs, the check would still not work, even though the PMD would
-have the present bit set, but it still wouldn't be leaf/large.
-
-I guess my description was a bit confusing, since the !pmd_present()
-case would only show on s390, but it is not the only problem here.
-I think the point is that those helpers should only be used on "proper"
-swap PTE/PMD entries, which already cannot be present. And of course
-that pte/pmd_pfn() is not meant to be used on such entries at all, as
-David explained.
-
-> 
+> > Thank you for your patch, but this change really does not make
+> > the code more readable.
 > > 
-> > I think that pmd_pfn() is not safe or ever meant to be called on swapped
-> > PMD entries, and it doesn't seem to be used in that way anywhere else but
-> > debug_vm_pgtable. Also, the whole logic to test the various swap helpers  
-> 
-> But is not the pmd_pfn() called on pmd which is derived from the swap entry
-> first.
-> 
-> 	pmd = pfn_pmd(args->fixed_pmd_pfn, args->page_prot);
-> 	swp = __pmd_to_swp_entry(pmd);
-> 	pmd = __swp_entry_to_pmd(swp);
-> 	WARN_ON(args->fixed_pmd_pfn != pmd_pfn(pmd));
-
-Yes, but this logic is not really testing swap entries. It only works
-because on other archs the __pmd_to_swp_entry() / __swp_entry_to_pmd() are
-no-ops, and because pmd_pfn() does not care about leaf/large.
-
-> 
-> > on normal PTE/PMD entries seems wrong to me. It just works by chance,
-> > because e.g. __pmd_to_swp_entry() and __swp_entry_to_pmd() are just no-ops
-> > on other architectures (also on s390, but only for PTEs), and also  
-> 
-> Hmm, basically it just tests pfn_pmd() and pmd_pfn() conversions ?
-
-Correct, but with the extra quirk that the initial PMD created by pfn_pmd()
-is not leaf/large, which is apparently not a problem on other archs for
-the pmd_pfn() conversion.
-
-Actually, I now wonder why pfn_pmd() would not implicitly mark it as
-leaf/large already, as it seems that this should only be used for leaf
-PMDs. But maybe there are some special cases where it could also be
-used for non-leaf PMDs.
-
-> 
-> > pmd_pfn() does not have any dependency on leaf/non-leaf entries there.
-> Could you please elaborate on that ?
-
-As explained above, the initial PMD created by pfn_pmd() is not leaf/large.
-Well, conceptually it is more or less, but it is not marked as such. This
-would lead to incorrect pmd_pfn() result (only) on s390.
-
-> 
+> > The contrary the suggested changes are making the code harder
+> > to read, so NACK.
 > > 
-> > So, I started with a small patch to make pmd_swap_tests() use a proper
-> > swapped PMD entry as input value, similar to how it is already done in
-> > pte_swap_exclusive_tests(), and not use pmd_pfn() for compare but rather
-> > compare the whole entries, again similar to pte_swap_exclusive_tests().  
-> 
-> Agreed, that will make sense as well.
-> 
+> > Note checkpatch is just a tool, sometimes there are good reasons
+> > to deviate from the style checks done by checkpatch.
 > > 
-> > But then I noticed that such a change would probably also make sense for
-> > the other swap tests, and also a small inconsistency in Documentation,
-> > where it says e.g.
+> > Next time when submitting a patch to fix checkpatch issues please
+> > take a look at the resulting code after the patch and only submit
+> > the patch upstream if it actually is an improvement.
 > > 
-> > __pte_to_swp_entry        | Creates a swapped entry (arch) from a mapped PTE
+> > Regards,
 > > 
-> > I think this is wrong, those helpers should never operate on present and
-> > mapped PTEs, and they certainly don't create any swapped entry from a
-> > mapped entry, given that they are just no-ops on most architectures.
-> > Instead, in this example, it just returns the arch-dependent
-> > representation of a swp_entry_t, which happens to be just the entry
-> > itself on most architectures. See also pte_to_swp_entry() /
-> > swp_entry_to_pte() in include/linux/swapops.h.  
-> 
-> Alright.
-> 
+> > Hans
 > > 
-> > Now it became a larger clean-up, and I hope it makes sense. This is all
-> > rather new common code for me, so maybe I got things wrong, feedback is
-> > welcome.  
+> Hi Hans,
 > 
-> A quick ran on arm64 looks just fine, will keep looking into this.
+> Thanks for the feedback. 
+> 
+> That's fine if breaking the "rule" is the only way to keep the file readable.
+> 
+> However, there are only three files (x86/sony-laptop.c and 
+> x86/dell/dell_rbu.c) out of 273 files in the whole drivers/platform 
+> folder that have such an error. 
 
-Thanks!
+Hi,
+
+Please don't call correct code "error" even if checkpatch may label it as 
+such. The goal is NOT and will never be to have zero checkpatch warnings.
+
+The fact that the checkpatch "rule" is broken only a few times does not 
+mean those 3 places have a problem, it just tells it's good rule for the
+general case. So I won't accept using such numbers as a leverage against 
+the few places just for the sake of silencing checkpatch.
+
+> Perhaps there are other approaches to make them more readable without 
+> breaking the rule.
+
+Perhaps, but I'm not sure the effort spent to find one is worthwhile 
+investment.
+
+> > > ---
+> > >  drivers/platform/x86/intel/vbtn.c | 38 +++++++++++++++++--------------
+> > >  1 file changed, 21 insertions(+), 17 deletions(-)
+> > > 
+> > > diff --git a/drivers/platform/x86/intel/vbtn.c b/drivers/platform/x86/intel/vbtn.c
+> > > index 232cd12e3c9f..bcc97b06844e 100644
+> > > --- a/drivers/platform/x86/intel/vbtn.c
+> > > +++ b/drivers/platform/x86/intel/vbtn.c
+> > > @@ -160,30 +160,34 @@ static void notify_handler(acpi_handle handle, u32 event, void *context)
+> > >  
+> > >  	guard(mutex)(&priv->mutex);
+> > >  
+> > > -	if ((ke = sparse_keymap_entry_from_scancode(priv->buttons_dev, event))) {
+> > > +	ke = sparse_keymap_entry_from_scancode(priv->buttons_dev, event);
+> > > +	if (ke) {
+> > >  		if (!priv->has_buttons) {
+> > >  			dev_warn(&device->dev, "Warning: received 0x%02x button event on a device without buttons, please report this.\n",
+> > >  				 event);
+> > >  			return;
+> > >  		}
+> > >  		input_dev = priv->buttons_dev;
+> > > -	} else if ((ke = sparse_keymap_entry_from_scancode(priv->switches_dev, event))) {
+> > > -		if (!priv->has_switches) {
+> > > -			/* See dual_accel_detect.h for more info */
+> > > -			if (priv->dual_accel)
+> > > -				return;
+> > > -
+> > > -			dev_info(&device->dev, "Registering Intel Virtual Switches input-dev after receiving a switch event\n");
+> > > -			ret = input_register_device(priv->switches_dev);
+> > > -			if (ret)
+> > > -				return;
+> > > -
+> > > -			priv->has_switches = true;
+> > > -		}
+> > > -		input_dev = priv->switches_dev;
+> > >  	} else {
+> > > -		dev_dbg(&device->dev, "unknown event index 0x%x\n", event);
+> > > -		return;
+> > > +		ke = sparse_keymap_entry_from_scancode(priv->switches_dev, event);
+> > > +		if (ke) {
+> > > +			if (!priv->has_switches) {
+> > > +				/* See dual_accel_detect.h for more info */
+> > > +				if (priv->dual_accel)
+> > > +					return;
+> > > +
+> > > +				dev_info(&device->dev, "Registering Intel Virtual Switches input-dev after receiving a switch event\n");
+> > > +				ret = input_register_device(priv->switches_dev);
+> > > +				if (ret)
+> > > +					return;
+> > > +
+> > > +				priv->has_switches = true;
+> > > +			}
+> > > +			input_dev = priv->switches_dev;
+> > > +		} else {
+> > > +			dev_dbg(&device->dev, "unknown event index 0x%x\n", event);
+> > > +			return;
+> > > +		}
+> > >  	}
+> > >  
+> > >  	if (priv->wakeup_mode) {
+> > 
+> 
+
+-- 
+ i.
 
 
