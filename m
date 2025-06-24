@@ -1,98 +1,123 @@
-Return-Path: <linux-kernel+bounces-700983-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-700948-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C7875AE6F28
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Jun 2025 21:05:49 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 3A804AE6EDC
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Jun 2025 20:46:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7975A17F557
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Jun 2025 19:05:48 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A751317CFCC
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Jun 2025 18:46:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8B8A42E613D;
-	Tue, 24 Jun 2025 19:05:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1BA5B2E7172;
+	Tue, 24 Jun 2025 18:46:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b="UQQwoqXE"
-Received: from smtp-1908.mail.infomaniak.ch (smtp-1908.mail.infomaniak.ch [185.125.25.8])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=lucaweiss.eu header.i=@lucaweiss.eu header.b="fdAFfRwM"
+Received: from ahti.lucaweiss.eu (ahti.lucaweiss.eu [128.199.32.197])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8A10B2E2EE2
-	for <linux-kernel@vger.kernel.org>; Tue, 24 Jun 2025 19:05:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.125.25.8
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6B4C423315A;
+	Tue, 24 Jun 2025 18:46:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=128.199.32.197
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750791917; cv=none; b=TszEIaY8q69ltHPX4KLQxPJ0GUeoEJynd2PDKKCiEq1TxKMd6RNf0QTO/7f6JcQktqrZgPoxHr6jmLfJngu5pgMwszhnhx5YBtrwKd01XaJ3fxfwgR2diibIlge1Xfvy/OGJugFcwtbsGNrm+Xia5a6Qxfo9jkeNXyRRrtSXnM8=
+	t=1750790800; cv=none; b=qY3YqpxVGDajnz7XHyIMptEZNvk6/Oi4t4cwbabbr99bcsN3+LduSO8p79MIhBxJ9f6eIAX/6oJ7A225yz15K1PfHiwv5PR/EQhp5r/NeNjQTXh56dqeyc4AwL7kiipSRfLhZzvRRFdPecCWjMYhXTzMbCroDcSW4uLu3kTiSVo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750791917; c=relaxed/simple;
-	bh=n3gPP5ter8z/G2UK+N8u5iPsNH1l9p6GeoNFT2fHCLI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=umB5ZsfO/evaiEPpSt4beRn0idedAdGrU1FqENdMJQzsteHzKHDRulr8xhoHpRi8U26D6wa6dHwjHVG4E3pgtSxQYkodHKGm03si2a860kpIWOkoRi8swpqHXa2w2B9bnwOZTuPKi8jvqnhV5F8C1NgQ9qP0P/h4acDxe/Lumnw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net; spf=pass smtp.mailfrom=digikod.net; dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b=UQQwoqXE; arc=none smtp.client-ip=185.125.25.8
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=digikod.net
-Received: from smtp-3-0000.mail.infomaniak.ch (unknown [IPv6:2001:1600:4:17::246b])
-	by smtp-3-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4bRYn45ytMzV6v;
-	Tue, 24 Jun 2025 20:46:00 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=digikod.net;
-	s=20191114; t=1750790760;
-	bh=u1rRYMTWI2GRDd2TE9wM30VWfP4sJX0NGJS6BmSAJtM=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=UQQwoqXEpxtEJCOHOk2/X9CWB1KzMUyxiRIvB/4YzrwwoneL5tl9zyvuzpwFXI361
-	 sLM702qxP1UsO/Y9b+ljbx52e28Loed5fXRuzmGrjQnGZnOVhlTlHfKrzjGq1IA9cu
-	 ML8DLRd9DdBy5QQhRjKWspMBAf7cHbjjAxG3NIr4=
-Received: from unknown by smtp-3-0000.mail.infomaniak.ch (Postfix) with ESMTPA id 4bRYn358gbzMBy;
-	Tue, 24 Jun 2025 20:45:59 +0200 (CEST)
-Date: Tue, 24 Jun 2025 20:45:58 +0200
-From: =?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>
-To: Song Liu <song@kernel.org>
-Cc: bpf@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-security-module@vger.kernel.org, brauner@kernel.org, 
-	kernel-team@meta.com, andrii@kernel.org, eddyz87@gmail.com, ast@kernel.org, 
-	daniel@iogearbox.net, martin.lau@linux.dev, viro@zeniv.linux.org.uk, jack@suse.cz, 
-	kpsingh@kernel.org, mattbobrowski@google.com, m@maowtm.org, neil@brown.name, 
-	=?utf-8?Q?G=C3=BCnther?= Noack <gnoack@google.com>
-Subject: Re: [PATCH v5 bpf-next 0/5] bpf path iterator
-Message-ID: <20250624.xahShi0iCh7t@digikod.net>
-References: <20250617061116.3681325-1-song@kernel.org>
- <CAPhsuW5uu8cOYJWJ3Gne+ixpiWVAby1hZOnUgsXcFASEhV4Xhg@mail.gmail.com>
+	s=arc-20240116; t=1750790800; c=relaxed/simple;
+	bh=7Kof3VsVQEwAhnIBqaWj3+BD5FpcbbRwilql5guZhTk=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=W+vQnTxzbxpMNvp3dVAP81KD0sbGx2MZCCqyn5HWRcGQn5hLrWtPBM3gi/23yvOJN4MV2wMyF68tO9JwZYqnHHg0mkktYOYxQh4LEBXVTVliJhZzkRtUAqdgWOgc+0xNVxn0t+uHaX4rEgTKoXIHQPIdvj+gh07PMuVEAniXAi0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=lucaweiss.eu; spf=pass smtp.mailfrom=lucaweiss.eu; dkim=pass (1024-bit key) header.d=lucaweiss.eu header.i=@lucaweiss.eu header.b=fdAFfRwM; arc=none smtp.client-ip=128.199.32.197
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=lucaweiss.eu
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lucaweiss.eu
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=lucaweiss.eu; s=s1;
+	t=1750790789; bh=7Kof3VsVQEwAhnIBqaWj3+BD5FpcbbRwilql5guZhTk=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To;
+	b=fdAFfRwM3z2AzSgyy9JisYCxm3OHDo3mBjcJ/1bWgLFPnkJ70qjvO3tEAUpyATx49
+	 4+f0FkeJ2XuE3V5iE3ydpuO47Uf1A6nOSxWOWPul8bbUUEk7X74HXrnClvE6zATtvK
+	 ifMNaQV5uDai3TZayC2pjf5Kz05OBJbZwnz/aXLE=
+Message-ID: <841c41cc-e44d-40c7-9431-a77feaa49b05@lucaweiss.eu>
+Date: Tue, 24 Jun 2025 20:46:28 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAPhsuW5uu8cOYJWJ3Gne+ixpiWVAby1hZOnUgsXcFASEhV4Xhg@mail.gmail.com>
-X-Infomaniak-Routing: alpha
+Subject: Re: [PATCH 0/4] Start using rpmpd for power domains on MSM8974
+To: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
+Cc: ~postmarketos/upstreaming@lists.sr.ht, phone-devel@vger.kernel.org,
+ Bjorn Andersson <andersson@kernel.org>,
+ Mathieu Poirier <mathieu.poirier@linaro.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Manivannan Sadhasivam <mani@kernel.org>,
+ Konrad Dybcio <konradybcio@kernel.org>, linux-arm-msm@vger.kernel.org,
+ linux-remoteproc@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+References: <20250621-msm8974-rpmpd-switch-v1-0-0a2cb303c446@lucaweiss.eu>
+ <amfgwjgstu4hoxz4lo7fqrqz5fqtf3r7o6wqvrrjkcfubwrjyz@5i75peprq3wn>
+Content-Language: en-US
+From: Luca Weiss <luca@lucaweiss.eu>
+In-Reply-To: <amfgwjgstu4hoxz4lo7fqrqz5fqtf3r7o6wqvrrjkcfubwrjyz@5i75peprq3wn>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Fri, Jun 20, 2025 at 02:59:17PM -0700, Song Liu wrote:
-> Hi Christian, Mickaël, and folks,
-> 
-> Could you please share your comments on this version? Does this
-> look sane?
+Hi Dmitry,
 
-This looks good to me but we need to know what is the acceptable next
-step to support RCU.  If we can go with another _rcu helper, I'm good
-with the current approach, otherwise we need to figure out a way to
-leverage the current helper to make it compatible with callers being in
-a RCU read-side critical section while leveraging safe path walk (i.e.
-several calls to path_walk_parent).
+On 24-06-2025 2:59 a.m., Dmitry Baryshkov wrote:
+> On Sat, Jun 21, 2025 at 03:19:55PM +0200, Luca Weiss wrote:
+>> Switch over the ADSP PIL to use power-domains instead of a regulator,
+>> and have one commit switching over the MSM8974 SoC plus all the devices
+>> to use power-domains.
+>>
+>> Note, that I'm aware that these changes are not backwards compatible and
+>> not really bisectable, but since it only affects the ADSP on these
+> 
+> Why? The cx-supply is handled unconditionally. A single-domain usecase
+> is also handled via a special code path. I think this might be
+> backwards-compatible, by the pure luck.
+
+Honestly I have not tried and not looked much. I mostly added this 
+paragraph to avoid the response that this change might break and is not 
+really backwards compatible. If it does (by accident) work with the 
+updated dts without the driver and the other way around, then even better.
+
+Regards
+Luca
 
 > 
-> Thanks,
-> Song
+>> pretty old boards, I say it's fine to have this. Get all the patches
+>> into the same release (6.17?) and then we're good again.
+>>
+>> Signed-off-by: Luca Weiss <luca@lucaweiss.eu>
+>> ---
+>> Luca Weiss (4):
+>>        dt-bindings: remoteproc: qcom,adsp: Make msm8974 use CX as power domain
+>>        remoteproc: qcom_q6v5_pas: Use resource with CX PD for MSM8974
+>>        ARM: dts: qcom: msm8974: Sort header includes alphabetically
+>>        ARM: dts: qcom: msm8974: Start using rpmpd for power domains
+>>
+>>   .../devicetree/bindings/remoteproc/qcom,adsp.yaml  | 18 ++------
+>>   .../arm/boot/dts/qcom/qcom-apq8074-dragonboard.dts | 13 ------
+>>   .../qcom/qcom-msm8974-lge-nexus5-hammerhead.dts    | 12 ------
+>>   .../boot/dts/qcom/qcom-msm8974-samsung-hlte.dts    | 12 ------
+>>   .../dts/qcom/qcom-msm8974-sony-xperia-rhine.dtsi   | 12 ------
+>>   arch/arm/boot/dts/qcom/qcom-msm8974.dtsi           | 50 ++++++++++++++++++++--
+>>   .../dts/qcom/qcom-msm8974pro-fairphone-fp2.dts     |  8 ----
+>>   arch/arm/boot/dts/qcom/qcom-msm8974pro-htc-m8.dts  | 11 -----
+>>   .../dts/qcom/qcom-msm8974pro-oneplus-bacon.dts     |  9 ----
+>>   .../qcom/qcom-msm8974pro-samsung-klte-common.dtsi  | 11 ++---
+>>   ...qcom-msm8974pro-sony-xperia-shinano-common.dtsi | 12 ------
+>>   drivers/remoteproc/qcom_q6v5_pas.c                 |  2 +-
+>>   12 files changed, 56 insertions(+), 114 deletions(-)
+>> ---
+>> base-commit: 7fa2fb97cd28e1d9670da538095565b6fba83977
+>> change-id: 20250621-msm8974-rpmpd-switch-b19b166c02be
+>>
+>> Best regards,
+>> -- 
+>> Luca Weiss <luca@lucaweiss.eu>
+>>
 > 
-> On Mon, Jun 16, 2025 at 11:11 PM Song Liu <song@kernel.org> wrote:
-> >
-> > In security use cases, it is common to apply rules to VFS subtrees.
-> > However, filtering files in a subtree is not straightforward [1].
-> >
-> > One solution to this problem is to start from a path and walk up the VFS
-> > tree (towards the root). Among in-tree LSMs, Landlock uses this solution.
-> >
-> 
-> [...]
-> 
+
 
