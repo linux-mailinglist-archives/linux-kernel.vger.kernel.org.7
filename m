@@ -1,146 +1,272 @@
-Return-Path: <linux-kernel+bounces-700462-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-700502-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0D7CEAE68FF
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Jun 2025 16:38:17 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id ADCABAE6989
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Jun 2025 16:51:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7B037189E265
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Jun 2025 14:33:07 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3EBB717822D
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Jun 2025 14:44:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2C9A72D4B59;
-	Tue, 24 Jun 2025 14:32:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5AAA82EF67A;
+	Tue, 24 Jun 2025 14:34:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="LMMPD4nf"
-Received: from mail-wm1-f52.google.com (mail-wm1-f52.google.com [209.85.128.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="VsiLNRwa"
+Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4DCC2291C37
-	for <linux-kernel@vger.kernel.org>; Tue, 24 Jun 2025 14:32:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7B6042F1984;
+	Tue, 24 Jun 2025 14:34:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750775552; cv=none; b=tNGJ0oa1oE5tfKTMY/TlNbUJUlTr0QyqEgsJgdR+/CdDWVPCoOVL+F1Fd7+bQvDZBBDjb2SPRMcYDmtKAmaCl32jWPTW5WeP7fk17hH1OH+P+3fiemsO377T1Ke0M8AA4F4Tw0IwHlHawP0+ALp+wtreoc8c+peLDo+FOms1Grw=
+	t=1750775650; cv=none; b=Q/DOyTcvI/6ISEvTnyF1XL+INXizQlHiH5pYYhWaATmLmymkWe5b5m2g9jOjL9XctR541k2vcomvbnyg8PWlki9FFsTGPQXeq8AUNzDOAkqWnRPtqc1H4keIWFKPfc96cXW34szAnAP0SgtfwC+Dq3xszt/qay1RNsrUquNfKEc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750775552; c=relaxed/simple;
-	bh=ETdCBVd9dlKlAmlrVMybF4vKOHUekbdvIvNdfOPZpVI=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=JqJbWkxHsxe8GTGIF8FyzNbRK4Oa8a6YuDdSL2PCE5OzfMNQW0Kv15mg7ybekMzgTX8jVppFCGmMEzZ2qIWZK4qNPQWJU3gJbBpY2/4Iuox06nX6FnCvzBAvDsUFMSGzac2U9nfzfhwuHXUaHOPrUcX3TmqXO0Ejq1f6pW4QXu0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=LMMPD4nf; arc=none smtp.client-ip=209.85.128.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
-Received: by mail-wm1-f52.google.com with SMTP id 5b1f17b1804b1-453608ed113so48017735e9.0
-        for <linux-kernel@vger.kernel.org>; Tue, 24 Jun 2025 07:32:30 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1750775549; x=1751380349; darn=vger.kernel.org;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=lFxv+CSVT1JduUoBwXVfn9STkVHcaXwFmqXMPaWFmWg=;
-        b=LMMPD4nfWmfdt3oxavht3kP9icuM4VZ/jIaW4KZA6XWc1bvgtK1b2P07rsc+zoF7ld
-         pwc3Mph3yYPdAEVlzDzaWA6U+Jre07n2zfPdLlPrav9nJQwSd/VvCpzGwo7dnjAlK5VZ
-         QdUHO5lZdnEi6gU6evxcrZET7MEpwCjE05BHwCOrObyf7wp8Fmdy/F1fKFUVyQa1TIt0
-         H8vp756+bFX5/fkLz7RsR7YTBBgtxHMDBwDjLnq083xyukgD0GUE6ob2ntRCrgWJZHS/
-         bTMaKmbF5IuOuaty+HzI155cUX6KP4iJXuyuYk/JhAC9xb2janfZv18LKuC8HiHrKExj
-         Ts4w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1750775549; x=1751380349;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=lFxv+CSVT1JduUoBwXVfn9STkVHcaXwFmqXMPaWFmWg=;
-        b=t+4G8i7rz09HSF2IUuMjIjFaRdiHYnidAEBU73mNHt21toNbzhdBpYo7AyaY0JyUtl
-         vF229CLZrty8pgs3+Hw7yx0SdsRWwZJTn0Hb64sJlibY1jdIa1Xw+8Zu6gN+mIfAApzt
-         ccezKDBDZ/x5RxBFld34kDl63IK3/WIMdxzsdIPD1STiKPFwmDSHPAed04JjjVOA4oy3
-         2xWWTIfU+t0EzZyQ+5R1CYfILR9qfNFR//VQjyo6S0ujLAFXUH9SepCB7UrlQMIFR7Ih
-         jap9QZPUGi76Pa5qFrsryEnjzkm/O2Q5q9q4Z8c2sOI7HuPm0LA5KumyXT9PJrokQQZ/
-         vsHA==
-X-Forwarded-Encrypted: i=1; AJvYcCX2SK0OzdNb29gcubOY+dDax61M1BeU5ryOPb24i8jEV4exJxRkW8B/yG6JIh4WPZKox9WVNatu8xCro3g=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzY2xYDf3h3aYK/ji7RT6pMCItZTZll7R85/Rbv6gYj7t1WwBRD
-	6uuH9DiP3oifRf4z9GxKwoNEOO9baXAdsgtw6F+IBRVFtETwu/n0Q4996gtDL+d/nDE=
-X-Gm-Gg: ASbGnctab1IKmFEvxJ/UuXHsIqpQmAqBFXVoWWKy0Nn73XEu5pn9b+bmGHz43UW7iL/
-	hqJTTolb9Wqrifz7Ahpz0XbKWNH/Zh6EnnvCKhyEqSZYXBEVcInjAdp4U9pY8BBoRHQv6Itynr0
-	PMBs70DX0blMOeg0762kLWyw6FbvdVYXNkuDebFR9J6UNUvSOvL0G6gTnLWAa2k8Z1LsMyQRz+V
-	m7NVClULLqDz1iSlJYQU0Tl1v9CI8gH/zXGnv+hWjiM6G3/7fKJuUwB3FhyLPhjfsKxmxUay16/
-	0dVrdZ9F6ZAvhPQZcCbMKucI9EKbXNdDuEL63a7L7eqq7BSnlUQpTKk+
-X-Google-Smtp-Source: AGHT+IHD4d2ak9CVpp5Gb3Vl//bTvUG78qxypokPSA3JfLjuNCjdx/+p/2yyT5p37+Ky+IXsejzn0Q==
-X-Received: by 2002:a05:600c:3489:b0:453:b44:eb69 with SMTP id 5b1f17b1804b1-4537dfbbd31mr26524705e9.13.1750775548638;
-        Tue, 24 Jun 2025 07:32:28 -0700 (PDT)
-Received: from [127.0.1.1] ([2a01:cb1d:dc:7e00:34d2:109c:3293:19e9])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4535ead2a84sm178512935e9.32.2025.06.24.07.32.27
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 24 Jun 2025 07:32:28 -0700 (PDT)
-From: Bartosz Golaszewski <brgl@bgdev.pl>
+	s=arc-20240116; t=1750775650; c=relaxed/simple;
+	bh=DtTAorRV04m+UqPYLziqVem+0lw1n5bOrgf3qqoVW5c=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=fP6b1gBJjJ5eQaETHbA7wG8JPEK8IAd7uqIQjB8W+uHMl0Xr25uuyqi7/Bfo1zYMejO8iRoIXCPqNBfsZUIVACrw0KsPCCJT7r+kvPNBYguEb8Vsx/ZvkL9qZUjex4rhZXLXk4vK7/9f63bLFG4/MBXoxinBMqNiSg28G6xRU1E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=VsiLNRwa; arc=none smtp.client-ip=148.251.105.195
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+	s=mail; t=1750775646;
+	bh=DtTAorRV04m+UqPYLziqVem+0lw1n5bOrgf3qqoVW5c=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=VsiLNRwajvv2QJrEI0N56LRWn/q+GcLO/NyN0sqValhG5nLcmDqC7+zBK9sCEZF6j
+	 EA23m8PBURNmZoB5CTQmOKCksyzNvN956ABXnUmWKaBBunVMAdc1GUAUtArd3mC3nk
+	 +cZjdxCuJG8iM/AiAuLj0lx8TvBZ5Vk6dph37TJS+HztSdCLJ0f1vg4nRWIBC//BJQ
+	 ZGefeMgDTiBkMcaGjG8IhDk9dYlEGQCgGaSHICa1zEyb2gRpiI9LYM6zITv/rxHURB
+	 1qZa6TBT9MaIr6bz2iEp2eZLDbNym3aADg6urX3IjngxZwDlS+VW3qLyP4+xe4KnLi
+	 PGx8953xaJHzg==
+Received: from laura.lan (unknown [IPv6:2001:b07:646b:e2:d2c7:2075:2c3c:38e5])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: laura.nao)
+	by bali.collaboradmins.com (Postfix) with ESMTPSA id A507C17E1067;
+	Tue, 24 Jun 2025 16:34:05 +0200 (CEST)
+From: Laura Nao <laura.nao@collabora.com>
+To: mturquette@baylibre.com,
+	sboyd@kernel.org,
+	robh@kernel.org,
+	krzk+dt@kernel.org,
+	conor+dt@kernel.org,
+	matthias.bgg@gmail.com,
+	angelogioacchino.delregno@collabora.com,
+	p.zabel@pengutronix.de,
+	richardcochran@gmail.com
+Cc: guangjie.song@mediatek.com,
+	wenst@chromium.org,
+	linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-mediatek@lists.infradead.org,
+	netdev@vger.kernel.org,
+	kernel@collabora.com,
+	Laura Nao <laura.nao@collabora.com>
+Subject: [PATCH v2 27/29] clk: mediatek: Add MT8196 ovl1 clock support
 Date: Tue, 24 Jun 2025 16:32:18 +0200
-Subject: [PATCH 1/5] pwrseq: thead-gpu: add missing header
+Message-Id: <20250624143220.244549-28-laura.nao@collabora.com>
+X-Mailer: git-send-email 2.39.5
+In-Reply-To: <20250624143220.244549-1-laura.nao@collabora.com>
+References: <20250624143220.244549-1-laura.nao@collabora.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
-Message-Id: <20250624-pwrseq-match-defines-v1-1-a59d90a951f1@linaro.org>
-References: <20250624-pwrseq-match-defines-v1-0-a59d90a951f1@linaro.org>
-In-Reply-To: <20250624-pwrseq-match-defines-v1-0-a59d90a951f1@linaro.org>
-To: Drew Fustini <drew@pdp7.com>, Guo Ren <guoren@kernel.org>, 
- Fu Wei <wefu@redhat.com>, Bartosz Golaszewski <brgl@bgdev.pl>, 
- Ulf Hansson <ulf.hansson@linaro.org>, 
- Michal Wilczynski <m.wilczynski@samsung.com>
-Cc: linux-riscv@lists.infradead.org, linux-pm@vger.kernel.org, 
- linux-kernel@vger.kernel.org, 
- Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1282;
- i=bartosz.golaszewski@linaro.org; h=from:subject:message-id;
- bh=kuQ4uO8LOxmEAAqs0l/C6pNUD/i2/y1K+eYCkH9r2oE=;
- b=owEBbQKS/ZANAwAKARGnLqAUcddyAcsmYgBoWrb5hTVaHLse7YY4Z8fJIQZKJ3AQgAUmHNQv0
- VwZwM91+1SJAjMEAAEKAB0WIQQWnetsC8PEYBPSx58Rpy6gFHHXcgUCaFq2+QAKCRARpy6gFHHX
- cujsEADPF8KCWrxiSt3p+cb4oVKfu3+XmlPa8P9/B3GoYcQRJeLWaTiMykmZYCWqLqquF996s5Z
- wmdFKfXPHda6dYr0UrL6AjoMDT3E2vi7vhx8XCENm0S3SU2IPnmUC6ZoSrRxq4j+pVYbchBLpi6
- usUAgi/RwAJ+oG36mYWYewQdGX7+2dpMjje5y1awCGwzcscsyg6IxSJDp0puslMfIYTfsh/cfRA
- fBJIzMW/dlVZW0QZVjXoZHWG6dlQbkAmUEiVURqPeKnia6SAvivPg8D+vyYv4etq5Clv18wCJRI
- lonF0OYTo0XxK3SAtUTgyuyYbiZr2uUAJDyOvzVgTjaJ+kbz2q7s+ykgusXxpBrhfsx0hxTOsh+
- Gznzh9pKDozRA9R8QOBdLmHbzqoVvWojoURYiul1T/q/06+CbC7rXfj8z6rH8kaRSBzPE37AIf6
- V8CKI/Uqz0B7JZCC1rtmFnWW7fFIkZGLD5DPG+rxIJ7y9IZnAtj3sk1vCRM1rHgnX4+1KajRx0H
- OXe6HlBsNJCmMzP446DYdvuj+DWhCghrCxIRQLl2EQm5vjiYzGhM27jt2ofnYPFw2G+hob+VbSa
- LmG1m17inHqLh1uVc/ypB5241VTSoK05UHHf8YR9GurlLl5qGyloHhTHqZdiO9zDc/llKFs77po
- z9GnVX4voR6m3Jw==
-X-Developer-Key: i=bartosz.golaszewski@linaro.org; a=openpgp;
- fpr=169DEB6C0BC3C46013D2C79F11A72EA01471D772
 
-From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+Add support for the MT8196 ovl1 clock controller, which provides clock
+gate control for the display system. It is integrated with the mtk-mmsys
+driver, which registers the ovl1 clock driver via
+platform_device_register_data().
 
-When using kcalloc(), kfree() etc., we need to include linux/slab.h.
-While on some architectures it may work fine because the header is
-pulled in implicitly, on others it triggers the following errors:
-
-drivers/power/sequencing/pwrseq-thead-gpu.c: In function ‘pwrseq_thead_gpu_match’:
-drivers/power/sequencing/pwrseq-thead-gpu.c:147:21: error: implicit declaration of function ‘kcalloc’ [-Wimplicit-function-declaration]
-  147 |         ctx->clks = kcalloc(ctx->num_clks, sizeof(*ctx->clks), GFP_KERNEL);
-
-Fixes: d4c2d9b5b7ce ("power: sequencing: Add T-HEAD TH1520 GPU power sequencer driver")
-Signed-off-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+Reviewed-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+Signed-off-by: Laura Nao <laura.nao@collabora.com>
 ---
- drivers/power/sequencing/pwrseq-thead-gpu.c | 1 +
- 1 file changed, 1 insertion(+)
+ drivers/clk/mediatek/Makefile          |   2 +-
+ drivers/clk/mediatek/clk-mt8196-ovl1.c | 153 +++++++++++++++++++++++++
+ 2 files changed, 154 insertions(+), 1 deletion(-)
+ create mode 100644 drivers/clk/mediatek/clk-mt8196-ovl1.c
 
-diff --git a/drivers/power/sequencing/pwrseq-thead-gpu.c b/drivers/power/sequencing/pwrseq-thead-gpu.c
-index 3dd27c32020a6d3b551eeaff2859456fed679814..855c6cc4f3b5bd1aa6e93305af0417d5791b092d 100644
---- a/drivers/power/sequencing/pwrseq-thead-gpu.c
-+++ b/drivers/power/sequencing/pwrseq-thead-gpu.c
-@@ -21,6 +21,7 @@
- #include <linux/of.h>
- #include <linux/pwrseq/provider.h>
- #include <linux/reset.h>
-+#include <linux/slab.h>
- 
- #include <dt-bindings/power/thead,th1520-power.h>
- 
-
+diff --git a/drivers/clk/mediatek/Makefile b/drivers/clk/mediatek/Makefile
+index 14a3caac04e4..e3fa5cc2163a 100644
+--- a/drivers/clk/mediatek/Makefile
++++ b/drivers/clk/mediatek/Makefile
+@@ -169,7 +169,7 @@ obj-$(CONFIG_COMMON_CLK_MT8196_MCUSYS) += clk-mt8196-mcu.o
+ obj-$(CONFIG_COMMON_CLK_MT8196_MDPSYS) += clk-mt8196-mdpsys.o
+ obj-$(CONFIG_COMMON_CLK_MT8196_MFGCFG) += clk-mt8196-mfg.o
+ obj-$(CONFIG_COMMON_CLK_MT8196_MMSYS) += clk-mt8196-disp0.o clk-mt8196-disp1.o clk-mt8196-vdisp_ao.o \
+-					 clk-mt8196-ovl0.o
++					 clk-mt8196-ovl0.o clk-mt8196-ovl1.o
+ obj-$(CONFIG_COMMON_CLK_MT8196_PEXTPSYS) += clk-mt8196-pextp.o
+ obj-$(CONFIG_COMMON_CLK_MT8196_UFSSYS) += clk-mt8196-ufs_ao.o
+ obj-$(CONFIG_COMMON_CLK_MT8365) += clk-mt8365-apmixedsys.o clk-mt8365.o
+diff --git a/drivers/clk/mediatek/clk-mt8196-ovl1.c b/drivers/clk/mediatek/clk-mt8196-ovl1.c
+new file mode 100644
+index 000000000000..b6a820cce80e
+--- /dev/null
++++ b/drivers/clk/mediatek/clk-mt8196-ovl1.c
+@@ -0,0 +1,153 @@
++// SPDX-License-Identifier: GPL-2.0-only
++/*
++ * Copyright (c) 2025 MediaTek Inc.
++ *                    Guangjie Song <guangjie.song@mediatek.com>
++ * Copyright (c) 2025 Collabora Ltd.
++ *                    Laura Nao <laura.nao@collabora.com>
++ */
++#include <dt-bindings/clock/mediatek,mt8196-clock.h>
++#include <linux/clk-provider.h>
++#include <linux/module.h>
++#include <linux/of_device.h>
++#include <linux/platform_device.h>
++
++#include "clk-gate.h"
++#include "clk-mtk.h"
++
++static const struct mtk_gate_regs ovl10_cg_regs = {
++	.set_ofs = 0x104,
++	.clr_ofs = 0x108,
++	.sta_ofs = 0x100,
++};
++
++static const struct mtk_gate_regs ovl10_hwv_regs = {
++	.set_ofs = 0x0050,
++	.clr_ofs = 0x0054,
++	.sta_ofs = 0x2c28,
++};
++
++static const struct mtk_gate_regs ovl11_cg_regs = {
++	.set_ofs = 0x114,
++	.clr_ofs = 0x118,
++	.sta_ofs = 0x110,
++};
++
++static const struct mtk_gate_regs ovl11_hwv_regs = {
++	.set_ofs = 0x0058,
++	.clr_ofs = 0x005c,
++	.sta_ofs = 0x2c2c,
++};
++
++#define GATE_HWV_OVL10(_id, _name, _parent, _shift) {	\
++		.id = _id,				\
++		.name = _name,				\
++		.parent_name = _parent,			\
++		.regs = &ovl10_cg_regs,			\
++		.hwv_regs = &ovl10_hwv_regs,		\
++		.shift = _shift,			\
++		.ops = &mtk_clk_gate_hwv_ops_setclr,	\
++		.flags =  CLK_OPS_PARENT_ENABLE,	\
++	}
++
++#define GATE_HWV_OVL11(_id, _name, _parent, _shift) {	\
++		.id = _id,				\
++		.name = _name,				\
++		.parent_name = _parent,			\
++		.regs = &ovl11_cg_regs,			\
++		.hwv_regs = &ovl11_hwv_regs,		\
++		.shift = _shift,			\
++		.ops = &mtk_clk_gate_hwv_ops_setclr,	\
++		.flags = CLK_OPS_PARENT_ENABLE,		\
++	}
++
++static const struct mtk_gate ovl1_clks[] = {
++	/* OVL10 */
++	GATE_HWV_OVL10(CLK_OVL1_OVLSYS_CONFIG, "ovl1_ovlsys_config", "disp", 0),
++	GATE_HWV_OVL10(CLK_OVL1_OVL_FAKE_ENG0, "ovl1_ovl_fake_eng0", "disp", 1),
++	GATE_HWV_OVL10(CLK_OVL1_OVL_FAKE_ENG1, "ovl1_ovl_fake_eng1", "disp", 2),
++	GATE_HWV_OVL10(CLK_OVL1_OVL_MUTEX0, "ovl1_ovl_mutex0", "disp", 3),
++	GATE_HWV_OVL10(CLK_OVL1_OVL_EXDMA0, "ovl1_ovl_exdma0", "disp", 4),
++	GATE_HWV_OVL10(CLK_OVL1_OVL_EXDMA1, "ovl1_ovl_exdma1", "disp", 5),
++	GATE_HWV_OVL10(CLK_OVL1_OVL_EXDMA2, "ovl1_ovl_exdma2", "disp", 6),
++	GATE_HWV_OVL10(CLK_OVL1_OVL_EXDMA3, "ovl1_ovl_exdma3", "disp", 7),
++	GATE_HWV_OVL10(CLK_OVL1_OVL_EXDMA4, "ovl1_ovl_exdma4", "disp", 8),
++	GATE_HWV_OVL10(CLK_OVL1_OVL_EXDMA5, "ovl1_ovl_exdma5", "disp", 9),
++	GATE_HWV_OVL10(CLK_OVL1_OVL_EXDMA6, "ovl1_ovl_exdma6", "disp", 10),
++	GATE_HWV_OVL10(CLK_OVL1_OVL_EXDMA7, "ovl1_ovl_exdma7", "disp", 11),
++	GATE_HWV_OVL10(CLK_OVL1_OVL_EXDMA8, "ovl1_ovl_exdma8", "disp", 12),
++	GATE_HWV_OVL10(CLK_OVL1_OVL_EXDMA9, "ovl1_ovl_exdma9", "disp", 13),
++	GATE_HWV_OVL10(CLK_OVL1_OVL_BLENDER0, "ovl1_ovl_blender0", "disp", 14),
++	GATE_HWV_OVL10(CLK_OVL1_OVL_BLENDER1, "ovl1_ovl_blender1", "disp", 15),
++	GATE_HWV_OVL10(CLK_OVL1_OVL_BLENDER2, "ovl1_ovl_blender2", "disp", 16),
++	GATE_HWV_OVL10(CLK_OVL1_OVL_BLENDER3, "ovl1_ovl_blender3", "disp", 17),
++	GATE_HWV_OVL10(CLK_OVL1_OVL_BLENDER4, "ovl1_ovl_blender4", "disp", 18),
++	GATE_HWV_OVL10(CLK_OVL1_OVL_BLENDER5, "ovl1_ovl_blender5", "disp", 19),
++	GATE_HWV_OVL10(CLK_OVL1_OVL_BLENDER6, "ovl1_ovl_blender6", "disp", 20),
++	GATE_HWV_OVL10(CLK_OVL1_OVL_BLENDER7, "ovl1_ovl_blender7", "disp", 21),
++	GATE_HWV_OVL10(CLK_OVL1_OVL_BLENDER8, "ovl1_ovl_blender8", "disp", 22),
++	GATE_HWV_OVL10(CLK_OVL1_OVL_BLENDER9, "ovl1_ovl_blender9", "disp", 23),
++	GATE_HWV_OVL10(CLK_OVL1_OVL_OUTPROC0, "ovl1_ovl_outproc0", "disp", 24),
++	GATE_HWV_OVL10(CLK_OVL1_OVL_OUTPROC1, "ovl1_ovl_outproc1", "disp", 25),
++	GATE_HWV_OVL10(CLK_OVL1_OVL_OUTPROC2, "ovl1_ovl_outproc2", "disp", 26),
++	GATE_HWV_OVL10(CLK_OVL1_OVL_OUTPROC3, "ovl1_ovl_outproc3", "disp", 27),
++	GATE_HWV_OVL10(CLK_OVL1_OVL_OUTPROC4, "ovl1_ovl_outproc4", "disp", 28),
++	GATE_HWV_OVL10(CLK_OVL1_OVL_OUTPROC5, "ovl1_ovl_outproc5", "disp", 29),
++	GATE_HWV_OVL10(CLK_OVL1_OVL_MDP_RSZ0, "ovl1_ovl_mdp_rsz0", "disp", 30),
++	GATE_HWV_OVL10(CLK_OVL1_OVL_MDP_RSZ1, "ovl1_ovl_mdp_rsz1", "disp", 31),
++	/* OVL11 */
++	GATE_HWV_OVL11(CLK_OVL1_OVL_DISP_WDMA0, "ovl1_ovl_disp_wdma0", "disp", 0),
++	GATE_HWV_OVL11(CLK_OVL1_OVL_DISP_WDMA1, "ovl1_ovl_disp_wdma1", "disp", 1),
++	GATE_HWV_OVL11(CLK_OVL1_OVL_UFBC_WDMA0, "ovl1_ovl_ufbc_wdma0", "disp", 2),
++	GATE_HWV_OVL11(CLK_OVL1_OVL_MDP_RDMA0, "ovl1_ovl_mdp_rdma0", "disp", 3),
++	GATE_HWV_OVL11(CLK_OVL1_OVL_MDP_RDMA1, "ovl1_ovl_mdp_rdma1", "disp", 4),
++	GATE_HWV_OVL11(CLK_OVL1_OVL_BWM0, "ovl1_ovl_bwm0", "disp", 5),
++	GATE_HWV_OVL11(CLK_OVL1_DLI0, "ovl1_dli0", "disp", 6),
++	GATE_HWV_OVL11(CLK_OVL1_DLI1, "ovl1_dli1", "disp", 7),
++	GATE_HWV_OVL11(CLK_OVL1_DLI2, "ovl1_dli2", "disp", 8),
++	GATE_HWV_OVL11(CLK_OVL1_DLI3, "ovl1_dli3", "disp", 9),
++	GATE_HWV_OVL11(CLK_OVL1_DLI4, "ovl1_dli4", "disp", 10),
++	GATE_HWV_OVL11(CLK_OVL1_DLI5, "ovl1_dli5", "disp", 11),
++	GATE_HWV_OVL11(CLK_OVL1_DLI6, "ovl1_dli6", "disp", 12),
++	GATE_HWV_OVL11(CLK_OVL1_DLI7, "ovl1_dli7", "disp", 13),
++	GATE_HWV_OVL11(CLK_OVL1_DLI8, "ovl1_dli8", "disp", 14),
++	GATE_HWV_OVL11(CLK_OVL1_DLO0, "ovl1_dlo0", "disp", 15),
++	GATE_HWV_OVL11(CLK_OVL1_DLO1, "ovl1_dlo1", "disp", 16),
++	GATE_HWV_OVL11(CLK_OVL1_DLO2, "ovl1_dlo2", "disp", 17),
++	GATE_HWV_OVL11(CLK_OVL1_DLO3, "ovl1_dlo3", "disp", 18),
++	GATE_HWV_OVL11(CLK_OVL1_DLO4, "ovl1_dlo4", "disp", 19),
++	GATE_HWV_OVL11(CLK_OVL1_DLO5, "ovl1_dlo5", "disp", 20),
++	GATE_HWV_OVL11(CLK_OVL1_DLO6, "ovl1_dlo6", "disp", 21),
++	GATE_HWV_OVL11(CLK_OVL1_DLO7, "ovl1_dlo7", "disp", 22),
++	GATE_HWV_OVL11(CLK_OVL1_DLO8, "ovl1_dlo8", "disp", 23),
++	GATE_HWV_OVL11(CLK_OVL1_DLO9, "ovl1_dlo9", "disp", 24),
++	GATE_HWV_OVL11(CLK_OVL1_DLO10, "ovl1_dlo10", "disp", 25),
++	GATE_HWV_OVL11(CLK_OVL1_DLO11, "ovl1_dlo11", "disp", 26),
++	GATE_HWV_OVL11(CLK_OVL1_DLO12, "ovl1_dlo12", "disp", 27),
++	GATE_HWV_OVL11(CLK_OVL1_OVLSYS_RELAY0, "ovl1_ovlsys_relay0", "disp", 28),
++	GATE_HWV_OVL11(CLK_OVL1_OVL_INLINEROT0, "ovl1_ovl_inlinerot0", "disp", 29),
++	GATE_HWV_OVL11(CLK_OVL1_SMI, "ovl1_smi", "disp", 30),
++};
++
++static const struct mtk_clk_desc ovl1_mcd = {
++	.clks = ovl1_clks,
++	.num_clks = ARRAY_SIZE(ovl1_clks),
++};
++
++static const struct platform_device_id clk_mt8196_ovl1_id_table[] = {
++	{ .name = "clk-mt8196-ovl1", .driver_data = (kernel_ulong_t)&ovl1_mcd },
++	{ /* sentinel */ }
++};
++MODULE_DEVICE_TABLE(platform, clk_mt8196_ovl1_id_table);
++
++static struct platform_driver clk_mt8196_ovl1_drv = {
++	.probe = mtk_clk_pdev_probe,
++	.remove = mtk_clk_pdev_remove,
++	.driver = {
++		.name = "clk-mt8196-ovl1",
++	},
++	.id_table = clk_mt8196_ovl1_id_table,
++};
++module_platform_driver(clk_mt8196_ovl1_drv);
++
++MODULE_DESCRIPTION("MediaTek MT8196 ovl1 clocks driver");
++MODULE_LICENSE("GPL");
 -- 
-2.48.1
+2.39.5
 
 
