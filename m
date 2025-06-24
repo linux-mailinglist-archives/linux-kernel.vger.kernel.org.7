@@ -1,265 +1,113 @@
-Return-Path: <linux-kernel+bounces-700315-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-700317-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 65E2BAE66D0
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Jun 2025 15:42:16 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5D9D4AE66D3
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Jun 2025 15:42:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BE7F1174A21
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Jun 2025 13:42:00 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 59F9C16E67F
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Jun 2025 13:42:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5561C548EE;
-	Tue, 24 Jun 2025 13:41:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 344742D0292;
+	Tue, 24 Jun 2025 13:41:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="KdDgVlvL"
-Received: from mail-ot1-f53.google.com (mail-ot1-f53.google.com [209.85.210.53])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="anqu1VRR"
+Received: from mail-pj1-f50.google.com (mail-pj1-f50.google.com [209.85.216.50])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 52A7628ECE2
-	for <linux-kernel@vger.kernel.org>; Tue, 24 Jun 2025 13:41:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 493E6291C02;
+	Tue, 24 Jun 2025 13:41:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750772480; cv=none; b=bMi6uXtwO7liaro/RDLXN9EvCnVu+i1vtT2Qy2cSPp6+msi/eDzIVF2h2tlZQOI7cJklTr3H7opw0+xlUfQ63wlocm4Dm3sreGodksGbdA595wrgmnugnGwYIDsMzfN8P1XPzkhIu0bE+IYQ0JVobqgFr6HUZySiXjiv3JOubvE=
+	t=1750772505; cv=none; b=TnhLfdGi5PKXULPE0X2prDz5B3Wl2JkhbvaP67Sc61SpotbH6w5geBz4P1/5dIPqQoCzoQWmBLE3tsdyvQoqXvbQEhXGzvcbEluFZxwx6UjRqL/dbSuB8E715OYmAWKuOu7exUS9muiCG3Rxu2hBnV2L6HdSKTOZYkiu6PG7MZc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750772480; c=relaxed/simple;
-	bh=jmFpIMRpxsSLGoUiR8GyCNXZX+mlzOk8oXjCkCEDPXY=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition:In-Reply-To; b=LGFrNo0itB3kQBpG9kAO2SoFbvtkCNVWlMyHAz3NmBesRdr3OYu9/xRoDmX4TwZoWdNpfcES409p516jCenY052c/hX6cn6IUSAwhp3apDm0PMuZuy8ERriWt5+ra2S3OVPQJerzhbhuPI3hpTfQMahteoxQ9Xo2PgGxqoisg5Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=KdDgVlvL; arc=none smtp.client-ip=209.85.210.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-ot1-f53.google.com with SMTP id 46e09a7af769-73a5c3e1b7aso3775911a34.3
-        for <linux-kernel@vger.kernel.org>; Tue, 24 Jun 2025 06:41:18 -0700 (PDT)
+	s=arc-20240116; t=1750772505; c=relaxed/simple;
+	bh=ilr8QyCfE8ZkgcKvzvG9t+yXqup+CVbZnX7tdrDKiUU=;
+	h=Date:Message-Id:To:Cc:Subject:From:In-Reply-To:References:
+	 Mime-Version:Content-Type; b=oUpPRFaof8fTKoS++TiJvEELt9ohouuglEwi+x9QZRHsG84JIFDzJgVdD17ZaIusQAn20RDTIzd9b97Yr8rfLCffA1yrblEI8Xq3aVFqRLfsEnXfd/T/gGixJfqwpqqIYMszj4RZq+rvuEw0TcP3u6ni0k0eKYjf3YXwMwwpuFc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=anqu1VRR; arc=none smtp.client-ip=209.85.216.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pj1-f50.google.com with SMTP id 98e67ed59e1d1-3122368d7cfso356031a91.1;
+        Tue, 24 Jun 2025 06:41:44 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1750772477; x=1751377277; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:message-id:subject:cc
-         :to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=9hpwa0JDrScKcOzTuCWX6BzMr27AQ60ja08V3b6kazw=;
-        b=KdDgVlvLmS4ljhPHj4Z5vsLFBJ85InDRuc2ryzQLSovcO1sRe1VQ6fs3afpbNRKWKF
-         O8Pw0vvXeMhTSEGMMjbNXIl4pa3D4Qmywxz59Z4XBXwDpVj15cTM+vVr1Uy2mf6p59b3
-         FdiAj0m9qKZbwV3Yz0oUWC/KwueqGhuDk+JUQwnaLAz8mOJMMQxKvMuqQ1AQvOF+IU2K
-         +/EAwrkdVrnHlwFOksRHHbZ+4dPYYbzP0GULJg4CwkWJk5iOOA1t9Qjz7xl8YN//nHHI
-         OZS7J/zR4FG4uG/7oP5h4vOadvZA2OZP//9CGPhQ2a+31MiMzx6g1f7P1vlH9iEq0CNX
-         e2tQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1750772477; x=1751377277;
-        h=in-reply-to:content-disposition:mime-version:message-id:subject:cc
-         :to:from:date:x-gm-message-state:from:to:cc:subject:date:message-id
+        d=gmail.com; s=20230601; t=1750772503; x=1751377303; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to:from
+         :subject:cc:to:message-id:date:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=9hpwa0JDrScKcOzTuCWX6BzMr27AQ60ja08V3b6kazw=;
-        b=Di9kxoVn6Gu25zvSCtwim8mkMOQSZlLANGLSlGTiQ8Lql/Sl4ybjBzKaap4V7+szOe
-         +Ul9mERcxdwcLLNJkHqusJRxXSNjtibrGNx/aCI81JGzJtXQJSQzVT2NFoXgYL/d+WXu
-         dQO723c/sBzoNl9S0f4Tr0BQaIp5+siw308Wgk9c/OiYmXF7sGf1oolbrXpWeWUIInEQ
-         1vds+B3p53746f+JxGWBc6rrd1YbYEydvpegwwvfSe7zYFDZbyP7AmXyrtJHFaK1juTh
-         39gto5GQ40nFu0NARElx8z4FrYoqDIZ/Y8tJh92aQjCGB75IlemyB1jE8NCsd2keGNrd
-         I5zQ==
-X-Forwarded-Encrypted: i=1; AJvYcCV1J4OzvK3hqBPt/VOyzs3mbTXR8j2WOPyQEwXUBhPKFQlULTuL91uANoL+l/SfjnWs5+rhIDxf2vnMbbc=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwYGeRdIUX353KpDVIVcMGEvJZG9pUpJaN3zZJvtw9YVbTjEfCG
-	tF5bfj/0hdCcSCsuuSxWzLpNizvuqPAi6HUE7UwtM7TGXLPCaigIUlhVQ2T1k5CWrxR5QMpafh6
-	pYqEf
-X-Gm-Gg: ASbGncvERMNuQH7UM0j0TkIt9wG1p3bvg9zuKUKhW6kQjElvNLSFS9Rwpy1XnrHmgxS
-	+WGwG41fCiSVJSh3TQnyXDG0jbUNBmhKR2X1lAWMiLl79kktqlBUhbAArRBv8j3nHP7Fu3GlTzW
-	iQlo3sIGBmC1uYZjlnQM9m7PSrKpVH66ex5QWoUv+VkJD47S5wmg9pbp91XtrpjU302eRICoxfZ
-	XfiGqM6Bf5N0LQev/U/u2g8Adr4fTZks7e3yvk4Z1KNoUKTCuaAMR2s2eKuX/AF39DpwNmpkwSk
-	EbXg+WOuIB5tboq+qT27gH1Rk+1oyAz9OkW7AqfXYhP9gDDw/COguO1tlyYzSLv6fajiQpHY4tt
-	gBFyx
-X-Google-Smtp-Source: AGHT+IEiuhdW8/sSiJzR1DxhRU/+og+q0UhK5YrSTANwnnO94EH7OfmpA0IaX4cQg+vq2e5zOFcNyQ==
-X-Received: by 2002:a05:6870:179c:b0:2e9:8ed9:16fc with SMTP id 586e51a60fabf-2eedba8115cmr10962084fac.11.1750772477122;
-        Tue, 24 Jun 2025 06:41:17 -0700 (PDT)
-Received: from localhost ([2603:8080:b800:f700:8c3f:8b5f:5c74:76a9])
-        by smtp.gmail.com with ESMTPSA id 586e51a60fabf-2eead8e17c1sm2067862fac.44.2025.06.24.06.41.14
+        bh=VLtIMvBntPZebemDraNox5q771O0b4RJzZvZqb2Y8Nc=;
+        b=anqu1VRRGPoJ0YoRfOyZ/1Frig21WaaCoCS+aXGw0eWntu7OVYTtLvxlXPRssvRy2M
+         wRaNgwyt1YPuo+hNa4hAFGQtsYw0W4j90Ah+CD6iVMPa5JJ8t3MqjlF4g6pP1gnPEf4c
+         17vakgT6l0k20k0qRD2TSBQEGDfKXR0igtUrzXwqwUMRr0E1/CKyAKjl6CFTdd85BOyJ
+         p/MovHCaSSFovJt4jSepp4BOb2Hufd0DOP0S924o5rva1ev+wX5HLFMIvfAGREy2DF+f
+         YYfmFJhNuDYeoF1d5qb8/G9KsKQPachYZgzc39nszXy1ITemtB3pUqjiBR3plpQmbIfn
+         PgEA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1750772503; x=1751377303;
+        h=content-transfer-encoding:mime-version:references:in-reply-to:from
+         :subject:cc:to:message-id:date:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=VLtIMvBntPZebemDraNox5q771O0b4RJzZvZqb2Y8Nc=;
+        b=IQjz9/j57sKgAjuHh3DCFZ31DOnaoab+UfKQ+lvXeLDPZU14OD4LdWwHnCAFMaTVAH
+         xGFUo/wrsxibrr81ydOeQy3PQW7rWvxEBiNZN/GkmnXnSkKz6n8AewNuu4OFB/HZgmLg
+         86w+1BuBES0Ao3i+pDKd4NSDRBxtBzAPvo50AZsmCChtw6SOtlCF6hMP0EtyLAzMRXTD
+         xNhQ3FVSkceQQ1MMB+l8PVbHF+wJTDawuzO2sJiJGXSul+3Nwyd64Emw2D/z5GRVXeys
+         g3qr125OqGWJd/i2TilbYb+saIMVidt0XbfagHbkaNcENlBkvdNXZLMvNbFCZ2NIAgf3
+         xb0Q==
+X-Forwarded-Encrypted: i=1; AJvYcCUorZSZjgsS1cJFwJmL0XqxOhi08x5X2WhVCayXX3+ls5g/9hl0e3LqhzJplkIACB/Dgz0+PLgD/bfqFvNT6AY=@vger.kernel.org, AJvYcCXJKTMvERbOHRW/OBlIpUycL1elqFvPmFWS3s6+sXSWdkLF7HdWSZG21kObDaaCW2imOzEAiREnwl/LqKI=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxmsQqSdvx/ba5+4TocznN0yBPhSZk2AEPQs+XSZMCxmlioTeO/
+	SUnN6E3rKZttvReT6buRHZiEI6raFix1YnCyepikVcZKfZ5yYE91ofOt
+X-Gm-Gg: ASbGncvb5F7bNKpICbsK6FIbjQ/xK2DlY/6tm3DDVx19FeSqJF84RmNa7O4O52pUG31
+	InpEeaIJTnM6NNajZGq/EDlh3fWUkFhO2LSqtXuVhy3cnkXbNvBNsDV2lVNoPSb8SmE3p57AdNe
+	hPSAQ55xcSgRpIA01dX/pq/eDDXgg1ZPrXTYCuffpj7YeQx5+Vk18f/ZSjsJ2SFjyeIFmu77UBj
+	sbyPFRa+xGV9JaJ/3EnyvBvTr6+PXgGf4yXO6HaXBpwvRHQzm6RXgU4Svy9LcF4NOGnqgCcunzM
+	dE9eB+jBFuBxvoBI38YYRU6hEbZ0IowPoMzlTGTtyuDMUAKqkf7FW/hpxKjGpGjdZz4KK8O73yD
+	dkPGBpkSy8paf8wAPOviaHW9WCJpOatl7Qw4Wadma
+X-Google-Smtp-Source: AGHT+IHA4wQdkY9pu5NPgDKAEx4KBIQ9Py8m30aGH51cuZUBSEKdOHrMkZ51fRAHcH8uyzh+aCZBiA==
+X-Received: by 2002:a17:90b:2e87:b0:315:6f2b:ce53 with SMTP id 98e67ed59e1d1-3159d8df90bmr23541039a91.25.1750772503448;
+        Tue, 24 Jun 2025 06:41:43 -0700 (PDT)
+Received: from localhost (p5332007-ipxg23901hodogaya.kanagawa.ocn.ne.jp. [180.34.120.7])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-3158a2f0b05sm14566237a91.32.2025.06.24.06.41.39
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 24 Jun 2025 06:41:15 -0700 (PDT)
-Date: Tue, 24 Jun 2025 16:41:13 +0300
-From: Dan Carpenter <dan.carpenter@linaro.org>
-To: oe-kbuild@lists.linux.dev, Badal Nilawar <badal.nilawar@intel.com>,
-	intel-xe@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
-	linux-kernel@vger.kernel.org
-Cc: lkp@intel.com, oe-kbuild-all@lists.linux.dev, anshuman.gupta@intel.com,
-	rodrigo.vivi@intel.com, alexander.usyskin@intel.com,
-	gregkh@linuxfoundation.org, daniele.ceraolospurio@intel.com,
-	jgg@nvidia.com
-Subject: Re: [PATCH v3 09/10] drm/xe/xe_late_bind_fw: Extract and print
- version info
-Message-ID: <aa407944-588c-4514-9523-6f13a989f4ae@suswa.mountain>
+        Tue, 24 Jun 2025 06:41:43 -0700 (PDT)
+Date: Tue, 24 Jun 2025 22:41:30 +0900 (JST)
+Message-Id: <20250624.224130.2089845741064711087.fujita.tomonori@gmail.com>
+To: a.hindborg@kernel.org
+Cc: miguel.ojeda.sandonis@gmail.com, alex.gaynor@gmail.com,
+ ojeda@kernel.org, fujita.tomonori@gmail.com, aliceryhl@google.com,
+ anna-maria@linutronix.de, bjorn3_gh@protonmail.com, boqun.feng@gmail.com,
+ dakr@kernel.org, frederic@kernel.org, gary@garyguo.net,
+ jstultz@google.com, linux-kernel@vger.kernel.org, lossin@kernel.org,
+ lyude@redhat.com, rust-for-linux@vger.kernel.org, sboyd@kernel.org,
+ tglx@linutronix.de, tmgross@umich.edu
+Subject: Re: [PATCH v3 0/5] rust: time: Convert hrtimer to use Instant and
+ Delta
+From: FUJITA Tomonori <fujita.tomonori@gmail.com>
+In-Reply-To: <87wm912sjg.fsf@kernel.org>
+References: <_dhT441zoMZanviBlUpcvPZEw7TiwB4v28ONPXSwi7WvEaMg_YJSmi5vRlLVaaUOujF7NOspxR0NYFLOHXud_g==@protonmail.internalid>
+	<CANiq72nwaxszEbn6O3xZi6H9P+U=5N0ugK1n9qBRteQwKXQSaw@mail.gmail.com>
+	<87wm912sjg.fsf@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250618190007.2932322-10-badal.nilawar@intel.com>
+Mime-Version: 1.0
+Content-Type: Text/Plain; charset=us-ascii
+Content-Transfer-Encoding: 7bit
 
-Hi Badal,
+On Tue, 24 Jun 2025 15:11:31 +0200
+Andreas Hindborg <a.hindborg@kernel.org> wrote:
 
-kernel test robot noticed the following build warnings:
+>> and already introduces pain for
+>> others (and likely even more pain when we need to rename it back next
+>> cycle), it doesn't look like a good idea to keep it.
+> 
+> Ok, I'll drop it.
 
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
-
-url:    https://github.com/intel-lab-lkp/linux/commits/Badal-Nilawar/mei-bus-add-mei_cldev_mtu-interface/20250619-025825
-base:   https://gitlab.freedesktop.org/drm/xe/kernel.git drm-xe-next
-patch link:    https://lore.kernel.org/r/20250618190007.2932322-10-badal.nilawar%40intel.com
-patch subject: [PATCH v3 09/10] drm/xe/xe_late_bind_fw: Extract and print version info
-config: i386-randconfig-141-20250623 (https://download.01.org/0day-ci/archive/20250624/202506241449.WdiucfJp-lkp@intel.com/config)
-compiler: gcc-12 (Debian 12.2.0-14) 12.2.0
-
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Reported-by: Dan Carpenter <dan.carpenter@linaro.org>
-| Closes: https://lore.kernel.org/r/202506241449.WdiucfJp-lkp@intel.com/
-
-New smatch warnings:
-drivers/gpu/drm/xe/xe_late_bind_fw.c:90 parse_cpd_header() error: uninitialized symbol 'offset'.
-drivers/gpu/drm/xe/xe_late_bind_fw.c:155 parse_lb_layout() error: uninitialized symbol 'offset'.
-
-Old smatch warnings:
-drivers/gpu/drm/xe/xe_late_bind_fw.c:195 xe_late_bind_wait_for_worker_completion() warn: inconsistent indenting
-
-vim +/offset +90 drivers/gpu/drm/xe/xe_late_bind_fw.c
-
-f9ea24fb9528adc Badal Nilawar 2025-06-19   49  static int parse_cpd_header(struct xe_late_bind *late_bind, u32 fw_id,
-f9ea24fb9528adc Badal Nilawar 2025-06-19   50  			    const void *data, size_t size, const char *manifest_entry)
-f9ea24fb9528adc Badal Nilawar 2025-06-19   51  {
-f9ea24fb9528adc Badal Nilawar 2025-06-19   52  	struct xe_device *xe = late_bind_to_xe(late_bind);
-f9ea24fb9528adc Badal Nilawar 2025-06-19   53  	const struct gsc_cpd_header_v2 *header = data;
-f9ea24fb9528adc Badal Nilawar 2025-06-19   54  	const struct gsc_manifest_header *manifest;
-f9ea24fb9528adc Badal Nilawar 2025-06-19   55  	const struct gsc_cpd_entry *entry;
-f9ea24fb9528adc Badal Nilawar 2025-06-19   56  	size_t min_size = sizeof(*header);
-f9ea24fb9528adc Badal Nilawar 2025-06-19   57  	struct xe_late_bind_fw *lb_fw;
-f9ea24fb9528adc Badal Nilawar 2025-06-19   58  	u32 offset;
-                                                ^^^^^^^^^^^
-
-f9ea24fb9528adc Badal Nilawar 2025-06-19   59  	int i;
-f9ea24fb9528adc Badal Nilawar 2025-06-19   60  
-f9ea24fb9528adc Badal Nilawar 2025-06-19   61  	if (fw_id >= MAX_FW_ID)
-f9ea24fb9528adc Badal Nilawar 2025-06-19   62  		return -EINVAL;
-f9ea24fb9528adc Badal Nilawar 2025-06-19   63  	lb_fw = &late_bind->late_bind_fw[fw_id];
-f9ea24fb9528adc Badal Nilawar 2025-06-19   64  
-f9ea24fb9528adc Badal Nilawar 2025-06-19   65  	/* manifest_entry is mandatory */
-f9ea24fb9528adc Badal Nilawar 2025-06-19   66  	xe_assert(xe, manifest_entry);
-f9ea24fb9528adc Badal Nilawar 2025-06-19   67  
-f9ea24fb9528adc Badal Nilawar 2025-06-19   68  	if (size < min_size || header->header_marker != GSC_CPD_HEADER_MARKER)
-f9ea24fb9528adc Badal Nilawar 2025-06-19   69  		return -ENOENT;
-f9ea24fb9528adc Badal Nilawar 2025-06-19   70  
-f9ea24fb9528adc Badal Nilawar 2025-06-19   71  	if (header->header_length < sizeof(struct gsc_cpd_header_v2)) {
-f9ea24fb9528adc Badal Nilawar 2025-06-19   72  		drm_err(&xe->drm, "%s late binding fw: Invalid CPD header length %u!\n",
-f9ea24fb9528adc Badal Nilawar 2025-06-19   73  			fw_id_to_name[lb_fw->id], header->header_length);
-f9ea24fb9528adc Badal Nilawar 2025-06-19   74  		return -EINVAL;
-f9ea24fb9528adc Badal Nilawar 2025-06-19   75  	}
-f9ea24fb9528adc Badal Nilawar 2025-06-19   76  
-f9ea24fb9528adc Badal Nilawar 2025-06-19   77  	min_size = header->header_length + sizeof(struct gsc_cpd_entry) * header->num_of_entries;
-f9ea24fb9528adc Badal Nilawar 2025-06-19   78  	if (size < min_size) {
-f9ea24fb9528adc Badal Nilawar 2025-06-19   79  		drm_err(&xe->drm, "%s late binding fw: too small! %zu < %zu\n",
-f9ea24fb9528adc Badal Nilawar 2025-06-19   80  			fw_id_to_name[lb_fw->id], size, min_size);
-f9ea24fb9528adc Badal Nilawar 2025-06-19   81  		return -ENODATA;
-f9ea24fb9528adc Badal Nilawar 2025-06-19   82  	}
-f9ea24fb9528adc Badal Nilawar 2025-06-19   83  
-f9ea24fb9528adc Badal Nilawar 2025-06-19   84  	/* Look for the manifest first */
-f9ea24fb9528adc Badal Nilawar 2025-06-19   85  	entry = (void *)header + header->header_length;
-f9ea24fb9528adc Badal Nilawar 2025-06-19   86  	for (i = 0; i < header->num_of_entries; i++, entry++)
-f9ea24fb9528adc Badal Nilawar 2025-06-19   87  		if (strcmp(entry->name, manifest_entry) == 0)
-f9ea24fb9528adc Badal Nilawar 2025-06-19   88  			offset = entry->offset & GSC_CPD_ENTRY_OFFSET_MASK;
-                                                                ^^^^^^^^
-Only initialized if found.
-
-f9ea24fb9528adc Badal Nilawar 2025-06-19   89  
-f9ea24fb9528adc Badal Nilawar 2025-06-19  @90  	if (!offset) {
-                                                     ^^^^^^
-Uninitialized.
-
-It's a good idea for developers to set CONFIG_INIT_STACK_ALL_PATTERN=y
-in their testing.
-
-f9ea24fb9528adc Badal Nilawar 2025-06-19   91  		drm_err(&xe->drm, "%s late binding fw: Failed to find manifest_entry\n",
-f9ea24fb9528adc Badal Nilawar 2025-06-19   92  			fw_id_to_name[lb_fw->id]);
-f9ea24fb9528adc Badal Nilawar 2025-06-19   93  		return -ENODATA;
-f9ea24fb9528adc Badal Nilawar 2025-06-19   94  	}
-f9ea24fb9528adc Badal Nilawar 2025-06-19   95  
-f9ea24fb9528adc Badal Nilawar 2025-06-19   96  	min_size = offset + sizeof(struct gsc_manifest_header);
-f9ea24fb9528adc Badal Nilawar 2025-06-19   97  	if (size < min_size) {
-f9ea24fb9528adc Badal Nilawar 2025-06-19   98  		drm_err(&xe->drm, "%s late binding fw: too small! %zu < %zu\n",
-f9ea24fb9528adc Badal Nilawar 2025-06-19   99  			fw_id_to_name[lb_fw->id], size, min_size);
-f9ea24fb9528adc Badal Nilawar 2025-06-19  100  		return -ENODATA;
-f9ea24fb9528adc Badal Nilawar 2025-06-19  101  	}
-f9ea24fb9528adc Badal Nilawar 2025-06-19  102  
-f9ea24fb9528adc Badal Nilawar 2025-06-19  103  	manifest = data + offset;
-f9ea24fb9528adc Badal Nilawar 2025-06-19  104  
-f9ea24fb9528adc Badal Nilawar 2025-06-19  105  	lb_fw->version.major = manifest->fw_version.major;
-f9ea24fb9528adc Badal Nilawar 2025-06-19  106  	lb_fw->version.minor = manifest->fw_version.minor;
-f9ea24fb9528adc Badal Nilawar 2025-06-19  107  	lb_fw->version.hotfix = manifest->fw_version.hotfix;
-f9ea24fb9528adc Badal Nilawar 2025-06-19  108  	lb_fw->version.build = manifest->fw_version.build;
-f9ea24fb9528adc Badal Nilawar 2025-06-19  109  
-f9ea24fb9528adc Badal Nilawar 2025-06-19  110  	return 0;
-f9ea24fb9528adc Badal Nilawar 2025-06-19  111  }
-f9ea24fb9528adc Badal Nilawar 2025-06-19  112  
-f9ea24fb9528adc Badal Nilawar 2025-06-19  113  /* Refer to the "Late Bind based Firmware Layout" documentation entry for details */
-f9ea24fb9528adc Badal Nilawar 2025-06-19  114  static int parse_lb_layout(struct xe_late_bind *late_bind, u32 fw_id,
-f9ea24fb9528adc Badal Nilawar 2025-06-19  115  			   const void *data, size_t size, const char *fpt_entry)
-f9ea24fb9528adc Badal Nilawar 2025-06-19  116  {
-f9ea24fb9528adc Badal Nilawar 2025-06-19  117  	struct xe_device *xe = late_bind_to_xe(late_bind);
-f9ea24fb9528adc Badal Nilawar 2025-06-19  118  	const struct csc_fpt_header *header = data;
-f9ea24fb9528adc Badal Nilawar 2025-06-19  119  	const struct csc_fpt_entry *entry;
-f9ea24fb9528adc Badal Nilawar 2025-06-19  120  	size_t min_size = sizeof(*header);
-f9ea24fb9528adc Badal Nilawar 2025-06-19  121  	struct xe_late_bind_fw *lb_fw;
-f9ea24fb9528adc Badal Nilawar 2025-06-19  122  	u32 offset;
-f9ea24fb9528adc Badal Nilawar 2025-06-19  123  	int i;
-f9ea24fb9528adc Badal Nilawar 2025-06-19  124  
-f9ea24fb9528adc Badal Nilawar 2025-06-19  125  	if (fw_id >= MAX_FW_ID)
-f9ea24fb9528adc Badal Nilawar 2025-06-19  126  		return -EINVAL;
-f9ea24fb9528adc Badal Nilawar 2025-06-19  127  
-f9ea24fb9528adc Badal Nilawar 2025-06-19  128  	lb_fw = &late_bind->late_bind_fw[fw_id];
-f9ea24fb9528adc Badal Nilawar 2025-06-19  129  
-f9ea24fb9528adc Badal Nilawar 2025-06-19  130  	/* fpt_entry is mandatory */
-f9ea24fb9528adc Badal Nilawar 2025-06-19  131  	xe_assert(xe, fpt_entry);
-f9ea24fb9528adc Badal Nilawar 2025-06-19  132  
-f9ea24fb9528adc Badal Nilawar 2025-06-19  133  	if (size < min_size || header->header_marker != CSC_FPT_HEADER_MARKER)
-f9ea24fb9528adc Badal Nilawar 2025-06-19  134  		return -ENOENT;
-f9ea24fb9528adc Badal Nilawar 2025-06-19  135  
-f9ea24fb9528adc Badal Nilawar 2025-06-19  136  	if (header->header_length < sizeof(struct csc_fpt_header)) {
-f9ea24fb9528adc Badal Nilawar 2025-06-19  137  		drm_err(&xe->drm, "%s late binding fw: Invalid FPT header length %u!\n",
-f9ea24fb9528adc Badal Nilawar 2025-06-19  138  			fw_id_to_name[lb_fw->id], header->header_length);
-f9ea24fb9528adc Badal Nilawar 2025-06-19  139  		return -EINVAL;
-f9ea24fb9528adc Badal Nilawar 2025-06-19  140  	}
-f9ea24fb9528adc Badal Nilawar 2025-06-19  141  
-f9ea24fb9528adc Badal Nilawar 2025-06-19  142  	min_size = header->header_length + sizeof(struct csc_fpt_entry) * header->num_of_entries;
-f9ea24fb9528adc Badal Nilawar 2025-06-19  143  	if (size < min_size) {
-f9ea24fb9528adc Badal Nilawar 2025-06-19  144  		drm_err(&xe->drm, "%s late binding fw: too small! %zu < %zu\n",
-f9ea24fb9528adc Badal Nilawar 2025-06-19  145  			fw_id_to_name[lb_fw->id], size, min_size);
-f9ea24fb9528adc Badal Nilawar 2025-06-19  146  		return -ENODATA;
-f9ea24fb9528adc Badal Nilawar 2025-06-19  147  	}
-f9ea24fb9528adc Badal Nilawar 2025-06-19  148  
-f9ea24fb9528adc Badal Nilawar 2025-06-19  149  	/* Look for the manifest first */
-f9ea24fb9528adc Badal Nilawar 2025-06-19  150  	entry = (void *)header + header->header_length;
-f9ea24fb9528adc Badal Nilawar 2025-06-19  151  	for (i = 0; i < header->num_of_entries; i++, entry++)
-f9ea24fb9528adc Badal Nilawar 2025-06-19  152  		if (strcmp(entry->name, fpt_entry) == 0)
-f9ea24fb9528adc Badal Nilawar 2025-06-19  153  			offset = entry->offset;
-f9ea24fb9528adc Badal Nilawar 2025-06-19  154  
-f9ea24fb9528adc Badal Nilawar 2025-06-19 @155  	if (!offset) {
-
-Same.
-
-f9ea24fb9528adc Badal Nilawar 2025-06-19  156  		drm_err(&xe->drm, "%s late binding fw: Failed to find fpt_entry\n",
-f9ea24fb9528adc Badal Nilawar 2025-06-19  157  			fw_id_to_name[lb_fw->id]);
-f9ea24fb9528adc Badal Nilawar 2025-06-19  158  		return -ENODATA;
-f9ea24fb9528adc Badal Nilawar 2025-06-19  159  	}
-f9ea24fb9528adc Badal Nilawar 2025-06-19  160  
-f9ea24fb9528adc Badal Nilawar 2025-06-19  161  	min_size = offset + sizeof(struct gsc_cpd_header_v2);
-f9ea24fb9528adc Badal Nilawar 2025-06-19  162  	if (size < min_size) {
-f9ea24fb9528adc Badal Nilawar 2025-06-19  163  		drm_err(&xe->drm, "%s late binding fw: too small! %zu < %zu\n",
-f9ea24fb9528adc Badal Nilawar 2025-06-19  164  			fw_id_to_name[lb_fw->id], size, min_size);
-f9ea24fb9528adc Badal Nilawar 2025-06-19  165  		return -ENODATA;
-f9ea24fb9528adc Badal Nilawar 2025-06-19  166  	}
-f9ea24fb9528adc Badal Nilawar 2025-06-19  167  
-f9ea24fb9528adc Badal Nilawar 2025-06-19  168  	return parse_cpd_header(late_bind, fw_id, data + offset, size - offset, "LTES.man");
-f9ea24fb9528adc Badal Nilawar 2025-06-19  169  }
-
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+Do you want me to send the updated hrtimer conversion patchset
+(using as_* names)?
 
 
