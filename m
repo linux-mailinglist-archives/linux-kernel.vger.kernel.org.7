@@ -1,102 +1,171 @@
-Return-Path: <linux-kernel+bounces-700678-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-700676-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id E0D02AE6B62
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Jun 2025 17:39:58 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7922DAE6B40
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Jun 2025 17:36:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9B7CB4C6430
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Jun 2025 15:34:31 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C26EA3BC645
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Jun 2025 15:33:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 621BA274B59;
-	Tue, 24 Jun 2025 15:27:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B8EE629E0E0;
+	Tue, 24 Jun 2025 15:27:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b="WGFcpeIH"
-Received: from fanzine2.igalia.com (fanzine2.igalia.com [213.97.179.56])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="vvlrnM2f";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="du7Ec+1k";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="vvlrnM2f";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="du7Ec+1k"
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7A43E29E0FC
-	for <linux-kernel@vger.kernel.org>; Tue, 24 Jun 2025 15:27:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.97.179.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 63A09274B52
+	for <linux-kernel@vger.kernel.org>; Tue, 24 Jun 2025 15:27:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750778850; cv=none; b=qFToYGUgZy6At7WIXZSmwvFZu27hnJfcKmURFEpH8Su21A9KAEmABL51vitjPOpT0bZdmSbY+xN2t+FjIPorHEy02mxY+gVWBZ1SwhzK3dH1dIILU6O+mpGOw8x0IYJoQPzW6UwcV8IIo/LQPqN7hcieJag/1xOBCTdKyD5hcR0=
+	t=1750778836; cv=none; b=DWKNhFWJFR+7DzxUEjNnSSRdNOiFC9WSwoQsiwkCa3NmqQoa/VGRlIFMpBb+yw+uVcoG3B6rmEyXMWO6J+Oqn3/i3FMd0QE5sU+nOmCTAeLE49LOD1ioP5kKZjxzIEtrN+Mi9HZL3MF009QT8VV+qPc3GkXCafJU76DOLPV6EOk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750778850; c=relaxed/simple;
-	bh=ca1Y/Gh+pqZBFc+hDMmzgSATta91r/dPr9MPXKk6vso=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=o4f9pRXqLQrgbKqVMSfabne3AstO6UarYoxHknX4/ZwEFKOwB6LOPonpxEsINbOOBhib2tr9CZ/LmLR1h8f0OM/kmF/a5mDyeE9OL6GN3Ke+etC7svf/Zt4xtCIuddiWm0QSebaKwSb5kPJ1go0eIbLGoiFT+OvKNwf4voqsprc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com; spf=pass smtp.mailfrom=igalia.com; dkim=pass (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b=WGFcpeIH; arc=none smtp.client-ip=213.97.179.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=igalia.com
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=igalia.com;
-	s=20170329; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:From:
-	References:Cc:To:Subject:MIME-Version:Date:Message-ID:Sender:Reply-To:
-	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
-	Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
-	List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=tS2MD2P8KTyLJPahJ0RE/sxNRohzo8cGrJIZa01FQjs=; b=WGFcpeIHWpF4LV4Qy/Md26mCSZ
-	NvwXC2XrAFFndygInot91Ucu1FA3rbsQqnANOuLYsLDhOvHGSLvlCnTOx5SNzyNKoBun0yNXSaJQ6
-	ubcRKm9JEK/9lM0QGFY8/7mzr58l/JsAiEXKGLKHt9ehFIFczgJpQl4CAc+Rtr+9gL4KrcGkRxfFj
-	ywRWI+5gC6KX3KDOMeCbaFcmdAN4wm9RR18xd0F1IipvjStCCQjkqcrHEjD6qag5Kcgj2uNelp4jC
-	q9gMNY0RA/wlToO59QhXGHAJI7v4lQAQQhehAJTXgyqUItlQsQmdyAS4X/h6l/TjW0M6TH2CTzHJ7
-	MLD0YllA==;
-Received: from [191.204.192.64] (helo=[192.168.15.100])
-	by fanzine2.igalia.com with esmtpsa 
-	(Cipher TLS1.3:ECDHE_X25519__RSA_PSS_RSAE_SHA256__AES_128_GCM:128) (Exim)
-	id 1uU5YQ-0083u2-PJ; Tue, 24 Jun 2025 17:27:22 +0200
-Message-ID: <f1d61291-f8b8-4646-9195-3724fdee184b@igalia.com>
-Date: Tue, 24 Jun 2025 12:27:19 -0300
+	s=arc-20240116; t=1750778836; c=relaxed/simple;
+	bh=zjZ/DNIXvK66lZcm+P5jsRfEbkkov/vhsRsVKMmico0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=qN+bDXmkGxNQ7VtNhYgwO9Cgp2SGghrl05+rZIVaN82H0yJgtdPQTWORev2l7G2/gQol2zhml3WVKIwRnb4xRy6jAZ/9+ghxjdFLdcxd38RwuQlFERUt2mnNg9rV5MxQNczL9PLmXHz+5RsXcKFgba25r9QFGhMgp/pAadwYqzY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=vvlrnM2f; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=du7Ec+1k; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=vvlrnM2f; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=du7Ec+1k; arc=none smtp.client-ip=195.135.223.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
+Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id 7E97F21188;
+	Tue, 24 Jun 2025 15:27:12 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1750778832; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=NoiiUm2Fj9WK2+okdYgOSWwXKVvL+oEsvy7xNbG15iI=;
+	b=vvlrnM2feTpV6+ta6uoKsfyvo3trinlhBI684D+M0ahVSjSaUP4cZoBGdLt58BhJywQwse
+	U98pFOyfr5XwpUaZ2FENX5MgnKN3Jkq52RzP/AQK+2SKFkcP5WgFRZnIADKx6xEt4C8T8X
+	gnzktuR3Y+USict2kCwJtnVz9DyEZR4=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1750778832;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=NoiiUm2Fj9WK2+okdYgOSWwXKVvL+oEsvy7xNbG15iI=;
+	b=du7Ec+1k9lAeD6cDmfItCTSD4+6O4OIyQYsdrFVetw2b9Kyw6tXD28putC1lfSJ5Uc/Xku
+	dId42Dp0uuXwQMBw==
+Authentication-Results: smtp-out1.suse.de;
+	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b=vvlrnM2f;
+	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b=du7Ec+1k
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1750778832; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=NoiiUm2Fj9WK2+okdYgOSWwXKVvL+oEsvy7xNbG15iI=;
+	b=vvlrnM2feTpV6+ta6uoKsfyvo3trinlhBI684D+M0ahVSjSaUP4cZoBGdLt58BhJywQwse
+	U98pFOyfr5XwpUaZ2FENX5MgnKN3Jkq52RzP/AQK+2SKFkcP5WgFRZnIADKx6xEt4C8T8X
+	gnzktuR3Y+USict2kCwJtnVz9DyEZR4=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1750778832;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=NoiiUm2Fj9WK2+okdYgOSWwXKVvL+oEsvy7xNbG15iI=;
+	b=du7Ec+1k9lAeD6cDmfItCTSD4+6O4OIyQYsdrFVetw2b9Kyw6tXD28putC1lfSJ5Uc/Xku
+	dId42Dp0uuXwQMBw==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 6B2ED13A9D;
+	Tue, 24 Jun 2025 15:27:12 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id sBX1GNDDWmi1DgAAD6G6ig
+	(envelope-from <chrubis@suse.cz>); Tue, 24 Jun 2025 15:27:12 +0000
+Date: Tue, 24 Jun 2025 17:27:51 +0200
+From: Cyril Hrubis <chrubis@suse.cz>
+To: Dmitry Vyukov <dvyukov@google.com>
+Cc: sashal@kernel.org, kees@kernel.org, elver@google.com,
+	linux-api@vger.kernel.org, linux-kernel@vger.kernel.org,
+	tools@kernel.org, workflows@vger.kernel.org
+Subject: Re: [RFC 00/19] Kernel API Specification Framework
+Message-ID: <aFrD9wuMky8TkhUW@yuki.lan>
+References: <aFNYQkbEctT6N0Hb@lappy>
+ <20250623132803.26760-1-dvyukov@google.com>
+ <aFqw5-PO4MjsEdYU@yuki.lan>
+ <CACT4Y+Youc3M0z0U9arrTgyOC1+UKytav4zObhjUXn8-RLThMQ@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 0/2] drm: amdgpu: Fix includes of <linux/export.h>
-To: Alex Deucher <alexander.deucher@amd.com>
-Cc: dri-devel@lists.freedesktop.org, Thomas Zimmermann <tzimmermann@suse.de>,
- =?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>,
- linux-kernel@vger.kernel.org, kernel-dev@igalia.com,
- amd-gfx@lists.freedesktop.org
-References: <20250613182651.1758760-1-andrealmeid@igalia.com>
- <4907bbe3-14e7-49cc-b5bd-78ba375bf46d@amd.com>
-Content-Language: en-US
-From: =?UTF-8?Q?Andr=C3=A9_Almeida?= <andrealmeid@igalia.com>
-In-Reply-To: <4907bbe3-14e7-49cc-b5bd-78ba375bf46d@amd.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CACT4Y+Youc3M0z0U9arrTgyOC1+UKytav4zObhjUXn8-RLThMQ@mail.gmail.com>
+X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
+X-Rspamd-Queue-Id: 7E97F21188
+X-Rspamd-Action: no action
+X-Spam-Flag: NO
+X-Spamd-Result: default: False [-4.51 / 50.00];
+	BAYES_HAM(-3.00)[99.99%];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	R_DKIM_ALLOW(-0.20)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	MX_GOOD(-0.01)[];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	ARC_NA(0.00)[];
+	MISSING_XM_UA(0.00)[];
+	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
+	TO_DN_SOME(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	RCVD_TLS_ALL(0.00)[];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:97:from];
+	FROM_EQ_ENVFROM(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	RCPT_COUNT_SEVEN(0.00)[8];
+	RCVD_COUNT_TWO(0.00)[2];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:rdns,imap1.dmz-prg2.suse.org:helo];
+	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	DKIM_TRACE(0.00)[suse.cz:+]
+X-Spam-Score: -4.51
+X-Spam-Level: 
 
-Hi Alex,
-
-Em 16/06/2025 03:59, Christian König escreveu:
-> Acked-by: Christian König <christian.koenig@amd.com> for the series.
+Hi!
+> > You may wonder if such kind of tests are useful at all, since quite a
+> > few of these errors are checked for and generated from a common
+> > functions. There are at least two cases I can think of. First of all it
+> > makes sure that errors are stable when particular function/subsystem is
+> > rewritten. And it can also make sure that errors are consistent across
+> > different implementation of the same functionality e.g. filesystems. I
+> > remember that some of the less used FUSE filesystems returned puzzling
+> > errors in certain corner cases.
 > 
+> I am not following how this is related to the validation part of the
+> patch series. Can you elaborate?
 
-Can you add this series to amd-staging-drm-next? Thanks!
+This part is me trying to explain that generated conformance tests would
+be useful for development as well.
 
-> On 6/13/25 20:26, André Almeida wrote:
->> Commit 7d95680d64ac ("scripts/misc-check: check unnecessary #include
->> <linux/export.h> when W=1") and commit a934a57a42f6 ("scripts/misc-check:
->> check missing #include <linux/export.h> when W=1") added new checks for when the
->> include <linux/export.h> is missued by drivers. This patchset make drm/amd code
->> compliant to this new commits.
->>
->> See also: https://lore.kernel.org/dri-devel/20250612121633.229222-1-tzimmermann@suse.de/
->>
->> André Almeida (2):
->>    drm/amd: Do not include <linux/export.h> when unused
->>    drm/amd: Include <linux/export.h> when needed
->>
->>   drivers/gpu/drm/amd/amdgpu/amdgpu_i2c.c      | 1 -
->>   drivers/gpu/drm/amd/amdgpu/amdgpu_object.c   | 1 +
->>   drivers/gpu/drm/amd/amdkfd/kfd_chardev.c     | 1 -
->>   drivers/gpu/drm/amd/amdkfd/kfd_flat_memory.c | 1 -
->>   drivers/gpu/drm/amd/amdxcp/amdgpu_xcp_drv.c  | 1 +
->>   5 files changed, 2 insertions(+), 3 deletions(-)
->>
-> 
+> Generation of such conformance tests would need info about parameter
+> types and their semantic meaning, not the validation part.
+> The conformance tests should test that actual syscall checking of
+> arguments, not the validation added by this framework.
 
+Exactly.
+
+I do not think that it makes sense to encode the argument ranges and
+functions to generate a valid syscall parameters into the kernel. Rather
+than that the information should encoded in the extended types, if we do
+that well enough we can generate combination of different valid and
+invalid parameters for the tests based on that.
+
+-- 
+Cyril Hrubis
+chrubis@suse.cz
 
