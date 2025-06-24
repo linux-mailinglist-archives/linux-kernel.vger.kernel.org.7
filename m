@@ -1,118 +1,170 @@
-Return-Path: <linux-kernel+bounces-700376-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-700380-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 47007AE67C0
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Jun 2025 16:05:04 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5F9B9AE67C5
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Jun 2025 16:06:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 12C591BC6197
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Jun 2025 14:02:18 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9EE631BC7676
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Jun 2025 14:03:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AB6C82C2ACE;
-	Tue, 24 Jun 2025 14:01:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EBECC2C3274;
+	Tue, 24 Jun 2025 14:03:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="OFg/HG1h"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.16])
+	dkim=pass (1024-bit key) header.d=linux.beauty header.i=me@linux.beauty header.b="B8uF7g3+"
+Received: from sender4-op-o12.zoho.com (sender4-op-o12.zoho.com [136.143.188.12])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C337427AC25;
-	Tue, 24 Jun 2025 14:01:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.16
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750773716; cv=none; b=n4tE2T3FbdzqDZae7ywTH0ltgTgmQt6kmwGJeIHdgeo55r5TTbgOefDSB1aH9QBq+9sOg+UdkyYzSY71x+oM4+yYxIqTgMnTLT15Mt9toRTRJl+r5uqnMAyJnXLY4S6EMcmj6PmVAzntMRPqAiwv+gBJUER+CopYgze7I4oMfXg=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750773716; c=relaxed/simple;
-	bh=qe/lKzDIKQb9yrByvn2o2OiLeZ837IOlRXcF3CcOVxY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Ykg+VvU8/J8SP+A1P4zld+0MA6BXCfkYflkC2s+ihJEzrI2x9ao7G/EYq1TS0qVL4rbPdF9V5H/IKtP9X3mEEqDWH4FVYbPRmiNMefMEnL9x55OKmCUubvPSBM54rXVgWKK4Nz6foj4FwyZIPrxysRdfAZxYlnnjDohNvz3gjPE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=OFg/HG1h; arc=none smtp.client-ip=192.198.163.16
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1750773714; x=1782309714;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=qe/lKzDIKQb9yrByvn2o2OiLeZ837IOlRXcF3CcOVxY=;
-  b=OFg/HG1hvZ6L4XxcdKofaXr5E3+wuY5PNS6t6tjxB8qmZnnTbWs9cTRZ
-   YFNh/obsPCVggJ8+jY52SqXIeG5w+NRlPZDT4xx4YlnyMUkS/UQLymqOT
-   6eQgKYrhND2yv9ZrGQ4TZ9dl4idQa47J8OJ8vc1xtONmxWXnDgkzZb/Mf
-   cR3Aa92cWpbYIKrbQu+84lgpyYrAiOM0o3cIvpX8Uzj0GraFfHu11QqNz
-   5C1Kj3nZkNXNtmwr1Carw4yDo9BECnGi88fCxZyfcWNY26Jdj0LPpujOT
-   sr/go9jS2NCIam/sfEytZKE9QZ2Ia6xndbUCi8MksiUAefvfMkVAOjQWu
-   Q==;
-X-CSE-ConnectionGUID: EcylcUW5RgS7FD3D4eoctA==
-X-CSE-MsgGUID: eYtG+Z2TQx6A3f+wAlnx3w==
-X-IronPort-AV: E=McAfee;i="6800,10657,11474"; a="40628397"
-X-IronPort-AV: E=Sophos;i="6.16,261,1744095600"; 
-   d="scan'208";a="40628397"
-Received: from fmviesa008.fm.intel.com ([10.60.135.148])
-  by fmvoesa110.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 24 Jun 2025 07:01:50 -0700
-X-CSE-ConnectionGUID: NcaZkpcHSr6VkMpll0qrAQ==
-X-CSE-MsgGUID: 9v/ZDIeDRXS0b/f/E5hikA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.16,261,1744095600"; 
-   d="scan'208";a="152450367"
-Received: from smile.fi.intel.com ([10.237.72.52])
-  by fmviesa008.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 24 Jun 2025 07:01:31 -0700
-Received: from andy by smile.fi.intel.com with local (Exim 4.98.2)
-	(envelope-from <andriy.shevchenko@linux.intel.com>)
-	id 1uU4DI-00000009UFW-2HG9;
-	Tue, 24 Jun 2025 17:01:28 +0300
-Date: Tue, 24 Jun 2025 17:01:28 +0300
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To: Andy Shevchenko <andy.shevchenko@gmail.com>,
-	Bartosz Golaszewski <brgl@bgdev.pl>
-Cc: Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
-	linux-mips@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-Subject: Re: [PATCH v1 1/1] MIPS: Alchemy: Remove unused forward declaration
-Message-ID: <aFqvuIzH2zo5X76q@smile.fi.intel.com>
-References: <20250531194346.3630898-1-andriy.shevchenko@linux.intel.com>
- <aEv_y5Lfe3Dul48I@smile.fi.intel.com>
- <aEwMFVSPzc-mV1ve@alpha.franken.de>
- <aEweZReuPzQ_hq8L@smile.fi.intel.com>
- <aEwy2Ud08nHHAdED@alpha.franken.de>
- <aEydkh4EkKu6w2NJ@surfacebook.localdomain>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D922D1BC07A
+	for <linux-kernel@vger.kernel.org>; Tue, 24 Jun 2025 14:03:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.12
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1750773785; cv=pass; b=mXpv7SGPd7+CRsCJ9/NzTL3kc6pNw+5JsUQIZOwOUYj4QNfmfOfKKcUn6OZWH1cPfoxOqX3w2mGVAuV5mMa25yWaNzxZ0Y3mpNf5Ndt/yQTRr6pTJ+vp+xcGzdOHr2QSF1F87Vana0+qoJG+r6LTVxSXVtGLt0Ff4nPW2TW9+ig=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1750773785; c=relaxed/simple;
+	bh=t69YTjZk7tAK9ZA0DgcSUtUe67tniRoABYvdwA60U40=;
+	h=Date:From:To:Cc:Message-ID:In-Reply-To:References:Subject:
+	 MIME-Version:Content-Type; b=l49bzBFiBQQyFF2bKp6lFEsokQ9NC8Yns/yrGeuBDmKieKHaC869IOTU39ndVSYK5ssz1gDJVqKJM2T2lLCI3Qcay0DZKCTZnS0q0XhSh86A0/erIbnH1ppZYCnb4+3DWmdHmqgTu0l6KDw4jyzpnm0uETkSDS8RvIGPLN21B/E=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux.beauty; spf=pass smtp.mailfrom=linux.beauty; dkim=pass (1024-bit key) header.d=linux.beauty header.i=me@linux.beauty header.b=B8uF7g3+; arc=pass smtp.client-ip=136.143.188.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux.beauty
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.beauty
+ARC-Seal: i=1; a=rsa-sha256; t=1750773731; cv=none; 
+	d=zohomail.com; s=zohoarc; 
+	b=hTX5MReisYbZvR19q4tWS0xnt3oKhKEGdUG2U9bUjLZUfS/wtlWWjGe7pHBxy6r/khJ05F142qABMsFAAzp/jEIQRVJMOTlt/9XX+QPv2q73IwdOrgT1+zRshdi7GNrxYnsftBBZU/Z3O+P6j4oh6+o8tu8XrhY8yX5j2xrmS1I=
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
+	t=1750773731; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
+	bh=ZL8NA9JQOJu6c3IEyUcRza2BGeeEksbdoW9f7dUeKPk=; 
+	b=cBzAl7CvVzTHxwj+eQl7WL4drYgg4esDcR+zSJ4Uk5cA0pc81/cSlxwfKR3ZtXBD4mQtuIjbAOwgvbFwYFi5u3qaCEJKPCyCS7E+CeXtsFQscAiLKXri/0xW1QZC0qefFTSFIAZre1IScpTL/eqe26T2rDOmMrahdOaARGzrc/A=
+ARC-Authentication-Results: i=1; mx.zohomail.com;
+	dkim=pass  header.i=linux.beauty;
+	spf=pass  smtp.mailfrom=me@linux.beauty;
+	dmarc=pass header.from=<me@linux.beauty>
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1750773731;
+	s=zmail; d=linux.beauty; i=me@linux.beauty;
+	h=Date:Date:From:From:To:To:Cc:Cc:Message-ID:In-Reply-To:References:Subject:Subject:MIME-Version:Content-Type:Content-Transfer-Encoding:Message-Id:Reply-To;
+	bh=ZL8NA9JQOJu6c3IEyUcRza2BGeeEksbdoW9f7dUeKPk=;
+	b=B8uF7g3+1EZ2cR31mzscQN/sJSLpPip83it4n2wpApifPdMn/0imV1OuZ9zK6rNT
+	44PT4hvIKGcQ75OzM+G4JB9ZAsycwBkPyAPC7xvd2JSvQS6WtWOGq4s6mRgbibtwzII
+	pxwiYfMu5SINKR0R23BSsVAlX46OWOkwUGkk8wXc=
+Received: from mail.zoho.com by mx.zohomail.com
+	with SMTP id 1750773728425534.8013543798188; Tue, 24 Jun 2025 07:02:08 -0700 (PDT)
+Date: Tue, 24 Jun 2025 22:02:08 +0800
+From: Li Chen <me@linux.beauty>
+To: "Thomas Gleixner" <tglx@linutronix.de>
+Cc: "Ingo Molnar" <mingo@redhat.com>, "Borislav Petkov" <bp@alien8.de>,
+	"Dave Hansen" <dave.hansen@linux.intel.com>, "x86" <x86@kernel.org>,
+	"H . Peter Anvin" <hpa@zytor.com>,
+	"Rafael J . Wysocki" <rafael.j.wysocki@intel.com>,
+	"Peter Zijlstra" <peterz@infradead.org>,
+	"K Prateek Nayak" <kprateek.nayak@amd.com>,
+	"Sohil Mehta" <sohil.mehta@intel.com>,
+	"Brian Gerst" <brgerst@gmail.com>,
+	"Patryk Wlazlyn" <patryk.wlazlyn@linux.intel.com>,
+	"linux-kernel" <linux-kernel@vger.kernel.org>,
+	"Gautham R. Shenoy" <gautham.shenoy@amd.com>,
+	"Li Chen" <chenl311@chinatelecom.cn>
+Message-ID: <197a23f047d.1095ea2d92028509.1160531071010499395@linux.beauty>
+In-Reply-To: <875xglntx1.ffs@tglx>
+References: <20250624080810.66821-1-me@linux.beauty>
+ <20250624080810.66821-3-me@linux.beauty> <875xglntx1.ffs@tglx>
+Subject: Re: [PATCH 2/2] x86/smpboot: avoid SMT domain attach/destroy if SMT
+ is not enabled
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <aEydkh4EkKu6w2NJ@surfacebook.localdomain>
-Organization: Intel Finland Oy - BIC 0357606-4 - c/o Alberga Business Park, 6
- krs, Bertel Jungin Aukio 5, 02600 Espoo
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+Importance: Medium
+User-Agent: Zoho Mail
+X-Mailer: Zoho Mail
 
-On Sat, Jun 14, 2025 at 12:52:18AM +0300, Andy Shevchenko wrote:
-> Fri, Jun 13, 2025 at 04:16:57PM +0200, Thomas Bogendoerfer kirjoitti:
-> > On Fri, Jun 13, 2025 at 03:49:41PM +0300, Andy Shevchenko wrote:
-> > > On Fri, Jun 13, 2025 at 01:31:33PM +0200, Thomas Bogendoerfer wrote:
-> > > > On Fri, Jun 13, 2025 at 01:39:07PM +0300, Andy Shevchenko wrote:
-> > > > > On Sat, May 31, 2025 at 10:43:46PM +0300, Andy Shevchenko wrote:
+Hi Thomas.=20
 
-...
+ ---- On Tue, 24 Jun 2025 21:36:10 +0800  Thomas Gleixner <tglx@linutronix.=
+de> wrote ---=20
+ > On Tue, Jun 24 2025 at 16:08, Li Chen wrote:
+ > > From: Li Chen <chenl311@chinatelecom.cn>
+ > >
+ > > Currently, the SMT domain is added into sched_domain_topology
+ > > by default if CONFIG_SCHED_SMT is enabled.
+ > >
+ > > If cpu_attach_domain finds that the CPU SMT domain=E2=80=99s cpumask_w=
+eight
+ >=20
+ > If cpu_attach_domain()
+ >=20
+ > IIRC, I told you that before.
+ >=20
+ > > is just 1, it will destroy_sched_domain it.
+ > >
+ > > On a large machine, such as one with 512 cores, this results in
+ > > 512 redundant domain attach/destroy operations.
+ > >
+ > > We can avoid these unnecessary operations by simply checking
+ >=20
+ > s/We can avoid/Avoid/
+ >=20
+ > Care to read my reviews? If you disagree, then discuss it with me, but
 
-> > > > > I think we can take it via GPIO tree if there is no reply.
-> > > > 
-> > > > please do
-> > > 
-> > > Acked-by?
-> > 
-> > Acked-by: Thomas Bogendoerfer <tsbogend@alpha.franken.de>
-> 
-> Thank you! Bart, seems we are all set to route this via GPIO tree. Do you have
-> any objections?
+I'm sorry that I forget to say that your previous wording review have alrea=
+dy been fixed in v2 https://lore.kernel.org/all/20250624085559.69436-3-me@l=
+inux.beauty/
 
-Bart, can you apply this one, please? Or do you have objections?
+And I would replace cpu_attach_domain with cpu_attach_domain().
 
--- 
-With Best Regards,
-Andy Shevchenko
+Sorry for wasting your time.=20
 
+ > silently ignoring it them is not an option.
+ >=20
+ > > cpu_smt_num_threads and not inserting SMT domain into x86_topology if =
+SMT
+ >=20
+ > not inserting? That's not what this new version does.
+ >=20
+ > > +static void __init maybe_remove_smt_level(void)
+ > > +{
+ > > +    if (cpu_smt_num_threads <=3D 1) {
+ > > +        /*
+ > > +         * SMT level is x86_topology[0].  Shift the array left by one=
+,
+ > > +         * keep the sentinel { NULL } at the end.
+ > > +         */
+ > > +        memmove(&x86_topology[0], &x86_topology[1],
+ > > +            sizeof(x86_topology) - sizeof(x86_topology[0]));
+ > > +        memset(&x86_topology[ARRAY_SIZE(x86_topology) - 1], 0,
+ > > +               sizeof(x86_topology[0]));
+ >=20
+ > So this sets the last entry in the array, aka the original sentinel in
+ > the last array entry, to zero...
+ >=20
+ > This is completely pointless. The above memmove() copies
+ >=20
+ >     topo[1 .. (N - 1)]=20
+ > to
+ >     topo[0 .. (N - 2)]
+ >=20
+ > Where N =3D ARRAY_SIZE(topo).
+ >=20
+ > Therefore
+ >         topo[N - 1] =3D=3D NULL
+ > and
+ >         topo[N - 2] =3D=3D NULL
+ >=20
+ > No?
+ >=20
+ > But then what's worse is that you fail to take that removal into account
+ > for the x86_has_numa_in_package case, which still unconditionally sets
+ > topo[N - 2] to zero even if the SMT level had been removed...
+ >=20
+ > Please take your time and do not rush out half baked stuff.
+=20
+Sorry again for my mistake. I will fix it in v3.
 
+Regards,
+Li
 
