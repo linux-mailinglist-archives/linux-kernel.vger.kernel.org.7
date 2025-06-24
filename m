@@ -1,235 +1,109 @@
-Return-Path: <linux-kernel+bounces-700980-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-700982-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3E4C5AE6F41
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Jun 2025 21:11:36 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7D742AE6F27
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Jun 2025 21:05:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8E7021BC5BCC
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Jun 2025 19:11:51 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 089955A37D9
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Jun 2025 19:05:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2F1D724676F;
-	Tue, 24 Jun 2025 19:05:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F012C2D5437;
+	Tue, 24 Jun 2025 19:05:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="afp+DIJh"
-Received: from mail-pj1-f42.google.com (mail-pj1-f42.google.com [209.85.216.42])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="greaUKvA"
+Received: from mail-lj1-f173.google.com (mail-lj1-f173.google.com [209.85.208.173])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D95CB170826
-	for <linux-kernel@vger.kernel.org>; Tue, 24 Jun 2025 19:04:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7C29E2E7F24
+	for <linux-kernel@vger.kernel.org>; Tue, 24 Jun 2025 19:05:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750791900; cv=none; b=pYYAUg/eaThQM//g2kHn3rxoIjlGnP/f9foxJg8yAGlLZvp4pRTIw1Kz5aHcTIEJyCRVhOzcaCHn/dFpHLgmcTjU90TdT0qoLEoeZMYNUnQBo0M2lGGOyVg23m2B+LVXxbKNLciYnIptzrL3Ceuvz8TFr5p1FObvAse2YZ1FwLY=
+	t=1750791905; cv=none; b=nC/T5CzAoWhQbWy0a1Zrcp9ixqGecevNew//tqkZLkjiwpAdJEFJ/TCFWy2jyHGsPX8mhRVb6iMUce4EqUFJvIUmYM86fCrce0M5gHmSLEFMLCrk9aZPJqGBJOY8kptJ2B2Y8Coi0LWvOeQeJUMHFu0YQeiylvwdM4RaY2r+Srg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750791900; c=relaxed/simple;
-	bh=2gIzDtztlXFsBmfrdVWYGJGg2T2mtarQJIjU/uKnbHs=;
+	s=arc-20240116; t=1750791905; c=relaxed/simple;
+	bh=mbsb9+fWnbzsLx5rxji39vFSDusnvdjQ+VlMMWao5NE=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=WfSVf5GtcH4eEJ41n9v44YblDix/ZJaBUgUp3I2ocrE/eWO8Tf748qh8QRBxXxStPwWT87wsIdy8HPmEQtYVA7Z6yQ6QSV5iN1BsoxyUAJj9KJSsta0E6hgjvFGObu0a0tOk6P84UrvxVmXSPPaA60LUV0UzD5yRZaPi5bbgeIQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=afp+DIJh; arc=none smtp.client-ip=209.85.216.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-pj1-f42.google.com with SMTP id 98e67ed59e1d1-3141b84bf65so921172a91.1
-        for <linux-kernel@vger.kernel.org>; Tue, 24 Jun 2025 12:04:58 -0700 (PDT)
+	 To:Cc:Content-Type; b=mPraDtIhTBJTM1UibnUeuw19wyLVbsft27kWGZLS0dTODtJsAHVErtt8efrrXFqbSXEwun6W4Dtu2SP1PowFMCaukpdhv/yRvRnq/yBg9pxOWNbHCEpvhZx4EX1N61ZPnCI9zI37HiyR9ofgCKO8Zl++Y6GuHAWOeqiBivLg+w4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=greaUKvA; arc=none smtp.client-ip=209.85.208.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-lj1-f173.google.com with SMTP id 38308e7fff4ca-32b7cf56cacso7646431fa.1
+        for <linux-kernel@vger.kernel.org>; Tue, 24 Jun 2025 12:05:03 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1750791898; x=1751396698; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1750791902; x=1751396702; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=K2Kngavp4rtDZRNS2LgoI8pHut0RmsW/toTlJ2MFFp0=;
-        b=afp+DIJh8kaMKzsjPbVLkdTWeWhhAgqy4wfc98CxE0vAqsI+xmK2nI6wzwpknXRrkv
-         +M9dQk2IZil7PmtvVGOshQZ0gvi1fuuHpzextyJxRjWt7Re6GnBnl7yxDIqnTy9GYonC
-         b8qtcZzwB+4UJMwDlTxIRmfjJYp6Lmitw8mP2VcVT2O4cbza5cuMTXFDVXPy7u4tqEHY
-         mhdt9QM+dGyGJisWszTdJNsjSYRGtpkiJTdolGGwBBwMyfEqPaoheaRMVy4k2CM2Dw+H
-         MrD9hPKH0XjPxOR9moFFTPz9gAl//2dyUZjXdBY9t9hPcvSdTEGT+YUSmpmNteCE9ym5
-         umWw==
+        bh=zgrYreYVLH8FvHoQvhsa3zUNDQAJAjppKx7XORV5c4c=;
+        b=greaUKvA3QPRnMukNkOtP1Rs94G9Ik3Gynpo7TPJAyRdeEM9OjvRLrU3i2BCZwhSdL
+         Xf6FZTMGRCZBRaXrjV7KEvJxLjCtam936SnmNhEbi5zGwqsQ8870DKYTZnZGjs/3ATZI
+         vXQkYyIL+CU2XRdapzIgeH9hWKovuYpX/ceNUtEXFAlYSw+8uCj45VudVx9pKnyLReAy
+         s6JbA2D67mA3mo1H02O/adj99e34r8NpL6nnuugv8FQJc8KHJU12ZvBjVbycR+tuu9ud
+         l9vWfZuSSoBh0T2sw66WaF7RUGEIvjFNrbTbwpBFr7HUtKCIwZ+o+R0gLNaI9SukfQ66
+         Fgew==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1750791898; x=1751396698;
+        d=1e100.net; s=20230601; t=1750791902; x=1751396702;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=K2Kngavp4rtDZRNS2LgoI8pHut0RmsW/toTlJ2MFFp0=;
-        b=tjFh2nYaeRUmDERISAvFC5ZKKzaz1TGBBMwzzIjfVbIDqwK3O5D/EAzIkEwwNVWJPB
-         4j0+k4qFzkgzW7fcm8DS9UPMXOe78da1r8IsPd51Wbfoq77FMBdUV7PMI+TzOnxQKN25
-         EnnHEDmfk5NjBnemaBD4sFgTK3wd+rzkvdVOEcqHcw4964IuFtrt61a7QAk3V/noVNUk
-         clWD8h4QB4M9qZswjNPouqmwr0y7Xu7dVScwbqB57WAe22rYQLjuw1GxJbaM4sMkz8W+
-         FvVgKUtpxP3cRz5QMKd4xBuPQ2sr6LcCrjqMAtFx94YkxsXIhV/TpPDmc1Q+fDoTAP3a
-         BgiQ==
-X-Gm-Message-State: AOJu0YydhLHMxyBjmwNbWVCcosPrO7LE38h4lc2mHnHZapXKxcFgBPCo
-	+cij88OzE3ekXQ5mcvlH8HkWEs9c/HZ0zXZUms7o+3JPoxoJMp2BtGgyofHjL08xf7+zEceliFH
-	RS+NJXDtajLOiHMnMpIyxMiPrbI0WajLB7BOkEVOP
-X-Gm-Gg: ASbGncs9gmB4K6ENOE8t5j7/2MDUOumt0jS9vduZdhUK9z/ZpdqiTZQPtiXdqgx+6q0
-	RQlZP92/6Oogcqy3zr/8LV6D1Vu6a+ynOzG+eXokgETqseNgfznTlanegikHz5dNQNWdy6VOTdM
-	hrdJIsgC2jEFWacxgZaZM3fUqXjPPLo47w9EEjkxzj2qY=
-X-Google-Smtp-Source: AGHT+IFKwv0p7g2UPZAuAO0ldFtReM/ENeLUBTFg81N68i1C71I9bm1zFs4UOFtwvKXxSowZacvDiUZFQTjZ6DR5MJk=
-X-Received: by 2002:a17:90b:35cf:b0:312:959:dc3f with SMTP id
- 98e67ed59e1d1-315f25d150dmr30205a91.3.1750791897784; Tue, 24 Jun 2025
- 12:04:57 -0700 (PDT)
+        bh=zgrYreYVLH8FvHoQvhsa3zUNDQAJAjppKx7XORV5c4c=;
+        b=tfnRfMFR3JghBTqQRzR7ZqGVN1Qt01qzuoKRnQO51Bczat0Zr4wTU3DDJJ2ZMECsPF
+         JR+e+gsGjOkzXTdqnvxyxki/7k9IqDU0ztsFhrfFGqgJqLfepTeXPnrYFVEn9IRKcg1z
+         1PS7rc2Ya7y4Frpgo0SZMWxAnVxjM0ws9Tm1DcrXo0wqNtT/1GwGag9L1sPWowYbe2Ig
+         AgvJHzBqmpwrqH0U/53Fo+XLxwFBVD4Ui1nZLw6tp2Nh5BQNP2tGXHuWWlZs5BaNoJOy
+         OhO5y5wVEjvlmAzIwGru3GAfPSyZZ/X3grJGq4DWfM/kB4Iyjs5jZVzdQqa+g1hYdgvh
+         Jnuw==
+X-Forwarded-Encrypted: i=1; AJvYcCU4NR0q9E7BNS54lzeD+2TssBLRynzPJbf/aioztErAFm0hiU3mYgT/P1l7AwxthaqGMXkhouZbLze1QUw=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwfHSwpR5STiH2sFGE5KT6p/BFXwM7vfqXOlcs7U8DAZUpb8hqs
+	1QYmbkv8DglQJpfrcIRnm3v2Z4JCPkMTg+uFw8vAhIfDqQ2QfWNQ/73H97Il+woORYx5Xcb3a6q
+	fswt21SADZnMKeTABGQls+PdRyf/0WUvA0LgNk6cZVEeS14e6/rj6a2Y=
+X-Gm-Gg: ASbGncuSlCrvxdGPn2O9K++tjGBKgeyng9tNVIPbkYDmU2zpnA4z4NqkqBNPDZgD1Rd
+	Fx7gzPSGt15Yst3zsmuZbo8/K7kTzvtAoozvgBl7UGK6Tp6kAWNzGibFaHF1esXdQI+jXaBCb43
+	6iCMdWTIiXM9ZG/m3IGJE1jJFGLNjnckb2qTagOWhcWew=
+X-Google-Smtp-Source: AGHT+IGRAdbblRlD3BsEideIncBbEmzKvsoZaeWYiP0C3/Bj6arnBv99h8pdXRsP35lURKgQ2I/vILxQ5IGPRudpng0=
+X-Received: by 2002:a2e:a54c:0:b0:32b:72c8:9a5d with SMTP id
+ 38308e7fff4ca-32cc4d3d6f2mr2458331fa.0.1750791901594; Tue, 24 Jun 2025
+ 12:05:01 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250609080841.1394941-1-nikunj@amd.com> <858qlhhj4c.fsf@amd.com>
-In-Reply-To: <858qlhhj4c.fsf@amd.com>
-From: Dionna Amalie Glaze <dionnaglaze@google.com>
-Date: Tue, 24 Jun 2025 12:04:45 -0700
-X-Gm-Features: AX0GCFutkCai5Ej5clSCJJHAvRh79dv943h8tZ9hiv-rxScUYBH5_ybiJhbKr2Q
-Message-ID: <CAAH4kHZPrDRF3sZ2GxFxMeue3o9PsEL7p-j8bKL2mxgBjR0ATg@mail.gmail.com>
-Subject: Re: [PATCH] x86/sev: Use TSC_FACTOR for Secure TSC frequency calculation
-To: Nikunj A Dadhania <nikunj@amd.com>
-Cc: linux-kernel@vger.kernel.org, bp@alien8.de, x86@kernel.org, 
-	tglx@linutronix.de, mingo@redhat.com, dave.hansen@linux.intel.com, 
-	thomas.lendacky@amd.com, aik@amd.com, stable@vger.kernel.org
+References: <OSBPR01MB1670163BDCA60924B3671D45BC72A@OSBPR01MB1670.jpnprd01.prod.outlook.com>
+In-Reply-To: <OSBPR01MB1670163BDCA60924B3671D45BC72A@OSBPR01MB1670.jpnprd01.prod.outlook.com>
+From: Linus Walleij <linus.walleij@linaro.org>
+Date: Tue, 24 Jun 2025 21:04:50 +0200
+X-Gm-Features: AX0GCFtEg0ndXbqdWy7FvRv-qpkhJSjku68IPxwnvAyNolU9JWUszgMqSgQ21Yk
+Message-ID: <CACRpkdZhHVBc+aGA91Y3hHOe13C4TYwM1E_mH526dTECBZaP8Q@mail.gmail.com>
+Subject: Re: [PATCH 00/16] MIPS: some compilation fixes for the Lantiq platform
+To: Shiji Yang <yangshiji66@outlook.com>
+Cc: linux-mips@vger.kernel.org, linux-gpio@vger.kernel.org, 
+	linux-spi@vger.kernel.org, Thomas Bogendoerfer <tsbogend@alpha.franken.de>, 
+	John Crispin <john@phrozen.org>, Mark Brown <broonie@kernel.org>, linux-kernel@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Mon, Jun 23, 2025 at 9:17=E2=80=AFPM Nikunj A Dadhania <nikunj@amd.com> =
-wrote:
->
-> Nikunj A Dadhania <nikunj@amd.com> writes:
->
-> > When using Secure TSC, the GUEST_TSC_FREQ MSR reports a frequency based=
- on
-> > the nominal P0 frequency, which deviates slightly (typically ~0.2%) fro=
-m
-> > the actual mean TSC frequency due to clocking parameters. Over extended=
- VM
-> > uptime, this discrepancy accumulates, causing clock skew between the
-> > hypervisor and SEV-SNP VM, leading to early timer interrupts as perceiv=
-ed
-> > by the guest.
-> >
-> > The guest kernel relies on the reported nominal frequency for TSC-based
-> > timekeeping, while the actual frequency set during SNP_LAUNCH_START may
-> > differ. This mismatch results in inaccurate time calculations, causing =
-the
-> > guest to perceive hrtimers as firing earlier than expected.
-> >
-> > Utilize the TSC_FACTOR from the SEV firmware's secrets page (see "Secre=
-ts
-> > Page Format" in the SNP Firmware ABI Specification) to calculate the me=
-an
-> > TSC frequency, ensuring accurate timekeeping and mitigating clock skew =
-in
-> > SEV-SNP VMs.
-> >
-> > Use early_ioremap_encrypted() to map the secrets page as
-> > ioremap_encrypted() uses kmalloc() which is not available during early =
-TSC
-> > initialization and causes a panic.
-> >
-> > Fixes: 73bbf3b0fbba ("x86/tsc: Init the TSC for Secure TSC guests")
-> > Reviewed-by: Tom Lendacky <thomas.lendacky@amd.com>
-> > Cc: stable@vger.kernel.org
-> > Signed-off-by: Nikunj A Dadhania <nikunj@amd.com>
->
-> A gentle reminder for review.
->
-> Thanks
-> Nikunj
->
-> > ---
-> >  arch/x86/include/asm/sev.h |  5 ++++-
-> >  arch/x86/coco/sev/core.c   | 24 ++++++++++++++++++++++++
-> >  2 files changed, 28 insertions(+), 1 deletion(-)
-> >
-> > diff --git a/arch/x86/include/asm/sev.h b/arch/x86/include/asm/sev.h
-> > index 58e028d42e41..655d7e37bbcc 100644
-> > --- a/arch/x86/include/asm/sev.h
-> > +++ b/arch/x86/include/asm/sev.h
-> > @@ -282,8 +282,11 @@ struct snp_secrets_page {
-> >       u8 svsm_guest_vmpl;
-> >       u8 rsvd3[3];
-> >
-> > +     /* The percentage decrease from nominal to mean TSC frequency. */
-> > +     u32 tsc_factor;
-> > +
-> >       /* Remainder of page */
-> > -     u8 rsvd4[3744];
-> > +     u8 rsvd4[3740];
-> >  } __packed;
-> >
-> >  struct snp_msg_desc {
-> > diff --git a/arch/x86/coco/sev/core.c b/arch/x86/coco/sev/core.c
-> > index b6db4e0b936b..ffd44712cec0 100644
-> > --- a/arch/x86/coco/sev/core.c
-> > +++ b/arch/x86/coco/sev/core.c
-> > @@ -2167,15 +2167,39 @@ static unsigned long securetsc_get_tsc_khz(void=
-)
-> >
-> >  void __init snp_secure_tsc_init(void)
-> >  {
-> > +     struct snp_secrets_page *secrets;
-> >       unsigned long long tsc_freq_mhz;
-> > +     void *mem;
-> >
-> >       if (!cc_platform_has(CC_ATTR_GUEST_SNP_SECURE_TSC))
-> >               return;
-> >
-> > +     mem =3D early_memremap_encrypted(sev_secrets_pa, PAGE_SIZE);
-> > +     if (!mem) {
-> > +             pr_err("Unable to get TSC_FACTOR: failed to map the SNP s=
-ecrets page.\n");
-> > +             sev_es_terminate(SEV_TERM_SET_LINUX, GHCB_TERM_SECURE_TSC=
-);
-> > +     }
-> > +
-> > +     secrets =3D (__force struct snp_secrets_page *)mem;
-> > +
-> >       setup_force_cpu_cap(X86_FEATURE_TSC_KNOWN_FREQ);
-> >       rdmsrq(MSR_AMD64_GUEST_TSC_FREQ, tsc_freq_mhz);
-> >       snp_tsc_freq_khz =3D (unsigned long)(tsc_freq_mhz * 1000);
-> >
-> > +     /*
-> > +      * Obtain the mean TSC frequency by decreasing the nominal TSC fr=
-equency with
-> > +      * TSC_FACTOR as documented in the SNP Firmware ABI specification=
-:
-> > +      *
-> > +      * GUEST_TSC_FREQ * (1 - (TSC_FACTOR * 0.00001))
-> > +      *
-> > +      * which is equivalent to:
-> > +      *
-> > +      * GUEST_TSC_FREQ -=3D (GUEST_TSC_FREQ * TSC_FACTOR) / 100000;
-> > +      */
-> > +     snp_tsc_freq_khz -=3D (snp_tsc_freq_khz * secrets->tsc_factor) / =
-100000;
-> > +
+On Wed, Jun 18, 2025 at 4:54=E2=80=AFPM Shiji Yang <yangshiji66@outlook.com=
+> wrote:
 
-To better match the documentation and to not store an intermediate
-result in a global, it'd be
-good to add local variables. I'm also not a big fan of ABI constants
-in the implementation.
+> This patch series fixes some MIPS Lantiq platform compilation issues
+> found on the 6.12 kernel[1].
 
-guest_tsc_freq_khz =3D (unsigned long)(tsc_freq_mhz * 1000);
-snp_tsc_freq_khz =3D guest_tsc_freq_khz -
-SNP_SCALE_TSC_FACTOR(guest_tsc_freq_khz * secrets->tsc_factor);
+Thanks!
 
-...in a header somewhere...
-/**
- * The SEV-SNP secrets page contains an encoding of the percentage decrease
- * from nominal TSC frequency to mean TSC frequency due to clocking paramet=
-ers.
- * The encoding is in parts per 100,000, so the following is an
-integer-based scaling macro.
- */
-#define SNP_SCALE_TSC_FACTOR(x) ((x) / 100000)
+(...)
+>   pinctrl: xway: mark xway_pinconf_group_set() as static
 
-> >       x86_platform.calibrate_cpu =3D securetsc_get_tsc_khz;
-> >       x86_platform.calibrate_tsc =3D securetsc_get_tsc_khz;
-> > +
-> > +     early_memunmap(mem, PAGE_SIZE);
-> >  }
-> >
-> > base-commit: 337964c8abfbef645cbbe25245e25c11d9d1fc4c
-> > --
-> > 2.43.0
->
+I already got a similar patch from Bartosz.
 
+>   pinctrl: falcon: mark pinctrl_falcon_init() as static
 
---=20
--Dionna Glaze, PhD, CISSP, CCSP (she/her)
+Patch applied!
+
+Yours,
+Linus Walleij
 
