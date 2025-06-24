@@ -1,124 +1,111 @@
-Return-Path: <linux-kernel+bounces-700076-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-700061-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B2786AE6377
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Jun 2025 13:18:45 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 3B69EAE634A
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Jun 2025 13:08:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 22ADC4A696B
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Jun 2025 11:18:46 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C333517B8A1
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Jun 2025 11:08:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7B619286D77;
-	Tue, 24 Jun 2025 11:18:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AAC12288C23;
+	Tue, 24 Jun 2025 11:08:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="maM7tyZJ"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.15])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="IiYfk0Mw"
+Received: from mail-pl1-f175.google.com (mail-pl1-f175.google.com [209.85.214.175])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 57D801F3B9E
-	for <linux-kernel@vger.kernel.org>; Tue, 24 Jun 2025 11:18:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.15
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C862E2288EE;
+	Tue, 24 Jun 2025 11:08:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750763919; cv=none; b=cTVHHbi9vI3yFKRX8fZy3HINNx4LM+6KzjShPJX2xI+vQqpQWZA8nT3PJb4A/3hZuV3GKnXt3Mwtc8vVZgVRy6C4QBugKvozpU4i66elbyp8SpB/ZxwpxoicntRom2CsABY8O5B8SrMv/wyjCuKi3ZS+YQJG7ygRWiPizoH+0Tk=
+	t=1750763312; cv=none; b=hWlvDf39SxojfCo4WTQTZm2fOEDAybuQUKewFfkQdpL++n5Rhd66CZc30NSYJsXKwyNUyUEwvQd1BKuxYjvXgfZs+TDzIDE0Gp3U4XT4V8ad+Ewdfn3jYYuA97/khEeeBVIIWWC4/d/wHl2bt0g43yZqn5D1EUl58k6XduleqJ0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750763919; c=relaxed/simple;
-	bh=1ap+QjOY8hp1HnLTsr/YMx4rqJ5F5CXHENt+R0rpaes=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=gFd8bE2Gh8I4gVdCJOXsn2WunjuWb2t2qXmlNg4HZztfZogckdf6Xh/mShBlNY2QbKQjBliFfhVaF9VqmHXwAMAljLScyl11Ky2wYqK41DRW8c+yCCBFEyHsZauTscrMJzT3J7NmjWQHghGnnzVKO8sT2aLkX6BT7X4G2pkUAbs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=maM7tyZJ; arc=none smtp.client-ip=192.198.163.15
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1750763918; x=1782299918;
-  h=from:to:cc:subject:date:message-id:mime-version:
-   content-transfer-encoding;
-  bh=1ap+QjOY8hp1HnLTsr/YMx4rqJ5F5CXHENt+R0rpaes=;
-  b=maM7tyZJa8fupRGfLc9gGQiX/YgaNbr8tZR3XW8oY9K525HG25IUFWIm
-   Bvxi4d3cjMYjrH5NVJtj2pZCKq4LqHly7JGaYFmJJ2o7Zl+KY2f48XVwo
-   IdlKSWssPnn8PA4BVcnn7eEcjqRyNQJRSk6A1uNFWXF8WwHM5flXgAQzz
-   aFuPfR8dSPOEFe2IZZnMYmvdpW7Qwk/XtRXc+icyuFEny37UX27A208wj
-   n5M8Cohs+olkQZX8shcH/3Z52AuBbi8PxDTOfQ53BEQdOGfB4h7m0BHOP
-   pZy119u8lIP24admnkHE0M3BCnZsNWAsvC4J+f3J6gYWap8T1PAoPQnGC
-   g==;
-X-CSE-ConnectionGUID: wlW6ONX9QM2zSVlbZM7HBA==
-X-CSE-MsgGUID: P2zN6/1USxmG9OqZsrOECQ==
-X-IronPort-AV: E=McAfee;i="6800,10657,11473"; a="53136036"
-X-IronPort-AV: E=Sophos;i="6.16,261,1744095600"; 
-   d="scan'208";a="53136036"
-Received: from fmviesa002.fm.intel.com ([10.60.135.142])
-  by fmvoesa109.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 24 Jun 2025 04:18:38 -0700
-X-CSE-ConnectionGUID: xYKLToauRQKMjPuCh/RVUg==
-X-CSE-MsgGUID: g/95QdzwTCGqHo5A/I1WzA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.16,261,1744095600"; 
-   d="scan'208";a="175488488"
-Received: from sannilnx-dsk.jer.intel.com ([10.12.231.107])
-  by fmviesa002-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 24 Jun 2025 04:18:36 -0700
-From: Alexander Usyskin <alexander.usyskin@intel.com>
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: Reuven Abliyev <reuven.abliyev@intel.com>,
-	Alexander Usyskin <alexander.usyskin@intel.com>,
-	linux-kernel@vger.kernel.org
-Subject: [char-misc-next v2] mei: bus: fix device leak
-Date: Tue, 24 Jun 2025 14:05:20 +0300
-Message-ID: <20250624110520.1403597-1-alexander.usyskin@intel.com>
-X-Mailer: git-send-email 2.43.0
+	s=arc-20240116; t=1750763312; c=relaxed/simple;
+	bh=DNg1JCVsgEHf23k4WG2oExPiJlj+bBuyEUK7sYa8r7U=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=kYzOMRgPh6/GHSsy0N0T5zHCiVaWBbICp27xcnGT73YvMCR/atM1Dz1Vw3Q5o8r43Yw3U1PZ3EGATCmfd5GOP6LUYe7xVzFYzlllrieRd5zIQsXi+cP5AQDx/Lp/edrIzmHEzXH/emYuoznYx1cnuG4A0jKUOP9PUUirtDYtKbI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=IiYfk0Mw; arc=none smtp.client-ip=209.85.214.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f175.google.com with SMTP id d9443c01a7336-234ae2bf851so7339245ad.1;
+        Tue, 24 Jun 2025 04:08:30 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1750763310; x=1751368110; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=u4AdC7xJ04CgkqAaAO3h+p8gGTP59K3A/YKahZ0U2Us=;
+        b=IiYfk0MwfkA110jQI6dgSM2N/sLhKUKfapDpomoAKFfN293MtF1CY5zi95RsJZ7mR1
+         JFE8lGfj3YM78UqTLM4QIIzwlMu+o8PTK0bapz04oK5GFktPcbb3vJ6WS1prCd/l9S/E
+         +1GUkdzGMj9/ptxkWZiJc6DPbX4zuNrvZX9IMukmp4Wb3j5A0HtPcf6w+k8CHnobQve7
+         bsHkg0aF9zbiCgU11PhW9eY3Ef7fLOwp1PvrhnifPKtAMUBSYspZo0NR0kc/tQeYTGaM
+         VNzCnM1t9TYtUZp+drYESB0ESFS+vP3ssH0sTPqp+ZPTVfDIBKWOpaxaOw6UcsGLor9b
+         lJbA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1750763310; x=1751368110;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=u4AdC7xJ04CgkqAaAO3h+p8gGTP59K3A/YKahZ0U2Us=;
+        b=M58QtE+z7g0xYPeea2hkbeWWFCM3sQTPtL6L+GpDS6WFnf7Rp3AA5mDtRSpd0i3WiY
+         s2iYSIKAYeWwuHBq1olWv9rGav7XUSys3kAgO2+SNhdNd4cCDn3L24hJ+87DQbeNTTm3
+         17wN6KA04DPvirQMZXX0mp/pwdJSmhWYorJoc7NCnpKmQ9w8CoE29MT4Fpov8uIYUpB3
+         Xc0BQMEHnGscL7opYvRH+3t6uilsIVdTkRmMpRcBYxfCraitFtv56ovNPikfJqzKUYm2
+         whvUIBuegHP5IkZ/Oa4LA15GgdynPY4wLa8ZOw2By0C6SI7A7z8fom7TDkzKWT+Um4Lj
+         D2rQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVvcL+/oTeJ8Us0JdssmVuBAhHj+zl8SwutNrX2pkA7ENTQGUX5S8OEjTj27IFKZShMuY6E4h2UZRrdxr8=@vger.kernel.org, AJvYcCXqEdKuN+HOP7UeZWdLSgppjBuepeV8deq9wF5qn9fRLj6W4wioH7q23Arz+dg8/AwVn2/SXGXkTsTrIB+g2jw=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyjI5HtpWngWvBULFy6cjWAw0/zOZTy5gw7fGg+JV1TYJnciu/g
+	/VeOaqsQpS+HirAm780FBDfoOIvJeFwTjywgPceHbJb6Z+PADY0wWGOT8V+/0acEw9ogBTa/yJC
+	ckPXOKSN4Rn370M7rnfksn3xIXAOIlH0Hr1xRCuc=
+X-Gm-Gg: ASbGncvFyrlEW1nnfCPFTRfJibK3kdseM5+dN2hZ85BIIZkFrySA+GtZZkZlB3PM9TI
+	J/jkRDXqEuFRgY4ovn1minrhsqQiMQl9Z1XsKuGNbDvaGZbIyPzzS9z4OOQdEuc1bu9Tk5eRzFF
+	gxQ8XChgLM8bRFaayPMbykTMlSkII/+Vf0IFCoP3+H6WM=
+X-Google-Smtp-Source: AGHT+IHnFuakCpfPBkjJNvFKFCJKt0vC/f+jLh/CjjCBWyYIGLi8aAa/I/GMHz7wT/6gQgfix8FO3sp0tGSeV4FtsYQ=
+X-Received: by 2002:a17:903:2450:b0:234:f200:5194 with SMTP id
+ d9443c01a7336-237d980d929mr102574535ad.1.1750763310017; Tue, 24 Jun 2025
+ 04:08:30 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20250610132823.3457263-1-fujita.tomonori@gmail.com> <175015666837.277659.5038961663728008472.b4-ty@kernel.org>
+In-Reply-To: <175015666837.277659.5038961663728008472.b4-ty@kernel.org>
+From: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
+Date: Tue, 24 Jun 2025 13:08:17 +0200
+X-Gm-Features: Ac12FXw9NRLPGpki39ay2NhQnfu75XaImkNq6s2i4SyS7A6IERIj-PvCYxubfCk
+Message-ID: <CANiq72=mDe2kB4yQnzb=kwopyUYG936pOoj80YpWk7+q6aJwbQ@mail.gmail.com>
+Subject: Re: [PATCH v3 0/5] rust: time: Convert hrtimer to use Instant and Delta
+To: Andreas Hindborg <a.hindborg@kernel.org>
+Cc: alex.gaynor@gmail.com, ojeda@kernel.org, 
+	FUJITA Tomonori <fujita.tomonori@gmail.com>, aliceryhl@google.com, anna-maria@linutronix.de, 
+	bjorn3_gh@protonmail.com, boqun.feng@gmail.com, dakr@kernel.org, 
+	frederic@kernel.org, gary@garyguo.net, jstultz@google.com, 
+	linux-kernel@vger.kernel.org, lossin@kernel.org, lyude@redhat.com, 
+	rust-for-linux@vger.kernel.org, sboyd@kernel.org, tglx@linutronix.de, 
+	tmgross@umich.edu
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-The bus rescan function creates bus devices for all clients.
-The fixup routine is executed on all devices, unneeded
-devices are removed and fully initialized once set
-is_added flag to 1.
+On Tue, Jun 17, 2025 at 12:39=E2=80=AFPM Andreas Hindborg <a.hindborg@kerne=
+l.org> wrote:
+>
+> [1/5] rust: time: Rename Delta's methods from as_* to into_*
+>       commit: 2ed94606a0fea693e250e5b8fda11ff8fc240d37
 
-If link to firmware is reset right after all devices are
-initialized, but before fixup is executed, the rescan tries
-to remove devices.
-The is_added flag is not set and the mei_cl_bus_dev_destroy
-returns prematurely.
-Allow to clean up device when is_added flag is unset to
-account for above scenario.
+Do we want this given the (~ongoing) discussion at
 
-Fixes: 6009595a66e4 ("mei: bus: link client devices instead of host clients")
-Signed-off-by: Alexander Usyskin <alexander.usyskin@intel.com>
----
- drivers/misc/mei/bus.c | 11 ++++-------
- 1 file changed, 4 insertions(+), 7 deletions(-)
+    https://lore.kernel.org/rust-for-linux/20250617144155.3903431-2-fujita.=
+tomonori@gmail.com/
 
-diff --git a/drivers/misc/mei/bus.c b/drivers/misc/mei/bus.c
-index 67176caf5416..f2e5d550c6b4 100644
---- a/drivers/misc/mei/bus.c
-+++ b/drivers/misc/mei/bus.c
-@@ -1430,17 +1430,14 @@ static void mei_cl_bus_dev_stop(struct mei_cl_device *cldev)
-  */
- static void mei_cl_bus_dev_destroy(struct mei_cl_device *cldev)
- {
--
- 	WARN_ON(!mutex_is_locked(&cldev->bus->cl_bus_lock));
- 
--	if (!cldev->is_added)
--		return;
--
--	device_del(&cldev->dev);
-+	if (cldev->is_added) {
-+		device_del(&cldev->dev);
-+		cldev->is_added = 0;
-+	}
- 
- 	list_del_init(&cldev->bus_list);
--
--	cldev->is_added = 0;
- 	put_device(&cldev->dev);
- }
- 
--- 
-2.43.0
+?
 
+I noticed due to a conflict in linux-next today.
+
+Cheers,
+Miguel
 
