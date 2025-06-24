@@ -1,190 +1,201 @@
-Return-Path: <linux-kernel+bounces-700147-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-700155-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9ECBDAE649B
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Jun 2025 14:20:51 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 08DBDAE64B8
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Jun 2025 14:23:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4EFF518912B6
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Jun 2025 12:19:30 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3AA483AD1A5
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Jun 2025 12:21:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C3887291C23;
-	Tue, 24 Jun 2025 12:15:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2D132292900;
+	Tue, 24 Jun 2025 12:16:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="bNEdlFI4"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.7])
+	dkim=pass (2048-bit key) header.d=konsulko.se header.i=@konsulko.se header.b="O1Y3yI7y";
+	dkim=permerror (0-bit key) header.d=konsulko.se header.i=@konsulko.se header.b="bZ6Ahj+E"
+Received: from mailrelay5-3.pub.mailoutpod3-cph3.one.com (mailrelay5-3.pub.mailoutpod3-cph3.one.com [46.30.212.10])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 71B322882A9;
-	Tue, 24 Jun 2025 12:15:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.7
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6DC6826A1BE
+	for <linux-kernel@vger.kernel.org>; Tue, 24 Jun 2025 12:16:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.30.212.10
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750767320; cv=none; b=akq3a7+drnbHUKaHQaeXSz//+oSY1yYBu/JsHcILh/9mOJMYweOVx6fXcDTLkv42BWFYTt3uLRCWtU8ByZsLNKvWiLX+Knpf7cmOiFjiAuRUx1kRwZ82dH086phwz8ftyCBRjj4oeyfJIia4g+EbEhNXlNatRjTqBSeSHx/mNy4=
+	t=1750767386; cv=none; b=YiU40bA5+DNGrdcHDsBwB2pCioxD6QSQL0XeFwG22GDw3mbL51qXIpGaDg9nYBHG4EIw2oQ+At1JKSOvdHlfbpI78CVzM+EGnrfVsHQATNgQ4w4yZR5/RmFhk1emT57AkyFtzNGOYBlG8AWTDiyl+diLHto8zFV9Cx+FSn2eUl4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750767320; c=relaxed/simple;
-	bh=RS3Ir0XcZ0wtTv3mLgddInGQ7GnUnQCjtJ18Ke5dvSs=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=EI4UQfCC2Fkr2My/SnFt6oE5k4eJI33rOxCH7qDpoZTEfO7VZFAQ1u1+Qd+QF+nGq8PD+/0QsigacnFYBsLn/iAoN92zPMLbigXALUA6nfxUlvAnZ7XIWvWbI9FvXf4T3THvgRl5itZCp0bJrPTtzHSBZXPd+zeou+LXZZwPbW0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=bNEdlFI4; arc=none smtp.client-ip=192.198.163.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1750767318; x=1782303318;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=RS3Ir0XcZ0wtTv3mLgddInGQ7GnUnQCjtJ18Ke5dvSs=;
-  b=bNEdlFI43fANoe8ulXaDdFPRH4gM37lQxFNo6tjeXHPqwU/rqHTC3lXi
-   ylK0IMoVf90+m119HgNdZplv4osxeza4LTlM7Xk2fk+pfPR3zjAmlTj8i
-   rxfzBxrpY4cqkP6iSijSsHuISRSHSTGT9YzIF0axvrb1Ui4CARbFBdDfQ
-   ODuVpYe3bz8VOLWjRqpnwcUjY+y1+xOX3T4W1Pt9PM9Hu+aUeWW3O0FyT
-   +6zVNFCwnRCUMw3jk0DRm1FcWeVdhFClIdFVChnENR/gUUXfgW1+/yvbT
-   +uNoR3fNkHBvvN1FQpK8opDi08Jfp2ED/gt+9v9rqBP1PRAqg+khfOJiX
-   w==;
-X-CSE-ConnectionGUID: 1irAqlk9TiWYqzucKT2t0A==
-X-CSE-MsgGUID: norpp/qmSxOmsZczG+F9sw==
-X-IronPort-AV: E=McAfee;i="6800,10657,11474"; a="78423405"
-X-IronPort-AV: E=Sophos;i="6.16,261,1744095600"; 
-   d="scan'208";a="78423405"
-Received: from orviesa003.jf.intel.com ([10.64.159.143])
-  by fmvoesa101.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 24 Jun 2025 05:15:18 -0700
-X-CSE-ConnectionGUID: KMhT0jvkQG6oua368CzdYg==
-X-CSE-MsgGUID: WAduLzKvSmGFelTHd0uYrA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.16,261,1744095600"; 
-   d="scan'208";a="156295716"
-Received: from lkp-server01.sh.intel.com (HELO e8142ee1dce2) ([10.239.97.150])
-  by orviesa003.jf.intel.com with ESMTP; 24 Jun 2025 05:15:13 -0700
-Received: from kbuild by e8142ee1dce2 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1uU2YR-000S5m-0z;
-	Tue, 24 Jun 2025 12:15:11 +0000
-Date: Tue, 24 Jun 2025 20:14:32 +0800
-From: kernel test robot <lkp@intel.com>
-To: Benjamin Gaignard <benjamin.gaignard@collabora.com>, joro@8bytes.org,
-	will@kernel.org, robin.murphy@arm.com, robh@kernel.org,
-	krzk+dt@kernel.org, conor+dt@kernel.org, heiko@sntech.de,
-	nicolas.dufresne@collabora.com, jgg@ziepe.ca
-Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
-	iommu@lists.linux.dev, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-rockchip@lists.infradead.org, kernel@collabora.com,
-	Benjamin Gaignard <benjamin.gaignard@collabora.com>
-Subject: Re: [PATCH v4 3/5] iommu: Add verisilicon IOMMU driver
-Message-ID: <202506242057.NVRNN4W1-lkp@intel.com>
-References: <20250623153931.158765-4-benjamin.gaignard@collabora.com>
+	s=arc-20240116; t=1750767386; c=relaxed/simple;
+	bh=zrvi77xSHk1MKReIAMpc6aIPXchnFwbbbWCkQnC3Bg8=;
+	h=Content-Type:Mime-Version:Subject:From:In-Reply-To:Date:Cc:
+	 Message-Id:References:To; b=WqS2y80b3aCDNTBjPtf/lY1cnZq3Ug3wdnmShW4tCte4+8batCCnb3mfUDxVC2/1Ar0BkD3ITexZKR3MGUOF8c/iSF4qvIPgZv3f0kLW+ss3LDDlkWs0Yk+3FXLvn3h1rv4r3bMjflrvDQjiKWQz84rMXc4jt3jecROzJe0SZc0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=konsulko.se; spf=none smtp.mailfrom=konsulko.se; dkim=pass (2048-bit key) header.d=konsulko.se header.i=@konsulko.se header.b=O1Y3yI7y; dkim=permerror (0-bit key) header.d=konsulko.se header.i=@konsulko.se header.b=bZ6Ahj+E; arc=none smtp.client-ip=46.30.212.10
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=konsulko.se
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=konsulko.se
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; t=1750767312; x=1751372112;
+	d=konsulko.se; s=rsa1;
+	h=to:references:message-id:content-transfer-encoding:cc:date:in-reply-to:from:
+	 subject:mime-version:content-type:from;
+	bh=M1Kg+66kgHeJqX/QTGsvuXZbak7RCmywd80sh5ukf3U=;
+	b=O1Y3yI7yDGtiM9CJBlbGz+wXBfbYrUpUbsnMBZ/MQBv16Gl7XVKButbAve9mGYAp3S8jgAdDUgGn6
+	 IkOTDz5oDWzMCszy22AG/G4qECmO7V0pU8ocjI+WlCSiwgL9xHypEuZTGWN3vQRXcTdvgfLZjBeo7E
+	 70jjzTwYge3Wh9WF8uGmu01fWKRi80HuxrL5D6hWzJxlEQsAsM5Y0yBLz4/mz87EslFz/ji+v5JNCZ
+	 H7pbrka4q9qZ4PvSAQTLz/KPJJsBJz21qRAlpOUxfXRTNW5BrFF40J8G/QPy2dYyR/XMHt7LE7Ak2x
+	 xUmf56OJ2hJLKHP8fVeWEjRn05oIy4w==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; t=1750767312; x=1751372112;
+	d=konsulko.se; s=ed1;
+	h=to:references:message-id:content-transfer-encoding:cc:date:in-reply-to:from:
+	 subject:mime-version:content-type:from;
+	bh=M1Kg+66kgHeJqX/QTGsvuXZbak7RCmywd80sh5ukf3U=;
+	b=bZ6Ahj+ExbkkRKMS4MKnICYB62Nu0dxU9dEaCvG8p/lb+BVUOP+EBn9ZfKDKz+TULZ0c2AzmSzsu7
+	 MmvVSCSCQ==
+X-HalOne-ID: df90b046-50f4-11f0-af95-d7c209f8bd06
+Received: from smtpclient.apple (host-90-233-201-126.mobileonline.telia.com [90.233.201.126])
+	by mailrelay5.pub.mailoutpod3-cph3.one.com (Halon) with ESMTPSA
+	id df90b046-50f4-11f0-af95-d7c209f8bd06;
+	Tue, 24 Jun 2025 12:15:12 +0000 (UTC)
+Content-Type: text/plain;
+	charset=utf-8
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250623153931.158765-4-benjamin.gaignard@collabora.com>
-
-Hi Benjamin,
-
-kernel test robot noticed the following build warnings:
-
-[auto build test WARNING on robh/for-next]
-[also build test WARNING on rockchip/for-next arm64/for-next/core linus/master v6.16-rc3 next-20250623]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
-
-url:    https://github.com/intel-lab-lkp/linux/commits/Benjamin-Gaignard/dt-bindings-vendor-prefixes-Add-Verisilicon/20250623-234734
-base:   https://git.kernel.org/pub/scm/linux/kernel/git/robh/linux.git for-next
-patch link:    https://lore.kernel.org/r/20250623153931.158765-4-benjamin.gaignard%40collabora.com
-patch subject: [PATCH v4 3/5] iommu: Add verisilicon IOMMU driver
-config: hexagon-allmodconfig (https://download.01.org/0day-ci/archive/20250624/202506242057.NVRNN4W1-lkp@intel.com/config)
-compiler: clang version 17.0.6 (https://github.com/llvm/llvm-project 6009708b4367171ccdbf4b5905cb6a803753fe18)
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250624/202506242057.NVRNN4W1-lkp@intel.com/reproduce)
-
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202506242057.NVRNN4W1-lkp@intel.com/
-
-All warnings (new ones prefixed by >>):
-
->> drivers/iommu/vsi-iommu.c:657:10: warning: variable 'err' is uninitialized when used here [-Wuninitialized]
-     657 |                 return err;
-         |                        ^~~
-   drivers/iommu/vsi-iommu.c:643:9: note: initialize the variable 'err' to silence this warning
-     643 |         int err;
-         |                ^
-         |                 = 0
-   1 warning generated.
+Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3826.200.121\))
+Subject: Re: [PATCH] mm/vmalloc: allow to set node and align in vrealloc
+From: Vitaly Wool <vitaly.wool@konsulko.se>
+In-Reply-To: <aFqT1mK7SYsYd3DZ@pc636>
+Date: Tue, 24 Jun 2025 14:15:01 +0200
+Cc: linux-mm@kvack.org,
+ akpm@linux-foundation.org,
+ linux-kernel@vger.kernel.org,
+ Danilo Krummrich <dakr@kernel.org>,
+ Alice Ryhl <aliceryhl@google.com>,
+ rust-for-linux@vger.kernel.org
+Content-Transfer-Encoding: quoted-printable
+Message-Id: <D562EE6A-DE99-4C97-8934-D60682DDE711@konsulko.se>
+References: <20250624095121.3243540-1-vitaly.wool@konsulko.se>
+ <aFqT1mK7SYsYd3DZ@pc636>
+To: Uladzislau Rezki <urezki@gmail.com>
+X-Mailer: Apple Mail (2.3826.200.121)
 
 
-vim +/err +657 drivers/iommu/vsi-iommu.c
 
-   638	
-   639	static int vsi_iommu_probe(struct platform_device *pdev)
-   640	{
-   641		struct device *dev = &pdev->dev;
-   642		struct vsi_iommu *iommu;
-   643		int err;
-   644	
-   645		iommu = devm_kzalloc(dev, sizeof(*iommu), GFP_KERNEL);
-   646		if (!iommu)
-   647			return -ENOMEM;
-   648	
-   649		iommu->dev = dev;
-   650	
-   651		iommu->regs = devm_platform_ioremap_resource(pdev, 0);
-   652		if (IS_ERR(iommu->regs))
-   653			return -ENOMEM;
-   654	
-   655		iommu->num_clocks = devm_clk_bulk_get_all(dev, &iommu->clocks);
-   656		if  (iommu->num_clocks < 0)
- > 657			return err;
-   658	
-   659		err = clk_bulk_prepare(iommu->num_clocks, iommu->clocks);
-   660		if (err)
-   661			return err;
-   662	
-   663		iommu->irq = platform_get_irq(pdev, 0);
-   664		if (iommu->irq < 0)
-   665			return iommu->irq;
-   666	
-   667		err = devm_request_irq(iommu->dev, iommu->irq, vsi_iommu_irq,
-   668				       IRQF_SHARED, dev_name(dev), iommu);
-   669		if (err)
-   670			goto err_unprepare_clocks;
-   671	
-   672		spin_lock_init(&iommu->lock);
-   673		dma_set_mask_and_coherent(dev, DMA_BIT_MASK(32));
-   674		platform_set_drvdata(pdev, iommu);
-   675	
-   676		pm_runtime_set_autosuspend_delay(dev, 100);
-   677		pm_runtime_use_autosuspend(dev);
-   678		pm_runtime_enable(dev);
-   679	
-   680		err = iommu_device_sysfs_add(&iommu->iommu, dev, NULL, dev_name(dev));
-   681		if (err)
-   682			goto err_runtime_disable;
-   683	
-   684		err = iommu_device_register(&iommu->iommu, &vsi_iommu_ops, dev);
-   685		if (err)
-   686			goto err_remove_sysfs;
-   687	
-   688		return 0;
-   689	
-   690	err_remove_sysfs:
-   691		iommu_device_sysfs_remove(&iommu->iommu);
-   692	err_runtime_disable:
-   693		pm_runtime_disable(dev);
-   694	err_unprepare_clocks:
-   695		clk_bulk_unprepare(iommu->num_clocks, iommu->clocks);
-   696		return err;
-   697	}
-   698	
+> On Jun 24, 2025, at 2:02=E2=80=AFPM, Uladzislau Rezki =
+<urezki@gmail.com> wrote:
+>=20
+> On Tue, Jun 24, 2025 at 11:51:21AM +0200, Vitaly Wool wrote:
+>> Reimplement vrealloc() to be able to set node and alignment should
+>> a user need to do so. Rename the function to vrealloc_node() to
+>> better match what it actually does now and introduce a macro for
+>> vrealloc() for backward compatibility.
+>>=20
+>> With that change we also provide the ability for the Rust part of
+>> the kernel to set node and aligmnent in its allocations.
+>>=20
+>> Signed-off-by: Vitaly Wool <vitaly.wool@konsulko.se>
+>> ---
+>> include/linux/vmalloc.h |  8 +++++---
+>> mm/vmalloc.c            | 16 +++++++++++++---
+>> 2 files changed, 18 insertions(+), 6 deletions(-)
+>>=20
+>> diff --git a/include/linux/vmalloc.h b/include/linux/vmalloc.h
+>> index fdc9aeb74a44..7d5251287687 100644
+>> --- a/include/linux/vmalloc.h
+>> +++ b/include/linux/vmalloc.h
+>> @@ -197,9 +197,11 @@ extern void *__vcalloc_noprof(size_t n, size_t =
+size, gfp_t flags) __alloc_size(1
+>> extern void *vcalloc_noprof(size_t n, size_t size) __alloc_size(1, =
+2);
+>> #define vcalloc(...) alloc_hooks(vcalloc_noprof(__VA_ARGS__))
+>>=20
+>> -void * __must_check vrealloc_noprof(const void *p, size_t size, =
+gfp_t flags)
+>> - __realloc_size(2);
+>> -#define vrealloc(...) alloc_hooks(vrealloc_noprof(__VA_ARGS__))
+>> +void *__must_check vrealloc_node_noprof(const void *p, size_t size,
+>> + unsigned long align, gfp_t flags, int nid) __realloc_size(2);
+>> +#define vrealloc_noprof(p, s, f) vrealloc_node_noprof(p, s, 1, f, =
+NUMA_NO_NODE)
+>> +#define vrealloc_node(...) =
+alloc_hooks(vrealloc_node_noprof(__VA_ARGS__))
+>> +#define vrealloc(...) alloc_hooks(vrealloc_noprof(__VA_ARGS__))
+>>=20
+>> extern void vfree(const void *addr);
+>> extern void vfree_atomic(const void *addr);
+>> diff --git a/mm/vmalloc.c b/mm/vmalloc.c
+>> index ab986dd09b6a..117894301db1 100644
+>> --- a/mm/vmalloc.c
+>> +++ b/mm/vmalloc.c
+>> @@ -4081,10 +4081,12 @@ void *vzalloc_node_noprof(unsigned long size, =
+int node)
+>> EXPORT_SYMBOL(vzalloc_node_noprof);
+>>=20
+>> /**
+>> - * vrealloc - reallocate virtually contiguous memory; contents =
+remain unchanged
+>> + * vrealloc_node - reallocate virtually contiguous memory; contents =
+remain unchanged
+>>  * @p: object to reallocate memory for
+>>  * @size: the size to reallocate
+>> + * @align: requested alignment
+>>  * @flags: the flags for the page level allocator
+>> + * @nid: node id
+>>  *
+>>  * If @p is %NULL, vrealloc() behaves exactly like vmalloc(). If =
+@size is 0 and
+>>  * @p is not a %NULL pointer, the object pointed to is freed.
+>> @@ -4103,7 +4105,7 @@ EXPORT_SYMBOL(vzalloc_node_noprof);
+>>  * Return: pointer to the allocated memory; %NULL if @size is zero or =
+in case of
+>>  *         failure
+>>  */
+>> -void *vrealloc_noprof(const void *p, size_t size, gfp_t flags)
+>> +void *vrealloc_node_noprof(const void *p, size_t size, unsigned long =
+align, gfp_t flags, int nid)
+>> {
+>> struct vm_struct *vm =3D NULL;
+>> size_t alloced_size =3D 0;
+>> @@ -4127,6 +4129,13 @@ void *vrealloc_noprof(const void *p, size_t =
+size, gfp_t flags)
+>> if (WARN(alloced_size < old_size,
+>> "vrealloc() has mismatched area vs requested sizes (%p)\n", p))
+>> return NULL;
+>> + if (WARN(nid !=3D NUMA_NO_NODE && nid !=3D =
+page_to_nid(vmalloc_to_page(p)),
+>> + "vrealloc() has mismatched nids\n"))
+>> + return NULL;
+>> + if (WARN((uintptr_t)p & (align - 1),
+>> + "will not reallocate with a bigger alignment (0x%lx)\n",
+>> + align))
+>> + return NULL;
+>> }
+>>=20
+>> /*
+>> @@ -4158,7 +4167,8 @@ void *vrealloc_noprof(const void *p, size_t =
+size, gfp_t flags)
+>> }
+>>=20
+>> /* TODO: Grow the vm_area, i.e. allocate and map additional pages. */
+>> - n =3D __vmalloc_noprof(size, flags);
+>> + n =3D __vmalloc_node_noprof(size, align, flags, nid, =
+__builtin_return_address(0));
+>> +
+>> if (!n)
+>> return NULL;
+>>=20
+>> --=20
+>> 2.39.2
+>>=20
+> Do we have users which require alignment and nid? I see that it is =
+part
+> of kvrealloc() API only.
+>=20
 
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+There=E2=80=99s a patch pending inclusion of this one which will be the =
+user of this change. I was reluctant
+to combine these 2 in one series because the second one is on the Rust =
+side, but it can be found
+here: https://github.com/vwool/linux-mm/pull/new/realloc-extend.
+
+~Vitaly=
 
