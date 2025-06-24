@@ -1,187 +1,109 @@
-Return-Path: <linux-kernel+bounces-701100-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-701117-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 51E2EAE70A1
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Jun 2025 22:26:47 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7F28AAE70EA
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Jun 2025 22:35:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 72DD717E413
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Jun 2025 20:26:46 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7BAEA4A29C5
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Jun 2025 20:34:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EAF592EBBB7;
-	Tue, 24 Jun 2025 20:26:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="Zi2H6T5z"
-Received: from fllvem-ot04.ext.ti.com (fllvem-ot04.ext.ti.com [198.47.19.246])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3F5DF2EAB69;
+	Tue, 24 Jun 2025 20:33:21 +0000 (UTC)
+Received: from logand.com (logand.com [37.48.87.44])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A92A929AAF0;
-	Tue, 24 Jun 2025 20:26:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.246
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 41F324C9F;
+	Tue, 24 Jun 2025 20:33:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=37.48.87.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750796785; cv=none; b=Pf/zEIyv5GcMt1lZ3TQaM2gNYdTZx1EPwFzVNNUMDPwivnm6DEG4B07gEnBgZjXE1NVDDET6wDgUeIQCVKHQer6HBd3mZD+9UNcgFpIB3SNyxbTHCPVabWlOA9DruIdfgzmRZlb0cWkY1YBhJPYarXBQ8bXaRTvEoalQC5a2IPM=
+	t=1750797200; cv=none; b=kWVZWEMDrXM25ntGwTlQ47hPiHvPZNVSkabk/yhCcON+krdKkW5a5+usIXtKcDn35T00FdpMGvDMzt91AjymlRqPRfLoL9U9tUyrBiNIbNEq6cjcuDgV7fPbE/LEC5i/8Oo4TaXjh97wh/lUsmGScmGOrbgSHC3WO9f/s94oU98=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750796785; c=relaxed/simple;
-	bh=8qvwSHO1+kU/s+0/nwif8OvvuO8uIInW/6Ce8eRN7RY=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=OUmIKyWgKE8N7N2iiYWYFuxGA5Ty2FkvF+NbS44zTCXDwz9NWlLZ7sJHrmQQNrpv0uOn2v1mpDCJx3mAep9gBujrUcIVcZ3pkxtGMIlOzYnSdRJAKUbwYKnhXDPdzW1LKn9600e7MnbuS5s7fAmBF6PdY/OuGBnz4h0OvC0+tZc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=Zi2H6T5z; arc=none smtp.client-ip=198.47.19.246
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
-Received: from lelvem-sh02.itg.ti.com ([10.180.78.226])
-	by fllvem-ot04.ext.ti.com (8.15.2/8.15.2) with ESMTP id 55OKQ6MP1955253;
-	Tue, 24 Jun 2025 15:26:06 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-	s=ti-com-17Q1; t=1750796766;
-	bh=m4TjCvZ5Jf7Xqqe6R0pi6faNrYPWbmCQi4gwoWZ2ILQ=;
-	h=From:To:CC:Subject:Date:In-Reply-To:References;
-	b=Zi2H6T5zdEo6iF+U1R3Sqp5A61gG/EGcLHULAJpH61ZlgAtb04iRpK8VjdS6b/o76
-	 SlTOb4UzcTlSZYNlrN2k+5pI7BdBgw6EZTjBKWxojuEtyxVKZWjjbO100e/N+iudK0
-	 y9qo35bYBbzGr4BbZ1LUOZJ+TKHGB7IQQ9VmKXf0=
-Received: from DLEE114.ent.ti.com (dlee114.ent.ti.com [157.170.170.25])
-	by lelvem-sh02.itg.ti.com (8.18.1/8.18.1) with ESMTPS id 55OKQ6gk2021547
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-SHA256 bits=128 verify=FAIL);
-	Tue, 24 Jun 2025 15:26:06 -0500
-Received: from DLEE100.ent.ti.com (157.170.170.30) by DLEE114.ent.ti.com
- (157.170.170.25) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.55; Tue, 24
- Jun 2025 15:26:06 -0500
-Received: from lelvem-mr05.itg.ti.com (10.180.75.9) by DLEE100.ent.ti.com
- (157.170.170.30) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.55 via
- Frontend Transport; Tue, 24 Jun 2025 15:26:05 -0500
-Received: from judy-hp.dhcp.ti.com (judy-hp.dhcp.ti.com [128.247.81.105])
-	by lelvem-mr05.itg.ti.com (8.18.1/8.18.1) with ESMTP id 55OKQ5VX2374186;
-	Tue, 24 Jun 2025 15:26:05 -0500
-From: Judith Mendez <jm@ti.com>
-To: Judith Mendez <jm@ti.com>, Wim Van Sebroeck <wim@linux-watchdog.org>,
-        Guenter Roeck <linux@roeck-us.net>, Rob Herring <robh@kernel.org>,
-        Krzysztof
- Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>
-CC: Vignesh Raghavendra <vigneshr@ti.com>, Tero Kristo <kristo@kernel.org>,
-        <linux-watchdog@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>
-Subject: [PATCH RESEND 2/2] watchdog: rti_wdt: Add reaction control
-Date: Tue, 24 Jun 2025 15:26:05 -0500
-Message-ID: <20250624202605.1333645-3-jm@ti.com>
-X-Mailer: git-send-email 2.49.0
-In-Reply-To: <20250624202605.1333645-1-jm@ti.com>
-References: <20250624202605.1333645-1-jm@ti.com>
+	s=arc-20240116; t=1750797200; c=relaxed/simple;
+	bh=awUJ59KCPPuvPJZePiwtYh8/HLcDmmaXXLX8J+3uhuE=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=guR5o57YfNTtiAIU3aEs3diYPV5P8L7e1vVsEl8CQ6hiAnOQjWt986tb/j8iRLyESZlf44xHUGftlMIhBjc1riKrxSvErx4zXP8cwhgKJDpYYZrQY4T75S85iHzf1IrBVnypv0rXg81xcwaJxkuhS0OOuWVZOHGwYbNe3Q5GdZ8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=logand.com; spf=pass smtp.mailfrom=logand.com; arc=none smtp.client-ip=37.48.87.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=logand.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=logand.com
+Received: by logand.com (Postfix, from userid 1001)
+	id CE7491A0C05; Tue, 24 Jun 2025 22:27:20 +0200 (CEST)
+X-Mailer: emacs 30.1 (via feedmail 11-beta-1 I)
+From: Tomas Hlavaty <tom@logand.com>
+To: Ryusuke Konishi <konishi.ryusuke@gmail.com>
+Cc: linux-nilfs@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: BUG: NILFS error (device dm-0): nilfs_bmap_lookup_contig: broken
+ bmap (inode number=4023271)
+Date: Tue, 24 Jun 2025 22:27:18 +0200
+Message-ID: <87tt44lwbd.fsf@logand.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
 Content-Type: text/plain
-X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
 
-This allows to configure reaction between NMI and reset for WWD.
+Hi Ryusuke,
 
-On K3 SoC's other than AM62L SoC [0], watchdog reset output is routed
-to the ESM module which can subsequently route the signal to safety
-master or SoC reset. On AM62L, the watchdog reset output is routed
-to the SoC HW reset block. So, add a new compatible for AM62l to add
-SoC data and configure reaction to reset instead of NMI.
+I get the following error:
 
-[0] https://www.ti.com/product/AM62L
-Signed-off-by: Judith Mendez <jm@ti.com>
----
- drivers/watchdog/rti_wdt.c | 31 +++++++++++++++++++++++++++----
- 1 file changed, 27 insertions(+), 4 deletions(-)
+   NILFS error (device dm-0): nilfs_bmap_lookup_contig:
+   broken bmap (inode number=4023271)
 
-diff --git a/drivers/watchdog/rti_wdt.c b/drivers/watchdog/rti_wdt.c
-index d1f9ce4100a8..d419884c86c4 100644
---- a/drivers/watchdog/rti_wdt.c
-+++ b/drivers/watchdog/rti_wdt.c
-@@ -35,7 +35,8 @@
- #define RTIWWDRXCTRL	0xa4
- #define RTIWWDSIZECTRL	0xa8
- 
--#define RTIWWDRX_NMI	0xa
-+#define RTIWWDRXN_RST	0x5
-+#define RTIWWDRXN_NMI	0xa
- 
- #define RTIWWDSIZE_50P		0x50
- #define RTIWWDSIZE_25P		0x500
-@@ -63,22 +64,29 @@
- 
- static int heartbeat;
- 
-+struct rti_wdt_data {
-+	bool reset;
-+};
-+
- /*
-  * struct to hold data for each WDT device
-  * @base - base io address of WD device
-  * @freq - source clock frequency of WDT
-  * @wdd  - hold watchdog device as is in WDT core
-+ * @data - hold configuration data
-  */
- struct rti_wdt_device {
- 	void __iomem		*base;
- 	unsigned long		freq;
- 	struct watchdog_device	wdd;
-+	const struct rti_wdt_data *data;
- };
- 
- static int rti_wdt_start(struct watchdog_device *wdd)
- {
- 	u32 timer_margin;
- 	struct rti_wdt_device *wdt = watchdog_get_drvdata(wdd);
-+	u8 reaction;
- 	int ret;
- 
- 	ret = pm_runtime_resume_and_get(wdd->parent);
-@@ -101,8 +109,12 @@ static int rti_wdt_start(struct watchdog_device *wdd)
- 	 */
- 	wdd->min_hw_heartbeat_ms = 520 * wdd->timeout + MAX_HW_ERROR;
- 
--	/* Generate NMI when wdt expires */
--	writel_relaxed(RTIWWDRX_NMI, wdt->base + RTIWWDRXCTRL);
-+	/* Generate reset or NMI when timer expires/serviced outside of window */
-+	reaction = RTIWWDRXN_NMI;
-+	if (wdt->data->reset)
-+		reaction = RTIWWDRXN_RST;
-+
-+	writel_relaxed(reaction, wdt->base + RTIWWDRXCTRL);
- 
- 	/* Open window size 50%; this is the largest window size available */
- 	writel_relaxed(RTIWWDSIZE_50P, wdt->base + RTIWWDSIZECTRL);
-@@ -255,6 +267,8 @@ static int rti_wdt_probe(struct platform_device *pdev)
- 	wdd->timeout = DEFAULT_HEARTBEAT;
- 	wdd->parent = dev;
- 
-+	wdt->data = of_device_get_match_data(dev);
-+
- 	watchdog_set_drvdata(wdd, wdt);
- 	watchdog_set_nowayout(wdd, 1);
- 	watchdog_set_restart_priority(wdd, 128);
-@@ -369,8 +383,17 @@ static void rti_wdt_remove(struct platform_device *pdev)
- 	pm_runtime_disable(&pdev->dev);
- }
- 
-+static struct rti_wdt_data j7_wdt = {
-+	.reset = false,
-+};
-+
-+static struct rti_wdt_data am62l_wdt = {
-+	.reset = true,
-+};
-+
- static const struct of_device_id rti_wdt_of_match[] = {
--	{ .compatible = "ti,j7-rti-wdt", },
-+	{ .compatible = "ti,j7-rti-wdt", .data = &j7_wdt },
-+	{ .compatible = "ti,am62l-rti-wdt", .data = &am62l_wdt },
- 	{},
- };
- MODULE_DEVICE_TABLE(of, rti_wdt_of_match);
--- 
-2.49.0
+and the filesystem gets mounted read-only.
 
+I can remount the filesystem read-write again manually, but after an
+operation which touches the broken part of the filesystem, it gets
+remounted read-only again.
+
+I have identified the file of the inode:
+sudo find / -inum 4023271
+as
+/root/.cache/mesa_shader_cache_db/index
+but remounting rw and trying to
+rm -r /root/.cache
+puts the filesystem to ro mode again.
+(not sure why there is .cache dir and mesa_shader_cache_db dir in the
+/root dir, I never use root account for GUI)
+
+I am in the process of upgrading the system from nixos24.11 to
+nixos25.05 but this issue is preventing me from doing so.  Is there a
+way to fix the filesystem so that it stays read-write?  Or do I have to
+discard the whole filesystem?
+
+Also I have noticed since long time ago, that reboot or shutdown says
+something about nilfs discarding stuff, which seems strange and those
+messages were not there a year or more ago.  Not sure if this is
+related, but it should not be discarding anything I guess.  I see these
+messages on many machines so it is not related to a particular hardware.
+
+Log and stacktrace are bellow.
+Please let me know if I can provide more info about the problem.
+
+Any help would be appreciated.
+
+Thank you,
+
+Tomas
+
+$ uname -a
+Linux buta 6.6.87 #1-NixOS SMP PREEMPT_DYNAMIC Thu Apr 10 12:37:44 UTC 2025 x86_64 GNU/Linux
+
+$ sudo dmesg | grep nilfs
+[    1.087780] stage-1-init: [Tue Jun 24 19:32:16 UTC 2025] loading module nilfs2...
+[   35.318251] NILFS error (device dm-0): nilfs_bmap_lookup_contig: broken bmap (inode number=4023271)
+[   35.319235] NILFS error (device dm-0): nilfs_bmap_lookup_contig: broken bmap (inode number=4023271)
+[...]
+[   35.347872] NILFS error (device dm-0): nilfs_bmap_lookup_contig:
+broken bmap (inode number=4023271)
+[ 1733.401421]  nilfs_segctor_do_construct+0xdd/0x2630 [nilfs2]
+[ 1733.401747]  ? nilfs_mdt_fetch_dirty+0x19/0x50 [nilfs2]
+[ 1733.401899]  ? nilfs_test_metadata_dirty.isra.0+0x50/0xb0 [nilfs2]
+[ 1733.402059]  nilfs_segctor_construct+0x170/0x2b0 [nilfs2]
+[ 1733.402220]  nilfs_segctor_thread+0x155/0x3f0 [nilfs2]
+[ 1733.402385]  ? __pfx_nilfs_segctor_thread+0x10/0x10 [nilfs2]
+[ 1738.068626] NILFS error (device dm-0): nilfs_bmap_last_key: broken
+bmap (inode number=4023271)
 
