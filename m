@@ -1,55 +1,55 @@
-Return-Path: <linux-kernel+bounces-700603-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-700605-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id F1F36AE6AB2
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Jun 2025 17:23:15 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7E63EAE6AAF
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Jun 2025 17:22:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A54F91C40A00
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Jun 2025 15:17:44 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 785D44E259A
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Jun 2025 15:17:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 702A52F0C59;
-	Tue, 24 Jun 2025 15:08:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8CBDD2F19B5;
+	Tue, 24 Jun 2025 15:08:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b="Fm8R0HCu"
+	dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b="pmSqjgvd"
 Received: from esa.microchip.iphmx.com (esa.microchip.iphmx.com [68.232.154.123])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B98142EF65C;
-	Tue, 24 Jun 2025 15:08:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E31DB2EF9CB;
+	Tue, 24 Jun 2025 15:08:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=68.232.154.123
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750777728; cv=none; b=HPPB5DYHf9dARDyp3W7IrUJT7teQB7sTxrDCPjkRI/UC8YBWkkt6D6M+a8ULxFb/lBfXph7VslnJJgeffqGK08+OYxuaQ2ytSLNq7CXSL2UWVArCBJJ0kvdcEiR14Kn/5m65cHKABlayZJtaToGV6/oJV5oDuTaqC1mrehSqR24=
+	t=1750777729; cv=none; b=IOt7lP18FTCMiE3vSJjH91+qYDjKv4DdXcYzjlYa7DbJdwQ4iOXWVv6YGdryeFlOdjpSXO0gIx7vTAQdBYBqnY+qn3xuiHsOnp6JiL2/QSZIReMggkWaqA/DM4lM3bP4ezkjWhMir2DGY+/euwdTKH5qkaRHrh6dOA4CHTrd+EI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750777728; c=relaxed/simple;
-	bh=/z69PibqywpVDUupVFU5et9XVf8qDTlwUsinAZCZ8UM=;
+	s=arc-20240116; t=1750777729; c=relaxed/simple;
+	bh=zo0NpMdOdWIh9B4OagOeYIcPDmAgxC72SvmGefvk/Hw=;
 	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=TZzvnOlYvp8TSTG6I6WQNQ4Gwju3/SDSnlvuBZFXACceIHAUoZZHAyGTabDwgvE1mRyEwj2G2ioyUUVxOFoqF1scP8Z6vJNRF70we38XkuyKf7+fkVZNHpxzw54xag5kODWvf1tj3CW4lpdxPSmHpT57Md9M4cVPiA61xC4ZPDI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com; spf=pass smtp.mailfrom=microchip.com; dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b=Fm8R0HCu; arc=none smtp.client-ip=68.232.154.123
+	 MIME-Version:Content-Type; b=L8rfdhQd3W9ccnD1CKGZ7hY82sFhSN5w1oUja/kaCgcez1P6a379cfGvUHxu4EK8RIKOhD4V02zy28zlSxyseSk1SjMwOZ/tXDf4WXQiJi4lsiTJc0E4sbkihzSVohG+QXJpUU7G/G6kePEPfEUIWLUM14dUUdvJbEgulDt6YEI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com; spf=pass smtp.mailfrom=microchip.com; dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b=pmSqjgvd; arc=none smtp.client-ip=68.232.154.123
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=microchip.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=microchip.com; i=@microchip.com; q=dns/txt; s=mchp;
-  t=1750777726; x=1782313726;
+  t=1750777727; x=1782313727;
   h=from:to:cc:subject:date:message-id:in-reply-to:
    references:mime-version:content-transfer-encoding;
-  bh=/z69PibqywpVDUupVFU5et9XVf8qDTlwUsinAZCZ8UM=;
-  b=Fm8R0HCulFPUEIKiIaTdB1QVVhlFV+0/4wYusE/StVgA7pm8cg1fL6bU
-   HzpMfjjp4mE/DOHWDC2XHu0XWO/KpXh/aA8z/1qgZ8jHYktH+hk1RdlFL
-   CI3yeEbGqd4T9dbr35HxSwRL8DmQKuBahRo0EWQKinYJ2hG/UmR+4gYL4
-   1pwrgaBX2DWDcqLHdRQNiwPzZhgj1+ZbyXKeTss/qqmrsN/SPLaozaj2B
-   3Ue3ns7/iZI/JWqt9p4gj6w5Jm60M/UO6hObwCpkWzMYIWjBhtjbjGcO0
-   qmG+EXMbN0Fd/PvxWXj03HxAJ5dwt3J2hl95y+Lugp3myvSV/H9x4amOn
-   g==;
+  bh=zo0NpMdOdWIh9B4OagOeYIcPDmAgxC72SvmGefvk/Hw=;
+  b=pmSqjgvdw08lsfrSHKDCBLstUd9X3Ph7gL/IkiyaF7TbU8TUH2gnWgks
+   Q9iEbtMyt5ArZK1OsUkefo1ZWKAGgiKTZ+qggGqM2zuFdoozF04UTVIsj
+   uvYN4AKzc1ZgPWm2YBJtFeHe4zObuyILIVjK/4k0WCBaf/eulCpiHvWUF
+   ZWtv0hMs6LYxrZnOvwgYNkk7lEHsdTb1oMvsjSNbRY6sqOrixu/6WVw8W
+   buVUYw8bua8zll82XW3LAfQunn5Bkb3+36ryfMI2AmZA9LzcD1BYmWxBv
+   hkL816AFB7nSGdY0fDzF4ww7mPYhblERtEcSulU+co7zb9Uwyag21NUNx
+   w==;
 X-CSE-ConnectionGUID: 4+RzxTN1Qsa6vG3Bpty4nA==
-X-CSE-MsgGUID: Q0O/25CwQsu2txuQI1HkOw==
+X-CSE-MsgGUID: 8gRjwljjR/KZuu12BifyyQ==
 X-IronPort-AV: E=Sophos;i="6.16,262,1744095600"; 
-   d="scan'208";a="42688174"
+   d="scan'208";a="42688175"
 X-Amp-Result: SKIPPED(no attachment in message)
 Received: from unknown (HELO email.microchip.com) ([170.129.1.10])
-  by esa4.microchip.iphmx.com with ESMTP/TLS/ECDHE-RSA-AES128-GCM-SHA256; 24 Jun 2025 08:08:43 -0700
+  by esa4.microchip.iphmx.com with ESMTP/TLS/ECDHE-RSA-AES128-GCM-SHA256; 24 Jun 2025 08:08:44 -0700
 Received: from chn-vm-ex01.mchp-main.com (10.10.85.143) by
  chn-vm-ex04.mchp-main.com (10.10.85.152) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
@@ -64,9 +64,9 @@ To: <mturquette@baylibre.com>, <sboyd@kernel.org>,
 CC: <robh@kernel.org>, <linux-clk@vger.kernel.org>,
 	<linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
 	<varshini.rajendran@microchip.com>
-Subject: [PATCH v2 04/32] clk: at91: clk-peripheral: switch to clk_parent_data
-Date: Tue, 24 Jun 2025 08:08:01 -0700
-Message-ID: <94aa65af65553f4251bcc9ca6420c8feafc27324.1750182562.git.Ryan.Wanner@microchip.com>
+Subject: [PATCH v2 05/32] clk: at91: clk-main: switch to clk parent data
+Date: Tue, 24 Jun 2025 08:08:02 -0700
+Message-ID: <222655275e1e58dbb3cb2f6e4e65fc08cc81b7db.1750182562.git.Ryan.Wanner@microchip.com>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <cover.1750182562.git.Ryan.Wanner@microchip.com>
 References: <cover.1750182562.git.Ryan.Wanner@microchip.com>
@@ -81,43 +81,44 @@ Content-Type: text/plain
 
 From: Claudiu Beznea <claudiu.beznea@tuxon.dev>
 
-Use struct clk_parent_data instead of parent_hw.
+Use struct clk_parent_data instead of parent_hw as this leads to the use
+of modern clock structures.
 
 Signed-off-by: Claudiu Beznea <claudiu.beznea@tuxon.dev>
-[ryan.wanner@microchip.com: Remove the SoC specific changes those will
-be added in a later commit. And adjust commit message]
+[ryan.wanner@microchip.com: Remove SoC specific changes will be added in
+a later patch. Adjust commit message.]
 Signed-off-by: Ryan Wanner <Ryan.Wanner@microchip.com>
 ---
- drivers/clk/at91/clk-peripheral.c | 16 ++++++++--------
- drivers/clk/at91/pmc.h            |  4 ++--
+ drivers/clk/at91/clk-main.c | 16 ++++++++--------
+ drivers/clk/at91/pmc.h      |  4 ++--
  2 files changed, 10 insertions(+), 10 deletions(-)
 
-diff --git a/drivers/clk/at91/clk-peripheral.c b/drivers/clk/at91/clk-peripheral.c
-index c173a44c800a..ed97b3c0a66b 100644
---- a/drivers/clk/at91/clk-peripheral.c
-+++ b/drivers/clk/at91/clk-peripheral.c
-@@ -97,7 +97,7 @@ static const struct clk_ops peripheral_ops = {
- 
- struct clk_hw * __init
- at91_clk_register_peripheral(struct regmap *regmap, const char *name,
--			     const char *parent_name, struct clk_hw *parent_hw,
-+			     const char *parent_name, struct clk_parent_data *parent_data,
- 			     u32 id)
+diff --git a/drivers/clk/at91/clk-main.c b/drivers/clk/at91/clk-main.c
+index 9b462becc693..514c5690253f 100644
+--- a/drivers/clk/at91/clk-main.c
++++ b/drivers/clk/at91/clk-main.c
+@@ -402,7 +402,7 @@ struct clk_hw * __init
+ at91_clk_register_rm9200_main(struct regmap *regmap,
+ 			      const char *name,
+ 			      const char *parent_name,
+-			      struct clk_hw *parent_hw)
++			      struct clk_parent_data *parent_data)
  {
- 	struct clk_peripheral *periph;
-@@ -105,7 +105,7 @@ at91_clk_register_peripheral(struct regmap *regmap, const char *name,
- 	struct clk_hw *hw;
- 	int ret;
- 
--	if (!name || !(parent_name || parent_hw) || id > PERIPHERAL_ID_MAX)
-+	if (!name || !(parent_name || parent_data) || id > PERIPHERAL_ID_MAX)
+ 	struct clk_rm9200_main *clkmain;
+ 	struct clk_init_data init = {};
+@@ -412,7 +412,7 @@ at91_clk_register_rm9200_main(struct regmap *regmap,
+ 	if (!name)
  		return ERR_PTR(-EINVAL);
  
- 	periph = kzalloc(sizeof(*periph), GFP_KERNEL);
-@@ -114,8 +114,8 @@ at91_clk_register_peripheral(struct regmap *regmap, const char *name,
+-	if (!(parent_name || parent_hw))
++	if (!(parent_name || parent_data))
+ 		return ERR_PTR(-EINVAL);
+ 
+ 	clkmain = kzalloc(sizeof(*clkmain), GFP_KERNEL);
+@@ -421,8 +421,8 @@ at91_clk_register_rm9200_main(struct regmap *regmap,
  
  	init.name = name;
- 	init.ops = &peripheral_ops;
+ 	init.ops = &rm9200_main_ops;
 -	if (parent_hw)
 -		init.parent_hws = (const struct clk_hw **)&parent_hw;
 +	if (parent_data)
@@ -125,55 +126,53 @@ index c173a44c800a..ed97b3c0a66b 100644
  	else
  		init.parent_names = &parent_name;
  	init.num_parents = 1;
-@@ -448,7 +448,7 @@ struct clk_hw * __init
- at91_clk_register_sam9x5_peripheral(struct regmap *regmap, spinlock_t *lock,
- 				    const struct clk_pcr_layout *layout,
- 				    const char *name, const char *parent_name,
--				    struct clk_hw *parent_hw,
-+				    struct clk_parent_data *parent_data,
- 				    u32 id, const struct clk_range *range,
- 				    int chg_pid, unsigned long flags)
+@@ -552,7 +552,7 @@ struct clk_hw * __init
+ at91_clk_register_sam9x5_main(struct regmap *regmap,
+ 			      const char *name,
+ 			      const char **parent_names,
+-			      struct clk_hw **parent_hws,
++			      struct clk_parent_data *parent_data,
+ 			      int num_parents)
  {
-@@ -457,7 +457,7 @@ at91_clk_register_sam9x5_peripheral(struct regmap *regmap, spinlock_t *lock,
- 	struct clk_hw *hw;
- 	int ret;
- 
--	if (!name || !(parent_name || parent_hw))
-+	if (!name || !(parent_name || parent_data))
+ 	struct clk_sam9x5_main *clkmain;
+@@ -564,7 +564,7 @@ at91_clk_register_sam9x5_main(struct regmap *regmap,
+ 	if (!name)
  		return ERR_PTR(-EINVAL);
  
- 	periph = kzalloc(sizeof(*periph), GFP_KERNEL);
-@@ -465,8 +465,8 @@ at91_clk_register_sam9x5_peripheral(struct regmap *regmap, spinlock_t *lock,
- 		return ERR_PTR(-ENOMEM);
+-	if (!(parent_hws || parent_names) || !num_parents)
++	if (!(parent_data || parent_names) || !num_parents)
+ 		return ERR_PTR(-EINVAL);
+ 
+ 	clkmain = kzalloc(sizeof(*clkmain), GFP_KERNEL);
+@@ -573,8 +573,8 @@ at91_clk_register_sam9x5_main(struct regmap *regmap,
  
  	init.name = name;
--	if (parent_hw)
--		init.parent_hws = (const struct clk_hw **)&parent_hw;
+ 	init.ops = &sam9x5_main_ops;
+-	if (parent_hws)
+-		init.parent_hws = (const struct clk_hw **)parent_hws;
 +	if (parent_data)
 +		init.parent_data = (const struct clk_parent_data *)parent_data;
  	else
- 		init.parent_names = &parent_name;
- 	init.num_parents = 1;
+ 		init.parent_names = parent_names;
+ 	init.num_parents = num_parents;
 diff --git a/drivers/clk/at91/pmc.h b/drivers/clk/at91/pmc.h
-index b43f6652417f..b6f2aca1e1fd 100644
+index b6f2aca1e1fd..e32a5e85d08f 100644
 --- a/drivers/clk/at91/pmc.h
 +++ b/drivers/clk/at91/pmc.h
-@@ -226,13 +226,13 @@ at91_clk_sama7g5_register_master(struct regmap *regmap,
+@@ -195,11 +195,11 @@ struct clk_hw * __init
+ at91_clk_register_rm9200_main(struct regmap *regmap,
+ 			      const char *name,
+ 			      const char *parent_name,
+-			      struct clk_hw *parent_hw);
++			      struct clk_parent_data *parent_data);
+ struct clk_hw * __init
+ at91_clk_register_sam9x5_main(struct regmap *regmap, const char *name,
+ 			      const char **parent_names,
+-			      struct clk_hw **parent_hws, int num_parents);
++			      struct clk_parent_data *parent_data, int num_parents);
  
  struct clk_hw * __init
- at91_clk_register_peripheral(struct regmap *regmap, const char *name,
--			     const char *parent_name, struct clk_hw *parent_hw,
-+			     const char *parent_name, struct clk_parent_data *parent_data,
- 			     u32 id);
- struct clk_hw * __init
- at91_clk_register_sam9x5_peripheral(struct regmap *regmap, spinlock_t *lock,
- 				    const struct clk_pcr_layout *layout,
- 				    const char *name, const char *parent_name,
--				    struct clk_hw *parent_hw,
-+				    struct clk_parent_data *parent_data,
- 				    u32 id, const struct clk_range *range,
- 				    int chg_pid, unsigned long flags);
- 
+ at91_clk_register_master_pres(struct regmap *regmap, const char *name,
 -- 
 2.43.0
 
