@@ -1,173 +1,181 @@
-Return-Path: <linux-kernel+bounces-699805-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-699804-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id AFCFAAE5FA5
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Jun 2025 10:41:21 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0D517AE5FA0
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Jun 2025 10:41:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C74CD17E477
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Jun 2025 08:41:18 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1133E3A39B1
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Jun 2025 08:40:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1D37C26AAB7;
-	Tue, 24 Jun 2025 08:41:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0EFF426A1B8;
+	Tue, 24 Jun 2025 08:41:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="UH1V3t9S"
-Received: from mail-wr1-f51.google.com (mail-wr1-f51.google.com [209.85.221.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="E0pbBCRD"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8949926A1AE
-	for <linux-kernel@vger.kernel.org>; Tue, 24 Jun 2025 08:41:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D57B126A0BF
+	for <linux-kernel@vger.kernel.org>; Tue, 24 Jun 2025 08:40:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750754467; cv=none; b=BOGk9aGD6YSQYIZQRjpzS+HEBuiOCO8eOY4snQbAdyK9lEvYeyPdkRC/qHS+04DSb0ap6kWnAb8u9qGhhZrkcdTYzPlR13DenAb/4+CIawZdVWmcat4jaDbNxWoxQkWHOgdamAX+V687CNFd7hFoIVyy2gE2OB5gfFlRb6W7ni8=
+	t=1750754460; cv=none; b=o7ZQdpGKtdFZ1RKoyLbliz1e/eLpzNSq9hO8wXFpHIDN69qRZF6tvFedgIxJikJ/Wwb2aIeNA5Z8KcQFzydhUCA4xxb6FaT3ZgJroGIbSVoSpUaC/y4SmLsZmUU4NIlhrhDVZBM99oVFr3Vha8qg0z15EG7Y31NFQoKyLK80VbY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750754467; c=relaxed/simple;
-	bh=zdAtxHvqY91gdiWBUFT7jBGg+f5hSLcaeJSjeAJNEVw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=tSXFnLx01w4M09c6lKjKCd1J4jWIig+V+KZyDS4M6CkW6fMHL7fTi9t8PPaY2tl47QS/0sm0LefwPqJHh+Njj0JTwNhfrJcHtn94qwioOeqHEO2lIfaJ+MZ7nwTAddB8qJZG/60ioQvPVi1oqX2ZObAUa/YboGTj5ftrKOqckDs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=UH1V3t9S; arc=none smtp.client-ip=209.85.221.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
-Received: by mail-wr1-f51.google.com with SMTP id ffacd0b85a97d-3a510432236so3731234f8f.0
-        for <linux-kernel@vger.kernel.org>; Tue, 24 Jun 2025 01:41:04 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=suse.com; s=google; t=1750754463; x=1751359263; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=42Y2N6ebar+wiBFiVwZ+1np3R1M+VYIv1aIQkqIKk40=;
-        b=UH1V3t9S4NXkPqOqyNyHVbHAvxkVhK777/oSyAzWRZWd6k92Hp4OfCtbGtwNzDa4NO
-         aHhBhJNq4Q3A+nOxolkOrzG72lygIik4Y4E+LWv/mSGQbN9iz3HUSvmv0HQK5PYMdQvj
-         brqPqcaUXH96LLCaWAUegv/ZlT7PD9EU1kzbq4fve7XPzLifVTz0o4UWYAj7PQBeOQSr
-         JRgXLjd1gtNqd/KDijBDLEv9x2tEREMuAv+kC35tuY2gJl9ERBaTJVwENE4mCpoAXrMP
-         czg3WpLW9ng2/Ip1qS6Kg1UNBBG9QOQPV57fiSUcR4QzdS9omCKPVzKAT84JEmwyzS9d
-         /10A==
+	s=arc-20240116; t=1750754460; c=relaxed/simple;
+	bh=1ArujaSby248nq0Ixxis4Ti8lW10a7X+xjWEEBIgTDM=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=lRZ3gVxCsWtlpGng56FTpomlUepJ6jLgX8K8b6fR7nsZxokDVTQazl4+TtS9DnSY8mv6mtSGeWyqcBk6DGlLkNFiDjJIiFteViXNkZKTT+B7sq8Nc50MQqh9XW17XvZjfs6r0qHxFhyWqAye0me9kVK+mUCSJo8X2jPhfAt0Pc4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=E0pbBCRD; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1750754454;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=izTadSmlT9HvOMZUre9d1OR1XTl4340RTPp1hiorFzI=;
+	b=E0pbBCRDrpBMi+V2ZhuCM/hoXaIl2NyALGGB5wonRzNN7oIeQY9lYj5FvXGIUrfArcQ2Sw
+	9uZHgluP1eJGD6grrA4ai5meyzLX3cIQ5EgoROGuhKLJNqtMictxNtBwZ0jO2nNcar546V
+	Bq6TMB+FRNVmsm/DtYIuT3Omnb/Iu/4=
+Received: from mail-ed1-f69.google.com (mail-ed1-f69.google.com
+ [209.85.208.69]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-156-Hxst_CZyNk2kZxyrJYUKmw-1; Tue, 24 Jun 2025 04:40:51 -0400
+X-MC-Unique: Hxst_CZyNk2kZxyrJYUKmw-1
+X-Mimecast-MFC-AGG-ID: Hxst_CZyNk2kZxyrJYUKmw_1750754450
+Received: by mail-ed1-f69.google.com with SMTP id 4fb4d7f45d1cf-6023d9a86ffso3095881a12.3
+        for <linux-kernel@vger.kernel.org>; Tue, 24 Jun 2025 01:40:51 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1750754463; x=1751359263;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=42Y2N6ebar+wiBFiVwZ+1np3R1M+VYIv1aIQkqIKk40=;
-        b=HA8kC/MqM1IbgjjCt6/QI+uix9VtWMaUt3RfpPOgJCmA5RyQBcHYzWrQjWafIh7ECk
-         jCSQ672Ysw2Ole9dhWzXwlhXn25/lTA/OME94JIXtnFhQHoSMMv4iU7+KE0PiPiuFzt5
-         abj/WpOoivywwchgszfW283sBotMYxEe+W8n+QtSsbhWnGw8qN1ybGT211AEbQdW0PqN
-         yt62I6hG2d63rd41KTzPheXOY4mWHBZjX2kKzPNW2I8BevbfiUYwvI8nB/s4poYkdAJH
-         di5vx1rQWPNNJU5h2iYrDb8FQXiEEq8oFipkvLOrp6Evk1Bp5LXA8bBvx7WpqJZdCY92
-         AKUQ==
-X-Forwarded-Encrypted: i=1; AJvYcCViXVZodPqc2eaC8YDRitPLq3ujhF8Eo7hIM8xkb2g3sRmEaf4DCd+18JkNkULg+v0Hkb5c+II0h79W6Bw=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxA807jPAW48RLny8MG/y/s5/sakrRb4EseT8ekMJ7HR5gOYOXc
-	4rK1Fa9bjBJ5kwNyso19PUIRK3A9XeZodwHUtNR693C/7SfVG57SU8VoDeR0MiddP1o=
-X-Gm-Gg: ASbGnctc02EwCLMQjQqy6K78HRLdGne3RAgUFNMRBpWHUXJ4WIlfPz5cM6jBNouMfnz
-	NNE0EiMpiEWjtCamtGDiEtdZy0GjEU8LtaF4TWAzLTLk6N2UYFKAcCLym2wBKPLAp/Jr2xFGyHy
-	/HI0NFMa534UPLhVGblkJv0JKFs71Khkfu9ov8wYWDTlC6QhWbye4XG6hWRnnty7vShfFDHEIVG
-	Mcb+pQUc4qbmUpZcCtzgc1zp07msjlEI0n2KLMCWJTiyoRTip3Pnk/+LOrnR2yIx/etwUqsogyA
-	Bxl9bgRDvZfvOa4s9aarPBA7Lam41F+FmcP+Oh0FVe+zuO7rykINPOBXVR2Z/5IE
-X-Google-Smtp-Source: AGHT+IHSGyDwoYjnGgDbPlFSLTlqgEue3oGk1SeNKtOch4nBjPOzzj8KWkuWYgkah6BLwc+G22XXxA==
-X-Received: by 2002:a05:6000:3111:b0:3a1:fcd6:1e6b with SMTP id ffacd0b85a97d-3a6d1334011mr11624969f8f.57.1750754462679;
-        Tue, 24 Jun 2025 01:41:02 -0700 (PDT)
-Received: from pathway.suse.cz ([176.114.240.130])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-749b5e08e52sm1231044b3a.9.2025.06.24.01.40.52
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 24 Jun 2025 01:41:02 -0700 (PDT)
-Date: Tue, 24 Jun 2025 10:40:46 +0200
-From: Petr Mladek <pmladek@suse.com>
-To: John Ogness <john.ogness@linutronix.de>
-Cc: Marcos Paulo de Souza <mpdesouza@suse.com>,
-	Steven Rostedt <rostedt@goodmis.org>,
-	Sergey Senozhatsky <senozhatsky@chromium.org>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Jiri Slaby <jirislaby@kernel.org>,
-	Jason Wessel <jason.wessel@windriver.com>,
-	Daniel Thompson <danielt@kernel.org>,
-	Douglas Anderson <dianders@chromium.org>,
-	Richard Weinberger <richard@nod.at>,
-	Anton Ivanov <anton.ivanov@cambridgegreys.com>,
-	Johannes Berg <johannes@sipsolutions.net>,
-	linux-kernel@vger.kernel.org, linux-serial@vger.kernel.org,
-	kgdb-bugreport@lists.sourceforge.net, linux-um@lists.infradead.org
-Subject: Re: [PATCH 2/7] printk: Use consoles_suspended flag when
- suspending/resuming all consoles
-Message-ID: <aFpkQHwNCslbKSP6@pathway.suse.cz>
-References: <20250606-printk-cleanup-part2-v1-0-f427c743dda0@suse.com>
- <20250606-printk-cleanup-part2-v1-2-f427c743dda0@suse.com>
- <aExBo-8cVOy6GegR@pathway.suse.cz>
- <84y0tmiidg.fsf@jogness.linutronix.de>
+        d=1e100.net; s=20230601; t=1750754450; x=1751359250;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=izTadSmlT9HvOMZUre9d1OR1XTl4340RTPp1hiorFzI=;
+        b=p9SiS+UOY3ZPv8LmKSEAzfIeq7MF7eCmHojtq1Y7oqLt7gzNA/lJ69HJ0iYNqbgmT6
+         tfNvOrDrqXGZlH7YFw9OrVDk7TQmsBy0MCwVBTe1mzsM8bNVfg+9btomGlpj6dUXwlW6
+         3TDOCdeAJLMblN9mn++i6c/Dyp9Lksu3eBRk+fXKfIPVTtt0X0+/K8EKT8HruJV/mRxm
+         wm9FxzWEMV8Hd2CIsfZ4nAAt0E+845QPvibi39d30PVD9pO2mLwQb03Y2iH4k0DZPfwk
+         6o3VbB2fq1F+Pz325GoKmi7oMokSYCDmtWP6nh4NzIKl1YZOHMTry/cBVe+oxhIiJLhr
+         6jqA==
+X-Forwarded-Encrypted: i=1; AJvYcCWKVDXIP0CQevATRRxLWJ1HBC/+6E+FlgLRTTvzUIERaNXGJzrXMm3tg6qHGh8K1THjp/ulQPhJ/+Xtfn0=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxJPYroSOD2OROB00DOuTt5U7lucNQP6at7s81Rmu0V5ybL0qr8
+	TZt0dvCPFDRHBylKJ55he/NqRFeHTzQd7CltwFhj/zdtxOIPoXKi9eYP/FPqqaELkeN3cLDvKay
+	6r76MTILQea0czwQjHw6iTYG1ShYga2kSxAgEJk1WayQ09CIIX7nCbGEGCP7sgla1eSxM8MWeb2
+	G7
+X-Gm-Gg: ASbGnctlz2DmOLGzbCo3RAkoJDVpXu1zBSeUsUnknrLi/BUv6E4DLlN4yU4Pr2U+WcV
+	Tp46j5BMpBBT26PAOaSgr1tEc/062SOV0GtAHF1IVqM2Mom/P5dbWaNX0Q7uw6KjGDPWIg7cXYZ
+	yTjp/WszfshFL4b4H+Tcq1TPiqm+7byV/AXQ35RRsINYxBBcvNyGt4PNZu3Cve8QT3ODVOjD03F
+	MO2knm2nXGwKABuxZxkA2FCrn9J43YshlKfnLTTAe0vCFxvHcLHL778gqJWuaMXMIqIt1sAftzj
+	eiCYiWdvy4QPXytooeE2taIrIHcjTHA3I5LtPkCwG6hmPJI+EmXkZsJHlF9vjnebE0A1pC8TubW
+	ZANHNyA+UniODtDOa287bpAyd6FdFOa5uZtcyUmxDYYCcHt/c9V/2ARG8VKd8FtHWWpUk96F6jQ
+	==
+X-Received: by 2002:a05:6402:5246:b0:606:df70:7a9f with SMTP id 4fb4d7f45d1cf-60a1d167770mr15597997a12.19.1750754449638;
+        Tue, 24 Jun 2025 01:40:49 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IHBreMHGcPq5pSjhKO9uagTn8eim+PFmP1VKqozyussO7lFzogiKEHW7qTXTthXNa3R0y9jNA==
+X-Received: by 2002:a05:6402:5246:b0:606:df70:7a9f with SMTP id 4fb4d7f45d1cf-60a1d167770mr15597980a12.19.1750754449174;
+        Tue, 24 Jun 2025 01:40:49 -0700 (PDT)
+Received: from ?IPV6:2001:1c00:c32:7800:5bfa:a036:83f0:f9ec? (2001-1c00-0c32-7800-5bfa-a036-83f0-f9ec.cable.dynamic.v6.ziggo.nl. [2001:1c00:c32:7800:5bfa:a036:83f0:f9ec])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-60c2f4812a6sm704365a12.60.2025.06.24.01.40.48
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 24 Jun 2025 01:40:48 -0700 (PDT)
+Message-ID: <30565c88-fb3c-4970-a7c8-bb81200a13aa@redhat.com>
+Date: Tue, 24 Jun 2025 10:40:47 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <84y0tmiidg.fsf@jogness.linutronix.de>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] mei: vsc: Remove unused irq functions
+To: linux@treblig.org, alexander.usyskin@intel.com
+Cc: arnd@arndb.de, gregkh@linuxfoundation.org, linux-kernel@vger.kernel.org
+References: <20250617003450.118751-1-linux@treblig.org>
+Content-Language: en-US, nl
+From: Hans de Goede <hdegoede@redhat.com>
+In-Reply-To: <20250617003450.118751-1-linux@treblig.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Fri 2025-06-20 16:49:07, John Ogness wrote:
-> On 2025-06-13, Petr Mladek <pmladek@suse.com> wrote:
-> >> diff --git a/kernel/printk/nbcon.c b/kernel/printk/nbcon.c
-> >> index fd12efcc4aeda8883773d9807bc215f6e5cdf71a..72de12396e6f1bc5234acfdf6dcc393acf88d216 100644
-> >> --- a/kernel/printk/nbcon.c
-> >> +++ b/kernel/printk/nbcon.c
-> >> @@ -1147,7 +1147,7 @@ static bool nbcon_kthread_should_wakeup(struct console *con, struct nbcon_contex
-> >>  	cookie = console_srcu_read_lock();
-> >>  
-> >>  	flags = console_srcu_read_flags(con);
-> >> -	if (console_is_usable(con, flags, false)) {
-> >> +	if (console_is_usable(con, flags, false, consoles_suspended)) {
-> >
-> > The new global console_suspended value has the be synchronized the
-> > same way as the current CON_SUSPENDED per-console flag.
-> > It means that the value must be:
-> >
-> >   + updated only under console_list_lock together with
-> >     synchronize_rcu().
-> >
-> >   + read using READ_ONCE() under console_srcu_read_lock()
-> 
-> Yes.
-> 
-> > I am going to propose more solutions because no one is obviously
-> > the best one.
-> 
-> [...]
-> 
-> > Variant C:
-> > ==========
-> >
-> > Remove even @flags parameter from console_is_usable() and read both
-> > values there directly.
-> >
-> > Many callers read @flags only because they call console_is_usable().
-> > The change would simplify the code.
-> >
-> > But there are few exceptions:
-> >
-> >    2. Another exception is __pr_flush() where console_is_usable() is
-> >       called twice with @use_atomic set "true" and "false".
-> >
-> >       We would want to read "con->flags" only once here. A solution
-> >       would be to add a parameter to check both con->write_atomic
-> >       and con->write_thread in a single call.
-> 
-> Or it could become a bitmask of printing types to check:
-> 
-> #define ATOMIC_PRINTING 0x1
-> #define NONATOMIC_PRINTING 0x2
-> 
-> and then __pr_flush() looks like:
-> 
-> if (!console_is_usable(c, flags, ATOMIC_PRINTING|NONATOMIC_PRINTING)
+Hi David,
 
-I like this. It will help even in all other cases when one mode is needed.
-I mean that, for example:
+On 17-Jun-25 2:34 AM, linux@treblig.org wrote:
+> From: "Dr. David Alan Gilbert" <linux@treblig.org>
+> 
+> vsc_tp_request_irq() and vsc_tp_free_irq() last uses were removed in 2024
+> by
+> commit 9b5e045029d8 ("mei: vsc: Don't stop/restart mei device during system
+> suspend/resume")
+> 
+> Remove them.
+> 
+> Signed-off-by: Dr. David Alan Gilbert <linux@treblig.org>
 
-   console_is_usable(c, flags, ATOMIC_PRINTING)
+Alexander pointed me at this patch because I just posted
+almost the same patch:
 
-is more self-explaining than
+https://lore.kernel.org/lkml/20250623085052.12347-2-hansg@kernel.org/
 
-   console_is_usable(c, flags, true)
+Normally I would say lets go with your (David's) version since
+you posted your patch first.
 
-Best Regards,
-Petr
+But your patch is missing the removal of the function prototypes
+from vsc-tp.h, so in this case I think we should go with my version.
+
+Regards,
+
+Hans
+
+
+
+> ---
+>  drivers/misc/mei/vsc-tp.c | 31 -------------------------------
+>  1 file changed, 31 deletions(-)
+> 
+> diff --git a/drivers/misc/mei/vsc-tp.c b/drivers/misc/mei/vsc-tp.c
+> index 267d0de5fade..99a55451e1fc 100644
+> --- a/drivers/misc/mei/vsc-tp.c
+> +++ b/drivers/misc/mei/vsc-tp.c
+> @@ -406,37 +406,6 @@ int vsc_tp_register_event_cb(struct vsc_tp *tp, vsc_tp_event_cb_t event_cb,
+>  }
+>  EXPORT_SYMBOL_NS_GPL(vsc_tp_register_event_cb, "VSC_TP");
+>  
+> -/**
+> - * vsc_tp_request_irq - request irq for vsc_tp device
+> - * @tp: vsc_tp device handle
+> - */
+> -int vsc_tp_request_irq(struct vsc_tp *tp)
+> -{
+> -	struct spi_device *spi = tp->spi;
+> -	struct device *dev = &spi->dev;
+> -	int ret;
+> -
+> -	irq_set_status_flags(spi->irq, IRQ_DISABLE_UNLAZY);
+> -	ret = request_threaded_irq(spi->irq, vsc_tp_isr, vsc_tp_thread_isr,
+> -				   IRQF_TRIGGER_FALLING | IRQF_ONESHOT,
+> -				   dev_name(dev), tp);
+> -	if (ret)
+> -		return ret;
+> -
+> -	return 0;
+> -}
+> -EXPORT_SYMBOL_NS_GPL(vsc_tp_request_irq, "VSC_TP");
+> -
+> -/**
+> - * vsc_tp_free_irq - free irq for vsc_tp device
+> - * @tp: vsc_tp device handle
+> - */
+> -void vsc_tp_free_irq(struct vsc_tp *tp)
+> -{
+> -	free_irq(tp->spi->irq, tp);
+> -}
+> -EXPORT_SYMBOL_NS_GPL(vsc_tp_free_irq, "VSC_TP");
+> -
+>  /**
+>   * vsc_tp_intr_synchronize - synchronize vsc_tp interrupt
+>   * @tp: vsc_tp device handle
+
 
