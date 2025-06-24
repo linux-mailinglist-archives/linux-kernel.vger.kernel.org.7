@@ -1,165 +1,176 @@
-Return-Path: <linux-kernel+bounces-699775-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-699764-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 816E7AE5F30
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Jun 2025 10:29:04 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5C469AE5F11
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Jun 2025 10:25:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5C0DE16F886
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Jun 2025 08:28:20 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 62B8D3ACC56
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Jun 2025 08:25:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C4389259CA0;
-	Tue, 24 Jun 2025 08:26:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EDCBC257455;
+	Tue, 24 Jun 2025 08:25:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="xq+e0shC"
-Received: from out30-101.freemail.mail.aliyun.com (out30-101.freemail.mail.aliyun.com [115.124.30.101])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="WyacTO3l"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 25C9925178E;
-	Tue, 24 Jun 2025 08:26:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.101
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6581E170A26
+	for <linux-kernel@vger.kernel.org>; Tue, 24 Jun 2025 08:25:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750753618; cv=none; b=t7Qa11ztwit2T4SpkvORHYPuoZo3KdV98cq+sEq1V81hfKIYZX3uOdapuqA35hAh1lt/62BfflBxrLQVXrKO3XFNthYo3CX9d25HTHQW/m0o0R53P6SnDhrFRpi6dp02GhSXFGqaQQyOQlkCYf9mWS7NzzCIJCms61u5+x2aZc8=
+	t=1750753532; cv=none; b=IicEJjERCL7LdFhsivA/H2qwEXuQs7o/HXkiuRVIfV7Q5brgNLJvGDzjW4MU0iuiKTmDBrwasrXPIPqnVAw1fZX/t+x8WhHANzTSGf2Bxu+JTztLJJRpSfOKPLX1NHoA4LZDUYzT5c0EVq38GSiPhPW2682hm5Aj2pECpMylZ1o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750753618; c=relaxed/simple;
-	bh=sGsf4i3YBdkKLiqYjEz90SpoxBUWvcqZ/WqYvmvx/Fg=;
-	h=Message-ID:Subject:Date:From:To:Cc:References:In-Reply-To; b=iAh4oXr4ErmhW39qMuGkMY6BAGcROVXh+SxWzyUuncvg6rRK6FWszRa/UxJ0PlpJl9nUrNzsK6iKQmTAfFK0ay7w57nHjff8vOVikyIw3u+iEGw3LUZPBlf9InP4pdOslJUa5MX1l1c5QmcrqstUOwkcGHiFX9IIlC6YNy50x2Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=xq+e0shC; arc=none smtp.client-ip=115.124.30.101
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
-DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
-	d=linux.alibaba.com; s=default;
-	t=1750753607; h=Message-ID:Subject:Date:From:To;
-	bh=qETiyRDq01cZyiTdnYUireDBSsJWh8qcYkIgG1vIyng=;
-	b=xq+e0shCKgtWhi3tEpP9KtOlwLTnHucP6OlrfyOpoNvh2XiqhpDpMRLdynbvfCAC9j9IjaLqsweTTXTS0wbg9hjd9gwYzf4r07OJSrLYrNKJtYlIQnM6qi5NtVic02umxj1ZJAjB8+2acmlb+Xfo/WT1ouJXAMh0X5YIpEnzwNk=
-Received: from localhost(mailfrom:xuanzhuo@linux.alibaba.com fp:SMTPD_---0Weg0EcI_1750753606 cluster:ay36)
-          by smtp.aliyun-inc.com;
-          Tue, 24 Jun 2025 16:26:46 +0800
-Message-ID: <1750753518.4877846-3-xuanzhuo@linux.alibaba.com>
-Subject: Re: [PATCH net v2 1/2] virtio-net: xsk: rx: fix the frame's length check
-Date: Tue, 24 Jun 2025 16:25:18 +0800
-From: Xuan Zhuo <xuanzhuo@linux.alibaba.com>
-To: Bui Quang Minh <minhquangbui99@gmail.com>
-Cc: "Michael S. Tsirkin" <mst@redhat.com>,
- Jason Wang <jasowang@redhat.com>,
- =?utf-8?q?Eugenio_P=C3=A9rez?= <eperezma@redhat.com>,
- Andrew Lunn <andrew+netdev@lunn.ch>,
- "David S. Miller" <davem@davemloft.net>,
- Eric Dumazet <edumazet@google.com>,
- Jakub Kicinski <kuba@kernel.org>,
- Paolo Abeni <pabeni@redhat.com>,
- Alexei Starovoitov <ast@kernel.org>,
- Daniel Borkmann <daniel@iogearbox.net>,
- Jesper Dangaard Brouer <hawk@kernel.org>,
- John Fastabend <john.fastabend@gmail.com>,
- virtualization@lists.linux.dev,
- linux-kernel@vger.kernel.org,
- bpf@vger.kernel.org,
- Bui Quang Minh <minhquangbui99@gmail.com>,
- netdev@vger.kernel.org
-References: <20250621144952.32469-1-minhquangbui99@gmail.com>
- <20250621144952.32469-2-minhquangbui99@gmail.com>
-In-Reply-To: <20250621144952.32469-2-minhquangbui99@gmail.com>
+	s=arc-20240116; t=1750753532; c=relaxed/simple;
+	bh=v+j9A2P5tDS+QVyr3TAKXUYg9OnqGPp3gpGqYyOwpjM=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=WcjcsKYjTvCKCcVnqBSSb5Hg6hLnnbmwXJa5+7furRaCFpB7wWigCgIDdWNvDzcXoATJL7ddw/7kWdqp6lE0MaKeBs67iW+z/xhY4/Z/vfywilcURN+jp9/dZj3AYAcbrzN4xUmdfGQ9FogwdL56e9WYg1rhTocxDZtZ3Q2GVlY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=WyacTO3l; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1750753529;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=0ht9obNB/zWD628XTjaTGT1DPmDG/6sGT4fPKITh1Sk=;
+	b=WyacTO3lTILZ5LgLNOgDnUsWHzqImB+XXtRb9w5++6hy1ce0OOd5VhdQ7R1YGIucPJlVZq
+	RKgstaRVlIVcAqgt96ELtqq5Yh9P2OCk5JpoH2NLCLGwlYV9Dgsh/HNQOG0UMaN20XPVgF
+	0iDXJ13pOQSI92FmbOPnCINjPr8BDiI=
+Received: from mail-wr1-f69.google.com (mail-wr1-f69.google.com
+ [209.85.221.69]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-445--VzrAad8N7-018cfZCrkYQ-1; Tue, 24 Jun 2025 04:25:27 -0400
+X-MC-Unique: -VzrAad8N7-018cfZCrkYQ-1
+X-Mimecast-MFC-AGG-ID: -VzrAad8N7-018cfZCrkYQ_1750753526
+Received: by mail-wr1-f69.google.com with SMTP id ffacd0b85a97d-3a56b3dee17so2826182f8f.0
+        for <linux-kernel@vger.kernel.org>; Tue, 24 Jun 2025 01:25:26 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1750753526; x=1751358326;
+        h=content-transfer-encoding:in-reply-to:organization:autocrypt
+         :content-language:from:references:cc:to:subject:user-agent
+         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=0ht9obNB/zWD628XTjaTGT1DPmDG/6sGT4fPKITh1Sk=;
+        b=XLWlc3fQpnU7a+YNfB0A4Cixt81bKKSdJ/Te8s+naaCKEtqkip6xi0eSCFHnOaDgD8
+         8qmcy+CY2VGn97A3IK+FwNFqFmPe0AxTFQ5vwkFebmVmQWdcwnrSNwDsA0iB6TbFEZFS
+         j03nwXYgQbx/oKM/IDQ6jE13k4oFGqMFzWAfjB6v7ZhmZUOp7qW3mJTWeHWAna8L6AOg
+         fVohUstQCNhkQXi3qzozux+Re+PljuwMXCdQPvO1kVOOQzKLd4E0ize93tdE8KTGlsK6
+         vmYw6fA2SJlT07hExjRjIUTly1u6Ev07jqlXVTTfVvHz4tqjN1aTpTsoFCyXnNjS9IOy
+         7MLQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWSiW6/bxBD97CmKS043/mmfg2WPDtlo5YzVUEOKefplRSpynzIqiIJKenwcbxj5+kKGZbJLN5LH45kU6o=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyZ1N8uIuHTKDkToUv11OAx8mpytXApMu5ZvPv9QwJPw7EgZdiy
+	PwNWXketaZMJUCitVuNGFvv5dWxPQwTdVHDfO81as9wmuL0SJnvwjf/pwjZNufNsa4LkAxfJSOt
+	F3SWTRTjhjXJM2l8i/ZnRGth4gHx8a190osDOSFb75y0Gncr+jswOqVuSrmAPV1x0Hg==
+X-Gm-Gg: ASbGncucGSjyLoXGreiYtPyLkmB+4BcmORgFQ+hMxRX7q0Ik83UPgPb3LYltEU//5NC
+	FFpgjNUB5+htYwBH2LN85MFx1O99crrhFoVX5ZFM7wh+Sd2cbyrPzG5ZzWl6agRj70wkRQAV3kA
+	83nI/znsagqqfYjP+dwVKQqw/gIwlwI4J6+oklyjfqQLsNIN6EQso2xs4avykjT47QdZZ6J67Or
+	1qqy6+T4695JxOTqMqSG/cEIgyckqQecn211zioW2pE4W8R8tZFONDBPvh7SSsNeXZqc8VjtXYc
+	1b6Q+crI6gLyR5fj6lmUqvRh1nXBu95bHn6w
+X-Received: by 2002:a05:6000:2801:b0:3a6:d95e:f37c with SMTP id ffacd0b85a97d-3a6e71c0f28mr1467910f8f.2.1750753525669;
+        Tue, 24 Jun 2025 01:25:25 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IHcxpfGpPVAdzv6s7B138Q1weXcQzlV/9i1DRCxfMy/EA2TyONOhYuOH4WjacHa65ptKpGtOA==
+X-Received: by 2002:a05:6000:2801:b0:3a6:d95e:f37c with SMTP id ffacd0b85a97d-3a6e71c0f28mr1467887f8f.2.1750753525196;
+        Tue, 24 Jun 2025 01:25:25 -0700 (PDT)
+Received: from ?IPV6:2a09:80c0:84::108? (mischulz23.caps.cit.tum.de. [2a09:80c0:84::108])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3a6e810caefsm1268633f8f.87.2025.06.24.01.25.24
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 24 Jun 2025 01:25:24 -0700 (PDT)
+Message-ID: <4b69c14f-1001-48a0-9c83-6d2284b5a04a@redhat.com>
+Date: Tue, 24 Jun 2025 10:25:23 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2] ksm_tests: Skip hugepage test when Transparent
+ Hugepages are disabled
+To: Li Wang <liwang@redhat.com>, akpm@linux-foundation.org,
+ lorenzo.stoakes@oracle.com, linux-kselftest@vger.kernel.org,
+ linux-mm@kvack.org, linux-kernel@vger.kernel.org
+Cc: Aruna Ramakrishna <aruna.ramakrishna@oracle.com>,
+ Bagas Sanjaya <bagasdotme@gmail.com>,
+ Catalin Marinas <catalin.marinas@arm.com>,
+ Dave Hansen <dave.hansen@linux.intel.com>, Joey Gouly <joey.gouly@arm.com>,
+ Johannes Weiner <hannes@cmpxchg.org>, Keith Lucas <keith.lucas@oracle.com>,
+ Ryan Roberts <ryan.roberts@arm.com>, Shuah Khan <shuah@kernel.org>
+References: <20250621004808.368878-1-liwang@redhat.com>
+ <20250624032748.393836-1-liwang@redhat.com>
+From: David Hildenbrand <david@redhat.com>
+Content-Language: en-US
+Autocrypt: addr=david@redhat.com; keydata=
+ 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
+ WNyWQQ==
+Organization: Red Hat
+In-Reply-To: <20250624032748.393836-1-liwang@redhat.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Sat, 21 Jun 2025 21:49:51 +0700, Bui Quang Minh <minhquangbui99@gmail.com> wrote:
-> When calling buf_to_xdp, the len argument is the frame data's length
-> without virtio header's length (vi->hdr_len). We check that len with
->
-> 	xsk_pool_get_rx_frame_size() + vi->hdr_len
->
-> to ensure the provided len does not larger than the allocated chunk
-> size. The additional vi->hdr_len is because in virtnet_add_recvbuf_xsk,
-> we use part of XDP_PACKET_HEADROOM for virtio header and ask the vhost
-> to start placing data from
->
-> 	hard_start + XDP_PACKET_HEADROOM - vi->hdr_len
-> not
-> 	hard_start + XDP_PACKET_HEADROOM
->
-> But the first buffer has virtio_header, so the maximum frame's length in
-> the first buffer can only be
->
-> 	xsk_pool_get_rx_frame_size()
-> not
-> 	xsk_pool_get_rx_frame_size() + vi->hdr_len
->
-> like in the current check.
->
-> This commit adds an additional argument to buf_to_xdp differentiate
-> between the first buffer and other ones to correctly calculate the maximum
-> frame's length.
->
-> Fixes: a4e7ba702701 ("virtio_net: xsk: rx: support recv small mode")
-> Signed-off-by: Bui Quang Minh <minhquangbui99@gmail.com>
+On 24.06.25 05:27, Li Wang wrote:
+> Some systems (e.g. minimal or real-time kernels) may not enable
+> Transparent Hugepages (THP), causing MADV_HUGEPAGE to return EINVAL.
+> This patch introduces a runtime check using the existing THP sysfs
+> interface and skips the hugepage merging test (`-H`) when THP is
+> not available.
+> 
+> To avoid those failures:
 
-Reviewed-by: Xuan Zhuo <xuanzhuo@linux.alibaba.com>
+But we deliberately have in tools/testing/selftests/mm/config:
 
-> ---
->  drivers/net/virtio_net.c | 22 ++++++++++++++++++----
->  1 file changed, 18 insertions(+), 4 deletions(-)
->
-> diff --git a/drivers/net/virtio_net.c b/drivers/net/virtio_net.c
-> index e53ba600605a..1eb237cd5d0b 100644
-> --- a/drivers/net/virtio_net.c
-> +++ b/drivers/net/virtio_net.c
-> @@ -1127,15 +1127,29 @@ static void check_sq_full_and_disable(struct virtnet_info *vi,
->  	}
->  }
->
-> +/* Note that @len is the length of received data without virtio header */
->  static struct xdp_buff *buf_to_xdp(struct virtnet_info *vi,
-> -				   struct receive_queue *rq, void *buf, u32 len)
-> +				   struct receive_queue *rq, void *buf,
-> +				   u32 len, bool first_buf)
->  {
->  	struct xdp_buff *xdp;
->  	u32 bufsize;
->
->  	xdp = (struct xdp_buff *)buf;
->
-> -	bufsize = xsk_pool_get_rx_frame_size(rq->xsk_pool) + vi->hdr_len;
-> +	/* In virtnet_add_recvbuf_xsk, we use part of XDP_PACKET_HEADROOM for
-> +	 * virtio header and ask the vhost to fill data from
-> +	 *         hard_start + XDP_PACKET_HEADROOM - vi->hdr_len
-> +	 * The first buffer has virtio header so the remaining region for frame
-> +	 * data is
-> +	 *         xsk_pool_get_rx_frame_size()
-> +	 * While other buffers than the first one do not have virtio header, so
-> +	 * the maximum frame data's length can be
-> +	 *         xsk_pool_get_rx_frame_size() + vi->hdr_len
-> +	 */
-> +	bufsize = xsk_pool_get_rx_frame_size(rq->xsk_pool);
-> +	if (!first_buf)
-> +		bufsize += vi->hdr_len;
->
->  	if (unlikely(len > bufsize)) {
->  		pr_debug("%s: rx error: len %u exceeds truesize %u\n",
-> @@ -1260,7 +1274,7 @@ static int xsk_append_merge_buffer(struct virtnet_info *vi,
->
->  		u64_stats_add(&stats->bytes, len);
->
-> -		xdp = buf_to_xdp(vi, rq, buf, len);
-> +		xdp = buf_to_xdp(vi, rq, buf, len, false);
->  		if (!xdp)
->  			goto err;
->
-> @@ -1358,7 +1372,7 @@ static void virtnet_receive_xsk_buf(struct virtnet_info *vi, struct receive_queu
->
->  	u64_stats_add(&stats->bytes, len);
->
-> -	xdp = buf_to_xdp(vi, rq, buf, len);
-> +	xdp = buf_to_xdp(vi, rq, buf, len, true);
->  	if (!xdp)
->  		return;
->
-> --
-> 2.43.0
->
+CONFIG_TRANSPARENT_HUGEPAGE=y
+
+So isn't this rather a test setup issue? Meaning, the environment is
+not well prepared.
+
+-- 
+Cheers,
+
+David / dhildenb
+
 
