@@ -1,213 +1,312 @@
-Return-Path: <linux-kernel+bounces-701298-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-701300-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id D1C31AE7355
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Jun 2025 01:35:46 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8E67BAE735B
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Jun 2025 01:40:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9587118864E2
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Jun 2025 23:36:02 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 280675A22E5
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Jun 2025 23:39:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 53F7C26AAB8;
-	Tue, 24 Jun 2025 23:35:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 62C0726AAA7;
+	Tue, 24 Jun 2025 23:40:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="HRhtQ6V3"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="OKpOlKxN"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.14])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 92668190664;
-	Tue, 24 Jun 2025 23:35:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750808136; cv=none; b=XkjcS6m3dPwojO1yciy3viIMpelRlpjMB8yoDI4LE8LPUN6FDhOdkl0wyb1aBxniR3YjLrPE3aTuIzCOFpEHrzQ+iEddi/Mpuysnw5ZQExmrbxXg/QlMdmikr151hEBM7uuqOPzE1kXvcWKLYdqHfr30PwhSwBmeiDOn1gZfvqU=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750808136; c=relaxed/simple;
-	bh=DBSni6pXshmHKrIebjfJdljvqz+aDXOLlSVsdM1Y+BY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=TZOmjSJAdKjmtfHUhxvhZfYPQRri/a/FLL6UWWqyP25OK2yf1i2XhLgYGmSQWxwcbZF/wiE0mlLtVsoeo2z4hXbB8BskRg+q2qP+QjQHeniibgO/F+U4epnLD761sdDXJXdMcEe3GQP62QG3sDNn3wB2MwT2yfWsjTIxGsH3Yhk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=HRhtQ6V3; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9513AC4CEE3;
-	Tue, 24 Jun 2025 23:35:35 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1750808136;
-	bh=DBSni6pXshmHKrIebjfJdljvqz+aDXOLlSVsdM1Y+BY=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=HRhtQ6V3o9Diw0R9OYYSQfaIr7Taf1gXaiOIDxUgTlWcRZVayB6sw5B2QQURXvsZG
-	 g2NFejNtNuPvqOuAq9hzibyeXJo0kJ7MFVCUJ9IrrGlz52ocLq6K+uZ+Ko8F8bCfBd
-	 ymMhAeAwhoh/cPe99Yqi3N2kX2M46eJUBkeXKpu1BI8jiV+5YLXQAAHhkrLF2tCApr
-	 fusjJFLWmRdtVjK0KAmvJmyVv82ouFhhM8gAxZbZi1tvZjAA346liH9DXuooypOn1l
-	 N5wnZcyGxM/NTx1nv6rBFAMb7XKUxdA/sGWNoLiRicr6GAeN5RACFUJ0MVLGtXFlGF
-	 C2O6X6RIgYAQA==
-Date: Wed, 25 Jun 2025 02:35:32 +0300
-From: Jarkko Sakkinen <jarkko@kernel.org>
-To: Qunqin Zhao <zhaoqunqin@loongson.cn>
-Cc: lee@kernel.org, herbert@gondor.apana.org.au,
-	linux-kernel@vger.kernel.org, loongarch@lists.linux.dev,
-	davem@davemloft.net, linux-crypto@vger.kernel.org,
-	peterhuewe@gmx.de, jgg@ziepe.ca, linux-integrity@vger.kernel.org,
-	Yinggang Gu <guyinggang@loongson.cn>,
-	Huacai Chen <chenhuacai@loongson.cn>
-Subject: Re: [PATCH v11 3/4] tpm: Add a driver for Loongson TPM device
-Message-ID: <aFs2RDOeOKvWUN2L@kernel.org>
-References: <20250619025138.2854-1-zhaoqunqin@loongson.cn>
- <20250619025138.2854-4-zhaoqunqin@loongson.cn>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8286A219E0;
+	Tue, 24 Jun 2025 23:40:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=192.198.163.14
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1750808403; cv=fail; b=dCFGoMiCJCEDycbMtO2t32lU6y54ctThX3ESos8bPsf02CewanbvANQta4PUK54a2Q8k+RBJ950t4dBRJ5fdFlBblYNluGNeuIVsw3lTtAIOQvQO7CRi2GJwAsOwOU0t2k8Dznn2cuG8q0gTdOLIU0665I9Ily/udy/UCU9xp08=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1750808403; c=relaxed/simple;
+	bh=mTjskPNUynPRDj0LO5WkVsR3e5u4qEKXhamnmnW61+w=;
+	h=Message-ID:Date:Subject:To:CC:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=ioul3UuBBOC1B9oANyPUpfJ624YNsqi7SqC28mjTy2qUN1G7/642k+EeM+BpqkVrn1FslkJ4iPAIHnsfF+0FJK2iv+5FGibztFVvgb1duXgKVYP3oZN6JBkCyV99vUUr17MgTh55p9Hu/BlRIm4r/ebI87uXGO8rl9GduWk2GW4=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=OKpOlKxN; arc=fail smtp.client-ip=192.198.163.14
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1750808401; x=1782344401;
+  h=message-id:date:subject:to:cc:references:from:
+   in-reply-to:content-transfer-encoding:mime-version;
+  bh=mTjskPNUynPRDj0LO5WkVsR3e5u4qEKXhamnmnW61+w=;
+  b=OKpOlKxNLh3eEmNf6DRi5b3T665pxTlBhDqFVRK9DMrj9SySw50yBwvB
+   bTL8scfBfw7ruA/OeKtc7HLFe9Ad6dDO2C1MJ19ylgiAaws7RFzC1pCK5
+   Y4YnVzm2iALMkBvcFjymoQjsYXNOWpq4NIbvjU1CNrA+1cGpYv40QaNvc
+   8zcrp0r2qmbMMxEsCCsOur6sJ8IdQCWk4CfPg7cibiDC8S+hXQVGFJHFc
+   BKIJszKue9WAjPdaAJoJTnQ0EKdLbTrbIUW+8Oj8Xyw06NzngkFpjlnlG
+   ihryidK65PYfUt0oAOOm6A33U4faKA/j/79823xlU9brVIht9uJ1b6I6I
+   Q==;
+X-CSE-ConnectionGUID: wU02IOuVSMKBdvLVMLNCuA==
+X-CSE-MsgGUID: W4/+mZE1QCSImoG5ZEhCAQ==
+X-IronPort-AV: E=McAfee;i="6800,10657,11474"; a="53133909"
+X-IronPort-AV: E=Sophos;i="6.16,263,1744095600"; 
+   d="scan'208";a="53133909"
+Received: from fmviesa003.fm.intel.com ([10.60.135.143])
+  by fmvoesa108.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 24 Jun 2025 16:40:00 -0700
+X-CSE-ConnectionGUID: v5aYjxa/S+uEFl7CQEAqww==
+X-CSE-MsgGUID: Z9oQXuWjSg6ZqLUusUu+iA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.16,263,1744095600"; 
+   d="scan'208";a="156082859"
+Received: from orsmsx902.amr.corp.intel.com ([10.22.229.24])
+  by fmviesa003.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 24 Jun 2025 16:40:00 -0700
+Received: from ORSMSX901.amr.corp.intel.com (10.22.229.23) by
+ ORSMSX902.amr.corp.intel.com (10.22.229.24) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.25; Tue, 24 Jun 2025 16:39:59 -0700
+Received: from ORSEDG903.ED.cps.intel.com (10.7.248.13) by
+ ORSMSX901.amr.corp.intel.com (10.22.229.23) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.25 via Frontend Transport; Tue, 24 Jun 2025 16:39:59 -0700
+Received: from NAM11-BN8-obe.outbound.protection.outlook.com (40.107.236.48)
+ by edgegateway.intel.com (134.134.137.113) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.25; Tue, 24 Jun 2025 16:39:58 -0700
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=oLELLjm1tok8+lutmvX1TZkZKw5g04BqcuR1zdnYsgloJguPRIc1Yvui9qYLwUkdC3I+zakyvrG+MSln0+o/X+5xAISxk3Ioy7HUSF5seZiwbAplMfRVyAMdj1p0cjECH870h+DX6my2QXuxRKnzZUqdz1LkHCLXpElG4mcrz0PVt1cJMAHvvG0K2a48tdQN4RvlOO9kqYb9sL18zMdCItQ3ZaE5aajCUH0nK1YdHt5gSm+IWJMFWWzCMCySevyQPg7Eyypyaj5HL/QZmJursdgO437W6QGg2++AqhyGkimC3A1iaZ26Xh+r5Q4ciZLT4pQkoSp+arQd19JS6K8LzA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=b6MQ2o3/rufFOQxMlxGt4hArP9RmZP6dTeUSp3bOUgk=;
+ b=QLufg9qarOY/5uXrSoqcikB5NSNNS3HR5Z9w471XSmTJsa6uMKsLTlU0MsuGgnjMbEflu/7USdddXDHjd/or+4o4VAnf3+3nKNz+gdn313aXbo6nT+gCLkUScA0zTj8n77lVXR1fVycZLvt5ZsH0tcvoY4tKFlZeedZ/0jpfJeMGZZ7bBNg9Nu8BNA8HX4ZjkCyooDe5wxucQD91VTC9goC0j8iutNuDXO9fRSG/RryqljD87/+YTlq1dDyaIlSs9loC6GwbFS891JUDJDO0zBYdg87MNEWN/TFceeEyLlocn7707IRukR5JpfX8sGnyqTKoaC0p+jaGjPzr0Chahw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
+ dkim=pass header.d=intel.com; arc=none
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=intel.com;
+Received: from SJ2PR11MB7573.namprd11.prod.outlook.com (2603:10b6:a03:4d2::10)
+ by CH3PR11MB7676.namprd11.prod.outlook.com (2603:10b6:610:127::7) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8857.28; Tue, 24 Jun
+ 2025 23:39:55 +0000
+Received: from SJ2PR11MB7573.namprd11.prod.outlook.com
+ ([fe80::61a:aa57:1d81:a9cf]) by SJ2PR11MB7573.namprd11.prod.outlook.com
+ ([fe80::61a:aa57:1d81:a9cf%6]) with mapi id 15.20.8792.034; Tue, 24 Jun 2025
+ 23:39:55 +0000
+Message-ID: <dee2c51a-5fb3-4aac-b8e4-a1ec87d76545@intel.com>
+Date: Tue, 24 Jun 2025 16:39:52 -0700
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v14 14/32] fs/resctrl: Introduce interface to display
+ number of free MBM counters
+To: Babu Moger <babu.moger@amd.com>, <corbet@lwn.net>, <tony.luck@intel.com>,
+	<Dave.Martin@arm.com>, <james.morse@arm.com>, <tglx@linutronix.de>,
+	<mingo@redhat.com>, <bp@alien8.de>, <dave.hansen@linux.intel.com>
+CC: <x86@kernel.org>, <hpa@zytor.com>, <akpm@linux-foundation.org>,
+	<rostedt@goodmis.org>, <paulmck@kernel.org>, <thuth@redhat.com>,
+	<ardb@kernel.org>, <gregkh@linuxfoundation.org>, <seanjc@google.com>,
+	<thomas.lendacky@amd.com>, <pawan.kumar.gupta@linux.intel.com>,
+	<manali.shukla@amd.com>, <perry.yuan@amd.com>, <kai.huang@intel.com>,
+	<peterz@infradead.org>, <xiaoyao.li@intel.com>, <kan.liang@linux.intel.com>,
+	<mario.limonciello@amd.com>, <xin3.li@intel.com>, <gautham.shenoy@amd.com>,
+	<xin@zytor.com>, <chang.seok.bae@intel.com>, <fenghuay@nvidia.com>,
+	<peternewman@google.com>, <maciej.wieczor-retman@intel.com>,
+	<eranian@google.com>, <linux-doc@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>
+References: <cover.1749848714.git.babu.moger@amd.com>
+ <ad9a9feca7638f9be09e348e3647d010a1a5db61.1749848715.git.babu.moger@amd.com>
+Content-Language: en-US
+From: Reinette Chatre <reinette.chatre@intel.com>
+In-Reply-To: <ad9a9feca7638f9be09e348e3647d010a1a5db61.1749848715.git.babu.moger@amd.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: MW4PR02CA0028.namprd02.prod.outlook.com
+ (2603:10b6:303:16d::7) To SJ2PR11MB7573.namprd11.prod.outlook.com
+ (2603:10b6:a03:4d2::10)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250619025138.2854-4-zhaoqunqin@loongson.cn>
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: SJ2PR11MB7573:EE_|CH3PR11MB7676:EE_
+X-MS-Office365-Filtering-Correlation-Id: 81b6d6a4-c86d-4d88-03d9-08ddb3786c58
+X-LD-Processed: 46c98d88-e344-4ed4-8496-4ed7712e255d,ExtAddr
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|376014|7416014|366016|7053199007;
+X-Microsoft-Antispam-Message-Info: =?utf-8?B?bFgvM3ZLdFlDUDQ5dzN5Ny9hMlRTU2dabVZXbFl4SVpXaE5iYUlpMzlmYjZh?=
+ =?utf-8?B?NGpRTEQzeVpEbXlnRTIxcmxDclJNcFNwWGF3LzVPSDlTMDhpdER0VnRaYlVW?=
+ =?utf-8?B?eHJSWHQwb3lNWkc0SjFWTjBxaWIxenVDMnNtSlZZSEhhMFZzMzNkSWVnMktC?=
+ =?utf-8?B?R3M0NFhFZ0M2MFoxVmRBcktVWWhiNjNLOFNuaEg4UG5ISXd3WXdrNmY2akc5?=
+ =?utf-8?B?NElEckp3RVdONGN2Z2RWeitlMkROOU9DU1Vub3VVbFpNZ3k0SDllckRUOWVZ?=
+ =?utf-8?B?MFZTZyszR0k3SkVHcWpPQ2ZVM2pvSFBGbERwRFRBdTJlcjNwSjY0WDlXbHpi?=
+ =?utf-8?B?MHVCYVQzOURVUW1TczhaeDc5MkNlWjVWcXVTRmlXMEZIakMyY3FydmROVEJP?=
+ =?utf-8?B?bHYvWVRDeng0OEhCMWwwcWxoNVAyUWJvcFhZem1zdTBrR2pRdGxZallnbXZO?=
+ =?utf-8?B?ZTFtcXAyT1JNcldnNFlXTDNsUkJKOGxkaGoyLy9iNlc4K1hoaE4xV1NRakpM?=
+ =?utf-8?B?eFREUi9hYzVFREdqbDR2dnhBWEUwM3pBZC9UaGlaYlZZZDVxWElsZlREbTRR?=
+ =?utf-8?B?YXY1N0dQdURNTVQ0U0ZsWWRRUE9pYUZxUi83R1hVb09IdmJxTTV2bmRra29l?=
+ =?utf-8?B?aG45ckJFNlhtaWYvZnZuWTN3RmNrb2pSQU5EU3hWYXRKbnkwM2hYaWRBN1ly?=
+ =?utf-8?B?V0JuQ3VXQ3JKV3pmUEdyQndMQ3hMaUFycE1KakRhL3dXY0Y1anlMSWFFT0Jj?=
+ =?utf-8?B?WVZEdC9HU0VzajhhTGxsaFB0aU9wTHdFaXU2SHEzUGJwZXhNdG1DcGtxMHc1?=
+ =?utf-8?B?eU9lTWZjcUNaN0Y5M21lWTFreE9vbDFzb2dmYnBWNzhsS3pZa2E4S1pXdmx0?=
+ =?utf-8?B?R1U1bGlhb2Zna1o4cmFpczluY0Vjakx0Q2pxcWoxbGdGRXR2Z2NtVWkremdv?=
+ =?utf-8?B?YkhRcmU4SjJLNi84WlAySjFGMWVBT0o1a2svTXpKWkpYZS9sbXczNEZpWjA4?=
+ =?utf-8?B?ZVN1dEo2aFlBdHVUZFdGamROYzJtbHFKTmFBU0haa1VXS01BQXk1dExXREpE?=
+ =?utf-8?B?RjF1TU1LNWdSdkw4TXd4dHE4NkRaSnJ6UXpjOE5TN3Q2UGUwaGlYTmVGZWJq?=
+ =?utf-8?B?NFRObUxkWVB5STkzVW10aXdxUThIbUcrNm5PWlNVd1loRFRqSFF0NGpCTGxh?=
+ =?utf-8?B?N3RFOWYvN1ZzaFZoMFJkOTd3aHQ2TTlUOUVLOWFMWStTYVMvZnUwSlZjWXFj?=
+ =?utf-8?B?RGl6a1ZlYU96eHRScU83MGFiQlN5VlZuL2lKU2RKN3dTSnlvNVVtelN5YnY1?=
+ =?utf-8?B?ZHUvUGVzWTRKVXpJbnh3dHdNU2swNVhqRktDMmszRW9Hb2kyalVCM1hCQ0Nr?=
+ =?utf-8?B?LzlyVVNEWWRreTVVOHhFTkdqS3JWSU9Uc0U4ZEdvMmlHL0l6eEJPOGxOdVQ3?=
+ =?utf-8?B?aFRkb2FuSlFaU2JhRW9UcGFQdUV2QmpaNjB2RTlyNjdXbm4vVU9JUFoyOE5J?=
+ =?utf-8?B?b3pVeDgrQm0xTDFIQ1lEazVTYkdscFRLbm52V3paaHhuVFlIZmYyUmh5OVE2?=
+ =?utf-8?B?U0xMc0thVnp6bUx5UjNSM3JudVVpRjlqanpQelVTalRyaHZETytpZ3dTdVJV?=
+ =?utf-8?B?SHlvem9kZGp5c2l4aUM4bTF2S2NDR0hkMTlCKzJxSzVNV3VySS9CNFh3MGVa?=
+ =?utf-8?B?Znh5MkRPQTE0eHRRNGluSE1TWVdpd2RoMTBwN1ZZWVlXZXJaV0FtVThhMlQ1?=
+ =?utf-8?B?UEFhV05nbk15UktLZmRGTE04TGcreHZGbnhBVU12YVFmS2NHV0REUmdqenRB?=
+ =?utf-8?B?cmFHWTRwNFdOS01nR2wvcTVsekMrRm9GYzlGL3drZjV4Sm50NWxCRnBWOXZD?=
+ =?utf-8?B?OVRWdVZ2OTd6T0ZoRnNYMjM0NHJ0eE9JdmJ4eWdiMjcvdzBqekNSVDdIckx1?=
+ =?utf-8?Q?txm4L2TLUKU=3D?=
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SJ2PR11MB7573.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(376014)(7416014)(366016)(7053199007);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: =?utf-8?B?cGJucXR2a1ZSNHBQMEVoOWR5ZEtFZ1lZYlNCVW1XOXdORGdaR1liK3gyeUpT?=
+ =?utf-8?B?WlBsNXpualQzOFoxQVkwbHNQdWdFMldHU1BIQTcybHM0aWk5V0JJOGdzR0ZH?=
+ =?utf-8?B?Ni9qeW9zSldFcHNLVER2UEJoV04vSmlXS3RROW95Ry9MQnRyUmF2SDJCcmlv?=
+ =?utf-8?B?bXNuVlpNcnUxdkdDYUVVSE5vWGVkc3BZWGRKT3BsSDYyNU5sTyt3MlRMVmNY?=
+ =?utf-8?B?aEMvYmxMSTVnOGNndnpPa1RRaTFPaXVWeVhsUTkrckpwN2txaWozVC9pZnZS?=
+ =?utf-8?B?dG80OGM1OUZlTGlCSHZOb2xyd1RJRmxzcWsvanYzK2RabmxyTTJWVzB2bFhV?=
+ =?utf-8?B?LytHNTZpaUZBeVA4ZjA0UG1ROXR0bnQwU2lyaGhWbHBaZW5yWk9Pek1FM2x6?=
+ =?utf-8?B?SVErZ1VkT1drak91UGlxNTdIRitETXNMaWhTU0syZmUzVUhKUVNmRWxjbnVU?=
+ =?utf-8?B?NFE3R0pIWSs1T3huZ095ckxmTy9uU3pZWW5OdWRxamVUc0Z1NVRmOStNMUVs?=
+ =?utf-8?B?NWUzdlJWUE5SOS93T3pvOXdSTVBIa2dCWWtRcXVQcHBSWTg0OW9nVkNhTnlO?=
+ =?utf-8?B?WFFXN3Fnazh3eGtvaHZiQWcrTGt4RFJoRHZuYmg3T2tQbGdiaklwMGxKcERT?=
+ =?utf-8?B?UzJNOGo2Y2pscER2RDdCM2xZdnpoSnBrcnAzeko3RFJuUFhUcC9jQU5iQ2FY?=
+ =?utf-8?B?RjU2bmh4TFJxV2UwNWJZMkZSYStEQjZmWTE0RHYrelZDNk9qaTkwOEh5bjVw?=
+ =?utf-8?B?UWpaR1JIc3IwbU1pdnVIbGIxZHU3Y2dmd2hpY3U0UGFCSG1UWU0rZldEZENo?=
+ =?utf-8?B?aUlGcUY5QnhicnF3cWlTL2dHaG5LakJVdDFTMWQ2Q2tqWWNBbU5UNzU1YTJP?=
+ =?utf-8?B?a0JnQ1NpYjluendUZWNGQ2poNWFzWFFKTFlxUkFJR2VGVjdGUHpqUFB5T3Ix?=
+ =?utf-8?B?cm00SjdhSjlKbWEzUy95NWw3bWd0ZXpMcXdiV0lRRWhWenNKeUU4bmlLOW13?=
+ =?utf-8?B?UkV4ZkhUSFB0RDlNa0k2L1M3WG02eUpwdDJ0STVBalBhWm5LUWh2VDd3cUFK?=
+ =?utf-8?B?UE80aUhTSnVsZHBPK0VCT0dFYldnOUZwalFXczhDN2xOSExvNTZweS8xSnNU?=
+ =?utf-8?B?UG03RVhobFZQZ01Ud0NVdEFibVQvMTlxSlE5MWc3aGphV3BrVWRpaTlJaXo3?=
+ =?utf-8?B?bmY2WU5ib0JDb0NhelRjakgwbEU0WW4xcUIzOHVvM09JUXdYUEJIOFpOa1Ev?=
+ =?utf-8?B?eWJNcHhXMmZuWTZkbUswMHluZC9kOWFqUkJMSDZoL21tUUZzZFJWUm5FTHRL?=
+ =?utf-8?B?bTdZZVlvRUR6VjQ0OEwva0xJWkRYcDBnTzRiZzFhSzZPRTVqb0F0MmJ2MEJj?=
+ =?utf-8?B?TUVreFhQbEk3WDZpREtDVHlwc1E2dVFsYUV3VWkyQmRWNTNtOHNmcHh5b2k1?=
+ =?utf-8?B?ZVVnaVNYQXVGK0ZLYzN0Q1laNVJlc0Z5SE5oOVIzakJnUjh6YkZXN1JkWUVJ?=
+ =?utf-8?B?K3lTdEdWRjhNcWdZM0NkMFFLYkx4YmVGWGFBbDRyaUF5WkxnRGZzeEZ0UUhG?=
+ =?utf-8?B?eTIwUnpWNFdnNG1oeTd0K1FiK085c1ZPSklVenF0OXJibGxVTmtwbGVJOG9h?=
+ =?utf-8?B?aVp6SHRYLzlZSW1BWHB0cHB5U3pmM1JXaHhKNnVzZWRXYUpmOEw4Sy8zb1RG?=
+ =?utf-8?B?aVIraVM4UHprdWdPcGpsOG04b1dMS3NiN2FZdXFXZERhMG5tb0hhSVEvQ2FJ?=
+ =?utf-8?B?dklwSHN6dVpxNzZnbXo4L0ZpdmRXYUxTL3lCaGt1V0VpeDRGNG03U1R6cGdk?=
+ =?utf-8?B?TWxqblQ2RjdoTzNmRUpQN1UyVVVjWFJVWTFQZGNsb25zL1RyZXdyRHJwSTdh?=
+ =?utf-8?B?QjdHZWFDaWo5V3dxQ0RLYUVUUTc1bFd1VkltN2FvZkxBYzJWN3FKUVNiMU1L?=
+ =?utf-8?B?WDgyaXFLREJ1YlZMQ2RJWnNTODJ3MytPUUdHVzNKU1h2eFczaENUOUE1MXNw?=
+ =?utf-8?B?a3pMNWdMczB0dUZZRWFwNHNwTjNjZjZrTlhWSnV3YlE5SXBwZmxZMm1oUWx5?=
+ =?utf-8?B?RFovd0trVEhlNlNMeUQ5cHUva28rSi9FZ1VCMnVucFJNZXNINmV3TnQ5dlc1?=
+ =?utf-8?B?TEFoN21wbmIrb0dtcG9HbU5tR1lTK1ZRRkxFNVZvK0lHeWF5Z040RWx4bzF4?=
+ =?utf-8?B?S1E9PQ==?=
+X-MS-Exchange-CrossTenant-Network-Message-Id: 81b6d6a4-c86d-4d88-03d9-08ddb3786c58
+X-MS-Exchange-CrossTenant-AuthSource: SJ2PR11MB7573.namprd11.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 24 Jun 2025 23:39:55.3207
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: /lQa5uuG8U538cWr3CGj79IdsonsGSP2ynUGn+fzMatE75O3yz/cu/sbYdEhBr1N2Db4NhB3aI+7R2SOqNRI5n3Y5zH/H4ms8rRXbYjpezE=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CH3PR11MB7676
+X-OriginatorOrg: intel.com
 
-On Thu, Jun 19, 2025 at 10:51:37AM +0800, Qunqin Zhao wrote:
-> Loongson Security Engine supports random number generation, hash,
-> symmetric encryption and asymmetric encryption. Based on these
-> encryption functions, TPM2 have been implemented in the Loongson
-> Security Engine firmware. This driver is responsible for copying data
-> into the memory visible to the firmware and receiving data from the
-> firmware.
+Hi Babu,
+
+On 6/13/25 2:04 PM, Babu Moger wrote:
+> Provide the interface to display the number of counters IDs available for
+
+"Introduce the "available_mbm_cntrs" resctrl file to display the number of
+counters available ..."
+
+> assignment in each domain when "mbm_event" mode is enabled.
 > 
-> Co-developed-by: Yinggang Gu <guyinggang@loongson.cn>
-> Signed-off-by: Yinggang Gu <guyinggang@loongson.cn>
-> Signed-off-by: Qunqin Zhao <zhaoqunqin@loongson.cn>
-> Reviewed-by: Huacai Chen <chenhuacai@loongson.cn>
+> Signed-off-by: Babu Moger <babu.moger@amd.com>
 > ---
->  drivers/char/tpm/Kconfig        |  9 ++++
->  drivers/char/tpm/Makefile       |  1 +
->  drivers/char/tpm/tpm_loongson.c | 84 +++++++++++++++++++++++++++++++++
->  3 files changed, 94 insertions(+)
->  create mode 100644 drivers/char/tpm/tpm_loongson.c
+...
+
+> ---
+>  Documentation/filesystems/resctrl.rst | 11 ++++++
+>  fs/resctrl/monitor.c                  |  5 ++-
+>  fs/resctrl/rdtgroup.c                 | 48 +++++++++++++++++++++++++++
+>  3 files changed, 63 insertions(+), 1 deletion(-)
 > 
-> diff --git a/drivers/char/tpm/Kconfig b/drivers/char/tpm/Kconfig
-> index dddd702b2..ba3924eb1 100644
-> --- a/drivers/char/tpm/Kconfig
-> +++ b/drivers/char/tpm/Kconfig
-> @@ -189,6 +189,15 @@ config TCG_IBMVTPM
->  	  will be accessible from within Linux.  To compile this driver
->  	  as a module, choose M here; the module will be called tpm_ibmvtpm.
+> diff --git a/Documentation/filesystems/resctrl.rst b/Documentation/filesystems/resctrl.rst
+> index 801914de0c81..8a2050098091 100644
+> --- a/Documentation/filesystems/resctrl.rst
+> +++ b/Documentation/filesystems/resctrl.rst
+> @@ -299,6 +299,17 @@ with the following files:
+>  	  # cat /sys/fs/resctrl/info/L3_MON/num_mbm_cntrs
+>  	  0=32;1=32
 >  
-> +config TCG_LOONGSON
-> +	tristate "Loongson TPM Interface"
-> +	depends on MFD_LOONGSON_SE
-> +	help
-> +	  If you want to make Loongson TPM support available, say Yes and
-> +	  it will be accessible from within Linux. To compile this
-> +	  driver as a module, choose M here; the module will be called
-> +	  tpm_loongson.
-> +
->  config TCG_XEN
->  	tristate "XEN TPM Interface"
->  	depends on TCG_TPM && XEN
-> diff --git a/drivers/char/tpm/Makefile b/drivers/char/tpm/Makefile
-> index 9de1b3ea3..5b5cdc0d3 100644
-> --- a/drivers/char/tpm/Makefile
-> +++ b/drivers/char/tpm/Makefile
-> @@ -46,3 +46,4 @@ obj-$(CONFIG_TCG_ARM_CRB_FFA) += tpm_crb_ffa.o
->  obj-$(CONFIG_TCG_VTPM_PROXY) += tpm_vtpm_proxy.o
->  obj-$(CONFIG_TCG_FTPM_TEE) += tpm_ftpm_tee.o
->  obj-$(CONFIG_TCG_SVSM) += tpm_svsm.o
-> +obj-$(CONFIG_TCG_LOONGSON) += tpm_loongson.o
-> diff --git a/drivers/char/tpm/tpm_loongson.c b/drivers/char/tpm/tpm_loongson.c
-> new file mode 100644
-> index 000000000..5cbdb37f8
-> --- /dev/null
-> +++ b/drivers/char/tpm/tpm_loongson.c
-> @@ -0,0 +1,84 @@
-> +// SPDX-License-Identifier: GPL-2.0
-> +/* Copyright (c) 2025 Loongson Technology Corporation Limited. */
-> +
-> +#include <linux/device.h>
-> +#include <linux/mfd/loongson-se.h>
-> +#include <linux/platform_device.h>
-> +#include <linux/wait.h>
-> +
-> +#include "tpm.h"
-> +
-> +struct tpm_loongson_cmd {
-> +	u32 cmd_id;
-> +	u32 data_off;
-> +	u32 data_len;
-> +	u32 pad[5];
-> +};
-> +
-> +static int tpm_loongson_recv(struct tpm_chip *chip, u8 *buf, size_t count)
-> +{
-> +	struct loongson_se_engine *tpm_engine = dev_get_drvdata(&chip->dev);
-> +	struct tpm_loongson_cmd *cmd_ret = tpm_engine->command_ret;
-> +
-> +	if (cmd_ret->data_len > count)
-> +		return -EIO;
-> +
-> +	memcpy(buf, tpm_engine->data_buffer, cmd_ret->data_len);
-> +
-> +	return cmd_ret->data_len;
-> +}
-> +
-> +static int tpm_loongson_send(struct tpm_chip *chip, u8 *buf, size_t count)
-> +{
-> +	struct loongson_se_engine *tpm_engine = dev_get_drvdata(&chip->dev);
-> +	struct tpm_loongson_cmd *cmd = tpm_engine->command;
-> +
-> +	if (count > tpm_engine->buffer_size)
-> +		return -E2BIG;
-> +
-> +	cmd->data_len = count;
-> +	memcpy(tpm_engine->data_buffer, buf, count);
-> +
-> +	return loongson_se_send_engine_cmd(tpm_engine);
-> +}
-> +
-> +static const struct tpm_class_ops tpm_loongson_ops = {
-> +	.flags = TPM_OPS_AUTO_STARTUP,
-> +	.recv = tpm_loongson_recv,
-> +	.send = tpm_loongson_send,
-> +};
-> +
-> +static int tpm_loongson_probe(struct platform_device *pdev)
-> +{
-> +	struct loongson_se_engine *tpm_engine;
-> +	struct device *dev = &pdev->dev;
-> +	struct tpm_loongson_cmd *cmd;
-> +	struct tpm_chip *chip;
-> +
-> +	tpm_engine = loongson_se_init_engine(dev->parent, SE_ENGINE_TPM);
-> +	if (!tpm_engine)
-> +		return -ENODEV;
-> +	cmd = tpm_engine->command;
-> +	cmd->cmd_id = SE_CMD_TPM;
-> +	cmd->data_off = tpm_engine->buffer_off;
-> +
-> +	chip = tpmm_chip_alloc(dev, &tpm_loongson_ops);
-> +	if (IS_ERR(chip))
-> +		return PTR_ERR(chip);
-> +	chip->flags = TPM_CHIP_FLAG_TPM2 | TPM_CHIP_FLAG_IRQ;
-> +	dev_set_drvdata(&chip->dev, tpm_engine);
-> +
-> +	return tpm_chip_register(chip);
-> +}
-> +
-> +static struct platform_driver tpm_loongson = {
-> +	.probe   = tpm_loongson_probe,
-> +	.driver  = {
-> +		.name  = "loongson-tpm",
+> +"available_mbm_cntrs":
+> +	The number of assignable counters available in each domain when
 
-This patch looks otherwise great but I'd prefer here tho use
-"tpm_loongson_probe" for the value of the name field.
+"The number of counters available for assignment in each domain ..."
 
-> +	},
-> +};
-> +module_platform_driver(tpm_loongson);
+> +	mbm_event mode is enabled on the system.
 > +
-> +MODULE_ALIAS("platform:loongson-tpm");
-> +MODULE_LICENSE("GPL");
-> +MODULE_DESCRIPTION("Loongson TPM driver");
-> -- 
-> 2.45.2
-> 
+> +	For example, on a system with 30 available [hardware] assignable counters
+> +	in each of its L3 domains:
+> +	::
+> +
+> +	  # cat /sys/fs/resctrl/info/L3_MON/available_mbm_cntrs
+> +	  0=30;1=30
+> +
+>  "max_threshold_occupancy":
+>  		Read/write file provides the largest value (in
+>  		bytes) at which a previously used LLC_occupancy
+> diff --git a/fs/resctrl/monitor.c b/fs/resctrl/monitor.c
+> index 92a87aa97b0f..2893da994f3c 100644
+> --- a/fs/resctrl/monitor.c
+> +++ b/fs/resctrl/monitor.c
+> @@ -924,9 +924,12 @@ int resctrl_mon_resource_init(void)
+>  	else if (resctrl_is_mon_event_enabled(QOS_L3_MBM_TOTAL_EVENT_ID))
+>  		mba_mbps_default_event = QOS_L3_MBM_TOTAL_EVENT_ID;
+>  
+> -	if (r->mon.mbm_cntr_assignable)
+> +	if (r->mon.mbm_cntr_assignable) {
+>  		resctrl_file_fflags_init("num_mbm_cntrs",
+>  					 RFTYPE_MON_INFO | RFTYPE_RES_CACHE);
+> +		resctrl_file_fflags_init("available_mbm_cntrs",
+> +					 RFTYPE_MON_INFO | RFTYPE_RES_CACHE);
+> +	}
+>  
+>  	return 0;
+>  }
+> diff --git a/fs/resctrl/rdtgroup.c b/fs/resctrl/rdtgroup.c
+> index 90b52593ef29..08bcca9bd8b6 100644
+> --- a/fs/resctrl/rdtgroup.c
+> +++ b/fs/resctrl/rdtgroup.c
+> @@ -1853,6 +1853,48 @@ static int resctrl_num_mbm_cntrs_show(struct kernfs_open_file *of,
+>  	return 0;
+>  }
+>  
+> +static int resctrl_available_mbm_cntrs_show(struct kernfs_open_file *of,
+> +					    struct seq_file *s, void *v)
+> +{
+> +	struct rdt_resource *r = rdt_kn_parent_priv(of->kn);
+> +	struct rdt_mon_domain *dom;
+> +	bool sep = false;
+> +	u32 cntrs, i;
+> +	int ret = 0;
+> +
+> +	cpus_read_lock();
+> +	mutex_lock(&rdtgroup_mutex);
+> +
+> +	rdt_last_cmd_clear();
+> +
+> +	if (!resctrl_arch_mbm_cntr_assign_enabled(r)) {
+> +		rdt_last_cmd_puts("mbm_cntr_assign mode is not enabled\n");
+> +		ret = -EINVAL;
+> +		goto unlock_cntrs_show;
 
-BR, Jarkko
+unlock_cntrs_show -> out_unlock (to be consistent with rest of resctrl)
+
+Reinette
 
