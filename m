@@ -1,72 +1,76 @@
-Return-Path: <linux-kernel+bounces-701054-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-701057-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9967AAE7007
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Jun 2025 21:46:07 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id DA72DAE700A
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Jun 2025 21:46:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AFD163AB798
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Jun 2025 19:45:41 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 90BB31897953
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Jun 2025 19:46:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1EA552E9738;
-	Tue, 24 Jun 2025 19:44:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 993642EE271;
+	Tue, 24 Jun 2025 19:44:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="Qpw+IoBo"
-Received: from mx0b-00069f02.pphosted.com (mx0b-00069f02.pphosted.com [205.220.177.32])
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="p3AZS7rh"
+Received: from mx0a-00069f02.pphosted.com (mx0a-00069f02.pphosted.com [205.220.165.32])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EFE242E8899;
-	Tue, 24 Jun 2025 19:44:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.177.32
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5C2882EA145;
+	Tue, 24 Jun 2025 19:44:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.165.32
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750794274; cv=none; b=GM0lvIgvnfeWxBuhyEJPtqXbRVTSaCUCi7AkI0SgDUkqHjwNAQOT07rlTEhGBJ8cw5VRGyoZsqDvgBJppbvY8VQ1fi4TTepAGXewS0awwz2Q2fhkbHLWFkHi4QLEUyMZgW/Ne+0ypGWxXfX7Ta3TCoICSBr4XnM0CbmtbUqDrvU=
+	t=1750794277; cv=none; b=gDCOjVqXgcDSfRGZ+nUZXrLlkfx4LyRpMXk4vaYoPuLDkf53Zx4lMKk6CgJ4taxP18j94KvEnMqJX1h18gUbWL0w1k1xXGCBR6WJPYg1JvuKTHLbemZD3Hf3mU8f+QJWPORddnt49Zcp16fFRS59G0pGmr8R/qIUOxrA01SOb3Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750794274; c=relaxed/simple;
-	bh=69eh9VLJi1J6J2mUImxaQHgQHo4o3bZRjXR+EqdYxsY=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=BVwHeroamABXLRMQj1Cq9jOkQtAdevoxdrouprD3r6DciVXa0XyNb/sIE6DMKmwobv68WZDs07ZTan3kYaLxms59xPsXfIPoiMnBb+dr2ekzf2j21iYQYcE6dwZhIxWHl5q5GLQF4R7pJG1jEKbhJ4mr2gcwmnSKiqg/q7QFnDw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=Qpw+IoBo; arc=none smtp.client-ip=205.220.177.32
+	s=arc-20240116; t=1750794277; c=relaxed/simple;
+	bh=3pFsyry3ogPsPI2M+Srbmm7Hms/oHfolhCZF5ZerzyQ=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=cPZSNJqTtD894NQM7n9zZjrXmrD97Ydj5F8/zMFWDigfPl6HwTAmQel2Q4UtKHJI6yJp/tTDWgIUuc56oDJ7mniE53SNUTCQuixSuyio0sDj2vcFqC+t+5f85OekQnUQmbbXWLgIzB4uiViI+53EZh7+E3m3AOiOHMhCYk/SU74=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=p3AZS7rh; arc=none smtp.client-ip=205.220.165.32
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oracle.com
-Received: from pps.filterd (m0246630.ppops.net [127.0.0.1])
-	by mx0b-00069f02.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 55OHBhtO025867;
-	Tue, 24 Jun 2025 19:44:23 GMT
+Received: from pps.filterd (m0246617.ppops.net [127.0.0.1])
+	by mx0b-00069f02.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 55OHBjic029946;
+	Tue, 24 Jun 2025 19:44:24 GMT
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=cc
-	:content-transfer-encoding:date:from:message-id:mime-version
-	:subject:to; s=corp-2025-04-25; bh=rxdCh/ih79IROOaGKB4RrxcA27cqV
-	7R+FSaE62x0ps0=; b=Qpw+IoBoWdQvVVlSl9j2omEn6te6tNpzOBc6ConFkxyYP
-	QNq8TkDCDFyY4UGmVs+vFPaVodUiYGcsAU4JgImivSqtN5G7TSyI3n4jdDbAvRhj
-	GGRVb/zF+dNmYFmyd8G783qGV+Q7lYwz6yYRlmLIcO2BBIoC4vDoBeUNPFjXgzFu
-	FxmZyqdS2C0ajhqaGuTt9WT5K4Je+QMyFP5oV+nGWF6CyLLtT0o/+3ldFKhU1Uks
-	O5QdkzSxKX3dxWrP8vSs9ylYwcsRzw6NlCkFmWsz4MjIynVl/WAKuVqt5y7U8MTp
-	8avfCQE7fQSuYz2qqwOKS3mqaA/OsRdETQKSS3dDw==
+	:content-transfer-encoding:date:from:in-reply-to:message-id
+	:mime-version:references:subject:to; s=corp-2025-04-25; bh=L+xWg
+	Q/9RAPDdeXdahMohh/91ikHv/27/0j3Sa/Uu0U=; b=p3AZS7rho9rTKGflpKuNT
+	NjRwqgUBPbrbvZqKYdSCNaSpDvPR9BRL+iMUGA4QIza/cAu0xhQEc0x8uJoi3TTO
+	6Z0xKea0vU/B6WFPFg8e54jssn/kFBhB/us290XfYyfvdBtmWG4aziB3vLloHefI
+	krkePVXub/jIyeGu0e0op965hcMHsDH76eX+rMo+6zVw0oHm/2P4JJUwHYWp6IYA
+	eF5sI96YDqJ/xOgrQb6ikjzPrEKeTgiwYiIXDJCE64KbTlcPag1hZx378tMXK4iu
+	KlTwOJCHe0S/V0Jqvl+evqI88lESRn9WztFyzZ2uzE/zIOOttduAKdmcmicJtm54
+	Q==
 Received: from iadpaimrmta03.imrmtpd1.prodappiadaev1.oraclevcn.com (iadpaimrmta03.appoci.oracle.com [130.35.103.27])
-	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 47egt1ct11-1
+	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 47ds8y5xyt-1
 	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Tue, 24 Jun 2025 19:44:22 +0000 (GMT)
+	Tue, 24 Jun 2025 19:44:24 +0000 (GMT)
 Received: from pps.filterd (iadpaimrmta03.imrmtpd1.prodappiadaev1.oraclevcn.com [127.0.0.1])
-	by iadpaimrmta03.imrmtpd1.prodappiadaev1.oraclevcn.com (8.18.1.2/8.18.1.2) with ESMTP id 55OItoiA024312;
-	Tue, 24 Jun 2025 19:44:22 GMT
+	by iadpaimrmta03.imrmtpd1.prodappiadaev1.oraclevcn.com (8.18.1.2/8.18.1.2) with ESMTP id 55OJFAdc024643;
+	Tue, 24 Jun 2025 19:44:23 GMT
 Received: from pps.reinject (localhost [127.0.0.1])
-	by iadpaimrmta03.imrmtpd1.prodappiadaev1.oraclevcn.com (PPS) with ESMTPS id 47ehkr3hu0-1
+	by iadpaimrmta03.imrmtpd1.prodappiadaev1.oraclevcn.com (PPS) with ESMTPS id 47ehkr3huj-1
 	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Tue, 24 Jun 2025 19:44:22 +0000
+	Tue, 24 Jun 2025 19:44:23 +0000
 Received: from iadpaimrmta03.imrmtpd1.prodappiadaev1.oraclevcn.com (iadpaimrmta03.imrmtpd1.prodappiadaev1.oraclevcn.com [127.0.0.1])
-	by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 55OJiLcL031379;
-	Tue, 24 Jun 2025 19:44:21 GMT
+	by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 55OJiLcN031379;
+	Tue, 24 Jun 2025 19:44:22 GMT
 Received: from ca-dev110.us.oracle.com (ca-dev110.us.oracle.com [10.129.136.45])
-	by iadpaimrmta03.imrmtpd1.prodappiadaev1.oraclevcn.com (PPS) with ESMTP id 47ehkr3hsx-1;
-	Tue, 24 Jun 2025 19:44:21 +0000
+	by iadpaimrmta03.imrmtpd1.prodappiadaev1.oraclevcn.com (PPS) with ESMTP id 47ehkr3hsx-2;
+	Tue, 24 Jun 2025 19:44:22 +0000
 From: Alok Tiwari <alok.a.tiwari@oracle.com>
 To: jonathan.cameron@huawei.com, will@kernel.org, mark.rutland@arm.com,
         linux-cxl@vger.kernel.org
 Cc: alok.a.tiwari@oracle.com, linux-perf-users@vger.kernel.org,
         linux-kernel@vger.kernel.org
-Subject: [PATCH v2 0/3] perf/cxlpmu: Fix allocation argument order and minor formatting
-Date: Tue, 24 Jun 2025 12:43:37 -0700
-Message-ID: <20250624194350.109790-1-alok.a.tiwari@oracle.com>
+Subject: [PATCH v2 1/3] perf/cxlpmu: Fix devm_kcalloc() argument order in cxl_pmu_probe()
+Date: Tue, 24 Jun 2025 12:43:38 -0700
+Message-ID: <20250624194350.109790-2-alok.a.tiwari@oracle.com>
 X-Mailer: git-send-email 2.46.0
+In-Reply-To: <20250624194350.109790-1-alok.a.tiwari@oracle.com>
+References: <20250624194350.109790-1-alok.a.tiwari@oracle.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -81,36 +85,48 @@ X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 mlxlogscore=999 b
  suspectscore=0 adultscore=0 malwarescore=0 mlxscore=0 phishscore=0
  spamscore=0 classifier=spam adjust=0 reason=mlx scancount=1
  engine=8.12.0-2505160000 definitions=main-2506240161
-X-Proofpoint-GUID: PqjC_nlaZtw1Y-qFVvHsLh536bqsCE2d
-X-Proofpoint-ORIG-GUID: PqjC_nlaZtw1Y-qFVvHsLh536bqsCE2d
-X-Authority-Analysis: v=2.4 cv=cpebk04i c=1 sm=1 tr=0 ts=685b0016 b=1 cx=c_pps a=qoll8+KPOyaMroiJ2sR5sw==:117 a=qoll8+KPOyaMroiJ2sR5sw==:17 a=6IFa9wvqVegA:10 a=RRer6SffVtzthgszA2kA:9 a=zZCYzV9kfG8A:10 cc=ntf awl=host:13207
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNjI0MDE2MSBTYWx0ZWRfX8rJ7CwuGrXij 4i6E0tQnxA+HdxRSvz4sodFGTspmbBQCXqmRd63J7VcIuXO7E9Un6n/QYnvxZcBonC1F3UivLjg G+6U+lIxPV5CsSXQ1DKmoORzklNH5xFGFU+hgm0jSDBWib70pvlQ8Ja62HiJ0h/jRhTc/7WgmCo
- Y6gg9xBKFxGkEsKK5gm6L7+S8QRfdH2OJ+9Drc5r/PyCk91kn9H+9ZrdQ5NDymntKWMbctXIETI Q1EZntUxr9447WlR5InW+jqEbZHYOd16pVdDTVKtgAE7j1CjKgluQlXBHB738bTr4y1U5G+c2JR WoRYll03vkTOazU8gAR0zNFRAc7pPb4w2mz5ZjkRyWxNiLYvW0WX9VLvPCJs9AUrKbP5TMj3bzG
- wmLe9fT5YDSlKkREs7o+pgvnoSuCj3Xfj4Lk+kjAaMsGaH9bHsgRcBhz/xx73YgRNrdsCbUD
+X-Proofpoint-ORIG-GUID: WwzDPj097zbDIdTUO8vgaoJoCcdL-zik
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNjI0MDE2MSBTYWx0ZWRfXxrlLTDf9HdRS DYtBlN1G4DH9OFH10nBhKuFBOSpZxvArKTarQaRzul1L2zgETlYq1ohdNp8y5bbgwdxhjIfXJtx pJRS7Ag7O2U/TVSSK60BKmyAcjN1Zripwv0Ol7UEivAO8TpyOL0N0aOT0ucs0C37wuwMfTExBYn
+ Ldnut56lvTEygwbbkM9YPiwGXHhzspwC8kBQU0X/Va1bthVlM5gFGK52te6Klpr5qCxm5R84Brh rvecnS0cF1AE15yiackeI23gzccUmjG3b0lFSjqBbU6gEey1rRd6OOQsFfidSiFMwtLatdqATDB u5RYjs7FgP8Ij0yYzb5dYdUnp/NkAqm/KIZNEZmK7AtllXx+Xwi/cu98jJjl7V2WRWgkum5ZJch
+ nijbZJOthefsXZjsox76I1pNwHNc5VjVNb5VMVWw1mFFm21CXXXHVspNBaXAWAIACpWYlqkU
+X-Proofpoint-GUID: WwzDPj097zbDIdTUO8vgaoJoCcdL-zik
+X-Authority-Analysis: v=2.4 cv=PqSTbxM3 c=1 sm=1 tr=0 ts=685b0018 b=1 cx=c_pps a=qoll8+KPOyaMroiJ2sR5sw==:117 a=qoll8+KPOyaMroiJ2sR5sw==:17 a=6IFa9wvqVegA:10 a=yPCof4ZbAAAA:8 a=yaHg9FHjClEfhIwcEPsA:9 cc=ntf awl=host:13207
 
-This patch series includes a few minor cleanups and correctness
-improvements in drivers/perf/cxl_pmu.c
+The previous code mistakenly swapped the count and size parameters.
+This fix corrects the argument order in devm_kcalloc() to follow the
+conventional count, size form, avoiding potential confusion or bugs.
 
-Correct the argument order in devm_kcalloc() to follow the
-conventional count, size form to avoid any confusion or bugs.
+Previous usage:
+  devm_kcalloc(dev, sizeof(*info->hw_events), info->num_counters,
+   GFP_KERNEL);
 
-Remove an unintended newline in the IRQ name string passed to
-devm_kasprintf() and  fix a formatting issue in the devm_kasprintf()
+New usage:
+  devm_kcalloc(dev, info->num_counters, sizeof(*info->hw_events),
+   GFP_KERNEL);
 
-Fix several typos in comments and documentation strings, improving code
-readability and alignment with the CXL specification.
+Previous incorrect order could lead to unexpected memory allocation
+behavior. This fix ensures correct allocation of hw_event structure.
 
-v1 -> v2
-created individual patches into a series as suggested Jonathan.
+Signed-off-by: Alok Tiwari <alok.a.tiwari@oracle.com>
+---
+ drivers/perf/cxl_pmu.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-Alok Tiwari (3):
-  perf/cxlpmu: Fix devm_kcalloc() argument order in cxl_pmu_probe()
-  perf/cxlpmu: Remove unintended newline from IRQ name format string
-  perf/cxlpmu: Fix typos in cxl_pmu.c comments and documentation
-
- drivers/perf/cxl_pmu.c | 12 ++++++------
- 1 file changed, 6 insertions(+), 6 deletions(-)
-
+diff --git a/drivers/perf/cxl_pmu.c b/drivers/perf/cxl_pmu.c
+index d6693519eaee2..8998c0a2f3a2d 100644
+--- a/drivers/perf/cxl_pmu.c
++++ b/drivers/perf/cxl_pmu.c
+@@ -834,8 +834,8 @@ static int cxl_pmu_probe(struct device *dev)
+ 	if (rc)
+ 		return rc;
+ 
+-	info->hw_events = devm_kcalloc(dev, sizeof(*info->hw_events),
+-				       info->num_counters, GFP_KERNEL);
++	info->hw_events = devm_kcalloc(dev, info->num_counters,
++				       sizeof(*info->hw_events), GFP_KERNEL);
+ 	if (!info->hw_events)
+ 		return -ENOMEM;
+ 
 -- 
 2.46.0
 
