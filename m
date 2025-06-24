@@ -1,52 +1,52 @@
-Return-Path: <linux-kernel+bounces-700632-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-700638-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 471B5AE6B10
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Jun 2025 17:31:31 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id CD1E6AE6AF1
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Jun 2025 17:28:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1DA3A1BC2B56
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Jun 2025 15:23:36 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 01038167FE5
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Jun 2025 15:23:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 339522FE373;
-	Tue, 24 Jun 2025 15:09:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F0C112FEE3C;
+	Tue, 24 Jun 2025 15:09:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b="D5fdDzLe"
+	dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b="gMs0uu4w"
 Received: from esa.microchip.iphmx.com (esa.microchip.iphmx.com [68.232.154.123])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5F2C92FD88E;
-	Tue, 24 Jun 2025 15:09:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 486A62FE327;
+	Tue, 24 Jun 2025 15:09:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=68.232.154.123
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750777761; cv=none; b=p8EPpPBI0XErGW722SoNxEO+pPupy81jV9azFZRFRsPE3cxk/J3bKCzRlE5MXA3P1ra6kJoQKq3gU4BA3sHRRO5SurP3lSNsEDfiEe/uBYVgoWPSGPvnhVPD2/rrcQbx5M6/e2UnJTVd7EDz5kTjyakwV/dCgw2QmmgYWLhYmkI=
+	t=1750777763; cv=none; b=W0vo1I4s86FCCBdWvHpNMsoZjfCaYao4Er6p6iZf+Izhkm6CgI7vgY+9btcuVJRIOUuk86lOGGaAoIM4OpGjrB8ibY4VAh6xYO9YBuNCCyXJycU4sSV68RA0Vrn8D8tZhbQgPwBCFesdsjv58p1Ut/tNLnWxfUBSzKqSx+hhM0c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750777761; c=relaxed/simple;
-	bh=Wy1k6qwxcZ9zyVWU7NiKahrw8iO6B4PQen0dkvULY20=;
+	s=arc-20240116; t=1750777763; c=relaxed/simple;
+	bh=p5PDzDnHI8l/OWgkEoxtwDdORlRKrZTTSGrtXa9jSuQ=;
 	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=YSxRjZoj1YVs9lBeFgJfBSBgomjJ6wlz5duwRczVqmOHkhBTmOc91jsUGIEqs/pLhlD4PIO4lpyvgBvYf0eqJ4PqNn61Et4r1q51VwTtwrJoQtNdQlbTHv7p2HW1+gRo3xkZBmgZmtTdYnyq1NS+wWbcYFuqQZ66usjkI061bI0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com; spf=pass smtp.mailfrom=microchip.com; dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b=D5fdDzLe; arc=none smtp.client-ip=68.232.154.123
+	 MIME-Version:Content-Type; b=NIgDGp+qT60Dw7Kd8Xi/aVMsIzJy+A/tVUVhJw677FA1PNfnKkHr78V7Uc50DWq9iWRMhsKgczIlvCKuCsHV+lN9ODIx0QuBCDKiRWT131smCaztmnduWw2wpmx7EBT4H5QhiR8aSQ2o3x0hR1X98M7EYfb7PNe9Mp1pUcEZ/Ek=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com; spf=pass smtp.mailfrom=microchip.com; dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b=gMs0uu4w; arc=none smtp.client-ip=68.232.154.123
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=microchip.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=microchip.com; i=@microchip.com; q=dns/txt; s=mchp;
-  t=1750777759; x=1782313759;
+  t=1750777761; x=1782313761;
   h=from:to:cc:subject:date:message-id:in-reply-to:
    references:mime-version:content-transfer-encoding;
-  bh=Wy1k6qwxcZ9zyVWU7NiKahrw8iO6B4PQen0dkvULY20=;
-  b=D5fdDzLehmcd+s/ey4+DmfOe+Blcq346P/Le0Fl8DidpRxyco4rKulml
-   DD0vz4jCjgKmxkx7tVlqLpBVjg7K0NKj/lGRgLUFefw4S38Rhb/Ce8j80
-   OSJ5Y390JD9AcZ1T6s6YrjvOU8VcYZGuREi2/2lPaZqz29G/szyDNt97x
-   n8qeoC5AI0ynp2G95qFaPtHbI7CEwTAzqlpzzDaJNCo2zjK4dAkfw6Gpn
-   38MKPkrbZIFN3J7N9ojIjPQx1mH8x1FxTZq5P482hDzkSGBJPePHapD43
-   TnE1U/63UEnILCBpBWQwPPED7eXBBJRAxIszuOozKB5UiLXccsYYuy7f0
+  bh=p5PDzDnHI8l/OWgkEoxtwDdORlRKrZTTSGrtXa9jSuQ=;
+  b=gMs0uu4w7b2SzgWsmYtIE5oVeEsmmEQsvg/EypSj90P4rQ/U2et5V1vK
+   WwRqDlxsI+P1t0pQJ7TgdVOpvVLw9CkFWl2aQc9jRQkd2CYUIJVYmzQ/Y
+   xOQPpg5iX7p4AOWuX9UK+Uxqs/tpbfgHjWwj2ol0KTFhnR6/zc0sqzPCL
+   QChSlhPua2x+82cn5sZWKY4+ZxaeP/SoztFK7N60hehPEjePBwHwXrDcM
+   Wbl8zJ7d4lI3tT1brFWPCGokzaw4GKuy3js43niAj2wivpOJgr00GbQzg
+   G5k8DBPODwaT533Hqb1vQPO51tiFt0jSa8I7r0WeVeKF/ieFlDp7dCwfv
    A==;
 X-CSE-ConnectionGUID: ticneE1VRpCt6c5L3blMOw==
-X-CSE-MsgGUID: t8VN0KghR3u1IUAGV/7HMg==
+X-CSE-MsgGUID: s28c1akGSVyjp9ESLpoNxA==
 X-IronPort-AV: E=Sophos;i="6.16,262,1744095600"; 
-   d="scan'208";a="210641588"
+   d="scan'208";a="210641589"
 X-Amp-Result: SKIPPED(no attachment in message)
 Received: from unknown (HELO email.microchip.com) ([170.129.1.10])
   by esa6.microchip.iphmx.com with ESMTP/TLS/ECDHE-RSA-AES128-GCM-SHA256; 24 Jun 2025 08:09:17 -0700
@@ -64,9 +64,9 @@ To: <mturquette@baylibre.com>, <sboyd@kernel.org>,
 CC: <robh@kernel.org>, <linux-clk@vger.kernel.org>,
 	<linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
 	<varshini.rajendran@microchip.com>
-Subject: [PATCH v2 20/32] clk: at91: sam9x60: switch to parent_hw and parent_data
-Date: Tue, 24 Jun 2025 08:08:17 -0700
-Message-ID: <7b54ed71ce0cc8134c77b6f5914bf0e95ffa4d77.1750182562.git.Ryan.Wanner@microchip.com>
+Subject: [PATCH v2 21/32] clk: at91: sama5d2: switch to parent_hw and parent_data
+Date: Tue, 24 Jun 2025 08:08:18 -0700
+Message-ID: <6df068977c06a23b503bd9191a2a6cab880c9a1e.1750182562.git.Ryan.Wanner@microchip.com>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <cover.1750182562.git.Ryan.Wanner@microchip.com>
 References: <cover.1750182562.git.Ryan.Wanner@microchip.com>
@@ -81,19 +81,22 @@ Content-Type: text/plain
 
 From: Claudiu Beznea <claudiu.beznea@tuxon.dev>
 
-Switch SAM9X60 clocks to use modern parent_hw and parent_data.
+Switch SAMA5D2 clocks to use parent_hw and parent_data. Having
+parent_hw instead of parent names improves to clock registration
+speed and re-parenting. Extra time saved on registration is
+~410us when running at 492MHz.
 
 Signed-off-by: Claudiu Beznea <claudiu.beznea@tuxon.dev>
 Signed-off-by: Ryan Wanner <Ryan.Wanner@microchip.com>
 ---
- drivers/clk/at91/sam9x60.c | 117 ++++++++++++++++++-------------------
- 1 file changed, 56 insertions(+), 61 deletions(-)
+ drivers/clk/at91/sama5d2.c | 168 +++++++++++++++++++------------------
+ 1 file changed, 86 insertions(+), 82 deletions(-)
 
-diff --git a/drivers/clk/at91/sam9x60.c b/drivers/clk/at91/sam9x60.c
-index d959b30e1352..b2e86e600a9f 100644
---- a/drivers/clk/at91/sam9x60.c
-+++ b/drivers/clk/at91/sam9x60.c
-@@ -79,9 +79,9 @@ static const struct clk_pcr_layout sam9x60_pcr_layout = {
+diff --git a/drivers/clk/at91/sama5d2.c b/drivers/clk/at91/sama5d2.c
+index 8bbc34e22cda..538ffb8deedb 100644
+--- a/drivers/clk/at91/sama5d2.c
++++ b/drivers/clk/at91/sama5d2.c
+@@ -37,9 +37,9 @@ static const struct clk_pcr_layout sama5d2_pcr_layout = {
  	.pid_mask = GENMASK(6, 0),
  };
  
@@ -104,82 +107,84 @@ index d959b30e1352..b2e86e600a9f 100644
 +	struct clk_hw *parent_hw;
  	unsigned long flags;
  	u8 id;
- } sam9x60_systemck[] = {
-@@ -89,11 +89,11 @@ static const struct {
+ } sama5d2_systemck[] = {
+@@ -47,14 +47,14 @@ static const struct {
  	 * ddrck feeds DDR controller and is enabled by bootloader thus we need
  	 * to keep it enabled in case there is no Linux consumer for it.
  	 */
--	{ .n = "ddrck",  .p = "masterck_div", .id = 2, .flags = CLK_IS_CRITICAL },
--	{ .n = "uhpck",  .p = "usbck",    .id = 6 },
--	{ .n = "pck0",   .p = "prog0",    .id = 8 },
--	{ .n = "pck1",   .p = "prog1",    .id = 9 },
--	{ .n = "qspick", .p = "masterck_div", .id = 19 },
-+	{ .n = "ddrck",  .id = 2, .flags = CLK_IS_CRITICAL },
-+	{ .n = "uhpck",  .id = 6 },
-+	{ .n = "pck0",   .id = 8 },
-+	{ .n = "pck1",   .id = 9 },
-+	{ .n = "qspick", .id = 19 },
+-	{ .n = "ddrck", .p = "masterck_div", .id = 2, .flags = CLK_IS_CRITICAL },
+-	{ .n = "lcdck", .p = "masterck_div", .id = 3 },
+-	{ .n = "uhpck", .p = "usbck",        .id = 6 },
+-	{ .n = "udpck", .p = "usbck",        .id = 7 },
+-	{ .n = "pck0",  .p = "prog0",        .id = 8 },
+-	{ .n = "pck1",  .p = "prog1",        .id = 9 },
+-	{ .n = "pck2",  .p = "prog2",        .id = 10 },
+-	{ .n = "iscck", .p = "masterck_div", .id = 18 },
++	{ .n = "ddrck", .id = 2, .flags = CLK_IS_CRITICAL },
++	{ .n = "lcdck", .id = 3 },
++	{ .n = "uhpck", .id = 6 },
++	{ .n = "udpck", .id = 7 },
++	{ .n = "pck0",  .id = 8 },
++	{ .n = "pck1",  .id = 9 },
++	{ .n = "pck2",  .id = 10 },
++	{ .n = "iscck", .id = 18 },
  };
  
  static const struct {
-@@ -184,32 +184,17 @@ static const struct {
+@@ -164,25 +164,15 @@ static const struct clk_programmable_layout sama5d2_programmable_layout = {
  
- static void __init sam9x60_pmc_setup(struct device_node *np)
+ static void __init sama5d2_pmc_setup(struct device_node *np)
  {
-+	const char *td_slck_name = "td_slck", *md_slck_name = "md_slck";
-+	u8 td_slck_index = 0, md_slck_index = 1, main_xtal_index = 2;
-+	struct clk_hw *hw, *main_rc_hw, *main_osc_hw;
-+	const char *main_xtal_name = "main_xtal";
++	struct clk_hw *hw, *audio_fracck_hw, *usbck_hw, *main_rc_hw, *main_osc_hw;
++	const char *slow_clk_name = "slowck", *main_xtal_name = "main_xtal";
++	u8 slow_clk_index = 0, main_xtal_index = 1;
  	struct clk_range range = CLK_RANGE(0, 0);
--	const char *td_slck_name, *md_slck_name, *mainxtal_name;
-+	struct clk_parent_data parent_data[6];
- 	struct pmc_data *sam9x60_pmc;
+-	const char *slck_name, *mainxtal_name;
+-	struct pmc_data *sama5d2_pmc;
 -	const char *parent_names[6];
--	struct clk_hw *main_osc_hw;
-+	struct clk_hw *usbck_hw;
- 	struct regmap *regmap;
++	struct clk_parent_data parent_data[6];
+ 	struct regmap *regmap, *regmap_sfr;
 -	struct clk_hw *hw;
- 	int i;
- 
--	i = of_property_match_string(np, "clock-names", "td_slck");
+-	int i;
++	struct pmc_data *sama5d2_pmc;
+ 	bool bypass;
+-
+-	i = of_property_match_string(np, "clock-names", "slow_clk");
 -	if (i < 0)
 -		return;
 -
--	td_slck_name = of_clk_get_parent_name(np, i);
--
--	i = of_property_match_string(np, "clock-names", "md_slck");
--	if (i < 0)
--		return;
--
--	md_slck_name = of_clk_get_parent_name(np, i);
+-	slck_name = of_clk_get_parent_name(np, i);
 -
 -	i = of_property_match_string(np, "clock-names", "main_xtal");
 -	if (i < 0)
 -		return;
 -	mainxtal_name = of_clk_get_parent_name(np, i);
--
++	int i;
+ 
  	regmap = device_node_to_regmap(np);
  	if (IS_ERR(regmap))
- 		return;
-@@ -221,26 +206,28 @@ static void __init sam9x60_pmc_setup(struct device_node *np)
- 	if (!sam9x60_pmc)
+@@ -195,51 +185,52 @@ static void __init sama5d2_pmc_setup(struct device_node *np)
+ 	if (!sama5d2_pmc)
  		return;
  
 -	hw = at91_clk_register_main_rc_osc(regmap, "main_rc_osc", 12000000,
--					   50000000);
+-					   100000000);
 -	if (IS_ERR(hw))
 +	main_rc_hw = at91_clk_register_main_rc_osc(regmap, "main_rc_osc", 12000000,
-+						   50000000);
++						   100000000);
 +	if (IS_ERR(main_rc_hw))
  		goto err_free;
  
--	hw = at91_clk_register_main_osc(regmap, "main_osc", mainxtal_name, NULL, 0);
+ 	bypass = of_property_read_bool(np, "atmel,osc-bypass");
+ 
+-	hw = at91_clk_register_main_osc(regmap, "main_osc", mainxtal_name, NULL,
+-					bypass);
+-	if (IS_ERR(hw))
 +	main_osc_hw = at91_clk_register_main_osc(regmap, "main_osc", NULL,
 +						 &AT91_CLK_PD_NAME(main_xtal_name, main_xtal_index),
-+						 0);
- 	if (IS_ERR(hw))
++						 bypass);
++	if (IS_ERR(main_osc_hw))
  		goto err_free;
--	main_osc_hw = hw;
  
 -	parent_names[0] = "main_rc_osc";
 -	parent_names[1] = "main_osc";
@@ -190,95 +195,116 @@ index d959b30e1352..b2e86e600a9f 100644
  	if (IS_ERR(hw))
  		goto err_free;
  
- 	sam9x60_pmc->chws[PMC_MAIN] = hw;
- 
- 	hw = sam9x60_clk_register_frac_pll(regmap, &pmc_pll_lock, "pllack_fracck",
--					   "mainck", sam9x60_pmc->chws[PMC_MAIN],
-+					   &AT91_CLK_PD_HW(sam9x60_pmc->chws[PMC_MAIN]),
-+					   clk_hw_get_rate(sam9x60_pmc->chws[PMC_MAIN]),
- 					   0, &plla_characteristics,
- 					   &pll_frac_layout,
- 					   /*
-@@ -253,7 +240,7 @@ static void __init sam9x60_pmc_setup(struct device_node *np)
- 		goto err_free;
- 
- 	hw = sam9x60_clk_register_div_pll(regmap, &pmc_pll_lock, "pllack_divck",
--					  "pllack_fracck", NULL, 0, &plla_characteristics,
-+					  NULL, hw, 0, &plla_characteristics,
- 					  &pll_div_layout,
- 					   /*
- 					    * This feeds CPU. It should not
-@@ -266,14 +253,15 @@ static void __init sam9x60_pmc_setup(struct device_node *np)
- 	sam9x60_pmc->chws[PMC_PLLACK] = hw;
- 
- 	hw = sam9x60_clk_register_frac_pll(regmap, &pmc_pll_lock, "upllck_fracck",
--					   "main_osc", main_osc_hw, 1,
--					   &upll_characteristics,
-+					   &AT91_CLK_PD_HW(main_osc_hw),
-+					   clk_hw_get_rate(main_osc_hw),
-+					   1, &upll_characteristics,
- 					   &pll_frac_layout, CLK_SET_RATE_GATE);
+ 	sama5d2_pmc->chws[PMC_MAIN] = hw;
+-
+-	hw = at91_clk_register_pll(regmap, "pllack", "mainck", 0,
++	hw = at91_clk_register_pll(regmap, "pllack", NULL,
++				   &AT91_CLK_PD_HW(sama5d2_pmc->chws[PMC_MAIN]), 0,
+ 				   &sama5d3_pll_layout, &plla_characteristics);
  	if (IS_ERR(hw))
  		goto err_free;
  
- 	hw = sam9x60_clk_register_div_pll(regmap, &pmc_pll_lock, "upllck_divck",
--					  "upllck_fracck", NULL, 1, &upll_characteristics,
-+					  NULL, hw, 1, &upll_characteristics,
- 					  &pll_div_layout,
- 					  CLK_SET_RATE_GATE |
- 					  CLK_SET_PARENT_GATE |
-@@ -283,17 +271,17 @@ static void __init sam9x60_pmc_setup(struct device_node *np)
+-	hw = at91_clk_register_plldiv(regmap, "plladivck", "pllack");
++	hw = at91_clk_register_plldiv(regmap, "plladivck", NULL, &AT91_CLK_PD_HW(hw));
+ 	if (IS_ERR(hw))
+ 		goto err_free;
  
- 	sam9x60_pmc->chws[PMC_UTMI] = hw;
+ 	sama5d2_pmc->chws[PMC_PLLACK] = hw;
  
--	parent_names[0] = md_slck_name;
+-	hw = at91_clk_register_audio_pll_frac(regmap, "audiopll_fracck",
+-					      "mainck");
+-	if (IS_ERR(hw))
++	audio_fracck_hw = at91_clk_register_audio_pll_frac(regmap, "audiopll_fracck", NULL,
++							   &AT91_CLK_PD_HW(sama5d2_pmc->chws[PMC_MAIN]));
++	if (IS_ERR(audio_fracck_hw))
+ 		goto err_free;
+ 
+-	hw = at91_clk_register_audio_pll_pad(regmap, "audiopll_padck",
+-					     "audiopll_fracck");
++	hw = at91_clk_register_audio_pll_pad(regmap, "audiopll_padck", NULL,
++					     &AT91_CLK_PD_HW(audio_fracck_hw));
+ 	if (IS_ERR(hw))
+ 		goto err_free;
+ 
+ 	sama5d2_pmc->chws[PMC_AUDIOPINCK] = hw;
+ 
+-	hw = at91_clk_register_audio_pll_pmc(regmap, "audiopll_pmcck",
+-					     "audiopll_fracck");
++	hw = at91_clk_register_audio_pll_pmc(regmap, "audiopll_pmcck", NULL,
++					     &AT91_CLK_PD_HW(audio_fracck_hw));
+ 	if (IS_ERR(hw))
+ 		goto err_free;
+ 
+@@ -249,25 +240,26 @@ static void __init sama5d2_pmc_setup(struct device_node *np)
+ 	if (IS_ERR(regmap_sfr))
+ 		regmap_sfr = NULL;
+ 
+-	hw = at91_clk_register_utmi(regmap, regmap_sfr, "utmick", "mainck", NULL);
++	hw = at91_clk_register_utmi(regmap, regmap_sfr, "utmick", NULL,
++				    &AT91_CLK_PD_HW(sama5d2_pmc->chws[PMC_MAIN]));
+ 	if (IS_ERR(hw))
+ 		goto err_free;
+ 
+ 	sama5d2_pmc->chws[PMC_UTMI] = hw;
+ 
+-	parent_names[0] = slck_name;
 -	parent_names[1] = "mainck";
--	parent_names[2] = "pllack_divck";
-+	parent_data[0] = AT91_CLK_PD_NAME(md_slck_name, md_slck_index);
-+	parent_data[1] = AT91_CLK_PD_HW(sam9x60_pmc->chws[PMC_MAIN]);
-+	parent_data[2] = AT91_CLK_PD_HW(sam9x60_pmc->chws[PMC_PLLACK]);
- 	hw = at91_clk_register_master_pres(regmap, "masterck_pres", 3,
--					   parent_names, NULL, &sam9x60_master_layout,
-+					   NULL, parent_data, &sam9x60_master_layout,
+-	parent_names[2] = "plladivck";
+-	parent_names[3] = "utmick";
++	parent_data[0] = AT91_CLK_PD_NAME(slow_clk_name, slow_clk_index);
++	parent_data[1] = AT91_CLK_PD_HW(sama5d2_pmc->chws[PMC_MAIN]);
++	parent_data[2] = AT91_CLK_PD_HW(sama5d2_pmc->chws[PMC_PLLACK]);
++	parent_data[3] = AT91_CLK_PD_HW(sama5d2_pmc->chws[PMC_UTMI]);
+ 	hw = at91_clk_register_master_pres(regmap, "masterck_pres", 4,
+-					   parent_names, NULL,
++					   NULL, parent_data,
+ 					   &at91sam9x5_master_layout,
  					   &mck_characteristics, &mck_lock);
  	if (IS_ERR(hw))
  		goto err_free;
  
- 	hw = at91_clk_register_master_div(regmap, "masterck_div",
--					  "masterck_pres", NULL, &sam9x60_master_layout,
-+					  NULL, &AT91_CLK_PD_HW(hw), &sam9x60_master_layout,
+-	hw = at91_clk_register_master_div(regmap, "masterck_div",
+-					  "masterck_pres", NULL,
++	hw = at91_clk_register_master_div(regmap, "masterck_div", NULL,
++					  &AT91_CLK_PD_HW(hw),
+ 					  &at91sam9x5_master_layout,
  					  &mck_characteristics, &mck_lock,
  					  CLK_SET_RATE_GATE, 0);
+@@ -276,31 +268,32 @@ static void __init sama5d2_pmc_setup(struct device_node *np)
+ 
+ 	sama5d2_pmc->chws[PMC_MCK] = hw;
+ 
+-	hw = at91_clk_register_h32mx(regmap, "h32mxck", "masterck_div");
++	hw = at91_clk_register_h32mx(regmap, "h32mxck", NULL,
++				     &AT91_CLK_PD_HW(sama5d2_pmc->chws[PMC_MCK]));
  	if (IS_ERR(hw))
-@@ -301,26 +289,26 @@ static void __init sam9x60_pmc_setup(struct device_node *np)
+ 		goto err_free;
  
- 	sam9x60_pmc->chws[PMC_MCK] = hw;
+ 	sama5d2_pmc->chws[PMC_MCK2] = hw;
  
--	parent_names[0] = "pllack_divck";
--	parent_names[1] = "upllck_divck";
--	parent_names[2] = "main_osc";
--	hw = sam9x60_clk_register_usb(regmap, "usbck", parent_names, NULL, 3);
+-	parent_names[0] = "plladivck";
+-	parent_names[1] = "utmick";
+-	hw = at91sam9x5_clk_register_usb(regmap, "usbck", parent_names, NULL, 2);
 -	if (IS_ERR(hw))
-+	parent_data[0] = AT91_CLK_PD_HW(sam9x60_pmc->chws[PMC_PLLACK]);
-+	parent_data[1] = AT91_CLK_PD_HW(sam9x60_pmc->chws[PMC_UTMI]);
-+	parent_data[2] = AT91_CLK_PD_HW(main_osc_hw);
-+	usbck_hw = sam9x60_clk_register_usb(regmap, "usbck", NULL, parent_data, 3);
++	parent_data[0] = AT91_CLK_PD_HW(sama5d2_pmc->chws[PMC_PLLACK]);
++	parent_data[1] = AT91_CLK_PD_HW(sama5d2_pmc->chws[PMC_UTMI]);
++	usbck_hw = at91sam9x5_clk_register_usb(regmap, "usbck", NULL, parent_data, 2);
 +	if (IS_ERR(usbck_hw))
  		goto err_free;
  
--	parent_names[0] = md_slck_name;
--	parent_names[1] = td_slck_name;
--	parent_names[2] = "mainck";
--	parent_names[3] = "masterck_div";
--	parent_names[4] = "pllack_divck";
--	parent_names[5] = "upllck_divck";
-+	parent_data[0] = AT91_CLK_PD_NAME(md_slck_name, md_slck_index);
-+	parent_data[1] = AT91_CLK_PD_NAME(td_slck_name, td_slck_index);
-+	parent_data[2] = AT91_CLK_PD_HW(sam9x60_pmc->chws[PMC_MAIN]);
-+	parent_data[3] = AT91_CLK_PD_HW(sam9x60_pmc->chws[PMC_MCK]);
-+	parent_data[4] = AT91_CLK_PD_HW(sam9x60_pmc->chws[PMC_PLLACK]);
-+	parent_data[5] = AT91_CLK_PD_HW(sam9x60_pmc->chws[PMC_UTMI]);
- 	for (i = 0; i < 2; i++) {
+-	parent_names[0] = slck_name;
+-	parent_names[1] = "mainck";
+-	parent_names[2] = "plladivck";
+-	parent_names[3] = "utmick";
+-	parent_names[4] = "masterck_div";
+-	parent_names[5] = "audiopll_pmcck";
++	parent_data[0] = AT91_CLK_PD_NAME(slow_clk_name, slow_clk_index);
++	parent_data[1] = AT91_CLK_PD_HW(sama5d2_pmc->chws[PMC_MAIN]);
++	parent_data[2] = AT91_CLK_PD_HW(sama5d2_pmc->chws[PMC_PLLACK]);
++	parent_data[3] = AT91_CLK_PD_HW(sama5d2_pmc->chws[PMC_UTMI]);
++	parent_data[4] = AT91_CLK_PD_HW(sama5d2_pmc->chws[PMC_MCK]);
++	parent_data[5] = AT91_CLK_PD_HW(sama5d2_pmc->chws[PMC_AUDIOPLLCK]);
+ 	for (i = 0; i < 3; i++) {
  		char name[6];
  
  		snprintf(name, sizeof(name), "prog%d", i);
@@ -286,45 +312,101 @@ index d959b30e1352..b2e86e600a9f 100644
  		hw = at91_clk_register_programmable(regmap, name,
 -						    parent_names, NULL, 6, i,
 +						    NULL, parent_data, 6, i,
- 						    &sam9x60_programmable_layout,
+ 						    &sama5d2_programmable_layout,
  						    NULL);
  		if (IS_ERR(hw))
-@@ -329,9 +317,15 @@ static void __init sam9x60_pmc_setup(struct device_node *np)
- 		sam9x60_pmc->pchws[i] = hw;
+@@ -309,9 +302,18 @@ static void __init sama5d2_pmc_setup(struct device_node *np)
+ 		sama5d2_pmc->pchws[i] = hw;
  	}
  
 +	/* Set systemck parent hws. */
-+	sam9x60_systemck[0].parent_hw = sam9x60_pmc->chws[PMC_MCK];
-+	sam9x60_systemck[1].parent_hw = usbck_hw;
-+	sam9x60_systemck[2].parent_hw = sam9x60_pmc->pchws[0];
-+	sam9x60_systemck[3].parent_hw = sam9x60_pmc->pchws[1];
-+	sam9x60_systemck[4].parent_hw = sam9x60_pmc->chws[PMC_MCK];
- 	for (i = 0; i < ARRAY_SIZE(sam9x60_systemck); i++) {
- 		hw = at91_clk_register_system(regmap, sam9x60_systemck[i].n,
--					      sam9x60_systemck[i].p, NULL,
-+					      NULL, &AT91_CLK_PD_HW(sam9x60_systemck[i].parent_hw),
- 					      sam9x60_systemck[i].id,
- 					      sam9x60_systemck[i].flags);
++	sama5d2_systemck[0].parent_hw = sama5d2_pmc->chws[PMC_MCK];
++	sama5d2_systemck[1].parent_hw = sama5d2_pmc->chws[PMC_MCK];
++	sama5d2_systemck[2].parent_hw = usbck_hw;
++	sama5d2_systemck[3].parent_hw = usbck_hw;
++	sama5d2_systemck[4].parent_hw = sama5d2_pmc->pchws[0];
++	sama5d2_systemck[5].parent_hw = sama5d2_pmc->pchws[1];
++	sama5d2_systemck[6].parent_hw = sama5d2_pmc->pchws[2];
++	sama5d2_systemck[7].parent_hw = sama5d2_pmc->chws[PMC_MCK];
+ 	for (i = 0; i < ARRAY_SIZE(sama5d2_systemck); i++) {
+-		hw = at91_clk_register_system(regmap, sama5d2_systemck[i].n,
+-					      sama5d2_systemck[i].p, NULL,
++		hw = at91_clk_register_system(regmap, sama5d2_systemck[i].n, NULL,
++					      &AT91_CLK_PD_HW(sama5d2_systemck[i].parent_hw),
+ 					      sama5d2_systemck[i].id,
+ 					      sama5d2_systemck[i].flags);
  		if (IS_ERR(hw))
-@@ -344,7 +338,8 @@ static void __init sam9x60_pmc_setup(struct device_node *np)
+@@ -324,7 +326,8 @@ static void __init sama5d2_pmc_setup(struct device_node *np)
  		hw = at91_clk_register_sam9x5_peripheral(regmap, &pmc_pcr_lock,
- 							 &sam9x60_pcr_layout,
- 							 sam9x60_periphck[i].n,
+ 							 &sama5d2_pcr_layout,
+ 							 sama5d2_periphck[i].n,
 -							 "masterck_div", NULL,
 +							 NULL,
-+							 &AT91_CLK_PD_HW(sam9x60_pmc->chws[PMC_MCK]),
- 							 sam9x60_periphck[i].id,
++							 &AT91_CLK_PD_HW(sama5d2_pmc->chws[PMC_MCK]),
+ 							 sama5d2_periphck[i].id,
  							 &range, INT_MIN,
- 							 sam9x60_periphck[i].flags);
-@@ -358,7 +353,7 @@ static void __init sam9x60_pmc_setup(struct device_node *np)
+ 							 sama5d2_periphck[i].flags);
+@@ -338,7 +341,8 @@ static void __init sama5d2_pmc_setup(struct device_node *np)
+ 		hw = at91_clk_register_sam9x5_peripheral(regmap, &pmc_pcr_lock,
+ 							 &sama5d2_pcr_layout,
+ 							 sama5d2_periph32ck[i].n,
+-							 "h32mxck", NULL,
++							 NULL,
++							 &AT91_CLK_PD_HW(sama5d2_pmc->chws[PMC_MCK2]),
+ 							 sama5d2_periph32ck[i].id,
+ 							 &sama5d2_periph32ck[i].r,
+ 							 INT_MIN, 0);
+@@ -348,17 +352,17 @@ static void __init sama5d2_pmc_setup(struct device_node *np)
+ 		sama5d2_pmc->phws[sama5d2_periph32ck[i].id] = hw;
+ 	}
+ 
+-	parent_names[0] = slck_name;
+-	parent_names[1] = "mainck";
+-	parent_names[2] = "plladivck";
+-	parent_names[3] = "utmick";
+-	parent_names[4] = "masterck_div";
+-	parent_names[5] = "audiopll_pmcck";
++	parent_data[0] = AT91_CLK_PD_NAME(slow_clk_name, slow_clk_index);
++	parent_data[1] = AT91_CLK_PD_HW(sama5d2_pmc->chws[PMC_MAIN]);
++	parent_data[2] = AT91_CLK_PD_HW(sama5d2_pmc->chws[PMC_PLLACK]);
++	parent_data[3] = AT91_CLK_PD_HW(sama5d2_pmc->chws[PMC_UTMI]);
++	parent_data[4] = AT91_CLK_PD_HW(sama5d2_pmc->chws[PMC_MCK]);
++	parent_data[5] = AT91_CLK_PD_HW(sama5d2_pmc->chws[PMC_AUDIOPLLCK]);
+ 	for (i = 0; i < ARRAY_SIZE(sama5d2_gck); i++) {
  		hw = at91_clk_register_generated(regmap, &pmc_pcr_lock,
- 						 &sam9x60_pcr_layout,
- 						 sam9x60_gck[i].n,
+ 						 &sama5d2_pcr_layout,
+ 						 sama5d2_gck[i].n,
 -						 parent_names, NULL, NULL, 6,
 +						 NULL, parent_data, NULL, 6,
- 						 sam9x60_gck[i].id,
- 						 &sam9x60_gck[i].r, INT_MIN);
+ 						 sama5d2_gck[i].id,
+ 						 &sama5d2_gck[i].r,
+ 						 sama5d2_gck[i].chg_pid);
+@@ -369,19 +373,19 @@ static void __init sama5d2_pmc_setup(struct device_node *np)
+ 	}
+ 
+ 	if (regmap_sfr) {
+-		parent_names[0] = "i2s0_clk";
+-		parent_names[1] = "i2s0_gclk";
++		parent_data[0] = AT91_CLK_PD_HW(sama5d2_pmc->phws[54]); /* i2s0_clk */
++		parent_data[1] = AT91_CLK_PD_HW(sama5d2_pmc->ghws[54]); /* i2s0_gclk */
+ 		hw = at91_clk_i2s_mux_register(regmap_sfr, "i2s0_muxclk",
+-					       parent_names, 2, 0);
++					       NULL, parent_data, 2, 0);
  		if (IS_ERR(hw))
+ 			goto err_free;
+ 
+ 		sama5d2_pmc->chws[PMC_I2S0_MUX] = hw;
+ 
+-		parent_names[0] = "i2s1_clk";
+-		parent_names[1] = "i2s1_gclk";
++		parent_data[0] = AT91_CLK_PD_HW(sama5d2_pmc->phws[55]); /* i2s1_clk */
++		parent_data[1] = AT91_CLK_PD_HW(sama5d2_pmc->ghws[55]); /* i2s1_gclk */
+ 		hw = at91_clk_i2s_mux_register(regmap_sfr, "i2s1_muxclk",
+-					       parent_names, 2, 1);
++					       NULL, parent_data, 2, 1);
+ 		if (IS_ERR(hw))
+ 			goto err_free;
+ 
 -- 
 2.43.0
 
