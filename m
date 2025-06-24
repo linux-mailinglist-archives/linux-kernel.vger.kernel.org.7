@@ -1,186 +1,181 @@
-Return-Path: <linux-kernel+bounces-700506-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-700456-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3585AAE69A4
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Jun 2025 16:53:57 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2FBB3AE68ED
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Jun 2025 16:36:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B87FB5A497D
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Jun 2025 14:45:46 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3E498188F6EA
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Jun 2025 14:31:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 76CCD2D4B78;
-	Tue, 24 Jun 2025 14:35:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 662442D1319;
+	Tue, 24 Jun 2025 14:30:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b="kOZAN9rz"
-Received: from out203-205-221-210.mail.qq.com (out203-205-221-210.mail.qq.com [203.205.221.210])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="pVXza9or"
+Received: from mail-io1-f54.google.com (mail-io1-f54.google.com [209.85.166.54])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0F1392D23B8;
-	Tue, 24 Jun 2025 14:35:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.205.221.210
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3F89B291894
+	for <linux-kernel@vger.kernel.org>; Tue, 24 Jun 2025 14:30:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750775731; cv=none; b=uniD5J4EVEAfE6vj06nb7eMjRNMbkstx+8B/C4TURmM/cebAHyg0Qo+WQQpjsYh7UIbzVe9Jeo2NQ2Z9PLeBEOIeuhbaFgE4nj1A5dZm8n2AnugiWsIGdUoYWdBA7WhGxPxXXmtPs1iDCW5itr7nXi6YOHxblP47Yv35RMxBVv0=
+	t=1750775439; cv=none; b=swZLGhjb6JMZvpOGgAE+OwLz/ZhJmdfwm5l1cKuGPTXA75gOgcj6V9RyQ/pZb9gG+84P0UVhr0om3/XhgsRAttlVfz84Rik2hRuXjWtYCpbkyEBwN4nXT0ze9wvJquY5LykEKHH7Qve1YWHWnd8aBfd7e64H65c9kSmqHqNOmPk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750775731; c=relaxed/simple;
-	bh=XWUoSHK9ZFJwMOXvEylhqSbkKPrkssdXq5HfgyRyxVU=;
-	h=Message-ID:From:To:Cc:Subject:Date:In-Reply-To:References:
-	 MIME-Version; b=oSsvXiXNS/3RYABCdI5xjwNHYEhUIjAECDOKCegzNt/nAJuAxQxbmEXoDny0jsbI7Qy1zVkqm2UKQW0wa2tv36BnJgpHTCcndKbR84KwXWXfD77o4q0ZShEL36KmvhcdJtmLwSyxbRDLJuAbDCCatuPvoG3u/6hqooVvbJiTgKk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com; spf=pass smtp.mailfrom=qq.com; dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b=kOZAN9rz; arc=none smtp.client-ip=203.205.221.210
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=qq.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qq.com; s=s201512;
-	t=1750775422; bh=WzKuairL6klH+H3Pk4Z77kBpxk6VjGhy/vtLbAwqk5I=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References;
-	b=kOZAN9rzKb1q9tF3m9+4tgSWGTydQYU7tqSKNjd8QI5toYZBZXpCMs+yLA/jrGFWz
-	 MztBaNrGn4q8RGvK4URp+blG7wJJa6rmSmb9KAa5lprZ+fxfm+F1IWS4fBYbofnGM1
-	 3n1eVUXGYwc1ZtWplOyca7bJ4Rh6gPHC7UZuv0o0=
-Received: from pek-lxu-l1.corp.ad.wrs.com ([111.198.228.63])
-	by newxmesmtplogicsvrszc13-0.qq.com (NewEsmtp) with SMTP
-	id 7922C4AA; Tue, 24 Jun 2025 22:30:18 +0800
-X-QQ-mid: xmsmtpt1750775418tjjf65ee2
-Message-ID: <tencent_C857B761776286CB137A836B096C03A34405@qq.com>
-X-QQ-XMAILINFO: N+vldBj843eNUXLV7XGtfaVgQimuVCxUrR6sPDEC+V9drvLoQjxq8Pv10JL9qj
-	 QWzIDij1izxZ3rRoaZUVLlAyN78/87L7WCOVeezIiR9vKaFN4jYeNutAnPJxqdfFSlooFVszfigi
-	 2iuCejs/o3458aXvQPAxDSMAsUQzall0XG7XUDmTSkSeyEUWm0/4D8hn5g/NbyTwTezC67hKjr9r
-	 nRNb4JowPS/u7WJ/YFK84gsTtPSm6U526ThhyJV6twb38qd1iaeIfi0DzzQm1MYiY3EOTm/DKivB
-	 UGJahcbWwZ9oPBC2RW6WRGFj45SdSfeMVFtv23iO5vzSYjujgKTM+IhOQcuv67Gd62jsCUmlCdxM
-	 q1PmxA1WYrnbXnklyLrCHM55rxP07C0ZZjJvUxcmIl5Xf6eZsK4/NFTgTQq/QDrSyaHOINRAFAQs
-	 7fQ4m1iFCQPlfS1UdA2mfSTO7yDXfqYrYD4Rtild/wxcji8mlGccDglqHvNvKjD+J73syu8NQquj
-	 yijzY8Jd1ccEryqr6g+lmJ3e349WLTXVvMTwKem93BS5g/dqa6zy2Y6E+wYxOMKbV1WNSvngSjdv
-	 vE8cLw2b2zrDPbA8klrDw1b5MegVOC2qAoxCwV+Dzx1Ww4aebWsxpMPrYCPPQD4e3XInI64RUtOE
-	 Iu4n+CzWJ4Z5pmf8e3p90k1KJwrZwv6lFijBKGqQUzIlq2bTc5bAllVwAKKDpDvJ8voFm1GivxZH
-	 BfskME/+hrVx3S9rD8S+TYMu70w4Wf4rCXt/9X1P1pxTKkue5D7ikiqtxqtn6Kd7W2WAQSbiEGel
-	 bhTYNbsIz9eMc571bglMHK2dPuvJIN75KiXtQIdlp8lYwbN4xM8h+jOskOWYcjvCInaztB4FBdIA
-	 LSG5+RFEotLgRjBO4lL2pdTcb7MplQauzOrBwOFcFSbycHlA8OzS4HlYJv72PNFoq1rxOrpSVp0S
-	 I9xgWT0/rkfJOk7l0DslLYiCnEuTySlS1hsWaa8ctNZpVsXNayHr1KhosOUgeCh9bqpHRcYPZDNF
-	 onVL95pQ==
-X-QQ-XMRINFO: Nq+8W0+stu50PRdwbJxPCL0=
-From: Edward Adam Davis <eadavis@qq.com>
-To: syzbot+fa90fcaa28f5cd4b1fc1@syzkaller.appspotmail.com
-Cc: clm@fb.com,
-	dsterba@suse.com,
-	josef@toxicpanda.com,
-	linux-btrfs@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	syzkaller-bugs@googlegroups.com,
-	wqu@suse.com
-Subject: [PATCH next] btrfs: fix deadlock in btrfs_read_chunk_tree
-Date: Tue, 24 Jun 2025 22:30:12 +0800
-X-OQ-MSGID: <20250624143011.327069-2-eadavis@qq.com>
-X-Mailer: git-send-email 2.49.0
-In-Reply-To: <685aa401.050a0220.2303ee.0009.GAE@google.com>
-References: <685aa401.050a0220.2303ee.0009.GAE@google.com>
+	s=arc-20240116; t=1750775439; c=relaxed/simple;
+	bh=nD6d1oQU0U6CEQ1PjJb3tKi1fzkMIlIjezBHP9gjyFE=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=sHJLWQ4w+XRqy9MEzLQmYNtNnJ2hXrIlcMPnDlyRUibJuQIIBbfD+fBm6NQAtynbswPk+K9b8RxdiF513M9ygdblSXZkRQgzXoBfZdOxviYfyh2GeM2RS9wmC2zNx8Cep3+HUFBNPSv/YpwBZ6aJboLmIxaTVrPFv1YbBdG/9cs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=pVXza9or; arc=none smtp.client-ip=209.85.166.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-io1-f54.google.com with SMTP id ca18e2360f4ac-86d01686196so15932939f.1
+        for <linux-kernel@vger.kernel.org>; Tue, 24 Jun 2025 07:30:37 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1750775437; x=1751380237; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=nD6d1oQU0U6CEQ1PjJb3tKi1fzkMIlIjezBHP9gjyFE=;
+        b=pVXza9orz/i1vTC6WD5SzWZ+9Z3/DY5r2DSictTUKkTInwmPH5OnYzr5WG6eQIcW4W
+         odMhv0h8vNFRwKNkNlNS+U0C02sBlt5TwnjM+exmHAKBF6+EEAbMPKZulwWcpMHZMqkO
+         Qo703bL29SunEIMVfZO3e0PM0e55g3w8kCeWzjTvsjR2Vd2A7XcdQqPZd9MLfj0wK4bT
+         PoFYQckPL6q/xJo9uuoxq2yeVcWVPRiWhyZoYoH1iJfMgO2liLA+f1uoo6t4LIAYMiyV
+         vZSDkZ+caPSH9YMUfYueiQrC1xdi+wyQeKIU9L/0J7eLrPqvdtPEkyAb/SHP0Ti4NAjX
+         97/w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1750775437; x=1751380237;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=nD6d1oQU0U6CEQ1PjJb3tKi1fzkMIlIjezBHP9gjyFE=;
+        b=J3MuwKuMbWaFR4B6sDMGRjxYyu4ah4Mr1u/ft8CIfHLipmB2bvyrhvCLIikGHBiGE0
+         b3NLTwVLAJi4CfKYaefVK66eVJSYwXoUNHuUH/z3YJd9xACTe0VEyew9HeHibyZZqvPc
+         RZe74zPCDvu7EcSwyPiaMjarDgdQ/XdnnVZvx0dLKgFuBaDoCo4hrnyAuNkQpZDcOMPk
+         g2NJqQbobFMLD7LVU9vxq8rqSCR6tJE7CNNehIFctw9lgX/KhQtJ7qH6GDLwsa7cWiTx
+         qKc0WxXIbU9rknXOcTCNe+vToknI8LKIUqKWfNzs+dOJ7HiwFVJfO/HwvdEISPdPUtu9
+         YFUg==
+X-Forwarded-Encrypted: i=1; AJvYcCU4utH8t6v24cqEdTiQ7kWC/mreHrp7YhYx3Rn+tho3Vpjd3cmp7V52bb0uj6UVOJD2wv532BiArFue5W4=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy2rPLAx1gDPpCFRLHpsiZfZrwx7FGrGc0rBch2esfl2cIXb6Cl
+	VPYZ7QOizuf7FY+FqaoIr9pbwZ13TRHlwRDxfipM5dz+QKdqiBx4lUbzFykPfG0a+CBPfMvd36o
+	PPA/VL3rGaP+ctP9o1k+riDfghsgTPuJ3jeAEzD6d
+X-Gm-Gg: ASbGnctfgKFQLUtje2/PaYc+44qWV+Vz7Y3dTygGgnrdRMuHDVmpuLB7nLxSE9J+gEn
+	qW3M2LlEf+UwABK1YNR4v5cQwU8k+3sSTTZh3wYLBfp9MMgB1kMKBe/nUItAwgs1dcrjivAT+BK
+	JBMK6D8hGy441SwIjd9rxgdAp9xvQXAZQoOUeAz1ypYN7scPipZW2LUTKhcWZsX8NQ0E+E/f7M
+X-Google-Smtp-Source: AGHT+IEHixcelKr3ZDZkYGsXMHko5Eg4schrz3wOXp27EKQA6K+fy348hW6r2MyxxJ0URo5kPr2rZaqYfCP2unLWoUs=
+X-Received: by 2002:a92:ca0e:0:b0:3dd:bfba:ff9c with SMTP id
+ e9e14a558f8ab-3de38ca2a44mr177442515ab.11.1750775436923; Tue, 24 Jun 2025
+ 07:30:36 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <aFNYQkbEctT6N0Hb@lappy> <20250623132803.26760-1-dvyukov@google.com>
+ <aFqw5-PO4MjsEdYU@yuki.lan>
+In-Reply-To: <aFqw5-PO4MjsEdYU@yuki.lan>
+From: Dmitry Vyukov <dvyukov@google.com>
+Date: Tue, 24 Jun 2025 16:30:23 +0200
+X-Gm-Features: AX0GCFsbVHjLUySg8qRCEV1aKqnjgETI6fmZpybrMY1RcxRtsY4qbFVJBY3VhYg
+Message-ID: <CACT4Y+Youc3M0z0U9arrTgyOC1+UKytav4zObhjUXn8-RLThMQ@mail.gmail.com>
+Subject: Re: [RFC 00/19] Kernel API Specification Framework
+To: Cyril Hrubis <chrubis@suse.cz>
+Cc: sashal@kernel.org, kees@kernel.org, elver@google.com, 
+	linux-api@vger.kernel.org, linux-kernel@vger.kernel.org, tools@kernel.org, 
+	workflows@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-Remove the lock uuid_mutex outside of sget_fc() to avoid the deadlock
-reported by [1].
+On Tue, 24 Jun 2025 at 16:05, Cyril Hrubis <chrubis@suse.cz> wrote:
+>
+> Hi!
+> > 6. What's the goal of validation of the input arguments?
+> > Kernel code must do this validation anyway, right.
+> > Any non-trivial validation is hard, e.g. even for open the validation function
+> > for file name would need to have access to flags and check file precense for
+> > some flags combinations. That may add significant amount of non-trivial code
+> > that duplicates main syscall logic, and that logic may also have bugs and
+> > memory leaks.
+>
+> I was looking at that part and thinking that we could generate (at least
+> some) automated conformance tests based on this information. We could
+> make sure that invalid parameters are properly rejected. For open(),
+> some combinations would be difficuilt to model though, e.g. for
+> O_DIRECTORY the pathname is supposed to be a path to a directory and
+> also the file descriptor returned has different properties. Also O_CREAT
+> requires third parameter and changes which kinds of filepaths are
+> invalid. Demultiplexing syscalls like this is going to be difficult to
+> get right.
+>
+> As for testing purposes, most of the time it would be enough just to say
+> something as "this parameter is an existing file". If we have this
+> information in a machine parseable format we can generate automatic
+> tests for various error conditions e.g. ELOOP, EACESS, ENAMETOOLONG,
+> ENOENT, ...
+>
+> For paths we could have something as:
+>
+> file:existing
+> file:notexisting
+> file:replaced|nonexisting
+> file:nonexisting|existing
+> dir:existing
+> dir:nonexisting
+>
+> Then for open() syscall we can do:
+>
+> flags=O_DIRECTORY path=dir:existing
+> flags=O_CREAT path=file:nonexisting|existing
+> flags=O_CREAT|O_EXCL path=file:nonexisting
+> ...
+>
+> You may wonder if such kind of tests are useful at all, since quite a
+> few of these errors are checked for and generated from a common
+> functions. There are at least two cases I can think of. First of all it
+> makes sure that errors are stable when particular function/subsystem is
+> rewritten. And it can also make sure that errors are consistent across
+> different implementation of the same functionality e.g. filesystems. I
+> remember that some of the less used FUSE filesystems returned puzzling
+> errors in certain corner cases.
 
-[1]
--> #1 (&type->s_umount_key#41/1){+.+.}-{4:4}:
-       lock_acquire+0x120/0x360 kernel/locking/lockdep.c:5871
-       down_write_nested+0x9d/0x200 kernel/locking/rwsem.c:1693
-       alloc_super+0x204/0x970 fs/super.c:345
-       sget_fc+0x329/0xa40 fs/super.c:761
-       btrfs_get_tree_super fs/btrfs/super.c:1867 [inline]
-       btrfs_get_tree_subvol fs/btrfs/super.c:2059 [inline]
-       btrfs_get_tree+0x4c6/0x12d0 fs/btrfs/super.c:2093
-       vfs_get_tree+0x8f/0x2b0 fs/super.c:1804
-       do_new_mount+0x24a/0xa40 fs/namespace.c:3902
-       do_mount fs/namespace.c:4239 [inline]
-       __do_sys_mount fs/namespace.c:4450 [inline]
-       __se_sys_mount+0x317/0x410 fs/namespace.c:4427
-       do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
-       do_syscall_64+0xfa/0x3b0 arch/x86/entry/syscall_64.c:94
-       entry_SYSCALL_64_after_hwframe+0x77/0x7f
+I am not following how this is related to the validation part of the
+patch series. Can you elaborate?
 
--> #0 (uuid_mutex){+.+.}-{4:4}:
-       check_prev_add kernel/locking/lockdep.c:3168 [inline]
-       check_prevs_add kernel/locking/lockdep.c:3287 [inline]
-       validate_chain+0xb9b/0x2140 kernel/locking/lockdep.c:3911
-       __lock_acquire+0xab9/0xd20 kernel/locking/lockdep.c:5240
-       lock_acquire+0x120/0x360 kernel/locking/lockdep.c:5871
-       __mutex_lock_common kernel/locking/mutex.c:602 [inline]
-       __mutex_lock+0x182/0xe80 kernel/locking/mutex.c:747
-       btrfs_read_chunk_tree+0xef/0x2170 fs/btrfs/volumes.c:7462
-       open_ctree+0x17f2/0x3a10 fs/btrfs/disk-io.c:3458
-       btrfs_fill_super fs/btrfs/super.c:984 [inline]
-       btrfs_get_tree_super fs/btrfs/super.c:1922 [inline]
-       btrfs_get_tree_subvol fs/btrfs/super.c:2059 [inline]
-       btrfs_get_tree+0xc6f/0x12d0 fs/btrfs/super.c:2093
-       vfs_get_tree+0x8f/0x2b0 fs/super.c:1804
-       do_new_mount+0x24a/0xa40 fs/namespace.c:3902
-       do_mount fs/namespace.c:4239 [inline]
-       __do_sys_mount fs/namespace.c:4450 [inline]
-       __se_sys_mount+0x317/0x410 fs/namespace.c:4427
-       do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
-       do_syscall_64+0xfa/0x3b0 arch/x86/entry/syscall_64.c:94
-       entry_SYSCALL_64_after_hwframe+0x77/0x7f
+Generation of such conformance tests would need info about parameter
+types and their semantic meaning, not the validation part.
+The conformance tests should test that actual syscall checking of
+arguments, not the validation added by this framework.
 
-other info that might help us debug this:
 
- Possible unsafe locking scenario:
+> Maybe it would be more useful to steer this towards a system that
+> annotates better the types for the syscall parameters and return values.
+> Something that would be an extension to a C types with a description on
+> how particular string or integer is interpreted.
 
-       CPU0                    CPU1
-       ----                    ----
-  lock(&type->s_umount_key#41/1);
-                               lock(uuid_mutex);
-                               lock(&type->s_umount_key#41/1);
-  lock(uuid_mutex);
++1
 
- *** DEADLOCK ***
 
-Fixes: 7aacdf6feed1 ("btrfs: delay btrfs_open_devices() until super block is created")
-Reported-by: syzbot+fa90fcaa28f5cd4b1fc1@syzkaller.appspotmail.com
-Closes: https://syzkaller.appspot.com/bug?extid=fa90fcaa28f5cd4b1fc1
-Tested-by: syzbot+fa90fcaa28f5cd4b1fc1@syzkaller.appspotmail.com
-Signed-off-by: Edward Adam Davis <eadavis@qq.com>
----
- fs/btrfs/super.c | 7 ++++---
- 1 file changed, 4 insertions(+), 3 deletions(-)
+> > Side-effects specification potentially can be used to detect logical kernel bugs,
+> > e.g. if a syscall does not claim to change fs state, but it does, it's a bug.
+> > Though, a more useful check should be failure/concurrency atomicity.
+> > Namely, if a syscall claims to not alter state on failure, it shouldn't do so.
+> > Concurrency atomicity means linearizability of concurrent syscalls
+> > (side-effects match one of 2 possible orders of syscalls).
+> > But for these we would need to add additional flags to the descriptions
+> > that say that a syscall supports failure/concurrency atomicity.
+> >
+> > 8. It would be useful to have a mapping of file_operations to actual files in fs.
+> > Otherwise the exposed info is not very actionable, since there is no way to understand
+> > what actual file/fd the ioctl's can be applied to.
+>
+> +1 There are many different kinds of file descriptors and they differ
+> wildy in what operations they support.
+>
+> Maybe we would need a subclass for a file descriptor, something as:
+>
+> fd:file
+> fd:timerfd
+> fd:pidfs
 
-diff --git a/fs/btrfs/super.c b/fs/btrfs/super.c
-index 237e60b53192..c2ce1eb53ad7 100644
---- a/fs/btrfs/super.c
-+++ b/fs/btrfs/super.c
-@@ -1864,11 +1864,10 @@ static int btrfs_get_tree_super(struct fs_context *fc)
- 	fs_devices = device->fs_devices;
- 	fs_info->fs_devices = fs_devices;
- 
-+	mutex_unlock(&uuid_mutex);
- 	sb = sget_fc(fc, btrfs_fc_test_super, set_anon_super_fc);
--	if (IS_ERR(sb)) {
--		mutex_unlock(&uuid_mutex);
-+	if (IS_ERR(sb))
- 		return PTR_ERR(sb);
--	}
- 
- 	set_device_specific_options(fs_info);
- 
-@@ -1887,6 +1886,7 @@ static int btrfs_get_tree_super(struct fs_context *fc)
- 		 * But the fs_info->fs_devices is not opened, we should not let
- 		 * btrfs_free_fs_context() to close them.
- 		 */
-+		mutex_lock(&uuid_mutex);
- 		fs_info->fs_devices = NULL;
- 		mutex_unlock(&uuid_mutex);
- 
-@@ -1906,6 +1906,7 @@ static int btrfs_get_tree_super(struct fs_context *fc)
- 		 */
- 		ASSERT(fc->s_fs_info == NULL);
- 
-+		mutex_lock(&uuid_mutex);
- 		ret = btrfs_open_devices(fs_devices, mode, sb);
- 		mutex_unlock(&uuid_mutex);
- 		if (ret < 0) {
--- 
-2.43.0
-
+FWIW syzkaller has this for the purpose of automatic generation of test inputs.
 
