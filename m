@@ -1,138 +1,101 @@
-Return-Path: <linux-kernel+bounces-699831-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-699833-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id AE72DAE5FFA
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Jun 2025 10:53:23 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4965AAE6002
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Jun 2025 10:55:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 26EDD1922347
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Jun 2025 08:53:39 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D826A4C01F4
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Jun 2025 08:55:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0EF132797BE;
-	Tue, 24 Jun 2025 08:53:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1427627990B;
+	Tue, 24 Jun 2025 08:54:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="P1ieF0xq"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Dxqf6fyq"
+Received: from mail-pl1-f170.google.com (mail-pl1-f170.google.com [209.85.214.170])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4D2DF2797B8;
-	Tue, 24 Jun 2025 08:53:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 23570253950;
+	Tue, 24 Jun 2025 08:54:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750755185; cv=none; b=fjY9BzLG4bE4DkzUlrBmnTLh/s/W1OqL/a3Xx2s8HCyioU+EqSMi5e9fGOGLnohhy1v9vxAr47trZM1zeL49jWzK9iHcn9XCXWK3DLQZO9Ym2+i/rchEPiOJXSBFpwmsEeeWgvlGPnO9KxI0wpaLcGejnzVpEErUQTLDnDsaRVM=
+	t=1750755284; cv=none; b=dzL7ZxNu0q9vezgREMLOQBQbg5ArW32zzk8kOsIStiEjOQblkvyZW+E5fwYhHI0XNVr43eJ2gcaWCcZdkmQjIeIUPO+1O06erfBzbAdHR2fLBhGIA6R4/FyLYw1Ma4fP+pss3Zn3Zhq4xpW4ygAJIfva2ZrtFMusLlf61An2qMA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750755185; c=relaxed/simple;
-	bh=0HGRQPm59Pg/7P9uBVV7QAOblnknaZe8TzNj9SKviec=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=KdzhPi4pDKWxEHF1bq64x+Llvpxd2lEQc05P1GBbCD/2DAjaylxDMolJFac7d613YRhLJNrELuWCBqEseGXjj8sWAMGkTXuhYrv8JPzpKHudfVNwXImELvSUyFtVTiU/j/0obBB6sK+iE2QMX0amyS5FvumGdDWPP04KU29ldb8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=P1ieF0xq; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9F24CC4CEE3;
-	Tue, 24 Jun 2025 08:53:04 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1750755185;
-	bh=0HGRQPm59Pg/7P9uBVV7QAOblnknaZe8TzNj9SKviec=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=P1ieF0xqmJpXU2h/I0y88hR3cOzu7Dge9teAEkYM8fTROq7PQkvkcL7BkYR7hsCMN
-	 c8YRzMRCAv276zeoajjd+2xVrc5Rzxnxjd4HrL/4O+IhU6adFA9Q+JxmQ69wvBnUgP
-	 vEFu8bCHm2FtzRWqWtNaPQBke4HKSbRKN0qeWFPIBFETCALOEysdhV3CQZV+kKG+ka
-	 ZbWq7UDsil1m42vYE6qNaJVviJe3XFI9gA6lfL95ycbMfn5KOjO/XfTTThfs2LA1in
-	 uuIMS46FaEreJ4dEfEmJVprXq91Y78wWaJlrq2avK01M6k6M9wFpI/8gm9sAh7H/b/
-	 BSNozO4+TIPrg==
-Date: Tue, 24 Jun 2025 10:53:02 +0200
-From: Maxime Ripard <mripard@kernel.org>
-To: Anusha Srivatsa <asrivats@redhat.com>
-Cc: Neil Armstrong <neil.armstrong@linaro.org>, 
-	Jessica Zhang <jessica.zhang@oss.qualcomm.com>, Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
-	Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, 
-	Simona Vetter <simona@ffwll.ch>, Inki Dae <inki.dae@samsung.com>, 
-	Jagan Teki <jagan@amarulasolutions.com>, Marek Szyprowski <m.szyprowski@samsung.com>, 
-	Andrzej Hajda <andrzej.hajda@intel.com>, Robert Foss <rfoss@kernel.org>, 
-	Laurent Pinchart <Laurent.pinchart@ideasonboard.com>, Jonas Karlman <jonas@kwiboo.se>, 
-	Jernej Skrabec <jernej.skrabec@gmail.com>, Chen-Yu Tsai <wens@csie.org>, 
-	Samuel Holland <samuel@sholland.org>, Seung-Woo Kim <sw0312.kim@samsung.com>, 
-	Kyungmin Park <kyungmin.park@samsung.com>, Krzysztof Kozlowski <krzk@kernel.org>, 
-	Alim Akhtar <alim.akhtar@samsung.com>, Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>, 
-	Tomi Valkeinen <tomi.valkeinen+renesas@ideasonboard.com>, Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>, 
-	Geert Uytterhoeven <geert+renesas@glider.be>, Magnus Damm <magnus.damm@gmail.com>, 
-	Biju Das <biju.das.jz@bp.renesas.com>, Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>, 
-	Alain Volmat <alain.volmat@foss.st.com>, Raphael Gallais-Pou <rgallaispou@gmail.com>, 
-	Stefan Agner <stefan@agner.ch>, Alison Wang <alison.wang@nxp.com>, 
-	Linus Walleij <linus.walleij@linaro.org>, Thierry Reding <thierry.reding@gmail.com>, 
-	Mikko Perttunen <mperttunen@nvidia.com>, Jonathan Hunter <jonathanh@nvidia.com>, 
-	dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org, 
-	linux-arm-kernel@lists.infradead.org, linux-sunxi@lists.linux.dev, linux-samsung-soc@vger.kernel.org, 
-	linux-renesas-soc@vger.kernel.org, linux-tegra@vger.kernel.org
-Subject: Re: [PATCH v2 04/16] drm/panel/sun4i: Keep up with refcounting
-Message-ID: <20250624-invisible-khaki-hog-14f5a0@houat>
-References: <20250619-b4-of_drm_find_panel_part1-v2-0-0df94aecc43d@redhat.com>
- <20250619-b4-of_drm_find_panel_part1-v2-4-0df94aecc43d@redhat.com>
- <20250620-groovy-imposing-reindeer-e52ed0@houat>
- <CAN9Xe3SsdbwXvDav_TUkryN3nXjujkwMTtcUcigavy5FZ29UcA@mail.gmail.com>
+	s=arc-20240116; t=1750755284; c=relaxed/simple;
+	bh=Bl6eH9wUdHc2uoNpPfh5jQE2lIisYdpL/oDDvuK0m8w=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Tur394TUb41K5CdyLzWkm/oDRcol5RPp1ZvmHn69u3jPEHc6dHDxkJUM2K2H+K+Z0V0nwbH8L0MUVmPDUFMAxR7PYaFhl+bVZnQ9MZPOu62lomC9UU8rL+YcYWqCKO/ad8Nu11CVbaTFyNPcbfLeB5/Jc8VvFETnq9hnO6OvQyg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Dxqf6fyq; arc=none smtp.client-ip=209.85.214.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f170.google.com with SMTP id d9443c01a7336-235248ba788so3979215ad.0;
+        Tue, 24 Jun 2025 01:54:41 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1750755281; x=1751360081; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Bl6eH9wUdHc2uoNpPfh5jQE2lIisYdpL/oDDvuK0m8w=;
+        b=Dxqf6fyqBB2l8n6E+BgOOwTaAT+dVBEps0JJCRKef2CGl//+tkC8kCBb3ZaNmqszxf
+         HbQv8KhNCpGQSZd5HI3+5DK42K9LENvxq+u8SdCBWbbjqgeRAiDwfhqE2tP2/CHC7tOh
+         PtX1qtLjQbTvXgp8hzu9oyGtWkcYOVImeM+tWvLxQKj6GCT0JFtWrsFlxlVhlvSI008Y
+         ZddAcd10CqxUhz8+QIotgSR5MLtkrrKG0JipInhuX7txoTmQEhE81s6GxFfDEcMeCsXt
+         UjWSF+WuLO0tBltGNCscXR7vq7lzk1xKXDCFN7eKtH2SU+ZYl7BncJ8F3p+pU2Q0jvVz
+         n5RQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1750755281; x=1751360081;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=Bl6eH9wUdHc2uoNpPfh5jQE2lIisYdpL/oDDvuK0m8w=;
+        b=bMKNlPCH3XH1kdecFYIvwex3zsMbDtCUpP+YVqhqu/NHyG0bwJWTevTGXDe6xhCjlz
+         kBRVlesKm/y4uLD7vUY+WybKfLBtmktDdrMtpXq6Oy9XAbodOXGHIEFNQYiafoQy6D9F
+         M7V94W2p2xG44kGxFCiDvkDtRg5iF1VNzaaqkWeAENLqKejK/GvfcVp0HvohwcHIVpdn
+         r+VT7EYlEg5+9Wz+DfLWISwz8WokPfooo6r2baTmomzQszMiEonatjfUAk3N/ItPVOk2
+         JM9zmEb5UjdAB5IrM9RgPqCEVbtmPTfS2oO7NT9mp5Z+fMD0lACZb2UuKATEMNGzjmG7
+         f81A==
+X-Forwarded-Encrypted: i=1; AJvYcCUuLuGUBBRLky76IGij0A7YCeGSzImtJrLVydMDEWU37QBRxzQ5z1gDSwS4zHjs6wfqwCXK/Lh8J3yvmQ==@vger.kernel.org, AJvYcCWE0UzOEheYsob2F2Pk423BD8HmikYei6KV9sFsOd7rBwz4g1Loeis1bumwt2lJ6dw2oasSDOEFvZey324=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwCXuoEKwngXQyX2JX+MDdHMdAynxgmjBwuQyM40bwgVW61lKTH
+	imq0m6GqpiGjtG50HBy2nOI4QrEqXpSfjeWCBq5prPymTFpG9HzjphNS0UqqMZkRx3O53dC/8M2
+	NPTWRISGxW6j/nmXdnBg4WCVoSaURwaU=
+X-Gm-Gg: ASbGncusJcN9mn+iFKRcIrQ7Kdlib0T08sZDTT1GuU4SxLLwO5vPRCgkPEZtnTgL/qD
+	AjCW2Ld3qcri2raL/wxyTZkt9esujf7k69vlCuGtkETabNRBcnID9i8Jx9/yH8i/DGPNU0f3+b0
+	Qhkvr8IsnX5oGfqiDghfvx9+4gd+vvA9CKrydp0MR8Sbk=
+X-Google-Smtp-Source: AGHT+IEj3+WVsDT/qy0LWw3vIbV0dRsOLH6ofdJvi/5wTVBaPGj7ScfnOytLEfzcGmyFE6qIIuzIcxLdnmO8YrwoWFM=
+X-Received: by 2002:a17:902:d487:b0:231:c9bb:6105 with SMTP id
+ d9443c01a7336-237d94bfe5bmr92558575ad.0.1750755280954; Tue, 24 Jun 2025
+ 01:54:40 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha384;
-	protocol="application/pgp-signature"; boundary="7gzjxsntd33bcrpz"
-Content-Disposition: inline
-In-Reply-To: <CAN9Xe3SsdbwXvDav_TUkryN3nXjujkwMTtcUcigavy5FZ29UcA@mail.gmail.com>
-
-
---7gzjxsntd33bcrpz
-Content-Type: text/plain; protected-headers=v1; charset=utf-8
-Content-Disposition: inline
+References: <20250624162338.7b4a03bf@canb.auug.org.au>
+In-Reply-To: <20250624162338.7b4a03bf@canb.auug.org.au>
+From: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
+Date: Tue, 24 Jun 2025 10:54:28 +0200
+X-Gm-Features: Ac12FXx5bczycx_7hI4db6jGu1yR4Hk2Pu_bIbfienVFKKKJW_5exLtc5FCCPRg
+Message-ID: <CANiq72nTVRfbnWA1bxW-u+a1f+PNt=YLUCrG47vdAcdVzGQvgA@mail.gmail.com>
+Subject: Re: linux-next: manual merge of the rust tree with the vfs-brauner tree
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Miguel Ojeda <ojeda@kernel.org>, Christian Brauner <brauner@kernel.org>, 
+	Alice Ryhl <aliceryhl@google.com>, 
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, 
+	Linux Next Mailing List <linux-next@vger.kernel.org>, Tamir Duberstein <tamird@gmail.com>
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
-Subject: Re: [PATCH v2 04/16] drm/panel/sun4i: Keep up with refcounting
-MIME-Version: 1.0
 
-On Fri, Jun 20, 2025 at 03:54:10PM -0500, Anusha Srivatsa wrote:
-> On Fri, Jun 20, 2025 at 8:27=E2=80=AFAM Maxime Ripard <mripard@kernel.org=
-> wrote:
->=20
-> > Hi,
-> >
-> > On Thu, Jun 19, 2025 at 02:15:56PM -0500, Anusha Srivatsa wrote:
-> > > Put the panel reference back when driver is no
-> > > longer using it.
-> > >
-> > > Signed-off-by: Anusha Srivatsa <asrivats@redhat.com>
-> >
-> > When I asked you to provide a rationale for why you think the
-> > drm_panel_put() call belonged where it does, it was pretty obvious it
-> > needed to be done for all patches with the same issue, not just a few
-> > random ones.
+On Tue, Jun 24, 2025 at 8:23=E2=80=AFAM Stephen Rothwell <sfr@canb.auug.org=
+.au> wrote:
 >
-> Well, not totally random. THe intention was to specifically explain
-> the cases where the drm_panel_put() is part of a probe(), enable() or
-> attach() like function since that caused confusion in the last
-> version. There must have been misunderstanding on my end when I
-> thought only those cases needed additional explanation. I will make
-> the commit message more verbose.
+> I fixed it up (I used the former change) and can carry the fix as
+> necessary.
 
-Eventually, it's a memory management thing. You can't judge how a
-driver, framework or function uses the memory from 3 lines of context.
+Looks good to me, thanks!
 
-This patch is a good example: it might make sense from the 3 lines of
-context. But if you consider what this function is doing, and how it
-uses the drm_panel pointer, what you did is broken.
-
-Maxime
-
---7gzjxsntd33bcrpz
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iJUEABMJAB0WIQTkHFbLp4ejekA/qfgnX84Zoj2+dgUCaFpnbgAKCRAnX84Zoj2+
-drFCAX41sEkvCTao7a9yQqRtmSfin2kdKCV2JaZfI5cw2dFqsTvw73LOz/t6iRwi
-Q+hmmYQBgIRnOILmbnDBTcsLHPwlfo8Xfh92lsXrdf9u2Wq1obP7UONKXxeWc3yG
-BRdzhtk14w==
-=LaLM
------END PGP SIGNATURE-----
-
---7gzjxsntd33bcrpz--
+Cheers,
+Miguel
 
