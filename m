@@ -1,53 +1,42 @@
-Return-Path: <linux-kernel+bounces-699545-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-699527-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id E48C0AE5C0D
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Jun 2025 07:50:56 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3D638AE5BDD
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Jun 2025 07:29:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5DF994A06E3
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Jun 2025 05:50:56 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 156E04452FB
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Jun 2025 05:29:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 31E58239E65;
-	Tue, 24 Jun 2025 05:50:42 +0000 (UTC)
-Received: from pegase1.c-s.fr (pegase1.c-s.fr [93.17.236.30])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4185B2CCC1;
-	Tue, 24 Jun 2025 05:50:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=93.17.236.30
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 11C5D230269;
+	Tue, 24 Jun 2025 05:29:16 +0000 (UTC)
+Received: from mx3.molgen.mpg.de (mx3.molgen.mpg.de [141.14.17.11])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DDD404C74;
+	Tue, 24 Jun 2025 05:29:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=141.14.17.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750744241; cv=none; b=NKfIfGR+SzSZXlD2Xv0xjvmCK5FuM+zqfnDY/4DowisKTA5tGd1pujKfubjV5f4gTa5+YuFA9TKMGk44HjAcXeFbO0ADM5qgzxRo4ty2xsmMPuUI1zmoW98/HXJnkJ/lYYtq1OZviXxf+SuGFUUcBZVyCo9YpLLKmSgcIph/d2U=
+	t=1750742955; cv=none; b=M9dfrh19Ajs3kRskAH37eCSJFf0YVizLtxpCml0glVP9xyFy0FV4042+bxPHstKPEoZ5mMNtLo4StQbHn0nTfY0H4KWTVcRvzY6RESXQmVIRtVj7Y2hzXd1jBsTGqGoS70bZ8NH+WMeHNwYrx9UKdhj9BtNB1ZDHxMN1R8faXLk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750744241; c=relaxed/simple;
-	bh=3D0KQ5ka29PjRTqDd/N/4uZhjid6uamBrNB6qb6b4VM=;
+	s=arc-20240116; t=1750742955; c=relaxed/simple;
+	bh=UKRjY5dqheg932jcCpNQUs+aaZ31mj9735W1eRDtzoo=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=OfiVZDjoYGMxu6HWf0KV90VTdFrNJoZJPhvNKND1cxJxMCBwBU4Ec1J9njlhHm1tG070MDsua1l9yMrD428ax6DOufBsl4VLEWt9rwqkrAG8tPfAHCVuGZ97hXaeeWKaE6OdUSVLT1YrfrgaBvAjYsPrRZuSaXuIuzztJJmp2FQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=csgroup.eu; spf=pass smtp.mailfrom=csgroup.eu; arc=none smtp.client-ip=93.17.236.30
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=csgroup.eu
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=csgroup.eu
-Received: from localhost (mailhub3.si.c-s.fr [192.168.12.233])
-	by localhost (Postfix) with ESMTP id 4bRD450pqCz9sHR;
-	Tue, 24 Jun 2025 07:27:49 +0200 (CEST)
-X-Virus-Scanned: amavisd-new at c-s.fr
-Received: from pegase1.c-s.fr ([192.168.12.234])
-	by localhost (pegase1.c-s.fr [127.0.0.1]) (amavisd-new, port 10024)
-	with ESMTP id TQwRk1sPy-Tu; Tue, 24 Jun 2025 07:27:48 +0200 (CEST)
-Received: from messagerie.si.c-s.fr (messagerie.si.c-s.fr [192.168.25.192])
-	by pegase1.c-s.fr (Postfix) with ESMTP id 4bRD446pFmz9sFT;
-	Tue, 24 Jun 2025 07:27:48 +0200 (CEST)
-Received: from localhost (localhost [127.0.0.1])
-	by messagerie.si.c-s.fr (Postfix) with ESMTP id DB3938B768;
-	Tue, 24 Jun 2025 07:27:48 +0200 (CEST)
-X-Virus-Scanned: amavisd-new at c-s.fr
-Received: from messagerie.si.c-s.fr ([127.0.0.1])
-	by localhost (messagerie.si.c-s.fr [127.0.0.1]) (amavisd-new, port 10023)
-	with ESMTP id SZzaiK0op1Va; Tue, 24 Jun 2025 07:27:48 +0200 (CEST)
-Received: from [192.168.235.99] (unknown [192.168.235.99])
-	by messagerie.si.c-s.fr (Postfix) with ESMTP id F03358B767;
-	Tue, 24 Jun 2025 07:27:47 +0200 (CEST)
-Message-ID: <ff2662ca-3b86-425b-97f8-3883f1018e83@csgroup.eu>
-Date: Tue, 24 Jun 2025 07:27:47 +0200
+	 In-Reply-To:Content-Type; b=ZaIU8uqSZD85xm3guDEWdyMGosZBFJRbgWbjpOD/fhRGHRbS+IIjStl1mXIu98DrN9SrR4WliJdjM4PLjPyX0vAAGK9iP9kYrqN00wFKmvWTPZCXhBDZOy07sh4HBL1I6USQhgLJ1GM2npV7qzuQnv7to4zmRpfgjpSmqTIX7d0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=molgen.mpg.de; spf=pass smtp.mailfrom=molgen.mpg.de; arc=none smtp.client-ip=141.14.17.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=molgen.mpg.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=molgen.mpg.de
+Received: from [192.168.0.192] (ip5f5af60b.dynamic.kabel-deutschland.de [95.90.246.11])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: pmenzel)
+	by mx.molgen.mpg.de (Postfix) with ESMTPSA id 2B4DE61E647A8;
+	Tue, 24 Jun 2025 07:28:33 +0200 (CEST)
+Message-ID: <4db45281-9943-4ed7-80c6-04b39c3e9a5e@molgen.mpg.de>
+Date: Tue, 24 Jun 2025 07:28:32 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -55,69 +44,104 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 0/5] powerpc: Implement masked user access
-To: David Laight <david.laight.linux@gmail.com>
-Cc: Michael Ellerman <mpe@ellerman.id.au>, Nicholas Piggin
- <npiggin@gmail.com>, Naveen N Rao <naveen@kernel.org>,
- Madhavan Srinivasan <maddy@linux.ibm.com>,
- Alexander Viro <viro@zeniv.linux.org.uk>,
- Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
- Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
- Peter Zijlstra <peterz@infradead.org>, Darren Hart <dvhart@infradead.org>,
- Davidlohr Bueso <dave@stgolabs.net>, Andre Almeida <andrealmeid@igalia.com>,
- Andrew Morton <akpm@linux-foundation.org>,
- Dave Hansen <dave.hansen@linux.intel.com>,
- Linus Torvalds <torvalds@linux-foundation.org>,
- linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
- linux-fsdevel@vger.kernel.org, linux-mm@kvack.org
-References: <cover.1750585239.git.christophe.leroy@csgroup.eu>
- <20250622172043.3fb0e54c@pumpkin>
-Content-Language: fr-FR
-From: Christophe Leroy <christophe.leroy@csgroup.eu>
-In-Reply-To: <20250622172043.3fb0e54c@pumpkin>
+Subject: Re: [PATCH] Bluetooth: hci_event: Add support for handling LE BIG
+ Sync Lost event
+To: Li Yang <yang.li@amlogic.com>
+Cc: Marcel Holtmann <marcel@holtmann.org>,
+ Johan Hedberg <johan.hedberg@gmail.com>,
+ Luiz Augusto von Dentz <luiz.dentz@gmail.com>,
+ "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
+ Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+ Simon Horman <horms@kernel.org>, linux-bluetooth@vger.kernel.org,
+ netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20250624-handle_big_sync_lost_event-v1-1-c32ce37dd6a5@amlogic.com>
+Content-Language: en-US
+From: Paul Menzel <pmenzel@molgen.mpg.de>
+In-Reply-To: <20250624-handle_big_sync_lost_event-v1-1-c32ce37dd6a5@amlogic.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
+
+Dear Li,
 
 
+Thank you for your patch.
 
-Le 22/06/2025 à 18:20, David Laight a écrit :
-> On Sun, 22 Jun 2025 11:52:38 +0200
-> Christophe Leroy <christophe.leroy@csgroup.eu> wrote:
+
+Am 24.06.25 um 07:20 schrieb Yang Li via B4 Relay:
+> From: Yang Li <yang.li@amlogic.com>
 > 
->> Masked user access avoids the address/size verification by access_ok().
->> Allthough its main purpose is to skip the speculation in the
->> verification of user address and size hence avoid the need of spec
->> mitigation, it also has the advantage to reduce the amount of
->> instructions needed so it also benefits to platforms that don't
->> need speculation mitigation, especially when the size of the copy is
->> not know at build time.
+> When the BIS source stops, the controller sends an LE BIG Sync Lost
+> event (subevent 0x1E). Currently, this event is not handled, causing
+> the BIS stream to remain active in BlueZ and preventing recovery.
+
+How can this situation be emulated to test your patch?
+
+> Signed-off-by: Yang Li <yang.li@amlogic.com>
+> ---
+>   include/net/bluetooth/hci.h |  6 ++++++
+>   net/bluetooth/hci_event.c   | 23 +++++++++++++++++++++++
+>   2 files changed, 29 insertions(+)
 > 
-> It also removes a conditional branch that is quite likely to be
-> statically predicted 'the wrong way'.
+> diff --git a/include/net/bluetooth/hci.h b/include/net/bluetooth/hci.h
+> index 82cbd54443ac..48389a64accb 100644
+> --- a/include/net/bluetooth/hci.h
+> +++ b/include/net/bluetooth/hci.h
+> @@ -2849,6 +2849,12 @@ struct hci_evt_le_big_sync_estabilished {
+>   	__le16  bis[];
+>   } __packed;
+>   
+> +#define HCI_EVT_LE_BIG_SYNC_LOST 0x1e
+> +struct hci_evt_le_big_sync_lost {
+> +	__u8    handle;
+> +	__u8    reason;
+> +} __packed;
+> +
+>   #define HCI_EVT_LE_BIG_INFO_ADV_REPORT	0x22
+>   struct hci_evt_le_big_info_adv_report {
+>   	__le16  sync_handle;
+> diff --git a/net/bluetooth/hci_event.c b/net/bluetooth/hci_event.c
+> index 66052d6aaa1d..730deaf1851f 100644
+> --- a/net/bluetooth/hci_event.c
+> +++ b/net/bluetooth/hci_event.c
+> @@ -7026,6 +7026,24 @@ static void hci_le_big_sync_established_evt(struct hci_dev *hdev, void *data,
+>   	hci_dev_unlock(hdev);
+>   }
+>   
+> +static void hci_le_big_sync_lost_evt(struct hci_dev *hdev, void *data,
+> +					    struct sk_buff *skb)
+> +{
+> +	struct hci_evt_le_big_sync_lost *ev = data;
+> +	struct hci_conn *conn;
+> +
+> +	bt_dev_dbg(hdev, "BIG Sync Lost: big_handle 0x%2.2x", ev->handle);
+> +
+> +	hci_dev_lock(hdev);
+> +
+> +	list_for_each_entry(conn, &hdev->conn_hash.list, list) {
+> +		if (test_bit(HCI_CONN_BIG_SYNC, &conn->flags))
+> +			hci_disconn_cfm(conn, HCI_ERROR_REMOTE_USER_TERM);
+> +	}
+> +
+> +	hci_dev_unlock(hdev);
+> +}
+> +
+>   static void hci_le_big_info_adv_report_evt(struct hci_dev *hdev, void *data,
+>   					   struct sk_buff *skb)
+>   {
+> @@ -7149,6 +7167,11 @@ static const struct hci_le_ev {
+>   		     hci_le_big_sync_established_evt,
+>   		     sizeof(struct hci_evt_le_big_sync_estabilished),
+>   		     HCI_MAX_EVENT_SIZE),
+> +	/* [0x1e = HCI_EVT_LE_BIG_SYNC_LOST] */
+> +	HCI_LE_EV_VL(HCI_EVT_LE_BIG_SYNC_LOST,
+> +		     hci_le_big_sync_lost_evt,
+> +		     sizeof(struct hci_evt_le_big_sync_lost),
+> +		     HCI_MAX_EVENT_SIZE),
+>   	/* [0x22 = HCI_EVT_LE_BIG_INFO_ADV_REPORT] */
+>   	HCI_LE_EV_VL(HCI_EVT_LE_BIG_INFO_ADV_REPORT,
+>   		     hci_le_big_info_adv_report_evt,
 
-But include/asm-generic/access_ok.h defines access_ok() as:
+Kind regards,
 
-	#define access_ok(addr, size) likely(__access_ok(addr, size))
-
-So GCC uses the 'unlikely' variant of the branch instruction to force 
-the correct prediction, doesn't it ?
-
-> 
->> Unlike x86_64 which masks the address to 'all bits set' when the
->> user address is invalid, here the address is set to an address in
->> the gap. It avoids relying on the zero page to catch offseted
->> accesses. On book3s/32 it makes sure the opening remains on user
->> segment. The overcost is a single instruction in the masking.
-> 
-> That isn't true (any more).
-> Linus changed the check to (approx):
-> 	if (uaddr > TASK_SIZE)
-> 		uaddr = TASK_SIZE;
-> (Implemented with a conditional move)
-
-Ah ok, I overlooked that, I didn't know the cmove instruction, seem 
-similar to the isel instruction on powerpc e500.
-
-Christophe
-
+Paul
 
