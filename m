@@ -1,128 +1,175 @@
-Return-Path: <linux-kernel+bounces-699942-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-699944-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3C668AE61AE
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Jun 2025 12:00:27 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id E6C3AAE61B0
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Jun 2025 12:01:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 19D1F1B61CCD
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Jun 2025 10:00:43 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6C54B4A73CF
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Jun 2025 10:01:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7CDF426B2C5;
-	Tue, 24 Jun 2025 10:00:21 +0000 (UTC)
-Received: from 1wt.eu (ded1.1wt.eu [163.172.96.212])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5260853BE
-	for <linux-kernel@vger.kernel.org>; Tue, 24 Jun 2025 10:00:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=163.172.96.212
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9588328030E;
+	Tue, 24 Jun 2025 10:00:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Fe3QzChP"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E8C1327FB31;
+	Tue, 24 Jun 2025 10:00:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750759221; cv=none; b=u+LdNRnLqNMcgxlCtw7TV/ZdhnwP8nYRBjNbg/t3if9zV4W8rnVaHGeIEENVxcVQma9CctDwAhVEABtTc6lIj8H82+3pr2OJqjf5S7fPfqYfgVZBimjRXsZf8iPtJDq2cXChpmQbj4+bmi9KP/x75fHFL5U627OI0ZM+LisbI1w=
+	t=1750759244; cv=none; b=Ih4+eksFSzBxoxzEM0rgNfRUib+Kt0/XeryAGRCgFpfLtQudS6fv8Ex+Rgh9GVxZYm/+sp7+MFkPDmjPHEWjJ9dH/LK2eJ2sJVM5lCVABltPna1oPPpwsCC9aC41FD0pBPdm4D+CcygjxXejnSdKuKP3omLkFvs46w/WR4RZq+A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750759221; c=relaxed/simple;
-	bh=aCNHC/uxRIZNbS49b3qmH3bmDQDeZHLLs6ZfW6WxAMs=;
+	s=arc-20240116; t=1750759244; c=relaxed/simple;
+	bh=BqpHavQ/lw1T1YQNn8lbODhWv9axsKn/Q1NKE5nNQW8=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=G/NOIkjddH2fwfRTuobius9VVitBBhbf6Ii8fwPoXR0xXlMQe+M7tCEKxSobSaZJWtgUdtBpS3lR0O19H1hVRQMOTngamNu9d1mzCe2G/CBObUeR1p6JIkCkNlyyKfcsSLe8bfmY4STvEhhPe+X903J0nOxHaWt68z275MqZyqQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=1wt.eu; spf=pass smtp.mailfrom=1wt.eu; arc=none smtp.client-ip=163.172.96.212
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=1wt.eu
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=1wt.eu
-Received: (from willy@localhost)
-	by pcw.home.local (8.15.2/8.15.2/Submit) id 55OA087C031994;
-	Tue, 24 Jun 2025 12:00:08 +0200
-Date: Tue, 24 Jun 2025 12:00:08 +0200
-From: Willy Tarreau <w@1wt.eu>
-To: Thomas =?iso-8859-1?Q?Wei=DFschuh?= <linux@weissschuh.net>
-Cc: linux-kernel@vger.kernel.org, Masahiro Yamada <masahiroy@kernel.org>,
-        Arnd Bergmann <arnd@arndb.de>
-Subject: Re: [RFC PATCH 2/3] tools/nolibc: add a new target
- "headers_all_archs" to loop over all archs
-Message-ID: <20250624100008.GE30919@1wt.eu>
-References: <20250620103705.10208-1-w@1wt.eu>
- <20250620103705.10208-3-w@1wt.eu>
- <4c48147d-aebc-4a2c-a60f-eba2e90584ed@t-8ch.de>
- <20250624062002.GD30919@1wt.eu>
- <a7bf2a5f-1d72-460e-8cff-1c7e31bda3c8@t-8ch.de>
+	 Content-Type:Content-Disposition:In-Reply-To; b=OduQNNrc7j2R84QYqZIdbv0GlzJOzwTkEctjxYPEoj0AcAQI1eD+nVH4GSWYSmpsENAtjGWUEsQXOTq+sS7lHDB67FNCT8I0VY53GOXn44Km5lq81HlTDVdZZxF8p7QLQ9B84AwOcmvYQCiSj2xGThiOp6id+eAQdtdsgA6Eka8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Fe3QzChP; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0A916C4CEE3;
+	Tue, 24 Jun 2025 10:00:41 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1750759243;
+	bh=BqpHavQ/lw1T1YQNn8lbODhWv9axsKn/Q1NKE5nNQW8=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=Fe3QzChPa0+w5DS3WDMm74d1nZ369WNmw5CsWx7cro2n7JB28Ay5n5AFg+TAV1Z0N
+	 bwksq4op1CDur52yktBYVmQVk7g9QY9dMm1Zdi/HJQ0lyDc0o3Nk4dkPtqzCInNoP6
+	 e4O1UNNvEjioFAZj3FgmsyLDSSRce9eXplanLAqRQ9e95xK55TstVJUnY0sX/sd6eR
+	 3qsJ0WhI7RwAO1IsLHGgtfRea6Z0YNqS2ErV3EbfQlJ89Qp8I0fn9AwdvWgcN3FSie
+	 rOKnd2+jihZlV5tlSivRrt4zjSVSRse03XDcSGyFPb69U6PCyrAnLWN1gvK63aZHRS
+	 ITnnm63uArKCw==
+Date: Tue, 24 Jun 2025 11:00:39 +0100
+From: Lee Jones <lee@kernel.org>
+To: Chao Yu <chao@kernel.org>, stable@vger.kernel.org,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Sasha Levin <sashal@kernel.org>
+Cc: jaegeuk@kernel.org, linux-f2fs-devel@lists.sourceforge.net,
+	linux-kernel@vger.kernel.org
+Subject: [STABLE 5.15+] f2fs: sysfs: add encoding_flags entry
+Message-ID: <20250624100039.GA3680448@google.com>
+References: <20250416054805.1416834-1-chao@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <a7bf2a5f-1d72-460e-8cff-1c7e31bda3c8@t-8ch.de>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <20250416054805.1416834-1-chao@kernel.org>
 
-On Tue, Jun 24, 2025 at 09:46:00AM +0200, Thomas Weiﬂschuh wrote:
-> On 2025-06-24 08:20:02+0200, Willy Tarreau wrote:
-> > On Mon, Jun 23, 2025 at 11:56:29PM +0200, Thomas Weiﬂschuh wrote:
-> > > On 2025-06-20 12:37:04+0200, Willy Tarreau wrote:
-> > > > This target allows to install the nolibc headers for all supported
-> > > > architectures at once, just like it is in the development tree. This
-> > > > is a first step to support full multi-architecture support.
-> > > > 
-> > > > Signed-off-by: Willy Tarreau <w@1wt.eu>
-> > > > ---
-> > > >  tools/include/nolibc/Makefile | 10 ++++++++++
-> > > >  1 file changed, 10 insertions(+)
-> > > > 
-> > > > diff --git a/tools/include/nolibc/Makefile b/tools/include/nolibc/Makefile
-> > > > index 9197c79b267a4..8de6ac5cec425 100644
-> > > > --- a/tools/include/nolibc/Makefile
-> > > > +++ b/tools/include/nolibc/Makefile
-> > > > @@ -23,6 +23,8 @@ else
-> > > >  Q=@
-> > > >  endif
-> > > >  
-> > > > +nolibc_supported_archs := aarch64 arm loongarch m68k mips powerpc riscv s390 sparc x86
-> > > > +
-> > > >  nolibc_arch := $(patsubst arm64,aarch64,$(ARCH))
-> > > >  arch_file := arch-$(nolibc_arch).h
-> > > >  all_files := \
-> > > > @@ -83,6 +85,7 @@ help:
-> > > >  	@echo "  all                 call \"headers\""
-> > > >  	@echo "  clean               clean the sysroot"
-> > > >  	@echo "  headers             prepare a sysroot in \$${OUTPUT}sysroot"
-> > > > +	@echo "  headers_all_archs   prepare a multi-arch sysroot in \$${OUTPUT}sysroot"
-> > > >  	@echo "  headers_standalone  like \"headers\", and also install kernel headers"
-> > > >  	@echo "  help                this help"
-> > > >  	@echo ""
-> > > > @@ -110,6 +113,13 @@ headers_standalone: headers
-> > > >  	$(Q)$(MAKE) -C $(srctree) headers
-> > > >  	$(Q)$(MAKE) -C $(srctree) headers_install INSTALL_HDR_PATH=$(OUTPUT)sysroot
-> > > >  
-> > > > +# installs headers for all archs at once.
-> > > > +headers_all_archs:
-> > > > +	$(Q)mkdir -p "$(OUTPUT)sysroot"
-> > > > +	$(Q)mkdir -p "$(OUTPUT)sysroot/include"
-> > > > +	$(Q)cp --parents $(all_files) arch.h "$(OUTPUT)sysroot/include/"
-> > > > +	$(Q)cp $(addsuffix .h,$(addprefix arch-,$(nolibc_supported_archs))) "$(OUTPUT)sysroot/include/"
-> > > 
-> > > IMO we could always just install all architecture headers.
-> > > It's not much code after all.
-> > > If it is a problem for a user they can either just delete the
-> > > superfluous architectures or do 'mv arch-$foo.h arch.h; rm arch-*.h'.
-> > 
-> > I wanted to do that first, then thought that maybe some would like
-> > to only install the nolibc headers because they already have the
-> > UAPI headers from another source (local libc, distro packages,
-> > toolchain etc). Even for us during nolibc development, not having
-> > to iterate through all archs to reinstall everything is a huge time
-> > saver.
-> >
-> > However, I had another idea that floated in my mind, which is that
-> > given that we're only saving a few small arch-* files by not
-> > installing all archs all the time, maybe we should replace the
-> > "headers" target to always install nolibc headers for all archs
-> > like above, and keep the uapi headers install separate (only one
-> > or all). This would remove the need for the target above whose
-> > role is a bit ambiguous. What do you think ?
+On Wed, 16 Apr 2025, Chao Yu wrote:
+
+> This patch adds a new sysfs entry /sys/fs/f2fs/<disk>/encoding_flags,
+> it is a read-only entry to show the value of sb.s_encoding_flags, the
+> value is hexadecimal.
 > 
-> That is exactly what I tried to express :-)
+> ===========================      ==========
+> Flag_Name                        Flag_Value
+> ===========================      ==========
+> SB_ENC_STRICT_MODE_FL            0x00000001
+> SB_ENC_NO_COMPAT_FALLBACK_FL     0x00000002
+> ===========================      ==========
+> 
+> case#1
+> mkfs.f2fs -f -O casefold -C utf8:strict /dev/vda
+> mount /dev/vda /mnt/f2fs
+> cat /sys/fs/f2fs/vda/encoding_flags
+> 1
+> 
+> case#2
+> mkfs.f2fs -f -O casefold -C utf8 /dev/vda
+> fsck.f2fs --nolinear-lookup=1 /dev/vda
+> mount /dev/vda /mnt/f2fs
+> cat /sys/fs/f2fs/vda/encoding_flags
+> 2
+> 
+> Signed-off-by: Chao Yu <chao@kernel.org>
+> ---
+>  Documentation/ABI/testing/sysfs-fs-f2fs | 13 +++++++++++++
+>  fs/f2fs/sysfs.c                         |  9 +++++++++
+>  2 files changed, 22 insertions(+)
 
-Ah OK, I understood that you wanted to install all UAPI in the target
-above :-)  OK that's fine then, will do that.
+This patch, commit 617e0491abe4 ("f2fs: sysfs: export linear_lookup in
+features directory") upstream, needs to find its way into all Stable
+branches containing upstream commit 91b587ba79e1 ("f2fs: Introduce
+linear search for dentries"), which is essentially linux-5.15.y and
+newer.
 
-Willy
+stable/linux-5.4.y:
+MISSING:     f2fs: Introduce linear search for dentries
+MISSING:     f2fs: sysfs: export linear_lookup in features directory
+
+stable/linux-5.10.y:
+MISSING:     f2fs: Introduce linear search for dentries
+MISSING:     f2fs: sysfs: export linear_lookup in features directory
+
+stable/linux-5.15.y:
+b0938ffd39ae f2fs: Introduce linear search for dentries [5.15.179]
+MISSING:     f2fs: sysfs: export linear_lookup in features directory
+
+stable/linux-6.1.y:
+de605097eb17 f2fs: Introduce linear search for dentries [6.1.129]
+MISSING:     f2fs: sysfs: export linear_lookup in features directory
+
+stable/linux-6.6.y:
+0bf2adad03e1 f2fs: Introduce linear search for dentries [6.6.76]
+MISSING:     f2fs: sysfs: export linear_lookup in features directory
+
+stable/linux-6.12.y:
+00d1943fe46d f2fs: Introduce linear search for dentries [6.12.13]
+MISSING:     f2fs: sysfs: export linear_lookup in features directory
+
+mainline:
+91b587ba79e1 f2fs: Introduce linear search for dentries
+617e0491abe4 f2fs: sysfs: export linear_lookup in features directory
+
+> diff --git a/Documentation/ABI/testing/sysfs-fs-f2fs
+> b/Documentation/ABI/testing/sysfs-fs-f2fs index
+> 59adb7dc6f9e..0dbe6813b709 100644 ---
+> a/Documentation/ABI/testing/sysfs-fs-f2fs +++
+> b/Documentation/ABI/testing/sysfs-fs-f2fs @@ -846,3 +846,16 @@
+> Description:	For several zoned storage devices, vendors will provide
+> extra space reserved_blocks. However, it is not enough, since this
+> extra space should not be shown to users. So, with this new sysfs
+> node, we can hide the space by substracting reserved_blocks from total
+> bytes. + +What:		/sys/fs/f2fs/<disk>/encoding_flags
+> +Date:		April 2025 +Contact:	"Chao Yu"
+> <chao@kernel.org> +Description:	This is a read-only entry to
+> show the value of sb.s_encoding_flags, the +		value is
+> hexadecimal. + +		===========================
+> ========== +		Flag_Name                        Flag_Value +
+> ===========================      ========== +
+> SB_ENC_STRICT_MODE_FL            0x00000001 +
+> SB_ENC_NO_COMPAT_FALLBACK_FL     0x00000002 +
+> ===========================      ========== diff --git
+> a/fs/f2fs/sysfs.c b/fs/f2fs/sysfs.c index 3a3485622691..cf98c5cbb98a
+> 100644 --- a/fs/f2fs/sysfs.c +++ b/fs/f2fs/sysfs.c @@ -274,6 +274,13
+> @@ static ssize_t encoding_show(struct f2fs_attr *a, return
+> sysfs_emit(buf, "(none)\n"); }
+>  
+> +static ssize_t encoding_flags_show(struct f2fs_attr *a, +
+> struct f2fs_sb_info *sbi, char *buf) +{ +	return sysfs_emit(buf,
+> "%x\n", +
+> le16_to_cpu(F2FS_RAW_SUPER(sbi)->s_encoding_flags)); +} + static
+> ssize_t mounted_time_sec_show(struct f2fs_attr *a, struct f2fs_sb_info
+> *sbi, char *buf) { @@ -1158,6 +1165,7 @@
+> F2FS_GENERAL_RO_ATTR(features);
+> F2FS_GENERAL_RO_ATTR(current_reserved_blocks);
+> F2FS_GENERAL_RO_ATTR(unusable); F2FS_GENERAL_RO_ATTR(encoding);
+> +F2FS_GENERAL_RO_ATTR(encoding_flags);
+> F2FS_GENERAL_RO_ATTR(mounted_time_sec);
+> F2FS_GENERAL_RO_ATTR(main_blkaddr);
+> F2FS_GENERAL_RO_ATTR(pending_discard); @@ -1270,6 +1278,7 @@ static
+> struct attribute *f2fs_attrs[] = { ATTR_LIST(reserved_blocks),
+> ATTR_LIST(current_reserved_blocks), ATTR_LIST(encoding), +
+> ATTR_LIST(encoding_flags), ATTR_LIST(mounted_time_sec), #ifdef
+> CONFIG_F2FS_STAT_FS ATTR_LIST(cp_foreground_calls), -- 2.49.0
+> 
+
+-- 
+Lee Jones [ÊùéÁêºÊñØ]
 
