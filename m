@@ -1,127 +1,112 @@
-Return-Path: <linux-kernel+bounces-699965-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-699984-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 02574AE61FC
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Jun 2025 12:17:12 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 924D5AE6263
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Jun 2025 12:27:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 75AB817A4E3
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Jun 2025 10:17:12 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 26F88178FDC
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Jun 2025 10:27:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3FD8928B50B;
-	Tue, 24 Jun 2025 10:15:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 97030283FF4;
+	Tue, 24 Jun 2025 10:27:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="hc3dYS6G"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=glxys.nl header.i=@glxys.nl header.b="j8mEjhpn"
+Received: from mail.postale.io (mail.postale.io [3.139.204.210])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 91534283FE8;
-	Tue, 24 Jun 2025 10:15:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 57C3528540E;
+	Tue, 24 Jun 2025 10:27:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=3.139.204.210
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750760157; cv=none; b=VbTkON2+81X6VsnnAQMY3gpHrKh8qLZ4KoxvakS+gTFJ0V1RoYSCb7DFDJpldisfXppZ2BFadZ0Zaq76BDrAeOvjWt8WgSTqJFRLc2RE5lQr1O+lep6kj7Ulmt2qHzsPhwHJ1OTUcUm5GkLXY4+Eu4GwZi1D4Y4+DbXWa3o7HLU=
+	t=1750760836; cv=none; b=VWh8wtcP2wda6kgQPDWVISStuxOMdwcV9cDWte0Wqx7tAVWQKeT6BpRPVsqU0fJiTUQQcWQ6joHmStTzIncunS/qAYd89o2FEYiFNeoTercHI82RbaljlY02W+9ona/DYNpcTyEizGd/kOwt1782BiUYturIZAIf+InXDmGoQX4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750760157; c=relaxed/simple;
-	bh=jUQe1mPxBCuPa1ikbnp69FnCdQgJXf3j0k9yd7kqXcc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=B2jbeah2wo4CTOJ1jLyTPqxRVNtSX2D47lPcRd7V9ez0rAcuYJD+5WtuLGVT0sQujpVFkvKcodKWFQS8F/EPhW1lFIsQ8oSgZWIyJfYrEaF5GNiFJcZ3M7b+qSVoQLzcuiAVciSbzsAwu5+R/Y3bFJMega14/z91qRKAsACG3NM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=hc3dYS6G; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D4A87C4CEE3;
-	Tue, 24 Jun 2025 10:15:56 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1750760157;
-	bh=jUQe1mPxBCuPa1ikbnp69FnCdQgJXf3j0k9yd7kqXcc=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=hc3dYS6GSnNGauU2coiSaJH7KD4ub0xkkoA/lSwF/xTB3aUXt9iMBENj9Txe7mGDK
-	 wIL89Iy7HDamnQ4h38H6Gs/38Tj1HjfQc2GyqdjRkw+Zc9d+M/xb+0App5Rpoxul+3
-	 heuMi9jcdLe6o8jKeAyr7xlPJaa7uL3HergQRJNw=
-Date: Tue, 24 Jun 2025 11:15:54 +0100
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To: Naresh Kamboju <naresh.kamboju@linaro.org>
-Cc: stable@vger.kernel.org, patches@lists.linux.dev,
-	linux-kernel@vger.kernel.org, torvalds@linux-foundation.org,
-	akpm@linux-foundation.org, linux@roeck-us.net, shuah@kernel.org,
-	patches@kernelci.org, lkft-triage@lists.linaro.org, pavel@denx.de,
-	jonathanh@nvidia.com, f.fainelli@gmail.com,
-	sudipm.mukherjee@gmail.com, srw@sladewatkins.net, rwarsow@gmx.de,
-	conor@kernel.org, hargar@microsoft.com, broonie@kernel.org
-Subject: Re: [PATCH 6.15 000/780] 6.15.3-rc1 review
-Message-ID: <2025062431-unsorted-morphine-ffd7@gregkh>
-References: <20250617152451.485330293@linuxfoundation.org>
- <CA+G9fYtUjjrzghRQVUJ5ct9zNK2ROcRVOizpT-ZyjzZGRSUz1Q@mail.gmail.com>
+	s=arc-20240116; t=1750760836; c=relaxed/simple;
+	bh=O9zlFX91oenyG4CVaS60rfnjqCpK1mYsOXbULDWIf5A=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=oWiHnH7DEHzrVqfahnCpzt4zZG6zCA4YoMwaIDfJn8ly1vvGa5GLBmflkTzhteWUok3WAnOkSaRat9N5jXgBDsDHxv4/dsseMWLktOIRyHF/uuEBM9LVRSlmfcHb+XZbrHnqMdvfkHDvpydPY72kUhRjguQIouuWxJGJvAC2SpE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=glxys.nl; spf=pass smtp.mailfrom=glxys.nl; dkim=pass (1024-bit key) header.d=glxys.nl header.i=@glxys.nl header.b=j8mEjhpn; arc=none smtp.client-ip=3.139.204.210
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=glxys.nl
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=glxys.nl
+Authentication-Results: mail.postale.io;
+	auth=pass (plain)
+From: GalaxySnail <me@glxys.nl>
+To: simont@opensource.cirrus.com
+Cc: david.rhodes@cirrus.com,
+	linux-kernel@vger.kernel.org,
+	linux-sound@vger.kernel.org,
+	lkp@intel.com,
+	me@glxys.nl,
+	oe-kbuild-all@lists.linux.dev,
+	patches@opensource.cirrus.com,
+	perex@perex.cz,
+	rf@opensource.cirrus.com,
+	tiwai@suse.com
+Subject: [PATCH v3] ALSA: hda: add MODULE_FIRMWARE for cs35l41/cs35l56
+Date: Tue, 24 Jun 2025 18:17:17 +0800
+Message-ID: <20250624101716.2365302-2-me@glxys.nl>
+X-Mailer: git-send-email 2.50.0
+In-Reply-To: <002901dbe4ef$57d0cce0$077266a0$@opensource.cirrus.com>
+References: <002901dbe4ef$57d0cce0$077266a0$@opensource.cirrus.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CA+G9fYtUjjrzghRQVUJ5ct9zNK2ROcRVOizpT-ZyjzZGRSUz1Q@mail.gmail.com>
+Content-Transfer-Encoding: 8bit
+Received: from localhost (Unknown [127.0.0.1])
+	by mail.postale.io  with ESMTPSA id 16D3340E-BF98-4835-A7E2-9319636AC841.1
+	envelope-from <me@glxys.nl>
+	tls TLS_AES_256_GCM_SHA384 (authenticated bits=0);
+	Tue, 24 Jun 2025 10:26:00 +0000
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+	d=glxys.nl; s=s20221125375;
+	h=from:subject:date:message-id:to:cc:mime-version;
+	bh=O9zlFX91oenyG4CVaS60rfnjqCpK1mYsOXbULDWIf5A=;
+	b=j8mEjhpnM+a8LzHzap7NERcwSu9MmiziuKrKLBL/vHOjRN6vxg3Zl9M+WIdYAlCLGuyIxFVcp8
+	/swJnL4OC3GLGoZ5P8KfFviP5+v+vuLxrUPg5tgG9jwl3xJQPmo4FMCO+AByQlCjociXJgyDYTSt
+	DLTq3qE5MjoNF+llTSpB4=
 
-On Tue, Jun 24, 2025 at 02:35:45AM +0530, Naresh Kamboju wrote:
-> On Tue, 17 Jun 2025 at 20:58, Greg Kroah-Hartman
-> <gregkh@linuxfoundation.org> wrote:
-> >
-> > This is the start of the stable review cycle for the 6.15.3 release.
-> > There are 780 patches in this series, all will be posted as a response
-> > to this one.  If anyone has any issues with these being applied, please
-> > let me know.
-> >
-> > Responses should be made by Thu, 19 Jun 2025 15:22:30 +0000.
-> > Anything received after that time might be too late.
-> >
-> > The whole patch series can be found in one patch at:
-> >         https://www.kernel.org/pub/linux/kernel/v6.x/stable-review/patch-6.15.3-rc1.gz
-> > or in the git tree and branch at:
-> >         git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-6.15.y
-> > and the diffstat can be found below.
-> >
-> > thanks,
-> >
-> > greg k-h
-> 
-> Regressions on s390 allmodconfig builds with gcc-13 and clang-20 failed on
-> the Linux stable-rc 6.15.4-rc1.
-> 
-> Regressions found on s390
-> * s390, build
->   - clang-20-allmodconfig
->   - gcc-13-allmodconfig
-> 
-> Regression Analysis:
->  - New regression? Yes
->  - Reproducibility? Yes
-> 
-> Build regression: stable-rc 6.15.4-rc1 s390 allmodconfig
-> sdhci-esdhc-imx.c 'sdhc_esdhc_tuning_restore' defined but not used
-> 
-> Reported-by: Linux Kernel Functional Testing <lkft@linaro.org>
-> 
-> ## Build errors
-> drivers/mmc/host/sdhci-esdhc-imx.c:1608:13: error:
-> 'sdhc_esdhc_tuning_restore' defined but not used
-> [-Werror=unused-function]
->  1608 | static void sdhc_esdhc_tuning_restore(struct sdhci_host *host)
->       |             ^~~~~~~~~~~~~~~~~~~~~~~~~
-> drivers/mmc/host/sdhci-esdhc-imx.c:1586:13: error:
-> 'sdhc_esdhc_tuning_save' defined but not used
-> [-Werror=unused-function]
->  1586 | static void sdhc_esdhc_tuning_save(struct sdhci_host *host)
->       |             ^~~~~~~~~~~~~~~~~~~~~~
-> cc1: all warnings being treated as errors
+add firmware information in the .modinfo section, so that userspace
+tools can find out firmware required by cs35l41/cs35l56 kernel module
 
-Looks like this needs 5846efac138a ("mmc: sdhci-esdhc-imx: fix defined
-but not used warnings"), but that's not quite right either as it fixes a
-different change here, and only applying it still will result in a build
-error.  I'll just drop the offending commit here entirely and wait for a
-working set of patches to be submitted if the authors want them.
+Signed-off-by: GalaxySnail <me@glxys.nl>
+---
+Thanks for your review!
 
-Same for the other branches where this showed up, thanks for the report.
+v2 -> v3: fixed typo
+v1 -> v2: fixed missing ';' in the previous patch
 
-thanks,
+ sound/pci/hda/cs35l41_hda.c | 2 ++
+ sound/pci/hda/cs35l56_hda.c | 4 ++++
+ 2 files changed, 6 insertions(+)
 
-greg k-h
+diff --git a/sound/pci/hda/cs35l41_hda.c b/sound/pci/hda/cs35l41_hda.c
+index d5bc81099d0d..17cdce91fdbf 100644
+--- a/sound/pci/hda/cs35l41_hda.c
++++ b/sound/pci/hda/cs35l41_hda.c
+@@ -2085,3 +2085,5 @@ MODULE_IMPORT_NS("SND_SOC_CS_AMP_LIB");
+ MODULE_AUTHOR("Lucas Tanure, Cirrus Logic Inc, <tanureal@opensource.cirrus.com>");
+ MODULE_LICENSE("GPL");
+ MODULE_IMPORT_NS("FW_CS_DSP");
++MODULE_FIRMWARE("cirrus/cs35l41-*.wmfw");
++MODULE_FIRMWARE("cirrus/cs35l41-*.bin");
+diff --git a/sound/pci/hda/cs35l56_hda.c b/sound/pci/hda/cs35l56_hda.c
+index 3f2fd32f4ad9..eedd8fdd3b8b 100644
+--- a/sound/pci/hda/cs35l56_hda.c
++++ b/sound/pci/hda/cs35l56_hda.c
+@@ -1122,3 +1122,7 @@ MODULE_IMPORT_NS("SND_SOC_CS_AMP_LIB");
+ MODULE_AUTHOR("Richard Fitzgerald <rf@opensource.cirrus.com>");
+ MODULE_AUTHOR("Simon Trimmer <simont@opensource.cirrus.com>");
+ MODULE_LICENSE("GPL");
++MODULE_FIRMWARE("cirrus/cs35l54-*.wmfw");
++MODULE_FIRMWARE("cirrus/cs35l54-*.bin");
++MODULE_FIRMWARE("cirrus/cs35l56-*.wmfw");
++MODULE_FIRMWARE("cirrus/cs35l56-*.bin");
+-- 
+2.50.0
+
 
