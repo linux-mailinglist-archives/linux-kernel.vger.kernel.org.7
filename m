@@ -1,152 +1,173 @@
-Return-Path: <linux-kernel+bounces-699645-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-699647-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6E88AAE5D60
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Jun 2025 09:05:32 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id DBA93AE5D67
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Jun 2025 09:07:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7F3993A955F
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Jun 2025 07:05:07 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 91AEB3ABFB4
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Jun 2025 07:06:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D5FFD2522B1;
-	Tue, 24 Jun 2025 07:05:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="tOZI3s2w"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 548E3246BC9;
+	Tue, 24 Jun 2025 07:06:58 +0000 (UTC)
+Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3BDB01A42C4;
-	Tue, 24 Jun 2025 07:05:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 62AE3335BA;
+	Tue, 24 Jun 2025 07:06:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750748714; cv=none; b=S95KAGDiF0XToM1Psq7QDSzLeKx2rycVObhtR7KkAo3muOjt7vwpWoVkUwEv6mVZ2ZeZglmFULloDUsWRV8ku64xE4rbuGIFuozj/kvivSPZn5OAAqvH9NREaqHyiQmfi4VfDntXh88j+iO/KFNC0NQlhR3fCsPZyy0ijrTBN7E=
+	t=1750748818; cv=none; b=Oc1IcOBM10puKO0FaDCgk/symmhCcjdUeaX4IsmARpbgKN0T3vC8T0Z/86Anf0CLuIEQQyylOFl3Iqk3QKV5Ji1jV9IWcNfpUTry7pRCm0cfnqmgL9Q2OijcfRe4GY7laQjVVwwX2zAhRrUe5+Dy7eR2oTGA9e+2jdMKh77SA3E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750748714; c=relaxed/simple;
-	bh=eukB8mJ6ncQwPDrZTpnRZ9v5SsQk3rVKzvfudt/NYmw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=MbMSCdte6zT2wG96+Zm2WavFcPxOw3LZ6WNDx5049kwfqsTWoOdEUlWGA3Uhsdk7BH+tjsjNETPKJ6fKsKO84PkiyM6oUwRcBFRlhD0ac6J6Ol4Qx1LByaTIS3DfT9yeO9oDKltMrfrCC6npeo5vWRwwBRD69OZ5U2v+z2RhUWs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=tOZI3s2w; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 47843C4CEE3;
-	Tue, 24 Jun 2025 07:05:12 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1750748712;
-	bh=eukB8mJ6ncQwPDrZTpnRZ9v5SsQk3rVKzvfudt/NYmw=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=tOZI3s2wfEv1AlWZ4E/MRDxT+dG65Q61XT9WL5mBS3jcZPqAw6VwWgyolFis4w9PD
-	 odWzXectA7BGD6HDWWfd0VG6T46J26dFHuhzpUiz19Kro1c5l56Tufn2/tiNXXahfQ
-	 mIb5URlRXkOWQ0DML1xRigZnxt7Dd35yKnzpQPkpZKEAwK0jb0t+qZRdQaBt6Y3Mx2
-	 aI4yudkky0fXziI/Nk4FWDSKJaYjG5Cyr7b5kyTsXttoLg96GMi5sgCdbrtpzn6vaA
-	 IFxws7CZ9ozvLFmEkBLkHNWx/H2ArrKKnn4FIFUwziaZIqf8F3T1VeUakXW70qVedA
-	 qT7JWJc+XX5kA==
-Date: Tue, 24 Jun 2025 09:05:09 +0200
-From: Maxime Ripard <mripard@kernel.org>
-To: Liu Ying <victor.liu@nxp.com>
-Cc: Luca Ceresoli <luca.ceresoli@bootlin.com>, 
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Thomas Zimmermann <tzimmermann@suse.de>, 
-	Andrzej Hajda <andrzej.hajda@intel.com>, Neil Armstrong <neil.armstrong@linaro.org>, 
-	Robert Foss <rfoss@kernel.org>, Laurent Pinchart <Laurent.pinchart@ideasonboard.com>, 
-	Jonas Karlman <jonas@kwiboo.se>, Jernej Skrabec <jernej.skrabec@gmail.com>, 
-	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, Marek Vasut <marex@denx.de>, 
-	Stefan Agner <stefan@agner.ch>, Shawn Guo <shawnguo@kernel.org>, 
-	Sascha Hauer <s.hauer@pengutronix.de>, Pengutronix Kernel Team <kernel@pengutronix.de>, 
-	Fabio Estevam <festevam@gmail.com>, Hui Pu <Hui.Pu@gehealthcare.com>, 
-	Thomas Petazzoni <thomas.petazzoni@bootlin.com>, dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org, 
-	imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH v8 2/5] drm/bridge: get the bridge returned by
- drm_bridge_chain_get_first_bridge()
-Message-ID: <20250624-precise-loon-of-mastery-ebad24@houat>
-References: <20250620-drm-bridge-alloc-getput-drm_bridge_chain_get_first_bridge-v8-0-0321845fcafb@bootlin.com>
- <20250620-drm-bridge-alloc-getput-drm_bridge_chain_get_first_bridge-v8-2-0321845fcafb@bootlin.com>
- <be6a4d90-2c6e-42be-9948-df1840fd2f83@nxp.com>
- <20250623160903.01c56bfc@booty>
- <1d8908b1-b38e-4226-9433-cd9405c7ca63@nxp.com>
+	s=arc-20240116; t=1750748818; c=relaxed/simple;
+	bh=RtOuGdFFqrZK99GNnVT7NvDKm7zjzha152XomLkmxSs=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=qRDjKUBofRgBy14JQBJn+AjlIOWZoZdzQWq4Doxj3zCjpZncVKOVVxp5sYI5Cr9fVRO0WOGIL/P6VHJtyZl0Akh8iQhsXVxGYnTi8iYAvxLGAEqIlSlliJete9C/iPPOZceaWv97R0ynv0RHV/Zo0O/1JOR+q3vmsFCEZxq6RIw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.18.186.231])
+	by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4bRGFX69TYz6DB8C;
+	Tue, 24 Jun 2025 15:06:08 +0800 (CST)
+Received: from frapeml500008.china.huawei.com (unknown [7.182.85.71])
+	by mail.maildlp.com (Postfix) with ESMTPS id ACF411404A6;
+	Tue, 24 Jun 2025 15:06:52 +0800 (CST)
+Received: from frapeml500008.china.huawei.com (7.182.85.71) by
+ frapeml500008.china.huawei.com (7.182.85.71) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.1.2507.39; Tue, 24 Jun 2025 09:06:52 +0200
+Received: from frapeml500008.china.huawei.com ([7.182.85.71]) by
+ frapeml500008.china.huawei.com ([7.182.85.71]) with mapi id 15.01.2507.039;
+ Tue, 24 Jun 2025 09:06:52 +0200
+From: Shameerali Kolothum Thodi <shameerali.kolothum.thodi@huawei.com>
+To: liulongfang <liulongfang@huawei.com>, "alex.williamson@redhat.com"
+	<alex.williamson@redhat.com>, "jgg@nvidia.com" <jgg@nvidia.com>, "Jonathan
+ Cameron" <jonathan.cameron@huawei.com>
+CC: "kvm@vger.kernel.org" <kvm@vger.kernel.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"linuxarm@openeuler.org" <linuxarm@openeuler.org>
+Subject: RE: [PATCH v4 2/3] migration: qm updates BAR configuration
+Thread-Topic: [PATCH v4 2/3] migration: qm updates BAR configuration
+Thread-Index: AQHb2dG59T/Cp4Rxr0u/1uSxds8UDLQR+I4Q
+Date: Tue, 24 Jun 2025 07:06:52 +0000
+Message-ID: <191c54da8764416c904c6ca8f120b155@huawei.com>
+References: <20250610063251.27526-1-liulongfang@huawei.com>
+ <20250610063251.27526-3-liulongfang@huawei.com>
+In-Reply-To: <20250610063251.27526-3-liulongfang@huawei.com>
+Accept-Language: en-GB, en-US
+Content-Language: en-US
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha384;
-	protocol="application/pgp-signature"; boundary="n2sylnxjileb3gpr"
-Content-Disposition: inline
-In-Reply-To: <1d8908b1-b38e-4226-9433-cd9405c7ca63@nxp.com>
 
 
---n2sylnxjileb3gpr
-Content-Type: text/plain; protected-headers=v1; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-Subject: Re: [PATCH v8 2/5] drm/bridge: get the bridge returned by
- drm_bridge_chain_get_first_bridge()
-MIME-Version: 1.0
 
-On Tue, Jun 24, 2025 at 10:44:03AM +0800, Liu Ying wrote:
-> On 06/23/2025, Luca Ceresoli wrote:
-> > On Mon, 23 Jun 2025 10:56:13 +0800
-> > Liu Ying <victor.liu@nxp.com> wrote:
-> >=20
-> >> On 06/21/2025, Luca Ceresoli wrote:
-> >>> drm_bridge_chain_get_first_bridge() returns a bridge pointer that the
-> >>> caller could hold for a long time. Increment the refcount of the retu=
-rned
-> >>> bridge and document it must be put by the caller. =20
-> >>
-> >> To make sure the incremented refcount is decremented once this patch is
-> >> applied, does it make sense to squash patch 3, 4 and 5 into this one?
-> >=20
-> > I see there is a trade off here between bisectability and patch
-> > readability.
-> >=20
-> > However about bisectability the problem is limited for this series. To
-> > get an actual get/put imbalance you'd have to be able to remove the
-> > bridge, but removing (part of) the bridge chain is not at all supported
-> > right now, and it won't be until after chapter 4 of this work (see
-> > cover letter).
-> >=20
-> > However I realize there is an issue if:
-> > * patch 2 is applied but patches 3/4/5 are not
-> >   (it does not make sense to apply this series partially, but this
-> >   might happen when cherry-picking?)
+> -----Original Message-----
+> From: liulongfang <liulongfang@huawei.com>
+> Sent: Tuesday, June 10, 2025 7:33 AM
+> To: alex.williamson@redhat.com; jgg@nvidia.com; Shameerali Kolothum
+> Thodi <shameerali.kolothum.thodi@huawei.com>; Jonathan Cameron
+> <jonathan.cameron@huawei.com>
+> Cc: kvm@vger.kernel.org; linux-kernel@vger.kernel.org;
+> linuxarm@openeuler.org; liulongfang <liulongfang@huawei.com>
+> Subject: [PATCH v4 2/3] migration: qm updates BAR configuration
 >=20
-> Yes for cherry-picking and bisecting.
+> On the new hardware platform, the configuration region for the
+> live migration function of the accelerator device is no longer
+> placed in the VF, but is instead placed in the PF.
 >=20
-> > * an entire DRM card is removed where
-> >   drm_bridge_chain_get_first_bridge() is used by some components
-> >=20
-> > If both happen we'd have a get without put, thus a missing free and a
-> > memory leak for the container struct.
+> Therefore, the configuration region of the live migration function
+> needs to be opened when the QM driver is loaded. When the QM driver
+> is uninstalled, the driver needs to clear this configuration.
 >=20
-> Yes, that's a memory leak.
+> Signed-off-by: Longfang Liu <liulongfang@huawei.com>
+> ---
+>  drivers/crypto/hisilicon/qm.c | 29 +++++++++++++++++++++++++++++
+>  1 file changed, 29 insertions(+)
 >=20
-> > Note that, besides drm_bridge_chain_get_first_bridge() that this
-> > series covers, there are various other accessors: see items 1.E.{2..8}
+> diff --git a/drivers/crypto/hisilicon/qm.c b/drivers/crypto/hisilicon/qm.=
+c
+> index d3f5d108b898..0a8888304e15 100644
+> --- a/drivers/crypto/hisilicon/qm.c
+> +++ b/drivers/crypto/hisilicon/qm.c
+> @@ -242,6 +242,9 @@
+>  #define QM_QOS_MAX_CIR_U		6
+>  #define QM_AUTOSUSPEND_DELAY		3000
 >=20
-> IIUC, without those items addressed, the issue we have is use-after-free,
-> but not the memory leak this patch introduces(without squash).
+> +#define QM_MIG_REGION_SEL		0x100198
+> +#define QM_MIG_REGION_EN		0x1
+> +
+>   /* abnormal status value for stopping queue */
+>  #define QM_STOP_QUEUE_FAIL		1
+>  #define	QM_DUMP_SQC_FAIL		3
+> @@ -3004,11 +3007,36 @@ static void qm_put_pci_res(struct hisi_qm *qm)
+>  	pci_release_mem_regions(pdev);
+>  }
+>=20
+> +static void hisi_mig_region_clear(struct hisi_qm *qm)
+> +{
+> +	u32 val;
+> +
+> +	/* Clear migration region set of PF */
+> +	if (qm->fun_type =3D=3D QM_HW_PF && qm->ver > QM_HW_V3) {
 
-Given that this structure is going to be allocated a couple of times in
-the system life at best, and that the situation prior to the work Luca
-has been doing was a use-after-free, I'm not really concerned about a
-transient memory leak in a situation that cannot happen.
+Is this going to be same for all future hardware's like OM_HW_V5, OM_HW_V6 =
+etc?
+Otherwise it is better you make it specific to OM_HW_V4. I think
+the above checking  is repeated throughout this series and there is no guar=
+antee
+that future hardware will have the same changes only. So better make it spe=
+cific.
 
-If people want to come and backport random patches without looking at
-the whole thing, that's their problem.
+Thanks,
+Shameer
 
-Maxime
 
---n2sylnxjileb3gpr
-Content-Type: application/pgp-signature; name="signature.asc"
+> +		val =3D readl(qm->io_base + QM_MIG_REGION_SEL);
+> +		val &=3D ~BIT(0);
+> +		writel(val, qm->io_base + QM_MIG_REGION_SEL);
+> +	}
+> +}
+> +
+> +static void hisi_mig_region_enable(struct hisi_qm *qm)
+> +{
+> +	u32 val;
+> +
+> +	/* Select migration region of PF */
+> +	if (qm->fun_type =3D=3D QM_HW_PF && qm->ver > QM_HW_V3) {
+> +		val =3D readl(qm->io_base + QM_MIG_REGION_SEL);
+> +		val |=3D QM_MIG_REGION_EN;
+> +		writel(val, qm->io_base + QM_MIG_REGION_SEL);
+> +	}
+> +}
+> +
+>  static void hisi_qm_pci_uninit(struct hisi_qm *qm)
+>  {
+>  	struct pci_dev *pdev =3D qm->pdev;
+>=20
+>  	pci_free_irq_vectors(pdev);
+> +	hisi_mig_region_clear(qm);
+>  	qm_put_pci_res(qm);
+>  	pci_disable_device(pdev);
+>  }
+> @@ -5630,6 +5658,7 @@ int hisi_qm_init(struct hisi_qm *qm)
+>  		goto err_free_qm_memory;
+>=20
+>  	qm_cmd_init(qm);
+> +	hisi_mig_region_enable(qm);
+>=20
+>  	return 0;
+>=20
+> --
+> 2.24.0
 
------BEGIN PGP SIGNATURE-----
-
-iJUEABMJAB0WIQTkHFbLp4ejekA/qfgnX84Zoj2+dgUCaFpOJQAKCRAnX84Zoj2+
-doGDAYDGXM7w79pHAhwD/Toi8Tf7Ko2GEnXH4ChZ9svR68EvHRbyf0xO9Ks5KkZH
-Gsd79QUBfjoS0KN+H67nrkLbjDtRVTDvSyjBZI7nQQ4JPzv7bafVx4WlQaMrji2I
-LY0GD5ZnCw==
-=ipG2
------END PGP SIGNATURE-----
-
---n2sylnxjileb3gpr--
 
