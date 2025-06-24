@@ -1,267 +1,95 @@
-Return-Path: <linux-kernel+bounces-699854-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-699860-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3EE0FAE6038
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Jun 2025 11:07:05 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 93D77AE6045
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Jun 2025 11:08:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BA1B44C1AD0
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Jun 2025 09:07:05 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 68FCA4A3573
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Jun 2025 09:08:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7931327AC3A;
-	Tue, 24 Jun 2025 09:06:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9AD241F4C87;
+	Tue, 24 Jun 2025 09:07:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="xi/QlwlW";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="Y9LCmN9J";
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="E5mo4GVk";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="oREfj0fF"
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A90B927A46B
-	for <linux-kernel@vger.kernel.org>; Tue, 24 Jun 2025 09:06:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=163.com header.i=@163.com header.b="L2mjg3x6"
+Received: from m16.mail.163.com (m16.mail.163.com [117.135.210.2])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5CE9D19F480
+	for <linux-kernel@vger.kernel.org>; Tue, 24 Jun 2025 09:07:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=117.135.210.2
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750756007; cv=none; b=kh7UL0gE34faywm/qqQ7/ll+1fe1Dh4ZfnWQbbyrk17i7HozSkHHNZzOUZ+LvVLU/OVmMintuGkTvS8EJH1Oh+8dSabGg3m0trDAinRzzK41iPTVFnG+8SSGgGXRFuhhrx3NemUgouyBBadli0gguZl3066GnNRxgIi9+FxMd6I=
+	t=1750756068; cv=none; b=vEj4+lkqFl3p/FgV2EL8FId7V+wi+kpK2IpsDUZysnm/7kvj9AcxfltrY1bmZUwlC+UjBWpU9L9WI92oc7aGvjrX1VtAuiP+9UFaIpd6/c3f/0nKl3A23yvFbovgWuFXcIm2G7WkPIagQRz4StexLPFcKx3Ht84klcchL1D89u8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750756007; c=relaxed/simple;
-	bh=oxW2aAAfKBhOjlWbxlJ/FAtpZq04AOHQ+xCrx3SgYHY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=NjPLPxenXSRBCioFTcFCeVnCiW6asafP8Gr368UKKOSZyGhRCXPql3hJKG5c5VDfpsuP8IOWzKJ4RoEOZDAXKL6EViqTgYmJ59rJ9llu4+G54AAIX0p4PdQ6QP9hpOL7KX8yCWPDZwDmYQiDpClcXUknZ01frKLd8koFbAv9c3Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=xi/QlwlW; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=Y9LCmN9J; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=E5mo4GVk; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=oREfj0fF; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id D7A7A21174;
-	Tue, 24 Jun 2025 09:06:42 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1750756003; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=9lICjNkiewMZFMzrpHfU5ovumYbwTZRme9bMEyMsD/M=;
-	b=xi/QlwlWq8NLVSwyspSzkPKvKMA6Uvj8/W9IFdzSFQMZ+ayNwxoQ7cp2wwdex97PvJgFlo
-	x2f/4oVPrxX02VMjazKS8ra2I9oaBaKqNmT3rxbP2v97idRqli2arNKpl/rNn7z5z2COdO
-	7+ljTlARtsgKwvd1zlhYhRoTz1XsnuM=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1750756003;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=9lICjNkiewMZFMzrpHfU5ovumYbwTZRme9bMEyMsD/M=;
-	b=Y9LCmN9JTWkqSIjoqHkEfxTSRml/p11vY01knXb//RDebqmAaD1GQiHEbhGpors9cm5R2y
-	CTBVZa09ODuiO0Bw==
-Authentication-Results: smtp-out1.suse.de;
-	dkim=pass header.d=suse.de header.s=susede2_rsa header.b=E5mo4GVk;
-	dkim=pass header.d=suse.de header.s=susede2_ed25519 header.b=oREfj0fF
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1750756002; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=9lICjNkiewMZFMzrpHfU5ovumYbwTZRme9bMEyMsD/M=;
-	b=E5mo4GVk3aRBGPmQF64SGv7r/9Z7BrhMxT4Br3ozs8DXcDb//Oxu3nHGSXqq7o7Mb7CLZo
-	IMLqC5HhH2wB7OabuAKDxSBbULfeVUwIiW40R1/IDWT12tchJxMWR5KfDDB9oIDWVupYrc
-	wnYgtTWRX1PCzt/kDQ6JBbhPNcnau4c=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1750756002;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=9lICjNkiewMZFMzrpHfU5ovumYbwTZRme9bMEyMsD/M=;
-	b=oREfj0fFjtCcmySuYyx4a2eVlsi9oKqRPyLTW1pAnJyz47RDYq0CXOXEI70b1LsSzPwU5h
-	OgkxMNrQ9mrgSXBQ==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 35F1213A24;
-	Tue, 24 Jun 2025 09:06:42 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id gHhlC6JqWmhnFgAAD6G6ig
-	(envelope-from <tzimmermann@suse.de>); Tue, 24 Jun 2025 09:06:42 +0000
-Message-ID: <6dedf895-1681-4fe3-8ca4-68fd05070ef2@suse.de>
-Date: Tue, 24 Jun 2025 11:06:41 +0200
+	s=arc-20240116; t=1750756068; c=relaxed/simple;
+	bh=PXxv1x4vMj8HtH6mDoDCzo/S/O1hLgYUGm2bvINLW8g=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:Content-Type:
+	 MIME-Version:Message-ID; b=ka/AsJn8f0rvwdkjXb7cQ6YuMl7Kn60sTH+TZbJXxVjrHGhHdyD/nFg6VngLZuAF9g3K7mJb5ustsvLW3YO95xNZ+Jw/YVbYvChDZwZriZ3vXzsuWu4EAane1/bZIJGiLcKeL3rysgcmqwSBy80vYr+htz8c5o3HyqA50k/eQHU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=fail (1024-bit key) header.d=163.com header.i=@163.com header.b=L2mjg3x6 reason="signature verification failed"; arc=none smtp.client-ip=117.135.210.2
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
+	s=s110527; h=Date:From:To:Subject:Content-Type:MIME-Version:
+	Message-ID; bh=AJtl+7U6LDrFg/qEQD3I4MJY8fflm/Bd3d5juOYtBlY=; b=L
+	2mjg3x6IZ47fmg9peX8RRCP2wdic9Vai5lyZfci6lXzrf0cZKLrGCe4+EbjQ9kuF
+	oEOMZpa69GfYBY/c+kbaWQQfcfQYUUiRRNzum25vTx9jZ3V3Gq4waD2Qx7IbHm2v
+	VVlcVMC6ZpzfTHcoWjJxUfNRBUOHqZRX6uNz/6EScM=
+Received: from 00107082$163.com ( [111.35.191.166] ) by
+ ajax-webmail-wmsvr-40-138 (Coremail) ; Tue, 24 Jun 2025 17:07:15 +0800
+ (CST)
+Date: Tue, 24 Jun 2025 17:07:15 +0800 (CST)
+From: "David Wang" <00107082@163.com>
+To: "Uladzislau Rezki (Sony)" <urezki@gmail.com>
+Cc: "Andrew Morton" <akpm@linux-foundation.org>, linux-mm@kvack.org,
+	LKML <linux-kernel@vger.kernel.org>, "Baoquan He" <bhe@redhat.com>,
+	"Harry Yoo" <harry.yoo@oracle.com>,
+	"Suren Baghdasaryan" <surenb@google.com>
+Subject: Re:[PATCH 1/2] lib/test_vmalloc.c: Use late_initcall() if built-in
+ for init ordering
+X-Priority: 3
+X-Mailer: Coremail Webmail Server Version XT5.0.14 build 20240801(9da12a7b)
+ Copyright (c) 2002-2025 www.mailtech.cn 163com
+In-Reply-To: <20250623184035.581229-1-urezki@gmail.com>
+References: <20250623184035.581229-1-urezki@gmail.com>
+X-NTES-SC: AL_Qu2eAvueuUgo4ySbZ+kZnEYQheY4XMKyuPkg1YJXOp80iCXp/hEFeXBPAETKwcOtMz6tvxe6XzRR9O1eYKR/YotLYXjwF9/upYrzi2UFi4Fl
+Content-Transfer-Encoding: base64
+Content-Type: text/plain; charset=UTF-8
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 6/8] Fix access to video_is_primary_device() when
- compiled without CONFIG_VIDEO
-To: Mario Limonciello <superm1@kernel.org>,
- Bjorn Helgaas <bhelgaas@google.com>
-Cc: Alex Deucher <alexander.deucher@amd.com>,
- =?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>,
- David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
- Lukas Wunner <lukas@wunner.de>,
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
- Maxime Ripard <mripard@kernel.org>, David Woodhouse <dwmw2@infradead.org>,
- Lu Baolu <baolu.lu@linux.intel.com>, Joerg Roedel <joro@8bytes.org>,
- Will Deacon <will@kernel.org>, Robin Murphy <robin.murphy@arm.com>,
- Alex Williamson <alex.williamson@redhat.com>,
- Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>,
- "open list:DRM DRIVERS" <dri-devel@lists.freedesktop.org>,
- open list <linux-kernel@vger.kernel.org>,
- "open list:INTEL IOMMU (VT-d)" <iommu@lists.linux.dev>,
- "open list:PCI SUBSYSTEM" <linux-pci@vger.kernel.org>,
- "open list:VFIO DRIVER" <kvm@vger.kernel.org>,
- "open list:SOUND" <linux-sound@vger.kernel.org>,
- Daniel Dadap <ddadap@nvidia.com>,
- Mario Limonciello <mario.limonciello@amd.com>,
- kernel test robot <lkp@intel.com>
-References: <20250623184757.3774786-1-superm1@kernel.org>
- <20250623184757.3774786-7-superm1@kernel.org>
-Content-Language: en-US
-From: Thomas Zimmermann <tzimmermann@suse.de>
-Autocrypt: addr=tzimmermann@suse.de; keydata=
- xsBNBFs50uABCADEHPidWt974CaxBVbrIBwqcq/WURinJ3+2WlIrKWspiP83vfZKaXhFYsdg
- XH47fDVbPPj+d6tQrw5lPQCyqjwrCPYnq3WlIBnGPJ4/jreTL6V+qfKRDlGLWFjZcsrPJGE0
- BeB5BbqP5erN1qylK9i3gPoQjXGhpBpQYwRrEyQyjuvk+Ev0K1Jc5tVDeJAuau3TGNgah4Yc
- hdHm3bkPjz9EErV85RwvImQ1dptvx6s7xzwXTgGAsaYZsL8WCwDaTuqFa1d1jjlaxg6+tZsB
- 9GluwvIhSezPgnEmimZDkGnZRRSFiGP8yjqTjjWuf0bSj5rUnTGiyLyRZRNGcXmu6hjlABEB
- AAHNJ1Rob21hcyBaaW1tZXJtYW5uIDx0emltbWVybWFubkBzdXNlLmRlPsLAjgQTAQgAOAIb
- AwULCQgHAgYVCgkICwIEFgIDAQIeAQIXgBYhBHIX+6yM6c9jRKFo5WgNwR1TC3ojBQJftODH
- AAoJEGgNwR1TC3ojx1wH/0hKGWugiqDgLNXLRD/4TfHBEKmxIrmfu9Z5t7vwUKfwhFL6hqvo
- lXPJJKQpQ2z8+X2vZm/slsLn7J1yjrOsoJhKABDi+3QWWSGkaGwRJAdPVVyJMfJRNNNIKwVb
- U6B1BkX2XDKDGffF4TxlOpSQzdtNI/9gleOoUA8+jy8knnDYzjBNOZqLG2FuTdicBXblz0Mf
- vg41gd9kCwYXDnD91rJU8tzylXv03E75NCaTxTM+FBXPmsAVYQ4GYhhgFt8S2UWMoaaABLDe
- 7l5FdnLdDEcbmd8uLU2CaG4W2cLrUaI4jz2XbkcPQkqTQ3EB67hYkjiEE6Zy3ggOitiQGcqp
- j//OwE0EWznS4AEIAMYmP4M/V+T5RY5at/g7rUdNsLhWv1APYrh9RQefODYHrNRHUE9eosYb
- T6XMryR9hT8XlGOYRwKWwiQBoWSDiTMo/Xi29jUnn4BXfI2px2DTXwc22LKtLAgTRjP+qbU6
- 3Y0xnQN29UGDbYgyyK51DW3H0If2a3JNsheAAK+Xc9baj0LGIc8T9uiEWHBnCH+RdhgATnWW
- GKdDegUR5BkDfDg5O/FISymJBHx2Dyoklv5g4BzkgqTqwmaYzsl8UxZKvbaxq0zbehDda8lv
- hFXodNFMAgTLJlLuDYOGLK2AwbrS3Sp0AEbkpdJBb44qVlGm5bApZouHeJ/+n+7r12+lqdsA
- EQEAAcLAdgQYAQgAIAIbDBYhBHIX+6yM6c9jRKFo5WgNwR1TC3ojBQJftOH6AAoJEGgNwR1T
- C3ojVSkIALpAPkIJPQoURPb1VWjh34l0HlglmYHvZszJWTXYwavHR8+k6Baa6H7ufXNQtThR
- yIxJrQLW6rV5lm7TjhffEhxVCn37+cg0zZ3j7zIsSS0rx/aMwi6VhFJA5hfn3T0TtrijKP4A
- SAQO9xD1Zk9/61JWk8OysuIh7MXkl0fxbRKWE93XeQBhIJHQfnc+YBLprdnxR446Sh8Wn/2D
- Ya8cavuWf2zrB6cZurs048xe0UbSW5AOSo4V9M0jzYI4nZqTmPxYyXbm30Kvmz0rYVRaitYJ
- 4kyYYMhuULvrJDMjZRvaNe52tkKAvMevcGdt38H4KSVXAylqyQOW5zvPc4/sq9c=
-In-Reply-To: <20250623184757.3774786-7-superm1@kernel.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Spamd-Result: default: False [-4.51 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	R_DKIM_ALLOW(-0.20)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	MX_GOOD(-0.01)[];
-	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	TO_DN_ALL(0.00)[];
-	FREEMAIL_ENVRCPT(0.00)[gmail.com];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	ARC_NA(0.00)[];
-	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	RCPT_COUNT_TWELVE(0.00)[26];
-	MIME_TRACE(0.00)[0:+];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	FREEMAIL_CC(0.00)[amd.com,gmail.com,ffwll.ch,wunner.de,linux.intel.com,kernel.org,infradead.org,8bytes.org,arm.com,redhat.com,perex.cz,suse.com,lists.freedesktop.org,vger.kernel.org,lists.linux.dev,nvidia.com,intel.com];
-	RCVD_TLS_ALL(0.00)[];
-	RCVD_COUNT_TWO(0.00)[2];
-	FROM_EQ_ENVFROM(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	MID_RHS_MATCH_FROM(0.00)[];
-	R_RATELIMIT(0.00)[to_ip_from(RLqbkuqg11osc55coksncbnarj)];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	DKIM_TRACE(0.00)[suse.de:+];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo,imap1.dmz-prg2.suse.org:rdns,suse.de:dkim,suse.de:mid,suse.de:email,intel.com:email]
-X-Spam-Level: 
-X-Spam-Flag: NO
-X-Rspamd-Queue-Id: D7A7A21174
-X-Rspamd-Action: no action
-X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
-X-Spam-Score: -4.51
+Message-ID: <5686796f.8f47.197a1310b6d.Coremail.00107082@163.com>
+X-Coremail-Locale: zh_CN
+X-CM-TRANSID:iigvCgD3L9vEalpoZKAjAA--.21015W
+X-CM-SenderInfo: qqqrilqqysqiywtou0bp/xtbBkBd2qmhaYIw2TAACs9
+X-Coremail-Antispam: 1U5529EdanIXcx71UUUUU7vcSsGvfC2KfnxnUU==
 
-
-
-Am 23.06.25 um 20:47 schrieb Mario Limonciello:
-> From: Mario Limonciello <mario.limonciello@amd.com>
->
-> When compiled without CONFIG_VIDEO the architecture specific
-> implementations of video_is_primary_device() include prototypes and
-> assume that video-common.c will be linked. Guard against this so that the
-> fallback inline implementation that returns false will be used when
-> compiled without CONFIG_VIDEO.
->
-> Reported-by: kernel test robot <lkp@intel.com>
-> Closes: https://lore.kernel.org/oe-kbuild-all/202506221312.49Fy1aNA-lkp@intel.com/
-> Signed-off-by: Mario Limonciello <mario.limonciello@amd.com>
-
-Acked-by: Thomas Zimmermann <tzimmermann@suse.de>
-
-> ---
-> v4:
->   * new patch
-> ---
->   arch/parisc/include/asm/video.h | 2 +-
->   arch/sparc/include/asm/video.h  | 2 ++
->   arch/x86/include/asm/video.h    | 2 ++
->   3 files changed, 5 insertions(+), 1 deletion(-)
->
-> diff --git a/arch/parisc/include/asm/video.h b/arch/parisc/include/asm/video.h
-> index c5dff3223194a..a9d50ebd6e769 100644
-> --- a/arch/parisc/include/asm/video.h
-> +++ b/arch/parisc/include/asm/video.h
-> @@ -6,7 +6,7 @@
->   
->   struct device;
->   
-> -#if defined(CONFIG_STI_CORE)
-> +#if defined(CONFIG_STI_CORE) && defined(CONFIG_VIDEO)
->   bool video_is_primary_device(struct device *dev);
->   #define video_is_primary_device video_is_primary_device
->   #endif
-> diff --git a/arch/sparc/include/asm/video.h b/arch/sparc/include/asm/video.h
-> index a6f48f52db584..773717b6d4914 100644
-> --- a/arch/sparc/include/asm/video.h
-> +++ b/arch/sparc/include/asm/video.h
-> @@ -19,8 +19,10 @@ static inline pgprot_t pgprot_framebuffer(pgprot_t prot,
->   #define pgprot_framebuffer pgprot_framebuffer
->   #endif
->   
-> +#ifdef CONFIG_VIDEO
->   bool video_is_primary_device(struct device *dev);
->   #define video_is_primary_device video_is_primary_device
-> +#endif
->   
->   static inline void fb_memcpy_fromio(void *to, const volatile void __iomem *from, size_t n)
->   {
-> diff --git a/arch/x86/include/asm/video.h b/arch/x86/include/asm/video.h
-> index 0950c9535fae9..08ec328203ef8 100644
-> --- a/arch/x86/include/asm/video.h
-> +++ b/arch/x86/include/asm/video.h
-> @@ -13,8 +13,10 @@ pgprot_t pgprot_framebuffer(pgprot_t prot,
->   			    unsigned long offset);
->   #define pgprot_framebuffer pgprot_framebuffer
->   
-> +#ifdef CONFIG_VIDEO
->   bool video_is_primary_device(struct device *dev);
->   #define video_is_primary_device video_is_primary_device
-> +#endif
->   
->   #include <asm-generic/video.h>
->   
-
--- 
---
-Thomas Zimmermann
-Graphics Driver Developer
-SUSE Software Solutions Germany GmbH
-Frankenstrasse 146, 90461 Nuernberg, Germany
-GF: Ivo Totev, Andrew Myers, Andrew McDonald, Boudien Moerman
-HRB 36809 (AG Nuernberg)
-
+CkF0IDIwMjUtMDYtMjQgMDI6NDA6MzQsICJVbGFkemlzbGF1IFJlemtpIChTb255KSIgPHVyZXpr
+aUBnbWFpbC5jb20+IHdyb3RlOgo+V2hlbiB0aGUgdm1hbGxvYyB0ZXN0IGNvZGUgaXMgY29tcGls
+ZWQgYXMgYSBidWlsdC1pbiwgdXNlIGxhdGVfaW5pdGNhbGwoKQo+aW5zdGVhZCBvZiBtb2R1bGVf
+aW5pdCgpIHRvIGRlZmVyIGEgdm1hbGxvYyB0ZXN0IGV4ZWN1dGlvbiB1bnRpbCBtb3N0Cj5zdWJz
+eXN0ZW1zIGFyZSB1cCBhbmQgcnVubmluZy4KPgo+SXQgYXZvaWRzIGludGVyZmVyaW5nIHdpdGgg
+Y29tcG9uZW50cyB0aGF0IG1heSBub3QgeWV0IGJlIGluaXRpYWxpemVkCj5hdCBtb2R1bGVfaW5p
+dCgpIHRpbWUuIEZvciBleGFtcGxlLCB0aGVyZSB3YXMgYSByZWNlbnQgcmVwb3J0IG9mIG1lbW9y
+eQo+cHJvZmlsaW5nIGluZnJhc3RydWN0dXJlIG5vdCBiZWluZyByZWFkeSBlYXJseSBlbm91Z2gg
+bGVhZGluZyB0byBrZXJuZWwKPmNyYXNoLgo+Cj5CeSB1c2luZyBsYXRlX2luaXRjYWxsKCkgaW4g
+dGhlIGJ1aWx0LWluIGNhc2UsIHdlIGVuc3VyZSB0aGUgdGVzdHMgYXJlCj5ydW4gYXQgYSBzYWZl
+ciBwb2ludCBkdXJpbmcgYSBib290IHNlcXVlbmNlLgo+Cj5DYzogSGFycnkgWW9vIDxoYXJyeS55
+b29Ab3JhY2xlLmNvbT4KPkNjOiBTdXJlbiBCYWdoZGFzYXJ5YW4gPHN1cmVuYkBnb29nbGUuY29t
+Pgo+Q2M6IERhdmlkIFdhbmcgPDAwMTA3MDgyQDE2My5jb20+Cj5TaWduZWQtb2ZmLWJ5OiBVbGFk
+emlzbGF1IFJlemtpIChTb255KSA8dXJlemtpQGdtYWlsLmNvbT4KPi0tLQo+IGxpYi90ZXN0X3Zt
+YWxsb2MuYyB8IDQgKysrKwo+IDEgZmlsZSBjaGFuZ2VkLCA0IGluc2VydGlvbnMoKykKPgo+ZGlm
+ZiAtLWdpdCBhL2xpYi90ZXN0X3ZtYWxsb2MuYyBiL2xpYi90ZXN0X3ZtYWxsb2MuYwo+aW5kZXgg
+MWIwYjU5NTQ5YWFmMS4uNzI2NDc4MTc1MGM5NiAxMDA2NDQKPi0tLSBhL2xpYi90ZXN0X3ZtYWxs
+b2MuYwo+KysrIGIvbGliL3Rlc3Rfdm1hbGxvYy5jCj5AQCAtNTk4LDcgKzU5OCwxMSBAQCBzdGF0
+aWMgaW50IF9faW5pdCB2bWFsbG9jX3Rlc3RfaW5pdCh2b2lkKQo+IAlyZXR1cm4gSVNfQlVJTFRJ
+TihDT05GSUdfVEVTVF9WTUFMTE9DKSA/IDA6LUVBR0FJTjsKPiB9Cj4gCj4rI2lmZGVmIE1PRFVM
+RQo+IG1vZHVsZV9pbml0KHZtYWxsb2NfdGVzdF9pbml0KQo+KyNlbHNlCj4rbGF0ZV9pbml0Y2Fs
+bCh2bWFsbG9jX3Rlc3RfaW5pdCk7Cgo+KyNlbmRpZgoKCldoZW4gTU9EVUxFIGRlZmluZWQswqAg
+bGF0ZV9pbml0Y2FsbCBpcyBkZWZpbmVkIGFzIG1vZHVsZV9pbml0IGluIC4vaW5jbHVkZS9saW51
+eC9tb2R1bGUuaApJIHRoaW5rIHRoZSBNT0RVTEUgY2hlY2sgaGVyZSBpcyByZWR1bmRhbnQsICAo
+aXQgaXMgY2xlYXJlciB0aG91Z2gpCgoKCgo+IAo+IE1PRFVMRV9MSUNFTlNFKCJHUEwiKTsKPiBN
+T0RVTEVfQVVUSE9SKCJVbGFkemlzbGF1IFJlemtpIik7Cj4tLSAKPjIuMzkuNQo=
 
