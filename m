@@ -1,104 +1,102 @@
-Return-Path: <linux-kernel+bounces-700067-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-700065-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 03399AE6367
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Jun 2025 13:13:41 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 53D46AE6363
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Jun 2025 13:12:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 79FC64A2067
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Jun 2025 11:13:21 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3DA9B1925F5E
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Jun 2025 11:13:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A079028C87D;
-	Tue, 24 Jun 2025 11:12:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 65661289804;
+	Tue, 24 Jun 2025 11:12:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ispras.ru header.i=@ispras.ru header.b="DaVOITAe"
-Received: from mail.ispras.ru (mail.ispras.ru [83.149.199.84])
-	(using TLSv1.2 with cipher DHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="fkbIsOIb"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 16EB228BA82;
-	Tue, 24 Jun 2025 11:12:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=83.149.199.84
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BDAE635953;
+	Tue, 24 Jun 2025 11:12:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750763578; cv=none; b=RE807flDNjB/k7hvb4ZIRadRNfpZfKLVjneuBfaABrs6djjRzV0gex6PSxXXLZnSN/XXE0+gfi1p4o/8FV3qevWCCfeFHM5V779VmA+HhjQNyaabs7LSO3oP8nRDDTLvsETsCjcM/SbaMbLEtYRtAfLXi9ICoS5z6rIyBKEWuTw=
+	t=1750763564; cv=none; b=hQG2/0Tlcek0UArf8WPEsdaVlRqWYO4fHiccNl1CEBJS04N9oJwTpIgKtQ7o6hxxRpR2s0TAmNr+mRWwEcM4Toz9X/RbVQ8U0lAheCkEaSnGiHymR5luK4UEl6r+zKsDsHosHmbsa0XhiOVKj9QDKCh+CTHwKu1ny9oegOPt1Ns=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750763578; c=relaxed/simple;
-	bh=NLOceXgEehwlSCG8uHC0Rov0STX+fJgURz/oW/KmDJQ=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=sLobSe/oaREw0qBkIQob7XJ0WYmcA8zQEzvJUf6y84T87u3861ytsQhTVtt/XPF8rqnMPpm2KqeS1k48FOFCphPiSAjomzZj6kN/OkC54+RjXvcKGLqm7XSpgvejWw7DIO2iPlR9ePW8I8hq1jY0n77za6yxhc/1Btesx+CXp4A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ispras.ru; spf=pass smtp.mailfrom=ispras.ru; dkim=pass (1024-bit key) header.d=ispras.ru header.i=@ispras.ru header.b=DaVOITAe; arc=none smtp.client-ip=83.149.199.84
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ispras.ru
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ispras.ru
-Received: from fedora.intra.ispras.ru (unknown [10.10.165.22])
-	by mail.ispras.ru (Postfix) with ESMTPSA id 3EA35552F54A;
-	Tue, 24 Jun 2025 11:12:46 +0000 (UTC)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mail.ispras.ru 3EA35552F54A
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ispras.ru;
-	s=default; t=1750763566;
-	bh=p3GEJfSnRmCnWSjlWMr2fWp6ucvUqxeu9MWl9UlNFvQ=;
-	h=From:To:Cc:Subject:Date:From;
-	b=DaVOITAeXWJh3EJwKDOOnjQmnWgZNMOioFCKoWMipAUy/NLS3XnWTe3zQxSl4VKJ3
-	 ErBy5HcLSN1Db7Ld/2USaR+Pnvc20vMVxMWpG1RdQG3E6po15oAgG8sBi7Cr4vkVGz
-	 PbwyZOala4KODv/1RlYr0IugHhkAf57yXGhWS2d4=
-From: Fedor Pchelkin <pchelkin@ispras.ru>
-To: Pablo Neira Ayuso <pablo@netfilter.org>
-Cc: Fedor Pchelkin <pchelkin@ispras.ru>,
-	Jozsef Kadlecsik <kadlec@netfilter.org>,
-	Florian Westphal <fw@strlen.de>,
-	netfilter-devel@vger.kernel.org,
-	coreteam@netfilter.org,
-	linux-kernel@vger.kernel.org,
-	lvc-project@linuxtesting.org,
-	Alexey Khoroshilov <khoroshilov@ispras.ru>
-Subject: [PATCH nf] netfilter: nf_tables: adjust lockdep assertions handling
-Date: Tue, 24 Jun 2025 14:12:15 +0300
-Message-ID: <20250624111216.107844-1-pchelkin@ispras.ru>
-X-Mailer: git-send-email 2.49.0
+	s=arc-20240116; t=1750763564; c=relaxed/simple;
+	bh=g3CbCB8jLF1TckbG87qfDePxT9szvDcnyqi4HxVYcrQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=FgWIT2Szyaa04THW6XrBYAp/UgGxO6Dc4kMq1ZTrYDomDcmGXyABe/KV/9EaLMMm7ZStTrcy90BkDUTnmFQmFHaKr8D+33eUUcgoYnmsTNAMsJGEk0QXIFmabIbuprI6U7cZoamSQUsoQ+Ea5w8sK7uj7oMkq9Fl7IBGu/U4pFs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=fkbIsOIb; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3A0D8C4CEE3;
+	Tue, 24 Jun 2025 11:12:42 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1750763564;
+	bh=g3CbCB8jLF1TckbG87qfDePxT9szvDcnyqi4HxVYcrQ=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=fkbIsOIbuazx6+T+H0SVxbZbAD6rOiZrFC4uNhu1CxmMtDIUcCiGAioxHwOIHtb1H
+	 i9+pVy9gSKFU6mehmWB2MpesfZCy/wb5xYivls9CZ3ilx0n9WBnQTAEY3A34+e+Exs
+	 jMIvwBzSBwgrV4Md31NMAqAJnfLk58cItwq3luZiFGaVZ+4VDmwukhBqjhVFvFggfz
+	 Enjq1PvmpGCUiLeOlkN/f7xC1HmAiw8eUUy9nnJNl+S2o7zuwVfggAEy0LTyF0+55G
+	 3KNbtHT8dLo8aPFTN7R0LA7fj3SQdNS2x3pwN0sybOGDRa+PUqnGYoO+5v7KDDPClW
+	 Fm5RXO43qpCLg==
+Date: Tue, 24 Jun 2025 13:12:39 +0200
+From: Danilo Krummrich <dakr@kernel.org>
+To: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>,
+	Alexandre Courbot <acourbot@nvidia.com>,
+	Lyude Paul <lyude@redhat.com>,
+	Andreas Hindborg <a.hindborg@kernel.org>,
+	FUJITA Tomonori <fujita.tomonori@gmail.com>,
+	Miguel Ojeda <ojeda@kernel.org>,
+	Tamir Duberstein <tamird@gmail.com>,
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+	Linux Next Mailing List <linux-next@vger.kernel.org>
+Subject: Re: linux-next: build failure after merge of the rust tree
+Message-ID: <aFqIJ6aN_iqEPGAR@pollux>
+References: <20250624173114.3be38990@canb.auug.org.au>
+ <CANiq72=nLeuw030T16-vDZT4A_gNyPm7WuXoK_3nFo0h0-eKJQ@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CANiq72=nLeuw030T16-vDZT4A_gNyPm7WuXoK_3nFo0h0-eKJQ@mail.gmail.com>
 
-It's needed to check the return value of lockdep_commit_lock_is_held(),
-otherwise there's no point in this assertion as it doesn't print any
-debug information on itself.
+On Tue, Jun 24, 2025 at 12:31:52PM +0200, Miguel Ojeda wrote:
+> By the way, I also noticed a Clippy warning in `nova-next` (on its
+> own, i.e. without merging anything) -- please see below [1].
 
-Found by Linux Verification Center (linuxtesting.org) with Svace static
-analysis tool.
+How do I get this warning to trigger? I did run my usual tests with rustc 1.78
+and 1.87.
 
-Fixes: b04df3da1b5c ("netfilter: nf_tables: do not defer rule destruction via call_rcu")
-Reported-by: Alexey Khoroshilov <khoroshilov@ispras.ru>
-Signed-off-by: Fedor Pchelkin <pchelkin@ispras.ru>
----
- net/netfilter/nf_tables_api.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+> [1]
+> 
+>     error: mutable borrow from immutable input(s)
+>        --> rust/kernel/dma.rs:297:78
+>         |
+>     297 |     pub unsafe fn as_slice_mut(&self, offset: usize, count:
+> usize) -> Result<&mut [T]> {
 
-diff --git a/net/netfilter/nf_tables_api.c b/net/netfilter/nf_tables_api.c
-index 24c71ecb2179..44b909755c86 100644
---- a/net/netfilter/nf_tables_api.c
-+++ b/net/netfilter/nf_tables_api.c
-@@ -4039,7 +4039,7 @@ void nf_tables_rule_destroy(const struct nft_ctx *ctx, struct nft_rule *rule)
- /* can only be used if rule is no longer visible to dumps */
- static void nf_tables_rule_release(const struct nft_ctx *ctx, struct nft_rule *rule)
- {
--	lockdep_commit_lock_is_held(ctx->net);
-+	WARN_ON_ONCE(!lockdep_commit_lock_is_held(ctx->net));
- 
- 	nft_rule_expr_deactivate(ctx, rule, NFT_TRANS_RELEASE);
- 	nf_tables_rule_destroy(ctx, rule);
-@@ -5859,7 +5859,7 @@ void nf_tables_deactivate_set(const struct nft_ctx *ctx, struct nft_set *set,
- 			      struct nft_set_binding *binding,
- 			      enum nft_trans_phase phase)
- {
--	lockdep_commit_lock_is_held(ctx->net);
-+	WARN_ON_ONCE(!lockdep_commit_lock_is_held(ctx->net));
- 
- 	switch (phase) {
- 	case NFT_TRANS_PREPARE_ERROR:
--- 
-2.49.0
+I think the method isn't wrong, it is unsafe and the safety requirement
+explicitly covers this part.
 
+However, we should consider changing it anyways.
+
+>         |
+>                 ^^^^^^^^
+>         |
+>     note: immutable borrow here
+>        --> rust/kernel/dma.rs:297:32
+>         |
+>     297 |     pub unsafe fn as_slice_mut(&self, offset: usize, count:
+> usize) -> Result<&mut [T]> {
+>         |                                ^^^^^
+>         = help: for further information visit
+> https://rust-lang.github.io/rust-clippy/master/index.html#mut_from_ref
+>         = note: `-D clippy::mut-from-ref` implied by `-D warnings`
+>         = help: to override `-D warnings` add `#[allow(clippy::mut_from_ref)]`
 
