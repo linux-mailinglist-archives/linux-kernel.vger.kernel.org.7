@@ -1,215 +1,154 @@
-Return-Path: <linux-kernel+bounces-699370-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-699388-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id A1596AE592C
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Jun 2025 03:26:21 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 33AC7AE595B
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Jun 2025 03:44:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3E20F2C12C0
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Jun 2025 01:26:22 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BE79516C729
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Jun 2025 01:44:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CAD8C19CC3D;
-	Tue, 24 Jun 2025 01:26:14 +0000 (UTC)
-Received: from szxga04-in.huawei.com (szxga04-in.huawei.com [45.249.212.190])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9DCD21C2DB2;
+	Tue, 24 Jun 2025 01:44:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="SaXSMPnC"
+Received: from out30-131.freemail.mail.aliyun.com (out30-131.freemail.mail.aliyun.com [115.124.30.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 021663FE7;
-	Tue, 24 Jun 2025 01:26:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.190
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E19D418641
+	for <linux-kernel@vger.kernel.org>; Tue, 24 Jun 2025 01:44:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750728374; cv=none; b=JahFou4qS0jdqbHcI2/fYbpQXuHb84hzAc7y6G04McoRZfrAPSnlAssvzzWWpX+DUacPiT8htJ6lU8tqUprG6MWq1aoU/xzNbZk9VPA2TitP9YAC80x+KQjm58YLWOkNYKpetuYzgmhbpo0/q0VYYRbQOlQmDJm0irahufumqBw=
+	t=1750729463; cv=none; b=U9FAKF7Jq03pFeAIFPE40FDW8Lu5XqRIe7gijPEUlvi6JGI53H45skHD3VQ42PznVJsI1RCOVP9XMfxSv1K8lC+E7o6no8flEhEwRgnK5FM9osdsE0Cm82sq9G7fdaA8HfQ8lvnPD0WfCh2q0qE/+Rf+b1mJphCoMhiHdS3H95o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750728374; c=relaxed/simple;
-	bh=aGnwgqdy4FtSjBe3EoNg9qVtk9DivJD9Nzt4l0iIhBo=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=XsFmUwuSY7GHkNr73izrM/Ld5mqgNABSgQr/SCkk26j3Irf6+2wDBlSUiB08TMKx3IhvGiwfd6yAN6cs7YZ/GedJtfdxYK+ZD0JJciCfR1HBaK9L1T1Ku6OxaqxxLuVYE7SO7SXqPYB8DXekleW/E/xOc80if7lp2HgYZIgASRo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.190
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.162.112])
-	by szxga04-in.huawei.com (SkyGuard) with ESMTP id 4bR6ch0Mjmz2Cff7;
-	Tue, 24 Jun 2025 09:22:12 +0800 (CST)
-Received: from dggpemf500002.china.huawei.com (unknown [7.185.36.57])
-	by mail.maildlp.com (Postfix) with ESMTPS id 046CB140294;
-	Tue, 24 Jun 2025 09:26:09 +0800 (CST)
-Received: from huawei.com (10.175.124.27) by dggpemf500002.china.huawei.com
- (7.185.36.57) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Tue, 24 Jun
- 2025 09:26:07 +0800
-From: Yue Haibing <yuehaibing@huawei.com>
-To: <jhs@mojatatu.com>, <xiyou.wangcong@gmail.com>, <jiri@resnulli.us>,
-	<davem@davemloft.net>, <edumazet@google.com>, <kuba@kernel.org>,
-	<pabeni@redhat.com>, <horms@kernel.org>, <yuehaibing@huawei.com>
-CC: <netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-Subject: [PATCH net-next] net/sched: Remove unused functions
-Date: Tue, 24 Jun 2025 09:43:27 +0800
-Message-ID: <20250624014327.3686873-1-yuehaibing@huawei.com>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1750729463; c=relaxed/simple;
+	bh=FmI7Pvi2S/VWMt5surE3jm0RzIxZPGXcGqhhkIsUgK4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=nVDiqYEMyE2OzTSuiQJRphnhXghZGBKaGu7F/K8CW2v4UmSKovisZ3tZQDpiCZVH7lZvINUjkkax0KlpJMbtz6e9mz2zAPHwqWKm221J9QlU31SBLzMSszPTpqK6ie3WW0TSHe1AM7gpJaQb3zGmuQBivZ+MOdA2HMODmMZu+AE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=SaXSMPnC; arc=none smtp.client-ip=115.124.30.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
+DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
+	d=linux.alibaba.com; s=default;
+	t=1750729456; h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type;
+	bh=bXzLG3qEfg6SUTPkxvvaO8P1W2oF5qK0rvfgE/cq0gA=;
+	b=SaXSMPnCXUg7sAS38XMy501xCZHVqC5q2oKJEh831Hz/w+VpXyZnwZtWe+k2+Citjlr3rjN9AarE1EJxMVDY/iT+M6qhGEb/amO7sxlIiP99Oa81UImoTv0WrroqPXw+9h+qQoftlhCrN2DFv2drlXJNq/1Ji/6Gqc7aawlWPcI=
+Received: from 30.74.144.102(mailfrom:baolin.wang@linux.alibaba.com fp:SMTPD_---0WeeL9rz_1750729455 cluster:ay36)
+          by smtp.aliyun-inc.com;
+          Tue, 24 Jun 2025 09:44:15 +0800
+Message-ID: <c6a531e7-f9ff-4e2a-8a28-c45cbfbc71fa@linux.alibaba.com>
+Date: Tue, 24 Jun 2025 09:44:14 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 1/2] mm: huge_memory: disallow hugepages if the
+ system-wide THP sysfs settings are disabled
+To: Barry Song <21cnbao@gmail.com>
+Cc: akpm@linux-foundation.org, hughd@google.com, david@redhat.com,
+ ziy@nvidia.com, lorenzo.stoakes@oracle.com, Liam.Howlett@oracle.com,
+ npache@redhat.com, ryan.roberts@arm.com, dev.jain@arm.com,
+ linux-mm@kvack.org, linux-kernel@vger.kernel.org
+References: <cover.1750666536.git.baolin.wang@linux.alibaba.com>
+ <adb8d5032ecc7b6935e3197cafffe92cbc7581e6.1750666536.git.baolin.wang@linux.alibaba.com>
+ <CAGsJ_4x4=eJQx9Tyt93hBqx4Q5ORnVUyWO5ddX8f5MEYQGO+AQ@mail.gmail.com>
+From: Baolin Wang <baolin.wang@linux.alibaba.com>
+In-Reply-To: <CAGsJ_4x4=eJQx9Tyt93hBqx4Q5ORnVUyWO5ddX8f5MEYQGO+AQ@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: kwepems200002.china.huawei.com (7.221.188.68) To
- dggpemf500002.china.huawei.com (7.185.36.57)
 
-Since commit c54e1d920f04 ("flow_offload: add ops to tc_action_ops for
-flow action setup") these are unused.
 
-Signed-off-by: Yue Haibing <yuehaibing@huawei.com>
----
- include/net/tc_act/tc_csum.h   | 9 ---------
- include/net/tc_act/tc_ct.h     | 9 ---------
- include/net/tc_act/tc_gate.h   | 9 ---------
- include/net/tc_act/tc_mpls.h   | 9 ---------
- include/net/tc_act/tc_police.h | 9 ---------
- include/net/tc_act/tc_sample.h | 9 ---------
- include/net/tc_act/tc_vlan.h   | 9 ---------
- 7 files changed, 63 deletions(-)
 
-diff --git a/include/net/tc_act/tc_csum.h b/include/net/tc_act/tc_csum.h
-index 68269e4581b7..2515da0142a6 100644
---- a/include/net/tc_act/tc_csum.h
-+++ b/include/net/tc_act/tc_csum.h
-@@ -18,15 +18,6 @@ struct tcf_csum {
- };
- #define to_tcf_csum(a) ((struct tcf_csum *)a)
- 
--static inline bool is_tcf_csum(const struct tc_action *a)
--{
--#ifdef CONFIG_NET_CLS_ACT
--	if (a->ops && a->ops->id == TCA_ID_CSUM)
--		return true;
--#endif
--	return false;
--}
--
- static inline u32 tcf_csum_update_flags(const struct tc_action *a)
- {
- 	u32 update_flags;
-diff --git a/include/net/tc_act/tc_ct.h b/include/net/tc_act/tc_ct.h
-index 77f87c622a2e..e6b45cb27ebf 100644
---- a/include/net/tc_act/tc_ct.h
-+++ b/include/net/tc_act/tc_ct.h
-@@ -92,13 +92,4 @@ static inline void
- tcf_ct_flow_table_restore_skb(struct sk_buff *skb, unsigned long cookie) { }
- #endif
- 
--static inline bool is_tcf_ct(const struct tc_action *a)
--{
--#if defined(CONFIG_NET_CLS_ACT) && IS_ENABLED(CONFIG_NF_CONNTRACK)
--	if (a->ops && a->ops->id == TCA_ID_CT)
--		return true;
--#endif
--	return false;
--}
--
- #endif /* __NET_TC_CT_H */
-diff --git a/include/net/tc_act/tc_gate.h b/include/net/tc_act/tc_gate.h
-index c8fa11ebb397..c1a67149c6b6 100644
---- a/include/net/tc_act/tc_gate.h
-+++ b/include/net/tc_act/tc_gate.h
-@@ -51,15 +51,6 @@ struct tcf_gate {
- 
- #define to_gate(a) ((struct tcf_gate *)a)
- 
--static inline bool is_tcf_gate(const struct tc_action *a)
--{
--#ifdef CONFIG_NET_CLS_ACT
--	if (a->ops && a->ops->id == TCA_ID_GATE)
--		return true;
--#endif
--	return false;
--}
--
- static inline s32 tcf_gate_prio(const struct tc_action *a)
- {
- 	s32 tcfg_prio;
-diff --git a/include/net/tc_act/tc_mpls.h b/include/net/tc_act/tc_mpls.h
-index 721de4f5733a..d452e5e94fd0 100644
---- a/include/net/tc_act/tc_mpls.h
-+++ b/include/net/tc_act/tc_mpls.h
-@@ -27,15 +27,6 @@ struct tcf_mpls {
- };
- #define to_mpls(a) ((struct tcf_mpls *)a)
- 
--static inline bool is_tcf_mpls(const struct tc_action *a)
--{
--#ifdef CONFIG_NET_CLS_ACT
--	if (a->ops && a->ops->id == TCA_ID_MPLS)
--		return true;
--#endif
--	return false;
--}
--
- static inline u32 tcf_mpls_action(const struct tc_action *a)
- {
- 	u32 tcfm_action;
-diff --git a/include/net/tc_act/tc_police.h b/include/net/tc_act/tc_police.h
-index 283bde711a42..490d88cb5233 100644
---- a/include/net/tc_act/tc_police.h
-+++ b/include/net/tc_act/tc_police.h
-@@ -44,15 +44,6 @@ struct tc_police_compat {
- 	struct tc_ratespec	peakrate;
- };
- 
--static inline bool is_tcf_police(const struct tc_action *act)
--{
--#ifdef CONFIG_NET_CLS_ACT
--	if (act->ops && act->ops->id == TCA_ID_POLICE)
--		return true;
--#endif
--	return false;
--}
--
- static inline u64 tcf_police_rate_bytes_ps(const struct tc_action *act)
- {
- 	struct tcf_police *police = to_police(act);
-diff --git a/include/net/tc_act/tc_sample.h b/include/net/tc_act/tc_sample.h
-index b5d76305e854..abd163ca1864 100644
---- a/include/net/tc_act/tc_sample.h
-+++ b/include/net/tc_act/tc_sample.h
-@@ -17,15 +17,6 @@ struct tcf_sample {
- };
- #define to_sample(a) ((struct tcf_sample *)a)
- 
--static inline bool is_tcf_sample(const struct tc_action *a)
--{
--#ifdef CONFIG_NET_CLS_ACT
--	return a->ops && a->ops->id == TCA_ID_SAMPLE;
--#else
--	return false;
--#endif
--}
--
- static inline __u32 tcf_sample_rate(const struct tc_action *a)
- {
- 	return to_sample(a)->rate;
-diff --git a/include/net/tc_act/tc_vlan.h b/include/net/tc_act/tc_vlan.h
-index 904eddfc1826..3f5e9242b5e8 100644
---- a/include/net/tc_act/tc_vlan.h
-+++ b/include/net/tc_act/tc_vlan.h
-@@ -26,15 +26,6 @@ struct tcf_vlan {
- };
- #define to_vlan(a) ((struct tcf_vlan *)a)
- 
--static inline bool is_tcf_vlan(const struct tc_action *a)
--{
--#ifdef CONFIG_NET_CLS_ACT
--	if (a->ops && a->ops->id == TCA_ID_VLAN)
--		return true;
--#endif
--	return false;
--}
--
- static inline u32 tcf_vlan_action(const struct tc_action *a)
- {
- 	u32 tcfv_action;
--- 
-2.34.1
+On 2025/6/23 19:08, Barry Song wrote:
+> On Mon, Jun 23, 2025 at 8:28 PM Baolin Wang
+> <baolin.wang@linux.alibaba.com> wrote:
+>>
+>> When invoking thp_vma_allowable_orders(), the TVA_ENFORCE_SYSFS flag is not
+>> specified, we will ignore the THP sysfs settings. Whilst it makes sense for the
+>> callers who do not specify this flag, it creates a odd and surprising situation
+>> where a sysadmin specifying 'never' for all THP sizes still observing THP pages
+>> being allocated and used on the system.
+>>
+>> The motivating case for this is MADV_COLLAPSE. The MADV_COLLAPSE will ignore
+>> the system-wide Anon THP sysfs settings, which means that even though we have
+>> disabled the Anon THP configuration, MADV_COLLAPSE will still attempt to collapse
+>> into a Anon THP. This violates the rule we have agreed upon: never means never.
+>>
+> 
+> Should we update the man page for madv_collapse ?
+> https://man7.org/linux/man-pages/man2/madvise.2.html
+> 
+>                MADV_COLLAPSE is independent of any sysfs (see sysfs(5))
+>                setting under /sys/kernel/mm/transparent_hugepage, both in
+>                terms of determining THP eligibility, and allocation
+>                semantics.  See Linux kernel source file
+>                Documentation/admin-guide/mm/transhuge.rst for more
+>                information.  MADV_COLLAPSE also ignores huge= tmpfs mount
+>                when operating on tmpfs files.  Allocation for the new
+>                hugepage may enter direct reclaim and/or compaction,
+>                regardless of VMA flags (though VM_NOHUGEPAGE is still
+>                respected).
+> 
+> So this effectively changes the uABI, right?
 
+Good point. Will update the man page.
+
+>> Currently, besides MADV_COLLAPSE not setting TVA_ENFORCE_SYSFS, there is only
+>> one other instance where TVA_ENFORCE_SYSFS is not set, which is in the
+>> collapse_pte_mapped_thp() function, but I believe this is reasonable from its
+>> comments:
+>>
+>> "
+>> /*
+>>   * If we are here, we've succeeded in replacing all the native pages
+>>   * in the page cache with a single hugepage. If a mm were to fault-in
+>>   * this memory (mapped by a suitably aligned VMA), we'd get the hugepage
+>>   * and map it by a PMD, regardless of sysfs THP settings. As such, let's
+>>   * analogously elide sysfs THP settings here.
+>>   */
+>> if (!thp_vma_allowable_order(vma, vma->vm_flags, 0, PMD_ORDER))
+>> "
+>>
+>> Another rule for madvise, referring to David's suggestion: “allowing for
+>> collapsing in a VM without VM_HUGEPAGE in the "madvise" mode would be fine".
+>>
+>> To address this issue, the current strategy should be:
+>>
+>> If no hugepage modes are enabled for the desired orders, nor can we enable them
+>> by inheriting from a 'global' enabled setting - then it must be the case that
+>> all desired orders either specify or inherit 'NEVER' - and we must abort.
+>>
+>> Meanwhile, we should fix the khugepaged selftest for MADV_COLLAPSE by enabling
+>> THP.
+> 
+> It’s a bit odd that the old test case expects collapsing to succeed
+> even when we’ve set it
+> to ‘never’.
+> Setting it to ‘always’ doesn’t seem to test anything as a counterpart.
+> 
+> I assume the goal is to test that setting it to ‘never’ prevents collapsing?
+
+The original logic will prevent khugepaged by setting THP_NEVER, 
+allowing only madvise_collapse() to perform THP collapse. And this is 
+the logic this patchset tries to fix, which is to also prevent 
+madvise_collapse() from performing THP collapse when system-wide THP 
+sysfs settings are disabled.
+
+Therefore, it should be changed to THP_ALWAYS here to allow 
+madvise_collapse() to perform THP collapse.
+
+Of course, the current logic cannot completely disable khugepaged, but I 
+haven't found a better way to modify it. As David suggested, changing to 
+MADVISE mode would cause some test cases to fail because some tests 
+previously set MADV_NOHUGEPAGE, and now there is no other way to clear 
+the MADV_NOHUGEPAGE flag except for setting MADV_HUGEPAGE. As a result, 
+khugepaged cannot be completely disabled either.
+
+So I think we should introduce a new method to clear MADV_NOHUGEPAGE 
+flag without setting MADV_HUGEPAGE in the future.
 
