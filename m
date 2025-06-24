@@ -1,92 +1,84 @@
-Return-Path: <linux-kernel+bounces-699460-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-699453-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 258BAAE5A5C
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Jun 2025 05:09:27 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4DE17AE5A50
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Jun 2025 05:01:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3B9B73B49C2
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Jun 2025 03:09:02 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D4ACF7B0B96
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Jun 2025 03:00:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 31A5F19DF4A;
-	Tue, 24 Jun 2025 03:09:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 538CF136658;
+	Tue, 24 Jun 2025 03:01:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b="chLk4k1m"
-Received: from relay.smtp-ext.broadcom.com (relay.smtp-ext.broadcom.com [192.19.144.205])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="um9XhMVS"
+Received: from out-173.mta0.migadu.com (out-173.mta0.migadu.com [91.218.175.173])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 20FD223774
-	for <linux-kernel@vger.kernel.org>; Tue, 24 Jun 2025 03:09:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.19.144.205
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 895021DFF0
+	for <linux-kernel@vger.kernel.org>; Tue, 24 Jun 2025 03:01:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750734561; cv=none; b=Y5NuTyMVHv6wsO6pSE4ci0O/0Onv8Tv2essswEESxant2CGdkEWs0V1cigmHJZBeKFT4GaX6KVD8Hr5JqVXN1W7piKXpr2Ia2SKJK3cnMAu6d/pEEQIkO2HN9byek2ZhGk5ZcV9M5Di5xhzq/48/TFG2JQ8RsxyE8wSSqOqycSg=
+	t=1750734085; cv=none; b=tjsFkVLC34eu/naTxkvkkM3PJqcjdw6dR7jDg/9hXTgKc3r0WN+tyykgvl0dk3kRprv7b3HXlFF3r/fMx9VUfiJYVrQuUejdJtIDjpMq76ZbX+llS+kDixZd5z3kJbdt0MSt2Gqc2uNfIZnY/ghhG+9tQygn3RYg2lfvO9+svw8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750734561; c=relaxed/simple;
-	bh=YGvDaLTtcK1FEWqHANmxfV/oj1NBdAGvyHAThtMEXlU=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=tkzIhozIJRtCh3mbBVDx1HVwAWuwY84Ec6bhdoEZqeLY7ikQx0VvY3r8Dl9iA2WnUS6u1RwRlx7dxOmFsgzCfRd3Di3UrAi2fYQRbqCzerNp0B7z5/qwgQhVLMHVTieYjO67415wUt5OARg9NR5rjCGbFS4+tSx6vN3l58gxxxo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com; spf=fail smtp.mailfrom=broadcom.com; dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b=chLk4k1m; arc=none smtp.client-ip=192.19.144.205
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=broadcom.com
-Received: from mail-lvn-it-01.broadcom.com (mail-lvn-it-01.lvn.broadcom.net [10.36.132.253])
-	by relay.smtp-ext.broadcom.com (Postfix) with ESMTP id 24739C000C84;
-	Mon, 23 Jun 2025 20:00:57 -0700 (PDT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 relay.smtp-ext.broadcom.com 24739C000C84
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=broadcom.com;
-	s=dkimrelay; t=1750734057;
-	bh=YGvDaLTtcK1FEWqHANmxfV/oj1NBdAGvyHAThtMEXlU=;
-	h=From:To:Cc:Subject:Date:From;
-	b=chLk4k1mG5ZR96cQVcWXdemtEatvXdlXVrLqGMfDdCSuEtyhqrM1b7zUZT1Jd5NHC
-	 9D4392hfUEQlN81fN1oKGLhDl7kdBjM9O/WOFCuzh49cyIUS+UkP1H8u/C8NbUNgmu
-	 NXHcwqI9631ctgUozBVCk10uJpaIWhZaP9Lb6so8=
-Received: from fainelli-desktop.igp.broadcom.net (fainelli-desktop.dhcp.broadcom.net [10.67.48.245])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mail-lvn-it-01.broadcom.com (Postfix) with ESMTPSA id C09631800051E;
-	Mon, 23 Jun 2025 20:00:26 -0700 (PDT)
-From: Florian Fainelli <florian.fainelli@broadcom.com>
-To: linux-kernel@vger.kernel.org
-Cc: Florian Fainelli <florian.fainelli@broadcom.com>,
-	Jan Kiszka <jan.kiszka@siemens.com>,
-	Kieran Bingham <kbingham@kernel.org>,
-	Andrew Morton <akpm@linux-foundation.org>
-Subject: [PATCH] scripts/gdb: De-reference per-CPU MCE interrupts
-Date: Mon, 23 Jun 2025 20:00:19 -0700
-Message-ID: <20250624030020.882472-1-florian.fainelli@broadcom.com>
-X-Mailer: git-send-email 2.43.0
+	s=arc-20240116; t=1750734085; c=relaxed/simple;
+	bh=ifnz8cxST4csJGnR4a4YdF7G0sJ2pkz2ecy8IJ4k5Sc=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=HfpjuBlTH+q0gqNb0h/dasKSmnpDzi07Hxeyznwbq4R708Qtx1uXu7oE+I1/NQFF6bKPkv9nVT0DD0NqzoRtLt3vwMNeeyBwyo2JVhfbHo1p2Enx1Imrufd8eZdAmSbsmL3TBXK9gh2jWA4TvuNuAx/IXdLbIGiwbHrwCjO+HME=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=um9XhMVS; arc=none smtp.client-ip=91.218.175.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Message-ID: <63712e2f-9a20-403f-aecd-83cfe759be69@linux.dev>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1750734080;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=udTLqfIMq1qZsjVlQeoaOV0M0czxIkS7YGqSRxrTbqg=;
+	b=um9XhMVSx/JUdFxW+9zaoi3GBlAvOvn8+azbCNOqCcptWYD/HY9VO3swBeHgT8sCTdMLL1
+	90cDnZeYUamv1S1hmKAsF2u8XhA5pdqh+nGIUu0Of+bJBj0Jp97vRYKu4dBqHx5vxQt5+o
+	/9DU9Jl/7yuK9QEHAGJPxZRSC9bNFU0=
+Date: Tue, 24 Jun 2025 11:01:12 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Subject: Re: [PATCH linux next 0/3] Docs/zh_CN: Translate networking docs to
+ Simplified Chinese
+To: jiang.kun2@zte.com.cn, alexs@kernel.org, corbet@lwn.net,
+ linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc: xu.xin16@zte.com.cn, yang.yang29@zte.com.cn, wang.yaxin@zte.com.cn,
+ fan.yu9@zte.com.cn, he.peilin@zte.com.cn, tu.qiang35@zte.com.cn,
+ qiu.yutan@zte.com.cn, zhang.yunkai@zte.com.cn, ye.xingchen@zte.com.cn
+References: <20250613112357830opyPb3DK8AEbbNPPJBTrM@zte.com.cn>
+Content-Language: en-US
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Yanteng Si <si.yanteng@linux.dev>
+In-Reply-To: <20250613112357830opyPb3DK8AEbbNPPJBTrM@zte.com.cn>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
+X-Migadu-Flow: FLOW_OUT
 
-The per-CPU MCE interrupts are looked up by reference and need to be
-de-referenced before printing.
 
-Fixes: b0969d7687a7 ("scripts/gdb: print interrupts")
-Signed-off-by: Florian Fainelli <florian.fainelli@broadcom.com>
----
- scripts/gdb/linux/interrupts.py | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+在 6/13/25 11:23 AM, jiang.kun2@zte.com.cn 写道:
+> From: Wang Yaxin <wang.yaxin@zte.com.cn>
+>
+> translate networking docs to Simplified Chinese
+>
+> Wang Yaxin (3):
+>    Docs/zh_CN: Translate netif-msg.rst to Simplified Chinese
+>    Docs/zh_CN: Translate xfrm_proc.rst to Simplified Chinese
+>    Docs/zh_CN: Translate netmem.rst to Simplified Chinese
 
-diff --git a/scripts/gdb/linux/interrupts.py b/scripts/gdb/linux/interrupts.py
-index 199d9e8193f4..8bd0d7108ae0 100644
---- a/scripts/gdb/linux/interrupts.py
-+++ b/scripts/gdb/linux/interrupts.py
-@@ -110,7 +110,7 @@ def x86_show_mce(prec, var, pfx, desc):
-     pvar = gdb.parse_and_eval(var)
-     text = "%*s: " % (prec, pfx)
-     for cpu in cpus.each_online_cpu():
--        text += "%10u " % (cpus.per_cpu(pvar, cpu))
-+        text += "%10u " % (cpus.per_cpu(pvar, cpu).dereference())
-     text += "  %s\n" % (desc)
-     return text
- 
--- 
-2.43.0
+They are not in the same thread. Please resend them.
+
+Thanks,
+
+Yanteng
 
 
