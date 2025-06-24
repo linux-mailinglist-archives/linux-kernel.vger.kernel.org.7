@@ -1,109 +1,123 @@
-Return-Path: <linux-kernel+bounces-701117-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-701101-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7F28AAE70EA
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Jun 2025 22:35:33 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id F3170AE70B6
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Jun 2025 22:30:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7BAEA4A29C5
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Jun 2025 20:34:30 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B7D283A5F83
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Jun 2025 20:29:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3F5DF2EAB69;
-	Tue, 24 Jun 2025 20:33:21 +0000 (UTC)
-Received: from logand.com (logand.com [37.48.87.44])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6AE422EB5B8;
+	Tue, 24 Jun 2025 20:30:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="KxnD+2w/"
+Received: from mail-wr1-f51.google.com (mail-wr1-f51.google.com [209.85.221.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 41F324C9F;
-	Tue, 24 Jun 2025 20:33:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=37.48.87.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3EAE92E9EB4;
+	Tue, 24 Jun 2025 20:30:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750797200; cv=none; b=kWVZWEMDrXM25ntGwTlQ47hPiHvPZNVSkabk/yhCcON+krdKkW5a5+usIXtKcDn35T00FdpMGvDMzt91AjymlRqPRfLoL9U9tUyrBiNIbNEq6cjcuDgV7fPbE/LEC5i/8Oo4TaXjh97wh/lUsmGScmGOrbgSHC3WO9f/s94oU98=
+	t=1750797002; cv=none; b=Gy7KCe82B2CBVaM5wbMiJlVjCXNrl28xOPBs2xQDrEKf7i0mzDz5SCMo4KoYWKFXHNlyI5ETPcftQzCJVAyq7C/TtxaYGObXFsAK2iXb59Se1nr0r/SYSlyJgv77zYFQUPHmDidY79VlgLy2LOpkaESlpCp5kZU3hIow7jmZfCM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750797200; c=relaxed/simple;
-	bh=awUJ59KCPPuvPJZePiwtYh8/HLcDmmaXXLX8J+3uhuE=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=guR5o57YfNTtiAIU3aEs3diYPV5P8L7e1vVsEl8CQ6hiAnOQjWt986tb/j8iRLyESZlf44xHUGftlMIhBjc1riKrxSvErx4zXP8cwhgKJDpYYZrQY4T75S85iHzf1IrBVnypv0rXg81xcwaJxkuhS0OOuWVZOHGwYbNe3Q5GdZ8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=logand.com; spf=pass smtp.mailfrom=logand.com; arc=none smtp.client-ip=37.48.87.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=logand.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=logand.com
-Received: by logand.com (Postfix, from userid 1001)
-	id CE7491A0C05; Tue, 24 Jun 2025 22:27:20 +0200 (CEST)
-X-Mailer: emacs 30.1 (via feedmail 11-beta-1 I)
-From: Tomas Hlavaty <tom@logand.com>
-To: Ryusuke Konishi <konishi.ryusuke@gmail.com>
-Cc: linux-nilfs@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: BUG: NILFS error (device dm-0): nilfs_bmap_lookup_contig: broken
- bmap (inode number=4023271)
-Date: Tue, 24 Jun 2025 22:27:18 +0200
-Message-ID: <87tt44lwbd.fsf@logand.com>
+	s=arc-20240116; t=1750797002; c=relaxed/simple;
+	bh=G5jHjUAFPaNxb766dDm6aPO5ukHke3MtXDLhg1dG6YY=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=XC9S6faHHUJE5rk964vezRzv8mA5UK8/iDdTNsITNN3IzjW9aDT8CS/p+dmLRG1CTIDf8/jfMN2CfcV3U5D+4OT+49rqBn185tvzfWBKZIqzPYxu7eVPDYmNW1BdSI7SBngSI2vmYWwLrnwbOvYLHx4sMYyHMBxj3bbYgx3ybMk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=KxnD+2w/; arc=none smtp.client-ip=209.85.221.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wr1-f51.google.com with SMTP id ffacd0b85a97d-3a6d1369d4eso588552f8f.2;
+        Tue, 24 Jun 2025 13:30:01 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1750796999; x=1751401799; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=cc1cJV8t9VucNYTqwHrmhx6iEFKvUQnQDzRDdocCpb4=;
+        b=KxnD+2w/QDVTMYS+KSpYaZ3IPmwVMpqex88t5g31MygVz4ojgC5UX9lJUmUbQcGozq
+         WQ1qCQwORp1JQN3Gcdc9nTfaDJF/UX8p+J7/S22xD1NMB9BhCzo3dKPQJxzU7OL+izP9
+         XBdmPVjwKxeSdKovcwp6LowwXOjPWsizi5e8Hck7w1SVdJNK+De3Ts/1QmB8VMritpxG
+         2+JnrYaBqbOIjDR3RyrH4ih2bsn0fl040MISY1UYEmoKz0dMUdFG8TjqBsCnCweZHkj6
+         QZv8ejhi38h2yWibsQ4dBmo9PiPMSLPET8lwe9O7AUeaSIr6CLLujSy7N4c2UBgW58x5
+         +Fww==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1750796999; x=1751401799;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=cc1cJV8t9VucNYTqwHrmhx6iEFKvUQnQDzRDdocCpb4=;
+        b=hmwQV6uIFYGe4HE1K4YP7URDcL/q5nKA723cxCVeGAndlerwXk5DZJnMIdEZsjoagf
+         BWBIRstS+G+eyuzFNoT8qROK8xivQ+pV9Lb0bvimCBvdVeveCj/++vD1m+8VG2UxEkCg
+         LlHszPIE+2q7y/eMuVXVtfp6aL3ivcc4q8rSYxnoWacdXKVqWmvFApNMqj1DrzJwo1Vc
+         ryb09SuWJIIw6pNfVPkxfMUZrfZlXA8YZcxQQowviaWhDQXV6zRnk8J9yBB6Zq8IzXbI
+         gwRXb7oifhFVwJwriYa4vhXOZZ9pXoOtUcZ0JkSHEOP+snZ/HbAo8V1Wlh4C3NhTxCvF
+         9UWw==
+X-Forwarded-Encrypted: i=1; AJvYcCVUADtnpzcDKzY30nhJ004k8eDDLHUlCsMXbrrTJiyxeiVqwLlevNlAeeEvYF9EI7J3k2MF6jshqk/m@vger.kernel.org, AJvYcCWXB+tSItltDj023XIhpp/iWojrZPv0+pFg4w0eCEsMFbgDKjQ6lHlBv8OqBVWipDMcs2xEVwxtLw8itrWM@vger.kernel.org
+X-Gm-Message-State: AOJu0YxnYHcpdOTQRhsqWP8OpcyGW7IfZbzGa/g5V3VHiCNLmUhxoUAG
+	FL4G2/woMRRKF+HuzBAzHb3H3DZjO4o+uMOgfUHgwIOlX3PXGJQUbguh
+X-Gm-Gg: ASbGnctk+S/Baw4REiK0P4xs9VdWsen3JtoH8x3mYL5Xhx87a48LDwC36b4PZMQo1en
+	M0RKYQ+WfeF2hovcv5qs4+pGbxqhmhIPlrnZGOwccmCNICTG4zweGlpeoyET8hNo/JqY6ahT+SK
+	88asyeL+SjMPE+0j2fNEvy2kvf29YL7a6z/rz9Tk3im3Uj0BS8S6TIZgK5+U/lhc0saiFy+ldFX
+	j/wOSOm+PG3E+RQpxgUBl2AHt3yYUcyU6rvCrHP55lqdVJfJ3ah3od2xwJj7MhDwdukuX/28sxs
+	6SJxScACJtGzvi9iIVPppaoP/186AO5ASjOApZMto/fcvY5agnrmhhd3MI/XhdvdF+HO/wQ=
+X-Google-Smtp-Source: AGHT+IHslSSf7KvDz7QkNZn4Jopu99GX8X8EENWK+B96+OCkA6cc2nKI3QeRmFM3Q4mtkbi5MWCS8g==
+X-Received: by 2002:a05:6000:4a0d:b0:3a1:fcd9:f2ff with SMTP id ffacd0b85a97d-3a6ed60c8d2mr137549f8f.12.1750796999442;
+        Tue, 24 Jun 2025 13:29:59 -0700 (PDT)
+Received: from localhost ([87.254.0.133])
+        by smtp.gmail.com with UTF8SMTPSA id 5b1f17b1804b1-4537c6e2f64sm13745905e9.2.2025.06.24.13.29.59
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 24 Jun 2025 13:29:59 -0700 (PDT)
+From: Colin Ian King <colin.i.king@gmail.com>
+To: "Rafael J . Wysocki" <rafael@kernel.org>,
+	Len Brown <lenb@kernel.org>,
+	James Morse <james.morse@arm.com>,
+	Tony Luck <tony.luck@intel.com>,
+	Borislav Petkov <bp@alien8.de>,
+	Ira Weiny <ira.weiny@intel.com>,
+	linux-acpi@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH][next] ACPI: APEI: EINJ: Fix check and iounmap of uninitialized pointer p
+Date: Tue, 24 Jun 2025 21:29:37 +0100
+Message-ID: <20250624202937.523013-1-colin.i.king@gmail.com>
+X-Mailer: git-send-email 2.50.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 
-Hi Ryusuke,
+In the case where a request_mem_region call fails and pointer r is null
+the error exit path via label 'out' will check for a non-null pointer
+p and try to iounmap it. However, pointer p has not been assigned a
+value at this point, so it may potentially contain any garbage value.
+Fix this by ensuring pointer p is initialized to NULL.
 
-I get the following error:
+Fixes: 1a35c88302a3 ("ACPI: APEI: EINJ: Fix kernel test sparse warnings")
+Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
+---
+ drivers/acpi/apei/einj-core.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-   NILFS error (device dm-0): nilfs_bmap_lookup_contig:
-   broken bmap (inode number=4023271)
+diff --git a/drivers/acpi/apei/einj-core.c b/drivers/acpi/apei/einj-core.c
+index 7930acd1d3f3..fc801587df8e 100644
+--- a/drivers/acpi/apei/einj-core.c
++++ b/drivers/acpi/apei/einj-core.c
+@@ -401,7 +401,7 @@ static int __einj_error_trigger(u64 trigger_paddr, u32 type,
+ 	u32 table_size;
+ 	int rc = -EIO;
+ 	struct acpi_generic_address *trigger_param_region = NULL;
+-	struct acpi_einj_trigger __iomem *p;
++	struct acpi_einj_trigger __iomem *p = NULL;
+ 
+ 	r = request_mem_region(trigger_paddr, sizeof(trigger_tab),
+ 			       "APEI EINJ Trigger Table");
+-- 
+2.50.0
 
-and the filesystem gets mounted read-only.
-
-I can remount the filesystem read-write again manually, but after an
-operation which touches the broken part of the filesystem, it gets
-remounted read-only again.
-
-I have identified the file of the inode:
-sudo find / -inum 4023271
-as
-/root/.cache/mesa_shader_cache_db/index
-but remounting rw and trying to
-rm -r /root/.cache
-puts the filesystem to ro mode again.
-(not sure why there is .cache dir and mesa_shader_cache_db dir in the
-/root dir, I never use root account for GUI)
-
-I am in the process of upgrading the system from nixos24.11 to
-nixos25.05 but this issue is preventing me from doing so.  Is there a
-way to fix the filesystem so that it stays read-write?  Or do I have to
-discard the whole filesystem?
-
-Also I have noticed since long time ago, that reboot or shutdown says
-something about nilfs discarding stuff, which seems strange and those
-messages were not there a year or more ago.  Not sure if this is
-related, but it should not be discarding anything I guess.  I see these
-messages on many machines so it is not related to a particular hardware.
-
-Log and stacktrace are bellow.
-Please let me know if I can provide more info about the problem.
-
-Any help would be appreciated.
-
-Thank you,
-
-Tomas
-
-$ uname -a
-Linux buta 6.6.87 #1-NixOS SMP PREEMPT_DYNAMIC Thu Apr 10 12:37:44 UTC 2025 x86_64 GNU/Linux
-
-$ sudo dmesg | grep nilfs
-[    1.087780] stage-1-init: [Tue Jun 24 19:32:16 UTC 2025] loading module nilfs2...
-[   35.318251] NILFS error (device dm-0): nilfs_bmap_lookup_contig: broken bmap (inode number=4023271)
-[   35.319235] NILFS error (device dm-0): nilfs_bmap_lookup_contig: broken bmap (inode number=4023271)
-[...]
-[   35.347872] NILFS error (device dm-0): nilfs_bmap_lookup_contig:
-broken bmap (inode number=4023271)
-[ 1733.401421]  nilfs_segctor_do_construct+0xdd/0x2630 [nilfs2]
-[ 1733.401747]  ? nilfs_mdt_fetch_dirty+0x19/0x50 [nilfs2]
-[ 1733.401899]  ? nilfs_test_metadata_dirty.isra.0+0x50/0xb0 [nilfs2]
-[ 1733.402059]  nilfs_segctor_construct+0x170/0x2b0 [nilfs2]
-[ 1733.402220]  nilfs_segctor_thread+0x155/0x3f0 [nilfs2]
-[ 1733.402385]  ? __pfx_nilfs_segctor_thread+0x10/0x10 [nilfs2]
-[ 1738.068626] NILFS error (device dm-0): nilfs_bmap_last_key: broken
-bmap (inode number=4023271)
 
