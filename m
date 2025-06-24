@@ -1,44 +1,44 @@
-Return-Path: <linux-kernel+bounces-699401-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-699406-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 988B1AE5973
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Jun 2025 03:56:08 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id F2EF2AE597B
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Jun 2025 03:58:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 34BFF4A7D80
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Jun 2025 01:56:09 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 81C6D4A3780
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Jun 2025 01:58:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A6CFF1D5CE5;
-	Tue, 24 Jun 2025 01:56:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ADB4F1FFC45;
+	Tue, 24 Jun 2025 01:58:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="R8bwwTuZ"
-Received: from out30-132.freemail.mail.aliyun.com (out30-132.freemail.mail.aliyun.com [115.124.30.132])
+	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="PtW5XDfi"
+Received: from out30-100.freemail.mail.aliyun.com (out30-100.freemail.mail.aliyun.com [115.124.30.100])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AF7D1146D6A
-	for <linux-kernel@vger.kernel.org>; Tue, 24 Jun 2025 01:55:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.132
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 11FC31F5823
+	for <linux-kernel@vger.kernel.org>; Tue, 24 Jun 2025 01:58:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.100
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750730163; cv=none; b=NxisD1d9+2/Cdqy7uFEzKUKifkAtc9ySQP4ixdhKtATNFLFbE/wVZcHAP8RXBMcLPFIqxp5ZMx4UQ31E0LHq3cvmHhVcCdUjQN7Wbe+VAR0Ctg+hvtf9z6FoHbPlkgnTgPxIivIwZojSOJixnBEIneOwwRZRfzIFNR36OSHnxWw=
+	t=1750730300; cv=none; b=CUUfurr5jQ/YvJ8rH2NOYCeTh39dxeVlMMYHZzIfeHgOq4DCUeYMpWP1wuJ2bOu9cWVu/ObTRdnD7rOc+zigIpojl+vBTDsDPLNW9PsMRfWB5Uab5hizpB3IjUGrwxRZ0sw9Qef4UXna8mVpzxNyPkbf32B66nNY1uPbo45i7ds=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750730163; c=relaxed/simple;
-	bh=5p61nrFwG6OcxRXcfdbvTuN9D8eXZhEFDOpqTbztMdM=;
+	s=arc-20240116; t=1750730300; c=relaxed/simple;
+	bh=ad1CRdxhimTQoc4mVUECK73MorHW2QAepV0h1yZjQvY=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=a6oa/llyokvUzB7iIpuZIa01LjtScVsmH6jRdmZ/7be/D12dLnJBWTRGkYytyzu6SQWGpLpkDCrp/+51nDitibfAAWxIHrzTlq88j8+fKsiQIiVpIikUDiZ18epQvw6mNPoCY+8CxpBK1b2tpila4Wd1ceyM5Fc9i/ihc0POXH8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=R8bwwTuZ; arc=none smtp.client-ip=115.124.30.132
+	 Content-Type:Content-Disposition:In-Reply-To; b=HEGy5x4jrPLLVyQhgorSyk3KnZUoXyDEuAjHcY1Eav6zvdHQlNe1rI0apI/w0q4T7qiWBkBq8Qse+fvF3SYN9VpmPO9QlM713AOsOV8JPW81wa+fLx5bmXtF2KVPMQNwDirx6KpMtlEew+gKAwMgopyNfyqjFrhKTJyEePM0m88=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=PtW5XDfi; arc=none smtp.client-ip=115.124.30.100
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
 DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
 	d=linux.alibaba.com; s=default;
-	t=1750730157; h=Date:From:To:Subject:Message-ID:MIME-Version:Content-Type;
-	bh=5FF2Rr9o7Nq8LA+Z0toU4V+eb1i3Wxay65maXg4Jcgo=;
-	b=R8bwwTuZa2k8mcrEocwEz7NIFeU4Ht5CxMr6Fvdr+LI+MJyndc2fpZmU++DE4INh//QoB/lyhMEvGMHUSezAfeo04ucYB8N9R/4Ck9RLqdC876+B1GqXkFSwBa4EaEk3y/+S7eAsPjgYT2ETQUWkWivWputoS0RDJONbYzblB4o=
-Received: from localhost(mailfrom:feng.tang@linux.alibaba.com fp:SMTPD_---0WeeA.zH_1750730156 cluster:ay36)
+	t=1750730290; h=Date:From:To:Subject:Message-ID:MIME-Version:Content-Type;
+	bh=Z79fTHSkmTmx2HsAIYRcS2dqelrSRbFVyUYyBEoggcw=;
+	b=PtW5XDfiDo4qTga/atf65PSPlHHvcIxETp3jlua3eghT7tFpbmgHp2Xzohc1NV34br+XrDF/doNZwv4RUkxms3FrvH++yD4JTAvugP+Li/SbQJZq63aUyacbXBrlF8vFRl2RjJg9vzNzjGbKlF9Hbi/QW97/EGNhIPczFBRAn7s=
+Received: from localhost(mailfrom:feng.tang@linux.alibaba.com fp:SMTPD_---0WeeA0u9_1750730289 cluster:ay36)
           by smtp.aliyun-inc.com;
-          Tue, 24 Jun 2025 09:55:56 +0800
-Date: Tue, 24 Jun 2025 09:55:55 +0800
+          Tue, 24 Jun 2025 09:58:09 +0800
+Date: Tue, 24 Jun 2025 09:58:08 +0800
 From: Feng Tang <feng.tang@linux.alibaba.com>
 To: Petr Mladek <pmladek@suse.com>
 Cc: Andrew Morton <akpm@linux-foundation.org>,
@@ -46,12 +46,12 @@ Cc: Andrew Morton <akpm@linux-foundation.org>,
 	Lance Yang <lance.yang@linux.dev>, Jonathan Corbet <corbet@lwn.net>,
 	linux-kernel@vger.kernel.org, paulmck@kernel.org,
 	john.ogness@linutronix.de
-Subject: Re: [PATCH V2 4/5] panic: add 'panic_sys_info=' setup option for
- sysctl and kernel cmdline
-Message-ID: <aFoFq7CJKGxZ-N-9@U-2FWC9VHC-2323.local>
+Subject: Re: [PATCH V2 5/5] panic: add note that panic_print interface is
+ deprecated
+Message-ID: <aFoGMI_1I_cZ9O8g@U-2FWC9VHC-2323.local>
 References: <20250616010840.38258-1-feng.tang@linux.alibaba.com>
- <20250616010840.38258-5-feng.tang@linux.alibaba.com>
- <aFltDlSKKCv3Cito@pathway.suse.cz>
+ <20250616010840.38258-6-feng.tang@linux.alibaba.com>
+ <aFlxLK8f276_5TZf@pathway.suse.cz>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -60,122 +60,60 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <aFltDlSKKCv3Cito@pathway.suse.cz>
+In-Reply-To: <aFlxLK8f276_5TZf@pathway.suse.cz>
 
-On Mon, Jun 23, 2025 at 05:04:46PM +0200, Petr Mladek wrote:
-> On Mon 2025-06-16 09:08:39, Feng Tang wrote:
-> > Add 'panic_sys_info=' setup which expects string like "tasks,mem,lock,...".
+On Mon, Jun 23, 2025 at 05:22:20PM +0200, Petr Mladek wrote:
+> On Mon 2025-06-16 09:08:40, Feng Tang wrote:
+> > Long term wise, the 'panic_sys_info' should be the only controlling
+> > interface, which can be referred by other modules.
 > 
-> This patch actually adds also the sysctl interface. It should be
-> mentioned in the "Subject" and here.
+> Strictly speaking, 'panic_sys_info' is not a complete
+> replacement for 'panic_print' because it does not allow
+> replaying the log buffer during panic.
+
+Indeed, I forgot this part.
+
+> I suggest to add a separate parameter "panic_console_replay"
+> for the missing functionality first. And 'panic_print' will
+> be obsoleted by both 'panic_sys_info' and 'panic_console_replay'.
  
-I mentioned 'sysctl' in the subjec line, but maybe it's not obvious :)
+Will do.
 
-> That said, it might be better to add the sysctl interface in
-> the previous patch and add just the setup() here.
-
-OK.
-
-> 
-> > --- a/Documentation/admin-guide/kernel-parameters.txt
-> > +++ b/Documentation/admin-guide/kernel-parameters.txt
-> > @@ -4541,6 +4541,19 @@
-> >  			Use this option carefully, maybe worth to setup a
-> >  			bigger log buffer with "log_buf_len" along with this.
+> > --- a/kernel/panic.c
+> > +++ b/kernel/panic.c
+> > @@ -76,6 +76,13 @@ ATOMIC_NOTIFIER_HEAD(panic_notifier_list);
+> >  EXPORT_SYMBOL(panic_notifier_list);
 > >  
-> > +	panic_sys_info=
+> >  #ifdef CONFIG_SYSCTL
+> > +static int sysctl_panic_print_handler(const struct ctl_table *table, int write,
+> > +			   void *buffer, size_t *lenp, loff_t *ppos)
+> > +{
+> > +	printk_once("panic: 'panic_print' sysctl interface will be obsoleted by 'panic_sys_info' interface.\n");
+> > +	return proc_doulongvec_minmax(table, write, buffer, lenp, ppos);
+> > +}
+> > +
+> >  static const struct ctl_table kern_panic_table[] = {
+> >  #ifdef CONFIG_SMP
+> >  	{
+> > @@ -107,7 +114,7 @@ static const struct ctl_table kern_panic_table[] = {
+> >  		.data		= &panic_print,
+> >  		.maxlen		= sizeof(unsigned long),
+> >  		.mode		= 0644,
+> > -		.proc_handler	= proc_doulongvec_minmax,
+> > +		.proc_handler	= sysctl_panic_print_handler,
 > 
-> 
-> > +			String of subsystem info to be dumped on panic.
-> 
-> I am not a native speaker but I have troubles to parse the above
-> sentence. See below.
-> > +			It expects string of comma-separated words like
-> > +			"tasks,mem,timer,...", which is a human readable string
-> > +			version of 'panic_print':
-> > +			tasks: print all tasks info
-> > +			mem: print system memory info
-> > +			timer: print timer info
-> > +			lock: print locks info if CONFIG_LOCKDEP is on
-> > +			ftrace: print ftrace buffer
-> > +			all_bt: print all CPUs backtrace (if available in the arch)
-> > +			blocked_tasks: print only tasks in uninterruptible (blocked) state
-> 
-> This blob is hard to parse. I suggest to replace it with something
-> like:
-> 
-> <proposal>
-> 	panic_sys_info= A comma separated list of extra information to be dumped
-> 			on panic.
-> 			Format: val[,val...]
-> 			Where @val can be any of the following:
-> 
-> 			tasks:		print all tasks info
-> 			mem:		print system memory info
-> 			timers:		print timers info
-> 			locks:		print locks info if CONFIG_LOCKDEP is on
-> 			ftrace:		print ftrace buffer
-> 			all_bt:		print all CPUs backtrace (if available in the arch)
-> 			blocked_tasks:	print only tasks in uninterruptible (blocked) state
-> 
-> 			This is a human readable alternative to the 'panic_print' option.
-> </proposal>
+> This handles only the sysctl interface. We should do something similar
+> also for the "panic_print" command line parameter. It would require
+> using core_param_cb() instead of core_param().
 
-Thanks! It's much better.
-
-> > +
-> >  	parkbd.port=	[HW] Parallel port number the keyboard adapter is
-> >  			connected to, default is 0.
-> >  			Format: <parport#>
-> > diff --git a/Documentation/admin-guide/sysctl/kernel.rst b/Documentation/admin-guide/sysctl/kernel.rst
-> > index dd49a89a62d3..2013afd98605 100644
-> > --- a/Documentation/admin-guide/sysctl/kernel.rst
-> > +++ b/Documentation/admin-guide/sysctl/kernel.rst
-> > @@ -899,6 +899,24 @@ So for example to print tasks and memory info on panic, user can::
-> >    echo 3 > /proc/sys/kernel/panic_print
-> >  
-> >  
-> > +panic_sys_info
-> > +==============
-> > +
-> > +String of subsystem info to be dumped on panic. It expects string of
-> 
-> Same here.
-> 
-> > +comma-separated words like "tasks,mem,timer,...", which is a human
-> > +readable string version of 'panic_print':
-> 
-> I would replace it with:
-> 
-> <proposal>
-> A comma separated list of extra information to be dumped on panic,
-> for example, "tasks,mem,timers,...".  It is a human readable alternative
-> to 'panic_print'. Possible values are:
-> </proposal>
-
-Will change.
-
-> > +
-> > +=============   ===================================================
-> > +tasks           print all tasks info
-> > +mem             print system memory info
-> > +timer           print timer info
-> > +lock            print locks info if CONFIG_LOCKDEP is on
-> > +ftrace          print ftrace buffer
-> > +all_bt          print all CPUs backtrace (if available in the arch)
-> > +blocked_tasks   print only tasks in uninterruptible (blocked) state
-> > +=============   ===================================================
-> > +
-> > +
-> >  panic_on_rcu_stall
-> >  ==================
-> 
-> The rest looks good.
- 
-Thanks!
+OK, thanks!
 
 - Feng
 
+> >  	},
+> >  	{
+> >  		.procname	= "panic_on_warn",
+> 
 > Best Regards,
 > Petr
 
