@@ -1,187 +1,261 @@
-Return-Path: <linux-kernel+bounces-700189-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-700191-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 43C99AE6504
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Jun 2025 14:32:26 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C6185AE650B
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Jun 2025 14:33:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 858687B2AB0
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Jun 2025 12:31:02 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E9D244A44DC
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Jun 2025 12:32:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4467929615D;
-	Tue, 24 Jun 2025 12:31:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 250F828A411;
+	Tue, 24 Jun 2025 12:32:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="eu9htEvB"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=collabora.com header.i=daniel.almeida@collabora.com header.b="ISpPr20l"
+Received: from sender4-pp-f112.zoho.com (sender4-pp-f112.zoho.com [136.143.188.112])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6DD9F289E1B;
-	Tue, 24 Jun 2025 12:31:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750768286; cv=none; b=CF91aJM9eoAtj7S5DwK8poP9aWiO2G0Jm2Eo1n2OGwAZKgtCaggTejQ5IVRhQRQVrC0CI/bRs/uPlwM45xhdre195LNxAyHYJ1r4zuZcSpPrT8H++5Xg6B0eaNVpt2yFUbz9JJwwM3XLSgtEuo215tDsMwKoYHqKSpRzYGhR990=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750768286; c=relaxed/simple;
-	bh=A1vlO/L1VKH8WOeSv/ouj3ncracjwzpEiurRYiS/ALg=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=EHpbbJp1/bWy7Kw08U3o1KmEOGioMOByrf7E1WLg1Mnk327tQ2rRBfuuW2Qn7vTzcdO2oFn7NUucwjZdiAtkbsGKy3JgE0OO8lS5l7wLL6zbirQaV3HUYtHxH+MooueTQBBst0HzFOIxujZiYMqvOz8s5zsZXTXx+3e6vEBCCNg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=eu9htEvB; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 19B39C4CEF3;
-	Tue, 24 Jun 2025 12:31:26 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1750768286;
-	bh=A1vlO/L1VKH8WOeSv/ouj3ncracjwzpEiurRYiS/ALg=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=eu9htEvBiVbL44j/hDA/XL5IHMVRkTjREoK+yoJofVs3i2H7zYeWM4nuOEa8lvA1q
-	 draOJBWRmasaODlA4846qtfnrHoWcfrlpN7SdkOAt9CRDuKgz+Jijdfb0hME3v4zjT
-	 vySbdesGJCidQHCf0M229vamBtjKXpnwatmAh49jUKp+nVNq+/QlhEUFGI/3hC6dpM
-	 MBpiZpEieyvMUEHttV5HVCNFcwOz97BYbHpUnESxPT0XUV2ac4VY/kC4HNi3iT2U1C
-	 nndDqpkUc6Rj2nldXF12iLWnmS6e5StbWpsEaS9jarXC/+el4cuLLpnkbs9yytEYsC
-	 jjsFUJ19nZmUg==
-Received: by mail-ed1-f43.google.com with SMTP id 4fb4d7f45d1cf-607ec30df2bso769442a12.1;
-        Tue, 24 Jun 2025 05:31:25 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCUIcBidubsUjr6GvP7f8421F8eC99nNi6qungSKTQM8pINmHk0ZFQw9RZuYj1FBx0HXJrFF3WY3Rotkx7e7@vger.kernel.org, AJvYcCUQZWnOTjCK2ItJvAeXFGpEn1wxgj+j7S3FaXb6FQWYwU4dhdbpvxOzHlLl1i2fpKNkBz0CHKkYXuM=@vger.kernel.org, AJvYcCVSnuJEYLz/GTL/Zt2wX6i8PbgDhcFQMKVvxqYQ9uKexcFTe4i2J5X9OE+QgjnqUXcCZ4Kr6BRLz/+w@vger.kernel.org, AJvYcCWfiTkex+f0MQn2Z3APHWJVp4HQPyHwHt4AGxv8/eCTD/Wh1tFfHarKKtWaIToUdgxBNH2xPZeVU+3DSQ==@vger.kernel.org, AJvYcCWioFj6dnpN+JivFYoas3pOlccQAJKDOtuz5crs2yTlM1t+seJTOz1ZTStM7uqQuJe3SwUJfStDO/trpVnwdOVG@vger.kernel.org, AJvYcCWjTrlomDwlBvZDpD+VWRgwmHhauJOez08kLDWR4/qlguDkO5nrNIV/nfXepGNh0ToK7Hez1v1ORB4YQQ==@vger.kernel.org, AJvYcCWkytK29gf2ZbYEOocH8bXuAPQ/UqBhE3WfKgyHkJCw6Bx1pmxGYIRJmSGiOfFXKWjatwVCMqjN1iruvkoSA2qz@vger.kernel.org, AJvYcCWwjMBDeub9j3awBbNGpJtyGIYzMVCfPwbN2Qb/7+cx5Pr16kamrB+C4ldq33XDCUihDqLrQVsWyCfqWvHQ@vger.kernel.org, AJvYcCXeEP3m9siA10DxTLOpTz8vc5wuJKop878SjR+iKM+WruZTu8Go8JcteBM33w5C6Oj8RMYc8u0iVfd4p07d+JQLfF/WEmsR@vger.kernel.org
-X-Gm-Message-State: AOJu0YwpG8YkBHYF8id6pnhc+2Rp05WERXknvveD5uYetID7V6bxhC+N
-	Ua0WPE2J9qre0HTAgZiSjYgdnmdP8M5x1lTQ9Vh5Rd6razi/cuq/AcCKQfndyTcPCVm7Il4K96q
-	gutnGDt0/tyS+RYnSVUVTaKVcGSIANGE=
-X-Google-Smtp-Source: AGHT+IG78TOJtNBgPo6KUbppTtQyUVPXosqjkC+mjKzFM6GuMzZpIE/4mn6DMDsxVG8gc/mo29CZZDSg4K3moyGLako=
-X-Received: by 2002:a50:9e07:0:b0:607:5987:5ba1 with SMTP id
- 4fb4d7f45d1cf-60a1d1676eamr10402408a12.20.1750768284578; Tue, 24 Jun 2025
- 05:31:24 -0700 (PDT)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8525527D77B;
+	Tue, 24 Jun 2025 12:32:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.112
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1750768341; cv=pass; b=KOD5+iw97tIkYY6326RRjEtjJxwGED7jWWqJrSoos+xfGmoOn4+Ldo7UdtzkfVurycZim8iumvrtdSYplJSJwuK3RRqdI5vR01vztlTZneuFI17ojPjyVvls7VZMbc8isKZaVYoeYHTLyVQzu7GAhJyhK9A0/hvdLHUpj09fpgE=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1750768341; c=relaxed/simple;
+	bh=/IVY3SRvdgqomqV+YcXPg7x2Uj3Au0mfQNdUpIf6cxs=;
+	h=Content-Type:Mime-Version:Subject:From:In-Reply-To:Date:Cc:
+	 Message-Id:References:To; b=OUC2oTh3bBbrJSREEBbmEHV0V7YRyJ6lReBSlQbk5x1oyDs05vTlkMYZYKXeCcFbQtbC+VuPc5FHBoljjhrp7oKQuBU1/3qDjfxBKRaE/+tydbOjkW+ShT4W5zFRbavWbM+33nscdL6u97S4nKkirXU2cXNFfbjlwAnrm/20FUc=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=daniel.almeida@collabora.com header.b=ISpPr20l; arc=pass smtp.client-ip=136.143.188.112
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+ARC-Seal: i=1; a=rsa-sha256; t=1750768302; cv=none; 
+	d=zohomail.com; s=zohoarc; 
+	b=Ss7szBl0C6vo5/TtI4TTs/5e8FEcW6SuOFLmtDIZ/tSzqaTsyK0gLgxc41jpiSuaRZ7BqZXfetf4ddWVqGXM27sLVGomXH3uni4Ygcy+Y2wXgQFASKUc8IK+PaGp5T+tDRWB9iEXdx7T95vfgZhXrm9Z3vFB8XglCPMH4MWyAAg=
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
+	t=1750768302; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
+	bh=Ie2joQ92AW905Mdsf8/ZIdEOpEY3fNe+VdtRpB8fjJc=; 
+	b=hRn2P0ElWzxqttX7k1AnHLgwprLRHHn1k0DRjVn+6acu5rpzMNisyZvh7+UrcxzUxbwEnkz220rhJ6Ikot8zQkGiCT3AnYxqajbJfaenUEeQ9bz0J1nYcQfy1dW+5SASmKmda/mh0OIQK66MXsj39Da6VY6u63ubSYrndHNU7JU=
+ARC-Authentication-Results: i=1; mx.zohomail.com;
+	dkim=pass  header.i=collabora.com;
+	spf=pass  smtp.mailfrom=daniel.almeida@collabora.com;
+	dmarc=pass header.from=<daniel.almeida@collabora.com>
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1750768302;
+	s=zohomail; d=collabora.com; i=daniel.almeida@collabora.com;
+	h=Content-Type:Mime-Version:Subject:Subject:From:From:In-Reply-To:Date:Date:Cc:Cc:Content-Transfer-Encoding:Message-Id:Message-Id:References:To:To:Reply-To;
+	bh=Ie2joQ92AW905Mdsf8/ZIdEOpEY3fNe+VdtRpB8fjJc=;
+	b=ISpPr20lQACBPMWyHmiigWOfLBud7LH+hg2ayxLBHprKY37qRS7jhw4Kocbvv2oT
+	ISCgvv4RkURorlcZSCOg2vTpv3sQE9m5+vAzjoobVbuJw67iSLDh1C5NHYR8EttsxuJ
+	nfdFtkSBxww05OMTQqKTfn21CJzWVQtfnYcEaBHA=
+Received: by mx.zohomail.com with SMTPS id 1750768300488400.79605759042045;
+	Tue, 24 Jun 2025 05:31:40 -0700 (PDT)
+Content-Type: text/plain;
+	charset=utf-8
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-References: <20250523043251.it.550-kees@kernel.org> <20250523043935.2009972-10-kees@kernel.org>
- <CAAhV-H4WxAwXTYVFOnphgHN80-_6jt77YZ_rw-sOBoBjjiN-yQ@mail.gmail.com>
-In-Reply-To: <CAAhV-H4WxAwXTYVFOnphgHN80-_6jt77YZ_rw-sOBoBjjiN-yQ@mail.gmail.com>
-From: Huacai Chen <chenhuacai@kernel.org>
-Date: Tue, 24 Jun 2025 20:31:12 +0800
-X-Gmail-Original-Message-ID: <CAAhV-H5oHPG+etNawAmVwyDtg80iKUrAM_m3Vj57bBO0scHqvQ@mail.gmail.com>
-X-Gm-Features: AX0GCFsgXJm0uAqj4ZcBCmgCp5XFBS8cfA5fjKZVFWrLP2ySZYpAIUKeGDxIJgs
-Message-ID: <CAAhV-H5oHPG+etNawAmVwyDtg80iKUrAM_m3Vj57bBO0scHqvQ@mail.gmail.com>
-Subject: Re: [PATCH v2 10/14] loongarch: Handle KCOV __init vs inline mismatches
-To: Kees Cook <kees@kernel.org>
-Cc: Arnd Bergmann <arnd@arndb.de>, WANG Xuerui <kernel@xen0n.name>, 
-	Thomas Gleixner <tglx@linutronix.de>, Tianyang Zhang <zhangtianyang@loongson.cn>, 
-	Bibo Mao <maobibo@loongson.cn>, Jiaxun Yang <jiaxun.yang@flygoat.com>, loongarch@lists.linux.dev, 
-	"Gustavo A. R. Silva" <gustavoars@kernel.org>, Christoph Hellwig <hch@lst.de>, Marco Elver <elver@google.com>, 
-	Andrey Konovalov <andreyknvl@gmail.com>, Andrey Ryabinin <ryabinin.a.a@gmail.com>, 
-	Ard Biesheuvel <ardb@kernel.org>, Masahiro Yamada <masahiroy@kernel.org>, 
-	Nathan Chancellor <nathan@kernel.org>, Nicolas Schier <nicolas.schier@linux.dev>, 
-	Nick Desaulniers <nick.desaulniers+lkml@gmail.com>, Bill Wendling <morbo@google.com>, 
-	Justin Stitt <justinstitt@google.com>, linux-kernel@vger.kernel.org, x86@kernel.org, 
-	kasan-dev@googlegroups.com, linux-doc@vger.kernel.org, 
-	linux-arm-kernel@lists.infradead.org, kvmarm@lists.linux.dev, 
-	linux-riscv@lists.infradead.org, linux-s390@vger.kernel.org, 
-	linux-efi@vger.kernel.org, linux-hardening@vger.kernel.org, 
-	linux-kbuild@vger.kernel.org, linux-security-module@vger.kernel.org, 
-	linux-kselftest@vger.kernel.org, sparclinux@vger.kernel.org, 
-	llvm@lists.linux.dev
-Content-Type: text/plain; charset="UTF-8"
+Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3826.600.51.1.1\))
+Subject: Re: [PATCH v4 3/6] rust: irq: add support for non-threaded IRQs and
+ handlers
+From: Daniel Almeida <daniel.almeida@collabora.com>
+In-Reply-To: <DAU5TAFKJQOF.2DFO7YAHZA4V2@kernel.org>
+Date: Tue, 24 Jun 2025 09:31:24 -0300
+Cc: Boqun Feng <boqun.feng@gmail.com>,
+ Alice Ryhl <aliceryhl@google.com>,
+ Danilo Krummrich <dakr@kernel.org>,
+ Miguel Ojeda <ojeda@kernel.org>,
+ Alex Gaynor <alex.gaynor@gmail.com>,
+ Gary Guo <gary@garyguo.net>,
+ =?utf-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>,
+ Andreas Hindborg <a.hindborg@kernel.org>,
+ Trevor Gross <tmgross@umich.edu>,
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ "Rafael J. Wysocki" <rafael@kernel.org>,
+ Thomas Gleixner <tglx@linutronix.de>,
+ Bjorn Helgaas <bhelgaas@google.com>,
+ =?utf-8?Q?Krzysztof_Wilczy=C2=B4nski?= <kwilczynski@kernel.org>,
+ linux-kernel@vger.kernel.org,
+ rust-for-linux@vger.kernel.org,
+ linux-pci@vger.kernel.org
 Content-Transfer-Encoding: quoted-printable
-
-Hi, Kees,
-
-On Thu, Jun 19, 2025 at 4:55=E2=80=AFPM Huacai Chen <chenhuacai@kernel.org>=
- wrote:
->
-> Hi, Kees,
->
-> On Fri, May 23, 2025 at 12:39=E2=80=AFPM Kees Cook <kees@kernel.org> wrot=
-e:
-> >
-> > When KCOV is enabled all functions get instrumented, unless
-> > the __no_sanitize_coverage attribute is used. To prepare for
-> > __no_sanitize_coverage being applied to __init functions, we have to
-> > handle differences in how GCC's inline optimizations get resolved. For
-> > loongarch this exposed several places where __init annotations were
-> > missing but ended up being "accidentally correct". Fix these cases and
-> > force one function to be inline with __always_inline.
-> >
-> > Signed-off-by: Kees Cook <kees@kernel.org>
-> > ---
-> > Cc: Huacai Chen <chenhuacai@kernel.org>
-> > Cc: WANG Xuerui <kernel@xen0n.name>
-> > Cc: Thomas Gleixner <tglx@linutronix.de>
-> > Cc: Tianyang Zhang <zhangtianyang@loongson.cn>
-> > Cc: Bibo Mao <maobibo@loongson.cn>
-> > Cc: Jiaxun Yang <jiaxun.yang@flygoat.com>
-> > Cc: <loongarch@lists.linux.dev>
-> > ---
-> >  arch/loongarch/include/asm/smp.h | 2 +-
-> >  arch/loongarch/kernel/time.c     | 2 +-
-> >  arch/loongarch/mm/ioremap.c      | 4 ++--
-> >  3 files changed, 4 insertions(+), 4 deletions(-)
-> >
-> > diff --git a/arch/loongarch/include/asm/smp.h b/arch/loongarch/include/=
-asm/smp.h
-> > index ad0bd234a0f1..88e19d8a11f4 100644
-> > --- a/arch/loongarch/include/asm/smp.h
-> > +++ b/arch/loongarch/include/asm/smp.h
-> > @@ -39,7 +39,7 @@ int loongson_cpu_disable(void);
-> >  void loongson_cpu_die(unsigned int cpu);
-> >  #endif
-> >
-> > -static inline void plat_smp_setup(void)
-> > +static __always_inline void plat_smp_setup(void)
-> Similar to x86 and arm, I prefer to mark it as __init rather than
-> __always_inline.
-If you have no objections, I will apply this patch with the above modificat=
-ion.
+Message-Id: <DB7F39EC-5F7D-49DA-BF2B-6200998B45E2@collabora.com>
+References: <20250608-topics-tyr-request_irq-v4-0-81cb81fb8073@collabora.com>
+ <20250608-topics-tyr-request_irq-v4-3-81cb81fb8073@collabora.com>
+ <aEbJt0YSc3-60OBY@pollux>
+ <CAH5fLghDbrgO2PiKyKZ87UrtouG25xWhVP_YmcgO0fFcnvZRkQ@mail.gmail.com>
+ <DAU0NHTHTDG4.2HNEABNAI8GHZ@kernel.org> <aFmPZMLGngAE_IHJ@tardis.local>
+ <aFmodsQK6iatXKoZ@tardis.local> <DAU5TAFKJQOF.2DFO7YAHZA4V2@kernel.org>
+To: Benno Lossin <lossin@kernel.org>
+X-Mailer: Apple Mail (2.3826.600.51.1.1)
+X-ZohoMailClient: External
 
 
-Huacai
 
->
-> Huacai
->
-> >  {
-> >         loongson_smp_setup();
-> >  }
-> > diff --git a/arch/loongarch/kernel/time.c b/arch/loongarch/kernel/time.=
-c
-> > index bc75a3a69fc8..367906b10f81 100644
-> > --- a/arch/loongarch/kernel/time.c
-> > +++ b/arch/loongarch/kernel/time.c
-> > @@ -102,7 +102,7 @@ static int constant_timer_next_event(unsigned long =
-delta, struct clock_event_dev
-> >         return 0;
-> >  }
-> >
-> > -static unsigned long __init get_loops_per_jiffy(void)
-> > +static unsigned long get_loops_per_jiffy(void)
-> >  {
-> >         unsigned long lpj =3D (unsigned long)const_clock_freq;
-> >
-> > diff --git a/arch/loongarch/mm/ioremap.c b/arch/loongarch/mm/ioremap.c
-> > index 70ca73019811..df949a3d0f34 100644
-> > --- a/arch/loongarch/mm/ioremap.c
-> > +++ b/arch/loongarch/mm/ioremap.c
-> > @@ -16,12 +16,12 @@ void __init early_iounmap(void __iomem *addr, unsig=
-ned long size)
-> >
-> >  }
-> >
-> > -void *early_memremap_ro(resource_size_t phys_addr, unsigned long size)
-> > +void * __init early_memremap_ro(resource_size_t phys_addr, unsigned lo=
-ng size)
-> >  {
-> >         return early_memremap(phys_addr, size);
-> >  }
-> >
-> > -void *early_memremap_prot(resource_size_t phys_addr, unsigned long siz=
-e,
-> > +void * __init early_memremap_prot(resource_size_t phys_addr, unsigned =
-long size,
-> >                     unsigned long prot_val)
-> >  {
-> >         return early_memremap(phys_addr, size);
-> > --
-> > 2.34.1
-> >
+> On 23 Jun 2025, at 16:28, Benno Lossin <lossin@kernel.org> wrote:
+>=20
+> On Mon Jun 23, 2025 at 9:18 PM CEST, Boqun Feng wrote:
+>> On Mon, Jun 23, 2025 at 10:31:16AM -0700, Boqun Feng wrote:
+>>> On Mon, Jun 23, 2025 at 05:26:14PM +0200, Benno Lossin wrote:
+>>>> On Mon Jun 23, 2025 at 5:10 PM CEST, Alice Ryhl wrote:
+>>>>> On Mon, Jun 9, 2025 at 12:47=E2=80=AFPM Danilo Krummrich =
+<dakr@kernel.org> wrote:
+>>>>>> On Sun, Jun 08, 2025 at 07:51:08PM -0300, Daniel Almeida wrote:
+>>>>>>> +        dev: &'a Device<Bound>,
+>>>>>>> +        irq: u32,
+>>>>>>> +        flags: Flags,
+>>>>>>> +        name: &'static CStr,
+>>>>>>> +        handler: T,
+>>>>>>> +    ) -> impl PinInit<Self, Error> + 'a {
+>>>>>>> +        let closure =3D move |slot: *mut Self| {
+>>>>>>> +            // SAFETY: The slot passed to pin initializer is =
+valid for writing.
+>>>>>>> +            unsafe {
+>>>>>>> +                slot.write(Self {
+>>>>>>> +                    inner: Devres::new(
+>>>>>>> +                        dev,
+>>>>>>> +                        RegistrationInner {
+>>>>>>> +                            irq,
+>>>>>>> +                            cookie: slot.cast(),
+>>>>>>> +                        },
+>>>>>>> +                        GFP_KERNEL,
+>>>>>>> +                    )?,
+>>>>>>> +                    handler,
+>>>>>>> +                    _pin: PhantomPinned,
+>>>>>>> +                })
+>>>>>>> +            };
+>>>>>>> +
+>>>>>>> +            // SAFETY:
+>>>>>>> +            // - The callbacks are valid for use with =
+request_irq.
+>>>>>>> +            // - If this succeeds, the slot is guaranteed to be =
+valid until the
+>>>>>>> +            // destructor of Self runs, which will deregister =
+the callbacks
+>>>>>>> +            // before the memory location becomes invalid.
+>>>>>>> +            let res =3D to_result(unsafe {
+>>>>>>> +                bindings::request_irq(
+>>>>>>> +                    irq,
+>>>>>>> +                    Some(handle_irq_callback::<T>),
+>>>>>>> +                    flags.into_inner() as usize,
+>>>>>>> +                    name.as_char_ptr(),
+>>>>>>> +                    slot.cast(),
+>>>>>>> +                )
+>>>>>>> +            });
+>>>>>>> +
+>>>>>>> +            if res.is_err() {
+>>>>>>> +                // SAFETY: We are returning an error, so we can =
+destroy the slot.
+>>>>>>> +                unsafe { core::ptr::drop_in_place(&raw mut =
+(*slot).handler) };
+>>>>>>> +            }
+>>>>>>> +
+>>>>>>> +            res
+>>>>>>> +        };
+>>>>>>> +
+>>>>>>> +        // SAFETY:
+>>>>>>> +        // - if this returns Ok, then every field of `slot` is =
+fully
+>>>>>>> +        // initialized.
+>>>>>>> +        // - if this returns an error, then the slot does not =
+need to remain
+>>>>>>> +        // valid.
+>>>>>>> +        unsafe { pin_init_from_closure(closure) }
+>>>>>>=20
+>>>>>> Can't we use try_pin_init!() instead, move request_irq() into the =
+initializer of
+>>>>>> RegistrationInner and initialize inner last?
+>>>>>=20
+>>>>> We need a pointer to the entire struct when calling
+>>>>> bindings::request_irq. I'm not sure this allows you to easily get =
+one?
+>>>>> I don't think using container_of! here is worth it.
+>>>>=20
+>>>> There is the `&this in` syntax (`this` is of type `NonNull<Self>`):
+>>>>=20
+>>>>    try_pin_init!(&this in Self {
+>>>>        inner: Devres::new(
+>>>>            dev,
+>>>>            RegistrationInner {
+>>>>                irq,
+>>>>                cookie: this.as_ptr().cast(),
+>>>>            },
+>>>>            GFP_KERNEL,
+>>>>        )?,
+>>>>        handler,
+>>>>        _pin: {
+>>>>            to_result(unsafe {
+>>>>                bindings::request_irq(
+>>>>                    irq,
+>>>>                    Some(handle_irq_callback::<T>),
+>>>>                    flags.into_inner() as usize,
+>>>>                    name.as_char_ptr(),
+>>>>                    slot.as_ptr().cast(),
+>>>=20
+>>> this is "this" instead of "slot", right?
+>>>=20
+>>>>                )
+>>>>            })?;
+>>>>            PhantomPinned
+>>>>        },
+>>>>    })
+>>>>=20
+>>>> Last time around, I also asked this question and you replied with =
+that
+>>>> we need to abort the initializer when `request_irq` returns false =
+and
+>>>> avoid running `Self::drop` (thus we can't do it using `pin_chain`).
+>>>>=20
+>>>> I asked what we could do instead and you mentioned the `_: {}`
+>>>> initializers and those would indeed solve it, but we can abuse the
+>>>> `_pin` field for that :)
+>>>>=20
+>>>=20
+>>> Hmm.. but if request_irq() fails, aren't we going to call `drop` on
+>>> `inner`, which drops the `Devres` which will eventually call
+>>> `RegistrationInner::drop()`? And that's a `free_irq()` without
+>>> `request_irq()` succeeded.
+>>>=20
+>>=20
+>> This may however work ;-) Because at `request_irq()` time, all it =
+needs
+>> is ready, and if it fails, `RegistrationInner` won't construct.
+>>=20
+>>    try_pin_init!(&this in Self {
+>>        handler,
+>>        inner: Devres::new(
+>>            dev,
+>>            RegistrationInner {
+>>                // Needs to use `handler` address as cookie, same for
+>>                // request_irq().
+>>                cookie: &raw (*(this.as_ptr().cast()).handler),
+>>                irq: {
+>>                     to_result(unsafe { bindings::request_irq(...) =
+})?;
+>>  irq
+>> }
+>>             },
+>>             GFP_KERNEL,
+>>        )?,
+>>        _pin: PhantomPinned
+>>    })
+>=20
+> Well yes and no, with the Devres changes, the `cookie` can just be the
+> address of the `RegistrationInner` & we can do it this way :)
+>=20
+> ---
+> Cheers,
+> Benno
+
+
+No, we need this to be the address of the the whole thing (i.e.
+Registration<T>), otherwise you can=E2=80=99t access the handler in the =
+irq
+callback.
+
+
+
+=E2=80=94 Daniel=
 
