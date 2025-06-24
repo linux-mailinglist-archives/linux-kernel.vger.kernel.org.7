@@ -1,123 +1,250 @@
-Return-Path: <linux-kernel+bounces-700817-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-700818-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1624FAE6D2E
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Jun 2025 19:01:02 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4DD1BAE6D37
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Jun 2025 19:01:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9B2501BC0A98
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Jun 2025 17:01:15 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1CBDC3A81CB
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Jun 2025 17:01:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0095223E336;
-	Tue, 24 Jun 2025 17:00:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C738E22259F;
+	Tue, 24 Jun 2025 17:01:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=googlemail.com header.i=@googlemail.com header.b="HKrWAUH4"
-Received: from mail-wr1-f46.google.com (mail-wr1-f46.google.com [209.85.221.46])
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="aGfYZTtH";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="6/kpi6Ev";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="DVrhu5Kp";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="4vDENtLw"
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B53E54AEE2;
-	Tue, 24 Jun 2025 17:00:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D07FE4AEE2
+	for <linux-kernel@vger.kernel.org>; Tue, 24 Jun 2025 17:01:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750784448; cv=none; b=ny53XUoXHy/7lemz0ox+YA+mqmbQAPDWOL4SGNRSGqv072WcaVRBBjnVddYlWXNr7PWYOqxGtaT7drt+76hp3fKBQa8C+EbgFeJPlzdcwQTUeo3u74dRMwG3MvBHU1rPIl3P8GaskhY959cWjn+djkDl6ZTjaQnRFq8MrnDSLCc=
+	t=1750784510; cv=none; b=DcDGs60tj6WOzK9LnvZYqge0DRgm6TOfrnJDbl6atJ3yaGDs0I3FpfcT9ppw1WXF3z2jZK8hNj++ZSMlBCXd1ATp1Gq96zASsUqoZZzMtKB8pcA+we6u1ufyayK3Y+uYms5yh8JPygiHjAg5vPWsp2iEhx94eYezjEvLwBz6msE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750784448; c=relaxed/simple;
-	bh=rMmIIm4TINIxOqut0X/Io6lixllqSqzkHQn2mUnABFI=;
+	s=arc-20240116; t=1750784510; c=relaxed/simple;
+	bh=C4kR92dvIKSY+mBM1jUDoNxkYmXG2uLSqJkTPCeWNfE=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=VtILmgNEzDIIlldrpjyrwDKEyR5NssOSku1a/mkzJhU0PqwktFYsfEREdY5LogXWeHmUCoyeWQrgYypx3WHwQjyLc+D5W6UkBr7JpvSiWap2kdZeICxeo1j+oWXjCYvgLYHW6sgtkTfFp6ARl90Dqi+DiQZhn50T1D4yp/aN3OA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=googlemail.com; spf=pass smtp.mailfrom=googlemail.com; dkim=pass (2048-bit key) header.d=googlemail.com header.i=@googlemail.com header.b=HKrWAUH4; arc=none smtp.client-ip=209.85.221.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=googlemail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=googlemail.com
-Received: by mail-wr1-f46.google.com with SMTP id ffacd0b85a97d-3a4e742dc97so56877f8f.0;
-        Tue, 24 Jun 2025 10:00:46 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=googlemail.com; s=20230601; t=1750784445; x=1751389245; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=te/STPrSTRQW9WE5N0wxDGPRRy2utQtxA+HuKmrb5X8=;
-        b=HKrWAUH4uBO8KqGhhDJRixugpBOJ/DgzzTXUOKU+D2VRa/67+G+uW90LcsGn6ERMfX
-         2lnTOKNeq2T/sqk2grUbkD4G1UirU/F1KsB0MaNrnkGWqLfIdwO4upZLI9zWtJaI212l
-         Ga8XjrkWIYzyZejhlUjgUS3YCbUoUXO1WlbG4pTtyQpwGtCQFcljo5SnQd1MlWTWHIp5
-         c9WLzZo5wQWkTtoFe0Rsfq6oOOPmHkgkyim+B9BE45j5d6xrZZRpQZqMJJ8UdfvgN/G3
-         0sMzqNmcwQocL+UGOid0jTPZOnUroSfVY8vBVTsoaJVHSMDXrWUG0415efeSGHQq/0Ez
-         kWCA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1750784445; x=1751389245;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=te/STPrSTRQW9WE5N0wxDGPRRy2utQtxA+HuKmrb5X8=;
-        b=MxcszboN9TSpH5OfcG7Y2s5mgB9w0wHUNlXZl3rgmap2UP16x2Q+vTnLCzz99SNZ4N
-         aF9GOF1/qpbXYs77rR6mMHV2qHbOU5OG+q58xlXCUSgOqhZ/Ct2slvK41QXcdhFWYxeq
-         riruwOG/swOqvb0fYDj6kLeI7IlZ4PaOxwZHx0TMUJI0apuOklwqEkUXnEvNpmqoJDfO
-         Ksmaz7YQDmZgH0FpN28rqh4Yku5zOtGaJwsuVFK86RwkVy6QRnYS5rXV8ff4PceBHJnK
-         Ul5GuWaY7/J1g4RQOdNEfeTMLXgexloUe/H72B67aIeSvoA0z2vsUdJUAA19/WQaWAqZ
-         MKqA==
-X-Forwarded-Encrypted: i=1; AJvYcCWpdoACWH5xh65xIl3VASOQxUwutkmyqWgGA64TgM0xnXEFyQb6MprGUyi826+SryGJpo5sFoFe@vger.kernel.org, AJvYcCWziNWGiN+Aq9yB2kFAjvKlzxZz/RffyT1Rm0Ulc4eEyhBRbNGE4+1n4IFmk8G5Ea8WxBYoSZrrpGEe17o=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx0rxHpAcn6RW5wrtmX46N9pK1ez7yc5d65SNFdYPzLZckMuwzo
-	HQn11Z934+jExPkV4DHpI1DvTWPX1U7bRrSW/O1tBKQ9QoAdY4N/YLM=
-X-Gm-Gg: ASbGncs5K1Ogf+rRr0uBO2+6W554aXvyOKHNzgNqq9040f7XkIhuN4VI2UAf9mKPBn7
-	QRNJE82dMJ6NZ7zPpFOR/tmo7QQ/34EYt6UkI7tFfrdq9OYoLUOAtbtFGB2WmiG0Fvte+l3h9On
-	o7dLdK9xbVXFSr1Ox3X9Ddok50T5Z0OGrkkrQXKVtPWfuE0Avj3jNch2oNpanyvPInDXoOE3joi
-	vpJWYxlQxeLWJqNtOsgw4DVSTQDHh+zQnpCuzBxSo3vWLcquea8mnO32KgsRkNRlFM3+MSEJKRF
-	G1kfMUSYPprjKAVk08WBV4rDHRQ6uiesfVbyxIn1r5F2JoVfOdEf/s0EPIx0TDCXmCfzVJNIvNg
-	x+pyTy0ItMuW/WPCbx/g3JKfSz5Agkjzyd8lFT1k=
-X-Google-Smtp-Source: AGHT+IFUfVerv6+pnCu+sN8dHX/BLfNsI8/p8b9WCDAx95/po6UN9b2bRri9xUJSyTn8llRJAFZcgw==
-X-Received: by 2002:a5d:588d:0:b0:3a4:edf5:8a41 with SMTP id ffacd0b85a97d-3a6e71b86f6mr3784089f8f.4.1750784444740;
-        Tue, 24 Jun 2025 10:00:44 -0700 (PDT)
-Received: from [192.168.1.3] (p5b2acd47.dip0.t-ipconnect.de. [91.42.205.71])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3a6e811039csm2338554f8f.89.2025.06.24.10.00.43
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 24 Jun 2025 10:00:44 -0700 (PDT)
-Message-ID: <1010f821-c1fd-4096-9f69-49a91336eb56@googlemail.com>
-Date: Tue, 24 Jun 2025 19:00:43 +0200
+	 In-Reply-To:Content-Type; b=Y4wJtDalUNdvD/ZA+dDkyGTnFGnDnqdDkAI3CRxTVKHHSGQMEGw9twq9QLnCvLeUDzc9ydm0IvzoyYbX2zqEa6CFptkDTbbxV1CNSjTd5FoWskNhCecbmv542GXSYre1ODKgc9Z/AcyocM1iUIc6KFAzaM4CZYASw3fNrM5QCKA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=aGfYZTtH; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=6/kpi6Ev; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=DVrhu5Kp; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=4vDENtLw; arc=none smtp.client-ip=195.135.223.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
+Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id C21B921213;
+	Tue, 24 Jun 2025 17:01:44 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1750784506; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=jvnPT5Z5a27dHW7pH9oYruNRJHKdz8wmk2SLPYe7h00=;
+	b=aGfYZTtHi8BsPxjI87aBM6CtxMfB+SUuX04MXSBTKoQ48bbp+HhYqVaNnxxmofmDn0wURm
+	sLTILjCqS39InPbLkYtXIzipHi3twar5JMzF9PHrrpYS/ShdIEqr82BweJG/r+DIraomjs
+	ariNOXIiI3WR50VD7lETIXlkO5OIyN4=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1750784506;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=jvnPT5Z5a27dHW7pH9oYruNRJHKdz8wmk2SLPYe7h00=;
+	b=6/kpi6EvQoOP4rLTC9kYNbdue4NIBiVchpCGAgEfUzF9SpkLEu8DThSVM6PLPIcyCn0V2U
+	xNDjpoOoLfM6LBBQ==
+Authentication-Results: smtp-out1.suse.de;
+	none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1750784504; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=jvnPT5Z5a27dHW7pH9oYruNRJHKdz8wmk2SLPYe7h00=;
+	b=DVrhu5KpD1jn9Ce8SmOYf1xrIMjBe70CMj5dEq89cGf5FQSso+uiXA9GZ6QNVVjCIE77Wn
+	LoDLckKZ0AVEu6TElIrNEVdlWARnO1xgojAM4pqVBBUMQubsbMnndKyaev96juvPPIhiKx
+	6N0txyImKz2hlBXlsd3mL/OmJvIH1sE=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1750784504;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=jvnPT5Z5a27dHW7pH9oYruNRJHKdz8wmk2SLPYe7h00=;
+	b=4vDENtLw5sZkd6doWY6u2P2eCoiQBENn2toFOcr8jfWlR9c3j0+S+Q8fSrffnYzc2hdpEH
+	uNYB3GyyLLsurEBw==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id AB26913A24;
+	Tue, 24 Jun 2025 17:01:44 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id cXx2KfjZWmiBKAAAD6G6ig
+	(envelope-from <vbabka@suse.cz>); Tue, 24 Jun 2025 17:01:44 +0000
+Message-ID: <5a38449e-f50d-4b3d-a0cc-dac551f691e0@suse.cz>
+Date: Tue, 24 Jun 2025 19:01:44 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Betterbird (Windows)
-Subject: Re: [PATCH 6.1 000/507] 6.1.142-rc2 review
-Content-Language: de-DE
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, stable@vger.kernel.org
-Cc: patches@lists.linux.dev, linux-kernel@vger.kernel.org,
- torvalds@linux-foundation.org, akpm@linux-foundation.org,
- linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org,
- lkft-triage@lists.linaro.org, pavel@denx.de, jonathanh@nvidia.com,
- f.fainelli@gmail.com, sudipm.mukherjee@gmail.com, srw@sladewatkins.net,
- rwarsow@gmx.de, conor@kernel.org, hargar@microsoft.com, broonie@kernel.org
-References: <20250624123036.124991422@linuxfoundation.org>
-From: Peter Schneider <pschneider1968@googlemail.com>
-In-Reply-To: <20250624123036.124991422@linuxfoundation.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 1/4] mm, madvise: simplify anon_name handling
+Content-Language: en-US
+To: Andrew Morton <akpm@linux-foundation.org>,
+ "Liam R. Howlett" <Liam.Howlett@oracle.com>,
+ Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
+ David Hildenbrand <david@redhat.com>, Jann Horn <jannh@google.com>,
+ Mike Rapoport <rppt@kernel.org>, Suren Baghdasaryan <surenb@google.com>,
+ Michal Hocko <mhocko@suse.com>, Colin Cross <ccross@google.com>
+Cc: linux-mm@kvack.org, linux-kernel@vger.kernel.org
+References: <20250624-anon_name_cleanup-v2-0-600075462a11@suse.cz>
+ <20250624-anon_name_cleanup-v2-1-600075462a11@suse.cz>
+From: Vlastimil Babka <vbabka@suse.cz>
+Autocrypt: addr=vbabka@suse.cz; keydata=
+ xsFNBFZdmxYBEADsw/SiUSjB0dM+vSh95UkgcHjzEVBlby/Fg+g42O7LAEkCYXi/vvq31JTB
+ KxRWDHX0R2tgpFDXHnzZcQywawu8eSq0LxzxFNYMvtB7sV1pxYwej2qx9B75qW2plBs+7+YB
+ 87tMFA+u+L4Z5xAzIimfLD5EKC56kJ1CsXlM8S/LHcmdD9Ctkn3trYDNnat0eoAcfPIP2OZ+
+ 9oe9IF/R28zmh0ifLXyJQQz5ofdj4bPf8ecEW0rhcqHfTD8k4yK0xxt3xW+6Exqp9n9bydiy
+ tcSAw/TahjW6yrA+6JhSBv1v2tIm+itQc073zjSX8OFL51qQVzRFr7H2UQG33lw2QrvHRXqD
+ Ot7ViKam7v0Ho9wEWiQOOZlHItOOXFphWb2yq3nzrKe45oWoSgkxKb97MVsQ+q2SYjJRBBH4
+ 8qKhphADYxkIP6yut/eaj9ImvRUZZRi0DTc8xfnvHGTjKbJzC2xpFcY0DQbZzuwsIZ8OPJCc
+ LM4S7mT25NE5kUTG/TKQCk922vRdGVMoLA7dIQrgXnRXtyT61sg8PG4wcfOnuWf8577aXP1x
+ 6mzw3/jh3F+oSBHb/GcLC7mvWreJifUL2gEdssGfXhGWBo6zLS3qhgtwjay0Jl+kza1lo+Cv
+ BB2T79D4WGdDuVa4eOrQ02TxqGN7G0Biz5ZLRSFzQSQwLn8fbwARAQABzSBWbGFzdGltaWwg
+ QmFia2EgPHZiYWJrYUBzdXNlLmN6PsLBlAQTAQoAPgIbAwULCQgHAwUVCgkICwUWAgMBAAIe
+ AQIXgBYhBKlA1DSZLC6OmRA9UCJPp+fMgqZkBQJnyBr8BQka0IFQAAoJECJPp+fMgqZkqmMQ
+ AIbGN95ptUMUvo6aAdhxaOCHXp1DfIBuIOK/zpx8ylY4pOwu3GRe4dQ8u4XS9gaZ96Gj4bC+
+ jwWcSmn+TjtKW3rH1dRKopvC07tSJIGGVyw7ieV/5cbFffA8NL0ILowzVg8w1ipnz1VTkWDr
+ 2zcfslxJsJ6vhXw5/npcY0ldeC1E8f6UUoa4eyoskd70vO0wOAoGd02ZkJoox3F5ODM0kjHu
+ Y97VLOa3GG66lh+ZEelVZEujHfKceCw9G3PMvEzyLFbXvSOigZQMdKzQ8D/OChwqig8wFBmV
+ QCPS4yDdmZP3oeDHRjJ9jvMUKoYODiNKsl2F+xXwyRM2qoKRqFlhCn4usVd1+wmv9iLV8nPs
+ 2Db1ZIa49fJet3Sk3PN4bV1rAPuWvtbuTBN39Q/6MgkLTYHb84HyFKw14Rqe5YorrBLbF3rl
+ M51Dpf6Egu1yTJDHCTEwePWug4XI11FT8lK0LNnHNpbhTCYRjX73iWOnFraJNcURld1jL1nV
+ r/LRD+/e2gNtSTPK0Qkon6HcOBZnxRoqtazTU6YQRmGlT0v+rukj/cn5sToYibWLn+RoV1CE
+ Qj6tApOiHBkpEsCzHGu+iDQ1WT0Idtdynst738f/uCeCMkdRu4WMZjteQaqvARFwCy3P/jpK
+ uvzMtves5HvZw33ZwOtMCgbpce00DaET4y/UzsBNBFsZNTUBCACfQfpSsWJZyi+SHoRdVyX5
+ J6rI7okc4+b571a7RXD5UhS9dlVRVVAtrU9ANSLqPTQKGVxHrqD39XSw8hxK61pw8p90pg4G
+ /N3iuWEvyt+t0SxDDkClnGsDyRhlUyEWYFEoBrrCizbmahOUwqkJbNMfzj5Y7n7OIJOxNRkB
+ IBOjPdF26dMP69BwePQao1M8Acrrex9sAHYjQGyVmReRjVEtv9iG4DoTsnIR3amKVk6si4Ea
+ X/mrapJqSCcBUVYUFH8M7bsm4CSxier5ofy8jTEa/CfvkqpKThTMCQPNZKY7hke5qEq1CBk2
+ wxhX48ZrJEFf1v3NuV3OimgsF2odzieNABEBAAHCwXwEGAEKACYCGwwWIQSpQNQ0mSwujpkQ
+ PVAiT6fnzIKmZAUCZ8gcVAUJFhTonwAKCRAiT6fnzIKmZLY8D/9uo3Ut9yi2YCuASWxr7QQZ
+ lJCViArjymbxYB5NdOeC50/0gnhK4pgdHlE2MdwF6o34x7TPFGpjNFvycZqccSQPJ/gibwNA
+ zx3q9vJT4Vw+YbiyS53iSBLXMweeVV1Jd9IjAoL+EqB0cbxoFXvnjkvP1foiiF5r73jCd4PR
+ rD+GoX5BZ7AZmFYmuJYBm28STM2NA6LhT0X+2su16f/HtummENKcMwom0hNu3MBNPUOrujtW
+ khQrWcJNAAsy4yMoJ2Lw51T/5X5Hc7jQ9da9fyqu+phqlVtn70qpPvgWy4HRhr25fCAEXZDp
+ xG4RNmTm+pqorHOqhBkI7wA7P/nyPo7ZEc3L+ZkQ37u0nlOyrjbNUniPGxPxv1imVq8IyycG
+ AN5FaFxtiELK22gvudghLJaDiRBhn8/AhXc642/Z/yIpizE2xG4KU4AXzb6C+o7LX/WmmsWP
+ Ly6jamSg6tvrdo4/e87lUedEqCtrp2o1xpn5zongf6cQkaLZKQcBQnPmgHO5OG8+50u88D9I
+ rywqgzTUhHFKKF6/9L/lYtrNcHU8Z6Y4Ju/MLUiNYkmtrGIMnkjKCiRqlRrZE/v5YFHbayRD
+ dJKXobXTtCBYpLJM4ZYRpGZXne/FAtWNe4KbNJJqxMvrTOrnIatPj8NhBVI0RSJRsbilh6TE
+ m6M14QORSWTLRg==
+In-Reply-To: <20250624-anon_name_cleanup-v2-1-600075462a11@suse.cz>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Spam-Flag: NO
+X-Spam-Score: -4.30
+X-Spamd-Result: default: False [-4.30 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	MIME_TRACE(0.00)[0:+];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	ARC_NA(0.00)[];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	RCVD_TLS_ALL(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	FROM_EQ_ENVFROM(0.00)[];
+	TO_DN_SOME(0.00)[];
+	RCVD_COUNT_TWO(0.00)[2];
+	RCPT_COUNT_SEVEN(0.00)[11];
+	MID_RHS_MATCH_FROM(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.cz:mid,suse.cz:email,imap1.dmz-prg2.suse.org:helo]
+X-Spam-Level: 
 
-Am 24.06.2025 um 14:31 schrieb Greg Kroah-Hartman:
-> This is the start of the stable review cycle for the 6.1.142 release.
-> There are 507 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
+On 6/24/25 15:03, Vlastimil Babka wrote:
+> Since the introduction in 9a10064f5625 ("mm: add a field to store names
+> for private anonymous memory") the code to set anon_name on a vma has
+> been using madvise_update_vma() to call replace_anon_vma_name(). Since
+> the former is called also by a number of other madvise behaviours that
+> do not set a new anon_name, they have been passing the existing
+> anon_name of the vma to make replace_vma_anon_name() a no-op.
+> 
+> This is rather wasteful as it needs anon_vma_name_eq() to determine the
+> no-op situations, and checks for when replace_vma_anon_name() is allowed
+> (the vma is anon/shmem) duplicate the checks already done earlier in
+> madvise_vma_behavior(). It has also lead to commit 942341dcc574 ("mm:
+> fix use-after-free when anon vma name is used after vma is freed")
+> adding anon_name refcount get/put operations exactly to the cases that
+> actually do not change anon_name - just so the replace_vma_anon_name()
+> can keep safely determining it has nothing to do.
+> 
+> The recent madvise cleanups made this suboptimal handling very obvious,
+> but happily also allow for an easy fix. madvise_update_vma() now has the
+> complete information whether it's been called to set a new anon_name, so
+> stop passing it the existing vma's name and doing the refcount get/put
+> in its only caller madvise_vma_behavior().
+> 
+> In madvise_update_vma() itself, limit calling of replace_anon_vma_name()
+> only to cases where we are setting a new name, otherwise we know it's a
+> no-op. We can rely solely on the __MADV_SET_ANON_VMA_NAME behaviour and
+> can remove the duplicate checks for vma being anon/shmem that were done
+> already in madvise_vma_behavior().
+> 
+> Additionally, by using vma_modify_flags() when not modifying the
+> anon_name, avoid explicitly passing the existing vma's anon_name and
+> storing a pointer to it in struct madv_behavior or a local variable.
+> This prevents the danger of accessing a freed anon_name after vma
+> merging, previously fixed by commit 942341dcc574.
+> 
+> Signed-off-by: Vlastimil Babka <vbabka@suse.cz>
 
-Just like rc1, rc2 builds, boots and works fine on my 2-socket Ivy Bridge Xeon E5-2697 v2 
-server. No dmesg oddities or regressions found.
+With fixed up function names as pointed out by Suren:
 
-Tested-by: Peter Schneider <pschneider1968@googlemail.com>
+Since the introduction in 9a10064f5625 ("mm: add a field to store names
+for private anonymous memory") the code to set anon_name on a vma has
+been using madvise_update_vma() to call replace_anon_vma_name(). Since
+the former is called also by a number of other madvise behaviours that
+do not set a new anon_name, they have been passing the existing
+anon_name of the vma to make replace_anon_vma_name() a no-op.
 
+This is rather wasteful as it needs anon_vma_name_eq() to determine the
+no-op situations, and checks for when replace_anon_vma_name() is allowed
+(the vma is anon/shmem) duplicate the checks already done earlier in
+madvise_vma_behavior(). It has also lead to commit 942341dcc574 ("mm:
+fix use-after-free when anon vma name is used after vma is freed")
+adding anon_name refcount get/put operations exactly to the cases that
+actually do not change anon_name - just so the replace_anon_vma_name()
+can keep safely determining it has nothing to do.
 
-Beste Grüße,
-Peter Schneider
+The recent madvise cleanups made this suboptimal handling very obvious,
+but happily also allow for an easy fix. madvise_update_vma() now has the
+complete information whether it's been called to set a new anon_name, so
+stop passing it the existing vma's name and doing the refcount get/put
+in its only caller madvise_vma_behavior().
 
--- 
-Climb the mountain not to plant your flag, but to embrace the challenge,
-enjoy the air and behold the view. Climb it so you can see the world,
-not so the world can see you.                    -- David McCullough Jr.
+In madvise_update_vma() itself, limit calling of replace_anon_vma_name()
+only to cases where we are setting a new name, otherwise we know it's a
+no-op. We can rely solely on the __MADV_SET_ANON_VMA_NAME behaviour and
+can remove the duplicate checks for vma being anon/shmem that were done
+already in madvise_vma_behavior().
 
-OpenPGP:  0xA3828BD796CCE11A8CADE8866E3A92C92C3FF244
-Download: https://www.peters-netzplatz.de/download/pschneider1968_pub.asc
-https://keys.mailvelope.com/pks/lookup?op=get&search=pschneider1968@googlemail.com
-https://keys.mailvelope.com/pks/lookup?op=get&search=pschneider1968@gmail.com
+Additionally, by using vma_modify_flags() when not modifying the
+anon_name, avoid explicitly passing the existing vma's anon_name and
+storing a pointer to it in struct madv_behavior or a local variable.
+This prevents the danger of accessing a freed anon_name after vma
+merging, previously fixed by commit 942341dcc574.
+
+Signed-off-by: Vlastimil Babka <vbabka@suse.cz>
 
