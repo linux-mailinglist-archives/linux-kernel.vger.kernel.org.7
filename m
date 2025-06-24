@@ -1,111 +1,96 @@
-Return-Path: <linux-kernel+bounces-700061-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-700063-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3B69EAE634A
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Jun 2025 13:08:40 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id F08C7AE635A
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Jun 2025 13:10:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C333517B8A1
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Jun 2025 11:08:40 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 08CC73AC5D5
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Jun 2025 11:10:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AAC12288C23;
-	Tue, 24 Jun 2025 11:08:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="IiYfk0Mw"
-Received: from mail-pl1-f175.google.com (mail-pl1-f175.google.com [209.85.214.175])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8E5EC28A71D;
+	Tue, 24 Jun 2025 11:10:17 +0000 (UTC)
+Received: from alerce.blitiri.com.ar (alerce.blitiri.com.ar [49.12.208.134])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C862E2288EE;
-	Tue, 24 Jun 2025 11:08:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9556C28A411
+	for <linux-kernel@vger.kernel.org>; Tue, 24 Jun 2025 11:10:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=49.12.208.134
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750763312; cv=none; b=hWlvDf39SxojfCo4WTQTZm2fOEDAybuQUKewFfkQdpL++n5Rhd66CZc30NSYJsXKwyNUyUEwvQd1BKuxYjvXgfZs+TDzIDE0Gp3U4XT4V8ad+Ewdfn3jYYuA97/khEeeBVIIWWC4/d/wHl2bt0g43yZqn5D1EUl58k6XduleqJ0=
+	t=1750763417; cv=none; b=sBxPxtANXJchtB9EZnO09FkO/SrD0cHiyAUqzGYYV3TWViuOQ4GppsNCaS5R8tCKeC+Pq/FnJD7Al5IuGd0w8pX3e+atkiPjDwBR7H5ND8sz0ogs42CtD5n5ZcmxjiXXwD48fTu6AVqatKDVxEAIlR+ncaYoZQ7NfTf0eJrVDqU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750763312; c=relaxed/simple;
-	bh=DNg1JCVsgEHf23k4WG2oExPiJlj+bBuyEUK7sYa8r7U=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=kYzOMRgPh6/GHSsy0N0T5zHCiVaWBbICp27xcnGT73YvMCR/atM1Dz1Vw3Q5o8r43Yw3U1PZ3EGATCmfd5GOP6LUYe7xVzFYzlllrieRd5zIQsXi+cP5AQDx/Lp/edrIzmHEzXH/emYuoznYx1cnuG4A0jKUOP9PUUirtDYtKbI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=IiYfk0Mw; arc=none smtp.client-ip=209.85.214.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f175.google.com with SMTP id d9443c01a7336-234ae2bf851so7339245ad.1;
-        Tue, 24 Jun 2025 04:08:30 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1750763310; x=1751368110; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=u4AdC7xJ04CgkqAaAO3h+p8gGTP59K3A/YKahZ0U2Us=;
-        b=IiYfk0MwfkA110jQI6dgSM2N/sLhKUKfapDpomoAKFfN293MtF1CY5zi95RsJZ7mR1
-         JFE8lGfj3YM78UqTLM4QIIzwlMu+o8PTK0bapz04oK5GFktPcbb3vJ6WS1prCd/l9S/E
-         +1GUkdzGMj9/ptxkWZiJc6DPbX4zuNrvZX9IMukmp4Wb3j5A0HtPcf6w+k8CHnobQve7
-         bsHkg0aF9zbiCgU11PhW9eY3Ef7fLOwp1PvrhnifPKtAMUBSYspZo0NR0kc/tQeYTGaM
-         VNzCnM1t9TYtUZp+drYESB0ESFS+vP3ssH0sTPqp+ZPTVfDIBKWOpaxaOw6UcsGLor9b
-         lJbA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1750763310; x=1751368110;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=u4AdC7xJ04CgkqAaAO3h+p8gGTP59K3A/YKahZ0U2Us=;
-        b=M58QtE+z7g0xYPeea2hkbeWWFCM3sQTPtL6L+GpDS6WFnf7Rp3AA5mDtRSpd0i3WiY
-         s2iYSIKAYeWwuHBq1olWv9rGav7XUSys3kAgO2+SNhdNd4cCDn3L24hJ+87DQbeNTTm3
-         17wN6KA04DPvirQMZXX0mp/pwdJSmhWYorJoc7NCnpKmQ9w8CoE29MT4Fpov8uIYUpB3
-         Xc0BQMEHnGscL7opYvRH+3t6uilsIVdTkRmMpRcBYxfCraitFtv56ovNPikfJqzKUYm2
-         whvUIBuegHP5IkZ/Oa4LA15GgdynPY4wLa8ZOw2By0C6SI7A7z8fom7TDkzKWT+Um4Lj
-         D2rQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVvcL+/oTeJ8Us0JdssmVuBAhHj+zl8SwutNrX2pkA7ENTQGUX5S8OEjTj27IFKZShMuY6E4h2UZRrdxr8=@vger.kernel.org, AJvYcCXqEdKuN+HOP7UeZWdLSgppjBuepeV8deq9wF5qn9fRLj6W4wioH7q23Arz+dg8/AwVn2/SXGXkTsTrIB+g2jw=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyjI5HtpWngWvBULFy6cjWAw0/zOZTy5gw7fGg+JV1TYJnciu/g
-	/VeOaqsQpS+HirAm780FBDfoOIvJeFwTjywgPceHbJb6Z+PADY0wWGOT8V+/0acEw9ogBTa/yJC
-	ckPXOKSN4Rn370M7rnfksn3xIXAOIlH0Hr1xRCuc=
-X-Gm-Gg: ASbGncvFyrlEW1nnfCPFTRfJibK3kdseM5+dN2hZ85BIIZkFrySA+GtZZkZlB3PM9TI
-	J/jkRDXqEuFRgY4ovn1minrhsqQiMQl9Z1XsKuGNbDvaGZbIyPzzS9z4OOQdEuc1bu9Tk5eRzFF
-	gxQ8XChgLM8bRFaayPMbykTMlSkII/+Vf0IFCoP3+H6WM=
-X-Google-Smtp-Source: AGHT+IHnFuakCpfPBkjJNvFKFCJKt0vC/f+jLh/CjjCBWyYIGLi8aAa/I/GMHz7wT/6gQgfix8FO3sp0tGSeV4FtsYQ=
-X-Received: by 2002:a17:903:2450:b0:234:f200:5194 with SMTP id
- d9443c01a7336-237d980d929mr102574535ad.1.1750763310017; Tue, 24 Jun 2025
- 04:08:30 -0700 (PDT)
+	s=arc-20240116; t=1750763417; c=relaxed/simple;
+	bh=Simcz+dPz1lMznCnH08QtMUqetrxTlmKokt29TSkifI=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=IhkUjAqgTbjy7WS1KfeO+1k7am3f1IeNy/zzfLTtoOo1w3oQFL6jybc31DYjirv0kjbv7EC2VPkVdj+/RIhx/gkrMhemkkhQo+fucmjUbzgvPFVUlVo3kqEpcV4wY/L0XbES+4DW3WG8z4lQ+wsKigtUxDmuOmn0KwDGX4UrjoY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sdfg.com.ar; spf=pass smtp.mailfrom=sdfg.com.ar; arc=none smtp.client-ip=49.12.208.134
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sdfg.com.ar
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sdfg.com.ar
+Received: from [IPV6:2a02:8109:aa17:ae00:b843:3b62:2e09:ec2f]
+	by sdfg.com.ar (chasquid) with ESMTPSA
+	tls TLS_AES_128_GCM_SHA256
+	(over submission+TLS, TLS-1.3, envelope from "rodrigo@sdfg.com.ar")
+	; Tue, 24 Jun 2025 11:08:52 +0000
+Message-ID: <86bc2557-b9cc-4767-9379-e60786b3f825@sdfg.com.ar>
+Date: Tue, 24 Jun 2025 13:08:51 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250610132823.3457263-1-fujita.tomonori@gmail.com> <175015666837.277659.5038961663728008472.b4-ty@kernel.org>
-In-Reply-To: <175015666837.277659.5038961663728008472.b4-ty@kernel.org>
-From: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
-Date: Tue, 24 Jun 2025 13:08:17 +0200
-X-Gm-Features: Ac12FXw9NRLPGpki39ay2NhQnfu75XaImkNq6s2i4SyS7A6IERIj-PvCYxubfCk
-Message-ID: <CANiq72=mDe2kB4yQnzb=kwopyUYG936pOoj80YpWk7+q6aJwbQ@mail.gmail.com>
-Subject: Re: [PATCH v3 0/5] rust: time: Convert hrtimer to use Instant and Delta
-To: Andreas Hindborg <a.hindborg@kernel.org>
-Cc: alex.gaynor@gmail.com, ojeda@kernel.org, 
-	FUJITA Tomonori <fujita.tomonori@gmail.com>, aliceryhl@google.com, anna-maria@linutronix.de, 
-	bjorn3_gh@protonmail.com, boqun.feng@gmail.com, dakr@kernel.org, 
-	frederic@kernel.org, gary@garyguo.net, jstultz@google.com, 
-	linux-kernel@vger.kernel.org, lossin@kernel.org, lyude@redhat.com, 
-	rust-for-linux@vger.kernel.org, sboyd@kernel.org, tglx@linutronix.de, 
-	tmgross@umich.edu
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] selftests/nolibc: avoid GCC 15
+ -Wunterminated-string-initialization
+To: =?UTF-8?Q?Thomas_Wei=C3=9Fschuh?= <linux@weissschuh.net>,
+ Willy Tarreau <w@1wt.eu>, Shuah Khan <shuah@kernel.org>
+Cc: linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20250623-nolibc-nonstring-v1-1-11282204766a@weissschuh.net>
+Content-Language: en-US
+From: Rodrigo Campos <rodrigo@sdfg.com.ar>
+In-Reply-To: <20250623-nolibc-nonstring-v1-1-11282204766a@weissschuh.net>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-On Tue, Jun 17, 2025 at 12:39=E2=80=AFPM Andreas Hindborg <a.hindborg@kerne=
-l.org> wrote:
->
-> [1/5] rust: time: Rename Delta's methods from as_* to into_*
->       commit: 2ed94606a0fea693e250e5b8fda11ff8fc240d37
+On 6/23/25 11:34 PM, Thomas Weißschuh wrote:
+> On GCC 15 the following warnings is emitted:
+> 
+> nolibc-test.c: In function ‘run_stdlib’:
+> nolibc-test.c:1416:32: warning: initializer-string for array of ‘char’ truncates NUL terminator but destination lacks ‘nonstring’ attribute (11 chars into 10 available) [-Wunterminated-string-initialization]
+>   1416 |                 char buf[10] = "test123456";
+>        |                                ^~~~~~~~~~~~
+> 
+> Increase the size of buf to avoid the warning.
+> 
+> It would also be possible to use __attribute__((nonstring)) but that
+> would require some ifdeffery to work with older compilers.
+> 
+> Fixes: 1063649cf531 ("selftests/nolibc: Add tests for strlcat() and strlcpy()")
+> Signed-off-by: Thomas Weißschuh <linux@weissschuh.net>
+> ---
+>   tools/testing/selftests/nolibc/nolibc-test.c | 2 +-
+>   1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/tools/testing/selftests/nolibc/nolibc-test.c b/tools/testing/selftests/nolibc/nolibc-test.c
+> index dbe13000fb1ac153e9a89f627492daeb584a05d4..52640d8ae402b9e34174ae798e74882ca750ec2b 100644
+> --- a/tools/testing/selftests/nolibc/nolibc-test.c
+> +++ b/tools/testing/selftests/nolibc/nolibc-test.c
+> @@ -1413,7 +1413,7 @@ int run_stdlib(int min, int max)
+>   		 * Add some more chars after the \0, to test functions that overwrite the buffer set
+>   		 * the \0 at the exact right position.
+>   		 */
+> -		char buf[10] = "test123456";
+> +		char buf[11] = "test123456";
+>   		buf[4] = '\0';
 
-Do we want this given the (~ongoing) discussion at
+Reviewed-by: Rodrigo Campos <rodrigo@sdfg.com.ar>
 
-    https://lore.kernel.org/rust-for-linux/20250617144155.3903431-2-fujita.=
-tomonori@gmail.com/
+Sorry for the typo :)
 
-?
 
-I noticed due to a conflict in linux-next today.
 
-Cheers,
-Miguel
+Best,
+Rodrigo
 
