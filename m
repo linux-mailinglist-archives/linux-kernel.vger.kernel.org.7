@@ -1,83 +1,158 @@
-Return-Path: <linux-kernel+bounces-699321-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-699323-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D9831AE5876
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Jun 2025 02:18:17 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 12596AE5877
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Jun 2025 02:18:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4F9187B4CA0
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Jun 2025 00:16:35 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6BC9E1B63074
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Jun 2025 00:18:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CDABA126C05;
-	Tue, 24 Jun 2025 00:17:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 595831AA1DA;
+	Tue, 24 Jun 2025 00:17:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="DVqE0rcx"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="p55P0z+J"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 25B751F956;
-	Tue, 24 Jun 2025 00:17:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B77DC19D080
+	for <linux-kernel@vger.kernel.org>; Tue, 24 Jun 2025 00:17:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750724228; cv=none; b=ECEurjhSv43kWcLVdQrEhFexfUNdjjNgQjvd4NZXdiluDVTnWXgpNOe7CsgLhMWdXOTACUm3OVbIPBm6QIPT5FUVNyYsl8SZrYHfNeEflC9kpR2I0YQOFzvHoPLxnffdsmJjuCL0hyUY60OItjm44iyomrlfhCmimzgB8u/GLaY=
+	t=1750724259; cv=none; b=p4ehuAzoRpcmhNbcgPqkicqKm8D4aiGnlmBzzbUkTTEOlq3ufKtshazD/GtXxkA8cEWimbGK5PMDmlhFVrJ1bwbnUA4zQghEbmVoJwnJGh46lgck+gpoa5mE1EOJWSZhJcM7uHorpu93a0vZPPX82PBMu6tYqn+3V4iRxaK5ccU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750724228; c=relaxed/simple;
-	bh=LG8hwkkohimmR2ukc3sgckWtHUtEhHZxioav2+XzR+A=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=rhGgNcCnvUaW4QFyqzedomnxqXhja2DpdGP3ok6EAoW5zHVw9ibYYUG1XjH9uyQb3zrV9bti82YKqVpJIC9IMgLf9HSBRJz3a2HTRcN3Ew4o84Gr2mLC7DCWlEUuIPGdMLiNNz2+QtcIas4H2BrElCJI/SSOPeue8bG/0i7fgqo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=DVqE0rcx; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id AE2A4C4CEEA;
-	Tue, 24 Jun 2025 00:17:06 +0000 (UTC)
+	s=arc-20240116; t=1750724259; c=relaxed/simple;
+	bh=o+v4lK1Ijp81f8YHyslKho/ngACy3vmkWV/zLRrVAJo=;
+	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
+	 Mime-Version:Content-Type; b=nnJX36r4fLkdDr6NGR7n1TcrV/kJcNdKAjG9rXiJyVVIVaxTcA2RK/mTsCZYE0vuf+kBUn6oIi9MlWAjoJ7xRCO1IUwskPeE7E+ctAz4ttMtmeIBJwsdQ77oOmelXC08pAqin1DlQJijyZXNAx8aas8oKV2Up4e3hXfZq9IeQkk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=p55P0z+J; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id CE676C4CEEA;
+	Tue, 24 Jun 2025 00:17:33 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1750724227;
-	bh=LG8hwkkohimmR2ukc3sgckWtHUtEhHZxioav2+XzR+A=;
+	s=k20201202; t=1750724258;
+	bh=o+v4lK1Ijp81f8YHyslKho/ngACy3vmkWV/zLRrVAJo=;
 	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=DVqE0rcxj4nXHjkupIsyOpMvoxPH9i0W440Rbm4yCJh0Dvj6MLKvoiZ1akBKEwuGP
-	 6+hYkOXD4EAjvXtNxtYkp+yfKpklk54QlEpEAoImhkpMSlTn25SIXbP5hEtU4nu/+Z
-	 3jdWVIHhx72nG0Nww/Ji0eCP9V74AXtGpwl17mQucL5JEqAoLbhyrSzL0w6u8EX1VW
-	 6vPdIGs0npmAfb585QQNHnl9ovZriqMprMYRv7GMdv4DiuC58b3/A3OEb4pUUo7n9L
-	 1wqFCW27ShpJAtJO5P6UmVcedbeic3T2irI4dhg3kvYm3AyGoR+1JyrCentzjZ17cN
-	 yYwTj9l9+zGkA==
-Date: Mon, 23 Jun 2025 17:17:06 -0700
-From: Jakub Kicinski <kuba@kernel.org>
-To: Byungchul Park <byungchul@sk.com>
-Cc: willy@infradead.org, netdev@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-mm@kvack.org, kernel_team@skhynix.com,
- almasrymina@google.com, ilias.apalodimas@linaro.org, harry.yoo@oracle.com,
- hawk@kernel.org, akpm@linux-foundation.org, davem@davemloft.net,
- john.fastabend@gmail.com, andrew+netdev@lunn.ch, asml.silence@gmail.com,
- toke@redhat.com, tariqt@nvidia.com, edumazet@google.com, pabeni@redhat.com,
- saeedm@nvidia.com, leon@kernel.org, ast@kernel.org, daniel@iogearbox.net,
- david@redhat.com, lorenzo.stoakes@oracle.com, Liam.Howlett@oracle.com,
- vbabka@suse.cz, rppt@kernel.org, surenb@google.com, mhocko@suse.com,
- horms@kernel.org, linux-rdma@vger.kernel.org, bpf@vger.kernel.org,
- vishal.moola@gmail.com, hannes@cmpxchg.org, ziy@nvidia.com,
- jackmanb@google.com
-Subject: Re: [PATCH net-next v6 6/9] netmem: remove __netmem_get_pp()
-Message-ID: <20250623171706.3bb10482@kernel.org>
-In-Reply-To: <20250623043207.GA31962@system.software.com>
-References: <20250620041224.46646-1-byungchul@sk.com>
-	<20250620041224.46646-7-byungchul@sk.com>
-	<20250623043207.GA31962@system.software.com>
+	b=p55P0z+JRFL5pp9PD2HqnGNMfSFW7SSI0qHf2U3z3GM7VlrggFqN+vzMDR8a7ZxH8
+	 rEAju40FWlxjaVY/RO+PJ3xVMeMKViCqxLWGQ6VNIvb2yItQacd4O4CQm4kgYS7sEW
+	 3x4VGycouXtbl8pLtC83FgmzzvLdThzLllqYYw1tzDrWAgIttb2Ebjn1fhANRc59aC
+	 ofeRsR9H7M7tniwEE/qcokBerA3CDNK8HMrAuQT0Jgm/xIRW+DlbyFaef8i7h/NHPR
+	 BV3H+Tul0ym9DilUAujzYljY6mQrGYcKjnXv+DaVTgalB7SknhfAGwWQ3q4pv2HFR3
+	 OH+bRecZsFy6A==
+Date: Tue, 24 Jun 2025 09:17:31 +0900
+From: Masami Hiramatsu (Google) <mhiramat@kernel.org>
+To: Lance Yang <ioworker0@gmail.com>
+Cc: akpm@linux-foundation.org, zi.li@linux.dev, anna.schumaker@oracle.com,
+ boqun.feng@gmail.com, joel.granados@kernel.org, jstultz@google.com,
+ kent.overstreet@linux.dev, leonylgao@tencent.com,
+ linux-kernel@vger.kernel.org, longman@redhat.com, mhiramat@kernel.org,
+ mingo@redhat.com, mingzhe.yang@ly.com, peterz@infradead.org,
+ rostedt@goodmis.org, senozhatsky@chromium.org, tfiga@chromium.org,
+ will@kernel.org, Lance Yang <lance.yang@linux.dev>
+Subject: Re: [PATCH RFC 1/3] locking/rwsem: make owner helpers globally
+ available
+Message-Id: <20250624091731.f4d3cf296943ce45e97a631f@kernel.org>
+In-Reply-To: <20250612042005.99602-2-lance.yang@linux.dev>
+References: <20250612042005.99602-1-lance.yang@linux.dev>
+	<20250612042005.99602-2-lance.yang@linux.dev>
+X-Mailer: Sylpheed 3.8.0beta1 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
+Mime-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 
-On Mon, 23 Jun 2025 13:32:07 +0900 Byungchul Park wrote:
-> In the meantime, libeth started to use __netmem_get_pp() again :(
-> 
-> Discard this patch please.  Do I have to resend this series with this
-> excluded?
+On Thu, 12 Jun 2025 12:19:24 +0800
+Lance Yang <ioworker0@gmail.com> wrote:
 
-You'll need to repost, unfortunately. If there's a build failure 
-the CI doesn't execute any functional testing nodes.
+> From: Lance Yang <lance.yang@linux.dev>
+> 
+> In preparation for extending blocker tracking to support rwsems, make the
+> rwsem_owner() and is_rwsem_reader_owned() helpers globally available for
+> determining if the blocker is a writer or one of the readers.
+> 
+
+Looks good to me.
+
+Reviewed-by: Masami Hiramatsu (Google) <mhiramat@kernel.org>
+
+Thanks!
+
+> Signed-off-by: Lance Yang <lance.yang@linux.dev>
+> ---
+>  include/linux/rwsem.h  | 12 ++++++++++++
+>  kernel/locking/rwsem.c |  8 +++++---
+>  2 files changed, 17 insertions(+), 3 deletions(-)
+> 
+> diff --git a/include/linux/rwsem.h b/include/linux/rwsem.h
+> index c8b543d428b0..544853bed5b9 100644
+> --- a/include/linux/rwsem.h
+> +++ b/include/linux/rwsem.h
+> @@ -132,6 +132,18 @@ static inline int rwsem_is_contended(struct rw_semaphore *sem)
+>  	return !list_empty(&sem->wait_list);
+>  }
+>  
+> +#if defined(CONFIG_DEBUG_RWSEMS) || defined(CONFIG_DETECT_HUNG_TASK_BLOCKER)
+> +/*
+> + * Return just the real task structure pointer of the owner
+> + */
+> +extern struct task_struct *rwsem_owner(struct rw_semaphore *sem);
+> +
+> +/*
+> + * Return true if the rwsem is owned by a reader.
+> + */
+> +extern bool is_rwsem_reader_owned(struct rw_semaphore *sem);
+> +#endif
+> +
+>  #else /* !CONFIG_PREEMPT_RT */
+>  
+>  #include <linux/rwbase_rt.h>
+> diff --git a/kernel/locking/rwsem.c b/kernel/locking/rwsem.c
+> index 2ddb827e3bea..6cb29442d4fc 100644
+> --- a/kernel/locking/rwsem.c
+> +++ b/kernel/locking/rwsem.c
+> @@ -181,11 +181,11 @@ static inline void rwsem_set_reader_owned(struct rw_semaphore *sem)
+>  	__rwsem_set_reader_owned(sem, current);
+>  }
+>  
+> -#ifdef CONFIG_DEBUG_RWSEMS
+> +#if defined(CONFIG_DEBUG_RWSEMS) || defined(CONFIG_DETECT_HUNG_TASK_BLOCKER)
+>  /*
+>   * Return just the real task structure pointer of the owner
+>   */
+> -static inline struct task_struct *rwsem_owner(struct rw_semaphore *sem)
+> +struct task_struct *rwsem_owner(struct rw_semaphore *sem)
+>  {
+>  	return (struct task_struct *)
+>  		(atomic_long_read(&sem->owner) & ~RWSEM_OWNER_FLAGS_MASK);
+> @@ -194,7 +194,7 @@ static inline struct task_struct *rwsem_owner(struct rw_semaphore *sem)
+>  /*
+>   * Return true if the rwsem is owned by a reader.
+>   */
+> -static inline bool is_rwsem_reader_owned(struct rw_semaphore *sem)
+> +bool is_rwsem_reader_owned(struct rw_semaphore *sem)
+>  {
+>  	/*
+>  	 * Check the count to see if it is write-locked.
+> @@ -205,7 +205,9 @@ static inline bool is_rwsem_reader_owned(struct rw_semaphore *sem)
+>  		return false;
+>  	return rwsem_test_oflags(sem, RWSEM_READER_OWNED);
+>  }
+> +#endif
+>  
+> +#ifdef CONFIG_DEBUG_RWSEMS
+>  /*
+>   * With CONFIG_DEBUG_RWSEMS configured, it will make sure that if there
+>   * is a task pointer in owner of a reader-owned rwsem, it will be the
+> -- 
+> 2.49.0
+> 
+
+
 -- 
-pw-bot: cr
+Masami Hiramatsu (Google) <mhiramat@kernel.org>
 
