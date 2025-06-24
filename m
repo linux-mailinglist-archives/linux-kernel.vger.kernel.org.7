@@ -1,81 +1,80 @@
-Return-Path: <linux-kernel+bounces-701201-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-701202-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id E36FCAE7215
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Jun 2025 00:12:04 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8034CAE7216
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Jun 2025 00:12:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A208C1BC2245
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Jun 2025 22:12:20 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id ECB5617BC57
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Jun 2025 22:12:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0967625B694;
-	Tue, 24 Jun 2025 22:11:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 171BA25C6E5;
+	Tue, 24 Jun 2025 22:11:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="fDIcflTt"
-Received: from mail-pl1-f170.google.com (mail-pl1-f170.google.com [209.85.214.170])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="U24/A8Sc"
+Received: from mail-pf1-f179.google.com (mail-pf1-f179.google.com [209.85.210.179])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EFEB525B1F0;
-	Tue, 24 Jun 2025 22:11:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9B99B25B667;
+	Tue, 24 Jun 2025 22:11:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750803100; cv=none; b=Z10FD3PUw0qSENk6TsAJyziusxFP7qYOZcjJLAG4Wpx7KD2kQUkbKjrZZrI7BDR5nNuKcvuJ8QOJ6YI130XAOJZaji0drXU/K/fUbrENZxIhihrCJUpIEwUKIMh/G80kdcb7pfphUjmD2Fkb3yPEs/xnWfrbNeF9xPcmhssS81I=
+	t=1750803102; cv=none; b=UBtd3nYlWTMfOn1xOniLu3AbD6ECacdtB6BtUYgZSkIKF5h1YvLv3/Xkt+Exc1HteNBueUpmW8qqoIao7Ddi7WM3dxQGoAAYO7Rx0zezcEKlBftGzqDP25mByrGbPvJtARTaKtBoDr5ZXnzeq9+gcxpkdbuS9JHU8YZhRKyaOus=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750803100; c=relaxed/simple;
-	bh=AP8shLBDvKbYuth+8++0JymfuCshZQX8ezE8AjEF8do=;
+	s=arc-20240116; t=1750803102; c=relaxed/simple;
+	bh=J2wN034E1ANJf8z7zTgfPajB+DTsr36981US4k79sBA=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=RnZjRDlrJVVfIXFQJKmgMIZ6si96GfVXnPeKVJeWlfm+3lZNhutWmQ9XfpUqERlNac3MB9iTLkRayDaHL/YHRorggfKSx7KvQ5vMPkIJsAQnEC+lh9Movy0j5fjTpKR+vZ5I3KhHXZpSJQhPaBn3Tx87NbgiYYapCqs5U0x4RuI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=fDIcflTt; arc=none smtp.client-ip=209.85.214.170
+	 In-Reply-To:To:Cc; b=CqtujbTtoAIPWj/TKVgD3eGaKwSW1BqdJCijomUyTzA1RboB1hNDhJgDDPGhhQb1PWEd2Xi3vXNPmy8aMOKZVDgGbUEv/yIpIMCoYd68ijnzxpD9fd+XK0zXYqnneX/eTFtG5oiqVMs+nbV2U9z50mBVVggw6WzuTfIdQd6EVi4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=U24/A8Sc; arc=none smtp.client-ip=209.85.210.179
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f170.google.com with SMTP id d9443c01a7336-235f9e87f78so65114745ad.2;
-        Tue, 24 Jun 2025 15:11:38 -0700 (PDT)
+Received: by mail-pf1-f179.google.com with SMTP id d2e1a72fcca58-747abb3cd0bso231775b3a.1;
+        Tue, 24 Jun 2025 15:11:40 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1750803098; x=1751407898; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1750803100; x=1751407900; darn=vger.kernel.org;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=LO0TxQnKvrLipyxCSYXSthueOvIoODhR5Ygf1iirZRk=;
-        b=fDIcflTtHEnt/sU4fHvmfUByLBYwd1g6Hkdmc+qSao/rGUUiI38NjCMfRStSvugrNq
-         +bMyghlvomxLos7CNN3hROvJknWer/NsxwR+ZlaQTmXjJJ3ewSFzT3qNALEPDNZykmlw
-         IV2T1Py5tLkKi/msc7IwWlQIkey2o/VpVoyTpDe47ppDfMY+Xk05KO+MclbCbc9zWukZ
-         8+N5bzeu3p+3/OqPQUIUnSXX5LqiA1C5Hkuq9myt3zhVUe/6HPe70+s9aZAS9yPo1vbQ
-         cpd2EHsvrZugD2rn8TxTCdXS8KhakFTIOONpwwuu9sxu85FTKgLJYNSi31ZWQ3l6GQao
-         bSGQ==
+        bh=hExQIcvoKTg+0rOcrZXWVdh84oK5KeLOdM+0A3CpbHg=;
+        b=U24/A8Sciib9eZGPOhA/1+xwTM4DMRU+nDLEfGXwG/KbcPsA5V5Nz3aUcMcHrZ0WAZ
+         Pz/hIJzzVUt8Fwbx++68Hthw2ec8HKqBjp6EjFINR7yntgfp7MYhwjnNY3FacBoondHY
+         shiBmWfon6GoTUz6O1N9ttrcxXjcGfZnNbUtXPONAp1/hYh8W+doErDn2NiGfTDClmxr
+         sHfVVnRidlqcrnenenKc1xeMN9q8A11pm/jEv0RuHMq7NXPcBKfEZYaISfVuP032noD4
+         +qj/lIh5DyLPcSwoLZM09uAC0pNCwevgzHlyNZ/qsxHD07RBM9Wjc1a0htOqhAY43HK7
+         rw9w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1750803098; x=1751407898;
+        d=1e100.net; s=20230601; t=1750803100; x=1751407900;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=LO0TxQnKvrLipyxCSYXSthueOvIoODhR5Ygf1iirZRk=;
-        b=JzJAIBsmZ83FhVf1uWBQXYHHN9e2CyfHtZiy0sawUlmtW9Cidnzr46K114rWeh6iFH
-         rCBMp4ScKwfX/Wrz+WLjhPfI5Wkj11tdSsKCavqMcDStFuJe2c4mf6nlfri30YhROcQe
-         66L4t40XyB43oQfaoL6SrYafG91Z9AxGOCNANgflj6MmHfNj73VTyzdNFUbRx6KVtlAq
-         vjGlMcdbAoiKmtuPVJkvUMFYB9kp4L0ydxqppcn9EOyVnfFUxCoOhdy0vZRGO+pYJA6G
-         7g793BWWOjYC8XXmgXCjPAA9el7YXnT6gqX5hAgdLlMMs2R7JDayY6qgiZrEf9N1odVt
-         y25Q==
-X-Forwarded-Encrypted: i=1; AJvYcCVkVgOU3npGvp1tIkx5+Zwx+R19LR4bTCAxcgbw1UC7iKuCZkQzTR52/0HGoAmwV72OGiLIStd52FQHFlhsVA==@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywpx05r1LeUGZgNMSZ+X/MPS4tN/mbRAzgILWNPbupdsdwdrc2M
-	6h8xmUnOwRertuJTMyBjRVARZMlyxi2MQF9UTsgYGRihlAu2fuHGP0p0
-X-Gm-Gg: ASbGncuoKwbOHzU+Oxx6LnTE5RADZ/Y0/tiDgoeIGzlZ2HKyIqKyZCISTCZhDG4qTVN
-	PS6EDp29pwQkuD6zcl36hxD1oYam6OoEhVzd81IZvJkmDjAvm5SlWQ9J5ecaT/w3/Hw4MVuCCNp
-	stMrAZr5FblkCEgj22YQJ/cfGDjPuyGgDOtxsx30O2SkaNcCoFYJGTf88KFu+hilPV41l2E+D6x
-	emQHY45YzMExlMOBjEaqQg1Z8my7LWRzS3XbqtZtAN4+gqgrQwXetUJ0TgyU2fNimk8/czM+aiQ
-	RfEA/aCOtWv+Rr3Z0gwJeT7haJP6HlGMQGpQsgqYYp6+m9tycd+QFZmFQayNI+hji+qmyTrUY2b
-	hfCRgXFu9yrE1zgl8TNPcWgDtHPc/hfpIuJqy
-X-Google-Smtp-Source: AGHT+IGzZk9ONGaeRCWEvkO3+3SKQAxtuncFrLeQo0zxqC9J+87qEA1081aiDzNzrowwqKyJ9OPZ4g==
-X-Received: by 2002:a17:903:4b2b:b0:234:de0a:b36e with SMTP id d9443c01a7336-238240827e5mr15140935ad.49.1750803098144;
-        Tue, 24 Jun 2025 15:11:38 -0700 (PDT)
+        bh=hExQIcvoKTg+0rOcrZXWVdh84oK5KeLOdM+0A3CpbHg=;
+        b=P8T+B6ua+VcmreLTwlm2Uj0CKmLNdjTqQt6Piw78ZWoqZKqjSAr/kUEiidogo88tjL
+         AG1ViGX/2epsZWcNaYhwaRcRg9qdK5u+7KW9/o5OSpsK1wyovpPq7xYFnTIIqyACQiQJ
+         qP2Ai4MKcSGjyMijhXR/uU9GUEKwNjkEIu8i2ym4P0YrufRp7p4nRSknT+ysBJqptHpg
+         Jy8+tcRPbKYzuxTAXDG822zk6EebGe2mtbgviSPc0rTykgflTXQ53+9kUd0wotOai85z
+         tj0r78hCO4HHetSinTYlamBN0GlDr+lSjjpIO9v6vsn5j5YM5RAEmgQb5rdBVgG7nVBZ
+         aixw==
+X-Forwarded-Encrypted: i=1; AJvYcCWiF4oSXi93eXQtepFASFZYvYbD4B2zGrTdo7lflgvPxRGrGJvnCB6U8hYmimx62lgCmWd4S5o+5+dZG/pXIg==@vger.kernel.org
+X-Gm-Message-State: AOJu0YxjjeZLXHmrWqghAHrLMapjYVM9+glNRvuvYoj9KJem2y8KUG03
+	FQFk8G9jh/HWg7VoyoHDmJvqyO91NLaO44X0KZqhXn7ZV9IAgbeWUCmc
+X-Gm-Gg: ASbGncsFmC559dauJ/quE4eJDhUEvRfBQ8m8nf2K7GRKpsqN3hgM6wZ/Wy6lcbrhRB/
+	w9rIy1p4NuQXRzE62AzC4nudVEk18TVOWwQ5WxBd0LURHKAe4TbdROqTTwI4p+utwdlHHEBRJHQ
+	CUDcUjLct+8xkzRib1HFqWA5AuQNs4Dj3sFk4ZA2asbQLa2EmmloX2FrHn99nTE5oI/6YznZ5qp
+	eadidf01fuBUjJr+PGzHbQ2Y7Y0RclhNScu+PwAN1nHS8XEkwHhP0UYndLdDhSaW353AiGb19ZN
+	IW8463NxS+URFovTJTa7xMHWXCrsY5wgaa8nXJBB6mgl11Yu2vm/oOEM+renwWzJk0soLqPMPZc
+	BwO+Yx43Xs5VobBLlQIcvdXL6RJ7DWyT8dmbs
+X-Google-Smtp-Source: AGHT+IHWmfvN/QWU2UTaYOJYLgSEIUkW9IzlfVoIh8mrWtOInCaVWO4MlPJi/aEgerL1ApzcgujsRQ==
+X-Received: by 2002:a17:902:e74b:b0:231:9817:6ec1 with SMTP id d9443c01a7336-2382538f63bmr10265625ad.17.1750803099689;
+        Tue, 24 Jun 2025 15:11:39 -0700 (PDT)
 Received: from mitchelllevy.localdomain (82.sub-174-224-205.myvzw.com. [174.224.205.82])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-237d8393741sm114580555ad.15.2025.06.24.15.11.36
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-237d8393741sm114580555ad.15.2025.06.24.15.11.38
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 24 Jun 2025 15:11:37 -0700 (PDT)
+        Tue, 24 Jun 2025 15:11:39 -0700 (PDT)
 From: Mitchell Levy <levymitchell0@gmail.com>
-Date: Tue, 24 Jun 2025 15:10:40 -0700
-Subject: [PATCH 2/5] rust: rust-analyzer: add lib to dirs searched for
- crates
+Date: Tue, 24 Jun 2025 15:10:41 -0700
+Subject: [PATCH 3/5] rust: percpu: add a rust per-CPU variable test
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -84,7 +83,7 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20250624-rust-percpu-v1-2-9c59b07d2a9c@gmail.com>
+Message-Id: <20250624-rust-percpu-v1-3-9c59b07d2a9c@gmail.com>
 References: <20250624-rust-percpu-v1-0-9c59b07d2a9c@gmail.com>
 In-Reply-To: <20250624-rust-percpu-v1-0-9c59b07d2a9c@gmail.com>
 To: Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, 
@@ -98,34 +97,208 @@ To: Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>,
 Cc: linux-kernel@vger.kernel.org, rust-for-linux@vger.kernel.org, 
  linux-mm@kvack.org, Mitchell Levy <levymitchell0@gmail.com>
 X-Mailer: b4 0.14.0
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1750803093; l=925;
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1750803093; l=6875;
  i=levymitchell0@gmail.com; s=20240719; h=from:subject:message-id;
- bh=AP8shLBDvKbYuth+8++0JymfuCshZQX8ezE8AjEF8do=;
- b=pBKHWuAH/AUFsSJOOF+za31dYJq/Odb5UdYfMzE5NloODzCBbzwlWo+IzJHKrBnsWJ9iyiTqR
- AgI5GoK1RQoB74TbmGU12txIA42xh1HK3QuuTVPKYNnXBlWl9AQ13os
+ bh=J2wN034E1ANJf8z7zTgfPajB+DTsr36981US4k79sBA=;
+ b=T9fAvCAJVHSEYQDHB7G792IQxMvoy47XXOoUkieCxnkJnVW13uXJLW6GXVuMO6r3HY6Oe+S1I
+ iOgQJ7l3wZ8BhpuLe0yGd6tUtiR8mnLqFRxz/ygj687J7mnS6V6qdps
 X-Developer-Key: i=levymitchell0@gmail.com; a=ed25519;
  pk=n6kBmUnb+UNmjVkTnDwrLwTJAEKUfs2e8E+MFPZI93E=
 
-When generating rust-project.json, also include crates in lib/
+Add a short exercise for Rust's per-CPU variable API, modelled after
+lib/percpu_test.c
 
 Signed-off-by: Mitchell Levy <levymitchell0@gmail.com>
 ---
- scripts/generate_rust_analyzer.py | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ lib/Kconfig.debug       |   9 ++++
+ lib/Makefile            |   1 +
+ lib/percpu_test_rust.rs | 120 ++++++++++++++++++++++++++++++++++++++++++++++++
+ rust/helpers/percpu.c   |  11 +++++
+ 4 files changed, 141 insertions(+)
 
-diff --git a/scripts/generate_rust_analyzer.py b/scripts/generate_rust_analyzer.py
-index 7c3ea2b55041..08e14ae9c1a0 100755
---- a/scripts/generate_rust_analyzer.py
-+++ b/scripts/generate_rust_analyzer.py
-@@ -152,7 +152,7 @@ def generate_crates(srctree, objtree, sysroot_src, external_src, cfgs, core_edit
-     # Then, the rest outside of `rust/`.
-     #
-     # We explicitly mention the top-level folders we want to cover.
--    extra_dirs = map(lambda dir: srctree / dir, ("samples", "drivers"))
-+    extra_dirs = map(lambda dir: srctree / dir, ("samples", "drivers", "lib"))
-     if external_src is not None:
-         extra_dirs = [external_src]
-     for folder in extra_dirs:
+diff --git a/lib/Kconfig.debug b/lib/Kconfig.debug
+index ebe33181b6e6..959ce156c601 100644
+--- a/lib/Kconfig.debug
++++ b/lib/Kconfig.debug
+@@ -2418,6 +2418,15 @@ config PERCPU_TEST
+ 
+ 	  If unsure, say N.
+ 
++config PERCPU_TEST_RUST
++	tristate "Rust per cpu operations test"
++	depends on m && DEBUG_KERNEL && RUST
++	help
++	  Enable this option to build a test module which validates Rust per-cpu
++	  operations.
++
++	  If unsure, say N.
++
+ config ATOMIC64_SELFTEST
+ 	tristate "Perform an atomic64_t self-test"
+ 	help
+diff --git a/lib/Makefile b/lib/Makefile
+index c38582f187dd..ab19106cc22c 100644
+--- a/lib/Makefile
++++ b/lib/Makefile
+@@ -288,6 +288,7 @@ obj-$(CONFIG_RBTREE_TEST) += rbtree_test.o
+ obj-$(CONFIG_INTERVAL_TREE_TEST) += interval_tree_test.o
+ 
+ obj-$(CONFIG_PERCPU_TEST) += percpu_test.o
++obj-$(CONFIG_PERCPU_TEST_RUST) += percpu_test_rust.o
+ 
+ obj-$(CONFIG_ASN1) += asn1_decoder.o
+ obj-$(CONFIG_ASN1_ENCODER) += asn1_encoder.o
+diff --git a/lib/percpu_test_rust.rs b/lib/percpu_test_rust.rs
+new file mode 100644
+index 000000000000..a9652e6ece08
+--- /dev/null
++++ b/lib/percpu_test_rust.rs
+@@ -0,0 +1,120 @@
++// SPDX-License-Identifier: GPL-2.0
++//! A simple self test for the rust per-CPU API.
++
++use core::ffi::c_void;
++
++use kernel::{
++    bindings::{on_each_cpu, smp_processor_id},
++    define_per_cpu,
++    percpu::{cpu_guard::*, *},
++    pr_info,
++    prelude::*,
++    unsafe_get_per_cpu,
++};
++
++module! {
++    type: PerCpuTestModule,
++    name: "percpu_test_rust",
++    author: "Mitchell Levy",
++    description: "Test code to exercise the Rust Per CPU variable API",
++    license: "GPL v2",
++}
++
++struct PerCpuTestModule;
++
++define_per_cpu!(PERCPU: i64 = 0);
++define_per_cpu!(UPERCPU: u64 = 0);
++
++impl kernel::Module for PerCpuTestModule {
++    fn init(_module: &'static ThisModule) -> Result<Self, Error> {
++        pr_info!("rust percpu test start\n");
++
++        let mut native: i64 = 0;
++        // SAFETY: PERCPU is properly defined
++        let mut pcpu: StaticPerCpu<i64> = unsafe { unsafe_get_per_cpu!(PERCPU) };
++        // SAFETY: We only have one PerCpu that points at PERCPU
++        unsafe { pcpu.get(CpuGuard::new()) }.with(|val: &mut i64| {
++            pr_info!("The contents of pcpu are {}\n", val);
++
++            native += -1;
++            *val += -1;
++            pr_info!("Native: {}, *pcpu: {}\n", native, val);
++            assert!(native == *val && native == -1);
++
++            native += 1;
++            *val += 1;
++            pr_info!("Native: {}, *pcpu: {}\n", native, val);
++            assert!(native == *val && native == 0);
++        });
++
++        let mut unative: u64 = 0;
++        // SAFETY: UPERCPU is properly defined
++        let mut upcpu: StaticPerCpu<u64> = unsafe { unsafe_get_per_cpu!(UPERCPU) };
++
++        // SAFETY: We only have one PerCpu pointing at UPERCPU
++        unsafe { upcpu.get(CpuGuard::new()) }.with(|val: &mut u64| {
++            unative += 1;
++            *val += 1;
++            pr_info!("Unative: {}, *upcpu: {}\n", unative, val);
++            assert!(unative == *val && unative == 1);
++
++            unative = unative.wrapping_add((-1i64) as u64);
++            *val = val.wrapping_add((-1i64) as u64);
++            pr_info!("Unative: {}, *upcpu: {}\n", unative, val);
++            assert!(unative == *val && unative == 0);
++
++            unative = unative.wrapping_add((-1i64) as u64);
++            *val = val.wrapping_add((-1i64) as u64);
++            pr_info!("Unative: {}, *upcpu: {}\n", unative, val);
++            assert!(unative == *val && unative == (-1i64) as u64);
++
++            unative = 0;
++            *val = 0;
++
++            unative = unative.wrapping_sub(1);
++            *val = val.wrapping_sub(1);
++            pr_info!("Unative: {}, *upcpu: {}\n", unative, val);
++            assert!(unative == *val && unative == (-1i64) as u64);
++            assert!(unative == *val && unative == u64::MAX);
++        });
++
++        pr_info!("rust static percpu test done\n");
++
++        pr_info!("rust dynamic percpu test start\n");
++        let mut test: DynamicPerCpu<u64> = DynamicPerCpu::new(GFP_KERNEL).unwrap();
++
++        // SAFETY: No prerequisites for on_each_cpu.
++        unsafe {
++            on_each_cpu(Some(inc_percpu), (&raw mut test) as *mut c_void, 0);
++            on_each_cpu(Some(inc_percpu), (&raw mut test) as *mut c_void, 0);
++            on_each_cpu(Some(inc_percpu), (&raw mut test) as *mut c_void, 0);
++            on_each_cpu(Some(inc_percpu), (&raw mut test) as *mut c_void, 1);
++            on_each_cpu(Some(check_percpu), (&raw mut test) as *mut c_void, 1);
++        }
++
++        pr_info!("rust dynamic percpu test done\n");
++
++        // Return Err to unload the module
++        Result::Err(EINVAL)
++    }
++}
++
++extern "C" fn inc_percpu(info: *mut c_void) {
++    // SAFETY: We know that info is a void *const DynamicPerCpu<u64> and DynamicPerCpu<u64> is Send.
++    let mut pcpu = unsafe { (*(info as *const DynamicPerCpu<u64>)).clone() };
++    // SAFETY: smp_processor_id has no preconditions
++    pr_info!("Incrementing on {}\n", unsafe { smp_processor_id() });
++
++    // SAFETY: We don't have multiple clones of pcpu in scope
++    unsafe { pcpu.get(CpuGuard::new()) }.with(|val: &mut u64| *val += 1);
++}
++
++extern "C" fn check_percpu(info: *mut c_void) {
++    // SAFETY: We know that info is a void *const DynamicPerCpu<u64> and DynamicPerCpu<u64> is Send.
++    let mut pcpu = unsafe { (*(info as *const DynamicPerCpu<u64>)).clone() };
++    // SAFETY: smp_processor_id has no preconditions
++    pr_info!("Asserting on {}\n", unsafe { smp_processor_id() });
++
++    // SAFETY: We don't have multiple clones of pcpu in scope
++    unsafe { pcpu.get(CpuGuard::new()) }.with(|val: &mut u64| assert!(*val == 4));
++}
+diff --git a/rust/helpers/percpu.c b/rust/helpers/percpu.c
+index a091389f730f..0e9b2fed3ebd 100644
+--- a/rust/helpers/percpu.c
++++ b/rust/helpers/percpu.c
+@@ -1,9 +1,20 @@
+ // SPDX-License-Identifier: GPL-2.0
+ 
+ #include <linux/percpu.h>
++#include <linux/smp.h>
+ 
+ void __percpu *rust_helper_alloc_percpu(size_t sz, size_t align)
+ {
+ 	return __alloc_percpu(sz, align);
+ }
+ 
++void rust_helper_on_each_cpu(smp_call_func_t func, void *info, int wait)
++{
++	on_each_cpu(func, info, wait);
++}
++
++int rust_helper_smp_processor_id(void)
++{
++	return smp_processor_id();
++}
++
 
 -- 
 2.34.1
