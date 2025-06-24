@@ -1,225 +1,225 @@
-Return-Path: <linux-kernel+bounces-699408-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-699412-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6A361AE597F
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Jun 2025 04:03:57 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 05915AE5989
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Jun 2025 04:06:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id DB2DF1B657B3
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Jun 2025 02:03:51 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B52323AD1CB
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Jun 2025 02:06:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9CD1A1C6FE9;
-	Tue, 24 Jun 2025 02:03:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E4F961C84DF;
+	Tue, 24 Jun 2025 02:06:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=NXP1.onmicrosoft.com header.i=@NXP1.onmicrosoft.com header.b="THEEGh7X"
-Received: from PA4PR04CU001.outbound.protection.outlook.com (mail-francecentralazon11013044.outbound.protection.outlook.com [40.107.162.44])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="EX4CkCWe"
+Received: from mail-pf1-f182.google.com (mail-pf1-f182.google.com [209.85.210.182])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D4EA99444;
-	Tue, 24 Jun 2025 02:03:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.162.44
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750730609; cv=fail; b=BoF70koHYVnu6Tq7XpYljeYq0EhZ1TX5jLVLgm2NICsyexhkzn9Ybsjx86iI/O+Q9gfJm2oySa6FgKEsbZjQ0Awv/zyfNc2EDNGUN0cjWgOX7x1cRZRKTBMEZTH1hs4xZcZc5FAIzkud0gnRPik3U37dUerY6xytsDmFXgHH02w=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750730609; c=relaxed/simple;
-	bh=0FsueVmC7dm2N395DK9c/m+Z8eHjBdX+q+YdJm2sPQg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=bax1/Y4Ayr+ECj1R5+nJ0kTb4bX1NoMJ0j8V7VQJDo/Ns8FVCUm5vsj+jS9em1BKrXMxZ81haeUS7aP0P735wLPIi3/lS0nPuB2XbYu4Vs4qGuesrsVn/6rGbqOI/fgsQ4w9XbfHjc7PZhSWopwhfWM8ESzc8KOCUHF8pedUX28=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=oss.nxp.com; spf=pass smtp.mailfrom=oss.nxp.com; dkim=pass (2048-bit key) header.d=NXP1.onmicrosoft.com header.i=@NXP1.onmicrosoft.com header.b=THEEGh7X; arc=fail smtp.client-ip=40.107.162.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=oss.nxp.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.nxp.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=McbIorFcW5iQr/glPVn8+74SUxGt4ibxA/VHI0Xl/TCWfsd6QnYt1ftv6FEN9qmX4t9RrYxMaKr4cY8jRa37sZ+d3AnyUh2QEQIFxzNMAv+0kLlDQiXDlU79LPLuNM1pEqUWwx1762d2zA0DSmzOpLEQZYCTmckyoHhCzzplEt18s+oKLzlrAjSGkbd2zO30fzA0EHv6J1FMuiK7l0yBB5cd+9QDIkgfyECh3K87hNTjEpkTUhCssx14bgSWNUojEfPfoCh9renov0yW1OjcPqIsYeSSBHYOBJIVStn9GR9VXX/Ghj+QrSmkk6Zk8qLOGsNTd4B5l/m5qINeLUpUHQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=HUSqS/ozSQiA5pIwF6lY3g9ZUSGabaHGtU6rgAk+mtU=;
- b=N7u5g5R3wIqKCiS1wrVv0I7kawUfoZlirwL/wEgstHUhYD+G2BJzm9PByHRu4H8PHAwDBjn0098Iino+2Xhz/TruhreDTPZ5Y70GpqwExH6A6vMqw4SyPttei1PoSuc6yLDzwBzaibT6/husnUray5z7O8+HTdGe1j70rEH2ltMo5bfpBXn2xss04l/p5D49tTqrQKsi7iHZkb0g9qXCHA6tsbsIcPcUwohQdQXkaS+/fChqP8mcOjziVmZqEUiCC4ooswNhegz01BVbYwDGahXmLKcEbH5olpy0P57Gaibu9hF6p/Kg1k8PyjciEzxwTProOpKW+8aMyBEOTIc0mw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=oss.nxp.com; dmarc=pass action=none header.from=oss.nxp.com;
- dkim=pass header.d=oss.nxp.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=NXP1.onmicrosoft.com;
- s=selector1-NXP1-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=HUSqS/ozSQiA5pIwF6lY3g9ZUSGabaHGtU6rgAk+mtU=;
- b=THEEGh7Xs1cXm1Hdu2rdB/9jSZd6rc0AJwyQOA5yKeQ9OW40LvLL6zyFPc4bM4W9BE9+kJ+NWQVsTCzElJs8Kv2IpRHtyXBs2Fh01XQN7ZJPoKzD0cK5cC/DWZs8wKC8eENU4/dyWj90FXSWKqGlBe3j9L193+fY9Qsqfsgu0DZMWicfFLrMd6d2TrZhQYGu1l41mKg5iXSUDWYq8w2w2iWzdAxk/g9pK4XeBnd5TQ5gqk4kSJ++nnEPSlX8/09pG4Xs1B/g+ml5o7JYHTuG3EcVT+mlkFk0/Qd6HmLm21jP8qtVeOKQFKVNWrp706B+0M5/+f8xIv+nn6mipFsvRg==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=oss.nxp.com;
-Received: from PAXPR04MB8459.eurprd04.prod.outlook.com (2603:10a6:102:1da::15)
- by VI0PR04MB10173.eurprd04.prod.outlook.com (2603:10a6:800:245::10) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8857.27; Tue, 24 Jun
- 2025 02:03:23 +0000
-Received: from PAXPR04MB8459.eurprd04.prod.outlook.com
- ([fe80::165a:30a2:5835:9630]) by PAXPR04MB8459.eurprd04.prod.outlook.com
- ([fe80::165a:30a2:5835:9630%3]) with mapi id 15.20.8857.026; Tue, 24 Jun 2025
- 02:03:23 +0000
-Date: Tue, 24 Jun 2025 11:13:51 +0800
-From: Peng Fan <peng.fan@oss.nxp.com>
-To: Cristian Marussi <cristian.marussi@arm.com>
-Cc: linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	arm-scmi@vger.kernel.org, sudeep.holla@arm.com,
-	james.quinlan@broadcom.com, f.fainelli@gmail.com,
-	vincent.guittot@linaro.org, etienne.carriere@st.com,
-	michal.simek@amd.com, quic_sibis@quicinc.com,
-	dan.carpenter@linaro.org, d-gole@ti.com, souvik.chakravarty@arm.com
-Subject: Re: [RFC PATCH 1/7] firmware: arm_scmi: Define a common
- SCMI_MAX_PROTOCOLS value
-Message-ID: <20250624031351.GC10415@nxa18884-linux>
-References: <20250620192813.2463367-1-cristian.marussi@arm.com>
- <20250620192813.2463367-2-cristian.marussi@arm.com>
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250620192813.2463367-2-cristian.marussi@arm.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
-X-ClientProxiedBy: SI1PR02CA0016.apcprd02.prod.outlook.com
- (2603:1096:4:1f4::17) To PAXPR04MB8459.eurprd04.prod.outlook.com
- (2603:10a6:102:1da::15)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B9DCD1534EC;
+	Tue, 24 Jun 2025 02:06:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.182
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1750730786; cv=none; b=QavH9xqg6HwwMggsK5RRkL/yuF8TQhUiayfqOoDieCj8OsA9hVa2EwB/XhAdKwFoNJqJohzKG1qed14gMFZsFNpWjgaxjVa6c+Q++HxD54XZXTiWoXIxJg7bqULHN1l11OpHGTzx6u2Ui2Horsdl75FStQ6+yPRHtyzkxHsyuKE=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1750730786; c=relaxed/simple;
+	bh=GJR3d0+YakXgNTLXGF9wrmrDfF4LBiz/RLUft7VJtJ4=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=G1yC+Hi1AoJr0k12zayKfw47tt8/RLwpG4LKDYxX5ODQRlN2OkyL3xiOk2SG79XAynm8oxE55pkQPcnEEKQtkcI56Xb89Ppp1nX/9KvnUifNbaMTcJtpnGh9guxBoSbdKUrkz3cybyB/cUaFmugxWyqve5oUm+zLl2DItmzwaNo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=EX4CkCWe; arc=none smtp.client-ip=209.85.210.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f182.google.com with SMTP id d2e1a72fcca58-747fc7506d4so3797951b3a.0;
+        Mon, 23 Jun 2025 19:06:24 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1750730784; x=1751335584; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=3rNITh+t2+x5/s2VvwZUC6lgwwyId84oh+/DyWcDpLQ=;
+        b=EX4CkCWeslCVVuv8JfMdTzLXmefenpFFEIyx5Hn8EIPCtF4aKSQAJVSLv4ZEyYYEzY
+         PfUV1UcqXaB5lPf52XO2lk8zklwGFVT7Jfr22SQNK3XYLv2fAu3Lga1D+TaWF3jz7v8m
+         s0kItyubs5xmUE5QRr63ykxsux5Xgv+23B84f7QIemqiiOUGOesDmt+4/a+c2UNIyHh8
+         A7UkFUB61P+bFGol1Lou/Gi5VRa1eWsPa2LYK7CjFswavV6bPfsb35iZHZYHbgL7/Iki
+         Ood0sP7i+px6kek541HCJq4Ci5Wx2QZQP27gKq6eZEG+72X3vk6VyJykl2ui3NSYhkk0
+         7q3g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1750730784; x=1751335584;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=3rNITh+t2+x5/s2VvwZUC6lgwwyId84oh+/DyWcDpLQ=;
+        b=YyUOxHGvc3Fur1g78P/JjGJAtH6rPkmolVLKtqw/aR9H4WxYLFZF8oq4c+2bn3mcO9
+         1cKTEqgdAk8ZkdQ2bwX89iYZ1o3H9IRM+NykAMbcb9vYqG1/HKFosXxiqsetK7V9eoDq
+         9e6dtwklb7l1pa7RWq1MQVrqt4nvqmr3xRKL0b5fxrQKQ3bXVlbmO8WMapfnbhF+uqUG
+         f/Gaw1eQ95QANOtJehblHIGn0gTrD108o28T2SA9umVZOZ09E3jFSyWzv5QdlMhqVioe
+         H0p+c6gqEuIC2RHknzHEgBfKoSpZO4xLh5CdidMTo/SNIW5DgTK2U6MP5gB2tNGB0ODL
+         1dsQ==
+X-Forwarded-Encrypted: i=1; AJvYcCX6AQnNer7rwJjiUlafW40fgyNr52s08vxgg4+1uTuzjTkOWBKrRlj7EHVVIZLlLYl5c5cwoknpm12u3go=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxK1BvL5IXeNjpqAopC8TPIOjaZDFIZC18FeffUZJ89Tanf504m
+	+hL5dLSrXDX7r46do4JfvHOxFvX0o8sJiGIj9/DZBamsEbBms3LhEqVxGNWgTM1u
+X-Gm-Gg: ASbGnct/32ZiGtQqqwZsA97cHFpO7smwNd08307SpjJkXrO3tnR1R2BPuJhbh3kdxb7
+	34z/hib/+O2zxDK8tRwvWJ+bkInx6lRKO/QIXXdC+eCsadfUlFGnLk04WkV+TnYDh0E5JpM+rXZ
+	zxyVYYBoVWu/poITYnD5Qo0qEfc81fhuPKfnmdB3h+GIEFOEyR5RFE1YPXbwGrMO+egP5jYym+W
+	SVVOiMVYGtCfZY4qcCqdrVeGL0p2DAI45ierZAkrPqFiSVgxzFlHBrfcyHZyBsw036AhWLvLw8k
+	TsDXHlVFtVRE2Mmz4nAgoP4+vtuOs5sxlB5BISMiqa5BwA==
+X-Google-Smtp-Source: AGHT+IGsy7Ig8lWXfTAueW2YzrG+Z8KtttnEg3OR52aPkdhZSYLYLXM+0QeImPbjWOiNAdfgEhI+jw==
+X-Received: by 2002:a05:6a20:ce4f:b0:1f5:a3e8:64c1 with SMTP id adf61e73a8af0-22025ea3dedmr23401214637.0.1750730783851;
+        Mon, 23 Jun 2025 19:06:23 -0700 (PDT)
+Received: from fedora.. ([2601:646:8081:3770::1707])
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-b31f12427e5sm7785395a12.50.2025.06.23.19.06.22
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 23 Jun 2025 19:06:23 -0700 (PDT)
+From: Collin Funk <collin.funk1@gmail.com>
+To: Peter Zijlstra <peterz@infradead.org>,
+	Ingo Molnar <mingo@redhat.com>,
+	Arnaldo Carvalho de Melo <acme@kernel.org>,
+	Namhyung Kim <namhyung@kernel.org>,
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+	Jiri Olsa <jolsa@kernel.org>,
+	Ian Rogers <irogers@google.com>,
+	Adrian Hunter <adrian.hunter@intel.com>,
+	"Liang, Kan" <kan.liang@linux.intel.com>,
+	James Clark <james.clark@linaro.org>,
+	Charlie Jenkins <charlie@rivosinc.com>,
+	Ravi Bangoria <ravi.bangoria@amd.com>,
+	"Masami Hiramatsu (Google)" <mhiramat@kernel.org>
+Cc: linux-perf-users@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Collin Funk <collin.funk1@gmail.com>
+Subject: [PATCH v2] [PATCH] perf build: Specify that shellcheck should use the bash dialect.
+Date: Mon, 23 Jun 2025 19:05:56 -0700
+Message-ID: <f7ea3a430dc2bd77656c50f93283547d1245e2fe.1750730589.git.collin.funk1@gmail.com>
+X-Mailer: git-send-email 2.49.0
+In-Reply-To: <e3751a74be34bbf3781c4644f518702a7270220b.1749785642.git.collin.funk1@gmail.com>
+References: <e3751a74be34bbf3781c4644f518702a7270220b.1749785642.git.collin.funk1@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-Exchange-MessageSentRepresentingType: 1
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: PAXPR04MB8459:EE_|VI0PR04MB10173:EE_
-X-MS-Office365-Filtering-Correlation-Id: 3218b75c-0999-4fd9-10ad-08ddb2c34c90
-X-MS-Exchange-SharedMailbox-RoutingAgent-Processed: True
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|52116014|1800799024|7416014|376014|366016|7053199007|38350700014;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?O4czjrV01sf70n6w7WVcpUcYxlNDCo6vbP0nEvGODSOa29P7673Vp4lVPLM4?=
- =?us-ascii?Q?gyzmkHb2qdGGbmgyI6iI7uBLLBFoujOXPM8lLq2QeQG/8u36zbJKaTtE7BIr?=
- =?us-ascii?Q?5JIhsiv4kGQZ6bsJoPAQQuUGDKZzqlHY+UQLIzVu70mBgD3x220Wlgs5dMUD?=
- =?us-ascii?Q?6pAsXNUGcUFL2YKNGj1SM2Cm3SoEVlkjNtL5kMMItI4/wvi0hq0mRBYWjP5v?=
- =?us-ascii?Q?S/3VK2AoYWC1a+Axrj7NeDgbKdry+Xft80fqoiRMB2HBNP7PvvqyvYqZgbZR?=
- =?us-ascii?Q?rKDuFkdilmBs5dqNA9DAZFh8aVrpzXl+pra+LF5md4BF1ueDNd6gM7cagNjC?=
- =?us-ascii?Q?TQamXtd5s0veLTItQoWUEh6BoVNmz+Ifaqsar94F7vQr2kLiv0XAbqkJ0ToM?=
- =?us-ascii?Q?U+jt57VEtXlce+n3O5QyF39l0Q9VKM+Yy9n/iX9MY5Kh6LQ+lkJ0frTovDPW?=
- =?us-ascii?Q?PQG2nnEkWOIPF7QSP2rHu90631DCUcl+NaHoPN4ScHfR1teVzJxs68wpdGqh?=
- =?us-ascii?Q?+Ruv35Q34DfcFFDmsjuUeT4iFLs7BGe2FPOB0M6It2IEIHd8HOEoo6xK5KAb?=
- =?us-ascii?Q?uW3jMkzJcA7lxVD+aSIzlBRjUS3l4KfPfV009bOnpsDVfzL5dPstfvdjGKOU?=
- =?us-ascii?Q?HdxXMeSYVy7e1Azzu6kZQCpFORQyhCi0tl8+njiNH6iKkcKHWP917CQ1c3G6?=
- =?us-ascii?Q?IussESOd/2lIGviINto/Eo5DtI4Ix8gVuw4eHgw7EktwGaeNgHkGHkK6sV28?=
- =?us-ascii?Q?1aUZwiSqNp5J4BtnQcU26iRuo8LQfal4CNAXeBEnBeA4svobeR1XUfeIDhZN?=
- =?us-ascii?Q?AWq/Ymqc+RBoqgoTLAL28xAhtmB+97FQheZ2SX7zsjxW516o4K0aHg9Deh2X?=
- =?us-ascii?Q?oYvdTUKjdpGNoeFkiBUsJ8PosDWRAoiqJ8t+uynxTUjL3h3PCfXasUOR8oVj?=
- =?us-ascii?Q?1hzppP+tzuYKRpN8TZiURovd4xyzjEQbfoWmqZHO0yFWVkSq/+cv4D4I6noQ?=
- =?us-ascii?Q?lE3LGzJVYz2FaEzYxu64dHweiyP4mOzTg2ijqeYLHy4H1FNtjprZanE3PBrf?=
- =?us-ascii?Q?PYV53/7A9uQB+FEhgrmDjY4fki4c01Ih6ox7iXyWNwXCZPGE13piKiskE12H?=
- =?us-ascii?Q?3yeVPgZ/EoblE3o35lXSbqBF77JoN/Y0kacGp40KSKIK9dhdGH7d8/Zaum1t?=
- =?us-ascii?Q?XbO1btTtsX9pS0dCycdLs/yQ1pE0ON+t2pGTqdzVM/zpJKfcsOduTHF3rqZf?=
- =?us-ascii?Q?rp09mvhiPKnMQpAEom9oyEfVnigBT4zb6HvbbMsgMUe8rYP22t09zvT0/No/?=
- =?us-ascii?Q?T/sRrZmTqHCZImhIW1Si9H7ImXt0ylW2yOMapcn/3OMf/GIp7/iiMiV964DO?=
- =?us-ascii?Q?eMAgV/FtLKJnB2VOcL7by48arnpp3MSVFyiIxCZOKWXhHJoi8/W83upQudMD?=
- =?us-ascii?Q?yT62d0KeH+e3yvhjTZQiIOvNnAFLvsgmfFMKn44HoMcFGmtdqTXPCg=3D=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PAXPR04MB8459.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(52116014)(1800799024)(7416014)(376014)(366016)(7053199007)(38350700014);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?XAEr7Sk7WNh5cBnX6SKFInkZlhQ+DLNx8H0QJZ26grE2bhfXbG2aIoXi+Szc?=
- =?us-ascii?Q?TC25oT9SxYm5cInwpsDZG8W9gWDOuwRDZuZbhsx/NcY5yOP8A0nAEO1wrD8L?=
- =?us-ascii?Q?kBowt3MC3EmW71uLvQ19h75suRJwH5rzRf9hhTG8357UETY32gbzGuE5Y85g?=
- =?us-ascii?Q?6OlaRZAgFHEVCSvwpdkgKYnVyRh+JvdsMyksFbJP0Flg6nc12FGhexlxbc//?=
- =?us-ascii?Q?VbSoHKrC7X2myt13XilS8qKob516oda84ti97A7PXUYChoCuSIQfWmsqK5o4?=
- =?us-ascii?Q?Vz+tEpGu+AhvT2p8o1YtHvwC5ysEDjpaae81vrOg15O0fzOlEEvXKSG60BWi?=
- =?us-ascii?Q?W13dc4i5Dn90SaGc6RUkmzNw/wvG7X4MQHgNmnfIIJX0EPPN9j9hdt3T61mn?=
- =?us-ascii?Q?3FPz/oM2hudwArEbA6/rrq08wbT7M4s3x3wuxzIcySguSGI7pYVyxYdWZ6U8?=
- =?us-ascii?Q?qs1/VdNOgm6RGpyJPJhqulWshKaMvwY5WIKtTqpOlf4DzBScovsaPOWuwc8R?=
- =?us-ascii?Q?I/Dcz1DU/h3NgDBrycEA15FkOpz/VZ4yNEdeY6VgBk1EfgiyK8YoqGX8hye2?=
- =?us-ascii?Q?rqPtXimqeu194WvYC1Mor1a7ULCwGZpVndjnobsuWY6mqzJgYUaj09h//LHd?=
- =?us-ascii?Q?nTk/NBYbjMao2sUz/6GVEUFDaJgZ30wjeU+8EmxVe10P8AFb7NFW3Crefp8O?=
- =?us-ascii?Q?Ln/Bh2oeUCEo6BqSZAA6I+AYr2VNa2lTy+SyAx+6X0AfoMerXCGHG7O+/S2s?=
- =?us-ascii?Q?0pBMphcQVtLqx0fCZFuvG9L7xVYiFL1jf4W0azl/GjrsuDoL2q8EkmXldyct?=
- =?us-ascii?Q?KJzqjDJBzk0rc37HQ2UOcwmBKrJUb9KwvdiqBvc0Fn6mx2ofr7Q7wIijt30H?=
- =?us-ascii?Q?/nkEuzPD/bNBJazVCaRpgP63okak88ycowMdgpyVUsR4H+i30mcw4R+097aL?=
- =?us-ascii?Q?bf05EV9XGIBjFfPiFcKNTDmdR8y/W44S9NtnkinOJsy16uZzIXn5a58wjUSC?=
- =?us-ascii?Q?iLG9uGJ+NxGzP9uzhmRdQqClWNRPFsSNA5kGAGDy2vYQ509VYmuZ21lV9QXX?=
- =?us-ascii?Q?Y46wXF9TyJuIWfI9CB95Gc97O2/uHYlBjmkrzRPms+QxhmxLb5p30TWIgM1c?=
- =?us-ascii?Q?16OpjWwFo8kAawpvyp/q7I2uMy5TbmHUgLZ16xEFULwnvzs9H98GdbghrGUN?=
- =?us-ascii?Q?zJoMz4JdNA2woKlIT7nhbOWxgx5dAsnxnTdQ480W6vBFZaVHK0Iu+wnYJ3NR?=
- =?us-ascii?Q?bLDUsYVhsrbGjiBI/G2iMJMDnbgbgMPGVNl2zzJa3Na3cyRHsoivkVmPXknV?=
- =?us-ascii?Q?LcicqbmbcU7oxHPG91OJc72WkWhwkfRWrfsoizJVdgrxOcJjEUy7La0L0H3T?=
- =?us-ascii?Q?AVKCqRXQc2ynPby8tOvWl9sTjlqAHaUJJVgnKqr4LgIZZ55AHNpBvPe0tva7?=
- =?us-ascii?Q?o60Ux0g9s1vUA94S0UYSoJ5LJKaPin6y8xU6LumrOQSpjX0GEfJZBP2cpLOI?=
- =?us-ascii?Q?LBhNPfVv7MwvRYCRuJhYflO8KEMNyZOpehOZxhlswsBB892AW3DchFRuVvs/?=
- =?us-ascii?Q?ckDxpNfqZci5eCQB9APd3Ogdm7GQ/LHd1rFhh+ee?=
-X-OriginatorOrg: oss.nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 3218b75c-0999-4fd9-10ad-08ddb2c34c90
-X-MS-Exchange-CrossTenant-AuthSource: PAXPR04MB8459.eurprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 24 Jun 2025 02:03:23.0508
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: u7uxdvhf3wgT3711hdpM9QbwjObzWuApE7ia7/VrYeJ04LornWcDTRV0FZ8gUyGdaieBrCBnKGKvb6dIwD2YZQ==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: VI0PR04MB10173
+Content-Transfer-Encoding: 8bit
 
-On Fri, Jun 20, 2025 at 08:28:07PM +0100, Cristian Marussi wrote:
->Add a common definition of SCMI_MAX_PROTOCOLS and use it all over the
->SCMI stack.
->
->Signed-off-by: Cristian Marussi <cristian.marussi@arm.com>
->---
-> drivers/firmware/arm_scmi/notify.c | 4 +---
-> include/linux/scmi_protocol.h      | 3 +++
-> 2 files changed, 4 insertions(+), 3 deletions(-)
->
->diff --git a/drivers/firmware/arm_scmi/notify.c b/drivers/firmware/arm_scmi/notify.c
->index e160ecb22948..27a53a6729dd 100644
->--- a/drivers/firmware/arm_scmi/notify.c
->+++ b/drivers/firmware/arm_scmi/notify.c
->@@ -94,8 +94,6 @@
-> #include "common.h"
-> #include "notify.h"
-> 
->-#define SCMI_MAX_PROTO		256
->-
-> #define PROTO_ID_MASK		GENMASK(31, 24)
-> #define EVT_ID_MASK		GENMASK(23, 16)
-> #define SRC_ID_MASK		GENMASK(15, 0)
->@@ -1652,7 +1650,7 @@ int scmi_notification_init(struct scmi_handle *handle)
-> 	ni->gid = gid;
-> 	ni->handle = handle;
-> 
->-	ni->registered_protocols = devm_kcalloc(handle->dev, SCMI_MAX_PROTO,
->+	ni->registered_protocols = devm_kcalloc(handle->dev, SCMI_MAX_PROTOCOLS,
-> 						sizeof(char *), GFP_KERNEL);
-> 	if (!ni->registered_protocols)
-> 		goto err;
->diff --git a/include/linux/scmi_protocol.h b/include/linux/scmi_protocol.h
->index 688466a0e816..6f8d36e1f8fc 100644
->--- a/include/linux/scmi_protocol.h
->+++ b/include/linux/scmi_protocol.h
->@@ -926,8 +926,11 @@ enum scmi_std_protocol {
-> 	SCMI_PROTOCOL_VOLTAGE = 0x17,
-> 	SCMI_PROTOCOL_POWERCAP = 0x18,
-> 	SCMI_PROTOCOL_PINCTRL = 0x19,
->+	SCMI_PROTOCOL_LAST = 0xff,
+When someone has a global shellcheckrc file, for example at
+~/.config/shellcheckrc, with the directive 'shell=sh', building perf
+will fail with many shellcheck errors like:
 
-The enum says this is std protocol, but 0x80~0xff is for vendor extension.
-It might confuse others to keep "SCMI_PROTOCOL_LAST" here.
+    In tests/shell/base_probe/test_adding_kernel.sh line 294:
+    (( TEST_RESULT += $? ))
+    ^---------------------^ SC3006 (warning): In POSIX sh, standalone ((..)) is undefined.
 
-> };
-> 
->+#define SCMI_MAX_PROTOCOLS	(SCMI_PROTOCOL_LAST + 1)
+    For more information:
+      https://www.shellcheck.net/wiki/SC3006 -- In POSIX sh, standalone ((..)) is...
+    make[5]: *** [tests/Build:91: tests/shell/base_probe/test_adding_kernel.sh.shellcheck_log] Error 1
 
-How about "#define SCMI_MAX_PROTOCOLS 256" as the line you removed in notify.c.
+Passing the '-s bash' option ensures that it runs correctly regardless
+of a developers global configuration.
 
-Regards
-Peng
+This patch adds '-s bash' to the SHELLCHECK variable in Makefile.perf
+and makes use of the variable consistently.
 
->+
-> enum scmi_system_events {
-> 	SCMI_SYSTEM_SHUTDOWN,
-> 	SCMI_SYSTEM_COLDRESET,
->-- 
->2.47.0
->
+Signed-off-by: Collin Funk <collin.funk1@gmail.com>
+---
+ tools/perf/Build                | 2 +-
+ tools/perf/Makefile.perf        | 2 +-
+ tools/perf/arch/x86/Build       | 2 +-
+ tools/perf/arch/x86/tests/Build | 2 +-
+ tools/perf/tests/Build          | 2 +-
+ tools/perf/trace/beauty/Build   | 2 +-
+ tools/perf/util/Build           | 2 +-
+ 7 files changed, 7 insertions(+), 7 deletions(-)
+
+diff --git a/tools/perf/Build b/tools/perf/Build
+index 06107f1e1d42..e69665bf9dce 100644
+--- a/tools/perf/Build
++++ b/tools/perf/Build
+@@ -73,7 +73,7 @@ endif
+ 
+ $(OUTPUT)%.shellcheck_log: %
+ 	$(call rule_mkdir)
+-	$(Q)$(call echo-cmd,test)shellcheck -s bash -a -S warning "$<" > $@ || (cat $@ && rm $@ && false)
++	$(Q)$(call echo-cmd,test)$(SHELLCHECK) -a -S warning "$<" > $@ || (cat $@ && rm $@ && false)
+ 
+ perf-y += $(SHELL_TEST_LOGS)
+ 
+diff --git a/tools/perf/Makefile.perf b/tools/perf/Makefile.perf
+index d4c7031b01a7..6810d321ff73 100644
+--- a/tools/perf/Makefile.perf
++++ b/tools/perf/Makefile.perf
+@@ -252,7 +252,7 @@ endif
+ ifeq ($(NO_SHELLCHECK),1)
+   SHELLCHECK :=
+ else
+-  SHELLCHECK := $(shell which shellcheck 2> /dev/null)
++  SHELLCHECK := $(shell which shellcheck 2> /dev/null) -s bash
+ endif
+ 
+ # shellcheck is using in tools/perf/tests/Build with option -a/--check-sourced (
+diff --git a/tools/perf/arch/x86/Build b/tools/perf/arch/x86/Build
+index afae7b8f6bd6..71e2553e5af1 100644
+--- a/tools/perf/arch/x86/Build
++++ b/tools/perf/arch/x86/Build
+@@ -10,6 +10,6 @@ endif
+ 
+ $(OUTPUT)%.shellcheck_log: %
+ 	$(call rule_mkdir)
+-	$(Q)$(call echo-cmd,test)shellcheck -a -S warning "$<" > $@ || (cat $@ && rm $@ && false)
++	$(Q)$(call echo-cmd,test)$(SHELLCHECK) -a -S warning "$<" > $@ || (cat $@ && rm $@ && false)
+ 
+ perf-test-y += $(SHELL_TEST_LOGS)
+diff --git a/tools/perf/arch/x86/tests/Build b/tools/perf/arch/x86/tests/Build
+index 5e00cbfd2d56..fd3af16f63bb 100644
+--- a/tools/perf/arch/x86/tests/Build
++++ b/tools/perf/arch/x86/tests/Build
+@@ -22,6 +22,6 @@ endif
+ 
+ $(OUTPUT)%.shellcheck_log: %
+ 	$(call rule_mkdir)
+-	$(Q)$(call echo-cmd,test)shellcheck -a -S warning "$<" > $@ || (cat $@ && rm $@ && false)
++	$(Q)$(call echo-cmd,test)$(SHELLCHECK) -a -S warning "$<" > $@ || (cat $@ && rm $@ && false)
+ 
+ perf-test-y += $(SHELL_TEST_LOGS)
+diff --git a/tools/perf/tests/Build b/tools/perf/tests/Build
+index 2181f5a92148..4a27fde30eb6 100644
+--- a/tools/perf/tests/Build
++++ b/tools/perf/tests/Build
+@@ -89,7 +89,7 @@ endif
+ 
+ $(OUTPUT)%.shellcheck_log: %
+ 	$(call rule_mkdir)
+-	$(Q)$(call echo-cmd,test)shellcheck -a -S warning "$<" > $@ || (cat $@ && rm $@ && false)
++	$(Q)$(call echo-cmd,test)$(SHELLCHECK) -a -S warning "$<" > $@ || (cat $@ && rm $@ && false)
+ 
+ perf-test-y += $(SHELL_TEST_LOGS)
+ 
+diff --git a/tools/perf/trace/beauty/Build b/tools/perf/trace/beauty/Build
+index f50ebdc445b8..727ce0a5c30a 100644
+--- a/tools/perf/trace/beauty/Build
++++ b/tools/perf/trace/beauty/Build
+@@ -31,6 +31,6 @@ endif
+ 
+ $(OUTPUT)%.shellcheck_log: %
+ 	$(call rule_mkdir)
+-	$(Q)$(call echo-cmd,test)shellcheck -s bash -a -S warning "$<" > $@ || (cat $@ && rm $@ && false)
++	$(Q)$(call echo-cmd,test)$(SHELLCHECK) -a -S warning "$<" > $@ || (cat $@ && rm $@ && false)
+ 
+ perf-y += $(SHELL_TEST_LOGS)
+diff --git a/tools/perf/util/Build b/tools/perf/util/Build
+index 7910d908c814..626a359fee1e 100644
+--- a/tools/perf/util/Build
++++ b/tools/perf/util/Build
+@@ -421,7 +421,7 @@ endif
+ 
+ $(OUTPUT)%.shellcheck_log: %
+ 	$(call rule_mkdir)
+-	$(Q)$(call echo-cmd,test)shellcheck -a -S warning "$<" > $@ || (cat $@ && rm $@ && false)
++	$(Q)$(call echo-cmd,test)$(SHELLCHECK) -a -S warning "$<" > $@ || (cat $@ && rm $@ && false)
+ 
+ perf-util-y += $(SHELL_TEST_LOGS)
+ 
+-- 
+2.49.0
+
 
