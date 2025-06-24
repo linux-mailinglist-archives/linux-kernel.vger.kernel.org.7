@@ -1,119 +1,144 @@
-Return-Path: <linux-kernel+bounces-699322-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-699303-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7DC78AE5875
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Jun 2025 02:18:12 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C9786AE5843
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Jun 2025 02:09:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 177EE1B62698
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Jun 2025 00:18:28 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2782E4C040F
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Jun 2025 00:09:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 20786188CC9;
-	Tue, 24 Jun 2025 00:17:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CC72229A9;
+	Tue, 24 Jun 2025 00:09:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=techsingularity.net header.i=@techsingularity.net header.b="ZjhYus94"
-Received: from mail44.out.titan.email (mail44.out.titan.email [3.69.224.234])
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="VO8gYizV"
+Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BDBCC35975
-	for <linux-kernel@vger.kernel.org>; Tue, 24 Jun 2025 00:17:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=3.69.224.234
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F2C69366;
+	Tue, 24 Jun 2025 00:08:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750724244; cv=none; b=F4M+rokbZaND0qADoAVaZM549pkJbEj7KkjRdLDPwYS1MNBliJeqxqnE1MUlkoDJelub/un4uw1O5ltM6K4cNfbQRjgV8TEGTtmsh+RpBZGWCbliP5JHhdA+lt8398Ty05t0YO4Dciy90LTFLETWhyXIM3OC42VrCXWGPUohU9M=
+	t=1750723741; cv=none; b=MVAkvN8TI3FQ1MEIGkDim6zBuQXEoUw1KlR24DHgJ3m6vBwqyJseBfMV0TpX8zn535Cz5lxzLvFZXDyaia+be/ifXyBBul18Yi8ZEZrMNXGFv2UcN00tsNnynC9u+VJ2X/wM8mF0UTufaDRK0it1oXTFlUJ7dZBJDnbYbsRjINk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750724244; c=relaxed/simple;
-	bh=Oftf5W4I/EXc8/dE5Uq8cLi3ZFqVSS5q7VTSqVAxhMo=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=bN508BLnoICI3vqCmRhCN6jrwvwh3TMaeF3ZWEGleuMZHgPAwPXf6INI6hnL+0GRlYTRJs3sV4tfcjpeXcAqc7ICbQxmdsw9Xyz4wJ0W059HU5/jYS6l+E6u5lLRRgs6W7rr/VDdRyYQemQHAvYxbCFHD9WDBCLlCV8ldjEVFjI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=techsingularity.net; spf=pass smtp.mailfrom=techsingularity.net; dkim=pass (1024-bit key) header.d=techsingularity.net header.i=@techsingularity.net header.b=ZjhYus94; arc=none smtp.client-ip=3.69.224.234
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=techsingularity.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=techsingularity.net
-Received: from localhost (localhost [127.0.0.1])
-	by smtp-out0101.titan.email (Postfix) with ESMTP id 1C55E10004E;
-	Mon, 23 Jun 2025 21:50:12 +0000 (UTC)
-DKIM-Signature: a=rsa-sha256; bh=l/nFCx/0llluEb4kDd+YLQaTel4IbFwefVMIpPfZ3f4=;
-	c=relaxed/relaxed; d=techsingularity.net;
-	h=from:cc:references:mime-version:to:in-reply-to:subject:date:message-id:from:to:cc:subject:date:message-id:in-reply-to:references:reply-to;
-	q=dns/txt; s=titan1; t=1750715411; v=1;
-	b=ZjhYus9479AB8zlDfn3DU4pPwYEGLllIXdh+Oej2Tb58/rckUt+jTTFGgs5lnYDntb/q/rR2
-	Wu/JvUCP3OhOnqy/6E+3njgsWI5Gb1y2Vy+qmfixaSpMqc9wx61Ya3OZyeRKpBJzs4HChP6DO21
-	1PJqCB+S6rszasxk6bf05MxE=
-Received: from mail.blacknight.com (ip-84-203-196-90.broadband.digiweb.ie [84.203.196.90])
-	by smtp-out0101.titan.email (Postfix) with ESMTPA id C41E0100008;
-	Mon, 23 Jun 2025 21:50:10 +0000 (UTC)
-Date: Mon, 23 Jun 2025 22:49:59 +0100
-Feedback-ID: :mgorman@techsingularity.net:techsingularity.net:flockmailId
-From: Mel Gorman <mgorman@techsingularity.net>
-To: Peter Zijlstra <peterz@infradead.org>
-Cc: Aaron Tomlin <atomlin@atomlin.com>, tglx@linutronix.de, 
-	mingo@redhat.com, bp@alien8.de, dave.hansen@linux.intel.com, x86@kernel.org, 
-	juri.lelli@redhat.com, vincent.guittot@linaro.org, hpa@zytor.com, oleg@redhat.com, 
-	dietmar.eggemann@arm.com, rostedt@goodmis.org, bsegall@google.com, mgorman@suse.de, 
-	vschneid@redhat.com, linux-kernel@vger.kernel.org
-Subject: Re: [RFC PATCH] sched: idle: Introduce CPU-specific idle=poll
-Message-ID: <7n6zmi3aaxrwfpvkzbugt3e3274zw3qb2kci4yyq2q6gojb3ku@zh3g4rvnyqzi>
-References: <20250621235745.3994-1-atomlin@atomlin.com>
- <20250623102334.GP1613200@noisy.programming.kicks-ass.net>
+	s=arc-20240116; t=1750723741; c=relaxed/simple;
+	bh=DTnAVL9M+3dEq83aYcEGNHIpPPI1VObniA2sW32qFUg=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=pFv+qul1W1W7MN/sJx5LJwAxchQH4aiUHKZOUvm8LXqVFQyrGy+RXspbYuwAiwtzNZdvK2p+iu9j/2awNtczM3btvRHHY4VMO/zXF3e2YH8p8jV6k86OeODtTx+HRh4FWB0w9MugKlU8/JMycQcfGb6udLizyE5DY1tf8wpdWQM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=VO8gYizV; arc=none smtp.client-ip=150.107.74.76
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
+	s=202503; t=1750723733;
+	bh=wo5ktJNOUfG3TSykYbWSc8PFH7/sie/YZV7UcWjBPJ0=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=VO8gYizVZDzSGm29Tc/aY1K2iAdjigj6nK4TrILm7K3r2vSDLlWIi7QNjVoXmc3s/
+	 zbcoiItyH16wfPX3Fy1D5G+DMCV8rbDEByD118CQHwuiZEJ/aK7qBfGO5ooOBZGwt+
+	 IpC25fTrK/0Bt+AOv3weZkUDDPKB4war6f+X326PhDAGg448FYD2apLTVmm8/K52fU
+	 iqlCZuBsUKHwwP3PBql6byjjvSbnbyWmvszgZ65gt5fF3FxvBm4qqSxAy78mZEfiuu
+	 p2pIKVf9kx4BH1QXuB7zvU3WqJt6ULDN3nND2E5cM/1X3g+OBW1TK0mg5s4jXqK37J
+	 SFUuiqHwETR1Q==
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(Client did not present a certificate)
+	by mail.ozlabs.org (Postfix) with ESMTPSA id 4bR50366Flz4wxx;
+	Tue, 24 Jun 2025 10:08:51 +1000 (AEST)
+Date: Tue, 24 Jun 2025 10:08:51 +1000
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+To: Andrew Morton <akpm@linux-foundation.org>, Palmer Dabbelt
+ <palmer@dabbelt.com>, Paul Walmsley <paul.walmsley@sifive.com>
+Cc: Drew Fustini <fustini@kernel.org>, Duje =?UTF-8?B?TWloYW5vdmnEhw==?=
+ <duje@dujemihanovic.xyz>, Linux Kernel Mailing List
+ <linux-kernel@vger.kernel.org>, Linux Next Mailing List
+ <linux-next@vger.kernel.org>
+Subject: Re: linux-next: manual merge of the mm-unstable tree with the
+ risc-v-fixes tree
+Message-ID: <20250624100851.40f8b416@canb.auug.org.au>
+In-Reply-To: <20250623101407.4fe17973@canb.auug.org.au>
+References: <20250623101407.4fe17973@canb.auug.org.au>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-15
-Content-Disposition: inline
-In-Reply-To: <20250623102334.GP1613200@noisy.programming.kicks-ass.net>
-X-F-Verdict: SPFVALID
-X-Titan-Src-Out: 1750715411915101861.2117.3965428696989907295@prod-euc1-smtp-out1001.
-X-CMAE-Score: 0
-X-CMAE-Analysis: v=2.4 cv=HKo5Fptv c=1 sm=1 tr=0 ts=6859cc13
-	a=+XWPlUOTt03IZrtNKHUAqA==:117 a=+XWPlUOTt03IZrtNKHUAqA==:17
-	a=Q9fys5e9bTEA:10 a=CEWIc4RMnpUA:10 a=lX01bCWNPQCBdb-pIg4A:9
-	a=PUjeQqilurYA:10
+Content-Type: multipart/signed; boundary="Sig_/N+iaO.pBDHQOFZd39ORK4ZY";
+ protocol="application/pgp-signature"; micalg=pgp-sha256
 
-On Mon, Jun 23, 2025 at 12:23:34PM +0200, Peter Zijlstra wrote:
-> On Sat, Jun 21, 2025 at 07:57:45PM -0400, Aaron Tomlin wrote:
-> > Currently, the idle=poll kernel boot parameter applies globally, forcing
-> > all CPUs into a shallow polling idle state to ensure ultra-low latency
-> > responsiveness. While this is beneficial for extremely latency-sensitive
-> > workloads, this global application lacks flexibility and can lead to
-> > significant power inefficiency. This is particularly evident in systems
-> > with a high CPU count, such as those utilising the
-> > Full Dynticks/Adaptive Tick feature (i.e., nohz_full). In such
-> > environments, only a subset of CPUs might genuinely require
-> > sub-microsecond responsiveness, while others, though active, could
-> > benefit from entering deeper idle states to conserve power.
-> 
-> Can't we already do this at runtime with pmqos? If you set your latency
-> demand very low, it should end up picking the poll state, no? And you
-> can do this per-cpu.
+--Sig_/N+iaO.pBDHQOFZd39ORK4ZY
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
 
-Yes, we can. idle=poll can be hazardous in weird ways and it's not like
-pmqos is hard to use. For example, lets say you had a RT application with
-latency constraints running on isolated CPUs while leaving housekeeping
-CPUs alone then it's simply a case of;
+Hi all,
 
-        for CPU in $ISOLATED_CPUS; do
-                SYSFS_PARAM="/sys/devices/system/cpu/cpu$CPU/power/pm_qos_resume_latency_us"
-                if [ ! -e $SYSFS_PARAM ]; then
-                        echo "WARNING: Unable to set PM QOS max latency for CPU $CPU\n"
-                        continue
-                fi
-                echo $MAX_EXIT_LATENCY > $SYSFS_PARAM
-                echo "Set PM QOS maximum resume latency on CPU $CPU to ${MAX_EXIT_LATENCY}us"
-        done
- 
+On Mon, 23 Jun 2025 10:14:07 +1000 Stephen Rothwell <sfr@canb.auug.org.au> =
+wrote:
+>
+> Today's linux-next merge of the mm-unstable tree got a conflict in:
+>=20
+>   .mailmap
+>=20
+> between commit:
+>=20
+>   850f0e2433cd ("MAINTAINERS: Update Drew Fustini's email address")
+>=20
+> from the risc-v-fixes tree and commit:
+>=20
+>   a5d3f8d805d2 ("mailmap: update Duje Mihanovi=C4=87's email address")
+>=20
+> from the mm-unstable tree.
+>=20
+> I fixed it up (see below) and can carry the fix as necessary. This
+> is now fixed as far as linux-next is concerned, but any non trivial
+> conflicts should be mentioned to your upstream maintainer when your tree
+> is submitted for merging.  You may also want to consider cooperating
+> with the maintainer of the conflicting tree to minimise any particularly
+> complex conflicts.
+>=20
+> --=20
+> Cheers,
+> Stephen Rothwell
+>=20
+> diff --cc .mailmap
+> index 93e94b0b9376,60165a8144bd..000000000000
+> --- a/.mailmap
+> +++ b/.mailmap
+> @@@ -223,7 -222,7 +223,8 @@@ Dmitry Safonov <0x7f454c46@gmail.com> <
+>   Dmitry Safonov <0x7f454c46@gmail.com> <dsafonov@virtuozzo.com>
+>   Domen Puncer <domen@coderock.org>
+>   Douglas Gilbert <dougg@torque.net>
+>  +Drew Fustini <fustini@kernel.org> <drew@pdp7.com>
+> + <duje@dujemihanovic.xyz> <duje.mihanovic@skole.hr>
+>   Ed L. Cashin <ecashin@coraid.com>
+>   Elliot Berman <quic_eberman@quicinc.com> <eberman@codeaurora.org>
+>   Enric Balletbo i Serra <eballetbo@kernel.org> <enric.balletbo@collabora=
+.com>
 
-In too many cases I've seen idle=poll being used when the user didn't know
-PM QOS existed. The most common response I've received is that the latency
-requirements were unknown resulting in much headbanging off the table.
-Don't get me started on the hazards of limiting c-states by index without
-checking that the c-states are or splitting isolated/housekeeping across
-SMT siblings.
+This is now a conflict between the mm-hotifxes tree and the
+risc-v-fixes tree.
 
--- 
-Mel Gorman
-SUSE Labs
+--=20
+Cheers,
+Stephen Rothwell
+
+--Sig_/N+iaO.pBDHQOFZd39ORK4ZY
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmhZ7JMACgkQAVBC80lX
+0Gy9uAf+LVmUb9ntPpYVAOMZ6jWnjbcV40GaJS9ocNrIncbeuCxDiFsH0JfY7H1F
+Z4mDvsoblqEBPMlFfyxiA/XsfcYe9mZR1vgtshilTuc6kSPr5EFYxJr2tdcQngSv
+Gs9PJjr6DustzZJ2CSbogxgaIuYzTZs69Teem6kAjY7rsMTk2/r76fHLMsergMJF
+Lc7jeod4wz2NU/QyoxqJcBOp/nZGUuyWhaAstrUqBXEJhehQYDgOILFJUV7UjKse
++CiWv8zSC/J2ecQgtTUMgf/TyqbCHocoOCoUPG6QNoz2Q9mpe0nqhnp7m6KuIfkn
+dCsJbUYOIFYpCNiFb+pXYHG08u00yw==
+=uleo
+-----END PGP SIGNATURE-----
+
+--Sig_/N+iaO.pBDHQOFZd39ORK4ZY--
 
