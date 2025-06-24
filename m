@@ -1,174 +1,205 @@
-Return-Path: <linux-kernel+bounces-700012-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-700014-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 001B2AE62AF
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Jun 2025 12:40:09 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2BA59AE62B8
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Jun 2025 12:41:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9B0CA188F696
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Jun 2025 10:40:25 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 30B6E3A73B9
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Jun 2025 10:40:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C327126B2AC;
-	Tue, 24 Jun 2025 10:40:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 11F5B27F170;
+	Tue, 24 Jun 2025 10:40:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="IAttkQBD"
-Received: from lelvem-ot01.ext.ti.com (lelvem-ot01.ext.ti.com [198.47.23.234])
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="l7U7EtDI"
+Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E7035279DC8;
-	Tue, 24 Jun 2025 10:39:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.23.234
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BD768218ABA;
+	Tue, 24 Jun 2025 10:40:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750761602; cv=none; b=eLTli0ktk3OGSdwkj2alWoYQ8YmJslW6yqHy7UHSCIvE9Tg0kR6pxHvM0IpooNpT6Sxu4dNOak/E0lYqNLeL18ilC+CgH5KxulYX2hVDTR/QJm6mKwGoELT0nyqupjrfAlTQx70eEyjAH6BiFCReUsW9sibijuWmAeh+yqjDiXw=
+	t=1750761658; cv=none; b=YCqJCI/9eLoBJ5jbfSSTQTLWug++db729SmlXwmal8xXyZ1NFbEjytJwKt5r8N1pRhaH8EYTsT+jiWWvohOcn8D8S9+2Ed/zyz+BTVV8APcuW5MSUsblLIAqc4N6zvVgskio9fnsAZXeRFG9UVl0ZQ0jgb2qzRyYtOvqHSoIr7Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750761602; c=relaxed/simple;
-	bh=XgW7u+cppxBGsC7FwEGR//C0SsF7znnagrv2bfxGCNI=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=MIYGnR0wJFgmQoG8Stwu37juTISodHNejUqEkbWZiED/gyDhE4YTpRtiljUVNPsu/bi+62jTNzdCnchF3B0wQ4p3RUY+djTycGFG1bOvHPCkv89V4geCP9SGU7vdVgY9kF85Y8zizCDckBtwo8epcsuMRfY28jCHMd9CSnXN8oo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=IAttkQBD; arc=none smtp.client-ip=198.47.23.234
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
-Received: from fllvem-sh03.itg.ti.com ([10.64.41.86])
-	by lelvem-ot01.ext.ti.com (8.15.2/8.15.2) with ESMTP id 55OAdrQc1138040;
-	Tue, 24 Jun 2025 05:39:53 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-	s=ti-com-17Q1; t=1750761593;
-	bh=1UndgjPOX1TCSZCvOeL9kzhOH9nzk/4CegsNiR3QXeQ=;
-	h=Date:Subject:To:CC:References:From:In-Reply-To;
-	b=IAttkQBDiEJkOHEDXHW7005DUZQuTbMFNZRmHM/51KZe3O/UWLyeI6xH4ipGx5q/t
-	 WDGQwOiybs4H2rRBnLYoUAK5H4LaAM6MzcinXU6ykw1sAxcTNe39nQ666dUOUM2nYN
-	 92UEYeue8BTdelqz0Qp6gvm/Z7gdGaOWpzCfUnPc=
-Received: from DLEE108.ent.ti.com (dlee108.ent.ti.com [157.170.170.38])
-	by fllvem-sh03.itg.ti.com (8.18.1/8.18.1) with ESMTPS id 55OAdrwh4136188
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-SHA256 bits=128 verify=FAIL);
-	Tue, 24 Jun 2025 05:39:53 -0500
-Received: from DLEE107.ent.ti.com (157.170.170.37) by DLEE108.ent.ti.com
- (157.170.170.38) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.55; Tue, 24
- Jun 2025 05:39:52 -0500
-Received: from lelvem-mr05.itg.ti.com (10.180.75.9) by DLEE107.ent.ti.com
- (157.170.170.37) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.55 via
- Frontend Transport; Tue, 24 Jun 2025 05:39:52 -0500
-Received: from [172.24.227.38] (ula0502350.dhcp.ti.com [172.24.227.38])
-	by lelvem-mr05.itg.ti.com (8.18.1/8.18.1) with ESMTP id 55OAdl6T1625959;
-	Tue, 24 Jun 2025 05:39:48 -0500
-Message-ID: <c4362d9e-62a4-4c28-b1cd-c338467f92ae@ti.com>
-Date: Tue, 24 Jun 2025 16:09:47 +0530
+	s=arc-20240116; t=1750761658; c=relaxed/simple;
+	bh=6d0auCNzoD1CyPxO+pEGu930r8hD35KbHS+ByXKsoHM=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=mTboY2pO1xVoCE0EbtV6ZDJQap2uiv+O+6Hy7eIJd8JC/NP2iY5rDL5TRWuQZtBego9o0TkbEIcVN6SKWqP51RfqNrDDLs4lJV5UjrUFQsnYZ/qqGsmF4quPmD5aKuK8+4pWd5RV/h0qwClnBxCuKnxTysieAD1rZEw0ILawe4o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=l7U7EtDI; arc=none smtp.client-ip=148.163.158.5
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0356516.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 55O1V2Z9025150;
+	Tue, 24 Jun 2025 10:40:47 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
+	:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=pp1; bh=IVDBez
+	qnJ2de4ogHnGgH0CYywDLOp7UCzimE3aYXKm4=; b=l7U7EtDIpgKtjmHRfugipg
+	oHqU3oNPgxfQXG/rvMs168Fjjz3BahVYpEMeHbKMQTSmvfOAHLa4+zouw3E1YYzH
+	oLCpKMPi/vefWxZBBDjSgX7SzEAcFAcdQ0weuLlUidZFLAFrPmKacP6blvEyFxxu
+	8BwgXMSvMBRQqDT0A5wb4falzwjLOa/QsAf9XIYDBxfXvPEnFyrXJ/em0QaZP082
+	Ru9R8/bGGL2ds1Lpv5qe0agrBp7oFWOKdOV1icwnravQUPr/uX/iU6t7Q/IDP9uu
+	drBvSOK3f6v0+Aa0Pp+LWI87a+VlH4V7W5M9Ufhbb4yT0EtD2qRVWlsLmZK+s6aw
+	==
+Received: from ppma22.wdc07v.mail.ibm.com (5c.69.3da9.ip4.static.sl-reverse.com [169.61.105.92])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 47dj5tr1rq-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 24 Jun 2025 10:40:47 +0000 (GMT)
+Received: from pps.filterd (ppma22.wdc07v.mail.ibm.com [127.0.0.1])
+	by ppma22.wdc07v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 55OAH4R7031277;
+	Tue, 24 Jun 2025 10:40:46 GMT
+Received: from smtprelay06.fra02v.mail.ibm.com ([9.218.2.230])
+	by ppma22.wdc07v.mail.ibm.com (PPS) with ESMTPS id 47e7eyun5k-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 24 Jun 2025 10:40:46 +0000
+Received: from smtpav04.fra02v.mail.ibm.com (smtpav04.fra02v.mail.ibm.com [10.20.54.103])
+	by smtprelay06.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 55OAeiaB35914396
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Tue, 24 Jun 2025 10:40:44 GMT
+Received: from smtpav04.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id A80EA2004D;
+	Tue, 24 Jun 2025 10:40:44 +0000 (GMT)
+Received: from smtpav04.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 31A6220040;
+	Tue, 24 Jun 2025 10:40:44 +0000 (GMT)
+Received: from thinkpad-T15 (unknown [9.87.159.139])
+	by smtpav04.fra02v.mail.ibm.com (Postfix) with SMTP;
+	Tue, 24 Jun 2025 10:40:44 +0000 (GMT)
+Date: Tue, 24 Jun 2025 12:40:42 +0200
+From: Gerald Schaefer <gerald.schaefer@linux.ibm.com>
+To: David Hildenbrand <david@redhat.com>
+Cc: Andrew Morton <akpm@linux-foundation.org>,
+        Anshuman Khandual
+ <anshuman.khandual@arm.com>,
+        Matthew Wilcox <willy@infradead.org>,
+        LKML
+ <linux-kernel@vger.kernel.org>, linux-mm <linux-mm@kvack.org>,
+        linux-s390@vger.kernel.org
+Subject: Re: [RFC PATCH 1/1] mm/debug_vm_pgtable: Use a swp_entry_t input
+ value for swap tests
+Message-ID: <20250624124042.45beda75@thinkpad-T15>
+In-Reply-To: <9bd91df8-e548-4ecc-bd30-f1ab611ecf4c@redhat.com>
+References: <20250623184321.927418-1-gerald.schaefer@linux.ibm.com>
+	<20250623184321.927418-2-gerald.schaefer@linux.ibm.com>
+	<9bd91df8-e548-4ecc-bd30-f1ab611ecf4c@redhat.com>
+X-Mailer: Claws Mail 4.3.1 (GTK 3.24.43; x86_64-redhat-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCHv4 2/6] dt-bindings: arm: ti: Add bindings for AM62D2 SoC
-To: Krzysztof Kozlowski <krzk@kernel.org>, <nm@ti.com>, <vigneshr@ti.com>,
-        <praneeth@ti.com>
-CC: <kristo@kernel.org>, <robh@kernel.org>, <krzk+dt@kernel.org>,
-        <conor+dt@kernel.org>, <linux-arm-kernel@lists.infradead.org>,
-        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <khasim@ti.com>, <v-singh1@ti.com>, <afd@ti.com>, <bb@ti.com>,
-        <devarsht@ti.com>
-References: <20250623141253.3519546-1-p-bhagat@ti.com>
- <20250623141253.3519546-3-p-bhagat@ti.com>
- <2e26a403-fac2-4217-8525-24e39d4c92c5@kernel.org>
-Content-Language: en-US
-From: Paresh Bhagat <p-bhagat@ti.com>
-In-Reply-To: <2e26a403-fac2-4217-8525-24e39d4c92c5@kernel.org>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
-X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
+X-TM-AS-GCONF: 00
+X-Proofpoint-ORIG-GUID: peLw0nyJ3RpBufj0GFzJMnHwIYUJBadY
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNjI0MDA4NyBTYWx0ZWRfX4YGMzFMG9XnG t6uE5WxBCo/dguH8Xieeqb5UxjhEZ/w2qg1CqmHgPvS9TkNO8P8ZvqW8IQr3+KwrYdb+ZDGOTfO jzBCyZ27qWlU7dkgf183B8FV5SdVrknUxao9279DXudrJTALFWpR49FNABVgChwslcE8Kgzqdhe
+ tOTOyGXCJZOq3pCC1mkYTXw3pQijy6+dxmqSTNf9XXth+WazO94uoFmtomp3xNrLHYRtfBf3OvG UOWmm6cqkIJieHyAtGJ0KHIPuFMwnTIUVpqHtDK5T4aBceW85KofEx/FLDnB3Ow/agueJnwOXD3 ltt8rgR+O0AOYsxtJR9RyOlaUK6IeW6ie2QaY4uoA61/zA3Qj2Q7RUH1JhTfHcqMnuSq4IGYUzF
+ yZ3NCLZx9gmRF3KC/GkY/Vug6nftBhkFfbKwasjOa/RZneK1ayT1dHHPE9ryws0HVN6ERzhn
+X-Authority-Analysis: v=2.4 cv=MshS63ae c=1 sm=1 tr=0 ts=685a80af cx=c_pps a=5BHTudwdYE3Te8bg5FgnPg==:117 a=5BHTudwdYE3Te8bg5FgnPg==:17 a=kj9zAlcOel0A:10 a=6IFa9wvqVegA:10 a=20KFwNOVAAAA:8 a=VnNF1IyMAAAA:8 a=bxlzOkSMlZTX2se0vY4A:9 a=CjuIK1q_8ugA:10
+X-Proofpoint-GUID: peLw0nyJ3RpBufj0GFzJMnHwIYUJBadY
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.7,FMLib:17.12.80.40
+ definitions=2025-06-24_04,2025-06-23_07,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxscore=0 bulkscore=0
+ lowpriorityscore=0 spamscore=0 mlxlogscore=999 impostorscore=0
+ clxscore=1011 phishscore=0 malwarescore=0 suspectscore=0 adultscore=0
+ priorityscore=1501 classifier=spam authscore=0 authtc=n/a authcc=
+ route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2505280000
+ definitions=main-2506240087
 
-Hi Krzysztof,
+On Mon, 23 Jun 2025 21:10:54 +0200
+David Hildenbrand <david@redhat.com> wrote:
 
-Thanks for the review.
+> On 23.06.25 20:43, Gerald Schaefer wrote:
+> > The various __pte/pmd_to_swp_entry and __swp_entry_to_pte/pmd helper
+> > functions are expected to operate on swapped PTE/PMD entries, not on
+> > present and mapped entries.
+> > 
+> > Reflect this in the swap tests by using a swp_entry_t as input value,
+> > similar to how it is already done in pte_swap_exclusive_tests().
+> > Move the swap entry creation to init_args() and store it in args, so
+> > it can also be used in other functions.
+> > 
+> > The pte/pmd_swap_tests() are also changed to compare entries instead of
+> > pfn values, because pte/pmd_pfn() helpers are not expected to operate on
+> > swapped entries. E.g. on s390, pmd_pfn() needs different shifts for leaf
+> > (large) and non-leaf PMDs.
+> > 
+> > Also update documentation, to reflect that the helpers operate on
+> > swapped and not mapped entries, and use correct names, i.e.
+> > __swp_to_pte/pmd_entry -> __swp_entry_to_pte/pmd.
+> > 
+> > For consistency, also change pte/pmd_swap_soft_dirty_tests() to use
+> > args->swp_entry instead of a present and mapped PTE/PMD.
+> > 
+> > Signed-off-by: Gerald Schaefer <gerald.schaefer@linux.ibm.com>
+> > ---
+> >   Documentation/mm/arch_pgtable_helpers.rst |  8 ++--
+> >   mm/debug_vm_pgtable.c                     | 55 ++++++++++++++---------
+> >   2 files changed, 38 insertions(+), 25 deletions(-)
+> > 
+> > diff --git a/Documentation/mm/arch_pgtable_helpers.rst b/Documentation/mm/arch_pgtable_helpers.rst
+> > index af245161d8e7..e2ac76202a85 100644
+> > --- a/Documentation/mm/arch_pgtable_helpers.rst
+> > +++ b/Documentation/mm/arch_pgtable_helpers.rst
+> > @@ -242,13 +242,13 @@ SWAP Page Table Helpers
+> >   ========================
+> >   
+> >   +---------------------------+--------------------------------------------------+
+> > -| __pte_to_swp_entry        | Creates a swapped entry (arch) from a mapped PTE |
+> > +| __pte_to_swp_entry        | Creates a swap entry (arch) from a swapped PTE   |  
+> 
+> Maybe something like:
+> 
+> "from a swap (!none && !present) PTE"
+> 
+> or short
+> 
+> "swap PTE".
+> 
+> "swapped" might be misleading.
+> 
+> Same for the other cases below.
 
-On 23/06/25 19:55, Krzysztof Kozlowski wrote:
-> On 23/06/2025 16:12, Paresh Bhagat wrote:
->> The AM62D2 SoC belongs to the K3 Multicore SoC architecture with DSP core
->> targeted for applications needing high-performance Digital Signal
->> Processing. It is used in applications like automotive audio systems,
->> professional sound equipment, radar and radio for aerospace, sonar in
->> marine devices, and ultrasound in medical imaging. It also supports
->> precise signal analysis in test and measurement tools.
-> Drop all marketing stuff.
->
->> Some highlights of AM62D2 SoC are:
-> This is not a product brochure.
->
-> A nit, subject: drop second/last, redundant "bindings". The
-> "dt-bindings" prefix is already stating that these are bindings.
-> See also:
-> https://elixir.bootlin.com/linux/v6.7-rc8/source/Documentation/devicetree/bindings/submitting-patches.rst#L18
+Right, it already felt awkward when I wrote it, not sure why I only changed
+it for "swapped entry (arch)". I think I like "swap PTE/PMD", naming the actual
+entries in the page table, vs. "swap entry (arch)", naming the (arch-dependent)
+representation of the swap PTE/PMD as swp_entry_t.
 
+Will change, and also adjust my description, where I also used possibly
+misleading "swapped".
 
-Will fix this in next version. Thanks
->
->
->
->> * Quad-Cortex-A53s (running up to 1.4GHz) in a single cluster. Dual/Single
->>    core variants are provided in the same package to allow HW compatible
->>    designs.
->> * One Device manager Cortex-R5F for system power and resource management,
->>    and one Cortex-R5F for Functional Safety or general-purpose usage.
->> * DSP with Matrix Multiplication Accelerator(MMA) (up to 2 TOPS) based on
->>    single core C7x.
->> * 3x Multichannel Audio Serial Ports (McASP) Up to 4/6/16 Serial Data Pins
->>    which can Transmit and Receive Clocks up to 50MHz, with multi-channel I2S
->>    and TDM Audio inputs and outputs.
->> * Integrated Giga-bit Ethernet switch supporting up to a total of two
->>    external ports with TSN capable to enable audio networking features such
->>    as, Ethernet Audio Video Bridging (eAVB) and Dante.
->> * 9xUARTs, 5xSPI, 6xI2C, 2xUSB2, 3xCAN-FD, 3x eMMC and SD, OSPI memory
->>    controller, 1x CSI-RX-4L for Camera, eCAP/eQEP, ePWM, among other
->>    peripherals.
->> * Dedicated Centralized Hardware Security Module with support for secure
->>    boot, debug security and crypto acceleration and trusted execution
->>    environment.
->> * One 32 bit DDR Subsystem that supports LPDDR4, DDR4 memory types.
->> * Low power mode support: Partial IO support for CAN/GPIO/UART wakeup.
+> 
+> >   +---------------------------+--------------------------------------------------+
+> > -| __swp_to_pte_entry        | Creates a mapped PTE from a swapped entry (arch) |
+> > +| __swp_entry_to_pte        | Creates a swapped PTE from a swap entry (arch)   |
+> >   +---------------------------+--------------------------------------------------+
+> > -| __pmd_to_swp_entry        | Creates a swapped entry (arch) from a mapped PMD |
+> > +| __pmd_to_swp_entry        | Creates a swap entry (arch) from a swapped PMD   |
+> >   +---------------------------+--------------------------------------------------+
+> > -| __swp_to_pmd_entry        | Creates a mapped PMD from a swapped entry (arch) |
+> > +| __swp_entry_to_pmd        | Creates a swapped PMD from a swap entry (arch)   |
+> >   +---------------------------+--------------------------------------------------+
+> >   | is_migration_entry        | Tests a migration (read or write) swapped entry  |
+> >   +-------------------------------+----------------------------------------------+
+> > diff --git a/mm/debug_vm_pgtable.c b/mm/debug_vm_pgtable.c
+> > index 7731b238b534..3b0f83ed6c2e 100644
+> > --- a/mm/debug_vm_pgtable.c
+> > +++ b/mm/debug_vm_pgtable.c
+> > @@ -73,6 +73,8 @@ struct pgtable_debug_args {
+> >   	unsigned long		fixed_pud_pfn;
+> >   	unsigned long		fixed_pmd_pfn;
+> >   	unsigned long		fixed_pte_pfn;
+> > +
+> > +	swp_entry_t		swp_entry;
+> >   };
+> >     
+> 
+> Nothing else jumped at me, so LGTM.
+> 
 
-I will refine the first two paragraphs to be very concise.
-
-
->>
->> This SoC is of part K3 AM62x family, which includes the AM62A and AM62P
->> variants. While the AM62A and AM62D are largely similar, the AM62D is
->> specifically targeted for general-purpose DSP applications, whereas the
->> AM62A focuses on edge AI workloads. A key distinction is that the AM62D
->> does not include multimedia components such as the video encoder/decoder,
->> MJPEG encoder, Vision Processing Accelerator (VPAC) for image signal
->> processing, or the display subsystem. Additionally, the AM62D has a
->> different pin configuration compared to the AM62A, which impacts
->> embedded software development.
-
-
-This section is important as it clarifies the difference between AM62a 
-and AM62d, as we are reusing AM62a dtsi files for AM62d. Let me know if 
-you need a shorter version.
-
-
->>
->> This adds dt bindings for TI's AM62D2 family of devices.
->>
->> More details about the SoCs can be found in the Technical Reference Manual:
->> https://www.ti.com/lit/pdf/sprujd4
->>
->> Signed-off-by: Paresh Bhagat <p-bhagat@ti.com>
->
-> And what happened with the previous comments?
-
-
-Yep there were some indentation problems earlier, which is fixed in this 
-version. There was also an ack from Conor Dooley in v3. I will include that.
-
-
->
-> Reach internally TI so they will coach you how to send patches upstream.
->
-> Best regards,
-> Krzysztof
+Thanks!
 
