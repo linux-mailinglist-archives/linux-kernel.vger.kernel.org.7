@@ -1,157 +1,116 @@
-Return-Path: <linux-kernel+bounces-699748-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-699753-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 973D0AE5EDC
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Jun 2025 10:15:25 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 484BCAE5EEF
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Jun 2025 10:19:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2B1F34A054B
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Jun 2025 08:15:26 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D1FED4A34A9
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Jun 2025 08:19:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 57BF4256C8D;
-	Tue, 24 Jun 2025 08:15:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5852F2517AA;
+	Tue, 24 Jun 2025 08:19:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="W7zemyC+"
-Received: from mail-wm1-f52.google.com (mail-wm1-f52.google.com [209.85.128.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="JdD8YJ+r"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.14])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F3FFC1C5D7A;
-	Tue, 24 Jun 2025 08:15:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 338E223BCFF
+	for <linux-kernel@vger.kernel.org>; Tue, 24 Jun 2025 08:19:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.14
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750752916; cv=none; b=IS6Knjui+56oIGYdI8GRySPeoTUKzx3ukjYVzn+CosQmQGDnGMviV3vIYlcNQC1q3nTsyJQH4d3U74Y4EEQ2lxjjK1m6OtztSmrSO+G3suxY5jDfcSV/pgmTUHq56Y7Vj6aZP/l5FSGNZJHr9oeQ7RUvUFPRRjYM/p/ch3qOLA0=
+	t=1750753154; cv=none; b=Q80ABkjpZyQgGRkM6JXCcc3t4vFMF5fQHiBrN+D+KAzIOTjvRgAmdKzNPz75rWBl0fV4+/1EpellWta7+JXVx6HXpWcspetSwVEJPdnRm+5OankBJEtj7NbhS66DUpHFGzaauN4DLa0uNon6Du0zk4iuWw2Ot7o1+myASQCmmXQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750752916; c=relaxed/simple;
-	bh=rgVyY4/YTQrAfm/pNuYNRBSarkZNCyC8P0/M3qGNqqs=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=ojWY3k+X6ihZ3dc4nQE1Q+1JbAGNNDuh4wJ8n+mGzfgTfXX0P8OIve/vl6MYsiDi6YfZ05n38YekDjFpchjNZcEwbu6+fYNdiLinguSomXnRBCcTtfbWZr/nwM+x3oDkZQ81Vk0kqHAp255DYohj/pgytjaC0LGpUmztGnys0qw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=W7zemyC+; arc=none smtp.client-ip=209.85.128.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f52.google.com with SMTP id 5b1f17b1804b1-453426170b6so35829785e9.1;
-        Tue, 24 Jun 2025 01:15:14 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1750752913; x=1751357713; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=7IpxvpdxasY3jjseo9IC3sZp16HwyYtH5hX5eKgsCpQ=;
-        b=W7zemyC+8wcljneTFKc7IXOPM3fixe06z7wMSiikfJI5ZiSps0pl1sPrnBX/KvHo2E
-         kvaE8F17dcAFPZnSgvuVlTUG/IIhyxD9/bgo56bb0n2zGfm8E7OaSlxgMObXKt9tBnss
-         24T6ky2zoQrHWSf05To2umIyqTX+t+97tkhmgRkH5ENolsFK2RMelLa3Tim8Qh83D74f
-         7IBr+dPAQgsqAjoQQtYKuN0SEyLJ05WkyX6raZpQG5uCndr4Caqlw+ErSu9tcVZG2yKH
-         tb/B/+MX32oKiEfSmefGu+zE0zAt1MlEYo6oG+BvlWYOPlg7tdHQg6ntNhQRtTGQ2QWz
-         K4kA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1750752913; x=1751357713;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=7IpxvpdxasY3jjseo9IC3sZp16HwyYtH5hX5eKgsCpQ=;
-        b=hgF26JrzssfTvLbDX+5bFRNOpyQemlIrLipwJ6Srzy4mdYwM+i3b2TJgHFEBbJhdWK
-         6Cn2Atl7Sj9ieCiBPpItER9z+iCeAne06oZlkMg4HO4QFjbxaSrALrxCl8cCHJ/Sd5NT
-         rAHYHU740WBf0w0SvjGU5ApJWVyWbaSILeiGvY3Lx0qd8g+RYL3cu42weLjyDgPMSWQi
-         DZe45cnnBxP+R7pDzzAQWjVTMXOnjiq1BWasYmojLYRlBR7jrzkA5sQjyKGHDQ2Wf8Ci
-         uBipc5NbmJqGJUhFKbsarZ+NpPC330MVvRFTvhqQg5Yb9v5Q2DeOkFh2JsWaD/q5yH3L
-         vaKQ==
-X-Forwarded-Encrypted: i=1; AJvYcCV+ltBlP5Pzr+ItLJylvI/6ZBdrzHdPccfAU3uIfPDPsl3W/ykYAV6+5dQslJhQvsBRfEpsvpc59RhZ@vger.kernel.org, AJvYcCW/luR5cmp9NmDo78KOHOepbSgklLMlMU8nxhWhp5IJ74E73Ea5/KZXWCDdSM5eBjCPYGAAtY9me5NU09zY@vger.kernel.org, AJvYcCWj/Qrjmob2xvBFD+O7q3Zv3TJyYYhz0tXqndRezEoNpg4UkKpQLvHenvsDZPdZXT8GR0xCZ+aw65Y=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzCWaA7teFd43LWBlCQhsQj8H0s+uiqDCqKy2awDeWW6t/4FT/R
-	Ykb3gYH1Y3Io6NHCpTzQdlG4r4zHAYWSbycxeTlhfkJdvRR7P21YIZyh
-X-Gm-Gg: ASbGncvKJFx/XVXm6LsQrVS6Vr2Qp9y8rvzBKHYlq8yl8kb9GcOs740AVZAjAehtup/
-	ZiEnT0sNSwBCd3CvoziZL9xRD5I3COw2umugc2aDKcHRKms+oBS41hfnArSHZu6597BBLprBwIj
-	M6sGgfRWw056qhPTPuNbQTuy6KbUDbW1wQUV57nr8cnGxfAlqcG/3AKUj1sym7QjVJPGx6s6GoG
-	myc0fbPjOeMXOB0Q0j90syBh6fdsNlQPLVa+Vf2Sp73487nkE3i04w6vp5DynkpiAUd1THc/ke6
-	q3No7IGpda1/yompd5gKaV4y+o1RmcLkLhkp0l/Gb3S/7pf8FFx5T0omcOZ5k6G3pdH4ateFPzj
-	NtgwQJk6EhI8=
-X-Google-Smtp-Source: AGHT+IGvxrxlLh/IwQsIqKE+iOFfbQrBMsh0pdGERhzrpVOADG+J1YSMUlf9uAMDMIBmyIUIZuLkng==
-X-Received: by 2002:a05:6000:2382:b0:3a5:1241:afde with SMTP id ffacd0b85a97d-3a6e71cba31mr2270832f8f.9.1750752912995;
-        Tue, 24 Jun 2025 01:15:12 -0700 (PDT)
-Received: from localhost.localdomain ([41.79.198.24])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3a6e810977esm1261465f8f.83.2025.06.24.01.15.10
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 24 Jun 2025 01:15:12 -0700 (PDT)
-From: Khalid Ali <khaliidcaliy@gmail.com>
-X-Google-Original-From: Khalid Ali <khaliidcaliy@gmail.com
-To: tglx@linutronix.de,
-	mingo@redhat.com,
-	bp@alien8.de,
-	dave.hansen@linux.intel.com,
-	hpa@zytor.com,
-	corbet@lwn.net
-Cc: luto@kernel.org,
-	peterz@infradead.org,
-	ardb@kernel.org,
-	jan.kiszka@siemens.com,
-	kbingham@kernel.org,
-	kirill.shutemov@linux.intel.com,
-	michael.roth@amd.com,
-	rick.p.edgecombe@intel.com,
-	brijesh.singh@amd.com,
-	sandipan.das@amd.com,
-	jgross@suse.com,
-	thomas.lendacky@amd.com,
-	linux-kernel@vger.kernel.org,
-	linux-doc@vger.kernel.org,
-	linux-efi@vger.kernel.org,
-	linux-mm@kvack.org
-Subject: Re: [PATCHv2 0/3] x86: Make 5-level paging support unconditional for x86-64
-Date: Tue, 24 Jun 2025 08:11:15 +0000
-Message-ID: <20250624081400.2284-1-khaliidcaliy@gmail.com>
-X-Mailer: git-send-email 2.49.0
-In-Reply-To: <20250516091534.3414310-1-kirill.shutemov@linux.intel.com>
-References: 
+	s=arc-20240116; t=1750753154; c=relaxed/simple;
+	bh=veO6F7myXH23/l8pZJTYL/+cG25MIh24hmrup24rlgk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=p779shy6LIYI1F+XwY++6UnGM7O3TGMurKPruTzmeCLqEnVOHXZR62Ws2cdt/GdE2uXuMhFDKP0EauQ7RPbo2K2mwNZf9tsRgG7fXXlCkkPZt5FLaiuOlBgy3ppGcD7tAj9Xi6eIJ1mSJgwpoItbxjQwdnYr3lGdVyDe0WvpCbM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=JdD8YJ+r; arc=none smtp.client-ip=198.175.65.14
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1750753154; x=1782289154;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=veO6F7myXH23/l8pZJTYL/+cG25MIh24hmrup24rlgk=;
+  b=JdD8YJ+rD+Zel+VKZ530ockgPHAX9nZAere5bUa+HWlKByLtiSDPIpAh
+   y+3c1atvFsg1PbzQEHthJdJ70iKzVymXUT/kc63JbF1t1PbYTSUdwy6wh
+   OsTvULXzyG2zZNy2Lb54uj/QpCdCYjmveoFh0eyl4nA3NKr4sC4KICQv9
+   3QI5lH90IfUBBgeZuAGSZme0sLV1/wtUwgVPs8wRJ7XR3v/lVL+SQs6EH
+   OKNlEQO57/c9Yow7zz9SyiBLUCBs/ZHwmUYCMZHkZljj5sJbprS5PYF3F
+   VcNTQBBrt2bu0/zlKQGk7BlVOcUMty0vC3oQ3mnE9vjPY/OqlmXe7ZvwE
+   Q==;
+X-CSE-ConnectionGUID: eSrrGQUUTwqYV7dOtr6oNQ==
+X-CSE-MsgGUID: dEDS7388QAmUUBhB3AWApg==
+X-IronPort-AV: E=McAfee;i="6800,10657,11473"; a="56763966"
+X-IronPort-AV: E=Sophos;i="6.16,261,1744095600"; 
+   d="scan'208";a="56763966"
+Received: from fmviesa006.fm.intel.com ([10.60.135.146])
+  by orvoesa106.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 24 Jun 2025 01:19:13 -0700
+X-CSE-ConnectionGUID: Z0lLToT4SLOs3MmC/TtBig==
+X-CSE-MsgGUID: g5OKnNdiScmqzJCM8VFGmQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.16,261,1744095600"; 
+   d="scan'208";a="151986381"
+Received: from yilunxu-optiplex-7050.sh.intel.com (HELO localhost) ([10.239.159.165])
+  by fmviesa006.fm.intel.com with ESMTP; 24 Jun 2025 01:19:09 -0700
+Date: Tue, 24 Jun 2025 16:11:36 +0800
+From: Xu Yilun <yilun.xu@linux.intel.com>
+To: Baolu Lu <baolu.lu@linux.intel.com>
+Cc: jgg@nvidia.com, jgg@ziepe.ca, kevin.tian@intel.com, will@kernel.org,
+	aneesh.kumar@kernel.org, iommu@lists.linux.dev,
+	linux-kernel@vger.kernel.org, joro@8bytes.org, robin.murphy@arm.com,
+	shuah@kernel.org, nicolinc@nvidia.com, aik@amd.com,
+	dan.j.williams@intel.com, yilun.xu@intel.com
+Subject: Re: [PATCH v2 3/4] iommufd: Destroy vdevice on idevice destroy
+Message-ID: <aFpduJmdcru6r1kd@yilunxu-OptiPlex-7050>
+References: <20250623094946.1714996-1-yilun.xu@linux.intel.com>
+ <20250623094946.1714996-4-yilun.xu@linux.intel.com>
+ <a2fddab4-bc85-46f6-9008-57a26e099698@linux.intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <a2fddab4-bc85-46f6-9008-57a26e099698@linux.intel.com>
 
->Both Intel and AMD CPUs support 5-level paging, which is expected to
->become more widely adopted in the future.
->
->Remove CONFIG_X86_5LEVEL.
->
->In preparation to that remove CONFIG_DYNAMIC_MEMORY_LAYOUT and make
->SPARSEMEM_VMEMMAP the only memory model.
->
->v2:
-> - Fix 32-bit build by wrapping p4d_set_huge() and p4d_clear_huge() in
->   #if CONFIG_PGTABLE_LEVELS > 4;
-> - Rebased onto current tip/master;
->
->Kirill A. Shutemov (3):
->  x86/64/mm: Always use dynamic memory layout
->  x86/64/mm: Make SPARSEMEM_VMEMMAP the only memory model
->  x86/64/mm: Make 5-level paging support unconditional
->
-> Documentation/arch/x86/cpuinfo.rst            |  8 ++---
-> .../arch/x86/x86_64/5level-paging.rst         |  9 ------
-> arch/x86/Kconfig                              | 32 ++-----------------
-> arch/x86/Kconfig.cpufeatures                  |  4 ---
-> arch/x86/boot/compressed/pgtable_64.c         | 11 ++-----
-> arch/x86/boot/header.S                        |  4 ---
-> arch/x86/boot/startup/map_kernel.c            |  5 +--
-> arch/x86/include/asm/page_64.h                |  2 --
-> arch/x86/include/asm/page_64_types.h          | 11 -------
-> arch/x86/include/asm/pgtable_64_types.h       | 24 --------------
-> arch/x86/kernel/alternative.c                 |  2 +-
-> arch/x86/kernel/head64.c                      |  4 ---
-> arch/x86/kernel/head_64.S                     |  2 --
-> arch/x86/mm/init.c                            |  4 ---
-> arch/x86/mm/init_64.c                         |  9 +-----
-> arch/x86/mm/pgtable.c                         |  2 +-
-> drivers/firmware/efi/libstub/x86-5lvl.c       |  2 +-
-> scripts/gdb/linux/pgtable.py                  |  4 +--
-> 18 files changed, 13 insertions(+), 126 deletions(-)
+On Tue, Jun 24, 2025 at 11:32:01AM +0800, Baolu Lu wrote:
+> On 6/23/25 17:49, Xu Yilun wrote:
+> > Destroy iommufd_vdevice(vdev) on iommufd_idevice(idev) destroy so that
+> > vdev can't outlive idev.
+> > 
+> > iommufd_device(idev) represents the physical device bound to iommufd,
+> > while the iommufd_vdevice(vdev) represents the virtual instance of the
+> > physical device in the VM. The lifecycle of the vdev should not be
+> > longer than idev. This doesn't cause real problem on existing use cases
+> > cause vdev doesn't impact the physical device, only provides
+> > virtualization information. But to extend vdev for Confidential
+> > Computing(CC), there are needs to do secure configuration for the vdev,
+> > e.g. TSM Bind/Unbind. These configurations should be rolled back on idev
+> > destroy, or the external driver(VFIO) functionality may be impact.
+> > 
+> > Building the association between idev & vdev requires the two objects
+> > pointing each other, but not referencing each other.
+> 
+> Does this mean each idevice can have at most a single vdevice? Is it
 
-I think i am too late, however this is completely wrong. There are still processors that doesn't support
-5-level paging which is mordern. We may call those processors old, however they are still common and used.
+Yes, I got this idea from here.
 
-So this patch seem too early for that. Some intel core-i5 and core-i7 doesn't support 5-level paging at all.
+https://lore.kernel.org/all/20250604132403.GJ5028@nvidia.com/
 
-This will break x86_64 cpus that doesn't support 5-level paging.
+> possible that different PASIDs of a physical device are assigned to
+> userspace for different purposes, such that there is a need for multiple
+> vdevices per idevice?
+
+Mm.. I don't have a clear idea how SIOV assignment work with iommufd,
+may come back later.
+
+Thanks,
+Yilun
 
