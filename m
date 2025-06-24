@@ -1,258 +1,180 @@
-Return-Path: <linux-kernel+bounces-700098-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-700100-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4FDD6AE63CC
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Jun 2025 13:46:46 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5FF6FAE63D0
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Jun 2025 13:47:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C9C634A74E5
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Jun 2025 11:46:46 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B7CFB3B1947
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Jun 2025 11:46:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1380E28D845;
-	Tue, 24 Jun 2025 11:46:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4B8532857CD;
+	Tue, 24 Jun 2025 11:47:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="OsHVH/Wu"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.9])
+	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="AEEMNYTN"
+Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BE8351EBA09;
-	Tue, 24 Jun 2025 11:46:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.9
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0F8D428C843
+	for <linux-kernel@vger.kernel.org>; Tue, 24 Jun 2025 11:47:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750765597; cv=none; b=GspmYx3isoeJXiqc+AzgDhMTmmcGibLgEb8lq89mr5/LSaQJL1UR+FIm14RGUoyZsve11hY74i6KE8eoHbFmjh7lmUT6IYZpK1LOKi0dl9a+GYySsylc/Zg8gCZI3aRC6jqBPNYhLqSDosNK6JnmwDiGfzegQUWgi6bwfzMmc8g=
+	t=1750765630; cv=none; b=Y0l5N1JNSakCLfnQ8SScjq+TgaQERyWQhOk0e0sAwlih0Idpfr1MGcSTlEOYZ4rbTaQRu1MXOP1zrB15Rbi108IxG66Hruk9KoJm05h4nmKHNwiggj3SQwZW12A3h/HLW1WOtFfDIjjzkV9WH0404k1kSUqEzW/xHpwdvwvETWg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750765597; c=relaxed/simple;
-	bh=Aq9GD2THfqFXMbWItD81A4DWQCtFtMOiUc3S2GCPJMY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=uQz0Y/SGZyH9w7IgVIcrE0De1NOEOxT8igufNVwPdKWsMQa9lKbg6HCCish5xh/HoQy4/2uaE4tnHQlv4qX0ODIbDPKQMSwHi/LI1xjAkjj6bhhHs4PWYgbqsWCPZJUhTUuaPcEER/Mxv7SkqrCljl/uQ1fFTBvCtmwW7AoaAUI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=OsHVH/Wu; arc=none smtp.client-ip=192.198.163.9
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1750765596; x=1782301596;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:content-transfer-encoding:in-reply-to;
-  bh=Aq9GD2THfqFXMbWItD81A4DWQCtFtMOiUc3S2GCPJMY=;
-  b=OsHVH/WuzzAIchm8vrneTB0NzP75WbpC8zE/7tPgkE8sMO8CnhJkFkML
-   fhDhMiKPUQ1E/jKEbk9dMBXpucdXm4Do7Ksz+lKw255PrqIA3278vG+qd
-   glXvtR81qmuQz09r3DKXr7GhPW4XJO51JP4OA0QOUYIexjvhy2eL3ob18
-   AiIMV3IPUq3v/UEF14Wf6n6BtoOPaPhwbvViDerZyWV63jmhTUv6jRMg6
-   F50KaYpY7hgWe71ld0MXXqxpUZ5Hb5oQZ/HJMcyiW3i097XQq6K9KEGBM
-   yIRfJcQ6SshwEP4Q92A/3IovnAovOWpEw8WC8RpSszdlirNJ5Ee2ZCntR
-   w==;
-X-CSE-ConnectionGUID: v+/US/TqQ++WwFPTzfuJfQ==
-X-CSE-MsgGUID: F0X7bjy/QuGVAXcDtszJcw==
-X-IronPort-AV: E=McAfee;i="6800,10657,11473"; a="63694013"
-X-IronPort-AV: E=Sophos;i="6.16,261,1744095600"; 
-   d="scan'208";a="63694013"
-Received: from orviesa008.jf.intel.com ([10.64.159.148])
-  by fmvoesa103.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 24 Jun 2025 04:46:35 -0700
-X-CSE-ConnectionGUID: Ydx9rhrBQc+u94FJjhhIjQ==
-X-CSE-MsgGUID: zQie7ZLdSTig2uGW7zzDJA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.16,261,1744095600"; 
-   d="scan'208";a="152400921"
-Received: from ncintean-mobl1.ger.corp.intel.com (HELO kekkonen.fi.intel.com) ([10.245.244.201])
-  by orviesa008-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 24 Jun 2025 04:46:30 -0700
-Received: from kekkonen.localdomain (localhost [127.0.0.1])
-	by kekkonen.fi.intel.com (Postfix) with ESMTP id 3361911F742;
-	Tue, 24 Jun 2025 14:46:27 +0300 (EEST)
-Date: Tue, 24 Jun 2025 11:46:27 +0000
-Organization: Intel Finland Oy - BIC 0357606-4 - c/o Alberga Business Park, 6 krs, Bertel Jungin Aukio 5, 02600 Espoo
-From: Sakari Ailus <sakari.ailus@linux.intel.com>
-To: Mehdi Djait <mehdi.djait@linux.intel.com>
-Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-	"Nirujogi, Pratap" <pnirujog@amd.com>,
-	Pratap Nirujogi <pratap.nirujogi@amd.com>, mchehab@kernel.org,
-	hverkuil@xs4all.nl, bryan.odonoghue@linaro.org, krzk@kernel.org,
-	dave.stevenson@raspberrypi.com, hdegoede@redhat.com,
-	jai.luthra@ideasonboard.com, tomi.valkeinen@ideasonboard.com,
-	linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
-	benjamin.chan@amd.com, bin.du@amd.com, grosikop@amd.com,
-	king.li@amd.com, dantony@amd.com, vengutta@amd.com,
-	Svetoslav.Stoilov@amd.com, Yana.Zheleva@amd.com
-Subject: Re: [PATCH v3 RESEND] media: i2c: Add OV05C10 camera sensor driver
-Message-ID: <aFqQEwdzSY123xps@kekkonen.localdomain>
-References: <20250609194321.1611419-1-pratap.nirujogi@amd.com>
- <20250615000915.GQ10542@pendragon.ideasonboard.com>
- <53674c5f-6b68-49e7-bbb0-fd06fff344c3@amd.com>
- <8b16675a-c6ac-4619-aabe-ad2a4be6c964@amd.com>
- <20250623220503.GA15951@pendragon.ideasonboard.com>
- <425j7c6xvbbatdhxgjgjawzwfnjmjetg6rpnwfudbtg6qz6nay@dy5ldbuhtbvv>
- <aFp7tuXkU1jayPum@kekkonen.localdomain>
- <aFp78tqHhe_IhV6d@kekkonen.localdomain>
- <20250624102745.GG15951@pendragon.ideasonboard.com>
- <nixg4efp3zkdpd6h7kp6wkvam63batpoknov2nkgu36voks6bk@gzuackzl3l5g>
+	s=arc-20240116; t=1750765630; c=relaxed/simple;
+	bh=0duF5eetDeurAx5SbercLm+GRrF1AVp/Z1fAOG3PhJY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=QwkOeTIEInR1EcHSzjpgUDu4K3d9qvnVa4plSO6V8QWE/zu3yIAVp8vDu4rERVc9vW1fkrJfQm7kCTh6eoxzN3uDjgOJFyVdpxIFJxm7u2jS1hvzxqOGXUHKBZ68KxeNpESRw7abLdSyPBLkEPAGyz1OcD1MQa6Z4qEwQ8P1kF8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=AEEMNYTN; arc=none smtp.client-ip=213.167.242.64
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
+Received: from [192.168.88.20] (91-158-153-178.elisa-laajakaista.fi [91.158.153.178])
+	by perceval.ideasonboard.com (Postfix) with ESMTPSA id 3C4BA50A;
+	Tue, 24 Jun 2025 13:46:49 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
+	s=mail; t=1750765609;
+	bh=0duF5eetDeurAx5SbercLm+GRrF1AVp/Z1fAOG3PhJY=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=AEEMNYTNycg7VuMvxD6mHCdEnDb34jzSzyMJyazRv1kTSsamHIAlAmiypksoLdi28
+	 IOSYmuOVO7+ZNNMvFpHOGe9C2Z+lyOylgn9GbNfEyl6t8ZEXp9ilISLOEDR0pMe0cW
+	 gXaKzjJ4WCuVZRVC2K8P5sVXu66/jSrN2+ADeCqQ=
+Message-ID: <d6ac1fe1-eeac-430c-ada6-d19386781b53@ideasonboard.com>
+Date: Tue, 24 Jun 2025 14:47:02 +0300
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <nixg4efp3zkdpd6h7kp6wkvam63batpoknov2nkgu36voks6bk@gzuackzl3l5g>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] drm/tidss: Set crtc modesetting parameters with adjusted
+ mode
+To: Jayesh Choudhary <j-choudhary@ti.com>, jyri.sarha@iki.fi,
+ dri-devel@lists.freedesktop.org, devarsht@ti.com
+Cc: maarten.lankhorst@linux.intel.com, mripard@kernel.org,
+ tzimmermann@suse.de, airlied@gmail.com, simona@ffwll.ch,
+ linux-kernel@vger.kernel.org
+References: <20250624080402.302526-1-j-choudhary@ti.com>
+Content-Language: en-US
+From: Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>
+Autocrypt: addr=tomi.valkeinen@ideasonboard.com; keydata=
+ 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
+In-Reply-To: <20250624080402.302526-1-j-choudhary@ti.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Hi Mehdi,
+Hi,
 
-On Tue, Jun 24, 2025 at 01:27:03PM +0200, Mehdi Djait wrote:
-> Hi Laurent, Hi Sakari,
+On 24/06/2025 11:04, Jayesh Choudhary wrote:
+> TIDSS uses crtc_* fields to propagate its registers and set the
+> clock rates. So set the CRTC modesetting timing parameters with
+> the adjusted mode when needed, to set correct values.
 > 
-> On Tue, Jun 24, 2025 at 01:27:45PM +0300, Laurent Pinchart wrote:
-> > On Tue, Jun 24, 2025 at 10:20:34AM +0000, Sakari Ailus wrote:
-> > > On Tue, Jun 24, 2025 at 10:19:35AM +0000, Sakari Ailus wrote:
-> > > > On Tue, Jun 24, 2025 at 10:35:18AM +0200, Mehdi Djait wrote:
-> > > > > On Tue, Jun 24, 2025 at 01:05:03AM +0300, Laurent Pinchart wrote:
-> > > > > > On Mon, Jun 23, 2025 at 05:51:48PM -0400, Nirujogi, Pratap wrote:
-> > > > > > > On 6/16/2025 6:49 PM, Nirujogi, Pratap wrote:
-> > > > > > > >>> +static int ov05c10_probe(struct i2c_client *client)
-> > > > > > > >>> +{
-> > > > > > > >>> +     struct ov05c10 *ov05c10;
-> > > > > > > >>> +     u32 clkfreq;
-> > > > > > > >>> +     int ret;
-> > > > > > > >>> +
-> > > > > > > >>> +     ov05c10 = devm_kzalloc(&client->dev, sizeof(*ov05c10), 
-> > > > > > > >>> GFP_KERNEL);
-> > > > > > > >>> +     if (!ov05c10)
-> > > > > > > >>> +             return -ENOMEM;
-> > > > > > > >>> +
-> > > > > > > >>> +     struct fwnode_handle *fwnode = dev_fwnode(&client->dev);
-> > > > > > > >>> +
-> > > > > > > >>> +     ret = fwnode_property_read_u32(fwnode, "clock-frequency", 
-> > > > > > > >>> &clkfreq);
-> > > > > > > >>> +     if (ret)
-> > > > > > > >>> +             return  dev_err_probe(&client->dev, -EINVAL,
-> > > > > > > >>> +                                   "fail to get clock freq\n");
-> > > > > > > >>
-> > > > > > > >> Let's try to land
-> > > > > > > >> https://lore.kernel.org/linux-media/20250521104115.176950-1- 
-> > > > > > > >> mehdi.djait@linux.intel.com/
-> > > > > > > >> and replace the code above with devm_v4l2_sensor_clk_get().
-> > > > > > > >>
-> > > > > > > > Ok, we will verify on our side.
-> > > > > > > 
-> > > > > > > We tried using devm_v4l2_sensor_clk_get() and found its required to add 
-> > > > > > > support for software_node to make it work with this driver.
-> > > > > > 
-> > > > > > Why is that ?
-> > > > > > 
-> > > > > > > Please refer 
-> > > > > > > the changes below and let us know if these should be submitted as a 
-> > > > > > > separate patch.
-> > > > > 
-> > > > > The helper is still not merged, so no patch is required.
-> > > > > 
-> > > > > I will see if a change is needed from the helper side or the OV05C10 side.
-> > > > 
-> > > > I wonder if there's a better way to figure out if you're running on a DT or
-> > > > ACPI based system than getting the device's parents and checking which one
-> > > > you find first, DT or ACPI. I think that should work for now at least.
-> > > 
-> > > Or, rather, checking for non-OF node here would probably work the best. I
-> > > wouldn't expect these to be software node based on DT systems ever.
-> > 
-> > Until it happens :-) And we'll handle it then.
+> Cc: Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>
+> Signed-off-by: Jayesh Choudhary <j-choudhary@ti.com>
+> ---
 > 
-> So we have the following:
+> Hello All,
 > 
-> - The problem with this driver is due to lack of proper ACPI
->   description. HW is already shipping and AMD will work on better ACPI
->   description for future models. See [1]
+> After the DSI fixes[0], TIDSS is using crtc_* timings while programming
+> hardware[1]. But while testing on TI's J784S4-EVM platform, I noticed
+> that crtc_timings are not propagated properly.
 > 
-> - software_node can also be used on DT systems
+> The display pipeline there looks like:
+> TIDSS -> CDNS-DSI -> SN65DSI86 bridge -> DisplayPort
 > 
-> [1] https://lore.kernel.org/lkml/0d801367-da24-4596-83d9-08ccd89ca670@redhat.com/
-> 
-> Now going back to the helper. If we want to support this case:
-> 
-> Approach 1: software_node || acpi
-> 
-> --- a/drivers/media/v4l2-core/v4l2-common.c
-> +++ b/drivers/media/v4l2-core/v4l2-common.c
-> @@ -682,16 +682,17 @@ struct clk *devm_v4l2_sensor_clk_get(struct device *dev, const char *id)
->         const char *clk_id __free(kfree) = NULL;
->         struct clk_hw *clk_hw;
->         struct clk *clk;
-> -       bool acpi_node;
-> +       bool acpi_sw_node;
->         u32 rate;
->         int ret;
->  
->         clk = devm_clk_get_optional(dev, id);
->         ret = device_property_read_u32(dev, "clock-frequency", &rate);
-> -       acpi_node = is_acpi_node(dev_fwnode(dev));
-> +       acpi_sw_node = is_acpi_node(dev_fwnode(dev)) ||
-> +                      is_software_node(dev_fwnode(dev));
->  
->         if (clk) {
-> -               if (!ret && acpi_node) {
-> +               if (!ret && acpi_sw_node) {
->                         ret = clk_set_rate(clk, rate);
->                         if (ret) {
->                                 dev_err(dev, "Failed to set clock rate: %u\n",
-> @@ -705,7 +706,7 @@ struct clk *devm_v4l2_sensor_clk_get(struct device *dev, const char *id)
->         if (ret)
->                 return ERR_PTR(ret);
->  
-> -       if (!IS_ENABLED(CONFIG_COMMON_CLK) || !acpi_node)
-> +       if (!IS_ENABLED(CONFIG_COMMON_CLK) || !acpi_sw_node)
->                 return ERR_PTR(-ENOENT);
->  
->         if (!id) {
-> 
-> 
-> Approach 2: of_node
-> 
-> --- a/drivers/media/v4l2-core/v4l2-common.c
-> +++ b/drivers/media/v4l2-core/v4l2-common.c
-> @@ -682,16 +682,16 @@ struct clk *devm_v4l2_sensor_clk_get(struct device *dev, const char *id)
->         const char *clk_id __free(kfree) = NULL;
->         struct clk_hw *clk_hw;
->         struct clk *clk;
-> -       bool acpi_node;
-> +       bool of_node;
->         u32 rate;
->         int ret;
->  
->         clk = devm_clk_get_optional(dev, id);
->         ret = device_property_read_u32(dev, "clock-frequency", &rate);
-> -       acpi_node = is_acpi_node(dev_fwnode(dev));
-> +       of_node = is_of_node(dev_fwnode(dev));
->  
->         if (clk) {
-> -               if (!ret && acpi_node) {
-> +               if (!ret && !of_node) {
->                         ret = clk_set_rate(clk, rate);
->                         if (ret) {
->                                 dev_err(dev, "Failed to set clock rate: %u\n",
-> @@ -705,7 +705,7 @@ struct clk *devm_v4l2_sensor_clk_get(struct device *dev, const char *id)
->         if (ret)
->                 return ERR_PTR(ret);
->  
-> -       if (!IS_ENABLED(CONFIG_COMMON_CLK) || !acpi_node)
-> +       if (!IS_ENABLED(CONFIG_COMMON_CLK) || of_node)
->                 return ERR_PTR(-ENOENT);
->  
->         if (!id) {
+> Consider the case of 1920x1080 resolution where the EDID mode has clock
+> of 148500kHz. After adjustment, the clock changes to 148800kHz. While
+> this change is reflected in mode->clock, its not propagated to
+> mode->crtc_clock.
 
-I'm in favour of the latter but both should be workable.
+Hmm, so CDNS-DSI changes the adjusted_mode->clock, but in the end tidss
+doesn't actually use the adjusted clock at all? I'm pretty sure I tested
+that... I need to try it (and this) again.
 
-Speaking of return values, devm_clk_get_optional() may also return
--EPROBE_DEFER. That needs to be handled.
+ Tomi
 
-And further on -EPROBE_DEFER, I think the helper should return
--EPROBE_DEFER if the "clock-frequency" property doesn't exist on non-OF
-nodes. That signals the required software nodes required on Intel Windows
-definitions/ipu-bridge or AMD systems aren't in place yet so really probing
-should be deferred. This would allow removing the hacks that return
--EPROBE_DEFER in sensor drivers when no graph endpoint is found.
+> 
+> [0] provides the **essential** fixes to get DSI working and its
+> patches are Reviewed and Tested.
+> The series improves the condition of DSI. I have observed that
+> 800x600 and 1280x1024 modes are working now after [0].
+> 
+> This patch helps to enables other modes. So taking this up as a
+> delta patch so as to avoid respining v5 of [0].
+> I hope this approach is okay!
+> 
+> [0]: https://lore.kernel.org/all/20250618-cdns-dsi-impro-v4-0-862c841dbe02@ideasonboard.com/
+> [1]: https://patchwork.kernel.org/project/dri-devel/patch/20250618-cdns-dsi-impro-v4-3-862c841dbe02@ideasonboard.com/ 
+> 
+>  drivers/gpu/drm/tidss/tidss_crtc.c | 5 ++++-
+>  1 file changed, 4 insertions(+), 1 deletion(-)
+> 
+> diff --git a/drivers/gpu/drm/tidss/tidss_crtc.c b/drivers/gpu/drm/tidss/tidss_crtc.c
+> index 17efd77ce7f2..da89fd01c337 100644
+> --- a/drivers/gpu/drm/tidss/tidss_crtc.c
+> +++ b/drivers/gpu/drm/tidss/tidss_crtc.c
+> @@ -91,7 +91,7 @@ static int tidss_crtc_atomic_check(struct drm_crtc *crtc,
+>  	struct dispc_device *dispc = tidss->dispc;
+>  	struct tidss_crtc *tcrtc = to_tidss_crtc(crtc);
+>  	u32 hw_videoport = tcrtc->hw_videoport;
+> -	const struct drm_display_mode *mode;
+> +	struct drm_display_mode *mode;
+>  	enum drm_mode_status ok;
+>  
+>  	dev_dbg(ddev->dev, "%s\n", __func__);
+> @@ -108,6 +108,9 @@ static int tidss_crtc_atomic_check(struct drm_crtc *crtc,
+>  		return -EINVAL;
+>  	}
+>  
+> +	if (drm_atomic_crtc_needs_modeset(crtc_state))
+> +		drm_mode_set_crtcinfo(mode, 0);
+> +
+>  	return dispc_vp_bus_check(dispc, hw_videoport, crtc_state);
+>  }
+>  
 
--- 
-Regards,
-
-Sakari Ailus
 
