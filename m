@@ -1,158 +1,135 @@
-Return-Path: <linux-kernel+bounces-700853-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-700855-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2FD52AE6DB1
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Jun 2025 19:38:12 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0DB0DAE6DBE
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Jun 2025 19:40:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0C9C53BB590
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Jun 2025 17:37:46 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 548A31BC6675
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Jun 2025 17:41:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D2DAF2E6D00;
-	Tue, 24 Jun 2025 17:37:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B49AC2E62B7;
+	Tue, 24 Jun 2025 17:40:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="NF9aAXSX"
-Received: from mail-pf1-f181.google.com (mail-pf1-f181.google.com [209.85.210.181])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="d13jDyH0"
+Received: from mail-wr1-f42.google.com (mail-wr1-f42.google.com [209.85.221.42])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C66842222D2;
-	Tue, 24 Jun 2025 17:37:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 500592222D2;
+	Tue, 24 Jun 2025 17:40:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750786677; cv=none; b=ixyMXooWJzsjN/ZL83NM/xgvhbU3mmt+k6F8u5fNWCaSgM65Bf0pNQu/xcQjsybCsAwdEzEbCqZK3aztrmjUCfNBAsr9tnLu3p76sOiJILRNFh1aRiKPn/uSdKCweROQ2+ZREBnyxrCupvLEhKPLuGh1ftJfIO+IW4FVApGO5FY=
+	t=1750786841; cv=none; b=nOvJdAZVBgfBSYR6immNNo+G0S8a+G46GdJh4a6lFFqZu0dCFR6ohzL6lD2crbIW7Rc3xsSZtck91OC9WCYpTGnNwwKixnSEtHQxAVj2fABFE3plXarkztub6tmluxvr2MS8Enqubg8EUaqGfSU/m8urxXSraF3/TSq74Ez2dHg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750786677; c=relaxed/simple;
-	bh=ukmnTODouOFjPUParCF5o0rMy+sxb6HlnqGiPe85+To=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=RrwBLkZm5F6T22PbWKRbSgwJRVN3nBYd/em3Xjxq5Gwvt8lz0QMeQOWhDQz25Z/eRQ4/nSysSx1/gFXzyYpsQ4QZSh5sMYChPtiANlf5Z53CDFR9x6UQBHOu9VBh6YIkjyLexfD3wqH2ksDhpOL2KQ974vCslVQUjC8KxQaEqzY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=NF9aAXSX; arc=none smtp.client-ip=209.85.210.181
+	s=arc-20240116; t=1750786841; c=relaxed/simple;
+	bh=YhoQgm0PvGp46pc/NLqp1FnyCxWoY1MPU8o9QFlgx1U=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=ZjcGWNcf0OfDK72kazol6NN82DHvAeNnBmiKWiFhZ9H/9xgQ5mVZ2eU8KRKXxrmj3WdWCLUjZp+YU2bjEZ2p13IRb665sntqooUpLn9PNAGs1bWuZRQAFoJZJPYjQl2QWYFVAyqpkC+jkUBqlSCowZ580zOWn3MeWj3rPINA6fk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=d13jDyH0; arc=none smtp.client-ip=209.85.221.42
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f181.google.com with SMTP id d2e1a72fcca58-7390d21bb1cso381705b3a.2;
-        Tue, 24 Jun 2025 10:37:55 -0700 (PDT)
+Received: by mail-wr1-f42.google.com with SMTP id ffacd0b85a97d-3a6cd1a6fecso748575f8f.3;
+        Tue, 24 Jun 2025 10:40:38 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1750786675; x=1751391475; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:from:to:cc:subject:date:message-id:reply-to;
-        bh=aek7AfukVB3w8z+c8ayab+lJztJVDxSWIM4wv2o679c=;
-        b=NF9aAXSXsZoJrgwCNx9YB5ojMwGqsGfsrVFBKKW/FYbKGlyaDk72oR3fvHE3V3OTPY
-         0yBJSM3uTrAP99YbIdK5Kepe36h0gsZfJoV+0xz4qIVf8vixFO7L4zyICge3wsbNEtir
-         hzFNHqykeF/f8D2qAzfwqRU+qMnjXdzvhMdZxNpMpTh3CNIyceUX17AQpNfBcJkYU93x
-         CrtPOf/XhFGB2okbJOrzW5rOWX9yx7stCWf1Eeh64w+essd9f0yHWbZZxjEWnKY1fbMs
-         +BH8ldJAX1d6n3WT/FOT8KjSdJsJ9F9xOmi+I8U0PDEZw+LtksSBL1Ay0cz92bPtbYlC
-         JMLQ==
+        d=gmail.com; s=20230601; t=1750786837; x=1751391637; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=OFY1porl5bWPwHx+ruPBvNUd9kv7h/Kd82He4WS0fRM=;
+        b=d13jDyH0K29I/6MjRpSkSHLTZ8Q9mHJBk2LqqMfG9TXqz1QsZp7lhWiQTalWN5Fqjn
+         txTlHUec1UG4WylaVb15r96oTthJ9CtWvSFU7XQyEmfBSzVZ3JDpH+VNZsB1q6DidD7P
+         FnFRJP+nus+Au4IHStc0Cptnj6RdnaJy0U/hKv/rK5MT/lFXxjaU8q/UieyHWaJ02le/
+         diyl1yk26fdiwy77KaKvhaJbyCsStNIvaw3AAWNTv2UvJb1yXCfS43UGnNQNGqrZhZax
+         VPQdgHj4/LOhT9UTGmPpFjCUuGJQZrqwUoEjS8TnbcQtpprJqDADbjlhQSaaeKy8XDX/
+         YoIw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1750786675; x=1751391475;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=aek7AfukVB3w8z+c8ayab+lJztJVDxSWIM4wv2o679c=;
-        b=pUosj0E5ag6+SMXk7if+I26iWZkEDH7MrwoInUd1tCkViuhGJEbDMDw3lj/qKGfA9N
-         xexkVEpNI89i8TCb3cpslcRVGj0rOKzuGgcnPcoxmP004iOYoQGEg75cGzSEC1V6ijH7
-         YqwxhSrfGShSEFwhS5lP1I0r8BJLSbCokl0tNXRsIg2GzJtBvI1NL8lz+jdXw/LO6aZi
-         fxxtz4OGbTXfQoBXECi1ejhZg7QWKhYBzX1bd4GyUsWZQ6ZC+5FLbd4Oj9r9Jy7Ktp1L
-         eG7bwqKjWCAuO57p9JdX3Ek6giR1cDEqXyFc88a3z/XiET8kV0AkEdNOjfvrivV1lLhO
-         M8fg==
-X-Forwarded-Encrypted: i=1; AJvYcCX7cQXFv1uJol17Tw3w4D1o1c5bp/npH94S/hrr0Cfv8G8vI9pjdC9IIJzcpsEAnkKDtSUWKVXn@vger.kernel.org, AJvYcCXokf0IzTbK9DoeG1Jp1TbgpA93ccb+V87HosP8rpXK9/8qeNsa7h0u6aF0JiQXLIDS0qW/Re+9K//02+Y=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxvtuCDKYbUne4BR0PteK+QYdb5iRCgnja/4JnulZQuJnsXR/4F
-	PdYkHkm9BgVASTAjrWRcHasHwH8wVY2o4F2khEi5nNstfLeyz/XS6Zj7UMQUwpLF
-X-Gm-Gg: ASbGncv5U7N4gnEayN0fh8PhGQEDYD8yspfBOIzdMwxGbME5PWIdh8CzhMT/rTarfO/
-	vTuAXzBTn8RjCi5LhKy+W15VMTNOiAUNGvDJvdPUFyPR/2eKtnRizNsI4939OXvhGw0H5If3Ei5
-	Pipreb2x3rpN4Z2vJsxkhMRknzdnCjkSFzqvzZF139/oGsCtYoJv0o21e4uvAatfdLDE5VheBRJ
-	e6Z7e3Nc3FS89Lj2qGfHarl3+a1TygqhHRlRuQEzPmkYL1ILkkkQIj6Li2MU/onYImwfUQfIypj
-	VvLJoRylLOOvZZ2y2E9F5YVl8pg2FbuNHRuXA4jWXXUkBMifCUVKSsqnQ+iWcSHjJL6NN5mGTtY
-	9pk3uILJzxVpuAA==
-X-Google-Smtp-Source: AGHT+IHDle5XI/EZff4+1+7+lpJPC7D34r2C4A4aRi7/ONzVB8eo26lB95DtEE3BuCBhWNHQSOCXFA==
-X-Received: by 2002:a17:903:1a0e:b0:236:9726:7264 with SMTP id d9443c01a7336-238245455demr1377075ad.5.1750786675103;
-        Tue, 24 Jun 2025 10:37:55 -0700 (PDT)
-Received: from [10.67.48.245] ([192.19.223.252])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-237d86d5efasm116834965ad.208.2025.06.24.10.37.53
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 24 Jun 2025 10:37:54 -0700 (PDT)
-Message-ID: <6a86e89f-3786-44f6-83e9-05ddfe7e6ebb@gmail.com>
-Date: Tue, 24 Jun 2025 10:37:52 -0700
+        d=1e100.net; s=20230601; t=1750786837; x=1751391637;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=OFY1porl5bWPwHx+ruPBvNUd9kv7h/Kd82He4WS0fRM=;
+        b=Si1ZoKXJyvnrPHuyvDvmTharNLVNjjtp8fqmtchQtyYG4o2u/SzCmDmnJfJx/4mz70
+         KdGWm0pEpRQ88RRoyo+VXrvYxla8s8oAr+i3XwPskEObUCGKLretc392aAMCarYKCUYC
+         vgIt5eI/y0erfAQGMtimcYbuxR2YAvJ8djL87aVrvJElpIbhyEhAH0M/zW0MLGHCLC57
+         mHfB2Ehx9IiTuopPdAf+JIPbc5wRVOkZGAE3tgJrP/rBMULzMMQgaLjrlYcxor7imk6U
+         1pZsRYESnRlfUhZweR0B/PWoDk6HJ6qpvMjuc2UJbZ6fJK8C33h7/ML4Q2Q2LDIjLFyw
+         dWrg==
+X-Forwarded-Encrypted: i=1; AJvYcCWa0i/TCO2r3qcawiAqJ2Cqy0ZEslMzlSHPj1vMJEKS70lqq5cqhuRJRFUvWc+VRYnihjO/jku1nXzv@vger.kernel.org, AJvYcCWo/ka5y/L1rIOHNK+pnFWCrrb3kLlg23m9BQgXi5Cm8x46pK0rLobQ9LT0uh7vimEkgJ4XheINIQBLdfbK@vger.kernel.org
+X-Gm-Message-State: AOJu0YzaEa6Mqrt2J70RDyP5bagFy5cg1wEetyi4BgCGGB+CbikoJ6MN
+	YkKArb0Wxi2A0aKcWj+Qa+Gij6UxaaU5PsKdmeKtgVb5Ki7zo2yVi7ZFEL2NMJfF
+X-Gm-Gg: ASbGncuNIIIFf6CVCpxc8I05Jd12dNp0sAIc61eiEvTKsu1hw5qFK5fvHSBPDoWNE4V
+	c8ioFOkCG2Mc+Bj/HWZtkZ2GTuX7fBDd65yIrKJOPilmLept2p2fljdH39F67V/gOpysyvooRZd
+	vThqyBAh36McT8MuCVA77o05tY/xShZ0CF3WnrtuSu6oCmwz7TE3BE1ZP0a1BFCdoGNydBgtrht
+	P55F9XJc0eUwpMijmiPrQSHXH3L39532dnrsgKT17oB7Dh4if9HD9zvsq+axELZQ+0CZIvoL9d3
+	wEaGFoJOKjMAQCZLjLm37YjD45HPVZ+bElUXQtb30XowsFzDt6S7q7hXASkhsGK2t7JrrPjY7r3
+	dSFqOioSHXNp1AvaCFHKz91oUs28VYJ8=
+X-Google-Smtp-Source: AGHT+IFtT41vpD34xSBuIrcMJgXGQTeQjP18pvo3pwzWrXiRe2esqep++fdIDTaxFi61D0d5cVUWeg==
+X-Received: by 2002:a05:6000:2482:b0:3a5:8abe:a264 with SMTP id ffacd0b85a97d-3a6d12fb9f9mr13459853f8f.37.1750786835620;
+        Tue, 24 Jun 2025 10:40:35 -0700 (PDT)
+Received: from iku.example.org ([2a06:5906:61b:2d00:a522:16f6:ec97:d332])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-453646cb692sm149812735e9.2.2025.06.24.10.40.34
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 24 Jun 2025 10:40:35 -0700 (PDT)
+From: Prabhakar <prabhakar.csengg@gmail.com>
+X-Google-Original-From: Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+To: Geert Uytterhoeven <geert+renesas@glider.be>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Magnus Damm <magnus.damm@gmail.com>
+Cc: linux-renesas-soc@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	Prabhakar <prabhakar.csengg@gmail.com>,
+	Biju Das <biju.das.jz@bp.renesas.com>,
+	Fabrizio Castro <fabrizio.castro.jz@renesas.com>,
+	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Subject: [PATCH 0/4] arm64: dts: renesas: Add XSPI support for RZ/V2N and RZ/V2H(P) SoCs and EVK
+Date: Tue, 24 Jun 2025 18:40:29 +0100
+Message-ID: <20250624174033.475401-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
+X-Mailer: git-send-email 2.49.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 6.15 000/588] 6.15.4-rc2 review
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, stable@vger.kernel.org
-Cc: patches@lists.linux.dev, linux-kernel@vger.kernel.org,
- torvalds@linux-foundation.org, akpm@linux-foundation.org,
- linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org,
- lkft-triage@lists.linaro.org, pavel@denx.de, jonathanh@nvidia.com,
- sudipm.mukherjee@gmail.com, srw@sladewatkins.net, rwarsow@gmx.de,
- conor@kernel.org, hargar@microsoft.com, broonie@kernel.org
-References: <20250624121449.136416081@linuxfoundation.org>
-Content-Language: en-US
-From: Florian Fainelli <f.fainelli@gmail.com>
-Autocrypt: addr=f.fainelli@gmail.com; keydata=
- xsDiBEjPuBIRBACW9MxSJU9fvEOCTnRNqG/13rAGsj+vJqontvoDSNxRgmafP8d3nesnqPyR
- xGlkaOSDuu09rxuW+69Y2f1TzjFuGpBk4ysWOR85O2Nx8AJ6fYGCoeTbovrNlGT1M9obSFGQ
- X3IzRnWoqlfudjTO5TKoqkbOgpYqIo5n1QbEjCCwCwCg3DOH/4ug2AUUlcIT9/l3pGvoRJ0E
- AICDzi3l7pmC5IWn2n1mvP5247urtHFs/uusE827DDj3K8Upn2vYiOFMBhGsxAk6YKV6IP0d
- ZdWX6fqkJJlu9cSDvWtO1hXeHIfQIE/xcqvlRH783KrihLcsmnBqOiS6rJDO2x1eAgC8meAX
- SAgsrBhcgGl2Rl5gh/jkeA5ykwbxA/9u1eEuL70Qzt5APJmqVXR+kWvrqdBVPoUNy/tQ8mYc
- nzJJ63ng3tHhnwHXZOu8hL4nqwlYHRa9eeglXYhBqja4ZvIvCEqSmEukfivk+DlIgVoOAJbh
- qIWgvr3SIEuR6ayY3f5j0f2ejUMYlYYnKdiHXFlF9uXm1ELrb0YX4GMHz80nRmxvcmlhbiBG
- YWluZWxsaSA8Zi5mYWluZWxsaUBnbWFpbC5jb20+wmYEExECACYCGyMGCwkIBwMCBBUCCAME
- FgIDAQIeAQIXgAUCZ7gLLgUJMbXO7gAKCRBhV5kVtWN2DlsbAJ9zUK0VNvlLPOclJV3YM5HQ
- LkaemACgkF/tnkq2cL6CVpOk3NexhMLw2xzOw00ESM+4EhAQAL/o09boR9D3Vk1Tt7+gpYr3
- WQ6hgYVON905q2ndEoA2J0dQxJNRw3snabHDDzQBAcqOvdi7YidfBVdKi0wxHhSuRBfuOppu
- pdXkb7zxuPQuSveCLqqZWRQ+Cc2QgF7SBqgznbe6Ngout5qXY5Dcagk9LqFNGhJQzUGHAsIs
- hap1f0B1PoUyUNeEInV98D8Xd/edM3mhO9nRpUXRK9Bvt4iEZUXGuVtZLT52nK6Wv2EZ1TiT
- OiqZlf1P+vxYLBx9eKmabPdm3yjalhY8yr1S1vL0gSA/C6W1o/TowdieF1rWN/MYHlkpyj9c
- Rpc281gAO0AP3V1G00YzBEdYyi0gaJbCEQnq8Vz1vDXFxHzyhgGz7umBsVKmYwZgA8DrrB0M
- oaP35wuGR3RJcaG30AnJpEDkBYHznI2apxdcuTPOHZyEilIRrBGzDwGtAhldzlBoBwE3Z3MY
- 31TOpACu1ZpNOMysZ6xiE35pWkwc0KYm4hJA5GFfmWSN6DniimW3pmdDIiw4Ifcx8b3mFrRO
- BbDIW13E51j9RjbO/nAaK9ndZ5LRO1B/8Fwat7bLzmsCiEXOJY7NNpIEpkoNoEUfCcZwmLrU
- +eOTPzaF6drw6ayewEi5yzPg3TAT6FV3oBsNg3xlwU0gPK3v6gYPX5w9+ovPZ1/qqNfOrbsE
- FRuiSVsZQ5s3AAMFD/9XjlnnVDh9GX/r/6hjmr4U9tEsM+VQXaVXqZuHKaSmojOLUCP/YVQo
- 7IiYaNssCS4FCPe4yrL4FJJfJAsbeyDykMN7wAnBcOkbZ9BPJPNCbqU6dowLOiy8AuTYQ48m
- vIyQ4Ijnb6GTrtxIUDQeOBNuQC/gyyx3nbL/lVlHbxr4tb6YkhkO6shjXhQh7nQb33FjGO4P
- WU11Nr9i/qoV8QCo12MQEo244RRA6VMud06y/E449rWZFSTwGqb0FS0seTcYNvxt8PB2izX+
- HZA8SL54j479ubxhfuoTu5nXdtFYFj5Lj5x34LKPx7MpgAmj0H7SDhpFWF2FzcC1bjiW9mjW
- HaKaX23Awt97AqQZXegbfkJwX2Y53ufq8Np3e1542lh3/mpiGSilCsaTahEGrHK+lIusl6mz
- Joil+u3k01ofvJMK0ZdzGUZ/aPMZ16LofjFA+MNxWrZFrkYmiGdv+LG45zSlZyIvzSiG2lKy
- kuVag+IijCIom78P9jRtB1q1Q5lwZp2TLAJlz92DmFwBg1hyFzwDADjZ2nrDxKUiybXIgZp9
- aU2d++ptEGCVJOfEW4qpWCCLPbOT7XBr+g/4H3qWbs3j/cDDq7LuVYIe+wchy/iXEJaQVeTC
- y5arMQorqTFWlEOgRA8OP47L9knl9i4xuR0euV6DChDrguup2aJVU8JPBBgRAgAPAhsMBQJn
- uAtCBQkxtc7uAAoJEGFXmRW1Y3YOJHUAoLuIJDcJtl7ZksBQa+n2T7T5zXoZAJ9EnFa2JZh7
- WlfRzlpjIPmdjgoicA==
-In-Reply-To: <20250624121449.136416081@linuxfoundation.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-On 6/24/25 05:30, Greg Kroah-Hartman wrote:
-> This is the start of the stable review cycle for the 6.15.4 release.
-> There are 588 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
-> 
-> Responses should be made by Thu, 26 Jun 2025 12:13:28 +0000.
-> Anything received after that time might be too late.
-> 
-> The whole patch series can be found in one patch at:
-> 	https://www.kernel.org/pub/linux/kernel/v6.x/stable-review/patch-6.15.4-rc2.gz
-> or in the git tree and branch at:
-> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-6.15.y
-> and the diffstat can be found below.
-> 
-> thanks,
-> 
-> greg k-h
+From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 
-On ARCH_BRCMSTB using 32-bit and 64-bit ARM kernels, build tested on 
-BMIPS_GENERIC:
+Hi all,
 
-Tested-by: Florian Fainelli <florian.fainelli@broadcom.com>
+This patch series adds XSPI support to the Renesas RZ/V2N (R9A09G056)
+and RZ/V2H(P) (R9A09G057) SoCs. It introduces the XSPI controller nodes
+in the SoC-level DTSI files and enables a connected serial NOR flash
+device on the respective evaluation boards.
+
+Note,
+- DT binding patches have been posted seprately [0]
+- Clock support has been posted already [1] to ML
+- Patches apply on top of series [2]
+
+[0] https://lore.kernel.org/all/20250624171605.469724-1-prabhakar.mahadev-lad.rj@bp.renesas.com/
+[1] https://lore.kernel.org/all/20250624173030.472196-1-prabhakar.mahadev-lad.rj@bp.renesas.com/
+[2] https://lore.kernel.org/all/20250620121045.56114-1-prabhakar.mahadev-lad.rj@bp.renesas.com/
+
+Cheers,
+Prabhakar
+
+Lad Prabhakar (4):
+  arm64: dts: renesas: r9a09g056: Add XSPI node
+  arm64: dts: renesas: r9a09g057: Add XSPI node
+  arm64: dts: renesas: r9a09g056n48-rzv2n-evk: Enable serial NOR FLASH
+  arm64: dts: renesas: r9a09g057h44-rzv2h-evk: Enable serial NOR FLASH
+
+ arch/arm64/boot/dts/renesas/r9a09g056.dtsi    | 23 +++++++++
+ .../dts/renesas/r9a09g056n48-rzv2n-evk.dts    | 48 +++++++++++++++++++
+ arch/arm64/boot/dts/renesas/r9a09g057.dtsi    | 23 +++++++++
+ .../dts/renesas/r9a09g057h44-rzv2h-evk.dts    | 48 +++++++++++++++++++
+ 4 files changed, 142 insertions(+)
+
 -- 
-Florian
+2.49.0
+
 
