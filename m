@@ -1,124 +1,92 @@
-Return-Path: <linux-kernel+bounces-699341-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-699334-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 62EF7AE58BF
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Jun 2025 02:42:10 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B2631AE58AD
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Jun 2025 02:40:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 381443BFBB5
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Jun 2025 00:41:28 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0C2B17AF5A1
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Jun 2025 00:39:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7AEF818BC0C;
-	Tue, 24 Jun 2025 00:40:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5084E146D6A;
+	Tue, 24 Jun 2025 00:40:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="NYnbFlMD"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.9])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="PX8XEXhm"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1719E176ADE;
-	Tue, 24 Jun 2025 00:40:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.9
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B01D46F53E
+	for <linux-kernel@vger.kernel.org>; Tue, 24 Jun 2025 00:40:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750725642; cv=none; b=gsmIu7p/7Unv1C4dvN4HgsrJHVCNdJIf8VKDARmAQ4XZFCdqwST/ZKVe04ISEJy5tllQbiteaqGvCIJmjoXUCL4xAwptdRq7BmRnad5Fn4H0xRbu0Kpsisf0wuK5FonXckLNeBzFjw82HAH/NlL3tiSMSTxVkj66jDdPRkADbc4=
+	t=1750725626; cv=none; b=PM1YbutLL8YM2WDpOxDZ0kR8/dnXj89jxt/vBVS9TH5RNqitWp/E8Q9b9I4CdebWGxV3JNvruIymjAR22XhVlO0iXztNz07aJZFzJulrSsmhAMuD9UTVgBiLStyUxUJmaCRv/ljPvaqfqD6kGzG+29+5YR1ZHZ9dQUDm9mNMo6o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750725642; c=relaxed/simple;
-	bh=7zG8s1HTXnImX23EOH8ogeopBUgZJRBGe/aweUfthkI=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=NEuTRd8LdfOJesjr6/kHLzHfSktsTXz/O1jUci8AOkMs0YmRor7Nhgff88icgBC/ZzFahat9igz9kk4hXbwAClyLFakFH++6ddher96onQzM8gF+oE5Dd3nsc79OuYp8sHxJXmrUBHAYdq9VCMzuR5hBncJKNe5LpibDYEioDA8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=NYnbFlMD; arc=none smtp.client-ip=198.175.65.9
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1750725642; x=1782261642;
-  h=from:to:cc:subject:in-reply-to:references:date:
-   message-id:mime-version;
-  bh=7zG8s1HTXnImX23EOH8ogeopBUgZJRBGe/aweUfthkI=;
-  b=NYnbFlMD1No/NBUjGx0m1qJgeYedJGh2NU+faOG5ED1ZVfAGwEznGDWB
-   4etqDCZi+UClFoFTy9VkCwC69tGRhmBpO2q8ba7CePdm3ifoYIjIvTNp2
-   wMuGYBFrjQAISpDrT7h+XYlZLjV/6NXEu888kPaBJQty/2g5FgvYP7n4x
-   fnBmIdBBM6CSUuFu4wCio1gXdex5Mitk/xX/DGkiV+Ag8jWr60I+a4cRE
-   3uv6eqHeOHrWU46j63h8N9W5M1yspzB1XlkFOHXRaf8lfMEDPLNnJiim2
-   WzVgAktVU0f9ln70xQV+zbScwhD3ZU7LRmSDn3w3Tp5WzZMqTfAiPRHzB
-   w==;
-X-CSE-ConnectionGUID: 3oOcPUkARcGS8eIJg2sXFQ==
-X-CSE-MsgGUID: eVN3PHpGR6+ZHxrCE4qVaw==
-X-IronPort-AV: E=McAfee;i="6800,10657,11473"; a="75488167"
-X-IronPort-AV: E=Sophos;i="6.16,260,1744095600"; 
-   d="scan'208";a="75488167"
-Received: from fmviesa010.fm.intel.com ([10.60.135.150])
-  by orvoesa101.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 23 Jun 2025 17:40:41 -0700
-X-CSE-ConnectionGUID: yv/YS85sSx+eJP8zzig3Aw==
-X-CSE-MsgGUID: +udptMSWTlu9aqwQJ9E+1g==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.16,260,1744095600"; 
-   d="scan'208";a="152449190"
-Received: from unknown (HELO vcostago-mobl3) ([10.241.226.49])
-  by fmviesa010-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 23 Jun 2025 17:40:40 -0700
-From: Vinicius Costa Gomes <vinicius.gomes@intel.com>
-To: Yi Sun <yi.sun@intel.com>, dave.jiang@intel.com,
- dmaengine@vger.kernel.org, linux-kernel@vger.kernel.org,
- fenghuay@nvidia.com, philip.lantz@intel.com
-Cc: yi.sun@intel.com, gordon.jin@intel.com, anil.s.keshavamurthy@intel.com
-Subject: Re: [PATCH v2 1/2] dmaengine: idxd: Expose DSA3.0 capabilities
- through sysfs
-In-Reply-To: <20250620130953.1943703-2-yi.sun@intel.com>
-References: <20250620130953.1943703-1-yi.sun@intel.com>
- <20250620130953.1943703-2-yi.sun@intel.com>
-Date: Mon, 23 Jun 2025 17:40:39 -0700
-Message-ID: <87tt466kfs.fsf@intel.com>
+	s=arc-20240116; t=1750725626; c=relaxed/simple;
+	bh=HSdCQQWxVeeErIFv7WqAXQehp59S8Y03qaZKyPJC5qo=;
+	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
+	 In-Reply-To:To:Cc; b=MjoS8J4VKH/C4VTHVwT0dj2UWx00ZqcZRi7gzlLZ88I14qHfWGhigEqsA/YK8hWAOANeLxouhEEL+sEJecksXFS3m7wCSw0f60376sRrKrcKClIx3cwWtiLCA7L8gImd8cYl00gMKCUrUp7eTU+/kR+cMtjQUcS6vy7lUPdSIoc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=PX8XEXhm; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3AC59C4CEEA;
+	Tue, 24 Jun 2025 00:40:25 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1750725625;
+	bh=HSdCQQWxVeeErIFv7WqAXQehp59S8Y03qaZKyPJC5qo=;
+	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
+	b=PX8XEXhmPW7ftop/zlrGyZTLveBRA2KNT3sTc5BccH0hCz2cDcjCPfaJKhrNiCbqE
+	 agmX8X7CyECp3iIynflrqidvZSOrkM73rAoG7bcVu7i0RJtrmGHUHWlFtvMoG9OITo
+	 IVDUTL+cmKFjRm9x/DbKrU7C46DLUy+ZA8hTLX63wpaegzvSVeOEOtl3+vO080xkFc
+	 EBEZNb5Dlg4O6uF3CspZmobnlO1/kbW0u2tz2Qfd31BDoxfIFmNGRmipQz/Vswl8zx
+	 BTUyiV4dMZC5Axo4HglkkPDggFrthsZ1WfIdmFZkaSpUm0hIMdQNkyXaoj3+L3q913
+	 xbEEg9cuL0m+g==
+Received: from [10.30.226.235] (localhost [IPv6:::1])
+	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id 70DA539FEB7D;
+	Tue, 24 Jun 2025 00:40:53 +0000 (UTC)
+Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Transfer-Encoding: 8bit
+Subject: Re: [f2fs-dev] [PATCH] f2fs: make sure zoned device GC to use FG_GC
+ in
+ shortage of free section
+From: patchwork-bot+f2fs@kernel.org
+Message-Id: 
+ <175072565225.3346761.9321054958830239968.git-patchwork-notify@kernel.org>
+Date: Tue, 24 Jun 2025 00:40:52 +0000
+References: <20250529222532.1088106-1-daeho43@gmail.com>
+In-Reply-To: <20250529222532.1088106-1-daeho43@gmail.com>
+To: Daeho Jeong <daeho43@gmail.com>
+Cc: linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net,
+ kernel-team@android.com, daehojeong@google.com
 
-Yi Sun <yi.sun@intel.com> writes:
+Hello:
 
-> Introduce sysfs interfaces for 3 new Data Streaming Accelerator (DSA)
-> capability registers (dsacap0-2) to enable userspace awareness of hardware
-> features in DSA version 3 and later devices.
->
-> Userspace components (e.g. configure libraries, workload Apps) require this
-> information to:
-> 1. Select optimal data transfer strategies based on SGL capabilities
-> 2. Enable hardware-specific optimizations for floating-point operations
-> 3. Configure memory operations with proper numerical handling
-> 4. Verify compute operation compatibility before submitting jobs
->
-> The output format is <dsacap2>,<dsacap1>,<dsacap0>, where each DSA
-> capability value is a 64-bit hexadecimal number, separated by commas.
-> The ordering follows the DSA 3.0 specification layout:
->  Offset:    0x190    0x188    0x180
->  Reg:       dsacap2  dsacap1  dsacap0
->
-> Example:
-> cat /sys/bus/dsa/devices/dsa0/dsacaps
->  000000000000f18d,0014000e000007aa,00fa01ff01ff03ff
->
-> According to the DSA 3.0 specification, there are 15 fields defined for
-> the three dsacap registers. However, there's no need to define all
-> register structures unless a use case requires them. At this point,
-> support for the Scatter-Gather List (SGL) located in dsacap0 is necessary,
-> so only dsacap0 is defined accordingly.
->
-> For reference, the DSA 3.0 specification is available at:
-> Link: https://software.intel.com/content/www/us/en/develop/articles/intel-data-streaming-accelerator-architecture-specification.html
->
-> Signed-off-by: Yi Sun <yi.sun@intel.com>
-> Co-developed-by: Anil S Keshavamurthy <anil.s.keshavamurthy@intel.com>
-> Signed-off-by: Anil S Keshavamurthy <anil.s.keshavamurthy@intel.com>
-> Reviewed-by: Dave Jiang <dave.jiang@intel.com>
->
+This patch was applied to jaegeuk/f2fs.git (dev)
+by Jaegeuk Kim <jaegeuk@kernel.org>:
 
-Acked-by: Vinicius Costa Gomes <vinicius.gomes@intel.com>
+On Thu, 29 May 2025 15:25:32 -0700 you wrote:
+> From: Daeho Jeong <daehojeong@google.com>
+> 
+> We already use FG_GC when we have free sections under
+> gc_boost_zoned_gc_percent. So, let's make it consistent.
+> 
+> Signed-off-by: Daeho Jeong <daehojeong@google.com>
+> 
+> [...]
 
+Here is the summary with links:
+  - [f2fs-dev] f2fs: make sure zoned device GC to use FG_GC in shortage of free section
+    https://git.kernel.org/jaegeuk/f2fs/c/24bf3ee37fb8
 
-Cheers,
+You are awesome, thank you!
 -- 
-Vinicius
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/patchwork/pwbot.html
+
+
 
