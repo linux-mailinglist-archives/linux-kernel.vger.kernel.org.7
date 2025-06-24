@@ -1,131 +1,223 @@
-Return-Path: <linux-kernel+bounces-699751-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-699754-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1A1D0AE5EEC
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Jun 2025 10:19:07 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 24A91AE5EF2
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Jun 2025 10:19:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9C39F4A19AA
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Jun 2025 08:19:07 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 013304A1406
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Jun 2025 08:19:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2375C257431;
-	Tue, 24 Jun 2025 08:19:01 +0000 (UTC)
-Received: from mail.loongson.cn (mail.loongson.cn [114.242.206.163])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8879223BCFF;
-	Tue, 24 Jun 2025 08:18:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=114.242.206.163
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0C986257424;
+	Tue, 24 Jun 2025 08:19:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="JWTmC9+X"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A1E3E2586FE
+	for <linux-kernel@vger.kernel.org>; Tue, 24 Jun 2025 08:19:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750753140; cv=none; b=XPMBh8gYtyiigPWfJ4cCbAjHPYj32r8rXEaKOWHhRQeT8Fk0eyIgGwGg8cw9GucgL8G5MoqiQytX7OpWyky9R6rIi39qqieX9g3qQnECMYFXNXxkUjGzNz4bQqJia3p+eu4bixZ+kqVV5rQ0FDSpQWy+ZVOc4eOPiOzz0kD8T6E=
+	t=1750753157; cv=none; b=m4FnVlRVUWZb+lnSxPE+YdhWXYpc4R838oGGgEeOOQ6NWKepIR94r6Mq9cBUwjKThZb0DYWTAbLGQ11E6DQrXcXFEUtdxDYfcLCpjFn1xG716rc36160Hqj1MN6IcAfZ30Z7aCHUouyCfsorpbPuoWMTrEbK2avrye1uzEPHfQ0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750753140; c=relaxed/simple;
-	bh=z34k/rz5oU4KRhHSyCwlYWpvC4hE0GFChAVXhYLHPqs=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=G3LfUu8VgmxSeDAv5m5v8bBMluyaIgAslXsbBX7M2qBZ6CmlhJrzuSM2JcGsbsob4a1OtzA3tkT7O3VG7/zsZUnXWXUxI04ntMI+od7zUy75tY3O6TnpnPaG9ICxdjRML1PbtB5yTxPBiraRv82o/V057vYnCipUDZ1qNotyZhc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn; spf=pass smtp.mailfrom=loongson.cn; arc=none smtp.client-ip=114.242.206.163
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=loongson.cn
-Received: from loongson.cn (unknown [111.207.111.194])
-	by gateway (Coremail) with SMTP id _____8Axx2ltX1poxxYcAQ--.28731S3;
-	Tue, 24 Jun 2025 16:18:54 +0800 (CST)
-Received: from ubuntu.. (unknown [111.207.111.194])
-	by front1 (Coremail) with SMTP id qMiowMCxbsVsX1po5oYoAQ--.60731S2;
-	Tue, 24 Jun 2025 16:18:53 +0800 (CST)
-From: Ming Wang <wangming01@loongson.cn>
-To: Ard Biesheuvel <ardb@kernel.org>,
-	Huacai Chen <chenhuacai@kernel.org>,
-	WANG Xuerui <kernel@xen0n.name>,
-	linux-efi@vger.kernel.org,
-	loongarch@lists.linux.dev,
-	linux-kernel@vger.kernel.org
-Cc: lixuefeng@loongson.cn,
-	chenhuacai@loongson.cn,
-	gaojuxin@loongson.cn
-Subject: [PATCH] efi/loongarch: Reserve EFI memory map region
-Date: Tue, 24 Jun 2025 16:18:52 +0800
-Message-ID: <20250624081852.1563985-1-wangming01@loongson.cn>
-X-Mailer: git-send-email 2.43.0
+	s=arc-20240116; t=1750753157; c=relaxed/simple;
+	bh=yL2j1876ItKV5RfwVnsodHgDStUVkQIYx65k9vE3WvI=;
+	h=Date:From:To:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=W84C9ZGUolRfVk4B4LoekWs568UcG47NUOf6RSm8s1ZB8zCrws/xUmasmnvlZz0KRJjkCUd5LdF3Ql7plfW2XqN4a45c67zty6TJ4BOHxi2Lg1ZoqIxlfXlvihNQR4V08fIQXg8nHHKQpimEIkqqReoAP6M4mw72whvQ0smQywg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=JWTmC9+X; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1750753154;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=xDy6AvQbreGo32VdcKEdzgul1ZGWwn4DfyAjOh6GrKU=;
+	b=JWTmC9+XHK2wHv8CIBiN1Ub4UBHcYPQMjtPWTpazM/aBVgrsuxMRfNJJ2r8/7znoYK1jow
+	muY7uGzC2Y60KCLA27BUsW+J1GFc87Np8FtsI8ZHuzKnmrqzjvua7/uXfCMlvUgbgcgXxp
+	mRAu64THIEVN67I0Evn6FjrU3WkzJBw=
+Received: from mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-441-bSqnsK-3PnOUK6GkZIcx0w-1; Tue,
+ 24 Jun 2025 04:19:10 -0400
+X-MC-Unique: bSqnsK-3PnOUK6GkZIcx0w-1
+X-Mimecast-MFC-AGG-ID: bSqnsK-3PnOUK6GkZIcx0w_1750753149
+Received: from mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.40])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 01C861800268;
+	Tue, 24 Jun 2025 08:19:09 +0000 (UTC)
+Received: from ws.net.home (unknown [10.45.226.128])
+	by mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id BB1BF19560A3;
+	Tue, 24 Jun 2025 08:19:06 +0000 (UTC)
+Date: Tue, 24 Jun 2025 10:19:03 +0200
+From: Karel Zak <kzak@redhat.com>
+To: linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
+	util-linux@vger.kernel.org
+Subject: [ANNOUNCE] util-linux v2.41.1
+Message-ID: <wnfaquaapqknjnu2bdvddkp2xbleowfcr2g3cqiewpl54oclmi@mrseflcu5nyk>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:qMiowMCxbsVsX1po5oYoAQ--.60731S2
-X-CM-SenderInfo: 5zdqwzxlqjiio6or00hjvr0hdfq/1tbiAgEDEmhZ3+0IvAAAsl
-X-Coremail-Antispam: 1Uk129KBj93XoW7CF1kuF1rCr4UXr48Aw4UWrX_yoW8Kr17p3
-	4xAr4kKrs5AFn3X34xG3y8uF45ua93K34fWF9Iyr909ws8AF1xZr4ftFyY9ay2qr4kGw1j
-	gFn8Ca4Iva1DJabCm3ZEXasCq-sJn29KB7ZKAUJUUUUr529EdanIXcx71UUUUU7KY7ZEXa
-	sCq-sGcSsGvfJ3Ic02F40EFcxC0VAKzVAqx4xG6I80ebIjqfuFe4nvWSU5nxnvy29KBjDU
-	0xBIdaVrnRJUUUBjb4IE77IF4wAFF20E14v26r1j6r4UM7CY07I20VC2zVCF04k26cxKx2
-	IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48v
-	e4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Xr0_Ar1l84ACjcxK6xIIjxv20xvEc7CjxVAFwI
-	0_Gr0_Cr1l84ACjcxK6I8E87Iv67AKxVW0oVCq3wA2z4x0Y4vEx4A2jsIEc7CjxVAFwI0_
-	GcCE3s1ln4kS14v26r1Y6r17M2vYz4IE04k24VAvwVAKI4IrM2AIxVAIcxkEcVAq07x20x
-	vEncxIr21l57IF6xkI12xvs2x26I8E6xACxx1l5I8CrVACY4xI64kE6c02F40Ex7xfMcIj
-	6xIIjxv20xvE14v26r1Y6r17McIj6I8E87Iv67AKxVWUJVW8JwAm72CE4IkC6x0Yz7v_Jr
-	0_Gr1lF7xvr2IYc2Ij64vIr41l42xK82IYc2Ij64vIr41l4I8I3I0E4IkC6x0Yz7v_Jr0_
-	Gr1l4IxYO2xFxVAFwI0_Jrv_JF1lx2IqxVAqx4xG67AKxVWUJVWUGwC20s026x8GjcxK67
-	AKxVWUGVWUWwC2zVAF1VAY17CE14v26r1q6r43MIIYrxkI7VAKI48JMIIF0xvE2Ix0cI8I
-	cVAFwI0_Jr0_JF4lIxAIcVC0I7IYx2IY6xkF7I0E14v26r1j6r4UMIIF0xvE42xK8VAvwI
-	8IcIk0rVWUJVWUCwCI42IY6I8E87Iv67AKxVWUJVW8JwCI42IY6I8E87Iv6xkF7I0E14v2
-	6r1j6r4UYxBIdaVFxhVjvjDU0xZFpf9x07jbYFAUUUUU=
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.40
 
-The EFI memory map at 'boot_memmap' is crucial for kdump to understand
-the primary kernel's memory layout. This memory region, typically part
-of EFI Boot Services (BS) data, can be overwritten after ExitBootServices
-if not explicitly preserved by the kernel.
 
-This commit addresses this by:
-1. Calling memblock_reserve() to reserve the entire physical region
-   occupied by the EFI memory map (header + descriptors). This prevents
-   the primary kernel from reallocating and corrupting this area.
-2. Setting the EFI_PRESERVE_BS_REGIONS flag in efi.flags. This indicates
-   that efforts have been made to preserve critical BS data regions,
-   which can be useful for other kernel subsystems or debugging.
+The util-linux stable release 2.41.1 is now available at
+                                  
+  http://www.kernel.org/pub/linux/utils/util-linux/v2.41/
+                                  
+Feedback and bug reports, as always, are welcomed.
+                                  
+  Karel         
 
-These changes ensure the original EFI memory map data remains intact,
-improving kdump reliability and potentially aiding other EFI-related
-functionalities that might rely on preserved BS data.
 
-Signed-off-by: Ming Wang <wangming01@loongson.cn>
----
- arch/loongarch/kernel/efi.c | 13 +++++++++++++
- 1 file changed, 13 insertions(+)
+util-linux 2.41.1 Release Notes
+===============================
 
-diff --git a/arch/loongarch/kernel/efi.c b/arch/loongarch/kernel/efi.c
-index de21e72759ee..98b1f0c030fc 100644
---- a/arch/loongarch/kernel/efi.c
-+++ b/arch/loongarch/kernel/efi.c
-@@ -135,6 +135,7 @@ void __init efi_init(void)
- 	tbl = early_memremap_ro(boot_memmap, sizeof(*tbl));
- 	if (tbl) {
- 		struct efi_memory_map_data data;
-+		phys_addr_t reserve_size = sizeof(*tbl) + tbl->map_size;
- 
- 		data.phys_map		= boot_memmap + sizeof(*tbl);
- 		data.size		= tbl->map_size;
-@@ -144,6 +145,18 @@ void __init efi_init(void)
- 		if (efi_memmap_init_early(&data) < 0)
- 			panic("Unable to map EFI memory map.\n");
- 
-+		/*
-+		 * Reserve the physical memory region occupied by the EFI
-+		 * memory map table (header + descriptors). This is crucial
-+		 * for kdump, as the kdump kernel relies on this original
-+		 * memmap passed by the bootloader. Without reservation,
-+		 * this region could be overwritten by the primary kernel.
-+		 * Also, set the EFI_PRESERVE_BS_REGIONS flag to indicate that
-+		 * critical boot services data regions like this are preserved.
-+		 */
-+		memblock_reserve((phys_addr_t)boot_memmap, reserve_size);
-+		set_bit(EFI_PRESERVE_BS_REGIONS, &efi.flags);
-+
- 		early_memunmap(tbl, sizeof(*tbl));
- 	}
- 
+autotools:
+    - don't use wide-character ncurses if --disable-widechar (by Karel Zak)
+
+cfdisk:
+    - fix memory leak and possible NULL dereference [gcc-analyzer] (by Karel Zak)
+
+column:
+    - fix compiler warning for non-widechar compilation (by Karel Zak)
+
+fdformat:
+    - use size_t and ssize_t (by Karel Zak)
+
+fdisk:
+    - fix possible memory leak (by Karel Zak)
+
+fdisk,partx:
+    - avoid strcasecmp() for ASCII-only strings (by Karel Zak)
+
+findmnt:
+    - fix -k option parsing regression (by Karel Zak)
+
+hardlink:
+    - define more function as inline (by Karel Zak)
+    - fix performance regression (inefficient signal evaluation) (by Karel Zak)
+    - Use macro for verbose output (by Karel Zak)
+
+include/cctype:
+    - fix string comparison (by Karel Zak)
+
+include/mount-api-utils:
+    - include linux/unistd.h (by Thomas Weißschuh)
+
+libblkid:
+    - Fix crash while parsing config with libeconf (by Stanislav Brabec)
+    - befs fix underflow (by Milan Broz)
+    - avoid strcasecmp() for ASCII-only strings (by Karel Zak)
+
+libblkid/src/topology/dm:
+    - fix fscanf return value check to match expected number of parsed items (by Mingjie Shen)
+
+libfdisk:
+    - avoid strcasecmp() for ASCII-only strings (by Karel Zak)
+
+libmount:
+    - (subdir) restrict for real mounts only (by Karel Zak)
+    - (subdir) remove unused code (by Karel Zak)
+    - avoid calling memset() unnecessarily (by Karel Zak)
+    - avoid strcasecmp() for ASCII-only strings (by Karel Zak)
+    - fix --no-canonicalize regression (by Karel Zak)
+
+libuuid:
+    - fix uuid_time on macOS without attribute((alias)) (by Eugene Gershnik)
+
+lsblk:
+    - use ID_PART_ENTRY_SCHEME as fallback for PTTYPE (by Karel Zak)
+    - avoid strcasecmp() for ASCII-only strings (by Karel Zak)
+
+lscpu:
+    - fix possible buffer overflow in cpuinfo parser (by Karel Zak)
+    - Fix loongarch op-mode output with recent kernel (by Xi Ruoyao)
+
+lsfd:
+    - (bug fix) scan the protocol field of /proc/net/packet as a hex number (by Masatake YAMATO)
+    - fix the description for PACKET.PROTOCOL column (by Masatake YAMATO)
+
+lsns:
+    - enhance compilation without USE_NS_GET_API (by Karel Zak)
+    - fix undefined reference to add_namespace_for_nsfd #3483 (by Thomas Devoogdt)
+
+meson:
+    - add feature for translated documentation (by Thomas Weißschuh)
+    - remove tinfo dependency from 'more' (by Thomas Weißschuh)
+    - fix manadocs for libsmartcols and libblkid (by Karel Zak)
+    - fix po-man installation (by Karel Zak)
+
+misc:
+    - never include wchar.h (by Karel Zak)
+
+more:
+    - fix broken ':!command' command key (by cgoesche)
+    - fix implicit previous shell_line execution #3508 (by cgoesche)
+
+mount:
+    - (man) add missing word (by Jakub Wilk)
+
+namespace.h:
+    - fix compilation on Linux < 4.10 (by Thomas Devoogdt)
+
+po:
+    - update uk.po (from translationproject.org) (by Yuri Chornoivan)
+    - update sr.po (from translationproject.org) (by Мирослав Николић)
+    - update ro.po (from translationproject.org) (by Remus-Gabriel Chelu)
+    - update pt.po (from translationproject.org) (by Pedro Albuquerque)
+    - update pl.po (from translationproject.org) (by Jakub Bogusz)
+    - update nl.po (from translationproject.org) (by Benno Schulenberg)
+    - update ja.po (from translationproject.org) (by YOSHIDA Hideki)
+    - update hr.po (from translationproject.org) (by Božidar Putanec)
+    - update fr.po (from translationproject.org) (by Frédéric Marchal)
+    - update es.po (from translationproject.org) (by Antonio Ceballos Roa)
+    - update de.po (from translationproject.org) (by Mario Blättermann)
+    - update cs.po (from translationproject.org) (by Petr Písař)
+
+po-man:
+    - merge changes (by Karel Zak)
+    - update sr.po (from translationproject.org) (by Мирослав Николић)
+    - update de.po (from translationproject.org) (by Mario Blättermann)
+
+tests:
+    - (test_mkfds::mapped-packet-socket) add a new parameter, protocol (by Masatake YAMATO)
+
+treewide:
+    - add ul_ to parse_timestamp() function name (by Karel Zak)
+    - add ul_ to parse_switch() function name (by Stanislav Brabec)
+    - add ul_ to parse_size() function name (by Karel Zak)
+    - add ul_ to parse_range() function name (by Karel Zak)
+    - fix optional arguments usage (by Karel Zak)
+    - avoid strcasecmp() for ASCII-only strings (by Karel Zak)
+
+Wipefs:
+    - improve --all descriptions for whole-disks (by Karel Zak)
+
+Misc:
+    - Do not call exit() on code ending in shared libraries (by Cristian Rodríguez)
+    - remove two leftover license lines from colors.{c,h} (by Benno Schulenberg)
+    - remove "Copyright (C) ...." notes from files that claim no copyright (by Benno Schulenberg)
+    - correct the full name of the GPL in various files (by Benno Schulenberg)
+    - Make scols_column_set_data_func docs visible (by FeRD (Frank Dana))
+    - Do not use strerror on shared libraries (by Cristian Rodríguez)
+    - Fix typo in blkdiscard docs (by pls-no-hack)
+    - lib/fileeq.c Fix a typo in message. (by Masanari Iida)
+
 -- 
-2.43.0
+ Karel Zak  <kzak@redhat.com>
+ http://karelzak.blogspot.com
 
 
