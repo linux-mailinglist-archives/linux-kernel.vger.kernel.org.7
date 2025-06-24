@@ -1,208 +1,226 @@
-Return-Path: <linux-kernel+bounces-699377-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-699379-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id BED0DAE5942
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Jun 2025 03:33:20 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9A3F8AE5947
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Jun 2025 03:34:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BF2B94415A8
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Jun 2025 01:32:55 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 261F83A5048
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Jun 2025 01:34:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6C2E519CD01;
-	Tue, 24 Jun 2025 01:33:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E41861BC07A;
+	Tue, 24 Jun 2025 01:34:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="aeeFHLHE"
-Received: from mail-wr1-f43.google.com (mail-wr1-f43.google.com [209.85.221.43])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b="KwuxS0B3"
+Received: from DB3PR0202CU003.outbound.protection.outlook.com (mail-northeuropeazon11010013.outbound.protection.outlook.com [52.101.84.13])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6405C189F3B
-	for <linux-kernel@vger.kernel.org>; Tue, 24 Jun 2025 01:33:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.43
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750728795; cv=none; b=dmCVA7cFP97qRS53i+epQHP+Wraxf7DbTdKkT+ZDLPh5YMfU2lZ9gAh459SmxZoSOKIFVTp9+r1H2UxGQRW5eE4juLk2XXyrUYu+PnE8uuvC68paIg4gA7bsf6VmCh+5nmmDTTWH+ejUK2RupwOQ2bnfU39JlB94jE4WVLUhEj0=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750728795; c=relaxed/simple;
-	bh=6p+408MQpHytDrmhkcz+mmecWcdbhzehShay90+zkUI=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=VVmmATRnxzpjOxenAHulicSi00tJAxkpoQCcrGP3WugyGQTCUw//ctlxtJRe7LpSZ5owuU+lu+rUyk/0inTQPXQe50fwq7k7q+lRgNgce38zeJtJ/8rTK8vrU6BrA0Tyi9JzrkANGsO4qoLOeGSGtEaa3KkSRuvVwD8VdozTxoY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=aeeFHLHE; arc=none smtp.client-ip=209.85.221.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
-Received: by mail-wr1-f43.google.com with SMTP id ffacd0b85a97d-3a52878d37aso730587f8f.2
-        for <linux-kernel@vger.kernel.org>; Mon, 23 Jun 2025 18:33:12 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=suse.com; s=google; t=1750728791; x=1751333591; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:content-language:from
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=xHCKLmpVjEQudH3qzY65MufqOC1HcXRqB++GHgObSkA=;
-        b=aeeFHLHEoLCxCTPAfaw2B2cyTiZ9ddc+ak13xP4ORIEDiBh6WC/M90bYTVwGPdcLQj
-         zcGJn3Bjmqpm73ICfH8RmoPoG7+4tlqY3TicJUSujVVxNoAVtss5P3Cleh0r3qg6OpSp
-         h4x1kxksToAFFV2lFqjc3KpWuA5e31voJpMM3Iutzh/UdfROJZIeF1wlCZrRWZRYzmIL
-         E1vGd5VXY3jz9zjE1c+Cb3OyBQXnPQopJ9CDOzTF4QeRqTmfLnsrzwFSed1iZkkBBLmM
-         WYVhnpQDiPgbzkeASF/XlA4wlKSi0asf24YVowEQLZS8XmXoYN1N6gBgB1E/DziR38LR
-         y74w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1750728791; x=1751333591;
-        h=content-transfer-encoding:in-reply-to:content-language:from
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=xHCKLmpVjEQudH3qzY65MufqOC1HcXRqB++GHgObSkA=;
-        b=lF6W5LzGfo0KBwbpvuFyfmk1r1u68NvdIky+ButW9DfprYixhzOlc4t94RH8NpThtZ
-         uwO4LkMZ4g0wgkvP8rURdx2TH3PFooRQ6dK1alUvE3xjm/HzTJfSwee4lhCDFRkkOR+4
-         GHAehU2sbbMmq/i+ngrv3qS+FbLFW+sWKi/XMAK5DoP2ThCuehgc5smUcEy5qLblyTQU
-         ohzw99fmNN2YtUikbQlU1EQ1wSR0BxbERbBbTqSTZ4WjOT7NQHacK4gQ/wOfhcoN5Aea
-         H9YRv/LdLe8DbQKORj5vTb7XsRw7ZtaGmXRMIWYMd9K5smdRZgAxPjZtkvlGgprHK0X9
-         y3Lg==
-X-Gm-Message-State: AOJu0Yx4vzEDeFwR59Xa8o14nAj6lPifImGOaDcHSgmZ1xk5153qyx3h
-	6cRsxUB+8ZkrgvDDslyX7iwU/+aJqECQNyREccnflITDskZcA/vHuPYoUBrlkNyucTE=
-X-Gm-Gg: ASbGncsfTjYGATCMyjbDTmpEgk4CALQxLLSf2qa7EV1CAT/uQgFQHriukTaeJqCcal5
-	U1DOsfUiSCapSkAqOPy8WITNAI238h8LvRBPx958wYnhCf34kNvCVlUdQiJ1j2fFmH3oWiEL9uA
-	Dms7x0I1dPP+OTYC7yaJW7nNUrrviXuKgSVBUBYUcgJoDJOdcQt2yaGgjbc5Bt+nthYI2Yv3nrd
-	1m1DZ/ruJzxEJFl64mENSbX5/CqWnbnQs9UT6m197tS8w4TI0Tguh9Yrm3Fx1Ttt4BusiWN9Cub
-	RMylUxMD4kL/oLGj9G94HBR+Nr/Kt6CE64VnXi8F7ZIOOvAjQnYoyQwP4PeS+X21kpzyGOqmt14
-	iKA==
-X-Google-Smtp-Source: AGHT+IHbfpmIDPmqnU8cy+Q9IV2WuX88shLGTNNvcbapHH0ZNP+AcjRX9uwgvLrVr3YI9Yof+6Sl7A==
-X-Received: by 2002:a05:6000:40c9:b0:3a4:eeeb:7e70 with SMTP id ffacd0b85a97d-3a6d12dfaf2mr4201936f8f.4.1750728790593;
-        Mon, 23 Jun 2025 18:33:10 -0700 (PDT)
-Received: from [10.202.32.28] ([202.127.77.110])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-749b5e4068esm399198b3a.63.2025.06.23.18.33.08
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 23 Jun 2025 18:33:09 -0700 (PDT)
-Message-ID: <faf70481-09dd-4c7a-bd43-f1e8bec877cb@suse.com>
-Date: Tue, 24 Jun 2025 09:33:06 +0800
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E07CE3FE7;
+	Tue, 24 Jun 2025 01:34:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.84.13
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1750728871; cv=fail; b=k2A6/Bo25E43/7D2OKs71Rg3Pory8lY9v0yqMirJHqO8xGbiAcJmCzawusk8CwkpToWepKBdJo9mkLJmiw1RGRb86AER68DuPh0pCM0jQ0SavDrsoBCJP4rR/jXltgerVsdIAcACGuc/01PZ2nR5Mb2Dasc/MpixEHO6B/fNRd0=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1750728871; c=relaxed/simple;
+	bh=qQznMYr5gkCCCDMSX9Mj2RbFUVtz9w81aDhgJGywR78=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=GQWjJlxjKLnd3uI4uT2hKLiI2dvWqG7cx19JKpmhRDClyh/J7tLPWGUQbOe1GdYkCU6HrcHkgyr9wJm5/bHy2o3dgC3RU+l903zHIgSswc5Ku6/KDB2xPDHYbTA8bAVwq8SuHImWlI7R3me8QJzucNo7k5eCx3CF/EoDV9rb/8c=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b=KwuxS0B3; arc=fail smtp.client-ip=52.101.84.13
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=RUVuMfQkLWAbRpoZ0HZqMf+8k3ifsqUqmNByyKtXKfEKj17BBbBQhoq6sPlm/z4DMArbOwZJ5r8qdqrCGgMroKLq7E5k/o0/x9PE+8LJ4XDk3lmpLNAgJZC2Auzp15sgXYJG84+R30iQVKwkb5RmeSnnmjWp0EjQwL3wS/Eq3LfJbSEerpiNT3caeW6LBFV/TpRgfzqGN2kn4nrREmghRIHn8DYfgACVvdrvgYhttY0i8M4D/+6TVNDNzeEY4kMsL0lJ4zZSaNOLHlQS7t9+HgcOO9CFpcOc8rHsHELF6kbFUxGcAQevZjN030iHCwnc3+EeFXHZR8pWP1i9LILq4w==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=wtr/uvXP+07SLeQydcQL/gNxDwRP+Aj5IyygAbKUUnY=;
+ b=Prl21L3zSDMTeFx/ZuUF6fFDSZxgv1kIUCJldtXDvOXxYduCxS3HzOi0IzXUcQDLsp2W7yvhtB/epcrSeMu0umzkexVHbDuu+i0IOUDcDzA6rVyYriHQVtEL3368UnwT8fZ6M2B1CTBcFeeP9/i8r5ZU5Xb9D5R4ZlVmNyvOuCU+zhCQe07rTqGZYQMLi7wdqiVICDkO+z7cEugbSztOXOWdL7u7/5n6uewF+MoX/PGGSNoO/G35S/FpeB73zvjdoukMfnw+cnb4/JxCeG6FNy6j5lVKFf8n+RRBZJuBnJq3TEnnK5VLvkGmOEYYhabD/8zNcPEToUBcFiCmln6Sdg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
+ header.d=nxp.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=wtr/uvXP+07SLeQydcQL/gNxDwRP+Aj5IyygAbKUUnY=;
+ b=KwuxS0B3a15qV/8YotgU2vKa4/YSdNqCJkPtdadPSHI5h3ginAxbsUV917qkEb84KaHe5HERmET0JZq18IhQ6C4sRo+LMBNl+3lzcrXI6W7364lB4cHA3KzMWl5bzpbQk/2q92jEfQcdVVipD6YtI+4LexQEB8DdbeYqzNdlIEJ3+TK92xzmiNXqS+TQMFf5xbADjlTFPMzCzMkgHs8s9tLmcm3JQ8I3dbV8mhsKGzAxVjn71wawYpQiY13k7tw4jDrv1PsTqbEqRSpfgE8uMecMs67lcqo6UcK7TYoSnM7T5LuSyyPcwz47xFUKm+IrOYGoKyO8AzwxZDJjMGTWLg==
+Received: from PAXPR04MB8510.eurprd04.prod.outlook.com (2603:10a6:102:211::7)
+ by AS8PR04MB7589.eurprd04.prod.outlook.com (2603:10a6:20b:291::18) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8857.30; Tue, 24 Jun
+ 2025 01:34:27 +0000
+Received: from PAXPR04MB8510.eurprd04.prod.outlook.com
+ ([fe80::a7c2:e2fa:8e04:40db]) by PAXPR04MB8510.eurprd04.prod.outlook.com
+ ([fe80::a7c2:e2fa:8e04:40db%5]) with mapi id 15.20.8857.026; Tue, 24 Jun 2025
+ 01:34:27 +0000
+From: Wei Fang <wei.fang@nxp.com>
+To: Simon Horman <horms@kernel.org>
+CC: Claudiu Manoil <claudiu.manoil@nxp.com>, Vladimir Oltean
+	<vladimir.oltean@nxp.com>, Clark Wang <xiaoning.wang@nxp.com>,
+	"andrew+netdev@lunn.ch" <andrew+netdev@lunn.ch>, "davem@davemloft.net"
+	<davem@davemloft.net>, "edumazet@google.com" <edumazet@google.com>,
+	"kuba@kernel.org" <kuba@kernel.org>, "pabeni@redhat.com" <pabeni@redhat.com>,
+	"netdev@vger.kernel.org" <netdev@vger.kernel.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"imx@lists.linux.dev" <imx@lists.linux.dev>
+Subject: RE: [PATCH net-next 1/3] net: enetc: change the statistics of ring to
+ unsigned long type
+Thread-Topic: [PATCH net-next 1/3] net: enetc: change the statistics of ring
+ to unsigned long type
+Thread-Index: AQHb4czJKeEuJfMl4UaViP+KlTFofbQNYN+AgAKcFdCAAPcrgIAAlwIg
+Date: Tue, 24 Jun 2025 01:34:27 +0000
+Message-ID:
+ <PAXPR04MB8510FB925B67BCBBE0ADAAEA8878A@PAXPR04MB8510.eurprd04.prod.outlook.com>
+References: <20250620102140.2020008-1-wei.fang@nxp.com>
+ <20250620102140.2020008-2-wei.fang@nxp.com>
+ <20250621095245.GA71935@horms.kernel.org>
+ <PAXPR04MB851070E3D67D390B7A4114F88879A@PAXPR04MB8510.eurprd04.prod.outlook.com>
+ <20250623162833.GD506049@horms.kernel.org>
+In-Reply-To: <20250623162833.GD506049@horms.kernel.org>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+authentication-results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nxp.com;
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: PAXPR04MB8510:EE_|AS8PR04MB7589:EE_
+x-ms-office365-filtering-correlation-id: 623d230c-a8d3-4412-501b-08ddb2bf41ea
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam: BCL:0;ARA:13230040|366016|376014|1800799024|38070700018;
+x-microsoft-antispam-message-info:
+ =?us-ascii?Q?fyxTSzCsTdYTcuuYmq5/izwkNF/CLPuotq5Lh5Xa+tfUTCzSEdie5OfxxElB?=
+ =?us-ascii?Q?aXz8K0cdBknILvl5yVnB46WY0WWicYIzIrTfFK8Gw4d8jJI/cCuFof7lbfbw?=
+ =?us-ascii?Q?YItVFg6i1J4I10LnWlM0hX7bRjI9J8yLF7QZaHJ22QAOgcYje8FA8RJnH41j?=
+ =?us-ascii?Q?myQ8iiAiQArqUWi/q/WJxJQcov8DMSxQgCNR3P4JPuJfm0zS9T4Y1wts26/H?=
+ =?us-ascii?Q?G4q61LMvM9oFJLhwrbXQqeo+y5wzMcqauSi7iYKPKa9D41zWi8XalDGQ7WCK?=
+ =?us-ascii?Q?nvpic8g6YUkktwXF2w2Z2TE8LukIC9ugrRwkALtS+PInXVPO4/DuYN0JsoPA?=
+ =?us-ascii?Q?Z4BMerJYEEb90GeAgG+ITL4NnQSgpgX/95SQA9fSe+Wiw4Us/Ye6UY3J95Y4?=
+ =?us-ascii?Q?WVmMMRppS0EXXnW3fX1/5YNScqqQCJta6A+1H7xQTPl/1KQxEqDtFldL2oOB?=
+ =?us-ascii?Q?luk9eIsTmQyk8V3LooTfcSUTvC7vRz2Yp95DHhpg64qbx8IqR88SZEiqEAuk?=
+ =?us-ascii?Q?TxqgTe35T73WLfMX4KM/Qww+aBkaGnySpb1aGUZ4wTDjlxU7i8KzX7QlJalu?=
+ =?us-ascii?Q?eiocUGJWX4PzzLfffI+JYSWDf8+GeM86OgUfwh1GlCcs2+B6IuWFTtjBchry?=
+ =?us-ascii?Q?8xmRKqTrMuyWcCf0d13YtJSoNFvWxrrnF+/nkeHH7CF5ka7hKQls3NVwRU7A?=
+ =?us-ascii?Q?BNHowP23PZONc2ZCzOZBET1CucuBucTYHQLMGrqqaI1vADR6BlDoaa6/J+7Z?=
+ =?us-ascii?Q?/x1Ho2+NxHM7mxhF0ysYrLg5TAX6JQIxCp400K1jakKgqYHpP4PnaAY+9Kfy?=
+ =?us-ascii?Q?AubolqWQEFm+dSFgss1+ufqn8Ole+ZW7aQMzrLtymiovhd7tt9OIKtDGpMPL?=
+ =?us-ascii?Q?9b71DFSfD0IFKDOeDMyX2VJXHab6C1VdF3AoAdU81k8GOgm3dA64VmoflkUF?=
+ =?us-ascii?Q?I7OJVlHw/R3rhx6hWat6tkXjCDiWoWLEn4IOQPbcVCHNwZefWCfPfnpsytUT?=
+ =?us-ascii?Q?A3rMb0VF5uh63XrknOMOLCFVhky+m5aOFhBcSCeAnM3k6hhPjIWHlV+GBuEt?=
+ =?us-ascii?Q?7MVdSsXj0VXB7NlnuOHSOs5vJDPSf/gNu5eUGwbmYe23czbwOncdIqKQebUr?=
+ =?us-ascii?Q?Zu+0MnN6GyVLAm6g0dvaUSeEkLHVl3aOFhPYdFiY1vbnwjgh2tLUC3ICU6EM?=
+ =?us-ascii?Q?hsALHZu649TxVwTynSFgjZ87bz9NsQtNYlekQXKlQiW8DzaryFUMxMmkMiah?=
+ =?us-ascii?Q?fzLzckV5aLWSIdgM1c7MvbsxsnMyyo66eO5OBgwuaUBe2FWRPYP2VC1p1UCy?=
+ =?us-ascii?Q?B6TSqrJP20uOjX5a7yVuRkJFeN6G/4hRst8F2QtL6i8pJO3Bm2aY8aKQMvH7?=
+ =?us-ascii?Q?Ijr8K61xsITSnEm0cu0WPPACmES++JL+qDVGBKcLSSFExuBeXRNIGcsgLKCI?=
+ =?us-ascii?Q?9UB+JaNC6jh1EFoVjY3FZGXb94eukQ+pHRa/q3sb5tXpZL89euA/0g=3D=3D?=
+x-forefront-antispam-report:
+ CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PAXPR04MB8510.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(376014)(1800799024)(38070700018);DIR:OUT;SFP:1101;
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0:
+ =?us-ascii?Q?iJZlRBnRtTwzc1lThelbXzMtYiRyb1MLGante7Dsh0ZBVtpNK+YH7uUC/wSo?=
+ =?us-ascii?Q?tbkDEsGp9dD6RaDHSK5iZ95IIjkL1VgVGQ6mOLEDj883A1Bqo6pi5K1Gbxgc?=
+ =?us-ascii?Q?oqArMDUnP5iYn/DQQhChWiTP7K+wRFE6sgnlmpdXlWfx0BEZDRJrXioPbQZp?=
+ =?us-ascii?Q?XPuks7pL/HtxlsoOKSwwa8kOKh5RvbFMiZU0V73AnzMW0CAjGtCFEXFpiAhU?=
+ =?us-ascii?Q?TPUrsEIWYDlmxar2dbt9JSpAk45xRF3su8H903Gv26yZ0ieMB4rEJ9aDRNap?=
+ =?us-ascii?Q?r15sox2HNE+XAwo3AjO0qil7nziQm5HflBS4HqK2kqqqKU3IOMFgBOOSnWYJ?=
+ =?us-ascii?Q?fUnCbM54EvKKXYfdvOMngvO858G88bmtfrO2CY9Q91DGVWVIYmeDlE5bdhoh?=
+ =?us-ascii?Q?4vUE+7xsgYFJEEXCgFkBtEZ3iHIguK/KHkxmYY6i7K3hCeg2gmALLl5XRHyB?=
+ =?us-ascii?Q?+40VZ1mso4klh66WvN96Isz9Oxg1p7FHzpXUqfg3Ai2OrR/mWT9UPkUI3SO9?=
+ =?us-ascii?Q?XpyYK6/mlAFZmWSjTdqSNKstA/Uqxf+cbpgMRD96xeQL2V2ZQFWksCgcMxNd?=
+ =?us-ascii?Q?PljQpGrBRI/YaPfomTMcqf2c0J33CKzGHYEUC4DfT7x/CKrM+2GAhUlvnAn9?=
+ =?us-ascii?Q?4ILr5IeZqUZSWgjRV4zIWB2x7idY74yxd9/zCN1HWr894eDz5BR23SfCByIG?=
+ =?us-ascii?Q?LTosW5GWLCSMqdx/+p44HJhksHiIB4XDpfi9C4ZlVD0NQeDrF0DuxcyV6ypn?=
+ =?us-ascii?Q?Nes/0onBECZRX8BlosFWJwKX+G8YYmn8judbWtG6/wXouUzwpFwPkMe1V57S?=
+ =?us-ascii?Q?BlLUh1tvUtpjIB19/UpGSzHqT9lZvX5iefHi9ZaqeDaiuCSRPYAEMm+UKngo?=
+ =?us-ascii?Q?uTMOyY9vauwNgxDKHAMXrQeWOgkEck4pZoBhMeIqNFpNxShPJ5patWDzweld?=
+ =?us-ascii?Q?NA/3JPm3lwYXGisH+x8sBj8wGZ49oCjWQvGRIuUBsV5orclrRP5QO+oYHami?=
+ =?us-ascii?Q?7kLKG4r0tWmojB7j1QM/Vc3j7rOfzisKDLPIxIcC8p9Pv4+s2v4JSL65+Zxv?=
+ =?us-ascii?Q?fQbLzTHtVGDZ3fhaiRHtWEzWqXA2lo3EZObTYKFe9hmmScVdeIw9pY1Aq23+?=
+ =?us-ascii?Q?XC968u4YgU6jHoLV5X5ZlX8Vzi0mTtcp7ZJm3llfQoMUGFWCqvRoyzjrFpvX?=
+ =?us-ascii?Q?UlaZj81x1pzrTy+MoiAdyWJlmyDjv11PE6OX/Bz4fDmElqAXLA6PhAFT0hXe?=
+ =?us-ascii?Q?4dj1EJarA1R/wyYW+2qv3VNWSfqg7g4O4d2U4hxBtHb4SQCuy0mF9I7+Qd2o?=
+ =?us-ascii?Q?u0RtvNvfkaugjNYQqgZOilthyzmVi0SHkWzAB8rjidghhbsVnDSGswH+lkic?=
+ =?us-ascii?Q?0ZLYZ7Yurk+FghjcvzQp6/1cAPfNJQudiVmZsbjqGJI6+vjQeBBo0gVbrCJp?=
+ =?us-ascii?Q?CWE+aSFs2oTN7myJ8qnQ+IESUKJiiIfy2oLTEgC7lkNoNYKUA+pxUahrr+dy?=
+ =?us-ascii?Q?i9cX4FZvUekW+4cPdvOp73+bKG1Sdb+L/E8Mu6VTPCpUJimACSDEcHDVf/xN?=
+ =?us-ascii?Q?h+EM6L5jELJ7iXfpI0o=3D?=
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] ocfs2: kill osb->system_file_mutex lock
-To: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>,
- Mark Fasheh <mark@fasheh.com>, Joel Becker <jlbec@evilplan.org>,
- Joseph Qi <joseph.qi@linux.alibaba.com>, jiangyiwen <jiangyiwen@huawei.com>,
- Andrew Morton <akpm@linux-foundation.org>, ocfs2-devel@lists.linux.dev
-Cc: LKML <linux-kernel@vger.kernel.org>
-References: <934355dd-a0b1-4e53-93ac-0a7ae7458051@I-love.SAKURA.ne.jp>
-From: Heming Zhao <heming.zhao@suse.com>
-Content-Language: en-US
-In-Reply-To: <934355dd-a0b1-4e53-93ac-0a7ae7458051@I-love.SAKURA.ne.jp>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: PAXPR04MB8510.eurprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 623d230c-a8d3-4412-501b-08ddb2bf41ea
+X-MS-Exchange-CrossTenant-originalarrivaltime: 24 Jun 2025 01:34:27.0820
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: T7RYk6pMsnVjJh3OJYHhF836ncYPkUsv6y3S4k/OPCLCkXZ/7jE6GVx5miw7LczGMthBUPcTwQTezeTnFGYNKw==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: AS8PR04MB7589
 
-Hello,
+> On Mon, Jun 23, 2025 at 01:49:59AM +0000, Wei Fang wrote:
+> > > >  struct enetc_ring_stats {
+> > > > -	unsigned int packets;
+> > > > -	unsigned int bytes;
+> > > > -	unsigned int rx_alloc_errs;
+> > > > -	unsigned int xdp_drops;
+> > > > -	unsigned int xdp_tx;
+> > > > -	unsigned int xdp_tx_drops;
+> > > > -	unsigned int xdp_redirect;
+> > > > -	unsigned int xdp_redirect_failures;
+> > > > -	unsigned int recycles;
+> > > > -	unsigned int recycle_failures;
+> > > > -	unsigned int win_drop;
+> > > > +	unsigned long packets;
+> > > > +	unsigned long bytes;
+> > > > +	unsigned long rx_alloc_errs;
+> > > > +	unsigned long xdp_drops;
+> > > > +	unsigned long xdp_tx;
+> > > > +	unsigned long xdp_tx_drops;
+> > > > +	unsigned long xdp_redirect;
+> > > > +	unsigned long xdp_redirect_failures;
+> > > > +	unsigned long recycles;
+> > > > +	unsigned long recycle_failures;
+> > > > +	unsigned long win_drop;
+> > > >  };
+> > >
+> > > Hi Wei fang,
+> > >
+> > > If the desire is for an unsigned 64 bit integer, then I think either =
+u64 or
+> unsigned
+> > > long long would be good choices.
+> > >
+> > > unsigned long may be 64bit or 32bit depending on the platform.
+> >
+> > The use of unsigned long is to keep it consistent with the statistical
+> > value type in struct net_device_stats. Because some statistics in
+> > net_device_stats come from enetc_ring_stats.
+> >
+> > #define NET_DEV_STAT(FIELD)			\
+> > 	union {					\
+> > 		unsigned long FIELD;		\
+> > 		atomic_long_t __##FIELD;	\
+> > 	}
+>=20
+> Thanks, I understand. But in this case I think the patch description coul=
+d
+> be reworded - unsigned int and unsigned long are the same thing on some
+> systems, and on such systems there is no overflow advantage of one over t=
+he
+> other.
 
-Protecting refcnt with a mutex is the right approach, and commit 43b10a20372d
-did it properly.
-However, I don't see how your patch fixes the syzbot report [1]. Could you
-elaborate on the root cause analysis?
-
-My review comments are inline below.
-
-[1]: https://syzkaller.appspot.com/bug?extid=1fed2de07d8e11a3ec1b
-
-On 6/21/25 23:56, Tetsuo Handa wrote:
-> Since calling _ocfs2_get_system_file_inode() twice with the same
-> arguments returns the same address, there is no need to serialize
-> _ocfs2_get_system_file_inode() using osb->system_file_mutex lock.
-> 
-> Kill osb->system_file_mutex lock in order to avoid AB-BA deadlock.
-> cmpxchg() will be sufficient for avoiding the inode refcount leak
-> problem which commit 43b10a20372d ("ocfs2: avoid system inode ref
-> confusion by adding mutex lock") tried to address.
-> 
-> Reported-by: Diogo Jahchan Koike <djahchankoike@gmail.com>
-'Reported-by' should be: https://syzkaller.appspot.com/bug?extid=1fed2de07d8e11a3ec1b
-
-> Closes: https://lkml.kernel.org/r/000000000000ff2d7a0620381afe@google.com
-I don't think we need 'Closes'.
-
-> Fixes: 43b10a20372d ("ocfs2: avoid system inode ref confusion by adding mutex lock")
-> Signed-off-by: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
-> Cc: jiangyiwen <jiangyiwen@huawei.com>
-> Cc: Joseph Qi <joseph.qi@huawei.com>
-> Cc: Joel Becker <jlbec@evilplan.org>
-> Cc: Mark Fasheh <mfasheh@suse.com>
-The 'CC's are also useless.
-
-> ---
->   fs/ocfs2/ocfs2.h   | 2 --
->   fs/ocfs2/super.c   | 2 --
->   fs/ocfs2/sysfile.c | 9 +++------
->   3 files changed, 3 insertions(+), 10 deletions(-)
-> 
-> diff --git a/fs/ocfs2/ocfs2.h b/fs/ocfs2/ocfs2.h
-> index 6aaa94c554c1..8bdeea60742a 100644
-> --- a/fs/ocfs2/ocfs2.h
-> +++ b/fs/ocfs2/ocfs2.h
-> @@ -494,8 +494,6 @@ struct ocfs2_super
->   	struct rb_root	osb_rf_lock_tree;
->   	struct ocfs2_refcount_tree *osb_ref_tree_lru;
->   
-> -	struct mutex system_file_mutex;
-> -
->   	/*
->   	 * OCFS2 needs to schedule several different types of work which
->   	 * require cluster locking, disk I/O, recovery waits, etc. Since these
-> diff --git a/fs/ocfs2/super.c b/fs/ocfs2/super.c
-> index 3d2533950bae..4461daf909cf 100644
-> --- a/fs/ocfs2/super.c
-> +++ b/fs/ocfs2/super.c
-> @@ -1997,8 +1997,6 @@ static int ocfs2_initialize_super(struct super_block *sb,
->   	spin_lock_init(&osb->osb_xattr_lock);
->   	ocfs2_init_steal_slots(osb);
->   
-> -	mutex_init(&osb->system_file_mutex);
-> -
->   	atomic_set(&osb->alloc_stats.moves, 0);
->   	atomic_set(&osb->alloc_stats.local_data, 0);
->   	atomic_set(&osb->alloc_stats.bitmap_data, 0);
-> diff --git a/fs/ocfs2/sysfile.c b/fs/ocfs2/sysfile.c
-> index 53a945da873b..b63af8d64904 100644
-> --- a/fs/ocfs2/sysfile.c
-> +++ b/fs/ocfs2/sysfile.c
-> @@ -98,11 +98,9 @@ struct inode *ocfs2_get_system_file_inode(struct ocfs2_super *osb,
->   	} else
->   		arr = get_local_system_inode(osb, type, slot);
->   
-> -	mutex_lock(&osb->system_file_mutex);
->   	if (arr && ((inode = *arr) != NULL)) {
->   		/* get a ref in addition to the array ref */
->   		inode = igrab(inode);
-> -		mutex_unlock(&osb->system_file_mutex);
->   		BUG_ON(!inode);
->   
-
-I agree the above mutex_lock and mutex_unlock is useless. we can remove it
-without any problem.
-
->   		return inode;
-> @@ -112,11 +110,10 @@ struct inode *ocfs2_get_system_file_inode(struct ocfs2_super *osb,
->   	inode = _ocfs2_get_system_file_inode(osb, type, slot);
-
-In my view, the key of commit 43b10a20372d is to avoid calling
-_ocfs2_get_system_file_inode() twice, which lead refcnt+1 but no place to
-do refcnt-1.
-
->   
->   	/* add one more if putting into array for first time */
-> -	if (arr && inode) {
-> -		*arr = igrab(inode);
-> -		BUG_ON(!*arr);
-> +	if (inode && arr && !*arr && !cmpxchg(&(*arr), NULL, inode)) {
-
-Bypassing the refcnt+1 here is not a good idea. We should do refcnt+1
-before returning to the caller.
-
-> +		inode = igrab(inode);
-> +		BUG_ON(!inode);
->   	}
-> -	mutex_unlock(&osb->system_file_mutex);
->   	return inode;
->   }
->   
+Okay, I will improve the commit message. Actually both LS1028A and i.MX95
+are arm64 architecture, so for these platforms using ENETC IP, unsigned lon=
+g
+is 64-bit.
 
 
