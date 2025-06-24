@@ -1,136 +1,112 @@
-Return-Path: <linux-kernel+bounces-700365-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-700341-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1D0CAAE6790
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Jun 2025 15:58:30 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7AB7FAE673D
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Jun 2025 15:52:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 057C75A44D6
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Jun 2025 13:58:05 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2DE383BE9BB
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Jun 2025 13:52:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6C0C62E0B4F;
-	Tue, 24 Jun 2025 13:53:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="YYOJxEzY"
-Received: from mail-lf1-f41.google.com (mail-lf1-f41.google.com [209.85.167.41])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 65EBE2D0274;
+	Tue, 24 Jun 2025 13:52:28 +0000 (UTC)
+Received: from mail-il1-f200.google.com (mail-il1-f200.google.com [209.85.166.200])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 26D1D2DF3D1;
-	Tue, 24 Jun 2025 13:53:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 841E22C3268
+	for <linux-kernel@vger.kernel.org>; Tue, 24 Jun 2025 13:52:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.200
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750773231; cv=none; b=WVocyq+0+uwlrmjUA/KPiGGCj4boEiVtqDiRy2XusTskinrfJI59MaXXLM7zMJBrqqlfB8XSlVdsnvOVbTy4rYk7+0P2RKYHoocWzBMb4PhaIMDdTz07y8jLmwoXmL+XqSOvCOldOsRjxm+76+UbNFyjuLgNf+nt/jggfUBnaWU=
+	t=1750773148; cv=none; b=oSU1wuOci+g2fCoYXNttHouTk3BQsVCWIWHvW1bldCpB+/sUM0rB55JzbKqFucWN+5gsdfzc44eM5PO5UVQsKvrt++2qFtWeJ10m+F1H7lL8ZdZWR8IZvTxgBH3M+MA1vtn/ib4/ohspmLIqeyPFrm2DQbrRrl31gWQfbYv6CWE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750773231; c=relaxed/simple;
-	bh=oiGDOTQlQJJvb4XNy0QogZP8XaCDTe3pugDhckuwwgU=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=kVKklP7IO0/UrYiLRLzDRa+Be1DtdVwXq7tTkM7A+eb48ABd2yaNgNlsv4Ub8VuxWZPsuzwfEMOPkPl0kXTtyiIXxgM1zsf5GrQ0uD/y6iaS7I7JvpR9Nvq/hoHl4UJ2b7qIQQloCL9ijAfHm1D47k/8fyMAojpKlLBnWTFIml0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=YYOJxEzY; arc=none smtp.client-ip=209.85.167.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lf1-f41.google.com with SMTP id 2adb3069b0e04-553b51f5218so452233e87.0;
-        Tue, 24 Jun 2025 06:53:49 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1750773228; x=1751378028; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=at4AGtoJzuUSMRoGQaflHxu5wCpuyRhNqdSwxFevlHw=;
-        b=YYOJxEzY60+mh/G8twOwmhGNRX5erhpyKSAsgProFQdZ3mzxFjxelw0GTnOhplEp0E
-         0Ab1CS+pbbQLs5rhFCBzh2Pj5DX0wD3P1EjLOwFIyiYdXT0FY6nVkKlU3wmsA+fBsvpB
-         5ovqXG/bCloqruYS23+oGbZdrmuCb6SGHF4Y2mC/yGEwjaMgnJkIwtiZ3B+t1T9zHo+x
-         ZF7DqxQ7K3M8SXxPeSXl0BqMNRuYD6SSK3XlJVQwu6TkhaVkkPIvRumXlCj5NgKB7UwL
-         oaXqriViFl7Go2gWYTMESKsO7Qsv20gQ59kx3o0p+9Xtaf8tN2YbWQDuodc9cat947W/
-         Eghw==
+	s=arc-20240116; t=1750773148; c=relaxed/simple;
+	bh=oXZ8co1e8mmwl9zX6KlK8xWZmne+5OdHNz2El37jtVM=;
+	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=OwDM4mkuqXRjnGWGCYiqUKhW0ZNljhDEvS0JZ6QsK5vKLii9o6cQ49vNQ9oSg2Y3j8DEFQ/V1eFiuH5z7QW9z0RqzbQgsntw34qboZAvrAt7iB8HxxjndiM6g4tA6DdJaRwd8YDqpvnf4FGX6nEwVmPbdepB3V9okexwDjB1AZ8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.200
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f200.google.com with SMTP id e9e14a558f8ab-3ddafe52d04so166681715ab.1
+        for <linux-kernel@vger.kernel.org>; Tue, 24 Jun 2025 06:52:26 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1750773228; x=1751378028;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=at4AGtoJzuUSMRoGQaflHxu5wCpuyRhNqdSwxFevlHw=;
-        b=XNrhd8okYxS5mZgzV1QZJvCOHt5UTx4S8K2EdygFxa7n3i2FCj7HtllKLS6xYUDXCx
-         5diRNh7XudsPf1RxggJU8inxeUleTvm2VgyTlRfYlzy+FRVzbt5ja+6uiar0lvOmNt0H
-         xU5Qwor0pyokULtcX3CsU1cg9MZO1gy2r17EW0qjjTScIERrTWTFkRUM4oRGILLHVJg9
-         2BzhOOl6Gs6dUYGrggeK2jGS1Gij5xatxswg43AMmdnb8zoXwizPqb8oOlr7fMs5B+tG
-         EmfXwxQ/6My6zhIBxSkk8Lw2fCKGOlv4zFY23W+yhLIJNS0LGpkiJFaeWiGzA9sZf+yk
-         NQ/g==
-X-Forwarded-Encrypted: i=1; AJvYcCUNPMRh+LmVGrj3j8rydET7snaqkTmKjXkzuIDtxKm0jUU8VFJQM295eyvi8fYU8KVIS5T+xFtlP12tghBv@vger.kernel.org, AJvYcCXBxM6O3AQoC8m5pz2GlonE28vdPxQmxvQ4LQv+wmHl4KhHKfFfg1S9n9l/x4/ziHAHr71O6KYRxVtN@vger.kernel.org
-X-Gm-Message-State: AOJu0YyU/aLS2ql6ksKFNJm1g1CeJglFYTjrnXCL6bxtpu/8D/8IhODZ
-	thn9ZrpXcHi2V0rvvo3Lq8votiGYONGFzBuZPaUSuD8fWipPf2Ch9MR6RpQu+BAYUPI=
-X-Gm-Gg: ASbGncvw3pSrdzw4+bsiPVIqCLfOlSpJUEXwsEgLrrduPKqYLY7rIQUnSvccca9fTF7
-	2ib052M8K/l4W9aQgDJXW4wHjjPWmfSrBJdqtW7cq8uhqJF50HOIBX+jmRb7UpbOa/+T7MYCKs7
-	45qcPaVcOahkbuKHX/+WRNUXU1mQHqlgqJyUnGnyycFipTvx6w1jqnNqaA+ycTmfWZeeFt0E8rr
-	9Dnn3oolyQXl2yKtrGnGQ9ZnwATWwuUudT3gmkODdtrvFvzNyU/31yKkOKu+gtijrDu6lVPWVQ3
-	z9azADgwARpjA33fsX8xnhsdHBxNgwEr+6tyUTe6uqITeg9IWIyQXggSQnUvghzo5VIgr1R4cSt
-	BLtoVFSYtKWVdKJJPyUq2+qOUJm+uhdHT+IWdXKG+H7OOmf4McF8Lp/m4lV5Amw==
-X-Google-Smtp-Source: AGHT+IFbDE+lWZiMZmwadCBMjxfgjChAjL5/r/S/Zb6cyZMzeD+uljn9vGxJOP6BB4iHquZJI37Mkw==
-X-Received: by 2002:a05:6512:3f19:b0:553:2c93:6140 with SMTP id 2adb3069b0e04-553e3b98f31mr5355681e87.9.1750773228139;
-        Tue, 24 Jun 2025 06:53:48 -0700 (PDT)
-Received: from user-A520M-DS3H.sberdevices.ru (broadband-188-32-30-96.ip.moscow.rt.ru. [188.32.30.96])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-554e6dc186esm1282905e87.114.2025.06.24.06.53.47
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 24 Jun 2025 06:53:47 -0700 (PDT)
-From: Alexey Romanov <romanov.alexey2000@gmail.com>
-To: neil.armstrong@linaro.org,
-	clabbe@baylibre.com,
-	herbert@gondor.apana.org.au,
-	davem@davemloft.net,
-	robh@kernel.org,
-	krzk+dt@kernel.org,
-	conor+dt@kernel.org,
-	khilman@baylibre.com,
-	jbrunet@baylibre.com,
-	martin.blumenstingl@googlemail.com
-Cc: linux-crypto@vger.kernel.org,
-	linux-amlogic@lists.infradead.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	Alexey Romanov <romanov.alexey2000@gmail.com>
-Subject: [PATCH v12 22/22] arm64: dts: amlogic: axg: add crypto node
-Date: Tue, 24 Jun 2025 16:52:14 +0300
-Message-Id: <20250624135214.1355051-23-romanov.alexey2000@gmail.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20250624135214.1355051-1-romanov.alexey2000@gmail.com>
-References: <20250624135214.1355051-1-romanov.alexey2000@gmail.com>
+        d=1e100.net; s=20230601; t=1750773145; x=1751377945;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=uin6lLcwohm4lv9WyITuwcyVt/c+X4e6jvHm3Unx2MU=;
+        b=aSIJINfltCYvxxIymawoKgbGlzgSBRVxG0uFMlR6hLMZcJ/ZpjhLOCXWMGvnKIAjJR
+         NTI0MhnS/8LbgQtanl47fKzmOaQ6G+RxzAPLi26p5+06vZ1tvLgviOYmPJGuhAhSRPjG
+         5B9DVbf1/NuTiE/AT7VtvykAFLFTLJD+kfID/7uJwpXopq5esF9khA6vZcO6h+vaVssG
+         ROqeyb42PGyXXWHqCvitzXtRJS13KbNhKOCYtRHaNz0duimuWh4o/ppHiX4XBLqlJT2q
+         Zjygb0UBa8v1WHeA2jmDMI3OgRsqcTFNNDWADOwuyeAZdWHZ+pfujCpKB0mZEyxF0Xd9
+         KBag==
+X-Forwarded-Encrypted: i=1; AJvYcCVvs3vYmnaVJds8iH8dF3RLT+fIdL6VzJvQcjICmuG4xaxTDBoPzcPv/1CBKOaa+wb4TklPfU9OdRYdhAI=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzA3/adV2p2GCmO9uW2Aq+/DmOWa8OkYh7TinOPVCcNaQrUd6cw
+	mf22uDKBLNFVWaju/U6Uq5iKinmauMi1urTXqSPGFPsKqkx3xOGseD+/jZ21JSZl0hyc/SCw77q
+	9c5p843GWORjFMIHOmzpATTLN6+tw3pAQIY/cxSZNTrgGXXOwHkxNLSIrXjo=
+X-Google-Smtp-Source: AGHT+IHvKvf/vVCdxwI030nwml5wrDQ6tlpXgTpPK6b9n0FXCh1L+iUC7/Lp70pNFIbf6gAfOug2uCJ+XPGVXDcG1bXFt78OzyPB
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+X-Received: by 2002:a05:6e02:1a2b:b0:3dd:c1ed:d901 with SMTP id
+ e9e14a558f8ab-3de38cd92b9mr212604135ab.21.1750773145639; Tue, 24 Jun 2025
+ 06:52:25 -0700 (PDT)
+Date: Tue, 24 Jun 2025 06:52:25 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <685aad99.a00a0220.2e5631.007a.GAE@google.com>
+Subject: [syzbot] Monthly hfs report (Jun 2025)
+From: syzbot <syzbot+list8132deb081c630ffb070@syzkaller.appspotmail.com>
+To: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-This patch adds a crypto node declaration. With the
-Amlogic crypto driver we can use HW implementation
-of SHA1/224/256 and AES algo.
+Hello hfs maintainers/developers,
 
-Signed-off-by: Alexey Romanov <romanov.alexey2000@gmail.com>
+This is a 31-day syzbot report for the hfs subsystem.
+All related reports/information can be found at:
+https://syzkaller.appspot.com/upstream/s/hfs
+
+During the period, 1 new issues were detected and 0 were fixed.
+In total, 46 issues are still open and 23 have already been fixed.
+
+Some of the still happening issues:
+
+Ref  Crashes Repro Title
+<1>  90790   Yes   kernel BUG in hfs_write_inode
+                   https://syzkaller.appspot.com/bug?extid=97e301b4b82ae803d21b
+<2>  17637   Yes   kernel BUG in __hfsplus_setxattr
+                   https://syzkaller.appspot.com/bug?extid=1107451c16b9eb9d29e6
+<3>  13270   Yes   possible deadlock in hfsplus_get_block
+                   https://syzkaller.appspot.com/bug?extid=b7ef7c0c8d8098686ae2
+<4>  8079    Yes   KMSAN: uninit-value in hfsplus_cat_case_cmp_key
+                   https://syzkaller.appspot.com/bug?extid=50d8672fea106e5387bb
+<5>  4225    Yes   KMSAN: uninit-value in hfsplus_delete_cat
+                   https://syzkaller.appspot.com/bug?extid=fdedff847a0e5e84c39f
+<6>  4084    Yes   possible deadlock in hfs_find_init (2)
+                   https://syzkaller.appspot.com/bug?extid=e390d66dda462b51fde1
+<7>  4039    Yes   KMSAN: uninit-value in hfsplus_attr_bin_cmp_key
+                   https://syzkaller.appspot.com/bug?extid=c6d8e1bffb0970780d5c
+<8>  3875    Yes   KMSAN: uninit-value in hfs_find_set_zero_bits
+                   https://syzkaller.appspot.com/bug?extid=773fa9d79b29bd8b6831
+<9>  3134    Yes   KASAN: slab-out-of-bounds Read in hfsplus_uni2asc
+                   https://syzkaller.appspot.com/bug?extid=076d963e115823c4b9be
+<10> 2893    Yes   KMSAN: uninit-value in hfsplus_lookup
+                   https://syzkaller.appspot.com/bug?extid=91db973302e7b18c7653
+
 ---
- arch/arm64/boot/dts/amlogic/meson-axg.dtsi | 7 +++++++
- 1 file changed, 7 insertions(+)
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
 
-diff --git a/arch/arm64/boot/dts/amlogic/meson-axg.dtsi b/arch/arm64/boot/dts/amlogic/meson-axg.dtsi
-index 2df143aa77ce..f126097ab013 100644
---- a/arch/arm64/boot/dts/amlogic/meson-axg.dtsi
-+++ b/arch/arm64/boot/dts/amlogic/meson-axg.dtsi
-@@ -294,6 +294,13 @@ ethmac: ethernet@ff3f0000 {
- 			status = "disabled";
- 		};
- 
-+		crypto: crypto@ff63e000 {
-+			compatible = "amlogic,axg-crypto";
-+			reg = <0x0 0xff63e000 0x0 0x48>;
-+			interrupts = <GIC_SPI 180 IRQ_TYPE_EDGE_RISING>;
-+			clocks = <&clkc CLKID_CLK81>;
-+		};
-+
- 		pcie_phy: phy@ff644000 {
- 			compatible = "amlogic,axg-pcie-phy";
- 			reg = <0x0 0xff644000 0x0 0x1c>;
--- 
-2.34.1
+To disable reminders for individual bugs, reply with the following command:
+#syz set <Ref> no-reminders
 
+To change bug's subsystems, reply with:
+#syz set <Ref> subsystems: new-subsystem
+
+You may send multiple commands in a single email message.
 
