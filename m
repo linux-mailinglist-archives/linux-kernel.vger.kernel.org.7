@@ -1,109 +1,212 @@
-Return-Path: <linux-kernel+bounces-699521-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-699523-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0E47AAE5BC6
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Jun 2025 07:12:04 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 0C703AE5BD0
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Jun 2025 07:18:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8B68D2C106A
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Jun 2025 05:12:04 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3CBDE17A196
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Jun 2025 05:18:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0237A22D4DE;
-	Tue, 24 Jun 2025 05:11:59 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AD42F35946
-	for <linux-kernel@vger.kernel.org>; Tue, 24 Jun 2025 05:11:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750741918; cv=none; b=AwIuXYwAne4VrAaSWdvbl59Fj/kJv+TeaQDhKYm2GaM0BMN+P+7delVfJZzJGlZ9OcBmW8y44BhbbF7RV9YrGLqq6kvOcQOuUuGCXfHfoizJS8K2COfcTcaTRWikDt1Y3XX8nAvDLFWCd6DJHfYKMVLo+n0iX4s3PnuvW3qkMzQ=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750741918; c=relaxed/simple;
-	bh=g2SBdp4Q/4Up3tjmS+X71YsKE7Mx/swu6jPKmmAmfVw=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=JF7Ii85ClHPn8A6xgusk938vlb0G4yjKLK+/aLoJ9OIPasn1RZjDP5TJH1M3mjbbFwVVO6z4zReoYIhKnrG74PsfaoaTOp0qAt48eO3DwyDSD18ItpmjZGLqesnEU+Oczyzt3CgXBkh1OfXQtmZshbvSlczgLof1Y+3APe3NS+A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id F10C5106F;
-	Mon, 23 Jun 2025 22:11:37 -0700 (PDT)
-Received: from [10.163.36.19] (unknown [10.163.36.19])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id B42053F63F;
-	Mon, 23 Jun 2025 22:11:52 -0700 (PDT)
-Message-ID: <140f3fdd-ec11-4a96-bd71-4f6c8b5f13e1@arm.com>
-Date: Tue, 24 Jun 2025 10:41:49 +0530
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8F16A229B0D;
+	Tue, 24 Jun 2025 05:18:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="LknhMYsM"
+Received: from NAM10-BN7-obe.outbound.protection.outlook.com (mail-bn7nam10on2083.outbound.protection.outlook.com [40.107.92.83])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2A6172AEED;
+	Tue, 24 Jun 2025 05:18:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.92.83
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1750742284; cv=fail; b=XjROUANjmJDsDGuAGCrgA5gXqONSdhrWZ5aDHe15ucMY6UBU7A+Tmfccpj9ETU3x2//2Ef+0t59ORiuS25XL+xW4LTVvS2giwTvFaqloeBUyFpGl1Ni4bquG4mq1L+vvrSPClBSWmCRFP52rZigaMbO2/DxxIveCJEXn6P5POqI=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1750742284; c=relaxed/simple;
+	bh=R21cPhFwDoOkHcSDwW3Gggm+W1TvbQZJ9Fc8dtjQEsc=;
+	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=MzEoZZNyjZdhj5Ze8ETWft5m3BjDu0Zp5HQ9SHpF1dcId3OJW/JPRum76rJHGO+t7rCM45iVfUH/wUQVDKpVTKdgXbYNoJb71FoNmsQkqrF9ibV38pXMxX4gFQlB0AfrSL/DecPD51YnlITbOnbYNFS80Je/7rUrYJkk5MiPVXY=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=LknhMYsM; arc=fail smtp.client-ip=40.107.92.83
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=DnF0+iWt3IDpGOIn3ZGxdA/Rge3080rCl8blevxtN06Kr0mkh3GDELB9/HVgjwHy3+i7gfl2P54vGMoQDswvI6Mp41sQC9P0VSvRULuJcfO42V3Sa3dx/ZgxrTgQc3F2ZPc1WEJCgVI3LEqKD6cJMVY4EEP2YVoyBFLNANjY9p+uTfb+myzdGD9Bxc3cbF0qRS6+ygi5Zc3PFdS1xpDo9PlCgNYfP4YyLXrH4ibqwZPUup8F06X3Dp6helEc+Qo052OICw6WyOXDCzxcfBVnCRhIasucLkPDYTvJzbs0AFSZBPFXkwb3GMAgmb57qBaWrmsKA4oqYwM4DfG2IAjuwg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=Bof3z2uJ1eEmg3cP0R57aLzEcbKaHTvcAPIbs291wwc=;
+ b=angbVkqF25OVV3Be4QbBRWKFrSomQlg/9tZygitUM0a6ISrzlvexNYPb7hy5BEmQ8XN0nsrb7oMMIJ4uoYbg7hWjRUWUozZ5HJrsRds3QvyNLllrk/HknSbuUr0eWbqyFM4RSVnOrB7CvPHh+8bXjNdA6yH7eL+4VKhWDYhTHPxUVO3cKlheQeZMt8TAAFY2mDL6BM+Lf0wDLiYk7xHIDsrHWjbOCcS3mIAsRk5dNkg8diNWDIEJ22nZG+zaB4AC6aq7Oz7UbZZ0Vt+4l/A8AtUgCYq4RtycWZPDugcyrLnR7JgpVUQXwuusDYoSlKaUxjj0BGxH4xXFjNBwU/GVMA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
+ dkim=pass header.d=nvidia.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=Bof3z2uJ1eEmg3cP0R57aLzEcbKaHTvcAPIbs291wwc=;
+ b=LknhMYsMfgpBP7K0e9Ognkxj4ddWDwi2OTSXv50NNmquwz3WRuiucTBL2urJ2mCTJKCJdD32liWflW2XVqCW8YWK3BTUXxeXU4ldlsoaaOcVXfnELo4X/+qbanYN+sKwVSPsXwX4+KugdqqOiIzW61xJUIYaWBXzPWp8LYzJXuuiS+GX2i7ri8Exdo0UhVH08xaQPp6z25ljVPMeSb6VAW0cHQ8FmAtbnq8Ug9qUf0JXG3li+d8+odUN85egbU/QAG1tdC7r/oekHBgK4gyuzlNq1Gm3vPYGB1RyhZpHxw2s+2UVagDaQmg2HrhP22xi4eN/ibZg0iyAis+ypZOfpQ==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nvidia.com;
+Received: from LV2PR12MB5968.namprd12.prod.outlook.com (2603:10b6:408:14f::7)
+ by IA1PR12MB9521.namprd12.prod.outlook.com (2603:10b6:208:593::6) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8857.25; Tue, 24 Jun
+ 2025 05:18:00 +0000
+Received: from LV2PR12MB5968.namprd12.prod.outlook.com
+ ([fe80::e6dd:1206:6677:f9c4]) by LV2PR12MB5968.namprd12.prod.outlook.com
+ ([fe80::e6dd:1206:6677:f9c4%4]) with mapi id 15.20.8857.020; Tue, 24 Jun 2025
+ 05:17:59 +0000
+Message-ID: <e8b9f61a-5816-4447-855e-9998ded12389@nvidia.com>
+Date: Mon, 23 Jun 2025 22:17:56 -0700
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v6 00/24] nova-core: run FWSEC-FRTS to perform first stage
+ of GSP initialization
+To: Alexandre Courbot <acourbot@nvidia.com>,
+ Danilo Krummrich <dakr@kernel.org>
+Cc: Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>,
+ Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>,
+ =?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>,
+ Andreas Hindborg <a.hindborg@kernel.org>, Alice Ryhl <aliceryhl@google.com>,
+ Trevor Gross <tmgross@umich.edu>, David Airlie <airlied@gmail.com>,
+ Simona Vetter <simona@ffwll.ch>,
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+ Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
+ Benno Lossin <lossin@kernel.org>, Ben Skeggs <bskeggs@nvidia.com>,
+ Joel Fernandes <joelagnelf@nvidia.com>, Timur Tabi <ttabi@nvidia.com>,
+ Alistair Popple <apopple@nvidia.com>, linux-kernel@vger.kernel.org,
+ rust-for-linux@vger.kernel.org, nouveau@lists.freedesktop.org,
+ dri-devel@lists.freedesktop.org, Lyude Paul <lyude@redhat.com>,
+ Shirish Baskaran <sbaskaran@nvidia.com>
+References: <20250619-nova-frts-v6-0-ecf41ef99252@nvidia.com>
+ <aFnArVIFkHCUzNqe@pollux> <DAUFC932W5MR.Q13BFD3CYEKJ@nvidia.com>
+Content-Language: en-US
+From: John Hubbard <jhubbard@nvidia.com>
+In-Reply-To: <DAUFC932W5MR.Q13BFD3CYEKJ@nvidia.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: BY1P220CA0012.NAMP220.PROD.OUTLOOK.COM
+ (2603:10b6:a03:59d::8) To LV2PR12MB5968.namprd12.prod.outlook.com
+ (2603:10b6:408:14f::7)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 6/9] coresight: Avoid enable programming clock
- duplicately
-To: Leo Yan <leo.yan@arm.com>, Suzuki K Poulose <suzuki.poulose@arm.com>,
- Mike Leach <mike.leach@linaro.org>, James Clark <james.clark@linaro.org>,
- Alexander Shishkin <alexander.shishkin@linux.intel.com>,
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: coresight@lists.linaro.org, linux-arm-kernel@lists.infradead.org,
- linux-kernel@vger.kernel.org
-References: <20250609-arm_cs_fix_clock_v3_public-v3-0-423b3f1f241d@arm.com>
- <20250609-arm_cs_fix_clock_v3_public-v3-6-423b3f1f241d@arm.com>
-Content-Language: en-US
-From: Anshuman Khandual <anshuman.khandual@arm.com>
-In-Reply-To: <20250609-arm_cs_fix_clock_v3_public-v3-6-423b3f1f241d@arm.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: LV2PR12MB5968:EE_|IA1PR12MB9521:EE_
+X-MS-Office365-Filtering-Correlation-Id: b2e502a4-95b6-4db2-bc32-08ddb2de7c5b
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|366016|7416014|376014;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?bFBYUy9NK240NDBQU1NQRHNWSHVCR3QzakJXbVdDdTk5UkdJWU50ZjVBSnV0?=
+ =?utf-8?B?NE9zcDYycWpZblNSTGZXUXNiY2xQclFhWjRMenZ1d3QvWG1pYytYQW4vV2hR?=
+ =?utf-8?B?bkcyY2FLNVg0SC9lUDR3eUxIWjArR0FsVVF5MHBpR1VYK254UGcwWUZVQmlk?=
+ =?utf-8?B?NVdPb29YYWdCRldOTlo1THlnV3IxZWtzRVRTQzZHOGNJSkQvblIxdEZlUVRT?=
+ =?utf-8?B?RXZkcXUzSnNrdG9kcHVZbThlTng1bU4rNEdUbUZEakhLQ2tZTzdoVHArN1Ev?=
+ =?utf-8?B?aHNicXpvQTNBVnpVTkxDbWdzMzBXZ0JzQjI1QVdITFIrbUhMWHpucTBaSFFj?=
+ =?utf-8?B?aW9pNzlKQjBYZFZiaUV1L2RsOWdndFNZZCtIT2pzZ20wc2F2MEtXVUR3cFYz?=
+ =?utf-8?B?UHV4NzNwSC9iWEI5RUFhS0dUdWlzTk5GYmJDbUc5R3dMemlTbmJRMDA4aUFR?=
+ =?utf-8?B?UW04azJOVitqeHZyVXlURDY4RlVXMEF2OU8vL1pYcVlWT3BoTjJtbGJhZzZ0?=
+ =?utf-8?B?bmpwbDBtRGFrdFRnSExGTzlzZ25lTlYwdXAyK1ZrazhBMTVXTGwyV3AyVDl1?=
+ =?utf-8?B?SWkyQ2VoWWRseDB5OVQyOHI2dlM5T2pTQ1JzTHBwcTh6dUQ5amlZZkFhQnlE?=
+ =?utf-8?B?SWlqUEZaRy9oc2RrQWloM1hYV3lzQy9YUFd5SWh3dkRkQkh2WVJWM0Foa0cx?=
+ =?utf-8?B?K2tPRGVsNnR0WkFxRWJ1a01OS0txNHdwOW56cVBrbU9IUHUwN1ZzemhlRC94?=
+ =?utf-8?B?cDB4blhKWWRsdUhWbGgvSUZ6c1FxTTJvOTVVdWFzU0Q1N1B0Qjc2ZTdicHd6?=
+ =?utf-8?B?VVRLN1dHaUNxdGFCaTVEZjJURE04YWo1aHluQzJQM2tNREZtMjIxWUtSSWJw?=
+ =?utf-8?B?d0VzdnJsK0dJczlyUDBxU0dSa0JyaTV3Sm5PNUpvVjMvNmRrV3JYdVpVWjJD?=
+ =?utf-8?B?YkdlMWZlOFRuaWYxVVpwMS9jYkpPWTQvZW1iV045MWZQVVJuUUFsTWdJam1u?=
+ =?utf-8?B?MUZDUEtzUjNqSUJmWUZicWluZ3FBWlVuYzZtc2tVbkd5OGtDMGN3eFdDZGVk?=
+ =?utf-8?B?Z1FqanUzTm0yNFNYOGcvNzRuYnhTSnVpcjBuNVM2d3VWYklONWVLNXFCV2U1?=
+ =?utf-8?B?ek9heHJ5d2Q4blNPbzBLRk9nNUN0Y1g4K1lVWDIyL1Fkc2tXc052ZFZzQlcr?=
+ =?utf-8?B?aUwrQXJuOGRTQzdvV3QxcVRjQ2lROGRWaG5qc3JtdjVNNEs0bzg4L2Q4NFRk?=
+ =?utf-8?B?ZzQ3S1paS25zUlg1UFdON2hWdmNCYVl2eVk2Z21pUkJpeDhoNm1KRWNXRS92?=
+ =?utf-8?B?bUZjeDFqYzdWbGNxV0YwTWVvb05Ha2ZVT0pYTlg4K3NXbHU0TnhXZTB6ZU1u?=
+ =?utf-8?B?aUJSeUhLVlBBd0JHeHBUQUJmc2ZvMXVKbFUzc0VKY1dlcjUwNllibWVzRy9H?=
+ =?utf-8?B?MlRiQUJ2dFp0UHNwei8xeEhCNnhlOGQxb3RKYzFqRkZaM3RjUE1QNXFoTFcy?=
+ =?utf-8?B?SThCakE5S01TM082OWJzVFFUeFBVdk5FK0xrWjgyK214SitpV0E1Z1pSaWpv?=
+ =?utf-8?B?S3FiUkZLTHd2Y3g0N2xjczdoM3JyRWZGRXBteUFhbFRCY2wxakdBcnU2WDc0?=
+ =?utf-8?B?WEFiT1FVakZ2R0xCZEVNQm56Y2hXZXErdWJjVnZyWXllVytHemxTOEtPNElq?=
+ =?utf-8?B?WEErV0wvOHVTbExsY2FjM3VZK3crTVFqdEVlSDZybXMvNGpNcEpMQ1VHVjdN?=
+ =?utf-8?B?c3ZaZFZEQW5mVEEzd2pMWTRWb0NqZW1Tc045NmNiMlF4clIwaXJvNUlHTGRT?=
+ =?utf-8?B?RWx0SXBKY21GWGlUek1kcHRWcGpUcko4YzBEdUVVdFVvMSttM01WVE1WeHd1?=
+ =?utf-8?B?Tzcwc3hheTBLTEpVU2d5Z2dmYzJpRW1kWFBlS3V4V25qSEE9PQ==?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:LV2PR12MB5968.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(7416014)(376014);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?THpXdzJkcGd2NjViYnRKSktpeXA1WUlXWUpXOXpkci9hWXpoOHMrSEhIS1po?=
+ =?utf-8?B?MlZJZXNheTFyaUVMN051T3BQaDNSMVZLS3ZVbzVOOUo4eElLbitZaXd4OWFS?=
+ =?utf-8?B?U2paMVE3MmYwcDdKbitjcjRhNUt1Q2FaZGVVVU5VQzdLc3BaOFdMSUtWdDM0?=
+ =?utf-8?B?VjFkKzk1VW82M0VpZWFzVnFVcld3UnRKUlpDeWp2bkRORTJXSjZwTHZCVmY3?=
+ =?utf-8?B?MG4ySE5NU1h1QXpsZSttR0dma2xBVndScGZReWpGQ1RSM1BCQVpzOGI0azdh?=
+ =?utf-8?B?S0JPeGZZbmIvMTFhM3JaU0RkVDBLUDVTZHVKRzF2WVVDWGZaelEyaVk5T2hD?=
+ =?utf-8?B?Yzd6YzNCZER2b1hPWnE2VG5zSlBOdFROTUFUL3ZVNmt0b21wdWhCZkZpeDlF?=
+ =?utf-8?B?N1lxSktrc0hZR0ZkMjlEbUxPZ1c4MExtL3hLNkUyQXNEUHZJWm1yVkEyY2pR?=
+ =?utf-8?B?VklQUFVNVm5OaXNRbmxjZzIzUnFIMlJQZUpTVWhHSitxdHlrclZEdEo5L0Rr?=
+ =?utf-8?B?dFpGWDB2K0laTGRJS1J3cVVIMWcvZU1SbU9VaWIvY2xmQXk3dm5BcmZ0bWtZ?=
+ =?utf-8?B?ek8vQXRGQkF0dXNkUzJWY0ZFbUZHd29kYWQ3cTQwQ0dxMG84RjZFTlNnMitT?=
+ =?utf-8?B?NjZ1cHpZWU12bDlnQ0pyak1rSS9UZ2FlR05tOXdVcmVMUzBncDdFZVFhUlNi?=
+ =?utf-8?B?UUdtelF6azM0Q0lqbjVrTURyV0h4QTFxdEV5NG9lcFd5N2RSUFk1SVdFWEdT?=
+ =?utf-8?B?YmVkR215WWVJc2NYTVJtYk80NlVONGdIMDFxL0VrU29EZW5SR1YxcFpuUU0x?=
+ =?utf-8?B?R1dmZzYrM2ZObVU2Yk5Kc2dnRGFvSVhqSHhRMjFUSEllejFQTjc5dkhLSWVa?=
+ =?utf-8?B?Qjl4dXdrTTlBL25sZnYxWG5oMTBGS1dXUzB0b2g0Z3VTUCtabUkxR0RnVkpv?=
+ =?utf-8?B?TGpLN0xnTDZMK3BhUHk1allya2pLUm9qcG9UYitNR2RwQXg4M2FSNmlPbmtp?=
+ =?utf-8?B?ZzhFc3pQTVZITU5pTGNBNzVUT1Q3bi9rR014R1IyVjVENTlTRmwxZHBBOGtl?=
+ =?utf-8?B?UGlqa280cFRyR1loa0RVL3JNYXZzS3FBOGt0ejJqaTJkelM1QTFoT3RWTm9q?=
+ =?utf-8?B?NUJuS1RxOUVyT1dNMHkvVkZZTzluS0labXArUVJwMEpBSVVhcjhiWDFwMFls?=
+ =?utf-8?B?djc0MlJXWHJHdTlSMk9wWDBZdGZFdzF3MS8xSWU3NllmbHZiUEsyOUFESER6?=
+ =?utf-8?B?SE92ZTU0L3FETDdCVDVMeXI0RFhIeWYyeEJmbFFrakVxakdnZTRBY00zVFUx?=
+ =?utf-8?B?QTNHY0hQeDMxV0MvNEQxSVBaeGRabzZZQkM1VjZEN0U0K1pOdCsyakZ6WGhQ?=
+ =?utf-8?B?bTQ2SDM3ejNrMHNLUXV6cFM4elc3cEZPSzdVaFpMWTNVK2hVaUFxYWhsRDFz?=
+ =?utf-8?B?OHVLL1JCUUo2MWY0UmVnbXdsazVQQ203NFdPTmVWeWtCYmtzMTF6ZFYzNzd6?=
+ =?utf-8?B?YTNpWHJVMmVpWCtqWXdRQW9LMThRbjZrQWQ3S2xMM2UwWnY0SEliMHNRY3F0?=
+ =?utf-8?B?VzMraHFKSDBtL1M0NThxcWcvaUoyNC9xQ1FGSnEvaWllR1kvZHpUK2NjckFQ?=
+ =?utf-8?B?MHpqVEN2OU16a3RkTEFQQ1AwMkxNaU9xeGRWd0k0b3o5ekVFcEJsdFFTWXlJ?=
+ =?utf-8?B?R0FORGd5eGd2RnFVdnFGREpaVmg3RUtEdUpFQTVTeXYyUzRrRk5qU2hMb3hj?=
+ =?utf-8?B?akhhcnpxdFFNdDhMWEFXRXNJZTQ4U0tvOERzaFdIemtPdXpMekRsRkQvVXMv?=
+ =?utf-8?B?M0YvR2NISFpsb0NQa1RZbUhjV1pLZ0NnVVJ0bXNsY24wUXZhVzJERWNHQ1BR?=
+ =?utf-8?B?WWZHMTNDS1FhVnAvbWcyOUJzVXVJeWVBTmcwcmhrTHU0emVFMGZ6SWtGTEV0?=
+ =?utf-8?B?V01JOTA2MHhSUklOVXhwdnd1UUpzaGw2UFdaVk1IUHpySnYxZTlPazhMS0dt?=
+ =?utf-8?B?QU51QkRheXJtSlNBd0RoZCtYK1dFT0JobFJZN2pRVjBTZ2owZHA3YlRMWTZK?=
+ =?utf-8?B?c29uVlJjREJENUVKcFZDbjdsWnp3U3A5SWthTlAxMWt3RDQ1MWZxeTZkajRz?=
+ =?utf-8?Q?YwFCb0rns0vXyxP9iTt5AZc/g?=
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: b2e502a4-95b6-4db2-bc32-08ddb2de7c5b
+X-MS-Exchange-CrossTenant-AuthSource: LV2PR12MB5968.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 24 Jun 2025 05:17:59.7450
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: G2Rh6cqFkONugCmKP8G7Lxq+QeYzHztWL8c6KE8ct778UncgHpnjdYY5NJO5lLR3ApnObVz4f0ZRHFGIbsx15g==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: IA1PR12MB9521
 
-
-
-On 09/06/25 9:30 PM, Leo Yan wrote:
-> The programming clock is enabled by AMBA bus driver before a dynamic
-> probe.  As a result, a CoreSight driver may redundantly enable the same
-> clock.
+On 6/23/25 7:56 PM, Alexandre Courbot wrote:
+> On Tue Jun 24, 2025 at 6:01 AM JST, Danilo Krummrich wrote:
+>> There's one thing that would be nice to fix subsequently, which is properly
+>> resetting the GPU. Currently, it needs a power cycle to be able to probe
+>> successfully after unbinding the driver.
 > 
-> To avoid this, add a check for device type and skip enabling the
-> programming clock for AMBA devices.  The returned NULL pointer will be
-> tolerated by the drivers.
+> Yes, what I usually do is the following after unloading Nova:
 > 
-> Fixes: 73d779a03a76 ("coresight: etm4x: Change etm4_platform_driver driver for MMIO devices")
-> Signed-off-by: Leo Yan <leo.yan@arm.com>
-> ---
->  include/linux/coresight.h | 11 +++++++----
->  1 file changed, 7 insertions(+), 4 deletions(-)
+>     echo 1 | sudo tee /sys/bus/pci/devices/0000:01:00.0/reset
 > 
-> diff --git a/include/linux/coresight.h b/include/linux/coresight.h
-> index dd2b4cc7a2b70cf060a3207548fe80e3824c489f..9afa1f76c78a3347e54d94fe9a9ebed72e3fff8e 100644
-> --- a/include/linux/coresight.h
-> +++ b/include/linux/coresight.h
-> @@ -480,15 +480,18 @@ static inline bool is_coresight_device(void __iomem *base)
->   * Returns:
->   *
->   * clk   - Clock is found and enabled
-> + * NULL  - Clock is not needed as it is managed by the AMBA bus driver
->   * ERROR - Clock is found but failed to enable
->   */
->  static inline struct clk *coresight_get_enable_apb_pclk(struct device *dev)
->  {
-> -	struct clk *pclk;
-> +	struct clk *pclk = NULL;
->  
-> -	pclk = devm_clk_get_enabled(dev, "apb_pclk");
-> -	if (IS_ERR(pclk))
-> -		pclk = devm_clk_get_enabled(dev, "apb");
-> +	if (!dev_is_amba(dev)) {
-> +		pclk = devm_clk_get_enabled(dev, "apb_pclk");
-> +		if (IS_ERR(pclk))
-> +			pclk = devm_clk_get_enabled(dev, "apb");
-> +	}
->  
->  	return pclk;
->  }
->
+> and this allows it to probe again. Maybe we want to add some equivalent
+> programmatically in the driver probe function?
 
-LGTM
+At this point, we are only getting things up to a certain very early
+stage. And so we have to reset like this in order to try again.
 
-Reviewed-by: Anshuman Khandual <anshuman.khandual@arm.com>
+But I'm not sure that will be the case, once we have more code in
+place to go further.
+
+So maybe hold off on this for a few weeks or so?
+
+thanks,
+-- 
+John Hubbard
+
 
