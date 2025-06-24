@@ -1,125 +1,257 @@
-Return-Path: <linux-kernel+bounces-699450-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-699440-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1B9D5AE5A49
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Jun 2025 04:54:06 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 94208AE5A2B
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Jun 2025 04:43:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E5AFD1B65396
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Jun 2025 02:54:21 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id F2B307A4CD2
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Jun 2025 02:42:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4CF6A19F11B;
-	Tue, 24 Jun 2025 02:53:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C197621771B;
+	Tue, 24 Jun 2025 02:43:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=aosc.io header.i=@aosc.io header.b="Kih/o9v+"
-Received: from relay-us1.mymailcheap.com (relay-us1.mymailcheap.com [51.81.35.219])
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="N/Q3ScHk"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4EBD618DB0D;
-	Tue, 24 Jun 2025 02:53:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=51.81.35.219
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8901B3398A
+	for <linux-kernel@vger.kernel.org>; Tue, 24 Jun 2025 02:43:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750733637; cv=none; b=Fi8F89JKPQFfjw37pdgI+SCc8sX0KlXh5Y63Agzz8JkXhNu/rutk4CeypA75uI8OJNCF0+VKMumIv0Q+EtSDaIGrLhMgsXVJi59+2ZjoRJgIcW+Jl3pt7F8UdAvheLmAdX3qVuC2Y3Hcu9+aq4qeaHZsATT+N59mhtwUvi4JfZE=
+	t=1750733027; cv=none; b=rP6rAt/6rzcWUW6vtusyzQx3KnM8EahsUEQMKHfABxwOctkkjN9i4knW5nto6QYrj1AAFw0q5LGPtn/BksZomAceHUAm+Sdgu8I0enxX+w3PvKXY9ZIQq6ij4DunHJLt9EGXaMET8CkCuYf0SGVfsaI8RrSbBrvNDq2NiHQQD2M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750733637; c=relaxed/simple;
-	bh=XtSK3TOHXlH7ADDyxdXV6GzxVcMU/rODkPLFQ0KdjcY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=hSNc41LnCyZ2qIBT8racoSUvZxMdo1KQy+z/w7F5/hF46/xuAnEZI44Qg6RPvn2VBKmFYOncvajhKGbNQWccAOh59b7DX2vcaGVPfNldHVDW7HYp6RgPxiUCOlVLG42n+831doK4VyYnPibfFZn2ff3ufzsxfOlSzzumz6qPSfc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=aosc.io; spf=pass smtp.mailfrom=aosc.io; dkim=pass (1024-bit key) header.d=aosc.io header.i=@aosc.io header.b=Kih/o9v+; arc=none smtp.client-ip=51.81.35.219
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=aosc.io
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=aosc.io
-Received: from relay5.mymailcheap.com (relay5.mymailcheap.com [159.100.248.207])
-	by relay-us1.mymailcheap.com (Postfix) with ESMTPS id BF6A2213FD;
-	Tue, 24 Jun 2025 02:44:08 +0000 (UTC)
-Received: from relay1.mymailcheap.com (relay1.mymailcheap.com [144.217.248.102])
-	by relay5.mymailcheap.com (Postfix) with ESMTPS id 2DFB1262C0;
-	Tue, 24 Jun 2025 02:44:00 +0000 (UTC)
-Received: from nf1.mymailcheap.com (nf1.mymailcheap.com [51.75.14.91])
-	by relay1.mymailcheap.com (Postfix) with ESMTPS id 77C863E859;
-	Tue, 24 Jun 2025 02:43:52 +0000 (UTC)
-Received: from mail20.mymailcheap.com (mail20.mymailcheap.com [51.83.111.147])
-	by nf1.mymailcheap.com (Postfix) with ESMTPSA id 8AB7C40078;
-	Tue, 24 Jun 2025 02:43:51 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=aosc.io; s=default;
-	t=1750733031; bh=XtSK3TOHXlH7ADDyxdXV6GzxVcMU/rODkPLFQ0KdjcY=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=Kih/o9v+9NKplD7w/sDmAGNEykum9Q8z1TM3z0aLoPsVwJmZGr6mWAMjd34eRJFKJ
-	 xWwQ7/3XWvm4yqREeiDTAMocCsp9cS9Aiq03odvYJA4dKHRkmjV4bJq/EPmxy3UUvP
-	 fOaT7ZmNeVplhVF8uVxx7kfTtO1DLKIu7oqzINqM=
-Received: from [19.191.1.9] (unknown [223.76.243.206])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mail20.mymailcheap.com (Postfix) with ESMTPSA id 969414082E;
-	Tue, 24 Jun 2025 02:43:47 +0000 (UTC)
-Message-ID: <f032284d-25e4-4192-aeb2-1270e497a830@aosc.io>
-Date: Tue, 24 Jun 2025 10:43:38 +0800
+	s=arc-20240116; t=1750733027; c=relaxed/simple;
+	bh=FHL+gsjsPdHuYxFfYAjijvJ6tRyazCSteFsgvpJW5HQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Y7nI7WJvchBI7KlBaqcd3yGu+00TmaPsrQ0CwCNZDfa6TtiyH6ljTjMTb8gK7cYqKcJ/Rt4BZxmAcUJiIEGw81y9lH7pN10IppwnP6L0Je5M38CM5UOxSrdjhkf+oGvXlgvo+1hUsyUP/r04SC9ou8NNqleP73HquzQCp/VpgI8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=N/Q3ScHk; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279867.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 55NElXl3026319
+	for <linux-kernel@vger.kernel.org>; Tue, 24 Jun 2025 02:43:44 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-type:date:from:in-reply-to:message-id:mime-version
+	:references:subject:to; s=qcppdkim1; bh=KN3XXvaKtZM+YmK/jTYgNUfD
+	5TIEnLm1ZgvjPuBqaac=; b=N/Q3ScHkA8ejc2FoLAPivBDZY5hNDMftlsjPB9ma
+	ER3bqn7xi9t3J+WV8Uffr5IbDMu1+Ck9EJaUhM042yfLQ1oax+kxERBazLauXmVB
+	LfnD6j0uzVsdz5bIlIXPMYlQqSrg73ghFFC4JUnc3bCwQ9ZuUOHiRVIUtbv2FPsw
+	xQBrzJoflyPy3++ZmHt4kdJjkMrR/1pztntBV2USCCK5o3QJiKNmSdsZgg6/kJXm
+	h0dzB7E40GgXoIJeRg1U8IxK8BkBJLhCMA7mGG7fOMMJ6tZhWBK42GXs//wTVNQS
+	ojDKZL6If3CVdbXr1cxG9Tf4IZBPwGiGxOGFHKSpArMWug==
+Received: from mail-qk1-f198.google.com (mail-qk1-f198.google.com [209.85.222.198])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 47f8ymsjgr-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Tue, 24 Jun 2025 02:43:44 +0000 (GMT)
+Received: by mail-qk1-f198.google.com with SMTP id af79cd13be357-7c760637fe5so712126785a.0
+        for <linux-kernel@vger.kernel.org>; Mon, 23 Jun 2025 19:43:44 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1750733023; x=1751337823;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=KN3XXvaKtZM+YmK/jTYgNUfD5TIEnLm1ZgvjPuBqaac=;
+        b=Ro/dOsyZGKJ4h5+ERXtdxbsg6kFIgkUu0AYWw8frVkJGaX82TSF0kSc9oLEsIfvBp+
+         60+P3F6+On5Baj7EtmJYf+ixMhueXJurTitw3QH99ReF9O8nQuMUHIcj8VWXo3KLhXM1
+         vq/It2BT4isCOfzEjn1B6GNGiYbOXHuo/AfFSbXQLbQlpPKQ2orbGOKMcj7RTNf50Oce
+         ucuWrJRsnRt3xf8ITs4eY/XQ/bv3XVDe0MXDmaosM9oHuPbF0wHvsupYhNJe/yfHfIBb
+         DHZNmE5aBCtiH84OFnsbO6R2A1P5ULd6Lj+NX2wmah64sGwAkvx06wr2KXLjzkfPf3lR
+         bM+A==
+X-Forwarded-Encrypted: i=1; AJvYcCUNoUK6czZiK8YhGgECAEVgzuEXHQC/UxtpTRx01XjsbLiksbnCy/A2v0J9bipQH0RTxhKzLppAbojycN0=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy7sMNbeMJifJ0gLaxFo33NYxVxyjd8cJ9ilQIUWY21H+oWF9mD
+	UBUbR7Sf9DKcGkxHrf0+Dz67xueMzoDkPoTTIY28Tsn1Tpj77u2kwruT9wtESlq46eHgJSu1AIE
+	siJelZT7MBBraaFk4Mf6wix7m500sah/4CHg5HomGA06Gre+dEI9MBASbJxhbzRM8DsI=
+X-Gm-Gg: ASbGncsZomv1mOythOyZjdZsWhHbR/pLjlYOFuY7/Me2Ovw1RbIPUWTYWjAC7SNTfPu
+	AHuBsjyIthPq/Q75kZMNp6MVGkFTW7ULjNXE421SM2RJoyQSnDvCRlJRtzg8nTq7zF+U8dBXTSM
+	usBFCZTc4iO0Bk3Rhp9oOei3TSbhozFxvhG2yg/BN0ZLIFbu/4VzmMDGNVvuEZ2Oq4yycGh/P+p
+	bI8UKPhJ3Ojc7Ov7zmR2KZv+jyvqgfNYXu27ORaMpAw/fPF7MjlclU1aWOG2LQIwXwE29mbCtaw
+	CwTGSalnG1SrXvAwRcOdj81QjkwqgLUQp8hUxVH2w1YNTJbTUHaG21zIczDuXY0g29QYGZwVdKp
+	3N1u2CjCJU8Y+dN1AwXIBTM7HG10mrjvzr38=
+X-Received: by 2002:a05:620a:17a2:b0:7c5:4adb:782a with SMTP id af79cd13be357-7d3f98c7db9mr2276709385a.9.1750733023193;
+        Mon, 23 Jun 2025 19:43:43 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IGit7DNQ9/dBe0d3sh4hHnQ03gUGXShhl+f6zGzYJBNK03gLkKyzMUdUA7ErzCdFn1GhoLtsA==
+X-Received: by 2002:a05:620a:17a2:b0:7c5:4adb:782a with SMTP id af79cd13be357-7d3f98c7db9mr2276707285a.9.1750733022781;
+        Mon, 23 Jun 2025 19:43:42 -0700 (PDT)
+Received: from umbar.lan (2001-14ba-a0c3-3a00-264b-feff-fe8b-be8a.rev.dnainternet.fi. [2001:14ba:a0c3:3a00:264b:feff:fe8b:be8a])
+        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-32b97f5916dsm15255841fa.2.2025.06.23.19.43.40
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 23 Jun 2025 19:43:40 -0700 (PDT)
+Date: Tue, 24 Jun 2025 05:43:39 +0300
+From: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
+To: Mohammad Rafi Shaik <mohammad.rafi.shaik@oss.qualcomm.com>
+Cc: Srinivas Kandagatla <srini@kernel.org>,
+        Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>,
+        Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>, Jaroslav Kysela <perex@perex.cz>,
+        Takashi Iwai <tiwai@suse.com>, Philipp Zabel <p.zabel@pengutronix.de>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Bartosz Golaszewski <brgl@bgdev.pl>, linux-arm-msm@vger.kernel.org,
+        linux-sound@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org,
+        quic_pkumpatl@quicinc.com, kernel@oss.qualcomm.com
+Subject: Re: [PATCH v1 2/2] ASoC: codecs: wsa883x: Handle shared reset GPIO
+ for WSA883x speakers
+Message-ID: <v7oxwbf6xjc2gxeviwe4tayovzasysqig5smk752an74qd2e46@q25ymfyru3ze>
+References: <20250620103012.360794-1-mohammad.rafi.shaik@oss.qualcomm.com>
+ <20250620103012.360794-3-mohammad.rafi.shaik@oss.qualcomm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] cpufreq: loongson3: Support older SMC firmware
-To: Yao Zi <ziyao@disroot.org>, Huacai Chen <chenhuacai@kernel.org>,
- WANG Xuerui <kernel@xen0n.name>, "Rafael J. Wysocki" <rafael@kernel.org>,
- Viresh Kumar <viresh.kumar@linaro.org>
-Cc: Jiaxun Yang <jiaxun.yang@flygoat.com>, Kexy Biscuit
- <kexybiscuit@aosc.io>, loongarch@lists.linux.dev, linux-pm@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <20250623123321.5622-1-ziyao@disroot.org>
-Content-Language: en-US
-From: Mingcong Bai <jeffbai@aosc.io>
-In-Reply-To: <20250623123321.5622-1-ziyao@disroot.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Rspamd-Server: nf1.mymailcheap.com
-X-Rspamd-Queue-Id: 8AB7C40078
-X-Rspamd-Action: no action
-X-Spamd-Result: default: False [-0.10 / 10.00];
-	MIME_GOOD(-0.10)[text/plain];
-	RCVD_TLS_ALL(0.00)[];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	FUZZY_RATELIMITED(0.00)[rspamd.com];
-	ARC_NA(0.00)[];
-	RCVD_COUNT_ONE(0.00)[1];
-	ASN(0.00)[asn:16276, ipnet:51.83.0.0/16, country:FR];
-	MIME_TRACE(0.00)[0:+];
-	RCPT_COUNT_SEVEN(0.00)[10];
-	SPFBL_URIBL_EMAIL_FAIL(0.00)[jeffbai.aosc.io:server fail,ziyao.disroot.org:server fail];
-	FROM_HAS_DN(0.00)[];
-	MID_RHS_MATCH_FROM(0.00)[];
-	FROM_EQ_ENVFROM(0.00)[];
-	TO_MATCH_ENVRCPT_SOME(0.00)[];
-	TO_DN_SOME(0.00)[]
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250620103012.360794-3-mohammad.rafi.shaik@oss.qualcomm.com>
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNjI0MDAyMSBTYWx0ZWRfXwD+HsRSIMzs2
+ +FokcsLOyfVAxDY4En5QXVcgBnGwHIWnbHYQbWacgk1/Jv4z/HBVT3xs6+60XhcJju3obuOD6KZ
+ HT9oEZp6xrgqW3MxGOqzZOKHmclzEZ71du+S6eTJ4hNalmBfI7mX2O79fFOBV3Cqn2EMCDKUv6x
+ Ph3X+Z9r4NeJAeUH13RqAZ2RuFlwHaCpXxh9djnLqAz7pl2z5q+p82fns+p18P0GKal0/WZ3ETu
+ cK60K8DoWiugmgahIHIYm6lD+EIkGonGGD/sdboDV75DzTYvOoCz0UMA7YTpMqAJEHjTXdJWEU+
+ YzUGWNArX6coQwvhcrhmY9Ba30QUgZLKtYGth+IQ0DQ9HAYSDBkis6VGNq9VF1603su5ufHtC6r
+ 8Yzbguo74QFXjFz/QqkhUtJQG3CsW6GTEFfIuTlDI7Kvi/cnWzE/pDZiV+Qndl/bqGb0QeiH
+X-Proofpoint-ORIG-GUID: MWno2SYGZG0hF3t6ODnX2fjxJ_h4UdlN
+X-Proofpoint-GUID: MWno2SYGZG0hF3t6ODnX2fjxJ_h4UdlN
+X-Authority-Analysis: v=2.4 cv=GLYIEvNK c=1 sm=1 tr=0 ts=685a10e0 cx=c_pps
+ a=qKBjSQ1v91RyAK45QCPf5w==:117 a=xqWC_Br6kY4A:10 a=kj9zAlcOel0A:10
+ a=6IFa9wvqVegA:10 a=EUspDBNiAAAA:8 a=5E2qFXZqrqlClrV78BEA:9 a=CjuIK1q_8ugA:10
+ a=NFOGd7dJGGMPyQGDc5-O:22
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.7,FMLib:17.12.80.40
+ definitions=2025-06-24_01,2025-06-23_07,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ suspectscore=0 spamscore=0 impostorscore=0 clxscore=1015 malwarescore=0
+ bulkscore=0 mlxscore=0 mlxlogscore=999 phishscore=0 lowpriorityscore=0
+ priorityscore=1501 adultscore=0 classifier=spam authscore=0 authtc=n/a
+ authcc= route=outbound adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2505280000 definitions=main-2506240021
 
-Greetings,
-
-<snip>
-  > This patch adds support for the SMC firmware found on these devices,
-> which I denoted as "SMC-0" in the driver. Boost support is omitted,
-> since determination of cores able to boost requires the driver to couple
-> tightly with micro-architecture details.
+On Fri, Jun 20, 2025 at 04:00:12PM +0530, Mohammad Rafi Shaik wrote:
+> On some Qualcomm platforms, such as QCS6490-RB3Gen2 and QCM6490-IDP,
+> multiple WSA8830/WSA8835 speakers share a common reset (shutdown) GPIO.
+> To handle such cases, use the reset controller framework along with the
+> "reset-gpio" driver.
 > 
-> For coexistence, I prefixed all SMC-call constants with their SMC
-> versions, and introduced "SMC-0"-specific initialization and
-> frequency-level-setup rountines.
-> 
-> Signed-off-by: Yao Zi <ziyao@disroot.org>
+> Signed-off-by: Mohammad Rafi Shaik <mohammad.rafi.shaik@oss.qualcomm.com>
 > ---
->   drivers/cpufreq/loongson3_cpufreq.c | 287 ++++++++++++++++++++--------
->   1 file changed, 211 insertions(+), 76 deletions(-)
+>  sound/soc/codecs/wsa883x.c | 57 ++++++++++++++++++++++++++++++++------
+>  1 file changed, 48 insertions(+), 9 deletions(-)
+> 
+> diff --git a/sound/soc/codecs/wsa883x.c b/sound/soc/codecs/wsa883x.c
+> index 13c9d4a6f015..b82b925c1f8d 100644
+> --- a/sound/soc/codecs/wsa883x.c
+> +++ b/sound/soc/codecs/wsa883x.c
+> @@ -14,6 +14,7 @@
+>  #include <linux/printk.h>
+>  #include <linux/regmap.h>
+>  #include <linux/regulator/consumer.h>
+> +#include <linux/reset.h>
+>  #include <linux/slab.h>
+>  #include <linux/soundwire/sdw.h>
+>  #include <linux/soundwire/sdw_registers.h>
+> @@ -468,6 +469,7 @@ struct wsa883x_priv {
+>  	struct sdw_stream_runtime *sruntime;
+>  	struct sdw_port_config port_config[WSA883X_MAX_SWR_PORTS];
+>  	struct gpio_desc *sd_n;
+> +	struct reset_control *sd_reset;
+>  	bool port_prepared[WSA883X_MAX_SWR_PORTS];
+>  	bool port_enable[WSA883X_MAX_SWR_PORTS];
+>  	int active_ports;
+> @@ -1547,6 +1549,44 @@ static const struct hwmon_chip_info wsa883x_hwmon_chip_info = {
+>  	.info	= wsa883x_hwmon_info,
+>  };
+>  
+> +static void wsa883x_reset_powerdown(void *data)
+> +{
+> +	struct wsa883x_priv *wsa883x = data;
+> +
+> +	if (wsa883x->sd_reset)
+> +		reset_control_assert(wsa883x->sd_reset);
+> +	else
+> +		gpiod_direction_output(wsa883x->sd_n, 1);
+> +}
+> +
+> +static void wsa883x_reset_deassert(struct wsa883x_priv *wsa883x)
 
-Tested good on an IPASON NL38-N11 (Loongson 3A6000) laptop, core 
-frequencies fluctuate between 250MHz and 2000MHz individually as 
-expected. CPU frequency scaling governors works as expected (performance 
-pins all cores to 2000MHz, the max frequency).
+Please name these two functions in using antonyms (e.g. init/fini,
+powerup / powerdown, assert / deassert, etc).
 
-Tested-by: Mingcong Bai <jeffbai@aosc.io>
+> +{
+> +	if (wsa883x->sd_reset)
+> +		reset_control_deassert(wsa883x->sd_reset);
+> +	else
+> +		gpiod_direction_output(wsa883x->sd_n, 0);
+> +}
+> +
+> +static int wsa883x_get_reset(struct device *dev, struct wsa883x_priv *wsa883x)
+> +{
+> +	wsa883x->sd_reset = devm_reset_control_get_optional_shared(dev, NULL);
+> +	if (IS_ERR(wsa883x->sd_reset))
+> +		return dev_err_probe(dev, PTR_ERR(wsa883x->sd_reset),
+> +				     "Failed to get reset\n");
+> +	else if (wsa883x->sd_reset)
 
-Best Regards,
-Mingcong Bai
+No need for 'else' here.
+
+> +		return 0;
+> +	/*
+> +	 * else: NULL, so use the backwards compatible way for powerdown-gpios,
+> +	 * which does not handle sharing GPIO properly.
+> +	 */
+> +	wsa883x->sd_n = devm_gpiod_get_optional(dev, "powerdown",
+> +						GPIOD_FLAGS_BIT_NONEXCLUSIVE | GPIOD_OUT_HIGH);
+> +	if (IS_ERR(wsa883x->sd_n))
+> +		return dev_err_probe(dev, PTR_ERR(wsa883x->sd_n),
+> +				     "Shutdown Control GPIO not found\n");
+> +	return 0;
+> +}
+> +
+>  static int wsa883x_probe(struct sdw_slave *pdev,
+>  			 const struct sdw_device_id *id)
+>  {
+> @@ -1567,13 +1607,9 @@ static int wsa883x_probe(struct sdw_slave *pdev,
+>  	if (ret)
+>  		return dev_err_probe(dev, ret, "Failed to enable vdd regulator\n");
+>  
+> -	wsa883x->sd_n = devm_gpiod_get_optional(dev, "powerdown",
+> -						GPIOD_FLAGS_BIT_NONEXCLUSIVE | GPIOD_OUT_HIGH);
+> -	if (IS_ERR(wsa883x->sd_n)) {
+> -		ret = dev_err_probe(dev, PTR_ERR(wsa883x->sd_n),
+> -				    "Shutdown Control GPIO not found\n");
+> -		goto err;
+> -	}
+> +	ret = wsa883x_get_reset(dev, wsa883x);
+> +	if (ret)
+> +		return ret;
+>  
+>  	dev_set_drvdata(dev, wsa883x);
+>  	wsa883x->slave = pdev;
+> @@ -1596,11 +1632,14 @@ static int wsa883x_probe(struct sdw_slave *pdev,
+>  	pdev->prop.simple_clk_stop_capable = true;
+>  	pdev->prop.sink_dpn_prop = wsa_sink_dpn_prop;
+>  	pdev->prop.scp_int1_mask = SDW_SCP_INT1_BUS_CLASH | SDW_SCP_INT1_PARITY;
+> -	gpiod_direction_output(wsa883x->sd_n, 0);
+> +
+> +	wsa883x_reset_deassert(wsa883x);
+> +	ret = devm_add_action_or_reset(dev, wsa883x_reset_powerdown, wsa883x);
+> +	if (ret)
+> +		return ret;
+>  
+>  	wsa883x->regmap = devm_regmap_init_sdw(pdev, &wsa883x_regmap_config);
+>  	if (IS_ERR(wsa883x->regmap)) {
+> -		gpiod_direction_output(wsa883x->sd_n, 1);
+>  		ret = dev_err_probe(dev, PTR_ERR(wsa883x->regmap),
+>  				    "regmap_init failed\n");
+>  		goto err;
+> -- 
+> 2.34.1
+> 
+
+-- 
+With best wishes
+Dmitry
 
