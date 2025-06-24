@@ -1,100 +1,209 @@
-Return-Path: <linux-kernel+bounces-700974-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-700979-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id AE728AE6F19
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Jun 2025 21:04:01 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 39590AE6F1F
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Jun 2025 21:05:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 85E583AC3C1
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Jun 2025 19:03:36 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3DB8417F30C
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Jun 2025 19:05:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4A2192E88AA;
-	Tue, 24 Jun 2025 19:03:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8177F2ECD0F;
+	Tue, 24 Jun 2025 19:03:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="AooYWGYt"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="iWlf1Ghi"
+Received: from mail-pf1-f201.google.com (mail-pf1-f201.google.com [209.85.210.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A6209170826;
-	Tue, 24 Jun 2025 19:03:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5FAF52EB5D6
+	for <linux-kernel@vger.kernel.org>; Tue, 24 Jun 2025 19:03:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750791815; cv=none; b=OMpuBG1uexpAjy42C/CVGomDb552QVV09Y8NpX5H4edarqRrnUjMQeu64LfdkP9Xs3P7+Mud+uMuZ6jLAa82tho7Ppitl/EgULu1lL7FsIgrlOyD5Qs00ff6rxIhpSbEUnNgYZ97PtZKPA8VTmHiMABk0BeT8H+yGYJ+gqEg4xE=
+	t=1750791822; cv=none; b=pYm+DWcqHa7zFpYixP2DW2yEOPB77PdLMczdV0L1Vk+kw2kKCH5NMNOWTxMgAawWH12CLgO9QpjBvkamYtM5BGNW17MaqSWsPkusPo8FaH4Z6UDc2FjBtquXKxQpmTw159WBKqbXgSyJh4W3N7Nh5My17/71qVycyoCSZNJrnHA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750791815; c=relaxed/simple;
-	bh=kxOa7FyXEDKy7RG2L0lqYalsa4MpC74s6Q+Y7frh6tk=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=cbrgLHU94z4RQK3Mrhxffz2a06M0sxn/iGzfEymQelTPcMUzbDdWKcMLgkOVI3+s46IetsLjnN28kmsydaQyn3hlCr620xNO42UWM6fVuf7rd/zbcD5f0h95GYZgE/SDyI4JdqtYs3qBnbZVBsfjZ/EvHcFJLMs+f7m7ZCOipmI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=AooYWGYt; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C72BCC4CEF0;
-	Tue, 24 Jun 2025 19:03:31 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1750791815;
-	bh=kxOa7FyXEDKy7RG2L0lqYalsa4MpC74s6Q+Y7frh6tk=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
-	b=AooYWGYtLTqSYu/m3CO7vZx7qc4EFJ1F8AJwop0w7cYhiLPtU/ReSCzjuSQTxFoK7
-	 MgTHjuY1jH+3uK4hoviUXdEAulgmwT32klIQB3bIiWFTTZuA2mSazun3OrMaFw6sgI
-	 9lLrD6SZQopdlpEBUfH+MqqsjEx2DVgAzpRh7Y1/5qoQEtqaszWJO/9EPdrah08cjZ
-	 hoCNBGDW4PBXpWpYSUx72Kt7ZjVfFegARY83qNQ4e4+qEvTI3oS3weDnuFXHYI/l46
-	 +cYTx+G1mpR/MeTWhSf4riXLKInZFXD4U8KRuKhjWEblGoVxVPYX5qmZBGe2Zn/T/G
-	 zjxziD0ZBFmsQ==
-From: Andreas Hindborg <a.hindborg@kernel.org>
-To: "FUJITA Tomonori" <fujita.tomonori@gmail.com>
-Cc: <miguel.ojeda.sandonis@gmail.com>,  <alex.gaynor@gmail.com>,
-  <ojeda@kernel.org>,  <aliceryhl@google.com>,  <anna-maria@linutronix.de>,
-  <bjorn3_gh@protonmail.com>,  <boqun.feng@gmail.com>,  <dakr@kernel.org>,
-  <frederic@kernel.org>,  <gary@garyguo.net>,  <jstultz@google.com>,
-  <linux-kernel@vger.kernel.org>,  <lossin@kernel.org>,
-  <lyude@redhat.com>,  <rust-for-linux@vger.kernel.org>,
-  <sboyd@kernel.org>,  <tglx@linutronix.de>,  <tmgross@umich.edu>
-Subject: Re: [PATCH v3 0/5] rust: time: Convert hrtimer to use Instant and
- Delta
-In-Reply-To: <87o6ud2fbx.fsf@kernel.org> (Andreas Hindborg's message of "Tue,
-	24 Jun 2025 19:56:50 +0200")
-References: <_dhT441zoMZanviBlUpcvPZEw7TiwB4v28ONPXSwi7WvEaMg_YJSmi5vRlLVaaUOujF7NOspxR0NYFLOHXud_g==@protonmail.internalid>
-	<CANiq72nwaxszEbn6O3xZi6H9P+U=5N0ugK1n9qBRteQwKXQSaw@mail.gmail.com>
-	<87wm912sjg.fsf@kernel.org>
-	<NrHeKJqwjFSpcF_2PKPa5kh4otoqBJTD97hA80afZiXD64Z1Ax6GqU3b_-vu9la9g2t6y2cdPFXdbnJELgO1uA==@protonmail.internalid>
-	<20250624.224130.2089845741064711087.fujita.tomonori@gmail.com>
-	<87o6ud2fbx.fsf@kernel.org>
-User-Agent: mu4e 1.12.9; emacs 30.1
-Date: Tue, 24 Jun 2025 21:03:24 +0200
-Message-ID: <87cyat2c8z.fsf@kernel.org>
+	s=arc-20240116; t=1750791822; c=relaxed/simple;
+	bh=Wblp0ohl6IRm7lIeNpyX4alondQblEImOX1Lca1Vayc=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Content-Type; b=PXlONfVQ+/RuK2fhBATAV2RJUF8kaynQClc6ke1ZYdjzilw/x78GNSoDRP01pk+GukmRyNkMTSKGzl4pU2qRHkP95JnfwQl3ok61TvcCVzIJ8dKGSImxhCo8xLRB4RegjXBK5j+6nRY4saE5s2JMx+zgb7kQky9Oo5LrI3VXspU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--irogers.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=iWlf1Ghi; arc=none smtp.client-ip=209.85.210.201
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--irogers.bounces.google.com
+Received: by mail-pf1-f201.google.com with SMTP id d2e1a72fcca58-748b4d5c045so4450051b3a.1
+        for <linux-kernel@vger.kernel.org>; Tue, 24 Jun 2025 12:03:41 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1750791820; x=1751396620; darn=vger.kernel.org;
+        h=to:from:subject:message-id:references:mime-version:in-reply-to:date
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=OvhUhEpt8Wtn+apdV1pw7/FGDr2NOUshwP9osdCowcg=;
+        b=iWlf1GhikkN/gqhpMG42XhbqD5VdiEqwvCiIlCDzjt4zMOIp7SeE++xYptoefqX0VI
+         mKHC/JzgJs9XyyZY5O5eu1GtwaQRigiD6yKXx/t7+gszNLNzDsSFwpHLEqzBKQPpO3Mj
+         62GnZmJzWHIeY6uFudeem9pOil99BXJXlTxrlF6WYYt50mdjOH6M8RE9FXjHXDF3tL7z
+         yi6g1hxYkYeDrvWurQ86QeEIjvFCkClAq412RSwB1tx4wvNksRQukM1YSci9I5aza9vI
+         3IxqiqUd0fjQ91DrRoiAA8j2X7HhVXr4xyH0aKjzz3awSss/x/aQvr3CSR9nTt2M9AjC
+         U9Tg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1750791820; x=1751396620;
+        h=to:from:subject:message-id:references:mime-version:in-reply-to:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=OvhUhEpt8Wtn+apdV1pw7/FGDr2NOUshwP9osdCowcg=;
+        b=ZRqbN/BBEVn0nxAnMZb+laEd2FLA9NP0112kOMvNAru69vp+8ekghdhfuQVV5K5jp8
+         OKvBxvu+o7ycSRLpPTNB1AWInkfXjVQQQGfuR/YIG9nw0zZQV/ehyu+nXVOjaRpp1keM
+         WtEvh4lE4HHdPlcdNtrk4S7WzCulOezwft4bSQ59FMCPyCSFPDyrn2D18lndr4qKN+tZ
+         S6ADV1pamAcTv/CGYZPbjWRIxfrKA3N7cF3dK/UHUFcfM6PxyCueEO2q+Kmvw+O+5+xN
+         ROG9irlpXODb9TS7SQlMipP3cgmdKAuludaUEBJn4bDAlu0sV8+FE7ZR1hnICTCZMzMY
+         Halw==
+X-Forwarded-Encrypted: i=1; AJvYcCVPL40BslOIfcl/njJAoL5wcRohrjKjw11eDGHK0bt9Sta9j3VOoWQnh/UL3+C2waveSghW2X6Ovm0TiTw=@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywyw0u1yOtWVL2biK1H/EFxEOuik9yMVD8K3ZpcwduMEA6/MB/X
+	E6QSb5ngyGs3Qqjfayq8YCOnSCVPsdprgpWL2p7hxo2yGW1AVRB8bl+voR/09xOZCziaf6e8T+3
+	+z7zWCQiMgg==
+X-Google-Smtp-Source: AGHT+IHXRzxwI/vxMtdvnFS97/XuZM4ViICM7CB3vtBrkVTBTbh4ijqkM8zAUt69HZBcWf2I334trVSs07qB
+X-Received: from pfuv1.prod.google.com ([2002:a05:6a00:1481:b0:746:2862:2a2f])
+ (user=irogers job=prod-delivery.src-stubby-dispatcher) by 2002:a05:6a00:170b:b0:748:f74f:6d27
+ with SMTP id d2e1a72fcca58-74ad45e0092mr388115b3a.24.1750791820499; Tue, 24
+ Jun 2025 12:03:40 -0700 (PDT)
+Date: Tue, 24 Jun 2025 12:03:25 -0700
+In-Reply-To: <20250624190326.2038704-1-irogers@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain
+Mime-Version: 1.0
+References: <20250624190326.2038704-1-irogers@google.com>
+X-Mailer: git-send-email 2.50.0.714.g196bf9f422-goog
+Message-ID: <20250624190326.2038704-6-irogers@google.com>
+Subject: [PATCH v1 5/5] perf test: In forked mode add check that fds aren't leaked
+From: Ian Rogers <irogers@google.com>
+To: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, 
+	Arnaldo Carvalho de Melo <acme@kernel.org>, Namhyung Kim <namhyung@kernel.org>, 
+	Mark Rutland <mark.rutland@arm.com>, 
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>, Jiri Olsa <jolsa@kernel.org>, 
+	Ian Rogers <irogers@google.com>, Adrian Hunter <adrian.hunter@intel.com>, 
+	Kan Liang <kan.liang@linux.intel.com>, James Clark <james.clark@linaro.org>, 
+	Howard Chu <howardchu95@gmail.com>, Charlie Jenkins <charlie@rivosinc.com>, 
+	Thomas Richter <tmricht@linux.ibm.com>, Athira Rajeev <atrajeev@linux.vnet.ibm.com>, 
+	Stephen Brennan <stephen.s.brennan@oracle.com>, 
+	Jean-Philippe Romain <jean-philippe.romain@foss.st.com>, Junhao He <hejunhao3@huawei.com>, 
+	"Dr. David Alan Gilbert" <linux@treblig.org>, Dmitry Vyukov <dvyukov@google.com>, linux-perf-users@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-Andreas Hindborg <a.hindborg@kernel.org> writes:
+When a test is forked no file descriptors should be open, however,
+parent ones may have been inherited - in particular those of the pipes
+of other forked child test processes. Add a loop to clean-up/close
+those file descriptors prior to running the test. At the end of the
+test assert that no additional file descriptors are present as this
+would indicate a file descriptor leak.
 
-> "FUJITA Tomonori" <fujita.tomonori@gmail.com> writes:
->
->> On Tue, 24 Jun 2025 15:11:31 +0200
->> Andreas Hindborg <a.hindborg@kernel.org> wrote:
->>
->>>> and already introduces pain for
->>>> others (and likely even more pain when we need to rename it back next
->>>> cycle), it doesn't look like a good idea to keep it.
->>>
->>> Ok, I'll drop it.
->>
->> Do you want me to send the updated hrtimer conversion patchset
->> (using as_* names)?
->
-> No, I am just about finished fixing up the rest. You can check if it is
-> OK when I push.
+Signed-off-by: Ian Rogers <irogers@google.com>
+---
+ tools/perf/tests/builtin-test.c | 69 +++++++++++++++++++++++++++++++++
+ 1 file changed, 69 insertions(+)
 
-I pushed it, please check.
-
-
-Best regards,
-Andreas Hindborg
-
-
+diff --git a/tools/perf/tests/builtin-test.c b/tools/perf/tests/builtin-test.c
+index 45d3d8b3317a..4061d5d969aa 100644
+--- a/tools/perf/tests/builtin-test.c
++++ b/tools/perf/tests/builtin-test.c
+@@ -4,6 +4,7 @@
+  *
+  * Builtin regression testing command: ever growing number of sanity tests
+  */
++#include <ctype.h>
+ #include <fcntl.h>
+ #include <errno.h>
+ #include <poll.h>
+@@ -155,6 +156,71 @@ static struct test_workload *workloads[] = {
+ #define test_suite__for_each_test_case(suite, idx)			\
+ 	for (idx = 0; (suite)->test_cases && (suite)->test_cases[idx].name != NULL; idx++)
+ 
++static void close_parent_fds(void)
++{
++	DIR *dir = opendir("/proc/self/fd");
++	struct dirent *ent;
++
++	while ((ent = readdir(dir))) {
++		char *end;
++		long fd;
++
++		if (ent->d_type != DT_LNK)
++			continue;
++
++		if (!isdigit(ent->d_name[0]))
++			continue;
++
++		fd = strtol(ent->d_name, &end, 10);
++		if (*end)
++			continue;
++
++		if (fd <= 3 || fd == dirfd(dir))
++			continue;
++
++		close(fd);
++	}
++	closedir(dir);
++}
++
++static void check_leaks(void)
++{
++	DIR *dir = opendir("/proc/self/fd");
++	struct dirent *ent;
++	int leaks = 0;
++
++	while ((ent = readdir(dir))) {
++		char path[PATH_MAX];
++		char *end;
++		long fd;
++		ssize_t len;
++
++		if (ent->d_type != DT_LNK)
++			continue;
++
++		if (!isdigit(ent->d_name[0]))
++			continue;
++
++		fd = strtol(ent->d_name, &end, 10);
++		if (*end)
++			continue;
++
++		if (fd <= 3 || fd == dirfd(dir))
++			continue;
++
++		leaks++;
++		len = readlinkat(dirfd(dir), ent->d_name, path, sizeof(path));
++		if (len > 0 && (size_t)len < sizeof(path))
++			path[len] = '\0';
++		else
++			strncpy(path, ent->d_name, sizeof(path));
++		pr_err("Leak of file descriptor %s that opened: '%s'\n", ent->d_name, path);
++	}
++	closedir(dir);
++	if (leaks)
++		abort();
++}
++
+ static int test_suite__num_test_cases(const struct test_suite *t)
+ {
+ 	int num;
+@@ -242,6 +308,8 @@ static int run_test_child(struct child_process *process)
+ 	struct child_test *child = container_of(process, struct child_test, process);
+ 	int err;
+ 
++	close_parent_fds();
++
+ 	err = sigsetjmp(run_test_jmp_buf, 1);
+ 	if (err) {
+ 		fprintf(stderr, "\n---- unexpected signal (%d) ----\n", err);
+@@ -257,6 +325,7 @@ static int run_test_child(struct child_process *process)
+ 	err = test_function(child->test, child->test_case_num)(child->test, child->test_case_num);
+ 	pr_debug("---- end(%d) ----\n", err);
+ 
++	check_leaks();
+ err_out:
+ 	fflush(NULL);
+ 	for (size_t i = 0; i < ARRAY_SIZE(signals); i++)
+-- 
+2.50.0.714.g196bf9f422-goog
 
 
