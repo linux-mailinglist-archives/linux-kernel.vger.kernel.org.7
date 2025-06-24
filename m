@@ -1,97 +1,337 @@
-Return-Path: <linux-kernel+bounces-700102-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-700105-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C5CF2AE63DA
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Jun 2025 13:49:07 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0F5F8AE63E7
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Jun 2025 13:53:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4D1E517EF54
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Jun 2025 11:49:07 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B41031898BFE
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Jun 2025 11:53:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E567228A1E0;
-	Tue, 24 Jun 2025 11:49:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="N6/n9L9X"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8A28F28DB7B;
+	Tue, 24 Jun 2025 11:52:59 +0000 (UTC)
+Received: from mailgw.kylinos.cn (mailgw.kylinos.cn [124.126.103.232])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 42D2F284682;
-	Tue, 24 Jun 2025 11:49:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9B73C21A42F;
+	Tue, 24 Jun 2025 11:52:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=124.126.103.232
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750765742; cv=none; b=i5+pw+T3Sw3w/3rrNbi38hRBOYsEzDyEipoBYphrVYOwMnrjYSe4LXooRoO+/UWICuziB/F9aZjIIgPP151KnjhYtl8Pbn8H9Q5QISkAvrpLJ2doiTFlmYUhAFoTyyeN79IMTZ6tJjI7Z2j7AW4h9+svezPih2AA/gqYtCaUKK8=
+	t=1750765979; cv=none; b=A3gEeUSvLJCA6B7I1d5cVAv9erhAe38dV+XIb1oTVC0hNCKMKpTU40OJlg42qC/rhWJgd4waRgZgfNYtPh04Iui4A09Dy/uEEIotLSzGmfN5RqvzcEYBWzlzWCnpNqwDzfokftWO7Alz1UEK96qvHcQnPo9pTsFIjtg4rGGDgJs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750765742; c=relaxed/simple;
-	bh=cw/9YN5eCuNOj+h6sAk5pRs3ujA52Uc7g1g1tXp3X9k=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=tEz5UYUcMA1Cg7FcPhCEUtCIAL1+Frgno1eKmI/FAo87RB/FqrDAVKJi6RW9p7Vu9kiyZyLkuGUK5Yed9nzlTYpg6x+2F5EIxlDcn3T1/RTXppwoMA5stNrAniuw2s+YLCa3dwDdlR5T1fvtx9rxY7XPKyacIy1xbHQL7cEKLtg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=N6/n9L9X; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7B4A8C4CEE3;
-	Tue, 24 Jun 2025 11:48:58 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1750765741;
-	bh=cw/9YN5eCuNOj+h6sAk5pRs3ujA52Uc7g1g1tXp3X9k=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=N6/n9L9XqvtVWn5BA1lPyvfpXm8DOKcAeYJsSnAQZ86k0AjwKCJ1UHGyJls84aJ+q
-	 4ufBoA6pL1/MREbg9e7GD5PWHJZ8e1ENPFvY5gY/ievuhmPX73LIE05eTgNlQLtUcA
-	 RcC6S4raNHVrBXgtGjO+xO2GeiE5Tw/l0DhHoKzlXp4G+RiQ8tJzpPhv/nf9t0kPKt
-	 hjbqjbMxAfboO4ZBRlytgfrgMoWhX9di8aWTUgsgsOtzWMDGRo5XcSRd+qX5Wx0bKF
-	 Ffy9Dr3WNS0xUmEfm+gaQwfY0dHEqBMe8YX+3bp1a3zZbem3QfLXi7H47bHuvBs9Za
-	 BBjX8B47GkUCw==
-Date: Tue, 24 Jun 2025 12:48:55 +0100
-From: Mark Brown <broonie@kernel.org>
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: stable@vger.kernel.org, patches@lists.linux.dev,
-	linux-kernel@vger.kernel.org, torvalds@linux-foundation.org,
-	akpm@linux-foundation.org, linux@roeck-us.net, shuah@kernel.org,
-	patches@kernelci.org, lkft-triage@lists.linaro.org, pavel@denx.de,
-	jonathanh@nvidia.com, f.fainelli@gmail.com,
-	sudipm.mukherjee@gmail.com, srw@sladewatkins.net, rwarsow@gmx.de,
-	conor@kernel.org, hargar@microsoft.com
-Subject: Re: [PATCH 6.15 000/592] 6.15.4-rc1 review
-Message-ID: <d568f701-c299-41a4-97af-47270cf640f7@sirena.org.uk>
-References: <20250623130700.210182694@linuxfoundation.org>
+	s=arc-20240116; t=1750765979; c=relaxed/simple;
+	bh=SNEL7ff1bV6EVPxE0ymDSSOChJQcy4tMjss3xXofuBg=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type; b=V3Tm8ZqSnlWh2QacnF4EdnwtGJ9/473AcAVuw5NaziDRN1TZbukCvIyO6YStqnC1KdlEF9grt2XJpdFuXHxQ6MeC7ldpIrf8fsQHQ3o8kG7rJatfuDnV8AL0altpinghcbaguVBqqs+4gZyaA/71SrTfeSq+2EAKwGJfsVTIS0k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinos.cn; spf=pass smtp.mailfrom=kylinos.cn; arc=none smtp.client-ip=124.126.103.232
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinos.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kylinos.cn
+X-UUID: bfcc14d050f111f0b29709d653e92f7d-20250624
+X-CID-P-RULE: Release_Ham
+X-CID-O-INFO: VERSION:1.1.45,REQID:63eea734-fc57-472e-97a4-89637b6213d8,IP:0,U
+	RL:0,TC:0,Content:0,EDM:0,RT:0,SF:0,FILE:0,BULK:0,RULE:Release_Ham,ACTION:
+	release,TS:0
+X-CID-META: VersionHash:6493067,CLOUDID:45fbe85e95b5f6139c8a5b66904cc175,BulkI
+	D:nil,BulkQuantity:0,Recheck:0,SF:102,TC:nil,Content:0|50,EDM:-3,IP:nil,UR
+	L:0,File:nil,RT:nil,Bulk:nil,QS:nil,BEC:nil,COL:0,OSI:0,OSA:0,AV:0,LES:1,S
+	PR:NO,DKR:0,DKP:0,BRR:0,BRE:0,ARC:0
+X-CID-BVR: 0
+X-CID-BAS: 0,_,0,_
+X-CID-FACTOR: TF_CID_SPAM_SNR
+X-UUID: bfcc14d050f111f0b29709d653e92f7d-20250624
+Received: from mail.kylinos.cn [(10.44.16.175)] by mailgw.kylinos.cn
+	(envelope-from <zhangzihuan@kylinos.cn>)
+	(Generic MTA)
+	with ESMTP id 398538517; Tue, 24 Jun 2025 19:52:48 +0800
+Received: from mail.kylinos.cn (localhost [127.0.0.1])
+	by mail.kylinos.cn (NSMail) with SMTP id 2E28EE008FA5;
+	Tue, 24 Jun 2025 19:52:48 +0800 (CST)
+X-ns-mid: postfix-685A9190-456638
+Received: from localhost.localdomain (unknown [172.25.120.24])
+	by mail.kylinos.cn (NSMail) with ESMTPA id 422F3E008FA4;
+	Tue, 24 Jun 2025 19:52:47 +0800 (CST)
+From: Zihuan Zhang <zhangzihuan@kylinos.cn>
+To: rafael@kernel.org,
+	pavel@kernel.org,
+	len.brown@intel.com
+Cc: linux-pm@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Zihuan Zhang <zhangzihuan@kylinos.cn>
+Subject: [PATCH v1] [RFC PATCH] PM / freezer: skip kernel threads with PF_NOFREEZE to reduce freeze overhead
+Date: Tue, 24 Jun 2025 19:52:44 +0800
+Message-Id: <20250624115244.19260-1-zhangzihuan@kylinos.cn>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="p7LEaVjrB2dgIlwA"
-Content-Disposition: inline
-In-Reply-To: <20250623130700.210182694@linuxfoundation.org>
-X-Cookie: Do, or do not
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
 
+Hi Rafael,
 
---p7LEaVjrB2dgIlwA
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+We are exploring performance optimizations in the freezer subsystem, and
+would like to submit this RFC patch for your feedback.
 
-On Mon, Jun 23, 2025 at 02:59:18PM +0200, Greg Kroah-Hartman wrote:
-> This is the start of the stable review cycle for the 6.15.4 release.
-> There are 592 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
+On modern systems, the number of kernel threads can easily reach several
+hundred.  However, during suspend or hibernate, only a small fraction of
+them are actually freezable. Most kernel threads are marked with
+`PF_NOFREEZE`.
 
-Tested-by: Mark Brown <broonie@kernel.org>
+Despite this, the freezer still traverses every task in the system and
+calls `freeze_task()` on all of them.
 
---p7LEaVjrB2dgIlwA
-Content-Type: application/pgp-signature; name="signature.asc"
+To reduce this overhead, we propose skipping kernel threads that are
+guaranteed non-freezable (`PF_KTHREAD && PF_NOFREEZE`) earlier in the
+traversal.
 
------BEGIN PGP SIGNATURE-----
+While studying the freezer behavior, we noticed that some kernel threads
+had `PF_FROZEN` set but never actually entered `refrigerator()`. This is
+confusing, and may indicate subtle races or incomplete freeze logic.
 
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmhakKcACgkQJNaLcl1U
-h9C0OQf+JAHd8Ho4rS9wZZ7Bo4ppdU3g0ATEsiv/oO9UHhpYFbi9PUxd2Vv2ZWDX
-7HZ8tdVlEXkKLcvWVzmVgeCEyTbB4/9nGXtoE2cVTsdNz193oe9+/XBiQkLTLhu4
-rIlEjdsmCw34MfJWg634w8i/gcsC7k3v033aEEgjii1nZAhIUUG4ZBCRIx3poNbZ
-x6k0DeeZqrr7/Vo0io6LP46TA2RljUuvgUSJ1UyJmaraM05f3LHfYGdxQ5jEq55h
-zBlEPI2UfI3TPc2sJ8y1mSWB0PsKROjhvZD3Mv4ANSwr8XKO1yE9TMviv351pKSl
-8ZcIKbl3ZFwDDgvQdXMcTl9Rnc683g==
-=4+IV
------END PGP SIGNATURE-----
+We also observed that some kernel threads are marked as freezable (i.e.
+not `PF_NOFREEZE`) but never actually enter the frozen state =E2=80=94 li=
+kely
+because they never reach `try_to_freeze()` within the freeze window.
+This further calls into question whether we should treat such threads as
+true freeze targets.
 
---p7LEaVjrB2dgIlwA--
+One concern is that kernel threads may **dynamically change state**
+during the freeze window. This makes it non-trivial to decide statically
+which threads are safe to skip.
+
+This RFC patch adds a preliminary filter to skip kernel threads that are
+both:
+
+- Marked with `PF_KTHREAD`; and
+- Marked with `PF_NOFREEZE`;
+
+These threads will no longer go through `freeze_task()` or count toward
+the `todo` counter. The goal is to reduce traversal time and avoid
+unnecessary bookkeeping for threads we know will always be skipped.
+
+We would like to hear your thoughts on whether:
+
+1. This change is acceptable and aligns with the freezer model's design;
+2. It's worth pursuing as a real optimization (even if the gain is
+   modest);
+3. We should further investigate dynamic kernel thread behavior during
+   suspend.
+
+here is the S3 log:
+grep -E "entered|freezable:1|set_task" dmesg
+[  134.344100] current kernel process name:kauditd pid:101 freezable:1 fr=
+ozen:0
+[  134.344138] current kernel process name:oom_reaper pid:113 freezable:1=
+ frozen:0
+[  134.344144] current kernel process name:kcompactd0 pid:115 freezable:1=
+ frozen:0
+[  134.344147] current kernel process name:ksmd pid:116 freezable:1 froze=
+n:0
+[  134.344150] current kernel process name:khugepaged pid:117 freezable:1=
+ frozen:0
+[  134.344182] current kernel process name:kswapd0 pid:129 freezable:1 fr=
+ozen:0
+[  134.344328] current kernel process name:jbd2/sdb3-8 pid:446 freezable:=
+1 frozen:0
+[  134.344334] current kernel process name:jbd2/sdb2-8 pid:505 freezable:=
+1 frozen:0
+[  134.344343] current kernel process name:jbd2/sda1-8 pid:510 freezable:=
+1 frozen:0
+[  134.346411] current kernel process name:kauditd pid:101 freezable:1 fr=
+ozen:0
+[  134.346434] current kernel process name:oom_reaper pid:113 freezable:1=
+ frozen:0
+[  134.346438] current kernel process name:kcompactd0 pid:115 freezable:1=
+ frozen:0
+[  134.346440] current kernel process name:ksmd pid:116 freezable:1 froze=
+n:0
+[  134.346442] current kernel process name:khugepaged pid:117 freezable:1=
+ frozen:0
+[  134.346465] current kernel process name:kswapd0 pid:129 freezable:1 fr=
+ozen:0
+[  134.346567] current kernel process name:jbd2/sdb3-8 pid:446 freezable:=
+1 frozen:0
+[  134.346571] current kernel process name:jbd2/sdb2-8 pid:505 freezable:=
+1 frozen:0
+[  134.346577] current kernel process name:jbd2/sda1-8 pid:510 freezable:=
+1 frozen:0
+[  134.348282] current kernel process name:kauditd pid:101 freezable:1 fr=
+ozen:0
+[  134.348303] current kernel process name:oom_reaper pid:113 freezable:1=
+ frozen:0
+[  134.348306] current kernel process name:kcompactd0 pid:115 freezable:1=
+ frozen:0
+[  134.348308] current kernel process name:ksmd pid:116 freezable:1 froze=
+n:0
+[  134.348310] current kernel process name:khugepaged pid:117 freezable:1=
+ frozen:0
+[  134.348331] current kernel process name:kswapd0 pid:129 freezable:1 fr=
+ozen:0
+[  134.348421] current kernel process name:jbd2/sdb3-8 pid:446 freezable:=
+1 frozen:0
+[  134.348424] current kernel process name:jbd2/sdb2-8 pid:505 freezable:=
+1 frozen:0
+[  134.348429] current kernel process name:jbd2/sda1-8 pid:510 freezable:=
+1 frozen:0
+[  134.352330] current kernel process name:kauditd pid:101 freezable:1 fr=
+ozen:0
+[  134.352351] current kernel process name:oom_reaper pid:113 freezable:1=
+ frozen:0
+[  134.352354] current kernel process name:kcompactd0 pid:115 freezable:1=
+ frozen:0
+[  134.352356] current kernel process name:ksmd pid:116 freezable:1 froze=
+n:0
+[  134.352358] current kernel process name:khugepaged pid:117 freezable:1=
+ frozen:0
+[  134.352379] current kernel process name:kswapd0 pid:129 freezable:1 fr=
+ozen:0
+[  134.352469] current kernel process name:jbd2/sdb3-8 pid:446 freezable:=
+1 frozen:0
+[  134.352473] current kernel process name:jbd2/sdb2-8 pid:505 freezable:=
+1 frozen:0
+[  134.352478] current kernel process name:jbd2/sda1-8 pid:510 freezable:=
+1 frozen:0
+[  134.360328] current kernel process name:kauditd pid:101 freezable:1 fr=
+ozen:0
+[  134.360349] current kernel process name:oom_reaper pid:113 freezable:1=
+ frozen:0
+[  134.360353] current kernel process name:kcompactd0 pid:115 freezable:1=
+ frozen:0
+[  134.360354] current kernel process name:ksmd pid:116 freezable:1 froze=
+n:0
+[  134.360356] current kernel process name:khugepaged pid:117 freezable:1=
+ frozen:0
+[  134.360377] current kernel process name:kswapd0 pid:129 freezable:1 fr=
+ozen:0
+[  134.360467] current kernel process name:jbd2/sdb3-8 pid:446 freezable:=
+1 frozen:0
+[  134.360471] current kernel process name:jbd2/sdb2-8 pid:505 freezable:=
+1 frozen:0
+[  134.360476] current kernel process name:jbd2/sda1-8 pid:510 freezable:=
+1 frozen:0
+[  134.368321] current kernel process name:kauditd pid:101 freezable:1 fr=
+ozen:0
+[  134.368342] current kernel process name:oom_reaper pid:113 freezable:1=
+ frozen:0
+[  134.368345] current kernel process name:kcompactd0 pid:115 freezable:1=
+ frozen:0
+[  134.368347] current kernel process name:ksmd pid:116 freezable:1 froze=
+n:0
+[  134.368349] current kernel process name:khugepaged pid:117 freezable:1=
+ frozen:0
+[  134.368370] current kernel process name:kswapd0 pid:129 freezable:1 fr=
+ozen:0
+[  134.368460] current kernel process name:jbd2/sdb3-8 pid:446 freezable:=
+1 frozen:0
+[  134.368463] current kernel process name:jbd2/sdb2-8 pid:505 freezable:=
+1 frozen:0
+[  134.368469] current kernel process name:jbd2/sda1-8 pid:510 freezable:=
+1 frozen:0
+[  134.376307] current kernel process name:kauditd pid:101 freezable:1 fr=
+ozen:0
+[  134.376329] current kernel process name:oom_reaper pid:113 freezable:1=
+ frozen:0
+[  134.376332] current kernel process name:kcompactd0 pid:115 freezable:1=
+ frozen:0
+[  134.376334] current kernel process name:ksmd pid:116 freezable:1 froze=
+n:0
+[  134.376336] current kernel process name:khugepaged pid:117 freezable:1=
+ frozen:0
+[  134.376356] current kernel process name:kswapd0 pid:129 freezable:1 fr=
+ozen:0
+[  134.376446] current kernel process name:jbd2/sdb3-8 pid:446 freezable:=
+1 frozen:0
+[  134.376450] current kernel process name:jbd2/sdb2-8 pid:505 freezable:=
+1 frozen:0
+[  134.376455] current kernel process name:jbd2/sda1-8 pid:510 freezable:=
+1 frozen:0
+[  134.385070] current kernel process name:kauditd pid:101 freezable:1 fr=
+ozen:0
+[  134.385093] current kernel process name:oom_reaper pid:113 freezable:1=
+ frozen:0
+[  134.385097] current kernel process name:kcompactd0 pid:115 freezable:1=
+ frozen:0
+[  134.385106] current kernel process name:ksmd pid:116 freezable:1 froze=
+n:0
+[  134.385108] current kernel process name:khugepaged pid:117 freezable:1=
+ frozen:0
+[  134.385136] current kernel process name:kswapd0 pid:129 freezable:1 fr=
+ozen:0
+[  134.385238] current kernel process name:jbd2/sdb3-8 pid:446 freezable:=
+1 frozen:0
+[  134.385242] current kernel process name:jbd2/sdb2-8 pid:505 freezable:=
+1 frozen:0
+[  134.385247] current kernel process name:jbd2/sda1-8 pid:510 freezable:=
+1 frozen:0
+[  134.385755] current kernel process name:kauditd pid:101 freezable:1 fr=
+ozen:0
+[  134.385756] set_task_frozen kernel thread name:kauditd pid:101
+[  134.385778] current kernel process name:oom_reaper pid:113 freezable:1=
+ frozen:0
+[  134.385779] set_task_frozen kernel thread name:oom_reaper pid:113
+[  134.385782] current kernel process name:kcompactd0 pid:115 freezable:1=
+ frozen:0
+[  134.385783] set_task_frozen kernel thread name:kcompactd0 pid:115
+[  134.385785] current kernel process name:ksmd pid:116 freezable:1 froze=
+n:0
+[  134.385786] set_task_frozen kernel thread name:ksmd pid:116
+[  134.385788] current kernel process name:khugepaged pid:117 freezable:1=
+ frozen:0
+[  134.385789] set_task_frozen kernel thread name:khugepaged pid:117
+[  134.385810] current kernel process name:kswapd0 pid:129 freezable:1 fr=
+ozen:0
+[  134.385849] kswapd0 entered refrigerator
+[  134.385911] current kernel process name:jbd2/sdb3-8 pid:446 freezable:=
+1 frozen:0
+[  134.385917] current kernel process name:jbd2/sdb2-8 pid:505 freezable:=
+1 frozen:0
+[  134.385917] jbd2/sdb3-8 entered refrigerator
+[  134.385926] current kernel process name:jbd2/sda1-8 pid:510 freezable:=
+1 frozen:0
+[  134.385953] jbd2/sdb2-8 entered refrigerator
+[  134.385963] jbd2/sda1-8 entered refrigerator
+[  134.387526] current kernel process name:kauditd pid:101 freezable:1 fr=
+ozen:1
+[  134.387549] current kernel process name:oom_reaper pid:113 freezable:1=
+ frozen:1
+[  134.387553] current kernel process name:kcompactd0 pid:115 freezable:1=
+ frozen:1
+[  134.387555] current kernel process name:ksmd pid:116 freezable:1 froze=
+n:1
+[  134.387557] current kernel process name:khugepaged pid:117 freezable:1=
+ frozen:1
+[  134.387581] current kernel process name:kswapd0 pid:129 freezable:1 fr=
+ozen:1
+[  134.387682] current kernel process name:jbd2/sdb3-8 pid:446 freezable:=
+1 frozen:1
+[  134.387686] current kernel process name:jbd2/sdb2-8 pid:505 freezable:=
+1 frozen:1
+[  134.387692] current kernel process name:jbd2/sda1-8 pid:510 freezable:=
+1 frozen:1
+
+Signed-off-by: Zihuan Zhang <zhangzihuan@kylinos.cn>
+---
+ kernel/power/process.c | 2 ++
+ 1 file changed, 2 insertions(+)
+
+diff --git a/kernel/power/process.c b/kernel/power/process.c
+index dc0dfc349f22..49dc6545a099 100644
+--- a/kernel/power/process.c
++++ b/kernel/power/process.c
+@@ -51,6 +51,8 @@ static int try_to_freeze_tasks(bool user_only)
+ 		todo =3D 0;
+ 		read_lock(&tasklist_lock);
+ 		for_each_process_thread(g, p) {
++			if ((p->flags & PF_KTHREAD) && !(p->flags & PF_NOFREEZE))
++				continue;
+ 			if (p =3D=3D current || !freeze_task(p))
+ 				continue;
+=20
+--=20
+2.25.1
+
 
