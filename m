@@ -1,54 +1,55 @@
-Return-Path: <linux-kernel+bounces-699739-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-699741-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CA138AE5EC2
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Jun 2025 10:09:12 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 16102AE5EC8
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Jun 2025 10:10:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 55B3916A209
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Jun 2025 08:09:07 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E32237A7A8F
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Jun 2025 08:08:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0F7C825394B;
-	Tue, 24 Jun 2025 08:09:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 040982566D9;
+	Tue, 24 Jun 2025 08:09:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.beauty header.i=me@linux.beauty header.b="EameN6R7"
+	dkim=pass (1024-bit key) header.d=linux.beauty header.i=me@linux.beauty header.b="bsjFlkcZ"
 Received: from sender4-op-o15.zoho.com (sender4-op-o15.zoho.com [136.143.188.15])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 21453248F7E
-	for <linux-kernel@vger.kernel.org>; Tue, 24 Jun 2025 08:08:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 932EE1DF98B
+	for <linux-kernel@vger.kernel.org>; Tue, 24 Jun 2025 08:09:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.15
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750752540; cv=pass; b=YozfLd0s0IsphTSnrRWDyRQXUpbXOgyjV3h0lovNPwUt023DSNuE1jy8URjy+3ZE0mCcTL3DzWTBAnNunAUHT5I6sVr4kS8RD13maa8/JpmpL/yd5dCmXoH+Li6xhVl2aI5ByUQIakPhqt4BArzMU8Gs12zmqpXwLjXTJUORRJM=
+	t=1750752582; cv=pass; b=N7VSkYrIFZCXOZzi1Dw34hm0HyQXY2Qig+aBUwZL+Xuy1xPXlIctYZavBPjrTLRXa17WSzyBrVn0LBwkUuah6WWQaT1or4fkHPOmfu4IXw/U4IWuKb8FC7zRw+x1xYj5H7GlTOb5fBAdcCfYwlyUnJtwcxhCGdvx3NtqKg+Ptks=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750752540; c=relaxed/simple;
-	bh=SaFeltjIhffRZcpSoI9ui/Z8/TR17m1v5uOiSvZXsFI=;
-	h=From:To:Subject:Date:Message-ID:MIME-Version:Content-Type; b=RpzTrCH0AEMWeORwWfE3SErmy+KtkOV+Ee7Wp5SLxOpU7JFxxka+SI1+IwZO6cgStIz48PH6MovqNYOmmKWOLaId1D6CgXaSALXSLxzjTOR5vaEUTucSgw9Jsh0lWNtwen6bgIQJe+dM6QEsqXvVu9NtLnWrEZkmguTV9S4fuWw=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux.beauty; spf=pass smtp.mailfrom=linux.beauty; dkim=pass (1024-bit key) header.d=linux.beauty header.i=me@linux.beauty header.b=EameN6R7; arc=pass smtp.client-ip=136.143.188.15
+	s=arc-20240116; t=1750752582; c=relaxed/simple;
+	bh=oxztMWmBEFZmnk5mzpPOmInc8CJ0XvgSTQhYUnDoiaA=;
+	h=From:To:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=AYWOmGg5719gqzNE8MnuPTDnmpn0UkhukyjA5lvJpVerVS9jqP2MbIgmGLMr53nRuLYAaeSFJ7Se1vRaTMEKOeK18HF/jteMrwF8GoZIYanJrhvL7YBmBQ33gxAP6jRXHDC3yQ3NLBD7lpMeTAu1JrIS9qz1RviWvctZnGyer6s=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux.beauty; spf=pass smtp.mailfrom=linux.beauty; dkim=pass (1024-bit key) header.d=linux.beauty header.i=me@linux.beauty header.b=bsjFlkcZ; arc=pass smtp.client-ip=136.143.188.15
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux.beauty
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.beauty
-ARC-Seal: i=1; a=rsa-sha256; t=1750752505; cv=none; 
+ARC-Seal: i=1; a=rsa-sha256; t=1750752510; cv=none; 
 	d=zohomail.com; s=zohoarc; 
-	b=Dqw8vfjrZUk5usJMY3XbRoNyqE+R9NbrFn7I9DpgDkBoaqujDT3RVvAb2hxF3I+gkQ63y7R6c2w2sj8hw9pfUsO7wdWHCWLSViWPW1MM25/zek3jrf0BOEzm5AsDSLSzyA0idBITOjjUwKbNLa9948+e12UIhSml1BiCT5UxaOs=
+	b=EsLzLwEOaoFXzevEsP7NDwUbkTDLf/nwLMJhWtCXnMWW/jUMoOuuohQco++C7OpeKHN3gbrXjm50NTF+lK6m4gxMdtbxNC4w1/WndLozaMUb7NSz5fHmspB/TYsDtOx/2RuDEM4kjNIjY31VemvAFWJqCJGLYscW7dcVK+7MFw0=
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
-	t=1750752505; h=Content-Type:Content-Transfer-Encoding:Date:Date:From:From:MIME-Version:Message-ID:Subject:Subject:To:To:Message-Id:Reply-To:Cc; 
-	bh=rQM7oFwr7sChbW7FI+ZavpM60eKYk7PeTWBCwjL44LM=; 
-	b=gikfV8JHINeKgFNlOJ3A5p0dDzj7RI/u+GrwsBy6HcalqhPfKp9mApPvvSv7ydpeYNUS6c4hBzHhX7nOCRrCyELWnt4Ajp0gB9nt6rt5laA9dgZFAlwYVMuLZCNuUyWzzxYENGdfC0Ego17vadqiWjvIt8QOcQWl011ReG+QYZ8=
+	t=1750752510; h=Content-Transfer-Encoding:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To:Cc; 
+	bh=inpdI4jjHBay8by/ADyJAX9SBwP0Wlfs/Ocj4U4TvOY=; 
+	b=ZG3344gxmdrU6QbFKt1f/sYa1VJ3TvbflWwDbJFqxYDmga6Rg15iHgsm+flZJXpE6oZvKGj2HxSizI2Foc1EjkpKO0/SC9HnR5vgZNBVeMn1DG91h1PqiHw5VFXt4aNWGouSa6U51IzXGZlpSgpq7GhD7HJfy6gsB9ItYB6+WVg=
 ARC-Authentication-Results: i=1; mx.zohomail.com;
 	dkim=pass  header.i=linux.beauty;
 	spf=pass  smtp.mailfrom=me@linux.beauty;
 	dmarc=pass header.from=<me@linux.beauty>
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1750752505;
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1750752510;
 	s=zmail; d=linux.beauty; i=me@linux.beauty;
-	h=From:From:To:To:Subject:Subject:Date:Date:Message-ID:MIME-Version:Content-Type:Content-Transfer-Encoding:Message-Id:Reply-To:Cc;
-	bh=rQM7oFwr7sChbW7FI+ZavpM60eKYk7PeTWBCwjL44LM=;
-	b=EameN6R7YwbXhDAc5QB+EGxOG20bAo2YKu/b4xwOhwJZg3hG/cj4ZFD9GbIU8z6T
-	MzsH6KIk0C6zt39Lind+l/zA3QBqiDn5DgJelSwQad51TEEtssvmcakgo9+Nc8WsY/T
-	O/6mzgIZjFv+7mpGsqXcuvB0SV1d1ana1os9xUv8=
-Received: by mx.zohomail.com with SMTPS id 1750752500469835.715678127577;
-	Tue, 24 Jun 2025 01:08:20 -0700 (PDT)
+	h=From:From:To:To:Subject:Subject:Date:Date:Message-ID:In-Reply-To:References:MIME-Version:Content-Transfer-Encoding:Message-Id:Reply-To:Cc;
+	bh=inpdI4jjHBay8by/ADyJAX9SBwP0Wlfs/Ocj4U4TvOY=;
+	b=bsjFlkcZJiH23+lWYznKMZpea2YAjkiq54XVopyZ9bJlTBARoV0imQbkVuvWQ+b4
+	w5jQRK5qgKBlJocFvFGZ35+wd2duda7ehtWkQxq8/1pw51DK10ztnBmHgpTHMoj9K2C
+	JzDHPKC5ROYfDFQE1OYe6c3jju1QSIPJRouTakZQ=
+Received: by mx.zohomail.com with SMTPS id 1750752507289328.68457917208616;
+	Tue, 24 Jun 2025 01:08:27 -0700 (PDT)
 From: Li Chen <me@linux.beauty>
 To: Thomas Gleixner <tglx@linutronix.de>,
 	Ingo Molnar <mingo@redhat.com>,
@@ -62,45 +63,104 @@ To: Thomas Gleixner <tglx@linutronix.de>,
 	Sohil Mehta <sohil.mehta@intel.com>,
 	Brian Gerst <brgerst@gmail.com>,
 	Patryk Wlazlyn <patryk.wlazlyn@linux.intel.com>,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH 0/2] x86/smpboot: tidy sched-topology and drop useless SMT level
-Date: Tue, 24 Jun 2025 16:08:06 +0800
-Message-ID: <20250624080810.66821-1-me@linux.beauty>
+	linux-kernel@vger.kernel.org,
+	"Gautham R. Shenoy" <gautham.shenoy@amd.com>,
+	Li Chen <chenl311@chinatelecom.cn>
+Subject: [PATCH 1/2] x86/smpboot: Decrapify build_sched_topology()
+Date: Tue, 24 Jun 2025 16:08:07 +0800
+Message-ID: <20250624080810.66821-2-me@linux.beauty>
 X-Mailer: git-send-email 2.49.0
+In-Reply-To: <20250624080810.66821-1-me@linux.beauty>
+References: <20250624080810.66821-1-me@linux.beauty>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 X-ZohoMailClient: External
 
-From: Li Chen <chenl311@chinatelecom.cn>
+From: Thomas Gleixner <tglx@linutronix.de>
 
-This two–patch series cleans up sched-domain topology handling and
-eliminates hundreds of pointless attach/destroy cycles when SMT is
-not available.
+The #ifdeffery and the initializers in build_sched_topology() are just
+disgusting. The SCHED_SMT #ifdef is also pointless because SCHED_SMT is
+unconditionally enabled when SMP is enabled.
 
-Patch 1  (from Thomas, unchanged) gets rid of the #ifdef maze in
-build_sched_topology() by statically initialising the topology array.
+Statically initialize the domain levels in the topology array and let
+build_sched_topology() invalidate the package domain level when NUMA in
+package is available.
 
-Patch 2  (mine) is a follow-up that simply memmoves the array when
-cpu_smt_num_threads <= 1, so the SMT level never gets created and
-immediately torn down again.
+Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+---
+ arch/x86/kernel/smpboot.c | 45 +++++++++++++++------------------------
+ 1 file changed, 17 insertions(+), 28 deletions(-)
 
-Tested on Qemu.
-
-Li Chen (1):
-  x86/smpboot: avoid SMT domain attach/destroy if SMT is not enabled
-
-Thomas Gleixner (1):
-  x86/smpboot: Decrapify build_sched_topology()
-
- arch/x86/kernel/smpboot.c | 59 +++++++++++++++++++++------------------
- 1 file changed, 32 insertions(+), 27 deletions(-)
-
+diff --git a/arch/x86/kernel/smpboot.c b/arch/x86/kernel/smpboot.c
+index fc78c2325fd29..7d202f9785362 100644
+--- a/arch/x86/kernel/smpboot.c
++++ b/arch/x86/kernel/smpboot.c
+@@ -478,43 +478,32 @@ static int x86_cluster_flags(void)
+  */
+ static bool x86_has_numa_in_package;
+ 
+-static struct sched_domain_topology_level x86_topology[6];
++#define DOMAIN(maskfn, flagsfn, dname) { .mask = maskfn, .sd_flags = flagsfn, .name = #dname }
+ 
+-static void __init build_sched_topology(void)
+-{
+-	int i = 0;
+-
+-#ifdef CONFIG_SCHED_SMT
+-	x86_topology[i++] = (struct sched_domain_topology_level){
+-		cpu_smt_mask, cpu_smt_flags, SD_INIT_NAME(SMT)
+-	};
+-#endif
++static struct sched_domain_topology_level x86_topology[] = {
++	DOMAIN(cpu_smt_mask, cpu_smt_flags, SMT),
+ #ifdef CONFIG_SCHED_CLUSTER
+-	x86_topology[i++] = (struct sched_domain_topology_level){
+-		cpu_clustergroup_mask, x86_cluster_flags, SD_INIT_NAME(CLS)
+-	};
++	DOMAIN(cpu_clustergroup_mask, x86_cluster_flags, CLS),
+ #endif
+ #ifdef CONFIG_SCHED_MC
+-	x86_topology[i++] = (struct sched_domain_topology_level){
+-		cpu_coregroup_mask, x86_core_flags, SD_INIT_NAME(MC)
+-	};
++	DOMAIN(cpu_coregroup_mask, x86_core_flags, MC),
+ #endif
+-	/*
+-	 * When there is NUMA topology inside the package skip the PKG domain
+-	 * since the NUMA domains will auto-magically create the right spanning
+-	 * domains based on the SLIT.
+-	 */
+-	if (!x86_has_numa_in_package) {
+-		x86_topology[i++] = (struct sched_domain_topology_level){
+-			cpu_cpu_mask, x86_sched_itmt_flags, SD_INIT_NAME(PKG)
+-		};
+-	}
++	DOMAIN(cpu_cpu_mask, x86_sched_itmt_flags, PKG),
++	{ NULL },
++};
+ 
++static void __init build_sched_topology(void)
++{
+ 	/*
+-	 * There must be one trailing NULL entry left.
++	 * When there is NUMA topology inside the package invalidate the
++	 * PKG domain since the NUMA domains will auto-magically create the
++	 * right spanning domains based on the SLIT.
+ 	 */
+-	BUG_ON(i >= ARRAY_SIZE(x86_topology)-1);
++	if (x86_has_numa_in_package) {
++		unsigned int pkgdom = ARRAY_SIZE(x86_topology) - 2;
+ 
++		memset(&x86_topology[pkgdom], 0, sizeof(x86_topology[pkgdom]));
++	}
+ 	set_sched_topology(x86_topology);
+ }
+ 
 -- 
 2.49.0
 
