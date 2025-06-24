@@ -1,176 +1,114 @@
-Return-Path: <linux-kernel+bounces-700246-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-700249-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DD5E0AE65F8
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Jun 2025 15:16:21 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id E7FBBAE6604
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Jun 2025 15:17:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 867F117166F
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Jun 2025 13:09:20 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E2B0217D51B
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Jun 2025 13:10:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3CE9829A31D;
-	Tue, 24 Jun 2025 13:09:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 499112BEC2D;
+	Tue, 24 Jun 2025 13:09:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ventanamicro.com header.i=@ventanamicro.com header.b="BjotVEEU"
-Received: from mail-wm1-f49.google.com (mail-wm1-f49.google.com [209.85.128.49])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="AlTmNgrf"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.21])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C3202291C28
-	for <linux-kernel@vger.kernel.org>; Tue, 24 Jun 2025 13:09:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3233C230996;
+	Tue, 24 Jun 2025 13:09:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.21
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750770554; cv=none; b=im399CgSxKrI0NSP7N7lqokeVLRjUbJ9b1DQinu5lUq885V6j7fiW2sUJD+bLyBhODmTt0563sgL5jvtPQdkxUHPwjZc7zDqxTZMK9h4MNACkJZb+WerneobmiibVhDxoRktHQG61jvGhtk6TXhnmW1PXpxpETT3MO+wL3aXQYs=
+	t=1750770582; cv=none; b=GFsADp2HOkIKPTtsg57eA2eSomQyy0gszv2eoe8sZAW61FMHxSs7Xv3MWpVHF41ybTJtJluSZ2lrqS+UxfPrAbViuTgnLdF0ElKR5QyXHIirxwmLb1DWa7+kbnMtNnY8X4EAWrN6+jJu7VHh+UyeCDG5nZwhMw62qR9tnhzGlgs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750770554; c=relaxed/simple;
-	bh=ktaevRMBGsoLidMb1dd+ZMhyr1fO7+J8BWuwSpQW2sg=;
-	h=Mime-Version:Content-Type:Date:Message-Id:Subject:Cc:To:From:
-	 References:In-Reply-To; b=WG20c5o8WE6qqyf1jvL6+69mWKiKhFhxbW9zkkDL+FAdoGRMIMA05KfDnawCQFz+3bbq2UczwAcjj38Iqv5Tj6t4Vo9pOEEPJj/MI7mK2zXRftxZobZnYMkCXltWPDWyfLzC4PqcG9mcyBzHYf5Axa749Fb51JRdOPSB2dqfwmA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ventanamicro.com; spf=pass smtp.mailfrom=ventanamicro.com; dkim=pass (2048-bit key) header.d=ventanamicro.com header.i=@ventanamicro.com header.b=BjotVEEU; arc=none smtp.client-ip=209.85.128.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ventanamicro.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ventanamicro.com
-Received: by mail-wm1-f49.google.com with SMTP id 5b1f17b1804b1-4519dd6523dso2192865e9.1
-        for <linux-kernel@vger.kernel.org>; Tue, 24 Jun 2025 06:09:12 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ventanamicro.com; s=google; t=1750770551; x=1751375351; darn=vger.kernel.org;
-        h=in-reply-to:references:from:to:cc:subject:message-id:date
-         :content-transfer-encoding:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=tbX9Uex4uDqQrjo1IMKC5QJV+aFv1JyAj570tEl8UMs=;
-        b=BjotVEEUUneIn/UNkOHNhF9ifjUCjpaSC3u0P3/Pb2r1AruhOs4Itk+WoAzx6Ia4et
-         ycp2wJHSc00GSnBndjZgquYNikQGoVuaKUydC0IAhl1M3e7a29oYdgRYQoZUdZf+5ntN
-         o7UrAHllE0fTRrjFTS4Fq38kEPEsg9O+SG6iHT83dindBpcjFe9vKnE6h2CYZJ9WqxIl
-         PFvqShsuUFyqzwUuyV5ZU0Or/lWMNfbbe+mg5LIb3p+o1qCwsfNikjV9E4w9jMg6ppIp
-         Hq9hD3hbIKm9cfQDSBAbWOkWYO8sMrfBIPXfMLwjOxYdsXgCne0/pa6aNZEZyxGK8D6S
-         CAvg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1750770551; x=1751375351;
-        h=in-reply-to:references:from:to:cc:subject:message-id:date
-         :content-transfer-encoding:mime-version:x-gm-message-state:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=tbX9Uex4uDqQrjo1IMKC5QJV+aFv1JyAj570tEl8UMs=;
-        b=lVHTtZsSiX4LEmel5FR7cn7r9xYu3WW6rgMbw7XEfp4uBYgCGVF/IAvXaH8DPTFDrU
-         Yz1r4Q8SifhsqSWMc6NNb2oEMLu/P93sf6xzkxvL+485ru1BszzH0SDqByo9UzLywfZy
-         hUNBc//bv3DtxvDs2PXM57+bwmPlCdWS7RLqXQn9mFyVeQ6o/coVw4Xzk8Rxi69YQyic
-         CvxjMCtoMOL4x96HLD0BZaC30r2k3R6LAvHO+COQ3PGz2uf7utIEdqEjXineBM1MBGb0
-         C7qkpaoe0ZdeddJpGlLPULVQRKC4zLNlSiavqNsRSq1hIHfpp/7OKnSwjCPFWa/Pv2Qx
-         Zzbg==
-X-Forwarded-Encrypted: i=1; AJvYcCUKKnmdSDLvgb4Rp7y7Pz6F2G/OBuw7wjUMy5SgPaI9DS86S9ns9mDUnYSABW84zTe7Y2sIhkeVgnuLiL4=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz/1TgzpkOqjrUXutfi3QZVjOun6I5A/YYvBljTkzT/JQbKuB7z
-	btHamtHkTZJumVz2QmRxGeN1rFwazHxgWPZM88l8PUlPD20hjYXq76mh09X9IryAsNg=
-X-Gm-Gg: ASbGnctYJh1KeiT6WYRHN6Wi04/EkGIOGyLX4RaTZ2IQRvYbLhJAItcFYX9lFfpoYp+
-	9cWY8ntZpjB5u/yfc70NrXW8+q4NnzOQ6PrpaLYicbxc3PLopdU2k0ZnZv6t4sW9oVZ6ublgXof
-	uf2+DWTiMPaYvuTp6E3DVtNuc/dIOfpwzblnxGGPUxXZFSp1YTZZAs6QTP2dX4WGtQyCeFK27wV
-	8Ozpy1IXwA0uRwUN2Ne+cOuSlkpCrhEVG4iUAZ4f13M8xakoJ0jJTQibCrf8+YfG31QPdVFECV7
-	WkYV3cTRJvLXCBKvRHDvOiQJ4DNE3L0HBzHnVyVtNsYM+BRyB1fd7vB0paZTpHhauNb79w==
-X-Google-Smtp-Source: AGHT+IHLyqpQ2L0/HxAVYH8zaUo9/78YcAJU66JWhWRRX6Iocb5sQWqQnegkrlHDzIHVDiiRW2HaGg==
-X-Received: by 2002:a05:600c:1e8a:b0:43e:94fa:4aef with SMTP id 5b1f17b1804b1-453659dd769mr67708255e9.8.1750770550920;
-        Tue, 24 Jun 2025 06:09:10 -0700 (PDT)
-Received: from localhost ([2a02:8308:a00c:e200:b00d:6d5f:6e67:f5e8])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4535e741b43sm178430385e9.0.2025.06.24.06.09.10
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 24 Jun 2025 06:09:10 -0700 (PDT)
+	s=arc-20240116; t=1750770582; c=relaxed/simple;
+	bh=dbXZ7nSfq6fTxFvYT5gu9ItR78nhxwfO9MMCL8FkCSY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=sfpITfzBkz5iT0UJTY2IBfxW7c4Ffh252v/0AN7lfoovraaqSrmUFDjU8R0aVtfQ7cK+j91xzadmIJNpJEmrGoI9mAGWvFJEEyvSgJvpqRl3oQJsbSI+Shnkk3kX4svGL0KLyccKkHDYz3i3jypA72uELuS1gqasru7nYC1EGB4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=AlTmNgrf; arc=none smtp.client-ip=198.175.65.21
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1750770581; x=1782306581;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=dbXZ7nSfq6fTxFvYT5gu9ItR78nhxwfO9MMCL8FkCSY=;
+  b=AlTmNgrfR+vMS/eJuPy3YZpsoGeJsZZ0xeVUalQmBGg88KkCpLRIY+vM
+   I54wX6jEBAY+eMVyLRs03BXq2/UzpAM0kMlXkmMxy+zw7OQs7sS+ZHoXz
+   zstJd9/SpmCGRSkFsTp7zdGY7dANHWnZMPleczQZ+txjIKWmH6lrTGine
+   FAnOjovbXseZk5jQAR2A262wxNTlEP78YKzG+CedvSWmHjppmrpuDvgcW
+   dtShrjbydHiUCrhXw4ZXGP+UxyCwALNVYAxG3PANRI1Z/lp6Rav+strT5
+   1Gnnv/O1pkgmOAq3dylh+r5nW6pzLi/cbVODHjayLs7QctBR2dAe6DomO
+   A==;
+X-CSE-ConnectionGUID: zVFmA7nJT5evOruj/YeCFw==
+X-CSE-MsgGUID: Mo6FWSKlTYqrTVb/bTwB6Q==
+X-IronPort-AV: E=McAfee;i="6800,10657,11474"; a="52877055"
+X-IronPort-AV: E=Sophos;i="6.16,261,1744095600"; 
+   d="scan'208";a="52877055"
+Received: from orviesa008.jf.intel.com ([10.64.159.148])
+  by orvoesa113.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 24 Jun 2025 06:09:40 -0700
+X-CSE-ConnectionGUID: zQ5SV2b1Q72K2t9mcS3AZw==
+X-CSE-MsgGUID: Gv+nfDZ9S7effF2Crpc1hw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.16,261,1744095600"; 
+   d="scan'208";a="152413419"
+Received: from smile.fi.intel.com ([10.237.72.52])
+  by orviesa008.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 24 Jun 2025 06:09:38 -0700
+Received: from andy by smile.fi.intel.com with local (Exim 4.98.2)
+	(envelope-from <andriy.shevchenko@linux.intel.com>)
+	id 1uU3P4-00000009TUa-0b6I;
+	Tue, 24 Jun 2025 16:09:34 +0300
+Date: Tue, 24 Jun 2025 16:09:33 +0300
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To: Petr Mladek <pmladek@suse.com>
+Cc: Anshuman Khandual <anshuman.khandual@arm.com>, linux-mm@kvack.org,
+	Rasmus Villemoes <linux@rasmusvillemoes.dk>,
+	Sergey Senozhatsky <senozhatsky@chromium.org>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	Jonathan Corbet <corbet@lwn.net>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	David Hildenbrand <david@redhat.com>, linux-kernel@vger.kernel.org,
+	linux-doc@vger.kernel.org
+Subject: Re: [RFC 1/2] lib/vsprintf: Add support for pte_t
+Message-ID: <aFqjje91QnAgg2_h@smile.fi.intel.com>
+References: <20250618041235.1716143-1-anshuman.khandual@arm.com>
+ <20250618041235.1716143-2-anshuman.khandual@arm.com>
+ <aFQYVPmStsIIFcMW@pathway.suse.cz>
+ <68cdf649-a273-4d83-b862-6b675a793f18@arm.com>
+ <aFqCmgT1k8daroNZ@pathway.suse.cz>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
-Date: Tue, 24 Jun 2025 15:09:09 +0200
-Message-Id: <DAUSD38QIV6D.1YO5ASNI3EUGV@ventanamicro.com>
-Subject: Re: [PATCH v2 3/2] RISC-V: sbi: remove sbi_ecall tracepoints
-Cc: <linux-riscv@lists.infradead.org>, <linux-kernel@vger.kernel.org>, "Paul
- Walmsley" <paul.walmsley@sifive.com>, <aou@eecs.berkeley.edu>, "Alexandre
- Ghiti" <alex@ghiti.fr>, "Atish Patra" <atishp@rivosinc.com>,
- <ajones@ventanamicro.com>, <cleger@rivosinc.com>,
- <apatel@ventanamicro.com>, <thomas.weissschuh@linutronix.de>,
- <david.laight.linux@gmail.com>
-To: "Palmer Dabbelt" <palmer@dabbelt.com>
-From: =?utf-8?q?Radim_Kr=C4=8Dm=C3=A1=C5=99?= <rkrcmar@ventanamicro.com>
-References: <20250619190315.2603194-4-rkrcmar@ventanamicro.com>
- <mhng-516082EA-5A9A-4A76-9448-70828749F95F@palmerdabbelt-mac>
-In-Reply-To: <mhng-516082EA-5A9A-4A76-9448-70828749F95F@palmerdabbelt-mac>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <aFqCmgT1k8daroNZ@pathway.suse.cz>
+Organization: Intel Finland Oy - BIC 0357606-4 - c/o Alberga Business Park, 6
+ krs, Bertel Jungin Aukio 5, 02600 Espoo
 
-2025-06-23T15:54:00-07:00, Palmer Dabbelt <palmer@dabbelt.com>:
-> Having patch 3 of 2 is not normal.
+On Tue, Jun 24, 2025 at 12:48:58PM +0200, Petr Mladek wrote:
+> On Fri 2025-06-20 13:32:31, Anshuman Khandual wrote:
+> > On 19/06/25 7:31 PM, Petr Mladek wrote:
 
-Sorry, I wanted to distinguish it from the original series without
-sending a new one, because it's quite radical proposal I don't
-necessarily want to get merged.
-Would "[RFC 3/2]", "[RFC 3/3]", or something else look better while
-raising the same alarms?
+...
 
-> On Thu, 19 Jun 2025 12:03:15 PDT (-0700), rkrcmar@ventanamicro.com wrote:
-> So the issue is the extra save/restore on function entry?  That's the=20
-> sort of think shrink wrapping is supposed to help with.  It's been=20
-> implemented in GCC for a while, but I'm not sure how well it's been=20
-> pushed on (IIRC it was just one of the SPEC workloads).
+> > Something like BUILD_BUG_ON() against pte_t as either u64 or u32 aka all
+> > the sizes the print format is going to support and it should pass on all
+> > platforms ?
+> 
+> Yes, I had BUILD_BUG_ON() in mind. It would be nice if you check at
+> least the most known architectures.
 
-Yes, shrink wrapping could help if compilers can figure out what to do
-with static_keys. It's hopefully going to sort itself out in the future.
-We'd ideally have some way to tell the compiler to always keep the
-tracepoints inside their branches, to make them less fragile, but that
-is probably asking too much from C.
+FWIW, we use static_assert():s in the file, so may be better to use them.
 
-I think GCC 15.1 had some shrink-wrapping improvements, but I've only
-been using 14.3 so far...
+-- 
+With Best Regards,
+Andy Shevchenko
 
-> That said, this is kind of hard to reason about.  Can you pull out a=20
-> smaller example?
 
-I posted an example of the original 8 argument ecall in v1:
-https://lore.kernel.org/linux-riscv/20250612145754.2126147-2-rkrcmar@ventan=
-amicro.com/T/#m1d441ab3de3e6d6b3b8d120b923f2e2081918a98
-For another example, let's have the following function:
-
-  struct sbiret some_sbi_ecall(uintptr_t a0, uintptr_t a1)
-  {
-    return sbi_ecall(123, 456, a0, a1);
-  }
-
-The disassembly without tracepoints (with -fno-omit-frame-pointer):
-(It could have been just "li;li;ecall;ret" without frame pointer.)
-
-   0xffffffff80016d48 <+0>:	addi	sp,sp,-16
-   0xffffffff80016d4a <+2>:	sd	ra,8(sp)
-   0xffffffff80016d4c <+4>:	sd	s0,0(sp)
-   0xffffffff80016d4e <+6>:	addi	s0,sp,16
-   0xffffffff80016d50 <+8>:	li	a7,123
-   0xffffffff80016d54 <+12>:	li	a6,456
-   0xffffffff80016d58 <+16>:	ecall
-   0xffffffff80016d5c <+20>:	ld	ra,8(sp)
-   0xffffffff80016d5e <+22>:	ld	s0,0(sp)
-   0xffffffff80016d60 <+24>:	addi	sp,sp,16
-   0xffffffff80016d62 <+26>:	ret
-
-With tracepoints, the situation is worse... the optimal outcome would
-add two nops, but the actual result is:
-
-   0xffffffff80017720 <+0>:	addi	sp,sp,-48
-   0xffffffff80017722 <+2>:	sd	ra,40(sp)
-   0xffffffff80017724 <+4>:	sd	s0,32(sp)
-   0xffffffff80017726 <+6>:	sd	s1,24(sp)
-   0xffffffff80017728 <+8>:	sd	s2,16(sp)
-   0xffffffff8001772a <+10>:	sd	s3,8(sp)
-   0xffffffff8001772c <+12>:	addi	s0,sp,48
-   0xffffffff8001772e <+14>:	nop
-   0xffffffff80017730 <+16>:	nop
-   0xffffffff80017734 <+20>:	li	a7,123
-   0xffffffff80017738 <+24>:	li	a6,456
-   0xffffffff8001773c <+28>:	ecall
-   0xffffffff80017740 <+32>:	nop
-   0xffffffff80017744 <+36>:	ld	ra,40(sp)
-   0xffffffff80017746 <+38>:	ld	s0,32(sp)
-   0xffffffff80017748 <+40>:	ld	s1,24(sp)
-   0xffffffff8001774a <+42>:	ld	s2,16(sp)
-   0xffffffff8001774c <+44>:	ld	s3,8(sp)
-   0xffffffff8001774e <+46>:	addi	sp,sp,48
-   0xffffffff80017750 <+48>:	ret
-   [Tracing slowpath continues to 202.]
-
-i.e. we spill 3 extra registers, which is at least better v1.  I'll try
-again with GCC 15.1, and get back if it actually improves the situation.
 
