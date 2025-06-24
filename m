@@ -1,93 +1,104 @@
-Return-Path: <linux-kernel+bounces-700823-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-700825-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7E422AE6D45
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Jun 2025 19:06:54 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id C00B4AE6D4A
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Jun 2025 19:08:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C6886174C20
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Jun 2025 17:06:54 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 00820188B5E5
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Jun 2025 17:08:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 60AF62C3278;
-	Tue, 24 Jun 2025 17:06:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="qr1RvsdH"
-Received: from mail-pj1-f73.google.com (mail-pj1-f73.google.com [209.85.216.73])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 97FB02E612D;
+	Tue, 24 Jun 2025 17:07:58 +0000 (UTC)
+Received: from relay.hostedemail.com (smtprelay0012.hostedemail.com [216.40.44.12])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8201E1E5219
-	for <linux-kernel@vger.kernel.org>; Tue, 24 Jun 2025 17:06:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.73
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 900132E175E;
+	Tue, 24 Jun 2025 17:07:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=216.40.44.12
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750784805; cv=none; b=qXlLatldsIOle56im/HB0bHaGwrFGAbL3wPdkr4VQHoJ88dHExuktVLUhCLEN9QQU/RLdM9BEuXMINOs2dhmsTD+FzESmOMt6s8QdwE20exQhNJ0Ow2HLHoLAWyE2wBncFy3T6S+SvT6PJs+Rf9eTL8wD3RFmwcjCTHya4f2bvs=
+	t=1750784878; cv=none; b=rdD1NVNpcvC1Ohku2IlfhzY3D7Pz46D+VEnZXtr5EN4JgFQpV+ThIpb+9+J0sK4r321U/txh1j/nzjsTwsKgP/2poYxRfe0xXEWo88SDYeMcO+TYKu6nu0lxkDK5RVou3BW+VPbiIZffALByq0ZsdiUy41J5yWI2vAGtOAfpP5Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750784805; c=relaxed/simple;
-	bh=El96RS2GoB+xf+x5xkRmmKhAycZmnaHN2uzD4493RT8=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=TSjtXhV7AvGpqW730xmAV5oIli7AIzy6bUdBNLAw7IUyTJ/6zZJc57MCf/sTYPEaB/F3tlVS8cCPpVyCbWRlpeIy9URyhc9GjUXjrCxoXp4I7GH/IJAJBSZxXe+KkP+33pPRy6STSaTHZgrroAFEIyee/hZDSh+gmoMYIaSk+Jc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=qr1RvsdH; arc=none smtp.client-ip=209.85.216.73
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
-Received: by mail-pj1-f73.google.com with SMTP id 98e67ed59e1d1-313d6d671ffso694452a91.2
-        for <linux-kernel@vger.kernel.org>; Tue, 24 Jun 2025 10:06:44 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1750784804; x=1751389604; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=3Fj3ia1xYcZY5Hv5rbn8TPDKNjSzgo+utgMvYqBwh94=;
-        b=qr1RvsdHys8bD6enK9LV1CLvZkESbZ+H5V1Rmf08jNW6fx8qVmVEN9/5fltZQzOfyv
-         Acnu3EHojahxOi00XI3SCNZOGLUqfcSjxlXRN1nPGvRoklAUxf6JlITItqNZP61fEFm2
-         S6DulUrj3P49OdiKoQn4oj7RxVchQA9fC6xmdvxq/8ltPSfYSB7IT4grf9KADqvIZOQO
-         P+aqDNZzpma0RIkUShr6lxlVExxIoW3l5ghyC1TRyvBMxVbJ+y7j78JoNltMipyMIfPK
-         Tou0FY5OhMhN4HZzgg4roIdfb4r9DIFZnl3ojZddhQ3+1lIt4vQSvg92EuN9QCgL23uc
-         lWXw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1750784804; x=1751389604;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=3Fj3ia1xYcZY5Hv5rbn8TPDKNjSzgo+utgMvYqBwh94=;
-        b=RxbtkVnaMm3bbm4l8RVDDiYXzpa1/GritHeC+FPr1mxH3mCf7fwusITWpNGgNd3358
-         fIkqkdmu/0NexVn7vYa3kk42SAflO9skrw8cX0OI0lHSPH2u5WHXtg8DohAxK1Ot0LU0
-         6nXiMKLDRFRuNNeNCAhjpS6cOcrC68zXgq44XLbTHZEItqqtsqxKv3Gg89prL+iK1kS0
-         4GR6vZlUbKBGW11GVeK9FdLLB470uoxW6xHoqxjK0EPxeXQgCp4TFXaY1qqFoLy+lz/7
-         /7NysIOZIKzFsBKhRBqRRlnQALnNlCpP3iCw8nlT5N/F9b854qIeV0jUv3riR25Zk1Ts
-         2Awg==
-X-Forwarded-Encrypted: i=1; AJvYcCXKNK5VN2dBbLbWNOoF6OaZ5zekZrGD6jBovHBR1UkuT4ZGrvDLzamb3YCB5w8sV3M4pbE2Qc6627i7vv0=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzd84RU7EWfGTQrTYXLX7POFdrHcbaTvM88WisYu8/TgHA/wgrR
-	WW868vV7vIaO0w1YRJc5y4Da+a1jeTpiv6zO0/VmrU1nGy0snLWinmpYC9GojJ3OA6k6Te1zroO
-	t3TlICQ==
-X-Google-Smtp-Source: AGHT+IG91rtujOF1URlp+uwPQ5xYFcxtfL51NMrhKNtKVdmuwx1+g9oU1lsxSZXSOfImxql2jLw2G1l0m9U=
-X-Received: from pjbqc8.prod.google.com ([2002:a17:90b:2888:b0:312:1af5:98c9])
- (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a17:90b:1b47:b0:301:9f62:a944
- with SMTP id 98e67ed59e1d1-315eddb82cbmr578213a91.33.1750784803871; Tue, 24
- Jun 2025 10:06:43 -0700 (PDT)
-Date: Tue, 24 Jun 2025 10:06:42 -0700
-In-Reply-To: <d243d203-7514-4541-9ea2-1200f7116cc1@zytor.com>
+	s=arc-20240116; t=1750784878; c=relaxed/simple;
+	bh=dAep9qf1zVqdFCAAzk9d6adpwmGTLIt1k47UquLn69E=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=ZXtLQyZVJXxWE1SRVoPUA5tbmMBzhYefG6PB7v5k1l5N6402lHhZQlziMFFX8HNgqcpat9EYhlglkaE9QwiGG+or1a6dPYuiM+NIYkIn+QgWDJ71zKQiXXb6nrkgTks1WD8Spy5SKFh5Emotd4pVREcTjU6HQBXGLMJECeCXHBc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org; spf=pass smtp.mailfrom=goodmis.org; arc=none smtp.client-ip=216.40.44.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=goodmis.org
+Received: from omf02.hostedemail.com (a10.router.float.18 [10.200.18.1])
+	by unirelay06.hostedemail.com (Postfix) with ESMTP id 81F8A10502F;
+	Tue, 24 Jun 2025 17:07:47 +0000 (UTC)
+Received: from [HIDDEN] (Authenticated sender: rostedt@goodmis.org) by omf02.hostedemail.com (Postfix) with ESMTPA id 6767C80018;
+	Tue, 24 Jun 2025 17:07:45 +0000 (UTC)
+Date: Tue, 24 Jun 2025 13:07:44 -0400
+From: Steven Rostedt <rostedt@goodmis.org>
+To: Jiazi Li <jqqlijiazi@gmail.com>
+Cc: linux-kernel@vger.kernel.org, "peixuan.qiu" <peixuan.qiu@transsion.com>,
+ Jens Axboe <axboe@kernel.dk>, io-uring@vger.kernel.org
+Subject: Re: [PATCH] stacktrace: do not trace user stack for user_worker
+ tasks
+Message-ID: <20250624130744.602c5b5f@batman.local.home>
+In-Reply-To: <20250623115914.12076-1-jqqlijiazi@gmail.com>
+References: <20250623115914.12076-1-jqqlijiazi@gmail.com>
+X-Mailer: Claws Mail 3.17.8 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20250328171205.2029296-1-xin@zytor.com> <d243d203-7514-4541-9ea2-1200f7116cc1@zytor.com>
-Message-ID: <aFrbIgouGiZWf51O@google.com>
-Subject: Re: [PATCH v4 00/19] Enable FRED with KVM VMX
-From: Sean Christopherson <seanjc@google.com>
-To: Xin Li <xin@zytor.com>
-Cc: pbonzini@redhat.com, kvm@vger.kernel.org, linux-doc@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, corbet@lwn.net, tglx@linutronix.de, 
-	mingo@redhat.com, bp@alien8.de, dave.hansen@linux.intel.com, x86@kernel.org, 
-	hpa@zytor.com, andrew.cooper3@citrix.com, luto@kernel.org, 
-	peterz@infradead.org, chao.gao@intel.com, xin3.li@intel.com
-Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+X-Rspamd-Queue-Id: 6767C80018
+X-Stat-Signature: 7mfwfisopyzzuytgifg8xyupdsge7cni
+X-Rspamd-Server: rspamout06
+X-Session-Marker: 726F737465647440676F6F646D69732E6F7267
+X-Session-ID: U2FsdGVkX1/D0o+whg74phBC5Y2Cn3IAQ7L3LDV3uL4=
+X-HE-Tag: 1750784865-899221
+X-HE-Meta: U2FsdGVkX18qhB4AyxZtWHh+WQN1DIxX1MeXKaLnIwDf8p6Zt4Zu1yObu8v7u2IRO2Wh/KRy5zMPxbUQelL5uOXu5JWk2rkGOXAlK62BYhNBjj00BCEGKLqCzaCOMHkhFYGuKprdisekwC/w3/7tSgFnpclH57/fTGyEWur8cAsAOLc/OVkdVqsBJroj+TOtvlRdWNnJ3Hx+yTYSylPqjTTpfKqosv90pVZAo/yPvIUY2Pui9Ghlu3ZBaBEj9gwDBc0t3CG0Pafh4woluVmRaAHPC1oBNTXOrdqg788nZaTxDqF9PVmfHHC2iVgxbA5aLJJYYF/85l5ZTeegfZz7pGjvRquL+6yZ7gCnxzWV2GmvThtZcj4hPbL6CzQc2s7Giv2VXYRlBIQUO30qRZZ3cw==
 
-On Fri, Mar 28, 2025, Xin Li wrote:
-> Any chance we could merge FRED ahead of CET?
+On Mon, 23 Jun 2025 19:59:11 +0800
+Jiazi Li <jqqlijiazi@gmail.com> wrote:
 
-Probably not?  CET exists is publicly available CPUs.  AFAIK, FRED does not.
-And CET is (/knock wood) hopefully pretty much ready?  FWIW, I'd really like to
-get both CET and FRED virtualization landed by 6.18, i.e. in time for the next
-LTS.
+> Tasks with PF_USER_WORKER flag also only run in kernel space,
+> so do not trace user stack for these tasks.
+
+What exactly is the difference between PF_KTHREAD and PF_USER_WORKER?
+
+Has all the locations that test for PF_KTHREAD been audited to make
+sure that PF_USER_WORKER isn't also needed?
+
+I'm working on other code that needs to differentiate between user
+tasks and kernel tasks, and having to have multiple flags to test is
+becoming quite a burden.
+
+-- Steve
+
+
+> 
+> Signed-off-by: Jiazi Li <jqqlijiazi@gmail.com>
+> Signed-off-by: peixuan.qiu <peixuan.qiu@transsion.com>
+> ---
+>  kernel/stacktrace.c | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
+> 
+> diff --git a/kernel/stacktrace.c b/kernel/stacktrace.c
+> index afb3c116da91..82fbccdd1a24 100644
+> --- a/kernel/stacktrace.c
+> +++ b/kernel/stacktrace.c
+> @@ -228,8 +228,8 @@ unsigned int stack_trace_save_user(unsigned long *store, unsigned int size)
+>  		.size	= size,
+>  	};
+>  
+> -	/* Trace user stack if not a kernel thread */
+> -	if (current->flags & PF_KTHREAD)
+> +	/* Skip tasks that do not return to userspace */
+> +	if (current->flags & (PF_KTHREAD | PF_USER_WORKER))
+>  		return 0;
+>  
+>  	arch_stack_walk_user(consume_entry, &c, task_pt_regs(current));
+
 
