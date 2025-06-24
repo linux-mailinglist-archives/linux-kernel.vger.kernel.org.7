@@ -1,99 +1,139 @@
-Return-Path: <linux-kernel+bounces-700220-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-700222-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3C4E5AE65AF
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Jun 2025 14:57:49 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E21E1AE65A4
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Jun 2025 14:55:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id BF3FF1894410
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Jun 2025 12:54:51 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DECCB4068FE
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Jun 2025 12:54:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 60AE429A9FE;
-	Tue, 24 Jun 2025 12:54:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="TOXe86FT"
-Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8491029A9ED;
+	Tue, 24 Jun 2025 12:54:45 +0000 (UTC)
+Received: from relay5-d.mail.gandi.net (relay5-d.mail.gandi.net [217.70.183.197])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 613CE293C6C;
-	Tue, 24 Jun 2025 12:54:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9496A299943
+	for <linux-kernel@vger.kernel.org>; Tue, 24 Jun 2025 12:54:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.197
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750769657; cv=none; b=UHbgn021Q0ZvdUAN6GOqiDyUH4hMLiCfxfB/+lrz9pkMSeV9E8+9ZCAk9dsMzHGIdVgB4bDS4cK5lStieoDqQSViiQIJ5Iux5iwBWy0ImcC8GGOPSrx2D4R6IfV09o29FqdMB03+IvlxI5BXftOA5x150jxzIY9lrgMixjL2IaA=
+	t=1750769685; cv=none; b=gFcHhMNxfnai+HPnfLNCo21odQ7YHU10/rbjS4n16bmtNq6PTBRSnxg0Q22UpSjTHdQh5gnep2ErTf6mZYa8Y6mXONHBl7Pbftq8DLATZSyJg1QGlGa/Fs1GgPqoHsbnGl/0Gpu+Uy7LRgqed0TGjCFNa2Rj9/vPQtEcfm7uvHY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750769657; c=relaxed/simple;
-	bh=5ovYbXQYys+DyZKG9JRf4Df0UI9wgCclm0f3wvOkCL8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=MuIiqT+9WiQPKXPz1+flRv1fpIDMSNJWKsGBnKLJRYbCzMRtFPBBuyLGZdbGNyQPb1SP9u4p2onnMayD1aDXiO7e59A9xCC7qXsmk7N6iIeggsRmlvCAilHMKkUfPIsWJiNTAJrU9u9QyLwrL11SsGdfxeSTM/+OmK28Lr3HPHs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=TOXe86FT; arc=none smtp.client-ip=90.155.50.34
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Transfer-Encoding:
-	Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:
-	Sender:Reply-To:Content-ID:Content-Description;
-	bh=FvVXFAHgqlVXaYjZe73wCkbdcF0aH935v03BBBUDZRY=; b=TOXe86FTv0MPRze00++nXzCcJA
-	+5PyOKUZ7cpy6JL2U5kGvgMu8ORyFaZziNTER/jEp4X62HR4Ibj3jFCUUFP9BzEHGo/EOKRRtkMUG
-	QFladtV50stPYTTm/+Ui8/nB+VdNdi6nXE6cBhsrXkN5TrMABlbLnzZvhIqJHBshB9CSF5hJ7Tfrx
-	yup8lhHQJR9weUS7kmICBfirR7/u4A5u61/IZxu+gVxvfyRocRkN1DePS0jMuM+GMRCaOagHMGIH6
-	aBO2xir65idRZ2xulTdiQBi0jWpVLfs6t7VVEY5jijZ4TUG6QZVY03q+aL71XwHitc7/vBvc5gawa
-	KxFqJ/sw==;
-Received: from willy by casper.infradead.org with local (Exim 4.98.2 #2 (Red Hat Linux))
-	id 1uU3AA-00000006cFM-28B1;
-	Tue, 24 Jun 2025 12:54:10 +0000
-Date: Tue, 24 Jun 2025 13:54:10 +0100
-From: Matthew Wilcox <willy@infradead.org>
-To: =?utf-8?B?6ZmI5rab5rab?= Taotao Chen <chentaotao@didiglobal.com>
-Cc: "tytso@mit.edu" <tytso@mit.edu>,
-	"hch@infradead.org" <hch@infradead.org>,
-	"adilger.kernel@dilger.ca" <adilger.kernel@dilger.ca>,
-	"brauner@kernel.org" <brauner@kernel.org>,
-	"jani.nikula@linux.intel.com" <jani.nikula@linux.intel.com>,
-	"rodrigo.vivi@intel.com" <rodrigo.vivi@intel.com>,
-	"tursulin@ursulin.net" <tursulin@ursulin.net>,
-	"airlied@gmail.com" <airlied@gmail.com>,
-	"linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
-	"linux-ext4@vger.kernel.org" <linux-ext4@vger.kernel.org>,
-	"linux-block@vger.kernel.org" <linux-block@vger.kernel.org>,
-	"intel-gfx@lists.freedesktop.org" <intel-gfx@lists.freedesktop.org>,
-	"dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
-	"linux-mm@kvack.org" <linux-mm@kvack.org>,
-	"linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"chentao325@qq.com" <chentao325@qq.com>
-Subject: Re: [PATCH v2 0/5] fs: refactor write_begin/write_end and add ext4
- IOCB_DONTCACHE support
-Message-ID: <aFqf8sbGsQ0kEme3@casper.infradead.org>
-References: <20250624121149.2927-1-chentaotao@didiglobal.com>
+	s=arc-20240116; t=1750769685; c=relaxed/simple;
+	bh=pJj1WebWYhn7Q88my90Fh2I0LvO/TjQPmlvD7ZxQF2o=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=dhdP/u2a1P5ezxBQ78Tnj/aMefR6xx+c4fh31a3M0oc23vP2giaXurdJhnFnxDFnydg3+kC1qsJciFSIFm5Hw2fAV3I/H/E9DbMkZzUxx9abx7tpzxb81Dy5IJZx1aVeFRijgsNKMnZ6ppHdr9GKYHZq64xIRTAzovIkxii1T7s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ghiti.fr; spf=pass smtp.mailfrom=ghiti.fr; arc=none smtp.client-ip=217.70.183.197
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ghiti.fr
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ghiti.fr
+Received: by mail.gandi.net (Postfix) with ESMTPSA id F163141CFD;
+	Tue, 24 Jun 2025 12:54:32 +0000 (UTC)
+Message-ID: <a89f5970-5ea9-4d92-8952-6c26a22ac153@ghiti.fr>
+Date: Tue, 24 Jun 2025 14:54:32 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20250624121149.2927-1-chentaotao@didiglobal.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] riscv: Prevent early kernel panic in instrumented
+ apply_early_boot_alternatives
+To: Changbin Du <changbin.du@huawei.com>,
+ Paul Walmsley <paul.walmsley@sifive.com>, Palmer Dabbelt
+ <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>
+Cc: linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org
+References: <20250624113042.2123140-1-changbin.du@huawei.com>
+Content-Language: en-US
+From: Alexandre Ghiti <alex@ghiti.fr>
+In-Reply-To: <20250624113042.2123140-1-changbin.du@huawei.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-GND-State: clean
+X-GND-Score: -100
+X-GND-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtddvgdduleelgecutefuodetggdotefrodftvfcurfhrohhfihhlvgemucfitefpfffkpdcuggftfghnshhusghstghrihgsvgenuceurghilhhouhhtmecufedtudenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujfgurhepkfffgggfuffvvehfhfgjtgfgsehtjeertddtvdejnecuhfhrohhmpeetlhgvgigrnhgurhgvucfihhhithhiuceorghlvgigsehghhhithhirdhfrheqnecuggftrfgrthhtvghrnheptdfhleefjeegheevgeeljeellefgvefhkeeiffekueejteefvdevhfelvdeggeeinecukfhppedvtddtudemkeeiudemfeefkedvmegvfheltdemfegrsgdtmedujegvtdemhegshegsmeefiedtieenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepihhnvghtpedvtddtudemkeeiudemfeefkedvmegvfheltdemfegrsgdtmedujegvtdemhegshegsmeefiedtiedphhgvlhhopeglkffrggeimedvtddtudemkeeiudemfeefkedvmegvfheltdemfegrsgdtmedujegvtdemhegshegsmeefiedtiegnpdhmrghilhhfrhhomheprghlvgigsehghhhithhirdhfrhdpnhgspghrtghpthhtohepiedprhgtphhtthhopegthhgrnhhgsghinhdrughusehhuhgrfigvihdrtghomhdprhgtphhtthhopehprghulhdrfigrlhhmshhlvgihsehsihhfihhvvgdrtghomhdprhgtphhtthhopehprghlmhgvrhesuggrsggsvghlthdrtghom
+ hdprhgtphhtthhopegrohhusegvvggtshdrsggvrhhkvghlvgihrdgvughupdhrtghpthhtoheplhhinhhugidqrhhishgtvheslhhishhtshdrihhnfhhrrgguvggrugdrohhrghdprhgtphhtthhopehlihhnuhigqdhkvghrnhgvlhesvhhgvghrrdhkvghrnhgvlhdrohhrgh
+X-GND-Sasl: alex@ghiti.fr
 
-On Tue, Jun 24, 2025 at 12:11:59PM +0000, 陈涛涛 Taotao Chen wrote:
-> From: Taotao Chen <chentaotao@didiglobal.com>
-> 
-> This patch series refactors the address_space_operations write_begin()
-> and write_end() callbacks to take struct kiocb * as their first argument,
-> allowing IOCB flags such as IOCB_DONTCACHE to propagate to filesystem’s
-> buffered write path.
-> 
-> Ext4 is updated to implement handling of the IOCB_DONTCACHE flag in its
-> buffered write path and to advertise support via the FOP_DONTCACHE file
-> operation flag.
-> 
-> Additionally, the i915 driver’s shmem write paths are updated to bypass
-> the legacy write_begin/write_end interface in favor of directly calling
-> write_iter(), using a constructed synchronous kiocb. Another i915 patch
-> replaces a manual write loop with kernel_write() in shmem object creation.
+Hi Changbin,
 
-Thanks, this is a really good cleanup.
+On 6/24/25 13:30, Changbin Du wrote:
+> Under FTRACE=y, DYNAMIC_FTRACE=n, and RISCV_ALTERNATIVE_EARLY=n, the kernel
+
+
+Your above config works fine for me, I guess you meant FUNCTION_TRACER 
+&& !DYNAMIC_FTRACE (which fails).
+
+We were just talking with Andy about this configuration (FUNCTION_TRACER 
+&& !DYNAMIC_FTRACE): do we really want to support static ftrace? Andy 
+should send a patch soon to remove this possibility as IMO we don't want 
+to support it. Let's wait for this patch and the discussion that will 
+follow before merging your fix. I'll keep it in my list for 6.16 just in 
+case someone comes up with a good argument to keep it.
+
+Thanks,
+
+Alex
+
+
+> panics upon returning from _mcount() in the early boot path. This occurs
+> during _start_kernel() -> setup_vm() -> apply_early_boot_alternatives().
+>
+> The CC_FLAGS_FTRACE is only removed from alternative.c when
+> CONFIG_RISCV_ALTERNATIVE_EARLY=y. Therefore, no function calls should be
+> made to alternative.c during early boot in this configuration.
+>
+> Fixes: a35707c3d850 ("riscv: add memory-type errata for T-Head")
+> Signed-off-by: Changbin Du <changbin.du@huawei.com>
+> ---
+>   arch/riscv/include/asm/alternative.h | 6 ++++++
+>   arch/riscv/kernel/alternative.c      | 4 ++--
+>   2 files changed, 8 insertions(+), 2 deletions(-)
+>
+> diff --git a/arch/riscv/include/asm/alternative.h b/arch/riscv/include/asm/alternative.h
+> index 3c2b59b25017..c670b0cc55f4 100644
+> --- a/arch/riscv/include/asm/alternative.h
+> +++ b/arch/riscv/include/asm/alternative.h
+> @@ -31,7 +31,13 @@
+>   #define ALT_ALT_PTR(a)			__ALT_PTR(a, alt_offset)
+>   
+>   void __init apply_boot_alternatives(void);
+> +
+> +# ifdef CONFIG_RISCV_ALTERNATIVE_EARLY
+>   void __init apply_early_boot_alternatives(void);
+> +# else
+> +static inline void apply_early_boot_alternatives(void) { }
+> +# endif
+> +
+>   void apply_module_alternatives(void *start, size_t length);
+>   
+>   void riscv_alternative_fix_offsets(void *alt_ptr, unsigned int len,
+> diff --git a/arch/riscv/kernel/alternative.c b/arch/riscv/kernel/alternative.c
+> index 7eb3cb1215c6..5406c3301627 100644
+> --- a/arch/riscv/kernel/alternative.c
+> +++ b/arch/riscv/kernel/alternative.c
+> @@ -205,6 +205,7 @@ void __init apply_boot_alternatives(void)
+>   	apply_vdso_alternatives();
+>   }
+>   
+> +#ifdef CONFIG_RISCV_ALTERNATIVE_EARLY
+>   /*
+>    * apply_early_boot_alternatives() is called from setup_vm() with MMU-off.
+>    *
+> @@ -219,12 +220,11 @@ void __init apply_boot_alternatives(void)
+>    */
+>   void __init apply_early_boot_alternatives(void)
+>   {
+> -#ifdef CONFIG_RISCV_ALTERNATIVE_EARLY
+>   	_apply_alternatives((struct alt_entry *)__alt_start,
+>   			    (struct alt_entry *)__alt_end,
+>   			    RISCV_ALTERNATIVES_EARLY_BOOT);
+> -#endif
+>   }
+> +#endif
+>   
+>   #ifdef CONFIG_MODULES
+>   void apply_module_alternatives(void *start, size_t length)
 
