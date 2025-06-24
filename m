@@ -1,108 +1,123 @@
-Return-Path: <linux-kernel+bounces-699653-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-699667-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 11747AE5D7C
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Jun 2025 09:14:40 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0454DAE5DB4
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Jun 2025 09:29:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D5D261B632A3
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Jun 2025 07:14:55 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5E42F4A7243
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Jun 2025 07:28:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2A44A251793;
-	Tue, 24 Jun 2025 07:14:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 35A2225486D;
+	Tue, 24 Jun 2025 07:28:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b="lVrpx2Bh"
-Received: from mail-ej1-f47.google.com (mail-ej1-f47.google.com [209.85.218.47])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="aKeXnPms"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.16])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 680AF248F64
-	for <linux-kernel@vger.kernel.org>; Tue, 24 Jun 2025 07:14:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2C35D252906
+	for <linux-kernel@vger.kernel.org>; Tue, 24 Jun 2025 07:28:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.16
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750749273; cv=none; b=J9PCFWn/Rxsp2RT2NmYxvSXDMTbNzlDmXTix3rLO4txIZhMVflaQKB4zJdVwHJohJff/Mn3X2qE460zveOqkDT1oLo7gkHbgoUwoZKqL+eole7zfg7QkiB2HsXxKoCDSwydeLWu3o3BAvMskPzNgL089qEpmebNVGm3qk+A6mu0=
+	t=1750750120; cv=none; b=tP6xuP/eXeawcAMNgArVEmnmWfx1FMLOpkdkIxIh6zuS4V9hTU6GiLH4XqUZl03bMfJ0074NEuT0k2Qaz2MIUm2Wp1sVEXPVGFGnx+Mn8ncjTqLksxPs2yA2Wo4AVb454JxpVJO8Ht0/tiswC0O/At9F+JsbwWTscmcH2HIsc/o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750749273; c=relaxed/simple;
-	bh=nET1gJEsQoUnbclWMzIn4J/kW3aT/Kgp+JNFW9tmDAQ=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=XVFduVhTF2oIzjNutUMUcFDKH++XZOBi8HuyUZT1NVk80n/75ThKsnr4d9HrMy3dKNuF+aHBdvO86yT/jjYKhpdGxiGwIFA8f6cBm9jW81AlQc2uFyk14ir0MrhhsGSIa2wbQsaqnVOGjvXrnD7803VO5byWO4y8MSzNZMoSNeI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev; spf=pass smtp.mailfrom=tuxon.dev; dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b=lVrpx2Bh; arc=none smtp.client-ip=209.85.218.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tuxon.dev
-Received: by mail-ej1-f47.google.com with SMTP id a640c23a62f3a-adb5cb6d8f1so784739166b.3
-        for <linux-kernel@vger.kernel.org>; Tue, 24 Jun 2025 00:14:31 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=tuxon.dev; s=google; t=1750749270; x=1751354070; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:content-language:from
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=i3O/kbdN1R6dzhK7EawM1PIi5N4Kg7zW17zp/dNMj1c=;
-        b=lVrpx2BhgYIzWopTvY9/D3KfCg4rnlRwDdXedxgwj7U1PfFDTNvX52NIrgkmdqMZ0j
-         miYVcNLpQ7FNaPwituJKxl2Iji8Oo4Us/wN89CE4bnFwS4bMx92RsQoY3P/PGrsB7JYX
-         P+sXoq9mTFt2RrRDoU5K5JHX7akuEKtKnNeqjqB8+kb/YGVEakCztPiapf5E9cs9P/zH
-         c+NYaDXvSERSXVDCIdvK9g/MgkKKVu/9Wg5MuqKTlGmogmUxj8ejxiOe8ggoAYVY4+A/
-         EypTQW+kPnlragj/U6cki9g8aItLfCCKpHSgyPMGbxA2YCsLlCSdoK/xgRItPnZn7u1h
-         uozQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1750749270; x=1751354070;
-        h=content-transfer-encoding:in-reply-to:content-language:from
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=i3O/kbdN1R6dzhK7EawM1PIi5N4Kg7zW17zp/dNMj1c=;
-        b=SgFUiq6YmOGvYPXHd08vjSYcngMx3sb/xl5c4Pqy1ZvH/kyVuME2FM3naCg45Od0VU
-         qX6Lg5kaMvNDEEnVEjhwdunBykNKbfwE0zHnRbF/ntaKnMoZeWaTLTRhBsDFO8PsvbzQ
-         QvgDuidcptVnv/JDJE2FxjUP9/21YyJnxKMZOTqaBXNurvM1Ldm2cndAzo/hVASm2+1Y
-         qqKlcv0RVlOE17sKX/DFfvHdCV5pvM8/Qr52AcBpdggzJUZfUTHU5COf/BNAZVPjmOZ7
-         py2CvDUVgxROUtj15SiefZfKB9NMjjd/ZeyVqJuvagWLUSNURqxnY05XmCP6B15Vv2ht
-         2AKA==
-X-Forwarded-Encrypted: i=1; AJvYcCXThd/LzxWC4BL6RNHJ29BbUXIHoNOcDvyWXBldIkNnYJ/qhLWw7Kzvm5ZMNxgkoF1SE2S8foSh7+iEIpQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyYysUtQ0bIzQPdul9FRp55Pa8G57SA+QiRPemhBg53zhtEPJSz
-	R4WBqYhhFXgUkqmYcroGOgXDa6iP8VNDxb7FnpfZuucmfKxg4JTIApSA9nrZy6AWZ4I=
-X-Gm-Gg: ASbGncvRKFhg1rJecUCpr5IME6zIY/MyZ34Ugq4H7fYToHOydRt8mTBY863kyJUyKhx
-	vHLojQnS4uoGz/+gDIklo2sZkEjDfZQttnAsuGXieZAXKs4vZ2lK2Zz+psu8dVj+mqWJJ2o88vQ
-	3lrHJ34GMA4YlmD8ysQUXOszzHIXGh6DdUc6u2sGDE7uopbhXh9c4dGFZZIgUE06hSRlQWom4bj
-	sFlat4XvBMyOw9oEnJvWv3k679IrXRKWipxUk65inJbAJ59hp4ANtRRHL4a1aoBoHH9hKpFq2+j
-	QBw+t+MvyEk9n8XFnFHgrEFyolRZ/K30uv+WH4fxBa/ZTrweag+Ix0hG7/hRa892Wg/URCQ=
-X-Google-Smtp-Source: AGHT+IFyqZi3XuHoAqSel9NcTyM6a8to6TnnNAlILz2CVQlPmoEe8VkJjYi2Jq9ty/8Rh1HMu6sWxA==
-X-Received: by 2002:a17:907:e2e2:b0:ae0:b3cd:8f32 with SMTP id a640c23a62f3a-ae0b3cd91cbmr16862866b.11.1750749269565;
-        Tue, 24 Jun 2025 00:14:29 -0700 (PDT)
-Received: from [192.168.50.4] ([82.78.167.110])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ae054209a40sm837830566b.173.2025.06.24.00.14.28
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 24 Jun 2025 00:14:29 -0700 (PDT)
-Message-ID: <c3ce0abd-d924-4c8e-9cce-39d694a19418@tuxon.dev>
-Date: Tue, 24 Jun 2025 10:14:27 +0300
+	s=arc-20240116; t=1750750120; c=relaxed/simple;
+	bh=TtfC8PQ5NJ7veeU9guOOT4owM20qjxMZAt56llMj1Xw=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=FWsJsVDm3M08g95/U6BA98O29yThDlYGCnSdYzpzJIAwQwbGEJAoI/Yk8fSO+TqBFRjJOa8nt6C/niHycyAdDcawbfC1Jk4oVbTCursuYFezFeHniwE2SI/TtTn3KrqYvMPgVP1yIsymfAC/FuS0pis2oWB98gE1SBrb6usatxM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=aKeXnPms; arc=none smtp.client-ip=198.175.65.16
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1750750120; x=1782286120;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=TtfC8PQ5NJ7veeU9guOOT4owM20qjxMZAt56llMj1Xw=;
+  b=aKeXnPmsXBdciHjO4Oa12j7rAmDexy0MzooiIo+lzOIMW2O2BFk+Wk/u
+   76x+iMbDicGHoxnzt+tCI+TkLTWBZQ/Djr16pVPj7ZnhSyivrftlJxisy
+   51HI6mRT+Lsc6LseahsPZxpzHlxGfeuu16lG7wrpdjZ2df69vVC+lPdnU
+   JPXZOA/EhGPOlwVbfyPQecAVD03Gq8YkR35mKR4i0Tvl7rFgbS/nWLunV
+   vH7b3/xu2IikkEW4Xdlg3x9bS87AwO6/VrZkPKxnt9iTjDqeYgNTYRkuI
+   Ow7Wnlp7h4PyUGSNyWlfRQQoMfqtfo1brZL+1W+dp2BARAeZU0Zu3uF2c
+   A==;
+X-CSE-ConnectionGUID: ltj9rdKrRUiLruy+0FLFBg==
+X-CSE-MsgGUID: od6NDZkrRMCl7Wt/2V3ZcA==
+X-IronPort-AV: E=McAfee;i="6800,10657,11473"; a="53067734"
+X-IronPort-AV: E=Sophos;i="6.16,261,1744095600"; 
+   d="scan'208";a="53067734"
+Received: from fmviesa010.fm.intel.com ([10.60.135.150])
+  by orvoesa108.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 24 Jun 2025 00:28:39 -0700
+X-CSE-ConnectionGUID: D+4ixqVxQjiaEtGvPBM4fw==
+X-CSE-MsgGUID: xAQVapMkT0OUnaP4a4b1Hg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.16,261,1744095600"; 
+   d="scan'208";a="152540689"
+Received: from sannilnx-dsk.jer.intel.com ([10.12.231.107])
+  by fmviesa010-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 24 Jun 2025 00:28:37 -0700
+From: Alexander Usyskin <alexander.usyskin@intel.com>
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: Reuven Abliyev <reuven.abliyev@intel.com>,
+	Alexander Usyskin <alexander.usyskin@intel.com>,
+	linux-kernel@vger.kernel.org
+Subject: [char-misc-next] mei: bus: fix device leak
+Date: Tue, 24 Jun 2025 10:15:21 +0300
+Message-ID: <20250624071521.1281436-1-alexander.usyskin@intel.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] ARM: dts: microchip: sam9x7: Add HLCD controller
-To: Dharma Balasubiramani <dharma.b@microchip.com>,
- Nicolas Ferre <nicolas.ferre@microchip.com>,
- Alexandre Belloni <alexandre.belloni@bootlin.com>,
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>
-Cc: linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <20250611-sam9x7-dts-v1-1-7f52fcb488ad@microchip.com>
-From: Claudiu Beznea <claudiu.beznea@tuxon.dev>
-Content-Language: en-US
-In-Reply-To: <20250611-sam9x7-dts-v1-1-7f52fcb488ad@microchip.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
+The bus rescan function creates bus devices for all clients.
+The fixup routine is executed on all devices, unneeded
+devices are removed and fully initialized once set
+is_added flag to 1.
 
+If link to firmware is reset right after all devices are
+initialized, but before fixup is executed, the rescan tries
+to remove devices.
+The is_added flag is not set and the mei_cl_bus_dev_destroy
+returns prematurely.
+Allow to clean up device when is_added flag is unset to
+account for above scenario.
 
-On 11.06.2025 12:17, Dharma Balasubiramani wrote:
-> Add support for HLCD controller.
-> 
-> Signed-off-by: Dharma Balasubiramani <dharma.b@microchip.com>
-> ---
->  arch/arm/boot/dts/microchip/sam9x7.dtsi | 26 ++++++++++++++++++++++++++
->  1 file changed, 26 insertions(+)
-Applied to at91-dt, thanks!
+Signed-off-by: Alexander Usyskin <alexander.usyskin@intel.com>
+---
+ drivers/misc/mei/bus.c | 11 ++++-------
+ 1 file changed, 4 insertions(+), 7 deletions(-)
+
+diff --git a/drivers/misc/mei/bus.c b/drivers/misc/mei/bus.c
+index 67176caf5416..f2e5d550c6b4 100644
+--- a/drivers/misc/mei/bus.c
++++ b/drivers/misc/mei/bus.c
+@@ -1430,17 +1430,14 @@ static void mei_cl_bus_dev_stop(struct mei_cl_device *cldev)
+  */
+ static void mei_cl_bus_dev_destroy(struct mei_cl_device *cldev)
+ {
+-
+ 	WARN_ON(!mutex_is_locked(&cldev->bus->cl_bus_lock));
+ 
+-	if (!cldev->is_added)
+-		return;
+-
+-	device_del(&cldev->dev);
++	if (cldev->is_added) {
++		device_del(&cldev->dev);
++		cldev->is_added = 0;
++	}
+ 
+ 	list_del_init(&cldev->bus_list);
+-
+-	cldev->is_added = 0;
+ 	put_device(&cldev->dev);
+ }
+ 
+-- 
+2.43.0
+
 
