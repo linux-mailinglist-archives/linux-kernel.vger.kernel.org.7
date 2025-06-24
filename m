@@ -1,87 +1,142 @@
-Return-Path: <linux-kernel+bounces-699431-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-699433-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id DD6E6AE59D4
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Jun 2025 04:23:37 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 60A29AE5A14
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Jun 2025 04:29:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C0F6C1BC129C
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Jun 2025 02:23:53 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id DA6C91889254
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Jun 2025 02:29:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2B0671F582C;
-	Tue, 24 Jun 2025 02:23:06 +0000 (UTC)
-Received: from mail-io1-f69.google.com (mail-io1-f69.google.com [209.85.166.69])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C5CD6202C46;
+	Tue, 24 Jun 2025 02:28:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=realtek.com header.i=@realtek.com header.b="sy2KWOAJ"
+Received: from rtits2.realtek.com.tw (rtits2.realtek.com [211.75.126.72])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3CC1C146D6A
-	for <linux-kernel@vger.kernel.org>; Tue, 24 Jun 2025 02:23:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.69
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A6257F50F;
+	Tue, 24 Jun 2025 02:28:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=211.75.126.72
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750731785; cv=none; b=ngVBtzYLRgc2rWz/plXpOzXUORpfp3+Dc5uHkugVPYrWLwFNpTbtV6lZje8XWq9x0GryvzkhDiHqOL9clo7tEkKW22MEsL54jfapVcICKx9XThHWHX6zdKfc+L1bHBDN/HkMOo/Eah8BIrvRH30lVWpEqh7cRvFuuJtpz29PIjA=
+	t=1750732128; cv=none; b=LXq4mVFkSjNi4BpjOihB8keFAq1TR42pltKsUq8F8r4iKEwhibkOqlhibrdMJWMyM/G4pmqFEPPclIB6iegJN/AFK/oEm9EOnHNQK5MPkCMY9X+J4eVD/onqGcXWuB+G2FS4QmigwyYnxF7Mmk6MX2Di3bc5OigPh+yaC7H4G+M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750731785; c=relaxed/simple;
-	bh=IYxQq+j85mlxBOt1SAkWII2rvYvwUkmZX/IJyNdDycE=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=kUd7Qv+1ikenAcRwv3o9QEfRII74Q09OUPPV76WpiWZDz4iCPruKSaQke4rmIpCdn6UfW5f4DBDoBpBovyQHTOsMuV67oR7ycecaEQZhLIC+MIJU+OGCvSQdtkWQFr+uUiNySUMCMEskOuv8BuRdoccF2aGXlALBRF7ujyzubuA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.69
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-io1-f69.google.com with SMTP id ca18e2360f4ac-8760733a107so396501239f.3
-        for <linux-kernel@vger.kernel.org>; Mon, 23 Jun 2025 19:23:04 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1750731783; x=1751336583;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=pmtv9PbyyeDc5et0avduxAVIo7zKxMEFE5NvMKYIppM=;
-        b=r0d8Vm5aPz78+3dU2Xo9xXFKMNZqTzsDLGRsTitmbtYMOs58FTKJNisO7TCmIqSmTG
-         QjW5erkuXcvY07Snhrhkx6WNrqkiCT1nBha5cdjgqyUWA3YbsWw+1GRYe5if6ILJIkC1
-         jAGZJek60y70kQVpkCSq5EdDTN48nHjG8JB+APvBHrGqQldH1G5rUMYJQqDObocX/T60
-         IPWrysbK8BWGL/YFjsBgXYbRRanBAveTC1FnyFU5KFsLi+UcfhTaGODoKWMqpPzfqRG2
-         WlUDhQR6hjZg9Z6VrxT1v+x78yCnxPOqJBmKmPDFftG5kj75+GxKXjexe2y1hd0aQKvC
-         C3CA==
-X-Forwarded-Encrypted: i=1; AJvYcCX08sYXJP80chb9oKs0wGn0H8J7UdnxOxqauXzrtnch/DwzybivEgpKcRuGurzLgmN4rpgVGkD2kuCvgqE=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx6EjCGQl98qxTD6JdhBeW0V9piMc9UTJDAi8rCFTeB2QQod0qj
-	nqzmZeBqxKgloL+AHVWwnsVo9yyP0RPBtoKrLlEQtZWMRdvRw+raYeWdKH6nSqldmGvFyibUQ8V
-	abbZwzcd7+9X4mZEXH/z8ZvNXB1HFypjbaZ8Wuh/6yZi1ZhEng+PzVSy8o7Y=
-X-Google-Smtp-Source: AGHT+IG1xINOyNIDaG5EFRPg3IGnQtlxhz+uYrM8Ycq4ZwV244sqXBLLwh+Bo1A72scUa3eJl+CnbJgEv8OimH3M582yPtNaPQPH
+	s=arc-20240116; t=1750732128; c=relaxed/simple;
+	bh=zqZunaHZ8pQiSS5PmcKL6vSLxeXji8wT6D1iH8su6Nc=;
+	h=From:To:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=mZU06gk6DLo4KmScbSetZRaj8PFJ56fFB8T8cg1YRxdWU4HK06UnkU2A3sX+S2y9e6G4FCfKTJGVuG1vQFtZ2BiN0sfBbfrLAYlHnEZCvOlwGT/4AK9Ie5w2BYiFP6QK8SuxUYY77p63D0B5AYV5ag9OV1RGOj6w7jlgEXGcbRw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=realtek.com; spf=pass smtp.mailfrom=realtek.com; dkim=pass (2048-bit key) header.d=realtek.com header.i=@realtek.com header.b=sy2KWOAJ; arc=none smtp.client-ip=211.75.126.72
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=realtek.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=realtek.com
+X-SpamFilter-By: ArmorX SpamTrap 5.80 with qID 55O2SYW302855972, This message is accepted by code: ctloc85258
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=realtek.com; s=dkim;
+	t=1750732114; bh=uBvqEueoCGRKtiHHzprOXSUige7h75N5qAm/5I+YmXw=;
+	h=From:To:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:Content-Transfer-Encoding:MIME-Version;
+	b=sy2KWOAJ/fZmscI54IjS6et/sEq8j89IjLP/b6eju0JVxjFo2nxUN/qPcWMt0i5Et
+	 hdPoJw5lxHhdQRLyLVow2MEpCToftHeaNLxsIehuvsatz0MkoaA+KxGJXgiZq7IRwP
+	 ckqGb2Ot5QfJJ80P2pMt+CCOsqe9oH0JwpCAOQXL8QIDUNM9rmKqWWC5F0Qei2c6R3
+	 HFSu86FL9JJnZ5FO8JxKoLJHMAep0lviCwWqIIDvHFyBfCeAMEYQtqTkwRVHsDpdoh
+	 lWd0XPweDixd/OzoYeWHjqm9QcJwYYeeGvCIs3QeRet+4ik+AiMbJjZiK4VW2F7yFv
+	 1oXJxnGBTqMjQ==
+Received: from mail.realtek.com (rtkexhmbs02.realtek.com.tw[172.21.6.41])
+	by rtits2.realtek.com.tw (8.15.2/3.13/5.93) with ESMTPS id 55O2SYW302855972
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Tue, 24 Jun 2025 10:28:34 +0800
+Received: from RTEXMBS06.realtek.com.tw (172.21.6.99) by
+ RTKEXHMBS02.realtek.com.tw (172.21.6.41) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.11; Tue, 24 Jun 2025 10:28:47 +0800
+Received: from RTEXDAG02.realtek.com.tw (172.21.6.101) by
+ RTEXMBS06.realtek.com.tw (172.21.6.99) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.1.2507.35; Tue, 24 Jun 2025 10:28:47 +0800
+Received: from RTEXDAG02.realtek.com.tw ([fe80::1d65:b3df:d72:eb25]) by
+ RTEXDAG02.realtek.com.tw ([fe80::1d65:b3df:d72:eb25%5]) with mapi id
+ 15.01.2507.035; Tue, 24 Jun 2025 10:28:47 +0800
+From: Ping-Ke Shih <pkshih@realtek.com>
+To: Pei Xiao <xiaopei01@kylinos.cn>,
+        "linux-wireless@vger.kernel.org"
+	<linux-wireless@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org"
+	<linux-kernel@vger.kernel.org>
+Subject: RE: [PATCH] wifi: rtw88: coex: Use bitwise instead of arithmetic operator for flags
+Thread-Topic: [PATCH] wifi: rtw88: coex: Use bitwise instead of arithmetic
+ operator for flags
+Thread-Index: AQHb5Kzf/JZXLElinkWikwA/8Zj8yrQRlYXA
+Date: Tue, 24 Jun 2025 02:28:46 +0000
+Message-ID: <910133af3684449cab0dba7a9389df04@realtek.com>
+References: <530c4d8c788a875690948f0f5029e3091aaab5d4.1750730099.git.xiaopei01@kylinos.cn>
+In-Reply-To: <530c4d8c788a875690948f0f5029e3091aaab5d4.1750730099.git.xiaopei01@kylinos.cn>
+Accept-Language: en-US, zh-TW
+Content-Language: zh-TW
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:4419:20b0:3df:29a6:ffbc with SMTP id
- e9e14a558f8ab-3df29a7066fmr8305625ab.17.1750731783384; Mon, 23 Jun 2025
- 19:23:03 -0700 (PDT)
-Date: Mon, 23 Jun 2025 19:23:03 -0700
-In-Reply-To: <20250624005552.1589-1-hdanton@sina.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <685a0c07.a00a0220.2e5631.0048.GAE@google.com>
-Subject: Re: [syzbot] [fs?] general protection fault in pidfs_free_pid
-From: syzbot <syzbot+25317a459958aec47bfa@syzkaller.appspotmail.com>
-To: hdanton@sina.com, linux-kernel@vger.kernel.org, 
-	syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
 
-Hello,
+Pei Xiao <xiaopei01@kylinos.cn> wrote:
+> This silences the following coccinelle warning:
+>   WARNING: sum of probable bitmasks, consider |
+>=20
+> Signed-off-by: Pei Xiao <xiaopei01@kylinos.cn>
+> ---
+>  drivers/net/wireless/realtek/rtw88/coex.c | 22 +++++++++++-----------
+>  1 file changed, 11 insertions(+), 11 deletions(-)
+>=20
+> diff --git a/drivers/net/wireless/realtek/rtw88/coex.c b/drivers/net/wire=
+less/realtek/rtw88/coex.c
+> index 64904278ddad..37788aca200b 100644
+> --- a/drivers/net/wireless/realtek/rtw88/coex.c
+> +++ b/drivers/net/wireless/realtek/rtw88/coex.c
+> @@ -1500,23 +1500,23 @@ static u8 rtw_coex_algorithm(struct rtw_dev *rtwd=
+ev)
+>         case BPM_HFP:
+>                 algorithm =3D COEX_ALGO_HFP;
+>                 break;
+> -       case           BPM_HID:
+> -       case BPM_HFP + BPM_HID:
+> +       case BPM_HID:
+> +       case BPM_HFP | BPM_HID:
+>                 algorithm =3D COEX_ALGO_HID;
+>                 break;
+> -       case BPM_HFP           + BPM_A2DP:
+> -       case           BPM_HID + BPM_A2DP:
+> -       case BPM_HFP + BPM_HID + BPM_A2DP:
+> +       case BPM_HFP | BPM_A2DP:
+> +       case BPM_HID | BPM_A2DP:
+> +       case BPM_HFP | BPM_HID | BPM_A2DP:
+>                 algorithm =3D COEX_ALGO_A2DP_HID;
+>                 break;
+> -       case BPM_HFP                      + BPM_PAN:
+> -       case           BPM_HID            + BPM_PAN:
+> -       case BPM_HFP + BPM_HID            + BPM_PAN:
+> +       case BPM_HFP | BPM_PAN:
+> +       case BPM_HID | BPM_PAN:
+> +       case BPM_HFP | BPM_HID | BPM_PAN:
 
-syzbot has tested the proposed patch and the reproducer did not trigger any issue:
+Please just replace '+' by '|'. Keep spaces. People can be easier to see th=
+e
+combination of BT profiles.
 
-Reported-by: syzbot+25317a459958aec47bfa@syzkaller.appspotmail.com
-Tested-by: syzbot+25317a459958aec47bfa@syzkaller.appspotmail.com
+>                 algorithm =3D COEX_ALGO_PAN_HID;
+>                 break;
+> -       case BPM_HFP           + BPM_A2DP + BPM_PAN:
+> -       case           BPM_HID + BPM_A2DP + BPM_PAN:
+> -       case BPM_HFP + BPM_HID + BPM_A2DP + BPM_PAN:
+> +       case BPM_HFP | BPM_A2DP | BPM_PAN:
+> +       case BPM_HID | BPM_A2DP | BPM_PAN:
+> +       case BPM_HFP | BPM_HID | BPM_A2DP | BPM_PAN:
+>                 algorithm =3D COEX_ALGO_A2DP_PAN_HID;
+>                 break;
+>         case                                BPM_PAN:
+> --
+> 2.25.1
 
-Tested on:
-
-commit:         f817b6dd Add linux-next specific files for 20250623
-git tree:       linux-next
-console output: https://syzkaller.appspot.com/x/log.txt?x=100f6dd4580000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=f7617ed010d11464
-dashboard link: https://syzkaller.appspot.com/bug?extid=25317a459958aec47bfa
-compiler:       Debian clang version 20.1.6 (++20250514063057+1e4d39e07757-1~exp1~20250514183223.118), Debian LLD 20.1.6
-patch:          https://syzkaller.appspot.com/x/patch.diff?x=1453eb0c580000
-
-Note: testing is done by a robot and is best-effort only.
 
