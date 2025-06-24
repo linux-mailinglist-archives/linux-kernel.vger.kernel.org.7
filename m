@@ -1,124 +1,98 @@
-Return-Path: <linux-kernel+bounces-700947-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-700983-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id A7BCBAE6ED6
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Jun 2025 20:46:19 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C7875AE6F28
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Jun 2025 21:05:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 625ED1BC4C4B
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Jun 2025 18:46:35 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7975A17F557
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Jun 2025 19:05:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6EC4F2E6112;
-	Tue, 24 Jun 2025 18:46:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8B8A42E613D;
+	Tue, 24 Jun 2025 19:05:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="czkr/+gN"
-Received: from fllvem-ot03.ext.ti.com (fllvem-ot03.ext.ti.com [198.47.19.245])
+	dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b="UQQwoqXE"
+Received: from smtp-1908.mail.infomaniak.ch (smtp-1908.mail.infomaniak.ch [185.125.25.8])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3BA5419DF4A;
-	Tue, 24 Jun 2025 18:46:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.245
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8A10B2E2EE2
+	for <linux-kernel@vger.kernel.org>; Tue, 24 Jun 2025 19:05:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.125.25.8
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750790772; cv=none; b=sa9Qu9MsrydImfblGttFSSB1kkiDUbbDc6afA2S3UZYa0bIJ9XfA/9Gp3lK+Ptxuf3CfmCYg6d6dJaBYRq/5bjq6P97fwfGd4+wmLpbPRVzw+WU2RU1H0T1GdVVmu+Xo0LpIEaZF74vu1DNj8lN4tRNDZA4AiI4yAAuJqpBwTaE=
+	t=1750791917; cv=none; b=TszEIaY8q69ltHPX4KLQxPJ0GUeoEJynd2PDKKCiEq1TxKMd6RNf0QTO/7f6JcQktqrZgPoxHr6jmLfJngu5pgMwszhnhx5YBtrwKd01XaJ3fxfwgR2diibIlge1Xfvy/OGJugFcwtbsGNrm+Xia5a6Qxfo9jkeNXyRRrtSXnM8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750790772; c=relaxed/simple;
-	bh=xON+1e8LUeEk49u3kbhtpooCftgHAT0Lk8KR3WI4ieo=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=S8UzUpSaxRzIfnDwOzAoVYB7Q7zTvX5XnzQI5TTSXXT+PO16dlQUQxtgA7VZLMRwHiIpIwZvDoWvbSenzp0StLB7ise/UA7jdPsGSn1Gp4V+ZiD4LaYriJcXaQIt+ClemO5lCgQFwvRzAzKZtq+JXioRGTQJv3V4AyCbUvgwQAk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=czkr/+gN; arc=none smtp.client-ip=198.47.19.245
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
-Received: from lelvem-sh01.itg.ti.com ([10.180.77.71])
-	by fllvem-ot03.ext.ti.com (8.15.2/8.15.2) with ESMTP id 55OIjxq61631233;
-	Tue, 24 Jun 2025 13:45:59 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-	s=ti-com-17Q1; t=1750790759;
-	bh=ryKve62wZWyoV8Jf68Qb1NJxYQaLU+F3unuU2gjuvFw=;
-	h=From:To:CC:Subject:Date:In-Reply-To:References;
-	b=czkr/+gN/RPfBFITbT9oUkZqztPreUMZHL54ISw0UlHXGCN9reB5vogrMrRhFcpsc
-	 Wiw9dCFUbCxHW4R6uo+fCgawL39YaWdIv7ijPit6RZgUTqpPczpjOCqjHyQxrTejPC
-	 2hTmXLPSVFn9wZK1AoJVZvRzRVBSC+2yjX/R7ItM=
-Received: from DLEE105.ent.ti.com (dlee105.ent.ti.com [157.170.170.35])
-	by lelvem-sh01.itg.ti.com (8.18.1/8.18.1) with ESMTPS id 55OIjxt21801622
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-SHA256 bits=128 verify=FAIL);
-	Tue, 24 Jun 2025 13:45:59 -0500
-Received: from DLEE110.ent.ti.com (157.170.170.21) by DLEE105.ent.ti.com
- (157.170.170.35) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.55; Tue, 24
- Jun 2025 13:45:59 -0500
-Received: from lelvem-mr06.itg.ti.com (10.180.75.8) by DLEE110.ent.ti.com
- (157.170.170.21) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.55 via
- Frontend Transport; Tue, 24 Jun 2025 13:45:59 -0500
-Received: from uda0132425.dhcp.ti.com (uda0132425.dhcp.ti.com [172.24.227.245])
-	by lelvem-mr06.itg.ti.com (8.18.1/8.18.1) with ESMTP id 55OIjtK31993515;
-	Tue, 24 Jun 2025 13:45:55 -0500
-From: Vignesh Raghavendra <vigneshr@ti.com>
-To: Nishanth Menon <nm@ti.com>, Tero Kristo <kristo@kernel.org>,
-        Rob Herring
-	<robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley
-	<conor+dt@kernel.org>,
-        Emanuele Ghidoli <ghidoliemanuele@gmail.com>
-CC: Vignesh Raghavendra <vigneshr@ti.com>,
-        Emanuele Ghidoli
-	<emanuele.ghidoli@toradex.com>,
-        Francesco Dolcini
-	<francesco.dolcini@toradex.com>,
-        <linux-arm-kernel@lists.infradead.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v1] arm64: dts: ti: k3-am62p-verdin: Enable pull-ups on I2C_3_HDMI
-Date: Wed, 25 Jun 2025 00:15:50 +0530
-Message-ID: <175079060331.1874839.8272490827438865820.b4-ty@ti.com>
-X-Mailer: git-send-email 2.49.0
-In-Reply-To: <20250529102601.452859-1-ghidoliemanuele@gmail.com>
-References: <20250529102601.452859-1-ghidoliemanuele@gmail.com>
+	s=arc-20240116; t=1750791917; c=relaxed/simple;
+	bh=n3gPP5ter8z/G2UK+N8u5iPsNH1l9p6GeoNFT2fHCLI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=umB5ZsfO/evaiEPpSt4beRn0idedAdGrU1FqENdMJQzsteHzKHDRulr8xhoHpRi8U26D6wa6dHwjHVG4E3pgtSxQYkodHKGm03si2a860kpIWOkoRi8swpqHXa2w2B9bnwOZTuPKi8jvqnhV5F8C1NgQ9qP0P/h4acDxe/Lumnw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net; spf=pass smtp.mailfrom=digikod.net; dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b=UQQwoqXE; arc=none smtp.client-ip=185.125.25.8
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=digikod.net
+Received: from smtp-3-0000.mail.infomaniak.ch (unknown [IPv6:2001:1600:4:17::246b])
+	by smtp-3-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4bRYn45ytMzV6v;
+	Tue, 24 Jun 2025 20:46:00 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=digikod.net;
+	s=20191114; t=1750790760;
+	bh=u1rRYMTWI2GRDd2TE9wM30VWfP4sJX0NGJS6BmSAJtM=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=UQQwoqXEpxtEJCOHOk2/X9CWB1KzMUyxiRIvB/4YzrwwoneL5tl9zyvuzpwFXI361
+	 sLM702qxP1UsO/Y9b+ljbx52e28Loed5fXRuzmGrjQnGZnOVhlTlHfKrzjGq1IA9cu
+	 ML8DLRd9DdBy5QQhRjKWspMBAf7cHbjjAxG3NIr4=
+Received: from unknown by smtp-3-0000.mail.infomaniak.ch (Postfix) with ESMTPA id 4bRYn358gbzMBy;
+	Tue, 24 Jun 2025 20:45:59 +0200 (CEST)
+Date: Tue, 24 Jun 2025 20:45:58 +0200
+From: =?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>
+To: Song Liu <song@kernel.org>
+Cc: bpf@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-security-module@vger.kernel.org, brauner@kernel.org, 
+	kernel-team@meta.com, andrii@kernel.org, eddyz87@gmail.com, ast@kernel.org, 
+	daniel@iogearbox.net, martin.lau@linux.dev, viro@zeniv.linux.org.uk, jack@suse.cz, 
+	kpsingh@kernel.org, mattbobrowski@google.com, m@maowtm.org, neil@brown.name, 
+	=?utf-8?Q?G=C3=BCnther?= Noack <gnoack@google.com>
+Subject: Re: [PATCH v5 bpf-next 0/5] bpf path iterator
+Message-ID: <20250624.xahShi0iCh7t@digikod.net>
+References: <20250617061116.3681325-1-song@kernel.org>
+ <CAPhsuW5uu8cOYJWJ3Gne+ixpiWVAby1hZOnUgsXcFASEhV4Xhg@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
+In-Reply-To: <CAPhsuW5uu8cOYJWJ3Gne+ixpiWVAby1hZOnUgsXcFASEhV4Xhg@mail.gmail.com>
+X-Infomaniak-Routing: alpha
 
-Hi Emanuele Ghidoli,
-
-On Thu, 29 May 2025 12:25:54 +0200, Emanuele Ghidoli wrote:
-> Enable internal bias pull-ups on the SoC-side I2C_3_HDMI that do not have
-> external pull resistors populated on the SoM. This ensures proper
-> default line levels.
+On Fri, Jun 20, 2025 at 02:59:17PM -0700, Song Liu wrote:
+> Hi Christian, Mickaël, and folks,
 > 
+> Could you please share your comments on this version? Does this
+> look sane?
+
+This looks good to me but we need to know what is the acceptable next
+step to support RCU.  If we can go with another _rcu helper, I'm good
+with the current approach, otherwise we need to figure out a way to
+leverage the current helper to make it compatible with callers being in
+a RCU read-side critical section while leveraging safe path walk (i.e.
+several calls to path_walk_parent).
+
 > 
-
-I have applied the following to branch ti-k3-dts-next on [1].
-Thank you!
-
-[1/1] arm64: dts: ti: k3-am62p-verdin: Enable pull-ups on I2C_3_HDMI
-      commit: cb2d9c00770e2e6c51864704b5d98c9a0ddccaf9
-
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent up the chain during
-the next merge window (or sooner if it is a relevant bug fix), however if
-problems are discovered then the patch may be dropped or reverted.
-
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
-
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
-
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
-
-[1] https://git.kernel.org/pub/scm/linux/kernel/git/ti/linux.git
---
-Vignesh
-
+> Thanks,
+> Song
+> 
+> On Mon, Jun 16, 2025 at 11:11 PM Song Liu <song@kernel.org> wrote:
+> >
+> > In security use cases, it is common to apply rules to VFS subtrees.
+> > However, filtering files in a subtree is not straightforward [1].
+> >
+> > One solution to this problem is to start from a path and walk up the VFS
+> > tree (towards the root). Among in-tree LSMs, Landlock uses this solution.
+> >
+> 
+> [...]
+> 
 
