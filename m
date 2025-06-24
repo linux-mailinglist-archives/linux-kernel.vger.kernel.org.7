@@ -1,112 +1,136 @@
-Return-Path: <linux-kernel+bounces-700209-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-700211-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E74DCAE656A
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Jun 2025 14:49:22 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1E664AE656E
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Jun 2025 14:50:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CA9183B1ED7
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Jun 2025 12:48:56 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C96EC1889178
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Jun 2025 12:51:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6CB872BD038;
-	Tue, 24 Jun 2025 12:48:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="qZ+OIKBL"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2FBCB2BD59C;
-	Tue, 24 Jun 2025 12:48:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7C957298CCF;
+	Tue, 24 Jun 2025 12:50:45 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 005D21DFFC;
+	Tue, 24 Jun 2025 12:50:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750769327; cv=none; b=tmys1+uW6go2utLVEXxhfyop2JAbq+88Sk8s9uMRV5Q5lr0u2gTXh1wd/lBwHakHUS8xcI4c6kzMXVUYcG5Vox7ANj0/Cu/uHkcybo1nJKZjp+VpZJr9yeHlbKd1btonjVYrSGq6dYeE3qNnUsOhNYevwnjczGKLVLMmLuew9pQ=
+	t=1750769445; cv=none; b=oE9eEVfnRAuoDAtWlcXRP3nWlUeRvKBB63AA0qP0gJZpZrMLBm6qSeBlzvgy0pee07iNfLWIREjYnjd/u8ib0I4IQhc5nXYdmqszaDMIWQPMHMP84jYc0lFCF3smfP+UXBpO8uUfoU8yBj5dxZhg3CIRq1t+r1B3rkPZXhQeh+E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750769327; c=relaxed/simple;
-	bh=tP4bo0nKPQxjqvAvCgRkhsp1e4XImh4zH8iqxHKFAZc=;
-	h=Mime-Version:Content-Type:Date:Message-Id:Cc:Subject:From:To:
-	 References:In-Reply-To; b=SKhxfcB7uTFXIhQhbrpogHZYXhRqlWHJp1xQiUmliGcpzA/Q4y3W6cpuM9BnodWNa6cfzwBGwCBzauNZ3ZXmIpZYP2npdkt6lYUYbaot6cCUVC7IC2s6kpAimnLwSwJibMdUwXx8UlhD4FxWbZLyAiSUCiJMt0LxeMcHR5FC9Kw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=qZ+OIKBL; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 221AAC4CEE3;
-	Tue, 24 Jun 2025 12:48:40 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1750769325;
-	bh=tP4bo0nKPQxjqvAvCgRkhsp1e4XImh4zH8iqxHKFAZc=;
-	h=Date:Cc:Subject:From:To:References:In-Reply-To:From;
-	b=qZ+OIKBLrFvFkfxsR5MIjH2l+GMeUdJ3LvE6in7YKt8ZOlrdvYvTvGdUPiITX+Hci
-	 IAUAG5FOl960IuncqFsT4sCckdvrwyVGTK3t+hqXliRYnEHYFQdQ6FOXLSAexzegUG
-	 CkDOi3rib7zM3USAYCGKlx4rPa9QT3sleQhH/wPnIApaJrzDaEoGsNffh5dUlhRo0T
-	 Q+hC/mnpj8MT7zlckl7TmIBqpamxI+HMgRPCwYn2ORln9cZjxHKRjVzfNiOmij/fvm
-	 3ztY/gCPEN16LIxzHgZiRBma1oGeGBiIc3rPiUga5y5Xqul22RAcueJSmpl8W3BDw+
-	 BsacP4oqOPr1w==
+	s=arc-20240116; t=1750769445; c=relaxed/simple;
+	bh=GyodmIXznG8GSgL/Ai3LAgH/nDuaIi0hljP1HBMPTe4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=di3X5Z+Ufu3AIldNgj+3U5n0oE4uWtLt5GfLjBco8uxWJopUJPkDeWwagkCDJ6GUMKr8zbeGZQ2JBKM5OXdHnxzdZStMwNFl0ZNGVk+kFHbhdsN28uG6t7joYtM/nr+wIQC5PxHGMr738c5FU/alN00U5fNKksxUU02EQGH8Si4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 25A03106F;
+	Tue, 24 Jun 2025 05:50:23 -0700 (PDT)
+Received: from e124191.cambridge.arm.com (e124191.cambridge.arm.com [10.1.197.45])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 8D7073F66E;
+	Tue, 24 Jun 2025 05:50:37 -0700 (PDT)
+Date: Tue, 24 Jun 2025 13:50:32 +0100
+From: Joey Gouly <joey.gouly@arm.com>
+To: Steven Price <steven.price@arm.com>
+Cc: kvm@vger.kernel.org, kvmarm@lists.linux.dev,
+	Suzuki K Poulose <suzuki.poulose@arm.com>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Marc Zyngier <maz@kernel.org>, Will Deacon <will@kernel.org>,
+	James Morse <james.morse@arm.com>,
+	Oliver Upton <oliver.upton@linux.dev>,
+	Zenghui Yu <yuzenghui@huawei.com>,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+	Alexandru Elisei <alexandru.elisei@arm.com>,
+	Christoffer Dall <christoffer.dall@arm.com>,
+	Fuad Tabba <tabba@google.com>, linux-coco@lists.linux.dev,
+	Ganapatrao Kulkarni <gankulkarni@os.amperecomputing.com>,
+	Gavin Shan <gshan@redhat.com>,
+	Shanker Donthineni <sdonthineni@nvidia.com>,
+	Alper Gun <alpergun@google.com>,
+	"Aneesh Kumar K . V" <aneesh.kumar@kernel.org>,
+	Emi Kisanuki <fj0570is@fujitsu.com>
+Subject: Re: [PATCH v9 28/43] arm64: RME: Allow checking SVE on VM instance
+Message-ID: <20250624125032.GA111675@e124191.cambridge.arm.com>
+References: <20250611104844.245235-1-steven.price@arm.com>
+ <20250611104844.245235-29-steven.price@arm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
-Date: Tue, 24 Jun 2025 14:48:39 +0200
-Message-Id: <DAURXDWGWEDV.2GZ129VC6IFKF@kernel.org>
-Cc: "Boqun Feng" <boqun.feng@gmail.com>, <linux-kernel@vger.kernel.org>,
- <rust-for-linux@vger.kernel.org>, <ojeda@kernel.org>,
- <alex.gaynor@gmail.com>, <gary@garyguo.net>, <a.hindborg@kernel.org>,
- <aliceryhl@google.com>, <tmgross@umich.edu>, <dakr@kernel.org>,
- <peterz@infradead.org>, <mingo@redhat.com>, <will@kernel.org>,
- <longman@redhat.com>, <felipe_life@live.com>, <daniel@sedlak.dev>,
- <bjorn3_gh@protonmail.com>, <simona@ffwll.ch>, <airlied@gmail.com>,
- <dri-devel@lists.freedesktop.org>, <lyude@redhat.com>
-Subject: Re: [PATCH v5 2/3] implement ww_mutex abstraction for the Rust tree
-From: "Benno Lossin" <lossin@kernel.org>
-To: "Onur" <work@onurozkan.dev>
-X-Mailer: aerc 0.20.1
-References: <20250621184454.8354-1-work@onurozkan.dev>
- <20250621184454.8354-3-work@onurozkan.dev>
- <DASY7BECFRCT.332X5ZHZMV2W@kernel.org> <aFlQ7K_mYYbrG8Cl@Mac.home>
- <DATYHYJVPL3L.3NLMH7PPHYU9@kernel.org> <aFlpFQ4ivKw81d-y@Mac.home>
- <DAU0ELV91E2Q.35FZOII18W44J@kernel.org> <aFmKsE_nJkaVMv0T@tardis.local>
- <DAUARTYJ118U.YW38OP8TRVO3@kernel.org> <20250624083437.1e50d54c@nimda.home>
- <DAUM8B2ZUMFQ.25R95W7IDAEHM@kernel.org>
- <20250624153102.3961f377@nimda.home>
-In-Reply-To: <20250624153102.3961f377@nimda.home>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250611104844.245235-29-steven.price@arm.com>
 
-On Tue Jun 24, 2025 at 2:31 PM CEST, Onur wrote:
-> On Tue, 24 Jun 2025 10:20:48 +0200
-> "Benno Lossin" <lossin@kernel.org> wrote:
->
->> On Tue Jun 24, 2025 at 7:34 AM CEST, Onur wrote:
->> > Should we handle this in the initial implementation or leave it for
->> > follow-up patches after the core abstraction of ww_mutex has landed?
->>=20
->> Since you're writing these abstractions specifically for usage in
->> drm, I think we should look at the intended use-cases there and then
->> decide on an API.
->>=20
->> So maybe Lyude or Dave can chime in :)
->>=20
->> If you (or someone else) have another user for this API that needs it
->> ASAP, then we can think about merging this and improve it later. But
->> if we don't have a user, then we shouldn't merge it anyways.
->
-> I don't think this is urgent, but it might be better to land the basic
-> structure first and improve it gradually I think? I would be happy to
-> continue working for the improvements as I don't plan to leave it as
-> just the initial version.
+On Wed, Jun 11, 2025 at 11:48:25AM +0100, Steven Price wrote:
+> From: Suzuki K Poulose <suzuki.poulose@arm.com>
+> 
+> Given we have different types of VMs supported, check the
+> support for SVE for the given instance of the VM to accurately
+> report the status.
+> 
+> Signed-off-by: Suzuki K Poulose <suzuki.poulose@arm.com>
+> Signed-off-by: Steven Price <steven.price@arm.com>
+> Reviewed-by: Gavin Shan <gshan@redhat.com>
 
-I don't think we should land the basic API when we don't have a user
-in-tree or blessed by the maintainers.
+Reviewed-by: Joey Gouly <joey.gouly@arm.com>
 
-> I worked on the v5 review notes, but if we are going to consider
-> designing a different API, then it doesn't make much sense to send a v6
-> patch before finishing the design, which requires additional people in
-> the topic. That would also mean some of the ongoing review discussion
-> would be wasted.
-
-I would just wait for DRM to say something :)
-
----
-Cheers,
-Benno
+> ---
+>  arch/arm64/include/asm/kvm_rme.h | 2 ++
+>  arch/arm64/kvm/arm.c             | 5 ++++-
+>  arch/arm64/kvm/rme.c             | 5 +++++
+>  3 files changed, 11 insertions(+), 1 deletion(-)
+> 
+> diff --git a/arch/arm64/include/asm/kvm_rme.h b/arch/arm64/include/asm/kvm_rme.h
+> index 2d7d7233c525..af5150c084ce 100644
+> --- a/arch/arm64/include/asm/kvm_rme.h
+> +++ b/arch/arm64/include/asm/kvm_rme.h
+> @@ -94,6 +94,8 @@ void kvm_init_rme(void);
+>  u32 kvm_realm_ipa_limit(void);
+>  u32 kvm_realm_vgic_nr_lr(void);
+>  
+> +bool kvm_rme_supports_sve(void);
+> +
+>  int kvm_realm_enable_cap(struct kvm *kvm, struct kvm_enable_cap *cap);
+>  int kvm_init_realm_vm(struct kvm *kvm);
+>  void kvm_destroy_realm(struct kvm *kvm);
+> diff --git a/arch/arm64/kvm/arm.c b/arch/arm64/kvm/arm.c
+> index 4eb229b6c315..d1ef12fe6176 100644
+> --- a/arch/arm64/kvm/arm.c
+> +++ b/arch/arm64/kvm/arm.c
+> @@ -426,7 +426,10 @@ int kvm_vm_ioctl_check_extension(struct kvm *kvm, long ext)
+>  		r = get_kvm_ipa_limit();
+>  		break;
+>  	case KVM_CAP_ARM_SVE:
+> -		r = system_supports_sve();
+> +		if (kvm_is_realm(kvm))
+> +			r = kvm_rme_supports_sve();
+> +		else
+> +			r = system_supports_sve();
+>  		break;
+>  	case KVM_CAP_ARM_PTRAUTH_ADDRESS:
+>  	case KVM_CAP_ARM_PTRAUTH_GENERIC:
+> diff --git a/arch/arm64/kvm/rme.c b/arch/arm64/kvm/rme.c
+> index 5f1fdefc0364..6bd21223a8be 100644
+> --- a/arch/arm64/kvm/rme.c
+> +++ b/arch/arm64/kvm/rme.c
+> @@ -38,6 +38,11 @@ static bool rme_has_feature(unsigned long feature)
+>  	return !!u64_get_bits(rmm_feat_reg0, feature);
+>  }
+>  
+> +bool kvm_rme_supports_sve(void)
+> +{
+> +	return rme_has_feature(RMI_FEATURE_REGISTER_0_SVE_EN);
+> +}
+> +
+>  static int rmi_check_version(void)
+>  {
+>  	struct arm_smccc_res res;
+> -- 
+> 2.43.0
+> 
 
