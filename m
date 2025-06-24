@@ -1,114 +1,152 @@
-Return-Path: <linux-kernel+bounces-699464-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-699465-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 35036AE5A77
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Jun 2025 05:25:27 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1F31BAE5A78
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Jun 2025 05:27:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C4E6217D96A
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Jun 2025 03:25:27 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id EB06B1BC0464
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Jun 2025 03:27:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 614A2210F65;
-	Tue, 24 Jun 2025 03:25:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D479B202F65;
+	Tue, 24 Jun 2025 03:26:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Di8weWX0"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.18])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="XIBeUj7H"
+Received: from mail-pg1-f173.google.com (mail-pg1-f173.google.com [209.85.215.173])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 274DB17A2F8
-	for <linux-kernel@vger.kernel.org>; Tue, 24 Jun 2025 03:25:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E116886348
+	for <linux-kernel@vger.kernel.org>; Tue, 24 Jun 2025 03:26:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750735520; cv=none; b=ZGHAPi4Bl9mB0+fLmBUoOZRbaedQ5FMs3x4P3LgWVc6m/mA/7YkK/azxHMRxEaIkEo3pJzKaaYPtb++i5M2lGoh0A90vXaQab6Zx5RC8tTAk6lkO6vpoPKipi6cWtIBWEN3S/8kUESTWn2TS4UCsQf0FPfaPfAIoa+7zqh7vXtw=
+	t=1750735617; cv=none; b=JK/S7b55QVn7wsus0bvhjhE7ezy3AW+TEszt7af5rU2aMK2UBEtJi11gXzmceHafYXNHF2KegTf7Gk7N6c+z7Y+CzjnQJ0QtOuCcCqow99Y1N9fIqybIWC6g51MCIgIhb62xKvXa31F++yEajTC0gft+tKoq/QkNg3cN0wMH7Ns=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750735520; c=relaxed/simple;
-	bh=CucvO7iLDIMDWZ7saFNdpJtyJDEpvnZmX1BGLn/ZtPI=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=WzUiAIe9HLKupfD4KctHmijMptQcKOOwrNxaU22MXkqC4pmLITa/ST+YU1V82knmRCcqbrAo1ODYGLGhFBsAfjoYB9nUcYtEqQFGAB371PPBbOniX2tb4kwyqnixvPCZNY8q10JmroJZXrrS2SZ3sXD3BBDCES4KJECUaSAB5Oc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Di8weWX0; arc=none smtp.client-ip=192.198.163.18
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1750735519; x=1782271519;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=CucvO7iLDIMDWZ7saFNdpJtyJDEpvnZmX1BGLn/ZtPI=;
-  b=Di8weWX0RX4bpIIhcGDVO7HKc3n5HjLILJQv+QQsOIhuqub0fGEl+udI
-   JHNGVVVkchq6Lfeccy6x07xXyC6M1bO1SNeu+X7Vv8WAjM7Ok19LnVKP+
-   81TBGwY9PUxw8s2SA1aG+1g8WpIhO/s/wpW4LEk1UOYJuy3LVqh8uCwND
-   XtYtmzfNu14jiXEgYfJ+G9h4j04FK60vC5XwfnxuX6fM0zs73KeCRcslx
-   1eMhuD+gk/nQlY2IbqJLl0KVnba/suaM9XnK3WOZbMXP0Ha1eJKcjD80s
-   R87VzkxKWOvJEijoHsPiqo6rlZi5jdiVn/NF6AbHkVZMx7utW1JPsWRLC
-   g==;
-X-CSE-ConnectionGUID: /EXhM0j4Q9mliHo+iicKYg==
-X-CSE-MsgGUID: 4CX33MHoRH+q9MUURciTdA==
-X-IronPort-AV: E=McAfee;i="6800,10657,11473"; a="52185383"
-X-IronPort-AV: E=Sophos;i="6.16,260,1744095600"; 
-   d="scan'208";a="52185383"
-Received: from fmviesa005.fm.intel.com ([10.60.135.145])
-  by fmvoesa112.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 23 Jun 2025 20:25:18 -0700
-X-CSE-ConnectionGUID: 61opIpQ0RnWrR8slq7h5mw==
-X-CSE-MsgGUID: MPs3SNIvSviu5Yle71xmlA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.16,260,1744095600"; 
-   d="scan'208";a="156078863"
-Received: from allen-sbox.sh.intel.com (HELO [10.239.159.30]) ([10.239.159.30])
-  by fmviesa005-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 23 Jun 2025 20:25:15 -0700
-Message-ID: <ff1a3fc1-3671-4cff-917f-5ea44bd2451e@linux.intel.com>
-Date: Tue, 24 Jun 2025 11:24:02 +0800
+	s=arc-20240116; t=1750735617; c=relaxed/simple;
+	bh=WBSqBKrbvBhLeAr+XtrdPGpusMlRBFNf9t/J0Ppge2g=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=fdrP5fFFqkebxAK/IpKA+HU0nKDzgfRq7a+5Y2f9CEDTx6FLlFbPPeildCeMJqSMsW2ANExJy26CUaOAcvXbYgcu0JgSzwbkUH1h31a6A3HItxN80ErT+QUUf8q7uIWlUAxwdbtkaJC76pMpDcekDO33nuXvX/IjzqpTxLKrpow=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=XIBeUj7H; arc=none smtp.client-ip=209.85.215.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pg1-f173.google.com with SMTP id 41be03b00d2f7-b321bd36a41so1289660a12.2
+        for <linux-kernel@vger.kernel.org>; Mon, 23 Jun 2025 20:26:55 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1750735615; x=1751340415; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=y6zAzkUctYOg+2Au8hGXTHoJuMr5xeREM4DfgRkZ3y8=;
+        b=XIBeUj7HiqpCOj+tLefN8LvHZMjKy1+Pi3zoGWpiZ5zopuECCY9GPdWw8QDdBrOR60
+         pKx3kAFiawADuwjcZCkIx4oVNzrEr52OSAvQwt2ffj/VCv+ZTQrK6s3q4wB6lQNeHlMV
+         f/hNX1Gp+inG1V36Pz+MIAFg4cMsAWdTqxOnB/wQn7kvmpDv2phzG9CDprcJdSHoRnjL
+         7ZCvSVs/BBWzlphZOurNVhUkV6SdbOsv42GEwZNABvH6zuCR9rj3dbk7OD4tCUUjd7/l
+         GweWnmrdzQqpjpls+a+9qVhaPPCGwS8Uy3nRWkMnfkuU+/3xdSlS5h19OUkSQS8uUprl
+         eMbg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1750735615; x=1751340415;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=y6zAzkUctYOg+2Au8hGXTHoJuMr5xeREM4DfgRkZ3y8=;
+        b=WtC7me/uGRvOC4Rnb4OP6+nmBvc0v12+19GUNvSdhefHLKNpYRto62Hp6ot99jXSIc
+         1XctroZW5VH7/7Rv3r5M3Nplmb7G/XkA7dxFZ/DroEY2m/5kgEjkPNetAP6zGlvJggh8
+         lJKFKkTLhJXEF4YZ8htwx+a8XfhPMw1lqYNKhDO+wXjV5wEwl23CARmPCk7ozrKkb8Lb
+         XNrfXouBBx6eA4VgOyq6vtI0So7Co6bWJQ2vZ3lVAi0L1R1mgBhsMyHveuzVi0JvjOxE
+         yFy+owL65E/ZSdkRiTXK+OED5VExZKQKd/thrSR+T4rrJlm8OfaliKVV2l9aWQnh85hZ
+         QQ0A==
+X-Gm-Message-State: AOJu0YyMeKzFhefqr+TGpQu0HlbniVStOPBns/JErzszpeTOhRnGuSq0
+	ooXGJ21eIEDWaskb+kQ0YZdoaYTvb9RU2Ro98CcRRa9kKBfjF4d1wDNy
+X-Gm-Gg: ASbGncvMNKiAGr4hJORv5JemMOZLQ8B/Ch++WJ6jXozwkswh0new9GZ68Q5aK+drdKB
+	fx5ppEyyHYK77hn8tRSSb7zmjRJpfRfTxE72P/4Yvpz2zlrPUkmULKmIGcy72HasdanV14WrNtx
+	phOEfN9RVqCGEKVGgdH5bFzNN5wXfewy4TkmMcnLa9yx/PhVxioNzjUkyfTiBnF7zCpa5YpHXF4
+	cgoVFlWAgiiIl/EWiP68CMZAqWEpEDTrs0gXfLhAZsQahMsylrGrR+Q/oN23/Z1KtozVHmKVECf
+	tu5hA4KhjkpaGs4SbMWWxNDIWjcaueaAb1rSX2qObzz7mV0Xqq3S1/cOLS4f5Raam9SDb0ArT8+
+	uMAv5
+X-Google-Smtp-Source: AGHT+IFsxyNsJftblVLXEbiCRXhAPY2/0TIDGnHa1E1az+8QjwIny2JUcrmMji0R1JszNLxSUTbcVw==
+X-Received: by 2002:a17:903:2381:b0:234:8c52:1f9b with SMTP id d9443c01a7336-237d9ab0946mr265104355ad.43.1750735615032;
+        Mon, 23 Jun 2025 20:26:55 -0700 (PDT)
+Received: from seokw-960QHA.lan ([210.100.209.148])
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-b31f119ac5bsm9173394a12.20.2025.06.23.20.26.53
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 23 Jun 2025 20:26:54 -0700 (PDT)
+From: Ryan Chung <seokwoo.chung130@gmail.com>
+To: jgross@suse.com,
+	sstabellini@kernel.org,
+	oleksandr_tyshchenko@epam.com
+Cc: linux-kernel@vger.kernel.org,
+	Ryan Chung <seokwoo.chung130@gmail.com>
+Subject: [PATCH] xen-pciback: Use sysfs_emit_at() in slots_show() and irq_handlers_show()
+Date: Tue, 24 Jun 2025 12:26:32 +0900
+Message-ID: <20250624032632.63845-1-seokwoo.chung130@gmail.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 2/4] iommufd/viommu: Fix the uninitialized
- iommufd_vdevice::ictx
-To: Xu Yilun <yilun.xu@linux.intel.com>, jgg@nvidia.com, jgg@ziepe.ca,
- kevin.tian@intel.com, will@kernel.org, aneesh.kumar@kernel.org
-Cc: iommu@lists.linux.dev, linux-kernel@vger.kernel.org, joro@8bytes.org,
- robin.murphy@arm.com, shuah@kernel.org, nicolinc@nvidia.com, aik@amd.com,
- dan.j.williams@intel.com, yilun.xu@intel.com
-References: <20250623094946.1714996-1-yilun.xu@linux.intel.com>
- <20250623094946.1714996-3-yilun.xu@linux.intel.com>
-Content-Language: en-US
-From: Baolu Lu <baolu.lu@linux.intel.com>
-In-Reply-To: <20250623094946.1714996-3-yilun.xu@linux.intel.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-On 6/23/25 17:49, Xu Yilun wrote:
-> Fix the uninitialized iommufd_vdevice::ictx. No code was using this
-> field before, but later vdevice will use it to sync up with idevice on
-> destroy paths.
-> 
-> Fixes: 0ce5c2477af2 ("iommufd/viommu: Add IOMMUFD_OBJ_VDEVICE and IOMMU_VDEVICE_ALLOC ioctl")
-> Cc:<stable@vger.kernel.org>
-> Signed-off-by: Xu Yilun<yilun.xu@linux.intel.com>
-> ---
->   drivers/iommu/iommufd/viommu.c | 1 +
->   1 file changed, 1 insertion(+)
-> 
-> diff --git a/drivers/iommu/iommufd/viommu.c b/drivers/iommu/iommufd/viommu.c
-> index 01df2b985f02..4577b88c8560 100644
-> --- a/drivers/iommu/iommufd/viommu.c
-> +++ b/drivers/iommu/iommufd/viommu.c
-> @@ -130,6 +130,7 @@ int iommufd_vdevice_alloc_ioctl(struct iommufd_ucmd *ucmd)
->   		goto out_put_idev;
->   	}
->   
-> +	vdev->ictx = ucmd->ictx;
+Replace the use of scnprintf() with sysfs_emit_at() in slots_show() and irq_handlers_show().
 
-iommufd_vdevice::ictx has been removed by this commit:
+This change uses sysfs_emit() API usage for sysfs 'show'
+functions as recommended from Documentation/filesystems/sysfs.rst. 
 
-6e235a772199 ("iommufd: Drop unused ictx in struct iommufd_vdevice")
+No functional change intended.
 
-in linux-next.
+Signed-off-by: Ryan Chung <seokwoo.chung130@gmail.com>
+---
+ drivers/xen/xen-pciback/pci_stub.c | 8 +++++---
+ 1 file changed, 5 insertions(+), 3 deletions(-)
 
-Thanks,
-baolu
+diff --git a/drivers/xen/xen-pciback/pci_stub.c b/drivers/xen/xen-pciback/pci_stub.c
+index 5c2f829d5b0b..d0a889474a46 100644
+--- a/drivers/xen/xen-pciback/pci_stub.c
++++ b/drivers/xen/xen-pciback/pci_stub.c
+@@ -18,6 +18,7 @@
+ #include <linux/wait.h>
+ #include <linux/sched.h>
+ #include <linux/atomic.h>
++#include <linux/sysfs.h>
+ #include <xen/events.h>
+ #include <xen/pci.h>
+ #include <xen/xen.h>
+@@ -30,6 +31,7 @@
+ #include "conf_space.h"
+ #include "conf_space_quirks.h"
+ 
++
+ #define PCISTUB_DRIVER_NAME "pciback"
+ 
+ static char *pci_devs_to_hide;
+@@ -720,7 +722,7 @@ static void kill_domain_by_device(struct pcistub_device *psdev)
+ 		return;
+ 	}
+ 	/*PV AER handlers will set this flag*/
+-	xenbus_printf(xbt, nodename, "aerState" , "aerfail");
++	xenbus_printf(xbt, nodename, "aerState", "aerfail");
+ 	err = xenbus_transaction_end(xbt, 0);
+ 	if (err) {
+ 		if (err == -EAGAIN)
+@@ -1261,7 +1263,7 @@ static ssize_t slots_show(struct device_driver *drv, char *buf)
+ 		if (count >= PAGE_SIZE)
+ 			break;
+ 
+-		count += scnprintf(buf + count, PAGE_SIZE - count,
++			count += sysfs_emit_at(buf, count,
+ 				   "%04x:%02x:%02x.%d\n",
+ 				   pci_dev_id->domain, pci_dev_id->bus,
+ 				   PCI_SLOT(pci_dev_id->devfn),
+@@ -1290,7 +1292,7 @@ static ssize_t irq_handlers_show(struct device_driver *drv, char *buf)
+ 		if (!dev_data)
+ 			continue;
+ 		count +=
+-		    scnprintf(buf + count, PAGE_SIZE - count,
++		    sysfs_emit_at(buf, count,
+ 			      "%s:%s:%sing:%ld\n",
+ 			      pci_name(psdev->dev),
+ 			      dev_data->isr_on ? "on" : "off",
+-- 
+2.43.0
+
 
