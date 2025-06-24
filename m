@@ -1,121 +1,122 @@
-Return-Path: <linux-kernel+bounces-699788-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-699779-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9D1FEAE5F71
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Jun 2025 10:34:46 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 851EFAE5F41
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Jun 2025 10:30:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D2D883AD524
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Jun 2025 08:32:30 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 93C07172A55
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Jun 2025 08:29:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BAAD625C711;
-	Tue, 24 Jun 2025 08:32:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 566C625A65B;
+	Tue, 24 Jun 2025 08:27:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="gngyiwTB"
-Received: from out30-112.freemail.mail.aliyun.com (out30-112.freemail.mail.aliyun.com [115.124.30.112])
+	dkim=pass (1024-bit key) header.d=foxmail.com header.i=@foxmail.com header.b="a8dlEUfA"
+Received: from out203-205-221-173.mail.qq.com (out203-205-221-173.mail.qq.com [203.205.221.173])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 50DBF25B67E;
-	Tue, 24 Jun 2025 08:32:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.112
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 44DEE257ACA;
+	Tue, 24 Jun 2025 08:27:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.205.221.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750753964; cv=none; b=TQUfX3NZ9FCJ87ttVsA8EXzmjYJWXBJMVOl1/u4DqCZuDccqr1o7C1A0sQaDjbj9nfJwckQE5JD9LQ3nzciBUawB7hxGqf8ek6P3nhGXVSQCSfGkTxCbSjmKRJIzwXFyoDWkliifsqrXSjbWe1p8iKgguzNg6Wyz+HiczfUlajk=
+	t=1750753678; cv=none; b=XvKXX4NzGpL9vEWGCqlitUVu6qcl6CHGpVNhLYpLbzX8y9CN82c0c07A+OnXSJrOPNcxfLeQoBDTWFVs6Z47QdH0z6wKdUIkxxqZrkFpYQRsr4HvdTDjS4ZT9PM3zvzE+s5Vm5x6dd+/b2iWLYWzThNYOCkNiCLo4dpPA4nWaCo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750753964; c=relaxed/simple;
-	bh=IP9zZ6vX1r03ltWl8w9ViI+/XIllLTAlSCc4K5E75r8=;
-	h=Message-ID:Subject:Date:From:To:Cc:References:In-Reply-To; b=fW6C5WTHgx1JVsRSyvw3nyG641+Av2heJ1HNMJlETCD15QK+GBDVNDKs4Wq+vrADqrOf/lvBtSm7owuXYqNJoEdHe0W4aLAslKgnCf+0yNO5XLlbtKY6/0OEOLF0gpdzCtOd4/P6yux49ufsg7uQ41l/5ojVk14LdjrWfzBx/P0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=gngyiwTB; arc=none smtp.client-ip=115.124.30.112
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
-DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
-	d=linux.alibaba.com; s=default;
-	t=1750753953; h=Message-ID:Subject:Date:From:To;
-	bh=xto8ohKa0ryNBVBrFTAZ50J9YmnkUMJE78zO1Eob+DM=;
-	b=gngyiwTB5wl/4ql3qUvMypZMauRuizllboob2BX57Qp1w+UpUZLzVz/fVm4PcPL4yt3P48jIe7dxgEV/GisbBuXZ3Yk4RQciJkSUf0C4oPCUeTyDmPpWD9agWctx8XxnNqJLo2HkqHPk6etNFmpfKI+VyPzcybtwOHhrnk4Co8E=
-Received: from localhost(mailfrom:xuanzhuo@linux.alibaba.com fp:SMTPD_---0WegCBpn_1750753630 cluster:ay36)
-          by smtp.aliyun-inc.com;
-          Tue, 24 Jun 2025 16:27:11 +0800
-Message-ID: <1750753624.9023402-5-xuanzhuo@linux.alibaba.com>
-Subject: Re: [PATCH net v2 2/2] virtio-net: xsk: rx: move the xdp->data adjustment to buf_to_xdp()
-Date: Tue, 24 Jun 2025 16:27:04 +0800
-From: Xuan Zhuo <xuanzhuo@linux.alibaba.com>
-To: Bui Quang Minh <minhquangbui99@gmail.com>
-Cc: "Michael S. Tsirkin" <mst@redhat.com>,
- Jason Wang <jasowang@redhat.com>,
- =?utf-8?q?Eugenio_P=C3=A9rez?= <eperezma@redhat.com>,
- Andrew Lunn <andrew+netdev@lunn.ch>,
- "David S. Miller" <davem@davemloft.net>,
- Eric Dumazet <edumazet@google.com>,
- Jakub Kicinski <kuba@kernel.org>,
- Paolo Abeni <pabeni@redhat.com>,
- Alexei Starovoitov <ast@kernel.org>,
- Daniel Borkmann <daniel@iogearbox.net>,
- Jesper Dangaard Brouer <hawk@kernel.org>,
- John Fastabend <john.fastabend@gmail.com>,
- virtualization@lists.linux.dev,
- linux-kernel@vger.kernel.org,
- bpf@vger.kernel.org,
- Bui Quang Minh <minhquangbui99@gmail.com>,
- netdev@vger.kernel.org
-References: <20250621144952.32469-1-minhquangbui99@gmail.com>
- <20250621144952.32469-3-minhquangbui99@gmail.com>
-In-Reply-To: <20250621144952.32469-3-minhquangbui99@gmail.com>
+	s=arc-20240116; t=1750753678; c=relaxed/simple;
+	bh=XdXYCnjRgqwOkrvlCdU3yHEE6yIMMFDPC4AjfWaa+Bg=;
+	h=Message-ID:From:To:Cc:Subject:Date:MIME-Version; b=q99fMWXJRHRzGPyGDEKYdOqw22ar+Hqww3v7rWBDe+w+yMctfcA0gb8TFPSHXt990HUbOa4icT+GHJ7NCZhMYSq/Szrk2K4WKnixCuqYZkYJtWrNhbVT6QyjkCE46heofPstFdhVkT9qdwyv2edx+4c50TJIoggY2ifM2ikOlGc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foxmail.com; spf=pass smtp.mailfrom=foxmail.com; dkim=pass (1024-bit key) header.d=foxmail.com header.i=@foxmail.com header.b=a8dlEUfA; arc=none smtp.client-ip=203.205.221.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foxmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=foxmail.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foxmail.com;
+	s=s201512; t=1750753669;
+	bh=JKkXa37Boy9N6ftzZePrOeiWpn/48tEY39AZQiHVcWQ=;
+	h=From:To:Cc:Subject:Date;
+	b=a8dlEUfADMInh2LtcETgrUMJ135Q3//7fXXivRHUc4lpusRMQGIBeIyXHC2OpoiR9
+	 EmVrURl4w0Pt6MBoCMC32KPZ65/fB9DawUTsuQJOkpmqFRXk1K/rdUbu+o5HRS0A6M
+	 yWeZEIisWyoyg+bMZ5pHr8uzKYR+RSSo3haoNWhw=
+Received: from KernelDevBox.byted.org ([115.190.40.13])
+	by newxmesmtplogicsvrszc13-0.qq.com (NewEsmtp) with SMTP
+	id 6DA23CD4; Tue, 24 Jun 2025 16:27:26 +0800
+X-QQ-mid: xmsmtpt1750753646th3ofuslc
+Message-ID: <tencent_C32D0CB0210F2605605435098E9BFC5AD107@qq.com>
+X-QQ-XMAILINFO: MinfFaxlAYcM9vZt8jNniaXm0if7ASEbcANM8kDoSvgX5HIhl4DGltA2aVZrGw
+	 ai5AMsygM5dhCGE2Z0mbOFQoVjXtjY1PzFUO2pEs3wFrTUHogrN67kwZWs1khMNKumwnSBp1nT2i
+	 Nq7N9JUyMXkDnblnBXnTn7TWGhRlTzf3Q96cg4IamtMEXWYqRcX/0hSx4jpPHgS+YlO5cglgAcBq
+	 93DGbHB4TsmsaechYy1t0nZkKaNb3f/+XSY7XEPrieBlWexLFHtxcdJdMfh8MdfnCyu+UN/S3MY9
+	 36AtNT7hEAU/9I4+OFmXu1cUGnQpkZoR/6NZH+gEqHLZnDPFSer/FwQl0mcjL9f8DIJyXCTI3KQU
+	 hrjwooXxp6N59rztdHv6JHXxHRLtl1iwMt2H6gg8EZ2E46iqEp+9SJ/ICN3DpwavyeJ5yyNVzlwu
+	 V2rY/HcxJ3Pqmk/2l0TkKY+JLsNebv8nOixdSZxu5AbyrYCHxEbLgs7pyZWrocEDdFHaWYuqUc/W
+	 JIaw2sPsKc5aSFj5+gqIgeV4gqzD1YClIpDxzkr1SN5Tc3nNczAYMYBbWA7o318HXgEVU1+neenJ
+	 X3kG3bQ9+WYaejVIYep1a+/qocGwixrfwE7tSn1fH9krGGWLKegVOXVHqd997FUix3XQwlrRt6c4
+	 5EPsQSCYbbVs/hMqk6V3LB0k9ND/c05fV2WxbmlW23o3p97nKIoiL/O3f3AH8n7A6eyvXyflVQ5p
+	 c6HvTpmiyz0oQY33l5EoWir5XAoPYk1MmNrPxYQBFWAM+8LUdDF/5I6IhpUDndjy1ZAyoQ/s/js/
+	 ITarvoA59MmXdx1Qv1F0HhvXgJcIoFpCUgD062G4JeCEOFxSWhk9WM/Lxk8//p2jbOgDiC7KIXcy
+	 eBQjNf6Qrpgras5ITY2XNR8CCwiFqPJELehN8vWyPG/sdLfZDB9z3Iwo3Vz8m6p0N9ZNWC2OEVBG
+	 rAOSLssBlQvU3mubcMkCrQjkY3kA93dVoGm2MbRKB06cnxdbuPwACQTnblqJmcbF89GjYwO4o=
+X-QQ-XMRINFO: MPJ6Tf5t3I/ycC2BItcBVIA=
+From: Zhang Shurong <zhang_shurong@foxmail.com>
+To: jacopo@jmondi.org
+Cc: mchehab@kernel.org,
+	u.kleine-koenig@pengutronix.de,
+	hverkuil@xs4all.nl,
+	linux-media@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Zhang Shurong <zhang_shurong@foxmail.com>
+Subject: [PATCH v4] media: rj54n1cb0c: Fix memleak in rj54n1_probe()
+Date: Tue, 24 Jun 2025 16:27:24 +0800
+X-OQ-MSGID: <20250624082724.1225931-1-zhang_shurong@foxmail.com>
+X-Mailer: git-send-email 2.39.5
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 
-On Sat, 21 Jun 2025 21:49:52 +0700, Bui Quang Minh <minhquangbui99@gmail.com> wrote:
-> This commit does not do any functional changes. It moves xdp->data
-> adjustment for buffer other than first buffer to buf_to_xdp() helper so
-> that the xdp_buff adjustment does not scatter over different functions.
->
-> Signed-off-by: Bui Quang Minh <minhquangbui99@gmail.com>
+rj54n1_probe() won't clean all the allocated resources in fail
+path, which may causes the memleaks. Add v4l2_ctrl_handler_free() to
+prevent memleak.
 
-Reviewed-by: Xuan Zhuo <xuanzhuo@linux.alibaba.com>
+Fixes: f187352dcd45 ("media: i2c: Copy rj54n1cb0c soc_camera sensor driver")
+Signed-off-by: Zhang Shurong <zhang_shurong@foxmail.com>
+---
+Changes in v2:
+- Fixed compile error
+Changes in v3:
+- Fixed coding style warnings identified by scripts/checkpatch.pl
+Changes in v4:
+- remove empty line between signed-off message and Fixes tag
+- Moved ctrl_handler assignment after the error check
+- Used existing error label for better code flow
+---
+ drivers/media/i2c/rj54n1cb0c.c | 9 ++++++---
+ 1 file changed, 6 insertions(+), 3 deletions(-)
 
-> ---
->  drivers/net/virtio_net.c | 16 ++++++++++++++--
->  1 file changed, 14 insertions(+), 2 deletions(-)
->
-> diff --git a/drivers/net/virtio_net.c b/drivers/net/virtio_net.c
-> index 1eb237cd5d0b..4e942ea1bfa3 100644
-> --- a/drivers/net/virtio_net.c
-> +++ b/drivers/net/virtio_net.c
-> @@ -1159,7 +1159,19 @@ static struct xdp_buff *buf_to_xdp(struct virtnet_info *vi,
->  		return NULL;
->  	}
->
-> -	xsk_buff_set_size(xdp, len);
-> +	if (first_buf) {
-> +		xsk_buff_set_size(xdp, len);
-> +	} else {
-> +		/* This is the same as xsk_buff_set_size but with the adjusted
-> +		 * xdp->data.
-> +		 */
-> +		xdp->data = xdp->data_hard_start + XDP_PACKET_HEADROOM;
-> +		xdp->data -= vi->hdr_len;
-> +		xdp->data_meta = xdp->data;
-> +		xdp->data_end = xdp->data + len;
-> +		xdp->flags = 0;
-> +	}
-> +
->  	xsk_buff_dma_sync_for_cpu(xdp);
->
->  	return xdp;
-> @@ -1284,7 +1296,7 @@ static int xsk_append_merge_buffer(struct virtnet_info *vi,
->  			goto err;
->  		}
->
-> -		memcpy(buf, xdp->data - vi->hdr_len, len);
-> +		memcpy(buf, xdp->data, len);
->
->  		xsk_buff_free(xdp);
->
-> --
-> 2.43.0
->
+diff --git a/drivers/media/i2c/rj54n1cb0c.c b/drivers/media/i2c/rj54n1cb0c.c
+index b7ca39f63dba..6dfc91216851 100644
+--- a/drivers/media/i2c/rj54n1cb0c.c
++++ b/drivers/media/i2c/rj54n1cb0c.c
+@@ -1329,10 +1329,13 @@ static int rj54n1_probe(struct i2c_client *client)
+ 			V4L2_CID_GAIN, 0, 127, 1, 66);
+ 	v4l2_ctrl_new_std(&rj54n1->hdl, &rj54n1_ctrl_ops,
+ 			V4L2_CID_AUTO_WHITE_BALANCE, 0, 1, 1, 1);
+-	rj54n1->subdev.ctrl_handler = &rj54n1->hdl;
+-	if (rj54n1->hdl.error)
+-		return rj54n1->hdl.error;
+ 
++	if (rj54n1->hdl.error) {
++		ret = rj54n1->hdl.error;
++		goto err_free_ctrl;
++	}
++
++	rj54n1->subdev.ctrl_handler = &rj54n1->hdl;
+ 	rj54n1->clk_div		= clk_div;
+ 	rj54n1->rect.left	= RJ54N1_COLUMN_SKIP;
+ 	rj54n1->rect.top	= RJ54N1_ROW_SKIP;
+-- 
+2.39.5
+
 
