@@ -1,59 +1,59 @@
-Return-Path: <linux-kernel+bounces-701208-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-701206-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 83AFEAE7224
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Jun 2025 00:13:46 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7E36BAE721E
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Jun 2025 00:13:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C1CCB1BC2355
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Jun 2025 22:13:53 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D44A5172C3D
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Jun 2025 22:13:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0681C25C6EA;
-	Tue, 24 Jun 2025 22:12:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 26E8C25BEE5;
+	Tue, 24 Jun 2025 22:12:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="Q/C8aypI"
-Received: from lelvem-ot02.ext.ti.com (lelvem-ot02.ext.ti.com [198.47.23.235])
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="Uxeq/LYU"
+Received: from lelvem-ot01.ext.ti.com (lelvem-ot01.ext.ti.com [198.47.23.234])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 97E2925A659;
-	Tue, 24 Jun 2025 22:12:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.23.235
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A72B725B303;
+	Tue, 24 Jun 2025 22:12:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.23.234
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750803168; cv=none; b=PXIiI/NW1lH/r+H/kHMB8heIXsXTnIwVj/6GW6zY6l8hpo79mznFWWb+nuB2VNcUaFNrvLEZqqMS/jXNFrOn6fE9/OTg7eDHHE1I3pC64IlnhOPmvpThPiutMxuSIJPvSa5qVV+fXVDhfNpx1tdwZylRZQjvUPP3Vb/JfcFSl8k=
+	t=1750803167; cv=none; b=g4Hwn6h/ahol3oLsKGZFyqGHcPHbRgzhR6eo4omeQwsI3uv8q2BPg884RsyJl9eT8B3XjHpaQG6/x2DWRuvbX7HEc9F9cYGKGjUg8qVI71t3eT2/00GVsvibvW20z8mhR7zepC3AAetUOtsSN6npp2DTtu6GSb1HYbcCJyekbng=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750803168; c=relaxed/simple;
-	bh=xt9KCza3hF+I3TXVvossfA/VxjFiivbpY4QJvk6e78Y=;
+	s=arc-20240116; t=1750803167; c=relaxed/simple;
+	bh=r8buntZ4n35y8007oTKk73dQT8pGjlHkhL2nFxgGllc=;
 	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=RUPiSw4E/omnPi0YVgM9l9XxmM6lnuOkNxnvv3+avpZUtz9ZFGP7J9D0YHH7gMp6K2PaOx1paL1nyfXiJWlrofa1+Nv+fth8ni2S3onzs24GcMtOlGqhN/rHY5WYApI9KgHPQuhcRw6Z/FUn+fK3O57ZHdP/JLlkSMZt9MylB8g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=Q/C8aypI; arc=none smtp.client-ip=198.47.23.235
+	 MIME-Version:Content-Type; b=THNSYr00kTJ/Dasi8dfy1uLX/KPT4K5mag4Vy5oOomKMPrsNJ6e+FdTlfwjXeHaiqaXOc/75iPdQuj54y0rNUwjz1pg3PsFgp9Glteb9BYm7807J0BBZ2q050Ft8Va2lRoWv5EDrtjGi4HVxOMnrt+aIrFKeFkg00bYlXE1Sm9c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=Uxeq/LYU; arc=none smtp.client-ip=198.47.23.234
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
-Received: from fllvem-sh03.itg.ti.com ([10.64.41.86])
-	by lelvem-ot02.ext.ti.com (8.15.2/8.15.2) with ESMTP id 55OMCW091932981;
-	Tue, 24 Jun 2025 17:12:32 -0500
+Received: from lelvem-sh01.itg.ti.com ([10.180.77.71])
+	by lelvem-ot01.ext.ti.com (8.15.2/8.15.2) with ESMTP id 55OMCVwb1281096;
+	Tue, 24 Jun 2025 17:12:31 -0500
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-	s=ti-com-17Q1; t=1750803152;
-	bh=ojILrlT5GdYiZsRAu4Z0+07jzeXbFv6th3HqKBTAOPI=;
+	s=ti-com-17Q1; t=1750803151;
+	bh=IdGPc8oyeGpMuwgv9EDY68OxmA/Y/eSY3jw2W86biNA=;
 	h=From:To:CC:Subject:Date:In-Reply-To:References;
-	b=Q/C8aypINr0GbGpr70qx+72VWvjCZs7FLnJTrZxQ1iQYcgNLO1A/9yGg+Ljb0nV/K
-	 bULy4zbhqQG95V94gIm8SyfbY4s+x7wKa0Tcn9OAgzMosO72H3+8JICa3NRoApZeko
-	 MLAC5Zm72cqWdoCxOEPe1BcbjBXIROeo0BKq9f4o=
-Received: from DLEE108.ent.ti.com (dlee108.ent.ti.com [157.170.170.38])
-	by fllvem-sh03.itg.ti.com (8.18.1/8.18.1) with ESMTPS id 55OMCVPd398618
+	b=Uxeq/LYUp83F+xfrlhT5QtTHfwZDjjxcgRdWG3LnmSkGlsn1kCssrP/8v1AbHub8P
+	 7mJ3n4JtvU/ceCmzfTHahrRRozcKj4MNzSt4+BAH3d7mddUQpZgLPAJIciwmnGn440
+	 GtdsUqmdMbEIibjISj9VgpOD5xpF3TNK7nNAJuyU=
+Received: from DLEE100.ent.ti.com (dlee100.ent.ti.com [157.170.170.30])
+	by lelvem-sh01.itg.ti.com (8.18.1/8.18.1) with ESMTPS id 55OMCVLw1942549
 	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-SHA256 bits=128 verify=FAIL);
 	Tue, 24 Jun 2025 17:12:31 -0500
-Received: from DLEE101.ent.ti.com (157.170.170.31) by DLEE108.ent.ti.com
- (157.170.170.38) with Microsoft SMTP Server (version=TLS1_2,
+Received: from DLEE111.ent.ti.com (157.170.170.22) by DLEE100.ent.ti.com
+ (157.170.170.30) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.55; Tue, 24
  Jun 2025 17:12:30 -0500
-Received: from lelvem-mr06.itg.ti.com (10.180.75.8) by DLEE101.ent.ti.com
- (157.170.170.31) with Microsoft SMTP Server (version=TLS1_2,
+Received: from lelvem-mr06.itg.ti.com (10.180.75.8) by DLEE111.ent.ti.com
+ (157.170.170.22) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.55 via
  Frontend Transport; Tue, 24 Jun 2025 17:12:30 -0500
 Received: from judy-hp.dhcp.ti.com (judy-hp.dhcp.ti.com [128.247.81.105])
-	by lelvem-mr06.itg.ti.com (8.18.1/8.18.1) with ESMTP id 55OMCU9K2248346;
+	by lelvem-mr06.itg.ti.com (8.18.1/8.18.1) with ESMTP id 55OMCU9L2248346;
 	Tue, 24 Jun 2025 17:12:30 -0500
 From: Judith Mendez <jm@ti.com>
 To: Judith Mendez <jm@ti.com>, Ulf Hansson <ulf.hansson@linaro.org>,
@@ -68,9 +68,9 @@ CC: Nishanth Menon <nm@ti.com>, Tero Kristo <kristo@kernel.org>,
 	<conor+dt@kernel.org>,
         <linux-arm-kernel@lists.infradead.org>, <devicetree@vger.kernel.org>,
         <linux-kernel@vger.kernel.org>, <linux-mmc@vger.kernel.org>
-Subject: [PATCH 1/3] mmc: sdhci_am654: Workaround for Errata i2312
-Date: Tue, 24 Jun 2025 17:12:28 -0500
-Message-ID: <20250624221230.1952291-2-jm@ti.com>
+Subject: [PATCH 2/3] arm64: dts: ti: k3-am62-main: Remove eMMC High Speed DDR support
+Date: Tue, 24 Jun 2025 17:12:29 -0500
+Message-ID: <20250624221230.1952291-3-jm@ti.com>
 X-Mailer: git-send-email 2.49.0
 In-Reply-To: <20250624221230.1952291-1-jm@ti.com>
 References: <20250624221230.1952291-1-jm@ti.com>
@@ -84,55 +84,27 @@ Content-Transfer-Encoding: 8bit
 Content-Type: text/plain
 X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
 
-Errata i2312 [0] for K3 silicon mentions the maximum obtainable
-timeout through MMC host controller is 700ms. And for commands taking
-longer than 700ms, hardware timeout should be disabled and software
-timeout should be used.
+For eMMC, High Speed DDR mode is not supported [0], so remove
+mmc-ddr-1_8v flag which adds the capability.
 
-The workaround for Errata i2312 can be achieved by adding
-SDHCI_QUIRK2_DISABLE_HW_TIMEOUT quirk in sdhci_am654.
-
-[0] https://www.ti.com/lit/pdf/sprz487
-
+[0] https://www.ti.com/lit/gpn/am625
 Signed-off-by: Judith Mendez <jm@ti.com>
 ---
- drivers/mmc/host/sdhci_am654.c | 9 ++++++---
- 1 file changed, 6 insertions(+), 3 deletions(-)
+ arch/arm64/boot/dts/ti/k3-am62-main.dtsi | 1 -
+ 1 file changed, 1 deletion(-)
 
-diff --git a/drivers/mmc/host/sdhci_am654.c b/drivers/mmc/host/sdhci_am654.c
-index ea14d56558c4..86d87d8e0675 100644
---- a/drivers/mmc/host/sdhci_am654.c
-+++ b/drivers/mmc/host/sdhci_am654.c
-@@ -613,7 +613,8 @@ static const struct sdhci_ops sdhci_am654_ops = {
- static const struct sdhci_pltfm_data sdhci_am654_pdata = {
- 	.ops = &sdhci_am654_ops,
- 	.quirks = SDHCI_QUIRK_MULTIBLOCK_READ_ACMD12,
--	.quirks2 = SDHCI_QUIRK2_PRESET_VALUE_BROKEN,
-+	.quirks2 = SDHCI_QUIRK2_PRESET_VALUE_BROKEN |
-+		   SDHCI_QUIRK2_DISABLE_HW_TIMEOUT,
- };
- 
- static const struct sdhci_am654_driver_data sdhci_am654_sr1_drvdata = {
-@@ -643,7 +644,8 @@ static const struct sdhci_ops sdhci_j721e_8bit_ops = {
- static const struct sdhci_pltfm_data sdhci_j721e_8bit_pdata = {
- 	.ops = &sdhci_j721e_8bit_ops,
- 	.quirks = SDHCI_QUIRK_MULTIBLOCK_READ_ACMD12,
--	.quirks2 = SDHCI_QUIRK2_PRESET_VALUE_BROKEN,
-+	.quirks2 = SDHCI_QUIRK2_PRESET_VALUE_BROKEN |
-+		   SDHCI_QUIRK2_DISABLE_HW_TIMEOUT,
- };
- 
- static const struct sdhci_am654_driver_data sdhci_j721e_8bit_drvdata = {
-@@ -667,7 +669,8 @@ static const struct sdhci_ops sdhci_j721e_4bit_ops = {
- static const struct sdhci_pltfm_data sdhci_j721e_4bit_pdata = {
- 	.ops = &sdhci_j721e_4bit_ops,
- 	.quirks = SDHCI_QUIRK_MULTIBLOCK_READ_ACMD12,
--	.quirks2 = SDHCI_QUIRK2_PRESET_VALUE_BROKEN,
-+	.quirks2 = SDHCI_QUIRK2_PRESET_VALUE_BROKEN |
-+		   SDHCI_QUIRK2_DISABLE_HW_TIMEOUT,
- };
- 
- static const struct sdhci_am654_driver_data sdhci_j721e_4bit_drvdata = {
+diff --git a/arch/arm64/boot/dts/ti/k3-am62-main.dtsi b/arch/arm64/boot/dts/ti/k3-am62-main.dtsi
+index 9e0b6eee9ac7..120ba8f9dd0e 100644
+--- a/arch/arm64/boot/dts/ti/k3-am62-main.dtsi
++++ b/arch/arm64/boot/dts/ti/k3-am62-main.dtsi
+@@ -553,7 +553,6 @@ sdhci0: mmc@fa10000 {
+ 		clocks = <&k3_clks 57 5>, <&k3_clks 57 6>;
+ 		clock-names = "clk_ahb", "clk_xin";
+ 		bus-width = <8>;
+-		mmc-ddr-1_8v;
+ 		mmc-hs200-1_8v;
+ 		ti,clkbuf-sel = <0x7>;
+ 		ti,otap-del-sel-legacy = <0x0>;
 -- 
 2.49.0
 
