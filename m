@@ -1,113 +1,213 @@
-Return-Path: <linux-kernel+bounces-700915-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-700917-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DDA89AE6E6B
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Jun 2025 20:16:35 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id A912DAE6E7F
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Jun 2025 20:18:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D6F3B3A6C5D
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Jun 2025 18:16:04 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3C8871884BF0
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Jun 2025 18:18:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 66ED42D23AE;
-	Tue, 24 Jun 2025 18:16:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0626C2E6D3D;
+	Tue, 24 Jun 2025 18:18:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ziepe.ca header.i=@ziepe.ca header.b="Hob0j6YN"
-Received: from mail-qt1-f171.google.com (mail-qt1-f171.google.com [209.85.160.171])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=ursu.me header.i=@ursu.me header.b="PVdN8LBR";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="oqvhvEid"
+Received: from fout-b3-smtp.messagingengine.com (fout-b3-smtp.messagingengine.com [202.12.124.146])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 56FEC293B46
-	for <linux-kernel@vger.kernel.org>; Tue, 24 Jun 2025 18:16:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8E641298CA4;
+	Tue, 24 Jun 2025 18:18:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.12.124.146
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750788979; cv=none; b=QvDdLYfkJjzSBegC9wGpqkhUalVlrw9eWNY3QbOLMS6i7VhENuu3SWu+vahvOQoyGl8udKmLgKBYq4Ai35gtfq/6xoRuh3RutOf42tK9X6ByuMJ1NW4q6PXW8NoYoXUoMuuWtJq5ifb1t88nXNbt262iV+NSEy6NVHl0cCBT5FA=
+	t=1750789087; cv=none; b=uYFjYwyM0bRSDYjIduhbYBkmS351sGrJDRAyboXnflNglJfN2joebagzCTcAq30QVwRvh4FxGpWgJLNIjU6edHufKJ4hI9NxWLvl/Zkg7JUokHTQ0ILQv42FNAGRfrRaDMI+xXCvrtAF4E6gfJpEXkHBx3mmyYjMIgSFvuSQPI4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750788979; c=relaxed/simple;
-	bh=DA/D38PB76BVpZicl9d8McqLird9x5AUMZVDHvIa5Z4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=SAOmCvXJV3G2PmH2rvA2+6kWpn3T1QAs+9uW/cd1R5lTwBZezz9q6SVT7Ke7pZ9QXNXB5ss0wv+bXs4F9vSeacmRM0TDLHjX6r/PhFEQSfalScqOo/yIVVaXvK8ihaDqA31DZOmrzVGh6H4DNY5YqHcn7n00Odtrj347PjcVBy0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ziepe.ca; spf=pass smtp.mailfrom=ziepe.ca; dkim=pass (2048-bit key) header.d=ziepe.ca header.i=@ziepe.ca header.b=Hob0j6YN; arc=none smtp.client-ip=209.85.160.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ziepe.ca
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ziepe.ca
-Received: by mail-qt1-f171.google.com with SMTP id d75a77b69052e-4a44b3526e6so9173071cf.0
-        for <linux-kernel@vger.kernel.org>; Tue, 24 Jun 2025 11:16:18 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ziepe.ca; s=google; t=1750788977; x=1751393777; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=RUtJ9tEA29eCjDyOeDq5s8JDWFGttISewMfomLtSMxY=;
-        b=Hob0j6YN0h3KLU+6VmkZ6QuH8xtxGbZHNOWQaJa3pCHZdbZM21YX27pnysdRMpNOpb
-         UzMHboljgSpQXKNI4Tg7NfqQTfiluCQzro4N/OVMRYzHWKPXCT20EjfBCws68pjDB7FL
-         OC/xAiIoN3sEpbxczwx6FugEYJ9eAdcL9e1SUjQHW8P55NlkZ5PrFZKt8vmyRtPsMquh
-         cW7L6EbnWkPS4KgC0E8HMZL3s9mWjQ59iUANMR8zMzUjdLplnsEMxca1400FfA4sj51p
-         jWgOlSz9ThUQbZsMdhESayRiq3RFbc101exJ98nAzAzkYQvkp49AJtgAQYcZyrvy63jQ
-         RZeA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1750788977; x=1751393777;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=RUtJ9tEA29eCjDyOeDq5s8JDWFGttISewMfomLtSMxY=;
-        b=hU18OZaY041Z8uZMu7XeQstzYy2W0/c9OIMEWCogii7FQqFAJ7CL25a29qCbi8Ute2
-         x+0zbZk6hYQpgIubcLR6r2WrtU7SHX1c02PloRXde/XS2T7/509AW1SvdAmnU5Xg68zy
-         KVngCnvbYiXuWsL0PJbUaHoC2l5u8UFYg1c2yGh6L2/ngZBK6Y0f3ll34lHjyIam1dQb
-         XvPwHXj6ZaO1v50ur7dAofUIHfO8eMbUE1Rz7XxDf/+bXGJEOj93hujzgZEJiaWvUTNF
-         M5aDLqGMIqZ68DZDrfzOFxuGhSABTmJ6y9sYmsXorSY4xH8LTlJ/5EZ8g7Lq8AyB+xhE
-         5T3w==
-X-Forwarded-Encrypted: i=1; AJvYcCVj1HRF2VBN2cPU38oDYfpnKdmKf7PVjeJFvrTrK/VxYY3ScQxwHDYgrPGJrC3LoSpj+GkezPEcRvre5xM=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwCHkUXxv3M708xg7c8C9kbEPqoEgPc4JQOFUkRwezUn35JLbZf
-	7XwEPFElHuAZ+rSLE61d13VSAzQSQ6JWNOk17Ji+mQeoRK9PWGrM4x1YDjZTSt0OxAU=
-X-Gm-Gg: ASbGncsSDzZ1KVgXWhbXOVM3UTXBZpZwYQsI/D7Ti6i2GhArgtfLCk/9RxGHd882clA
-	EOuAkdz799mEz7YW14bCFavulkBCUtpQmiAzPvraetqFpNPJ/DxT4zPiX+Bce+J0uge5E+S6hq5
-	80nDbaKK1/2t62or0BRo1B9Q3Sq39l0XPLKwk8Hh3CndlGFxeD6nZlm/uy4++tPe2qksdWiiIgg
-	oeOOk5iUqQkKFHPwA5KbpcY2fUFGi7UqtE6Y6VfM1Xav4Z6x71FJV7hlYpEgJBotXpSSmjSmZNr
-	cx9jIm35prrYONwyo9d0z6UfGxR1CwGoPkKU8FpHcie6OWtblpKJE4m1rxL7aMsKCwwaWG4Hk8y
-	XHDy4Cb5GyxexuxuYBJbgVNAHIQssG18PmGypRA==
-X-Google-Smtp-Source: AGHT+IF6I3w46MYeQWneTxqWC3YDA/b4GfvnKogo4xGCeiX5WBI7oCdnuJ/jwqVwtuKe0ddn/P8YxQ==
-X-Received: by 2002:ac8:57c1:0:b0:494:a30b:e27c with SMTP id d75a77b69052e-4a7c080060amr5144121cf.39.1750788977151;
-        Tue, 24 Jun 2025 11:16:17 -0700 (PDT)
-Received: from ziepe.ca (hlfxns017vw-142-167-56-70.dhcp-dynamic.fibreop.ns.bellaliant.net. [142.167.56.70])
-        by smtp.gmail.com with ESMTPSA id d75a77b69052e-4a779e5d2b3sm53372151cf.43.2025.06.24.11.16.16
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 24 Jun 2025 11:16:16 -0700 (PDT)
-Received: from jgg by wakko with local (Exim 4.97)
-	(envelope-from <jgg@ziepe.ca>)
-	id 1uU8Bs-00000000hCY-0nqw;
-	Tue, 24 Jun 2025 15:16:16 -0300
-Date: Tue, 24 Jun 2025 15:16:16 -0300
-From: Jason Gunthorpe <jgg@ziepe.ca>
-To: Alex Mastro <amastro@fb.com>
-Cc: Alex Williamson <alex.williamson@redhat.com>, peterx@redhat.com,
-	kbusch@kernel.org, kvm@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] vfio/pci: print vfio-device name to fdinfo
-Message-ID: <20250624181616.GE72557@ziepe.ca>
-References: <20250624005605.GA72557@ziepe.ca>
- <20250624163559.2984626-1-amastro@fb.com>
+	s=arc-20240116; t=1750789087; c=relaxed/simple;
+	bh=1hwi+3E/npjJsLVURhD/rxh1PG72Jr4fM9CClyzAC+g=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=EXLJ8S6wzE0DPvU4bLq/FyVmp7HEz3t+hPGC1Oqu42ouT2WKSsCpaFzPbYhUk8jKN7LEkhKz6Nmccv0Rl+KqR5juQLSlZtVRdbRAn8fNVLHF6CFMgbZG0+SKincvOgAVBsTgzdP5yyt1Uhv6CNRu+rfaXsFChETDtqpZJ6i5/LI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ursu.me; spf=pass smtp.mailfrom=ursu.me; dkim=pass (2048-bit key) header.d=ursu.me header.i=@ursu.me header.b=PVdN8LBR; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=oqvhvEid; arc=none smtp.client-ip=202.12.124.146
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ursu.me
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ursu.me
+Received: from phl-compute-07.internal (phl-compute-07.phl.internal [10.202.2.47])
+	by mailfout.stl.internal (Postfix) with ESMTP id 422381D0017B;
+	Tue, 24 Jun 2025 14:18:04 -0400 (EDT)
+Received: from phl-mailfrontend-01 ([10.202.2.162])
+  by phl-compute-07.internal (MEProxy); Tue, 24 Jun 2025 14:18:04 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ursu.me; h=cc:cc
+	:content-transfer-encoding:content-type:content-type:date:date
+	:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to; s=fm3; t=1750789084;
+	 x=1750875484; bh=NciPXSYJhwcZ1bsK1ubxsblaN89sbnSvIgaoVIz9JbM=; b=
+	PVdN8LBRwUbXlpOdljRRcCNcoy77SF3sv3dl+q2Ljh+MeRcWSvH2QG+YI1TFssQI
+	4C8KWeFkxLaPMKWxyKCicFbjzUvzKtArVllKR5Q/pNWZxIHqPKWsWpxJMTj9HY5z
+	YGsvL5ZCdeIew9W4/XGhS5N5i4o33rNdoNpGHhDKWLvZTy639/jXSKHVx8nsNyWr
+	YkaIAtbOnzPJNcV25DliWWcK/6joQieUiV2/7VS2eRPbhh/UhCr7OvyQFaij3Xke
+	cAXE3fiMFSSnV17n1O+KwcC9BSQ9ptpHebL9IQz1WWIh7S4aa01wu+bqB1liD000
+	CF662nMGNOx/JBw3nnxRjg==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-transfer-encoding
+	:content-type:content-type:date:date:feedback-id:feedback-id
+	:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to:x-me-proxy
+	:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=1750789084; x=
+	1750875484; bh=NciPXSYJhwcZ1bsK1ubxsblaN89sbnSvIgaoVIz9JbM=; b=o
+	qvhvEidl+Sx8Stsy7sPbFdXvHZm2m+Q5xZS+LPmJCXJYqal4YwpZo85t+5GDUAJP
+	2Y9mr5Ach3BXYSw4d9mJS03n1cGlmvCtMLaGUaSMdtImSpy17iIr5q1RIWVod5OI
+	OPFEU6aS8F3vUPGh4S3yUUBXFxBCPGy5q55BsOniJSGbZo/XT/+ETzY2lW4SNywJ
+	eMMN0TtZyEBbFi0QqiGuxbGt84VDCmOwZR2WYPH/rMoM4QLzoEEocAYu1RD5oFuR
+	aXsqfLQVilLuqlZYpArBPp4AkdpUPXwmxyVLH+R38ACgV9M5KW/YU0BDzb1t1y2S
+	BsqC/MjiuTHWjmUCHojEg==
+X-ME-Sender: <xms:2-taaHIpGyB6qt6BgHQRh8OaQ3lGnNo9SAA-niqkOrcDq7WZ-6DF9g>
+    <xme:2-taaLIt22tD7CyvpmUnXgPjUKPrXD4M9i-Zp1yWryj8zAo8KAFC5zJ5yl9hQ1TAK
+    _UJ-_e9w7tW4sLRVa0>
+X-ME-Received: <xmr:2-taaPu42EqyXkBp1J_EqED2zFA7OcjzO8AoB86IwtOHPuBaudE5KyZmQn0wA6Whsw-l>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtddvgddvtdehlecutefuodetggdotefrod
+    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpuffrtefokffrpgfnqfghnecuuegr
+    ihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjug
+    hrpefkffggfgfuvfevfhfhjggtgfesthejredttddvjeenucfhrhhomhepgghlrgguucgf
+    tffufgcuoehvlhgrugesuhhrshhurdhmvgeqnecuggftrfgrthhtvghrnhepkeefgeevje
+    dvfefhffeigefffefguedugeeiledufedugfeuudeftdefiefgffegnecuvehluhhsthgv
+    rhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomhepvhhlrggusehurhhsuhdrmh
+    gvpdhnsggprhgtphhtthhopeduuddpmhhouggvpehsmhhtphhouhhtpdhrtghpthhtohep
+    jhgrtggvkhesjhgrtggvkhhkrdhinhhfohdprhgtphhtthhopegrnhhthhhonhihrdhlrd
+    hnghhuhigvnhesihhnthgvlhdrtghomhdprhgtphhtthhopehprhiivghmhihslhgrfidr
+    khhithhsiigvlhesihhnthgvlhdrtghomhdprhgtphhtthhopegrnhgurhgvfidonhgvth
+    guvghvsehluhhnnhdrtghhpdhrtghpthhtohepuggrvhgvmhesuggrvhgvmhhlohhfthdr
+    nhgvthdprhgtphhtthhopegvughumhgriigvthesghhoohhglhgvrdgtohhmpdhrtghpth
+    htohepkhhusggrsehkvghrnhgvlhdrohhrghdprhgtphhtthhopehprggsvghnihesrhgv
+    ughhrghtrdgtohhmpdhrtghpthhtohepihhnthgvlhdqfihirhgvugdqlhgrnheslhhish
+    htshdrohhsuhhoshhlrdhorhhg
+X-ME-Proxy: <xmx:2-taaAaxvwqGdwbAj1k_t3LBQOLaEt2ZlzZe2Y3XKhJBtm60xJhO2g>
+    <xmx:2-taaOaHdW4mjJrXXHwn3s9rgnxiCFUsLfZLDiad67M8ELcIQgnrzA>
+    <xmx:2-taaEAdEt1fNiC9LMKofyE_NzrSN2vEbkKe9drL1c2O43Xgf-j94Q>
+    <xmx:2-taaMaFm1D-xYN_JaZOgSHqhIJH3qFRK6Ef1ec8xCkR23tgKITtOg>
+    <xmx:3OtaaLPDZItZE2PQO623UVfkVioF5bDeE4QbN1J08M8aGWrcxuKjBo3o>
+Feedback-ID: i9ff147ff:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Tue,
+ 24 Jun 2025 14:18:01 -0400 (EDT)
+Message-ID: <431c1aaa-304d-4291-97f8-c092a6bee884@ursu.me>
+Date: Tue, 24 Jun 2025 21:17:44 +0300
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250624163559.2984626-1-amastro@fb.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 2/2] e1000e: ignore factory-default checksum value on
+ TGP platform
+To: Jacek Kowalski <jacek@jacekk.info>,
+ Tony Nguyen <anthony.l.nguyen@intel.com>,
+ Przemek Kitszel <przemyslaw.kitszel@intel.com>,
+ Andrew Lunn <andrew+netdev@lunn.ch>, "David S. Miller"
+ <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
+ Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>
+Cc: intel-wired-lan@lists.osuosl.org, netdev@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+References: <fe064a2c-31d6-4671-ba30-198d121782d0@jacekk.info>
+ <b7856437-2c74-4e01-affa-3bbc57ce6c51@jacekk.info>
+ <8538df94-8ce3-422d-a360-dd917c7e153a@jacekk.info>
+Content-Language: en-US
+From: Vlad URSU <vlad@ursu.me>
+In-Reply-To: <8538df94-8ce3-422d-a360-dd917c7e153a@jacekk.info>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Tue, Jun 24, 2025 at 09:35:58AM -0700, Alex Mastro wrote:
-
-> > The userspace can deduce more information, like the actual PCI BDF, by
-> > mapping the name through sysfs.
+On 23.06.2025 19:18, Jacek Kowalski wrote:
+> Vlad,
 > 
-> In the vfio cdev case, <pci sysfs path>/vfio-dev/X tells you the
-> /dev/vfio/devices/X mapping, but is there a straightforward way to map in the
-> opposite direction?
+> could you verify that the following patch works for you?
+> 
+>> diff --git a/drivers/net/ethernet/intel/e1000e/defines.h b/drivers/net/ethernet/intel/e1000e/defines.h
+>> index 8294a7c4f122..01696eb8dace 100644
+>> --- a/drivers/net/ethernet/intel/e1000e/defines.h
+>> +++ b/drivers/net/ethernet/intel/e1000e/defines.h
+>> @@ -637,6 +637,7 @@
+>>   
+>>   /* For checksumming, the sum of all words in the NVM should equal 0xBABA. */
+>>   #define NVM_SUM                    0xBABA
+>> +#define NVM_SUM_FACTORY_DEFAULT    0xFFFF
+>>   
+>>   /* PBA (printed board assembly) number words */
+>>   #define NVM_PBA_OFFSET_0           8
+>> diff --git a/drivers/net/ethernet/intel/e1000e/nvm.c b/drivers/net/ethernet/intel/e1000e/nvm.c
+>> index e609f4df86f4..37cbf9236d84 100644
+>> --- a/drivers/net/ethernet/intel/e1000e/nvm.c
+>> +++ b/drivers/net/ethernet/intel/e1000e/nvm.c
+>> @@ -558,6 +558,11 @@ s32 e1000e_validate_nvm_checksum_generic(struct e1000_hw *hw)
+>>   		checksum += nvm_data;
+>>   	}
+>>   
+>> +	if (hw->mac.type == e1000_pch_tgp && checksum == (u16)NVM_SUM_FACTORY_DEFAULT) {
+>> +		e_dbg("Factory-default NVM Checksum on TGP platform - ignoring\n");
+>> +		return 0;
+>> +	}
+>> +
+>>   	if (checksum != (u16)NVM_SUM) {
+>>   		e_dbg("NVM Checksum Invalid\n");
+>>   		return -E1000_ERR_NVM;
+> 
 
-There will be a symlink under /sys/class/vfio-xx/XX pointing to the
-<pci sysfs path>/vfio-dev/X directory
+No, it doesn't.
 
-And another symlink under /sys/dev/char/XX:XX doing the same.
+You are comparing the wrong value with NVM_SUM_FACTORY_DEFAULT. You 
+should check it against the checksum word 0x3F (NVM bytes 0x7E and 0x7F) 
+which is used to ensure that the base NVM image
+is a valid image, and which in my case is left unchanged by Dell in the 
+firmware.
 
-Jason
+I believe the changes should look something like this:
+
+---
+  drivers/net/ethernet/intel/e1000e/defines.h |  3 +++
+  drivers/net/ethernet/intel/e1000e/nvm.c     | 13 ++++++++++++-
+  2 files changed, 15 insertions(+), 1 deletion(-)
+
+diff --git a/drivers/net/ethernet/intel/e1000e/defines.h 
+b/drivers/net/ethernet/intel/e1000e/defines.h
+index 8294a7c4f122..996a0f4d2b49 100644
+--- a/drivers/net/ethernet/intel/e1000e/defines.h
++++ b/drivers/net/ethernet/intel/e1000e/defines.h
+@@ -638,6 +638,9 @@
+  /* For checksumming, the sum of all words in the NVM should equal 
+0xBABA. */
+  #define NVM_SUM                    0xBABA
+
++/* Factory default value for the NVM checksum word */
++#define NVM_CHECKSUM_WORD_FACTORY_DEFAULT       0xFFFF
++
+  /* PBA (printed board assembly) number words */
+  #define NVM_PBA_OFFSET_0           8
+  #define NVM_PBA_OFFSET_1           9
+diff --git a/drivers/net/ethernet/intel/e1000e/nvm.c 
+b/drivers/net/ethernet/intel/e1000e/nvm.c
+index e609f4df86f4..4620efac0208 100644
+--- a/drivers/net/ethernet/intel/e1000e/nvm.c
++++ b/drivers/net/ethernet/intel/e1000e/nvm.c
+@@ -547,7 +547,18 @@ s32 e1000e_validate_nvm_checksum_generic(struct 
+e1000_hw *hw)
+  {
+  	s32 ret_val;
+  	u16 checksum = 0;
+-	u16 i, nvm_data;
++	u16 i, nvm_data, checksum_word;
++
++	ret_val = e1000_read_nvm(hw, NVM_CHECKSUM_REG, 1, &checksum_word);
++	if (ret_val) {
++		e_dbg("NVM Read Error\n");
++		return ret_val;
++	}
++
++	if (hw->mac.type == e1000_pch_tgp && checksum_word == 
+(u16)NVM_CHECKSUM_WORD_FACTORY_DEFAULT) {
++		e_dbg("Factory-default NVM Checksum word on TGP platform - ignoring\n");
++		return 0;
++	}
+
+  	for (i = 0; i < (NVM_CHECKSUM_REG + 1); i++) {
+  		ret_val = e1000_read_nvm(hw, i, 1, &nvm_data);
+-- 
 
