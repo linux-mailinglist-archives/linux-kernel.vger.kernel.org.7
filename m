@@ -1,109 +1,143 @@
-Return-Path: <linux-kernel+bounces-700070-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-700072-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id E868FAE636D
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Jun 2025 13:15:43 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2B994AE6371
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Jun 2025 13:16:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C5381192650E
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Jun 2025 11:15:59 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B422117AD5F
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Jun 2025 11:16:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 560C82882AD;
-	Tue, 24 Jun 2025 11:15:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 16ECE28A1F5;
+	Tue, 24 Jun 2025 11:16:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="T8gIYnqN"
-Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="NA6nZe1l"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.17])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DB99B219E0;
-	Tue, 24 Jun 2025 11:15:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E8EC8221FD2;
+	Tue, 24 Jun 2025 11:15:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.17
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750763736; cv=none; b=mYGcuYKGR9hwF1l3k5KbWPKvHAySPjCzaRhBqTIFla+/uN39AN4ZOY9gOwlhaJUc02Gcn2rFnbW8aETAiCeJDd8apj/oPTO7H1koCt/Nxmk46ZWzb/1HQfvok4Qk4EwN8owJg29piyFbHY9X9hZCZFc6btF0x1R2SNjsiIsjVBQ=
+	t=1750763761; cv=none; b=fT0Ay4biDK3cKQGGLrdUYsvXVZ6Q6J2X3FwhYoZjZgd4kD1E5wd/KojpRTXUwRYiZW9gQXX3vvfl7GNS4ySqma9ZRzlZNL6pz2mZ2citWptkMoFLxVBXIrnNrV3nHwkuS+2qnoTU6WCeUmzG2p76D8ihiFLFPWx1fsiZai0zSV0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750763736; c=relaxed/simple;
-	bh=TLkqf97AKaEymQttD1QvPzOUup9tkvH4B9dgCySCB34=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=NR5wheEIC8ZMMdiT7iKUkaGXOJnMrjGkBKTr049uBVnjpl0VTe/jhu382LSWCROy2koB//uWj5hOYisXnHTqeOMnwCov+vb2bNtJA46jRQZ0vhDViUAaCBCVLJhKW9QmPoWAu2XfQMqL/oZigpQ3IjARk4Py+yzI5oHsxaQB5cA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=T8gIYnqN; arc=none smtp.client-ip=150.107.74.76
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
-	s=202503; t=1750763730;
-	bh=PPoki8NdQDT+GsOVVWlBYak8Wz+8531cXIBDBqINZag=;
-	h=Date:From:To:Cc:Subject:From;
-	b=T8gIYnqNwEX1vS1cahTd+HSdCmqHaTlFT/80YEEtgYb9k2ekKjjnH8tdMPc/4Lyh8
-	 MciW571pz5mzvEqbbwO8r6/9lwCPY2CgwgjJfyUmZnYw4svxXVs1SFkwWal7R3LCk1
-	 vZGFXdpHDFYVoMhdSMHfLBxpbHaNhmwrVpTIUcmqboKz5140XKC0aXUN5k1DfYbt8l
-	 1VftnCJKWlWzdnjRuKUNX9ow573zIf1k3/J5LxDJ219SXtifvWrGU1KLpzf/4zNSlG
-	 u2Vg0lf1aYtx0k36NqSL7sG9rLwpLQbSIdVfjpWFAgDTISVwX6mCHGWXHMIM5ftSMO
-	 mGST84cFVRK6w==
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(Client did not present a certificate)
-	by mail.ozlabs.org (Postfix) with ESMTPSA id 4bRMnF3DCNz4x0s;
-	Tue, 24 Jun 2025 21:15:29 +1000 (AEST)
-Date: Tue, 24 Jun 2025 21:15:28 +1000
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-To: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@kernel.org>,
- "H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>
-Cc: Pawan Gupta <pawan.kumar.gupta@linux.intel.com>, "Borislav Petkov (AMD)"
- <bp@alien8.de>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
- Linux Next Mailing List <linux-next@vger.kernel.org>
-Subject: linux-next: Fixes tag needs some work in the tip tree
-Message-ID: <20250624211528.3b0b3bcb@canb.auug.org.au>
+	s=arc-20240116; t=1750763761; c=relaxed/simple;
+	bh=/hEDWmKMpxL1TTtSTgQajlUalHKiOIbTebJglgbd3XI=;
+	h=From:Date:To:cc:Subject:In-Reply-To:Message-ID:References:
+	 MIME-Version:Content-Type; b=nVAySYs6pgrJEs7Hky22prRkSWtKdHLQLidz3rspAIFxWJD12AvQa4OHbGyu7jqzLaxZ5GoTDQh/oeyk9RDD2m0xJDBBeoWGYvHKaJVfkXV472IIcVcg1TgdLqOeIT9vPEbwJMf3J6W/Qv/DjCmsfJ7/IRYkiQIsBIEwmA3zflU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=NA6nZe1l; arc=none smtp.client-ip=198.175.65.17
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1750763760; x=1782299760;
+  h=from:date:to:cc:subject:in-reply-to:message-id:
+   references:mime-version;
+  bh=/hEDWmKMpxL1TTtSTgQajlUalHKiOIbTebJglgbd3XI=;
+  b=NA6nZe1lJ8d3r15Mp4qt6wxQCqr2e1+eWjeimrwgtp/c7nN4REt3r+WC
+   xbfpWdgwR9dsU8hQHa3j/wpw/oT+ZlquZBrxobCrRHJX+8yih3VMdIx0C
+   VSnUMGpE4e2ijDxQ1BdbbNexzQkDZFc4bRld5/GGdQnCksW3hPqrzmC8r
+   c6TJbb/NV9+zbVgss7+x4FUXDBKoXOr4KzeeCK0FXuSwx0KYrAJb/E6u/
+   LShHF2gM0iZv5+qkc655ghJiWk8tB4rOh2ypMixwUBiGMv9RP5MyF5MdT
+   5JeFEkud7o/9+Is412tVaBCPyeszmIeMZXzmagyCDDyHQYTp/VtaBqy3i
+   w==;
+X-CSE-ConnectionGUID: hdEsl2LtS0Kz6vn6iByfrw==
+X-CSE-MsgGUID: mS9aQ9P8R16PjtmYYRC+hg==
+X-IronPort-AV: E=McAfee;i="6800,10657,11473"; a="52967793"
+X-IronPort-AV: E=Sophos;i="6.16,261,1744095600"; 
+   d="scan'208";a="52967793"
+Received: from fmviesa001.fm.intel.com ([10.60.135.141])
+  by orvoesa109.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 24 Jun 2025 04:15:59 -0700
+X-CSE-ConnectionGUID: U0BrDhxySZmm8dQeB5z3Dw==
+X-CSE-MsgGUID: N8ZIb1TNRJ2NIjz8hwJa+g==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.16,261,1744095600"; 
+   d="scan'208";a="182769515"
+Received: from ijarvine-mobl1.ger.corp.intel.com (HELO localhost) ([10.245.245.16])
+  by smtpauth.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 24 Jun 2025 04:15:57 -0700
+From: =?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
+Date: Tue, 24 Jun 2025 14:15:53 +0300 (EEST)
+To: "Jiri Slaby (SUSE)" <jirislaby@kernel.org>
+cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
+    linux-serial <linux-serial@vger.kernel.org>, 
+    LKML <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v2 3/5] serial: 8250: rename lsr_TEMT, iir_NOINT to
+ lowercase
+In-Reply-To: <20250624080641.509959-4-jirislaby@kernel.org>
+Message-ID: <d56d8017-71f3-3cd5-4190-7515531695f3@linux.intel.com>
+References: <20250624080641.509959-1-jirislaby@kernel.org> <20250624080641.509959-4-jirislaby@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="Sig_/mfsg4c9pM3LCkOg0RNC4cAQ";
- protocol="application/pgp-signature"; micalg=pgp-sha256
+Content-Type: multipart/mixed; boundary="8323328-96334279-1750763753=:943"
 
---Sig_/mfsg4c9pM3LCkOg0RNC4cAQ
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+  This message is in MIME format.  The first part should be readable text,
+  while the remaining parts are likely unreadable without MIME-aware tools.
 
-Hi all,
+--8323328-96334279-1750763753=:943
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 
-In commit
+On Tue, 24 Jun 2025, Jiri Slaby (SUSE) wrote:
 
-  e88b1627b86e ("x86/bugs: Allow ITS stuffing in eIBRS+retpoline mode also")
+> There are already variables like 'iir_noint1' and 'iir_noint2'. Follow
+> the preexisting lowercase naming of variables. So s/lsr_TEMT/lsr_temt/
+> and 'iir_NOINT' likewise.
+>=20
+> Signed-off-by: Jiri Slaby (SUSE) <jirislaby@kernel.org>
+> Suggested-by: Ilpo J=C3=A4rvinen <ilpo.jarvinen@linux.intel.com>
+> ---
+>  drivers/tty/serial/8250/8250_port.c | 8 ++++----
+>  1 file changed, 4 insertions(+), 4 deletions(-)
+>=20
+> diff --git a/drivers/tty/serial/8250/8250_port.c b/drivers/tty/serial/825=
+0/8250_port.c
+> index 5bb0ca04da55..7eddcab318b4 100644
+> --- a/drivers/tty/serial/8250/8250_port.c
+> +++ b/drivers/tty/serial/8250/8250_port.c
+> @@ -2233,15 +2233,15 @@ static void serial8250_init_mctrl(struct uart_por=
+t *port)
+>  static void serial8250_iir_txen_test(struct uart_port *port)
+>  {
+>  =09struct uart_8250_port *up =3D up_to_u8250p(port);
+> -=09bool lsr_TEMT, iir_NOINT;
+> +=09bool lsr_temt, iir_noint;
+> =20
+>  =09if (port->quirks & UPQ_NO_TXEN_TEST)
+>  =09=09return;
+> =20
+>  =09/* Do a quick test to see if we receive an interrupt when we enable t=
+he TX irq. */
+>  =09serial_port_out(port, UART_IER, UART_IER_THRI);
+> -=09lsr_TEMT =3D serial_port_in(port, UART_LSR) & UART_LSR_TEMT;
+> -=09iir_NOINT =3D serial_port_in(port, UART_IIR) & UART_IIR_NO_INT;
+> +=09lsr_temt =3D serial_port_in(port, UART_LSR) & UART_LSR_TEMT;
+> +=09iir_noint =3D serial_port_in(port, UART_IIR) & UART_IIR_NO_INT;
+>  =09serial_port_out(port, UART_IER, 0);
+> =20
+>  =09/*
+> @@ -2253,7 +2253,7 @@ static void serial8250_iir_txen_test(struct uart_po=
+rt *port)
+>  =09 * variable. So, in case of UPQ_NO_TXEN_TEST, let's just don't test i=
+f we receive TX irq.
+>  =09 * This way, we'll never enable UART_BUG_TXEN.
+>  =09 */
+> -=09if (lsr_TEMT && iir_NOINT) {
+> +=09if (lsr_temt && iir_noint) {
+>  =09=09if (!(up->bugs & UART_BUG_TXEN)) {
+>  =09=09=09up->bugs |=3D UART_BUG_TXEN;
+>  =09=09=09dev_dbg(port->dev, "enabling bad tx status workarounds\n");
+>=20
 
-Fixes tag
-
-  Fixes: 8c57ca583ebf ("x86/bugs: Restructure ITS mitigation")
-
-has these problem(s):
-
-  - Target SHA1 does not exist
-
-Maybe you meant
-
-Fixes: 61ab72c2c6bf ("x86/bugs: Restructure ITS mitigation")
+Reviewed-by: Ilpo J=C3=A4rvinen <ilpo.jarvinen@linux.intel.com>
 
 --=20
-Cheers,
-Stephen Rothwell
+ i.
 
---Sig_/mfsg4c9pM3LCkOg0RNC4cAQ
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmhaiNAACgkQAVBC80lX
-0Gwqcwf9GchWncrg6OGIICN5lxxZhYx7tgB0KBo7TXQzrPDAO1Kl91GFEFpoSrQi
-DWeRknS5WFMCqH23Cj47ndZSbjF9eepiig4PNVg3rXxsmky03MDcjTu34hxf2cG+
-LwMjOOCUmM856AJSWIVmWraNZD25undCA6/hr4i4qHRT/ukoZ3wuLxnrde70+7OR
-k6nrFdMySWCTNO1B+ZeVYx60L58nvFY24dZYdd/RzeK8q0/BervjgiLYn9X/D2MT
-BObzmpfPmsSSjkj9amJGEQZiW35cDAx2Npzp/NPDM0SsukbdDWwyNpw2tPRNQGhQ
-W+vHgzBcVxN71hj0B74h8T8jh6ixEw==
-=V2Y0
------END PGP SIGNATURE-----
-
---Sig_/mfsg4c9pM3LCkOg0RNC4cAQ--
+--8323328-96334279-1750763753=:943--
 
