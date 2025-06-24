@@ -1,174 +1,187 @@
-Return-Path: <linux-kernel+bounces-699799-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-699793-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 42FA4AE5F97
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Jun 2025 10:38:48 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 68342AE5F78
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Jun 2025 10:35:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 25CC53AEE37
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Jun 2025 08:36:24 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 45B171899E0E
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Jun 2025 08:35:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B339F25E828;
-	Tue, 24 Jun 2025 08:36:12 +0000 (UTC)
-Received: from mx01.omp.ru (mx01.omp.ru [90.154.21.10])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6272025C815;
+	Tue, 24 Jun 2025 08:35:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="DWGDQDr0"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.16])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9B02125D8E9;
-	Tue, 24 Jun 2025 08:36:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.154.21.10
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5C9492522A7;
+	Tue, 24 Jun 2025 08:35:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.16
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750754172; cv=none; b=NPn00nxBGMF1p8/6Ow7iFrFJgyotOmCJg7fGUpgwpqThIeXuUlKfGDtqIPK2Rnp5mx91bbHJPQByFQ1uyw01Ce8p6ghmuccjBU7tdgGO36aLjQTtwrTy7KfwriSsa7Ba+T4QK/6ZieisqNFkr3I+EgD/wlRsw+a4ypD9Ep0+PeQ=
+	t=1750754134; cv=none; b=fYYwsdnUpwyOqFpEGCJd+bSURCgEmZSkTvBIjIudlBtmDk++XU04agUQkNsyPev5vsfJwscWpjYp9vl2aS1Yy3jDSuzvn/t0Vyt7IGA311oVXIcSZ0MXGL4Qf5QMFtEV5nXSwBqyp4qZwnQ5lz3WKGizoox2JrFnhw15n2RBub0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750754172; c=relaxed/simple;
-	bh=Nx9IrRPwmqoCPc33na9M+Lr3g/VXJl7D7gv1DWymz98=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=bF2FklsQJxHusQWSCjhdnHdDvrFmzf8RLUNKZVrvy/xmxJiBKBSSr/HmONhwfQvf7G4+EPTvHRUI45k54uXAQIX8TGg4r+Lb9fjh2OcgoK1Hl8Mt5/UEaf36d6yJJNmLLDoXyh1RAvS/aQG92b+CHlT8K1kAK9QBFF6aLgPRNSI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=omp.ru; spf=pass smtp.mailfrom=omp.ru; arc=none smtp.client-ip=90.154.21.10
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=omp.ru
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=omp.ru
-Received: from inp1wst086.omp.ru (81.22.207.138) by msexch01.omp.ru
- (10.188.4.12) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id 15.2.1258.12; Tue, 24 Jun
- 2025 11:35:58 +0300
-From: Dmitriy Privalov <d.privalov@omp.ru>
-To: <stable@vger.kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-CC: Dmitriy Privalov <d.privalov@omp.ru>, Miklos Szeredi <miklos@szeredi.hu>,
-	<linux-fsdevel@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-	<lvc-project@linuxtesting.org>, Miklos Szeredi <mszeredi@redhat.com>
-Subject: [PATCH v2 5.10/5.15 3/3] fuse: don't increment nlink in link()
-Date: Tue, 24 Jun 2025 11:35:12 +0300
-Message-ID: <20250624083512.1386802-3-d.privalov@omp.ru>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20250624083512.1386802-1-d.privalov@omp.ru>
-References: <20250624083512.1386802-1-d.privalov@omp.ru>
+	s=arc-20240116; t=1750754134; c=relaxed/simple;
+	bh=WyQDQWnqq81OoIwpxZisCxByRiTBJQZ/Ifg54KE6Tv4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=b21Q2+pIuwwRaKr3Twi7x01KjKexVkPM0S+Kkr2vXVXeG5nLnitc61lAGkg82Wa5nlLcD2n4MkjMoEN1GclATy80smy/+Nd3FmLashZBmqyNFIV5uxVJa28v6EU1Fu4m7P59VYQwQ8krH6cjs0RmxVI1zJywVHRutjoM46ymqL4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=DWGDQDr0; arc=none smtp.client-ip=198.175.65.16
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1750754133; x=1782290133;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:content-transfer-encoding:in-reply-to;
+  bh=WyQDQWnqq81OoIwpxZisCxByRiTBJQZ/Ifg54KE6Tv4=;
+  b=DWGDQDr0c9WjW+NCxIWo3Cj9nOT1OHEujYd96VXZdp6tbWwJr0EzSQol
+   zAuYsyaVqVZSJzlLimoe+gzJ9kq7jQEd9FIm1uvXf0lM4PSY2GZLejq83
+   DlvyOU5gNRvW7KEK4q7a2GyAX2T7KYeqtjJX8fEznMb+5A8zfIviQNC3A
+   pcYdRbMb34RExKACale2Jw0G1vC+9zXOVg9DQW67qXig39zVQTJte8Ii2
+   4MSwu87jELOVXqlIOtKJ5erzdrpl/BmIIdux42Qw2UlR1h3LMJXIuvnGF
+   baCwgf07nRMv+MpJ0lTMrCFak9k3lSKVzeYUXhnRz5oLwW2b7DO+rXtBc
+   Q==;
+X-CSE-ConnectionGUID: SLzij9CuQRm6H4h5F4l2HQ==
+X-CSE-MsgGUID: XKGyYQ75R+yVXeAqxX9sAw==
+X-IronPort-AV: E=McAfee;i="6800,10657,11473"; a="53076016"
+X-IronPort-AV: E=Sophos;i="6.16,261,1744095600"; 
+   d="scan'208";a="53076016"
+Received: from fmviesa002.fm.intel.com ([10.60.135.142])
+  by orvoesa108.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 24 Jun 2025 01:35:32 -0700
+X-CSE-ConnectionGUID: IjHWV/EAQoWkLJ+O+ajfSA==
+X-CSE-MsgGUID: jjCN4NDjS8qGJDsLkEYJhg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.16,261,1744095600"; 
+   d="scan'208";a="175456235"
+Received: from bergbenj-mobl1.ger.corp.intel.com (HELO mdjait-mobl) ([10.245.244.224])
+  by fmviesa002-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 24 Jun 2025 01:35:28 -0700
+Date: Tue, 24 Jun 2025 10:35:18 +0200
+From: Mehdi Djait <mehdi.djait@linux.intel.com>
+To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Cc: "Nirujogi, Pratap" <pnirujog@amd.com>, 
+	Pratap Nirujogi <pratap.nirujogi@amd.com>, mchehab@kernel.org, sakari.ailus@linux.intel.com, 
+	hverkuil@xs4all.nl, bryan.odonoghue@linaro.org, krzk@kernel.org, 
+	dave.stevenson@raspberrypi.com, hdegoede@redhat.com, jai.luthra@ideasonboard.com, 
+	tomi.valkeinen@ideasonboard.com, linux-media@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	benjamin.chan@amd.com, bin.du@amd.com, grosikop@amd.com, king.li@amd.com, 
+	dantony@amd.com, vengutta@amd.com, Svetoslav.Stoilov@amd.com, 
+	Yana.Zheleva@amd.com
+Subject: Re: [PATCH v3 RESEND] media: i2c: Add OV05C10 camera sensor driver
+Message-ID: <425j7c6xvbbatdhxgjgjawzwfnjmjetg6rpnwfudbtg6qz6nay@dy5ldbuhtbvv>
+References: <20250609194321.1611419-1-pratap.nirujogi@amd.com>
+ <20250615000915.GQ10542@pendragon.ideasonboard.com>
+ <53674c5f-6b68-49e7-bbb0-fd06fff344c3@amd.com>
+ <8b16675a-c6ac-4619-aabe-ad2a4be6c964@amd.com>
+ <20250623220503.GA15951@pendragon.ideasonboard.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: msexch01.omp.ru (10.188.4.12) To msexch01.omp.ru
- (10.188.4.12)
-X-KSE-ServerInfo: msexch01.omp.ru, 9
-X-KSE-AntiSpam-Interceptor-Info: scan successful
-X-KSE-AntiSpam-Version: 6.1.1, Database issued on: 06/24/2025 08:21:21
-X-KSE-AntiSpam-Status: KAS_STATUS_NOT_DETECTED
-X-KSE-AntiSpam-Method: none
-X-KSE-AntiSpam-Rate: 19
-X-KSE-AntiSpam-Info: Lua profiles 194289 [Jun 24 2025]
-X-KSE-AntiSpam-Info: Version: 6.1.1.11
-X-KSE-AntiSpam-Info: Envelope from: d.privalov@omp.ru
-X-KSE-AntiSpam-Info: LuaCore: 62 0.3.62
- e2af3448995f5f8a7fe71abf21bb23519d0f38c3
-X-KSE-AntiSpam-Info: {rep_avail}
-X-KSE-AntiSpam-Info: {Tracking_uf_ne_domains}
-X-KSE-AntiSpam-Info: {Tracking_from_domain_doesnt_match_to}
-X-KSE-AntiSpam-Info: {SMTP from is not routable}
-X-KSE-AntiSpam-Info: {Found in DNSBL: 81.22.207.138 in (user)
- b.barracudacentral.org}
-X-KSE-AntiSpam-Info:
-	omp.ru:7.1.1;127.0.0.199:7.1.2;d41d8cd98f00b204e9800998ecf8427e.com:7.1.1;81.22.207.138:7.1.2;inp1wst086.omp.ru:7.1.1
-X-KSE-AntiSpam-Info: FromAlignment: s
-X-KSE-AntiSpam-Info: ApMailHostAddress: 81.22.207.138
-X-KSE-AntiSpam-Info: {DNS response errors}
-X-KSE-AntiSpam-Info: Rate: 19
-X-KSE-AntiSpam-Info: Status: not_detected
-X-KSE-AntiSpam-Info: Method: none
-X-KSE-AntiSpam-Info: Auth:dmarc=temperror header.from=omp.ru;spf=temperror
- smtp.mailfrom=omp.ru;dkim=none
-X-KSE-Antiphishing-Info: Clean
-X-KSE-Antiphishing-ScanningType: Heuristic
-X-KSE-Antiphishing-Method: None
-X-KSE-Antiphishing-Bases: 06/24/2025 08:23:00
-X-KSE-Antivirus-Interceptor-Info: scan successful
-X-KSE-Antivirus-Info: Clean, bases: 6/24/2025 7:08:00 AM
-X-KSE-Attachment-Filter-Triggered-Rules: Clean
-X-KSE-Attachment-Filter-Triggered-Filters: Clean
-X-KSE-BulkMessagesFiltering-Scan-Result: InTheLimit
+In-Reply-To: <20250623220503.GA15951@pendragon.ideasonboard.com>
 
-From: Miklos Szeredi <mszeredi@redhat.com>
+Hi Laurent, Hi Pratap,
 
-commit 97f044f690bac2b094bfb7fb2d177ef946c85880 upstream.
+Thank you for the patch
 
-The fuse_iget() call in create_new_entry() already updated the inode with
-all the new attributes and incremented the attribute version.
+On Tue, Jun 24, 2025 at 01:05:03AM +0300, Laurent Pinchart wrote:
+> (CC'ing Mehdi)
+> 
+> On Mon, Jun 23, 2025 at 05:51:48PM -0400, Nirujogi, Pratap wrote:
+> > On 6/16/2025 6:49 PM, Nirujogi, Pratap wrote:
+> > >>> +static int ov05c10_probe(struct i2c_client *client)
+> > >>> +{
+> > >>> +     struct ov05c10 *ov05c10;
+> > >>> +     u32 clkfreq;
+> > >>> +     int ret;
+> > >>> +
+> > >>> +     ov05c10 = devm_kzalloc(&client->dev, sizeof(*ov05c10), 
+> > >>> GFP_KERNEL);
+> > >>> +     if (!ov05c10)
+> > >>> +             return -ENOMEM;
+> > >>> +
+> > >>> +     struct fwnode_handle *fwnode = dev_fwnode(&client->dev);
+> > >>> +
+> > >>> +     ret = fwnode_property_read_u32(fwnode, "clock-frequency", 
+> > >>> &clkfreq);
+> > >>> +     if (ret)
+> > >>> +             return  dev_err_probe(&client->dev, -EINVAL,
+> > >>> +                                   "fail to get clock freq\n");
+> > >>
+> > >> Let's try to land
+> > >> https://lore.kernel.org/linux-media/20250521104115.176950-1- 
+> > >> mehdi.djait@linux.intel.com/
+> > >> and replace the code above with devm_v4l2_sensor_clk_get().
+> > >>
+> > > Ok, we will verify on our side.
+> > 
+> > We tried using devm_v4l2_sensor_clk_get() and found its required to add 
+> > support for software_node to make it work with this driver.
+> 
+> Why is that ?
+> 
+> > Please refer 
+> > the changes below and let us know if these should be submitted as a 
+> > separate patch.
 
-Incrementing the nlink will result in the wrong count.  This wasn't noticed
-because the attributes were invalidated right after this.
+The helper is still not merged, so no patch is required.
 
-Updating ctime is still needed for the writeback case when the ctime is not
-refreshed.
+I will see if a change is needed from the helper side or the OV05C10 side.
 
-Signed-off-by: Miklos Szeredi <mszeredi@redhat.com>
-Signed-off-by: Dmitriy Privalov <d.privalov@omp.ru>
----
-v2: Add 371e8fd02969 and cefd1b83275d to backport
+> 
+> Mehdi, do you have any comment ?
+> 
 
- fs/fuse/dir.c | 30 +++++++++++-------------------
- 1 file changed, 11 insertions(+), 19 deletions(-)
+No comment for now: I will investigate this.
 
-diff --git a/fs/fuse/dir.c b/fs/fuse/dir.c
-index f8b444674c14..08ede7f7d8dc 100644
---- a/fs/fuse/dir.c
-+++ b/fs/fuse/dir.c
-@@ -807,9 +807,8 @@ void fuse_flush_time_update(struct inode *inode)
- 	mapping_set_error(inode->i_mapping, err);
- }
- 
--void fuse_update_ctime(struct inode *inode)
-+static void fuse_update_ctime_in_cache(struct inode *inode)
- {
--	fuse_invalidate_attr(inode);
- 	if (!IS_NOCMTIME(inode)) {
- 		inode->i_ctime = current_time(inode);
- 		mark_inode_dirty_sync(inode);
-@@ -817,6 +816,12 @@ void fuse_update_ctime(struct inode *inode)
- 	}
- }
- 
-+void fuse_update_ctime(struct inode *inode)
-+{
-+	fuse_invalidate_attr(inode);
-+	fuse_update_ctime_in_cache(inode);
-+}
-+
- static void fuse_entry_unlinked(struct dentry *entry)
- {
- 	struct inode *inode = d_inode(entry);
-@@ -987,24 +992,11 @@ static int fuse_link(struct dentry *entry, struct inode *newdir,
- 	args.in_args[1].size = newent->d_name.len + 1;
- 	args.in_args[1].value = newent->d_name.name;
- 	err = create_new_entry(fm, &args, newdir, newent, inode->i_mode);
--	/* Contrary to "normal" filesystems it can happen that link
--	   makes two "logical" inodes point to the same "physical"
--	   inode.  We invalidate the attributes of the old one, so it
--	   will reflect changes in the backing inode (link count,
--	   etc.)
--	*/
--	if (!err) {
--		struct fuse_inode *fi = get_fuse_inode(inode);
--
--		spin_lock(&fi->lock);
--		fi->attr_version = atomic64_inc_return(&fm->fc->attr_version);
--		if (likely(inode->i_nlink < UINT_MAX))
--			inc_nlink(inode);
--		spin_unlock(&fi->lock);
--		fuse_update_ctime(inode);
--	} else if (err == -EINTR) {
-+	if (!err)
-+		fuse_update_ctime_in_cache(inode);
-+	else if (err == -EINTR)
- 		fuse_invalidate_attr(inode);
--	}
-+
- 	return err;
- }
- 
--- 
-2.34.1
+--
+Kind Regards
+Mehdi Djait
 
+> > ---
+> > @@ -645,16 +645,16 @@ struct clk *devm_v4l2_sensor_clk_get(struct device 
+> > *dev, const char *id)
+> >          const char *clk_id __free(kfree) = NULL;
+> >          struct clk_hw *clk_hw;
+> >          struct clk *clk;
+> > -       bool acpi_node;
+> > +       bool is_node;
+> >          u32 rate;
+> >          int ret;
+> > 
+> >          clk = devm_clk_get_optional(dev, id);
+> >          ret = device_property_read_u32(dev, "clock-frequency", &rate);
+> > -       acpi_node = is_acpi_node(dev_fwnode(dev));
+> > +       is_node = is_acpi_node(dev_fwnode(dev)) || 
+> > is_software_node(dev_fwnode(dev));
+> > 
+> >          if (clk) {
+> > -               if (!ret && acpi_node) {
+> > +               if (!ret && is_node) {
+> >                          ret = clk_set_rate(clk, rate);
+> >                          if (ret) {
+> >                                  dev_err(dev, "Failed to set clock rate: 
+> > %u\n",
+> > @@ -668,7 +668,7 @@ struct clk *devm_v4l2_sensor_clk_get(struct device 
+> > *dev, const char *id)
+> >          if (ret)
+> >                  return ERR_PTR(ret);
+> > 
+> > -       if (!IS_ENABLED(CONFIG_COMMON_CLK) || !acpi_node)
+> > +       if (!IS_ENABLED(CONFIG_COMMON_CLK) || !is_node)
+> >                  return ERR_PTR(-ENOENT);
+> > 
+> >          if (!id) {
+> > ----
+> 
+> -- 
+> Regards,
+> 
+> Laurent Pinchart
 
