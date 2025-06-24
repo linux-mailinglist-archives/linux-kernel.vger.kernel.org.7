@@ -1,127 +1,115 @@
-Return-Path: <linux-kernel+bounces-700192-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-700214-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 655C9AE6513
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Jun 2025 14:34:11 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id AB7DCAE657C
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Jun 2025 14:52:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EACC34A3D53
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Jun 2025 12:34:07 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1ACC73B22AD
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Jun 2025 12:51:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A718628B501;
-	Tue, 24 Jun 2025 12:33:59 +0000 (UTC)
-Received: from szxga02-in.huawei.com (szxga02-in.huawei.com [45.249.212.188])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8B24D29994E;
+	Tue, 24 Jun 2025 12:52:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="O0ORMoVA"
+Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DC1A2222571;
-	Tue, 24 Jun 2025 12:33:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.188
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8BC5329551B;
+	Tue, 24 Jun 2025 12:51:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750768439; cv=none; b=bXfdMTp9VWUzI9fdNuU/iOEIgv5mhoqBHdy3M8ye4ArXKE2e32rCWrm+Cp3s1CMKK42XEPW5idIUO9Dr/y3S4AELk9m0j5KbVNCUj9j1G1zndvHk8E2RBmPlAnEd9VJyRi1hy5dKdnhmWgrMvOnn2CKUX8wHxomkTH8d6jb6ppU=
+	t=1750769521; cv=none; b=JRu/AJv6X/86YjQL2iZeup5d4LpGm1pnrkymVyUpG55U8VjgE0TP4kQkDh8jKSsX/jMGVOP3F2sEjwboAxqlGPVG20nlClfk7MmrrB0k54KoCdw8ta+J7Zcgkal7zA23is1RtF6qF+PDSYZpDklmIw96/J0Mpp7MJUusRnopPNQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750768439; c=relaxed/simple;
-	bh=ntGwK67tdZVtGMNaU6QKhZxFxF5O/eBDm3EURT/Hu1s=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=HWRwDGhtX6y3Sozu6jPrktwMlfvZweUQKIxwUmmcG6mJvmrMrwkiAB/mmyqzW5n6iWQVb1Hkibp5qvxAbEz17T8U1OAOyKmFb19sIgAkGlZd+mLhA4dIaWz6wu9S2iFAAWRJ75AFrqIEsg+gefYAVyDP2puBhV8/6CPy4aJY4+Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.188
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.163.252])
-	by szxga02-in.huawei.com (SkyGuard) with ESMTP id 4bRPQf1J4RzTgmJ;
-	Tue, 24 Jun 2025 20:29:30 +0800 (CST)
-Received: from dggpemf500016.china.huawei.com (unknown [7.185.36.197])
-	by mail.maildlp.com (Postfix) with ESMTPS id 4E544180237;
-	Tue, 24 Jun 2025 20:33:49 +0800 (CST)
-Received: from huawei.com (10.175.124.27) by dggpemf500016.china.huawei.com
- (7.185.36.197) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Tue, 24 Jun
- 2025 20:33:48 +0800
-From: Wang Liang <wangliang74@huawei.com>
-To: <davem@davemloft.net>, <edumazet@google.com>, <kuba@kernel.org>,
-	<pabeni@redhat.com>, <horms@kernel.org>, <dsahern@kernel.org>
-CC: <yuehaibing@huawei.com>, <zhangchangzhong@huawei.com>,
-	<wangliang74@huawei.com>, <netdev@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>
-Subject: [PATCH net-next] net: add sysctl ndisc_debug
-Date: Tue, 24 Jun 2025 20:51:15 +0800
-Message-ID: <20250624125115.3926152-1-wangliang74@huawei.com>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1750769521; c=relaxed/simple;
+	bh=6H/6DkhwBEk6xZXj6xYuHV8A9YsL6O4OURI3iBlHbWI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=mCtUVDsQSSjwS1Oth8iwCrUXDeXNiUxqf3O1cAY7RKDnkH5XZ2f6VnFpAOGlTotTEoYalrAei5/uDOzgp+JSiLvaQSA+SGyxu00K3pkEsqVK/phaLxc5waiNTDs4YFxNY0tADgGBqZXhO2eozCzgin7e2daSNExgjb21qdm6m/I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=O0ORMoVA; arc=none smtp.client-ip=90.155.50.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Transfer-Encoding:
+	Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:
+	Sender:Reply-To:Content-ID:Content-Description;
+	bh=YOojs8ETOh0nTkI9FVoRaG17pTblKI2h/qJphUDsFTg=; b=O0ORMoVA2HBFIa95a4tYoOnfak
+	MlNH1yfUbdVu/C/pxQlWEsaEhdAx3u7SfeayvsOe9NUYSILkqFBRqkm4yIBf1E8pvaYTgHU8nzzvY
+	y9JJ10OQ6HASMGlWlOnmVsnklPeMvsR+pzbKqhpAlJa+iKEYdPU8j+FtVvU+WBWkAqRtHAbbtF8t5
+	eudvW7VJjfuSDpm7I/N24ZvaqCI5U+9SFvyDByBHQRUA97w0vqSV8Uv9Q4aWCqg4RF3hVL5G4FTxB
+	yxwniFZbWrdvugPLzzqFJ9gn1vfOSJd+Vr5DzpRRDd0fnpYhXAZqoPh4iXN99K8hUZRhmK4+AG+Vl
+	uuV/Unfw==;
+Received: from willy by casper.infradead.org with local (Exim 4.98.2 #2 (Red Hat Linux))
+	id 1uU37w-00000006bv4-0Kku;
+	Tue, 24 Jun 2025 12:51:52 +0000
+Date: Tue, 24 Jun 2025 13:51:51 +0100
+From: Matthew Wilcox <willy@infradead.org>
+To: =?utf-8?B?6ZmI5rab5rab?= Taotao Chen <chentaotao@didiglobal.com>
+Cc: "tytso@mit.edu" <tytso@mit.edu>,
+	"hch@infradead.org" <hch@infradead.org>,
+	"adilger.kernel@dilger.ca" <adilger.kernel@dilger.ca>,
+	"brauner@kernel.org" <brauner@kernel.org>,
+	"jani.nikula@linux.intel.com" <jani.nikula@linux.intel.com>,
+	"rodrigo.vivi@intel.com" <rodrigo.vivi@intel.com>,
+	"tursulin@ursulin.net" <tursulin@ursulin.net>,
+	"airlied@gmail.com" <airlied@gmail.com>,
+	"linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
+	"linux-ext4@vger.kernel.org" <linux-ext4@vger.kernel.org>,
+	"linux-block@vger.kernel.org" <linux-block@vger.kernel.org>,
+	"intel-gfx@lists.freedesktop.org" <intel-gfx@lists.freedesktop.org>,
+	"dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
+	"linux-mm@kvack.org" <linux-mm@kvack.org>,
+	"linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"chentao325@qq.com" <chentao325@qq.com>
+Subject: Re: [PATCH v2 3/5] fs: change write_begin/write_end interface to
+ take struct kiocb *
+Message-ID: <aFqfZ9hiiW4qnYtO@casper.infradead.org>
+References: <20250624121149.2927-1-chentaotao@didiglobal.com>
+ <20250624121149.2927-4-chentaotao@didiglobal.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: kwepems200002.china.huawei.com (7.221.188.68) To
- dggpemf500016.china.huawei.com (7.185.36.197)
+In-Reply-To: <20250624121149.2927-4-chentaotao@didiglobal.com>
 
-Ipv6 ndisc uses ND_PRINTK to print logs. However it only works when
-ND_DEBUG was set in the compilation phase. This patch adds sysctl
-ndisc_debug, so we can change the print switch when system is running and
-get ipv6 ndisc log to debug.
+On Tue, Jun 24, 2025 at 12:12:08PM +0000, 陈涛涛 Taotao Chen wrote:
+> -static int blkdev_write_end(struct file *file, struct address_space *mapping,
+> +static int blkdev_write_end(struct kiocb *iocb, struct address_space *mapping,
+>  		loff_t pos, unsigned len, unsigned copied, struct folio *folio,
+>  		void *fsdata)
+>  {
+>  	int ret;
+> -	ret = block_write_end(file, mapping, pos, len, copied, folio, fsdata);
+> +	ret = block_write_end(iocb->ki_filp, mapping, pos, len, copied, folio, fsdata);
 
-Signed-off-by: Wang Liang <wangliang74@huawei.com>
----
- include/net/ndisc.h        | 5 ++---
- net/ipv6/ndisc.c           | 3 +++
- net/ipv6/sysctl_net_ipv6.c | 7 +++++++
- 3 files changed, 12 insertions(+), 3 deletions(-)
+... huh.  I thought block_write_end() had to have the same prototype as
+->write_end because it was used by some filesystems as the ->write_end.
+I see that's not true (any more?).  Maybe I was confused with
+generic_write_end().  Anyway, block_write_end() doesn't use it's file
+argument, and never will, so we can just remove it.
 
-diff --git a/include/net/ndisc.h b/include/net/ndisc.h
-index 3c88d5bc5eed..481a7fc5d5c1 100644
---- a/include/net/ndisc.h
-+++ b/include/net/ndisc.h
-@@ -60,12 +60,11 @@ enum {
- 
- #include <net/neighbour.h>
- 
--/* Set to 3 to get tracing... */
--#define ND_DEBUG 1
-+extern u8 ndisc_debug;
- 
- #define ND_PRINTK(val, level, fmt, ...)				\
- do {								\
--	if (val <= ND_DEBUG)					\
-+	if (val <= ndisc_debug)					\
- 		net_##level##_ratelimited(fmt, ##__VA_ARGS__);	\
- } while (0)
- 
-diff --git a/net/ipv6/ndisc.c b/net/ipv6/ndisc.c
-index ecb5c4b8518f..be4bb72b1d61 100644
---- a/net/ipv6/ndisc.c
-+++ b/net/ipv6/ndisc.c
-@@ -83,6 +83,9 @@ static void pndisc_destructor(struct pneigh_entry *n);
- static void pndisc_redo(struct sk_buff *skb);
- static int ndisc_is_multicast(const void *pkey);
- 
-+u8 ndisc_debug = 1;
-+EXPORT_SYMBOL_GPL(ndisc_debug);
-+
- static const struct neigh_ops ndisc_generic_ops = {
- 	.family =		AF_INET6,
- 	.solicit =		ndisc_solicit,
-diff --git a/net/ipv6/sysctl_net_ipv6.c b/net/ipv6/sysctl_net_ipv6.c
-index d2cd33e2698d..c0968f0c5d00 100644
---- a/net/ipv6/sysctl_net_ipv6.c
-+++ b/net/ipv6/sysctl_net_ipv6.c
-@@ -247,6 +247,13 @@ static struct ctl_table ipv6_rotable[] = {
- 		.proc_handler	= proc_dointvec,
- 	},
- #endif /* CONFIG_NETLABEL */
-+	{
-+		.procname	= "ndisc_debug",
-+		.data		= &ndisc_debug,
-+		.maxlen		= sizeof(u8),
-+		.mode		= 0644,
-+		.proc_handler	= proc_dou8vec_minmax
-+	},
- };
- 
- static int __net_init ipv6_sysctl_net_init(struct net *net)
--- 
-2.34.1
+> +++ b/include/linux/fs.h
+> @@ -446,10 +446,10 @@ struct address_space_operations {
+>  
+>  	void (*readahead)(struct readahead_control *);
+>  
+> -	int (*write_begin)(struct file *, struct address_space *mapping,
+> +	int (*write_begin)(struct kiocb *, struct address_space *mapping,
+>  				loff_t pos, unsigned len,
+>  				struct folio **foliop, void **fsdata);
+> -	int (*write_end)(struct file *, struct address_space *mapping,
+> +	int (*write_end)(struct kiocb *, struct address_space *mapping,
+>  				loff_t pos, unsigned len, unsigned copied,
+>  				struct folio *folio, void *fsdata);
 
+Should we make this a 'const struct kiocb *'?  I don't see a need for
+filesystems to be allowed to modify the kiocb in future, but perhaps
+other people have different opinions.
 
