@@ -1,197 +1,167 @@
-Return-Path: <linux-kernel+bounces-699640-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-699642-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id BDF6FAE5D57
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Jun 2025 09:03:27 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1308EAE5D5D
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Jun 2025 09:04:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E78C77A445A
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Jun 2025 07:02:03 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E5E103A9D81
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Jun 2025 07:04:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9EC2025334B;
-	Tue, 24 Jun 2025 07:03:10 +0000 (UTC)
-Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 392A624EAB1;
+	Tue, 24 Jun 2025 07:04:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b="qyeOMxAV"
+Received: from mail-ej1-f53.google.com (mail-ej1-f53.google.com [209.85.218.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7BD24227E8F;
-	Tue, 24 Jun 2025 07:03:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A36A6372
+	for <linux-kernel@vger.kernel.org>; Tue, 24 Jun 2025 07:04:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750748590; cv=none; b=HW9XjA1Jvw8FMkwKqNFMbhN+bp8aXFO0f9fPs2n5kiApiQRC1E97xO2AGaCLc7kKeBk2Uv0d5oQ58okZzD7VE+nZN/1Mr75blMXRq/0kN9BhePD1h9DKy15y4kn6MBLLAv88xctNsChr6RHS7WkSHiQkZCvA2tdiee+5QItpSAw=
+	t=1750748688; cv=none; b=aCRMxtz3YVxlDTSyW3um2+0Sw4SZqvHA60DP+WFpsuhRaV6gYKuF2Mf+8YV56EtYgUylkVr0237WUmo8D/tfjmeNHPIuanHMcsCOeKYmZBE/06Ciyj4SrcJ4HJwJC93WM2GWhsoYU8Hq/SVljGwp7/BO76FF0Ut3y0Jkq3l6mo4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750748590; c=relaxed/simple;
-	bh=F5wbZ0hJ0JoYIWdMRRqSqMD0TydLNMWlujeCLdfcppU=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=rqoI2G77VI+rH0TqjIQ0YAEDzmVu5T7vl4BH+UFk3rUsx39Vw/r2rp7Aep/IWoYHh9KQEezQcVJfFQ53vZfgU+aRzLlPlumQ2yn13fapWksIpXcUPG4A3/AV/F/qj9tX39SZZ0wE+xENhiqYeixqtoYT9o3Eongro0eR70v6rVY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.18.186.231])
-	by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4bRG990pWsz6DB68;
-	Tue, 24 Jun 2025 15:02:21 +0800 (CST)
-Received: from frapeml100007.china.huawei.com (unknown [7.182.85.133])
-	by mail.maildlp.com (Postfix) with ESMTPS id E90FC1404A6;
-	Tue, 24 Jun 2025 15:03:04 +0800 (CST)
-Received: from frapeml500008.china.huawei.com (7.182.85.71) by
- frapeml100007.china.huawei.com (7.182.85.133) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.1.2507.39; Tue, 24 Jun 2025 09:03:04 +0200
-Received: from frapeml500008.china.huawei.com ([7.182.85.71]) by
- frapeml500008.china.huawei.com ([7.182.85.71]) with mapi id 15.01.2507.039;
- Tue, 24 Jun 2025 09:03:04 +0200
-From: Shameerali Kolothum Thodi <shameerali.kolothum.thodi@huawei.com>
-To: liulongfang <liulongfang@huawei.com>, "alex.williamson@redhat.com"
-	<alex.williamson@redhat.com>, "jgg@nvidia.com" <jgg@nvidia.com>, "Jonathan
- Cameron" <jonathan.cameron@huawei.com>
-CC: "kvm@vger.kernel.org" <kvm@vger.kernel.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"linuxarm@openeuler.org" <linuxarm@openeuler.org>
-Subject: RE: [PATCH v4 1/3] migration: update BAR space size
-Thread-Topic: [PATCH v4 1/3] migration: update BAR space size
-Thread-Index: AQHb2dGm67ktikNh8k6km+yGJfGW1bQR963A
-Date: Tue, 24 Jun 2025 07:03:04 +0000
-Message-ID: <3ec5ffdee2f64c74a82093c06612f59b@huawei.com>
-References: <20250610063251.27526-1-liulongfang@huawei.com>
- <20250610063251.27526-2-liulongfang@huawei.com>
-In-Reply-To: <20250610063251.27526-2-liulongfang@huawei.com>
-Accept-Language: en-GB, en-US
-Content-Language: en-US
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+	s=arc-20240116; t=1750748688; c=relaxed/simple;
+	bh=XNIc3kjYQjwXXUBYl3GyECf4oKKi0byLqTBYhJEe+0E=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Q1F6IKQxJF3fd/inmWRRch3UbHPvDiDXfxUqyns6rDtq4T6x0QLaHvdyvKP3OCq6kj9jJp/NHaZWhsbyAzXhym9Mc59suGBK3DvCbh/L/1+CCgZdfClt3HSEpc1UGQ0sVBd5Zs07fGmPCi1ttRZT6zsp5tpEmY7zB9Jo7EbC51g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev; spf=pass smtp.mailfrom=tuxon.dev; dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b=qyeOMxAV; arc=none smtp.client-ip=209.85.218.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tuxon.dev
+Received: by mail-ej1-f53.google.com with SMTP id a640c23a62f3a-ad93ff9f714so17501766b.2
+        for <linux-kernel@vger.kernel.org>; Tue, 24 Jun 2025 00:04:45 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=tuxon.dev; s=google; t=1750748684; x=1751353484; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:content-language:from
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=HLbitD9Yz365jr3BdIqraX9XTg2iaE+GPbMQNtnpays=;
+        b=qyeOMxAVfGluDNmUE2YUVwQ5UogysrKhUtf0vcZtebOiPukoLQj8nPbzzrNYFgYF4z
+         fS6aWdrpNHCWgZywfpBZeWB13JIvRlvYTsM7110xWRr4kZLexKfIinD6WRxzrwJRcgkx
+         pFAa0AjI0UfUaYYtiqrvEHURaIfgu1YdDmFsM8+0LDFWnpCQq1DGJ3i7yuqQXxI50y0S
+         ehtWKFpZv7V7BWWibGXVl97mUwmbGTm0vyyIG31e3YHqhTxp9pmbODJJ11wmSCEeP96J
+         dioFwdF6xm1fiqD1//P0o/2Bh4ogPQ7XAKvBbW1ysLqx5jD4Rejx/liTsdTT2g7ElX6q
+         g5mw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1750748684; x=1751353484;
+        h=content-transfer-encoding:in-reply-to:content-language:from
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=HLbitD9Yz365jr3BdIqraX9XTg2iaE+GPbMQNtnpays=;
+        b=NFFfRCW1ewf5Cjol/28qr7BFk98CsdvWecbEWBIf8b2XKR8Tq9JhnEb1Pf9L2gBawL
+         WvDmtjUxPO7aoQ//IMGgtkUagl3K2NHjQHFgYpa5GFpa5drJTlqXCt5fah3xPfH5W4Mv
+         laG9XJtV5zbUWFVrdxuOepXk+iKjRfLGMlkOJfkC2znBVoPrII+D7FglannetwFjlVSz
+         qnaFvQxD54ykRPTFFHZkC4uyIoF/V4LAxsyPnl9OUGNkigeW7qr1zzPdZw8lpv+Kco8s
+         hLaaecTQdsEAH1r1hSx6viCp2kGDFA4lsXEvsXTgd15UjG1oJgLJEs/NJg2QiHrbMBOG
+         EOXw==
+X-Forwarded-Encrypted: i=1; AJvYcCWhjTzy/82X61ZNquu9qiKhcn9P5Kx+OBue3840JSDKoGwS4d+MRxUIo0LhiDO7Cz4CvnbU6DakjE6Qdgg=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz+xCnzD/Ud63nPrWz90uqa+QYufkRizhTE/4aCEyD5ZIj26hvE
+	ffYUSPLTpFIu/Sa1UtNUQ417N6Zk7Ul4GfFxnnQGolLAiFqkyvppTWN/gYcct9bd00E=
+X-Gm-Gg: ASbGnctFKubuuqOtoJFtvM3CulhEkYFQ1AxBAvf1e4MrAOftij9mtpNSxu/r8l4XJha
+	or5UoX27p8XRnWzVTi1cDkeVJGvzNno3KHSMqzyUW/9Jcm0S2HrTVbqHZBrx7+9jY0JiXWpRNP6
+	sDXs/4KhK+fwGHFWxcNVc8K1A85UglRn/bpVr6vDIfsD1OSoIbJULsytHN1hbxnCEEEL3C7WYs5
+	9Xxgvy9N+8iADWYcLwuddh8vb7cJBqpvhK1QW66/D+6Fti05cJA9yH4bpQZUyXUpiq99+wW3vOu
+	dmDc18GiEmaoNV2fslrFuLADylZPgaEnpCUPrzhrDx27hbKiimmGNb31sfaVH9cj3+Lowf+POOH
+	JRhHvXQ==
+X-Google-Smtp-Source: AGHT+IH9JmPa7BbH+tgIB0uoiJ2JP68fJ2WltDdUQv4ZUEycK4uvEtfSZLwyJj/VT7FzXEaxap3DCQ==
+X-Received: by 2002:a17:906:6a05:b0:ace:cc7f:8abe with SMTP id a640c23a62f3a-ae057b39bdfmr1676502066b.31.1750748683722;
+        Tue, 24 Jun 2025 00:04:43 -0700 (PDT)
+Received: from [192.168.50.4] ([82.78.167.110])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ae053ecbf72sm817956566b.47.2025.06.24.00.04.41
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 24 Jun 2025 00:04:42 -0700 (PDT)
+Message-ID: <c51b2b64-24a7-4e14-bdd8-c4a356423100@tuxon.dev>
+Date: Tue, 24 Jun 2025 10:04:40 +0300
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] clk: at91: sam9x7: update pll clk ranges
+To: Varshini Rajendran <varshini.rajendran@microchip.com>,
+ mturquette@baylibre.com, sboyd@kernel.org, nicolas.ferre@microchip.com,
+ alexandre.belloni@bootlin.com, linux-clk@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Cc: Patrice Vilchez <Patrice.Vilchez@microchip.com>
+References: <20250610084503.69749-1-varshini.rajendran@microchip.com>
+From: Claudiu Beznea <claudiu.beznea@tuxon.dev>
+Content-Language: en-US
+In-Reply-To: <20250610084503.69749-1-varshini.rajendran@microchip.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
+Hi, Varshini,
 
-
-> -----Original Message-----
-> From: liulongfang <liulongfang@huawei.com>
-> Sent: Tuesday, June 10, 2025 7:33 AM
-> To: alex.williamson@redhat.com; jgg@nvidia.com; Shameerali Kolothum
-> Thodi <shameerali.kolothum.thodi@huawei.com>; Jonathan Cameron
-> <jonathan.cameron@huawei.com>
-> Cc: kvm@vger.kernel.org; linux-kernel@vger.kernel.org;
-> linuxarm@openeuler.org; liulongfang <liulongfang@huawei.com>
-> Subject: [PATCH v4 1/3] migration: update BAR space size
->=20
-> On the new hardware platform, the live migration configuration region
-> is moved from VF to PF. The VF's own configuration space is
-> restored to the complete 64KB, and there is no need to divide the
-> size of the BAR configuration space equally.
->=20
-> Signed-off-by: Longfang Liu <liulongfang@huawei.com>
+On 10.06.2025 11:45, Varshini Rajendran wrote:
+> Update the min, max ranges of the PLL clocks according to the latest
+> datasheet to be coherent in the driver. This patch apparently solves
+> issues in obtaining the right sdio frequency.
+> 
+> Fixes: 33013b43e271 ("clk: at91: sam9x7: add sam9x7 pmc driver")
+> Suggested-by: Patrice Vilchez <Patrice.Vilchez@microchip.com>
+> Signed-off-by: Varshini Rajendran <varshini.rajendran@microchip.com>
 > ---
->  .../vfio/pci/hisilicon/hisi_acc_vfio_pci.c    | 36 ++++++++++++++-----
->  1 file changed, 27 insertions(+), 9 deletions(-)
->=20
-> diff --git a/drivers/vfio/pci/hisilicon/hisi_acc_vfio_pci.c
-> b/drivers/vfio/pci/hisilicon/hisi_acc_vfio_pci.c
-> index 2149f49aeec7..b16115f590fd 100644
-> --- a/drivers/vfio/pci/hisilicon/hisi_acc_vfio_pci.c
-> +++ b/drivers/vfio/pci/hisilicon/hisi_acc_vfio_pci.c
-> @@ -1250,6 +1250,28 @@ static struct hisi_qm *hisi_acc_get_pf_qm(struct
-> pci_dev *pdev)
->  	return !IS_ERR(pf_qm) ? pf_qm : NULL;
->  }
->=20
-> +static size_t hisi_acc_get_resource_len(struct vfio_pci_core_device *vde=
-v,
-> +					unsigned int index)
-> +{
-> +	struct hisi_acc_vf_core_device *hisi_acc_vdev =3D
-> +			hisi_acc_drvdata(vdev->pdev);
-> +
-> +	/*
-> +	 * On the old HW_V3 device, the ACC VF device BAR2
-> +	 * region encompasses both functional register space
-> +	 * and migration control register space.
-> +	 * only the functional region should be report to Guest.
-> +	 *
-> +	 * On the new HW device, the migration control register
-> +	 * has been moved to the PF device BAR2 region.
-> +	 * The VF device BAR2 is entirely functional register space.
-> +	 */
-> +	if (hisi_acc_vdev->pf_qm->ver =3D=3D QM_HW_V3)
-> +		return (pci_resource_len(vdev->pdev, index) >> 1);
-> +
-> +	return pci_resource_len(vdev->pdev, index);
-> +}
-> +
->  static int hisi_acc_pci_rw_access_check(struct vfio_device *core_vdev,
->  					size_t count, loff_t *ppos,
->  					size_t *new_count)
-> @@ -1260,8 +1282,9 @@ static int hisi_acc_pci_rw_access_check(struct
-> vfio_device *core_vdev,
->=20
->  	if (index =3D=3D VFIO_PCI_BAR2_REGION_INDEX) {
->  		loff_t pos =3D *ppos & VFIO_PCI_OFFSET_MASK;
-> -		resource_size_t end =3D pci_resource_len(vdev->pdev, index) /
-> 2;
-> +		resource_size_t end;
->=20
-> +		end =3D hisi_acc_get_resource_len(vdev, index);
->  		/* Check if access is for migration control region */
->  		if (pos >=3D end)
->  			return -EINVAL;
-> @@ -1282,8 +1305,9 @@ static int hisi_acc_vfio_pci_mmap(struct
-> vfio_device *core_vdev,
->  	index =3D vma->vm_pgoff >> (VFIO_PCI_OFFSET_SHIFT - PAGE_SHIFT);
->  	if (index =3D=3D VFIO_PCI_BAR2_REGION_INDEX) {
->  		u64 req_len, pgoff, req_start;
-> -		resource_size_t end =3D pci_resource_len(vdev->pdev, index) /
-> 2;
-> +		resource_size_t end;
->=20
-> +		end =3D PAGE_ALIGN(hisi_acc_get_resource_len(vdev, index));
+>  drivers/clk/at91/sam9x7.c | 20 ++++++++++----------
+>  1 file changed, 10 insertions(+), 10 deletions(-)
+> 
+> diff --git a/drivers/clk/at91/sam9x7.c b/drivers/clk/at91/sam9x7.c
+> index cbb8b220f16b..ffab32b047a0 100644
+> --- a/drivers/clk/at91/sam9x7.c
+> +++ b/drivers/clk/at91/sam9x7.c
+> @@ -61,44 +61,44 @@ static const struct clk_master_layout sam9x7_master_layout = {
+>  
+>  /* Fractional PLL core output range. */
+>  static const struct clk_range plla_core_outputs[] = {
+> -	{ .min = 375000000, .max = 1600000000 },
+> +	{ .min = 800000000, .max = 1600000000 },
+>  };
+>  
+>  static const struct clk_range upll_core_outputs[] = {
+> -	{ .min = 600000000, .max = 1200000000 },
+> +	{ .min = 600000000, .max = 960000000 },
+>  };
+>  
+>  static const struct clk_range lvdspll_core_outputs[] = {
+> -	{ .min = 400000000, .max = 800000000 },
+> +	{ .min = 600000000, .max = 1200000000 },
+>  };
+>  
+>  static const struct clk_range audiopll_core_outputs[] = {
+> -	{ .min = 400000000, .max = 800000000 },
+> +	{ .min = 600000000, .max = 1200000000 },
+>  };
+>  
+>  static const struct clk_range plladiv2_core_outputs[] = {
+> -	{ .min = 375000000, .max = 1600000000 },
+> +	{ .min = 800000000, .max = 1600000000 },
+>  };
+>  
+>  /* Fractional PLL output range. */
+>  static const struct clk_range plla_outputs[] = {
+> -	{ .min = 732421, .max = 800000000 },
+> +	{ .min = 400000000, .max = 800000000 },
+>  };
+>  
+>  static const struct clk_range upll_outputs[] = {
+> -	{ .min = 300000000, .max = 600000000 },
+> +	{ .min = 300000000, .max = 480000000 },
+>  };
+>  
+>  static const struct clk_range lvdspll_outputs[] = {
+> -	{ .min = 10000000, .max = 800000000 },
+> +	{ .min = 175000000, .max = 550000000 },
+>  };
+>  
+>  static const struct clk_range audiopll_outputs[] = {
+> -	{ .min = 10000000, .max = 800000000 },
+> +	{ .min = 0, .max = 300000000 },
 
-I think I have commented on this before. The above PAGE_ALIGN will change t=
-he=20
-behavior on HW_V3 with 64K PAGE_SIZE kernel. The end will become 64K which
-is not what we want on HW_V3. Could you please check that again.
+Is this min value something valid?
 
-Thanks,
-Shameer
-
->  		req_len =3D vma->vm_end - vma->vm_start;
->  		pgoff =3D vma->vm_pgoff &
->  			((1U << (VFIO_PCI_OFFSET_SHIFT - PAGE_SHIFT)) - 1);
-> @@ -1330,7 +1354,6 @@ static long hisi_acc_vfio_pci_ioctl(struct
-> vfio_device *core_vdev, unsigned int
->  	if (cmd =3D=3D VFIO_DEVICE_GET_REGION_INFO) {
->  		struct vfio_pci_core_device *vdev =3D
->  			container_of(core_vdev, struct vfio_pci_core_device,
-> vdev);
-> -		struct pci_dev *pdev =3D vdev->pdev;
->  		struct vfio_region_info info;
->  		unsigned long minsz;
->=20
-> @@ -1345,12 +1368,7 @@ static long hisi_acc_vfio_pci_ioctl(struct
-> vfio_device *core_vdev, unsigned int
->  		if (info.index =3D=3D VFIO_PCI_BAR2_REGION_INDEX) {
->  			info.offset =3D
-> VFIO_PCI_INDEX_TO_OFFSET(info.index);
->=20
-> -			/*
-> -			 * ACC VF dev BAR2 region consists of both
-> functional
-> -			 * register space and migration control register
-> space.
-> -			 * Report only the functional region to Guest.
-> -			 */
-> -			info.size =3D pci_resource_len(pdev, info.index) / 2;
-> +			info.size =3D hisi_acc_get_resource_len(vdev,
-> info.index);
->=20
->  			info.flags =3D VFIO_REGION_INFO_FLAG_READ |
->  					VFIO_REGION_INFO_FLAG_WRITE |
-> --
-> 2.24.0
-
+Thank you,
+Claudiu
 
