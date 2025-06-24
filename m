@@ -1,216 +1,177 @@
-Return-Path: <linux-kernel+bounces-700058-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-700052-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 82409AE6343
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Jun 2025 13:05:58 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 27CD3AE6336
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Jun 2025 13:04:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 54FE74A8040
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Jun 2025 11:05:52 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A1EA74A7A69
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Jun 2025 11:04:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A706328EA70;
-	Tue, 24 Jun 2025 11:05:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2EB14288C00;
+	Tue, 24 Jun 2025 11:04:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=mt.com header.i=@mt.com header.b="JzexgJkf"
-Received: from DUZPR83CU001.outbound.protection.outlook.com (mail-northeuropeazon11012050.outbound.protection.outlook.com [52.101.66.50])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ZqSv5D6B"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 398D228D8FA;
-	Tue, 24 Jun 2025 11:05:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.66.50
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750763105; cv=fail; b=IbBkzyjhnseGre8FWByYh42CVvbgCMf9vT+hIRb4MKsUrm6b9+4WU7ULzHKHu0UxAW4g5I4zyMMpbMz/PGEyT42KQT2jUomlotncqlTa+f0COURuSZ6WzALlaTVwAgwDqq11HljAFAR0P85cL0TKQP4dKl/PZGPv3d3dc7R7YAo=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750763105; c=relaxed/simple;
-	bh=/hw0Z73A6tAzj/8+8TqFYFyUJGvnZkxoHBQ8EtmXyBo=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=GjW6BZfv4a6PqOmlGv158LjpDtPcejVspSjgmqfNVP33lLqycMrW6QOokltvinFurzInn3Qse3BlUNvkGpTDGjrREuLu1LCwLFcxfnUl9giIKt5H4uhY9hmbX0lLck1nr20iZxY7Ws1qTK/hXFmV7C4hkErC/zqf6SqtmnKfRGk=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mt.com; spf=fail smtp.mailfrom=mt.com; dkim=pass (2048-bit key) header.d=mt.com header.i=@mt.com header.b=JzexgJkf; arc=fail smtp.client-ip=52.101.66.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mt.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=mt.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=pWQhdFK+EbKqVNwsnpX8RmkcsR8BWu7Hzg1+4DODJhHKxnsNqb1x8lcLSw87z3iLBIckY4EBD5SAz1AfZgLPOBbhfvroL/AQHrTYycMpyNBVI5u+o0JcYeAwt8LylKPGk+ErnwdAF/u4KGjyMCl6xkVucRJzw19ImRCctv0ri1FJIStAOOMiFpwmCibCPiIJt+JEDYmPkHKmR4Sg7UzpyZWy99AenkYD9eDVz6YiHuTY/Z0f+gTER8hMZdpWYXCopJnsTU4sS5uSSeO9aIt2NzfCoGF6KykyjOpJfRQxKJ3PTCHvaPHC3ea2TLQ9sRZCQ07sqJI2s0RLbHce7XutxA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=hv4edHflx6yroY1WPxyeRixNHJivyK5HvXMOw3AVR7s=;
- b=hg0hqMQlBy8SE6byVJxnAUpniBUypPQTccnNQ/lOE9PKD+T1iNeMR7+RS0XdVRgml0+58ofSBjrOP1als5gYV9xk8aZVFUiXkvkauR2i+H6hgU3iRYXTEelLQ137a1vIYiZcI77qieL00dd819O2QaOvPq190BDWFkjb/6fdaQcUDOLH/wqxh5ksCGX/BsAQY55phRvnk5+vReRaCfNQ2UJN9VcDF6tZTL/Wnt5hwJSYynUD1EM0P+dP/5GtBAzOXlj4CYsUaYeMiw2YRe/Pi28QjpjHaNajhNlCyCRCvjXHBKMpM7lmCWpWrF7p/3bBAl30am5YzcGQRPNr6d6GRA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=mt.com; dmarc=pass action=none header.from=mt.com; dkim=pass
- header.d=mt.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mt.com; s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=hv4edHflx6yroY1WPxyeRixNHJivyK5HvXMOw3AVR7s=;
- b=JzexgJkf1m/7JpZwemHtcbstM39d/IXnaeLmP1oOLoL9nz2qis7YQ+e70lrZSo2f1uXLU2Upk/FdEvFXwY9m2/GKEu6ksd1b9saIcfoiGxlLg0nnUxL/Q+sFrESSQwXImiQxGqAlNK/4pcSbIh8iqw7xU6Kd3PMQDFmwDqM6Uq1C8LJ346RRKfffPm+RyGmTniRXK1WFQ4QBn8QXBxnE94L5zB3OewPyy5rOZdd0eHmZ48kBdkMXypPL+lEUl1Ack468ON408gJtv/507QMlSH8QJIlwmidSkHb6ThJ1mnMLaEuj+F3ERQYKPiMZfkO9nakscaAGCX1cvh+L7USaZw==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=mt.com;
-Received: from VI1PR03MB3856.eurprd03.prod.outlook.com (2603:10a6:803:66::33)
- by GV1PR03MB10728.eurprd03.prod.outlook.com (2603:10a6:150:202::18) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8857.30; Tue, 24 Jun
- 2025 11:04:55 +0000
-Received: from VI1PR03MB3856.eurprd03.prod.outlook.com
- ([fe80::e9fe:470f:27e0:b265]) by VI1PR03MB3856.eurprd03.prod.outlook.com
- ([fe80::e9fe:470f:27e0:b265%5]) with mapi id 15.20.8857.016; Tue, 24 Jun 2025
- 11:04:55 +0000
-From: Wojciech Dubowik <Wojciech.Dubowik@mt.com>
-To: linux-kernel@vger.kernel.org
-Cc: Wojciech Dubowik <Wojciech.Dubowik@mt.com>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Shawn Guo <shawnguo@kernel.org>,
-	Sascha Hauer <s.hauer@pengutronix.de>,
-	Pengutronix Kernel Team <kernel@pengutronix.de>,
-	Fabio Estevam <festevam@gmail.com>,
-	Wojciech Dubowik <wojciech.dubowik@mt.com>,
-	Kees Cook <kees@kernel.org>,
-	Tony Luck <tony.luck@intel.com>,
-	"Guilherme G. Piccoli" <gpiccoli@igalia.com>,
-	Alexander Stein <alexander.stein@ew.tq-group.com>,
-	Marek Vasut <marex@denx.de>,
-	Frank Li <Frank.Li@nxp.com>,
-	Markus Niebel <Markus.Niebel@tq-group.com>,
-	=?UTF-8?q?Jo=C3=A3o=20Paulo=20Gon=C3=A7alves?= <joao.goncalves@toradex.com>,
-	Frieder Schrempf <frieder.schrempf@kontron.de>,
-	Michael Walle <mwalle@kernel.org>,
-	Heiko Schocher <hs@denx.de>,
-	Francesco Dolcini <francesco.dolcini@toradex.com>,
-	Max Merchel <Max.Merchel@ew.tq-group.com>,
-	Primoz Fiser <primoz.fiser@norik.com>,
-	Tim Harvey <tharvey@gateworks.com>,
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
-	Heiko Stuebner <heiko@sntech.de>,
-	Caleb James DeLisle <cjd@cjdns.fr>,
-	Junhao Xie <bigfoot@classfun.cn>,
-	Andre Przywara <andre.przywara@arm.com>,
-	=?UTF-8?q?Rafa=C5=82=20Mi=C5=82ecki?= <rafal@milecki.pl>,
-	Kever Yang <kever.yang@rock-chips.com>,
-	Manivannan Sadhasivam <mani@kernel.org>,
-	devicetree@vger.kernel.org,
-	imx@lists.linux.dev,
-	linux-arm-kernel@lists.infradead.org,
-	linux-hardening@vger.kernel.org
-Subject: [PATCH v3 4/4] MAINTAINERS: Add entry for METTLER TOLEDO BOARD SUPPORT
-Date: Tue, 24 Jun 2025 13:04:02 +0200
-Message-ID: <20250624110408.128283-5-Wojciech.Dubowik@mt.com>
-X-Mailer: git-send-email 2.47.2
-In-Reply-To: <20250624110408.128283-1-Wojciech.Dubowik@mt.com>
-References: <20250624110408.128283-1-Wojciech.Dubowik@mt.com>
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: ZR0P278CA0199.CHEP278.PROD.OUTLOOK.COM
- (2603:10a6:910:6a::21) To VI1PR03MB3856.eurprd03.prod.outlook.com
- (2603:10a6:803:66::33)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 794B919F480;
+	Tue, 24 Jun 2025 11:04:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1750763054; cv=none; b=kV06ngbhV0KquqB+X4fRJwX5AhKH3rG/+KF+ATJuttvlwbUgtRZcJTwDF1Gwjv+AJyMOXxleiisrZ7gv529UPTGK1Asax7rmn+zQAyoon4OhyLPFnmrCHBPE2P6u7znnJlqaQ6gxlNdZPxnNxGPo9NxLexseQgUdEOK/7mW9vaw=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1750763054; c=relaxed/simple;
+	bh=F+Ut0uhyqMWbQMweVF486zOFsPnCENVNVbpdP3ATUDA=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=JxK+N/pROvtx6aBrllK75L0Bj0AJKXdHWdK9daZrbSBGfiwgghkV8K7majR88I6kan5SV82AOMzsseY3KrAjxLKhgIBI10B+anjTVKh+ZpkSOWruUlbi7dkKEZVR6A9VMTuo40ov8G0wyUjVnFbmzJ5VmmOxcLPj5lQsFPbwI4A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ZqSv5D6B; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7CCC4C4CEE3;
+	Tue, 24 Jun 2025 11:04:11 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1750763054;
+	bh=F+Ut0uhyqMWbQMweVF486zOFsPnCENVNVbpdP3ATUDA=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=ZqSv5D6B0y7mg2AUQgSm69sMfGE/+ffsDWYi2wUe4Xn0nvLgdNvQP84vknLIJZIJf
+	 fXKI1/WUNQ4IEETJT+qY/CN4rq+/pTMWfwkoC7/Hh2KREqWcxYwSxjg4qT2FE4tVv1
+	 XSLdfkYuHxXhy/u3dtoqeUVcjx8Mdrf6lr29fk62QaRBC4KDymfgzbmNhtGpdF8UlR
+	 zKKjJB4HNzT3c2pWM8RDNI2ubNqnpzJjuzNrliU3cmGLkojx2UvQY5Hj6iGDXGxBZ0
+	 JP6Ob2fmhtW7aGg8pmn6Jzqp99Ro5q8qMBsNsOcBAd4EgGjpQ3VqxCibrZygz/Ve1O
+	 8me8GOmI/JDGQ==
+Message-ID: <420cc724-e6cf-42d9-b00b-558965bee085@kernel.org>
+Date: Tue, 24 Jun 2025 13:04:09 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: VI1PR03MB3856:EE_|GV1PR03MB10728:EE_
-X-MS-Office365-Filtering-Correlation-Id: 00d39370-f871-4efe-2bd6-08ddb30ef353
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|366016|52116014|7416014|376014|1800799024|38350700014;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?W+Zyab7EFt0fDOO4WRXBRSCqdCdpeF5efu95k7FNPdqQmN5JobLy9ACgtlIA?=
- =?us-ascii?Q?fqUl2VQNREwInp/L9hDtaBZN7bjrL4EhuGj5GfF1HKoDMoyA35fLkgpOIIF6?=
- =?us-ascii?Q?jGFmlcfR3blEtNNvWN1AtYg1cpkzf6okhzOA0xRuae0ejdvDq2HeMfpEYFPw?=
- =?us-ascii?Q?F/o05SWCIWiF6BF+gYw74CvEPCmO+aXbu01REeFaos1HNA2j+0zMRzDqVt7X?=
- =?us-ascii?Q?qHz/BqEQvbN4jOfMn/lx0s2C8fzF9Av6BbYX13C+GVAdftJLWKaKufUFFb2t?=
- =?us-ascii?Q?tT1jmbvq4GQXp3HnxvzGbEfWjna/tDoBPsr2QZxPeTjaUUjZ1V+E2lSOWWqV?=
- =?us-ascii?Q?In91jXGi5eFUYMo5C19WI/wEFKhLeLf8fCm16N2KJcLylnSxoa9yeOEGfdjF?=
- =?us-ascii?Q?Dzqj+ihvKiZgnS1RL73TYczX2Y+rPD9UfuKywFmI6FowG1mlMPLNVYVqLmwQ?=
- =?us-ascii?Q?CO14W1ltqwNpMwci9z9KiZqRPdKeQAEUeAGGhGUX9NJqoC4kgMTAvGTzsfGq?=
- =?us-ascii?Q?I0PUoXR0ur5JutSZ3p08muI79us34k7m6FZR6JnT6ZKLgl4NPOlPiB1fDn2+?=
- =?us-ascii?Q?Yw3zFAudhfefM+qd40aY3vyPnBEHub+NPxdbyFGSkLK67ToyVzOCcWgI9JWd?=
- =?us-ascii?Q?9Lm4DpCFkHvonVux/3hNjbI/VzGTvkkkZhcCD6pWj39qFa1giyoDX3FlP9+m?=
- =?us-ascii?Q?/aPJrNCG1xjjjDUK22fcS0XyGTuRGUISNgFPKTrzdiqap/DjZLts3kA5ufzU?=
- =?us-ascii?Q?euVMJ7UoAKGe9+CdBhLiKmeB0XJd/Apb/OKDip7hrNbGdVBk5j8AOrtXXD6C?=
- =?us-ascii?Q?Jih+m7kDqU107C268k0GSnaa30PZKMrR5H0gCA2V1Wtd73qRa1OywxzF/ioV?=
- =?us-ascii?Q?nKvt4pbLKWWReiK69d7s1cT1/m0Q2EQto0vQLpPfCUb1n1n5vxWKlQQYgDH3?=
- =?us-ascii?Q?uDOj99ltPpfhZTZUl+o9mO9iokjUh45205uDvQEeoKudn6elojG74I26fpGX?=
- =?us-ascii?Q?4OoYZnjl2iPnGx1SrSWjhIZ+8QEmjRxfrXb31HG0f1cocSAhWS9SeQpsjJte?=
- =?us-ascii?Q?IUU2drhiOUKbal/6VDBQ/UAi4/x8nDnEyCG/NGm4YB9sZDvBewZr46FNzXZf?=
- =?us-ascii?Q?XR+MFpjozM8uVu175p/SpDOGl79ASfqZJ9HJ29hJTl+ZJXPbdAhQq0DPI2va?=
- =?us-ascii?Q?uvmEUM6WuoLQqEyA3THUvzrK0srDvslR3Ayrgzs+T0FDZf8wHDZlJlX433k4?=
- =?us-ascii?Q?xgvcKeItMsBu+GfT6qdwBX7E+maHa2ht20IKdVnwLkoOXr+YkenNNDxiJlow?=
- =?us-ascii?Q?Sg1pfJk9N21K60wesUS227EtslnnOnaHbv283Ee0ieOjsqNFl/+lZNvrjvrX?=
- =?us-ascii?Q?Z5DK67dMIaBw9kwbgF92KQseJ3s9EplccR7iUkwTyzPmnJOUYzkXznmhmNBo?=
- =?us-ascii?Q?FOrolRPR3F36qvstGi5I38XXr5kTQBXHREGzywS6p/IOsPBRgvsYsQ=3D=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:VI1PR03MB3856.eurprd03.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(52116014)(7416014)(376014)(1800799024)(38350700014);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?bD+abLfvAp/UUU8mzHOw0U8kfTgeAbn2rlSV/m/AfGBHTVisHPmLXg4hOnsI?=
- =?us-ascii?Q?IOuzu74YvO9Gxa/wPh1hi6H56Q+BhzUzDgGBZLPbUGZx0cXOK0UIIOTcGqIn?=
- =?us-ascii?Q?DuIbhu9UXvdsViTLhsJcfyJqNhV7i69c0ESlDCjrAbi0pjMLFE80g7qR5Roc?=
- =?us-ascii?Q?1Stne3C38CaJ1VOH8Hy7UEC9fi7Vd7HbpMlUY31BxcF9HuKYzO7H65eWKntX?=
- =?us-ascii?Q?u3uuiX501sYMI5Zg6chs1lWUFgH2/CLjaorwRqUIkwKDIF3un2+OrT7CAMFQ?=
- =?us-ascii?Q?+vfdktWFQuC8gTEJuHEzVcMXD1+qd/F/lOQjYEERTj/OnWldd20xq3Sh3h5f?=
- =?us-ascii?Q?Dgg+kLRbl8+iII5g5816MG873tPllLNAxqT0o3SLRIn+UbKkirwFY4/2phcF?=
- =?us-ascii?Q?HlBXo6TWKxyI65RjtWdvQbVF9/ewhDjxOblWWqBJhtw6t/zySMZC6HfW22Jj?=
- =?us-ascii?Q?YjMgSEqthoN3mHLpqFwgK1DfPElW5a6eQl3AtK5KDFS4iUvYvHKLpmfHhPDC?=
- =?us-ascii?Q?z2HoZQ5pqiqw7Pq4RX8ocrqeTy9tCu8p7AP3NJxcnxvb1D6BDPXyqpxO0fB2?=
- =?us-ascii?Q?wQ+UYqGm/xkLG2xdQAb7E0vfiIgKJuuqH2g/De1WjJf+af8QjFTSosx1PsBy?=
- =?us-ascii?Q?YDHmyGaKaNG3HfJcemCP8Q1tSUXluekiMmimvXfkFs736/VESzMIvobN7nRk?=
- =?us-ascii?Q?6aMZoIsGc+bTVzm5SrsJqB6D/aETfQe/g4LJqvOb3G+BivDo2Ai2V9HERzY+?=
- =?us-ascii?Q?QQfb/Jd85EULvc+FTXDHs6zQUwH6SiraYQ/RLeXOg7iWRp9jlNEao5naB6EC?=
- =?us-ascii?Q?OTXV2JzyeD4hFucmS1w8Tf2to7Wvjy4ZqPyBhLMZpSjF8DPQ9C6udhFWOPvH?=
- =?us-ascii?Q?mGuIsxJjxg93IsJD+D65cN6Qy8uCp7UlxeE1FYqw85zO4qF7RFpQKSxdiYuY?=
- =?us-ascii?Q?+rhLj/r6RSris6aTIEG9C4vgbq3aWoEUOFv+125hHk6/6uU6gm0KFhKvnXuA?=
- =?us-ascii?Q?7wvopRNasrPptG/6I+20CX0Cv+aY0j/k3jsh177xu+jRSVtQoUlOVWtdbyh3?=
- =?us-ascii?Q?pvHjhJ2guACOvY6JQQ/qzsW1yKKXoHj1j6+SMYTaNnTD7JoC483yvEvSdQpK?=
- =?us-ascii?Q?HeaVFKjDqq1AywCfwGlIbV9Y8UEvCcHpjq/L3X2yzgJnQaMTQvLE9rb6dfih?=
- =?us-ascii?Q?GUXP71n2i3L+eHk/aNdxQQrQ9C12iLEJxvCXeFvE3HkAx4wfg2cfy7Ylyjzq?=
- =?us-ascii?Q?dWy74qd+pzuerEKkTFzUS3icRkHAyb8yDU2hQOUa5DNFoHiKhpIfIpUE1wX0?=
- =?us-ascii?Q?Zqu8JXEjgnV4SejaiKy0v1m3tI6PAqY7tK2R+dORok9YRDU8iIuekSICBkh2?=
- =?us-ascii?Q?0arzlE0B9mAp6Ex09RtS87rBijb433oPgrIjGAuEjyDjchVx+l7eqSVKuFtc?=
- =?us-ascii?Q?bDhV9vHiiLhEKPwG+FfTkYEV/87V2e3VuDshaLVqNjsY1J71TpH4DPsPa1wB?=
- =?us-ascii?Q?ZHV23MP8qd61uMvmLCmx0RV9T/Su8PgqqSAFx7QKS+q6CPvMRQi9SBHYW8XW?=
- =?us-ascii?Q?f7eV00P89eMn2xFB/8pX5CS5TmvGvyg6c5Y4a/DP?=
-X-OriginatorOrg: mt.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 00d39370-f871-4efe-2bd6-08ddb30ef353
-X-MS-Exchange-CrossTenant-AuthSource: VI1PR03MB3856.eurprd03.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 24 Jun 2025 11:04:55.0865
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: fb4c0aee-6cd2-482f-a1a5-717e7c02496b
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: 0R4Akt8noFzq6VmiXMRi/P1X2aL8gZRcrza36NoFpIyMtJY5rBGp0omyBAVopED3Ql85p7JMaB0b5nKdmzKrcg==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: GV1PR03MB10728
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 2/2] clock: eswin: Add eic7700 clock driver
+To: dongxuyang@eswincomputing.com, mturquette@baylibre.com, sboyd@kernel.org,
+ robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
+ linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+Cc: ningyu@eswincomputing.com, linmin@eswincomputing.com,
+ huangyifeng@eswincomputing.com
+References: <20250624103212.287-1-dongxuyang@eswincomputing.com>
+ <20250624103314.400-1-dongxuyang@eswincomputing.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 a/A=
+In-Reply-To: <20250624103314.400-1-dongxuyang@eswincomputing.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Add a new MAINTAINERS section for the METTLER TOLEDO BOARD
-SUPPORT covering imx8mm-mt-* device tree files.
+On 24/06/2025 12:33, dongxuyang@eswincomputing.com wrote:
+> From: Xuyang Dong <dongxuyang@eswincomputing.com>
+> 
+> This driver depends on the CCF framework implementation.
+>   Based on this driver, other modules in the SoC can use the APIs
+>   provided by CCF to perform clock-related operations.
+>   The driver supports eic7700 series chips.
+> 
+> Signed-off-by: Yifeng Huang <huangyifeng@eswincomputing.com>
+> Signed-off-by: Xuyang Dong <dongxuyang@eswincomputing.com>
+> ---
+>  drivers/clk/Kconfig             |    1 +
+>  drivers/clk/Makefile            |    1 +
+>  drivers/clk/eswin/Kconfig       |   10 +
+>  drivers/clk/eswin/Makefile      |    8 +
+>  drivers/clk/eswin/clk-eic7700.c | 3809 +++++++++++++++++++++++++++++++
+>  drivers/clk/eswin/clk-eic7700.h |  194 ++
 
-Signed-off-by: Wojciech Dubowik <Wojciech.Dubowik@mt.com>
----
- MAINTAINERS | 5 +++++
- 1 file changed, 5 insertions(+)
 
-diff --git a/MAINTAINERS b/MAINTAINERS
-index efb51ee92683..869fd05d3689 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -16123,6 +16123,11 @@ S:	Maintained
- F:	arch/arm64/boot/dts/marvell/armada-3720-eDPU.dts
- F:	arch/arm64/boot/dts/marvell/armada-3720-uDPU.*
- 
-+METTLER TOLEDO BOARD SUPPORT
-+M:	Wojciech Dubowik <wojciech.dubowik@mt.com>
-+S:	Maintained
-+F:	arch/arm64/boot/dts/freescale/imx8mm-mt-*
-+
- MHI BUS
- M:	Manivannan Sadhasivam <mani@kernel.org>
- L:	mhi@lists.linux.dev
--- 
-2.47.2
 
+...
+
+
+> +void eswin_clk_register_pll(struct eswin_pll_clock *clks, int nums,
+> +			    struct eswin_clock_data *data, struct device *dev)
+> +{
+> +	void __iomem *base = data->base;
+> +	struct eswin_clk_pll *p_clk = NULL;
+> +	struct clk *clk = NULL;
+> +	struct clk_init_data init;
+> +	int i;
+> +	static struct gpio_desc *cpu_voltage_gpio;
+> +
+> +	p_clk = devm_kzalloc(dev, sizeof(*p_clk) * nums, GFP_KERNEL);
+> +
+> +	if (!p_clk)
+> +		return;
+> +	/*
+> +	 *In the D2D system, the boost operation is performed using the GPIO on Die0.
+
+What is the Linux coding style of comment?
+
+> +	 *However, the same GPIO pin cannot be acquired twice, so special handling is implemented:
+> +	 *Once the GPIO is acquired,the other driver simply uses it directly
+> +	 */
+> +	cpu_voltage_gpio =
+> +		IS_ERR_OR_NULL(cpu_voltage_gpio) ?
+> +			devm_gpiod_get(dev, "cpu-voltage", GPIOD_OUT_HIGH) :
+> +			cpu_voltage_gpio;
+> +	if (IS_ERR_OR_NULL(cpu_voltage_gpio)) {
+> +		dev_warn(dev, "failed to get cpu volatge gpio\n");
+> +		cpu_voltage_gpio = NULL;
+> +	} else {
+> +		/*cpu default freq is 1400M, the volatge should be VOLTAGE_0_8V*/
+> +		eswin_clk_set_cpu_volatge(cpu_voltage_gpio, VOLTAGE_0_8V);
+
+Amount of typos and unreadable stuff like missing spaces in this driver
+is just discouraging and making review unnecessary difficult. Fix the
+typos, fix the style. Driver is also way too big for simple clock driver
+and I am surprised to see so many redundancies.
+
+Anyway, your binding said it is not 1400M but something else so this is
+a mess.
+
+
+Best regards,
+Krzysztof
 
