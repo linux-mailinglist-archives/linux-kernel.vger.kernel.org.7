@@ -1,79 +1,80 @@
-Return-Path: <linux-kernel+bounces-700516-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-700514-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7B6AFAE69C6
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Jun 2025 16:56:18 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 43E20AE69BB
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Jun 2025 16:55:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B7B4F173300
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Jun 2025 14:50:02 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5C52C6A4553
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Jun 2025 14:49:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BB7852E2F15;
-	Tue, 24 Jun 2025 14:43:19 +0000 (UTC)
-Received: from baidu.com (mx22.baidu.com [220.181.50.185])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E713E2E1735;
+	Tue, 24 Jun 2025 14:42:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=sipsolutions.net header.i=@sipsolutions.net header.b="QCu9oZNH"
+Received: from sipsolutions.net (s3.sipsolutions.net [168.119.38.16])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 616662E175F;
-	Tue, 24 Jun 2025 14:43:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.181.50.185
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C65F72E1727;
+	Tue, 24 Jun 2025 14:42:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=168.119.38.16
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750776199; cv=none; b=tbgAliUlB9Fnd/TNSfSTXbQXVJ8sMh9TurXT8lPi6Ac9NxdaCpC6hE40DkWfYvlRA+SKT1Fm0U6nYgm6KOMbVJySUZRWTWK/yNbEWB4P54bTewevmYnUAfA+gEdD/HBG1y7141qwCN9Bzpo55Xl3lZeHrkvrzu8bddIwZZTrzoI=
+	t=1750776175; cv=none; b=cHymALBwFFVPWahvvtQMnezgG7FN2CkzU7AWOJHc6JHFwO8K8Zwc4mnDC0qrAcwsCF84fOIDZOO2syUzFLqJUW3ACFoZ/Ehi7u9rhYzgrAN/eJhFP5uxFJ2x2KQBiNbO/pNo0yo3Qcok91jWLqbE6gyQnrlme0ILPdKroqMZo9Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750776199; c=relaxed/simple;
-	bh=gm05zOftEwfrXqVxKIbq5Eu6YqOXsIaRljvnTWIMGh8=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=CwOcB8H5olJY6lXVobVJ0bq+H6SMdOtsg+hgyf09EVYNla6SOjiNxspfXwW5m9SD3ULhX+Uzx7SzM3g3RFJ5fJohMC/wGd+2VbiBCkagbSQydMrgRe4kzp4cA1/1U0A7cekk/MRK+blVyD4DEVWGRNaeMJgHmYn5tjd8+NU3AsM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=baidu.com; spf=pass smtp.mailfrom=baidu.com; arc=none smtp.client-ip=220.181.50.185
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=baidu.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baidu.com
-From: Fushuai Wang <wangfushuai@baidu.com>
-To: <ioana.ciornei@nxp.com>, <andrew+netdev@lunn.ch>, <davem@davemloft.net>,
-	<edumazet@google.com>, <kuba@kernel.org>, <pabeni@redhat.com>
-CC: <netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>, Fushuai Wang
-	<wangfushuai@baidu.com>
-Subject: [PATCH net] dpaa2-eth: fix xdp_rxq_info leak in dpaa2_eth_setup_rx_flow
-Date: Tue, 24 Jun 2025 22:42:35 +0800
-Message-ID: <20250624144235.69622-1-wangfushuai@baidu.com>
-X-Mailer: git-send-email 2.39.2 (Apple Git-143)
+	s=arc-20240116; t=1750776175; c=relaxed/simple;
+	bh=+zL4QC+9cHA0s9cjJlJPly78N3xttvgurNiByN0DCFs=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=bjtJVEXeAeDZt/8Ee45jRZbfhz8w4A3bZXUvevuHEcL4n8ZESuzPdAK9Qpl4ELXL9BqBeAHLU8K2hLUPmAf4tePz66Dzd7DeAKnQpDPUBkndviZqlbPpNkXc5ucAPUd+KdIZgT8Tfg1D7kIsP7f4VEun//d8UiHSlNHjSewNI1E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sipsolutions.net; spf=pass smtp.mailfrom=sipsolutions.net; dkim=pass (2048-bit key) header.d=sipsolutions.net header.i=@sipsolutions.net header.b=QCu9oZNH; arc=none smtp.client-ip=168.119.38.16
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sipsolutions.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sipsolutions.net
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=sipsolutions.net; s=mail; h=MIME-Version:Content-Transfer-Encoding:
+	Content-Type:References:In-Reply-To:Date:Cc:To:From:Subject:Message-ID:Sender
+	:Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:Resent-To:
+	Resent-Cc:Resent-Message-ID; bh=ap+T4uXmGhGheaBLvwseZjUACeA/69c61bTMLd1PY1E=;
+	t=1750776173; x=1751985773; b=QCu9oZNHf/2Lem8o55nsFPcr0JzHPiVJ7AhOovTWvuyMS1k
+	/6n6HNkQM5cwNRhW9DBk00n75jDUPk0IMFXAulHUhYJQyvGhd1RaAud5bxyhUgol6qjCt5opW5cBP
+	QfCHERC6ajqE3+gOVy0I1snkWntvVde0uafErDEodquK8UBBjt2ji5CGAdxtjlw95O2wY6riOS6tf
+	VZxTKs8cIKf/gaT0ijxIUPwrMVImz7svcC62eUGrYrTJHlSlHQ8avlSrWCb55WDE1DD7FEd3tIBNA
+	g1oSC9RJaE8pmQNyyanyjmKihdA8N1i/vqjikz2UHumnfdtljSP1PfLHXhAVsoIQ==;
+Received: by sipsolutions.net with esmtpsa (TLS1.3:ECDHE_X25519__RSA_PSS_RSAE_SHA256__AES_256_GCM:256)
+	(Exim 4.98.2)
+	(envelope-from <johannes@sipsolutions.net>)
+	id 1uU4rK-00000008uQv-0voQ;
+	Tue, 24 Jun 2025 16:42:50 +0200
+Message-ID: <a0eefe910c3216594ea145465bb8a68a4b0d9990.camel@sipsolutions.net>
+Subject: Re: [PATCH] wifi: mac80211: Add limit to ignore NSS change warning
+From: Johannes Berg <johannes@sipsolutions.net>
+To: Paul Menzel <pmenzel@molgen.mpg.de>
+Cc: linux-wireless@vger.kernel.org, linux-kernel@vger.kernel.org
+Date: Tue, 24 Jun 2025 16:42:49 +0200
+In-Reply-To: <20250529070922.3467-1-pmenzel@molgen.mpg.de>
+References: <20250529070922.3467-1-pmenzel@molgen.mpg.de>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.56.2 (3.56.2-1.fc42) 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: bjkjy-exc3.internal.baidu.com (172.31.50.47) To
- bjkjy-mail-ex22.internal.baidu.com (172.31.50.16)
-X-FEAS-Client-IP: 172.31.50.16
-X-FE-Policy-ID: 52:10:53:SYSTEM
+X-malware-bazaar: not-scanned
 
-When xdp_rxq_info_reg_mem_model() fails after a successful
-xdp_rxq_info_reg(), the kernel may leaks the registered RXQ
-info structure. Fix this by calling xdp_rxq_info_unreg() in
-the error path, ensuring proper cleanup when memory model
-registration fails.
+On Thu, 2025-05-29 at 09:09 +0200, Paul Menzel wrote:
+> Currently, Linux warns as below:
+>=20
+>     Ignoring NSS change in VHT Operating Mode Notification from cc:d4:2e:=
+bb:59:f4 with invalid nss 4
+>=20
 
-Fixes: d678be1dc1ec ("dpaa2-eth: add XDP_REDIRECT support")
-Signed-off-by: Fushuai Wang <wangfushuai@baidu.com>
----
- drivers/net/ethernet/freescale/dpaa2/dpaa2-eth.c | 1 +
- 1 file changed, 1 insertion(+)
+I think we should make it a debug message as well, that's a really
+pointless thing to bother users with.
 
-diff --git a/drivers/net/ethernet/freescale/dpaa2/dpaa2-eth.c b/drivers/net/ethernet/freescale/dpaa2/dpaa2-eth.c
-index 2ec2c3dab250..b4a62eae4719 100644
---- a/drivers/net/ethernet/freescale/dpaa2/dpaa2-eth.c
-+++ b/drivers/net/ethernet/freescale/dpaa2/dpaa2-eth.c
-@@ -3939,6 +3939,7 @@ static int dpaa2_eth_setup_rx_flow(struct dpaa2_eth_priv *priv,
- 					 MEM_TYPE_PAGE_ORDER0, NULL);
- 	if (err) {
- 		dev_err(dev, "xdp_rxq_info_reg_mem_model failed\n");
-+		xdp_rxq_info_unreg(&fq->channel->xdp_rxq);
- 		return err;
- 	}
- 
--- 
-2.36.1
+Want to make that change too?
 
+johannes
 
