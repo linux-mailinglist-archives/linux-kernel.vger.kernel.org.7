@@ -1,147 +1,350 @@
-Return-Path: <linux-kernel+bounces-700097-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-700099-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4AD7DAE63C3
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Jun 2025 13:42:25 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 55AE0AE63CE
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Jun 2025 13:46:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2A531192489F
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Jun 2025 11:42:41 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 609D31924CE4
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Jun 2025 11:47:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 553E028D8D4;
-	Tue, 24 Jun 2025 11:42:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6982C2857CD;
+	Tue, 24 Jun 2025 11:46:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="l31mpb6+"
-Received: from mail-lf1-f48.google.com (mail-lf1-f48.google.com [209.85.167.48])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=topic.nl header.i=@topic.nl header.b="nODFPU3J"
+Received: from OSPPR02CU001.outbound.protection.outlook.com (mail-norwayeastazon11023103.outbound.protection.outlook.com [40.107.159.103])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C1C1528B4E7
-	for <linux-kernel@vger.kernel.org>; Tue, 24 Jun 2025 11:42:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.48
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750765340; cv=none; b=OdBodUbolLWjTkpVV+dQs02sPVyYj77S/MxLi2vgTkNkU7Fu1aIpfTxlTtZDACLDHXzoEtvn/AzL7fIznD1ULwlkwyLng30sBUPgJYDjPhE6zPS62N8xIBZtHgEPUvOEUoPCkq3c00XW+4wG3LjPlhXFYIyqq1R/bzVqgQkRLCg=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750765340; c=relaxed/simple;
-	bh=o9NtCbdEqXVH///YhmYsCyDbtZ2RQ2t50KFUTbDF7Vk=;
-	h=From:Date:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=dCreg5PRYdu/CEkg3SYFd0ymPuYgdQE0hLe2r4BtV+r2ZkwdGcmaEFxclpeaeIRE+Om6XYkmruoFgvw03g29EkQnkfTm43Kcpk9GI1fnnnBiCFtor5zio9kIyh2QE9Y6B+XR90b51kEf/ca/LKd69eXwDySghjr4BFPl6kUK3/E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=l31mpb6+; arc=none smtp.client-ip=209.85.167.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lf1-f48.google.com with SMTP id 2adb3069b0e04-54e7967cf67so5001414e87.0
-        for <linux-kernel@vger.kernel.org>; Tue, 24 Jun 2025 04:42:17 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1750765336; x=1751370136; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:date:from:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=5s25fyGVsgH7CUUdiHpgC4SpMceOJi2ulartzmm/61o=;
-        b=l31mpb6+r0ux3+Iojt6x6WBy/DIedw1d31V2I9LZrZwkfXzjIigifOtu2QAAvJiZIG
-         DJcTL/Fwek6eo9dhkAxdbmGMoNruoOndr7CREoKsqBh9KF/iqSQ8LYRxOXFveebUpTOT
-         RmarYAQNI9Dqzw3OgJ92sa0yDsoWvlJAb9Xj/sqSNBVG2q/+psoJHymwiFZvJu2tUvzi
-         q8XZhntjCx5LzhgT6nqM+yDNgHBO8TCHB9J1+cMH//HrOqVZFDbtVETnfqCE2S/QEHXc
-         940b4MkZydZvoH5tzsJ1lLAlcCbMqZso5XuZmin0vh+FpRoMyILO8AhO4UtHnQw1Fu1N
-         zuoA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1750765336; x=1751370136;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:date:from
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=5s25fyGVsgH7CUUdiHpgC4SpMceOJi2ulartzmm/61o=;
-        b=A0oO3um9/cyE8Zje7FurRhXfX9zUFSxaoyir/qtZC6uimM0HXzqMH8dQRGzjFLsa1j
-         26AnS20DXyvbmrW8CwepxofSTTKALJWHeDT4bkL0Zpy9rksuXtF/kEVpKEpjwAyNc/wy
-         yaJiCTUPcmBDS6ye6U3cKgKurBYnC+V5iJyr0/jLCePulzQlW1nnibiexP0WC1NVb6b8
-         /D+Ztc88Q/C6nCwp8HXJvC1X0KcipzZ3U8Wm2NHF+AgH7yF3o44HppvxOlUl8PChD5Z9
-         9yz3+/NC5tWDquJbTz9rwENvHBW6MFbMKIc4Unbr4fQdZy3oveo1XzsodMlNGxxPdIQu
-         T0BQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVEAnHxCALVIHYaxfXHTvSDRrzOfxXCJ70e6Q6nvrG+OlWjhc6mekTc0meNHIntbFydLcgaS/ZAuR5AvA4=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yyl0/V1vZRUec+duSnfer97TjSMtcr61cWVU1iPsTP3VM0fun/5
-	VYgWfT+GEVBrNcO79bwqLZeBfLQNJgt3450N79jvoK30Kcfp0n0JjLMO
-X-Gm-Gg: ASbGncv1gmoJlITHFXXrVg3tWYfV0Kyzg8ueYg5/6Kbjxn59AQPtnFi4f7oLwwjtnsP
-	76zk3u/Lxk9pR7cODAtPoiUa6WJdWNDtRS6PThHlm4bNcWh2niBPMWlQLLv0IKfW4M2l1gcMGxY
-	qIdVzTLvkRB+3pMs/AGrFxciuH90m7OMFisp4SBaqJ4Lgt9h7UXqnPx260dZCFnogi56o0T4BY3
-	C+qcmOMgz0tbpo/WkFv4bd0r5hxKEt5Y3zqgZ0xBYjNcw1aqVB8tb4CMOlQj9qC/XliNeW0uxJr
-	aRzsCVPW69gO+8E+XphQrKXf7i7iO+OlEB+iYQcQqNSpc40gqo1/eQICPg/g944Zf1ZTlSKNqZN
-	44FUcJKkQtkg=
-X-Google-Smtp-Source: AGHT+IGmukpKZCpvBS9DnXJ5zF/aXj7ll7dmnJzveDXO4jN9B/KEDcKBMAx2bSwr80gt54+0Qzco9w==
-X-Received: by 2002:a05:6512:3ca5:b0:54b:1055:f4c3 with SMTP id 2adb3069b0e04-553e3ba8018mr5596807e87.11.1750765335508;
-        Tue, 24 Jun 2025 04:42:15 -0700 (PDT)
-Received: from pc636 (host-95-203-1-180.mobileonline.telia.com. [95.203.1.180])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-553ea450edfsm1430158e87.102.2025.06.24.04.42.14
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 24 Jun 2025 04:42:14 -0700 (PDT)
-From: Uladzislau Rezki <urezki@gmail.com>
-X-Google-Original-From: Uladzislau Rezki <urezki@pc636>
-Date: Tue, 24 Jun 2025 13:42:12 +0200
-To: David Wang <00107082@163.com>
-Cc: "Uladzislau Rezki (Sony)" <urezki@gmail.com>,
-	Andrew Morton <akpm@linux-foundation.org>, linux-mm@kvack.org,
-	LKML <linux-kernel@vger.kernel.org>, Baoquan He <bhe@redhat.com>,
-	Harry Yoo <harry.yoo@oracle.com>,
-	Suren Baghdasaryan <surenb@google.com>
-Subject: Re: [PATCH 1/2] lib/test_vmalloc.c: Use late_initcall() if built-in
- for init ordering
-Message-ID: <aFqPFPmR1sZQzMS0@pc636>
-References: <20250623184035.581229-1-urezki@gmail.com>
- <5686796f.8f47.197a1310b6d.Coremail.00107082@163.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D3E561EBA09
+	for <linux-kernel@vger.kernel.org>; Tue, 24 Jun 2025 11:46:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.159.103
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1750765606; cv=fail; b=hRtO6zxEpt0v6yFsJ4y4QfCxnn1MH1zg8TKhxxFXZjaWCPdxk3/rEdg6W4/Rgm2K1eVWx3zVgQjb1pKTpuuNjaY9TGycu9eLCyCZvPYbWyC6epIlwRE4qCHw+PsE0TI3b6x3ST6WnXBLto6cyEfUuZ9td96LIFQ8/7A/p2WdyP8=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1750765606; c=relaxed/simple;
+	bh=rPwNxGhM/QFuaGA9zCne+V6G0qiyY6fMeZhEonFW+8E=;
+	h=From:To:CC:Subject:Date:Message-ID:Content-Type:MIME-Version:
+	 References; b=l9cdwQx9sT+LbWV2+Nd+0KUR+lNCcZKmKXlpslcuE/PxD6DvgsWLyLFyhRJbLSrHEu7PdSkz9D5P3RPFcXwg+LkHEIOTxZQhWsAvty1sKyzrai4f2pwFCQ+GtocXfKxv76p/vdgUkrrWAEWxt7FkIJ7cE+mAzpqa2TIBNiT9s+A=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=topic.nl; spf=pass smtp.mailfrom=topic.nl; dkim=pass (2048-bit key) header.d=topic.nl header.i=@topic.nl header.b=nODFPU3J; arc=fail smtp.client-ip=40.107.159.103
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=topic.nl
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=topic.nl
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=fqmX1JVQMX08x6HsNCqzpyQLcLFBO4wj5Yfg7TiqYRxjUJ4/Qg5eEVgEHVrkjgmCjfggIabQ7Ua8oLC85KMr7bLjTsIIRUi/5aahorxml2nMgGTILOUdLIGp9FQFDshvP2774kUjtGc72yjXfBTcjMa1t9sdEfHXBjH1LKtIUH6cPQ3q/wkiLcgbQkisaweJR4mk9ywX/pXp6l2KtOCE7EE+dYZhNThwBNFmD3JFGtUZolNerVDMUqoAziVcNKZ1jIZMktMkAVYVtB78yjFHapxOmOYbh4KioxqyXiyyDix1d5le4kBuIZmdWpiRdzKkN2VBLkKmUygF0h7op3tPSg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=fYK8+2XmszCRh2F55WIp3kMHls8HFkHMNQOXqw9CzEY=;
+ b=HBPnmEsYc889GLbz+urkUZR+BfOxnVTC3NeuFV5JJLfaCtFIyNEnWfdP5BEJQalRYvokkUjbXe8hXHrxnWz2KW31dLuYj5WBJB7ggTVBuD4EWXFQGZEYCCBvzDKtsESjHPxFcMihG7PhpSlDAIJlaTHPPMdNV7H/crZce0JXnJdrWh+UJvxERRaQacHtvD6lkxX5JbHMYiAcaZ58dq9KzB8tP0o8eJgE/9jaEzlEwokvPxSvRKy5i8qmZtPUpszeHNAP3S816KRoFEKrcyFCs3cQv5czFG6qa+X60iY8BpKOtaToSeFwr44HaiaORZYmF6y2YyXsjwpcUYpcDeouSw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 13.93.42.39) smtp.rcpttodomain=lists.freedesktop.org smtp.mailfrom=topic.nl;
+ dmarc=pass (p=quarantine sp=quarantine pct=100) action=none
+ header.from=topic.nl; dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=topic.nl; s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=fYK8+2XmszCRh2F55WIp3kMHls8HFkHMNQOXqw9CzEY=;
+ b=nODFPU3JiwbTqJWMDgticqf15SgQKCA3oUX//MbqKhHHkA42FMzi8xdqJF83TnWVx7ncA1V6A4zANnJbJygGW50KoLqb0UhslSr8pZLrlfSAnR5Ki6VHROzrQnVjjTG+8icX6m/omIZbqcZerNPM+iqnOdGcyjHr9yRd47kfiParZot8qkF4j1xuwj0+kINrQCQd1yy2i4sA0owOgPd3EpY7e3VcYhcOGbBL1hGEwe8XOZq3DzfddKLllPvlYGjw1r4n+h+UpTSu04dS7FLYjnV8FgeyvEXGJUCZ927ipxGmWgJJCr9vr0oAkwoYTabRr3XPgxjVLr/8KquVb2zzKA==
+Received: from AS4P190CA0005.EURP190.PROD.OUTLOOK.COM (2603:10a6:20b:5de::17)
+ by AM9PR04MB8381.eurprd04.prod.outlook.com (2603:10a6:20b:3b5::17) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8857.29; Tue, 24 Jun
+ 2025 11:46:39 +0000
+Received: from AMS0EPF000001AB.eurprd05.prod.outlook.com
+ (2603:10a6:20b:5de:cafe::1b) by AS4P190CA0005.outlook.office365.com
+ (2603:10a6:20b:5de::17) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.20.8880.17 via Frontend Transport; Tue,
+ 24 Jun 2025 11:46:39 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 13.93.42.39)
+ smtp.mailfrom=topic.nl; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=topic.nl;
+Received-SPF: Pass (protection.outlook.com: domain of topic.nl designates
+ 13.93.42.39 as permitted sender) receiver=protection.outlook.com;
+ client-ip=13.93.42.39; helo=westeu12-emailsignatures-cloud.codetwo.com; pr=C
+Received: from westeu12-emailsignatures-cloud.codetwo.com (13.93.42.39) by
+ AMS0EPF000001AB.mail.protection.outlook.com (10.167.16.151) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.8880.14 via Frontend Transport; Tue, 24 Jun 2025 11:46:39 +0000
+Received: from DU2PR03CU002.outbound.protection.outlook.com (40.93.64.27) by westeu12-emailsignatures-cloud.codetwo.com with CodeTwo SMTP Server (TLS12) via SMTP; Tue, 24 Jun 2025 11:46:38 +0000
+Authentication-Results-Original: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=topic.nl;
+Received: from AM8PR04MB7779.eurprd04.prod.outlook.com (2603:10a6:20b:24b::14)
+ by DU4PR04MB10984.eurprd04.prod.outlook.com (2603:10a6:10:586::9) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8857.28; Tue, 24 Jun
+ 2025 11:46:36 +0000
+Received: from AM8PR04MB7779.eurprd04.prod.outlook.com
+ ([fe80::7417:d17f:8d97:44d2]) by AM8PR04MB7779.eurprd04.prod.outlook.com
+ ([fe80::7417:d17f:8d97:44d2%3]) with mapi id 15.20.8857.026; Tue, 24 Jun 2025
+ 11:46:36 +0000
+From: Mike Looijmans <mike.looijmans@topic.nl>
+To: dri-devel@lists.freedesktop.org
+CC: Mike Looijmans <mike.looijmans@topic.nl>,
+	Andrzej Hajda <andrzej.hajda@intel.com>,
+	David Airlie <airlied@gmail.com>,
+	Herve Codina <herve.codina@bootlin.com>,
+	Jernej Skrabec <jernej.skrabec@gmail.com>,
+	Jonas Karlman <jonas@kwiboo.se>,
+	Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+	Maxime Ripard <mripard@kernel.org>,
+	Neil Armstrong <neil.armstrong@linaro.org>,
+	Robert Foss <rfoss@kernel.org>,
+	Simona Vetter <simona@ffwll.ch>,
+	Thomas Zimmermann <tzimmermann@suse.de>,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH] drm/bridge: ti-sn65dsi83: Improve error reporting and handling
+Date: Tue, 24 Jun 2025 13:45:15 +0200
+Message-ID: <20250624114630.303058-1-mike.looijmans@topic.nl>
+X-Mailer: git-send-email 2.43.0
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain
+X-ClientProxiedBy: AM0PR06CA0092.eurprd06.prod.outlook.com
+ (2603:10a6:208:fa::33) To AM8PR04MB7779.eurprd04.prod.outlook.com
+ (2603:10a6:20b:24b::14)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <5686796f.8f47.197a1310b6d.Coremail.00107082@163.com>
+X-MS-TrafficTypeDiagnostic:
+	AM8PR04MB7779:EE_|DU4PR04MB10984:EE_|AMS0EPF000001AB:EE_|AM9PR04MB8381:EE_
+X-MS-Office365-Filtering-Correlation-Id: 90f82562-e2f2-430e-d45e-08ddb314c7e7
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam-Untrusted:
+ BCL:0;ARA:13230040|52116014|1800799024|7416014|376014|366016|38350700014;
+X-Microsoft-Antispam-Message-Info-Original:
+ =?us-ascii?Q?6d6L0ll5RgowXk3rhyXxAzt8WymtNA/FuvC240PL9SOX7MSlyyLuhgejjCK6?=
+ =?us-ascii?Q?WYgjGqdceoBoVRiP4b0+5QEDAOEvr21FAXX82KfGdntV2ycDvMKgTZEhXMNT?=
+ =?us-ascii?Q?4xxdPhCTd8hDygdQ4uWmAG1T90bT0JgEfTJTDPRC/hYY7T93vqQmPwhC1EMi?=
+ =?us-ascii?Q?iPwpb3LyQo84WSRtlxt/eHukVOCpe0UFz9oSIEPdgySFDMpVunv5PYguKCbd?=
+ =?us-ascii?Q?iE9GhP5pNALXouytNvLkrx1Woz+lf3d4uPt/aRJqUaaJqpdPdi72QMCn3zp1?=
+ =?us-ascii?Q?A5mK/R25uX7HVgTscE4tgBr4jVc3h59HTlJ4EKqRnPWmqmxu9+VYLF/cr2kO?=
+ =?us-ascii?Q?1E3AjQy7CWwZiq6eKZKktj2y3Oys8w0ZPQKh0nKWKTzWNg9TvDvZ6iNFR6gJ?=
+ =?us-ascii?Q?oygMdpFClkkYfTY9nLS3qsa15L3+P6xtC1njlFdxdbhDoCUgNmSYWJb/QjQs?=
+ =?us-ascii?Q?/XWJ2o/Qb277PKP69owcIAlesTG8qhlnXMfNwkd0kVPvehqA0dz8w3RuRpVj?=
+ =?us-ascii?Q?KuSwb8vzfpNwYJ41pqBrxfSv1gNgq17lmQ3A6NFwbR6GcFy5DcyleoclepvX?=
+ =?us-ascii?Q?UT52eG9N+wP7zGmV3hvK0jYdUnvb9+Ltl2Pbpk0ou7RMA0FcZ4u8crFKIlo2?=
+ =?us-ascii?Q?9Xy6GjN7FGfjw93h/y/V03dtWPsrWrWVQUW+clwwq6aKy1nbfs+7MbOYqhGg?=
+ =?us-ascii?Q?JCHh6ByALHb6LMRqde+TznQI8Dn+PSt5dln4mo1LbcV+/oIyzuG0dPbbeVBw?=
+ =?us-ascii?Q?FukzdTQb30Y1PpXW/nzVtx1LcYKJiWoOdbmqF6dT/o1izk2cwwg3b10b24qI?=
+ =?us-ascii?Q?ORXMpBuJT6GQ8b+ZDaBTHEkpkTc+3CRbdK3d7C+UgIpRThhYYv0nNZ62bP5L?=
+ =?us-ascii?Q?aEolT+z/ILK7aZOnJQfIQODyrOGrWN/z+dz+KsE2sxcqigGbv4tazcgkJFPp?=
+ =?us-ascii?Q?B9wR5mYgSSc2Lg27yZdX8WmRESeqay+28PdIFBrkGtSVtxVukPv1UjMg2mXz?=
+ =?us-ascii?Q?hatgmrCiz6rIey3CIuUex/PJauqYU0DPb6dOYfWxGB7vtxoyldMYR9cezhJD?=
+ =?us-ascii?Q?pLySaMefBHjvn8Y5VYaFPmCy5gNMonQB/utn5phAC8S5XnSQzDdZyt5xgRR8?=
+ =?us-ascii?Q?T9sRopsFKE1ljjvUG8cWia6s7SiFw747TfFLcIAuy6tLszBUNpBekgEsJorw?=
+ =?us-ascii?Q?EibxdAlHqj+BZT3MUhcMlg7EAz0/1Jg6Y8dHmx81egJRPgnDCTwwUDY3T1OZ?=
+ =?us-ascii?Q?HZHFAslGpucsQzwKY1B9q7KJBe2yh8LdXan7UMebEwBjDd5btjVg+bdQZti+?=
+ =?us-ascii?Q?UMbX4T+HEzh/HDTKjztDT4hS4swBywc9CEb27Wu5cedZV7Elng6iqDCcy38/?=
+ =?us-ascii?Q?uyWeB6mffEuozOlt4017+rh94BbDsDvABZO3qEQZnhsaOiV37xCCXhNRaH42?=
+ =?us-ascii?Q?9q8NUryRxGK3xgtiTr1pChUCDt6PPqnFB6bHWR6RKRbHRqGORHNHyw=3D=3D?=
+X-Forefront-Antispam-Report-Untrusted:
+ CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:AM8PR04MB7779.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(52116014)(1800799024)(7416014)(376014)(366016)(38350700014);DIR:OUT;SFP:1102;
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DU4PR04MB10984
+X-CodeTwo-MessageID: 4113afed-d9bd-415a-9a30-57deb34b44fe.20250624114638@westeu12-emailsignatures-cloud.codetwo.com
+References:
+ <1b153bce-a66a-45ee-a5c6-963ea6fb1c82.949ef384-8293-46b8-903f-40a477c056ae.213ecd1f-6e92-42df-b45b-58dd7ea05682@emailsignatures365.codetwo.com>
+X-CodeTwoProcessed: true
+X-EOPAttributedMessage: 0
+X-MS-Exchange-Transport-CrossTenantHeadersStripped:
+ AMS0EPF000001AB.eurprd05.prod.outlook.com
+X-MS-PublicTrafficType: Email
+X-MS-Office365-Filtering-Correlation-Id-Prvs:
+	284653f6-5fa9-429f-1857-08ddb314c614
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|7416014|36860700013|1800799024|376014|82310400026|14060799003|35042699022;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?8M+b8pZMw7dysil8+9Oel0MyvI+zoLzTh8UFIPqZwAjL6N6o7Xj426Mspyks?=
+ =?us-ascii?Q?tA0KX0hRjA3B3vNJVsMJFbb5w3Taw3lHjOW1q2AM43bDOSORsrPvTsGQrWzE?=
+ =?us-ascii?Q?wXtF/5sDmpJW1wY73PYjfwxuRcMtbl3YLkUIhlhoXAQD8Z1BWlEwbB3j25Wi?=
+ =?us-ascii?Q?vaYYSxqJ/f7n7SWXNmwpRW8LrzRda3m5rzcxmE+NMmMwXgR7OaBDToMykdbe?=
+ =?us-ascii?Q?pfU9KPPj/QbfNsS7vxblGHymFlMTtG1xsbtpphv1QE+wpVCUxfV3gJUs4+Vl?=
+ =?us-ascii?Q?1756sDrTMl12FgBof68QZgpSx+c7JWfUOBkzwtP8sVX9XE+YumRzDExuAQcx?=
+ =?us-ascii?Q?7xfBh/KINlpicSV57zlrC6n6pgcR76ZuPo844MeqONWxydH0LnGFqpw0Rcr5?=
+ =?us-ascii?Q?IlVU77KPnSvqi3EyktDluDYU/4oCcnQKUGIDUmJV3X90wmgcf+p23mgtFB9q?=
+ =?us-ascii?Q?ZPduJsOo4E5nSzgc0wLeGC3fCGADl4znO+XtvpWTmLiea7Gbu2188vY9z1vn?=
+ =?us-ascii?Q?cG7ynBkRoK4Pb9pz5A2lZmBnhGvylvoF87F1ExAihd09sAr/eFmbxhy4cOeB?=
+ =?us-ascii?Q?IQZwXnWl3LaQW72/0MDDq725Q/7e+7gbJWJdfk7e84MaedjfBhis/g2eXPT4?=
+ =?us-ascii?Q?cT7oqu6clJyqm3iwMQD1tJ14ogYId8rUpDz+bCArUW6/ZnquCOuI8S3iKygK?=
+ =?us-ascii?Q?TAe6OXTYDj4LFlq0AZSMUuk07KqtYwnORqxi9xoy3iPyAFQn31iGVA0HcOKk?=
+ =?us-ascii?Q?Vkj/F7YHqxBGCqJ/L4jUdc6JewmvFAcMlIaZzZGL75I5pc9zmieLT3IOqRBI?=
+ =?us-ascii?Q?hfK2FnDo5/qhJqh5kMKlNMnKocziw+zIuOjxE1pk0aMQF8WQLIfceb8jU4Dk?=
+ =?us-ascii?Q?NTz9LnYndtLUHLD75Y7PJXBBWq/DOOPyovbYb+LTckTHnabNvqg4FauEifxX?=
+ =?us-ascii?Q?uATcRIcGqK93L0j1FLgoTsSYw9YfRaso+KU/xlETn2lInEIsjbV0zYot0z7Y?=
+ =?us-ascii?Q?039VfaZ0eQ9ozGPHfzWtTnuACmS6m0EatM01B7vuzU7HNcFBlY1Wxt37cU45?=
+ =?us-ascii?Q?bHHtx7LSctzDw36UMe0HCT4iHEjZFNSm68nErOrjY2072qBKJEPdEKFjKRtA?=
+ =?us-ascii?Q?q3olc3r5kQzaTI35pTqdSDS8acaqcKgp+VxXhDDKu73oLeIUH+ahus+nJleC?=
+ =?us-ascii?Q?PXkFmz1HlXqbRTLBBfHSOOiTNVx56P5WyKdzCVXz601BOrvyFO0AY1m2bwtv?=
+ =?us-ascii?Q?x4iYv4F3DHtUbHR8xPC69kRbGWz+BUVPfquzIDVE3xXzCKoU9QfclQg4xiLF?=
+ =?us-ascii?Q?rH6t3Kh6qhJLR1hXBXL+97lPCYWPZRRo2BtuFnykJcd03ZdLJxD60bhxySbb?=
+ =?us-ascii?Q?neCYpbQrtzS0MoPvHmwzwUiVzADNyW8x2T4WWtWdfbVZqjdgFF6EnH8pg3FJ?=
+ =?us-ascii?Q?yckd6SOzHpZEjv7VzQt3eQ25ha8Ms/eoSE8bsbRxvUYdLm7SPFtfnQ=3D=3D?=
+X-Forefront-Antispam-Report:
+	CIP:13.93.42.39;CTRY:NL;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:westeu12-emailsignatures-cloud.codetwo.com;PTR:westeu12-emailsignatures-cloud.codetwo.com;CAT:NONE;SFS:(13230040)(7416014)(36860700013)(1800799024)(376014)(82310400026)(14060799003)(35042699022);DIR:OUT;SFP:1102;
+X-OriginatorOrg: topic.nl
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 24 Jun 2025 11:46:39.0636
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 90f82562-e2f2-430e-d45e-08ddb314c7e7
+X-MS-Exchange-CrossTenant-Id: 449607a5-3517-482d-8d16-41dd868cbda3
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=449607a5-3517-482d-8d16-41dd868cbda3;Ip=[13.93.42.39];Helo=[westeu12-emailsignatures-cloud.codetwo.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	AMS0EPF000001AB.eurprd05.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM9PR04MB8381
 
-On Tue, Jun 24, 2025 at 05:07:15PM +0800, David Wang wrote:
-> 
-> At 2025-06-24 02:40:34, "Uladzislau Rezki (Sony)" <urezki@gmail.com> wrote:
-> >When the vmalloc test code is compiled as a built-in, use late_initcall()
-> >instead of module_init() to defer a vmalloc test execution until most
-> >subsystems are up and running.
-> >
-> >It avoids interfering with components that may not yet be initialized
-> >at module_init() time. For example, there was a recent report of memory
-> >profiling infrastructure not being ready early enough leading to kernel
-> >crash.
-> >
-> >By using late_initcall() in the built-in case, we ensure the tests are
-> >run at a safer point during a boot sequence.
-> >
-> >Cc: Harry Yoo <harry.yoo@oracle.com>
-> >Cc: Suren Baghdasaryan <surenb@google.com>
-> >Cc: David Wang <00107082@163.com>
-> >Signed-off-by: Uladzislau Rezki (Sony) <urezki@gmail.com>
-> >---
-> > lib/test_vmalloc.c | 4 ++++
-> > 1 file changed, 4 insertions(+)
-> >
-> >diff --git a/lib/test_vmalloc.c b/lib/test_vmalloc.c
-> >index 1b0b59549aaf1..7264781750c96 100644
-> >--- a/lib/test_vmalloc.c
-> >+++ b/lib/test_vmalloc.c
-> >@@ -598,7 +598,11 @@ static int __init vmalloc_test_init(void)
-> > 	return IS_BUILTIN(CONFIG_TEST_VMALLOC) ? 0:-EAGAIN;
-> > }
-> > 
-> >+#ifdef MODULE
-> > module_init(vmalloc_test_init)
-> >+#else
-> >+late_initcall(vmalloc_test_init);
-> 
-> >+#endif
-> 
-> 
-> When MODULE defined,  late_initcall is defined as module_init in ./include/linux/module.h
-> I think the MODULE check here is redundant,  (it is clearer though)
-> 
-That was an idea to use MODULE, because late_initcall is designed not
-for module.s It would require the comment then.
+The datasheet advises to wait 5ms after starting the video stream before
+resetting the error registers. The driver only waits 1ms. Change the
+sequence to match the datasheet:
+- Turn on the DSI
+- Wait 5ms
+- Write 0xFF to CSR 0xE5 to clear the error registers
 
---
-Uladzislau Rezki
+Don't read the error register (which may fail), just write 0xff as the
+datasheet suggests.
+
+The driver creates a timer or IRQ handler that reads the error register,
+which implements the "wait some time and read the register" part.
+
+When using a timer to poll the status register, the timer did not stop
+when the error handler triggers a reset. This has been observed to cause
+a series of multiple resets. Let handle_errors return a bool indicating
+whether all is fine, and only extend the time when it returns true. That
+also allows the IRQ disable call to move to the interrupt routine.
+
+When the error handler does trigger, log a message that explains the
+reset cause.
+
+Fixes: ad5c6ecef27e ("drm: bridge: ti-sn65dsi83: Add error recovery mechani=
+sm")
+Signed-off-by: Mike Looijmans <mike.looijmans@topic.nl>
+---
+
+ drivers/gpu/drm/bridge/ti-sn65dsi83.c | 50 +++++++++++++++------------
+ 1 file changed, 28 insertions(+), 22 deletions(-)
+
+diff --git a/drivers/gpu/drm/bridge/ti-sn65dsi83.c b/drivers/gpu/drm/bridge=
+/ti-sn65dsi83.c
+index 033c44326552..6240a9997cc2 100644
+--- a/drivers/gpu/drm/bridge/ti-sn65dsi83.c
++++ b/drivers/gpu/drm/bridge/ti-sn65dsi83.c
+@@ -417,7 +417,7 @@ static void sn65dsi83_reset_work(struct work_struct *ws=
+)
+ 		enable_irq(ctx->irq);
+ }
+=20
+-static void sn65dsi83_handle_errors(struct sn65dsi83 *ctx)
++static bool sn65dsi83_handle_errors(struct sn65dsi83 *ctx)
+ {
+ 	unsigned int irq_stat;
+ 	int ret;
+@@ -430,17 +430,20 @@ static void sn65dsi83_handle_errors(struct sn65dsi83 =
+*ctx)
+=20
+ 	ret =3D regmap_read(ctx->regmap, REG_IRQ_STAT, &irq_stat);
+ 	if (ret || irq_stat) {
+-		/*
+-		 * IRQ acknowledged is not always possible (the bridge can be in
+-		 * a state where it doesn't answer anymore). To prevent an
+-		 * interrupt storm, disable interrupt. The interrupt will be
+-		 * after the reset.
+-		 */
+-		if (ctx->irq)
+-			disable_irq_nosync(ctx->irq);
++		if (ret) {
++			dev_err(ctx->dev, "Communication failure\n");
++		} else {
++			dev_err(ctx->dev, "Error status: 0x%02x\n", irq_stat);
++			/* Clear errors if the chip was still responding */
++			regmap_write(ctx->regmap, REG_IRQ_STAT, irq_stat);
++		}
+=20
+ 		schedule_work(&ctx->reset_work);
++
++		return false;
+ 	}
++
++	return true;
+ }
+=20
+ static void sn65dsi83_monitor_work(struct work_struct *work)
+@@ -448,9 +451,8 @@ static void sn65dsi83_monitor_work(struct work_struct *=
+work)
+ 	struct sn65dsi83 *ctx =3D container_of(to_delayed_work(work),
+ 					     struct sn65dsi83, monitor_work);
+=20
+-	sn65dsi83_handle_errors(ctx);
+-
+-	schedule_delayed_work(&ctx->monitor_work, msecs_to_jiffies(1000));
++	if (sn65dsi83_handle_errors(ctx))
++		schedule_delayed_work(&ctx->monitor_work, msecs_to_jiffies(1000));
+ }
+=20
+ static void sn65dsi83_monitor_start(struct sn65dsi83 *ctx)
+@@ -639,18 +641,13 @@ static void sn65dsi83_atomic_enable(struct drm_bridge=
+ *bridge,
+ 				    struct drm_atomic_state *state)
+ {
+ 	struct sn65dsi83 *ctx =3D bridge_to_sn65dsi83(bridge);
+-	unsigned int pval;
+=20
++	/* Wait 5 ms after starting DSI stream */
++	usleep_range(5000, 5500);
+ 	/* Clear all errors that got asserted during initialization. */
+-	regmap_read(ctx->regmap, REG_IRQ_STAT, &pval);
+-	regmap_write(ctx->regmap, REG_IRQ_STAT, pval);
+-
+-	/* Wait for 1ms and check for errors in status register */
+-	usleep_range(1000, 1100);
+-	regmap_read(ctx->regmap, REG_IRQ_STAT, &pval);
+-	if (pval)
+-		dev_err(ctx->dev, "Unexpected link status 0x%02x\n", pval);
++	regmap_write(ctx->regmap, REG_IRQ_STAT, 0xff);
+=20
++	/* Start checking for errors in status register */
+ 	if (ctx->irq) {
+ 		/* Enable irq to detect errors */
+ 		regmap_write(ctx->regmap, REG_IRQ_GLOBAL, REG_IRQ_GLOBAL_IRQ_EN);
+@@ -929,7 +926,16 @@ static irqreturn_t sn65dsi83_irq(int irq, void *data)
+ {
+ 	struct sn65dsi83 *ctx =3D data;
+=20
+-	sn65dsi83_handle_errors(ctx);
++	if (!sn65dsi83_handle_errors(ctx)) {
++		/*
++		 * IRQ acknowledged is not always possible (the bridge can be in
++		 * a state where it doesn't answer anymore). To prevent an
++		 * interrupt storm, disable interrupt. The interrupt will be
++		 * after the reset.
++		 */
++		disable_irq_nosync(ctx->irq);
++	}
++
+ 	return IRQ_HANDLED;
+ }
+=20
+--=20
+2.43.0
+
+base-commit: 78f4e737a53e1163ded2687a922fce138aee73f5
+branch: linux-master-sn65dsi83-errorhandling
+
+Met vriendelijke groet / kind regards,=0A=
+=0A=
+Mike Looijmans=0A=
+System Expert=0A=
+=0A=
+=0A=
+TOPIC Embedded Products B.V.=0A=
+Materiaalweg 4, 5681 RJ Best=0A=
+The Netherlands=0A=
+=0A=
+T: +31 (0) 499 33 69 69=0A=
+E: mike.looijmans@topic.nl=0A=
+W: www.topic.nl=0A=
+=0A=
+Please consider the environment before printing this e-mail=0A=
 
