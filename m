@@ -1,100 +1,133 @@
-Return-Path: <linux-kernel+bounces-699632-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-699617-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id CA071AE5D40
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Jun 2025 08:55:43 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 27A71AE5D1E
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Jun 2025 08:50:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5BFEF1888E37
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Jun 2025 06:55:46 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 332783A4B85
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Jun 2025 06:50:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 57CCA17A2E2;
-	Tue, 24 Jun 2025 06:55:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7E932248F64;
+	Tue, 24 Jun 2025 06:50:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="mfdqEhHT"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.18])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="C6DMZrn3"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 79ACA42065
-	for <linux-kernel@vger.kernel.org>; Tue, 24 Jun 2025 06:55:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 734F657C9F;
+	Tue, 24 Jun 2025 06:50:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750748122; cv=none; b=FXG0qbYNKxIaxYPaFCLoezENUCMLBKM4h7+U+vBRrkFNwSz79fKBSINPsQZlNwdNngoyEw+vd782c+QgpHfc93mtsVIXJ6O3w526RVBQkFo/A+0NyLA5DwF329jbDBydN7myABODcoMDFAujFLYsQEsAaEHUHlBbJyI551mvTsU=
+	t=1750747816; cv=none; b=GF93yEgI10QSaLx9QgSocV5tHrrF3cfG0i/lA/8NK9sGcPskJSvfME/kQIJmh5Y0Z09WVJzvQ4fNvCTUcldD4D1bnzsqdpTPpj6EpglNtdnWIbIVCLbafcywVHZB+jsa2v0jynl/hqGuHecICJ/5qNJq8ivoFnsk4B9aHWjBX0U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750748122; c=relaxed/simple;
-	bh=tXHl/fqunYnn9miDE1bZcQNgfI8xMAEVRtl7KrUO6C8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=KGe+FmA4OImJxVRu85YOd7lDySvVbcM3GogMgGG6fSZedGH6r25peAcqmpiGl3JlA+bGmWIEZt7E8Wpfln1p30r6hl4rcsOHfrIpvLgu6IxpCiIWPUFYiqZ7IsQ/atoA9fDjcpOebYRFfF/cl6pJbOeKmUXZGSvmB6KAAUGZ+/M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=mfdqEhHT; arc=none smtp.client-ip=192.198.163.18
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1750748121; x=1782284121;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=tXHl/fqunYnn9miDE1bZcQNgfI8xMAEVRtl7KrUO6C8=;
-  b=mfdqEhHTp6oig5U1AhL4eQcynP6TXATqztrCJrey8YFCjsbgGqeVUKvx
-   7GMI4sIrcShcn45nnPH2wyMl7BUxmBaz+/Vp/KxafY6SHur7pDNoUq9YS
-   ffFggWgLFgdAlBRvwzGRm23p4GqasKjqCAZWDYW/YuJOmKLOxl5MY6L+V
-   3serwyjp+y+zTHjx7ba9QB3jsommPZaAGNLjaAZZ4XK8NzcMNeWtVnsyn
-   RgUCjUGjRyYwL9wrLKdRHP+VJaOmrq+F3pBIweLI4SZ77+4hO76wZVG3s
-   sadHt06WcWcT0Bm/+6GqkFknp1Kzkem9cyczhpB2N89NCFYO/eLX2/vCM
-   Q==;
-X-CSE-ConnectionGUID: 19Ig1l+BSPiEQPNApDn9DA==
-X-CSE-MsgGUID: CYIqTr+/QmKlkYlbOZ6P6Q==
-X-IronPort-AV: E=McAfee;i="6800,10657,11473"; a="52200145"
-X-IronPort-AV: E=Sophos;i="6.16,260,1744095600"; 
-   d="scan'208";a="52200145"
-Received: from fmviesa006.fm.intel.com ([10.60.135.146])
-  by fmvoesa112.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 23 Jun 2025 23:55:20 -0700
-X-CSE-ConnectionGUID: J+lBBPhlSe66ItEBZ8CM5w==
-X-CSE-MsgGUID: GxudAC+RSpqdHxvxokPFZg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.16,260,1744095600"; 
-   d="scan'208";a="151967165"
-Received: from yilunxu-optiplex-7050.sh.intel.com (HELO localhost) ([10.239.159.165])
-  by fmviesa006.fm.intel.com with ESMTP; 23 Jun 2025 23:55:17 -0700
-Date: Tue, 24 Jun 2025 14:47:44 +0800
-From: Xu Yilun <yilun.xu@linux.intel.com>
-To: jgg@nvidia.com, jgg@ziepe.ca, kevin.tian@intel.com, will@kernel.org,
-	aneesh.kumar@kernel.org
-Cc: iommu@lists.linux.dev, linux-kernel@vger.kernel.org, joro@8bytes.org,
-	robin.murphy@arm.com, shuah@kernel.org, nicolinc@nvidia.com,
-	aik@amd.com, dan.j.williams@intel.com, baolu.lu@linux.intel.com,
-	yilun.xu@intel.com
-Subject: Re: [PATCH v2 3/4] iommufd: Destroy vdevice on idevice destroy
-Message-ID: <aFpKEO7/+Xf6Wu+d@yilunxu-OptiPlex-7050>
-References: <20250623094946.1714996-1-yilun.xu@linux.intel.com>
- <20250623094946.1714996-4-yilun.xu@linux.intel.com>
+	s=arc-20240116; t=1750747816; c=relaxed/simple;
+	bh=bYUy5b5AemSX+L8+KqgznKt7mKvggbR0E20A4SGRvPE=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=FiX2fK5vMzJXsXohUyiB4zcbkYvHx7qbfjBDPA/dVh+1tGT8iRtZ2/D0lT221SHJ71L77f1sD19+FvBv/MdpNE4gfLWjzdfY3qD9tcyChfuiuCKHBN2lqJtpGrV5lsQkDKEZc0zTeNQGnnwv+Of5NTd+vAQS2DxlOVjn61cDqzA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=C6DMZrn3; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279871.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 55NKlNv5015342;
+	Tue, 24 Jun 2025 06:50:06 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=qcppdkim1; bh=27TTRq7FPFUk8HJAEAoODj
+	MXSoPbbkPWOMnJihjRr0Y=; b=C6DMZrn3FCnlIrzc0KQxo8EvpssrhPd380D9X3
+	UXa7216zhFgYtEzczI9sbmOA6JMYrAKHS08f6OFYfvTCiBB23465+VmvO6M0Bqix
+	UMHZajyb7vLAdqBUgMej6Yn4j3yo7ALj60JnlbbPiToKyUSWAXe4nPGXLb0kup8X
+	G6e3w0K6nhMezlhdaNkN8vSMJWXE1EOzrhfsiGRKi65SIuTAcYIutAZkIDfjkV1R
+	UBYtLwpNtuF7WwRfJNRPTZXVAM93BbCSKwAE1pflCKkZjPn7uAALL1BqrRLrskUM
+	VlJ5QF29L6Ri2UVSIhu2fVsnFkpR0AF6OXXfX71KNkEwkaOA==
+Received: from nasanppmta05.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 47fbhqhj6b-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 24 Jun 2025 06:50:05 +0000 (GMT)
+Received: from nasanex01b.na.qualcomm.com (nasanex01b.na.qualcomm.com [10.46.141.250])
+	by NASANPPMTA05.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 55O6o4vU002382
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 24 Jun 2025 06:50:05 GMT
+Received: from hu-gkohli-hyd.qualcomm.com (10.80.80.8) by
+ nasanex01b.na.qualcomm.com (10.46.141.250) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.9; Mon, 23 Jun 2025 23:50:00 -0700
+From: Gaurav Kohli <quic_gkohli@quicinc.com>
+To: <amitk@kernel.org>, <rafael@kernel.org>, <daniel.lezcano@linaro.org>,
+        <rui.zhang@intel.com>, <lukasz.luba@arm.com>, <robh@kernel.org>,
+        <krzk+dt@kernel.org>, <andersson@kernel.org>, <konradybcio@kernel.org>
+CC: <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <linux-arm-msm@vger.kernel.org>, <quic_manafm@quicinc.com>,
+        Gaurav Kohli
+	<quic_gkohli@quicinc.com>
+Subject: [PATCH v4 0/2] Enable TSENS and thermal zone for QCS615 SoC
+Date: Tue, 24 Jun 2025 12:19:43 +0530
+Message-ID: <20250624064945.764245-1-quic_gkohli@quicinc.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250623094946.1714996-4-yilun.xu@linux.intel.com>
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nasanex01b.na.qualcomm.com (10.46.141.250)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: pJpvqKAkktgoUP3isVObT1SHn-nb7-un
+X-Authority-Analysis: v=2.4 cv=Id+HWXqa c=1 sm=1 tr=0 ts=685a4a9e cx=c_pps
+ a=JYp8KDb2vCoCEuGobkYCKw==:117 a=JYp8KDb2vCoCEuGobkYCKw==:17
+ a=GEpy-HfZoHoA:10 a=6IFa9wvqVegA:10 a=VwQbUJbxAAAA:8 a=COk6AnOGAAAA:8
+ a=EUspDBNiAAAA:8 a=JfOcGDDDXtGUpYJnmSUA:9 a=TjNXssC_j7lpFel5tvFf:22
+X-Proofpoint-GUID: pJpvqKAkktgoUP3isVObT1SHn-nb7-un
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNjI0MDA1NyBTYWx0ZWRfX0AVENF6zOWyK
+ J1mweZ/XiH/IwUskDJYPJMweQlDPQTLFGSGeKBTtKjG9PLp6M6HnBpuacJA9iztDTT3wHM6IfuV
+ Gz0GnMFZzznmR6JOu9RFiQ4xH4VzopbKTO3QYsoyt99PdF/StYHlocQFCAoXNo/8Q3X1ga7U7nm
+ fD8ZGGDfab78DWeZttnDpyHDMgm9DVHYw1lu7PYRXrgIl8iIxUo/F2G8h5autwFdX928tF+EVIw
+ Si9HcdnokNbE7QOogvVqRwjZ5ghnQLiFSgxec/8q6ruKeJ9Tlotu3tv5+8owMm+cSc3XuBn3slW
+ ysE1tk3+kb90kN54TPRnLIR1fvbGo5kEbxaGNTwLtPR10ko1rnZ0KnEQjbs6GNykvh+yqkbAiE0
+ ZvVHP4jctTa+zvipuTcOUGfxh5/JZrFtsR7u13Y3ApDtxspJQudHWjbR81JpKPYsIwl/pdoM
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.7,FMLib:17.12.80.40
+ definitions=2025-06-24_02,2025-06-23_07,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ spamscore=0 priorityscore=1501 mlxlogscore=922 phishscore=0 bulkscore=0
+ clxscore=1011 impostorscore=0 mlxscore=0 lowpriorityscore=0 malwarescore=0
+ suspectscore=0 adultscore=0 classifier=spam authscore=0 authtc=n/a authcc=
+ route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2505280000
+ definitions=main-2506240057
 
-> +void iommufd_vdevice_destroy(struct iommufd_object *obj)
-> +{
-> +	struct iommufd_vdevice *vdev =
-> +		container_of(obj, struct iommufd_vdevice, obj);
-> +
-> +	mutex_lock(&vdev->idev->igroup->lock);
-> +	iommufd_vdevice_abort(obj);
-> +	mutex_unlock(&vdev->idev->igroup->lock);
-> +	wake_up_interruptible_all(&vdev->ictx->destroy_wait);
+Adding compatible string in TSENS dt-bindings, device node
+for TSENS controller and Thermal zone support.
 
-Should change to
+---
+Changes in v4:
+- Fix naming of thermal sensor.
+- Link to v3: https://lore.kernel.org/linux-devicetree/20250613112402.2203617-1-quic_gkohli@quicinc.com/
 
-        wake_up_interruptible_all(&vdev->viommu->ictx->destroy_wait);
+Changes in v3:
+- Add critical for all trips.
+- Link to v2: https://lore.kernel.org/linux-devicetree/cover.1744955863.git.gkohli@qti.qualcomm.com/
 
-since vdev->ictx will be deleted.
+Changes in v2:
+- Drop the passive trip point and add critical for CPU thermal zones.
+- Rearrange the tsens dt node and fix the address part.
+- Fix the commit subject with target name.
+- Link to v1: https://lore.kernel.org/linux-devicetree/cover.1744292503.git.quic_gkohli@quicinc.com/
+---
 
-Thanks,
-Yilun
+Gaurav Kohli (2):
+  dt-bindings: thermal: tsens: Add QCS615 compatible
+  arm64: dts: qcom: qcs615: Enable TSENS support for QCS615 SoC
+
+ .../bindings/thermal/qcom-tsens.yaml          |   1 +
+ arch/arm64/boot/dts/qcom/qcs615.dtsi          | 205 ++++++++++++++++++
+ 2 files changed, 206 insertions(+)
+
+-- 
+2.34.1
+
 
