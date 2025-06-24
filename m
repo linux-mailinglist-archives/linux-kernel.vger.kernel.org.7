@@ -1,142 +1,129 @@
-Return-Path: <linux-kernel+bounces-699734-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-699736-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9251DAE5EB7
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Jun 2025 10:07:53 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6F380AE5EBC
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Jun 2025 10:08:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 44FB11B677B9
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Jun 2025 08:08:09 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4C1D01B679E3
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Jun 2025 08:08:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E4AB425A353;
-	Tue, 24 Jun 2025 08:06:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 94D08257AFB;
+	Tue, 24 Jun 2025 08:07:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="G/9oKIGy"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=w6rz.net header.i=@w6rz.net header.b="Fao41GU0"
+Received: from omta040.useast.a.cloudfilter.net (omta040.useast.a.cloudfilter.net [44.202.169.39])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 464C5190664;
-	Tue, 24 Jun 2025 08:06:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B4D27257455
+	for <linux-kernel@vger.kernel.org>; Tue, 24 Jun 2025 08:07:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=44.202.169.39
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750752414; cv=none; b=IqSlN5ICp5ZeyfMz0tpvP2c97qzm13EUa9weiL/ck1yC0hgJ8Ntw0ELl1Lfo+/ozDWPI/AA1u62KV8EgeqVgozyu9wdcwRIT4vKFynGdNfFCZ1gzgy5z5NAnEbEWlhdn7tGId1jdifTszjmQHWn3X98QTIaccFRKNXel1Dd6ES0=
+	t=1750752462; cv=none; b=LxvPzc4GI+ywolfHtgXBaMFL0uG200+1xdCJdZyFE08hJS/Nbt7ku1LA80StwbGttuTtVvo0IzAR8JPw1bWKiP4ZviWNyOOy4A9Yv5LdQPqz6OfGRVVo79bMGnnHKCVTM1bZX/Zrz484H5JzoFlKb9Al4N9k0BRaWcZ1lPazrXY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750752414; c=relaxed/simple;
-	bh=rONZBqSu0G336QD6fdEcLUvwhyF4RivARlvQIYQaJu0=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=LF66IqYHpw0R27vnJmRDyqs+/O2bIJF7AvtXgUgbSiR3QaTLtFLpsg5u3dJZMYc2S8O9dRCk5383zimZGVClb20ksRzDDfAK331fFI06hWb+947XFas26gfMBhu3w8wnrYDlP2AnUGppSfRzICxX/2J5oc9/oOGsjdY4Ms2TG7A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=G/9oKIGy; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4D05EC4CEEF;
-	Tue, 24 Jun 2025 08:06:52 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1750752413;
-	bh=rONZBqSu0G336QD6fdEcLUvwhyF4RivARlvQIYQaJu0=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=G/9oKIGypl9sgF5wi0bI6DQWCsjBJW4+FlBDMK61TRiZyAz92va9RLWsu4sdbpB9X
-	 b7/PNne8bE4qUL/cpttYo16r+fGTPKNYruANTu+nXoAd9p8+Wkdk+uy7zr6KMvY1oh
-	 0PyTGm3+jhHFz6gEZOFMmVAQHRgS2CbLmS98RBy2wULZThNEXkVe4R2gZ3OSOhP5X7
-	 Hw7EQc0F4iFxPWEic/GOvMuvRFHk/SYeZ5jax1PQczZqgT1sk4XwDx19xc6gTN9J2+
-	 FmR1FaM5gjjQ/cGBzZVq3ItGp6DXEqvVhiSdlIWfRn3npU8KIT+j0SR+902vy1tLSc
-	 xNnluErWJ81Cg==
-From: "Jiri Slaby (SUSE)" <jirislaby@kernel.org>
-To: gregkh@linuxfoundation.org
-Cc: linux-serial@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	"Jiri Slaby (SUSE)" <jirislaby@kernel.org>,
-	=?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>,
-	Jonathan Corbet <corbet@lwn.net>,
-	linux-doc@vger.kernel.org
-Subject: [PATCH v2 5/5] tty: fix tty_port_tty_*hangup() kernel-doc
-Date: Tue, 24 Jun 2025 10:06:41 +0200
-Message-ID: <20250624080641.509959-6-jirislaby@kernel.org>
-X-Mailer: git-send-email 2.50.0
-In-Reply-To: <20250624080641.509959-1-jirislaby@kernel.org>
-References: <20250624080641.509959-1-jirislaby@kernel.org>
+	s=arc-20240116; t=1750752462; c=relaxed/simple;
+	bh=bcr7ZsoDIxCVOP86HeZSlurtef12X/747KFw9IGHX20=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Mgibz7ItIyUU06G5dhj73Qmegad86jLWCFulTmM+UirTFgeMDJgDHQ1g9SODvCkDLJRZ+m3+BSxnYwcWNk4gA0ScR1WOEGOqcoxMv7gYgY8VtAEZU9LZqpkErQmWHz27nYpjzYjxXkAZLKnRGgBQto9J9ZpIYkXs09SklTI2tZw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=w6rz.net; spf=pass smtp.mailfrom=w6rz.net; dkim=pass (2048-bit key) header.d=w6rz.net header.i=@w6rz.net header.b=Fao41GU0; arc=none smtp.client-ip=44.202.169.39
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=w6rz.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=w6rz.net
+Received: from eig-obgw-6003a.ext.cloudfilter.net ([10.0.30.151])
+	by cmsmtp with ESMTPS
+	id TieTuMQRSVkcRTygmuAvM5; Tue, 24 Jun 2025 08:07:33 +0000
+Received: from box5620.bluehost.com ([162.241.219.59])
+	by cmsmtp with ESMTPS
+	id TygluAHA1h9ZxTygluyiHl; Tue, 24 Jun 2025 08:07:31 +0000
+X-Authority-Analysis: v=2.4 cv=GODDEfNK c=1 sm=1 tr=0 ts=685a5cc4
+ a=30941lsx5skRcbJ0JMGu9A==:117 a=30941lsx5skRcbJ0JMGu9A==:17
+ a=IkcTkHD0fZMA:10 a=6IFa9wvqVegA:10 a=7vwVE5O1G3EA:10 a=VwQbUJbxAAAA:8
+ a=HaFmDPmJAAAA:8 a=49j0FZ7RFL9ueZfULrUA:9 a=QEXdDO2ut3YA:10
+ a=nmWuMzfKamIsx3l42hEX:22 a=Wh1V8bzkS9CpCxOpQUxp:22
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=w6rz.net;
+	s=default; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:From:
+	References:Cc:To:Subject:MIME-Version:Date:Message-ID:Sender:Reply-To:
+	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+	Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
+	List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=xFO6NK3ONdTJZbcH9gQ3lLvShx7ldiwcq/fdKK4epLE=; b=Fao41GU0zgS/RAeXpf/hDrCEgw
+	D3aFqiPqy7avOdaCzGQynxn0XaCohepOU2VLvWAbgA76NLv72RuKCRv+Rdj8unqQ3Zwj17aQiEuuE
+	CLOkLDgZW7L4hfzYY+6exAwNBxD0TM2f+s1kMGA59VRYqikzfcx2+gpSFA3auAZkIjoh8frdljpgO
+	Sk4LsUkSX0jyvEAFnT6hn/dgoBUtR4awqHN9m/KchvKSDMoUy1CNR56X0Lh4Pda0lgdCPz+YGZT5+
+	C7oovy8V8yW/0P5AVM3Onq1kAxYT5Osh2EY+7jmQIeoLnkKkps8CMNlQSVx2UK+7RIZiaYsw7isZX
+	x/vZBMTQ==;
+Received: from c-73-223-253-157.hsd1.ca.comcast.net ([73.223.253.157]:47784 helo=[10.0.1.116])
+	by box5620.bluehost.com with esmtpsa  (TLS1.2) tls TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256
+	(Exim 4.98.1)
+	(envelope-from <re@w6rz.net>)
+	id 1uTygi-00000002D2m-2Sr4;
+	Tue, 24 Jun 2025 02:07:28 -0600
+Message-ID: <e14cda6a-d50b-4b7a-81c0-4c2e5fb8b447@w6rz.net>
+Date: Tue, 24 Jun 2025 01:07:24 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 6.15 000/592] 6.15.4-rc1 review
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, stable@vger.kernel.org
+Cc: patches@lists.linux.dev, linux-kernel@vger.kernel.org,
+ torvalds@linux-foundation.org, akpm@linux-foundation.org,
+ linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org,
+ lkft-triage@lists.linaro.org, pavel@denx.de, jonathanh@nvidia.com,
+ f.fainelli@gmail.com, sudipm.mukherjee@gmail.com, srw@sladewatkins.net,
+ rwarsow@gmx.de, conor@kernel.org, hargar@microsoft.com, broonie@kernel.org
+References: <20250623130700.210182694@linuxfoundation.org>
+Content-Language: en-US
+From: Ron Economos <re@w6rz.net>
+In-Reply-To: <20250623130700.210182694@linuxfoundation.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - box5620.bluehost.com
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - w6rz.net
+X-BWhitelist: no
+X-Source-IP: 73.223.253.157
+X-Source-L: No
+X-Exim-ID: 1uTygi-00000002D2m-2Sr4
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
+X-Source-Sender: c-73-223-253-157.hsd1.ca.comcast.net ([10.0.1.116]) [73.223.253.157]:47784
+X-Source-Auth: re@w6rz.net
+X-Email-Count: 16
+X-Org: HG=bhshared;ORG=bluehost;
+X-Source-Cap: d3NpeHJ6bmU7d3NpeHJ6bmU7Ym94NTYyMC5ibHVlaG9zdC5jb20=
+X-Local-Domain: yes
+X-CMAE-Envelope: MS4xfPyvrPoi1+iFhvi6bixntYvzoG4rjKJkYCO+QBm21aJ7hYyQSEZyVNv3w/Fvvye4DmeRCLh36wJL7jtNHwZRp+TkukGBuLy8ai3zCc9g78Odi9A3GvgD
+ zwLa/B1HFAqv4JXpuTN1N/58HBLk2wwqtTP1vSfjlfecZxPzfHo6MWl2cAtjl18Sk5OS1re6FcfEDP5VhvITVadZU8eMcxtBAj4=
 
-The commit below added a new helper, but omitted to move (and add) the
-corressponding kernel-doc. Do it now.
+On 6/23/25 05:59, Greg Kroah-Hartman wrote:
+> This is the start of the stable review cycle for the 6.15.4 release.
+> There are 592 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
+>
+> Responses should be made by Wed, 25 Jun 2025 13:05:55 +0000.
+> Anything received after that time might be too late.
+>
+> The whole patch series can be found in one patch at:
+> 	https://www.kernel.org/pub/linux/kernel/v6.x/stable-review/patch-6.15.4-rc1.gz
+> or in the git tree and branch at:
+> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-6.15.y
+> and the diffstat can be found below.
+>
+> thanks,
+>
+> greg k-h
 
-Signed-off-by: Jiri Slaby (SUSE) <jirislaby@kernel.org>
-Fixes: 2b5eac0f8c6e ("tty: introduce and use tty_port_tty_vhangup() helper")
-Link: https://lore.kernel.org/all/b23d566c-09dc-7374-cc87-0ad4660e8b2e@linux.intel.com/
-Reported-by: Ilpo Järvinen <ilpo.jarvinen@linux.intel.com>
-Cc: Jonathan Corbet <corbet@lwn.net>
-Cc: linux-doc@vger.kernel.org
----
- Documentation/driver-api/tty/tty_port.rst | 5 +++--
- drivers/tty/tty_port.c                    | 5 -----
- include/linux/tty_port.h                  | 9 +++++++++
- 3 files changed, 12 insertions(+), 7 deletions(-)
+Built and booted successfully on RISC-V RV64 (HiFive Unmatched).
 
-diff --git a/Documentation/driver-api/tty/tty_port.rst b/Documentation/driver-api/tty/tty_port.rst
-index 5cb90e954fcf..504a353f2682 100644
---- a/Documentation/driver-api/tty/tty_port.rst
-+++ b/Documentation/driver-api/tty/tty_port.rst
-@@ -42,9 +42,10 @@ TTY Refcounting
- TTY Helpers
- -----------
- 
-+.. kernel-doc::  include/linux/tty_port.h
-+   :identifiers: tty_port_tty_hangup tty_port_tty_vhangup
- .. kernel-doc::  drivers/tty/tty_port.c
--   :identifiers: tty_port_tty_hangup tty_port_tty_wakeup
--
-+   :identifiers: tty_port_tty_wakeup
- 
- Modem Signals
- -------------
-diff --git a/drivers/tty/tty_port.c b/drivers/tty/tty_port.c
-index 903eebdbe12d..5b4d5fb99a59 100644
---- a/drivers/tty/tty_port.c
-+++ b/drivers/tty/tty_port.c
-@@ -391,11 +391,6 @@ void tty_port_hangup(struct tty_port *port)
- }
- EXPORT_SYMBOL(tty_port_hangup);
- 
--/**
-- * tty_port_tty_hangup - helper to hang up a tty
-- * @port: tty port
-- * @check_clocal: hang only ttys with %CLOCAL unset?
-- */
- void __tty_port_tty_hangup(struct tty_port *port, bool check_clocal, bool async)
- {
- 	struct tty_struct *tty = tty_port_tty_get(port);
-diff --git a/include/linux/tty_port.h b/include/linux/tty_port.h
-index 021f9a8415c0..332ddb93603e 100644
---- a/include/linux/tty_port.h
-+++ b/include/linux/tty_port.h
-@@ -251,11 +251,20 @@ static inline int tty_port_users(struct tty_port *port)
- 	return port->count + port->blocked_open;
- }
- 
-+/**
-+ * tty_port_tty_hangup - helper to hang up a tty asynchronously
-+ * @port: tty port
-+ * @check_clocal: hang only ttys with %CLOCAL unset?
-+ */
- static inline void tty_port_tty_hangup(struct tty_port *port, bool check_clocal)
- {
- 	__tty_port_tty_hangup(port, check_clocal, true);
- }
- 
-+/**
-+ * tty_port_tty_vhangup - helper to hang up a tty synchronously
-+ * @port: tty port
-+ */
- static inline void tty_port_tty_vhangup(struct tty_port *port)
- {
- 	__tty_port_tty_hangup(port, false, false);
--- 
-2.50.0
+Tested-by: Ron Economos <re@w6rz.net>
 
 
