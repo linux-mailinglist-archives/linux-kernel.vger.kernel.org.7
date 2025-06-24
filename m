@@ -1,331 +1,217 @@
-Return-Path: <linux-kernel+bounces-699750-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-699752-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4028EAE5EE0
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Jun 2025 10:16:28 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 10BBFAE5EF0
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Jun 2025 10:19:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 91EE37B059C
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Jun 2025 08:15:04 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id CB4001B67CEE
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Jun 2025 08:19:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DD4B72571DC;
-	Tue, 24 Jun 2025 08:16:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D1A3E257AD1;
+	Tue, 24 Jun 2025 08:19:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="cNqXtYhN"
-Received: from mail-ed1-f46.google.com (mail-ed1-f46.google.com [209.85.208.46])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="XDs9HEBs"
+Received: from mail-yw1-f182.google.com (mail-yw1-f182.google.com [209.85.128.182])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2FBD917A314;
-	Tue, 24 Jun 2025 08:16:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 92C5230E84D;
+	Tue, 24 Jun 2025 08:19:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750752977; cv=none; b=F0RXp/SnXkdoqBa6Rhu+0OKP2CCvAsd3szvVQTnu5F7MsWMq5g297JSYJGEz7uTbXEMfJzbqIM5MX7pTihqVvqw0DSiLLNhmhLGcMRds4sDjGoEfLziByazUiHXSqEiCGRwQzb3YdVGnig8Z6AEJjEf+pkwEK1XeVpUHDWiALYU=
+	t=1750753154; cv=none; b=jmoEIRglcZG9MX1W+ozl8G14YZsJB0aw3ge8lG893fdFfJnBCtC8R7Eix9cuQ3cMHfjmUhS8xYSP1cFCGH72JmL1cZbpuDPVvpfvx5X9O3IaQArb6wKDzWDGOEtZSa7D7+2dmvDpA0dSqu+SHH1d+8f3tkQnF6BJgl2YkXkMg4E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750752977; c=relaxed/simple;
-	bh=RHJWm97l1z86eZlG80G9Wnl+vHc5FKhGHFVeXhqLsUY=;
-	h=From:Date:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=u5IKF+VN1pflItG/qCEQd27dIH7oHIKgUyzxoJie8GpZ94Qx7akR0Mxw9LTRp2x0Wx35NetTCfZS9ZnZ7CvVhpdzzESd7O2Jcp7rAtKQznzjmO05HsQ02zn/GRflBEVY/2WztBK+AaF8ZfF7NkvQdBVNFDCiyUlg8y+bLFw0pQQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=cNqXtYhN; arc=none smtp.client-ip=209.85.208.46
+	s=arc-20240116; t=1750753154; c=relaxed/simple;
+	bh=5a9phdz7D6n6ePqfkDs1A4rTHLxpcrtrt0JxKFR2lYM=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=AJ083PGw0hnvRZqKlOaouXVovfX1QkXAaoyFdle4rT5Wn5VZvrk72dOhMXoghOCYZuYfEPhthY3Rx33mD9QO6EfjhY9dGbwZmG4fqlZNQ4Uou2cKauVkHmv0oR0I7PsCnliH4XpZfa8DkZ8fjkwb1FwWJ1qkxn5kdPu6hQE+s2g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=XDs9HEBs; arc=none smtp.client-ip=209.85.128.182
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f46.google.com with SMTP id 4fb4d7f45d1cf-607cf70b00aso328031a12.2;
-        Tue, 24 Jun 2025 01:16:14 -0700 (PDT)
+Received: by mail-yw1-f182.google.com with SMTP id 00721157ae682-706e7babc4eso2061507b3.2;
+        Tue, 24 Jun 2025 01:19:12 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1750752973; x=1751357773; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:date:from:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=mAcm5UIinGoMpKwWNc1ojafy/mX4XG65Y7yDM8lxv8E=;
-        b=cNqXtYhN5K+iAACEDOIWQF7nlc5SEMNfddncG9KUg/Z+m/0LGp7NDJ9Cje7KAwjhIP
-         GrQubti5PQ1vhB/kbuEFhoGlbzCVqKaT46/jneuL67mS6sloaueyhmH+NX2u2Wv77EhS
-         wjUXybUG0SRQgyJuzOI++CzMF9gnBWckvT0beHgMbpAeabXvsk0b0G1Y6A0lJWw24kYR
-         lbgCDsIga2J8RHJmgiKOBYA7xW8MBCdJ2ksGp8uAFnmgOfpNXk4ES45eVYRiZd/ya8Fw
-         aaUVSUoQUlNX/mxWO3Eaws3r+YQTS3MHICpsDyL2gdtZArUXKZtof6EeEc2ctK13geef
-         XCNg==
+        d=gmail.com; s=20230601; t=1750753151; x=1751357951; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=VHgEsigv797toVCzAe7I/zuMfsGR9eA4wJiGN0BxYF0=;
+        b=XDs9HEBsARdDPgmEx6c0O6kp7IqywRFfgRgO2mjimrzbQGz4h9mOi5ofuCQUaLmyWF
+         mBH9Xc3UqM3ZBSWFSEa0OgK80l6jb+JCuHY2tN2HB0mMvRwigDSQv9gOLufKO3WNQAVi
+         HFKnLZg4/drRtARPvO4Z+i1ISecCtbX619e5jnolKi0tGE29glx8uFStbfK1vPrhFIdH
+         RhVwNPNEsxaaaxW+gBTFf198OqVeRIQFZ1ggN9c2x/Efe7ZRrvYACaMPM2HOpcOHHfQw
+         PHdz2fo84zsOyKKmqzuwRlUoatxIE+rSbyE/pO30dYxLXXfg7Qwkc77L3yAD72ZNY4u8
+         zUrA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1750752973; x=1751357773;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:date:from
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=mAcm5UIinGoMpKwWNc1ojafy/mX4XG65Y7yDM8lxv8E=;
-        b=mHGkUjJperhSRK10oYca9s9Dl+Y1Sp17KHRFqoMlIAO5X6oAN06EvCkVXDrhdm9Gt1
-         ouR6sQnKW3TyLfKfa9PMw6Ql7CAuAmLjpSsBneAJLLniQuqykpT6SL2DiCqNAR5W9lnT
-         f5JAZt7lq4sSyeWJNt+Qc4+Hs4nVkFurKGBpFkxzYZKOFMvsP1/2yrrjvrIQKtIYjefX
-         bb12X9fYbFq5tlAwQqZrS3W1eiQb7MoSxR8QWnCj98A9n83u5cfKYDAeJlJloYmalRgU
-         3zeY8REMVqjHzYMRbKJZYYMWYjtuhatJdfgZdJ7cHiFsh5mT9umIe5iNy2mny7AyT9sW
-         +7fQ==
-X-Forwarded-Encrypted: i=1; AJvYcCU4DNC5i7v12cop1P1VVoF1cmetqmcNtiP5O/XSuePV1EMiSA6Gurrx9uNmS7HB/7xnZSA7YzK4DB33tBVO@vger.kernel.org, AJvYcCUHODaEkXzxZeOxJwNNMsJ87HW+exlAWH3H9Kih/y7XAbkL/ba0ps0l8rRmETb0+roP4E8=@vger.kernel.org, AJvYcCXWJnU6oBEFjvCtOB73VYbHdaq0cZpIaIcAyVJ8KWozLwuCDug7uDJ19sIFW02Iu069UWWl1LxesOVvAMzUN5fLahvS@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx7JgLEeGxJDI138ulex4ac/uP2+KbCdaX0LffdCstBb8HQSWd3
-	wBjYx+nVf+etXteXZs4De8IOPUsRHMlUN6cEwQ2fEmMI1KSq0BpRV+pS
-X-Gm-Gg: ASbGncsBhAVck5pBECw08S+DlmpgKtA9XBMlIFDNzUDZQfCMaQZDoBY+0x9s6vgqDmD
-	GOAWmm7hUlTbYp9yMIh8XBkKkCODp1GQJ52mQy29BFf2R/C5/+HtEggATr+5AiCToy09CdfCxxk
-	lR/T/fVhQq0mVvYdB//vSXzYJD46VwcXEX2zov4fdGJtCpu6/w7RXSdS/wzXPqZOHR7b1lGBnzH
-	SG9HPIQqIb13wn+eoXlRApd4d0Fwh4cdEYkqGp1NhLhfX6TUGmk8yX5WHH60hOphvd24dfFDKtq
-	2oJn47vbS/tf8FS1yV+ajP2lY0JRj07vUc0na2JYQ3CxiGjDPQ==
-X-Google-Smtp-Source: AGHT+IFpo1YTfyKC9L7YcokNvlr++59Cb9VkIWvEcLrDGXixqSp+63diIhUWOy7XGW3xBFTxDYcAKA==
-X-Received: by 2002:a17:907:d78a:b0:ad5:43eb:d927 with SMTP id a640c23a62f3a-ae0579d1f8dmr1503149466b.23.1750752972988;
-        Tue, 24 Jun 2025 01:16:12 -0700 (PDT)
-Received: from krava ([176.74.159.170])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ae053e8218bsm836119166b.4.2025.06.24.01.16.11
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 24 Jun 2025 01:16:12 -0700 (PDT)
-From: Jiri Olsa <olsajiri@gmail.com>
-X-Google-Original-From: Jiri Olsa <jolsa@kernel.org>
-Date: Tue, 24 Jun 2025 10:16:09 +0200
-To: Andrii Nakryiko <andrii.nakryiko@gmail.com>
-Cc: Alexei Starovoitov <alexei.starovoitov@gmail.com>,
-	Tao Chen <chen.dylane@linux.dev>, KP Singh <kpsingh@kernel.org>,
-	Matt Bobrowski <mattbobrowski@google.com>,
-	Song Liu <song@kernel.org>, Alexei Starovoitov <ast@kernel.org>,
-	Daniel Borkmann <daniel@iogearbox.net>,
-	Andrii Nakryiko <andrii@kernel.org>,
-	Martin KaFai Lau <martin.lau@linux.dev>, Eduard <eddyz87@gmail.com>,
-	Yonghong Song <yonghong.song@linux.dev>,
-	John Fastabend <john.fastabend@gmail.com>,
-	Stanislav Fomichev <sdf@fomichev.me>, Hao Luo <haoluo@google.com>,
-	Steven Rostedt <rostedt@goodmis.org>,
-	Masami Hiramatsu <mhiramat@kernel.org>,
-	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-	bpf <bpf@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>,
-	linux-trace-kernel <linux-trace-kernel@vger.kernel.org>
-Subject: Re: [PATCH bpf-next v5 1/3] bpf: Show precise link_type for
- {uprobe,kprobe}_multi fdinfo
-Message-ID: <aFpeyZnOuJ3Xr4J6@krava>
-References: <20250623134342.227347-1-chen.dylane@linux.dev>
- <CAADnVQ+aZw4-3Ab9nLWrZUg78sc-SXuEGYnPrdOChw8m9sRLvw@mail.gmail.com>
- <CAEf4BzZVw4aSpdTH+VKkG_q6J-sQwSFSCyU+-c5DcA5euP49ng@mail.gmail.com>
+        d=1e100.net; s=20230601; t=1750753151; x=1751357951;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=VHgEsigv797toVCzAe7I/zuMfsGR9eA4wJiGN0BxYF0=;
+        b=VZgYEHTvCqKg0/hviVe0M23mnSmaGqWAL+/vM9Ra1e1txj+7EYrd3cASNq26YVaXXM
+         wmRAudNbKkBEq/rT20mmV81NzI7m+MauDknnMTpSUXI0RwIqc6iwEZf83c3Pl40YvmCy
+         lgS/6TlvZYJhNKKML0yeWYAqGbGTsRKYqLJ11myuGvn1kzWMOYmgqiIAmpRCbmAtk93q
+         5Al9vc2S8OeqneQjq5nC7Y4RMj81lA31Cfh+o2rxiEDnSwDEOfYlfhoLpNED4eu8xdq3
+         WpdbGu5tSc8lvP7mNCtlwWfmoqDsFHN9f204Nj96xOAdrIb6Dcag7nl6r7autGDowzwB
+         HKpw==
+X-Forwarded-Encrypted: i=1; AJvYcCUsQB27rwFCLPGWihNP9MhGctIunuNcrI+XaT//byq9B+NRAzTCiGRk4KuxZQCufsFFMqoVFOes/IdQ@vger.kernel.org, AJvYcCUwgIf2sC/khVBqnRw/ZWnpvWihHnNvv+iF7NuQEqREiTbO+FOHU3dCxE9+NlvEE6ymSNy/uSTyCPU=@vger.kernel.org, AJvYcCVkanBSb7nMMDBq+QIu+LFWsdRTb6MVsv06CzNyxxixrD6Hjs5lLJJAsYutl5kJPxkVP+wfDi4sVO3ytfup@vger.kernel.org
+X-Gm-Message-State: AOJu0YxtEuO6EIDLAJgh0NWAR3C8E/oCAbDZcKBAaroAI+sEVQiDrQt4
+	M8yegOWpxKi/ZRGx1+M+juyXIzxqsmPRJPwMFckUU2N83XyB4/E+ygAWU3LrnrOd7uY7sYxJjPx
+	MOKWbJQkvPvfWS2hZ82EYWns8nz5lpXc=
+X-Gm-Gg: ASbGncudaN6Zr8EkP62TTZiAUQxO0py6Jze3X1Y6778WGhStGBeE+jOzcC/KssDce35
+	CKPVN+YcJodDCtIqEr8vg/ntInq77IURKEG9nHiX8zP+tJx73JTwvmMK/FKKmS0xXZhqRa/dUez
+	nxa+tWYflj4rvqC1SMF3qAyp1ZHmjvTsdWXX7Nue80ac1dW+hYbgNVpw==
+X-Google-Smtp-Source: AGHT+IEobZ95YPFh7gSnrVYpj1c1HgaveoCeuvwSoyJpoS0Z6TFC3YdT/2xXv5PXGSxYfKmeryT51rEuyJZlHWDM/K8=
+X-Received: by 2002:a05:690c:c14:b0:70e:7613:e31b with SMTP id
+ 00721157ae682-712c639043emr99303287b3.2.1750753151474; Tue, 24 Jun 2025
+ 01:19:11 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAEf4BzZVw4aSpdTH+VKkG_q6J-sQwSFSCyU+-c5DcA5euP49ng@mail.gmail.com>
+References: <20250622155010.164451-1-l.rubusch@gmail.com> <20250622155010.164451-7-l.rubusch@gmail.com>
+ <aFkpv0CUkateel8q@smile.fi.intel.com> <CAFXKEHb9Fbd_UOF90EumEtns82VPhYBrLZ=JtmhVJ4pJsT=q-g@mail.gmail.com>
+ <aFpV1f1qapCQunVO@smile.fi.intel.com>
+In-Reply-To: <aFpV1f1qapCQunVO@smile.fi.intel.com>
+From: Lothar Rubusch <l.rubusch@gmail.com>
+Date: Tue, 24 Jun 2025 10:18:35 +0200
+X-Gm-Features: AX0GCFu3oFpqSYvU-4eggzmfabKFBuG-nKLi0LF1UG8mCx-7osic9bYVrJ7mkcw
+Message-ID: <CAFXKEHYhXekE29Ljfv=c7oRuzo0irWtJNM7fjW516xQ-ydsm=Q@mail.gmail.com>
+Subject: Re: [PATCH v10 6/7] iio: accel: adxl345: extend inactivity time for
+ less than 1s
+To: Andy Shevchenko <andriy.shevchenko@intel.com>
+Cc: lars@metafoo.de, Michael.Hennerich@analog.com, jic23@kernel.org, 
+	dlechner@baylibre.com, nuno.sa@analog.com, andy@kernel.org, corbet@lwn.net, 
+	linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-doc@vger.kernel.org, eraretuya@gmail.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Mon, Jun 23, 2025 at 01:59:18PM -0700, Andrii Nakryiko wrote:
-> On Mon, Jun 23, 2025 at 10:56 AM Alexei Starovoitov
-> <alexei.starovoitov@gmail.com> wrote:
+On Tue, Jun 24, 2025 at 9:38=E2=80=AFAM Andy Shevchenko
+<andriy.shevchenko@intel.com> wrote:
+>
+> On Mon, Jun 23, 2025 at 11:21:01PM +0200, Lothar Rubusch wrote:
+> > On Mon, Jun 23, 2025 at 12:17=E2=80=AFPM Andy Shevchenko
+> > <andriy.shevchenko@intel.com> wrote:
+> > > On Sun, Jun 22, 2025 at 03:50:09PM +0000, Lothar Rubusch wrote:
+>
+> ...
+>
+> > > > -static int adxl345_set_inact_time(struct adxl345_state *st, u32 va=
+l_s)
+> > > > +static int adxl345_set_inact_time(struct adxl345_state *st, u32 va=
+l_int,
+> > > > +                               u32 val_fract)
+> > > >  {
+> > > >       int max_boundary =3D U8_MAX;
+> > > >       int min_boundary =3D 10;
+> > > > -     unsigned int val =3D min(val_s, U8_MAX);
+> > > > +     unsigned int val;
+> > >
+> > > You see, I even suggested splitting this assignment to begin with.
+> > > The change will be clearer with that done.
+> > >
+> > > >       enum adxl345_odr odr;
+> > > >       unsigned int regval;
+> > > >       int ret;
+> > > >
+> > > > -     if (val =3D=3D 0) {
+> > > > +     if (val_int =3D=3D 0 && val_fract =3D=3D 0) {
 > >
-> > On Mon, Jun 23, 2025 at 6:44 AM Tao Chen <chen.dylane@linux.dev> wrote:
-> > >
-> > > Alexei suggested, 'link_type' can be more precise and differentiate
-> > > for human in fdinfo. In fact BPF_LINK_TYPE_KPROBE_MULTI includes
-> > > kretprobe_multi type, the same as BPF_LINK_TYPE_UPROBE_MULTI, so we
-> > > can show it more concretely.
-> > >
-> > > link_type:      kprobe_multi
-> > > link_id:        1
-> > > prog_tag:       d2b307e915f0dd37
-> > > ...
-> > > link_type:      kretprobe_multi
-> > > link_id:        2
-> > > prog_tag:       ab9ea0545870781d
-> > > ...
-> > > link_type:      uprobe_multi
-> > > link_id:        9
-> > > prog_tag:       e729f789e34a8eca
-> > > ...
-> > > link_type:      uretprobe_multi
-> > > link_id:        10
-> > > prog_tag:       7db356c03e61a4d4
-> > >
-> > > Signed-off-by: Tao Chen <chen.dylane@linux.dev>
-> > > ---
-> > >  include/linux/trace_events.h | 10 ++++++++++
-> > >  kernel/bpf/syscall.c         |  9 ++++++++-
-> > >  kernel/trace/bpf_trace.c     | 28 ++++++++++++++++++++++++++++
-> > >  3 files changed, 46 insertions(+), 1 deletion(-)
-> > >
-> > > Change list:
-> > >   v4 -> v5:
-> > >     - Add patch1 to show precise link_type for
-> > >       {uprobe,kprobe}_multi.(Alexei)
-> > >     - patch2,3 just remove type field, which will be showed in
-> > >       link_type
-> > >   v4:
-> > >   https://lore.kernel.org/bpf/20250619034257.70520-1-chen.dylane@linux.dev
-> > >
-> > >   v3 -> v4:
-> > >     - use %pS to print func info.(Alexei)
-> > >   v3:
-> > >   https://lore.kernel.org/bpf/20250616130233.451439-1-chen.dylane@linux.dev
-> > >
-> > >   v2 -> v3:
-> > >     - show info in one line for multi events.(Jiri)
-> > >   v2:
-> > >   https://lore.kernel.org/bpf/20250615150514.418581-1-chen.dylane@linux.dev
-> > >
-> > >   v1 -> v2:
-> > >     - replace 'func_cnt' with 'uprobe_cnt'.(Andrii)
-> > >     - print func name is more readable and security for kprobe_multi.(Alexei)
-> > >   v1:
-> > >   https://lore.kernel.org/bpf/20250612115556.295103-1-chen.dylane@linux.dev
-> > >
-> > > diff --git a/include/linux/trace_events.h b/include/linux/trace_events.h
-> > > index fa9cf4292df..951c91babbc 100644
-> > > --- a/include/linux/trace_events.h
-> > > +++ b/include/linux/trace_events.h
-> > > @@ -780,6 +780,8 @@ int bpf_get_perf_event_info(const struct perf_event *event, u32 *prog_id,
-> > >                             unsigned long *missed);
-> > >  int bpf_kprobe_multi_link_attach(const union bpf_attr *attr, struct bpf_prog *prog);
-> > >  int bpf_uprobe_multi_link_attach(const union bpf_attr *attr, struct bpf_prog *prog);
-> > > +void bpf_kprobe_multi_link_type_show(const struct bpf_link *link, char *link_type, int len);
-> > > +void bpf_uprobe_multi_link_type_show(const struct bpf_link *link, char *link_type, int len);
-> > >  #else
-> > >  static inline unsigned int trace_call_bpf(struct trace_event_call *call, void *ctx)
-> > >  {
-> > > @@ -832,6 +834,14 @@ bpf_uprobe_multi_link_attach(const union bpf_attr *attr, struct bpf_prog *prog)
-> > >  {
-> > >         return -EOPNOTSUPP;
-> > >  }
-> > > +static inline void
-> > > +bpf_kprobe_multi_link_type_show(const struct bpf_link *link, char *link_type, int len)
-> > > +{
-> > > +}
-> > > +static inline void
-> > > +bpf_uprobe_multi_link_type_show(const struct bpf_link *link, char *link_type, int len)
-> > > +{
-> > > +}
-> > >  #endif
-> > >
-> > >  enum {
-> > > diff --git a/kernel/bpf/syscall.c b/kernel/bpf/syscall.c
-> > > index 51ba1a7aa43..43b821b37bc 100644
-> > > --- a/kernel/bpf/syscall.c
-> > > +++ b/kernel/bpf/syscall.c
-> > > @@ -3226,9 +3226,16 @@ static void bpf_link_show_fdinfo(struct seq_file *m, struct file *filp)
-> > >         const struct bpf_prog *prog = link->prog;
-> > >         enum bpf_link_type type = link->type;
-> > >         char prog_tag[sizeof(prog->tag) * 2 + 1] = { };
-> > > +       char link_type[64] = {};
-> > >
-> > >         if (type < ARRAY_SIZE(bpf_link_type_strs) && bpf_link_type_strs[type]) {
-> > > -               seq_printf(m, "link_type:\t%s\n", bpf_link_type_strs[type]);
-> > > +               if (link->type == BPF_LINK_TYPE_KPROBE_MULTI)
-> > > +                       bpf_kprobe_multi_link_type_show(link, link_type, sizeof(link_type));
-> > > +               else if (link->type == BPF_LINK_TYPE_UPROBE_MULTI)
-> > > +                       bpf_uprobe_multi_link_type_show(link, link_type, sizeof(link_type));
-> > > +               else
-> > > +                       strscpy(link_type, bpf_link_type_strs[type], sizeof(link_type));
-> > > +               seq_printf(m, "link_type:\t%s\n", link_type);
+> > The case for 0sec, 0.0 or setting "0" and fract will consequently be
+> > "0". 0 is an invalid input for this period and sensor, so it will
+> > default to an optimized period based on given ODR.
 > >
-> > New callbacks just to print a string?
-> > Let's find a different way.
+> > > > +             /* Generated inactivity time based on ODR */
+> > > >               ret =3D regmap_read(st->regmap, ADXL345_REG_BW_RATE, =
+&regval);
+> > > >               if (ret)
+> > > >                       return ret;
+> > >
+> > > >               odr =3D FIELD_GET(ADXL345_BW_RATE_MSK, regval);
+> > > >               val =3D clamp(max_boundary - adxl345_odr_tbl[odr][0],
+> > > >                           min_boundary, max_boundary);
+> > > > +             st->inact_time_ms =3D MILLI * val;
+> > > > +
+> > > > +             /* Inactivity time in s */
+> > > > +             return regmap_write(st->regmap, ADXL345_REG_TIME_INAC=
+T, val);
+> > > > +     } else if (val_int =3D=3D 0 && val_fract > 0) {
+> > >
+> > > val_fract check is not needed here.
 > >
-> > How about moving 'flags' from bpf_[ku]probe_multi_link into bpf_link ?
-> > (There is a 7 byte hole there anyway)
-> > and checking flags inline.
+> > Case for e.g. 0.123, numbers under 1s. This goes into the free-fall reg=
+ister.
+>
+> 0.0 is already checked above, and since the val_fract is unsigned this is=
+ check
+> is redundant.
+>
+> > > > +             /* time < 1s, free-fall */
+> > > > +
+> > > > +             /*
+> > > > +              * Datasheet max. value is 255 * 5000 us =3D 1.275000=
+ seconds.
+> > > > +              *
+> > > > +              * Recommended values between 100ms and 350ms (0x14 t=
+o 0x46)
+> > > > +              */
+> > > > +             st->inact_time_ms =3D DIV_ROUND_UP(val_fract, MILLI);
+> > > > +
+> > > > +             return regmap_write(st->regmap, ADXL345_REG_TIME_FF,
+> > > > +                                 DIV_ROUND_CLOSEST(val_fract, 5));
+> > > > +     } else if (val_int > 0) {
+> > >
+> > > if now is redundant here, right?
 > >
-> > Jiri, Andrii,
-> >
-> > better ideas?
-> 
-> We can just remember original attr->link_create.attach_type in
-> bpf_link itself, and then have a small helper that will accept link
-> type and attach type, and fill out link type representation based on
-> those two. Internally we can do the special-casing of  uprobe vs
-> uretprobe and kprobe vs kretprobe transparently to all the other code.
-> And use that here in show_fdinfo
+> > So, this will be 1s through 255s. Periods above 1sec. This goes into
+> > the inactivity register.
+>
+> See above,
+>
 
-but you'd still need the flags, no? to find out if it's return probe
+I agree, that checking for val_fract is actually done as a sub case of
+val_int, and only if val_int was 0. So, would the following make it
+clearer?
 
-I tried what Alexei suggested and it seems ok and simple enough
+if (val_int  =3D=3D 0) {
+    if (val_fract =3D=3D 0) {
+        // 0 provided, default values
+    } else {
+        // >0s, e.g. 0.123s, use free-fall register
+} else {
+    // 1s - 255s, use inactivity register
+}
 
-jirka
+Actually - I did not touch that - I saw some places where I'm already
+using nested if/else in the third level. I guess, by the style advice
+according to switch/case, this also applies to if/else, right?
 
+If yes, when the according parts go into another round, I might give
+it a try to separate as well using helper functions.
 
----
-diff --git a/include/linux/bpf.h b/include/linux/bpf.h
-index 5dd556e89cce..287c956cdbd2 100644
---- a/include/linux/bpf.h
-+++ b/include/linux/bpf.h
-@@ -1702,6 +1702,7 @@ struct bpf_link {
- 	 * link's semantics is determined by target attach hook
- 	 */
- 	bool sleepable;
-+	u32 flags;
- 	/* rcu is used before freeing, work can be used to schedule that
- 	 * RCU-based freeing before that, so they never overlap
- 	 */
-diff --git a/kernel/bpf/syscall.c b/kernel/bpf/syscall.c
-index 56500381c28a..f1d9ee9717a1 100644
---- a/kernel/bpf/syscall.c
-+++ b/kernel/bpf/syscall.c
-@@ -3228,7 +3228,14 @@ static void bpf_link_show_fdinfo(struct seq_file *m, struct file *filp)
- 	char prog_tag[sizeof(prog->tag) * 2 + 1] = { };
- 
- 	if (type < ARRAY_SIZE(bpf_link_type_strs) && bpf_link_type_strs[type]) {
--		seq_printf(m, "link_type:\t%s\n", bpf_link_type_strs[type]);
-+		if (link->type == BPF_LINK_TYPE_KPROBE_MULTI)
-+			seq_printf(m, "link_type:\t%s\n", link->flags == BPF_F_KPROBE_MULTI_RETURN ?
-+				   "kretprobe_multi" : "kprobe_multi");
-+		else if (link->type == BPF_LINK_TYPE_UPROBE_MULTI)
-+			seq_printf(m, "link_type:\t%s\n", link->flags == BPF_F_UPROBE_MULTI_RETURN ?
-+				   "uretprobe_multi" : "uprobe_multi");
-+		else
-+			seq_printf(m, "link_type:\t%s\n", bpf_link_type_strs[type]);
- 	} else {
- 		WARN_ONCE(1, "missing BPF_LINK_TYPE(...) for link type %u\n", type);
- 		seq_printf(m, "link_type:\t<%u>\n", type);
-diff --git a/kernel/trace/bpf_trace.c b/kernel/trace/bpf_trace.c
-index 0a06ea6638fe..81d7a4e5ae15 100644
---- a/kernel/trace/bpf_trace.c
-+++ b/kernel/trace/bpf_trace.c
-@@ -2466,7 +2466,6 @@ struct bpf_kprobe_multi_link {
- 	u32 cnt;
- 	u32 mods_cnt;
- 	struct module **mods;
--	u32 flags;
- };
- 
- struct bpf_kprobe_multi_run_ctx {
-@@ -2586,7 +2585,7 @@ static int bpf_kprobe_multi_link_fill_link_info(const struct bpf_link *link,
- 
- 	kmulti_link = container_of(link, struct bpf_kprobe_multi_link, link);
- 	info->kprobe_multi.count = kmulti_link->cnt;
--	info->kprobe_multi.flags = kmulti_link->flags;
-+	info->kprobe_multi.flags = kmulti_link->link.flags;
- 	info->kprobe_multi.missed = kmulti_link->fp.nmissed;
- 
- 	if (!uaddrs)
-@@ -2976,7 +2975,7 @@ int bpf_kprobe_multi_link_attach(const union bpf_attr *attr, struct bpf_prog *pr
- 	link->addrs = addrs;
- 	link->cookies = cookies;
- 	link->cnt = cnt;
--	link->flags = flags;
-+	link->link.flags = flags;
- 
- 	if (cookies) {
- 		/*
-@@ -3045,7 +3044,6 @@ struct bpf_uprobe_multi_link {
- 	struct path path;
- 	struct bpf_link link;
- 	u32 cnt;
--	u32 flags;
- 	struct bpf_uprobe *uprobes;
- 	struct task_struct *task;
- };
-@@ -3109,7 +3107,7 @@ static int bpf_uprobe_multi_link_fill_link_info(const struct bpf_link *link,
- 
- 	umulti_link = container_of(link, struct bpf_uprobe_multi_link, link);
- 	info->uprobe_multi.count = umulti_link->cnt;
--	info->uprobe_multi.flags = umulti_link->flags;
-+	info->uprobe_multi.flags = umulti_link->link.flags;
- 	info->uprobe_multi.pid = umulti_link->task ?
- 				 task_pid_nr_ns(umulti_link->task, task_active_pid_ns(current)) : 0;
- 
-@@ -3369,7 +3367,7 @@ int bpf_uprobe_multi_link_attach(const union bpf_attr *attr, struct bpf_prog *pr
- 	link->uprobes = uprobes;
- 	link->path = path;
- 	link->task = task;
--	link->flags = flags;
-+	link->link.flags = flags;
- 
- 	bpf_link_init(&link->link, BPF_LINK_TYPE_UPROBE_MULTI,
- 		      &bpf_uprobe_multi_link_lops, prog);
+Best,
+L
+
+> > > > +             /* Time >=3D 1s, inactivity */
+> > > > +             st->inact_time_ms =3D MILLI * val_int;
+> > > > +
+> > > > +             return regmap_write(st->regmap, ADXL345_REG_TIME_INAC=
+T, val_int);
+> > > >       }
+> > > >
+> > > > -     return regmap_write(st->regmap, ADXL345_REG_TIME_INACT, val);
+> > > > +     /* Do not support negative or wrong input. */
+> > > > +     return -EINVAL;
+> > > >  }
+>
+> --
+> With Best Regards,
+> Andy Shevchenko
+>
+>
 
