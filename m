@@ -1,89 +1,100 @@
-Return-Path: <linux-kernel+bounces-699352-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-699354-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id ED934AE58D9
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Jun 2025 02:56:18 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 6E370AE58E4
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Jun 2025 02:59:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8F5C61B66ED0
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Jun 2025 00:56:34 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 377D11BC0065
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Jun 2025 00:59:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 23F41146D6A;
-	Tue, 24 Jun 2025 00:56:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8CB68188CC9;
+	Tue, 24 Jun 2025 00:59:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ziepe.ca header.i=@ziepe.ca header.b="WJhg3xAw"
-Received: from mail-qk1-f174.google.com (mail-qk1-f174.google.com [209.85.222.174])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="dhf4kfKW"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C0CBD179A3
-	for <linux-kernel@vger.kernel.org>; Tue, 24 Jun 2025 00:56:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8ABC51552FA
+	for <linux-kernel@vger.kernel.org>; Tue, 24 Jun 2025 00:59:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750726569; cv=none; b=ZXbxr+Ms2ulVE/JrvVmFdR0qXJyspQjRAKaMJRxcIbrvqHvn8mEr8W+uJdc7CUb3iodKhG3jSGDhAaeUrA5H5VBly42j1ngo8fEpzd3cJS03poWM0yZeZt+5i5O5VfnKj/jKGIGYxLlP3CwfzNtHd43FeJGHviGg9POw+AQ0uHE=
+	t=1750726755; cv=none; b=frEfGEi3L5Z93vwRntBwH27rXHPSo+LKYHOiOx1YIYj4a8lRwFyWOLd69WlybgiogQiWr8FQNZHgo6xDEwATjoamo5VKa62uHcI0cSVz4og9QLA1YJqRikqBK7taVA1eQfbnHcyyprHrW4cU3OQp6VKxupMfjAmwOrczEm4rMl4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750726569; c=relaxed/simple;
-	bh=7O+ajiUDfZzafBBNiM6e5tJhCUr430Qh1/kaNQGaM+c=;
+	s=arc-20240116; t=1750726755; c=relaxed/simple;
+	bh=JYUAOGvUK29IFunmxLuYweJTMsA9TRZOorHO6S+oXwE=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=drrPAy4ku7NJnRb9XPTCsHkg/EXfznlhAa/FiIiwebCdnwcTwUz8X6WFTktsrZRvdyRxejqddgAtPsLArG3lZj8oopY2COYVUW/kUz8o1ytHoOGxTiEOCD38BBf95aeV8tQWIkwOWJzv9TJ9GwJUooXCW/xvy4dIbuzceeW934w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ziepe.ca; spf=pass smtp.mailfrom=ziepe.ca; dkim=pass (2048-bit key) header.d=ziepe.ca header.i=@ziepe.ca header.b=WJhg3xAw; arc=none smtp.client-ip=209.85.222.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ziepe.ca
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ziepe.ca
-Received: by mail-qk1-f174.google.com with SMTP id af79cd13be357-7d38d562a55so629778185a.2
-        for <linux-kernel@vger.kernel.org>; Mon, 23 Jun 2025 17:56:07 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ziepe.ca; s=google; t=1750726566; x=1751331366; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=u8pDtojTuV6LFOjfDU1WAEP2YMGFUVnVXeIZSV015Tk=;
-        b=WJhg3xAwDnEtmpOKHPAQl9ExlKfP22au9D1+PsZVs5aOzR6wChf5v4eCZjsIToE9Ab
-         ScpGHEceuSn6Gtjm0iv3fsHGTgJPjZDj7w7o73tH9DSMR7vfI5tjKgIu2JosoX/n8ZkP
-         eUZxpj87u0uyoPuA6IAVDHr9WE9krzPT4LrZz0FuNbRhlkJI0FABQyoNk1w7K5d8iu7U
-         v16dPOpMYTrdsozdToA5QzFCfuUt1r5nRX6a2LoYbTaZRAV0PUSeGGlPa2C0hLdh1vSf
-         aLv99SUSDpOy+4NiBi5LgC3h/Vg+IO12vlPNBK1hLy/f3C1wpGuJQv7dxo5qPqTDrJOW
-         SG0g==
+	 Content-Type:Content-Disposition:In-Reply-To; b=JhiZS7ZckIGtYvQ9/eL3EwKG8QNgy9RbFJUqT8A4hLNkiKiE0tDPneSRF/k+diVHrrgdY++IzoyvlEAjoZ4b8TPpJCFflbBQLTRkat3whJrX0OSPSGu6mXrlsx5ddD8R4/VOJvphj98V3E3hgQjTPu1RrqcJbcRer5tokvgz/7Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=dhf4kfKW; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279863.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 55NIp5Ku031297
+	for <linux-kernel@vger.kernel.org>; Tue, 24 Jun 2025 00:59:13 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-type:date:from:in-reply-to:message-id:mime-version
+	:references:subject:to; s=qcppdkim1; bh=AxLK5B4OfagnPv6t+o+jFPMN
+	vAJ4a85Lwkz3DtkuD+A=; b=dhf4kfKW/Gs1mSBfdkIuPSPVaA5M2LoXT3ucxJ6K
+	AZqIoHkY/sP//lo8+nPvscCs9GGqG9oGuAuB0TJLht/N0cn3/JQRsse19LhRUUDm
+	Nk+0o4AUcLGANWfwmgSx6I6BYjJeoS5Y3YhzsnsuHlszNCq3s7UFdKgGQtAXsTv8
+	80w69rTyQ1/FCY8WD2yqbOnr1xJ2kFZT2e9YTDHSvYQPhBFZ18BqbBQHF0y7EWlb
+	sfzBYVV/3XyVvrVivm/ObEPq0kOagzwSEODqN42ugvacA6d5Pi7bv4mI5Wbijk4J
+	dP7m1OvOMDAtz8S1tasTTiQ/LdCbVLOwwLFRdgzi2Lhc2A==
+Received: from mail-qk1-f200.google.com (mail-qk1-f200.google.com [209.85.222.200])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 47emcmm0se-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Tue, 24 Jun 2025 00:59:13 +0000 (GMT)
+Received: by mail-qk1-f200.google.com with SMTP id af79cd13be357-7d0981315c8so370390685a.0
+        for <linux-kernel@vger.kernel.org>; Mon, 23 Jun 2025 17:59:13 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1750726567; x=1751331367;
+        d=1e100.net; s=20230601; t=1750726752; x=1751331552;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=u8pDtojTuV6LFOjfDU1WAEP2YMGFUVnVXeIZSV015Tk=;
-        b=s6y6wEstlDLp7GXx0CheC2t4dgIAM6es+xJomPhQIr+BklGOjZN6F88M048zjcd9Ra
-         f10UYo50qElPfkfKm0/OXvp6dM2t794O4vDHcvc3sIQMj5dZJbz2ykMbPK7K8PyFnb19
-         24Pm5z16izxQoAjArgjsMsRdHIx8ngmLoYzOlhYuNYtmVUeoxl9Ff+JToN2s2eLF2gFI
-         ERsvirpTYb2gNZp/ITGEFgT93FU7u7qT/xvuYn8Tf6/FT1OuBiIBo3Y3Lr0OXiRa1O43
-         sq3ihRUsnQtKEBa7xPRwP1oA6PFWWtYESLP+FIIp7UuGL7358+0xNUuH/T+rFK45RnSQ
-         3uXQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUiOoRF8napWgihTcHHOslk4RscOHFj/LEhmo5iP3xR229BmjgFHXkhItnq28t/yszmtZyHqQlNfX8Mm+M=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyNV6dTotsc2umIvousTmps4B9BFCH5QTCtPadPjZTMHKURNh72
-	bzScGrb4JlysYlol+06EqLErsoXveKWS7jrJSDaD/eHk+Atipqksc/XXm/zagQFqlc8=
-X-Gm-Gg: ASbGncvv3JdcfI6Q1SdCzRRmghR9pwnOG0vDswGjBo8SGMG13VY5UxJQDTPH232eSOM
-	H++gZNnx4IyHcXYbm0aR0CNtZcaKE5a/AUc+OHonQy9Ttnf9+dOag9tY6HdBYFYxAMTxXkVTWCZ
-	ZTFfyEp/BidhVwrWh2GGHGXtC4yDj0oRbao7yE5nej6VmhaA3/VI3bcG7lGQOvZbcBYyVDLVNbB
-	ghTHQf1LA1A2xWtvGF49SxZ5yjW/09TEIjfm64lTYkEQyN/4FCMHVxRrw8X1pspLs0yJi80f55R
-	etijTKlySZbooIuJ2sy3JdXNteTExAT6hGSopfx6zWKW504oVPjEfq5ZlYD1cI9AkyXF16KJpsy
-	sKpm5jTfx4Cud6/08IQYtAMUcwTKmnVxKlSlqZg==
-X-Google-Smtp-Source: AGHT+IGX6hq2GvuJ1K/s8jNlp2hlgIbEh4pTewUT8bxyCxJMmW0ogtWNidvI1vHbIFzO1aMASc52bQ==
-X-Received: by 2002:a05:620a:3183:b0:7d2:2822:3f79 with SMTP id af79cd13be357-7d3f98dfd21mr1951957585a.13.1750726566656;
-        Mon, 23 Jun 2025 17:56:06 -0700 (PDT)
-Received: from ziepe.ca (hlfxns017vw-142-167-56-70.dhcp-dynamic.fibreop.ns.bellaliant.net. [142.167.56.70])
-        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6fd093e087bsm51501256d6.20.2025.06.23.17.56.05
+        bh=AxLK5B4OfagnPv6t+o+jFPMNvAJ4a85Lwkz3DtkuD+A=;
+        b=omYhtgiMTAsu2uuuisYrSgBcp64LqOAuWBaA4m5BxrMmGqrL/Fo0wmK3CizfjX+adx
+         Yf19iwvPpoyDhtq5YkU5EduEflA4oUTGQifVaxMKY8jGAQ5hHa/KxPQ2ZECzzmhuoNGA
+         dqwKO2mc6nsPUDnmsMKNPYj49IgYdbxPMzaaOJc8VuohplXzXrnYMPmwlhPIFZ6bSquN
+         CDvgiP9nLowSlB7YhhfFZn92vwCdlPWo6hgoDxAkl6H2oyRLEZgHEtj9mdNYTf7BIjT9
+         29jD/j+cLzE8ntxUxN7DEeogFIWDqkStJNvjjpIOlydQn32hSuT5lKVc4F6FkevT91RA
+         4WTA==
+X-Forwarded-Encrypted: i=1; AJvYcCXhvMHy7CG547QKJNLv9YXxgPbipm210pEhszjQEpJTs69JUGSZshhwWlELfHOyr5ITKgdknkrFg/Ul2M0=@vger.kernel.org
+X-Gm-Message-State: AOJu0YypZzG8/Lyf+MAcF6wgaFc3brG9Zw52uq0WPPfd9A8fEt8K0g6h
+	Afq3uQBKe2KtB9awZDZ40l5jSEeBoslY+hOGZzWiiYlQnaQ/CCLt75e1PWKwKDLG3Yzh63KqbkZ
+	PKdTKHJREQ3FOY6Hm7qb2Bhla73BKb17KdMoJ6g3QTATJGnMnopdMsZYyCmDrPNfgSAo=
+X-Gm-Gg: ASbGnculzQrzonXR9Pz0fuygFdkSZvS3q6peI3fTg7cRptObXjPrjIrD2CDLKSylcZq
+	db4sf3irus7LooeLpZafxHJI9l1BRgIYGt0D9kIPfrZdh6maHHM+Bltb6W0g1nY5rj881hHUZvl
+	HxKcdDPfvn3KlvDL+Ujzeru87bWPDK/snx+AtaPHbrz2hpZ8hadTU9zfRZWCUiYDpmErTV41BR+
+	3UKwUZDN+/WXXD6/YgcSuuvNJ5e2MfYL6TUvCgx0oj6079Ne5qC4tCjh4x3DiJ+uBNevefVITwt
+	ICi/Nlg8LqlMjhkrylwPzIqh8H7YFBZ21DIJmTQZVk64jEHnkX3dTMzbHyqKCfRrwobUcn5AhNO
+	FMta4FkyGhyxKyPdG3CLm9LJDkVsPemk0V7M=
+X-Received: by 2002:a05:620a:a90b:b0:7d4:f7:3baa with SMTP id af79cd13be357-7d400f74702mr1750091685a.8.1750726751794;
+        Mon, 23 Jun 2025 17:59:11 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IGbrdGvPGdMsxD7cM7pxk9ZTzDk39wxGR/2YWHHePKYKtmHmosEildSYIv+nX67voLtWmHHaA==
+X-Received: by 2002:a05:620a:a90b:b0:7d4:f7:3baa with SMTP id af79cd13be357-7d400f74702mr1750088885a.8.1750726751378;
+        Mon, 23 Jun 2025 17:59:11 -0700 (PDT)
+Received: from umbar.lan (2001-14ba-a0c3-3a00-264b-feff-fe8b-be8a.rev.dnainternet.fi. [2001:14ba:a0c3:3a00:264b:feff:fe8b:be8a])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-553e41d71cfsm1622121e87.243.2025.06.23.17.59.10
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 23 Jun 2025 17:56:06 -0700 (PDT)
-Received: from jgg by wakko with local (Exim 4.97)
-	(envelope-from <jgg@ziepe.ca>)
-	id 1uTrxF-00000000aHE-1Uw0;
-	Mon, 23 Jun 2025 21:56:05 -0300
-Date: Mon, 23 Jun 2025 21:56:05 -0300
-From: Jason Gunthorpe <jgg@ziepe.ca>
-To: Alex Williamson <alex.williamson@redhat.com>
-Cc: Alex Mastro <amastro@fb.com>, peterx@redhat.com, kbusch@kernel.org,
-	kvm@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] vfio/pci: print vfio-device name to fdinfo
-Message-ID: <20250624005605.GA72557@ziepe.ca>
-References: <20250623-vfio-fdinfo-v1-1-c9cec65a2922@fb.com>
- <20250623161831.12109402.alex.williamson@redhat.com>
+        Mon, 23 Jun 2025 17:59:10 -0700 (PDT)
+Date: Tue, 24 Jun 2025 03:59:08 +0300
+From: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
+To: Luca Weiss <luca@lucaweiss.eu>
+Cc: ~postmarketos/upstreaming@lists.sr.ht, phone-devel@vger.kernel.org,
+        Bjorn Andersson <andersson@kernel.org>,
+        Mathieu Poirier <mathieu.poirier@linaro.org>,
+        Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>,
+        Manivannan Sadhasivam <mani@kernel.org>,
+        Konrad Dybcio <konradybcio@kernel.org>, linux-arm-msm@vger.kernel.org,
+        linux-remoteproc@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 0/4] Start using rpmpd for power domains on MSM8974
+Message-ID: <amfgwjgstu4hoxz4lo7fqrqz5fqtf3r7o6wqvrrjkcfubwrjyz@5i75peprq3wn>
+References: <20250621-msm8974-rpmpd-switch-v1-0-0a2cb303c446@lucaweiss.eu>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -92,39 +103,76 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250623161831.12109402.alex.williamson@redhat.com>
+In-Reply-To: <20250621-msm8974-rpmpd-switch-v1-0-0a2cb303c446@lucaweiss.eu>
+X-Proofpoint-GUID: 6UFbu4YbztZHbyhArT_kZC_vi8kUveA3
+X-Proofpoint-ORIG-GUID: 6UFbu4YbztZHbyhArT_kZC_vi8kUveA3
+X-Authority-Analysis: v=2.4 cv=J+eq7BnS c=1 sm=1 tr=0 ts=6859f861 cx=c_pps
+ a=hnmNkyzTK/kJ09Xio7VxxA==:117 a=xqWC_Br6kY4A:10 a=kj9zAlcOel0A:10
+ a=6IFa9wvqVegA:10 a=dlmhaOwlAAAA:8 a=GRKTxiLP57tiYEfkEIsA:9 a=CjuIK1q_8ugA:10
+ a=PEH46H7Ffwr30OY-TuGO:22 a=y4cfut4LVr_MrANMpYTh:22
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNjI0MDAwNiBTYWx0ZWRfX2FxL/De9qj4v
+ 0pbQa7dUaisiPTWxBCLRDqZJLhlcfkOAwHim+uMQLjuTBv2pZfuhMX0krVMuOsdSp+8EJ3+3v8r
+ ff16NVm0PnK6hKhX1N3W05sCTXeVHyhM/OVcSYr886Du0DcpdRwckKJjOzU0zdMPHHrGAl9ElCn
+ 2sYyGgF2U89beMbXyegE95ggik+Pa84jv9wbh/ciGEmeKehnpYSkl9f6LG0lWWJgUT3tfFV9EHO
+ pTaAGLjMVFi/WzagV73mrOQqKhc5aWQzZMb5ZvcvdcvBu8lPZcRgn7WIL7y9KXB6pCpCJxKlWjV
+ eU9E9wyxmDnoAfXlhbT7Y9CPvi7y9D/2iwM5n/RL7tjJdhFhc8onWb71TAK9iu+uoD61c5Q9Q9h
+ rOk14Q93ezBilr6vvqzPEQ3VWyHjhQ7mxIcHeY6TXJ5Ms39f2SpQa9nSJ+u4VK2e3qIc3oVH
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.7,FMLib:17.12.80.40
+ definitions=2025-06-23_08,2025-06-23_07,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ bulkscore=0 mlxlogscore=894 adultscore=0 impostorscore=0 clxscore=1015
+ spamscore=0 malwarescore=0 phishscore=0 priorityscore=1501 suspectscore=0
+ mlxscore=0 lowpriorityscore=0 classifier=spam authscore=0 authtc=n/a authcc=
+ route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2505280000
+ definitions=main-2506240006
 
-On Mon, Jun 23, 2025 at 04:18:31PM -0600, Alex Williamson wrote:
-> > Alternatively, if we wanted to normalize show_fdinfo formatting, this
-> > could instead hoist the print formatting up into vfio_main.c, and call
-> > an optional vfio_device_ops->instance_name() to get the name. I opted
-> > not to do this here due to unfamiliarity with other vfio drivers, but am
-> > open to changing it.
+On Sat, Jun 21, 2025 at 03:19:55PM +0200, Luca Weiss wrote:
+> Switch over the ADSP PIL to use power-domains instead of a regulator,
+> and have one commit switching over the MSM8974 SoC plus all the devices
+> to use power-domains.
 > 
-> TBH, I don't think we need a callback, just use dev_name() in
-> vfio_main.
+> Note, that I'm aware that these changes are not backwards compatible and
+> not really bisectable, but since it only affects the ADSP on these
 
-IMHO this should really be the name of /dev/vfio/XX file and not
-something made up like event fd uses.
+Why? The cx-supply is handled unconditionally. A single-domain usecase
+is also handled via a special code path. I think this might be
+backwards-compatible, by the pure luck.
 
-The file was opened via /dev/vfio/XX, that is what lsof should report..
+> pretty old boards, I say it's fine to have this. Get all the patches
+> into the same release (6.17?) and then we're good again.
+> 
+> Signed-off-by: Luca Weiss <luca@lucaweiss.eu>
+> ---
+> Luca Weiss (4):
+>       dt-bindings: remoteproc: qcom,adsp: Make msm8974 use CX as power domain
+>       remoteproc: qcom_q6v5_pas: Use resource with CX PD for MSM8974
+>       ARM: dts: qcom: msm8974: Sort header includes alphabetically
+>       ARM: dts: qcom: msm8974: Start using rpmpd for power domains
+> 
+>  .../devicetree/bindings/remoteproc/qcom,adsp.yaml  | 18 ++------
+>  .../arm/boot/dts/qcom/qcom-apq8074-dragonboard.dts | 13 ------
+>  .../qcom/qcom-msm8974-lge-nexus5-hammerhead.dts    | 12 ------
+>  .../boot/dts/qcom/qcom-msm8974-samsung-hlte.dts    | 12 ------
+>  .../dts/qcom/qcom-msm8974-sony-xperia-rhine.dtsi   | 12 ------
+>  arch/arm/boot/dts/qcom/qcom-msm8974.dtsi           | 50 ++++++++++++++++++++--
+>  .../dts/qcom/qcom-msm8974pro-fairphone-fp2.dts     |  8 ----
+>  arch/arm/boot/dts/qcom/qcom-msm8974pro-htc-m8.dts  | 11 -----
+>  .../dts/qcom/qcom-msm8974pro-oneplus-bacon.dts     |  9 ----
+>  .../qcom/qcom-msm8974pro-samsung-klte-common.dtsi  | 11 ++---
+>  ...qcom-msm8974pro-sony-xperia-shinano-common.dtsi | 12 ------
+>  drivers/remoteproc/qcom_q6v5_pas.c                 |  2 +-
+>  12 files changed, 56 insertions(+), 114 deletions(-)
+> ---
+> base-commit: 7fa2fb97cd28e1d9670da538095565b6fba83977
+> change-id: 20250621-msm8974-rpmpd-switch-b19b166c02be
+> 
+> Best regards,
+> -- 
+> Luca Weiss <luca@lucaweiss.eu>
+> 
 
-For the legacy route this effectively gives you the iommu group.
-
-For the new route this will give you the struct device.
-
-The userspace can deduce more information, like the actual PCI BDF, by
-mapping the name through sysfs.
-
-I would have guessed this is already happening automatically as part
-of the cdev mechanism? Maybe we broken it when we changed the inode to
-use unmap mapping range?
-
-> The group interface always requires the name, in some cases
-> it can require further information, but we seem to have forgotten that
-> in the cdev interface anyway :-\
-
-?
-
-Jason
+-- 
+With best wishes
+Dmitry
 
