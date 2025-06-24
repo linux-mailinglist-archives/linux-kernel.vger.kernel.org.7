@@ -1,93 +1,114 @@
-Return-Path: <linux-kernel+bounces-699400-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-699402-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1B495AE5972
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Jun 2025 03:55:37 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 89F20AE5975
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Jun 2025 03:56:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A567E4A7E35
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Jun 2025 01:55:37 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 25F6A4A7F09
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Jun 2025 01:56:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0AA0C1DE8B3;
-	Tue, 24 Jun 2025 01:55:25 +0000 (UTC)
-Received: from www262.sakura.ne.jp (www262.sakura.ne.jp [202.181.97.72])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 606F31DF98B;
+	Tue, 24 Jun 2025 01:56:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="hgv5+WSY"
+Received: from mail-pf1-f179.google.com (mail-pf1-f179.google.com [209.85.210.179])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 59D411C84DF
-	for <linux-kernel@vger.kernel.org>; Tue, 24 Jun 2025 01:55:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.181.97.72
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7309217332C;
+	Tue, 24 Jun 2025 01:56:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750730124; cv=none; b=f5/DtVsPV18EyU23/dXBjBgeDlwXxYOF6206rzdiH84E1CVwG0bxUH+pjRi6CT/d0M5hlBAi1DiQzQluWJYudQUB3E0gI8YMI/wjVpX/aeTarJIEGDrDkiQxMec89TUSwLlyjA+osYm0DzezYGAvU7HxZWF2tZ8MYdC/gqtGSoo=
+	t=1750730182; cv=none; b=YkSzpeUJLkt7YaFqBq5/6IWi6Zy2Md1GsIwed2MV18FEjMuKoNaT8Vcw3oRl0hX6KPXcOsSwOH6dZt/C9JaB4WJovE28SJZJLtrFaOYj91Ru3k8MEk9BN6CwJhyKnD/3+xLzoYv9oCsLbQvR1NJqaS0Sop7XRy0ALn+PZkOAZY8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750730124; c=relaxed/simple;
-	bh=fjJUluiUV0jFld53GkIQxGvraehfT1fvsKV6Vu5F2es=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=RM47SVslI3Oce4zzqTSWjui7zo5CaT1k3o1XOY+sGwpHVtIwZcWIlCB6yqs1g9zC8hxFGO90r9UEpr9bBC8dCITtsGuLul8yfNYhDRVYYJEEzSaoyeB16ead9cWG83URt95jjRT1oUOYF3yShbxyGDN2QR0mC0HkzIsOOWDhtSw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=I-love.SAKURA.ne.jp; spf=pass smtp.mailfrom=I-love.SAKURA.ne.jp; arc=none smtp.client-ip=202.181.97.72
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=I-love.SAKURA.ne.jp
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=I-love.SAKURA.ne.jp
-Received: from www262.sakura.ne.jp (localhost [127.0.0.1])
-	by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTP id 55O1tKFn064509;
-	Tue, 24 Jun 2025 10:55:20 +0900 (JST)
-	(envelope-from penguin-kernel@I-love.SAKURA.ne.jp)
-Received: from [192.168.1.6] (M106072142033.v4.enabler.ne.jp [106.72.142.33])
-	(authenticated bits=0)
-	by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTPSA id 55O1tKE0064505
-	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NO);
-	Tue, 24 Jun 2025 10:55:20 +0900 (JST)
-	(envelope-from penguin-kernel@I-love.SAKURA.ne.jp)
-Message-ID: <1c0f49ac-2634-4126-abcd-7859fc71f134@I-love.SAKURA.ne.jp>
-Date: Tue, 24 Jun 2025 10:55:20 +0900
+	s=arc-20240116; t=1750730182; c=relaxed/simple;
+	bh=QWc3pPSuQi9bLIgKfIf6Gs/fdQgo8PD1cAbJoDdQmcE=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=u+0r4XIrb87CQBaeIUaqG8tH+oz9iTO8DdeRQ0+Ap10irJXmtSDdWERNDwiqRoHB5FjZxlCBi9c61jG3grTWoG6asbvTZewSfwrtL4n8r139/IT3uybLWwoypd+dWlVxuzUYVV75g0p8wF5ryzwk3pbPzzxiCad0IyM2UiZfcd0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=hgv5+WSY; arc=none smtp.client-ip=209.85.210.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f179.google.com with SMTP id d2e1a72fcca58-748fe69a7baso4488894b3a.3;
+        Mon, 23 Jun 2025 18:56:21 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1750730181; x=1751334981; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=DFTKA/J3N4zuA9kN6irxuppW+fhNRQUbPdKz5iIgmSg=;
+        b=hgv5+WSYXq5ct7C+kKIrVmQ9t+HiZAMhr34YFV9Uvdh+7F6hwprPR8vCUq6kFN9lbE
+         ADUCcMv+UjNrc81AS5vpo8NpsaEiYwDHSxr4gohLzGcQBA4Gj6jqSvA2SdhZvqfGiv+W
+         s9imdfkUdFTlYuBJXSeJJpZwvotuvNsHu3nRz9QWytp70zfj9yKJuSMziH6rcp3JoujD
+         BuWsRYPLALKy+0eZr5Tx5p6AlfB9GZHivpIbfZvtxPbnsUXQTMijonftgtg+LPRO3OU4
+         sUqfYjj9TotzmVNEno0bGjnFpOOjwBhM5/KPHUHcBwzwPbjUANhvsop18VAONowzxuMa
+         kdew==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1750730181; x=1751334981;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=DFTKA/J3N4zuA9kN6irxuppW+fhNRQUbPdKz5iIgmSg=;
+        b=Q+kssuNo5WfIl3VMyOjUHTKIyU1MqiqPKBrSuEOBEctF/4pAW0yudG8FCb5grXXltt
+         EDUUqNHoM3LRG0POvvKSlJflb3E07ZIMOHfqMQN6amFf5UmnpUl4mc3MMbNn9H0CVhey
+         y7AnXhW1D4ssIvl2tI8vsYq4/L4UwIBKreoLYsVAdRQfeTGPHGIZKbcDtY0HKe+bnZtu
+         42KpWlxmcfI65BxCDe3T+sUWFQJBmKXCq9b9R5lQAcw5tB8YYG3wevQCDz4xJlJPEXzE
+         Qg46qKiAgMNaMQVbRuMpQwsUkUEhixAUiybi+35nbgsLvzgDr6I2I0tRYxVHcjtSUuqw
+         XvOA==
+X-Forwarded-Encrypted: i=1; AJvYcCVTQSfI77QPRLoStSCdxk8zgPhMyMqM+tWNHLOoML9yAmTws5WbO26iLc0Nh5keZoSPhUek64e4r/tSR5A=@vger.kernel.org, AJvYcCXgCTNmGw2N/toz2kJSU6UgmPruyxLBQ2K6efS1JmZnW/frwu3/YIAnFjRMW75F6u+MtKU9B3Qu71xXig==@vger.kernel.org
+X-Gm-Message-State: AOJu0YxWp4Lu2ynA/C1RiAc/ZFyfMB8ZdLuG7WrJ3bR4QH1CxdAeED5h
+	uawl4iuPTPihr1KsDcrNUXwzNiHx34pu58kb//VQ7wh8hpJFfN7pxB25
+X-Gm-Gg: ASbGncstgTtpAuIcueKLN2REPqO7Di4l9WJFBwymJlfBOGj8GjjEyFVXwcj/TJsxPnO
+	VzK/uNN1/uvarA7+wVbie80EY8+FXQrzQOmhZn6VgppVUxw3GNQ/lmgg7cHZFhNG9/K1sFtsnnC
+	9/dCi9mH6A2XpZVeOB0Hby1Au/M26/cSGtBV4c2mMBLXokJTJbHkDI9yRpKu/Yf+FzsQylX4YdG
+	cJEkGBGmYB9+qn5XqXQbjM25hv9qRskDUF9mtFIhBvfluk2hclGR2ztGMsp5bD55CLrTmvFIhM/
+	rNnCwv2nkX3vapUF68yRyAb+82w8ey5bIdJTewUtlHBgfI0sjZ0d68WbnjAT9j5e0oNvK6PO+Es
+	YdUDR5Dbs4ZYjXjTd00HFtgF/IYSn
+X-Google-Smtp-Source: AGHT+IGIOzokD3mmNbhbRTvnuHMtDXZq7ICEazwrGHSTUPZR78tkBKR4IAGXU12KxhS22Quy66jlZQ==
+X-Received: by 2002:a05:6a00:2386:b0:748:e150:ac77 with SMTP id d2e1a72fcca58-7490d6c3b5fmr18728442b3a.22.1750730180570;
+        Mon, 23 Jun 2025 18:56:20 -0700 (PDT)
+Received: from localhost.localdomain ([114.242.33.243])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-749c8872629sm425424b3a.164.2025.06.23.18.56.18
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 23 Jun 2025 18:56:20 -0700 (PDT)
+From: Wang Jinchao <wangjinchao600@gmail.com>
+To: Song Liu <song@kernel.org>,
+	Yu Kuai <yukuai3@huawei.com>
+Cc: Wang Jinchao <wangjinchao600@gmail.com>,
+	linux-raid@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH v3 0/2] Optimize r1conf->r1bio_pool
+Date: Tue, 24 Jun 2025 09:55:51 +0800
+Message-ID: <20250624015604.70309-1-wangjinchao600@gmail.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] ocfs2: kill osb->system_file_mutex lock
-To: Heming Zhao <heming.zhao@suse.com>
-Cc: LKML <linux-kernel@vger.kernel.org>, Mark Fasheh <mark@fasheh.com>,
-        Joel Becker <jlbec@evilplan.org>,
-        Joseph Qi <joseph.qi@linux.alibaba.com>,
-        jiangyiwen <jiangyiwen@huawei.com>,
-        Andrew Morton
- <akpm@linux-foundation.org>,
-        ocfs2-devel@lists.linux.dev,
-        Diogo Jahchan Koike <djahchankoike@gmail.com>
-References: <934355dd-a0b1-4e53-93ac-0a7ae7458051@I-love.SAKURA.ne.jp>
- <faf70481-09dd-4c7a-bd43-f1e8bec877cb@suse.com>
-Content-Language: en-US
-From: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
-In-Reply-To: <faf70481-09dd-4c7a-bd43-f1e8bec877cb@suse.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Anti-Virus-Server: fsav201.rs.sakura.ne.jp
-X-Virus-Status: clean
+Content-Transfer-Encoding: 8bit
 
-On 2025/06/24 10:33, Heming Zhao wrote:
-> Hello,
-> 
-> Protecting refcnt with a mutex is the right approach, and commit 43b10a20372d
-> did it properly.
-> However, I don't see how your patch fixes the syzbot report [1]. Could you
-> elaborate on the root cause analysis?
-> 
-> My review comments are inline below.
-> 
-> [1]: https://syzkaller.appspot.com/bug?extid=1fed2de07d8e11a3ec1b
+The r1conf->r1bio_pool field was previously a struct, 
+which caused a bug after raid1_reshape.
+These patch changes it to a pointer type 
+and removes struct pool_info and related code.
 
-My patch does not fix [1]. My patch fixes a bug which syzbot reported at
-https://lkml.kernel.org/r/000000000000ff2d7a0620381afe@google.com
-when testing with Diogo's patch at
-https://syzkaller.appspot.com/x/patch.diff?x=178f93d5980000 for [1].
+Wang Jinchao (2):
+  md/raid1: change r1conf->r1bio_pool to a pointer type
+  md/raid1: remove struct pool_info and related code
 
->> Reported-by: Diogo Jahchan Koike <djahchankoike@gmail.com>
-> 'Reported-by' should be: https://syzkaller.appspot.com/bug?extid=1fed2de07d8e11a3ec1b
+ drivers/md/raid1.c | 84 +++++++++++++++++-----------------------------
+ drivers/md/raid1.h | 22 +-----------
+ 2 files changed, 31 insertions(+), 75 deletions(-)
+-- 
+v1: Replace mempool_init() with mempool_create()
+v2: Replace mempool_init() with mempool_create_kmalloc_pool()
+v3: Fix checkpatch errors and a bug in calculating new_r1bio_size
 
-Since there is not yet a bug link for my patch, I don't choose syzbot as reporter.
-Diogo will post a formal patch for fixing [1] after returning from vacation.
+The idea was proposed by Kuai, and I implemented it.
+Thanks for the guidance and review.
+
+-- 
+2.43.0
 
 
