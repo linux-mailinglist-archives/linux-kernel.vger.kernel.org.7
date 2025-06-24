@@ -1,244 +1,501 @@
-Return-Path: <linux-kernel+bounces-700244-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-700247-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2EBAFAE65E9
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Jun 2025 15:12:33 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id A1163AE65DC
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Jun 2025 15:09:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C8BBF1BC1DCA
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Jun 2025 13:09:01 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5D53F3B020F
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Jun 2025 13:09:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5A4EB2BEC29;
-	Tue, 24 Jun 2025 13:08:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 79B0E29B206;
+	Tue, 24 Jun 2025 13:09:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="QbZx1uyl"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	dkim=pass (1024-bit key) header.d=oppo.com header.i=@oppo.com header.b="SnXgRGsw"
+Received: from OS8PR02CU002.outbound.protection.outlook.com (mail-japanwestazon11012049.outbound.protection.outlook.com [40.107.75.49])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2EE7B298992
-	for <linux-kernel@vger.kernel.org>; Tue, 24 Jun 2025 13:08:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750770510; cv=none; b=u1zFCRx9AMEqvkioymrV2xpIrgoW0O2C46w+zxf1oXV3wXLPMmbYCELRZ9B5c5z4fk0d0JdnrNTywM6QxVEZ3pBRfoiQtAWv3mRbBE22hUbICxcxvGAsfWpadXp/u1uwHhoTwX1T65s/MowQVr93oalTh1Vm1w5G9rploJS6DTM=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750770510; c=relaxed/simple;
-	bh=OWhxjim2hzRwp44IATiri7aWjY41RYVfuAGrMg9lkKY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=hlBKrTZOS7IyEOOkz234dq2x05ELpCZ3ISDeDXD6uV3VqNHf+6z4asajd0k+BGW7J9DxGKcqAtNaoSvW7HAXh/xd39m1FewsYY4o50VfMntXkOu8cFXxal+sLQrNVd2+0bvNtsOZoyNAo7+fGuij9pirOcpAKIHcLNbl6BYEQBk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=QbZx1uyl; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279865.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 55O77GQW015721
-	for <linux-kernel@vger.kernel.org>; Tue, 24 Jun 2025 13:08:28 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	GXCLZ7wAY3gbFYvClwpaaAkNVDWwCvFGSPtbvkJl6S4=; b=QbZx1uylK1oDoaHE
-	AxheQ3bLH0vLEbfkRRSrZr/l2/yYim17/kmALfwpQKFR+X7ovIUY+p+RU1+vC2X5
-	16iDRtyt4ZtNqI5TQ3L9yhwhFrAByVNva9qHM7gfny2S9up19BvOq6IeuWY8wYBR
-	LVNGeTg/p3/rL63xnhH4ICX3TOjSiWEiI6v1bOtNBAZQRzGeA9Drh6rO2C3uoPMG
-	UX4/IRvcJTzQHoHMWehZfO/2pQ/FhCv0SvK2L5cRcsJWUK5mNfn4ovwOQr+AkjIn
-	3nObZbjWy0cXguNZsKogCNwLcEPrDKXEvNE/gosHHSTce7idiG0uCHwontU8EFH2
-	c3cdoA==
-Received: from mail-pg1-f197.google.com (mail-pg1-f197.google.com [209.85.215.197])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 47evc5najf-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Tue, 24 Jun 2025 13:08:28 +0000 (GMT)
-Received: by mail-pg1-f197.google.com with SMTP id 41be03b00d2f7-b2c37558eccso342116a12.1
-        for <linux-kernel@vger.kernel.org>; Tue, 24 Jun 2025 06:08:28 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1750770507; x=1751375307;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=GXCLZ7wAY3gbFYvClwpaaAkNVDWwCvFGSPtbvkJl6S4=;
-        b=MNkIUFIIgQ/zPNP92ZEMNnGSuwylsrbMhwaXEl1ibB+8bnqPjHGtOgeNhqvTuMch9h
-         FWxiOwyJY8gAg8kzSXZ5FUDQEYXfpbnT2H6L7JaBJG/6WI4JE0GCe+EVY+3g6zWavwdn
-         I42LakqwR75Mq6MrZmyC9dqenNw7tWJjki5QtmIjZr0iVpIxyVgiUkoX3fbSsOlxEahI
-         vMMoJgwjRpZXYpv8uyy5bwrLwIvp5X+OEficLVHQWXF9PkX3lc62Wu0HGTAtuc5Bx1Ap
-         NBEojR0OKYj+zPGdLPtrbEGy2m9i+d+JkwBBWb1qeL7R+g3P8oj4PDU7Re5Za9anGcW5
-         wByw==
-X-Forwarded-Encrypted: i=1; AJvYcCXNQQtzD1DaIklWBx9G87HJU1lB+kJNedMOjX+Yx59GaNPDSDUeYCJh7ZWGU2qPbSswZ7hQDbV38NIm5Tk=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwA+dGCCkZdj9BgCEd9xqXgH1cZTzNz6lCXPjj30t+SEFvE4I3c
-	/ldCifMZyCPKzNw7mwZOvfnWx4q27G2tAJ6MbLFht3uDrS5TwmqbqkYYjXE/AbyPPMFMcw548LU
-	MNcd/J6y//HIJnbISrLfs2vJCnL1j8q9aE6h5SjxeAtLo8e2OOXXHD4RRIdmpcOsPDWA=
-X-Gm-Gg: ASbGnct48U9vrpsm4in5VE9gr/OpQqAnyKa/fKPwkdEkiOk2qESh0tENm0zFhUpexUc
-	Wc9WRV3AuYR6Dnb8zlRGt7o3FLSNL96ioklQRS7oQdnmWKsqlgPKVZSCCGbbYAaEd+/nrj1Oo+e
-	tl0GesIc1BnkGb6bj+KW1x4kA5M8Kc0zkRScsYbATD9Cju5+aq36FUFbaYWPX+8k2g11syO2J/D
-	t/YOhPqCEditFn3Y6K0q1YYjMn7eooFG6ByoQv7A4vbAhJTQOq/t6AH7mEWiom1C4Ge5mz7L6F3
-	MA/rBT3XEpaXmV5GnC38oq9YP/lxEcoNYaikvU9qA1mRR/xqfOpgnhqBCCyS7qdp5mmp7fykUQ=
-	=
-X-Received: by 2002:a05:6a00:9a0:b0:749:93d:b098 with SMTP id d2e1a72fcca58-7490db4278fmr17729271b3a.22.1750770507033;
-        Tue, 24 Jun 2025 06:08:27 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IFaLKteWP9POVkOhi2cCkGrtK+lX6AAeVvFFXqxc3EwlHw8pY4QVWlpLKOHl1nNiBko7q5DOw==
-X-Received: by 2002:a05:6a00:9a0:b0:749:93d:b098 with SMTP id d2e1a72fcca58-7490db4278fmr17729252b3a.22.1750770506624;
-        Tue, 24 Jun 2025 06:08:26 -0700 (PDT)
-Received: from [192.168.0.126] ([2401:fb00:ffff:fffc:0:1:ac11:493f])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-749c88721b9sm1836215b3a.150.2025.06.24.06.08.23
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 24 Jun 2025 06:08:26 -0700 (PDT)
-Message-ID: <72f9de63-dc19-4467-b883-8637f95a8e82@oss.qualcomm.com>
-Date: Tue, 24 Jun 2025 18:38:22 +0530
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C5F48230996;
+	Tue, 24 Jun 2025 13:09:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.75.49
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1750770562; cv=fail; b=qDIvM9xm7+tqi1ybmbRRe/NUpzwI9jbIjpxpVHk/7l/GbD8VvpXOlANBCmBKEi4Evro4H0cMr9F/7RsSG8N3ZILRIrpqKTGjMZ94YX53igSjdHCiBlFErYuJoSnwJG5348PJ0iUlAR7X5c79fRnjlVHObgCcRB74tc9TaNRkk7w=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1750770562; c=relaxed/simple;
+	bh=XOZVBCXgom74CVigcYXQ0RxNFnA3bCjaBGjkDLreKtE=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=N8O/SrGfyl7QJl11WMRARbVbzuZxW2i473ZFGHES6MWEttaKUjgDsq1QjoWrkWVkqZa2YfyB+wO4ksV5ozFifg7/mwScmqciCMHwYbLlv4RGT+ZL+DiuDsGFZpTSiyi32Fv1oZl/PToV1GSWNzXcQ5Fz7omaM80ilPxsZD1aqlM=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=oppo.com; spf=pass smtp.mailfrom=oppo.com; dkim=pass (1024-bit key) header.d=oppo.com header.i=@oppo.com header.b=SnXgRGsw; arc=fail smtp.client-ip=40.107.75.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=oppo.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oppo.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=JlkV76dXBEWMgzXrJw7b5Y2CmDXF5lnJEdIaBbqKEwBA2mC4fMHbTB0AKfguQqcaa/stmh6shNXQemJLBGOgLB0L6HHvymorlmzNsKnTh56PXqzP3/Ql/SSkEjC5Y7hUy7djbjJ3Abfqf9KX7fAiOrFQC1LPg84jYiAo9rR8cxvijg6nL4o7OWRn4fLvN0pzkICcq29Ow27v7+GMeJOk3x6IbYBZ4eYf1heI1phKXHyn//l3ZUExr4Ff3G3mtfpoHbaMVNLxxvUcKYQkHPMlF/ghOOz9jRBs/TRfTQOMn9iyzp4IQBouNCCxEbhX2lSDFVrf0osQEq0UCzLlqiS6ug==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=KOsDDQxRrffZ6cmniYFbDQd13mftWgjlhIqhjvcM350=;
+ b=uSP/d2cPcyXsadbkiSP6rclAdfKSOIriYjmU98tAw0Lry4vPMAHs0x+PlkLLo1aOb/RDDOZq4xSsJ60OA9JPH8rUihtI8miKGNoUNF3/5l2bhc8LUBE0R4gsSRIeqWjDgGo9EZB/HwtiiQ9/aBqFfXjybfVvnyBMsw5eO1lOy1QxwqQSlk2ns5EQxQvc2UHjUunCXCjr6UaGAv/6LLtpNWOb57M5rGqmGYWYGU0O186mtf0U5/ieq+57bSXf3KVQtz6bmRDTaXThzhEBSD14Mybt4u2l98A238/r4xV9nEX5pOOyaHH1OrnPEBoCOTr35Zxu3SbjP6oW2c9s8vMZDg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 58.252.5.68) smtp.rcpttodomain=kernel.org smtp.mailfrom=oppo.com; dmarc=pass
+ (p=quarantine sp=quarantine pct=100) action=none header.from=oppo.com;
+ dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oppo.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=KOsDDQxRrffZ6cmniYFbDQd13mftWgjlhIqhjvcM350=;
+ b=SnXgRGswQgGm/S+qO26z+dY0Xizx4AnILbxgQ2tQTui6tYyg8qtCsIz8DlPEaoztr7Jjz42BfFFj9VaWb4+FEoBDKRz92bQ432hfrsTtg22ktRLabRwtwEYZjNaj5Ysb80t8kv0k5ZncQ9BiPkuIMN6xbCG+pWa4/F7pRjCxYyY=
+Received: from PS2PR01CA0063.apcprd01.prod.exchangelabs.com
+ (2603:1096:300:57::27) by SG2PR02MB5651.apcprd02.prod.outlook.com
+ (2603:1096:4:1cb::11) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8857.28; Tue, 24 Jun
+ 2025 13:09:11 +0000
+Received: from OSA0EPF000000CB.apcprd02.prod.outlook.com
+ (2603:1096:300:57:cafe::c2) by PS2PR01CA0063.outlook.office365.com
+ (2603:1096:300:57::27) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.20.8880.17 via Frontend Transport; Tue,
+ 24 Jun 2025 13:09:06 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 58.252.5.68)
+ smtp.mailfrom=oppo.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=oppo.com;
+Received-SPF: Pass (protection.outlook.com: domain of oppo.com designates
+ 58.252.5.68 as permitted sender) receiver=protection.outlook.com;
+ client-ip=58.252.5.68; helo=mail.oppo.com; pr=C
+Received: from mail.oppo.com (58.252.5.68) by
+ OSA0EPF000000CB.mail.protection.outlook.com (10.167.240.57) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.20.8880.14 via Frontend Transport; Tue, 24 Jun 2025 13:09:10 +0000
+Received: from PA80318969.adc.com (172.16.40.118) by mailappw30.adc.com
+ (172.16.56.197) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Tue, 24 Jun
+ 2025 21:09:09 +0800
+From: huangzaiyang <huangzaiyang@oppo.com>
+To: <jikos@kernel.org>
+CC: <bentiss@kernel.org>, <linux-input@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>, huangzaiyang <huangzaiyang@oppo.com>
+Subject: [PATCH] drivers/hid: Implement a battery status polling mechanism for selected input devices.
+Date: Tue, 24 Jun 2025 21:08:36 +0800
+Message-ID: <20250624130836.5743-1-huangzaiyang@oppo.com>
+X-Mailer: git-send-email 2.17.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 3/4] usb: dwc3: qcom: Facilitate autosuspend during
- host mode
-To: Thinh Nguyen <Thinh.Nguyen@synopsys.com>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Bjorn Andersson <bjorn.andersson@oss.qualcomm.com>,
-        "linux-arm-msm@vger.kernel.org" <linux-arm-msm@vger.kernel.org>,
-        "linux-usb@vger.kernel.org" <linux-usb@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-References: <20250610091357.2983085-1-krishna.kurapati@oss.qualcomm.com>
- <20250610091357.2983085-4-krishna.kurapati@oss.qualcomm.com>
- <20250623235856.b2jwgf5j6yup2sww@synopsys.com>
-Content-Language: en-US
-From: Krishna Kurapati <krishna.kurapati@oss.qualcomm.com>
-In-Reply-To: <20250623235856.b2jwgf5j6yup2sww@synopsys.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Proofpoint-GUID: Cu1RV7iiOSag6nEW7tjEfxCnAbffy4ng
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNjI0MDExMCBTYWx0ZWRfXyQ7cSIlXI+JA
- aNry3iN33cGqHombUzNsP5AqFsfgOeHWFfRlY5XKdUYkRzJKh3+i+c0+3NskTffi/FyfebWATTQ
- S/ywbcrZ1Dq3Lc7Km8Rt7IyJPV0pnDg7ANklujye6tdjC+EHVn3ue7KV/3GbtZeG/fp+sjYkcib
- asUVNsgUb4xuUirula3v+9hxh54j1V9WT7fDk5rOJX3cAEGMIaXa5CN7VNX1OsWhZJ6F/1oxitw
- OYRyFp4mYbFjc1JxEt8mdtpb8uyoSBfi5z2BdYp/jtDae9jHyyzkMl812nbJme+mU51mUuWZgos
- QwxJlMzkoqNJvARI2mRDrZQYBHCxc4DzPaiQZ4AS8Z4dHozn1AvE5Mv6c42T9zgnXmp4YzAg8cg
- vgC+Y8rBooLA2yrwGqGWSUEZJpuHakUqXn9bAkDVb5G9dIvjzJW/yGI+Jz0/JQAKihfakZXc
-X-Authority-Analysis: v=2.4 cv=caHSrmDM c=1 sm=1 tr=0 ts=685aa34c cx=c_pps
- a=rz3CxIlbcmazkYymdCej/Q==:117 a=xqWC_Br6kY4A:10 a=IkcTkHD0fZMA:10
- a=6IFa9wvqVegA:10 a=EUspDBNiAAAA:8 a=biFwQZO8mOkSj3tXal0A:9 a=QEXdDO2ut3YA:10
- a=bFCP_H2QrGi7Okbo017w:22
-X-Proofpoint-ORIG-GUID: Cu1RV7iiOSag6nEW7tjEfxCnAbffy4ng
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.7,FMLib:17.12.80.40
- definitions=2025-06-24_05,2025-06-23_07,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- impostorscore=0 mlxlogscore=999 suspectscore=0 priorityscore=1501
- lowpriorityscore=0 bulkscore=0 adultscore=0 mlxscore=0 spamscore=0
- malwarescore=0 phishscore=0 clxscore=1015 classifier=spam authscore=0
- authtc=n/a authcc= route=outbound adjust=0 reason=mlx scancount=1
- engine=8.19.0-2505280000 definitions=main-2506240110
+Content-Type: text/plain; charset="utf-8"
+X-ClientProxiedBy: mailappw31.adc.com (172.16.56.198) To mailappw30.adc.com
+ (172.16.56.197)
+Content-Transfer-Encoding: quoted-printable
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: OSA0EPF000000CB:EE_|SG2PR02MB5651:EE_
+X-MS-Office365-Filtering-Correlation-Id: 07e04303-eeae-4426-6666-08ddb3204f3d
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|1800799024|36860700013|376014|82310400026;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?g3u+GWt6my3stBzFYWFcz/Yho/sXHthL+ms0l5R4525PvEnpKixH3/tihoa4?=
+ =?us-ascii?Q?aprsj9UGRTizD7No/i77/U6nwQxWtBPbBDEWSc2Wqzxs+b8XNEUpoEG+yr70?=
+ =?us-ascii?Q?LRghJ9rOElP2vxAK/YKXwEVMe3yg92zWTWMNqNTmR1YbwzO7PXOwoA/gVMiy?=
+ =?us-ascii?Q?89B9yDQS8K3bQpTDCAZDOsoJL/TTNMK0dC7SWc+W5blun4PTPRiz2IXIRIcj?=
+ =?us-ascii?Q?+++mmL8X2JSCoV8pzU/YzqOsKA+BhuUGVoWPcwCb0AnFD9YXEF1m3FySbscV?=
+ =?us-ascii?Q?w4PRLDwxkVcs7jzi0g2LYLekIU4B25aYOkPtPUGoQJMZsVin0JhICGYb41pF?=
+ =?us-ascii?Q?lNZTaXmIKLXdUxGJvoNgpsGBsAf4dgS56+elS42Ta+smXV+e/mGsfgmdv0cJ?=
+ =?us-ascii?Q?Y1luQjU0Hs+maGZp6xmaE4A8pin/SWyqjBbySJa2viWBP6CwiwIvz4oTJZJE?=
+ =?us-ascii?Q?pNAzjN3X9KjuyYvBG0s/o0ZZulEen7fOpcpU0NdwIiqJYT7qZvOnqqJQAQ2D?=
+ =?us-ascii?Q?WBub43zHO5kUitgAeIzTmG+LI1hddVD3nRGt78O2QM382ox/+QS0sfvyMr4o?=
+ =?us-ascii?Q?/sSzd7MUQZ0WBibcm5JV1JBxBebT32YgqWIFllHN/qH7n2vWFhKd5l2SJqxB?=
+ =?us-ascii?Q?JTy/YfEkpaqqop7ByjklbPgi0YQiTtu1k8qoiSomQe5DzUNYqtXJebZYxeI8?=
+ =?us-ascii?Q?CLm0QzlqQ/kTsoTOc+Hs97w6HpGJgxQXT/ddoTEZLN0xoXxH6DokjdEYGdC+?=
+ =?us-ascii?Q?Ku3GfJLp93PLklbeh/wnk9wutv+2bo9Rxr4l+UVnNjzp50icxoY7RtF1CaIc?=
+ =?us-ascii?Q?b3S/SE6XO2mVOxzELjBmdZ5C+rlDTj7PlNj/JyS+YV1LwoP7Ezq3PxeOC5wC?=
+ =?us-ascii?Q?HCXd+MDMysWurkcHFMYMRoReIcX/Vt5soWP8c0OaJ3bP/fQc/12q0FwHoTKM?=
+ =?us-ascii?Q?Ebwo1h2rBk/A80mni7f6kPGOHIMeMhVdmO/SwlKwnPlnhX/JdnjwVvpyjta3?=
+ =?us-ascii?Q?+lLr2VKL4fdV/pyX8BOvi4+q5CcccKG8geyruCd+aWb1NR0LLBS9PfIdN5/Y?=
+ =?us-ascii?Q?6Q2X5fCP5fFRMH0rTYaZF8q8QOEEUbKT0DkNPpHtqCUnzlE++9MFjRAojVwV?=
+ =?us-ascii?Q?ESEGHOYYMrCYzQt2hilDkWcDnkzG/I/WKV3ok5R3yhWvAWck3GLInTGAeLJJ?=
+ =?us-ascii?Q?0LTjTSeWkeymV9K+9MqWHP0wpOA97mqyAPDBdM8XckaFhmsI12UO00B7ywDw?=
+ =?us-ascii?Q?Dzh7+8qJpj2soqSi4DUWdeBUNKnZM+gmaI2SmqwDNsCPsyI6MsRRoknFf2SR?=
+ =?us-ascii?Q?40lCo3oKWUZk4Er3qBnFBm6Gy0pa7PcGInS8qWSOWJ3Ecgywzw+/4Ingj9ae?=
+ =?us-ascii?Q?XNRa74JdmES7dFx/zdVJ0ckCMSN5Ga5vAMjly5Lzf+8TsSAkZ2vQ/E74glCq?=
+ =?us-ascii?Q?+kVDicwfAzRL1rk7hkBkOCRqP3vMpRPvVQALTLKn236owsncN30UyMdUUXQG?=
+ =?us-ascii?Q?pSZzDI+qdVS2zSI3yo3ML27mXmShq+eagekQ?=
+X-Forefront-Antispam-Report:
+	CIP:58.252.5.68;CTRY:CN;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.oppo.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(1800799024)(36860700013)(376014)(82310400026);DIR:OUT;SFP:1101;
+X-OriginatorOrg: oppo.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 24 Jun 2025 13:09:10.4132
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 07e04303-eeae-4426-6666-08ddb3204f3d
+X-MS-Exchange-CrossTenant-Id: f1905eb1-c353-41c5-9516-62b4a54b5ee6
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=f1905eb1-c353-41c5-9516-62b4a54b5ee6;Ip=[58.252.5.68];Helo=[mail.oppo.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	OSA0EPF000000CB.apcprd02.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SG2PR02MB5651
 
+Reading battery capacity and status could fail and end up with timeout
+after 5s for some input devices, for example:8BitDo SN30 Pro+ gamepad.
+Implement a battery status polling mechanism for selected input devices,
+set HID_BATTERY_QUIRK_AVOID_QUERY and HID_BATTERY_QUIRK_POLLING_QUERY
+for 8BitDo SN30 Pro+ gamepad.
+to Avoid UI freezing when reading battery capacity/status.
 
+Signed-off-by: huangzaiyang <huangzaiyang@oppo.com>
+---
+ drivers/hid/hid-input.c | 63 +++++++++++++++++++++++++++++++++++++++++
+ include/linux/hid.h     |  2 ++
+ 2 files changed, 65 insertions(+)
 
-On 6/24/2025 5:29 AM, Thinh Nguyen wrote:
-> On Tue, Jun 10, 2025, Krishna Kurapati wrote:
->> When in host mode, it is intended that the controller goes to suspend
->> state to save power and wait for interrupts from connected peripheral
->> to wake it up. This is particularly used in cases where a HID or Audio
->> device is connected. In such scenarios, the usb controller can enter
->> auto suspend and resume action after getting interrupts from the
->> connected device.
->>
->> Allow autosuspend for and xhci device and allow userspace to decide
->> whether to enable this functionality.
->>
->> a) Register to usb-core notifications in set_role vendor callback to
->> identify when root hubs are being created. Configure them to
->> use_autosuspend.
->>
->> b) Identify usb core notifications where the HCD is being added and
->> enable autosuspend for that particular xhci device.
->>
->> Signed-off-by: Krishna Kurapati <krishna.kurapati@oss.qualcomm.com>
+diff --git a/drivers/hid/hid-input.c b/drivers/hid/hid-input.c
+index 9d80635a91eb..b113f5c49d03 100644
+--- a/drivers/hid/hid-input.c
++++ b/drivers/hid/hid-input.c
+@@ -341,6 +341,7 @@ static enum power_supply_property hidinput_battery_prop=
+s[] =3D {
+ #define HID_BATTERY_QUIRK_FEATURE      (1 << 1) /* ask for feature report =
+*/
+ #define HID_BATTERY_QUIRK_IGNORE       (1 << 2) /* completely ignore the b=
+attery */
+ #define HID_BATTERY_QUIRK_AVOID_QUERY  (1 << 3) /* do not query the batter=
+y */
++#define HID_BATTERY_QUIRK_POLLING_QUERY        (1 << 4) /* polling query t=
+he battery */
 
+ static const struct hid_device_id hid_battery_quirks[] =3D {
+        { HID_BLUETOOTH_DEVICE(USB_VENDOR_ID_APPLE,
+@@ -390,6 +391,16 @@ static const struct hid_device_id hid_battery_quirks[]=
+ =3D {
+         * set HID_BATTERY_QUIRK_IGNORE for all Elan I2C-HID devices.
+         */
+        { HID_I2C_DEVICE(USB_VENDOR_ID_ELAN, HID_ANY_ID), HID_BATTERY_QUIRK=
+_IGNORE },
++       /*
++        * Reading battery capacity and status could fail and end up
++        * with timeout after 5s for some input devices, for example:
++        * 8BitDo SN30 Pro+ gamepad.
++        * set HID_BATTERY_QUIRK_AVOID_QUERY and HID_BATTERY_QUIRK_POLLING_=
+QUERY
++        * for 8BitDo SN30 Pro+ gamepad.
++        * to Avoid UI freezing when reading battery capacity/status
++        */
++       { HID_BLUETOOTH_DEVICE(USB_VENDOR_ID_MICROSOFT, USB_DEVICE_ID_8BITD=
+O_SN30_PRO_PLUS),
++         HID_BATTERY_QUIRK_AVOID_QUERY | HID_BATTERY_QUIRK_POLLING_QUERY }=
+,
+        {}
+ };
 
-[...]
+@@ -497,6 +508,33 @@ static int hidinput_get_battery_property(struct power_=
+supply *psy,
+        return ret;
+ }
 
->> +static int dwc3_xhci_event_notifier(struct notifier_block *nb,
->> +				    unsigned long event, void *ptr)
->> +{
->> +	struct dwc3_qcom  *qcom	= container_of(nb, struct dwc3_qcom, xhci_nb);
->> +	struct dwc3	  *dwc	= &qcom->dwc;
->> +	struct usb_bus	  *ubus	= ptr;
->> +	struct usb_hcd	  *hcd;
->> +
->> +	if (!dwc->xhci)
->> +		goto done;
->> +
->> +	hcd = platform_get_drvdata(dwc->xhci);
->> +	if (!hcd)
->> +		goto done;
->> +
->> +	if (event != USB_BUS_ADD)
->> +		goto done;
->> +
->> +	if (strcmp(dev_name(ubus->sysdev), dev_name(dwc->sysdev)) != 0)
-> 
-> Can this be false? If possible, I'd like to avoid these pointers and
-> strcmp here.
-> 
++/*
++ * hid input device battery polling handler
++ */
++static void hidinput_battery_polling_handler(struct work_struct *work)
++{
++       int value;
++       struct hid_device *dev =3D container_of(work, struct hid_device, ba=
+ttery_delayed_work.work);
++
++       dev->battery_status =3D HID_BATTERY_QUERIED;
++       dev->battery_avoid_query =3D true;
++       value =3D hidinput_query_battery_capacity(dev);
++       if (value < 0) {
++               dev->battery_status =3D HID_BATTERY_UNKNOWN;
++               hid_err(dev, "cannot get battery capacity from device!\n");
++       } else {
++               dev->battery_capacity =3D value;
++               dev->battery_avoid_query =3D false;
++               dev->battery_status =3D HID_BATTERY_REPORTED;
++               hid_err(dev, "get battery capacity from device:%d!\n", valu=
+e);
++       }
++
++       /*keep polling period same to battery_ratelimit_time*/
++       queue_delayed_work(dev->battery_wq,
++                               &dev->battery_delayed_work,
++                               msecs_to_jiffies(30 * 1000));
++}
++
+ static int hidinput_setup_battery(struct hid_device *dev, unsigned report_=
+type,
+                                  struct hid_field *field, bool is_percenta=
+ge)
+ {
+@@ -571,6 +609,21 @@ static int hidinput_setup_battery(struct hid_device *d=
+ev, unsigned report_type,
+        }
 
-Needed this to identify if the dwc3 pointer corresponds to this glue or 
-not. This can be false.
+        power_supply_powers(dev->battery, &dev->dev);
++
++       if (quirks & HID_BATTERY_QUIRK_POLLING_QUERY) {
++               INIT_DELAYED_WORK(&dev->battery_delayed_work, hidinput_batt=
+ery_polling_handler);
++               dev->battery_wq =3D create_singlethread_workqueue(dev_name(=
+&dev->dev));
++               if (dev->battery_wq) {
++                       queue_delayed_work(dev->battery_wq,
++                                       &dev->battery_delayed_work,
++                                       msecs_to_jiffies(0));
++                       hid_warn(dev, "create battery poll work: %s\n", dev=
+_name(&dev->dev));
++               } else {
++                       hid_err(dev, "can't create battery poll work: %ld\n=
+",
++                                       PTR_ERR(dev->battery_wq));
++               }
++       }
++
+        return 0;
 
-BTW, Dmitry suggested to just do "runtime_use_autosuspend" inside probe 
-of xhci-plat.c and remove this logic. Hope that would be fine ?
+ err_free_name:
+@@ -583,11 +636,21 @@ static int hidinput_setup_battery(struct hid_device *=
+dev, unsigned report_type,
 
->> +		goto done;
->> +
->> +	if (event == USB_BUS_ADD) {
-> 
-> This condition is redundant when you have the check a few lines above.
-> 
+ static void hidinput_cleanup_battery(struct hid_device *dev)
+ {
++       unsigned quirks;
+        const struct power_supply_desc *psy_desc;
 
-ACK.
+        if (!dev->battery)
+                return;
 
->> +		/*
->> +		 * Identify instant of creation of primary hcd and
->> +		 * mark xhci as autosuspend capable at this point.
->> +		 */
->> +		pm_runtime_use_autosuspend(&dwc->xhci->dev);
->> +	}
->> +
->> +done:
->> +	return NOTIFY_DONE;
->> +}
->> +
->>   static void dwc3_qcom_set_role_notifier(struct dwc3 *dwc, enum usb_role next_role)
->>   {
->>   	struct dwc3_qcom *qcom = to_dwc3_qcom(dwc);
->> @@ -659,12 +694,22 @@ static void dwc3_qcom_set_role_notifier(struct dwc3 *dwc, enum usb_role next_rol
->>   		return;
->>   	}
->>   
->> -	if (qcom->current_role == USB_ROLE_DEVICE &&
->> -	    next_role != USB_ROLE_DEVICE)
->> +	if (qcom->current_role == USB_ROLE_NONE) {
->> +		if (next_role == USB_ROLE_DEVICE) {
->> +			dwc3_qcom_vbus_override_enable(qcom, true);
->> +		} else if (next_role == USB_ROLE_HOST) {
->> +			qcom->xhci_nb.notifier_call = dwc3_xhci_event_notifier;
->> +			usb_register_notify(&qcom->xhci_nb);
->> +		}
->> +	} else if (qcom->current_role == USB_ROLE_DEVICE &&
->> +		   next_role != USB_ROLE_DEVICE) {
->>   		dwc3_qcom_vbus_override_enable(qcom, false);
->> -	else if ((qcom->current_role != USB_ROLE_DEVICE) &&
->> -		 (next_role == USB_ROLE_DEVICE))
->> -		dwc3_qcom_vbus_override_enable(qcom, true);
->> +	} else if (qcom->current_role == USB_ROLE_HOST) {
->> +		if (next_role == USB_ROLE_NONE)
->> +			usb_unregister_notify(&qcom->xhci_nb);
->> +		else if (next_role == USB_ROLE_DEVICE)
->> +			dwc3_qcom_vbus_override_enable(qcom, true);
-> 
-> We don't unregister the notifier when switching from host to device?
-> 
++       quirks =3D find_battery_quirk(dev);
++       if (quirks & HID_BATTERY_QUIRK_POLLING_QUERY) {
++               cancel_delayed_work_sync(&dev->battery_delayed_work);
++               if (dev->battery_wq) {
++                       destroy_workqueue(dev->battery_wq);
++                       hid_err(dev, "destroy battery poll work\n");
++               }
++       }
++
+        psy_desc =3D dev->battery->desc;
+        power_supply_unregister(dev->battery);
+        kfree(psy_desc->name);
+diff --git a/include/linux/hid.h b/include/linux/hid.h
+index 568a9d8c749b..ff69aee70153 100644
+--- a/include/linux/hid.h
++++ b/include/linux/hid.h
+@@ -652,6 +652,8 @@ struct hid_device {
+        enum hid_battery_status battery_status;
+        bool battery_avoid_query;
+        ktime_t battery_ratelimit_time;
++       struct delayed_work battery_delayed_work;
++       struct workqueue_struct *battery_wq;
+ #endif
 
-ACK. My bad, missed it.
+        unsigned long status;                                           /* =
+see STAT flags above */
+--
+2.17.1
 
-Thanks for the review.
+________________________________
+OPPO
 
-Regards,
-Krishna,
+=C2=B1=C2=BE=C2=B5=C3=A7=C3=97=C3=93=C3=93=C3=8A=C2=BC=C3=BE=C2=BC=C2=B0=C3=
+=86=C3=A4=C2=B8=C2=BD=C2=BC=C3=BE=C2=BA=C2=AC=C3=93=C3=90OPPO=C2=B9=C2=AB=
+=C3=8B=C2=BE=C2=B5=C3=84=C2=B1=C2=A3=C3=83=C3=9C=C3=90=C3=85=C3=8F=C2=A2=C2=
+=A3=C2=AC=C2=BD=C3=B6=C3=8F=C3=9E=C3=93=C3=9A=C3=93=C3=8A=C2=BC=C3=BE=C3=96=
+=C2=B8=C3=83=C3=B7=C2=B5=C3=84=C3=8A=C3=95=C2=BC=C3=BE=C3=88=C3=8B=C2=A3=C2=
+=A8=C2=B0=C3=BC=C2=BA=C2=AC=C2=B8=C3=B6=C3=88=C3=8B=C2=BC=C2=B0=C3=88=C2=BA=
+=C3=97=C3=A9=C2=A3=C2=A9=C3=8A=C2=B9=C3=93=C3=83=C2=A1=C2=A3=C2=BD=C3=BB=C3=
+=96=C2=B9=C3=88=C3=8E=C2=BA=C3=8E=C3=88=C3=8B=C3=94=C3=9A=C3=8E=C2=B4=C2=BE=
+=C2=AD=C3=8A=C3=9A=C3=88=C2=A8=C2=B5=C3=84=C3=87=C3=A9=C2=BF=C3=B6=C3=8F=C3=
+=82=C3=92=C3=94=C3=88=C3=8E=C2=BA=C3=8E=C3=90=C3=8E=C3=8A=C2=BD=C3=8A=C2=B9=
+=C3=93=C3=83=C2=A1=C2=A3=C3=88=C3=A7=C2=B9=C3=BB=C3=84=C3=BA=C2=B4=C3=AD=C3=
+=8A=C3=95=C3=81=C3=8B=C2=B1=C2=BE=C3=93=C3=8A=C2=BC=C3=BE=C2=A3=C2=AC=C3=87=
+=C3=90=C3=8E=C3=B0=C2=B4=C2=AB=C2=B2=C2=A5=C2=A1=C2=A2=C2=B7=C3=96=C2=B7=C2=
+=A2=C2=A1=C2=A2=C2=B8=C2=B4=C3=96=C3=86=C2=A1=C2=A2=C3=93=C2=A1=C3=8B=C2=A2=
+=C2=BB=C3=B2=C3=8A=C2=B9=C3=93=C3=83=C2=B1=C2=BE=C3=93=C3=8A=C2=BC=C3=BE=C3=
+=96=C2=AE=C3=88=C3=8E=C2=BA=C3=8E=C2=B2=C2=BF=C2=B7=C3=96=C2=BB=C3=B2=C3=86=
+=C3=A4=C3=8B=C3=B9=C3=94=C3=98=C3=96=C2=AE=C3=88=C3=8E=C2=BA=C3=8E=C3=84=C3=
+=9A=C3=88=C3=9D=C2=A3=C2=AC=C2=B2=C2=A2=C3=87=C3=AB=C3=81=C2=A2=C2=BC=C2=B4=
+=C3=92=C3=94=C2=B5=C3=A7=C3=97=C3=93=C3=93=C3=8A=C2=BC=C3=BE=C3=8D=C2=A8=C3=
+=96=C2=AA=C2=B7=C2=A2=C2=BC=C3=BE=C3=88=C3=8B=C2=B2=C2=A2=C3=89=C2=BE=C2=B3=
+=C3=BD=C2=B1=C2=BE=C3=93=C3=8A=C2=BC=C3=BE=C2=BC=C2=B0=C3=86=C3=A4=C2=B8=C2=
+=BD=C2=BC=C3=BE=C2=A1=C2=A3
+=C3=8D=C3=B8=C3=82=C3=A7=C3=8D=C2=A8=C3=91=C2=B6=C2=B9=C3=8C=C3=93=C3=90=C3=
+=88=C2=B1=C3=8F=C3=9D=C2=BF=C3=89=C3=84=C3=9C=C2=B5=C2=BC=C3=96=C3=82=C3=93=
+=C3=8A=C2=BC=C3=BE=C2=B1=C2=BB=C2=BD=C3=98=C3=81=C3=B4=C2=A1=C2=A2=C3=90=C3=
+=9E=C2=B8=C3=84=C2=A1=C2=A2=C2=B6=C2=AA=C3=8A=C2=A7=C2=A1=C2=A2=C3=86=C3=86=
+=C2=BB=C2=B5=C2=BB=C3=B2=C2=B0=C3=BC=C2=BA=C2=AC=C2=BC=C3=86=C3=8B=C3=A3=C2=
+=BB=C3=BA=C2=B2=C2=A1=C2=B6=C2=BE=C2=B5=C3=88=C2=B2=C2=BB=C2=B0=C2=B2=C3=88=
+=C2=AB=C3=87=C3=A9=C2=BF=C3=B6=C2=A3=C2=ACOPPO=C2=B6=C3=94=C2=B4=C3=8B=C3=
+=80=C3=A0=C2=B4=C3=AD=C3=8E=C3=B3=C2=BB=C3=B2=C3=92=C3=85=C3=82=C2=A9=C2=B6=
+=C3=B8=C3=92=C3=BD=C3=96=C3=82=C3=96=C2=AE=C3=88=C3=8E=C2=BA=C3=8E=C3=8B=C3=
+=B0=C3=8A=C2=A7=C2=B8=C3=85=C2=B2=C2=BB=C2=B3=C3=90=C2=B5=C2=A3=C3=94=C3=B0=
+=C3=88=C3=8E=C2=B2=C2=A2=C2=B1=C2=A3=C3=81=C3=B4=C3=93=C3=AB=C2=B1=C2=BE=C3=
+=93=C3=8A=C2=BC=C3=BE=C3=8F=C3=A0=C2=B9=C3=98=C3=96=C2=AE=C3=92=C2=BB=C3=87=
+=C3=90=C3=88=C2=A8=C3=80=C3=BB=C2=A1=C2=A3
+=C2=B3=C3=BD=C2=B7=C3=87=C3=83=C3=B7=C3=88=C2=B7=C3=8B=C2=B5=C3=83=C3=B7=C2=
+=A3=C2=AC=C2=B1=C2=BE=C3=93=C3=8A=C2=BC=C3=BE=C2=BC=C2=B0=C3=86=C3=A4=C2=B8=
+=C2=BD=C2=BC=C3=BE=C3=8E=C3=9E=C3=92=C3=A2=C3=97=C3=B7=C3=8E=C2=AA=C3=94=C3=
+=9A=C3=88=C3=8E=C2=BA=C3=8E=C2=B9=C3=BA=C2=BC=C3=92=C2=BB=C3=B2=C2=B5=C3=98=
+=C3=87=C3=B8=C3=96=C2=AE=C3=92=C2=AA=C3=94=C2=BC=C2=A1=C2=A2=C3=95=C3=90=C3=
+=80=C2=BF=C2=BB=C3=B2=C2=B3=C3=90=C3=85=C2=B5=C2=A3=C2=AC=C3=92=C3=A0=C3=8E=
+=C3=9E=C3=92=C3=A2=C3=97=C3=B7=C3=8E=C2=AA=C3=88=C3=8E=C2=BA=C3=8E=C2=BD=C2=
+=BB=C3=92=C3=97=C2=BB=C3=B2=C2=BA=C3=8F=C3=8D=C2=AC=C3=96=C2=AE=C3=95=C3=BD=
+=C3=8A=C2=BD=C3=88=C2=B7=C3=88=C3=8F=C2=A1=C2=A3 =C2=B7=C2=A2=C2=BC=C3=BE=
+=C3=88=C3=8B=C2=A1=C2=A2=C3=86=C3=A4=C3=8B=C3=B9=C3=8A=C3=B4=C2=BB=C3=BA=C2=
+=B9=C2=B9=C2=BB=C3=B2=C3=8B=C3=B9=C3=8A=C3=B4=C2=BB=C3=BA=C2=B9=C2=B9=C3=96=
+=C2=AE=C2=B9=C3=98=C3=81=C2=AA=C2=BB=C3=BA=C2=B9=C2=B9=C2=BB=C3=B2=C3=88=C3=
+=8E=C2=BA=C3=8E=C3=89=C3=8F=C3=8A=C3=B6=C2=BB=C3=BA=C2=B9=C2=B9=C3=96=C2=AE=
+=C2=B9=C3=89=C2=B6=C2=AB=C2=A1=C2=A2=C2=B6=C2=AD=C3=8A=C3=82=C2=A1=C2=A2=C2=
+=B8=C3=9F=C2=BC=C2=B6=C2=B9=C3=9C=C3=80=C3=AD=C3=88=C3=8B=C3=94=C2=B1=C2=A1=
+=C2=A2=C3=94=C2=B1=C2=B9=C2=A4=C2=BB=C3=B2=C3=86=C3=A4=C3=8B=C3=BB=C3=88=C3=
+=8E=C2=BA=C3=8E=C3=88=C3=8B=C2=A3=C2=A8=C3=92=C3=94=C3=8F=C3=82=C2=B3=C3=86=
+=C2=A1=C2=B0=C2=B7=C2=A2=C2=BC=C3=BE=C3=88=C3=8B=C2=A1=C2=B1=C2=BB=C3=B2=C2=
+=A1=C2=B0OPPO=C2=A1=C2=B1=C2=A3=C2=A9=C2=B2=C2=BB=C3=92=C3=B2=C2=B1=C2=BE=
+=C3=93=C3=8A=C2=BC=C3=BE=C3=96=C2=AE=C3=8E=C3=B3=C3=8B=C3=8D=C2=B6=C3=B8=C2=
+=B7=C3=85=C3=86=C3=BA=C3=86=C3=A4=C3=8B=C3=B9=C3=8F=C3=AD=C3=96=C2=AE=C3=88=
+=C3=8E=C2=BA=C3=8E=C3=88=C2=A8=C3=80=C3=BB=C2=A3=C2=AC=C3=92=C3=A0=C2=B2=C2=
+=BB=C2=B6=C3=94=C3=92=C3=B2=C2=B9=C3=8A=C3=92=C3=A2=C2=BB=C3=B2=C2=B9=C3=BD=
+=C3=8A=C2=A7=C3=8A=C2=B9=C3=93=C3=83=C2=B8=C3=83=C2=B5=C3=88=C3=90=C3=85=C3=
+=8F=C2=A2=C2=B6=C3=B8=C3=92=C3=BD=C2=B7=C2=A2=C2=BB=C3=B2=C2=BF=C3=89=C3=84=
+=C3=9C=C3=92=C3=BD=C2=B7=C2=A2=C2=B5=C3=84=C3=8B=C3=B0=C3=8A=C2=A7=C2=B3=C3=
+=90=C2=B5=C2=A3=C3=88=C3=8E=C2=BA=C3=8E=C3=94=C3=B0=C3=88=C3=8E=C2=A1=C2=A3
+=C3=8E=C3=84=C2=BB=C2=AF=C2=B2=C3=AE=C3=92=C3=AC=C3=85=C3=BB=C3=82=C2=B6=C2=
+=A3=C2=BA=C3=92=C3=B2=C3=88=C2=AB=C3=87=C3=B2=C3=8E=C3=84=C2=BB=C2=AF=C2=B2=
+=C3=AE=C3=92=C3=AC=C3=93=C2=B0=C3=8F=C3=AC=C2=A3=C2=AC=C2=B5=C2=A5=C2=B4=C2=
+=BF=C3=92=C3=94YES\OK=C2=BB=C3=B2=C3=86=C3=A4=C3=8B=C3=BB=C2=BC=C3=B2=C2=B5=
+=C2=A5=C2=B4=C3=8A=C2=BB=C3=A3=C2=B5=C3=84=C2=BB=C3=98=C2=B8=C2=B4=C2=B2=C2=
+=A2=C2=B2=C2=BB=C2=B9=C2=B9=C2=B3=C3=89=C2=B7=C2=A2=C2=BC=C3=BE=C3=88=C3=8B=
+=C2=B6=C3=94=C3=88=C3=8E=C2=BA=C3=8E=C2=BD=C2=BB=C3=92=C3=97=C2=BB=C3=B2=C2=
+=BA=C3=8F=C3=8D=C2=AC=C3=96=C2=AE=C3=95=C3=BD=C3=8A=C2=BD=C3=88=C2=B7=C3=88=
+=C3=8F=C2=BB=C3=B2=C2=BD=C3=93=C3=8A=C3=9C=C2=A3=C2=AC=C3=87=C3=AB=C3=93=C3=
+=AB=C2=B7=C2=A2=C2=BC=C3=BE=C3=88=C3=8B=C3=94=C3=99=C2=B4=C3=8E=C3=88=C2=B7=
+=C3=88=C3=8F=C3=92=C3=94=C2=BB=C3=B1=C2=B5=C3=83=C3=83=C3=B7=C3=88=C2=B7=C3=
+=8A=C3=A9=C3=83=C3=A6=C3=92=C3=A2=C2=BC=C3=BB=C2=A1=C2=A3=C2=B7=C2=A2=C2=BC=
+=C3=BE=C3=88=C3=8B=C2=B2=C2=BB=C2=B6=C3=94=C3=88=C3=8E=C2=BA=C3=8E=C3=8A=C3=
+=9C=C3=8E=C3=84=C2=BB=C2=AF=C2=B2=C3=AE=C3=92=C3=AC=C3=93=C2=B0=C3=8F=C3=AC=
+=C2=B6=C3=B8=C2=B5=C2=BC=C3=96=C3=82=C2=B9=C3=8A=C3=92=C3=A2=C2=BB=C3=B2=C2=
+=B4=C3=AD=C3=8E=C3=B3=C3=8A=C2=B9=C3=93=C3=83=C2=B8=C3=83=C2=B5=C3=88=C3=90=
+=C3=85=C3=8F=C2=A2=C3=8B=C3=B9=C3=94=C3=AC=C2=B3=C3=89=C2=B5=C3=84=C3=88=C3=
+=8E=C2=BA=C3=8E=C3=96=C2=B1=C2=BD=C3=93=C2=BB=C3=B2=C2=BC=C3=A4=C2=BD=C3=93=
+=C3=8B=C3=B0=C2=BA=C2=A6=C2=B3=C3=90=C2=B5=C2=A3=C3=94=C3=B0=C3=88=C3=8E=C2=
+=A1=C2=A3
+This e-mail and its attachments contain confidential information from OPPO,=
+ which is intended only for the person or entity whose address is listed ab=
+ove. Any use of the information contained herein in any way (including, but=
+ not limited to, total or partial disclosure, reproduction, or disseminatio=
+n) by persons other than the intended recipient(s) is prohibited. If you ar=
+e not the intended recipient, please do not read, copy, distribute, or use =
+this information. If you have received this transmission in error, please n=
+otify the sender immediately by reply e-mail and then delete this message.
+Electronic communications may contain computer viruses or other defects inh=
+erently, may not be accurately and/or timely transmitted to other systems, =
+or may be intercepted, modified ,delayed, deleted or interfered. OPPO shall=
+ not be liable for any damages that arise or may arise from such matter and=
+ reserves all rights in connection with the email.
+Unless expressly stated, this e-mail and its attachments are provided witho=
+ut any warranty, acceptance or promise of any kind in any country or region=
+, nor constitute a formal confirmation or acceptance of any transaction or =
+contract. The sender, together with its affiliates or any shareholder, dire=
+ctor, officer, employee or any other person of any such institution (herein=
+after referred to as "sender" or "OPPO") does not waive any rights and shal=
+l not be liable for any damages that arise or may arise from the intentiona=
+l or negligent use of such information.
+Cultural Differences Disclosure: Due to global cultural differences, any re=
+ply with only YES\OK or other simple words does not constitute any confirma=
+tion or acceptance of any transaction or contract, please confirm with the =
+sender again to ensure clear opinion in written form. The sender shall not =
+be responsible for any direct or indirect damages resulting from the intent=
+ional or misuse of such information.
+________________________________
+OPPO
+
+=E6=9C=AC=E7=94=B5=E5=AD=90=E9=82=AE=E4=BB=B6=E5=8F=8A=E5=85=B6=E9=99=84=E4=
+=BB=B6=E5=90=AB=E6=9C=89OPPO=E5=85=AC=E5=8F=B8=E7=9A=84=E4=BF=9D=E5=AF=86=
+=E4=BF=A1=E6=81=AF=EF=BC=8C=E4=BB=85=E9=99=90=E4=BA=8E=E9=82=AE=E4=BB=B6=E6=
+=8C=87=E6=98=8E=E7=9A=84=E6=94=B6=E4=BB=B6=E4=BA=BA=EF=BC=88=E5=8C=85=E5=90=
+=AB=E4=B8=AA=E4=BA=BA=E5=8F=8A=E7=BE=A4=E7=BB=84=EF=BC=89=E4=BD=BF=E7=94=A8=
+=E3=80=82=E7=A6=81=E6=AD=A2=E4=BB=BB=E4=BD=95=E4=BA=BA=E5=9C=A8=E6=9C=AA=E7=
+=BB=8F=E6=8E=88=E6=9D=83=E7=9A=84=E6=83=85=E5=86=B5=E4=B8=8B=E4=BB=A5=E4=BB=
+=BB=E4=BD=95=E5=BD=A2=E5=BC=8F=E4=BD=BF=E7=94=A8=E3=80=82=E5=A6=82=E6=9E=9C=
+=E6=82=A8=E9=94=99=E6=94=B6=E4=BA=86=E6=9C=AC=E9=82=AE=E4=BB=B6=EF=BC=8C=E5=
+=88=87=E5=8B=BF=E4=BC=A0=E6=92=AD=E3=80=81=E5=88=86=E5=8F=91=E3=80=81=E5=A4=
+=8D=E5=88=B6=E3=80=81=E5=8D=B0=E5=88=B7=E6=88=96=E4=BD=BF=E7=94=A8=E6=9C=AC=
+=E9=82=AE=E4=BB=B6=E4=B9=8B=E4=BB=BB=E4=BD=95=E9=83=A8=E5=88=86=E6=88=96=E5=
+=85=B6=E6=89=80=E8=BD=BD=E4=B9=8B=E4=BB=BB=E4=BD=95=E5=86=85=E5=AE=B9=EF=BC=
+=8C=E5=B9=B6=E8=AF=B7=E7=AB=8B=E5=8D=B3=E4=BB=A5=E7=94=B5=E5=AD=90=E9=82=AE=
+=E4=BB=B6=E9=80=9A=E7=9F=A5=E5=8F=91=E4=BB=B6=E4=BA=BA=E5=B9=B6=E5=88=A0=E9=
+=99=A4=E6=9C=AC=E9=82=AE=E4=BB=B6=E5=8F=8A=E5=85=B6=E9=99=84=E4=BB=B6=E3=80=
+=82
+=E7=BD=91=E7=BB=9C=E9=80=9A=E8=AE=AF=E5=9B=BA=E6=9C=89=E7=BC=BA=E9=99=B7=E5=
+=8F=AF=E8=83=BD=E5=AF=BC=E8=87=B4=E9=82=AE=E4=BB=B6=E8=A2=AB=E6=88=AA=E7=95=
+=99=E3=80=81=E4=BF=AE=E6=94=B9=E3=80=81=E4=B8=A2=E5=A4=B1=E3=80=81=E7=A0=B4=
+=E5=9D=8F=E6=88=96=E5=8C=85=E5=90=AB=E8=AE=A1=E7=AE=97=E6=9C=BA=E7=97=85=E6=
+=AF=92=E7=AD=89=E4=B8=8D=E5=AE=89=E5=85=A8=E6=83=85=E5=86=B5=EF=BC=8COPPO=
+=E5=AF=B9=E6=AD=A4=E7=B1=BB=E9=94=99=E8=AF=AF=E6=88=96=E9=81=97=E6=BC=8F=E8=
+=80=8C=E5=BC=95=E8=87=B4=E4=B9=8B=E4=BB=BB=E4=BD=95=E6=8D=9F=E5=A4=B1=E6=A6=
+=82=E4=B8=8D=E6=89=BF=E6=8B=85=E8=B4=A3=E4=BB=BB=E5=B9=B6=E4=BF=9D=E7=95=99=
+=E4=B8=8E=E6=9C=AC=E9=82=AE=E4=BB=B6=E7=9B=B8=E5=85=B3=E4=B9=8B=E4=B8=80=E5=
+=88=87=E6=9D=83=E5=88=A9=E3=80=82
+=E9=99=A4=E9=9D=9E=E6=98=8E=E7=A1=AE=E8=AF=B4=E6=98=8E=EF=BC=8C=E6=9C=AC=E9=
+=82=AE=E4=BB=B6=E5=8F=8A=E5=85=B6=E9=99=84=E4=BB=B6=E6=97=A0=E6=84=8F=E4=BD=
+=9C=E4=B8=BA=E5=9C=A8=E4=BB=BB=E4=BD=95=E5=9B=BD=E5=AE=B6=E6=88=96=E5=9C=B0=
+=E5=8C=BA=E4=B9=8B=E8=A6=81=E7=BA=A6=E3=80=81=E6=8B=9B=E6=8F=BD=E6=88=96=E6=
+=89=BF=E8=AF=BA=EF=BC=8C=E4=BA=A6=E6=97=A0=E6=84=8F=E4=BD=9C=E4=B8=BA=E4=BB=
+=BB=E4=BD=95=E4=BA=A4=E6=98=93=E6=88=96=E5=90=88=E5=90=8C=E4=B9=8B=E6=AD=A3=
+=E5=BC=8F=E7=A1=AE=E8=AE=A4=E3=80=82 =E5=8F=91=E4=BB=B6=E4=BA=BA=E3=80=81=
+=E5=85=B6=E6=89=80=E5=B1=9E=E6=9C=BA=E6=9E=84=E6=88=96=E6=89=80=E5=B1=9E=E6=
+=9C=BA=E6=9E=84=E4=B9=8B=E5=85=B3=E8=81=94=E6=9C=BA=E6=9E=84=E6=88=96=E4=BB=
+=BB=E4=BD=95=E4=B8=8A=E8=BF=B0=E6=9C=BA=E6=9E=84=E4=B9=8B=E8=82=A1=E4=B8=9C=
+=E3=80=81=E8=91=A3=E4=BA=8B=E3=80=81=E9=AB=98=E7=BA=A7=E7=AE=A1=E7=90=86=E4=
+=BA=BA=E5=91=98=E3=80=81=E5=91=98=E5=B7=A5=E6=88=96=E5=85=B6=E4=BB=96=E4=BB=
+=BB=E4=BD=95=E4=BA=BA=EF=BC=88=E4=BB=A5=E4=B8=8B=E7=A7=B0=E2=80=9C=E5=8F=91=
+=E4=BB=B6=E4=BA=BA=E2=80=9D=E6=88=96=E2=80=9COPPO=E2=80=9D=EF=BC=89=E4=B8=
+=8D=E5=9B=A0=E6=9C=AC=E9=82=AE=E4=BB=B6=E4=B9=8B=E8=AF=AF=E9=80=81=E8=80=8C=
+=E6=94=BE=E5=BC=83=E5=85=B6=E6=89=80=E4=BA=AB=E4=B9=8B=E4=BB=BB=E4=BD=95=E6=
+=9D=83=E5=88=A9=EF=BC=8C=E4=BA=A6=E4=B8=8D=E5=AF=B9=E5=9B=A0=E6=95=85=E6=84=
+=8F=E6=88=96=E8=BF=87=E5=A4=B1=E4=BD=BF=E7=94=A8=E8=AF=A5=E7=AD=89=E4=BF=A1=
+=E6=81=AF=E8=80=8C=E5=BC=95=E5=8F=91=E6=88=96=E5=8F=AF=E8=83=BD=E5=BC=95=E5=
+=8F=91=E7=9A=84=E6=8D=9F=E5=A4=B1=E6=89=BF=E6=8B=85=E4=BB=BB=E4=BD=95=E8=B4=
+=A3=E4=BB=BB=E3=80=82
+=E6=96=87=E5=8C=96=E5=B7=AE=E5=BC=82=E6=8A=AB=E9=9C=B2=EF=BC=9A=E5=9B=A0=E5=
+=85=A8=E7=90=83=E6=96=87=E5=8C=96=E5=B7=AE=E5=BC=82=E5=BD=B1=E5=93=8D=EF=BC=
+=8C=E5=8D=95=E7=BA=AF=E4=BB=A5YES\OK=E6=88=96=E5=85=B6=E4=BB=96=E7=AE=80=E5=
+=8D=95=E8=AF=8D=E6=B1=87=E7=9A=84=E5=9B=9E=E5=A4=8D=E5=B9=B6=E4=B8=8D=E6=9E=
+=84=E6=88=90=E5=8F=91=E4=BB=B6=E4=BA=BA=E5=AF=B9=E4=BB=BB=E4=BD=95=E4=BA=A4=
+=E6=98=93=E6=88=96=E5=90=88=E5=90=8C=E4=B9=8B=E6=AD=A3=E5=BC=8F=E7=A1=AE=E8=
+=AE=A4=E6=88=96=E6=8E=A5=E5=8F=97=EF=BC=8C=E8=AF=B7=E4=B8=8E=E5=8F=91=E4=BB=
+=B6=E4=BA=BA=E5=86=8D=E6=AC=A1=E7=A1=AE=E8=AE=A4=E4=BB=A5=E8=8E=B7=E5=BE=97=
+=E6=98=8E=E7=A1=AE=E4=B9=A6=E9=9D=A2=E6=84=8F=E8=A7=81=E3=80=82=E5=8F=91=E4=
+=BB=B6=E4=BA=BA=E4=B8=8D=E5=AF=B9=E4=BB=BB=E4=BD=95=E5=8F=97=E6=96=87=E5=8C=
+=96=E5=B7=AE=E5=BC=82=E5=BD=B1=E5=93=8D=E8=80=8C=E5=AF=BC=E8=87=B4=E6=95=85=
+=E6=84=8F=E6=88=96=E9=94=99=E8=AF=AF=E4=BD=BF=E7=94=A8=E8=AF=A5=E7=AD=89=E4=
+=BF=A1=E6=81=AF=E6=89=80=E9=80=A0=E6=88=90=E7=9A=84=E4=BB=BB=E4=BD=95=E7=9B=
+=B4=E6=8E=A5=E6=88=96=E9=97=B4=E6=8E=A5=E6=8D=9F=E5=AE=B3=E6=89=BF=E6=8B=85=
+=E8=B4=A3=E4=BB=BB=E3=80=82
+This e-mail and its attachments contain confidential information from OPPO,=
+ which is intended only for the person or entity whose address is listed ab=
+ove. Any use of the information contained herein in any way (including, but=
+ not limited to, total or partial disclosure, reproduction, or disseminatio=
+n) by persons other than the intended recipient(s) is prohibited. If you ar=
+e not the intended recipient, please do not read, copy, distribute, or use =
+this information. If you have received this transmission in error, please n=
+otify the sender immediately by reply e-mail and then delete this message.
+Electronic communications may contain computer viruses or other defects inh=
+erently, may not be accurately and/or timely transmitted to other systems, =
+or may be intercepted, modified ,delayed, deleted or interfered. OPPO shall=
+ not be liable for any damages that arise or may arise from such matter and=
+ reserves all rights in connection with the email.
+Unless expressly stated, this e-mail and its attachments are provided witho=
+ut any warranty, acceptance or promise of any kind in any country or region=
+, nor constitute a formal confirmation or acceptance of any transaction or =
+contract. The sender, together with its affiliates or any shareholder, dire=
+ctor, officer, employee or any other person of any such institution (herein=
+after referred to as "sender" or "OPPO") does not waive any rights and shal=
+l not be liable for any damages that arise or may arise from the intentiona=
+l or negligent use of such information.
+Cultural Differences Disclosure: Due to global cultural differences, any re=
+ply with only YES\OK or other simple words does not constitute any confirma=
+tion or acceptance of any transaction or contract, please confirm with the =
+sender again to ensure clear opinion in written form. The sender shall not =
+be responsible for any direct or indirect damages resulting from the intent=
+ional or misuse of such information.
 
