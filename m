@@ -1,129 +1,132 @@
-Return-Path: <linux-kernel+bounces-699604-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-699623-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id E4504AE5CF0
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Jun 2025 08:38:23 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8B8C2AE5D2D
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Jun 2025 08:52:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C32341B647CF
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Jun 2025 06:38:39 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2050F17AB49
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Jun 2025 06:52:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9023524678F;
-	Tue, 24 Jun 2025 06:38:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3809A248895;
+	Tue, 24 Jun 2025 06:52:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="kFdQFOoC"
-Received: from mail-wm1-f42.google.com (mail-wm1-f42.google.com [209.85.128.42])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b="DgFB30b1"
+Received: from out203-205-221-205.mail.qq.com (out203-205-221-205.mail.qq.com [203.205.221.205])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 43FC223E359
-	for <linux-kernel@vger.kernel.org>; Tue, 24 Jun 2025 06:38:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EC2CC24678F;
+	Tue, 24 Jun 2025 06:52:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.205.221.205
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750747091; cv=none; b=gYlja5/IkG13AY3TjQr/90+PyE8PPV6KxYDJ8Zu1G5y5mfA/O0SyhtnZIQdhEZ233PJoddKr2xBpyWo9WfJ9/W21BLa8dqUQb9hZYstr+2bAjudy913SK/cMY5Z9CEH4QIit2/SKghS1EE9nIHvWkxGBP+6z0jB57CZOXlwyypE=
+	t=1750747957; cv=none; b=FLR9a63itHdQKngteciq3dI6EBCagEMAfoQLc2wtf/aRaFD2lHiKuV9qwojvCQnBPKHCXUNsa58auSle3MTnx5kfF64y1JGdNoFKgQmQGRjF4l2+N6gTNK/r4i8dQhvyAppqvg9qhGWd0O+kuPfxNcrel7HA3gml9XvG7LpgHbM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750747091; c=relaxed/simple;
-	bh=UqT1UTBAsYvRB01kXkmbX0p3Nu6z/Y55LPEAo9YxJwY=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=hMT/x1ATP/A3thuz8GgMcndyy6R57Koy5EO8Qg0Frc87/Qo0fi3aCl0BeUBDqf9mNKz03njTPk3q45uZdqpe2ZezKFd0sr1mgLpmJNDhGm+VVHbXXOjw6Cp0wzLkm/YKi2qxcJDg2a3Y5H7TTA+9Zb7n2+OLHROubFxHuWR4aLA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=kFdQFOoC; arc=none smtp.client-ip=209.85.128.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wm1-f42.google.com with SMTP id 5b1f17b1804b1-453749aef9eso151345e9.3
-        for <linux-kernel@vger.kernel.org>; Mon, 23 Jun 2025 23:38:09 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1750747087; x=1751351887; darn=vger.kernel.org;
-        h=mime-version:user-agent:content-transfer-encoding:references
-         :in-reply-to:date:cc:to:from:subject:message-id:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=UqT1UTBAsYvRB01kXkmbX0p3Nu6z/Y55LPEAo9YxJwY=;
-        b=kFdQFOoCEmr6IoMLPSVaYaMOGHHJh2fTIulYqQeMDujwwMIMtgcfzkDkKpKv6JWGAj
-         guO0fasKgsx4sWjD+Q0ip96pr+dz8AnjQQUa2CzVixvvfwxvX6/E48RedAgFZi+DZgDu
-         CXRc5Z8HsXPXifObXJZqrxMXZSoGlFYR2eO6VxW4tZoAp8tKZl4RfuTSHrADqn6Dt3vq
-         wDVecDmWeXAKwSeAmp13CGnlOP/LBT5/hMx2PX8/snA4wIUWw79vHGD4cQNV86edQeEZ
-         Z35GrDayuTX5rliE5f3IW7KQPySGWg5I7n6Nd8Y9moMrY8OtoZjJU8JXLOxinKJovBBW
-         WbxA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1750747087; x=1751351887;
-        h=mime-version:user-agent:content-transfer-encoding:references
-         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=UqT1UTBAsYvRB01kXkmbX0p3Nu6z/Y55LPEAo9YxJwY=;
-        b=gSvgj0EDZnc1+C39pQI8gG4bsfCgF+gnKsEBqkFE5WLWZAVnUpU7whVt/d94wT5RB5
-         bSRKDo6Q7wLqBUoL//Paoh7K/lTgpJDCn64V6hOVmWfJhUP9Tj6AjBRSw1YX8fEFfUG6
-         Xi4dhlY74sJgtVphx1tLRe1X4HpZ7kOe5Q6ubZE6bWDAi3qBMu7NWgr7lII7EM263pO9
-         aAJSZgCQjWHsBXbRd26ozS2iCcoguS/KD1BKCZ1E+SvNLr8Djh5q2WIasIvrRB/mVNvn
-         B9QaUBohcbwfQS5ReKne3ZFceAui5Bec7Li9ooWTPlguKiloB7N9Ovyul6gVfMEXMApA
-         zdsw==
-X-Forwarded-Encrypted: i=1; AJvYcCWnSuUMFh9ZlRKFyzSweLXYL9syyfugBLVp32jtS0ITXaxDQblVbZGGwtK4tmjldHdZrdf/F21ILV18CTg=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyNjuTWVZo1FybY61gZn99nm8CmB37KedVf7R4BxpiifIApmWRq
-	0r1z+vVaNFUJDwyhZk0Q7GSTWeHXuVU9p1T0Trsmn4Qhlpiij/mXTZsgYsS4mIq+N38=
-X-Gm-Gg: ASbGncsqBhxCAT0X7qiZc3ghKIhUnlppphU3ZmtvnS12A6eDUQVWN1/PKRTqJAwf4Pj
-	bhGxsHJSGb1HWRYrUKJsnSA9/foToZr75EGvymantNosKgyDU9r6QaOQt8Hu9orSIumdnuC4Lwt
-	IMolr/54CY1NUoa8v4rFjd1gPctHUzhdxBahAMjFxgT1xHscMvvBwB0m490wJivanzn7Be3+1Mv
-	pvu7Uf0okiiTnNEQjWljMM+DzR3ZlY+6BqIE8/Orbf5wdEJU0YsQaPnsVowd3VofDPCojZVxhuX
-	aHMWmbYAV2p9cM/h7SVbRz21BIyfzfREqgPVxjaL5YmwxCiskLc4byDw1SHMB41EDr2YqwoxWf3
-	lTw==
-X-Google-Smtp-Source: AGHT+IGOPbecHGYgB2YysSR5anppdA2xKx7TGTKt6AUrQoPCRTvADAlN3zQqydUylWoqDxWazLJxPA==
-X-Received: by 2002:a05:600c:1d02:b0:445:49e:796b with SMTP id 5b1f17b1804b1-453658bac72mr136170125e9.17.1750747087505;
-        Mon, 23 Jun 2025 23:38:07 -0700 (PDT)
-Received: from [10.1.1.109] ([80.111.64.44])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-453647f29bdsm131378405e9.18.2025.06.23.23.38.06
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 23 Jun 2025 23:38:06 -0700 (PDT)
-Message-ID: <9237a946ada82934ef4c0b5a84162a400fb5a88b.camel@linaro.org>
-Subject: Re: [PATCH v4 00/32] Samsung S2MPG10 PMIC MFD-based drivers
-From: =?ISO-8859-1?Q?Andr=E9?= Draszik <andre.draszik@linaro.org>
-To: Alexandre Belloni <alexandre.belloni@bootlin.com>
-Cc: Krzysztof Kozlowski <krzk@kernel.org>, Rob Herring <robh@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, Sylwester Nawrocki
- <s.nawrocki@samsung.com>, Chanwoo Choi	 <cw00.choi@samsung.com>, Alim
- Akhtar <alim.akhtar@samsung.com>, Michael Turquette
- <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, Russell King	
- <linux@armlinux.org.uk>, Catalin Marinas <catalin.marinas@arm.com>, Will
- Deacon	 <will@kernel.org>, Peter Griffin <peter.griffin@linaro.org>, Tudor
- Ambarus	 <tudor.ambarus@linaro.org>, Will McVicker
- <willmcvicker@google.com>, 	kernel-team@android.com,
- linux-kernel@vger.kernel.org, 	linux-samsung-soc@vger.kernel.org,
- devicetree@vger.kernel.org, 	linux-clk@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, 	linux-rtc@vger.kernel.org, Lee Jones
- <lee@kernel.org>
-Date: Tue, 24 Jun 2025 07:38:05 +0100
-In-Reply-To: <202506232219552539103b@mail.local>
-References: <20250409-s2mpg10-v4-0-d66d5f39b6bf@linaro.org>
-	 <20250415160212.GA372032@google.com> <2025041715425693974c6d@mail.local>
-	 <24314441936d97a1892474eacdbbd690612de265.camel@linaro.org>
-	 <905e6cab9932c814a578826329f5e3f944418ef9.camel@linaro.org>
-	 <b193e94f042cf6134d2bed92152c23ee5bba6a26.camel@linaro.org>
-	 <202506232219552539103b@mail.local>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.56.1-1 
+	s=arc-20240116; t=1750747957; c=relaxed/simple;
+	bh=IwtqpUUs2GAjRDgMrffiPNG04xDpRsc/RMX91PflDTM=;
+	h=Message-ID:From:To:Cc:Subject:Date:In-Reply-To:References:
+	 MIME-Version; b=Q4sg7k5ZQDWdAVDfAPLNPo8zGbcy9Ji5GyTacicOSWvrtV9PrqsD0awPP+thi0S8zW995DSmamFRkRtMWLVW0ASuabQy4TUqfNPl2JL/Whwl4ajVfT6l/C3zmxvuEk3cJVLhn7vFOy1IBu5OrEVCjKvDq7rguxrYTbRKcJ2m818=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com; spf=pass smtp.mailfrom=qq.com; dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b=DgFB30b1; arc=none smtp.client-ip=203.205.221.205
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=qq.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qq.com; s=s201512;
+	t=1750747946; bh=xAP4VDtXDB8aJ4fy3jRl90NNCRDR6SwmqvbAMYEVAac=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References;
+	b=DgFB30b1tyg9i0e7RxDqOKyxYFi5bXCbr3hGnCBqO3HX+VWvkxaw4bsQyM9n9YK/r
+	 2V0kLAJu+Mo4G6lpdm1D/x6upd3twnpdZL8k+9h1B8D5jqhubuG9o28gKT+7lAtpC+
+	 IIVlm1Zxsj+CB2LLVXTXQ9dSs90Ajz59TXHXGcv4=
+Received: from pek-lxu-l1.corp.ad.wrs.com ([111.198.228.63])
+	by newxmesmtplogicsvrsza29-0.qq.com (NewEsmtp) with SMTP
+	id 9AF8D82A; Tue, 24 Jun 2025 14:38:47 +0800
+X-QQ-mid: xmsmtpt1750747127tdqm5337r
+Message-ID: <tencent_4EF87A626D702F816CD0951CE956EC32CD0A@qq.com>
+X-QQ-XMAILINFO: MvM61XSVXCtD9I5tNbXt4gI5iHx25tdK7d4vJW0dmMBXy9BBF8cQO/Ggt5F/aT
+	 E2X3U9k1qBC31Oru55M61vLeKp35tvHGuCtMnTEAcjX+0HYADQuY2D11KpP6ER8eztrMHrDgf0ca
+	 pMN8o7beJpRWMm7UJ5ZbUFW2IFRuKRueNd0GGILtNcpFoRnatUuBW6ophhzoD4b2Y4v5d6/v9oA2
+	 YLx6YT7jaokCsA4q25XL+rnQXpf7eDkoAnhUMtzVv0r33kUmMcWGVtl+SQRLaeTRErCEA9IjUJT2
+	 5dM8247QoXqzYN54UrdyGuzpc309K/luJuZFd0+Ku4VYfwKKwMJVVdlbMVBezeXHx+7M/SHiowVx
+	 jFt9oluIEyQFL3R6xUsMg5OXmZrBOOOIVJw1BJfiOegudrAx6q0l/oan/o1dSh66ghD0VA6oPTEx
+	 WDT7i9K0mpEDc+m2tuTAhP4CsRXSH5QlJ+3yPXbJhHgl1H8KaF8t3LsWRdf6itlNxRSxbT5SyCJZ
+	 DQ8908/55fTeltqCJjmeRy8e/CwZlWpyRo81mbWOrEr83DhuxiQzmttl7UUzQ6SUcNPpUw/2XVVm
+	 f5Vu3fm91O+kcJSHr3+E8fEZ4wijurccJ7QCKzs6iYLMsi1R8ShoUMV8ZDgF0BlfxyN2Qo6BKGAh
+	 Jy3Zu+a8h5AKGrOBN+3f7Q3ulU9S46ocC4vvC0fv2IWV6bpZXZy72GrJXfNMUq+mqUqVVmPi4fAs
+	 K6lSHLT/XJ892Ye28vxTSo+skVlLfSIuebULPsLXHNktX+FcU3jLBxdCUBfFr+0oSQzX7Fm1y8QU
+	 jyzUTuJnKZKgC2lyJB9iThsX/qP+KwA2hg5qdlQ+iBciDzrNbTFKacnDxPy+Zm62iBUHjFXBf3n7
+	 xJNm6K97vBpPSWoWEZ2nHiO+Et9SctZkDYa9C/Cfzfscx4LaF4DPzXJzkq0HEcCZ44Vcc75pERHt
+	 jP7ur8AimqFzQo3ZZZHSZmSGH85ru6
+X-QQ-XMRINFO: MPJ6Tf5t3I/ycC2BItcBVIA=
+From: Edward Adam Davis <eadavis@qq.com>
+To: syzbot+daba72c4af9915e9c894@syzkaller.appspotmail.com
+Cc: linux-kernel@vger.kernel.org,
+	linux-trace-kernel@vger.kernel.org,
+	mathieu.desnoyers@efficios.com,
+	mhiramat@kernel.org,
+	rostedt@goodmis.org,
+	syzkaller-bugs@googlegroups.com
+Subject: [PATCH] tracing: Fix filter logic error
+Date: Tue, 24 Jun 2025 14:38:46 +0800
+X-OQ-MSGID: <20250624063845.4097939-2-eadavis@qq.com>
+X-Mailer: git-send-email 2.49.0
+In-Reply-To: <6859ea24.a00a0220.2e5631.0044.GAE@google.com>
+References: <6859ea24.a00a0220.2e5631.0044.GAE@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 
-On Tue, 2025-06-24 at 00:19 +0200, Alexandre Belloni wrote:
-> On 16/06/2025 12:33:21+0100, Andr=C3=A9 Draszik wrote:
-> > Hi Alexandre,
-> >=20
-> > On Mon, 2025-05-19 at 15:41 +0100, Andr=C3=A9 Draszik wrote:
-> > >=20
-> > > Lee has kindly merged all the core driver patches.
-> > >=20
-> > > Any chance the rtc changes will make it into the same kernel release?
-> >=20
-> > Friendly ping.
->=20
-> I've applied the patches, I'll try to send them to Linus but there are no
-> guarantee they will make it for this release.
+If the processing of the tr->events loop fails, the filter that has been
+added to filter_head will be released twice in free_filter_list(&head->rcu)
+and __free_filter(filter).
 
-Thank you Alexandre!
+After adding the filter of tr->events, add the filter to the filter_head
+process to avoid triggering uaf.
 
-A.
+Fixes: a9d0aab5eb33 ("tracing: Fix regression of filter waiting a long time on RCU synchronization")
+Reported-by: syzbot+daba72c4af9915e9c894@syzkaller.appspotmail.com
+Closes: https://syzkaller.appspot.com/bug?extid=daba72c4af9915e9c894
+Tested-by: syzbot+daba72c4af9915e9c894@syzkaller.appspotmail.com
+Signed-off-by: Edward Adam Davis <eadavis@qq.com>
+---
+ kernel/trace/trace_events_filter.c | 14 +++++++-------
+ 1 file changed, 7 insertions(+), 7 deletions(-)
+
+diff --git a/kernel/trace/trace_events_filter.c b/kernel/trace/trace_events_filter.c
+index 08141f105c95..3885aadc434d 100644
+--- a/kernel/trace/trace_events_filter.c
++++ b/kernel/trace/trace_events_filter.c
+@@ -1436,13 +1436,6 @@ static void filter_free_subsystem_filters(struct trace_subsystem_dir *dir,
+ 
+ 	INIT_LIST_HEAD(&head->list);
+ 
+-	item = kmalloc(sizeof(*item), GFP_KERNEL);
+-	if (!item)
+-		goto free_now;
+-
+-	item->filter = filter;
+-	list_add_tail(&item->list, &head->list);
+-
+ 	list_for_each_entry(file, &tr->events, list) {
+ 		if (file->system != dir)
+ 			continue;
+@@ -1454,6 +1447,13 @@ static void filter_free_subsystem_filters(struct trace_subsystem_dir *dir,
+ 		event_clear_filter(file);
+ 	}
+ 
++	item = kmalloc(sizeof(*item), GFP_KERNEL);
++	if (!item)
++		goto free_now;
++
++	item->filter = filter;
++	list_add_tail(&item->list, &head->list);
++
+ 	delay_free_filter(head);
+ 	return;
+  free_now:
+-- 
+2.43.0
 
 
