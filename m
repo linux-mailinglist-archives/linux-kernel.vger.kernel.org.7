@@ -1,363 +1,226 @@
-Return-Path: <linux-kernel+bounces-700652-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-700594-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7E4DBAE6B14
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Jun 2025 17:31:55 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2EB70AE6A9D
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Jun 2025 17:21:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 006AF17F90B
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Jun 2025 15:26:40 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id DCA951C281B2
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Jun 2025 15:16:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 58AAE29E0FC;
-	Tue, 24 Jun 2025 15:09:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D7B902ED145;
+	Tue, 24 Jun 2025 15:08:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b="n8QA8Bss"
-Received: from esa.microchip.iphmx.com (esa.microchip.iphmx.com [68.232.154.123])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="cP2gGrpE"
+Received: from mail-ed1-f43.google.com (mail-ed1-f43.google.com [209.85.208.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BE971307AFD;
-	Tue, 24 Jun 2025 15:09:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=68.232.154.123
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2CBBF2EBDCF;
+	Tue, 24 Jun 2025 15:08:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750777773; cv=none; b=Yk7vzcXo2S0QjPQwXeFQVo8uu+Omtc1t7fP/6BhuswexDdhM4ti2gWzIwyisW0YKAy1IDawa/nyZWNcJJtlQ/MKmAsW8MdPNWMsGtH1JYQbsw7F057LdTCRxaUMs0BTdVShShFYfZIPU92qgCPzGW/bO+hgBFwUEm8p1TF2R92w=
+	t=1750777719; cv=none; b=P13YolriFdae853WsHd4jNFtaxPkEb/EqYnCoslZRBsMdC+uis7+RRi+W+gvK8Vz0wDKTA3hY6ew6KPruOTJWprORXaWyvNmFxboe0aGGI0/DynmSTjRTiMnAZmac21ETz1oVqQQS02MDruThrLdmbKHIuSXPvJLcFG2aI7RiqY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750777773; c=relaxed/simple;
-	bh=L7YqKuTIwCYHtrw/RUpnVI94eOPAPR+812suCuUne80=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=copj252Li4tGlqMbyRjGuOEl9cJJkj51kyZgd43y6/4txW1y+8LgAlkZdoUxaUrkhpboE/WoTwrk/uBtJobvmsJJYhmxherncZyrka77h3iDfardG75ocYGcBbru569r6KUsFb/KglwE8Rx9BNGZBn6JraEcCYSY2Lbj6IpkWFc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com; spf=pass smtp.mailfrom=microchip.com; dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b=n8QA8Bss; arc=none smtp.client-ip=68.232.154.123
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=microchip.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=microchip.com; i=@microchip.com; q=dns/txt; s=mchp;
-  t=1750777769; x=1782313769;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=L7YqKuTIwCYHtrw/RUpnVI94eOPAPR+812suCuUne80=;
-  b=n8QA8BssdDmqOm5jSg3RhOAfuei0/P1QRzKczNyQvSeu0yvBBfPBAIlS
-   4buJai5ZDPmtXxvfNpA7En+5xmLc7KMfXnJb6jo+Hv3PAAhNqPQW0Ciqs
-   1z29AqTIwODuFfJNu5PstujXc00c9jh9HUaSvmdHX2vg2GoVY+50ANdGr
-   WVucxqKqAbdC2yCH4uJNwQIfx7Z9cGEM8msFaYR4iXvbJYOev7MZuDAHr
-   TkEisFs/cg05rhQfjrosN9HmTkv/ZDU0o2Jc9btxtsS0YyalGSaq/ZScn
-   5dqvdLWEeBivBoKBxL0H4JTR8c8MJrnMQscHrIwq+Uptvhx9vReGNlhV/
-   g==;
-X-CSE-ConnectionGUID: ticneE1VRpCt6c5L3blMOw==
-X-CSE-MsgGUID: USWrQUkhRoyvEBRirVuBUQ==
-X-IronPort-AV: E=Sophos;i="6.16,262,1744095600"; 
-   d="scan'208";a="210641603"
-X-Amp-Result: SKIPPED(no attachment in message)
-Received: from unknown (HELO email.microchip.com) ([170.129.1.10])
-  by esa6.microchip.iphmx.com with ESMTP/TLS/ECDHE-RSA-AES128-GCM-SHA256; 24 Jun 2025 08:09:22 -0700
-Received: from chn-vm-ex01.mchp-main.com (10.10.85.143) by
- chn-vm-ex03.mchp-main.com (10.10.85.151) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.44; Tue, 24 Jun 2025 08:08:41 -0700
-Received: from ryan-Precision-3630-Tower.microchip.com (10.10.85.11) by
- chn-vm-ex01.mchp-main.com (10.10.85.143) with Microsoft SMTP Server id
- 15.1.2507.44 via Frontend Transport; Tue, 24 Jun 2025 08:08:40 -0700
-From: <Ryan.Wanner@microchip.com>
-To: <mturquette@baylibre.com>, <sboyd@kernel.org>,
-	<nicolas.ferre@microchip.com>, <alexandre.belloni@bootlin.com>,
-	<claudiu.beznea@tuxon.dev>
-CC: <robh@kernel.org>, <linux-clk@vger.kernel.org>,
-	<linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
-	<varshini.rajendran@microchip.com>, Ryan Wanner <Ryan.Wanner@microchip.com>
-Subject: [PATCH v2 32/32] clk: at91: sama7d65: switch to clk_parent_data
-Date: Tue, 24 Jun 2025 08:08:29 -0700
-Message-ID: <79fe811a4282bafeb9e30fbf42ae5cf584788eac.1750182562.git.Ryan.Wanner@microchip.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <cover.1750182562.git.Ryan.Wanner@microchip.com>
-References: <cover.1750182562.git.Ryan.Wanner@microchip.com>
+	s=arc-20240116; t=1750777719; c=relaxed/simple;
+	bh=NuFaFx/Jlrn7Uzv/YpfDCKRC95PSFqVCthK20kI/oQM=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=GqAKfn3Bd1nmnpGdoMGjxVkq02F/Jd3GouM2QvQlKBEZv67D+0ExLD+gSEyQTVqHaWQQfmE4joDoZevx0ffeT1ZQiMU9LcIk7NTPfUR/AlDvQG1AvywOIJ6ATUmIC+YYUDt7Rnf5r/3gJHFHHmHXiTo2ekRZSlQAx0I8TxOrakc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=cP2gGrpE; arc=none smtp.client-ip=209.85.208.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ed1-f43.google.com with SMTP id 4fb4d7f45d1cf-604bff84741so1170668a12.2;
+        Tue, 24 Jun 2025 08:08:36 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1750777715; x=1751382515; darn=vger.kernel.org;
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=NPe580k9SnUeLtOTdaxzcN6ec7qD36w8YTL5HYQln/Q=;
+        b=cP2gGrpEk7CZLdQyXf3b25wyjbvblbEPkJokzOByA8+AFo0IMRcwmaeiSGIZIf6Lek
+         z/ZACo0PNJCTpfbThiHNOSUp3OvRrLrCB8meXvNJQI+oGktuBDdeIRFXYy6u2FNqNpRJ
+         n98XsKdxQiK0O/bnaBbieR8ifKsfJ0voeOTvlR7gUJc1B1yr2/knm0FtK47UeV5RSbBD
+         VEYN0IKqhaDKSvyqdcClyN6JgX00e8KEtAgCqDujAlPS1dATi5k4DVdgem9Tu3L1ulDS
+         vKdJZxFpuxPF/VEQzoxBWlqU4hTI90ZLXY2MPYuR8SsqhZ9dIot7/znizsNJbgD59d0F
+         dzOw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1750777715; x=1751382515;
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=NPe580k9SnUeLtOTdaxzcN6ec7qD36w8YTL5HYQln/Q=;
+        b=N80Agk4bkOZ3so8KiUXdJ+vO2j6M48JaP4P4gZkgFYdSvVBaRe2oYhfu5EI8kxK4eI
+         SsCEfpeTseWSaA1VmXF3ZdIjs7NgMV/z8BD1Sfb6h1NC2S46r4qoix7Okvq/lsee66If
+         Le6P+/vS61+R1onDFyGqhFq4eD/t3th+RNFJOaMLZmFh5lVfW/kxt2s5nYs6hbezSJ+T
+         RbKJX9YVc41t3ZVMPnQ7uVGGeL4Z3mqxbBUN/39U7j2HsFIs5BkR1/gtABoD83KmF3BG
+         DsYS62B0Jc8uu7v7xbh9pHfuslS1NG2KZrv1v9ciRPPIH3Bkn19ZCLDLeAUJYBD8UCnc
+         dpVw==
+X-Forwarded-Encrypted: i=1; AJvYcCW4OSnujYxEJe1meEzqoeALMx92tYhPw5B1fPUz9RBL4TGsJ99Gsu3Llkb1q2TIfZFoGu99IIzaD1nv@vger.kernel.org, AJvYcCWBaOQ5qSFHAPHbxzO2N/AVhRh4f7C/kM459q3CHXS219hM9Fzt7C72B8IPvuGa/f2T2KOd9SqZKsKnEOE=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxlkW38pIz5SQp8DneTa1PziYJeXQHKydiXSbRD5w3A3wsI8Qxk
+	hEeVriCTJUG14tAZOJv1CmVaQNp2NXsnbZXpttu2SJkUPN/OZlljzlzp
+X-Gm-Gg: ASbGncsBVjiqQ3uBGEACyMFXeDlGnXP81nGIV7pdAYaELyAQTtHhqBaybZZcNFF+fT2
+	GXpUBrUBL/5nFcci1HTRDdTqIghlJPkKYHr+ZahcKH8W064lsey5dt0kbfQYJI2emJTeK1d5+Zp
+	mNTp2PHGA62iOey9BlpFLkooH4D7VHFrayDFtLuyKADfAUy7m+VVVgK3DKd+OT73PoiA6AFfFJk
+	odH4ZlKgkEBAV6ngpHU2QZv/oQU7GoFruY3k9GaeUjAv1IIKsEKuW5UMrR1eKl7TJGFsbNlRxTy
+	CnPfvxpybWHWr0KHWJDVvM5SxPrPTTefPiXTXhgTyS2F9nuBE+4AwyjYk+B1QZumVYrGWb04qka
+	/z6HVjti+38ob7N9C65DWtclJULHH18g8NPwlBVabYi/YUh+r2M8PyxNc7xKePw==
+X-Google-Smtp-Source: AGHT+IHy5CQXuAwnEZr15uqPSOadrd6iZ0m9VPaArcL1biwJzP259ImtZVizKwEUiRu8h5CVftquWA==
+X-Received: by 2002:a05:6402:2548:b0:608:f493:871e with SMTP id 4fb4d7f45d1cf-60a1ccb522fmr15773402a12.14.1750777714903;
+        Tue, 24 Jun 2025 08:08:34 -0700 (PDT)
+Received: from ernest.hoecke-nb (248.201.173.83.static.wline.lns.sme.cust.swisscom.ch. [83.173.201.248])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-60c2f1ae73dsm1148911a12.26.2025.06.24.08.08.34
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 24 Jun 2025 08:08:34 -0700 (PDT)
+Date: Tue, 24 Jun 2025 17:08:32 +0200
+From: Ernest Van Hoecke <ernestvanhoecke@gmail.com>
+To: Alan Stern <stern@rowland.harvard.edu>, 
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Thinh Nguyen <Thinh.Nguyen@synopsys.com>, 
+	Roger Quadros <rogerq@kernel.org>, Nishanth Menon <nm@ti.com>, 
+	Vignesh Raghavendra <vigneshr@ti.com>
+Cc: Sebastian Reichel <sebastian.reichel@collabora.com>, 
+	Chance Yang <chance.yang@kneron.us>, Prashanth K <prashanth.k@oss.qualcomm.com>, 
+	linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: dwc3-am62/usb-conn-gpio: USB gadget not added when booting in host
+ mode
+Message-ID: <taw2mvbj6a2lqwy5h3tuqeifqy2w4gt4pzh4uahxuw27yw64q2@koxg54wgp2a2>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-From: Ryan Wanner <Ryan.Wanner@microchip.com>
+Hi all,
 
-Switch SAMA7D65 clocks to use parent_hw and parent_data. Having
-parent_hw instead of parent names improves to clock registration
-speed and re-parenting.
+On the TI AM62 when using a USB OTG port, I found some unexpected
+behaviour when booting with this port in host mode.
 
-Signed-off-by: Ryan Wanner <Ryan.Wanner@microchip.com>
----
- drivers/clk/at91/sama7d65.c | 113 +++++++++++++++++-------------------
- 1 file changed, 54 insertions(+), 59 deletions(-)
+This happens, for example, when booting with a USB pen drive inserted.
+When the pen drive is later removed, the OTG port correctly switches
+to "device" mode instead of "host" mode, but the related USB gadget
+does not come up (in my case, a CDC NCM configuration).
 
-diff --git a/drivers/clk/at91/sama7d65.c b/drivers/clk/at91/sama7d65.c
-index b74813a288a8..23723587cf9a 100644
---- a/drivers/clk/at91/sama7d65.c
-+++ b/drivers/clk/at91/sama7d65.c
-@@ -1089,36 +1089,34 @@ static const struct clk_pcr_layout sama7d65_pcr_layout = {
- 
- static void __init sama7d65_pmc_setup(struct device_node *np)
- {
--	const char *main_xtal_name = "main_xtal";
-+	u8 td_slck_index = 0, md_slck_index = 1, main_xtal_index = 2;
-+	const char * const main_xtal_name = "main_xtal";
-+	const char * const td_slck_name = "td_slck";
-+	const char * const md_slck_name = "md_slck";
-+	struct clk_hw *hw, *main_rc_hw, *main_osc_hw;
-+	struct clk_parent_data parent_data[10];
- 	struct pmc_data *sama7d65_pmc;
--	const char *parent_names[11];
- 	void **alloc_mem = NULL;
- 	int alloc_mem_size = 0;
-+	struct clk *main_xtal;
- 	struct regmap *regmap;
--	struct clk_hw *hw, *main_rc_hw, *main_osc_hw, *main_xtal_hw;
--	struct clk_hw *td_slck_hw, *md_slck_hw;
--	static struct clk_parent_data parent_data;
--	struct clk_hw *parent_hws[10];
- 	bool bypass;
- 	int i, j;
- 
--	td_slck_hw = __clk_get_hw(of_clk_get_by_name(np, "td_slck"));
--	md_slck_hw = __clk_get_hw(of_clk_get_by_name(np, "md_slck"));
--	main_xtal_hw = __clk_get_hw(of_clk_get_by_name(np, main_xtal_name));
--
--	if (!td_slck_hw || !md_slck_hw || !main_xtal_hw)
-+	main_xtal = of_clk_get(np, main_xtal_index);
-+	if (IS_ERR(main_xtal))
- 		return;
- 
- 	regmap = device_node_to_regmap(np);
- 	if (IS_ERR(regmap))
--		return;
-+		goto put_main_xtal;
- 
- 	sama7d65_pmc = pmc_data_allocate(PMC_INDEX_MAX,
- 					 nck(sama7d65_systemck),
- 					 nck(sama7d65_periphck),
- 					 nck(sama7d65_gck), 8);
- 	if (!sama7d65_pmc)
--		return;
-+		goto put_main_xtal;
- 
- 	alloc_mem = kmalloc(sizeof(void *) *
- 			    (ARRAY_SIZE(sama7d65_mckx) + ARRAY_SIZE(sama7d65_gck)),
-@@ -1133,16 +1131,15 @@ static void __init sama7d65_pmc_setup(struct device_node *np)
- 
- 	bypass = of_property_read_bool(np, "atmel,osc-bypass");
- 
--	parent_data.name = main_xtal_name;
--	parent_data.fw_name = main_xtal_name;
- 	main_osc_hw = at91_clk_register_main_osc(regmap, "main_osc", NULL,
--						 &parent_data, bypass);
-+						 &AT91_CLK_PD_NAME(main_xtal_name, main_xtal_index),
-+						 bypass);
- 	if (IS_ERR(main_osc_hw))
- 		goto err_free;
- 
--	parent_hws[0] = main_rc_hw;
--	parent_hws[1] = main_osc_hw;
--	hw = at91_clk_register_sam9x5_main(regmap, "mainck", NULL, parent_hws, 2);
-+	parent_data[0] = AT91_CLK_PD_HW(main_rc_hw);
-+	parent_data[1] = AT91_CLK_PD_HW(main_osc_hw);
-+	hw = at91_clk_register_sam9x5_main(regmap, "mainck", NULL, parent_data, 2);
- 	if (IS_ERR(hw))
- 		goto err_free;
- 
-@@ -1150,7 +1147,7 @@ static void __init sama7d65_pmc_setup(struct device_node *np)
- 
- 	for (i = 0; i < PLL_ID_MAX; i++) {
- 		for (j = 0; j < PLL_COMPID_MAX; j++) {
--			struct clk_hw *parent_hw;
-+			unsigned long parent_rate = 0;
- 
- 			if (!sama7d65_plls[i][j].n)
- 				continue;
-@@ -1159,20 +1156,22 @@ static void __init sama7d65_pmc_setup(struct device_node *np)
- 			case PLL_TYPE_FRAC:
- 				switch (sama7d65_plls[i][j].p) {
- 				case SAMA7D65_PLL_PARENT_MAINCK:
--					parent_hw = sama7d65_pmc->chws[PMC_MAIN];
-+					parent_data[0] = AT91_CLK_PD_NAME("mainck", -1);
-+					parent_rate = clk_hw_get_rate(sama7d65_pmc->chws[PMC_MAIN]);
- 					break;
- 				case SAMA7D65_PLL_PARENT_MAIN_XTAL:
--					parent_hw = main_xtal_hw;
-+					parent_data[0] = AT91_CLK_PD_NAME(main_xtal_name,
-+									  main_xtal_index);
-+					parent_rate = clk_get_rate(main_xtal);
- 					break;
- 				default:
- 					/* Should not happen. */
--					parent_hw = NULL;
- 					break;
- 				}
- 
- 				hw = sam9x60_clk_register_frac_pll(regmap,
- 					&pmc_pll_lock, sama7d65_plls[i][j].n,
--					NULL, parent_hw, i,
-+					parent_data, parent_rate, i,
- 					sama7d65_plls[i][j].c,
- 					sama7d65_plls[i][j].l,
- 					sama7d65_plls[i][j].f);
-@@ -1202,7 +1201,7 @@ static void __init sama7d65_pmc_setup(struct device_node *np)
- 	}
- 
- 	hw = at91_clk_register_master_div(regmap, "mck0", NULL,
--					  sama7d65_plls[PLL_ID_CPU][1].hw,
-+					  &AT91_CLK_PD_HW(sama7d65_plls[PLL_ID_CPU][1].hw),
- 					  &mck0_layout, &mck0_characteristics,
- 					  &pmc_mck0_lock, CLK_GET_RATE_NOCACHE, 5);
- 	if (IS_ERR(hw))
-@@ -1211,12 +1210,11 @@ static void __init sama7d65_pmc_setup(struct device_node *np)
- 	sama7d65_pmc->chws[PMC_MCK] = hw;
- 	sama7d65_mckx[PCK_PARENT_HW_MCK0].hw = hw;
- 
--	parent_hws[0] = md_slck_hw;
--	parent_hws[1] = td_slck_hw;
--	parent_hws[2] = sama7d65_pmc->chws[PMC_MAIN];
-+	parent_data[0] = AT91_CLK_PD_NAME(md_slck_name, md_slck_index);
-+	parent_data[1] = AT91_CLK_PD_NAME(td_slck_name, td_slck_index);
-+	parent_data[2] = AT91_CLK_PD_HW(sama7d65_pmc->chws[PMC_MAIN]);
- 	for (i = PCK_PARENT_HW_MCK1; i < ARRAY_SIZE(sama7d65_mckx); i++) {
- 		u8 num_parents = 3 + sama7d65_mckx[i].ep_count;
--		struct clk_hw *tmp_parent_hws[8];
- 		u32 *mux_table;
- 
- 		mux_table = kmalloc_array(num_parents, sizeof(*mux_table),
-@@ -1233,13 +1231,11 @@ static void __init sama7d65_pmc_setup(struct device_node *np)
- 			u8 pll_id = sama7d65_mckx[i].ep[j].pll_id;
- 			u8 pll_compid = sama7d65_mckx[i].ep[j].pll_compid;
- 
--			tmp_parent_hws[j] = sama7d65_plls[pll_id][pll_compid].hw;
-+			parent_data[3 + j] = AT91_CLK_PD_HW(sama7d65_plls[pll_id][pll_compid].hw);
- 		}
--		PMC_FILL_TABLE(&parent_hws[3], tmp_parent_hws,
--			       sama7d65_mckx[i].ep_count);
- 
- 		hw = at91_clk_sama7g5_register_master(regmap, sama7d65_mckx[i].n,
--						      num_parents, NULL, parent_hws,
-+						      num_parents, NULL, parent_data,
- 						      mux_table, &pmc_mckX_lock,
- 						      sama7d65_mckx[i].id,
- 						      sama7d65_mckx[i].c,
-@@ -1253,29 +1249,29 @@ static void __init sama7d65_pmc_setup(struct device_node *np)
- 			sama7d65_pmc->chws[sama7d65_mckx[i].eid] = hw;
- 	}
- 
--	parent_names[0] = "syspll_divpmcck";
--	parent_names[1] = "usbpll_divpmcck";
--	parent_names[2] = "main_osc";
--	hw = sam9x60_clk_register_usb(regmap, "usbck", parent_names, 3);
-+	parent_data[0] = AT91_CLK_PD_HW(sama7d65_plls[PLL_ID_SYS][PLL_COMPID_DIV0].hw);
-+	parent_data[1] = AT91_CLK_PD_HW(sama7d65_plls[PLL_ID_USB][PLL_COMPID_DIV0].hw);
-+	parent_data[2] = AT91_CLK_PD_HW(main_osc_hw);
-+	hw = sam9x60_clk_register_usb(regmap, "usbck", NULL, parent_data, 3);
- 	if (IS_ERR(hw))
- 		goto err_free;
- 
--	parent_hws[0] = md_slck_hw;
--	parent_hws[1] = td_slck_hw;
--	parent_hws[2] = sama7d65_pmc->chws[PMC_MAIN];
--	parent_hws[3] = sama7d65_plls[PLL_ID_SYS][PLL_COMPID_DIV0].hw;
--	parent_hws[4] = sama7d65_plls[PLL_ID_DDR][PLL_COMPID_DIV0].hw;
--	parent_hws[5] = sama7d65_plls[PLL_ID_GPU][PLL_COMPID_DIV0].hw;
--	parent_hws[6] = sama7d65_plls[PLL_ID_BAUD][PLL_COMPID_DIV0].hw;
--	parent_hws[7] = sama7d65_plls[PLL_ID_AUDIO][PLL_COMPID_DIV0].hw;
--	parent_hws[8] = sama7d65_plls[PLL_ID_ETH][PLL_COMPID_DIV0].hw;
-+	parent_data[0] = AT91_CLK_PD_NAME(md_slck_name, md_slck_index);
-+	parent_data[1] = AT91_CLK_PD_NAME(td_slck_name, td_slck_index);
-+	parent_data[2] = AT91_CLK_PD_HW(sama7d65_pmc->chws[PMC_MAIN]);
-+	parent_data[3] = AT91_CLK_PD_HW(sama7d65_plls[PLL_ID_SYS][PLL_COMPID_DIV0].hw);
-+	parent_data[4] = AT91_CLK_PD_HW(sama7d65_plls[PLL_ID_DDR][PLL_COMPID_DIV0].hw);
-+	parent_data[5] = AT91_CLK_PD_HW(sama7d65_plls[PLL_ID_GPU][PLL_COMPID_DIV0].hw);
-+	parent_data[6] = AT91_CLK_PD_HW(sama7d65_plls[PLL_ID_BAUD][PLL_COMPID_DIV0].hw);
-+	parent_data[7] = AT91_CLK_PD_HW(sama7d65_plls[PLL_ID_AUDIO][PLL_COMPID_DIV0].hw);
-+	parent_data[8] = AT91_CLK_PD_HW(sama7d65_plls[PLL_ID_ETH][PLL_COMPID_DIV0].hw);
- 
- 	for (i = 0; i < 8; i++) {
- 		char name[6];
- 
- 		snprintf(name, sizeof(name), "prog%d", i);
- 
--		hw = at91_clk_register_programmable(regmap, name, NULL, parent_hws,
-+		hw = at91_clk_register_programmable(regmap, name, NULL, parent_data,
- 						    9, i,
- 						    &programmable_layout,
- 						    sama7d65_prog_mux_table);
-@@ -1287,7 +1283,7 @@ static void __init sama7d65_pmc_setup(struct device_node *np)
- 
- 	for (i = 0; i < ARRAY_SIZE(sama7d65_systemck); i++) {
- 		hw = at91_clk_register_system(regmap, sama7d65_systemck[i].n,
--					      sama7d65_systemck[i].p, NULL,
-+					      NULL, &AT91_CLK_PD_HW(sama7d65_pmc->pchws[i]),
- 					      sama7d65_systemck[i].id, 0);
- 		if (IS_ERR(hw))
- 			goto err_free;
-@@ -1300,7 +1296,7 @@ static void __init sama7d65_pmc_setup(struct device_node *np)
- 							 &sama7d65_pcr_layout,
- 							 sama7d65_periphck[i].n,
- 							 NULL,
--							 sama7d65_mckx[sama7d65_periphck[i].p].hw,
-+							 &AT91_CLK_PD_HW(sama7d65_mckx[sama7d65_periphck[i].p].hw),
- 							 sama7d65_periphck[i].id,
- 							 &sama7d65_periphck[i].r,
- 							 sama7d65_periphck[i].chgp ? 0 :
-@@ -1311,13 +1307,12 @@ static void __init sama7d65_pmc_setup(struct device_node *np)
- 		sama7d65_pmc->phws[sama7d65_periphck[i].id] = hw;
- 	}
- 
--	parent_hws[0] = md_slck_hw;
--	parent_hws[1] = td_slck_hw;
--	parent_hws[2] = sama7d65_pmc->chws[PMC_MAIN];
--	parent_hws[3] = sama7d65_pmc->chws[PMC_MCK1];
-+	parent_data[0] = AT91_CLK_PD_NAME(md_slck_name, md_slck_index);
-+	parent_data[1] = AT91_CLK_PD_NAME(td_slck_name, td_slck_index);
-+	parent_data[2] = AT91_CLK_PD_HW(sama7d65_pmc->chws[PMC_MAIN]);
-+	parent_data[3] = AT91_CLK_PD_HW(sama7d65_pmc->chws[PMC_MCK1]);
- 	for (i = 0; i < ARRAY_SIZE(sama7d65_gck); i++) {
- 		u8 num_parents = 4 + sama7d65_gck[i].pp_count;
--		struct clk_hw *tmp_parent_hws[8];
- 		u32 *mux_table;
- 
- 		mux_table = kmalloc_array(num_parents, sizeof(*mux_table),
-@@ -1334,15 +1329,13 @@ static void __init sama7d65_pmc_setup(struct device_node *np)
- 			u8 pll_id = sama7d65_gck[i].pp[j].pll_id;
- 			u8 pll_compid = sama7d65_gck[i].pp[j].pll_compid;
- 
--			tmp_parent_hws[j] = sama7d65_plls[pll_id][pll_compid].hw;
-+			parent_data[4 + j] = AT91_CLK_PD_HW(sama7d65_plls[pll_id][pll_compid].hw);
- 		}
--		PMC_FILL_TABLE(&parent_hws[4], tmp_parent_hws,
--			       sama7d65_gck[i].pp_count);
- 
- 		hw = at91_clk_register_generated(regmap, &pmc_pcr_lock,
- 						 &sama7d65_pcr_layout,
- 						 sama7d65_gck[i].n, NULL,
--						 parent_hws, mux_table,
-+						 parent_data, mux_table,
- 						 num_parents,
- 						 sama7d65_gck[i].id,
- 						 &sama7d65_gck[i].r,
-@@ -1356,7 +1349,7 @@ static void __init sama7d65_pmc_setup(struct device_node *np)
- 	of_clk_add_hw_provider(np, of_clk_hw_pmc_get, sama7d65_pmc);
- 	kfree(alloc_mem);
- 
--	return;
-+	goto put_main_xtal;
- 
- err_free:
- 	if (alloc_mem) {
-@@ -1366,6 +1359,8 @@ static void __init sama7d65_pmc_setup(struct device_node *np)
- 	}
- 
- 	kfree(sama7d65_pmc);
-+put_main_xtal:
-+	clk_put(main_xtal);
- }
- 
- /* Some clks are used for a clocksource */
--- 
-2.43.0
+This issue only occurs when CONFIG_USB_CONN_GPIO and
+CONFIG_USB_DWC3_AM62 are set to m and not when these modules are
+built-in.
 
+I tried to find the differences in their setup using ftrace and printk.
+
+When they are built-in, I can see that the USB connector module
+(usb-conn-gpio) is always probed (usb_conn_probe()) after dwc3-am62.
+
+When built as modules, usb_conn_probe can happen before the probe of
+dwc3-am62 is finished. This is problematic since the USB Role Switch
+device needs to be registered first by DWC3. Namely, `dwc3_drd_init()`
+calls `usb_role_switch_register()`, and `usb_conn_probe()` gets it with
+`usb_role_switch_get()`. When `usb_conn_probe()` cannot get the role
+switch device, it defers its probe until it can. This logic seems to
+be working well, so the only difference here seems to be probe order.
+
+In both cases:
+ * The (last) usb_conn_probe gets the correct usb role switch.
+ * The dual role mode is the same, and switches as expected
+
+When the pen drive is unplugged, the USB OTG port correctly switches
+to device mode for both cases. `dwc3_gadget_init()` is then called, but
+when built as modules, strange things seem to happen once this method
+hits `usb_add_gadget()`. Ftrace shows that it is executed, and executes
+its body and returns, but my printk's after this point don't end up in
+the kernel log anymore.
+
+Ftrace snippet in working (builtin) case:
+[...]
+     kworker/1:2-52      [001] .....    80.070233: dwc3_gadget_init <-__dwc3_set_mode
+     kworker/1:2-52      [001] .....    80.073332: usb_initialize_gadget <-dwc3_gadget_init
+[...]
+     kworker/1:2-52      [001] .....    80.855694: dwc3_debugfs_create_endpoint_dir <-dwc3_gadget_init
+     kworker/1:2-52      [001] .....    80.875767: usb_add_gadget <-dwc3_gadget_init
+     kworker/1:2-52      [001] .....    80.896299: usb_udc_uevent <-dev_uevent
+   systemd-udevd-132     [000] .....    80.898973: usb_udc_uevent <-dev_uevent
+   (udev-worker)-469     [000] .....    80.899839: usb_udc_uevent <-dev_uevent
+     kworker/1:3-53      [001] .....    80.900302: usb_gadget_state_work <-process_one_work
+   gadget-import-512     [000] .....    80.963264: gadgets_make <-configfs_mkdir
+[...]
+
+Ftrace snippet in nonworking (modules) case:
+[...]
+     kworker/0:4-60      [000] .....   104.112791: dwc3_gadget_init <-__dwc3_set_mode
+     kworker/0:4-60      [000] .....   104.115912: usb_initialize_gadget <-dwc3_gadget_init
+[...]
+     kworker/0:4-60      [000] .....   104.918814: usb_add_gadget <-dwc3_gadget_init
+     kworker/0:4-60      [000] .....   104.939290: usb_udc_uevent <-dev_uevent
+   systemd-udevd-127     [000] .....   104.943682: usb_udc_uevent <-dev_uevent
+     kworker/0:0-9       [000] .....   104.944201: usb_gadget_state_work <-process_one_work
+   (udev-worker)-417     [001] .....   104.944411: usb_udc_uevent <-dev_uevent
+[end of ]
+
+When built as modules, gadgets_make() is never called, and the resulting
+chain of gadget events thus does not happen.
+
+My printk logging after unplugging the pen drive shows the following:
+
+Builtin:
+usb_conn_isr
+usb_conn_queue_dwork
+usb_conn_detect_cable
+usb_role_string
+usb_role_string
+usb_conn_detect_cable role host -> device, gpios: id 1, vbus 1
+usb_role_switch_set_role
+usb_role_switch_get_drvdata
+dwc3_usb_role_switch_set, role: 2
+usb_role_switch_uevent
+__dwc3_set_mode: dwc->current_dr_role: 1
+__dwc3_set_mode: desired_dr_role: 2
+usb_role_switch_uevent
+usb_role_switch_uevent
+dwc3_gadget_init
+dwc3_gadget_init: usb_initialize_gadget
+dwc3_gadget_init: dwc3_gadget_init_endpoints
+dwc3_gadget_init: usb_add_gadget
+dwc3_gadget_check_config
+dwc3_gadget_start
+__dwc3_gadget_start
+dwc3_gadget_start_config, resource_index: 0
+dwc3_send_gadget_ep_cmd, dep: ep0out, cmd: 9, params: 0000000013236000
+__dwc3_gadget_ep_enable, dep: ep0out, action: 0
+dwc3_gadget_set_ep_config, dep: ep0out, action: 0
+dwc3_send_gadget_ep_cmd, dep: ep0out, cmd: 1, params: 0000000013236000
+dwc3_send_gadget_ep_cmd, dep: ep0out, cmd: 2, params: 0000000013236000
+__dwc3_gadget_ep_enable, dep: ep0in, action: 0
+dwc3_gadget_set_ep_config, dep: ep0in, action: 0
+dwc3_send_gadget_ep_cmd, dep: ep0in, cmd: 1, params: 0000000013236000
+dwc3_send_gadget_ep_cmd, dep: ep0in, cmd: 2, params: 0000000013236000
+dwc3_send_gadget_ep_cmd, dep: ep0out, cmd: 6, params: 00000000c3883fbf
+dwc3_gadget_run_stop: start
+
+Modules:
+usb_conn_isr
+usb_conn_queue_dwork
+usb_conn_detect_cable
+usb_role_string
+usb_role_string
+usb_conn_detect_cable role host -> device, gpios: id 1, vbus 1
+usb_role_switch_set_role
+usb_role_switch_get_drvdata
+dwc3_usb_role_switch_set, role: 2
+usb_role_switch_uevent
+__dwc3_set_mode: dwc->current_dr_role: 1
+usb_role_switch_uevent
+__dwc3_set_mode: desired_dr_role: 2
+usb_role_switch_uevent
+dwc3_gadget_init
+dwc3_gadget_init: usb_initialize_gadget
+dwc3_gadget_init: dwc3_gadget_init_endpoints
+
+
+Logs before the unplug are identical to each other except for the
+usb_conn_probe that can happen earlier in the boot and potentially get
+deferred.
+
+I will be investigating this further, any input is more than welcome.
+
+Thanks,
+Ernest
 
