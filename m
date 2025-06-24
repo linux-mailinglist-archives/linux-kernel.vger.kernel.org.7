@@ -1,314 +1,163 @@
-Return-Path: <linux-kernel+bounces-700146-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-700138-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id BB61DAE6495
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Jun 2025 14:20:23 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5F852AE646D
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Jun 2025 14:16:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8C7F0407E6D
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Jun 2025 12:18:29 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CA85A16F166
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Jun 2025 12:16:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C2F342BD5BC;
-	Tue, 24 Jun 2025 12:14:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9E22A29AAF0;
+	Tue, 24 Jun 2025 12:14:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="Fwq8HAcr"
-Received: from NAM12-MW2-obe.outbound.protection.outlook.com (mail-mw2nam12on2042.outbound.protection.outlook.com [40.107.244.42])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="KERi0xfz"
+Received: from mail-yw1-f172.google.com (mail-yw1-f172.google.com [209.85.128.172])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 34D40298258;
-	Tue, 24 Jun 2025 12:14:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.244.42
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750767284; cv=fail; b=SBdrODHZ4fyhknLZmun3inlZBSC+CeEX1Kt0HlapV3p5oUdPYyl9bil+pTr01l9AQcJKdiyjCcD4Bg6vBhYXgy+vOTyoBKal7EcJ3zUBTHRdhW6uEIqKO3O0r3sIHZI+hkyCkjdbM6F9ggsR27QcvcqvHbR19Z1LkWIuuDob/+o=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750767284; c=relaxed/simple;
-	bh=RKoWo9bGqIzzXF2xjFxek4viR8XQlFkcZWpsTQ1mElA=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=IwYe9ZX9x3PCOoZyRm2YvQ3UaiwtH4UUyt/Sc3BxuQpTwL5yFEniWi6QafU5/VZnSMejpDGxE6zjgv9q3oDZvugSrY29XROoanLy5LaH1CS3aPiU4FXBxLmqwd0X6/fMb13qw17+cfgVZ9bjiDxTtQEQ0+DID/O0O3FZ5jCB6VU=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=Fwq8HAcr; arc=fail smtp.client-ip=40.107.244.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=rofExcMPTmOJO11sWeggvx0vzLO/YqxezJ5HDn9Zu//gTiI4+DcnRSXJuVtDhS6J5tICRQZMeI7bRewXUThZrs3YB5gGGdlMTmsUPGV/kAXnw8Yi9gy6Re/rK4BQv8wlKCqzNWYwhS6X2AsrfrmDYGZNE2N1DTRgL8kDHumDFnNAt/AvhWzJWvGsHyc6S0JmOvwiBwXbe1eGodWAY8gifQZFShS0Ll72947VBF5NA4TBqsbOcxwaILqvBZ2r7Mm84qo9mJN6L3zmMeeKTrqf1He1LJdspTgnyKwnPxi7YFWtukWRWQhWQfCMOggh6T4pPaLgt49MNmqQTuJK4cryJg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=ebb1ycMDhtsLqHBlOchScTb+H/X9Y2soCSTnmRSjAec=;
- b=opIQaV2bX49p7JxwYyeQI16FBHJcfWbFzQb5iXXyilWFEbwfp0Phcw6EV3SOdHBOIXArvVnNor0PIN888eCWCS/pWFjkVXC+f0B18ZIMSKoNLFKnrVNGiHxNqrR1xY3qvnO3GDNoomLldMMGYT0sJxeLu6zjXAcrY47Igas7RPTcORMFCuiRCgY4iCK2Fy+6zMosYdwbd//OgW+1mI+IwGBkhDmb6y+/NTCT4GbMqua8c6ewGFSo9mQsKu7vxQ/a/u6PCuwXHmI1fFxbkJM9o6cJqrlmH0i/sDw/dBMywdAXvnO0Ly+IgjFkTrT/JlOuCu4TCWDIFIPHV1xaKa+kyA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 165.204.84.17) smtp.rcpttodomain=davemloft.net smtp.mailfrom=amd.com;
- dmarc=pass (p=quarantine sp=quarantine pct=100) action=none
- header.from=amd.com; dkim=none (message not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=ebb1ycMDhtsLqHBlOchScTb+H/X9Y2soCSTnmRSjAec=;
- b=Fwq8HAcrXcJ3xyZhQteflRoCQ+6O2eaaDS23C+dsAsSltYzKflA+HjdefHLUcCRUlOSE1pCjQGJS6jZnH7BbnSNRQk1NdfDDgSNOK/fgPeZAyF6wNeeQ0ymC3AaKTUqYwPRHE0dvWbo1JW/+20qRuT7UkDytdgLKm7X7PMAeuP0=
-Received: from DS7PR05CA0004.namprd05.prod.outlook.com (2603:10b6:5:3b9::9) by
- LV2PR12MB5920.namprd12.prod.outlook.com (2603:10b6:408:172::20) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8857.22; Tue, 24 Jun
- 2025 12:14:33 +0000
-Received: from DS2PEPF00003442.namprd04.prod.outlook.com
- (2603:10b6:5:3b9:cafe::9c) by DS7PR05CA0004.outlook.office365.com
- (2603:10b6:5:3b9::9) with Microsoft SMTP Server (version=TLS1_3,
- cipher=TLS_AES_256_GCM_SHA384) id 15.20.8880.17 via Frontend Transport; Tue,
- 24 Jun 2025 12:14:33 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
- smtp.mailfrom=amd.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=amd.com;
-Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
- 165.204.84.17 as permitted sender) receiver=protection.outlook.com;
- client-ip=165.204.84.17; helo=SATLEXMB03.amd.com; pr=C
-Received: from SATLEXMB03.amd.com (165.204.84.17) by
- DS2PEPF00003442.mail.protection.outlook.com (10.167.17.69) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.20.8880.14 via Frontend Transport; Tue, 24 Jun 2025 12:14:32 +0000
-Received: from SATLEXMB06.amd.com (10.181.40.147) by SATLEXMB03.amd.com
- (10.181.40.144) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Tue, 24 Jun
- 2025 07:14:32 -0500
-Received: from SATLEXMB03.amd.com (10.181.40.144) by SATLEXMB06.amd.com
- (10.181.40.147) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Tue, 24 Jun
- 2025 07:14:32 -0500
-Received: from xhdabhijitg41x.xilinx.com (10.180.168.240) by
- SATLEXMB03.amd.com (10.181.40.144) with Microsoft SMTP Server id 15.1.2507.39
- via Frontend Transport; Tue, 24 Jun 2025 07:14:27 -0500
-From: Abhijit Gangurde <abhijit.gangurde@amd.com>
-To: <shannon.nelson@amd.com>, <brett.creeley@amd.com>, <davem@davemloft.net>,
-	<edumazet@google.com>, <kuba@kernel.org>, <pabeni@redhat.com>,
-	<corbet@lwn.net>, <jgg@ziepe.ca>, <leon@kernel.org>, <andrew+netdev@lunn.ch>
-CC: <allen.hubbe@amd.com>, <nikhil.agarwal@amd.com>,
-	<linux-rdma@vger.kernel.org>, <netdev@vger.kernel.org>,
-	<linux-doc@vger.kernel.org>, <linux-kernel@vger.kernel.org>, Abhijit Gangurde
-	<abhijit.gangurde@amd.com>
-Subject: [PATCH v3 14/14] RDMA/ionic: Add Makefile/Kconfig to kernel build environment
-Date: Tue, 24 Jun 2025 17:43:15 +0530
-Message-ID: <20250624121315.739049-15-abhijit.gangurde@amd.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20250624121315.739049-1-abhijit.gangurde@amd.com>
-References: <20250624121315.739049-1-abhijit.gangurde@amd.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 818AB299AAC;
+	Tue, 24 Jun 2025 12:14:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.172
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1750767246; cv=none; b=ZfAn1PWxjPB92wNUA17MzBQkvJCu9lDeaPMYwp5ZryZxr4j0HY08PBaJMxQjyndXOy/So35QpoSVk0WR1GTxiEJc3/ixfrb/nTQOagAPHe/117UWk2CJN/gRSwA19PZHJZPe024tbPbr1w8NI3jey7uvF9QUApuIFQQKGcyV+y4=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1750767246; c=relaxed/simple;
+	bh=ePm0jJWqGXRR7vHBFxgYXrJJtOzI3e/OKIPjCcbV0nI=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=TLQf6XzwGYR+vgE3BvO/UiLoM6cN5PomwdxVmfzRIXEf8mvsQr2uBGIyQqppL5DKTn6hBhFHA13RTWhGpVZS+cQuSSvGiCnnIcuPAdGCuCoXasltsNAOdg0+VRlksU8o8eL6S0uOlxWAF7z8h+T8SNPuU1HF6oK+pHLGAHxJ0EM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=KERi0xfz; arc=none smtp.client-ip=209.85.128.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-yw1-f172.google.com with SMTP id 00721157ae682-71101efedabso3756847b3.2;
+        Tue, 24 Jun 2025 05:14:04 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1750767243; x=1751372043; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=ml9c9kjIjL4ob9bPUhkIZhRpvrm1uOprQJuOEQPEJo0=;
+        b=KERi0xfzsEJxv1LL2tJai8U4qZ0Zle96JQRnqzAlx/lJCNfFtz0NeaOiFyhGVetxxC
+         9fwzsNc44r7ZqAPnQ+DseygCr+iv9eXRNauoPUrykDwX0XJDIIwBKTOYK5VEq/jHB4W3
+         IBSVf2pjwS4MJN16N66s5xElJo/QZtVBPqoxID6rbH8MeHW/hGfeEm9k4ODFbuQRJuL2
+         nFHunGsnoIXtvcR7AsH0wqotMHtkCZJq5L7oc3XF4AD0sP3hIHpAMsVdN9jngISIyOXH
+         5/tGwFe2tg224qqEgn2RLsHgnyJDe+hgQ1Yr6gJ1DoDYJ9Brpzhp9B1nZO4KcZb7mxLz
+         PuIQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1750767243; x=1751372043;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=ml9c9kjIjL4ob9bPUhkIZhRpvrm1uOprQJuOEQPEJo0=;
+        b=GZvofQhmw4tlIK4ucqqv7NR2p5CiCa6gLiuQjc6LIExYkmxhf0PfIxN0VNCYjmzhUB
+         KXbRDCaO5LC5dKampB53i+57UR19mJTtbgVLvO6Vx2pcTdZu9+LiN2fQsl8514GoGPhD
+         mtWch45YRUb2cm/mwVk0PZ/eSrlOorCK/VsIo5pTcnZ7dcrttUJ74c3Sg3710jZtkfpR
+         VcEbik2K7CUWPxI9dG9pmiLJQ9o8/IovlRqWzJfHoQYksiP2Q35uoPxbnzSqU8ShKqIi
+         nTJXtkT7U/30ZKVXUgBByKwl6DUJ785Zv31jDTkemrgdXOCrunZ3CKikFg9TM7Mlwg+8
+         bJPQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXJNTnEgdKXf1EBWRn+vpL4s0bKbHiE1uLw+aIjz88kZwzvbjv6tZECOaCjcH2dX1yA5WQmGsFMoIyCelE=@vger.kernel.org, AJvYcCXZ0T/y+/6Ga6+yG8x76eO4x4x+PFilngXjqZ4AE7uonB7awG/ZkYE2JEWII9o38pWSqr0e2Ey8KT91+Aw=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxZUH96DgJMt9pdqrZhpJCdveitthr2UX6BDwlEmv05JvkIdtT3
+	tUr7hZXXZ2YAX+VyOTXq6e1YYw9hyBBky0TNNh1yaeY8LZPLhHt8NTd5UvNd5zZyloAYfZ26RtI
+	6DHa6rgIAIY1uG783I35V+MgRz8BS4O0=
+X-Gm-Gg: ASbGncu5pcCBfhItOJZW19YFQy+OfrRXDrvd4NnYqeKx3PQy5tW+E9JVNNNe2Xp9yqO
+	Y7T2kUCqxlGwshbcSRRnq8y0YhflFEjPB0LCqZC5zQ/c5YVqdZaEUkE2P9+8fPtr3svzZDwLg9g
+	MVDso6QYKdRgn3fcMLZYgP1tqkLyn8rIAOqbjsV6g2KYB7
+X-Google-Smtp-Source: AGHT+IGJneseQd34valjwD4g7qXNUGa5fvh5W4dFNyk2R9RoiDvyW7yd9lajATYT7lSlzYjGnEFNumQ7oA81TwA56nw=
+X-Received: by 2002:a05:690c:a0a8:10b0:712:c14a:a363 with SMTP id
+ 00721157ae682-712c5fecc20mr77351027b3.0.1750767243031; Tue, 24 Jun 2025
+ 05:14:03 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DS2PEPF00003442:EE_|LV2PR12MB5920:EE_
-X-MS-Office365-Filtering-Correlation-Id: 5613966a-dbcc-4967-f6a5-08ddb318ada6
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|376014|82310400026|7416014|1800799024|36860700013|921020;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?Kx0P+ImZ1ciMcdOio7OfsH03ZpICCOsP7nRycGNOKikeO3x0cVepXVQbp/7Y?=
- =?us-ascii?Q?PgHg3glbefNHRjdUBx/lr+u/yAJBJrBPH4NH7QeQC8sN3+/OLbwGQ1RWg+uT?=
- =?us-ascii?Q?6xNqMDczg3n4Ja6TlGcoSaNeDcfzrgz115zZ6CSk/kA3C4tzOhf14Ut71opb?=
- =?us-ascii?Q?P+CinD16/lvCg73AYklE165KFqMWLPofSims1/VX+kU+wQijveiQ6VAMl8SO?=
- =?us-ascii?Q?er38fd1HxSe9ylAeehRaPgZoqUosOvI22rwlS7mJFmRhx1IYdmaVGYz2lQJp?=
- =?us-ascii?Q?l1v6MTCbDmNC3xRcto7nqghgXWpLT0Xtm7cI1FTo3XiW2kcwQpe3BOa6y6nG?=
- =?us-ascii?Q?2cXaWvhYQraG8OT4kY7wJ2STMYxqWXZ3x/64zDY6IsAwphXlImCf3vzYj0Db?=
- =?us-ascii?Q?VDofzIt4/dTHacATbY40g+o+3V9DNIVHCzX1S12gVQCZcuxi0Pn1SVAMwcZ0?=
- =?us-ascii?Q?ZMi7ize2wR68CtTNkuxMW/R5wmULporTGf2FOYsCZ46nY9gmDqYWp66LZjHD?=
- =?us-ascii?Q?mQbuQJRv7yPTIP+YCsyLa/lB7qrSzlvnjmUgh9Y/OwJxgXLK+NFFhINVqEHJ?=
- =?us-ascii?Q?YrSEoKWNFoQQ+8rF277XbuQ+1zpqLMFg6WUigqWQGn7+7y+g0oH6GhrZMlfp?=
- =?us-ascii?Q?DASd9dSYDDjg8gxdokIAY46hucvYUoWqQ9sdNHwRKDqDRa40fE+MOqbvNU9o?=
- =?us-ascii?Q?xYPzcB1q8Dh4uPti/c+J6TSKFQy96xQ0htBlp0B+F4XRlPIteL5JWJhJgrlX?=
- =?us-ascii?Q?lFPXNA6h6ZuqgYI2tnMCp7hSzVcxhPr+9izb8MdVlWF44Kx+LRWV1Knv4o6t?=
- =?us-ascii?Q?KVAdpZe+l2vWTdtsib/0EzCfDvczZfChkp13/Gmod9OigQi7u3AVLVEdGz7b?=
- =?us-ascii?Q?o/hp47wNfb2Fup2kAPq7VbN8wv19/FKxajessuLeQLXStXQlCCub3JqCki4v?=
- =?us-ascii?Q?O2ApOjGFLr5TKj5r+vTN7+FvxdTlObyGKHDTwPCAhGVY9X1rON0qZJnlowmP?=
- =?us-ascii?Q?kbB4ozDdin9LI4tunRHCOiu55FN0wxchV/LzuqgMaOfB1Z/bx+JvLZekNCfA?=
- =?us-ascii?Q?S0s9UJpgZXKSr4vaGQnBwyZXAXFwLn+VgESsF1j/7dcWYu3oRcIHKZ8Qjhfv?=
- =?us-ascii?Q?LWpZOvt2J/6sI8G8GzCvmeUuPaMc7jCRqTk4XnQSAum8tsOar+tGUDvEiKZr?=
- =?us-ascii?Q?kdOOQ5t+tZhxj83SqThHKl1pALJJqf6clbhEWweeb5elGg958+33qbk6hm6b?=
- =?us-ascii?Q?nx2yWNKGRN7ZanpRgCu2AlhxAAfdgTdqGn7GFz54/31RCYOYWwD/2C2BB3BH?=
- =?us-ascii?Q?mCZQ2czmYfwa+db3r7tI2rQKtr1jRbRgZqz59xC1Dv/p7BRaNK8uj5AAIIvu?=
- =?us-ascii?Q?CgXsZtntzk6DbWepZqgnXL9vYR/RAjejVVlqjt4bq/LtyPpq9x/NbidSwfNl?=
- =?us-ascii?Q?ANYZL/vwmf5ooQvBGnmBnXT30ecXqpSJZyGelsbRBeVNTQObgFslnoBHH0P1?=
- =?us-ascii?Q?MIJLLUmF6OWr5EsYYW70pcmNHPNvHOKaMhMlyBoZ4O8qmHPA8+yYkCVSMQ?=
- =?us-ascii?Q?=3D=3D?=
-X-Forefront-Antispam-Report:
-	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:SATLEXMB03.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(376014)(82310400026)(7416014)(1800799024)(36860700013)(921020);DIR:OUT;SFP:1101;
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 24 Jun 2025 12:14:32.9666
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 5613966a-dbcc-4967-f6a5-08ddb318ada6
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[SATLEXMB03.amd.com]
-X-MS-Exchange-CrossTenant-AuthSource:
-	DS2PEPF00003442.namprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: LV2PR12MB5920
+References: <20250621062944.168386-1-abdelrahmanfekry375@gmail.com> <7852d6ac-95f0-41ec-8365-d23a2b16b208@kernel.org>
+In-Reply-To: <7852d6ac-95f0-41ec-8365-d23a2b16b208@kernel.org>
+From: Abdelrahman Fekry <abdelrahmanfekry375@gmail.com>
+Date: Tue, 24 Jun 2025 15:13:51 +0300
+X-Gm-Features: Ac12FXzFNhMuUIJFqi8IDai0efhsfCqHPuMbewzkMoJuG_hD0-sw55sonDvBegw
+Message-ID: <CAGn2d8MfaEpfc2a0MbuuGQ8_Z6HjTRLQVLk9AvqxWuSJSo43QA@mail.gmail.com>
+Subject: Re: [PATCH] staging: media: atomisp: Replace scnprintf with
+ sysfs_emit in bo_show
+To: Hans de Goede <hansg@kernel.org>
+Cc: andy@kernel.org, mchehab@kernel.org, sakari.ailus@linux.intel.com, 
+	gregkh@linuxfoundation.org, linux-kernel@vger.kernel.org, 
+	linux-media@vger.kernel.org, linux-staging@lists.linux.dev, 
+	skhan@linuxfoundation.org, linux-kernel-mentees@lists.linux.dev
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Add ionic to the kernel build environment.
+On Mon, Jun 23, 2025 at 9:31=E2=80=AFPM Hans de Goede <hansg@kernel.org> wr=
+ote:
+>
+> Hi,
+> As Andy already mentioned you really should try to first better understan=
+d
+> the code before changing it.
+>
+> In this case this code is used for 2 custom sysfs attributes called
+> "active_bo" and "free_bo".
+>
+> sysfs attributes are custom userspace API and we really want to remove
+> all custom userspace APIs from this driver before moving it out of
+> drivers/staging
+>
+> Instead everything should be done through existing standard kernels
+> API, mostly the standard v4l2 API.
+>
+> Note this is already mentioned in drivers/staging/media/atomisp/TODO
+> although these specific sysfs attributes are not named:
+>
+> """
+> TODO
+> =3D=3D=3D=3D
+>
+> 1. Items which MUST be fixed before the driver can be moved out of stagin=
+g:
+>
+> * Remove/disable private IOCTLs
+>
+> * Remove/disable custom v4l2-ctrls
+>
+> * Remove custom sysfs files created by atomisp_drvfs.c
+> """
+>
+> In this case the "active_bo" and "free_bo" sysfs attributes seem
+> to be there for debugging purposes only and they can simply be removed.
+>
+> So instead of replacing scnprintf you should write a new patch
+> removing everything starting at:
+>
+> <--- start removing code here --->
+> /*
+>  * p: private
+>  * v: vmalloc
+>
+> ...
+>
+> static struct attribute_group atomisp_attribute_group[] =3D {
+>         {.attrs =3D sysfs_attrs_ctrl },
+> };
+> <--- end removing code here --->
+>
+> and then also remove the sysfs_create_group() and
+> sysfs_remove_group() calls.
+>
+> After writing that patch maybe you can also take a look at tackling
+> the "Remove custom sysfs files created by atomisp_drvfs.c" TODO
+> list item?
+>
+> Regards,
+>
+> Hans
+>
 
-Co-developed-by: Allen Hubbe <allen.hubbe@amd.com>
-Signed-off-by: Allen Hubbe <allen.hubbe@amd.com>
-Signed-off-by: Abhijit Gangurde <abhijit.gangurde@amd.com>
----
-v2->v3
-  - Removed select of ethernet driver
-  - Fixed make htmldocs error
-
- .../device_drivers/ethernet/index.rst         |  1 +
- .../ethernet/pensando/ionic_rdma.rst          | 43 +++++++++++++++++++
- MAINTAINERS                                   |  9 ++++
- drivers/infiniband/Kconfig                    |  1 +
- drivers/infiniband/hw/Makefile                |  1 +
- drivers/infiniband/hw/ionic/Kconfig           | 15 +++++++
- drivers/infiniband/hw/ionic/Makefile          |  9 ++++
- 7 files changed, 79 insertions(+)
- create mode 100644 Documentation/networking/device_drivers/ethernet/pensando/ionic_rdma.rst
- create mode 100644 drivers/infiniband/hw/ionic/Kconfig
- create mode 100644 drivers/infiniband/hw/ionic/Makefile
-
-diff --git a/Documentation/networking/device_drivers/ethernet/index.rst b/Documentation/networking/device_drivers/ethernet/index.rst
-index 139b4c75a191..4b16ecd289da 100644
---- a/Documentation/networking/device_drivers/ethernet/index.rst
-+++ b/Documentation/networking/device_drivers/ethernet/index.rst
-@@ -50,6 +50,7 @@ Contents:
-    neterion/s2io
-    netronome/nfp
-    pensando/ionic
-+   pensando/ionic_rdma
-    smsc/smc9
-    stmicro/stmmac
-    ti/cpsw
-diff --git a/Documentation/networking/device_drivers/ethernet/pensando/ionic_rdma.rst b/Documentation/networking/device_drivers/ethernet/pensando/ionic_rdma.rst
-new file mode 100644
-index 000000000000..80c4d9876d3e
---- /dev/null
-+++ b/Documentation/networking/device_drivers/ethernet/pensando/ionic_rdma.rst
-@@ -0,0 +1,43 @@
-+.. SPDX-License-Identifier: GPL-2.0+
-+
-+============================================================
-+Linux Driver for the AMD Pensando(R) Ethernet adapter family
-+============================================================
-+
-+AMD Pensando RDMA driver.
-+Copyright (C) 2018-2025, Advanced Micro Devices, Inc.
-+
-+Contents
-+========
-+
-+- Identifying the Adapter
-+- Enabling the driver
-+- Support
-+
-+Identifying the Adapter
-+=======================
-+
-+See Documentation/networking/device_drivers/ethernet/pensando/ionic.rst
-+for more information on identifying the adapter.
-+
-+Enabling the driver
-+===================
-+
-+The driver is enabled via the standard kernel configuration system,
-+using the make command::
-+
-+  make oldconfig/menuconfig/etc.
-+
-+The driver is located in the menu structure at:
-+
-+  -> Device Drivers
-+    -> InfiniBand support
-+      -> AMD Pensando DSC RDMA/RoCE Support
-+
-+Support
-+=======
-+
-+For general Linux rdma support, please use the rdma mailing
-+list, which is monitored by AMD Pensando personnel::
-+
-+  linux-rdma@vger.kernel.org
-diff --git a/MAINTAINERS b/MAINTAINERS
-index 3f35ebff0b41..e0aee7c025b1 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -1165,6 +1165,15 @@ F:	Documentation/networking/device_drivers/ethernet/amd/pds_core.rst
- F:	drivers/net/ethernet/amd/pds_core/
- F:	include/linux/pds/
- 
-+AMD PENSANDO RDMA DRIVER
-+M:	Abhijit Gangurde <abhijit.gangurde@amd.com>
-+M:	Allen Hubbe <allen.hubbe@amd.com>
-+L:	linux-rdma@vger.kernel.org
-+S:	Maintained
-+F:	Documentation/networking/device_drivers/ethernet/pensando/ionic_rdma.rst
-+F:	drivers/infiniband/hw/ionic/
-+F:	include/uapi/rdma/ionic-abi.h
-+
- AMD PMC DRIVER
- M:	Shyam Sundar S K <Shyam-sundar.S-k@amd.com>
- L:	platform-driver-x86@vger.kernel.org
-diff --git a/drivers/infiniband/Kconfig b/drivers/infiniband/Kconfig
-index 3a394cd772f6..f0323f1d6f01 100644
---- a/drivers/infiniband/Kconfig
-+++ b/drivers/infiniband/Kconfig
-@@ -85,6 +85,7 @@ source "drivers/infiniband/hw/efa/Kconfig"
- source "drivers/infiniband/hw/erdma/Kconfig"
- source "drivers/infiniband/hw/hfi1/Kconfig"
- source "drivers/infiniband/hw/hns/Kconfig"
-+source "drivers/infiniband/hw/ionic/Kconfig"
- source "drivers/infiniband/hw/irdma/Kconfig"
- source "drivers/infiniband/hw/mana/Kconfig"
- source "drivers/infiniband/hw/mlx4/Kconfig"
-diff --git a/drivers/infiniband/hw/Makefile b/drivers/infiniband/hw/Makefile
-index df61b2299ec0..b706dc0d0263 100644
---- a/drivers/infiniband/hw/Makefile
-+++ b/drivers/infiniband/hw/Makefile
-@@ -14,3 +14,4 @@ obj-$(CONFIG_INFINIBAND_HNS_HIP08)	+= hns/
- obj-$(CONFIG_INFINIBAND_QEDR)		+= qedr/
- obj-$(CONFIG_INFINIBAND_BNXT_RE)	+= bnxt_re/
- obj-$(CONFIG_INFINIBAND_ERDMA)		+= erdma/
-+obj-$(CONFIG_INFINIBAND_IONIC)		+= ionic/
-diff --git a/drivers/infiniband/hw/ionic/Kconfig b/drivers/infiniband/hw/ionic/Kconfig
-new file mode 100644
-index 000000000000..de6f10e9b6e9
---- /dev/null
-+++ b/drivers/infiniband/hw/ionic/Kconfig
-@@ -0,0 +1,15 @@
-+# SPDX-License-Identifier: GPL-2.0
-+# Copyright (C) 2018-2025, Advanced Micro Devices, Inc.
-+
-+config INFINIBAND_IONIC
-+	tristate "AMD Pensando DSC RDMA/RoCE Support"
-+	depends on NETDEVICES && ETHERNET && PCI && INET && IONIC
-+	help
-+	  This enables RDMA/RoCE support for the AMD Pensando family of
-+	  Distributed Services Cards (DSCs).
-+
-+	  To learn more, visit our website at
-+	  <https://www.amd.com/en/products/accelerators/pensando.html>.
-+
-+	  To compile this driver as a module, choose M here. The module
-+	  will be called ionic_rdma.
-diff --git a/drivers/infiniband/hw/ionic/Makefile b/drivers/infiniband/hw/ionic/Makefile
-new file mode 100644
-index 000000000000..957973742820
---- /dev/null
-+++ b/drivers/infiniband/hw/ionic/Makefile
-@@ -0,0 +1,9 @@
-+# SPDX-License-Identifier: GPL-2.0
-+
-+ccflags-y :=  -I $(srctree)/drivers/net/ethernet/pensando/ionic
-+
-+obj-$(CONFIG_INFINIBAND_IONIC)	+= ionic_rdma.o
-+
-+ionic_rdma-y :=	\
-+	ionic_ibdev.o ionic_lif_cfg.o ionic_queue.o ionic_pgtbl.o ionic_admin.o \
-+	ionic_controlpath.o ionic_datapath.o ionic_hw_stats.o
--- 
-2.43.0
-
+Thank you so much Hans for this informative feedback , i now see the
+whole picture ,
+i will submit a new patch that removes the two custom attributes
+active_bo and free_bo
+and then will proceed with the TODO list item " Remove custom sysfs
+files created by atomisp_drvfs.c"
 
