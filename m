@@ -1,57 +1,57 @@
-Return-Path: <linux-kernel+bounces-700618-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-700654-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1CA87AE6AC8
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Jun 2025 17:25:21 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 903C3AE6B1A
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Jun 2025 17:32:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D09A716B24C
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Jun 2025 15:20:11 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8657517BB4A
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Jun 2025 15:27:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A18C52F5499;
-	Tue, 24 Jun 2025 15:08:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A2BC12DCC15;
+	Tue, 24 Jun 2025 15:09:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b="KJ2VTkxP"
+	dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b="D9Un/pWk"
 Received: from esa.microchip.iphmx.com (esa.microchip.iphmx.com [68.232.154.123])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6129E2F3C26;
-	Tue, 24 Jun 2025 15:08:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8FBAA29E112;
+	Tue, 24 Jun 2025 15:09:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=68.232.154.123
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750777736; cv=none; b=KdYYKYwDQjUP1pApCxw8qJ6CMzIGiht573522tpmSEWty7PZwZN6mfz96AIeXWf/z/u3hFB6VwW/FilTzBbIX6C6NCp4iwPoMbljStGtCwQc0QPp8mDA8VqIfSJBGALkK3aXom0uQQ0AHQ7BYajH8geY8vu/Bvh22lpo0aQ5geM=
+	t=1750777781; cv=none; b=dEYcgcUli/ULrjXYxzFBfw0I4lzsugAHBxLR0Dn4Fshik+S+89oNKP97r73c25zsnBcFquG6md189YJ8DQbLlSIyoeEb5Jpu24ygoexbk9sQWlHXsspb28k2jsqJVcAvIX7uunsizpwoKIksWKX5bmt9WL6fIwxu20ZH5+rW/+w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750777736; c=relaxed/simple;
-	bh=ewK93IZBE5AdW/boaGsKbjjZ+eEA2xMxJ1F5syBIWcM=;
+	s=arc-20240116; t=1750777781; c=relaxed/simple;
+	bh=4m0mSB0qMTXb2csR88OxbItjA7gFCwW1bRUmBS2WlCg=;
 	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=G7e9lT9ND9BANpyJPjDczeJXIPTr5ozLnWFnDxY3sX5DJLY7T6DbNm4VFDiEvHTKSP4iEOwr2xk9/o879XEElEFbGmhALx1u/wMrBxTrBrp6HLNLldPeEC9gz7HX8nJ8MWuJUCRLi4IUDbwwVXs2SaSMpkp2N2OlT6hKDgeGJI4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com; spf=pass smtp.mailfrom=microchip.com; dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b=KJ2VTkxP; arc=none smtp.client-ip=68.232.154.123
+	 MIME-Version:Content-Type; b=n2Evq0hkF51Q0mSF/OEELH1FgpHp5akoqdjed29BvunfwYPjXe8Wk8H93xQ3xKeS7BgxmtLEzqZ1nrZp7PwbeqVzII+DH8nbDajtQieUdDu15rGbsJBjC289gwBYiqPiEGRUF7TaICKE48TT9L5ROFy70RpWf+mdSoodeZuEgoY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com; spf=pass smtp.mailfrom=microchip.com; dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b=D9Un/pWk; arc=none smtp.client-ip=68.232.154.123
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=microchip.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=microchip.com; i=@microchip.com; q=dns/txt; s=mchp;
-  t=1750777734; x=1782313734;
+  t=1750777779; x=1782313779;
   h=from:to:cc:subject:date:message-id:in-reply-to:
    references:mime-version:content-transfer-encoding;
-  bh=ewK93IZBE5AdW/boaGsKbjjZ+eEA2xMxJ1F5syBIWcM=;
-  b=KJ2VTkxPROhjeUFQh0jpo8dNlY7IILETWrKHSKuL1Sss98P5u5jS2E4F
-   BmJx3K8K2LwUpcpyO1IIPisec/96MWH1uNIMG5HfW+OIEEM7u9RQbNZI9
-   yfPdh+CQJiTafl63v3yYF1Usa9cCUKSFI79quTizE0Xafy9miO7wYAK/a
-   HkV4T4YeB/kSKiz+TcmPh64+Isj0ZGdvrkP+Z5j6PRdEY97pX95FZEUjy
-   GFdez2QpChlixgO1AT4gBylePWkBK/+xvzQesrIHlUilLLIX5N992VdsT
-   EG3Aj6R5UoR/SxbRP1roxNSQWbMMRkLRh4KGghNr3IO0BaBs0hvNwcuWl
-   Q==;
-X-CSE-ConnectionGUID: 4+RzxTN1Qsa6vG3Bpty4nA==
-X-CSE-MsgGUID: JmQSy8bSSGanE8uo8FA/cA==
+  bh=4m0mSB0qMTXb2csR88OxbItjA7gFCwW1bRUmBS2WlCg=;
+  b=D9Un/pWkr7C7H1Q6MCQ718Patp9bRxLumbprbR5IoufpvsScExiS/nwn
+   MyEjDKlCCv2RyKhCaPEnxh4BzabRZkiFPwWecYx/URE8WpHk35chl1lQd
+   8d2KCax98Qbsm74YMoMCkHejbzOblheGyuVa3q7hetLzU8UbZc5JiK+Rs
+   iqgOw1wZsj/Q/YDmVzn8+Lv45pp/li2tFN2Q3gv4dL0PRiHLBtoHPqYTz
+   XCdU5BsThG6jimihXsT5za3uHAfCGMDoijDuF3DflOkQafjhReqQmTEYl
+   P86BmqHFA1iKve1gBB9K9pGnVXpfmRJSaOGhhK88yzHAOZlBEDKXU8Nie
+   g==;
+X-CSE-ConnectionGUID: aaR+vTR6QzCaLHJjoz8HzA==
+X-CSE-MsgGUID: KA0Z3Rr4SrCGEgboNrq4RA==
 X-IronPort-AV: E=Sophos;i="6.16,262,1744095600"; 
-   d="scan'208";a="42688191"
+   d="scan'208";a="43755112"
 X-Amp-Result: SKIPPED(no attachment in message)
 Received: from unknown (HELO email.microchip.com) ([170.129.1.10])
-  by esa4.microchip.iphmx.com with ESMTP/TLS/ECDHE-RSA-AES128-GCM-SHA256; 24 Jun 2025 08:08:47 -0700
+  by esa2.microchip.iphmx.com with ESMTP/TLS/ECDHE-RSA-AES128-GCM-SHA256; 24 Jun 2025 08:09:35 -0700
 Received: from chn-vm-ex01.mchp-main.com (10.10.85.143) by
- chn-vm-ex04.mchp-main.com (10.10.85.152) with Microsoft SMTP Server
+ chn-vm-ex03.mchp-main.com (10.10.85.151) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
  15.1.2507.44; Tue, 24 Jun 2025 08:08:38 -0700
 Received: from ryan-Precision-3630-Tower.microchip.com (10.10.85.11) by
@@ -64,9 +64,9 @@ To: <mturquette@baylibre.com>, <sboyd@kernel.org>,
 CC: <robh@kernel.org>, <linux-clk@vger.kernel.org>,
 	<linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
 	<varshini.rajendran@microchip.com>
-Subject: [PATCH v2 14/32] clk: at91: clk-plldiv: add support for parent_hw
-Date: Tue, 24 Jun 2025 08:08:11 -0700
-Message-ID: <b235fe4435a124cf29b9fb8ada9a81523c0cd161.1750182562.git.Ryan.Wanner@microchip.com>
+Subject: [PATCH v2 15/32] clk: at91: clk-h32mx: add support for parent_hw
+Date: Tue, 24 Jun 2025 08:08:12 -0700
+Message-ID: <5e9bfd1ee862b83410cc6579e47cb291ee6aeaf7.1750182562.git.Ryan.Wanner@microchip.com>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <cover.1750182562.git.Ryan.Wanner@microchip.com>
 References: <cover.1750182562.git.Ryan.Wanner@microchip.com>
@@ -81,11 +81,11 @@ Content-Type: text/plain
 
 From: Claudiu Beznea <claudiu.beznea@tuxon.dev>
 
-Add support for parent_hw in plldiv clock driver.
+Add support for parent_hw in h32mx clock driver.
 With this parent-child relation is described with pointers rather
 than strings making registration a bit faster.
 
-All the SoC based drivers that rely on clk-plldiv were adapted
+All the SoC based drivers that rely on clk-h32mx were adapted
 to the new API change. The switch itself for SoCs will be done
 in subsequent patches.
 
@@ -94,33 +94,32 @@ Signed-off-by: Claudiu Beznea <claudiu.beznea@tuxon.dev>
 going to be coalesced into one SoC specific commit.]
 Signed-off-by: Ryan Wanner <Ryan.Wanner@microchip.com>
 ---
- drivers/clk/at91/clk-plldiv.c | 11 +++++++----
- drivers/clk/at91/dt-compat.c  |  2 +-
- drivers/clk/at91/pmc.h        |  2 +-
+ drivers/clk/at91/clk-h32mx.c | 11 +++++++----
+ drivers/clk/at91/dt-compat.c |  2 +-
+ drivers/clk/at91/pmc.h       |  2 +-
  3 files changed, 9 insertions(+), 6 deletions(-)
 
-diff --git a/drivers/clk/at91/clk-plldiv.c b/drivers/clk/at91/clk-plldiv.c
-index ba3a1839a96d..c5d0c6e27397 100644
---- a/drivers/clk/at91/clk-plldiv.c
-+++ b/drivers/clk/at91/clk-plldiv.c
-@@ -72,11 +72,11 @@ static const struct clk_ops plldiv_ops = {
+diff --git a/drivers/clk/at91/clk-h32mx.c b/drivers/clk/at91/clk-h32mx.c
+index 1e6c12eeda10..4b709f9bd831 100644
+--- a/drivers/clk/at91/clk-h32mx.c
++++ b/drivers/clk/at91/clk-h32mx.c
+@@ -83,10 +83,10 @@ static const struct clk_ops h32mx_ops = {
  
  struct clk_hw * __init
- at91_clk_register_plldiv(struct regmap *regmap, const char *name,
--			 const char *parent_name)
-+			 const char *parent_name, struct clk_parent_data *parent_data)
+ at91_clk_register_h32mx(struct regmap *regmap, const char *name,
+-			const char *parent_name)
++			const char *parent_name, struct clk_parent_data *parent_data)
  {
- 	struct clk_plldiv *plldiv;
- 	struct clk_hw *hw;
+ 	struct clk_sama5d4_h32mx *h32mxclk;
 -	struct clk_init_data init;
 +	struct clk_init_data init = {};
  	int ret;
  
- 	plldiv = kzalloc(sizeof(*plldiv), GFP_KERNEL);
-@@ -85,8 +85,11 @@ at91_clk_register_plldiv(struct regmap *regmap, const char *name,
+ 	h32mxclk = kzalloc(sizeof(*h32mxclk), GFP_KERNEL);
+@@ -95,8 +95,11 @@ at91_clk_register_h32mx(struct regmap *regmap, const char *name,
  
  	init.name = name;
- 	init.ops = &plldiv_ops;
+ 	init.ops = &h32mx_ops;
 -	init.parent_names = parent_name ? &parent_name : NULL;
 -	init.num_parents = parent_name ? 1 : 0;
 +	if (parent_data)
@@ -130,33 +129,33 @@ index ba3a1839a96d..c5d0c6e27397 100644
 +	init.num_parents = 1;
  	init.flags = CLK_SET_RATE_GATE;
  
- 	plldiv->hw.init = &init;
+ 	h32mxclk->hw.init = &init;
 diff --git a/drivers/clk/at91/dt-compat.c b/drivers/clk/at91/dt-compat.c
-index 22bcaa3b28dd..3285e3110b58 100644
+index 3285e3110b58..ccdeba3a1130 100644
 --- a/drivers/clk/at91/dt-compat.c
 +++ b/drivers/clk/at91/dt-compat.c
-@@ -724,7 +724,7 @@ of_at91sam9x5_clk_plldiv_setup(struct device_node *np)
- 	if (IS_ERR(regmap))
- 		return;
+@@ -201,7 +201,7 @@ static void __init of_sama5d4_clk_h32mx_setup(struct device_node *np)
  
--	hw = at91_clk_register_plldiv(regmap, name, parent_name);
-+	hw = at91_clk_register_plldiv(regmap, name, parent_name, NULL);
+ 	parent_name = of_clk_get_parent_name(np, 0);
+ 
+-	hw = at91_clk_register_h32mx(regmap, name, parent_name);
++	hw = at91_clk_register_h32mx(regmap, name, parent_name, NULL);
  	if (IS_ERR(hw))
  		return;
  
 diff --git a/drivers/clk/at91/pmc.h b/drivers/clk/at91/pmc.h
-index 519d71652619..df2deb134a8d 100644
+index df2deb134a8d..fe42700df6db 100644
 --- a/drivers/clk/at91/pmc.h
 +++ b/drivers/clk/at91/pmc.h
-@@ -243,7 +243,7 @@ at91_clk_register_pll(struct regmap *regmap, const char *name,
- 		      const struct clk_pll_characteristics *characteristics);
- struct clk_hw * __init
- at91_clk_register_plldiv(struct regmap *regmap, const char *name,
--			 const char *parent_name);
-+			 const char *parent_name, struct clk_parent_data *parent_data);
+@@ -177,7 +177,7 @@ at91_clk_register_generated(struct regmap *regmap, spinlock_t *lock,
  
  struct clk_hw * __init
- sam9x60_clk_register_div_pll(struct regmap *regmap, spinlock_t *lock,
+ at91_clk_register_h32mx(struct regmap *regmap, const char *name,
+-			const char *parent_name);
++			const char *parent_name, struct clk_parent_data *parent_data);
+ 
+ struct clk_hw * __init
+ at91_clk_i2s_mux_register(struct regmap *regmap, const char *name,
 -- 
 2.43.0
 
