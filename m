@@ -1,216 +1,120 @@
-Return-Path: <linux-kernel+bounces-700773-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-700778-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1B118AE6C84
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Jun 2025 18:35:56 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 90530AE6C8C
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Jun 2025 18:37:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id ADF505A6BB0
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Jun 2025 16:35:19 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A84761C22180
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Jun 2025 16:38:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EBF292E6116;
-	Tue, 24 Jun 2025 16:35:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3FA7F2E2F07;
+	Tue, 24 Jun 2025 16:37:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="TE88l1xH"
-Received: from mail-qv1-f43.google.com (mail-qv1-f43.google.com [209.85.219.43])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=fb.com header.i=@fb.com header.b="TsKdgwUm"
+Received: from mx0a-00082601.pphosted.com (mx0b-00082601.pphosted.com [67.231.153.30])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A3E2D2E3B18;
-	Tue, 24 Jun 2025 16:35:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 00E9A307481
+	for <linux-kernel@vger.kernel.org>; Tue, 24 Jun 2025 16:37:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=67.231.153.30
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750782927; cv=none; b=gKTQgzBkg8xR2oj0P5wxx46H+9UjfTd1sNnRHIPLwu/1GvUAFG8OEb0F45RjLYMYO1+Hj5+6sKmJ2YESJsjM1+wfAEtuWWwNXT+gYj3xP/4IN9m8l4o3rQwS2oA5h4fHH2iPRbJwZrOMK9Q62SY4sTz+PSCHzPnhQ/kmaiy4Q4s=
+	t=1750783059; cv=none; b=atOIbLdAC9nxCHPoE2xzuGy9jMZ5RcceB4m4bA9hbx3/AHrPWZbP2SkqP2w04pU0TNtz2hWMCqMXGqHW/14u5ix1vEO0xhh32y7imowYhychXWh2gXiAST+fI1t5Z2yXraG/7x9tyyP+KKb0ddFJVW5WXi3VtRafDo8ubD2yUn0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750782927; c=relaxed/simple;
-	bh=LjV6uqFkDZ7WeWyzUybyEtVZAFyO4GSfRKdGE3HZLG0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=X//VV2kfzYNUCnNFe1dWqykBWOYMnBJWXDciEeJeXsNCD1HVj2UGSi4JuIQL2YBh1DUupF3PkrRCEODwqzWB9O80QZOd8/O68MY/9+PdYE/gAS2SheMNjoPcviIv9YRBorTBtZ48xPA0mO3XpCrFx/BmbicnepH+UDPE+lX+w5Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=TE88l1xH; arc=none smtp.client-ip=209.85.219.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qv1-f43.google.com with SMTP id 6a1803df08f44-6fad79433bbso53847086d6.0;
-        Tue, 24 Jun 2025 09:35:25 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1750782924; x=1751387724; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:feedback-id:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=0QNqquuevQzO214EF0t3CB2Yl6DSj/hm7kyzxr3XDUE=;
-        b=TE88l1xHckn9u7OhWVwWygLRzBQ1jj3Ekh8ORGMb9IzFQc9MXg0lsELe4Dz+qxH0jr
-         zveFPAmsLqbQpMnsVZiOaUR/Hxa6+xoqONx4t0QdSJQOiZGiLBp/58faHVtFHyxxmlVw
-         4YWXf2JqWrzV5paGaXc3wnnckoOTzlvrpQd6QUhGqJcZ06j/7zMfoBQMsSOmy5YEaPQh
-         O8crvv5bxegIlS203x99OKU3gATdooBurEg0u5f5aewkvFc54KBiAQLdyhNWo2gGj7MN
-         6Nb0yY+gQYs0jWHa1tWZGpOCYCzwHj1QLyt0Y3WyLY9Y/qufBw8S+Zw4KwWsnpxUdrti
-         wEAQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1750782924; x=1751387724;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:feedback-id:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=0QNqquuevQzO214EF0t3CB2Yl6DSj/hm7kyzxr3XDUE=;
-        b=gQQR+YUiYBZjsl/uMMvafSi5XZFsuFRg3ebNP8LVy226iSi/r924LmZ7MX2Nt2NXoS
-         8z1f9PaoJSSK8yGXuFRkjgLGWwCcZZLJdzh940k3WJHgs1CAb6gFRIfxhrvxYp/ZBzOC
-         EQ+siq/llPCUbJmYbu0gmzwigFQVZ6FouEs7u+DN9mSlfnb22/mB1Ho7uKrgrufFGOfF
-         QbBRd/klHdHz8E+gYZKL4XPTb1o0ROB9+McEq+EfVx6uYz08t2er5tgfesy3FKVFawMN
-         DOKg2jxlwtR+jDo6p/AVDGfHMUIMZeknAiuMJj4i3m+Dtx+jPGcCm22zDc/kFIAbVoYx
-         bJug==
-X-Forwarded-Encrypted: i=1; AJvYcCUfn09+0BsWb7cDzjU/vvjOyFkiqzF9kT5cVU6WoGMgNeC1mHt0Znb0v34bjjZbrKf7IGABag1C96zxmyeM@vger.kernel.org, AJvYcCV4mivcn22HTlb6zKfmYy53vbQYakUZLdvzvswcGInhMLJ7URU7VuD+os3ttv+gIiHP5fX/svula+Tz@vger.kernel.org, AJvYcCVWSBixJs4/qPKZZ32d0jSglOiwbrqPItaofVqiqkFlce60B+Rcg387Y+oh4DbRj5YsGL29kTeDW8IBTgWrGe8=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw0eC7f2Znm0WQDPS3q1wPnl+JqJGdncPywqieP/v5iwEamgvZZ
-	ky3bOWdNL5XExHngQFvzv0/iMWSN9vkBxliPklD9+0rM/iKVT6YNzKVI
-X-Gm-Gg: ASbGncvCMg8YWu/eyjexo5hOGSl4+ohRljMudsuyaCGGGPLMOMt49EEocr4JHnIfkZa
-	M10aHIu0bAmMKKN3ZM7N0MZEmOUNRA9Mrza47y/PgSC+SbKN33Ac58Jd371bTRc0Iz9TsnyYLw4
-	Cypxu06H6RH+3Raxhl8Xy784y8Qp3j++l+BOW0VKyRoshv42ZwfsyO75RH93g+3BOsceOdDtllW
-	f17RMWxOH0zpTIQ1t6oYWJhcYToOTS5k7IU1mIcwu+B75uGC0k0X1a+hNv5a9Af8UJ2ER1lSFIJ
-	gzj0RJqxeX9fMn39jC/xIy5+GIOPjhy+fA6FYg7S4nIO4eymEv7dUmNBJmJfgqeVVpdxoRnvgMq
-	TMd1B1+Y4u91iZGA74o1NmCFtixo+Ewui58i8mmOIoElc/pHJ5NhnDAa7CHzZNXs=
-X-Google-Smtp-Source: AGHT+IEPMlsFrV06xtIotQuWrty2uBXXPCKpsgJkwOxW5ihx34pxGRbrnlY3mm+GvFIAEGYs+rloYg==
-X-Received: by 2002:a05:6214:20c4:b0:6fa:cdc9:8afa with SMTP id 6a1803df08f44-6fd0a50af00mr284466746d6.17.1750782924419;
-        Tue, 24 Jun 2025 09:35:24 -0700 (PDT)
-Received: from fauth-a2-smtp.messagingengine.com (fauth-a2-smtp.messagingengine.com. [103.168.172.201])
-        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6fd0954430dsm58565536d6.65.2025.06.24.09.35.23
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 24 Jun 2025 09:35:24 -0700 (PDT)
-Received: from phl-compute-11.internal (phl-compute-11.phl.internal [10.202.2.51])
-	by mailfauth.phl.internal (Postfix) with ESMTP id 5D63D120006A;
-	Tue, 24 Jun 2025 12:35:23 -0400 (EDT)
-Received: from phl-mailfrontend-01 ([10.202.2.162])
-  by phl-compute-11.internal (MEProxy); Tue, 24 Jun 2025 12:35:23 -0400
-X-ME-Sender: <xms:y9NaaOjA-JnUE8R0_6UFw33RJauVdhVzIfbHzE2yMSdpGvuYjVdm6w>
-    <xme:y9NaaPCuEFpGDLx71ItSOxUXlBYSaz8VjvkSMlHpy8m-VkcAyfl7dXTvHQEtMUq7u
-    h1-jSoyEtKoiHZSHg>
-X-ME-Received: <xmr:y9NaaGF05rK9iRfoFHdreuq9f0NsfObOes-lzSyr9oD4ET5jRZcmQ3moJw>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtddvgddvtdefkecutefuodetggdotefrod
-    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpuffrtefokffrpgfnqfghnecuuegr
-    ihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjug
-    hrpeffhffvvefukfhfgggtuggjsehttdertddttddvnecuhfhrohhmpeeuohhquhhnucfh
-    vghnghcuoegsohhquhhnrdhfvghnghesghhmrghilhdrtghomheqnecuggftrfgrthhtvg
-    hrnhephedugfduffffteeutddvheeuveelvdfhleelieevtdeguefhgeeuveeiudffiedv
-    necuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomhepsghoqh
-    hunhdomhgvshhmthhprghuthhhphgvrhhsohhnrghlihhthidqieelvdeghedtieegqddu
-    jeejkeehheehvddqsghoqhhunhdrfhgvnhhgpeepghhmrghilhdrtghomhesfhhigihmvg
-    drnhgrmhgvpdhnsggprhgtphhtthhopedviedpmhhouggvpehsmhhtphhouhhtpdhrtghp
-    thhtoheplhhoshhsihhnsehkvghrnhgvlhdrohhrghdprhgtphhtthhopehgrghrhiesgh
-    grrhihghhuohdrnhgvthdprhgtphhtthhopehlihhnuhigqdhkvghrnhgvlhesvhhgvghr
-    rdhkvghrnhgvlhdrohhrghdprhgtphhtthhopehruhhsthdqfhhorhdqlhhinhhugiesvh
-    hgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopehlkhhmmheslhhishhtshdrlhhi
-    nhhugidruggvvhdprhgtphhtthhopehlihhnuhigqdgrrhgthhesvhhgvghrrdhkvghrnh
-    gvlhdrohhrghdprhgtphhtthhopehojhgvuggrsehkvghrnhgvlhdrohhrghdprhgtphht
-    thhopegrlhgvgidrghgrhihnohhrsehgmhgrihhlrdgtohhmpdhrtghpthhtohepsghjoh
-    hrnhefpghghhesphhrohhtohhnmhgrihhlrdgtohhm
-X-ME-Proxy: <xmx:y9NaaHQf_uRax2x0Xhu1rzQgl4Kolr71lvGkDvqzPlai7wN9K06e1g>
-    <xmx:y9NaaLxgqaMZ_S0VZZKkoxYRRzs9ADvECjlCrhaN8vInW0xI2eI0FA>
-    <xmx:y9NaaF60PZIgYbS5s1acOYfINQtagIA8ZAkUMjjo4BOQzRIwWLW0YQ>
-    <xmx:y9NaaIzRl_HuMXe8Tq5E4pVBz_gVSFH53EUbIvhcIR7yLs66nYSNkg>
-    <xmx:y9NaaHjNqOH6cY_twN0wO59ZxG7DFG5c5NhxTK41Ce42jTCmJkqNSr5g>
-Feedback-ID: iad51458e:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Tue,
- 24 Jun 2025 12:35:22 -0400 (EDT)
-Date: Tue, 24 Jun 2025 09:35:21 -0700
-From: Boqun Feng <boqun.feng@gmail.com>
-To: Benno Lossin <lossin@kernel.org>
-Cc: Gary Guo <gary@garyguo.net>, linux-kernel@vger.kernel.org,
-	rust-for-linux@vger.kernel.org, lkmm@lists.linux.dev,
-	linux-arch@vger.kernel.org, Miguel Ojeda <ojeda@kernel.org>,
-	Alex Gaynor <alex.gaynor@gmail.com>,
-	=?iso-8859-1?Q?Bj=F6rn?= Roy Baron <bjorn3_gh@protonmail.com>,
-	Andreas Hindborg <a.hindborg@kernel.org>,
-	Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>,
-	Danilo Krummrich <dakr@kernel.org>, Will Deacon <will@kernel.org>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Wedson Almeida Filho <wedsonaf@gmail.com>,
-	Viresh Kumar <viresh.kumar@linaro.org>,
-	Lyude Paul <lyude@redhat.com>, Ingo Molnar <mingo@kernel.org>,
-	Mitchell Levy <levymitchell0@gmail.com>,
-	"Paul E. McKenney" <paulmck@kernel.org>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Linus Torvalds <torvalds@linux-foundation.org>,
-	Thomas Gleixner <tglx@linutronix.de>
-Subject: Re: [PATCH v5 04/10] rust: sync: atomic: Add generic atomics
-Message-ID: <aFrTyXcFVOjWa2o-@Mac.home>
-References: <20250618164934.19817-1-boqun.feng@gmail.com>
- <20250618164934.19817-5-boqun.feng@gmail.com>
- <20250621123212.66fb016b.gary@garyguo.net>
- <aFjj8AV668pl9jLN@Mac.home>
- <20250623193019.6c425467.gary@garyguo.net>
- <aFmmYSAyvxotYfo7@tardis.local>
- <DAUAW2Y0HYLY.3CDC9ZW0BUKI4@kernel.org>
+	s=arc-20240116; t=1750783059; c=relaxed/simple;
+	bh=BNWhmaavD5+X77lm7PY0bRLx040883qzUEvAvWvBb2U=;
+	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=CRo59MEcGJb5TRwSf/1tkt13bo1MAGZXHTPsEFg/OnS8SvNELzLOTlmaonilUmsl5wwyxsaQcJekIeT9whaMYgMuKoH3uxW4z5yBnIHy8ULJ7vN09Xmx4bjTlgDilLonVU2tHQKP6mdgqIhhG58/Q6tX7WA1/rXVH3iYstbbU7o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=fb.com; spf=pass smtp.mailfrom=meta.com; dkim=pass (1024-bit key) header.d=fb.com header.i=@fb.com header.b=TsKdgwUm; arc=none smtp.client-ip=67.231.153.30
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=fb.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=meta.com
+Received: from pps.filterd (m0001303.ppops.net [127.0.0.1])
+	by m0001303.ppops.net (8.18.1.2/8.18.1.2) with ESMTP id 55OEC9nr021605
+	for <linux-kernel@vger.kernel.org>; Tue, 24 Jun 2025 09:37:35 -0700
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fb.com; h=cc
+	:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=facebook; bh=H
+	5lsDphYvNXaLxsu+qjlWiXiejojiHg4KrTrvEEeeGk=; b=TsKdgwUm2MlFBQBl6
+	ZpkdvRJQQzMk/sXb5qXTJGsPDZJ2tzp89fH48zE5s+lVfgUcMjoYQKOa858J7xRK
+	zbpMQmN/yYSrFC34Of9fhiStceQi4gnd355y/YA1L2rNh/7Ppnm++8+5t4+ZCYz6
+	VNajYk8QurxevEYKFd/LEYmpXw=
+Received: from maileast.thefacebook.com ([163.114.135.16])
+	by m0001303.ppops.net (PPS) with ESMTPS id 47dre7d90c-2
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Tue, 24 Jun 2025 09:37:35 -0700 (PDT)
+Received: from twshared7571.34.frc3.facebook.com (2620:10d:c0a8:1b::30) by
+ mail.thefacebook.com (2620:10d:c0a9:6f::237c) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.2.1748.24; Tue, 24 Jun 2025 16:37:34 +0000
+Received: by devgpu004.nha5.facebook.com (Postfix, from userid 199522)
+	id 68A05197B1B; Tue, 24 Jun 2025 09:37:30 -0700 (PDT)
+From: Alex Mastro <amastro@fb.com>
+To: Jason Gunthorpe <jgg@ziepe.ca>
+CC: Alex Mastro <amastro@fb.com>,
+        Alex Williamson
+	<alex.williamson@redhat.com>, <peterx@redhat.com>,
+        <kbusch@kernel.org>, <kvm@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] vfio/pci: print vfio-device name to fdinfo
+Date: Tue, 24 Jun 2025 09:35:58 -0700
+Message-ID: <20250624163559.2984626-1-amastro@fb.com>
+X-Mailer: git-send-email 2.47.1
+In-Reply-To: <20250624005605.GA72557@ziepe.ca>
+References:
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <DAUAW2Y0HYLY.3CDC9ZW0BUKI4@kernel.org>
+Content-Transfer-Encoding: quoted-printable
+X-FB-Internal: Safe
+Content-Type: text/plain
+X-Proofpoint-GUID: MreFK8HlSUTaU8ILApvMUz1KSWiNyrC-
+X-Authority-Analysis: v=2.4 cv=Vbv3PEp9 c=1 sm=1 tr=0 ts=685ad44f cx=c_pps a=MfjaFnPeirRr97d5FC5oHw==:117 a=MfjaFnPeirRr97d5FC5oHw==:17 a=6IFa9wvqVegA:10 a=9jRdOu3wAAAA:8 a=oIC1ugqSzqvTnn3gIawA:9 a=ZE6KLimJVUuLrTuGpvhn:22
+X-Proofpoint-ORIG-GUID: MreFK8HlSUTaU8ILApvMUz1KSWiNyrC-
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNjI0MDEzOCBTYWx0ZWRfX3r9YK9qmOki7 b8dUMzTi75durci7R6JL5up9E1carSwSq3U6qcNAsiok5KkX4Ad9zZIsl4b/9BxaN62LQS7r/BV fABjnc9Jv3O4fHA9jJctOjKcMLiersbn853p8uFlUl3Tq69LqR66t8XcRupzTyk/c4YTzm+7jPC
+ uxFFb5Zfwumbnz/L+bZ3DqhL4PDnvdGdo2rVsqeV9lm6jWZpg3IZtX0KH4FdL6Rl2H6PEWWfb4R UR3Q+ds05ZSeL0Bz81l32pmil15rDADRrdN6ocJ3sTukqknBoSuZ+qr4AJTS4sobzp+zUcgSoyc J8ugLfknSyQ8rcA++iwcAIG191ojwEvO7KRbX/4FPbTUlgeqbNu0OrkC6TUIVDucBEio2z2gLSa
+ 2z5Ev+/lkUvs0zWr7StBwmb839J59bCtUXeIsDY8ySnMKphJwP6DxucQ27OBSOl3bnWujBjL
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.7,FMLib:17.12.80.40
+ definitions=2025-06-24_06,2025-06-23_07,2025-03-28_01
 
-On Tue, Jun 24, 2025 at 01:27:38AM +0200, Benno Lossin wrote:
-> On Mon Jun 23, 2025 at 9:09 PM CEST, Boqun Feng wrote:
-> > On Mon, Jun 23, 2025 at 07:30:19PM +0100, Gary Guo wrote:
-> >> cannot just transmute between from pointers to usize (which is its
-> >> Repr):
-> >> * Transmuting from pointer to usize discards provenance
-> >> * Transmuting from usize to pointer gives invalid provenance
-> >> 
-> >> We want neither behaviour, so we must store `usize` directly and
-> >> always call into repr functions.
-> >> 
-> >
-> > If we store `usize`, how can we support the `get_mut()` then? E.g.
-> >
-> >     static V: i32 = 32;
-> >
-> >     let mut x = Atomic::new(&V as *const i32 as *mut i32);
-> >     // ^ assume we expose_provenance() in new().
-> >
-> >     let ptr: &mut *mut i32 = x.get_mut(); // which is `&mut self.0.get()`.
-> >
-> >     let ptr_val = *ptr; // Does `ptr_val` have the proper provenance?
-> 
-> If `get_mut` transmutes the integer into a pointer, then it will have
-> the wrong provenance (it will just have plain invalid provenance).
-> 
+On Mon, 23 Jun 2025 21:56:05 -0300 Jason Gunthorpe <jgg@ziepe.ca> wrote:
+> For the legacy route this effectively gives you the iommu group.
 
-The key topic Gary and I have been discussing is whether we should
-define Atomic<T> as:
+This is true, but
+- There could be multiple devices per group, and I can't see a good way t=
+o
+  determine exactly which one is in use. (we happen to have one device pe=
+r
+  group, so this particular concern is somewhat moot for us)
+- In our use case, we vend the vfio device fd via SCM_RIGHTS to other pro=
+cesses
+  which did not open the group fd. We keep track of this internally, but =
+it's an
+  imperfect solution, and we'd like a more fundamental way to query the k=
+ernel
+  for this.
 
-(my current implementation)
+> For the new route this will give you the struct device.
+>=20
+> The userspace can deduce more information, like the actual PCI BDF, by
+> mapping the name through sysfs.
 
-    pub struct Atomic<T: AllowAtomic>(Opaque<T>);
+In the vfio cdev case, <pci sysfs path>/vfio-dev/X tells you the
+/dev/vfio/devices/X mapping, but is there a straightforward way to map in=
+ the
+opposite direction?
 
-or
+I'm open to other approaches to solving the issue, but making an additive=
+ change
+to fdinfo seemed innocuous enough, and hopefully unlikely to be incompati=
+ble
+with future direction of this subsystem.
 
-(Gary's suggestion)
-
-    pub struct Atomic<T: AllowAtomic>(Opaque<T::Repr>);
-
-`T::Repr` is guaranteed to be the same size and alignment of `T`, and
-per our discussion, it makes sense to further require that `transmute<T,
-T::Repr>()` should also be safe (as the safety requirement of
-`AllowAtomic`), or we can say `T` bit validity can be preserved by
-`T::Repr`: a valid bit combination `T` can be transumated to `T::Repr`,
-and if transumated back, it's the same bit combination.
-
-Now as I pointed out, if we use `Opaque<T::Repr>`, then `.get_mut()`
-would be unsound for `Atomic<*mut T>`. And Gary's concern is that in
-the current implementation, we directly cast a `*mut T` (from
-`Opaque::get()`) into a `*mut T::Repr`, and pass it directly into C/asm
-atomic primitives. However, I think with the additional safety
-requirement above, this shouldn't be a problem: because the C/asm atomic
-primitives would just pass the address to an asm block, and that'll be
-out of Rust abstract machine, and as long as the C/primitives atomic
-primitives are implemented correctly, the bit representation of `T`
-remains valid after asm blocks.
-
-So I think the current implementation still works and is better.
-
-Regards,
-Boqun
-
-> ---
-> Cheers,
-> Benno
+Thanks,
+Alex
 
