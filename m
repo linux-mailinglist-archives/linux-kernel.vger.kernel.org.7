@@ -1,51 +1,51 @@
-Return-Path: <linux-kernel+bounces-699481-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-699482-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 24B60AE5A97
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Jun 2025 05:39:27 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id E98D7AE5A99
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Jun 2025 05:40:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 607831894C24
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Jun 2025 03:39:37 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9661318962AD
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Jun 2025 03:40:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8428B1F4199;
-	Tue, 24 Jun 2025 03:39:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 31F461DF98B;
+	Tue, 24 Jun 2025 03:39:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=disroot.org header.i=@disroot.org header.b="fhcukdLK"
+	dkim=pass (2048-bit key) header.d=disroot.org header.i=@disroot.org header.b="MvpY/fp/"
 Received: from layka.disroot.org (layka.disroot.org [178.21.23.139])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D7BC51C84CF;
-	Tue, 24 Jun 2025 03:39:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2DF2819C558;
+	Tue, 24 Jun 2025 03:39:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.21.23.139
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750736352; cv=none; b=MjwSetEnaxNCQ/hEfZzgEZuXM5XFBHAW6ewJKn/3KYhdjb68gsNA8A4GTsoanAuCadCaNn0EhkLHX8s/Z1YdOzNCRVMVNZgg3Nfw0i5jgaoAzyc/4ZUte7TE8SH97gYaYM/POIv8xaMy9ugnJucTGoDBQXDr8TK12u4Eo7qY7YY=
+	t=1750736396; cv=none; b=RF+7R6VGrW11/FS0Bm7+IWUUN5s3pzyk7XmZiqCkD94W/DssEUSanO6sX+XaCmK/eN4dFzjlx8EkHsehgpCdfcRMpIF6FH96FXO1fJGdRMqiyQg6tkGlTf6kFO2u15rY1TSGTcQS6nsTxwjKPsxQbeS82xDUBpWQo5av2qq5UJQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750736352; c=relaxed/simple;
-	bh=YdthC4P4i6JxOovTtbUlGfw7qhNZMWWwsuN+cx1Xm1M=;
+	s=arc-20240116; t=1750736396; c=relaxed/simple;
+	bh=Cn577oWTiuD78zUlriRAp/KCdUeL45UyKPT3ZBfVSNg=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=FsfCtzLhpC5H3Ho3yoJUDumm0HtiVs0XTCbfsQTqA8iiFFj9DnwX8X5Y3DHJ29tm5PSHdZPVkSroZGxAeVMhOVGMIgRoyd81b2kKNbYsXFv6ET3HNoeKdyNHY8I/twAof7x7Z+/yqMp5c9C5uW+pOKysGCIqd9V0X9d1kmcieao=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=disroot.org; spf=pass smtp.mailfrom=disroot.org; dkim=pass (2048-bit key) header.d=disroot.org header.i=@disroot.org header.b=fhcukdLK; arc=none smtp.client-ip=178.21.23.139
+	 MIME-Version; b=Bdnic/T7q4nS0gILH0lOJDPQjLWW92N4k4n/7vKzII8SBMQ3utO4wHwweiH2XerwR6OXSR3oGN2q8F5Rg4rCkxHxbDFS6Flbf6yfxghi+NSNab6a93G7XuhVf+myxQ7DWzgmWVG4tgKo08RR3G8tfY+uj2hUpP2W+SP9uC9A6f0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=disroot.org; spf=pass smtp.mailfrom=disroot.org; dkim=pass (2048-bit key) header.d=disroot.org header.i=@disroot.org header.b=MvpY/fp/; arc=none smtp.client-ip=178.21.23.139
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=disroot.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=disroot.org
 Received: from mail01.disroot.lan (localhost [127.0.0.1])
-	by disroot.org (Postfix) with ESMTP id 6BFB425F15;
-	Tue, 24 Jun 2025 05:39:09 +0200 (CEST)
+	by disroot.org (Postfix) with ESMTP id E0D6625A24;
+	Tue, 24 Jun 2025 05:39:53 +0200 (CEST)
 X-Virus-Scanned: SPAM Filter at disroot.org
 Received: from layka.disroot.org ([127.0.0.1])
  by localhost (disroot.org [127.0.0.1]) (amavis, port 10024) with ESMTP
- id l32qCvgyBGSN; Tue, 24 Jun 2025 05:39:07 +0200 (CEST)
+ id uTZH90UD7F9r; Tue, 24 Jun 2025 05:39:53 +0200 (CEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=disroot.org; s=mail;
-	t=1750736347; bh=YdthC4P4i6JxOovTtbUlGfw7qhNZMWWwsuN+cx1Xm1M=;
+	t=1750736393; bh=Cn577oWTiuD78zUlriRAp/KCdUeL45UyKPT3ZBfVSNg=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References;
-	b=fhcukdLKF0vr8WO5ycXld3+PiyTHOVlqIKBW379HEIaBHDcU/rZV+eNLcvzEsulMI
-	 +8cC7Geo2SpaYbYGob8hX5yIx0oyuTQuaMWeYejiAAhP6cm7oDMsakELwbHolNdSWg
-	 m70a6Ppm1eBJMeTTtxwrwfnH9WynMjcYt0Y4v7s8h1W+dovZbmdg5CJcH4MCBBTq6a
-	 5fYu18thTmfuvGaYaKSHUJ+T+ewYXBNcQTgyar3+g9HppWTK8tpwNL4Vfk4cuIPA1k
-	 EPcelewpq07W/97j8muWVV9iCEYrlv/wwCjPpo5HG+FHJprbt/H1rmbtW6RWP9amvN
-	 /V8A9O1SCdoxA==
+	b=MvpY/fp/GC/4at6lGtQowOZO/8toL+OLqjdCqhMbcnsa8/RujJ1XHBCvyx83zh3UQ
+	 SPdXvB0xdxZ1NHDQaw0jB6H0bnGJfzavbFAQD/mndyAc9kISM1JNzxngKPd2Ex1rZF
+	 IG9PPmDHiSpId/9jZGyudx10QjTUp5tBZrG2Oytvwv/3dyc7RQ8LoQGgDPMGg6UOtX
+	 h0GgTcqm1z43zl3We7QRRkbR4V4shR1RrrJtfR6PlpUfAB8fh9aygUgsjuHA6mO20P
+	 XcSuczhntnHFm65KZQbJsZsSwdl+U0cAxsj3sjgW1omWilsy7FUvS/bXVB26snkmQr
+	 aD4PaKFyEKcOw==
 From: Yao Zi <ziyao@disroot.org>
 To: Vinod Koul <vkoul@kernel.org>,
 	Kishon Vijay Abraham I <kishon@kernel.org>,
@@ -65,11 +65,10 @@ Cc: linux-phy@lists.infradead.org,
 	devicetree@vger.kernel.org,
 	linux-arm-kernel@lists.infradead.org,
 	linux-rockchip@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	Neil Armstrong <neil.armstrong@linaro.org>
-Subject: [PATCH v4 5/6] phy: rockchip: naneng-combphy: Add RK3528 support
-Date: Tue, 24 Jun 2025 03:37:32 +0000
-Message-ID: <20250624033733.50197-6-ziyao@disroot.org>
+	linux-kernel@vger.kernel.org
+Subject: [PATCH v4 6/6] arm64: dts: rockchip: Add naneng-combphy for RK3528
+Date: Tue, 24 Jun 2025 03:37:33 +0000
+Message-ID: <20250624033733.50197-7-ziyao@disroot.org>
 In-Reply-To: <20250624033733.50197-1-ziyao@disroot.org>
 References: <20250624033733.50197-1-ziyao@disroot.org>
 Precedence: bulk
@@ -80,229 +79,56 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Rockchip RK3528 integrates one naneng-combphy that is able to operate in
-PCIe and USB3 mode. The control logic is similar to previous variants of
-naneng-combphy but the register layout is apperantly different from the
-RK3568 one.
+Rockchip RK3528 ships a naneng-combphy that is shared by PCIe and USB
+3.0 controllers. Describe it and the pipe-phy grf which it depends on.
 
 Signed-off-by: Yao Zi <ziyao@disroot.org>
-Reviewed-by: Heiko Stuebner <heiko@sntech.de>
-Reviewed-by: Neil Armstrong <neil.armstrong@linaro.org>
 ---
- .../rockchip/phy-rockchip-naneng-combphy.c    | 186 +++++++++++++++++-
- 1 file changed, 185 insertions(+), 1 deletion(-)
+ arch/arm64/boot/dts/rockchip/rk3528.dtsi | 24 ++++++++++++++++++++++++
+ 1 file changed, 24 insertions(+)
 
-diff --git a/drivers/phy/rockchip/phy-rockchip-naneng-combphy.c b/drivers/phy/rockchip/phy-rockchip-naneng-combphy.c
-index 1d1c7723584b..bf00a85a113b 100644
---- a/drivers/phy/rockchip/phy-rockchip-naneng-combphy.c
-+++ b/drivers/phy/rockchip/phy-rockchip-naneng-combphy.c
-@@ -20,7 +20,46 @@
- #define REF_CLOCK_25MHz			(25 * HZ_PER_MHZ)
- #define REF_CLOCK_100MHz		(100 * HZ_PER_MHZ)
+diff --git a/arch/arm64/boot/dts/rockchip/rk3528.dtsi b/arch/arm64/boot/dts/rockchip/rk3528.dtsi
+index a22db9d4b518..31b27096566a 100644
+--- a/arch/arm64/boot/dts/rockchip/rk3528.dtsi
++++ b/arch/arm64/boot/dts/rockchip/rk3528.dtsi
+@@ -417,6 +417,11 @@ vpu_grf: syscon@ff340000 {
+ 			reg = <0x0 0xff340000 0x0 0x8000>;
+ 		};
  
--/* COMBO PHY REG */
-+/* RK3528 COMBO PHY REG */
-+#define RK3528_PHYREG6				0x18
-+#define RK3528_PHYREG6_PLL_KVCO			GENMASK(12, 10)
-+#define RK3528_PHYREG6_PLL_KVCO_VALUE		0x2
-+#define RK3528_PHYREG6_SSC_DIR			GENMASK(5, 4)
-+#define RK3528_PHYREG6_SSC_UPWARD		0
-+#define RK3528_PHYREG6_SSC_DOWNWARD		1
++		pipe_phy_grf: syscon@ff348000 {
++			compatible = "rockchip,rk3528-pipe-phy-grf", "syscon";
++			reg = <0x0 0xff348000 0x0 0x8000>;
++		};
 +
-+#define RK3528_PHYREG40				0x100
-+#define RK3528_PHYREG40_SSC_EN			BIT(20)
-+#define RK3528_PHYREG40_SSC_CNT			GENMASK(10, 0)
-+#define RK3528_PHYREG40_SSC_CNT_VALUE		0x17d
+ 		vo_grf: syscon@ff360000 {
+ 			compatible = "rockchip,rk3528-vo-grf", "syscon";
+ 			reg = <0x0 0xff360000 0x0 0x10000>;
+@@ -1085,6 +1090,25 @@ dmac: dma-controller@ffd60000 {
+ 			#dma-cells = <1>;
+ 			arm,pl330-periph-burst;
+ 		};
 +
-+#define RK3528_PHYREG42				0x108
-+#define RK3528_PHYREG42_CKDRV_CLK_SEL		BIT(29)
-+#define RK3528_PHYREG42_CKDRV_CLK_PLL		0
-+#define RK3528_PHYREG42_CKDRV_CLK_CKRCV		1
-+#define RK3528_PHYREG42_PLL_LPF_R1_ADJ		GENMASK(10, 7)
-+#define RK3528_PHYREG42_PLL_LPF_R1_ADJ_VALUE	0x9
-+#define RK3528_PHYREG42_PLL_CHGPUMP_CUR_ADJ	GENMASK(6, 4)
-+#define RK3528_PHYREG42_PLL_CHGPUMP_CUR_ADJ_VALUE 0x7
-+#define RK3528_PHYREG42_PLL_KVCO_ADJ		GENMASK(2, 0)
-+#define RK3528_PHYREG42_PLL_KVCO_ADJ_VALUE	0x0
-+
-+#define RK3528_PHYREG80				0x200
-+#define RK3528_PHYREG80_CTLE_EN			BIT(17)
-+
-+#define RK3528_PHYREG81				0x204
-+#define RK3528_PHYREG81_CDR_PHASE_PATH_GAIN_2X	BIT(5)
-+#define RK3528_PHYREG81_SLEW_RATE_CTRL		GENMASK(2, 0)
-+#define RK3528_PHYREG81_SLEW_RATE_CTRL_SLOW	0x7
-+
-+#define RK3528_PHYREG83				0x20c
-+#define RK3528_PHYREG83_RX_SQUELCH		GENMASK(2, 0)
-+#define RK3528_PHYREG83_RX_SQUELCH_VALUE	0x6
-+
-+#define RK3528_PHYREG86				0x218
-+#define RK3528_PHYREG86_RTERM_DET_CLK_EN	BIT(14)
-+
-+/* RK3568 COMBO PHY REG */
- #define RK3568_PHYREG6				0x14
- #define RK3568_PHYREG6_PLL_DIV_MASK		GENMASK(7, 6)
- #define RK3568_PHYREG6_PLL_DIV_SHIFT		6
-@@ -398,6 +437,147 @@ static int rockchip_combphy_probe(struct platform_device *pdev)
- 	return PTR_ERR_OR_ZERO(phy_provider);
- }
- 
-+static int rk3528_combphy_cfg(struct rockchip_combphy_priv *priv)
-+{
-+	const struct rockchip_combphy_grfcfg *cfg = priv->cfg->grfcfg;
-+	unsigned long rate;
-+	u32 val;
-+
-+	/* Set SSC downward spread spectrum */
-+	val = FIELD_PREP(RK3528_PHYREG6_SSC_DIR, RK3528_PHYREG6_SSC_DOWNWARD);
-+	rockchip_combphy_updatel(priv, RK3528_PHYREG6_SSC_DIR, val, RK3528_PHYREG6);
-+
-+	switch (priv->type) {
-+	case PHY_TYPE_PCIE:
-+		rockchip_combphy_param_write(priv->phy_grf, &cfg->con0_for_pcie, true);
-+		rockchip_combphy_param_write(priv->phy_grf, &cfg->con1_for_pcie, true);
-+		rockchip_combphy_param_write(priv->phy_grf, &cfg->con2_for_pcie, true);
-+		rockchip_combphy_param_write(priv->phy_grf, &cfg->con3_for_pcie, true);
-+		break;
-+	case PHY_TYPE_USB3:
-+		/* Enable adaptive CTLE for USB3.0 Rx */
-+		rockchip_combphy_updatel(priv, RK3528_PHYREG80_CTLE_EN, RK3528_PHYREG80_CTLE_EN,
-+					 RK3528_PHYREG80);
-+
-+		/* Set slow slew rate control for PI */
-+		val = FIELD_PREP(RK3528_PHYREG81_SLEW_RATE_CTRL,
-+				 RK3528_PHYREG81_SLEW_RATE_CTRL_SLOW);
-+		rockchip_combphy_updatel(priv, RK3528_PHYREG81_SLEW_RATE_CTRL, val,
-+					 RK3528_PHYREG81);
-+
-+		/* Set CDR phase path with 2x gain */
-+		rockchip_combphy_updatel(priv, RK3528_PHYREG81_CDR_PHASE_PATH_GAIN_2X,
-+					 RK3528_PHYREG81_CDR_PHASE_PATH_GAIN_2X, RK3528_PHYREG81);
-+
-+		/* Set Rx squelch input filler bandwidth */
-+		val = FIELD_PREP(RK3528_PHYREG83_RX_SQUELCH, RK3528_PHYREG83_RX_SQUELCH_VALUE);
-+		rockchip_combphy_updatel(priv, RK3528_PHYREG83_RX_SQUELCH, val, RK3528_PHYREG83);
-+
-+		rockchip_combphy_param_write(priv->phy_grf, &cfg->pipe_txcomp_sel, false);
-+		rockchip_combphy_param_write(priv->phy_grf, &cfg->pipe_txelec_sel, false);
-+		rockchip_combphy_param_write(priv->phy_grf, &cfg->usb_mode_set, true);
-+		break;
-+	default:
-+		dev_err(priv->dev, "incompatible PHY type\n");
-+		return -EINVAL;
-+	}
-+
-+	rate = clk_get_rate(priv->refclk);
-+
-+	switch (rate) {
-+	case REF_CLOCK_24MHz:
-+		rockchip_combphy_param_write(priv->phy_grf, &cfg->pipe_clk_24m, true);
-+		if (priv->type == PHY_TYPE_USB3) {
-+			/* Set ssc_cnt[10:0]=00101111101 & 31.5KHz */
-+			val = FIELD_PREP(RK3528_PHYREG40_SSC_CNT, RK3528_PHYREG40_SSC_CNT_VALUE);
-+			rockchip_combphy_updatel(priv, RK3528_PHYREG40_SSC_CNT, val,
-+						 RK3528_PHYREG40);
-+		} else if (priv->type == PHY_TYPE_PCIE) {
-+			/* tx_trim[14]=1, Enable the counting clock of the rterm detect */
-+			rockchip_combphy_updatel(priv, RK3528_PHYREG86_RTERM_DET_CLK_EN,
-+						 RK3528_PHYREG86_RTERM_DET_CLK_EN, RK3528_PHYREG86);
-+		}
-+		break;
-+	case REF_CLOCK_100MHz:
-+		rockchip_combphy_param_write(priv->phy_grf, &cfg->pipe_clk_100m, true);
-+		if (priv->type == PHY_TYPE_PCIE) {
-+			/* PLL KVCO tuning fine */
-+			val = FIELD_PREP(RK3528_PHYREG6_PLL_KVCO, RK3528_PHYREG6_PLL_KVCO_VALUE);
-+			rockchip_combphy_updatel(priv, RK3528_PHYREG6_PLL_KVCO, val,
-+						 RK3528_PHYREG6);
-+
-+			/* su_trim[6:4]=111, [10:7]=1001, [2:0]=000, swing 650mv */
-+			writel(0x570804f0, priv->mmio + RK3528_PHYREG42);
-+		}
-+		break;
-+	default:
-+		dev_err(priv->dev, "Unsupported rate: %lu\n", rate);
-+		return -EINVAL;
-+	}
-+
-+	if (device_property_read_bool(priv->dev, "rockchip,ext-refclk")) {
-+		rockchip_combphy_param_write(priv->phy_grf, &cfg->pipe_clk_ext, true);
-+
-+		if (priv->type == PHY_TYPE_PCIE && rate == REF_CLOCK_100MHz) {
-+			val = FIELD_PREP(RK3528_PHYREG42_CKDRV_CLK_SEL,
-+					 RK3528_PHYREG42_CKDRV_CLK_CKRCV);
-+			val |= FIELD_PREP(RK3528_PHYREG42_PLL_LPF_R1_ADJ,
-+					  RK3528_PHYREG42_PLL_LPF_R1_ADJ_VALUE);
-+			val |= FIELD_PREP(RK3528_PHYREG42_PLL_CHGPUMP_CUR_ADJ,
-+					  RK3528_PHYREG42_PLL_CHGPUMP_CUR_ADJ_VALUE);
-+			val |= FIELD_PREP(RK3528_PHYREG42_PLL_KVCO_ADJ,
-+					  RK3528_PHYREG42_PLL_KVCO_ADJ_VALUE);
-+			rockchip_combphy_updatel(priv,
-+						 RK3528_PHYREG42_CKDRV_CLK_SEL		|
-+						 RK3528_PHYREG42_PLL_LPF_R1_ADJ		|
-+						 RK3528_PHYREG42_PLL_CHGPUMP_CUR_ADJ	|
-+						 RK3528_PHYREG42_PLL_KVCO_ADJ,
-+						 val, RK3528_PHYREG42);
-+
-+			val = FIELD_PREP(RK3528_PHYREG6_PLL_KVCO, RK3528_PHYREG6_PLL_KVCO_VALUE);
-+			rockchip_combphy_updatel(priv, RK3528_PHYREG6_PLL_KVCO, val,
-+						 RK3528_PHYREG6);
-+		}
-+	}
-+
-+	if (priv->type == PHY_TYPE_PCIE) {
-+		if (device_property_read_bool(priv->dev, "rockchip,enable-ssc"))
-+			rockchip_combphy_updatel(priv, RK3528_PHYREG40_SSC_EN,
-+						 RK3528_PHYREG40_SSC_EN, RK3528_PHYREG40);
-+	}
-+
-+	return 0;
-+}
-+
-+static const struct rockchip_combphy_grfcfg rk3528_combphy_grfcfgs = {
-+	/* pipe-phy-grf */
-+	.pcie_mode_set		= { 0x0000, 5, 0, 0x00, 0x11 },
-+	.usb_mode_set		= { 0x0000, 5, 0, 0x00, 0x04 },
-+	.pipe_rxterm_set	= { 0x0000, 12, 12, 0x00, 0x01 },
-+	.pipe_txelec_set	= { 0x0004, 1, 1, 0x00, 0x01 },
-+	.pipe_txcomp_set	= { 0x0004, 4, 4, 0x00, 0x01 },
-+	.pipe_clk_24m		= { 0x0004, 14, 13, 0x00, 0x00 },
-+	.pipe_clk_100m		= { 0x0004, 14, 13, 0x00, 0x02 },
-+	.pipe_rxterm_sel	= { 0x0008, 8, 8, 0x00, 0x01 },
-+	.pipe_txelec_sel	= { 0x0008, 12, 12, 0x00, 0x01 },
-+	.pipe_txcomp_sel	= { 0x0008, 15, 15, 0x00, 0x01 },
-+	.pipe_clk_ext		= { 0x000c, 9, 8, 0x02, 0x01 },
-+	.pipe_phy_status	= { 0x0034, 6, 6, 0x01, 0x00 },
-+	.con0_for_pcie		= { 0x0000, 15, 0, 0x00, 0x110 },
-+	.con1_for_pcie		= { 0x0004, 15, 0, 0x00, 0x00 },
-+	.con2_for_pcie		= { 0x0008, 15, 0, 0x00, 0x101 },
-+	.con3_for_pcie		= { 0x000c, 15, 0, 0x00, 0x0200 },
-+};
-+
-+static const struct rockchip_combphy_cfg rk3528_combphy_cfgs = {
-+	.num_phys	= 1,
-+	.phy_ids	= {
-+		0xffdc0000,
-+	},
-+	.grfcfg		= &rk3528_combphy_grfcfgs,
-+	.combphy_cfg	= rk3528_combphy_cfg,
-+};
-+
- static int rk3562_combphy_cfg(struct rockchip_combphy_priv *priv)
- {
- 	const struct rockchip_combphy_grfcfg *cfg = priv->cfg->grfcfg;
-@@ -1213,6 +1393,10 @@ static const struct rockchip_combphy_cfg rk3588_combphy_cfgs = {
++		combphy: phy@ffdc0000 {
++			compatible = "rockchip,rk3528-naneng-combphy";
++			reg = <0x0 0xffdc0000 0x0 0x10000>;
++			assigned-clocks = <&cru CLK_REF_PCIE_INNER_PHY>;
++			assigned-clock-rates = <100000000>;
++			clocks = <&cru CLK_REF_PCIE_INNER_PHY>,
++				 <&cru PCLK_PCIE_PHY>,
++				 <&cru PCLK_PIPE_GRF>;
++			clock-names = "ref", "apb", "pipe";
++			power-domains = <&power RK3528_PD_VPU>;
++			resets = <&cru SRST_PCIE_PIPE_PHY>,
++				 <&cru SRST_P_PCIE_PHY>;
++			reset-names = "phy", "apb";
++			#phy-cells = <1>;
++			rockchip,pipe-grf = <&vpu_grf>;
++			rockchip,pipe-phy-grf = <&pipe_phy_grf>;
++			status = "disabled";
++		};
+ 	};
  };
  
- static const struct of_device_id rockchip_combphy_of_match[] = {
-+	{
-+		.compatible = "rockchip,rk3528-naneng-combphy",
-+		.data = &rk3528_combphy_cfgs,
-+	},
- 	{
- 		.compatible = "rockchip,rk3562-naneng-combphy",
- 		.data = &rk3562_combphy_cfgs,
 -- 
 2.49.0
 
