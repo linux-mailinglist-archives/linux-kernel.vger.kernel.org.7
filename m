@@ -1,132 +1,115 @@
-Return-Path: <linux-kernel+bounces-699641-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-699635-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 51E84AE5D58
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Jun 2025 09:03:47 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id E6CB2AE5D49
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Jun 2025 08:58:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id ACFCD3A7F2F
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Jun 2025 07:03:21 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8180517FEBF
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Jun 2025 06:58:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4E361246BC9;
-	Tue, 24 Jun 2025 07:03:22 +0000 (UTC)
-Received: from out28-125.mail.aliyun.com (out28-125.mail.aliyun.com [115.124.28.125])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 989D224A06D;
+	Tue, 24 Jun 2025 06:58:23 +0000 (UTC)
+Received: from mail-vk1-f176.google.com (mail-vk1-f176.google.com [209.85.221.176])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 33C75372;
-	Tue, 24 Jun 2025 07:03:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.28.125
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9CFE442065;
+	Tue, 24 Jun 2025 06:58:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750748601; cv=none; b=rUNAfw+VQLF5dU/lI3d5k8dPjEaQ95qfe/tuF37j40EELomj8vhH32leU+ccia96GZpDxXiK5l09GK5MCoAyoTu6NeD+YYhwNFgeN8HkcuchJk4oHT3PIpsJvRnSsI7BOHG4OYyKi0iBk+SpWuZOPhn0orRhzbWu6bINnznemUU=
+	t=1750748303; cv=none; b=DtW9LPLJvgzitLSHAod4G5yxNovhrZLROAw7ReFWMtK3lDaHWSTDCXTAQfAqdaut+KdvuqabPr2vjpttxZWUSp9tO4SUBlhGZIrx4XH2arbslII2JpUZLN1VE86QJd0V1iJl/Ake6UU93oeuNDoj1oZ1DP+h63R4QOxev0sQD4g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750748601; c=relaxed/simple;
-	bh=5yxFHUftbyV+RMCcFSunsXqR9/ZdNxpPFMQ7e3zC6zc=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=k1JoWR6hv5D5gRds6MtIuIZFUS47cUYNEvbhEUx6e9OrDpEKE/uuNvUZH8psCwcwevT607bYkBpXgY+R0DzDo0Bud95t9/o4eNEHHxFu4SEqtFOWjDXUwDx+4sxsihnm5NC76GdryKjHF4YXfgb2TdUJfa500pKaRd43W3ZqahI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=awinic.com; spf=pass smtp.mailfrom=awinic.com; arc=none smtp.client-ip=115.124.28.125
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=awinic.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=awinic.com
-Received: from ubuntu-VirtualBox..(mailfrom:wangweidong.a@awinic.com fp:SMTPD_---.dVKPy6z_1750748268 cluster:ay29)
-          by smtp.aliyun-inc.com;
-          Tue, 24 Jun 2025 14:57:50 +0800
-From: wangweidong.a@awinic.com
-To: broonie@kernel.org
-Cc: colin.i.king@gmail.com,
-	lgirdwood@gmail.com,
-	linux-kernel@vger.kernel.org,
-	linux-sound@vger.kernel.org,
-	perex@perex.cz,
-	thorsten.blum@linux.dev,
-	tiwai@suse.com,
-	u.kleine-koenig@baylibre.com,
-	wangweidong.a@awinic.com,
-	yijiangtao@awinic.com,
-	zhujun2@cmss.chinamobile.com
-Subject: Re: [PATCH V2] ASoC: codecs: Add calibration function to aw88399 chip
-Date: Tue, 24 Jun 2025 14:57:48 +0800
-Message-ID: <20250624065748.60509-1-wangweidong.a@awinic.com>
-X-Mailer: git-send-email 2.47.0
-In-Reply-To: <aFVgVTIe5oT0MkZy@finisterre.sirena.org.uk>
-References: <aFVgVTIe5oT0MkZy@finisterre.sirena.org.uk>
+	s=arc-20240116; t=1750748303; c=relaxed/simple;
+	bh=ll+XCQtbnZpyxXV1CX8tUsesHOegPhxgo220bAItwDM=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=BEcI+JjosByu5RSr1BDFVWzAm4HizkL14DfucNc5Khouoey4TyATETrOXLIa5besHATnWUSZQ0i4FACebl8Iep0Xe5Mgwt0DHiYihkh2ldL6yrE79hIZtcPUggwrY9i4h7EyvGlD1NxsZ+lLFA5qwN7OoViVz9mBmuOqL50KYbk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.221.176
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-vk1-f176.google.com with SMTP id 71dfb90a1353d-5315acf37b6so1573532e0c.2;
+        Mon, 23 Jun 2025 23:58:21 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1750748300; x=1751353100;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=I3mb0VhzXDswklcC+tGvNju9dri/YZ4kpTTjwEnQ8oA=;
+        b=F9tuvUTuU6ogyoRSgfNhy32ZWzIN8FcN5FvXPRyNVDB1qoK3RVqu99FNXWa16mcTmb
+         +9H545r1Wo2EH9RjmCGtqdf9xPjzal4a+ZRKVtaFhv1TlER6JEw1OsX0o80cjA6kf81f
+         8cckH2dKpLtK5/Ph5SjIDZ9MqVAMPYrncHnUjjm0skq0NqWOyBfCf13fD10mofzcg8cg
+         afURmygH2PPIWOiel4PBvyaDuPU2R3v2ImL4ZXa3NI0E7WnvjPclTcZ6mZ1WcBWqzs4x
+         lQXNnSrz0JKwVLb1uu0KE/F4FEdO3dOsauLAWyOdqM7iR/LpScxBPUE5c8MgIKPbEfoE
+         DmSA==
+X-Forwarded-Encrypted: i=1; AJvYcCU25SWZJ5LKnbFYOs/WI7n61KrUOusKH//c1nj8Q/wQXCyQ1Tes5Mn09P82f/lDtpj99L1eW86h7GNoscdo@vger.kernel.org, AJvYcCVGJ0uJl3w8jhjzuSP1IIup/7aqxKOTwCXeKnNaejNxpZDsgEz9l6O2ACwXKynKlbrTbLtliHDgTQNne2+LhnTnefI=@vger.kernel.org, AJvYcCVSPsdMOhYrLdzKbUz/KoJCPsVwqOBLW9Rb5ADcuFOgJGLxjGeImkY96ogSJzZHaL3E9WwlojZz01s=@vger.kernel.org
+X-Gm-Message-State: AOJu0YycFtwB6ERbGmjzOdWIEvhHJwLXaWLkWFm/3enyZImGhNNGaDS7
+	2/GBto+pRn4Et/RQes7GGo9WsunjdbyHqw0E5qgKx5HRyT/5wLb9et4hhS5goLGN
+X-Gm-Gg: ASbGncu7YM40J0k3xWbhl8Rim9axK0xnGe402MA6yPggNGIx/yL7AZNvnUgan7arVXb
+	gNsPuAY7cyatutpOsMnH+j0PyLb0INrnM1KbpPlUHo4KwdrJg88lCW2MHeuJcfHBkm+BaOgnw5t
+	Dfv6wbpPOGxM7vLwx+O6bpVPLuNevjS0y/rIJkpBwgjJJ9CXPTHXaJFUN8luBy8u2q6+2dh5p6z
+	tx5FI311fJaX9GXWLZgVrSM3cUur6of6XIdi3yjBEEbQSWZbxI/CAUUQgjpHBHhECfcYtt4BsSG
+	ZOIL390iww91BRxZEFqkj+SzG7hNTWAszeTpDkpUsjfCI8/TJ/Fk0cIZHp2LISJPROFXAbX3dHA
+	c/eokbPuQjSoYoRb/B43hMOiU
+X-Google-Smtp-Source: AGHT+IH13kO9YbN/OP792OHwLxVq9xJLt1+adMRr3ztnrXD9QfANaSlEjjo0oCqpeabfB0hX/HhAEg==
+X-Received: by 2002:a05:6122:4fa7:b0:530:66e6:e214 with SMTP id 71dfb90a1353d-531ad5211d8mr9933143e0c.3.1750748300282;
+        Mon, 23 Jun 2025 23:58:20 -0700 (PDT)
+Received: from mail-ua1-f51.google.com (mail-ua1-f51.google.com. [209.85.222.51])
+        by smtp.gmail.com with ESMTPSA id 71dfb90a1353d-531ab202cb0sm1567358e0c.9.2025.06.23.23.58.19
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 23 Jun 2025 23:58:19 -0700 (PDT)
+Received: by mail-ua1-f51.google.com with SMTP id a1e0cc1a2514c-86f9c719d63so1133277241.1;
+        Mon, 23 Jun 2025 23:58:19 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCUOFu9gsnoDagXiYFGRaYljZMSqd2EAD558d0UcOO2+BCL0zBwoaxJy0PVAqi3Ulnj1/ON3G7lUXAWOo9k98qgpLVA=@vger.kernel.org, AJvYcCVJuPaf1TkBEuaWWCy6svMxXKDdncoxa//WFtdx10GSfTaDnkpSxrnoD0yzmz0YFJm+Vxm5FU5yc65tFsVI@vger.kernel.org, AJvYcCXWeSFJmd4eMxPgbDX180qWJT+iMRwGpHG70s/K9plcp3GwSlY21jFy5VcNaoiLUMPkmmoTGXLDsdE=@vger.kernel.org
+X-Received: by 2002:a05:6102:2d01:b0:4e9:b076:9f7f with SMTP id
+ ada2fe7eead31-4e9c2cf29b5mr8486894137.16.1750748294782; Mon, 23 Jun 2025
+ 23:58:14 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
+References: <20250610072809.1808464-1-raag.jadav@intel.com> <aFVO-QtE3D3dU7y8@black.fi.intel.com>
+In-Reply-To: <aFVO-QtE3D3dU7y8@black.fi.intel.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Tue, 24 Jun 2025 08:58:03 +0200
+X-Gmail-Original-Message-ID: <CAMuHMdVPDxgEV49yN1JS8Q2WVwxfau6kccMV0OPojxDnMfp-yQ@mail.gmail.com>
+X-Gm-Features: Ac12FXyVxQAMbNcfIs45xL1NaEpK__-Ph2zKIrzrkRShDUqHQRPel2D8ZJHFv1I
+Message-ID: <CAMuHMdVPDxgEV49yN1JS8Q2WVwxfau6kccMV0OPojxDnMfp-yQ@mail.gmail.com>
+Subject: Re: [PATCH v1] clk: renesas: rzv2h: use devm_kmemdup_array()
+To: Raag Jadav <raag.jadav@intel.com>
+Cc: mturquette@baylibre.com, sboyd@kernel.org, 
+	andriy.shevchenko@linux.intel.com, linux-clk@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, 
+	Linux-Renesas <linux-renesas-soc@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 
-Thank you very much for your review=0D
-=0D
-On Fri, Jun 20, 2025 at 14:21:25PM +0100, broonie@kernel.org wrote:=0D
-> On Fri, Jun 20, 2025 at 07:08:44PM +0800, wangweidong.a@awinic.com wrote:=
-=0D
-=0D
->> +static int aw_cali_svc_dev_cali_re(struct aw88399 *aw88399)=0D
->> +{=0D
->> +	struct aw_device *aw_dev =3D aw88399->aw_pa;=0D
->> +	int ret;=0D
->> +=0D
->> +	mutex_lock(&aw88399->lock);=0D
->> +	aw_cali_svc_run_mute(aw_dev, CALI_RESULT_NORMAL);=0D
->> +=0D
->> +	ret =3D aw_cali_svc_cali_re_mode_enable(aw_dev, true);=0D
->> +	if (ret) {=0D
->> +		dev_err(aw_dev->dev, "start cali re failed\n");=0D
->> +		goto re_mode_err;=0D
->> +	}=0D
->> +=0D
->> +	msleep(3000);=0D
-=0D
-> Callibration takes 3s which is a fairly long time.=0D
-=0D
-This time is because the chip needs to wait for =0D
-the data to stabilise during calibration =0D
-in order to ensure more accurate calibration values.=0D
-I will reduce this time to 1s.=0D
-=0D
->> @@ -1588,6 +1968,13 @@ static int aw88399_re_get(struct snd_kcontrol *kc=
-ontrol,=0D
->>  	struct snd_soc_component *codec =3D snd_soc_kcontrol_component(kcontro=
-l);=0D
->>  	struct aw88399 *aw88399 =3D snd_soc_component_get_drvdata(codec);=0D
->>  	struct aw_device *aw_dev =3D aw88399->aw_pa;=0D
->> +	int ret;=0D
->> +=0D
->> +	if (aw_dev->status) {=0D
->> +		ret =3D aw_cali_svc_dev_cali_re(aw88399);=0D
->> +		if (ret)=0D
->> +			return -EPERM;=0D
->> +	}=0D
-=0D
-> AFAICT it's triggered if the device is powered on and userspace reads=0D
-> the control that reports the callibration value.  That seems like it's a=
-=0D
-> bit too easy to trigger - something like running amixer would read the=0D
-> control and lock the CODEC up for 3s, and I'm guessing that if the CODEC=
-=0D
-> is powered due to audio playing that'd result in disruption to users=0D
-> listening to that audio.  I think it'd be better to have another write=0D
-> only control (or volatile one which reads 0 always) that triggers the=0D
-> calibration when userspace writes to it ("Calibrate Now Switch" or=0D
-> something).  Since the calibration is also directly writable from=0D
-> userspace we can't just use a write to this control.  In general it=0D
-> should always be possible to read controls without disrupting anything=0D
-> else that's going on.=0D
-=0D
-> BTW since the calibration is dynamically done the control should be=0D
-> flagged as volatile.=0D
-I will make the following two changes:=0D
-1.Add an additional "Calib Switch" Kcontrol to =0D
-  indicate whether calibration operations can be performed.=0D
-2.Add "Trigger Calib" to Kcontrol. =0D
-  This Kcontrol is write-only. When calibration is allowed,=0D
-  perform the calibration operation.=0D
-=0D
-Thank you again.=0D
-=0D
-Best regards,=0D
-Weidong Wang=0D
+Hi Raag,
+
+On Fri, 20 Jun 2025 at 14:07, Raag Jadav <raag.jadav@intel.com> wrote:
+> On Tue, Jun 10, 2025 at 12:58:09PM +0530, Raag Jadav wrote:
+> > Convert to use devm_kmemdup_array() which is more robust.
+> >
+> > Signed-off-by: Raag Jadav <raag.jadav@intel.com>
+
+Thanks for your patch!
+
+> Bump. Anything I can do to move this forward?
+
+Please include linux-renesas-soc@vger.kernel.org next time.
+
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+i.e. will queue in renesas-clk for v6.17.
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+-- 
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
 
