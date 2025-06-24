@@ -1,198 +1,143 @@
-Return-Path: <linux-kernel+bounces-700500-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-700461-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id EC046AE6987
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Jun 2025 16:50:51 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id CCBA4AE68F8
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Jun 2025 16:37:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 930FF1C247F6
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Jun 2025 14:44:15 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 53CEF16BF6B
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Jun 2025 14:32:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 62F622F0C71;
-	Tue, 24 Jun 2025 14:34:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D2A4C2D321D;
+	Tue, 24 Jun 2025 14:32:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="FiER8Ywh"
-Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="0EAFe1RT"
+Received: from mail-wr1-f44.google.com (mail-wr1-f44.google.com [209.85.221.44])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C948E2EF67A;
-	Tue, 24 Jun 2025 14:34:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 720D52D1907
+	for <linux-kernel@vger.kernel.org>; Tue, 24 Jun 2025 14:32:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750775647; cv=none; b=ng24l+MkofQf6T95Q8K2Ha6Y+wrLGEMiV2jEC/9YMCowz/DqmN/ihDngBOIl3TUWx7t6HMn8eFUHugvUR3geSlnWLkZxSyznNuNjTJhc6T9HJB5XxdLTWPkjDha5nRo+1pt3F7m4BQIUxJyyYjqry9tXYWvGz5RtXxjzCsWrh80=
+	t=1750775551; cv=none; b=lFIWYSfBApFexdpeTpXtmx/2A4ZZdF3u5vqDE4y7LdYRUWSnDHONIxZ7mXrdMhd1jPCYsOyelIiTukXcXwiKs0BT5ke4juQbb8Hak7P1/sS9m8v/ypMki04DwqXEl3r3OfdT3Ess+8ARuhT4ucLd4HOi1zkei7uM2kmlK8XsZeo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750775647; c=relaxed/simple;
-	bh=sxFfw3Y0yrRE69+4r7UoRqCEHKYjSvPgna49+boYyUQ=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=ubTT06AAHd1aoo9nTvNFzl8K7d/q5MWVHV48KMW7SGII08G2LiscHrSeVOKjkrWPuylfQw1qGA/a9DTct9WvrsT2m7cBiIEok8ACYxFgPAZNdFsMcexG0wF8MqNwCvEVZZQWn54svfkPnmkb0hoKFp7Uku14en8xn6+CaSs1Hwo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=FiER8Ywh; arc=none smtp.client-ip=148.251.105.195
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1750775644;
-	bh=sxFfw3Y0yrRE69+4r7UoRqCEHKYjSvPgna49+boYyUQ=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=FiER8YwhNZEAm8aPyBFtOrVinj9Bb7MMW1gGDrCc9Yy1fihXpD1A7imCc7G7OHfi+
-	 MMcWqU5lmnwzWZeBcvqZcu7KYtNUWsyw4cebHaMSAlnhQpRHjoVeDdfxR5Ag/p/NJB
-	 ABszjbxQnFQyxfUfBHuzeSx8A2gz3KmZrXQlAdwVvAn2JB+JkVOXHNaRZMEoJ4Di4O
-	 tPrpS0iSy0Zd195M6JNxe1T0swAom2+oQZbIFhE4PWC/Wpz2T2SLFHLResgjkwc1j5
-	 XFIA7KHu2n5g4OCA8VlO99aNTHTg0gKCfdrka8TkgFz142SKPLsItqq6kO65ppE+5H
-	 H+qWCb/dC41sg==
-Received: from laura.lan (unknown [IPv6:2001:b07:646b:e2:d2c7:2075:2c3c:38e5])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: laura.nao)
-	by bali.collaboradmins.com (Postfix) with ESMTPSA id 2971317E088B;
-	Tue, 24 Jun 2025 16:34:03 +0200 (CEST)
-From: Laura Nao <laura.nao@collabora.com>
-To: mturquette@baylibre.com,
-	sboyd@kernel.org,
-	robh@kernel.org,
-	krzk+dt@kernel.org,
-	conor+dt@kernel.org,
-	matthias.bgg@gmail.com,
-	angelogioacchino.delregno@collabora.com,
-	p.zabel@pengutronix.de,
-	richardcochran@gmail.com
-Cc: guangjie.song@mediatek.com,
-	wenst@chromium.org,
-	linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-mediatek@lists.infradead.org,
-	netdev@vger.kernel.org,
-	kernel@collabora.com,
-	Laura Nao <laura.nao@collabora.com>
-Subject: [PATCH v2 25/29] clk: mediatek: Add MT8196 disp-ao clock support
-Date: Tue, 24 Jun 2025 16:32:16 +0200
-Message-Id: <20250624143220.244549-26-laura.nao@collabora.com>
-X-Mailer: git-send-email 2.39.5
-In-Reply-To: <20250624143220.244549-1-laura.nao@collabora.com>
-References: <20250624143220.244549-1-laura.nao@collabora.com>
+	s=arc-20240116; t=1750775551; c=relaxed/simple;
+	bh=qL9XmUvWaq5tHfaWx1V5LuweXRKdi1ZrjKkrO+YSNmw=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=DWTapWdY8dt8Usy6bY8VOIB2s+CTl21tPopUiEjllp3a1nIi+5R88EzeOeyxU7BTzqk3THwLst1j2tBBfQtEr2OKvUskLJf/1V+6XBSN+kU9Hnxd5AqCLBr/k29/IGM6XEbM8yjnQ28unai4FOGunaQ+aS3tuRv3EnfICc5Hj/M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=0EAFe1RT; arc=none smtp.client-ip=209.85.221.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
+Received: by mail-wr1-f44.google.com with SMTP id ffacd0b85a97d-3a5257748e1so3623348f8f.2
+        for <linux-kernel@vger.kernel.org>; Tue, 24 Jun 2025 07:32:29 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1750775548; x=1751380348; darn=vger.kernel.org;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=B/7dQju2CZeLI5d0OlTARaTle2Uj51q+BbaBg8wUzJM=;
+        b=0EAFe1RTEz0BLt/FrR23WBsQ/aUei6oBJohWZ+bO4PLFJXfoMu2YkIyT0GoKf5mpBb
+         OKR0+SqBdouRt/0Js7jjhPgSfFQAPLvh9oKtyUTB3Z39/GVzx1NxbUpUpC0HCcnOgNgm
+         XpfWt7irb0GvgP2LPROhDVCro9/ck0trsCEvA9sRxGPMVk6WB2UvCpfC5Tsl1im87oB9
+         6xvi/JojQKo4jGeP43M9Ygt4ul2NvHpFuf8rBQgWFxoBeudBjnvK5VwslbjFcn+AxMOB
+         Cwja1Gm6Uz/wVIklFt+PjpbjnE91l8bRZRb1trimK/dyRDs41T+hizkO9GpcUP4qrqg/
+         yU/A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1750775548; x=1751380348;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=B/7dQju2CZeLI5d0OlTARaTle2Uj51q+BbaBg8wUzJM=;
+        b=IqaQNJXWeL+FiQUFEIXb6brgp0QlR9ltkUh08bllyuO1avqibgsvL8lrhAo4P1QEg3
+         uufQ9pc/2tvX1UHghNHTZJqgY40H1jeiqzNZ6RV0IWAVL73Euee4iq59dMjIBg6abzuf
+         QHtCumUttP+YBdyfHr+tGzIVt6GENDaMZPDBxp4TRZO2KGUYNnU97BdeIzP4C4g+Qm2g
+         ESY4B9HwGXMieGNvP5vCUxPw21T5HQedU8MG/TMN5UvlVltn++34oDZTmhIucoHl94fz
+         7MZfv3LLTJKP8B9dihsxOYInQiaz61Z+8Z05XFntQnQJfZkVzdUL+ZhlRtrf8PSzZcDD
+         PhSQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVA2mJGfXL2A4RJ4pc4z1UtIpM5kI/EohFDCK7VPniY6A++MO4+Y950T9ONnQ6V7I43YZu4YnniDkrr7Ro=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx2a7PQE8C0NEgDLd+G9wIs3XNVyMAq39ct20Q2um6vbDs0FPeJ
+	okGsZsdBccQM1llr3+ASOyqt+icoMtdlZ+Qu+EnDGHQMXvZ/emj5vrev/ewEKGhG5lk=
+X-Gm-Gg: ASbGncvXs445LtCz70KQzx0tOl4k1wYQ7/TgGSCSyg7nbZVTOpMmGEG2ulpZB+JO5fy
+	o1jQvvaGQqrZRgDUd1RHAFLhhsRNlq/I4VlFyrIcsYUe7NcyFlv+6AD6gVbKrzKSFhhfhg/MkVU
+	jbg1RI2336EB8Nuh6eVYWidOkUTw7M+fDu/C40rnkU0BtIO+zqqb0uOPRvLW0kKPjvIomrWOWmJ
+	R2KjclFr/OswRPEEfDSzgd+hYlU+wWUJlqCrWqtxg0B6epbqGlCP94PnGa8YVzb3lh8dzD+dYOY
+	+pGMLJXEDBwP101tAy9tfSMOaoEcfHErjIQGOgbutSybrj2PlBw2oObhcfv/J2jDpBY=
+X-Google-Smtp-Source: AGHT+IHImXCD0PRHI4M7v4iVLzEcYBW7djJvPwpqCRg7wUTNPed+BG1KF5ix/KPWpzBJJQPBFgd2ag==
+X-Received: by 2002:a05:6000:4b0b:b0:3a4:f66a:9d31 with SMTP id ffacd0b85a97d-3a6d12dbda2mr14879216f8f.16.1750775547583;
+        Tue, 24 Jun 2025 07:32:27 -0700 (PDT)
+Received: from [127.0.1.1] ([2a01:cb1d:dc:7e00:34d2:109c:3293:19e9])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4535ead2a84sm178512935e9.32.2025.06.24.07.32.26
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 24 Jun 2025 07:32:27 -0700 (PDT)
+From: Bartosz Golaszewski <brgl@bgdev.pl>
+Subject: [PATCH 0/5] pwrseq: replace magic numbers with defines for match()
+ return values
+Date: Tue, 24 Jun 2025 16:32:17 +0200
+Message-Id: <20250624-pwrseq-match-defines-v1-0-a59d90a951f1@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAPG2WmgC/x2MQQqEMBAEvyJz3gENGl2/sngIsdU5mNWMqCD+3
+ eCxKKouUkSBUptdFLGLyj8kKD4Z+cmFESx9YjK5qXJrSl6OqFh5dpufuMcgAcoOvrRNUcN+QSl
+ dYhLnu/119/0AI6qNWWYAAAA=
+X-Change-ID: 20250624-pwrseq-match-defines-aec46817e69e
+To: Drew Fustini <drew@pdp7.com>, Guo Ren <guoren@kernel.org>, 
+ Fu Wei <wefu@redhat.com>, Bartosz Golaszewski <brgl@bgdev.pl>, 
+ Ulf Hansson <ulf.hansson@linaro.org>, 
+ Michal Wilczynski <m.wilczynski@samsung.com>
+Cc: linux-riscv@lists.infradead.org, linux-pm@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, 
+ Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1246;
+ i=bartosz.golaszewski@linaro.org; h=from:subject:message-id;
+ bh=qL9XmUvWaq5tHfaWx1V5LuweXRKdi1ZrjKkrO+YSNmw=;
+ b=owEBbQKS/ZANAwAKARGnLqAUcddyAcsmYgBoWrb56VtEbN8jrXfh++pA9Tt/a91zSI2thLGP6
+ Zb3X5N2VSWJAjMEAAEKAB0WIQQWnetsC8PEYBPSx58Rpy6gFHHXcgUCaFq2+QAKCRARpy6gFHHX
+ cs66D/9nnDqDh8+Uk6m4QTPNKsT8dOx6VegPWlRe/pW2j2o1y4gS8tZrc+2iV21gq7fF4mxnmiN
+ SZJ+VE3IBUWkbI469tBUamwvJmopwlvIWXBbpvLmns5TuVfg2ziCF6b9f53xUGr0ptLAxC7xt2+
+ 6ofUKyshmn4ReWIk/gfyRUG6F20k9fUbxcm0IL0CKHADAcWOhEGdAYBu33Hna7oJTzahusPUZvg
+ zGR91MBSHbd4Xxp77OJZRhjuYDIm8kYhYaN16zs08H6GX/OxlJrm2bXf6+qRb10/mu9xZlACjZf
+ mVW3bszsPHgUBF8/RPQ/SEO8frUA59kInVGDYJ1J8XgmcLqE8sqfui5C0rREjVHO/Qgr8/CCgi1
+ c0sIkUxzX4PjQB8EGSGkks0qHUt0+bwvKoh7mwO20lRlgxCBGSPhybLH5uJ2mHANOBJNHDpzZJI
+ wcJ5JG9eCbuNApPD8E22Lr03o/197nRm6I5uGOBXWW5Tt6QgI/kOr04mMYtVR4RZYThbaA3b72S
+ pS4feJHuF7MukcvxVQmLyKCrFVbn99hheJXgJsGlzyGDMUiwbS0CrQoJ+YzV/o9I+pFub/k3naU
+ XBQK0UV1GCUgIHc9UNYX4IpDnXhF5652trnNl9Iva/DbXSbEUbGAdR+MPdzj27BUa2+W+Lp7aEA
+ opBD6qhhZj6HaKw==
+X-Developer-Key: i=bartosz.golaszewski@linaro.org; a=openpgp;
+ fpr=169DEB6C0BC3C46013D2C79F11A72EA01471D772
 
-Add support for the MT8196 disp-ao clock controller, which provides
-clock gate control for the display system. It is integrated with the
-mtk-mmsys driver, which registers the disp-ao clock driver via
-platform_device_register_data().
+We currently use 0 or 1 as magic numbers returned from the match()
+callback. It's more readable to replace them with proper defines whose
+names indicate the meaning. While at it: fix a build issue with the
+thead-gpu driver I noticed and extend build coverage for the drivers.
 
-Reviewed-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
-Signed-off-by: Laura Nao <laura.nao@collabora.com>
+Signed-off-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
 ---
- drivers/clk/mediatek/Makefile              |  2 +-
- drivers/clk/mediatek/clk-mt8196-vdisp_ao.c | 79 ++++++++++++++++++++++
- 2 files changed, 80 insertions(+), 1 deletion(-)
- create mode 100644 drivers/clk/mediatek/clk-mt8196-vdisp_ao.c
+Bartosz Golaszewski (5):
+      pwrseq: thead-gpu: add missing header
+      pwrseq: extend build coverage for pwrseq drivers with COMPILE_TEST=y
+      pwrseq: add defines for return values of the match() callback
+      pwrseq: qcom-wcn: use new defines for match() return values
+      pwrseq: thead-gpu: use new defines for match() return values
 
-diff --git a/drivers/clk/mediatek/Makefile b/drivers/clk/mediatek/Makefile
-index 18ada357e6ae..112607da29ab 100644
---- a/drivers/clk/mediatek/Makefile
-+++ b/drivers/clk/mediatek/Makefile
-@@ -168,7 +168,7 @@ obj-$(CONFIG_COMMON_CLK_MT8196_IMP_IIC_WRAP) += clk-mt8196-imp_iic_wrap.o
- obj-$(CONFIG_COMMON_CLK_MT8196_MCUSYS) += clk-mt8196-mcu.o
- obj-$(CONFIG_COMMON_CLK_MT8196_MDPSYS) += clk-mt8196-mdpsys.o
- obj-$(CONFIG_COMMON_CLK_MT8196_MFGCFG) += clk-mt8196-mfg.o
--obj-$(CONFIG_COMMON_CLK_MT8196_MMSYS) += clk-mt8196-disp0.o clk-mt8196-disp1.o
-+obj-$(CONFIG_COMMON_CLK_MT8196_MMSYS) += clk-mt8196-disp0.o clk-mt8196-disp1.o clk-mt8196-vdisp_ao.o
- obj-$(CONFIG_COMMON_CLK_MT8196_PEXTPSYS) += clk-mt8196-pextp.o
- obj-$(CONFIG_COMMON_CLK_MT8196_UFSSYS) += clk-mt8196-ufs_ao.o
- obj-$(CONFIG_COMMON_CLK_MT8365) += clk-mt8365-apmixedsys.o clk-mt8365.o
-diff --git a/drivers/clk/mediatek/clk-mt8196-vdisp_ao.c b/drivers/clk/mediatek/clk-mt8196-vdisp_ao.c
-new file mode 100644
-index 000000000000..b4708f34ccdb
---- /dev/null
-+++ b/drivers/clk/mediatek/clk-mt8196-vdisp_ao.c
-@@ -0,0 +1,79 @@
-+// SPDX-License-Identifier: GPL-2.0-only
-+/*
-+ * Copyright (c) 2025 MediaTek Inc.
-+ *                    Guangjie Song <guangjie.song@mediatek.com>
-+ * Copyright (c) 2025 Collabora Ltd.
-+ *                    Laura Nao <laura.nao@collabora.com>
-+ */
-+#include <dt-bindings/clock/mediatek,mt8196-clock.h>
-+#include <linux/clk-provider.h>
-+#include <linux/module.h>
-+#include <linux/of_device.h>
-+#include <linux/platform_device.h>
-+
-+#include "clk-gate.h"
-+#include "clk-mtk.h"
-+
-+static const struct mtk_gate_regs mm_v_cg_regs = {
-+	.set_ofs = 0x104,
-+	.clr_ofs = 0x108,
-+	.sta_ofs = 0x100,
-+};
-+
-+static const struct mtk_gate_regs mm_v_hwv_regs = {
-+	.set_ofs = 0x0030,
-+	.clr_ofs = 0x0034,
-+	.sta_ofs = 0x2c18,
-+};
-+
-+#define GATE_MM_AO_V(_id, _name, _parent, _shift) {	\
-+		.id = _id,				\
-+		.name = _name,				\
-+		.parent_name = _parent,			\
-+		.regs = &mm_v_cg_regs,			\
-+		.shift = _shift,			\
-+		.ops = &mtk_clk_gate_ops_setclr,	\
-+		.flags = CLK_OPS_PARENT_ENABLE |	\
-+			 CLK_IS_CRITICAL,		\
-+	}
-+
-+#define GATE_HWV_MM_V(_id, _name, _parent, _shift) {	\
-+		.id = _id,				\
-+		.name = _name,				\
-+		.parent_name = _parent,			\
-+		.regs = &mm_v_cg_regs,			\
-+		.hwv_regs = &mm_v_hwv_regs,		\
-+		.shift = _shift,			\
-+		.ops = &mtk_clk_gate_hwv_ops_setclr,	\
-+		.flags = CLK_OPS_PARENT_ENABLE,		\
-+	}
-+
-+static const struct mtk_gate mm_v_clks[] = {
-+	GATE_HWV_MM_V(CLK_MM_V_DISP_VDISP_AO_CONFIG, "mm_v_disp_vdisp_ao_config", "disp", 0),
-+	GATE_HWV_MM_V(CLK_MM_V_DISP_DPC, "mm_v_disp_dpc", "disp", 16),
-+	GATE_MM_AO_V(CLK_MM_V_SMI_SUB_SOMM0, "mm_v_smi_sub_somm0", "disp", 2),
-+};
-+
-+static const struct mtk_clk_desc mm_v_mcd = {
-+	.clks = mm_v_clks,
-+	.num_clks = ARRAY_SIZE(mm_v_clks),
-+};
-+
-+static const struct of_device_id of_match_clk_mt8196_vdisp_ao[] = {
-+	{ .compatible = "mediatek,mt8196-vdisp-ao", .data = &mm_v_mcd },
-+	{ /* sentinel */ }
-+};
-+MODULE_DEVICE_TABLE(of, of_match_clk_mt8196_vdisp_ao);
-+
-+static struct platform_driver clk_mt8196_vdisp_ao_drv = {
-+	.probe = mtk_clk_pdev_probe,
-+	.remove = mtk_clk_pdev_remove,
-+	.driver = {
-+		.name = "clk-mt8196-vdisp-ao",
-+		.of_match_table = of_match_clk_mt8196_vdisp_ao,
-+	},
-+};
-+module_platform_driver(clk_mt8196_vdisp_ao_drv);
-+
-+MODULE_DESCRIPTION("MediaTek MT8196 vdisp_ao clocks driver");
-+MODULE_LICENSE("GPL");
+ drivers/power/sequencing/Kconfig            |  4 ++--
+ drivers/power/sequencing/core.c             |  6 +++---
+ drivers/power/sequencing/pwrseq-qcom-wcn.c  |  8 ++++----
+ drivers/power/sequencing/pwrseq-thead-gpu.c | 12 +++++++-----
+ include/linux/pwrseq/provider.h             |  3 +++
+ 5 files changed, 19 insertions(+), 14 deletions(-)
+---
+base-commit: d4c2d9b5b7ceed14a3a835fd969bb0699b9608d3
+change-id: 20250624-pwrseq-match-defines-aec46817e69e
+
+Best regards,
 -- 
-2.39.5
+Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
 
 
