@@ -1,56 +1,86 @@
-Return-Path: <linux-kernel+bounces-700075-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-700077-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9232BAE6376
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Jun 2025 13:17:48 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0C9C1AE637A
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Jun 2025 13:22:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 989FA401963
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Jun 2025 11:17:23 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id EA2711926B72
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Jun 2025 11:22:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B4EEC286D77;
-	Tue, 24 Jun 2025 11:17:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 07C9828B501;
+	Tue, 24 Jun 2025 11:21:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=treblig.org header.i=@treblig.org header.b="ZhCFvAHr"
-Received: from mx.treblig.org (mx.treblig.org [46.235.229.95])
+	dkim=pass (1024-bit key) header.d=iki.fi header.i=@iki.fi header.b="W9iv1j2v"
+Received: from meesny.iki.fi (meesny.iki.fi [195.140.195.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6DE701EEA5D
-	for <linux-kernel@vger.kernel.org>; Tue, 24 Jun 2025 11:17:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.229.95
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750763862; cv=none; b=VkIcmg9337Pk3TZr+FBTA0UOQt61eaEsesPdC+vb9OJUZzVO9n0gYsgKyG9OUP8Zr6WvatbvQMLipGvNtBDC7RBB+QNa8mqdjTssDPvGzTSisChqXyt9bpV1Fg8yZOyVo1w1lYLEzR54eJNjNTydk1CmYvICKf32cNCJoHH6M1g=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750763862; c=relaxed/simple;
-	bh=TWCQSXlqS0oYCQKX5vXnBkXZqPX6pMuj8xu6/6UTIFI=;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8EE9F25CC50;
+	Tue, 24 Jun 2025 11:21:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=195.140.195.201
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1750764116; cv=pass; b=uBauuB5SUx/2ca+HEG1eJWI9FyEUImHdw0jGLzm6WIPXxwuKE3Beo0RpL7IPxUxuqiZOSyp3qhfCojyqEraKowJNvx0CymAotz+/r+lYSops4QXNAk7DaVmiDJvsZH/s4OAQuOunlrKOJRjWnA+Gl+p+elaGnroqZ+V95V6e+8E=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1750764116; c=relaxed/simple;
+	bh=Q4e0cxZPvwB/jU7+RlQ7/Pfqg4bJEzPH4mWOGdAP3zU=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=jx3uF4orJf+lysdlNNaC+Rq1ISawk2jOgs3jhnPUfLQOsFgnVenYI4W6rqCKEeIJyzBqI+v5m8QBmscWNXMQaFfSkhOZXQe3zn1NYw10G13/fcAKQCeyiMaF5amZZOoAW/tLfm+04tu3/BS9KJ2b0xeVJ9L8oe6MP/99G7eX1rg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=treblig.org; spf=pass smtp.mailfrom=treblig.org; dkim=pass (2048-bit key) header.d=treblig.org header.i=@treblig.org header.b=ZhCFvAHr; arc=none smtp.client-ip=46.235.229.95
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=treblig.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=treblig.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=treblig.org
-	; s=bytemarkmx; h=Content-Type:MIME-Version:Message-ID:Subject:From:Date:From
-	:Subject; bh=4w0jGmjYB58yoIcY+MBPOFLj0Xm9wtH0W0ob4h2UOKs=; b=ZhCFvAHrLOPV6kmO
-	BHLy7nWmyO8bsvA1UIQ+DCS3bieKWoaV9A5aJuNy/LcaALgvBqLoehhNMjZjWP3K+3VIV0K+Ojt5h
-	LgdhIqNq9UwJuwK26PEt9fITCiWIlHfLSfLoBhI+8vwxyFGiCOHdZB7Nlhuyn1Hp4uZK7uNCOT7be
-	BVY/8Sg95OJMNV+2QBr9XTcv1WRs98rKD/Tiemj/fDrmuD57R6bCjzr76hGzx/P8e8kacOFqya0lo
-	fFbLkcz4e+4+fL+N0jtwCoxxKa96YA0aVkv884ddNaE23N/B66ITji84Z923tJughN0I6vx5J+WNO
-	/OSFVju4YLUCV4j2PA==;
-Received: from dg by mx.treblig.org with local (Exim 4.96)
-	(envelope-from <dg@treblig.org>)
-	id 1uU1eW-00Ba2f-2w;
-	Tue, 24 Jun 2025 11:17:24 +0000
-Date: Tue, 24 Jun 2025 11:17:24 +0000
-From: "Dr. David Alan Gilbert" <linux@treblig.org>
-To: Hans de Goede <hdegoede@redhat.com>
-Cc: alexander.usyskin@intel.com, arnd@arndb.de, gregkh@linuxfoundation.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] mei: vsc: Remove unused irq functions
-Message-ID: <aFqJRIQkw624nQFf@gallifrey>
-References: <20250617003450.118751-1-linux@treblig.org>
- <30565c88-fb3c-4970-a7c8-bb81200a13aa@redhat.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=XWv/JTHjq9x/conbJTjNZXQcvTKN0k3EMOqkanA9zSkKfi8JT+v4Zxr3Y6TLNZvW1gKw5XgKWIAAX9Djf3qnoy6LXZ9f7W49mHwalDrn/nkDepWSqLvXZjJTqrghXwsNYKY62+cZxj65GoSwRAMyQnF+pVHyFqbhQwQB4U3fWC0=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iki.fi; spf=pass smtp.mailfrom=iki.fi; dkim=pass (1024-bit key) header.d=iki.fi header.i=@iki.fi header.b=W9iv1j2v; arc=pass smtp.client-ip=195.140.195.201
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iki.fi
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=iki.fi
+Received: from hillosipuli.retiisi.eu (2a00-1190-d1dd-0-127c-61ff-fee2-b97e.v6.cust.suomicom.net [IPv6:2a00:1190:d1dd:0:127c:61ff:fee2:b97e])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: sailus)
+	by meesny.iki.fi (Postfix) with ESMTPSA id 4bRMwS67grzySZ;
+	Tue, 24 Jun 2025 14:21:44 +0300 (EEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=iki.fi; s=meesny;
+	t=1750764105;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=SiBWYF52ldVdAyjpa6Dr9mxN+UlONOOH/+/KD+gVQDg=;
+	b=W9iv1j2vR8H4TzsDZSzdrBWqQuMV96tHnWfe2SEzvoAPNuOzXFdxYPl7+F9C7NV8rdqDvj
+	/ozhdCrtjHTfkkoFEUtbgCOt8S/iBukdb8OEK64VUrMZ4hDnVcI1sfu0Tdp6JdoLRpUMcN
+	hmT3JDPGYpwiOSNmvFXdXAps0w0XAGU=
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=iki.fi;
+	s=meesny; t=1750764105;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=SiBWYF52ldVdAyjpa6Dr9mxN+UlONOOH/+/KD+gVQDg=;
+	b=YdK6kN3oRfRPNbSE5aRZz6vhhMWmRyKxxg7m4gJjis/HJ09I/+6WFwO2Uol4ulnuW0bJHy
+	ak5zauQYbZUBDZ0TlVOqW+rKjKH285aSs1VwnXsGuMpcKeRIT1T8GvF79E0BB1wK+6VFlW
+	Mh9NjOTDqpsEwJPvvb2J4mZONc4mMdU=
+ARC-Authentication-Results: i=1;
+	ORIGINATING;
+	auth=pass smtp.auth=sailus smtp.mailfrom=sakari.ailus@iki.fi
+ARC-Seal: i=1; s=meesny; d=iki.fi; t=1750764105; a=rsa-sha256; cv=none;
+	b=gdkmV4sKf8wbg2B9bRe3kvQCFRW3VxZLIj5jRC6qaRFo3hhnWM2woTwIoOsQE9OECWvp5k
+	l5Pp0/5WqJztWO+em0N/J2GPP8v43Debb5VhpZgt31wMhdGCJ18XjKw+kMCLD6MON6ak+D
+	ByK4AWlFlAqSptW1dFJXDhExS+aa9Cc=
+Received: from valkosipuli.retiisi.eu (valkosipuli.local [192.168.4.2])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (prime256v1) server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by hillosipuli.retiisi.eu (Postfix) with ESMTPS id 2E092634C93;
+	Tue, 24 Jun 2025 14:21:44 +0300 (EEST)
+Date: Tue, 24 Jun 2025 11:21:43 +0000
+From: Sakari Ailus <sakari.ailus@iki.fi>
+To: Hanne-Lotta =?iso-8859-1?B?TeRlbnDk5A==?= <hannelotta@gmail.com>
+Cc: mchehab@kernel.org, hljunggr@cisco.com, ribalda@chromium.org,
+	hverkuil@xs4all.nl, skhan@linuxfoundation.org,
+	linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-kernel-mentees@lists.linux.dev
+Subject: Re: [PATCH v3 2/2] docs: Improve grammar, formatting in Video4Linux
+Message-ID: <aFqKRyntONqsxJSs@valkosipuli.retiisi.eu>
+References: <20250612172703.32293-1-hannelotta@gmail.com>
+ <20250612172703.32293-2-hannelotta@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -59,100 +89,34 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
-In-Reply-To: <30565c88-fb3c-4970-a7c8-bb81200a13aa@redhat.com>
-X-Chocolate: 70 percent or better cocoa solids preferably
-X-Operating-System: Linux/6.1.0-34-amd64 (x86_64)
-X-Uptime: 11:16:45 up 57 days, 19:30,  1 user,  load average: 0.02, 0.02, 0.00
-User-Agent: Mutt/2.2.12 (2023-09-09)
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20250612172703.32293-2-hannelotta@gmail.com>
 
-* Hans de Goede (hdegoede@redhat.com) wrote:
-> Hi David,
-> 
-> On 17-Jun-25 2:34 AM, linux@treblig.org wrote:
-> > From: "Dr. David Alan Gilbert" <linux@treblig.org>
-> > 
-> > vsc_tp_request_irq() and vsc_tp_free_irq() last uses were removed in 2024
-> > by
-> > commit 9b5e045029d8 ("mei: vsc: Don't stop/restart mei device during system
-> > suspend/resume")
-> > 
-> > Remove them.
-> > 
-> > Signed-off-by: Dr. David Alan Gilbert <linux@treblig.org>
-> 
-> Alexander pointed me at this patch because I just posted
-> almost the same patch:
-> 
-> https://lore.kernel.org/lkml/20250623085052.12347-2-hansg@kernel.org/
-> 
-> Normally I would say lets go with your (David's) version since
-> you posted your patch first.
-> 
-> But your patch is missing the removal of the function prototypes
-> from vsc-tp.h, so in this case I think we should go with my version.
+Hei Hanne-Lotta,
 
-Oops, yep that makes sense to me.
+On Thu, Jun 12, 2025 at 08:27:03PM +0300, Hanne-Lotta M‰enp‰‰ wrote:
+> Fix typos, punctuation and improve grammar and formatting
+> in documentation for Video4Linux (V4L).
+> 
+> Signed-off-by: Hanne-Lotta M‰enp‰‰ <hannelotta@gmail.com>
 
-Thanks,
+Thanks for the patch. Documentation patches should have "Documentation: "
+prefix, similarly all media tree patches should have "media: " prefix. Also
+the lines may be up to 75 characters long.
 
-Dave
+The result is:
 
-> Regards,
-> 
-> Hans
-> 
-> 
-> 
-> > ---
-> >  drivers/misc/mei/vsc-tp.c | 31 -------------------------------
-> >  1 file changed, 31 deletions(-)
-> > 
-> > diff --git a/drivers/misc/mei/vsc-tp.c b/drivers/misc/mei/vsc-tp.c
-> > index 267d0de5fade..99a55451e1fc 100644
-> > --- a/drivers/misc/mei/vsc-tp.c
-> > +++ b/drivers/misc/mei/vsc-tp.c
-> > @@ -406,37 +406,6 @@ int vsc_tp_register_event_cb(struct vsc_tp *tp, vsc_tp_event_cb_t event_cb,
-> >  }
-> >  EXPORT_SYMBOL_NS_GPL(vsc_tp_register_event_cb, "VSC_TP");
-> >  
-> > -/**
-> > - * vsc_tp_request_irq - request irq for vsc_tp device
-> > - * @tp: vsc_tp device handle
-> > - */
-> > -int vsc_tp_request_irq(struct vsc_tp *tp)
-> > -{
-> > -	struct spi_device *spi = tp->spi;
-> > -	struct device *dev = &spi->dev;
-> > -	int ret;
-> > -
-> > -	irq_set_status_flags(spi->irq, IRQ_DISABLE_UNLAZY);
-> > -	ret = request_threaded_irq(spi->irq, vsc_tp_isr, vsc_tp_thread_isr,
-> > -				   IRQF_TRIGGER_FALLING | IRQF_ONESHOT,
-> > -				   dev_name(dev), tp);
-> > -	if (ret)
-> > -		return ret;
-> > -
-> > -	return 0;
-> > -}
-> > -EXPORT_SYMBOL_NS_GPL(vsc_tp_request_irq, "VSC_TP");
-> > -
-> > -/**
-> > - * vsc_tp_free_irq - free irq for vsc_tp device
-> > - * @tp: vsc_tp device handle
-> > - */
-> > -void vsc_tp_free_irq(struct vsc_tp *tp)
-> > -{
-> > -	free_irq(tp->spi->irq, tp);
-> > -}
-> > -EXPORT_SYMBOL_NS_GPL(vsc_tp_free_irq, "VSC_TP");
-> > -
-> >  /**
-> >   * vsc_tp_intr_synchronize - synchronize vsc_tp interrupt
-> >   * @tp: vsc_tp device handle
-> 
+-----8<----------
+media: Documentation: Improve grammar, formatting in Video4Linux
+
+Fix typos, punctuation and improve grammar and formatting in documentation
+for Video4Linux (V4L).
+-----8<----------
+
+I changed this while applying the patch.
+
 -- 
- -----Open up your eyes, open up your mind, open up your code -------   
-/ Dr. David Alan Gilbert    |       Running GNU/Linux       | Happy  \ 
-\        dave @ treblig.org |                               | In Hex /
- \ _________________________|_____ http://www.treblig.org   |_______/
+Terveisin,
+
+Sakari Ailus
 
