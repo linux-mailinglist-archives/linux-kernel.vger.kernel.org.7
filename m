@@ -1,83 +1,109 @@
-Return-Path: <linux-kernel+bounces-700296-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-700257-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3B821AE66A2
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Jun 2025 15:35:05 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id DA4F9AE6603
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Jun 2025 15:17:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 38DEC7ABFF2
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Jun 2025 13:33:41 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 880823AD854
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Jun 2025 13:17:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 616FA2C1590;
-	Tue, 24 Jun 2025 13:34:56 +0000 (UTC)
-Received: from gate.crashing.org (gate.crashing.org [63.228.1.57])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EC6532A1A4;
-	Tue, 24 Jun 2025 13:34:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=63.228.1.57
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2350129B21C;
+	Tue, 24 Jun 2025 13:17:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="dVh7i0sj";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="dj4kO9Hf"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1C16A28E5F8
+	for <linux-kernel@vger.kernel.org>; Tue, 24 Jun 2025 13:17:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750772096; cv=none; b=p2zAUHgQCuzBVVejIex1mo47f1DtNR0/h3KppzEsmECf5+nCaBkDyBK4sEU1q+e5291FXYRHDaRfMMTKhdYDVfsTVYtDYKK18Ht9iuAc8SQJAmIl/3nAe1BKUixG1YMyios1ZWIo8UElQmlezQZLO6bLTsnrZ8dIy1V2WvUb7dg=
+	t=1750771059; cv=none; b=jyIu9P19FGsIwQPmFsEtvtwWtW57zAKwlprvTqwpsvAndg7ZICVAxqGcxt3zBxnzfJW/mMFxGxYeYDpsNUVjP+Hl6huloI4ijtq+qH+YQsmtRRJ2CmMnQJA/IH6hHKnk92fU6STScM23nOrbrJuH+LMSXy5QaYUrxFaCYl5n2B8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750772096; c=relaxed/simple;
-	bh=l8hlToF1Oci/MZLkd/37EWZi6SIO9bMm5mseHYujdR4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:Mime-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=iBA5Fq6YIjLRjcG8/HcZJhvV+2khNq6mGL7IIL0NVV5EDu6guq/JX3Q3L3waq8W6RqLekqIT2pmhbzH9P/MgpUCWYjmM4tUx2UISV6G+VbcqFryQFCMLJWUPy2sVE2ig2DNwj2JEfphUtemQ4gxDy0SfI1c9/VbsHJra1mJOMc0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.crashing.org; spf=pass smtp.mailfrom=kernel.crashing.org; arc=none smtp.client-ip=63.228.1.57
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.crashing.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.crashing.org
-Received: from gate.crashing.org (localhost.localdomain [127.0.0.1])
-	by gate.crashing.org (8.14.1/8.14.1) with ESMTP id 55ODHH69017475;
-	Tue, 24 Jun 2025 08:17:17 -0500
-Received: (from segher@localhost)
-	by gate.crashing.org (8.14.1/8.14.1/Submit) id 55ODHFe6017474;
-	Tue, 24 Jun 2025 08:17:15 -0500
-X-Authentication-Warning: gate.crashing.org: segher set sender to segher@kernel.crashing.org using -f
-Date: Tue, 24 Jun 2025 08:17:14 -0500
-From: Segher Boessenkool <segher@kernel.crashing.org>
-To: Christophe Leroy <christophe.leroy@csgroup.eu>
-Cc: David Laight <david.laight.linux@gmail.com>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Nicholas Piggin <npiggin@gmail.com>, Naveen N Rao <naveen@kernel.org>,
-        Madhavan Srinivasan <maddy@linux.ibm.com>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
-        Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Darren Hart <dvhart@infradead.org>,
-        Davidlohr Bueso <dave@stgolabs.net>,
-        Andre Almeida <andrealmeid@igalia.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
-        linux-fsdevel@vger.kernel.org, linux-mm@kvack.org
-Subject: Re: [PATCH 0/5] powerpc: Implement masked user access
-Message-ID: <20250624131714.GG17294@gate.crashing.org>
-References: <cover.1750585239.git.christophe.leroy@csgroup.eu> <20250622172043.3fb0e54c@pumpkin> <ff2662ca-3b86-425b-97f8-3883f1018e83@csgroup.eu>
+	s=arc-20240116; t=1750771059; c=relaxed/simple;
+	bh=58/OCqpQ7WUDprpGdcjlaMsOB10LaVqKAGJ1TTvEmWM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=rRtGKYElKZIVF+k0eSX9i1OVyFz+HdLpR/y5i74BjPvBWqvLtzGfZIp2b/e1tzaozUmKAql5JRF3Qzpan+1lvflLmU/Lv5IbIPyC+cBJeGjgklGfCG7Xl9b+mqUdn054G1vseTy//MPn2PDm4FHT2J8+M4LbZPrY56laa7xA7FQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=dVh7i0sj; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=dj4kO9Hf; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+Date: Tue, 24 Jun 2025 15:17:30 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1750771056;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=IieBpWHrUJv1ck4+wSYHEjk5x9SCb1YNYUD3LP0jkSk=;
+	b=dVh7i0sjSNv6aPgxQQ3ZbfR+PVq9/BRCCT5OvFwO4opVw94YOleFduwwtJ7i35s0RY1mcc
+	spkMDXgoW422GwQP6qWPAM0CmCOl+LbO7vvk1oI42cBn31ikvj30RLLzB/lE49oQY7KduT
+	yaBtTMMeKTgHPaDyiijt/qzGrYm/GwVCwNV3HVqKRZ8ljkEzSEesDWoEAEauJ2jnydQSqW
+	KPcM3FdptK4WSd0JK86mxmDCa5fGFnQ4qGNznydbfIm8qeXtSulkG2+3VFtJwFWqnQ8APQ
+	fpYMGkbEodnbIM6uVPLqM2tND7SieEpJZXJ9p+i81HbitX3t4+tQDAplLelxOA==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1750771056;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=IieBpWHrUJv1ck4+wSYHEjk5x9SCb1YNYUD3LP0jkSk=;
+	b=dj4kO9HfCpnvs8yEFiJQ1vwOtBep2CJz4cxkEeFgjILyB6PMaRzRqeRIOnE/DR03iTOxoI
+	CxclgKHT7ijIsMAQ==
+From: Nam Cao <namcao@linutronix.de>
+To: =?iso-8859-1?Q?Cl=E9ment_L=E9ger?= <cleger@rivosinc.com>
+Cc: "Maciej W. Rozycki" <macro@orcam.me.uk>,
+	Palmer Dabbelt <palmer@dabbelt.com>,
+	Paul Walmsley <paul.walmsley@sifive.com>, aou@eecs.berkeley.edu,
+	Alexandre Ghiti <alex@ghiti.fr>, bigeasy@linutronix.de,
+	clrkwllms@kernel.org, rostedt@goodmis.org,
+	linux-rt-devel@lists.linux.dev, linux-riscv@lists.infradead.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] riscv: Enable interrupt during exception handling
+Message-ID: <20250624131730.XqPd1HUR@linutronix.de>
+References: <mhng-60581B88-6FC7-4349-96B6-730D908ABF4A@palmerdabbelt-mac>
+ <alpine.DEB.2.21.2506240303170.61655@angie.orcam.me.uk>
+ <19cf2371-7293-4e71-a17d-669db4c8270a@rivosinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+MIME-Version: 1.0
+Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
-In-Reply-To: <ff2662ca-3b86-425b-97f8-3883f1018e83@csgroup.eu>
-User-Agent: Mutt/1.4.2.3i
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <19cf2371-7293-4e71-a17d-669db4c8270a@rivosinc.com>
 
-On Tue, Jun 24, 2025 at 07:27:47AM +0200, Christophe Leroy wrote:
-> Ah ok, I overlooked that, I didn't know the cmove instruction, seem 
-> similar to the isel instruction on powerpc e500.
+On Tue, Jun 24, 2025 at 01:37:13PM +0200, Clément Léger wrote:
+> On 24/06/2025 04:09, Maciej W. Rozycki wrote:
+> > On Mon, 23 Jun 2025, Palmer Dabbelt wrote:
+> >> I'm kind of split on a Fixes tag here.  One could argue it's a regression, as
+> >> having interrupts disabled during exceptions is going to cause all sorts of
+> >> performance issues for users.  Seems a bit risk to just backport, though...
+> >>
+> >> That said, if nobody noticed then it's probably a good sign nobody is really
+> >> paying attention and we should just backport it before anyone notices...
+> > 
+> >  Oh, someone did notice and it's not only performance, cf. 
+> > <https://lore.kernel.org/r/alpine.DEB.2.21.2501070143250.18889@angie.orcam.me.uk/>.
+> 
+> I also had a series which was doing so for misaligned accesses handling,
+> but after discussion, it was not ok to do so.:
+> 
+> https://lore.kernel.org/linux-riscv/20250422094419.GC14170@noisy.programming.kicks-ass.net/
 
-cmove does a move (register or memory) when some condition is true.
-isel (which is base PowerPC, not something "e500" only) is a
-computational instruction, it copies one of two registers to a third,
-which of the two is decided by any bit in the condition register.
+If I understand that right, exceptions from kernel should be treated as
+NMI, so that lockdep can tell us if exception handlers touch locks.
 
-But sure, seen from very far off both isel and cmove can be used to
-implemente the ternary operator ("?:"), are similar in that way :-)
+But (conditionally) enabling interrupts does not lose us that benefit. It
+is still considered NMI by lockdep.
 
+Unless I miss something, the patch is fine as is.
 
-Segher
+Best regards,
+Nam
 
