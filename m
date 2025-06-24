@@ -1,239 +1,268 @@
-Return-Path: <linux-kernel+bounces-699376-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-699378-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id AA61FAE593F
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Jun 2025 03:31:26 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 22244AE5945
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Jun 2025 03:33:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 37BE717914F
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Jun 2025 01:31:27 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9E2844A0F7C
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Jun 2025 01:33:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 99EA01C84CB;
-	Tue, 24 Jun 2025 01:31:17 +0000 (UTC)
-Received: from mail.nfschina.com (unknown [42.101.60.213])
-	by smtp.subspace.kernel.org (Postfix) with SMTP id 15443189F3B;
-	Tue, 24 Jun 2025 01:31:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=42.101.60.213
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6E3471C5D46;
+	Tue, 24 Jun 2025 01:33:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=zytor.com header.i=@zytor.com header.b="HfjP+2ui"
+Received: from mail.zytor.com (terminus.zytor.com [198.137.202.136])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BA3D77B3E1;
+	Tue, 24 Jun 2025 01:33:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.136
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750728677; cv=none; b=f3OuulVicS5wH2/twDhGZJxdBl2nVTDK+e9CXLFYKYlQc3yXC3UD16n78N2cSzi3rcw9Pd6yEZ8gphgpIj+/Awgii/nVD42yaBW/I1MA0QmOLhOc6T7Ri618pBvIeUmpZY2y1qXvmY7/4Fnmy82ptJTndFIhJjqktFn23xLovXo=
+	t=1750728804; cv=none; b=WylEsrcHwHZA5751krRLXkIho89mGZ+4bcgpdw2Jfzodmc6I0dq6xn3vnuwGSD8G2bZld6BTWoGV5He5OBHKvOAcvd1zkwNMATifZ2KSCgMMTbf8/uxcrNrZRwW4cbDoG0SI7ab+l7lDahW/kz+disb59Zo9NB6EV7rvOuBf6rY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750728677; c=relaxed/simple;
-	bh=izK6xWigpQbVX5kq0ouVraYM2E7Gku1yLtAuADFoTJY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:From:In-Reply-To:
-	 Content-Type; b=L+M0AkW/4qYkNK3VtxUjOOWEfjYFnsS+L9nWtcN1QhOZMFW3BfCmhz/T9+b3Kd9nGQHqvG7ZS12aar9iU3IEc26fQ9nEpagNz0BlGi4GJofky5ff55Y5IeeTx+RYZyt7P9zm6LJPbS4GfH84t4I46FStB5a57zocIf+x1xbfAPU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=nfschina.com; spf=pass smtp.mailfrom=nfschina.com; arc=none smtp.client-ip=42.101.60.213
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=nfschina.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nfschina.com
-Received: from [172.30.20.101] (unknown [180.167.10.98])
-	by mail.nfschina.com (MailData Gateway V2.8.8) with ESMTPSA id A15D060105E92;
-	Tue, 24 Jun 2025 09:31:01 +0800 (CST)
-Message-ID: <2b28f725-03ae-4666-b13b-817cd74ad82e@nfschina.com>
-Date: Tue, 24 Jun 2025 09:31:00 +0800
+	s=arc-20240116; t=1750728804; c=relaxed/simple;
+	bh=DDXXpzThdkTMxz6jA6EtBoRknNT8Nxayy1Q97Mwhtg4=;
+	h=Date:From:To:CC:Subject:In-Reply-To:References:Message-ID:
+	 MIME-Version:Content-Type; b=ucJfcVTp9fWudtbW3Vy9yAwdoQRloKRXMCPWhGXe7Nz6CwPp0RXe0jIpysKxiEDTN8MRpOVM7mfcISIBf+JE9zMIK+wIKDEkIM151GD49524fr2ju7Hv6O57f+NGgsLUKhlVvP5dqg5M/57GDahdpL9ba3ClK561lavcIpNus1w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zytor.com; spf=pass smtp.mailfrom=zytor.com; dkim=pass (2048-bit key) header.d=zytor.com header.i=@zytor.com header.b=HfjP+2ui; arc=none smtp.client-ip=198.137.202.136
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zytor.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zytor.com
+Received: from [127.0.0.1] (c-76-133-66-138.hsd1.ca.comcast.net [76.133.66.138])
+	(authenticated bits=0)
+	by mail.zytor.com (8.18.1/8.17.1) with ESMTPSA id 55O1WmW21156343
+	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NO);
+	Mon, 23 Jun 2025 18:32:48 -0700
+DKIM-Filter: OpenDKIM Filter v2.11.0 mail.zytor.com 55O1WmW21156343
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zytor.com;
+	s=2025062101; t=1750728769;
+	bh=DDXXpzThdkTMxz6jA6EtBoRknNT8Nxayy1Q97Mwhtg4=;
+	h=Date:From:To:CC:Subject:In-Reply-To:References:From;
+	b=HfjP+2uigBiq+o5awIxrlOyCWB9f+/u3r3kV+CtD24rRnn0Z4BH4BmXh2bnE2aUZk
+	 ilwwOHqnkZLf95xLiR2iyChzWTf+9KH0krNhQohFxt0Nnuey/jf4W5AJNi83TyhSg7
+	 ZZQ5CWu4+qTcQ+cR+M2fydaOg6TiAxNflB4x3aJbLpcKVCGmErVimsn1/n5G7YUp4s
+	 0lHgw1k+u6q8SzSpLd24SpO3cA9OVzjeDde1PwfV8S/S/Ru4P2EM2mMWdW7rvXlP00
+	 aqZCDyY57h15l1Pe+mh4+vJqMtA4yalcyZ6xpumvnNnt+hoqS4T6TvsOIdwb+fyzl4
+	 qGLU/CDzjwiHA==
+Date: Mon, 23 Jun 2025 18:32:46 -0700
+From: "H. Peter Anvin" <hpa@zytor.com>
+To: Ethan Zhao <haifeng.zhao@linux.intel.com>, Xin Li <xin@zytor.com>,
+        linux-kernel@vger.kernel.org, kvm@vger.kernel.org,
+        stable@vger.kernel.org
+CC: tglx@linutronix.de, mingo@redhat.com, bp@alien8.de,
+        dave.hansen@linux.intel.com, x86@kernel.org, seanjc@google.com,
+        pbonzini@redhat.com, peterz@infradead.org, sohil.mehta@intel.com,
+        brgerst@gmail.com, tony.luck@intel.com, fenghuay@nvidia.com
+Subject: =?US-ASCII?Q?Re=3A_=5BPATCH_v4_1/2=5D_x86/traps=3A_Initialize_D?=
+ =?US-ASCII?Q?R6_by_writing_its_architectural_reset_value?=
+User-Agent: K-9 Mail for Android
+In-Reply-To: <8437bad1-bdae-4922-bf4c-9303872fab57@linux.intel.com>
+References: <20250620231504.2676902-1-xin@zytor.com> <20250620231504.2676902-2-xin@zytor.com> <4018038c-8c96-49e0-b6b7-f54e0f52a65f@linux.intel.com> <b170c705-c2a8-44ac-a77d-0c3c73ebed0a@zytor.com> <8437bad1-bdae-4922-bf4c-9303872fab57@linux.intel.com>
+Message-ID: <61C84739-1089-46B7-B99E-7AEBF79E5582@zytor.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] nfsd: Using guard() to simplify nfsd_cache_lookup()
-Content-Language: en-US
-To: NeilBrown <neil@brown.name>
-Cc: chuck.lever@oracle.com, jlayton@kernel.org, okorniev@redhat.com,
- Dai.Ngo@oracle.com, tom@talpey.com, linux-nfs@vger.kernel.org,
- linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
- Su Hui <suhui@nfschina.com>
-X-MD-Sfrom: suhui@nfschina.com
-X-MD-SrcIP: 180.167.10.98
-From: Su Hui <suhui@nfschina.com>
-In-Reply-To: <175072435698.2280845.12079422273351211469@noble.neil.brown.name>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain;
+ charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 
-On 2025/6/24 08:19, NeilBrown wrote:
-> On Mon, 23 Jun 2025, Su Hui wrote:
->> Using guard() to replace *unlock* label. guard() makes lock/unlock code
->> more clear. Change the order of the code to let all lock code in the
->> same scope. No functional changes.
-> While I agree that this code could usefully be cleaned up and that you
-> have made some improvements, I think the use of guard() is a nearly
-> insignificant part of the change.  You could easily do exactly the same
-> patch without using guard() but having and explicit spin_unlock() before
-> the new return.  That doesn't mean you shouldn't use guard(), but it
-> does mean that the comment explaining the change could be more usefully
-> focused on the "Change the order ..." part, and maybe explain what that
-> is important.
-Got it. I will focus on "Change the order ..." part in the next v2 patch.
-> I actually think there is room for other changes which would make the
-> code even better:
-> - Change nfsd_prune_bucket_locked() to nfsd_prune_bucket().  Have it
->    take the lock when needed, then drop it, then call
->    nfsd_cacherep_dispose() - and return the count.
-> - change nfsd_cache_insert to also skip updating the chain length stats
->    when it finds a match - in that case the "entries" isn't a chain
->    length. So just  lru_put_end(), return.  Have it return NULL if
->    no match was found
-> - after the found_entry label don't use nfsd_reply_cache_free_locked(),
->    just free rp.  It has never been included in any rbtree or list, so it
->    doesn't need to be removed.
-> - I'd be tempted to have nfsd_cache_insert() take the spinlock itself
->    and call it under rcu_read_lock() - and use RCU to free the cached
->    items.
-> - put the chunk of code after the found_entry label into a separate
->    function and instead just return RC_REPLY (and maybe rename that
->    RC_CACHED).  Then in nfsd_dispatch(), if RC_CACHED was returned, call
->    that function that has the found_entry code.
+On June 23, 2025 6:19:31 PM PDT, Ethan Zhao <haifeng=2Ezhao@linux=2Eintel=
+=2Ecom> wrote:
 >
-> I think that would make the code a lot easier to follow.  Would you like
-> to have a go at that - I suspect it would be several patches - or shall
-> I do it?
+>=E5=9C=A8 2025/6/24 0:34, Xin Li =E5=86=99=E9=81=93:
+>> On 6/22/2025 11:49 PM, Ethan Zhao wrote:
+>>>=20
+>>> =E5=9C=A8 2025/6/21 7:15, Xin Li (Intel) =E5=86=99=E9=81=93:
+>>>> Initialize DR6 by writing its architectural reset value to avoid
+>>>> incorrectly zeroing DR6 to clear DR6=2EBLD at boot time, which leads
+>>>> to a false bus lock detected warning=2E
+>>>>=20
+>>>> The Intel SDM says:
+>>>>=20
+>>>> =C2=A0=C2=A0 1) Certain debug exceptions may clear bits 0-3 of DR6=2E
+>>>>=20
+>>>> =C2=A0=C2=A0 2) BLD induced #DB clears DR6=2EBLD and any other debug =
+exception
+>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 doesn't modify DR6=2EBLD=2E
+>>>>=20
+>>>> =C2=A0=C2=A0 3) RTM induced #DB clears DR6=2ERTM and any other debug =
+exception
+>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 sets DR6=2ERTM=2E
+>>>>=20
+>>>> =C2=A0=C2=A0 To avoid confusion in identifying debug exceptions, debu=
+g handlers
+>>>> =C2=A0=C2=A0 should set DR6=2EBLD and DR6=2ERTM, and clear other DR6 =
+bits before
+>>>> =C2=A0=C2=A0 returning=2E
+>>>>=20
+>>>> The DR6 architectural reset value 0xFFFF0FF0, already defined as
+>>>> macro DR6_RESERVED, satisfies these requirements, so just use it to
+>>>> reinitialize DR6 whenever needed=2E
+>>>>=20
+>>>> Since clear_all_debug_regs() no longer zeros all debug registers,
+>>>> rename it to initialize_debug_regs() to better reflect its current
+>>>> behavior=2E
+>>>>=20
+>>>> Since debug_read_clear_dr6() no longer clears DR6, rename it to
+>>>> debug_read_reset_dr6() to better reflect its current behavior=2E
+>>>>=20
+>>>> Reported-by: Sohil Mehta <sohil=2Emehta@intel=2Ecom>
+>>>> Link: https://lore=2Ekernel=2Eorg/lkml/06e68373-a92b-472e-8fd9- ba548=
+119770c@intel=2Ecom/
+>>>> Fixes: ebb1064e7c2e9 ("x86/traps: Handle #DB for bus lock")
+>>>> Suggested-by: H=2E Peter Anvin (Intel) <hpa@zytor=2Ecom>
+>>>> Tested-by: Sohil Mehta <sohil=2Emehta@intel=2Ecom>
+>>>> Reviewed-by: H=2E Peter Anvin (Intel) <hpa@zytor=2Ecom>
+>>>> Reviewed-by: Sohil Mehta <sohil=2Emehta@intel=2Ecom>
+>>>> Acked-by: Peter Zijlstra (Intel) <peterz@infradead=2Eorg>
+>>>> Signed-off-by: Xin Li (Intel) <xin@zytor=2Ecom>
+>>>> Cc: stable@vger=2Ekernel=2Eorg
+>>>> ---
+>>>>=20
+>>>> Changes in v3:
+>>>> *) Polish initialize_debug_regs() (PeterZ)=2E
+>>>> *) Rewrite the comment for DR6_RESERVED definition (Sohil and Sean)=
+=2E
+>>>> *) Collect TB, RB, AB (PeterZ and Sohil)=2E
+>>>>=20
+>>>> Changes in v2:
+>>>> *) Use debug register index 6 rather than DR_STATUS (PeterZ and Sean)=
+=2E
+>>>> *) Move this patch the first of the patch set to ease backporting=2E
+>>>> ---
+>>>> =C2=A0 arch/x86/include/uapi/asm/debugreg=2Eh | 21 ++++++++++++++++-
+>>>> =C2=A0 arch/x86/kernel/cpu/common=2Ec=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0 | 24 ++++++++------------
+>>>> =C2=A0 arch/x86/kernel/traps=2Ec=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 | 34 +++++++++++++++++----------=
+-
+>>>> =C2=A0 3 files changed, 51 insertions(+), 28 deletions(-)
+>>>>=20
+>>>> diff --git a/arch/x86/include/uapi/asm/debugreg=2Eh b/arch/x86/includ=
+e/ uapi/asm/debugreg=2Eh
+>>>> index 0007ba077c0c=2E=2E41da492dfb01 100644
+>>>> --- a/arch/x86/include/uapi/asm/debugreg=2Eh
+>>>> +++ b/arch/x86/include/uapi/asm/debugreg=2Eh
+>>>> @@ -15,7 +15,26 @@
+>>>> =C2=A0=C2=A0=C2=A0=C2=A0 which debugging register was responsible for=
+ the trap=2E The other bits
+>>>> =C2=A0=C2=A0=C2=A0=C2=A0 are either reserved or not of interest to us=
+=2E */
+>>>> -/* Define reserved bits in DR6 which are always set to 1 */
+>>>> +/*
+>>>> + * Define bits in DR6 which are set to 1 by default=2E
+>>>> + *
+>>>> + * This is also the DR6 architectural value following Power-up, Rese=
+t or INIT=2E
+>>>> + *
+>>>> + * Note, with the introduction of Bus Lock Detection (BLD) and Restr=
+icted
+>>>> + * Transactional Memory (RTM), the DR6 register has been modified:
+>>>> + *
+>>>> + * 1) BLD flag (bit 11) is no longer reserved to 1 if the CPU suppor=
+ts
+>>>> + *=C2=A0=C2=A0=C2=A0 Bus Lock Detection=2E=C2=A0 The assertion of a =
+bus lock could clear it=2E
+>>>> + *
+>>>> + * 2) RTM flag (bit 16) is no longer reserved to 1 if the CPU suppor=
+ts
+>>>> + *=C2=A0=C2=A0=C2=A0 restricted transactional memory=2E=C2=A0 #DB oc=
+curred inside an RTM region
+>>>> + *=C2=A0=C2=A0=C2=A0 could clear it=2E
+>>>> + *
+>>>> + * Apparently, DR6=2EBLD and DR6=2ERTM are active low bits=2E
+>>>> + *
+>>>> + * As a result, DR6_RESERVED is an incorrect name now, but it is kep=
+t for
+>>>> + * compatibility=2E
+>>>> + */
+>>>> =C2=A0 #define DR6_RESERVED=C2=A0=C2=A0=C2=A0 (0xFFFF0FF0)
+>>>> =C2=A0 #define DR_TRAP0=C2=A0=C2=A0=C2=A0 (0x1)=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0 /* db0 */
+>>>> diff --git a/arch/x86/kernel/cpu/common=2Ec b/arch/x86/kernel/cpu/com=
+mon=2Ec
+>>>> index 8feb8fd2957a=2E=2E0f6c280a94f0 100644
+>>>> --- a/arch/x86/kernel/cpu/common=2Ec
+>>>> +++ b/arch/x86/kernel/cpu/common=2Ec
+>>>> @@ -2243,20 +2243,16 @@ EXPORT_PER_CPU_SYMBOL(__stack_chk_guard);
+>>>> =C2=A0 #endif
+>>>> =C2=A0 #endif
+>>>> -/*
+>>>> - * Clear all 6 debug registers:
+>>>> - */
+>>>> -static void clear_all_debug_regs(void)
+>>>> +static void initialize_debug_regs(void)
+>>>> =C2=A0 {
+>>>> -=C2=A0=C2=A0=C2=A0 int i;
+>>>> -
+>>>> -=C2=A0=C2=A0=C2=A0 for (i =3D 0; i < 8; i++) {
+>>>> -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 /* Ignore db4, db5 */
+>>>> -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 if ((i =3D=3D 4) || (i =
+=3D=3D 5))
+>>>> -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 c=
+ontinue;
+>>>> -
+>>>> -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 set_debugreg(0, i);
+>>>> -=C2=A0=C2=A0=C2=A0 }
+>>>> +=C2=A0=C2=A0=C2=A0 /* Control register first -- to make sure everyth=
+ing is disabled=2E */
+>>>=20
+>>> In the Figure 19-1=2E Debug Registers of SDM section 19=2E2 DEBUG REGI=
+STERS,
+>>>=20
+>>> bit 10, 12, 14, 15 of DR7 are marked as gray (Reversed) and their valu=
+e are filled as
+>>>=20
+>>> 1, 0, 0,0 ; should we clear them all here ?=C2=A0 I didn't find any ot=
+her description in the
+>>>=20
+>>> SDM about the result if they are cleaned=2E of course, this patch does=
+n't change
+>>>=20
+>>> the behaviour of original DR7 initialization code, no justification ne=
+eded,
+>>>=20
+>>> just out of curiosity=2E
+>>=20
+>> This patch is NOT intended to make any actual change to DR7
+>> initialization=2E
+>>=20
+>So far it is okay,=C2=A0 I am just curious why these registers were clear=
+ed to zero
 >
-> Thanks,
-> NeilBrown
+>but the git log history and SDM doesn't give too much consistent clue=2E
 >
-Really thanks for your suggestions!
-Yes, I'd like to do it in the next v2 patchset as soon as possible.
-I'm always searching some things I can participate in about linux kernel
-community, so it's happy for me to do this thing.
+>That is 16 years old code=2E
+>
+>> Please take a look at the second patch of this patch set=2E
+>
+>Looking=2E
+>
+>
+>Thanks,
+>
+>Ethan
+>
+>>=20
+>> Thanks!
+>> =C2=A0=C2=A0=C2=A0 Xin
+>>=20
+>>>=20
+>>>> +=C2=A0=C2=A0=C2=A0 set_debugreg(0, 7);
+>>>> +=C2=A0=C2=A0=C2=A0 set_debugreg(DR6_RESERVED, 6);
+>>>> +=C2=A0=C2=A0=C2=A0 /* dr5 and dr4 don't exist */
+>>>> +=C2=A0=C2=A0=C2=A0 set_debugreg(0, 3);
+>>>> +=C2=A0=C2=A0=C2=A0 set_debugreg(0, 2);
+>>>> +=C2=A0=C2=A0=C2=A0 set_debugreg(0, 1);
+>>>> +=C2=A0=C2=A0=C2=A0 set_debugreg(0, 0);
+>
 
-regards,
-Su Hui
+Older than that=2E
 
->
->> Signed-off-by: Su Hui <suhui@nfschina.com>
->> ---
->>   fs/nfsd/nfscache.c | 99 ++++++++++++++++++++++------------------------
->>   1 file changed, 48 insertions(+), 51 deletions(-)
->>
->> diff --git a/fs/nfsd/nfscache.c b/fs/nfsd/nfscache.c
->> index ba9d326b3de6..2d92adf3e6b0 100644
->> --- a/fs/nfsd/nfscache.c
->> +++ b/fs/nfsd/nfscache.c
->> @@ -489,7 +489,7 @@ int nfsd_cache_lookup(struct svc_rqst *rqstp, unsigned int start,
->>   
->>   	if (type == RC_NOCACHE) {
->>   		nfsd_stats_rc_nocache_inc(nn);
->> -		goto out;
->> +		return rtn;
->>   	}
->>   
->>   	csum = nfsd_cache_csum(&rqstp->rq_arg, start, len);
->> @@ -500,64 +500,61 @@ int nfsd_cache_lookup(struct svc_rqst *rqstp, unsigned int start,
->>   	 */
->>   	rp = nfsd_cacherep_alloc(rqstp, csum, nn);
->>   	if (!rp)
->> -		goto out;
->> +		return rtn;
->>   
->>   	b = nfsd_cache_bucket_find(rqstp->rq_xid, nn);
->> -	spin_lock(&b->cache_lock);
->> -	found = nfsd_cache_insert(b, rp, nn);
->> -	if (found != rp)
->> -		goto found_entry;
->> -	*cacherep = rp;
->> -	rp->c_state = RC_INPROG;
->> -	nfsd_prune_bucket_locked(nn, b, 3, &dispose);
->> -	spin_unlock(&b->cache_lock);
->> +	scoped_guard(spinlock, &b->cache_lock) {
->> +		found = nfsd_cache_insert(b, rp, nn);
->> +		if (found == rp) {
->> +			*cacherep = rp;
->> +			rp->c_state = RC_INPROG;
->> +			nfsd_prune_bucket_locked(nn, b, 3, &dispose);
->> +			goto out;
->> +		}
->> +		/* We found a matching entry which is either in progress or done. */
->> +		nfsd_reply_cache_free_locked(NULL, rp, nn);
->> +		nfsd_stats_rc_hits_inc(nn);
->> +		rtn = RC_DROPIT;
->> +		rp = found;
->> +
->> +		/* Request being processed */
->> +		if (rp->c_state == RC_INPROG)
->> +			goto out_trace;
->> +
->> +		/* From the hall of fame of impractical attacks:
->> +		 * Is this a user who tries to snoop on the cache?
->> +		 */
->> +		rtn = RC_DOIT;
->> +		if (!test_bit(RQ_SECURE, &rqstp->rq_flags) && rp->c_secure)
->> +			goto out_trace;
->>   
->> +		/* Compose RPC reply header */
->> +		switch (rp->c_type) {
->> +		case RC_NOCACHE:
->> +			break;
->> +		case RC_REPLSTAT:
->> +			xdr_stream_encode_be32(&rqstp->rq_res_stream, rp->c_replstat);
->> +			rtn = RC_REPLY;
->> +			break;
->> +		case RC_REPLBUFF:
->> +			if (!nfsd_cache_append(rqstp, &rp->c_replvec))
->> +				return rtn; /* should not happen */
->> +			rtn = RC_REPLY;
->> +			break;
->> +		default:
->> +			WARN_ONCE(1, "nfsd: bad repcache type %d\n", rp->c_type);
->> +		}
->> +
->> +out_trace:
->> +		trace_nfsd_drc_found(nn, rqstp, rtn);
->> +		return rtn;
->> +	}
->> +out:
->>   	nfsd_cacherep_dispose(&dispose);
->>   
->>   	nfsd_stats_rc_misses_inc(nn);
->>   	atomic_inc(&nn->num_drc_entries);
->>   	nfsd_stats_drc_mem_usage_add(nn, sizeof(*rp));
->> -	goto out;
->> -
->> -found_entry:
->> -	/* We found a matching entry which is either in progress or done. */
->> -	nfsd_reply_cache_free_locked(NULL, rp, nn);
->> -	nfsd_stats_rc_hits_inc(nn);
->> -	rtn = RC_DROPIT;
->> -	rp = found;
->> -
->> -	/* Request being processed */
->> -	if (rp->c_state == RC_INPROG)
->> -		goto out_trace;
->> -
->> -	/* From the hall of fame of impractical attacks:
->> -	 * Is this a user who tries to snoop on the cache? */
->> -	rtn = RC_DOIT;
->> -	if (!test_bit(RQ_SECURE, &rqstp->rq_flags) && rp->c_secure)
->> -		goto out_trace;
->> -
->> -	/* Compose RPC reply header */
->> -	switch (rp->c_type) {
->> -	case RC_NOCACHE:
->> -		break;
->> -	case RC_REPLSTAT:
->> -		xdr_stream_encode_be32(&rqstp->rq_res_stream, rp->c_replstat);
->> -		rtn = RC_REPLY;
->> -		break;
->> -	case RC_REPLBUFF:
->> -		if (!nfsd_cache_append(rqstp, &rp->c_replvec))
->> -			goto out_unlock; /* should not happen */
->> -		rtn = RC_REPLY;
->> -		break;
->> -	default:
->> -		WARN_ONCE(1, "nfsd: bad repcache type %d\n", rp->c_type);
->> -	}
->> -
->> -out_trace:
->> -	trace_nfsd_drc_found(nn, rqstp, rtn);
->> -out_unlock:
->> -	spin_unlock(&b->cache_lock);
->> -out:
->>   	return rtn;
->>   }
->>   
->> -- 
->> 2.30.2
->>
->>
+I believe it dates back from when Linux first got DRx support=2E
 
