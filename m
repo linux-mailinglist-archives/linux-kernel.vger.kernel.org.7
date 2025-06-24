@@ -1,177 +1,273 @@
-Return-Path: <linux-kernel+bounces-700706-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-700709-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6C4BFAE6BB5
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Jun 2025 17:49:35 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4AC36AE6B9D
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Jun 2025 17:47:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 83C541882175
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Jun 2025 15:44:38 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 49D043AE131
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Jun 2025 15:46:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BA6743074BC;
-	Tue, 24 Jun 2025 15:44:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 53A7F274B26;
+	Tue, 24 Jun 2025 15:46:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="GDyvaqSK"
-Received: from mail-pg1-f201.google.com (mail-pg1-f201.google.com [209.85.215.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="agTe6CaT";
+	dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b="Kc99u0sI"
+Received: from mx0b-00069f02.pphosted.com (mx0b-00069f02.pphosted.com [205.220.177.32])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A1BBC307481
-	for <linux-kernel@vger.kernel.org>; Tue, 24 Jun 2025 15:44:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.201
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750779855; cv=none; b=BhJ9fVRrvkCdtE0CDzHY1t+PJHHVdS1OJ7+Sx5P0cAyqf1vVAL5z2LyD2kdv+ZKBEE/1DYIMceHLXd+gvjYVsvpMAMuHoa2BbccoMWq8UrLh7oCW47FsT23QpLPNK2K0k/hTTl3zKohxhjY+KhYfobCZz9uDjOhe6WauBaE42uI=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750779855; c=relaxed/simple;
-	bh=GnVRZMcxsfo36v0rXfqthwJ8QHDF3AOpfJy8ji+OFnw=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=mfA5byTzYyWn+aiQ8fYPbX21snna5iFMhx2TWticD+lR1nTsqzzXbtNYYhnl/78aWMotwooUzUc4lBjf+HXOQY6Zr9sr3jdHaCbtmvUq3AaKhj0dqzsfKBMav/+TvuDjpq8bTYrmVQ8tF4LQtpre9n93gWcxJwR+QCn1ehRAi58=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=GDyvaqSK; arc=none smtp.client-ip=209.85.215.201
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
-Received: by mail-pg1-f201.google.com with SMTP id 41be03b00d2f7-b2f103f6074so477277a12.3
-        for <linux-kernel@vger.kernel.org>; Tue, 24 Jun 2025 08:44:13 -0700 (PDT)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BE3F626CE1C
+	for <linux-kernel@vger.kernel.org>; Tue, 24 Jun 2025 15:46:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=205.220.177.32
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1750779980; cv=fail; b=fOa/Fwi7IM3nEijC7Lc7K7l3wPPsULXJvzUYx+YNc2E/TStSiSRHS1RGCD3HGSWXKmuDgfag0ZeXyWh9oqnA9D4v2PFEpDuN2Kb2H4XMFh3q05v8DZU/en01U6GbacZwx0JQmWNQ22HGbe+YGRrTtSs7AGIRWaV1enIcuhDy7ws=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1750779980; c=relaxed/simple;
+	bh=1SyGcEuZTiuRXg7nxNohA6435yUYZxn5Uq6Rgs1/kd8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
+	 Content-Disposition:In-Reply-To:MIME-Version; b=ZDi8xIjDXffh1aYmfJKGzcU85T49OiK6PYxUqtGFnqDS+FsNjSxNooOG0J/xyyJ64iJRqDELWUfWgViKT0U74sqffBwqHKRy+OTXhMu35RpkKeph6KGHbmntwvDqfB+jUboL4yCd52nSTGI3lQlB9/vJVUGWy//RiTh6bNjKwjc=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=agTe6CaT; dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b=Kc99u0sI; arc=fail smtp.client-ip=205.220.177.32
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oracle.com
+Received: from pps.filterd (m0333520.ppops.net [127.0.0.1])
+	by mx0b-00069f02.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 55OFMkiG007393;
+	Tue, 24 Jun 2025 15:46:02 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=cc
+	:content-type:date:from:in-reply-to:message-id:mime-version
+	:references:subject:to; s=corp-2025-04-25; bh=lTAGLixXmfqsLoH+93
+	AtHZchQ5ZviIOOC2uxccaM10s=; b=agTe6CaT6CJlxbwZ9ifky54DXqN6Yv4r3C
+	crd6IgTaHBjWeQE2y8WIn4iobaNUvk8jUgvU3dfMTbxSphmFQJfx8N5vggnddc8u
+	iZRvUu35pcJS3YMxnRGlywcpe0BBcXtJv+J3vrbFK0a1uM2i2dHe0tWfdFCGPqfC
+	gpxRQMweA5Ul7PJVyv1giG/lqoJiwV0+yDQp7kmxsDgtxmhWPv77Ak3NqLbyH+3u
+	wNjDQruBlxF7Rfn78DcxhurS4xzd28n5vkSj7uWVfvSuCQFs3gLcifofubQH1gO+
+	2tBMvNfnh/w7TrZh3n+RRz4e43jXJrUh7CXaDiEa5QntTLxnGQaQ==
+Received: from phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com (phxpaimrmta03.appoci.oracle.com [138.1.37.129])
+	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 47egummdgu-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Tue, 24 Jun 2025 15:46:01 +0000 (GMT)
+Received: from pps.filterd (phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com [127.0.0.1])
+	by phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com (8.18.1.2/8.18.1.2) with ESMTP id 55OEVmch002571;
+	Tue, 24 Jun 2025 15:46:01 GMT
+Received: from nam12-dm6-obe.outbound.protection.outlook.com (mail-dm6nam12on2053.outbound.protection.outlook.com [40.107.243.53])
+	by phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com (PPS) with ESMTPS id 47ehpda3mv-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Tue, 24 Jun 2025 15:46:00 +0000
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=QBPh1/rBXHXCLz0CFOheKwS+zWVGd5nBwWsgarBENekFp3Ll5Om89pAOmk64o2R9PZVf3PpcHcHJd2i97+xgsouJq15at4dO3sj25XLnKHlhDt1YNT4zV+TfdEcHM1G7zD0McDdAlrd/mOmTVvkgQPMjbo4YGPWcyx8DP5RCqmnJ3uQ561l7P9r5fjy2nV3FVEjal+sGnXIJWFLv9DQ3/rZW/xdlhg0r5Wzf8xH5wEkz96UFuFNC0zGOzi0BvtCF8vbMF2r8YCKFef+5AHzqrojO4+IAWupAv4uwI9Ltn9VpMctD+KWTliyESsl+PJoYmTxukP/vTS7EuA42aD02Cg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=lTAGLixXmfqsLoH+93AtHZchQ5ZviIOOC2uxccaM10s=;
+ b=BiHvlucn8IRxh/crdmtShLg4XoznZreNiYd8QkhjH89RSh93BhEgOYes/2rgU21UYkdA0/szEL8iTSVbKoKbH9fCLAj8PxKYTMp5JoctDPpDQJLAtqhX3GfM50/SwV9QLkMikioz14W9U/Ru1RHfDPRjz7KdkPGQGt2dXgqP/y1B+7VQQhxLLGZX8t0QH2Hoks/qsuxH1+a++91Utb9IDuzeUPSLg39FfcKz/sJGFnlgn9zrOngLZTzE5hxd+3LOYiz+hucrJXt/mEFv+99RaWxoqIoPfoT/NFmhr9O7tj6QJlyElw709EkH9DMpQegZBwUPD9W++MaoU1V1bHmIPA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=oracle.com; dmarc=pass action=none header.from=oracle.com;
+ dkim=pass header.d=oracle.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1750779853; x=1751384653; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=M32rdd63dk2gWs5pdkKPTYIbq2vkcSl+gMb+cObpj7E=;
-        b=GDyvaqSK+Phb7Eehch2uZn/mUDF4eZ3Iid67xN19U6bGbPdbKJD2R5G3QgyG/rov8O
-         nW9d8Hro11UuVvV+LZGrPR3ua7mdNgS83i7h7ZtAfEryWVUC6O3gccDWj30vtkUCGsLi
-         z7gmfJ9ysUatKHktbciWkp9nyhbVH/KK442GsloX1iHKMvrnZwtpLT+N5oXu9vVAbSa1
-         D0c3X6QPJ2xF7UoiQY/hDzSGBLV5XQkWHmX+K32sS1Azv1qgpi3a0vpBO5LPpcLpFMMR
-         RGby4WzmDdbaxfZxbvRv9oOTFdMdXa/ZR+qcDF6UO50Ri+u7U8Pn0IQxly00mQcw/smV
-         bumQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1750779853; x=1751384653;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=M32rdd63dk2gWs5pdkKPTYIbq2vkcSl+gMb+cObpj7E=;
-        b=LpKv6oEyvFBbK8wAUbEcd6TtoZ/B0YwCX/9Y6p0wsUoydEBfNUzzUA6p3CpHBwcf76
-         0t+hlQ3HcfaUFR2s+E+6mbMb4qp/WPBhnyLpWqGCFJj3jpFKGZeCtEBqeD87vRprwbeN
-         jyaiyYOdutEnZ7tMVKvM5fQFzFrwPeiXN/YPDyO3ZzBRUWTXxPJcLi3IlA4A8PSpMyan
-         mQD+oQAgDC5OCCaUyQDfEm9CpsqcN2VmYkDXefBlkoQbOiAFmsmBrSNAhq0Kh2N901EO
-         nbmIGqwafhaPUsMfjQ0AgO43iQYIGLdy6LpkRGomuFpzM/ISFoqD67xe4r6hPoH0id8h
-         e5fw==
-X-Forwarded-Encrypted: i=1; AJvYcCUoO8d2edYUUyyOvgS6DmBh72OLsVdLcXYbrzczCSGh3kl4/KCgzjYmIWmiC0kywm7soYR8riJa/AYg6Eg=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwOXFtnblzOD/zoZ/0zB7+TEHZLFXUBxr+FRKj0CFJTwRj/Qs3V
-	14QXU9NZWpfeird8mKEndWwqQBcNeI2xICXKm3btbJ9LNAsYCcKAMKeFdjOPlgI0/mZGytFzVgg
-	ZffqmYw==
-X-Google-Smtp-Source: AGHT+IGonx/FKvzf78PMDuuLP5ZT7EtOsQDlQhEQGU+CYP7qWJBCuuiOI3BtXUi4gssl10l5hEj/HjvszWA=
-X-Received: from pfblh2.prod.google.com ([2002:a05:6a00:7102:b0:748:e071:298a])
- (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a05:6a20:4325:b0:1f3:2e85:c052
- with SMTP id adf61e73a8af0-22026fa9d7dmr29631693637.35.1750779853025; Tue, 24
- Jun 2025 08:44:13 -0700 (PDT)
-Date: Tue, 24 Jun 2025 08:44:11 -0700
-In-Reply-To: <20250328171205.2029296-8-xin@zytor.com>
+ d=oracle.onmicrosoft.com; s=selector2-oracle-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=lTAGLixXmfqsLoH+93AtHZchQ5ZviIOOC2uxccaM10s=;
+ b=Kc99u0sIgqYwePmKNY0yxlirBAqOlC2VvkuF4Cc1RCbqHA2iJwtK5AA3NENyW7M5n8FRZTOq3hfIV6H/g6YPSzAv8U71SiNYPdAFZinsjqxdqzmHodXQ6zloc48m+Na7D3Wn9s6h2YqW/voNeobMJ3Bpq81jdorIISK1TVb9Zeg=
+Received: from DM4PR10MB8218.namprd10.prod.outlook.com (2603:10b6:8:1cc::16)
+ by CH0PR10MB4860.namprd10.prod.outlook.com (2603:10b6:610:db::9) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8857.30; Tue, 24 Jun
+ 2025 15:45:57 +0000
+Received: from DM4PR10MB8218.namprd10.prod.outlook.com
+ ([fe80::2650:55cf:2816:5f2]) by DM4PR10MB8218.namprd10.prod.outlook.com
+ ([fe80::2650:55cf:2816:5f2%6]) with mapi id 15.20.8857.026; Tue, 24 Jun 2025
+ 15:45:57 +0000
+Date: Tue, 24 Jun 2025 16:45:55 +0100
+From: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
+To: Vlastimil Babka <vbabka@suse.cz>
+Cc: Andrew Morton <akpm@linux-foundation.org>,
+        "Liam R. Howlett" <Liam.Howlett@oracle.com>,
+        David Hildenbrand <david@redhat.com>, Jann Horn <jannh@google.com>,
+        Mike Rapoport <rppt@kernel.org>,
+        Suren Baghdasaryan <surenb@google.com>, Michal Hocko <mhocko@suse.com>,
+        Colin Cross <ccross@google.com>, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 4/4] mm, madvise: use standard madvise locking in
+ madvise_set_anon_name()
+Message-ID: <667e6631-8e2f-4154-8fcc-55fb5ab49a07@lucifer.local>
+References: <20250624-anon_name_cleanup-v2-0-600075462a11@suse.cz>
+ <20250624-anon_name_cleanup-v2-4-600075462a11@suse.cz>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250624-anon_name_cleanup-v2-4-600075462a11@suse.cz>
+X-ClientProxiedBy: LO4P123CA0001.GBRP123.PROD.OUTLOOK.COM
+ (2603:10a6:600:150::6) To DM4PR10MB8218.namprd10.prod.outlook.com
+ (2603:10b6:8:1cc::16)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20250328171205.2029296-1-xin@zytor.com> <20250328171205.2029296-8-xin@zytor.com>
-Message-ID: <aFrHy09b4x2C95nv@google.com>
-Subject: Re: [PATCH v4 07/19] KVM: VMX: Save/restore guest FRED RSP0
-From: Sean Christopherson <seanjc@google.com>
-To: "Xin Li (Intel)" <xin@zytor.com>
-Cc: pbonzini@redhat.com, kvm@vger.kernel.org, linux-doc@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, corbet@lwn.net, tglx@linutronix.de, 
-	mingo@redhat.com, bp@alien8.de, dave.hansen@linux.intel.com, x86@kernel.org, 
-	hpa@zytor.com, andrew.cooper3@citrix.com, luto@kernel.org, 
-	peterz@infradead.org, chao.gao@intel.com, xin3.li@intel.com
-Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: DM4PR10MB8218:EE_|CH0PR10MB4860:EE_
+X-MS-Office365-Filtering-Correlation-Id: f4af56cb-2086-469a-2c2a-08ddb3363649
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|7416014|1800799024|376014|366016|7053199007;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?DAtzreR9kMMEbAtx1hKz4WegI1dGwkj4bCTWpFO9dovM5fjQA+bgg6q7io7p?=
+ =?us-ascii?Q?yNkkE2MHUVmS1SqcWlTGTGKUlxIgqHXlrC5GeKOTqwjGJ3XIT798DiwdaVst?=
+ =?us-ascii?Q?+FFf5WHKrzLH7actLG0WOWfJwocvR53XlALAdgwOl3fdePYJUEUeC3gvjMj4?=
+ =?us-ascii?Q?5cnTLsNwUkfK2sYiclOvkC5Q2zCkRDQF3s7YNJZH1wGZS2JR/a/zrWEfbUYZ?=
+ =?us-ascii?Q?tjcLXbS0FxoeiuP124I5e9Hvv2yJtYv/sQKLCr4uyuToLSI8TCkP+V59l140?=
+ =?us-ascii?Q?Vf5hfLpHbbn+sDwHfJt/xWqLJV29e0tdczpNXniIrocArRL4yHImJIQ9f9Dn?=
+ =?us-ascii?Q?T58Vp7Sk2tupctlp71Z6jAABrjqhkbCL+2hThJOyOqakVxf8rMN3TcCh9qLs?=
+ =?us-ascii?Q?sSlw6PcquFK2u6P6uFikeG2K7Wi6+pOIZy8sbQi8p/hnuPbhIMFa8vDQC2FG?=
+ =?us-ascii?Q?UMh7SkaHB6YXf4GmLCHDTxqvti/B5FLyJlc+zP9XZmwB7ctlx/jWHlfpju6K?=
+ =?us-ascii?Q?2RRlv0EzldPGXmsGDulyxT0fF26UAiTSl35mtth+T+xQ6/pAxFS1/HwMsIzK?=
+ =?us-ascii?Q?rOQkQhuQrOozIRWF/ODSq4bn5iE6paUJictTLPv7lcmgblLyIYHSPdpOAw6r?=
+ =?us-ascii?Q?HVaQYdbdb2rXFMLWrgJlzqCtRPjm6glk8mSL8pTzMNdz6NPMtCZKxxxi1UVh?=
+ =?us-ascii?Q?3sGBZywp5ghkIIzxtkMujoDXyNZVSGCERkE3DjDkPnrOqHR7Wy3qpJP3pbO3?=
+ =?us-ascii?Q?8WuWhlssNoHKLjLaCwxj9/7vsuMUrl6zq6XGDwZNYH5GF2msM9HSftRD3Ryx?=
+ =?us-ascii?Q?u5VEViUaP6oJiLzBThPJ/t2ut7A47910HZO+2jQR8xcASfN4Eocq0ev/HdZ0?=
+ =?us-ascii?Q?CL2mLKWbGdWrN/2HsNrWgD+qm3xtnRftddkKpNQCVgMST+X3k1PNwP2a7kYE?=
+ =?us-ascii?Q?wTEBrkStm26XUUhYbe2U3c/wvNVC6CCS4DxaZlikYq17IthJ+VLmQ39AFek7?=
+ =?us-ascii?Q?PU8CZo49/ikBU99lsmXRQgz2OCgYMf9luXv44yQEvbuZYiCXoXBbYJ6kdNsn?=
+ =?us-ascii?Q?CwkAfqu9gcXFfab5w7DQ/eK/9jYGYUwAK12e+y0Ra7/AzJbq6moQv8bE9YmX?=
+ =?us-ascii?Q?jKTSUAsoITa1lxv6TsVGq/HAGes/6fCcxHi47Q0ez7Zz9JkiFdaZncWtZr+2?=
+ =?us-ascii?Q?G73NRdgmKW7E1s9+3wUgcicbfuLh+bJq0GxtbxWgt8UcR+X1ndYW+6T2/LbG?=
+ =?us-ascii?Q?gabbKUdAbTqSxKhiVWYfQvtY0D8Yoi1qOuyGyicduTwyxB+1/GAJO1E/X/9a?=
+ =?us-ascii?Q?TAqkpIxaHOYquZyOb4ZF1sztYt9sXk1szjZsxyP+u/Ot5QDqL9LDo6vgSxQq?=
+ =?us-ascii?Q?jYT/HkPEf4cFrrqYXuo6EqBcd8CTfuBdbiZS6f4ENZZmrsRsUdjZviWme2G8?=
+ =?us-ascii?Q?bR1ZHVKbEMQ=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DM4PR10MB8218.namprd10.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(7416014)(1800799024)(376014)(366016)(7053199007);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?J5w52+lZixIum4mP/zIMgYdYJaX6pb8Z91kmlDNhquW5M0vKXVj7+qY/bEeC?=
+ =?us-ascii?Q?QGB3vfXHdJ8Bi2z7gvnmaUpf4jIXXOnv/cCOHpBysnSPEeLT/Gvt4Io8smv3?=
+ =?us-ascii?Q?maNUyN5+b8fflmXKCBBHkxl3eXJhEf7fJLtM8rORhoW+mVXFhiOUlVigJhyi?=
+ =?us-ascii?Q?EQZFMYbqHPHdfK3THaxZxULvvaMrWQIFfF7352Ac4kbm+MaVY9aQOQbTQIMh?=
+ =?us-ascii?Q?HC5asY9lhLoWnWuO6YL6Jg6Irq2Nj/F3xxZW6s5VFKpXfZbPgDJp4ajtlO0h?=
+ =?us-ascii?Q?VE8KOXdDxUSly0lGHta3wC7INowiZFVsKdBJOQuWvls2thpximK85IxiAI5F?=
+ =?us-ascii?Q?ontxX9ihYCHoVAMBDsKW/33LjxtNBELFLqtFL5OfJO/tOz8iokzQR0iAl0nD?=
+ =?us-ascii?Q?z9tTE1hBnDMc7ATyw7jOc1TT0OjSJo270N4uCtt7pIF5JFM37F2t6fow4+Vs?=
+ =?us-ascii?Q?JbG/B0mWJvOtiAUjdjnYnylSQ3s4Bf2KU0GhuoJxBXQUJekuEstB2Qkv33FF?=
+ =?us-ascii?Q?dm1BDEZqtvC8QLCxSD/W2Jvuc1/jFKI3o7g6bMs35CHEfuVh+vWMZCT1HUIu?=
+ =?us-ascii?Q?BsiQCeUyM1VMYYtddSDSXovTunfdnQj2WW/9ysp7ZmTjZwE5ZpYRd3/eOVdK?=
+ =?us-ascii?Q?GF5mBwfrj6iPdA7TyOLEDsKYzqjCxHpwozfS3C5vnF8wKaT4jn1hQeL5J8lh?=
+ =?us-ascii?Q?iRcTxPPCwCYeDoG/ni+Nez0+bzhm8ji85gS1E5s4CR/7f264ZByUGs+mvEdv?=
+ =?us-ascii?Q?xZC+0uDgMH8vSJqqv4vFb+70JSxybgVsObuM4tgudsy/qd3/lFqceVk/gA4q?=
+ =?us-ascii?Q?qooAh04V0AaF6aeMHsmZt9bckCYPu7TC6JGzeIGkVtJlNNn3NsnmokL171bp?=
+ =?us-ascii?Q?3HsyzsT9LZdAkf7RYwv/fVryLUiMztZDJrMaHgxvWMpO7/hp/Dfd7sksxzMI?=
+ =?us-ascii?Q?ReSq39dUQoPXcS303zE/kcszwCjXz2Zo7QeyfUqXT5t4BC97DybJls2qufw/?=
+ =?us-ascii?Q?McZVagipcnMApeNd7BPpAx6NAiDGlWGnKc3ogDRyXJSw0VfUSBlrmkdXZCpr?=
+ =?us-ascii?Q?cb4nbS7QtjBaW75EA6dJUpQlwZA+jMTzkQfmhKm2EZDzxCiYsEwoZanGmWAX?=
+ =?us-ascii?Q?LkxTKHH2dVyC5ELLE0I86kFh90Zvf1z1qEQmJx7uuBgJeexZXcUsuvKYj4LS?=
+ =?us-ascii?Q?gGsM5DJ97IZcTj3SPGOP8hNiDpMgCiZN5y0Zm8PDj+d05t07SsheW7lfjLXz?=
+ =?us-ascii?Q?hMcNZbt+ch70EC6dWTFg7NsWrzwEGWxJmsEFmtlJSbd4SgxtP0OummXjzzl3?=
+ =?us-ascii?Q?KcCa9gJLXhGUT0LN41V+NZkHqRjHnPtc5nM/WgbmQFDpalCgGjT6FNuXR+Cc?=
+ =?us-ascii?Q?EpqLYSt2bp6CsqKUAxiRSO6JvpDnHLd+9+8NUvEQvI9tenedVq9berPny+cR?=
+ =?us-ascii?Q?dYQanKsNqYwb0IUQgiszgvMQVMzP71f6Zhpp7pUnaCdLKmRQV6XFQ+uGFePb?=
+ =?us-ascii?Q?c/Wx/3nIdlVHbzFPU0IQQTdOzCEgs1xwNZ9LobP8FzO7z3Ryj4AdWWTTUH3y?=
+ =?us-ascii?Q?eFZm6A8tBoCrMflkmUK1gx9nyYmeqn0C3DA/rWVCX4igstlBrPzUOjAcKNXM?=
+ =?us-ascii?Q?jw=3D=3D?=
+X-MS-Exchange-AntiSpam-ExternalHop-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-ExternalHop-MessageData-0:
+	0GaNVJVpvc0M2ftD81wZ/uShvCEqgyO077qneO9RmU3lWGyo2VHdrjhDAsyEM79IbOmJAsCbtvtdksihDVLBauMyBSLLf2PQFc0VSv+Kg/nrBKiYYCvrJszqNnYo2LTieG9OrsuW49+SX+G0ZB1yL/qXB4iwb1DNcaxPzCkJgMksWUYu19vv2N+VDhE8KEh80dSISOIUsAHMcJQW/Qxyl9K5yN8mXNGZcLsLxZ85Rqu6xJzrJHmRvnrBcpXb8NJswi8DAlxAAL09LSH1XG6Fzp+STnKQ7vlFYQlvE1Di6Dftg3Oi4tnv8khOHp9i7DVJTGSrCfjMmn9ioA7AyOLxNP94GpE/Dr2As950tK/3oCKiDQOuua8sK7cGMfQeS93ljEBkPea1orjD5fVFGlHF5yLG/LCNPdAWR9cqw5OmN4HIsQuSpyfaIrtFhWe76Q/vBifatTsV+CYak6FllJUs2GZJyyvLwnR89bAzcsHXiCGMvrGzw0LV4QWsKox5SaeLJL4SqokK/46mcJnRGPZnRk/FBjch2KdotxO18VjiCvoW+vQKcQ0qA+q+RHE2RTuJOrekwC08EAoQfezkJifqKWiEuXcJwWYGepGKXr60ZPw=
+X-OriginatorOrg: oracle.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: f4af56cb-2086-469a-2c2a-08ddb3363649
+X-MS-Exchange-CrossTenant-AuthSource: DM4PR10MB8218.namprd10.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 24 Jun 2025 15:45:57.7753
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 4e2c6054-71cb-48f1-bd6c-3a9705aca71b
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: BYw3s3FkCHhFCe3sPaN2GgUQjQSBLnonD7NrJ0bS8qR5P05XXcepuhdqyeqd91ZKOfiVeqk9d46N9k4Crj86XE0QMsNwqAQ3cZQf911tJjg=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CH0PR10MB4860
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.7,FMLib:17.12.80.40
+ definitions=2025-06-24_06,2025-06-23_07,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 adultscore=0 phishscore=0
+ suspectscore=0 spamscore=0 mlxlogscore=999 mlxscore=0 malwarescore=0
+ bulkscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2505160000 definitions=main-2506240132
+X-Proofpoint-ORIG-GUID: 8VLbBst0y_zATkSGh3Kl36djCNjP62J0
+X-Proofpoint-GUID: 8VLbBst0y_zATkSGh3Kl36djCNjP62J0
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNjI0MDEzMiBTYWx0ZWRfXyzpLtCFawRK8 4viKx6w3MV+b+Nv97ZGbNO28xFxD2yYHSdJCl+deGPkxXJUy+gjXIbxQ/Xp+BFmOaAeX3QTeNvF Y3gH7sSFQZHRzS/t/0eC2TXZ1DFcyPrYG7yzXDb4OJYrCnd2R3Sj4kTWyYkDpcITzVZTze5PVF6
+ ODa3jnWMjFuEC6mGVYpcnQdStu0Dc9/AP8BcQGoXO/K/1icgDnzPWQOxKCnjyToAzrw2BsUhqwv bKkh/rSV7RZMzlcF6sfgtORYgX4RDs8zyQ0LpLbHkmAyhagGL/3bj0MGk6zy7DU7FLaZw8kDDrM j45mCuu2KUDfKh4I4efM/7zyZ1d+NM86I1jaMLcoA6UiN4Si0aeAhwyMnYlt39VHyDHitopdEJ7
+ zOnO1kqY3F/DfgSCoPAjdVHaOW1Y7vazI1NDkk2WPHYQVyGrx0xOoLWWwFRkGmIgaodxv5E8
+X-Authority-Analysis: v=2.4 cv=S5rZwJsP c=1 sm=1 tr=0 ts=685ac83a b=1 cx=c_pps a=WeWmnZmh0fydH62SvGsd2A==:117 a=WeWmnZmh0fydH62SvGsd2A==:17 a=6eWqkTHjU83fiwn7nKZWdM+Sl24=:19 a=lCpzRmAYbLLaTzLvsPZ7Mbvzbb8=:19 a=wKuvFiaSGQ0qltdbU6+NXLB8nM8=:19
+ a=Ol13hO9ccFRV9qXi2t6ftBPywas=:19 a=xqWC_Br6kY4A:10 a=kj9zAlcOel0A:10 a=6IFa9wvqVegA:10 a=GoEa3M9JfhUA:10 a=yPCof4ZbAAAA:8 a=Z5dEeDZ-bys1F5YNRK4A:9 a=CjuIK1q_8ugA:10
 
-On Fri, Mar 28, 2025, Xin Li (Intel) wrote:
-> From: Xin Li <xin3.li@intel.com>
-> 
-> Save guest FRED RSP0 in vmx_prepare_switch_to_host() and restore it
-> in vmx_prepare_switch_to_guest() because MSR_IA32_FRED_RSP0 is passed
-> through to the guest, thus is volatile/unknown.
-> 
-> Note, host FRED RSP0 is restored in arch_exit_to_user_mode_prepare(),
-> regardless of whether it is modified in KVM.
-> 
-> Signed-off-by: Xin Li <xin3.li@intel.com>
-> Signed-off-by: Xin Li (Intel) <xin@zytor.com>
-> Tested-by: Shan Kang <shan.kang@intel.com>
+On Tue, Jun 24, 2025 at 03:03:48PM +0200, Vlastimil Babka wrote:
+> Use madvise_lock()/madvise_unlock() in madvise_set_anon_name() in the
+> same way as in do_madvise(). This narrows the lock scope a bit and
+> reuses existing functionality. get_lock_mode() already picks the correct
+> MADVISE_MMAP_WRITE_LOCK mode for __MADV_SET_ANON_VMA_NAME so we can just
+> remove the explicit assignment.
+>
+> Signed-off-by: Vlastimil Babka <vbabka@suse.cz>
+
+Reviewed-by: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
+
+This is a nice idea, hadn't thought of it :) aren't we making anon vma name
+behave now :P
+
+I mean this is a _minor_ difference in functionality in that we will now
+use mmap_write_lock_killable() and could fail to lock on fatal signal
+whereas before we unconditionally lock but I think that's fine, and
+possibly even... desirable actually?
+
+At any rate this is all nice, thanks again!
+
 > ---
-> 
-> Changes in v3:
-> * KVM only needs to save/restore guest FRED RSP0 now as host FRED RSP0
->   is restored in arch_exit_to_user_mode_prepare() (Sean Christopherson).
-> 
-> Changes in v2:
-> * Don't use guest_cpuid_has() in vmx_prepare_switch_to_{host,guest}(),
->   which are called from IRQ-disabled context (Chao Gao).
-> * Reset msr_guest_fred_rsp0 in __vmx_vcpu_reset() (Chao Gao).
-> ---
->  arch/x86/kvm/vmx/vmx.c | 9 +++++++++
->  arch/x86/kvm/vmx/vmx.h | 1 +
->  2 files changed, 10 insertions(+)
-> 
-> diff --git a/arch/x86/kvm/vmx/vmx.c b/arch/x86/kvm/vmx/vmx.c
-> index 236fe5428a74..1fd32aa255f9 100644
-> --- a/arch/x86/kvm/vmx/vmx.c
-> +++ b/arch/x86/kvm/vmx/vmx.c
-> @@ -1349,6 +1349,10 @@ void vmx_prepare_switch_to_guest(struct kvm_vcpu *vcpu)
+>  mm/madvise.c | 13 +++++++++----
+>  1 file changed, 9 insertions(+), 4 deletions(-)
+>
+> diff --git a/mm/madvise.c b/mm/madvise.c
+> index cae064479cdf908707c45b941bd03d43d095eab6..ee02ccd0315a146cdb3001cd189e03be9e48a2ea 100644
+> --- a/mm/madvise.c
+> +++ b/mm/madvise.c
+> @@ -2082,10 +2082,10 @@ static int madvise_set_anon_name(struct mm_struct *mm, unsigned long start,
+>  {
+>  	unsigned long end;
+>  	unsigned long len;
+> +	int error;
+>  	struct madvise_behavior madv_behavior = {
+>  		.mm = mm,
+>  		.behavior = __MADV_SET_ANON_VMA_NAME,
+> -		.lock_mode = MADVISE_MMAP_WRITE_LOCK,
+>  		.anon_name = anon_name,
+>  	};
+>
+> @@ -2106,7 +2106,14 @@ static int madvise_set_anon_name(struct mm_struct *mm, unsigned long start,
+>
+>  	madv_behavior.range.start = start;
+>  	madv_behavior.range.end = end;
+> -	return madvise_walk_vmas(&madv_behavior);
+> +
+> +	error = madvise_lock(&madv_behavior);
+> +	if (error)
+> +		return error;
+> +	error = madvise_walk_vmas(&madv_behavior);
+> +	madvise_unlock(&madv_behavior);
+> +
+> +	return error;
+>  }
+>
+>  int set_anon_vma_name(unsigned long addr, unsigned long size,
+> @@ -2136,9 +2143,7 @@ int set_anon_vma_name(unsigned long addr, unsigned long size,
+>  			return -ENOMEM;
 >  	}
->  
->  	wrmsrl(MSR_KERNEL_GS_BASE, vmx->msr_guest_kernel_gs_base);
-> +
-> +	if (cpu_feature_enabled(X86_FEATURE_FRED) && guest_cpu_cap_has(vcpu, X86_FEATURE_FRED))
-
-For these paths, I'm leaning towards omitting the cpu_feature_enabled() check.
-The guest_cpu_cap_has() check should suffice, this isn't a super hot path, and
-the cost of the runtime check will likely be a single, well-predicted uop when
-FRED is unsupported (e.g. a fused BT+Jcc).
-
-Unlike the MSR interception toggling, the "extra" work is negligible (and it's
-something confusing to check cpu_feature_enabled() instead of kvm_cpu_cap_has()).
-
-> +		wrmsrns(MSR_IA32_FRED_RSP0, vmx->msr_guest_fred_rsp0);
-> +
->  #else
->  	savesegment(fs, fs_sel);
->  	savesegment(gs, gs_sel);
-> @@ -1393,6 +1397,11 @@ static void vmx_prepare_switch_to_host(struct vcpu_vmx *vmx)
->  	invalidate_tss_limit();
->  #ifdef CONFIG_X86_64
->  	wrmsrl(MSR_KERNEL_GS_BASE, vmx->msr_host_kernel_gs_base);
-> +
-> +	if (cpu_feature_enabled(X86_FEATURE_FRED) && guest_cpu_cap_has(&vmx->vcpu, X86_FEATURE_FRED)) {
-> +		vmx->msr_guest_fred_rsp0 = read_msr(MSR_IA32_FRED_RSP0);
-> +		fred_sync_rsp0(vmx->msr_guest_fred_rsp0);
-
-Can you add a comment here?  Passing the guest value to fred_sync_rsp0() surprised
-me a bit.  The code and naming makes sense after looking at everything, but it's
-quite different than the surrounding code, e.g. the MSR_KERNEL_GS_BASE, handling.
-Something like this?
-
-		/*
-		 * Synchronize the current value in hardware to the kernel's
-		 * local cache.  The desired host RSP0 will be set if/when the
-		 * CPU exits to userspace (RSP0 is a per-task value).
-		 */
-
-> +	}
->  #endif
->  	load_fixmap_gdt(raw_smp_processor_id());
->  	vmx->guest_state_loaded = false;
-> diff --git a/arch/x86/kvm/vmx/vmx.h b/arch/x86/kvm/vmx/vmx.h
-> index f48791cf6aa6..8e27b7cc700d 100644
-> --- a/arch/x86/kvm/vmx/vmx.h
-> +++ b/arch/x86/kvm/vmx/vmx.h
-> @@ -276,6 +276,7 @@ struct vcpu_vmx {
->  #ifdef CONFIG_X86_64
->  	u64		      msr_host_kernel_gs_base;
->  	u64		      msr_guest_kernel_gs_base;
-> +	u64		      msr_guest_fred_rsp0;
->  #endif
->  
->  	u64		      spec_ctrl;
-> -- 
-> 2.48.1
-> 
+>
+> -	mmap_write_lock(mm);
+>  	error = madvise_set_anon_name(mm, addr, size, anon_name);
+> -	mmap_write_unlock(mm);
+>  	anon_vma_name_put(anon_name);
+>
+>  	return error;
+>
+> --
+> 2.50.0
+>
 
