@@ -1,139 +1,145 @@
-Return-Path: <linux-kernel+bounces-700331-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-700334-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CBDAFAE66F9
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Jun 2025 15:48:56 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 4DBD4AE6701
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Jun 2025 15:49:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 18181169E3C
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Jun 2025 13:48:14 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5E5A04C3541
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Jun 2025 13:48:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 92D472C3268;
-	Tue, 24 Jun 2025 13:47:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5CF1529ACC0;
+	Tue, 24 Jun 2025 13:48:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="aq7N0ZLd"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=rivosinc-com.20230601.gappssmtp.com header.i=@rivosinc-com.20230601.gappssmtp.com header.b="W3hE5vYd"
+Received: from mail-pl1-f175.google.com (mail-pl1-f175.google.com [209.85.214.175])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DCE982C325B;
-	Tue, 24 Jun 2025 13:47:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 396522BE7BC
+	for <linux-kernel@vger.kernel.org>; Tue, 24 Jun 2025 13:48:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750772855; cv=none; b=bsvMxiL0qruqCMp778z5ycOnB/WP/5NFuQBGkVMHtjLl3ZrvQQ5FZFEZl/ZKp06+it6SPKz9LNQ3YTiFRuxvH8ZHuv7R7v2CrkjTd5ql9n4vHnQtr/izY6yFX6q0hqujyE0p45ePAJWNxtN/bGph0/CQpXB6BGjMExewDXNjmm0=
+	t=1750772915; cv=none; b=S0jwqj7USRGUePQ3Wue+mTSMrxfyiNMsb9ucieLgx15bASC7j47FQHl0ZFjUoN5iQuh5eXfg5RIHZLqOX0WqwXP7l+SAQqcq+EbQzzbs2UH+PjIxNOep4PNgMGi0tWUFl+9DkYw98LKah7n30jCCIoBlTYg9I3JBKU7zfRfYD3U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750772855; c=relaxed/simple;
-	bh=UEg6wQSAHePDtn5dg6MmJ4Z93KBz5q6wdT/Iwd0Dq8M=;
-	h=Date:Content-Type:MIME-Version:From:Cc:To:In-Reply-To:References:
-	 Message-Id:Subject; b=TOpnAt8s7K4/w3EhXllffEg/LZWUfopI1F+wB5O1u63ueQPv6cB/kMfWaJ5I2huqf6qAcpqddrlW6KqiZA4eXLdk9Jir6XwQBnyLq+301/mq1T1KdiIfh3QB8l0wwEbgB22GE5BR964xmltWVbH4snbLkd+zCxriJ+jwO+UmdQY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=aq7N0ZLd; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 674C5C4CEE3;
-	Tue, 24 Jun 2025 13:47:34 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1750772854;
-	bh=UEg6wQSAHePDtn5dg6MmJ4Z93KBz5q6wdT/Iwd0Dq8M=;
-	h=Date:From:Cc:To:In-Reply-To:References:Subject:From;
-	b=aq7N0ZLd56t0DIMXduDxRGE2Ue3ycOz6dAm+8/tNr19JYWNOpvDVOQ4LmD9UDlX1W
-	 trAKW2P54up6emSPMPVeyy0ez6xbBnrTzFBMoZlDoEc1+kdCQVsKjUtzeLj/Xe1Pws
-	 iNmyZBtmGz/gRMNiQBmMt5d2e023yOLNhAL3PLJPv3i+EuP9XO14zICWwqZ968Qr1C
-	 Bz6tWa2myoOHoso+kZvrt3zk1ClAJjqkmDvFqAZASEGxKliPtax1EKeml13ed4VPN6
-	 +tshzurwrTD89fKRs+QTbIg89cdLCJnuMZRADsdPduQKrV3GocAaQcAAYl6IZ3ESZJ
-	 nOvUzqqzf5flA==
-Date: Tue, 24 Jun 2025 08:47:33 -0500
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+	s=arc-20240116; t=1750772915; c=relaxed/simple;
+	bh=E3V++5MfDVggiII4WpQCK+D0VM0vjMcbOBqOELEWJKM=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=oVoamj2MeiNaJc8BnLP339JeQlJoT9/kJeXMZEPDX/Y4ndZ8QJ+PKyhNpCVlMzJUFp27FeeuEIoZzSyDDvSO7xk4deTyQNMx1fa+XFc1ROaFyXzLVhFIeULCEIdRwbuxkE9U9J+79fAD/oXeBZQRbA4TCqMM355oLKRdK5u8EBo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rivosinc.com; spf=pass smtp.mailfrom=rivosinc.com; dkim=pass (2048-bit key) header.d=rivosinc-com.20230601.gappssmtp.com header.i=@rivosinc-com.20230601.gappssmtp.com header.b=W3hE5vYd; arc=none smtp.client-ip=209.85.214.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rivosinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rivosinc.com
+Received: by mail-pl1-f175.google.com with SMTP id d9443c01a7336-234b440afa7so5686055ad.0
+        for <linux-kernel@vger.kernel.org>; Tue, 24 Jun 2025 06:48:33 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=rivosinc-com.20230601.gappssmtp.com; s=20230601; t=1750772913; x=1751377713; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=H99QKyWxgJFviR9gCoeMBJLsUrcpUyL0OAKfLepv64s=;
+        b=W3hE5vYdLE3hbXF2zm8+AHWeJ3K0e0S5x6Fi4GDAlG1h7GITDqzyhhpxp/DHffjlfk
+         CdtQzCd6F3NL9pSQnlvyg6wCyaQ/EAuV7x37L2vpBgWilY+AX4hlC/aB9//xHnWB07Q9
+         6vN67oAb6dZm+v2DveOxPlMps0/ZuGhqjFZDVRuwCjH03cXvFT8Cpdubc1gWGfAUoJML
+         2o0Kuh88E6ESIrfbpZ21V22AdIdH0lzXbY/NAsnV42fkQtQ+8nSkv35ufJNRu9pKsMhY
+         QdA+704me7H65hQFpwMAcfL/yOJ3OMYAdv0Jf8bcM+zM44J6ZLPCZcVgxnWAyESVxcK2
+         eWig==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1750772913; x=1751377713;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=H99QKyWxgJFviR9gCoeMBJLsUrcpUyL0OAKfLepv64s=;
+        b=kOxDd/jHv9z27vEzAACInttG6bTr9Pac83Zc/4jeVQw1+7H6wrA91DY7sYylSynCVS
+         fibbBlNVVjDCmLeq+EJ8ZHpZIoBvpDVoNoD3zYwRTLKO2VrjXzSmCNolmvyWtBvKQ4SA
+         xmCOIia0owk6cadQrUHCbQog0w0x/x2QDo+PAlUKkBVSAcCbaWyBpQ1Rs7rST8kQeF4F
+         GWry0YsdGoR5jL0/m9eqqYtfQsL5E1x+1/OeN1pxJvZriwvQculGQ232tXwDZ1Hx0CSA
+         2VGBhyUP6c3uDr1CL9klZgxTVPt97uJqvCPw9nRMDq1tiAEcAvEmGm5zS0Pry0T2G88p
+         qtyw==
+X-Forwarded-Encrypted: i=1; AJvYcCUU3Tcnnij9eNylJmbFd7gsJ6ccCh32ZMZBbOMpMLXiLMgWPJ2F71VLEUIssIbclixwL2xH4Qjc5JyMOX4=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxIu79wec5sW/sHAYbt/3qLdXNl5kBfABmZukRiipGo3qIhxXz1
+	dEZ9Dx7KXI2mYw3NO3bOWVq1UlX8aAU8HZIYrs1s+ynrAhgBuvcUAz8vzF1BAdxc6Zg=
+X-Gm-Gg: ASbGncvNfvviNAxX2Y18LW7FX2j4F35MyEpZCuSv1PO6SFi4gc7YaEOQ3R2Oz1Mdwcm
+	CE50s1CWQPFlx3+YNgHXriN//n82N6PvbiXvr1Q+IsMwEY25fSHecXlwj4vtwgPcOf36ET9JCvq
+	+pT1fZonctaXtt9p30zFGy0hafEBmkBxwsNMpTdTia7iMl/sdwjQ6/fXVE+6F+cuRlapzC2UCm7
+	FAkx59xUSA/7LtQtkXFPlG7AYWH94O0s6T+S0+9kSFYl19T97F8Sos9r47bxveQMErf17c6HgEX
+	aq17/53f1My9P8CnBrh9Xr3FAO2Echbse9KYs74EJUZN6aUxSTzKTX1nMj27r1W5qzp+57wiWGv
+	bHM0bXJgG2pMUMOZM4wVpPt6CaCtjmfQ=
+X-Google-Smtp-Source: AGHT+IH3VVcKlPmQAwhvEtRsqViiUOznLNr6sCLhqQcLQB4C7EhcexsF4UBAe4n2C1iZkbDQyg+oRw==
+X-Received: by 2002:a17:903:4b30:b0:234:8c3d:2912 with SMTP id d9443c01a7336-237d96b6361mr256983115ad.11.1750772913474;
+        Tue, 24 Jun 2025 06:48:33 -0700 (PDT)
+Received: from ?IPV6:2a01:e0a:e17:9700:16d2:7456:6634:9626? ([2a01:e0a:e17:9700:16d2:7456:6634:9626])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-237d87391e5sm106566055ad.244.2025.06.24.06.48.26
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 24 Jun 2025 06:48:33 -0700 (PDT)
+Message-ID: <d135d6cc-5117-4b3a-9abe-2e5fd9e3e490@rivosinc.com>
+Date: Tue, 24 Jun 2025 15:48:21 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-From: "Rob Herring (Arm)" <robh@kernel.org>
-Cc: Conor Dooley <conor+dt@kernel.org>, linux-arm-msm@vger.kernel.org, 
- Konrad Dybcio <konradybcio@kernel.org>, 
- Krzysztof Kozlowski <krzk+dt@kernel.org>, phone-devel@vger.kernel.org, 
- linux-kernel@vger.kernel.org, ~postmarketos/upstreaming@lists.sr.ht, 
- Bjorn Andersson <andersson@kernel.org>, devicetree@vger.kernel.org
-To: Cristian Cozzolino <cristian_ci@protonmail.com>
-In-Reply-To: <20250624-rimob-initial-devicetree-v2-0-34f6045ebc30@protonmail.com>
-References: <20250624-rimob-initial-devicetree-v2-0-34f6045ebc30@protonmail.com>
-Message-Id: <175077273896.3865908.3372427223791553913.robh@kernel.org>
-Subject: Re: [PATCH v2 0/3] Add initial device tree for Billion Capture+
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] riscv: Enable interrupt during exception handling
+To: Nam Cao <namcao@linutronix.de>
+Cc: "Maciej W. Rozycki" <macro@orcam.me.uk>,
+ Palmer Dabbelt <palmer@dabbelt.com>, Paul Walmsley
+ <paul.walmsley@sifive.com>, aou@eecs.berkeley.edu,
+ Alexandre Ghiti <alex@ghiti.fr>, bigeasy@linutronix.de,
+ clrkwllms@kernel.org, rostedt@goodmis.org, linux-rt-devel@lists.linux.dev,
+ linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org,
+ Peter Zijlstra <peterz@infradead.org>
+References: <mhng-60581B88-6FC7-4349-96B6-730D908ABF4A@palmerdabbelt-mac>
+ <alpine.DEB.2.21.2506240303170.61655@angie.orcam.me.uk>
+ <19cf2371-7293-4e71-a17d-669db4c8270a@rivosinc.com>
+ <20250624131730.XqPd1HUR@linutronix.de>
+Content-Language: en-US
+From: =?UTF-8?B?Q2zDqW1lbnQgTMOpZ2Vy?= <cleger@rivosinc.com>
+In-Reply-To: <20250624131730.XqPd1HUR@linutronix.de>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
 
-On Tue, 24 Jun 2025 03:20:04 +0200, Cristian Cozzolino wrote:
-> Billion Capture+ is a handset using the MSM8953 SoC released in 2017
-> and sold by Flipkart.
+
+On 24/06/2025 15:17, Nam Cao wrote:
+> On Tue, Jun 24, 2025 at 01:37:13PM +0200, Clément Léger wrote:
+>> On 24/06/2025 04:09, Maciej W. Rozycki wrote:
+>>> On Mon, 23 Jun 2025, Palmer Dabbelt wrote:
+>>>> I'm kind of split on a Fixes tag here.  One could argue it's a regression, as
+>>>> having interrupts disabled during exceptions is going to cause all sorts of
+>>>> performance issues for users.  Seems a bit risk to just backport, though...
+>>>>
+>>>> That said, if nobody noticed then it's probably a good sign nobody is really
+>>>> paying attention and we should just backport it before anyone notices...
+>>>
+>>>  Oh, someone did notice and it's not only performance, cf. 
+>>> <https://lore.kernel.org/r/alpine.DEB.2.21.2501070143250.18889@angie.orcam.me.uk/>.
+>>
+>> I also had a series which was doing so for misaligned accesses handling,
+>> but after discussion, it was not ok to do so.:
+>>
+>> https://lore.kernel.org/linux-riscv/20250422094419.GC14170@noisy.programming.kicks-ass.net/
 > 
-> Add a device tree with initial support for:
+> If I understand that right, exceptions from kernel should be treated as
+> NMI, so that lockdep can tell us if exception handlers touch locks.
 > 
-> - GPIO keys
-> - SDHCI (internal and external storage)
-> - USB Device Mode
-> - Regulators
-> - Simple framebuffer
+> But (conditionally) enabling interrupts does not lose us that benefit. It
+> is still considered NMI by lockdep.
 > 
-> Signed-off-by: Cristian Cozzolino <cristian_ci@protonmail.com>
-> ---
-> Changes in v2:
-> - (patch 3/3):
->   - add unit address and label to qseecom (Luca);
->   - reorder properties alphabetically in gpio-keys node (Konrad);
->   - fix hex values in reg address and size cells: from 0x00 to 0x0 (Konrad);
->   - add regulator-allow-set-load property to regulators supplying sdhc1/sdhc2.
-> - Link to v1: https://lore.kernel.org/r/20250620-rimob-initial-devicetree-v1-0-8e667ea21f82@protonmail.com
-> 
-> ---
-> Cristian Cozzolino (3):
->       dt-bindings: vendor-prefixes: Add Flipkart
->       dt-bindings: arm: qcom: Add Billion Capture+
->       arm64: dts: qcom: msm8953: Add device tree for Billion Capture+
-> 
->  Documentation/devicetree/bindings/arm/qcom.yaml    |   1 +
->  .../devicetree/bindings/vendor-prefixes.yaml       |   2 +
->  arch/arm64/boot/dts/qcom/Makefile                  |   1 +
->  .../arm64/boot/dts/qcom/msm8953-flipkart-rimob.dts | 255 +++++++++++++++++++++
->  4 files changed, 259 insertions(+)
-> ---
-> base-commit: 0ff41df1cb268fc69e703a08a57ee14ae967d0ca
-> change-id: 20250620-rimob-initial-devicetree-da86a5bffc8b
+> Unless I miss something, the patch is fine as is.
+
+Hi Nam,
+
+Yeah indeed, providing that all traps handlers really are reentrant, I
+think it's fine.
+
+Thanks,
+
+Clément
+
 > 
 > Best regards,
-> --
-> Cristian Cozzolino <cristian_ci@protonmail.com>
-> 
-> 
-> 
-
-
-My bot found new DTB warnings on the .dts files added or changed in this
-series.
-
-Some warnings may be from an existing SoC .dtsi. Or perhaps the warnings
-are fixed by another series. Ultimately, it is up to the platform
-maintainer whether these warnings are acceptable or not. No need to reply
-unless the platform maintainer has comments.
-
-If you already ran DT checks and didn't see these error(s), then
-make sure dt-schema is up to date:
-
-  pip3 install dtschema --upgrade
-
-
-This patch series was applied (using b4) to base:
- Base: using specified base-commit 0ff41df1cb268fc69e703a08a57ee14ae967d0ca
-
-If this is not the correct base, please add 'base-commit' tag
-(or use b4 which does this automatically)
-
-New warnings running 'make CHECK_DTBS=y for arch/arm64/boot/dts/qcom/' for 20250624-rimob-initial-devicetree-v2-0-34f6045ebc30@protonmail.com:
-
-arch/arm64/boot/dts/qcom/msm8953-flipkart-rimob.dtb: gpu@1c00000 (qcom,adreno-506.0): clock-names:5: 'alwayson' is not one of ['core', 'iface', 'mem', 'mem_iface', 'alt_mem_iface', 'gfx3d', 'rbbmtimer', 'rbcpr']
-	from schema $id: http://devicetree.org/schemas/display/msm/gpu.yaml#
-
-
-
-
+> Nam
 
 
