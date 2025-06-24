@@ -1,130 +1,110 @@
-Return-Path: <linux-kernel+bounces-699511-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-699513-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id EC18DAE5B90
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Jun 2025 06:42:47 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 172BFAE5B98
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Jun 2025 06:44:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D11F51BC0448
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Jun 2025 04:43:03 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9A11E2C311F
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Jun 2025 04:44:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AFD9B227574;
-	Tue, 24 Jun 2025 04:42:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7C9C322A4E5;
+	Tue, 24 Jun 2025 04:44:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="cw+v0ikP"
-Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="LtJg/Vod"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4DFFF21B9F6;
-	Tue, 24 Jun 2025 04:42:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6E37CB652;
+	Tue, 24 Jun 2025 04:44:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750740162; cv=none; b=Vi57oLnFtkr5v7YdShe8A5EysyAMIjR806S+xoqsIF4FfXyJb2KcV/9zrCmty96avDgxRD2qAhLNV/+hgsnzHOvEAPy+v/Rv9X+PRtkP5aqme6IaaOKWg70mlX9LiyNd4PtMEpo5/LS/V6dcU3iJAllgCwIpDx1eyYNAvaUx6vQ=
+	t=1750740256; cv=none; b=ZMIhutsfOx6V8qsdx0pv3R/LQ1ReTcYd/Byv4aThUJ+8FU4R/iZwbbA2R8yTiceXNfAxAd99f/4pRyN0S7aPIXSNgaPv5SQLhvLDLgEP/PlLpN2JpdDEjwods05CFVSbdq82RZcuEqfn6wFboqITFPMaQJqCHMuuFueisQZsdlU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750740162; c=relaxed/simple;
-	bh=4oCgMDFg06/ZJ+fJ36lp5jhor6NtQ1mEl3NvdGraXWE=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=VpUWKjxcDSRqpYoFGoiGMDKwg3JKrbzsbf36ii7E8ax3qzjijkxpO03DJR9SjENsr5fFJ7RqEzh9hqZ88+m34Ls/CLFxfUDyJ6AJsJ56Hg5i5xO3eyK5nUOGWABcmg79V0If7HXRILVcKHXcvBTMHkRT8mcYFEepC7x3EUn/+Cg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=cw+v0ikP; arc=none smtp.client-ip=150.107.74.76
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
-	s=202503; t=1750740153;
-	bh=3862urRcsU1qhVaMyUmElt22m52yJ8kkk/5cd28KV+c=;
-	h=Date:From:To:Cc:Subject:From;
-	b=cw+v0ikPI+QXYaLbwSkyjaCy+E7ZyaFRx8Qde639DY4iy5j1ndCT74Z272UPAqeTz
-	 McWl66WedJCvDkX4UyQA0162E/PfNeK2xD7FYhgEAZ+q2pKxDfirvujRxqimv5JARI
-	 /dxBROhtFixtx8zciuULMP7j55JdoNNV6pnJxpdwTZ4G5uETeYFcQz47s1aI++XTOO
-	 vA2LYgwuptlNAoJCqqwqKgSJXBckUF65IfRf9/WTFOj8TMmO4JRKQEndN058LcAi1o
-	 7/wOnUgDv9LpvU57tUDxKIF7W0Mi0XiQ2x7+rmWB16ZDT+KzgtKarzOG6lUm35JWu+
-	 mC4pK4m6s1WxQ==
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(Client did not present a certificate)
-	by mail.ozlabs.org (Postfix) with ESMTPSA id 4bRC3s08vQz4wbb;
-	Tue, 24 Jun 2025 14:42:32 +1000 (AEST)
-Date: Tue, 24 Jun 2025 14:42:31 +1000
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-To: Greg KH <greg@kroah.com>, Christian Brauner <brauner@kernel.org>
-Cc: Alice Ryhl <aliceryhl@google.com>, Danilo Krummrich <dakr@kernel.org>,
- Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Linux Next
- Mailing List <linux-next@vger.kernel.org>, Remo Senekowitsch
- <remo@buenzli.dev>
-Subject: linux-next: manual merge of the driver-core tree with the
- vfs-brauner tree
-Message-ID: <20250624144231.3598eb5e@canb.auug.org.au>
+	s=arc-20240116; t=1750740256; c=relaxed/simple;
+	bh=70vF/+LDkN4q7jTfHlGAIAhxNTippQO8QdvV+YYKln0=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=HQhckBpxnIgfvs3RBd+JFVbLnC8kp/rgRP5ve00N7Rl2pc/ghtM3uzlpMcLMFHFtiS7vZILbp4AlzRYtd1DGtKX/Zhx+kOjo59g7ydsErZkimmASwWTIreA3/VYRccfnfiBaKDizbpCak2Uxm+4+S4E4hHN/QsHuE5eHKEO/ess=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=LtJg/Vod; arc=none smtp.client-ip=198.175.65.18
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1750740255; x=1782276255;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=70vF/+LDkN4q7jTfHlGAIAhxNTippQO8QdvV+YYKln0=;
+  b=LtJg/VodfdOJE0vsCBm0M4TQNyrN5nxq20QX2i5afMTULXVLmiHC9azW
+   1bbBRV5aRdiPdCxhmk1i/VmAEFTPDikYXq+RVBk7Qpc6FFBhMMw0clXcn
+   f+JxwNu8kJG9+gGgX7DrLbWj+rb3wBZJyp2+fittPdZpNRpKTy+WdyQyf
+   acgfAmLpuuhr6wBpHVhwUDW03GDtsZ41YSPz2e4e539FcaDUHDtekXxdH
+   Xzva66R3IRroVEN/1+Ld4fbb9G5I96u4zVg8DRfYxZGFbMHDx09/LMoaE
+   hAXQw27z7s+/UU2FY/D+eoVF8/xU+Q3ZKnszsDz6JDWZjb8FZ32SaACMh
+   A==;
+X-CSE-ConnectionGUID: d47SEBL/Rcq+3r46AZ9mkQ==
+X-CSE-MsgGUID: CVxzRt2oQeSNyGOIIrXJ5w==
+X-IronPort-AV: E=McAfee;i="6800,10657,11473"; a="53097156"
+X-IronPort-AV: E=Sophos;i="6.16,260,1744095600"; 
+   d="scan'208";a="53097156"
+Received: from orviesa005.jf.intel.com ([10.64.159.145])
+  by orvoesa110.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 23 Jun 2025 21:44:14 -0700
+X-CSE-ConnectionGUID: /IMDF3uBQ862VPPddpuBuw==
+X-CSE-MsgGUID: ZdH+2z/NRSGVG1dkvjtRHw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.16,260,1744095600"; 
+   d="scan'208";a="157578062"
+Received: from allen-sbox.sh.intel.com (HELO [10.239.159.30]) ([10.239.159.30])
+  by orviesa005-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 23 Jun 2025 21:44:08 -0700
+Message-ID: <06992407-0c84-4f3f-a89a-5986024928a4@linux.intel.com>
+Date: Tue, 24 Jun 2025 12:42:51 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="Sig_/g5DpCZ1jN5L0MCP+wZACWEo";
- protocol="application/pgp-signature"; micalg=pgp-sha256
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v4 4/8] iommu/vt-d: Use pci_is_display()
+To: Mario Limonciello <superm1@kernel.org>,
+ Bjorn Helgaas <bhelgaas@google.com>
+Cc: Alex Deucher <alexander.deucher@amd.com>,
+ =?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>,
+ David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+ Lukas Wunner <lukas@wunner.de>,
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+ Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
+ David Woodhouse <dwmw2@infradead.org>, Joerg Roedel <joro@8bytes.org>,
+ Will Deacon <will@kernel.org>, Robin Murphy <robin.murphy@arm.com>,
+ Alex Williamson <alex.williamson@redhat.com>,
+ Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>,
+ "open list:DRM DRIVERS" <dri-devel@lists.freedesktop.org>,
+ open list <linux-kernel@vger.kernel.org>,
+ "open list:INTEL IOMMU (VT-d)" <iommu@lists.linux.dev>,
+ "open list:PCI SUBSYSTEM" <linux-pci@vger.kernel.org>,
+ "open list:VFIO DRIVER" <kvm@vger.kernel.org>,
+ "open list:SOUND" <linux-sound@vger.kernel.org>,
+ Daniel Dadap <ddadap@nvidia.com>,
+ Mario Limonciello <mario.limonciello@amd.com>,
+ Simona Vetter <simona.vetter@ffwll.ch>, Bjorn Helgaas <helgaas@kernel.org>
+References: <20250623184757.3774786-1-superm1@kernel.org>
+ <20250623184757.3774786-5-superm1@kernel.org>
+Content-Language: en-US
+From: Baolu Lu <baolu.lu@linux.intel.com>
+In-Reply-To: <20250623184757.3774786-5-superm1@kernel.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
---Sig_/g5DpCZ1jN5L0MCP+wZACWEo
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+On 6/24/25 02:47, Mario Limonciello wrote:
+> From: Mario Limonciello<mario.limonciello@amd.com>
+> 
+> The inline pci_is_display() helper does the same thing.  Use it.
+> 
+> Reviewed-by: Daniel Dadap<ddadap@nvidia.com>
+> Reviewed-by: Simona Vetter<simona.vetter@ffwll.ch>
+> Suggested-by: Bjorn Helgaas<helgaas@kernel.org>
+> Signed-off-by: Mario Limonciello<mario.limonciello@amd.com>
 
-Hi all,
-
-Today's linux-next merge of the driver-core tree got a conflict in:
-
-  rust/helpers/helpers.c
-
-between commit:
-
-  6efbf978891b ("poll: rust: allow poll_table ptrs to be null")
-
-from the vfs-brauner tree and commit:
-
-  a2801affa710 ("rust: device: Create FwNode abstraction for accessing devi=
-ce properties")
-
-from the driver-core tree.
-
-I fixed it up (see below) and can carry the fix as necessary. This
-is now fixed as far as linux-next is concerned, but any non trivial
-conflicts should be mentioned to your upstream maintainer when your tree
-is submitted for merging.  You may also want to consider cooperating
-with the maintainer of the conflicting tree to minimise any particularly
-complex conflicts.
-
---=20
-Cheers,
-Stephen Rothwell
-
-diff --cc rust/helpers/helpers.c
-index d2887e3b2826,393ad201befb..000000000000
---- a/rust/helpers/helpers.c
-+++ b/rust/helpers/helpers.c
-@@@ -32,7 -32,7 +32,8 @@@
-  #include "platform.c"
-  #include "pci.c"
-  #include "pid_namespace.c"
- +#include "poll.c"
-+ #include "property.c"
-  #include "rbtree.c"
-  #include "rcu.c"
-  #include "refcount.c"
-
---Sig_/g5DpCZ1jN5L0MCP+wZACWEo
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmhaLLcACgkQAVBC80lX
-0GwMiQf+NjX8yQQ4+zH18KjEzMCn74HOS3EbVuOYo2xkmBMJR5ttiRj1Ry44zuy0
-aLQ+6P4+4B9WxUCaL/8c4q3jITb/Q0vy62xTAaPLM/GPyt1T3qzKLWGMMYocJ7Kn
-jDy6KvIrGBMl26aKIk8tpea9uyVF1OJBGa/q8oDHlyjSA+1LApTyqxJcwU10gCvm
-VVZeHMdrD455Y0xm8BWDkezQ08XG2fywFzQm6GsYm+cSx7cNCoUBfy/PpAyUQ4gL
-8b6MW6MnqHwD6jR2GyVFGhXC1fOBUor0pZOa9N66++s+yr/i7o7bV6vvoqtKIEsC
-xR8xQ3gyaL+kvKCs4tfi7zzIFdypmw==
-=MrpV
------END PGP SIGNATURE-----
-
---Sig_/g5DpCZ1jN5L0MCP+wZACWEo--
+Reviewed-by: Lu Baolu <baolu.lu@linux.intel.com>
 
