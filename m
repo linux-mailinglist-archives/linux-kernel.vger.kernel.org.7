@@ -1,154 +1,152 @@
-Return-Path: <linux-kernel+bounces-699409-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-699411-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1A517AE5981
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Jun 2025 04:04:10 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3B482AE5987
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Jun 2025 04:05:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 321031B66262
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Jun 2025 02:04:23 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CA91517EB3D
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Jun 2025 02:05:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 014D61F582C;
-	Tue, 24 Jun 2025 02:04:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EFBC71C84DF;
+	Tue, 24 Jun 2025 02:05:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="W8zox4XS"
-Received: from mail-yw1-f195.google.com (mail-yw1-f195.google.com [209.85.128.195])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=zytor.com header.i=@zytor.com header.b="eBBb7hag"
+Received: from mail.zytor.com (terminus.zytor.com [198.137.202.136])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C294214A4CC;
-	Tue, 24 Jun 2025 02:03:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.195
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E658C2AD20;
+	Tue, 24 Jun 2025 02:04:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.136
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750730639; cv=none; b=QL957ZVPHFF/oKSa6FjpVQ39dSvNujsqkWSQk3Rs/a0fkZxiUxXptmUmL3IQe/2HwrIXacsQS/fnZDTY1CHrCdsiJ0KmvbICrRHWfCrHmpmqdnzEKXf1wjuqtHJiQBL5lSx1MXJtzga3A3QBbkA3J160AfvQ8Cnxuo2fhoCVJ7w=
+	t=1750730702; cv=none; b=Kmu5oEvTwWo+iMpK2qA2poFozn7UDd1C3NnSU4YLNapkl5XoUAl+vl0u7YJeKNNVcKtnKiyagCY6a2xtrUjtJmP/domjg3w6GPZEkASYZxzMeKPxAHCjKmCaJ+S66ShEPD24S3nIEhAVJ+ceOjzWlYgiTeMy03h/ByQj2BaFX5s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750730639; c=relaxed/simple;
-	bh=UJE2/Y7LI/pKefGOhbN7ZDMBgEeuetvdd15cyoz+nKw=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=mK2GyvndggGR6EjtK+EwFgjUclnegh0i0J7ArSPuU3xZmJU84uqwI+xI57CgsccCfUgoBJBnhdS3feXR20UkDqVPGd01LhX1xR0By3iFzOYLqVYJqtcKRkJmfs9Y+waScOxgrhbh/Kl0a4wG0S35T0JXLzSUZJ9IVegnpz7bUl4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=W8zox4XS; arc=none smtp.client-ip=209.85.128.195
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-yw1-f195.google.com with SMTP id 00721157ae682-7113ac6d4b3so44657707b3.3;
-        Mon, 23 Jun 2025 19:03:56 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1750730636; x=1751335436; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=LbET8ZuLZumqrMIKpSUW3w2wpA6THdEQI6aTEMnHyl4=;
-        b=W8zox4XSyrGoow1yeCIiJ/X0LNsvpmyXBmMLfgBJANUmqNIPSTHOq2AYfPNTSB2IEa
-         ec8WKfqCYgOUFklFqTpP3FiOuB4onZvWAPq85hUsJvukhFSXpe83pe0jpXJeupLsCtSR
-         YES6yMsmtLxAjh0Gjz+UU7RngyZwPXfAm+T6w/821KFCq4ZKKjKmifXRh3QAJYv1jwO+
-         tUJV9KvHjhI/pdTUPDGl695T8GL2p9pkUTKPu7UHv+HnwdI2o2va0Z+iCQp+qgK5yruH
-         8Tu4+J2hIA0+d32y5ap++/HeI6rBWNbd03bhWiHq5QL0yzw/vZvLvaFRx1MBFtmj+4i0
-         qH3w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1750730636; x=1751335436;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=LbET8ZuLZumqrMIKpSUW3w2wpA6THdEQI6aTEMnHyl4=;
-        b=ZfxFwO7gU9UizBtmIKc8YJVw+dwVrzV026nuVgcPwrjtFsqG78Vqbtqf/ZnOjQPSYy
-         1VkjouOWpAjrtxvfILcEyQt+OQRSlv2yPrq3UdDgsFtlQN8Dbo+2S0q5JPMEhSQK9VHf
-         Thcp/RXsKcLMt2aebuBSTxLtgfyG+50fcPgYbFf1s6RdjmOqUT6TFiHSy3IuyHi1E3mc
-         I7jN9vOjFtUd+NCcbP6OpJ7kJubopqxYZZKnG/CmZjtjXDnsghNLafwbT7/h0xSDZ12L
-         tibE9b+KVliOaZUvgY8C/99xzSQLpR6Q0g6AyjtXQ+v+Gzcgjxnr4kop+5B1107/xul2
-         twjQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVqqEdTTnWK0WymlhM9/z6vwuUsFqGtqdkIy265S0atPcbfxFVsPf0tqhXI6dkcocWC91DbpyZ8v/KZsrHB@vger.kernel.org, AJvYcCWXdObsHr2HR32wV02KBX/YP+chFy+WOfSVROAKz0jP9RYuZpDraE65Te/x+K67obBsLfY=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxz1iofUHRbl+FCduTfkAD3vFW31eKWABeT5gVa4WF1QAepZL9j
-	pfPVA4SOuMDtCGNzKLMqnLtCqL+V1AKlA97TcUhk5IdaSEQCXFEavUaPMUTe55yxforFt/rcX85
-	81a76ol4RcyGlpw+4v/UTEQsHskCd7X8=
-X-Gm-Gg: ASbGncu4giLAh7KooZ6Ve3eMEtoTvh+oJig/YBBFDpzJ5iI+sXsnNL8A4ImlFq8d/NG
-	DQsTdzrWGBJWFx8E48oy4SIZMs8JKXUpG9TrV8X1+3+GXjDyHPjnNec6HhwyW6acHzbdOVY8B/B
-	LLJKN57YjwysgT1ACGdrXQCq0ow/gew7Cg+pjwWrIfJj8=
-X-Google-Smtp-Source: AGHT+IHOPhdtF/Z59QPk3w46p7Lp0drAeKTcVm8UPsK5Kg2MvMFSi2UmEpSzHr9pm8xE1Jb7PAqQtqtwFxDigvZ7uiA=
-X-Received: by 2002:a05:690c:720a:b0:70e:1d14:2b76 with SMTP id
- 00721157ae682-712c65176efmr217686177b3.23.1750730635611; Mon, 23 Jun 2025
- 19:03:55 -0700 (PDT)
+	s=arc-20240116; t=1750730702; c=relaxed/simple;
+	bh=ozhNlPrG1zY3QnOQtbtSXT7lm+SrDzV7TAF7n5LDm5c=;
+	h=Date:From:To:CC:Subject:In-Reply-To:References:Message-ID:
+	 MIME-Version:Content-Type; b=hv4109TC/oYAtfyGMbKerIykCtrmjnlRZhCBYhyiTlUxQPW573a9+hQgJrSWuHiRh4PawQzu5D9bLgGayw4LX7ek+0c7kHKyd3E1BNx96x/6X5XPvjVQcauezKrl+gWWetzEfNyR22FEKvVYRdIExLPPNEk0GytQyv2Teg16di8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zytor.com; spf=pass smtp.mailfrom=zytor.com; dkim=pass (2048-bit key) header.d=zytor.com header.i=@zytor.com header.b=eBBb7hag; arc=none smtp.client-ip=198.137.202.136
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zytor.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zytor.com
+Received: from [127.0.0.1] (c-76-133-66-138.hsd1.ca.comcast.net [76.133.66.138])
+	(authenticated bits=0)
+	by mail.zytor.com (8.18.1/8.17.1) with ESMTPSA id 55O246qt1165702
+	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NO);
+	Mon, 23 Jun 2025 19:04:06 -0700
+DKIM-Filter: OpenDKIM Filter v2.11.0 mail.zytor.com 55O246qt1165702
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zytor.com;
+	s=2025062101; t=1750730648;
+	bh=L3efv8sWvW3xYmKWauFJHtNCboQZu0NBi75OSGIZRQs=;
+	h=Date:From:To:CC:Subject:In-Reply-To:References:From;
+	b=eBBb7hagbmX719xPfYNmOmXwj6p75pGqZMYrqOrcUt7OdbZ/si3q8TUCP3nV5ZNGI
+	 7zQ9dpCrNvDDvZg+1RoDsF5xFuAM0UHYlcWBNoKHQDxwLh8EwwPMLxfCAGabKtj6mc
+	 fhBcpg+bPg2hfzpCxgL5RPkxjcg61+8E1A7xR3oyHJ3lVuvuODrPXPUAn75ShbMTU7
+	 zze2izK2c5CrWHSvOdPWT5pwFV6BFxVbxOQ+nssk7dR2Rper6L95RfcLCepdleCuih
+	 BkWAe3uL/jTMuHkGXyRJwKr1cK9PwcSCuGnPJeo9fLYR8WfM3eNPq89tdFqSdj2Mi1
+	 IGSaayTzP7Tzw==
+Date: Mon, 23 Jun 2025 19:04:05 -0700
+From: "H. Peter Anvin" <hpa@zytor.com>
+To: Xin Li <xin@zytor.com>,
+        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>
+CC: Andy Lutomirski <luto@kernel.org>, Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
+        Peter Zijlstra <peterz@infradead.org>,
+        Ard Biesheuvel <ardb@kernel.org>,
+        "Paul E. McKenney" <paulmck@kernel.org>,
+        Josh Poimboeuf <jpoimboe@kernel.org>,
+        Xiongwei Song <xiongwei.song@windriver.com>,
+        Xin Li <xin3.li@intel.com>, "Mike Rapoport (IBM)" <rppt@kernel.org>,
+        Brijesh Singh <brijesh.singh@amd.com>,
+        Michael Roth <michael.roth@amd.com>, Tony Luck <tony.luck@intel.com>,
+        Alexey Kardashevskiy <aik@amd.com>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Jonathan Corbet <corbet@lwn.net>, Sohil Mehta <sohil.mehta@intel.com>,
+        Ingo Molnar <mingo@kernel.org>,
+        Pawan Gupta <pawan.kumar.gupta@linux.intel.com>,
+        Daniel Sneddon <daniel.sneddon@linux.intel.com>,
+        Kai Huang <kai.huang@intel.com>, Sandipan Das <sandipan.das@amd.com>,
+        Breno Leitao <leitao@debian.org>,
+        Rick Edgecombe <rick.p.edgecombe@intel.com>,
+        Alexei Starovoitov <ast@kernel.org>, Hou Tao <houtao1@huawei.com>,
+        Juergen Gross <jgross@suse.com>,
+        Vegard Nossum <vegard.nossum@oracle.com>, Kees Cook <kees@kernel.org>,
+        Eric Biggers <ebiggers@google.com>, Jason Gunthorpe <jgg@ziepe.ca>,
+        "Masami Hiramatsu (Google)" <mhiramat@kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Luis Chamberlain <mcgrof@kernel.org>, Yuntao Wang <ytcoode@gmail.com>,
+        Rasmus Villemoes <linux@rasmusvillemoes.dk>,
+        Christophe Leroy <christophe.leroy@csgroup.eu>,
+        Tejun Heo <tj@kernel.org>, Changbin Du <changbin.du@huawei.com>,
+        Huang Shijie <shijie@os.amperecomputing.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Namhyung Kim <namhyung@kernel.org>,
+        Arnaldo Carvalho de Melo <acme@redhat.com>, linux-doc@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-efi@vger.kernel.org,
+        linux-mm@kvack.org, Yian Chen <yian.chen@intel.com>
+Subject: Re: [PATCHv6 01/16] x86/cpu: Enumerate the LASS feature bits
+User-Agent: K-9 Mail for Android
+In-Reply-To: <73796800-819b-4433-b0ef-db852336d7a4@zytor.com>
+References: <20250620135325.3300848-1-kirill.shutemov@linux.intel.com> <20250620135325.3300848-2-kirill.shutemov@linux.intel.com> <d3055288-c640-4df3-978e-abb97b1610e7@zytor.com> <tfpekzid4hu4xguq3fetosyltg3owjy2cactqklohfohalhbza@hx7qdrpcymrn> <aa91aadb-758e-42db-86ab-451384e466ed@zytor.com> <D8783A84-119A-4981-9EB1-12C21BB34714@zytor.com> <f04936b7-e1e1-4a63-a907-33315af0dd8f@zytor.com> <73796800-819b-4433-b0ef-db852336d7a4@zytor.com>
+Message-ID: <0A71C898-B587-4292-AB05-6CA46BBD6F88@zytor.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250621045501.101187-1-dongml2@chinatelecom.cn> <CAADnVQLz7-tVmJ7C3VdNDcL8y07Vyg5Ad+DhKAQ7odQAo_BO=Q@mail.gmail.com>
-In-Reply-To: <CAADnVQLz7-tVmJ7C3VdNDcL8y07Vyg5Ad+DhKAQ7odQAo_BO=Q@mail.gmail.com>
-From: Menglong Dong <menglong8.dong@gmail.com>
-Date: Tue, 24 Jun 2025 10:03:12 +0800
-X-Gm-Features: Ac12FXyvar2ZApG5VPKeQGwM1dztSP5um2keuHqSibu6UiSRKIDa7zDE1AnkIEI
-Message-ID: <CADxym3bJUNA4H_ksUhX9tjcDQSrLTvr0kKaPzVzeEC79o0OVTQ@mail.gmail.com>
-Subject: Re: [PATCH bpf-next v2] bpf: make update_prog_stats always_inline
-To: Alexei Starovoitov <alexei.starovoitov@gmail.com>
-Cc: Alexei Starovoitov <ast@kernel.org>, Daniel Borkmann <daniel@iogearbox.net>, 
-	John Fastabend <john.fastabend@gmail.com>, Andrii Nakryiko <andrii@kernel.org>, 
-	Martin KaFai Lau <martin.lau@linux.dev>, Eduard <eddyz87@gmail.com>, Song Liu <song@kernel.org>, 
-	Yonghong Song <yonghong.song@linux.dev>, KP Singh <kpsingh@kernel.org>, 
-	Stanislav Fomichev <sdf@fomichev.me>, Hao Luo <haoluo@google.com>, Jiri Olsa <jolsa@kernel.org>, 
-	bpf <bpf@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>, 
-	Menglong Dong <dongml2@chinatelecom.cn>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain;
+ charset=utf-8
 Content-Transfer-Encoding: quoted-printable
 
-On Tue, Jun 24, 2025 at 12:26=E2=80=AFAM Alexei Starovoitov
-<alexei.starovoitov@gmail.com> wrote:
+On June 23, 2025 10:40:59 AM PDT, Xin Li <xin@zytor=2Ecom> wrote:
+>On 6/20/2025 5:50 PM, H=2E Peter Anvin wrote:
+>> On 2025-06-20 17:45, H=2E Peter Anvin wrote:
+>>>>=20
+>>>> But I simply hate adding a disabled feature that depends on !X86_64;
+>>>> x86_64 has a broad scope, and new CPU features are often intentionall=
+y
+>>>> not enabled for 32-bit=2E
+>>>>=20
+>>>> (X86_DISABLED_FEATURE_PCID is the only one before LASS)
+>>>=20
+>>> More importantly, it is wrong=2E
+>>>=20
+>>> The 32-bit build can depend on this feature not existing, therefore it=
+ SHOULD be listed as a disabled feature=2E
+>>>=20
+>>=20
+>> Ok, that was word salad=2E What I meant was that the original patch is =
+correct, and we SHOULD have this as a disabled feature=2E
 >
-> On Fri, Jun 20, 2025 at 9:57=E2=80=AFPM Menglong Dong <menglong8.dong@gma=
-il.com> wrote:
-> >
-> > The function update_prog_stats() will be called in the bpf trampoline.
-> > In most cases, it will be optimized by the compiler by making it inline=
-.
-> > However, we can't rely on the compiler all the time, and just make it
-> > __always_inline to reduce the possible overhead.
-> >
-> > Signed-off-by: Menglong Dong <dongml2@chinatelecom.cn>
-> > ---
-> > v2:
-> > - split out __update_prog_stats() and make update_prog_stats()
-> >   __always_inline, as Alexei's advice
-> > ---
-> >  kernel/bpf/trampoline.c | 23 ++++++++++++++---------
-> >  1 file changed, 14 insertions(+), 9 deletions(-)
-> >
-> > diff --git a/kernel/bpf/trampoline.c b/kernel/bpf/trampoline.c
-> > index c4b1a98ff726..1f92246117eb 100644
-> > --- a/kernel/bpf/trampoline.c
-> > +++ b/kernel/bpf/trampoline.c
-> > @@ -911,18 +911,16 @@ static u64 notrace __bpf_prog_enter_recur(struct =
-bpf_prog *prog, struct bpf_tram
-> >         return bpf_prog_start_time();
-> >  }
-> >
-> > -static void notrace update_prog_stats(struct bpf_prog *prog,
-> > -                                     u64 start)
-> > +static void notrace __update_prog_stats(struct bpf_prog *prog, u64 sta=
-rt)
-> >  {
-> >         struct bpf_prog_stats *stats;
-> >
-> > -       if (static_branch_unlikely(&bpf_stats_enabled_key) &&
-> > -           /* static_key could be enabled in __bpf_prog_enter*
-> > -            * and disabled in __bpf_prog_exit*.
-> > -            * And vice versa.
-> > -            * Hence check that 'start' is valid.
-> > -            */
-> > -           start > NO_START_TIME) {
-> > +       /* static_key could be enabled in __bpf_prog_enter*
-> > +        * and disabled in __bpf_prog_exit*.
-> > +        * And vice versa.
-> > +        * Hence check that 'start' is valid.
-> > +        */
+>Agreed!
+>
+>> The reason is that it reduces the need to explicitly test for 32/64 bit=
+s for features that don't exist on 32 bits=2E When they are flagged as disa=
+bled, they get filtered out *at compile time*=2E
+>
+>It's better to make it depend on X86_32 directly rather than !X86_64:
+>
+>config X86_DISABLED_FEATURE_LASS
+>	def_bool y
+>	depends on X86_32
 >
 >
-> Instead of old networking style I reformatted above to normal
-> kernel style comment.
+>But the disabled feature list due to lack of 32-bit enabling will keep
+>growing until we remove 32-bit kernel code=2E
 >
-> > +       if (start > NO_START_TIME) {
+>Wondering should we bother enforcing cpuid_deps[] on 32-bit?
 >
-> and refactored it to <=3D and removed extra indent in below.
-> while applying.
+>IOW, turn off the feature when its dependency isn=E2=80=99t satisfied on =
+32b-it;
+>don=E2=80=99t just throw a warning and hope for the best=2E
+>
+>Thanks!
+>    Xin
+>
 
-Looks much better, thanks a lot ~
+We should have the dependencies enforced; in fact, preferably we would enf=
+orce them at build time as well=2E
 
