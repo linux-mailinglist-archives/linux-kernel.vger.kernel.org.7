@@ -1,106 +1,121 @@
-Return-Path: <linux-kernel+bounces-701228-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-701238-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 87A2CAE7260
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Jun 2025 00:38:03 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7607FAE727B
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Jun 2025 00:51:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3CF271BC5CC3
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Jun 2025 22:38:19 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 59BD93A8FE0
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Jun 2025 22:50:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3525725BEE8;
-	Tue, 24 Jun 2025 22:37:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 159C425B30F;
+	Tue, 24 Jun 2025 22:51:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="lYszVeyS"
-Received: from mail-ed1-f54.google.com (mail-ed1-f54.google.com [209.85.208.54])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="GZDTmQmo"
+Received: from mail-ed1-f43.google.com (mail-ed1-f43.google.com [209.85.208.43])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F26FC2571B4
-	for <linux-kernel@vger.kernel.org>; Tue, 24 Jun 2025 22:37:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E04B73595C;
+	Tue, 24 Jun 2025 22:51:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750804671; cv=none; b=bxa6MMxzZJmctpt91iqzF6sU5UhWiN3zhrdMZ4aJD9QKXALND2R0JxIXV3be9OIfm5NXnNM6Fe73/q4teI6W+skN9RPAwlPdIbjOJxSQOJyKnUq7Mojl9UPAy17LN4/hkatVp+nUTOq/JOgAohneUf5Iy/5a6U+T++Q4dbrAXlk=
+	t=1750805463; cv=none; b=qNwlPJGdLn199ERXv77WdU5PinFIJyoW41gqie2EsKdji9zLKZx63cxiCdiXwWQ0ImhkYMzNiNCLb8mEE9T9VjSN1gPRBZGZo43VjZmiM8Pte9go4Yzpju4EZ9xyr0btvpCnIA83QQSiCU5/NIfNVrmGDkwcsZrL9Fossn4OMdg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750804671; c=relaxed/simple;
-	bh=yqvkvZZvlS9/bOgEqxYcbtsKWtITOAr79gDOJhHlSdw=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=tGvCjCETRsPSbMs92GzQWHufT6258jE9GlcUvkmIfO+b8xZZx6QynKoEHkbjIjuTyaTcxrqWKXiS5RJ2UvlSadvsLpq2/lKdCIGzinP4DYc//GkctPIz87wamwyG9Rhs/sDwlvYXTzErYUbzgukHu7frEL4QoIPgp+gefYRufIY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=lYszVeyS; arc=none smtp.client-ip=209.85.208.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-ed1-f54.google.com with SMTP id 4fb4d7f45d1cf-5f438523d6fso2424a12.1
-        for <linux-kernel@vger.kernel.org>; Tue, 24 Jun 2025 15:37:49 -0700 (PDT)
+	s=arc-20240116; t=1750805463; c=relaxed/simple;
+	bh=T8KBieTxhuZTahVfqdneQX0l34RjkembcNWLTB1cw7Q=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=oFM9W8TlYWx8Qw67wvErFHdB/wkBlJ2oRIIyz+j/iF+kG7Oa1RhFjw1BMXmeUuTiKKaKfroRBZhro8zgqQj0p6+FWaK0Q0rVXlJsWLgNoioIxibE9sWgi8Pu1MdDeLO0c5t2ar3a7YueSpX1yKzbTOOtX6BZLiZYCGRS3idOjXQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=GZDTmQmo; arc=none smtp.client-ip=209.85.208.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ed1-f43.google.com with SMTP id 4fb4d7f45d1cf-601dfef6a8dso9311727a12.1;
+        Tue, 24 Jun 2025 15:51:01 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1750804668; x=1751409468; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=C+LTR+yGLGyDG4mNtaRppoEfvrEV+3aBoT+/CzTmxE0=;
-        b=lYszVeySNFnimMDm6VzBsCp+jjuKB8Bdl++GDlbUA3uxtDj+Djf/fcV4S58ws/m8wt
-         14BMHM6WmB6G5xbMnvNjoH4rMeJjE7LWggWucg6os3tf4i1NbSWMV02JImbYZXOjWybu
-         osnYJeywGZZCj9d1ryl0Say+gap60WfS+bWVc04hdiJBbNvWRkR854ZZpL0Y9FwWCRq1
-         ZV14kXulNeJhNT2xKI3JtqGv+Gzvh5anz+nsjeWl3shJWdAJWU5mEjHnlRT4lUoh/6RG
-         kMX2gmOPs9r4KJhXkSlJKIYuMc4vPy2ZKpmo8KZ9qZzHLWbRYuo9hp7MCWsWdhIqReVz
-         9dOg==
+        d=gmail.com; s=20230601; t=1750805460; x=1751410260; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=2Xczy8xEcTibMyimv1VhRCXIPBpvLafnj4WwxtkKaLA=;
+        b=GZDTmQmoAQnuHJ+MiKwsuv6fv2HSObx+hKA+33JfXuKI2tWDLrt+KqvgK93ZIgFzK6
+         eIzmG3mRRWDEiyRlJ1zHxune1sItaPVQj7YXdERhWl6Da9S2GPktC1Dv3CzWO/D24w2X
+         l14u9ytYYSUjl+yoTtDscwTH/EwjS2NZdnf2jHIax/qw0GfE/oM7VJbM0EVGQuTBqinG
+         5QstY/Z0faKl89Ta1W3QiKIrBPzjNqQ6/+dlvJi4vmxFO+9y0FQy17EZT1T353Ww1GYp
+         SKwYbpf2PqjILwYwb5tlUs/1KZr/xO9oDVtV8aTMnVdWFpzUd0tBlx6kxHAhyg90+pnd
+         xqfg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1750804668; x=1751409468;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=C+LTR+yGLGyDG4mNtaRppoEfvrEV+3aBoT+/CzTmxE0=;
-        b=dOmu33csOXSdhoRooP/5eFVAf9+GCD5rzLoZCe+iKRAYmrowKKnoK2E8GISwnf1W5d
-         XvpHKGJVzl3b2tJqqbWv8oAVSKulRc7MFqdMCSWkW0144BA62oihYEUjfqXTYlzpgGA5
-         /ejHnT3p7gC/+SsGPAPZukml9CwwM1ZO+EErdCfhQYbiQ2WngrmTQWXot9uxm6rSgQ0b
-         QJMuoCcUYCvDXfixQW3DwxK9rIhQ4EzkFfBUFjMYYAJ8O/I9TIG8OV3X+wvXkJAwY7uI
-         l5cDCBvFW6sCp9WpjI8eZRm0gDGMX3laQuJi2Kmk3Ws6FomFZgFnVx/7OGJz0Jkil9bk
-         4S5w==
-X-Gm-Message-State: AOJu0YzDra2GwwV0wolB/waud0JxGHIv/bRr95BN6O9XdPscXr1qwcn8
-	4pc0rRifuznpeFA7E4rSoOMT8QQZLp11RcdoS1cONL0dymubM3jSKt7IW+YLNcOVCx5Fc1tuHdS
-	U9okpVyhWys/4/PQfC9Onn9HIdza3vCb74QTZry3V
-X-Gm-Gg: ASbGncs4w9gsjVl5VZwGVgTRQsrJ6S7LSlP37SaINJjdWlya/KPF6ixmGao60LBUd98
-	DLBhwS2W6VV8ZFSu+8c823tf9M01x6bAZbaTq8lCZtEf/zRcwQaeUqHAt/IlitD0fdKeOch0vxY
-	oqVlr0zWkKYeVu1c5x4/RvXdY9oQqQITIKjfCVjebYt3U=
-X-Google-Smtp-Source: AGHT+IENVZRLEn7PEDj6/WLvBEeRzhLq2UIfYqLVR56owc5IlIdrL2fzNuFAVT2CGwacJMIV98SfSWSfg6sa081HAUI=
-X-Received: by 2002:a05:6402:44d6:b0:60c:3b41:6306 with SMTP id
- 4fb4d7f45d1cf-60c4fd3ffccmr570a12.7.1750804668109; Tue, 24 Jun 2025 15:37:48
- -0700 (PDT)
+        d=1e100.net; s=20230601; t=1750805460; x=1751410260;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=2Xczy8xEcTibMyimv1VhRCXIPBpvLafnj4WwxtkKaLA=;
+        b=ZKisJDw9i67hBtrW/t6/g1ZixbgkT+hJQkti4ZSpguvgq4TYlmL/HPHtr15Xa8DFPF
+         Qu8nRsnMGnXLquABQOyOcvJoEDLk0ijZC8msiKA7tHz1wDvOUd8tme0oWJ7bChEA5bkr
+         9F2lLqO2LniNW3cOjsyfSSDudTeVYOOKBSALGJLdtygM8pOWd/KoyKEqOvtrhlOK0Y2r
+         Hz599PSmOGlytm+H71S+fW9FKfClCzuMS7rgigFhkMm9KyXz1aI03BMVikpeS7SHGCMT
+         7lhYOTT15l2Ydb3edfOvZthkNDW8ABLJONP5y6hnExE+o0GfMdk5STq0nB3dnJZ2yEuE
+         QKFA==
+X-Forwarded-Encrypted: i=1; AJvYcCUG3qtcTGGbiyWahkd2kNsKgmCiNbeSpj0Th0YdU1duw7c0kiWcjYFHbkFsfTKlAZpHARW9twlYJ3XmIsaD@vger.kernel.org, AJvYcCVFBvglGgZDjZOASGaa+l0dt9WRR0X990ZqoGu5JuUBxneFGYrpsQGVsYZ/xZweC949YOhL1wlx6UYw@vger.kernel.org, AJvYcCWZe62JqAlzcueSWo/fMmumgi3G+SF1Tdvc+e+7OcYIK1CB/dXlU1eOQAxFVMoYRHthfZx7U03uUk9mMcvLFQ==@vger.kernel.org
+X-Gm-Message-State: AOJu0YxvXfhiXl/DzCuW8u7vwo3nwqZbqntOyH4oWj+rda3YlZ1YaTGN
+	9g5JaFCGGimSKpNYRBh0x4Lv9xuXc7J2IHJvsN5o+7e2OkWSOr76vvE=
+X-Gm-Gg: ASbGnctwd6iqSaKG8wrK9HUySAWb/T90mm5nPRbDiNVFJwkQ/Eur6RasHCnnuW5gzGQ
+	8klsXLLEmewoCcyWGg0yAbCY2VTopjWJSYHqMcPGUunA7xnO/3/zfge1mbb8Ssq5DD+NCt9RbAN
+	9YlOqidsTMwaSxiMl+aitEB1od6uXeS+otO10Q6u2C8PALYybbFymLXdvBDUM3jjP+C2SzVYVi/
+	v9eEdUAtaZJBDiq1Zclf+dbHh3eZKZICzD3rOVclQH6+OfBbAyus7EPvKRrAYWUitBtRsNBa9qx
+	YakOOqOzsEsL/RzCtkiWOY7IVWqwJg6w/xoSmOyUJlRt5vNoNmfpVA2SRyqloBNADcoBBcs1DYk
+	ywN9h
+X-Google-Smtp-Source: AGHT+IH2S+/FT8sL/swFQVHYZ1kGEg0lc4whDC0ZcBw00Lnz/By+27Z3Dbr2+Mx6hQMUC0xhNC6gyw==
+X-Received: by 2002:a17:907:edcb:b0:ad8:9466:3354 with SMTP id a640c23a62f3a-ae0befc28aemr84127966b.54.1750805459799;
+        Tue, 24 Jun 2025 15:50:59 -0700 (PDT)
+Received: from alex-x1e.localdomain ([84.226.118.249])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ae0543421e9sm940093666b.185.2025.06.24.15.50.58
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 24 Jun 2025 15:50:59 -0700 (PDT)
+From: Aleksandrs Vinarskis <alex.vinarskis@gmail.com>
+To: Bjorn Andersson <andersson@kernel.org>,
+	linux-arm-msm@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Cc: Konrad Dybcio <konradybcio@kernel.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	laurentiu.tudor1@dell.com,
+	abel.vesa@linaro.org,
+	bryan.odonoghue@linaro.org,
+	jens.glathe@oldschoolsolutions.biz,
+	Aleksandrs Vinarskis <alex.vinarskis@gmail.com>
+Subject: [PATCH v1 0/1] arm64: dts: qcom: x1e80100-pmics: Disable pm8010 by default
+Date: Wed, 25 Jun 2025 00:41:19 +0200
+Message-ID: <20250624225056.1056974-1-alex.vinarskis@gmail.com>
+X-Mailer: git-send-email 2.48.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250530185239.2335185-1-jmattson@google.com> <20250530185239.2335185-3-jmattson@google.com>
- <aFsaH97Qxn7nUA86@google.com>
-In-Reply-To: <aFsaH97Qxn7nUA86@google.com>
-From: Jim Mattson <jmattson@google.com>
-Date: Tue, 24 Jun 2025 15:37:36 -0700
-X-Gm-Features: Ac12FXyBUxK5P-foDM5mpKN6vUellwixIkbV-6MHUnNPTBeC3YvEcmK6uwCkcqw
-Message-ID: <CALMp9eTBP5UJZu+++44XXNAn+xOFoBNwHb1JYgbG+EzwH7Uc-Q@mail.gmail.com>
-Subject: Re: [PATCH v4 2/3] KVM: x86: Provide a capability to disable
- APERF/MPERF read intercepts
-To: Sean Christopherson <seanjc@google.com>
-Cc: linux-kernel@vger.kernel.org, kvm@vger.kernel.org, 
-	Paolo Bonzini <pbonzini@redhat.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-On Tue, Jun 24, 2025 at 2:35=E2=80=AFPM Sean Christopherson <seanjc@google.=
-com> wrote:
->
-> This needs to be rebased on top of the MSR interception rework, which I'v=
-e now
-> pushed to kvm-x86 next.  Luckily, it's quite painless.  Compile tested on=
-ly at
-> this point (about to throw it onto metal).
->
-> I'd be happy to post a v5 on your behalf (pending your thoughts on my fee=
-dback
-> to patch 1), unless you want the honors.  The fixup is a wee bit more tha=
-n I'm
-> comfortable doing on-the-fly.
->
-Please do.
+Follow up to previous discussion [1].
+
+Disable camera specific PMIC pm8010 by default, as some X1E/X1 devices
+do not have one. Platform that utilize it should enable it.
+
+Affected upstream devices:
+- none
+Affected devices submitted upstream (did not land yet):
+- CRD, as part of CAMSS series by Bryan [2]
+
+[1] https://lore.kernel.org/linux-arm-msm/519f9e21-466f-4e8b-9bd0-dfe0448920bb@oss.qualcomm.com/
+[2] https://lore.kernel.org/all/20250417-b4-linux-next-25-03-13-dtsi-x1e80100-camss-v7-5-3fd4124cf35a@linaro.org/
+
+Aleksandrs Vinarskis (1):
+  arm64: dts: qcom: x1e80100-pmics: Disable pm8010 by default
+
+ arch/arm64/boot/dts/qcom/x1e80100-pmics.dtsi | 2 ++
+ 1 file changed, 2 insertions(+)
+
+-- 
+2.48.1
+
 
