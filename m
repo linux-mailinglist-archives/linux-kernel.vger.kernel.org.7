@@ -1,143 +1,112 @@
-Return-Path: <linux-kernel+bounces-699582-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-699584-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id D4C3CAE5C9A
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Jun 2025 08:09:02 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 65F56AE5CA4
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Jun 2025 08:10:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5FFB61888477
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Jun 2025 06:09:11 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0BEEC3A844E
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Jun 2025 06:10:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1C54A238C2A;
-	Tue, 24 Jun 2025 06:08:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2A23322FF22;
+	Tue, 24 Jun 2025 06:10:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="bleJG0tK"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b="CWlh+QXG"
+Received: from out162-62-57-49.mail.qq.com (out162-62-57-49.mail.qq.com [162.62.57.49])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F31702222CE;
-	Tue, 24 Jun 2025 06:08:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C24C426ACB
+	for <linux-kernel@vger.kernel.org>; Tue, 24 Jun 2025 06:10:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=162.62.57.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750745327; cv=none; b=bO98rjr9PjxobgWE4www+OrBfT0nnN+aCsHeDFZ3hlyaP+84Jl54OjBiHnNzFYwsGgLphdiSPQ37KQFDNatg4l3D+UUzlNoXNfOJPtTtawCMfxWrfS802r/l7Kp0yI6PyQ5sEjz6JGvQARDlX8+Aok+DFSuzdMgYFCZ8c0scIVQ=
+	t=1750745423; cv=none; b=unFkJ/tnHLiFU4g6fzTBuypghX+Qxb+7bZDaDLSP/K33XoO0rlynlpCAtInSj1+q8x628srbQAroDN/IVho8VpCA66qVSqntHh1ykp1x3GfEJDiuvVVR471/qgdSMSfHw0AAL9+Td28Ba+kSd/hkcMPPx+yssHEzAIkYFZ+hiyU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750745327; c=relaxed/simple;
-	bh=+X9MtZsUcv4GSkC9cyuG5jWSnASNAwoaLQAkoxpRors=;
-	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=SmjtkiIrorDa+khO6wAr7jOH8sk7BxFjLIvyp72mUfXKWBzRK4PkRmG6U5/3BP9qaSbi7uzLT5JJsh1rylGpqCNNts1yn0xy/9FIsBBoP/Fv+QIz0Qu2WbBHv8+xlFBZt/jPCPeyIx3Y/lh8CrqfGJWmJFFMfZ7EJQr/w6f4ZiU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=bleJG0tK; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279873.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 55O68Rmg021627;
-	Tue, 24 Jun 2025 06:08:43 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-type:date:from:in-reply-to:message-id:mime-version
-	:references:subject:to; s=qcppdkim1; bh=1wDUv5SQjPOU0hH1sA13zx1J
-	1sJ+ZXrjU+iyfsayI5g=; b=bleJG0tKNA7Y2vk2mBcusas5okxzOgSA8X8b8eYg
-	Lpf0fx19vPBLmZAjvB1eSNqHmiESMreHqWI8NTGJ2uddPSp+q4HtchfGfgHujn3C
-	qJb1qCMoFkN/GuSx6xm9mrgyeaCp8nmk9iuBkqDGq01gHb8VeCwvFPNX7as9SrO8
-	l79tRxdOEaOJEcDUoT5TPPlry9NLwM5z7ILHlKdsmdWNK9JpzpNCho5BzL2PFlLP
-	Y9DQp1fquM3RA7z5nVGHi41uvsJmMpcW6z9KL3wocfSbx/QApdotXwI22tbfzDlj
-	RQPznn2BauFkO4JfbM255anW4ymtYwJJ+brwrxjBLVo8Zw==
-Received: from nasanppmta05.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 47f2rpu63g-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 24 Jun 2025 06:08:42 +0000 (GMT)
-Received: from nasanex01b.na.qualcomm.com (nasanex01b.na.qualcomm.com [10.46.141.250])
-	by NASANPPMTA05.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 55O68fcg017083
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 24 Jun 2025 06:08:41 GMT
-Received: from hu-varada-blr.qualcomm.com (10.80.80.8) by
- nasanex01b.na.qualcomm.com (10.46.141.250) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.9; Mon, 23 Jun 2025 23:08:38 -0700
-Date: Tue, 24 Jun 2025 11:38:34 +0530
-From: Varadarajan Narayanan <quic_varada@quicinc.com>
-To: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-CC: <andersson@kernel.org>, <konradybcio@kernel.org>, <robh@kernel.org>,
-        <krzk+dt@kernel.org>, <conor+dt@kernel.org>, <lumag@kernel.org>,
-        <linux-arm-msm@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] arm64: dts: qcom: ipq9574: Fix 'l2' regulator min/max
- voltages
-Message-ID: <aFpA4mk2L/sxlpO1@hu-varada-blr.qualcomm.com>
-References: <20250623113227.1754156-1-quic_varada@quicinc.com>
- <465751c4-a45a-41ce-ab65-ebddb71dd916@oss.qualcomm.com>
+	s=arc-20240116; t=1750745423; c=relaxed/simple;
+	bh=N07dqHZVlzoXTWTMyfPtYpNHh8ZJk4GIA1QFw9GE2k4=;
+	h=Message-ID:From:To:Cc:Subject:Date:In-Reply-To:References:
+	 MIME-Version; b=XITHj/MYYOKTsAWuA6HLM7XS5+yGWB+m6u46Ys4lbPV4x1ZDEpA1/bjHdZCHXVEey8vat5wFIdMKy8hkLyW5noHThRKM6D0NDxJwhQpDLWHjEkxSXiFPQ3fWj79tDR7NWV2McaOIDPAQ3U+oY7XXSKik0EsU9ydxVDhxqBLvML4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com; spf=pass smtp.mailfrom=qq.com; dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b=CWlh+QXG; arc=none smtp.client-ip=162.62.57.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=qq.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qq.com; s=s201512;
+	t=1750745415; bh=/48aJHiyx5+lekASMdemfOkemMWXQbzfEebToJfcUw4=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References;
+	b=CWlh+QXGnRYJsGFyhXA+yR1YvDESJdYR9w8xMf41w+NwgbMEzR9NxNZXh+C/5FLIT
+	 f97FS6DyATAlakjVpUVasqaLpBYxefxyw6qKRIIEouYKjGhSy8Rbn+z4ixmZTrb8co
+	 b9I1Qc3pNu2s2otftjIJ3Dx4w+gwiY8ieDxlYN+I=
+Received: from pek-lxu-l1.corp.ad.wrs.com ([111.198.228.63])
+	by newxmesmtplogicsvrsza36-0.qq.com (NewEsmtp) with SMTP
+	id 28D8A2BB; Tue, 24 Jun 2025 14:10:13 +0800
+X-QQ-mid: xmsmtpt1750745413tkio2pdb6
+Message-ID: <tencent_04E8067F098D2ED5AEC04C86E7DA06EC1206@qq.com>
+X-QQ-XMAILINFO: Nq1uWKlIb9DMOHggUw40dwNtJSxo0+HwB2/EhAlTzAPwRQMfb/0Vhi66EOQtCR
+	 kRFJVcZR9aKFx1ORrfYuhOCok+63hlzm06BCQUf/iDMQ8B2wKs4QoTnfhDYRoTxieKZxL65I3sZm
+	 DKuf4Fsi5xJQjLd43+gC3RHtq1qoUg69x4Rx0UeiPctcFMJrb0Wesy9xOFP9Ba22F5kCSUbaCE64
+	 +un2lbFQDNLAyhlLNraSHJlSE2mN1zHMnwuoHkDx3TcoEnbfRJrc0Yvqc5JaZg4zjM7x+/hOo89b
+	 R86l477pguav4YDUGxftpKlV0l/cDE/RYcIkqL9Qh4/d3d8h3+RgBm4HCV4Mk8L+sPDYrAb29nDT
+	 Tm8a7dzs9u3E4UhL8HqkaSU6JeQoj5Go8LYTEyQ0KzKVjRI9yZLTvZB8smlCH5BQDqSGXEXywh3X
+	 iqzGXGgg519Ak0s9WVO92NwrCq4qXRqYNr9NVJPalTK27OoNWmDeNvrSYCs5B9EPusnywrVd/pMt
+	 5O7riUd+5fGeFtte3KpU3bjMq5LR6KlFYVnd1J1qtMx+XGYSK2P7JGEfOmaj2uHN4e8cTxY7nVuv
+	 QyH/pHrXYl/Q+r9+n4VSpan46HnPBW8vt8qXIO3tSalTziZfYWhE64V88qQ+605m3tnV5oi1bBwQ
+	 YCX8PWjn6P1X5cJfjCp4TKom4I2cE63mzWLffRCRRgGNHulXkEOX7cCLiI/yrkgiqjtwuO68gLXf
+	 VBTtP+e1BKa3o6F66e3T5Y2iW3ButjZLuAI2KDZWNcNM3c1ObnaXe11hVmB3Ua4x9BFlACK2c42T
+	 Pn+1gH+9m5REQ5SijNeKqDicjRH+6xfR2hChF0fBhkwPIYb6j6E9sKVX8ITrxgLe30NaqUPKvCsF
+	 58oeI4AxNJzqsyAQW3ee3pVyAhnXKz2wQBxKN7XTT1KNCLO9xUXecNPq/hPvSyW1zG1ABG6NUnhm
+	 7vE9FvTc0=
+X-QQ-XMRINFO: NI4Ajvh11aEj8Xl/2s1/T8w=
+From: Edward Adam Davis <eadavis@qq.com>
+To: syzbot+daba72c4af9915e9c894@syzkaller.appspotmail.com
+Cc: linux-kernel@vger.kernel.org,
+	syzkaller-bugs@googlegroups.com
+Subject: Re: [syzbot] [trace?] KASAN: slab-use-after-free Read in __free_filter
+Date: Tue, 24 Jun 2025 14:10:12 +0800
+X-OQ-MSGID: <20250624061011.4070923-2-eadavis@qq.com>
+X-Mailer: git-send-email 2.49.0
+In-Reply-To: <6859ea24.a00a0220.2e5631.0044.GAE@google.com>
+References: <6859ea24.a00a0220.2e5631.0044.GAE@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-In-Reply-To: <465751c4-a45a-41ce-ab65-ebddb71dd916@oss.qualcomm.com>
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nasanex01b.na.qualcomm.com (10.46.141.250)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Authority-Analysis: v=2.4 cv=NdDm13D4 c=1 sm=1 tr=0 ts=685a40ea cx=c_pps
- a=JYp8KDb2vCoCEuGobkYCKw==:117 a=JYp8KDb2vCoCEuGobkYCKw==:17
- a=GEpy-HfZoHoA:10 a=kj9zAlcOel0A:10 a=6IFa9wvqVegA:10 a=COk6AnOGAAAA:8
- a=hBTOza7BeWqvS7caNNMA:9 a=CjuIK1q_8ugA:10 a=TjNXssC_j7lpFel5tvFf:22
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNjI0MDA1MSBTYWx0ZWRfX0CVzaeCoc96Y
- 887ER8cYDmrk6w0ZpE96cNi79SFSQgawv45fg0GHgg2/OP9zmkVR3cgrjFTrdRkFU8oNdvCo3T8
- UlghGwm/qAXyOZjZNygtkU93iZ+bLYNEmlbMzM+OQkpmSo21/dAV5KqHx3afv6+4SrJ+0z4GoEM
- F+WFE+Q7qAVyD5nzfA2qJgd9mnGpw6+uZGfYH9w4bSuBYN+KdnEpl33DnYibBLoMFcJb4M+u/d8
- ztgSMmlcLz9YzvXMcNc28o7p8N5WDG7Rgix6PTrWj8crxRn5BK8BO06bHLhYjimyJbaZYZ/zSV/
- aLMzFn25ceM2k6iIRBSWA5qyAcqn21mD475Ddte5xAirTe213dVb8xIl6h5IKseY9n5iX8q770Z
- zsVdEok5Uv8GEzkhpiUepPz5BLhYpN1sW3SD3XTq/1rPas9UDW3tUC7Elkm5FEv94DtQhLHj
-X-Proofpoint-ORIG-GUID: QzpYM4SiRXrFgsB4SfmGR7todxqHUuhC
-X-Proofpoint-GUID: QzpYM4SiRXrFgsB4SfmGR7todxqHUuhC
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.7,FMLib:17.12.80.40
- definitions=2025-06-24_02,2025-06-23_07,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- bulkscore=0 mlxscore=0 spamscore=0 malwarescore=0 lowpriorityscore=0
- phishscore=0 priorityscore=1501 suspectscore=0 mlxlogscore=574 adultscore=0
- clxscore=1015 impostorscore=0 classifier=spam authscore=0 authtc=n/a authcc=
- route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2505280000
- definitions=main-2506240051
+Content-Transfer-Encoding: 8bit
 
-On Mon, Jun 23, 2025 at 01:34:22PM +0200, Konrad Dybcio wrote:
-> On 6/23/25 1:32 PM, Varadarajan Narayanan wrote:
-> > The min and max voltages on l2 regulator is 850000uV. This was
-> > incorrectly set at 1800000uV earlier and that affected the
-> > stability of the networking subsystem.
-> >
-> > Fixes: d5506524d9d9 ("arm64: dts: qcom: ipq9574: Add LDO regulator node")
-> > Signed-off-by: Varadarajan Narayanan <quic_varada@quicinc.com>
-> > ---
->
-> Shouldn't there be a consumer for it, instead of it being always-on?
+#syz test
 
-The uniphy block is the consumer of this voltage. The PMIC configures it
-to 850000uV based on OTP settings and s/w doesn't change it as uniphy
-doesn't do scaling.
+diff --git a/kernel/trace/trace_events_filter.c b/kernel/trace/trace_events_filter.c
+index 08141f105c95..3885aadc434d 100644
+--- a/kernel/trace/trace_events_filter.c
++++ b/kernel/trace/trace_events_filter.c
+@@ -1436,13 +1436,6 @@ static void filter_free_subsystem_filters(struct trace_subsystem_dir *dir,
+ 
+ 	INIT_LIST_HEAD(&head->list);
+ 
+-	item = kmalloc(sizeof(*item), GFP_KERNEL);
+-	if (!item)
+-		goto free_now;
+-
+-	item->filter = filter;
+-	list_add_tail(&item->list, &head->list);
+-
+ 	list_for_each_entry(file, &tr->events, list) {
+ 		if (file->system != dir)
+ 			continue;
+@@ -1454,6 +1447,13 @@ static void filter_free_subsystem_filters(struct trace_subsystem_dir *dir,
+ 		event_clear_filter(file);
+ 	}
+ 
++	item = kmalloc(sizeof(*item), GFP_KERNEL);
++	if (!item)
++		goto free_now;
++
++	item->filter = filter;
++	list_add_tail(&item->list, &head->list);
++
+ 	delay_free_filter(head);
+ 	return;
+  free_now:
 
--Varada
-
-> >  arch/arm64/boot/dts/qcom/ipq9574-rdp-common.dtsi | 4 ++--
-> >  1 file changed, 2 insertions(+), 2 deletions(-)
-> >
-> > diff --git a/arch/arm64/boot/dts/qcom/ipq9574-rdp-common.dtsi b/arch/arm64/boot/dts/qcom/ipq9574-rdp-common.dtsi
-> > index bdb396afb992..21b04a2c629d 100644
-> > --- a/arch/arm64/boot/dts/qcom/ipq9574-rdp-common.dtsi
-> > +++ b/arch/arm64/boot/dts/qcom/ipq9574-rdp-common.dtsi
-> > @@ -106,8 +106,8 @@ ipq9574_s1: s1 {
-> >  		};
-> >
-> >  		mp5496_l2: l2 {
-> > -			regulator-min-microvolt = <1800000>;
-> > -			regulator-max-microvolt = <1800000>;
-> > +			regulator-min-microvolt = <850000>;
-> > +			regulator-max-microvolt = <850000>;
-> >  			regulator-always-on;
-> >  			regulator-boot-on;
-> >  		};
-> >
-> > base-commit: 5d4809e25903ab8e74034c1f23c787fd26d52934
 
