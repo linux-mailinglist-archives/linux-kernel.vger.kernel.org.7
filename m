@@ -1,72 +1,76 @@
-Return-Path: <linux-kernel+bounces-700940-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-700942-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4E877AE6EC7
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Jun 2025 20:43:25 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 51CB4AE6ECB
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Jun 2025 20:44:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A20F6175AEA
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Jun 2025 18:43:25 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B34B11764CC
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Jun 2025 18:44:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3ACB42E613A;
-	Tue, 24 Jun 2025 18:43:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0FEF42E6D1B;
+	Tue, 24 Jun 2025 18:44:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="cX+EZDo9"
-Received: from fllvem-ot04.ext.ti.com (fllvem-ot04.ext.ti.com [198.47.19.246])
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="yNdCM3fM"
+Received: from fllvem-ot03.ext.ti.com (fllvem-ot03.ext.ti.com [198.47.19.245])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 014BE23E336;
-	Tue, 24 Jun 2025 18:43:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.246
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AD482566A;
+	Tue, 24 Jun 2025 18:44:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.245
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750790598; cv=none; b=nHXwu5ZbN5Wn8nA7H1S5dft8tjSEkTI8Sm+jiYua3dIl8pumH7jG2x2nc3NQ/+64zMOXFQASaXFx4whw1Qh01zo6eP1z+JUnolOJNTWtU3s1TdYzDMsK5ke1d/L9KuUMjf5Po+rtCjZRr66OKUCnlV8B1nn98H0okxRH74Ad7H4=
+	t=1750790643; cv=none; b=mC8hR84SeWBexBNHef0CeEHjqvNB9SAJZ0GiIaOKggEtHS4PfX+L/3Dww+t4+yREB4cEdG4Bv1mmxXtcK6IA9uTPMn4vcQ3zrxaAoa27IyxUQOF7v1GLiHSOaaVud8aAT2YQkI8nukmpn3K/PWazv77Lo09bmCWgUuhhr5nL7nM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750790598; c=relaxed/simple;
-	bh=Y8uetc/l6Yo9r1gQ3WM1s9uM4dXQFdBZqDFLLWz1HZc=;
+	s=arc-20240116; t=1750790643; c=relaxed/simple;
+	bh=4XBT3ISaw2KBYxJ6RfSzaeMT6YpHw2zgEWbU4vnm1PI=;
 	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=jcEBd/YWH0SWIXiLI5VgwCtIDS4S03MG5SUU2nTMECBkIJM1jXtEsT77r1IXztoME2nJAirzbR9pWTK6Xx6HjnzZ6ZGAaM1VkxhRbBz4WWcTFLi3PxIiVglo9ch1r7z69hFROwcmgEFA/ZipO98lxBVL6ka4asGB5Em3dX9NBEI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=cX+EZDo9; arc=none smtp.client-ip=198.47.19.246
+	 MIME-Version:Content-Type; b=oKsPnOqgSH28dv7vYQCxlV0uRHPFKBtUcoqwpy4wsibXAq6un/rLQ0/42w3zYq3PCzjTMjHcorzpF5bnclu9qS1RJVsy2YyuVR7fxwRd2jS0u3EiMJ4S6iwaFT41SpA/m6DhKJqx68DT9Yui90TKz7TubVTIM1Z+llk8g0FOlqw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=yNdCM3fM; arc=none smtp.client-ip=198.47.19.245
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
-Received: from fllvem-sh03.itg.ti.com ([10.64.41.86])
-	by fllvem-ot04.ext.ti.com (8.15.2/8.15.2) with ESMTP id 55OIh5Yu1931905;
-	Tue, 24 Jun 2025 13:43:05 -0500
+Received: from lelvem-sh02.itg.ti.com ([10.180.78.226])
+	by fllvem-ot03.ext.ti.com (8.15.2/8.15.2) with ESMTP id 55OIhuEu1631030;
+	Tue, 24 Jun 2025 13:43:56 -0500
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-	s=ti-com-17Q1; t=1750790585;
-	bh=6HDzsSj8clkMH6rJzicxNla6A2ITDCMSWqNF1pdoY+s=;
+	s=ti-com-17Q1; t=1750790636;
+	bh=/3xmZQajfkAmQDGGPmRvO73eeqfBxMjIyl1Zj6r5Eqw=;
 	h=From:To:CC:Subject:Date:In-Reply-To:References;
-	b=cX+EZDo9LGanEgCMfbHE+QMXMjx5anTWXre2gynTIl3gQfYkOTpLhQAWhRYz+1cu2
-	 r8gAQD5WIIZD0h3gGE5ctMcOyK5eysHOLy79kyf7Ip5Re37yUaxRlrYa3e1gdtvLrH
-	 Q1evsxDl0iIM693nVvmKDLsRvRMBhcREUzUt7BWk=
-Received: from DLEE111.ent.ti.com (dlee111.ent.ti.com [157.170.170.22])
-	by fllvem-sh03.itg.ti.com (8.18.1/8.18.1) with ESMTPS id 55OIh594262823
+	b=yNdCM3fMFWo/Pys2rbNE8oY5KCLTh7sxMjKCYguf5R9m4lrZ5WTM4ei0yBkOlG/dl
+	 RRmiPD1CYufLlN+qW7hWBxRYAxNVA+GJnEVL3l2/rPSyd5qjKqqaJwOV5pTzMNGmvY
+	 Li2nIep4uiwCktUXfoq9hXIqqAt2jewuIYHT5PEw=
+Received: from DLEE114.ent.ti.com (dlee114.ent.ti.com [157.170.170.25])
+	by lelvem-sh02.itg.ti.com (8.18.1/8.18.1) with ESMTPS id 55OIhuuE1960099
 	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-SHA256 bits=128 verify=FAIL);
-	Tue, 24 Jun 2025 13:43:05 -0500
-Received: from DLEE105.ent.ti.com (157.170.170.35) by DLEE111.ent.ti.com
- (157.170.170.22) with Microsoft SMTP Server (version=TLS1_2,
+	Tue, 24 Jun 2025 13:43:56 -0500
+Received: from DLEE112.ent.ti.com (157.170.170.23) by DLEE114.ent.ti.com
+ (157.170.170.25) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.55; Tue, 24
- Jun 2025 13:43:05 -0500
-Received: from lelvem-mr06.itg.ti.com (10.180.75.8) by DLEE105.ent.ti.com
- (157.170.170.35) with Microsoft SMTP Server (version=TLS1_2,
+ Jun 2025 13:43:56 -0500
+Received: from lelvem-mr05.itg.ti.com (10.180.75.9) by DLEE112.ent.ti.com
+ (157.170.170.23) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.55 via
- Frontend Transport; Tue, 24 Jun 2025 13:43:05 -0500
+ Frontend Transport; Tue, 24 Jun 2025 13:43:55 -0500
 Received: from uda0132425.dhcp.ti.com (uda0132425.dhcp.ti.com [172.24.227.245])
-	by lelvem-mr06.itg.ti.com (8.18.1/8.18.1) with ESMTP id 55OIh1YP1990105;
-	Tue, 24 Jun 2025 13:43:02 -0500
+	by lelvem-mr05.itg.ti.com (8.18.1/8.18.1) with ESMTP id 55OIhqrB2253076;
+	Tue, 24 Jun 2025 13:43:53 -0500
 From: Vignesh Raghavendra <vigneshr@ti.com>
-To: Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>,
-        Nishanth Menon <nm@ti.com>, Guillaume La Roque <glaroque@baylibre.com>
-CC: Vignesh Raghavendra <vigneshr@ti.com>, Andrew Davis <afd@ti.com>,
-        <vishalm@ti.com>, <linux-omap@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v2] arm64: Kconfig.platforms: remove useless select for ARCH_K3
-Date: Wed, 25 Jun 2025 00:12:49 +0530
-Message-ID: <175079051631.1872397.9030558754679240250.b4-ty@ti.com>
+To: Nishanth Menon <nm@ti.com>, Tero Kristo <kristo@kernel.org>,
+        Rob Herring
+	<robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley
+	<conor+dt@kernel.org>, Michael Walle <mwalle@kernel.org>
+CC: Vignesh Raghavendra <vigneshr@ti.com>,
+        <linux-arm-kernel@lists.infradead.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] arm64: dts: ti: k3-j722s-main: Add audio-refclk0 node
+Date: Wed, 25 Jun 2025 00:13:48 +0530
+Message-ID: <175079060338.1874839.9922739903045678282.b4-ty@ti.com>
 X-Mailer: git-send-email 2.49.0
-In-Reply-To: <20250519-kconfig-v2-1-56c1a0137a0f@baylibre.com>
-References: <20250519-kconfig-v2-1-56c1a0137a0f@baylibre.com>
+In-Reply-To: <20250618090724.1917731-1-mwalle@kernel.org>
+References: <20250618090724.1917731-1-mwalle@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -77,23 +81,18 @@ Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
 X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
 
-Hi Guillaume La Roque,
+Hi Michael Walle,
 
-On Mon, 19 May 2025 10:20:56 +0200, Guillaume La Roque wrote:
-> After patch done on TI_MESSAGE_MANAGER[1] and TI_SCI_PROTOCOL[2] driver
-> select on ARCH_K3 are not needed anymore.
-> Select MAILBOX by default is not needed anymore[3],
-> PM_GENERIC_DOMAIN if PM was enabled by default so not needed.
+On Wed, 18 Jun 2025 11:07:24 +0200, Michael Walle wrote:
+> Add the node for the AUDIO_EXT_REFCLK0 clock output.
 > 
-> Remove it and give possibility to enable this driver in modules.
 > 
-> [...]
 
-I have applied the following to branch ti-k3-config-next on [1].
+I have applied the following to branch ti-k3-dts-next on [1].
 Thank you!
 
-[1/1] arm64: Kconfig.platforms: remove useless select for ARCH_K3
-      commit: 631ce8f743a5c85bd7f0a5e7dcca70566d88f43f
+[1/1] arm64: dts: ti: k3-j722s-main: Add audio-refclk0 node
+      commit: a947e57796894f5557183dc1c106804239e30212
 
 All being well this means that it will be integrated into the linux-next
 tree (usually sometime in the next 24 hours) and sent up the chain during
