@@ -1,153 +1,134 @@
-Return-Path: <linux-kernel+bounces-700854-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-700840-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7E9D9AE6DB7
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Jun 2025 19:39:06 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7E638AE6D89
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Jun 2025 19:31:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 42F323BBF10
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Jun 2025 17:38:41 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4BA873BB2C9
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Jun 2025 17:30:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C5E472E612C;
-	Tue, 24 Jun 2025 17:38:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 14F212E6D1B;
+	Tue, 24 Jun 2025 17:30:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="tL1iALCh"
-Received: from out.smtpout.orange.fr (out-70.smtpout.orange.fr [193.252.22.70])
-	(using TLSv1.2 with cipher AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Cb7nszqD"
+Received: from mail-wm1-f48.google.com (mail-wm1-f48.google.com [209.85.128.48])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D161A2222D2;
-	Tue, 24 Jun 2025 17:38:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.252.22.70
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B998E2E62B2;
+	Tue, 24 Jun 2025 17:30:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750786739; cv=none; b=P84+6Vjv9Umb2JqsiFhPN81O/rN1VDSm1t4kPOFyw2iyd4vKerLhnicSw334+3al/mxdSsrt3PfdG68FFiFzOI0v2vBZkxTjZsLaeJ319JCb25tG1lwtuJCwDkaT1rtZXWAJ/WK1WKa9FKBU0CEkgSFsQV8VT0Kl7trX+0rRK2I=
+	t=1750786239; cv=none; b=sDG7SctY8XD/8a975rG+9TEuHSOobCVTWR/X6DGeV2u61DMn3hjliHz9CD3vc3sTqe6fC8PyE3CwjZ+IvUe/lAZj6uHURwimX12m7AmU5EH0Taop/yK7cw5tUsEBMKaLlzhdFoyoXwNAmvfJCBYzNtTKH3g3Q8pxSlaW1qT2qBs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750786739; c=relaxed/simple;
-	bh=ZkCWn0QHam7a5R0rFc2IsQMa/sN1/gjIDqPehWFjAZY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=ffd1l0Ny2sUbI3p8UazIQoFm1rypU3EQWHQ3bqrEh4ALfeVUa/ldgMqSTusVwcO4wPzqZ5NQTHqIghNXiW8bMhICvh1Q1nWW5KRaF6nXv6RXqG6EmPviRsdtlCJN4SlMGriPR6vxNpymiLvC2wNS4jneaQRozCfYmvBENtbiu1w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=tL1iALCh; arc=none smtp.client-ip=193.252.22.70
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wanadoo.fr
-Received: from [172.16.82.72] ([124.33.176.97])
-	by smtp.orange.fr with ESMTPA
-	id U7T2uunxGIvsEU7T4unzHj; Tue, 24 Jun 2025 19:30:01 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
-	s=t20230301; t=1750786201;
-	bh=62W6P0RSf4KxMB1WJp+8zhpz6t6u4Bl2crtn8XVEMj4=;
-	h=Message-ID:Date:MIME-Version:Subject:To:From;
-	b=tL1iALChBzynpGLudnIP/nnGC18KGldMrh0P91m1pYe1TLL+OOcXRhWn+pve8vCef
-	 d03I3kPtDAfMFdThhixyjYwlT53DwBuoDAdozQk7qX6kJhienlHYkCNifKXjNDvok4
-	 A4OrcrvAmxJWrtYgeYtkbUFfVcMidMlHQJ8VK95j6q0EnmgSEwgZEjGylO6fqO/5Z9
-	 XScJAJTqhDbJhp4thcLsD11yllXSBvh7wmpeY0KW/L3jlSQFVx/zEI3AKIyZUpRnre
-	 I+1NLFdtjK2WpH12ccDmDCD0sp34lY3ONk3u+/8vaKITiCVuz1cO4mGWYVOIZY4R7f
-	 ivWB+V2VRt5QQ==
-X-ME-Helo: [172.16.82.72]
-X-ME-Auth: bWFpbGhvbC52aW5jZW50QHdhbmFkb28uZnI=
-X-ME-Date: Tue, 24 Jun 2025 19:30:01 +0200
-X-ME-IP: 124.33.176.97
-Message-ID: <bf5442d1-34e0-495f-8a56-4e47f53ca4ad@wanadoo.fr>
-Date: Wed, 25 Jun 2025 02:29:56 +0900
+	s=arc-20240116; t=1750786239; c=relaxed/simple;
+	bh=KjfD8/sQycIfcr15duDSGm8a8lz63RMMwIonB2QQzCI=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=F51uTVusJI20BUGPpumYwUsmkMaCeL796TMsPMTjCtdGHxRk1yXmKNj4oThZzXU01jFKDotif9LDObb8Fs832bpV/mvSDWd8GvXHIscvU9DhAAa0YhW6EgVb+UKm9SHVSQSwgFRUQfaJvdLNQT9ohjhM8vksEi+qZfMO7oVWcg8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Cb7nszqD; arc=none smtp.client-ip=209.85.128.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f48.google.com with SMTP id 5b1f17b1804b1-451d54214adso5495015e9.3;
+        Tue, 24 Jun 2025 10:30:35 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1750786234; x=1751391034; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=Yu8n/ZxSlMEyHw+8f9j2wZUhhCslJl7/P5zfwbE+6OQ=;
+        b=Cb7nszqDOyjXSSne6TfneiKTAOzr/rJQgfxnRmoMIrdNfFtgWl7zSjorhQmeu8WhbC
+         MQc6J+2l7ga1XLaWeZapI+MWUI604gBVLVOvDUnISlYYWoeqdT2fcVkinZbYleAazF9B
+         MKRokJTZzhgmwR3f3XLMWTWlJPVPLY6bPVSnjfRDn9ba9s0nWRUP6mCOv9uTJtmX4Xaa
+         VqkMYOW1uNT5JWWwO+wz+lrxWCiyhfs9WLWMwNT4j/ERcZno9438Eb1NK48Mgo7XJSaI
+         MdKa5l+zUFvRUyoiuvaO435j8vB8tC0iJ+AP1K0yZjrkERTvAuCttts3CBhUAWhCG4qv
+         zkug==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1750786234; x=1751391034;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=Yu8n/ZxSlMEyHw+8f9j2wZUhhCslJl7/P5zfwbE+6OQ=;
+        b=nuMCi2nSQWvpr7E+llICC2J7wGOMWTMPs/s9TeHIf7gSeQtEj6dsKtlGQnwKD9kTl6
+         DhEYPMGEmVgcLZustU5gShRH+uDy7NjQWZ/vl24gjOHfq1eIGdaGRU/Im01+94L60VGq
+         B+LncwcM/fGK/lCJfKU4bctHocK/s+7gxr7tE38CE0EiJeghcUcYmI8wx2iz4HT++zqI
+         qt/JRBSVGHGklxPsNL4HoRvOL0Um1tDw7I3pbiV5UNPbFwTIhhdwZUA3pX4Me7kn0Yns
+         cIcSGYai0A2DERJPXjX+JqhljOTVEBilPXCBOqSs6+TlMEEDuSf9dst2OYdW7Fdh47kl
+         yt2Q==
+X-Forwarded-Encrypted: i=1; AJvYcCU4IlBj8hnYdv4o97dh9LEl8+NVEOXMJTaXfVynzXvTucN38Q34IU1hxs7dFdz1Q5PmQjopgvBTzbOQSIFD@vger.kernel.org, AJvYcCURKXozVcqWkymlSWcXb/ZZ7VX4+BQgQSNivIyAYsG8Geqz7dm6e5IijSSEfuMjgvo/6j9PQLVNYYVN@vger.kernel.org, AJvYcCUbNAmvA0hjdWGBZstNA88GzdHL+4XLZ2GZo7tYY/pvmOM557ZZUhJjEc95wd/e5pnQkTDvvpPLNxNp@vger.kernel.org
+X-Gm-Message-State: AOJu0YzpBc0NrR+iG7NsVtGDM/4T/JfONuCclDlk9HrBXAFtftKn/z+2
+	XmSsSuZxLgyPmS44tx9VHnf8KFXSs3lQvTYWXyZXV9a17ib46hzAJeR7
+X-Gm-Gg: ASbGncvAbZNXfKStoEK60l/mYz2is5cGLGVtbprx7FghEcNE+OPLFSMHl99eER/S/RG
+	nDdMmUUHHBgkW2vy3OTWOEJO6uvq706VJ+5yomNknpFnkvfPAm3GjfsbeNOMRe8mJ1cg8t9qhf1
+	j0Soe67FYyHOKf/kfjjTKJ9oDhS2Ypf3QjRJcdNgMvYx2emj4S2mFyqhzg/5JCoJSCqHwHRaQFU
+	Wpk1vda8s+9kq5tqXHaET34VxSGQT99Ld2o/zahQj6+FqN90GiGQNs9/DIe+qva2XUrJEGDteRF
+	ORrUD7wTaTffU/OqFcfKJXlBqRAabgOV1H5B0fG4R098TLAsAExi1GzzY79LO5YAAcuGh4c3/hq
+	a/jVRbAkSV6B7rJK0gaWE
+X-Google-Smtp-Source: AGHT+IEYRMfJj8ckgsfejRtU0TYjIX32gYfl66cnRmBlGfHsjbeIKuTNWNIQEq5YMKboPn5X9A8oWw==
+X-Received: by 2002:a05:600c:3150:b0:442:ccf9:e6f2 with SMTP id 5b1f17b1804b1-453659dde70mr160985635e9.16.1750786233542;
+        Tue, 24 Jun 2025 10:30:33 -0700 (PDT)
+Received: from iku.example.org ([2a06:5906:61b:2d00:a522:16f6:ec97:d332])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4535ead202asm181662565e9.27.2025.06.24.10.30.32
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 24 Jun 2025 10:30:32 -0700 (PDT)
+From: Prabhakar <prabhakar.csengg@gmail.com>
+X-Google-Original-From: Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+To: Geert Uytterhoeven <geert+renesas@glider.be>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Magnus Damm <magnus.damm@gmail.com>
+Cc: linux-renesas-soc@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	Prabhakar <prabhakar.csengg@gmail.com>,
+	Biju Das <biju.das.jz@bp.renesas.com>,
+	Fabrizio Castro <fabrizio.castro.jz@renesas.com>,
+	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Subject: [PATCH 0/6] clk: renesas: Add XSPI clock support for RZ/V2N and RZ/V2H(P)
+Date: Tue, 24 Jun 2025 18:30:24 +0100
+Message-ID: <20250624173030.472196-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
+X-Mailer: git-send-email 2.49.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] can: ucan: Use usb_endpoint_type() rather than
- duplicating its implementation
-To: Markus Elfring <Markus.Elfring@web.de>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org,
- Chen Ni <nichen@iscas.ac.cn>, linux-can@vger.kernel.org,
- Marc Kleine-Budde <mkl@pengutronix.de>
-References: <48e217a7-b90e-4af3-b535-812c449dd3ba@web.de>
-Content-Language: en-US
-From: Vincent Mailhol <mailhol.vincent@wanadoo.fr>
-Autocrypt: addr=mailhol.vincent@wanadoo.fr; keydata=
- xjMEZluomRYJKwYBBAHaRw8BAQdAf+/PnQvy9LCWNSJLbhc+AOUsR2cNVonvxhDk/KcW7FvN
- LFZpbmNlbnQgTWFpbGhvbCA8bWFpbGhvbC52aW5jZW50QHdhbmFkb28uZnI+wrIEExYKAFoC
- GwMFCQp/CJcFCwkIBwICIgIGFQoJCAsCBBYCAwECHgcCF4AWIQTtj3AFdOZ/IOV06OKrX+uI
- bbuZwgUCZx41XhgYaGtwczovL2tleXMub3BlbnBncC5vcmcACgkQq1/riG27mcIYiwEAkgKK
- BJ+ANKwhTAAvL1XeApQ+2NNNEwFWzipVAGvTRigA+wUeyB3UQwZrwb7jsQuBXxhk3lL45HF5
- 8+y4bQCUCqYGzjgEZx4y8xIKKwYBBAGXVQEFAQEHQJrbYZzu0JG5w8gxE6EtQe6LmxKMqP6E
- yR33sA+BR9pLAwEIB8J+BBgWCgAmFiEE7Y9wBXTmfyDldOjiq1/riG27mcIFAmceMvMCGwwF
- CQPCZwAACgkQq1/riG27mcJU7QEA+LmpFhfQ1aij/L8VzsZwr/S44HCzcz5+jkxnVVQ5LZ4B
- ANOCpYEY+CYrld5XZvM8h2EntNnzxHHuhjfDOQ3MAkEK
-In-Reply-To: <48e217a7-b90e-4af3-b535-812c449dd3ba@web.de>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-Hi Markus,
+From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 
-On 25/06/2025 at 02:12, Markus Elfring wrote:
-> From: Markus Elfring <elfring@users.sourceforge.net>
-> Date: Tue, 24 Jun 2025 19:05:04 +0200
-> 
-> Reuse existing functionality from usb_endpoint_type() instead of keeping
-> duplicate source code.
-> 
-> The source code was transformed by using the Coccinelle software.
+Hi All,
 
-Looking at the helpers in linux/usb/ch9.h, it seems that Coccinelle missed many
-simplifications.
+This patch series adds support for the XSPI clocks on the Renesas RZ/V2N
+(R9A09G056) and RZ/V2H(P) (R9A09G057) SoCs. It includes clock binding
+definitions, clock mux and divider configuration, module clock/reset
+registration, and support for fixed-factor clocks with status reporting.
 
-> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+Cheers,
+Prabhakar
 
-Can you use the same e-mail address for signing and for sending the patch?
+Lad Prabhakar (6):
+  dt-bindings: clock: renesas,r9a09g056/57-cpg: Add XSPI core clock
+  clk: renesas: r9a09g056: Add support for xspi mux and divider
+  clk: renesas: r9a09g057: Add support for xspi mux and divider
+  clk: renesas: rzv2h: Add fixed-factor module clocks with status
+    reporting
+  clk: renesas: r9a09g056: Add XSPI clock/reset
+  clk: renesas: r9a09g057: Add XSPI clock/reset
 
-> ---
->  drivers/net/can/usb/ucan.c | 6 ++----
->  1 file changed, 2 insertions(+), 4 deletions(-)
-> 
-> diff --git a/drivers/net/can/usb/ucan.c b/drivers/net/can/usb/ucan.c
-> index 07406daf7c88..3c8dad8bcca4 100644
-> --- a/drivers/net/can/usb/ucan.c
-> +++ b/drivers/net/can/usb/ucan.c
-> @@ -1353,16 +1353,14 @@ static int ucan_probe(struct usb_interface *intf,
->  		ep = &iface_desc->endpoint[i].desc;
->  
->  		if (((ep->bEndpointAddress & USB_ENDPOINT_DIR_MASK) != 0) &&
-                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-This is:
+ drivers/clk/renesas/r9a09g056-cpg.c           | 37 ++++++++-
+ drivers/clk/renesas/r9a09g057-cpg.c           | 39 ++++++++-
+ drivers/clk/renesas/rzv2h-cpg.c               | 83 +++++++++++++++++++
+ drivers/clk/renesas/rzv2h-cpg.h               | 24 ++++++
+ .../dt-bindings/clock/renesas,r9a09g056-cpg.h |  1 +
+ .../dt-bindings/clock/renesas,r9a09g057-cpg.h |  1 +
+ 6 files changed, 180 insertions(+), 5 deletions(-)
 
-	usb_endpoint_dir_in(ep)
-
-> -		    ((ep->bmAttributes & USB_ENDPOINT_XFERTYPE_MASK) ==
-> -		     USB_ENDPOINT_XFER_BULK)) {
-> +		    usb_endpoint_type(ep) == USB_ENDPOINT_XFER_BULK) {
-                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-This is:
-
-	usb_endpoint_xfer_bulk(ep)
-
->  			/* In Endpoint */
-After changing to usb_endpoint_dir_in(ep), this comment can be removed.
-
->  			in_ep_addr = ep->bEndpointAddress;
->  			in_ep_addr &= USB_ENDPOINT_NUMBER_MASK;
->  			in_ep_size = le16_to_cpu(ep->wMaxPacketSize);
->  		} else if (((ep->bEndpointAddress & USB_ENDPOINT_DIR_MASK) ==
->  			    0) &&
-> -			   ((ep->bmAttributes & USB_ENDPOINT_XFERTYPE_MASK) ==
-> -			    USB_ENDPOINT_XFER_BULK)) {
-> +			   usb_endpoint_type(ep) == USB_ENDPOINT_XFER_BULK) {
-
-Similarly as above use:
-
-	usb_endpoint_dir_out(ep)
-
-and:
-
-	usb_endpoint_xfer_bulk(ep)
-
->  			/* Out Endpoint */
->  			out_ep_addr = ep->bEndpointAddress;
->  			out_ep_addr &= USB_ENDPOINT_NUMBER_MASK;
-
-
-Yours sincerely,
-Vincent Mailhol
+-- 
+2.49.0
 
 
