@@ -1,77 +1,64 @@
-Return-Path: <linux-kernel+bounces-699437-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-699439-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 828D2AE5A20
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Jun 2025 04:40:31 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0C92FAE5A26
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Jun 2025 04:43:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 88FE54466A0
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Jun 2025 02:40:06 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B21881B63FC3
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Jun 2025 02:43:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E2E791E500C;
-	Tue, 24 Jun 2025 02:40:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6581B210F65;
+	Tue, 24 Jun 2025 02:43:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="auQ/emyc"
-Received: from mail-wr1-f54.google.com (mail-wr1-f54.google.com [209.85.221.54])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="GAyPkHHC"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.7])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CFFD017A2F8
-	for <linux-kernel@vger.kernel.org>; Tue, 24 Jun 2025 02:40:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B8974256D;
+	Tue, 24 Jun 2025 02:43:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750732824; cv=none; b=KkbR0faTcVvkGC1kEoEzIUz3E8rdkO7E8KxpPzhUVZjY0WsS0K3AP7F28nOSwyERit2MAXouvB6WkFnKvMaZaZyHHYSPyr2qqCKQuX2N0VWkGFwNNPg2OIoW9QnjHv2CJurfEylGaqHIsCzeM+hfKyiJbVcVrf1pXWOa9OAJLZ4=
+	t=1750732992; cv=none; b=WBtEGKdxTC39MbW0Daib9OjLzhLBiQN4/iXjbSB5viL90sDnYR6uqedgvBNbQbPKE+40xMVt7o4TOxpAtFqqw9eQa0gFMugXiT1s4C+sHZOD7qAmyPsYt+XV02D755wNCm1i6A2g5WMKlyIeukhVlZmSYNCVghLMe8nztKY7Q9o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750732824; c=relaxed/simple;
-	bh=enTOF6FIzn9wWsAyYbgHTZ9l+Kvoh1jGzhMq4Ig/1JY=;
+	s=arc-20240116; t=1750732992; c=relaxed/simple;
+	bh=9vbcNw9Mbs/3u6hDwSuzlhG9OvZfIjeiZZ4bG4w70gM=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=VUO8brQtlcOXSg1vlRAZ9bDvZFBsTLJF2ulPXHm7MQb9KxPEUyg2SHB1Fq0xZOLjus1H/LKfQK9IGVQBxO0GECzViNzeRU3yhWD+MNpK/p51gFlqcim7Z6KkouytTjsNRUfgpMq7CumywkJKh3QuThPCAB/hu4zrOJfdWJmqu8k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=auQ/emyc; arc=none smtp.client-ip=209.85.221.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
-Received: by mail-wr1-f54.google.com with SMTP id ffacd0b85a97d-3a5828d26e4so733508f8f.0
-        for <linux-kernel@vger.kernel.org>; Mon, 23 Jun 2025 19:40:21 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=suse.com; s=google; t=1750732820; x=1751337620; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:content-language:from
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=NwpXcIqfYnXwglQhFL6GpMu90ycYFYBcj7QErSUqSgA=;
-        b=auQ/emyc/8mZNSoUU0/QoytTMJPExQbMJTeEVeVoV7v+deakUfMdwPrWHgLSMLiJgN
-         biyfaNkla4q3bkAOHge+NgSL7IW3eHtiLqscqWtKGGR3WNVn7bLmrRHzP9IyHOpUgduq
-         ACrt2JUdC39RG78KRFp3JacKuwUNY7fEocQL0cBinrKdIEH4pn2BGnwCdqf6WDa8VyvP
-         Smi5Gy/kOb6t0YD1SDuQlN7vLisnZiFLTt0HOHsW0Ikvzibk44CsgJAkOocVg5b5zbKp
-         i6CjM0PRKszrur0VHdPgJ4ic5DUMlM1tdUW4h4sV6A+YYQ5WrqzVDf6DyDT9AH6QK2S8
-         OhJg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1750732820; x=1751337620;
-        h=content-transfer-encoding:in-reply-to:content-language:from
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=NwpXcIqfYnXwglQhFL6GpMu90ycYFYBcj7QErSUqSgA=;
-        b=SIcrnRsshJWxWDWTG087BrpcxnlLXzuctzcz84BsMFaMOPOHJa0ONkLildrZ/61CeY
-         04BI7Oq/wkIFjF5ADCKUgEl3FA/Zdrjh6x+zrtu8bsOut2FaBEGhz0D9RHZ4ZSzir8O+
-         b25rK7gN/PXAcjU6nlGEvzNd5hbvd7fwpi1he5Ea9sW8hslVtsFjv/y/pCJppaSdhzx1
-         Xkyzl78H9jWbyZ9bIKu04zR393B/z7Kw3QA+BXVEWDZKAvMHMs9EvV2hyNsXexojlZNU
-         9FfpBfVHKz8SGNQXNzBscqBsIBKpzhuPEEZXYSCG/62qib99E1iaIECnmPjyxOLP8Jvj
-         bh5w==
-X-Gm-Message-State: AOJu0YyjBUdlWVf+Q6jPBEwL6WUVvAKMQn4ENoDhWgAr31FJQN+Y3Ld2
-	WoFyMSdBo995x4Sex3E3vOR3xQ4N/4NXzjoy6xcpS6tnRC8pgDM7kGAEi5+7DzLXQxg=
-X-Gm-Gg: ASbGncufkLYJnIRs7PqML1Y30Rv6fr6N4CnBM7WIxWROkh57PfAm0haU2KPCgWHoKbK
-	X8eVt87jQsVOhzSSrbx7gik6kQKb0pT1acOhr9A91aYXuQsaqXUITcnUx4gcEGAlZRx6fNQaEn9
-	szy+OIf0Q6W0zLb/oUovzHLlnuB3YRW9nrU2zxYiEB1WS9RSd75J3Awyii8Trf5GzatLTgeHkeW
-	FtMD2bESrTAoMqhkOhFMvmiglZErFuE725OezQ1jMZzYdmARKamx1oZlS3+txwGUNKBW45+jNRp
-	VUexvHQifONJaZlEUnyWKWeIym2T2BWdemKEvsH8m7uOqmpFHI9g1FBufSmcM7rDZw8=
-X-Google-Smtp-Source: AGHT+IEbqdclaAWUAWaYHwVY2zKq3xTnPeMuXhaeWz6w8mGwqFsDw03lzO3ccYAE94DQmRS/3SPWxA==
-X-Received: by 2002:a05:6000:2486:b0:3a5:3369:52f3 with SMTP id ffacd0b85a97d-3a6d12d736emr3843326f8f.3.1750732820059;
-        Mon, 23 Jun 2025 19:40:20 -0700 (PDT)
-Received: from [10.202.32.28] ([202.127.77.110])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-3158a331babsm11877556a91.46.2025.06.23.19.40.17
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 23 Jun 2025 19:40:19 -0700 (PDT)
-Message-ID: <c9467d9e-5cac-49b8-b839-179dc79d0bce@suse.com>
-Date: Tue, 24 Jun 2025 10:40:15 +0800
+	 In-Reply-To:Content-Type; b=MxzxYe5RgQypzdaraQ1siS9bw+sqhQBeKTluYsFTyyH+mZEQzJ9MnMskXje33SSNZ4A5gJiNkFJj1whMF+mWD/XVQGkNFqpTugFkrkylpklVInEwC566H8aOFkJmtnQFShwdQxODkDJukQOnePITFwfZhzcQYo3uEVtgiHWml1Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=GAyPkHHC; arc=none smtp.client-ip=192.198.163.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1750732991; x=1782268991;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=9vbcNw9Mbs/3u6hDwSuzlhG9OvZfIjeiZZ4bG4w70gM=;
+  b=GAyPkHHCENqu8yC+c6yxIsCb6ASi9WjRLRTcqUtzmzAVlaoaYmT54/EL
+   H/Ckr2Ozarvwbe8ISonM73aCRl5/5vz930rrvDaRrWSIXQWIn8d0C7Jon
+   u/zv2EvL1BE88EQlQdFrQ2W/3+21KKt4wHMdrpSGIsDss3+J4gBMpkWRZ
+   6PahuvILgvNm1H8D6QPfTXsjiZI4DL87KRilCflvrafXjVCnfQA9MWog4
+   etqNJFZx1it73W+TD780kWOdVHI293fLSDLP/b1BrQRg3GjHoWciUCJKY
+   9SuG6vYshF9HQ5JKmaOlTVlh/vYDTnwrMIRW6rNXFI5OmAwyhCcDIDQRQ
+   w==;
+X-CSE-ConnectionGUID: AMDKteQoRBOfPjhxAaCduQ==
+X-CSE-MsgGUID: dQ5q7U1rTaS8Qi1P8q8BRQ==
+X-IronPort-AV: E=McAfee;i="6800,10657,11473"; a="78374219"
+X-IronPort-AV: E=Sophos;i="6.16,260,1744095600"; 
+   d="scan'208";a="78374219"
+Received: from orviesa004.jf.intel.com ([10.64.159.144])
+  by fmvoesa101.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 23 Jun 2025 19:43:10 -0700
+X-CSE-ConnectionGUID: YIvisesFRVWm4WWaUthwAg==
+X-CSE-MsgGUID: 2XPtW4+8QGG1L5+3k6vawA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.16,260,1744095600"; 
+   d="scan'208";a="156350418"
+Received: from unknown (HELO [10.238.128.162]) ([10.238.128.162])
+  by orviesa004-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 23 Jun 2025 19:43:06 -0700
+Message-ID: <a1ea7e74-a90a-4961-9f83-ad04e1d7a573@linux.intel.com>
+Date: Tue, 24 Jun 2025 10:43:03 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -79,81 +66,247 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] ocfs2: kill osb->system_file_mutex lock
-To: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>,
- Mark Fasheh <mark@fasheh.com>, Joel Becker <jlbec@evilplan.org>,
- Joseph Qi <joseph.qi@linux.alibaba.com>, jiangyiwen <jiangyiwen@huawei.com>,
- Andrew Morton <akpm@linux-foundation.org>, ocfs2-devel@lists.linux.dev,
- Diogo Jahchan Koike <djahchankoike@gmail.com>
-Cc: LKML <linux-kernel@vger.kernel.org>
-References: <934355dd-a0b1-4e53-93ac-0a7ae7458051@I-love.SAKURA.ne.jp>
- <faf70481-09dd-4c7a-bd43-f1e8bec877cb@suse.com>
- <675ea747-5c05-410c-888c-fe6dd2b48d87@I-love.SAKURA.ne.jp>
-From: Heming Zhao <heming.zhao@suse.com>
-Content-Language: en-US
-In-Reply-To: <675ea747-5c05-410c-888c-fe6dd2b48d87@I-love.SAKURA.ne.jp>
+Subject: Re: [PATCH v4 2/2] x86/traps: Initialize DR7 by writing its
+ architectural reset value
+To: "H. Peter Anvin" <hpa@zytor.com>, "Xin Li (Intel)" <xin@zytor.com>,
+ linux-kernel@vger.kernel.org, kvm@vger.kernel.org, stable@vger.kernel.org
+Cc: tglx@linutronix.de, mingo@redhat.com, bp@alien8.de,
+ dave.hansen@linux.intel.com, x86@kernel.org, seanjc@google.com,
+ pbonzini@redhat.com, peterz@infradead.org, sohil.mehta@intel.com,
+ brgerst@gmail.com, tony.luck@intel.com, fenghuay@nvidia.com
+References: <20250620231504.2676902-1-xin@zytor.com>
+ <20250620231504.2676902-3-xin@zytor.com>
+ <c526eb25-571e-427a-93e9-3afdaa6ca413@linux.intel.com>
+ <EBD6D476-3014-475A-9467-77CA51755D41@zytor.com>
+From: Ethan Zhao <haifeng.zhao@linux.intel.com>
+Autocrypt: addr=haifeng.zhao@linux.intel.com; keydata=
+ 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
+ 8TCx1OJHpvWFmL4Deq8=
+In-Reply-To: <EBD6D476-3014-475A-9467-77CA51755D41@zytor.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-On 6/24/25 10:17, Tetsuo Handa wrote:
-> On 2025/06/24 10:33, Heming Zhao wrote:
->>> @@ -112,11 +110,10 @@ struct inode *ocfs2_get_system_file_inode(struct ocfs2_super *osb,
->>>        inode = _ocfs2_get_system_file_inode(osb, type, slot);
->>
->> In my view, the key of commit 43b10a20372d is to avoid calling
->> _ocfs2_get_system_file_inode() twice, which lead refcnt+1 but no place to
->> do refcnt-1.
-> 
-> My understanding is that concurrently calling _ocfs2_get_system_file_inode() itself
-> is OK, for the caller of ocfs2_get_system_file_inode() is responsible for calling
-> iput().
 
-We have different perspectives on calling _ocfs2_get_system_file_inode().
-In the current code logic, _ocfs2_get_system_file_inode() is expected to
-be called only once. Subsequent local system inodes will be retrieved from
-the cache (via get_local_system_inode()).
+在 2025/6/24 9:53, H. Peter Anvin 写道:
+> On June 23, 2025 6:41:07 PM PDT, Ethan Zhao <haifeng.zhao@linux.intel.com> wrote:
+>> 在 2025/6/21 7:15, Xin Li (Intel) 写道:
+>>> Initialize DR7 by writing its architectural reset value to always set
+>>> bit 10, which is reserved to '1', when "clearing" DR7 so as not to
+>>> trigger unanticipated behavior if said bit is ever unreserved, e.g. as
+>>> a feature enabling flag with inverted polarity.
+>>>
+>>> Tested-by: Sohil Mehta <sohil.mehta@intel.com>
+>>> Reviewed-by: H. Peter Anvin (Intel) <hpa@zytor.com>
+>>> Reviewed-by: Sohil Mehta <sohil.mehta@intel.com>
+>>> Acked-by: Peter Zijlstra (Intel) <peterz@infradead.org>
+>>> Acked-by: Sean Christopherson <seanjc@google.com>
+>>> Signed-off-by: Xin Li (Intel) <xin@zytor.com>
+>>> Cc: stable@vger.kernel.org
+>>> ---
+>>>
+>>> Change in v4:
+>>> *) Cc stable for backporting, just in case bit 10 of DR7 has become
+>>>      unreserved on new hardware, even though clearing it doesn't
+>>>      currently cause any real issues (Dave Hansen).
+>>>
+>>> Changes in v3:
+>>> *) Reword the changelog using Sean's description.
+>>> *) Explain the definition of DR7_FIXED_1 (Sohil).
+>>> *) Collect TB, RB, AB (PeterZ, Sohil and Sean).
+>>>
+>>> Changes in v2:
+>>> *) Use debug register index 7 rather than DR_CONTROL (PeterZ and Sean).
+>>> *) Use DR7_FIXED_1 as the architectural reset value of DR7 (Sean).
+>>> ---
+>>>    arch/x86/include/asm/debugreg.h | 19 +++++++++++++++----
+>>>    arch/x86/include/asm/kvm_host.h |  2 +-
+>>>    arch/x86/kernel/cpu/common.c    |  2 +-
+>>>    arch/x86/kernel/kgdb.c          |  2 +-
+>>>    arch/x86/kernel/process_32.c    |  2 +-
+>>>    arch/x86/kernel/process_64.c    |  2 +-
+>>>    arch/x86/kvm/x86.c              |  4 ++--
+>>>    7 files changed, 22 insertions(+), 11 deletions(-)
+>>>
+>>> diff --git a/arch/x86/include/asm/debugreg.h b/arch/x86/include/asm/debugreg.h
+>>> index 363110e6b2e3..a2c1f2d24b64 100644
+>>> --- a/arch/x86/include/asm/debugreg.h
+>>> +++ b/arch/x86/include/asm/debugreg.h
+>>> @@ -9,6 +9,14 @@
+>>>    #include <asm/cpufeature.h>
+>>>    #include <asm/msr.h>
+>>>    +/*
+>>> + * Define bits that are always set to 1 in DR7, only bit 10 is
+>>> + * architecturally reserved to '1'.
+>>> + *
+>>> + * This is also the init/reset value for DR7.
+>>> + */
+>>> +#define DR7_FIXED_1	0x00000400
+>>> +
+>>>    DECLARE_PER_CPU(unsigned long, cpu_dr7);
+>>>      #ifndef CONFIG_PARAVIRT_XXL
+>>> @@ -100,8 +108,8 @@ static __always_inline void native_set_debugreg(int regno, unsigned long value)
+>>>      static inline void hw_breakpoint_disable(void)
+>>>    {
+>>> -	/* Zero the control register for HW Breakpoint */
+>>> -	set_debugreg(0UL, 7);
+>>> +	/* Reset the control register for HW Breakpoint */
+>>> +	set_debugreg(DR7_FIXED_1, 7);
+>> Given you have it be adhere to SDM about the DR7 reversed bits setting,
+>>
+>> then no reason to leave patch[1/2] to set_debugreg(0, 7) alone.
+>>
+>> did I miss something here ?
+>>
+>>
+>> Thanks,
+>>
+>> Ethan
+>>
+>>
+>>>      	/* Zero-out the individual HW breakpoint address registers */
+>>>    	set_debugreg(0UL, 0);
+>>> @@ -125,9 +133,12 @@ static __always_inline unsigned long local_db_save(void)
+>>>    		return 0;
+>>>      	get_debugreg(dr7, 7);
+>>> -	dr7 &= ~0x400; /* architecturally set bit */
+>>> +
+>>> +	/* Architecturally set bit */
+>>> +	dr7 &= ~DR7_FIXED_1;
+>>>    	if (dr7)
+>>> -		set_debugreg(0, 7);
+>>> +		set_debugreg(DR7_FIXED_1, 7);
+>>> +
+>>>    	/*
+>>>    	 * Ensure the compiler doesn't lower the above statements into
+>>>    	 * the critical section; disabling breakpoints late would not
+>>> diff --git a/arch/x86/include/asm/kvm_host.h b/arch/x86/include/asm/kvm_host.h
+>>> index b4a391929cdb..639d9bcee842 100644
+>>> --- a/arch/x86/include/asm/kvm_host.h
+>>> +++ b/arch/x86/include/asm/kvm_host.h
+>>> @@ -31,6 +31,7 @@
+>>>      #include <asm/apic.h>
+>>>    #include <asm/pvclock-abi.h>
+>>> +#include <asm/debugreg.h>
+>>>    #include <asm/desc.h>
+>>>    #include <asm/mtrr.h>
+>>>    #include <asm/msr-index.h>
+>>> @@ -249,7 +250,6 @@ enum x86_intercept_stage;
+>>>    #define DR7_BP_EN_MASK	0x000000ff
+>>>    #define DR7_GE		(1 << 9)
+>>>    #define DR7_GD		(1 << 13)
+>>> -#define DR7_FIXED_1	0x00000400
+>>>    #define DR7_VOLATILE	0xffff2bff
+>>>      #define KVM_GUESTDBG_VALID_MASK \
+>>> diff --git a/arch/x86/kernel/cpu/common.c b/arch/x86/kernel/cpu/common.c
+>>> index 0f6c280a94f0..27125e009847 100644
+>>> --- a/arch/x86/kernel/cpu/common.c
+>>> +++ b/arch/x86/kernel/cpu/common.c
+>>> @@ -2246,7 +2246,7 @@ EXPORT_PER_CPU_SYMBOL(__stack_chk_guard);
+>>>    static void initialize_debug_regs(void)
+>>>    {
+>>>    	/* Control register first -- to make sure everything is disabled. */
+>>> -	set_debugreg(0, 7);
+>>> +	set_debugreg(DR7_FIXED_1, 7);
+>>>    	set_debugreg(DR6_RESERVED, 6);
+>>>    	/* dr5 and dr4 don't exist */
+>>>    	set_debugreg(0, 3);
+>>> diff --git a/arch/x86/kernel/kgdb.c b/arch/x86/kernel/kgdb.c
+>>> index 102641fd2172..8b1a9733d13e 100644
+>>> --- a/arch/x86/kernel/kgdb.c
+>>> +++ b/arch/x86/kernel/kgdb.c
+>>> @@ -385,7 +385,7 @@ static void kgdb_disable_hw_debug(struct pt_regs *regs)
+>>>    	struct perf_event *bp;
+>>>      	/* Disable hardware debugging while we are in kgdb: */
+>>> -	set_debugreg(0UL, 7);
+>>> +	set_debugreg(DR7_FIXED_1, 7);
+>>>    	for (i = 0; i < HBP_NUM; i++) {
+>>>    		if (!breakinfo[i].enabled)
+>>>    			continue;
+>>> diff --git a/arch/x86/kernel/process_32.c b/arch/x86/kernel/process_32.c
+>>> index a10e180cbf23..3ef15c2f152f 100644
+>>> --- a/arch/x86/kernel/process_32.c
+>>> +++ b/arch/x86/kernel/process_32.c
+>>> @@ -93,7 +93,7 @@ void __show_regs(struct pt_regs *regs, enum show_regs_mode mode,
+>>>      	/* Only print out debug registers if they are in their non-default state. */
+>>>    	if ((d0 == 0) && (d1 == 0) && (d2 == 0) && (d3 == 0) &&
+>>> -	    (d6 == DR6_RESERVED) && (d7 == 0x400))
+>>> +	    (d6 == DR6_RESERVED) && (d7 == DR7_FIXED_1))
+>>>    		return;
+>>>      	printk("%sDR0: %08lx DR1: %08lx DR2: %08lx DR3: %08lx\n",
+>>> diff --git a/arch/x86/kernel/process_64.c b/arch/x86/kernel/process_64.c
+>>> index 8d6cf25127aa..b972bf72fb8b 100644
+>>> --- a/arch/x86/kernel/process_64.c
+>>> +++ b/arch/x86/kernel/process_64.c
+>>> @@ -133,7 +133,7 @@ void __show_regs(struct pt_regs *regs, enum show_regs_mode mode,
+>>>      	/* Only print out debug registers if they are in their non-default state. */
+>>>    	if (!((d0 == 0) && (d1 == 0) && (d2 == 0) && (d3 == 0) &&
+>>> -	    (d6 == DR6_RESERVED) && (d7 == 0x400))) {
+>>> +	    (d6 == DR6_RESERVED) && (d7 == DR7_FIXED_1))) {
+>>>    		printk("%sDR0: %016lx DR1: %016lx DR2: %016lx\n",
+>>>    		       log_lvl, d0, d1, d2);
+>>>    		printk("%sDR3: %016lx DR6: %016lx DR7: %016lx\n",
+>>> diff --git a/arch/x86/kvm/x86.c b/arch/x86/kvm/x86.c
+>>> index b58a74c1722d..a9d992d5652f 100644
+>>> --- a/arch/x86/kvm/x86.c
+>>> +++ b/arch/x86/kvm/x86.c
+>>> @@ -11035,7 +11035,7 @@ static int vcpu_enter_guest(struct kvm_vcpu *vcpu)
+>>>      	if (unlikely(vcpu->arch.switch_db_regs &&
+>>>    		     !(vcpu->arch.switch_db_regs & KVM_DEBUGREG_AUTO_SWITCH))) {
+>>> -		set_debugreg(0, 7);
+>>> +		set_debugreg(DR7_FIXED_1, 7);
+>>>    		set_debugreg(vcpu->arch.eff_db[0], 0);
+>>>    		set_debugreg(vcpu->arch.eff_db[1], 1);
+>>>    		set_debugreg(vcpu->arch.eff_db[2], 2);
+>>> @@ -11044,7 +11044,7 @@ static int vcpu_enter_guest(struct kvm_vcpu *vcpu)
+>>>    		if (unlikely(vcpu->arch.switch_db_regs & KVM_DEBUGREG_WONT_EXIT))
+>>>    			kvm_x86_call(set_dr6)(vcpu, vcpu->arch.dr6);
+>>>    	} else if (unlikely(hw_breakpoint_active())) {
+>>> -		set_debugreg(0, 7);
+>>> +		set_debugreg(DR7_FIXED_1, 7);
+>>>    	}
+>>>      	vcpu->arch.host_debugctl = get_debugctlmsr();
+> It's split up for the benefit of the stable maintainers.
 
-> 
-> The problem commit 43b10a20372d fixed is that there was no mechanism to avoid
-> concurrently calling
-> 
->    *arr = igrab(inode);
-> 
-> which will result in failing to call iput() for raced references when
-> ocfs2_release_system_inodes() is called.
-> 
->>
->>>          /* add one more if putting into array for first time */
->>> -    if (arr && inode) {
->>> -        *arr = igrab(inode);
->>> -        BUG_ON(!*arr);
->>> +    if (inode && arr && !*arr && !cmpxchg(&(*arr), NULL, inode)) {
->>
->> Bypassing the refcnt+1 here is not a good idea. We should do refcnt+1
->> before returning to the caller.
->>
->>> +        inode = igrab(inode);
-> 
-> We do refcnt+1 immediately after cmpxchg() succeeds, for
-> ocfs2_release_system_inodes() which clears *arr is the place for
-> doing refcnt-1.
-> 
->>> +        BUG_ON(!inode);
->>>        }
->>> -    mutex_unlock(&osb->system_file_mutex);
->>>        return inode;
->>>    }
->>>    
->>
-> 
+Undeniably split, as observed. :)
 
-In my view, your patch has logical errors - at least from my perspective,
-I have to vote NAK.
 
-In my view, for this syzbot bug, the better solution is to block/deny write
-operations during the ocfs2 mounting phase.
-There are many syzbot bugs related to writing data during the mounting phase.
-I don't believe there is any reason a user would want to write data before the
-filesystem is mounted.
+Thanks,
+
+Ethan
+
+>
+-- 
+"firm, enduring, strong, and long-lived"
 
 
