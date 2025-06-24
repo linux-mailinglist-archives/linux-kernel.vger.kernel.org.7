@@ -1,130 +1,97 @@
-Return-Path: <linux-kernel+bounces-700104-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-700102-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2CF98AE63E0
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Jun 2025 13:49:36 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id C5CF2AE63DA
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Jun 2025 13:49:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 95ADE4A0E9B
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Jun 2025 11:49:33 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4D1E517EF54
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Jun 2025 11:49:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 61493283C8C;
-	Tue, 24 Jun 2025 11:49:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E567228A1E0;
+	Tue, 24 Jun 2025 11:49:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=codiax-se.20230601.gappssmtp.com header.i=@codiax-se.20230601.gappssmtp.com header.b="MPyaUrd5"
-Received: from mail-lf1-f51.google.com (mail-lf1-f51.google.com [209.85.167.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="N6/n9L9X"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 192E928E607
-	for <linux-kernel@vger.kernel.org>; Tue, 24 Jun 2025 11:49:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 42D2F284682;
+	Tue, 24 Jun 2025 11:49:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750765759; cv=none; b=Bob/3kUB2gsRVyGdot1FfB/D2JZ8OWKbbwNAsFOSopy1o0/iPwPHa8eKwVsoeAub3ytgFiAK7mrXNhVhMyONW885nJYzhwURfKC8UYnryRSx6bUeuAnQfl8KUQAKD2iKTZPzvI7hPVuBG0tCryg/VbneLs5vIN7ezdFYGVc3Ygw=
+	t=1750765742; cv=none; b=i5+pw+T3Sw3w/3rrNbi38hRBOYsEzDyEipoBYphrVYOwMnrjYSe4LXooRoO+/UWICuziB/F9aZjIIgPP151KnjhYtl8Pbn8H9Q5QISkAvrpLJ2doiTFlmYUhAFoTyyeN79IMTZ6tJjI7Z2j7AW4h9+svezPih2AA/gqYtCaUKK8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750765759; c=relaxed/simple;
-	bh=C+ldSKk8CmcmIkATHZDyFz0szza0IdxJ0ts1fTi5YiM=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=mAyC1DuOJbaP8z688s9abH14oNJ2x6d78f8xgNUKVhBbCgh3Uft/WF80gFHd+JoQFmW81vyjCuLJ22gWBD8/WKJzHl+ikzxLUhUHZDTW2Dx4hoaoU4ZYo1OeF3DTtmOEaHIS+SaoDsu6CW+/5siiV1LPc8KokZvAmB4eKO7D/DE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=codiax.se; spf=pass smtp.mailfrom=codiax.se; dkim=pass (2048-bit key) header.d=codiax-se.20230601.gappssmtp.com header.i=@codiax-se.20230601.gappssmtp.com header.b=MPyaUrd5; arc=none smtp.client-ip=209.85.167.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=codiax.se
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=codiax.se
-Received: by mail-lf1-f51.google.com with SMTP id 2adb3069b0e04-553b5165cf5so410998e87.0
-        for <linux-kernel@vger.kernel.org>; Tue, 24 Jun 2025 04:49:15 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=codiax-se.20230601.gappssmtp.com; s=20230601; t=1750765754; x=1751370554; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=rrUbcmZF3TAdKKDR84X6iLmpavcaVxBgM0j4vAqCqGs=;
-        b=MPyaUrd5PYYE4IGNfXqoUsY4Uv9jrcq8rHPHT1JWbrzqZ9fNJ7NP5eEv61atC4e+4h
-         gKe3vGgVtEB6rOI53kUs0D1309u9Mr1hBD8Y6/236FHZKday0IaqZFgmtCWR7uwajY4u
-         PKKALhuJrgaIuoj2oMyu1yv/eHz4rcp9omRRI2tI26QppDY7yXfQ3OKKwAjSC9cLNHCY
-         zkmzFKwrCxkonP7ufXQuTqlVJBKmjgY9wSNuqouScG61br52ijabfQG5fxQw1/7eOu67
-         D03NJ286MO5eynj+8GPheNchsimAtkhNvo4vBNsv9xeGTznb4RLv5vFZ/tEO8ULgXW/D
-         f63A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1750765754; x=1751370554;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=rrUbcmZF3TAdKKDR84X6iLmpavcaVxBgM0j4vAqCqGs=;
-        b=rpG/HL0/Iufvf0FFCr4wRm8PuHcX+TeG86Eg+Jkt3nx2g6cC9LrwfJDgbpG4iA8yVi
-         7BMMTg9UlbiNfWj/iKVoQnXwQXn5O5PxQZAzZoCO6Zg8PV5N3myY3wcwvqpbR5sft2Xt
-         v1VrN4gLRvl13iXrYS1xQjLkJLIHaWPCaHmkwvF7r/mZnSUvnUk4C70mpHS0bFy+PBsh
-         oC6rt4aj2MOzMkDlOJQzMnNJRmkSBdcMD23A9HsIOG+biLMMTuxUGPgwPl7y0dQS/dBJ
-         hE1DTldBSXTWateozwL6Oz3T4Oq8GVRIsaJgnmu5TCTNtIkKFIDWTirq5jY/NB3RUc+y
-         A8CQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWefQvv0nKgc0IrozkODmzODSznePGj90cMq/Bk8D94LbM65b/8oKlFIUtjVdF3SF907VpM/3JBo9y8NaY=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwfyfE7NCIQoqZ+gVWZI3jlRNWW1qSNX8LtbheTf+itbhClc9DR
-	w+K2Wi9tmtSqtUh/TssVQLkY/ZiLQJLGNtK9Jv4HJ5XRugp+uPql5AYvQWRu/iqE2IkuQjLVqu7
-	FRELQ
-X-Gm-Gg: ASbGncubuFyE9muWpYSOt5AQap96rmXTutBITORXCzP2JCj72UpvfNWLZnmejcJiQWg
-	1ayzasuSYhE4aOUG1MCaC5BsimlwWzAAOLVYF+fjZ5tyFdxvaC5bZjiWyL2Jy50ItUrqJoAhz7G
-	Gmwf5t7HI8c55my/E/td5WDA9rw/gOM6VIMvxAwiN0l2qg5B4xcTjsth6yUX9/WKl4p8Wz7sWk9
-	KKFBideYnwzx72bdS/uxzLXUwxhonMLdBFaHs5lWj/3+Uie3/OO3ewSzsh1R246vbtY9cJmtJsd
-	+HvqPpJm+yYhMacp+PRm0slpfNGrfYGK/NpLOM2n6AP5UEOiQcwir+zxTlvgZlGUn6wuWd0NToa
-	A4azQR4DGHrWpUwwcOQmEa74zMwmoM9S7
-X-Google-Smtp-Source: AGHT+IFSGexEtfcMzAQ+fzVvPpnt09+h/hiP53/5GJBuSDikVVM5naJcA0DuDdEg78KtDtVifjADUw==
-X-Received: by 2002:a05:6512:b87:b0:553:a456:a0c1 with SMTP id 2adb3069b0e04-553e3d04850mr5554575e87.43.1750765752686;
-        Tue, 24 Jun 2025 04:49:12 -0700 (PDT)
-Received: from falcon.codiax (h-37-123-161-8.A137.corp.bahnhof.se. [37.123.161.8])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-553e41c2e5csm1806724e87.155.2025.06.24.04.49.11
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 24 Jun 2025 04:49:12 -0700 (PDT)
-From: Albin Tornqvist <albin.tornqvist@codiax.se>
-To: tony@atomide.com,
-	robh@kernel.org,
-	krzk+dt@kernel.org,
-	conor+dt@kernel.org
-Cc: linux-omap@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	albin.tornqvist@codiax.se
-Subject: [PATCH] arm: dts: ti: omap: Fixup pinheader typo
-Date: Tue, 24 Jun 2025 13:48:39 +0200
-Message-ID: <20250624114839.1465115-2-albin.tornqvist@codiax.se>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20250624114839.1465115-1-albin.tornqvist@codiax.se>
-References: <20250624114839.1465115-1-albin.tornqvist@codiax.se>
+	s=arc-20240116; t=1750765742; c=relaxed/simple;
+	bh=cw/9YN5eCuNOj+h6sAk5pRs3ujA52Uc7g1g1tXp3X9k=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=tEz5UYUcMA1Cg7FcPhCEUtCIAL1+Frgno1eKmI/FAo87RB/FqrDAVKJi6RW9p7Vu9kiyZyLkuGUK5Yed9nzlTYpg6x+2F5EIxlDcn3T1/RTXppwoMA5stNrAniuw2s+YLCa3dwDdlR5T1fvtx9rxY7XPKyacIy1xbHQL7cEKLtg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=N6/n9L9X; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7B4A8C4CEE3;
+	Tue, 24 Jun 2025 11:48:58 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1750765741;
+	bh=cw/9YN5eCuNOj+h6sAk5pRs3ujA52Uc7g1g1tXp3X9k=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=N6/n9L9XqvtVWn5BA1lPyvfpXm8DOKcAeYJsSnAQZ86k0AjwKCJ1UHGyJls84aJ+q
+	 4ufBoA6pL1/MREbg9e7GD5PWHJZ8e1ENPFvY5gY/ievuhmPX73LIE05eTgNlQLtUcA
+	 RcC6S4raNHVrBXgtGjO+xO2GeiE5Tw/l0DhHoKzlXp4G+RiQ8tJzpPhv/nf9t0kPKt
+	 hjbqjbMxAfboO4ZBRlytgfrgMoWhX9di8aWTUgsgsOtzWMDGRo5XcSRd+qX5Wx0bKF
+	 Ffy9Dr3WNS0xUmEfm+gaQwfY0dHEqBMe8YX+3bp1a3zZbem3QfLXi7H47bHuvBs9Za
+	 BBjX8B47GkUCw==
+Date: Tue, 24 Jun 2025 12:48:55 +0100
+From: Mark Brown <broonie@kernel.org>
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: stable@vger.kernel.org, patches@lists.linux.dev,
+	linux-kernel@vger.kernel.org, torvalds@linux-foundation.org,
+	akpm@linux-foundation.org, linux@roeck-us.net, shuah@kernel.org,
+	patches@kernelci.org, lkft-triage@lists.linaro.org, pavel@denx.de,
+	jonathanh@nvidia.com, f.fainelli@gmail.com,
+	sudipm.mukherjee@gmail.com, srw@sladewatkins.net, rwarsow@gmx.de,
+	conor@kernel.org, hargar@microsoft.com
+Subject: Re: [PATCH 6.15 000/592] 6.15.4-rc1 review
+Message-ID: <d568f701-c299-41a4-97af-47270cf640f7@sirena.org.uk>
+References: <20250623130700.210182694@linuxfoundation.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="p7LEaVjrB2dgIlwA"
+Content-Disposition: inline
+In-Reply-To: <20250623130700.210182694@linuxfoundation.org>
+X-Cookie: Do, or do not
 
-From: Albin Törnqvist <albin.tornqvist@codiax.se>
 
-This commit fixes a typo introduced in commit
-ee368a10d0df ("ARM: dts: am335x-boneblack.dts: unique gpio-line-names").
-gpio0_7 is located on the P9 header on the BBB.
-This was verified with a BeagleBone Black by toggling the pin and
-checking with a multimeter that it corresponds to pin 42 on the P9
-header.
+--p7LEaVjrB2dgIlwA
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-Signed-off-by: Albin Törnqvist <albin.tornqvist@codiax.se>
----
- arch/arm/boot/dts/ti/omap/am335x-boneblack.dts | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+On Mon, Jun 23, 2025 at 02:59:18PM +0200, Greg Kroah-Hartman wrote:
+> This is the start of the stable review cycle for the 6.15.4 release.
+> There are 592 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
 
-diff --git a/arch/arm/boot/dts/ti/omap/am335x-boneblack.dts b/arch/arm/boot/dts/ti/omap/am335x-boneblack.dts
-index 16b567e3cb47..b4fdcf9c02b5 100644
---- a/arch/arm/boot/dts/ti/omap/am335x-boneblack.dts
-+++ b/arch/arm/boot/dts/ti/omap/am335x-boneblack.dts
-@@ -35,7 +35,7 @@ &gpio0 {
- 		"P9_18 [spi0_d1]",
- 		"P9_17 [spi0_cs0]",
- 		"[mmc0_cd]",
--		"P8_42A [ecappwm0]",
-+		"P9_42A [ecappwm0]",
- 		"P8_35 [lcd d12]",
- 		"P8_33 [lcd d13]",
- 		"P8_31 [lcd d14]",
--- 
-2.43.0
+Tested-by: Mark Brown <broonie@kernel.org>
 
+--p7LEaVjrB2dgIlwA
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmhakKcACgkQJNaLcl1U
+h9C0OQf+JAHd8Ho4rS9wZZ7Bo4ppdU3g0ATEsiv/oO9UHhpYFbi9PUxd2Vv2ZWDX
+7HZ8tdVlEXkKLcvWVzmVgeCEyTbB4/9nGXtoE2cVTsdNz193oe9+/XBiQkLTLhu4
+rIlEjdsmCw34MfJWg634w8i/gcsC7k3v033aEEgjii1nZAhIUUG4ZBCRIx3poNbZ
+x6k0DeeZqrr7/Vo0io6LP46TA2RljUuvgUSJ1UyJmaraM05f3LHfYGdxQ5jEq55h
+zBlEPI2UfI3TPc2sJ8y1mSWB0PsKROjhvZD3Mv4ANSwr8XKO1yE9TMviv351pKSl
+8ZcIKbl3ZFwDDgvQdXMcTl9Rnc683g==
+=4+IV
+-----END PGP SIGNATURE-----
+
+--p7LEaVjrB2dgIlwA--
 
