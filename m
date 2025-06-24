@@ -1,103 +1,90 @@
-Return-Path: <linux-kernel+bounces-699759-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-699756-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1604AAE5EFF
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Jun 2025 10:21:56 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id B8BF8AE5EF8
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Jun 2025 10:21:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2A5E53B1F37
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Jun 2025 08:21:28 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BA5983A3DFD
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Jun 2025 08:20:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 042BA2580CB;
-	Tue, 24 Jun 2025 08:21:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6F7B5257444;
+	Tue, 24 Jun 2025 08:20:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Z2MzqTxI"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="lvutBbAf"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 613E1253950;
-	Tue, 24 Jun 2025 08:21:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CA5B630E84D;
+	Tue, 24 Jun 2025 08:20:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750753299; cv=none; b=Ei84/HBqCbwuPVLAaXbORC/5h9tq5YBsXgQ0GZJhyTtfY54ojSQ18cIS8zOcwBYJMJ9pwBopJp3QeRmPObBEAHjCquQY2LFStKlITU6LPhsfJf1JIByyrgNlvY/I8l8U42syywJ4ZtDnELTKuQ0UOdzRosgxWS8RCnFjDGPRXK0=
+	t=1750753254; cv=none; b=qq38nhWAMPIB3wvUsDor/LaWwsxR894IaO6NpPhbEPUqPvu3m4KSvjd7KyEidwUbIqdno+mqn+tl8cCI+eVaHpAEAXqTj2qKeWiYbVJe/7dJknIjSgUCspz22tja2Oq+23zLC1i16KJHbwM6z0v1dVudGwaZpK0lXFKG9lvtet0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750753299; c=relaxed/simple;
-	bh=sMDYw/iEzAAz7E8kipgSoSk+Xe3siOFd54HwBLDS/lw=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=C6Roo2cnvOkM3PJJcqIpORME+U79ri889HUCT7tZFdm0OiglJfTemcQDPrJHkRPRDUR64KE550XctxiysJKLjz9kMjB6pGqW6aDkkIE7mnaO/9fZxuRW2HUOPG/6kA8Js7stZvU2G9mLAeuKpuX2JuXxiYqU/LzAono3Nfd09AQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Z2MzqTxI; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 34C38C4CEE3;
-	Tue, 24 Jun 2025 08:21:39 +0000 (UTC)
+	s=arc-20240116; t=1750753254; c=relaxed/simple;
+	bh=MT2ajhY7wBsxVe1u0WpkIwXTE93WmbRHqKzUBLSi+Cc=;
+	h=Mime-Version:Content-Type:Date:Message-Id:Cc:Subject:From:To:
+	 References:In-Reply-To; b=g8QpkC3eP3nxJ/0SqkyVZkaQqa12gTJJJbKb262msBu+ZoLMZMEaH1QdeYXEohbd47OTJsk35g4QKjr7X4VUpmxYWzTtyt9RlJF95QonScNC8bs2pbcHU1a05vQ/ZXH3DwTD3CcpRSlX3aeNXgK0XLhymJYJ90+RVxYUaJJeORo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=lvutBbAf; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 53CC1C4CEE3;
+	Tue, 24 Jun 2025 08:20:50 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1750753299;
-	bh=sMDYw/iEzAAz7E8kipgSoSk+Xe3siOFd54HwBLDS/lw=;
-	h=From:To:Cc:Subject:Date:From;
-	b=Z2MzqTxI3dtLZ7GtsTSYeMod9QaXWm+vcXoL8iaQcrCqlf1k5EKrjFgoyzhTbm9DQ
-	 2dKYoB8gMhemY3752FmjoAUa/O11f/+md/cW03qFT80BXvOHXo6XKwcV/Ah5sEUat0
-	 rngw8dM8a1lnP5BY6oogNa4uQngxhw2R8fMvNhJKUAX3duH8DFom9eu88Z5qK1gKsH
-	 HYBzuIl38GffZQT78sqHTncspRbMsmE9UkOJ/ekXxHcXkfzEIsUAY3H4GauB4fX6jL
-	 6J/E89XR9yeySKbTATQ//O57LFo0fdm6yK4/LTxmLGSFry0jDB5su41mEZqJohGMgo
-	 N9wMXqqxeNHSQ==
-Received: from johan by xi.lan with local (Exim 4.97.1)
-	(envelope-from <johan+linaro@kernel.org>)
-	id 1uTyuO-0000000042t-3zC9;
-	Tue, 24 Jun 2025 10:21:37 +0200
-From: Johan Hovold <johan+linaro@kernel.org>
-To: Jeff Johnson <jjohnson@kernel.org>
-Cc: linux-wireless@vger.kernel.org,
-	ath11k@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	Johan Hovold <johan+linaro@kernel.org>,
-	Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>,
-	Baochen Qiang <quic_bqiang@quicinc.com>
-Subject: [PATCH] wifi: ath11k: fix suspend use-after-free after probe failure
-Date: Tue, 24 Jun 2025 10:20:22 +0200
-Message-ID: <20250624082022.15469-1-johan+linaro@kernel.org>
-X-Mailer: git-send-email 2.49.0
+	s=k20201202; t=1750753254;
+	bh=MT2ajhY7wBsxVe1u0WpkIwXTE93WmbRHqKzUBLSi+Cc=;
+	h=Date:Cc:Subject:From:To:References:In-Reply-To:From;
+	b=lvutBbAfVXmj1ZMHbzOxFilI6BH6zaExqSK5o5j/FEuZtLGxwsaYRltqPRVegyhVM
+	 ME/N4uiz9VeS0iNejQTO5huO/BsnLQMQshee4k1gtdsr0Iul6GNhiuXkyQrhkn4u7u
+	 6hJqU5Aflh9wt9xc4e5KdszFH4cIq4Qs+g/o8iaccojclIrjyAXYSavsE2b5y95QBF
+	 /bdUy8ILbBtLS9Kk42ErF2bG1ta/9Z2+XKyLIGRtLQOypGLuhMDfcdftgXvsqSCW5s
+	 YDV5iE68DTJaS/HAwSM5iqACPvWFwZCAp2EtN7AzODZNPoA5G5JsFm6Nr4l+wt7j1y
+	 fT/vdxJb//SHA==
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Mime-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Date: Tue, 24 Jun 2025 10:20:48 +0200
+Message-Id: <DAUM8B2ZUMFQ.25R95W7IDAEHM@kernel.org>
+Cc: "Boqun Feng" <boqun.feng@gmail.com>, <linux-kernel@vger.kernel.org>,
+ <rust-for-linux@vger.kernel.org>, <ojeda@kernel.org>,
+ <alex.gaynor@gmail.com>, <gary@garyguo.net>, <a.hindborg@kernel.org>,
+ <aliceryhl@google.com>, <tmgross@umich.edu>, <dakr@kernel.org>,
+ <peterz@infradead.org>, <mingo@redhat.com>, <will@kernel.org>,
+ <longman@redhat.com>, <felipe_life@live.com>, <daniel@sedlak.dev>,
+ <bjorn3_gh@protonmail.com>, <simona@ffwll.ch>, <airlied@gmail.com>,
+ <dri-devel@lists.freedesktop.org>, <lyude@redhat.com>
+Subject: Re: [PATCH v5 2/3] implement ww_mutex abstraction for the Rust tree
+From: "Benno Lossin" <lossin@kernel.org>
+To: "Onur" <work@onurozkan.dev>
+X-Mailer: aerc 0.20.1
+References: <20250621184454.8354-1-work@onurozkan.dev>
+ <20250621184454.8354-3-work@onurozkan.dev>
+ <DASY7BECFRCT.332X5ZHZMV2W@kernel.org> <aFlQ7K_mYYbrG8Cl@Mac.home>
+ <DATYHYJVPL3L.3NLMH7PPHYU9@kernel.org> <aFlpFQ4ivKw81d-y@Mac.home>
+ <DAU0ELV91E2Q.35FZOII18W44J@kernel.org> <aFmKsE_nJkaVMv0T@tardis.local>
+ <DAUARTYJ118U.YW38OP8TRVO3@kernel.org> <20250624083437.1e50d54c@nimda.home>
+In-Reply-To: <20250624083437.1e50d54c@nimda.home>
 
-Make sure to deregister the PM notifier to avoid a use-after-free on
-suspend in case core initialisation fails (e.g. due to missing
-firmware).
+On Tue Jun 24, 2025 at 7:34 AM CEST, Onur wrote:
+> Should we handle this in the initial implementation or leave it for
+> follow-up patches after the core abstraction of ww_mutex has landed?
 
-Fixes: 32d93b51bc7e ("wifi: ath11k: choose default PM policy for hibernation")
-Reported-by: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-Link: https://lore.kernel.org/all/d0cd065c-1cd1-4e56-8c57-60777b1f3664@oss.qualcomm.com/
-Cc: Baochen Qiang <quic_bqiang@quicinc.com>
-Signed-off-by: Johan Hovold <johan+linaro@kernel.org>
+Since you're writing these abstractions specifically for usage in drm, I
+think we should look at the intended use-cases there and then decide on
+an API.
+
+So maybe Lyude or Dave can chime in :)
+
+If you (or someone else) have another user for this API that needs it
+ASAP, then we can think about merging this and improve it later. But if
+we don't have a user, then we shouldn't merge it anyways.
+
 ---
- drivers/net/wireless/ath/ath11k/core.c | 7 ++++++-
- 1 file changed, 6 insertions(+), 1 deletion(-)
-
-diff --git a/drivers/net/wireless/ath/ath11k/core.c b/drivers/net/wireless/ath/ath11k/core.c
-index 22a101136135..eb1f35617c64 100644
---- a/drivers/net/wireless/ath/ath11k/core.c
-+++ b/drivers/net/wireless/ath/ath11k/core.c
-@@ -2581,10 +2581,15 @@ int ath11k_core_init(struct ath11k_base *ab)
- 	ret = ath11k_core_soc_create(ab);
- 	if (ret) {
- 		ath11k_err(ab, "failed to create soc core: %d\n", ret);
--		return ret;
-+		goto err_unregister_pm_notifier;
- 	}
- 
- 	return 0;
-+
-+err_unregister_pm_notifier:
-+	ath11k_core_pm_notifier_unregister(ab);
-+
-+	return ret;
- }
- EXPORT_SYMBOL(ath11k_core_init);
- 
--- 
-2.49.0
-
+Cheers,
+Benno
 
