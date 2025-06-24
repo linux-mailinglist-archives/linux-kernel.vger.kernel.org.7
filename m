@@ -1,129 +1,173 @@
-Return-Path: <linux-kernel+bounces-699803-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-699805-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3D594AE5F9F
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Jun 2025 10:40:10 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id AFCFAAE5FA5
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Jun 2025 10:41:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8ACCC17AA6E
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Jun 2025 08:40:00 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C74CD17E477
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Jun 2025 08:41:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CEEDC25CC68;
-	Tue, 24 Jun 2025 08:39:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1D37C26AAB7;
+	Tue, 24 Jun 2025 08:41:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=w6rz.net header.i=@w6rz.net header.b="qUVdZKPC"
-Received: from omta34.uswest2.a.cloudfilter.net (omta34.uswest2.a.cloudfilter.net [35.89.44.33])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="UH1V3t9S"
+Received: from mail-wr1-f51.google.com (mail-wr1-f51.google.com [209.85.221.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F414F25C809
-	for <linux-kernel@vger.kernel.org>; Tue, 24 Jun 2025 08:39:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=35.89.44.33
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8949926A1AE
+	for <linux-kernel@vger.kernel.org>; Tue, 24 Jun 2025 08:41:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750754385; cv=none; b=ou/6ScaFnnqD9asv6cR3S7Ptx5h9qOWNCxootYGuJtLCNWwcP0jiv4vs1lQtn1jc8xuh4PQemD1Ls3lxCAc1vVAWYQ3YjWQQpnMGUwcMlWyDe7Oj6vdZV6Vj0TQpwUbiEa+mmPXAmjWEzD42/Zp1/v7TBP1IrdfN0osHnav6ksU=
+	t=1750754467; cv=none; b=BOGk9aGD6YSQYIZQRjpzS+HEBuiOCO8eOY4snQbAdyK9lEvYeyPdkRC/qHS+04DSb0ap6kWnAb8u9qGhhZrkcdTYzPlR13DenAb/4+CIawZdVWmcat4jaDbNxWoxQkWHOgdamAX+V687CNFd7hFoIVyy2gE2OB5gfFlRb6W7ni8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750754385; c=relaxed/simple;
-	bh=rX6P9uJ++V6vV1O8h53puKB00AubrWSSwqgASU6o0tE=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=AwYDHY3n/W2CYhMdy9DjfJsc4/P3MFT5RBWynyESD796++GpmbBe7+jHp2Yy7SyxX/C3BDmQV2SMVQgJ/y2e5Osjna/Z3ZwE3sGuKEq2s8MZc9hJqPpuP93ZpMqQY8DDjkixpFBm9sIJxJAUxYY9kRqwl/nkdGj7/qmEeVGtp/I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=w6rz.net; spf=pass smtp.mailfrom=w6rz.net; dkim=pass (2048-bit key) header.d=w6rz.net header.i=@w6rz.net header.b=qUVdZKPC; arc=none smtp.client-ip=35.89.44.33
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=w6rz.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=w6rz.net
-Received: from eig-obgw-5009a.ext.cloudfilter.net ([10.0.29.176])
-	by cmsmtp with ESMTPS
-	id TZV9uwdz3WuHKTzBuuqcls; Tue, 24 Jun 2025 08:39:42 +0000
-Received: from box5620.bluehost.com ([162.241.219.59])
-	by cmsmtp with ESMTPS
-	id TzBtuiLn95IQGTzBuuBByH; Tue, 24 Jun 2025 08:39:42 +0000
-X-Authority-Analysis: v=2.4 cv=Y+7+sAeN c=1 sm=1 tr=0 ts=685a644e
- a=30941lsx5skRcbJ0JMGu9A==:117 a=30941lsx5skRcbJ0JMGu9A==:17
- a=IkcTkHD0fZMA:10 a=6IFa9wvqVegA:10 a=7vwVE5O1G3EA:10 a=VwQbUJbxAAAA:8
- a=HaFmDPmJAAAA:8 a=49j0FZ7RFL9ueZfULrUA:9 a=QEXdDO2ut3YA:10
- a=nmWuMzfKamIsx3l42hEX:22 a=Wh1V8bzkS9CpCxOpQUxp:22
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=w6rz.net;
-	s=default; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:From:
-	References:Cc:To:Subject:MIME-Version:Date:Message-ID:Sender:Reply-To:
-	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
-	Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
-	List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=w9cJ1qrvW+sy42b7Whs+I9aymfUJla/Cy2Xe7jpLw0w=; b=qUVdZKPCUv6fCnqaqY5L2grqru
-	mYUW45kUMzKD+GkoNo9QcCxHdcCSWzKBc4eZ3IvzmzemHQFMgfLkEpy8J038pkYLe3j0KlZD8HIM7
-	E9pcbZ/RrkRAHBw2Gik2ezpV7+OlScmHZ87xzM1TKda2GXfvidNsMshyVBDi4SJumo0KzI9cdjaMV
-	OhJrtk16bJi+T/uB9PaqJfii2/+7DBI0Qmi10Qt7QcmSNaIAxK+2J3VJLImlV9BbgwWkCVrSUhTOA
-	HBglQPEwOejSu5ihZ9/0JgkPuZJCUHRrj12+MWkUEmhFQLvWa4oNSHxaayszLwQUt0IX8I4GiKRCf
-	yQOYoSAw==;
-Received: from c-73-223-253-157.hsd1.ca.comcast.net ([73.223.253.157]:47032 helo=[10.0.1.116])
-	by box5620.bluehost.com with esmtpsa  (TLS1.2) tls TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256
-	(Exim 4.98.1)
-	(envelope-from <re@w6rz.net>)
-	id 1uTzBr-00000002ROq-0YHg;
-	Tue, 24 Jun 2025 02:39:39 -0600
-Message-ID: <86227a29-2385-4bb1-be18-f1ac734fda55@w6rz.net>
-Date: Tue, 24 Jun 2025 01:39:35 -0700
+	s=arc-20240116; t=1750754467; c=relaxed/simple;
+	bh=zdAtxHvqY91gdiWBUFT7jBGg+f5hSLcaeJSjeAJNEVw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=tSXFnLx01w4M09c6lKjKCd1J4jWIig+V+KZyDS4M6CkW6fMHL7fTi9t8PPaY2tl47QS/0sm0LefwPqJHh+Njj0JTwNhfrJcHtn94qwioOeqHEO2lIfaJ+MZ7nwTAddB8qJZG/60ioQvPVi1oqX2ZObAUa/YboGTj5ftrKOqckDs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=UH1V3t9S; arc=none smtp.client-ip=209.85.221.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
+Received: by mail-wr1-f51.google.com with SMTP id ffacd0b85a97d-3a510432236so3731234f8f.0
+        for <linux-kernel@vger.kernel.org>; Tue, 24 Jun 2025 01:41:04 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=suse.com; s=google; t=1750754463; x=1751359263; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=42Y2N6ebar+wiBFiVwZ+1np3R1M+VYIv1aIQkqIKk40=;
+        b=UH1V3t9S4NXkPqOqyNyHVbHAvxkVhK777/oSyAzWRZWd6k92Hp4OfCtbGtwNzDa4NO
+         aHhBhJNq4Q3A+nOxolkOrzG72lygIik4Y4E+LWv/mSGQbN9iz3HUSvmv0HQK5PYMdQvj
+         brqPqcaUXH96LLCaWAUegv/ZlT7PD9EU1kzbq4fve7XPzLifVTz0o4UWYAj7PQBeOQSr
+         JRgXLjd1gtNqd/KDijBDLEv9x2tEREMuAv+kC35tuY2gJl9ERBaTJVwENE4mCpoAXrMP
+         czg3WpLW9ng2/Ip1qS6Kg1UNBBG9QOQPV57fiSUcR4QzdS9omCKPVzKAT84JEmwyzS9d
+         /10A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1750754463; x=1751359263;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=42Y2N6ebar+wiBFiVwZ+1np3R1M+VYIv1aIQkqIKk40=;
+        b=HA8kC/MqM1IbgjjCt6/QI+uix9VtWMaUt3RfpPOgJCmA5RyQBcHYzWrQjWafIh7ECk
+         jCSQ672Ysw2Ole9dhWzXwlhXn25/lTA/OME94JIXtnFhQHoSMMv4iU7+KE0PiPiuFzt5
+         abj/WpOoivywwchgszfW283sBotMYxEe+W8n+QtSsbhWnGw8qN1ybGT211AEbQdW0PqN
+         yt62I6hG2d63rd41KTzPheXOY4mWHBZjX2kKzPNW2I8BevbfiUYwvI8nB/s4poYkdAJH
+         di5vx1rQWPNNJU5h2iYrDb8FQXiEEq8oFipkvLOrp6Evk1Bp5LXA8bBvx7WpqJZdCY92
+         AKUQ==
+X-Forwarded-Encrypted: i=1; AJvYcCViXVZodPqc2eaC8YDRitPLq3ujhF8Eo7hIM8xkb2g3sRmEaf4DCd+18JkNkULg+v0Hkb5c+II0h79W6Bw=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxA807jPAW48RLny8MG/y/s5/sakrRb4EseT8ekMJ7HR5gOYOXc
+	4rK1Fa9bjBJ5kwNyso19PUIRK3A9XeZodwHUtNR693C/7SfVG57SU8VoDeR0MiddP1o=
+X-Gm-Gg: ASbGnctc02EwCLMQjQqy6K78HRLdGne3RAgUFNMRBpWHUXJ4WIlfPz5cM6jBNouMfnz
+	NNE0EiMpiEWjtCamtGDiEtdZy0GjEU8LtaF4TWAzLTLk6N2UYFKAcCLym2wBKPLAp/Jr2xFGyHy
+	/HI0NFMa534UPLhVGblkJv0JKFs71Khkfu9ov8wYWDTlC6QhWbye4XG6hWRnnty7vShfFDHEIVG
+	Mcb+pQUc4qbmUpZcCtzgc1zp07msjlEI0n2KLMCWJTiyoRTip3Pnk/+LOrnR2yIx/etwUqsogyA
+	Bxl9bgRDvZfvOa4s9aarPBA7Lam41F+FmcP+Oh0FVe+zuO7rykINPOBXVR2Z/5IE
+X-Google-Smtp-Source: AGHT+IHSGyDwoYjnGgDbPlFSLTlqgEue3oGk1SeNKtOch4nBjPOzzj8KWkuWYgkah6BLwc+G22XXxA==
+X-Received: by 2002:a05:6000:3111:b0:3a1:fcd6:1e6b with SMTP id ffacd0b85a97d-3a6d1334011mr11624969f8f.57.1750754462679;
+        Tue, 24 Jun 2025 01:41:02 -0700 (PDT)
+Received: from pathway.suse.cz ([176.114.240.130])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-749b5e08e52sm1231044b3a.9.2025.06.24.01.40.52
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 24 Jun 2025 01:41:02 -0700 (PDT)
+Date: Tue, 24 Jun 2025 10:40:46 +0200
+From: Petr Mladek <pmladek@suse.com>
+To: John Ogness <john.ogness@linutronix.de>
+Cc: Marcos Paulo de Souza <mpdesouza@suse.com>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	Sergey Senozhatsky <senozhatsky@chromium.org>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Jiri Slaby <jirislaby@kernel.org>,
+	Jason Wessel <jason.wessel@windriver.com>,
+	Daniel Thompson <danielt@kernel.org>,
+	Douglas Anderson <dianders@chromium.org>,
+	Richard Weinberger <richard@nod.at>,
+	Anton Ivanov <anton.ivanov@cambridgegreys.com>,
+	Johannes Berg <johannes@sipsolutions.net>,
+	linux-kernel@vger.kernel.org, linux-serial@vger.kernel.org,
+	kgdb-bugreport@lists.sourceforge.net, linux-um@lists.infradead.org
+Subject: Re: [PATCH 2/7] printk: Use consoles_suspended flag when
+ suspending/resuming all consoles
+Message-ID: <aFpkQHwNCslbKSP6@pathway.suse.cz>
+References: <20250606-printk-cleanup-part2-v1-0-f427c743dda0@suse.com>
+ <20250606-printk-cleanup-part2-v1-2-f427c743dda0@suse.com>
+ <aExBo-8cVOy6GegR@pathway.suse.cz>
+ <84y0tmiidg.fsf@jogness.linutronix.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 5.15 000/411] 5.15.186-rc1 review
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, stable@vger.kernel.org
-Cc: patches@lists.linux.dev, linux-kernel@vger.kernel.org,
- torvalds@linux-foundation.org, akpm@linux-foundation.org,
- linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org,
- lkft-triage@lists.linaro.org, pavel@denx.de, jonathanh@nvidia.com,
- f.fainelli@gmail.com, sudipm.mukherjee@gmail.com, srw@sladewatkins.net,
- rwarsow@gmx.de, conor@kernel.org, hargar@microsoft.com, broonie@kernel.org
-References: <20250623130632.993849527@linuxfoundation.org>
-Content-Language: en-US
-From: Ron Economos <re@w6rz.net>
-In-Reply-To: <20250623130632.993849527@linuxfoundation.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - box5620.bluehost.com
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - w6rz.net
-X-BWhitelist: no
-X-Source-IP: 73.223.253.157
-X-Source-L: No
-X-Exim-ID: 1uTzBr-00000002ROq-0YHg
-X-Source: 
-X-Source-Args: 
-X-Source-Dir: 
-X-Source-Sender: c-73-223-253-157.hsd1.ca.comcast.net ([10.0.1.116]) [73.223.253.157]:47032
-X-Source-Auth: re@w6rz.net
-X-Email-Count: 92
-X-Org: HG=bhshared;ORG=bluehost;
-X-Source-Cap: d3NpeHJ6bmU7d3NpeHJ6bmU7Ym94NTYyMC5ibHVlaG9zdC5jb20=
-X-Local-Domain: yes
-X-CMAE-Envelope: MS4xfNGJzU0ad5RtX/WvFCLnHayNCNPaVdEDvms/CDFaXNwQFfCyYiZAtFgNcJKyfK9LqjcMk+8Cp4Cv7dBP3rxMUI5dSovBe73K34JAFUpusVx6X1aKHDB9
- P4rliy0SZosSC0eQ9jd4r9skVSHxz0m+t0VOn3GhzpFoY9j5NmmsXjVqzVokVZ1BiR9WkByGpZItl+A0DV9Hz7MhRX4Zg9RtX2s=
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <84y0tmiidg.fsf@jogness.linutronix.de>
 
-On 6/23/25 06:02, Greg Kroah-Hartman wrote:
-> This is the start of the stable review cycle for the 5.15.186 release.
-> There are 411 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
->
-> Responses should be made by Wed, 25 Jun 2025 13:05:51 +0000.
-> Anything received after that time might be too late.
->
-> The whole patch series can be found in one patch at:
-> 	https://www.kernel.org/pub/linux/kernel/v5.x/stable-review/patch-5.15.186-rc1.gz
-> or in the git tree and branch at:
-> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-5.15.y
-> and the diffstat can be found below.
->
-> thanks,
->
-> greg k-h
+On Fri 2025-06-20 16:49:07, John Ogness wrote:
+> On 2025-06-13, Petr Mladek <pmladek@suse.com> wrote:
+> >> diff --git a/kernel/printk/nbcon.c b/kernel/printk/nbcon.c
+> >> index fd12efcc4aeda8883773d9807bc215f6e5cdf71a..72de12396e6f1bc5234acfdf6dcc393acf88d216 100644
+> >> --- a/kernel/printk/nbcon.c
+> >> +++ b/kernel/printk/nbcon.c
+> >> @@ -1147,7 +1147,7 @@ static bool nbcon_kthread_should_wakeup(struct console *con, struct nbcon_contex
+> >>  	cookie = console_srcu_read_lock();
+> >>  
+> >>  	flags = console_srcu_read_flags(con);
+> >> -	if (console_is_usable(con, flags, false)) {
+> >> +	if (console_is_usable(con, flags, false, consoles_suspended)) {
+> >
+> > The new global console_suspended value has the be synchronized the
+> > same way as the current CON_SUSPENDED per-console flag.
+> > It means that the value must be:
+> >
+> >   + updated only under console_list_lock together with
+> >     synchronize_rcu().
+> >
+> >   + read using READ_ONCE() under console_srcu_read_lock()
+> 
+> Yes.
+> 
+> > I am going to propose more solutions because no one is obviously
+> > the best one.
+> 
+> [...]
+> 
+> > Variant C:
+> > ==========
+> >
+> > Remove even @flags parameter from console_is_usable() and read both
+> > values there directly.
+> >
+> > Many callers read @flags only because they call console_is_usable().
+> > The change would simplify the code.
+> >
+> > But there are few exceptions:
+> >
+> >    2. Another exception is __pr_flush() where console_is_usable() is
+> >       called twice with @use_atomic set "true" and "false".
+> >
+> >       We would want to read "con->flags" only once here. A solution
+> >       would be to add a parameter to check both con->write_atomic
+> >       and con->write_thread in a single call.
+> 
+> Or it could become a bitmask of printing types to check:
+> 
+> #define ATOMIC_PRINTING 0x1
+> #define NONATOMIC_PRINTING 0x2
+> 
+> and then __pr_flush() looks like:
+> 
+> if (!console_is_usable(c, flags, ATOMIC_PRINTING|NONATOMIC_PRINTING)
 
-Built and booted successfully on RISC-V RV64 (HiFive Unmatched).
+I like this. It will help even in all other cases when one mode is needed.
+I mean that, for example:
 
-Tested-by: Ron Economos <re@w6rz.net>
+   console_is_usable(c, flags, ATOMIC_PRINTING)
 
+is more self-explaining than
+
+   console_is_usable(c, flags, true)
+
+Best Regards,
+Petr
 
