@@ -1,53 +1,61 @@
-Return-Path: <linux-kernel+bounces-699452-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-699460-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 59CB2AE5A4F
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Jun 2025 05:00:57 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 258BAAE5A5C
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Jun 2025 05:09:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id DCF351B6577B
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Jun 2025 03:01:12 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3B9B73B49C2
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Jun 2025 03:09:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4A5FB19C558;
-	Tue, 24 Jun 2025 03:00:49 +0000 (UTC)
-Received: from unicom145.biz-email.net (unicom145.biz-email.net [210.51.26.145])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 31A5F19DF4A;
+	Tue, 24 Jun 2025 03:09:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b="chLk4k1m"
+Received: from relay.smtp-ext.broadcom.com (relay.smtp-ext.broadcom.com [192.19.144.205])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 15F9E182BC;
-	Tue, 24 Jun 2025 03:00:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.51.26.145
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 20FD223774
+	for <linux-kernel@vger.kernel.org>; Tue, 24 Jun 2025 03:09:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.19.144.205
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750734048; cv=none; b=pH4czZ2eZBxytKVId+B9J7H58HBMmWSppp8lJevKYVii4z6WuR3atm97TI+f9BNVQc9NQdqRHrqbHua3HTa+0/ttPLIXeK6MVT5uGTfklzVgawMXbvalHS4Ph9ROkXgfNq0H6m88D1+GeOreD0tzUApMsi6vKixOsktoVRe8V6g=
+	t=1750734561; cv=none; b=Y5NuTyMVHv6wsO6pSE4ci0O/0Onv8Tv2essswEESxant2CGdkEWs0V1cigmHJZBeKFT4GaX6KVD8Hr5JqVXN1W7piKXpr2Ia2SKJK3cnMAu6d/pEEQIkO2HN9byek2ZhGk5ZcV9M5Di5xhzq/48/TFG2JQ8RsxyE8wSSqOqycSg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750734048; c=relaxed/simple;
-	bh=eEFc4F7xE1kxOscj3Caa6fs+2Wwo8rF7+/oxQOwlfMQ=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=u8fUiYxtegQphwowKP5gqFacE14ggTi2QJ8K1o93/R8oWd5lGEL24tJDdozWZIh333AtKUriauRyRnRtZSEJ4f/OVvEGPiUdbG9K2rDgOw9GwmCtJ8kgjycjCY/5FoKQRauHkaURwZVyezS3zlg3N84jXFpSMFQII/aj1Ooe5w8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=inspur.com; spf=pass smtp.mailfrom=inspur.com; arc=none smtp.client-ip=210.51.26.145
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=inspur.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=inspur.com
-Received: from jtjnmail201612.home.langchao.com
-        by unicom145.biz-email.net ((D)) with ASMTP (SSL) id 202506241100315435;
-        Tue, 24 Jun 2025 11:00:31 +0800
-Received: from localhost.localdomain.com (10.94.6.249) by
- jtjnmail201612.home.langchao.com (10.100.2.12) with Microsoft SMTP Server id
- 15.1.2507.57; Tue, 24 Jun 2025 11:00:30 +0800
-From: chuguangqing <chuguangqing@inspur.com>
-To: Tony Nguyen <anthony.l.nguyen@intel.com>, Przemek Kitszel
-	<przemyslaw.kitszel@intel.com>, Andrew Lunn <andrew+netdev@lunn.ch>, "David
- S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, Jakub
- Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>
-CC: <linux-kernel@vger.kernel.org>, <netdev@vger.kernel.org>,
-	<intel-wired-lan@lists.osuosl.org>, chuguangqing <chuguangqing@inspur.com>
-Subject: [PATCH 0/1] check the ioremap return value first (supplementary CC)
-Date: Tue, 24 Jun 2025 10:58:53 +0800
-Message-ID: <20250624025915.1692-2-chuguangqing@inspur.com>
-X-Mailer: git-send-email 2.43.5
-In-Reply-To: <20250624025915.1692-1-chuguangqing@inspur.com>
-References: <3bf6df3b-affe-4f10-8b05-29f3393d19e0@intel.com>
- <20250624025915.1692-1-chuguangqing@inspur.com>
+	s=arc-20240116; t=1750734561; c=relaxed/simple;
+	bh=YGvDaLTtcK1FEWqHANmxfV/oj1NBdAGvyHAThtMEXlU=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=tkzIhozIJRtCh3mbBVDx1HVwAWuwY84Ec6bhdoEZqeLY7ikQx0VvY3r8Dl9iA2WnUS6u1RwRlx7dxOmFsgzCfRd3Di3UrAi2fYQRbqCzerNp0B7z5/qwgQhVLMHVTieYjO67415wUt5OARg9NR5rjCGbFS4+tSx6vN3l58gxxxo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com; spf=fail smtp.mailfrom=broadcom.com; dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b=chLk4k1m; arc=none smtp.client-ip=192.19.144.205
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=broadcom.com
+Received: from mail-lvn-it-01.broadcom.com (mail-lvn-it-01.lvn.broadcom.net [10.36.132.253])
+	by relay.smtp-ext.broadcom.com (Postfix) with ESMTP id 24739C000C84;
+	Mon, 23 Jun 2025 20:00:57 -0700 (PDT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 relay.smtp-ext.broadcom.com 24739C000C84
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=broadcom.com;
+	s=dkimrelay; t=1750734057;
+	bh=YGvDaLTtcK1FEWqHANmxfV/oj1NBdAGvyHAThtMEXlU=;
+	h=From:To:Cc:Subject:Date:From;
+	b=chLk4k1mG5ZR96cQVcWXdemtEatvXdlXVrLqGMfDdCSuEtyhqrM1b7zUZT1Jd5NHC
+	 9D4392hfUEQlN81fN1oKGLhDl7kdBjM9O/WOFCuzh49cyIUS+UkP1H8u/C8NbUNgmu
+	 NXHcwqI9631ctgUozBVCk10uJpaIWhZaP9Lb6so8=
+Received: from fainelli-desktop.igp.broadcom.net (fainelli-desktop.dhcp.broadcom.net [10.67.48.245])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mail-lvn-it-01.broadcom.com (Postfix) with ESMTPSA id C09631800051E;
+	Mon, 23 Jun 2025 20:00:26 -0700 (PDT)
+From: Florian Fainelli <florian.fainelli@broadcom.com>
+To: linux-kernel@vger.kernel.org
+Cc: Florian Fainelli <florian.fainelli@broadcom.com>,
+	Jan Kiszka <jan.kiszka@siemens.com>,
+	Kieran Bingham <kbingham@kernel.org>,
+	Andrew Morton <akpm@linux-foundation.org>
+Subject: [PATCH] scripts/gdb: De-reference per-CPU MCE interrupts
+Date: Mon, 23 Jun 2025 20:00:19 -0700
+Message-ID: <20250624030020.882472-1-florian.fainelli@broadcom.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -55,22 +63,30 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-tUid: 2025624110031415c3819e8b85ca5c6989f831ba4e68d
-X-Abuse-Reports-To: service@corp-email.com
-Abuse-Reports-To: service@corp-email.com
-X-Complaints-To: service@corp-email.com
-X-Report-Abuse-To: service@corp-email.com
 
-Always check ioremap() return value  before use.
+The per-CPU MCE interrupts are looked up by reference and need to be
+de-referenced before printing.
 
-chuguangqing (1):
-  ixgbe: check the ioremap return value first
-
- drivers/net/ethernet/intel/ixgbe/ixgbe_main.c | 2 +-
+Fixes: b0969d7687a7 ("scripts/gdb: print interrupts")
+Signed-off-by: Florian Fainelli <florian.fainelli@broadcom.com>
+---
+ scripts/gdb/linux/interrupts.py | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
+diff --git a/scripts/gdb/linux/interrupts.py b/scripts/gdb/linux/interrupts.py
+index 199d9e8193f4..8bd0d7108ae0 100644
+--- a/scripts/gdb/linux/interrupts.py
++++ b/scripts/gdb/linux/interrupts.py
+@@ -110,7 +110,7 @@ def x86_show_mce(prec, var, pfx, desc):
+     pvar = gdb.parse_and_eval(var)
+     text = "%*s: " % (prec, pfx)
+     for cpu in cpus.each_online_cpu():
+-        text += "%10u " % (cpus.per_cpu(pvar, cpu))
++        text += "%10u " % (cpus.per_cpu(pvar, cpu).dereference())
+     text += "  %s\n" % (desc)
+     return text
+ 
 -- 
-2.43.5
+2.43.0
 
 
