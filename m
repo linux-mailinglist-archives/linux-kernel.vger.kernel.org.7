@@ -1,93 +1,121 @@
-Return-Path: <linux-kernel+bounces-700926-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-700928-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id AD46DAE6EA2
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Jun 2025 20:31:50 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id DDA73AE6EA4
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Jun 2025 20:32:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 852693A9540
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Jun 2025 18:31:17 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 06E00175FF6
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Jun 2025 18:32:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 913952E6D18;
-	Tue, 24 Jun 2025 18:31:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9B2602E62B2;
+	Tue, 24 Jun 2025 18:32:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="V1/Wgsvb"
-Received: from mail-oi1-f174.google.com (mail-oi1-f174.google.com [209.85.167.174])
+	dkim=pass (2048-bit key) header.d=ziepe.ca header.i=@ziepe.ca header.b="W9iskX5n"
+Received: from mail-qv1-f46.google.com (mail-qv1-f46.google.com [209.85.219.46])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 93AE1223316
-	for <linux-kernel@vger.kernel.org>; Tue, 24 Jun 2025 18:31:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 58283226CF1
+	for <linux-kernel@vger.kernel.org>; Tue, 24 Jun 2025 18:32:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750789892; cv=none; b=XdNP0UIAoCyYalfDCXpLl+FmZJ9WG9N190Te+DHq6Aj3azeTpb0Z4lzfg7hSw2dK65D5JBP6u+8jewL0mKIl/q/J1fHUhb6vK8PDW58o/ppnw5ldcLQ229rLCf81tgBr8D9iP+naKlyzlBKQkaHvqKzQNPnMhKhL8GxIgIEYHVo=
+	t=1750789923; cv=none; b=Wy8mS/4p1RBDSKAwX6ow1mFNm5wlRH99GhVYRTHUw7TxKA2OfDelT8XHgXnl8sxKqGdqVOte2xleRoS2TFOdfoIjbmUAABtqBofEeTsW1MinRknhOh4L53fL80WACI90sEyTtyUK5ereH6i7HiKKgt8uwyxUaPS7ft0iFEoaDnA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750789892; c=relaxed/simple;
-	bh=m8J3O7QzYtKHkTJW6LMTlN1rnZ3hXaZDwhHlnyjRWHQ=;
+	s=arc-20240116; t=1750789923; c=relaxed/simple;
+	bh=twg7uShwjKAF0d/1Baw6xRpptUpYWnudk9Sex3ub+Tk=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=bHZapypxtuFufWn/nEYG/efpc7dJfJaL65JGcNATxGm+WKLjLohYTbb17SSLL9XnswlcBfkuyj8yrPfOxjdDcM2Iac75RnNFDq0WwneA25tIu+9jkE28QQr4nNuB+38DASPO+Shgz7DK4YTgKWFz+D3LZdJLrdqIiieb04NjPa4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=V1/Wgsvb; arc=none smtp.client-ip=209.85.167.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-oi1-f174.google.com with SMTP id 5614622812f47-40abe6f8f08so4924890b6e.0
-        for <linux-kernel@vger.kernel.org>; Tue, 24 Jun 2025 11:31:29 -0700 (PDT)
+	 Content-Type:Content-Disposition:In-Reply-To; b=WnPImiWpWutyelnIyuGVb3jSMgr8hyQNgom9UI4EeChoM8r7nYDltrm4kyobpR+iVdBTskSLxeoozX7k9bHItRqsQax+yCLZ++UL7CKQ8nLRMw+3eiZgdtwaOPn7bwNTVghGxvd2o3bN57JFrvYApI2PGAIzTF+lUmoTVUdjiGI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ziepe.ca; spf=pass smtp.mailfrom=ziepe.ca; dkim=pass (2048-bit key) header.d=ziepe.ca header.i=@ziepe.ca header.b=W9iskX5n; arc=none smtp.client-ip=209.85.219.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ziepe.ca
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ziepe.ca
+Received: by mail-qv1-f46.google.com with SMTP id 6a1803df08f44-6fadd3ad18eso7885006d6.2
+        for <linux-kernel@vger.kernel.org>; Tue, 24 Jun 2025 11:32:01 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1750789889; x=1751394689; darn=vger.kernel.org;
+        d=ziepe.ca; s=google; t=1750789920; x=1751394720; darn=vger.kernel.org;
         h=in-reply-to:content-transfer-encoding:content-disposition
          :mime-version:references:message-id:subject:cc:to:from:date:from:to
          :cc:subject:date:message-id:reply-to;
-        bh=GjxEYQ1lbJWp4ECKZKQpz8oozPbUNKZGlrJ6EmAWMmk=;
-        b=V1/WgsvbksR0gweco31aEBMw+5KQsjbsnRt8VFD7eN7CMlaN2YZ6lUkMRpD3YBgF1G
-         qCk8LuBcCDQF6sTxEyNKn/EE0oaHCGDRpWmqHEP2wOxcMzaPg5+ZJvmPiH5A4h9wlqVa
-         SqK5zigWn5SPaSv8LtEL38pr8ShYl8YqSEqenDBukCXtQVIqpSUFS/dWIAgmZCMUFUpi
-         w2fp/Bw7NHYklTolWIoq7SqBuSEbKir8MVoVg81l0B85fbLx/KdGfDnCCMfvWtff6xQ/
-         ELN8M8W7Ve+FIpbloOrZCBTICFCIOYeilORbqDAD7akGtCCOFrLVP04wH8ZEVaSRE0Ck
-         QFGA==
+        bh=97KaKUWHgkryLWUXFqPgiNV17vft1ADESM26qVDqmoE=;
+        b=W9iskX5nWsFP9iKiJA/Om31WenSekkHe034ZgVbhl0JaS4kyJDkT0Uyx4m8nUMHebC
+         SPflzKzZIijbd86GJVQ5EmEJSRUo2ydJLWJ/pxALxiwm4Q/lg7gvnm3Dg7kAdZBYXRFu
+         8+N1ui03mtwpRKfO3CL2bDpO8P3rPgP7siQlMQbjAF1jM4s3KI8fMT5g3AyP+hzl2JH/
+         putFrkkMCTjQswSVfl3ALZucjQSdGjTeCHfh4VHY8xxMoa2y3bTEF/nfT7GENI0CXNb5
+         A8kmtWtVOI9SHE4oXBtycNTSUj6NA0Z4T6ZlOTWTmNMYIOFRKbGBu2dLxdUCz5DE8YMZ
+         KxtQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1750789889; x=1751394689;
+        d=1e100.net; s=20230601; t=1750789920; x=1751394720;
         h=in-reply-to:content-transfer-encoding:content-disposition
          :mime-version:references:message-id:subject:cc:to:from:date
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=GjxEYQ1lbJWp4ECKZKQpz8oozPbUNKZGlrJ6EmAWMmk=;
-        b=KhUCgg4qr10Ibi0JepDPRU3LVxMCzsF9VSeFqiiMsV4GI7QsiCxM+bPP4/bCSIGDYA
-         Kgigc0DRF3rUSH8Q/vcUZLBdSAbWru+mn4UUVyw389GlJGr9ud3KOll0zy5d9X/iTU0l
-         Gy6dadIpHFWbP2SY13D+HS0rDsDBrFBLxNt3X091RJg4foDENSKsXmgKo1WQk44qBoZL
-         sW46oCwfCp/HyM3aHEPygJgtAltcsFkxSFConHlhycVIgjQX39fgSwV5Uf0u/HsjbHZn
-         JT8LZNO0R6aP60ygGqaXCP+QfT1M3DIVcAL+n+9m9pt8ASYPBIuxJ3K9kqgUhS4lJDoY
-         VeHw==
-X-Forwarded-Encrypted: i=1; AJvYcCXEvvkr/BbuSkmuvJm/kLY7cnagD32ZgzI5VyY66Vbg6Ys7rTVJ1lynYCSteUh6OijXtE3cJvvRRZ1OKRI=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw7yLaDG79HFEuVwsZa1RXytjXgY6/A+w48C8IjXPgh/XlaKElo
-	cB5v1jnocxuOt1/PZe5Wq2EJS+x0aS3KozB1GftUi/oQBe9EA/BKwNvHqpJI58CTm+atnrfnLLP
-	knZX/
-X-Gm-Gg: ASbGnctizPJfuCITv4E2tSNqHOvQVmSd1S1kGUvmVqaxhqmpDCpBs/erKbqt4oExPfz
-	N8ojsGHxGB1fHBhvcWNloeUGGCOXSObJDPleJl5y1b3V7ufQhD06dhmaSkaMRpoMtVDUaeV7Dpu
-	FzCqSgjdzNgAY3AU7kF9ULl8W8hGGenPCX1/Tva5JLbuflELwr6StKXuCnHGZFNMeyBmYI5lmpy
-	AP0Kf8yQnRxFsg0n+nuiQvYojaEatVojitvgjw/GcicuoxlgGje82B0Id+AU1+zT6yqvE23VDEv
-	X6FSf37GEVSntqraGVTwNF0WHcVyuAQL2ng8vRkiR+JFuNYLoj+5D974XRnKS4JhDT/Ljg==
-X-Google-Smtp-Source: AGHT+IFwefbh7k0nvQhczietm5nprEfi0G1/PBzQxhLLmXWhfFEBYvdG9Ik5OraSPjQQOjmjLaMTJA==
-X-Received: by 2002:a05:6808:d4e:b0:3f9:76d2:e437 with SMTP id 5614622812f47-40b05bf2641mr317669b6e.20.1750789888699;
-        Tue, 24 Jun 2025 11:31:28 -0700 (PDT)
-Received: from localhost ([2603:8080:b800:f700:22c9:dcd3:f442:dd1d])
-        by smtp.gmail.com with ESMTPSA id 5614622812f47-40ac6c30481sm1893573b6e.17.2025.06.24.11.31.27
+        bh=97KaKUWHgkryLWUXFqPgiNV17vft1ADESM26qVDqmoE=;
+        b=GT4qNGhNY8tBkk05aZM2sgQBIUiSD/Tp6N1yhkDsuTtoRDqCkdPtEdmc9LrSHmLYwZ
+         0KzSa+NxsOH/G2ynwzZWpyy5rDDb7K+gwJNY89yT2O7K7CrQHuzSaBLEb90yDFd/R0IE
+         POJbq+mTg2T5vGzTa10MryZmpYz+lkl/RagUKqjFQyv65ossXtq4+HHvyU/HPjVmUMDD
+         rOCCcg3LMnnmqRoz9qzfBNJZdx6PcQY2/g18QwWxUF4de7ztMcrFSKyxwuS+sQUpBrAw
+         4K44WKVjXqdyXL5Q7z2cV0in7chqQ2FHTANuVvKy1jNoWIWlaWMsp3U+La/WDckYczl7
+         bBPw==
+X-Forwarded-Encrypted: i=1; AJvYcCWT7LlMc7r07Tc2mQgRcZozvcp04jIQubmWKGxGq7b+eE7I4SSab1FjNSu+AwphykNtKjT84vXD7Rfmz9I=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzQnlhxEVAPRHj9G7neaSQh3aQ+Vr3bwjDpRk5FT4Zt7rb+lqOe
+	brqeEdA5dH+dnut8aLr40I2nkg4IjW2A7SmYlnAyBS7Sps397Ws1aIeSYuVsxigPwA4=
+X-Gm-Gg: ASbGncsPWfSV0CGO+x1Hh50GkZ8piPpK3TaK0B7OeKiJQx47dh51PGDu8mhEL7FMuk6
+	MowGQuNNWWK01xU1Q91eROGdrF522djZbsFCmXwMlTT4mmwV1nkcoAjwkBKUtljtEaBW7tVwz2H
+	mjK125KLzVGOXzRzSf4OmCMweWR+P26htKAHTXL2B9oN0bK726nINHkU8ZDLOaEdFhUiQL5wz3l
+	LmpVbeyOupgAQH8n0O7FPhe+AvE84FqgXXbCLmawDj1TrgrXITBMZywBnaZFMnQKt15VnfPyO9k
+	3vAxKD/pBa2f5HV7u/Bup5/8cDzR/NFC+Tas2nWlxptBj0e71KLeIo+2W5oReC5vy+p2gzxERgV
+	nxQiIBvUWKzFWORDJ16KK4LY9wHB+CealeRd13A==
+X-Google-Smtp-Source: AGHT+IG+85yGm34BWTRlYBBLW0w/BlKssPbCsgVI4ZKC/N2owtfICs7gpUhfLe5Godb1E2tNf0/CAQ==
+X-Received: by 2002:a05:6214:1bcd:b0:6fa:bb44:fddf with SMTP id 6a1803df08f44-6fd0a473d36mr275064036d6.16.1750789919997;
+        Tue, 24 Jun 2025 11:31:59 -0700 (PDT)
+Received: from ziepe.ca (hlfxns017vw-142-167-56-70.dhcp-dynamic.fibreop.ns.bellaliant.net. [142.167.56.70])
+        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6fd09577929sm59926056d6.86.2025.06.24.11.31.59
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 24 Jun 2025 11:31:28 -0700 (PDT)
-Date: Tue, 24 Jun 2025 21:31:26 +0300
-From: Dan Carpenter <dan.carpenter@linaro.org>
-To: Abdelrahman Fekry <abdelrahmanfekry375@gmail.com>
-Cc: andy@kernel.org, hdegoede@redhat.com, mchehab@kernel.org,
-	sakari.ailus@linux.intel.com, gregkh@linuxfoundation.org,
-	linux-kernel@vger.kernel.org, linux-media@vger.kernel.org,
-	linux-staging@lists.linux.dev, skhan@linuxfoundation.org,
-	linux-kernel-mentees@lists.linux.dev
-Subject: Re: [PATCH v2] staging: media: atomisp: remove debug sysfs
- attributes active_bo and free_bo
-Message-ID: <5d579b8c-0676-46d8-a020-77ee91e1e7d3@suswa.mountain>
-References: <20250624144943.39297-1-abdelrahmanfekry375@gmail.com>
- <cef03d37-715c-47a8-81d4-0872d505c39b@suswa.mountain>
- <CAGn2d8ML8eTcN2G18B7FYkapROnOeAKJir5fJvOXDdXTLY43aQ@mail.gmail.com>
- <5ce9dac3-0b7a-45d1-8313-2f65165b50e7@suswa.mountain>
- <CAGn2d8N8GrRR0FnaB7S2BsPs0HXHhwHfg+q55HbfkMqy1kMGTw@mail.gmail.com>
+        Tue, 24 Jun 2025 11:31:59 -0700 (PDT)
+Received: from jgg by wakko with local (Exim 4.97)
+	(envelope-from <jgg@ziepe.ca>)
+	id 1uU8R4-00000000hJ0-3C5H;
+	Tue, 24 Jun 2025 15:31:58 -0300
+Date: Tue, 24 Jun 2025 15:31:58 -0300
+From: Jason Gunthorpe <jgg@ziepe.ca>
+To: Pratyush Yadav <pratyush@kernel.org>
+Cc: Pasha Tatashin <pasha.tatashin@soleen.com>,
+	Mike Rapoport <rppt@kernel.org>, jasonmiu@google.com,
+	graf@amazon.com, changyuanl@google.com, dmatlack@google.com,
+	rientjes@google.com, corbet@lwn.net, rdunlap@infradead.org,
+	ilpo.jarvinen@linux.intel.com, kanie@linux.alibaba.com,
+	ojeda@kernel.org, aliceryhl@google.com, masahiroy@kernel.org,
+	akpm@linux-foundation.org, tj@kernel.org, yoann.congal@smile.fr,
+	mmaurer@google.com, roman.gushchin@linux.dev, chenridong@huawei.com,
+	axboe@kernel.dk, mark.rutland@arm.com, jannh@google.com,
+	vincent.guittot@linaro.org, hannes@cmpxchg.org,
+	dan.j.williams@intel.com, david@redhat.com,
+	joel.granados@kernel.org, rostedt@goodmis.org,
+	anna.schumaker@oracle.com, song@kernel.org, zhangguopeng@kylinos.cn,
+	linux@weissschuh.net, linux-kernel@vger.kernel.org,
+	linux-doc@vger.kernel.org, linux-mm@kvack.org,
+	gregkh@linuxfoundation.org, tglx@linutronix.de, mingo@redhat.com,
+	bp@alien8.de, dave.hansen@linux.intel.com, x86@kernel.org,
+	hpa@zytor.com, rafael@kernel.org, dakr@kernel.org,
+	bartosz.golaszewski@linaro.org, cw00.choi@samsung.com,
+	myungjoo.ham@samsung.com, yesanishhere@gmail.com,
+	Jonathan.Cameron@huawei.com, quic_zijuhu@quicinc.com,
+	aleksander.lobakin@intel.com, ira.weiny@intel.com,
+	andriy.shevchenko@linux.intel.com, leon@kernel.org, lukas@wunner.de,
+	bhelgaas@google.com, wagi@kernel.org, djeffery@redhat.com,
+	stuart.w.hayes@gmail.com
+Subject: Re: [RFC v2 05/16] luo: luo_core: integrate with KHO
+Message-ID: <20250624183158.GF72557@ziepe.ca>
+References: <mafs05xgtw5wn.fsf@kernel.org>
+ <CA+CK2bDWAPSmTdnD7vw4G00nPsM8R_Zefs_G+9zvSqTJqPb9Lg@mail.gmail.com>
+ <aFLr7RDKraQk8Gvt@kernel.org>
+ <CA+CK2bAnCRu+k=Q78eA4kcAebxA9NgOorhwRqu-WxC913YBsBw@mail.gmail.com>
+ <CA+CK2bB3P1vX658ErkP4_-L6WZSOCcenEwUdX1qS=poDjs=i+A@mail.gmail.com>
+ <aFP7wwCviqxujKDg@kernel.org>
+ <CA+CK2bDqO4SkUpiFahfUx2MUiE8oae9HmuaghPAnCwaJZpoTwQ@mail.gmail.com>
+ <mafs0ikkqv3ds.fsf@kernel.org>
+ <CA+CK2bCA_ggpvbY+MQPaAHsN7MOzV7D3=MYvfAP4cFwhThJpPw@mail.gmail.com>
+ <mafs0frfpt8yp.fsf@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -97,58 +125,58 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAGn2d8N8GrRR0FnaB7S2BsPs0HXHhwHfg+q55HbfkMqy1kMGTw@mail.gmail.com>
+In-Reply-To: <mafs0frfpt8yp.fsf@kernel.org>
 
-On Tue, Jun 24, 2025 at 08:49:36PM +0300, Abdelrahman Fekry wrote:
-> On Tue, Jun 24, 2025 at 8:32 PM Dan Carpenter <dan.carpenter@linaro.org> wrote:
+On Tue, Jun 24, 2025 at 06:12:14PM +0200, Pratyush Yadav wrote:
+> On Fri, Jun 20 2025, Pasha Tatashin wrote:
+> 
+> > On Fri, Jun 20, 2025 at 11:28 AM Pratyush Yadav <pratyush@kernel.org> wrote:
+> >> On Thu, Jun 19 2025, Pasha Tatashin wrote:
+> [...]
+> >> Outside of hypervisor live update, I have a very clear use case in mind:
+> >> userspace memory handover (on guest side). Say a guest running an
+> >> in-memory cache like memcached with many gigabytes of cache wants to
+> >> reboot. It can just shove the cache into a memfd, give it to LUO, and
+> >> restore it after reboot. Some services that suffer from long reboots are
+> >> looking into using this to reduce downtime. Since it pretty much
+> >> overlaps with the hypervisor work for now, I haven't been talking about
+> >> it as much.
+> >>
+> >> Would you also call this use case "live update"? Does it also fit with
+> >> your vision of where LUO should go?
 > >
-> > On Tue, Jun 24, 2025 at 07:51:10PM +0300, Abdelrahman Fekry wrote:
-> > > On Tue, Jun 24, 2025 at 7:31 PM Dan Carpenter <dan.carpenter@linaro.org> wrote:
-> > > >
-> > > > On Tue, Jun 24, 2025 at 05:49:43PM +0300, Abdelrahman Fekry wrote:
-> > > > >  int hmm_init(void)
-> > > > >  {
-> > > > >       int ret;
-> > > > > @@ -130,14 +48,6 @@ int hmm_init(void)
-> > > > >        */
-> > > > >       dummy_ptr = hmm_alloc(1);
-> > > > >
-> > > > > -     if (!ret) {
-> > > > > -             ret = sysfs_create_group(&atomisp_dev->kobj,
-> > > > > -                                      atomisp_attribute_group);
-> > > > > -             if (ret)
-> > > > > -                     dev_err(atomisp_dev,
-> > > > > -                             "%s Failed to create sysfs\n", __func__);
-> > > > > -     }
-> > > > > -
-> > > > >       return ret;
-> > > >
-> > > >
-> > > > It's really unclear how this "return ret;" is supposed to work.  Was
-> > > > that part of the sysfs_create_group()?
-> > > >
-> > > yes , but still it can be set by hmm_bo_device_init so even after removing
-> > > sysfs_create_group , ret value depends on another function.
-> > >
+> > Yes, absolutely. The use case you described (preserving a memcached
+> > instance via memfd) is a perfect fit for LUO's vision.
 > >
-> > You're in too big of a hurry.  Wait for a day between resending patches.
-> > I have looked at this some more and it turns out that nothing checks the
-> > error code so the "return ret;" doesn't work.  What do you think we
-> > should do?
+> > While the primary use case driving this work is supporting the
+> > preservation of virtual machines on a hypervisor, the framework itself
+> > is not restricted to that scenario. We define "live update" as the
+> > process of updating the kernel from one version to another while
+> > preserving FD-based resources and keeping selected devices
+> > operational. The machine itself can be running storage, database,
+> > networking, containers, or anything else.
 > >
-> sorry , will keep the time issue in mind.
-> regarding the "return ret", its now basically returning the error code of
-> hmm_bo_device_init () inside the function , but outside the function
-> scope like you mentioned, no function call to the hmm_init() checks
-> the error code. Thats what you mean right ?
+> > A good parallel is Kernel Live Patching: we don't distinguish what
+> > workload is running on a machine when applying a security patch; we
+> > simply patch the running kernel. In the same way, Live Update is
+> > designed to be workload-agnostic. Whether the system is running an
+> > in-memory database, containers, or VMs, its primary goal is to enable
+> > a full kernel update while preserving the userspace-requested state.
+> 
+> Okay, then we are on the same page and I can live with whatever name we
+> go with :-)
+> 
+> BTW, I think it would be useful to make this clarification on the LUO
+> docs as well so the intended use case/audience of the API is clear.
+> Currently the doc string in luo_core.c only talks about hypervisors and
+> VMs.
 
-Yes.  Nothing is checking for if hmm_init() fails.  Step through the
-code and verify that nothing crashes or bad happens as a result.
+Just to be clear though - you used the word "reboot" and here we are
+really only talking about kexec. kexec is not really a reboot, but it
+is sort of close.
 
-For example, I think hmm_bo_alloc() will print "hmm_bo_device not inited
-yet." and return.  So that's kind of annoying but it's not a crash.
-Search through the rest of the driver and verify how it will behave.
+LUO is a way to pass lots of different things across a kexec, and if
+you are happy to use kexec then you should be able to use it.
 
-regards,
-dan carpenter
+Jason
 
