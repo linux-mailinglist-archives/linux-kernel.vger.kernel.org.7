@@ -1,145 +1,161 @@
-Return-Path: <linux-kernel+bounces-699643-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-699644-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2BF12AE5D5B
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Jun 2025 09:04:58 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8C610AE5D5F
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Jun 2025 09:05:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D22781B63232
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Jun 2025 07:05:13 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B14C91B6780B
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Jun 2025 07:05:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1B6A624BD0C;
-	Tue, 24 Jun 2025 07:04:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 420242459D5;
+	Tue, 24 Jun 2025 07:04:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="HctFox7l"
-Received: from mail-wr1-f49.google.com (mail-wr1-f49.google.com [209.85.221.49])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="FZSQcD8M"
+Received: from mail-pg1-f174.google.com (mail-pg1-f174.google.com [209.85.215.174])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E4FB220A5D8;
-	Tue, 24 Jun 2025 07:04:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 335CC2376EF
+	for <linux-kernel@vger.kernel.org>; Tue, 24 Jun 2025 07:04:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750748688; cv=none; b=oCI1Dz5bdjO8SstMb9Eu6cjbvObOX9HjOrK1wgQswGDEd6Nc19MVK0RYcr1u2IWbjRNECeeT4iRptfRH+i8lXCXcHHLQyLniqkaTEf4Z7ZTSIRqNVOueJi/IZpQXwZP5NVnRat8SYwHs7OVzR34hIuFoAiBbUFV+LDX0GP5P3Fo=
+	t=1750748697; cv=none; b=YtcDaEKrpuwDJnGi5eJbyZSV35Fm1G/uub7JbUfMZLGOOMoN7Pl6F8Ho1n8WgDS5ecYJ0JRND107HPFGV8b+zjyAUNeexcrCbUdh0dDrghaN4p9ybINBKJtEOpAew+FkmjCWPl6XV4iav+E1rrzQ/Zkc6vNh5XHqiYUqM7qSFf0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750748688; c=relaxed/simple;
-	bh=3L8zVA2ueuJ98h4O9ApjC8lw44r2R1R4pYIOlzcPuI8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ZHZg4Utz5SL4feoCchUMibAo+H1OzoUQqWJezHqISFeMWph16p/od9h4mN7VQ1F8mslVDAn4/Ynee5hvarXHEnvPYoCTlidSJ0PrGzaY27QLbctSXiiYdpc3d06gQ4oO187VI3fxGzw3J/CV2oFQWymqGkpOuAhQMk0H7gevQes=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=HctFox7l; arc=none smtp.client-ip=209.85.221.49
+	s=arc-20240116; t=1750748697; c=relaxed/simple;
+	bh=WQIe86JuUNhj2gkklQzuWuDuGEmfX2qJAnjURmdjQsM=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=AsCdO+zOKZLbbD/WGdlsg2SeqThqxjd+y5L+xC0b/6UTuWTSbGP9aYS0gM2mSnhrw9kH3LbzDx6+ndUhGgnt6kfHVymuZ7QiDFf1GPMpOgEkZsqK8tO+/Ud6C9wG0bWr7u6udG59pKQtOdAqqa8W8IIrlwD2usCIs6+Uyw4qs64=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=FZSQcD8M; arc=none smtp.client-ip=209.85.215.174
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f49.google.com with SMTP id ffacd0b85a97d-3a4fb9c2436so47247f8f.1;
-        Tue, 24 Jun 2025 00:04:46 -0700 (PDT)
+Received: by mail-pg1-f174.google.com with SMTP id 41be03b00d2f7-b34a6d0c9a3so194397a12.3
+        for <linux-kernel@vger.kernel.org>; Tue, 24 Jun 2025 00:04:54 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1750748685; x=1751353485; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=ldoS5jcwhFZyQ+2I13CKfPxsMRdOZ6a+TpT13V19plU=;
-        b=HctFox7lAZajpt3/OKoqmps+BjVWw8vzo3RCTAMlhMhyJvB/lp7uGZQN5q5T6NIWgo
-         E8OS/LaVNcMX1zgInwnqoIk9ZqdoQtWrQA5cobBh0l5VDr1TFVLv0BTwE/pKTqJXVh10
-         +2rN98MOb5QAVuKsUnX3bxxV7DxUjciprFEgYSEAocSfuAdvUMOm0XYEImGSciNgMQ4b
-         YTpXixhoWa941rHp+Kw3N2RJVLZ3VZSHPpZugkDfg9nQOWFedPmLm26TqD0eOO6PAQfI
-         5taiDV66o6A40HLXFYDqANpUVypNMh+sXaFltOsOvT0DRmusM4rdbJNGp86Yte/b9Nz2
-         qaZg==
+        d=gmail.com; s=20230601; t=1750748694; x=1751353494; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=NFaPEwYqVk8swUeuusja02739T2S2QTaLE27xP5T8F4=;
+        b=FZSQcD8ME2w5VKmeooMc/wLzXIF1QaS6AuHZLMZDiRnWh5KyO6AwKYzYFXPpbhRCK7
+         UaPQsClgQxpMhsYfDA+Ejmm1ckKxbatFMR96b8UOopYRz/Y05HVN5IGRyxwgo0In9Jzq
+         jomJwPthW7Ex8VVccEH2Ymhf9J0TqQEazn0IQ43YzSQ+VOs0YgzxeCK4/va0SingnQRD
+         QraRihidsCkXgk5dr6ooTBJxs4dZg13s1+bucBpyVoyohmWwg20uv6SdEEdWboQftnxG
+         krHdh7tQ4kHZbc27706rK7AjZplwUZGzD+xyPbZ2mvbZ0Tm+KA8KRdC8UvSqU7d1Wg4v
+         n7Wg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1750748685; x=1751353485;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=ldoS5jcwhFZyQ+2I13CKfPxsMRdOZ6a+TpT13V19plU=;
-        b=K2PLrfWfzVXQ50uZ+9/zefINNtfuBgDEgBg2vNEfzVlNRK/YQ3x891YmenhugtbpM6
-         7qOw/CQqYvirYxbMoHCmweGO5pXw/OdjPgHRZFb+XUKfWsBA7/CfZWPZ0yRHRXuZXDqQ
-         YZHQa+DV+ct4aowaedcxRj3BzLjgLuybZMANdEL1Ldno+ChEXUAjhzdHENX/nhKu+2pA
-         SQPjAGup8mqqbdCXuxx1aeTcXMtcBAlAQFY/ZCfjj6TvhDFIxxmtKI1cTibOjj5dK5A4
-         wA3ci9ZdSI+6n/b7AeVMxxGl7LntNEPp6uyC7WsBhtlAGC48sVnnmN68hJoVWTE57eAI
-         5Hqg==
-X-Forwarded-Encrypted: i=1; AJvYcCUPoEBo6hhAFcXApUZi2Nhrbi2DMenS3ZYSRQLbHoJTKDfMO9Rs/yxdMCFrN3b9zdO69VEAGUkz3Ye+Mg==@vger.kernel.org, AJvYcCVuYohlBeNIKEpd9Zt080BYtIHqtcufZO3ChN6llBt3RBNgh7egYJfnFz2TId7uwtbz7iYf9EHay1G8cOL+@vger.kernel.org, AJvYcCWg4vKwK9aow3i3NR+RFSc1ZYk5f2oIF0K3vpG0YL5ZpGcxzHQmRiwWpgeiY4P3ER4+PIJgxmzk0h/H@vger.kernel.org
-X-Gm-Message-State: AOJu0Yyxi2ZL0RXDL/MNssb3xUijwMF9sWyqIZQIhvPTvsDwSctPtT4e
-	Fis7jtUsG5OwAcWibyzFnHed7yFKY34yk6mEydw7tZF5GodXVK3tk71T
-X-Gm-Gg: ASbGncuNQoGzDQi+bOWlbWw6tRyMP0TA70ZkOu6gGD83rqE36556G954nRHPpgAVnVh
-	3StkN5pSXlxEnjEbxLIbr06s5MFoudqMTuZPCA97VYq48UALnVdyIZxWi+i7F9yBZY89PWmvyUd
-	A4j3g+uIhqHOdkBFHSiC+J+wWDk1vHz7e9FOUaB3MXSKCYWudbQ9f8xDPMTUJ36Uv3dPhKTyqvP
-	XV9bMY/J6hDhsfEzRF36WODroQdk0buyAM2Q2yMKZ8rFEqBglhGoPFeA5jxqYwaYL1jFUmleQea
-	puY/X9StAiyj0rIXJRdi7mzzMkBaDHpOHwf+XQh3l+SNcwTFBbFG3ZxvHO4=
-X-Google-Smtp-Source: AGHT+IFLnIIvnfFaira7QlQiLZpMYoYe8pvFntKV59gZwf40Yu7Kvn30zOxxdw3g68qAAQQUPUQLCg==
-X-Received: by 2002:a05:6000:4284:b0:3a5:2f23:376f with SMTP id ffacd0b85a97d-3a6d129de4cmr13306333f8f.13.1750748684895;
-        Tue, 24 Jun 2025 00:04:44 -0700 (PDT)
-Received: from legfed1 ([2a00:79c0:6bf:b400:47ca:3373:65d:a678])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3a6e805d21fsm1131162f8f.23.2025.06.24.00.04.44
+        d=1e100.net; s=20230601; t=1750748694; x=1751353494;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=NFaPEwYqVk8swUeuusja02739T2S2QTaLE27xP5T8F4=;
+        b=f54arSMtMu1dIYLVTrtvZ0G3T/pVO4HIFFS2wawhT4ECl7JiX27bttBS41H8ugRQ3i
+         WAA0IWwSbQNvS1WK/n96ugqDqsPEnzq8aVSNpoqvbL95GMbDgT79+zl9iugaImsNDOoO
+         IZHHcrZZ+Dg3PBWVsikofPMEDpmzjmSXlzDYTLOo1y9yu3d0RmmqO/46Wu44LelwNaqv
+         vbhxbSvfXiucVx+q+JcyP3ZDSz7kA4f2nSSeiWkiUXy1bVkd1n4sTBOf6Zc+foIqOyWL
+         zWWYOMkgDkpqH5OdVNzCHj6mcfYEuNo+c7Q4v4kY5GOdJJtMdDjRotxO0zRv4Y5gOGOj
+         MeXQ==
+X-Gm-Message-State: AOJu0YxCbRk2JWdfCTUtLvcvKBWuOu5Ahj4YAhUiYjsMqiYe4IKT517x
+	nKQqmEem2A3+M2Y0+/ehw5/mcppH3CCEWRJsfQtBm9cF9+YcP6XZNjLy
+X-Gm-Gg: ASbGncuwilWzWsbtPhm1iirLL19mXjHAsgz7TdMZ1dSofjbOcX2JzpRqcqG+HVjSWPD
+	p95lguX+fMMiVh5/p1DKz1capIZPnFjeP9R1gAwxP1+jMuT4IiV37g03PuMCP/MRq5tEZA0yIX5
+	Nz6NIP/C8Ot9TFAqsYaKeJ+A/pU0s38BWry8Zd45nmr04a0XosMDnt5ku7KCrKm4vatfSVVXEdg
+	n9Vo2HcJ00EkbuhlZ1D+evixdkCuMvAYiicxth1y+kyFnTWn2GI1m3y1yt6Nmqws3f61XQ9JIy/
+	plQG56wk7YcUQQ0gdVZIv1iGpFpMc6QuCHYm8Ew2y7fGimVJKPhvH8enVntjvlsb6lsIZgVpHCn
+	mmGoI
+X-Google-Smtp-Source: AGHT+IEhlwIsSspUcRAJkdSSVmCisgdMIL1hyOAtY/muUDQ/EBJGGCf1AuTRLdemhb2h+4QRgwCiMA==
+X-Received: by 2002:a17:90b:3cc5:b0:312:959:dc4d with SMTP id 98e67ed59e1d1-3159d6260efmr25628648a91.7.1750748694011;
+        Tue, 24 Jun 2025 00:04:54 -0700 (PDT)
+Received: from seokw-960QHA.lan ([210.100.209.148])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-3159e06acfesm10479145a91.36.2025.06.24.00.04.51
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 24 Jun 2025 00:04:44 -0700 (PDT)
-Date: Tue, 24 Jun 2025 09:04:42 +0200
-From: Dimitri Fedrau <dima.fedrau@gmail.com>
-To: Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <ukleinek@kernel.org>
-Cc: dimitri.fedrau@liebherr.com, Jean Delvare <jdelvare@suse.com>,
-	Guenter Roeck <linux@roeck-us.net>, linux-pwm@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-hwmon@vger.kernel.org
-Subject: Re: [PATCH v3] pwm: mc33xs2410: add support for temperature sensors
-Message-ID: <20250624070442.GA3383@legfed1>
-References: <20250619-mc33xs2410-hwmon-v3-1-301731e49f8f@liebherr.com>
- <cviovwci5fgtyina7p7zqjns7cwveivy3vetqhhagwmrlc2gm2@jrqgorif7xff>
+        Tue, 24 Jun 2025 00:04:53 -0700 (PDT)
+From: Ryan Chung <seokwoo.chung130@gmail.com>
+To: jgross@suse.com,
+	sstabellini@kernel.org,
+	oleksandr_tyshchenko@epam.com
+Cc: linux-kernel@vger.kernel.org,
+	linux-kernel-mentees@lists.linux.dev,
+	Ryan Chung <seokwoo.chung130@gmail.com>
+Subject: [PATCH v2] xen-pciback: Replace scnprintf() with sysfs_emit_at()
+Date: Tue, 24 Jun 2025 16:04:42 +0900
+Message-ID: <20250624070443.11740-1-seokwoo.chung130@gmail.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <cviovwci5fgtyina7p7zqjns7cwveivy3vetqhhagwmrlc2gm2@jrqgorif7xff>
 
-Hi Uwe,
+This change uses sysfs_emit() API usage for sysfs 'show'
+functions as recommended from Documentation/filesystems/sysfs.rst.
 
-Am Mon, Jun 23, 2025 at 11:07:24AM +0200 schrieb Uwe Kleine-König:
-> hello Dimitri,
-> 
-> On Thu, Jun 19, 2025 at 07:32:42PM +0200, Dimitri Fedrau via B4 Relay wrote:
-> > @@ -29,6 +30,8 @@
-> >  
-> >  #include <linux/spi/spi.h>
-> >  
-> > +/* ctrl registers */
-> > +
-> >  #define MC33XS2410_GLB_CTRL			0x00
-> >  #define MC33XS2410_GLB_CTRL_MODE		GENMASK(7, 6)
-> >  #define MC33XS2410_GLB_CTRL_MODE_NORMAL		FIELD_PREP(MC33XS2410_GLB_CTRL_MODE, 1)
-> > @@ -51,6 +54,21 @@
-> >  
-> >  #define MC33XS2410_WDT				0x14
-> >  
-> > +#define MC33XS2410_TEMP_WT			0x29
-> > +#define MC33XS2410_TEMP_WT_MASK			GENMASK(7, 0)
-> > +
-> > +/* diag registers */
-> > +
-> > +/* chan in { 1 ... 4 } */
-> > +#define MC33XS2410_OUT_STA(chan)		(0x02 + (chan) - 1)
-> > +#define MC33XS2410_OUT_STA_OTW			BIT(8)
-> > +
-> > +#define MC33XS2410_TS_TEMP_DIE			0x26
-> > +#define MC33XS2410_TS_TEMP_MASK			GENMASK(9, 0)
-> 
-> Keep the registers in address order please
-> 
-Aren't they ? There are "ctrl" and "diag" registers and I didn't mix up
-adresses. There is a comment for each of them when defines start.
+No functional change intended.
+Signed-off-by: Ryan Chung <seokwoo.chung130@gmail.com>
+---
+ drivers/xen/xen-pciback/pci_stub.c | 12 ++++++------
+ 1 file changed, 6 insertions(+), 6 deletions(-)
 
-> > +/* chan in { 1 ... 4 } */
-> > +#define MC33XS2410_TS_TEMP(chan)		(0x2f + (chan) - 1)
-> 
-> I wonder if it would be cleaner if this was abstracted using mfd. Then
-> the hwmon driver could live in drivers/hwmon
-> 
-I will have a look into auxiliary devices as Guenter proposed in a
-following mail.
+diff --git a/drivers/xen/xen-pciback/pci_stub.c b/drivers/xen/xen-pciback/pci_stub.c
+index 5c2f829d5b0b..045e74847fe6 100644
+--- a/drivers/xen/xen-pciback/pci_stub.c
++++ b/drivers/xen/xen-pciback/pci_stub.c
+@@ -1261,7 +1261,7 @@ static ssize_t slots_show(struct device_driver *drv, char *buf)
+ 		if (count >= PAGE_SIZE)
+ 			break;
+ 
+-		count += scnprintf(buf + count, PAGE_SIZE - count,
++		count += sysfs_emit_at(buf, count,
+ 				   "%04x:%02x:%02x.%d\n",
+ 				   pci_dev_id->domain, pci_dev_id->bus,
+ 				   PCI_SLOT(pci_dev_id->devfn),
+@@ -1290,7 +1290,7 @@ static ssize_t irq_handlers_show(struct device_driver *drv, char *buf)
+ 		if (!dev_data)
+ 			continue;
+ 		count +=
+-		    scnprintf(buf + count, PAGE_SIZE - count,
++		    sysfs_emit_at(buf, count,
+ 			      "%s:%s:%sing:%ld\n",
+ 			      pci_name(psdev->dev),
+ 			      dev_data->isr_on ? "on" : "off",
+@@ -1375,7 +1375,7 @@ static ssize_t quirks_show(struct device_driver *drv, char *buf)
+ 		if (count >= PAGE_SIZE)
+ 			goto out;
+ 
+-		count += scnprintf(buf + count, PAGE_SIZE - count,
++		count += sysfs_emit_at(buf, count,
+ 				   "%02x:%02x.%01x\n\t%04x:%04x:%04x:%04x\n",
+ 				   quirk->pdev->bus->number,
+ 				   PCI_SLOT(quirk->pdev->devfn),
+@@ -1391,7 +1391,7 @@ static ssize_t quirks_show(struct device_driver *drv, char *buf)
+ 			if (count >= PAGE_SIZE)
+ 				goto out;
+ 
+-			count += scnprintf(buf + count, PAGE_SIZE - count,
++			count += sysfs_emit_at(buf, count,
+ 					   "\t\t%08x:%01x:%08x\n",
+ 					   cfg_entry->base_offset +
+ 					   field->offset, field->size,
+@@ -1462,7 +1462,7 @@ static ssize_t permissive_show(struct device_driver *drv, char *buf)
+ 		if (!dev_data || !dev_data->permissive)
+ 			continue;
+ 		count +=
+-		    scnprintf(buf + count, PAGE_SIZE - count, "%s\n",
++		    sysfs_emit_at(buf, count, "%s\n",
+ 			      pci_name(psdev->dev));
+ 	}
+ 	spin_unlock_irqrestore(&pcistub_devices_lock, flags);
+@@ -1521,7 +1521,7 @@ static ssize_t allow_interrupt_control_show(struct device_driver *drv,
+ 		if (!dev_data || !dev_data->allow_interrupt_control)
+ 			continue;
+ 		count +=
+-		    scnprintf(buf + count, PAGE_SIZE - count, "%s\n",
++		    sysfs_emit_at(buf, count, "%s\n",
+ 			      pci_name(psdev->dev));
+ 	}
+ 	spin_unlock_irqrestore(&pcistub_devices_lock, flags);
+-- 
+2.43.0
 
-> Liebe Grüße
-> Uwe
-
-Viele Grüße
-Dimitri
 
