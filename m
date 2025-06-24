@@ -1,179 +1,112 @@
-Return-Path: <linux-kernel+bounces-699699-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-699701-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id EBFDDAE5E19
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Jun 2025 09:39:46 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 76685AE5E24
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Jun 2025 09:41:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 973D21B6342D
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Jun 2025 07:39:57 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C11BE405195
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Jun 2025 07:39:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3279925486D;
-	Tue, 24 Jun 2025 07:38:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="hMzm0yjT"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.18])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7D7BD2571C8;
+	Tue, 24 Jun 2025 07:38:30 +0000 (UTC)
+Received: from mail-il1-f198.google.com (mail-il1-f198.google.com [209.85.166.198])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 03EDFBA49;
-	Tue, 24 Jun 2025 07:38:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6822B256C60
+	for <linux-kernel@vger.kernel.org>; Tue, 24 Jun 2025 07:38:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.198
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750750686; cv=none; b=Spj4QMrtq++RUmGkFNKg2TFIKOmcjRdZfxhWANWGMK0UQA2Lsr9B6EOvPL7iKebf3GIbmMDn1EDx84U5skxG+7tLEiCH0EtA4nidWQ9z0N5rdRBuVXhQorSw1vDBRE0BPTtDQb5TRTIElSeDOVz5aeXBVF/UFwv1jbXFt9tWpzs=
+	t=1750750710; cv=none; b=rgPh7XeKqsEB6ZU5VFxG2zLH68liKz16Fm1Qnr5tJCIJOLYDxaTwIjhM51K8+xj/ptkf+DFjCexXN7dHnb4nmZj+/Crbb9kVZKaR3sp63ofVfn4Ye4IWCK05FEOlWGJwAKqcUjdcF0jc5y+304er9h4SyfEIaw2PK1sRHjiPZ6k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750750686; c=relaxed/simple;
-	bh=uof2a1fOq6wtjDzq0MgfyjYAft9RO4Q0fa0qJ5Rtd0w=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Rev9r1KxcphGQlqxZEnaACptxl3oCZ/KZUAB4lP0liFuTJDbwGMbwW9BGmDWFEC2nYxSMFCV+1vG2kP2vGWG0oGeIgRqnrQ0HfTaBF8iRniSLmHU4IqOC6ILAlQocn9sdV2O2lP/iQIDhj2ddALow2Vd50qtvC0Snngd6BkFeus=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=hMzm0yjT; arc=none smtp.client-ip=198.175.65.18
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1750750686; x=1782286686;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:content-transfer-encoding:in-reply-to;
-  bh=uof2a1fOq6wtjDzq0MgfyjYAft9RO4Q0fa0qJ5Rtd0w=;
-  b=hMzm0yjTVdGapuaoniRpsYttHdiB/5x22BDrFYb8WPWH1Hu/Ge2IhmTV
-   BSTRKIZ6xG7wgZaOgjax8urpFFCDir1Eq2FD/rZ1tr2qdBnd0u9KYw7UU
-   n0j7OCOEWcfb7iN4vv4NSiKhiJS6dd4fTQxe3KvbM8g6tID0C3MMZyioa
-   pUJREpjCC7xFk85em1ppSv4TDblLpFghZjnOb888RvxXoaxomhEirySVd
-   GVNIydcPuUw0wAWa6twuQY7VuCpgyqUQW86tEDliU4IRrT2TUgy27ss4Q
-   fwqrS6UrTKTsDEDLHGDYPsxDB9ME1sM7IzNxHJT7UqZS8Cl17sKwTnxIL
-   Q==;
-X-CSE-ConnectionGUID: n+E+XNj5SouaNgkv0TfUvw==
-X-CSE-MsgGUID: MEp1R7eUQqGx16IsFKAHiQ==
-X-IronPort-AV: E=McAfee;i="6800,10657,11473"; a="53113829"
-X-IronPort-AV: E=Sophos;i="6.16,261,1744095600"; 
-   d="scan'208";a="53113829"
-Received: from orviesa010.jf.intel.com ([10.64.159.150])
-  by orvoesa110.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 24 Jun 2025 00:38:04 -0700
-X-CSE-ConnectionGUID: I4AEmWPZTQOezcDp0Bivtw==
-X-CSE-MsgGUID: sCeZHKSiSDKdqPSQ2Kmk/w==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.16,261,1744095600"; 
-   d="scan'208";a="151259282"
-Received: from smile.fi.intel.com ([10.237.72.52])
-  by orviesa010.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 24 Jun 2025 00:38:01 -0700
-Received: from andy by smile.fi.intel.com with local (Exim 4.98.2)
-	(envelope-from <andriy.shevchenko@intel.com>)
-	id 1uTyE9-00000009PJ1-1PuQ;
-	Tue, 24 Jun 2025 10:37:57 +0300
-Date: Tue, 24 Jun 2025 10:37:57 +0300
-From: Andy Shevchenko <andriy.shevchenko@intel.com>
-To: Lothar Rubusch <l.rubusch@gmail.com>
-Cc: lars@metafoo.de, Michael.Hennerich@analog.com, jic23@kernel.org,
-	dlechner@baylibre.com, nuno.sa@analog.com, andy@kernel.org,
-	corbet@lwn.net, linux-iio@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org,
-	eraretuya@gmail.com
-Subject: Re: [PATCH v10 6/7] iio: accel: adxl345: extend inactivity time for
- less than 1s
-Message-ID: <aFpV1f1qapCQunVO@smile.fi.intel.com>
-References: <20250622155010.164451-1-l.rubusch@gmail.com>
- <20250622155010.164451-7-l.rubusch@gmail.com>
- <aFkpv0CUkateel8q@smile.fi.intel.com>
- <CAFXKEHb9Fbd_UOF90EumEtns82VPhYBrLZ=JtmhVJ4pJsT=q-g@mail.gmail.com>
+	s=arc-20240116; t=1750750710; c=relaxed/simple;
+	bh=QRt2kMUKKo3WovmnyygE/uZNFYNYksTMY81fyx21Aw8=;
+	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=QBFdwBlxOM+8S0+Jx0rr3MGG8HFAV34eZuIu/v93cDFOZhPhqY1EpvJC8QqZofJL15nmtUqXbOtwfYuAjf/UV0qHEZBJj30gf53pQEiLqzKVNvb9QnYMtX40NzpVNbhp+B47t8KCplhVcJGMdiuf7qVkrls2uR2T4zMaAa/3n6s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.198
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f198.google.com with SMTP id e9e14a558f8ab-3ddd5311fd3so61918155ab.3
+        for <linux-kernel@vger.kernel.org>; Tue, 24 Jun 2025 00:38:28 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1750750707; x=1751355507;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=Y963xLNbVywdgMorz82t4MiEiMYWjkE7nnRGkYos37s=;
+        b=tDYgPnf+1jLZMu6Wx3eiBm99WF0rYUXwAp281xRg7G8lihftHOS0cE7jLKmjuU/ojO
+         hDu36miBKn8Ej7zTy2igNU3KXJEBDkuDOB+VFuf9UOR5IMitN8j4u4uiKofNbzRMWCPG
+         V6Ref8cvk0O8y6QzpeSIdrLniddfh4Ita28zQ98DfcmRc2yZk4tO5NAcths6UhQ1G2eR
+         3GLXVn2vB8d37It3ofdRJ9oOogAQC1mmLhLoFbfpaPhCWhMUM+UeVAYQBXDWBLYwmXhE
+         1WWL+0VRKlLf9hMlrHM99LiAX/PHFssnXNo8KSuBHL9YU+z3+A9YikgrxGrGhbURe2XD
+         WeoA==
+X-Forwarded-Encrypted: i=1; AJvYcCVnCRnGCWK5gTJjamo4Ggm70FGHreNyGAbscXxRqnMrN0Gb3Je9eoNmQQ4PzS0ubAYZ34O4rZJOz1PWvmI=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxlYkDelVyB/wtHlYlImtVOpEUxIVH4mavUgLD33nuTZYP+W8hq
+	dsmMKIR2eWMm+1Q7ZyNILkxoPAFfZzsrA0tp5gEIa75n6g9cKrKdy0Rhwh+mAkIiO5HvkK/+L4g
+	pLko30F3SqeF8mNCtLc8DCwKgtR4m19vsAA19+Exntqzx0cCEKXA9S8lnQh4=
+X-Google-Smtp-Source: AGHT+IFqVTw4FTRwv+Ci/OXlWPaTpzBgQqZk9sx3Vol1TK7v62itBtYlol9Bs9jwjEFkDZ30bXyDEkrrdBWH8FGmGeM5S6bMM7ug
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAFXKEHb9Fbd_UOF90EumEtns82VPhYBrLZ=JtmhVJ4pJsT=q-g@mail.gmail.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - c/o Alberga Business Park, 6
- krs, Bertel Jungin Aukio 5, 02600 Espoo
+X-Received: by 2002:a05:6e02:1646:b0:3db:86fc:d328 with SMTP id
+ e9e14a558f8ab-3de38c2e1c2mr179727175ab.5.1750750707609; Tue, 24 Jun 2025
+ 00:38:27 -0700 (PDT)
+Date: Tue, 24 Jun 2025 00:38:27 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <685a55f3.050a0220.2303ee.0006.GAE@google.com>
+Subject: [syzbot] Monthly ntfs3 report (Jun 2025)
+From: syzbot <syzbot+list32a9ebc8ed81539e58eb@syzkaller.appspotmail.com>
+To: almaz.alexandrovich@paragon-software.com, linux-kernel@vger.kernel.org, 
+	ntfs3@lists.linux.dev, syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-On Mon, Jun 23, 2025 at 11:21:01PM +0200, Lothar Rubusch wrote:
-> On Mon, Jun 23, 2025 at 12:17 PM Andy Shevchenko
-> <andriy.shevchenko@intel.com> wrote:
-> > On Sun, Jun 22, 2025 at 03:50:09PM +0000, Lothar Rubusch wrote:
+Hello ntfs3 maintainers/developers,
 
-...
+This is a 31-day syzbot report for the ntfs3 subsystem.
+All related reports/information can be found at:
+https://syzkaller.appspot.com/upstream/s/ntfs3
 
-> > > -static int adxl345_set_inact_time(struct adxl345_state *st, u32 val_s)
-> > > +static int adxl345_set_inact_time(struct adxl345_state *st, u32 val_int,
-> > > +                               u32 val_fract)
-> > >  {
-> > >       int max_boundary = U8_MAX;
-> > >       int min_boundary = 10;
-> > > -     unsigned int val = min(val_s, U8_MAX);
-> > > +     unsigned int val;
-> >
-> > You see, I even suggested splitting this assignment to begin with.
-> > The change will be clearer with that done.
-> >
-> > >       enum adxl345_odr odr;
-> > >       unsigned int regval;
-> > >       int ret;
-> > >
-> > > -     if (val == 0) {
-> > > +     if (val_int == 0 && val_fract == 0) {
-> 
-> The case for 0sec, 0.0 or setting "0" and fract will consequently be
-> "0". 0 is an invalid input for this period and sensor, so it will
-> default to an optimized period based on given ODR.
-> 
-> > > +             /* Generated inactivity time based on ODR */
-> > >               ret = regmap_read(st->regmap, ADXL345_REG_BW_RATE, &regval);
-> > >               if (ret)
-> > >                       return ret;
-> >
-> > >               odr = FIELD_GET(ADXL345_BW_RATE_MSK, regval);
-> > >               val = clamp(max_boundary - adxl345_odr_tbl[odr][0],
-> > >                           min_boundary, max_boundary);
-> > > +             st->inact_time_ms = MILLI * val;
-> > > +
-> > > +             /* Inactivity time in s */
-> > > +             return regmap_write(st->regmap, ADXL345_REG_TIME_INACT, val);
-> > > +     } else if (val_int == 0 && val_fract > 0) {
-> >
-> > val_fract check is not needed here.
-> 
-> Case for e.g. 0.123, numbers under 1s. This goes into the free-fall register.
+During the period, 3 new issues were detected and 0 were fixed.
+In total, 39 issues are still open and 65 have already been fixed.
 
-0.0 is already checked above, and since the val_fract is unsigned this is check
-is redundant.
+Some of the still happening issues:
 
-> > > +             /* time < 1s, free-fall */
-> > > +
-> > > +             /*
-> > > +              * Datasheet max. value is 255 * 5000 us = 1.275000 seconds.
-> > > +              *
-> > > +              * Recommended values between 100ms and 350ms (0x14 to 0x46)
-> > > +              */
-> > > +             st->inact_time_ms = DIV_ROUND_UP(val_fract, MILLI);
-> > > +
-> > > +             return regmap_write(st->regmap, ADXL345_REG_TIME_FF,
-> > > +                                 DIV_ROUND_CLOSEST(val_fract, 5));
-> > > +     } else if (val_int > 0) {
-> >
-> > if now is redundant here, right?
-> 
-> So, this will be 1s through 255s. Periods above 1sec. This goes into
-> the inactivity register.
+Ref  Crashes Repro Title
+<1>  20874   Yes   kernel BUG in dnotify_free_mark
+                   https://syzkaller.appspot.com/bug?extid=06cc05ddc896f12b7ec5
+<2>  14296   Yes   KMSAN: uninit-value in longest_match_std (2)
+                   https://syzkaller.appspot.com/bug?extid=08d8956768c96a2c52cf
+<3>  5925    Yes   possible deadlock in run_unpack_ex
+                   https://syzkaller.appspot.com/bug?extid=731b27ee9413ba859499
+<4>  5556    Yes   possible deadlock in ntfs_read_folio
+                   https://syzkaller.appspot.com/bug?extid=8ef76b0b1f86c382ad37
+<5>  4757    Yes   KASAN: out-of-bounds Write in end_buffer_read_sync
+                   https://syzkaller.appspot.com/bug?extid=3f7f291a3d327486073c
+<6>  4422    Yes   possible deadlock in ntfs_fiemap
+                   https://syzkaller.appspot.com/bug?extid=96cee7d33ca3f87eee86
+<7>  3268    Yes   possible deadlock in ntfs_file_mmap
+                   https://syzkaller.appspot.com/bug?extid=c1751b6739d83d70bb75
+<8>  2667    Yes   possible deadlock in mark_as_free_ex (2)
+                   https://syzkaller.appspot.com/bug?extid=8df514c431bd240c5644
+<9>  2331    Yes   possible deadlock in ntfs_look_for_free_space
+                   https://syzkaller.appspot.com/bug?extid=d27edf9f96ae85939222
+<10> 2329    Yes   possible deadlock in attr_data_get_block (2)
+                   https://syzkaller.appspot.com/bug?extid=262a71e9d2faf8747085
 
-See above,
+---
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
 
-> > > +             /* Time >= 1s, inactivity */
-> > > +             st->inact_time_ms = MILLI * val_int;
-> > > +
-> > > +             return regmap_write(st->regmap, ADXL345_REG_TIME_INACT, val_int);
-> > >       }
-> > >
-> > > -     return regmap_write(st->regmap, ADXL345_REG_TIME_INACT, val);
-> > > +     /* Do not support negative or wrong input. */
-> > > +     return -EINVAL;
-> > >  }
+To disable reminders for individual bugs, reply with the following command:
+#syz set <Ref> no-reminders
 
--- 
-With Best Regards,
-Andy Shevchenko
+To change bug's subsystems, reply with:
+#syz set <Ref> subsystems: new-subsystem
 
-
+You may send multiple commands in a single email message.
 
