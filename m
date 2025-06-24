@@ -1,113 +1,97 @@
-Return-Path: <linux-kernel+bounces-700378-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-700369-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7ED54AE67B8
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Jun 2025 16:04:28 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 92B3BAE679B
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Jun 2025 15:59:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B04C11628D2
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Jun 2025 14:02:39 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 432DA3AB184
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Jun 2025 13:59:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6E8632C3268;
-	Tue, 24 Jun 2025 14:02:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6BE182D193B;
+	Tue, 24 Jun 2025 13:56:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b="Y8h1iAiG"
-Received: from out203-205-221-242.mail.qq.com (out203-205-221-242.mail.qq.com [203.205.221.242])
+	dkim=pass (2048-bit key) header.d=listout.xyz header.i=@listout.xyz header.b="SZPiNZwm"
+Received: from mout-p-202.mailbox.org (mout-p-202.mailbox.org [80.241.56.172])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8438D2C158B
-	for <linux-kernel@vger.kernel.org>; Tue, 24 Jun 2025 14:02:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.205.221.242
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AEE9028ECE0;
+	Tue, 24 Jun 2025 13:56:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750773754; cv=none; b=gaZmDJhJY6tZpLp2T7aAPc5Gw1OKVFUwL/f/Sn4u9LGqBog75G7r12hbJTii+uZx4wpGw+uL4V+whJBjFa1+832R5LIbol5PFwklVVCXj/Z5tZ0oFGJQX7NFF857b7V2kXMRuB3COBNcrjWjr+Jlcxj9ezkEdVL1689O1GpCVRo=
+	t=1750773404; cv=none; b=ScNKj7WWzpPjUT4/qClrAnWGqiHkTmN7mCM/JuPBXxXuZN6FYDR5rqS557WKkRxTvBQL9TrP5SZ2XcxoQDZDH4gfvRbbwVw1676jsDhmC6Nk3SfCkkU6uf3JqChcLo3D++tOaj4YDeqqNiJEOHzNLXwV92dgBZm45XaYcBbk/DI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750773754; c=relaxed/simple;
-	bh=F81MkQGwFJzCnvHxH0OXEMF+pgVliNXtH0SLmFjk75c=;
-	h=Message-ID:From:To:Cc:Subject:Date:In-Reply-To:References:
-	 MIME-Version; b=K/B+ge2ETsCBxwqnKey2QxC08zzODuh+ANKaofPi+Xyq2ByDlUMkfRkXikv7nuJOtEkMKcni8nH6buK0qLbHe3kbXVVPfjXKiJsaG8BP36TYAHaYyrI8K/MxdxFaVFn04xnTaAko2UQTp5NsqIOCBoVzgPC8x+jtaQavgFksFhE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com; spf=pass smtp.mailfrom=qq.com; dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b=Y8h1iAiG; arc=none smtp.client-ip=203.205.221.242
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=qq.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qq.com; s=s201512;
-	t=1750773741; bh=t60h/E1hMd521+buKWx/qNzgsjnZi8H0bTEIedjzT0Q=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References;
-	b=Y8h1iAiGLH6BrDLiAhcw/omLO+z6CzN+WZU0m6SDYAOoJKNje07sv+lkvBHglm8/b
-	 gijFpofGG3MQKX5N4T7ueGCZzgUmo3lu0jfMYbGATfoZ57QBNe78j9CNqTAZHKBQ8d
-	 mjJ2mSyU0ygxk/rfn0qwuVSwSGvt5ZR1GTrQnLTc=
-Received: from pek-lxu-l1.corp.ad.wrs.com ([111.198.228.63])
-	by newxmesmtplogicsvrsza36-0.qq.com (NewEsmtp) with SMTP
-	id E0BB2C8C; Tue, 24 Jun 2025 21:56:11 +0800
-X-QQ-mid: xmsmtpt1750773371tnfh3idsj
-Message-ID: <tencent_86C09604E922EC06CE1479EA6C582EC56C0A@qq.com>
-X-QQ-XMAILINFO: NQR8mRxMnur93WNAedUAiGvMbVKd9ddk0WL+cXr91gLps5VvHIHXyL8b9iu4PM
-	 Jvp7hUj/62Rleh9ZbvhkdYMTDjZnaJ0p33neXFXYTMnoPTXdx6UfXV7Hg6qEWvvMNOe4AmKLOp0q
-	 XwwTfHDnKl9p2w7V2LkXl0XPia7LDE/0nFOrPPQUIulCFghNM4ZCAm9R6XgmslCjg864NeV7ybgO
-	 8HWR4ld0DTy+V36yvdqcyEPDLoR5XtQaYI9f6phza6o+OG/i4/pNSKbbwDknWqoAAOKHRnwgm/lK
-	 TXWB5lacjjEsTtuTDu3j+1DMNhv+pWLLDhG4+6pex0gi9sndJnjliO/iyW1Ix9YtWWKh44t9i770
-	 V7Xw8j9NX0pBIdhPAPz0F8RNMLhN9oJeHcUbyGO/apphViixji2jLonlgDctVdvt8QYPZZKsMgWU
-	 lFGBp/BaLzpaljDFmINXFkzapqW4YZj5MfnJZQP5C3GvyQtbFzt46D4CWzfrGwk1W9dgNv8+kvUi
-	 oSO7eR78tRjpbiTFdjKBxCzYTuDxO2pBRuVaZRWH5nHeKGXD+4uDD3nWqFw0rD1xgHZstxTRWLxZ
-	 Q8MlhU093+WSuP8FQbxtxnVw5uKblAcgdSh53OmGBprply6nqdCmgnH73Ch5ObpkXSBaSH4ihsy7
-	 ourTExfnHszXNdknQuBb/yydiF2Fe1MFO6OHGK+5YuoGGuOBiGWXM+lAegE0l8zQnUftE4DxPtzf
-	 R4F0ypglCRfFuA2HFEZ5FZCIwwHn7iZZVgGpPK/PFFHUS/h4+LFeGT38lxP900SQw/02CjR9I5E5
-	 tsjil+xCUke4v8hW4/lTqRJeD/SiNv/0bPxRCoUtBEeUTs/50yjc2CKn1HpBm6f4+lByyiRxJQYp
-	 NHGhhd0WWntPLx55Waht26RoFKjP4blY1XBuYEffaP0SEfCpGDUCPAVXVNdoDs/p5ebHsLXHLx
-X-QQ-XMRINFO: MSVp+SPm3vtS1Vd6Y4Mggwc=
-From: Edward Adam Davis <eadavis@qq.com>
-To: syzbot+fa90fcaa28f5cd4b1fc1@syzkaller.appspotmail.com
-Cc: linux-kernel@vger.kernel.org,
-	syzkaller-bugs@googlegroups.com
-Subject: Re: [syzbot] [btrfs?] possible deadlock in btrfs_read_chunk_tree
-Date: Tue, 24 Jun 2025 21:56:11 +0800
-X-OQ-MSGID: <20250624135610.295300-2-eadavis@qq.com>
-X-Mailer: git-send-email 2.49.0
-In-Reply-To: <685aa401.050a0220.2303ee.0009.GAE@google.com>
-References: <685aa401.050a0220.2303ee.0009.GAE@google.com>
+	s=arc-20240116; t=1750773404; c=relaxed/simple;
+	bh=B6gCqFX0DYfSOHCLouznUndba41nDMKlKq4BB0mKOwY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=sFwqbmC+AQa4M+RzsOKtElHMVNzGWuJvj+u8EqFBKagVg9rTZCl057ClrAMARAUzpw6Y3Oc7rO3chJY/kij2M8UorIYjHM9Fz6Q4tm6sjyWr9l9Qw4fJ3snqPKWhAxmAXRw01jxcG9r/UBj1srTCog7em2hYtevVbcjMhSqtb40=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=listout.xyz; spf=pass smtp.mailfrom=listout.xyz; dkim=pass (2048-bit key) header.d=listout.xyz header.i=@listout.xyz header.b=SZPiNZwm; arc=none smtp.client-ip=80.241.56.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=listout.xyz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=listout.xyz
+Received: from smtp1.mailbox.org (smtp1.mailbox.org [10.196.197.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mout-p-202.mailbox.org (Postfix) with ESMTPS id 4bRRM50VM5z9t6q;
+	Tue, 24 Jun 2025 15:56:33 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=listout.xyz; s=MBO0001;
+	t=1750773393;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=uDKHq09riz26MRUGKyYOF6elIgy9JDdvB3gqrf3U0Ss=;
+	b=SZPiNZwmqPmL7WaX11SLgBmO0PsneQyb/e1xMaC4yJgg25CuVXeBUZKIhTvKVcwSmwigw1
+	XZcWWPrMxRLOaPE33QSchaTFll+vCc5Gd3AgrR3cUNZ8FaKEXIzhX/H/ACUy5APxNUkYUT
+	PISTECqIMt/gE9fwJo4dTNPdGLZK0e928dRkkxioQQUvkd4Vfm46PtlsElG0hizDT6hZd6
+	IG+XeQQpfWqgjIDSlR2A8mEg1MeBINJfRPtqlyfU+fAC8EpLgZGWP8uPHY+WTeQt0eU+29
+	MDb5v5OfV01y5QtgSj7EqMYkIOKtufaG0GEQ1k1KKet0mROFIYHWphCZlrifnw==
+Date: Tue, 24 Jun 2025 19:26:28 +0530
+From: Brahmajit Das <listout@listout.xyz>
+To: "Rafael J. Wysocki" <rafael@kernel.org>
+Cc: linux-hardening@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-acpi@vger.kernel.org, lenb@kernel.org, lv.zheng@intel.com, kees@kernel.org, 
+	rui.zhang@intel.com, len.brown@intel.com
+Subject: Re: [PATCH] ACPI / sysfs: Replace deprecated and unsafe functions
+ with sysfs_emit
+Message-ID: <jbcmfguk7sfgpf4b5jsdjvuz7nzs34yhre3dokehrzm42dj4s7@fbpzrahozjay>
+References: <20250624133739.25215-1-listout@listout.xyz>
+ <CAJZ5v0jSk-NrovSq5En6qOureQXFbCsJLChorbgYXQdYfa0m3w@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAJZ5v0jSk-NrovSq5En6qOureQXFbCsJLChorbgYXQdYfa0m3w@mail.gmail.com>
 
-#syz test
+On 24.06.2025 15:46, Rafael J. Wysocki wrote:
+> On Tue, Jun 24, 2025 at 3:38 PM Brahmajit Das <listout@listout.xyz> wrote:
+> >
+> > acpi/sysfs.c has many instances of unsafe or deprecated functions such
+> > as sprintf, strcpy. This patch relaces them with sysfs_emit to safer
+> 
+> "replaces"
+> 
+> > alternavtive and better following of kernel API.
+> 
+> "alternative"
+> 
+> 1. Have you tested all of the affected interfaces and verified that
+> they still work as expected after the changes?
+> 2. While the replaced functions are unsafe in principle, is the usage
+> of them in any places affected by this patch actually unsafe?
+> 
 
-diff --git a/fs/btrfs/super.c b/fs/btrfs/super.c
-index 237e60b53192..c2ce1eb53ad7 100644
---- a/fs/btrfs/super.c
-+++ b/fs/btrfs/super.c
-@@ -1864,11 +1864,10 @@ static int btrfs_get_tree_super(struct fs_context *fc)
- 	fs_devices = device->fs_devices;
- 	fs_info->fs_devices = fs_devices;
- 
-+	mutex_unlock(&uuid_mutex);
- 	sb = sget_fc(fc, btrfs_fc_test_super, set_anon_super_fc);
--	if (IS_ERR(sb)) {
--		mutex_unlock(&uuid_mutex);
-+	if (IS_ERR(sb))
- 		return PTR_ERR(sb);
--	}
- 
- 	set_device_specific_options(fs_info);
- 
-@@ -1887,6 +1886,7 @@ static int btrfs_get_tree_super(struct fs_context *fc)
- 		 * But the fs_info->fs_devices is not opened, we should not let
- 		 * btrfs_free_fs_context() to close them.
- 		 */
-+		mutex_lock(&uuid_mutex);
- 		fs_info->fs_devices = NULL;
- 		mutex_unlock(&uuid_mutex);
- 
-@@ -1906,6 +1906,7 @@ static int btrfs_get_tree_super(struct fs_context *fc)
- 		 */
- 		ASSERT(fc->s_fs_info == NULL);
- 
-+		mutex_lock(&uuid_mutex);
- 		ret = btrfs_open_devices(fs_devices, mode, sb);
- 		mutex_unlock(&uuid_mutex);
- 		if (ret < 0) {
+I meant to send this as RFC. Sorry.
+But I guess the questions still holds.
 
+-- 
+Regards,
+listout
 
