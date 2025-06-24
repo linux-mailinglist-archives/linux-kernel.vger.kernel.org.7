@@ -1,108 +1,174 @@
-Return-Path: <linux-kernel+bounces-700405-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-700407-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id C8D83AE6820
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Jun 2025 16:17:47 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id A7DE1AE6842
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Jun 2025 16:21:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3D91C6A0532
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Jun 2025 14:14:21 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 589FA1892FDD
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Jun 2025 14:17:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 041342D23A3;
-	Tue, 24 Jun 2025 14:13:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AA7B42D23A3;
+	Tue, 24 Jun 2025 14:14:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="LfOnF6Aj"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.17])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="l5h9VWGL"
+Received: from mail-pj1-f50.google.com (mail-pj1-f50.google.com [209.85.216.50])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 57CC6296147
-	for <linux-kernel@vger.kernel.org>; Tue, 24 Jun 2025 14:13:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.17
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7E7971F4607;
+	Tue, 24 Jun 2025 14:14:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750774418; cv=none; b=YC4fbVxYDfT3bOtuQ+3pcjSxLYmVgfr44breWBAi7+TJ9wv03N3kgbS2v3OfaPO5QQxSZNEA9z41EaXUEDN2u57AiB4TrubAstrCNJEr6lbyeGNtlGME3n/XuyCL6JY5OJHuvVobij1DUOsZN6UHvmzOpypdVrx6Q2xCIsETHO8=
+	t=1750774487; cv=none; b=Yuuz7fNMEiuprGImNDU0gWuwGqO+OCzsvOAon6Xluh4WrQ4JV8S2YrEEWq3wntJMAwE0LQYHy9M7uR9za0YbLtGzTC276rSlc2a5vTImHBYwO90iD0xfbcnm9rTCxucX5/LdGgLnEWFRZQWJGQQR3IN6rd1tUk7VCIzFCkhET3g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750774418; c=relaxed/simple;
-	bh=oempXtxZmm2flXJ2XHkp+B58SBPwwEHaQWJvyPV0ghQ=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type; b=uCfqZrptpf7uN7bctsd3GFkMrxexKZc2OkX9+esHPmNKpZIZuJYj3G4fgzNvmFJek8ax4sJxOsbPtInoxIaLzKvBRPfdDGMI/MjYoHpwXfGveW4u6lZKeAEFfFBSrQzuu1k5KC4mHO5v5OK+bTrl/5ym4yLR2kt22yROFFMremc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=LfOnF6Aj; arc=none smtp.client-ip=192.198.163.17
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1750774416; x=1782310416;
-  h=from:to:cc:subject:date:message-id:mime-version:
-   content-transfer-encoding;
-  bh=oempXtxZmm2flXJ2XHkp+B58SBPwwEHaQWJvyPV0ghQ=;
-  b=LfOnF6Ajf0HNnIQg0rol4oBe4PTb10qgzGZ1I3Y5sac+stcTnjte/73Y
-   FRkeldJPJrEbV/gIeXh3QiHq9TIJFechmIm8/d0lNfv88J1nKD6jPt+MA
-   Rui3EBKt8q7zh3TjGY+irg8fj1dZoOQHdJgnaWRgXGpMDdcFDayFJuwv/
-   WApodvmJUIQrdxcNCNJnhZtJNqfdjqREn9P9JUfA9VeqfEEyOCHcgJVwe
-   MJxKpSol6SCQ5y+sF76A38Fw/sUyHbMIage2q2UAZnZhE1nkROj91o6gJ
-   CO4tko/ZmIX9G3fOl46g+6lGQaq9AwOEmBtj0xU+4AZPF0ZAnxtnOUZE2
-   w==;
-X-CSE-ConnectionGUID: kAYvs+ZQT72XdgP/N5117g==
-X-CSE-MsgGUID: QFm7CXblSRuEz0U/0thB9w==
-X-IronPort-AV: E=McAfee;i="6800,10657,11474"; a="52952345"
-X-IronPort-AV: E=Sophos;i="6.16,261,1744095600"; 
-   d="scan'208";a="52952345"
-Received: from fmviesa006.fm.intel.com ([10.60.135.146])
-  by fmvoesa111.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 24 Jun 2025 07:13:36 -0700
-X-CSE-ConnectionGUID: K+qj7QfXSJ+xe5rRf37a6g==
-X-CSE-MsgGUID: jRhzMfYHSNCujAKQ7NNS7Q==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.16,261,1744095600"; 
-   d="scan'208";a="152048612"
-Received: from jpp-desktop.igk.intel.com ([10.91.221.24])
-  by fmviesa006.fm.intel.com with ESMTP; 24 Jun 2025 07:13:35 -0700
-From: Sachin Mokashi <sachin.mokashi@intel.com>
-To: linux-kernel@vger.kernel.org
-Cc: akpm@linux-foundation.org,
-	Sachin Mokashi <sachin.mokashi@intel.com>
-Subject: [PATCH] mailmap: Update Sachin Mokashi's email address
-Date: Tue, 24 Jun 2025 10:12:20 -0400
-Message-Id: <20250624141220.1264691-1-sachin.mokashi@intel.com>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1750774487; c=relaxed/simple;
+	bh=tmOAhF2CNTR72yp25jzRdXMJ2OFtEyASCK3R92HxtEc=;
+	h=Date:Message-Id:To:Cc:Subject:From:In-Reply-To:References:
+	 Mime-Version:Content-Type; b=R4uMcb68j9sjJchGYu5PBr7iQU4Gm1p3g3QjDkcI4dw3EteKCvPIjZcuxBHGYUv3SjzRhb9nuRo7991YtIsPzBiUe42hYs/5S9FhhNnGlppSgqqJyAyOoBHvNgnvGhvVwY90KH/GsYLzXqOA0MgsOHRCRuj+u1ls7rv3qmqvNU0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=l5h9VWGL; arc=none smtp.client-ip=209.85.216.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pj1-f50.google.com with SMTP id 98e67ed59e1d1-315c1b0623cso2561155a91.1;
+        Tue, 24 Jun 2025 07:14:45 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1750774484; x=1751379284; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to:from
+         :subject:cc:to:message-id:date:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=HGGfcffrAo9eq6TZlCoUx0e67nzgl+RHiLPtw606gqI=;
+        b=l5h9VWGLk7f0FpX20eh3/RLJm8QOHmFRiDz59eL/tZI3O02nhxBeZ8kA575nTl6uDP
+         qFfgQ6GVl3xOV9zWFzmMjtSI8Ut55Weiv+MqEYwEc4D7Jdsb5WhmLZwmCSK9ONsCp4qq
+         1l+5o9psZq2crUqsFuA7HBWggnEjKBn3GODT7mpS7XxnbsQI1Qt5NHprwEDq6tgiwm2N
+         txCwgp/0JU2ElvXy+Y1JPc9QTB9NM59gArhvmS+k+xJZ/BYQsaiB+e+rsaEZvZ2W0ect
+         l6LXBclz61WBwPXOk8g6BXJ7lxqdLYLIRY4ko2lWmwzIZdyB2gSEdCEfvgz/gFVrHwyG
+         ZDBA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1750774484; x=1751379284;
+        h=content-transfer-encoding:mime-version:references:in-reply-to:from
+         :subject:cc:to:message-id:date:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=HGGfcffrAo9eq6TZlCoUx0e67nzgl+RHiLPtw606gqI=;
+        b=YGguz3unckokjfwNdpUfGXx4DAzuZ+TM/HdF9fzGDPn1OSezNkrPz0MROJGOjqAiIG
+         nmXD3OteDmq5Qgike4TbZ4yecfayg0EgH2kM1430tUX1JE2Z57BYlLqEK0/amhi6NuVH
+         +E/8SRCsXPUud9bEDlNkaErhrg9HuKB9X7GCzt2RJVWdeBAQHwRduovtURrLZWxcvGM6
+         SKOjSW02fpVI7SexjirrkzK+yEcKFykUVE11tUZ6Ukk9c8YiSua/nF0YzXYsSLgKnW9V
+         ujJpXrtKcSiKoTPBWOY45ZKFcfUsMg1mhITmzBBPgtE8xZxKnk3GNbVE9sRYDqx9PDRj
+         mUXQ==
+X-Forwarded-Encrypted: i=1; AJvYcCU4khJY9ZcraGJnRrPNo/ddmpJPmalCko+3BqVKRJIYMg7UTe/+DkrhxcGMylaH7CZ0owLrQbxYEf40wrMWj3U=@vger.kernel.org, AJvYcCXGCPyu3Z1bE3LjJODMaPR6nOHZ7IdEJJOsby6Fk/zcijED1n2eXi5XKAgBVMHnQRwp+Cmz9roY43smVbA=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwXtMSYiR6qc3oINSjOD8juSu6N/bc00pOcgpWlR0eIndgFaNSX
+	bTkpahLl4rFgR2TO5EW2DmT+kHwNNe+LGLv4tQgUtN7OgDTMvk/hYuVC
+X-Gm-Gg: ASbGncs46/mdUQvhYdn1ztl8Q++z4JeRTcEKZbIcBeo1HpALaipVtpXbG5eQNbq/CEm
+	1HwKZUoIIAX/iFtgOoZSOVAd+vvmTVSukgh3QcYF68rGsOaKmfoVW785xXbjE2BIemja3aP0hVB
+	NzsO14gJ2AeA5KLLpWdv0zkrhZ4BUpFwLv8Ev6yYTiy21JAoDuxtZiXAvE3IlF01oWLIgcKvxXB
+	WaC9dx7V2nxQiPK6HI3Ami362ikl6eYpujZCjgor8AGBKkzOHbHDHUdjyaZF1+gt9TA97DsI5Uh
+	YSietaM9YAOgVAdIQ5TuTahn7kYSbelmaAND1JDlgcN8gT+RQrC/2z8iSd0PPrB1T8ws5LdtcQf
+	PYJpINed5AU7NGDc0vPjMVaPX/3u+kxIsFSJDbQjk
+X-Google-Smtp-Source: AGHT+IGowRDyySJy1j8k0ZZKiMExfxK4WJSD9h6BhlvCpJCsl56VjiVIEvxSxPzgxpUtpydjak9mtw==
+X-Received: by 2002:a17:90a:d64f:b0:311:f684:d3cd with SMTP id 98e67ed59e1d1-3159d63d9e7mr30845175a91.12.1750774484443;
+        Tue, 24 Jun 2025 07:14:44 -0700 (PDT)
+Received: from localhost (p5332007-ipxg23901hodogaya.kanagawa.ocn.ne.jp. [180.34.120.7])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-3159df84850sm11688244a91.13.2025.06.24.07.14.40
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 24 Jun 2025 07:14:44 -0700 (PDT)
+Date: Tue, 24 Jun 2025 23:14:28 +0900 (JST)
+Message-Id: <20250624.231428.764205178512881259.fujita.tomonori@gmail.com>
+To: aliceryhl@google.com
+Cc: fujita.tomonori@gmail.com, miguel.ojeda.sandonis@gmail.com,
+ a.hindborg@kernel.org, alex.gaynor@gmail.com, ojeda@kernel.org,
+ anna-maria@linutronix.de, bjorn3_gh@protonmail.com, boqun.feng@gmail.com,
+ dakr@kernel.org, frederic@kernel.org, gary@garyguo.net,
+ jstultz@google.com, linux-kernel@vger.kernel.org, lossin@kernel.org,
+ lyude@redhat.com, rust-for-linux@vger.kernel.org, sboyd@kernel.org,
+ tglx@linutronix.de, tmgross@umich.edu
+Subject: Re: [PATCH v1 1/2] rust: time: Rename Delta's methods
+ as_micros_ceil and as_millis
+From: FUJITA Tomonori <fujita.tomonori@gmail.com>
+In-Reply-To: <CAH5fLgjttTnev2h4J-hF-LdUTJCoryJyFm5_LqJ6_GBe+=An5Q@mail.gmail.com>
+References: <CAH5fLgjJRbjPnN58RuaBtNrY1A-tif3ohETLxdbaE4b46Hjbqg@mail.gmail.com>
+	<20250624.224923.1801832299260163743.fujita.tomonori@gmail.com>
+	<CAH5fLgjttTnev2h4J-hF-LdUTJCoryJyFm5_LqJ6_GBe+=An5Q@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Mime-Version: 1.0
+Content-Type: Text/Plain; charset=us-ascii
 Content-Transfer-Encoding: 7bit
 
-As previous contributions were made with the older email address,
-which is no longer in use. Update my new address to map the old
-one.
+On Tue, 24 Jun 2025 14:54:24 +0100
+Alice Ryhl <aliceryhl@google.com> wrote:
 
-Signed-off-by: Sachin Mokashi <sachin.mokashi@intel.com>
----
- .mailmap | 1 +
- 1 file changed, 1 insertion(+)
+>> >> So would the function be defined like this?
+>> >>
+>> >> fn as_nanos(self) -> i64;
+>> >>
+>> >> If that's the case, then we've come full circle back to the original
+>> >> problem; Clippy warns against using as_* names for trait methods that
+>> >> take self as follows:
+>> >>
+>> >> warning: methods called `as_*` usually take `self` by reference or `self` by mutable reference
+>> >>    --> /home/fujita/git/linux-rust/rust/kernel/time/hrtimer.rs:430:17
+>> >>     |
+>> >> 430 |     fn as_nanos(self) -> i64;
+>> >>     |                 ^^^^
+>> >>     |
+>> >>     = help: consider choosing a less ambiguous name
+>> >>     = help: for further information visit https://rust-lang.github.io/rust-clippy/master/index.html#wrong_self_convention
+>> >>     = note: `-W clippy::wrong-self-convention` implied by `-W clippy::all`
+>> >>     = help: to override `-W clippy::all` add `#[allow(clippy::wrong_self_convention)]`
+>> >>
+>> >> https://lore.kernel.org/rust-for-linux/20250610132823.3457263-2-fujita.tomonori@gmail.com/
+>> >
+>> > Are we missing a derive(Copy) for this type? Clippy does not emit that
+>> > lint if the type is Copy:
+>> > https://github.com/rust-lang/rust-clippy/issues/273
+>>
+>> I think that both Delta and Instant structs implement Copy.
+>>
+>> #[repr(transparent)]
+>> #[derive(PartialEq, PartialOrd, Eq, Ord)]
+>> pub struct Instant<C: ClockSource> {
+>>     inner: bindings::ktime_t,
+>>     _c: PhantomData<C>,
+>> }
+>>
+>> impl<C: ClockSource> Clone for Instant<C> {
+>>     fn clone(&self) -> Self {
+>>         *self
+>>     }
+>> }
+>>
+>> impl<C: ClockSource> Copy for Instant<C> {}
+>>
+>> #[derive(Copy, Clone, PartialEq, PartialOrd, Eq, Ord, Debug)]
+>> pub struct Delta {
+>>     nanos: i64,
+>> }
+>>
+>> The above warning is about the trait method.
+> 
+> Wait, it's a trait method!?
 
-diff --git a/.mailmap b/.mailmap
-index d57531dab08b..571379d80f50 100644
---- a/.mailmap
-+++ b/.mailmap
-@@ -668,6 +668,7 @@ Muchun Song <muchun.song@linux.dev> <smuchun@gmail.com>
- Ross Zwisler <zwisler@kernel.org> <ross.zwisler@linux.intel.com>
- Rudolf Marek <R.Marek@sh.cvut.cz>
- Rui Saraiva <rmps@joel.ist.utl.pt>
-+Sachin Mokashi <sachin.mokashi@intel.com> <sachinx.mokashi@intel.com>
- Sachin P Sant <ssant@in.ibm.com>
- Sai Prakash Ranjan <quic_saipraka@quicinc.com> <saiprakash.ranjan@codeaurora.org>
- Sakari Ailus <sakari.ailus@linux.intel.com> <sakari.ailus@iki.fi>
--- 
-2.34.1
+Yes. Clippy warns the following implementation:
 
-Intel Deutschland GmbH
-Registered Address: Am Campeon 10, 85579 Neubiberg, Germany
-Tel: +49 89 99 8853-0, www.intel.de
-Managing Directors: Sean Fennelly, Jeffrey Schneiderman, Tiffany Doon Silva
-Chairperson of the Supervisory Board: Nicole Lau
-Registered Office: Munich
-Commercial Register: Amtsgericht Muenchen HRB 186928
+pub trait HrTimerExpires {
+    fn as_nanos(self) -> i64;
+}
+
+Clippy doesn't warn when the methods on Delta and Instant are written
+similarly. So Clippy is happy about the followings:
+
+pub trait HrTimerExpires {
+    fn as_nanos(&self) -> i64;
+}
+
+impl HrTimerExpires for Delta {
+    fn as_nanos(&self) -> i64 {
+        Delta::as_nanos(*self)
+    }
+}
 
 
