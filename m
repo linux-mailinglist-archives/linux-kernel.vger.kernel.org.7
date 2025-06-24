@@ -1,104 +1,136 @@
-Return-Path: <linux-kernel+bounces-700107-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-700109-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 27758AE63F0
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Jun 2025 13:56:57 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8A523AE63F4
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Jun 2025 13:57:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B745916CCD8
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Jun 2025 11:56:57 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 945D83BA9FB
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Jun 2025 11:57:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7883628DEF9;
-	Tue, 24 Jun 2025 11:56:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 60AB928DEF9;
+	Tue, 24 Jun 2025 11:57:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="RwD7iGie"
-Received: from mail-wm1-f44.google.com (mail-wm1-f44.google.com [209.85.128.44])
+	dkim=pass (2048-bit key) header.d=futuring-girl.com header.i=@futuring-girl.com header.b="MhDBnMaZ"
+Received: from mail-pj1-f44.google.com (mail-pj1-f44.google.com [209.85.216.44])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4A20022AE5D;
-	Tue, 24 Jun 2025 11:56:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C65CD28CF75
+	for <linux-kernel@vger.kernel.org>; Tue, 24 Jun 2025 11:57:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750766208; cv=none; b=h6FRK9JB/eqh6pSK1VwiY/ISEiwZlEYUR//Oy2BOf6C4TCYwgxxHKrosFHpriTd8PmaqiuPa0SmDI3b6Uni/346PB47trmEICIY+4xN3G0BrvHdpwLuvLdcZ9lyN5H/YjoWgiO7ECNMKciY30OtPbx3N1WlerxzMtNuIlOcmh+w=
+	t=1750766244; cv=none; b=rOh/3fA5ggk6sclGAbg6K/CIUt8zHLjzb4tXdUnAoY2t8xwfmX9PfNoCnlLpw0Rx9i6MlH4fIztPFFlJ6KcQL2nBWad83DskcsmYHZopFOZiQ9S4Cv4MKMs3hj7QzdFaV12o2D7Dp7dSRMcyzhUJ2HWNJJflrbakiKMR5Fr1phg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750766208; c=relaxed/simple;
-	bh=4Gb8SOZItbW+wIwmtb5Q/gL4wOxUhzrF5mJlDtp1XkM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=PCipwto2n7Rn7l9Z4QFktvtDYeS9yF6YuSAczea/GNei7X3o7wWLwS/xmeSXBVwI313808ztF+2maGPQuKe3Nf0d0/RFssbg99xuDD1zmP0qO1T2PQ91q+z8YTGDNi/oMwNrIxPWZUYqXh+n7FjiAsHBDmPIybYqCAltKT1nH/c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=RwD7iGie; arc=none smtp.client-ip=209.85.128.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f44.google.com with SMTP id 5b1f17b1804b1-4537deebb01so3099615e9.0;
-        Tue, 24 Jun 2025 04:56:47 -0700 (PDT)
+	s=arc-20240116; t=1750766244; c=relaxed/simple;
+	bh=tRy1eXVSAZ56E3F4ovZPdbmpPSsxWjWS0y1a7XOGytg=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=aM4gYDhanUmRPPGspLLAhflUKYI2WXVa3Uom9Qrgm7y6ef5fCulpgk8ZmqWjNMerKedLfLRXw+hJaNO4omplolej9FGKcbaYJ1yXNZ9SNcJmo5F4GhSSYdFlvMsPHoE8Lw2zSRtdAVd4W+fSxzCaMeLGHhOqStXxfnXXO/xqLdg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=futuring-girl.com; spf=pass smtp.mailfrom=futuring-girl.com; dkim=pass (2048-bit key) header.d=futuring-girl.com header.i=@futuring-girl.com header.b=MhDBnMaZ; arc=none smtp.client-ip=209.85.216.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=futuring-girl.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=futuring-girl.com
+Received: by mail-pj1-f44.google.com with SMTP id 98e67ed59e1d1-311da0bef4aso5570475a91.3
+        for <linux-kernel@vger.kernel.org>; Tue, 24 Jun 2025 04:57:22 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1750766206; x=1751371006; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=R5eEIvr9JcE4paU6Nr7MR5Mat6t5/855zPOooiaqaHM=;
-        b=RwD7iGieh2vDByYikIUEcnAZ0R1Rp8sSNqmXOTJcbqJqk3jwLrR9LafHeDv5tXS1du
-         UG+gdkIX95iXO7426UkvHOvl147ISJU7YeAWkiTMoZ2PEjosoqTRUR+H6DPSAz2ZZmps
-         951LVqJJL4ToG9KP34t9Ve4nMsWEGQKeY/BUaO5Ch//uQQ4BLrrO1wMIXXgb3bqL48Tf
-         pQGs5FbdLpqMK07NiQQJhWPPrIVNhTcJtE1bZbXlOLUGMvv8pUPhpwBIKuQwc7rrjQ/I
-         loRsI4Px8aeYcTEqaaFwgRhahFEyrDwXZPRtfeePzFq52wSuf2WLApUs71mKvRcg5gbJ
-         mtHg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1750766206; x=1751371006;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+        d=futuring-girl.com; s=google; t=1750766242; x=1751371042; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=R5eEIvr9JcE4paU6Nr7MR5Mat6t5/855zPOooiaqaHM=;
-        b=cNmRfSVYyEIVOsh3YY9c5pbRo70hoc91oHCzoTQrzXAkbOuGEqshBLfuanvD8eewmD
-         Qj6ieUGrI9MRSegMwzq6rG6msQq2BySHt6V6eS8FwXjy1A0hEDP3qRYhlH0Gx+rqRoZf
-         BR+NZU+wozKq09Os2MJwP2x+aeJS3c0d5F/OeJFRhS+V672as8Pt4P6qVyhFLEN/vWsX
-         ImozVmj4NtrG6u0OYh7MqG5PvbRAbQ+i3XYRvUrflz/yKrMP2PyJQ3UUjv8HhuKhH/lG
-         fXVCXe0+0kreysEF4HMpm5CcVDpZHDou1qwx9QC2X9IuVyCVaGzJT3UexCFNkaRARWk2
-         97ZA==
-X-Forwarded-Encrypted: i=1; AJvYcCUla4F40IJj33aCBmm9yqM/fPbvO7NHbjRafUjTGU4xFAt5T7FX+B7ARVYx5g/0NYS1s4w1UeC4@vger.kernel.org, AJvYcCVbBWsZGUdJVZVSQiGuN+1rgi7wpPs5UeWdhSiYfPXmRgXDVRMYniY5+shYWVUkKELIv57WrF/gbKvunrD8@vger.kernel.org, AJvYcCWm/5IHwP2vS8aDGiR071yunG32aX0mJDXydf4vRExB/nLPFJrt8J1DhW/AYRWJcKMngt3xr7KiZjgntQ==@vger.kernel.org
-X-Gm-Message-State: AOJu0YxK4S+M4fF/NxigfhjPB+SUMkt4yoDzDIls+kKnbrktiCv3XuT+
-	HjXaaEl9CP72ia+BEVbcyNSOvpSatX2WdURS8Ly45NKMdY1qdRfvZ+Kg
-X-Gm-Gg: ASbGncvrLU4eU/zOF059kxLEiWL3izXDG+bv8ZdyCmyl/i2hfNepbnBJyDdEIQC7GeE
-	e3e4Yi6i8tAh2htrQg61ezM9dbHZ+9f8IYtA+8hdVrQcWU/x2f4VOvLNdhYQiLMKQSSyceUF9tD
-	X1OqqSkVExbvOGFgtV2V5pGbB8zInx2QhY8BV10LXZX3ZXYQ5T8EQFFITOUA2VVKraOqlB3/GMT
-	yWhMvSfYBakE21CP1KvIXK04PtALeCZhRHU9R/fiWESxEvrtE2tpnsQKYe/dRR7gZt340TqJ4CG
-	/4A5sdqjkUyrHU41cjSD/ywp/VJke16e2myGUC8goQE/msY5qcrvw5NQjw==
-X-Google-Smtp-Source: AGHT+IF5uc4Crgzm9C/NUWTssWPsc1rQwpNZ40qhHDiLYTtLtTW3bFcM2LE+mpuBnDDXgWUMAWxfWQ==
-X-Received: by 2002:a05:600c:8b37:b0:43d:fa59:cc8f with SMTP id 5b1f17b1804b1-453657bfda0mr145918725e9.33.1750766205354;
-        Tue, 24 Jun 2025 04:56:45 -0700 (PDT)
-Received: from gmail.com ([2a02:c7c:f4f0:900:7f3f:914:11c0:78c0])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4535e98b4bbsm171329205e9.15.2025.06.24.04.56.44
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 24 Jun 2025 04:56:44 -0700 (PDT)
-Date: Tue, 24 Jun 2025 12:56:40 +0100
-From: Qasim Ijaz <qasdev00@gmail.com>
-To: Aditya Garg <gargaditya08@live.com>
-Cc: jikos@kernel.org, bentiss@kernel.org, linux-input@vger.kernel.org,
-	linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Subject: Re: [PATCH] HID: appletb-kbd: fix slab use-after-free bug in
- appletb_kbd_probe
-Message-ID: <aFqSaznWWrxkEs1b@gmail.com>
-References: <20250623230812.31927-1-qasdev00@gmail.com>
- <PN3PR01MB95977E7AB0C3A8E3EFE3DA7CB878A@PN3PR01MB9597.INDPRD01.PROD.OUTLOOK.COM>
+        bh=Q86PY0wC/gj3dz8RRxO/iauAyWxBGEaS/86SENs7hZg=;
+        b=MhDBnMaZ73ioL1i/bOywA8euLyIP+6OIXW9V0udYBCo9Z3jY39WQva7uJT+uL29FTk
+         cfcA5l8b+STdXdklCQN5D/5UrKhsHYAZeV1r73H7h8NITyn2dO7mB+4OBkgA1MRVDQ9z
+         PuJLMm9mkBmO1pNrp2/2AYroBhKWvkn5/NwEyFBBMGOtIOtmRjUq/UrW/wxCE10tDI6b
+         0VaFDxf9EmeTEcS4q7/1cLSGG0lSI/o3U+YNfD1kpxYmCimM5vLPIB3Ll3yvmECcOxch
+         hqMNfxWXzKucJOs5UwohT/aX5fBtKdO3I1hZtQx5QHCgNGinU3gmYbt+soy8bubKzaYn
+         zfZQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1750766242; x=1751371042;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=Q86PY0wC/gj3dz8RRxO/iauAyWxBGEaS/86SENs7hZg=;
+        b=O+zuxhxkF8DaQo8LIDd4n+dB4xqkiVjGHu3siCSwrW57cJNJQ7N1PFNQDumIXTG8il
+         oAS9Sgp8ho1KprJdW5QATUe1IuAsgEOgx29M3XkHsc8K4udMdL85/JU1d0LlAP2AN4Ld
+         apT4XHvfIVDpmXlzuGfszsB4FS0VIbevaL7k7c2cAOQlBx/k1s1r0wINQmqMT3WBJzXK
+         W66jvaGwb/C0GyQJtGm5Yin+DkX9IPKogjLiLkDrZ19HjiZQG2TfR5UtiArMbNmzrrgb
+         EpH+SSnT6kZi28CVqM2xXYhFFttnpTfQavLJJBNTZZOLVfPbutlrVfPjaCCaTFHo8s60
+         vNPQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWhNXmzvK1NL/MAo67AR11AY/+Niwsqa8D7vwZqKoL49P1msmNSeTO/KCFmMDZ1TSq+X/eztxATyGl2s7c=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyUohVVws3zPQ01xJJAywgki2dCWoMHp/AlWJ9ERAY+WT7tea+Q
+	h1xccfrDf541uy8uijvJ33o+At+65MykW/EcOAb5A7DpBmwXYqqiMSOBq16Xs+6J99Me2ALQMil
+	2uJPq0cMu3pwh9fuOvg79DTLxSvCPtyZ7WW4CaiESzw==
+X-Gm-Gg: ASbGnct+9i92WgQk29/LSWtoaSX/WjpH+sv2hymy+Nt7fbXm4ok3sCDqZz3MbS5gJhr
+	brsQ+wDJbD5Wm3EQhgrbgykxQiO5bO0zDMeAHqixRznN4XKAGRoxuflgFkcRYJGLY77bTflwZoU
+	lCkU79ZrsmYEyHiCSIQ/3Eip6hWdEjGzxVJS7jO/1g7xk=
+X-Google-Smtp-Source: AGHT+IExtPp2I2mFB0A9OeofBQzId6Ui2rK6a6yZnOAvbn0MCJF3aNmFF52R/DaW0iRmuQwDOo3jMJSYi3yRrmIXxCw=
+X-Received: by 2002:a17:90b:5690:b0:312:1ac5:c7c7 with SMTP id
+ 98e67ed59e1d1-3159d6257b4mr24312771a91.2.1750766241983; Tue, 24 Jun 2025
+ 04:57:21 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <PN3PR01MB95977E7AB0C3A8E3EFE3DA7CB878A@PN3PR01MB9597.INDPRD01.PROD.OUTLOOK.COM>
+References: <20250623130700.210182694@linuxfoundation.org>
+In-Reply-To: <20250623130700.210182694@linuxfoundation.org>
+From: Takeshi Ogasawara <takeshi.ogasawara@futuring-girl.com>
+Date: Tue, 24 Jun 2025 20:57:05 +0900
+X-Gm-Features: AX0GCFuTEjbibu-8Tjw0fKQGwh7s3i7RYXmZdiawgw2iqWdvIFiSW0TkstL5ynU
+Message-ID: <CAKL4bV7Ce1J2xVQNbsgWwNm0ekUiny6TxtSvaXa8dQ=-tT-mCA@mail.gmail.com>
+Subject: Re: [PATCH 6.15 000/592] 6.15.4-rc1 review
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: stable@vger.kernel.org, patches@lists.linux.dev, 
+	linux-kernel@vger.kernel.org, torvalds@linux-foundation.org, 
+	akpm@linux-foundation.org, linux@roeck-us.net, shuah@kernel.org, 
+	patches@kernelci.org, lkft-triage@lists.linaro.org, pavel@denx.de, 
+	jonathanh@nvidia.com, f.fainelli@gmail.com, sudipm.mukherjee@gmail.com, 
+	srw@sladewatkins.net, rwarsow@gmx.de, conor@kernel.org, hargar@microsoft.com, 
+	broonie@kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Tue, Jun 24, 2025 at 10:57:05AM +0530, Aditya Garg wrote:
-> Ok this makes sense. Probably execute time_delete_sync only when there is kbd->backlight_dev in appletb_kbd_remove as well. Currently it is being executed unconditionally.
+Hi Greg
 
-Good point, will resend v2
+On Mon, Jun 23, 2025 at 10:09=E2=80=AFPM Greg Kroah-Hartman
+<gregkh@linuxfoundation.org> wrote:
+>
+> This is the start of the stable review cycle for the 6.15.4 release.
+> There are 592 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
+>
+> Responses should be made by Wed, 25 Jun 2025 13:05:55 +0000.
+> Anything received after that time might be too late.
+>
+> The whole patch series can be found in one patch at:
+>         https://www.kernel.org/pub/linux/kernel/v6.x/stable-review/patch-=
+6.15.4-rc1.gz
+> or in the git tree and branch at:
+>         git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable=
+-rc.git linux-6.15.y
+> and the diffstat can be found below.
+>
+> thanks,
+>
+> greg k-h
 
-Thanks,
-Qasim
-> 
-> > 	hid_hw_close(hdev);
-> > stop_hw:
-> > 	hid_hw_stop(hdev);
+6.15.4-rc1 tested.
+
+Build successfully completed.
+Boot successfully completed.
+No dmesg regressions.
+Video output normal.
+Sound output normal.
+
+Lenovo ThinkPad X1 Carbon Gen10(Intel i7-1260P(x86_64) arch linux)
+
+[    0.000000] Linux version 6.15.4-rc1rv-gde19bfa00d6f
+(takeshi@ThinkPadX1Gen10J0764) (gcc (GCC) 15.1.1 20250425, GNU ld (GNU
+Binutils) 2.44.0) #1 SMP PREEMPT_DYNAMIC Tue Jun 24 20:14:32 JST 2025
+
+Thanks
+
+Tested-by: Takeshi Ogasawara <takeshi.ogasawara@futuring-girl.com>
 
