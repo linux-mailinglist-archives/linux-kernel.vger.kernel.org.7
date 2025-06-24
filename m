@@ -1,106 +1,135 @@
-Return-Path: <linux-kernel+bounces-699897-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-699899-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 714E6AE60CC
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Jun 2025 11:24:57 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2FB04AE60CF
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Jun 2025 11:25:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 320B11B600E9
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Jun 2025 09:24:45 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B8772173A4F
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Jun 2025 09:25:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0ECC227C842;
-	Tue, 24 Jun 2025 09:24:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AB0A027AC2E;
+	Tue, 24 Jun 2025 09:24:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="FIDnlRSB"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b="eJ6YKXFz"
+Received: from esa.microchip.iphmx.com (esa.microchip.iphmx.com [68.232.154.123])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 637F427C152;
-	Tue, 24 Jun 2025 09:24:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A3E881BC9E2
+	for <linux-kernel@vger.kernel.org>; Tue, 24 Jun 2025 09:24:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=68.232.154.123
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750757043; cv=none; b=RaX4K8D7nzxq8h34PzhpCBTp5SbJXkVFao8+Hy0EeR2KHfj6zbxrHRcQBJqbnnKzim9M4CSgDYSkb0ngQJSCwmIyJd+uwbxaFJJ0YEkJJV7K9ash9rlzQndG+z2HwGT8quWgefwwVkE1lZeXX0icD5VE18iPqfO8TiodiNVkXr8=
+	t=1750757095; cv=none; b=HZOjF4YXPddnONybmg6rkF6/5N0ICKqlI5lPv49zqdePfCI6mC8lvrecdBTlhUKh6QNJbMmwkhOHEbFHUMWV7Mn4U4JhPD9FsvK2WsUDYFt6umiUeaN99SchHGcc83hi7LCfI1BKG8z0Kb2IentkJ1cm7XvJb5XCKDj/iIXlNfI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750757043; c=relaxed/simple;
-	bh=QYAwKGaMyRPFds2JikA1ZeUtbx6W3TfSyn793IrFJDc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=mJZHR3AV2qJP4xOSJ3S9ufOG6cFBT725I3FnnFBIjejFHu6kvTQZNqGwi7G/Kd8txfargpuzhRBVEtUnW3sF0kDaKylFlUPJb1s5tX3X2tpBnQvYytu8ZH8p0xX9Je6D+gcTpXXlYsCP3Gk+C6H58i8pKdOBRx2zuTfutvDkY+o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=FIDnlRSB; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7E0DFC4CEE3;
-	Tue, 24 Jun 2025 09:24:01 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1750757043;
-	bh=QYAwKGaMyRPFds2JikA1ZeUtbx6W3TfSyn793IrFJDc=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=FIDnlRSBQp/raYM1lA1Si36UfKygBLzdWycLUtBa1MIAl1xaHD3D+aMu0MwwN/j3H
-	 1KbxtXhu8BgDfURSFCKEuszkpGY4xL5Uot7m9VpMsNodSc/81unp9AmCOJ1J12KnNX
-	 ++lepZ8/1jA4e5BMhd+AbZYLUhvCPONHmRf3x2qfyGm/sMLvM4EGY2DrC1aMXIaJcF
-	 rslT5S44I/cTX++h/g8ao+weNoa8AOB10d02yMAuD+BRMnZ+7rnFIm8fD+tqXHW8DG
-	 ominQx6dYkZ+YuOJEazB3zO0s4aryCqiuys9COOT/6H8sTvK0aRPhMTltuHVEEUctk
-	 P101oRNGEnpCw==
-Date: Tue, 24 Jun 2025 11:23:59 +0200
-From: Christian Brauner <brauner@kernel.org>
-To: syzbot <syzbot+25317a459958aec47bfa@syzkaller.appspotmail.com>
-Cc: jack@suse.cz, linux-fsdevel@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com, viro@zeniv.linux.org.uk
-Subject: Re: [syzbot] [fs?] general protection fault in pidfs_free_pid
-Message-ID: <20250624-volldampf-brotscheiben-70bed5ac4dba@brauner>
-References: <20250624-serienweise-bezeugen-0f2a5ecd5d76@brauner>
- <685a65af.050a0220.2303ee.0008.GAE@google.com>
+	s=arc-20240116; t=1750757095; c=relaxed/simple;
+	bh=OA1BhEclyD3cxhcgakDc2CPEw7A1ytSUj3LETMJQ82E=;
+	h=From:Subject:Date:Message-ID:MIME-Version:Content-Type:To:CC; b=tlzoOU1lgOgg9Rc/2MOXrG8pvodJ3/dZJhyoqHt0RiBGNy1d6gMzhrhMrgruGxIonhtYP7aJsnANUwsZoQaD2ks2esFATnBeYfko7HY2AYjkiWEkcOm6NSJnskEbryYivDEdp9OSkLXQ8jGBUs2u4kC4SWwsZaaRJ2cQQyh/ny4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com; spf=pass smtp.mailfrom=microchip.com; dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b=eJ6YKXFz; arc=none smtp.client-ip=68.232.154.123
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=microchip.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=microchip.com; i=@microchip.com; q=dns/txt; s=mchp;
+  t=1750757093; x=1782293093;
+  h=from:subject:date:message-id:mime-version:
+   content-transfer-encoding:to:cc;
+  bh=OA1BhEclyD3cxhcgakDc2CPEw7A1ytSUj3LETMJQ82E=;
+  b=eJ6YKXFzI0I+WtBp+R8N2XEPA+qsm9MDba5ev5sepst2OTAm9CBDc27w
+   kUEiBfrDK8gxIkUiCg8kJ9BMgY/2Y9Oi5DHresfo26YOXCn5GDs5Ovd+T
+   5A98+CV3vwvsKpyA7I2FNlvvUvasaZGOtcsNkOiwWHrvqqEKlp0oYLG99
+   hnoyjC1vrcqPgzST0R8gL3a362Jg7r2gnjepjjGc0nvI88tjpixA4GR6y
+   ISDFx4fZx3aVutmDRQWWhrUKtydP/a09i8UYL/g+cj0WypyaSra+5iyQm
+   1UIqDRHY/zyTJJycM7bVxtjFSa/LrHvEwLvTK4/IusgpHPyuYuAD2iHxF
+   A==;
+X-CSE-ConnectionGUID: kAMBk0q5SXCuhoUD0ewa8g==
+X-CSE-MsgGUID: YHIEH+SeTDOHPwIIrtz4fA==
+X-IronPort-AV: E=Sophos;i="6.16,261,1744095600"; 
+   d="scan'208";a="42674594"
+X-Amp-Result: SKIPPED(no attachment in message)
+Received: from unknown (HELO email.microchip.com) ([170.129.1.10])
+  by esa4.microchip.iphmx.com with ESMTP/TLS/ECDHE-RSA-AES128-GCM-SHA256; 24 Jun 2025 02:24:52 -0700
+Received: from chn-vm-ex04.mchp-main.com (10.10.85.152) by
+ chn-vm-ex04.mchp-main.com (10.10.85.152) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.44; Tue, 24 Jun 2025 02:24:22 -0700
+Received: from [127.0.0.1] (10.10.85.11) by chn-vm-ex04.mchp-main.com
+ (10.10.85.152) with Microsoft SMTP Server id 15.1.2507.44 via Frontend
+ Transport; Tue, 24 Jun 2025 02:24:16 -0700
+From: Dharma Balasubiramani <dharma.b@microchip.com>
+Subject: [PATCH v4 0/3] drm/bridge: microchip-lvds: clean up and fix bus
+ formats
+Date: Tue, 24 Jun 2025 14:54:13 +0530
+Message-ID: <20250624-microchip-lvds-v4-0-937d42a420e9@microchip.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <685a65af.050a0220.2303ee.0008.GAE@google.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAL1uWmgC/3XMQQ6CMBAF0KuQrq1pS1vAlfcwLsowSBOhpDWNh
+ nB3CwtDRDOZxf+ZeRMJ6C0Gcsom4jHaYN2QgjxkBDoz3JDaJmUimFBM85L2FryDzo70HptA64I
+ r3lSaVdKQ9DR6bO1zBS/XlDsbHs6/Vj/ypf1LRU7ToEFloClMKc6fgyO4nixcFBtC5DtCJKJEq
+ E0NOq38ReRbQu6IPBGQg245Sqa4/ibmeX4DPeDrfDYBAAA=
+To: Manikandan Muralidharan <manikandan.m@microchip.com>, Andrzej Hajda
+	<andrzej.hajda@intel.com>, Neil Armstrong <neil.armstrong@linaro.org>,
+	"Robert Foss" <rfoss@kernel.org>, Laurent Pinchart
+	<Laurent.pinchart@ideasonboard.com>, Jonas Karlman <jonas@kwiboo.se>, "Jernej
+ Skrabec" <jernej.skrabec@gmail.com>, Maarten Lankhorst
+	<maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>,
+	Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>,
+	Simona Vetter <simona@ffwll.ch>
+CC: <dri-devel@lists.freedesktop.org>, <linux-kernel@vger.kernel.org>, "Dharma
+ Balasubiramani" <dharma.b@microchip.com>, Sandeep Sheriker M
+	<sandeep.sheriker@microchip.com>
+X-Mailer: b4 0.13.0
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1750757054; l=1447;
+ i=dharma.b@microchip.com; s=20240209; h=from:subject:message-id;
+ bh=OA1BhEclyD3cxhcgakDc2CPEw7A1ytSUj3LETMJQ82E=;
+ b=ln2ThX2OMPa4FXL63lhDtkNyMUggWXK1b9l3Kd2BCDlIEol/WdAh5rjbyU1caYHsaSAiLnPw5
+ KjQ49VUKpWfAMKl5TIAbnj6rr+33i7+4fPCihAZKmj+ffMHVDrOrLpK
+X-Developer-Key: i=dharma.b@microchip.com; a=ed25519;
+ pk=kCq31LcpLAe9HDfIz9ZJ1U7T+osjOi7OZSbe0gqtyQ4=
 
-On Tue, Jun 24, 2025 at 01:45:35AM -0700, syzbot wrote:
-> > On Mon, Jun 23, 2025 at 11:27:26AM -0700, syzbot wrote:
-> >> Hello,
-> >> 
-> >> syzbot found the following issue on:
-> >> 
-> >> HEAD commit:    5d4809e25903 Add linux-next specific files for 20250620
-> >> git tree:       linux-next
-> >> console+strace: https://syzkaller.appspot.com/x/log.txt?x=150ef30c580000
-> >> kernel config:  https://syzkaller.appspot.com/x/.config?x=58afc4b78b52b7e3
-> >> dashboard link: https://syzkaller.appspot.com/bug?extid=25317a459958aec47bfa
-> >> compiler:       Debian clang version 20.1.6 (++20250514063057+1e4d39e07757-1~exp1~20250514183223.118), Debian LLD 20.1.6
-> >> syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=10a5330c580000
-> >> C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=12c9f6bc580000
-> >> 
-> >> Downloadable assets:
-> >> disk image: https://storage.googleapis.com/syzbot-assets/16492bf6b788/disk-5d4809e2.raw.xz
-> >> vmlinux: https://storage.googleapis.com/syzbot-assets/7be284ded1de/vmlinux-5d4809e2.xz
-> >> kernel image: https://storage.googleapis.com/syzbot-assets/467d717f0d9c/bzImage-5d4809e2.xz
-> >> 
-> >> The issue was bisected to:
-> >> 
-> >> commit fb0b3e2b2d7f213cb4fde623706f9ed6d748a373
-> >> Author: Christian Brauner <brauner@kernel.org>
-> >> Date:   Wed Jun 18 20:53:46 2025 +0000
-> >> 
-> >>     pidfs: support xattrs on pidfds
-> >> 
-> >> bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=15a1b370580000
-> >> final oops:     https://syzkaller.appspot.com/x/report.txt?x=17a1b370580000
-> >> console output: https://syzkaller.appspot.com/x/log.txt?x=13a1b370580000
-> >> 
-> >> IMPORTANT: if you fix the issue, please add the following tag to the commit:
-> >> Reported-by: syzbot+25317a459958aec47bfa@syzkaller.appspotmail.com
-> >> Fixes: fb0b3e2b2d7f ("pidfs: support xattrs on pidfds")
-> >
-> > #syz test: 
-> >
-> > #syz test: https://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs.git vfs-6.17.pidfs
-> 
-> Command #1:
-> want either no args or 2 args (repo, branch), got 4
+This patch series drops the unsed panel field, switches to atomic variants
+and adds support to select between the two supported formats (JEIDA and
+VESA) by the LVDSC.
 
-#syz test: https://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs.git vfs-6.17.pidfs
+Signed-off-by: Dharma Balasubiramani <dharma.b@microchip.com>
+---
+Changes in v4:
+- Split the commits into 3.
+- Drop <drm/drm_panel.h>
+- Link to v3: https://lore.kernel.org/r/20250624-microchip-lvds-v3-1-c3c6f1e40516@microchip.com
+
+Changes in v3:
+- Use BIT(0) instead of 1.
+- Drop the panel field of the mchp_lvds structure.
+- Drop the inner parentheses in write in serialiser_on().
+- Link to v2: https://lore.kernel.org/r/20250623-microchip-lvds-v2-1-8ecbabc6abc4@microchip.com
+
+Changes in v2:
+- Switch to atomic bridge functions
+- Drop custom connector creation
+- Use drm_atomic_get_new_connector_for_encoder()
+- Link to v1: https://lore.kernel.org/r/20250618-microchip-lvds-v1-1-1eae5acd7a82@microchip.com
+
+---
+Dharma Balasubiramani (3):
+      drm/bridge: microchip-lvds: drop unused drm_panel
+      drm/bridge: microchip-lvds: switch to use atomic variants
+      drm/bridge: microchip-lvds: fix bus format mismatch with VESA displays
+
+ drivers/gpu/drm/bridge/microchip-lvds.c | 71 +++++++++++++++++++++++++--------
+ 1 file changed, 54 insertions(+), 17 deletions(-)
+---
+base-commit: 4325743c7e209ae7845293679a4de94b969f2bef
+change-id: 20250618-microchip-lvds-b7151d96094a
+
+Best regards,
+-- 
+Dharma Balasubiramani <dharma.b@microchip.com>
+
 
