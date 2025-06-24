@@ -1,189 +1,89 @@
-Return-Path: <linux-kernel+bounces-701263-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-701279-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 77D77AE72FD
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Jun 2025 01:20:04 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5DE52AE731F
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Jun 2025 01:28:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 50AB61BC038D
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Jun 2025 23:19:55 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EB7E93A9B87
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Jun 2025 23:27:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4FF7726A1D9;
-	Tue, 24 Jun 2025 23:19:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9B2BD26C381;
+	Tue, 24 Jun 2025 23:26:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="StgIEZNo"
-Received: from mail-pf1-f201.google.com (mail-pf1-f201.google.com [209.85.210.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b="GJcmcRUk"
+Received: from relay.smtp-ext.broadcom.com (relay.smtp-ext.broadcom.com [192.19.144.205])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5CB6226B744
-	for <linux-kernel@vger.kernel.org>; Tue, 24 Jun 2025 23:19:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A343E26AAB7;
+	Tue, 24 Jun 2025 23:26:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.19.144.205
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750807151; cv=none; b=ZRO/V6rdGqIXLEmuqIEpvnyr3lUO4ZLC3G7/2hjjkEESVWcEvc8V4+773oYXozKtNnCIhfWp3Ueb6BzTlj71PHqtSnmDVsZVK+859VvnPp1bZU8+CMoTQhTCL9wwmlMcKKA6OShwfax1zeJYD+H+X6H9R4gCfdN0aSUMH4/oki0=
+	t=1750807610; cv=none; b=cCXYmEa9e+CwoyrMs6LBc94pFAd2v1Qwqho7S41a6AAdsxALguBf9ZHck9b9ccMDlLVZ5xnv7MvtSdMTbW9ch02XlwTwkcNh+mMYiZyT9/DtAM7EEPWjThqe9g5o/7cMfyTXpe3dSaEpK3AwmpO4i2Cklhc22Rh+ItqCUnx9x+0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750807151; c=relaxed/simple;
-	bh=Ov7KYM5urbb+duQlFNaUQMctYTgtbQGKJ1mEoTEkiAk=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=bVe+tVBtkeQx2tQ5GQpDO/z8Xg8Lq28+fpykPRCRHEdR4QTKy0P26aukUnzl8LSpBGa5SHzfXIjb2KBvh1wtBX8sHXZgnHT9uqmqfGDrd+lsIxUqevhga9PyI2Zt4kVhmzDpXxpOkT64B/l1CU44YTJZFSIvknxishroWOgtaAQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--irogers.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=StgIEZNo; arc=none smtp.client-ip=209.85.210.201
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--irogers.bounces.google.com
-Received: by mail-pf1-f201.google.com with SMTP id d2e1a72fcca58-74890390d17so716027b3a.2
-        for <linux-kernel@vger.kernel.org>; Tue, 24 Jun 2025 16:19:09 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1750807148; x=1751411948; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=B1kPy2JCJb4zSJWeggG32MlvxkW2zq73XjOq2Ztu1jk=;
-        b=StgIEZNotgRr9KbKx1Hkb8wAaV2I80CrDLcL8H+MAojsJn6LXNJ1iKHEyYiGeypeij
-         HTKFJsQ1FA/4jqcKChjtGrxjQY37MngWgANyuvZLwAWHLGi8vwy7e/Y7nPaTdjh40FBi
-         TzS9L8m51/MRflJ2WQk0QmJY6eK4nYyOTcKh2p9GsFGR28QMyOcJ7hBGk6XjxO5yr2CT
-         wyYk/KLgfXN4W6mHBzEN/yQ9eEG+m2yVFqNtmTUJmJsvk4xrSu2UHavbQ6ORSLtNxG9I
-         qXu2SDBDJUGnlU623uJbgzCgS/dq4XXtkSYrbGCnL90yJhSbNdlD6lITncc2B09YBVxl
-         P+TA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1750807148; x=1751411948;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=B1kPy2JCJb4zSJWeggG32MlvxkW2zq73XjOq2Ztu1jk=;
-        b=GBRvKREuYPpQiMiSi/0QGEMsaykCDcKaSuQLW+7yuzCrWqi+q+SFJEIujhbrDc4lrk
-         qbFMCLRuCYquYu6SqQPHaq35jsO6Cw8sRSlXlfsX2H3ITViW1pgNqwzfG2hJHX/JKPo5
-         424KgXQ061b8EWRQafVmYReOtyX7paWiZJwZ9nUlKSlpD+ep+kgKB/X9egagdFq2BZMl
-         q63xQ+r2n4nq0ABK66/dtBwfd6psY2Q/7yi/GeKikcT2t9egdHPhLn7SRhTLViUmF7tB
-         Y1X17TgapTUvafQu4cVJugvaJ9R8QwlU0VAmyEOOUffqsf0KI2SvyNZQLclVYBm8ZtoN
-         QvOw==
-X-Forwarded-Encrypted: i=1; AJvYcCXiVmvaSUmZ3+Ax+1QJFOvRFmG/RHF8fdUI9hqgIY52syq5+ZO8oMBcqRN46st5/bGNIbtD/TS5rn5QRa0=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwgX3OLR1gzysh963LxuqAeaIbz1lAgVH3VQeax88XI77tt1a9T
-	7LCch9coNie+skVpqk4MYOjHjSKid9BFmUYyeLl0i1H33k//pAvUL5u1VCwq7GtgZpri8qqBDfL
-	EOs54Z9Hntg==
-X-Google-Smtp-Source: AGHT+IFM/3RFuKFIfuGzUEOUqlkqwyLCKg/Cqd+4H1d7Z9aSC+KCwBKw4SxuPZ/gbvXQWKoQuXWIxobHNqhB
-X-Received: from pfbfa15.prod.google.com ([2002:a05:6a00:2d0f:b0:749:2cc7:bd89])
- (user=irogers job=prod-delivery.src-stubby-dispatcher) by 2002:a05:6a00:1826:b0:748:fcfa:8bd5
- with SMTP id d2e1a72fcca58-74ad4462622mr1658511b3a.3.1750807148521; Tue, 24
- Jun 2025 16:19:08 -0700 (PDT)
-Date: Tue, 24 Jun 2025 16:18:37 -0700
-In-Reply-To: <20250624231837.179536-1-irogers@google.com>
+	s=arc-20240116; t=1750807610; c=relaxed/simple;
+	bh=MryCwuQ5UgpRpkPiut10MXF4O6MqDCKghsmv+2OB+JY=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Nwfpxu/A9u0zr3oQfuAQT6L5T5vr+RwspfHXVXqCeqh7HqfaFkL4CLJ9hMRaHGLU3r26Hz97gyeTqelfojRbSpMotg/w/qu3xlBR3l/9rBc0hzAq/Eh0nGPmsht2SBApn7NVmqSl2cIh1jTS+CXxePrXLBfREq+lDVneJ7A99cY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com; spf=fail smtp.mailfrom=broadcom.com; dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b=GJcmcRUk; arc=none smtp.client-ip=192.19.144.205
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=broadcom.com
+Received: from mail-lvn-it-01.broadcom.com (mail-lvn-it-01.lvn.broadcom.net [10.36.132.253])
+	by relay.smtp-ext.broadcom.com (Postfix) with ESMTP id 85629C000C95;
+	Tue, 24 Jun 2025 16:26:47 -0700 (PDT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 relay.smtp-ext.broadcom.com 85629C000C95
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=broadcom.com;
+	s=dkimrelay; t=1750807607;
+	bh=MryCwuQ5UgpRpkPiut10MXF4O6MqDCKghsmv+2OB+JY=;
+	h=From:To:Cc:Subject:Date:From;
+	b=GJcmcRUkZuoz94XL5ZAK8UH7RAU6imQOlEXiY88VUZLxxNAXEyUIfUcMoAC7UyOo+
+	 CfVAJOkPj7fwVIOMrow9i0FaSzCubIlKRqasyysHuZfJXJBe9Ispa0Csey1LlmEbX4
+	 KhbeAAJM1Mx8PJO7lt6AVKfPp7GQeBHIte6NeG88=
+Received: from fainelli-desktop.igp.broadcom.net (fainelli-desktop.dhcp.broadcom.net [10.67.48.245])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mail-lvn-it-01.broadcom.com (Postfix) with ESMTPSA id 12FEE18000530;
+	Tue, 24 Jun 2025 16:26:17 -0700 (PDT)
+From: Florian Fainelli <florian.fainelli@broadcom.com>
+To: linux-kernel@vger.kernel.org
+Cc: Florian Fainelli <florian.fainelli@broadcom.com>,
+	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>,
+	Jim Quinlan <jim2101024@gmail.com>,
+	Lorenzo Pieralisi <lpieralisi@kernel.org>,
+	=?UTF-8?q?Krzysztof=20Wilczy=C5=84ski?= <kwilczynski@kernel.org>,
+	Manivannan Sadhasivam <mani@kernel.org>,
+	Rob Herring <robh@kernel.org>,
+	Bjorn Helgaas <bhelgaas@google.com>,
+	linux-rpi-kernel@lists.infradead.org (moderated list:BROADCOM BCM2711/BCM2835 ARM ARCHITECTURE),
+	linux-arm-kernel@lists.infradead.org (moderated list:BROADCOM BCM2711/BCM2835 ARM ARCHITECTURE),
+	linux-pci@vger.kernel.org (open list:BROADCOM STB PCIE DRIVER)
+Subject: [PATCH 0/2] PCI: brcmstb: Trivial changes
+Date: Tue, 24 Jun 2025 16:19:21 -0700
+Message-ID: <20250624231923.990361-1-florian.fainelli@broadcom.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20250624231837.179536-1-irogers@google.com>
-X-Mailer: git-send-email 2.50.0.727.gbf7dc18ff4-goog
-Message-ID: <20250624231837.179536-4-irogers@google.com>
-Subject: [PATCH v4 3/3] perf tests: Add a DRM PMU test
-From: Ian Rogers <irogers@google.com>
-To: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, 
-	Arnaldo Carvalho de Melo <acme@kernel.org>, Mark Rutland <mark.rutland@arm.com>, 
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>, Jiri Olsa <jolsa@kernel.org>, 
-	Adrian Hunter <adrian.hunter@intel.com>, Kan Liang <kan.liang@linux.intel.com>, 
-	"Masami Hiramatsu (Google)" <mhiramat@kernel.org>, James Clark <james.clark@linaro.org>, 
-	Weilin Wang <weilin.wang@intel.com>, Dominique Martinet <asmadeus@codewreck.org>, 
-	Thomas Richter <tmricht@linux.ibm.com>, Junhao He <hejunhao3@huawei.com>, 
-	Jean-Philippe Romain <jean-philippe.romain@foss.st.com>, matthew.olson@intel.com, 
-	linux-kernel@vger.kernel.org, linux-perf-users@vger.kernel.org, 
-	dri-devel@lists.freedesktop.org
-Cc: Ian Rogers <irogers@google.com>
-Content-Type: text/plain; charset="UTF-8"
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 
-The test opens any DRM devices so that the shell has fdinfo files
-containing the DRM data. The test then uses perf stat to make sure the
-events can be read.
+The first patch removes Nicolas from the maintainers list since he has
+not been active and the second patch uses an existing constant rather
+than open code the value.
 
-Signed-off-by: Ian Rogers <irogers@google.com>
----
- tools/perf/tests/shell/drm_pmu.sh | 78 +++++++++++++++++++++++++++++++
- 1 file changed, 78 insertions(+)
- create mode 100755 tools/perf/tests/shell/drm_pmu.sh
+Florian Fainelli (2):
+  MAINTAINERS: Drop Nicolas from maintaining pcie-brcmstb
+  PCI: brcmstb: Replace open coded value with PCIE_T_RRS_READY_MS
 
-diff --git a/tools/perf/tests/shell/drm_pmu.sh b/tools/perf/tests/shell/drm_pmu.sh
-new file mode 100755
-index 000000000000..e629fe0e8463
---- /dev/null
-+++ b/tools/perf/tests/shell/drm_pmu.sh
-@@ -0,0 +1,78 @@
-+#!/bin/bash
-+# DRM PMU
-+# SPDX-License-Identifier: GPL-2.0
-+
-+set -e
-+
-+output=$(mktemp /tmp/perf.drm_pmu.XXXXXX.txt)
-+
-+cleanup() {
-+  rm -f "${output}"
-+
-+  trap - EXIT TERM INT
-+}
-+
-+trap_cleanup() {
-+  echo "Unexpected signal in ${FUNCNAME[1]}"
-+  cleanup
-+  exit 1
-+}
-+trap trap_cleanup EXIT TERM INT
-+
-+# Array to store file descriptors and device names
-+declare -A device_fds
-+
-+# Open all devices and store file descriptors. Opening the device will create a
-+# /proc/$$/fdinfo file containing the DRM statistics.
-+fd_count=3 # Start with file descriptor 3
-+for device in /dev/dri/*
-+do
-+  if [[ ! -c "$device" ]]
-+  then
-+    continue
-+  fi
-+  major=$(stat -c "%Hr" "$device")
-+  if [[ "$major" != 226 ]]
-+  then
-+    continue
-+  fi
-+  echo "Opening $device"
-+  eval "exec $fd_count<\"$device\""
-+  echo "fdinfo for: $device (FD: $fd_count)"
-+  cat "/proc/$$/fdinfo/$fd_count"
-+  echo
-+  device_fds["$device"]="$fd_count"
-+  fd_count=$((fd_count + 1))
-+done
-+
-+if [[ ${#device_fds[@]} -eq 0 ]]
-+then
-+  echo "No DRM devices found [Skip]"
-+  cleanup
-+  exit 2
-+fi
-+
-+# For each DRM event
-+err=0
-+for p in $(perf list --raw-dump drm-)
-+do
-+  echo -n "Testing perf stat of $p. "
-+  perf stat -e "$p" --pid=$$ true > "$output" 2>&1
-+  if ! grep -q "$p" "$output"
-+  then
-+    echo "Missing DRM event in: [Failed]"
-+    cat "$output"
-+    err=1
-+  else
-+    echo "[OK]"
-+  fi
-+done
-+
-+# Close all file descriptors
-+for fd in "${device_fds[@]}"; do
-+  eval "exec $fd<&-"
-+done
-+
-+# Finished
-+cleanup
-+exit $err
+ MAINTAINERS                           | 1 -
+ drivers/pci/controller/pcie-brcmstb.c | 2 +-
+ 2 files changed, 1 insertion(+), 2 deletions(-)
+
 -- 
-2.50.0.727.gbf7dc18ff4-goog
+2.43.0
 
 
