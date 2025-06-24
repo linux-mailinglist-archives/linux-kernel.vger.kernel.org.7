@@ -1,94 +1,62 @@
-Return-Path: <linux-kernel+bounces-700750-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-700752-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4701EAE6C40
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Jun 2025 18:16:01 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 97C7BAE6C45
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Jun 2025 18:16:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A808D1896B59
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Jun 2025 16:15:37 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7D5A25A5B27
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Jun 2025 16:15:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B0F3C2E1749;
-	Tue, 24 Jun 2025 16:15:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 430DE21B9FD;
+	Tue, 24 Jun 2025 16:15:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="bedy3yV8"
-Received: from mail-pl1-f181.google.com (mail-pl1-f181.google.com [209.85.214.181])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="UZLEobQR"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 891F42405EB;
-	Tue, 24 Jun 2025 16:15:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 952E52CA8;
+	Tue, 24 Jun 2025 16:15:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750781709; cv=none; b=HLx/4rPlQ7YQgq03oeZ+ltvk7oVqeZFDaWEOy3okzNbpwtCJM9h1ZsPbGrl3zIe/4uNfCiy9qT1x3vaI3mv4zFPrGefqRcR3HAiekHgTTrJQqXktLXnfGq20ByvQogNIu9RgPsjG/4bpPGArqnLYgmQU2+5JEyt8DUGTIUDwiYY=
+	t=1750781743; cv=none; b=PoDyzWKt3b3TsTiZfnlnRQrOdHEQ7u9pl1D8vN8+nfhtiwEZbcAW3vo+eRW1aeYMkO0raHSUM3YyawCS/+UBCB/6j0ByIMNchKr1BvCQDYJJTtP5Y1MU4w5lOpCATNh8CxAJheqMirOhoZK6SCR49xThX7QqvFYNpRWsvCdTyEQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750781709; c=relaxed/simple;
-	bh=lvGwQAAObMcMpnGSVKYiVQnRJ15AOjLbSCae8dPzrUE=;
+	s=arc-20240116; t=1750781743; c=relaxed/simple;
+	bh=57KGGXFeYzK3SWKuPuzos71t2DB02nUIsE5M3fgI7hw=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=S8StAmCtOIYqMmuLbaqRA5ef6GMQGhHJmLF9UCUXjlhr9lO8HP8LIWAZTR1vkphUbYy6yvPYqJDZ8zv/wd2so6xi6cyOqG/6mOL1XLjFqKvlxVt03SQic7976lIhR9clKLXQvokuj3E+gbOO56G1+Y2YynUj1ksE9/Ij6WyAKbU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=bedy3yV8; arc=none smtp.client-ip=209.85.214.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f181.google.com with SMTP id d9443c01a7336-23602481460so7816575ad.0;
-        Tue, 24 Jun 2025 09:15:07 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1750781707; x=1751386507; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=NOFa14hzPvC6t+oIp0DexT1UxNfRS4Cl15Pgd6Dy9Oc=;
-        b=bedy3yV8ASaKB6pPQpywKeazSqLRtPBDK1ZD257lN+Fy86jw7SEEM7lDAtRciw8ntj
-         YaY/d83k4zy7Jabc/TSYaY7UZNBIu5SCmGclUvZoYXnczuNhadDf11oTW4VQz+xDtfQG
-         q0fNgJYUx7/2AGp3gDIVr7GHeK/fnSOEAfFP32mQgijB1GKjjFfV3CkWwpdiVfadaLwJ
-         5d/mdqXb++yDUUvfCbUjHF8N7b32DxvHlasJADgsQfoS1TSgx+Guf1+wRXBiM3KG1Vn6
-         ceR4RPMRLaM/KrEwCW4ncw5KhOQNRX05JC4OQu060/8BPtDcdKnNUsRaUerTd2/oz+Bw
-         q7Xg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1750781707; x=1751386507;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=NOFa14hzPvC6t+oIp0DexT1UxNfRS4Cl15Pgd6Dy9Oc=;
-        b=NHUhA0n9xsRy4pr3nLB6qPMaBtfG9gXZ2kAwdQV+X6DNO/p1NxWuefiTtHZQEnsDXP
-         JjvA4Sshm+FzAOLBs9O1rjfDgPNmf91uNeaOwlhURnXzSqT02SB9fbYSKClrqKWCgTS7
-         cM4FCISfP7me6EEwkegXAAZxt2OxhuYhAzyPUSkrStg0YV0d36GuA4xreJTmZvz90i6+
-         keA9rWDC0Bnwo2tX8OrnXSaetYjnnH4HOwDeWX2xbz3yv2q3B5ODixcl7k4eamUNGsFG
-         pFMk+UXdTw96+3RVDMAVRbFlvPQdGIDwujwU38blu1VxTxMjHyn4BDd9yfODHZFKYyqm
-         e0Lw==
-X-Forwarded-Encrypted: i=1; AJvYcCUDOsEI/NagvGvFUeAZGBiyvtLgD+bWbLROPUAvjlh984HtkzLDo4EuwjessB6S88g6V9dxuHDxtfE=@vger.kernel.org, AJvYcCUwKSoY0HqV6YhtgMXRLakBmBa4NxQ+6Swa435h8sm5h1OF1VlMWYfCQFKc3x5F88Vvb2zzRUpJYz2YEA4=@vger.kernel.org, AJvYcCV7mY8J5LU/ivXHRX7FWxblj0v2S5ncq2sEtNJqxwv6iqY4dffV7u/KaGsJl/i1ft3il1yx6qkxLd4DiQPZRM+Igw==@vger.kernel.org
-X-Gm-Message-State: AOJu0YxVH7CbR+574UC3fJb2VQVZXzSpJV0D8PpYFatCWmlc1lUwp/G/
-	GJZcU2PqpkAKwFNSTKFbkkTdZim3pUY4izDTIFhKjlJrVN3AbPLxApXv
-X-Gm-Gg: ASbGncupjfVMfz9qe5/LkWqHDvn/gmqLAQQSiPbwP9OUghXAz2akZAWf5WtNSEINjII
-	LyFkTpP7Y0XNkYjZpcrtW2YWvwdIXG7XxOLPNtaIVU2w8vs0iN6UzTN9q2oV37e6blKDNYE9NUB
-	zEiToDohcQhDRuelTcxZKvAxhROtphOp3rtlW5+EVwf6Pb7dgEdT/KL8zejxvz8wTuxS6reC7Rv
-	ZsB+vsvbqHw0INUOMUylXP2xVvhfY54vbgHB59SrJ08+I+JJZrMgIhBlXlHzjYMWLGUDLVumoaO
-	qyU9BYNZVBIoU7nbUURdiju+7E/ntxm3UAd0NUrq8tR4MF3uf6Rfo00Rjas=
-X-Google-Smtp-Source: AGHT+IHG7rYkinFLRzsG4MwI6gkoEJZsqgBi83L3LCSzHE9voyWIDchNPTp5X+xH8/2vrw7ovBDS3g==
-X-Received: by 2002:a17:902:f54f:b0:235:ea0d:ae23 with SMTP id d9443c01a7336-2381ddd180dmr3846685ad.6.1750781706256;
-        Tue, 24 Jun 2025 09:15:06 -0700 (PDT)
-Received: from hiagonb ([67.159.246.222])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-237d839618esm115515765ad.33.2025.06.24.09.15.01
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 24 Jun 2025 09:15:05 -0700 (PDT)
-Date: Tue, 24 Jun 2025 13:15:00 -0300
-From: Hiago De Franco <hiagofranco@gmail.com>
-To: Mathieu Poirier <mathieu.poirier@linaro.org>
-Cc: Ulf Hansson <ulf.hansson@linaro.org>, linux-pm@vger.kernel.org,
-	linux-remoteproc@vger.kernel.org, Shawn Guo <shawnguo@kernel.org>,
-	Sascha Hauer <s.hauer@pengutronix.de>,
-	Bjorn Andersson <andersson@kernel.org>,
-	Hiago De Franco <hiago.franco@toradex.com>, imx@lists.linux.dev,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	Peng Fan <peng.fan@oss.nxp.com>, daniel.baluta@nxp.com,
-	iuliana.prodan@oss.nxp.com,
-	"Rafael J . Wysocki" <rafael@kernel.org>,
-	Peng Fan <peng.fan@nxp.com>
-Subject: Re: [PATCH v5 2/3] remoteproc: imx_rproc: skip clock enable when
- M-core is managed by the SCU
-Message-ID: <20250624161500.odnopjv5jqvyyus2@hiagonb>
-References: <20250617193450.183889-1-hiagofranco@gmail.com>
- <20250617193450.183889-3-hiagofranco@gmail.com>
- <aFlvqK6SHvWHIpMn@p14s>
+	 Content-Type:Content-Disposition:In-Reply-To; b=Usraz2iRleMblEpbSLJGk10IycYfCpk69+1VXy2vb2eX/ZrFUtTm+/CGyXElYxeKi3ua5ndeZiUs8eGpPWLtCq/OukgNa+U6UeBSo2C93JhVzUw2YkHxcqtR0KBcQ99gKGS5ZytaQli/nB3WR+ZEASknB4417GK017JLFZohdtI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=UZLEobQR; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5EB27C4CEE3;
+	Tue, 24 Jun 2025 16:15:39 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1750781743;
+	bh=57KGGXFeYzK3SWKuPuzos71t2DB02nUIsE5M3fgI7hw=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=UZLEobQROqAuzu4WGUq3ilnyh0W3kf7mHHZLhm59Bq+kmmatsj9yzu6Vz7vWpQUZ3
+	 ZMKHK1O6dphmww8tlmC9n0JJYD7HDSq98/onavbNuW0BKxtI9b2PDfy+hxL1079pLK
+	 I825s0pdnz7Ib7A1502mkKCoqocwCD0UZ2hwsBaKJYhraDX4AStrq8UVEhEGDfwONJ
+	 Lyro5JtRvr4SjQKVxfI/0ks6LaPXYUE2DSvnu1jKC0SlEvZPZwAxG6+u9ZsWoMEAS0
+	 o0Sy1FuogCmKsTUdqWD7lhHltZCF8CD8+NFINHff9hFG0VCjLOpFdvfYQ+AKKb7ERy
+	 cbALbi6aTGErg==
+Date: Tue, 24 Jun 2025 18:15:36 +0200
+From: Danilo Krummrich <dakr@kernel.org>
+To: Boqun Feng <boqun.feng@gmail.com>
+Cc: gregkh@linuxfoundation.org, rafael@kernel.org, ojeda@kernel.org,
+	alex.gaynor@gmail.com, gary@garyguo.net, bjorn3_gh@protonmail.com,
+	lossin@kernel.org, a.hindborg@kernel.org, aliceryhl@google.com,
+	tmgross@umich.edu, david.m.ertman@intel.com, ira.weiny@intel.com,
+	leon@kernel.org, kwilczynski@kernel.org, bhelgaas@google.com,
+	rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-pci@vger.kernel.org
+Subject: Re: [PATCH v2 3/4] rust: devres: get rid of Devres' inner Arc
+Message-ID: <aFrPKAxHfAetcQzz@cassiopeiae>
+References: <20250622164050.20358-1-dakr@kernel.org>
+ <20250622164050.20358-4-dakr@kernel.org>
+ <aFizv7suXTADJU3f@Mac.home>
+ <aFrBvwFrUGD45TeF@cassiopeiae>
+ <aFrIbRA9b9LOxFQ3@Mac.home>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -97,77 +65,41 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <aFlvqK6SHvWHIpMn@p14s>
+In-Reply-To: <aFrIbRA9b9LOxFQ3@Mac.home>
 
-Hi Mathieu,
+On Tue, Jun 24, 2025 at 08:46:53AM -0700, Boqun Feng wrote:
+> On Tue, Jun 24, 2025 at 05:18:23PM +0200, Danilo Krummrich wrote:
+> > On Sun, Jun 22, 2025 at 06:54:07PM -0700, Boqun Feng wrote:
+> > > I think you also need to mention that `inner` only remains valid until
+> > > `inner.devm.complete_all()` unblocks `Devres::drop()`, because after
+> > > `Devres::drop()`'s `devm.wait_for_completion()` returns, `inner` may be
+> > > dropped or freed.
+> > 
+> > I think of it the other way around: The invariant guarantees that `inner` is
+> > *always* valid.
+> > 
+> > The the `drop_in_place(inner)` call has to justify that it upholds this
+> > invariant, by ensuring that at the time it is called no other code that accesses
+> > `inner` can ever run.
+> > 
+> > Defining it the other way around would make the `inner()` accessor unsafe.
+> 
+> Maybe I wasn't clear enough, I meant in the following function:
+> 
+>     unsafe extern "C" fn devres_callback(ptr: *mut kernel::ffi::c_void) {
+> -        let ptr = ptr as *mut DevresInner<T>;
+> -        // Devres owned this memory; now that we received the callback, drop the `Arc` and hence the
+> -        // reference.
+> -        // SAFETY: Safe, since we leaked an `Arc` reference to devm_add_action() in
+> -        //         `DevresInner::new`.
+> -        let inner = unsafe { Arc::from_raw(ptr) };
+> +        // SAFETY: In `Self::new` we've passed a valid pointer to `Inner` to `devm_add_action()`,
+> +        // hence `ptr` must be a valid pointer to `Inner`.
+> +        let inner = unsafe { &*ptr.cast::<Inner<T>>() };
+> 
+> ^ this `inner` was constructed by reborrowing from `ptr`, but it should
+> only be used before the following `inner.devm.complete_all()`...
 
-On Mon, Jun 23, 2025 at 09:15:52AM -0600, Mathieu Poirier wrote:
-> Hi Hiago,
-> 
-> On Tue, Jun 17, 2025 at 04:34:49PM -0300, Hiago De Franco wrote:
-> > From: Hiago De Franco <hiago.franco@toradex.com>
-> > 
-> > For the i.MX8X and i.MX8 family SoCs, when the M-core is powered up
-> > by the bootloader, M-core and Linux are in same SCFW (System Controller
-> > Firmware) partition, so linux has permission to control M-core.
-> 
-> Ok
-> 
-> > 
-> > But when M-core is started, the SCFW will automatically enable the clock
-> 
-> I find the "But when M-core is started" part confusing.  Started by who?  And
-> are you making a distinction between "powered up" and "started"?  It is not
-> possible for someone that doesn't have HW documentation to understand what is
-> going on.
-
-Ok, understood, I will improve this in the next revision. Just to make
-clear, I am talking about Cortex-A bootloader starting Cortex-M (U-Boot
-bootaux command in this case). This means powered up, started and
-running.
-
-> 
-> > and configure the rate, and any users that want to enable the clock will
-> > get error 'LOCKED' from SCFW. So current imx_rproc.c probe function
-> > fails because clk_prepare_enable also fails. With that, the M-core power
-> > domain is powered off when it is still running, causing a SCU (System
-> > Controller Unit) fault reset, and the system restarts.
-> > 
-> > To address the issue, ignore handling the clk for i.MX8X and i.MX8 M-core,
-> > because SCFW will automatically enable and configure the clock.
-> > 
-> > Suggested-by: Peng Fan <peng.fan@nxp.com>
-> > Reviewed-by: Ulf Hansson <ulf.hansson@linaro.org>
-> > Signed-off-by: Hiago De Franco <hiago.franco@toradex.com>
-> > ---
-> > v4 -> v5:
-> >  - Unchanged.
-> > v3 -> v4:
-> >  - Unchanged.
-> > v2 -> v3:
-> >  - Unchanged.
-> > v1 -> v2:
-> >  - Commit description updated, as suggested. Fixed Peng Fan email.
-> > ---
-> >  drivers/remoteproc/imx_rproc.c | 4 ++--
-> >  1 file changed, 2 insertions(+), 2 deletions(-)
-> > 
-> > diff --git a/drivers/remoteproc/imx_rproc.c b/drivers/remoteproc/imx_rproc.c
-> > index 74299af1d7f1..627e57a88db2 100644
-> > --- a/drivers/remoteproc/imx_rproc.c
-> > +++ b/drivers/remoteproc/imx_rproc.c
-> > @@ -1029,8 +1029,8 @@ static int imx_rproc_clk_enable(struct imx_rproc *priv)
-> >  	struct device *dev = priv->dev;
-> >  	int ret;
-> >  
-> > -	/* Remote core is not under control of Linux */
-> > -	if (dcfg->method == IMX_RPROC_NONE)
-> > +	/* Remote core is not under control of Linux or it is managed by SCU API */
-> > +	if (dcfg->method == IMX_RPROC_NONE || dcfg->method == IMX_RPROC_SCU_API)
-> >  		return 0;
-> >  
-> >  	priv->clk = devm_clk_get(dev, NULL);
-> > -- 
-> > 2.39.5
-> > 
+Oh, so you meant adding this to the safety comment. Yes, that makes sense. Maybe
+ScopeGuard works too, as you say.
 
