@@ -1,98 +1,180 @@
-Return-Path: <linux-kernel+bounces-700069-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-700071-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 32681AE636B
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Jun 2025 13:14:37 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3F073AE636F
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Jun 2025 13:16:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3F9A47AB20F
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Jun 2025 11:13:09 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4C6637A7F6C
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Jun 2025 11:14:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CA8A728C843;
-	Tue, 24 Jun 2025 11:14:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 525BF28C843;
+	Tue, 24 Jun 2025 11:15:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="fXoKQpDr"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="USaWoSJ2"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.19])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 33237221F17;
-	Tue, 24 Jun 2025 11:14:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4DB761EEA5D;
+	Tue, 24 Jun 2025 11:15:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.19
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750763656; cv=none; b=KUT4ZfH3U5+Ueh9zzad0IVuH8vpZUzFZ9CPnnRwCAdm0hpVQOIlmyH/eAV5WOUvaAHXzoLAnMrTkmACllxikBBqcJTI4/p68sN9QI1o+3yMfP5lqBHYGGw/HKZoVPvDaCZsgDIGRxHKzCRK+SpoMk2ZqnPUaozib2M2EtCMMdIU=
+	t=1750763737; cv=none; b=WAbjM5IxrpRjdsa3/TjCPqIZfoEiqUPEj6yeBVeRRjxPv9A5sMLlFy5nwF6i0XLFPfeM6rr3ueVB1WlUQ/go4eatIjwiX9eAr3SOuolkM26pHhBWVxrl8Tgh1QAeZqVVKKB3pGI32ejHD/rhSYmSQLRRuf3UexGr/fmN813NAcw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750763656; c=relaxed/simple;
-	bh=Us7Q1PFZzaMBawMok6kpzJbe2Glw5foEeT6W19FayVw=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=hhofjdoObRbc8jDcT3GqJz6fEVz6FXHS/ei6QC26GbDmBWrZ6oVG16jLmb2EPHd5h332vPsKr9oAfZ3uQPTZwEm8m14X82cZAVWUErQ4pDeA2YGxOvcbtElhzpx45KcU5iA1pES6Z5b4RXMCOrK3QYoUIH/z+XPssUfaIhbHLzg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=fXoKQpDr; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 363A1C4CEEE;
-	Tue, 24 Jun 2025 11:14:11 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1750763654;
-	bh=Us7Q1PFZzaMBawMok6kpzJbe2Glw5foEeT6W19FayVw=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
-	b=fXoKQpDrEY6m6qKm3fCmp+HwRy5F0dgMYA+u5GTCsLJVBhljgr3kFarHv7NooRCsU
-	 dmJ5lSMvd/xrHz8UDapUpPqrxIE0U+Df1RDQxbFcwvopL+lBo/to6IxEHbkna3v3Ln
-	 Ul0D/YRJXEhhdglDoRO4DRWoKgqrWXGx8JLH0l8mlADpXbnXbRLzYXrPfKoQjZKKRm
-	 tBbX8HVp9u3/w39v7leEK4db6Y9CLy/xS/A8CPpawqQczmMRAnqxM+9m2c+nWMBbWU
-	 2IpqDb7horrpODjDDUv8d/6Eql1tL27U8RJizLmSeQ1zbYy30fKNZabV6qxP1SrI2D
-	 b0DZcGzMRWLsw==
-From: Andreas Hindborg <a.hindborg@kernel.org>
-To: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
-Cc: alex.gaynor@gmail.com,  ojeda@kernel.org,  FUJITA Tomonori
- <fujita.tomonori@gmail.com>,  aliceryhl@google.com,
-  anna-maria@linutronix.de,  bjorn3_gh@protonmail.com,
-  boqun.feng@gmail.com,  dakr@kernel.org,  frederic@kernel.org,
-  gary@garyguo.net,  jstultz@google.com,  linux-kernel@vger.kernel.org,
-  lossin@kernel.org,  lyude@redhat.com,  rust-for-linux@vger.kernel.org,
-  sboyd@kernel.org,  tglx@linutronix.de,  tmgross@umich.edu
-Subject: Re: [PATCH v3 0/5] rust: time: Convert hrtimer to use Instant and
- Delta
-In-Reply-To: <CANiq72=mDe2kB4yQnzb=kwopyUYG936pOoj80YpWk7+q6aJwbQ@mail.gmail.com>
- (Miguel
-	Ojeda's message of "Tue, 24 Jun 2025 13:08:17 +0200")
-References: <20250610132823.3457263-1-fujita.tomonori@gmail.com>
-	<175015666837.277659.5038961663728008472.b4-ty@kernel.org>
-	<CANiq72=mDe2kB4yQnzb=kwopyUYG936pOoj80YpWk7+q6aJwbQ@mail.gmail.com>
-User-Agent: mu4e 1.12.9; emacs 30.1
-Date: Tue, 24 Jun 2025 13:14:01 +0200
-Message-ID: <87plet4cjq.fsf@kernel.org>
+	s=arc-20240116; t=1750763737; c=relaxed/simple;
+	bh=giBJWbKCZDCZomcuUzUBk68/z0/RqLrNjY/vqUVWhCI=;
+	h=From:Date:To:cc:Subject:In-Reply-To:Message-ID:References:
+	 MIME-Version:Content-Type; b=aNXfDVchGu9poUVqziJ1kAdxkL/o/binig+IdJj0YkDySFwYrS0vSf1KSP/zNqWRbqFizBC2mXRAoTcFQjwQrnj2OEoJ6V3vJqh5VhBjrlJGP1mdcItv7Tty5GO4eH5IJwHxQEkR8uu8REUuOyhXT/mBjNIz/eEdZREETV+R15s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=USaWoSJ2; arc=none smtp.client-ip=198.175.65.19
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1750763736; x=1782299736;
+  h=from:date:to:cc:subject:in-reply-to:message-id:
+   references:mime-version;
+  bh=giBJWbKCZDCZomcuUzUBk68/z0/RqLrNjY/vqUVWhCI=;
+  b=USaWoSJ2+YEEzZAMTxsCn/6yhtvqcTXvgbqKLws9/+BrsQVNkEOhPFvu
+   l2QQFsmAZ0uJjKvV35jKXdJn/AwOaEIXto4PQ47NRvYw5uaGh+1FVdl+A
+   zPz7xO+yAtM8Mz9ziwJrRooRu4jkZO03MNwEifL1QvEudOvmpIQQmqpB2
+   +K0sBdXLi5WUft5Ez+ApAk/4x2ir8QnWLQqV/LP1ozubJWKA7AnxNK0VO
+   Pz9yaVMi+3jfUHvcNz/nBS+kJ1/vROCXUaGveyr6sdiQkGYW4LpJEdhQ1
+   NpMP0rwwY03bxpK7rPZ5eX0EhjMXSWYzfePg91+PqwBaG644HBsuzqxKI
+   Q==;
+X-CSE-ConnectionGUID: wPFkYcnkTtG9hiEsl2Ucdg==
+X-CSE-MsgGUID: zu+SE7qLR0WU9cK9CpaM6w==
+X-IronPort-AV: E=McAfee;i="6800,10657,11473"; a="52868942"
+X-IronPort-AV: E=Sophos;i="6.16,261,1744095600"; 
+   d="scan'208";a="52868942"
+Received: from orviesa008.jf.intel.com ([10.64.159.148])
+  by orvoesa111.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 24 Jun 2025 04:15:34 -0700
+X-CSE-ConnectionGUID: sos1YxJXTWyQvlTESp5sfw==
+X-CSE-MsgGUID: dG8yJcKGQDObuBxfiZ+oVA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.16,261,1744095600"; 
+   d="scan'208";a="152397365"
+Received: from ijarvine-mobl1.ger.corp.intel.com (HELO localhost) ([10.245.245.16])
+  by orviesa008-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 24 Jun 2025 04:15:32 -0700
+From: =?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
+Date: Tue, 24 Jun 2025 14:15:27 +0300 (EEST)
+To: "Jiri Slaby (SUSE)" <jirislaby@kernel.org>
+cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
+    linux-serial <linux-serial@vger.kernel.org>, 
+    LKML <linux-kernel@vger.kernel.org>, 
+    Andy Shevchenko <andy.shevchenko@gmail.com>
+Subject: Re: [PATCH v2 1/5] serial: 8250: extract serial8250_init_mctrl()
+In-Reply-To: <b78023eb-f5ab-6287-1cd7-5db76d905eed@linux.intel.com>
+Message-ID: <4d6b65af-294c-fd02-af91-099e22420472@linux.intel.com>
+References: <20250624080641.509959-1-jirislaby@kernel.org> <20250624080641.509959-2-jirislaby@kernel.org> <b78023eb-f5ab-6287-1cd7-5db76d905eed@linux.intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+Content-Type: multipart/mixed; boundary="8323328-865615950-1750763727=:943"
 
-Miguel Ojeda <miguel.ojeda.sandonis@gmail.com> writes:
+  This message is in MIME format.  The first part should be readable text,
+  while the remaining parts are likely unreadable without MIME-aware tools.
 
-> On Tue, Jun 17, 2025 at 12:39=E2=80=AFPM Andreas Hindborg <a.hindborg@ker=
-nel.org> wrote:
->>
->> [1/5] rust: time: Rename Delta's methods from as_* to into_*
->>       commit: 2ed94606a0fea693e250e5b8fda11ff8fc240d37
->
-> Do we want this given the (~ongoing) discussion at
->
->     https://lore.kernel.org/rust-for-linux/20250617144155.3903431-2-fujit=
-a.tomonori@gmail.com/
->
-> ?
->
+--8323328-865615950-1750763727=:943
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 
-My plan is to merge it and go with `into_*`. There are pros and cons for
-both `to_*` and `into_*`. If someone has objections, they can send a new
-patch with rationale and we can revisit. Sounds OK?
+On Tue, 24 Jun 2025, Ilpo J=C3=A4rvinen wrote:
 
+> On Tue, 24 Jun 2025, Jiri Slaby (SUSE) wrote:
+>=20
+> > After commit 795158691cc0 ("serial: 8250: extract
+> > serial8250_initialize()"), split serial8250_initialize() even more --
+> > the mctrl part of this code can be separated into
+> > serial8250_init_mctrl() -- done now.
+> >=20
+> > Signed-off-by: Jiri Slaby (SUSE) <jirislaby@kernel.org>
+> > Suggested-by: Ilpo J=C3=A4rvinen <ilpo.jarvinen@linux.intel.com>
+>=20
+> Heh, I didn't even realize I was suggesting this :-D but it's good=20
+> nonetheless.
+>=20
+> Reviewed-by: Ilpo J=C3=A4rvinen <ilpo.jarvinen@linux.intel.com>
+>=20
+> > Cc: Andy Shevchenko <andy.shevchenko@gmail.com>
+> > ---
+> > [v2]
+> > * use port-> directly.
+> > * do not remove curly braces.
+> > Both rebase errors -- noticed by Andy.
+> > ---
+> >  drivers/tty/serial/8250/8250_port.c | 21 +++++++++++++--------
+> >  1 file changed, 13 insertions(+), 8 deletions(-)
+> >=20
+> > diff --git a/drivers/tty/serial/8250/8250_port.c b/drivers/tty/serial/8=
+250/8250_port.c
+> > index 48c30e158cb8..0f85a2f292fc 100644
+> > --- a/drivers/tty/serial/8250/8250_port.c
+> > +++ b/drivers/tty/serial/8250/8250_port.c
+> > @@ -2216,15 +2216,8 @@ static void serial8250_THRE_test(struct uart_por=
+t *port)
+> >  =09=09up->bugs |=3D UART_BUG_THRE;
+> >  }
+> > =20
+> > -static void serial8250_initialize(struct uart_port *port)
+> > +static void serial8250_init_mctrl(struct uart_port *port)
+> >  {
+> > -=09struct uart_8250_port *up =3D up_to_u8250p(port);
+> > -=09unsigned long flags;
+> > -=09bool lsr_TEMT, iir_NOINT;
+> > -
+> > -=09serial_port_out(port, UART_LCR, UART_LCR_WLEN8);
+> > -
+> > -=09uart_port_lock_irqsave(port, &flags);
+> >  =09if (port->flags & UPF_FOURPORT) {
 
-Best regards,
-Andreas Hindborg
+I should have also added what I meant with my earlier suggestion. AFAICT,=
+=20
+this UPF_FOURPORT thing can only occur if SERIAL_8250_FOURPORT is enabled.
 
+The challenge obviously are the if/else constructs but there are a few=20
+places that do port->flags & UPF_FOURPORT specific thing and something=20
+else otherwise. That hw-specific code could be placed into the hw-specific=
+=20
+8250_fourport.c file if the hw-specific function is made to return true=20
+if it did match, and the generic code runs otherwise.
 
+I also have no idea why serial/sunsu.c checks UPF_FOURPORT, perhaps that's=
+=20
+copy-paste in action. :-)
 
+> >  =09=09if (!port->irq)
+> >  =09=09=09port->mctrl |=3D TIOCM_OUT1;
+> > @@ -2235,6 +2228,18 @@ static void serial8250_initialize(struct uart_po=
+rt *port)
+> >  =09}
+> > =20
+> >  =09serial8250_set_mctrl(port, port->mctrl);
+> > +}
+> > +
+> > +static void serial8250_initialize(struct uart_port *port)
+> > +{
+> > +=09struct uart_8250_port *up =3D up_to_u8250p(port);
+> > +=09unsigned long flags;
+> > +=09bool lsr_TEMT, iir_NOINT;
+> > +
+> > +=09serial_port_out(port, UART_LCR, UART_LCR_WLEN8);
+> > +
+> > +=09uart_port_lock_irqsave(port, &flags);
+> > +=09serial8250_init_mctrl(port);
+> > =20
+> >  =09/*
+> >  =09 * Serial over Lan (SoL) hack:
+> >=20
+>=20
+>=20
+
+--=20
+ i.
+
+--8323328-865615950-1750763727=:943--
 
