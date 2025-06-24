@@ -1,78 +1,99 @@
-Return-Path: <linux-kernel+bounces-699540-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-699534-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id EDE4CAE5BFE
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Jun 2025 07:46:40 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9323CAE5BF8
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Jun 2025 07:45:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 86EB67B194C
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Jun 2025 05:45:17 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E61DB1B678FE
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Jun 2025 05:45:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 12D7E248895;
-	Tue, 24 Jun 2025 05:45:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AC2AA238C21;
+	Tue, 24 Jun 2025 05:45:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="m3JXIY2X"
-Received: from lelvem-ot02.ext.ti.com (lelvem-ot02.ext.ti.com [198.47.23.235])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="kdsie3t4"
+Received: from mail-pf1-f182.google.com (mail-pf1-f182.google.com [209.85.210.182])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E65E02459D5
-	for <linux-kernel@vger.kernel.org>; Tue, 24 Jun 2025 05:45:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.23.235
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 791F119C546;
+	Tue, 24 Jun 2025 05:45:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750743940; cv=none; b=m6ync4zoNsNbJJTTMSpqe1P6IhEcqzcl8WNvor6ZHjwkHpwhNmaLLfwKA7aD8RqzvS2GNr0UgchbHG/jleJA2v2pcDjnW1VKalX3fDMWdzfxvdUsH30cLPz04iLJeGFKVl9O3bKmi7/P5tznUaWR7lPPs2tKehncC7DS4UWB1I4=
+	t=1750743921; cv=none; b=uOo3BFC+G0Ukoyl1b/KH3thafUPETeXdCmh9PUH+2xW/hLwSHEOn90ljsS1u3d5shB8vuf9rhonrfmcCxRIbKD8hrz6Y09Y7HghdoAu78/aiYowLK9MM6J53jCmF/f3/0MMIy0z7S5lvsI4t6g4M446WzBl5oCc5gQpfZB9vXRs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750743940; c=relaxed/simple;
-	bh=dJT98dzfpj2MWexVDMxvDypJ9F3HmDPH8FzX3oX/iHk=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=A1PBgrXh9HSEjD0GkUAJ/boF0B04mOZ8vS891erVbT9d/b8bmKoKGq/Qoaj38vHtpWm1kTisroLFtwYDW713kabij3fbeeKYK+YLBCY1xYDSU6KSjSLP1bIhHBAFYG4SeZPSPb7//yFjggctS+swnCoDNDBNMKScWX8uUpCD/eo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=m3JXIY2X; arc=none smtp.client-ip=198.47.23.235
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
-Received: from lelvem-sh01.itg.ti.com ([10.180.77.71])
-	by lelvem-ot02.ext.ti.com (8.15.2/8.15.2) with ESMTP id 55O5iw6m1699738;
-	Tue, 24 Jun 2025 00:44:58 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-	s=ti-com-17Q1; t=1750743898;
-	bh=dF79D7yUBv3vLwPqq1oMk7JyF7hSYsuIrzf2gckNIf4=;
-	h=From:To:CC:Subject:Date:In-Reply-To:References;
-	b=m3JXIY2XjkaTpCgcqoHKuaJGbIXuKKD4psRLoRpEIC2Lt1GTdqzVDEX1Dt79PPNrq
-	 ilwvf/nyuvdEQ7leJqcg7cJmk9xueMcHghTex7tnCkgQ4x49fhjX9hwo8wufYKPvuo
-	 hqizp6oVM7UVUdr+6DfR7qrvLvEz6dilLoU1tfW8=
-Received: from DLEE103.ent.ti.com (dlee103.ent.ti.com [157.170.170.33])
-	by lelvem-sh01.itg.ti.com (8.18.1/8.18.1) with ESMTPS id 55O5iwek1240916
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-SHA256 bits=128 verify=FAIL);
-	Tue, 24 Jun 2025 00:44:58 -0500
-Received: from DLEE114.ent.ti.com (157.170.170.25) by DLEE103.ent.ti.com
- (157.170.170.33) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.55; Tue, 24
- Jun 2025 00:44:57 -0500
-Received: from lelvem-mr06.itg.ti.com (10.180.75.8) by DLEE114.ent.ti.com
- (157.170.170.25) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.55 via
- Frontend Transport; Tue, 24 Jun 2025 00:44:58 -0500
-Received: from localhost (jayesh-hp-z2-tower-g5-workstation.dhcp.ti.com [172.24.227.214])
-	by lelvem-mr06.itg.ti.com (8.18.1/8.18.1) with ESMTP id 55O5ivUE962027;
-	Tue, 24 Jun 2025 00:44:57 -0500
-From: Jayesh Choudhary <j-choudhary@ti.com>
-To: <andrzej.hajda@intel.com>, <neil.armstrong@linaro.org>, <rfoss@kernel.org>,
-        <Laurent.pinchart@ideasonboard.com>, <mripard@kernel.org>,
-        <lumag@kernel.org>, <dianders@chromium.org>,
-        <dri-devel@lists.freedesktop.org>, <tomi.valkeinen@ideasonboard.com>
-CC: <jonas@kwiboo.se>, <jernej.skrabec@gmail.com>,
-        <maarten.lankhorst@linux.intel.com>, <tzimmermann@suse.de>,
-        <airlied@gmail.com>, <simona@ffwll.ch>, <lyude@redhat.com>,
-        <luca.ceresoli@bootlin.com>, <viro@zeniv.linux.org.uk>,
-        <andy.yan@rock-chips.com>, <linux@treblig.org>, <javierm@redhat.com>,
-        <linux-kernel@vger.kernel.org>, <devarsht@ti.com>,
-        <j-choudhary@ti.com>
-Subject: [PATCH v4 5/5] drm/bridge: cadence: cdns-mhdp8546-core: Reduce log level for DPCD read/write
-Date: Tue, 24 Jun 2025 11:14:48 +0530
-Message-ID: <20250624054448.192801-6-j-choudhary@ti.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20250624054448.192801-1-j-choudhary@ti.com>
-References: <20250624054448.192801-1-j-choudhary@ti.com>
+	s=arc-20240116; t=1750743921; c=relaxed/simple;
+	bh=EtF+yaGuJF3j9Mq5cSGsIUOF6ix7MOFy5FzlzzWfoj8=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=Ef9IfekUm0RLKY5CRZudCcvp7rX6sQL45U7IFtIOjiRQmJ88Q90HgDqPKQ7r+dwSz0tdHLnLh4HN4mP7wv7OwwnvdE/+D4poUPT2r8ATDbarRW3s0XmzEacgdSalbWrtLlgwxWjhg8zFq6Qbx6nxywxiW4ECzdNXAetgnIGRv6c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=kdsie3t4; arc=none smtp.client-ip=209.85.210.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f182.google.com with SMTP id d2e1a72fcca58-739b3fe7ce8so63207b3a.0;
+        Mon, 23 Jun 2025 22:45:18 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1750743918; x=1751348718; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=xgKsM416bqMqvI55x8cJU8L9NhSAKr4ObSXw0Ig8+pg=;
+        b=kdsie3t4ScSvRu889ZN8yM7Yuc0ZzVFF4F7zXfJuGPBCytWvCxe00blZo4rO01Wjmj
+         0xwde18yme2yFYN5e3Vk/mW47bI66yfxmVDe1G4cqGdz6QRFVaY0WDR3FXsv8fw6/qBK
+         U5GETjtNMkvhayZlRz4yE1EfXSjmFo0ZZD6lDiMn0Atii9A0Fhk+8WpA8Y+T3HhROC3g
+         J6esZlX6ozAw7oFrrFbLkYc2025rG5GS5i5+SPxiKbjSgPKhBaRCoAULpFHESSREFxb7
+         netE8+VwkgKjreOxndOMxQmAll+iucV29C4E1Y0o+1sIrkVtqixO4Kjbd4i1Txhn5K5B
+         3Okw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1750743918; x=1751348718;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=xgKsM416bqMqvI55x8cJU8L9NhSAKr4ObSXw0Ig8+pg=;
+        b=tllI1qeJlssSASeUO6XGt2fAdbRrebnMFNFO339RlBnVZyPkSh0o1nJCLBlIN2bcxw
+         xmg2nlB+Wnpn4xnAKiDl/wqcUEEAaoDrU1cTGofz0YX+T2K9tfzTUdH/NMsAaok/Tc9M
+         kVZYMC9R082HpvhdattB84jd3smH0GY+lPaB4LevaFUC262smZ6G0aTqQE2Tey7BiBKj
+         MsFH2TJxm/sNiAjKVQzk0xMjUcEDxpQqZjLYkQYTC/euSN7PsEhr0WNtE5S9lbVPBZBl
+         wzWRhENlrrxLPERKuxyMz6J5r1W3tmyT5BiCBsS84QL5fPwm+HcOhF9ohXXBVqyLfVJj
+         IYJQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVqX9dFq3TbHCO3fXNUWg7qEo109UoAT3mgIIHP6CIpz4MsacD94ZdjYBtzpPFIaFXJ4RZF+1xcgVcV4RU=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyTaINfh7ac1BI7m2YoiCRuwrUHYRMgVwf+bx4qkL5bxGjKaIzJ
+	OcKl1UXHY97xG/puXVj8gycQAaWR7kBMF9aznNh3JF6pFxs5iRyTA0Ps
+X-Gm-Gg: ASbGncvGEY6mrp7GoVuYFAAXY3jODBYMd1I+bdrfG8X3WrTCDFG1EJCDfPGVUTp64zf
+	LbVRAE+BBxDnMlFt89Bs78yp7oxO2e/UDhLQMcAa0ftWBglxfAwK37c0hyKblbifcp1EjnMndCV
+	QObjDpMqmyOoyoHMhoIx821nLjTvqfNb5QpYysLX9WZLQwZDTxpq6GSrsy64uxqP7ldhC97+SxP
+	sksuKo8Ct9vO77RFRVR1xio2xH7DukNIsAv1wmKJeIuDpdCXA+pTVZ3ordMIqRCPBjmXExDLVum
+	B+L8bEIg7UhWCd6aRzJla498l4J+CLse5W5q17dO501ajw==
+X-Google-Smtp-Source: AGHT+IG3Rra0nX5NHYF8B8AR9MpR4tQODldF3AUTaKXnR3BDdKdqt7fkp82e4BjwT6xJLYt7lAyJnA==
+X-Received: by 2002:a05:6a00:2ea3:b0:748:31ed:ba8a with SMTP id d2e1a72fcca58-7490da69990mr20249511b3a.15.1750743917733;
+        Mon, 23 Jun 2025 22:45:17 -0700 (PDT)
+Received: from fedora.. ([2601:646:8081:3770::1707])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-749c88548ffsm851518b3a.134.2025.06.23.22.45.16
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 23 Jun 2025 22:45:17 -0700 (PDT)
+From: Collin Funk <collin.funk1@gmail.com>
+To: Peter Zijlstra <peterz@infradead.org>,
+	Ingo Molnar <mingo@redhat.com>,
+	Arnaldo Carvalho de Melo <acme@kernel.org>,
+	Namhyung Kim <namhyung@kernel.org>,
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+	Jiri Olsa <jolsa@kernel.org>,
+	Ian Rogers <irogers@google.com>,
+	Adrian Hunter <adrian.hunter@intel.com>,
+	"Liang, Kan" <kan.liang@linux.intel.com>,
+	James Clark <james.clark@linaro.org>,
+	Charlie Jenkins <charlie@rivosinc.com>,
+	Ravi Bangoria <ravi.bangoria@amd.com>,
+	"Masami Hiramatsu (Google)" <mhiramat@kernel.org>
+Cc: linux-perf-users@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Collin Funk <collin.funk1@gmail.com>
+Subject: [PATCH v3] perf build: Specify that shellcheck should use the bash dialect.
+Date: Mon, 23 Jun 2025 22:44:59 -0700
+Message-ID: <f8415e57c938482668717d918ab566ff5082f281.1750743784.git.collin.funk1@gmail.com>
+X-Mailer: git-send-email 2.49.0
+In-Reply-To: <e3751a74be34bbf3781c4644f518702a7270220b.1749785642.git.collin.funk1@gmail.com>
+References: <e3751a74be34bbf3781c4644f518702a7270220b.1749785642.git.collin.funk1@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -80,46 +101,125 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
 
-Reduce the log level for cdns_mhdp_dpcd_read and cdns_mhdp_dpcd_write
-errors in cdns_mhdp_transfer function as in case of failure, there is
-flooding of these prints along with other indicators like EDID failure
-logs which are fairly intuitive in themselves rendering these error logs
-useless.
-Also, the caller functions for the cdns_mhdp_transfer in drm_dp_helper.c
-(which calls it 32 times), has debug log level in case transfer fails.
-So having a superseding log level in cdns_mhdp_transfer seems bad.
+When someone has a global shellcheckrc file, for example at
+~/.config/shellcheckrc, with the directive 'shell=sh', building perf
+will fail with many shellcheck errors like:
 
-Signed-off-by: Jayesh Choudhary <j-choudhary@ti.com>
+    In tests/shell/base_probe/test_adding_kernel.sh line 294:
+    (( TEST_RESULT += $? ))
+    ^---------------------^ SC3006 (warning): In POSIX sh, standalone ((..)) is undefined.
+
+    For more information:
+      https://www.shellcheck.net/wiki/SC3006 -- In POSIX sh, standalone ((..)) is...
+    make[5]: *** [tests/Build:91: tests/shell/base_probe/test_adding_kernel.sh.shellcheck_log] Error 1
+
+Passing the '-s bash' option ensures that it runs correctly regardless
+of a developers global configuration.
+
+This patch adds '-s bash' and other options to the SHELLCHECK variable
+in Makefile.perf and makes use of the variable consistently.
+
+Signed-off-by: Collin Funk <collin.funk1@gmail.com>
 ---
- drivers/gpu/drm/bridge/cadence/cdns-mhdp8546-core.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ tools/perf/Build                | 2 +-
+ tools/perf/Makefile.perf        | 2 +-
+ tools/perf/arch/x86/Build       | 2 +-
+ tools/perf/arch/x86/tests/Build | 2 +-
+ tools/perf/tests/Build          | 2 +-
+ tools/perf/trace/beauty/Build   | 2 +-
+ tools/perf/util/Build           | 2 +-
+ 7 files changed, 7 insertions(+), 7 deletions(-)
 
-diff --git a/drivers/gpu/drm/bridge/cadence/cdns-mhdp8546-core.c b/drivers/gpu/drm/bridge/cadence/cdns-mhdp8546-core.c
-index 3ce0930bf5aa..6d62819fb909 100644
---- a/drivers/gpu/drm/bridge/cadence/cdns-mhdp8546-core.c
-+++ b/drivers/gpu/drm/bridge/cadence/cdns-mhdp8546-core.c
-@@ -778,7 +778,7 @@ static ssize_t cdns_mhdp_transfer(struct drm_dp_aux *aux,
- 			if (!ret)
- 				continue;
+diff --git a/tools/perf/Build b/tools/perf/Build
+index 06107f1e1d42..b03cc59dabf8 100644
+--- a/tools/perf/Build
++++ b/tools/perf/Build
+@@ -73,7 +73,7 @@ endif
  
--			dev_err(mhdp->dev,
-+			dev_dbg(mhdp->dev,
- 				"Failed to write DPCD addr %u\n",
- 				msg->address + i);
+ $(OUTPUT)%.shellcheck_log: %
+ 	$(call rule_mkdir)
+-	$(Q)$(call echo-cmd,test)shellcheck -s bash -a -S warning "$<" > $@ || (cat $@ && rm $@ && false)
++	$(Q)$(call echo-cmd,test)$(SHELLCHECK) "$<" > $@ || (cat $@ && rm $@ && false)
  
-@@ -788,7 +788,7 @@ static ssize_t cdns_mhdp_transfer(struct drm_dp_aux *aux,
- 		ret = cdns_mhdp_dpcd_read(mhdp, msg->address,
- 					  msg->buffer, msg->size);
- 		if (ret) {
--			dev_err(mhdp->dev,
-+			dev_dbg(mhdp->dev,
- 				"Failed to read DPCD addr %u\n",
- 				msg->address);
+ perf-y += $(SHELL_TEST_LOGS)
+ 
+diff --git a/tools/perf/Makefile.perf b/tools/perf/Makefile.perf
+index d4c7031b01a7..e0cf8db5462b 100644
+--- a/tools/perf/Makefile.perf
++++ b/tools/perf/Makefile.perf
+@@ -252,7 +252,7 @@ endif
+ ifeq ($(NO_SHELLCHECK),1)
+   SHELLCHECK :=
+ else
+-  SHELLCHECK := $(shell which shellcheck 2> /dev/null)
++  SHELLCHECK := $(shell which shellcheck 2> /dev/null) -s bash -a -S warning
+ endif
+ 
+ # shellcheck is using in tools/perf/tests/Build with option -a/--check-sourced (
+diff --git a/tools/perf/arch/x86/Build b/tools/perf/arch/x86/Build
+index afae7b8f6bd6..d31a1168757c 100644
+--- a/tools/perf/arch/x86/Build
++++ b/tools/perf/arch/x86/Build
+@@ -10,6 +10,6 @@ endif
+ 
+ $(OUTPUT)%.shellcheck_log: %
+ 	$(call rule_mkdir)
+-	$(Q)$(call echo-cmd,test)shellcheck -a -S warning "$<" > $@ || (cat $@ && rm $@ && false)
++	$(Q)$(call echo-cmd,test)$(SHELLCHECK) "$<" > $@ || (cat $@ && rm $@ && false)
+ 
+ perf-test-y += $(SHELL_TEST_LOGS)
+diff --git a/tools/perf/arch/x86/tests/Build b/tools/perf/arch/x86/tests/Build
+index 5e00cbfd2d56..01d5527f38c7 100644
+--- a/tools/perf/arch/x86/tests/Build
++++ b/tools/perf/arch/x86/tests/Build
+@@ -22,6 +22,6 @@ endif
+ 
+ $(OUTPUT)%.shellcheck_log: %
+ 	$(call rule_mkdir)
+-	$(Q)$(call echo-cmd,test)shellcheck -a -S warning "$<" > $@ || (cat $@ && rm $@ && false)
++	$(Q)$(call echo-cmd,test)$(SHELLCHECK) "$<" > $@ || (cat $@ && rm $@ && false)
+ 
+ perf-test-y += $(SHELL_TEST_LOGS)
+diff --git a/tools/perf/tests/Build b/tools/perf/tests/Build
+index 2181f5a92148..d6c35dd0de3b 100644
+--- a/tools/perf/tests/Build
++++ b/tools/perf/tests/Build
+@@ -89,7 +89,7 @@ endif
+ 
+ $(OUTPUT)%.shellcheck_log: %
+ 	$(call rule_mkdir)
+-	$(Q)$(call echo-cmd,test)shellcheck -a -S warning "$<" > $@ || (cat $@ && rm $@ && false)
++	$(Q)$(call echo-cmd,test)$(SHELLCHECK) "$<" > $@ || (cat $@ && rm $@ && false)
+ 
+ perf-test-y += $(SHELL_TEST_LOGS)
+ 
+diff --git a/tools/perf/trace/beauty/Build b/tools/perf/trace/beauty/Build
+index f50ebdc445b8..561590ee8cda 100644
+--- a/tools/perf/trace/beauty/Build
++++ b/tools/perf/trace/beauty/Build
+@@ -31,6 +31,6 @@ endif
+ 
+ $(OUTPUT)%.shellcheck_log: %
+ 	$(call rule_mkdir)
+-	$(Q)$(call echo-cmd,test)shellcheck -s bash -a -S warning "$<" > $@ || (cat $@ && rm $@ && false)
++	$(Q)$(call echo-cmd,test)$(SHELLCHECK) "$<" > $@ || (cat $@ && rm $@ && false)
+ 
+ perf-y += $(SHELL_TEST_LOGS)
+diff --git a/tools/perf/util/Build b/tools/perf/util/Build
+index 7910d908c814..2dfa09a6f27d 100644
+--- a/tools/perf/util/Build
++++ b/tools/perf/util/Build
+@@ -421,7 +421,7 @@ endif
+ 
+ $(OUTPUT)%.shellcheck_log: %
+ 	$(call rule_mkdir)
+-	$(Q)$(call echo-cmd,test)shellcheck -a -S warning "$<" > $@ || (cat $@ && rm $@ && false)
++	$(Q)$(call echo-cmd,test)$(SHELLCHECK) "$<" > $@ || (cat $@ && rm $@ && false)
+ 
+ perf-util-y += $(SHELL_TEST_LOGS)
  
 -- 
-2.34.1
+2.49.0
 
 
