@@ -1,89 +1,153 @@
-Return-Path: <linux-kernel+bounces-701102-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-701104-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 86EC7AE70B8
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Jun 2025 22:30:34 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 39794AE70BE
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Jun 2025 22:31:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 300C77AD37E
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Jun 2025 20:29:10 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A1A6F165CF2
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Jun 2025 20:30:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 993242EA142;
-	Tue, 24 Jun 2025 20:30:24 +0000 (UTC)
-Received: from relay.hostedemail.com (smtprelay0014.hostedemail.com [216.40.44.14])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 262F62ECD30;
+	Tue, 24 Jun 2025 20:30:32 +0000 (UTC)
+Received: from mail-io1-f78.google.com (mail-io1-f78.google.com [209.85.166.78])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6F545226CF3;
-	Tue, 24 Jun 2025 20:30:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=216.40.44.14
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0CD562EBBBF
+	for <linux-kernel@vger.kernel.org>; Tue, 24 Jun 2025 20:30:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.78
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750797024; cv=none; b=jU7msMIuDDzUYAmi3quvohg4GnhKYVbb2G9EdA+WTPTLIMicYAAGKS0gCo97HGTswQH3TqN2/okXBdCZUWnRbOOiSb4/qTv4dZK+yK/d+Eph5VKFlzTeeBpk/C4wQRc7UiaoTlwk/rCTZAq9ZUAkTTCo8E/mZ07m8+H34FIeATg=
+	t=1750797031; cv=none; b=XiGDBt4cGAMGATIxZVdVYkBJgysWUnyANlMfGl54VNICIyp3GwMQLmho2WCzbqH/wkKxiysiGfmv6jZ2Wv17gwDNYbWG7ik5j5q2sSToqErh3z/vTLSr7iX3j1CSm+A9ZlCHQOzSl5+GbaR1KxLNnZVB40ryXnwsRgp3RZLyDHg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750797024; c=relaxed/simple;
-	bh=r0BGxRvGGazgNQl+Evi5LdgZpHgbLsYLLsHsiMw8HR4=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=RvPsb7g4GPq5KCuvTzpWpNBBPydqQ2NoFz1wBh/fQcZVbRxrdhCY+iuYUFf3vSOPgaEe55w2XSNMh93S8HiNaJH4l/griSqoeIzvR66DoPz497U0cWTeSYEtAKG4B2OwEXRZyIj8yFV4kmuzPxm4DarIVwZIIqMxnFGl6uRuqHA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org; spf=pass smtp.mailfrom=goodmis.org; arc=none smtp.client-ip=216.40.44.14
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=goodmis.org
-Received: from omf08.hostedemail.com (a10.router.float.18 [10.200.18.1])
-	by unirelay03.hostedemail.com (Postfix) with ESMTP id 4B034BEA0D;
-	Tue, 24 Jun 2025 20:30:18 +0000 (UTC)
-Received: from [HIDDEN] (Authenticated sender: rostedt@goodmis.org) by omf08.hostedemail.com (Postfix) with ESMTPA id 648A820025;
-	Tue, 24 Jun 2025 20:30:14 +0000 (UTC)
-Date: Tue, 24 Jun 2025 16:30:13 -0400
-From: Steven Rostedt <rostedt@goodmis.org>
-To: Indu Bhagat <indu.bhagat@oracle.com>
-Cc: Peter Zijlstra <peterz@infradead.org>, linux-kernel@vger.kernel.org,
- linux-trace-kernel@vger.kernel.org, bpf@vger.kernel.org, x86@kernel.org,
- Masami Hiramatsu <mhiramat@kernel.org>, Mathieu Desnoyers
- <mathieu.desnoyers@efficios.com>, Josh Poimboeuf <jpoimboe@kernel.org>,
- Ingo Molnar <mingo@kernel.org>, Jiri Olsa <jolsa@kernel.org>, Namhyung Kim
- <namhyung@kernel.org>, Thomas Gleixner <tglx@linutronix.de>, Andrii
- Nakryiko <andrii@kernel.org>, "Jose E. Marchesi" <jemarch@gnu.org>, Beau
- Belgrave <beaub@linux.microsoft.com>, Jens Remus <jremus@linux.ibm.com>,
- Linus Torvalds <torvalds@linux-foundation.org>, Andrew Morton
- <akpm@linux-foundation.org>
-Subject: Re: [PATCH v10 02/14] unwind_user: Add frame pointer support
-Message-ID: <20250624163013.06c6c726@batman.local.home>
-In-Reply-To: <6f1c21e9-ba0f-4262-8f56-962e0a7d6877@oracle.com>
-References: <20250611005421.144238328@goodmis.org>
-	<20250611010428.092934995@goodmis.org>
-	<20250618135201.GM1613376@noisy.programming.kicks-ass.net>
-	<20250618110915.754e604f@gandalf.local.home>
-	<6f1c21e9-ba0f-4262-8f56-962e0a7d6877@oracle.com>
-X-Mailer: Claws Mail 3.17.8 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1750797031; c=relaxed/simple;
+	bh=htQEQ/BzUbGDReOf5LAHoRmRPlTzuA///0KC3V4lOFc=;
+	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=aRmfWsJLOHzIR2Cn7b4UF533h9S0iKdqiAoe0XPUvOG52ogjugz4IkHDs3Tk36Z/hywO6kDs/+iORW0uLTGzJw9DCSu3Jf6vAMsSGx4yidyA8TK5kubL5+MrBEe7vs1WASXzX/UdH1LvBVVWad4dsixmnFiYLAUtMfpv3CZsDCU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.78
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-io1-f78.google.com with SMTP id ca18e2360f4ac-869e9667f58so1091044339f.3
+        for <linux-kernel@vger.kernel.org>; Tue, 24 Jun 2025 13:30:29 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1750797029; x=1751401829;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=6knl0xaS3L51AM1ZsG9RmXp7O5QA7TblObdipk/GWaI=;
+        b=S/XmkHpsTiwRB4zpIkHIyBhrT/LsZkcFFOjrV4xur60wS57IzXxu6RB7wdq6I59sFC
+         1Md/O4ATI6vlllOfL+bIM6jl2jTEkPn7Zo9vMuR+SuFI8Ou3v1Djstv07z23rCY4GZm7
+         BzSHaBjjb08y8VC0d8QIDl7jVHwpAlGwqyiDlQDmbEytTuy+GrSkfXCqiuaz0rP/T5Og
+         9RIY/Aj7oAn0vQ0nHZhY3hnQyTFPrNR7eYwbwum1mcRd1ZSzE4a37SzBopBzmTy+NTT8
+         T/Ln/cL0EeXhwcVIiih/F1ViwZ2ehQ/YV4ry9MgRC7sCi/1ffxzEWHGWNpajWjaDkOmZ
+         FILw==
+X-Forwarded-Encrypted: i=1; AJvYcCWSOX/lO/lhohrKiv/GNKRI+v5NlrM7qLA9m2aR+PFZVNEq2D1KeYvvt+30n6rjwOdchvlgQq3mhrUYWpk=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxTET5j3BhcFzbkoY/Ed+oA7lcDqXZUCCWOUWURw2rQSGmXtxzD
+	H6MhlRlgVTgMP4sqNs6HfE9qj9H+zrB1NpYm1LBH/CPgxseYDD8c4jbUodDl24s7bYR7Mfq3vbx
+	wUzJq5/JDKC5xl07JjlXbOPlHnjcO1RG7YvsV+AMkHc2igarw6jAHB007lSM=
+X-Google-Smtp-Source: AGHT+IH5de4d25y6CNlVfsK+tP43zSWrtYw23gCA5QZDONUigQy1STLCYjJtal9wLts9ebxBnXhWSL8kr7WxPmyE5pg4p7yHjyyC
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-X-Stat-Signature: htuzsruqx5b9qcc8c8nfrkzx7aru9asq
-X-Rspamd-Server: rspamout01
-X-Rspamd-Queue-Id: 648A820025
-X-Session-Marker: 726F737465647440676F6F646D69732E6F7267
-X-Session-ID: U2FsdGVkX194JVDKxupSlk6ajjbciStKN2QFizai75w=
-X-HE-Tag: 1750797014-895506
-X-HE-Meta: U2FsdGVkX18kexM3alD+wmiOBkxPT6Y+hN8pFlEMejxx8x0Ua+KW5x7Z0iP2n8wxaDJuOYuHjGrR5J3M0X2cf4Xj5xHrSNAJvIByULlA3iJJu60Qx7aQDqrdwQWArXhbW0TLWMYVsBEPzgEnlv23JR9y6UNA6AGsOdd+IFt8hRK5jC9TsuDS21LV1OFEPnrqM1L1SOorGmSa1vnFPikWoUKKlajpNKFcVcAgbrQCjv8zWOWATDMtJwlHdPK25NX+lREmLuUnngA5mqpYMEabiO4I6cU0mAo1eyTvGu2aDLf5/ZJOZsz9+Y+Njz+LPbD3t32s3WuVHDr/JskgPIW67aRGf3CV2fmN
+X-Received: by 2002:a05:6e02:156c:b0:3dc:87c7:a5b9 with SMTP id
+ e9e14a558f8ab-3df329a5a46mr4971615ab.10.1750797029291; Tue, 24 Jun 2025
+ 13:30:29 -0700 (PDT)
+Date: Tue, 24 Jun 2025 13:30:29 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <685b0ae5.a00a0220.2e5631.009a.GAE@google.com>
+Subject: [syzbot] [wpan?] WARNING in lowpan_xmit (2)
+From: syzbot <syzbot+5b74e0e96f12e3728ec8@syzkaller.appspotmail.com>
+To: alex.aring@gmail.com, davem@davemloft.net, edumazet@google.com, 
+	horms@kernel.org, kuba@kernel.org, linux-kernel@vger.kernel.org, 
+	linux-wpan@vger.kernel.org, miquel.raynal@bootlin.com, netdev@vger.kernel.org, 
+	pabeni@redhat.com, stefan@datenfreihafen.org, syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-On Mon, 23 Jun 2025 09:31:17 -0700
-Indu Bhagat <indu.bhagat@oracle.com> wrote:
+Hello,
 
-> >> Also, CFA here is Call-Frame-Address and RA Return-Address ?  
-> > 
-> > I believe so. Do you want me to add a comment?
-> >   
-> 
-> If a comment is added, Canonical Frame Address will be more appropriate.
+syzbot found the following issue on:
 
-Thanks Indu,
+HEAD commit:    4f4040ea5d3e net: ti: icssg-prueth: Add prp offload suppor..
+git tree:       net-next
+console output: https://syzkaller.appspot.com/x/log.txt?x=11630dd4580000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=fab0bcec5be1995b
+dashboard link: https://syzkaller.appspot.com/bug?extid=5b74e0e96f12e3728ec8
+compiler:       Debian clang version 20.1.6 (++20250514063057+1e4d39e07757-1~exp1~20250514183223.118), Debian LLD 20.1.6
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=170cd370580000
 
-Updated.
+Downloadable assets:
+disk image: https://storage.googleapis.com/syzbot-assets/64e76754e788/disk-4f4040ea.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/58f25c6cca53/vmlinux-4f4040ea.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/f700f89884c1/bzImage-4f4040ea.xz
 
--- Steve
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+5b74e0e96f12e3728ec8@syzkaller.appspotmail.com
+
+ieee802154 phy0 wpan0: encryption failed: -22
+ieee802154 phy1 wpan1: encryption failed: -22
+------------[ cut here ]------------
+WARNING: CPU: 1 PID: 1302 at ./include/linux/skbuff.h:3157 skb_network_header_len include/linux/skbuff.h:3157 [inline]
+WARNING: CPU: 1 PID: 1302 at ./include/linux/skbuff.h:3157 lowpan_header net/ieee802154/6lowpan/tx.c:236 [inline]
+WARNING: CPU: 1 PID: 1302 at ./include/linux/skbuff.h:3157 lowpan_xmit+0xde9/0x1340 net/ieee802154/6lowpan/tx.c:282
+Modules linked in:
+CPU: 1 UID: 0 PID: 1302 Comm: aoe_tx0 Not tainted 6.16.0-rc2-syzkaller-00591-g4f4040ea5d3e #0 PREEMPT(full) 
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 05/07/2025
+RIP: 0010:skb_network_header_len include/linux/skbuff.h:3157 [inline]
+RIP: 0010:lowpan_header net/ieee802154/6lowpan/tx.c:236 [inline]
+RIP: 0010:lowpan_xmit+0xde9/0x1340 net/ieee802154/6lowpan/tx.c:282
+Code: 48 85 c0 0f 84 38 02 00 00 49 89 c6 e8 00 77 a0 f6 e9 69 f5 ff ff e8 f6 76 a0 f6 90 0f 0b 90 e9 5c f6 ff ff e8 e8 76 a0 f6 90 <0f> 0b 90 e9 2c f7 ff ff e8 da 76 a0 f6 e9 12 fc ff ff 90 0f 0b 90
+RSP: 0018:ffffc9000437f640 EFLAGS: 00010293
+RAX: ffffffff8b1fe568 RBX: ffff8880312e6140 RCX: ffff888027989e00
+RDX: 0000000000000000 RSI: 000000000000ffff RDI: 000000000000ffff
+RBP: ffffc9000437f830 R08: 0000000000000003 R09: 0000000000000000
+R10: ffffc9000437f4f0 R11: fffff5200086fea4 R12: 1ffff1100625cc36
+R13: 0000000000000020 R14: ffff8880312e6140 R15: 000000000000ffff
+FS:  0000000000000000(0000) GS:ffff888125d4f000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 00007fe947dbbf98 CR3: 000000007a4dc000 CR4: 00000000003526f0
+DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+Call Trace:
+ <TASK>
+ __netdev_start_xmit include/linux/netdevice.h:5225 [inline]
+ netdev_start_xmit include/linux/netdevice.h:5234 [inline]
+ xmit_one net/core/dev.c:3828 [inline]
+ dev_hard_start_xmit+0x2d4/0x830 net/core/dev.c:3844
+ __dev_queue_xmit+0x1adf/0x3a70 net/core/dev.c:4711
+ dev_queue_xmit include/linux/netdevice.h:3365 [inline]
+ tx+0x6b/0x190 drivers/block/aoe/aoenet.c:62
+ kthread+0x1d0/0x3e0 drivers/block/aoe/aoecmd.c:1237
+ kthread+0x70e/0x8a0 kernel/kthread.c:464
+ ret_from_fork+0x3f9/0x770 arch/x86/kernel/process.c:148
+ ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:245
+ </TASK>
+
+
+---
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
+
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+
+If the report is already addressed, let syzbot know by replying with:
+#syz fix: exact-commit-title
+
+If you want syzbot to run the reproducer, reply with:
+#syz test: git://repo/address.git branch-or-commit-hash
+If you attach or paste a git patch, syzbot will apply it before testing.
+
+If you want to overwrite report's subsystems, reply with:
+#syz set subsystems: new-subsystem
+(See the list of subsystem names on the web dashboard)
+
+If the report is a duplicate of another one, reply with:
+#syz dup: exact-subject-of-another-report
+
+If you want to undo deduplication, reply with:
+#syz undup
 
