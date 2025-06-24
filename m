@@ -1,160 +1,121 @@
-Return-Path: <linux-kernel+bounces-699974-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-699978-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6D333AE6220
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Jun 2025 12:20:50 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 577DCAE6248
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Jun 2025 12:23:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 24AC0189D811
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Jun 2025 10:21:06 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DE1764A4680
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Jun 2025 10:23:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7B661281372;
-	Tue, 24 Jun 2025 10:20:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 362982868B2;
+	Tue, 24 Jun 2025 10:22:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="b17630g9"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.14])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="ht9+kCU/"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5E05B24EAB1;
-	Tue, 24 Jun 2025 10:20:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.14
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AB21328643D
+	for <linux-kernel@vger.kernel.org>; Tue, 24 Jun 2025 10:22:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750760443; cv=none; b=KKEKUnpSCPwmDQt6pgkTuiLYteXruSUfglcB5Oynxt20ww9rLazC7P6Ydd6YE2cm22l3i+dfxDdd6pmwAo0Su1lmo90rznhrLsXa7QNFchbyrn43saoRSWv1y8okMQAbhtzK2tnjxKIQa2Nq6QWspf9K14OF0nYbwTTJiwg4U/o=
+	t=1750760531; cv=none; b=U1DqcJJjaZdTG9HV2s9WGsa7cwwqD44b8qvCxeLSOYp/TZUyn4U3YZ3mTWJmqWoTAn/7SJzZOcYTI/mCISgGNqdHtdEinxSfJo8+496VHZQ3mZ1LBWrQOT3mbm8vUvQlmrjerGA/LLEX67VvLeaRTJTKX9ERFD4SBlz08ZSCrN0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750760443; c=relaxed/simple;
-	bh=wUvreC2UbJVMy8/iEqDx1j3RiHEzErGNB+uB0eTJz40=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=OOC1mHCLcH/AaKHnNf7gpXYtr59MLoW80sgQ4AIwAMAZT9OjyzvRzTW0NZHdcDSvs6OXFHS2X7wsyP2tPXTiN/GqngpVpEm1Q54CGuHGkC99ZvnF/6T7LUc1wfnVNEqK2dfPgBGXbblqa2tjarxH6dIBFmDcbTy8jYNSKswbYhA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=b17630g9; arc=none smtp.client-ip=192.198.163.14
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1750760442; x=1782296442;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:content-transfer-encoding:in-reply-to;
-  bh=wUvreC2UbJVMy8/iEqDx1j3RiHEzErGNB+uB0eTJz40=;
-  b=b17630g9jixRXbehq2+usEV8Ugkg0oY1NK7mF85lsO09GDNuXDlsaQi3
-   c08uRDhPEMxRfw1+v9EUFqIJQkJzv9SkEg650v3Ye5sDRXS3PgMPiwCBs
-   JF7gUNpS4gQN/gcohu5SjQukU8980JUz1XaqMWuyHs85lMLDYoP4eIwoW
-   ZhikXD4MaEaEbafADEZPxTV8vihTwac0/n2dn7oYa5/TTvoVke9OPTWYr
-   n+zeuSiqOaVMjZTpHqeryCD8JjI/AayRq3qPsJ2zxLPs2wWLCeSy9kpjK
-   1WHN1YJQ0yIIINJJKJOFwSXccHHxuvLmz6VsJELjQblTZ2FM9Eqq3CAqY
-   g==;
-X-CSE-ConnectionGUID: mjcVxr19TBSiDDmJSBvarw==
-X-CSE-MsgGUID: zjZcT9mBRNmxbvSXd4zIiw==
-X-IronPort-AV: E=McAfee;i="6800,10657,11473"; a="53064445"
-X-IronPort-AV: E=Sophos;i="6.16,261,1744095600"; 
-   d="scan'208";a="53064445"
-Received: from orviesa003.jf.intel.com ([10.64.159.143])
-  by fmvoesa108.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 24 Jun 2025 03:20:42 -0700
-X-CSE-ConnectionGUID: 1EjwfBJQTGCYmQmGrTRf6Q==
-X-CSE-MsgGUID: W/9E6YlGQ5eNp+eWeyB5jQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.16,261,1744095600"; 
-   d="scan'208";a="156267236"
-Received: from ncintean-mobl1.ger.corp.intel.com (HELO kekkonen.fi.intel.com) ([10.245.244.201])
-  by ORVIESA003-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 24 Jun 2025 03:20:37 -0700
-Received: from kekkonen.localdomain (localhost [127.0.0.1])
-	by kekkonen.fi.intel.com (Postfix) with ESMTP id 3F87411F94F;
-	Tue, 24 Jun 2025 13:20:34 +0300 (EEST)
-Date: Tue, 24 Jun 2025 10:20:34 +0000
-Organization: Intel Finland Oy - BIC 0357606-4 - c/o Alberga Business Park, 6 krs, Bertel Jungin Aukio 5, 02600 Espoo
-From: Sakari Ailus <sakari.ailus@linux.intel.com>
-To: Mehdi Djait <mehdi.djait@linux.intel.com>
-Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-	"Nirujogi, Pratap" <pnirujog@amd.com>,
-	Pratap Nirujogi <pratap.nirujogi@amd.com>, mchehab@kernel.org,
-	hverkuil@xs4all.nl, bryan.odonoghue@linaro.org, krzk@kernel.org,
-	dave.stevenson@raspberrypi.com, hdegoede@redhat.com,
-	jai.luthra@ideasonboard.com, tomi.valkeinen@ideasonboard.com,
-	linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
-	benjamin.chan@amd.com, bin.du@amd.com, grosikop@amd.com,
-	king.li@amd.com, dantony@amd.com, vengutta@amd.com,
-	Svetoslav.Stoilov@amd.com, Yana.Zheleva@amd.com
-Subject: Re: [PATCH v3 RESEND] media: i2c: Add OV05C10 camera sensor driver
-Message-ID: <aFp78tqHhe_IhV6d@kekkonen.localdomain>
-References: <20250609194321.1611419-1-pratap.nirujogi@amd.com>
- <20250615000915.GQ10542@pendragon.ideasonboard.com>
- <53674c5f-6b68-49e7-bbb0-fd06fff344c3@amd.com>
- <8b16675a-c6ac-4619-aabe-ad2a4be6c964@amd.com>
- <20250623220503.GA15951@pendragon.ideasonboard.com>
- <425j7c6xvbbatdhxgjgjawzwfnjmjetg6rpnwfudbtg6qz6nay@dy5ldbuhtbvv>
- <aFp7tuXkU1jayPum@kekkonen.localdomain>
+	s=arc-20240116; t=1750760531; c=relaxed/simple;
+	bh=EAplqW2ugJAkvDa+aOJIODUp0iAnSPiEybzJg50wrII=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=kg23fQ0XUhqti5h9f7WiWERxmFj41iXi3CV4Yc+lDJmL2od2GJ/Q+/VrGv70G3tMJnBYcanys9/0HAwv1y+1HY3I7FYxnBxbP+55u4EOSxcB4Szdrf/2x9fjFI7vbcRCunV0EJX5tHuumoVLS8LPFFCU813P3fm2HdyqVuvamgM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=ht9+kCU/; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1750760528;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=LBSg8EY7sp1BX+AXcNCVD/E1en0mg8rYiqbGQhd2mHE=;
+	b=ht9+kCU/TnJPD5agk2ZyZrHPVFM7ysb93WKE3bVa5uFZmPCMewDQyCnpnaZg9NcoaauYvZ
+	9Ttgi5DofF3c7u7gG3RTYCz1NeqSVBkc+aBWg8PgTTatYc9K0mbZn4/1Mt603GE0kb6QgI
+	aEIUG9aFSxHPb7v2tGWFgdd6Eduuyro=
+Received: from mail-ej1-f70.google.com (mail-ej1-f70.google.com
+ [209.85.218.70]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-135-jrYxJhiYNVa_w2NTc71tOg-1; Tue, 24 Jun 2025 06:22:07 -0400
+X-MC-Unique: jrYxJhiYNVa_w2NTc71tOg-1
+X-Mimecast-MFC-AGG-ID: jrYxJhiYNVa_w2NTc71tOg_1750760526
+Received: by mail-ej1-f70.google.com with SMTP id a640c23a62f3a-ade6db50b9cso30104566b.1
+        for <linux-kernel@vger.kernel.org>; Tue, 24 Jun 2025 03:22:06 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1750760526; x=1751365326;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=LBSg8EY7sp1BX+AXcNCVD/E1en0mg8rYiqbGQhd2mHE=;
+        b=AtnQLLpSPfqNn2o1Jnf31EVV1sqXvFNbMyMNB01bOaAzxx1BON8dtjBMqkGtTlAR27
+         Gkc34dMj7BWcsl87f1RtOhu0/6GC5kzkKKzVfhR8niRA0wyv1qtVKL7IdVJBai0K47BU
+         kyRMTZMavw0YJrpJnQli3lHSJTJW+/fUDfCZZipqz8fOWp1D+z++p9c3JazmOHdq1r0s
+         p/Z55V/L9HN1DCM4Na5LMqk0c+LJ4mtYLrOM3OGExctAOCrujV0r+1FHt1NVBXzK92Rq
+         DeCddJaNLAJJvqORoHUptHXayXu88dgjKGkLnWGgCLqNVFVdamqglnmGfzMR6Oud0xFZ
+         OGbQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUfg53sEmljnz2b20SRohB1A/sMn44ffyPtLBuiufQxYZh2HSKIH6V0mRx+SROj8V8jUtTeJz+z2OfHEE4=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwKYBV+I6pVSoXT2sIvpZjO8fh2D4PMSi1rEt3lKioEDST/3/uG
+	x4ttc83wSwFgxad5sRwgFBcEpuUmrICd+HmxDNSQCHTMSml7o3manxPxEllz1Ny7NVD74uNS9TS
+	BYAar5me6gXUEMO/aIKhg/w98nNXZIdYDjSr8VwV9GS6RW3RgkfiqVYV92/Raj/GsbyvI40/bu5
+	0hWSJZdyEtpLwCqwgSHXJMcJqIfgXB/5HG6hQpdf5m
+X-Gm-Gg: ASbGnctt3W/unO7htG2Io64Mc87RGy06jnnFy+pZVWs53ULTMhR8sXmjMeXyRsGbwPb
+	LtWRBUPaqwMu8u6j7XmgIcwdEz7BCoPktA4/+iTzW7iqpUEDPVHJYwtWI+rwIKWvgKfmkSOs0pO
+	8gwHB+
+X-Received: by 2002:a17:906:8924:b0:ae0:ad5c:4185 with SMTP id a640c23a62f3a-ae0ad5c4bb6mr127042066b.57.1750760525918;
+        Tue, 24 Jun 2025 03:22:05 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IFK7idR9ddwSthjp78IPlVH980PF43V9ofMCipwNRyRw+Vq3cABVYLahb6LovHNST8gpasNwDNrhBfNArPnPZc=
+X-Received: by 2002:a17:906:8924:b0:ae0:ad5c:4185 with SMTP id
+ a640c23a62f3a-ae0ad5c4bb6mr127039766b.57.1750760525506; Tue, 24 Jun 2025
+ 03:22:05 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <aFp7tuXkU1jayPum@kekkonen.localdomain>
+References: <20250617001838.114457-1-linux@treblig.org> <CAJaqyWfD1xy+Y=fn1x8uXTMQuq8ewVV9MsttzCxLACJJZg2A2Q@mail.gmail.com>
+In-Reply-To: <CAJaqyWfD1xy+Y=fn1x8uXTMQuq8ewVV9MsttzCxLACJJZg2A2Q@mail.gmail.com>
+From: Lei Yang <leiyang@redhat.com>
+Date: Tue, 24 Jun 2025 18:21:28 +0800
+X-Gm-Features: Ac12FXzfQeWK8ouZps9YTtPNR42ROlRbSB3jIfmuYcflJDxiz6fBrlpSiur_mHY
+Message-ID: <CAPpAL=xgBK3qqNdaiR=OwbiMaA_5VpouE4YfaEyYghkHxJ0CtQ@mail.gmail.com>
+Subject: Re: [PATCH v2 0/2] vringh small unused functions
+To: Eugenio Perez Martin <eperezma@redhat.com>
+Cc: linux@treblig.org, mst@redhat.com, horms@kernel.org, jasowang@redhat.com, 
+	xuanzhuo@linux.alibaba.com, kvm@vger.kernel.org, 
+	virtualization@lists.linux.dev, netdev@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Tue, Jun 24, 2025 at 10:19:35AM +0000, Sakari Ailus wrote:
-> Hi Mehdi,
-> 
-> On Tue, Jun 24, 2025 at 10:35:18AM +0200, Mehdi Djait wrote:
-> > Hi Laurent, Hi Pratap,
-> > 
-> > Thank you for the patch
-> > 
-> > On Tue, Jun 24, 2025 at 01:05:03AM +0300, Laurent Pinchart wrote:
-> > > (CC'ing Mehdi)
-> > > 
-> > > On Mon, Jun 23, 2025 at 05:51:48PM -0400, Nirujogi, Pratap wrote:
-> > > > On 6/16/2025 6:49 PM, Nirujogi, Pratap wrote:
-> > > > >>> +static int ov05c10_probe(struct i2c_client *client)
-> > > > >>> +{
-> > > > >>> +     struct ov05c10 *ov05c10;
-> > > > >>> +     u32 clkfreq;
-> > > > >>> +     int ret;
-> > > > >>> +
-> > > > >>> +     ov05c10 = devm_kzalloc(&client->dev, sizeof(*ov05c10), 
-> > > > >>> GFP_KERNEL);
-> > > > >>> +     if (!ov05c10)
-> > > > >>> +             return -ENOMEM;
-> > > > >>> +
-> > > > >>> +     struct fwnode_handle *fwnode = dev_fwnode(&client->dev);
-> > > > >>> +
-> > > > >>> +     ret = fwnode_property_read_u32(fwnode, "clock-frequency", 
-> > > > >>> &clkfreq);
-> > > > >>> +     if (ret)
-> > > > >>> +             return  dev_err_probe(&client->dev, -EINVAL,
-> > > > >>> +                                   "fail to get clock freq\n");
-> > > > >>
-> > > > >> Let's try to land
-> > > > >> https://lore.kernel.org/linux-media/20250521104115.176950-1- 
-> > > > >> mehdi.djait@linux.intel.com/
-> > > > >> and replace the code above with devm_v4l2_sensor_clk_get().
-> > > > >>
-> > > > > Ok, we will verify on our side.
-> > > > 
-> > > > We tried using devm_v4l2_sensor_clk_get() and found its required to add 
-> > > > support for software_node to make it work with this driver.
-> > > 
-> > > Why is that ?
-> > > 
-> > > > Please refer 
-> > > > the changes below and let us know if these should be submitted as a 
-> > > > separate patch.
-> > 
-> > The helper is still not merged, so no patch is required.
-> > 
-> > I will see if a change is needed from the helper side or the OV05C10 side.
-> 
-> I wonder if there's a better way to figure out if you're running on a DT or
-> ACPI based system than getting the device's parents and checking which one
-> you find first, DT or ACPI. I think that should work for now at least.
+Tested this series of patches with virtio-net regression tests,
+everything works fine.
 
-Or, rather, checking for non-OF node here would probably work the best. I
-wouldn't expect these to be software node based on DT systems ever.
+Tested-by: Lei Yang <leiyang@redhat.com>
 
--- 
-Regards,
+On Tue, Jun 17, 2025 at 8:31=E2=80=AFPM Eugenio Perez Martin
+<eperezma@redhat.com> wrote:
+>
+> On Tue, Jun 17, 2025 at 2:18=E2=80=AFAM <linux@treblig.org> wrote:
+> >
+> > From: "Dr. David Alan Gilbert" <linux@treblig.org>
+> >
+> > Hi,
+> >   The following pair of patches remove a bunch of small functions
+> > that have been unused for a long time.
+> >
+>
+> Acked-by: Eugenio P=C3=A9rez <eperezma@redhat.com>
+>
+> Thanks!
+>
+>
 
-Sakari Ailus
 
