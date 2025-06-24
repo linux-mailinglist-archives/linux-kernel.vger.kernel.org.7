@@ -1,92 +1,101 @@
-Return-Path: <linux-kernel+bounces-700175-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-700178-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7C3CAAE64DC
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Jun 2025 14:28:10 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0789DAE64F1
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Jun 2025 14:30:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 92BF1165CD4
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Jun 2025 12:28:02 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0CA08188E473
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Jun 2025 12:29:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BF7E928D8F8;
-	Tue, 24 Jun 2025 12:27:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="MNA9quXo"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2ADE7290D8F;
+	Tue, 24 Jun 2025 12:29:17 +0000 (UTC)
+Received: from mx3.molgen.mpg.de (mx3.molgen.mpg.de [141.14.17.11])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2527C27C16A;
-	Tue, 24 Jun 2025 12:27:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DB19628C86C;
+	Tue, 24 Jun 2025 12:29:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=141.14.17.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750768075; cv=none; b=mdZKso76wJ8Kj3LkvnH6WFCxKl1bld4aFHCC4E1M9D3/ixOFcNTaAFg6P1KQzpBrNi9lcH+v0zmRBB/by1OISvvjhkM9rx5+WBo1GuDDaDSInmxXHGFp7cXkW9hjXzbA9wZVtKO+tP+GLP8c6GA22kTf2wX3ZLGtk7qm0Zs09X4=
+	t=1750768156; cv=none; b=X2zkQ69FAfFnyMQAw3UrOx85zeUDGL0NXpT68qX/mYD339P0XijVhnnB2cnYdjyfTsL5oUAH+bfu80N3T3TYgQmA5iWJzfqJ6fv26kEwRWJEM+WXlNJBsuSD6ZBjvUe0Y/+/hCJ71JIGHL5mzpPkoxfukl1ROLkTqdMziLSa7Bs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750768075; c=relaxed/simple;
-	bh=k7QNQgI2bL4tonbgxVxZaKDXSZo/JrdE01ST9ousifA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=XJrW/pSNxeyawlrMYJSoZrA2THMC7ODa3mchejLkz766S073hQ3R+VKK9Sr75n9WNjD/nYxAF8Y625G9LL98k1ojugcnditCUepFeV1sTHb675g+Ndrvo5Jev3hei3jDo14g6byK1eggOuYULy5qwQyvu8zLIKJW/73npQ3T4mo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=MNA9quXo; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 06871C4CEE3;
-	Tue, 24 Jun 2025 12:27:52 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1750768074;
-	bh=k7QNQgI2bL4tonbgxVxZaKDXSZo/JrdE01ST9ousifA=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=MNA9quXoDMMom1I9d7ZHf72mZc5vGCg+pCWEZd7q2H0oPCcSBCop+ZRM61cVO0Bgm
-	 ZI/JeJn+h/KBEDxr8nQ2adMvqcNDtB6OIrrK0lj8V8usdmLQ7iAIFIWll9ohy/ob8G
-	 oYMu2ZyNGFtwLFZ8fb0yvTai1qUdID74DVNW2r1HnWBiaoN1j9twIjzusoZEZY7cGw
-	 zamnlYs+v1WtE4U1d5ootZp5D2DTXow29z6OIMB0w8J3pLCxXsDatiW1gzWY7CY+VU
-	 5IaHNV1sqqmYl3kxv3wFcPVLidzp2+JXt3ccwowGtOgXL4jooK5lD9wS08gMBjp7cu
-	 ruCqNsJKL+xDg==
-Date: Tue, 24 Jun 2025 12:27:50 +0000
-From: sergeh@kernel.org
-To: Yue Haibing <yuehaibing@huawei.com>
-Cc: paul@paul-moore.com, jmorris@namei.org, serge@hallyn.com,
-	casey@schaufler-ca.com, linux-security-module@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH -next] security: Remove unused declaration cap_mmap_file()
-Message-ID: <aFqZxu_Slzmux6jj@lei>
-References: <20250624014108.3686460-1-yuehaibing@huawei.com>
+	s=arc-20240116; t=1750768156; c=relaxed/simple;
+	bh=HlUi9YhdGknl6g85IsHv3eHpQvxK+OZD1d8vFZhqTJg=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=ZqnVVV0nwAyI3ytFMyBjFGo5kKOx+g/F/XxNSNVg5iKhQ27cgINp2jRcDp5xFa/jqPAC/7D3TKS7Rn4ERhGHHx6/Q0XNlVSdULkNO4LsaGVOvIk4EoXmwHZCYf7rznUhqaywRkAqLX+Ua4cIQRmuSEaKNiOtSzJPb5A2A/0zHr4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=molgen.mpg.de; spf=pass smtp.mailfrom=molgen.mpg.de; arc=none smtp.client-ip=141.14.17.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=molgen.mpg.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=molgen.mpg.de
+Received: from [141.14.12.217] (g217.RadioFreeInternet.molgen.mpg.de [141.14.12.217])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: pmenzel)
+	by mx.molgen.mpg.de (Postfix) with ESMTPSA id B1C1E61E647A8;
+	Tue, 24 Jun 2025 14:27:53 +0200 (CEST)
+Message-ID: <7b1f0f17-197d-4c57-b1d2-a9d8ec6ff398@molgen.mpg.de>
+Date: Tue, 24 Jun 2025 14:27:52 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250624014108.3686460-1-yuehaibing@huawei.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [External] Re: [PATCH] i2c: aspeed: change debug level in irq
+ handler
+To: Zhang Jian <zhangjian.3032@bytedance.com>
+Cc: Ryan Chen <ryan_chen@aspeedtech.com>,
+ Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+ Joel Stanley <joel@jms.id.au>, Andi Shyti <andi.shyti@kernel.org>,
+ Andrew Jeffery <andrew@codeconstruct.com.au>, linux-i2c@vger.kernel.org,
+ openbmc@lists.ozlabs.org, linux-arm-kernel@lists.infradead.org,
+ linux-aspeed@lists.ozlabs.org, linux-kernel@vger.kernel.org
+References: <20250618102148.3085214-1-zhangjian.3032@bytedance.com>
+ <63e740bf-cd0c-4671-9254-6846048b0366@molgen.mpg.de>
+ <CA+J-oUvm-3G9GRCzjOd+j8K6iNs1piCFAKBNfwih49iFwiB4pA@mail.gmail.com>
+Content-Language: en-US
+From: Paul Menzel <pmenzel@molgen.mpg.de>
+In-Reply-To: <CA+J-oUvm-3G9GRCzjOd+j8K6iNs1piCFAKBNfwih49iFwiB4pA@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Tue, Jun 24, 2025 at 09:41:08AM +0800, Yue Haibing wrote:
-> Commit 3f4f1f8a1ab7 ("capabilities: remove cap_mmap_file()")
-> removed the implementation but leave declaration.
+Dear Jian,
+
+
+Am 24.06.25 um 12:32 schrieb Zhang Jian:
+
+> Thanks for your reply and sorry for the late reply, I was trying to
+> figure out why this log occurred, it's quite hard to reproduce.
+
+Thank you for your reply. So few days and over the weekend classifies as 
+instant reply. ;-)
+
+Were you able to find a reproducer, or just rebooting?
+
+> I traced all the master and slave states, and eventually found that 
+> the behavior matches the description in commit b4cc1cbba519. The
+> issue has already been fixed in that commit it was caused by a state
+> machine bug that led to the interrupt not being handled correctly.
 > 
-> Signed-off-by: Yue Haibing <yuehaibing@huawei.com>
+> see: https://github.com/torvalds/linux/commit/b4cc1cbba519
 
-Hm, how did I not catch that?  Thanks.
+The commit you found is present in Linux since v6.7-rc7.
 
-Reviewed-by: Serge Hallyn <serge@hallyn.com>
+> (The state transitions between the master and slave here rely on
+> interrupts. When the signal waveform is incomplete (such as during
+> power off/on), it may cause state errors or brief unresponsiveness,
+> resulting in some log prints.)
 
-> ---
->  include/linux/security.h | 2 --
->  1 file changed, 2 deletions(-)
-> 
-> diff --git a/include/linux/security.h b/include/linux/security.h
-> index dba349629229..e8d9f6069f0c 100644
-> --- a/include/linux/security.h
-> +++ b/include/linux/security.h
-> @@ -193,8 +193,6 @@ int cap_inode_getsecurity(struct mnt_idmap *idmap,
->  			  struct inode *inode, const char *name, void **buffer,
->  			  bool alloc);
->  extern int cap_mmap_addr(unsigned long addr);
-> -extern int cap_mmap_file(struct file *file, unsigned long reqprot,
-> -			 unsigned long prot, unsigned long flags);
->  extern int cap_task_fix_setuid(struct cred *new, const struct cred *old, int flags);
->  extern int cap_task_prctl(int option, unsigned long arg2, unsigned long arg3,
->  			  unsigned long arg4, unsigned long arg5);
-> -- 
-> 2.34.1
-> 
+Thank you for getting to the bottom of this.
+
+Now that you ran into this, and have a suggestion, how the logging or 
+log messages could be improved, please share.
+
+
+Kind regards,
+
+Paul
 
