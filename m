@@ -1,125 +1,86 @@
-Return-Path: <linux-kernel+bounces-699385-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-699369-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4791BAE5955
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Jun 2025 03:42:31 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 44D4BAE592A
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Jun 2025 03:25:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id DCD7A7A9718
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Jun 2025 01:41:07 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 543464471A8
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Jun 2025 01:24:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 38B141C84CB;
-	Tue, 24 Jun 2025 01:42:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=disroot.org header.i=@disroot.org header.b="ki72FuPL"
-Received: from layka.disroot.org (layka.disroot.org [178.21.23.139])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5919E19B5B1;
+	Tue, 24 Jun 2025 01:24:59 +0000 (UTC)
+Received: from szxga05-in.huawei.com (szxga05-in.huawei.com [45.249.212.191])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A91C01946DF;
-	Tue, 24 Jun 2025 01:42:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.21.23.139
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B927518641;
+	Tue, 24 Jun 2025 01:24:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.191
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750729342; cv=none; b=XH5x6Ne54l4TzK3bqWH7gBcf4hcX4UJfSvHdiAWcnNtUZSjpfV2QkX20N1l6cUS8jz4rIRgVIl3GfmSR+Ms5dGdpU7R21KmCavZnoFOfjzvd0/7GQsPGaOVsubpitoGXGEyGyooG83a55PuPY14lQ4ciEHn8kVReiIUk647X51Y=
+	t=1750728299; cv=none; b=WAh4e5GxrHoo37h11eYLAy56GSwWFUNcjD+6Tqg+HbUH9/x7/pIOvb0H5SrVTZ9ojsyxIjBAfCpcD7uE7PqXi3IRG0DYY2FI+IQz8V4mJVkD/Eq8BpdTmB5N/sl43Qi/nwVYh0ADxKYH8UceYtLXG8nhsD9qEfPEzvtm+Bc3fuc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750729342; c=relaxed/simple;
-	bh=VvHo+YvNoQIsmPh60/IV+ZW7D+ewbHAD+Igs22VFyiU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=mIJIQzpDbCtqUqMxpkgseFLwlCx/YG4oQY/kKWwoucN///F9+zqNV5Me1TaAgOmkM268XRhdQ5FZ9hcikmf0APUBvKufGgYB5YotPWf5Dj4UAf60oyS1APhCOVXyJn0ea8CFTzjqycu7x+qq4gRSumlJ30gKzo8zx9awzRr5HG8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=disroot.org; spf=pass smtp.mailfrom=disroot.org; dkim=pass (2048-bit key) header.d=disroot.org header.i=@disroot.org header.b=ki72FuPL; arc=none smtp.client-ip=178.21.23.139
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=disroot.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=disroot.org
-Received: from mail01.disroot.lan (localhost [127.0.0.1])
-	by disroot.org (Postfix) with ESMTP id E3AB325C6F;
-	Tue, 24 Jun 2025 03:42:17 +0200 (CEST)
-X-Virus-Scanned: SPAM Filter at disroot.org
-Received: from layka.disroot.org ([127.0.0.1])
- by localhost (disroot.org [127.0.0.1]) (amavis, port 10024) with ESMTP
- id utfTtbN02bci; Tue, 24 Jun 2025 03:42:17 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=disroot.org; s=mail;
-	t=1750729337; bh=VvHo+YvNoQIsmPh60/IV+ZW7D+ewbHAD+Igs22VFyiU=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To;
-	b=ki72FuPLBOfAtePC6++zcN8NdKRRgiTwtJhpgk0ZmmIMFXCAQ5qWdUQctsFEkdb7p
-	 5c1CIOqYjUzJ41YBo+E8h2HfHZIvcuSgtu/pgFhoJXssT9eJpETXyj1sgALC+EhUZR
-	 mFz40Ai23IH4QhCfJdRMhrqv10FbbKXXQu9PUIcPMkXNRl0+OS5CRJw9eICyHVJFMw
-	 m8AcyoeoNercj02VbGoAYgedYPvoh/86KF/v3m3sb+GmYoOKOBQ7tUv19h5sV0UBCT
-	 g2vPCMegKTNnOsJ9F7m9f/xY8Jp3l6x3nJx3+NgjTWWb/e8wgVkDaT6t1ttrd8TIZZ
-	 25mbcJD6YG03Q==
-Date: Tue, 24 Jun 2025 01:42:00 +0000
-From: Yao Zi <ziyao@disroot.org>
-To: Xi Ruoyao <xry111@xry111.site>, Huacai Chen <chenhuacai@kernel.org>,
-	WANG Xuerui <kernel@xen0n.name>,
-	"Rafael J. Wysocki" <rafael@kernel.org>,
-	Viresh Kumar	 <viresh.kumar@linaro.org>
-Cc: Jiaxun Yang <jiaxun.yang@flygoat.com>, Mingcong Bai <jeffbai@aosc.io>,
-	Kexy Biscuit <kexybiscuit@aosc.io>, loongarch@lists.linux.dev,
-	linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] cpufreq: loongson3: Support older SMC firmware
-Message-ID: <aFoCaKrOcf-yIard@pie.lan>
-References: <20250623123321.5622-1-ziyao@disroot.org>
- <9246b226e356ea0db044a592fed8853dd593f7f7.camel@xry111.site>
+	s=arc-20240116; t=1750728299; c=relaxed/simple;
+	bh=Hn+0wwL8ZlhoJI/0juhHC2Xllu76w0znhfwXP9KXX30=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=bhqh0giDIOzNgdJ2+2Z+clwY4KqKV96rNTVg9gVJu+eKADskDj7DGIrIA6rJgrfv2jv1HAU64rjN7CxG+7D9HfMYBtfnO/XF/qyjCE1VP3mqsLxwBtA0HFygAP0TLUZp45SPd9ztljWWi0rae5IoCm8M2Yor/7cBAaGIRPwsnrU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.191
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.162.112])
+	by szxga05-in.huawei.com (SkyGuard) with ESMTP id 4bR6dy5h1cz2BdCN;
+	Tue, 24 Jun 2025 09:23:18 +0800 (CST)
+Received: from dggpemf500002.china.huawei.com (unknown [7.185.36.57])
+	by mail.maildlp.com (Postfix) with ESMTPS id E5BF4140296;
+	Tue, 24 Jun 2025 09:24:53 +0800 (CST)
+Received: from huawei.com (10.175.124.27) by dggpemf500002.china.huawei.com
+ (7.185.36.57) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Tue, 24 Jun
+ 2025 09:24:53 +0800
+From: Yue Haibing <yuehaibing@huawei.com>
+To: <davem@davemloft.net>, <edumazet@google.com>, <kuba@kernel.org>,
+	<pabeni@redhat.com>, <horms@kernel.org>, <gnaaman@drivenets.com>
+CC: <netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+	<yuehaibing@huawei.com>
+Subject: [PATCH net-next] neighbour: Remove redundant assignment to err
+Date: Tue, 24 Jun 2025 09:42:16 +0800
+Message-ID: <20250624014216.3686659-1-yuehaibing@huawei.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <9246b226e356ea0db044a592fed8853dd593f7f7.camel@xry111.site>
+Content-Type: text/plain
+X-ClientProxiedBy: kwepems200002.china.huawei.com (7.221.188.68) To
+ dggpemf500002.china.huawei.com (7.185.36.57)
 
-On Mon, Jun 23, 2025 at 10:59:50PM +0800, Xi Ruoyao wrote:
-> On Mon, 2025-06-23 at 12:33 +0000, Yao Zi wrote:
-> 
-> /* snip */
-> 
-> > -static struct cpufreq_driver loongson3_cpufreq_driver = {
-> > +static struct cpufreq_driver loongson3_cpufreq_smc0_driver = {
-> >  	.name = "loongson3",
-> 
-> How about using different names for the drivers?
+'err' has been checked against 0 in the if statement.
 
-I don't have a strong opinion on the name since it could be considered
-in both ways,
+Signed-off-by: Yue Haibing <yuehaibing@huawei.com>
+---
+ net/core/neighbour.c | 4 +---
+ 1 file changed, 1 insertion(+), 3 deletions(-)
 
-- SMCv0 and SMCv1 provide similar functions and are implemented in the
-  same driver. The firmware version is already printed in the probe
-  callback, which should be enough for debugging purpose.
-- Meanwhile, loongson3_cpufreq_smc0_driver and
-  loongson3_cpufreq_smc1_driver ARE different sets of callbacks,
-  different names may avoid future confusion.
+diff --git a/net/core/neighbour.c b/net/core/neighbour.c
+index 85a5535de8ba..8ad9898f8e42 100644
+--- a/net/core/neighbour.c
++++ b/net/core/neighbour.c
+@@ -2055,10 +2055,8 @@ static int neigh_add(struct sk_buff *skb, struct nlmsghdr *nlh,
+ 
+ 	err = __neigh_update(neigh, lladdr, ndm->ndm_state, flags,
+ 			     NETLINK_CB(skb).portid, extack);
+-	if (!err && ndm_flags & (NTF_USE | NTF_MANAGED)) {
++	if (!err && ndm_flags & (NTF_USE | NTF_MANAGED))
+ 		neigh_event_send(neigh, NULL);
+-		err = 0;
+-	}
+ 	neigh_release(neigh);
+ out:
+ 	return err;
+-- 
+2.34.1
 
-I'm willing to provide different names in v2 unless you change your mind
-or there're further objections, thanks.
-
-> >  	.flags = CPUFREQ_CONST_LOOPS,
-> > -	.init = loongson3_cpufreq_cpu_init,
-> > +	.init = loongson3_cpufreq_cpu_smc0_init,
-> >  	.exit = loongson3_cpufreq_cpu_exit,
-> >  	.online = loongson3_cpufreq_cpu_online,
-> >  	.offline = loongson3_cpufreq_cpu_offline,
-> > -	.get = loongson3_cpufreq_get,
-> > -	.target_index = loongson3_cpufreq_target,
-> > +	.target_index = loongson3_cpufreq_smc0_target,
-> > +	.verify = cpufreq_generic_frequency_table_verify,
-> > +	.suspend = cpufreq_generic_suspend,
-> > +};
-> > +
-> > +static struct cpufreq_driver loongson3_cpufreq_smc1_driver = {
-> > +	.name = "loongson3",
-> 
-> Tested on a 3A6000 laptop with the schedutil policy.  On idle one core
-> is at 2000MHz and other cores are at 250MHz, when building the kernel
-> all cores are at 2000MHz.
-> 
-> Tested-by: Xi Ruoyao <xry111@xry111.site>
-> 
-> -- 
-> Xi Ruoyao <xry111@xry111.site>
-> 
-
-Regards,
-Yao Zi
 
