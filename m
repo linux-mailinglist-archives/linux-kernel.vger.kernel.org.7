@@ -1,99 +1,117 @@
-Return-Path: <linux-kernel+bounces-700531-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-700533-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6A1B8AE69F2
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Jun 2025 17:01:45 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 82D6BAE69F0
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Jun 2025 17:01:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id ADD484E60CE
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Jun 2025 14:54:28 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7E2F917C2DB
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Jun 2025 14:55:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B21FF2DCBFD;
-	Tue, 24 Jun 2025 14:51:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 00A9E296148;
+	Tue, 24 Jun 2025 14:51:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="TqNkzM0h"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="VxY9lexh"
+Received: from mail-pg1-f176.google.com (mail-pg1-f176.google.com [209.85.215.176])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1068C2DCBE2;
-	Tue, 24 Jun 2025 14:51:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 812642D322D
+	for <linux-kernel@vger.kernel.org>; Tue, 24 Jun 2025 14:51:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750776679; cv=none; b=Yb4OJCCyX+uZnWQ1WIJxXib2VhENaECiDUhR8TF/0HySpC4tsasMbyjILh3spKlTKw6EHsQxzvCC+u14D12tSwF3fgOEx4MnB4T0VrTD1HgilU2cvu0lU9mJdNZd6ejp3WYfXKp8oFIJ2tk3aUzMq2dGSSIubcg9sZZpzERx/ms=
+	t=1750776703; cv=none; b=TFihmtKXZU+27TnV7JRCp6ATLCG5NvXlAyIRKs4CV4giZ0Rjfwt7OXb79sSj42tchswi0zScOhwtW8Ak8zMRnHye7+vOlN1f0gXCmqFIpqB8Kirmh0Q1MqliFaNuZjt9mgSW1O5UxbDrDJynmPz8pm6s1Lg+rilfFhdTMDDgfnA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750776679; c=relaxed/simple;
-	bh=KK2vk1yPlnj09LCWq7CpMvw2JhhM32dj4jzP99gy3as=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=PkaAeYjiPvasr1ehhzLhBezGBYO1sig6Bn1EUoYln324nwmZWMsa/ViMw3MYJoSLUtBUsBC/4EZdiAXoxeo9p8cAXqHFJZBroSMg/zJqq6Q+t2RF8SzS4A3lyghVJhyhKSd+oz9bxwcYo7B+YdL+9wb2sJElvaSqDROpIR3kIaA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=TqNkzM0h; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 64845C4CEE3;
-	Tue, 24 Jun 2025 14:51:14 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1750776677;
-	bh=KK2vk1yPlnj09LCWq7CpMvw2JhhM32dj4jzP99gy3as=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=TqNkzM0hc6MqWy5NSlh7OAo2RDaSXtmy11gyYEBZ9JW89xcz3E6BiBoHTlFdpNkuz
-	 IjYb5Hlix3QAMBwFUg2b7bbS04hGyRstVHEfsIIA9MUotozqvs/MQ3+v4D99Xc1F2P
-	 1fJ7oYZnWjp8zXkf8Xg0GCiWx5hgwzAE810QhpSAv6sqLXOakDfduanhg5ctlKXD9B
-	 fng57byF1XfjO0BThTWQ5FfkVlWy7pfN20KVHKUdBVT0xxCzpi29ElbvnPIHO8yQBU
-	 HFGK33ccD/pN5vUZB+7s/cy3749bFf0DxMJKwyf/fKHwu9oA/WECii+gnaQ5hdnKUp
-	 PIgESwe6+MAKA==
-Date: Tue, 24 Jun 2025 16:51:11 +0200
-From: Danilo Krummrich <dakr@kernel.org>
-To: Greg KH <gregkh@linuxfoundation.org>
-Cc: Alexandre Courbot <acourbot@nvidia.com>, Timur Tabi <timur@kernel.org>,
-	John Hubbard <jhubbard@nvidia.com>, Miguel Ojeda <ojeda@kernel.org>,
-	Alex Gaynor <alex.gaynor@gmail.com>,
-	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>,
-	=?iso-8859-1?Q?Bj=F6rn?= Roy Baron <bjorn3_gh@protonmail.com>,
-	Benno Lossin <benno.lossin@proton.me>,
-	Andreas Hindborg <a.hindborg@kernel.org>,
-	Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>,
-	linux-kernel@vger.kernel.org, rust-for-linux@vger.kernel.org,
-	airlied@redhat.com
-Subject: Re: [PATCH] rust: add basic ELF sections parser
-Message-ID: <aFq7X_JeZj4n3suo@cassiopeiae>
-References: <DA9AU3OBT29Z.3CX827C91I3IH@nvidia.com>
- <2025053050-maggot-landfall-d5eb@gregkh>
- <DA9KIGDH4IF6.2T383ZVLTJN0G@nvidia.com>
- <2025053039-reselect-thinness-e0a2@gregkh>
- <CAOZdJXVvmDro0Mv36grqQ6LB_1O5GzwPx+Dde+wsfu9Cu_me7A@mail.gmail.com>
- <2025053148-gore-badass-1d1d@gregkh>
- <DAACKTM8B9A1.3SI9LRGNMSBH3@nvidia.com>
- <2025053117-snowy-tradition-eb9e@gregkh>
- <DAL37D3FG3YA.TSCJ1LMJO1X8@nvidia.com>
- <2025062405-stability-privacy-f965@gregkh>
+	s=arc-20240116; t=1750776703; c=relaxed/simple;
+	bh=9OKO6BDx2IMt/zmfSUV0ohxKy/gloikZpQsoqXzWc24=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
+	 MIME-Version:Content-Type; b=O0D79/K/ALFvijHi+HQp/sCLgoi8vDctEk2PVoTu/Kd+dbqtFyVXumm2F9yFrjuKcGVR7C+aMsM0s+4FoyJ1dn+r9CwwNp4Xzgnv1iqPCtK2cLM0znoh0KR+gIgpzVTe7pv2ClY8WFZrEQbbxk5BOqmlD79bytrbWY3NPbd8XYY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=VxY9lexh; arc=none smtp.client-ip=209.85.215.176
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
+Received: by mail-pg1-f176.google.com with SMTP id 41be03b00d2f7-b31c84b8052so641242a12.1
+        for <linux-kernel@vger.kernel.org>; Tue, 24 Jun 2025 07:51:41 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1750776701; x=1751381501; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:date:message-id:subject
+         :references:in-reply-to:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=tKBpAEgjMRRMgJIPmMH9OybSrIc+zODRWtXV0gOOoM0=;
+        b=VxY9lexhNOadkDCtR4VHh0SZ1aWbgugTdN7boPLzK4KlFtZTnCUf31ncWITMYv03Ph
+         6dYM62jKhmZ+yATIVGKo401k2Cjp+JqMMEoSuJu8mWymd8n/BOInH9iCSpxnLKUaBPvg
+         LJqriuDz/XLoT4f3Tp/jFkShoulcP7ky4PLPBRa5SGCchMmv6wjWx471dhSNMTv/Tipx
+         26yEiTimkD1GEuqjaqyRVKfPbQC88Rrlp1bxfpmrkm8EK2mCbmev2ElGjEFQdwofjjH6
+         IYHN86bFHjsUBAStt//22byarrkadUg8RxKlWkqmFdvobjORNNMBOD56k61rKHyPW1Wf
+         2T/w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1750776701; x=1751381501;
+        h=content-transfer-encoding:mime-version:date:message-id:subject
+         :references:in-reply-to:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=tKBpAEgjMRRMgJIPmMH9OybSrIc+zODRWtXV0gOOoM0=;
+        b=aRutNHOB4PyshdWRQoGm60WN+kXPYTtATUbnqv2DZCNPF7t3tThPHR3fRbq/2T/mOv
+         ZBCasO36xDJyJXwrq+fS/eAShJInomgEaHB91R+i7y4yMCOLM+84acaVT6J89Pr6yP3G
+         PEOEpUKJbGUEg3rPFmd7L+Zma9nm1sw6dy4MhLAYM6JqsnSepRvcslAtjUYuDVSzxNak
+         UhXiINuFovkYr2ZLB9h+xwW2P19KES8pcAtQBL0wWgZgXvPm9FpYmdBmvoZ8cqPGiKfc
+         d8fqSnDE5k/OodrBnkC3iX5RQqKne4/N9+DY6RzXGhUNKa3lZsZWo6yl8IHncjYd6VDu
+         hoEQ==
+X-Forwarded-Encrypted: i=1; AJvYcCW//+GO8P4efHbVFlWXqv1wZVkzZ6tFFKUOlDYIfRtzsF+TihDBpESLcyQV/K3oNFzQcrb2UWWScgDDMtI=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwpTCYIi812bLLzdTDqbn8z35yZO7k4Ap5ud2hUBX/kPQdWP2yQ
+	LfBlT+/MYlzF5UJYCjpuzKfnsK8NgyMz9QVDz7cclmBD8kTJj4TnVTAat8Id0K5t1mzOWlmPuPA
+	sxG9U
+X-Gm-Gg: ASbGncscW/AZjyHjlOuc21e4qk904zQEOR87TfeA1qFcGFkQNzI+P89I6HynoOXlFxv
+	5OpYAyWV6MjcLY/i6KiuSbYYeZ/Zg5gmnyyAU46gxluvIPhYti8SJf+rFlBNyf8hQPLtpW2f3/d
+	xMQDDKVwklvRML2+JBRK8evCQGBr68gQPGjmwtDZGmGDPXAmtuLmraW0bxRjvoZqYz5cWN1pYkL
+	Wm5lgVxWdKs1NvC9dVllUpJBUUuhNk4Wo+YGn60SQcpGQZ1JLXb2AmjLCWjl4mw1Ngzi5BBkXHy
+	4mLhuaowmjilrCKvOHKz/1itqP2GW9bXtj4xFGRSQcf8o/QKLlyY8Q==
+X-Google-Smtp-Source: AGHT+IH9g7UwNzUmYqNzcBMkeoifKor3akGE6R+oyeKg6dqY1DgcLWxDTqF/fdwAjctOxQqHqKy3kw==
+X-Received: by 2002:a05:6a00:2789:b0:742:a91d:b2f5 with SMTP id d2e1a72fcca58-7490d6089e3mr22801763b3a.13.1750776700860;
+        Tue, 24 Jun 2025 07:51:40 -0700 (PDT)
+Received: from [127.0.0.1] ([12.48.65.201])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-749c887378csm2040731b3a.178.2025.06.24.07.51.39
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 24 Jun 2025 07:51:40 -0700 (PDT)
+From: Jens Axboe <axboe@kernel.dk>
+To: Ming Lei <ming.lei@redhat.com>, 
+ Caleb Sander Mateos <csander@purestorage.com>
+Cc: Uday Shankar <ushankar@purestorage.com>, linux-block@vger.kernel.org, 
+ linux-kernel@vger.kernel.org
+In-Reply-To: <20250621162842.337452-1-csander@purestorage.com>
+References: <20250621162842.337452-1-csander@purestorage.com>
+Subject: Re: [PATCH] ublk: fix narrowing warnings in UAPI header
+Message-Id: <175077669906.72735.6561579879572890372.b4-ty@kernel.dk>
+Date: Tue, 24 Jun 2025 08:51:39 -0600
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <2025062405-stability-privacy-f965@gregkh>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-Mailer: b4 0.14.3-dev-d7477
 
-(Cc: +Dave)
 
-On Tue, Jun 24, 2025 at 03:26:11PM +0100, Greg KH wrote:
-> We know no user/kernel api can ever be changed in the future, so how can
-> we ever accept this?
+On Sat, 21 Jun 2025 10:28:41 -0600, Caleb Sander Mateos wrote:
+> When a C++ file compiled with -Wc++11-narrowing includes the UAPI header
+> linux/ublk_cmd.h, ublk_sqe_addr_to_auto_buf_reg()'s assignments of u64
+> values to u8, u16, and u32 fields result in compiler warnings. Add
+> explicit casts to the intended types to avoid these warnings. Drop the
+> unnecessary bitmasks.
+> 
+> 
+> [...]
 
-I think the nova project is a bit special in this aspect, since we develop the
-driver upstream for the purpose of breaking the chicken-egg problem of not
-getting infrastructure upstream while not having a user, but not getting a user
-upstream without having the corresponding infrastructure.
+Applied, thanks!
 
-Given that, neither nova-core nor nova-drm make any promises to be working
-drivers in the sense of being useful to users.
+[1/1] ublk: fix narrowing warnings in UAPI header
+      commit: 03912ca894e4e5d6499bc57e9f10dda9f0965c1d
 
-However, eventually we will hit the point where enough development has been done
-such that the drivers actually become useful for users. This will be the turning
-point at which we will of course guarantee to keep supporting a firmware version
-(or any other uAPI) once introduced.
+Best regards,
+-- 
+Jens Axboe
 
-Until then, it is what the Kconfig claims: "This driver is work in progress and
-may not be functional."
+
+
 
