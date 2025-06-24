@@ -1,141 +1,123 @@
-Return-Path: <linux-kernel+bounces-701056-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-701053-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id EA5DAAE7009
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Jun 2025 21:46:26 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 839E7AE7006
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Jun 2025 21:45:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A10F01897AA7
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Jun 2025 19:46:42 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0FA6817C2DD
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Jun 2025 19:45:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 847982EE26B;
-	Tue, 24 Jun 2025 19:44:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 149612E88B3;
+	Tue, 24 Jun 2025 19:44:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="BQgN2+Od"
-Received: from mx0b-00069f02.pphosted.com (mx0b-00069f02.pphosted.com [205.220.177.32])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="YuweBf/D"
+Received: from mail-lf1-f50.google.com (mail-lf1-f50.google.com [209.85.167.50])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3E4602E9ED8;
-	Tue, 24 Jun 2025 19:44:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.177.32
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2B6BA2E8885
+	for <linux-kernel@vger.kernel.org>; Tue, 24 Jun 2025 19:44:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750794276; cv=none; b=NWwIbt7j1PicbchUB5Tgry8+ip8he0Fkg9MM/hUBZx+fHMv626npy40+7fhKSGtnnqKjsXuYTmMWCz6yeZsaTPgiVTAQp2q7hx4n7EIOb5cnEmwLLi8ZiGJjbrkhmf8s5fhwQhRGQBPlivQx6HWfBk5NCicQKFzsRRG3LwrPRYk=
+	t=1750794245; cv=none; b=AtKnwlrOdCcecs4m9boKSu/CEWSDMoJM/OjvcPacSTupWD+0IU6w5tvsnXJAUN2HYefuF6lWyhq5stpUvKi2rofUvc/UG+U/ZVvEKE7lOuEu836BFAwGlmr+ZsFBF7BLSOdAGNlJ+J7mHJ/5i75n1+Cjy/zfbg8FES5kkPWmMQQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750794276; c=relaxed/simple;
-	bh=sBd4i6NfN8Nagy/LxcY8zqS/alXR3Z8Cwab51tRWFQc=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=N3y2lkdmd6GKFEhRWdjXpTkvFhjghBaMmhHK+bGkrjhtX4OueI4xbFvJ/pG2NEwiR+ycnRUn1p1N6gIJ4aoCBDQrkYdmS9jwlwXjSJ27oUP0l7mzdX8jmQsEaQ+BcX1GqEaKKYTKUwUrpPzIsjlPVKa3ucjkn65J9JpdFbKeeS8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=BQgN2+Od; arc=none smtp.client-ip=205.220.177.32
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oracle.com
-Received: from pps.filterd (m0333520.ppops.net [127.0.0.1])
-	by mx0b-00069f02.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 55OHBaLo006329;
-	Tue, 24 Jun 2025 19:44:26 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=cc
-	:content-transfer-encoding:date:from:in-reply-to:message-id
-	:mime-version:references:subject:to; s=corp-2025-04-25; bh=2heMm
-	h50U9/9fd3I2Fq191i4cQ9bhdmCrjgCm4fMKSY=; b=BQgN2+Od7YJocacBGlCV5
-	pDROzy4ncWc8lg8zUtT1X/ByT0soj7j8Il5MAlMgiYfKj0T05/pQxSMPyM8M29+g
-	X57xGrqGHBDaJPHTJFOLbsyrxpmyGIGlZlqcaGlJBrPU4zdigh611+CL+PoACpdi
-	nugIwSwMzSdXl8dgh8kw+iPvqpAvd86YvnuJ0er5CAMQNj0AuUn3GQNLKUPEwvAN
-	vGMOvUTXemsMTndDIQqFvQiT3Ct8P9y9CImQtkq2utwDrr0SrAhPfq/68GDqlriv
-	RWTzQLvNtBy9RPZSf22se0QuK5IQsagVtAxHs37D3aNIhGry+ldnU5jPdMzb/lDA
-	A==
-Received: from iadpaimrmta03.imrmtpd1.prodappiadaev1.oraclevcn.com (iadpaimrmta03.appoci.oracle.com [130.35.103.27])
-	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 47egummwph-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Tue, 24 Jun 2025 19:44:25 +0000 (GMT)
-Received: from pps.filterd (iadpaimrmta03.imrmtpd1.prodappiadaev1.oraclevcn.com [127.0.0.1])
-	by iadpaimrmta03.imrmtpd1.prodappiadaev1.oraclevcn.com (8.18.1.2/8.18.1.2) with ESMTP id 55OJR0Of024157;
-	Tue, 24 Jun 2025 19:44:25 GMT
-Received: from pps.reinject (localhost [127.0.0.1])
-	by iadpaimrmta03.imrmtpd1.prodappiadaev1.oraclevcn.com (PPS) with ESMTPS id 47ehkr3hvd-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Tue, 24 Jun 2025 19:44:25 +0000
-Received: from iadpaimrmta03.imrmtpd1.prodappiadaev1.oraclevcn.com (iadpaimrmta03.imrmtpd1.prodappiadaev1.oraclevcn.com [127.0.0.1])
-	by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 55OJiLcR031379;
-	Tue, 24 Jun 2025 19:44:24 GMT
-Received: from ca-dev110.us.oracle.com (ca-dev110.us.oracle.com [10.129.136.45])
-	by iadpaimrmta03.imrmtpd1.prodappiadaev1.oraclevcn.com (PPS) with ESMTP id 47ehkr3hsx-4;
-	Tue, 24 Jun 2025 19:44:24 +0000
-From: Alok Tiwari <alok.a.tiwari@oracle.com>
-To: jonathan.cameron@huawei.com, will@kernel.org, mark.rutland@arm.com,
-        linux-cxl@vger.kernel.org
-Cc: alok.a.tiwari@oracle.com, linux-perf-users@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH v2 3/3] perf/cxlpmu: Fix typos in cxl_pmu.c comments and documentation
-Date: Tue, 24 Jun 2025 12:43:40 -0700
-Message-ID: <20250624194350.109790-4-alok.a.tiwari@oracle.com>
-X-Mailer: git-send-email 2.46.0
-In-Reply-To: <20250624194350.109790-1-alok.a.tiwari@oracle.com>
-References: <20250624194350.109790-1-alok.a.tiwari@oracle.com>
+	s=arc-20240116; t=1750794245; c=relaxed/simple;
+	bh=mEEqXQPzSi/2DYZkyERnStSQgx8nwqj2N53hxm8wTV8=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=gRUw/2B0S8jo1B/sVarvXmxRJQYigmgKVzG2fCPwhTKKlIATlbMnOxPZ4zXz8wkv7XGOXIfhFfqvSZ+EoWJNaBoHjfIU1czhpwPD8gxJVSuHb/NHDteoUbrlvYuR7EvYW2yPiWEFhnP/B7yK7LCaMLL8ExGsDjnfOuMBg6dgj3w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=YuweBf/D; arc=none smtp.client-ip=209.85.167.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-lf1-f50.google.com with SMTP id 2adb3069b0e04-55350d0eedeso960400e87.2
+        for <linux-kernel@vger.kernel.org>; Tue, 24 Jun 2025 12:44:02 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1750794241; x=1751399041; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=mEEqXQPzSi/2DYZkyERnStSQgx8nwqj2N53hxm8wTV8=;
+        b=YuweBf/Dx6SZV/ES4ka0J24b0HGZJ6DKvelBic6v7vtEMuXQYaq7y7u8fsIdzd53Ug
+         T/izPE21Rs6qf2tq2ef9l32nn0rshjyM12/1vAQggoOJJNZ+5wT/XSzDBfIGyU45+pia
+         cYKgK6nMTDq0Omn85/YCoHk2NHXo9ucAb/YO1ZbukPV5STuI5bhPdPmENeK1rLamBTpU
+         Lxq+9DTSuLoIkURW1yLjC8gwIkTVtGsvZDCKcFYHVXC8rnHKsHN4/g1sN+0kkFLLWwe3
+         0LHCplcJ5T9Sktq0SRwZpWO48uR+08HPj/Uah0eoRSDuRFQB3t9jRBa4iYSnuhXlQyVn
+         apyg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1750794241; x=1751399041;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=mEEqXQPzSi/2DYZkyERnStSQgx8nwqj2N53hxm8wTV8=;
+        b=uk8WUN/7ub2AW1j6QVdTsGtv/DsOvoLAdggxcERTGaKuHfXtMlIufsZRxNPd0fQnP/
+         x4KKrY/Mo3qCcvUUh4PMHlNvdX69Pes8dbGu+IGkOsfsHNaRr+KI0zjjoro/9XnrYVoS
+         dAXRrH3sB9mq2DwbtOdL7hlB1D2sIvXY/EY8tXArriKw7hD23zdbthg3omm8FyPDXGeV
+         xaVDHLGCAzA2jp9x7RyJgFUwa2dE4p+PavNpcQ1frCjijlDDsPagiGkAkw55hNOKfbY3
+         rog1UKz9yrWe7b2KEj2JPIJphI7wnFpFezaPFj/XqpaVMr3RJjWi7U5vGrlfujGHfuSG
+         4smg==
+X-Forwarded-Encrypted: i=1; AJvYcCUAp2Z4e7+wG3LpMkM+B55Kvl4Lv8DcKLzJCqIuG6NYxRfdz5ANdQvlFZbTB7+QJYswo7K+wxG9dHpBxDU=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwX02KiFaGrQ2+JznYmxF3SECAWA444VeVbKa3wM8toHj80Ac7b
+	oiUgpFSprOisLP/uJI+GReCIOyBuSUMcccnKb4+IoiydT1bGZO2OrIMNMrhLgsBeOnN03bY5BdJ
+	fW9StKB6jwz4pwIUoujMrxLk+wqhruuCnq6JC3FH/0A==
+X-Gm-Gg: ASbGncuHAyoUst/RtqVnlf4QMb9wrGaXtSDkRLDG8QAyUkzHToAkPCEYB5VIb92KWtI
+	MnXNrp0CNaOSMIOweBYLeC6uHWXUT/U09+sMZTNCy8Nb/KT/GOYehihuV4k+GkzFIOab2Qq8QbX
+	PwXCwDmV2RscXb9HJDYbFom9YFTAM9pkyhDwEdR3FZKzE=
+X-Google-Smtp-Source: AGHT+IF2ZsZmunuKbQXBbvrJ/CF+mo6d+N7b7ivEICTBxI/GH/HmsLM4r9Hm61QzUCqDuwsN/lGUxeELXR1RoBAx8E4=
+X-Received: by 2002:a2e:9e4c:0:b0:32b:7cdb:aa4d with SMTP id
+ 38308e7fff4ca-32cc657b90dmr64541fa.31.1750794241285; Tue, 24 Jun 2025
+ 12:44:01 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.7,FMLib:17.12.80.40
- definitions=2025-06-24_06,2025-06-23_07,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 mlxlogscore=999 bulkscore=0
- suspectscore=0 adultscore=0 malwarescore=0 mlxscore=0 phishscore=0
- spamscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2505160000 definitions=main-2506240161
-X-Proofpoint-ORIG-GUID: DOBrEKH3SOuxSu46q0fPrpr0OyoWn6KR
-X-Proofpoint-GUID: DOBrEKH3SOuxSu46q0fPrpr0OyoWn6KR
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNjI0MDE2MSBTYWx0ZWRfX33tc4A+wJXL5 nAxh1wvPccoTEx1KoWwfDLpmd5FmdoaNX1QW6XvZ/YQG1sqnAPeS5ykaDvufGoN5DggVYUbdMTW bkHyLRc+qVEdUXn4NsX6/pUJA9ucA0rMOXJ+XgSgqk7gJbLKu1zoZyPAPfHC6v7etXx14Z33K7e
- ohEfYjUUI9hSWn8X/C/kcCGcLjo2ddc2EMVK0Fvpceoxv8HSq4P+QA2U8EBwbnHneZOW9xAvqs5 NE6of3+uSfTipWv+CMUJewctb22jzuYn5y94mSiahPP/6BO9KuSRhIaE21TSJScCBGRvOMUCsUf G1x09zfe28srODGyqtvaKwV5IHbKQepPbX43OKh+dbZO5+q7emcEKpJU0jsp/rnlUBrQ7NMBnyD
- GLTisXQ8/6Tn++qWBqfnc9K0g1dKJpSXCHhmEFKePHTt1mmHZnqJ0iryvHFWzHYFzuKho0D9
-X-Authority-Analysis: v=2.4 cv=S5rZwJsP c=1 sm=1 tr=0 ts=685b0019 b=1 cx=c_pps a=qoll8+KPOyaMroiJ2sR5sw==:117 a=qoll8+KPOyaMroiJ2sR5sw==:17 a=6IFa9wvqVegA:10 a=yPCof4ZbAAAA:8 a=SMJxHL9mSaAU-aCgd-cA:9 cc=ntf awl=host:13207
+References: <20250624-gpio-mmio-pdata-v1-0-a58c72eb556a@linaro.org> <20250624-gpio-mmio-pdata-v1-2-a58c72eb556a@linaro.org>
+In-Reply-To: <20250624-gpio-mmio-pdata-v1-2-a58c72eb556a@linaro.org>
+From: Linus Walleij <linus.walleij@linaro.org>
+Date: Tue, 24 Jun 2025 21:43:50 +0200
+X-Gm-Features: AX0GCFvZTjr80iDIOZKB_55ymASKXhThtYvBCFl997kaJ5_-KuT-0OBBGsj3psE
+Message-ID: <CACRpkdavsQJTfiwn-F+ML5MK6ADtr-31bBxLA4gV7MTAYR0YGQ@mail.gmail.com>
+Subject: Re: [PATCH RFT 2/6] gpio: mmio: get chip label and GPIO base from
+ device properties
+To: Bartosz Golaszewski <brgl@bgdev.pl>
+Cc: Lee Jones <lee@kernel.org>, Liviu Dudau <liviu.dudau@arm.com>, 
+	Sudeep Holla <sudeep.holla@arm.com>, Lorenzo Pieralisi <lpieralisi@kernel.org>, 
+	Aaro Koskinen <aaro.koskinen@iki.fi>, Janusz Krzysztofik <jmkrzyszt@gmail.com>, 
+	Tony Lindgren <tony@atomide.com>, Russell King <linux@armlinux.org.uk>, 
+	Krzysztof Kozlowski <krzk@kernel.org>, Alim Akhtar <alim.akhtar@samsung.com>, linux-gpio@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+	linux-omap@vger.kernel.org, patches@opensource.cirrus.com, 
+	linux-samsung-soc@vger.kernel.org, 
+	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Fix several minor typo errors in comments:
-- Remove duplicated word "a" in "a a VID / GroupID".
-- Correct "Opcopdes" to "Opcodes" in CXL spec reference.
-- Fix spelling of "implemnted" to "implemented".
+On Tue, Jun 24, 2025 at 3:19=E2=80=AFPM Bartosz Golaszewski <brgl@bgdev.pl>=
+ wrote:
 
-Improves code readability and documentation consistency.
+> From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+>
+> Ahead of removing struct bgpio_pdata support from the gpio-mmio generic
+> module, let's add support for getting the relevant values from generic
+> device properties. "label" is a semi-standardized property in some GPIO
+> drivers so let's go with it. There's no standard "base" property, so
+> let's use the name "gpio-mmio,base" to tie it to this driver
+> specifically. The number of GPIOs will be retrieved using
+> gpiochip_get_ngpios() so there's no need to look it up in the software
+> node.
+>
+> Signed-off-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
 
-Signed-off-by: Alok Tiwari <alok.a.tiwari@oracle.com>
----
- drivers/perf/cxl_pmu.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+This works for me.
+I wouldn't be stoked to see device trees abusing the "gpio-mmio,base"
+property all of a sudden just because it now exists as a device
+property though... I kind of wish we had a way to opt out of exposing
+this to all the sub-property paths. But it seems tiresome, so:
 
-diff --git a/drivers/perf/cxl_pmu.c b/drivers/perf/cxl_pmu.c
-index 5a475a5a1f095..d094030220bf2 100644
---- a/drivers/perf/cxl_pmu.c
-+++ b/drivers/perf/cxl_pmu.c
-@@ -113,7 +113,7 @@ struct cxl_pmu_info {
- 
- /*
-  * All CPMU counters are discoverable via the Event Capabilities Registers.
-- * Each Event Capability register contains a a VID / GroupID.
-+ * Each Event Capability register contains a VID / GroupID.
-  * A counter may then count any combination (by summing) of events in
-  * that group which are in the Supported Events Bitmask.
-  * However, there are some complexities to the scheme.
-@@ -406,7 +406,7 @@ static struct attribute *cxl_pmu_event_attrs[] = {
- 	CXL_PMU_EVENT_CXL_ATTR(s2m_bisnp_curblk,		CXL_PMU_GID_S2M_BISNP, BIT(4)),
- 	CXL_PMU_EVENT_CXL_ATTR(s2m_bisnp_datblk,		CXL_PMU_GID_S2M_BISNP, BIT(5)),
- 	CXL_PMU_EVENT_CXL_ATTR(s2m_bisnp_invblk,		CXL_PMU_GID_S2M_BISNP, BIT(6)),
--	/* CXL rev 3.1 Table 3-50 S2M NDR Opcopdes */
-+	/* CXL rev 3.1 Table 3-50 S2M NDR Opcodes */
- 	CXL_PMU_EVENT_CXL_ATTR(s2m_ndr_cmp,			CXL_PMU_GID_S2M_NDR, BIT(0)),
- 	CXL_PMU_EVENT_CXL_ATTR(s2m_ndr_cmps,			CXL_PMU_GID_S2M_NDR, BIT(1)),
- 	CXL_PMU_EVENT_CXL_ATTR(s2m_ndr_cmpe,			CXL_PMU_GID_S2M_NDR, BIT(2)),
-@@ -627,7 +627,7 @@ static void cxl_pmu_event_start(struct perf_event *event, int flags)
- 	hwc->state = 0;
- 
- 	/*
--	 * Currently only hdm filter control is implemnted, this code will
-+	 * Currently only hdm filter control is implemented, this code will
- 	 * want generalizing when more filters are added.
- 	 */
- 	if (info->filter_hdm) {
--- 
-2.46.0
+Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
 
+Yours,
+Linus Walleij
 
