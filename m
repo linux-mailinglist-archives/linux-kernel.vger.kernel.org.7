@@ -1,108 +1,99 @@
-Return-Path: <linux-kernel+bounces-701047-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-701049-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9B8CCAE6FF5
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Jun 2025 21:44:27 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C2D78AE6FF7
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Jun 2025 21:44:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C89387A89C5
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Jun 2025 19:42:53 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9A8EF3A5167
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Jun 2025 19:44:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7B2DA2EBBBB;
-	Tue, 24 Jun 2025 19:42:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 53A812F0021;
+	Tue, 24 Jun 2025 19:42:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="vJViIy5k"
-Received: from mail-pl1-f201.google.com (mail-pl1-f201.google.com [209.85.214.201])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="JwT4FBKB"
+Received: from mail-pj1-f73.google.com (mail-pj1-f73.google.com [209.85.216.73])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9372C2E92A7
-	for <linux-kernel@vger.kernel.org>; Tue, 24 Jun 2025 19:42:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 471992EFDA5
+	for <linux-kernel@vger.kernel.org>; Tue, 24 Jun 2025 19:42:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.73
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750794128; cv=none; b=peGuZTp04+4h2ARMES/K3Oh7d/lqp8S9eClgZO6ceupnI+TMybc9SAelVtO4jl3GDHZeTWva1bImkgO7LMlkmyafF34pQOjVsIRE8pYX2sGDyH9Ih3/dSwACUWHKnrhdAWkr+dFltev0JdBf2VXHeMzQwsp838Lso1GF5h7roxM=
+	t=1750794139; cv=none; b=Yrqza0mmDiQFHBVUmlstKzxrygQ+PfUCoKLp7W8RRCKGdSBOlQr76EPSTuPHmsZQ6GYQXGUlBsf+DPn6SShWGgUcKDezv3klFlpYf8d2FK32QEJzJ90J9aTR/SzxTJW908C25UCk3TcrRaI/rSPwDcHnB3cHNYD2Ugej6Ya3KbA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750794128; c=relaxed/simple;
-	bh=J4vR7SZtbxRakpQGlJHSsT8TJNks6Led0n3EAyUc0K8=;
+	s=arc-20240116; t=1750794139; c=relaxed/simple;
+	bh=7WnHnjZ2Inj8vNFPOPMWn5vUT1QywHWs7gt7IcDZPtY=;
 	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=eDfnw0iow5lwcrWo5V44gmdJzvCs3J/cOoBAoCPiVE5EfrK9KvLXPdC3DMLte9RlRO/3k9V1MMu81IH74rlx1BNG7x6LXpCONGytLgkf4CiWwyU0ZYUC9OqWqZ850fRspCmUfAQabxFfdUrOWCV/MafJVqVGhVN/+xhOyflfCSQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=vJViIy5k; arc=none smtp.client-ip=209.85.214.201
+	 To:Cc:Content-Type; b=MDSx5idOmmSq2Fi2OI9XnjVGeXuLieAnEoskEdmjEffFXqqDw3BeDoO4n8im1XmXKV5Z4IoCk1vVRR8N5PEV+d6Ey4CdrhwS8PEMjyDkA3ILTlst0ZNm8l3gIe0xTFxILQ1S2umCju+s1I757JRHnJ/OQ8sOEcGMWtLDlrMd3OY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=JwT4FBKB; arc=none smtp.client-ip=209.85.216.73
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
-Received: by mail-pl1-f201.google.com with SMTP id d9443c01a7336-234fedd3e51so55966475ad.1
-        for <linux-kernel@vger.kernel.org>; Tue, 24 Jun 2025 12:42:07 -0700 (PDT)
+Received: by mail-pj1-f73.google.com with SMTP id 98e67ed59e1d1-313fb0ec33bso800107a91.2
+        for <linux-kernel@vger.kernel.org>; Tue, 24 Jun 2025 12:42:18 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1750794127; x=1751398927; darn=vger.kernel.org;
+        d=google.com; s=20230601; t=1750794138; x=1751398938; darn=vger.kernel.org;
         h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
          :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=FcIVsm6SwCmai4pYGu1I3g9ltmCQWixFuWfg9AQgveQ=;
-        b=vJViIy5kyg957PemRHKQ2O33/m1WVggkuuoQ5APMaaqW7tO01B8jANDl5lbPpQ17QB
-         o+/GPh+BnwGHin90FU85P/N6VM+jqoZm30xyuTfn5ZNBqblZTcjwQlqVhopwp0I5Snr8
-         xMY9pIJgfkuCVR/s4x8mkPP+LDFNxIwe75CT9cSvfG7jmFHQpitwOW2y7xaWQJXtCCKr
-         t3p4bADYCB8Y8KS6n5eaKCogGZyPW4/RiZ9K5rTyg0yNupichuflQ10NRXz25KDkb0K2
-         bW6MydUt2ROnwK9Y7d9kSt7rf8X7bkd5CmH4L4IUPk+kh+cpFKqxVv1Y2BcRXqs7Cujv
-         Lseg==
+        bh=eiZv+Ux8bnoIxxwKrwVqiL0FOPFJvedVqWOdvOf0LcA=;
+        b=JwT4FBKB36u+z9iIrpd2CTptQ40I90Qt+oY7IoccOVgCFZUIQYqi1QMwzVSEH6AbRs
+         f4Qe2Dor0nWsqwFOH9EPaiBXrCFW7VcQvWiB8bMMqgF5ycIp49m8SJuoKHmJgPlisBNm
+         YsX+LBhAVnxDFgc2dPsSvpCrTCsiLBUK2PMf1OPtYmnQFntHolTK6ylJyr5534JobOA8
+         nSmxMdMVqOUIs3GCfxaeyO3DP9jeGK4LBc1ZoAtqMMwHla5xwS9C/ed/w/F4qy1Ybizk
+         uq3cfVkj67rIkRbhebAronl0XkAL7AdXSJ9Txyss4Q51iuTOj2CdBm/RnsXXh/tFrs7g
+         1ESg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1750794127; x=1751398927;
+        d=1e100.net; s=20230601; t=1750794138; x=1751398938;
         h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
          :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=FcIVsm6SwCmai4pYGu1I3g9ltmCQWixFuWfg9AQgveQ=;
-        b=gaTWFZ+80K6iyiG4ki1AshkJHb13sJjL+NPp7YC/7Snd95dsDUsxqRJb4f5n8KI/Qc
-         qKan0VuS+lBkCJDK0uB/xwJ5Z/6RedaSfDofVL7RwwqtozFMtkcsGRw0tDLc0U+TBeGR
-         eOlGPiqKsS3QwKB+A50MH50rFMLUCkA/zlDIyfImHAUFYGiVHnqzQlhAeTPvE3JmpeQx
-         74BtepVv3TMTxdSHrIGXGp6USb/q29IcOHwOw9iZ4QR0oSRnHPsXzzSvYvI29rH6Hx1p
-         obgJddfLgKZNbEFSL+Ym4oomhsEDW1qZy6+ZUwvMJIYUvCufHTO3CTJ5qJN6BjAKfpfB
-         C00w==
-X-Forwarded-Encrypted: i=1; AJvYcCXd46aKT0NprYEGSupjRrSPmvJgacegRO+va6hSXWd+dZle3V5IdTpvmpv1ydZRIRVdBldBc+73HmHK+PI=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyxxoXF0AsMwQeyTNf1mk5XTKhbHzP9BbvSuFxYu2gXYkJ4Kvxz
-	i1B4SgjrZkOyhB6tn4EHLpKwVsXKqIAHuOzjdLEwtphWyPzOiyWjGHOIl8X22GBQO0hWd4npwsX
-	+n25OxQ==
-X-Google-Smtp-Source: AGHT+IEq6KgpAt5TZlBf/a/lvKLpoi3UG5KRbpv+ZxHvaNEAIVgbzmKUN7CslVZPXksufY8n8U0SLN5z8sY=
-X-Received: from plbmv13.prod.google.com ([2002:a17:903:b8d:b0:235:54f:4f12])
- (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a17:903:4b30:b0:235:129e:f649
- with SMTP id d9443c01a7336-23823f99aa7mr9831915ad.12.1750794127166; Tue, 24
- Jun 2025 12:42:07 -0700 (PDT)
-Date: Tue, 24 Jun 2025 12:38:38 -0700
-In-Reply-To: <20250523001138.3182794-1-seanjc@google.com>
+        bh=eiZv+Ux8bnoIxxwKrwVqiL0FOPFJvedVqWOdvOf0LcA=;
+        b=lShsYlNbDUvQlE7uYEvSTkIXoCHExBv0vljXLZmWoYxgnos3cNdMMyXvuF40f4CbkY
+         ycT2oqCMLcefo/tHHzJQxXky/0IkIHYRAPuQX1sXlD84EuzSjIEUBuDXvgXDTDTyz2qx
+         91ul7VwsQz93EvhbgVggv2mJNCj3jAh6XQAL5bcjejFHXh2jooltQ/CVhjkG3TUV+xYR
+         pepwSNejCnKPwUYh7YNvcz5bkp08G/S1tNNT7p4W3Ani03LfEka/gKe4nswQ/wVjPqhQ
+         B8N+iYXF+oD8I6zAfnUy6vGUSQdQLvCLjynrLykYbBvoQg2OgiT+pNtYhAPi6I8VG0w8
+         9SKw==
+X-Forwarded-Encrypted: i=1; AJvYcCWb5y7vr1Ps8GyZWmIIVq5NUf9k8HQxPaCsZGVNX+aec73vNZiEp+WgmUDTacSENysGckkc6cBh8yH3bzQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwmzjZotm44RhT10LmA1uPs8iWBhttl1WGaPL47LQqIdI7LOZ1y
+	oMra9l683JQWaS2L9dnE6EvZmubehYKKn7JqhuIrHMG4PJcYhJX4UoTuOr+0/7n1OvLbh2p0wrX
+	i1pGzjg==
+X-Google-Smtp-Source: AGHT+IECMFlbef6lDHwuSpgtWmzJM6Kenqel0iDDnhehUo2TFEdmq9e7oOv+NFpDNFQ4sz1U43MsG6xhPwc=
+X-Received: from pjboe18.prod.google.com ([2002:a17:90b:3952:b0:312:f88d:25f6])
+ (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a17:90b:5626:b0:312:1dc9:9f67
+ with SMTP id 98e67ed59e1d1-315f26132bcmr173645a91.2.1750794137714; Tue, 24
+ Jun 2025 12:42:17 -0700 (PDT)
+Date: Tue, 24 Jun 2025 12:38:41 -0700
+In-Reply-To: <20250523181606.568320-1-rk0006818@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 Mime-Version: 1.0
-References: <20250523001138.3182794-1-seanjc@google.com>
+References: <20250523181606.568320-1-rk0006818@gmail.com>
 X-Mailer: git-send-email 2.50.0.714.g196bf9f422-goog
-Message-ID: <175079268655.517596.11530108670607154610.b4-ty@google.com>
-Subject: Re: [PATCH v4 0/4] KVM: x86: Dynamically allocate hashed page list
+Message-ID: <175079223746.515152.1077822979652127877.b4-ty@google.com>
+Subject: Re: [PATCH] selftests: kvm: Fix spelling of 'occurrences' in
+ sparsebit.c comments
 From: Sean Christopherson <seanjc@google.com>
-To: Sean Christopherson <seanjc@google.com>, Paolo Bonzini <pbonzini@redhat.com>
-Cc: kvm@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	Vipin Sharma <vipinsh@google.com>, James Houghton <jthoughton@google.com>
+To: Sean Christopherson <seanjc@google.com>, skhan@linuxfoundation.org, 
+	Rahul Kumar <rk0006818@gmail.com>
+Cc: pbonzini@redhat.com, linux-kselftest@vger.kernel.org, kvm@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-kernel-mentees@lists.linux.dev
 Content-Type: text/plain; charset="utf-8"
 
-On Thu, 22 May 2025 17:11:34 -0700, Sean Christopherson wrote:
-> Allocate the hashed list of shadow pages dynamically (separate from
-> struct kvm), and on-demand.  The hashed list is 32KiB, i.e. absolutely
-> belongs in a separate allocation, and is worth skipping if KVM isn't
-> shadowing guest PTEs for the VM.
-> 
-> I double checked that padding kvm_arch with a 4KiB array trips the assert,
-> but padding with 2KiB does not.  So knock on wood, I finally got the assert
-> right.  Maybe.
-> 
-> [...]
+On Fri, 23 May 2025 23:43:52 +0530, Rahul Kumar wrote:
+> Corrected two instances of the misspelled word 'occurences' to
+> 'occurrences' in comments explaining node invariants in sparsebit.c.
+> These comments describe core behavior of the data structure and
+> should be clear.
+ 
 
-Applied to kvm-x86 mmu, thanks!
+Applied to kvm-x86 selftests, thanks!
 
-[1/4] KVM: TDX: Move TDX hardware setup from main.c to tdx.c
-      https://github.com/kvm-x86/linux/commit/1f287a4e7b90
-[2/4] KVM: x86/mmu: Dynamically allocate shadow MMU's hashed page list
-      https://github.com/kvm-x86/linux/commit/02c6bea57d0d
-[3/4] KVM: x86: Use kvzalloc() to allocate VM struct
-      https://github.com/kvm-x86/linux/commit/97ad7dd0e53d
-[4/4] KVM: x86/mmu: Defer allocation of shadow MMU's hashed page list
-      https://github.com/kvm-x86/linux/commit/59ce4bd2996b
+[1/1] selftests: kvm: Fix spelling of 'occurrences' in sparsebit.c comments
+      https://github.com/kvm-x86/linux/commit/30142a93b164
 
 --
 https://github.com/kvm-x86/kvm-unit-tests/tree/next
