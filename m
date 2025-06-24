@@ -1,111 +1,125 @@
-Return-Path: <linux-kernel+bounces-699795-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-699796-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 58D73AE5F8E
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Jun 2025 10:37:07 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 791FAAE5F8D
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Jun 2025 10:36:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 770253AE9B8
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Jun 2025 08:35:36 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DC6FD161EAD
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Jun 2025 08:36:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8D71225C82F;
-	Tue, 24 Jun 2025 08:35:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6724025C701;
+	Tue, 24 Jun 2025 08:36:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=foxmail.com header.i=@foxmail.com header.b="aa7PBuhK"
-Received: from xmbghk7.mail.qq.com (xmbghk7.mail.qq.com [43.163.128.50])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="VHpuMjjP"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0332C25C81F
-	for <linux-kernel@vger.kernel.org>; Tue, 24 Jun 2025 08:35:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=43.163.128.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BC2E125BEEF;
+	Tue, 24 Jun 2025 08:36:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750754153; cv=none; b=MmgdPMgcAB1A3yS5/w2NW+iOyTvq7FoCGq3fTlq6hd3uC4fLhzWU7Gmx73YXI4Q4Ji86DvPu/NbxnWLoLYJwUScb47GC1Wy7+lHc2QgNT8/HToWkesa8+2iuCZP8s422T6Y5FVL7F8GM9KMVSh70Ev5uaQJrDQr6rspB4YJo56A=
+	t=1750754164; cv=none; b=F6DtDgGbwGrcTGZI44HfCqObnt2u7GjSpkJm0pHki9zibF9eXukrIBBj6XcW8zYeqNXQbWrhlXflNN/AecmFZoJi7/1ASnvFFcctXkYqv+E2ybhdqscQ22wILFlENRg5W2F+zzP/caU010bVYKK/UUihgAJ1QK5Kh2uO6b25s5I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750754153; c=relaxed/simple;
-	bh=79sCu4PyYzVHW/Z8QGotil/TpK5J5xXTNlL9Xox50k8=;
-	h=Message-ID:From:To:Cc:Subject:Date:MIME-Version; b=i2JwoY/kQoW4Pj5jchzDriB9Hyo2ZAALHx6iPXk0BwqdkshEgFuRls2XzEyRfIKQObEooSvuTakMibNb1Q0DQ8kkb4c7g/oTHfv4yOH5CpwtXX8HSiN7EJYgWOc2J4DhqAOmmffYSwqn8MwNPPGCWSmiTg6/XZKpZ4e9UzYZ7NM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foxmail.com; spf=pass smtp.mailfrom=foxmail.com; dkim=pass (1024-bit key) header.d=foxmail.com header.i=@foxmail.com header.b=aa7PBuhK; arc=none smtp.client-ip=43.163.128.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foxmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=foxmail.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foxmail.com;
-	s=s201512; t=1750754148;
-	bh=v6o/ShoJvWLhlSyxTPkbAI0fwmABW2L1+nINfU74Drk=;
-	h=From:To:Cc:Subject:Date;
-	b=aa7PBuhK0AaTGz2s8/2WFMA0irbyCGeqFAIVq6xT+iRhsA77Zfpd3sYcOwq08COtJ
-	 6VnDabDk3yl3B2l3oubNoIlDh6OeqJGLqrU255SHv44YpEues26UpeW50rultUkAcG
-	 sD9wMCQTzVkDrlsMva/+i5lOa6KU9Fc6YD6jAd+8=
-Received: from KernelDevBox.byted.org ([115.190.40.13])
-	by newxmesmtplogicsvrszgpuc5-0.qq.com (NewEsmtp) with SMTP
-	id 8ED3EC23; Tue, 24 Jun 2025 16:35:45 +0800
-X-QQ-mid: xmsmtpt1750754145t96osdqnj
-Message-ID: <tencent_889D023A2A9B04DE8D592DFE961C5893C706@qq.com>
-X-QQ-XMAILINFO: MKFQA+k1yb/29nquRTkIAQGt4f0wbGob7cvjvfJ8CF+sR9wKkmiBC4dNgvLeJp
-	 fixeD0fmRyYLywArMVqyEdBYo7uQ8yPnXXLlbyMm4HBRjboZHX3FLGP4Bbb7VFN4RaNqY+X4GehU
-	 f4QYVOorW3Bk3TABhklZlbqMXxqjYgdjIHBSF4Ze3WiBFF8Wv9Byx2YmeTcfCtdvLpQKe3UlSf2F
-	 b8F/Y4uWPkjishF6MQA0NyXN9TLHNhK9Y6O4VvhufylnkiCIJLLurm4AOKaV/VM3U9HXSdZv4L4p
-	 YRzqU8Okk51I6z9qMfccSJVOUHHIOh74DSiYVlqtWg/dJI/6e1LoAhejfUTvBhxk8o23H7c0Ium4
-	 uqiGeop7q/29K2vxFgGHvjqwk+1mBqGS40M3erJFpy9d64szRhXiOxcMmuIfQrcjDDLqOsBllKaX
-	 uG8OEpOwstYHThd+rBlObgV4oaebCyV0y9r1riLs3rMHmNghnrCbJ0duI2nm/OQZz2CSWstBA3pb
-	 xTEsTFO2A5SQSi56BC8el+mhuVVlA9sNf+1d5k8SZVDqL7pp/j0z5jhxLbgl3JMOyGgPaTeNVGrB
-	 xVdXzslCI7I5XDLr73rTMZnsA6beB3UkWvNGb6Y9qNCLOhblY3oplPcR5m5aAI55nmauJloK36rY
-	 e55jd8RhPTGRdnbbXBkTKCGgtZCsfNJqWUzhRaa19caR5M+KRIHQwWyMWgByD11bV3cePftyoCGw
-	 waNu4oaU8wfrlpic9SsIckgUYPvbGo2wyyhBA+tBpuFMX37B9qLms8GgW8faqCFHiFB9fBEZRjPz
-	 0WUhwSxqMZjhBrn57Qhpko3uKfVxmeZQnQXTCqx9Kb229VWpQutaezaNyNQzZsvTvoCQJcdKMlw/
-	 FT2TiyaEtrenAcNntLbl/wHU2LSPNE+rxUvbDzkJZc6ftfgeeI+C0T7NQzW2N29jPAeiG849zwcD
-	 4SLSIHudFSsaNHQ43WfkJSkDgVFXddrcbmgkySGMUgX/OA/p1X6E1bivdg54fwW44odbtAetliGU
-	 2NO1WuaA==
-X-QQ-XMRINFO: MSVp+SPm3vtS1Vd6Y4Mggwc=
-From: Zhang Shurong <zhang_shurong@foxmail.com>
-To: joro@8bytes.org
-Cc: will@kernel.org,
-	robin.murphy@arm.com,
-	wens@csie.org,
-	jernej.skrabec@gmail.com,
-	samuel@sholland.org,
-	iommu@lists.linux.dev,
-	linux-arm-kernel@lists.infradead.org,
-	linux-sunxi@lists.linux.dev,
-	linux-kernel@vger.kernel.org,
-	Zhang Shurong <zhang_shurong@foxmail.com>
-Subject: [PATCH] The sun50i_iommu_of_xlate() function didn't properly handle the case where of_find_device_by_node() returns NULL. This could lead to a NULL pointer dereference when accessing platform_get_drvdata(iommu_pdev) if the device node couldn't be found.
-Date: Tue, 24 Jun 2025 16:35:43 +0800
-X-OQ-MSGID: <20250624083543.1232205-1-zhang_shurong@foxmail.com>
-X-Mailer: git-send-email 2.39.5
+	s=arc-20240116; t=1750754164; c=relaxed/simple;
+	bh=MJy6OMhMptZe3RrGJsinqz7wBzAMB5yPuryBH6JrVFY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=ho3uKp5G2Sjo2xghUB0am21lTEoVNzT+d87e/dLZe1xw+YoctpXp/URrseIQH9WHcp/4P31jRue5LLWcDaOpwGDG5YX3XoOmt3e6RPYqbJeg7d/l55CoDimkerG3MPrJTadgvbxxfIHfkZJcOcop23WnGLZKECw+EL76TFcXqqI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=VHpuMjjP; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2091EC4CEE3;
+	Tue, 24 Jun 2025 08:36:01 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1750754164;
+	bh=MJy6OMhMptZe3RrGJsinqz7wBzAMB5yPuryBH6JrVFY=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=VHpuMjjPISJlSvNXm9yaoo4xt/mmXGZp/zkfmWB2FqGiAO7ZsVJTX5SH8idkYK7K1
+	 i8n9bEE4HAxzSIBD6yFxYWxjYLn48lVej+jAdNJhK2ryd2S/hw0rWX15R8X7wLp23I
+	 Eq4py7lFuiSCT5/LVCkKP/x+AvzQdpRw5tFq1NQ5T+q2JjjTzu2xrQbY5qyoBZpQkW
+	 xCkDK+M77QNomqB1jX82yH2aZdUvdGpHN/O97LVqpHtWh6D2uFl0bdgFzojMjZDVGH
+	 md5cySGewTKKaHs4V28oPNVvrbuyieekQ1K6f3IgzWDaWhR3ge2Y8ORs8M9IYHLcn8
+	 EaM4SP3b2iDvg==
+Message-ID: <917039d8-7d19-4a94-8c22-b46da619693d@kernel.org>
+Date: Tue, 24 Jun 2025 10:36:00 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] nvmem: imx-ocotp: Use helper function
+ devm_clk_get_enabled()
+To: Huan Tang <tanghuan@vivo.com>
+Cc: festevam@gmail.com, imx@lists.linux.dev, kernel@pengutronix.de,
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+ s.hauer@pengutronix.de, shawnguo@kernel.org, srini@kernel.org
+References: <5b048b32-36b4-4c4f-aefb-058674147b76@kernel.org>
+ <20250624083312.453-1-tanghuan@vivo.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 a/A=
+In-Reply-To: <20250624083312.453-1-tanghuan@vivo.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Add a WARN_ON() check to detect this condition and return -ENODEV when it
-occurs. This ensures proper error handling and helps diagnose incorrect
-device tree configurations at runtime.
+On 24/06/2025 10:33, Huan Tang wrote:
+>> No for another round of terrible vivo.com scripted bugs.
+> 
+> To clarify: 
+> This is my personal mistake. Hope you have a good impression of "vivo.com".
 
-Fixes: 4100b8c229b3 ("iommu: Add Allwinner H6 IOMMU driver")
-Signed-off-by: Zhang Shurong <zhang_shurong@foxmail.com>
----
- drivers/iommu/sun50i-iommu.c | 3 +++
- 1 file changed, 3 insertions(+)
+I have terrible impression of vivo.com, because you were sending dozen
+or hundred of poorly crafted patches, created by some automation,
+repeating same issues, putting strain on maintainer resources instead of
+approaching this slowly and learning while doing the task.
 
-diff --git a/drivers/iommu/sun50i-iommu.c b/drivers/iommu/sun50i-iommu.c
-index 76c9620af4bb..0f85850269ae 100644
---- a/drivers/iommu/sun50i-iommu.c
-+++ b/drivers/iommu/sun50i-iommu.c
-@@ -833,6 +833,9 @@ static int sun50i_iommu_of_xlate(struct device *dev,
- 				 const struct of_phandle_args *args)
- {
- 	struct platform_device *iommu_pdev = of_find_device_by_node(args->np);
-+	if (WARN_ON(!iommu_pdev))
-+		return -ENODEV;
-+
- 	unsigned id = args->args[0];
- 
- 	dev_iommu_priv_set(dev, platform_get_drvdata(iommu_pdev));
--- 
-2.39.5
+One of the things I requested was to perform internal review. Who
+reviewed this patch internally?
 
+Best regards,
+Krzysztof
 
