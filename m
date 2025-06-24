@@ -1,109 +1,105 @@
-Return-Path: <linux-kernel+bounces-700992-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-700994-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4E007AE6F58
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Jun 2025 21:16:20 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6F223AE6F5C
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Jun 2025 21:18:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F1EA73A579E
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Jun 2025 19:15:54 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 408491BC5CD4
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Jun 2025 19:18:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4EB831946DF;
-	Tue, 24 Jun 2025 19:16:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 726D22512DE;
+	Tue, 24 Jun 2025 19:18:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="YpSnrxcg"
-Received: from mail-lf1-f45.google.com (mail-lf1-f45.google.com [209.85.167.45])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="nUHQ22oS"
+Received: from mail-lf1-f54.google.com (mail-lf1-f54.google.com [209.85.167.54])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 02D0417A2E2
-	for <linux-kernel@vger.kernel.org>; Tue, 24 Jun 2025 19:16:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1D8B922541B
+	for <linux-kernel@vger.kernel.org>; Tue, 24 Jun 2025 19:18:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750792573; cv=none; b=dEu57kHjTAk8OEosJuBtO6MVd1qlrHuRWFFNA4iwz33v1uTx8Y7iTkKEFo1+EkKidFMGtbFooBErVO+Ls0dAFf1Yy6DNL/3kf5ICteNr2lfKWte9wCHgV36fPmJxPAyNsEakRzk+f4CYsLivzSBgfqZ0DTH9R5HybLVvybcHImk=
+	t=1750792689; cv=none; b=oN75Lu+V48i4UvtpfeDV/A0ZwVxEn7ft/vzYO58Xp6eUzv+AcOYruRwVcy2odVdSyWayyf+zl0jjCiF6xw1cJwj0vHhsPWXBkUwvrzZvXEfnfQrUtNp5umjmGGrZovQEf4TknJwms2iuV4Z+RJ4xZgZLLoCWJmw60A5cYqHTJeA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750792573; c=relaxed/simple;
-	bh=ihWWakMukXt8Os5zOHseSTg4tzKTY1m9zw8OxkJuiHM=;
+	s=arc-20240116; t=1750792689; c=relaxed/simple;
+	bh=rlVXyiPaoDofT68Kl6k4LwYvAUk0MKvVfKfqUm2AAQA=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Q9K7aq1IeOnh6TXo0Bu0Sc0UWQMS3SorgD1XDI3j0tOYV9iOgGTxwgjTjDQPUj/xyIq7sLN2pLDRuRqItEX5YoYXKJsPLT5iiCyuHIcf0xGQe8rcrxNXtDTGKR9xmZ+A2aOs92CEONRxwvAPa+i/PJx2WUJIBZei1Nv/KqU/LzI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=YpSnrxcg; arc=none smtp.client-ip=209.85.167.45
+	 To:Cc:Content-Type; b=qYKyjrzXR9kB1oia7gpnSz1fFcUVO5GNJplil1IW7Zsk757/Ail+A+10hRiGO+RnEvIwMuttI17R63ToT0vYOqjYYnqYrAceKLRfyKBblonp1IfBAAyh8GEYKmze4lZjIGB++BGJ1BtskPw9Ds0+aasp8WKYQWhgw9kDbZhqaBI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=nUHQ22oS; arc=none smtp.client-ip=209.85.167.54
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lf1-f45.google.com with SMTP id 2adb3069b0e04-55350d0eedeso932914e87.2
-        for <linux-kernel@vger.kernel.org>; Tue, 24 Jun 2025 12:16:11 -0700 (PDT)
+Received: by mail-lf1-f54.google.com with SMTP id 2adb3069b0e04-5535652f42cso871779e87.2
+        for <linux-kernel@vger.kernel.org>; Tue, 24 Jun 2025 12:18:07 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1750792570; x=1751397370; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1750792686; x=1751397486; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=ihWWakMukXt8Os5zOHseSTg4tzKTY1m9zw8OxkJuiHM=;
-        b=YpSnrxcgP6His/jiye0hx5Tm1sOZSmfyn0sJdK7DtV9f4uim+LANBvNc8LUDl59lLm
-         tmmhp313Uz4S7donnbcaJ0JF8NUMpc6Ru7CAILtRtikbmGbIJ/zYLAFaxY0r88YudGZ/
-         IBVp+hHIyGZSLR2Gx2jimgSI/BP5toWa06oBMJiqFYDidQZR/4Rr3hxf7XQUVJV60xVW
-         Tlokco5egdeRs4+5XGuxNlEE+fpWvz9wyffeD/e/LgwAw1bP6yVrL/Jur3ZmDKS2AP2S
-         h3ik/aD+ZmHB6NYpNm9mNZnARiM137HofJmqV3k1b7n3bhIN4uOKhHI+uj11rxunhcoq
-         g1ag==
+        bh=rlVXyiPaoDofT68Kl6k4LwYvAUk0MKvVfKfqUm2AAQA=;
+        b=nUHQ22oSLhAFjtUXZm3Ql3svJys8sFwLkxrxP9oWNjDXa5ZwRp/iBNsRTNHPNCDVXf
+         WKetQcQQAMZgvWJjIfNvdJ+AwyeRdmT9i9ysBHenLmVJ3wAtNSQ/qHKwc0kE5g64SlKX
+         PIvQmpT8zOA2JgAfKKq/La1W/7O+MvnN8jX5IM/I0illIwz+gqkHgUV47S4V1aWnKWIc
+         8jMzOQ1nqSavvwqhMKRMGRUiGsbQCx4wKwB26i4elsPiRhcqDqwmapTCNTzIqy09mHBh
+         7l33grqynegOasNM9OsRhdOh41yC2escMumM/WxQAW3JtsvBm5bjJyT7FWUrCWTY9PqL
+         C1gw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1750792570; x=1751397370;
+        d=1e100.net; s=20230601; t=1750792686; x=1751397486;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=ihWWakMukXt8Os5zOHseSTg4tzKTY1m9zw8OxkJuiHM=;
-        b=OiFGlN9GxFmuBi2Av/67XDdXmmC2brr6/CbvmD1L02z/fFnHlSsn0LZio+5JlfMKkA
-         qKjvjz8x54qBFXES1YpLZLzolJCj+ynLkgs+8v7KhLKkXJYgnxofZFXYdx7MYS8RIXpC
-         dtoqxm/UQuE1H23NROu666ciXWloevj636z7NGQMj7FqRL1tx5e4YoN5HPdUuTtNTKSf
-         58A35W9yQbc8ZpPdPyqndV7t/ggaDGv/nY9FKW8OusUyvNn5lEJTMHADTqoYn/1ZMU3U
-         S9s8D4/WF1XA6cu8HQJPwhtd+8Yg3lohqWYnq66fmkmvHhddZdozo/WrNCvBrfADI2iO
-         BxPA==
-X-Forwarded-Encrypted: i=1; AJvYcCUUHeSZ+zLykUP5sacsrtDF1t8n5XU5q3KvIzQrtg4lbgC5yYCV1inQVq7cUe5hhItLTXxT4d3/z1hXQ8o=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy4Bumy9mu2s2C5AEsTz6oO+bgY66Z25tDIxbniK9CP+OtViLxf
-	u5oe8808gWJ/a8kULTU8csUx6Wt33BDNe5+/iAVXTU/YGxi5i+D0QIQ5vvNp2tZHpkqGtMBpUp9
-	lSK+mrE7HxAnV7AFL5FzpPvwiOZQZTYwJqTrQtia5bg==
-X-Gm-Gg: ASbGncsRRQxIC1BIE57+USW2JMRCeZql3hDXT3ISCwkSF9ATvhB0cpEXGXfNE3eqT92
-	xsP4w+nQ4UtFqfC6s0w7tewHtCtkoIAootPq2FIl5O/iErCh7IVVZStFcz9VbwyUWuUIKC6pX//
-	Iv00TWqM5iFjp0MOdI4/tFojyx/eGb8EYlp6GrEXQ4cT4=
-X-Google-Smtp-Source: AGHT+IHmRRS+snn9ezdisZXjq9pNKvNF1NOIie7MqflwaPNY3SKz61GchJJ41LtKpgJIpimyXyrJyvJ1Pacxv1Ru12U=
-X-Received: by 2002:ac2:4c45:0:b0:552:1c1b:561 with SMTP id
- 2adb3069b0e04-554fdd23ba8mr18893e87.23.1750792570121; Tue, 24 Jun 2025
- 12:16:10 -0700 (PDT)
+        bh=rlVXyiPaoDofT68Kl6k4LwYvAUk0MKvVfKfqUm2AAQA=;
+        b=LiHvlaN6GEAWpWAaZEO83iPLrevcB1OtxxxPuZaXMiz/BIdSbFfoBSbfFefSl6ncRU
+         qv6joVbUiLRVRblah+GWAcfIYW/lC+eCWdmhhiRUUbIMRcU+5dmtbSf11DCxEDSlYtS4
+         zjZl3PcLK7dOvhzkBCGvfvrSAMOuzI50Nh/wnPjBPs97mhAbyeJvnjE76d9frYD8XNdm
+         KFCnkf25IJ0NTFP1eDu3s0yarwRV22vL4bObNohEHfDKMTHkpTRMtUdaNGkcWwGVtc37
+         x6FUEi9+hUeH7VGtY9I3MjRGmlUkYg2iJv0ZnOYnkmPe0GNbh6WLE31sy2tv4NcMR5rG
+         TP1A==
+X-Forwarded-Encrypted: i=1; AJvYcCV/+7tVdTPjMVvJ6XrMV9R9jalV549TyCud47BgIXXzQvjQKiVvTN+Fxy5mACLv80Tp/r7Lz1pPGUPrkDI=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxNvIDTstq0WpNUus/2ypVvvR3Sa5tkRSLz4BikWECyAMAFw+pG
+	oNoMQcZg+6eSyjhfLuV66s59QQGM5LaEtHlCVdEOsVPdqo/0fl6p6gvsJbuoO6b/xlawpucYr6L
+	uEvR6jLlNALqlKYFVrHLyKLjEwVxJxWOWH/rY2xzOjBEmiYlJkdGynvE=
+X-Gm-Gg: ASbGncsQD8HoE5etZorQWZDQWeE8Xmssphw6ApLzzhc+1DG3JE4LT2oqiFSgCZhaoZN
+	q4U7IHSb9aUh/KV5dmGqswx2sQ10fjPoWWfDcRbWMy6cY1JTP9WmrrwEoGB1mRf8X2/2Kl7prju
+	h+sOKBfh5Cs+Axx5R1aRKdpL59RDwebTgnt2kVcTjJxBc=
+X-Google-Smtp-Source: AGHT+IFRBqQQlZzmsyWAYd/fJO69xU5qiVZgLBjJUdgfVBCQ+ItkLOaHMARaUX9KAs2hBQpx0fD6NPKZSopDiZk+7Hc=
+X-Received: by 2002:a05:6512:3991:b0:553:349c:6465 with SMTP id
+ 2adb3069b0e04-554fde57958mr25095e87.33.1750792686171; Tue, 24 Jun 2025
+ 12:18:06 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250620010345.11247-1-chenyuan_fl@163.com> <20250620012708.16709-1-chenyuan_fl@163.com>
-In-Reply-To: <20250620012708.16709-1-chenyuan_fl@163.com>
+References: <20250620015343.21494-1-chenyuan_fl@163.com>
+In-Reply-To: <20250620015343.21494-1-chenyuan_fl@163.com>
 From: Linus Walleij <linus.walleij@linaro.org>
-Date: Tue, 24 Jun 2025 21:15:58 +0200
-X-Gm-Features: AX0GCFs0q4vtQFV_NNK7FgYpbrOMY93VLrNBvqqOTi5xPuc96sQtOMY9VoZarF0
-Message-ID: <CACRpkdaA8UQYX8bFeHn4JCxLgK_-UxR_n=ZCZmgbk8tqSgnFAw@mail.gmail.com>
-Subject: Re: [PATH v2] pinctrl: sunxi: Fix memory leak on krealloc failure in sunxi_pctrl_dt_node_to_map
+Date: Tue, 24 Jun 2025 21:17:55 +0200
+X-Gm-Features: AX0GCFsyN733x2NMyJXFZzqYTBVf21W_AH6wHIRxGUCRJ9WSimGlYAoArQO5BDI
+Message-ID: <CACRpkda6EYeKKpVbJ=iuQTC+X2JDmppf+Bq2Lq8MeyHTCOPfJw@mail.gmail.com>
+Subject: Re: [PATCH] pinctrl: berlin: fix memory leak in berlin_pinctrl_build_state()
 To: Yuan Chen <chenyuan_fl@163.com>
-Cc: wens@csie.org, linux-gpio@vger.kernel.org, 
-	linux-arm-kernel@lists.infradead.org, linux-sunxi@lists.linux.dev, 
-	linux-kernel@vger.kernel.org, Yuan Chen <chenyuan@kylinos.cn>
+Cc: linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	Yuan Chen <chenyuan@kylinos.cn>
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Fri, Jun 20, 2025 at 3:27=E2=80=AFAM Yuan Chen <chenyuan_fl@163.com> wro=
+On Fri, Jun 20, 2025 at 3:53=E2=80=AFAM Yuan Chen <chenyuan_fl@163.com> wro=
 te:
 
 > From: Yuan Chen <chenyuan@kylinos.cn>
 >
-> In sunxi_pctrl_dt_node_to_map(), when krealloc() fails to resize the pinc=
-trl_map
-> array, the function returns -ENOMEM directly without freeing the previous=
-ly
-> allocated *map buffer. This results in a memory leak of the original kmal=
-loc_array
-> allocation.
+> In the original implementation, krealloc() failure handling incorrectly
+> assigned the original memory pointer to NULL after kfree(), causing a
+> memory leak when reallocation failed.
 >
-> Fixes: e11dee2e98f8 ("pinctrl: sunxi: Deal with configless pins")
+> Fixes: de845036f997 ("pinctrl: berlin: fix error return code of berlin_pi=
+nctrl_build_state()")
 > Signed-off-by: Yuan Chen <chenyuan@kylinos.cn>
 
-Patch applied for fixes!
+Patch applied!
 
 Yours,
 Linus Walleij
