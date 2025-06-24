@@ -1,103 +1,147 @@
-Return-Path: <linux-kernel+bounces-700587-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-700609-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9CEBCAE6A5B
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Jun 2025 17:14:35 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 08948AE6AB9
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Jun 2025 17:23:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 125847B7A49
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Jun 2025 15:13:09 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9BA8B4A673B
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Jun 2025 15:18:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 751C92EA468;
-	Tue, 24 Jun 2025 15:08:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C6D0A2F2C7C;
+	Tue, 24 Jun 2025 15:08:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=collabora.com header.i=nfraprado@collabora.com header.b="FtptMFis"
-Received: from sender4-pp-f112.zoho.com (sender4-pp-f112.zoho.com [136.143.188.112])
+	dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b="mzJwNzZB"
+Received: from esa.microchip.iphmx.com (esa.microchip.iphmx.com [68.232.154.123])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0FD5B2D8796;
-	Tue, 24 Jun 2025 15:08:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.112
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750777708; cv=pass; b=CJN11n6P7gBHPpOp3jLlF2CZ8TEw7HFoJWeL8o4ME5rsetxTsKk+q1XoAA1IaOXAKKS+PYFXOlCWDW3pqb5f2MvsYxavu8u4QHLj5l2ibjdRCImXTh71nlh0k+941rAjCz/gwrLniMZ1CsuMC+JXRD+fgGUsCQ5y6exTPBqhCSc=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750777708; c=relaxed/simple;
-	bh=iFbya3akG5s+WS6JIinMfQGqethChzDGcRe3Sr4acZc=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=PT2Zl5qUhYC9Lv2eOUIOXL3U8spbnK1mCycxLJtcwmF+IFfZryZeVY4QNMoZMxwhv/LH5tJWiXwcJSxBxIQ31ofDoWvQHFiGWLbvaG4d4pWeULLiZiofBIe8cbSfBuXJxWNbxQvuC33HFlfcXant53LLVOdyfjb9UDVnvnmMb8U=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=nfraprado@collabora.com header.b=FtptMFis; arc=pass smtp.client-ip=136.143.188.112
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-ARC-Seal: i=1; a=rsa-sha256; t=1750777688; cv=none; 
-	d=zohomail.com; s=zohoarc; 
-	b=j2T9YRPFmYHllAw3Uj+oprvkwNlJuGisTI3I33f9NyyOLPlWD6NhDuy8il1fatk6YzWEAT6XrwlVprtYlftjxk9KXOsWei8/WM3Jt7ueJrqur5UIHs774ZonkCokIsotBBlJA4kWHqrxlsQ/c7E/JH4JKQE0rPpWjI9PNf1xW8s=
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
-	t=1750777688; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
-	bh=iFbya3akG5s+WS6JIinMfQGqethChzDGcRe3Sr4acZc=; 
-	b=h7IxcQ8JPbIC+RE7fTXushzJnYfvEgD8fnuk9Ek59B5Jzz1fUgofQK4SM3ff/+xMIY0rpevizoPXVMBIQJ0JKYpeDAh6oiZD0AxG6tW3hbvbPtaXshOwW54ZZl2eCFnt5w4+LpDIYsNhWD8cCV7Eh2g+WgSa+AdzNWgXGsXtnRE=
-ARC-Authentication-Results: i=1; mx.zohomail.com;
-	dkim=pass  header.i=collabora.com;
-	spf=pass  smtp.mailfrom=nfraprado@collabora.com;
-	dmarc=pass header.from=<nfraprado@collabora.com>
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1750777688;
-	s=zohomail; d=collabora.com; i=nfraprado@collabora.com;
-	h=Message-ID:Subject:Subject:From:From:To:To:Cc:Cc:Date:Date:In-Reply-To:References:Content-Type:Content-Transfer-Encoding:MIME-Version:Message-Id:Reply-To;
-	bh=iFbya3akG5s+WS6JIinMfQGqethChzDGcRe3Sr4acZc=;
-	b=FtptMFisHQLd/sJ12WNGMcjoOI8gkU4MkUTPkZnp2DNG7YTgyEFoITQdqnxu4Wre
-	UYnu71dhwT3nmywqje6WNh6p5cf3qD3zmUCKG3tK3F/VyLInOFxJD9JHoFNLg2FX/Uj
-	9++aNZ2IsPHD1rdDv629KMriuxFmGV+VSst6vEVY=
-Received: by mx.zohomail.com with SMTPS id 1750777687203110.75444813457466;
-	Tue, 24 Jun 2025 08:08:07 -0700 (PDT)
-Message-ID: <639e695859d632c9527d76876df2a48287197fb9.camel@collabora.com>
-Subject: Re: [PATCH v1 0/5] iio: Add support for MT6363/6373 Auxiliary ADC
-From: =?ISO-8859-1?Q?N=EDcolas?= "F. R. A. Prado" <nfraprado@collabora.com>
-To: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, 
-	jic23@kernel.org
-Cc: dlechner@baylibre.com, nuno.sa@analog.com, andy@kernel.org,
- robh@kernel.org,  krzk+dt@kernel.org, conor+dt@kernel.org,
- matthias.bgg@gmail.com,  linux-iio@vger.kernel.org,
- devicetree@vger.kernel.org,  linux-kernel@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org,  linux-mediatek@lists.infradead.org,
- kernel@collabora.com
-Date: Tue, 24 Jun 2025 11:08:05 -0400
-In-Reply-To: <20250623120028.108809-1-angelogioacchino.delregno@collabora.com>
-References: 
-	<20250623120028.108809-1-angelogioacchino.delregno@collabora.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.46.4-2 
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E2BAD2F1984;
+	Tue, 24 Jun 2025 15:08:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=68.232.154.123
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1750777731; cv=none; b=U9SUBBcOw8GCxr3PhmXIOaqRKTPbsJEH/K34JJBRVGFWxO0VeBvnu2PSd4NAuiQxbld3TdZHFkiBYl8Lg5f4JstEsdznTdiSCIk6pZ8bVIemfKGh7K9ngFc5chKLzt1R1F/guGbab+/pqwTnCFdimwVxspr6XUTqRp4htO8tSWg=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1750777731; c=relaxed/simple;
+	bh=NFlza7NMXYr7yoaM4juKHHENgegAA1/AX4WT/TjqqEs=;
+	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=aOfzl0doZDd7qwZoP4T92Kv0OI4V5CxKGRMzScDaEY/UqUPrCVVgHPYv8QpOaFaZG1Lcbjmp44IcZ2edAgi6Vl5jzbc/hyT4YkwDP3Rs0bBY55tuyQIf9/aCmnAE/Fy7ylZV99XIhOqAt/+GqvyguPrYPOJ4kJVCfIuuTYwaWAU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com; spf=pass smtp.mailfrom=microchip.com; dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b=mzJwNzZB; arc=none smtp.client-ip=68.232.154.123
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=microchip.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=microchip.com; i=@microchip.com; q=dns/txt; s=mchp;
+  t=1750777729; x=1782313729;
+  h=from:to:cc:subject:date:message-id:in-reply-to:
+   references:mime-version:content-transfer-encoding;
+  bh=NFlza7NMXYr7yoaM4juKHHENgegAA1/AX4WT/TjqqEs=;
+  b=mzJwNzZBzcd8CAqxFIyPsTm9EX/Kc/9SR3WlcpaA6Hak8DOloy8Xl0Xo
+   0StZJeMOyKzi8qnaQ48OPedOy5ZO9AvZXy1Y26147l2fL1JRaaT2Ap2CY
+   Q6tUsyR4lrCgIef/knF5QCTwxMB5dsKOQyvepjKfYjL1C2QN3YOlJW6uc
+   +MgaEXoM8XEcNQUUoMi2Agcdo7v9ejrQ6/hyv/bc7joBy0iZwpLaVfd3f
+   sWfXo0Qw+44fyueZNvYTv0QRRCsIkY+6kGwBdfAGyXwl054eBCO20uj76
+   CKqb5zGYVEVRaqufSpi5ES93VafFbw5S9qbhzwGrXAljPhA1IUbaXBK58
+   Q==;
+X-CSE-ConnectionGUID: 4+RzxTN1Qsa6vG3Bpty4nA==
+X-CSE-MsgGUID: elByiUfvT9SJiDW4RZv8kg==
+X-IronPort-AV: E=Sophos;i="6.16,262,1744095600"; 
+   d="scan'208";a="42688180"
+X-Amp-Result: SKIPPED(no attachment in message)
+Received: from unknown (HELO email.microchip.com) ([170.129.1.10])
+  by esa4.microchip.iphmx.com with ESMTP/TLS/ECDHE-RSA-AES128-GCM-SHA256; 24 Jun 2025 08:08:45 -0700
+Received: from chn-vm-ex01.mchp-main.com (10.10.85.143) by
+ chn-vm-ex04.mchp-main.com (10.10.85.152) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.44; Tue, 24 Jun 2025 08:08:37 -0700
+Received: from ryan-Precision-3630-Tower.microchip.com (10.10.85.11) by
+ chn-vm-ex01.mchp-main.com (10.10.85.143) with Microsoft SMTP Server id
+ 15.1.2507.44 via Frontend Transport; Tue, 24 Jun 2025 08:08:37 -0700
+From: <Ryan.Wanner@microchip.com>
+To: <mturquette@baylibre.com>, <sboyd@kernel.org>,
+	<nicolas.ferre@microchip.com>, <alexandre.belloni@bootlin.com>,
+	<claudiu.beznea@tuxon.dev>
+CC: <robh@kernel.org>, <linux-clk@vger.kernel.org>,
+	<linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
+	<varshini.rajendran@microchip.com>
+Subject: [PATCH v2 08/32] clk: at91: clk-programmable: use clk_parent_data
+Date: Tue, 24 Jun 2025 08:08:05 -0700
+Message-ID: <44cbeb6ac133a44e0c09da82434cda10c894a66a.1750182562.git.Ryan.Wanner@microchip.com>
+X-Mailer: git-send-email 2.43.0
+In-Reply-To: <cover.1750182562.git.Ryan.Wanner@microchip.com>
+References: <cover.1750182562.git.Ryan.Wanner@microchip.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-ZohoMailClient: External
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
 
-On Mon, 2025-06-23 at 14:00 +0200, AngeloGioacchino Del Regno wrote:
-> This series adds support for the Auxiliary ADC IP found on the new
-> MediaTek MT6363 and MT6373 PMICs, found on board designs featuring
-> the MT8196 Chromebook SoC or the MT6991 Dimensity 9400 Smartphone
-> SoC.
->=20
-> AngeloGioacchino Del Regno (5):
-> =C2=A0 dt-bindings: iio: adc: mt6359: Add bindings for MT6363 PMIC AuxADC
-> =C2=A0 dt-bindings: iio: adc: mt6359: Add bindings for MT6373 PMIC AuxADC
-> =C2=A0 iio: adc: mt6359: Add ready register index and mask to channel dat=
-a
-> =C2=A0 iio: adc: mt6359: Add support for MediaTek MT6363 PMIC AUXADC
-> =C2=A0 iio: adc: mt6359: Add support for MediaTek MT6373 PMIC AUXADC
+From: Claudiu Beznea <claudiu.beznea@tuxon.dev>
 
-For the entire series:
+Use struct clk_parent_data instead of struct parent_hw as this leads
+to less usage of __clk_get_hw() in SoC specific clock drivers and simpler
+conversion of existing SoC specific clock drivers from parent_names to
+modern clk_parent_data structures.
 
-Reviewed-by: N=C3=ADcolas F. R. A. Prado <nfraprado@collabora.com>
+Signed-off-by: Claudiu Beznea <claudiu.beznea@tuxon.dev>
+[ryan.wanner@microchip.com: Remove SoC specific changes those will be
+added in a separate commit.]
+Signed-off-by: Ryan Wanner <Ryan.Wanner@microchip.com>
+---
+ drivers/clk/at91/clk-programmable.c | 8 ++++----
+ drivers/clk/at91/pmc.h              | 2 +-
+ 2 files changed, 5 insertions(+), 5 deletions(-)
 
-(as I internally reviewed this before submission)
+diff --git a/drivers/clk/at91/clk-programmable.c b/drivers/clk/at91/clk-programmable.c
+index 1195fb405503..275ca701f294 100644
+--- a/drivers/clk/at91/clk-programmable.c
++++ b/drivers/clk/at91/clk-programmable.c
+@@ -215,7 +215,7 @@ static const struct clk_ops programmable_ops = {
+ struct clk_hw * __init
+ at91_clk_register_programmable(struct regmap *regmap,
+ 			       const char *name, const char **parent_names,
+-			       struct clk_hw **parent_hws, u8 num_parents, u8 id,
++			       struct clk_parent_data *parent_data, u8 num_parents, u8 id,
+ 			       const struct clk_programmable_layout *layout,
+ 			       u32 *mux_table)
+ {
+@@ -224,7 +224,7 @@ at91_clk_register_programmable(struct regmap *regmap,
+ 	struct clk_init_data init = {};
+ 	int ret;
+ 
+-	if (id > PROG_ID_MAX || !(parent_names || parent_hws))
++	if (id > PROG_ID_MAX || !(parent_names || parent_data))
+ 		return ERR_PTR(-EINVAL);
+ 
+ 	prog = kzalloc(sizeof(*prog), GFP_KERNEL);
+@@ -233,8 +233,8 @@ at91_clk_register_programmable(struct regmap *regmap,
+ 
+ 	init.name = name;
+ 	init.ops = &programmable_ops;
+-	if (parent_hws)
+-		init.parent_hws = (const struct clk_hw **)parent_hws;
++	if (parent_data)
++		init.parent_data = (const struct clk_parent_data *)parent_data;
+ 	else
+ 		init.parent_names = parent_names;
+ 	init.num_parents = num_parents;
+diff --git a/drivers/clk/at91/pmc.h b/drivers/clk/at91/pmc.h
+index 54d472276fc9..34036f2d0578 100644
+--- a/drivers/clk/at91/pmc.h
++++ b/drivers/clk/at91/pmc.h
+@@ -263,7 +263,7 @@ sam9x60_clk_register_frac_pll(struct regmap *regmap, spinlock_t *lock,
+ 
+ struct clk_hw * __init
+ at91_clk_register_programmable(struct regmap *regmap, const char *name,
+-			       const char **parent_names, struct clk_hw **parent_hws,
++			       const char **parent_names, struct clk_parent_data *parent_data,
+ 			       u8 num_parents, u8 id,
+ 			       const struct clk_programmable_layout *layout,
+ 			       u32 *mux_table);
+-- 
+2.43.0
 
---=20
-Thanks,
-
-N=C3=ADcolas
 
