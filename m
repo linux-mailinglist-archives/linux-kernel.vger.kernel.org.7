@@ -1,369 +1,474 @@
-Return-Path: <linux-kernel+bounces-699811-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-699808-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6459EAE5FB1
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Jun 2025 10:42:55 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E2F15AE5FAE
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Jun 2025 10:42:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id ADE6A4A3C1E
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Jun 2025 08:42:47 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DCCDE3B5012
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Jun 2025 08:41:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4413D26A1B6;
-	Tue, 24 Jun 2025 08:42:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A270226A1CC;
+	Tue, 24 Jun 2025 08:42:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=arm.com header.i=@arm.com header.b="Ms3Rf08X";
-	dkim=pass (1024-bit key) header.d=arm.com header.i=@arm.com header.b="Ms3Rf08X"
-Received: from AS8PR03CU001.outbound.protection.outlook.com (mail-westeuropeazon11012059.outbound.protection.outlook.com [52.101.71.59])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="K4JpJTl7"
+Received: from mail-wr1-f42.google.com (mail-wr1-f42.google.com [209.85.221.42])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6CEF726A1AE
-	for <linux-kernel@vger.kernel.org>; Tue, 24 Jun 2025 08:42:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.71.59
-ARC-Seal:i=3; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750754547; cv=fail; b=LfNrgBh83Hn7GU5GeUNQ5yxSZP1AoAL2GIXxBdCk+WTlqbjBGoMnhxeQnXZLooijhEzF//Whms7CEpEySvwYfY1VYrjddmsQArbmsOw3GcXICac2vID6m62ElEGXQMpUoYp6lcorODMF7c/wzpzxsZ16GAGqa5I3bO2W8/Vg/lQ=
-ARC-Message-Signature:i=3; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750754547; c=relaxed/simple;
-	bh=BO/IVyjLYpRB4BU+cYoO3iRpFMqnIqBEtqrBgJ5SAxU=;
-	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=jhHhwtGLYK76d99Jb5o47KUXCgxHEC+9UXPtfbAmn3CBFQKM/fdN4NTbJfbjl/+Jiy7VJJ7WqB+IOBDSYtsp3EvYSg0lgchdz9kBB3zHeWiWVdIey/0OH0aGtwYkSV0EOgKZybBV0murLQITDF3ryP84EEDONkjmGDfoIADFtV0=
-ARC-Authentication-Results:i=3; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; dkim=pass (1024-bit key) header.d=arm.com header.i=@arm.com header.b=Ms3Rf08X; dkim=pass (1024-bit key) header.d=arm.com header.i=@arm.com header.b=Ms3Rf08X; arc=fail smtp.client-ip=52.101.71.59
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-ARC-Seal: i=2; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=pass;
- b=aL2qEYNPJqDjU9agiMQtzfzanr7Kn0U/PVl27CFPYim17NBUYHZHE9tcm6BKquOq/l9bJRjZkxgZHxfPMh1YiVsbhBFIY9a7chji0vPiuI4E4CLsEg8qVaABjAYyv+mlIj4lRwoErf+XiD/Vyxa215nmT92MFsZNMg5UhMrmA1wrsEbXdyswrXkwxYrYlK5PbOPP70OzoDsd8wtjynUbr6OqguTqJCq0vb97bB983IzD0qKlkcA0IfOUvqEdXfh9sJAqNNuVkuZcER89782FS4vjvsXuq+58aGu/uavRDPZNaF9ft0m7LNTY6O5E4UKGICwNNoVcWnAiyPDMzYmpJw==
-ARC-Message-Signature: i=2; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=9069FHBZTseaRQX2hpabSvzLmvz79TQCF95JD+UAZ6k=;
- b=tZ3AmGFwH7P9k81Bkg79c3wyj+qFOokaxxGsbRQ/KwAe94hPTmGZZ3hWGw1yLYuJczTfMkXcmCssW918ccBHOjrJtEW7AjwyP09n9CIIPrLtsoSS2lgrGeFzAfx8wQb1JrlD5YBdjtTB04AEG0vP3BizbgjbPhVavUwE33vHlgf5YcPU01AtwJ7l1VoS0eWSS2BF4ZYYvi7Sd9pj+6HudTVo51n/9tfOkGr/7zcllCcIRf4mvDgyhbG7TP7/LN1/8rVn9BmGZGdvPfjvRLv7BCvOAqFsrhhqB/GU61CHBBqx29pBo/qJ8hXy3F5Prvz5gVMbOf13wOnluAq1lLNDcw==
-ARC-Authentication-Results: i=2; mx.microsoft.com 1; spf=pass (sender ip is
- 4.158.2.129) smtp.rcpttodomain=linux.alibaba.com smtp.mailfrom=arm.com;
- dmarc=pass (p=none sp=none pct=100) action=none header.from=arm.com;
- dkim=pass (signature was verified) header.d=arm.com; arc=pass (0 oda=1 ltdi=1
- spf=[1,1,smtp.mailfrom=arm.com] dkim=[1,1,header.d=arm.com]
- dmarc=[1,1,header.from=arm.com])
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arm.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=9069FHBZTseaRQX2hpabSvzLmvz79TQCF95JD+UAZ6k=;
- b=Ms3Rf08XDMnEHSZhPd16GQtiF+dwExhLGR48o3iyLKiVZyn1eLozSRL4gNnTtRnyIkQmEyCLtjaydxP05+eYI1xLLxULiBW/lxmWo4Jg8XVZrjJN8utAg5fB53sAscGKqhw9nZT4cz0bAKV/RT8VKUIQYo+NKsKiNAivLnJGkLk=
-Received: from DUZPR01CA0037.eurprd01.prod.exchangelabs.com
- (2603:10a6:10:468::15) by AS8PR08MB5925.eurprd08.prod.outlook.com
- (2603:10a6:20b:23d::18) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8857.25; Tue, 24 Jun
- 2025 08:42:17 +0000
-Received: from DB1PEPF000509EB.eurprd03.prod.outlook.com
- (2603:10a6:10:468:cafe::d6) by DUZPR01CA0037.outlook.office365.com
- (2603:10a6:10:468::15) with Microsoft SMTP Server (version=TLS1_3,
- cipher=TLS_AES_256_GCM_SHA384) id 15.20.8880.17 via Frontend Transport; Tue,
- 24 Jun 2025 08:42:23 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 4.158.2.129)
- smtp.mailfrom=arm.com; dkim=pass (signature was verified)
- header.d=arm.com;dmarc=pass action=none header.from=arm.com;
-Received-SPF: Pass (protection.outlook.com: domain of arm.com designates
- 4.158.2.129 as permitted sender) receiver=protection.outlook.com;
- client-ip=4.158.2.129; helo=outbound-uk1.az.dlp.m.darktrace.com; pr=C
-Received: from outbound-uk1.az.dlp.m.darktrace.com (4.158.2.129) by
- DB1PEPF000509EB.mail.protection.outlook.com (10.167.242.69) with Microsoft
- SMTP Server (version=TLS1_3, cipher=TLS_AES_256_GCM_SHA384) id 15.20.8880.14
- via Frontend Transport; Tue, 24 Jun 2025 08:42:16 +0000
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=CZI2issI4DmwdqFo+zieAJcfaqsDnNyu0y7wyJpcCeOX45Itel9PlBSmUMq9udFgW7O2H0Z/WQ82Rypcu+oU1aZWkEOIAl+RPhyaVPVlBqhMI/Y/7ImSJEbBlMR0r32WDW/bN5mZiTOWFcH8NpOx15Xw8k7nEBToNwBIgDQu1vVKdN+Kyscm8lTg4PiQQfi/dWf8dj2x48A8YGr38VHtJ61oYdzg1rAuy4TMSsOPcfzP76yP/bfUUflo9b41ErRNxDIygqXy2an8cvk66ZInxxD2L1SC6rk5vhWuTE/8vqWHxrBtxrYj6ertjuIdQc9NmF8u+01qecTkyeQgsxX3hQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=9069FHBZTseaRQX2hpabSvzLmvz79TQCF95JD+UAZ6k=;
- b=aGCb9Q/k1Akp7McSx7qHInj3A+c+ZziJN08SbtRO6vVPHfvkoLdB6KoNSN8xRTnATzux4mSzKCFL9C4E3jK75LTKpSC5Q0GK+TAnhdrmEC7xUINSVUMwdzTVAnenNa6McId6otRQ5gVHMKHGiw4lUxV5bWC9yWHTYjQ4Kx4xkBo291h+AdmkXOKqguLurXZJl3JDbGivS60mSHrWbc1EEC46y2PLpiwIu+OF5Vd/FW7di1leIhxk6grlTt0V7Fip6389mSs0duv2DstTwfGA3DAFOPZcL2PCGWYGMLUgfsG1Ieev7y5ePKkxPc2KWsbCJ+GwOjHyaNfWQeWvFAG1mw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=arm.com; dmarc=pass action=none header.from=arm.com; dkim=pass
- header.d=arm.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arm.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=9069FHBZTseaRQX2hpabSvzLmvz79TQCF95JD+UAZ6k=;
- b=Ms3Rf08XDMnEHSZhPd16GQtiF+dwExhLGR48o3iyLKiVZyn1eLozSRL4gNnTtRnyIkQmEyCLtjaydxP05+eYI1xLLxULiBW/lxmWo4Jg8XVZrjJN8utAg5fB53sAscGKqhw9nZT4cz0bAKV/RT8VKUIQYo+NKsKiNAivLnJGkLk=
-Authentication-Results-Original: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=arm.com;
-Received: from AM9PR08MB7120.eurprd08.prod.outlook.com (2603:10a6:20b:3dc::22)
- by DB9PR08MB6697.eurprd08.prod.outlook.com (2603:10a6:10:2ad::14) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8857.29; Tue, 24 Jun
- 2025 08:41:41 +0000
-Received: from AM9PR08MB7120.eurprd08.prod.outlook.com
- ([fe80::2933:29aa:2693:d12e]) by AM9PR08MB7120.eurprd08.prod.outlook.com
- ([fe80::2933:29aa:2693:d12e%4]) with mapi id 15.20.8857.026; Tue, 24 Jun 2025
- 08:41:41 +0000
-Message-ID: <8912e179-601a-4677-b2f6-14f40d488d98@arm.com>
-Date: Tue, 24 Jun 2025 14:11:36 +0530
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 1/2] mm: huge_memory: disallow hugepages if the
- system-wide THP sysfs settings are disabled
-To: Baolin Wang <baolin.wang@linux.alibaba.com>, akpm@linux-foundation.org,
- hughd@google.com, david@redhat.com
-Cc: ziy@nvidia.com, lorenzo.stoakes@oracle.com, Liam.Howlett@oracle.com,
- npache@redhat.com, ryan.roberts@arm.com, baohua@kernel.org,
- linux-mm@kvack.org, linux-kernel@vger.kernel.org
-References: <cover.1750666536.git.baolin.wang@linux.alibaba.com>
- <adb8d5032ecc7b6935e3197cafffe92cbc7581e6.1750666536.git.baolin.wang@linux.alibaba.com>
-Content-Language: en-US
-From: Dev Jain <dev.jain@arm.com>
-In-Reply-To: <adb8d5032ecc7b6935e3197cafffe92cbc7581e6.1750666536.git.baolin.wang@linux.alibaba.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: MA0PR01CA0086.INDPRD01.PROD.OUTLOOK.COM
- (2603:1096:a01:ae::11) To AM9PR08MB7120.eurprd08.prod.outlook.com
- (2603:10a6:20b:3dc::22)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BB5AC26A0BF;
+	Tue, 24 Jun 2025 08:41:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.42
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1750754521; cv=none; b=B0yK0HYAJ+G737vawawc7NlPof5K3S+8sKpr+kMzZQa5iS3SeAOL6prOwlcwd0NvpWlszSDsI7HJGO79RtllyVOrWPSxN6xWfGsDsIuq/6J66HR1svVfBxjjzSeYVKFHcdHTiqq2k7UicR4+cE/1ZhPLbE37VjwN1p1p79MkX9E=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1750754521; c=relaxed/simple;
+	bh=/oX38kqzbWaqU0n0Fh7iSo5ky4dqr7yhrYhJ9+iljwg=;
+	h=Message-ID:Date:From:To:Cc:Subject:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Zwn6WJ7YeQyqckeLfbjTaubKzvLiJwLpXHVGqeJCqj9bRpZjDHOKcLLQgJ+aWqaydTqFF3J+EU8uS/EFUTGl57Baavbkso0BqyjFVUeYjZpYhO5zkm5+pwZVjEDwmBqEaLe5xkLwuES2efJI7mcVAw8JguXaTcOKpDpLtGjEeb4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=K4JpJTl7; arc=none smtp.client-ip=209.85.221.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wr1-f42.google.com with SMTP id ffacd0b85a97d-3a6cdc27438so4302986f8f.2;
+        Tue, 24 Jun 2025 01:41:59 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1750754518; x=1751359318; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:subject:cc:to:from:date:message-id:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=gxJVjiTDlOeg2EkZyZ6FBY+d8DTxhC71gq9697gn2mc=;
+        b=K4JpJTl75KHPXtfNHXxa8n85BcdSfhkzmjOtNyMV2btjxiqWWYDLej6rSDEW5tlnA7
+         12rQs0WaEoVmys/MOqzlR3EVSLGfncFddUPO+aTwiifRGh5ojQAvuBx1omHluccSqDTF
+         5bPFNulCQywj3+hy/NIlfg37W6SNynx4dh27dKW6gFJJfZUBdN2dC3kz4UHxYfTa+yvq
+         Gx0uUYmkBuDsXSfrgQ5/mqjspmRQ5Tiif4G2twqBWba0c0mbyNhO34bqpsodaQcaHOlA
+         VKU/wme7pe/A/fE1lshAqtjo9kya+PLhpYVFTlsAWwf0Ay7hf6DEw6k3or/c9jTgeZTw
+         K4MA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1750754518; x=1751359318;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:subject:cc:to:from:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=gxJVjiTDlOeg2EkZyZ6FBY+d8DTxhC71gq9697gn2mc=;
+        b=BM6hkxSnW+MyNGZ0wuzLE8TVFY6oVyfMfhjaWtNpl1lnk/sEk/1dyKBN6WphJt8kZN
+         q1YQ8vq0frqm6HriTd5b+W1EKCXWOqB/RLQ/2I4iu7F057TlbSDGJf/YUPrA5wfFj+zI
+         /1FAF/RPhLgBs+O4hCBZXa33CNn02izTry5fBEcUuwnCfqpQZRJb9hLA51+jzdwL1yXR
+         9vIwqK+qvGzTI8GwzN1ib9EALRUqHOeMba34kUMSTyGuYwRtaRKzk1WZJwSkAs/0GqqL
+         NHnMtLrgCYWphnfsF61TwNDuUyivVpnC8QCGwnIgMChRifY1jiMFmXMclRG6ep3ynC10
+         0/yg==
+X-Forwarded-Encrypted: i=1; AJvYcCUl8FOaLHb/NAtZTgn4yZEFiqV5xsnQaYqKoEPWYd1pYBmxMLsVLNeGLlVMY5GNExeVogrjXStaCqHn@vger.kernel.org, AJvYcCXoQRhApZowbOdXxeXtwxzNawK6B2Jc+vbktxzJu4SJRWWabqtXSy5Wxozr/CaWqMvVEBPKycfZnMLBb8o=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx/dwcGAvCTUlbWR8iU2x1+ZJ+Lz+EcLXLMhfQi/6kjHhZhDofe
+	OSK32UF3ryN8f7qQfaeayzoR5ucuxrBblT840WRA9I6WViBw1DSMNlnS
+X-Gm-Gg: ASbGncvXoUr2wqmiu6vGVfksFULzQU7JMSZO8tAsy9pWh+nhHcHFeYFqbErd9IS1qMK
+	4+KSXmvQ67yKF5egta0r9aSGVCSyPGDJf7r3ylWCfrJlk0jFzir/5KRrNtE0u04uiECJXYvTO8M
+	JysJfCu48SqUQ47jC47kDWHsh3ZNjyFlSPYqD6ppyoLwtVlkblJ63ZWDRctgRuC1KdMlVUuWg8I
+	M81XXDlZLE1KDI/NqafNt5RHHuBBjJFlFmJJMo6ql4cvhtoSQD0+ogYLgCauzrzoRdrXM2D9jJu
+	qq8qmJjoZlaELU6Fox8VmC/wwwmKJ3RYjfp1Usl2NBw2viVkv/eLPX1I9DNK2JF1v/bkfNIUnZU
+	6M/kqHSJ2ZpKSMaL0T8KUtyEgA30i
+X-Google-Smtp-Source: AGHT+IEX5roKgsJa1cioFILElZUGIDcZwVbz+KW8neuAL1u3GRVjQn1ZjhaJLEDqe1fLATzPuXrxVQ==
+X-Received: by 2002:a05:6000:1acf:b0:3a6:d7e9:4309 with SMTP id ffacd0b85a97d-3a6d7e94339mr8846503f8f.29.1750754517664;
+        Tue, 24 Jun 2025 01:41:57 -0700 (PDT)
+Received: from Ansuel-XPS. (93-34-88-225.ip49.fastwebnet.it. [93.34.88.225])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3a6e8050e09sm1382668f8f.19.2025.06.24.01.41.56
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 24 Jun 2025 01:41:57 -0700 (PDT)
+Message-ID: <685a64d5.df0a0220.1f9a42.38b0@mx.google.com>
+X-Google-Original-Message-ID: <aFpk0lOZPEluJ5kx@Ansuel-XPS.>
+Date: Tue, 24 Jun 2025 10:41:54 +0200
+From: Christian Marangi <ansuelsmth@gmail.com>
+To: Andy Shevchenko <andy.shevchenko@gmail.com>
+Cc: Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= <ukleinek@kernel.org>,
+	Lukas Wunner <lukas@wunner.de>,
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+	Herbert Xu <herbert@gondor.apana.org.au>,
+	Andy Shevchenko <andy@kernel.org>,
+	Jonathan Cameron <Jonathan.Cameron@huawei.com>,
+	linux-kernel@vger.kernel.org, linux-pwm@vger.kernel.org,
+	Benjamin Larsson <benjamin.larsson@genexis.eu>,
+	Lorenzo Bianconi <lorenzo@kernel.org>
+Subject: Re: [PATCH v15 2/2] pwm: airoha: Add support for EN7581 SoC
+References: <20250623211116.1395-1-ansuelsmth@gmail.com>
+ <20250623211116.1395-2-ansuelsmth@gmail.com>
+ <CAHp75VcEJ0w5rcyq_DSHHunYanU5S9OgnRz1t8XervXqGQCX4w@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-TrafficTypeDiagnostic:
-	AM9PR08MB7120:EE_|DB9PR08MB6697:EE_|DB1PEPF000509EB:EE_|AS8PR08MB5925:EE_
-X-MS-Office365-Filtering-Correlation-Id: d83a3ed3-c73f-4e7b-1128-08ddb2fb05ec
-x-checkrecipientrouted: true
-NoDisclaimer: true
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam-Untrusted:
- BCL:0;ARA:13230040|7416014|1800799024|366016|376014;
-X-Microsoft-Antispam-Message-Info-Original:
- =?utf-8?B?cGRTT0lNT0Q0R3JOWDdoSUlMN3U4Y2JsaDJNVXVjWGc5YTBJZytjdmtGVW1F?=
- =?utf-8?B?TUdSSmdFNElSQnk1N2tsSkx1akx1WFlabitwOU9KS0ZnVzlmdW5uRHo5cXVO?=
- =?utf-8?B?Y1VHM1RjR1JGQ25yaG1Lb1NKZ0pONndEQkg0a1hENlFOQUZDTzViU0F2YUQ4?=
- =?utf-8?B?bGgxWDZGMWsycVJFMzRiSGF3NTdibEY1ekRENFhLNnpmeWxWL1dScHJRYkl5?=
- =?utf-8?B?RUpiVXRHVnpsNEJDSmdseWxtYi9RYXc1MkVuMEora1VVckZpMy9wY3lDZTY3?=
- =?utf-8?B?VXdZZnR2dmwwTzFUUWswSVBUbE5OVGxDbG1ZQ1dHY2MrU3A0bXIvU1p2YkQ0?=
- =?utf-8?B?dElVemYrMVA2MUpPKzJoMUxscnJSYkppWnNHazVoNEFIOE9aTU92TkRmZkh4?=
- =?utf-8?B?RzlwOUREajdNa2MyQUNBYlB5d3pJRDJuZFFWdkZOUktXWFpOWHdpRWIvNW5z?=
- =?utf-8?B?NW9WbjVFZXJKVjVFR0grSWU3NTZQcTJLYktTby83VDFXbGlibjU0UnZndngv?=
- =?utf-8?B?Q1hpVXhWd1ZvamtDQjdzbFFia3lUZ2c4UThRWFpkT0owTmpmRUhUSS94Wkl4?=
- =?utf-8?B?QkwreThwcUFwMjZxREVtWGpEVXJjVlRnRDFRcG9GNUZYd21PTERzQWlqTkVq?=
- =?utf-8?B?MEwvY0FIcGtUa1NJdVJ0c3JIMHFXQUpDREE5TWlxU3VCbXBZd2RwK1p6Rzl5?=
- =?utf-8?B?UDFjZTRqbU9tcTd4VUtHWFlUNHRyL1JDNWFGUVROMTdpT3g3WktrcUdIN3RP?=
- =?utf-8?B?bWcrcm5ISHdrMDF6aElNZEhYTmplbUJwLytINjVYT3lNdmZBeFR3TnZKelhZ?=
- =?utf-8?B?SHVleFJTbUNkZHI3RlNqTUIwSHlaWlo4ZHpkd2N4QzZCMTcvcnNEbUhLWXd3?=
- =?utf-8?B?dTdpOVd0Nm9id24xSm52aXJBdXY4Z21xc3duOXY5RUFyQWxvOVE4eEF6aEtj?=
- =?utf-8?B?NHVmUytBWXY4TXZvVnBMQU1UY2xUT25ybk5sZnZtSW9UUGplcWVwRWZUZ3I0?=
- =?utf-8?B?di9DMmtUemRIdDl2RERzbTdjWThsZEVxV3Z3NGpFYU95SklKcm5NZ3R1Q1BF?=
- =?utf-8?B?N2puazhYbXQ1Wm1DOHRzcWNJaDd6c3R2MmNVM1VBMmpETlpXWklyYndoZnI3?=
- =?utf-8?B?T3Q2OVRYaWZWSGtZQW5KZFRuSFordkQ0YS82bFVRYVR2UkhGN2RTOE1Sbm80?=
- =?utf-8?B?UUl1QnBXU2xnNzBFaHc5MmhpUEV2T3d1UnIzSTJmT3JLYzI0d3EvSGlHRWt1?=
- =?utf-8?B?bUNXWmxJeS9RUkFQZW5oOUp0ZE5Xa3N1a2FhVnB1TldyckJ6TzJoYlJUL2c1?=
- =?utf-8?B?bnZEVFZXVGJnTUxYMFVzcUV6MHNkOE1aK3h2V0hPdE4wdjE1VWNmR1VKVmMy?=
- =?utf-8?B?cTJrU0RQOUd0ajlNcUZZMHFOZjRQVVF6cDFIU0tGRjlPeWRBRTEvb3RyV3ZG?=
- =?utf-8?B?Vi9ldHNvYjBhcXRDbGREd1dRZ2F5K1FVaG9wQmQ5L005YS9MR1RUUXh4M05B?=
- =?utf-8?B?M0xPNGlhaC82WmdvNFpkNm9hN2RtOVd4RFlCdWhQZFVJbStyekJzL3o4ZzhH?=
- =?utf-8?B?TGFVVXBvUUNQRDJBaEYyekN5YWxYREU3dWV4dE5iSHBOL1VNNThpM1NsRHA0?=
- =?utf-8?B?R0QwYXg4SmY0M1BTVzh6R3EwNXR6YURzcDhHcUhFbWpSK3VZRmdjb0N1Um15?=
- =?utf-8?B?U1RMaFZhTi9TTzhKQkZsL1VKWUpVZUlrL1pCYnZVaWVNWGdPZjFPa2orbXhK?=
- =?utf-8?B?RUNWdlFnZVM2RjNhSGNSaFlQaE5kMVRVU0w1Y3NtOGsvWSsrMDAwUGVJTWlU?=
- =?utf-8?B?VFVaNk8xcGQyc3FDbkJFK1RNejdKSTJKaDh3RU5UUnhEaTdvK25XQUx1Y3o0?=
- =?utf-8?B?eGRxaHhjOVBQdUNUSTJSb1VtQXJvbThyNC92OVZENGdGd0RwTjNmRW9qWEo5?=
- =?utf-8?Q?fxJeQU60E4Y=3D?=
-X-Forefront-Antispam-Report-Untrusted:
- CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:AM9PR08MB7120.eurprd08.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(7416014)(1800799024)(366016)(376014);DIR:OUT;SFP:1101;
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DB9PR08MB6697
-X-EOPAttributedMessage: 0
-X-MS-Exchange-Transport-CrossTenantHeadersStripped:
- DB1PEPF000509EB.eurprd03.prod.outlook.com
-X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-Correlation-Id-Prvs:
-	1c2525c8-5b3b-48a6-b38a-08ddb2faf120
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|1800799024|35042699022|36860700013|14060799003|376014|7416014|82310400026;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?U0dNVEVVQmcvVUV6RmNxQko1dno0VUxOL3ZhSlRkMXljZzdYWkVkZFd6Tlkw?=
- =?utf-8?B?WGIwRlFFcXpDOGlTbFc3UDdjMnRTVlpuczc2ZnIrMWNiNzgweERWN2ZjUW1D?=
- =?utf-8?B?OGV3RkdsWFk4MUhMUXVxSllYL2FQYlFCcEpTV1Y0VjNSN2NyTWFRR0FsM1R4?=
- =?utf-8?B?NEtyRjQ0Umhxc015S2pvemU1M1Ura2F3RmtwaU9mV1JEQktZMFNvdElreno4?=
- =?utf-8?B?bUlkaEhteTBlV1lmaFJack5IaEhzUC9VaEJqNmZDNVJaOFRPYVUwVnVBZi9z?=
- =?utf-8?B?MThwOEJxZm9ycFh3NGh6REw0VVdNazk4ZlNUb1lhcW9qalBUay9zWmZTbWwy?=
- =?utf-8?B?Rml4OVJhUk14bnB4SkVBR0RBVXZBNjdhWFROR1lVSTN6eHYzeXRYbzVqMk1u?=
- =?utf-8?B?alJWY2JQYjB6UHRqV0p1eithZTQzbXJKOU9wWHhaSSsyRHorRTR2OWFIbDJX?=
- =?utf-8?B?ZUpTazlTSjEyVUpmRjNTOXErR2sxdWkvUnI4WlRDQzFLdGNYaEJyL0NzdTN0?=
- =?utf-8?B?QjFpQkJZOElpemk4Q2N3WUlnYk1sRW9FODUvaUZIb2ZLWHFFcDdQYlExV0Yz?=
- =?utf-8?B?MTRVSlA2WmxReGFqWGFLNnIyRE5nakhmd0hzcTluQkxzK2dVVnBTZWE3ajBr?=
- =?utf-8?B?ekpnQ2l0cFA0SU9nZjBnTDNQQzV5Vm5GckxsSHVhelFYcUh2RHpRNmtkdmF3?=
- =?utf-8?B?K3VWS1pHRHRMamk0V3ZKY2ZNTUlpbDgxZjZIaldwd1Y1UFpkQnRDVHNneWhK?=
- =?utf-8?B?emRTTVJ6V1RpMEtlYytoN0NKY21Jcng1VGFMUGNmcGtsQXlMSGVVRDBPaHJu?=
- =?utf-8?B?UG1DZ2pYTmVCZlBaSFdlYjhPMDc0VS9OVGl0aFZsV3A3dDlRSTlBd1ozUzFI?=
- =?utf-8?B?Z3RobHZ4U3lzL0cyV0tvb0R5Vk9jV2ZUb0p0NlkwVk1sWFd1cGJ1RnhHTnJE?=
- =?utf-8?B?ZUExWnFkd1ZhZUJ6MDlXWjdic01pY1VOamxZYjk2NmIrckVnVThRcTRMWTJa?=
- =?utf-8?B?VDlrb0FodjdhY0tUeTY4UVp1RHJBbEo0U1FLaUFKV3ZDaDU2elliMUc1WEdR?=
- =?utf-8?B?NU5vSXdKWWtPSjlZQ29OalRldWk3cmwvWFJNUHhFanBkUUZTOHBPaWFXekY5?=
- =?utf-8?B?aTJDQXp0K2ZSVGQ2UkJMMHVrSUpCekw3eXhJMHlEVDNpZ1Q5Y1B0SlJFRjIv?=
- =?utf-8?B?cHorT3JqWi9vaGxxa0ZGQjNSbnJLVGhmVUxtTElsb0pZK0tPV3ovVGlEZFNN?=
- =?utf-8?B?SnIyUm1CMVVHR1U2U3Y2ai9WYWY3eXFNL2pHSDNZREtRU3RsVkRTSHlGZDJj?=
- =?utf-8?B?cEo0ZE9MRTJmRjc5dG1sUkhtUUhoZVNVbGcyeEY2YnJqVFRrdFFyYjRpcnhF?=
- =?utf-8?B?RVRVK2ZocldKRHcvV1BsdjArakQyZzFSUk5IbXJNb1J6UmkrenVEd3ZxTHJ5?=
- =?utf-8?B?NThXeDZncEpSMklLR0xpazk1V1lCQjRZSVlZaTdVVHRrL1RtRnR0dlc2LzF3?=
- =?utf-8?B?SW55Q1g4QXpZQ0s3WnA0dmtxOW5WVUkyVHBsU29YT1lieFh3TGUydjlUMlNs?=
- =?utf-8?B?WmhnTTI4bnVlcUhUZHlKRmZ2eDNuUk5SV0NNbzZFWGdYNko1K3d1OG1wYllF?=
- =?utf-8?B?VmpBdmxBWDhadnJnS01NYnhxRTBhd0tHSXJMRHphblZKQW1IeDNtYWtBaklB?=
- =?utf-8?B?aDRwTFI2SDFkV0NqZmNzUjhxUFlpZytFenRES0RFQmhIZmlDUlNNUWpmbDlk?=
- =?utf-8?B?R0hCVnRzQkhiZjVYdlNmYU5hOEhjTWE2T3NjZ3BPM3pJcWtGWERrMUh0UFBW?=
- =?utf-8?B?d3Flek1ZeHNGekxqU3dESzFkS0xxby9kUlNBWVZOL3dkZ2NTZWlwajJFNk5h?=
- =?utf-8?B?K1R3bHY3OHJkWDlTaTZRVFR1QXhUQXltWVhUZlV5WWNPcndIYTJyZ0swdjdV?=
- =?utf-8?B?M3hTQmdhTnhxUHhoVWJ5K2hXV0JYaWZKUldEckFkdWNVemFVWkhpZk42RVIx?=
- =?utf-8?B?dlhUNEc1b21KUG1rNDdTdnh2UHkxL2o2WEZkZE5WeEI4VWkxdDZ2UXJwY2hU?=
- =?utf-8?Q?YKUUIg?=
-X-Forefront-Antispam-Report:
-	CIP:4.158.2.129;CTRY:GB;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:outbound-uk1.az.dlp.m.darktrace.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(1800799024)(35042699022)(36860700013)(14060799003)(376014)(7416014)(82310400026);DIR:OUT;SFP:1101;
-X-OriginatorOrg: arm.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 24 Jun 2025 08:42:16.1217
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: d83a3ed3-c73f-4e7b-1128-08ddb2fb05ec
-X-MS-Exchange-CrossTenant-Id: f34e5979-57d9-4aaa-ad4d-b122a662184d
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=f34e5979-57d9-4aaa-ad4d-b122a662184d;Ip=[4.158.2.129];Helo=[outbound-uk1.az.dlp.m.darktrace.com]
-X-MS-Exchange-CrossTenant-AuthSource:
-	DB1PEPF000509EB.eurprd03.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: AS8PR08MB5925
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAHp75VcEJ0w5rcyq_DSHHunYanU5S9OgnRz1t8XervXqGQCX4w@mail.gmail.com>
 
+On Tue, Jun 24, 2025 at 09:37:26AM +0300, Andy Shevchenko wrote:
+> On Tue, Jun 24, 2025 at 12:11 AM Christian Marangi <ansuelsmth@gmail.com> wrote:
+> >
+> > Introduce driver for PWM module available on EN7581 SoC.
+> 
+> ...
+> 
+> > Signed-off-by: Benjamin Larsson <benjamin.larsson@genexis.eu>
+> > Reviewed-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+> > Co-developed-by: Lorenzo Bianconi <lorenzo@kernel.org>
+> > Signed-off-by: Lorenzo Bianconi <lorenzo@kernel.org>
+> > Co-developed-by: Christian Marangi <ansuelsmth@gmail.com>
+> > Signed-off-by: Christian Marangi <ansuelsmth@gmail.com>
+> > ---
+> > Changes v15:
+> > - Fix compilation error for 64bit division on 32bit (patch 01)
+> > - Add prefer async probe
+> 
+> Wow, I am impressed!
+> 
+> ...
+> 
+> > +config PWM_AIROHA
+> > +       tristate "Airoha PWM support"
+> > +       depends on ARCH_AIROHA || COMPILE_TEST
+> 
+> > +       depends on OF
+> 
+> There is nothing dependent on this. If you want to enable run-time,
+> why not using this in conjunction with the COMPILE_TEST?
+> 
+> > +       select REGMAP_MMIO
+> 
+> ...
+> 
+> > +#include <linux/bitfield.h>
+> > +#include <linux/bitops.h>
+> > +#include <linux/err.h>
+> 
+> > +#include <linux/gpio.h>
+> 
+> Have you had a chance to read the top of that header file?
+> No, just no. This header must not be used in the new code.
+>
 
-On 23/06/25 1:58 pm, Baolin Wang wrote:
-> When invoking thp_vma_allowable_orders(), the TVA_ENFORCE_SYSFS flag is not
-> specified, we will ignore the THP sysfs settings. Whilst it makes sense for the
-> callers who do not specify this flag, it creates a odd and surprising situation
-> where a sysadmin specifying 'never' for all THP sizes still observing THP pages
-> being allocated and used on the system.
->
-> The motivating case for this is MADV_COLLAPSE. The MADV_COLLAPSE will ignore
-> the system-wide Anon THP sysfs settings, which means that even though we have
-> disabled the Anon THP configuration, MADV_COLLAPSE will still attempt to collapse
-> into a Anon THP. This violates the rule we have agreed upon: never means never.
->
-> Currently, besides MADV_COLLAPSE not setting TVA_ENFORCE_SYSFS, there is only
-> one other instance where TVA_ENFORCE_SYSFS is not set, which is in the
-> collapse_pte_mapped_thp() function, but I believe this is reasonable from its
-> comments:
->
-> "
-> /*
->   * If we are here, we've succeeded in replacing all the native pages
->   * in the page cache with a single hugepage. If a mm were to fault-in
->   * this memory (mapped by a suitably aligned VMA), we'd get the hugepage
->   * and map it by a PMD, regardless of sysfs THP settings. As such, let's
->   * analogously elide sysfs THP settings here.
->   */
-> if (!thp_vma_allowable_order(vma, vma->vm_flags, 0, PMD_ORDER))
+As you can see by the changelog this is very old code so I wasn't
+aware.
 
-So the behaviour now is: First check whether THP settings converge to never.
-Then, if enforce_sysfs is not set, return immediately. So in this khugepaged
-code will it be better to call __thp_vma_allowable_orders()? If the sysfs
-settings are changed to never before hitting collapse_pte_mapped_thp(),
-then right now we will return SCAN_VMA_CHECK from here, whereas, the comment
-says "regardless of sysfs THP settings", which should include "regardless
-of whether the sysfs settings say never".
+> > +#include <linux/io.h>
+> > +#include <linux/iopoll.h>
+> > +#include <linux/math64.h>
+> > +#include <linux/mfd/syscon.h>
+> > +#include <linux/module.h>
+> 
+> > +#include <linux/of.h>
+> 
+> Nothing is used from this header. You actually missed mod_devicetable.h.
+> 
+> > +#include <linux/platform_device.h>
+> > +#include <linux/pwm.h>
+> > +#include <linux/regmap.h>
+> 
+> Missing headers, such as types.h.
+> Please, follow the IWYU principle.
+> 
 
-> "
+Aside from types do you have hint of other missing header? Do you have a
+tool to identify the missing header?
+
+> ...
+> 
+> > +struct airoha_pwm {
+> > +       struct regmap *regmap;
+> 
+> > +       u64 initialized;
+> 
+> Is it bitmap? This looks really weird, at least a comment is a must to
+> explain why 64-bit for the variable that suggests (by naming) only a
+> single bit.
+> 
+
+There could be 33 PWM channel so it doesn't fit a u32. This is why u64.
+I feel bitmap might be overkill for the task but if requested, I will
+change it.
+
+> > +       struct airoha_pwm_bucket buckets[AIROHA_PWM_NUM_BUCKETS];
+> > +
+> > +       /* Cache bucket used by each pwm channel */
+> > +       u8 channel_bucket[AIROHA_PWM_MAX_CHANNELS];
+> > +};
+> 
+> ...
+> 
+> > +static u32 airoha_pwm_get_duty_ticks_from_ns(u64 period_ns, u64 duty_ns)
+> > +{
+> > +       return mul_u64_u64_div_u64(duty_ns, AIROHA_PWM_DUTY_FULL,
+> > +                                  period_ns);
+> 
+> For readability this can be one line.
+> 
+
+Mhhh I try to limit code to 80 column where possible.
+
+> > +}
+> 
+> ...
+> 
+> > +       regmap_read(pc->regmap, AIROHA_PWM_REG_GPIO_FLASH_PRD_SET(offset),
+> > +                   &val);
+> 
+> Ditto.
+> 
+> Btw, no error checks for regmap_*() calls?
+> 
+> 
+> > +static int airoha_pwm_get_generator(struct airoha_pwm *pc, u64 duty_ns,
+> > +                                   u64 period_ns)
+> > +{
+> > +       int i, best = -ENOENT, unused = -ENOENT;
+> 
+> Why is 'i' signed?
+> 
+> > +       u64 best_period_ns = 0;
+> > +       u64 best_duty_ns = 0;
+> > +
+> > +       for (i = 0; i < ARRAY_SIZE(pc->buckets); i++) {
+> > +               struct airoha_pwm_bucket *bucket = &pc->buckets[i];
+> > +               u64 bucket_period_ns = bucket->period_ns;
+> > +               u64 bucket_duty_ns = bucket->duty_ns;
+> > +               u32 duty_ticks, duty_ticks_bucket;
+> > +
+> > +               /* If found, save an unused bucket to return it later */
+> > +               if (!bucket->used) {
+> > +                       unused = i;
+> > +                       continue;
+> > +               }
+> > +
+> > +               /* We found a matching bucket, exit early */
+> > +               if (duty_ns == bucket_duty_ns &&
+> > +                   period_ns == bucket_period_ns)
+> > +                       return i;
+> > +
+> > +               /*
+> > +                * Unlike duty cycle zero, which can be handled by
+> > +                * disabling PWM, a generator is needed for full duty
+> > +                * cycle but it can be reused regardless of period
+> > +                */
+> > +               duty_ticks = airoha_pwm_get_duty_ticks_from_ns(period_ns, duty_ns);
+> > +               duty_ticks_bucket = airoha_pwm_get_duty_ticks_from_ns(bucket_period_ns,
+> > +                                                                     bucket_duty_ns);
+> > +               if (duty_ticks == AIROHA_PWM_DUTY_FULL &&
+> > +                   duty_ticks_bucket == AIROHA_PWM_DUTY_FULL)
+> > +                       return i;
+> > +
+> > +               /*
+> > +                * With an unused bucket available, skip searching for
+> > +                * a bucket to recycle (closer to the requested period/duty)
+> > +                */
+> > +               if (unused != -ENOENT)
+> > +                       continue;
+> > +
+> > +               /* Ignore bucket with invalid configs */
+> > +               if (bucket_period_ns > period_ns ||
+> > +                   bucket_duty_ns > duty_ns)
+> > +                       continue;
+> > +
+> > +               /*
+> > +                * Search for a bucket closer to the requested period/duty
+> > +                * that has the maximal possible period that isn't bigger
+> > +                * than the requested period. For that period pick the maximal
+> > +                * duty_cycle that isn't bigger than the requested duty_cycle.
+> > +                */
+> > +               if (bucket_period_ns > best_period_ns ||
+> > +                   (bucket_period_ns == best_period_ns &&
+> > +                    bucket_duty_ns > best_duty_ns)) {
+> > +                       best_period_ns = bucket_period_ns;
+> > +                       best_duty_ns = bucket_duty_ns;
+> > +                       best = i;
+> > +               }
+> > +       }
+> > +
+> > +       /* With no unused bucket, return the best one found (if ever) */
+> > +       return unused == -ENOENT ? best : unused;
+> > +}
+> 
+> This entire function reminds me of something from util_macros.h or
+> bsearch.h or similar. Can you double check that you really can't
+> utilise one of those?
+> 
+
+I checked and bsearch can't be used and and for util_macros the closest
+can't be used. As explained in previous revision, it's not simply a
+matter of finding the closest value but it's about finding a value that
+is closest to the period_ns and only with that condition satisfied one
+closest to the duty. We can't mix them as search for the closest of
+both.
+
+> ...
+> 
+> > +       /* Nothing to clear, PWM channel never used */
+> > +       if (!(pc->initialized & BIT_ULL(hwpwm)))
+> > +               return;
+> 
+> So, it's a bitmap, why not use bitmap types and APIs?
+> 
+> > +       bucket = pc->channel_bucket[hwpwm];
+> > +       pc->buckets[bucket].used &= ~BIT_ULL(hwpwm);
+> 
+> Oh, why do you need 'used' to be also 64-bit?
+> 
+
+In the extreme case, a bucket can be used by all 33 PWM channel.
+
+> > +}
+> 
+> ...
+> 
+> > +       /*
+> > +        * Search for a bucket that already satisfy duty and period
+> 
+> satisfies
+> 
+> > +        * or an unused one.
+> > +        * If not found, -ENOENT is returned.
+> > +        */
+> 
+> ...
+> 
+> > +static int airoha_pwm_sipo_init(struct airoha_pwm *pc)
+> > +{
+> > +       u32 val;
+> > +
+> > +       if (!(pc->initialized >> AIROHA_PWM_NUM_GPIO))
+> > +               return 0;
+> 
+> It will be clearer if you use bitmap APIs here to show how many bits
+> are indeed being used in "initialized" for this check.
+> Basically it's something like find_first_set_from() or so (I don't
+> remember names by heart). It will show the starting point
+> and the limit.
+> 
+> ...
+> 
+> > +       regmap_clear_bits(pc->regmap, AIROHA_PWM_REG_SIPO_FLASH_MODE_CFG,
+> > +                         AIROHA_PWM_SERIAL_GPIO_MODE_74HC164);
+> 
+> This is interesting. Can the gpio-74x164 be used as a whole?
+> 
+
+It's sad but the shift register chip is entirely handled by the SoC. We
+can't access to it's registers so the dedicated gpio driver can't be
+used.
+
+> ...
+> 
+> > +       regmap_write(pc->regmap, AIROHA_PWM_REG_SGPIO_CLK_DLY, 0x0);
+> 
+> '0x' is not needed.
+> 
+> ...
+> 
+> > +       if (regmap_read_poll_timeout(pc->regmap, AIROHA_PWM_REG_SGPIO_LED_DATA, val,
+> > +                                    !(val & AIROHA_PWM_SGPIO_LED_DATA_SHIFT_FLAG),
+> > +                                    10, 200 * USEC_PER_MSEC))
+> > +               return -ETIMEDOUT;
+> 
+> Why is the error code shadowed?
+> ret = regmap...
+> if (ret)
+>   return ret;
+> 
+> ...
+> 
+> > +       if (regmap_read_poll_timeout(pc->regmap, AIROHA_PWM_REG_SGPIO_LED_DATA, val,
+> > +                                    !(val & AIROHA_PWM_SGPIO_LED_DATA_SHIFT_FLAG),
+> > +                                    10, 200 * USEC_PER_MSEC))
+> > +               return -ETIMEDOUT;
+> 
+> Ditto.
+> 
+> ...
+> 
+> > +       /* index -1 means disable PWM channel */
+> 
+> Negative index means
+> 
+> > +       if (index < 0) {
+> 
+> > +       }
+> 
+> ...
+> 
+> > +static int airoha_pwm_config(struct airoha_pwm *pc, struct pwm_device *pwm,
+> > +                            u64 duty_ns, u64 period_ns)
+> > +{
+> > +       unsigned int hwpwm = pwm->hwpwm;
+> > +       int bucket;
+> > +
+> > +       bucket = airoha_pwm_consume_generator(pc, duty_ns, period_ns,
+> > +                                             hwpwm);
+> > +       if (bucket < 0)
+> > +               return -EBUSY;
+> 
+> Why is the error code shadowed?
+> 
+> > +
+> > +       airoha_pwm_config_flash_map(pc, hwpwm, bucket);
+> > +
+> > +       pc->initialized |= BIT_ULL(hwpwm);
+> > +       pc->channel_bucket[hwpwm] = bucket;
+> > +
+> > +       /*
+> > +        * SIPO are special GPIO attached to a shift register chip. The handling
+> > +        * of this chip is internal to the SoC that takes care of applying the
+> > +        * values based on the flash map. To apply a new flash map, it's needed
+> > +        * to trigger a refresh on the shift register chip.
+> > +        * If we are configuring a SIPO, always reinit the shift register chip
+> > +        * to make sure the correct flash map is applied.
+> > +        * We skip reconfiguring the shift register if we related hwpwm
+> 
+> s/we/the/ ?
+> 
+> > +        * is disabled (as it doesn't need to be mapped).
+> > +        */
+> > +       if (!(pc->initialized & BIT_ULL(hwpwm)) && hwpwm >= AIROHA_PWM_NUM_GPIO)
+> > +               airoha_pwm_sipo_init(pc);
+> > +
+> > +       return 0;
+> > +}
+> 
+> ...
+> 
+> > +       if (!(pc->initialized >> AIROHA_PWM_NUM_GPIO))
+> > +               regmap_clear_bits(pc->regmap, AIROHA_PWM_REG_SIPO_FLASH_MODE_CFG,
+> > +                                 AIROHA_PWM_SERIAL_GPIO_FLASH_MODE);
+> 
+> If you use regmap cache the "initialized" might be not needed at all.
+> It might be possible to read back (from the cache) the current state
+> of some registers. Have you checked if this is a feasible approach?
+> 
+
+The initialized is still needed to understand if a PWM channel has been
+provisioned or it's still "dirty" and assigned to a bucket externally to
+the kernel (for example by a bootloader)
+
+Also the documentation is not very clear on what is really considered a
+volatile register or not so maybe skipping some write might introduce
+some unintended regression.
+
+> ...
+> 
+> > +       /*
+> > +        * Duty goes at 255 step, normalize it to check if we can
+> 
+> "in steps of 255 ns" ?
+> The original comment is confusing as step in singular form may mislead.
 >
-> Another rule for madvise, referring to David's suggestion: “allowing for
-> collapsing in a VM without VM_HUGEPAGE in the "madvise" mode would be fine".
->
-> To address this issue, the current strategy should be:
->
-> If no hugepage modes are enabled for the desired orders, nor can we enable them
-> by inheriting from a 'global' enabled setting - then it must be the case that
-> all desired orders either specify or inherit 'NEVER' - and we must abort.
->
-> Meanwhile, we should fix the khugepaged selftest for MADV_COLLAPSE by enabling
-> THP.
->
-> Suggested-by: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
-> Signed-off-by: Baolin Wang <baolin.wang@linux.alibaba.com>
-> ---
->   include/linux/huge_mm.h                 | 51 ++++++++++++++++++-------
->   tools/testing/selftests/mm/khugepaged.c |  6 +--
->   2 files changed, 39 insertions(+), 18 deletions(-)
->
-> diff --git a/include/linux/huge_mm.h b/include/linux/huge_mm.h
-> index 4d5bb67dc4ec..ab70ca4e704b 100644
-> --- a/include/linux/huge_mm.h
-> +++ b/include/linux/huge_mm.h
-> @@ -267,6 +267,42 @@ unsigned long __thp_vma_allowable_orders(struct vm_area_struct *vma,
->   					 unsigned long tva_flags,
->   					 unsigned long orders);
->   
-> +/* Strictly mask requested anonymous orders according to sysfs settings. */
-> +static inline unsigned long __thp_mask_anon_orders(unsigned long vm_flags,
-> +		unsigned long tva_flags, unsigned long orders)
-> +{
-> +	const unsigned long always = READ_ONCE(huge_anon_orders_always);
-> +	const unsigned long madvise = READ_ONCE(huge_anon_orders_madvise);
-> +	const unsigned long inherit = READ_ONCE(huge_anon_orders_inherit);
-> +	const unsigned long never = ~(always | madvise | inherit);
-> +	const bool inherit_never = !hugepage_global_enabled();
-> +
-> +	/* Disallow orders that are set to NEVER directly ... */
-> +	orders &= ~never;
-> +
-> +	/* ... or through inheritance (global == NEVER). */
-> +	if (inherit_never)
-> +		orders &= ~inherit;
-> +
-> +	/*
-> +	 * Otherwise, we only enforce sysfs settings if asked. In addition,
-> +	 * if the user sets a sysfs mode of madvise and if TVA_ENFORCE_SYSFS
-> +	 * is not set, we don't bother checking whether the VMA has VM_HUGEPAGE
-> +	 * set.
-> +	 */
-> +	if (!(tva_flags & TVA_ENFORCE_SYSFS))
-> +		return orders;
-> +
-> +	/* We already excluded never inherit above. */
-> +	if (vm_flags & VM_HUGEPAGE)
-> +		return orders & (always | madvise | inherit);
-> +
-> +	if (hugepage_global_always())
-> +		return orders & (always | inherit);
-> +
-> +	return orders & always;
-> +}
-> +
->   /**
->    * thp_vma_allowable_orders - determine hugepage orders that are allowed for vma
->    * @vma:  the vm area to check
-> @@ -289,19 +325,8 @@ unsigned long thp_vma_allowable_orders(struct vm_area_struct *vma,
->   				       unsigned long orders)
->   {
->   	/* Optimization to check if required orders are enabled early. */
-> -	if ((tva_flags & TVA_ENFORCE_SYSFS) && vma_is_anonymous(vma)) {
-> -		unsigned long mask = READ_ONCE(huge_anon_orders_always);
-> -
-> -		if (vm_flags & VM_HUGEPAGE)
-> -			mask |= READ_ONCE(huge_anon_orders_madvise);
-> -		if (hugepage_global_always() ||
-> -		    ((vm_flags & VM_HUGEPAGE) && hugepage_global_enabled()))
-> -			mask |= READ_ONCE(huge_anon_orders_inherit);
-> -
-> -		orders &= mask;
-> -		if (!orders)
-> -			return 0;
-> -	}
-> +	if (vma_is_anonymous(vma))
-> +		orders = __thp_mask_anon_orders(vm_flags, tva_flags, orders);
->   
->   	return __thp_vma_allowable_orders(vma, vm_flags, tva_flags, orders);
->   }
-> diff --git a/tools/testing/selftests/mm/khugepaged.c b/tools/testing/selftests/mm/khugepaged.c
-> index 4341ce6b3b38..85bfff53dba6 100644
-> --- a/tools/testing/selftests/mm/khugepaged.c
-> +++ b/tools/testing/selftests/mm/khugepaged.c
-> @@ -501,11 +501,7 @@ static void __madvise_collapse(const char *msg, char *p, int nr_hpages,
->   
->   	printf("%s...", msg);
->   
-> -	/*
-> -	 * Prevent khugepaged interference and tests that MADV_COLLAPSE
-> -	 * ignores /sys/kernel/mm/transparent_hugepage/enabled
-> -	 */
-> -	settings.thp_enabled = THP_NEVER;
-> +	settings.thp_enabled = THP_ALWAYS;
->   	settings.shmem_enabled = SHMEM_NEVER;
->   	thp_push_settings(&settings);
->   
+
+I think you are confused duty is divided in 255 segment so I chencged
+this to Duty is divided in 255 segment, normalize it t...
+
+> > +        * share a generator.
+> > +        */
+> 
+> -- 
+> With Best Regards,
+> Andy Shevchenko
+
+-- 
+	Ansuel
 
