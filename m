@@ -1,96 +1,69 @@
-Return-Path: <linux-kernel+bounces-701173-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-701176-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 972B8AE71AF
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Jun 2025 23:47:07 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 36FE5AE71C1
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Jun 2025 23:56:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C4E493B13A9
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Jun 2025 21:46:41 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 97AA3178D2C
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Jun 2025 21:56:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9FFFD25A326;
-	Tue, 24 Jun 2025 21:47:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9DFCC25B1EF;
+	Tue, 24 Jun 2025 21:56:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="b7itt1C9"
-Received: from mail-yb1-f176.google.com (mail-yb1-f176.google.com [209.85.219.176])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="gYAUjcqw"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 82ACA307483;
-	Tue, 24 Jun 2025 21:46:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EE1972550A4;
+	Tue, 24 Jun 2025 21:56:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750801621; cv=none; b=Mi+mWV+C0B4hs6X9SCQUb5dg+65lEAFRUhuu/9oIAfdikUBFwY45NDMGbnDEmDcSBTnbXYRhz8g0oH837AbQn1qLUT/hSN7nNqkBwLyX90lDBtsVRI9bK0Di9rmRW6oUUGq/6yTnssjbCT2+lvqLR3spAqT4dd3tGhDGRlfSQyA=
+	t=1750802168; cv=none; b=Nf/NsezkHaOiGRNk471WwrpA+oMhWKIenVOEyDwLxA/N07dAQGY8NtQmKnrtAhyisi9XoBU4ghLJh0rqjqIHmwd4Kt1yxW2VUQtM1oG9A2xo0EOap9hZDj5d80Y8QAMk41sGkGR5kKBn+od3YKN8Ho0CTBkN+v40xaIGFt7q1C8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750801621; c=relaxed/simple;
-	bh=H96UaVMZ2NjDXytS4I6LKdfHpQjgJ55mU0qGKk2dKRo=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=MRG+nsDrk/OB0t4YpI2Leh/+KHS7XDUM67/A1l9cYODq+QVhESo/8MFbTR5Zv5zF0QlO3zA9HX5D3C5pAEyMpizPD27Qch2F7wyp4+dWELaZ2k4S43pn6JYHliM79CUKUZpq9rNSsB66FGghnFut08pN0h4/lnxUiHW+pVDtYrQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=b7itt1C9; arc=none smtp.client-ip=209.85.219.176
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-yb1-f176.google.com with SMTP id 3f1490d57ef6-e85e06a7f63so2218363276.1;
-        Tue, 24 Jun 2025 14:46:59 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1750801618; x=1751406418; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=4X4FkzK1vIHXXkT/xfwGQHLL5/iBSkQzdD5mcVSep68=;
-        b=b7itt1C99Wtjsp5rW4vMLwRS59E1C6ISD22RZvKGlrKLBY6A7Dkkfj9nDCPBKQdz8e
-         AdwjvHV9vXPFsf42sjfbxmi8CXaNoPJP/sbucZbQTVSKJT4ZRDY6YJHq8wR0OPUlGdiE
-         lVRHRMielmE33JYMwrIrNSWPChpEM+WfL/ROJ4fW8Mfrm8wsdv9GQau5uhrtH5Ea5SL/
-         0gClT19CF9R09clqK33pNjQoT9DQT0C8vchar2x3QQi3q52mYjcIxvySKUgcxVJHC2pf
-         L95zbvpLww0Z9qO/wjZDTvvJnKKsSUwNCeNQQ9vRp6h9+mvbR7LQgy9Dulw2MZOxtndZ
-         mJSA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1750801618; x=1751406418;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=4X4FkzK1vIHXXkT/xfwGQHLL5/iBSkQzdD5mcVSep68=;
-        b=aMZmJiiEosJB79tF/W32at0tc3B3inEVb3hzgbFExqN0rfKx2Ffl5iVS/ccjHyChbQ
-         +WDDpb8NG9cxzebcXWr/C4smW+9fMpBJpNuslh1+1hrBXrS7RHM8TC00R4yRCEQnar5Q
-         g8FnnAiLl9YQf0H7NW5jClS1adYOaINbogFoYGcZZU1+iSZNRN0vtQj+TwPe+JbHwUQd
-         0bezGe2gsV4o5ZG2AhgEBJx09GZDMX3JTxmwwgqw7iUcdoxhyf3ox+0KLGHvTrZ+4E0/
-         j3SRHGks+nkrTp6fTmsIX2TCIKEjUqzCPWfxYzBX3/YwegMx24mliUCutC9C19bKiNeE
-         HexQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUzd0hjcLiRpYQNHXUaCMPB2zjjnkaFYQBPphhBQ9hJt1RCNa13mLTSrSQijC4NPdV4J/45m4/fgms=@vger.kernel.org, AJvYcCWBkkZhXqoFL+Qmmk3Yle+aPPTnRxQ2vthKAa3Bc3y6rYc2ZEqJ9P7HCp/C2Z78Rh0zFqjjSKu48XaKhv7l@vger.kernel.org
-X-Gm-Message-State: AOJu0YxaGtyqb0zPY+9GZmT+j/LfGWZsdiXPR/78LYHHsl7i8HmTBlDT
-	g3KPICFAlj6tjrGIAgOIh5pQNaBgYflGI/sIx2/hMuJ6yiwyLDssGD6H
-X-Gm-Gg: ASbGnct88cg0246nsUUWTL+k/Ce2wZTtKwdHCdVJwwwcQM70lVSUrSw6znPAarpRwPk
-	R/gzqTernqRL0XZCPZ2ML76UhIvbKqWkK5uhyNsw3dp4FYJR+prTdnF8bNM/IAP2BuvmVX/Vye+
-	cD/JoaAz+UuAHHxRsx0MbinKZVYdbbIQlLgTPIPGIVwbF91jTVQ7JKvsyGop1FB+BcCxfINUpKv
-	KsRrClO1Qz0CArJYEi4BLDez4MeIGrNgncYyxzMfydTb6DJTF033xxN5JgdLm0HcNhV7RcBVoWA
-	mOXvYMzr2XUCbjrUaBZDT3D9vLM14vCQhdZd8qhFLP+0w7wAT4RnLl9RD4yxqw==
-X-Google-Smtp-Source: AGHT+IGuHgYXMzcha0KcT+CIr9rLcM40d+eszdLfZC66yc2GwoBIh+Acn+v3VdIm2K4NgvN4YvrwrA==
-X-Received: by 2002:a05:6902:2401:b0:e85:ea51:fd00 with SMTP id 3f1490d57ef6-e86017a7b85mr539913276.6.1750801618260;
-        Tue, 24 Jun 2025 14:46:58 -0700 (PDT)
-Received: from localhost ([2a03:2880:25ff:44::])
-        by smtp.gmail.com with ESMTPSA id 3f1490d57ef6-e842aaba56csm3270264276.3.2025.06.24.14.46.57
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 24 Jun 2025 14:46:57 -0700 (PDT)
-From: Joshua Hahn <joshua.hahnjy@gmail.com>
-To: Robert Richter <rrichter@amd.com>
-Cc: Gregory Price <gourry@gourry.net>,
-	Alison Schofield <alison.schofield@intel.com>,
-	Vishal Verma <vishal.l.verma@intel.com>,
-	Ira Weiny <ira.weiny@intel.com>,
-	Dan Williams <dan.j.williams@intel.com>,
-	Jonathan Cameron <Jonathan.Cameron@huawei.com>,
-	Dave Jiang <dave.jiang@intel.com>,
-	Davidlohr Bueso <dave@stgolabs.net>,
-	Terry Bowman <terry.bowman@amd.com>,
-	linux-cxl@vger.kernel.org,
+	s=arc-20240116; t=1750802168; c=relaxed/simple;
+	bh=JRa97lfPaZOPo8bGvoEroFHrSxN0ICPZca9EWd5GZ7Y=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=cCyWH0B+1Kw8o/ilupjiRoWFrkaukgMfRglaQSmKzEuzralTmGM+dXwicoEzJwT8C9ooxDDZ4LDOBUREGt/IM8dF1INJogow8/+eWEbUKumG45QQtp/sgfYNI0TzGizTm9BuRHaD6cwylWQ8aIcWiHaXr33H3PG23E9JeaWHSyQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=gYAUjcqw; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8E48AC4CEE3;
+	Tue, 24 Jun 2025 21:56:03 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1750802167;
+	bh=JRa97lfPaZOPo8bGvoEroFHrSxN0ICPZca9EWd5GZ7Y=;
+	h=From:To:Cc:Subject:Date:From;
+	b=gYAUjcqwjPhzMHl2io5vhXV5qO/D7WVWZF//d5XlNsRtjv7Kdk/QPRQk1Hd4J51FJ
+	 pGo2HE/ubtdkXSAu1CuQhoEoFpE7/DG2d1N/cHVXOOLzpGuNB2gV50xF880ZvXkB6E
+	 0ZdzQWE/YkmzNX+hxHrVWUhOL2NDmXwXfLoJHcf+afUf8YjH8L++CRLUU4Ya4ZRkAs
+	 mONi0Mi4nIkF3ivKkl12bRyRLodvlbp5rROLJIgjwuEYU1GzAfGDbZFAYIlWjQBdrL
+	 9laxL61TwqZNnAhyIUfVmlAsEWfR66pEHLsIsNNZ6tyOH7lBfdXO4DX84uxxL3+xm4
+	 XNAvYc2foPN0g==
+From: Danilo Krummrich <dakr@kernel.org>
+To: gregkh@linuxfoundation.org,
+	rafael@kernel.org,
+	ojeda@kernel.org,
+	alex.gaynor@gmail.com,
+	boqun.feng@gmail.com,
+	gary@garyguo.net,
+	bjorn3_gh@protonmail.com,
+	lossin@kernel.org,
+	a.hindborg@kernel.org,
+	aliceryhl@google.com,
+	tmgross@umich.edu,
+	david.m.ertman@intel.com,
+	ira.weiny@intel.com,
+	leon@kernel.org,
+	kwilczynski@kernel.org,
+	bhelgaas@google.com
+Cc: rust-for-linux@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
-	"Fabio M. De Francesco" <fabio.m.de.francesco@linux.intel.com>
-Subject: Re: [PATCH] [HACK] drop zen5_init checks due to segfault
-Date: Tue, 24 Jun 2025 14:46:54 -0700
-Message-ID: <20250624214656.96471-1-joshua.hahnjy@gmail.com>
-X-Mailer: git-send-email 2.47.1
-In-Reply-To: <aFo68StiDKzLjNdS@rric.localdomain>
-References: 
+	linux-pci@vger.kernel.org,
+	Danilo Krummrich <dakr@kernel.org>
+Subject: [PATCH v3 0/4] Improvements for Devres
+Date: Tue, 24 Jun 2025 23:53:58 +0200
+Message-ID: <20250624215600.221167-1-dakr@kernel.org>
+X-Mailer: git-send-email 2.49.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -99,49 +72,80 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-On Tue, 24 Jun 2025 07:43:13 +0200 Robert Richter <rrichter@amd.com> wrote:
+This patch series provides some optimizations for Devres:
 
-> On 17.06.25 13:33:18, Joshua Hahn wrote:
-> > I was hoping for some help in understanding your explanation here -- I don't
-> > think I can see where the dependency appears. (In particular, I'm having
-> > trouble understanding where the efi_rts_wq dependnecy matters during the
-> > cxl_zen5_init function). 
-> 
-> Here a temporary patch with an explanation in the description:
+  1) Provide a more lightweight replacement for Devres::new_foreign_owned().
 
-Hi Robert,
+  2) Get rid of Devres' inner Arc and instead consume and provide an
+     impl PinInit instead.
 
-Thank you for this patch! I just tested on my machine, and can confirm that
-this does indeed fix the problem. I'm not sure if this will be folded into
-the rest of the patchset or if it will be its own, but I will add my
-signatures below.
+     Additionally, having the resulting explicit synchronization in
+     Devres::drop() prevents potential subtle undesired side effects of the
+     devres callback dropping the final Arc reference asynchronously within
+     the devres callback.
 
-Thank you again, Have a great day!
+  3) An optimization for when we never need to access the resource or release
+     it manually.
 
-Tested-by: Joshua Hahn <joshua.hahnjy@gmail.com>
-Reviewed-by: Joshua Hahn <joshua.hahnjy@gmail.com>
+Thanks to Alice and Benno for some great offline discussions on this topic.
 
-> From a540b814d48574b67a9aaa97a5d7536c61d4deda Mon Sep 17 00:00:00 2001
-> From: Robert Richter <rrichter@amd.com>
-> Date: Tue, 13 May 2025 15:02:16 +0200
-> Subject: [PATCH] cxl/acpi: Prepare use of EFI runtime services
-> 
-> In order to use EFI runtime services, esp. ACPI PRM which uses the
-> efi_rts_wq workqueue, initialize EFI before CXL ACPI.
-> 
-> There is a subsys_initcall order dependency if driver is builtin:
-> 
->  subsys_initcall(cxl_acpi_init);
->  subsys_initcall(efisubsys_init);
-> 
-> Prevent the efi_rts_wq workqueue being used by cxl_acpi_init() before
-> its allocation. Use subsys_initcall_sync(cxl_acpi_init) to always run
-> efisubsys_init() first.
-> 
-> Reported-by: Gregory Price <gourry@gourry.net>
-> Signed-off-by: Robert Richter <rrichter@amd.com>
+This patch series depends on the Opaque patch in [1] and the pin-init patch in
+[2], which Benno will provide a signed tag for. A branch containing the patches
+can be found in [3].
 
-[...snip...]
+[1] https://lore.kernel.org/lkml/20250610-b4-rust_miscdevice_registrationdata-v6-1-b03f5dfce998@gmail.com/
+[2] https://lore.kernel.org/rust-for-linux/20250529081027.297648-2-lossin@kernel.org/
+[3] https://git.kernel.org/pub/scm/linux/kernel/git/dakr/linux.git/log/?h=rust/devres
 
-Sent using hkml (https://github.com/sjp38/hackermail)
+Changes in v3:
+  - devres::register:
+    - add 'static bound for ForeignOwnable
+    - use drop() instead of `let _ =`
+  - Devres:
+    - use ptr::from_ref() instead of Inner::as_ptr()
+    - use &raw mut instead of addr_of_mut!()
+    - use SAFETY comment proposal from Benno
+    - add invariant for `Devres::inner`
+    - use ScopeGuard in devres_callback()
+  - devres::register_release():
+    - add impl<T: Release> Release for &T
+    - add 'static bound for ForeignOwnable
+    - use drop() instead of `let _ =`
+
+Changes in v2:
+  - Revocable:
+    - remove Error: From<E> bound
+  - devres::register:
+    - rename devres::register_foreign_boxed() to just devres::register()
+    - move T: 'static bound to the function rather than the impl block
+  - Devres:
+    - Fix aliasing issue by using an Opaque<Inner>; should be
+      UnsafePinned<Inner> once available.
+    - Add doc-comments for a couple of private fields.
+    - Link Revocable on 'revoke' in Devres::new().
+  - devres::register_release():
+    - expand documentation of Release
+    - rename devres::register_foreign_release() for devres::register_release()
+
+Danilo Krummrich (4):
+  rust: revocable: support fallible PinInit types
+  rust: devres: replace Devres::new_foreign_owned()
+  rust: devres: get rid of Devres' inner Arc
+  rust: devres: implement register_release()
+
+ drivers/gpu/nova-core/driver.rs |   7 +-
+ drivers/gpu/nova-core/gpu.rs    |   6 +-
+ rust/helpers/device.c           |   7 +
+ rust/kernel/cpufreq.rs          |  11 +-
+ rust/kernel/devres.rs           | 372 +++++++++++++++++++++++---------
+ rust/kernel/drm/driver.rs       |  14 +-
+ rust/kernel/pci.rs              |  20 +-
+ rust/kernel/revocable.rs        |   6 +-
+ samples/rust/rust_driver_pci.rs |  19 +-
+ 9 files changed, 327 insertions(+), 135 deletions(-)
+
+
+base-commit: d752224c81ec2e5c0e86635c4b1cc835f9ca4151
+-- 
+2.49.0
 
