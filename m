@@ -1,171 +1,103 @@
-Return-Path: <linux-kernel+bounces-699765-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-699777-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id E56F1AE5F12
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Jun 2025 10:25:52 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 55E17AE5F38
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Jun 2025 10:29:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C148E1920687
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Jun 2025 08:26:08 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 589FD4A62F5
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Jun 2025 08:28:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7A211257AC8;
-	Tue, 24 Jun 2025 08:25:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="IrMF+meO";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="juGlLOTK";
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="IrMF+meO";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="juGlLOTK"
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E202425A2DE;
+	Tue, 24 Jun 2025 08:27:04 +0000 (UTC)
+Received: from smtp153-162.sina.com.cn (smtp153-162.sina.com.cn [61.135.153.162])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1D2B7248880
-	for <linux-kernel@vger.kernel.org>; Tue, 24 Jun 2025 08:25:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4B4C9258CDA
+	for <linux-kernel@vger.kernel.org>; Tue, 24 Jun 2025 08:26:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=61.135.153.162
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750753546; cv=none; b=M08DJQgVMOHEl3vRevqddtISQTOD3FuotHcXXBkhKA291HMS/iEs9FfUQanJ4lYE9fWQSfEhDXQsPSTopIkI3I50CVuA+LLRPEqHX+TZhxBGsIy+JATiZIhfVPVOzXs8fhkRdw1uPXAezgfNkSZXQU5svdU9e6d1j420Ens3MEw=
+	t=1750753624; cv=none; b=WKy3q8WPvpSX2azkOSVpWUieJeX2K9YQXPocLAXMc+Z7/3wL72qLkQvakww+Vjyr+LzZ59gSbAduM4FcVSulnGMy02KgzW58L49uGw1cgh4z/k2qjuGSZLGTP8NGdKpjWrnZ+Rx9PbuHd/4wAwmKAWprLAnqI0YPwz+ySnWh/ok=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750753546; c=relaxed/simple;
-	bh=WsCmZE6j5dqNhNx+p5lMZwXY0aoDrCXifeYdN+YsGmM=;
-	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=oIO9v9hoNCHIhpbw/ahi3as5gma4v7fWaCVHX+jXibgPVE+RRyIhy/zf6wizBLh6G6IpEUb/Wu5beSxjCbj8NkZaVBjRu9lZWS1TWm+uo+JczebERgqQ5pyxxNvoMjjjtFbQW/3oyW6VyKAG3vHFRaS1cyNDXEwYEZ+J3wdEMhs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=IrMF+meO; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=juGlLOTK; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=IrMF+meO; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=juGlLOTK; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id 56CE62116B;
-	Tue, 24 Jun 2025 08:25:43 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1750753543; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=giWYgG7/fs8FdfQPHWkc+hiQdHnal0Cy9gldgNUZ2F0=;
-	b=IrMF+meOyoOZxiu8KDU3LmpReeFoUkOlD3mrlO5ionzxFJwd6Ub2Mt5Y8Yblc8QWs9sp/o
-	UpnsY9U6hAjAOguiPwaK2tYh4kRcFjyiZnq5P/PgH7n9iiPsD2WLSWIP2PkVhXHC1gWEl8
-	pJFakYQL4yn05xwoPnk0D/sqk9BWJng=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1750753543;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=giWYgG7/fs8FdfQPHWkc+hiQdHnal0Cy9gldgNUZ2F0=;
-	b=juGlLOTKIDsde3uxOf9T3e9Zbh6wU/IyEG+13pmaE9UYEQd7FsZ9rA24WPrfGaj+s21AUA
-	2T+LjvuNF1PH4UCg==
-Authentication-Results: smtp-out1.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1750753543; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=giWYgG7/fs8FdfQPHWkc+hiQdHnal0Cy9gldgNUZ2F0=;
-	b=IrMF+meOyoOZxiu8KDU3LmpReeFoUkOlD3mrlO5ionzxFJwd6Ub2Mt5Y8Yblc8QWs9sp/o
-	UpnsY9U6hAjAOguiPwaK2tYh4kRcFjyiZnq5P/PgH7n9iiPsD2WLSWIP2PkVhXHC1gWEl8
-	pJFakYQL4yn05xwoPnk0D/sqk9BWJng=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1750753543;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=giWYgG7/fs8FdfQPHWkc+hiQdHnal0Cy9gldgNUZ2F0=;
-	b=juGlLOTKIDsde3uxOf9T3e9Zbh6wU/IyEG+13pmaE9UYEQd7FsZ9rA24WPrfGaj+s21AUA
-	2T+LjvuNF1PH4UCg==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 2781F13A24;
-	Tue, 24 Jun 2025 08:25:43 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id 1RhLCAdhWmgwCQAAD6G6ig
-	(envelope-from <tiwai@suse.de>); Tue, 24 Jun 2025 08:25:43 +0000
-Date: Tue, 24 Jun 2025 10:25:42 +0200
-Message-ID: <87qzz9lf5l.wl-tiwai@suse.de>
-From: Takashi Iwai <tiwai@suse.de>
-To: Pei Xiao <xiaopei01@kylinos.cn>
-Cc: tiwai@suse.com,
-	perex@perex.cz,
-	quic_wcheng@quicinc.com,
-	linux-sound@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] ALSA: usb-audio: qcom: fix NULL pointer dereference in qmi_stop_session
-In-Reply-To: <9da1a13ffee0924e4813ef5b20625a89680ce88d.1750745062.git.xiaopei01@kylinos.cn>
-References: <9da1a13ffee0924e4813ef5b20625a89680ce88d.1750745062.git.xiaopei01@kylinos.cn>
-User-Agent: Wanderlust/2.15.9 (Almost Unreal) Emacs/27.2 Mule/6.0
+	s=arc-20240116; t=1750753624; c=relaxed/simple;
+	bh=MK/0sV9iPODGMfIvaSoqDQLATEj45R3OjlM3rNrtZLI=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=Ox1Qz1ipeGJXMnJhV9GIcYuOCmTUs89pCYb729lxKp7M9PS7uwBN1adbAm0TJquToxtxS+W0D3druJxI6HGF5tIyw+n2C+lOuLHQ84m2/JRF3iLSfSVFGQXbpTojzSG5V9P3xfIjTBaocQwnGoLAsSJE4FJVwV9Qabj3WAwRXvc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sina.com; spf=pass smtp.mailfrom=sina.com; arc=none smtp.client-ip=61.135.153.162
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sina.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sina.com
+X-SMAIL-HELO: localhost.localdomain
+Received: from unknown (HELO localhost.localdomain)([114.249.58.236])
+	by sina.com (10.54.253.31) with ESMTP
+	id 685A612100006786; Tue, 24 Jun 2025 16:26:11 +0800 (CST)
+X-Sender: hdanton@sina.com
+X-Auth-ID: hdanton@sina.com
+Authentication-Results: sina.com;
+	 spf=none smtp.mailfrom=hdanton@sina.com;
+	 dkim=none header.i=none;
+	 dmarc=none action=none header.from=hdanton@sina.com
+X-SMAIL-MID: 3424196816267
+X-SMAIL-UIID: CA572E708C92455AB66B99258C176F7C-20250624-162611-1
+From: Hillf Danton <hdanton@sina.com>
+To: syzbot <syzbot+daba72c4af9915e9c894@syzkaller.appspotmail.com>
+Cc: linux-kernel@vger.kernel.org,
+	syzkaller-bugs@googlegroups.com
+Subject: Re: [syzbot] [trace?] KASAN: slab-use-after-free Read in __free_filter
+Date: Tue, 24 Jun 2025 16:25:58 +0800
+Message-ID: <20250624082559.1616-1-hdanton@sina.com>
+In-Reply-To: <6859ea24.a00a0220.2e5631.0044.GAE@google.com>
+References: 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
-Content-Type: text/plain; charset=US-ASCII
-X-Spam-Flag: NO
-X-Spam-Score: -3.30
-X-Spamd-Result: default: False [-3.30 / 50.00];
-	BAYES_HAM(-3.00)[99.99%];
-	MID_CONTAINS_FROM(1.00)[];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	NEURAL_HAM_SHORT(-0.20)[-0.998];
-	MIME_GOOD(-0.10)[text/plain];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	ARC_NA(0.00)[];
-	TO_DN_SOME(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	RCVD_TLS_ALL(0.00)[];
-	FROM_EQ_ENVFROM(0.00)[];
-	RCPT_COUNT_FIVE(0.00)[6];
-	RCVD_COUNT_TWO(0.00)[2];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.de:mid]
-X-Spam-Level: 
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 
-On Tue, 24 Jun 2025 08:06:06 +0200,
-Pei Xiao wrote:
+> Date: Mon, 23 Jun 2025 16:58:28 -0700
+> syzbot found the following issue on:
 > 
-> The find_substream() call may return NULL, but the original error path
-> dereferenced 'subs' unconditionally in dev_err(&subs->dev->dev, ...),
-> causing a NULL pointer dereference when subs is NULL.
-> 
-> Fix by replacing dev_err with pr_err which doesn't require device context.
-> This safely handles NULL subs while preserving the critical debugging
-> information (pcm_card_num, pcm_dev_num, direction).
-> 
-> Signed-off-by: Pei Xiao <xiaopei01@kylinos.cn>
-> ---
->  sound/usb/qcom/qc_audio_offload.c | 3 +--
->  1 file changed, 1 insertion(+), 2 deletions(-)
-> 
-> diff --git a/sound/usb/qcom/qc_audio_offload.c b/sound/usb/qcom/qc_audio_offload.c
-> index 5bc27c82e0af..556fd9cb4fa6 100644
-> --- a/sound/usb/qcom/qc_audio_offload.c
-> +++ b/sound/usb/qcom/qc_audio_offload.c
-> @@ -759,8 +759,7 @@ static void qmi_stop_session(void)
->  			subs = find_substream(pcm_card_num, info->pcm_dev_num,
->  					      info->direction);
->  			if (!subs || !chip || atomic_read(&chip->shutdown)) {
-> -				dev_err(&subs->dev->dev,
-> -					"no sub for c#%u dev#%u dir%u\n",
-> +				pr_err("no sub for c#%u dev#%u dir%u\n",
->  					info->pcm_card_num,
->  					info->pcm_dev_num,
->  					info->direction);
+> HEAD commit:    86731a2a651e Linux 6.16-rc3
+> git tree:       upstream
+> console output: https://syzkaller.appspot.com/x/log.txt?x=1611eb0c580000
+> kernel config:  https://syzkaller.appspot.com/x/.config?x=4ad206eb0100c6a2
+> dashboard link: https://syzkaller.appspot.com/bug?extid=daba72c4af9915e9c894
+> compiler:       gcc (Debian 12.2.0-14) 12.2.0, GNU ld (GNU Binutils for Debian) 2.40
+> syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=13b16dd4580000
+> C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=17c7bb0c580000
 
-if we replace with pr_err(), it should show a bit more relevant
-information; otherwise user can't know who spews this error for what
-reason.
+#syz test
 
-Alternatively, we may replace the device pointer with another existing
-device, e.g. uadev[idx].udev->dev, too.
-
-
-thanks,
-
-Takashi
+--- x/kernel/trace/trace_events_filter.c
++++ y/kernel/trace/trace_events_filter.c
+@@ -1429,6 +1429,7 @@ static void filter_free_subsystem_filter
+ 	struct trace_event_file *file;
+ 	struct filter_head *head;
+ 	struct filter_list *item;
++	int free_filter = 1;
+ 
+ 	head = kmalloc(sizeof(*head), GFP_KERNEL);
+ 	if (!head)
+@@ -1442,6 +1443,7 @@ static void filter_free_subsystem_filter
+ 
+ 	item->filter = filter;
+ 	list_add_tail(&item->list, &head->list);
++	free_filter = 0;
+ 
+ 	list_for_each_entry(file, &tr->events, list) {
+ 		if (file->system != dir)
+@@ -1467,7 +1469,8 @@ static void filter_free_subsystem_filter
+ 			continue;
+ 		__free_subsystem_filter(file);
+ 	}
+-	__free_filter(filter);
++	if (free_filter)
++		__free_filter(filter);
+ }
+ 
+ int filter_assign_type(const char *type)
+--
 
