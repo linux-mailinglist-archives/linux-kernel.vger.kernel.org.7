@@ -1,227 +1,183 @@
-Return-Path: <linux-kernel+bounces-699846-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-699844-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 84917AE601F
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Jun 2025 11:02:00 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8B9A7AE601A
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Jun 2025 11:00:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0A2E44C1582
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Jun 2025 09:02:01 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8F64A3B3350
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Jun 2025 09:00:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3F42A2777F1;
-	Tue, 24 Jun 2025 09:01:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DBFD427A90F;
+	Tue, 24 Jun 2025 09:00:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="SpH1YQA5"
-Received: from lelvem-ot01.ext.ti.com (lelvem-ot01.ext.ti.com [198.47.23.234])
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="IkwDwFTM"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9BFEF42056
-	for <linux-kernel@vger.kernel.org>; Tue, 24 Jun 2025 09:01:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.23.234
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CB46B42056
+	for <linux-kernel@vger.kernel.org>; Tue, 24 Jun 2025 09:00:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750755713; cv=none; b=MCwgl3begJUFKMnXVivD+Nb8uNwFuznxGtJqMz/5MKQzelW+tybegNGvxGTjM0PAZShfO309TdFG5Z3b8YxKgGfrzu91FHSdez6+hv2PBSgEbIIcyMTRO3U1mO7snqsf3SuqB9X3G1kDdPXKpH4w84jSRalQvZ1iC9DzplPnKbM=
+	t=1750755635; cv=none; b=FQPdbiAZETc51+FvlhCm9l+lzvI4kPJ+pAX+ee9st6VgvfUK5cGxki4uiEJHy98Tfo71IPELcVuUg1ZkqXjjwlqFjaZYoEeCSnJ3DPCQGz1PKb01j4cLGkTirtzDGuLcVB6HGszGvtExdNRrcpXPi2xmWkoTxUv7ctPW+a/D7M8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750755713; c=relaxed/simple;
-	bh=gvqnNFRX096LbHK68fwyzpMFRv34rfn2xmPpgicqHDU=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=pPjP8F7oymmFJpzA+oQ0TTxcs3AQZhb7OQX1/FmQ8a613u2O+uNxdlFZ4bJYyWDVU7GqYMiF72khtJaMa9fZhpLr8qF1IgiMqt8QL8CjbaS/xCdXqIyk7zudDUN7zneaEV3K+rL0F3mwLGEsWzlj78h3qAkdomYyVEPhVY4C/GI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=SpH1YQA5; arc=none smtp.client-ip=198.47.23.234
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
-Received: from fllvem-sh04.itg.ti.com ([10.64.41.54])
-	by lelvem-ot01.ext.ti.com (8.15.2/8.15.2) with ESMTP id 55O90ZDm1122333;
-	Tue, 24 Jun 2025 04:00:35 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-	s=ti-com-17Q1; t=1750755635;
-	bh=esswBLe6SIahZaBqrIk0DlQE/Zgu8U6weX3OQF3nSyM=;
-	h=Date:Subject:To:CC:References:From:In-Reply-To;
-	b=SpH1YQA5UvGl5uBkOa3frH6j1qInLDq3/EXLsaL20MY997EVXlUDalMGfBShloSTK
-	 8Pgy9Z+ef2FXouM6XsJ2U1iRP3/IEmHmP0PNfVXci3tKpdbfSMumTOI3Vb3mZVpjSU
-	 700ggn7Q25vKM++enEhHcSs/DNGgYAWF9O4zUqc0=
-Received: from DLEE114.ent.ti.com (dlee114.ent.ti.com [157.170.170.25])
-	by fllvem-sh04.itg.ti.com (8.18.1/8.18.1) with ESMTPS id 55O90YIa127208
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-SHA256 bits=128 verify=FAIL);
-	Tue, 24 Jun 2025 04:00:34 -0500
-Received: from DLEE105.ent.ti.com (157.170.170.35) by DLEE114.ent.ti.com
- (157.170.170.25) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.55; Tue, 24
- Jun 2025 04:00:34 -0500
-Received: from lelvem-mr06.itg.ti.com (10.180.75.8) by DLEE105.ent.ti.com
- (157.170.170.35) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.55 via
- Frontend Transport; Tue, 24 Jun 2025 04:00:34 -0500
-Received: from [172.24.227.214] (jayesh-hp-z2-tower-g5-workstation.dhcp.ti.com [172.24.227.214])
-	by lelvem-mr06.itg.ti.com (8.18.1/8.18.1) with ESMTP id 55O90RJs1232253;
-	Tue, 24 Jun 2025 04:00:28 -0500
-Message-ID: <c36bd142-7a13-43e2-a392-cdbd45b4a66b@ti.com>
+	s=arc-20240116; t=1750755635; c=relaxed/simple;
+	bh=U2xQx0rn/8aGgc9dHIi1/pHNKm2foU2fX57mEUJHDOQ=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=uoPMEfqJcS+eznhTDSr+MIJzUzUTFrGpBZoDGuFGpOGgnlvSC65KwjyLEsN6utYyrsZoKz9dQqo5lJUJXL0bbITjJ66sH6AfQinAc1txFGgCkzzO//+6Jn2g0pAk3JJ+ayHxlcN8iaJi6uPjX9tR6xBiRRvSQccY1f6hyxs5N18=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=IkwDwFTM; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279866.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 55O7Jvua021620
+	for <linux-kernel@vger.kernel.org>; Tue, 24 Jun 2025 09:00:33 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=qcppdkim1; bh=+NyI67ThhjfZFCRQE5F28n
+	vgsys0I1SbZpACtlofh+8=; b=IkwDwFTMSuXG9jdTws0CFK7qIZG5tWP2fN3wkd
+	3gRD87tpG8nMMVMvxvDuVk0VeT1ArQDxN6i9SYktiPn31zQyRmoPjGAmi0wPferz
+	TTGlR1nJefA6WbMWc6g4otZeYoCy6qx7H3CxpfEpPeJwHrCeJwVRzijS+a6R/z0g
+	62LYG+vB0B9SFk7NbLlVQ9nK6AtqdVSnAXNdQZgGRUB8ZlXYuNfOs/HXOldBThLr
+	pchatsxw3HgKyrCb/P83EQaCf/oOVNA5vfzHn905XFrwmmw4rApFSHKBStI/uGPA
+	jsLUpMenfoSWaZzjX+KnlMSbsPg0bXkUl21VFDklU4sy3ogA==
+Received: from mail-pg1-f197.google.com (mail-pg1-f197.google.com [209.85.215.197])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 47ec265ppx-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Tue, 24 Jun 2025 09:00:32 +0000 (GMT)
+Received: by mail-pg1-f197.google.com with SMTP id 41be03b00d2f7-b2fa1a84566so3108449a12.1
+        for <linux-kernel@vger.kernel.org>; Tue, 24 Jun 2025 02:00:32 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1750755632; x=1751360432;
+        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
+         :date:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=+NyI67ThhjfZFCRQE5F28nvgsys0I1SbZpACtlofh+8=;
+        b=IM7rZlyG0Qw6sJw9qmBgvDFpcS2QZ+eBtutnjgIEjIo0wqAzk2yAZoLkG6nCJST2sf
+         xI8Fzu7JWzRzh3silUFr9Ck6sF3nhsIfKVozSqMBEJKRLO5FXCNXoxGcnMz27Lf1ITWO
+         HSDWHLYpLOxPqFZaT+wPOmgzPAvk4E9eCxbCaeA36KNaIDNUS6I33lfOCuDYo0owgeyT
+         oYURYTlmkQ14inSsJW8+qnHbeYGi8lPUVmeoatrDP+elNsGMC0u1J2PvWX0yr9Z5T176
+         4LuVcU7w760lVp0Wos3wEzfWvLKntrxb6VQH7ywQJwHbfLvKJmI2JwpgOKCbJptT8EwO
+         UnXA==
+X-Forwarded-Encrypted: i=1; AJvYcCWhRbp1igy4z+LuVCis65U/xikLtf2zOPy8pq8DYOER8eSoUXBZw7QUlbEYEtUpj5R3XVvew7xHX1zieiQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwS/ncuQ12eSTnyd7HuvYDVAmwfUhMv8MBQoIHfwLzVSLH8yWnM
+	v3auLdIlWC3Kd05vGNeDwVCfxizKYdFdmruypqom72iAw/OPDQnXfKrcLgq3eFgGrSuPhBAzOky
+	YQksdMMifdp8R1gCaoYt74hSdt9hjGMcQh3hAf5WyI5Vz3XoxrS/M+Sx4fMykUeSc8gA=
+X-Gm-Gg: ASbGncuN6Efg3X00130ErzYkGh0K6CojsbptPxCFBSzAIgZ63TGKHRfNbif/ifAKkbB
+	sIAh2A7JSmlaztR9ByWS9vTjYHlIe4dwNE8QyjFtF4tOP3s+GccRrj/10QleYDUlzeVZnEWnhoN
+	vmnV9aKH4DO4dcQcZn1GTLrOSd7s1KHYoPOnd9OR975UiyHpRjInJQEE9y2JUARj0IZCMdZnd8n
+	M045/2yjcYt+4p6Hk4t3nTT+WKuh4dXg+BwPAygGurdWybXaD56tAcsUgFyK7ZFy7y4qVC/FOJe
+	wu4k680+aWzfAudyRHb20VpRayQg4GVhG/uTyh1f50/r7DiZziJ3C3fuZVpZbJhfaxjzRCuTsvr
+	AXaFZ5zZJ4eY4/AVTXM+dP5UWQPj0R3HjEcrR92ulDqevJJqeBhJeka3/aQ==
+X-Received: by 2002:a05:6a20:6a0f:b0:1f5:6c7b:8920 with SMTP id adf61e73a8af0-22026e7e31emr24033266637.9.1750755631854;
+        Tue, 24 Jun 2025 02:00:31 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IGdcVenNkz5UxzXqMMWqPIWW9v1GT19pnFNZ9q4LN+b4fsLANqDhBzMgjxLlovaHaAcmWCGpw==
+X-Received: by 2002:a05:6a20:6a0f:b0:1f5:6c7b:8920 with SMTP id adf61e73a8af0-22026e7e31emr24033213637.9.1750755631339;
+        Tue, 24 Jun 2025 02:00:31 -0700 (PDT)
+Received: from hu-kathirav-blr.qualcomm.com (blr-bdr-fw-01_GlobalNAT_AllZones-Outside.qualcomm.com. [103.229.18.19])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-749b5e08d11sm1269076b3a.20.2025.06.24.02.00.28
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 24 Jun 2025 02:00:30 -0700 (PDT)
+From: Kathiravan Thirumoorthy <kathiravan.thirumoorthy@oss.qualcomm.com>
 Date: Tue, 24 Jun 2025 14:30:26 +0530
+Subject: [PATCH v2] arm64: dts: qcom: ipq5424: Describe the 4-wire UART SE
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 00/17] drm/bridge: cdns-dsi: Make it work a bit better
-To: Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>,
-        Jyri Sarha
-	<jyri.sarha@iki.fi>,
-        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-        Maxime Ripard <mripard@kernel.org>,
-        Thomas Zimmermann <tzimmermann@suse.de>,
-        David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
-        Vinod Koul
-	<vkoul@kernel.org>,
-        Kishon Vijay Abraham I <kishon@kernel.org>,
-        Andrzej Hajda
-	<andrzej.hajda@intel.com>,
-        Neil Armstrong <neil.armstrong@linaro.org>,
-        Robert
- Foss <rfoss@kernel.org>,
-        Laurent Pinchart
-	<Laurent.pinchart@ideasonboard.com>,
-        Jonas Karlman <jonas@kwiboo.se>,
-        Jernej
- Skrabec <jernej.skrabec@gmail.com>,
-        Dmitry Baryshkov <lumag@kernel.org>
-CC: <dri-devel@lists.freedesktop.org>, <linux-kernel@vger.kernel.org>,
-        <linux-phy@lists.infradead.org>,
-        Francesco Dolcini <francesco@dolcini.it>,
-        Aradhya Bhatia <aradhya.bhatia@linux.dev>,
-        Devarsh Thakkar <devarsht@ti.com>,
-        Parth Pancholi <parth.pancholi@toradex.com>
-References: <20250618-cdns-dsi-impro-v4-0-862c841dbe02@ideasonboard.com>
-Content-Language: en-US
-From: Jayesh Choudhary <j-choudhary@ti.com>
-In-Reply-To: <20250618-cdns-dsi-impro-v4-0-862c841dbe02@ideasonboard.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
+Message-Id: <20250624-ipq5424_hsuart-v2-1-6566dabfe4a6@oss.qualcomm.com>
+X-B4-Tracking: v=1; b=H4sIAClpWmgC/3WMwQ6CMBAFf4Xs2ZK2tIie/A9DTClFNhEKXSAa0
+ n+3cvfyknnJzA7kAjqCa7ZDcBsS+jGBPGVgezM+HcM2MUguNS+lYjjNWkn16Gk1YWFVI4qyKS7
+ WiAqSNAXX4fsI3uvEPdLiw+fob+L3/k1tgglmlDuLlvPOcn3zRPm8mpf1w5CngTrG+AW4bRgas
+ wAAAA==
+X-Change-ID: 20250624-ipq5424_hsuart-8b136b39ca18
+To: Bjorn Andersson <andersson@kernel.org>,
+        Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>
+Cc: linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        Kathiravan Thirumoorthy <kathiravan.thirumoorthy@oss.qualcomm.com>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1750755628; l=1705;
+ i=kathiravan.thirumoorthy@oss.qualcomm.com; s=20230906;
+ h=from:subject:message-id; bh=U2xQx0rn/8aGgc9dHIi1/pHNKm2foU2fX57mEUJHDOQ=;
+ b=89q++4S8stJPzoWdCgNns6o4Lzix0HmD6nfkstc2DzbtOCEG0+3QGXanhUbYsUqdvcINowyh7
+ VFneObFsUxeDfpn+lxap3tWCipkNtc14jIlwtS477HYWANAlFrM9Ar6
+X-Developer-Key: i=kathiravan.thirumoorthy@oss.qualcomm.com; a=ed25519;
+ pk=xWsR7pL6ch+vdZ9MoFGEaP61JUaRf0XaZYWztbQsIiM=
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNjI0MDA3NiBTYWx0ZWRfX+5ZiPUvwHD2Q
+ F7ho7pFEqLEal3+hxmvdgXsQWXN4/mxbfuDINeO8pZ3udC9WLYiPoPLh1rp4jqNPbttnxvogAXF
+ 0zbWIrBuaRm4j1ii33ZcDCKP6p3k6ZAUNBEyXkuC2jWT4eTHIyEY2hAhFUnjCDvMt8AWm3cSM29
+ 1TJhBzBu6jaO7hEUflVpNVQ4F/QGbURJM/qU2LIRp7yFbgGlr3z8sBoG1YWAU6WzMqJnhaxGfwJ
+ 1C4Vba+iLzGHOrQuj7Jz3X7076D3pxUjYY23FY0o5tgqbFi8N6IozdxepYfS8RFIY77FLH7Ty8p
+ b07GaMPWUoZooRArW5a3Kq8WffhYnE2PnuRUk+dpH5JaBQE4E6Q4F60+IEnUoyI+utARAWHFA9q
+ B9JVmMjLwYWE2BcgUPqEMPwNowplvir6MbbG3YAI0kdlXLhQD8+luf9obdQtUqdFv3v1ANIo
+X-Authority-Analysis: v=2.4 cv=XPQwSRhE c=1 sm=1 tr=0 ts=685a6930 cx=c_pps
+ a=rz3CxIlbcmazkYymdCej/Q==:117 a=Ou0eQOY4+eZoSc0qltEV5Q==:17
+ a=IkcTkHD0fZMA:10 a=6IFa9wvqVegA:10 a=VwQbUJbxAAAA:8 a=EUspDBNiAAAA:8
+ a=EDESvqxZEWg_xnwLgQYA:9 a=QEXdDO2ut3YA:10 a=bFCP_H2QrGi7Okbo017w:22
+X-Proofpoint-GUID: 80kPUPM_0P3xJBEdcOHbLig2ZnnBPeRg
+X-Proofpoint-ORIG-GUID: 80kPUPM_0P3xJBEdcOHbLig2ZnnBPeRg
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.7,FMLib:17.12.80.40
+ definitions=2025-06-24_03,2025-06-23_07,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ lowpriorityscore=0 impostorscore=0 clxscore=1015 suspectscore=0 mlxscore=0
+ spamscore=0 phishscore=0 malwarescore=0 mlxlogscore=944 bulkscore=0
+ priorityscore=1501 adultscore=0 classifier=spam authscore=0 authtc=n/a
+ authcc= route=outbound adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2505280000 definitions=main-2506240076
 
-Hello Tomi,
+QUPv3 in IPQ5424 consists of six Serial Engines (SEs). Describe the
+first SE, which supports a 4-wire UART configuration suitable for
+applications such as HS-UART.
 
-On 18/06/25 15:29, Tomi Valkeinen wrote:
-> While trying to get the cdns-dsi to work on Toradex's AM69 Aquila
-> platform, I hit multiple issues in the driver. Basicaly nothing worked
-> for with the board.
-> 
-> This series fixes those issues. While I itch to make much larger changes
-> to the cdns-dsi driver, I opted to keep this series relatively simple to
-> make the fixes more clear and possibly help with backporting.
-> 
-> The series also touches tidss, but those changes are not strictly
-> needed, and can be merged separately. And the series also touches
-> cdns-dphy, and those changes are needed.
-> 
-> This has been tested on Toradex AM69 Aquila (upstream) and AM62P Verdin
-> (Toradex's BSP), with:
-> - HDMI output using lontium lt8912b
-> - LVDS panel (sn65dsi84 + panel-lvds)
-> 
->   Tomi
-> 
-> Signed-off-by: Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>
-> ---
-> Changes in v4:
-> - Rebased on top of drm-misc-next, which has most of the dependencies
->    merged
-> - Moved one dependency, "drm/bridge: cdns-dsi: Fix the _atomic_check()"
->    into this series
-> - Dropped "drm/tidss: Adjust the pclk based on the HW capabilities".
->    This causes a regression with OLDI outputs, and is not strictly
->    required. Fixing this needs restructuring tidss clock handling.
+Note that the required initialization for this SE is not handled by the
+bootloader. Therefore, add the SE node in the device tree but keep it
+disabled. Enable it once Linux gains support for configuring the SE,
+allowing to use in relevant RDPs.
 
-Here upon further investigating the issue for OLDI, that caused this
-patch to be dropped, I saw that it was due to the VP clock owned by
-OLDI driver. It does not actually go into the determine_rate() call
-like we would expect it to.
+Signed-off-by: Kathiravan Thirumoorthy <kathiravan.thirumoorthy@oss.qualcomm.com>
+---
+Changes in v2:
+- Correct the interrupt number
+- Link to v1: https://lore.kernel.org/r/20250624-ipq5424_hsuart-v1-1-a4e71d00fc05@oss.qualcomm.com
+---
+ arch/arm64/boot/dts/qcom/ipq5424.dtsi | 9 +++++++++
+ 1 file changed, 9 insertions(+)
 
-Tested on J784S4-EVM platform (along with the DSI support as posted in
-https://lore.kernel.org/all/20250624082619.324851-1-j-choudhary@ti.com/)
-I can see that display comes up for 800x600 and 1280x1024 resolution.
+diff --git a/arch/arm64/boot/dts/qcom/ipq5424.dtsi b/arch/arm64/boot/dts/qcom/ipq5424.dtsi
+index 66bd2261eb25d79051adddef604c55f5b01e6e8b..2b8499422a8a9a2f63e1af9ae8c189bafe690514 100644
+--- a/arch/arm64/boot/dts/qcom/ipq5424.dtsi
++++ b/arch/arm64/boot/dts/qcom/ipq5424.dtsi
+@@ -417,6 +417,15 @@ qupv3: geniqup@1ac0000 {
+ 			#address-cells = <2>;
+ 			#size-cells = <2>;
+ 
++			uart0: serial@1a80000 {
++				compatible = "qcom,geni-uart";
++				reg = <0 0x01a80000 0 0x4000>;
++				clocks = <&gcc GCC_QUPV3_UART0_CLK>;
++				clock-names = "se";
++				interrupts = <GIC_SPI 339 IRQ_TYPE_LEVEL_HIGH>;
++				status = "disabled";
++			};
++
+ 			uart1: serial@1a84000 {
+ 				compatible = "qcom,geni-debug-uart";
+ 				reg = <0 0x01a84000 0 0x4000>;
 
+---
+base-commit: f817b6dd2b62d921a6cdc0a3ac599cd1851f343c
+change-id: 20250624-ipq5424_hsuart-8b136b39ca18
 
-Tested-by: Jayesh Choudhary <j-choudhary@ti.com>
+Best regards,
+-- 
+Kathiravan Thirumoorthy <kathiravan.thirumoorthy@oss.qualcomm.com>
 
-
-I observed that we still need something like drm_mode_set_crtcinfo()
-to propagate correct crtc_* fields even when we do not call round_rate()
-Since mode_fixup() is not preferred now, we need it in atomic_check()
-like you had it in v3:[3/17]
-
-I have posted a delta patch on top of this series:
-https://lore.kernel.org/all/20250624080402.302526-1-j-choudhary@ti.com/
-that doe sit and helps in further enabling other modes.
-
-Warm Regards,
-Jayesh
-
-
-
-> - Link to v3: https://lore.kernel.org/r/20250414-cdns-dsi-impro-v3-0-4e52551d4f07@ideasonboard.com
-> 
-> Changes in v3:
-> - Add Aradhya's "drm/bridge: cdns-dsi: Fix the _atomic_check()" to the
->    dependencies
-> - The above patch from Aradhya allowed adding "drm/bridge: cdns-dsi:
->    Drop crtc_* code", which resulted in quite large changes in the
->    commits, even if the end result doesn't really differ.
-> - Reordered commits to decrease back-and-forth (e.g. fixing something in
->    a a code that will be removed in the next commits)
-> - The reordering caused quite big changes in the commits (even if the
->    final end result is more or less the same), so I chose not to add
->    tested-by tags.
-> - Rename 'cdns_get_dphy_pll_cfg' to 'cdns_dphy_get_pll_cfg'
-> - Use div_u64() instead of div64_u64()
-> - Drop "Fail if HS rate changed when validating PHY config". This was
->    too strict, as clock rounding (especially with DRM's 1kHz
->    resolution...) leads to clock rates that do not match exactly.
->    However, the rate mismatch should be fine as the commits adjust the
->    pixel clock, and the resulting differences should be so small that we
->    can't even improve the timings match by adjusting the DSI HFP, as the
->    adjustment rounds to 0.
-> - Link to v2: https://lore.kernel.org/r/20250402-cdns-dsi-impro-v2-0-4a093eaa5e27@ideasonboard.com
-> 
-> Changes in v2:
-> - Change the tidss clock adjustment from mode_fixup() to atomic_check()
-> - Link to v1: https://lore.kernel.org/r/20250320-cdns-dsi-impro-v1-0-725277c5f43b@ideasonboard.com
-> 
-> ---
-> Aradhya Bhatia (1):
->        drm/bridge: cdns-dsi: Fix the _atomic_check()
-> 
-> Tomi Valkeinen (16):
->        drm/tidss: Fix missing includes and struct decls
->        drm/tidss: Use the crtc_* timings when programming the HW
->        phy: cdns-dphy: Store hs_clk_rate and return it
->        phy: cdns-dphy: Remove leftover code
->        drm/bridge: cdns-dsi: Remove extra line at the end of the file
->        drm/bridge: cdns-dsi: Drop crtc_* code
->        drm/bridge: cdns-dsi: Remove broken fifo emptying check
->        drm/bridge: cdns-dsi: Drop checks that shouldn't be in .mode_valid()
->        drm/bridge: cdns-dsi: Update htotal in cdns_dsi_mode2cfg()
->        drm/bridge: cdns-dsi: Drop cdns_dsi_adjust_phy_config()
->        drm/bridge: cdns-dsi: Adjust mode to negative syncs
->        drm/bridge: cdns-dsi: Fix REG_WAKEUP_TIME value
->        drm/bridge: cdns-dsi: Use video mode and clean up cdns_dsi_mode2cfg()
->        drm/bridge: cdns-dsi: Fix event mode
->        drm/bridge: cdns-dsi: Tune adjusted_mode->clock according to dsi needs
->        drm/bridge: cdns-dsi: Don't fail on MIPI_DSI_MODE_VIDEO_BURST
-> 
->   drivers/gpu/drm/bridge/cadence/cdns-dsi-core.c | 211 +++++++++++--------------
->   drivers/gpu/drm/tidss/tidss_crtc.c             |   2 +-
->   drivers/gpu/drm/tidss/tidss_dispc.c            |  16 +-
->   drivers/gpu/drm/tidss/tidss_dispc.h            |   3 +
->   drivers/gpu/drm/tidss/tidss_drv.h              |   2 +
->   drivers/gpu/drm/tidss/tidss_plane.h            |   2 +
->   drivers/gpu/drm/tidss/tidss_scale_coefs.h      |   2 +
->   drivers/phy/cadence/cdns-dphy.c                |  24 ++-
->   8 files changed, 115 insertions(+), 147 deletions(-)
-> ---
-> base-commit: 261a603062a87bad0b54904c76dacb15fa126c74
-> change-id: 20250320-cdns-dsi-impro-3d8fbd7848d1
-> 
-> Best regards,
 
