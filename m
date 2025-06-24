@@ -1,137 +1,152 @@
-Return-Path: <linux-kernel+bounces-700957-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-700960-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 04371AE6EF0
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Jun 2025 20:54:36 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id F3467AE6EFA
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Jun 2025 20:57:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3C91017EB51
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Jun 2025 18:54:36 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A520C3BD438
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Jun 2025 18:56:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8B43B2E7636;
-	Tue, 24 Jun 2025 18:54:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 05B114C74;
+	Tue, 24 Jun 2025 18:57:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ursu.me header.i=@ursu.me header.b="kf982Q6P";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="BtJZfkQb"
-Received: from fhigh-b1-smtp.messagingengine.com (fhigh-b1-smtp.messagingengine.com [202.12.124.152])
+	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="TFQb859B"
+Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 022FD1BEF7E;
-	Tue, 24 Jun 2025 18:54:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.12.124.152
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C3D2B26CE3E;
+	Tue, 24 Jun 2025 18:57:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750791266; cv=none; b=SIVhNwQgaKbUzSk/NxtMT+9qASfyud7LtVykJ/6w1oH9NADydPysc8CJeno2MiGAaXHuLdU3DUx47NGZrab2fbuWj1YunnIc/3iprKQMWNZmp4DyFJRX+MECmlIdQDdYJjJ4WqCt4k9crID+sgAi45n0XAVvI/DFYNVvauwoc6s=
+	t=1750791426; cv=none; b=m8kAh8dbfSyashy4J724AgdtFMdqcmV24zMUHy+DUczkHGEuiLbFtkXpipw9BYxDrlN2hUwfksa6irYIH9IeYPAPlix0JFG+C/nTyDLwuACNfHtmUaSWWdq+NP7/2Bn8TJ8e3PI7OxpiC8gbionJc52QRSEz5qsVWH7c0V5WYV4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750791266; c=relaxed/simple;
-	bh=NCb22LhO5XC64kFAzLnTRrocrXYfGuHb0ZMV8tHjSXU=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Ph6rThhWEp2G/HzLsoep+t7BOvn4YBiN3tWC3I63PRZpMyOm9RFg6ONTGoZkj+6RtkGqNCQtRg2s19BZcvRqOcA5PAJvyJJE63a5vedlisMalAw4+glDq5ZvDZ4Yk8ZYeFfcU35Ew+D4exQeKJ2jlxvaATMP1wDnHytQbU5Yj2k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ursu.me; spf=pass smtp.mailfrom=ursu.me; dkim=pass (2048-bit key) header.d=ursu.me header.i=@ursu.me header.b=kf982Q6P; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=BtJZfkQb; arc=none smtp.client-ip=202.12.124.152
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ursu.me
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ursu.me
-Received: from phl-compute-05.internal (phl-compute-05.phl.internal [10.202.2.45])
-	by mailfhigh.stl.internal (Postfix) with ESMTP id B06F57A0170;
-	Tue, 24 Jun 2025 14:54:23 -0400 (EDT)
-Received: from phl-mailfrontend-02 ([10.202.2.163])
-  by phl-compute-05.internal (MEProxy); Tue, 24 Jun 2025 14:54:24 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ursu.me; h=cc:cc
-	:content-transfer-encoding:content-type:content-type:date:date
-	:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to; s=fm3; t=1750791263;
-	 x=1750877663; bh=r4ovMX0anPN+WiNz0S85LAe+51KjLkJjPDDy5vLdsmY=; b=
-	kf982Q6PME2m9SzGt1Rx8SMrIS3BlRmSpFJsIYda7lu7mgUJsRZpdHC4PIM2oCnd
-	r9stmmCo9ur4VJC99O8ZATZSjjUGwIDDZpyar+GsabCk208EgkwwRltBhWhxXxfp
-	VveHJWRMG/X6H5/RFAwfynl2585OAt3jZ0gaoYKdjg9vc7SJ7tFxRX4rbowZ/Uyy
-	rlerk2NEO14IYPjTsa4lKgvQgpoG02vTRHdphbTUQo9uguDeb7XwWOJsvG+wFLYM
-	QD/h9/k8mEVRmJAYyUyArT/bEJcjFmskK2HJrrGv6AwDyeRp1GaVNHojAikENQCD
-	yl+jJnptcoK77Aff2aMveQ==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:content-type:date:date:feedback-id:feedback-id
-	:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to:x-me-proxy
-	:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=1750791263; x=
-	1750877663; bh=r4ovMX0anPN+WiNz0S85LAe+51KjLkJjPDDy5vLdsmY=; b=B
-	tJZfkQbNerPtueO5Yp+NvVTLhyqOLr9oU6CkrEMuDjeZQi9W4FZkVbONP84I0lzt
-	YquDqmpkmcm/NkcDm/6xdoyljqCW3KXlkNKJzNXYMryMOgNMnaWfPjCJUo30MbAs
-	29Uy3Uxq+fGMHqs5elIBx1BfYqo5d86ah57g91WVSpOCZ3iaNxnJjJAYPTulfa64
-	O9UWLFHQQu80k0/48BTNbmg1MH6hgnmiVdi7NMtTxF8T7f99/1UhntXf/r6hMSFV
-	VUDvu1Bcvp8AcMVjEX3RrTsVyuj+T9JMaZ49byngu+lUU9x9J/vLjPyZY6fs+vq6
-	dGKtvJ10n0w3mbS+4082Q==
-X-ME-Sender: <xms:XvRaaBZGC5nE5Qc_REb8OYYa0-quUOUUWeP8LKO3OKJLULpONqNYJQ>
-    <xme:XvRaaIa3AkP0DW0mp7kjhwadKCpG7X6xlTla1JXbe4ct8zO6cyxGzWaowoHKjPsoC
-    GXwGy3M5RjNdB0-EEE>
-X-ME-Received: <xmr:XvRaaD_g8lMY1TLaLj3-BI0cPApDoF_imlJmFNfN1cUsFKupJw-fxLUUf0bz9AVdoi4Q>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtddvgddvtdeiiecutefuodetggdotefrod
-    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpuffrtefokffrpgfnqfghnecuuegr
-    ihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjug
-    hrpefkffggfgfuvfevfhfhjggtgfesthekredttddvjeenucfhrhhomhepgghlrgguucgf
-    tffufgcuoehvlhgrugesuhhrshhurdhmvgeqnecuggftrfgrthhtvghrnhepteehfeduge
-    elleffgfduffevffdvhfevteevleefteetjedtiedvudevheduheffnecuvehluhhsthgv
-    rhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomhepvhhlrggusehurhhsuhdrmh
-    gvpdhnsggprhgtphhtthhopeduuddpmhhouggvpehsmhhtphhouhhtpdhrtghpthhtohep
-    jhgrtggvkhesjhgrtggvkhhkrdhinhhfohdprhgtphhtthhopegrnhhthhhonhihrdhlrd
-    hnghhuhigvnhesihhnthgvlhdrtghomhdprhgtphhtthhopehprhiivghmhihslhgrfidr
-    khhithhsiigvlhesihhnthgvlhdrtghomhdprhgtphhtthhopegrnhgurhgvfidonhgvth
-    guvghvsehluhhnnhdrtghhpdhrtghpthhtohepuggrvhgvmhesuggrvhgvmhhlohhfthdr
-    nhgvthdprhgtphhtthhopegvughumhgriigvthesghhoohhglhgvrdgtohhmpdhrtghpth
-    htohepkhhusggrsehkvghrnhgvlhdrohhrghdprhgtphhtthhopehprggsvghnihesrhgv
-    ughhrghtrdgtohhmpdhrtghpthhtohepihhnthgvlhdqfihirhgvugdqlhgrnheslhhish
-    htshdrohhsuhhoshhlrdhorhhg
-X-ME-Proxy: <xmx:XvRaaPqA2ZR_wKuYWUc9L_fvLGIWIJ1uQBaOgFmZVaVi4pCXysAYpw>
-    <xmx:XvRaaMpKOLldltRfgeqxmNAZ8nXCHmo6Lj8mu4ny1j6osOik8my6Cg>
-    <xmx:XvRaaFTwRw8HINhciiTvAupDKDUV33dUbR0Y208pDgMiTwprmZfqDg>
-    <xmx:XvRaaEpdmvsS9sqc74zIPWbD7Lq2Va3jOXDt4DYN3vGBVcZjRbAASA>
-    <xmx:X_RaaCfLsZ5JyT2WTI2sM4JS9kdhf_7RPZlpb-UYc3ILMC33BecwsQdk>
-Feedback-ID: i9ff147ff:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Tue,
- 24 Jun 2025 14:54:20 -0400 (EDT)
-Message-ID: <5dbd4c98-f161-4f91-aacd-08ab2b7f155c@ursu.me>
-Date: Tue, 24 Jun 2025 21:54:15 +0300
+	s=arc-20240116; t=1750791426; c=relaxed/simple;
+	bh=Wj1BVQK4pHNQLQ0sMBbbYrIKkTxSc9PFKwokZoPHlXM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Bl9uD+sJftKABcSLKxs1PAVC8I0hZljERq94QA7F6G3Qy5ckN0vcXg9xx5EotiHo9eqB08KSnbSWvMFKVilivFFWTm5lr+tSJkDJNKDNbdET6yS8BgRUOqIoab/H4FeKMv9+H9ofJQU8OB0J0QeAtgHzkiPXPg2SN76If1kc8Fo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=TFQb859B; arc=none smtp.client-ip=213.167.242.64
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
+Received: from pendragon.ideasonboard.com (81-175-209-231.bb.dnainternet.fi [81.175.209.231])
+	by perceval.ideasonboard.com (Postfix) with UTF8SMTPSA id CB68F6F3;
+	Tue, 24 Jun 2025 20:56:45 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
+	s=mail; t=1750791406;
+	bh=Wj1BVQK4pHNQLQ0sMBbbYrIKkTxSc9PFKwokZoPHlXM=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=TFQb859B027xRHDYUGWO+lbI9pismOo1t9AZDi6IrXt6n/HL/2r0kQfQZXnsPfrDZ
+	 cLzxg6MgXfTkO4snHwWus+L9ei6IhUTwAfMsunrdo+DfZR/QplxFevAGOyqrZQbYKL
+	 pBbfZiUGOze2K+GgWf8gyf/FweiSdpn1dsYsoTqw=
+Date: Tue, 24 Jun 2025 21:56:43 +0300
+From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+To: Frank Li <Frank.li@nxp.com>
+Cc: Mauro Carvalho Chehab <mchehab@kernel.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Kumar M <anil.mamidala@xilinx.com>, linux-media@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	imx@lists.linux.dev, "Guoniu.zhou" <guoniu.zhou@nxp.com>,
+	Stefan Hladnik <stefan.hladnik@gmail.com>,
+	Florian Rebaudo <frebaudo@witekio.com>
+Subject: Re: [PATCH v3 2/2] media: i2c: Add ON Semiconductor AP1302 ISP driver
+Message-ID: <20250624185643.GE20757@pendragon.ideasonboard.com>
+References: <20250623-ap1302-v3-0-c9ca5b791494@nxp.com>
+ <20250623-ap1302-v3-2-c9ca5b791494@nxp.com>
+ <20250623224701.GE15951@pendragon.ideasonboard.com>
+ <aFryrpyDByI6wu5b@lizhi-Precision-Tower-5810>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 2/2] e1000e: ignore factory-default checksum value on
- TGP platform
-To: Jacek Kowalski <jacek@jacekk.info>,
- Tony Nguyen <anthony.l.nguyen@intel.com>,
- Przemek Kitszel <przemyslaw.kitszel@intel.com>,
- Andrew Lunn <andrew+netdev@lunn.ch>, "David S. Miller"
- <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
- Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>
-Cc: intel-wired-lan@lists.osuosl.org, netdev@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <fe064a2c-31d6-4671-ba30-198d121782d0@jacekk.info>
- <b7856437-2c74-4e01-affa-3bbc57ce6c51@jacekk.info>
- <8538df94-8ce3-422d-a360-dd917c7e153a@jacekk.info>
- <431c1aaa-304d-4291-97f8-c092a6bee884@ursu.me>
- <e4903c9f-6b84-4831-8530-40ff6e27a367@jacekk.info>
-Content-Language: en-US
-From: Vlad URSU <vlad@ursu.me>
-In-Reply-To: <e4903c9f-6b84-4831-8530-40ff6e27a367@jacekk.info>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <aFryrpyDByI6wu5b@lizhi-Precision-Tower-5810>
 
-On 24.06.2025 21:34, Jacek Kowalski wrote:
-
-> You are right that I'm comparing the wrong value. But it is only a 
-> matter of variable name:
-
-Ah, yes, you're right. I missed the fact that nvm_data will hold the 
-checksum word at the end of the for loop.
-
-> -    if (hw->mac.type == e1000_pch_tgp && checksum ==
-> (u16)NVM_SUM_FACTORY_DEFAULT) {
-> +    if (hw->mac.type == e1000_pch_tgp && nvm_data ==
-> (u16)NVM_SUM_FACTORY_DEFAULT) {
+On Tue, Jun 24, 2025 at 02:47:10PM -0400, Frank Li wrote:
+> On Tue, Jun 24, 2025 at 01:47:01AM +0300, Laurent Pinchart wrote:
+> > On Mon, Jun 23, 2025 at 03:17:38PM -0400, Frank Li wrote:
+> > > From: Anil Kumar Mamidala <anil.mamidala@xilinx.com>
+> > >
+> > > The AP1302 is a standalone ISP for ON Semiconductor sensors.
+> > > AP1302 ISP supports single and dual sensor inputs. The driver
+> > > code supports AR1335, AR0144 and AR0330 sensors with single and
+> > > dual mode by loading the corresponding firmware.
+> > >
+> > > Signed-off-by: Anil Kumar Mamidala <anil.mamidala@xilinx.com>
+> > > Signed-off-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+> > > Signed-off-by: Stefan Hladnik <stefan.hladnik@gmail.com>
+> > > Signed-off-by: Florian Rebaudo <frebaudo@witekio.com>
+> > > Signed-off-by: Frank Li <Frank.Li@nxp.com>
+> > > ---
+> > > Change in v3:
+> > > - add extra empty line between difference register define
+> > > - add bits.h
+> > > - use GEN_MASK and align regiser bit define from 31 to 0.
+> > > - add ap1302_sensor_supply
+> > > - add enable gpio
+> > > - update firmware header format
+> >
+> > One of the main issues with this driver is that we need to standardize
+> > the header format. The standardized format will need to be approved by
+> > onsemi as we will need to provide not just a driver, but also a
+> > toolchain that will produce firmwares in the right format. Furthermore,
+> > some time ago the AP1302 firmware was extended with the ability to
+> > dynamically compute PLL parameters IIRC. This needs to be taken into
+> > account.
 > 
-> Could you check my change with this modification?
+> It is quite common when work with firmwares. Generally, it need version
+> information at header.
+> 
+> The driver need check firmware's API version, if miss match or incompatible,
+> just return and report error.
+> 
+> we can't assume firmware always align driver code because many user just
+> update kernel without update rootfs or firmware package.
 
-It works with this change.
+Sure, but that's not the point. The point is that there are multiple
+out-of-tree ap1302 driver versions, developed or adapted by different
+SoC vendors. Those variants use firmware files produced by those SoC
+vendors, and they not standard. We need to standardize on a firmware
+format to upstream a driver, and that standardization needs to involve
+the device manufacturer.
+
+> > I want to resuscitate this driver and get it merged. There's more work
+> > to do, in collaboration with onsemi, and I haven't had time to tackle
+> > it. If you want to propose a proper design for firmware handling I would
+> > be happy to participate in the discussion.
+> 
+> who is onsemi contact windows.
+> 
+> > > - update raw sensor supply delay time
+> > > - use gpiod_set_value_cansleep() insteand gpiod_set_value()
+> > > - update use latest v4l2 api
+> > > - use ctrl_to_sd() helper function
+> > > - add ap1302_g_volatile_ctrl()
+> > > - remove ap1302_get_fmt()
+> > > - use guard for mutex.
+> > > - use dev_err_probe
+> > > - use devm_add_action_or_reset to simple error handle at probe.
+> > > - use read_poll_timeout() simple dma idle polling.
+> > >
+> > > previous upstream:
+> > > https://lore.kernel.org/linux-media/1631091372-16191-1-git-send-email-anil.mamidala@xilinx.com/
+> > > ---
+> > >  MAINTAINERS                |    1 +
+> > >  drivers/media/i2c/Kconfig  |    9 +
+> > >  drivers/media/i2c/Makefile |    1 +
+> > >  drivers/media/i2c/ap1302.c | 2838 ++++++++++++++++++++++++++++++++++++++++++++
+> > >  4 files changed, 2849 insertions(+)
+> >
+> > [snip]
+
+-- 
+Regards,
+
+Laurent Pinchart
 
