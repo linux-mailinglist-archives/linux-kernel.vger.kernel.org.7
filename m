@@ -1,72 +1,60 @@
-Return-Path: <linux-kernel+bounces-699785-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-699787-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id AB7EDAE5F5A
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Jun 2025 10:31:48 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id ECB3EAE5F68
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Jun 2025 10:32:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 40028188DA7D
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Jun 2025 08:31:37 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 760897A3C20
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Jun 2025 08:31:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C5773259CA9;
-	Tue, 24 Jun 2025 08:31:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9817E25B694;
+	Tue, 24 Jun 2025 08:32:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="fp8Hkii4"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="gxafShcX"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8882D25744F
-	for <linux-kernel@vger.kernel.org>; Tue, 24 Jun 2025 08:30:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 01CBE25B31A;
+	Tue, 24 Jun 2025 08:32:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750753860; cv=none; b=c0ss+YADuBMP2p8FUti6ij7TXdE4inofoD7Xt7sfrO28taN+VCbEQZ3zwIdqTTKN62MEQmAKyybto4/1fSvoXozL0Hh1kweucBImKyg53+jhMw212PnaFvibP7ndNoGD51047kOQXCOJwnSMZ4q59IFCPSxRDLo+vkGBoeGsBfY=
+	t=1750753955; cv=none; b=DpimDOCoSLdQzoVbr1xAsvY5tbqqcFE6TAL3aeRP2AXt8j7I1e9BpN1sxMKxUU9FiGCj4B32oIJvY1MRdnDEB/IpJn2JMUag7asGDGVebJFy9KldKuvYc03LfsEPoI8rpz6eo91jxctFpNoSUG42N5hNN7sO4nU/pvcdRYWOHcE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750753860; c=relaxed/simple;
-	bh=QOHbXjq8BQfASz7XeifT+IWRHhkz+YrxDpafUWPOsyU=;
+	s=arc-20240116; t=1750753955; c=relaxed/simple;
+	bh=qF/2TqDtDQ1C1He5ZDDsFMx7oY/Nxq3SWripk0LkMzI=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=YMDcpLUmdjs10ZnCIyB1tJWbsBEsr8uLm4V5gWKCX6JR04BswhElur82n/fjYT3Iat1vQ3K9VzOY4EVHVBAjCIrUoz7NaHKcBpavfrA7BpzHhZ95wV0hUgLtnKrquBdyo9x1o2qRYqqYyZn/Hova+Qojxk4KZ8Sy9oJAYAIDkA4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=fp8Hkii4; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1750753857;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=uasRZZUq4je56X5RWLM0Pz1qlN/y56MEIUD9faMoeXs=;
-	b=fp8Hkii4akpen/qv9am2IG4TXlJqIlQ0y00sykYH0+THSVyTzyhiyVv9J5bZh1Eqi4IBdP
-	TWtRtqq+uCSXFv+tuxB7cyhPEMQQxD2yYi20aGB9WzmfRUDI9Kzpegyl+2JH7SeHzCdFpm
-	XCSCC0S/Jyk5JmySw7lZ7XPlASF7HsM=
-Received: from mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-124-GR_HFpohMWeLGDfluxR8nA-1; Tue,
- 24 Jun 2025 04:30:53 -0400
-X-MC-Unique: GR_HFpohMWeLGDfluxR8nA-1
-X-Mimecast-MFC-AGG-ID: GR_HFpohMWeLGDfluxR8nA_1750753852
-Received: from mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.40])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id BC09E1955F44;
-	Tue, 24 Jun 2025 08:30:51 +0000 (UTC)
-Received: from localhost (unknown [10.72.112.21])
-	by mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 912AC19560A3;
-	Tue, 24 Jun 2025 08:30:50 +0000 (UTC)
-Date: Tue, 24 Jun 2025 16:30:35 +0800
-From: Baoquan He <bhe@redhat.com>
-To: "Uladzislau Rezki (Sony)" <urezki@gmail.com>
-Cc: Andrew Morton <akpm@linux-foundation.org>, linux-mm@kvack.org,
-	LKML <linux-kernel@vger.kernel.org>,
-	Harry Yoo <harry.yoo@oracle.com>,
-	Suren Baghdasaryan <surenb@google.com>,
-	David Wang <00107082@163.com>
-Subject: Re: [PATCH 1/2] lib/test_vmalloc.c: Use late_initcall() if built-in
- for init ordering
-Message-ID: <aFpiK2iPRDj8AIzV@MiWiFi-R3L-srv>
-References: <20250623184035.581229-1-urezki@gmail.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=H68QCRllsZgPWZzEgd3yJhfGrugmlFyyxIjaWiX9lNreK1FhjNFN2sO7tOoTgwHD2mkoQUGaXG86ADhyfhkY0x12OMy62UPiL7fYj84FrGW68l/cmZzStk5nyNs/oKd7zx0NIe/CZD4pL5+qHO2BpEKZPU1nJ5UPGTA4fuGIr5o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=gxafShcX; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7178BC4CEE3;
+	Tue, 24 Jun 2025 08:32:33 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1750753953;
+	bh=qF/2TqDtDQ1C1He5ZDDsFMx7oY/Nxq3SWripk0LkMzI=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=gxafShcXQIsDd0+CRV9gM6VsU8rGAI/MN95JrKIUDu9Crz0q3c4P+bNq0Tc+XUfTc
+	 WCvnMyc+LQIBFCIY+LCj4ct98GSo2KM369SFlKXGijTPJ+x+/Mqp4K9YfTcceePNG6
+	 wb2GH882UcIC8SaPude3vGVZ9Y0VOAQhPwNZy7/wiNQYSitR+/HLerQ3JrPweXeg9O
+	 j+tmJArYNECwYe1h01GvPaH/lxdEeI9no5pdyWNzdeAGAoEyw6jqsc7pL0eo/OhlMg
+	 5ykU5yqciHmxRQ5lMnwyC17duk9jC9Frleho1mVqyuaUGCzA0SNL8NGLaQLl7vi/MP
+	 08Uri3raOvA9w==
+Received: from johan by xi.lan with local (Exim 4.97.1)
+	(envelope-from <johan@kernel.org>)
+	id 1uTz4w-000000005Nb-49UH;
+	Tue, 24 Jun 2025 10:32:31 +0200
+Date: Tue, 24 Jun 2025 10:32:30 +0200
+From: Johan Hovold <johan@kernel.org>
+To: Johan Hovold <johan+linaro@kernel.org>
+Cc: Jeff Johnson <jjohnson@kernel.org>, linux-wireless@vger.kernel.org,
+	ath11k@lists.infradead.org, linux-kernel@vger.kernel.org,
+	Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>,
+	Baochen Qiang <quic_bqiang@quicinc.com>
+Subject: Re: [PATCH] wifi: ath11k: fix suspend use-after-free after probe
+ failure
+Message-ID: <aFpingRwP3foaKJ9@hovoldconsulting.com>
+References: <20250624082022.15469-1-johan+linaro@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -75,54 +63,22 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250623184035.581229-1-urezki@gmail.com>
-X-Scanned-By: MIMEDefang 3.0 on 10.30.177.40
+In-Reply-To: <20250624082022.15469-1-johan+linaro@kernel.org>
 
-On 06/23/25 at 08:40pm, Uladzislau Rezki (Sony) wrote:
-> When the vmalloc test code is compiled as a built-in, use late_initcall()
-> instead of module_init() to defer a vmalloc test execution until most
-> subsystems are up and running.
-> 
-> It avoids interfering with components that may not yet be initialized
-> at module_init() time. For example, there was a recent report of memory
-> profiling infrastructure not being ready early enough leading to kernel
-> crash.
-> 
-> By using late_initcall() in the built-in case, we ensure the tests are
-> run at a safer point during a boot sequence.
-> 
-> Cc: Harry Yoo <harry.yoo@oracle.com>
-> Cc: Suren Baghdasaryan <surenb@google.com>
-> Cc: David Wang <00107082@163.com>
-> Signed-off-by: Uladzislau Rezki (Sony) <urezki@gmail.com>
-> ---
->  lib/test_vmalloc.c | 4 ++++
->  1 file changed, 4 insertions(+)
+On Tue, Jun 24, 2025 at 10:20:22AM +0200, Johan Hovold wrote:
+> Make sure to deregister the PM notifier to avoid a use-after-free on
+> suspend in case core initialisation fails (e.g. due to missing
+> firmware).
 
-LGTM,
+Not sure it matters in this case, but forgot to include:
 
-Reviewed-by: Baoquan He <bhe@redhat.com>
+Tested-on: WCN6855 hw2.0 WLAN.HSP.1.1-03125-QCAHSPSWPL_V1_V2_SILICONZ_LITE-3.6510.41
 
-> 
-> diff --git a/lib/test_vmalloc.c b/lib/test_vmalloc.c
-> index 1b0b59549aaf1..7264781750c96 100644
-> --- a/lib/test_vmalloc.c
-> +++ b/lib/test_vmalloc.c
-> @@ -598,7 +598,11 @@ static int __init vmalloc_test_init(void)
->  	return IS_BUILTIN(CONFIG_TEST_VMALLOC) ? 0:-EAGAIN;
->  }
->  
-> +#ifdef MODULE
->  module_init(vmalloc_test_init)
-> +#else
-> +late_initcall(vmalloc_test_init);
-> +#endif
->  
->  MODULE_LICENSE("GPL");
->  MODULE_AUTHOR("Uladzislau Rezki");
-> -- 
-> 2.39.5
-> 
-> 
+> Fixes: 32d93b51bc7e ("wifi: ath11k: choose default PM policy for hibernation")
+> Reported-by: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+> Link: https://lore.kernel.org/all/d0cd065c-1cd1-4e56-8c57-60777b1f3664@oss.qualcomm.com/
+> Cc: Baochen Qiang <quic_bqiang@quicinc.com>
+> Signed-off-by: Johan Hovold <johan+linaro@kernel.org>
 
+Johan
 
