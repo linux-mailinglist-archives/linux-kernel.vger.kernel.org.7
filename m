@@ -1,114 +1,113 @@
-Return-Path: <linux-kernel+bounces-701052-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-701037-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 089EEAE7000
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Jun 2025 21:45:36 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0A708AE6FD7
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Jun 2025 21:41:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6917417BEB1
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Jun 2025 19:45:36 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id ED8DC7AAB96
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Jun 2025 19:39:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CF5CC2ED15A;
-	Tue, 24 Jun 2025 19:42:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 692142E9ECC;
+	Tue, 24 Jun 2025 19:41:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="nePFoL33"
-Received: from mail-pf1-f201.google.com (mail-pf1-f201.google.com [209.85.210.201])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="AFEWb1mq"
+Received: from mail-lf1-f53.google.com (mail-lf1-f53.google.com [209.85.167.53])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2833A2EACE8
-	for <linux-kernel@vger.kernel.org>; Tue, 24 Jun 2025 19:42:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 12DB82E7631
+	for <linux-kernel@vger.kernel.org>; Tue, 24 Jun 2025 19:40:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750794177; cv=none; b=oh7bNmZKYv85suzmng7WF9fc+aoMQXaoIyhRyeB3ZQx4FjUo5B/3SXQXNTHINOJx2CsZdp69Y7wjAM9dA3tLRue7SxelOxeheBvimC7xpAjmyGH6IcSGDkraMWqf6U1lVxH05X3gnh/SzPTrHHKlStfLwpw4+sUeswo2P2IHy8g=
+	t=1750794061; cv=none; b=cgAQFHHlizrGM/Enqe7uDugYGEVEaC+59pI5d74JxvSfXktcaK4wkO3pWeQ1FNcVKlryLKISv7WG+xF2XL1cvdWOLUW93u2SbaSWCdVF9vgO40QyyU/S/diHTcX8JrPUWFWY/JDkrCR63/CKaKzmPwbgHRB24OYedNXJPnBUUXU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750794177; c=relaxed/simple;
-	bh=dO+dW40LtZuSsCWa+WBV8jzzSSO9iLzEYTMbtOq+Yv0=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=AFuYlLcjKYyqkthXYpKFQL5JaSCknibDjtscaJmRnV1Tsp8a8BO9ML1swWLwOP/spz/TVJwjxKC86SsYmQKn0SO2Pl/OYsfl2zpBwsaOGG9159YL3QCkluIlwnq6TV8/ArjQc4NgXto3E0DQMkdiSBb0BfhMl/cQ1nn+TiVpgs8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=nePFoL33; arc=none smtp.client-ip=209.85.210.201
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
-Received: by mail-pf1-f201.google.com with SMTP id d2e1a72fcca58-748fd21468cso473905b3a.1
-        for <linux-kernel@vger.kernel.org>; Tue, 24 Jun 2025 12:42:55 -0700 (PDT)
+	s=arc-20240116; t=1750794061; c=relaxed/simple;
+	bh=v3BnJq5LQEaxFgCM6/6sxf7x2jYyXjVWSnRn8QlR/f4=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=SOV+N78VdsjIZOmpfsJGAiLU+H8A7LWJNoU4W/+7ir9NiBGiSS2gxE5TuYQNPV2B84Qm9jZxkmAJDL9IGxIWf3mftBRdpld/PzJI81SFc3m4B5LWqLjTAQG/gVcmYH+KHstEijjTltAsHO9b7hqRTf+UeG2XKuDau5oCLos6PVw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=AFEWb1mq; arc=none smtp.client-ip=209.85.167.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-lf1-f53.google.com with SMTP id 2adb3069b0e04-553644b8f56so869463e87.1
+        for <linux-kernel@vger.kernel.org>; Tue, 24 Jun 2025 12:40:59 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1750794174; x=1751398974; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=X4quOVy1erD77eB7GtW5qeTK+/ZPrDIfGhJB042CiIs=;
-        b=nePFoL33G6uVLy4L4SnqvCPgpeqyNgcL1ot/cSdZM6Xg6QdwkT4QxEtonVL6LK1Ziq
-         sVr2SbQsAHU1gfdefI2vKnUqDbx5+GEWGIFgp7+3gBd0OkKu1PIKQ3khkOQmgD569j0Y
-         RLrYwnPh/MwLev+6lX7tvavfiyYJ1Cg4oYgufh1ovHgNpw2UBkfjW4yzn59T2I1bCe9O
-         BqZOT3KhruQT7dYsEpAcMIqjOQO8udEFp8e8fvjI0KXsINa+ovuI/VGnjRLmorh5wvMN
-         0VI61dmToczMUdXZYrlvzP+9pw4STOLd43Sd2xIYz0R8MKXCJg6FFOZ3kuGrFqgXLYt+
-         OowQ==
+        d=linaro.org; s=google; t=1750794058; x=1751398858; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=v3BnJq5LQEaxFgCM6/6sxf7x2jYyXjVWSnRn8QlR/f4=;
+        b=AFEWb1mq5CPJdumumk3sziznQwPhwH6b7yd6Um1kG2joo3xGWQcglTlunBbli40mNe
+         Jqa059X0pJONyVSsTZEbeCCnwrDOj//HqycfMmLl2vVX4C0e9RLnj1A/rS6+OmfLcBQD
+         b9gvGlcRIWLnjDYKzQxO2lrqKhpY0uiV9l79ZJhLKB9OVCdBIr18VfWHvo8dYqun0CVr
+         ZkAah/7oFwFrcWW0JbYolxRKwPp015eozp/m3PYSxxNuNCE6Qgvj/t0Z2m1DFf8Gx1WM
+         WZc8zUIG2WgLOsHVoCprukTHPhaxnxorG4p0TmIByh+mzfDVxdI8S9rKDTYOJ0i0ojfF
+         Qsfw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1750794174; x=1751398974;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=X4quOVy1erD77eB7GtW5qeTK+/ZPrDIfGhJB042CiIs=;
-        b=VfgtigUhnts6mBmF4ZEB77X2BbJ+acL8Ko7eY1C4viS1TbezWYBd7/jFYvP+4l/2ry
-         RAABrVFyaqTwRnB4mq7dbd/zySIRFQeWSchoIi4qsGImxB85cKvS6jwH5DBRSWVFqsNK
-         8PrxVg2pODC5nFHYC6e1LLZpJSvKuUUqHHNLBTziKxkPcPTTjjm08+pD95oudMt7kc3F
-         wxYSgyWZNPg+Kb93WXUcZXdiXsfEPfFTLS5cYV+NziMlDKRAxmJDnq0cR+8ym9LtX4mP
-         NL9vyEZBm/eerfFieHK0hSE0cvVhVLNxIZABEc5qpfNSJyYIVrHMco0D34wm1m93nulF
-         +xog==
-X-Forwarded-Encrypted: i=1; AJvYcCX7cR4rqHRTAcfuW9bPHS+jS4v/stU9NetSW9gdAGKtzWwoLHgHpGW9pnfjNTokzsfkcO1rfJvqU6Sl/NE=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yya36lirGEc0QueRHfNaLmm6T2vLct+JGAUK6OIt1IuFgGwY2rJ
-	tKWh5qlhyggTk+Y+UrSNTULYVuqumDehcovZBHf4ziGDJGsfjHfUbBcxrumwJBGu/OJ2vhwCT+/
-	FfLnQhA==
-X-Google-Smtp-Source: AGHT+IFPp/7TrD3168GEkS3WDBIVg8N4ZeR3LrjWM06mZPH5V7T+xiSLPv8PGV346ZTlZS0IgYMMeeAwzao=
-X-Received: from pfbde21.prod.google.com ([2002:a05:6a00:4695:b0:73c:26eb:39b0])
- (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a05:6a20:1443:b0:220:41f6:7a6c
- with SMTP id adf61e73a8af0-2207f302f0cmr351194637.40.1750794174645; Tue, 24
- Jun 2025 12:42:54 -0700 (PDT)
-Date: Tue, 24 Jun 2025 12:38:45 -0700
-In-Reply-To: <cover.1748553480.git.thomas.lendacky@amd.com>
+        d=1e100.net; s=20230601; t=1750794058; x=1751398858;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=v3BnJq5LQEaxFgCM6/6sxf7x2jYyXjVWSnRn8QlR/f4=;
+        b=GVUKzCPCO4rktJYvTV3CGjnKuyzoyzxFyvsyqBO6K9g19fmqk0+owzXUAqC2tTHwYX
+         d7qJofku3Q3PEteVU+SwQ2i9j8iIqC4INMK+7CyqFy12BkJkC9+kri5yGZfqek+GaNFt
+         JbjxruTIyIQlEBNbsiUSdQPnDbFA6v79FdfIiUXplxYvbtjYEzDw5HbsOfcSzxAWs6Bw
+         oSbJLlSq7uElq6VZLV0+NszCdNy6h+ItnOKA90cTp5GwSBSxGPt+5LajL4dcGMqzXrNA
+         rX0IfHhdBmJLPZzZrT+5snhC1dapnYBAljkiaL+YFEcvQqaX4kzOUD3Ml/Jjdh6Z8+Ga
+         2diw==
+X-Forwarded-Encrypted: i=1; AJvYcCULZn/rHepwAYpibO5NueC4jKYXV4kBIaC6oooHq9irxvoS4Huak6L9NUy+96+ysCw5EXE+j/RRDnuGEmo=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzsEBZNqX9VPRy+ujmHAoXdEsddsu3ogdHaie3CjTbqHNeu2QfK
+	pxgFY/G3kDfJG+wix40HJTX/2cnoCVUu7W2XKNtvVPvNDs2UEo6jwTB0uWGR92LjymDFf8V4oJB
+	fdMGOUjknaMtDlWBHwm/syiTTHjqqHRY8MHPO+2eVUw==
+X-Gm-Gg: ASbGnctRvkEdLyH8TmoU9wfCYJPtwdCCECIRpPkDcJ5qCET6o6lk9DUcDYV/YVIZC8/
+	f02TDNkc1wn65ve9rZv9z8TPNmPTycqBGh+feFUfYMWIGtCVCGxpsgeM3fgID0tgBVZlEcR4O2t
+	jxntfzVkcx6E4Dg5DxcXgvS3YrZup5c0VCQBo/CU+0go4=
+X-Google-Smtp-Source: AGHT+IGeXWsd2KZRikpXjgFDmBc/qqqZ9/rCy22guOYB7u6OVOcVFigKyeu0DQMbioQlth4Oki5hGk6T6/TasorD7hM=
+X-Received: by 2002:a05:6512:118d:b0:553:af30:1e8b with SMTP id
+ 2adb3069b0e04-554fdf9676cmr31086e87.38.1750794058182; Tue, 24 Jun 2025
+ 12:40:58 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <cover.1748553480.git.thomas.lendacky@amd.com>
-X-Mailer: git-send-email 2.50.0.714.g196bf9f422-goog
-Message-ID: <175079224437.515260.14294578957654984603.b4-ty@google.com>
-Subject: Re: [PATCH 0/2] Remove some hardcoded SEV-SNP guest policy checks
- during guest launch
-From: Sean Christopherson <seanjc@google.com>
-To: Sean Christopherson <seanjc@google.com>, kvm@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	x86@kernel.org, Tom Lendacky <thomas.lendacky@amd.com>
-Cc: Paolo Bonzini <pbonzini@redhat.com>, Borislav Petkov <bp@alien8.de>, 
-	Dave Hansen <dave.hansen@linux.intel.com>, Ingo Molnar <mingo@redhat.com>, 
-	Thomas Gleixner <tglx@linutronix.de>, Michael Roth <michael.roth@amd.com>
-Content-Type: text/plain; charset="utf-8"
+MIME-Version: 1.0
+References: <20250623-gpio-sysfs-chip-export-v2-0-d592793f8964@linaro.org> <20250623-gpio-sysfs-chip-export-v2-8-d592793f8964@linaro.org>
+In-Reply-To: <20250623-gpio-sysfs-chip-export-v2-8-d592793f8964@linaro.org>
+From: Linus Walleij <linus.walleij@linaro.org>
+Date: Tue, 24 Jun 2025 21:40:46 +0200
+X-Gm-Features: AX0GCFuS6mww0UGvkfja-_98m6Xmqj6RLmLWfp6E97Yy_7h19_QAZkV_Etx9c9c
+Message-ID: <CACRpkdaW_Ce16EAXSEUqYTuBB4E1y7NeAkhLLik6qtOm25+pyQ@mail.gmail.com>
+Subject: Re: [PATCH v2 8/9] gpio: sysfs: allow disabling the legacy parts of
+ the GPIO sysfs interface
+To: Bartosz Golaszewski <brgl@bgdev.pl>
+Cc: Ahmad Fatoum <a.fatoum@pengutronix.de>, Kent Gibson <warthog618@gmail.com>, 
+	=?UTF-8?Q?Jan_L=C3=BCbbe?= <jlu@pengutronix.de>, Marek Vasut <marex@denx.de>, 
+	Geert Uytterhoeven <geert+renesas@glider.be>, linux-gpio@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, 
+	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Thu, 29 May 2025 16:17:58 -0500, Tom Lendacky wrote:
-> This series removes some guest policy checks that can be better controlled
-> by the SEV firmware.
-> 
-> - Remove the check for the SMT policy bit. Currently, a check is made to
->   ensure the SMT policy bit is set to 1. However, there is no reason for
->   KVM to do this. The SMT policy bit, when 0, is used to ensure that SMT
->   has been disabled *in the BIOS.* As this does not require any special
->   support within KVM, the check can be safely removed to allow the SEV
->   firmware to determine whether the system meets the policy.
-> 
-> [...]
+On Mon, Jun 23, 2025 at 11:00=E2=80=AFAM Bartosz Golaszewski <brgl@bgdev.pl=
+> wrote:
 
-Applied to kvm-x86 svm.  FWIW, I'm not entirely sure I love the idea of doing
-nothing, e.g. it'd be nice to enumerate support to userspace.  But adding a
-bunch of code to regurgitate information that's likely available to userspace
-(or more likely, the platform admin/orchestrator) doesn't seem worthwile either.
+> From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+>
+> Add a Kconfig switch allowing to disable the legacy parts of the GPIO
+> sysfs interface. This means that even though we keep the
+> /sys/class/gpio/ directory, it no longer contains the global
+> export/unexport attribute pair (instead, the user should use the
+> per-chip export/unpexport) nor the gpiochip$BASE entries. This option
+> default to y if GPIO sysfs is enabled but we'll default it to n at some
+> point in the future.
+>
+> Signed-off-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
 
-I'll make sure to flag this for Paolo's eyeballs.
+This is great.
+Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
 
-[1/2] KVM: SVM: Allow SNP guest policy disallow running with SMT enabled
-      https://github.com/kvm-x86/linux/commit/9f4701e05fae
-[2/2] KVM: SVM: Allow SNP guest policy to specify SINGLE_SOCKET
-      https://github.com/kvm-x86/linux/commit/24be2b7956a5
-
---
-https://github.com/kvm-x86/kvm-unit-tests/tree/next
+Yours,
+Linus Walleij
 
