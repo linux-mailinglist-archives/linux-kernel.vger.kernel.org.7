@@ -1,125 +1,185 @@
-Return-Path: <linux-kernel+bounces-700871-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-700874-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9B31FAE6DF7
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Jun 2025 19:56:53 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4CD76AE6DFB
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Jun 2025 19:57:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E2B2A4A0BF9
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Jun 2025 17:56:53 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A60E65A5A27
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Jun 2025 17:57:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C541F2E62B8;
-	Tue, 24 Jun 2025 17:56:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 774B0226D03;
+	Tue, 24 Jun 2025 17:57:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="iuZWFt6y"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="hTqQ0oT2"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1FDFB2DAFB9;
-	Tue, 24 Jun 2025 17:56:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C867B2E62C0;
+	Tue, 24 Jun 2025 17:57:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750787804; cv=none; b=F6Yrbznrm3DwrEIqwl/kH/qhJfKM8nryl3yb0ibM8sxgKXPUIuvpD6L6n+fnnd4wjzkRrrRIxf5aAkGImFKWLWNudVblKVmtHSUgQ4tkW4bkHE2iWV+J+mG98qXlJDx18wbYWTfOgNR0RWLyYQSh6idDHUlfkeeFrkzegFZBews=
+	t=1750787838; cv=none; b=fsk3O/ITaWCVmE1RzmBijO1B4XWdxda+iYEl3l8Fll0ic/iqLxwFIScI5PQLJUQU+wKjscxXhW8SJYYm/wDV3vxxXFfv//Q46QCicIlYK+Hfdd8beu03iLthnMi9RifMQfEgl0eLkx87b8Ln7I/uc9aty4FY6msWIUpSDTQsK04=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750787804; c=relaxed/simple;
-	bh=STdjH06ZEoi9PRmrLJP7FLKxed9+IlHUbKgbwftgTek=;
+	s=arc-20240116; t=1750787838; c=relaxed/simple;
+	bh=JEHWULRoFr8HmcK51IB5pjchZBRZaxJIIXSVSXZMX+Y=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=WETA2VjBrknumLayat/JPRL9C2MaTBz8Ynh/Y95BQxAk/8mSPu7GdrqXlSFML568ZFJm5G/WDfVgKKikRJ5g3fyrG2wuZFRdPSMDnbx09Js7RVNvAayEhXB2+n+/kyhn0Cf5WM/toEUEIE4JZKYP25zH6xQQmonYlpXDPyohApU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=iuZWFt6y; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A8DD3C4CEF4;
-	Tue, 24 Jun 2025 17:56:43 +0000 (UTC)
+	 To:Cc:Content-Type; b=l9xGVx/EQYMHkyG+aS6XWm7TFH1SO0uMp8afTJ+KQ6CsQl7RNz9rnFbUlavCkYlvMysrOAx0CnHrqG4wuLNHYDUFM9KNq8VoArtqzlO9VBDC5gcBCUYJwKBnOk1b/5DgtFGQtkhZKI6SKUpTYhU0N8CzgjKttaKBukY3Xu1dF/A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=hTqQ0oT2; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6E993C4CEF8;
+	Tue, 24 Jun 2025 17:57:17 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1750787803;
-	bh=STdjH06ZEoi9PRmrLJP7FLKxed9+IlHUbKgbwftgTek=;
+	s=k20201202; t=1750787837;
+	bh=JEHWULRoFr8HmcK51IB5pjchZBRZaxJIIXSVSXZMX+Y=;
 	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=iuZWFt6yt3SnNPdQqHHkfWb5c/6qcFToxw9CVQBpihM0nFhHuYLaaMe6FfGfTtBiv
-	 rH5iktqyrE6a5iniGtlrDmpNojLpXeqiBXTcHLPNsHC9gp7EV2DTM6VcObEU3BSVxl
-	 U36zx0MZZxSKxIwAQAkaIFk8AZxCggXtOi4RyIfNhLuY0fsnUanTCbIhC0bUptx0Rp
-	 XcUv1HnjCQbmqBdOFLjurtJY446q3YWEJ1foBeO2eXJLgqHqaU/Sw7PzLlX8daENeU
-	 fC6sS564B57ksOwTobmu4jaNYJp5shaTRSkzLhqvbZ7or/u9QKZnLncWUqVmMcWns/
-	 +iIPREtbKN6DA==
-Received: by mail-oo1-f53.google.com with SMTP id 006d021491bc7-60f24b478e3so2908153eaf.3;
-        Tue, 24 Jun 2025 10:56:43 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCUjBCyPFAgWVbBjPX5yYuj9zLh3dhOzQpEaXOkHR0/bpIj2v6X523gNXm5CKYtX5zf0pJkOx4qRvwU3Goji4dk=@vger.kernel.org, AJvYcCUrLY9SkWvW22Bh/LSvCjKApT1V30Xu9GBF0VEhxLNYW1RHa3+l/WiDMpXtPX7h0AXaTDQ1cbfEDpoZ@vger.kernel.org, AJvYcCX85fACMm2z5pgZWxvvtQYrO3/NY8zTLoPXZmtTIE/rhYM4ohYItiPvw7HdRS4Wuu/+Jd4XbPsuFfh1DEOj@vger.kernel.org, AJvYcCXbIM0sgL/Oxjz8OygIL/G2VfkULr7b9UHM5qHZB6xDCKXI/ZvRaIEbNUk2Lk+OrNnRzv4gFoLNl/hPBw==@vger.kernel.org
-X-Gm-Message-State: AOJu0YyMDivGbmgn7dP5qkHGWr/8uzoVx6O3IwrmrK7IX5wla0qdy1Bm
-	3n7iTNrGX5F07rTS1oxqIWJwE8moik4ywVjRS4lp8NF+ntJwnbT72eTwnMRAhleBbM7xiqZSb4k
-	EA1k70rJdl/wvc94Ss6MbMu9mlBCuzxU=
-X-Google-Smtp-Source: AGHT+IGtZmw+qiUqob8uolYYHaLvj7zQCRMrhowwkQ6uaCuY6yqPQStnuSx1CMSohXJmqc1ErtElSyNm5m+nxc2StOA=
-X-Received: by 2002:a4a:e90a:0:b0:611:31a:6ff5 with SMTP id
- 006d021491bc7-6115ba3ea53mr12497524eaf.7.1750787802958; Tue, 24 Jun 2025
- 10:56:42 -0700 (PDT)
+	b=hTqQ0oT2eE+n8ekqNRtqT2c9Whh/IcmBrx+9e9aZ2Yn2EcB/uIG+rIQilr9m4YiUm
+	 19xY24Ecag+oE8aG7/pDVduLkWY1BIoOs8IWkj5mKmfIuWpaf5YLjlgiW8IGyDuZkr
+	 vKYaf8uJC73Itr0rYnttdvJafJ8LWZZrJIBsRKTaRvsZxIyDDj3GixARaAJGYgJwK8
+	 UccDEqF6LQqtor9YdeSgXXRWdbEg0MI78opDNTfuJxrcsyWiQ+N1BZ50Wxo+tQY7Ej
+	 lBp4xvED0C6YBkqMhdCnHGbusP8NDw9QT+xh0VjTYynyerokjmfZ9zrc92oQTDLd1I
+	 hJsGdyd/o1lZw==
+Received: by mail-lj1-f178.google.com with SMTP id 38308e7fff4ca-32b43c5c04fso1286611fa.0;
+        Tue, 24 Jun 2025 10:57:17 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCX7AYOiHosK/w3LizNOzL9ImrpKopMU945RNnTTeG7aGjb2vprlJ/oX9iCqIb0uPT3KOxixU6SH4UR81KM=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwoBRuLfDeNVfxV7sdKjTImrqQb1rKVwZ9nE24IM21DORXvmhVX
+	sOWksEv7y5eHupvvvyxv+T/kbVB8zevz1sZPsiD+tOa+uapQNrmK3IU3te3s8FWXNg/3aEYQhSu
+	yQN4uryDgs483xW60CqSk1OC8+GHreU8=
+X-Google-Smtp-Source: AGHT+IGq7hissTIkrVJCDOV8p8HRypLn0VmeopkjUXXhsLLPYzSM5f5T0O7Ot9nZ0vtikK/lSezVm3GumAphKV0oQew=
+X-Received: by 2002:a05:6512:3c98:b0:553:2154:7bcc with SMTP id
+ 2adb3069b0e04-554f5ccf99bmr1457634e87.20.1750787836092; Tue, 24 Jun 2025
+ 10:57:16 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250620150914.276272-1-igor.korotin.linux@gmail.com>
- <20250620152425.285683-1-igor.korotin.linux@gmail.com> <aFXbcDKP_jw_Sg5k@cassiopeiae>
-In-Reply-To: <aFXbcDKP_jw_Sg5k@cassiopeiae>
-From: "Rafael J. Wysocki" <rafael@kernel.org>
-Date: Tue, 24 Jun 2025 19:56:32 +0200
-X-Gmail-Original-Message-ID: <CAJZ5v0ggAFg-pcujf5BysNNp3ncStOWruyAemFLJB5=95uu9XA@mail.gmail.com>
-X-Gm-Features: AX0GCFsuxGTM77WPv_Ty8PU9EPeo6p7qzhGvatJp50zVE0gHymfHgjEibVHegIQ
-Message-ID: <CAJZ5v0ggAFg-pcujf5BysNNp3ncStOWruyAemFLJB5=95uu9XA@mail.gmail.com>
-Subject: Re: [PATCH v8 4/9] rust: acpi: add `acpi::DeviceId` abstraction
-To: Danilo Krummrich <dakr@kernel.org>
-Cc: Igor Korotin <igor.korotin.linux@gmail.com>, "Rafael J . Wysocki" <rafael@kernel.org>, 
-	Alex Gaynor <alex.gaynor@gmail.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
-	Miguel Ojeda <ojeda@kernel.org>, Rob Herring <robh@kernel.org>, 
-	Saravana Kannan <saravanak@google.com>, Alex Hung <alex.hung@amd.com>, 
-	Andrew Morton <akpm@linux-foundation.org>, Jakub Kicinski <kuba@kernel.org>, 
-	Jonathan Cameron <Jonathan.Cameron@huawei.com>, 
-	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>, 
-	Mauro Carvalho Chehab <mchehab+huawei@kernel.org>, Remo Senekowitsch <remo@buenzli.dev>, 
-	Tamir Duberstein <tamird@gmail.com>, Viresh Kumar <viresh.kumar@linaro.org>, 
-	Wedson Almeida Filho <wedsonaf@gmail.com>, Xiangfei Ding <dingxiangfei2009@gmail.com>, 
-	devicetree@vger.kernel.org, linux-acpi@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, rust-for-linux@vger.kernel.org, 
-	=?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
-	Alice Ryhl <aliceryhl@google.com>, Andreas Hindborg <a.hindborg@kernel.org>, 
-	Benno Lossin <lossin@kernel.org>, Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
-	Len Brown <lenb@kernel.org>, Trevor Gross <tmgross@umich.edu>
+References: <20250522172941.1669424-1-jeremy.linton@arm.com>
+ <CAK7LNAQzkh+DO7ZBVEgLu63k0H5qB-etV_jpo67k+itLWGAosA@mail.gmail.com> <14f2329f-e110-4f3f-976b-acb38d255798@arm.com>
+In-Reply-To: <14f2329f-e110-4f3f-976b-acb38d255798@arm.com>
+From: Masahiro Yamada <masahiroy@kernel.org>
+Date: Wed, 25 Jun 2025 02:56:38 +0900
+X-Gmail-Original-Message-ID: <CAK7LNARG3wO_1R6_n1djbAQVx8=t0aMqAR4aaMUsRDBysSkkfA@mail.gmail.com>
+X-Gm-Features: AX0GCFvK0nA7ob0OCVGm5FQUprS6ycScSfAziip_yY57p5OzWJ2IDkXAzRbgpk4
+Message-ID: <CAK7LNARG3wO_1R6_n1djbAQVx8=t0aMqAR4aaMUsRDBysSkkfA@mail.gmail.com>
+Subject: Re: [PATCH] scripts: add zboot support to extract-vmlinux
+To: Jeremy Linton <jeremy.linton@arm.com>
+Cc: linux-kbuild@vger.kernel.org, nathan@kernel.org, nicolas.schier@linux.dev, 
+	linux-kernel@vger.kernel.org, Ard Biesheuvel <ardb@kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Sat, Jun 21, 2025 at 12:06=E2=80=AFAM Danilo Krummrich <dakr@kernel.org>=
- wrote:
+On Tue, Jun 17, 2025 at 1:09=E2=80=AFAM Jeremy Linton <jeremy.linton@arm.co=
+m> wrote:
 >
-> On Fri, Jun 20, 2025 at 04:24:25PM +0100, Igor Korotin wrote:
-> > `acpi::DeviceId` is an abstraction around `struct acpi_device_id`.
+> Hi,
+>
+> Thanks for looking at this.
+>
+> On 6/7/25 11:04 AM, Masahiro Yamada wrote:
+> > On Fri, May 23, 2025 at 2:29=E2=80=AFAM Jeremy Linton <jeremy.linton@ar=
+m.com> wrote:
+> >>
+> >> Zboot compressed kernel images are used for arm kernels on various
+> >> distros.
 > >
-> > This is used by subsequent patches, in particular the i2c driver
-> > abstractions, to create ACPI device ID tables.
+> > Are you talking about arm 32 bit here?
+> > (arch/arm/boot/zImage)
 >
-> I think this should say something like
->
->         "Enable drivers to build ACPI device ID tables, to be consumed by=
- the
->          corresponding bus abstractions, such as platform or I2C."
->
-> instead.
->
-> If we agree, I can change it when applying the patch -- no need to resend=
-.
+> No, it should be arm64.
 >
 > >
-> > Signed-off-by: Igor Korotin <igor.korotin.linux@gmail.com>
+> >> extract-vmlinux fails with those kernels because the wrapped image is
+> >> another PE. While this could be a bit confusing, the tools primary
+> >> purpose of unwrapping and decompressing the contained vmlinux image
+> >> makes it the obvious place for this functionality.
+> >>
+> >> Add a 'file' check in check_vmlinux() that detects a contained PE
+> >> image before trying readelf. Recent file implementations output
+> >> something like:
+> >>
+> >> "Linux kernel ARM64 boot executable Image, little-endian, 4K pages"
+> >
+> > Are you talking about arm64 here?
+> >
+> > I am confused, as arm64 adopts a simple-compressed image.
 >
-> @Rafael: Can I get an ACK for this one, such that I can take it together =
-with
-> all other patches through the driver-core tree?
+> No, there is a CONFIG_EFI_ZBOOT, which is a EFI/PE image which self
+> decompresses a contained kernel similar to x86, but is for !x86 EFI
+> architectures. This patch extends this utility to work for those images
+> as well.
 
-I don't see anything objectionable in it, even though Rust code is
-still kind of outside my confidence zone ATM.
+The commit description does not explain why this is useful.
 
-Anyway, please feel free to add
+Extracing vmlinux ELF is useful for debugging purposes.
 
-Acked-by: Rafael J. Wysocki <rafael@kernel.org>
+In this case, the extracted file is
+arch/arm64/boot/vmlinux.bin, which is just a (zero-padded) binary.
 
-to this.
 
-Thanks!
+
+
+>
+> >
+> >
+> > Apparently, this patch did not work for me.
+> >
+> > $ ./scripts/extract-vmlinux  arch/arm/boot/zImage
+> > extract-vmlinux: Cannot find vmlinux.
+> >
+> > The 'file' command says, it is "data".
+> > Is my 'file' command too old?
+> >
+> > $ file arch/arm/boot/Image
+> > arch/arm/boot/Image: data
+> >
+> >
+> >> Which is also a stronger statement than readelf provides so drop that
+> >> part of the comment. At the same time this means that kernel images
+> >> which don't appear to contain a compressed image will be returned
+> >> rather than reporting an error. Which matches the behavior for
+> >> existing ELF files.
+> >>
+> >> Signed-off-by: Jeremy Linton <jeremy.linton@arm.com>
+> >> Cc: Ard Biesheuvel <ardb@kernel.org>
+> >> ---
+> >>   scripts/extract-vmlinux | 9 +++++----
+> >>   1 file changed, 5 insertions(+), 4 deletions(-)
+> >>
+> >> diff --git a/scripts/extract-vmlinux b/scripts/extract-vmlinux
+> >> index 8995cd304e6e..edda1abe226c 100755
+> >> --- a/scripts/extract-vmlinux
+> >> +++ b/scripts/extract-vmlinux
+> >> @@ -12,10 +12,11 @@
+> >>
+> >>   check_vmlinux()
+> >>   {
+> >> -       # Use readelf to check if it's a valid ELF
+> >> -       # TODO: find a better to way to check that it's really vmlinux
+> >> -       #       and not just an elf
+> >> -       readelf -h $1 > /dev/null 2>&1 || return 1
+> >> +       file $1 |grep 'Linux kernel.*boot executable Image' > /dev/nul=
+l
+> >> +       if [ "$?" -ne "0" ]; then
+> >> +               # Use readelf to check if it's a valid ELF, if 'file' =
+fails
+> >> +               readelf -h $1 > /dev/null 2>&1 || return 1
+> >> +       fi
+> >>
+> >>          cat $1
+> >>          exit 0
+> >> --
+> >> 2.49.0
+> >>
+> >
+> >
+>
+>
+
+
+--=20
+Best Regards
+Masahiro Yamada
 
