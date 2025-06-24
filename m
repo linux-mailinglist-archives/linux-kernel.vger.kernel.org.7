@@ -1,128 +1,83 @@
-Return-Path: <linux-kernel+bounces-700423-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-700434-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A2219AE683E
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Jun 2025 16:20:57 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 182CBAE6898
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Jun 2025 16:27:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4578A7AB2F8
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Jun 2025 14:19:27 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6F8B518828A7
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Jun 2025 14:23:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 925F82E11DA;
-	Tue, 24 Jun 2025 14:16:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C6D512E336B;
+	Tue, 24 Jun 2025 14:16:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=listout.xyz header.i=@listout.xyz header.b="BwmiRiQ5"
-Received: from mout-p-101.mailbox.org (mout-p-101.mailbox.org [80.241.56.151])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="rwZ94aLG"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BFBC02DFA46;
-	Tue, 24 Jun 2025 14:16:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.151
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0C0EF2E7632;
+	Tue, 24 Jun 2025 14:16:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750774604; cv=none; b=D/R12fg+YAZ+rwpkgyXF7y7BUN3FCcZwNIyS6MBdK4pnZTJi2QjhxnnaNN6xC9C1iNQYI2L+InAqjv82Q28s/w+ss7oLQtjzQiNec5gzIm26+SMOfCyfHulE5w7OAVCE9tF1R1P+dmEEsbXshZUhF7JrCcnntWCUdsnWuWutt0w=
+	t=1750774611; cv=none; b=T85H80RCShjsaTgUBeeDR0ZrGhczjD7/obtQ8dpdHHyYqBwZZ23dk/RC21H2MfENG0bd1CAkxhOiSFRRV/dm97eKRsj+HWeU8M5PPubHcK7Gi5xm6cu1MgxtAA7V1BZTwoKiGzOhWIKRTuloP4svVgsBjhix6OcXNyf2yFE7Kv4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750774604; c=relaxed/simple;
-	bh=QySNGEn+z7q6xrGNdmdgwcdRl64BoG8RShihdAdvQ84=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=L7YC/aiOu9F5Pmyo/PB7BxcWBX9qxd5OKICMoli2aLRquxrmHfve3MPl4rKk3eGsIxMNlmBCRSzJoKsepDhq9aLESaHWsw6VHUj6Hj3xshw3E2uXA24hWrrtlDudTUhO+oONITmsH2xfhq53rm/Nl0L55cuGfErwe3XHfc+ikEs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=listout.xyz; spf=pass smtp.mailfrom=listout.xyz; dkim=pass (2048-bit key) header.d=listout.xyz header.i=@listout.xyz header.b=BwmiRiQ5; arc=none smtp.client-ip=80.241.56.151
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=listout.xyz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=listout.xyz
-Received: from smtp202.mailbox.org (smtp202.mailbox.org [10.196.197.202])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mout-p-101.mailbox.org (Postfix) with ESMTPS id 4bRRp80z34z9swN;
-	Tue, 24 Jun 2025 16:16:32 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=listout.xyz; s=MBO0001;
-	t=1750774592;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=zOB+KWj4K3uiBKIu1Zg12zTHSz73MTm6NuU1DNkS8ag=;
-	b=BwmiRiQ5DPb88L1bZT9xNSIhUKq+5c8llet+J2eGabC0TL2Nk7Xru+zRNTbAs7LeQut6BQ
-	f5MYSfxo/Rbn3WZ73Fh6Vom/ECXeSggR47dL3TtzpPOWWZOfP7o5DP6GDQa0bUHc1pA2/r
-	w0ZIzf7uN7IU16fMUeA2y5SWxVGDD84JktE2zo7PoZMR2FrnjnXqQ0AJopsyefQoIrmNVG
-	mWRSb2Gt/1b5plXqft2bRAQO6gJdAokb87X0XC+VzmhchAVrUAGwpYiQwFE3ho2oB5Q6dG
-	qnQ3ToOpAKME4tNm1/rg4XR7P3ho4OfB2WueYwCZo+Da7DcUTdHwrYUtJcPkSw==
-Date: Tue, 24 Jun 2025 19:46:25 +0530
-From: Brahmajit Das <listout@listout.xyz>
-To: "Rafael J. Wysocki" <rafael@kernel.org>
-Cc: linux-hardening@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-acpi@vger.kernel.org, lenb@kernel.org, lv.zheng@intel.com, kees@kernel.org, 
-	rui.zhang@intel.com, len.brown@intel.com
-Subject: Re: [PATCH] ACPI / sysfs: Replace deprecated and unsafe functions
- with sysfs_emit
-Message-ID: <jgk536vpai32yf4ozjx66pah2nvi67j7cnbs4wlfrj5vsetg3w@sgd6huslhtk2>
-References: <20250624133739.25215-1-listout@listout.xyz>
- <CAJZ5v0jSk-NrovSq5En6qOureQXFbCsJLChorbgYXQdYfa0m3w@mail.gmail.com>
+	s=arc-20240116; t=1750774611; c=relaxed/simple;
+	bh=17L7ponko88riHevvmIv4qyXvYBhLHE4wx7OmbK6EWE=;
+	h=Message-ID:Date:MIME-Version:Cc:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=ZkLO0v1K9mk+0E068mAvIgAKVgoFaLqgUMrS+YDu1dIcCwKD51XQB9bzfJtbwjHJ4RdGfn74MRdK9WxXZI0/VU6uUdlUTxR4qJrHjjMeuYPwM0dXjGd6GQM/dp7v7yGKPgtGhD4EJkoXs7QRBH1wFC66TzIoF7YvTEwQRjRN62M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=rwZ94aLG; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3D975C4CEE3;
+	Tue, 24 Jun 2025 14:16:49 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1750774610;
+	bh=17L7ponko88riHevvmIv4qyXvYBhLHE4wx7OmbK6EWE=;
+	h=Date:Cc:Subject:To:References:From:In-Reply-To:From;
+	b=rwZ94aLG2J34d46JgW0UgzuNCLWzIl4Y9DSwUBVeWF1Hv0EeLF7YKKf2IGQ0OfD3y
+	 VCTTCqu6wSdbLk66Y/kn6YmgTiJp2VQCJ0nEUca78qnlsIRvQasldl8ftDVosrnUmq
+	 W2CAHMSvdQ8nqiW5XKd6ogdFjeVOqkwZiGHaLjMqMk/ZdmfK8oxko+pqsyZ0U+nUtX
+	 Aysu1zT5gozraHT8acwjE1A2m4PwEbQEtqb5Lt1W+2Vfi/HO6InMhDNYbXlqDyDLK0
+	 g5/2k7pZqvZTDAOJ5W+QYnCl+sEncFly2ldAd8c9clIXcayPrF/xaRWVDjCotoj+XW
+	 kwJaycCf1Z/vg==
+Message-ID: <f90d39de-d24b-4006-aa09-71bcce5e4eb4@kernel.org>
+Date: Tue, 24 Jun 2025 22:16:47 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
+User-Agent: Mozilla Thunderbird
+Cc: chao@kernel.org, corbet@lwn.net, linux-doc@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] docs: f2fs: fix typos in f2fs.rst
+To: Yuanye Ma <yuanye.ma20@gmail.com>, jaegeuk@kernel.org,
+ linux-f2fs-devel@lists.sourceforge.net
+References: <20250618225546.104949-1-yuanye.ma20@gmail.com>
+Content-Language: en-US
+From: Chao Yu <chao@kernel.org>
+In-Reply-To: <20250618225546.104949-1-yuanye.ma20@gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAJZ5v0jSk-NrovSq5En6qOureQXFbCsJLChorbgYXQdYfa0m3w@mail.gmail.com>
 
-On 24.06.2025 15:46, Rafael J. Wysocki wrote:
-> On Tue, Jun 24, 2025 at 3:38 PM Brahmajit Das <listout@listout.xyz> wrote:
-> >
-> > acpi/sysfs.c has many instances of unsafe or deprecated functions such
-> > as sprintf, strcpy. This patch relaces them with sysfs_emit to safer
+On 2025/6/19 06:55, Yuanye Ma wrote:
+> This patch fixes two minor typos in Documentation/filesystems/f2fs.rst:
 > 
-> "replaces"
+> - "ramdom" → "random"
+> - "reenable" → "re-enable"
 > 
-> > alternavtive and better following of kernel API.
+> The changes improve spelling and consistency in the documentation.
 > 
-> "alternative"
+> These issues were identified using the 'codespell' tool with the
+> following command:
 > 
-> 1. Have you tested all of the affected interfaces and verified that
-> they still work as expected after the changes?
-> 2. While the replaced functions are unsafe in principle, is the usage
-> of them in any places affected by this patch actually unsafe?
+>    $ find Documentation/ -path Documentation/translations -prune -o \
+>      -name '*.rst' -print | xargs codespell
 > 
+> Signed-off-by: Yuanye Ma <yuanye.ma20@gmail.com>
 
-The previous patch's idea came while I was working to remove strcpy from
-acpi/sysfs.c. But I guess this is not a good way of sending patch and me
-being a new comer didn't help that I didn't completely tested the patch
-before sending, even it was meant for RFC.
+Reviewed-by: Chao Yu <chao@kernel.org>
 
-I vaguely remember a tread by GHK where he asked to leave out old code
-and only work on new code that you've tested. So I'll follow that for
-now until I've learnt testing my changes properly.
-
-And again sorry.
-
-I'm working on a patch that replaces deprecated strcpy (which according
-to kernel docs) with sysfs_emit. And looks like:
-
-diff --git a/drivers/acpi/sysfs.c b/drivers/acpi/sysfs.c
-index a48ebbf768f9..7ce90998ab97 100644
---- a/drivers/acpi/sysfs.c
-+++ b/drivers/acpi/sysfs.c
-@@ -181,10 +181,9 @@ static int param_set_trace_method_name(const char *val,
- 
- 	/* This is a hack.  We can't kmalloc in early boot. */
- 	if (is_abs_path)
--		strcpy(trace_method_name, val);
-+		sysfs_emit(trace_method_name, "%s", val);
- 	else {
--		trace_method_name[0] = '\\';
--		strcpy(trace_method_name+1, val);
-+		sysfs_emit(trace_method_name, "\%s", val);
- 	}
- 
- 	/* Restore the original tracer state */
-
-I guess I'll keep this, instead of replacing every instance of sprint
-with sysfs_emit blindly.
--- 
-Regards,
-listout
+Thanks,
 
