@@ -1,114 +1,187 @@
-Return-Path: <linux-kernel+bounces-700197-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-700189-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9CF81AE6537
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Jun 2025 14:39:32 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 43C99AE6504
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Jun 2025 14:32:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7077B4A68E9
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Jun 2025 12:39:31 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 858687B2AB0
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Jun 2025 12:31:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D9AEA28EA70;
-	Tue, 24 Jun 2025 12:39:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4467929615D;
+	Tue, 24 Jun 2025 12:31:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=onurozkan.dev header.i=@onurozkan.dev header.b="PKF81/DS"
-Received: from forward501d.mail.yandex.net (forward501d.mail.yandex.net [178.154.239.209])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="eu9htEvB"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CF241230996;
-	Tue, 24 Jun 2025 12:39:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.154.239.209
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6DD9F289E1B;
+	Tue, 24 Jun 2025 12:31:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750768754; cv=none; b=mV1Kpri6Y7/uQMDEFWTBwHlKDzL+DobN+0FLOwpgwC906Nh2Q5SBk3X58ixa172lrFxB21vZ8bS9wAM/in8cgw4/2k0FiKTLn7dV1osMqWQ6jgZ5WOW7dRhMnAWcBYPVHGPySVGZi5KJo5jIuqVPk81XI88+6JFHNnTtBrFJBwI=
+	t=1750768286; cv=none; b=CF91aJM9eoAtj7S5DwK8poP9aWiO2G0Jm2Eo1n2OGwAZKgtCaggTejQ5IVRhQRQVrC0CI/bRs/uPlwM45xhdre195LNxAyHYJ1r4zuZcSpPrT8H++5Xg6B0eaNVpt2yFUbz9JJwwM3XLSgtEuo215tDsMwKoYHqKSpRzYGhR990=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750768754; c=relaxed/simple;
-	bh=IiZvAA3FleTUiDWA3EVVuuyPPqVxWqgsxdcovX1m2xg=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=kSVg86QDW3+lZQ5KmKi9nD+xbsRFys3w05PGKtJ7vbF/F1bSQUR9nJQk8YeNl2iNtadk1XCF5a7FTbiMb6G4ZCyzg17SVjhaqdc6ddI24938iriHjKX3FcNzTmUrkISh2z4nk0XWWXAF2jLTlA3OS+8wvNEUHTC3AalTlVWZpbY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=onurozkan.dev; spf=pass smtp.mailfrom=onurozkan.dev; dkim=pass (1024-bit key) header.d=onurozkan.dev header.i=@onurozkan.dev header.b=PKF81/DS; arc=none smtp.client-ip=178.154.239.209
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=onurozkan.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=onurozkan.dev
-Received: from mail-nwsmtp-smtp-production-main-81.klg.yp-c.yandex.net (mail-nwsmtp-smtp-production-main-81.klg.yp-c.yandex.net [IPv6:2a02:6b8:c42:832b:0:640:fda5:0])
-	by forward501d.mail.yandex.net (Yandex) with ESMTPS id 0F5F661A1F;
-	Tue, 24 Jun 2025 15:31:10 +0300 (MSK)
-Received: by mail-nwsmtp-smtp-production-main-81.klg.yp-c.yandex.net (smtp/Yandex) with ESMTPSA id 4VSEOs8LaeA0-juFvfTtH;
-	Tue, 24 Jun 2025 15:31:08 +0300
-X-Yandex-Fwd: 1
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=onurozkan.dev;
-	s=mail; t=1750768269;
-	bh=KUzUZlPWU3SLSvntobllY0hRQ6erceKcqtakC8llS30=;
-	h=Cc:Message-ID:Subject:Date:References:To:From:In-Reply-To;
-	b=PKF81/DS5QIdXChUVJRELAbFDbbjMSk6Zhd0TJmV3md1Art5XzZuq8Ua3WNksVxHD
-	 /J327gmOHntnzMqVRBcj5qtBasPiJajsEXHfyOAp8XHJykcWm3KaT5fa3pl6MpjB7G
-	 qu4FRG7y6EK6KCXMxCq/0f4G4TIjcObdueQ6IBgI=
-Authentication-Results: mail-nwsmtp-smtp-production-main-81.klg.yp-c.yandex.net; dkim=pass header.i=@onurozkan.dev
-Date: Tue, 24 Jun 2025 15:31:02 +0300
-From: Onur <work@onurozkan.dev>
-To: "Benno Lossin" <lossin@kernel.org>
-Cc: "Boqun Feng" <boqun.feng@gmail.com>, <linux-kernel@vger.kernel.org>,
- <rust-for-linux@vger.kernel.org>, <ojeda@kernel.org>,
- <alex.gaynor@gmail.com>, <gary@garyguo.net>, <a.hindborg@kernel.org>,
- <aliceryhl@google.com>, <tmgross@umich.edu>, <dakr@kernel.org>,
- <peterz@infradead.org>, <mingo@redhat.com>, <will@kernel.org>,
- <longman@redhat.com>, <felipe_life@live.com>, <daniel@sedlak.dev>,
- <bjorn3_gh@protonmail.com>, <simona@ffwll.ch>, <airlied@gmail.com>,
- <dri-devel@lists.freedesktop.org>, <lyude@redhat.com>
-Subject: Re: [PATCH v5 2/3] implement ww_mutex abstraction for the Rust tree
-Message-ID: <20250624153102.3961f377@nimda.home>
-In-Reply-To: <DAUM8B2ZUMFQ.25R95W7IDAEHM@kernel.org>
-References: <20250621184454.8354-1-work@onurozkan.dev>
-	<20250621184454.8354-3-work@onurozkan.dev>
-	<DASY7BECFRCT.332X5ZHZMV2W@kernel.org>
-	<aFlQ7K_mYYbrG8Cl@Mac.home>
-	<DATYHYJVPL3L.3NLMH7PPHYU9@kernel.org>
-	<aFlpFQ4ivKw81d-y@Mac.home>
-	<DAU0ELV91E2Q.35FZOII18W44J@kernel.org>
-	<aFmKsE_nJkaVMv0T@tardis.local>
-	<DAUARTYJ118U.YW38OP8TRVO3@kernel.org>
-	<20250624083437.1e50d54c@nimda.home>
-	<DAUM8B2ZUMFQ.25R95W7IDAEHM@kernel.org>
-X-Mailer: Claws Mail 4.3.1 (GTK 3.24.49; x86_64-unknown-linux-gnu)
+	s=arc-20240116; t=1750768286; c=relaxed/simple;
+	bh=A1vlO/L1VKH8WOeSv/ouj3ncracjwzpEiurRYiS/ALg=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=EHpbbJp1/bWy7Kw08U3o1KmEOGioMOByrf7E1WLg1Mnk327tQ2rRBfuuW2Qn7vTzcdO2oFn7NUucwjZdiAtkbsGKy3JgE0OO8lS5l7wLL6zbirQaV3HUYtHxH+MooueTQBBst0HzFOIxujZiYMqvOz8s5zsZXTXx+3e6vEBCCNg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=eu9htEvB; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 19B39C4CEF3;
+	Tue, 24 Jun 2025 12:31:26 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1750768286;
+	bh=A1vlO/L1VKH8WOeSv/ouj3ncracjwzpEiurRYiS/ALg=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=eu9htEvBiVbL44j/hDA/XL5IHMVRkTjREoK+yoJofVs3i2H7zYeWM4nuOEa8lvA1q
+	 draOJBWRmasaODlA4846qtfnrHoWcfrlpN7SdkOAt9CRDuKgz+Jijdfb0hME3v4zjT
+	 vySbdesGJCidQHCf0M229vamBtjKXpnwatmAh49jUKp+nVNq+/QlhEUFGI/3hC6dpM
+	 MBpiZpEieyvMUEHttV5HVCNFcwOz97BYbHpUnESxPT0XUV2ac4VY/kC4HNi3iT2U1C
+	 nndDqpkUc6Rj2nldXF12iLWnmS6e5StbWpsEaS9jarXC/+el4cuLLpnkbs9yytEYsC
+	 jjsFUJ19nZmUg==
+Received: by mail-ed1-f43.google.com with SMTP id 4fb4d7f45d1cf-607ec30df2bso769442a12.1;
+        Tue, 24 Jun 2025 05:31:25 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCUIcBidubsUjr6GvP7f8421F8eC99nNi6qungSKTQM8pINmHk0ZFQw9RZuYj1FBx0HXJrFF3WY3Rotkx7e7@vger.kernel.org, AJvYcCUQZWnOTjCK2ItJvAeXFGpEn1wxgj+j7S3FaXb6FQWYwU4dhdbpvxOzHlLl1i2fpKNkBz0CHKkYXuM=@vger.kernel.org, AJvYcCVSnuJEYLz/GTL/Zt2wX6i8PbgDhcFQMKVvxqYQ9uKexcFTe4i2J5X9OE+QgjnqUXcCZ4Kr6BRLz/+w@vger.kernel.org, AJvYcCWfiTkex+f0MQn2Z3APHWJVp4HQPyHwHt4AGxv8/eCTD/Wh1tFfHarKKtWaIToUdgxBNH2xPZeVU+3DSQ==@vger.kernel.org, AJvYcCWioFj6dnpN+JivFYoas3pOlccQAJKDOtuz5crs2yTlM1t+seJTOz1ZTStM7uqQuJe3SwUJfStDO/trpVnwdOVG@vger.kernel.org, AJvYcCWjTrlomDwlBvZDpD+VWRgwmHhauJOez08kLDWR4/qlguDkO5nrNIV/nfXepGNh0ToK7Hez1v1ORB4YQQ==@vger.kernel.org, AJvYcCWkytK29gf2ZbYEOocH8bXuAPQ/UqBhE3WfKgyHkJCw6Bx1pmxGYIRJmSGiOfFXKWjatwVCMqjN1iruvkoSA2qz@vger.kernel.org, AJvYcCWwjMBDeub9j3awBbNGpJtyGIYzMVCfPwbN2Qb/7+cx5Pr16kamrB+C4ldq33XDCUihDqLrQVsWyCfqWvHQ@vger.kernel.org, AJvYcCXeEP3m9siA10DxTLOpTz8vc5wuJKop878SjR+iKM+WruZTu8Go8JcteBM33w5C6Oj8RMYc8u0iVfd4p07d+JQLfF/WEmsR@vger.kernel.org
+X-Gm-Message-State: AOJu0YwpG8YkBHYF8id6pnhc+2Rp05WERXknvveD5uYetID7V6bxhC+N
+	Ua0WPE2J9qre0HTAgZiSjYgdnmdP8M5x1lTQ9Vh5Rd6razi/cuq/AcCKQfndyTcPCVm7Il4K96q
+	gutnGDt0/tyS+RYnSVUVTaKVcGSIANGE=
+X-Google-Smtp-Source: AGHT+IG78TOJtNBgPo6KUbppTtQyUVPXosqjkC+mjKzFM6GuMzZpIE/4mn6DMDsxVG8gc/mo29CZZDSg4K3moyGLako=
+X-Received: by 2002:a50:9e07:0:b0:607:5987:5ba1 with SMTP id
+ 4fb4d7f45d1cf-60a1d1676eamr10402408a12.20.1750768284578; Tue, 24 Jun 2025
+ 05:31:24 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+References: <20250523043251.it.550-kees@kernel.org> <20250523043935.2009972-10-kees@kernel.org>
+ <CAAhV-H4WxAwXTYVFOnphgHN80-_6jt77YZ_rw-sOBoBjjiN-yQ@mail.gmail.com>
+In-Reply-To: <CAAhV-H4WxAwXTYVFOnphgHN80-_6jt77YZ_rw-sOBoBjjiN-yQ@mail.gmail.com>
+From: Huacai Chen <chenhuacai@kernel.org>
+Date: Tue, 24 Jun 2025 20:31:12 +0800
+X-Gmail-Original-Message-ID: <CAAhV-H5oHPG+etNawAmVwyDtg80iKUrAM_m3Vj57bBO0scHqvQ@mail.gmail.com>
+X-Gm-Features: AX0GCFsgXJm0uAqj4ZcBCmgCp5XFBS8cfA5fjKZVFWrLP2ySZYpAIUKeGDxIJgs
+Message-ID: <CAAhV-H5oHPG+etNawAmVwyDtg80iKUrAM_m3Vj57bBO0scHqvQ@mail.gmail.com>
+Subject: Re: [PATCH v2 10/14] loongarch: Handle KCOV __init vs inline mismatches
+To: Kees Cook <kees@kernel.org>
+Cc: Arnd Bergmann <arnd@arndb.de>, WANG Xuerui <kernel@xen0n.name>, 
+	Thomas Gleixner <tglx@linutronix.de>, Tianyang Zhang <zhangtianyang@loongson.cn>, 
+	Bibo Mao <maobibo@loongson.cn>, Jiaxun Yang <jiaxun.yang@flygoat.com>, loongarch@lists.linux.dev, 
+	"Gustavo A. R. Silva" <gustavoars@kernel.org>, Christoph Hellwig <hch@lst.de>, Marco Elver <elver@google.com>, 
+	Andrey Konovalov <andreyknvl@gmail.com>, Andrey Ryabinin <ryabinin.a.a@gmail.com>, 
+	Ard Biesheuvel <ardb@kernel.org>, Masahiro Yamada <masahiroy@kernel.org>, 
+	Nathan Chancellor <nathan@kernel.org>, Nicolas Schier <nicolas.schier@linux.dev>, 
+	Nick Desaulniers <nick.desaulniers+lkml@gmail.com>, Bill Wendling <morbo@google.com>, 
+	Justin Stitt <justinstitt@google.com>, linux-kernel@vger.kernel.org, x86@kernel.org, 
+	kasan-dev@googlegroups.com, linux-doc@vger.kernel.org, 
+	linux-arm-kernel@lists.infradead.org, kvmarm@lists.linux.dev, 
+	linux-riscv@lists.infradead.org, linux-s390@vger.kernel.org, 
+	linux-efi@vger.kernel.org, linux-hardening@vger.kernel.org, 
+	linux-kbuild@vger.kernel.org, linux-security-module@vger.kernel.org, 
+	linux-kselftest@vger.kernel.org, sparclinux@vger.kernel.org, 
+	llvm@lists.linux.dev
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Tue, 24 Jun 2025 10:20:48 +0200
-"Benno Lossin" <lossin@kernel.org> wrote:
+Hi, Kees,
 
-> On Tue Jun 24, 2025 at 7:34 AM CEST, Onur wrote:
-> > Should we handle this in the initial implementation or leave it for
-> > follow-up patches after the core abstraction of ww_mutex has landed?
-> 
-> Since you're writing these abstractions specifically for usage in
-> drm, I think we should look at the intended use-cases there and then
-> decide on an API.
-> 
-> So maybe Lyude or Dave can chime in :)
-> 
-> If you (or someone else) have another user for this API that needs it
-> ASAP, then we can think about merging this and improve it later. But
-> if we don't have a user, then we shouldn't merge it anyways.
+On Thu, Jun 19, 2025 at 4:55=E2=80=AFPM Huacai Chen <chenhuacai@kernel.org>=
+ wrote:
+>
+> Hi, Kees,
+>
+> On Fri, May 23, 2025 at 12:39=E2=80=AFPM Kees Cook <kees@kernel.org> wrot=
+e:
+> >
+> > When KCOV is enabled all functions get instrumented, unless
+> > the __no_sanitize_coverage attribute is used. To prepare for
+> > __no_sanitize_coverage being applied to __init functions, we have to
+> > handle differences in how GCC's inline optimizations get resolved. For
+> > loongarch this exposed several places where __init annotations were
+> > missing but ended up being "accidentally correct". Fix these cases and
+> > force one function to be inline with __always_inline.
+> >
+> > Signed-off-by: Kees Cook <kees@kernel.org>
+> > ---
+> > Cc: Huacai Chen <chenhuacai@kernel.org>
+> > Cc: WANG Xuerui <kernel@xen0n.name>
+> > Cc: Thomas Gleixner <tglx@linutronix.de>
+> > Cc: Tianyang Zhang <zhangtianyang@loongson.cn>
+> > Cc: Bibo Mao <maobibo@loongson.cn>
+> > Cc: Jiaxun Yang <jiaxun.yang@flygoat.com>
+> > Cc: <loongarch@lists.linux.dev>
+> > ---
+> >  arch/loongarch/include/asm/smp.h | 2 +-
+> >  arch/loongarch/kernel/time.c     | 2 +-
+> >  arch/loongarch/mm/ioremap.c      | 4 ++--
+> >  3 files changed, 4 insertions(+), 4 deletions(-)
+> >
+> > diff --git a/arch/loongarch/include/asm/smp.h b/arch/loongarch/include/=
+asm/smp.h
+> > index ad0bd234a0f1..88e19d8a11f4 100644
+> > --- a/arch/loongarch/include/asm/smp.h
+> > +++ b/arch/loongarch/include/asm/smp.h
+> > @@ -39,7 +39,7 @@ int loongson_cpu_disable(void);
+> >  void loongson_cpu_die(unsigned int cpu);
+> >  #endif
+> >
+> > -static inline void plat_smp_setup(void)
+> > +static __always_inline void plat_smp_setup(void)
+> Similar to x86 and arm, I prefer to mark it as __init rather than
+> __always_inline.
+If you have no objections, I will apply this patch with the above modificat=
+ion.
 
-I don't think this is urgent, but it might be better to land the basic
-structure first and improve it gradually I think? I would be happy to
-continue working for the improvements as I don't plan to leave it as
-just the initial version.
 
-I worked on the v5 review notes, but if we are going to consider
-designing a different API, then it doesn't make much sense to send a v6
-patch before finishing the design, which requires additional people in
-the topic. That would also mean some of the ongoing review discussion
-would be wasted.
+Huacai
 
----
-
-Regards,
-Onur
+>
+> Huacai
+>
+> >  {
+> >         loongson_smp_setup();
+> >  }
+> > diff --git a/arch/loongarch/kernel/time.c b/arch/loongarch/kernel/time.=
+c
+> > index bc75a3a69fc8..367906b10f81 100644
+> > --- a/arch/loongarch/kernel/time.c
+> > +++ b/arch/loongarch/kernel/time.c
+> > @@ -102,7 +102,7 @@ static int constant_timer_next_event(unsigned long =
+delta, struct clock_event_dev
+> >         return 0;
+> >  }
+> >
+> > -static unsigned long __init get_loops_per_jiffy(void)
+> > +static unsigned long get_loops_per_jiffy(void)
+> >  {
+> >         unsigned long lpj =3D (unsigned long)const_clock_freq;
+> >
+> > diff --git a/arch/loongarch/mm/ioremap.c b/arch/loongarch/mm/ioremap.c
+> > index 70ca73019811..df949a3d0f34 100644
+> > --- a/arch/loongarch/mm/ioremap.c
+> > +++ b/arch/loongarch/mm/ioremap.c
+> > @@ -16,12 +16,12 @@ void __init early_iounmap(void __iomem *addr, unsig=
+ned long size)
+> >
+> >  }
+> >
+> > -void *early_memremap_ro(resource_size_t phys_addr, unsigned long size)
+> > +void * __init early_memremap_ro(resource_size_t phys_addr, unsigned lo=
+ng size)
+> >  {
+> >         return early_memremap(phys_addr, size);
+> >  }
+> >
+> > -void *early_memremap_prot(resource_size_t phys_addr, unsigned long siz=
+e,
+> > +void * __init early_memremap_prot(resource_size_t phys_addr, unsigned =
+long size,
+> >                     unsigned long prot_val)
+> >  {
+> >         return early_memremap(phys_addr, size);
+> > --
+> > 2.34.1
+> >
 
