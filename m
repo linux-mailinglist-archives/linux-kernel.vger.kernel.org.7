@@ -1,120 +1,221 @@
-Return-Path: <linux-kernel+bounces-699610-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-699600-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4B143AE5D05
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Jun 2025 08:42:58 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id C3CD2AE5CDE
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Jun 2025 08:35:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 312C81B65ED6
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Jun 2025 06:43:14 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 22C344A6522
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Jun 2025 06:35:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5B5BA241674;
-	Tue, 24 Jun 2025 06:42:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 72DC423C515;
+	Tue, 24 Jun 2025 06:35:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="bnVdFEuJ"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.12])
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="HbU6agOt"
+Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5AFBB231A55
-	for <linux-kernel@vger.kernel.org>; Tue, 24 Jun 2025 06:42:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.12
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1D9B813B284;
+	Tue, 24 Jun 2025 06:35:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750747372; cv=none; b=olVdToilUs6xxtzFbCN4VDLIduC6ghDe1jDiTOR5d4rT9EHoq5ebVZkqQoOwfaEWuHRsrI60scmN5G2LBNNIqw1KehzpRUTIx7aOCZv4ZS54X8gO0Vj0W2Dz0yaG3s4/5vox8FArsyjZtkNko3k1DwRxuAAt7CH2IjocxNO3fJY=
+	t=1750746931; cv=none; b=UYN+xGMGiWlKc2XLBYiFktdY9E/3cigpCqnpfKPOrG/dD1ecznAyGvjAf8+GU6E3NgYHZpJEnHbdTdiL4JMQZP1eSQZ7u+hiTNH9rLGRbCIw3vGHKaKSlnoBntXUO2pYZXgyvs+dYXMnyOBQEKSkNJrnpmCRLqxWVm5P0v0S95w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750747372; c=relaxed/simple;
-	bh=onLRsAPAlqNyYp1MJ0vIrTl+4YIOU0c9R/hbGwqKhJs=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Ycx6S88skIfsdovxrq9TOQoxhWgGYinKqU3uA+dC40VQa9PrT562g+nfbXmWCv6ClXhCr83qkVlRaMd86L/Hz0MyzBlY/9wZOInuAxH4YjkQQhA8uYuEoLWFODiV0JYlNRxs5aUc+xoPx/hOphv1ez72CkA33jkVhvNzzJgB4dc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=bnVdFEuJ; arc=none smtp.client-ip=192.198.163.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1750747371; x=1782283371;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=onLRsAPAlqNyYp1MJ0vIrTl+4YIOU0c9R/hbGwqKhJs=;
-  b=bnVdFEuJXaFTWy+axihK6klOLelJGeRzFhZMDAmUvVK5a4r/5FoSuUP6
-   qydk0goMTwNLwPZYIKSYUzlgw7vA4n+Kdcjy84tr18OgkE300hqGEjyEf
-   BoluzsjafiRjyDSUoXfn09gFY/OjxOYHSPFNlBODkbWhr7lIrUn3wUwMj
-   XaY6OYzvqCtuCtToKar3xP7u1SU9+86DxU2RnO8zwbF+ooWgepqzU1V19
-   /ZBpfdLkDjOU+fDYlu7vMvUV4bPzK4hIfi5bvytWicv8BUJqumLrnHkl0
-   9wxKKqCbSvR1KK3ZwQYbPI42DtQtW1AVJHzx8dtUZODqa2tmqW5EKnUgM
-   Q==;
-X-CSE-ConnectionGUID: uHGhEhLQQE+QXqfRr7Merw==
-X-CSE-MsgGUID: qA6EwGlSS1GxG8fX/hU38g==
-X-IronPort-AV: E=McAfee;i="6800,10657,11473"; a="56778564"
-X-IronPort-AV: E=Sophos;i="6.16,260,1744095600"; 
-   d="scan'208";a="56778564"
-Received: from orviesa009.jf.intel.com ([10.64.159.149])
-  by fmvoesa106.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 23 Jun 2025 23:42:51 -0700
-X-CSE-ConnectionGUID: zIIJLWnkSvePKeiZ+NRlUw==
-X-CSE-MsgGUID: LTi3RoF9Rq+ChNs3lCwJLg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.16,260,1744095600"; 
-   d="scan'208";a="151583142"
-Received: from yilunxu-optiplex-7050.sh.intel.com (HELO localhost) ([10.239.159.165])
-  by orviesa009.jf.intel.com with ESMTP; 23 Jun 2025 23:42:47 -0700
-Date: Tue, 24 Jun 2025 14:35:14 +0800
-From: Xu Yilun <yilun.xu@linux.intel.com>
-To: Baolu Lu <baolu.lu@linux.intel.com>
-Cc: jgg@nvidia.com, jgg@ziepe.ca, kevin.tian@intel.com, will@kernel.org,
-	aneesh.kumar@kernel.org, iommu@lists.linux.dev,
-	linux-kernel@vger.kernel.org, joro@8bytes.org, robin.murphy@arm.com,
-	shuah@kernel.org, nicolinc@nvidia.com, aik@amd.com,
-	dan.j.williams@intel.com, yilun.xu@intel.com
-Subject: Re: [PATCH v2 2/4] iommufd/viommu: Fix the uninitialized
- iommufd_vdevice::ictx
-Message-ID: <aFpHInZwCC2N34Fh@yilunxu-OptiPlex-7050>
-References: <20250623094946.1714996-1-yilun.xu@linux.intel.com>
- <20250623094946.1714996-3-yilun.xu@linux.intel.com>
- <ff1a3fc1-3671-4cff-917f-5ea44bd2451e@linux.intel.com>
+	s=arc-20240116; t=1750746931; c=relaxed/simple;
+	bh=JqHIVqC0ywsMBOqVkOcMY7gYmKbvXVQXDpqzSThGHlc=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=cMd4OVCIN/hRFkY/sQLdsHz+CxxYnBSF+tdki8HWAKelbwP9m31qXPxEycb9mPYJnLHI9oxgHDjiJa0puFhB+naA8wVDDL/HffMnh+d0nnRIJQqR9YVE8UnI/iT+8BR2VsA/U7jffsJUd0GkmqLtSUyjYp0BdRE0xJXTbB4T8QU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=HbU6agOt; arc=none smtp.client-ip=148.163.156.1
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0353729.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 55O5pqHZ026632;
+	Tue, 24 Jun 2025 06:35:27 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
+	:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=pp1; bh=EU8lPQ
+	cM4c4rLi13rmWV1+8Jm1PcKek1/5wjDEiebyI=; b=HbU6agOtrC+H6vCutsomUd
+	b1+UDthAbGvbU3w3jiPW+vDbpYOR81BVVsu37dWrfg0iwiF4it7M5jQfLgirXn99
+	PBfmvmg4GNgEJwfTAzt8ui939O0d+yKUI6TAfBBmAF/vTM0pAMN4ZfLjz6777fC2
+	TljAqRxXMXwQnrWmLQNP08p+hfH9TeVAjj99UTPQ2POF8IO5ZxWoKQoxpL6XLVOE
+	pPUKwuDDBQrD3DFV0neaDn8Ye07PmiEiCc2vZDTzdXSv6YlkPyil8EIGLXkp968s
+	5Cg1MqU0bUPxQrH8i1ug17S1duBWH1icQczsW1w53OoxGL/wtcQbJ4+9+Z3uwpmw
+	==
+Received: from pps.reinject (localhost [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 47dme16pyv-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 24 Jun 2025 06:35:27 +0000 (GMT)
+Received: from m0353729.ppops.net (m0353729.ppops.net [127.0.0.1])
+	by pps.reinject (8.18.0.8/8.18.0.8) with ESMTP id 55O6UcQB024730;
+	Tue, 24 Jun 2025 06:35:26 GMT
+Received: from ppma22.wdc07v.mail.ibm.com (5c.69.3da9.ip4.static.sl-reverse.com [169.61.105.92])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 47dme16pys-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 24 Jun 2025 06:35:26 +0000 (GMT)
+Received: from pps.filterd (ppma22.wdc07v.mail.ibm.com [127.0.0.1])
+	by ppma22.wdc07v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 55O5UJY5030487;
+	Tue, 24 Jun 2025 06:35:25 GMT
+Received: from smtprelay07.fra02v.mail.ibm.com ([9.218.2.229])
+	by ppma22.wdc07v.mail.ibm.com (PPS) with ESMTPS id 47e7eytr03-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 24 Jun 2025 06:35:25 +0000
+Received: from smtpav07.fra02v.mail.ibm.com (smtpav07.fra02v.mail.ibm.com [10.20.54.106])
+	by smtprelay07.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 55O6ZLUx45810056
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Tue, 24 Jun 2025 06:35:21 GMT
+Received: from smtpav07.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 758462004B;
+	Tue, 24 Jun 2025 06:35:21 +0000 (GMT)
+Received: from smtpav07.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 2630720043;
+	Tue, 24 Jun 2025 06:35:21 +0000 (GMT)
+Received: from [9.152.212.130] (unknown [9.152.212.130])
+	by smtpav07.fra02v.mail.ibm.com (Postfix) with ESMTP;
+	Tue, 24 Jun 2025 06:35:21 +0000 (GMT)
+Message-ID: <ad905a68-a89b-458d-8a8b-2081a6656b91@linux.ibm.com>
+Date: Tue, 24 Jun 2025 08:35:20 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <ff1a3fc1-3671-4cff-917f-5ea44bd2451e@linux.intel.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] perf list: Add IBM z17 event descriptions
+To: Ian Rogers <irogers@google.com>, sumanthk@linux.ibm.com
+Cc: linux-kernel@vger.kernel.org, linux-s390@vger.kernel.org,
+        linux-perf-users@vger.kernel.org, acme@kernel.org, namhyung@kernel.org,
+        agordeev@linux.ibm.com, gor@linux.ibm.com, hca@linux.ibm.com,
+        japo@linux.ibm.com
+References: <20250623132731.899525-1-tmricht@linux.ibm.com>
+ <CAP-5=fV_hXzq0A-91NakejcQGnvPp+uJGGe=vccwM+47JVCmtA@mail.gmail.com>
+Content-Language: en-US
+From: Thomas Richter <tmricht@linux.ibm.com>
+Organization: IBM
+In-Reply-To: <CAP-5=fV_hXzq0A-91NakejcQGnvPp+uJGGe=vccwM+47JVCmtA@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-TM-AS-GCONF: 00
+X-Authority-Analysis: v=2.4 cv=Tc6WtQQh c=1 sm=1 tr=0 ts=685a472f cx=c_pps a=5BHTudwdYE3Te8bg5FgnPg==:117 a=5BHTudwdYE3Te8bg5FgnPg==:17 a=IkcTkHD0fZMA:10 a=6IFa9wvqVegA:10 a=VnNF1IyMAAAA:8 a=Ijd6lzqJG2aW12Tu_CUA:9 a=3ZKOabzyN94A:10 a=QEXdDO2ut3YA:10
+X-Proofpoint-GUID: O_PDUk_VDM-TxWmpuruxgOrmND4Gbd3q
+X-Proofpoint-ORIG-GUID: tn4b4MwragX7YbONVuR0l9BqJMnIX0YZ
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNjI0MDA1MiBTYWx0ZWRfX0DY1VwK2+kBT BgQ5kxel7HtuGuy9qNOhiN5Cp9fw762HcJOoU4HQgqfQaeAsrT8E8CnGO5EkLj2G80zKGQDmDr1 rURO2lL2GqRD+ngbvS/9i8ajz2ivCjzbTvxF6AxKHPedqi67oujQtMobKmQR37lgWXp0LzfQlD1
+ ULWvoAdz5z/Z8cJB5U9Qe7Mtn5v4EZNLvZmKDVcaOkzTbvSODslWnXWIRaKK5Rj9ul6kaqceM3A CcTbV7eqBr/DqSV7e/aKkz6c5giqFOCDIpzPWlzQI51iDcXj+FHJO5lIVIS7RkQarqUuhX+yWxr 7C3oPjzSZKFKSv4Cnf3hAVUF98IxHu5CL4/2nxYnBpbx86m1Y+su1nWVi/3coJoLHgJj1l95whh
+ IDNctXSpE3IQjrhp47L1F8/RMw1cZ66/y4bmhnhQ8M/lNv2QVDTNfjl7v5mAB/BNBeKJBSfM
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.7,FMLib:17.12.80.40
+ definitions=2025-06-24_02,2025-06-23_07,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 lowpriorityscore=0
+ priorityscore=1501 mlxscore=0 mlxlogscore=999 phishscore=0 spamscore=0
+ malwarescore=0 suspectscore=0 impostorscore=0 clxscore=1015 adultscore=0
+ bulkscore=0 classifier=spam authscore=0 authtc=n/a authcc= route=outbound
+ adjust=0 reason=mlx scancount=1 engine=8.19.0-2505280000
+ definitions=main-2506240052
 
-On Tue, Jun 24, 2025 at 11:24:02AM +0800, Baolu Lu wrote:
-> On 6/23/25 17:49, Xu Yilun wrote:
-> > Fix the uninitialized iommufd_vdevice::ictx. No code was using this
-> > field before, but later vdevice will use it to sync up with idevice on
-> > destroy paths.
-> > 
-> > Fixes: 0ce5c2477af2 ("iommufd/viommu: Add IOMMUFD_OBJ_VDEVICE and IOMMU_VDEVICE_ALLOC ioctl")
-> > Cc:<stable@vger.kernel.org>
-> > Signed-off-by: Xu Yilun<yilun.xu@linux.intel.com>
-> > ---
-> >   drivers/iommu/iommufd/viommu.c | 1 +
-> >   1 file changed, 1 insertion(+)
-> > 
-> > diff --git a/drivers/iommu/iommufd/viommu.c b/drivers/iommu/iommufd/viommu.c
-> > index 01df2b985f02..4577b88c8560 100644
-> > --- a/drivers/iommu/iommufd/viommu.c
-> > +++ b/drivers/iommu/iommufd/viommu.c
-> > @@ -130,6 +130,7 @@ int iommufd_vdevice_alloc_ioctl(struct iommufd_ucmd *ucmd)
-> >   		goto out_put_idev;
-> >   	}
-> > +	vdev->ictx = ucmd->ictx;
+On 6/23/25 19:53, Ian Rogers wrote:
+> On Mon, Jun 23, 2025 at 6:35 AM Thomas Richter <tmricht@linux.ibm.com> wrote:
+>>
+>> Update IBM z17 counter description using document SA23-2260-08:
+>> "The Load-Program-Parameter and the CPU-Measurement Facilities"
+>> released in May 2025 to include counter definitions for IBM z17
+>> counter sets:
+>> * Basic counter set
+>> * Problem/user counter set
+>> * Crypto counter set.
+>>
+>> Use document SA23-2261-09:
+>> "The CPU-Measurement Facility Extended Counters Definition
+>>  for z10, z196/z114, zEC12/zBC12, z13/z13s, z14, z15, z16 and z17"
+>> released on April 2025 to include counter definitions for IBM z17
+>> * Extended counter set
+>> * MT-Diagnostic counter set.
+>>
+>> Use document SA22-7832-14:
+>> "z/Architecture Principles of Operation."
+>> released in April 2025 to include counter definitions for IBM z17
+>> * PAI-Crypto counter set
+>> * PAI-Extention counter set.
+>>
+>> Use document
+>> "CPU MF Formulas and Updates April 2025"
+>> released in April 2025 to include metric calculations.
+>>
+>> Signed-off-by: Thomas Richter <tmricht@linux.ibm.com>
+>> Acked-by: Sumanth Korikkar <sumanthk@linux.ibm.com>
 > 
-> iommufd_vdevice::ictx has been removed by this commit:
+> [snip]
 > 
-> 6e235a772199 ("iommufd: Drop unused ictx in struct iommufd_vdevice")
+>> +       {
+>> +               "Unit": "CPU-M-CF",
+>> +               "EventCode": "143",
+>> +               "EventName": "L1C_TLB2_MISSES",
+>> +               "BriefDescription": "L1C TLB2 Misses",
+>> +               "PublicDescription": "Increments by one for any cycle where a Level-1 cache or Level-2 TLB miss is in progress."
+>> +       },
 > 
-> in linux-next.
+> [snip]
+> 
+>> +  {
+>> +    "BriefDescription": "Cycles per Instructions from Finite cache/memory",
+>> +    "MetricName": "finite_cpi",
+>> +    "MetricExpr": "L1C_TLB2_MISSES / INSTRUCTIONS if has_event(L1C_TLB2_MISSES) else 0"
+>> +  },
+>> +  {
+>> +    "BriefDescription": "Estimated Instruction Complexity CPI infinite Level 1",
+>> +    "MetricName": "est_cpi",
+>> +    "MetricExpr": "(CPU_CYCLES / INSTRUCTIONS) - (L1C_TLB2_MISSES / INSTRUCTIONS) if has_event(INSTRUCTIONS) else 0"
+>> +  },
+>> +  {
+>> +    "BriefDescription": "Estimated Sourcing Cycles per Level 1 Miss",
+>> +    "MetricName": "scpl1m",
+>> +    "MetricExpr": "L1C_TLB2_MISSES / (L1I_DIR_WRITES + L1D_DIR_WRITES) if has_event(L1C_TLB2_MISSES) else 0"
+>> +  },
+> 
+> Just a quick check. If the PMU CPU-M-CF is always present then the
+> "has_event(L1C_TLB2_MISSES)" check will always be true as the event is
+> in json and not in sysfs. I'm guessing this is being done for the
+> benefit of hypervisors.
+> 
 
-Ah, I see the thread. This patch should be dropped.
+The issue is indeed with z/VM, where the CPU Measurement facility is not exported to
+any guest OS including linux.
+If you run Linux on top of z/VM then these events do not exist.
 
-Thanks,
-Yilun
+# uname -a
+Linux a8345022.lnxne.boe 6.16.0-rc1m-perf #14 SMP Tue Jun 10 07:39:06 CEST 2025 s390x GNU/Linux
+# grep VM /proc/sysinfo 
+VM00 Name:            A8345022
+VM00 Control Program: z/VM    7.4.0   
+VM00 Adjustment:      50
+VM00 CPUs Total:      4
+VM00 CPUs Configured: 4
+VM00 CPUs Standby:    0
+VM00 CPUs Reserved:   0
+# lscpumf 
+lscpumf: No CPU-measurement facilities detected
+# 
 
-> 
+Without this if..else the perf stat -e metric fail when Linux is installed on top of z/VM systems.
+See commit c2f3d7dfc7373 ("perf stat: Do not fail on metrics on s390 z/VM systems")
+
+which fixed it for z16 machine generation.
+
+Hope this helps.
+
 > Thanks,
-> baolu
+> Ian
+
+
+-- 
+Thomas Richter, Dept 3303, IBM s390 Linux Development, Boeblingen, Germany
+--
+IBM Deutschland Research & Development GmbH
+
+Vorsitzender des Aufsichtsrats: Wolfgang Wendt
+
+Geschäftsführung: David Faller
+
+Sitz der Gesellschaft: Böblingen / Registergericht: Amtsgericht Stuttgart, HRB 243294
 
