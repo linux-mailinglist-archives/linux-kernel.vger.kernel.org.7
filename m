@@ -1,140 +1,157 @@
-Return-Path: <linux-kernel+bounces-699663-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-699665-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id F0BE9AE5DA1
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Jun 2025 09:28:11 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6601FAE5DA4
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Jun 2025 09:28:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CDF191645DD
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Jun 2025 07:28:01 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6117F4009EC
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Jun 2025 07:27:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2760F25394B;
-	Tue, 24 Jun 2025 07:27:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8A4502550C2;
+	Tue, 24 Jun 2025 07:28:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="MARKBIXl"
-Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="VQoBOm1u"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.13])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 826F957C9F;
-	Tue, 24 Jun 2025 07:27:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4D856253B47;
+	Tue, 24 Jun 2025 07:28:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.13
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750750074; cv=none; b=AEdlQo14RVTWaCg4MpV5c791MdYyaFvuE76CmQVHuLmUOp1RVyzJkDnVGI7y9602V9TTd1SutyLhW9138tlpcuvEJuAClVYQpN0jiYxYZeWxw05vLTmy4f+MjzxqDaE2J0qwRz7gQhynM7i9x08f/EAM+bgFn4Zan5AQyZC9U4o=
+	t=1750750092; cv=none; b=Km+UVoTT/eK9QAOabAQAbl4TV/MPC/QklqAaxYwL8e6ptTtoWgSbGcifjsG8tHUBlEjIUraE1HwNXQOnxoPj5f/aaflSwGnLWLiEqokxibyzhXfGy1URTa9BIJB32j/ea6kueD3ZR4LBVhFed90iX0oDJbS9Oxrt1VFuNoSr+r0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750750074; c=relaxed/simple;
-	bh=2VRlaahf+tQJQsFz0DN32NcUbTYYVROMUttudjfToi8=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=uV7n2xDrHnqp9KOXz+wyvBNuNcZJQsBLuNjygqi6oAxqcnJjoAPO7Rlo24BJ5XkvYA6jQNoOUUcanEspQUjIHznJ9IeF6ocByFzXCxVCu5fZbPoPjTVqkk/wuYOryx6i6B5ba7nPftA2T+Ht0rZWY/U68hTwU8rek3jEoLv+yV0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=MARKBIXl; arc=none smtp.client-ip=148.251.105.195
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1750750065;
-	bh=2VRlaahf+tQJQsFz0DN32NcUbTYYVROMUttudjfToi8=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=MARKBIXlPxz2c3Aj7cq2Yj9Ci3qEsh1TvnReud096eqPVZ1zy9JEPDEDb5Rw7TZgY
-	 nmVnhzQkDecSH1xqCEx+zfoLAGVG+bJ1KUjr8vS1pfECnXeGo6AmRcvWr6xas3T55Z
-	 xdA+r2ds2AAhQ6gXDMZnpuoCgD9yhe0tg/CtBKmzqNxUETe7foLF/woYD6yZ/TPUmX
-	 eeVNbV9UF2DnbuBAf2NBaUUWRJfN7F+bKOBLDr1VzJwgXHJ0/UsfN1EV4nb7yJBDpm
-	 qFKULyxZjxxldJ/ddg5NzqsZ+zAR6H4ZPn1M5jS0hdKUTCY0gTUiFD6/Rg87X1NwLd
-	 cHR1Y9d+vmjfA==
-Received: from [192.168.1.100] (2-237-20-237.ip236.fastwebnet.it [2.237.20.237])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: kholk11)
-	by bali.collaboradmins.com (Postfix) with ESMTPSA id 9811517E0EA4;
-	Tue, 24 Jun 2025 09:27:44 +0200 (CEST)
-Message-ID: <480c78cc-076f-44e2-bd90-1dcc91a235ee@collabora.com>
-Date: Tue, 24 Jun 2025 09:27:43 +0200
+	s=arc-20240116; t=1750750092; c=relaxed/simple;
+	bh=UpuqpA1vESFJrEGfO1lC4nqQldZ8FEUumluvqyaDbBk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=hrVITrr7jg7EIf1FKNK1nRNvtn1yEWeiiITTBLO+SpE90YXzd2WjcGtPLd5WCOayBEMc1vs/JvwfRqbdhvN5wk5bx6pjtCHT60DnPy/YJzFyplkaKTf7YH14wwCLWB1X7+IVABQuBTfnKPAKywbFRw2ZqaBHxU6PnB52PjpYRmU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=VQoBOm1u; arc=none smtp.client-ip=198.175.65.13
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1750750091; x=1782286091;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:content-transfer-encoding:in-reply-to;
+  bh=UpuqpA1vESFJrEGfO1lC4nqQldZ8FEUumluvqyaDbBk=;
+  b=VQoBOm1uPuTdsZ3ADKs6GM/2mj4roeU+5cwnLuzrAZTdQ4iMYZf1mIHD
+   D593yxPbQtkN4NyQX/u2qj8/fvKZI4Gj+7vIesExR3ioUszkiX0QVUPLR
+   cMxM8OpLn3c/pmVZNkMQNtFjnQeVosSzWizgrQr1Dbsxr+BEXqmB8wYli
+   dsf+Q7l5BcqVXc3z3P2pQ+ls2h2Mn1x9kFgW2N4io0quocmHYNfNL8ZJH
+   xkHOnpxXJW5aBFaveXyQJ2fKDK50b4HthwTLsjvAauCZ4rCO91QrwsyFH
+   T0WjDjHO+vM5uwkKT9qvHd1L51edOTRZeNv1w6K+47JfOiFeZwv2fheXM
+   w==;
+X-CSE-ConnectionGUID: A+DgpJoERG2qzfuIz2IkpA==
+X-CSE-MsgGUID: 71ZKqBfeT02lAJHoIcgxjA==
+X-IronPort-AV: E=McAfee;i="6800,10657,11473"; a="64037746"
+X-IronPort-AV: E=Sophos;i="6.16,261,1744095600"; 
+   d="scan'208";a="64037746"
+Received: from orviesa001.jf.intel.com ([10.64.159.141])
+  by orvoesa105.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 24 Jun 2025 00:28:10 -0700
+X-CSE-ConnectionGUID: Z71nk8nYRuilM5ZhEUrI1g==
+X-CSE-MsgGUID: 9J55saeBROyC+lAS1DxVoA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.16,261,1744095600"; 
+   d="scan'208";a="189035512"
+Received: from smile.fi.intel.com ([10.237.72.52])
+  by orviesa001.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 24 Jun 2025 00:28:07 -0700
+Received: from andy by smile.fi.intel.com with local (Exim 4.98.2)
+	(envelope-from <andriy.shevchenko@intel.com>)
+	id 1uTy4Y-00000009PAK-47rV;
+	Tue, 24 Jun 2025 10:28:02 +0300
+Date: Tue, 24 Jun 2025 10:28:02 +0300
+From: Andy Shevchenko <andriy.shevchenko@intel.com>
+To: Lothar Rubusch <l.rubusch@gmail.com>
+Cc: lars@metafoo.de, Michael.Hennerich@analog.com, jic23@kernel.org,
+	dlechner@baylibre.com, nuno.sa@analog.com, andy@kernel.org,
+	corbet@lwn.net, linux-iio@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org,
+	eraretuya@gmail.com
+Subject: Re: [PATCH v10 3/7] iio: accel: adxl345: add activity event feature
+Message-ID: <aFpTgoEIkWorp_pQ@smile.fi.intel.com>
+References: <20250622155010.164451-1-l.rubusch@gmail.com>
+ <20250622155010.164451-4-l.rubusch@gmail.com>
+ <aFkfjAekGJTU5o71@smile.fi.intel.com>
+ <CAFXKEHbGThKzMxg=aZMgVEZ2S2hUoGAOoE5wu_vCuzEPqL0+cA@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v1 1/2] dt-bindings: mfd: Add binding for MediaTek MT6363
- series SPMI PMIC
-To: "Rob Herring (Arm)" <robh@kernel.org>
-Cc: lee@kernel.org, linux-kernel@vger.kernel.org, conor+dt@kernel.org,
- linux-arm-kernel@lists.infradead.org, krzk+dt@kernel.org,
- linux-mediatek@lists.infradead.org, matthias.bgg@gmail.com,
- kernel@collabora.com, devicetree@vger.kernel.org
-References: <20250623120038.108891-1-angelogioacchino.delregno@collabora.com>
- <20250623120038.108891-2-angelogioacchino.delregno@collabora.com>
- <175068852802.3230004.1923972457454728043.robh@kernel.org>
-From: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
-Content-Language: en-US
-In-Reply-To: <175068852802.3230004.1923972457454728043.robh@kernel.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAFXKEHbGThKzMxg=aZMgVEZ2S2hUoGAOoE5wu_vCuzEPqL0+cA@mail.gmail.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - c/o Alberga Business Park, 6
+ krs, Bertel Jungin Aukio 5, 02600 Espoo
 
-Il 23/06/25 16:22, Rob Herring (Arm) ha scritto:
-> 
-> On Mon, 23 Jun 2025 14:00:37 +0200, AngeloGioacchino Del Regno wrote:
->> Add a binding for the MediaTek MT6363/6373 (and similar) multi
->> function PMICs connected over SPMI.
->>
->> These PMICs are found on board designs using newer MediaTek SoCs,
->> such as the Dimensity 9400 Smartphone chip, or the Chromebook
->> MT8196 chip.
->>
->> Signed-off-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
->> ---
->>   .../bindings/mfd/mediatek,mt6363.yaml         | 98 +++++++++++++++++++
->>   1 file changed, 98 insertions(+)
->>   create mode 100644 Documentation/devicetree/bindings/mfd/mediatek,mt6363.yaml
->>
-> 
-> My bot found errors running 'make dt_binding_check' on your patch:
-> 
-> yamllint warnings/errors:
-> 
-> dtschema/dtc warnings/errors:
-> /builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/mfd/mediatek,mt6363.yaml:
+On Mon, Jun 23, 2025 at 10:57:39PM +0200, Lothar Rubusch wrote:
+> On Mon, Jun 23, 2025 at 11:34 AM Andy Shevchenko
+> <andriy.shevchenko@intel.com> wrote:
+> > On Sun, Jun 22, 2025 at 03:50:06PM +0000, Lothar Rubusch wrote:
 
-Yeah, sorry about not adding the information at the very beginning (but I suspect
-the bot would still complain), but anyway that's because this series depends on the
-one that actually introduces the bindings for the regulators that are referenced in
-here...
+...
 
-https://lore.kernel.org/all/20250623120016.108732-1-angelogioacchino.delregno@collabora.com
+> > > +     case IIO_EV_TYPE_MAG:
+> > > +             return adxl345_read_mag_config(st, dir,
+> > > +                                            ADXL345_ACTIVITY);
+> >
+> > It looks like you set the editor to wrap at 72 characters, but here the single
+> > line less than 80! Note that the limit is *exactly* 80 character.
+> >
+> 
+> I have my setup adjusted to 80 characters. Anyway, the cases here is
+> different, it needs
+> to be seen in context of the follow up patches. I tried to prepare the
+> patches now in a way
+> where changes are mostly "added". Is this correct and desired patch preparation?
+> 
+> In the particular case, this patch now adds ACTIVITY. A follow up
+> patch will add INACTIVITY.
+> Since this is still building up, it will add yet another argument to
+> those functions, i.e.
+> > > +             return adxl345_write_mag_config(st, dir,
+> > > +                                             ADXL345_ACTIVITY,
+> 
+> will become, later
+> > >               return adxl345_write_mag_config(st, dir,
+> > >                                               ADXL345_ACTIVITY,
+> > > +                                             ADXL345_INACTIVITY,
 
+Yeah, but with the difference that you still remove the added line in the case
+above (as this example is not the same as what we are talking about).
 
-Cheers,
-Angelo
+I think you wanted more something like
 
+		return adxl345_read_mag_config(st, dir,
+					       ADXL345_ACTIVITY);
 
-> 	Error in referenced schema matching $id: http://devicetree.org/schemas/regulator/mediatek,mt6363-regulator.yaml
-> 	Tried these paths (check schema $id if path is wrong):
-> 	/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/regulator/mediatek,mt6363-regulator.yaml
-> 	/usr/local/lib/python3.11/dist-packages/dtschema/schemas/regulator/mediatek,mt6363-regulator.yaml
-> /builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/mfd/mediatek,mt6363.example.dtb: pmic@4 (mediatek,mt6363): regulators: 'oneOf' conditional failed, one must be fixed:
-> 	{'compatible': ['mediatek,mt6363-regulator']} should not be valid under {'description': "Can't find referenced schema: http://devicetree.org/schemas/regulator/mediatek,mt6363-regulator.yaml#"}
-> 	{'compatible': ['mediatek,mt6363-regulator']} should not be valid under {'description': "Can't find referenced schema: http://devicetree.org/schemas/regulator/mediatek,mt6373-regulator.yaml#"}
-> 	from schema $id: http://devicetree.org/schemas/mfd/mediatek,mt6363.yaml#
-> Documentation/devicetree/bindings/mfd/mediatek,mt6363.example.dtb: /example-0/spmi/pmic@4/regulators: failed to match any schema with compatible: ['mediatek,mt6363-regulator']
-> 
-> doc reference errors (make refcheckdocs):
-> 
-> See https://patchwork.ozlabs.org/project/devicetree-bindings/patch/20250623120038.108891-2-angelogioacchino.delregno@collabora.com
-> 
-> The base for the series is generally the latest rc1. A different dependency
-> should be noted in *this* patch.
-> 
-> If you already ran 'make dt_binding_check' and didn't see the above
-> error(s), then make sure 'yamllint' is installed and dt-schema is up to
-> date:
-> 
-> pip3 install dtschema --upgrade
-> 
-> Please check and re-submit after running the above command yourself. Note
-> that DT_SCHEMA_FILES can be set to your schema file to speed up checking
-> your schema. However, it must be unset to test all examples with your schema.
-> 
+ito become
+
+		return adxl345_read_mag_config(st, dir,
+					       ADXL345_INACTIVITY,
+					       ADXL345_ACTIVITY);
+
+> To make the change more additive, I did linebreaks earlier than 80
+> characters. Is this
+> legitimate in this case?
+
+I think so.
+
+> If so, I'll keep all related formatting as is (and will only change
+> the other requests).
+
+Sure.
+
+> Otherwise, I can do it differently and adopt all the formatting
+> changes to prioritize 80 characters.
+
+-- 
+With Best Regards,
+Andy Shevchenko
 
 
 
