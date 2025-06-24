@@ -1,68 +1,68 @@
-Return-Path: <linux-kernel+bounces-701270-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-701271-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4A1B6AE7309
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Jun 2025 01:26:03 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id E5F60AE730B
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Jun 2025 01:26:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6BAED7B1424
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Jun 2025 23:24:39 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4159B7B139B
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Jun 2025 23:24:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C921826B0B6;
-	Tue, 24 Jun 2025 23:25:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1830326B77C;
+	Tue, 24 Jun 2025 23:25:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="DVYJGrWx"
-Received: from mail-pf1-f201.google.com (mail-pf1-f201.google.com [209.85.210.201])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="vLv50ce5"
+Received: from mail-pg1-f201.google.com (mail-pg1-f201.google.com [209.85.215.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5849726B0BE
-	for <linux-kernel@vger.kernel.org>; Tue, 24 Jun 2025 23:25:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EF61C26B750
+	for <linux-kernel@vger.kernel.org>; Tue, 24 Jun 2025 23:25:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750807534; cv=none; b=NCKUeIE1ZWJtbKX1wNkUUf0uHNQBi8+x1z3BOMWHWwTT7befcptgnC/PMZK8ZHoYVTuVH/Wyo1wVQTRKyYYXvcBjtZWyixjfxATPn4FXMNA92253vY/tSyk5OW2SSKI7b/9X0NzVcaKd+5j31E+UDwdIHyoMjZeKev9InJDGLI8=
+	t=1750807535; cv=none; b=X9MGUl6HVajfwsOSrhwmtfqQnUnzMpmIAZmGf4+NAJ89giMeYPc9G57oVGcdzAE8sYaGXRlwazLWrSNhlvHZjIR+Q+nYCYxbAkfboUrpjKo7/EJ918J4ls+LW2I0ft8afZ33TgF9t4vIjgzfVi1JpTFJv7MnZ7N6tgyNr6QPisw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750807534; c=relaxed/simple;
-	bh=eWFtMg+1mUstLz1AnFmKGbl4X0Ap1ZmRq13QxZaZr14=;
+	s=arc-20240116; t=1750807535; c=relaxed/simple;
+	bh=csrmOtgDOUPu84tv7PeAGJkBv9W4D79BKUWoKWfBICc=;
 	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=TQMnvyQ71hYLS7NBEXCOWwsxOrWSA73iKX4h+GX9h0YIEOlO7CsgM8v5lzf6dweqFYBZej7W/Tlz7i1BRNEfXKDEzgiVcXSyvcP0MSG79Cu6/01qlFZrJshY86Z8zWbVRkf4H6gqHq9kPX0hG3YfEawCxSNNE3wY9FTlsxArTx8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--mmaurer.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=DVYJGrWx; arc=none smtp.client-ip=209.85.210.201
+	 To:Cc:Content-Type; b=OjtEcnZsH9EkYEQNfd8GsJF36ytZO8l3r4qY5emROkhGf3g0kETnex/o3pd5AF9SlaB9103ekQlNda5QxlH6JQqtrJQEqFQB5wp17QNtWX07pxrDZep8Z3jMKfhOpUahAIz0MLoB7WWGnJ+iFjl9hZXm804oDdo/4cXu23Jhegs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--mmaurer.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=vLv50ce5; arc=none smtp.client-ip=209.85.215.201
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--mmaurer.bounces.google.com
-Received: by mail-pf1-f201.google.com with SMTP id d2e1a72fcca58-7491814d6f2so905283b3a.3
-        for <linux-kernel@vger.kernel.org>; Tue, 24 Jun 2025 16:25:32 -0700 (PDT)
+Received: by mail-pg1-f201.google.com with SMTP id 41be03b00d2f7-b3183193374so4198876a12.1
+        for <linux-kernel@vger.kernel.org>; Tue, 24 Jun 2025 16:25:33 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1750807531; x=1751412331; darn=vger.kernel.org;
+        d=google.com; s=20230601; t=1750807533; x=1751412333; darn=vger.kernel.org;
         h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
          :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=0XFj7DwWuJaySgVlNklxUH82PEHx6pCmOK1QZq0Gviw=;
-        b=DVYJGrWxjq364A6bg4syZLnLd8UBWlVRD0s/0PQnYSI0oIvuloL9OvoEQHprnkrMbB
-         b2g8PgJggc00Fh7x8iKd/03XTc7xR/nDcITtwjKOxRjiDH2uy1PuiWcLhKutL0uuvNjZ
-         csmSJiAbHdBYUg++gymBoLgMH4yxAcn7hRJ028SnAZV2GeBXjb0DR+J4YSrFG4w7gpts
-         QX4heN4fopbybt84NjeEiQWFwyqprRJ65tRIeCgGzxrG6bj3/vmUDX2NED0BNR5wJxBM
-         sf6/Uc4D5tP84HxnGZfW/qMfFrpJ8vjoWZhUnk65P0HP9+P0CsYp0LwX8YiDAjQ7EgeR
-         ySoA==
+        bh=jpHn/Mf98CTz3w1q9Q5YkPhYg7ss8fRZAZdslJSSZ2w=;
+        b=vLv50ce5PqFTzHC4D1ivqemyvOFggxUl7Peb4XYNWuN+eQqeQtEbjBZ+YG7HXBE6Zl
+         t1UtRXh7RjARMippVTLbcLjhWtnicsdNxI/ncTP43aEFhuOegNNVIslqxoc/XJ7fJyV7
+         SKizI4GZTNcnAvu615KahBb6f983ux+hDWR8hqyIBLe9EKFYy9HADT+XJB2QMM2qXmw/
+         tK14qDi2OrDc/U97H0zFBdfS2VDnm4j8/ZjjgcQ2nDTfkhoFqe9ckKKz7Krq+gbo4qV1
+         QScteN9fK3aoi6lA0VxD5sRDhOeCkKxvNpNrWgc5vazaodUtPNTQlRa8Bpf46pAcr9zA
+         Si7w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1750807531; x=1751412331;
+        d=1e100.net; s=20230601; t=1750807533; x=1751412333;
         h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
          :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=0XFj7DwWuJaySgVlNklxUH82PEHx6pCmOK1QZq0Gviw=;
-        b=Tzm9jKNBPPYTuTrc474dhTThkjlkkJQ1c9OQqo2yN4b+u81J5QAMHQOPOVMu0bLqfP
-         PmHePQreZhhtMXLGoII6eubt4AceDmDJIkrpzP1pKCGUwcB3fJF0GVeR6pzyFQE4tkdF
-         VwvWZT5tmk8mXNrzk23Ry8jGtPngK/Tp9evGHXVNh5UssClUYS4uWH6YKjKXyP3N63aO
-         97FEHUJNi8semY8PK0wEPWvHC3qJBvfAf5R1AnSjwKHI8ql5Svl5bFLhzZplzuV8xFkC
-         e3F4Sz+V/guJuMflLbM2jtAgeMYMUiB6ljBDMmzfMrMm/s35J6SzD7uy8HaddcXMVqIc
-         TMzg==
-X-Gm-Message-State: AOJu0YyYGAA7WqHJLE6eqBRIhNlkbqMgSELt8+/SfY4AAesccAadcpID
-	SITbpFmHDmWpVm8K8VOKqPGGO3ZXgAElJmnjsQ6Asfhz1jHks6ABOFcRxDzFCDyW1TlcErTxwzE
-	iC7aT6pUepg==
-X-Google-Smtp-Source: AGHT+IGJcn/EykG+jT5OLFYGdRt3qZuwFyOC3e8e4pPnmsh56KpRwNnABv2ZTEHRxb/6BHFTngcWEJMV3ym2
-X-Received: from pfbde4.prod.google.com ([2002:a05:6a00:4684:b0:741:8e1a:2d09])
- (user=mmaurer job=prod-delivery.src-stubby-dispatcher) by 2002:aa7:8893:0:b0:748:ff39:a0ed
- with SMTP id d2e1a72fcca58-74ad45b3fc0mr1280034b3a.20.1750807531520; Tue, 24
- Jun 2025 16:25:31 -0700 (PDT)
-Date: Tue, 24 Jun 2025 23:25:21 +0000
+        bh=jpHn/Mf98CTz3w1q9Q5YkPhYg7ss8fRZAZdslJSSZ2w=;
+        b=wspeGCQTy2a/A/W3R1ref6HAGaGRnZo5CpF6/QiO4YYEwN1CxLPFbVKYxMk2R4XkZm
+         d7piC/TGvoMwlJJYS+jkXxEoYPQ/3CZYwvdh1hmuQWC5OAN4qA8ic0NigUpUZdcFvN/c
+         hRsXbF2P+9oHxkRoro6FL/EvgVddfE4bOudWUZCfp+HqW9SscT0Ni49CmHirXaCiES8r
+         W40Y+CAlnTs9k94pQfp3nexLeLaxHgJ2f0Jw5Omw24mIj3RvXlwd9yoBQnxv0cMFD42v
+         b0GXhfvTvAJzqjXIXSEPyB7y2C8rJuFkaims6YGnf31TMdQ7pZPvO5nQ1GmHq3ItMV6q
+         G/3A==
+X-Gm-Message-State: AOJu0Yz+V4xEapx6/q+9h5HBZwgLlpID+Ox3UbpYFI5HGRimfhU9vVcK
+	ogmy2MngxKRCfWyr418xrS0qsPit1FUMoT8c6hFlh5qOBLmpjylxYnmiQfa/7qlJcm7SxIXfk0C
+	6+PlgirAgVw==
+X-Google-Smtp-Source: AGHT+IEU3WSnV/iYS+a5AiCRRNPTzXx/GpONFhMr5wKKYYchsgqip2PjcSWvWvbf8EDrhqqxX+S/mAdfK9y4
+X-Received: from pgww8.prod.google.com ([2002:a05:6a02:2c88:b0:b31:c9e0:b48])
+ (user=mmaurer job=prod-delivery.src-stubby-dispatcher) by 2002:a05:6a21:9996:b0:21f:775d:107e
+ with SMTP id adf61e73a8af0-2207f20ad9bmr1219035637.17.1750807533234; Tue, 24
+ Jun 2025 16:25:33 -0700 (PDT)
+Date: Tue, 24 Jun 2025 23:25:22 +0000
 In-Reply-To: <20250624-debugfs-rust-v7-0-9c8835a7a20f@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -72,13 +72,13 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 Mime-Version: 1.0
 References: <20250624-debugfs-rust-v7-0-9c8835a7a20f@google.com>
 X-Developer-Key: i=mmaurer@google.com; a=ed25519; pk=2Ezhl7+fEjTOMVFpplDeak2AdQ8cjJieLRVJdNzrW+E=
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1750807526; l=7234;
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1750807526; l=3137;
  i=mmaurer@google.com; s=20250429; h=from:subject:message-id;
- bh=eWFtMg+1mUstLz1AnFmKGbl4X0Ap1ZmRq13QxZaZr14=; b=sQMWG9TzZ8Ejh9Im87WE0ksTMM5FUPvSrLruugwPkCpAPFP/kQrxEqc1uyNsImCPyasfVlfXH
- uYrOGEtsF/oDPEiDI0IlLJo5EMuRFc99bs56ZHxUQs6vqwVvb0yuOh6
+ bh=csrmOtgDOUPu84tv7PeAGJkBv9W4D79BKUWoKWfBICc=; b=7e3OUzW7UAi5cjOdMhqW3Qbh8mz1+Pvlsdj4Lv2je6H6Mq0sUdorH00u999tBHoADar7VDMPx
+ Lkgob2aCw1jAWDWOIDEaXyQhAu/KJLt9vA9hiDtrT0uCIC/9Xsq6Jge
 X-Mailer: b4 0.14.2
-Message-ID: <20250624-debugfs-rust-v7-2-9c8835a7a20f@google.com>
-Subject: [PATCH v7 2/6] rust: debugfs: Bind file creation for long-lived Display
+Message-ID: <20250624-debugfs-rust-v7-3-9c8835a7a20f@google.com>
+Subject: [PATCH v7 3/6] rust: types: Support &'static and &'static mut ForeignOwnable
 From: Matthew Maurer <mmaurer@google.com>
 To: Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, 
 	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
@@ -91,197 +91,83 @@ Cc: linux-kernel@vger.kernel.org, rust-for-linux@vger.kernel.org,
 	Matthew Maurer <mmaurer@google.com>
 Content-Type: text/plain; charset="utf-8"
 
-Allows creation of files for references that live forever and lack
-metadata through the `Display` implementation.
-
-The `Display` implementation is used because `seq_printf` needs to route
-through `%pA`, which in turn routes through Arguments.
+These types live forever and do not require cleanup, so they can
+serve as `ForeignOwnable`.
 
 Signed-off-by: Matthew Maurer <mmaurer@google.com>
 ---
- rust/kernel/debugfs.rs              | 62 +++++++++++++++++++++++++++++++++++++
- rust/kernel/debugfs/display_file.rs | 61 ++++++++++++++++++++++++++++++++++++
- rust/kernel/debugfs/entry.rs        |  8 +++++
- 3 files changed, 131 insertions(+)
+ rust/kernel/types.rs | 58 ++++++++++++++++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 58 insertions(+)
 
-diff --git a/rust/kernel/debugfs.rs b/rust/kernel/debugfs.rs
-index 2359bd11cd664fb9f7206f8fe38f758dc43d2cb8..1f20d85da56fcb89476552feefc9d97fab43cc04 100644
---- a/rust/kernel/debugfs.rs
-+++ b/rust/kernel/debugfs.rs
-@@ -10,7 +10,10 @@
- use crate::str::CStr;
- #[cfg(CONFIG_DEBUG_FS)]
- use crate::sync::Arc;
-+use core::fmt::Display;
- 
-+#[cfg(CONFIG_DEBUG_FS)]
-+mod display_file;
- #[cfg(CONFIG_DEBUG_FS)]
- mod entry;
- #[cfg(CONFIG_DEBUG_FS)]
-@@ -59,6 +62,43 @@ fn create(_name: &CStr, _parent: Option<&Dir>) -> Self {
-         Self()
-     }
- 
-+    #[cfg(CONFIG_DEBUG_FS)]
-+    fn create_file<T: Display + Sized>(&self, name: &CStr, data: &'static T) -> File {
-+        let Some(parent) = &self.0 else {
-+            return File {
-+                _entry: Entry::empty(),
-+            };
-+        };
-+        // SAFETY:
-+        // * `name` is a NUL-terminated C string, living across the call, by `CStr` invariant.
-+        // * `parent` is a live `dentry` since we have a reference to it.
-+        // * `vtable` is all stock `seq_file` implementations except for `open`.
-+        //   `open`'s only requirement beyond what is provided to all open functions is that the
-+        //   inode's data pointer must point to a `T` that will outlive it, which we know because
-+        //   we have a static reference.
-+        let ptr = unsafe {
-+            bindings::debugfs_create_file_full(
-+                name.as_char_ptr(),
-+                0o444,
-+                parent.as_ptr(),
-+                data as *const _ as *mut _,
-+                core::ptr::null(),
-+                &<T as display_file::DisplayFile>::VTABLE,
-+            )
-+        };
-+
-+        // SAFETY: `debugfs_create_file_full` either returns an error code or a legal
-+        // dentry pointer, so `Entry::new` is safe to call here.
-+        let entry = unsafe { Entry::new(ptr, Some(parent.clone())) };
-+
-+        File { _entry: entry }
-+    }
-+
-+    #[cfg(not(CONFIG_DEBUG_FS))]
-+    fn create_file<T: Display + Sized>(&self, _name: &CStr, _data: &'static T) -> File {
-+        File {}
-+    }
-+
-     /// Create a DebugFS subdirectory.
-     ///
-     /// Subdirectory handles cannot outlive the directory handle they were created from.
-@@ -75,6 +115,22 @@ pub fn subdir(&self, name: &CStr) -> Self {
-         Dir::create(name, Some(self))
-     }
- 
-+    /// Create a file in a DebugFS directory with the provided name, and contents from invoking
-+    /// [`Display::fmt`] on the provided reference.
-+    ///
-+    /// # Examples
-+    ///
-+    /// ```
-+    /// # use kernel::c_str;
-+    /// # use kernel::debugfs::Dir;
-+    /// let dir = Dir::new(c_str!("my_debugfs_dir"));
-+    /// dir.display_file(c_str!("foo"), &200);
-+    /// // "my_debugfs_dir/foo" now contains the number 200.
-+    /// ```
-+    pub fn display_file<T: Display + Sized>(&self, name: &CStr, data: &'static T) -> File {
-+        self.create_file(name, data)
-+    }
-+
-     /// Create a new directory in DebugFS at the root.
-     ///
-     /// # Examples
-@@ -88,3 +144,9 @@ pub fn new(name: &CStr) -> Self {
-         Dir::create(name, None)
-     }
+diff --git a/rust/kernel/types.rs b/rust/kernel/types.rs
+index 22985b6f69820d6df8ff3aae0bf815fad36a9d92..6f9617b5b491426b1be5f3a27dc2c48ad1854da8 100644
+--- a/rust/kernel/types.rs
++++ b/rust/kernel/types.rs
+@@ -142,6 +142,64 @@ unsafe fn borrow<'a>(_: *mut Self::PointedTo) -> Self::Borrowed<'a> {}
+     unsafe fn borrow_mut<'a>(_: *mut Self::PointedTo) -> Self::BorrowedMut<'a> {}
  }
-+
-+/// Handle to a DebugFS file.
-+pub struct File {
-+    #[cfg(CONFIG_DEBUG_FS)]
-+    _entry: Entry,
-+}
-diff --git a/rust/kernel/debugfs/display_file.rs b/rust/kernel/debugfs/display_file.rs
-new file mode 100644
-index 0000000000000000000000000000000000000000..e4b551f7092884ad12e18a32cc243d0d037931a6
---- /dev/null
-+++ b/rust/kernel/debugfs/display_file.rs
-@@ -0,0 +1,61 @@
-+// SPDX-License-Identifier: GPL-2.0
-+// Copyright (C) 2025 Google LLC.
-+
-+use crate::prelude::*;
-+use crate::seq_file::SeqFile;
-+use crate::seq_print;
-+use core::fmt::Display;
-+
-+/// Implements `open` for `file_operations` via `single_open` to fill out a `seq_file`.
-+///
-+/// # Safety
-+///
-+/// * `inode`'s private pointer must point to a value of type `T` which will outlive the `inode`
-+///   and will not be mutated during this call.
-+/// * `file` must point to a live, not-yet-initialized file object.
-+pub(crate) unsafe extern "C" fn display_open<T: Display>(
-+    inode: *mut bindings::inode,
-+    file: *mut bindings::file,
-+) -> c_int {
-+    // SAFETY:
-+    // * `file` is acceptable by caller precondition.
-+    // * `print_act` will be called on a `seq_file` with private data set to the third argument,
-+    //   so we meet its safety requirements.
-+    // * The `data` pointer passed in the third argument is a valid `T` pointer that outlives
-+    //   this call by caller preconditions.
-+    unsafe { bindings::single_open(file, Some(display_act::<T>), (*inode).i_private) }
-+}
-+
-+/// Prints private data stashed in a seq_file to that seq file.
-+///
-+/// # Safety
-+///
-+/// `seq` must point to a live `seq_file` whose private data is a live pointer to a `T` which is
-+/// not being mutated.
-+pub(crate) unsafe extern "C" fn display_act<T: Display>(
-+    seq: *mut bindings::seq_file,
-+    _: *mut c_void,
-+) -> c_int {
-+    // SAFETY: By caller precondition, this pointer is live, points to a value of type `T`, and
-+    // is not being mutated.
-+    let data = unsafe { &*((*seq).private as *mut T) };
-+    // SAFETY: By caller precondition, `seq_file` points to a live `seq_file`, so we can lift
-+    // it.
-+    let seq_file = unsafe { SeqFile::from_raw(seq) };
-+    seq_print!(seq_file, "{}", data);
-+    0
-+}
-+
-+// Work around lack of generic const items.
-+pub(crate) trait DisplayFile: Display + Sized {
-+    const VTABLE: bindings::file_operations = bindings::file_operations {
-+        read: Some(bindings::seq_read),
-+        llseek: Some(bindings::seq_lseek),
-+        release: Some(bindings::single_release),
-+        open: Some(display_open::<Self>),
-+        // SAFETY: `file_operations` supports zeroes in all fields.
-+        ..unsafe { core::mem::zeroed() }
-+    };
-+}
-+
-+impl<T: Display + Sized> DisplayFile for T {}
-diff --git a/rust/kernel/debugfs/entry.rs b/rust/kernel/debugfs/entry.rs
-index ae0e2c4e1d58e878ebb081a71e4ac0f4a7d99b91..2baaf31c326c3071b92b5bc37552907fa1102246 100644
---- a/rust/kernel/debugfs/entry.rs
-+++ b/rust/kernel/debugfs/entry.rs
-@@ -38,6 +38,14 @@ pub(crate) unsafe fn new(entry: *mut bindings::dentry, parent: Option<Arc<Entry>
-         }
-     }
  
-+    /// Constructs a placeholder DebugFS [`Entry`].
-+    pub(crate) fn empty() -> Self {
-+        Self {
-+            entry: core::ptr::null_mut(),
-+            _parent: None,
-+        }
++// SAFETY: The `into_foreign` function derives its pointer from a reference, so it is correctly
++// aligned.
++unsafe impl<T: 'static> ForeignOwnable for &'static T {
++    type PointedTo = T;
++    type Borrowed<'a> = &'a T;
++    type BorrowedMut<'a> = &'a T;
++
++    fn into_foreign(self) -> *mut Self::PointedTo {
++        self as *const _ as _
 +    }
 +
-     /// Returns the pointer representation of the DebugFS directory.
-     ///
-     /// # Guarantees
++    unsafe fn from_foreign(foreign: *mut Self::PointedTo) -> Self {
++        // SAFETY: from_foreign has stricter restrictions than borrow
++        unsafe { Self::borrow(foreign) }
++    }
++
++    unsafe fn borrow<'a>(foreign: *mut Self::PointedTo) -> Self::Borrowed<'a> {
++        // SAFETY: We know the original reference lived forever, so we can convert it back
++        unsafe { &*foreign }
++    }
++
++    unsafe fn borrow_mut<'a>(foreign: *mut Self::PointedTo) -> Self::BorrowedMut<'a> {
++        // SAFETY: borrow_mut has stricter restrictions than borrow
++        unsafe { Self::borrow(foreign) }
++    }
++}
++
++// SAFETY: The `into_foreign` function derives its pointer from a reference, so it is correctly
++// aligned.
++unsafe impl<T: 'static> ForeignOwnable for &'static mut T {
++    type PointedTo = T;
++    type Borrowed<'a> = &'a T;
++    type BorrowedMut<'a> = &'a mut T;
++
++    fn into_foreign(self) -> *mut Self::PointedTo {
++        self as *const _ as _
++    }
++
++    unsafe fn from_foreign(foreign: *mut Self::PointedTo) -> Self {
++        // SAFETY: from_foreign has stricter restrictions than `borrow_mut`
++        unsafe { Self::borrow_mut(foreign) }
++    }
++
++    unsafe fn borrow<'a>(foreign: *mut Self::PointedTo) -> Self::Borrowed<'a> {
++        // SAFETY: We know the original reference lived forever, and the requirements on the
++        // function indicate that `from_foreign` and `borrow_mut` will not happen concurrently, so
++        // we can do a shared borrow.
++        unsafe { &*foreign }
++    }
++
++    unsafe fn borrow_mut<'a>(foreign: *mut Self::PointedTo) -> Self::BorrowedMut<'a> {
++        // SAFETY: We know the original reference lived forever, and the requirements on the
++        // function indicate that no other borrows will happen concurrently, so we can do a
++        // unique borrow.
++        unsafe { &mut *foreign }
++    }
++}
++
+ /// Runs a cleanup function/closure when dropped.
+ ///
+ /// The [`ScopeGuard::dismiss`] function prevents the cleanup function from running.
 
 -- 
 2.50.0.714.g196bf9f422-goog
