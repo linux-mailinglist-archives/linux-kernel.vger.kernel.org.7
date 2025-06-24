@@ -1,218 +1,120 @@
-Return-Path: <linux-kernel+bounces-700015-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-700017-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 64122AE62B9
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Jun 2025 12:41:37 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id ACFBCAE62C0
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Jun 2025 12:43:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E4B4E16D97B
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Jun 2025 10:41:37 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8B0361924851
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Jun 2025 10:43:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A65B028466F;
-	Tue, 24 Jun 2025 10:41:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3774727EC80;
+	Tue, 24 Jun 2025 10:43:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=denx.de header.i=@denx.de header.b="O81Rly9R"
-Received: from mx.denx.de (mx.denx.de [89.58.32.78])
+	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="ePAFulvM"
+Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9DFC7218ABA;
-	Tue, 24 Jun 2025 10:41:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=89.58.32.78
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4C252218ABA
+	for <linux-kernel@vger.kernel.org>; Tue, 24 Jun 2025 10:43:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750761690; cv=none; b=oybFIIhl6JnAVKuzZ77NFIjizOrMzvbVWkK+4PWOuJpb2HKPq1SzN0Y9eMtCYpz2O70VvyhdNi023WClsDiwYlKnTVCkrv2nixb5trWKqxFhm1gZ5O7zIKxie/j2iytpDZZ/8P7wImeixLz4a5KuS73IEK6EiPOzwMXL/BbwrL4=
+	t=1750761792; cv=none; b=ffMvDmUbVMm8I6coWjvOV+3I/8G+Xg78aZCNxObZDs896jwar0Cb1clRun/nAyKU6an0qq+Q+WG1lVPxnEXic3qi683RBlB6ZtMoHHMLHDcxllHPkQUF3aC1kZfmcqmpzkxP2FSwT/ufFx1xWEtlLGDZoZKITfNNxoupK9ek2rw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750761690; c=relaxed/simple;
-	bh=mHuFsM00zsmxReWQp0YW0IovyAqAiKaN9vwTtZUpZ1I=;
+	s=arc-20240116; t=1750761792; c=relaxed/simple;
+	bh=yz+JsuAiHyWr/UyOi0g9uuvNp3Sy8j7oMp0yuTEJQxc=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Qy3O+IYmykWv72EmHLFXfYIcdWS9el4v4Qth8HYkYaaygTPhTvvpBOtPXchcCUfYWATWhBY7FVmGFHy8WMAl+xcH5uE++FgDSfknQaTCrV9vFNJepESy/CRnz3gqOqG1GE2y+32+0V7QkIdor1YgAXjbENqIyw+XLrWpxBAmL7I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=denx.de; spf=pass smtp.mailfrom=denx.de; dkim=pass (2048-bit key) header.d=denx.de header.i=@denx.de header.b=O81Rly9R; arc=none smtp.client-ip=89.58.32.78
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=denx.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=denx.de
-Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id E820C101E9287;
-	Tue, 24 Jun 2025 12:41:10 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=denx.de; s=mx-20241105;
-	t=1750761677; h=from:subject:date:message-id:to:cc:mime-version:content-type:
-	 in-reply-to:references; bh=xJNZSdtlkmYSmYR194N6u/IIwvLnmZyLCW5wos6cefs=;
-	b=O81Rly9RWffD1vprGIl6wBGzUIqmAs4FKeptoBWaVbi98DKflcuKrXOi/+WfDxvIkCoNsq
-	B8YX5tAhGPNXO0jpbhC/kdKkicKFvyZVRlXm9SRLc3BF9elb7QkiVxNvlGVnWXvWaPZoQr
-	PKlhnwOnBPAzcW8V9ZXu2vSzAYs5KVeIol/jIMsxD80dsHyb5q7aZto5klDzlZzYDbl6el
-	etk/HqBCVUB8AWsw1JI81+euCWs6ThTGgEJzOSX7wi3rT9UDZx5mGPb4EitnFOo/i+khE7
-	adnF828od6mJWOIBxCGN7Tz1Cq/KZsqsvJCx9U/xUWgwpH7QtOHheeIaEAf45g==
-Date: Tue, 24 Jun 2025 12:41:08 +0200
-From: Pavel Machek <pavel@denx.de>
-To: Naresh Kamboju <naresh.kamboju@linaro.org>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, stable@vger.kernel.org,
-	patches@lists.linux.dev, linux-kernel@vger.kernel.org,
-	torvalds@linux-foundation.org, akpm@linux-foundation.org,
-	linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org,
-	lkft-triage@lists.linaro.org, jonathanh@nvidia.com,
-	f.fainelli@gmail.com, sudipm.mukherjee@gmail.com,
-	srw@sladewatkins.net, rwarsow@gmx.de, conor@kernel.org,
-	hargar@microsoft.com, broonie@kernel.org,
-	Linux ARM <linux-arm-kernel@lists.infradead.org>,
-	Julien Thierry <jthierry@redhat.com>,
-	James Morse <james.morse@arm.com>,
-	Dan Carpenter <dan.carpenter@linaro.org>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Will Deacon <will@kernel.org>, Arnd Bergmann <arnd@arndb.de>,
-	Anders Roxell <anders.roxell@linaro.org>
-Subject: Re: [PATCH 5.10 000/355] 5.10.239-rc1 review
-Message-ID: <aFqAxKT6C7idQY32@duo.ucw.cz>
-References: <20250623130626.716971725@linuxfoundation.org>
- <CA+G9fYt2e-ZGhU57oqWwC1_t2RPgxLCJFVC0Pa8-fYPkZcUvVQ@mail.gmail.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=Ns9V3gak30qQ+9XdpZtZJkYLUgAoXzmbepMYqIMCbcsbKYQXhKTxEBQzfjhmprmGmo9me+Tfr7M74c+ejt6ExVK9w46bm3H8vT41whIAxvOUfy6rh2sHAXmLRNUfPdUjyH9aBKnVvZgRocNbIBp1haQhNy/RKZpyTlNTxXJGAEE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=ePAFulvM; arc=none smtp.client-ip=213.167.242.64
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
+Received: from pendragon.ideasonboard.com (85-76-34-99-nat.elisa-mobile.fi [85.76.34.99])
+	by perceval.ideasonboard.com (Postfix) with UTF8SMTPSA id EFE946A6;
+	Tue, 24 Jun 2025 12:42:51 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
+	s=mail; t=1750761772;
+	bh=yz+JsuAiHyWr/UyOi0g9uuvNp3Sy8j7oMp0yuTEJQxc=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=ePAFulvMmvswetLospzsePX/uVj/vzBwEAPvsFBHa+eS7EPE1Eqo+IsrtMPNjtDvY
+	 MzRclrzKONfQwkxDK3jJX4MFYzz/+ou1QkhWiXHiMGKMK8vzahz0zaLENbvlvknLjO
+	 PG7PEwMTPE2wDnJPzQoKnzje1YwxXMXVInU34sFU=
+Date: Tue, 24 Jun 2025 13:42:48 +0300
+From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+To: Dharma Balasubiramani <dharma.b@microchip.com>
+Cc: Manikandan Muralidharan <manikandan.m@microchip.com>,
+	Andrzej Hajda <andrzej.hajda@intel.com>,
+	Neil Armstrong <neil.armstrong@linaro.org>,
+	Robert Foss <rfoss@kernel.org>, Jonas Karlman <jonas@kwiboo.se>,
+	Jernej Skrabec <jernej.skrabec@gmail.com>,
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+	Maxime Ripard <mripard@kernel.org>,
+	Thomas Zimmermann <tzimmermann@suse.de>,
+	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+	dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v4 1/3] drm/bridge: microchip-lvds: drop unused drm_panel
+Message-ID: <20250624104248.GH15951@pendragon.ideasonboard.com>
+References: <20250624-microchip-lvds-v4-0-937d42a420e9@microchip.com>
+ <20250624-microchip-lvds-v4-1-937d42a420e9@microchip.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="99H4i/IRjps6Yc2M"
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <CA+G9fYt2e-ZGhU57oqWwC1_t2RPgxLCJFVC0Pa8-fYPkZcUvVQ@mail.gmail.com>
-X-Last-TLS-Session-Version: TLSv1.3
+In-Reply-To: <20250624-microchip-lvds-v4-1-937d42a420e9@microchip.com>
 
+On Tue, Jun 24, 2025 at 02:54:14PM +0530, Dharma Balasubiramani wrote:
+> Drop the drm_panel field of the mchp_lvds struct as it is unused.
+> 
+> Signed-off-by: Dharma Balasubiramani <dharma.b@microchip.com>
+> ---
+>  drivers/gpu/drm/bridge/microchip-lvds.c | 7 -------
+>  1 file changed, 7 deletions(-)
+> 
+> diff --git a/drivers/gpu/drm/bridge/microchip-lvds.c b/drivers/gpu/drm/bridge/microchip-lvds.c
+> index 9f4ff82bc6b4..42751124b868 100644
+> --- a/drivers/gpu/drm/bridge/microchip-lvds.c
+> +++ b/drivers/gpu/drm/bridge/microchip-lvds.c
+> @@ -23,7 +23,6 @@
+>  #include <drm/drm_atomic_helper.h>
+>  #include <drm/drm_bridge.h>
+>  #include <drm/drm_of.h>
+> -#include <drm/drm_panel.h>
+>  #include <drm/drm_print.h>
+>  #include <drm/drm_probe_helper.h>
+>  #include <drm/drm_simple_kms_helper.h>
+> @@ -56,7 +55,6 @@ struct mchp_lvds {
+>  	struct device *dev;
+>  	void __iomem *regs;
+>  	struct clk *pclk;
+> -	struct drm_panel *panel;
+>  	struct drm_bridge bridge;
+>  	struct drm_bridge *panel_bridge;
+>  };
+> @@ -179,13 +177,8 @@ static int mchp_lvds_probe(struct platform_device *pdev)
+>  			"can't find port point, please init lvds panel port!\n");
+>  		return -ENODEV;
+>  	}
 
---99H4i/IRjps6Yc2M
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+The above code seems unneeded now, I think you can drop it too.
 
-Hi!
+> -
+> -	lvds->panel = of_drm_find_panel(port);
+>  	of_node_put(port);
+>  
+> -	if (IS_ERR(lvds->panel))
+> -		return -EPROBE_DEFER;
+> -
+>  	lvds->panel_bridge = devm_drm_of_get_bridge(dev, dev->of_node, 1, 0);
+>  
+>  	if (IS_ERR(lvds->panel_bridge))
 
-> > This is the start of the stable review cycle for the 5.10.239 release.
-> > There are 355 patches in this series, all will be posted as a response
-> > to this one.  If anyone has any issues with these being applied, please
-> > let me know.
-> >
-> > Responses should be made by Wed, 25 Jun 2025 13:05:51 +0000.
-> > Anything received after that time might be too late.
-> >
-> > The whole patch series can be found in one patch at:
-> >         https://www.kernel.org/pub/linux/kernel/v5.x/stable-review/patc=
-h-5.10.239-rc1.gz
-> > or in the git tree and branch at:
-> >         git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stab=
-le-rc.git linux-5.10.y
-> > and the diffstat can be found below.
-> >
-> > thanks,
-> >
-> > greg k-h
->=20
-> Regressions on arm64 tinyconfig builds with gcc-12 and clang failed on
-> the Linux stable-rc 5.10.239-rc1.
+-- 
+Regards,
 
-Yeah, we see same problems:
-
-
-814
-  CC      arch/arm64/kernel/asm-offsets.s
-815
-In file included from ./arch/arm64/include/asm/alternative.h:6,
-816
-                 from ./arch/arm64/include/asm/sysreg.h:1050,
-817
-                 from ./arch/arm64/include/asm/cputype.h:194,
-818
-                 from ./arch/arm64/include/asm/cache.h:8,
-819
-                 from ./include/linux/cache.h:6,
-820
-                 from ./include/linux/printk.h:9,
-821
-                 from ./include/linux/kernel.h:17,
-822
-                 from ./include/linux/list.h:9,
-823
-                 from ./include/linux/kobject.h:19,
-824
-                 from ./include/linux/of.h:17,
-825
-                 from ./include/linux/irqdomain.h:35,
-826
-                 from ./include/linux/acpi.h:13,
-827
-                 from ./include/acpi/apei.h:9,
-828
-                 from ./include/acpi/ghes.h:5,
-829
-                 from ./include/linux/arm_sdei.h:8,
-830
-                 from arch/arm64/kernel/asm-offsets.c:10:
-831
-=2E/arch/arm64/include/asm/insn.h: In function 'aarch64_insn_gen_atomic_ld_=
-op':
-832
-=2E/arch/arm64/include/asm/insn.h:26:54: error: 'FAULT_BRK_IMM' undeclared =
-(first use in this function)
-833
-   26 | #define AARCH64_BREAK_FAULT    (AARCH64_BREAK_MON | (FAULT_BRK_IMM =
-<< 5))
-834
-      |                                                      ^~~~~~~~~~~~~
-835
-=2E/arch/arm64/include/asm/insn.h:573:9: note: in expansion of macro 'AARCH=
-64_BREAK_FAULT'
-836
-  573 |  return AARCH64_BREAK_FAULT;
-837
-      |         ^~~~~~~~~~~~~~~~~~~
-838
-=2E/arch/arm64/include/asm/insn.h:26:54: note: each undeclared identifier i=
-s reported only once for each function it appears in
-839
-   26 | #define AARCH64_BREAK_FAULT    (AARCH64_BREAK_MON | (FAULT_BRK_IMM =
-<< 5))
-840
-      |                                                      ^~~~~~~~~~~~~
-841
-=2E/arch/arm64/include/asm/insn.h:573:9: note: in expansion of macro 'AARCH=
-64_BREAK_FAULT'
-842
-  573 |  return AARCH64_BREAK_FAULT;
-843
-      |         ^~~~~~~~~~~~~~~~~~~
-844
-=2E/arch/arm64/include/asm/insn.h: In function 'aarch64_insn_gen_cas':
-845
-=2E/arch/arm64/include/asm/insn.h:26:54: error: 'FAULT_BRK_IMM' undeclared =
-(first use in this function)
-846
-   26 | #define AARCH64_BREAK_FAULT    (AARCH64_BREAK_MON | (FAULT_BRK_IMM =
-<< 5))
-847
-      |                                                      ^~~~~~~~~~~~~
-848
-=2E/arch/arm64/include/asm/insn.h:583:9: note: in expansion of macro 'AARCH=
-64_BREAK_FAULT'
-849
-  583 |  return AARCH64_BREAK_FAULT;
-850
-      |         ^~~~~~~~~~~~~~~~~~~
-851
-make[1]: *** [scripts/Makefile.build:117: arch/arm64/kernel/asm-offsets.s] =
-Error 1
-852
-make: *** [Makefile:1262: prepare0] Error 2
-
-BR,
-										Pavel
---=20
-DENX Software Engineering GmbH,        Managing Director: Erika Unter
-HRB 165235 Munich, Office: Kirchenstr.5, D-82194 Groebenzell, Germany
-
---99H4i/IRjps6Yc2M
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iF0EABECAB0WIQRPfPO7r0eAhk010v0w5/Bqldv68gUCaFqAxAAKCRAw5/Bqldv6
-8oO2AJ0THdQP/jgUCOPQIWJxokWKjzBWXwCfbnHq/Z5PGgx+mwo8REY3xKum4EY=
-=7i9r
------END PGP SIGNATURE-----
-
---99H4i/IRjps6Yc2M--
+Laurent Pinchart
 
