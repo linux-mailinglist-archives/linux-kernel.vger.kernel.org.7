@@ -1,171 +1,132 @@
-Return-Path: <linux-kernel+bounces-700676-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-700679-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7922DAE6B40
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Jun 2025 17:36:58 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id DEDC8AE6B41
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Jun 2025 17:37:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C26EA3BC645
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Jun 2025 15:33:39 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3B22D7B3C26
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Jun 2025 15:33:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B8EE629E0E0;
-	Tue, 24 Jun 2025 15:27:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 67E5C2DA76F;
+	Tue, 24 Jun 2025 15:27:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="vvlrnM2f";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="du7Ec+1k";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="vvlrnM2f";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="du7Ec+1k"
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="WZK6ZJ3A"
+Received: from mail-pl1-f201.google.com (mail-pl1-f201.google.com [209.85.214.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 63A09274B52
-	for <linux-kernel@vger.kernel.org>; Tue, 24 Jun 2025 15:27:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5CA8A3074A6
+	for <linux-kernel@vger.kernel.org>; Tue, 24 Jun 2025 15:27:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750778836; cv=none; b=DWKNhFWJFR+7DzxUEjNnSSRdNOiFC9WSwoQsiwkCa3NmqQoa/VGRlIFMpBb+yw+uVcoG3B6rmEyXMWO6J+Oqn3/i3FMd0QE5sU+nOmCTAeLE49LOD1ioP5kKZjxzIEtrN+Mi9HZL3MF009QT8VV+qPc3GkXCafJU76DOLPV6EOk=
+	t=1750778876; cv=none; b=HjsSTk3LFHXAghemhbBiZTeJjBo2Yrgb6sRPuTOEPFo5pwIrgGnD192KDds5+Qt+cR54JsPvxcUo68gmqBpR807xESb+3F5PKATHgYHXNCLx2aidxNPbG2ieLUyJelwdUMJyc9d4OeDvw035j7lRIrVvrWmAMP3qc3tU4n8fMeI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750778836; c=relaxed/simple;
-	bh=zjZ/DNIXvK66lZcm+P5jsRfEbkkov/vhsRsVKMmico0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=qN+bDXmkGxNQ7VtNhYgwO9Cgp2SGghrl05+rZIVaN82H0yJgtdPQTWORev2l7G2/gQol2zhml3WVKIwRnb4xRy6jAZ/9+ghxjdFLdcxd38RwuQlFERUt2mnNg9rV5MxQNczL9PLmXHz+5RsXcKFgba25r9QFGhMgp/pAadwYqzY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=vvlrnM2f; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=du7Ec+1k; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=vvlrnM2f; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=du7Ec+1k; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id 7E97F21188;
-	Tue, 24 Jun 2025 15:27:12 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1750778832; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=NoiiUm2Fj9WK2+okdYgOSWwXKVvL+oEsvy7xNbG15iI=;
-	b=vvlrnM2feTpV6+ta6uoKsfyvo3trinlhBI684D+M0ahVSjSaUP4cZoBGdLt58BhJywQwse
-	U98pFOyfr5XwpUaZ2FENX5MgnKN3Jkq52RzP/AQK+2SKFkcP5WgFRZnIADKx6xEt4C8T8X
-	gnzktuR3Y+USict2kCwJtnVz9DyEZR4=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1750778832;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=NoiiUm2Fj9WK2+okdYgOSWwXKVvL+oEsvy7xNbG15iI=;
-	b=du7Ec+1k9lAeD6cDmfItCTSD4+6O4OIyQYsdrFVetw2b9Kyw6tXD28putC1lfSJ5Uc/Xku
-	dId42Dp0uuXwQMBw==
-Authentication-Results: smtp-out1.suse.de;
-	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b=vvlrnM2f;
-	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b=du7Ec+1k
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1750778832; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=NoiiUm2Fj9WK2+okdYgOSWwXKVvL+oEsvy7xNbG15iI=;
-	b=vvlrnM2feTpV6+ta6uoKsfyvo3trinlhBI684D+M0ahVSjSaUP4cZoBGdLt58BhJywQwse
-	U98pFOyfr5XwpUaZ2FENX5MgnKN3Jkq52RzP/AQK+2SKFkcP5WgFRZnIADKx6xEt4C8T8X
-	gnzktuR3Y+USict2kCwJtnVz9DyEZR4=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1750778832;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=NoiiUm2Fj9WK2+okdYgOSWwXKVvL+oEsvy7xNbG15iI=;
-	b=du7Ec+1k9lAeD6cDmfItCTSD4+6O4OIyQYsdrFVetw2b9Kyw6tXD28putC1lfSJ5Uc/Xku
-	dId42Dp0uuXwQMBw==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 6B2ED13A9D;
-	Tue, 24 Jun 2025 15:27:12 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id sBX1GNDDWmi1DgAAD6G6ig
-	(envelope-from <chrubis@suse.cz>); Tue, 24 Jun 2025 15:27:12 +0000
-Date: Tue, 24 Jun 2025 17:27:51 +0200
-From: Cyril Hrubis <chrubis@suse.cz>
-To: Dmitry Vyukov <dvyukov@google.com>
-Cc: sashal@kernel.org, kees@kernel.org, elver@google.com,
-	linux-api@vger.kernel.org, linux-kernel@vger.kernel.org,
-	tools@kernel.org, workflows@vger.kernel.org
-Subject: Re: [RFC 00/19] Kernel API Specification Framework
-Message-ID: <aFrD9wuMky8TkhUW@yuki.lan>
-References: <aFNYQkbEctT6N0Hb@lappy>
- <20250623132803.26760-1-dvyukov@google.com>
- <aFqw5-PO4MjsEdYU@yuki.lan>
- <CACT4Y+Youc3M0z0U9arrTgyOC1+UKytav4zObhjUXn8-RLThMQ@mail.gmail.com>
+	s=arc-20240116; t=1750778876; c=relaxed/simple;
+	bh=MepxRO2ogI5XQ3ZUzw1gcXY64ic46PvTDY+KYhuA9P0=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=rjlUVuzrYfnqF5C8cIUgwM8HWoWGiJQqHwCxicE/0XI7xFs+Wk8sDhMqkIon6sOKaaMp0Q24u4p/8BS2+kJ8d6MGiJ8qWuyHzjXu/1Bx/Il+0xEhRb5131siGhu+dclWcMYijNtP3sAHXtvg3rqN5wRAPnXr9nnkTVfRH2W8tWQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=WZK6ZJ3A; arc=none smtp.client-ip=209.85.214.201
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
+Received: by mail-pl1-f201.google.com with SMTP id d9443c01a7336-2358de17665so48208135ad.3
+        for <linux-kernel@vger.kernel.org>; Tue, 24 Jun 2025 08:27:54 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1750778874; x=1751383674; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:from:to:cc:subject:date:message-id:reply-to;
+        bh=8ozpzeYt4xTkvHRuQkIJTdoQYtXmcQ7LICuVmYRW9gk=;
+        b=WZK6ZJ3AuiGdvP2b+SBCaWG2/HwwkhXTBNXfMqnckLRQMPj0MJ4iZ14Hmp7ZdULO+X
+         DslGD5rMmwc6tWFnbIFSQzHR16uUTpRLwPi7KaAhdE7EBprCSyzT0Dtx8nI84pDwcqNk
+         zYBrRrQTWp5ZrjAb+2LUgUD3S4ki7FqBl3QGomQ5bOgxJWrFhUAUVvPsQy/eVLZJVPqB
+         uoVml+AG9ETMzACojMoKizPs0JQu64axF4SZJMV6N/QtqESGESuMJ7cwfUI4g0LJ7dvX
+         ssg4lzk41nqtojkamz36RhZVOV9VYnQ9hefZhYPxWTZ/8V8utCGKB1x0/KIL2YSWvnBY
+         Scog==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1750778874; x=1751383674;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=8ozpzeYt4xTkvHRuQkIJTdoQYtXmcQ7LICuVmYRW9gk=;
+        b=V7RUUjBKi2zm8dGx+jzQ51cotDFS3WSFTPZ5bx+FjXHllmta8S/Guwe6+OBVyS+Kvu
+         mgIukuvRsh9yBkruw+cRmuz2nIOjT9/hKib+3zySOB2tQF5btU53yysOwxR91BDf/bfh
+         bmEDbzxEpJD3DdedUqO9bObgT3BrpmQI4CHaKsb5+8lUoRd+bbBJXo2QwKkYSsXekjfO
+         GHgFQnX5k1fBsS+vGrCQUsNmNO2MsV5cKWAaYuDZR+/q/Qe0RLAMPY2/IAXIXKAJjyCk
+         vebcMvMxmrnnkck1fa5Zo1KcQP0VkS6oAsDgoODRnm01pbunMj0ZWLZIPIdCWy582J6B
+         50vQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWPutvwJJZczHhxPCDhuXSQc/Xl8jVdGYRHGV20yVCzJz9cCD/4FQvFyIQMPW/67ZteRT6DuIORPBM3ywQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyOlQ/7O5830W1TXZIf7AjxaQqQqNIrO2piprFZ94rJQB952yF9
+	9BV+ZUJCbjydKf4kWvCVrUFg/YoRwSY6lBltIjDMiV5TjZVZr+CcDuwMW+GL6/NeTNqhYGOZvMj
+	EC7HeoQ==
+X-Google-Smtp-Source: AGHT+IFUejh1pO/KNNRbnpHWhaff//dtVImgTpNy+o6XsUzk8HP9FdRsW+ItyD5wajOAd09IzHcqdYMV9uY=
+X-Received: from plbky5.prod.google.com ([2002:a17:902:f985:b0:223:f7e6:116d])
+ (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a17:902:dac6:b0:236:7165:6ecf
+ with SMTP id d9443c01a7336-237d9a7c3a9mr312281565ad.38.1750778873740; Tue, 24
+ Jun 2025 08:27:53 -0700 (PDT)
+Date: Tue, 24 Jun 2025 08:27:52 -0700
+In-Reply-To: <20250328171205.2029296-7-xin@zytor.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CACT4Y+Youc3M0z0U9arrTgyOC1+UKytav4zObhjUXn8-RLThMQ@mail.gmail.com>
-X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
-X-Rspamd-Queue-Id: 7E97F21188
-X-Rspamd-Action: no action
-X-Spam-Flag: NO
-X-Spamd-Result: default: False [-4.51 / 50.00];
-	BAYES_HAM(-3.00)[99.99%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	R_DKIM_ALLOW(-0.20)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	MX_GOOD(-0.01)[];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	ARC_NA(0.00)[];
-	MISSING_XM_UA(0.00)[];
-	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	TO_DN_SOME(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	RCVD_TLS_ALL(0.00)[];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	FROM_EQ_ENVFROM(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	RCPT_COUNT_SEVEN(0.00)[8];
-	RCVD_COUNT_TWO(0.00)[2];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:rdns,imap1.dmz-prg2.suse.org:helo];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	DKIM_TRACE(0.00)[suse.cz:+]
-X-Spam-Score: -4.51
-X-Spam-Level: 
+Mime-Version: 1.0
+References: <20250328171205.2029296-1-xin@zytor.com> <20250328171205.2029296-7-xin@zytor.com>
+Message-ID: <aFrD-Pn9cmHcVxWs@google.com>
+Subject: Re: [PATCH v4 06/19] KVM: VMX: Set FRED MSR interception
+From: Sean Christopherson <seanjc@google.com>
+To: "Xin Li (Intel)" <xin@zytor.com>
+Cc: pbonzini@redhat.com, kvm@vger.kernel.org, linux-doc@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, corbet@lwn.net, tglx@linutronix.de, 
+	mingo@redhat.com, bp@alien8.de, dave.hansen@linux.intel.com, x86@kernel.org, 
+	hpa@zytor.com, andrew.cooper3@citrix.com, luto@kernel.org, 
+	peterz@infradead.org, chao.gao@intel.com, xin3.li@intel.com
+Content-Type: text/plain; charset="us-ascii"
 
-Hi!
-> > You may wonder if such kind of tests are useful at all, since quite a
-> > few of these errors are checked for and generated from a common
-> > functions. There are at least two cases I can think of. First of all it
-> > makes sure that errors are stable when particular function/subsystem is
-> > rewritten. And it can also make sure that errors are consistent across
-> > different implementation of the same functionality e.g. filesystems. I
-> > remember that some of the less used FUSE filesystems returned puzzling
-> > errors in certain corner cases.
-> 
-> I am not following how this is related to the validation part of the
-> patch series. Can you elaborate?
+On Fri, Mar 28, 2025, Xin Li (Intel) wrote:
+> @@ -7935,6 +7945,34 @@ static void update_intel_pt_cfg(struct kvm_vcpu *vcpu)
+>  		vmx->pt_desc.ctl_bitmask &= ~(0xfULL << (32 + i * 4));
+>  }
+>  
+> +static void vmx_set_intercept_for_fred_msr(struct kvm_vcpu *vcpu)
+> +{
 
-This part is me trying to explain that generated conformance tests would
-be useful for development as well.
+This function should short-circult on
 
-> Generation of such conformance tests would need info about parameter
-> types and their semantic meaning, not the validation part.
-> The conformance tests should test that actual syscall checking of
-> arguments, not the validation added by this framework.
+	if (!kvm_cpu_cap_has(X86_FEATURE_FRED))
+		return;
 
-Exactly.
+Functionally, it shouldn't matter.  It's mostly for documentation purposes, and
+to avoid doing unnecessary work.
 
-I do not think that it makes sense to encode the argument ranges and
-functions to generate a valid syscall parameters into the kernel. Rather
-than that the information should encoded in the extended types, if we do
-that well enough we can generate combination of different valid and
-invalid parameters for the tests based on that.
+> +	bool flag = !guest_cpu_cap_has(vcpu, X86_FEATURE_FRED);
 
--- 
-Cyril Hrubis
-chrubis@suse.cz
+"flag" is unnecessarily ambiguous (eww, I see that the exiting PT code does that).
+I like "set", as it has (hopefully) obvious polarity, and aligns with the function
+being called.
+
+> +
+> +	vmx_set_intercept_for_msr(vcpu, MSR_IA32_FRED_RSP1, MSR_TYPE_RW, flag);
+> +	vmx_set_intercept_for_msr(vcpu, MSR_IA32_FRED_RSP2, MSR_TYPE_RW, flag);
+> +	vmx_set_intercept_for_msr(vcpu, MSR_IA32_FRED_RSP3, MSR_TYPE_RW, flag);
+> +	vmx_set_intercept_for_msr(vcpu, MSR_IA32_FRED_STKLVLS, MSR_TYPE_RW, flag);
+> +	vmx_set_intercept_for_msr(vcpu, MSR_IA32_FRED_SSP1, MSR_TYPE_RW, flag);
+> +	vmx_set_intercept_for_msr(vcpu, MSR_IA32_FRED_SSP2, MSR_TYPE_RW, flag);
+> +	vmx_set_intercept_for_msr(vcpu, MSR_IA32_FRED_SSP3, MSR_TYPE_RW, flag);
+> +	vmx_set_intercept_for_msr(vcpu, MSR_IA32_FRED_CONFIG, MSR_TYPE_RW, flag);
+> +
+> +	/*
+> +	 * IA32_FRED_RSP0 and IA32_PL0_SSP (a.k.a. IA32_FRED_SSP0) are only used
+> +	 * for delivering events when running userspace, while KVM always runs in
+> +	 * kernel mode (the CPL is always 0 after any VM exit), thus KVM can run
+> +	 * safely with guest IA32_FRED_RSP0 and IA32_PL0_SSP.
+> +	 *
+> +	 * As a result, no need to intercept IA32_FRED_RSP0 and IA32_PL0_SSP.
+> +	 *
+> +	 * Note, save and restore of IA32_PL0_SSP belong to CET supervisor context
+> +	 * management no matter whether FRED is enabled or not.  So leave its
+> +	 * state management to CET code.
+> +	 */
+> +	vmx_set_intercept_for_msr(vcpu, MSR_IA32_FRED_RSP0, MSR_TYPE_RW, flag);
+> +}
 
