@@ -1,196 +1,345 @@
-Return-Path: <linux-kernel+bounces-699486-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-699488-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 42540AE5AA5
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Jun 2025 05:57:38 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id C4145AE5AA9
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Jun 2025 05:58:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B3A482C087B
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Jun 2025 03:57:38 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 05EA41688C9
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Jun 2025 03:58:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 963AB1F5851;
-	Tue, 24 Jun 2025 03:57:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AC1AB1F9F70;
+	Tue, 24 Jun 2025 03:57:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="GjXHGbQQ"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.17])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="kCC3hbVB"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CDAF21DB148;
-	Tue, 24 Jun 2025 03:57:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.17
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C990C126C03
+	for <linux-kernel@vger.kernel.org>; Tue, 24 Jun 2025 03:57:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750737451; cv=none; b=s0YLls09KAElZ/XGTDu9yr6HvJombuU7hjiYv8xt1gtKYkEsTUt9UUygrG/bR5K6zyhkDvOWeH2aCReRDsJzIra7pTpem6hrzqn/1aAQb09lSwaamdiXsd5NgIfJX4xpfuVcqbL46YpQbJxNqeXoO8vy2JFm01nQ18/1nJhe2GA=
+	t=1750737477; cv=none; b=Nb+pUNZXU+xhrv1w2RYA04WALTMEq2l3QJB4XYp1EZkO7uLcdXris3fp85dBv2tD1ss8qXnQY87HzTonfd430kH/GSdOn41AfEv2D9+oVSlf0PQCj+/mjTuvgdBZOo5L7xlDAosBZCf8SFZOD/mftLQjAoyNiA3Y7ODQUGIkWBM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750737451; c=relaxed/simple;
-	bh=eDRLwb46ZJNkUBRm5BBOB9MU9TVVS4hMshWk6nSG+fM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=HPcCPe7C8MdjLiZeNBQip2/CU2GYO34o2Lx1Cr6bRRwxuIxnJmFmC+kJ6T1acjDOAdr7OdghvTLcbmrjZPd23Pr4HaPgKaaK95S2d5nN4v+rCtciWYxaRMOBRxhKwqTplyab9QcCMytmhsYWdn84Raeyt6WZKiS2nwTAeCnfnUc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=GjXHGbQQ; arc=none smtp.client-ip=192.198.163.17
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1750737450; x=1782273450;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=eDRLwb46ZJNkUBRm5BBOB9MU9TVVS4hMshWk6nSG+fM=;
-  b=GjXHGbQQwuPptryXi6ORwaah2nJa6MgSOQej3MFnBsnPOOuhALfbOl5o
-   xJ9EYwYq+rioF3FlyfHNkdbNb5QlWfaZYV8/xKb0G16dRBFXc/BbL2RGA
-   f6o5UD4a8kyxufBXxHnMyHQM2+0SS/z/r0quGTQmL50wlJbrQCgmZHR3W
-   zBabLTE0FbPtWvosujaCRLjo1DBCdKWKnQ7OMBQtnQxvy4NKE1Z1Sexqv
-   2E9ZGFCSPrrG9rbtm6r3CeIMoJysviy8QowRFcIG0jOJ5i4fZ/uN6FTAD
-   NXsgjhizl64gKExlOYiJM9UjMrmuNC8oJdsvWRc0qzPNFmHNHK2S8zRBN
-   A==;
-X-CSE-ConnectionGUID: lkuGDu2ESEicfOWL9y5Y5w==
-X-CSE-MsgGUID: HoDDye/nR/CyR/1C2yTKIQ==
-X-IronPort-AV: E=McAfee;i="6800,10657,11473"; a="52899989"
-X-IronPort-AV: E=Sophos;i="6.16,260,1744095600"; 
-   d="scan'208";a="52899989"
-Received: from fmviesa004.fm.intel.com ([10.60.135.144])
-  by fmvoesa111.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 23 Jun 2025 20:57:25 -0700
-X-CSE-ConnectionGUID: hTpeXAEMS8WjON5jEVhW+g==
-X-CSE-MsgGUID: 6lr16b0fSsKfY8hjpPXPag==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.16,260,1744095600"; 
-   d="scan'208";a="157282861"
-Received: from lkp-server01.sh.intel.com (HELO e8142ee1dce2) ([10.239.97.150])
-  by fmviesa004.fm.intel.com with ESMTP; 23 Jun 2025 20:57:22 -0700
-Received: from kbuild by e8142ee1dce2 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1uTume-000RhN-2P;
-	Tue, 24 Jun 2025 03:57:20 +0000
-Date: Tue, 24 Jun 2025 11:56:58 +0800
-From: kernel test robot <lkp@intel.com>
-To: GalaxySnail <me@glxys.nl>, linux-sound@vger.kernel.org
-Cc: oe-kbuild-all@lists.linux.dev, linux-kernel@vger.kernel.org,
-	patches@opensource.cirrus.com,
-	David Rhodes <david.rhodes@cirrus.com>,
-	Richard Fitzgerald <rf@opensource.cirrus.com>,
-	Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>,
-	GalaxySnail <me@glxys.nl>
-Subject: Re: [PATCH] ALSA: hda: add MODULE_FIRMWARE for cs35l41/cs35l56
-Message-ID: <202506241158.kxrazQoo-lkp@intel.com>
-References: <20250623140030.1539477-2-me@glxys.nl>
+	s=arc-20240116; t=1750737477; c=relaxed/simple;
+	bh=+QzU21Jo6D91iPMqSksxmcP7qfut/YubP7Ke/jZpSfw=;
+	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
+	 Mime-Version:Content-Type; b=nrBcMlQa7AECJcdMS/rKVcs00SWidGEwG9gtrEvdWZZv6F7Xcpkz06R/ATKj/la6hfZfMXLCOxxK09IAMc3XTvqw7IL69rOTqy1JptLi9q4exj5pSnaF0KBU1RFAqejTnASJDRgFOPmVo2lv2V1BQ/qzKCuF/IqpUGPjeBdbWYk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=kCC3hbVB; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D30A9C4CEE3;
+	Tue, 24 Jun 2025 03:57:54 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1750737477;
+	bh=+QzU21Jo6D91iPMqSksxmcP7qfut/YubP7Ke/jZpSfw=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=kCC3hbVBNl6QWCLz+hYnASzTvBsSOfNInQMt9Ow4pBUveGWC0Ua0zCZEOJdtq1uOR
+	 CG9pXr+wnzfI6sN3ObdMVJvLuIrgptLnJYqIXO2fEfpXYHIJhbdkT2iKzg2+wmB9zG
+	 GWymzT6dgkBj6lMzY9gyn0z2FxouXAPr4n+DkUlC5hB37/6TyB9uehLDzKN0ujgl3B
+	 GBUXJeu4o/4jGLp65SmYC4RwR4/KFneYVaH//wvMe3GhywBkgNbidkz/BQjtUuT3kH
+	 ml1xff5gezX4/qn+Wtidw7DR2myMZ6sCIKOZjSzoq47c2vqBnY0yEky0r+fmpgA/Kx
+	 sHjDsUFI7JS9w==
+Date: Tue, 24 Jun 2025 12:57:53 +0900
+From: Masami Hiramatsu (Google) <mhiramat@kernel.org>
+To: Lance Yang <ioworker0@gmail.com>
+Cc: akpm@linux-foundation.org, zi.li@linux.dev, anna.schumaker@oracle.com,
+ boqun.feng@gmail.com, joel.granados@kernel.org, jstultz@google.com,
+ kent.overstreet@linux.dev, leonylgao@tencent.com,
+ linux-kernel@vger.kernel.org, longman@redhat.com, mhiramat@kernel.org,
+ mingo@redhat.com, mingzhe.yang@ly.com, peterz@infradead.org,
+ rostedt@goodmis.org, senozhatsky@chromium.org, tfiga@chromium.org,
+ will@kernel.org, Lance Yang <lance.yang@linux.dev>
+Subject: Re: [PATCH RFC 3/3] hung_task: extend hung task blocker tracking to
+ rwsems
+Message-Id: <20250624125753.1b64a9b0dafbd2bd63239dbc@kernel.org>
+In-Reply-To: <20250612042005.99602-4-lance.yang@linux.dev>
+References: <20250612042005.99602-1-lance.yang@linux.dev>
+	<20250612042005.99602-4-lance.yang@linux.dev>
+X-Mailer: Sylpheed 3.8.0beta1 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250623140030.1539477-2-me@glxys.nl>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-Hi GalaxySnail,
+On Thu, 12 Jun 2025 12:19:26 +0800
+Lance Yang <ioworker0@gmail.com> wrote:
 
-kernel test robot noticed the following build errors:
+> From: Lance Yang <lance.yang@linux.dev>
+> 
+> Inspired by mutex blocker tracking[1], and having already extended it to
+> semaphores, let's now add support for reader-writer semaphores (rwsems).
+> 
+> The approach is simple: when a task enters TASK_UNINTERRUPTIBLE while
+> waiting for an rwsem, we just call hung_task_set_blocker(). The hung task
+> detector can then query the rwsem's owner to identify the lock holder.
+> 
+> Tracking works reliably for writers, as there can only be a single writer
+> holding the lock, and its task struct is stored in the owner field.
+> 
+> The main challenge lies with readers. The owner field points to only one
+> of many concurrent readers, so we might lose track of the blocker if that
+> specific reader unlocks, even while others remain. This is not a
+> significant issue, however. In practice, long-lasting lock contention is
+> almost always caused by a writer. Therefore, reliably tracking the writer
+> is the primary goal of this patch series ;)
 
-[auto build test ERROR on tiwai-sound/for-next]
-[also build test ERROR on tiwai-sound/for-linus linus/master v6.16-rc3 next-20250623]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
+I think as far as it is reliable, it is better than nothing :) and that
+can help us to debug some part of kernel crashes.
 
-url:    https://github.com/intel-lab-lkp/linux/commits/GalaxySnail/ALSA-hda-add-MODULE_FIRMWARE-for-cs35l41-cs35l56/20250623-220657
-base:   https://git.kernel.org/pub/scm/linux/kernel/git/tiwai/sound.git for-next
-patch link:    https://lore.kernel.org/r/20250623140030.1539477-2-me%40glxys.nl
-patch subject: [PATCH] ALSA: hda: add MODULE_FIRMWARE for cs35l41/cs35l56
-config: x86_64-rhel-9.4 (https://download.01.org/0day-ci/archive/20250624/202506241158.kxrazQoo-lkp@intel.com/config)
-compiler: gcc-12 (Debian 12.2.0-14) 12.2.0
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250624/202506241158.kxrazQoo-lkp@intel.com/reproduce)
+> 
+> With this change, the hung task detector can now show blocker task's info
+> like below:
+> 
+> [Thu Jun 12 11:01:33 2025] INFO: task rw_sem_thread2:36526 blocked for more than 122 seconds.
+> [Thu Jun 12 11:01:33 2025]       Tainted: G S         O        6.16.0-rc1 #1
+> [Thu Jun 12 11:01:33 2025] "echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
+> [Thu Jun 12 11:01:33 2025] task:rw_sem_thread2  state:D stack:0     pid:36526 tgid:36526 ppid:2      task_flags:0x208040 flags:0x00004000
+> [Thu Jun 12 11:01:33 2025] Call Trace:
+> [Thu Jun 12 11:01:33 2025]  <TASK>
+> [Thu Jun 12 11:01:33 2025]  __schedule+0x7c7/0x1930
+> [Thu Jun 12 11:01:33 2025]  ? __pfx___schedule+0x10/0x10
+> [Thu Jun 12 11:01:33 2025]  ? _raw_spin_lock_irq+0x8a/0xe0
+> [Thu Jun 12 11:01:33 2025]  ? __pfx__raw_spin_lock_irq+0x10/0x10
+> [Thu Jun 12 11:01:33 2025]  schedule+0x6a/0x180
+> [Thu Jun 12 11:01:33 2025]  schedule_preempt_disabled+0x15/0x30
+> [Thu Jun 12 11:01:33 2025]  rwsem_down_write_slowpath+0x447/0x1090
+> [Thu Jun 12 11:01:33 2025]  ? __pfx_rwsem_down_write_slowpath+0x10/0x10
+> [Thu Jun 12 11:01:33 2025]  ? __pfx___schedule+0x10/0x10
+> [Thu Jun 12 11:01:33 2025]  ? __pfx___might_resched+0x10/0x10
+> [Thu Jun 12 11:01:33 2025]  ? __pfx_thread2_func+0x10/0x10 [rw_sem_test_2]
+> [Thu Jun 12 11:01:33 2025]  down_write+0x125/0x140
+> [Thu Jun 12 11:01:33 2025]  ? __pfx_down_write+0x10/0x10
+> [Thu Jun 12 11:01:33 2025]  ? msleep+0x91/0xf0
+> [Thu Jun 12 11:01:33 2025]  ? __raw_spin_lock_irqsave+0x8c/0xf0
+> [Thu Jun 12 11:01:33 2025]  thread2_func+0x37/0x70 [rw_sem_test_2]
+> [Thu Jun 12 11:01:33 2025]  kthread+0x39f/0x750
+> [Thu Jun 12 11:01:33 2025]  ? __pfx_kthread+0x10/0x10
+> [Thu Jun 12 11:01:33 2025]  ? __pfx__raw_spin_lock_irq+0x10/0x10
+> [Thu Jun 12 11:01:33 2025]  ? __pfx_kthread+0x10/0x10
+> [Thu Jun 12 11:01:33 2025]  ret_from_fork+0x25d/0x320
+> [Thu Jun 12 11:01:33 2025]  ? __pfx_kthread+0x10/0x10
+> [Thu Jun 12 11:01:33 2025]  ret_from_fork_asm+0x1a/0x30
+> [Thu Jun 12 11:01:33 2025]  </TASK>
+> [Thu Jun 12 11:01:33 2025] INFO: task rw_sem_thread2:36526 <writer> blocked on an rw-semaphore likely owned by task rw_sem_thread1:36525 <writer>
+> [Thu Jun 12 11:01:33 2025] task:rw_sem_thread1  state:S stack:0     pid:36525 tgid:36525 ppid:2      task_flags:0x208040 flags:0x00004000
+> [Thu Jun 12 11:01:33 2025] Call Trace:
+> [Thu Jun 12 11:01:33 2025]  <TASK>
+> [Thu Jun 12 11:01:33 2025]  __schedule+0x7c7/0x1930
+> [Thu Jun 12 11:01:33 2025]  ? __pfx___schedule+0x10/0x10
+> [Thu Jun 12 11:01:33 2025]  ? __mod_timer+0x304/0xa80
+> [Thu Jun 12 11:01:33 2025]  ? irq_work_queue+0x6a/0xa0
+> [Thu Jun 12 11:01:33 2025]  ? __pfx_vprintk_emit+0x10/0x10
+> [Thu Jun 12 11:01:33 2025]  schedule+0x6a/0x180
+> [Thu Jun 12 11:01:33 2025]  schedule_timeout+0xfb/0x230
+> [Thu Jun 12 11:01:33 2025]  ? __pfx_schedule_timeout+0x10/0x10
+> [Thu Jun 12 11:01:33 2025]  ? __pfx_process_timeout+0x10/0x10
+> [Thu Jun 12 11:01:33 2025]  ? down_write+0xc4/0x140
+> [Thu Jun 12 11:01:33 2025]  msleep_interruptible+0xbe/0x150
+> [Thu Jun 12 11:01:33 2025]  ? __pfx_thread1_func+0x10/0x10 [rw_sem_test_2]
+> [Thu Jun 12 11:01:33 2025]  thread1_func+0x37/0x60 [rw_sem_test_2]
+> [Thu Jun 12 11:01:33 2025]  kthread+0x39f/0x750
+> [Thu Jun 12 11:01:33 2025]  ? __pfx_kthread+0x10/0x10
+> [Thu Jun 12 11:01:33 2025]  ? __pfx__raw_spin_lock_irq+0x10/0x10
+> [Thu Jun 12 11:01:33 2025]  ? __pfx_kthread+0x10/0x10
+> [Thu Jun 12 11:01:33 2025]  ret_from_fork+0x25d/0x320
+> [Thu Jun 12 11:01:33 2025]  ? __pfx_kthread+0x10/0x10
+> [Thu Jun 12 11:01:33 2025]  ret_from_fork_asm+0x1a/0x30
+> [Thu Jun 12 11:01:33 2025]  </TASK>
+> 
+> [1] https://lore.kernel.org/all/174046694331.2194069.15472952050240807469.stgit@mhiramat.tok.corp.google.com/
+> 
+> Suggested-by: Masami Hiramatsu (Google) <mhiramat@kernel.org>
+> Signed-off-by: Lance Yang <lance.yang@linux.dev>
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202506241158.kxrazQoo-lkp@intel.com/
+Looks good to me.
 
-All errors (new ones prefixed by >>):
+Reviewed-by: Masami Hiramatsu (Google) <mhiramat@kernel.org>
 
-   In file included from include/linux/module.h:22,
-                    from include/linux/device/driver.h:21,
-                    from include/linux/device.h:32,
-                    from include/linux/acpi.h:14,
-                    from sound/pci/hda/cs35l41_hda.c:9:
->> include/linux/moduleparam.h:24:9: error: expected ',' or ';' before 'static'
-      24 |         static const char __UNIQUE_ID(name)[]                             \
-         |         ^~~~~~
-   include/linux/module.h:168:32: note: in expansion of macro '__MODULE_INFO'
-     168 | #define MODULE_INFO(tag, info) __MODULE_INFO(tag, tag, info)
-         |                                ^~~~~~~~~~~~~
-   include/linux/module.h:299:36: note: in expansion of macro 'MODULE_INFO'
-     299 | #define MODULE_FIRMWARE(_firmware) MODULE_INFO(firmware, _firmware)
-         |                                    ^~~~~~~~~~~
-   sound/pci/hda/cs35l41_hda.c:2116:1: note: in expansion of macro 'MODULE_FIRMWARE'
-    2116 | MODULE_FIRMWARE("cirrus/cs35l41-*.bin")
-         | ^~~~~~~~~~~~~~~
---
-   In file included from include/linux/module.h:22,
-                    from include/linux/device/driver.h:21,
-                    from include/linux/device.h:32,
-                    from include/linux/acpi.h:14,
-                    from sound/pci/hda/cs35l56_hda.c:9:
->> include/linux/moduleparam.h:24:9: error: expected ',' or ';' before 'static'
-      24 |         static const char __UNIQUE_ID(name)[]                             \
-         |         ^~~~~~
-   include/linux/module.h:168:32: note: in expansion of macro '__MODULE_INFO'
-     168 | #define MODULE_INFO(tag, info) __MODULE_INFO(tag, tag, info)
-         |                                ^~~~~~~~~~~~~
-   include/linux/module.h:299:36: note: in expansion of macro 'MODULE_INFO'
-     299 | #define MODULE_FIRMWARE(_firmware) MODULE_INFO(firmware, _firmware)
-         |                                    ^~~~~~~~~~~
-   sound/pci/hda/cs35l56_hda.c:1126:1: note: in expansion of macro 'MODULE_FIRMWARE'
-    1126 | MODULE_FIRMWARE("cirrus/cs35l54-*.bin")
-         | ^~~~~~~~~~~~~~~
---
-   In file included from include/linux/module.h:22,
-                    from include/linux/device/driver.h:21,
-                    from include/linux/device.h:32,
-                    from include/linux/acpi.h:14,
-                    from cs35l41_hda.c:9:
->> include/linux/moduleparam.h:24:9: error: expected ',' or ';' before 'static'
-      24 |         static const char __UNIQUE_ID(name)[]                             \
-         |         ^~~~~~
-   include/linux/module.h:168:32: note: in expansion of macro '__MODULE_INFO'
-     168 | #define MODULE_INFO(tag, info) __MODULE_INFO(tag, tag, info)
-         |                                ^~~~~~~~~~~~~
-   include/linux/module.h:299:36: note: in expansion of macro 'MODULE_INFO'
-     299 | #define MODULE_FIRMWARE(_firmware) MODULE_INFO(firmware, _firmware)
-         |                                    ^~~~~~~~~~~
-   cs35l41_hda.c:2116:1: note: in expansion of macro 'MODULE_FIRMWARE'
-    2116 | MODULE_FIRMWARE("cirrus/cs35l41-*.bin")
-         | ^~~~~~~~~~~~~~~
---
-   In file included from include/linux/module.h:22,
-                    from include/linux/device/driver.h:21,
-                    from include/linux/device.h:32,
-                    from include/linux/acpi.h:14,
-                    from cs35l56_hda.c:9:
->> include/linux/moduleparam.h:24:9: error: expected ',' or ';' before 'static'
-      24 |         static const char __UNIQUE_ID(name)[]                             \
-         |         ^~~~~~
-   include/linux/module.h:168:32: note: in expansion of macro '__MODULE_INFO'
-     168 | #define MODULE_INFO(tag, info) __MODULE_INFO(tag, tag, info)
-         |                                ^~~~~~~~~~~~~
-   include/linux/module.h:299:36: note: in expansion of macro 'MODULE_INFO'
-     299 | #define MODULE_FIRMWARE(_firmware) MODULE_INFO(firmware, _firmware)
-         |                                    ^~~~~~~~~~~
-   cs35l56_hda.c:1126:1: note: in expansion of macro 'MODULE_FIRMWARE'
-    1126 | MODULE_FIRMWARE("cirrus/cs35l54-*.bin")
-         | ^~~~~~~~~~~~~~~
+BTW, can you also add a patch to extend the test module
+(samples/hung_task/hung_task_tests.c) to handle the rwsem
+blocking case ? (reader and writer side)
+
+Thank you,
 
 
-vim +24 include/linux/moduleparam.h
+> ---
+>  include/linux/hung_task.h | 18 +++++++++---------
+>  kernel/hung_task.c        | 29 +++++++++++++++++++++++++----
+>  kernel/locking/rwsem.c    | 17 ++++++++++++++++-
+>  3 files changed, 50 insertions(+), 14 deletions(-)
+> 
+> diff --git a/include/linux/hung_task.h b/include/linux/hung_task.h
+> index 1bc2b3244613..34e615c76ca5 100644
+> --- a/include/linux/hung_task.h
+> +++ b/include/linux/hung_task.h
+> @@ -21,17 +21,17 @@
+>   * type.
+>   *
+>   * Type encoding:
+> - * 00 - Blocked on mutex        (BLOCKER_TYPE_MUTEX)
+> - * 01 - Blocked on semaphore    (BLOCKER_TYPE_SEM)
+> - * 10 - Blocked on rt-mutex     (BLOCKER_TYPE_RTMUTEX)
+> - * 11 - Blocked on rw-semaphore (BLOCKER_TYPE_RWSEM)
+> + * 00 - Blocked on mutex			(BLOCKER_TYPE_MUTEX)
+> + * 01 - Blocked on semaphore			(BLOCKER_TYPE_SEM)
+> + * 10 - Blocked on rw-semaphore as READER	(BLOCKER_TYPE_RWSEM_READER)
+> + * 11 - Blocked on rw-semaphore as WRITER	(BLOCKER_TYPE_RWSEM_WRITER)
+>   */
+> -#define BLOCKER_TYPE_MUTEX      0x00UL
+> -#define BLOCKER_TYPE_SEM        0x01UL
+> -#define BLOCKER_TYPE_RTMUTEX    0x02UL
+> -#define BLOCKER_TYPE_RWSEM      0x03UL
+> +#define BLOCKER_TYPE_MUTEX		0x00UL
+> +#define BLOCKER_TYPE_SEM		0x01UL
+> +#define BLOCKER_TYPE_RWSEM_READER	0x02UL
+> +#define BLOCKER_TYPE_RWSEM_WRITER	0x03UL
+>  
+> -#define BLOCKER_TYPE_MASK       0x03UL
+> +#define BLOCKER_TYPE_MASK		0x03UL
+>  
+>  #ifdef CONFIG_DETECT_HUNG_TASK_BLOCKER
+>  static inline void hung_task_set_blocker(void *lock, unsigned long type)
+> diff --git a/kernel/hung_task.c b/kernel/hung_task.c
+> index d2432df2b905..8708a1205f82 100644
+> --- a/kernel/hung_task.c
+> +++ b/kernel/hung_task.c
+> @@ -23,6 +23,7 @@
+>  #include <linux/sched/debug.h>
+>  #include <linux/sched/sysctl.h>
+>  #include <linux/hung_task.h>
+> +#include <linux/rwsem.h>
+>  
+>  #include <trace/events/sched.h>
+>  
+> @@ -100,6 +101,7 @@ static void debug_show_blocker(struct task_struct *task)
+>  {
+>  	struct task_struct *g, *t;
+>  	unsigned long owner, blocker, blocker_type;
+> +	const char *rwsem_blocked_by, *rwsem_blocked_as;
+>  
+>  	RCU_LOCKDEP_WARN(!rcu_read_lock_held(), "No rcu lock held");
+>  
+> @@ -111,12 +113,20 @@ static void debug_show_blocker(struct task_struct *task)
+>  
+>  	switch (blocker_type) {
+>  	case BLOCKER_TYPE_MUTEX:
+> -		owner = mutex_get_owner(
+> -			(struct mutex *)hung_task_blocker_to_lock(blocker));
+> +		owner = mutex_get_owner(hung_task_blocker_to_lock(blocker));
+>  		break;
+>  	case BLOCKER_TYPE_SEM:
+> -		owner = sem_last_holder(
+> -			(struct semaphore *)hung_task_blocker_to_lock(blocker));
+> +		owner = sem_last_holder(hung_task_blocker_to_lock(blocker));
+> +		break;
+> +	case BLOCKER_TYPE_RWSEM_READER:
+> +	case BLOCKER_TYPE_RWSEM_WRITER:
+> +		owner = (unsigned long)rwsem_owner(
+> +					hung_task_blocker_to_lock(blocker));
+> +		rwsem_blocked_as = (blocker_type == BLOCKER_TYPE_RWSEM_READER) ?
+> +					"reader" : "writer";
+> +		rwsem_blocked_by = is_rwsem_reader_owned(
+> +					hung_task_blocker_to_lock(blocker)) ?
+> +					"reader" : "writer";
+>  		break;
+>  	default:
+>  		WARN_ON_ONCE(1);
+> @@ -134,6 +144,11 @@ static void debug_show_blocker(struct task_struct *task)
+>  			pr_err("INFO: task %s:%d is blocked on a semaphore, but the last holder is not found.\n",
+>  			       task->comm, task->pid);
+>  			break;
+> +		case BLOCKER_TYPE_RWSEM_READER:
+> +		case BLOCKER_TYPE_RWSEM_WRITER:
+> +			pr_err("INFO: task %s:%d is blocked on an rw-semaphore, but the owner is not found.\n",
+> +			       task->comm, task->pid);
+> +			break;
+>  		}
+>  		return;
+>  	}
+> @@ -152,6 +167,12 @@ static void debug_show_blocker(struct task_struct *task)
+>  			pr_err("INFO: task %s:%d blocked on a semaphore likely last held by task %s:%d\n",
+>  			       task->comm, task->pid, t->comm, t->pid);
+>  			break;
+> +		case BLOCKER_TYPE_RWSEM_READER:
+> +		case BLOCKER_TYPE_RWSEM_WRITER:
+> +			pr_err("INFO: task %s:%d <%s> blocked on an rw-semaphore likely owned by task %s:%d <%s>\n",
+> +			       task->comm, task->pid, rwsem_blocked_as, t->comm,
+> +			       t->pid, rwsem_blocked_by);
+> +			break;
+>  		}
+>  		sched_show_task(t);
+>  		return;
+> diff --git a/kernel/locking/rwsem.c b/kernel/locking/rwsem.c
+> index a310eb9896de..92c6332da401 100644
+> --- a/kernel/locking/rwsem.c
+> +++ b/kernel/locking/rwsem.c
+> @@ -27,6 +27,7 @@
+>  #include <linux/export.h>
+>  #include <linux/rwsem.h>
+>  #include <linux/atomic.h>
+> +#include <linux/hung_task.h>
+>  #include <trace/events/lock.h>
+>  
+>  #ifndef CONFIG_PREEMPT_RT
+> @@ -1065,10 +1066,13 @@ rwsem_down_read_slowpath(struct rw_semaphore *sem, long count, unsigned int stat
+>  		wake_up_q(&wake_q);
+>  
+>  	trace_contention_begin(sem, LCB_F_READ);
+> +	set_current_state(state);
+> +
+> +	if (state == TASK_UNINTERRUPTIBLE)
+> +		hung_task_set_blocker(sem, BLOCKER_TYPE_RWSEM_READER);
+>  
+>  	/* wait to be given the lock */
+>  	for (;;) {
+> -		set_current_state(state);
+>  		if (!smp_load_acquire(&waiter.task)) {
+>  			/* Matches rwsem_mark_wake()'s smp_store_release(). */
+>  			break;
+> @@ -1083,8 +1087,12 @@ rwsem_down_read_slowpath(struct rw_semaphore *sem, long count, unsigned int stat
+>  		}
+>  		schedule_preempt_disabled();
+>  		lockevent_inc(rwsem_sleep_reader);
+> +		set_current_state(state);
+>  	}
+>  
+> +	if (state == TASK_UNINTERRUPTIBLE)
+> +		hung_task_clear_blocker();
+> +
+>  	__set_current_state(TASK_RUNNING);
+>  	lockevent_inc(rwsem_rlock);
+>  	trace_contention_end(sem, 0);
+> @@ -1146,6 +1154,9 @@ rwsem_down_write_slowpath(struct rw_semaphore *sem, int state)
+>  	set_current_state(state);
+>  	trace_contention_begin(sem, LCB_F_WRITE);
+>  
+> +	if (state == TASK_UNINTERRUPTIBLE)
+> +		hung_task_set_blocker(sem, BLOCKER_TYPE_RWSEM_WRITER);
+> +
+>  	for (;;) {
+>  		if (rwsem_try_write_lock(sem, &waiter)) {
+>  			/* rwsem_try_write_lock() implies ACQUIRE on success */
+> @@ -1179,6 +1190,10 @@ rwsem_down_write_slowpath(struct rw_semaphore *sem, int state)
+>  trylock_again:
+>  		raw_spin_lock_irq(&sem->wait_lock);
+>  	}
+> +
+> +	if (state == TASK_UNINTERRUPTIBLE)
+> +		hung_task_clear_blocker();
+> +
+>  	__set_current_state(TASK_RUNNING);
+>  	raw_spin_unlock_irq(&sem->wait_lock);
+>  	lockevent_inc(rwsem_wlock);
+> -- 
+> 2.49.0
+> 
 
-730b69d2252595 Rusty Russell  2008-10-22  22  
-^1da177e4c3f41 Linus Torvalds 2005-04-16  23  #define __MODULE_INFO(tag, name, info)					  \
-34182eea36fc1d Rusty Russell  2012-11-22 @24  	static const char __UNIQUE_ID(name)[]				  \
-2aec389e19150e Johan Hovold   2020-11-23  25  		__used __section(".modinfo") __aligned(1)		  \
-898490c010b5d2 Alexey Gladkov 2019-04-29  26  		= __MODULE_INFO_PREFIX __stringify(tag) "=" info
-898490c010b5d2 Alexey Gladkov 2019-04-29  27  
 
 -- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+Masami Hiramatsu (Google) <mhiramat@kernel.org>
 
