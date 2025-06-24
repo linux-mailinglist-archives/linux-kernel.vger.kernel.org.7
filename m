@@ -1,188 +1,229 @@
-Return-Path: <linux-kernel+bounces-700007-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-700000-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 31986AE62A1
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Jun 2025 12:37:53 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 33954AE6295
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Jun 2025 12:36:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id DA72E19250F0
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Jun 2025 10:38:08 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 51A587B53C4
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Jun 2025 10:35:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F3CBE28DEF0;
-	Tue, 24 Jun 2025 10:36:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 00B692882AD;
+	Tue, 24 Jun 2025 10:36:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="HGNkWtKj"
-Received: from mail-wm1-f46.google.com (mail-wm1-f46.google.com [209.85.128.46])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="JU4LZVID"
+Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E29E4288CBE
-	for <linux-kernel@vger.kernel.org>; Tue, 24 Jun 2025 10:36:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 33EEB284B2E;
+	Tue, 24 Jun 2025 10:36:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750761404; cv=none; b=crylBumW1J/39ARUg+RBWzgOoc/6aTT0vsn5ueKh80DF9STOORTcqo4C2CRQo2nBMfqzj0OX/0zs8xysdo18eNc6IHRIB57EIzY66nYW0kfNE0srASFSOHWzh509cePQjWmcelN5LIw1mPoJcNM7ug6JFTMl3ybWTIl1/zYAgkE=
+	t=1750761366; cv=none; b=GG1GuN8UswmRHmbezmYjMVxEoacDuyr/UKQIBudmQU4vDg3DG3YIvCFrEP7OBj2o5Qt8XVbQKK5danQOfgjCEYYwj2LNEMJu/REYoAcZrYh+mr0Ph6SsiUvHEFY5oejGS0Dhm2mcG7kK9parWcAXWTA8lmqF4Apr5LRPivFoE5s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750761404; c=relaxed/simple;
-	bh=X4TMFyCSx8+go3pfcWGphm0X5j2rswwDLDyFMqRvmhs=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=dRowk4/FgJxlPVTcbILrHr+c4eNq/EXAfDGCL+b+IT2mqMxkOyDUsvz178RqbPSVuiAVU3wyq7wephvgrERKe4qP3eZiosFaFeWBgHu7fR0zWwGT0tc1EfSrlZaE6eVlMWPwZYPa93f/pfl3O7E7JXra0B6d7v9CUe49z+roUT0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=HGNkWtKj; arc=none smtp.client-ip=209.85.128.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wm1-f46.google.com with SMTP id 5b1f17b1804b1-451d41e1ad1so1990875e9.1
-        for <linux-kernel@vger.kernel.org>; Tue, 24 Jun 2025 03:36:40 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1750761399; x=1751366199; darn=vger.kernel.org;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=WfaJB4wgBJF9kKkXQUfWPFPPVgluIefucU17tIlexuI=;
-        b=HGNkWtKjyS+loBQXGemKg+KQ4MT/yigDhQJwr4+0UCsQ1XVODFiXTyoVSl47BZr4ao
-         WOvxAGztnXTdg2dcqrlqWT2a72fJDuw4oRGNmvnD11av5kh6nQoZFNXAWNW4D7ywcZoM
-         qo6EQqVyy+H/fa9uOmwqMaJpAzysT2hHEYctL3tAYjiILcsyKT9m6+FNCnpJleD5ZAFl
-         fDU78B3B/MrEI5O30Ga0V6487+cgxefLd4V1k/5yAIWPKIJr8ljg+4gkpLw7EmwzFYh2
-         U7orl8p7kAgR79On/LT43X3ivCh7/ZfV3UNMR5c3ceRn/kIoliNcpYC1f9mB3R47oP7L
-         nlRQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1750761399; x=1751366199;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=WfaJB4wgBJF9kKkXQUfWPFPPVgluIefucU17tIlexuI=;
-        b=NVGq+Wx1YOq+0KNi1We+dD4AfdwxxeZa3P8Z2j0uRRm3TvWlig85N49QfuT9sKhTh8
-         t/YIy8BnerlEyiM6HbgYMWWws29V08Op0/cmAisLCyHYPUeloSYKRax63doVTqoSNIDV
-         ijlkgZrzWSDHtd323V0GG/Kd6yrbVk/re9lt7WGowqJnaJA5sd4D0xB3GyyJ4wUaqJRK
-         rFxBZkxUTw4xADW0LZtbA/YBRzm7E/2MohpgcbXGKK424ASwEwxx/tNW/H0g/LSkzzVp
-         hCJblmvcFRgdwtudEU9uXlMw6E6n9zyByqVzavNDl0pVodx2qzTtOrU8j4y1X5Y3yMcj
-         Tl5Q==
-X-Forwarded-Encrypted: i=1; AJvYcCWPvKwfCNNR9gp4cZ2ziojuE4jfBfr/LuC/3m+aBasYQv9byxPKtw3rb5X7QqBHjbqUZ1ejwXtEPCn7mDo=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyEiAK+Emtsq0Ugp9BQIVyC5rnrxOST+SbvyQl57ZsTtmUWN2p7
-	Ai6Krvb23HQNXxrlfnKGQxCOGRygz4lRM9utJcOr5XXC3ceoQK9uiYiftKQVxbWqfQY=
-X-Gm-Gg: ASbGncuMoHK2Bdv6lIEXIrdJh1ZM/9eIBUiBGj5042AFv9N9f/u7/eQXvcQq9YacIuX
-	++m075BWCcNz8q085sBExNJoDYEJCAWV6WBiz3ZF1qNWRnUpjVX75DZLvATFxN+68h1BWguEhBJ
-	DO6wUP5IyJCK5RKrJ4OTkmH2DVv0cPXE+a1Dg8CnUHKu2yyC6ubaKIuqlNYY8Lk+8CG+FptSFov
-	j447pKyA1WnV1Q2nRzDqFqnyXJzhW+GreVBQ9D1+r5E+iQ52e0xO298v6OBya1h+eNWYyZcgSC7
-	MlLl5ZkcTPBHv+xYZM9VyNQ4HBQyQmDEjthwNQDu25GeJqVzIWLWqFxLUbOys+1eGn6pdLM=
-X-Google-Smtp-Source: AGHT+IFjHGQ/H+wHW0syoZB/rCcGbth7MceBuzjub/X3klVhpmcprnqWAMJ0DPRZSe/+ArGUdMIdMg==
-X-Received: by 2002:a05:600c:5250:b0:442:f4a3:b5f2 with SMTP id 5b1f17b1804b1-453653925f1mr135996935e9.6.1750761399129;
-        Tue, 24 Jun 2025 03:36:39 -0700 (PDT)
-Received: from ho-tower-lan.lan ([37.18.136.128])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-453646cb641sm143398245e9.3.2025.06.24.03.36.38
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 24 Jun 2025 03:36:38 -0700 (PDT)
-From: James Clark <james.clark@linaro.org>
-Date: Tue, 24 Jun 2025 11:35:36 +0100
-Subject: [PATCH v3 6/6] spi: spi-fsl-dspi: Report FIFO overflows as errors
+	s=arc-20240116; t=1750761366; c=relaxed/simple;
+	bh=8lP/P121+jxwfTv9os6PlhkSCltscahIQUsXTlEA+Xo=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=l1swswe8RvD7xg6mQgw6E6hgSDmt4an4ZOvABKLqbqb2ZmPG1Gu7YLmk65CT/YRjie5byT1EDOS5SAaG7tmeUTNDoz/LuJL10aKUZRGRDxY2lPdC8NmX1J8x09jNjY4T864RXZwuOw5BTNapswQH7FEqZDKjjDNveGy9xdzClWs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=JU4LZVID; arc=none smtp.client-ip=148.163.156.1
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0360083.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 55O2xRhm023976;
+	Tue, 24 Jun 2025 10:35:51 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
+	:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=pp1; bh=9I+Jrr
+	BWMzV3J3ZToe/bX1BNuNOGD46znaROuagAJYU=; b=JU4LZVIDcdRHmAtfCDMtZR
+	wo7TP8q9FEmkOJpL1m1rPnox5bLFoUwTGlinIqlxNLsClw4l0Rf6qyudNhgeS4BV
+	5oCgFjscQqrKDvC/4Nnr7VFB8s8wn8IHn/6CAiTPj5czT7PXzO49ftqG+noCVboz
+	uJthBn1D9wZS0/YtqKVkh65lA6hKBdcl8r+Nq49l0z0u8iSrAZyoxVs8ktezrQm5
+	632AQL1put359hG2N7DDGNaBicYvcH/fmWfs343llM+Kgu+WHdNVpGOMzJr06nhH
+	jlhC5SQbe1m92h39LkxjDWG+IYoXzNuDpoQCTNNBoPgwikHzTnKR5dI1tUqhjI5g
+	==
+Received: from ppma13.dal12v.mail.ibm.com (dd.9e.1632.ip4.static.sl-reverse.com [50.22.158.221])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 47dm8j806m-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 24 Jun 2025 10:35:50 +0000 (GMT)
+Received: from pps.filterd (ppma13.dal12v.mail.ibm.com [127.0.0.1])
+	by ppma13.dal12v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 55O75qSs003970;
+	Tue, 24 Jun 2025 10:35:49 GMT
+Received: from smtprelay03.fra02v.mail.ibm.com ([9.218.2.224])
+	by ppma13.dal12v.mail.ibm.com (PPS) with ESMTPS id 47e99kk8ww-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 24 Jun 2025 10:35:49 +0000
+Received: from smtpav06.fra02v.mail.ibm.com (smtpav06.fra02v.mail.ibm.com [10.20.54.105])
+	by smtprelay03.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 55OAZmdV57278972
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Tue, 24 Jun 2025 10:35:48 GMT
+Received: from smtpav06.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 28F6E20049;
+	Tue, 24 Jun 2025 10:35:48 +0000 (GMT)
+Received: from smtpav06.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id B2FFB20040;
+	Tue, 24 Jun 2025 10:35:47 +0000 (GMT)
+Received: from thinkpad-T15 (unknown [9.87.159.139])
+	by smtpav06.fra02v.mail.ibm.com (Postfix) with SMTP;
+	Tue, 24 Jun 2025 10:35:47 +0000 (GMT)
+Date: Tue, 24 Jun 2025 12:35:45 +0200
+From: Gerald Schaefer <gerald.schaefer@linux.ibm.com>
+To: Anshuman Khandual <anshuman.khandual@arm.com>
+Cc: Andrew Morton <akpm@linux-foundation.org>,
+        Matthew Wilcox
+ <willy@infradead.org>,
+        David Hildenbrand <david@redhat.com>,
+        LKML
+ <linux-kernel@vger.kernel.org>, linux-mm <linux-mm@kvack.org>,
+        linux-s390@vger.kernel.org
+Subject: Re: [RFC PATCH 0/1] mm/debug_vm_pgtable: Use a swp_entry_t input
+ value for swap tests
+Message-ID: <20250624123545.354f8d73@thinkpad-T15>
+In-Reply-To: <9e220213-0d4a-4e61-b8cc-45ea21b073a6@arm.com>
+References: <20250623184321.927418-1-gerald.schaefer@linux.ibm.com>
+	<9e220213-0d4a-4e61-b8cc-45ea21b073a6@arm.com>
+X-Mailer: Claws Mail 4.3.1 (GTK 3.24.43; x86_64-redhat-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
-Message-Id: <20250624-james-nxp-spi-dma-v3-6-e7d574f5f62c@linaro.org>
-References: <20250624-james-nxp-spi-dma-v3-0-e7d574f5f62c@linaro.org>
-In-Reply-To: <20250624-james-nxp-spi-dma-v3-0-e7d574f5f62c@linaro.org>
-To: Vladimir Oltean <olteanv@gmail.com>, Mark Brown <broonie@kernel.org>, 
- Vladimir Oltean <vladimir.oltean@nxp.com>, Arnd Bergmann <arnd@arndb.de>, 
- Larisa Grigore <larisa.grigore@nxp.com>, Frank Li <Frank.li@nxp.com>, 
- Christoph Hellwig <hch@lst.de>
-Cc: linux-spi@vger.kernel.org, imx@lists.linux.dev, 
- linux-kernel@vger.kernel.org, James Clark <james.clark@linaro.org>
-X-Mailer: b4 0.14.0
+X-TM-AS-GCONF: 00
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNjI0MDA4NyBTYWx0ZWRfX2dn/UD0vb3yy UVcEch4gAS8kZtdwopacMfio22ULIzZ8V8fIj6xNL/MMAKtRib1ToG7qrwhbmxQBAyi0miBicVk dRF6mvPg6vn9tKeXNzCtipsVF1zq0YYup4s3pRAJZKUDgKJhcc0nBQbEhWuhXPbzSNxY+4BuLEF
+ +aKbhAgrKQnaCVqZCt5WmEXCJhq9JVqnHuw549IEqiRtFX0HiLI6NPWQZ80o7OuRe/g1flfeDVU 3tb1qrhBnAZfY18CaVE/AjVuCQJinluwPq9XgoA49WElCqNFcQDhzFn/klQQuVJjf3hwxf2F7zM vk0l43gQtHMaQ7ljuz8pYhg5UKLmVUUkX3xExEp+OCWi0QCzmBN6VYJCxiK0TcXSiQ7HJC2A0eR
+ ISxznmt6A4+fG5LDTNCJqgwC221usMY3GdSDQIUnpsJRW8FtIpE1wHpjtMJCjGHNHHummrwF
+X-Proofpoint-GUID: umY9LuCWRT_4Z46m74en7xSK2Owj1ieb
+X-Proofpoint-ORIG-GUID: umY9LuCWRT_4Z46m74en7xSK2Owj1ieb
+X-Authority-Analysis: v=2.4 cv=combk04i c=1 sm=1 tr=0 ts=685a7f86 cx=c_pps a=AfN7/Ok6k8XGzOShvHwTGQ==:117 a=AfN7/Ok6k8XGzOShvHwTGQ==:17 a=kj9zAlcOel0A:10 a=6IFa9wvqVegA:10 a=7CQSdrXTAAAA:8 a=XP1gfaMLOQXsyWrxb4UA:9 a=CjuIK1q_8ugA:10
+ a=a-qgeE7W1pNrGK8U0ZQC:22
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.7,FMLib:17.12.80.40
+ definitions=2025-06-24_04,2025-06-23_07,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 spamscore=0 adultscore=0 mlxlogscore=999 clxscore=1011
+ impostorscore=0 suspectscore=0 mlxscore=0 phishscore=0 lowpriorityscore=0
+ bulkscore=0 classifier=spam authscore=0 authtc=n/a authcc= route=outbound
+ adjust=0 reason=mlx scancount=1 engine=8.19.0-2505280000
+ definitions=main-2506240087
 
-In target mode, the host sending more data than can be consumed would be
-a common problem for any message exceeding the FIFO or DMA buffer size.
-Cancel the whole message as soon as this condition is hit as the message
-will be corrupted.
+On Tue, 24 Jun 2025 13:20:42 +0530
+Anshuman Khandual <anshuman.khandual@arm.com> wrote:
 
-Only do this for target mode in a DMA transfer because we need to add a
-register read. In IRQ and polling modes always do it because SPI_SR was
-already read and it might catch some host mode programming/buffer
-management errors too.
+> Hello Gerald,
+> 
+> On 24/06/25 12:13 AM, Gerald Schaefer wrote:
+> > Hi,
+> > 
+> > currently working on enabling THP_SWAP and THP_MIGRATION support for s390,
+> > and stumbling over the WARN_ON(args->fixed_pmd_pfn != pmd_pfn(pmd)) in
+> > debug_vm_pgtable pmd_swap_tests(). The problem is that pmd_pfn() on s390
+> > will use different shift values for leaf (large) and non-leaf PMDs. And
+> > when used on swapped PMDs, for which pmd_leaf() will always return false
+> > because !pmd_present(), the result is not really well defined.  
+> 
+> Just curious - pmd_pfn() would have otherwise worked on leaf PMD entries ?
+> Because the PMD swap entries are not leaf entries as pmd_present() returns
+> negative, pmd_pfn() does not work on those ?
 
-Signed-off-by: James Clark <james.clark@linaro.org>
----
- drivers/spi/spi-fsl-dspi.c | 28 +++++++++++++++++++++++++++-
- 1 file changed, 27 insertions(+), 1 deletion(-)
+Yes, but there are actually two problems with this. The initial pmd that
+is created with pfn_pmd() is already not leaf/large, but present, so
+pmd_pfn() would already not work correctly on s390.
 
-diff --git a/drivers/spi/spi-fsl-dspi.c b/drivers/spi/spi-fsl-dspi.c
-index 58881911e74a..16a9769f518d 100644
---- a/drivers/spi/spi-fsl-dspi.c
-+++ b/drivers/spi/spi-fsl-dspi.c
-@@ -560,12 +560,24 @@ static void dspi_rx_dma_callback(void *arg)
- 	complete(&dma->cmd_rx_complete);
- }
- 
-+static int dspi_fifo_error(struct fsl_dspi *dspi, u32 spi_sr)
-+{
-+	if (spi_sr & (SPI_SR_TFUF | SPI_SR_RFOF)) {
-+		dev_err_ratelimited(&dspi->pdev->dev, "FIFO errors:%s%s\n",
-+				    spi_sr & SPI_SR_TFUF ? " TX underflow," : "",
-+				    spi_sr & SPI_SR_RFOF ? " RX overflow," : "");
-+		return -EIO;
-+	}
-+	return 0;
-+}
-+
- static int dspi_next_xfer_dma_submit(struct fsl_dspi *dspi)
- {
- 	size_t size = dspi_dma_transfer_size(dspi);
- 	struct device *dev = &dspi->pdev->dev;
- 	struct fsl_dspi_dma *dma = dspi->dma;
- 	int time_left;
-+	u32 spi_sr;
- 	int i;
- 
- 	for (i = 0; i < dspi->words_in_flight; i++)
-@@ -614,7 +626,8 @@ static int dspi_next_xfer_dma_submit(struct fsl_dspi *dspi)
- 
- 	if (spi_controller_is_target(dspi->ctlr)) {
- 		wait_for_completion_interruptible(&dspi->dma->cmd_rx_complete);
--		return 0;
-+		regmap_read(dspi->regmap, SPI_SR, &spi_sr);
-+		return dspi_fifo_error(dspi, spi_sr);
- 	}
- 
- 	time_left = wait_for_completion_timeout(&dspi->dma->cmd_tx_complete,
-@@ -1069,6 +1082,10 @@ static void dspi_poll(struct fsl_dspi *dspi)
- 
- 			if (spi_sr & SPI_SR_CMDTCF)
- 				break;
-+
-+			dspi->cur_msg->status = dspi_fifo_error(dspi, spi_sr);
-+			if (dspi->cur_msg->status)
-+				return;
- 		} while (--tries);
- 
- 		if (!tries) {
-@@ -1085,6 +1102,7 @@ static void dspi_poll(struct fsl_dspi *dspi)
- static irqreturn_t dspi_interrupt(int irq, void *dev_id)
- {
- 	struct fsl_dspi *dspi = (struct fsl_dspi *)dev_id;
-+	int status;
- 	u32 spi_sr;
- 
- 	regmap_read(dspi->regmap, SPI_SR, &spi_sr);
-@@ -1093,6 +1111,14 @@ static irqreturn_t dspi_interrupt(int irq, void *dev_id)
- 	if (!(spi_sr & SPI_SR_CMDTCF))
- 		return IRQ_NONE;
- 
-+	status = dspi_fifo_error(dspi, spi_sr);
-+	if (status) {
-+		if (dspi->cur_msg)
-+			WRITE_ONCE(dspi->cur_msg->status, status);
-+		complete(&dspi->xfer_done);
-+		return IRQ_HANDLED;
-+	}
-+
- 	dspi_rxtx(dspi);
- 
- 	if (!dspi->len) {
+Later, after the __pmd_to_swp_entry() / __swp_entry_to_pmd() cycle, the
+present bit got removed because of how those helpers will be implemented
+for s390. Now it is neither large nor present, and pmd_pfn() will be
+extra confused.
 
--- 
-2.34.1
+IOW, even if we could implement those helpers as simple no-ops similar
+to other archs, the check would still not work, even though the PMD would
+have the present bit set, but it still wouldn't be leaf/large.
+
+I guess my description was a bit confusing, since the !pmd_present()
+case would only show on s390, but it is not the only problem here.
+I think the point is that those helpers should only be used on "proper"
+swap PTE/PMD entries, which already cannot be present. And of course
+that pte/pmd_pfn() is not meant to be used on such entries at all, as
+David explained.
+
+> 
+> > 
+> > I think that pmd_pfn() is not safe or ever meant to be called on swapped
+> > PMD entries, and it doesn't seem to be used in that way anywhere else but
+> > debug_vm_pgtable. Also, the whole logic to test the various swap helpers  
+> 
+> But is not the pmd_pfn() called on pmd which is derived from the swap entry
+> first.
+> 
+> 	pmd = pfn_pmd(args->fixed_pmd_pfn, args->page_prot);
+> 	swp = __pmd_to_swp_entry(pmd);
+> 	pmd = __swp_entry_to_pmd(swp);
+> 	WARN_ON(args->fixed_pmd_pfn != pmd_pfn(pmd));
+
+Yes, but this logic is not really testing swap entries. It only works
+because on other archs the __pmd_to_swp_entry() / __swp_entry_to_pmd() are
+no-ops, and because pmd_pfn() does not care about leaf/large.
+
+> 
+> > on normal PTE/PMD entries seems wrong to me. It just works by chance,
+> > because e.g. __pmd_to_swp_entry() and __swp_entry_to_pmd() are just no-ops
+> > on other architectures (also on s390, but only for PTEs), and also  
+> 
+> Hmm, basically it just tests pfn_pmd() and pmd_pfn() conversions ?
+
+Correct, but with the extra quirk that the initial PMD created by pfn_pmd()
+is not leaf/large, which is apparently not a problem on other archs for
+the pmd_pfn() conversion.
+
+Actually, I now wonder why pfn_pmd() would not implicitly mark it as
+leaf/large already, as it seems that this should only be used for leaf
+PMDs. But maybe there are some special cases where it could also be
+used for non-leaf PMDs.
+
+> 
+> > pmd_pfn() does not have any dependency on leaf/non-leaf entries there.
+> Could you please elaborate on that ?
+
+As explained above, the initial PMD created by pfn_pmd() is not leaf/large.
+Well, conceptually it is more or less, but it is not marked as such. This
+would lead to incorrect pmd_pfn() result (only) on s390.
+
+> 
+> > 
+> > So, I started with a small patch to make pmd_swap_tests() use a proper
+> > swapped PMD entry as input value, similar to how it is already done in
+> > pte_swap_exclusive_tests(), and not use pmd_pfn() for compare but rather
+> > compare the whole entries, again similar to pte_swap_exclusive_tests().  
+> 
+> Agreed, that will make sense as well.
+> 
+> > 
+> > But then I noticed that such a change would probably also make sense for
+> > the other swap tests, and also a small inconsistency in Documentation,
+> > where it says e.g.
+> > 
+> > __pte_to_swp_entry        | Creates a swapped entry (arch) from a mapped PTE
+> > 
+> > I think this is wrong, those helpers should never operate on present and
+> > mapped PTEs, and they certainly don't create any swapped entry from a
+> > mapped entry, given that they are just no-ops on most architectures.
+> > Instead, in this example, it just returns the arch-dependent
+> > representation of a swp_entry_t, which happens to be just the entry
+> > itself on most architectures. See also pte_to_swp_entry() /
+> > swp_entry_to_pte() in include/linux/swapops.h.  
+> 
+> Alright.
+> 
+> > 
+> > Now it became a larger clean-up, and I hope it makes sense. This is all
+> > rather new common code for me, so maybe I got things wrong, feedback is
+> > welcome.  
+> 
+> A quick ran on arm64 looks just fine, will keep looking into this.
+
+Thanks!
 
 
