@@ -1,158 +1,132 @@
-Return-Path: <linux-kernel+bounces-700735-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-700737-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id A1F09AE6C15
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Jun 2025 18:06:39 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6CD85AE6C19
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Jun 2025 18:07:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8FF431884F65
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Jun 2025 16:06:54 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C0CA91795EA
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Jun 2025 16:07:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4C9D92E173D;
-	Tue, 24 Jun 2025 16:06:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8722B2E1732;
+	Tue, 24 Jun 2025 16:07:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="WEXrj4bL"
-Received: from mail-wm1-f43.google.com (mail-wm1-f43.google.com [209.85.128.43])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Gkpd7d+V"
+Received: from mail-pl1-f180.google.com (mail-pl1-f180.google.com [209.85.214.180])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 434472E11D3
-	for <linux-kernel@vger.kernel.org>; Tue, 24 Jun 2025 16:06:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 838CA2E1727
+	for <linux-kernel@vger.kernel.org>; Tue, 24 Jun 2025 16:07:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750781189; cv=none; b=fvpg5HWBK/yRdl3rUZCHZu3PkUBnc1ZBkdqfwe2x9GGvKRTmi6hoh+Lt1KCGLZasMRm6c96r/g2akWiVbkBvPGU5Smps0p5AGQe5FUN9VKj/0QRO38TdUwRD14PXZ0xY/2Z1I1bARxpPTGtqbfipgpsEUi+1+EWAjaDybeudJzA=
+	t=1750781222; cv=none; b=e7TRw6MjhR44c5vef6ITWRhWhLGoJShKGfqecZLbtTDSj67AxsRV600BJR/An88eLCnhaYwriorZnQf2vAJwIHljgHvbeixy02HodkqQOENERW7xCCuWWuLSvHTnw1fVTDLKoU6PintDLXmsqjaA1JeO893x0dkP9vL+474YwuA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750781189; c=relaxed/simple;
-	bh=ksd+r9cixP2JpFRZLh5NH/QezogKKzVMrSYSuaXgros=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=g3yDcH9ALtsJOL9tS3iCQP84ijL4PzO0cywhMdzruoXU2+RETJUjrZ+oRs6grAYxNPaPT1w6dBVHblY4puI2PxuP1oskiKoaOucjlxklud3086gsnXqbpMwAYk1tgfHKzneb6UxFkYus1BynIX2TY+Adj2K6tky6rPA+sWWS4TI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=WEXrj4bL; arc=none smtp.client-ip=209.85.128.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
-Received: by mail-wm1-f43.google.com with SMTP id 5b1f17b1804b1-450cb2ddd46so4248755e9.2
-        for <linux-kernel@vger.kernel.org>; Tue, 24 Jun 2025 09:06:26 -0700 (PDT)
+	s=arc-20240116; t=1750781222; c=relaxed/simple;
+	bh=wXhzquiZzQYaMRXISZYdFPi1aSvfyfJWV3jXSy1aahg=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=IsAWcwqHijYhbodIIT9pqxlAR01VG8twUo77vqeh6c8jUMg3SAE1cNPIMpuNZ0v9JVf5wOknISmb1a8VjOQ+B8CBUoJaYsE56q7/L8DUspPiX1lKidJfmySysixMbi+MSFSgMFssxXN2463tUimyqOQMRa03LTJwqc3DRAAETxw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Gkpd7d+V; arc=none smtp.client-ip=209.85.214.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f180.google.com with SMTP id d9443c01a7336-2369da67bacso7919255ad.3
+        for <linux-kernel@vger.kernel.org>; Tue, 24 Jun 2025 09:07:00 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1750781185; x=1751385985; darn=vger.kernel.org;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=mkw37E8JWs02brQAU4juDlznrN1By33E9feiEVoXMro=;
-        b=WEXrj4bLo9SDMW/BgJSeqVjtWUb0IIC8wVQr3W+WTr4wHhdyf6kbd1GocXJaAQH7i0
-         xA4nJkwAn8C9wSAqkqbE7/cGGfSMBiZqb6/UP+8DUIB8PoPlCjIX4Q1HWN+5SeZ/6KbV
-         WPmQ5bqUcElpLsIrG1yd/Pty4oRSK31UIWe1O1RTWb1FPUVU3dnxZncjGFIroREPGMSw
-         TVOFboa/Xzy7hHkDdfjnsnxNSZJ3LKxV7o14/Xnov8Bgc4m4rtAkdLpqQX9u6Zx/s320
-         CMGTAutV1sG5PqAeIEkwDw4C4RMVMdey2vU4tQeST97KjKlz+4SXmMRz0RiQ5fluD0Qu
-         cUmA==
+        d=gmail.com; s=20230601; t=1750781220; x=1751386020; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=p469Z/13LqtJ+BNt8oKrD3ps0WvPg6z+cySWcusL5lU=;
+        b=Gkpd7d+VAn+bSrwKTEZ4iLi4xPFf+2w2mH4+QdsgacPEJMePSu4rwn96M8wFwxZGpn
+         OvXTIGxIHO4eaKl+gyIaY30f8iaOJC5/giF5kDMHx2I2lx3S65mND4CvVL83gbLPxR2Q
+         o8PwbtjydLNK0GR/CCU56JtQdV8wsF+TMkv/NxCCDjerKUG7UFitXgbpXbKFg916Nj9N
+         kazp0PZRlPBZpJfkDWtGV2dd7JtViMNIHUHHO9gLA4GUMvAYzRmiJDRekN9+EdzlVr9s
+         OMsZMFEtWJVOVe/WvfFhTWjABCYTXYmNyxv51RZu/SWq8k6uQqriBWtVOzPQa5Tk0uGj
+         y15g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1750781185; x=1751385985;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
+        d=1e100.net; s=20230601; t=1750781220; x=1751386020;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=mkw37E8JWs02brQAU4juDlznrN1By33E9feiEVoXMro=;
-        b=ULlDg76z7zs6BLnFMdJEUVkQmweexrwH0d4uyu7EwXcPqsOzrJODrFQuFZyCf99KEU
-         ihS4RVnEklkDGLJnGaUFJqvZnvapGVkQyl5nH9nz/oDq5fDaFFpXy2NT+X/z9nGdZpPe
-         Yg1jvpqQag09seZrIZUrwrxame9pVlr8wC0QdsbjjmHQb3OXCVCvCqIfZtTmhnRl3xgF
-         Vye5UDZzfLkKutbVGqzNtsFQYc0hEoXRgGiXogzzAJoqFfwtInVQqE0sVGLayAmBV1pk
-         Ax6Q0II9gtTkfi/OrgokA6KZ3ayF5bkbvaW0Lw9zdaUEidW/A03rlkS0zoj3hppkGUVj
-         4w6A==
-X-Forwarded-Encrypted: i=1; AJvYcCW2ltp6RMfcGDMM8633Lpxyr388iF6C1sWGCx803lD1VvkQ8HIK6auzdfTQtQRNVmKXGYaSdstdJovHtqY=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwabBu/xljv7vrrGTu9oTOQx8XHMAJNonCIFU3KJjPOkTl47uDl
-	UPrLm35i/u0BP5iCccLziA98wYbnqpiCX4DqpQMNu1VFYNxz8tfzTPapKgoXaBTcM4c=
-X-Gm-Gg: ASbGncusq5psBFXByQA/fYU2s2p0nBir+HDDpmEFLp/3w6KvY/gmKJhAX8aInlMnIPH
-	JxrCy8KIeDgHJvB5JJikzQ+PR+gGl9BEGNDUirvqYSxJqoGqoDm6j2xjCIbes1d42jBS3QMQstb
-	kAvoun4CXdYfA9PlWSI5l9PBT/04ajxag64EKPilF9/YiR5ydBN8oSxm7Z2pnwpLUdNhhWPuAmX
-	BsZy43XqmE+ZiXQFUE2oIrIwY2OhPMMUzgEAV2fjzgjz+nyUN9OJmG2v/UF2ojUkIU9+o45efcr
-	UKnrAvv4iAU0eCMQLWkGYBv9TGxsrNM3EyzTUZ5tDDVVfIJmL12yBdpTGsDIo1oeGaY0QwJKlZZ
-	lOKN9Syw0cJM=
-X-Google-Smtp-Source: AGHT+IEhQzGC8kExWFQeWgM/yDeL09UAxr7lNw3qqiK2IVc702o/A3qxsPe7x/s60KhVtq/Z48a/wQ==
-X-Received: by 2002:a05:600c:4fc5:b0:442:e03b:58a9 with SMTP id 5b1f17b1804b1-453659edd23mr149033095e9.25.1750781185514;
-        Tue, 24 Jun 2025 09:06:25 -0700 (PDT)
-Received: from toaster.baylibre.com ([2a01:e0a:3c5:5fb1:9dad:c694:2b52:ea7d])
-        by smtp.googlemail.com with ESMTPSA id 5b1f17b1804b1-453646cb64csm151933805e9.4.2025.06.24.09.06.24
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 24 Jun 2025 09:06:25 -0700 (PDT)
-From: Jerome Brunet <jbrunet@baylibre.com>
-Date: Tue, 24 Jun 2025 18:06:17 +0200
-Subject: [PATCH v2 2/2] NTB: epf: Add Renesas rcar support
+        bh=p469Z/13LqtJ+BNt8oKrD3ps0WvPg6z+cySWcusL5lU=;
+        b=hBZkVmQDpprplN5LMK4kkHcrRQZ2paDe3WQjBeDoMfUe9qDYITd7PVtDgNBTvP2xrc
+         uiu0Xv8ba5lZHSqXka6Xs286+uttLWslsAZoowGf6vTPKUZFBMLfW67rRo7bs2B7PZhs
+         sKEcylxGZ+bnnjR7SwXr9j+T+FLif3FtSnz8DqDOS6f/LWv8ZgO8CN3KctxtxCHB1uiL
+         f5E/DwLNm88+TqHZZRTJ1F4hHYHbPgHr20OHsfRORp8MGhNrJLNVuH3frpio5ck/KvtH
+         dYrI2YgQf1S3+TEmMRI+CwIM/raCck3RR6J8K8SF1uJKhyY3OUCCEl8VuLTrULcXszhA
+         UHeQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUG9sv3AeqtImNu5Nhk816kwEq6a6jfzC0BXf5tNVJnoCl2GR5ZZxBftiQkKQ5M+IHycG8CBqj+ShUGXWY=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwYHNH7ZfPkhL9Pmcwa+E+vY/jI0uwmBpEd/WQg27GlZC7lwRAj
+	EuSW7OI8ngECL4YU8KVqoysAXStrkTUMmmg+F5TEfKGXfqGo3gH+U6cF/N9FvQBH6eLh9JOPqED
+	8jZj1e21Fw9H6yUlyjyknVTj5yKIzQGU=
+X-Gm-Gg: ASbGncvUf6dRSnJGsiR5Bg7bI9FIRrL/tEEMaFSwMhsPH+xUPetWRxzjmXcdO8NX+hU
+	HEysI09AYjP0SFVV/Qf8WZNPhWCmvPdRp9rXgL97arSUFE7cWHlixnAui5Ubvsoxs/kW2P0B6vI
+	A4+dhtusCyNRyNiLyL23tpDtzjW6vjy8NGT5XrGRPZAMGF
+X-Google-Smtp-Source: AGHT+IFYc3aMqLcv9loqWoG6Cca5FOBY7JI9DHpHoCgORxjIKHkQVWbdRXgw9oELbsi29DR4r0stwfPFPJoo6+BSQJg=
+X-Received: by 2002:a17:90b:2dd0:b0:311:e9a6:332e with SMTP id
+ 98e67ed59e1d1-3159d577a7bmr10119236a91.0.1750781219668; Tue, 24 Jun 2025
+ 09:06:59 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250624-ntb-rcar-support-v2-2-8c0e5cf69c4d@baylibre.com>
-References: <20250624-ntb-rcar-support-v2-0-8c0e5cf69c4d@baylibre.com>
-In-Reply-To: <20250624-ntb-rcar-support-v2-0-8c0e5cf69c4d@baylibre.com>
-To: Jon Mason <jdmason@kudzu.us>, Dave Jiang <dave.jiang@intel.com>, 
- Allen Hubbe <allenbh@gmail.com>
-Cc: ntb@lists.linux.dev, linux-kernel@vger.kernel.org, 
- Frank Li <Frank.li@nxp.com>, 
- Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>, 
- Yuya Hamamachi <yuya.hamamachi.sx@renesas.com>, 
- Jerome Brunet <jbrunet@baylibre.com>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1326; i=jbrunet@baylibre.com;
- h=from:subject:message-id; bh=ksd+r9cixP2JpFRZLh5NH/QezogKKzVMrSYSuaXgros=;
- b=owEBbQKS/ZANAwAKAeb8Dxw38tqFAcsmYgBoWsz+tpfrxfKmcVzoE4RqWgZDMGhoyDP6ic2R+
- /FiP9KOq+KJAjMEAAEKAB0WIQT04VmuGPP1bV8btxvm/A8cN/LahQUCaFrM/gAKCRDm/A8cN/La
- hVD5EACoPMsRVtwtBSevpYMpzypxnVkVwkz7kmmvOasvLnrxvYooXYNDy+/+XkcpX3OclE2dEmY
- 0+RxsR9Hwpc4wCDzxSmozDy+cAcdVV8zuiKJ4se9WiFzWEFCeOGCiXJTco6mZi86hVdWs/jrAgJ
- 5Ps/XixjlDgPldUfiE2nMrflGL1wC20daqiS5G4kla7aZ+FuS8GfGcM/ZeLnP8iIfASF1AMgcWs
- 4ljdzyobJ5KtrTruf+X07ArVG0MafAV8+87Z4cUQbit/bo4IC4k6aag4FHX+YDDlLxQ7lzUf7h+
- Q/L+YgVrrrawNzTP0l9K9sFFbm4p6FTsK6mTt70cO92UZszCjLjxGYklov+hnkuq9zd7Aj/Pwek
- VVGweKgdkLZYnEMpWWVLJCPNtb5smtsyrHqxegJlD3TNQvjBwolr11/+uiR1z47FfeTG46kgLwg
- 0jhO6fnWEZ8DR6UeAmX7AcTRrXbCZHDhgaAKCIOKR3NPpSl/3tu38ZoHuhn3lUEdT/HlXPcrUcW
- h7o0gVFv/1CqVrYFer+Ej2fLuLnhI9KjvVhrF2lLvJ2YAqZNG/8ryMGEfyh1npPyFEBFXuQY/TK
- ZUL68GxzoWUvDEswVkyKLQiZ50V+rbYXcVrsDbI4DDV8fYkUFW9m3WCkHApvvZn+JZjHG4ceNsw
- cQ+O0NtgKQ5y7HQ==
-X-Developer-Key: i=jbrunet@baylibre.com; a=openpgp;
- fpr=F29F26CF27BAE1A9719AE6BDC3C92AAF3E60AED9
+References: <20250613182651.1758760-1-andrealmeid@igalia.com>
+ <4907bbe3-14e7-49cc-b5bd-78ba375bf46d@amd.com> <f1d61291-f8b8-4646-9195-3724fdee184b@igalia.com>
+In-Reply-To: <f1d61291-f8b8-4646-9195-3724fdee184b@igalia.com>
+From: Alex Deucher <alexdeucher@gmail.com>
+Date: Tue, 24 Jun 2025 12:06:46 -0400
+X-Gm-Features: AX0GCFuxrPW3hb_jLYUej8jia4MsLoarWXQZKlGY5dgY_YRWYdFs1Tn4-SjFsec
+Message-ID: <CADnq5_PRhMAoPj-deOkzo+3XSuZhnPZwvfjK9dUDrNEDZLPpUA@mail.gmail.com>
+Subject: Re: [PATCH 0/2] drm: amdgpu: Fix includes of <linux/export.h>
+To: =?UTF-8?Q?Andr=C3=A9_Almeida?= <andrealmeid@igalia.com>
+Cc: Alex Deucher <alexander.deucher@amd.com>, dri-devel@lists.freedesktop.org, 
+	Thomas Zimmermann <tzimmermann@suse.de>, =?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>, 
+	linux-kernel@vger.kernel.org, kernel-dev@igalia.com, 
+	amd-gfx@lists.freedesktop.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Add virtual non-transparent bridge support for Renesas rcar platform
+Applied.  Thanks!
 
-Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
----
- drivers/ntb/hw/epf/ntb_hw_epf.c | 15 +++++++++++++++
- 1 file changed, 15 insertions(+)
-
-diff --git a/drivers/ntb/hw/epf/ntb_hw_epf.c b/drivers/ntb/hw/epf/ntb_hw_epf.c
-index e8eb3adc6cecd2d52235a3f0b6b5a59ec58f1d73..97c9ed7e4dc27dabd21d3f083cc70d55bb280df8 100644
---- a/drivers/ntb/hw/epf/ntb_hw_epf.c
-+++ b/drivers/ntb/hw/epf/ntb_hw_epf.c
-@@ -747,6 +747,16 @@ static const enum pci_barno mx8_map[NTB_BAR_NUM] = {
- 	[BAR_MW4]	= NO_BAR
- };
- 
-+static const enum pci_barno rcar_barno[NTB_BAR_NUM] = {
-+	[BAR_CONFIG]	= BAR_0,
-+	[BAR_PEER_SPAD]	= BAR_0,
-+	[BAR_DB]	= BAR_4,
-+	[BAR_MW1]	= BAR_2,
-+	[BAR_MW2]	= NO_BAR,
-+	[BAR_MW3]	= NO_BAR,
-+	[BAR_MW4]	= NO_BAR,
-+};
-+
- static const struct pci_device_id ntb_epf_pci_tbl[] = {
- 	{
- 		PCI_DEVICE(PCI_VENDOR_ID_TI, PCI_DEVICE_ID_TI_J721E),
-@@ -758,6 +768,11 @@ static const struct pci_device_id ntb_epf_pci_tbl[] = {
- 		.class = PCI_CLASS_MEMORY_RAM << 8, .class_mask = 0xffff00,
- 		.driver_data = (kernel_ulong_t)mx8_map,
- 	},
-+	{
-+		PCI_DEVICE(PCI_VENDOR_ID_RENESAS, 0x0030),
-+		.class = PCI_CLASS_MEMORY_RAM << 8, .class_mask = 0xffff00,
-+		.driver_data = (kernel_ulong_t)rcar_barno,
-+	},
- 	{ },
- };
- 
-
--- 
-2.47.2
-
+On Tue, Jun 24, 2025 at 11:27=E2=80=AFAM Andr=C3=A9 Almeida <andrealmeid@ig=
+alia.com> wrote:
+>
+> Hi Alex,
+>
+> Em 16/06/2025 03:59, Christian K=C3=B6nig escreveu:
+> > Acked-by: Christian K=C3=B6nig <christian.koenig@amd.com> for the serie=
+s.
+> >
+>
+> Can you add this series to amd-staging-drm-next? Thanks!
+>
+> > On 6/13/25 20:26, Andr=C3=A9 Almeida wrote:
+> >> Commit 7d95680d64ac ("scripts/misc-check: check unnecessary #include
+> >> <linux/export.h> when W=3D1") and commit a934a57a42f6 ("scripts/misc-c=
+heck:
+> >> check missing #include <linux/export.h> when W=3D1") added new checks =
+for when the
+> >> include <linux/export.h> is missued by drivers. This patchset make drm=
+/amd code
+> >> compliant to this new commits.
+> >>
+> >> See also: https://lore.kernel.org/dri-devel/20250612121633.229222-1-tz=
+immermann@suse.de/
+> >>
+> >> Andr=C3=A9 Almeida (2):
+> >>    drm/amd: Do not include <linux/export.h> when unused
+> >>    drm/amd: Include <linux/export.h> when needed
+> >>
+> >>   drivers/gpu/drm/amd/amdgpu/amdgpu_i2c.c      | 1 -
+> >>   drivers/gpu/drm/amd/amdgpu/amdgpu_object.c   | 1 +
+> >>   drivers/gpu/drm/amd/amdkfd/kfd_chardev.c     | 1 -
+> >>   drivers/gpu/drm/amd/amdkfd/kfd_flat_memory.c | 1 -
+> >>   drivers/gpu/drm/amd/amdxcp/amdgpu_xcp_drv.c  | 1 +
+> >>   5 files changed, 2 insertions(+), 3 deletions(-)
+> >>
+> >
+>
 
