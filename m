@@ -1,249 +1,119 @@
-Return-Path: <linux-kernel+bounces-700264-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-700265-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 99FBBAE6643
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Jun 2025 15:25:54 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 69409AE6636
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Jun 2025 15:24:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C814317DF0C
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Jun 2025 13:21:00 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2F699189AB8F
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Jun 2025 13:21:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EB4A42BFC7C;
-	Tue, 24 Jun 2025 13:19:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 446792BFC70;
+	Tue, 24 Jun 2025 13:20:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="Q2kcqtiR"
-Received: from mail-wm1-f41.google.com (mail-wm1-f41.google.com [209.85.128.41])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="MsySpz/y";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="rZcr0U14"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 878D72C3761
-	for <linux-kernel@vger.kernel.org>; Tue, 24 Jun 2025 13:19:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 475052E630
+	for <linux-kernel@vger.kernel.org>; Tue, 24 Jun 2025 13:20:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750771174; cv=none; b=X36UmdnF4rkGc/1uQ55CVrl9LdkBZN52yZ0ybg8TQB7FadstNKsAdjLBlrehjrbti5IZcPC/SDZY2BuAsOIsJW1GjrDZRqMwtRhQnl90npPRyX4L8GduSCLf2JdIgpSl2/tfDeTEKHys0st4a5rvjeUS5E51P75gyBA1ueG9cbM=
+	t=1750771204; cv=none; b=hlbcU89Qnk7pscxf65tsFY62BK5alrPqhrfpBHcWV5OI44A9PQhdeg75BgGIHGH70Sv2LhIMrNbOJJgezkcOiZStRa3BMEcr+MCvLYU+SCFJP0AxW/zlqm3q8rmSk29zgfG/2glmaOIwWumCJLMOsdGaPs35BMPZPPn6jaZQEUk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750771174; c=relaxed/simple;
-	bh=42CM0Y9wbPob7M9n1TchKbAWBw3fz3skePpGaPIjouI=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=FUltOsEJGc0yeIxUHGwHfbyhSW8ddsjciDpaAPimY3xKQM/H6Ngfp61fONqSbaAOgqXK5L8bRrrhr/r9qGcWwrH9OmRo14Ze0lDBsIwsiawBdHeBqvX57jfRweVtJSpUJcvE98QNMF0J16evR/nst2Bzi1Ypzsc4YRW4egJtoOM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=Q2kcqtiR; arc=none smtp.client-ip=209.85.128.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
-Received: by mail-wm1-f41.google.com with SMTP id 5b1f17b1804b1-451d7b50815so42400695e9.2
-        for <linux-kernel@vger.kernel.org>; Tue, 24 Jun 2025 06:19:32 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1750771171; x=1751375971; darn=vger.kernel.org;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=g2B/kiSHHHZJxgJh/qvuyiyzLHnz4/qgrmBlSv19H08=;
-        b=Q2kcqtiRgx94eX2fm8UtBXVyHHzFpTm1uGLlfYZ1q/P/iFTszbdXHbTc5NZfOqbscY
-         00ekfCRJN+DMLy0AE+DUY2JJIcf6rWKs06d+1XwammUzxkfcWPogGTUpwq/d5PHAdpiA
-         ukEMcqRf7jbsuBI+t8y2Y32MZS6ZAEm5XyGVsH0QRA3VdDaDEX2bn06MPGdn7AaRYM0O
-         7TR6VU10MJKyBiOki1ICzM30QZQTQObPBBcR03lI9Z9vf/AYGD1hYoo9BU6SD6GSdDsP
-         3DG96/5Wy2z1Q8YQ3Qt86e5cqmBZsxNm9th+Dyf8eoqOJLxWcc+IltY0H/je3a61ycOi
-         cajA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1750771171; x=1751375971;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=g2B/kiSHHHZJxgJh/qvuyiyzLHnz4/qgrmBlSv19H08=;
-        b=SrF6M/xDXQDd+vAkA3zvB9VEsJWB2QrBDpeEIDCLmI/qZRaxeQYM7xITmdgZ62Uw4a
-         c12NO/0K4nnqT/QBU9qDyI9fc/Vjn9l4ZdPGlNxF3IaffHb2z7eJSCCa3ateHvGLkTI8
-         DK9is6eoqbGPPE7q68TkmQYovO54ExcqP9/Ckjc0WCm3leEOKq8GLc4+kYJuUW92sCbu
-         DQiLLhHoULR6g3/u+EQ6833lkjOwqBq22mtGFCMUg20Umz7FDk8Y2iJQDWvEZ3Z2BHU1
-         34DV2qvNZOou4VMUX1M+QPYQQ2ow3AqsRKS+VVrwkG7ZBEFB++2ZTexIT1TMU1aq5yEu
-         YYwQ==
-X-Forwarded-Encrypted: i=1; AJvYcCX7jLFAcX25t6MlJD6RA9v/wDo1vVWH9V/8D2a0rlX3UEd9WURbPvCPodiGKKhU2PCZcqDp9sR5T0FZmqY=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxGxnAr4SOJS6aKn7W4WIXgGRtWxCR1adgB6r0hLQzNzqGeKyjz
-	CwVi49WccgAMC4lL4RBlkpxdt/KsTScPvx1sf/bAuS+yf7+CT8GkI3gdRbMReWIh9Ds=
-X-Gm-Gg: ASbGncuaOomoTaOcdbNqvXxRe69XAAhGP9dTV8/B78Vt+SR+R2f2BGuT7qvPBwG5wxq
-	udmoubyVokQjJJeCmfmhJRlMuc+nrzd+zFSP5NL0jBk1Mw100RC22URQCMN5A+3gx+ibEnWAYxX
-	ctGGk1GXfKRiuyNPsdcHBazDo0tdhKixB7b/Lp7TUK33A6Mj1Kk2YinMyPZs/WGpR8hdsogYrYr
-	n79PsrxKlr9UxeoYRaa8zGsQqPbP6CnNOhtyJot+O1GHCAObuEDt59HceiVAcMLq0e5nc3m+CTh
-	9RVEYLUWqMMBWXRO3ZknGh+zzXeFrDDXzXq1+Dl4UFP9+LmrnD+BJA+51O1UNY7x/A==
-X-Google-Smtp-Source: AGHT+IEonwGwTEN0PQTTY5zvr8GZMj5f2L5JRFileQvI4Ft8kxR7RvhZm0EGSz4y5sH3Ydfuq5cdmg==
-X-Received: by 2002:a5d:5f53:0:b0:3a6:eb59:f37f with SMTP id ffacd0b85a97d-3a6eb59f3d2mr816690f8f.12.1750771170749;
-        Tue, 24 Jun 2025 06:19:30 -0700 (PDT)
-Received: from [127.0.1.1] ([2a01:cb1d:dc:7e00:34d2:109c:3293:19e9])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-453646fd74asm141302195e9.22.2025.06.24.06.19.29
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 24 Jun 2025 06:19:30 -0700 (PDT)
-From: Bartosz Golaszewski <brgl@bgdev.pl>
-Date: Tue, 24 Jun 2025 15:19:17 +0200
-Subject: [PATCH RFT 6/6] gpio: mmio: remove struct bgpio_pdata
+	s=arc-20240116; t=1750771204; c=relaxed/simple;
+	bh=7ENWU273P4TzxOJ+SBH2+4yYoiGM4HCwP5SxFrfryOc=;
+	h=From:To:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=jUWiAFBB7snHrPllhECGk5J3aedvj0lZVtu2NRcaroCzlkWNbYtqi1jYndjIWyKJcROSQBZ41Hdl9ty/vjWthExQpP0MRJp6NJl2UdhA1ElIfMGuqjH4qhtT2BtgoOeEHTVy78F7GZMpCsdlR7eUJyqRrJxlZZplAqJNfXuTDss=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=MsySpz/y; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=rZcr0U14; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+From: Thomas Gleixner <tglx@linutronix.de>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1750771201;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=Rqu1VmKUsSXUk4N8ocSLjCb043Le6kxV5qzQ2PImkK4=;
+	b=MsySpz/yUSlr4OrZztYsDzYZ0/s4l5wYp/MpKK0Fv71daoHoj4LJOBTzELivAa0LPAbKbb
+	W9uoSgE7KCGWXe3umwManN5QueEyJ5q5RgxLW7djevxv4+BQrhteTULsJ0+BxRwNy+n9l1
+	zq9gXs2L971esuEKLxkh40WeFyA1nn15UmnGPcwJEA0qmYUrgqg+bH3PVNweKoNFYPbdiv
+	HiqIFz7QuUeYMWVJUVzmJyCV4GkLgIC8MJcHbfqWF6UCJPAEnE4RyRVgFl7QHwRCKsgJRf
+	653HlEjm1wL0J0SwH+MI+DpJOzrZvrW8L7PDnBA168IGAzr8PH6joqEnII3TSQ==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1750771201;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=Rqu1VmKUsSXUk4N8ocSLjCb043Le6kxV5qzQ2PImkK4=;
+	b=rZcr0U14Y2MG2nvL7VxtXxGYAdgQZl0SAMT2mVzOWW7gQdy3EqNHhOl43tKl6qCJpSWuI2
+	xg2Rf0bKaHFmsYBw==
+To: Gabriele Monaco <gmonaco@redhat.com>, linux-kernel@vger.kernel.org,
+ Anna-Maria Behnsen <anna-maria@linutronix.de>, Frederic Weisbecker
+ <frederic@kernel.org>, Waiman Long <longman@redhat.com>
+Subject: Re: [PATCH v6 6/6] timers: Exclude isolated cpus from timer migation
+In-Reply-To: <b33dcafca895da1d9c64a7d6ab771952a932e579.camel@redhat.com>
+References: <20250530142031.215594-1-gmonaco@redhat.com>
+ <20250530142031.215594-7-gmonaco@redhat.com> <875xgqqrel.ffs@tglx>
+ <b33dcafca895da1d9c64a7d6ab771952a932e579.camel@redhat.com>
+Date: Tue, 24 Jun 2025 15:20:00 +0200
+Message-ID: <878qlhnunz.ffs@tglx>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250624-gpio-mmio-pdata-v1-6-a58c72eb556a@linaro.org>
-References: <20250624-gpio-mmio-pdata-v1-0-a58c72eb556a@linaro.org>
-In-Reply-To: <20250624-gpio-mmio-pdata-v1-0-a58c72eb556a@linaro.org>
-To: Linus Walleij <linus.walleij@linaro.org>, 
- Bartosz Golaszewski <brgl@bgdev.pl>, Lee Jones <lee@kernel.org>, 
- Liviu Dudau <liviu.dudau@arm.com>, Sudeep Holla <sudeep.holla@arm.com>, 
- Lorenzo Pieralisi <lpieralisi@kernel.org>, 
- Aaro Koskinen <aaro.koskinen@iki.fi>, 
- Janusz Krzysztofik <jmkrzyszt@gmail.com>, Tony Lindgren <tony@atomide.com>, 
- Russell King <linux@armlinux.org.uk>, Krzysztof Kozlowski <krzk@kernel.org>, 
- Alim Akhtar <alim.akhtar@samsung.com>
-Cc: linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, 
- linux-arm-kernel@lists.infradead.org, linux-omap@vger.kernel.org, 
- patches@opensource.cirrus.com, linux-samsung-soc@vger.kernel.org, 
- Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=openpgp-sha256; l=3644;
- i=bartosz.golaszewski@linaro.org; h=from:subject:message-id;
- bh=H3M3IpDQpY9NSlvQzNFcRcqnugqGexh8ZnJKDM0pSQk=;
- b=owEBbQKS/ZANAwAKARGnLqAUcddyAcsmYgBoWqXYsMqxCAK8bVz8LUzIFa3A10IhSZWnxZZsN
- y8r7RVwjcSJAjMEAAEKAB0WIQQWnetsC8PEYBPSx58Rpy6gFHHXcgUCaFql2AAKCRARpy6gFHHX
- ck/vEACtGvpcJ1rDqsgHSQ1GwautrZv4YEuXxKtBnuKN+NKbKghxnTNRHCCpyNXnCtxEbtiq7y8
- OjE8GYR13yIXh+1q7W+hK73xOKZZYp7OKgszPx6sc1XZVxQVUFaZZK9l1IKT36uV6GMdzHkBYTR
- VLXV1B8i3FYqgT9VVJiXlPCTeYkyRt3bOhslU2Wgf/i82p19bvW99oZ4odEgC+BAXpMEMOmb1bi
- s5gUjdNfaISr8OhvHIWmDOSjqnwnwMcBVPl6VnI8/Zy1bFo7DjaU0rTYcGDQMwoJ8jn1PRPbkKA
- J5vsXCQOkCe7CkMs7A0u1AQgbX4gQtST2Nun3Zndjk/OX1P4k+m6YU65hzs6kC2BI/ApH1pmCct
- tLlsIUDjPM8WAgsc1U4Y6WYVmSJf7SIVAy1uFDwLeKn3C1TzF93zb1HhF9fSeZNGNydcCtyh3ZO
- siD6Gb8u4cOa6kAtcEekj9BY2HBt7dl9Z1pIfRWL+6IbZX3PKftx6KkQKEFm3Br4FnQMSY8Vnti
- /yhgqO320uLRS6bIOZH70S91IcTigcwHdVkj8ndRazqgDc6pDaQ1xsUAE7CAk3hjnF4RoXaU3hs
- 1vkdBp6qaOnwhfLDadsq11vMZoW8jZDv6A35M6PSY1zuGWL2uHZdVsOOc4AtnOGEblLXaWZDaar
- J16/cpP8OIkWQHw==
-X-Developer-Key: i=bartosz.golaszewski@linaro.org; a=openpgp;
- fpr=169DEB6C0BC3C46013D2C79F11A72EA01471D772
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 
-From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+On Tue, Jun 24 2025 at 10:05, Gabriele Monaco wrote:
 
-With no more users, we can now remove struct bgpio_pdata. Move the
-relevant bits from bgpio_parse_fw() into bgpio_pdev_probe() while
-maintaining the logical ordering (get flags before calling
-bgpio_init()).
+Please trim your replies. It's a pain to scroll through 160 quotes lines
+to find the gist of the mail...
 
-Signed-off-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
----
- drivers/gpio/gpio-mmio.c    | 65 +++++++++++----------------------------------
- include/linux/gpio/driver.h |  6 -----
- 2 files changed, 15 insertions(+), 56 deletions(-)
+> On Fri, 2025-06-20 at 19:00 +0200, Thomas Gleixner wrote:
+>> > +	if ((!housekeeping_cpu(cpu, HK_TYPE_DOMAIN) ||
+>> > +	=C2=A0=C2=A0=C2=A0=C2=A0 cpuset_cpu_is_isolated(cpu)) &&
+>> > +	=C2=A0=C2=A0=C2=A0 housekeeping_cpu(cpu, HK_TYPE_KERNEL_NOISE) &&
+>> > +	=C2=A0=C2=A0=C2=A0 tick_nohz_cpu_hotpluggable(cpu))
+>> > +		return 0;
+>>=20
+>> Same nonsense as above.
+>>=20
+> tmigr_cpu_available is called at boot time and is applying also the
+> boot time isolation parameters (tmigr_isolated_exclude_cpumask is only
+> used by the cpuset code).
+>
+> Now let's assume a machine booted with the arguments isolcpus=3D0-3
+> nohz_full=3D5-7.
+>
+> Without checking for tick_nohz_cpu_hotpluggable() here, we would not
+> set the tick cpu (0) as available at boot, ending up in the unwanted
+> corner cases discussed in the v5 of the series.
+>
+> I could remove this call here (which is mostly redundant after boot)
+> and enable explicitly the tick cpu in another way, but this still seems
+> cleaner to me.
+>
+> Does it make sense to you? Is the comment in the code unclear?
 
-diff --git a/drivers/gpio/gpio-mmio.c b/drivers/gpio/gpio-mmio.c
-index 8108aa8e6b86ae3d0b520a0f22a09689ab1d9bc5..cf4d3f968af52bb750038d32f78d1c39498d3f06 100644
---- a/drivers/gpio/gpio-mmio.c
-+++ b/drivers/gpio/gpio-mmio.c
-@@ -734,39 +734,6 @@ static const struct of_device_id bgpio_of_match[] = {
- };
- MODULE_DEVICE_TABLE(of, bgpio_of_match);
- 
--static struct bgpio_pdata *bgpio_parse_fw(struct device *dev, unsigned long *flags)
--{
--	struct bgpio_pdata *pdata;
--	const char *label;
--	unsigned int base;
--	int ret;
--
--	if (!dev_fwnode(dev))
--		return NULL;
--
--	pdata = devm_kzalloc(dev, sizeof(*pdata), GFP_KERNEL);
--	if (!pdata)
--		return ERR_PTR(-ENOMEM);
--
--	pdata->base = -1;
--
--	if (device_is_big_endian(dev))
--		*flags |= BGPIOF_BIG_ENDIAN_BYTE_ORDER;
--
--	if (device_property_read_bool(dev, "no-output"))
--		*flags |= BGPIOF_NO_OUTPUT;
--
--	ret = device_property_read_string(dev, "label", &label);
--	if (!ret)
--		pdata->label = label;
--
--	ret = device_property_read_u32(dev, "gpio-mmio,base", &base);
--	if (!ret && base <= INT_MAX)
--		pdata->base = base;
--
--	return pdata;
--}
--
- static int bgpio_pdev_probe(struct platform_device *pdev)
- {
- 	struct device *dev = &pdev->dev;
-@@ -778,18 +745,10 @@ static int bgpio_pdev_probe(struct platform_device *pdev)
- 	void __iomem *dirin;
- 	unsigned long sz;
- 	unsigned long flags = 0;
-+	unsigned int base;
- 	int err;
- 	struct gpio_chip *gc;
--	struct bgpio_pdata *pdata;
--
--	pdata = bgpio_parse_fw(dev, &flags);
--	if (IS_ERR(pdata))
--		return PTR_ERR(pdata);
--
--	if (!pdata) {
--		pdata = dev_get_platdata(dev);
--		flags = pdev->id_entry->driver_data;
--	}
-+	const char *label;
- 
- 	r = platform_get_resource_byname(pdev, IORESOURCE_MEM, "dat");
- 	if (!r)
-@@ -821,17 +780,23 @@ static int bgpio_pdev_probe(struct platform_device *pdev)
- 	if (!gc)
- 		return -ENOMEM;
- 
-+	if (device_is_big_endian(dev))
-+		flags |= BGPIOF_BIG_ENDIAN_BYTE_ORDER;
-+
-+	if (device_property_read_bool(dev, "no-output"))
-+		flags |= BGPIOF_NO_OUTPUT;
-+
- 	err = bgpio_init(gc, dev, sz, dat, set, clr, dirout, dirin, flags);
- 	if (err)
- 		return err;
- 
--	if (pdata) {
--		if (pdata->label)
--			gc->label = pdata->label;
--		gc->base = pdata->base;
--		if (pdata->ngpio > 0)
--			gc->ngpio = pdata->ngpio;
--	}
-+	err = device_property_read_string(dev, "label", &label);
-+	if (!err)
-+		gc->label = label;
-+
-+	err = device_property_read_u32(dev, "gpio-mmio,base", &base);
-+	if (!err && base <= INT_MAX)
-+		gc->base = base;
- 
- 	platform_set_drvdata(pdev, gc);
- 
-diff --git a/include/linux/gpio/driver.h b/include/linux/gpio/driver.h
-index 97cc75623261917e9b3624e1e636d2432c0db205..4b984e8f8fcdbba5c008fc67ff0557bda11df40b 100644
---- a/include/linux/gpio/driver.h
-+++ b/include/linux/gpio/driver.h
-@@ -718,12 +718,6 @@ const unsigned long *gpiochip_query_valid_mask(const struct gpio_chip *gc);
- /* get driver data */
- void *gpiochip_get_data(struct gpio_chip *gc);
- 
--struct bgpio_pdata {
--	const char *label;
--	int base;
--	int ngpio;
--};
--
- #ifdef CONFIG_IRQ_DOMAIN_HIERARCHY
- 
- int gpiochip_populate_parent_fwspec_twocell(struct gpio_chip *gc,
+It does not make sense and the comment does not change that.
 
--- 
-2.48.1
+The point is that tmigr_init() is an early initcall which is invoked
+before SMP is initialized and APs are brought up.
+
+At this point CPU0 can neither be isolated nor nohz full for obvious
+reasons, no?
+
+Thanks,
+
+        tglx
+
 
 
