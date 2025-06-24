@@ -1,95 +1,119 @@
-Return-Path: <linux-kernel+bounces-701133-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-701125-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id E5460AE7119
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Jun 2025 22:53:18 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id D982FAE7102
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Jun 2025 22:46:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6BEAE179425
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Jun 2025 20:53:19 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 918701BC028B
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Jun 2025 20:47:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8F28D2E92D0;
-	Tue, 24 Jun 2025 20:53:11 +0000 (UTC)
-Received: from mail.hallyn.com (mail.hallyn.com [178.63.66.53])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 177972E8899;
+	Tue, 24 Jun 2025 20:46:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="t3HOiJ7/"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DDD783595C;
-	Tue, 24 Jun 2025 20:53:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.63.66.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 626D12405E8;
+	Tue, 24 Jun 2025 20:46:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750798391; cv=none; b=AOYNUdBLzvKGY3cSfWYKqx+DZdYIAqLgSdip7CMoS6C+SCuis86f16KjzRiMs+vYiZ0Qp0WFqGkCpoIkqCQU3I96eY+CNqRNGQ7qTstZH9bWt4TgG+9b7J5YMmud56lhMgfkypox1e1vO2IXfH1LZ4rdYnpF3U2YIDVQ0VL9HOA=
+	t=1750798005; cv=none; b=PqOrM5CTuf0sTAztlzp78ZQauBpHlDKD4hboNFQbn/Vr2CR5UeXm4kqqkUZ9BK3Bt5aqjkeVJ4/oKR4JlVEPjK+1++uWG/AcABTmtY7bXUnVpLPAuN74YBoTbHg1DLKuQYX/oQV+P+tuH4x/rokZ/4knJL2RPTiihpvulML17Sk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750798391; c=relaxed/simple;
-	bh=6jaG03zyu9kwTbu3ZXC3E5D6ygGmX9zCBHT5Fh2x/ck=;
+	s=arc-20240116; t=1750798005; c=relaxed/simple;
+	bh=JE5izUwd5pMie06/3hvl6LkV32U8BqmlJuVS9TMGxOY=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=aFBOvIufrTooZ+DMuvdbrRwaWsbD9i3V8twc1mAKbQRoNwEuXwvS6d/IvwTyOyy6rHwofEqXyuKwJ7kC/z67Uh62NFg1LOUt0naaJql3AO0r3m6yZuLTc8g14qp5agFJ/DpTOy5FTfJhDKf372V5bbxESg2LLM9vglfxAJFSA0c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=hallyn.com; spf=pass smtp.mailfrom=mail.hallyn.com; arc=none smtp.client-ip=178.63.66.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=hallyn.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mail.hallyn.com
-Received: by mail.hallyn.com (Postfix, from userid 1001)
-	id 53C8547B; Tue, 24 Jun 2025 15:46:02 -0500 (CDT)
-Date: Tue, 24 Jun 2025 15:46:02 -0500
-From: "Serge E. Hallyn" <serge@hallyn.com>
-To: Paul Moore <paul@paul-moore.com>
-Cc: sergeh@kernel.org, Yue Haibing <yuehaibing@huawei.com>,
-	jmorris@namei.org, serge@hallyn.com, casey@schaufler-ca.com,
-	linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH -next] security: Remove unused declaration cap_mmap_file()
-Message-ID: <20250624204602.GA70964@mail.hallyn.com>
-References: <20250624014108.3686460-1-yuehaibing@huawei.com>
- <aFqZxu_Slzmux6jj@lei>
- <CAHC9VhQ50UM6LxnUT7PSrGKNdbuUFJmZQmir1HtrQg_C9j6x2Q@mail.gmail.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=Pms2O0q5/OKMwLvAbhveCU+wkal6x3ehU4yQORtqUDWPQjVSmVd3cV4sedUPSYDiGv88VOzmuc5izlyFrtbqSclH2e52gPNao8SBXMIyzc+JuLT8HcoIf9zMXz4xvYpPAvqGsillMLpdWJugWhBhusENsWNIkLnwkWExphT6+GE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=t3HOiJ7/; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 27284C4CEE3;
+	Tue, 24 Jun 2025 20:46:38 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1750798004;
+	bh=JE5izUwd5pMie06/3hvl6LkV32U8BqmlJuVS9TMGxOY=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=t3HOiJ7/Pketlpzx1szq3pDyKSCj7y+3Y2bzV7iH0qtrVzJMWdq7FoyevKRfFGwKc
+	 1vKM7Zt7D7+L8OYp7KiGPnO751xceQjJpvK1ZWQTrdpTs0l2Jk1BZAF5ybVRtSePEx
+	 AJsgkjExx4qFbZ6/UwmSd+9xDXfQkEekEh7l0fMh6eZnIt42aJpXcI52smpNQaIOBb
+	 ItOaCLV6sEIAtNOXnpTlpJnpf24KrcF9Rk7Rg6p+kLR+AR71wGf9a+YOBBQqACa7DF
+	 cRXUc1//xQPMuQTqYey+QzKOj1H3nBm7TYZDezzWW++QohnCF2XLu817kX9+Tih5G/
+	 Rze5A4n53qjWA==
+Date: Tue, 24 Jun 2025 22:46:36 +0200
+From: Danilo Krummrich <dakr@kernel.org>
+To: Rob Herring <robh@kernel.org>
+Cc: "Rafael J . Wysocki" <rafael@kernel.org>,
+	Igor Korotin <igor.korotin.linux@gmail.com>,
+	Alex Gaynor <alex.gaynor@gmail.com>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Miguel Ojeda <ojeda@kernel.org>,
+	Saravana Kannan <saravanak@google.com>,
+	Alex Hung <alex.hung@amd.com>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Jakub Kicinski <kuba@kernel.org>,
+	Jonathan Cameron <Jonathan.Cameron@huawei.com>,
+	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+	Mauro Carvalho Chehab <mchehab+huawei@kernel.org>,
+	Remo Senekowitsch <remo@buenzli.dev>,
+	Tamir Duberstein <tamird@gmail.com>,
+	Viresh Kumar <viresh.kumar@linaro.org>,
+	Wedson Almeida Filho <wedsonaf@gmail.com>,
+	Xiangfei Ding <dingxiangfei2009@gmail.com>,
+	devicetree@vger.kernel.org, linux-acpi@vger.kernel.org,
+	linux-kernel@vger.kernel.org, rust-for-linux@vger.kernel.org,
+	=?iso-8859-1?Q?Bj=F6rn?= Roy Baron <bjorn3_gh@protonmail.com>,
+	Alice Ryhl <aliceryhl@google.com>,
+	Andreas Hindborg <a.hindborg@kernel.org>,
+	Benno Lossin <lossin@kernel.org>, Boqun Feng <boqun.feng@gmail.com>,
+	Gary Guo <gary@garyguo.net>, Len Brown <lenb@kernel.org>,
+	Trevor Gross <tmgross@umich.edu>
+Subject: Re: [PATCH v8 1/9] rust: device: implement FwNode::is_of_node()
+Message-ID: <aFsOrAqpBtz9OAEI@cassiopeiae>
+References: <20250620150914.276272-1-igor.korotin.linux@gmail.com>
+ <20250620151504.278766-1-igor.korotin.linux@gmail.com>
+ <aFXjOod7TGSFB7wC@cassiopeiae>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAHC9VhQ50UM6LxnUT7PSrGKNdbuUFJmZQmir1HtrQg_C9j6x2Q@mail.gmail.com>
+In-Reply-To: <aFXjOod7TGSFB7wC@cassiopeiae>
 
-On Tue, Jun 24, 2025 at 11:48:10AM -0400, Paul Moore wrote:
-> On Tue, Jun 24, 2025 at 8:27 AM <sergeh@kernel.org> wrote:
-> > On Tue, Jun 24, 2025 at 09:41:08AM +0800, Yue Haibing wrote:
-> > > Commit 3f4f1f8a1ab7 ("capabilities: remove cap_mmap_file()")
-> > > removed the implementation but leave declaration.
-> > >
-> > > Signed-off-by: Yue Haibing <yuehaibing@huawei.com>
-> >
-> > Hm, how did I not catch that?  Thanks.
+On Sat, Jun 21, 2025 at 12:40:02AM +0200, Danilo Krummrich wrote:
+> On Fri, Jun 20, 2025 at 04:15:04PM +0100, Igor Korotin wrote:
+> > From: Danilo Krummrich <dakr@kernel.org>
+> > 
+> > Implement FwNode::is_of_node() in order to check whether a FwNode
+> > instance is embedded in a struct device_node.
+> > 
+> > Signed-off-by: Danilo Krummrich <dakr@kernel.org>
+> > Signed-off-by: Igor Korotin <igor.korotin.linux@gmail.com>
+> > ---
+> >  MAINTAINERS                    | 1 +
+> >  rust/helpers/helpers.c         | 1 +
+> >  rust/helpers/of.c              | 8 ++++++++
+> >  rust/kernel/device/property.rs | 7 +++++++
+> >  4 files changed, 17 insertions(+)
+> >  create mode 100644 rust/helpers/of.c
+> > 
+> > diff --git a/MAINTAINERS b/MAINTAINERS
+> > index 9f724cd556f4..1e918319cff4 100644
+> > --- a/MAINTAINERS
+> > +++ b/MAINTAINERS
+> > @@ -18579,6 +18579,7 @@ T:	git git://git.kernel.org/pub/scm/linux/kernel/git/robh/linux.git
+> >  F:	Documentation/ABI/testing/sysfs-firmware-ofw
+> >  F:	drivers/of/
+> >  F:	include/linux/of*.h
+> > +F:	rust/helpers/of.c
 > 
-> At least you weren't the idiot who wrote the original patch ;)
-> 
-> I'll grab this for the LSM tree in a bit unless you want to take it.
+> @Rob: Any concerns about adding the OF Rust helpers to the OF entry?
 
-Either way - go ahead :)  Thanks.
+Given that you proposed to use is_of_node() and rust/kernel/of.rs is under your
+MAINTAINERS entry as well, I assume this is fine.
 
-> > Reviewed-by: Serge Hallyn <serge@hallyn.com>
-> >
-> > > ---
-> > >  include/linux/security.h | 2 --
-> > >  1 file changed, 2 deletions(-)
-> > >
-> > > diff --git a/include/linux/security.h b/include/linux/security.h
-> > > index dba349629229..e8d9f6069f0c 100644
-> > > --- a/include/linux/security.h
-> > > +++ b/include/linux/security.h
-> > > @@ -193,8 +193,6 @@ int cap_inode_getsecurity(struct mnt_idmap *idmap,
-> > >                         struct inode *inode, const char *name, void **buffer,
-> > >                         bool alloc);
-> > >  extern int cap_mmap_addr(unsigned long addr);
-> > > -extern int cap_mmap_file(struct file *file, unsigned long reqprot,
-> > > -                      unsigned long prot, unsigned long flags);
-> > >  extern int cap_task_fix_setuid(struct cred *new, const struct cred *old, int flags);
-> > >  extern int cap_task_prctl(int option, unsigned long arg2, unsigned long arg3,
-> > >                         unsigned long arg4, unsigned long arg5);
-> > > --
-> > > 2.34.1
-> 
-> -- 
-> paul-moore.com
+If not, please let me know.
 
