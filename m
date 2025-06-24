@@ -1,187 +1,112 @@
-Return-Path: <linux-kernel+bounces-701060-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-701058-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CCD2AAE700F
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Jun 2025 21:47:20 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6D1CBAE7023
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Jun 2025 21:48:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A2B8C17CC79
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Jun 2025 19:47:18 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3E1167B3C61
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Jun 2025 19:45:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3D0882EF9B6;
-	Tue, 24 Jun 2025 19:45:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6FFD72E92D0;
+	Tue, 24 Jun 2025 19:45:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="MgSS3qhl"
-Received: from fllvem-ot04.ext.ti.com (fllvem-ot04.ext.ti.com [198.47.19.246])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="hP/jpYyw"
+Received: from mail-lj1-f182.google.com (mail-lj1-f182.google.com [209.85.208.182])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 70B912EBDCA;
-	Tue, 24 Jun 2025 19:45:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.246
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1AC412E613D
+	for <linux-kernel@vger.kernel.org>; Tue, 24 Jun 2025 19:45:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750794328; cv=none; b=MryFLHkNe+Iup3m+hSonK0jrmsad05nPHDiXfar8P8ZGqpokbbgMPpatjSZTHH/Dt5RFwy4Bq4WrSMMgUie7WiZJyqqTiQJd8ujiOR7r1fs+HnQ06Wxtpc/kjwDPnNVU51SL5E/gwWjAjciBJ7gbdaxtdPpEILsLq2etGv59EZM=
+	t=1750794324; cv=none; b=MgGhcOOq8Pz8lVUpa2UoYD0MliWozIYi/wiohx3j75aYBcjL0q2THZ75uX248BXrMVUBNHp2d3IQuXgIryYmNLNbZoIgEHrWYJFZQZwyArNwUJRso04im/ulklO3NXYJsZ7afujF25NTtrpo73aumHsA9yKImaEh+0LxClwbIaY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750794328; c=relaxed/simple;
-	bh=8qvwSHO1+kU/s+0/nwif8OvvuO8uIInW/6Ce8eRN7RY=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=mFAo6471HxlU4OzmBgrdIrsC7wNYfFYtK0EVn89M/jNDoeOXGekaqLhaWA3PBesxfrx7/8lv2rGUrXBa38MAspB6BUTbz/N40NGLTJwxLABinKGP7+rBSSckzI3jyvz/iueH3mw4KkvzoywAD+SXWoZrYqWOXMtt81p1aL5Loko=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=MgSS3qhl; arc=none smtp.client-ip=198.47.19.246
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
-Received: from lelvem-sh01.itg.ti.com ([10.180.77.71])
-	by fllvem-ot04.ext.ti.com (8.15.2/8.15.2) with ESMTP id 55OJj9M21945033;
-	Tue, 24 Jun 2025 14:45:10 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-	s=ti-com-17Q1; t=1750794310;
-	bh=m4TjCvZ5Jf7Xqqe6R0pi6faNrYPWbmCQi4gwoWZ2ILQ=;
-	h=From:To:CC:Subject:Date:In-Reply-To:References;
-	b=MgSS3qhlb4E4VxLIsORGpIfH6G73g16XHF1Y8NbX3vC0gHAEy3ur1GQXatw/ky80w
-	 /wbZe4PNnxJZepd+gbklL64u/ubS/88FzlxjoJvL2uIfytLLGbQfNGFZci/13NPBpQ
-	 52ThHlA0pS0bRCrFOm6unYXHjG7B22z8scfqoEFY=
-Received: from DFLE113.ent.ti.com (dfle113.ent.ti.com [10.64.6.34])
-	by lelvem-sh01.itg.ti.com (8.18.1/8.18.1) with ESMTPS id 55OJj9J91839531
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-SHA256 bits=128 verify=FAIL);
-	Tue, 24 Jun 2025 14:45:09 -0500
-Received: from DFLE105.ent.ti.com (10.64.6.26) by DFLE113.ent.ti.com
- (10.64.6.34) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.55; Tue, 24
- Jun 2025 14:45:09 -0500
-Received: from lelvem-mr05.itg.ti.com (10.180.75.9) by DFLE105.ent.ti.com
- (10.64.6.26) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.55 via
- Frontend Transport; Tue, 24 Jun 2025 14:45:09 -0500
-Received: from judy-hp.dhcp.ti.com (judy-hp.dhcp.ti.com [128.247.81.105])
-	by lelvem-mr05.itg.ti.com (8.18.1/8.18.1) with ESMTP id 55OJj92c2326408;
-	Tue, 24 Jun 2025 14:45:09 -0500
-From: Judith Mendez <jm@ti.com>
-To: Judith Mendez <jm@ti.com>, Wim Van Sebroeck <wim@linux-watchdog.org>,
-        Guenter Roeck <linux@roeck-us.net>, Rob Herring <robh@kernel.org>,
-        "Krzysztof
- Kozlowski" <krzk+dt@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>
-CC: Tero Kristo <t-kristo@ti.com>, Vignesh Raghavendra <vigneshr@ti.com>,
-        <linux-watchdog@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>
-Subject: [PATCH 2/2] watchdog: rti_wdt: Add reaction control to rti
-Date: Tue, 24 Jun 2025 14:45:09 -0500
-Message-ID: <20250624194509.1314095-3-jm@ti.com>
-X-Mailer: git-send-email 2.49.0
-In-Reply-To: <20250624194509.1314095-1-jm@ti.com>
-References: <20250624194509.1314095-1-jm@ti.com>
+	s=arc-20240116; t=1750794324; c=relaxed/simple;
+	bh=30oeBRC9xhWE/gLU7A7qEMlCfCO9Q3lAAEFktP0zyns=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=iAYDVHAOxv410+ri5EjInco683jKykiNyMc9oJnUmiWBcxjJXKscxtY0xH4Ha4iecfjdhHu6GWjMLo2XE9BtfLuVXndsyInYqIDIuTrEZrreRJS5BDiMcyBN1imMqVJcQBFFWDsmn14oyJXvRSiB0XxjXsSZOUc5Z2te/FR4as8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=hP/jpYyw; arc=none smtp.client-ip=209.85.208.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-lj1-f182.google.com with SMTP id 38308e7fff4ca-32aabfd3813so50313541fa.3
+        for <linux-kernel@vger.kernel.org>; Tue, 24 Jun 2025 12:45:21 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1750794320; x=1751399120; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=30oeBRC9xhWE/gLU7A7qEMlCfCO9Q3lAAEFktP0zyns=;
+        b=hP/jpYywfPh1JFB9YkQ1vVGg/+/Jg0mkwd74myvKZZ5kOqxrZlk74X8dd5v4JAWT+W
+         +TYXXGddhgNvRRrlHEZfCtiWpzzVohLCJYSdrQv43nca7M7Y8hlHjkdIsEXKVEnNig9S
+         g3Qxdegcxt2ZpMlqYqxX6wK6qsdDWi4sY8yYnjp9176ycdv/YCb/9ADGmM4Tv0ztjVoh
+         eHxZm8FjnMw6nV8tUq0Wft+aCAM4N6QnenxX45+qPmgEJMwpEBuy9tkfduQyaNCz91dB
+         BsOiOK9Nj1kxneUmoh+SGxn/EIivLF3v5Uqd0X7jJHYLmY4agFo6qcEyzO1G2SX93Uon
+         Yk4g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1750794320; x=1751399120;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=30oeBRC9xhWE/gLU7A7qEMlCfCO9Q3lAAEFktP0zyns=;
+        b=uhagbnTSlv+vmErmYD5vKZUvoIjoFFWptQSP7QbmzC6DjkFuARfQ/RpWgLZnvrvwKY
+         s8MdncSEMYxL2dJk+NV4WvKV1VcncHCabp2vLZyMlYLSvVn/zvGtIQNbHHrhOyvxNcNV
+         mahsqk3dWI1BcNBhuQT/o93+Fb4tukce1kl6GBx9b5qS8VXL6OFEJVXHqNuT04ervesv
+         skjymxPb5js7EW75lJIOc6TDj3YduVYdzj6aEBdmFkKlK7Rx0kvZ4bAQVMBnIB1nTXp9
+         SoBezcEJTucJvCMYto1jl8DCwaC22+O8v0SvDxkqnHxD8bpOhBnpPfoD0qxOKqb8QQsv
+         WkNQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVi+uR8zgDqwmJ7Okq5H12tlJIJ49x1sXursPv36iLrkM/9zk0oBWhxBhFnfgfTwLC6JkBs8ChWzrWkZ3k=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwwuWypNdEvzePSISwEhlEqPJ+0VN3kTA3jeQH8FbMIq6nNnPVa
+	x8p4kTA9NSdCxUlTerfS+3NZz8hROhdH/S2/AVvNGqfEzlgQbR+OTeuO4KRmbK0zyw2LF3ArwUD
+	MF79CDRb++jrD04fFzQ6YhCX4ASZTPORW0FDsR21/Vg==
+X-Gm-Gg: ASbGnct2az5aIeV7vOqSQd6rkA+MhBXlEOurajb6IwA/UsJBrG/OUVt0tdOoEdiPkit
+	R+GXv/OBArPMRNHAujWIgrhPswTUeiBsm7DMIhLRwkRJwROl7uwjJhMG6WRPBKaKyJ8FC4pufIM
+	MJ7k2iWU8KJV6SqFGr49+6wsd+ChY2Rpknrb9V1R0pccs=
+X-Google-Smtp-Source: AGHT+IGHrdlGkQUWphFDOu9KYoSs8Q372bw5fsoYgco33pNU9fbGTgKUqdcWmtZRyS8Ikc4JU9SHkbRiDX4irW201y0=
+X-Received: by 2002:a05:6512:1396:b0:553:2bf7:77be with SMTP id
+ 2adb3069b0e04-554fdd0ba1dmr50743e87.22.1750794320312; Tue, 24 Jun 2025
+ 12:45:20 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
+References: <20250624-gpio-mmio-pdata-v1-0-a58c72eb556a@linaro.org> <20250624-gpio-mmio-pdata-v1-3-a58c72eb556a@linaro.org>
+In-Reply-To: <20250624-gpio-mmio-pdata-v1-3-a58c72eb556a@linaro.org>
+From: Linus Walleij <linus.walleij@linaro.org>
+Date: Tue, 24 Jun 2025 21:45:09 +0200
+X-Gm-Features: AX0GCFu6Td3LW-_JOyLEYO7GYkA80dSGig80su6HVwjgXpS6hbnfvwIR-aklY7E
+Message-ID: <CACRpkdahd=5cdjL4Je4_PqFmV8dkSuuuRLxdPB0n0-gyFKin4w@mail.gmail.com>
+Subject: Re: [PATCH RFT 3/6] mfd: vexpress-sysreg: set-up software nodes for gpio-mmio
+To: Bartosz Golaszewski <brgl@bgdev.pl>
+Cc: Lee Jones <lee@kernel.org>, Liviu Dudau <liviu.dudau@arm.com>, 
+	Sudeep Holla <sudeep.holla@arm.com>, Lorenzo Pieralisi <lpieralisi@kernel.org>, 
+	Aaro Koskinen <aaro.koskinen@iki.fi>, Janusz Krzysztofik <jmkrzyszt@gmail.com>, 
+	Tony Lindgren <tony@atomide.com>, Russell King <linux@armlinux.org.uk>, 
+	Krzysztof Kozlowski <krzk@kernel.org>, Alim Akhtar <alim.akhtar@samsung.com>, linux-gpio@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+	linux-omap@vger.kernel.org, patches@opensource.cirrus.com, 
+	linux-samsung-soc@vger.kernel.org, 
+	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-This allows to configure reaction between NMI and reset for WWD.
+On Tue, Jun 24, 2025 at 3:19=E2=80=AFPM Bartosz Golaszewski <brgl@bgdev.pl>=
+ wrote:
 
-On K3 SoC's other than AM62L SoC [0], watchdog reset output is routed
-to the ESM module which can subsequently route the signal to safety
-master or SoC reset. On AM62L, the watchdog reset output is routed
-to the SoC HW reset block. So, add a new compatible for AM62l to add
-SoC data and configure reaction to reset instead of NMI.
+> From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+>
+> Replace struct bgpio_pdata - that we plan to remove - with software
+> nodes containing properties encoding the same values thatr can now be
+> parsed by gpio-mmio.
+>
+> Signed-off-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
 
-[0] https://www.ti.com/product/AM62L
-Signed-off-by: Judith Mendez <jm@ti.com>
----
- drivers/watchdog/rti_wdt.c | 31 +++++++++++++++++++++++++++----
- 1 file changed, 27 insertions(+), 4 deletions(-)
+Neat!
+Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
 
-diff --git a/drivers/watchdog/rti_wdt.c b/drivers/watchdog/rti_wdt.c
-index d1f9ce4100a8..d419884c86c4 100644
---- a/drivers/watchdog/rti_wdt.c
-+++ b/drivers/watchdog/rti_wdt.c
-@@ -35,7 +35,8 @@
- #define RTIWWDRXCTRL	0xa4
- #define RTIWWDSIZECTRL	0xa8
- 
--#define RTIWWDRX_NMI	0xa
-+#define RTIWWDRXN_RST	0x5
-+#define RTIWWDRXN_NMI	0xa
- 
- #define RTIWWDSIZE_50P		0x50
- #define RTIWWDSIZE_25P		0x500
-@@ -63,22 +64,29 @@
- 
- static int heartbeat;
- 
-+struct rti_wdt_data {
-+	bool reset;
-+};
-+
- /*
-  * struct to hold data for each WDT device
-  * @base - base io address of WD device
-  * @freq - source clock frequency of WDT
-  * @wdd  - hold watchdog device as is in WDT core
-+ * @data - hold configuration data
-  */
- struct rti_wdt_device {
- 	void __iomem		*base;
- 	unsigned long		freq;
- 	struct watchdog_device	wdd;
-+	const struct rti_wdt_data *data;
- };
- 
- static int rti_wdt_start(struct watchdog_device *wdd)
- {
- 	u32 timer_margin;
- 	struct rti_wdt_device *wdt = watchdog_get_drvdata(wdd);
-+	u8 reaction;
- 	int ret;
- 
- 	ret = pm_runtime_resume_and_get(wdd->parent);
-@@ -101,8 +109,12 @@ static int rti_wdt_start(struct watchdog_device *wdd)
- 	 */
- 	wdd->min_hw_heartbeat_ms = 520 * wdd->timeout + MAX_HW_ERROR;
- 
--	/* Generate NMI when wdt expires */
--	writel_relaxed(RTIWWDRX_NMI, wdt->base + RTIWWDRXCTRL);
-+	/* Generate reset or NMI when timer expires/serviced outside of window */
-+	reaction = RTIWWDRXN_NMI;
-+	if (wdt->data->reset)
-+		reaction = RTIWWDRXN_RST;
-+
-+	writel_relaxed(reaction, wdt->base + RTIWWDRXCTRL);
- 
- 	/* Open window size 50%; this is the largest window size available */
- 	writel_relaxed(RTIWWDSIZE_50P, wdt->base + RTIWWDSIZECTRL);
-@@ -255,6 +267,8 @@ static int rti_wdt_probe(struct platform_device *pdev)
- 	wdd->timeout = DEFAULT_HEARTBEAT;
- 	wdd->parent = dev;
- 
-+	wdt->data = of_device_get_match_data(dev);
-+
- 	watchdog_set_drvdata(wdd, wdt);
- 	watchdog_set_nowayout(wdd, 1);
- 	watchdog_set_restart_priority(wdd, 128);
-@@ -369,8 +383,17 @@ static void rti_wdt_remove(struct platform_device *pdev)
- 	pm_runtime_disable(&pdev->dev);
- }
- 
-+static struct rti_wdt_data j7_wdt = {
-+	.reset = false,
-+};
-+
-+static struct rti_wdt_data am62l_wdt = {
-+	.reset = true,
-+};
-+
- static const struct of_device_id rti_wdt_of_match[] = {
--	{ .compatible = "ti,j7-rti-wdt", },
-+	{ .compatible = "ti,j7-rti-wdt", .data = &j7_wdt },
-+	{ .compatible = "ti,am62l-rti-wdt", .data = &am62l_wdt },
- 	{},
- };
- MODULE_DEVICE_TABLE(of, rti_wdt_of_match);
--- 
-2.49.0
-
+Yours,
+Linus Walleij
 
