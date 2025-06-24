@@ -1,379 +1,165 @@
-Return-Path: <linux-kernel+bounces-699952-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-699957-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id E78B3AE61DA
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Jun 2025 12:13:24 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6C537AE61E4
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Jun 2025 12:14:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D44393A3C5B
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Jun 2025 10:12:59 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4EFD97A932B
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Jun 2025 10:13:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9C122280004;
-	Tue, 24 Jun 2025 10:13:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4E724280024;
+	Tue, 24 Jun 2025 10:14:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Ki0gZ1nV"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.20])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="SEInEzts"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.13])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A0734A2D
-	for <linux-kernel@vger.kernel.org>; Tue, 24 Jun 2025 10:13:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=198.175.65.20
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750759998; cv=fail; b=Sjh/3jNvKw6KxnqLN+4HhVaYo0yY2vrsYDVpX+rNJvQRBYhh0F3jARBwEqcxn9Eecu5n1wCwj32WcMhpw3DJMLVpQhPsPMmJTk2usvKFcYOwDmzA8F28d6rKEVLHSMd3g2H87EZ+FvfiV4XWLEIwCRBayyFvcPhPsTzNpFAZHpc=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750759998; c=relaxed/simple;
-	bh=f2bmwj0XAzchfNauMSrPhP5q9mFKZTEcu87oLb0FWyc=;
-	h=Message-ID:Date:Subject:To:CC:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=cCc/2jZokQozEQbCH5vVMglF9thtmf883MiO9lVKrdb6Kl4g7I5JFbNjcaO+nZdQEvrLaryN3Zmpi1oYw+64qnW55oLZBYgiX5FFu94A53/yiiMtjlTnQakirae6YGBWlFii+5be5QnnNwIxgiEhQ0ad0e6AIAcVrK952UE9f88=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Ki0gZ1nV; arc=fail smtp.client-ip=198.175.65.20
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E510A27C879
+	for <linux-kernel@vger.kernel.org>; Tue, 24 Jun 2025 10:14:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.13
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1750760045; cv=none; b=iu0eQ5WDMcS4irkynkNntltiJQhnTLczPjZtQgXh55GNcnm+llYTnJxKe0mAEvlSgvmCDPgPDhcrKfIfSroPjXPs0uKJVgFkvaxJWkyyXaeBS6IFnpW6aVnPOnhj9rvi9zpIW7P9Zx3pyujxZ1sb2CNVf3bJ8LTW0FxSMe0/zkQ=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1750760045; c=relaxed/simple;
+	bh=GiI2VSijnFCghaiO7yOcCW+FmIFFoXPWegYvrrRwpbo=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Ltz6cSC0m7V8WSjgDf6tXzSt4Bg7PpbSjTsD9LvBu9Lakp2szr4QWjcMxbLwmWwCMclkoQbF4k1K19r2FUcF187bkZW7XufoddAs4YrZ4Aq9oNf+KMO3SgG35AJXvy1JPVsexN/IXVQ7ipwtRb9Ci6PvgMZgcEIX4chq85E8mfM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=SEInEzts; arc=none smtp.client-ip=198.175.65.13
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1750759997; x=1782295997;
-  h=message-id:date:subject:to:cc:references:from:
-   in-reply-to:content-transfer-encoding:mime-version;
-  bh=f2bmwj0XAzchfNauMSrPhP5q9mFKZTEcu87oLb0FWyc=;
-  b=Ki0gZ1nVQgU6HRJBX4Y92gQGSUgQxuXjP1EZCZqY8wuMbSidPqeI6GAG
-   PgUT4Vnmw8pYzWfwMKNWjW3myONYJZ2Vi47TjYkhbmBcvigwWQZ49OMVE
-   fvWGgCAiPEVPrT3/IpUrJFFPysqYeBpptKiw7ZvIRE1mHarW6e3BaYNq6
-   eyhatj8S8p0qdCND5Fdy9ZClMW/46qNTEIhI+45CMlQ91hwqTF4QsnwnO
-   YsM2fcriqucLFUnQybd5nao4ac5nJOsx8wSSj5vnN8yCcbbT6pFdb3lCV
-   2cjduWoTmvwfRH1jwKILb+9kmRdYTbPc9SlkDB5tu3WlOrdXG108r85tb
-   g==;
-X-CSE-ConnectionGUID: tkaR4cODRxSQQD1v2NRQug==
-X-CSE-MsgGUID: HVCGvN49TcCG6mhCahhLEA==
-X-IronPort-AV: E=McAfee;i="6800,10657,11473"; a="52714862"
+  t=1750760044; x=1782296044;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=GiI2VSijnFCghaiO7yOcCW+FmIFFoXPWegYvrrRwpbo=;
+  b=SEInEztsAiSIM9yKI2O3CrVqvt4bkHtML2zF4bG5XulUzVGe3URaeDsW
+   yHf3Ht630iChFWaOMCcoMVm9GVoBW9icUVp8AA0RWrOZ2wifmGpeCCTAP
+   vW2H0lkMpIVPDRLdLto52jb+cyQ6DvoCUy0cT//pbdnL4yEMq6B27XHx8
+   kJLbIFbF+bpWo84uV0UYvEPTJhvhMNGo9C7ek1PNvtemwp+ArWIuFkdkZ
+   ktrb+iu9lxbkVwK1T4+hdhftgVuVvYhAse7TiLO7EGzsAkK6ttu2dB2ZP
+   7/s7sub0wKGEodHi0YQhRpJzqrHLxWq1ZM3GqSdqTBiO/HWXAr3XHq+SQ
+   A==;
+X-CSE-ConnectionGUID: F1d9UrQYSy6f4XaQ2D/uGg==
+X-CSE-MsgGUID: iebv/h5mSwiZyPPRqWms0A==
+X-IronPort-AV: E=McAfee;i="6800,10657,11473"; a="64053404"
 X-IronPort-AV: E=Sophos;i="6.16,261,1744095600"; 
-   d="scan'208";a="52714862"
-Received: from orviesa008.jf.intel.com ([10.64.159.148])
-  by orvoesa112.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 24 Jun 2025 03:13:16 -0700
-X-CSE-ConnectionGUID: MLJ4ptsxSF6yobN8ALzImw==
-X-CSE-MsgGUID: Ps0PSn1kTgSXn0NBeyqq1A==
+   d="scan'208";a="64053404"
+Received: from fmviesa004.fm.intel.com ([10.60.135.144])
+  by orvoesa105.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 24 Jun 2025 03:14:03 -0700
+X-CSE-ConnectionGUID: G3efHSgdTFKrXncrQ+b54Q==
+X-CSE-MsgGUID: PKGul18fS1mB82vJghcxHg==
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="6.16,261,1744095600"; 
-   d="scan'208";a="152378203"
-Received: from orsmsx903.amr.corp.intel.com ([10.22.229.25])
-  by orviesa008.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 24 Jun 2025 03:13:16 -0700
-Received: from ORSMSX902.amr.corp.intel.com (10.22.229.24) by
- ORSMSX903.amr.corp.intel.com (10.22.229.25) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.25; Tue, 24 Jun 2025 03:13:15 -0700
-Received: from ORSEDG901.ED.cps.intel.com (10.7.248.11) by
- ORSMSX902.amr.corp.intel.com (10.22.229.24) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.25 via Frontend Transport; Tue, 24 Jun 2025 03:13:15 -0700
-Received: from NAM04-BN8-obe.outbound.protection.outlook.com (40.107.100.51)
- by edgegateway.intel.com (134.134.137.111) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.25; Tue, 24 Jun 2025 03:13:15 -0700
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=VTAbS305r1y1NRBwBJ7vAh4t1IA9A2VUQYeFr7I12ZUCNc3ixGNIFlFUO+9KV9BDnbdAvy34S162sfqhszxft33zOqlP67gfQODzWIDrdeWJtxKKhKw+EF4woui3hNiUw4Vr6qSaTlb0msGMVIio5Krv6oqfuwRGVRogZ+GSX8TKMYS8hXt3IMfLLDO5zOY+UMGis3uNajtls49kNUJ4bWiv7klRsiPf/E1PQ3o39i/Fh+nVq+ntA4qlhJQlQXicoSiFuJSkKGy+Mwikz3LIAbDrevyHRfjvg5R9IfLKrQrNEGg3jtcC7D4caKQDNoR1Tp5b2of5yVm7GnMBqZ2eHg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=LqiI8O7Vk6yXFxY+ilX8D1Fgu1MuHsFCzphxMV1EJg4=;
- b=ATvRyr92zQsbsAWljF/0KE29oYYFaA7ywQjb5G39jedOhPn7p8W2jJEjgKbQp/VE+v42tSTh8z/j0f0GpZBPVsmmp2Tu4s/0jEMuYKxv9410qgkJlB1R766UKv7Kldpv/pCkVqGepQZxe2JwS4s16LF/t43VGouooNFF0B8/Wjc3GxfXzTLnaOHNzQSXOe/7QX1ope0lnNhYCJDdlg6YBvkgGrHuqTd1dxiYvRbqyLhcT/j4LcD5fpDJ/pIpCXQd5ZQhGmLDWND6c00DdHgqPBKL11MIM0dyj5U8FavAmlgXEFd+vAtXSocyPEndjv1XbfOKHpbWK/+yKeK6c8TpmA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
- dkim=pass header.d=intel.com; arc=none
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=intel.com;
-Received: from BN9PR11MB5530.namprd11.prod.outlook.com (2603:10b6:408:103::8)
- by CO1PR11MB4787.namprd11.prod.outlook.com (2603:10b6:303:95::23) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8857.25; Tue, 24 Jun
- 2025 10:12:59 +0000
-Received: from BN9PR11MB5530.namprd11.prod.outlook.com
- ([fe80::13bd:eb49:2046:32a9]) by BN9PR11MB5530.namprd11.prod.outlook.com
- ([fe80::13bd:eb49:2046:32a9%5]) with mapi id 15.20.8857.026; Tue, 24 Jun 2025
- 10:12:59 +0000
-Message-ID: <852276a6-def4-45ee-97ef-cce7cf565ca0@intel.com>
-Date: Tue, 24 Jun 2025 15:42:50 +0530
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 08/10] drm/xe/xe_late_bind_fw: Introduce debug fs node
- to disable late binding
-To: Daniele Ceraolo Spurio <daniele.ceraolospurio@intel.com>,
-	<intel-xe@lists.freedesktop.org>, <dri-devel@lists.freedesktop.org>,
-	<linux-kernel@vger.kernel.org>
-CC: <anshuman.gupta@intel.com>, <rodrigo.vivi@intel.com>,
-	<alexander.usyskin@intel.com>, <gregkh@linuxfoundation.org>, <jgg@nvidia.com>
-References: <20250618190007.2932322-1-badal.nilawar@intel.com>
- <20250618190007.2932322-9-badal.nilawar@intel.com>
- <b9a468c0-53ed-4da4-a044-76c5e8461b95@intel.com>
- <3fad6292-cbdb-4724-8e28-5315bb735d78@intel.com>
- <4b582be9-74e7-4175-8528-59f8e0bd120d@intel.com>
-Content-Language: en-US
-From: "Nilawar, Badal" <badal.nilawar@intel.com>
-In-Reply-To: <4b582be9-74e7-4175-8528-59f8e0bd120d@intel.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: MA0PR01CA0052.INDPRD01.PROD.OUTLOOK.COM
- (2603:1096:a01:ac::13) To BN9PR11MB5530.namprd11.prod.outlook.com
- (2603:10b6:408:103::8)
+   d="scan'208";a="157375216"
+Received: from rfrazer-mobl3.amr.corp.intel.com (HELO khuang2-desk.gar.corp.intel.com) ([10.124.223.45])
+  by fmviesa004-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 24 Jun 2025 03:14:00 -0700
+From: Kai Huang <kai.huang@intel.com>
+To: dave.hansen@intel.com,
+	peterz@infradead.org,
+	tglx@linutronix.de,
+	bp@alien8.de,
+	mingo@redhat.com,
+	hpa@zytor.com,
+	kirill.shutemov@linux.intel.com
+Cc: rick.p.edgecombe@intel.com,
+	pbonzini@redhat.com,
+	seanjc@google.com,
+	x86@kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH] x86/virt/tdx: Further fix tdh_vp_enter() calls instrumentable code warning
+Date: Tue, 24 Jun 2025 22:13:51 +1200
+Message-ID: <20250624101351.8019-1-kai.huang@intel.com>
+X-Mailer: git-send-email 2.49.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: BN9PR11MB5530:EE_|CO1PR11MB4787:EE_
-X-MS-Office365-Filtering-Correlation-Id: 77fd180f-d3ba-4287-02b4-08ddb307b1ca
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|376014|1800799024|366016;
-X-Microsoft-Antispam-Message-Info: =?utf-8?B?TzJ1VzdUMXlBZ25kc2RvYXV2dUJIYkZ3N200OUxkUmNRYXlSOGNBNm5DMUxW?=
- =?utf-8?B?R3BBWnZyaCs4azhEVnpNdHozeTExUDZMUTBqMStCVlExTUpYZmNJVlMwc2pL?=
- =?utf-8?B?enUxU2xJYTVLWXpUWEg4S2E2RDBROVFJbkxMWjJkVGQ1eU1pWVpLMjVkdXd1?=
- =?utf-8?B?a3dvcndKc3J4cUZhZFNUdW5BNGwwUWxIUXJpWXE2aDA3L3hYZVlEL01SamdN?=
- =?utf-8?B?Z3dtTFRNN0U1RENvUjhEZXppK2tWUmJVMmMwSXNiRExwR1lBdFFQNnM3d2RU?=
- =?utf-8?B?cFBGeUhmTm1yZEVPQlQ3d3VZd0Nvcm5ZM1NySmFzb3RzVWJLTG1PYVQyd0JW?=
- =?utf-8?B?L2ZyYmFGeWFsa0FoV1hHMFY5NTVlR203NTJ5V1JjaUxJV3FvbmFKSVBHTUtZ?=
- =?utf-8?B?UU9PejRWMWRHYlhRdXAzc0d0Qy9VWFVhSDNoaTdTWlBZVU5PVjEyMEM5NXFF?=
- =?utf-8?B?cDQyZHIwZlBMZFp2ZjdQNVR3SmRlZDlFNEJZbWd0ZjhDdStiUFVHeGpCREMx?=
- =?utf-8?B?emxvVlp4U3A1NE1XMmpMdWhkZVl1UWRNTWNxNFo2aDZJTG93MlJndCtwTTlk?=
- =?utf-8?B?UkU3R094dEtvMms0S3VVQmMySEw5MEJXRE50RmFna3pUbndPMjl6L09iUDQ3?=
- =?utf-8?B?VmhNK2RKRDJZcmE2Zy9FaW5jUDBPc1p5dGJyc1hyRkRxZk5DZldUQXpZOVUv?=
- =?utf-8?B?SEYyNnFlLzRRakhGbW5nazFseG1EelI4SFIxQ0t5amUrZ3Z1TXZmYUF5eHQ3?=
- =?utf-8?B?YTJ5WUdNNk9CNzNlWWhQdzRwMXVHVkpkSjcwTUNlYWNQZVpqMU82QWNEOWlM?=
- =?utf-8?B?K1ZCaVVtckhEM1k1MXdvZENNY1orT216eVk0d3VzNXBaTXBIK3FZSy9ZbllK?=
- =?utf-8?B?Q1gvRmlxRGNId2cvempGK2QzRkt3d3FXdVFBNnJaL3pxb3duZERjdXc5SW1u?=
- =?utf-8?B?azArdkV0WFpvcnVTWXcyQzFLTHZkWmZubE5hR084QmRZNDFMUG93R21ZQ1N5?=
- =?utf-8?B?QXh0NGZsRVZ1cVZ5WXVHckFvU1kwWCtOQzNRVVdJazRPMStRSzFmS1N4U1M0?=
- =?utf-8?B?L2FEcllmOHAzcENnNFYwaFBmRnhqZkR4d1Y3NzZRTWZZN0FtdEdvKzRhV3B2?=
- =?utf-8?B?R0NKYXZhZzBtMVdlMGJFLzB1Q2x0TENWZS84UWJjWEtOWkZVejVnRnpsdCtJ?=
- =?utf-8?B?RTc4eTRvWlNXL0ZWSGR1WFV6SnBWRU1hL2RwVjBEb0d2SmdvNXlNOTZKRVd3?=
- =?utf-8?B?RFFLVVNQR3cwRnpBUHJxK2VPSUJRQ2daSXRTZ2crZGlnOWJKRkZuSWJDWXFZ?=
- =?utf-8?B?UnN3YTRZQmZUYy8wTXd0VHBESzlyU2xxMHV5MVRVR1RyYVJTRk9NNzg3aXhU?=
- =?utf-8?B?Y2JwamhzRC96cUVZajlBSlpvSzd6UldyN05KM2c4ZzE4RE5Wczh2UWtzamlJ?=
- =?utf-8?B?Y3l6andTMTMxWHBGVHRDNmduRFRvOHVobjVuTC9obTFCNGZ2SFBqbVNRSmFj?=
- =?utf-8?B?VklPODhScVhnay9HQm5WUUJIM09Sc3FYZVhFUlMwMnhEL2ZBSldJNTIzMEhv?=
- =?utf-8?B?MFoxcUtPWmI0b2l0UkdjMW9KVHlDM3hJelkzMjgwa25FQk01Q0Z6TmNwUWdF?=
- =?utf-8?B?ZERhSm5TeUtqM1JkNGswRnRYTG41cDlYZU11TTkzU0VEcHFCalBiazMySHNE?=
- =?utf-8?B?MTlPRTY2NWFoQjhlSXhieWxFLzNwbXg3cHl4VVBKUGJqWFhXeTlYTUExbUtQ?=
- =?utf-8?B?Wm04c3FyY01mNzRJN1hxekQrdW14YjVNTmJpUTZmSTkyalJaMGRXU0laZDNx?=
- =?utf-8?B?eWpEMkY1dUI1emFLQlQ3VEhjdGVEek5HdXY4K0pXYjRIcnFKTzZLRGlRdUdL?=
- =?utf-8?B?bm9UaDNOcU1NbVBiemR2SysyL1BPOXhtVjRPUVBsZjRQNTQ0MGNGWkR0Mk93?=
- =?utf-8?Q?5E/e+IdKS4w=3D?=
-X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:BN9PR11MB5530.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(1800799024)(366016);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?utf-8?B?TGZsRjE2YXdBQnZFL0xyL0xmazAwbmxVcG5KWklyNmZpeWJjYlVSTlIyUHdt?=
- =?utf-8?B?TDQ3MlhWQkd3NDBXdWkxY04wbkJhZUVHc3pOektsVmJYMU1vb1hrM0ZQUGxl?=
- =?utf-8?B?c25DUmd0Z2FvZ2pyWjY4bjlWVnpyeENiWmVwd3BPUU1TZTBPRUJRWHFSQWw5?=
- =?utf-8?B?KzRxRWJ6VXZValIvVzJLb3E2VENBTE9SbjZZQmI4WnNNYjFKVUtkQkdTK0hG?=
- =?utf-8?B?eW1QLytnbXF4Vk1HaWRXalBlakdHaG1ublZhcnN4VE5YYlMvbnBLSXNFSnJk?=
- =?utf-8?B?Q1MwNlhON2xDbzZUMzEzTDhXc0pLWXM5anY2M3oxNHNObmdYM29ibHZ2Q1hv?=
- =?utf-8?B?T0xqYnlRS3hLUW5oUkpWMkFQdDZ5Um92QjFMUm01aG1LdUF5d2hyMmxRdUtO?=
- =?utf-8?B?SDQwdkFrTGw3Vk11eWdwTWFSUEZjaWRZR3VFRStJSWhGNTBaUVdpVGx0YXNW?=
- =?utf-8?B?QkVvRGtuREl4ZkdIYUVBUHpoVTl5ZjBHRHUyQ3R2QUpNckdMcVVzb3F5VGt3?=
- =?utf-8?B?ditSd202QzRGT1EzK1AyVnZjTVVQN2ppUFJTYjhaZUFhTHd5TUpjS2JDV1Vv?=
- =?utf-8?B?SVFLa0M4YjhHejdEd1gvSDROMVpSekwwQ0NPNy8rS3ROUy9QaFc3Q1A2U3Q3?=
- =?utf-8?B?SXJ3eE9EYXh5aEh5TEFiallac3hVRkVoWVdZVFBRWGxmMTJpSmlDa25QaHVW?=
- =?utf-8?B?SVI0M1hWSFlWcFcwQWh0dnNCZHRZdU1nQWt4eE5ZVVRuWFZtY1I5cndiMGpH?=
- =?utf-8?B?NmtJNzBoMFB5MmFyMTJEaHg3dkIxZGU4OFRYZmVHTFRRMWJYWGtBdHltWjBK?=
- =?utf-8?B?MmJtdUZFOFUwRW9VSFYzeEc2aURoTmZ5L3lzbmZtQ0RaUVpXVFpRdUpPV2xX?=
- =?utf-8?B?N2V2VTFIUFUrWWVVem1ERVhNVEg0dnRZT1hRUXRmWFpqcTNPaHl3clZpbmx4?=
- =?utf-8?B?SFU3eHRYYkVOWGhrOWhOSnNJanlxbHEvSUhSaG84MXBpS0xVczRuYm1zUHlm?=
- =?utf-8?B?M3JlaWkzQm5XR2RYS0YrS0pTanpZY3lvY0dGZFBIRDVjQUl2ZkVyallIQWxU?=
- =?utf-8?B?UVNTTjYrREQ2aWtPYXFYVkcvWnovcGNhMTN6YWszblgvS0lCcTB2eUM2SGhY?=
- =?utf-8?B?bnkzQmtMQ3VYakc1QlBhSkVKNEtRbkJxTC9vUWh1WFBqVEdzcFZ0dXRONnZW?=
- =?utf-8?B?U003bFVhWEp2TXM1ek04YkMwNWl2bXBFaDZRaDg2SGVLZnhTemc1QzRXbW9l?=
- =?utf-8?B?RlczN1lxN2lHMXg1dFJGQUpHM2wrbjF6T21YdUFxbHI0V1crYk84WjNyQ2RR?=
- =?utf-8?B?WFhxdGpiT3F3U0JmNFJqckg2YXo3NkVSdWhhZWc3ZENtekRqRUVqSWFIYmd4?=
- =?utf-8?B?YldLSUdEdlp4WFl0M2owSHRCSGovRXh3TGd3QWlqR25zMVpOS2hqR0taWHJF?=
- =?utf-8?B?V3lTYy9yL2x1UlF5aUlXWkRZR0UxL2hmVkw3VjRKYVB3Nm9wY2t5dDZxakFh?=
- =?utf-8?B?c2VKb2hwL2w1eUFpUzFPQ0FrcnVFcW00Ynl2bTdlNzl0dnVhcEtSbkYvQk54?=
- =?utf-8?B?MlRIMmRPMnRZZHBjWE9kQnFQY2dOTnRuVTkyWk5zV1ZrWDd5VDVOYm9tWmZQ?=
- =?utf-8?B?eTF2alBEUGs1ZVg0M3hVQUEwOWtYS24wU2RFTk0wV2lkMmFHV1BxQVdSajZG?=
- =?utf-8?B?eHVSa0xkVGxKeVFUR0xUTkpBOTdGc2dhS28xWndIbW1GWCtDSzMxdDVZTjJw?=
- =?utf-8?B?UThpeHc2NlNTZlFib2RMcnhmUjEyQlR2SHlxbm1VRGtrNUhJT2tydTBNOUNm?=
- =?utf-8?B?ZXoyZGtQRzhNVUpEOUp2czlJcFNDeStvRG04a1NYRkc1d1JrOWp6R05GRmkv?=
- =?utf-8?B?MXkzVUhGS2N4S1A2VTdMaHRmUUJEOUFiLzdIaTFLaDVneVJnSTNxWGJGYXI5?=
- =?utf-8?B?eFBZM3daQlh3SGV3Q3FDVWc2R0JVRkxBTDFOTFg1Ky9wa0I2bnZjUUN1ZjZD?=
- =?utf-8?B?UHQ0aDEwTXFDYmdBQWpyT3RidlIrdzJSMFRNZCt1eXgydEZGcHYwc0ppdFpP?=
- =?utf-8?B?WjNYaXhNblY0d2tPYVprV1hQTVpabGFISTBmK3Yvc0JxV2FOd0N3U25PdHVJ?=
- =?utf-8?Q?ASCIezHgfqQJwOt2RJjiYVDte?=
-X-MS-Exchange-CrossTenant-Network-Message-Id: 77fd180f-d3ba-4287-02b4-08ddb307b1ca
-X-MS-Exchange-CrossTenant-AuthSource: BN9PR11MB5530.namprd11.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 24 Jun 2025 10:12:58.9291
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: 9gf7wkK18zp5x5F3rSF5JMESBJ+vjQFTydSsl3IYp9Qz8MIpmLMk4We95bbSXrnWGXsd3uDl7zL/MM0BfRKOkQ==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CO1PR11MB4787
-X-OriginatorOrg: intel.com
+Content-Transfer-Encoding: 8bit
 
+tdh_vp_enter() needs to be marked noinstr, which means it can't call any
+non-inlined noinstr functions.  Commit e9f17038d814 ("x86/tdx: mark
+tdh_vp_enter() as __flatten") tried to address a build warning caused by
+tdx_tdvpr_pa() not getting inlined.  Unfortunately that commit didn't
+fix the warning completely due to the inconsistent behavior of the
+__flatten annotation.
 
-On 23-06-2025 21:07, Daniele Ceraolo Spurio wrote:
->
->
-> On 6/18/2025 11:51 PM, Nilawar, Badal wrote:
->>
->> On 19-06-2025 02:49, Daniele Ceraolo Spurio wrote:
->>>
->>>
->>> On 6/18/2025 12:00 PM, Badal Nilawar wrote:
->>>> Introduce a debug filesystem node to disable late binding fw reload
->>>> during the system or runtime resume. This is intended for situations
->>>> where the late binding fw needs to be loaded from user mode.
->>>
->>> You haven't replied to my question on the previous rev in regards to 
->>> the expected use-case here.
->>> Is this for testing only, or something an actual user might want to 
->>> do? If we only need this for testing, please specify so.
->>
->> Apologies for the oversight. Yes, this is only necessary for testing 
->> the binary before releasing it for up-streaming. There is internal
->> tool which uses IGSC lib to download the binary. To avoid clash 
->> between the binaries, this debug fs node is provided.
->>
->>>
->>> Also, what happens if we suspend with a user-loaded binary? 
->>> userspace doesn't have visibility to know that they have to re-load 
->>> their binary.
->>
->> If the device enters D3 cold state, the binary needs to be reloaded. 
->> However, the kernel mode driver (KMD) does not have control over 
->> binaries downloaded via the IGSC library.
->> If needed D3 cold can be disabled from BIOS or by setting up 
->> vram_threshold = 0.
->
-> I'm confused. Whatever the tool writes is lost on d3cold entry, does 
-> it make any difference to the tester if we revert to the default 
-> values or to the kernel-loaded table? It's still not what they've 
-> written. It sounds to me more like what you need is to block D3cold 
-> (and potentially S2/S3) when the UMD tool is used so that the 
-> userspace-provided table is not lost.
->
-> Otherwise, we could add a modparam to override the binary like we have 
-> for the other firmwares and test anything new that way.
+There are two problems that can come up depending on the compiler and
+config.  One is that tdx_tdvpr_pa() doesn't get inlined, the other is
+that page_to_phys() doesn't get inlined.
 
-In user space late binding flow xe kmd doesn't need to participate. In 
-System suspend flow we will not know whether it will go to D3Cold or 
-not, so we will simply reload the binary during resume. Meanwhile as 
-discussed offline I will document that config will be lost on D3Cold entry.
+The __flatten annotation makes the compiler inline all function calls
+that the annotated function makes, and the aforementioned commit assumed
+this is always honored, recursively.  But it turns out it's not always
+true:
 
-Regards,
-Badal
+ - Gcc may ignore __flatten when CONFIG_CC_OPTIMIZE_FOR_SIZE=y.
+ - Clang doesn't support recursive inlining for __flatten, which can
+   trigger another similar warning when page_to_phys() calls pfn_valid()
+   when CONFIG_DEBUG_VIRTUAL=y.
 
->
-> Daniele
->
->>
->> Regards,
->> Badal
->>
->>> Daniele
->>>
->>>>
->>>> v2:
->>>>    -s/(uval == 1) ? true : false/!!uval/ (Daniele)
->>>>
->>>> Signed-off-by: Badal Nilawar <badal.nilawar@intel.com>
->>>> ---
->>>>   drivers/gpu/drm/xe/xe_debugfs.c            | 41 
->>>> ++++++++++++++++++++++
->>>>   drivers/gpu/drm/xe/xe_late_bind_fw.c       |  3 ++
->>>>   drivers/gpu/drm/xe/xe_late_bind_fw_types.h |  3 ++
->>>>   3 files changed, 47 insertions(+)
->>>>
->>>> diff --git a/drivers/gpu/drm/xe/xe_debugfs.c 
->>>> b/drivers/gpu/drm/xe/xe_debugfs.c
->>>> index d83cd6ed3fa8..d1f6f556efa2 100644
->>>> --- a/drivers/gpu/drm/xe/xe_debugfs.c
->>>> +++ b/drivers/gpu/drm/xe/xe_debugfs.c
->>>> @@ -226,6 +226,44 @@ static const struct file_operations 
->>>> atomic_svm_timeslice_ms_fops = {
->>>>       .write = atomic_svm_timeslice_ms_set,
->>>>   };
->>>>   +static ssize_t disable_late_binding_show(struct file *f, char 
->>>> __user *ubuf,
->>>> +                     size_t size, loff_t *pos)
->>>> +{
->>>> +    struct xe_device *xe = file_inode(f)->i_private;
->>>> +    struct xe_late_bind *late_bind = &xe->late_bind;
->>>> +    char buf[32];
->>>> +    int len;
->>>> +
->>>> +    len = scnprintf(buf, sizeof(buf), "%d\n", late_bind->disable);
->>>> +
->>>> +    return simple_read_from_buffer(ubuf, size, pos, buf, len);
->>>> +}
->>>> +
->>>> +static ssize_t disable_late_binding_set(struct file *f, const char 
->>>> __user *ubuf,
->>>> +                    size_t size, loff_t *pos)
->>>> +{
->>>> +    struct xe_device *xe = file_inode(f)->i_private;
->>>> +    struct xe_late_bind *late_bind = &xe->late_bind;
->>>> +    u32 uval;
->>>> +    ssize_t ret;
->>>> +
->>>> +    ret = kstrtouint_from_user(ubuf, size, sizeof(uval), &uval);
->>>> +    if (ret)
->>>> +        return ret;
->>>> +
->>>> +    if (uval > 1)
->>>> +        return -EINVAL;
->>>> +
->>>> +    late_bind->disable = !!uval;
->>>> +    return size;
->>>> +}
->>>> +
->>>> +static const struct file_operations disable_late_binding_fops = {
->>>> +    .owner = THIS_MODULE,
->>>> +    .read = disable_late_binding_show,
->>>> +    .write = disable_late_binding_set,
->>>> +};
->>>> +
->>>>   void xe_debugfs_register(struct xe_device *xe)
->>>>   {
->>>>       struct ttm_device *bdev = &xe->ttm;
->>>> @@ -249,6 +287,9 @@ void xe_debugfs_register(struct xe_device *xe)
->>>>       debugfs_create_file("atomic_svm_timeslice_ms", 0600, root, xe,
->>>>                   &atomic_svm_timeslice_ms_fops);
->>>>   +    debugfs_create_file("disable_late_binding", 0600, root, xe,
->>>> +                &disable_late_binding_fops);
->>>> +
->>>>       for (mem_type = XE_PL_VRAM0; mem_type <= XE_PL_VRAM1; 
->>>> ++mem_type) {
->>>>           man = ttm_manager_type(bdev, mem_type);
->>>>   diff --git a/drivers/gpu/drm/xe/xe_late_bind_fw.c 
->>>> b/drivers/gpu/drm/xe/xe_late_bind_fw.c
->>>> index c0be9611c73b..001e526e569a 100644
->>>> --- a/drivers/gpu/drm/xe/xe_late_bind_fw.c
->>>> +++ b/drivers/gpu/drm/xe/xe_late_bind_fw.c
->>>> @@ -129,6 +129,9 @@ int xe_late_bind_fw_load(struct xe_late_bind 
->>>> *late_bind)
->>>>       if (!late_bind->component_added)
->>>>           return -EINVAL;
->>>>   +    if (late_bind->disable)
->>>> +        return 0;
->>>> +
->>>>       for (fw_id = 0; fw_id < MAX_FW_ID; fw_id++) {
->>>>           lbfw = &late_bind->late_bind_fw[fw_id];
->>>>           if (lbfw->valid)
->>>> diff --git a/drivers/gpu/drm/xe/xe_late_bind_fw_types.h 
->>>> b/drivers/gpu/drm/xe/xe_late_bind_fw_types.h
->>>> index d256f53d59e6..f79f0c0b2c4a 100644
->>>> --- a/drivers/gpu/drm/xe/xe_late_bind_fw_types.h
->>>> +++ b/drivers/gpu/drm/xe/xe_late_bind_fw_types.h
->>>> @@ -71,6 +71,9 @@ struct xe_late_bind {
->>>>       struct xe_late_bind_fw late_bind_fw[MAX_FW_ID];
->>>>       /** @late_bind.wq: workqueue to submit request to download 
->>>> late bind blob */
->>>>       struct workqueue_struct *wq;
->>>> +
->>>> +    /** @late_bind.disable to block late binding reload during pm 
->>>> resume flow*/
->>>> +    bool disable;
->>>>   };
->>>>     #endif
->>>
->
+Therefore using __flatten is not the right fix.
+
+To fix the first problem, remove the __flatten for tdh_vp_enter() and
+instead annotate tdx_tdvpr_pa() with __always_inline to make sure it is
+always inlined.
+
+To fix the second problem, change tdx_tdvpr_pa() to use
+PFN_PHYS(page_to_pfn()) instead of page_to_phys() so that there will be
+no more function call inside tdx_tdvpr_pa()[*].
+
+The TDVPR page is always an actual page out of page allocator, so the
+additional warning around pfn_valid() check in page_to_phys() doesn't
+help a lot anyway.  It's not worth complicating the code for such
+warning when CONFIG_DEBUG_VIRTUAL=y.
+
+[*] Since commit cba5d9b3e99d ("x86/mm/64: Make SPARSEMEM_VMEMMAP the
+    only memory model") page_to_pfn() has been a simple macro without
+    any function call.
+
+Fixes: e9f17038d814 ("x86/tdx: mark tdh_vp_enter() as __flatten")
+Signed-off-by: Kai Huang <kai.huang@intel.com>
+---
+ arch/x86/virt/vmx/tdx/tdx.c | 11 ++++++++---
+ 1 file changed, 8 insertions(+), 3 deletions(-)
+
+diff --git a/arch/x86/virt/vmx/tdx/tdx.c b/arch/x86/virt/vmx/tdx/tdx.c
+index c7a9a087ccaf..f92ceaea2726 100644
+--- a/arch/x86/virt/vmx/tdx/tdx.c
++++ b/arch/x86/virt/vmx/tdx/tdx.c
+@@ -1502,9 +1502,14 @@ static inline u64 tdx_tdr_pa(struct tdx_td *td)
+ 	return page_to_phys(td->tdr_page);
+ }
+ 
+-static inline u64 tdx_tdvpr_pa(struct tdx_vp *td)
++static __always_inline u64 tdx_tdvpr_pa(struct tdx_vp *td)
+ {
+-	return page_to_phys(td->tdvpr_page);
++	/*
++	 * Don't use page_to_phys() because tdh_vp_enter() calls this
++	 * function from 'noinstr' code, and page_to_phys() can call
++	 * uninlined functions on some compiler/configs.
++	 */
++	return PFN_PHYS(page_to_pfn(td->tdvpr_page));
+ }
+ 
+ /*
+@@ -1518,7 +1523,7 @@ static void tdx_clflush_page(struct page *page)
+ 	clflush_cache_range(page_to_virt(page), PAGE_SIZE);
+ }
+ 
+-noinstr __flatten u64 tdh_vp_enter(struct tdx_vp *td, struct tdx_module_args *args)
++noinstr u64 tdh_vp_enter(struct tdx_vp *td, struct tdx_module_args *args)
+ {
+ 	args->rcx = tdx_tdvpr_pa(td);
+ 
+
+base-commit: b7e21417e1f2c9b2d5c15b0a7d866e810de772aa
+-- 
+2.49.0
+
 
