@@ -1,110 +1,134 @@
-Return-Path: <linux-kernel+bounces-700389-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-700391-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1CC65AE67D5
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Jun 2025 16:09:24 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id C3BAFAE67D9
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Jun 2025 16:09:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1F2E916AFCF
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Jun 2025 14:08:32 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 93B9C5A6403
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Jun 2025 14:08:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DB0502C375A;
-	Tue, 24 Jun 2025 14:08:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DD9E52D12E9;
+	Tue, 24 Jun 2025 14:08:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="LWuD3VSW"
-Received: from desiato.infradead.org (desiato.infradead.org [90.155.92.199])
+	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="rjX9wgVy"
+Received: from out30-111.freemail.mail.aliyun.com (out30-111.freemail.mail.aliyun.com [115.124.30.111])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D118728EA4D;
-	Tue, 24 Jun 2025 14:08:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.92.199
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3723B28ECE2
+	for <linux-kernel@vger.kernel.org>; Tue, 24 Jun 2025 14:08:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.111
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750774106; cv=none; b=uZmX/h7Q3CylkHCyWEJ2clNciS1YyT1tuEUh9rL8zJTkty0cww9DoR4V/1um6z6KdeTraNf9bppZfV+GAqbOzMmGklBHTL32WYkKwIWdCG+inZhxGiVc+FPYoHldB6tPg4cmk9Pm5ESPvoXLd9hYv8WerJa9zR3elpNmBbvx/6w=
+	t=1750774137; cv=none; b=o4AiIsC5kCg0fWk+lwgZtWv+UckjjWKmCg6N9PostTCs8ZFbMHXX4K052EY1lO9dnzrb3dP+s7if1b7baFPz6wWKBWFqJIkKWWSqJZ11O76GjChFrgLXsGjOoXgbbSyn6pnTTvptckfNzijWis2O2PA0KwfTE/KCILesssfVwm0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750774106; c=relaxed/simple;
-	bh=iV4gr/3BWV7NDdHOhEsRqVulf21qeRC85FDYk+HLPN8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=VmqVB/tEeemMer8psKI8C61mREx5335X04hWhjzq8a74IwqkZxskKvE0828PB79D56MQ6C5/UYY4T2Dsglb8mp36Q8LS0i73StTjcMu3AHjHQLGx8m4YQgdlwUL6e5RlYTBvnkUM0DUVdywZfQuJ24bcbWQGgCkdWdPukm3awLE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=LWuD3VSW; arc=none smtp.client-ip=90.155.92.199
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=desiato.20200630; h=In-Reply-To:Content-Transfer-Encoding:
-	Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:
-	Sender:Reply-To:Content-ID:Content-Description;
-	bh=LJ52+yqkREKU2n9YRiyK+/2J+b9eohTa6Rk0szUFEOE=; b=LWuD3VSWymEY53n/WlHmdkJc/b
-	YzK3kQa/G79T7gG+xtXFq2WZipwh5UpGA0W0fv0YtNLauDcMNjOnBv1btZyeFtV47UJun+SZwUEXV
-	uDI0vzvMP0wy/8jEW/w0jQ/fDClDP3IEx+LUUiLQOFT0uNwf9zUcb6H8gGMHv4YFN7hiBj7I8hs/W
-	Qj3vvnez6pTwAY1sUw30W3AVI3NbRi9TCjvVxAuwKxRiliZRkCWUz01DxPxWiuB31Nu3R0+k94OrY
-	pgrjcuyCsoZewvIJ2Xsks3X7KduKPHK7se76aexBvCpHZga1JxgBiSe3YGu8Pcox0h6x6PNnuqr/v
-	w87ENWuw==;
-Received: from 77-249-17-252.cable.dynamic.v4.ziggo.nl ([77.249.17.252] helo=noisy.programming.kicks-ass.net)
-	by desiato.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
-	id 1uU4Js-00000005SFZ-33Ob;
-	Tue, 24 Jun 2025 14:08:16 +0000
-Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
-	id 905AB307E51; Tue, 24 Jun 2025 16:08:15 +0200 (CEST)
-Date: Tue, 24 Jun 2025 16:08:15 +0200
-From: Peter Zijlstra <peterz@infradead.org>
-To: =?iso-8859-1?Q?Cl=E9ment_L=E9ger?= <cleger@rivosinc.com>
-Cc: Nam Cao <namcao@linutronix.de>, "Maciej W. Rozycki" <macro@orcam.me.uk>,
-	Palmer Dabbelt <palmer@dabbelt.com>,
-	Paul Walmsley <paul.walmsley@sifive.com>, aou@eecs.berkeley.edu,
-	Alexandre Ghiti <alex@ghiti.fr>, bigeasy@linutronix.de,
-	clrkwllms@kernel.org, rostedt@goodmis.org,
-	linux-rt-devel@lists.linux.dev, linux-riscv@lists.infradead.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] riscv: Enable interrupt during exception handling
-Message-ID: <20250624140815.GU1613200@noisy.programming.kicks-ass.net>
-References: <mhng-60581B88-6FC7-4349-96B6-730D908ABF4A@palmerdabbelt-mac>
- <alpine.DEB.2.21.2506240303170.61655@angie.orcam.me.uk>
- <19cf2371-7293-4e71-a17d-669db4c8270a@rivosinc.com>
- <20250624131730.XqPd1HUR@linutronix.de>
- <d135d6cc-5117-4b3a-9abe-2e5fd9e3e490@rivosinc.com>
+	s=arc-20240116; t=1750774137; c=relaxed/simple;
+	bh=ZWssv0IXI0IXobo+UKoj2+5cxw7bT2DZZ8muTcsZ9mo=;
+	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
+	 In-Reply-To:Content-Type; b=kxyMT3/xwqm/M9dhRlSiI9c1F2cCAj9zyJW1KAGXrSC7GkZeb3QqeGCKZc3fadwSlAAii8REcWNz9Ervl+C4zwJZ30aGvF544niyMgdZ3sJB1ibwznThiq2dGAM6JiwurtS8rm89I3nOwIvU/h5pAbmGUaxTx5uSZuzKjc2g07w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=rjX9wgVy; arc=none smtp.client-ip=115.124.30.111
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
+DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
+	d=linux.alibaba.com; s=default;
+	t=1750774125; h=Message-ID:Date:MIME-Version:Subject:From:To:Content-Type;
+	bh=etMUb4iNHTlYD5dbMCiSgTbHRULmUItFOT5kzzE5wG8=;
+	b=rjX9wgVyr1Buw1CEOb79xz/epmeb5ErRMfjO2HsLxliWFPcFHxpW9M/GjBKftbcfFVlXY4RzVqYU3kPHmhUOM+rDiuxcTD0KBAO0SNQ1Q40cZJ7xJ4iHWwdFN3sKtizRQCezFNytG3YcWRWZj8OAMMLbOO1BoNIlnDPB06SypTU=
+Received: from 30.171.184.29(mailfrom:baolin.wang@linux.alibaba.com fp:SMTPD_---0WeiLodu_1750774123 cluster:ay36)
+          by smtp.aliyun-inc.com;
+          Tue, 24 Jun 2025 22:08:44 +0800
+Message-ID: <6771bdca-b489-42f3-b2fe-5449879e8687@linux.alibaba.com>
+Date: Tue, 24 Jun 2025 22:08:43 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 1/2] mm: huge_memory: disallow hugepages if the
+ system-wide THP sysfs settings are disabled
+From: Baolin Wang <baolin.wang@linux.alibaba.com>
+To: Dev Jain <dev.jain@arm.com>, akpm@linux-foundation.org, hughd@google.com,
+ david@redhat.com
+Cc: ziy@nvidia.com, lorenzo.stoakes@oracle.com, Liam.Howlett@oracle.com,
+ npache@redhat.com, ryan.roberts@arm.com, baohua@kernel.org,
+ linux-mm@kvack.org, linux-kernel@vger.kernel.org
+References: <cover.1750666536.git.baolin.wang@linux.alibaba.com>
+ <adb8d5032ecc7b6935e3197cafffe92cbc7581e6.1750666536.git.baolin.wang@linux.alibaba.com>
+ <8912e179-601a-4677-b2f6-14f40d488d98@arm.com>
+ <e666835e-4c15-4f5a-bab1-f27e0c438f16@linux.alibaba.com>
+In-Reply-To: <e666835e-4c15-4f5a-bab1-f27e0c438f16@linux.alibaba.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <d135d6cc-5117-4b3a-9abe-2e5fd9e3e490@rivosinc.com>
 
-On Tue, Jun 24, 2025 at 03:48:21PM +0200, Clément Léger wrote:
+
+
+On 2025/6/24 17:57, Baolin Wang wrote:
 > 
 > 
-> On 24/06/2025 15:17, Nam Cao wrote:
-> > On Tue, Jun 24, 2025 at 01:37:13PM +0200, Clément Léger wrote:
-> >> On 24/06/2025 04:09, Maciej W. Rozycki wrote:
-> >>> On Mon, 23 Jun 2025, Palmer Dabbelt wrote:
-> >>>> I'm kind of split on a Fixes tag here.  One could argue it's a regression, as
-> >>>> having interrupts disabled during exceptions is going to cause all sorts of
-> >>>> performance issues for users.  Seems a bit risk to just backport, though...
-> >>>>
-> >>>> That said, if nobody noticed then it's probably a good sign nobody is really
-> >>>> paying attention and we should just backport it before anyone notices...
-> >>>
-> >>>  Oh, someone did notice and it's not only performance, cf. 
-> >>> <https://lore.kernel.org/r/alpine.DEB.2.21.2501070143250.18889@angie.orcam.me.uk/>.
-> >>
-> >> I also had a series which was doing so for misaligned accesses handling,
-> >> but after discussion, it was not ok to do so.:
-> >>
-> >> https://lore.kernel.org/linux-riscv/20250422094419.GC14170@noisy.programming.kicks-ass.net/
-> > 
-> > If I understand that right, exceptions from kernel should be treated as
-> > NMI, so that lockdep can tell us if exception handlers touch locks.
-> > 
-> > But (conditionally) enabling interrupts does not lose us that benefit. It
-> > is still considered NMI by lockdep.
-> > 
-> > Unless I miss something, the patch is fine as is.
+> On 2025/6/24 16:41, Dev Jain wrote:
+>>
+>> On 23/06/25 1:58 pm, Baolin Wang wrote:
+>>> When invoking thp_vma_allowable_orders(), the TVA_ENFORCE_SYSFS flag 
+>>> is not
+>>> specified, we will ignore the THP sysfs settings. Whilst it makes 
+>>> sense for the
+>>> callers who do not specify this flag, it creates a odd and surprising 
+>>> situation
+>>> where a sysadmin specifying 'never' for all THP sizes still observing 
+>>> THP pages
+>>> being allocated and used on the system.
+>>>
+>>> The motivating case for this is MADV_COLLAPSE. The MADV_COLLAPSE will 
+>>> ignore
+>>> the system-wide Anon THP sysfs settings, which means that even though 
+>>> we have
+>>> disabled the Anon THP configuration, MADV_COLLAPSE will still attempt 
+>>> to collapse
+>>> into a Anon THP. This violates the rule we have agreed upon: never 
+>>> means never.
+>>>
+>>> Currently, besides MADV_COLLAPSE not setting TVA_ENFORCE_SYSFS, there 
+>>> is only
+>>> one other instance where TVA_ENFORCE_SYSFS is not set, which is in the
+>>> collapse_pte_mapped_thp() function, but I believe this is reasonable 
+>>> from its
+>>> comments:
+>>>
+>>> "
+>>> /*
+>>> Â  * If we are here, we've succeeded in replacing all the native pages
+>>> Â  * in the page cache with a single hugepage. If a mm were to fault-in
+>>> Â  * this memory (mapped by a suitably aligned VMA), we'd get the 
+>>> hugepage
+>>> Â  * and map it by a PMD, regardless of sysfs THP settings. As such, 
+>>> let's
+>>> Â  * analogously elide sysfs THP settings here.
+>>> Â  */
+>>> if (!thp_vma_allowable_order(vma, vma->vm_flags, 0, PMD_ORDER))
+>>
+>> So the behaviour now is: First check whether THP settings converge to 
+>> never.
+>> Then, if enforce_sysfs is not set, return immediately. So in this 
+>> khugepaged
+>> code will it be better to call __thp_vma_allowable_orders()? If the sysfs
+>> settings are changed to never before hitting collapse_pte_mapped_thp(),
+>> then right now we will return SCAN_VMA_CHECK from here, whereas, the 
+>> comment
+>> says "regardless of sysfs THP settings", which should include "regardless
+>> of whether the sysfs settings say never".
+> 
+> Sounds reasonable to me. Thanks.
+> 
+> I will change thp_vma_allowable_order() to __thp_vma_allowable_orders() 
+> in the collapse_pte_mapped_thp() function to maintain consistency with 
+> the original logic.
+> 
+> Lorenzo and David, how do you think? Thanks.
 
-I'm confused, you're wanting to conditionally enable interrupts from a
-kernel exception while its NMI like? *WHY* ?!
-
+After thinking more, since collapse_pte_mapped_thp() is only used for 
+file/shmem collapse, changing to __thp_vma_allowable_orders() has no 
+effect. So I prefer to leave it as is.
 
