@@ -1,87 +1,74 @@
-Return-Path: <linux-kernel+bounces-700201-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-700206-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7FA10AE6544
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Jun 2025 14:42:34 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id CF3C0AE655F
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Jun 2025 14:48:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C46654C00A4
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Jun 2025 12:42:33 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D45AD3A9645
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Jun 2025 12:47:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 50A29291C0E;
-	Tue, 24 Jun 2025 12:42:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=lwn.net header.i=@lwn.net header.b="ZnPmYoOl"
-Received: from ms.lwn.net (ms.lwn.net [45.79.88.28])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 87E6629551E;
+	Tue, 24 Jun 2025 12:48:12 +0000 (UTC)
+Received: from mail.prodrive-technologies.com (mail.prodrive-technologies.com [212.61.153.67])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 21A89222571;
-	Tue, 24 Jun 2025 12:42:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.79.88.28
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3B46621765E;
+	Tue, 24 Jun 2025 12:48:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.61.153.67
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750768944; cv=none; b=lpjlz/G3QhicjYrq3JG2NZrWGnH3hFw4cBQpuTlpPJH5QLZ7WWS91BQtU+gFl6J5syt7jWt2XrQV8NXN0Pftg/PLAQEuFXxS4uf+qgDBmiG2cm4fH9s5hQlOryBU8GoLy//mPOFm1EhgtJXGKz5H3s1FGW3UyY2YXbPBpFiXdBg=
+	t=1750769292; cv=none; b=B1/0dlHF0OfaZ72N7/iKMK84kjCp102LqxxVFN47ImsIUtpD4EebPCC8ntCnE2YuXh72W22kX0/XVLBdpSDjkHijm+OYAOnSGfDczdJPFPg6/PupgwYdffc5LtAyvhn3eP9Ozv6S6Rwoypw7w09ZaMMJNpZKi61PBG/aWetAOfs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750768944; c=relaxed/simple;
-	bh=VIVzvuGLxfr6FEARxXBTW3jW4mO77H2gDFFgT8Ut+io=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=BcT9ytmcm7pXX8HumYlWO8FBCiPgZShuj6yYaxcKhCsxhSE8jHaaNkfMHg+TyqBX3M2zdPYXws0v3PQYTsRbASSsLHxNLMAklv0NxhV2X9Hk3g8GYExPGJQdDkI09u8xguMgZpkcUcRWxr+Pz0wz8MhxYkTR+nsJnCVlnLeq/eo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lwn.net; spf=pass smtp.mailfrom=lwn.net; dkim=pass (2048-bit key) header.d=lwn.net header.i=@lwn.net header.b=ZnPmYoOl; arc=none smtp.client-ip=45.79.88.28
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lwn.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lwn.net
-DKIM-Filter: OpenDKIM Filter v2.11.0 ms.lwn.net 0164C406FC
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=lwn.net; s=20201203;
-	t=1750768936; bh=oD11XIAvJqRoGH2EZZgtZLub3E/yceoBzeCcm0HjK9w=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
-	b=ZnPmYoOliNLXAjgiNqpuGzcUHCNR4FJRzfHgzfy8KdeufvTwe2ryg1jpnDR7Vol64
-	 BMwv9G8UpXUKaGWBc9BbpkfIovyuGZU87SwLUyPvo9tE0wO0TvNJZVmAn5EHNtaS/M
-	 wfbWVhykEHi5jevC8x4mwJ0v0dwlqMVCBoaGp8MwlRlYekhrPg3MvDhLv/FF1rfg3u
-	 zbkuVVBX29yYVk6WblsAd/xgA6a0ai6RBQTNAMEfVQpMjkOMsLXoyHoIoYVJc1PQT3
-	 /UVJOJtV8oCb2Knv2OSANKhBH94dQOzBymYx0IuOyumBcDW1pBzZ61H6jPe4UJ2RyZ
-	 bPg5RVIac6WIQ==
-Received: from localhost (mdns.lwn.net [45.79.72.68])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by ms.lwn.net (Postfix) with ESMTPSA id 0164C406FC;
-	Tue, 24 Jun 2025 12:42:15 +0000 (UTC)
-From: Jonathan Corbet <corbet@lwn.net>
-To: Bagas Sanjaya <bagasdotme@gmail.com>, Alok Tiwari
- <alok.a.tiwari@oracle.com>, pbonzini@redhat.com, kvm@vger.kernel.org,
- linux-doc@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org
-Subject: Re: [PATCH next] Documentation: KVM: fix reference for
- kvm_ppc_resize_hpt and various typos
-In-Reply-To: <aFniQYHCyi4BKVcs@archie.me>
-References: <20250623191152.44118-1-alok.a.tiwari@oracle.com>
- <aFniQYHCyi4BKVcs@archie.me>
-Date: Tue, 24 Jun 2025 06:42:15 -0600
-Message-ID: <87jz5171lk.fsf@trenco.lwn.net>
+	s=arc-20240116; t=1750769292; c=relaxed/simple;
+	bh=Hilcgacb5T6lcTk4xUKS+2QL0eNiJ3t+yrbfo/oLiPE=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=kTTk04aJ3XL7a+nfuSiOPL4IQenDVjYmooO0aJTUv+vhHUkkCM4Tn7lJuu9y1dDy+PPNknzcxlajzQ6pQtbnhQznctD2Vwd6W1ebixUQv0z351B4qPIgKFkiX5c4FeDsVpIKhhi8kNeYPhr77Rdhi048OmKOCUW4fZ8jn6mFVOo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=prodrive-technologies.com; spf=pass smtp.mailfrom=prodrive-technologies.com; arc=none smtp.client-ip=212.61.153.67
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=prodrive-technologies.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=prodrive-technologies.com
+Received: from EXCOP01.bk.prodrive.nl (10.1.0.22) by EXCOP01.bk.prodrive.nl
+ (10.1.0.22) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.4; Tue, 24 Jun
+ 2025 14:42:59 +0200
+Received: from lnxdevrm02.bk.prodrive.nl (10.1.1.121) by
+ EXCOP01.bk.prodrive.nl (10.1.0.22) with Microsoft SMTP Server id 15.2.1544.4
+ via Frontend Transport; Tue, 24 Jun 2025 14:42:59 +0200
+Received: from paugeu by lnxdevrm02.bk.prodrive.nl with local (Exim 4.96)
+	(envelope-from <paul.geurts@prodrive-technologies.com>)
+	id 1uU2zL-00Bg0N-0d;
+	Tue, 24 Jun 2025 14:42:59 +0200
+From: Paul Geurts <paul.geurts@prodrive-technologies.com>
+To: <mgreer@animalcreek.com>, <krzk@kernel.org>, <andrew+netdev@lunn.ch>,
+	<davem@davemloft.net>, <edumazet@google.com>, <kuba@kernel.org>,
+	<pabeni@redhat.com>, <robh@kernel.org>, <conor+dt@kernel.org>,
+	<linux-wireless@vger.kernel.org>, <netdev@vger.kernel.org>,
+	<devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+CC: <martijn.de.gouw@prodrive-technologies.com>, Paul Geurts
+	<paul.geurts@prodrive-technologies.com>
+Subject: [PATCH v2 0/2] NFC: trf7970a: Add option to reduce antenna gain
+Date: Tue, 24 Jun 2025 14:42:45 +0200
+Message-ID: <20250624124247.2763864-1-paul.geurts@prodrive-technologies.com>
+X-Mailer: git-send-email 2.39.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Content-Type: text/plain
 
-Bagas Sanjaya <bagasdotme@gmail.com> writes:
+The TRF7970a device is sensitive to RF disturbances, which can make it
+hard to pass some EMC immunity tests. By reducing the RX antenna gain,
+the device becomes less sensitive to EMC disturbances, as a trade-off
+against antenna performance.
 
-> On Mon, Jun 23, 2025 at 12:11:47PM -0700, Alok Tiwari wrote:
->>  If this ioctl is called when a hash table has already been allocated,
->>  with a different order from the existing hash table, the existing hash
->> -table will be freed and a new one allocated.  If this is ioctl is
->> -called when a hash table has already been allocated of the same order
->> +table will be freed and a new one allocated. If this ioctl is called
->> +when a hash table has already been allocated of the same order
->
-> Two spaces between sentences (just to be consistent), please.
+Signed-off-by: Paul Geurts <paul.geurts@prodrive-technologies.com>
+---
+v1 -> v2:
+- Added vendor prefix
+- Added units
 
-Spaces after periods are explicitly documented as something we do not
-"correct" or harass our contributors about.  Please, for the Nth time,
-do not add unnecessary friction to the process of improving our
-documentation.
 
-jon
 
