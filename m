@@ -1,230 +1,214 @@
-Return-Path: <linux-kernel+bounces-700031-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-700034-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id EBCCDAE62EC
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Jun 2025 12:53:19 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7DE14AE62F3
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Jun 2025 12:54:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C0D27178CD5
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Jun 2025 10:53:19 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0FEEB3BAB74
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Jun 2025 10:53:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 62B1828469D;
-	Tue, 24 Jun 2025 10:53:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 13EE2289E3F;
+	Tue, 24 Jun 2025 10:53:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b="rlPHDjJV"
-Received: from NAM12-DM6-obe.outbound.protection.outlook.com (mail-dm6nam12on2061.outbound.protection.outlook.com [40.107.243.61])
+	dkim=pass (1024-bit key) header.d=leica-geosystems.com header.i=@leica-geosystems.com header.b="lGELpFiG"
+Received: from PA4PR04CU001.outbound.protection.outlook.com (mail-francecentralazon11013019.outbound.protection.outlook.com [40.107.162.19])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D39A7223704
-	for <linux-kernel@vger.kernel.org>; Tue, 24 Jun 2025 10:53:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.243.61
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6EB36286D4E;
+	Tue, 24 Jun 2025 10:53:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.162.19
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750762392; cv=fail; b=kPqvRS/5oExmtPzL5hxeQ/1ouMqc/WSOq3LtFibS7xErfeklLoopp3iUUhqv2lTkasN45YDv/JrK22j+AEt/nPTl257v1VhfkNz3Wo3r1qt9ZplKvtxDd26e9YKc6zB/nnTXgtqsQT+hdDEjYK+YISYwcAWMzKLR6aP17NdcYAU=
+	t=1750762425; cv=fail; b=WT26rw0zjnArSfAOrfjSKfMgDHIYErLPDP8bP4MWjXUC2EkeaZf/6G0jdgKxA85K4V3t958jdb94qtwjCWxa6csdX+Xfbwk9dL3gYZhkcbPfQFLKDHrSXql1I7aPID/6iAMU0bDyVlye5KSraqrbj1uUy/jsxcG3okVxIKACpDw=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750762392; c=relaxed/simple;
-	bh=tv8w2vpXHfORcd9a8vynl8n2EboLkpe9KHSrRAXEqN8=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=naSpWgajfGz31+1eBAkJml66dTwuK82ByQdTT/AWGx1GEWjTRPCcJ3kqRQilp3PNgj8PGq4duTiHIyXsWn2QhY4lv3FZko+P9NEXv4yximZuk+SMxEZKUNespgB8sRqZzshN+NXS+hs7KtySzIBHglpOU0/cH0nc7wAYnV/iasQ=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com; spf=pass smtp.mailfrom=microchip.com; dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b=rlPHDjJV; arc=fail smtp.client-ip=40.107.243.61
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=microchip.com
+	s=arc-20240116; t=1750762425; c=relaxed/simple;
+	bh=U9E/hhUR2xYzWugNxJmJGCcHVrHkwaU5t09dWVYudyM=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=W+Lvqe9g6H9rzcsjzVC/imHZNqpjCGsAKJT8qdmqSyQ5FgdTNxgfBC9OnC1KhUkQIuyCk0xCG/SsM55ZU51jaJlQCsixnAYpA73jITP6D1ngrWNK/+hc8PjjzYECOSO2I9vkbcnuZyaUMCUsYZJY+7Ho0B6TSeOaF2DU+KK7iBU=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=leica-geosystems.com; spf=fail smtp.mailfrom=leica-geosystems.com; dkim=pass (1024-bit key) header.d=leica-geosystems.com header.i=@leica-geosystems.com header.b=lGELpFiG; arc=fail smtp.client-ip=40.107.162.19
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=leica-geosystems.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=leica-geosystems.com
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=Z9ah1cjgi/jLY+Ouk2PDkMqCQvQlij74IRE3LJg9QN3N0z6u+fvJS0oHvFnWRnlqq1HLPsid9D6sG6Pkgfl4PGunKYYpQcd0VkrAeiTBPfbkRc4Gg1dziUpwTLTgXmok8JYj6RCEqbapWunJ+gZGq/NicsJF8h3BmfeMqKy0yL5wPd8v9jwkjjhMDJ1jsJ1svgL0oDBCoaznMyDQQ7tAWEMHAYMh1yPNQ0Vb3Piw1R7wMq9e4osSsk+tDedTUNzvv09DUPo6ysR4NlJJAB79Ux2uSSFoThmvVhNWUDcwydMAzFzJsXBC54xr1ExR8Fw7fHSF4/kE7I6t8KuQwpGckw==
+ b=SShFqIxnn9sxJXyi5C39SUxGGcCu3s/xNMYgo1IAWL6ESVWuj4ft+o7yG8Ay4FFjOzD5xwRDyMIihyJ8lSJsvRNm6UtQXN6VdzW7GE45l4EPlqY5g1Uaj0qvB6dGOhtU083P5XGpWdTGVH7ItruBsaHiRDahw//yoR6EoJ6SEbA06vtId9cISbHzsTPvSTwuXPu0hhyFOoUPapGpsjE+cx7qFMYbagbz7qePmHCnhuagLsDzrpumzwPGhHt4UMIrC0b8WYH6WVYNYnNTHpCp+wNUeT8c6ZkPPl2jlLr3oT6pZpqC7+nn8ErP0225EpOAYhQLZIUv00Ys+IjiBo6LNQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=tv8w2vpXHfORcd9a8vynl8n2EboLkpe9KHSrRAXEqN8=;
- b=w49GFD1vu9QTCK1RDY3GuU5hux5Gw5PXB5DZPtZJ6E9CME6hSZQTRWoD9rfZUzwe93Mb3o1ONoTZNR99Dkg89SfhL5a7TLVuUSNdpbjSuhdjwS1532hzzd3OFojwJb9W5DjoXMlXaxjDlAGK3nUItdvbYzYwtCO/vRkSKYaerMaxQOqfciUi00IH+3kFik2LYyCEkV8j5hM6iw2/kdxZYQEcXn2FUKKzRjHMdKC6FrvZmy1gN2p/3LyEjxdsP7vLlP+Xn7MvArMWCUaVv4lOjUPn/uig9OSnuFNS67urH+RJX0v0UWFTg0pYodbA4PG3JQeQAYlC3GbjazlPG6l8wA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=microchip.com; dmarc=pass action=none
- header.from=microchip.com; dkim=pass header.d=microchip.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=microchip.com;
+ bh=x1SOwFystKE2ge9VOH9hZodBnZUTd3lqqDhPpMuPs5Q=;
+ b=uoqDVwSuiL6qlWqtfbyzbAJLAVXjRX69panb31z9p3IzRpwBvbnS39sQadZYQwEylh98BE0Qu4jPemIDRticjIPZ1sF9OXZobaurUjvMWOGIPJi44loKubTTF0h+mV9FdwK4hB6XkvISXZZfPFrgovGsbcF7aFhW1wkZr2MLv+jWRrAx/Ok8piY7BXMGSyiQTDrXKfmiQ2PKcyO0ZAfzbIiI7nSaf2FlttSwBsVK+Cpnsv8vwwh380dx0zj2XN78htOiEFx6RhJNt1HWQ6KKyC8qAI6FVcW70CptxjsRQmlSxNA0rT958UY/2FsXnxYxSjyolkSkrjkl9XPHF1tgYQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 193.8.40.94) smtp.rcpttodomain=vger.kernel.org
+ smtp.mailfrom=leica-geosystems.com; dmarc=pass (p=reject sp=reject pct=100)
+ action=none header.from=leica-geosystems.com; dkim=none (message not signed);
+ arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=leica-geosystems.com;
  s=selector1;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=tv8w2vpXHfORcd9a8vynl8n2EboLkpe9KHSrRAXEqN8=;
- b=rlPHDjJVebppLwzv1xI6e3SZ7c7gSA41FI3+JNTnNbZHDorQ/Hw4IC+LMceyXAzRNJaqnxIh+kNKvZnBmRC1a8rJ+biesrsqoWxywpB/BBHQglU9QEFZ7znhESCq/995A19p/msk2/r9uDyM57Q7ZowFQO5/dn1CYRjVxSdvNveVdXjy6VZhCYfqIeXcW/W1PC2F4Zv9sbEJpJJ1yqKIo1pc7ETuLGd7JcEbeY6zV6QfiLgXk/JnA6i3bvnrWZvpCciT6h2FV8b3SSowm/BAp9KxFy/euJoPtldfZbwFJQPdZ696kjRlTrlnlbONgmTf0NR2b9bK3yYlh6wDKm5o/Q==
-Received: from PH7PR11MB6451.namprd11.prod.outlook.com (2603:10b6:510:1f4::16)
- by DM4PR11MB5245.namprd11.prod.outlook.com (2603:10b6:5:388::20) with
+ bh=x1SOwFystKE2ge9VOH9hZodBnZUTd3lqqDhPpMuPs5Q=;
+ b=lGELpFiG0MZIvFrcxQwLV4VXcCNt2l4ArObEw2PERI1VmEtSM31Il8180efWukSL30f6DsjnDOMmPLhl4CflFfO8rEcnqaq4cps9ThjODDfYtSOV8zJ+P+QaS5fSjZlJIfG/3pT/astS+6xbkr2v1ifn3bqiC1CVZmo5DEneTqU=
+Received: from AM0PR10CA0028.EURPRD10.PROD.OUTLOOK.COM (2603:10a6:208:17c::38)
+ by DB9PR06MB8122.eurprd06.prod.outlook.com (2603:10a6:10:291::23) with
  Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8857.31; Tue, 24 Jun
- 2025 10:53:07 +0000
-Received: from PH7PR11MB6451.namprd11.prod.outlook.com
- ([fe80::80a8:f388:d92e:41f8]) by PH7PR11MB6451.namprd11.prod.outlook.com
- ([fe80::80a8:f388:d92e:41f8%5]) with mapi id 15.20.8857.022; Tue, 24 Jun 2025
- 10:53:07 +0000
-From: <Dharma.B@microchip.com>
-To: <laurent.pinchart@ideasonboard.com>
-CC: <Manikandan.M@microchip.com>, <andrzej.hajda@intel.com>,
-	<neil.armstrong@linaro.org>, <rfoss@kernel.org>, <jonas@kwiboo.se>,
-	<jernej.skrabec@gmail.com>, <maarten.lankhorst@linux.intel.com>,
-	<mripard@kernel.org>, <tzimmermann@suse.de>, <airlied@gmail.com>,
-	<simona@ffwll.ch>, <dri-devel@lists.freedesktop.org>,
-	<linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v4 1/3] drm/bridge: microchip-lvds: drop unused drm_panel
-Thread-Topic: [PATCH v4 1/3] drm/bridge: microchip-lvds: drop unused drm_panel
-Thread-Index: AQHb5OnimHgNx3OeY0G+OrHRjNF7R7QSH6AAgAABAQCAAAEqAIAAALSA
-Date: Tue, 24 Jun 2025 10:53:07 +0000
-Message-ID: <9f7fe1a6-77bd-4dba-9d83-2a9d0625baec@microchip.com>
-References: <20250624-microchip-lvds-v4-0-937d42a420e9@microchip.com>
- <20250624-microchip-lvds-v4-1-937d42a420e9@microchip.com>
- <20250624104248.GH15951@pendragon.ideasonboard.com>
- <adee247c-933b-418c-959d-665b1df11874@microchip.com>
- <20250624105034.GI15951@pendragon.ideasonboard.com>
-In-Reply-To: <20250624105034.GI15951@pendragon.ideasonboard.com>
-Accept-Language: en-GB, en-US
-Content-Language: en-GB
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-authentication-results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=microchip.com;
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: PH7PR11MB6451:EE_|DM4PR11MB5245:EE_
-x-ms-office365-filtering-correlation-id: 98b69ed5-8138-4ad9-11a5-08ddb30d4d99
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam:
- BCL:0;ARA:13230040|7416014|376014|366016|1800799024|38070700018;
-x-microsoft-antispam-message-info:
- =?utf-8?B?WW96S0JCZU1IU290TC9WYW9SS3dqODBKeWdpSWhCamJhZnZobTN5TFBJSlRn?=
- =?utf-8?B?VzVwb1AxMU1SLzRSVkx5VTUvUXJJMzg3Nlk4MFQ3MStJOWY3NWZ2UTNzSUJP?=
- =?utf-8?B?dFBFem5ac21EVFVYeVM1Nnl5dlBwYUIxc2xjeG85elAvVVdPOGxPMzJpbnZM?=
- =?utf-8?B?S3ZPWmJpRmNXNng0SGdiVFVBVEpNZUJkbllBVFFuZ3ZBQ0M3NWxSY3VRZjJl?=
- =?utf-8?B?VjNLYTZaMnpYZjNxMndYQmxvUlJnbFZTWW9zRFV1WnBtbFhseGFFMWowUTRC?=
- =?utf-8?B?eWx3bEcvT0pxeSswWWhyTk5pTGVPZDJyVkVpZXQ0Q241blJxUFJZNGlGa0My?=
- =?utf-8?B?V1UrdC8xZFBIaEx6RFRKWlgvUUR3blZKOFNnQlpLOTg0S3QvR09pMjkwWWVl?=
- =?utf-8?B?RWZRS24zYmhDZjVwdEJ6VENKREJWZWthRFN4RFZNWFRQNTFmWE5nSVZMNktS?=
- =?utf-8?B?ZkpJM1BCcnpIRjlvTXlPcnNRWlJZd1JhamdrZ09kKzVVMWRKZnlObytjOVZy?=
- =?utf-8?B?dGR2cDFYSHU2UXRWN2Q2ekFVek5LeVlrYi8yWnRvY3UweFlYYjhobE5ybU1D?=
- =?utf-8?B?ejFKbkRHSDQwcUZNeGFDamx4VVV5MWx3UlIwYnorR3gvOXBnT1lPK3o0UzJC?=
- =?utf-8?B?T1FHMEtzUUloTE1RUTRubHE3YnZTR0Q2Yzd4b0ZvNEhVaGZpK2owNmhlWnps?=
- =?utf-8?B?UCs1NmRML0sza3pvMzdOdWFZeksrNHJFc1NVcEk0ZUtvUkdWWVZwOVdDSURX?=
- =?utf-8?B?WGxZVjkxVXgvOXR3bkpvM05pNUYwSmMwdlBHaFJvaTlZdWJnR0N5M3VKYlpC?=
- =?utf-8?B?cGZVZmZYQ1FNU1U5STA2Um5Yd0dqYTRQcmtjaVRabDI2TkJYbVp2eEpFa3Yz?=
- =?utf-8?B?MjJtS3VoZE9WN211R29iOUorYmgyQmNoeUFJZVpyeXNqZUh1S1FJem5PVURw?=
- =?utf-8?B?SGczbXM4dWtWbkdlVUlwRnZZM2tRQlVTNHZEZERvdm5PR3F2Skhoa25VZzNs?=
- =?utf-8?B?NGFUeUk3dThkYUptczdQZ1ovanlkNEN2THdIMGJsaytrZ2tCQ3RtT21GaitZ?=
- =?utf-8?B?WUJadXNsME9UcUt5VERTeTlleWpPTlhxdU9TQlNDUXd4V084dDZrUHBVSTVM?=
- =?utf-8?B?YWRCN2o3TktFME5tSllDeW81WG43OU1ONXYvZW1DWi9iYUM4R1ZRd1g2UE5X?=
- =?utf-8?B?MUN4U1ZQZ1J5dVhmMHhBbXVENDhYb085a2VIK0ZBcHNiQTd6N2M2VVZEcWtw?=
- =?utf-8?B?bmo1anB5TEVpUVZwbktyQ2U4K2FDY3ZmNklmSytLSkhoSnNVenVXN0E4UzIr?=
- =?utf-8?B?YUZUNTRDclphV3hlVFVsdW1KTG5nMHY4cmI5SmtDNDJQTlJINWFRdDN3ay8x?=
- =?utf-8?B?OE05OE1pVWdVRm9EOERmUGdQUnVDVkMyMjFpVTZmYzdyb09pVmxGVzN3bERK?=
- =?utf-8?B?MUp5WnliNk1talVVUGIrblpNdlB2OTBDMnQ3ODF2NjJxQllCRHgreTZQTzgz?=
- =?utf-8?B?Ym1ZOU1lYVVrM1RwbDc2L2JWaEFucS9pOVhOMW42Q0Rpcnd3ZUpuYXIxRmI1?=
- =?utf-8?B?d2N0dFVBVEFoUjM4Zk9LeGRzNjl2ZDkzUmRjcUhXc1VBZjdaSGVFbENYVlJP?=
- =?utf-8?B?VzJ0VzFEVC9xR0J1aVNOc2xSM1h4emkxVDRtejZlS1Z5eUQ3bTVXN2ZMci9K?=
- =?utf-8?B?L0wzeWNzNEpiZkpmOXJpQURxK1RsVGEvYjZUM2tBWFJXRFkzTG0rOC8wVkpx?=
- =?utf-8?B?VFJKcWgvVUNUdDR4SmJjNVlWUWcvRmhIY2pUT0F3dlE0bFNlUXZuQnJNYTZu?=
- =?utf-8?B?TXJLSStDdWZiVTBheVA4MWdha3ZndDVwcDNMYW9YemU0aWJmZGxoc3oyRzNI?=
- =?utf-8?B?S3NBUFgvWUhpaGVFTnRXTmVhWFZvME9FNEtmNm8xT1Z5QU1Zd3lpKysyOFRW?=
- =?utf-8?B?NDN2eUxxL2lEZnRrUUJyakkya0ZKTzcwMi8vakkra0pPUXluYUJjNnR3NC96?=
- =?utf-8?Q?+tNBkeEXqXG9lzHjDWQ4scqU6RpYiY=3D?=
-x-forefront-antispam-report:
- CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PH7PR11MB6451.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(7416014)(376014)(366016)(1800799024)(38070700018);DIR:OUT;SFP:1101;
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0:
- =?utf-8?B?T1B1bVdvRmpUYnNoWHgvWUZFdU1RN1NHZ0tLWXEyRzRYR1ZzUklET2RISnF2?=
- =?utf-8?B?d0RiWmp1c3Z5dkNkdlVWT2JpY0dkU2x3ZjJ0RDBFSzZWcm9TUGVMZGc2cXVq?=
- =?utf-8?B?L2tNbWlSZHpXSkgyZVJoSzBIdExzU1ltYjVzSU1JRktNZElGQjFqeWFZd3FS?=
- =?utf-8?B?cGpDM0xSZXB5ZUZ5SzFyNW1rY1lyTk5LV1diTkpFR1dJMURQSXV6OVVHMCtT?=
- =?utf-8?B?U01rVmw2QS9wVktaVzNkZVdoRU1KNUwvZ1puUk8rYVZRUFB6V1V3cjhHeVEx?=
- =?utf-8?B?SGFRRDl1TUw4K1JoTTVMcFVOTGhERjdOUWdZWm9yYlJsVEFybFM5ODZiK081?=
- =?utf-8?B?ZG9sLzhKenlMcUJiOWF2UFAwaU0zWUxGTnZZbG1Td1VpTUVURUdrNisrME4r?=
- =?utf-8?B?aDBOR0FrdHpkMzY2OC9oVGw1YUxmTzV3eXRVZUdGVThkU3ZWSkYwZDIrZU9W?=
- =?utf-8?B?VnhUODMxNFhZZ3BoY1lTa2xnK0hRQ2N6Q0R4K3p5M0I1RDc2OXZLN3IxME5P?=
- =?utf-8?B?VllBOFdyV3IwTFUxWFdKdnd5VjR2SFVYYVpLd1RNV3RNbmhUd1hjZFMvVk9V?=
- =?utf-8?B?TXJkaGVjYmZoMURyR01iRUcrVlo5Q3VkZ1ludXFILy9zbXN2ZVBQS3lEOWJL?=
- =?utf-8?B?VjNZWmtLbmFvYkNETTdDWU1ySTJMVlVIQ3N4TU9NaUI4MmYzRDA4Zyt6WnQz?=
- =?utf-8?B?ZjYyNnJ5K1VxcVhUR0p1eVZFc3JQYzhidFI4TTBwTkw5UEw4VndVQWRJYzI3?=
- =?utf-8?B?S21yb3RMcjE4MWdHTGdHSXRJWEFPL3RTb0EyeEtaSXdPcGhkMWN0ZytOdzdp?=
- =?utf-8?B?aSs3cCtiMm5LWXJpTE00QUd5a2FjT3p0em1pcDY4VGM4aXJpL29rTDc2akx5?=
- =?utf-8?B?c2txY01sOTZ1WC8vL0tqYXBEUWgxcitRRVhEV2pBc1VRTmp2NHN1U3B0Z1ZQ?=
- =?utf-8?B?ampUejdNSzl1eVQ3RGgvUlRWWW5Ga0EzNzl2OVpNeE9tUTJKWkhDRzNxYkpr?=
- =?utf-8?B?aCtHSTVNUjREeEppL1JodWNiT3lBcVRKb3Zaek05WWFpY3lWWWU0ZlZtNm1u?=
- =?utf-8?B?QVFwckFXNWVwS3lpeGkvOFJOS0FCdTVSNmc2bEhrem42TUVYb2hzS3dYL3FS?=
- =?utf-8?B?WjU2OVZpYnBMTlRLbVVESWFtaE55OTh6bjkzNmF0L3duNW9uOVQwSndFSith?=
- =?utf-8?B?dUtVdWQvZTlTTldKbU1NRVpndlk0Z0pMa0VHODR2TkpONmFRNVRQZzN1R3Rs?=
- =?utf-8?B?M1VqVUsvRGdPd0VmbkZTTEplUFdqRWFrQlRWem9lZlZzbTVLcEd5Mk9sRitv?=
- =?utf-8?B?VjJxdnBMNGpjNFRJN3VkZ2dhemZ3SWRNZTZEM0RjQVpYWVhNMGg0SE1jcHlG?=
- =?utf-8?B?ZU1lMW5GYWNraHRQVFFqblBPbTloa3Y4bG81UVFndDBBeldvdTZrRVNzQjFL?=
- =?utf-8?B?bm5hR0M4T1pwc282SVRzNkZoNTczVG1EU3dHNHlLb0RRRnRQb3p4V2lQV2dt?=
- =?utf-8?B?Ym15Z1RNWW42NDRxVXIzR1NRUTZ3aklLdENiSWZHVU16R2ZENUw5VGZSTkx1?=
- =?utf-8?B?aW01WDN2RkxqWm1mV1JqM1JBNHBDSWNMUXpoNVVvZUhnS2tKb3ZHUWhtZ0N4?=
- =?utf-8?B?YWkvVm9TaHpSNjV3aXF0azROVzJxQXdvdW1ZR2tab2F3cXVaWlhIeE9laHdY?=
- =?utf-8?B?UzVpTTFkd3Q3MGt0Z3BpYTkxMzdmNzVEY2dwbkpnd0lMZ2tTTUdEa0I5YnVC?=
- =?utf-8?B?cm10R2drYUtUUFZWd256OWxwOWI5Z0ozWEFWblVPaGpjWHRjVGdSbEthb3c4?=
- =?utf-8?B?Y0Y2QTNrWTVwYW9qak5YTkVJQ3A2bGgxejVIN21oMDB1YXN3VDkzaXJIcWpo?=
- =?utf-8?B?b2xwbnRJNVZEOXU1b1hDNXU5U0pFT20rTTl3Mkhab3pXOE5Ra0gyNmNPNE42?=
- =?utf-8?B?VW1uSGI3UTNXWVRRZk9tUkdmRHRVZ0xPcDlDQ0FJNGZEekNzVlF4WVdzM3Fn?=
- =?utf-8?B?eU9VMFVsV1NmekpibEdtTFlua1BnbkthQTNXNExFV3I1UzRXYWprbTRGNlIx?=
- =?utf-8?B?UXJQbi94c1d1M1YvSFlRUmh1MnpHY2J1QkY3L2RPLy9pY3hUemw1bkw0aVEw?=
- =?utf-8?Q?yPDIpSIQcWHeotFqYptZMSJOB?=
-Content-Type: text/plain; charset="utf-8"
-Content-ID: <D2BBE453B769564484A6E65172B41A88@namprd11.prod.outlook.com>
-Content-Transfer-Encoding: base64
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8857.29; Tue, 24 Jun
+ 2025 10:53:40 +0000
+Received: from AMS0EPF000001A7.eurprd05.prod.outlook.com
+ (2603:10a6:208:17c:cafe::10) by AM0PR10CA0028.outlook.office365.com
+ (2603:10a6:208:17c::38) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.20.8857.30 via Frontend Transport; Tue,
+ 24 Jun 2025 10:53:40 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 193.8.40.94)
+ smtp.mailfrom=leica-geosystems.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=leica-geosystems.com;
+Received-SPF: Pass (protection.outlook.com: domain of leica-geosystems.com
+ designates 193.8.40.94 as permitted sender) receiver=protection.outlook.com;
+ client-ip=193.8.40.94; helo=hexagon.com; pr=C
+Received: from hexagon.com (193.8.40.94) by
+ AMS0EPF000001A7.mail.protection.outlook.com (10.167.16.234) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.8880.14 via Frontend Transport; Tue, 24 Jun 2025 10:53:40 +0000
+Received: from aherlnxbspsrv01.lgs-net.com ([10.60.34.116]) by hexagon.com with Microsoft SMTPSVC(10.0.17763.1697);
+	 Tue, 24 Jun 2025 12:53:40 +0200
+From: Johannes Schneider <johannes.schneider@leica-geosystems.com>
+Subject: [PATCH v2 0/2] usb: dwc3: Fix TRB reclaim regression and clean up
+ reclaim logic
+Date: Tue, 24 Jun 2025 12:53:11 +0200
+Message-Id: <20250624-dwc3-fix-gadget-mtp-v2-0-0e2d9979328f@leica-geosystems.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-OriginatorOrg: microchip.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: PH7PR11MB6451.namprd11.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 98b69ed5-8138-4ad9-11a5-08ddb30d4d99
-X-MS-Exchange-CrossTenant-originalarrivaltime: 24 Jun 2025 10:53:07.3850
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+X-B4-Tracking: v=1; b=H4sIAJeDWmgC/32NTQ6DIBSEr2JY9zWASn9WvUfjAuGJJFUMj9gaw
+ 91LPUCX32Tmm50RRo/E7tXOIq6efJgLyFPFzKhnh+BtYSa5bLmSAuzb1DD4DzhtHSaY0gK14Te
+ tdH9tjGJluUQsjcP67AqPnlKI23Gyil/637cK4KCbFpXF4SL6/vFCbzQ4DLRRwonOJkysyzl/A
+ Z+h8hbBAAAA
+X-Change-ID: 20250621-dwc3-fix-gadget-mtp-3c09a6ab84c6
+To: Thinh Nguyen <Thinh.Nguyen@synopsys.com>, 
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: Pengutronix Kernel Team <kernel@pengutronix.de>, 
+ linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ stable@vger.kernel.org, bsp-development.geo@leica-geosystems.com, 
+ Johannes Schneider <johannes.schneider@leica-geosystems.com>
+X-Mailer: b4 0.14.2
+X-OriginalArrivalTime: 24 Jun 2025 10:53:40.0072 (UTC) FILETIME=[3E96CE80:01DBE4F6]
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: AMS0EPF000001A7:EE_|DB9PR06MB8122:EE_
+X-MS-Office365-Filtering-Correlation-Id: d9211e6f-4442-45fa-7065-08ddb30d613c
+X-SET-LOWER-SCL-SCANNER: YES
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|36860700013|1800799024|82310400026|376014;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?OHpzQ2Z1L2tBZ3BJU1pkbzZzRU0wRHVFc1E2QTByRXBHM0lQUTJ5KzlEQitJ?=
+ =?utf-8?B?VE9MOGF3cS83OTFqQzY2amFHY005eTJNYXFXa3JlZEFkUGc0aUUxWHIzTlk3?=
+ =?utf-8?B?WGZHY1YxOXVYSzlsTnZaMlNkNkhUYWJBa25rVlYrQkhrUUUrbCtpV1YvZkly?=
+ =?utf-8?B?UlQ5TEtkL3lGcVNBTjVXRnFURWVRWXhPUVMzS3laWEY4RHBzOVJXeGszY0cw?=
+ =?utf-8?B?MFdpelZsZGJ3Z2luc2ZxUEZIeVp4RFBWYytHYXR4UkVIek1CRytMczY2QkE5?=
+ =?utf-8?B?ZXRnWUhUclpVMUtGOWRMMXlFQ0NyYTJCQ3VJRzlvaFkxb2Y4NjJVNTg5TlhZ?=
+ =?utf-8?B?L0MrMm9HcTVkSmxzdDl0OWRhTDRydHo1cWNGU1JTREJKYXB3ektXT3RQeEMz?=
+ =?utf-8?B?andoeGl3cnFmanNMMmM2b2xGdWJjQUMzZ2h6UzZwMnV2THdrcmc0M0FQQ21a?=
+ =?utf-8?B?aXp2WEFMQ2Qwa1BJT2dFV3RFRDFleUZkL1pURG5FOWFvd2V2VnNkWXZRV0Rz?=
+ =?utf-8?B?R1VHNVdrekptTlpXZVh0dU9VQ3JVOHFMZG9ycnVPbkU1Qk5uQ2hVZ3N6WTZZ?=
+ =?utf-8?B?QXNjWURUSnNlRUE1TFg2Q20zQW5DSHBKaEgxOUh0Q1p0QkRtamc2NXI1VGpV?=
+ =?utf-8?B?dTBzYVdHWklUTTdGLzlIK1pqS1p6ck8wdW5CTUhQRWhGLzNqV1JXb1h6Q1Fy?=
+ =?utf-8?B?dWsrbTA0MnRKalZOeDRWOEQwblB2TXRxWTJrVlFWb3RMdS95SDhOMXhYanla?=
+ =?utf-8?B?dTRsRUFRVHlIbnZMV0YxbzhHdXRialRCY3ErdDgvdXUxVWQ2OVh5ZWtDZEZV?=
+ =?utf-8?B?YUN1c0txWnpKdXlleFhJTnFJMStmNEN2TVQ3NHVkWkxZVGtkL2ZucWNvUzRW?=
+ =?utf-8?B?WEo4NytRaTVrQ2VESU5zU1dtTFRBQ01mTlN4WkticTNXOTZRRmRTRHdyemx1?=
+ =?utf-8?B?T0RZV2M1c2VMSUNDa2wzR3FFSHJqWW03K3hScFdubDFlZFoxUXBUZW5aRWJX?=
+ =?utf-8?B?Ui9IY3Z3UUJUM3ljS2VVQVUzOEc4NTNBMEMwVVZrT3pvdDB3eU1ISlNHTjh2?=
+ =?utf-8?B?T0NkWWZ0NzJxMEFyaTBnREdrMGlpL3RXcGtwamV4S2NObnJ3ZnZmeEtodldj?=
+ =?utf-8?B?MjFmM3A1RC82bDVKZFFub3BRckJzbWh2Y2lsam5iK3Y3M2hYZWRoejhqdHZU?=
+ =?utf-8?B?TVZLVXBVbFFSRjBHM0N3UENuVmlVTENtMkFyTkVQS1o1cE1QZnFkVlRmQmRs?=
+ =?utf-8?B?ZUZFb0NwZEt6eFh3R0h3SmhUaUtnUStvbUgwRldBOEZielVXQ2l1ZDh1Q05s?=
+ =?utf-8?B?NTNGdGNGQUl1SXZTV1NtWUphOUxZd09LU21VMVBJdUd5SUFOa052TWFCWWFw?=
+ =?utf-8?B?V3VZNU93ZDhuMjdoV0NpMDNNUXdROEFrOW5jUTU1Z2dMaHNDUHVUL0VnNC9K?=
+ =?utf-8?B?d2haVXNvblUxUnZvdDRtRW9qR0J2M3pGblFWQkdlWmVGWnBSUGRyTmhrWU9N?=
+ =?utf-8?B?QjB3NUp6endrODhuZFFPYTRjT1NoWStyamp5K3ovUm5IdWN6QXhIVkFyVGtS?=
+ =?utf-8?B?VDQxbXJsUHJaQ2FiaEJWaGlqcSsxSDBldDNqWHFNa1FhNExBY1FqNk9sSXRM?=
+ =?utf-8?B?VzhRdXVtSy9QL0h2aFlGV29pUFpFUGFGN3RtVFBlQ0xoQXRsbmNBNEpNbHNJ?=
+ =?utf-8?B?TlBGblo0ZzhBNUppQ0tlWmtHYno0NVhnNkpjS3ZJSXFHVnRiVW81ZDRoUUtM?=
+ =?utf-8?B?T3UvVUNPRkxxS0dLeG9SM2t5QjJDUE4yNGtzZ0t0MFZBTGd6UHdTcjR3VlNM?=
+ =?utf-8?B?T2IzRHJMc3pKalVFbmU3NWZBdlkzOTF0Z2ZjS3FvOVBXQVEvR0huMzMvaTFW?=
+ =?utf-8?B?QlBHVkRIaDZFMExYd25lcXBLV0NuNElnK2phZS9JQkQ1RVB3VzIxUFErREow?=
+ =?utf-8?B?dUZsQWpxK25pU2ZjOUZiVUNZUFZTQWprUURZY0h1MzBoVFM2SzJ2ancwMXFv?=
+ =?utf-8?B?WS9jTUlHcjhrNkNndGNkUlh3TmszZVd6YjJEMUEwTVdIdisvTDlqSWxqVXRR?=
+ =?utf-8?B?YUdZeGRoTzZOSkNDcGxoNFpJS1Q5ZUZGam5zUT09?=
+X-Forefront-Antispam-Report:
+	CIP:193.8.40.94;CTRY:CH;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:hexagon.com;PTR:ahersrvdom50.leica-geosystems.com;CAT:NONE;SFS:(13230040)(36860700013)(1800799024)(82310400026)(376014);DIR:OUT;SFP:1101;
+X-OriginatorOrg: leica-geosystems.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 24 Jun 2025 10:53:40.2847
  (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 3f4057f3-b418-4d4e-ba84-d55b4e897d88
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: 10VOb+QdfdoWNwmuZSK/PfS1vxX2mYBeMDrR3q/PSdIQctJE1qBWWQygNeGo4x8sVsjJpB2+87ii0CiJO6ZdmA==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM4PR11MB5245
+X-MS-Exchange-CrossTenant-Network-Message-Id: d9211e6f-4442-45fa-7065-08ddb30d613c
+X-MS-Exchange-CrossTenant-Id: 1b16ab3e-b8f6-4fe3-9f3e-2db7fe549f6a
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=1b16ab3e-b8f6-4fe3-9f3e-2db7fe549f6a;Ip=[193.8.40.94];Helo=[hexagon.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	AMS0EPF000001A7.eurprd05.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DB9PR06MB8122
 
-T24gMjQvMDYvMjUgNDoyMCBwbSwgTGF1cmVudCBQaW5jaGFydCB3cm90ZToNCj4gRVhURVJOQUwg
-RU1BSUw6IERvIG5vdCBjbGljayBsaW5rcyBvciBvcGVuIGF0dGFjaG1lbnRzIHVubGVzcyB5b3Ug
-a25vdyB0aGUgY29udGVudCBpcyBzYWZlDQo+IA0KPiBPbiBUdWUsIEp1biAyNCwgMjAyNSBhdCAx
-MDo0NjoyNkFNICswMDAwLCBEaGFybWEuQkBtaWNyb2NoaXAuY29tIHdyb3RlOg0KPj4gT24gMjQv
-MDYvMjUgNDoxMiBwbSwgTGF1cmVudCBQaW5jaGFydCB3cm90ZToNCj4+PiBPbiBUdWUsIEp1biAy
-NCwgMjAyNSBhdCAwMjo1NDoxNFBNICswNTMwLCBEaGFybWEgQmFsYXN1YmlyYW1hbmkgd3JvdGU6
-DQo+Pj4+IERyb3AgdGhlIGRybV9wYW5lbCBmaWVsZCBvZiB0aGUgbWNocF9sdmRzIHN0cnVjdCBh
-cyBpdCBpcyB1bnVzZWQuDQo+Pj4+DQo+Pj4+IFNpZ25lZC1vZmYtYnk6IERoYXJtYSBCYWxhc3Vi
-aXJhbWFuaSA8ZGhhcm1hLmJAbWljcm9jaGlwLmNvbT4NCj4+Pj4gLS0tDQo+Pj4+ICAgIGRyaXZl
-cnMvZ3B1L2RybS9icmlkZ2UvbWljcm9jaGlwLWx2ZHMuYyB8IDcgLS0tLS0tLQ0KPj4+PiAgICAx
-IGZpbGUgY2hhbmdlZCwgNyBkZWxldGlvbnMoLSkNCj4+Pj4NCj4+Pj4gZGlmZiAtLWdpdCBhL2Ry
-aXZlcnMvZ3B1L2RybS9icmlkZ2UvbWljcm9jaGlwLWx2ZHMuYyBiL2RyaXZlcnMvZ3B1L2RybS9i
-cmlkZ2UvbWljcm9jaGlwLWx2ZHMuYw0KPj4+PiBpbmRleCA5ZjRmZjgyYmM2YjQuLjQyNzUxMTI0
-Yjg2OCAxMDA2NDQNCj4+Pj4gLS0tIGEvZHJpdmVycy9ncHUvZHJtL2JyaWRnZS9taWNyb2NoaXAt
-bHZkcy5jDQo+Pj4+ICsrKyBiL2RyaXZlcnMvZ3B1L2RybS9icmlkZ2UvbWljcm9jaGlwLWx2ZHMu
-Yw0KPj4+PiBAQCAtMjMsNyArMjMsNiBAQA0KPj4+PiAgICAjaW5jbHVkZSA8ZHJtL2RybV9hdG9t
-aWNfaGVscGVyLmg+DQo+Pj4+ICAgICNpbmNsdWRlIDxkcm0vZHJtX2JyaWRnZS5oPg0KPj4+PiAg
-ICAjaW5jbHVkZSA8ZHJtL2RybV9vZi5oPg0KPj4+PiAtI2luY2x1ZGUgPGRybS9kcm1fcGFuZWwu
-aD4NCj4+Pj4gICAgI2luY2x1ZGUgPGRybS9kcm1fcHJpbnQuaD4NCj4+Pj4gICAgI2luY2x1ZGUg
-PGRybS9kcm1fcHJvYmVfaGVscGVyLmg+DQo+Pj4+ICAgICNpbmNsdWRlIDxkcm0vZHJtX3NpbXBs
-ZV9rbXNfaGVscGVyLmg+DQo+Pj4+IEBAIC01Niw3ICs1NSw2IEBAIHN0cnVjdCBtY2hwX2x2ZHMg
-ew0KPj4+PiAgICAgICAgIHN0cnVjdCBkZXZpY2UgKmRldjsNCj4+Pj4gICAgICAgICB2b2lkIF9f
-aW9tZW0gKnJlZ3M7DQo+Pj4+ICAgICAgICAgc3RydWN0IGNsayAqcGNsazsNCj4+Pj4gLSAgICAg
-c3RydWN0IGRybV9wYW5lbCAqcGFuZWw7DQo+Pj4+ICAgICAgICAgc3RydWN0IGRybV9icmlkZ2Ug
-YnJpZGdlOw0KPj4+PiAgICAgICAgIHN0cnVjdCBkcm1fYnJpZGdlICpwYW5lbF9icmlkZ2U7DQo+
-Pj4+ICAgIH07DQo+Pj4+IEBAIC0xNzksMTMgKzE3Nyw4IEBAIHN0YXRpYyBpbnQgbWNocF9sdmRz
-X3Byb2JlKHN0cnVjdCBwbGF0Zm9ybV9kZXZpY2UgKnBkZXYpDQo+Pj4+ICAgICAgICAgICAgICAg
-ICAgICAgICAgICJjYW4ndCBmaW5kIHBvcnQgcG9pbnQsIHBsZWFzZSBpbml0IGx2ZHMgcGFuZWwg
-cG9ydCFcbiIpOw0KPj4+PiAgICAgICAgICAgICAgICAgcmV0dXJuIC1FTk9ERVY7DQo+Pj4+ICAg
-ICAgICAgfQ0KPj4+DQo+Pj4gVGhlIGFib3ZlIGNvZGUgc2VlbXMgdW5uZWVkZWQgbm93LCBJIHRo
-aW5rIHlvdSBjYW4gZHJvcCBpdCB0b28uDQo+Pg0KPj4gWWVzLCBJIGNvbnNpZGVyZWQgcmVtb3Zp
-bmcgaXQgYXMgd2VsbC4gSG93ZXZlciwgSSB3YXMgd29uZGVyaW5nIGlmIGl0DQo+PiBtaWdodCBz
-dGlsbCBiZSB2YWx1YWJsZSB0byByZXR1cm4gZWFybHkgd2hlbiB0aGUgZW5kcG9pbnQgaXNuJ3Qg
-Zm91bmQsDQo+PiB0byBjbGVhcmx5IGluZGljYXRlIHRoYXQgdGhlIHBhbmVsIHBvcnQgaXMgbWlz
-c2luZy4NCj4gDQo+IFRoYXQgZXJyb3IgaXMgY292ZXJlZCBieSB0aGUgZGV2bV9kcm1fb2ZfZ2V0
-X2JyaWRnZSgpIGNhbGwgYmVsb3csIHNvIEkNCj4gdGhpbmsgeW91IGNhbiBkcm9wIHRoZSBjb2Rl
-IGFib3ZlLg0KDQpTdXJlLCBJIHdpbGwgZHJvcCB0aGUgZGV2aWNlIG5vZGUgInBvcnQiIGFzIHdl
-bGwuDQoNCj4gDQo+Pj4+IC0NCj4+Pj4gLSAgICAgbHZkcy0+cGFuZWwgPSBvZl9kcm1fZmluZF9w
-YW5lbChwb3J0KTsNCj4+Pj4gICAgICAgICBvZl9ub2RlX3B1dChwb3J0KTsNCj4+Pj4NCj4+Pj4g
-LSAgICAgaWYgKElTX0VSUihsdmRzLT5wYW5lbCkpDQo+Pj4+IC0gICAgICAgICAgICAgcmV0dXJu
-IC1FUFJPQkVfREVGRVI7DQo+Pj4+IC0NCj4+Pj4gICAgICAgICBsdmRzLT5wYW5lbF9icmlkZ2Ug
-PSBkZXZtX2RybV9vZl9nZXRfYnJpZGdlKGRldiwgZGV2LT5vZl9ub2RlLCAxLCAwKTsNCj4+Pj4N
-Cj4+Pj4gICAgICAgICBpZiAoSVNfRVJSKGx2ZHMtPnBhbmVsX2JyaWRnZSkpDQo+IA0KPiAtLQ0K
-PiBSZWdhcmRzLA0KPiANCj4gTGF1cmVudCBQaW5jaGFydA0KDQoNCi0tIA0KV2l0aCBCZXN0IFJl
-Z2FyZHMsDQpEaGFybWEgQi4NCg==
+Hoi,
+
+This patch series fixes a subtle regression introduced in the recent
+scatter-gather cleanup for the DWC3 USB gadget driver, and follows up
+with two clean-up patches to simplify and clarify related logic.
+
+Background:
+
+Commit 61440628a4ff ("usb: dwc3: gadget: Cleanup SG handling") removed
+some redundant state tracking in the DWC3 gadget driver, including how
+scatter-gather TRBs are reclaimed after use. However, the reclaim logic
+began relying on the TRB CHN (chain) bit to determine whether TRBs
+belonged to a chain — which led to missed TRB reclamation in some
+cases.
+
+This broke userspace-facing protocols like MTP (Media Transfer Protocol)
+when used via FunctionFS, causing incomplete transfers due to skipped
+zero-length packets (ZLPs) or improperly reclaimed short TRBs.
+
+The "offending" chunk from 61440628a4ff:
+80                 ret = dwc3_gadget_ep_reclaim_completed_trb(dep, req,
+81 -                               trb, event, status, true);
+82 +                               trb, event, status,
+83 +                               !!(trb->ctrl & DWC3_TRB_CTRL_CHN));
+
+Patch 1 fixes the issue by ensuring the HWO bit is always cleared
+on reclaimed TRBs, regardless of the CHN bit.
+
+Patches 2 and 3 follow up with simplifications:
+- Patch 2 removes the now-redundant `chain` argument to the reclaim function
+- Patch 3 simplifies the logic in `dwc3_needs_extra_trb()` to make the conditions easier to read and maintain
+
+All three patches have been tested on a imx8mp based hardware, with
+userspace MTP (viveris/uMTP-Responder) over FunctionFS and resolve the
+regression while preserving the recent cleanup work.
+
+Signed-off-by: Johannes Schneider <johannes.schneider@leica-geosystems.com>
+---
+Changes in v2:
+- dropped Patch 3, as it did change the logic
+- CC to stable
+- Link to v1: https://lore.kernel.org/r/20250621-dwc3-fix-gadget-mtp-v1-0-a45e6def71bb@leica-geosystems.com
+
+---
+Johannes Schneider (2):
+      usb: dwc3: gadget: Fix TRB reclaim logic for short transfers and ZLPs
+      usb: dwc3: gadget: Simplify TRB reclaim logic by removing redundant 'chain' argument
+
+ drivers/usb/dwc3/gadget.c | 10 +++++-----
+ 1 file changed, 5 insertions(+), 5 deletions(-)
+---
+base-commit: d0c22de9995b624f563bc5004d44ac2655712a56
+change-id: 20250621-dwc3-fix-gadget-mtp-3c09a6ab84c6
+
+Best regards,
+-- 
+Johannes Schneider <johannes.schneider@leica-geosystems.com>
+
 
