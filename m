@@ -1,125 +1,290 @@
-Return-Path: <linux-kernel+bounces-699796-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-699800-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 791FAAE5F8D
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Jun 2025 10:36:57 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 956ECAE5F93
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Jun 2025 10:38:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DC6FD161EAD
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Jun 2025 08:36:10 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 995F91629BB
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Jun 2025 08:37:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6724025C701;
-	Tue, 24 Jun 2025 08:36:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1DDAA259CBA;
+	Tue, 24 Jun 2025 08:36:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="VHpuMjjP"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Wpf/3loU"
+Received: from mail-ed1-f46.google.com (mail-ed1-f46.google.com [209.85.208.46])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BC2E125BEEF;
-	Tue, 24 Jun 2025 08:36:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4B9D9239072;
+	Tue, 24 Jun 2025 08:36:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750754164; cv=none; b=F6DtDgGbwGrcTGZI44HfCqObnt2u7GjSpkJm0pHki9zibF9eXukrIBBj6XcW8zYeqNXQbWrhlXflNN/AecmFZoJi7/1ASnvFFcctXkYqv+E2ybhdqscQ22wILFlENRg5W2F+zzP/caU010bVYKK/UUihgAJ1QK5Kh2uO6b25s5I=
+	t=1750754195; cv=none; b=Y3RSvRaUrquSoAfxQNqUBYhIyhWjhfj3KIF+ITcOMMxfoec0GD6soe7QlsMQY2VOrUeHbAiyXevh+HdvA4Gi/b6K1fIayXMUcLcMmj7Gq8qu/zdpzZIVdJNcSzhsj9wpMeTAPhnU+gJgJPhWBNEYvuD78WmeRWZB+6LnsSj53fc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750754164; c=relaxed/simple;
-	bh=MJy6OMhMptZe3RrGJsinqz7wBzAMB5yPuryBH6JrVFY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=ho3uKp5G2Sjo2xghUB0am21lTEoVNzT+d87e/dLZe1xw+YoctpXp/URrseIQH9WHcp/4P31jRue5LLWcDaOpwGDG5YX3XoOmt3e6RPYqbJeg7d/l55CoDimkerG3MPrJTadgvbxxfIHfkZJcOcop23WnGLZKECw+EL76TFcXqqI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=VHpuMjjP; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2091EC4CEE3;
-	Tue, 24 Jun 2025 08:36:01 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1750754164;
-	bh=MJy6OMhMptZe3RrGJsinqz7wBzAMB5yPuryBH6JrVFY=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=VHpuMjjPISJlSvNXm9yaoo4xt/mmXGZp/zkfmWB2FqGiAO7ZsVJTX5SH8idkYK7K1
-	 i8n9bEE4HAxzSIBD6yFxYWxjYLn48lVej+jAdNJhK2ryd2S/hw0rWX15R8X7wLp23I
-	 Eq4py7lFuiSCT5/LVCkKP/x+AvzQdpRw5tFq1NQ5T+q2JjjTzu2xrQbY5qyoBZpQkW
-	 xCkDK+M77QNomqB1jX82yH2aZdUvdGpHN/O97LVqpHtWh6D2uFl0bdgFzojMjZDVGH
-	 md5cySGewTKKaHs4V28oPNVvrbuyieekQ1K6f3IgzWDaWhR3ge2Y8ORs8M9IYHLcn8
-	 EaM4SP3b2iDvg==
-Message-ID: <917039d8-7d19-4a94-8c22-b46da619693d@kernel.org>
-Date: Tue, 24 Jun 2025 10:36:00 +0200
+	s=arc-20240116; t=1750754195; c=relaxed/simple;
+	bh=DPJpJN9s6ZA+aVPC7f73tg71gOj4+qsMe1oiivNtvGg=;
+	h=From:Date:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=amQvBJlhD4gN0riK4vcKvjZTHJK5GTGdfoeyv7iPOH6c/t8zF/ISj/rNPzMvsfekxYAmrElc4JBdFbUTFpopPGvtKSOVhLmBIuZou8WgfLtXD+RhPcLIA46DMXfSdPLE5DNa9DHnHBrG7uGls6mc6Hc4SooCQr4nCG2sBDk2lVo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Wpf/3loU; arc=none smtp.client-ip=209.85.208.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ed1-f46.google.com with SMTP id 4fb4d7f45d1cf-60c3aafae23so386821a12.1;
+        Tue, 24 Jun 2025 01:36:33 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1750754191; x=1751358991; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:date:from:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=8NhrJpvC7TgDUrt3uAEiGkoYGZtc78/mqwoJoV1MrgM=;
+        b=Wpf/3loUqfKR9uJMTTa0QH5yeyDj2gLmsJTj0DxGlUjsUKTZF3ECuhcWUXW3eMZhgE
+         axyhoujd1VAROKtw4P450j8XnXNwWYtdykhw5W8pjREdsirmVF2LsFmcHGpDfELzMf9j
+         w8Hja4/uwAnuEPMheEhRsd6W8D75XAJ7+1ICGnvvbLn1I6ExSHAEi2PQ+iYREl+q9ei4
+         u/fQYEQ+fLFOQ1tQWStTLyAZmXQplKgR/FkAklwNIcHTnUtd48DXhKs/xSO/tfD6ezC5
+         7i4mj531EGWcsYsVXl/X8L/ZI9oT9KSeIBPpquorEzq91xak6nlFsNmfHzJNnSLjRWGi
+         XOqQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1750754191; x=1751358991;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:date:from
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=8NhrJpvC7TgDUrt3uAEiGkoYGZtc78/mqwoJoV1MrgM=;
+        b=sIpmA+rESerjXMU3cXi1582B1p85qDMpETy1/m+WNbeuprFPFz9OxuUHQl0BuOwnju
+         gCgEH5mTSvCTbpyx5tK8JgCgmj2MwsQKNlbImeJCuFvFB9N07BWB0QFtdtN5H87G1/oB
+         NRa5Vkydei8NRuz17qJWOXtO7T0l8BAc12BiwMqDcC+zg7RNZEqv9B6cBMxI/aqY291H
+         ercNqYx0ux/EETANcLrJlqQloXsFX3qfipbrFSeItEsoUEA8uh5/8hPoGHOq2fz+1LXG
+         4+BMcGUoRUihf0tCupZRN1Giz4IBJK1n23/4metmvCccKczp4Yxz4rRmYxI9u0wiQepj
+         +6MQ==
+X-Forwarded-Encrypted: i=1; AJvYcCU/T+xSnkrQLtY8GQQ51PCmCCB+jCuBhnQ4T/WTB7jE8m0pdSVGFQWB/cO+so8+Uvw6VbEsexShQSUkJsgi@vger.kernel.org, AJvYcCU4vai5H0cj69n6x1gZQiCrl6SAyPpYjFUWdiQtj+Vsj0YpKEaXnqMDmXstuhBFs38/GWBlvHuebFF/UANhy+q94znP@vger.kernel.org, AJvYcCX35f6Dx4JEbEPg1NVLQk5FlWr/O3VO2ePshs9KEqHvBfT1CQxfwDMigupU6HIQNnfmlP0=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yyipjj2w/xEIVmtSJ/xAaBWPcW3Dz28iwUZXTiNZ3a6DS1Sb7bY
+	CJqaeOkjMvhEHtDvNoQWf9YLpSCypCFCBj/KU+4T384ZkNKl+fPvP4hC
+X-Gm-Gg: ASbGncsgAq/WP8yO0Qd7EpXnf1D4lKirx3QwZnnQsG7DvbPPkdK698QEVZ1HnfrIPdC
+	kq6naVHOYqj6yDWhvakrsgRRYQ0sbCN3w9BT3xYwQWwVSr7HXLMpQk25sh9mpHfwsqa8EASGo6w
+	b/PfOgku1et5GqATFi/gEp+XdEpYPN7XuYf1U6Ejrsy6L1EuvgPKbT75GDA0655AILKE7dJ5gjS
+	Xae8UGnpWvOYdcOgaSuEuHZxh0+JgM9dXxhmnFHThdwz1KhXVHs1hhJMXhyDPo9ZfWCH9nk17hz
+	mJ3lJKA/vWMwxbkSbqwhhIyYN1VCpbjgTOkQYHNX9CRB7IhAc0VNGJWleHqj
+X-Google-Smtp-Source: AGHT+IFGOZlBnt/18l1WubHvG2W9Dvn4QHDQNxDaVi5EzzCbgGmlwlSe5ED3ButsJ3gDlExIaYwz3Q==
+X-Received: by 2002:a17:907:3d12:b0:ad2:27b1:7214 with SMTP id a640c23a62f3a-ae0a73c8082mr277648766b.17.1750754191180;
+        Tue, 24 Jun 2025 01:36:31 -0700 (PDT)
+Received: from krava ([176.74.159.170])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ae05420a31dsm844848966b.170.2025.06.24.01.36.30
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 24 Jun 2025 01:36:30 -0700 (PDT)
+From: Jiri Olsa <olsajiri@gmail.com>
+X-Google-Original-From: Jiri Olsa <jolsa@kernel.org>
+Date: Tue, 24 Jun 2025 10:36:29 +0200
+To: Jiri Olsa <olsajiri@gmail.com>, Peter Zijlstra <peterz@infradead.org>,
+	Masami Hiramatsu <mhiramat@kernel.org>
+Cc: Oleg Nesterov <oleg@redhat.com>, Andrii Nakryiko <andrii@kernel.org>,
+	Alejandro Colomar <alx@kernel.org>,
+	Eyal Birger <eyal.birger@gmail.com>, kees@kernel.org,
+	bpf@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-trace-kernel@vger.kernel.org, x86@kernel.org,
+	Song Liu <songliubraving@fb.com>, Yonghong Song <yhs@fb.com>,
+	John Fastabend <john.fastabend@gmail.com>,
+	Hao Luo <haoluo@google.com>, Steven Rostedt <rostedt@goodmis.org>,
+	Alan Maguire <alan.maguire@oracle.com>,
+	David Laight <David.Laight@aculab.com>,
+	Thomas =?iso-8859-1?Q?Wei=DFschuh?= <thomas@t-8ch.de>,
+	Ingo Molnar <mingo@kernel.org>
+Subject: Re: [PATCHv3 perf/core 00/22] uprobes: Add support to optimize usdt
+ probes on x86_64
+Message-ID: <aFpjjeYKO5uBuwcl@krava>
+References: <20250605132350.1488129-1-jolsa@kernel.org>
+ <aFFouFEKLFsYhVOe@krava>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] nvmem: imx-ocotp: Use helper function
- devm_clk_get_enabled()
-To: Huan Tang <tanghuan@vivo.com>
-Cc: festevam@gmail.com, imx@lists.linux.dev, kernel@pengutronix.de,
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
- s.hauer@pengutronix.de, shawnguo@kernel.org, srini@kernel.org
-References: <5b048b32-36b4-4c4f-aefb-058674147b76@kernel.org>
- <20250624083312.453-1-tanghuan@vivo.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 a/A=
-In-Reply-To: <20250624083312.453-1-tanghuan@vivo.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <aFFouFEKLFsYhVOe@krava>
 
-On 24/06/2025 10:33, Huan Tang wrote:
->> No for another round of terrible vivo.com scripted bugs.
+ping
+
+On Tue, Jun 17, 2025 at 03:08:08PM +0200, Jiri Olsa wrote:
+> hi, ping
 > 
-> To clarify: 
-> This is my personal mistake. Hope you have a good impression of "vivo.com".
-
-I have terrible impression of vivo.com, because you were sending dozen
-or hundred of poorly crafted patches, created by some automation,
-repeating same issues, putting strain on maintainer resources instead of
-approaching this slowly and learning while doing the task.
-
-One of the things I requested was to perform internal review. Who
-reviewed this patch internally?
-
-Best regards,
-Krzysztof
+> thanks,
+> jirka
+> 
+> On Thu, Jun 05, 2025 at 03:23:27PM +0200, Jiri Olsa wrote:
+> > hi,
+> > this patchset adds support to optimize usdt probes on top of 5-byte
+> > nop instruction.
+> > 
+> > The generic approach (optimize all uprobes) is hard due to emulating
+> > possible multiple original instructions and its related issues. The
+> > usdt case, which stores 5-byte nop seems much easier, so starting
+> > with that.
+> > 
+> > The basic idea is to replace breakpoint exception with syscall which
+> > is faster on x86_64. For more details please see changelog of patch 8.
+> > 
+> > The run_bench_uprobes.sh benchmark triggers uprobe (on top of different
+> > original instructions) in a loop and counts how many of those happened
+> > per second (the unit below is million loops).
+> > 
+> > There's big speed up if you consider current usdt implementation
+> > (uprobe-nop) compared to proposed usdt (uprobe-nop5):
+> > 
+> > current:
+> >         usermode-count :  152.501 ± 0.012M/s
+> >         syscall-count  :   14.463 ± 0.062M/s
+> > -->     uprobe-nop     :    3.160 ± 0.005M/s
+> >         uprobe-push    :    3.003 ± 0.003M/s
+> >         uprobe-ret     :    1.100 ± 0.003M/s
+> >         uprobe-nop5    :    3.132 ± 0.012M/s
+> >         uretprobe-nop  :    2.103 ± 0.002M/s
+> >         uretprobe-push :    2.027 ± 0.004M/s
+> >         uretprobe-ret  :    0.914 ± 0.002M/s
+> >         uretprobe-nop5 :    2.115 ± 0.002M/s
+> > 
+> > after the change:
+> >         usermode-count :  152.343 ± 0.400M/s
+> >         syscall-count  :   14.851 ± 0.033M/s
+> >         uprobe-nop     :    3.204 ± 0.005M/s
+> >         uprobe-push    :    3.040 ± 0.005M/s
+> >         uprobe-ret     :    1.098 ± 0.003M/s
+> > -->     uprobe-nop5    :    7.286 ± 0.017M/s
+> >         uretprobe-nop  :    2.144 ± 0.001M/s
+> >         uretprobe-push :    2.069 ± 0.002M/s
+> >         uretprobe-ret  :    0.922 ± 0.000M/s
+> >         uretprobe-nop5 :    3.487 ± 0.001M/s
+> > 
+> > I see bit more speed up on Intel (above) compared to AMD. The big nop5
+> > speed up is partly due to emulating nop5 and partly due to optimization.
+> > 
+> > The key speed up we do this for is the USDT switch from nop to nop5:
+> > 	uprobe-nop     :    3.160 ± 0.005M/s
+> > 	uprobe-nop5    :    7.286 ± 0.017M/s
+> > 
+> > 
+> > Changes from v2:
+> > - rebased on top of tip/master + mm/mm-stable + 1 extra change [1]
+> > - added acks [Oleg,Andrii]
+> > - more details changelog for patch 1 [Masami]
+> > - several tests changes [Andrii]
+> > - add explicit PAGE_SIZE low limit to vm_unmapped_area call [Andrii]
+> > 
+> > 
+> > This patchset is adding new syscall, here are notes to check list items
+> > in Documentation/process/adding-syscalls.rst:
+> > 
+> > - System Call Alternatives
+> >   New syscall seems like the best way in here, because we need
+> >   just to quickly enter kernel with no extra arguments processing,
+> >   which we'd need to do if we decided to use another syscall.
+> > 
+> > - Designing the API: Planning for Extension
+> >   The uprobe syscall is very specific and most likely won't be
+> >   extended in the future.
+> > 
+> > - Designing the API: Other Considerations
+> >   N/A because uprobe syscall does not return reference to kernel
+> >   object.
+> > 
+> > - Proposing the API
+> >   Wiring up of the uprobe system call is in separate change,
+> >   selftests and man page changes are part of the patchset.
+> > 
+> > - Generic System Call Implementation
+> >   There's no CONFIG option for the new functionality because it
+> >   keeps the same behaviour from the user POV.
+> > 
+> > - x86 System Call Implementation
+> >   It's 64-bit syscall only.
+> > 
+> > - Compatibility System Calls (Generic)
+> >   N/A uprobe syscall has no arguments and is not supported
+> >   for compat processes.
+> > 
+> > - Compatibility System Calls (x86)
+> >   N/A uprobe syscall is not supported for compat processes.
+> > 
+> > - System Calls Returning Elsewhere
+> >   N/A.
+> > 
+> > - Other Details
+> >   N/A.
+> > 
+> > - Testing
+> >   Adding new bpf selftests.
+> > 
+> > - Man Page
+> >   Attached.
+> > 
+> > - Do not call System Calls in the Kernel
+> >   N/A
+> > 
+> > pending todo (or follow ups):
+> > - use PROCMAP_QUERY in tests
+> > - alloc 'struct uprobes_state' for mm_struct only when needed [Andrii]
+> > - use mm_cpumask(vma->vm_mm) in text_poke_sync
+> > 
+> > thanks,
+> > jirka
+> > 
+> > 
+> > Cc: Alejandro Colomar <alx@kernel.org>
+> > Cc: Eyal Birger <eyal.birger@gmail.com>
+> > Cc: kees@kernel.org
+> > 
+> > [1] https://lore.kernel.org/linux-trace-kernel/20250514101809.2010193-1-jolsa@kernel.org/T/#u
+> > ---
+> > Jiri Olsa (21):
+> >       uprobes: Remove breakpoint in unapply_uprobe under mmap_write_lock
+> >       uprobes: Rename arch_uretprobe_trampoline function
+> >       uprobes: Make copy_from_page global
+> >       uprobes: Add uprobe_write function
+> >       uprobes: Add nbytes argument to uprobe_write
+> >       uprobes: Add is_register argument to uprobe_write and uprobe_write_opcode
+> >       uprobes: Add do_ref_ctr argument to uprobe_write function
+> >       uprobes/x86: Add mapping for optimized uprobe trampolines
+> >       uprobes/x86: Add uprobe syscall to speed up uprobe
+> >       uprobes/x86: Add support to optimize uprobes
+> >       selftests/bpf: Import usdt.h from libbpf/usdt project
+> >       selftests/bpf: Reorg the uprobe_syscall test function
+> >       selftests/bpf: Rename uprobe_syscall_executed prog to test_uretprobe_multi
+> >       selftests/bpf: Add uprobe/usdt syscall tests
+> >       selftests/bpf: Add hit/attach/detach race optimized uprobe test
+> >       selftests/bpf: Add uprobe syscall sigill signal test
+> >       selftests/bpf: Add optimized usdt variant for basic usdt test
+> >       selftests/bpf: Add uprobe_regs_equal test
+> >       selftests/bpf: Change test_uretprobe_regs_change for uprobe and uretprobe
+> >       seccomp: passthrough uprobe systemcall without filtering
+> >       selftests/seccomp: validate uprobe syscall passes through seccomp
+> > 
+> >  arch/arm/probes/uprobes/core.c                              |   2 +-
+> >  arch/x86/entry/syscalls/syscall_64.tbl                      |   1 +
+> >  arch/x86/include/asm/uprobes.h                              |   7 ++
+> >  arch/x86/kernel/uprobes.c                                   | 525 ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-
+> >  include/linux/syscalls.h                                    |   2 +
+> >  include/linux/uprobes.h                                     |  20 +++-
+> >  kernel/events/uprobes.c                                     | 100 ++++++++++++-----
+> >  kernel/fork.c                                               |   1 +
+> >  kernel/seccomp.c                                            |  32 ++++--
+> >  kernel/sys_ni.c                                             |   1 +
+> >  tools/testing/selftests/bpf/prog_tests/uprobe_syscall.c     | 523 +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++------
+> >  tools/testing/selftests/bpf/prog_tests/usdt.c               |  38 ++++---
+> >  tools/testing/selftests/bpf/progs/uprobe_syscall.c          |   4 +-
+> >  tools/testing/selftests/bpf/progs/uprobe_syscall_executed.c |  60 +++++++++-
+> >  tools/testing/selftests/bpf/test_kmods/bpf_testmod.c        |  11 +-
+> >  tools/testing/selftests/bpf/usdt.h                          | 545 +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+> >  tools/testing/selftests/seccomp/seccomp_bpf.c               | 107 ++++++++++++++----
+> >  17 files changed, 1867 insertions(+), 112 deletions(-)
+> >  create mode 100644 tools/testing/selftests/bpf/usdt.h
+> > 
+> > 
+> > Jiri Olsa (1):
+> >       man2: Add uprobe syscall page
+> > 
+> >  man/man2/uprobe.2    |  1 +
+> >  man/man2/uretprobe.2 | 36 ++++++++++++++++++++++++------------
+> >  2 files changed, 25 insertions(+), 12 deletions(-)
+> >  create mode 100644 man/man2/uprobe.2
 
