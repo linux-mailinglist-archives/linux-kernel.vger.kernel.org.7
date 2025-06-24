@@ -1,153 +1,97 @@
-Return-Path: <linux-kernel+bounces-700336-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-700339-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9041EAE6704
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Jun 2025 15:50:23 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6F30AAE6713
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Jun 2025 15:51:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id F422C189E33E
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Jun 2025 13:50:05 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 848421887149
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Jun 2025 13:51:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 74CCF299A85;
-	Tue, 24 Jun 2025 13:49:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DF01F2D1319;
+	Tue, 24 Jun 2025 13:50:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="f0AMqJ8+"
-Received: from mail-pg1-f172.google.com (mail-pg1-f172.google.com [209.85.215.172])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=collabora.com header.i=nfraprado@collabora.com header.b="ASSplS6Q"
+Received: from sender4-op-o14.zoho.com (sender4-op-o14.zoho.com [136.143.188.14])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7D5C923E336;
-	Tue, 24 Jun 2025 13:49:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.172
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750772981; cv=none; b=aFMrSiEo0BJJjo7HIpCA9Mwe1u77a7wcWgwyoC1QlmQqUXhUoSGj0FNH62hl7jDmuzu9iVjMqxFip/ZA3RsGlUVB1mD6SGUYeVFFoNR7M6oJptSTTNB0HEtU/PEiLYo4EuKQAuzG/c3o66PhwsxsXrf8ThMzMbp+XcTP/XX2b/w=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750772981; c=relaxed/simple;
-	bh=oqjGCqo+3jPtMvnW+xPAtBoGDiiD+tGkyyZIw+G6SsU=;
-	h=Date:Message-Id:To:Cc:Subject:From:In-Reply-To:References:
-	 Mime-Version:Content-Type; b=SGXzjV1Qg7Rp2N/FhNGAwTUfDbcTtd58kP/u9BhL49WlBAZ73C5j57OGHHpy7IUZim39Hy9VJKXuXIRxnHQNK7OFJ1t/nRu4pahK9BfASXlJaW/LsKuJL5e8dRPwP75L5kjL5kMztmXTDkJSD9a/sfkYJScFx5Sdv6zhZAo7A1g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=f0AMqJ8+; arc=none smtp.client-ip=209.85.215.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pg1-f172.google.com with SMTP id 41be03b00d2f7-b271f3ae786so406487a12.3;
-        Tue, 24 Jun 2025 06:49:40 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1750772980; x=1751377780; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to:from
-         :subject:cc:to:message-id:date:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=1D3QdEAPCGyd4A120mlOM8Gbdnk1+ZP4/PAl9Roc7GQ=;
-        b=f0AMqJ8+ZIkz8JQWxYIDyHKmlIptwLOBSQpwTpmUDBTwChVRFOnvtUAA6dOX7nOMf/
-         6cD1fZqFmW3/s2vLtEXsa6AG21ur7hOgKyOoX09pNEN8Yz0eQN+1uTpmiTKnJ/b7zv8l
-         pbOpr1KEYEk/2rQ6RLzFLVrZAzDmFZAS8Pe5ByqZBOdmSJ4lsag2Ay4foWbGDtfaWnrP
-         nc4aHyBtHXiLS9o2zODHLoTZpTmqSaLuaNu2eTwysHFX5SxGBP/9WUTiRR/QPFQqPEb0
-         YuQShVVRTiyaQEY/r5/UvShhEO33eCd3CNev8kmgKT7IRMF6wlEzEtJEfuaqr9u4fADO
-         lyvA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1750772980; x=1751377780;
-        h=content-transfer-encoding:mime-version:references:in-reply-to:from
-         :subject:cc:to:message-id:date:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=1D3QdEAPCGyd4A120mlOM8Gbdnk1+ZP4/PAl9Roc7GQ=;
-        b=kjVF/VqGwR/tdFjH9oiJfqUVwopwjE7dEVFIwTibr9c3Ep5RxozGcGaQvIEF2WPlz9
-         4x3R5WmvwGTHSEjrECom7galmFls+uzELee/0CPxR4n32KFE+zJaDEZCZVA4w4CGvGUq
-         mZuVdJ0dW+yuHVSlT8Fp5yUTeSyfhwe6USloqmKH83qPVy8XMNFN8CssWu/xQuTtDBhx
-         l7UdpPLrktKyIqX8m5tH4L8F60QmoBAhHeRu4H8zK8nlr4vkTprfKTdpBSA7e9wHDRKR
-         7JaaUTf9aJN5tcrEsPdxW97jaYUdK3LF7VlRDXSZkj5jy4NpQ896OLT83P3ohbmlPQOF
-         6q6w==
-X-Forwarded-Encrypted: i=1; AJvYcCU+hJBmm+e98NdNgb0u5Xw4QRdBsY7y+7bTvuLgJuZrgGFi/zOwXLUSxc7oONV4+hUuBVdniR9NWZStvwU=@vger.kernel.org, AJvYcCUf03+nXwF43MYj+i4lbTD5NDCgT+3XR17GyEP+Mc0I+KVll15+K5HmU5/M5owrm75TK61+OHziCDCNVXiOYDo=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw0ikLkTWFGTkOLjUmoYCRguziAxv7P4PKUwygBnGU8HRgWXWTB
-	ZI/AMNOC1dZGdrNzh+e9fREaoZMQNap4kLPyqfvec2ToYaBULA7aUn7O
-X-Gm-Gg: ASbGncvsty6wVGxnHLnkmHEOagFDK78Asgdj/bKUR+jheqmV7aaxrTA2W0ACELMOf8a
-	yTgBaV5jh3/qqzcICgfx0kGwPMM0H+Aqv5iMJEnJAhrJNPUx9CCYHsK/uC4ZC064N/TL1r+FL7h
-	DyzMAX/0X+9G8EBgwwFWqfdigHL1uSE1XxT5fOJOl0sEYEgydaZL8AWqEQ3ngxcmM4z8+jhCub3
-	yERLmqYQn9EY77gAGInKLTmurL3A8ynsJf6+yAewuLmMDv24pF2isA9Mnp/bD2dEgtGWlO29SKn
-	0kM9kErfM8JiyhP6Xm9cZyrT64CZbFkR26f+grty25AgOzwlFIBp6TgKA/yIQmEw14fEtQygh3x
-	cXojlF4qAPi8kQkm7YJx1DItUfc3l+GKJYzGOOj7W
-X-Google-Smtp-Source: AGHT+IH09BoG9Y25KaozOAWn8XkeE8DpcA4nq7ILpLesorAZDceyoUHgWz2VqSLwz8qJawXqMxjsTA==
-X-Received: by 2002:a05:6a20:4310:b0:203:c461:dd36 with SMTP id adf61e73a8af0-22026ca838fmr27618037637.6.1750772979687;
-        Tue, 24 Jun 2025 06:49:39 -0700 (PDT)
-Received: from localhost (p5332007-ipxg23901hodogaya.kanagawa.ocn.ne.jp. [180.34.120.7])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-749c8851b26sm1828905b3a.122.2025.06.24.06.49.35
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 24 Jun 2025 06:49:39 -0700 (PDT)
-Date: Tue, 24 Jun 2025 22:49:23 +0900 (JST)
-Message-Id: <20250624.224923.1801832299260163743.fujita.tomonori@gmail.com>
-To: aliceryhl@google.com
-Cc: fujita.tomonori@gmail.com, miguel.ojeda.sandonis@gmail.com,
- a.hindborg@kernel.org, alex.gaynor@gmail.com, ojeda@kernel.org,
- anna-maria@linutronix.de, bjorn3_gh@protonmail.com, boqun.feng@gmail.com,
- dakr@kernel.org, frederic@kernel.org, gary@garyguo.net,
- jstultz@google.com, linux-kernel@vger.kernel.org, lossin@kernel.org,
- lyude@redhat.com, rust-for-linux@vger.kernel.org, sboyd@kernel.org,
- tglx@linutronix.de, tmgross@umich.edu
-Subject: Re: [PATCH v1 1/2] rust: time: Rename Delta's methods
- as_micros_ceil and as_millis
-From: FUJITA Tomonori <fujita.tomonori@gmail.com>
-In-Reply-To: <CAH5fLgjJRbjPnN58RuaBtNrY1A-tif3ohETLxdbaE4b46Hjbqg@mail.gmail.com>
-References: <CANiq72mBfTr0cdj_4Cpdk62h2k+Y5K3NSs54_1-9jiszMZ6AuA@mail.gmail.com>
-	<20250619.160844.1477802332578239775.fujita.tomonori@gmail.com>
-	<CAH5fLgjJRbjPnN58RuaBtNrY1A-tif3ohETLxdbaE4b46Hjbqg@mail.gmail.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 62A782C15B6;
+	Tue, 24 Jun 2025 13:50:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.14
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1750773044; cv=pass; b=J2aeMxAZ0dztvuS0Q9y+jkGCHyZHnnsUMUMSn54FI7ZhGNuE2+QqwlCkG0kiN/pmdWTFogrLKg7tdhUpPcDl/ilJA8Z2ekLFc5nMBZ2bqKuMBtLKT3sAgG240pulB4aG14WmR5LuqRQNADKKFJAwfNzjLw5qqDs1ElzQxvXvfgE=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1750773044; c=relaxed/simple;
+	bh=3LDQcD87Wri+XCeuQushsbc9uN7RNaVkwTY6s9v+ves=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=fpGd2NuBrgIHx6V0Ly6aLANR/BZ1Ea3cLXM3vW3372H0dCAsEtoFG1miVaKaHu3lLtVF3KrVhjg3Es3TfSNRq3w5JCnIbzhnC77cQegtO0rVHk/Fh9z8EDmI8LXenuXEtUz68+6ao051QdCZZUK6aVDG/S/JE6FNd/aUtjlJXmU=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=nfraprado@collabora.com header.b=ASSplS6Q; arc=pass smtp.client-ip=136.143.188.14
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+ARC-Seal: i=1; a=rsa-sha256; t=1750772999; cv=none; 
+	d=zohomail.com; s=zohoarc; 
+	b=HLWWqkzJBSCO02jmpwtlHthMZkWiBpHDnf9cvDr3XP5JhIgB6ehWRY6etS5qQ3U2jqmFx34awjXzhso7eJFhX5EOhiqfJ5ZHmGnnra78heE07TXhd/wG+BEhJe5hzhKDNHPt3riYBEsBLtGJ9QZMfxmv2RLtAzE4AYibe1ZdM74=
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
+	t=1750772999; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
+	bh=3LDQcD87Wri+XCeuQushsbc9uN7RNaVkwTY6s9v+ves=; 
+	b=HXugNEJocg/1EDbe7DPsj2aiYUr7PPRE9V/OktHI8VLRCLiHt6ulZqwUXlKgCvC40ROmSVEekb39878ixPgRwXvU+XRpAIVHfoJvEIMHdQl6WcD5OnlNkPkT1alb0WVDbMFLkubaEO9/YPBiBnnPXE/Vm0m1kFZfB4xDIa4hIAg=
+ARC-Authentication-Results: i=1; mx.zohomail.com;
+	dkim=pass  header.i=collabora.com;
+	spf=pass  smtp.mailfrom=nfraprado@collabora.com;
+	dmarc=pass header.from=<nfraprado@collabora.com>
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1750772999;
+	s=zohomail; d=collabora.com; i=nfraprado@collabora.com;
+	h=Message-ID:Subject:Subject:From:From:To:To:Cc:Cc:Date:Date:In-Reply-To:References:Content-Type:Content-Transfer-Encoding:MIME-Version:Message-Id:Reply-To;
+	bh=3LDQcD87Wri+XCeuQushsbc9uN7RNaVkwTY6s9v+ves=;
+	b=ASSplS6QQZVezYgDHp0gixP86wG7iGU3qlgQy9LSg316kfeJOzDAHHmJ77C+IPG4
+	avXEF0Po3g0xyJmam+yzmlcU/Vu6RfmZYxRd9o41SfeVhbpRrHWzGSJj3E/eistQYDT
+	y/I66yC7rRH7qlu2Zui/copKRLnoQL2WGKqCNH1k=
+Received: by mx.zohomail.com with SMTPS id 175077299645558.67407326984835;
+	Tue, 24 Jun 2025 06:49:56 -0700 (PDT)
+Message-ID: <52bcdfcfe84db4be9eeb7b7ebe926e990e460c03.camel@collabora.com>
+Subject: Re: [PATCH 0/3] Add MT8196 compatibles to bindings
+From: =?ISO-8859-1?Q?N=EDcolas?= "F. R. A. Prado" <nfraprado@collabora.com>
+To: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, 
+	devicetree@vger.kernel.org
+Cc: qii.wang@mediatek.com, andi.shyti@kernel.org, robh@kernel.org, 
+ krzk+dt@kernel.org, conor+dt@kernel.org, matthias.bgg@gmail.com, 
+ gregkh@linuxfoundation.org, jirislaby@kernel.org,
+ daniel.lezcano@linaro.org,  tglx@linutronix.de, linux-i2c@vger.kernel.org,
+ linux-kernel@vger.kernel.org,  linux-arm-kernel@lists.infradead.org,
+ linux-mediatek@lists.infradead.org,  linux-serial@vger.kernel.org,
+ kernel@collabora.com
+Date: Tue, 24 Jun 2025 09:49:24 -0400
+In-Reply-To: <20250611110800.458164-1-angelogioacchino.delregno@collabora.com>
+References: 
+	<20250611110800.458164-1-angelogioacchino.delregno@collabora.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.46.4-2 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Type: Text/Plain; charset=us-ascii
-Content-Transfer-Encoding: 7bit
+MIME-Version: 1.0
+X-ZohoMailClient: External
 
-On Tue, 24 Jun 2025 13:15:32 +0100
-Alice Ryhl <aliceryhl@google.com> wrote:
+On Wed, 2025-06-11 at 13:07 +0200, AngeloGioacchino Del Regno wrote:
+> This series adds compatibles for MT8196 (Chromebooks) and MT6991
+> (Smartphones) for HW that is fully compatible with older SoCs.
+>=20
+> AngeloGioacchino Del Regno (3):
+> =C2=A0 dt-bindings: timer: mediatek,timer: Add MediaTek MT8196 compatible
+> =C2=A0 dt-bindings: serial: mediatek,uart: Add compatible for MT8196
+> =C2=A0 dt-bindings: i2c: i2c-mt65xx: Add MediaTek MT8196/6991 compatibles
 
->> So would the function be defined like this?
->>
->> fn as_nanos(self) -> i64;
->>
->> If that's the case, then we've come full circle back to the original
->> problem; Clippy warns against using as_* names for trait methods that
->> take self as follows:
->>
->> warning: methods called `as_*` usually take `self` by reference or `self` by mutable reference
->>    --> /home/fujita/git/linux-rust/rust/kernel/time/hrtimer.rs:430:17
->>     |
->> 430 |     fn as_nanos(self) -> i64;
->>     |                 ^^^^
->>     |
->>     = help: consider choosing a less ambiguous name
->>     = help: for further information visit https://rust-lang.github.io/rust-clippy/master/index.html#wrong_self_convention
->>     = note: `-W clippy::wrong-self-convention` implied by `-W clippy::all`
->>     = help: to override `-W clippy::all` add `#[allow(clippy::wrong_self_convention)]`
->>
->> https://lore.kernel.org/rust-for-linux/20250610132823.3457263-2-fujita.tomonori@gmail.com/
-> 
-> Are we missing a derive(Copy) for this type? Clippy does not emit that
-> lint if the type is Copy:
-> https://github.com/rust-lang/rust-clippy/issues/273
+For the whole series,
 
-I think that both Delta and Instant structs implement Copy.
+Reviewed-by: N=C3=ADcolas F. R. A. Prado <nfraprado@collabora.com>
 
-#[repr(transparent)]
-#[derive(PartialEq, PartialOrd, Eq, Ord)]
-pub struct Instant<C: ClockSource> {
-    inner: bindings::ktime_t,
-    _c: PhantomData<C>,
-}
+--=20
+Thanks,
 
-impl<C: ClockSource> Clone for Instant<C> {
-    fn clone(&self) -> Self {
-        *self
-    }
-}
-
-impl<C: ClockSource> Copy for Instant<C> {}
-
-#[derive(Copy, Clone, PartialEq, PartialOrd, Eq, Ord, Debug)]
-pub struct Delta {
-    nanos: i64,
-}
-
-
-The above warning is about the trait method.
+N=C3=ADcolas
 
