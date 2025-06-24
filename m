@@ -1,92 +1,151 @@
-Return-Path: <linux-kernel+bounces-700446-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-700448-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B0B4BAE68C4
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Jun 2025 16:32:31 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id AB5D6AE68CB
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Jun 2025 16:32:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EF5AC4E33D5
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Jun 2025 14:26:37 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 85E516A2CF8
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Jun 2025 14:26:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EACCD2D4B7C;
-	Tue, 24 Jun 2025 14:23:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C054F2D29A9;
+	Tue, 24 Jun 2025 14:24:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="ki3e8wtC";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="+Ox1q9up"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	dkim=pass (1024-bit key) header.d=collabora.com header.i=nfraprado@collabora.com header.b="Y9Db3CJu"
+Received: from sender4-op-o14.zoho.com (sender4-op-o14.zoho.com [136.143.188.14])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F0D8428ECE2
-	for <linux-kernel@vger.kernel.org>; Tue, 24 Jun 2025 14:23:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750775035; cv=none; b=XmetL0+GMUXA8flOhijztPF+2QJyizPMn6u3dRKJjmhOyVnOs55Nc+i8MzG/lruDKQfbkLLkndRXm24KM/8Bnwde3NOiCZLEXoIPcmPuPCBvLDZ+i7EA4EM8kq2K5TAMuQvg/Bp27DvZPdp+UneLHe6zRCQBi2c0+y7Kh9n6Llg=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750775035; c=relaxed/simple;
-	bh=2BUfcgCrJNd4CKMKzefVZR+8SKV18VIfH+NHbCQsXS4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=NodHlrwSnO0uC3GFgDCK9psmFwJiSHN3AnuZau0RSw0hm5WktPk8u5aixMJIDUfVH9OB4KEYbQ1khP4+OmTwC0q9kbgk/sA/vD+4oJeZCxjlBFpca0HycBmDib1AgMj4E2xwrQjKacx+Cvz5fmeFsIfzuyh1ynsJzqzk5UEicTQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=ki3e8wtC; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=+Ox1q9up; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Date: Tue, 24 Jun 2025 16:23:50 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1750775032;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=lrpSBL/DLIzI8Jp1GABlBZa1QLU8cOGFC43YvRyDTwg=;
-	b=ki3e8wtCd9SJ7t9BIbk/33RI2H3L4u1EgoQsMqDtqMTIucEh+FwvCt6HLpzmcgpfiQk2LK
-	9ZIWfpRTRuthrnt+vbLsy9Bm8osVRcZ0sKoVpCiN2+o0gCrwELuoU2JwEgQEx/LOxXbTSd
-	b9f+NTbWKejtUmZVGDhIV7Dkw9MbMlwPCFISMIvS/k5ErRAHRN3q1yT1EPYWVqa3M7rUTX
-	qnrtAVkJeMkr88US/gVcQb2bq4tGi45elRV+1UrugGKc+OeBDiDwCs01YwKw/JBjkG1fNV
-	0wyUbsTRfFDhlwQUZewhAT9FNC4SkCyzdD5A9/0pa5zxYKSs0bJYk4+z1zCsNw==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1750775032;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=lrpSBL/DLIzI8Jp1GABlBZa1QLU8cOGFC43YvRyDTwg=;
-	b=+Ox1q9upvHIs+HqG0mecMSWkZTr4CpN8Ir6qcIVFg6RmjyCmJcl5BucqBcplFnhDne/GxY
-	/krpYf0/y4Tu7cCQ==
-From: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-To: Peter Zijlstra <peterz@infradead.org>
-Cc: =?utf-8?B?Q2zDqW1lbnQgTMOpZ2Vy?= <cleger@rivosinc.com>,
-	Nam Cao <namcao@linutronix.de>,
-	"Maciej W. Rozycki" <macro@orcam.me.uk>,
-	Palmer Dabbelt <palmer@dabbelt.com>,
-	Paul Walmsley <paul.walmsley@sifive.com>, aou@eecs.berkeley.edu,
-	Alexandre Ghiti <alex@ghiti.fr>, clrkwllms@kernel.org,
-	rostedt@goodmis.org, linux-rt-devel@lists.linux.dev,
-	linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] riscv: Enable interrupt during exception handling
-Message-ID: <20250624142350.xZ_DdClH@linutronix.de>
-References: <mhng-60581B88-6FC7-4349-96B6-730D908ABF4A@palmerdabbelt-mac>
- <alpine.DEB.2.21.2506240303170.61655@angie.orcam.me.uk>
- <19cf2371-7293-4e71-a17d-669db4c8270a@rivosinc.com>
- <20250624131730.XqPd1HUR@linutronix.de>
- <d135d6cc-5117-4b3a-9abe-2e5fd9e3e490@rivosinc.com>
- <20250624140815.GU1613200@noisy.programming.kicks-ass.net>
- <20250624141130.gZVv4WnP@linutronix.de>
- <20250624141801.GV1613200@noisy.programming.kicks-ass.net>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 35E271F4607;
+	Tue, 24 Jun 2025 14:24:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.14
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1750775099; cv=pass; b=IxjKXiOAYOTIHrPWvR5zhx/fIXnW8yGoivjfdzMgHa++Cv4ndBzrtNtnGHxo/UAyF+KFyVfZI07vNh0vJ9iPzostisKYlJkn4kZvx61eTBfI3yHINUNin9WGIw1PlpI5R6xxvp/owsPHcpP/s+2LpsGKOLxd/kxxUaYpWUb37RQ=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1750775099; c=relaxed/simple;
+	bh=RrCfd4LRI0YthoKkMgXgWQDEDfg201AKOzW91yg3140=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=QEN7wuRUcQzO//cTlhfhySubGSjrR5g7pSurGsFnST1zHNPjvr7IOacsupqhuBoebp39yv6Ci5riXZXMZ4RcoWsomzVxQv1GfxWd8ZXgaYJ7afiLTVPdvBw/wWD8jmzeKIWpv8FRL79V6TAkAxND67GTGXXfWFMdwQJ1khwMQhU=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=nfraprado@collabora.com header.b=Y9Db3CJu; arc=pass smtp.client-ip=136.143.188.14
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+ARC-Seal: i=1; a=rsa-sha256; t=1750775065; cv=none; 
+	d=zohomail.com; s=zohoarc; 
+	b=FtqdH5fHsxD5tdO7RpQju9z7Kg83NOATY3cl0059rNyGDnnP3b9v5JTOlHY6/urmd5nUxZXc5cMU39UUrlA0hWZXJpWRMyKMEIiiJydahC6TEBGh01wTwYzKfZc9tM47Yv7ZorSRTjazwYMRLA06vjhSiZ11hNJyrRlsxIsIBNE=
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
+	t=1750775065; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
+	bh=RrCfd4LRI0YthoKkMgXgWQDEDfg201AKOzW91yg3140=; 
+	b=ACM7SGKNrUHcbiaQDC0GYK/KK410dR4iCIUK8yPanKSUsXcJp94qDBrO+V9ftpLE50I7K1WyacmNirQxm7/ubHcs85iZMTb/f815+arXp/x/bnTPg2TATcQTUADIyJjJD6TtmoNrnBM8zrI6ey6j0Z8kS8BmBfee6gT2iW1uRVw=
+ARC-Authentication-Results: i=1; mx.zohomail.com;
+	dkim=pass  header.i=collabora.com;
+	spf=pass  smtp.mailfrom=nfraprado@collabora.com;
+	dmarc=pass header.from=<nfraprado@collabora.com>
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1750775065;
+	s=zohomail; d=collabora.com; i=nfraprado@collabora.com;
+	h=Message-ID:Subject:Subject:From:From:To:To:Cc:Cc:Date:Date:In-Reply-To:References:Content-Type:Content-Transfer-Encoding:MIME-Version:Message-Id:Reply-To;
+	bh=RrCfd4LRI0YthoKkMgXgWQDEDfg201AKOzW91yg3140=;
+	b=Y9Db3CJu+WCNT9IPnm9GUXLw/oPeRGGIdJ9OZByccR8anQcerUNem9jDBQpmBSh3
+	fsEYbTHqEY6/DS4vW0m35Mv3iNeztEuw6kqgWK1dg/nKqVabW6tRDbfUm3XKQIHqKof
+	3/O+sJ5oh376h1WzFmpK2W7xZXuOhXJkH5D7VTzw=
+Received: by mx.zohomail.com with SMTPS id 1750775063297142.35232576576414;
+	Tue, 24 Jun 2025 07:24:23 -0700 (PDT)
+Message-ID: <2762e08674df39b79dc169ef3791eaeeaff17d17.camel@collabora.com>
+Subject: Re: [PATCH v1 00/13] pmdomain: Partial refactor, add MT8196 support
+From: =?ISO-8859-1?Q?N=EDcolas?= "F. R. A. Prado" <nfraprado@collabora.com>
+To: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, 
+	linux-mediatek@lists.infradead.org
+Cc: robh@kernel.org, conor+dt@kernel.org, mbrugger@suse.com, 
+ y.oudjana@protonmail.com, linux-pm@vger.kernel.org, ulf.hansson@linaro.org,
+  linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, 
+ mandyjh.liu@mediatek.com, lihongbo22@huawei.com, wenst@chromium.org, 
+ matthias.bgg@gmail.com, krzk+dt@kernel.org, kernel@collabora.com, 
+ linux-arm-kernel@lists.infradead.org
+Date: Tue, 24 Jun 2025 10:24:21 -0400
+In-Reply-To: <20250623120154.109429-1-angelogioacchino.delregno@collabora.com>
+References: 
+	<20250623120154.109429-1-angelogioacchino.delregno@collabora.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.46.4-2 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20250624141801.GV1613200@noisy.programming.kicks-ass.net>
+X-ZohoMailClient: External
 
-On 2025-06-24 16:18:01 [+0200], Peter Zijlstra wrote:
-> I'm confused, sending signals is for exception from userspace. That has
-> nothing to do with exceptions from kernelspace being NMI like.
+On Mon, 2025-06-23 at 14:01 +0200, AngeloGioacchino Del Regno wrote:
+> This series refactors the bus protection regmaps retrieval to avoid
+> searching in all power domain devicetree subnodes for vendor
+> properties
+> to get syscons for different busses, and adds a new property which is
+> located in the power controller root node containing handles to the
+> same.
+>=20
+> Retrocompatibility is retained and was tested on multiple SoCs in the
+> Collabora lab - specifically, on Genio 350/510/700/1200, and manually
+> on MT6795 Helio (Xperia M5 Smartphone), MT8186, MT8192 and MT8195
+> Chromebooks.
+>=20
+> This was tested *three times*:
+> =C2=A0- Before the per-SoC conversion in drivers/pmdomain/mediatek
+> =C2=A0- With per-SoC conversion code but with *legacy* devicetree
+> =C2=A0- With per-SoC conversion code and with *new* devicetree conversion
+>=20
+> All of those tests were successful on all of the aforementioned SoCs.
+>=20
+> This also adds support for:
+> =C2=A0- Modem power domain for both old and new MediaTek SoCs, useful for
+> =C2=A0=C2=A0 bringing up the GSM/3G/4G/5G modem for both laptop and smart=
+phone
+> use
+> =C2=A0- RTFF MCU HW, as found in MT8196 Chromebooks and MT6991 Dimensity
+> 9400
+> =C2=A0- Hardware Voter (MT8196/MT6991), allowing ATF, remote processors
+> and
+> =C2=A0=C2=A0 the AP (Linux) to manage the same power domains through a vo=
+ter
+> MCU,
+> =C2=A0=C2=A0 avoiding power racing
+> =C2=A0- Directly controlled power domains for MT8196
+> =C2=A0- Voted power domains for MT8196
+> =C2=A0- Multimedia (voted) power domains for MT8196.
+>=20
+> Note that all of the power domains for MT8196 should also work on
+> MT6991
+> but since I have no Dimensity 9400 boards, even though I'm 99.5% sure
+> that
+> it will simply work as those are the same, I avoided to add
+> compatibles
+> for 6991 as it's impossible for me to test.
+>=20
+> AngeloGioacchino Del Regno (13):
+> =C2=A0 dt-bindings: power: mediatek: Document mediatek,bus-protection
+> =C2=A0 pmdomain: mediatek: Refactor bus protection regmaps retrieval
+> =C2=A0 pmdomain: mediatek: Handle SoCs with inverted SRAM power-down bits
+> =C2=A0 pmdomain: mediatek: Move ctl sequences out of power_on/off
+> functions
+> =C2=A0 pmdomain: mediatek: Add support for modem power sequences
+> =C2=A0 pmdomain: mediatek: Add support for RTFF Hardware in MT8196/MT6991
+> =C2=A0 pmdomain: mediatek: Add support for Hardware Voter power domains
+> =C2=A0 pmdomain: mediatek: Add support for secure HWCCF infra power on
+> =C2=A0 pmdomain: mediatek: Convert all SoCs to new style regmap retrieval
+> =C2=A0 arm64: dts: mediatek: Convert all SoCs to use mediatek,bus-
+> protection
+> =C2=A0 dt-bindings: power: Add support for MT8196 power controllers
+> =C2=A0 pmdomain: mediatek: Add support for MT8196 SCPSYS power domains
+> =C2=A0 pmdomain: mediatek: Add support for MT8196 HFRPSYS power domains
 
-Yes. See the original submission
-	https://lore.kernel.org/linux-riscv/20250620114346.1740512-1-namcao@linutronix.de/
+For the entire series,
 
-Sebastian
+Reviewed-by: N=C3=ADcolas F. R. A. Prado <nfraprado@collabora.com>
+
+(as I've reviewed this internally before submission)
+
+--=20
+Thanks,
+
+N=C3=ADcolas
 
