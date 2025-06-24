@@ -1,161 +1,343 @@
-Return-Path: <linux-kernel+bounces-701292-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-701294-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5468EAE733F
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Jun 2025 01:32:50 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 49244AE7346
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Jun 2025 01:33:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 755CA7B1AE1
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Jun 2025 23:31:26 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E822E1BC2CFF
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Jun 2025 23:33:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EC72226E6FA;
-	Tue, 24 Jun 2025 23:31:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 96EA526B774;
+	Tue, 24 Jun 2025 23:31:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="2TC6O+zQ"
-Received: from mail-pj1-f74.google.com (mail-pj1-f74.google.com [209.85.216.74])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="J0FMUguE"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.20])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C019426E14C
-	for <linux-kernel@vger.kernel.org>; Tue, 24 Jun 2025 23:31:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.74
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750807868; cv=none; b=DA7xD3e6vwkhEUTMbN1RKCc4gIvcxbtEfutRpd9CsIYuTOOXssMoaFnZsrGxI1xhCupILm+AcqVUV1N35H/nW4EG7awk88BM41NZHApFnT3mgCkHDxXxjXXVGAQx3SOe5wh6l9ULdm0ToXNf5V6QAZzadr632/djqqegANRRyU4=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750807868; c=relaxed/simple;
-	bh=nX0YHqLfleKwgIkQRR7zhOtfTngLBmfTmLBeKNNNlEE=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=iAxEqNBzlYQSuy49qFPFoLumE1uADoA/lTgfZAjr/CO2tyYDayegpfjqRFtHt+Ce9POkspMvOvgAXyHWo4+l9/VL0dKa0bsK2wa+wNpymSrdSWAJ6sF6QOWGYXhwW0TvPfQVP2a4cv4JEmsEVPlq26ha/ddwyL1qL6weyh1lsIo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=2TC6O+zQ; arc=none smtp.client-ip=209.85.216.74
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
-Received: by mail-pj1-f74.google.com with SMTP id 98e67ed59e1d1-3138e65efe2so883128a91.1
-        for <linux-kernel@vger.kernel.org>; Tue, 24 Jun 2025 16:31:06 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1750807866; x=1751412666; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=O/hcbVM3hgEz99lahHzlfgB8IEMKnnphGvT38Gwa/j0=;
-        b=2TC6O+zQBDMKTLEHc7NlNjSwCu4fdZiDiuopWC1IHdW9W19w2bwNtvSvbDOm8DJpV2
-         r4BZ9pQTRmWWiRNx/xpKy7PgUS6RUq1EMBDIRLb6rYOih+9STBxvHjIGwinq+/Sbnwwi
-         jfsWXR62O2TZiVl9BevkMRhS51wcIE2CvKG5XjhNhnuuq9nJc+UhYqqgJ6+Zwap7D0pr
-         8ipYIV9R/xVhT6tau2XiWQSWCEFhqX3yXzSuZnonwYmAgtRjTeTQQxuIue81LucGcly3
-         AfviJrrPPUb2W2WqbvmkNyBB34+fGUX+QNxHgEgW4+fRjLutxkU5xqdfG+nUEwZDjwgy
-         LmZQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1750807866; x=1751412666;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=O/hcbVM3hgEz99lahHzlfgB8IEMKnnphGvT38Gwa/j0=;
-        b=wfgaVk6T/p4XZwKyWcO5qIWSAvNi/7dk+AbKkmEauWRdAemnBAI+RRRoGSLIC7nN2b
-         1xWF95ab62d3maY+6N5C06L0+FZTwgax/LYxxi6B1ubCVC+qsd9Uw77UrAeeel3U1+hK
-         PKkMIcuiY5al+LM+WdbXfCO2SH9qX4TlbL8B0Nuw7qyoPdN8m7AG/FrWeHgGg9R76Z8V
-         JV4q/cPc8FnriTu3qYyAWgU7Usm3ikuX2SLouv5Ds/ZfHCfAB/1OFQMtM8C4uN2iCaVx
-         btrA3zMbrsTrb0/ol21+4RjOIKpg0ZK5519/OwLCTRbdGr9s24bJ8ybS0/yGq1GLKghB
-         y9kA==
-X-Gm-Message-State: AOJu0Yzai0WsNvMl5XDNiOevylTQkzKYIPseRgDEFnq4aYNSLIu82aD/
-	AmpSJEoFgus8pBu+5B7l2Z+j/RxKRhBPo+egxkZ3soRNbqVbMwf/m3vwSAH/NVDs1VBFScwxmnS
-	+XGKJDw==
-X-Google-Smtp-Source: AGHT+IFOA5I0fytY1fxsbAPIcxCuXX1tMxsiYvby57eByHBNqJwSR1UKppPsacZEWlYJTkj1qwxGne4E8Ak=
-X-Received: from pjbhl6.prod.google.com ([2002:a17:90b:1346:b0:311:e71e:3fb9])
- (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a17:90a:d008:b0:312:1b53:5e98
- with SMTP id 98e67ed59e1d1-315f26c401fmr891263a91.34.1750807865998; Tue, 24
- Jun 2025 16:31:05 -0700 (PDT)
-Date: Tue, 24 Jun 2025 16:31:04 -0700
-In-Reply-To: <20250530185239.2335185-3-jmattson@google.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C094926B768;
+	Tue, 24 Jun 2025 23:31:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=198.175.65.20
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1750807913; cv=fail; b=Uco1COTXngScpOQD8F8yHjiJm0Z5nj3LAZcBxPmQPOdEW8o/oLE+WareNclgr17hk4kNXD5f13p5eH7NfrALY46hJFx5vTah9Q2dl5hRCuLdp6GAdiDXRbyxehuSX4GDqQ8CKKu2GKwplf1SuPhUGC6MKTGkgght6I26kc+SR7s=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1750807913; c=relaxed/simple;
+	bh=+ulsCr6IG/BACyXZC0niSBRo/ZocVRyGdonwmiRqIN8=;
+	h=Message-ID:Date:Subject:To:CC:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=RhyRsZvxJWAWF0t1CULc7drkL2peZWYpbXpmqAc6vlwZLZP9lQcGJimSStUQY+MX0ZHCBBkfbMEoTtH3eDTNnSCjsXqiDAvDGYRvHgxEbNp2dvs9Yr+ME8i1dblpsEOLBa47RvowAkgu6BI1CITFHC3uAAGyLREMrRS0hP+WDHI=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=J0FMUguE; arc=fail smtp.client-ip=198.175.65.20
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1750807912; x=1782343912;
+  h=message-id:date:subject:to:cc:references:from:
+   in-reply-to:content-transfer-encoding:mime-version;
+  bh=+ulsCr6IG/BACyXZC0niSBRo/ZocVRyGdonwmiRqIN8=;
+  b=J0FMUguEnqpk41KFya2abWiqlCdQehEInXvS7mWnTlJyhy8kUKC2OQXW
+   lkEDxoSi3/wfxV57yu4wmA1kJDv2U9GhZNOhmHE4PE27YUy286CtKS1zM
+   02R2MlGXym7W+WDqVCLsCi9OAtZeawzn+XOJV/H2Q1qW91UGDzQYVPMSH
+   YPweEEm6ZYMZ27wjawyptDkJSy4bPQcQ5dHh61x7uZLE9KJvNoycR8uyv
+   eDbvlnihXGIbOh1V104IfdqsuZLgGk9zz/HLJsgpz9u14ohWcpKXPzRE0
+   yF5VY7s2DLz5hQJL9V/r1PXR1+rnyLWy/D1uFqFUDgePcObW6G1RA5LeQ
+   Q==;
+X-CSE-ConnectionGUID: +QtRNCxmQ3yzyDmBrA2Q9Q==
+X-CSE-MsgGUID: fQT5CwumQF6bPDXGsCIkOQ==
+X-IronPort-AV: E=McAfee;i="6800,10657,11474"; a="52786788"
+X-IronPort-AV: E=Sophos;i="6.16,263,1744095600"; 
+   d="scan'208";a="52786788"
+Received: from fmviesa001.fm.intel.com ([10.60.135.141])
+  by orvoesa112.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 24 Jun 2025 16:31:51 -0700
+X-CSE-ConnectionGUID: psS3e4fPTkWrfvQzevnO4g==
+X-CSE-MsgGUID: UYivCd9oQIOdyYuNomxe7w==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.16,263,1744095600"; 
+   d="scan'208";a="182935991"
+Received: from orsmsx903.amr.corp.intel.com ([10.22.229.25])
+  by fmviesa001.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 24 Jun 2025 16:31:50 -0700
+Received: from ORSMSX902.amr.corp.intel.com (10.22.229.24) by
+ ORSMSX903.amr.corp.intel.com (10.22.229.25) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.25; Tue, 24 Jun 2025 16:31:49 -0700
+Received: from ORSEDG903.ED.cps.intel.com (10.7.248.13) by
+ ORSMSX902.amr.corp.intel.com (10.22.229.24) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.25 via Frontend Transport; Tue, 24 Jun 2025 16:31:49 -0700
+Received: from NAM12-BN8-obe.outbound.protection.outlook.com (40.107.237.80)
+ by edgegateway.intel.com (134.134.137.113) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.25; Tue, 24 Jun 2025 16:31:49 -0700
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=OZwonAZm7og3LkQ+0NBIj4yohr6FkghQnbhOEP5LVonTxZuuKpSmqqo1qw/ATJB1NzJ36PwPfFIbup8RIGa9zNjKAQHCgy4nWyNpJcsPp+HhNPBMgdlad1agmHDfCHHSMne1G0Km1qSlCpGJ1Y4MDAh+7dKyQrBsehdL7BKp22lm3m3HjpdcANBSE951TgsFgxVfreoetCp+D5Vwnx5rHu4QsoalP1am1ANrv7rrxINZtxFr9Wp+ZPa695A6ciAFE7x4S62KkiBLojO1GYc0klDtUISnz1Hck/H17psjQ23pmtbxprJA/xX8on/VQUHIz2XVGS9QRWckr1zC+ziWmA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=cVZ5+BXeQYhyIoobx6ZPbZ2gQNmPBKZUkeI0zf3WTG8=;
+ b=cLjDuzCuJldZngh2ugjVPdLyVLLAQqMOd+CdFuEQoyKhGkPtSO9bbPSQ6L/UYPfZsPZJPgRBXhzOY6cpx6OoKaaFMyKNaS07WWikC418iaKrFPajRNUtXDnhtQkJdKBYtFjeOwxR5YtZa8CTv0Wym1mBEDxTndYl9UhGRdADUd/Nl0xTH932uRu3q0DwxrBjMpzRRwzLuXZ5An9gHOA/Q8vFQ9STyigUzn5vUrbd5JuKJ1YsNWctfZAmYKzu1b85uO4V8nSUrVJRoIP55u/t9c5CCsNzOkqslLNyqUAZ9Zfhhg8YPcfKrXuLkaUb04LlBJc7iuq0bY6kEyefaBg9GA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
+ dkim=pass header.d=intel.com; arc=none
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=intel.com;
+Received: from SJ2PR11MB7573.namprd11.prod.outlook.com (2603:10b6:a03:4d2::10)
+ by LV2PR11MB6000.namprd11.prod.outlook.com (2603:10b6:408:17c::12) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8880.16; Tue, 24 Jun
+ 2025 23:31:40 +0000
+Received: from SJ2PR11MB7573.namprd11.prod.outlook.com
+ ([fe80::61a:aa57:1d81:a9cf]) by SJ2PR11MB7573.namprd11.prod.outlook.com
+ ([fe80::61a:aa57:1d81:a9cf%6]) with mapi id 15.20.8792.034; Tue, 24 Jun 2025
+ 23:31:40 +0000
+Message-ID: <887bad33-7f4a-4b6d-95a7-fdfe0451f42b@intel.com>
+Date: Tue, 24 Jun 2025 16:31:37 -0700
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v14 13/32] fs/resctrl: Introduce mbm_cntr_cfg to track
+ assignable counters per domain
+To: Babu Moger <babu.moger@amd.com>, <corbet@lwn.net>, <tony.luck@intel.com>,
+	<Dave.Martin@arm.com>, <james.morse@arm.com>, <tglx@linutronix.de>,
+	<mingo@redhat.com>, <bp@alien8.de>, <dave.hansen@linux.intel.com>
+CC: <x86@kernel.org>, <hpa@zytor.com>, <akpm@linux-foundation.org>,
+	<rostedt@goodmis.org>, <paulmck@kernel.org>, <thuth@redhat.com>,
+	<ardb@kernel.org>, <gregkh@linuxfoundation.org>, <seanjc@google.com>,
+	<thomas.lendacky@amd.com>, <pawan.kumar.gupta@linux.intel.com>,
+	<manali.shukla@amd.com>, <perry.yuan@amd.com>, <kai.huang@intel.com>,
+	<peterz@infradead.org>, <xiaoyao.li@intel.com>, <kan.liang@linux.intel.com>,
+	<mario.limonciello@amd.com>, <xin3.li@intel.com>, <gautham.shenoy@amd.com>,
+	<xin@zytor.com>, <chang.seok.bae@intel.com>, <fenghuay@nvidia.com>,
+	<peternewman@google.com>, <maciej.wieczor-retman@intel.com>,
+	<eranian@google.com>, <linux-doc@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>
+References: <cover.1749848714.git.babu.moger@amd.com>
+ <1a3ed4abaaebbcf2399068ef5004760e8722d9e0.1749848715.git.babu.moger@amd.com>
+Content-Language: en-US
+From: Reinette Chatre <reinette.chatre@intel.com>
+In-Reply-To: <1a3ed4abaaebbcf2399068ef5004760e8722d9e0.1749848715.git.babu.moger@amd.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: MW4PR04CA0276.namprd04.prod.outlook.com
+ (2603:10b6:303:89::11) To SJ2PR11MB7573.namprd11.prod.outlook.com
+ (2603:10b6:a03:4d2::10)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20250530185239.2335185-1-jmattson@google.com> <20250530185239.2335185-3-jmattson@google.com>
-Message-ID: <aFs1OL8QybDRUQkF@google.com>
-Subject: Re: [PATCH v4 2/3] KVM: x86: Provide a capability to disable
- APERF/MPERF read intercepts
-From: Sean Christopherson <seanjc@google.com>
-To: Jim Mattson <jmattson@google.com>
-Cc: linux-kernel@vger.kernel.org, kvm@vger.kernel.org, 
-	Paolo Bonzini <pbonzini@redhat.com>
-Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: SJ2PR11MB7573:EE_|LV2PR11MB6000:EE_
+X-MS-Office365-Filtering-Correlation-Id: 36b634d4-98b0-47df-19fb-08ddb3774546
+X-LD-Processed: 46c98d88-e344-4ed4-8496-4ed7712e255d,ExtAddr
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|7416014|376014|1800799024|366016|7053199007;
+X-Microsoft-Antispam-Message-Info: =?utf-8?B?alJRdktlcXpKbGdqUndjT1psNXR2TzVONVZsVFM5bXpYTFpLWXRmaDBHRUdx?=
+ =?utf-8?B?QnNzcmJ6VTVQbGRzOEE2alRnU2xjZGNSRjloRUJXbTc5UFh3d2x1VDB5QWhI?=
+ =?utf-8?B?czhnNWNGd0ZkQjVZMDFVMFFkRXppdjBjaWhTd0FOV2VGeS9uYUttZnQ2Y0lY?=
+ =?utf-8?B?aWZXdGN6YmxOSWVZSU9JRVc4VCszYUh4S01CRm91L1g3ZU5BbkxMNzFJR1FR?=
+ =?utf-8?B?ZkhEb3FjUmcvOGN2ak1UaVBueW5ldnBQUzFTeWRUa1gxUWtsZ1ZpdWsvOXdX?=
+ =?utf-8?B?KzJ3b3RoT1FyU0xOQlF1c2NPdmQzU2haQTYyMGRNV0t0T2JSY3gweFdVbTBy?=
+ =?utf-8?B?ellsMkFoQmhsZFZESEltcXh3b1RVTlk0WlpOaWNNWXZEM0J4ZE45U0VpYy80?=
+ =?utf-8?B?cDdIVE04c0t4dzhndnlIQkJoTi9TZmZBVnpYSmh5SGlJNXZJNW9Xa3ErNy9w?=
+ =?utf-8?B?Y1JUdDQra1hPQXNkclVNZS9STXZLWmVuQnNqVkpNOS82ZzV3endXaHY0SnZ2?=
+ =?utf-8?B?R2tRNVYvc2lYcnREZ0dUK1BFNTNMUmhtMVpLaFZYLzJLcmVwcFNwZWlCMVQ0?=
+ =?utf-8?B?anAralc2ZzE0MzNQZTNWNnRUVlk2ZzMyWnNOK3BCb0Y2VHVocitjbGdDU3Q3?=
+ =?utf-8?B?ZXBYZHNvMVAwdDF5UXl3aUJKNkcreFZ2UUVpKzJFaU9SOU5DS1g3N1lueU5T?=
+ =?utf-8?B?SGdZTDZYVWcrZkF2RFpSd0FKWWNkWVg2bUpSWndiZE1TSE9XRFVqRGRXdGFm?=
+ =?utf-8?B?SjBBcTBCNE5SNTYwdHRuWXFCK2tCcGl0YkpTUHhQbmcvQ3gvMjVidVpDUXIr?=
+ =?utf-8?B?ekJqUlRDM01id3VVdWtsT0dKeHBHL29VTDdDRXZBOFlWc0E0NTZadzA2VVgw?=
+ =?utf-8?B?SmdsV3Zybmd0cmNtTzdXSmZ6UlJTRHNHb3B6WURidU9zbEJKaFVLNFBGcTBy?=
+ =?utf-8?B?RlFhQ1FVOUpqTHF4aUM5aVVBWFdPbHYvcDMrTUE0OUtZL2ZlaVZsbFZvV2lM?=
+ =?utf-8?B?TXBQeGNQSU8xTUk2Y3k0VDVrd1o2RVlUU252YzQwdFcra1B2dm55MWY5eHpE?=
+ =?utf-8?B?RzVyVTk1ZmpncURSeHFsbFhiaFVnNXFxc01PRXNadDAyY2pGZWN0c2kwYjlv?=
+ =?utf-8?B?SUgzSlNQZ1NlTGFPdnRvN29XNk1BMU56MjhQOTFrdUtGdjJyRHg4TjJERTc3?=
+ =?utf-8?B?OTlBRmErNFYyeE9vQW9oNkwwQ0k5cmRUcElseWJwOFlUbEdlZWJvQ1ZZTzBC?=
+ =?utf-8?B?TnRDY0dpeVR2dHFkd3YwN0dmT2s5Ni9xNVhIWHpnL0c2L0F0bS9CelZqeXhw?=
+ =?utf-8?B?UEpaeXc0ZSt3MndjSmdrcVYyMTBFOUREekJ6dFd5eVl2TS81d3NCdmZBaHZ6?=
+ =?utf-8?B?UnVCclRtRG9QZGkvRG9RMEU4eVJwWFlLanhsT0ppQUk5Zk03NGZOSGJEU3p2?=
+ =?utf-8?B?YzR1WXBiSmJBTHVRY29TVWlZa2I0NFFEUGx6dXBGV20ydmJETDMvQ0l2eUdt?=
+ =?utf-8?B?eng3azYzWXdxZlhyQWg2UitXWTRQbFBDbjRPOWZnVGhiL0tZR256Z2t1cEpr?=
+ =?utf-8?B?SnBiT0JTdWcvWmg4YjhuS1RuUHlGWUVnV3lpbWVIQlZUeFVOTkNDT3NnQ2JS?=
+ =?utf-8?B?WG5BTFJQaStLRVBlNCtGTzloL2dhbE9mRTZFcHZxQUx1RklwZHE5RFBRaUtL?=
+ =?utf-8?B?M2E2VWJqM1lUQ21IMTR0ZThzcG9rRERSbS9ocW9jbkJLU1ppeGhET054eHZJ?=
+ =?utf-8?B?Q1FqeDAyNHNzQkZ4ZHo0NlJXalpacE9vNHlHdG1VbVg3NDd5dVhkTUtNQWU1?=
+ =?utf-8?B?WGtTSUdYVit6dERYcEFZU0dKVEVTcHdvZDcxTGVaMklURDZTOXNHZDhtZWQz?=
+ =?utf-8?B?dVFVQzB2NFdERU5OVHkvN3ZWVjdWMXFGNmRwR1J3K0FCNkhMbU1Jd0RQMmVi?=
+ =?utf-8?Q?EIqRDxNFjSA=3D?=
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SJ2PR11MB7573.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(7416014)(376014)(1800799024)(366016)(7053199007);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: =?utf-8?B?ZWY2dGZab0Izem5iK0dhT0RlMVc4bGxzYSs1Z3VZdzlNUko4cTdvKzNGbklX?=
+ =?utf-8?B?QWtMRTlSS0I1S2R4WVNyd1IyU2lETXppSGs0RFY1YmN5dHZlVFc3ajV3Tlc0?=
+ =?utf-8?B?aUpwSUY0YjU4bm5MOWZaMFJYOU05M1hHU0JoNWJrT0wwK2d2SlBRVlgwV1Uy?=
+ =?utf-8?B?Nlo3a29aZ3NXVGVWSk1PWGNjNHFjUTZsMktyb1lXcDhZNWVpK1J4M1FVcElr?=
+ =?utf-8?B?WncrMXo5eHB3S0VDVGF0R0RocUhOUmZEWXFsMHR3bUQ3amdUQldZQUUvRUI5?=
+ =?utf-8?B?R3hmZEpoWHIrTjhIbTUrdUVUZnd4UXU5NDhyZTEwR2NXciswY1BUM21xd2Fr?=
+ =?utf-8?B?RldkTzVrOGt2QWJnSHpPR1pUR1Y0ekM1VEMyY1dZSEVXQ05zREVTei9HUmhF?=
+ =?utf-8?B?WHU3U0huM3kwOUVYbldHZk5icUZGZ0thWVAySXFESFd5Si9wcG9WZVNhMW56?=
+ =?utf-8?B?ZElhNVpBbWNyWHFFU3hxYzcvVDZkRXgzTGRLTFBQeElGNS9Lc1lSbmpaVStm?=
+ =?utf-8?B?bEp3U3h6V3lwZzh5bTREdEJtc3dqNUdKSGFPcS9Ub3kxYmdLMVQ4V1AvWTJl?=
+ =?utf-8?B?aHRjREtkeFJ0b01ScDVhK1lHZDNBeis4YWFud2s2SFVTS2lzbkMrQy9WMFc0?=
+ =?utf-8?B?cU05eTNON25Zd0gxVlRwclFtZmxmZHZxYXRYQ3dueHUvU3B0VUxGaFYxQ1hL?=
+ =?utf-8?B?UWJGcVBvcjdaYUdGTGN6QXl5QUI4VU5IRDIrZDB1MFhhK3hsTG5pT0VOQ0Fh?=
+ =?utf-8?B?V3pTSnh4RE51eURSN1JvUFl4b0p5REtzS0M0QVdyNnNpWlgzd0lPZi8yMnNj?=
+ =?utf-8?B?Y0VaYm82ak56Umh1S3MrdGI5cTlvK1B1cU1CN1IvYTI0bFJhbnBwVndkVEhk?=
+ =?utf-8?B?OUY5UHdrZ2JQL0sxWFYrSFpiOFIrMGJLTUZKaDAzSUNWVlBFR2pGTndySG82?=
+ =?utf-8?B?dEwwdWZudithR09neUEvaDJVL2p2VHdpZG1sUmRrMFdjNVlOTU9Xb3RyVEE3?=
+ =?utf-8?B?bGViTGQwOWgyQWhLVzc4YmVjT3N4ZnFvSVYycFJWK3ZWVmhKNVVua0VTMWNH?=
+ =?utf-8?B?TWt0ZjZ0bm1WK0RqL1JNdmJ2VXZDNDAxUW1sWjVOK3pNK1o1dXorZnFib25X?=
+ =?utf-8?B?bGxBWGEvbHppQnJMQWVBWlU2QmNzMG5lU29QY3FLYkk0S3ovN291MFBYc2tv?=
+ =?utf-8?B?WXVWWXZTNnRKaVh5c09PeGFBUEhGT0MwVFZXcXdLR0pSRWNqVkdaSnJkcEpa?=
+ =?utf-8?B?dkx5NTFvajRiQ3A0UXlYNmJhUWx0SzNZa3ZhQytpaWZaUENla296ZzJEWVNB?=
+ =?utf-8?B?ck1ZQVFvVitwNTg1ZHY1dFRCb2JmRVdMa24ybUt6aGl2VkhSY2xDdGFYUUZW?=
+ =?utf-8?B?eFBKd3E1RlNaU3Y1REFQYTNYckU4YWo2aHhxOXNnL1VOTUJxbVg5WjcrVi9r?=
+ =?utf-8?B?RzZEemdVbDBLMU01ZjF1eFRSRTc5QlE5YkJzb3BmUHJTRG93ZWFFczNONW1y?=
+ =?utf-8?B?ZXhtc1Qwb3J3SVVrV3FYT1l1bEdrdW15NFhWUGx4Uksvb2lyd3F1OENZMmFC?=
+ =?utf-8?B?UmoreG0zdUhMWE93RlR1d1piWWRJZnVydU1mRmlQcGlYVlVMNEYvSVJaTTRX?=
+ =?utf-8?B?WjBpZFMrV2liMGpQYk9JaVk1RHp1Qlo2dVpBdmZ4TkNhaWljZGFyVFpXdXFV?=
+ =?utf-8?B?djdLNEZGV1NRWDJNZ1c0MjFFNU9YMzV2cFZ2ejBaRHZJaHpxWDI3ZGtSOUwv?=
+ =?utf-8?B?QVpvUnEvN21Yd2V2WjUvRXVEaXJFdFV0aVduY0pqZ2hSWmpBOHo1bTBMRG14?=
+ =?utf-8?B?NXBaNy9TaTVaQjB2ZFBwYzR3VzF4cVQyN2M1UFlLSWdKZElqWjBmME5ZeE9a?=
+ =?utf-8?B?NnN6Tm1ZM0VEZG1iaFdmQUpvR2lPeVhTUVROY1B4blFXUEJsMGJUWFMrVENs?=
+ =?utf-8?B?QkcyQ2NxaHhmYURXcEhZdmgwYitONm5HQjNXNkF1YlZtK01zL09YMFE0ZDQz?=
+ =?utf-8?B?Z3JNZlFneTRSNzBiRXJHQ1BnS01PdCtoU3M2NXBBcXR5d2tGRklrU3dpTS9W?=
+ =?utf-8?B?VXhRTTlQMlM1TUtYRkRVQ01aKzU3OGVLUEJMa3I5bDFnL3U0QlpYTEFBclUy?=
+ =?utf-8?B?cGpzT3NYYlA4VHN5azBIREwxSTBIZlRFSE9BZzZOaTNiclBZOUNnTFh6S1Z6?=
+ =?utf-8?B?Qnc9PQ==?=
+X-MS-Exchange-CrossTenant-Network-Message-Id: 36b634d4-98b0-47df-19fb-08ddb3774546
+X-MS-Exchange-CrossTenant-AuthSource: SJ2PR11MB7573.namprd11.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 24 Jun 2025 23:31:40.2360
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: aQzBJTwE48vlrpHdFRKPYMue+YG4G8a2xyy6qO3maaJTO4njVIj8EFmPk6ayMoAM58L1yzHDMdxQ3TRowed7TPNkr2xpGY6Dhb4XV/08S+4=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: LV2PR11MB6000
+X-OriginatorOrg: intel.com
 
-On Fri, May 30, 2025, Jim Mattson wrote:
-> @@ -7790,6 +7791,28 @@ all such vmexits.
+Hi Babu,
+
+On 6/13/25 2:04 PM, Babu Moger wrote:
+> The "mbm_event" mode allows users to assign a hardware counter ID to an
+
+"hardware counter ID" -> "hardware counter" (I'll stop pointing these out)
+
+> RMID, event pair and monitor bandwidth usage as long as it is assigned.
+> The hardware continues to track the assigned counter until it is
+> explicitly unassigned by the user. Counters are assigned/unassigned at
+> monitoring domain level.
+> 
+> Manage a monitoring domain's hardware counters using a per monitoring
+> domain array of struct mbm_cntr_cfg that is indexed by the hardware
+> counter ID. A hardware counter's configuration contains the MBM event
+> ID and points to the monitoring group that it is assigned to, with a
+> NULL pointer meaning that the hardware counter is available for assignment.
+> 
+> There is no direct way to determine which hardware counters are assigned
+> to a particular monitoring group. Check every entry of every hardware
+> counter configuration array in every monitoring domain to query which
+> MBM events of a monitoring group is tracked by hardware. Such queries are
+> acceptable because of a very small number of assignable counters (32
+> to 64).
+> 
+> Suggested-by: Peter Newman <peternewman@google.com>
+> Signed-off-by: Babu Moger <babu.moger@amd.com>
+> ---
+...
+
+> ---
+>  fs/resctrl/rdtgroup.c   |  8 ++++++++
+>  include/linux/resctrl.h | 19 +++++++++++++++++++
+>  2 files changed, 27 insertions(+)
+> 
+> diff --git a/fs/resctrl/rdtgroup.c b/fs/resctrl/rdtgroup.c
+> index 967e4df62a19..90b52593ef29 100644
+> --- a/fs/resctrl/rdtgroup.c
+> +++ b/fs/resctrl/rdtgroup.c
+> @@ -4084,6 +4084,7 @@ static void rdtgroup_setup_default(void)
 >  
->  Do not enable KVM_FEATURE_PV_UNHALT if you disable HLT exits.
+>  static void domain_destroy_mon_state(struct rdt_mon_domain *d)
+>  {
+> +	kfree(d->cntr_cfg);
+>  	bitmap_free(d->rmid_busy_llc);
+>  	for (int i = 0; i < QOS_NUM_L3_MBM_EVENTS; i++) {
+>  		kfree(d->mbm_states[i]);
+> @@ -4167,6 +4168,13 @@ static int domain_setup_mon_state(struct rdt_resource *r, struct rdt_mon_domain
+>  			goto cleanup;
+>  	}
 >  
-> +Virtualizing the ``IA32_APERF`` and ``IA32_MPERF`` MSRs requires more
-> +than just disabling APERF/MPERF exits. While both Intel and AMD
-> +document strict usage conditions for these MSRs--emphasizing that only
-> +the ratio of their deltas over a time interval (T0 to T1) is
-> +architecturally defined--simply passing through the MSRs can still
-> +produce an incorrect ratio.
+> +	if (resctrl_is_mbm_enabled() && r->mon.mbm_cntr_assignable) {
+> +		tsize = sizeof(*d->cntr_cfg);
+> +		d->cntr_cfg = kcalloc(r->mon.num_mbm_cntrs, tsize, GFP_KERNEL);
+> +		if (!d->cntr_cfg)
+> +			goto cleanup;
+> +	}
 > +
-> +This erroneous ratio can occur if, between T0 and T1:
-> +
-> +1. The vCPU thread migrates between logical processors.
-> +2. Live migration or suspend/resume operations take place.
-> +3. Another task shares the vCPU's logical processor.
-> +4. C-states lower thean C0 are emulated (e.g., via HLT interception).
-> +5. The guest TSC frequency doesn't match the host TSC frequency.
-> +
-> +Due to these complexities, KVM does not automatically associate this
-> +passthrough capability with the guest CPUID bit,
-> +``CPUID.6:ECX.APERFMPERF[bit 0]``. Userspace VMMs that deem this
-> +mechanism adequate for virtualizing the ``IA32_APERF`` and
-> +``IA32_MPERF`` MSRs must set the guest CPUID bit explicitly.
 
-Question: what do we want to do about nested?  Due to differences between SVM
-and VMX at the time you posted your patches, this series _as posted_ will do
-nested passthrough for SVM, but not VMX (before the MSR rework, SVM auto-merged
-bitmaps for all MSRs in svm_direct_access_msrs).
+Please see my earlier comment https://lore.kernel.org/lkml/b761e6ec-a874-4d06-8437-a3a717a91abb@intel.com/
+Before this addition the "cleanup" goto label can only be called when
+(a) idx is guaranteed to be initialized and (b) d->mbm_states[idx] == NULL.
+Using that goto label in snippet above cannot guarantee either.
 
-As I've got it locally applied, neither SVM nor VMX will do passthrough to L2.
-I'm leaning toward allowing full passthrough, because (a) it's easy, (b) I can't
-think of any reason not to, and (c) SVM's semi-auto-merging logic means we could
-*unintentinally* do full passthrough in the future, in the unlikely event that
-KVM added passthrough support for an MSR in the same chunk as APERF and MPERF.
+>  	return 0;
+>  cleanup:
+>  	bitmap_free(d->rmid_busy_llc);
+> diff --git a/include/linux/resctrl.h b/include/linux/resctrl.h
+> index f078ef24a8ad..468a4ebabc64 100644
+> --- a/include/linux/resctrl.h
+> +++ b/include/linux/resctrl.h
+> @@ -156,6 +156,22 @@ struct rdt_ctrl_domain {
+>  	u32				*mbps_val;
+>  };
+>  
+> +/**
+> + * struct mbm_cntr_cfg - Assignable counter configuration.
+> + * @evtid:		MBM event to which the counter is assigned. Only valid
+> + *			if @rdtgroup is not NULL.
+> + * @evt_cfg:		Event configuration created using the READS_TO_LOCAL_MEM,
+> + *			READS_TO_REMOTE_MEM, etc. bits that represent the memory
+> + *			transactions being counted.
+> + * @rdtgrp:		resctrl group assigned to the counter. NULL if the
+> + *			counter is free.
+> + */
+> +struct mbm_cntr_cfg {
+> +	enum resctrl_event_id	evtid;
+> +	u32			evt_cfg;
 
-This would be the extent of the changes (I think, haven't tested yet).
+It is not clear to me why the event configuration needs to be duplicated
+between mbm_cntr_cfg::evt_cfg and mon_evt::evt_cfg (done in patch #16).
+I think there should be only one "source of truth" and mon_evt::evt_cfg
+seems most appropriate since then it can be shared with BMEC.
 
-diff --git a/arch/x86/kvm/svm/nested.c b/arch/x86/kvm/svm/nested.c
-index 749f7b866ac8..b7fd2e869998 100644
---- a/arch/x86/kvm/svm/nested.c
-+++ b/arch/x86/kvm/svm/nested.c
-@@ -194,7 +194,7 @@ void recalc_intercepts(struct vcpu_svm *svm)
-  * Hardcode the capacity of the array based on the maximum number of _offsets_.
-  * MSRs are batched together, so there are fewer offsets than MSRs.
-  */
--static int nested_svm_msrpm_merge_offsets[6] __ro_after_init;
-+static int nested_svm_msrpm_merge_offsets[7] __ro_after_init;
- static int nested_svm_nr_msrpm_merge_offsets __ro_after_init;
- typedef unsigned long nsvm_msrpm_merge_t;
- 
-@@ -216,6 +216,8 @@ int __init nested_svm_init_msrpm_merge_offsets(void)
-                MSR_IA32_SPEC_CTRL,
-                MSR_IA32_PRED_CMD,
-                MSR_IA32_FLUSH_CMD,
-+               MSR_IA32_APERF,
-+               MSR_IA32_MPERF,
-                MSR_IA32_LASTBRANCHFROMIP,
-                MSR_IA32_LASTBRANCHTOIP,
-                MSR_IA32_LASTINTFROMIP,
-diff --git a/arch/x86/kvm/vmx/nested.c b/arch/x86/kvm/vmx/nested.c
-index c69df3aba8d1..b8ea1969113d 100644
---- a/arch/x86/kvm/vmx/nested.c
-+++ b/arch/x86/kvm/vmx/nested.c
-@@ -715,6 +715,12 @@ static inline bool nested_vmx_prepare_msr_bitmap(struct kvm_vcpu *vcpu,
-        nested_vmx_set_intercept_for_msr(vmx, msr_bitmap_l1, msr_bitmap_l0,
-                                         MSR_IA32_FLUSH_CMD, MSR_TYPE_W);
- 
-+       nested_vmx_set_intercept_for_msr(vmx, msr_bitmap_l1, msr_bitmap_l0,
-+                                        MSR_IA32_APERF, MSR_TYPE_R);
-+
-+       nested_vmx_set_intercept_for_msr(vmx, msr_bitmap_l1, msr_bitmap_l0,
-+                                        MSR_IA32_MPERF, MSR_TYPE_R);
-+
-        kvm_vcpu_unmap(vcpu, &map);
- 
-        vmx->nested.force_msr_bitmap_recalc = false;
+It also seems unnecessary to make so many copies of the event configuration
+if it can just be determined from the event ID.
+
+Looking ahead at how this is used, for example in event_filter_write()
+introduced in patch #25:
+	ret = resctrl_process_configs(buf, &evt_cfg); 
+	if (!ret && mevt->evt_cfg != evt_cfg) {
+		mevt->evt_cfg = evt_cfg;
+		resctrl_assign_cntr_allrdtgrp(r, mevt);
+	}
+
+After user provides new event configuration the mon_evt::evt_cfg is
+updated. Since there is this initial check to determine if counters need
+to be updated I think it is unnecessary to have a second copy of mbm_cntr_cfg::evt_cfg
+that needs to be checked again. The functions called by resctrl_assign_cntr_allrdtgrp(r, mevt)
+should just update the counters without any additional comparison.
+
+For example, rdtgroup_assign_cntr() can be simplified to:
+	rdtgroup_assign_cntr() {
+		...
+		list_for_each_entry(d, &r->mon_domains, hdr.list) {
+			cntr_id = mbm_cntr_get(r, d, rdtgrp, mevt->evtid);
+			if (cntr_id >= 0)
+				resctrl_arch_config_cntr(r, d, mevt->evtid, rdtgrp->mon.rmid,
+							 rdtgrp->closid, cntr_id, true);
+		}
+	}
+
+
+Reinette
 
