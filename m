@@ -1,80 +1,71 @@
-Return-Path: <linux-kernel+bounces-699697-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-699698-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 72789AE5E1D
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Jun 2025 09:40:27 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id CC89EAE5E1F
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Jun 2025 09:40:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7AF647AB0D1
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Jun 2025 07:37:47 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 35C26404146
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Jun 2025 07:39:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 997C825DAE2;
-	Tue, 24 Jun 2025 07:36:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3B2CD25B1F6;
+	Tue, 24 Jun 2025 07:36:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="JYqFwX8A"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.14])
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="i+Q7ULGT";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="2cWt1fdr"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 38D3225D548;
-	Tue, 24 Jun 2025 07:36:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.14
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E24CA2571BF;
+	Tue, 24 Jun 2025 07:36:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750750567; cv=none; b=osIPKOJO4r9iladCT/si5KOkAx1kB77zmbyeE1z9kHeff7j4kU/6xxS3PPPLdEYz6bdfKZ32VXI7BY+6yWu6od05lIvrsRyc7kHUbfGk9KaKm2QYNKshgexbgdF5J1yam36EOP/iq6wleQu3zqQX2OkpeAlhuyS8wRLk05DFUCY=
+	t=1750750583; cv=none; b=KH94Ms1S5QED2KwrHg/vV/ESW8t7EU8yKP2ptswwzpNLpY5cy02k+qx6kjyPNC5t8git0/ljI1TOcG3OtP/s+uEYG32NGVu65472rem4nYIbS7vymM9YnERW3KlV63V2zAMSW/Wpu1Q0Dcn+yciROpjLt5jzsw6YlTyiK2kMZK8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750750567; c=relaxed/simple;
-	bh=p1BCckKI1VLjf0H6yX/KbuZqmDDBzRIgscjBVJaTNHg=;
+	s=arc-20240116; t=1750750583; c=relaxed/simple;
+	bh=V00eRtkZmW3pS/tIYaNjrH9iQXJJOPTf0MJar/mKIVo=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=tmyltK31XtW8l2em4gaX3Cl22iHAFg+l+jtNjXxGN5SBx0t+345Wert5BBCRun3aETZW9gVwtohYNHWjtTSqJ5tpzQc0HQZtJH1o8YYvdawvoS5mHmSoEsAZmF6VOunriYIw3MiUhkyXdymyslR4JbXk1KA2nw8JZMkNvhAKtCU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=JYqFwX8A; arc=none smtp.client-ip=198.175.65.14
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1750750565; x=1782286565;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=p1BCckKI1VLjf0H6yX/KbuZqmDDBzRIgscjBVJaTNHg=;
-  b=JYqFwX8Aw4n6dkH6BPHdNFeFU6mQAO/YBAJUwZlBKdi+gn2BH0h4WoKu
-   EEsnCksNeCSNsw4XoNnC3cJe9YoqAxZZqcXju+bD9PpJ44OMVfecn2nZD
-   XhnRRran687e6c0QKhnSLkkwDiQwnJ+UwESzlJbOL0TT4FD2Dbpkn/Yqf
-   839as69Hy6bX+LUdeJz5APaGZiL1dN0L/rJ3Nk6j+qeX03w3E8LvPa4Yp
-   aWRDf/HtM2bUhudRMP42xU7OHUS+A/VbX/0UB9vdjMM/0FEzNM5p3bQ47
-   5pY9NgHzzAzmfwuw1LY8FIaVsbjeeTIIpPzSIJN086NYQpdpuUuKarnXl
-   w==;
-X-CSE-ConnectionGUID: hS3W1462RmS35WpKqaFy3Q==
-X-CSE-MsgGUID: INBHR9EIRG+/EVKLTdn77w==
-X-IronPort-AV: E=McAfee;i="6800,10657,11473"; a="56760224"
-X-IronPort-AV: E=Sophos;i="6.16,261,1744095600"; 
-   d="scan'208";a="56760224"
-Received: from fmviesa006.fm.intel.com ([10.60.135.146])
-  by orvoesa106.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 24 Jun 2025 00:36:04 -0700
-X-CSE-ConnectionGUID: Mya1kTKgTeqT3gq4Q/s+yA==
-X-CSE-MsgGUID: JW0shPs/QmG9H78FzpjBQw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.16,261,1744095600"; 
-   d="scan'208";a="151978287"
-Received: from smile.fi.intel.com ([10.237.72.52])
-  by fmviesa006.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 24 Jun 2025 00:36:02 -0700
-Received: from andy by smile.fi.intel.com with local (Exim 4.98.2)
-	(envelope-from <andriy.shevchenko@linux.intel.com>)
-	id 1uTyCF-00000009PGy-3Fdm;
-	Tue, 24 Jun 2025 10:35:59 +0300
-Date: Tue, 24 Jun 2025 10:35:59 +0300
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To: Mika Westerberg <mika.westerberg@linux.intel.com>
-Cc: Randolph Ha <rha051117@gmail.com>, linux-i2c@vger.kernel.org,
-	linux-acpi@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Wolfram Sang <wsa+renesas@sang-engineering.com>,
-	Mika Westerberg <westeri@kernel.org>
-Subject: Re: [PATCH v1 1/1] i2c: acpi: Replace custom code with
- device_match_acpi_handle()
-Message-ID: <aFpVX05xv4j4uRiP@smile.fi.intel.com>
-References: <20250623134521.158447-1-andriy.shevchenko@linux.intel.com>
- <20250624054508.GA2824380@black.fi.intel.com>
- <aFpRZoIkQod6g2Dm@smile.fi.intel.com>
- <20250624072559.GB2824380@black.fi.intel.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=HyYDK2Y05SeUnSystEJ3prNLckCArl8M3mIcZVfsIBxk3NCjNGbhMEr0s7CC7NkjRCf7YsHoTm+q4A+2chyW3BLkUSDPscc1z9zEFUYdfoG+8YgEEU8o4qXhIIYxiFzFEDlQKB79cfbZ2Sl8NKAQBLc6EIT7QqiYe/BYijYnnhg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=i+Q7ULGT; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=2cWt1fdr; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+Date: Tue, 24 Jun 2025 09:36:09 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1750750574;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=3i1MmWycKIjSa1eRswkqM6h98UB4zkHzxS3AAMMtz+E=;
+	b=i+Q7ULGTa616Iqv0o+NQzdQRe+CNprF6yDmVee8nf5+26nTWuTfbYPR0WUpzk4/EY2iMl2
+	+fb2pom2zzpVlBX9P0s1ICUN0ufE4FTEFZ5+VClq6j1YSuuTD6W6mEBhh4SL0xjcUfPhQQ
+	Q2Sh/1lCJxqiepbp2rvDrPGYveHJTIZZ49DmRyxR71rS5OlKOMu+BIbQSZjNVPCb3GcHQl
+	Z53kdHqu5KdDyxs0mDqIYVtKLKgEimUBaLJtHy4xCwR0jjjxidFCocEv30xnZAX7kk48ka
+	IifuT3wsO3mAbNt554ZvcST+RNRogJE44Yb7+SUEHRI2Lmp+TRlCJJZSXVj0nA==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1750750574;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=3i1MmWycKIjSa1eRswkqM6h98UB4zkHzxS3AAMMtz+E=;
+	b=2cWt1fdrOBRfhNP+nkf8mfmrpu3POA7VXVHVN8W74rVO0Czrg52m/MlZWBGsjeROgUG92h
+	JFCpNJyuHUbrjmBw==
+From: Nam Cao <namcao@linutronix.de>
+To: Gabriele Monaco <gmonaco@redhat.com>
+Cc: linux-kernel@vger.kernel.org, Steven Rostedt <rostedt@goodmis.org>,
+	Jonathan Corbet <corbet@lwn.net>,
+	Masami Hiramatsu <mhiramat@kernel.org>,
+	linux-trace-kernel@vger.kernel.org, linux-doc@vger.kernel.org,
+	Ingo Molnar <mingo@redhat.com>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Tomas Glozar <tglozar@redhat.com>, Juri Lelli <jlelli@redhat.com>,
+	john.ogness@linutronix.de
+Subject: Re: [RFC PATCH v2 09/12] rv: Replace tss monitor with more complete
+ sts
+Message-ID: <20250624073609.OA9Q1V4g@linutronix.de>
+References: <20250514084314.57976-1-gmonaco@redhat.com>
+ <20250514084314.57976-10-gmonaco@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -83,46 +74,58 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250624072559.GB2824380@black.fi.intel.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - c/o Alberga Business Park, 6
- krs, Bertel Jungin Aukio 5, 02600 Espoo
+In-Reply-To: <20250514084314.57976-10-gmonaco@redhat.com>
 
-On Tue, Jun 24, 2025 at 10:25:59AM +0300, Mika Westerberg wrote:
-> On Tue, Jun 24, 2025 at 10:19:02AM +0300, Andy Shevchenko wrote:
-> > On Tue, Jun 24, 2025 at 08:45:08AM +0300, Mika Westerberg wrote:
-> > > On Mon, Jun 23, 2025 at 04:45:21PM +0300, Andy Shevchenko wrote:
-> > > > Since driver core provides a generic device_match_acpi_handle()
-> > > > we may replace the custom code with it.
-> > > 
-> > > Well okay but now you replace a simple comparison with a function call. I'm
-> > > fine with the patch but I also don't think this is an improvement ;-)
-> > 
-> > The improvement is in using standard API for such cases.
-> 
-> Well ACPI_HANDLE() and comparing handles is also a "standard API".
+On Wed, May 14, 2025 at 10:43:11AM +0200, Gabriele Monaco wrote:
+> diff --git a/kernel/trace/rv/monitors/tss/tss_trace.h b/kernel/trace/rv/monitors/sts/sts_trace.h
+> similarity index 67%
+> rename from kernel/trace/rv/monitors/tss/tss_trace.h
+> rename to kernel/trace/rv/monitors/sts/sts_trace.h
+> index 4619dbb50cc0..d78beb58d5b3 100644
+> --- a/kernel/trace/rv/monitors/tss/tss_trace.h
+> +++ b/kernel/trace/rv/monitors/sts/sts_trace.h
+> @@ -4,12 +4,12 @@
+>   * Snippet to be included in rv_trace.h
+>   */
+>  
+> -#ifdef CONFIG_RV_MON_TSS
+> -DEFINE_EVENT(event_da_monitor, event_tss,
+> +#ifdef CONFIG_RV_MON_STS
+> +DEFINE_EVENT(event_da_monitor, event_sts,
+>  	     TP_PROTO(char *state, char *event, char *next_state, bool final_state),
+>  	     TP_ARGS(state, event, next_state, final_state));
+>  
+> -DEFINE_EVENT(error_da_monitor, error_tss,
+> +DEFINE_EVENT(error_da_monitor, error_sts,
+>  	     TP_PROTO(char *state, char *event),
+>  	     TP_ARGS(state, event));
+> -#endif /* CONFIG_RV_MON_TSS */
+> +#endif /* CONFIG_RV_MON_STS */
 
-In some [rare] cases this might lead to removing acpi.h which is a monsteur
-that slows down a build and provokes developer to avoid IWYU principle from
-enforcement.
+You are changing the tracepoint's name. Should we worry about breaking
+userspace?
 
-> > You may argue on many things that may be open coded in
-> > the kernel while we have helpers (in some cases exported)
-> > functions that are one-liners or so. Note, the helper also
-> > performs an additional check and having an open coded copy
-> > may miss such a change. To me it's an improvement.
-> 
-> Which is unnecessary check in this case.
+It probably doesn't matter at the moment, because I doubt anyone is really
+relying on this tracepoint. But I think we should have a definite stance on
+this, for future references.
 
-In this perhaps, but my point is that any of such amendments will be applied in
-one place for all, while open coding prevents this.
+I have seen tracepoints being changed (I know of [1][2][3], I was one of
+them :P), so it seems to be considered okay. But adding userspace tools to
+the equation and it doesn't make sense to me. For example, lttng is using
+the page_fault tracepoints [4], which is broken by [3].
 
-> But like I said, no objections. I just don't think this improves anything.
+If this should be stable user API, then we should starting thinking about
+better API which allows changes like this to happen. Otherwise, they should
+be clearly documented to be unstable.
 
-I think there is an improvement.
+(I think I may also need to change my rtapp's tracepoint names at some point
+in the future, that's why I am asking)
 
--- 
-With Best Regards,
-Andy Shevchenko
+Best regards,
+Nam
 
-
+[1] commit dbb6ecb328cb ("btrfs: tracepoints: simplify raid56 events")
+[2] commit 244132c4e577 ("tracing/timers: Rename the hrtimer_init event to hrtimer_setup")
+[3] https://lore.kernel.org/lkml/2dda8c03-072a-43b2-af0c-bb996d64c388@cs.wisc.edu/#t
+[4] https://github.com/lttng/lttng-modules/blob/master/include/instrumentation/events/arch/x86/exceptions.h#L88C48-L88C63
 
