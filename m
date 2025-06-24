@@ -1,160 +1,186 @@
-Return-Path: <linux-kernel+bounces-700455-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-700506-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id E2F66AE68EA
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Jun 2025 16:35:47 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3585AAE69A4
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Jun 2025 16:53:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D2B9D3A95C1
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Jun 2025 14:29:45 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B87FB5A497D
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Jun 2025 14:45:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 816542D23B5;
-	Tue, 24 Jun 2025 14:30:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 76CCD2D4B78;
+	Tue, 24 Jun 2025 14:35:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="URFyznW8";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="y0oAZeI1";
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="URFyznW8";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="y0oAZeI1"
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b="kOZAN9rz"
+Received: from out203-205-221-210.mail.qq.com (out203-205-221-210.mail.qq.com [203.205.221.210])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5FC0523741
-	for <linux-kernel@vger.kernel.org>; Tue, 24 Jun 2025 14:30:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0F1392D23B8;
+	Tue, 24 Jun 2025 14:35:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.205.221.210
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750775402; cv=none; b=R72JqMoHPJveRyjTnXBK0CBhJN1PDN1hjEidDWCzAc96qq+GsxOHRKQ+VNg+ysYOYUIe18B/F3m0rw8qP6bweOE8bpgBeVjkgQK1KakzL3fr8iZrB2Fzdprnu3XeCyLTdGpOQlKq/09qzeptHg0tFWzQnvaI9mdzIrYXtibMVO4=
+	t=1750775731; cv=none; b=uniD5J4EVEAfE6vj06nb7eMjRNMbkstx+8B/C4TURmM/cebAHyg0Qo+WQQpjsYh7UIbzVe9Jeo2NQ2Z9PLeBEOIeuhbaFgE4nj1A5dZm8n2AnugiWsIGdUoYWdBA7WhGxPxXXmtPs1iDCW5itr7nXi6YOHxblP47Yv35RMxBVv0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750775402; c=relaxed/simple;
-	bh=qpvaQFDW+0dHZvXO/+ldJtYYEf/g7b/ifdIXwLxnrs4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=E12w6oTQPmUi7jah7FXzDR7MTV7lGg9Vrmo+m+gAO9eJfrmgV4LCHZfoC4n85+ynxCJ0gdqYLa9ZV5439euTbdciHQicZGK3LQ3b3gJMhKrrWP6DnAoAp8q6QK6k3wXYI+q7bK18tJKPN5otKBLyBDTqE/HABU2kcgml4J70AJI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=URFyznW8; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=y0oAZeI1; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=URFyznW8; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=y0oAZeI1; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id 73B6E2116E;
-	Tue, 24 Jun 2025 14:29:59 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1750775399; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=GdzHCZdpOzN9qk+zX9xpsiMsUBeRg80+Yr/M8DrT0PI=;
-	b=URFyznW8jNAukftcOhGRh/TSh7iDXB85HE9FUSbFS0SHWKSIsJfOh4YO8BlzxpwK1w/Hgk
-	RPJl9r9VU1NJafACnnb7p+zGb3x8tAF4dnoVZn2dZhrjJXf1RqbGRdTqdzOjiLaAfj7kmm
-	mRcxvgBsOj7yujle13duzbydnne8DwQ=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1750775399;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=GdzHCZdpOzN9qk+zX9xpsiMsUBeRg80+Yr/M8DrT0PI=;
-	b=y0oAZeI176k7LZhMYHZ7cNE3YlmVmtjDIsJF6VfF9KBrTgqeSEaibJpE9dK2Y6k5krx3nE
-	XMjD6S13/dH72ZAA==
-Authentication-Results: smtp-out1.suse.de;
-	dkim=pass header.d=suse.de header.s=susede2_rsa header.b=URFyznW8;
-	dkim=pass header.d=suse.de header.s=susede2_ed25519 header.b=y0oAZeI1
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1750775399; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=GdzHCZdpOzN9qk+zX9xpsiMsUBeRg80+Yr/M8DrT0PI=;
-	b=URFyznW8jNAukftcOhGRh/TSh7iDXB85HE9FUSbFS0SHWKSIsJfOh4YO8BlzxpwK1w/Hgk
-	RPJl9r9VU1NJafACnnb7p+zGb3x8tAF4dnoVZn2dZhrjJXf1RqbGRdTqdzOjiLaAfj7kmm
-	mRcxvgBsOj7yujle13duzbydnne8DwQ=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1750775399;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=GdzHCZdpOzN9qk+zX9xpsiMsUBeRg80+Yr/M8DrT0PI=;
-	b=y0oAZeI176k7LZhMYHZ7cNE3YlmVmtjDIsJF6VfF9KBrTgqeSEaibJpE9dK2Y6k5krx3nE
-	XMjD6S13/dH72ZAA==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 58EA813A24;
-	Tue, 24 Jun 2025 14:29:59 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id 9sBLE2e2WmgPfQAAD6G6ig
-	(envelope-from <dwagner@suse.de>); Tue, 24 Jun 2025 14:29:59 +0000
-Date: Tue, 24 Jun 2025 16:29:58 +0200
-From: Daniel Wagner <dwagner@suse.de>
-To: Christoph Hellwig <hch@infradead.org>
-Cc: John Garry <john.g.garry@oracle.com>, Daniel Wagner <wagi@kernel.org>, 
-	"Sean A." <sean@ashe.io>, 
-	"James.Bottomley@hansenpartnership.com" <James.Bottomley@hansenpartnership.com>, "atomlin@atomlin.com" <atomlin@atomlin.com>, 
-	"kashyap.desai@broadcom.com" <kashyap.desai@broadcom.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, 
-	"linux-scsi@vger.kernel.org" <linux-scsi@vger.kernel.org>, "martin.petersen@oracle.com" <martin.petersen@oracle.com>, 
-	"mpi3mr-linuxdrv.pdl@broadcom.com" <mpi3mr-linuxdrv.pdl@broadcom.com>, "sreekanth.reddy@broadcom.com" <sreekanth.reddy@broadcom.com>, 
-	"sumit.saxena@broadcom.com" <sumit.saxena@broadcom.com>
-Subject: Re: [RFC PATCH v2 1/1] scsi: mpi3mr: Introduce smp_affinity_enable
- module parameter
-Message-ID: <0233e47b-894f-49e0-822c-bc1436352c98@flourine.local>
-References: <1xjYfSjJndOlG0Uro2jPuAmIrfqi5AVbfpFeWh7RfLfzqqH9u8ePoqgaP32ElXrGyOB47UvesV_Y2ypmM3cZtWit2EPnV3aj6i9w_DMo1eI=@ashe.io>
- <077ffc15-f949-41d4-a13b-4949990ba830@oracle.com>
- <aFjjf3qbuEOeWUjt@infradead.org>
+	s=arc-20240116; t=1750775731; c=relaxed/simple;
+	bh=XWUoSHK9ZFJwMOXvEylhqSbkKPrkssdXq5HfgyRyxVU=;
+	h=Message-ID:From:To:Cc:Subject:Date:In-Reply-To:References:
+	 MIME-Version; b=oSsvXiXNS/3RYABCdI5xjwNHYEhUIjAECDOKCegzNt/nAJuAxQxbmEXoDny0jsbI7Qy1zVkqm2UKQW0wa2tv36BnJgpHTCcndKbR84KwXWXfD77o4q0ZShEL36KmvhcdJtmLwSyxbRDLJuAbDCCatuPvoG3u/6hqooVvbJiTgKk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com; spf=pass smtp.mailfrom=qq.com; dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b=kOZAN9rz; arc=none smtp.client-ip=203.205.221.210
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=qq.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qq.com; s=s201512;
+	t=1750775422; bh=WzKuairL6klH+H3Pk4Z77kBpxk6VjGhy/vtLbAwqk5I=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References;
+	b=kOZAN9rzKb1q9tF3m9+4tgSWGTydQYU7tqSKNjd8QI5toYZBZXpCMs+yLA/jrGFWz
+	 MztBaNrGn4q8RGvK4URp+blG7wJJa6rmSmb9KAa5lprZ+fxfm+F1IWS4fBYbofnGM1
+	 3n1eVUXGYwc1ZtWplOyca7bJ4Rh6gPHC7UZuv0o0=
+Received: from pek-lxu-l1.corp.ad.wrs.com ([111.198.228.63])
+	by newxmesmtplogicsvrszc13-0.qq.com (NewEsmtp) with SMTP
+	id 7922C4AA; Tue, 24 Jun 2025 22:30:18 +0800
+X-QQ-mid: xmsmtpt1750775418tjjf65ee2
+Message-ID: <tencent_C857B761776286CB137A836B096C03A34405@qq.com>
+X-QQ-XMAILINFO: N+vldBj843eNUXLV7XGtfaVgQimuVCxUrR6sPDEC+V9drvLoQjxq8Pv10JL9qj
+	 QWzIDij1izxZ3rRoaZUVLlAyN78/87L7WCOVeezIiR9vKaFN4jYeNutAnPJxqdfFSlooFVszfigi
+	 2iuCejs/o3458aXvQPAxDSMAsUQzall0XG7XUDmTSkSeyEUWm0/4D8hn5g/NbyTwTezC67hKjr9r
+	 nRNb4JowPS/u7WJ/YFK84gsTtPSm6U526ThhyJV6twb38qd1iaeIfi0DzzQm1MYiY3EOTm/DKivB
+	 UGJahcbWwZ9oPBC2RW6WRGFj45SdSfeMVFtv23iO5vzSYjujgKTM+IhOQcuv67Gd62jsCUmlCdxM
+	 q1PmxA1WYrnbXnklyLrCHM55rxP07C0ZZjJvUxcmIl5Xf6eZsK4/NFTgTQq/QDrSyaHOINRAFAQs
+	 7fQ4m1iFCQPlfS1UdA2mfSTO7yDXfqYrYD4Rtild/wxcji8mlGccDglqHvNvKjD+J73syu8NQquj
+	 yijzY8Jd1ccEryqr6g+lmJ3e349WLTXVvMTwKem93BS5g/dqa6zy2Y6E+wYxOMKbV1WNSvngSjdv
+	 vE8cLw2b2zrDPbA8klrDw1b5MegVOC2qAoxCwV+Dzx1Ww4aebWsxpMPrYCPPQD4e3XInI64RUtOE
+	 Iu4n+CzWJ4Z5pmf8e3p90k1KJwrZwv6lFijBKGqQUzIlq2bTc5bAllVwAKKDpDvJ8voFm1GivxZH
+	 BfskME/+hrVx3S9rD8S+TYMu70w4Wf4rCXt/9X1P1pxTKkue5D7ikiqtxqtn6Kd7W2WAQSbiEGel
+	 bhTYNbsIz9eMc571bglMHK2dPuvJIN75KiXtQIdlp8lYwbN4xM8h+jOskOWYcjvCInaztB4FBdIA
+	 LSG5+RFEotLgRjBO4lL2pdTcb7MplQauzOrBwOFcFSbycHlA8OzS4HlYJv72PNFoq1rxOrpSVp0S
+	 I9xgWT0/rkfJOk7l0DslLYiCnEuTySlS1hsWaa8ctNZpVsXNayHr1KhosOUgeCh9bqpHRcYPZDNF
+	 onVL95pQ==
+X-QQ-XMRINFO: Nq+8W0+stu50PRdwbJxPCL0=
+From: Edward Adam Davis <eadavis@qq.com>
+To: syzbot+fa90fcaa28f5cd4b1fc1@syzkaller.appspotmail.com
+Cc: clm@fb.com,
+	dsterba@suse.com,
+	josef@toxicpanda.com,
+	linux-btrfs@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	syzkaller-bugs@googlegroups.com,
+	wqu@suse.com
+Subject: [PATCH next] btrfs: fix deadlock in btrfs_read_chunk_tree
+Date: Tue, 24 Jun 2025 22:30:12 +0800
+X-OQ-MSGID: <20250624143011.327069-2-eadavis@qq.com>
+X-Mailer: git-send-email 2.49.0
+In-Reply-To: <685aa401.050a0220.2303ee.0009.GAE@google.com>
+References: <685aa401.050a0220.2303ee.0009.GAE@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <aFjjf3qbuEOeWUjt@infradead.org>
-X-Spamd-Result: default: False [-4.51 / 50.00];
-	BAYES_HAM(-3.00)[99.99%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	R_DKIM_ALLOW(-0.20)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	MX_GOOD(-0.01)[];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	RCPT_COUNT_TWELVE(0.00)[13];
-	MISSING_XM_UA(0.00)[];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	ARC_NA(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	TO_DN_EQ_ADDR_SOME(0.00)[];
-	RCVD_TLS_ALL(0.00)[];
-	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	FROM_EQ_ENVFROM(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	TO_DN_SOME(0.00)[];
-	RCVD_COUNT_TWO(0.00)[2];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.de:dkim];
-	DNSWL_BLOCKED(0.00)[2a07:de40:b281:106:10:150:64:167:received,2a07:de40:b281:104:10:150:64:97:from];
-	DKIM_TRACE(0.00)[suse.de:+]
-X-Spam-Level: 
-X-Spam-Flag: NO
-X-Rspamd-Queue-Id: 73B6E2116E
-X-Rspamd-Action: no action
-X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
-X-Spam-Score: -4.51
+Content-Transfer-Encoding: 8bit
 
-On Sun, Jun 22, 2025 at 10:17:51PM -0700, Christoph Hellwig wrote:
-> On Wed, Jun 18, 2025 at 07:49:16AM +0100, John Garry wrote:
-> > BTW, if you use taskset to set the affinity of a process and ensure that
-> > /sys/block/xxx/queue/rq_affinity is set so that we complete on same CPU as
-> > submitted, then I thought that this would ensure that interrupts are not
-> > bothering other CPUs.
-> 
-> The RT folks want to not even have interrupts on the application CPUs.
-> That's perfectly reasonable and a common request.  Why doing driver
-> hacks as in this patch and many others is so completely insane.  Instead
-> we need common functionality for that.  The core irq layer has added
-> them for managed interrupts, and Daniel has been working on the blk-mq side
-> for a while.
+Remove the lock uuid_mutex outside of sget_fc() to avoid the deadlock
+reported by [1].
 
-Indeed, I am in the process to finish the work on my next version for
-the isolcpus support in the block layer. I hope to send it out the next
-version this week.
+[1]
+-> #1 (&type->s_umount_key#41/1){+.+.}-{4:4}:
+       lock_acquire+0x120/0x360 kernel/locking/lockdep.c:5871
+       down_write_nested+0x9d/0x200 kernel/locking/rwsem.c:1693
+       alloc_super+0x204/0x970 fs/super.c:345
+       sget_fc+0x329/0xa40 fs/super.c:761
+       btrfs_get_tree_super fs/btrfs/super.c:1867 [inline]
+       btrfs_get_tree_subvol fs/btrfs/super.c:2059 [inline]
+       btrfs_get_tree+0x4c6/0x12d0 fs/btrfs/super.c:2093
+       vfs_get_tree+0x8f/0x2b0 fs/super.c:1804
+       do_new_mount+0x24a/0xa40 fs/namespace.c:3902
+       do_mount fs/namespace.c:4239 [inline]
+       __do_sys_mount fs/namespace.c:4450 [inline]
+       __se_sys_mount+0x317/0x410 fs/namespace.c:4427
+       do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
+       do_syscall_64+0xfa/0x3b0 arch/x86/entry/syscall_64.c:94
+       entry_SYSCALL_64_after_hwframe+0x77/0x7f
+
+-> #0 (uuid_mutex){+.+.}-{4:4}:
+       check_prev_add kernel/locking/lockdep.c:3168 [inline]
+       check_prevs_add kernel/locking/lockdep.c:3287 [inline]
+       validate_chain+0xb9b/0x2140 kernel/locking/lockdep.c:3911
+       __lock_acquire+0xab9/0xd20 kernel/locking/lockdep.c:5240
+       lock_acquire+0x120/0x360 kernel/locking/lockdep.c:5871
+       __mutex_lock_common kernel/locking/mutex.c:602 [inline]
+       __mutex_lock+0x182/0xe80 kernel/locking/mutex.c:747
+       btrfs_read_chunk_tree+0xef/0x2170 fs/btrfs/volumes.c:7462
+       open_ctree+0x17f2/0x3a10 fs/btrfs/disk-io.c:3458
+       btrfs_fill_super fs/btrfs/super.c:984 [inline]
+       btrfs_get_tree_super fs/btrfs/super.c:1922 [inline]
+       btrfs_get_tree_subvol fs/btrfs/super.c:2059 [inline]
+       btrfs_get_tree+0xc6f/0x12d0 fs/btrfs/super.c:2093
+       vfs_get_tree+0x8f/0x2b0 fs/super.c:1804
+       do_new_mount+0x24a/0xa40 fs/namespace.c:3902
+       do_mount fs/namespace.c:4239 [inline]
+       __do_sys_mount fs/namespace.c:4450 [inline]
+       __se_sys_mount+0x317/0x410 fs/namespace.c:4427
+       do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
+       do_syscall_64+0xfa/0x3b0 arch/x86/entry/syscall_64.c:94
+       entry_SYSCALL_64_after_hwframe+0x77/0x7f
+
+other info that might help us debug this:
+
+ Possible unsafe locking scenario:
+
+       CPU0                    CPU1
+       ----                    ----
+  lock(&type->s_umount_key#41/1);
+                               lock(uuid_mutex);
+                               lock(&type->s_umount_key#41/1);
+  lock(uuid_mutex);
+
+ *** DEADLOCK ***
+
+Fixes: 7aacdf6feed1 ("btrfs: delay btrfs_open_devices() until super block is created")
+Reported-by: syzbot+fa90fcaa28f5cd4b1fc1@syzkaller.appspotmail.com
+Closes: https://syzkaller.appspot.com/bug?extid=fa90fcaa28f5cd4b1fc1
+Tested-by: syzbot+fa90fcaa28f5cd4b1fc1@syzkaller.appspotmail.com
+Signed-off-by: Edward Adam Davis <eadavis@qq.com>
+---
+ fs/btrfs/super.c | 7 ++++---
+ 1 file changed, 4 insertions(+), 3 deletions(-)
+
+diff --git a/fs/btrfs/super.c b/fs/btrfs/super.c
+index 237e60b53192..c2ce1eb53ad7 100644
+--- a/fs/btrfs/super.c
++++ b/fs/btrfs/super.c
+@@ -1864,11 +1864,10 @@ static int btrfs_get_tree_super(struct fs_context *fc)
+ 	fs_devices = device->fs_devices;
+ 	fs_info->fs_devices = fs_devices;
+ 
++	mutex_unlock(&uuid_mutex);
+ 	sb = sget_fc(fc, btrfs_fc_test_super, set_anon_super_fc);
+-	if (IS_ERR(sb)) {
+-		mutex_unlock(&uuid_mutex);
++	if (IS_ERR(sb))
+ 		return PTR_ERR(sb);
+-	}
+ 
+ 	set_device_specific_options(fs_info);
+ 
+@@ -1887,6 +1886,7 @@ static int btrfs_get_tree_super(struct fs_context *fc)
+ 		 * But the fs_info->fs_devices is not opened, we should not let
+ 		 * btrfs_free_fs_context() to close them.
+ 		 */
++		mutex_lock(&uuid_mutex);
+ 		fs_info->fs_devices = NULL;
+ 		mutex_unlock(&uuid_mutex);
+ 
+@@ -1906,6 +1906,7 @@ static int btrfs_get_tree_super(struct fs_context *fc)
+ 		 */
+ 		ASSERT(fc->s_fs_info == NULL);
+ 
++		mutex_lock(&uuid_mutex);
+ 		ret = btrfs_open_devices(fs_devices, mode, sb);
+ 		mutex_unlock(&uuid_mutex);
+ 		if (ret < 0) {
+-- 
+2.43.0
+
 
