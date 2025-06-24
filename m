@@ -1,175 +1,166 @@
-Return-Path: <linux-kernel+bounces-699999-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-700001-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id AD04FAE6290
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Jun 2025 12:36:16 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 220AAAE6294
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Jun 2025 12:36:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B55364060B6
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Jun 2025 10:35:51 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9CC5D16B467
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Jun 2025 10:36:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AF5B7283FC2;
-	Tue, 24 Jun 2025 10:36:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 402D8223DE8;
+	Tue, 24 Jun 2025 10:36:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="KXPZAEQi"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="HSI9dRYh"
+Received: from mail-wm1-f43.google.com (mail-wm1-f43.google.com [209.85.128.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 71BAE218ABA
-	for <linux-kernel@vger.kernel.org>; Tue, 24 Jun 2025 10:36:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 96C4025C821
+	for <linux-kernel@vger.kernel.org>; Tue, 24 Jun 2025 10:36:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750761362; cv=none; b=XAC9+eNYaki4lF2e3pOBBHp7tgRpMu34gOCzCAGRJ8buAd4ecw5ZOLXbLZTgaXpuhDzDfIPBnBj7bgFHAoaQKxUf57o+QioHdf470vvU9lt8k7g9BL861FAcWfuxMUyw87FXPuuYQYGp+Bt0x2Ime7NbhQwHxyetHITNfgvkPmc=
+	t=1750761396; cv=none; b=NhD9vsvf6zuAsCgYT/INE91WHA1+cv2a2buUXNR+pJELgYNn/ely6CcMq3XfA54B6ZmZ/dxJI1TGcS7FOH8fn6zJAeV4ie8F1M+y3SWrU60khD88uRcr9SO+yA6a9V+Ovlwu9bOeUQ/XAEAjQUn/Tq9uDK14clerJZUC1wp/I+A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750761362; c=relaxed/simple;
-	bh=6CViWuPX00eU2i8EAuavfyf3Zqe6PhQ83HuHdPBTl2A=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=S0mdAgoNKFZFv0NZsLN8dWQOJpDWVn8s/3mJ1wlV1kLcbSmEYTxs8lUuAdNihMAubhKyCqtkYcOwG6N0mu7XX+cmx59a2lEARjHgBR66JVgnm3dOiZonMHSozSeOfJSV26XTuSEq2f1PUbwAb6V2JvBGE1yvnTgiPs6pzScOvlA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=KXPZAEQi; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1750761359;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=P3LLsiuFWfA6idjZrblBAge6t85zqJ/pmKfL0AuNa2U=;
-	b=KXPZAEQi7WwrwBZqsLAZ4EQnDqmeQgNKog8kDNj+onYjRfpOIGKhokOclLGf9RsKDDse4W
-	6eAitxELRqNc2TwPFPXC1hGIAyfAohziwj9NE4Vt1FUMhr7b2B3IZmkdP4fFW7c9O4M+xI
-	4gQWRz8zEENQLWa1eQV53r6/Zmqs2oU=
-Received: from mail-ed1-f72.google.com (mail-ed1-f72.google.com
- [209.85.208.72]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-576-ljqJNFCaN_a_6Pt638OGjw-1; Tue, 24 Jun 2025 06:35:57 -0400
-X-MC-Unique: ljqJNFCaN_a_6Pt638OGjw-1
-X-Mimecast-MFC-AGG-ID: ljqJNFCaN_a_6Pt638OGjw_1750761357
-Received: by mail-ed1-f72.google.com with SMTP id 4fb4d7f45d1cf-606aea61721so300344a12.2
-        for <linux-kernel@vger.kernel.org>; Tue, 24 Jun 2025 03:35:57 -0700 (PDT)
+	s=arc-20240116; t=1750761396; c=relaxed/simple;
+	bh=s/p1Xv9n0I6aRsXvJfI6PtEEVZffpXSQRtqTJvgA7bo=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=P75yx5jnfQSVlZy2zSmGMQHf0ZY9Xhuppnd+XQOBR4hWkUjjxNVllW3UPCEP2CpgoEhUbGP5WwZuKvKOwr0/nRXfoVwdZXsAQpNvJchK5ED7yhFyGhOvXvKHFeNiLh6LFj8UiESM3sVoN6m/cl9ks5Y7Wn6ZYrcRtKeMOknP4wk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=HSI9dRYh; arc=none smtp.client-ip=209.85.128.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wm1-f43.google.com with SMTP id 5b1f17b1804b1-450d668c2a1so38140995e9.0
+        for <linux-kernel@vger.kernel.org>; Tue, 24 Jun 2025 03:36:34 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1750761393; x=1751366193; darn=vger.kernel.org;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=mV2F430M3zf1QNtT0HJo3gDR7bQHbqH+Rduaa+AqTs0=;
+        b=HSI9dRYh4OmTep8TZdzSuurajAq9L20OJ9AjaRQ2eD+widQj7r1Yf5p8hYAvN970Ql
+         l5cV7sAvHIDjpvzFdZ3MyvKNMQJNh+960jA1SJ0lzWeucx+WqsMaoplEOQvcH3sZ/RaF
+         4F8OYtShXe98cHB3ddpbTGUCuAZt9oZBA4bAQq8ZAezuv4sQX75Ef06WP/zY9lmX0R7m
+         Qh11z2O+zaOD42QgMr28YYC9hOuJcfsAK4qLDQxd2Z/d4kX+FHS2HgGecRvUCMh27r/V
+         K6DoJXRTh5QVcmGmEs3fM6HtbOG8QfWXAibQKXlSmA4ypc2nrCU6OZ3viWtetQGB7by0
+         dg8A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1750761357; x=1751366157;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=P3LLsiuFWfA6idjZrblBAge6t85zqJ/pmKfL0AuNa2U=;
-        b=JqYRWlFYkrpo1xUSQLjMe7y7nK4L99gbID4kz5DgHXiV87ErmHvXMFZLOuPu5Row+W
-         Nt4LUdbMakFHlUKFuhi8CORRVNjxDJ4H7XSr32uj7ZQTB6dCkzCHq/X/cO1u4PMtNDej
-         fU44rSIJUbQLpYfQF0LXw4nN6IP0IeuMbVUZT+EAkUbCON0U4JS1pfNYmZZ3ekiq/K0f
-         MYsAs5ATG2xzCLYw0KDnHGwP2Vt0dM+znjOgA6OtJrEQxsgVgYKhJ55c9dipeMw5oEzL
-         fGqs4RD8xY2NEA5+kVOU50K+5+zJs0th+Yl20wX4ncXIgO4hqfgx2nz0hOpBO1BOGsHE
-         /sJA==
-X-Forwarded-Encrypted: i=1; AJvYcCWbRfCDeK+pu5G2VlUMKwTIljlum5qN+e1Cv8+0xrRmFVbO19ruJE3rUgMGsn5LtcPX3IAjzmuokp52sZU=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yyo5oAhT3DIGDQGAtkTmeBrIZE2h6lsAw/UHZ82KTgquOgi8UjB
-	a/6Bqgyv4GXjA6aWNVWLoFMWCc3phNDGmvtJat4hmCxIffw+cfcCpuP/dEyWzSo7G4gEvS1No1/
-	qKmtgj6DuXnCVpNakL2QfOdjWDQYJ3UzwUH3NIkL6ot5krKIpTY/3CPvf6pp1DKuW23qb/hY3tP
-	i0SxJaruKORaR6P0XGKTeMhUejYkIQhCKBuBZfGq3R
-X-Gm-Gg: ASbGncuQ3tK1wmEOTT9q3HwIzr5FF01VPgmzBSTxJPyrpaYLwYwVbfC2Ge0y8UfbVNm
-	XjHEA9sgQHndaFbcOt2N27jD8a6NpKtOPV5xPWjrw9O554a7A9q2beI1X9MTv++BIDmLbuq9NJP
-	rKQrp2
-X-Received: by 2002:a17:906:6a05:b0:ace:cc7f:8abe with SMTP id a640c23a62f3a-ae057b39bdfmr1751261066b.31.1750761356621;
-        Tue, 24 Jun 2025 03:35:56 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IG945gyIWXiR+ffSgL3olytMGzXmaQ3MYtuPPSyPyclXoNDFXHfuOBd36+G6jQmYhGmRc0OV6LyDDHJ4f9ky0E=
-X-Received: by 2002:a17:906:6a05:b0:ace:cc7f:8abe with SMTP id
- a640c23a62f3a-ae057b39bdfmr1751259566b.31.1750761356252; Tue, 24 Jun 2025
- 03:35:56 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1750761393; x=1751366193;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=mV2F430M3zf1QNtT0HJo3gDR7bQHbqH+Rduaa+AqTs0=;
+        b=EZf2lz5cOWCcF6BLJog5rduLzZ1yyNwamkmXwcA6JyxSP7R7APA9sQVsE7KsdBaED1
+         kIvSJnHhpQOMGGaTuQ72wxzw2+/He3dGcS2FIfAiebOfs5MqP6EBKRNOIRFGbS0xkDrR
+         iUc3uZcuAsW3aH7XaTMsOGrhxxEyf/Tjqje42ZWFwudHunm78zpmCQn0ABMEaoE8C3Nc
+         Z8htfufgLj0tCdWb84+qMRoBoOIsErvlNAn9rvnDIK/QzhHevvsMMDAFlDdCvWdt0DaT
+         uu3qBxPjMjJhRVs1G0NRPpvkUmATNjWJ6gRMxyOYLnrYRT+Zaax3pTL1QVc9My//sPhv
+         Qijg==
+X-Forwarded-Encrypted: i=1; AJvYcCUdldehv9eRFaCRp5bAt/wNVtRQqnCs7N5sq0PHtInoqiNx6F8+p1Ns7rWFN81gA1KdXcF3cPgFRZNHg2A=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzLtn/wh2OVvSucJylwzwtGfJmsyjpxG6OEg2F+vYMjH0BvoTAO
+	tHuRapEeqokQv2035wQfkH7M6jH46VArxWyANBCv+Hqq8HiF+DggUFNwAUFu5aAdQcY=
+X-Gm-Gg: ASbGncsJOvX4P8y89vr8gNl/RtQii054lcSeE67Eg7OFSsqrnpd3dYzNjnl/QxSmtNk
+	64iiN0O8J9M18Bn9ndd4YXRFMAkmuQilUO3O4JskSIkD9VBFeDx07eCAzSHV9D1ATUoQbcKsgxw
+	eBX5EJZMVJSEKyGB1xKaOyepqFDVVSUFx0UM9OJiO6XZnnAespPonXikM0EIOrlEYT3yZgDgy2p
+	MODMX4Tm8pXj/LfVN3eRgnGRsitxsJA2NwK4zFG1L4dKOJ+flxjD9kMnvYli8XZXHBcRidiPtIz
+	fugtHL9mZp92E1rq8sGlaG5ABncGFo0w5AzvSyTZ/jafmes0e/VKO3kx9JriVPDBWNkyNrg=
+X-Google-Smtp-Source: AGHT+IE0oRQNwaJh1+Up/aJBnSPbbAIWGlweTCtCPOeJbMewjs4LOHGtQALu971QtWWJIuf3LTdG6Q==
+X-Received: by 2002:a05:600c:8b16:b0:43c:f509:2bbf with SMTP id 5b1f17b1804b1-4537b7b9f4bmr27625885e9.15.1750761392859;
+        Tue, 24 Jun 2025 03:36:32 -0700 (PDT)
+Received: from ho-tower-lan.lan ([37.18.136.128])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-453646cb641sm143398245e9.3.2025.06.24.03.36.32
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 24 Jun 2025 03:36:32 -0700 (PDT)
+From: James Clark <james.clark@linaro.org>
+Subject: [PATCH v3 0/6] spi: spi-fsl-dspi: Target mode improvements
+Date: Tue, 24 Jun 2025 11:35:30 +0100
+Message-Id: <20250624-james-nxp-spi-dma-v3-0-e7d574f5f62c@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250616082518.10411-1-jasowang@redhat.com> <20250616082518.10411-2-jasowang@redhat.com>
-In-Reply-To: <20250616082518.10411-2-jasowang@redhat.com>
-From: Lei Yang <leiyang@redhat.com>
-Date: Tue, 24 Jun 2025 18:35:18 +0800
-X-Gm-Features: Ac12FXyfv18Bnl6zW9gEC4TfyPem9I0gsnQH2c14IyIgNpT2vz0N9HVKpPOYF10
-Message-ID: <CAPpAL=wHn_Ak+5qNwqv6rEv=ROQPzra2nJuLD0HxOpZfjsEjVA@mail.gmail.com>
-Subject: Re: [PATCH V3 01/19] virtio_ring: rename virtqueue_reinit_xxx to virtqueue_reset_xxx()
-To: Jason Wang <jasowang@redhat.com>
-Cc: mst@redhat.com, xuanzhuo@linux.alibaba.com, eperezma@redhat.com, 
-	virtualization@lists.linux.dev, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAHJ/WmgC/3WO0QqCMBSGX0V23WI76tSueo/oYtMzXeSULYYhv
+ ntTiArs8jvwff+ZiUdn0JNTMhOHwXgz2AjpISF1J22L1DSRCTDIWQ5Ab7JHT+00Uj8a2vSSyqo
+ qUKHSSigSvdGhNtPWvFwjd8Y/BvfcJgJfr+9auVMLnDLKmSgRUmS1Fue7sdINx8G1a31TBav+q
+ aDKlGPBM4Xwra6fBPisC57uJSAmGC8Qaw2ZlOonsSzLCx0Ml+ExAQAA
+To: Vladimir Oltean <olteanv@gmail.com>, Mark Brown <broonie@kernel.org>, 
+ Vladimir Oltean <vladimir.oltean@nxp.com>, Arnd Bergmann <arnd@arndb.de>, 
+ Larisa Grigore <larisa.grigore@nxp.com>, Frank Li <Frank.li@nxp.com>, 
+ Christoph Hellwig <hch@lst.de>
+Cc: linux-spi@vger.kernel.org, imx@lists.linux.dev, 
+ linux-kernel@vger.kernel.org, James Clark <james.clark@linaro.org>
+X-Mailer: b4 0.14.0
 
-I used the "virtio-net-pci,...,in_order=3Don" to test this series of
-patches v3 with regression tests, everything works fine.
+Improve usability of target mode by reporting FIFO errors and increasing
+the buffer size when DMA is used. While we're touching DMA stuff also
+switch to non-coherent memory, although this is unrelated to target
+mode.
 
-Tested-by: Lei Yang <leiyang@redhat.com>
+The first commit is marked as a fix because it can fix intermittent
+issues with existing transfers, rather than the later fixes which
+improve larger than FIFO target mode transfers which would have never
+worked.
 
-On Mon, Jun 16, 2025 at 4:27=E2=80=AFPM Jason Wang <jasowang@redhat.com> wr=
-ote:
->
-> To be consistent with virtqueue_reset().
->
-> Reviewed-by: Xuan Zhuo <xuanzhuo@linux.alibaba.com>
-> Signed-off-by: Jason Wang <jasowang@redhat.com>
-> ---
->  drivers/virtio/virtio_ring.c | 12 ++++++------
->  1 file changed, 6 insertions(+), 6 deletions(-)
->
-> diff --git a/drivers/virtio/virtio_ring.c b/drivers/virtio/virtio_ring.c
-> index b784aab66867..afdd51fc3c9c 100644
-> --- a/drivers/virtio/virtio_ring.c
-> +++ b/drivers/virtio/virtio_ring.c
-> @@ -1005,7 +1005,7 @@ static void virtqueue_vring_init_split(struct vring=
-_virtqueue_split *vring_split
->         }
->  }
->
-> -static void virtqueue_reinit_split(struct vring_virtqueue *vq)
-> +static void virtqueue_reset_split(struct vring_virtqueue *vq)
->  {
->         int num;
->
-> @@ -1248,7 +1248,7 @@ static int virtqueue_resize_split(struct virtqueue =
-*_vq, u32 num)
->  err_state_extra:
->         vring_free_split(&vring_split, vdev, vring_dma_dev(vq));
->  err:
-> -       virtqueue_reinit_split(vq);
-> +       virtqueue_reset_split(vq);
->         return -ENOMEM;
->  }
->
-> @@ -2092,7 +2092,7 @@ static void virtqueue_vring_attach_packed(struct vr=
-ing_virtqueue *vq,
->         vq->free_head =3D 0;
->  }
->
-> -static void virtqueue_reinit_packed(struct vring_virtqueue *vq)
-> +static void virtqueue_reset_packed(struct vring_virtqueue *vq)
->  {
->         memset(vq->packed.vring.device, 0, vq->packed.event_size_in_bytes=
-);
->         memset(vq->packed.vring.driver, 0, vq->packed.event_size_in_bytes=
-);
-> @@ -2219,7 +2219,7 @@ static int virtqueue_resize_packed(struct virtqueue=
- *_vq, u32 num)
->  err_state_extra:
->         vring_free_packed(&vring_packed, vdev, vring_dma_dev(vq));
->  err_ring:
-> -       virtqueue_reinit_packed(vq);
-> +       virtqueue_reset_packed(vq);
->         return -ENOMEM;
->  }
->
-> @@ -2852,9 +2852,9 @@ int virtqueue_reset(struct virtqueue *_vq,
->                 recycle_done(_vq);
->
->         if (vq->packed_ring)
-> -               virtqueue_reinit_packed(vq);
-> +               virtqueue_reset_packed(vq);
->         else
-> -               virtqueue_reinit_split(vq);
-> +               virtqueue_reset_split(vq);
->
->         return virtqueue_enable_after_reset(_vq);
->  }
-> --
-> 2.34.1
->
->
+With the combination of the commit to increase the DMA buffer size and
+the commit to use non-coherent memory, the host mode performance figures
+are as follows on S32G3:
+
+  # spidev_test --device /dev/spidev1.0 --bpw 8 --size <test_size> --cpha --iter 10000000 --speed 10000000
+
+  Coherent (4096 byte transfers): 6534 kbps
+  Non-coherent:                   7347 kbps
+
+  Coherent (16 byte transfers):    447 kbps
+  Non-coherent:                    448 kbps
+
+Just for comparison running the same test in XSPI mode:
+
+  4096 byte transfers:            2143 kbps
+  16 byte transfers:               637 kbps
+
+These tests required hacking S32G3 to use DMA in host mode, although
+the figures should be representative of target mode too where DMA is
+used. And the other devices that use DMA in host mode should see similar
+improvements.
+
+Signed-off-by: James Clark <james.clark@linaro.org>
+---
+Changes in v3:
+- Stub out DMA functions in the driver so no-DMA builds work
+- Link to v2: https://lore.kernel.org/r/20250613-james-nxp-spi-dma-v2-0-017eecf24aab@linaro.org
+
+Changes in v2:
+- Store status in cur_msg->status rather than adding xfer_status
+- Show exact underflow/overflow flags in error message
+- Rate limit error messages
+- Add a comment about resetting the completion counter prior to transfer
+- Rename dspi_is_fifo_overflow() -> dspi_fifo_error()
+- Add performance figures to cover letter
+- Rebase onto https://git.kernel.org/pub/scm/linux/kernel/git/broonie/spi.git/for-next
+  to avoid some conflicts
+- Link to v1: https://lore.kernel.org/r/20250609-james-nxp-spi-dma-v1-0-2b831e714be2@linaro.org
+
+---
+James Clark (5):
+      spi: spi-fsl-dspi: Clear completion counter before initiating transfer
+      spi: spi-fsl-dspi: Store status directly in cur_msg->status
+      spi: spi-fsl-dspi: Stub out DMA functions
+      spi: spi-fsl-dspi: Use non-coherent memory for DMA
+      spi: spi-fsl-dspi: Report FIFO overflows as errors
+
+Larisa Grigore (1):
+      spi: spi-fsl-dspi: Increase DMA buffer size
+
+ drivers/spi/spi-fsl-dspi.c | 221 ++++++++++++++++++++++++++++++++-------------
+ 1 file changed, 160 insertions(+), 61 deletions(-)
+---
+base-commit: 4f326fa6236787ca516ea6eab8e5e9dc5c236f03
+change-id: 20250522-james-nxp-spi-dma-a997ebebfb6b
+
+Best regards,
+-- 
+James Clark <james.clark@linaro.org>
 
 
