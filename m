@@ -1,138 +1,115 @@
-Return-Path: <linux-kernel+bounces-700101-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-700103-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 06DFEAE63D6
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Jun 2025 13:48:47 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id BA4C2AE63DD
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Jun 2025 13:49:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5F29017F61A
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Jun 2025 11:48:47 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DC05117F6F1
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Jun 2025 11:49:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7213828C843;
-	Tue, 24 Jun 2025 11:48:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 10B1C28DEF9;
+	Tue, 24 Jun 2025 11:49:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="EJZY7C4f"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=codiax-se.20230601.gappssmtp.com header.i=@codiax-se.20230601.gappssmtp.com header.b="ckVOXXo7"
+Received: from mail-lf1-f49.google.com (mail-lf1-f49.google.com [209.85.167.49])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CFBBF1EBA09;
-	Tue, 24 Jun 2025 11:48:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DDE1228DF36
+	for <linux-kernel@vger.kernel.org>; Tue, 24 Jun 2025 11:49:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750765720; cv=none; b=Rw9atV8uvnle/tY3RfWGSc0xnTsAAGD4NWIDUb7zXaftl73DrFFn4VA8sU9YN770UUBmN+Vv+HeE2dUsoC7q0Hb4hq6JRIsANPKyd2xjHqCOU7j3Gj95287uWrrWK0IK9FNyTqt6poDv+6xYdv5v5boLcos2eUHuuLXst+oj1Qs=
+	t=1750765747; cv=none; b=b7qeEEGPT1gcKWHBTgAlOmRBlvTEDUyR7JvtBoZU9WkXcAQbsdM4hBvwuC/dfFIV1abvaQBKX2VOXKANqbajL98OaRA19dgQYm9Un3LK7nYxEkyY+NYZTu2Qu91Ac0dZY8LE4+eHMDvBMltUEXe5hPbGWBaIQYS9EP0Sqza7V2A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750765720; c=relaxed/simple;
-	bh=t98U/v6kOm3A23+hwV+vgWZIzYEBlhLrnRJchELQH3s=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=n5vfcUUFoWi9bsAnuX9kVjdfFP5jqIi+LZTVIlDWAPoKJYc+AdO3z6WF6nBlnsOp9i0oGlGFBvoa3uW1KO/Lbri1G9+AuKzkvSpTiIXpswA2hsYNdm1IikenYL5K9gjWO2bhA8jeYHIrDDFhtrwfKO0mZtFzQh3HehzE2DbyyLE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=EJZY7C4f; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id DB722C4CEE3;
-	Tue, 24 Jun 2025 11:48:38 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1750765720;
-	bh=t98U/v6kOm3A23+hwV+vgWZIzYEBlhLrnRJchELQH3s=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
-	b=EJZY7C4fn6Iq0L8HhKdGfgD5uT4mwmwIIVJCavUT7+A4ajLAoBsgi5nE4AKMohY+D
-	 SVI932sVDMDm6tyXJN4oM30YN3jZAf1WIGUVWI9gMVFZFcu38Ie8w/Z0L/NyZxwiwk
-	 z6iFXA7rLNb/4G78+QGL/ALVpP5N4EMidQ1qcMYxJz15duR9iYQBB7/m2M6nb/1kM0
-	 iOiE4ILdgvmeZdiQcQicNJ21PzI+KxXLLJWHEjVYVrJBONqhS/tkIPFfblV8io7TET
-	 keUBx7WzE8KXZpyGMI3haHVHBHCzWeQo+FX7W9Hdz2yZDP7KnBLYqWAVvq9zzMrmrf
-	 doWOqvZmXYLGg==
-From: Andreas Hindborg <a.hindborg@kernel.org>
-To: "Stephen Rothwell" <sfr@canb.auug.org.au>
-Cc: "Danilo Krummrich" <dakr@kernel.org>,  "Alexandre Courbot"
- <acourbot@nvidia.com>,  "FUJITA Tomonori" <fujita.tomonori@gmail.com>,
-  "Linux Kernel Mailing List" <linux-kernel@vger.kernel.org>,  "Linux Next
- Mailing List" <linux-next@vger.kernel.org>
-Subject: Re: linux-next: manual merge of the rust-timekeeping tree with the
- drm-nova tree
-In-Reply-To: <20250624195142.1050e147@canb.auug.org.au> (Stephen Rothwell's
-	message of "Tue, 24 Jun 2025 19:51:42 +1000")
-References: <iuo4BpdTglZkpW9Xyy1ehjFspmj3ay0q7iejyeOShBG0HLZmIrhzIpi0eG_wBv71ZPPCgh2lcn2BOsrFHOegfg==@protonmail.internalid>
-	<20250624195142.1050e147@canb.auug.org.au>
-User-Agent: mu4e 1.12.9; emacs 30.1
-Date: Tue, 24 Jun 2025 13:48:30 +0200
-Message-ID: <87ecv94ay9.fsf@kernel.org>
+	s=arc-20240116; t=1750765747; c=relaxed/simple;
+	bh=UxTC9xRj/zj8ryzAX8TqE4eUO7zS1dCWnLFe+Zg1R4A=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=tOUPEoe7CrS2iYk9vi4fldVCkvqX7KCMfVakO25I9XDLc/md4U/edxa+cA3V6NNzKH0EyQSh/vExYQu3kOw+dXOa6L1EyBMKTC+E/wBGfQ6zV9PS7F8edLrqPGIKjpiL+/yY5aqnOPcuTCvWlsij2ulQ7LdYG+RjaA/TxH56DNc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=codiax.se; spf=pass smtp.mailfrom=codiax.se; dkim=pass (2048-bit key) header.d=codiax-se.20230601.gappssmtp.com header.i=@codiax-se.20230601.gappssmtp.com header.b=ckVOXXo7; arc=none smtp.client-ip=209.85.167.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=codiax.se
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=codiax.se
+Received: by mail-lf1-f49.google.com with SMTP id 2adb3069b0e04-55350d0eedeso356037e87.2
+        for <linux-kernel@vger.kernel.org>; Tue, 24 Jun 2025 04:49:03 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=codiax-se.20230601.gappssmtp.com; s=20230601; t=1750765742; x=1751370542; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=YDe4d6DAb1FPdDH1nEMDmv6KDrUedHX2gEqJkiLhXb8=;
+        b=ckVOXXo7T62cvZjAdf7HtZTh3MwLJVlRzVWw81NMJaoZQvc6AiFjggK+q7UcWOfryc
+         UI82g5i0OwSBdRM0jNaF64UhWfPdMsCKKbCf5OedxpzfAUdq5UHGyjm7CnPq7uDiNjaI
+         XSwOsdfOFIdky/c7Eu0sEZA8ScNGaiLPR5/0PDzOS4hBdFJVkdsHEvPnluLJz7JLu4Fi
+         7XrfpUz+pOzqez2kAm5otbQVKrKAYUioT9FWTQ2OEmjzc4ZjCeMhHmh6R5CDy6ESPdUW
+         CWulya1J0wYB8sd9h3zuIcNDNDcbQxJrjnH4TJyUpEnHIOx0kdKh99HOW8ssF5VzjwkG
+         gWhg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1750765742; x=1751370542;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=YDe4d6DAb1FPdDH1nEMDmv6KDrUedHX2gEqJkiLhXb8=;
+        b=UuA+Jcqg5aF2pOJVR88A7MAu8WJZ0wAJpZdwtG59BeZq/f9/DbgDb1k9N602IIbS1o
+         UvJ4xSW2nKuAs7JfLtU5u8PTJcKqXbRphvNn+rOgY3PTxHstvjeehAn3hUfI914cHU7n
+         6FJMlVonDRSbabxCNvj+OQkiSYb1O9sRibbNlOp86tKCMlpbQj12uUWRJfj3tC+c4NCe
+         7SdE4U5/aH3C06k7iphFlibYn5l8M+JWAx0KzQW1OFZ5oVsknXW5ZAZf6SFkp9VAISSA
+         ugNdrnk571zJY8Q8weFURyZKHS/68Jw/3CP3dq3c51b0YQFtYUcXjZjnt/oIHtoCbXKK
+         AVYw==
+X-Forwarded-Encrypted: i=1; AJvYcCXSXQO/SoRS862lXRZtjLQCL35iJBB2URQdI/YBZvudGVaoT6UaBxnGny0GGRCNVTO5vY8Lf710AKHTk7M=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyR6jsWb/tiWujVriVRw0BwyG4ktcgRDdUreolpuY4XAMGa9KQd
+	KCfbfkofRzddnguw4J+rAF7oNkC3cLjlTjS9TrRMyLKTERDRAKQckxP46pM1bGyw4Ag=
+X-Gm-Gg: ASbGncuw2psu8j0dThcJe94Qw7m94L8T/h1Zqip1Vg6eh+71nOxjFWvar462ASJrraI
+	V+nHEzIoFBK7MVl3/UDSwhOy3ga35kGeMH6IYom2bczMmWZcF2gcniGfk0lOBN5M9PPgmGhlCYA
+	8So+mcO6f0KbSPxEbuU7YZ9bC1V++6E+yblgQPfqz7FPOEHq7syOz1SFAHpjyLVn7cC3WC4I6xM
+	88M17ZW6yTBArWLUWYcj97PKXwTBhtp3cvr6YwsK6QrQ5+xGdl5V66Ukq2h2M5yce3fx+CWaz/G
+	vMRVOJ1Q8umgpttzZRc4lXNZ1/O2DHeeqyteowE0GGqzF1ub206Wtg/5Xdis89p5IMuaKCniceP
+	3Z4mA1MJ50n8xlS3ObcC01FL+/nelAbNn
+X-Google-Smtp-Source: AGHT+IEfSt7tNNrH2iQBY0OqVXLuy72EhSV4+ycj/JlWBqXpOEeYEFU9T6O3BE1zu7c7pWadRz2Lug==
+X-Received: by 2002:a05:6512:12c8:b0:553:2e37:6945 with SMTP id 2adb3069b0e04-553e3cfda88mr5286333e87.32.1750765741784;
+        Tue, 24 Jun 2025 04:49:01 -0700 (PDT)
+Received: from falcon.codiax (h-37-123-161-8.A137.corp.bahnhof.se. [37.123.161.8])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-553e41c2e5csm1806724e87.155.2025.06.24.04.49.01
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 24 Jun 2025 04:49:01 -0700 (PDT)
+From: Albin Tornqvist <albin.tornqvist@codiax.se>
+To: tony@atomide.com,
+	robh@kernel.org,
+	krzk+dt@kernel.org,
+	conor+dt@kernel.org
+Cc: linux-omap@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	albin.tornqvist@codiax.se
+Subject: [PATCH] Fixup BBB dts typo
+Date: Tue, 24 Jun 2025 13:48:38 +0200
+Message-ID: <20250624114839.1465115-1-albin.tornqvist@codiax.se>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-"Stephen Rothwell" <sfr@canb.auug.org.au> writes:
+Hello,
+while trying to set up the Beagleboard Relay Cape for the Beaglebone
+Black i found a typo in the dts for one of the pins. I spent some time
+pulling my hair, hoping this patch will save some time for other devs.
 
-> Hi all,
->
-> After merging the rust-timekeeping tree, today's linux-next build
-> (x86_64 allmodconfig) failed like this:
->
-> error[E0599]: no method named `as_nanos` found for struct `Delta` in the current scope
->   --> drivers/gpu/nova-core/util.rs:45:33
->    |
-> 45 |         if start_time.elapsed().as_nanos() > timeout.as_nanos() as i64 {
->    |                                 ^^^^^^^^ method not found in `Delta`
->
-> error: aborting due to 1 previous error
->
-> For more information about this error, try `rustc --explain E0599`.
->
-> Caused by commits
->
->   2ed94606a0fe ("rust: time: Rename Delta's methods from as_* to into_*")
->   768dfbfc98e2 ("rust: time: Make Instant generic over ClockSource")
->
-> interacting with commit
->
->   a03c9bd953c2 ("gpu: nova-core: add helper function to wait on condition")
->
-> from the drm-nova tree.
->
-> I tried to fix it up, but this lead down a rabbit hole and my rust
-> skills are poor, so I just dropped the rust-timekeeping tree for today.
-> A merge resolution would be appreciated.
+This is my first contribution, I hope this is the appropriate mailing
+list and that i got formatting correct.
 
-I would suggest the following:
+The testing procedure is described in the commit message(for the first
+and only patch in this series).
 
-diff --git a/drivers/gpu/nova-core/util.rs b/drivers/gpu/nova-core/util.rs
-index 5cafe0797cd6..24cbf3f4cc39 100644
---- a/drivers/gpu/nova-core/util.rs
-+++ b/drivers/gpu/nova-core/util.rs
-@@ -3,7 +3,7 @@
- use core::time::Duration;
- 
- use kernel::prelude::*;
--use kernel::time::Instant;
-+use kernel::time::{Instant, Monotonic};
- 
- pub(crate) const fn to_lowercase_bytes<const N: usize>(s: &str) -> [u8; N] {
-     let src = s.as_bytes();
-@@ -35,14 +35,14 @@ pub(crate) const fn const_bytes_to_str(bytes: &[u8]) -> &str {
- /// TODO[DLAY]: replace with `read_poll_timeout` once it is available.
- /// (https://lore.kernel.org/lkml/20250220070611.214262-8-fujita.tomonori@gmail.com/)
- pub(crate) fn wait_on<R, F: Fn() -> Option<R>>(timeout: Duration, cond: F) -> Result<R> {
--    let start_time = Instant::now();
-+    let start_time = Instant::<Monotonic>::now();
- 
-     loop {
-         if let Some(ret) = cond() {
-             return Ok(ret);
-         }
- 
--        if start_time.elapsed().as_nanos() > timeout.as_nanos() as i64 {
-+        if start_time.elapsed().into_nanos() > timeout.as_nanos() as i64 {
-             return Err(ETIMEDOUT);
-         }
-     }
+Albin Törnqvist (1):
+  arm: dts: ti: omap: Fixup pinheader typo
 
-For the Nova people: You might consider if it makes sense to take a
-`kernel::time::Delta<C>` for the timeout.
+ arch/arm/boot/dts/ti/omap/am335x-boneblack.dts | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Best regards,
-Andreas Hindborg
-
+-- 
+2.43.0
 
 
