@@ -1,121 +1,113 @@
-Return-Path: <linux-kernel+bounces-699678-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-699676-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 969DEAE5DDB
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Jun 2025 09:34:39 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 9BA49AE5DD2
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Jun 2025 09:33:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0FD5C170956
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Jun 2025 07:34:40 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 41E5B4A472E
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Jun 2025 07:33:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 36798256C6A;
-	Tue, 24 Jun 2025 07:34:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=realtek.com header.i=@realtek.com header.b="pxcT+AjY"
-Received: from rtits2.realtek.com.tw (rtits2.realtek.com [211.75.126.72])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8D1142550D2;
+	Tue, 24 Jun 2025 07:33:27 +0000 (UTC)
+Received: from mail-il1-f200.google.com (mail-il1-f200.google.com [209.85.166.200])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 719B3252906;
-	Tue, 24 Jun 2025 07:34:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=211.75.126.72
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8F1C0253950
+	for <linux-kernel@vger.kernel.org>; Tue, 24 Jun 2025 07:33:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.200
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750750465; cv=none; b=QsAHx9K2u2CC4ZMygGzazil1T/jjWi/o0740bIDc4YXWV7C+OVDlbCD/oIYepXjo8Ht0FfCxG4fnED96YoT0pL14nh3rAw4NKK4bPHTpPOwdw1M8ojbbUFe9+3vck2BPzIaI34v9js0jnULA4vDFln/V4zvNpNqWvmhbRN7iQhI=
+	t=1750750407; cv=none; b=ls3F0Gey5EalBZXEoirBy2QnIDJxZrySwr2FNY6Ab8YjlswqvtF7m+SmpgacGqFB9voskzAVZ1KseOOKRjcUMTsI1fdYTUKB/dW0FQiIiRk+4STqR8ldpJD4jv0RgbxhLUDGM/bdQ0yw3r0B8Icdy4Zgqvu2vcs0oyCTjudoZLs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750750465; c=relaxed/simple;
-	bh=4L4p8mzQIrawtPvkgMyDPHn1DG4pqUKquaAb1QnlhgU=;
-	h=From:To:CC:Subject:In-Reply-To:References:MIME-Version:
-	 Content-Type:Message-ID:Date; b=PtcLUkvlsaeWHli6FHiKPfgWDVE5h7+uj9lMd0nwsxgH3mHtmYusf4Y+UDzUUEKHdOwvITHjYOtogkdU/3K8d8FzgXN7yzGmIo8KqtwMTDYqLBJawBD7N0zGIG0wxWFHc7errkVcVDne5ZslakxuH5hZHmNw/e+BJhpQ7vZF2jI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=realtek.com; spf=pass smtp.mailfrom=realtek.com; dkim=pass (2048-bit key) header.d=realtek.com header.i=@realtek.com header.b=pxcT+AjY; arc=none smtp.client-ip=211.75.126.72
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=realtek.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=realtek.com
-X-SpamFilter-By: ArmorX SpamTrap 5.80 with qID 55O7X4Qp83232313, This message is accepted by code: ctloc85258
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=realtek.com; s=dkim;
-	t=1750750385; bh=+E+259xMEjdlVbAqk5TSc75UapVAIhlftohVhdBf7Hw=;
-	h=From:To:CC:Subject:In-Reply-To:References:MIME-Version:
-	 Content-Type:Message-ID:Date;
-	b=pxcT+AjYRzNsJxtH/yCu7DK16gT7BoQXfkbldezyvQBXBdrsgtB1qXtGoVWYAUpJw
-	 FWgUUQwFDd9m8stUZG7tQfN9nX/VCvB3BUaaHQiLu17i9tjGJxO5J7Pquu2OhrVxFX
-	 bsRWECyw3Y/RXbVqT2lOcJ9KC/ctn4CikLNdAVrHp2AfemKnaO3AMoC6fp41CVj9+Y
-	 MyDPg8MIJcpMtCsaFEcY+KA6l6IHGmnGNF23lrH8h/1ZnCozOp/is1XvlBtHGfQpwM
-	 x5jJsoCf88BY1q+TOK73fkbaHBgxv1LB91LpgAfpAaLmYpyGp4PAPhnXLOAqPCqXfJ
-	 M7fuOIIVyWMrQ==
-Received: from mail.realtek.com (rtexh36506.realtek.com.tw[172.21.6.27])
-	by rtits2.realtek.com.tw (8.15.2/3.13/5.93) with ESMTPS id 55O7X4Qp83232313
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Tue, 24 Jun 2025 15:33:05 +0800
-Received: from RTEXDAG02.realtek.com.tw (172.21.6.101) by
- RTEXH36506.realtek.com.tw (172.21.6.27) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.1.2507.39; Tue, 24 Jun 2025 15:33:18 +0800
-Received: from [127.0.1.1] (172.21.69.94) by RTEXDAG02.realtek.com.tw
- (172.21.6.101) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.35; Tue, 24 Jun
- 2025 15:33:17 +0800
-From: Ping-Ke Shih <pkshih@realtek.com>
-To: Daniil Dulov <d.dulov@aladdin.ru>, Ping-Ke Shih <pkshih@realtek.com>
-CC: Daniil Dulov <d.dulov@aladdin.ru>, Hin-Tak Leung <hintak.leung@gmail.com>,
-        Larry Finger <Larry.Finger@lwfinger.net>,
-        "John W. Linville"
-	<linville@tuxdriver.com>,
-        <linux-wireless@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <lvc-project@linuxtesting.org>
-Subject: Re: [PATCH v2] rtl818x: Kill URBs before clearing tx status queue
-In-Reply-To: <20250617135634.21760-1-d.dulov@aladdin.ru>
-References: <20250617135634.21760-1-d.dulov@aladdin.ru>
+	s=arc-20240116; t=1750750407; c=relaxed/simple;
+	bh=MeqGFNohGS/UtYjbbo1m1v78LUNtCclwggCbgSPV57g=;
+	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=BNk12fgVKh3Qv3bG5cq93+P9UJNQxGt63mdGqbkaH3BGF5rh7I3fuWOowF6Q3+oIt2aK6ZFgkG0GtyFCqUOcQyLBhaFeMvoNpEVWNjCtpXdbyk1jAIGSGVJt/Tg7UfMLqTAe4RIXBRbf/AdcLoLoofzVCdN4VwxZCevebmWJBd8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.200
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f200.google.com with SMTP id e9e14a558f8ab-3df2d0b7c50so1595675ab.1
+        for <linux-kernel@vger.kernel.org>; Tue, 24 Jun 2025 00:33:25 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1750750404; x=1751355204;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=lwAeDL4uXrRxotGYDd6+WSH1XlQXeR92VyGqeuNWUPw=;
+        b=dA1J+q96sUKP0PHn1aqri2FK8kHWtTm4Jx4ZWVL8qHSFJGCA3oScMej5y1YaLtw1kv
+         Lesnt2x/JCVHfLdeDaeAccqU7FNfMC5/Os9MpLwMS3MLpHjV/3ui+unZo1biDBApll6k
+         3x5diuPufWsZ0Fir2Ac3US3ZdROROjbc7SttbVM3JhZdP3767I01sz8aAfidskSLhxdy
+         Bs5oXIN35l0U11PchDblOjlYZV7xWrUHRmeBOiMbbcIM1IfcDVoWJiSS+41FhGf2NqKp
+         5P3iT/Vw4IkN4zmbEPHzUwEYURIJEi8s8tjqvNIEb0yOyUyF9FlS8p0SVw2WbQw8myuX
+         ETOA==
+X-Forwarded-Encrypted: i=1; AJvYcCUnvjw5prKOxhbjKHRe6JxrSayddckNuc7qMpXEqJJZ2bEnAhalf/ue5+cjDZHgY58BTD40+yn9ktZ2pQU=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy3IdX3IATALqB6uFCS7eG6Vs4ZC2VDLy1eZnjOyLf3IY6UCS6Y
+	LDbpDo1xlfuyfBwUWViQ96UlcLgZGMZzPMDGsrN1Cp+MYSqdgKO1x2+rPP9vU+4aXZ2uxZv27Y3
+	lJH3VrqwxVJp+t4O5KBg/47CqvLXPh+tKJb21v+k2pjSq+ZIdwRE5MyfDOHY=
+X-Google-Smtp-Source: AGHT+IHu6murt6u/PZyZTSIcUyKz2pY0qGxTZPtECK46mjpD9QQFcB4AQfBUeY1tG/ABYktrXd1DAQqgr39+BdQev1/MD6UlG3BA
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
-Message-ID: <08206e08-f59f-4819-91c1-14e871fde06f@RTEXDAG02.realtek.com.tw>
-Date: Tue, 24 Jun 2025 15:33:17 +0800
-X-ClientProxiedBy: RTEXMBS02.realtek.com.tw (172.21.6.95) To
- RTEXDAG02.realtek.com.tw (172.21.6.101)
+X-Received: by 2002:a05:6e02:3d88:b0:3dd:b808:be59 with SMTP id
+ e9e14a558f8ab-3de38ce17a4mr184303075ab.21.1750750404673; Tue, 24 Jun 2025
+ 00:33:24 -0700 (PDT)
+Date: Tue, 24 Jun 2025 00:33:24 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <685a54c4.050a0220.2303ee.0004.GAE@google.com>
+Subject: [syzbot] Monthly btrfs report (Jun 2025)
+From: syzbot <syzbot+list02d191bb80c00a2f200e@syzkaller.appspotmail.com>
+To: clm@fb.com, dsterba@suse.com, josef@toxicpanda.com, 
+	linux-btrfs@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-Daniil Dulov <d.dulov@aladdin.ru> wrote:
+Hello btrfs maintainers/developers,
 
-> In rtl8187_stop() move the call of usb_kill_anchored_urbs() before clearing
-> b_tx_status.queue. This change prevents callbacks from using already freed
-> skb due to anchor was not killed before freeing such skb.
-> 
->  BUG: kernel NULL pointer dereference, address: 0000000000000080
->  #PF: supervisor read access in kernel mode
->  #PF: error_code(0x0000) - not-present page
->  PGD 0 P4D 0
->  Oops: Oops: 0000 [#1] SMP NOPTI
->  CPU: 7 UID: 0 PID: 0 Comm: swapper/7 Not tainted 6.15.0 #8 PREEMPT(voluntary)
->  Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 0.0.0 02/06/2015
->  RIP: 0010:ieee80211_tx_status_irqsafe+0x21/0xc0 [mac80211]
->  Call Trace:
->   <IRQ>
->   rtl8187_tx_cb+0x116/0x150 [rtl8187]
->   __usb_hcd_giveback_urb+0x9d/0x120
->   usb_giveback_urb_bh+0xbb/0x140
->   process_one_work+0x19b/0x3c0
->   bh_worker+0x1a7/0x210
->   tasklet_action+0x10/0x30
->   handle_softirqs+0xf0/0x340
->   __irq_exit_rcu+0xcd/0xf0
->   common_interrupt+0x85/0xa0
->   </IRQ>
-> 
-> Tested on RTL8187BvE device.
-> 
-> Found by Linux Verification Center (linuxtesting.org) with SVACE.
-> 
-> Fixes: c1db52b9d27e ("rtl8187: Use usb anchor facilities to manage urbs")
-> Signed-off-by: Daniil Dulov <d.dulov@aladdin.ru>
-> Reviewed-by: Ping-Ke Shih <pkshih@realtek.com>
+This is a 31-day syzbot report for the btrfs subsystem.
+All related reports/information can be found at:
+https://syzkaller.appspot.com/upstream/s/btrfs
 
-1 patch(es) applied to rtw-next branch of rtw.git, thanks.
+During the period, 0 new issues were detected and 1 were fixed.
+In total, 39 issues are still open and 100 have already been fixed.
 
-16d8fd74dbfc wifi: rtl818x: Kill URBs before clearing tx status queue
+Some of the still happening issues:
+
+Ref  Crashes Repro Title
+<1>  4190    Yes   WARNING in btrfs_space_info_update_bytes_may_use
+                   https://syzkaller.appspot.com/bug?extid=8edfa01e46fd9fe3fbfb
+<2>  1382    Yes   BUG: MAX_LOCKDEP_CHAIN_HLOCKS too low! (7)
+                   https://syzkaller.appspot.com/bug?extid=74f79df25c37437e4d5a
+<3>  880     Yes   WARNING in btrfs_commit_transaction (2)
+                   https://syzkaller.appspot.com/bug?extid=dafbca0e20fbc5946925
+<4>  752     Yes   WARNING in btrfs_create_pending_block_groups (2)
+                   https://syzkaller.appspot.com/bug?extid=b0643a1387dac0572b27
+<5>  495     Yes   general protection fault in btrfs_root_node
+                   https://syzkaller.appspot.com/bug?extid=9c3e0cdfbfe351b0bc0e
+<6>  454     Yes   WARNING in btrfs_chunk_alloc
+                   https://syzkaller.appspot.com/bug?extid=e8e56d5d31d38b5b47e7
+<7>  439     Yes   WARNING in cleanup_transaction
+                   https://syzkaller.appspot.com/bug?extid=021d10c4d4edc87daa03
+<8>  324     Yes   WARNING in btrfs_remove_chunk
+                   https://syzkaller.appspot.com/bug?extid=e8582cc16881ec70a430
+<9>  304     Yes   WARNING in lookup_inline_extent_backref
+                   https://syzkaller.appspot.com/bug?extid=d6f9ff86c1d804ba2bc6
+<10> 241     Yes   WARNING in btrfs_release_global_block_rsv (2)
+                   https://syzkaller.appspot.com/bug?extid=48ed002119c0f19daf63
 
 ---
-https://github.com/pkshih/rtw.git
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
 
+To disable reminders for individual bugs, reply with the following command:
+#syz set <Ref> no-reminders
+
+To change bug's subsystems, reply with:
+#syz set <Ref> subsystems: new-subsystem
+
+You may send multiple commands in a single email message.
 
