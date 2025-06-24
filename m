@@ -1,125 +1,156 @@
-Return-Path: <linux-kernel+bounces-700527-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-700528-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 154D4AE69DE
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Jun 2025 16:59:23 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4D636AE69EA
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Jun 2025 17:00:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 00E201C24E5E
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Jun 2025 14:53:19 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7992C165B7A
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Jun 2025 14:53:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ABC712D5C9B;
-	Tue, 24 Jun 2025 14:49:13 +0000 (UTC)
-Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8668F2D8792;
+	Tue, 24 Jun 2025 14:49:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Ohfbkb+a"
+Received: from mail-oa1-f54.google.com (mail-oa1-f54.google.com [209.85.160.54])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DE8172D4B55;
-	Tue, 24 Jun 2025 14:49:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 73D762D877F
+	for <linux-kernel@vger.kernel.org>; Tue, 24 Jun 2025 14:49:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750776553; cv=none; b=Fl93anyBb2tHH3IS2vx8LIN0qv/uT0HJn4ODSSAg/p35V1BNN+sni5iHoHGETsRG4GixPiJMv3PxT8NpDIhSw/ShwcIxSdC95a5dP8CgYTK2KDQy58tL2cHQyu0L7rtL4Vz/Urhm5L67wfCEvBekh8FW1rf7AY5DZtrwBX4QXtg=
+	t=1750776587; cv=none; b=OZ90Ioj13SPMtfdodHFaEetbgkoN7yvMgL3GXRNk5TOtdszA4fSwLWzv3YPJOl+E7VldDWNKJqRehD178CGZTY8ELG+joDbhoqfx9lZ1/OGOYiK/P0TwlAitt5onaj/1x/mQL1LUsTvcagU5UwqI2xTJKPzRQTH0a3RHUhIGR0M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750776553; c=relaxed/simple;
-	bh=k63dUMrxuP+pXkGPYNOLQuLDInZ1Aa1nDtY8Wekcx+c=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=LHJ0gaBFHUygTn/8jkV9iwgMa3GXERsABCyY0PvL/iJbHhdg+1oSnVaq8VkDEDlAlnASr6FoXncSKTAxuaErHaA3AJM7RmkOryOlIw/YmCTC64K2k+ZtYr52XIoulh4iNg0QNPFuuiqOiRVEFBOXxtecXqWJPAvE7NUbRorHTlk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.18.186.231])
-	by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4bRSQ10dF4z6J69c;
-	Tue, 24 Jun 2025 22:44:09 +0800 (CST)
-Received: from frapeml500008.china.huawei.com (unknown [7.182.85.71])
-	by mail.maildlp.com (Postfix) with ESMTPS id ABC1B140158;
-	Tue, 24 Jun 2025 22:49:08 +0800 (CST)
-Received: from frapeml500007.china.huawei.com (7.182.85.172) by
- frapeml500008.china.huawei.com (7.182.85.71) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.1.2507.39; Tue, 24 Jun 2025 16:49:08 +0200
-Received: from frapeml500007.china.huawei.com ([7.182.85.172]) by
- frapeml500007.china.huawei.com ([7.182.85.172]) with mapi id 15.01.2507.039;
- Tue, 24 Jun 2025 16:49:08 +0200
-From: Shiju Jose <shiju.jose@huawei.com>
-To: Li Ming <ming.li@zohomail.com>, "dave@stgolabs.net" <dave@stgolabs.net>,
-	Jonathan Cameron <jonathan.cameron@huawei.com>, "dave.jiang@intel.com"
-	<dave.jiang@intel.com>, "alison.schofield@intel.com"
-	<alison.schofield@intel.com>, "vishal.l.verma@intel.com"
-	<vishal.l.verma@intel.com>, "ira.weiny@intel.com" <ira.weiny@intel.com>,
-	"dan.j.williams@intel.com" <dan.j.williams@intel.com>
-CC: "linux-cxl@vger.kernel.org" <linux-cxl@vger.kernel.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: RE: [PATCH 1/1] cxl/edac: Fix using wrong repair type to check dram
- event record
-Thread-Topic: [PATCH 1/1] cxl/edac: Fix using wrong repair type to check dram
- event record
-Thread-Index: AQHb4aRbXn0MH+hivkiQkxp6bmOsr7QSaqzw
-Date: Tue, 24 Jun 2025 14:49:08 +0000
-Message-ID: <3f0636a92de94d608276a1f6da17e4d7@huawei.com>
-References: <20250620052924.138892-1-ming.li@zohomail.com>
-In-Reply-To: <20250620052924.138892-1-ming.li@zohomail.com>
-Accept-Language: en-GB, en-US
-Content-Language: en-US
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+	s=arc-20240116; t=1750776587; c=relaxed/simple;
+	bh=3PBHHUZgAT4HpCnmQF7y8YTzpCi6cJ8shRi+Dro0qp4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Sun72c7nA3rg1d9ze8tfa/eYLKaNKDO/LTxjLPI15+GmNrllOgXWfTCxfTaPDhO1h1lGzRiIQigxztkmOo05wJ/WxIT2BXjIs0ddL1GszL4D282JWFpiA8u1y3hwXgL6Z62tj1qEKhxaSke0Ia2kdh6prD9/+kzk7YojOanvHKA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=Ohfbkb+a; arc=none smtp.client-ip=209.85.160.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-oa1-f54.google.com with SMTP id 586e51a60fabf-2edec6c5511so144799fac.2
+        for <linux-kernel@vger.kernel.org>; Tue, 24 Jun 2025 07:49:45 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1750776584; x=1751381384; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=f17suXwGZaWKYHNj2hVCx02g00hUtF+cxL8n4hLFrwM=;
+        b=Ohfbkb+aFhK5vUV0D/KEb93IXfquZAtN14F2Ud0xKskKLIGMTtPY9BAm1Wbhig2DlV
+         g++f1kStrEZOH0mRu9RhczN62kxc6ARWZ3AuBn16KodYGRNTYlFozSu9Y0cTahhLBZwn
+         KBsipaeRw5kcaYL9zpjunCYSsqV5rEduHAZy4VsSrt1nflaFjfx4PeaDjexjvdYslPTc
+         xCAXeuwU6oPMoYmEKoCvS0Q5Rr2MsSx++H4IeWnq6xFW56mc8nPoUW1ekDWz9mxRtDxy
+         guQaU2BnlsWMtipNUcbvqxAPuLHFYVfQPUYv22bgzaoOl1fLhPRaQMXGSAp26NkDVYtt
+         9EeA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1750776584; x=1751381384;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=f17suXwGZaWKYHNj2hVCx02g00hUtF+cxL8n4hLFrwM=;
+        b=S8mX7WTlqAzYzSqyA7w1jhJlW6eKjk9/lToyQfmVpZ4jChevF0Fp+Wr7JWwbcAsVkw
+         DnDmd93y82nkGip6N5+sf0kLIp8fXLefZERss4+kQr/p8AmUXPS6+LMmKC+ouoQ7Xp3i
+         HfInI5Kd4BHy8+4CAkHBx5UEVY5e1a8joXWRF7SPgRiNws1IDZJe6Qi/0nuyjYGB8ljr
+         tpPhgAcrBsgM5JX6btZexV9b4Rfov0brxytiIkCF1zcn2+W4mArWoqK0CQGSkOBg8DNd
+         slZc+lXYPBMllqAyzGqFGkJTZx5YZ2L3OzqdUVfBlb4x7cxhbuq+TV6tLibQkW+Uf85v
+         HPUw==
+X-Forwarded-Encrypted: i=1; AJvYcCXkowk+Xl6LLZmflffB/PrJU5SN2eh+1Z5gvwBIjXsimKbiJV1JHLUAmNz0kFbmu3zsn1J6cnljmwzf6lw=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwT/T2NME99xWpVmh1T1bW9+U1uwxr6LeZl0YW/h7ztAu/iAqbX
+	wt49AYKwmH4gTFoUxFH1tcW9Te0eRdZ32auB4qhAaUOzl6/udl5n0ISL2KkceQT2u8Q=
+X-Gm-Gg: ASbGncsEoqZ1q4Q31s72w0wDkhYnQaZnqfgmZTHgp+NZ8aex7Blgfm6edH9oLgqDRHr
+	+Xce3YA1hrA7CMR4dC9at7+yGiEmF3hfQWzuzPQtFzTt2WQGR/S+hCD8LStPRx3JlO80Y13jtSA
+	AzHt93TwBHpkKrEvk07lDZ6hPCLvz+rZRFGm9GJDJ3om+VfbFsAlZjgBCeunHCH/U8KUSBOXRsF
+	w5MMcG2epQFZjgtWFQPwZOR1d4l4NbWDZSd7Q84oRa6vIUfCnR0hFbocSUeUK2h9pP3j/wkF3YN
+	dtKWUZBQ/aeUo3+N2qMUmpZSbMpS+sxPw/9S48nbJPIw/qwJufkTgAr4TKMTehOPUvYq0igdboF
+	EXM8b
+X-Google-Smtp-Source: AGHT+IFGsh98Xn7lqzpPwci6Ut5otRF4a95USgj4aytGS8PcOkey/dgiqyyjB95CmPN/YGSny0xhIg==
+X-Received: by 2002:a05:6870:a44d:b0:2d8:957a:5178 with SMTP id 586e51a60fabf-2eeee4db0d6mr11360058fac.21.1750776584495;
+        Tue, 24 Jun 2025 07:49:44 -0700 (PDT)
+Received: from localhost ([2603:8080:b800:f700:22c9:dcd3:f442:dd1d])
+        by smtp.gmail.com with ESMTPSA id 586e51a60fabf-2ee8a8e5eb3sm2149846fac.32.2025.06.24.07.49.42
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 24 Jun 2025 07:49:43 -0700 (PDT)
+Date: Tue, 24 Jun 2025 17:49:41 +0300
+From: Dan Carpenter <dan.carpenter@linaro.org>
+To: Su Hui <suhui@nfschina.com>
+Cc: chuck.lever@oracle.com, jlayton@kernel.org, neil@brown.name,
+	okorniev@redhat.com, Dai.Ngo@oracle.com, tom@talpey.com,
+	linux-nfs@vger.kernel.org, linux-kernel@vger.kernel.org,
+	kernel-janitors@vger.kernel.org
+Subject: Re: [PATCH] nfsd: Using guard() to simplify nfsd_cache_lookup()
+Message-ID: <7a156b03-c522-4e18-85ec-2c7ebfd97a42@suswa.mountain>
+References: <148c69b4-4cf7-4112-97e8-6a5c23505638@suswa.mountain>
+ <7975be21-045e-4b2b-9c73-79aba5b683db@nfschina.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <7975be21-045e-4b2b-9c73-79aba5b683db@nfschina.com>
 
->-----Original Message-----
->From: Li Ming <ming.li@zohomail.com>
->Sent: 20 June 2025 06:29
->To: dave@stgolabs.net; Jonathan Cameron <jonathan.cameron@huawei.com>;
->dave.jiang@intel.com; alison.schofield@intel.com; vishal.l.verma@intel.com=
-;
->ira.weiny@intel.com; dan.j.williams@intel.com; Shiju Jose
-><shiju.jose@huawei.com>
->Cc: linux-cxl@vger.kernel.org; linux-kernel@vger.kernel.org; Li Ming
-><ming.li@zohomail.com>
->Subject: [PATCH 1/1] cxl/edac: Fix using wrong repair type to check dram e=
-vent
->record
->
->cxl_find_rec_dram() is used to find a DRAM event record based on the input=
-ted
->attributes. Different repair_type of the inputted attributes will check th=
-e DRAM
->event record in different ways.
->When EDAC driver is performing a memory rank sparing, it should use
->CXL_RANK_SPARING rather than CXL_BANK_SPARING as repair_type for DRAM
->event record checking.
->
->Fixes: 588ca944c277 ("cxl/edac: Add CXL memory device memory sparing
->control feature")
->Signed-off-by: Li Ming <ming.li@zohomail.com>
->---
->base-commit: 3c70ec71abdaf4e4fa48cd8fdfbbd864d78235a8 cxl/fixes
+On Tue, Jun 24, 2025 at 09:45:27AM +0800, Su Hui wrote:
+> On 2025/6/23 23:47, Dan Carpenter wrote:
+> > On Mon, Jun 23, 2025 at 08:22:27PM +0800, Su Hui wrote:
+> > > Using guard() to replace *unlock* label. guard() makes lock/unlock code
+> > > more clear. Change the order of the code to let all lock code in the
+> > > same scope. No functional changes.
+> > > 
+> > > Signed-off-by: Su Hui <suhui@nfschina.com>
+> > > ---
+> > >   fs/nfsd/nfscache.c | 99 ++++++++++++++++++++++------------------------
+> > >   1 file changed, 48 insertions(+), 51 deletions(-)
+> > > 
+> > > diff --git a/fs/nfsd/nfscache.c b/fs/nfsd/nfscache.c
+> > > index ba9d326b3de6..2d92adf3e6b0 100644
+> > > --- a/fs/nfsd/nfscache.c
+> > > +++ b/fs/nfsd/nfscache.c
+> > > @@ -489,7 +489,7 @@ int nfsd_cache_lookup(struct svc_rqst *rqstp, unsigned int start,
+> > >   	if (type == RC_NOCACHE) {
+> > >   		nfsd_stats_rc_nocache_inc(nn);
+> > > -		goto out;
+> > > +		return rtn;
+> > >   	}
+> > >   	csum = nfsd_cache_csum(&rqstp->rq_arg, start, len);
+> > > @@ -500,64 +500,61 @@ int nfsd_cache_lookup(struct svc_rqst *rqstp, unsigned int start,
+> > >   	 */
+> > >   	rp = nfsd_cacherep_alloc(rqstp, csum, nn);
+> > >   	if (!rp)
+> > > -		goto out;
+> > > +		return rtn;
+> > >   	b = nfsd_cache_bucket_find(rqstp->rq_xid, nn);
+> > > -	spin_lock(&b->cache_lock);
+> > > -	found = nfsd_cache_insert(b, rp, nn);
+> > > -	if (found != rp)
+> > > -		goto found_entry;
+> > > -	*cacherep = rp;
+> > > -	rp->c_state = RC_INPROG;
+> > > -	nfsd_prune_bucket_locked(nn, b, 3, &dispose);
+> > > -	spin_unlock(&b->cache_lock);
+> > > +	scoped_guard(spinlock, &b->cache_lock) {
+> > > +		found = nfsd_cache_insert(b, rp, nn);
+> > > +		if (found == rp) {
+> > > +			*cacherep = rp;
+> > > +			rp->c_state = RC_INPROG;
+> > > +			nfsd_prune_bucket_locked(nn, b, 3, &dispose);
+> > > +			goto out;
+> > It took me a while to figure out why we've added a goto here.  In the
+> > original code this "goto out;" was a "spin_unlock(&b->cache_lock);".
+> > The spin_unlock() is more readable because you can immediately see that
+> > it's trying to drop the lock where a "goto out;" is less obvious about
+> > the intention.
+> 
+> Does "break;" be better in this place?  Meaning Break this lock guard scope.
+> 
 
-Reviewed-by: Shiju Jose <shiju.jose@huawei.com>
->---
-> drivers/cxl/core/edac.c | 2 +-
-> 1 file changed, 1 insertion(+), 1 deletion(-)
->
->diff --git a/drivers/cxl/core/edac.c b/drivers/cxl/core/edac.c index
->d725ee954199..623aaa4439c4 100644
->--- a/drivers/cxl/core/edac.c
->+++ b/drivers/cxl/core/edac.c
->@@ -1323,7 +1323,7 @@ cxl_mem_get_rec_dram(struct cxl_memdev *cxlmd,
-> 		attrbs.bank =3D ctx->bank;
-> 	break;
-> 	case EDAC_REPAIR_RANK_SPARING:
->-		attrbs.repair_type =3D CXL_BANK_SPARING;
->+		attrbs.repair_type =3D CXL_RANK_SPARING;
-> 		break;
-> 	default:
-> 		return NULL;
->--
->2.34.1
+Yeah, probably break is better.
+
+regards,
+dan carpenter
 
 
