@@ -1,120 +1,182 @@
-Return-Path: <linux-kernel+bounces-700017-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-700019-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id ACFBCAE62C0
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Jun 2025 12:43:19 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 9A132AE62CB
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Jun 2025 12:46:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8B0361924851
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Jun 2025 10:43:35 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 764461924D2F
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Jun 2025 10:46:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3774727EC80;
-	Tue, 24 Jun 2025 10:43:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6A7CA28641D;
+	Tue, 24 Jun 2025 10:46:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="ePAFulvM"
-Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
+	dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b="NW+9A/iY"
+Received: from mx07-00178001.pphosted.com (mx08-00178001.pphosted.com [91.207.212.93])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4C252218ABA
-	for <linux-kernel@vger.kernel.org>; Tue, 24 Jun 2025 10:43:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F14FB2222AF;
+	Tue, 24 Jun 2025 10:46:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.207.212.93
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750761792; cv=none; b=ffMvDmUbVMm8I6coWjvOV+3I/8G+Xg78aZCNxObZDs896jwar0Cb1clRun/nAyKU6an0qq+Q+WG1lVPxnEXic3qi683RBlB6ZtMoHHMLHDcxllHPkQUF3aC1kZfmcqmpzkxP2FSwT/ufFx1xWEtlLGDZoZKITfNNxoupK9ek2rw=
+	t=1750761982; cv=none; b=uzLW4ZmBhwxZ+hFvOxi8npnETTEXbZ0cdsUV+H/TIFSCA76rmVsRyxN9u58kpV5Z1BzUSEHmHD6sL7kduebL5bQMNN2a3Fecs3kJSWTs/DWDooPS7vnVBDQAyqxQlanNMTpPkdQJgJiVjB2xmTyfHE+6Tb6gV2walcOBz7Mrq2E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750761792; c=relaxed/simple;
-	bh=yz+JsuAiHyWr/UyOi0g9uuvNp3Sy8j7oMp0yuTEJQxc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Ns9V3gak30qQ+9XdpZtZJkYLUgAoXzmbepMYqIMCbcsbKYQXhKTxEBQzfjhmprmGmo9me+Tfr7M74c+ejt6ExVK9w46bm3H8vT41whIAxvOUfy6rh2sHAXmLRNUfPdUjyH9aBKnVvZgRocNbIBp1haQhNy/RKZpyTlNTxXJGAEE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=ePAFulvM; arc=none smtp.client-ip=213.167.242.64
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
-Received: from pendragon.ideasonboard.com (85-76-34-99-nat.elisa-mobile.fi [85.76.34.99])
-	by perceval.ideasonboard.com (Postfix) with UTF8SMTPSA id EFE946A6;
-	Tue, 24 Jun 2025 12:42:51 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-	s=mail; t=1750761772;
-	bh=yz+JsuAiHyWr/UyOi0g9uuvNp3Sy8j7oMp0yuTEJQxc=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=ePAFulvMmvswetLospzsePX/uVj/vzBwEAPvsFBHa+eS7EPE1Eqo+IsrtMPNjtDvY
-	 MzRclrzKONfQwkxDK3jJX4MFYzz/+ou1QkhWiXHiMGKMK8vzahz0zaLENbvlvknLjO
-	 PG7PEwMTPE2wDnJPzQoKnzje1YwxXMXVInU34sFU=
-Date: Tue, 24 Jun 2025 13:42:48 +0300
-From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-To: Dharma Balasubiramani <dharma.b@microchip.com>
-Cc: Manikandan Muralidharan <manikandan.m@microchip.com>,
-	Andrzej Hajda <andrzej.hajda@intel.com>,
-	Neil Armstrong <neil.armstrong@linaro.org>,
-	Robert Foss <rfoss@kernel.org>, Jonas Karlman <jonas@kwiboo.se>,
-	Jernej Skrabec <jernej.skrabec@gmail.com>,
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	Maxime Ripard <mripard@kernel.org>,
-	Thomas Zimmermann <tzimmermann@suse.de>,
-	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
-	dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v4 1/3] drm/bridge: microchip-lvds: drop unused drm_panel
-Message-ID: <20250624104248.GH15951@pendragon.ideasonboard.com>
-References: <20250624-microchip-lvds-v4-0-937d42a420e9@microchip.com>
- <20250624-microchip-lvds-v4-1-937d42a420e9@microchip.com>
+	s=arc-20240116; t=1750761982; c=relaxed/simple;
+	bh=UqWYnkZxIfBxNvrN3q062W40OjIAoDQnWRibvmyYYHI=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=T+2wEurBlASl80nuAwqjQnDIn1C3ZflY+S8FT59TXUEZtEStEophwD6Ed+lsSlHNnJcPU2NLvYcLOfw98yvVeQWxaa+8JRuJAbDBgvI2ksNIPGAKWCe+OU1JS2k47NYQCBPmCFMp8n9rEY8Y1gdQQpSHJVCfsJxRi3TM92/W1yo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com; spf=pass smtp.mailfrom=foss.st.com; dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b=NW+9A/iY; arc=none smtp.client-ip=91.207.212.93
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=foss.st.com
+Received: from pps.filterd (m0046661.ppops.net [127.0.0.1])
+	by mx07-00178001.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 55O89PlW018562;
+	Tue, 24 Jun 2025 12:45:45 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foss.st.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=selector1; bh=
+	LowxC1XeO1Q3ptnV100NCfbZE/+FCacaRTlFDEZ7nw4=; b=NW+9A/iYDBIYOudx
+	bupDVw7fFsOUiF1POCQhkWRdtrMnA2SQEgn3ffTStQz7psNYYvO1bykZpdgutoWy
+	1WzDPo1HfRDTujMzGceUmoFF9dI3csRqk+OrSjX2U1Q82AHPZk0yuR9GirUQWEuY
+	0uTXBDmqmhreOATOMkPOrAg+HFRtqZZO74LR/Kz8sUH5woYThZWMJktOCzrRuZP5
+	jloxRIqQkKw51725g6fIFcIyiDtijqkG3NSDKgTMgLLmmSM6OD0+OHlCDgC/T3aL
+	OBE2cZ+Obv2dvhAJpM9vhApHeFKzbOlpzSn/muvTc+F8R53Tnl46alaOILvOrx/r
+	WA2Mzw==
+Received: from beta.dmz-ap.st.com (beta.dmz-ap.st.com [138.198.100.35])
+	by mx07-00178001.pphosted.com (PPS) with ESMTPS id 47dkmjm6bk-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 24 Jun 2025 12:45:45 +0200 (MEST)
+Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
+	by beta.dmz-ap.st.com (STMicroelectronics) with ESMTP id 5B79640046;
+	Tue, 24 Jun 2025 12:44:24 +0200 (CEST)
+Received: from Webmail-eu.st.com (shfdag1node2.st.com [10.75.129.70])
+	by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id 974C5B51BAB;
+	Tue, 24 Jun 2025 12:43:10 +0200 (CEST)
+Received: from [10.48.86.185] (10.48.86.185) by SHFDAG1NODE2.st.com
+ (10.75.129.70) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Tue, 24 Jun
+ 2025 12:43:09 +0200
+Message-ID: <5044c733-8836-43bd-85d7-0f552b000fb1@foss.st.com>
+Date: Tue, 24 Jun 2025 12:43:08 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20250624-microchip-lvds-v4-1-937d42a420e9@microchip.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 06/13] perf: stm32: introduce DDRPERFM driver
+To: Krzysztof Kozlowski <krzk@kernel.org>, Will Deacon <will@kernel.org>,
+        Mark
+ Rutland <mark.rutland@arm.com>, Rob Herring <robh@kernel.org>,
+        Krzysztof
+ Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>,
+        Maxime
+ Coquelin <mcoquelin.stm32@gmail.com>,
+        Alexandre Torgue
+	<alexandre.torgue@foss.st.com>,
+        Philipp Zabel <p.zabel@pengutronix.de>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Gatien Chevallier
+	<gatien.chevallier@foss.st.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Gabriel Fernandez
+	<gabriel.fernandez@foss.st.com>
+CC: <linux-arm-kernel@lists.infradead.org>, <linux-perf-users@vger.kernel.org>,
+        <devicetree@vger.kernel.org>,
+        <linux-stm32@st-md-mailman.stormreply.com>,
+        <linux-kernel@vger.kernel.org>, <linux-doc@vger.kernel.org>,
+        <linux-clk@vger.kernel.org>
+References: <20250623-ddrperfm-upstream-v1-0-7dffff168090@foss.st.com>
+ <20250623-ddrperfm-upstream-v1-6-7dffff168090@foss.st.com>
+ <9cb1575e-ae27-4a78-adb7-8a9e7072375e@kernel.org>
+Content-Language: en-US
+From: Clement LE GOFFIC <clement.legoffic@foss.st.com>
+In-Reply-To: <9cb1575e-ae27-4a78-adb7-8a9e7072375e@kernel.org>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: SHFCAS1NODE1.st.com (10.75.129.72) To SHFDAG1NODE2.st.com
+ (10.75.129.70)
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.7,FMLib:17.12.80.40
+ definitions=2025-06-24_04,2025-06-23_07,2025-03-28_01
 
-On Tue, Jun 24, 2025 at 02:54:14PM +0530, Dharma Balasubiramani wrote:
-> Drop the drm_panel field of the mchp_lvds struct as it is unused.
+On 6/23/25 11:45, Krzysztof Kozlowski wrote:
+[...]
+
+Hi Krzysztof,
+
+Sorry I forgot to address comments below.
+
+>> +
+>> +static const struct stm32_ddr_pmu_cfg stm32_ddr_pmu_cfg_mp1 = {
+>> +	.regs = &stm32_ddr_pmu_regspec_mp1,
+>> +	.attribute = stm32_ddr_pmu_attr_groups_mp1,
+>> +	.counters_nb = MP1_CNT_NB,
+>> +	.evt_counters_nb = MP1_CNT_NB - 1, /* Time counter is not an event counter */
+>> +	.time_cnt_idx = MP1_TIME_CNT_IDX,
+>> +	.get_counter = stm32_ddr_pmu_get_event_counter_mp1,
+>> +};
+>> +
+>> +static const struct stm32_ddr_pmu_cfg stm32_ddr_pmu_cfg_mp2 = {
+>> +	.regs = &stm32_ddr_pmu_regspec_mp2,
+>> +	.attribute = stm32_ddr_pmu_attr_groups_mp2,
+>> +	.counters_nb = MP2_CNT_NB,
+>> +	.evt_counters_nb = MP2_CNT_NB - 1, /* Time counter is an event counter */
+>> +	.time_cnt_idx = MP2_TIME_CNT_IDX,
+>> +	.get_counter = stm32_ddr_pmu_get_event_counter_mp2,
+>> +};
+>> +
+>> +static const struct dev_pm_ops stm32_ddr_pmu_pm_ops = {
+>> +	SET_SYSTEM_SLEEP_PM_OPS(NULL, stm32_ddr_pmu_device_resume)
+>> +};
+>> +
+>> +static const struct of_device_id stm32_ddr_pmu_of_match[] = {
+>> +	{
+>> +		.compatible = "st,stm32mp131-ddr-pmu",
+>> +		.data = &stm32_ddr_pmu_cfg_mp1
+>> +	},
+>> +	{
+>> +		.compatible = "st,stm32mp151-ddr-pmu",
+>> +		.data = &stm32_ddr_pmu_cfg_mp1
 > 
-> Signed-off-by: Dharma Balasubiramani <dharma.b@microchip.com>
-> ---
->  drivers/gpu/drm/bridge/microchip-lvds.c | 7 -------
->  1 file changed, 7 deletions(-)
+> So devices are compatible, thus express it correctly and drop this.
+
+Ok so I assume this comes with your comment in the bindings and 
+basically don't get you point here.
+Can you please be more precise ?
+
 > 
-> diff --git a/drivers/gpu/drm/bridge/microchip-lvds.c b/drivers/gpu/drm/bridge/microchip-lvds.c
-> index 9f4ff82bc6b4..42751124b868 100644
-> --- a/drivers/gpu/drm/bridge/microchip-lvds.c
-> +++ b/drivers/gpu/drm/bridge/microchip-lvds.c
-> @@ -23,7 +23,6 @@
->  #include <drm/drm_atomic_helper.h>
->  #include <drm/drm_bridge.h>
->  #include <drm/drm_of.h>
-> -#include <drm/drm_panel.h>
->  #include <drm/drm_print.h>
->  #include <drm/drm_probe_helper.h>
->  #include <drm/drm_simple_kms_helper.h>
-> @@ -56,7 +55,6 @@ struct mchp_lvds {
->  	struct device *dev;
->  	void __iomem *regs;
->  	struct clk *pclk;
-> -	struct drm_panel *panel;
->  	struct drm_bridge bridge;
->  	struct drm_bridge *panel_bridge;
->  };
-> @@ -179,13 +177,8 @@ static int mchp_lvds_probe(struct platform_device *pdev)
->  			"can't find port point, please init lvds panel port!\n");
->  		return -ENODEV;
->  	}
+>> +	},
+>> +	{
+>> +		.compatible = "st,stm32mp251-ddr-pmu",
+>> +		.data = &stm32_ddr_pmu_cfg_mp2
+>> +	},
+>> +	{ },
+>> +};
+>> +MODULE_DEVICE_TABLE(of, stm32_ddr_pmu_of_match);
+>> +
+>> +static struct platform_driver stm32_ddr_pmu_driver = {
+>> +	.driver = {
+>> +		.name = DRIVER_NAME,
+>> +		.pm = &stm32_ddr_pmu_pm_ops,
+>> +		.of_match_table = of_match_ptr(stm32_ddr_pmu_of_match),
+> 
+> Drop of_match_ptr, you have here warnings.
 
-The above code seems unneeded now, I think you can drop it too.
+Yes Indeed.
+I'll also fix the pm pointer by using "pm_sleep_ptr".
 
-> -
-> -	lvds->panel = of_drm_find_panel(port);
->  	of_node_put(port);
->  
-> -	if (IS_ERR(lvds->panel))
-> -		return -EPROBE_DEFER;
-> -
->  	lvds->panel_bridge = devm_drm_of_get_bridge(dev, dev->of_node, 1, 0);
->  
->  	if (IS_ERR(lvds->panel_bridge))
+Best regards,
+Clément
 
--- 
-Regards,
+> 
+> 
+> 
+> Best regards,
+> Krzysztof
 
-Laurent Pinchart
 
