@@ -1,131 +1,276 @@
-Return-Path: <linux-kernel+bounces-699714-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-699716-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 93879AE5E4D
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Jun 2025 09:46:13 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 982FAAE5E55
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Jun 2025 09:48:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 705171B64182
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Jun 2025 07:46:29 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 33F243A7487
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Jun 2025 07:48:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E691823C50A;
-	Tue, 24 Jun 2025 07:46:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BEF542512C8;
+	Tue, 24 Jun 2025 07:48:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=weissschuh.net header.i=@weissschuh.net header.b="kU1rFC9u"
-Received: from todd.t-8ch.de (todd.t-8ch.de [159.69.126.157])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="NMUDRSnX"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EEE9372617
-	for <linux-kernel@vger.kernel.org>; Tue, 24 Jun 2025 07:46:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.69.126.157
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E913B1876;
+	Tue, 24 Jun 2025 07:48:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750751168; cv=none; b=jaflj4Bk/4l/LLMYsc4yV4Ff7z84GZu8xLx2EOfgGGPugVb3xnfgAveFjl03/EQTKN7ATW9S9Vw1fCgTam0U0n08sxP/5S44OXRRccoj+DPR5e0hh48fNn3mP6Ln536WcFmCJ1EfipkyWxoGjYVh6bZn+mGtXrlJw3urhnnp7Pk=
+	t=1750751307; cv=none; b=jzHIXju4IlxCmcBsAVs4QV/rN9fxRgIHba6PcxEguK2YSXopiJDfTXM0LA+Z7X/lDFtsXU0G3QZntPxxJimylzxD2BDYJt8aYXfTKP31HvD75fH9PTMpJqy3xwcvTnZ43LEz/sqnpATfir3jjiocyppPDIWqJMxv5mra3mNjdEs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750751168; c=relaxed/simple;
-	bh=vlL/YfOAh6ZfyEaYxM/VBBUTlhM3GzXsVMD5GoAJ7Rw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ejcvWEnLmngKmD/fYfNo8LNqn6fcza7Cx+rRqZqrO3Eff79BsDvdPq0XVGXYGpPhNIC/COetqJnzqz3RaEEn3ia7sfTiYlXpExTMSuXa0bRHpyGEwjJakYAesL8zqBalu3skuqpAG09C719aLuRVUjykyRgo8kvQplNL2pZHBl8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=weissschuh.net; spf=pass smtp.mailfrom=weissschuh.net; dkim=pass (1024-bit key) header.d=weissschuh.net header.i=@weissschuh.net header.b=kU1rFC9u; arc=none smtp.client-ip=159.69.126.157
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=weissschuh.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=weissschuh.net
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=weissschuh.net;
-	s=mail; t=1750751160;
-	bh=vlL/YfOAh6ZfyEaYxM/VBBUTlhM3GzXsVMD5GoAJ7Rw=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=kU1rFC9ugJyr0FZotbyThQpa7ifP7PNoPaACC3KeLBVxUad+HDSGs/T9vWaPioaTB
-	 mOyBAzsonASxGpM0Jj88DMRC72Krimpz3UrdQv2gkr2Ch4fo86rJZ3DFeglyvHX33h
-	 gP0Bnq8N3MDV3DnIilImV35+hYB6VIfjOYlCcYHs=
-Date: Tue, 24 Jun 2025 09:46:00 +0200
-From: Thomas =?utf-8?Q?Wei=C3=9Fschuh?= <linux@weissschuh.net>
-To: Willy Tarreau <w@1wt.eu>
-Cc: linux-kernel@vger.kernel.org, Masahiro Yamada <masahiroy@kernel.org>, 
-	Arnd Bergmann <arnd@arndb.de>
-Subject: Re: [RFC PATCH 2/3] tools/nolibc: add a new target
- "headers_all_archs" to loop over all archs
-Message-ID: <a7bf2a5f-1d72-460e-8cff-1c7e31bda3c8@t-8ch.de>
-References: <20250620103705.10208-1-w@1wt.eu>
- <20250620103705.10208-3-w@1wt.eu>
- <4c48147d-aebc-4a2c-a60f-eba2e90584ed@t-8ch.de>
- <20250624062002.GD30919@1wt.eu>
+	s=arc-20240116; t=1750751307; c=relaxed/simple;
+	bh=87IhusWnFHqddKhc+u8V+JDM2N3zSseDLKZaCid1I40=;
+	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=maVC0QzgSQ2Ii4p+eyoARxoAqzn4LO4Wwz4Px+C/r0ktRCJfCWii4k8oSMf34dqu7ihRWHP8fGoLfRMUYlud6gpcXFqJzwQlJk2RF7+2r5OCdg0enEJ3SOCEM9DNKBC20mSfqmao21+jzpytljBDjBCMjhxHdSzgo3za+wsYI7k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=NMUDRSnX; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id CA07DC4CEEF;
+	Tue, 24 Jun 2025 07:48:19 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1750751306;
+	bh=87IhusWnFHqddKhc+u8V+JDM2N3zSseDLKZaCid1I40=;
+	h=Date:Subject:To:References:From:In-Reply-To:From;
+	b=NMUDRSnXUpS0q4QJmlAwIads/FCRoiKqHnNK5yRu6FGT5xYQP6Yyy2JTuuvYrjKEF
+	 RTe7bnuTLb/QxEVqPfMPeDrhLqEihckLvvl04TVZX6cCy1T4/IxnCB6vAmDfZB/9n0
+	 LauTe6pP3miPobjsX9ru22b4Ar4ipL9WjEx6PzS6s0oBNpsAj+VAroU8mXeI0ieg/X
+	 zo8VXTdLze62zoSFMpPncIbj8G5Bv7+VLXE/zVaBtMTKn9StAxMiVKpr7Lp3GtsoTt
+	 EeNcsJjhVuz1snW7tVDZpSfyWZc0g1M5APYV8IceaBgdMt3XcMPs+KuNYrC3h+cykC
+	 TkQIIG0jt452g==
+Message-ID: <9bd05709-7702-4b74-85e1-3df25b57c535@kernel.org>
+Date: Tue, 24 Jun 2025 09:48:18 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20250624062002.GD30919@1wt.eu>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 1/2] hwmon: (pmbus) Add support for MPS multi-phase
+ mp2869a/mp29612a controllers
+To: tzuhao.wtmh@gmail.com, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Jean Delvare <jdelvare@suse.com>,
+ Guenter Roeck <linux@roeck-us.net>, Jonathan Corbet <corbet@lwn.net>,
+ Jonathan Cameron <Jonathan.Cameron@huawei.com>,
+ Naresh Solanki <naresh.solanki@9elements.com>,
+ Rodrigo Gobbi <rodrigo.gobbi.7@gmail.com>,
+ Michal Simek <michal.simek@amd.com>, Fabio Estevam <festevam@gmail.com>,
+ Henry Wu <Henry_Wu@quantatw.com>, Grant Peltier <grantpeltier93@gmail.com>,
+ Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+ Cedric Encarnacion <cedricjustine.encarnacion@analog.com>,
+ Kim Seer Paller <kimseer.paller@analog.com>,
+ Leo Yang <leo.yang.sy0@gmail.com>, Ninad Palsule <ninad@linux.ibm.com>,
+ Alex Vdovydchenko <xzeol@yahoo.com>,
+ John Erasmus Mari Geronimo <johnerasmusmari.geronimo@analog.com>,
+ Nuno Sa <nuno.sa@analog.com>, Jerome Brunet <jbrunet@baylibre.com>,
+ Noah Wang <noahwang.wang@outlook.com>,
+ Mariel Tinaco <Mariel.Tinaco@analog.com>, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-hwmon@vger.kernel.org,
+ linux-doc@vger.kernel.org
+References: <20250624074156.291176-1-Henry_Wu@quantatw.tw>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 a/A=
+In-Reply-To: <20250624074156.291176-1-Henry_Wu@quantatw.tw>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On 2025-06-24 08:20:02+0200, Willy Tarreau wrote:
-> On Mon, Jun 23, 2025 at 11:56:29PM +0200, Thomas Weißschuh wrote:
-> > On 2025-06-20 12:37:04+0200, Willy Tarreau wrote:
-> > > This target allows to install the nolibc headers for all supported
-> > > architectures at once, just like it is in the development tree. This
-> > > is a first step to support full multi-architecture support.
-> > > 
-> > > Signed-off-by: Willy Tarreau <w@1wt.eu>
-> > > ---
-> > >  tools/include/nolibc/Makefile | 10 ++++++++++
-> > >  1 file changed, 10 insertions(+)
-> > > 
-> > > diff --git a/tools/include/nolibc/Makefile b/tools/include/nolibc/Makefile
-> > > index 9197c79b267a4..8de6ac5cec425 100644
-> > > --- a/tools/include/nolibc/Makefile
-> > > +++ b/tools/include/nolibc/Makefile
-> > > @@ -23,6 +23,8 @@ else
-> > >  Q=@
-> > >  endif
-> > >  
-> > > +nolibc_supported_archs := aarch64 arm loongarch m68k mips powerpc riscv s390 sparc x86
-> > > +
-> > >  nolibc_arch := $(patsubst arm64,aarch64,$(ARCH))
-> > >  arch_file := arch-$(nolibc_arch).h
-> > >  all_files := \
-> > > @@ -83,6 +85,7 @@ help:
-> > >  	@echo "  all                 call \"headers\""
-> > >  	@echo "  clean               clean the sysroot"
-> > >  	@echo "  headers             prepare a sysroot in \$${OUTPUT}sysroot"
-> > > +	@echo "  headers_all_archs   prepare a multi-arch sysroot in \$${OUTPUT}sysroot"
-> > >  	@echo "  headers_standalone  like \"headers\", and also install kernel headers"
-> > >  	@echo "  help                this help"
-> > >  	@echo ""
-> > > @@ -110,6 +113,13 @@ headers_standalone: headers
-> > >  	$(Q)$(MAKE) -C $(srctree) headers
-> > >  	$(Q)$(MAKE) -C $(srctree) headers_install INSTALL_HDR_PATH=$(OUTPUT)sysroot
-> > >  
-> > > +# installs headers for all archs at once.
-> > > +headers_all_archs:
-> > > +	$(Q)mkdir -p "$(OUTPUT)sysroot"
-> > > +	$(Q)mkdir -p "$(OUTPUT)sysroot/include"
-> > > +	$(Q)cp --parents $(all_files) arch.h "$(OUTPUT)sysroot/include/"
-> > > +	$(Q)cp $(addsuffix .h,$(addprefix arch-,$(nolibc_supported_archs))) "$(OUTPUT)sysroot/include/"
-> > 
-> > IMO we could always just install all architecture headers.
-> > It's not much code after all.
-> > If it is a problem for a user they can either just delete the
-> > superfluous architectures or do 'mv arch-$foo.h arch.h; rm arch-*.h'.
-> 
-> I wanted to do that first, then thought that maybe some would like
-> to only install the nolibc headers because they already have the
-> UAPI headers from another source (local libc, distro packages,
-> toolchain etc). Even for us during nolibc development, not having
-> to iterate through all archs to reinstall everything is a huge time
-> saver.
->
-> However, I had another idea that floated in my mind, which is that
-> given that we're only saving a few small arch-* files by not
-> installing all archs all the time, maybe we should replace the
-> "headers" target to always install nolibc headers for all archs
-> like above, and keep the uapi headers install separate (only one
-> or all). This would remove the need for the target above whose
-> role is a bit ambiguous. What do you think ?
+On 24/06/2025 09:41, tzuhao.wtmh@gmail.com wrote:
+> +static int
+> +MP2869A_read_byte_data(struct i2c_client *client, int page, int reg)
+> +{
+> +	switch (reg) {
+> +	case PMBUS_VOUT_MODE:
+> +		/* Enforce VOUT direct format. */
+> +		return PB_VOUT_MODE_DIRECT;
+> +	default:
+> +		return -ENODATA;
+> +	}
+> +}
+> +
+> +static int
+> +MP2869A_identify_vout_format(struct i2c_client *client,
 
-That is exactly what I tried to express :-)
+Use Linux coding style, so lowercase for variables, types and functions.
+Everywhere (except when coding style tells you different, so please read
+it).
+
+> +			    struct MP2869A_data *data)
+> +{
+> +	int i, ret;
+> +
+> +	for (i = 0; i < data->info.pages; i++) {
+> +		ret = i2c_smbus_write_byte_data(client, PMBUS_PAGE, i);
+> +		if (ret < 0)
+> +			return ret;
+> +
+> +		ret = i2c_smbus_read_word_data(client, MP2869A_VOUT_MODE);
+> +		if (ret < 0)
+> +			return ret;
+> +
+> +		switch (ret & MP2869A_VOUT_MODE_MASK) {
+> +		case MP2869A_VOUT_MODE_VID:
+> +			data->vout_format[i] = vid;
+> +			break;
+> +		default:
+> +		return -EINVAL;
+> +		}
+> +		}
+
+Messed indentation in multiple places.
+
+> +	return 0;
+> +}
+> +
+> +static struct pmbus_driver_info MP2869A_info = {
+
+This is const.
+
+> +	.pages = MP2869A_PAGE_NUM,
+> +	.format[PSC_VOLTAGE_IN] = linear,
+> +	.format[PSC_VOLTAGE_OUT] = direct,
+> +	.format[PSC_TEMPERATURE] = linear,
+> +	.format[PSC_CURRENT_IN] = linear,
+> +	.format[PSC_CURRENT_OUT] = linear,
+> +	.format[PSC_POWER] = linear,
+> +	.m[PSC_VOLTAGE_OUT] = 1,
+> +	.b[PSC_VOLTAGE_OUT] = 0,
+> +	.R[PSC_VOLTAGE_OUT] = -3,
+> +	.func[0] = PMBUS_HAVE_VIN | PMBUS_HAVE_VOUT | PMBUS_HAVE_STATUS_VOUT |
+> +		PMBUS_HAVE_IIN | PMBUS_HAVE_IOUT | PMBUS_HAVE_STATUS_IOUT |
+> +		PMBUS_HAVE_TEMP | PMBUS_HAVE_STATUS_TEMP | PMBUS_HAVE_POUT |
+> +		PMBUS_HAVE_PIN | PMBUS_HAVE_STATUS_INPUT,
+> +	.func[1] = PMBUS_HAVE_VOUT | PMBUS_HAVE_STATUS_VOUT | PMBUS_HAVE_IOUT |
+> +		PMBUS_HAVE_STATUS_IOUT | PMBUS_HAVE_POUT | PMBUS_HAVE_TEMP,
+> +	.read_byte_data = MP2869A_read_byte_data,
+> +	.read_word_data = MP2869A_read_word_data,
+> +};
+> +
+> +static int mp2869a_probe(struct i2c_client *client)
+> +{
+> +	struct pmbus_driver_info *info;
+> +	struct MP2869A_data *data;
+> +	int ret;
+> +
+> +	data = devm_kzalloc(&client->dev, sizeof(struct MP2869A_data),
+
+sizeof(*)
+
+> +		GFP_KERNEL);
+
+Misaligned. Run checkpatch --srtict
+
+> +	if (!data)
+> +		return -ENOMEM;
+> +
+> +	data->chip_id = (enum chips)(uintptr_t)i2c_get_match_data(client);
+
+These are just wrong or redundant casts. You need only one cast -
+kernel_ulong_t
+
+> +
+> +	memcpy(data->max_phases, mp2869a_max_phases[data->chip_id],
+> +		sizeof(data->max_phases));
+
+Why you cannot just store the pointer?
+
+> +
+> +	memcpy(&data->info, &MP2869A_info, sizeof(*info));
+
+Why you cannot just store the pointer?
+
+> +	info = &data->info;
+> +
+> +
+
+One blank line, not two
+
+> +	/* Identify vout format. */
+> +	ret = MP2869A_identify_vout_format(client, data);
+> +	if (ret)
+> +		return ret;
+> +
+> +	/* set the device to page 0 */
+> +	i2c_smbus_write_byte_data(client, PMBUS_PAGE, 0);
+> +
+> +	return pmbus_do_probe(client, info);
+> +}
+> +
+> +static const struct of_device_id __maybe_unused mp2869a_of_match[] = {
+> +	{ .compatible = "mps,mp2869a", .data = (void *)mp2869a },
+> +	{ .compatible = "mps,mp29612a", .data = (void *)mp29612a},
+> +	{}
+> +};
+> +
+> +MODULE_DEVICE_TABLE(of, mp2869a_of_match);
+> +
+> +static struct i2c_driver mp2869a_driver = {
+> +	.driver = {
+> +		.name = "mp2869a",
+> +		.of_match_table = mp2869a_of_match,
+> +	},
+> +	.probe = mp2869a_probe,
+> +	.id_table = mp2869a_id,
+> +};
+> +
+> +module_i2c_driver(mp2869a_driver);
+> +
+> +
+
+One blank line, not two. This applies everywhere.
+
+> +MODULE_AUTHOR("Henry Wu <Henry_WU@quantatw.com>");
+> +MODULE_DESCRIPTION("PMBus driver for MPS MP2869A/MP29612A device");
+> +MODULE_LICENSE("GPL");
+> +MODULE_IMPORT_NS(PMBUS);
 
 
-Thomas
+Best regards,
+Krzysztof
 
