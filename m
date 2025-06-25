@@ -1,80 +1,116 @@
-Return-Path: <linux-kernel+bounces-701800-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-701798-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B754AAE798E
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Jun 2025 10:08:49 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 97AEAAE7984
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Jun 2025 10:07:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8A61B7A763A
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Jun 2025 08:07:15 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F059017F87D
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Jun 2025 08:07:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 80D621E25ED;
-	Wed, 25 Jun 2025 08:08:25 +0000 (UTC)
-Received: from mail.itouring.de (mail.itouring.de [85.10.202.141])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EF91320CCD8;
+	Wed, 25 Jun 2025 08:07:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=yeah.net header.i=@yeah.net header.b="bz9kPgx6"
+Received: from mail-m16.yeah.net (mail-m16.yeah.net [220.197.32.16])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 278511FBE8C;
-	Wed, 25 Jun 2025 08:08:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=85.10.202.141
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 99BF61E5B6F;
+	Wed, 25 Jun 2025 08:07:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.197.32.16
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750838905; cv=none; b=PuBFmpzyUU+PLilhhVp0K2H5SeuxQDKOp/Mi8sRUOq9gI/S/ppjQTP9OX5j24gbEt2QLqxHw58UZR/2O2KdkoeT3tXLC1vQZZ0EOt9o8xkAVfwV6ZTUIV/i518UeBK/XQCqEoyVhg6/nxVqJmnYxAVx3cKFC805mD29stBVtrAI=
+	t=1750838840; cv=none; b=FT0FuTkTWnEd9MofIfwmgef1k/XHTxQILbDx8ppqM1kSDW4T2cw3ZawYBI3M9W5DS+7KXsgnS8h7g1dkKiAWSErhp9Wu9JNvp6tYdoobB7a/oZfVe2SrTo3z/WJHdp7IKiZ+RRG4RYX7CiirsQ0YaXaffQRFttRKRrTb5LZ53w4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750838905; c=relaxed/simple;
-	bh=JAxf1CaBgAJOl5eOA6B44Q1dBB+pzL1QrV464SHm514=;
-	h=Subject:To:Cc:References:From:Message-ID:Date:MIME-Version:
-	 In-Reply-To:Content-Type; b=JOzuYmTjF5acamsqqZGblnI9G/yeBT/CPvUOy1SLN+tMFmRAbj7eFi4g8cy9qwNQ9x8YDb7wSCPaZ+Ve2+SAYEIaUFMusAnYyk/L7Rf64iHQb+bHRpogLR0+fHiaGCMotrvY24U2oIyNERwipT95YJwIIdSrYImo3PLneAWGuKA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=applied-asynchrony.com; spf=pass smtp.mailfrom=applied-asynchrony.com; arc=none smtp.client-ip=85.10.202.141
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=applied-asynchrony.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=applied-asynchrony.com
-Received: from tux.applied-asynchrony.com (p5b347a18.dip0.t-ipconnect.de [91.52.122.24])
-	by mail.itouring.de (Postfix) with ESMTPSA id C0FE1C28E;
-	Wed, 25 Jun 2025 10:00:57 +0200 (CEST)
-Received: from [192.168.100.221] (hho.applied-asynchrony.com [192.168.100.221])
-	by tux.applied-asynchrony.com (Postfix) with ESMTP id 639BD6018BEA5;
-	Wed, 25 Jun 2025 10:00:56 +0200 (CEST)
-Subject: Re: [PATCH 6.15 000/588] 6.15.4-rc2 review
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, stable@vger.kernel.org
-Cc: patches@lists.linux.dev, linux-kernel@vger.kernel.org,
- torvalds@linux-foundation.org, akpm@linux-foundation.org,
- linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org,
- lkft-triage@lists.linaro.org, pavel@denx.de, jonathanh@nvidia.com,
- f.fainelli@gmail.com, sudipm.mukherjee@gmail.com, srw@sladewatkins.net,
- rwarsow@gmx.de, conor@kernel.org, hargar@microsoft.com, broonie@kernel.org,
- Christian Brauner <brauner@kernel.org>
-References: <20250624121449.136416081@linuxfoundation.org>
-From: =?UTF-8?Q?Holger_Hoffst=c3=a4tte?= <holger@applied-asynchrony.com>
-Organization: Applied Asynchrony, Inc.
-Message-ID: <e9249afe-f039-4180-d50d-b199c26dea26@applied-asynchrony.com>
-Date: Wed, 25 Jun 2025 10:00:56 +0200
+	s=arc-20240116; t=1750838840; c=relaxed/simple;
+	bh=TCuSxifzX9CBgsGlRjDPkKP/DAen5me5qQ/q/qMAIZ8=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=fLgovD1CFeRdgQbQNKV40xKHz5tV4SLyoQUk3dfo6TbPqJdWXnzP1YySJ3ofpI0s8SOPZ3GjlsPsxKJQ9heoiieQNmOAGvldO+us8wTvS7S8DeCY52euYDRZ9H+yqcDG1AXRpBrAvz/4UJJHD9vrB7Itp6Zk+0bVZYNedY7w63Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=yeah.net; spf=pass smtp.mailfrom=yeah.net; dkim=pass (1024-bit key) header.d=yeah.net header.i=@yeah.net header.b=bz9kPgx6; arc=none smtp.client-ip=220.197.32.16
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=yeah.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=yeah.net
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yeah.net;
+	s=s110527; h=From:To:Subject:Date:Message-Id:MIME-Version; bh=0W
+	mHz61pOuc8mNMwx/wFxfFDW8jE3ZKqr9gWGALrOII=; b=bz9kPgx6hlqwRLxJ70
+	RzYkc5Q+fZiT8L1NCmM2anxpqBObpkir3DHfzVWvcCWX0+vPMQBVidKqRGrzMZN8
+	pYA2NR72yEsJq+K3z6N5hEyltSnuO/stcrra+Mc6Tr3sjiDlq82HgtamnoJxTDPU
+	tHPeBgwtUV5vDvV2Su/QTtlLM=
+Received: from mps-HP-EliteBook-840-G3.monolithicpower.com (unknown [])
+	by gzsmtp3 (Coremail) with SMTP id M88vCgBHvw6erVtoD2t5AQ--.20252S2;
+	Wed, 25 Jun 2025 16:04:49 +0800 (CST)
+From: wenswang@yeah.net
+To: robh@kernel.org,
+	krzk+dt@kernel.org,
+	conor+dt@kernel.org,
+	jdelvare@suse.com,
+	linux@roeck-us.net,
+	corbet@lwn.net
+Cc: Jonathan.Cameron@huawei.com,
+	michal.simek@amd.com,
+	naresh.solanki@9elements.com,
+	festevam@gmail.com,
+	rodrigo.gobbi.7@gmail.com,
+	grantpeltier93@gmail.com,
+	laurent.pinchart@ideasonboard.com,
+	cedricjustine.encarnacion@analog.com,
+	nuno.sa@analog.com,
+	ninad@linux.ibm.com,
+	jbrunet@baylibre.com,
+	kimseer.paller@analog.com,
+	xzeol@yahoo.com,
+	leo.yang.sy0@gmail.com,
+	Mariel.Tinaco@analog.com,
+	johnerasmusmari.geronimo@analog.com,
+	linux@weissschuh.net,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-hwmon@vger.kernel.org,
+	linux-doc@vger.kernel.org,
+	Wensheng Wang <wenswang@yeah.net>
+Subject: [PATCH 3/4] dt-bindings: hwmon: Add MPS mp29502
+Date: Wed, 25 Jun 2025 16:04:25 +0800
+Message-Id: <20250625080425.966014-1-wenswang@yeah.net>
+X-Mailer: git-send-email 2.25.1
+In-Reply-To: <20250625065956.964759-1-wenswang@yeah.net>
+References: <20250625065956.964759-1-wenswang@yeah.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <20250624121449.136416081@linuxfoundation.org>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:M88vCgBHvw6erVtoD2t5AQ--.20252S2
+X-Coremail-Antispam: 1Uf129KBjvdXoW7JryrXrWxGr4rZr48JrW8JFb_yoWftrb_uw
+	4xZa1DCrWkJF1fK3Zakr4kAr15Jw17Kr409wn7tF1kXF9agay3KF93t34a9ryxGay7ur15
+	Cwn2grZ3XrnIgjkaLaAFLSUrUUUUjb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
+	9fnUUvcSsGvfC2KfnxnUUI43ZEXa7IU0C387UUUUU==
+X-CM-SenderInfo: 5zhq24xdqjq5hhdkh0dhw/1tbiEgp3pGhbdHLEzQAAs3
 
-(cc: Christian Brauner>
+From: Wensheng Wang <wenswang@yeah.net>
 
-Since 6.15.4-rc1 I noticed that some KDE apps (kded6, kate (the text editor))
-started going into a tailspin with 100% per-process CPU.
+Add support for MPS mp29502 controller
 
-The symptom is 100% reproducible: open a new file with kate, save empty file,
-make changes, save, watch CPU go 100%. perf top shows copy_to_user running wild.
+Signed-off-by: Wensheng Wang <wenswang@yeah.net>
+---
+ Documentation/devicetree/bindings/trivial-devices.yaml | 2 ++
+ 1 file changed, 2 insertions(+)
 
-First I tried to reproduce on 6.15.3 - no problem, everything works fine.
+diff --git a/Documentation/devicetree/bindings/trivial-devices.yaml b/Documentation/devicetree/bindings/trivial-devices.yaml
+index 493e7232f09f..2066696ecff4 100644
+--- a/Documentation/devicetree/bindings/trivial-devices.yaml
++++ b/Documentation/devicetree/bindings/trivial-devices.yaml
+@@ -291,6 +291,8 @@ properties:
+           - mps,mp2888
+             # Monolithic Power Systems Inc. multi-phase controller mp2891
+           - mps,mp2891
++            # Monolithic Power Systems Inc. multi-phase controller mp29502
++          - mps,mp29502
+             # Monolithic Power Systems Inc. multi-phase controller mp29608
+           - mps,mp29608
+             # Monolithic Power Systems Inc. multi-phase controller mp29612
+-- 
+2.25.1
 
-After checking the list of patches for 6.15.4 I reverted the anon_inode series
-(all 3 for the first attempt) and the problem is gone.
-
-Will try to reduce further & can gladly try additional fixes, but for now
-I'd say these patches are not yet suitable for stable.
-
-thanks
-Holger
 
