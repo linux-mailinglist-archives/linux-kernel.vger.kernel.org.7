@@ -1,149 +1,130 @@
-Return-Path: <linux-kernel+bounces-701844-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-701869-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1C8F4AE7A12
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Jun 2025 10:29:55 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7E945AE7A68
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Jun 2025 10:37:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6F065168731
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Jun 2025 08:29:55 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3651B3B7F77
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Jun 2025 08:37:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E7C5326B77E;
-	Wed, 25 Jun 2025 08:29:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 34C63275AED;
+	Wed, 25 Jun 2025 08:37:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="bpnhslPO"
-Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="NH02XYi7"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.19])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E575D26B085
-	for <linux-kernel@vger.kernel.org>; Wed, 25 Jun 2025 08:29:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 24BAB26B973
+	for <linux-kernel@vger.kernel.org>; Wed, 25 Jun 2025 08:37:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.19
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750840189; cv=none; b=rCV7ea8XguQtWEjwKMVXlIPNX+RwWP9oj4Wm6dGs+0X1EgMPAWxZrMl2zaSPcrAdS8WtO5x1hKTgULacuTZXJlS9RHW18JGiqMrNmizFF7dDI5XoTsIvyaC5oRbbqoXdb1dYSxf143hWp0SM4ObrkDhh0qylfCRDm9fJnteob6Y=
+	t=1750840667; cv=none; b=cnY+2APVlAocza9QJh2RxqZo/ejn0R6FTF9CCB+QsBqKJ4gebv3sGiSrYjc5dyj/3ufm9HMX2A5IBGwvSkhYQneM9XTfCJ/FFvAWcdOKabBHT3Uh1AF8woIVCHIASbh80HaMKYL+3P16mX0lKOAOBcydtfuyq8dDS30gEWA69/A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750840189; c=relaxed/simple;
-	bh=f+o8iEPouqOHBWyxZ8dTxNmU58i6ENQXee19SBZ0B3s=;
+	s=arc-20240116; t=1750840667; c=relaxed/simple;
+	bh=EwvPZo7oTwprahWbVv9CKBqzmPZmEw39Hs2j42qQ/og=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=qF/2Itt5uXiB4kmorO4nlAMENbKj1xXEB65IldX+XLrJfZwuweNNbfiRcYeiw03cTfniMvBVtF88sLYywlwq9YBs6ormLyWDO5nZ5qhh1N9BR5P9uwRMfBvLFNHridOhbUpO48IHW+maOF/s674UibHyN8unl3Xm2lDbJaRJhpc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=bpnhslPO; arc=none smtp.client-ip=90.155.50.34
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Transfer-Encoding:
-	Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:
-	Sender:Reply-To:Content-ID:Content-Description;
-	bh=fWPaB80+3HWu+QPjwcL43NRsxuq/i0mNSJil+VDDtCE=; b=bpnhslPOuwpAv5MIFbclSTE58N
-	VlQToVKxMVzWYNe4JgqmrVls+RsRyDCgNS/u99gI9xHeUQ2ryPxnfsNE+930VMvC0b+jSPLCANOFD
-	8NZaA/ebsYPHP3LWprw5kZNcCFeZ0Wj5bApNkD7eZOLR9r/wwWVWkN7RQQ/RRg9+U96cjeZ3vBLCf
-	i0TOGdJbRsJmTNBd3N6YyM6pxL368MBkqYkb9bAhd9ssq+z/rypi00eCiBRdFU40DT7dK/HnnJxWy
-	C0ljmhqrYcdo04xTHkbFoPPGk4iqFS1nZ0NXSIwjD0SSg08bAXmUfPofSgGSPbxby7a1cl4d1pN0h
-	MnXjq2qA==;
-Received: from 77-249-17-252.cable.dynamic.v4.ziggo.nl ([77.249.17.252] helo=noisy.programming.kicks-ass.net)
-	by casper.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
-	id 1uULVe-00000008tHl-0J2Y;
-	Wed, 25 Jun 2025 08:29:34 +0000
-Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
-	id C49BF308983; Wed, 25 Jun 2025 10:29:32 +0200 (CEST)
-Date: Wed, 25 Jun 2025 10:29:32 +0200
-From: Peter Zijlstra <peterz@infradead.org>
-To: Li Chen <me@linux.beauty>
-Cc: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
-	Borislav Petkov <bp@alien8.de>,
-	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
-	"H . Peter Anvin" <hpa@zytor.com>,
-	"Rafael J . Wysocki" <rafael.j.wysocki@intel.com>,
-	K Prateek Nayak <kprateek.nayak@amd.com>,
-	Sohil Mehta <sohil.mehta@intel.com>,
-	Brian Gerst <brgerst@gmail.com>,
-	Patryk Wlazlyn <patryk.wlazlyn@linux.intel.com>,
-	linux-kernel@vger.kernel.org,
-	"Gautham R. Shenoy" <gautham.shenoy@amd.com>,
-	Li Chen <chenl311@chinatelecom.cn>
-Subject: Re: [PATCH v3 2/2] x86/smpboot: avoid SMT domain attach/destroy if
- SMT is not enabled
-Message-ID: <20250625082932.GA1613200@noisy.programming.kicks-ass.net>
-References: <20250625034552.42365-1-me@linux.beauty>
- <20250625034552.42365-3-me@linux.beauty>
+	 Content-Type:Content-Disposition:In-Reply-To; b=E1M8yk4r6Sp05fMzNcgLpt5CRMZlyyJsINeL5tjOAaMce+AoON/ShKtqQo14I5FixWy+5I+fl4La0VUvnpjRrPKMI965h8BUPWKLpXYckiU8LeXDmbPzmz4p/SsVhfy/nSow31S4pFOPAUfwS+ytUMb/q2vUv8nIeqApZeSqo5o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=NH02XYi7; arc=none smtp.client-ip=198.175.65.19
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1750840667; x=1782376667;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=EwvPZo7oTwprahWbVv9CKBqzmPZmEw39Hs2j42qQ/og=;
+  b=NH02XYi769r1+YHwfSulY1PSz9hXh+MDin5jWDeTln+cNwBlR/uq6Fiu
+   3PTexSS7kAiV7CC+bXqyLJ4iaaK8FycV1OSyNlE54oWfV9y72n9M/pwlN
+   N5UaWIOGn1RDcFHAo179jQdpIrqEhBbJMS7G5q4Kf9/R92RUtbOnSAXLL
+   /Lc+2z7SNqsiPaVZu+jLumonIz9w9BafQoL8rRe16Ddzwp92axnEVtcSR
+   M74DMjJn/84UZ1/vLYTlY0t4FxB2Ltq7V7zgffSyIyEi5Wdc0/rCchDYm
+   NRGBYpmahgkuX0A9YViAD+p/D1yUThRTLuH6IT8julytpNXiqfhZx3UH7
+   Q==;
+X-CSE-ConnectionGUID: 1jbn6YWOSLCGFVZwKrLRiQ==
+X-CSE-MsgGUID: rIJFN/HTRWiDD8oyylzvPA==
+X-IronPort-AV: E=McAfee;i="6800,10657,11474"; a="52973198"
+X-IronPort-AV: E=Sophos;i="6.16,264,1744095600"; 
+   d="scan'208";a="52973198"
+Received: from fmviesa003.fm.intel.com ([10.60.135.143])
+  by orvoesa111.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 25 Jun 2025 01:37:39 -0700
+X-CSE-ConnectionGUID: whELoIkaQLOb2fMkjiX5Eg==
+X-CSE-MsgGUID: WWOHAobDSV6gRb7pT1MS+w==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.16,264,1744095600"; 
+   d="scan'208";a="156186620"
+Received: from yilunxu-optiplex-7050.sh.intel.com (HELO localhost) ([10.239.159.165])
+  by fmviesa003.fm.intel.com with ESMTP; 25 Jun 2025 01:37:36 -0700
+Date: Wed, 25 Jun 2025 16:29:59 +0800
+From: Xu Yilun <yilun.xu@linux.intel.com>
+To: Jason Gunthorpe <jgg@nvidia.com>
+Cc: kevin.tian@intel.com, will@kernel.org, aneesh.kumar@kernel.org,
+	iommu@lists.linux.dev, linux-kernel@vger.kernel.org,
+	joro@8bytes.org, robin.murphy@arm.com, shuah@kernel.org,
+	nicolinc@nvidia.com, aik@amd.com, dan.j.williams@intel.com,
+	baolu.lu@linux.intel.com, yilun.xu@intel.com
+Subject: Re: [PATCH v2 4/4] iommufd/selftest: Add coverage for vdevice
+ tombstone
+Message-ID: <aFuzh4OPmjfemD8I@yilunxu-OptiPlex-7050>
+References: <20250623094946.1714996-1-yilun.xu@linux.intel.com>
+ <20250623094946.1714996-5-yilun.xu@linux.intel.com>
+ <20250624134145.GB150753@nvidia.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20250625034552.42365-3-me@linux.beauty>
+In-Reply-To: <20250624134145.GB150753@nvidia.com>
 
-On Wed, Jun 25, 2025 at 11:45:50AM +0800, Li Chen wrote:
-> From: Li Chen <chenl311@chinatelecom.cn>
+On Tue, Jun 24, 2025 at 10:41:45AM -0300, Jason Gunthorpe wrote:
+> On Mon, Jun 23, 2025 at 05:49:46PM +0800, Xu Yilun wrote:
+> > diff --git a/tools/testing/selftests/iommu/iommufd.c b/tools/testing/selftests/iommu/iommufd.c
+> > index 1a8e85afe9aa..092e1344447e 100644
+> > --- a/tools/testing/selftests/iommu/iommufd.c
+> > +++ b/tools/testing/selftests/iommu/iommufd.c
+> > @@ -3014,6 +3014,19 @@ TEST_F(iommufd_viommu, vdevice_cache)
+> >  	}
+> >  }
+> >  
+> > +TEST_F(iommufd_viommu, vdevice_tombstone)
+> > +{
+> > +	uint32_t viommu_id = self->viommu_id;
+> > +	uint32_t dev_id = self->device_id;
+> > +	uint32_t vdev_id = 0;
+> > +
+> > +	if (dev_id) {
 > 
-> Currently, the SMT domain is added into sched_domain_topology by default.
+> Why the if? The test should work or skip, not silently skip.
 > 
-> If cpu_attach_domain() finds that the CPU SMT domain’s cpumask_weight
-> is just 1, it will destroy it.
-> 
-> On a large machine, such as one with 512 cores, this results in
-> 512 redundant domain attach/destroy operations.
-> 
-> Avoid these unnecessary operations by simply checking
-> cpu_smt_num_threads and remove SMT domain if the SMT domain is not
-> enabled, and adjust the PKG index accordingly if NUMA-in-package
-> invalidates that level as well.
-> 
-> Signed-off-by: Li Chen <chenl311@chinatelecom.cn>
-> ---
-> changelog:
-> v2: fix wording issue as suggested by Thomas [1]
-> v3: remove pointless memset and adjust PKG index accordingly,
->     as suggested by Thomas [2] 
-> 
-> [1]: https://lore.kernel.org/all/87msa2r018.ffs@tglx/
-> [2]: https://lore.kernel.org/all/875xglntx1.ffs@tglx/
-> 
->  arch/x86/kernel/smpboot.c | 18 +++++++++++++++++-
->  1 file changed, 17 insertions(+), 1 deletion(-)
-> 
-> diff --git a/arch/x86/kernel/smpboot.c b/arch/x86/kernel/smpboot.c
-> index 7d202f9785362..4b6daa1545445 100644
-> --- a/arch/x86/kernel/smpboot.c
-> +++ b/arch/x86/kernel/smpboot.c
-> @@ -494,13 +494,29 @@ static struct sched_domain_topology_level x86_topology[] = {
->  
->  static void __init build_sched_topology(void)
->  {
-> +	bool smt_dropped = false;
-> +
-> +	if (cpu_smt_num_threads <= 1) {
-> +		/*
-> +		 * SMT level is x86_topology[0].  Shift the array left by one,
-> +		 */
-> +		memmove(&x86_topology[0], &x86_topology[1],
-> +			sizeof(x86_topology) - sizeof(x86_topology[0]));
-> +		smt_dropped = true;
-> +	}
-> +
->  	/*
->  	 * When there is NUMA topology inside the package invalidate the
->  	 * PKG domain since the NUMA domains will auto-magically create the
->  	 * right spanning domains based on the SLIT.
->  	 */
->  	if (x86_has_numa_in_package) {
-> -		unsigned int pkgdom = ARRAY_SIZE(x86_topology) - 2;
-> +		unsigned int pkgdom;
-> +
-> +		if (smt_dropped)
-> +			pkgdom = ARRAY_SIZE(x86_topology) - 3;
-> +		else
-> +			pkgdom = ARRAY_SIZE(x86_topology) - 2;
->  
->  		memset(&x86_topology[pkgdom], 0, sizeof(x86_topology[pkgdom]));
->  	}
+> self->device_id is setup by the fixture, it can't be absent.
 
-Oh gawd, and you all really think this is better than dynamically
-creating that array?
+It can, when the variant no_viommu.
 
-This is quite terrible.
+I agree this should not be silently skipped, see below changes:
+Should also apply to viommu_alloc_nested_iopf, vdevice_cache.
+
++TEST_F(iommufd_viommu, vdevice_tombstone)
++{
++       uint32_t viommu_id = self->viommu_id;
++       uint32_t dev_id = self->device_id;
++       uint32_t vdev_id = 0;
++
++       if (!dev_id)
++               SKIP(return, "Skipping test for variant no_viommu");
++
++       test_cmd_vdevice_alloc(viommu_id, dev_id, 0x99, &vdev_id);
++       test_ioctl_destroy(self->stdev_id);
++       EXPECT_ERRNO(ENOENT, _test_ioctl_destroy(self->fd, vdev_id));
++}
+
+Thanks,
+Yilun
+
+> 
+> Jason
 
