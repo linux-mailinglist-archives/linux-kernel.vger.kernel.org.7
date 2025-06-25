@@ -1,186 +1,120 @@
-Return-Path: <linux-kernel+bounces-701797-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-701799-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1688AAE7980
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Jun 2025 10:06:58 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id F22ADAE798A
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Jun 2025 10:08:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D6D701BC62E4
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Jun 2025 08:07:13 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B058D1BC6400
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Jun 2025 08:08:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3640E20C038;
-	Wed, 25 Jun 2025 08:06:51 +0000 (UTC)
-Received: from leonov.paulk.fr (leonov.paulk.fr [185.233.101.22])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 80F9220E007;
+	Wed, 25 Jun 2025 08:08:15 +0000 (UTC)
+Received: from bmailout1.hostsharing.net (bmailout1.hostsharing.net [83.223.95.100])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 423E122083;
-	Wed, 25 Jun 2025 08:06:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.233.101.22
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BC9F31E5B95;
+	Wed, 25 Jun 2025 08:08:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=83.223.95.100
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750838810; cv=none; b=V/6sXW9VXkeHfVNla9HApOamam01oH8lfNPGf1KuE0l8TxK2Uuae/+4irYA3uHEw9ikbBY1ssSiZ/ukpNmbAW1+LuhiwzZAGl0AEdBEaJ54Ha/qt//Xn6gi7r0Cw7paN67lmGSHS8D8yDqEmuTNMCw/zkuN5MRm5By4irUNkUhs=
+	t=1750838895; cv=none; b=FLD3X6a6UCKFArcfciaI9ZTe2MUjtTuN4RRBPZKORr7uIeqeOMIe2TLibOB28rbOfLsZJYFSFYRQHcyp9xRNqAjvwC+b7HuHlCCkVRlkzBv8jo4drUuRJ6hfTCh4Qw+/ROQ9UKJF/QB0rOyP4s/OYZIVc03uxSmyobgcv3ZkjsM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750838810; c=relaxed/simple;
-	bh=SUQMaFhUsjhVyG2G9qQt9mhfmHW9G7AFOmwCMv9clcc=;
+	s=arc-20240116; t=1750838895; c=relaxed/simple;
+	bh=EYBnaryO2t2j1TYPtDQ15vC+AkkaRRLZ5JYRisv3DBw=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=qEgIZVlpg0TOqyk+pxVBpGc/QIOuy7ZDzD3iVpOiB1aB6pyoA+CDSw5itPISbJNLMqsXVpeDIHW/550hlHNQ0Yk/Zzrjv37rV1SQUBUbUkqq6CtKUvZomu+Ydv9ndUKfmPOFaYGfrtkkjwRjNYjpvFuzkLHUtY71gVh+AGfnjkk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sys-base.io; spf=pass smtp.mailfrom=sys-base.io; arc=none smtp.client-ip=185.233.101.22
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sys-base.io
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sys-base.io
-Received: from laika.paulk.fr (12.234.24.109.rev.sfr.net [109.24.234.12])
-	by leonov.paulk.fr (Postfix) with ESMTPS id 922901F00047;
-	Wed, 25 Jun 2025 08:06:40 +0000 (UTC)
-Received: by laika.paulk.fr (Postfix, from userid 65534)
-	id 07F15AC79F8; Wed, 25 Jun 2025 08:06:38 +0000 (UTC)
-X-Spam-Level: 
-Received: from shepard (unknown [192.168.1.1])
-	by laika.paulk.fr (Postfix) with ESMTPSA id C2E29AC79F3;
-	Wed, 25 Jun 2025 08:06:36 +0000 (UTC)
-Date: Wed, 25 Jun 2025 10:06:19 +0200
-From: Paul Kocialkowski <paulk@sys-base.io>
-To: Kuba =?utf-8?Q?Szczodrzy=C5=84ski?= <kuba@szczodrzynski.pl>
-Cc: Maxime Ripard <mripard@kernel.org>,
-	Samuel Holland <samuel@sholland.org>, Chen-Yu Tsai <wens@csie.org>,
-	Jernej Skrabec <jernej.skrabec@gmail.com>,
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	Thomas Zimmermann <tzimmermann@suse.de>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
-	linux-arm-kernel@lists.infradead.org, linux-sunxi@lists.linux.dev,
-	linux-kernel@vger.kernel.org, linux-riscv@lists.infradead.org,
-	linux-phy@lists.infradead.org, devicetree@vger.kernel.org,
-	dri-devel@lists.freedesktop.org
-Subject: Re: [PATCH 3/5] drm/sun4i: Enable LVDS output on sun20i D1s/T113
-Message-ID: <aFut-yuJS2lfWaE8@shepard>
-References: <20250221161751.1278049-1-kuba@szczodrzynski.pl>
- <20250221161751.1278049-4-kuba@szczodrzynski.pl>
+	 Content-Type:Content-Disposition:In-Reply-To; b=nyEbyVwky626ke6q3vBUvZAXE/RbEdOFd5xtwrjcNwnFfmtMZFkdCKU57tuV2HFZVNQH+Soy3lGKSch0jaOuWBX5j341Ow2F/wPpoW1NXgdP7nog+NvNMA4BXcxwENaefvDElDVbgH1Niclr2hjUd0+4Z+c9M006xFawgz0ZwHA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=wunner.de; spf=none smtp.mailfrom=h08.hostsharing.net; arc=none smtp.client-ip=83.223.95.100
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=wunner.de
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=h08.hostsharing.net
+Received: from h08.hostsharing.net (h08.hostsharing.net [IPv6:2a01:37:1000::53df:5f1c:0])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256
+	 client-signature RSA-PSS (4096 bits) client-digest SHA256)
+	(Client CN "*.hostsharing.net", Issuer "RapidSSL TLS RSA CA G1" (verified OK))
+	by bmailout1.hostsharing.net (Postfix) with ESMTPS id E93BD2C06E33;
+	Wed, 25 Jun 2025 10:08:02 +0200 (CEST)
+Received: by h08.hostsharing.net (Postfix, from userid 100393)
+	id E3CED3B708B; Wed, 25 Jun 2025 10:08:02 +0200 (CEST)
+Date: Wed, 25 Jun 2025 10:08:02 +0200
+From: Lukas Wunner <lukas@wunner.de>
+To: Krishna Kumar <krishnak@linux.ibm.com>
+Cc: linuxppc-dev@lists.ozlabs.org,
+	Timothy Pearson <tpearson@raptorengineering.com>,
+	Shawn Anastasio <sanastasio@raptorengineering.com>,
+	linux-kernel <linux-kernel@vger.kernel.org>,
+	"\"linux-pci\"," <linux-pci@vger.kernel.org>,
+	Madhavan Srinivasan <maddy@linux.ibm.com>,
+	Michael Ellerman <mpe@ellerman.id.au>,
+	christophe leroy <christophe.leroy@csgroup.eu>,
+	Naveen N Rao <naveen@kernel.org>,
+	"\"Bjorn Helgaas\"," <bhelgaas@google.com>
+Subject: Re: [PATCH v2 6/6] pci/hotplug/pnv_php: Enable third attention
+ indicator
+Message-ID: <aFuuYq0m0hDAdPRF@wunner.de>
+References: <20250618190146.GA1213349@bhelgaas>
+ <1469323476.1312174.1750293474949.JavaMail.zimbra@raptorengineeringinc.com>
+ <19689b53-ac23-4b48-97c7-b26f360a7b75@linux.ibm.com>
+ <aFaCfYre9N52ARWH@wunner.de>
+ <f13a2d2b-af52-4934-b4fa-66bc1e5ece32@linux.ibm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="Zc2DNXh9m8XgbscL"
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250221161751.1278049-4-kuba@szczodrzynski.pl>
+In-Reply-To: <f13a2d2b-af52-4934-b4fa-66bc1e5ece32@linux.ibm.com>
 
+On Wed, Jun 25, 2025 at 09:38:19AM +0530, Krishna Kumar wrote:
+> On 6/21/25 3:29 PM, Lukas Wunner wrote:
+> > On Fri, Jun 20, 2025 at 02:56:51PM +0530, Krishna Kumar wrote:
+> > > 5. If point 3 and 4 does not solve the problem, then only we should
+> > > move to pciehp.c. But AFAIK, PPC/Powernv is DT based while pciehp.c
+> > > may be only supporting acpi (I have to check it on this). We need to
+> > > provide PHB related information via DTB and maintain the related
+> > > topology information via dtb and then it can be doable.
+> > 
+> > pciehp is not ACPI-specific.  The PCIe port service driver in
+> > drivers/pci/pcie/portdrv.c binds to any PCIe port, examines the
+> > port's capabilities (e.g. hotplug, AER, DPC, ...) and instantiates
+> > sub-devices to which pciehp and the other drivers such as aer bind.
+> 
+> 1. If we get PHB info from mmcfg via acpi table in x86 and create a
+>    root port from there with some address/entity and if this Acpi and
+>    associated entity is not present for PPC, then it can be a problem.
+> 
+> 2. PPC is normally based on DTB entity and it identifies PHB and pcie
+>    devices from there. If this all the information is correctly map
+>    via portdrv.c then there is no problem and whatever you are telling
+>    is correct and it will work.
+> 
+> 3. But if point 2 is not handled correctly we need to just aligned with
+>    port related data structure to make it work.
 
---Zc2DNXh9m8XgbscL
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+PCI devices do not have to be enumerated in the devicetree (or in ACPI
+DSDT) because PCI is an enumerable bus (like USB).  Only the host bridge
+has to be enumerated in the devicetree or DSDT.  The kernel can find the
+PCI devices below the host bridge itself.  Hot-plugged devices are
+usually not described in the devicetree or DSDT because one doesn't
+know their properties in advance.
 
-Hi,
+pnv_php.c seems to search the devicetree for hotplug slots and
+instantiates them.  My expectation would be that any hotplug-capable
+PCIe Root Port or Downstream Port, which is *not* described in the
+devicetree such that pnv_php.c creates a slot for it, is handled by
+pciehp.
 
-Some comments below.
+Timothy was talking about a Microsemi PCIe switch below the Root Port.
+My understanding is that the Downstream Ports of that switch are
+hotplug-capable.  So unless you've disabled CONFIG_HOTPLUG_PCI_PCIE,
+I'd expect those ports to be handled by pciehp.  Assuming they're not
+described as a "ibm,ioda2-phb" compatible device in the devicetree,
+but why would they?
 
-On Fri 21 Feb 25, 17:17, Kuba Szczodrzy=C5=84ski wrote:
-> The Allwinner D1s/T113 needs to use the combo D-PHY to enable LVDS
-> output.
->=20
-> Enable LVDS support in the TCON and configure it using the PHY.
->=20
-> Signed-off-by: Kuba Szczodrzy=C5=84ski <kuba@szczodrzynski.pl>
-> ---
->  drivers/gpu/drm/sun4i/sun4i_tcon.c | 28 ++++++++++++++++++++++++++++
->  1 file changed, 28 insertions(+)
->=20
-> diff --git a/drivers/gpu/drm/sun4i/sun4i_tcon.c b/drivers/gpu/drm/sun4i/s=
-un4i_tcon.c
-> index ccf335a61..58230a552 100644
-> --- a/drivers/gpu/drm/sun4i/sun4i_tcon.c
-> +++ b/drivers/gpu/drm/sun4i/sun4i_tcon.c
-> @@ -171,6 +171,30 @@ static void sun6i_tcon_setup_lvds_phy(struct sun4i_t=
-con *tcon,
->  			  SUN6I_TCON0_LVDS_ANA0_EN_DRVD(val));
->  }
-> =20
-> +static void sun20i_tcon_setup_lvds_dphy(struct sun4i_tcon *tcon,
-> +					const struct drm_encoder *encoder)
-> +{
-> +	union phy_configure_opts opts =3D { };
-> +
-> +	if (!tcon->quirks->has_combo_dphy || !tcon->dphy)
-> +		return;
-> +
-> +	phy_init(tcon->dphy);
-> +	phy_set_mode(tcon->dphy, PHY_MODE_LVDS);
-> +	phy_configure(tcon->dphy, &opts);
-> +	phy_power_on(tcon->dphy);
+Thanks,
 
-While the callback doesn't have any return code (and it probably should, fe=
-el
-free to fix that), the return codes for the phy_ calls should be checked and
-the function aborted early in case of error.
-
-> +}
-> +
-> +static void sun20i_tcon_disable_lvds_dphy(struct sun4i_tcon *tcon,
-> +					  const struct drm_encoder *encoder)
-> +{
-> +	if (!tcon->quirks->has_combo_dphy || !tcon->dphy)
-> +		return;
-> +
-> +	phy_power_off(tcon->dphy);
-> +	phy_exit(tcon->dphy);
-
-Same comment here.
-
-> +}
-> +
->  static void sun4i_tcon_lvds_set_status(struct sun4i_tcon *tcon,
->  				       const struct drm_encoder *encoder,
->  				       bool enabled)
-> @@ -1550,8 +1574,12 @@ static const struct sun4i_tcon_quirks sun9i_a80_tc=
-on_tv_quirks =3D {
-> =20
->  static const struct sun4i_tcon_quirks sun20i_d1_lcd_quirks =3D {
->  	.has_channel_0		=3D true,
-> +	.has_combo_dphy		=3D true,
-> +	.supports_lvds		=3D true,
->  	.dclk_min_div		=3D 1,
->  	.set_mux		=3D sun8i_r40_tcon_tv_set_mux,
-> +	.setup_lvds_phy		=3D sun20i_tcon_setup_lvds_dphy,
-> +	.disable_lvds_phy	=3D sun20i_tcon_disable_lvds_dphy,
->  };
-> =20
->  /* sun4i_drv uses this list to check if a device node is a TCON */
-> --=20
-> 2.25.1
->=20
->=20
-
---=20
-Paul Kocialkowski,
-
-Independent contractor - sys-base - https://www.sys-base.io/
-Free software developer - https://www.paulk.fr/
-
-Expert in multimedia, graphics and embedded hardware support with Linux.
-
---Zc2DNXh9m8XgbscL
-Content-Type: application/pgp-signature; name=signature.asc
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAEBCgAdFiEEAbcMXZQMtj1fphLChP3B6o/ulQwFAmhbrfsACgkQhP3B6o/u
-lQwpAQ//ejWbFNBH4z9VJ16EP4vlDwIeCKa/jCLxdPV14o7aRNZfyfLW+MU5LoZb
-583jqZAEAzyLgyElFfWOmpTVzZgoPzfZArozcWQKfzfTpvcn2y0/DSVXrh8XWVRW
-v9xC8/hIeMXflvorPgeJKJw2UagKbgwHTipQ1dq49by/uIz0UpidtfyfUI5Gc5Qz
-+wxS9jIEyYX2Hq5hmQhDsVYjnL2MrCC6ITlCeE1Sq+ifiBA+bZ1UqQQKswh2IO2O
-BVzOseWscsfG1BazmVGLPOba0PyS/qRMuesCE1hDTmFMvvLKN6TDYw/fYAC4gE64
-xJm72Ou4GtoIz+7YSKZNDeVkap1ulDNxim4FpOFgTwssha1vNIM2YK1HoFAo5YhD
-H9mDqrpol1+ti4L4R9UjDtt7RAg97hxwXfvWhQzt6gMRDWsfkiMqAz2gB9Tn4SDP
-DzQZJYhL+k1AkxxIoQtw89+eQ6Ipcss4EBHu5LjB340x4CruXUrFXNXRPdDQyFUi
-qV6cV9fvMev1lDvQAmH8z2U45ezhLm0kdkgzXyHXGfXfV24UmuST3TcbBIhdrBcL
-2L0SJqcj87i4YLrrmp05O/oen1QseIlxyn6Y3l2HWq/35Q8iSA63iOnw+NySZnb6
-RUqGYYj48OX2EZHaCLWaiDRUh41yCSwbWQmyXPEfmgfu6K+YKGQ=
-=1Zjq
------END PGP SIGNATURE-----
-
---Zc2DNXh9m8XgbscL--
+Lukas
 
