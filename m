@@ -1,1086 +1,330 @@
-Return-Path: <linux-kernel+bounces-702611-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-702613-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id CBD66AE84AC
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Jun 2025 15:29:59 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6C572AE84B3
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Jun 2025 15:30:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8371D16381B
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Jun 2025 13:26:29 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6FEEC7B563E
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Jun 2025 13:26:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A477325D548;
-	Wed, 25 Jun 2025 13:26:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3F0AF262FEB;
+	Wed, 25 Jun 2025 13:27:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="gyvkDVun";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="RTaPVAgY";
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="gyvkDVun";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="RTaPVAgY"
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ILgF6ZWn"
+Received: from mail-lj1-f176.google.com (mail-lj1-f176.google.com [209.85.208.176])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 90D5625B697
-	for <linux-kernel@vger.kernel.org>; Wed, 25 Jun 2025 13:26:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EAD9B3FD4;
+	Wed, 25 Jun 2025 13:27:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750857981; cv=none; b=onPqrrsSn3MACnk1MUkgKNrM865m9oxYjktM1qyd5XFJfMC4GGZx6QJLn9XYGgZ8HNrMRVLGhVF9fT6Ut8u9IILh2CukiJyF0zVGs2lJ+UmrMGTrDv946s07ep0HXQ0MX3e2iKjWQLvFKnK5W45R5Ij0daJFTy6dU4jTtZM65Hg=
+	t=1750858035; cv=none; b=HjnwTvrRZKERhxq0NNuBW+G59aVmtDjKVPjAFEKxio5XB2c9QK0HuW+1X1wDPPsMw3FQ69XXK4wrYxuwellzNZhn1rmUcLAr5TGhxYoE4livFsEB9TJPOWyaQWnT6dOSAeFgb8PAWBtAMen4xdy7ssCHJxKS5Hl9wJJRlRqjOQY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750857981; c=relaxed/simple;
-	bh=k/9+xauGHwE+esVkh6FDWWGnrEoFzYHf/ELSkmSZiPg=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=cVwEHYgn2j1lpzm2m+ur3rNiwlPiOVE2HdnTxuWi1jyVA41Ce4+CAV/wy05hKuYL+6N/jvdr7QlYZE5o/ujGpHfkYtfPYn7r6GPmGVU8W4vo9b/zoj7dfj56NzswO/7kGCpvo/YGQWEJp7AB7A2CX/i69MPIjEpZMi++h6zZZsU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=gyvkDVun; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=RTaPVAgY; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=gyvkDVun; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=RTaPVAgY; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id B34A11F74D;
-	Wed, 25 Jun 2025 13:26:15 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1750857975; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=SaQLooy5B/KKk9YYCRo0zxdH1UWXS6ebVZJe+dBVzPs=;
-	b=gyvkDVunklImxmNIt4Fa1OetkXQKIiP+Q7Cuiu7jN+WgmcEweK3w/0KoYclIlTUhlcJD19
-	6MI2YlzAXyMs6ePV2kfvBWST/a9sr4RWGB8hZLEytVmiJckCftR35ov5ZrwucxVa33awEV
-	/eNvUTHBfrdZfC5GOcwlAI9IwoNRmdg=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1750857975;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=SaQLooy5B/KKk9YYCRo0zxdH1UWXS6ebVZJe+dBVzPs=;
-	b=RTaPVAgYkg55lnQgcbkHGd+nDr21Rf5Sg08UaBBrvgRThdWLY8K2V3itNBE8LLmHCfF0Gy
-	YIj5hiKCLWc1KMCg==
-Authentication-Results: smtp-out2.suse.de;
-	dkim=pass header.d=suse.de header.s=susede2_rsa header.b=gyvkDVun;
-	dkim=pass header.d=suse.de header.s=susede2_ed25519 header.b=RTaPVAgY
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1750857975; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=SaQLooy5B/KKk9YYCRo0zxdH1UWXS6ebVZJe+dBVzPs=;
-	b=gyvkDVunklImxmNIt4Fa1OetkXQKIiP+Q7Cuiu7jN+WgmcEweK3w/0KoYclIlTUhlcJD19
-	6MI2YlzAXyMs6ePV2kfvBWST/a9sr4RWGB8hZLEytVmiJckCftR35ov5ZrwucxVa33awEV
-	/eNvUTHBfrdZfC5GOcwlAI9IwoNRmdg=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1750857975;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=SaQLooy5B/KKk9YYCRo0zxdH1UWXS6ebVZJe+dBVzPs=;
-	b=RTaPVAgYkg55lnQgcbkHGd+nDr21Rf5Sg08UaBBrvgRThdWLY8K2V3itNBE8LLmHCfF0Gy
-	YIj5hiKCLWc1KMCg==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 7171413485;
-	Wed, 25 Jun 2025 13:26:15 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id M0tMGvf4W2ipAQAAD6G6ig
-	(envelope-from <tzimmermann@suse.de>); Wed, 25 Jun 2025 13:26:15 +0000
-Message-ID: <b75a40b4-531a-4cd4-8fe3-bd73dcaf2470@suse.de>
-Date: Wed, 25 Jun 2025 15:26:15 +0200
+	s=arc-20240116; t=1750858035; c=relaxed/simple;
+	bh=7ZxBAiyfUmMtN7AjxxGSzEQM7fP1mVANe3bslfVATjM=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=q9sPy6SuWwtCE9KQspMPq4kMGLOg9B9CFJ2rKrtHKNHL3tbqSF3/0kdj0xi+CjIhQDJLvzNS2TzDX8N22VCATpCWrm578/kdibuSIFeI63pTXvVcISJAuT8NNDm0rG+DhcEM0tt6ASQSRjWyr8SwfFa1crmf06eDkLFKF23Pibs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ILgF6ZWn; arc=none smtp.client-ip=209.85.208.176
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lj1-f176.google.com with SMTP id 38308e7fff4ca-32b910593edso13817571fa.1;
+        Wed, 25 Jun 2025 06:27:12 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1750858031; x=1751462831; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=0eWmQcceDnjey6WVhwoCM3alttfmTOHZzpPMwjO1DTw=;
+        b=ILgF6ZWnEv0jM1prhwrOzV6Bqp2AdXgx25huXTmTCIWcKUy9rf6HJrv10VDvqrw9jX
+         BkYSvszjJl60uR0IP1UBpcmbQ1pnaG0FEp3dCw/xv/WiAu0omzit5XswaGTKEuOeOzHv
+         2fCo5bMeCQzsmtr7fwfBqax2/bth0G59J9St3ZVD9PACz9kHutVXXPRKNa0X8HsSaLc9
+         MYGB/xViXqG2KpO75r4XTypRMusnAt0tCcjQwXVYxh5yYUQi9z3ZLyR36aIpIgvMeCQI
+         UEyD89at3dhAmWWxlAd6j5L9M1eCQ/6igi+41BhScXFITCUiGkRKDPuR4PvmzOweMOUQ
+         TMJA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1750858031; x=1751462831;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=0eWmQcceDnjey6WVhwoCM3alttfmTOHZzpPMwjO1DTw=;
+        b=QNfkxEB49Sr7jJPo//kxyLc2L+N2ANxikymFqUOsZjzCpq0mWn84ExQy/2boqJQEfV
+         iHT9LG9qGozaLbr8ot1vYsyaVpQWlcmuQP3KZf3SQRm+Q8Vx1G5Tcd7ddCPtrgGCDD+a
+         PnAN8R+ldmMlu55qJPvggD8bTu4uaQ/0S5Jv5sulyycQtoFNekkZ3fkFHDqSVzBqqrbU
+         zHWmOyljMQVZK/KAGYpVfffFaNYcfAJO8Zqk/AJsyGZe4nteVGQDu2BZkRs6GOwNjZni
+         5gaaWaLJdpVfWdl+dSdaCftrJUjh5rYMt4wvi+2dfsxhrBMH1RSTiBNTJQGOz5E9A4NQ
+         OOew==
+X-Forwarded-Encrypted: i=1; AJvYcCWcXTt8nH0983inY2l8uUYzRAU4BbuR3x4TQWRuqUVGveU3U/GV5xAUlT7eo3qJzkosn7hc/kgz@vger.kernel.org, AJvYcCWkkX9xGUyuuFKv+zTmFytjA/pTyPA0T4JRzBngPtpB6wVTS0jZWbzMlY2yOikryZm84PBIN6QM1qZYK0b4+PA=@vger.kernel.org, AJvYcCXbA7ax3fApSHbgIrhPsCCk9zG6UNSErs0BW6qPYOBxySzq3/QXu7AABQXzHuQFCJZMlWLFbmb0@vger.kernel.org, AJvYcCXjH49X1X85P/NiF3rpDkGpAtCpyUrlf7T0pFLPZEP2s4JV/ERtFPFDgrbg30AMPpnER1/nyinyXYSQZN/j@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywfr8hkM4Fn0vAYuZ13uq6YeJXVoTKeunG46ZOylPuSA42tln9x
+	TBaQDuEJaOrhwEH225t9gUMnP1PePlftpavjy1ZDSPAIk7Ocb6TdoX2zxhHaMUb2Bq+DRQiJZlr
+	UI+soR5iLJN9e+sZEcf5QxMhLzDl697I=
+X-Gm-Gg: ASbGnct7bfCfinCKdUjc53o69LPDh461OJUJGTD34+L6rWsH6xqzsypQnE0djhLyDdL
+	K07SyY5eyHXf6pxo77zcC6I5/s02UImLd2VY0j1XmIwtyclP0P3k0+cmVJRdP9NN+dZC1p8i6xw
+	5M/fg6bl180RJ0vm02Mj1mGOZiNgab2o1lWWcZdkHaDA==
+X-Google-Smtp-Source: AGHT+IG2ftQGOZB8IDsuFAGSJ7WRgj2/KluM8fac5/UJbucBJJKKOqnTxouoVa1M2ZVSrEhuRs/0LY5oo8U9dBqktqk=
+X-Received: by 2002:a2e:a5c2:0:b0:32a:8297:54c9 with SMTP id
+ 38308e7fff4ca-32cc6434852mr10560721fa.8.1750858030473; Wed, 25 Jun 2025
+ 06:27:10 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 2/2] fbdev: remove metronomefb
-To: Arnd Bergmann <arnd@kernel.org>, Helge Deller <deller@gmx.de>,
- Jonathan Corbet <corbet@lwn.net>
-Cc: Arnd Bergmann <arnd@arndb.de>, linux-fbdev@vger.kernel.org,
- dri-devel@lists.freedesktop.org, linux-doc@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <20250625131511.3366522-1-arnd@kernel.org>
- <20250625131511.3366522-2-arnd@kernel.org>
-Content-Language: en-US
-From: Thomas Zimmermann <tzimmermann@suse.de>
-Autocrypt: addr=tzimmermann@suse.de; keydata=
- xsBNBFs50uABCADEHPidWt974CaxBVbrIBwqcq/WURinJ3+2WlIrKWspiP83vfZKaXhFYsdg
- XH47fDVbPPj+d6tQrw5lPQCyqjwrCPYnq3WlIBnGPJ4/jreTL6V+qfKRDlGLWFjZcsrPJGE0
- BeB5BbqP5erN1qylK9i3gPoQjXGhpBpQYwRrEyQyjuvk+Ev0K1Jc5tVDeJAuau3TGNgah4Yc
- hdHm3bkPjz9EErV85RwvImQ1dptvx6s7xzwXTgGAsaYZsL8WCwDaTuqFa1d1jjlaxg6+tZsB
- 9GluwvIhSezPgnEmimZDkGnZRRSFiGP8yjqTjjWuf0bSj5rUnTGiyLyRZRNGcXmu6hjlABEB
- AAHNJ1Rob21hcyBaaW1tZXJtYW5uIDx0emltbWVybWFubkBzdXNlLmRlPsLAjgQTAQgAOAIb
- AwULCQgHAgYVCgkICwIEFgIDAQIeAQIXgBYhBHIX+6yM6c9jRKFo5WgNwR1TC3ojBQJftODH
- AAoJEGgNwR1TC3ojx1wH/0hKGWugiqDgLNXLRD/4TfHBEKmxIrmfu9Z5t7vwUKfwhFL6hqvo
- lXPJJKQpQ2z8+X2vZm/slsLn7J1yjrOsoJhKABDi+3QWWSGkaGwRJAdPVVyJMfJRNNNIKwVb
- U6B1BkX2XDKDGffF4TxlOpSQzdtNI/9gleOoUA8+jy8knnDYzjBNOZqLG2FuTdicBXblz0Mf
- vg41gd9kCwYXDnD91rJU8tzylXv03E75NCaTxTM+FBXPmsAVYQ4GYhhgFt8S2UWMoaaABLDe
- 7l5FdnLdDEcbmd8uLU2CaG4W2cLrUaI4jz2XbkcPQkqTQ3EB67hYkjiEE6Zy3ggOitiQGcqp
- j//OwE0EWznS4AEIAMYmP4M/V+T5RY5at/g7rUdNsLhWv1APYrh9RQefODYHrNRHUE9eosYb
- T6XMryR9hT8XlGOYRwKWwiQBoWSDiTMo/Xi29jUnn4BXfI2px2DTXwc22LKtLAgTRjP+qbU6
- 3Y0xnQN29UGDbYgyyK51DW3H0If2a3JNsheAAK+Xc9baj0LGIc8T9uiEWHBnCH+RdhgATnWW
- GKdDegUR5BkDfDg5O/FISymJBHx2Dyoklv5g4BzkgqTqwmaYzsl8UxZKvbaxq0zbehDda8lv
- hFXodNFMAgTLJlLuDYOGLK2AwbrS3Sp0AEbkpdJBb44qVlGm5bApZouHeJ/+n+7r12+lqdsA
- EQEAAcLAdgQYAQgAIAIbDBYhBHIX+6yM6c9jRKFo5WgNwR1TC3ojBQJftOH6AAoJEGgNwR1T
- C3ojVSkIALpAPkIJPQoURPb1VWjh34l0HlglmYHvZszJWTXYwavHR8+k6Baa6H7ufXNQtThR
- yIxJrQLW6rV5lm7TjhffEhxVCn37+cg0zZ3j7zIsSS0rx/aMwi6VhFJA5hfn3T0TtrijKP4A
- SAQO9xD1Zk9/61JWk8OysuIh7MXkl0fxbRKWE93XeQBhIJHQfnc+YBLprdnxR446Sh8Wn/2D
- Ya8cavuWf2zrB6cZurs048xe0UbSW5AOSo4V9M0jzYI4nZqTmPxYyXbm30Kvmz0rYVRaitYJ
- 4kyYYMhuULvrJDMjZRvaNe52tkKAvMevcGdt38H4KSVXAylqyQOW5zvPc4/sq9c=
-In-Reply-To: <20250625131511.3366522-2-arnd@kernel.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
-X-Rspamd-Queue-Id: B34A11F74D
-X-Rspamd-Action: no action
-X-Spam-Flag: NO
-X-Spamd-Result: default: False [-4.51 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	R_DKIM_ALLOW(-0.20)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	MX_GOOD(-0.01)[];
-	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	FREEMAIL_ENVRCPT(0.00)[gmx.de];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	FREEMAIL_TO(0.00)[kernel.org,gmx.de,lwn.net];
-	ARC_NA(0.00)[];
-	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	TO_DN_SOME(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	RCVD_TLS_ALL(0.00)[];
-	DKIM_TRACE(0.00)[suse.de:+];
-	RCVD_COUNT_TWO(0.00)[2];
-	FROM_EQ_ENVFROM(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	MID_RHS_MATCH_FROM(0.00)[];
-	RECEIVED_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:106:10:150:64:167:received];
-	RCPT_COUNT_SEVEN(0.00)[8];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:rdns,imap1.dmz-prg2.suse.org:helo,suse.de:mid,suse.de:dkim,suse.de:email]
-X-Spam-Score: -4.51
-X-Spam-Level: 
+References: <20250625130510.18382-1-ceggers@arri.de>
+In-Reply-To: <20250625130510.18382-1-ceggers@arri.de>
+From: Luiz Augusto von Dentz <luiz.dentz@gmail.com>
+Date: Wed, 25 Jun 2025 09:26:58 -0400
+X-Gm-Features: Ac12FXxoRatCETVtaTcE8jTrNySsVyuFBKwzRXMZzaO5K4vFYbneLMjuaNcOZUE
+Message-ID: <CABBYNZ+cfFCzBMNBv6imodUG1twK5=MSwoVCnR8St_w9-HiU_w@mail.gmail.com>
+Subject: Re: [PATCH] Bluetooth: HCI: Fix HCI command order for extended advertising
+To: Christian Eggers <ceggers@arri.de>
+Cc: Marcel Holtmann <marcel@holtmann.org>, Johan Hedberg <johan.hedberg@gmail.com>, 
+	Jaganath Kanakkassery <jaganath.k.os@gmail.com>, linux-bluetooth@vger.kernel.org, 
+	netdev@vger.kernel.org, linux-kernel@vger.kernel.org, stable@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
+Hi Christian,
 
-
-Am 25.06.25 um 15:12 schrieb Arnd Bergmann:
-> From: Arnd Bergmann <arnd@arndb.de>
+On Wed, Jun 25, 2025 at 9:05=E2=80=AFAM Christian Eggers <ceggers@arri.de> =
+wrote:
 >
-> This driver has not worked correctly for many years, and the only in-tree
-> reference to it is going away as well, so remove the driver now.
+> For extended advertising capable controllers, hci_start_ext_adv_sync()
+> at the moment synchronously calls SET_EXT_ADV_PARAMS [1],
+> SET_ADV_SET_RAND_ADDR [2], SET_EXT_SCAN_RSP_DATA [3](optional) and
+> SET_EXT_ADV_ENABLE [4].  After all synchronous commands are finished,
+> SET_EXT_ADV_DATA is called from the async response handler of
+> SET_EXT_ADV_PARAMS [5] (via hci_update_adv_data).
 >
-> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+> So the current implementation sets the advertising data AFTER enabling
+> the advertising instance.  The BT Core specification explicitly allows
+> for this [6]:
+>
+> > If advertising is currently enabled for the specified advertising set,
+> > the Controller shall use the new data in subsequent extended
+> > advertising events for this advertising set. If an extended
+> > advertising event is in progress when this command is issued, the
+> > Controller may use the old or new data for that event.
 
-Reviewed-by: Thomas Zimmermann <tzimmermann@suse.de>
+Ok, lets stop right here, if the controller deviates from the spec it
+needs a quirk and not make the whole stack work around a bug in the
+firmware.
 
+> In case of the Realtek RTL8761BU chip (almost all contemporary BT USB
+> dongles are built on it), updating the advertising data after enabling
+> the instance produces (at least one) corrupted advertising message.
+> Under normal conditions, a single corrupted advertising message would
+> probably not attract much attention, but during MESH provisioning (via
+> MGMT I/O / mesh_send(_sync)), up to 3 different messages (BEACON, ACK,
+> CAPS) are sent within a loop which causes corruption of ALL provisioning
+> messages.
+>
+> I have no idea whether this could be fixed in the firmware of the USB
+> dongles (I didn't even find the chip on the Realtek homepage), but
+> generally I would suggest changing the order of the HCI commands as this
+> matches the command order for "non-extended adv capable" controllers and
+> simply is more natural.
+>
+> This patch only considers advertising instances with handle > 0, I don't
+> know whether this should be extended to further cases.
+>
+> [1] https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tr=
+ee/net/bluetooth/hci_sync.c#n1319
+> [2] https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tr=
+ee/net/bluetooth/hci_sync.c#n1204
+> [3] https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tr=
+ee/net/bluetooth/hci_sync.c#n1471
+> [4] https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tr=
+ee/net/bluetooth/hci_sync.c#n1469
+> [5] https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tr=
+ee/net/bluetooth/hci_event.c#n2180
+> [6] https://www.bluetooth.com/wp-content/uploads/Files/Specification/HTML=
+/Core-60/out/en/host-controller-interface/host-controller-interface-functio=
+nal-specification.html#UUID-d4f36cb5-f26c-d053-1034-e7a547ed6a13
+>
+> Signed-off-by: Christian Eggers <ceggers@arri.de>
+> Fixes: a0fb3726ba55 ("Bluetooth: Use Set ext adv/scan rsp data if control=
+ler supports")
+> Cc: stable@vger.kernel.org
 > ---
->   Documentation/fb/index.rst        |   1 -
->   Documentation/fb/metronomefb.rst  |  38 --
->   drivers/video/fbdev/Kconfig       |   9 -
->   drivers/video/fbdev/Makefile      |   1 -
->   drivers/video/fbdev/metronomefb.c | 724 ------------------------------
->   include/video/metronomefb.h       |  57 ---
->   6 files changed, 830 deletions(-)
->   delete mode 100644 Documentation/fb/metronomefb.rst
->   delete mode 100644 drivers/video/fbdev/metronomefb.c
->   delete mode 100644 include/video/metronomefb.h
+>  include/net/bluetooth/hci_core.h |  1 +
+>  include/net/bluetooth/hci_sync.h |  1 +
+>  net/bluetooth/hci_event.c        | 33 +++++++++++++++++++++++++++++
+>  net/bluetooth/hci_sync.c         | 36 ++++++++++++++++++++++++++------
+>  4 files changed, 65 insertions(+), 6 deletions(-)
 >
-> diff --git a/Documentation/fb/index.rst b/Documentation/fb/index.rst
-> index 33e3c49f8856..4f3f3b60ba9f 100644
-> --- a/Documentation/fb/index.rst
-> +++ b/Documentation/fb/index.rst
-> @@ -22,7 +22,6 @@ Frame Buffer
->       internals
->       lxfb
->       matroxfb
-> -    metronomefb
->       modedb
->       pvr2fb
->       pxafb
-> diff --git a/Documentation/fb/metronomefb.rst b/Documentation/fb/metronomefb.rst
-> deleted file mode 100644
-> index 63e1d31a7e54..000000000000
-> --- a/Documentation/fb/metronomefb.rst
-> +++ /dev/null
-> @@ -1,38 +0,0 @@
-> -===========
-> -Metronomefb
-> -===========
-> -
-> -Maintained by Jaya Kumar <jayakumar.lkml.gmail.com>
-> -
-> -Last revised: Mar 10, 2008
-> -
-> -Metronomefb is a driver for the Metronome display controller. The controller
-> -is from E-Ink Corporation. It is intended to be used to drive the E-Ink
-> -Vizplex display media. E-Ink hosts some details of this controller and the
-> -display media here http://www.e-ink.com/products/matrix/metronome.html .
-> -
-> -Metronome is interfaced to the host CPU through the AMLCD interface. The
-> -host CPU generates the control information and the image in a framebuffer
-> -which is then delivered to the AMLCD interface by a host specific method.
-> -The display and error status are each pulled through individual GPIOs.
-> -
-> -Metronomefb is platform independent and depends on a board specific driver
-> -to do all physical IO work. Currently, an example is implemented for the
-> -PXA board used in the AM-200 EPD devkit. This example is am200epd.c
-> -
-> -Metronomefb requires waveform information which is delivered via the AMLCD
-> -interface to the metronome controller. The waveform information is expected to
-> -be delivered from userspace via the firmware class interface. The waveform file
-> -can be compressed as long as your udev or hotplug script is aware of the need
-> -to uncompress it before delivering it. metronomefb will ask for metronome.wbf
-> -which would typically go into /lib/firmware/metronome.wbf depending on your
-> -udev/hotplug setup. I have only tested with a single waveform file which was
-> -originally labeled 23P01201_60_WT0107_MTC. I do not know what it stands for.
-> -Caution should be exercised when manipulating the waveform as there may be
-> -a possibility that it could have some permanent effects on the display media.
-> -I neither have access to nor know exactly what the waveform does in terms of
-> -the physical media.
-> -
-> -Metronomefb uses the deferred IO interface so that it can provide a memory
-> -mappable frame buffer. It has been tested with tinyx (Xfbdev). It is known
-> -to work at this time with xeyes, xclock, xloadimage, xpdf.
-> diff --git a/drivers/video/fbdev/Kconfig b/drivers/video/fbdev/Kconfig
-> index 55c6686f091e..c661b2136009 100644
-> --- a/drivers/video/fbdev/Kconfig
-> +++ b/drivers/video/fbdev/Kconfig
-> @@ -1698,15 +1698,6 @@ config XEN_FBDEV_FRONTEND
->   	  frame buffer driver.  It communicates with a back-end
->   	  in another domain.
->   
-> -config FB_METRONOME
-> -	tristate "E-Ink Metronome/8track controller support"
-> -	depends on FB
-> -	select FB_SYSMEM_HELPERS_DEFERRED
-> -	help
-> -	  This driver implements support for the E-Ink Metronome
-> -	  controller. The pre-release name for this device was 8track
-> -	  and could also have been called by some vendors as PVI-nnnn.
-> -
->   config FB_MB862XX
->   	tristate "Fujitsu MB862xx GDC support"
->   	depends on FB
-> diff --git a/drivers/video/fbdev/Makefile b/drivers/video/fbdev/Makefile
-> index b3d12f977c06..3be6ee8e9136 100644
-> --- a/drivers/video/fbdev/Makefile
-> +++ b/drivers/video/fbdev/Makefile
-> @@ -91,7 +91,6 @@ obj-$(CONFIG_FB_PMAG_AA)	  += pmag-aa-fb.o
->   obj-$(CONFIG_FB_PMAG_BA)	  += pmag-ba-fb.o
->   obj-$(CONFIG_FB_PMAGB_B)	  += pmagb-b-fb.o
->   obj-$(CONFIG_FB_MAXINE)		  += maxinefb.o
-> -obj-$(CONFIG_FB_METRONOME)        += metronomefb.o
->   obj-$(CONFIG_FB_BROADSHEET)       += broadsheetfb.o
->   obj-$(CONFIG_FB_S1D13XXX)	  += s1d13xxxfb.o
->   obj-$(CONFIG_FB_SH7760)		  += sh7760fb.o
-> diff --git a/drivers/video/fbdev/metronomefb.c b/drivers/video/fbdev/metronomefb.c
-> deleted file mode 100644
-> index 6f0942c6e5f1..000000000000
-> --- a/drivers/video/fbdev/metronomefb.c
-> +++ /dev/null
-> @@ -1,724 +0,0 @@
-> -/*
-> - * linux/drivers/video/metronomefb.c -- FB driver for Metronome controller
-> - *
-> - * Copyright (C) 2008, Jaya Kumar
-> - *
-> - * This file is subject to the terms and conditions of the GNU General Public
-> - * License. See the file COPYING in the main directory of this archive for
-> - * more details.
-> - *
-> - * Layout is based on skeletonfb.c by James Simmons and Geert Uytterhoeven.
-> - *
-> - * This work was made possible by help and equipment support from E-Ink
-> - * Corporation. https://www.eink.com/
-> - *
-> - * This driver is written to be used with the Metronome display controller.
-> - * It is intended to be architecture independent. A board specific driver
-> - * must be used to perform all the physical IO interactions. An example
-> - * is provided as am200epd.c
-> - *
-> - */
-> -#include <linux/module.h>
-> -#include <linux/kernel.h>
-> -#include <linux/errno.h>
-> -#include <linux/string.h>
-> -#include <linux/mm.h>
-> -#include <linux/vmalloc.h>
-> -#include <linux/delay.h>
-> -#include <linux/interrupt.h>
-> -#include <linux/fb.h>
-> -#include <linux/init.h>
-> -#include <linux/platform_device.h>
-> -#include <linux/list.h>
-> -#include <linux/firmware.h>
-> -#include <linux/dma-mapping.h>
-> -#include <linux/uaccess.h>
-> -#include <linux/irq.h>
-> -
-> -#include <video/metronomefb.h>
-> -
-> -#include <linux/unaligned.h>
-> -
-> -/* Display specific information */
-> -#define DPY_W 832
-> -#define DPY_H 622
-> -
-> -static int user_wfm_size;
-> -
-> -/* frame differs from image. frame includes non-visible pixels */
-> -struct epd_frame {
-> -	int fw; /* frame width */
-> -	int fh; /* frame height */
-> -	u16 config[4];
-> -	int wfm_size;
-> -};
-> -
-> -static struct epd_frame epd_frame_table[] = {
-> -	{
-> -		.fw = 832,
-> -		.fh = 622,
-> -		.config = {
-> -			15 /* sdlew */
-> -			| 2 << 8 /* sdosz */
-> -			| 0 << 11 /* sdor */
-> -			| 0 << 12 /* sdces */
-> -			| 0 << 15, /* sdcer */
-> -			42 /* gdspl */
-> -			| 1 << 8 /* gdr1 */
-> -			| 1 << 9 /* sdshr */
-> -			| 0 << 15, /* gdspp */
-> -			18 /* gdspw */
-> -			| 0 << 15, /* dispc */
-> -			599 /* vdlc */
-> -			| 0 << 11 /* dsi */
-> -			| 0 << 12, /* dsic */
-> -		},
-> -		.wfm_size = 47001,
-> -	},
-> -	{
-> -		.fw = 1088,
-> -		.fh = 791,
-> -		.config = {
-> -			0x0104,
-> -			0x031f,
-> -			0x0088,
-> -			0x02ff,
-> -		},
-> -		.wfm_size = 46770,
-> -	},
-> -	{
-> -		.fw = 1200,
-> -		.fh = 842,
-> -		.config = {
-> -			0x0101,
-> -			0x030e,
-> -			0x0012,
-> -			0x0280,
-> -		},
-> -		.wfm_size = 46770,
-> -	},
-> -};
-> -
-> -static struct fb_fix_screeninfo metronomefb_fix = {
-> -	.id =		"metronomefb",
-> -	.type =		FB_TYPE_PACKED_PIXELS,
-> -	.visual =	FB_VISUAL_STATIC_PSEUDOCOLOR,
-> -	.xpanstep =	0,
-> -	.ypanstep =	0,
-> -	.ywrapstep =	0,
-> -	.line_length =	DPY_W,
-> -	.accel =	FB_ACCEL_NONE,
-> -};
-> -
-> -static struct fb_var_screeninfo metronomefb_var = {
-> -	.xres		= DPY_W,
-> -	.yres		= DPY_H,
-> -	.xres_virtual	= DPY_W,
-> -	.yres_virtual	= DPY_H,
-> -	.bits_per_pixel	= 8,
-> -	.grayscale	= 1,
-> -	.nonstd		= 1,
-> -	.red =		{ 4, 3, 0 },
-> -	.green =	{ 0, 0, 0 },
-> -	.blue =		{ 0, 0, 0 },
-> -	.transp =	{ 0, 0, 0 },
-> -};
-> -
-> -/* the waveform structure that is coming from userspace firmware */
-> -struct waveform_hdr {
-> -	u8 stuff[32];
-> -
-> -	u8 wmta[3];
-> -	u8 fvsn;
-> -
-> -	u8 luts;
-> -	u8 mc;
-> -	u8 trc;
-> -	u8 stuff3;
-> -
-> -	u8 endb;
-> -	u8 swtb;
-> -	u8 stuff2a[2];
-> -
-> -	u8 stuff2b[3];
-> -	u8 wfm_cs;
-> -} __attribute__ ((packed));
-> -
-> -/* main metronomefb functions */
-> -static u8 calc_cksum(int start, int end, u8 *mem)
-> -{
-> -	u8 tmp = 0;
-> -	int i;
-> -
-> -	for (i = start; i < end; i++)
-> -		tmp += mem[i];
-> -
-> -	return tmp;
-> -}
-> -
-> -static u16 calc_img_cksum(u16 *start, int length)
-> -{
-> -	u16 tmp = 0;
-> -
-> -	while (length--)
-> -		tmp += *start++;
-> -
-> -	return tmp;
-> -}
-> -
-> -/* here we decode the incoming waveform file and populate metromem */
-> -static int load_waveform(u8 *mem, size_t size, int m, int t,
-> -			 struct metronomefb_par *par)
-> -{
-> -	int tta;
-> -	int wmta;
-> -	int trn = 0;
-> -	int i;
-> -	unsigned char v;
-> -	u8 cksum;
-> -	int cksum_idx;
-> -	int wfm_idx, owfm_idx;
-> -	int mem_idx = 0;
-> -	struct waveform_hdr *wfm_hdr;
-> -	u8 *metromem = par->metromem_wfm;
-> -	struct device *dev = par->info->device;
-> -
-> -	if (user_wfm_size)
-> -		epd_frame_table[par->dt].wfm_size = user_wfm_size;
-> -
-> -	if (size != epd_frame_table[par->dt].wfm_size) {
-> -		dev_err(dev, "Error: unexpected size %zd != %d\n", size,
-> -					epd_frame_table[par->dt].wfm_size);
-> -		return -EINVAL;
-> -	}
-> -
-> -	wfm_hdr = (struct waveform_hdr *) mem;
-> -
-> -	if (wfm_hdr->fvsn != 1) {
-> -		dev_err(dev, "Error: bad fvsn %x\n", wfm_hdr->fvsn);
-> -		return -EINVAL;
-> -	}
-> -	if (wfm_hdr->luts != 0) {
-> -		dev_err(dev, "Error: bad luts %x\n", wfm_hdr->luts);
-> -		return -EINVAL;
-> -	}
-> -	cksum = calc_cksum(32, 47, mem);
-> -	if (cksum != wfm_hdr->wfm_cs) {
-> -		dev_err(dev, "Error: bad cksum %x != %x\n", cksum,
-> -					wfm_hdr->wfm_cs);
-> -		return -EINVAL;
-> -	}
-> -	wfm_hdr->mc += 1;
-> -	wfm_hdr->trc += 1;
-> -	for (i = 0; i < 5; i++) {
-> -		if (*(wfm_hdr->stuff2a + i) != 0) {
-> -			dev_err(dev, "Error: unexpected value in padding\n");
-> -			return -EINVAL;
-> -		}
-> -	}
-> -
-> -	/* calculating trn. trn is something used to index into
-> -	the waveform. presumably selecting the right one for the
-> -	desired temperature. it works out the offset of the first
-> -	v that exceeds the specified temperature */
-> -	if ((sizeof(*wfm_hdr) + wfm_hdr->trc) > size)
-> -		return -EINVAL;
-> -
-> -	for (i = sizeof(*wfm_hdr); i <= sizeof(*wfm_hdr) + wfm_hdr->trc; i++) {
-> -		if (mem[i] > t) {
-> -			trn = i - sizeof(*wfm_hdr) - 1;
-> -			break;
-> -		}
-> -	}
-> -
-> -	/* check temperature range table checksum */
-> -	cksum_idx = sizeof(*wfm_hdr) + wfm_hdr->trc + 1;
-> -	if (cksum_idx >= size)
-> -		return -EINVAL;
-> -	cksum = calc_cksum(sizeof(*wfm_hdr), cksum_idx, mem);
-> -	if (cksum != mem[cksum_idx]) {
-> -		dev_err(dev, "Error: bad temperature range table cksum"
-> -				" %x != %x\n", cksum, mem[cksum_idx]);
-> -		return -EINVAL;
-> -	}
-> -
-> -	/* check waveform mode table address checksum */
-> -	wmta = get_unaligned_le32(wfm_hdr->wmta) & 0x00FFFFFF;
-> -	cksum_idx = wmta + m*4 + 3;
-> -	if (cksum_idx >= size)
-> -		return -EINVAL;
-> -	cksum = calc_cksum(cksum_idx - 3, cksum_idx, mem);
-> -	if (cksum != mem[cksum_idx]) {
-> -		dev_err(dev, "Error: bad mode table address cksum"
-> -				" %x != %x\n", cksum, mem[cksum_idx]);
-> -		return -EINVAL;
-> -	}
-> -
-> -	/* check waveform temperature table address checksum */
-> -	tta = get_unaligned_le32(mem + wmta + m * 4) & 0x00FFFFFF;
-> -	cksum_idx = tta + trn*4 + 3;
-> -	if (cksum_idx >= size)
-> -		return -EINVAL;
-> -	cksum = calc_cksum(cksum_idx - 3, cksum_idx, mem);
-> -	if (cksum != mem[cksum_idx]) {
-> -		dev_err(dev, "Error: bad temperature table address cksum"
-> -			" %x != %x\n", cksum, mem[cksum_idx]);
-> -		return -EINVAL;
-> -	}
-> -
-> -	/* here we do the real work of putting the waveform into the
-> -	metromem buffer. this does runlength decoding of the waveform */
-> -	wfm_idx = get_unaligned_le32(mem + tta + trn * 4) & 0x00FFFFFF;
-> -	owfm_idx = wfm_idx;
-> -	if (wfm_idx >= size)
-> -		return -EINVAL;
-> -	while (wfm_idx < size) {
-> -		unsigned char rl;
-> -		v = mem[wfm_idx++];
-> -		if (v == wfm_hdr->swtb) {
-> -			while (((v = mem[wfm_idx++]) != wfm_hdr->swtb) &&
-> -				wfm_idx < size)
-> -				metromem[mem_idx++] = v;
-> -
-> -			continue;
-> -		}
-> -
-> -		if (v == wfm_hdr->endb)
-> -			break;
-> -
-> -		rl = mem[wfm_idx++];
-> -		for (i = 0; i <= rl; i++)
-> -			metromem[mem_idx++] = v;
-> -	}
-> -
-> -	cksum_idx = wfm_idx;
-> -	if (cksum_idx >= size)
-> -		return -EINVAL;
-> -	cksum = calc_cksum(owfm_idx, cksum_idx, mem);
-> -	if (cksum != mem[cksum_idx]) {
-> -		dev_err(dev, "Error: bad waveform data cksum"
-> -				" %x != %x\n", cksum, mem[cksum_idx]);
-> -		return -EINVAL;
-> -	}
-> -	par->frame_count = (mem_idx/64);
-> -
-> -	return 0;
-> -}
-> -
-> -static int metronome_display_cmd(struct metronomefb_par *par)
-> -{
-> -	int i;
-> -	u16 cs;
-> -	u16 opcode;
-> -	static u8 borderval;
-> -
-> -	/* setup display command
-> -	we can't immediately set the opcode since the controller
-> -	will try parse the command before we've set it all up
-> -	so we just set cs here and set the opcode at the end */
-> -
-> -	if (par->metromem_cmd->opcode == 0xCC40)
-> -		opcode = cs = 0xCC41;
-> -	else
-> -		opcode = cs = 0xCC40;
-> -
-> -	/* set the args ( 2 bytes ) for display */
-> -	i = 0;
-> -	par->metromem_cmd->args[i] = 	1 << 3 /* border update */
-> -					| ((borderval++ % 4) & 0x0F) << 4
-> -					| (par->frame_count - 1) << 8;
-> -	cs += par->metromem_cmd->args[i++];
-> -
-> -	/* the rest are 0 */
-> -	memset((u8 *) (par->metromem_cmd->args + i), 0, (32-i)*2);
-> -
-> -	par->metromem_cmd->csum = cs;
-> -	par->metromem_cmd->opcode = opcode; /* display cmd */
-> -
-> -	return par->board->met_wait_event_intr(par);
-> -}
-> -
-> -static int metronome_powerup_cmd(struct metronomefb_par *par)
-> -{
-> -	int i;
-> -	u16 cs;
-> -
-> -	/* setup power up command */
-> -	par->metromem_cmd->opcode = 0x1234; /* pwr up pseudo cmd */
-> -	cs = par->metromem_cmd->opcode;
-> -
-> -	/* set pwr1,2,3 to 1024 */
-> -	for (i = 0; i < 3; i++) {
-> -		par->metromem_cmd->args[i] = 1024;
-> -		cs += par->metromem_cmd->args[i];
-> -	}
-> -
-> -	/* the rest are 0 */
-> -	memset(&par->metromem_cmd->args[i], 0,
-> -	       (ARRAY_SIZE(par->metromem_cmd->args) - i) * 2);
-> -
-> -	par->metromem_cmd->csum = cs;
-> -
-> -	msleep(1);
-> -	par->board->set_rst(par, 1);
-> -
-> -	msleep(1);
-> -	par->board->set_stdby(par, 1);
-> -
-> -	return par->board->met_wait_event(par);
-> -}
-> -
-> -static int metronome_config_cmd(struct metronomefb_par *par)
-> -{
-> -	/* setup config command
-> -	we can't immediately set the opcode since the controller
-> -	will try parse the command before we've set it all up */
-> -
-> -	memcpy(par->metromem_cmd->args, epd_frame_table[par->dt].config,
-> -		sizeof(epd_frame_table[par->dt].config));
-> -	/* the rest are 0 */
-> -	memset(&par->metromem_cmd->args[4], 0,
-> -	       (ARRAY_SIZE(par->metromem_cmd->args) - 4) * 2);
-> -
-> -	par->metromem_cmd->csum = 0xCC10;
-> -	par->metromem_cmd->csum += calc_img_cksum(par->metromem_cmd->args, 4);
-> -	par->metromem_cmd->opcode = 0xCC10; /* config cmd */
-> -
-> -	return par->board->met_wait_event(par);
-> -}
-> -
-> -static int metronome_init_cmd(struct metronomefb_par *par)
-> -{
-> -	int i;
-> -	u16 cs;
-> -
-> -	/* setup init command
-> -	we can't immediately set the opcode since the controller
-> -	will try parse the command before we've set it all up
-> -	so we just set cs here and set the opcode at the end */
-> -
-> -	cs = 0xCC20;
-> -
-> -	/* set the args ( 2 bytes ) for init */
-> -	i = 0;
-> -	par->metromem_cmd->args[i] = 0;
-> -	cs += par->metromem_cmd->args[i++];
-> -
-> -	/* the rest are 0 */
-> -	memset((u8 *) (par->metromem_cmd->args + i), 0, (32-i)*2);
-> -
-> -	par->metromem_cmd->csum = cs;
-> -	par->metromem_cmd->opcode = 0xCC20; /* init cmd */
-> -
-> -	return par->board->met_wait_event(par);
-> -}
-> -
-> -static int metronome_init_regs(struct metronomefb_par *par)
-> -{
-> -	int res;
-> -
-> -	res = par->board->setup_io(par);
-> -	if (res)
-> -		return res;
-> -
-> -	res = metronome_powerup_cmd(par);
-> -	if (res)
-> -		return res;
-> -
-> -	res = metronome_config_cmd(par);
-> -	if (res)
-> -		return res;
-> -
-> -	res = metronome_init_cmd(par);
-> -
-> -	return res;
-> -}
-> -
-> -static void metronomefb_dpy_update(struct metronomefb_par *par)
-> -{
-> -	int fbsize;
-> -	u16 cksum;
-> -	unsigned char *buf = par->info->screen_buffer;
-> -
-> -	fbsize = par->info->fix.smem_len;
-> -	/* copy from vm to metromem */
-> -	memcpy(par->metromem_img, buf, fbsize);
-> -
-> -	cksum = calc_img_cksum((u16 *) par->metromem_img, fbsize/2);
-> -	*((u16 *)(par->metromem_img) + fbsize/2) = cksum;
-> -	metronome_display_cmd(par);
-> -}
-> -
-> -static u16 metronomefb_dpy_update_page(struct metronomefb_par *par, int index)
-> -{
-> -	int i;
-> -	u16 csum = 0;
-> -	u16 *buf = (u16 *)(par->info->screen_buffer + index);
-> -	u16 *img = (u16 *)(par->metromem_img + index);
-> -
-> -	/* swizzle from vm to metromem and recalc cksum at the same time*/
-> -	for (i = 0; i < PAGE_SIZE/2; i++) {
-> -		*(img + i) = (buf[i] << 5) & 0xE0E0;
-> -		csum += *(img + i);
-> -	}
-> -	return csum;
-> -}
-> -
-> -/* this is called back from the deferred io workqueue */
-> -static void metronomefb_dpy_deferred_io(struct fb_info *info, struct list_head *pagereflist)
-> -{
-> -	u16 cksum;
-> -	struct fb_deferred_io_pageref *pageref;
-> -	struct metronomefb_par *par = info->par;
-> -
-> -	/* walk the written page list and swizzle the data */
-> -	list_for_each_entry(pageref, pagereflist, list) {
-> -		unsigned long pgoffset = pageref->offset >> PAGE_SHIFT;
-> -		cksum = metronomefb_dpy_update_page(par, pageref->offset);
-> -		par->metromem_img_csum -= par->csum_table[pgoffset];
-> -		par->csum_table[pgoffset] = cksum;
-> -		par->metromem_img_csum += cksum;
-> -	}
-> -
-> -	metronome_display_cmd(par);
-> -}
-> -
-> -static void metronomefb_defio_damage_range(struct fb_info *info, off_t off, size_t len)
-> -{
-> -	struct metronomefb_par *par = info->par;
-> -
-> -	metronomefb_dpy_update(par);
-> -}
-> -
-> -static void metronomefb_defio_damage_area(struct fb_info *info, u32 x, u32 y,
-> -					  u32 width, u32 height)
-> -{
-> -	struct metronomefb_par *par = info->par;
-> -
-> -	metronomefb_dpy_update(par);
-> -}
-> -
-> -FB_GEN_DEFAULT_DEFERRED_SYSMEM_OPS(metronomefb,
-> -				   metronomefb_defio_damage_range,
-> -				   metronomefb_defio_damage_area)
-> -
-> -static const struct fb_ops metronomefb_ops = {
-> -	.owner	= THIS_MODULE,
-> -	FB_DEFAULT_DEFERRED_OPS(metronomefb),
-> -};
-> -
-> -static struct fb_deferred_io metronomefb_defio = {
-> -	.delay			= HZ,
-> -	.sort_pagereflist	= true,
-> -	.deferred_io		= metronomefb_dpy_deferred_io,
-> -};
-> -
-> -static int metronomefb_probe(struct platform_device *dev)
-> -{
-> -	struct fb_info *info;
-> -	struct metronome_board *board;
-> -	int retval = -ENOMEM;
-> -	int videomemorysize;
-> -	unsigned char *videomemory;
-> -	struct metronomefb_par *par;
-> -	const struct firmware *fw_entry;
-> -	int i;
-> -	int panel_type;
-> -	int fw, fh;
-> -	int epd_dt_index;
-> -
-> -	/* pick up board specific routines */
-> -	board = dev->dev.platform_data;
-> -	if (!board)
-> -		return -EINVAL;
-> -
-> -	/* try to count device specific driver, if can't, platform recalls */
-> -	if (!try_module_get(board->owner))
-> -		return -ENODEV;
-> -
-> -	info = framebuffer_alloc(sizeof(struct metronomefb_par), &dev->dev);
-> -	if (!info)
-> -		goto err;
-> -
-> -	/* we have two blocks of memory.
-> -	info->screen_buffer which is vm, and is the fb used by apps.
-> -	par->metromem which is physically contiguous memory and
-> -	contains the display controller commands, waveform,
-> -	processed image data and padding. this is the data pulled
-> -	by the device's LCD controller and pushed to Metronome.
-> -	the metromem memory is allocated by the board driver and
-> -	is provided to us */
-> -
-> -	panel_type = board->get_panel_type();
-> -	switch (panel_type) {
-> -	case 6:
-> -		epd_dt_index = 0;
-> -		break;
-> -	case 8:
-> -		epd_dt_index = 1;
-> -		break;
-> -	case 97:
-> -		epd_dt_index = 2;
-> -		break;
-> -	default:
-> -		dev_err(&dev->dev, "Unexpected panel type. Defaulting to 6\n");
-> -		epd_dt_index = 0;
-> -		break;
-> -	}
-> -
-> -	fw = epd_frame_table[epd_dt_index].fw;
-> -	fh = epd_frame_table[epd_dt_index].fh;
-> -
-> -	/* we need to add a spare page because our csum caching scheme walks
-> -	 * to the end of the page */
-> -	videomemorysize = PAGE_SIZE + (fw * fh);
-> -	videomemory = vzalloc(videomemorysize);
-> -	if (!videomemory)
-> -		goto err_fb_rel;
-> -
-> -	info->screen_buffer = videomemory;
-> -	info->fbops = &metronomefb_ops;
-> -
-> -	metronomefb_fix.line_length = fw;
-> -	metronomefb_var.xres = fw;
-> -	metronomefb_var.yres = fh;
-> -	metronomefb_var.xres_virtual = fw;
-> -	metronomefb_var.yres_virtual = fh;
-> -	info->var = metronomefb_var;
-> -	info->fix = metronomefb_fix;
-> -	info->fix.smem_len = videomemorysize;
-> -	par = info->par;
-> -	par->info = info;
-> -	par->board = board;
-> -	par->dt = epd_dt_index;
-> -	init_waitqueue_head(&par->waitq);
-> -
-> -	/* this table caches per page csum values. */
-> -	par->csum_table = vmalloc(videomemorysize/PAGE_SIZE);
-> -	if (!par->csum_table)
-> -		goto err_vfree;
-> -
-> -	/* the physical framebuffer that we use is setup by
-> -	 * the platform device driver. It will provide us
-> -	 * with cmd, wfm and image memory in a contiguous area. */
-> -	retval = board->setup_fb(par);
-> -	if (retval) {
-> -		dev_err(&dev->dev, "Failed to setup fb\n");
-> -		goto err_csum_table;
-> -	}
-> -
-> -	/* after this point we should have a framebuffer */
-> -	if ((!par->metromem_wfm) ||  (!par->metromem_img) ||
-> -		(!par->metromem_dma)) {
-> -		dev_err(&dev->dev, "fb access failure\n");
-> -		retval = -EINVAL;
-> -		goto err_csum_table;
-> -	}
-> -
-> -	info->fix.smem_start = par->metromem_dma;
-> -
-> -	/* load the waveform in. assume mode 3, temp 31 for now
-> -		a) request the waveform file from userspace
-> -		b) process waveform and decode into metromem */
-> -	retval = request_firmware(&fw_entry, "metronome.wbf", &dev->dev);
-> -	if (retval < 0) {
-> -		dev_err(&dev->dev, "Failed to get waveform\n");
-> -		goto err_csum_table;
-> -	}
-> -
-> -	retval = load_waveform((u8 *) fw_entry->data, fw_entry->size, 3, 31,
-> -				par);
-> -	release_firmware(fw_entry);
-> -	if (retval < 0) {
-> -		dev_err(&dev->dev, "Failed processing waveform\n");
-> -		goto err_csum_table;
-> -	}
-> -
-> -	retval = board->setup_irq(info);
-> -	if (retval)
-> -		goto err_csum_table;
-> -
-> -	retval = metronome_init_regs(par);
-> -	if (retval < 0)
-> -		goto err_free_irq;
-> -
-> -	info->flags = FBINFO_VIRTFB;
-> -
-> -	info->fbdefio = &metronomefb_defio;
-> -	fb_deferred_io_init(info);
-> -
-> -	retval = fb_alloc_cmap(&info->cmap, 8, 0);
-> -	if (retval < 0) {
-> -		dev_err(&dev->dev, "Failed to allocate colormap\n");
-> -		goto err_free_irq;
-> -	}
-> -
-> -	/* set cmap */
-> -	for (i = 0; i < 8; i++)
-> -		info->cmap.red[i] = (((2*i)+1)*(0xFFFF))/16;
-> -	memcpy(info->cmap.green, info->cmap.red, sizeof(u16)*8);
-> -	memcpy(info->cmap.blue, info->cmap.red, sizeof(u16)*8);
-> -
-> -	retval = register_framebuffer(info);
-> -	if (retval < 0)
-> -		goto err_cmap;
-> -
-> -	platform_set_drvdata(dev, info);
-> -
-> -	dev_dbg(&dev->dev,
-> -		"fb%d: Metronome frame buffer device, using %dK of video"
-> -		" memory\n", info->node, videomemorysize >> 10);
-> -
-> -	return 0;
-> -
-> -err_cmap:
-> -	fb_dealloc_cmap(&info->cmap);
-> -err_free_irq:
-> -	board->cleanup(par);
-> -err_csum_table:
-> -	vfree(par->csum_table);
-> -err_vfree:
-> -	vfree(videomemory);
-> -err_fb_rel:
-> -	framebuffer_release(info);
-> -err:
-> -	module_put(board->owner);
-> -	return retval;
-> -}
-> -
-> -static void metronomefb_remove(struct platform_device *dev)
-> -{
-> -	struct fb_info *info = platform_get_drvdata(dev);
-> -
-> -	if (info) {
-> -		struct metronomefb_par *par = info->par;
-> -
-> -		unregister_framebuffer(info);
-> -		fb_deferred_io_cleanup(info);
-> -		fb_dealloc_cmap(&info->cmap);
-> -		par->board->cleanup(par);
-> -		vfree(par->csum_table);
-> -		vfree(info->screen_buffer);
-> -		module_put(par->board->owner);
-> -		dev_dbg(&dev->dev, "calling release\n");
-> -		framebuffer_release(info);
-> -	}
-> -}
-> -
-> -static struct platform_driver metronomefb_driver = {
-> -	.probe	= metronomefb_probe,
-> -	.remove	= metronomefb_remove,
-> -	.driver	= {
-> -		.name	= "metronomefb",
-> -	},
-> -};
-> -module_platform_driver(metronomefb_driver);
-> -
-> -module_param(user_wfm_size, uint, 0);
-> -MODULE_PARM_DESC(user_wfm_size, "Set custom waveform size");
-> -
-> -MODULE_DESCRIPTION("fbdev driver for Metronome controller");
-> -MODULE_AUTHOR("Jaya Kumar");
-> -MODULE_LICENSE("GPL");
-> -
-> -MODULE_FIRMWARE("metronome.wbf");
-> diff --git a/include/video/metronomefb.h b/include/video/metronomefb.h
-> deleted file mode 100644
-> index 9863f4b6d418..000000000000
-> --- a/include/video/metronomefb.h
-> +++ /dev/null
-> @@ -1,57 +0,0 @@
-> -/*
-> - * metronomefb.h - definitions for the metronome framebuffer driver
-> - *
-> - * Copyright (C) 2008 by Jaya Kumar
-> - *
-> - * This file is subject to the terms and conditions of the GNU General Public
-> - * License. See the file COPYING in the main directory of this archive for
-> - * more details.
-> - *
-> - */
-> -
-> -#ifndef _LINUX_METRONOMEFB_H_
-> -#define _LINUX_METRONOMEFB_H_
-> -
-> -/* command structure used by metronome controller */
-> -struct metromem_cmd {
-> -	u16 opcode;
-> -	u16 args[((64-2)/2)];
-> -	u16 csum;
-> -};
-> -
-> -/* struct used by metronome. board specific stuff comes from *board */
-> -struct metronomefb_par {
-> -	struct metromem_cmd *metromem_cmd;
-> -	unsigned char *metromem_wfm;
-> -	unsigned char *metromem_img;
-> -	u16 *metromem_img_csum;
-> -	u16 *csum_table;
-> -	dma_addr_t metromem_dma;
-> -	struct fb_info *info;
-> -	struct metronome_board *board;
-> -	wait_queue_head_t waitq;
-> -	u8 frame_count;
-> -	int extra_size;
-> -	int dt;
-> -};
-> -
-> -/* board specific routines and data */
-> -struct metronome_board {
-> -	struct module *owner; /* the platform device */
-> -	void (*set_rst)(struct metronomefb_par *, int);
-> -	void (*set_stdby)(struct metronomefb_par *, int);
-> -	void (*cleanup)(struct metronomefb_par *);
-> -	int (*met_wait_event)(struct metronomefb_par *);
-> -	int (*met_wait_event_intr)(struct metronomefb_par *);
-> -	int (*setup_irq)(struct fb_info *);
-> -	int (*setup_fb)(struct metronomefb_par *);
-> -	int (*setup_io)(struct metronomefb_par *);
-> -	int (*get_panel_type)(void);
-> -	unsigned char *metromem;
-> -	int fw;
-> -	int fh;
-> -	int wfm_size;
-> -	struct fb_info *host_fbinfo; /* the host LCD controller's fbi */
-> -};
-> -
-> -#endif
+> diff --git a/include/net/bluetooth/hci_core.h b/include/net/bluetooth/hci=
+_core.h
+> index 9fc8f544e20e..8d37f127ddba 100644
+> --- a/include/net/bluetooth/hci_core.h
+> +++ b/include/net/bluetooth/hci_core.h
+> @@ -237,6 +237,7 @@ struct oob_data {
+>
+>  struct adv_info {
+>         struct list_head list;
+> +       bool    enable_after_set_ext_data;
+>         bool    enabled;
+>         bool    pending;
+>         bool    periodic;
+> diff --git a/include/net/bluetooth/hci_sync.h b/include/net/bluetooth/hci=
+_sync.h
+> index 5224f57f6af2..00eceffeec87 100644
+> --- a/include/net/bluetooth/hci_sync.h
+> +++ b/include/net/bluetooth/hci_sync.h
+> @@ -112,6 +112,7 @@ int hci_schedule_adv_instance_sync(struct hci_dev *hd=
+ev, u8 instance,
+>  int hci_setup_ext_adv_instance_sync(struct hci_dev *hdev, u8 instance);
+>  int hci_start_ext_adv_sync(struct hci_dev *hdev, u8 instance);
+>  int hci_enable_ext_advertising_sync(struct hci_dev *hdev, u8 instance);
+> +int hci_enable_ext_advertising(struct hci_dev *hdev, u8 instance);
+>  int hci_enable_advertising_sync(struct hci_dev *hdev);
+>  int hci_enable_advertising(struct hci_dev *hdev);
+>
+> diff --git a/net/bluetooth/hci_event.c b/net/bluetooth/hci_event.c
+> index 66052d6aaa1d..eb018d8a3c4b 100644
+> --- a/net/bluetooth/hci_event.c
+> +++ b/net/bluetooth/hci_event.c
+> @@ -2184,6 +2184,37 @@ static u8 hci_cc_set_ext_adv_param(struct hci_dev =
+*hdev, void *data,
+>         return rp->status;
+>  }
+>
+> +static u8 hci_cc_le_set_ext_adv_data(struct hci_dev *hdev, void *data,
+> +                                    struct sk_buff *skb)
+> +{
+> +       struct hci_cp_le_set_ext_adv_data *cp;
+> +       struct hci_ev_status *rp =3D data;
+> +       struct adv_info *adv_instance;
+> +
+> +       bt_dev_dbg(hdev, "status 0x%2.2x", rp->status);
+> +
+> +       if (rp->status)
+> +               return rp->status;
+> +
+> +       cp =3D hci_sent_cmd_data(hdev, HCI_OP_LE_SET_EXT_ADV_DATA);
+> +       if (!cp)
+> +               return rp->status;
+> +
+> +       hci_dev_lock(hdev);
+> +
+> +       if (cp->handle) {
+> +               adv_instance =3D hci_find_adv_instance(hdev, cp->handle);
+> +               if (adv_instance) {
+> +                       if (adv_instance->enable_after_set_ext_data)
+> +                               hci_enable_ext_advertising(hdev, cp->hand=
+le);
+> +               }
+> +       }
+> +
+> +       hci_dev_unlock(hdev);
+> +
+> +       return rp->status;
+> +}
+> +
+>  static u8 hci_cc_read_rssi(struct hci_dev *hdev, void *data,
+>                            struct sk_buff *skb)
+>  {
+> @@ -4166,6 +4197,8 @@ static const struct hci_cc {
+>                sizeof(struct hci_rp_le_read_num_supported_adv_sets)),
+>         HCI_CC(HCI_OP_LE_SET_EXT_ADV_PARAMS, hci_cc_set_ext_adv_param,
+>                sizeof(struct hci_rp_le_set_ext_adv_params)),
+> +       HCI_CC_STATUS(HCI_OP_LE_SET_EXT_ADV_DATA,
+> +                     hci_cc_le_set_ext_adv_data),
+>         HCI_CC_STATUS(HCI_OP_LE_SET_EXT_ADV_ENABLE,
+>                       hci_cc_le_set_ext_adv_enable),
+>         HCI_CC_STATUS(HCI_OP_LE_SET_ADV_SET_RAND_ADDR,
+> diff --git a/net/bluetooth/hci_sync.c b/net/bluetooth/hci_sync.c
+> index 1f8806dfa556..da0e39cce721 100644
+> --- a/net/bluetooth/hci_sync.c
+> +++ b/net/bluetooth/hci_sync.c
+> @@ -1262,6 +1262,7 @@ int hci_setup_ext_adv_instance_sync(struct hci_dev =
+*hdev, u8 instance)
+>                 hci_cpu_to_le24(adv->max_interval, cp.max_interval);
+>                 cp.tx_power =3D adv->tx_power;
+>                 cp.sid =3D adv->sid;
+> +               adv->enable_after_set_ext_data =3D true;
+>         } else {
+>                 hci_cpu_to_le24(hdev->le_adv_min_interval, cp.min_interva=
+l);
+>                 hci_cpu_to_le24(hdev->le_adv_max_interval, cp.max_interva=
+l);
+> @@ -1456,6 +1457,23 @@ int hci_enable_ext_advertising_sync(struct hci_dev=
+ *hdev, u8 instance)
+>                                      data, HCI_CMD_TIMEOUT);
+>  }
+>
+> +static int enable_ext_advertising_sync(struct hci_dev *hdev, void *data)
+> +{
+> +       u8 instance =3D PTR_UINT(data);
+> +
+> +       return hci_enable_ext_advertising_sync(hdev, instance);
+> +}
+> +
+> +int hci_enable_ext_advertising(struct hci_dev *hdev, u8 instance)
+> +{
+> +       if (!hci_dev_test_flag(hdev, HCI_ADVERTISING) &&
+> +           list_empty(&hdev->adv_instances))
+> +               return 0;
+> +
+> +       return hci_cmd_sync_queue(hdev, enable_ext_advertising_sync,
+> +                                 UINT_PTR(instance), NULL);
+> +}
+> +
+>  int hci_start_ext_adv_sync(struct hci_dev *hdev, u8 instance)
+>  {
+>         int err;
+> @@ -1464,11 +1482,11 @@ int hci_start_ext_adv_sync(struct hci_dev *hdev, =
+u8 instance)
+>         if (err)
+>                 return err;
+>
+> -       err =3D hci_set_ext_scan_rsp_data_sync(hdev, instance);
+> -       if (err)
+> -               return err;
+> -
+> -       return hci_enable_ext_advertising_sync(hdev, instance);
+> +       /* SET_EXT_ADV_DATA and SET_EXT_ADV_ENABLE are called in the
+> +        * asynchronous response chain of set_ext_adv_params in order to
+> +        * set the advertising data first prior enabling it.
+> +        */
 
--- 
---
-Thomas Zimmermann
-Graphics Driver Developer
-SUSE Software Solutions Germany GmbH
-Frankenstrasse 146, 90461 Nuernberg, Germany
-GF: Ivo Totev, Andrew Myers, Andrew McDonald, Boudien Moerman
-HRB 36809 (AG Nuernberg)
+Doing things asynchronously is known to create problems, which is why
+we introduced the cmd_sync infra to handle a chain of commands like
+this, so Id suggest sticking to the synchronous way, if the order
+needs to be changed then use a quirk to detect it and then make sure
+the instance is disabled on hci_set_ext_adv_data_sync and then
+re-enable after updating it.
 
+> +       return hci_set_ext_scan_rsp_data_sync(hdev, instance);
+>  }
+>
+>  int hci_disable_per_advertising_sync(struct hci_dev *hdev, u8 instance)
+> @@ -1832,8 +1850,14 @@ static int hci_set_ext_adv_data_sync(struct hci_de=
+v *hdev, u8 instance)
+>
+>         if (instance) {
+>                 adv =3D hci_find_adv_instance(hdev, instance);
+> -               if (!adv || !adv->adv_data_changed)
+> +               if (!adv)
+>                         return 0;
+> +               if (!adv->adv_data_changed) {
+> +                       if (adv->enable_after_set_ext_data)
+> +                               hci_enable_ext_advertising_sync(hdev,
+> +                                                               adv->hand=
+le);
+> +                       return 0;
+> +               }
+>         }
+>
+>         len =3D eir_create_adv_data(hdev, instance, pdu->data,
+> --
+> 2.43.0
+>
+
+
+--=20
+Luiz Augusto von Dentz
 
