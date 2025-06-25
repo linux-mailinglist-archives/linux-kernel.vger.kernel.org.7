@@ -1,247 +1,117 @@
-Return-Path: <linux-kernel+bounces-702775-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-702776-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id A8A53AE872B
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Jun 2025 16:53:58 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4D66AAE8737
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Jun 2025 16:56:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 812BB1897426
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Jun 2025 14:54:09 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 143A6167B64
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Jun 2025 14:56:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 66EF226A0A0;
-	Wed, 25 Jun 2025 14:53:30 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B8A903A1BA;
-	Wed, 25 Jun 2025 14:53:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3E091262FF1;
+	Wed, 25 Jun 2025 14:55:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="3USGO9Cx"
+Received: from mail-lf1-f52.google.com (mail-lf1-f52.google.com [209.85.167.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0D5AF17BEBF
+	for <linux-kernel@vger.kernel.org>; Wed, 25 Jun 2025 14:55:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750863209; cv=none; b=uyTnfIg0Lz0TCi12SXnNPhJ1VZKMhKFMN0HQgahXt9h6NQXWz4jyAnMIR3qCv3u5+6tpUJ8hiX1vG5BxYbvO9C5eQ+X7tzAhejRD0JzMyFKYlO9F2IZlR8KJC7n2vjHOpHDIA+Qrr1Tz+Ia9Fn8MHhvMAHrMG1epN3m289cBl+U=
+	t=1750863356; cv=none; b=IReM/OwOEo/4uw4MUM0tHTZ5B0C/2+eKg9E5cgbyVwR7chxTacskhKsOJSPTxA5/GmNb9eBqPgEn5AbyJNokJM1BnGESuk4+Ils62+t6Ikcs7SjIKtKAppboFa7KD2CqGt0hVYsm0ha4BZj2kKhD+7IqDemFsxM6JqyQSM97XJo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750863209; c=relaxed/simple;
-	bh=BZTfedCKdq6x+7eR+NF9rZHR9g2/RXBYOmiF0RhPWvQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=bq9qo00NgVF/74w+/1KE/YoNc3R6Nx1G909PGkZS2KgZXoxVFmFoPY1PE2gBtL4vh+EA/nOEJPXRMvLx9l/1gIfWfgnaD+R7mtbiZ3ttX+jFd4PouQ0mlk6jcWI/mewMfCzJiU4Pylk8T/KVPM0l/mSZynvVsX3Ix7wmpE0LEIE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id C070D106F;
-	Wed, 25 Jun 2025 07:53:08 -0700 (PDT)
-Received: from pluto (usa-sjc-mx-foss1.foss.arm.com [172.31.20.19])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 2F42D3F58B;
-	Wed, 25 Jun 2025 07:53:24 -0700 (PDT)
-Date: Wed, 25 Jun 2025 15:53:21 +0100
-From: Cristian Marussi <cristian.marussi@arm.com>
-To: Dhruva Gole <d-gole@ti.com>
-Cc: Cristian Marussi <cristian.marussi@arm.com>,
-	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	arm-scmi@vger.kernel.org, sudeep.holla@arm.com,
-	james.quinlan@broadcom.com, f.fainelli@gmail.com,
-	vincent.guittot@linaro.org, etienne.carriere@st.com,
-	peng.fan@oss.nxp.com, michal.simek@amd.com, quic_sibis@quicinc.com,
-	dan.carpenter@linaro.org, souvik.chakravarty@arm.com
-Subject: Re: [RFC PATCH 0/7] Introduce SCMI Telemetry support
-Message-ID: <aFwNYf2T8USGW2au@pluto>
-References: <20250620192813.2463367-1-cristian.marussi@arm.com>
- <20250624102233.mdvffjvilozfz25f@lcpd911>
+	s=arc-20240116; t=1750863356; c=relaxed/simple;
+	bh=jrBtoywouXF/4yYfXz6f2gT+dZfD6qO0490nSXgTbM0=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=IQIEgKsCg5N1MOa/AmczIT1Ps7LYu9DsoX+tQGqKWArUGfFjQTD1S8O35QqT1zS4sefL/Xo5NT+R2FXLj1uysc9AObbgQpOoyCIZqo7CdHzzcKxlHFrdNsA2401/IlObKgAoddzhjH1SNkJlB8DxxULHOSm/phiinkXQ+t1V6s8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=3USGO9Cx; arc=none smtp.client-ip=209.85.167.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
+Received: by mail-lf1-f52.google.com with SMTP id 2adb3069b0e04-55351af2fc6so6864108e87.0
+        for <linux-kernel@vger.kernel.org>; Wed, 25 Jun 2025 07:55:54 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1750863353; x=1751468153; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=jrBtoywouXF/4yYfXz6f2gT+dZfD6qO0490nSXgTbM0=;
+        b=3USGO9CxYLwVCIgGOXUk8Xy6OtQJ5adXMT+EBIbjhWERKO2uu1V+R55zS5iP+qFi8+
+         NK+nvZHlTHZxr9xYe2LBAIgMXH40zR/8rTUgbLNIWY+AnU6zwvI95ty3yXyXkXQD3VSW
+         Pv9ZzPU7uLHKZzU411ISuf7tWJk+3qRSCVDjFAU1GR17T7FRUzcY6DRek7eANiv03KRa
+         6KHnVewXrFAXXttVY83h7UiHaazMKQMQs7s/szhSKLjOq+E/4DY59Y9ewQcs296z099M
+         BRcgpVE97GNy2bL2bCvuKQtNpoIihJ6fOaVsbxPNp2XY7QVush3pqB6d9R3Cejjl4sjs
+         bZtA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1750863353; x=1751468153;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=jrBtoywouXF/4yYfXz6f2gT+dZfD6qO0490nSXgTbM0=;
+        b=JwxqjmDHQUCt0frfp0OvbxmO7pbuGTmGgodlcL/aY4cJGrqvqvJ8gC1cuOwZSxG4r8
+         v4vlKYvMMMh2u5qirG6GYPTrpZg11e0JiUtnkzmoYemWRyyxZRgkhTeCHtr9VW5S8z8a
+         +MDU0odcasG3py1MJuN1cml0mCYH1xsbudK4ZUZpuLPmlzFYzuEuoweLOhcgKP9Tj7RN
+         umHMA+4eRgqNgXFdDmvDzWd7ZwCGlNQIzCRMK7UHlXaasz2fCp+V5Q/WBaUmiU2MabW8
+         yolG7KQ171atTRAGmRJeuF+fqLStPxgmbzLpMtfQ1fXaicWGSme/AG+837i4l4siMkuP
+         u15Q==
+X-Forwarded-Encrypted: i=1; AJvYcCUcYK48c0pAwEG/XarSVYqjITs/FnsIeheq3bXDZhOYegeB0VdFXLZ7uaItakAh8mfXe9IqdL0XOFsIt9E=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyNixndKqYgXtAdGWYeey3vpCR21le5+vCs3EGRImRk2XFMRbtG
+	x6/bob4jLOZOsuQ1k6kOS+MkVuzSiVlGItq4gpZ21aEjxAL/DVk4vLpBg+7rDri0qFXSkKwH5Sw
+	NYo9pqP2y2ttDyeJtO3GuorRcS6hOfe7qGSF3zpVVQg==
+X-Gm-Gg: ASbGncvVVzl7VOt3sIqBiIqmcsDMjGYiyqlnLLB1clIZ/ClFPULofe9FlvTmFv7f8ie
+	lJLezttjxxp2Jsk8IZl01tTWboVFoMdHolFPcPSMrZhKp9ZqSs096QVWOpIR2ZkTue+0FI7Xag8
+	jqxjJ0qAxBckFm3cbvFDjea90OOW+XniHAdFOS98ypl5Lk27v5Lnme7bux+Go8TZQCLUtpoDIk1
+	ng=
+X-Google-Smtp-Source: AGHT+IGAUq5gFTw7qUZjZn3rHuNNjUzgrTHXn3aPE83EdUFWdbkV7VelOsQBi1h7nliNA6yx9WJxaL/S6b9yacsmTDQ=
+X-Received: by 2002:a05:6512:1591:b0:553:abe6:e3e7 with SMTP id
+ 2adb3069b0e04-554fdf5cefbmr1084123e87.47.1750863352960; Wed, 25 Jun 2025
+ 07:55:52 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250624102233.mdvffjvilozfz25f@lcpd911>
+References: <20250625-qcom-scm-race-v1-0-45601e1f248b@linaro.org>
+ <20250625-qcom-scm-race-v1-3-45601e1f248b@linaro.org> <efbe6c4d-cbf2-4749-8a3f-a69b2e4b726c@oss.qualcomm.com>
+In-Reply-To: <efbe6c4d-cbf2-4749-8a3f-a69b2e4b726c@oss.qualcomm.com>
+From: Bartosz Golaszewski <brgl@bgdev.pl>
+Date: Wed, 25 Jun 2025 16:55:42 +0200
+X-Gm-Features: Ac12FXwpw1VlRY373Rr5D8HNLBzbb_Agr5ioNTABVgBeHneEchkZKiZDcld1xlY
+Message-ID: <CAMRc=McS2MceSr6OmZc4stVAmKd0=gAYUH4qCzZUDYQEYVFnFw@mail.gmail.com>
+Subject: Re: [PATCH 3/4] firmware: qcom: scm: initialize tzmem before marking
+ SCM as available
+To: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+Cc: Bjorn Andersson <andersson@kernel.org>, Konrad Dybcio <konradybcio@kernel.org>, 
+	linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Tue, Jun 24, 2025 at 03:52:33PM +0530, Dhruva Gole wrote:
-> Hey Cristian,
-> 
-
-Hi Dhruva,
-
-thanks for leaving your feedback.
-
-> On Jun 20, 2025 at 20:28:06 +0100, Cristian Marussi wrote:
-> > Hi all,
-> > 
-
-[snip]
-
-> > 
-> >  2. an alternative and surely more performant API based on chardev file_ops
-> >    and IOCTLs as described fully in:
-> > 
-> > 	include/uapi/linux/scmi.h
-> > 
-> >    This, in a nutshell, creates one char-device /dec/scmi_tlm_0 for-each
-> >    SCMI Telemetry instance found on the system and then:
-> > 
-> >    - uses some IOCTLs to configure a set of properties equivalent to the
-> >      ones above in SysFS
-> >    - uses some other IOCTLs for direct access to data in binary format
-> >    - uses a .read file_operations to read back a human readable buffer
-> >      containing all the enabled DEs using the same format as above
-> > 	<DE_ID> <TIMESTAMP> <DATA_VALUE>
-> >    - (TBD) uses .mmap file_operation to allow for the raw unfiltered access
-> >      to the SCMI Telemetry binary data as provided by the platform
-> > 
-> > This initial RFC aims at first to explore and experiment to find the best
-> > possible userspace API (or mix of APIs) that can provide simplicity of use
-> > while also ensuring high performance from the user-space point of view.
-> 
-> I think the IOCTL based API and then a userspace tool that can use these
-> sounds good for now.
+On Wed, Jun 25, 2025 at 4:47=E2=80=AFPM Konrad Dybcio
+<konrad.dybcio@oss.qualcomm.com> wrote:
+>
+> On 6/25/25 10:14 AM, Bartosz Golaszewski wrote:
+> > From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+> >
+> > Now that qcom_scm_shm_bridge_enable() uses the struct device passed to
+> > it as argument to make the QCOM_SCM_MP_SHM_BRIDGE_ENABLE SCM call, we
+> > can move the TZMem initialization before the assignment of the __scm
+> > pointer in the SCM driver (which marks SCM as ready to users) thus
+> > fixing the potential race between consumer calls and the memory pool
+> > initialization.
+> >
+> > Signed-off-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+> > ---
+>
+> I'm not sure any user of tzmem ever checks qcom_scm_is_available()
 >
 
-Definitely better for performance...
+Well, they all should, right? At least the ICE and fastrpc drivers do
+check this from a quick glance. Also: every call that has more than 4
+arguments will be an implicit user of tzmem.
 
-> > 
-> > IOW, nothing is set in stone as of now (clearly) some of the alternative
-> > options going ahead are:
-> > 
-> >  A. shrinking the gigantic SysFS above to keep only a few of those knobs
-> >     while keeping and extending the chardev API
-> > 
-> >  B. keeping the gigantic FS for readability, but moving to a real
-> >     standalone Telemetry-FS to overcome the limitations/constraints of
-> >     SysFS, while keeping the chardev/IOCTL API for performance
-> >     (not sure anyway the gigantic FS would be acceptable or makes sense
-> >     anyway)
-> > 
-> >  C. keeping the gigantic FS but move it to debugfs so as to provide it
-> >     only for test/debug/devel, while keeping only the chardev/IOCTLs as
-> >     the production interface
-> 
-> 
-> As for this series, I would support the motion to move this to debugFS.
-> Similar to how we have /sys/kernel/debug/scmi/0/raw ...
-> I think grouping telemetry too under the same debug/ interface makes more
-> sense to me.
-> 
-
-... indeed all of this was initially prototyped under debugfs in
-
-	/sys/kernel/debug/scmi/0/telemetry
-
-The thing is, of course, anything there is doomed to be axed in a
-production system....so you would loose the human-readable and easily
-scriptable API...while moving to sysfs is probably less of acceptable
-for a number of reasons (like multi value files...)
-
-... so for these reasons I would also be tempted by a variation of B:
-
- - a standlone full-fledged filesystem to overcome sysfs limitations,
-   but stripped down a bit to avoid the full-depth of the above sysfs
-   tree (say dropping the DEs dedicated subdirectories), and augmented
-   with some dedicated file and related IOCTL/file_operations based binary
-   interface as described in the current uapi, so as to avoid additional
-   dedicated char-devices to cope with
-
-> > 
-> > ... moreover we could also additionally:
-> > 
-> >  D. generalize enough one of the above choices to make it abstract enough
-> >     that other non-SCMI based telemetry can plug into some sort of geenric
-> >     Telemetry subsystem
-> 
-> To my knowledge, I don't see that many users of firmware based telemetry similar to how
-> SCMI telemetry is being proposed. So maybe at the moment a whole new
-> telemetry subsystem might be an overkill.
->
-
-Yes...and  indee  this would be a nice to have, BUT at the moment being SCMI
-the one and only user of this new subsystem, I would NOT even have
-enough non-SCMI use-cases to look at in order to generalize and abstract
-some common features...
- 
-> > 
-> >  E. explore completely different APIs to userspace (netlink ?)
-> > 
-> >  F. additionally serve some of the DEs in some existent Kernel subsystem
-> >     (like HWMON/IIO/PERF...) under the constraint discussed above (i.e.
-> >     userspace has to tell me which DEs can fit into which subsys)
-> 
-> Perhaps in the future...
-> 
-> As a user, having used hwmon in the past, and also looking at the SCMI spec example
-> of capturing the output of a sensor which measures the temperature of a PE
-> 
-> Here's some points that support that:
-> 
-> * HWMON is a well-established interface for exposing sensor data (temperature,
-> voltage, current, power, etc.) to userspace via sysfs.
-> 
-> * Many userspace tools (e.g., lm-sensors, monitoring dashboards) already 
-> understand HWMON.
-> 
-
-Absolutely, but, just to be clear, here I am talking about adding some of
-the discovered Telemetry DEs also as additional sensor devices to HWMON,
-BUT any existing sensor discovered via the SCMI Sensor protocol (0x15)
-which is currently fed into HWMON or IIO will STILL be handled by those
-subsystems....
-
-> * Well-known/architected SCMI DEs (like temperature, voltage, power)
-> directly map to HWMON sensor types.
-> 
-
-...well the thing is, while you can be sure that a DE is a temperature
-you cannot automatically be sure of WHAT it is really measuring (name is
-also optional) OR if it fits (or you want it to fit) into HWMON or IIO
-subsystems...IOW there are NO well-known/architected DE beside a few
-general events in the 0xA000-0xA013 range...
-
-> However I can see that we may hit a limitation with that with the amount
-> of flexibility in SCMI telemetry, it may not always fit well in hwmon.
-> 
-> But, I think we can still leverage hwmon for telemetry related to power/
-> sensor related info.
-> 
-
-Absolutely, but as of now I think Kernel needs some sort of feedback/config
-info from userspace to identify WHAT is fine to be registered with HWMON/IIO/PERF
-etc etc...since userspace is where the precise semantic decription of what-the-hell
-0x1234 ID represents on the specific platform...
-(so that is the reason for still NOT having this mechanism in this series...)
-
-> The question about how do we differentiate between the above subsystems
-> is still open. Do we expect telemetry to purely come from the firmware
-> once the kernel is booted up already and is limited in the scope of what
-> it knows about the system its running on?
-> Or, can we somehow use DT to specify the subsystem we are interested in
-> based on the telemetry "number" and some compatible?
-> 
-
-I dont think DT is a viable option for this kind of descriptions...I was
-more thinking about an extension of (whatever we choose as) API which
-a userspace app can use to select which DEs is approriate for a specific
-kernel subsystem (f anything)
-
-> > 
-> >     NOTE THAT, this latter solution CANNOT be the only solution, because
-> >     all of the above subsystem (beside PERF) expose a SysFS-based userspace
-> >     interface (AFAIK), so, using their standard well-known interfaces WON'T
-> >     solve the performance and scalability problem we have in our SysFS.
-> > 
-> > Beside all of the above, the specification is still in ALPHA_0 and some
-> > features are still NOT supported by this series...
-> > 
-> > ...and of course any form of documentation is still missing :D
-> > 
-> > Based on V6.16-rc2.
-> > 
-> > Any feedback welcome,
-> > 
-> > For whoever had the gut to read till here :P ...
-> 
-> Hehe.. somehow managed to read it all :P
-> 
-
-...congratulations ! (I have no prizes to distribute, though :P)
-
-Thanks
-Cristian,
+Bartosz
 
