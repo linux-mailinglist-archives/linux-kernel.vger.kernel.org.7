@@ -1,164 +1,103 @@
-Return-Path: <linux-kernel+bounces-702442-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-702445-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1CDC3AE8283
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Jun 2025 14:20:20 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 586D0AE828E
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Jun 2025 14:21:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 528183B5A6F
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Jun 2025 12:19:43 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 33DD61BC0D4E
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Jun 2025 12:21:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1D6FC25F98C;
-	Wed, 25 Jun 2025 12:19:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C71C425EF98;
+	Wed, 25 Jun 2025 12:21:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="K/gCwCFk"
-Received: from mail-wm1-f53.google.com (mail-wm1-f53.google.com [209.85.128.53])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=sipsolutions.net header.i=@sipsolutions.net header.b="D/cOxRnO"
+Received: from sipsolutions.net (s3.sipsolutions.net [168.119.38.16])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 57DF525CC49
-	for <linux-kernel@vger.kernel.org>; Wed, 25 Jun 2025 12:19:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9E79E25E806;
+	Wed, 25 Jun 2025 12:21:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=168.119.38.16
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750853981; cv=none; b=TJLKqu9TPn2U6ElXueLNKP0nEQd9RRWKGYHtPOlpLchcXN8HEYfBFLQ2E/Rc5JwQL/69kpzqL7lnZeaoJXxD17+zv5DnHlLRUtZk6wH1iRU+puj1QfRX3alsx3y3c83HREJ1EZK/NKdvrud32u+EAu08+HswDyPHJn4MSHOKJrc=
+	t=1750854083; cv=none; b=UCfays6U3p76bIYIxXqjYtjXX9CbZKdDMNQQTG7xQyVNoLF1rn+XN7mIpTmCNPlUaFsKhSmEY/6+j7tYoCuEDeKI+4eH3s0AEphMgazHFk2I+wycf4RHmc2Sx0uhal6I6oZ9cpmOE3uPkOxICvW2RnxJIu8ulepjCTLPzo6M7PI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750853981; c=relaxed/simple;
-	bh=XRVu8I1TW50eEO7yMqUltjODw6rALvnLW/kAKL0wlng=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=OdNJzRMSBYgyzkLQkMYkRHtSLk9ScA71q8OV0qkmtM9/+0/TuAsRg8xoI5GNP5wQytBM+Ve0ndWKDN2qRIEdoREGw7gYJrNyxEwiNNffq8XnLQPBQoLJSL7LxxzYNCTojooKW53J2LBkM7y+Q6Iysht5dPNX12jlnsvYLsjQoQY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=K/gCwCFk; arc=none smtp.client-ip=209.85.128.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
-Received: by mail-wm1-f53.google.com with SMTP id 5b1f17b1804b1-451d7b50815so52312095e9.2
-        for <linux-kernel@vger.kernel.org>; Wed, 25 Jun 2025 05:19:38 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=suse.com; s=google; t=1750853977; x=1751458777; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=XRVu8I1TW50eEO7yMqUltjODw6rALvnLW/kAKL0wlng=;
-        b=K/gCwCFk09WX0H0oWIXqs2wjgQli14b25T0WLHKCUyiWLMs/ywCJ2Xt/IXJIfskPYY
-         MzCP/P2BH5j4uav3CpM5H1YjNsFSuKltV/62YVnZA31GDuO9LnHmeQK9283KWtm7o2oL
-         cveGVKjk6nvnSy6ARfJHyHa7aNTHh4J39udXRrkqicXb3x2/QWvoA5NtCjX8Iq24DIe2
-         MZZp96OLryDmicqZHfgCNXdhOP8q5sh8YJbCEwbfLl4qsYfVTC3Q3kUqo8mA9lJu6Dcu
-         P8Lmhj2AcYBE30z58yZZ2gIXJBBbknPouGx7vO/LLWbvTtzbj2B95k31m+JSm22G8hXg
-         +Txw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1750853977; x=1751458777;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=XRVu8I1TW50eEO7yMqUltjODw6rALvnLW/kAKL0wlng=;
-        b=qZBLG0B+84/s0KfEKHvRyqhN/TBdcUJIoYMT6wpflGkP8vwTwSYj3+k2vcmI1SiSi2
-         VK9+4fWBGp511h0SonTdDRQMKKLJVYgpV97Rtbc5kuUCDnueXw1+drxs7ViAE0dCaGSL
-         5THmr8hwRUzgtYCONCmcM6Z6Mx5TWDa777CCcdSrEnMkNovYhlBtKeFFlquWJaTq4wdJ
-         NTRNgyO5urDBZx1GmWDZt3D6w1MVL8DowptwvyXATkqfEAlKKUbIzbWeems8MnLX5pnN
-         M8bU2GvrKYi73ZJZCaUWwpXa408M2dNUBthQ6Xx2XZtHm35Y67PBFnGwMbZnBUnGMXo/
-         huZQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVYtwiGFbDCy0N3ew9dEhsZbT0j9Tob50ZWLjFB7GAYF8kMeLE9vaFSHvtzCMeAt4hPVSVstJWzKZc7mvk=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyH3K2C5vG2r7TjPJ4CCnu1eetspbh6y0AHK2N1ECfklHLN3Xb7
-	tUS/FlZDi9mmdmgMzZlKMP9L5UxewugG9c32NbQAju6CvSssYxD1KCW2NXOt1qJ+J18=
-X-Gm-Gg: ASbGncsrd/feD95bdEt7xJawiUkIyypL0wekruA7xi0eU7EBPXPGxByXepKH1m6ZeQV
-	wiOfLAUVrP/1qHYARzmLkKR/DY3myIb9xsTmL3JkQDapIzSouhhvyQrt+KvCSz11Eed8PMevRGd
-	O1950U8+TJONJ+31UEvTOcywnY2xn1OmWIOJ3WJk65LGTj9ht0GsQ0xXS9GvkzfGEptocfhAB3S
-	SGc+rUK0WVWeKs/nO3PB0Jc3YCOFHbBJRhSSMbyLXWrxUX5UNn/vCGFmuMyl8Ep9EO5an93gI6L
-	HqRocB3z9Z89JcANDSzS3iFuOLRHtC7P9vCshSDa1fhGrET6jWueYzAvLrZnTcAi
-X-Google-Smtp-Source: AGHT+IFenLT6lFTGDmYC2ik7lE03eZEeBOn7sNQj0UmfMjCUA6i2rdTwHxLvkI7uVFxXLFUNIq0hTQ==
-X-Received: by 2002:a5d:5c0b:0:b0:3a4:ee3f:8e1e with SMTP id ffacd0b85a97d-3a6ed652736mr2376381f8f.39.1750853977443;
-        Wed, 25 Jun 2025 05:19:37 -0700 (PDT)
-Received: from blackdock.suse.cz ([193.86.92.181])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3a6e80ff561sm4581365f8f.68.2025.06.25.05.19.36
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 25 Jun 2025 05:19:37 -0700 (PDT)
-Date: Wed, 25 Jun 2025 14:19:35 +0200
-From: Michal =?utf-8?Q?Koutn=C3=BD?= <mkoutny@suse.com>
-To: Chen Yu <yu.c.chen@intel.com>
-Cc: Jonathan Corbet <corbet@lwn.net>, 
-	Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, 
-	Shakeel Butt <shakeel.butt@linux.dev>, Juri Lelli <juri.lelli@redhat.com>, 
-	Ben Segall <bsegall@google.com>, Libo Chen <libo.chen@oracle.com>, Mel Gorman <mgorman@suse.de>, 
-	Valentin Schneider <vschneid@redhat.com>, Andrew Morton <akpm@linux-foundation.org>, 
-	"Liam R. Howlett" <Liam.Howlett@oracle.com>, Lorenzo Stoakes <lorenzo.stoakes@oracle.com>, 
-	Vlastimil Babka <vbabka@suse.cz>, Phil Auld <pauld@redhat.com>, Tejun Heo <tj@kernel.org>, 
-	Daniel Jordan <daniel.m.jordan@oracle.com>, Jann Horn <jannh@google.com>, Pedro Falcato <pfalcato@suse.de>, 
-	Aubrey Li <aubrey.li@intel.com>, Tim Chen <tim.c.chen@intel.com>, 
-	"Huang, Ying" <ying.huang@linux.alibaba.com>, linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-mm@kvack.org
-Subject: Re: [PATCH v2] sched/numa: Introduce per cgroup numa balance control
-Message-ID: <ldyynnd3ngxnu3bie7ezuavewshgfepro5kjids6cuxy4imzy5@nt5id7nj5kt7>
-References: <20250625102337.3128193-1-yu.c.chen@intel.com>
+	s=arc-20240116; t=1750854083; c=relaxed/simple;
+	bh=j9lxAywOv5yt4LeQ6A3AxT624fpEB3GL4l9rgh6gKj8=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=OjWncCcpEEB441kwaMnil4R5UBP5vXajxu5F22S1LZFiRBlJ4T+ZCDOyGw0KYXNbbW9JRdneHyAng+tvVISKDun8AheBEtq2zB1d8J7xVmGsgT32d8no66MryM3c0fq/ETAz2Rv/DRuqTk10RFVoBpWOhjIXmY+0vzCMXEHYop0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sipsolutions.net; spf=pass smtp.mailfrom=sipsolutions.net; dkim=pass (2048-bit key) header.d=sipsolutions.net header.i=@sipsolutions.net header.b=D/cOxRnO; arc=none smtp.client-ip=168.119.38.16
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sipsolutions.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sipsolutions.net
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=sipsolutions.net; s=mail; h=MIME-Version:Content-Transfer-Encoding:
+	Content-Type:References:In-Reply-To:Date:Cc:To:From:Subject:Message-ID:Sender
+	:Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:Resent-To:
+	Resent-Cc:Resent-Message-ID; bh=j9lxAywOv5yt4LeQ6A3AxT624fpEB3GL4l9rgh6gKj8=;
+	t=1750854081; x=1752063681; b=D/cOxRnO7VMqyRtGInj2VexJGr2raup6RlPuGSVHyN6lRqY
+	wxmERjFFyTtHe3UyBYwGvO6/vhu/JsDhihck9/wkvkDMUALxRdPwSMJ9y/LHmLPxyxBeiAxD2dWhM
+	2EkoXrhRyRM/pJS5/3lHBj0ADeol0FzhbYYu1IQnHoJBw80hE+/9yeX0DzxFRhwMzD4zvhFy4ABnT
+	7eKTYQme/O6mGvrfdldpDPEApYfHyl01qIEnkgVVFV3G6NSpZ28FBZtNE4+ZyDxoc6b8ALPOXmdsL
+	d4YBPGGdrHDY8D2dAbR1SfwdlfQSFsFigZvecjKVaK+0fqdMc1jA2VqkFJyAIMrQ==;
+Received: by sipsolutions.net with esmtpsa (TLS1.3:ECDHE_X25519__RSA_PSS_RSAE_SHA256__AES_256_GCM:256)
+	(Exim 4.98.2)
+	(envelope-from <johannes@sipsolutions.net>)
+	id 1uUP7I-00000009xkX-2M7X;
+	Wed, 25 Jun 2025 14:20:40 +0200
+Message-ID: <dd87fa28e596126536d79281e87e2e0f52d9dfd4.camel@sipsolutions.net>
+Subject: Re: [PATCH 6/9] kasan/um: call kasan_init_generic in kasan_init
+From: Johannes Berg <johannes@sipsolutions.net>
+To: Sabyrzhan Tasbolatov <snovitoll@gmail.com>, ryabinin.a.a@gmail.com, 
+	glider@google.com, andreyknvl@gmail.com, dvyukov@google.com, 
+	vincenzo.frascino@arm.com, catalin.marinas@arm.com, will@kernel.org, 
+	chenhuacai@kernel.org, kernel@xen0n.name, maddy@linux.ibm.com,
+ mpe@ellerman.id.au, 	npiggin@gmail.com, christophe.leroy@csgroup.eu,
+ hca@linux.ibm.com, 	gor@linux.ibm.com, agordeev@linux.ibm.com,
+ borntraeger@linux.ibm.com, 	svens@linux.ibm.com, richard@nod.at,
+ anton.ivanov@cambridgegreys.com, 	dave.hansen@linux.intel.com,
+ luto@kernel.org, peterz@infradead.org, 	tglx@linutronix.de,
+ mingo@redhat.com, bp@alien8.de, x86@kernel.org, hpa@zytor.com, 
+	chris@zankel.net, jcmvbkbc@gmail.com, akpm@linux-foundation.org
+Cc: guoweikang.kernel@gmail.com, geert@linux-m68k.org, rppt@kernel.org, 
+	tiwei.btw@antgroup.com, richard.weiyang@gmail.com, benjamin.berg@intel.com,
+ 	kevin.brodsky@arm.com, kasan-dev@googlegroups.com, 
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
+	loongarch@lists.linux.dev, linuxppc-dev@lists.ozlabs.org, 
+	linux-s390@vger.kernel.org, linux-um@lists.infradead.org, linux-mm@kvack.org
+Date: Wed, 25 Jun 2025 14:20:38 +0200
+In-Reply-To: <20250625095224.118679-7-snovitoll@gmail.com> (sfid-20250625_115328_891177_CC2D325A)
+References: <20250625095224.118679-1-snovitoll@gmail.com>
+	 <20250625095224.118679-7-snovitoll@gmail.com>
+	 (sfid-20250625_115328_891177_CC2D325A)
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.56.2 (3.56.2-1.fc42) 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="taxhvss7yhmjcw3c"
-Content-Disposition: inline
-In-Reply-To: <20250625102337.3128193-1-yu.c.chen@intel.com>
+X-malware-bazaar: not-scanned
 
-
---taxhvss7yhmjcw3c
-Content-Type: text/plain; protected-headers=v1; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-Subject: Re: [PATCH v2] sched/numa: Introduce per cgroup numa balance control
-MIME-Version: 1.0
-
-On Wed, Jun 25, 2025 at 06:23:37PM +0800, Chen Yu <yu.c.chen@intel.com> wro=
-te:
-> [Problem Statement]
-> Currently, NUMA balancing is configured system-wide.
-> However, in some production environments, different
-> cgroups may have varying requirements for NUMA balancing.
-> Some cgroups are CPU-intensive, while others are
-> memory-intensive. Some do not benefit from NUMA balancing
-> due to the overhead associated with VMA scanning, while
-> others prefer NUMA balancing as it helps improve memory
-> locality. In this case, system-wide NUMA balancing is
-> usually disabled to avoid causing regressions.
+On Wed, 2025-06-25 at 14:52 +0500, Sabyrzhan Tasbolatov wrote:
+> Call kasan_init_generic() which enables the static flag
+> to mark generic KASAN initialized, otherwise it's an inline stub.
 >=20
-> [Proposal]
-> Introduce a per-cgroup interface to enable NUMA balancing
-> for specific cgroups.
+> Delete the key `kasan_um_is_ready` in favor of the global static flag in
+> linux/kasan-enabled.h which is enabled with kasan_init_generic().
+>=20
+> Closes: https://bugzilla.kernel.org/show_bug.cgi?id=3D218315
+> Signed-off-by: Sabyrzhan Tasbolatov <snovitoll@gmail.com>
 
-The balancing works with task granularity already and this new attribute
-is not much of a resource to control.
-Have you considered a per-task attribute? (sched_setattr(), prctl() or
-similar) That one could be inherited and respective cgroups would be
-seeded with a process with intended values. And cpuset could be
-traditionally used to restrict the scope of balancing of such tasks.
+Looks fine, I guess. You can test/build it without qemu - on x86 - by
+using 'make ARCH=3Dum' or so.
 
-WDYT?
+I'm assuming it'll go through some kasan tree since there are
+dependencies:
 
-> This interface is associated with the CPU subsystem, which
-> does not support threaded subtrees, and close to CPU bandwidth
-> control.
- (??) does support
+Acked-by: Johannes Berg <johannes@sipsolutions.net>
 
-> The system administrator needs to set the NUMA balancing mode to
-> NUMA_BALANCING_CGROUP=3D4 to enable this feature. When the system is in
-> NUMA_BALANCING_CGROUP mode, NUMA balancing for all cgroups is disabled
-> by default. After the administrator enables this feature for a
-> specific cgroup, NUMA balancing for that cgroup is enabled.
-
-How much dynamic do you such changes to be? In relation to given
-cgroup's/process's lifecycle.
-
-Thanks,
-Michal
-
---taxhvss7yhmjcw3c
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYKAB0WIQRCE24Fn/AcRjnLivR+PQLnlNv4CAUCaFvpVAAKCRB+PQLnlNv4
-CKYLAP40v6E11draiFGguEeqd7Lo4UR4CFcKxIm+6hw1tSGtPQEA4pB22MPLn2Lb
-ThLQgnota7Zcd4S/rZoMXEwsCHHU/Qs=
-=BfMT
------END PGP SIGNATURE-----
-
---taxhvss7yhmjcw3c--
+johannes
 
