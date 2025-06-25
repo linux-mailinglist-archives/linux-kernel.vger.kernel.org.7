@@ -1,162 +1,167 @@
-Return-Path: <linux-kernel+bounces-702110-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-702100-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id A9BA6AE7E35
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Jun 2025 11:57:54 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 03738AE7E19
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Jun 2025 11:53:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8DEA7189FC4C
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Jun 2025 09:54:52 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2157D3B500B
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Jun 2025 09:52:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E907229E10A;
-	Wed, 25 Jun 2025 09:53:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 345F22868BF;
+	Wed, 25 Jun 2025 09:52:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="nPqjimk7"
-Received: from mail-lj1-f176.google.com (mail-lj1-f176.google.com [209.85.208.176])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Z+N3SKJF"
+Received: from mail-wm1-f52.google.com (mail-wm1-f52.google.com [209.85.128.52])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B8CA829E0F9;
-	Wed, 25 Jun 2025 09:53:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AA98427FB27
+	for <linux-kernel@vger.kernel.org>; Wed, 25 Jun 2025 09:52:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750845211; cv=none; b=hcUq5BhA3qY1eeUMuSqRUrTtNHQNqw7vTnTpjvKGCyE/hha19TyP5KUOOgShVncJXvye0Nk0+as3LYApWtoL1LMzVRA8oKoeoGgAIIysY1aXfybWUndiPcckwlnbL4TrExmMq8cZUlpbmEJNowE05Ba2H1HUK3nDHcGDpf1Btv0=
+	t=1750845148; cv=none; b=i5uTSNt6F9AtXu239WpxlF1PzpFG96ricRJ9OgvO/zq2/NsVfl8qpOw59f7zTZxU05lWYEn55467Kr6GR8QzufAxCWciS+5MiTGktrJxQKUTLkTR824RiIzrlwR04WPHnoB899b6E2ct+8wEn0FxdKgIb3yuYxmdQjgkvgl0k/k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750845211; c=relaxed/simple;
-	bh=lhF1+oDAAfZTQLsvxX1VmCxIOVKQmNCDXyIFJsn0eiM=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=uihtDvAPlJbOmaGjJ8ivtaq7ga/RM7XYZBsb4fYQzSFUo3N6+xYcHe7EDEVKMKgAVMTb4ldshPmOOiYHAVCoqx7sc4jTehjpH58IK8/AcS8DoJu7/TgndIvXqtSISQyGuske1fjrMUVpBdm+QZBktCinKB8wTx943T0RqbQctUU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=nPqjimk7; arc=none smtp.client-ip=209.85.208.176
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lj1-f176.google.com with SMTP id 38308e7fff4ca-32b595891d2so12947931fa.2;
-        Wed, 25 Jun 2025 02:53:29 -0700 (PDT)
+	s=arc-20240116; t=1750845148; c=relaxed/simple;
+	bh=MrRga72y9s3IG9s+3PWdhvyFhlYCAnz1dBzKqnRtsvw=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=UtATED/xLbbDDLaAp5IwJVPKUiCT5aaUmPEc3Igy3Cp5hSNAPHL5HyrQ2PKSb4aSnEXCm3iZzLPUBAKGFcEReMwCeJrMO7zVSLCF8FOdvT8bXQspSpwCthFqIuXPDNlJevOYGgLKnImubwreWQHYcBVpp5Bu8Fwhm8OSHTDMOz8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=Z+N3SKJF; arc=none smtp.client-ip=209.85.128.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wm1-f52.google.com with SMTP id 5b1f17b1804b1-4537fdec33bso9052085e9.1
+        for <linux-kernel@vger.kernel.org>; Wed, 25 Jun 2025 02:52:26 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1750845208; x=1751450008; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=iNdRW1IbQwaJLK3IU9ZGilulsvtFwP6FJhql802bOZE=;
-        b=nPqjimk7/FsQJjAoB24yytSbXNE7dfVB2tzUSdlNHgzr5O+BcocuFtLPykTMWJl437
-         /wLinRyH4w+jPobMpMRY3vSEaAAcV5mwtXuby6gSfUNcs8aRpLYGF9lq8iBjzqMcMTa/
-         2CYlnrS6uvNJSb1kMH5ivIHbj0TVkW9aXUINEUZsWkQw5kaAe5IGvJj/TasBihGq6NrT
-         UQfVGxHO5evwCMUfmtUhGGhHx0SefoxbdOZt4RdSnK5Ez37N8Q+suY4M3TguevIGWcT1
-         XsvWnOhCu2R8IFls1QKRxyIfnysaSIvVTm54nzmKGdKm7XQQ6KrdjF4lhTPg1Kcod30l
-         O5uA==
+        d=linaro.org; s=google; t=1750845145; x=1751449945; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=gvynr5GPXAD7xF14LG7ABlRKJ5SF08nktafK/D9Sp4o=;
+        b=Z+N3SKJFuiPHaejrVN9ql6f/eYo9opFv/34l4t2kNyVuZJoBMnnz2r80ZfEdoA7aGF
+         DIptkYPQkY6kZN0bdSZ7qmNxmL39a/iO4moJUt+f+vTQYU74Au060W+0sd3pYH12oA7L
+         WqbiDn2SACu1YYwbIkJ/tvlju7kWkm/bqnXrTfhXD3HoRUD23mW/PXhZREFK5dSg1yxp
+         10oajCPwXJBUR45kT2ut/FjQYbCCrx68A4utXijV2vWube1lMdXXwCxknADrZiYoQZMh
+         LVBjhtH0FMZsY1nDewk2b0yoV+jpgSM5C/Meek/+ZTe52ohRptW+qk0xEAg+cZpzVFra
+         lt5A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1750845208; x=1751450008;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=iNdRW1IbQwaJLK3IU9ZGilulsvtFwP6FJhql802bOZE=;
-        b=GZS0oQdb7NMrzTHqUitU/aYvNVpSRXMGgJvqfZOZOt924wiTJWJaKqsvuj0DvkGbGs
-         OvaVc9gUD7gsQ0pdPqD1JQS9wQru9L2JkO9npkDmEkQYELv/oNzFYeQpX6eZxPkdgrut
-         oRjIH7Yjzel91ZMsxi18HFPsNj88ORpDsJXWiwMjvb0U8ovq6xS9ouZxyB54bqeVHojl
-         7QTwF6i2YAlv8b3RNEDWo986yTdKOaKVTMJDjRHGxsfIiKocX8RKafz4ky1AOyr1XjMz
-         b8x/mtI0gRQxCRxoBvY5WR3we3qYuP/7j3TrXNwAA9iQBYVpi6CYp08Ejm1jmbS+eqQQ
-         k5kw==
-X-Forwarded-Encrypted: i=1; AJvYcCWFd8jfv0ZEp2m+dULB8t/YWLZTkdCv38sVtXA01AJPqHZux0PIi4bp826MRaVtBzR+8KZgRBe4nDvkKQ==@vger.kernel.org, AJvYcCXCF+hESLKUZOgB4rjk/ZfCdWF/14K3m/KiD6luVrDsoSXbJqrxHyi1zmkkkWvm8PJVC5YchD8p8iTvFUQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwyPpYVPhAwGEximwJ5Nq+7vTE1lVwwUAX4ETH4tHyauPcKlTcP
-	06CuJXOUBZLH/8l+Fj2j4yZvTl4/35EOs4iYQw2f6x2bxQRsSCf2Spgn
-X-Gm-Gg: ASbGncuml7t7ydik+XjVdlv4iLCSJQSod3oBvvr/vH+5dtf+fU+OEX2NnY7OnZt6/4J
-	W2sVGoLVlYABFiVsWqlnkZCMgwPgwPOXvn1PfYse90JUQLji+wnDQRRlkd1BKtFIW+JSxL8V/kz
-	AAQJXeAFUSWOuqP4dwpvtS1ct+C5dpU808+OC6/7zqxumZ68ZZpqSKjG+15hWEm1HZPgF6JH2qa
-	BxV8+Vy0lJqREEvjS3KrIJRfb+13mqDT318i4zsV1vItABi7Ln3CBzc8zCRivvpJBUpwAyjiNr/
-	5rUEO85hnO9ckmr89WX6ap+Nvy+qF3iLyOYO3sLK3rqtvDr1Ooi1u3SE+rUkEUVvyUuHw3NcQVs
-	trb6P4Hzng9tsVCPnb/5PvzVHedXtsw==
-X-Google-Smtp-Source: AGHT+IEEyG7BglU4Us5Yezwlbfk1A7iCiSut02wYI0QnYJbbPrBalxPgrrZo+Iohs0E8JQ9l3Ex35w==
-X-Received: by 2002:a05:651c:31cf:b0:32b:33c7:e0c9 with SMTP id 38308e7fff4ca-32cc64b7c27mr7419481fa.16.1750845207836;
-        Wed, 25 Jun 2025 02:53:27 -0700 (PDT)
-Received: from localhost.localdomain (2.135.54.165.dynamic.telecom.kz. [2.135.54.165])
-        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-32b980a36c0sm19311851fa.62.2025.06.25.02.53.22
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 25 Jun 2025 02:53:27 -0700 (PDT)
-From: Sabyrzhan Tasbolatov <snovitoll@gmail.com>
-To: ryabinin.a.a@gmail.com,
-	glider@google.com,
-	andreyknvl@gmail.com,
-	dvyukov@google.com,
-	vincenzo.frascino@arm.com,
-	catalin.marinas@arm.com,
-	will@kernel.org,
-	chenhuacai@kernel.org,
-	kernel@xen0n.name,
-	maddy@linux.ibm.com,
-	mpe@ellerman.id.au,
-	npiggin@gmail.com,
-	christophe.leroy@csgroup.eu,
-	hca@linux.ibm.com,
-	gor@linux.ibm.com,
-	agordeev@linux.ibm.com,
-	borntraeger@linux.ibm.com,
-	svens@linux.ibm.com,
-	richard@nod.at,
-	anton.ivanov@cambridgegreys.com,
-	johannes@sipsolutions.net,
-	dave.hansen@linux.intel.com,
-	luto@kernel.org,
-	peterz@infradead.org,
-	tglx@linutronix.de,
-	mingo@redhat.com,
-	bp@alien8.de,
-	x86@kernel.org,
-	hpa@zytor.com,
-	chris@zankel.net,
-	jcmvbkbc@gmail.com,
-	akpm@linux-foundation.org
-Cc: guoweikang.kernel@gmail.com,
-	geert@linux-m68k.org,
-	rppt@kernel.org,
-	tiwei.btw@antgroup.com,
-	richard.weiyang@gmail.com,
-	benjamin.berg@intel.com,
-	kevin.brodsky@arm.com,
-	kasan-dev@googlegroups.com,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	loongarch@lists.linux.dev,
-	linuxppc-dev@lists.ozlabs.org,
-	linux-s390@vger.kernel.org,
-	linux-um@lists.infradead.org,
-	linux-mm@kvack.org,
-	snovitoll@gmail.com
-Subject: [PATCH 7/9] kasan/x86: call kasan_init_generic in kasan_init
-Date: Wed, 25 Jun 2025 14:52:22 +0500
-Message-Id: <20250625095224.118679-8-snovitoll@gmail.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20250625095224.118679-1-snovitoll@gmail.com>
-References: <20250625095224.118679-1-snovitoll@gmail.com>
+        d=1e100.net; s=20230601; t=1750845145; x=1751449945;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=gvynr5GPXAD7xF14LG7ABlRKJ5SF08nktafK/D9Sp4o=;
+        b=PyoUVyvz9TgHgTJM8XYtHa9rHbnk7Lz6tVxh4scPuaI/bbtCuSIUu/RP0Qqus+kYMQ
+         4fk0U0gTicacQFhEq9myyWlY4W9KeRgqvQPd0WEDvY5d1c9yypjHBs6Qnr1+Nv/zAx2n
+         frRMC4b8nlz6a/4lIDZLUjecUW8NQfewtFnn35+xqwddsvp11M8BYCzALaJuDnt0MGUQ
+         cExprEvQX6fPvWZz31gUebofra4fWRFjeAwek3W6Zx8fyEM4RxTSUFwPjXHaN47gEBO3
+         dKGv5afb7qVVxdOpuOsYvfndJ6b/VKhw545Pz2eXEgoIgJGwVutWdUWD2jBxMK3o1TM0
+         1YmA==
+X-Forwarded-Encrypted: i=1; AJvYcCVV43X/qAxVq695XFmRJk6X/nxxMzEosT3/9934NRTcnUmNFNeHXbvnXUYq2Bf6nDTpn1kQe2nVN/bFIW8=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzUoL3Yt2sHUGeekonkslP49N1IzjJHHX9LTZ29RwdRGdYD9AiJ
+	SsXnZB8/vqqb5oKfV85ToV32N63mFywSEmUzehI11W7399/b76g8/GOx3zcyKTmLFOY=
+X-Gm-Gg: ASbGncuBFh56Z1bhtmBktv4iXtiLsLR7cEUANw50J/UlCnO1NsLDMSsyucnkDeZIMhU
+	tMcaaaGs7g5AQqyxxav33H8qczUJaw+N0wRuztGT9Rl79Y6+BpxWsMA1Wnf9PMwLnMghXVmPfuN
+	8JCl3DGcpHFBwo8dgmECqF+bIsFqEb1/6ztYlCFR2qNiKELrYoyu1lKTTAwDmPvOYot4yLmOoAF
+	vPCMQk232+pam2XxBcihV+9I/WM7MB5LTIlP78U6Lijpvefti/ylP0UOl4JikME4RhlW5CPuKQG
+	Apz7/tcVm2aSecxhezse9Pu6J3oqPd1/mn6rx74FhQkQLGWtu2f8mAEiVJjJ8TKQNBQ=
+X-Google-Smtp-Source: AGHT+IGWhnH2ozWlkqt9r0oHgwgVkhzmM8aFffesqO/fLKJ2oKRNU+kDEm/CqDK4ln1Y/aAeqeYL2g==
+X-Received: by 2002:a05:600c:8b70:b0:442:cab1:e092 with SMTP id 5b1f17b1804b1-45381ab1724mr20000025e9.11.1750845144979;
+        Wed, 25 Jun 2025 02:52:24 -0700 (PDT)
+Received: from [192.168.1.3] ([37.18.136.128])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-453822c3084sm15607705e9.0.2025.06.25.02.52.23
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 25 Jun 2025 02:52:24 -0700 (PDT)
+Message-ID: <3eddec49-f41a-4b59-972f-92693677bb7c@linaro.org>
+Date: Wed, 25 Jun 2025 10:52:23 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 1/6] spi: spi-fsl-dspi: Clear completion counter before
+ initiating transfer
+To: Frank Li <Frank.li@nxp.com>
+Cc: Vladimir Oltean <olteanv@gmail.com>, Mark Brown <broonie@kernel.org>,
+ Vladimir Oltean <vladimir.oltean@nxp.com>, Arnd Bergmann <arnd@arndb.de>,
+ Larisa Grigore <larisa.grigore@nxp.com>, Christoph Hellwig <hch@lst.de>,
+ linux-spi@vger.kernel.org, imx@lists.linux.dev, linux-kernel@vger.kernel.org
+References: <20250624-james-nxp-spi-dma-v3-0-e7d574f5f62c@linaro.org>
+ <20250624-james-nxp-spi-dma-v3-1-e7d574f5f62c@linaro.org>
+ <aFrLMCq6hRJj5FjI@lizhi-Precision-Tower-5810>
+Content-Language: en-US
+From: James Clark <james.clark@linaro.org>
+In-Reply-To: <aFrLMCq6hRJj5FjI@lizhi-Precision-Tower-5810>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-Call kasan_init_generic() which enables the static flag
-to mark generic KASAN initialized, otherwise it's an inline stub.
-Also prints the banner from the single place.
 
-Closes: https://bugzilla.kernel.org/show_bug.cgi?id=218315
-Signed-off-by: Sabyrzhan Tasbolatov <snovitoll@gmail.com>
----
- arch/x86/mm/kasan_init_64.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/arch/x86/mm/kasan_init_64.c b/arch/x86/mm/kasan_init_64.c
-index 0539efd0d21..998b6010d6d 100644
---- a/arch/x86/mm/kasan_init_64.c
-+++ b/arch/x86/mm/kasan_init_64.c
-@@ -451,5 +451,5 @@ void __init kasan_init(void)
- 	__flush_tlb_all();
- 
- 	init_task.kasan_depth = 0;
--	pr_info("KernelAddressSanitizer initialized\n");
-+	kasan_init_generic();
- }
--- 
-2.34.1
+On 24/06/2025 4:58 pm, Frank Li wrote:
+> On Tue, Jun 24, 2025 at 11:35:31AM +0100, James Clark wrote:
+>> In target mode, extra interrupts can be received between the end of a
+>> transfer and halting the module if the host continues sending more data.
+>> If the interrupt from this occurs after the reinit_completion() then the
+>> completion counter is left at a non-zero value. The next unrelated
+>> transfer initiated by userspace will then complete immediately without
+>> waiting for the interrupt or writing to the RX buffer.
+>>
+>> Fix it by resetting the counter before the transfer so that lingering
+>> values are cleared. This is done after clearing the FIFOs and the
+>> status register but before the transfer is initiated, so no interrupts
+>> should be received at this point resulting in other race conditions.
+>>
+>> Fixes: 4f5ee75ea171 ("spi: spi-fsl-dspi: Replace interruptible wait queue with a simple completion")
+>> Signed-off-by: James Clark <james.clark@linaro.org>
+>> ---
+>>   drivers/spi/spi-fsl-dspi.c | 10 +++++++++-
+>>   1 file changed, 9 insertions(+), 1 deletion(-)
+>>
+>> diff --git a/drivers/spi/spi-fsl-dspi.c b/drivers/spi/spi-fsl-dspi.c
+>> index 04c88d090c4d..744dfc561db2 100644
+>> --- a/drivers/spi/spi-fsl-dspi.c
+>> +++ b/drivers/spi/spi-fsl-dspi.c
+>> @@ -1122,11 +1122,19 @@ static int dspi_transfer_one_message(struct spi_controller *ctlr,
+>>   		if (dspi->devtype_data->trans_mode == DSPI_DMA_MODE) {
+>>   			status = dspi_dma_xfer(dspi);
+>>   		} else {
+>> +			/*
+>> +			 * Reset completion counter to clear any extra
+>> +			 * complete()s from spurious interrupts that may have
+>> +			 * happened after the last message's completion but
+>> +			 * before the module was fully in stop mode.
+>> +			 */
+> 
+> I think you change is correct. reinit_completion() should be called before
+> dspi_fifo_write().
+> 
+> comments is quite confused. how about below comments?
+> 
+> /*
+>   * Reinitialize the completion before transferring data to avoid the case where
+>   * it might remain in the done state due to a spurious interrupt from a previous
+>   * transfer. This could falsely signal that the current transfer has completed.
+>   */
+> 
+> Frank
+
+Will do
+
+>> +			if (dspi->irq)
+>> +				reinit_completion(&dspi->xfer_done);
+>> +
+>>   			dspi_fifo_write(dspi);
+>>
+>>   			if (dspi->irq) {
+>>   				wait_for_completion(&dspi->xfer_done);
+>> -				reinit_completion(&dspi->xfer_done);
+>>   			} else {
+>>   				do {
+>>   					status = dspi_poll(dspi);
+>>
+>> --
+>> 2.34.1
+>>
 
 
