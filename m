@@ -1,114 +1,87 @@
-Return-Path: <linux-kernel+bounces-702054-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-702053-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id DF40AAE7D73
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Jun 2025 11:39:56 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id AFB09AE7D74
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Jun 2025 11:40:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4534B16BF2E
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Jun 2025 09:39:03 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5AD243BCF39
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Jun 2025 09:38:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C2CD62D3215;
-	Wed, 25 Jun 2025 09:26:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b="hRibJiBQ"
-Received: from mail.zeus03.de (zeus03.de [194.117.254.33])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 31D152E4246;
+	Wed, 25 Jun 2025 09:26:06 +0000 (UTC)
+Received: from mail-il1-f198.google.com (mail-il1-f198.google.com [209.85.166.198])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 570FA2BEC34
-	for <linux-kernel@vger.kernel.org>; Wed, 25 Jun 2025 09:26:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=194.117.254.33
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 422122C15A6
+	for <linux-kernel@vger.kernel.org>; Wed, 25 Jun 2025 09:26:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.198
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750843578; cv=none; b=VLyYlR2IIoj5cIKhW5EF5gjOIb+wB99f3CdxoGnYhZtPpBh2DlkgR4ouGVdtkCfFOVpTAo8NJN3b37ZroY5EDQFfy1Ak+8ZnW/1HMbiokW5NOa8UnPXOBka0zjtz3ley2URG6KdwgetAZsQyfRZPTsDPH7KmDUfzqrcrYGIQHU8=
+	t=1750843565; cv=none; b=gtbqT2XESEy3E5VYohwwGEfjp1dqhZneO7TnvPBU6W2MX4ym9J6mseTkOC/8G4bWxHVBicBWULZ8yhkzqKxD3nmJ8vptRRZWCpt4XxFLdHNNE52IkXVUfi7yCVz/Q0EUiVu9iKvRgFPoq054jkHiPo0CHNdNWiCb7eFEsDfsF30=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750843578; c=relaxed/simple;
-	bh=i5r60Tsu8spq+T7mS1rYkF5bymhbpl4o6cazscGpgX8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=irr9My0eb5hbZF/w1RMnklGVQBwxEzwJZfaoXNlCuT4FbZwYm87U8UDnOPPG2NDp0hZLvRCuW+fSpPjXlqt4B5x/79EVs3W2GJ1+nmlcmsc4aOvAmoiCt7B7V62hA7c3nHJwMCs04A6PnZC8fX7WriXUq5ka6jXP2r7Erb/VeTQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com; spf=pass smtp.mailfrom=sang-engineering.com; dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b=hRibJiBQ; arc=none smtp.client-ip=194.117.254.33
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sang-engineering.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	sang-engineering.com; h=date:from:to:cc:subject:message-id
-	:references:mime-version:content-type:in-reply-to; s=k1; bh=l1Pg
-	OZheUsI8ZgLgWtfmvgHNHnT9bsH9ajc2wwvcsMw=; b=hRibJiBQybeTM2v5XK0W
-	UYZ9wJcabp75bbZJz/bMN3Ed3oqI5dZERxrovMrgN5DcTPD82nsfgmpa0FMgYTyQ
-	v19+GPcv35o8CqI3tPbAJ5/X7Px6pntHECMBoIV4/KdcMa8B+xSQS77MgFYQy6EO
-	81t3HIf35IaYF8erAdQLzGxM4V0Smq2rtKgB0BuzOPwK6MygtXa6wtf/onqop6F7
-	2ZEdhmRW5kJp4tc5HaJ24aj7Q3WvKhnP4713++izPVv0PTzF6R69QkvsxVdDypM/
-	SC+t+AawO8uy0NgO+4gvgolKJyOZd5NjNjtIDn17welo08c6OtvJlyo6eZedVMIb
-	RQ==
-Received: (qmail 590769 invoked from network); 25 Jun 2025 11:25:53 +0200
-Received: by mail.zeus03.de with UTF8SMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 25 Jun 2025 11:25:53 +0200
-X-UD-Smtp-Session: l3s3148p1@2lP+B2I4oJhtKDAs
-Date: Wed, 25 Jun 2025 11:25:41 +0200
-From: Wolfram Sang <wsa+renesas@sang-engineering.com>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Wolfram Sang <wsa@kernel.org>, linux-i2c@vger.kernel.org,
-	linux-kernel@vger.kernel.org, Bartosz Golaszewski <brgl@bgdev.pl>,
-	Andi Shyti <andi.shyti@kernel.org>
-Subject: Re: [PULL REQUEST] i2c-for-6.16-rc3
-Message-ID: <aFvAlSQICukBzt7K@shikoro>
-References: <aFgDHBHwY5ElWILx@shikoro>
- <CAHk-=wjCznJeOUSHcR5BszEUVv5BW6heO6jMX38MHXNaL3kbmQ@mail.gmail.com>
+	s=arc-20240116; t=1750843565; c=relaxed/simple;
+	bh=qUPNZnfiHXpVJGIU/x+D5DTJ1JEYjPYS78iH53c62YY=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=IC2c0qVGEEmOMDEXmzmmkb7HRvNBDILdu9DUvz6z38coyuNsjjuCQfwUNwFbrkYqz8NZ7pkx4Gh4+CzdGIRLt9S+FXn/izykbB2D1/3FOH50G5Jly0sjQuxu0hU2Xj07kLTrUxlQfx9u++PW4wddG/doUjSdLZzs+wbPvQEv7TU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.198
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f198.google.com with SMTP id e9e14a558f8ab-3ddcb80387dso6826775ab.1
+        for <linux-kernel@vger.kernel.org>; Wed, 25 Jun 2025 02:26:04 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1750843563; x=1751448363;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=EDEC+2bl2jbOP+vy2256BRfU0S2KmDjZ98enuZrGuoc=;
+        b=iJpk2xW+gTv55ujd6jftQqN5BMPiw7AXlNzdbse7oPsA1bJ+UsO1R+5iEpN8Yuhsrk
+         0cI4p57zsPI87XQKNFpLFY4nAxlfRwRH7CoEEr5s+11eODwdg94o+mBP6wGmMvk1aw6I
+         zVDlxyjPzDnmf+LhiU+DIp74uULU7XmD4klrdFuKcbBNlHvhhyQA6ypDUuhJmtbtsSeN
+         UdNEX/8PTUXKqOnwaj4OtjwgsdX6+mcjKtk8O6v7SxFi58Y/RxBm0OTK8b7NxW/E500p
+         WvfeZvvudTrW0+WQqgvy6YYbHtMJb5OJ+Pr+he4j4UAUZpiTEXZjDHzZtJf88LsNgrSL
+         /myQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWjXq2cfVSD6tIeMlmGC/lFdd+/4a8MYYWh/25GSG89wCZkOuLkwnMK2PwZOUJkIuMjqrRdNukVdgUbvBk=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyNvSfWnoXn5f1z2quE36CGhhTqk6ZDgviadMjstUWcGqNn6PjE
+	53lFAC4cyf85dzrRIZjdhzkVffRvtq7NccuzUUjMQsN4j5oxIj4w7CQA+xVW4F/5Qqb1Or4CZnV
+	S8L8NcdqhdFATNuKD+hpO8j8fxc4fhVc3ar3tRySWhsde0ekZE5GE6EH2QaU=
+X-Google-Smtp-Source: AGHT+IEFNUo3zPx8PBwk3JcU7J1fDm/BHs2fK+Uz6glB15XNIr7uumAtXsVB8pHpEUIIT7lgi3ACSGnLmUciP66fSN1cXag4jed/
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="JMbvFv9CHOhDS+6+"
-Content-Disposition: inline
-In-Reply-To: <CAHk-=wjCznJeOUSHcR5BszEUVv5BW6heO6jMX38MHXNaL3kbmQ@mail.gmail.com>
+X-Received: by 2002:a05:6e02:178d:b0:3dd:c9e4:d46a with SMTP id
+ e9e14a558f8ab-3df32c8ac64mr23277455ab.7.1750843563459; Wed, 25 Jun 2025
+ 02:26:03 -0700 (PDT)
+Date: Wed, 25 Jun 2025 02:26:03 -0700
+In-Reply-To: <20250625082730.1756-1-hdanton@sina.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <685bc0ab.a00a0220.2e5631.00c2.GAE@google.com>
+Subject: Re: [syzbot] [hams?] KASAN: slab-use-after-free Read in rose_get_neigh
+From: syzbot <syzbot+e04e2c007ba2c80476cb@syzkaller.appspotmail.com>
+To: hdanton@sina.com, linux-kernel@vger.kernel.org, 
+	syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
+Hello,
 
---JMbvFv9CHOhDS+6+
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+syzbot has tested the proposed patch and the reproducer did not trigger any issue:
 
-Linus,
+Reported-by: syzbot+e04e2c007ba2c80476cb@syzkaller.appspotmail.com
+Tested-by: syzbot+e04e2c007ba2c80476cb@syzkaller.appspotmail.com
 
-> If you do conversions after the merge window, make them DAMN OBVIOUS.
-> Make them minimal, make them automated, and DO NOT DO OTHER RANDOM
-> CRAP AROUND THEM.
+Tested on:
 
-Okay, I don't want to do annoying things, so let me rephrase what I got
-out of this. I should have 2 cleanup patches, one for the callback
-changes and one for the whitespace changes?
+commit:         7595b66a Merge tag 'selinux-pr-20250624' of git://git...
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=14e0d182580000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=4ec8b4e4d31ae914
+dashboard link: https://syzkaller.appspot.com/bug?extid=e04e2c007ba2c80476cb
+compiler:       Debian clang version 20.1.6 (++20250514063057+1e4d39e07757-1~exp1~20250514183223.118), Debian LLD 20.1.6
+patch:          https://syzkaller.appspot.com/x/patch.diff?x=17775182580000
 
-Because I think the whitespace patch is needed. This is still the
-beginning of a larger refactoring and having struct members initialized
-according to coding style will greatly simplify next steps. And this
-paragraph should then be the commit message of the whitespace patch.
-
-I assumed that it was obvious that everything in this pull request was
-automated. I honestly really don't enjoy pushing whitespaces around
-manually.
-
-   Wolfram
-
---JMbvFv9CHOhDS+6+
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAmhbwJUACgkQFA3kzBSg
-KbaoBhAAh88bS4Eu1XiE9ReKbEZYWw6wqEKTeq9gbsPvzdXWnQ5Z1VwspnaFqHUl
-UwlPAEW/OF4jAPqNBdfnd2PJBbS/A1lFWUPkSV2WlXT3PKGMULNCvdPL0BoVulbF
-N4giPCtygW0fImzmHj/S8th1VcZdtxd6IarVuzED3gYzPVTPfIeZFHg6GqDbeU9a
-P+FhzkGRNbkZs/k863PWLjzjN/cvh1Z9DOY3otEIbEzjk2FZ0Tux6RiEO0ASKkfj
-iN3IcOibkyVdMQAu7Hl9FEYCwQg8VJwdhkVl/MzQ/T9FVHl7AmfVr9qlcjh6uPPU
-25M4SxxmjU3i8IpE7mcYKF8y72JBr9E2HzMwDYkcmr/Y3yrUloo4WviYklecqWIw
-k39MSmE87d8DBg3Owwrd+ex9w/1zAMYYmYFB85izzQp5Yl2Cp6a2WYgwqXXY79gR
-vZIDeaRCbJm7baxxR2dxQtB/3AmhjcPlai9ARqW/cA4D7LoONU521oFFLWD7YWBR
-wMLCa2QBnmtg6XPQ/28OHT+dkaKAO5AL2mJFnz1InWK6fI6uHzXw5AFAp5xD+p/9
-XqY85k8fXr2urNzZ/R57p09Ff8Oc/0JtPBNCdMtyOjUqP8V0Gkr99cRfIPZXnjcm
-uz9GKiDXNmu5yyrEauDIZ/dLBPRJNpqSn6TFLeZ2OjccKsGQLTY=
-=B/56
------END PGP SIGNATURE-----
-
---JMbvFv9CHOhDS+6+--
+Note: testing is done by a robot and is best-effort only.
 
