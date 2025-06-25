@@ -1,129 +1,141 @@
-Return-Path: <linux-kernel+bounces-701807-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-701809-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 01936AE79A8
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Jun 2025 10:12:32 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 97318AE79AF
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Jun 2025 10:14:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9CF9D3B58A4
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Jun 2025 08:12:06 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4CF1B3AD6F8
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Jun 2025 08:14:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 387DA20E007;
-	Wed, 25 Jun 2025 08:12:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 28E1F20F076;
+	Wed, 25 Jun 2025 08:14:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="cXR0yF29"
-Received: from mail-wr1-f44.google.com (mail-wr1-f44.google.com [209.85.221.44])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="NxLWfs3X"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7795220D4E7
-	for <linux-kernel@vger.kernel.org>; Wed, 25 Jun 2025 08:12:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 04BF61E5B95;
+	Wed, 25 Jun 2025 08:14:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750839147; cv=none; b=TIaytnA8SpJL3LOvOOcWqWKtABcxejbACfwWG7hWc0ADc91ud3PACuZvFoKOqr3CpUO6/O9QkKwBuLSC1zk2d+zXm3EisO2I0GO8ZQwWyIT/FsZ0y18DF69S8bQoJhbZO3sUQOZ6ymiVqE5KV/w8BWQQjNQhVc+cPubWbpChP4g=
+	t=1750839286; cv=none; b=MhZsMfWnUu2Id7i8NCsKfs+WJMNzTdRm0YXMMIDBqfNVvsfp2J0uaPZHTygzZIcU3EfUu2mRWiAaGTPXN0kSO/3gKgreEzsYHUERAJejGc1D/IXREdwb0CHTdztzCxeNtkQVoDK75cDxu0su88+0yvFnYRwdiWKTKa3KL8v2AL0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750839147; c=relaxed/simple;
-	bh=3Q6PvI9WLyYhMaGfJjkTb+FYVTdE2N8kvgVnMIWR/m4=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Qa5Yq99gPxoAQAWMVJ0lJguQS/AvXF7LgzYgO4sXu9lzqlel9V+xwIxpveeu0dLYCgFC7pOKFpDI0E9/jjZpWioJFAe2N7+ctlJwUMLof1M2JYgk20KqVTFhLmMIpmHbBJ315rMKp7UayxzVyt0fD6OxTwmOWgQJxc/4wQkTHRg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=cXR0yF29; arc=none smtp.client-ip=209.85.221.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
-Received: by mail-wr1-f44.google.com with SMTP id ffacd0b85a97d-3a51481a598so3194970f8f.3
-        for <linux-kernel@vger.kernel.org>; Wed, 25 Jun 2025 01:12:25 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1750839144; x=1751443944; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=hUoo6FJst5NdWLmIH4CqS4bd0d0TxJYeNn2FpbLv3cA=;
-        b=cXR0yF29cy9rc745is0Jex+On7JBZM3pRf0qPdHnTuk+RDuDQvHO1MsYqv9XPVZEXn
-         Kam0McmGfvHbTqFtOHXQ0Wb6jPwBcOBc4OguhmaNHjYcXvAHm5wQ6pzND8GHgM80QLli
-         ve7YQeoMFaRq0SI7/3ewE0ReTlVUh5fhQlnTqsyRliU79oLVZi7vT9V4zyZbnXsva9nr
-         02OpCK0hvH3x3VOO8QmtaeGiSiR0sPJueGzoV41pRin9TVzPXfvxnc93RH89iEd+N34H
-         h1FcFF7VAYT59MsrLEYo7AAzGI0fvxUGPsH74bzwjBEtWIFxzIiw1jkTVQYvpHUOzRej
-         yA+A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1750839144; x=1751443944;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=hUoo6FJst5NdWLmIH4CqS4bd0d0TxJYeNn2FpbLv3cA=;
-        b=v6vNuQDEWmKmOz4+PSSl3Mx0Ang2yaDWCCmbmzeE4/2xS7WkeJJv9a0vq4RnsGVWm5
-         w/xo9iv0ozw/rS0hV045la6KQFHYUhUOYf3FWdyl5TWbjIgwuP81Rkkzbcpuo8wxj+IH
-         MWFAOjEXFH5DmZ+Zgs1Xr75O7mameHqczvYyuUzXfHgK63Ro5gi/Mr2JgiA93ZPTONFz
-         WMt00LQG3WS6IIQ7W+gzpfskAl3MWb9c5XtKicysuvd48X1pqYAAYGgXd2KxOOcIaGPD
-         +nnMPZTzVt6pAEXD5GujO5/nDaRtPz8RpJQsUeBm+j7Jt9ExvkOY5w3tfcBSPPuAwyXe
-         yFTw==
-X-Forwarded-Encrypted: i=1; AJvYcCUlgDVu0aaQUEgnRPVObRqaGiBsk+kVCmNfnUq1lMr3E8S8aFCVz2/SNrLaghS820+UcCFlRz1cH1GXUJo=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxXFV9Qy5Iue2ROv1gfCo1Mw917cFs5vcLF1wvByipz/B67at//
-	adFMo17pkfX+yaZnNxXcfO0o9opa2NLjqKG+5Ht3xFC5Yq9vM1iahUrLkg4p9yw7iao=
-X-Gm-Gg: ASbGncvoVvSum3Lg0xpMRyC/IxSYe5TZmwLAypOrNc/60Zmek5z/G2C92feChh2WMQY
-	UhbPz5UmHyZq8KmhY0dxheiYi/oKiI2zAT8V2BxohDycjLudEYXWiCsZuG5+ZXyceUZKawdkIFb
-	1lamOadKOhTE4nqXcs6+rBwRqv96MYz02WWHabXEEhtKS1xxpkf9E33M1hSZI+TLiqvcfpg/+Lg
-	QaAiRwDPvb9FN9kIGlUlbnz1M2Zee2dGUhXH2BvQ7PWpfhqF66ZvyNLrtMcajzGQWQFNQx7kYvl
-	hyRX9UlsNVeGms4eL58IeEqunXWFtroCnIueb5DAfyLXrHLuUbARID9ZCuSVR6U=
-X-Google-Smtp-Source: AGHT+IHoTnmbQpVOqUBn04Pr6So0n0WsB+ZlquCI3rmaIUNAwfhUugZ1XzHHxQ5IwkSpcBcGAAFTAg==
-X-Received: by 2002:a05:6000:41f2:b0:3a4:ddd6:427f with SMTP id ffacd0b85a97d-3a6ed66a4c1mr1590058f8f.35.1750839143559;
-        Wed, 25 Jun 2025 01:12:23 -0700 (PDT)
-Received: from brgl-uxlite.home ([2a01:cb1d:dc:7e00:d216:42f3:1e7e:472e])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4538233c05csm12228065e9.5.2025.06.25.01.12.23
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 25 Jun 2025 01:12:23 -0700 (PDT)
-From: Bartosz Golaszewski <brgl@bgdev.pl>
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: linux-gpio@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-Subject: [PATCH] gpio: pisosr: remove unneeded direction_output() callback
-Date: Wed, 25 Jun 2025 10:12:22 +0200
-Message-ID: <20250625081222.12744-1-brgl@bgdev.pl>
-X-Mailer: git-send-email 2.48.1
+	s=arc-20240116; t=1750839286; c=relaxed/simple;
+	bh=GqL4CggirbV7hh3xRcy8wiv64QmZ9L7ToVZj95DQD6A=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=J+U1Mptaaj9n0psHj4154L2x5gJGCejupwT7boEB2ZHS94SLAtmF5mUtFpjQRQBOq7YAE/g9wVEcWi0F2NeBtLgHY+XoqLIC8auX3inHD3ALu3Jy6uGvVedXkFamiAhjTSK0udiEQCBpra/shuQWpILl1rEh1ADKFH8jTRttE4w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=NxLWfs3X; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279871.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 55P3VeN8027585;
+	Wed, 25 Jun 2025 08:14:21 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	nRekJoixgz1lLAacTbvKF4g/prEyVh9BWko1JVSwWmM=; b=NxLWfs3X8Y9IVQoz
+	k69ID8KA+w8iv6gs6kVp5gyUNFs3U9nppXlW+EwufyTGuZgwWiRFxwwaL16SoBo+
+	/ToheVArOI9JWNijwXSC1gTlZcl0oDs66d208Ej2BhthefBFVJRn7ragWCmMbS9W
+	mD8toV1p3R0AzMii4OfMWFBMIgJYqxt7WWLAMCq0UbXnHcQRqL8/tzqVhMOh10Hj
+	aZNgfb+tAaKoQRoKtnTFyDXpNGllrJeDTfg2E8Le9Mat17azwA7r3vfgyXP3hJ4j
+	VCdAeHt5BnYokVHz8Yli95to5hOOoQA3Qn8/DQKVwRfc0DQHRFevsKGqmVSwZYLW
+	wY3EYA==
+Received: from nalasppmta03.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 47fbhqnjve-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 25 Jun 2025 08:14:20 +0000 (GMT)
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+	by NALASPPMTA03.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 55P8EJGk006042
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 25 Jun 2025 08:14:19 GMT
+Received: from [10.216.41.135] (10.80.80.8) by nalasex01a.na.qualcomm.com
+ (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Wed, 25 Jun
+ 2025 01:14:14 -0700
+Message-ID: <c9528c12-378e-4072-804f-0f269246f4ed@quicinc.com>
+Date: Wed, 25 Jun 2025 13:44:11 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH V3] scsi: ufs: qcom : Fix NULL pointer dereference in
+ ufs_qcom_setup_clocks
+To: "Martin K. Petersen" <martin.petersen@oracle.com>,
+        Vinod Koul
+	<vkoul@kernel.org>
+CC: <mani@kernel.org>, <James.Bottomley@HansenPartnership.com>,
+        <bvanassche@acm.org>, <andersson@kernel.org>,
+        <neil.armstrong@linaro.org>, <konrad.dybcio@oss.qualcomm.com>,
+        <dmitry.baryshkov@oss.qualcomm.com>, <quic_cang@quicinc.com>,
+        <vkoul@kernel.org>, <linux-arm-msm@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <linux-scsi@vger.kernel.org>,
+        Naresh Kamboju
+	<naresh.kamboju@linaro.org>,
+        Aishwarya <aishwarya.tcv@arm.com>,
+        "Ram Kumar
+ Dwivedi" <quic_rdwivedi@quicinc.com>
+References: <20250623134809.20405-1-quic_nitirawa@quicinc.com>
+ <yq1bjqcoblg.fsf@ca-mkp.ca.oracle.com>
+Content-Language: en-US
+From: Nitin Rawat <quic_nitirawa@quicinc.com>
+In-Reply-To: <yq1bjqcoblg.fsf@ca-mkp.ca.oracle.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: 4oAVagPOQyK9XJNHnwVF2s5gUIqSxlnG
+X-Authority-Analysis: v=2.4 cv=Id+HWXqa c=1 sm=1 tr=0 ts=685bafdc cx=c_pps
+ a=ouPCqIW2jiPt+lZRy3xVPw==:117 a=ouPCqIW2jiPt+lZRy3xVPw==:17
+ a=GEpy-HfZoHoA:10 a=IkcTkHD0fZMA:10 a=6IFa9wvqVegA:10 a=yPCof4ZbAAAA:8
+ a=yCiMO8VnE8-TVoMtNoQA:9 a=QEXdDO2ut3YA:10
+X-Proofpoint-GUID: 4oAVagPOQyK9XJNHnwVF2s5gUIqSxlnG
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNjI1MDA2MCBTYWx0ZWRfX0eh+pwMCeW8B
+ GP3tTR09qzoiP4PQwmoMVW2GhUCbTsCGdHgsSX5ai9hOSmJ02N19vfVRxQ9wMjZjwZiNGzIeo8A
+ ObYJW0DBDEcayH9fahHfaKfGioD8xg5AiMrEJTNxXUXK0KjLGs5KrEWN7Z5lpSo416MxR4zNmbK
+ 27Y2g9n5L4csxGCYQi+2tpgBwtpwupC96wZ5Ev2JXBj6q/+sPMDNNdYaAmUL2ElMquC1RMZWwK8
+ W+CIMUO4xdGEQdj9ep6svAHFSIqmXR9aYFMhjP3PA/0eUsp6QQYp748H0ChGJCoTt+Q/VkK0Sv+
+ fHg/sLs0wIrxdMhmI1hsPluF/DalFRQNtLjoAVLyUqZcBMBilDa5Ad2yEZVj5sEgAAcfywddubJ
+ ZyF27RlsRTBv8SkGVv+x9wIRoHRll93nGfXO3JJIQXrjR5k+chTewR2sMNJnpJjMdFYvek7Y
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.7,FMLib:17.12.80.40
+ definitions=2025-06-25_01,2025-06-23_07,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ spamscore=0 priorityscore=1501 mlxlogscore=999 phishscore=0 bulkscore=0
+ clxscore=1015 impostorscore=0 mlxscore=0 lowpriorityscore=0 malwarescore=0
+ suspectscore=0 adultscore=0 classifier=spam authscore=0 authtc=n/a authcc=
+ route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2505280000
+ definitions=main-2506250060
 
-From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
 
-GPIO core can handle input-only chips that don't implement the
-direction_output() callback at all. There's no need for the driver to
-provide a dummy implementation so drop it.
 
-Signed-off-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
----
- drivers/gpio/gpio-pisosr.c | 8 --------
- 1 file changed, 8 deletions(-)
+On 6/25/2025 6:58 AM, Martin K. Petersen wrote:
+> 
+> Nitin,
+> 
+>> Fix a NULL pointer dereference in ufs_qcom_setup_clocks due to an
+>> uninitialized 'host' variable. The variable 'phy' is now assigned
+>> after confirming 'host' is not NULL.
+> 
+> Reviewed-by: Martin K. Petersen <martin.petersen@oracle.com>
+> 
+> This will have to go through the phy tree since that's where the rest of
+> these changes went.
 
-diff --git a/drivers/gpio/gpio-pisosr.c b/drivers/gpio/gpio-pisosr.c
-index e3013e778e15..a69b74866a13 100644
---- a/drivers/gpio/gpio-pisosr.c
-+++ b/drivers/gpio/gpio-pisosr.c
-@@ -67,13 +67,6 @@ static int pisosr_gpio_direction_input(struct gpio_chip *chip,
- 	return 0;
- }
- 
--static int pisosr_gpio_direction_output(struct gpio_chip *chip,
--					unsigned offset, int value)
--{
--	/* This device is input only */
--	return -EINVAL;
--}
--
- static int pisosr_gpio_get(struct gpio_chip *chip, unsigned offset)
- {
- 	struct pisosr_gpio *gpio = gpiochip_get_data(chip);
-@@ -108,7 +101,6 @@ static const struct gpio_chip template_chip = {
- 	.owner			= THIS_MODULE,
- 	.get_direction		= pisosr_gpio_get_direction,
- 	.direction_input	= pisosr_gpio_direction_input,
--	.direction_output	= pisosr_gpio_direction_output,
- 	.get			= pisosr_gpio_get,
- 	.get_multiple		= pisosr_gpio_get_multiple,
- 	.base			= -1,
--- 
-2.48.1
+Sure Martin. Thanks.
+
+Hi Vinod,
+Please could you merge this change through the phy tree.
+
+Regards,
+Nitin
+> 
 
 
