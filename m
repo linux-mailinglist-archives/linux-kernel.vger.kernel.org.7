@@ -1,244 +1,136 @@
-Return-Path: <linux-kernel+bounces-702267-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-702272-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id C3BD9AE803A
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Jun 2025 12:53:10 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7ECC1AE8044
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Jun 2025 12:54:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 36D3E3B77ED
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Jun 2025 10:52:33 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 30CA83A9424
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Jun 2025 10:54:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C649C2DA746;
-	Wed, 25 Jun 2025 10:50:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8ECA32D321D;
+	Wed, 25 Jun 2025 10:52:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Uu9DQBx6"
-Received: from mail-vs1-f54.google.com (mail-vs1-f54.google.com [209.85.217.54])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="Ij4auXQo"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 061192D9ED2
-	for <linux-kernel@vger.kernel.org>; Wed, 25 Jun 2025 10:50:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.217.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8AA5A3074A3;
+	Wed, 25 Jun 2025 10:52:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750848612; cv=none; b=HsyDYLv2vbhh30mFffYCHg2jq3zq4uf/dZ9LA7qsgG+vBdZJSLVfyPdHNAM7Pp9kk9E9ifD7gRWqKXHmAI1u7xrMq1BYvRM4GoDK7U2ixX9tHlud4/Ir4F/qs3y7Tvl3HCqmXamKAY6wbvE6uXW1lVw+igrKzEI4W5Cd6MlOznQ=
+	t=1750848727; cv=none; b=tGeXica6EGRkhn/P6m1BB8UZb1kmH6fPXTYGjDnFf3IKU0fZGOGWZuWlFC27CUL9/R0BBmVM1n443VO0Lu00is1zMKt9zp0sM/cdcDzCV+hEa7PwQWlpYLbIJsJeWHhfaeNkYbm4gKEBQ5YevA9dZaZNjWrnZiX04VHG9qaSakM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750848612; c=relaxed/simple;
-	bh=Hfw6Wv3qC8JKZmB/iY5bd/ySsIIzGlY3PAyQM698alo=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=tkaHQZiSpPdV3T98KM5o+Qj1kS5uHyNIUqiDwF+8DOaoLXL1e6ScBKO9VZrWYWzKYaFZhlqVSjWqSmYVdKlAkoZqHvQcTs9LwKyRHXDGSIXDQKpHXU9QuLqkd6ER8AC4kVHEdkQsd+280UnXx+wfW9Rbi8jfbDSg7QXlJObI7RA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Uu9DQBx6; arc=none smtp.client-ip=209.85.217.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-vs1-f54.google.com with SMTP id ada2fe7eead31-4e7eefcbf08so1333413137.2
-        for <linux-kernel@vger.kernel.org>; Wed, 25 Jun 2025 03:50:10 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1750848610; x=1751453410; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=/sJoc+hZXTIC0xZRzuuXvo5VKveaaibtDlPs/XIETRE=;
-        b=Uu9DQBx6LxPbU0Tq50mtrYNqjwZeu7k3dxXKQOtKNEGSpQxeqQwNdpg8d7G8uy34of
-         GISfNek/+ZRgD2lrC+4ITs+abL7CfcsmhWZboidae+lGbu7Kes3v55T/GF3CzlQhZBaK
-         3L42dwFEeQBGOKeanXwEJLU+nrLVk7m1oA0QayXHn3n3By3JQddqBJJI6bsfXiC+AmMG
-         gIB84FJJ9VVbUmdg+QXWiQrH/4P3RpQFifmyT7QJMHK679uiUxEiYgJ2nQME81n0KLij
-         t9xLslrNhWivzlxk4f66HK8lRQlaDlxTJ6hmopWZk10SQc35Qbrf38lESliJOsIBJPlN
-         lCLw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1750848610; x=1751453410;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=/sJoc+hZXTIC0xZRzuuXvo5VKveaaibtDlPs/XIETRE=;
-        b=OW9YRMX6FQP6y1EBZxb28Lq9hTsjdke+IORRGHOWCO5E+DcF47cuOW2Yu30T4WcHER
-         G9AOBW3Bt/X8jlh09Ol1hKg69rKSATOLhD0cKcdK2l793wTAHWVIRS5DxTNGmnOUkJUv
-         btWBZ1IT2w04ovQVeKRVVGXLqYg1OJPtluUy4s1NTND2xokNe+yrGXkCrFa6xNtbZa+z
-         jUTaJLP/+c2P/ziRvI/YA/6yw28v+nspjrGPTx8KYAh98DPX/vHO0PDpuCNj7i8RiYtZ
-         NyvFwANHWJ5+DQD55q+h0u9LVJ6aHLUU13Bl+akwyqtMu8RYikp8WsvMsJcQF1RcllC7
-         osAg==
-X-Forwarded-Encrypted: i=1; AJvYcCUjkNYNMSv/U/Qn1zYTaNGZjJ/8GnnvUOsU8e+XULjhbcGiuS8BYYjAdLjmHechG3BUZ0OrknKPDJzlvIw=@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywz7svWxf6rlPcIiTHnrwgGgQ3TfcorU3SGuA1H07ub/MTuil0V
-	OUbhe/zqMvn2m2Oy6cqufsjEf63Ik0RZiDiGzuwA96ZuQHu0qpD1wzeh/kDK0Kl63MsnFzEJIB6
-	CVmSKp/3nYhhUljCl2ETBO68Or+Fqf+g=
-X-Gm-Gg: ASbGncudhxV/sjoOGD3GwX2HfOSMFu8ql4CwP+XKCuiSutt0gORSGtxRBhO3+X1pZ9Y
-	tn8i31y9MHXou4qjF88FNUm8rSszh7zSbAxj/NPRsEDcqOF6BOSuV2bzoS7TII6DI0gAdBoiIXF
-	8HEzfo9ihuFiFYHat1x0enHH9ZE6+NZUbzj44CH8eSD8E=
-X-Google-Smtp-Source: AGHT+IFIGWbS74JzjCEZUb4i5VKaQ/aFUR/LkXTomtH2wQ2EWDeymwBSyFo8o2yIrCkV5HClVkxBQa8gvmUemUzz4AI=
-X-Received: by 2002:a05:6102:4193:b0:4e9:968b:4416 with SMTP id
- ada2fe7eead31-4ecc76a9296mr1213988137.24.1750848609825; Wed, 25 Jun 2025
- 03:50:09 -0700 (PDT)
+	s=arc-20240116; t=1750848727; c=relaxed/simple;
+	bh=1YHsKIdOqJMrsX2Kpl5DnLJEoFjWsPIpEHyTFgeqMmM=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=K1ii9iZVBmirzUm66gxuaVbbKMZEGOzcdSSDOuo5BqjtZ3IxOGHB6oT9euMZqlRh0/vVBW83cpcPXeIOsvfzoMvG3fV1l4Q63WkzMLOmIOydI2/wmjv58rkTqdp7Lz8bbQvTaT8H0Al1uni7STY3EYp8To6Sqg5/ourTrZG5JCE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=Ij4auXQo; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279870.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 55PAI6H2013820;
+	Wed, 25 Jun 2025 10:52:03 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	f5PY3URjo6lfFndro9HnX+YLREKT8H3OWjeSoal0FdE=; b=Ij4auXQoXpzCQt7J
+	nIgOQEXW5y1QvYNKCssm+Udjz9Qt9laPnT5wvqRWCVzZMWdY79mT5zXrF/gOszsN
+	m85jPjDFGD8ANXBH+fo3xwcpjooGxAZ8u1dikYmPeOS937YnBJoEwP43eJ2JAiM+
+	LON6Rn94tZEFxen+u70zW4QwWxAzqsa+9ekHsvcribTWgNEFV5P3dpcDO2PYpbco
+	ryMHxemvFAXFJYdXfBAzwgNsNKvjQM7/6KqmoS4boKATGxsAp46ZWdu7ubHcxs+s
+	/Wj9V1YPh4eCSjYmfWuSJOMgLDTdBO3STTEU9q/tIZ+AiCNpBhxd89TBdCrCgYCi
+	vxeZhg==
+Received: from nalasppmta02.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 47fbm1x5ny-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 25 Jun 2025 10:52:03 +0000 (GMT)
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+	by NALASPPMTA02.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 55PAq2gI025275
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 25 Jun 2025 10:52:02 GMT
+Received: from [10.217.217.109] (10.80.80.8) by nalasex01a.na.qualcomm.com
+ (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Wed, 25 Jun
+ 2025 03:51:57 -0700
+Message-ID: <b71479b9-2f54-4d87-b384-04a948325328@quicinc.com>
+Date: Wed, 25 Jun 2025 16:21:54 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <2c19a6cf-0b42-477b-a672-ed8c1edd4267@redhat.com>
- <20250624162503.78957-1-ioworker0@gmail.com> <27d174e0-c209-4851-825a-0baeb56df86f@redhat.com>
- <CAGsJ_4wyByWJqzsDGhx=4=Xs+3uUZt6PZdyVoUCUMAo350cm-g@mail.gmail.com> <8a157228-0b7e-479d-a224-ec85b458ea75@redhat.com>
-In-Reply-To: <8a157228-0b7e-479d-a224-ec85b458ea75@redhat.com>
-From: Barry Song <21cnbao@gmail.com>
-Date: Wed, 25 Jun 2025 22:49:57 +1200
-X-Gm-Features: Ac12FXxMNCsiYUkQXXJTm07hkaCKzJuFJqJgjEbwhAVFd_yNyGUFpCyPyMLyoy8
-Message-ID: <CAGsJ_4xPEqXozZCy623LzD6Y01cM9XrbrrYAbddXnUj2eZ8O2Q@mail.gmail.com>
-Subject: Re: [PATCH v4 3/4] mm: Support batched unmap for lazyfree large
- folios during reclamation
-To: David Hildenbrand <david@redhat.com>
-Cc: Lance Yang <ioworker0@gmail.com>, akpm@linux-foundation.org, 
-	baolin.wang@linux.alibaba.com, chrisl@kernel.org, kasong@tencent.com, 
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
-	linux-mm@kvack.org, linux-riscv@lists.infradead.org, 
-	lorenzo.stoakes@oracle.com, ryan.roberts@arm.com, v-songbaohua@oppo.com, 
-	x86@kernel.org, ying.huang@intel.com, zhengtangquan@oppo.com
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 0/2] Add support for clock controllers and CPU scaling
+ for QCS615
+To: Bjorn Andersson <andersson@kernel.org>
+CC: Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>,
+        Ajit Pandey <quic_ajipan@quicinc.com>,
+        Imran Shaik
+	<quic_imrashai@quicinc.com>,
+        Jagadeesh Kona <quic_jkona@quicinc.com>,
+        <linux-arm-msm@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>,
+        Konrad Dybcio
+	<konrad.dybcio@oss.qualcomm.com>
+References: <20250612-qcs615-mm-cpu-dt-v3-v3-0-721d5db70342@quicinc.com>
+ <jtirzyxqdffbqwlhuepgspyepimn7tx3btcovutfhzveynlk33@3xnoc4awrbma>
+Content-Language: en-US
+From: Taniya Das <quic_tdas@quicinc.com>
+In-Reply-To: <jtirzyxqdffbqwlhuepgspyepimn7tx3btcovutfhzveynlk33@3xnoc4awrbma>
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Authority-Analysis: v=2.4 cv=YYu95xRf c=1 sm=1 tr=0 ts=685bd4d3 cx=c_pps
+ a=ouPCqIW2jiPt+lZRy3xVPw==:117 a=ouPCqIW2jiPt+lZRy3xVPw==:17
+ a=GEpy-HfZoHoA:10 a=IkcTkHD0fZMA:10 a=6IFa9wvqVegA:10 a=VwQbUJbxAAAA:8
+ a=COk6AnOGAAAA:8 a=ig_1wT9v4rekqANRyDEA:9 a=QEXdDO2ut3YA:10
+ a=TjNXssC_j7lpFel5tvFf:22
+X-Proofpoint-GUID: kUIEfbVIeSNk_M-ScQQn6TY_mOloYmIX
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNjI1MDA4MSBTYWx0ZWRfX3SaAwO3275vV
+ UjdtBrtmN16H5PfLJCQ0KKlD8lgOZfhKFw0CvbXnWgBQGxH5ijwsAxeXmXZKwKSOxw61ajwfeJJ
+ 59Bq1NMxNPYOdQmb/FLNWfYFSRkmEpfnitf+495M+Hn7BRpGj16S1BX3QAbxH37mDDQ/Jk/LtsE
+ +Z3Sn2/ItMpT3TzIw999OmbSlBdDc94nlfd7KOBamEwDH/u0Tjwo1ya25loFkNypabxZYdLjQTx
+ 9tUQgJnN76SeduqLxA0cId6tc2x894hrzZB0crpjg31QVGZrvi5ohEI3/eqp4+mSc43OXBGnD4F
+ MdJa9/SJGsV+S5+MK3oQJG6BzMroEr3Fro3G3o/lG+n39Cu0XbstK/0IPzhhJ5toHqKJEqw2qEL
+ DaLcjH+ydwFliqARcc3/gotnSOuGatJ+qgAvOWDZZ5WCHeIieYEjkyDN6cpJM7DxtJrtf1JR
+X-Proofpoint-ORIG-GUID: kUIEfbVIeSNk_M-ScQQn6TY_mOloYmIX
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.7,FMLib:17.12.80.40
+ definitions=2025-06-25_03,2025-06-23_07,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ malwarescore=0 adultscore=0 spamscore=0 impostorscore=0 suspectscore=0
+ lowpriorityscore=0 priorityscore=1501 phishscore=0 mlxlogscore=571
+ clxscore=1015 mlxscore=0 bulkscore=0 classifier=spam authscore=0 authtc=n/a
+ authcc= route=outbound adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2505280000 definitions=main-2506250081
 
-On Wed, Jun 25, 2025 at 10:43=E2=80=AFPM David Hildenbrand <david@redhat.co=
-m> wrote:
->
-> On 25.06.25 12:38, Barry Song wrote:
-> >>> diff --git a/mm/rmap.c b/mm/rmap.c
-> >>> index fb63d9256f09..241d55a92a47 100644
-> >>> --- a/mm/rmap.c
-> >>> +++ b/mm/rmap.c
-> >>> @@ -1847,12 +1847,25 @@ void folio_remove_rmap_pud(struct folio *foli=
-o, struct page *page,
-> >>>
-> >>>    /* We support batch unmapping of PTEs for lazyfree large folios */
-> >>>    static inline bool can_batch_unmap_folio_ptes(unsigned long addr,
-> >>> -                     struct folio *folio, pte_t *ptep)
-> >>> +                                           struct folio *folio, pte_=
-t *ptep,
-> >>> +                                           struct vm_area_struct *vm=
-a)
-> >>>    {
-> >>>        const fpb_t fpb_flags =3D FPB_IGNORE_DIRTY | FPB_IGNORE_SOFT_D=
-IRTY;
-> >>> +     unsigned long next_pmd, vma_end, end_addr;
-> >>>        int max_nr =3D folio_nr_pages(folio);
-> >>>        pte_t pte =3D ptep_get(ptep);
-> >>>
-> >>> +     /*
-> >>> +      * Limit the batch scan within a single VMA and within a single
-> >>> +      * page table.
-> >>> +      */
-> >>> +     vma_end =3D vma->vm_end;
-> >>> +     next_pmd =3D ALIGN(addr + 1, PMD_SIZE);
-> >>> +     end_addr =3D addr + (unsigned long)max_nr * PAGE_SIZE;
-> >>> +
-> >>> +     if (end_addr > min(next_pmd, vma_end))
-> >>> +             return false;
-> >>
-> >> May I suggest that we clean all that up as we fix it?
-> >>
-> >> Maybe something like this:
-> >>
-> >> diff --git a/mm/rmap.c b/mm/rmap.c
-> >> index 3b74bb19c11dd..11fbddc6ad8d6 100644
-> >> --- a/mm/rmap.c
-> >> +++ b/mm/rmap.c
-> >> @@ -1845,23 +1845,38 @@ void folio_remove_rmap_pud(struct folio *folio=
-, struct page *page,
-> >>    #endif
-> >>    }
-> >>
-> >> -/* We support batch unmapping of PTEs for lazyfree large folios */
-> >> -static inline bool can_batch_unmap_folio_ptes(unsigned long addr,
-> >> -                       struct folio *folio, pte_t *ptep)
-> >> +static inline unsigned int folio_unmap_pte_batch(struct folio *folio,
-> >> +               struct page_vma_mapped_walk *pvmw, enum ttu_flags flag=
-s,
-> >> +               pte_t pte)
-> >>    {
-> >>           const fpb_t fpb_flags =3D FPB_IGNORE_DIRTY | FPB_IGNORE_SOFT=
-_DIRTY;
-> >> -       int max_nr =3D folio_nr_pages(folio);
-> >> -       pte_t pte =3D ptep_get(ptep);
-> >> +       struct vm_area_struct *vma =3D pvmw->vma;
-> >> +       unsigned long end_addr, addr =3D pvmw->address;
-> >> +       unsigned int max_nr;
-> >> +
-> >> +       if (flags & TTU_HWPOISON)
-> >> +               return 1;
-> >> +       if (!folio_test_large(folio))
-> >> +               return 1;
-> >> +
-> >> +       /* We may only batch within a single VMA and a single page tab=
-le. */
-> >> +       end_addr =3D min_t(unsigned long, ALIGN(addr + 1, PMD_SIZE), v=
-ma->vm_end);
-> >
-> > Is this pmd_addr_end()?
-> >
->
-> Yes, that could be reused as well here.
->
-> >> +       max_nr =3D (end_addr - addr) >> PAGE_SHIFT;
-> >>
-> >> +       /* We only support lazyfree batching for now ... */
-> >>           if (!folio_test_anon(folio) || folio_test_swapbacked(folio))
-> >> -               return false;
-> >> +               return 1;
-> >>           if (pte_unused(pte))
-> >> -               return false;
-> >> -       if (pte_pfn(pte) !=3D folio_pfn(folio))
-> >> -               return false;
-> >> +               return 1;
-> >> +       /* ... where we must be able to batch the whole folio. */
-> >> +       if (pte_pfn(pte) !=3D folio_pfn(folio) || max_nr !=3D folio_nr=
-_pages(folio))
-> >> +               return 1;
-> >> +       max_nr =3D folio_pte_batch(folio, addr, pvmw->pte, pte, max_nr=
-, fpb_flags,
-> >> +                                NULL, NULL, NULL);
-> >>
-> >> -       return folio_pte_batch(folio, addr, ptep, pte, max_nr, fpb_fla=
-gs, NULL,
-> >> -                              NULL, NULL) =3D=3D max_nr;
-> >> +       if (max_nr !=3D folio_nr_pages(folio))
-> >> +               return 1;
-> >> +       return max_nr;
-> >>    }
-> >>
-> >>    /*
-> >> @@ -2024,9 +2039,7 @@ static bool try_to_unmap_one(struct folio *folio=
-, struct vm_area_struct *vma,
-> >>                           if (pte_dirty(pteval))
-> >>                                   folio_mark_dirty(folio);
-> >>                   } else if (likely(pte_present(pteval))) {
-> >> -                       if (folio_test_large(folio) && !(flags & TTU_H=
-WPOISON) &&
-> >> -                           can_batch_unmap_folio_ptes(address, folio,=
- pvmw.pte))
-> >> -                               nr_pages =3D folio_nr_pages(folio);
-> >> +                       nr_pages =3D folio_unmap_pte_batch(folio, &pvm=
-w, flags, pteval);
-> >>                           end_addr =3D address + nr_pages * PAGE_SIZE;
-> >>                           flush_cache_range(vma, address, end_addr);
-> >>
-> >>
-> >> Note that I don't quite understand why we have to batch the whole thin=
-g or fallback to
-> >> individual pages. Why can't we perform other batches that span only so=
-me PTEs? What's special
-> >> about 1 PTE vs. 2 PTEs vs. all PTEs?
-> >>
-> >>
-> >> Can someone enlighten me why that is required?
-> >
-> > It's probably not a strict requirement =E2=80=94 I thought cases where =
-the
-> > count is greater than 1 but less than nr_pages might not provide much
-> > practical benefit, except perhaps in very rare edge cases, since
-> > madv_free() already calls split_folio().
->
-> Okay, but it makes the code more complicated. If there is no reason to
-> prevent the batching, we should drop it.
 
-It's not necessarily more complex, since page_vma_mapped_walk() still
-has to check each PTE individually and can't skip ahead based on nr.
-With nr_pages batched, we can exit the loop early in one go.
 
-Thanks
-Barry
+On 6/19/2025 2:51 AM, Bjorn Andersson wrote:
+> On Thu, Jun 12, 2025 at 03:47:19PM +0530, Taniya Das wrote:
+>> Add the video, camera, display and gpu clock controller nodes and the
+>> cpufreq-hw node to support cpu scaling.
+>>
+>> Clock Dependency:
+>> https://lore.kernel.org/all/20250119-qcs615-mm-v4-clockcontroller-v4-0-5d1bdb5a140c@quicinc.com/
+>>
+> 
+> This was rejected 6 months ago.
+> 
+
+I will update it to the correct latest link.
+
+> Regards,
+> Bjorn
+> 
+
 
