@@ -1,43 +1,71 @@
-Return-Path: <linux-kernel+bounces-701651-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-701656-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id DC08EAE776F
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Jun 2025 08:50:16 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 36065AE777B
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Jun 2025 08:51:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9327E3BEF00
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Jun 2025 06:49:51 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 00C694A09BC
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Jun 2025 06:51:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 239C01F4611;
-	Wed, 25 Jun 2025 06:49:42 +0000 (UTC)
-Received: from outboundhk.mxmail.xiaomi.com (outboundhk.mxmail.xiaomi.com [118.143.206.90])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 175631F3B8A
-	for <linux-kernel@vger.kernel.org>; Wed, 25 Jun 2025 06:49:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=118.143.206.90
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C61412080C4;
+	Wed, 25 Jun 2025 06:50:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b="YNk/+ZKY"
+Received: from esa.microchip.iphmx.com (esa.microchip.iphmx.com [68.232.153.233])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C89BE1FBCB2;
+	Wed, 25 Jun 2025 06:50:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=68.232.153.233
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750834181; cv=none; b=uhpce6/4woBvju8caAWni+fh+cqQVdjD690ow2ziRCjjriSa+AwRN3neSxcAJVYOWTdpzIiq7wQHq8+S2kNqrmVTkyq4moSRAmeoutSCatRevprNBx+4sbRmToJ/wfD3iTaddQpYCaB4XfJx/ylM4Pry6n4kGm7ZxZwJT2Svlzk=
+	t=1750834215; cv=none; b=OUK7zh7jbcNnfqHKKkIhF7pZpd0YkTqWckloa+gzpnyqLkY6qsCppb3Je8mQ3N9PCnkfDEhRPsZZhZC76NCk/Atx6w6S/KZpgvHRgRdL1s307GDUg1U57NTqH3Zb9erX4EhNmRQnX/plsvKc0LWWPv5CMIPA0XHOC9mxJvvJRIw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750834181; c=relaxed/simple;
-	bh=g84O1o5hFU3l3xduZF6PY/IbjbIYklm6i3ld7YRDi8g=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=QOntm+Gy/t4zTPSGCY5SYo8KI/15zVJkf8TtWZ1x7cBZ5MNLdL06/NUY0Y0njzJjTc4kqpL+XXh+lRjbqtpUcAzSAYjGwn91YCBkk+SKsivwumjInIZJFljmVUJs7Xio8Bp/ioyxgm9IpHKzClkzc1knBrckUZCikSsCSTb0jR4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=xiaomi.com; spf=pass smtp.mailfrom=xiaomi.com; arc=none smtp.client-ip=118.143.206.90
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=xiaomi.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=xiaomi.com
-X-CSE-ConnectionGUID: vX/1TlSMQvSPkzc97lpYvg==
-X-CSE-MsgGUID: hWu1/TpcR9mXYFu/+Y9UMA==
-X-IronPort-AV: E=Sophos;i="6.16,264,1744041600"; 
-   d="scan'208";a="118524165"
-From: Jianan Huang <huangjianan@xiaomi.com>
-To: <linux-f2fs-devel@lists.sourceforge.net>, <chao@kernel.org>,
-	<jaegeuk@kernel.org>
-CC: <wanghui33@xiaomi.com>, <linux-kernel@vger.kernel.org>, Jianan Huang
-	<huangjianan@xiaomi.com>, Sheng Yong <shengyong1@xiaomi.com>
-Subject: [PATCH v3] f2fs: avoid splitting bio when reading multiple pages
-Date: Wed, 25 Jun 2025 14:49:27 +0800
-Message-ID: <20250625064927.516586-1-huangjianan@xiaomi.com>
-X-Mailer: git-send-email 2.43.0
+	s=arc-20240116; t=1750834215; c=relaxed/simple;
+	bh=Ari4l4DdMYDHywUQJMzpAojTPk4J50E+stnCgXSLvZI=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=H/V/x3OLwEMiJO4eitxh42HW87xC5Pli8P33CPnvxAdjyylzivE5M0r8TtIFLVDD4i3jUjQC8G35s7mQsD+rAbvAdusRoc0ne/av6jN+W6+8og0WW4mTwc2WQTxn+QBtBw9eXN3DZ07fjR076cDScfxqPNcIeZ38kgKuiURcd7E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com; spf=pass smtp.mailfrom=microchip.com; dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b=YNk/+ZKY; arc=none smtp.client-ip=68.232.153.233
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=microchip.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=microchip.com; i=@microchip.com; q=dns/txt; s=mchp;
+  t=1750834214; x=1782370214;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=Ari4l4DdMYDHywUQJMzpAojTPk4J50E+stnCgXSLvZI=;
+  b=YNk/+ZKYZUyGC6FHYPohKJNInshszMXHsWGRvxaoov/qgSWhWoWZJYEY
+   oiiQ8vnYBE3iHJPi3sjWEF62pHoH5RKjQQUMvCzZmwrz06qS1GWiCeFkK
+   bp2lTkX/Bns4bmqUQTXf2gCr1PjnlUo9elRs/XZA99SuQW+HthuK7RLiz
+   +6eOn8Myy/5WNfuL/vujdgNxyQsgWwlgza83QluSRAnwGOkCeKo7K7fjc
+   J1Ld2dstYKDKviYhHyPx3Pi9rm/7nWhO38Ttn2D7LiMAib3Gxth2hpVb7
+   c93qS+3l9rj09yzVQMbm23c0ItHahLe0esclEJgv/IVqtwQb8MzRVdbSy
+   A==;
+X-CSE-ConnectionGUID: I6q3k54CR/y9OS0wbbtBHw==
+X-CSE-MsgGUID: 1mc1J/PLTleWv4ujWqG+AQ==
+X-IronPort-AV: E=Sophos;i="6.16,264,1744095600"; 
+   d="scan'208";a="43193030"
+X-Amp-Result: SKIPPED(no attachment in message)
+Received: from unknown (HELO email.microchip.com) ([170.129.1.10])
+  by esa3.microchip.iphmx.com with ESMTP/TLS/ECDHE-RSA-AES128-GCM-SHA256; 24 Jun 2025 23:50:13 -0700
+Received: from chn-vm-ex04.mchp-main.com (10.10.85.152) by
+ chn-vm-ex03.mchp-main.com (10.10.85.151) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.44; Tue, 24 Jun 2025 23:49:48 -0700
+Received: from archlinux.mchp-main.com (10.10.85.11) by
+ chn-vm-ex04.mchp-main.com (10.10.85.152) with Microsoft SMTP Server id
+ 15.1.2507.44 via Frontend Transport; Tue, 24 Jun 2025 23:49:45 -0700
+From: Mihai Sain <mihai.sain@microchip.com>
+To: <nicolas.ferre@microchip.com>, <alexandre.belloni@bootlin.com>,
+	<claudiu.beznea@tuxon.dev>, <robh@kernel.org>, <krzk+dt@kernel.org>,
+	<conor+dt@kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+	<devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+CC: Mihai Sain <mihai.sain@microchip.com>
+Subject: [PATCH 0/3] Update the cache configuration for Microchip SAMA5D MPUs
+Date: Wed, 25 Jun 2025 09:49:31 +0300
+Message-ID: <20250625064934.4828-1-mihai.sain@microchip.com>
+X-Mailer: git-send-email 2.50.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -46,65 +74,23 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Content-Type: text/plain
-X-ClientProxiedBy: BJ-MBX04.mioffice.cn (10.237.8.124) To YZ-MBX05.mioffice.cn
- (10.237.88.125)
 
-When fewer pages are read, nr_pages may be smaller than nr_cpages. Due
-to the nr_vecs limit, the compressed pages will be split into multiple
-bios and then merged at the block level. In this case, nr_cpages should
-be used to pre-allocate bvecs.
-To handle this case, align max_nr_pages to cluster_size, which should be
-enough for all compressed pages.
+This patch series updates the cache configuration Microchip SAMA5D MPUs.
+The cache configuration is described in block diagram from datasheet.
 
-Signed-off-by: Jianan Huang <huangjianan@xiaomi.com>
-Signed-off-by: Sheng Yong <shengyong1@xiaomi.com>
----
-Changes since v2:
-- Initialize index only for compressed files.
-Changes since v1:
-- Use aligned nr_pages instead of nr_cpages to pre-allocate bvecs.
+Mihai Sain (3):
+  ARM: dts: microchip: sama5d2: Update the cache configuration for CPU
+  ARM: dts: microchip: sama5d3: Update the cache configuration for CPU
+  ARM: dts: microchip: sama5d4: Update the cache configuration for CPU
 
- fs/f2fs/data.c | 12 ++++++++++--
- 1 file changed, 10 insertions(+), 2 deletions(-)
+ arch/arm/boot/dts/microchip/sama5d2.dtsi | 3 +++
+ arch/arm/boot/dts/microchip/sama5d3.dtsi | 2 ++
+ arch/arm/boot/dts/microchip/sama5d4.dtsi | 3 +++
+ 3 files changed, 8 insertions(+)
 
-diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c
-index 31e892842625..d071d9f6a811 100644
---- a/fs/f2fs/data.c
-+++ b/fs/f2fs/data.c
-@@ -2303,7 +2303,7 @@ int f2fs_read_multi_pages(struct compress_ctx *cc, struct bio **bio_ret,
- 		}
- 
- 		if (!bio) {
--			bio = f2fs_grab_read_bio(inode, blkaddr, nr_pages,
-+			bio = f2fs_grab_read_bio(inode, blkaddr, nr_pages - i,
- 					f2fs_ra_op_flags(rac),
- 					folio->index, for_write);
- 			if (IS_ERR(bio)) {
-@@ -2376,6 +2376,14 @@ static int f2fs_mpage_readpages(struct inode *inode,
- 	unsigned max_nr_pages = nr_pages;
- 	int ret = 0;
- 
-+#ifdef CONFIG_F2FS_FS_COMPRESSION
-+	if (f2fs_compressed_file(inode)) {
-+		index = rac ? readahead_index(rac) : folio->index;
-+		max_nr_pages = round_up(index + nr_pages, cc.cluster_size) -
-+				round_down(index, cc.cluster_size);
-+	}
-+#endif
-+
- 	map.m_pblk = 0;
- 	map.m_lblk = 0;
- 	map.m_len = 0;
-@@ -2385,7 +2393,7 @@ static int f2fs_mpage_readpages(struct inode *inode,
- 	map.m_seg_type = NO_CHECK_TYPE;
- 	map.m_may_create = false;
- 
--	for (; nr_pages; nr_pages--) {
-+	for (; nr_pages; nr_pages--, max_nr_pages--) {
- 		if (rac) {
- 			folio = readahead_folio(rac);
- 			prefetchw(&folio->flags);
+
+base-commit: 7595b66ae9de667bf35a8c99e8f1bfc4792e207e
 -- 
-2.43.0
+2.50.0
 
 
