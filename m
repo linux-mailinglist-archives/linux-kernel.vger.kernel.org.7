@@ -1,159 +1,209 @@
-Return-Path: <linux-kernel+bounces-703151-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-703154-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 35475AE8C2F
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Jun 2025 20:19:37 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id D17AEAE8C38
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Jun 2025 20:21:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6F8CC4A267F
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Jun 2025 18:19:37 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id AD7281BC650C
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Jun 2025 18:22:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BF45D2D662F;
-	Wed, 25 Jun 2025 18:19:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AD78B2D8DAF;
+	Wed, 25 Jun 2025 18:21:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="gIBUPjQ9"
-Received: from mail-oi1-f175.google.com (mail-oi1-f175.google.com [209.85.167.175])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="tk364R0V"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 975812D540B
-	for <linux-kernel@vger.kernel.org>; Wed, 25 Jun 2025 18:19:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E72552D5419;
+	Wed, 25 Jun 2025 18:21:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750875568; cv=none; b=SMQ5iklokCiTr/wG+rA56LzkFd6OFKtD+FyN0TYbivsoL1VaVYwp8Fz0d3YP8My23Raz1aK+zyOof/myG/8i4hmA/udHMvhyOTpotLtqT7bYrpEutqWyGjEuZsD58V/rSfBTTYmRy5XgXKVdF+97ZtZnkTrPBeTfGwQQ0IEaE44=
+	t=1750875687; cv=none; b=TrB0foUxmyC05cYiTG2RdWO3A1ZnBaiV22wkjFjHdNMUVi1C+eg0O5eRb95RACNVr6km+c16TOHb5eDwbp3IPI0+VFRLFUPfY9z7uI7KwSZy/uk8BTDVKSVQXs5nNnxZWoU4Q8xT3ewrWrgxvztfSn9OI67+pJegv0/PIc8tOBI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750875568; c=relaxed/simple;
-	bh=Jfj5qnXFugsOMh6HpU5RjfMH6+e8axtkDbqBf4lvN0Y=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=PXRYucrShUnqcLaw0KouLiSh9DKXHAccI0/DeEezxZPU8nFTy/a7ro0Z56AfJTShncB/ZZ0GweiuOhyxhvOj55MlnMSZqp2jtE2d6CLiahDzNXjiFI63XlESK+sG7II5RCtyA2BJ2E6ehi71nSNwlO7ZlP48JBqhHPCwg87HBi4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=gIBUPjQ9; arc=none smtp.client-ip=209.85.167.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-oi1-f175.google.com with SMTP id 5614622812f47-4067b7d7e52so55788b6e.2
-        for <linux-kernel@vger.kernel.org>; Wed, 25 Jun 2025 11:19:26 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1750875565; x=1751480365; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=0Dm5388ZZrY1U4+efN8p/OTMRUgs76Nb9FuLZ9jSeOs=;
-        b=gIBUPjQ96a+Lg9983NJrNYvY2HJ1SedKuihBTsBolYzOwcq2A9pgJ8PNSNt4QEb3YA
-         qBXHsJAXFKWdLSaflPUayl9dbT5IIC//HQqS3WLhWgJLPqT1477PSgpMTFpfqUY4SLBd
-         wmnHP4cIf6cnftPnhXnVSKZD2vd0y7wwq3iRoQJs6Ctdbhr3bi5EI185KfYupuUMUjBo
-         Lo/AeDzdu8WOgxl53zsxSujFt+WomBWmUUR83ZIpvIm0wpfokOvIzNkUab8MFd+RMa0G
-         sLmyfIkwsX0eeqsDFIM1JsHLD5ON2Cex/rfttEz88oTRsUbK8qAgmI0Qna+l9N8EQify
-         SqoA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1750875565; x=1751480365;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=0Dm5388ZZrY1U4+efN8p/OTMRUgs76Nb9FuLZ9jSeOs=;
-        b=Ymi7pxsY1YLZ1d2/pkcwoEQXIEwVO5jthvgV8k0QKLNWzN1QHtxFtWw7HmSNlo912M
-         HWY/oyzD1wvhWs8Jgy3gPqgmkTb1CkYS3n8ltWqRMMccTvKX/j7x9IdXEl0WaETAIBFQ
-         EA/7OG0BrlCTge+3Y2OGhVOpS49ebuG+CB0bw6qJqK7n6oXpLdS15OBuTsFrWiC86qvW
-         NiOLBbyqGE8q1GQAL+MFxHLYSzbE4U68MevmUh1mWtt55mWWvznWPB0HpGoexrRUzakk
-         YR1Kd6ozREHkFVGVToElSZ6YuJ7enfLw+28Sl4yMfgFBQX9Jr1YHoqmkHIam1nrtYYk8
-         m3lA==
-X-Forwarded-Encrypted: i=1; AJvYcCWa0GyvcLJFYtvDObqbSi33IX72SlfQ5upBcdFGadXW6F+OsBk+7nWVV/V+v0tmwvoNioFLF95NDOb3f4A=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzutJ5SZvdA5IGsGJ1FCb5PZ15driUcho/WsPkWWgHceqwsVau3
-	dzpgy0fuSwyLDVpH6xLXgdkmE10GUe/RXWCK3G5IUQmjl+abZt5zOlL23A5O8/dPHlc=
-X-Gm-Gg: ASbGncsHttv6xNZOy/rCo7Hc0Pk08wtu/kkApiZ70jnJHQyVxp0M9DJH1cyU5zWZWSL
-	7QHadoovG6UrerHarxRD7kwjf1pL6RYILsXa5ZDyW9Ag0Fyi6bpD30dSmRO7Py6leb+xQUILYla
-	UDZjIpzvAyQJY2YnrlR3d/GPnoU5nD+DFh8KpIJ0l6KyM3GJM08lOstEwb4w8pv1ER8p3xJyyZa
-	Dd/wNMIPVzkbkTTuq1L3DTm/Tpw3uqfHqc9JG6MGst7nakitlyM0A5Ye+S5q7WTRmDoVQmvWPI2
-	304PLukdX0Gznb9YiVSvw7WtBDLc+yS4fvNmIfh0EJ5aoEBN7XSoTU5Dshu3LZ9d1ac=
-X-Google-Smtp-Source: AGHT+IGyEXNA75F1Qnqm4F8gyjHFHlyO/fw4ijh8dQyLEguVkILpGruCyf60HTw4fIUAOctXuX74UQ==
-X-Received: by 2002:a05:6808:8204:b0:406:6a21:527f with SMTP id 5614622812f47-40b05c75308mr3205199b6e.35.1750875565621;
-        Wed, 25 Jun 2025 11:19:25 -0700 (PDT)
-Received: from localhost ([2603:8080:b800:f700:3ee4:904:206f:ad8])
-        by smtp.gmail.com with ESMTPSA id 5614622812f47-40ac6d22c23sm2280631b6e.42.2025.06.25.11.19.25
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 25 Jun 2025 11:19:25 -0700 (PDT)
-Date: Wed, 25 Jun 2025 21:19:24 +0300
-From: Dan Carpenter <dan.carpenter@linaro.org>
-To: Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= <u.kleine-koenig@baylibre.com>
-Cc: Zaid Alali <zaidal@os.amperecomputing.com>,
-	"Rafael J. Wysocki" <rafael@kernel.org>,
-	Len Brown <lenb@kernel.org>, James Morse <james.morse@arm.com>,
-	Tony Luck <tony.luck@intel.com>, Borislav Petkov <bp@alien8.de>,
-	Ira Weiny <ira.weiny@intel.com>,
-	Jonathan Cameron <Jonathan.Cameron@huawei.com>,
-	Dan Williams <dan.j.williams@intel.com>,
-	Al Viro <viro@zeniv.linux.org.uk>,
-	Sudeep Holla <sudeep.holla@arm.com>, linux-acpi@vger.kernel.org,
-	linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH v2 next] ACPI: APEI: EINJ: prevent memory corruption in
- error_type_set()
-Message-ID: <757b5117-a865-4d31-b566-248048f87b29@suswa.mountain>
-References: <c71e7ba6-f127-4f49-acbf-20063dd26553@sabinyo.mountain>
- <ks34mfmv2vhwojpxlzv7tyordcjdo6zclcflplvs2wsl6gkbn5@3v5kguelmita>
+	s=arc-20240116; t=1750875687; c=relaxed/simple;
+	bh=6zTjp7jRB2Jx+9WHHH175m07BThSG/TYu6uPE8FB4jo=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=iXonGY6tdT6N8RZNMIDkv5o9Mk663+0ogc5zDXdFgeWK1UlAVjhOx2Ed7HqVHe4uSAzwMB67HJMUvaWA7/ponpEQ31ToDVwMSGbYKBLMlNAubEwb4pU/sg83OPnGXDIbqPB1avvRSIp0QLhZEpH75g2Lq2EsSBb4vfSUJpJeB+0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=tk364R0V; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPS id 7EB33C4CEEA;
+	Wed, 25 Jun 2025 18:21:26 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1750875686;
+	bh=6zTjp7jRB2Jx+9WHHH175m07BThSG/TYu6uPE8FB4jo=;
+	h=From:Subject:Date:To:Cc:Reply-To:From;
+	b=tk364R0VnsrIsvLDO06yfWzbHZIUOWfPbkBdzhT5uLm7fxI7B85FOSE56wQeE93yw
+	 eK14Fphr4s8BLnfP70+EZhv7b6lI+bB9JcGs2ZvYGRIPmxunnTn/rUnOygHsDQuh4r
+	 qR800JsxEq4BmCC5NCBIKrrhaBihvEqJBHozUjEynSTdDixZRR5gY8xsyr5eeQ1IMy
+	 kx2szrlWT9r6/lzTfyZ1inMqqPw5t5xaJ8uUWz5AyhnYuwpEzVN3PYHAPprglenfiN
+	 Mixa0sqKbKnRBifxu66RENgU57WehaqIvqwlxfpkPe9j2SOM9b5LULboUC9q0MeR0u
+	 QGCiy4qzkqOCQ==
+Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 72EF7C7EE30;
+	Wed, 25 Jun 2025 18:21:26 +0000 (UTC)
+From: Stuart Burtner via B4 Relay <devnull+sburtner.d3embedded.com@kernel.org>
+Subject: [PATCH 0/2] media: i2c: Add driver for Sony IMX728
+Date: Wed, 25 Jun 2025 14:20:02 -0400
+Message-Id: <20250625-imx728-on-6-12-v4-v1-0-cfc6e18c3e23@d3embedded.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <ks34mfmv2vhwojpxlzv7tyordcjdo6zclcflplvs2wsl6gkbn5@3v5kguelmita>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIANM9XGgC/x3MPQqAMAxA4atIZgMaU/+uIg7SRs1glRakIN7d4
+ vgN7z0QJahEGIsHgtwa9fQZdVmA3Re/CarLBqrIVC0x6pE66vH02GJNeDMyN9YY4cF1K+TuCrJ
+ q+p/T/L4f4BTSnWMAAAA=
+X-Change-ID: 20250624-imx728-on-6-12-v4-443c55e49d7f
+To: Stuart Burtner <sburtner@d3embedded.com>, 
+ Mauro Carvalho Chehab <mchehab@kernel.org>, Rob Herring <robh@kernel.org>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, Shawn Guo <shawnguo@kernel.org>, 
+ Sascha Hauer <s.hauer@pengutronix.de>, 
+ Pengutronix Kernel Team <kernel@pengutronix.de>, 
+ Fabio Estevam <festevam@gmail.com>, 
+ Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>, 
+ Sakari Ailus <sakari.ailus@linux.intel.com>
+Cc: linux-media@vger.kernel.org, devicetree@vger.kernel.org, 
+ imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org, 
+ linux-kernel@vger.kernel.org, Spencer Hill <shill@d3engineering.com>, 
+ Sebastian LaVine <slavine@d3engineering.com>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=openpgp-sha256; l=3965;
+ i=sburtner@d3embedded.com; h=from:subject:message-id;
+ bh=6zTjp7jRB2Jx+9WHHH175m07BThSG/TYu6uPE8FB4jo=;
+ b=owEB7QES/pANAwAKAUhClGWrMl62AcsmYgBoXD4UCgoBBbMxRsAo6haiO2mY7nAmNjcvb0+aI
+ cVGZrqZxAuJAbMEAAEKAB0WIQRYcXSPQoXxpLLN1/FIQpRlqzJetgUCaFw+FAAKCRBIQpRlqzJe
+ tg/ODACzTuZLcmQupvz2GECUgNtyaPVLf5/NKaD8BBA2G6eft66Ee0t6kuMcgIgA+KeXf6h1UZi
+ NmWZPTHo7DB9HhDImLl8gu19mTJt89ocTH/va19/im54B6zQvjGxGXysKsBZRy/RiqgVgV02uFg
+ cdAXF/qbe1ygQGot5rXJy/nIrxM4ALW2H/chZQRn5qaYXotq05mOfqq/9Zun9On4ZemLkgVP+ns
+ z0Fbv3e9xe7smoaMYF929MNTLdj2dhEQSRUSOEHqf2tndrfEQh/C3PV1BT2NC1qISTIlDBHZ6W1
+ W05ccVYdwSpfjOJGRTe64ust/HkaiHG7kjFNnUHwcmAk2U2m+LNJgm3E0Ozk+svBCXYgwuO6anT
+ AoibwPaMPZVRdk3XTP+yBtx9EpxaZtjswUoCYmjBN8fvWS42eKNqzMtBYDJCSTZ6aLt6cYrwJUi
+ nnJue1rw9kaZXO5FG01mWNpe/6hzL8DuTx6gkvGHBzG7o+2Vv56o939PH77PpKLFAi19M=
+X-Developer-Key: i=sburtner@d3embedded.com; a=openpgp;
+ fpr=5871748F4285F1A4B2CDD7F148429465AB325EB6
+X-Endpoint-Received: by B4 Relay for sburtner@d3embedded.com/default with
+ auth_id=441
+X-Original-From: Stuart Burtner <sburtner@d3embedded.com>
+Reply-To: sburtner@d3embedded.com
 
-On Wed, Jun 25, 2025 at 08:04:14PM +0200, Uwe Kleine-König wrote:
-> Hello Dan,
-> 
-> On Wed, Jun 25, 2025 at 11:34:38AM -0500, Dan Carpenter wrote:
-> > The "einj_buf" buffer is 32 chars.  Verify that "count" is not too large
-> > for that.  Also leave the last character as a NUL terminator to ensure
-> > the string is properly terminated.
-> > 
-> > Fixes: 0c6176e1e186 ("ACPI: APEI: EINJ: Enable the discovery of EINJv2 capabilities")
-> > Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
-> > ---
-> > v2: I messed up the sizeof() calculation in the copy_from_user() and I put
-> >     the parentheses in the wrong place in v1.
-> > 
-> >  drivers/acpi/apei/einj-core.c | 5 ++++-
-> >  1 file changed, 4 insertions(+), 1 deletion(-)
-> > 
-> > diff --git a/drivers/acpi/apei/einj-core.c b/drivers/acpi/apei/einj-core.c
-> > index d6d7e36e3647..2206cbbdccfa 100644
-> > --- a/drivers/acpi/apei/einj-core.c
-> > +++ b/drivers/acpi/apei/einj-core.c
-> > @@ -826,8 +826,11 @@ static ssize_t error_type_set(struct file *file, const char __user *buf,
-> >  	int rc;
-> >  	u64 val;
-> >  
-> > +	if (count > sizeof(einj_buf))
-> > +		return -EINVAL;
-> > +
-> >  	memset(einj_buf, 0, sizeof(einj_buf));
-> > -	if (copy_from_user(einj_buf, buf, count))
-> 
-> I would add a comment here to explain the -1. It's in the commit log,
-> but that doesn't help a future reader.
-> 
+Hello! My name is Stuart Burtner.  I will be continuing the work done by Sebastian & Spencer
+on this driver. I will finish this patch series and maintain this driver moving forward.
 
-Sure.  I can add a comment.
+This series adds a V4L2 sensor driver for the Sony IMX728, and related
+devicetree overlays.
 
-	/* Leave the last character for the NUL terminator */
+v3 [0] -> v4:
+- Drop set_fps() function because it doesn't actually change FPS
+- Use "guard" instead of mutex_lock()
+- Fix error checking on imx728->reset_gpio
+- Fix attribution of Spencer Hill as Co-Author
+- Fix maintainer entry for Stuart
+- Clean up documentation for gpios, per notes from Krzysztof Kozlowski
+- Removed defconfig modifications
 
-> > +	if (copy_from_user(einj_buf, buf, min(count, sizeof(einj_buf) - 1)))
-> >  		return -EFAULT;
-> >  
-> >  	if (strncmp(einj_buf, "V2_", 3) == 0) {
-> 
-> Further down there is:
-> 
-> 	return count;
-> 
-> Is that still correct given that you read less now?
+[0]: https://lore.kernel.org/all/20250212195656.69528-1-slavine@d3embedded.com/
 
-Yep.  If we don't return count userspace will try again, right?
+v4l2-compliance 1.26.1-5142, 64 bits, 64-bit time_t
+v4l2-compliance SHA: 4aee01a02792 2023-12-12 21:40:38
 
-regards,
-dan carpenter
+Compliance test for device /dev/v4l-subdev4:
+
+Driver Info:
+	Driver version   : 6.12.33
+	Capabilities     : 0x00000000
+
+Required ioctls:
+	test VIDIOC_SUDBEV_QUERYCAP: OK
+	test invalid ioctls: OK
+
+Allow for multiple opens:
+	test second /dev/v4l-subdev4 open: OK
+	test VIDIOC_SUBDEV_QUERYCAP: OK
+	test for unlimited opens: OK
+
+Debug ioctls:
+	test VIDIOC_LOG_STATUS: OK (Not Supported)
+
+Input ioctls:
+	test VIDIOC_G/S_TUNER/ENUM_FREQ_BANDS: OK (Not Supported)
+	test VIDIOC_G/S_FREQUENCY: OK (Not Supported)
+	test VIDIOC_S_HW_FREQ_SEEK: OK (Not Supported)
+	test VIDIOC_ENUMAUDIO: OK (Not Supported)
+	test VIDIOC_G/S/ENUMINPUT: OK (Not Supported)
+	test VIDIOC_G/S_AUDIO: OK (Not Supported)
+	Inputs: 0 Audio Inputs: 0 Tuners: 0
+
+Output ioctls:
+	test VIDIOC_G/S_MODULATOR: OK (Not Supported)
+	test VIDIOC_G/S_FREQUENCY: OK (Not Supported)
+	test VIDIOC_ENUMAUDOUT: OK (Not Supported)
+	test VIDIOC_G/S/ENUMOUTPUT: OK (Not Supported)
+	test VIDIOC_G/S_AUDOUT: OK (Not Supported)
+	Outputs: 0 Audio Outputs: 0 Modulators: 0
+
+Input/Output configuration ioctls:
+	test VIDIOC_ENUM/G/S/QUERY_STD: OK (Not Supported)
+	test VIDIOC_ENUM/G/S/QUERY_DV_TIMINGS: OK (Not Supported)
+	test VIDIOC_DV_TIMINGS_CAP: OK (Not Supported)
+	test VIDIOC_G/S_EDID: OK (Not Supported)
+
+Control ioctls:
+	test VIDIOC_QUERY_EXT_CTRL/QUERYMENU: OK
+	test VIDIOC_QUERYCTRL: OK
+	test VIDIOC_G/S_CTRL: OK
+	test VIDIOC_G/S/TRY_EXT_CTRLS: OK
+	test VIDIOC_(UN)SUBSCRIBE_EVENT/DQEVENT: OK
+	test VIDIOC_G/S_JPEGCOMP: OK (Not Supported)
+	Standard Controls: 9 Private Controls: 0
+
+Format ioctls:
+	test VIDIOC_ENUM_FMT/FRAMESIZES/FRAMEINTERVALS: OK (Not Supported)
+	test VIDIOC_G/S_PARM: OK (Not Supported)
+	test VIDIOC_G_FBUF: OK (Not Supported)
+	test VIDIOC_G_FMT: OK (Not Supported)
+	test VIDIOC_TRY_FMT: OK (Not Supported)
+	test VIDIOC_S_FMT: OK (Not Supported)
+	test VIDIOC_G_SLICED_VBI_CAP: OK (Not Supported)
+	test Cropping: OK (Not Supported)
+	test Composing: OK (Not Supported)
+	test Scaling: OK (Not Supported)
+
+Codec ioctls:
+	test VIDIOC_(TRY_)ENCODER_CMD: OK (Not Supported)
+	test VIDIOC_G_ENC_INDEX: OK (Not Supported)
+	test VIDIOC_(TRY_)DECODER_CMD: OK (Not Supported)
+
+Buffer ioctls:
+	test VIDIOC_REQBUFS/CREATE_BUFS/QUERYBUF: OK (Not Supported)
+	test CREATE_BUFS maximum buffers: OK
+	test VIDIOC_EXPBUF: OK (Not Supported)
+	test Requests: OK (Not Supported)
+
+Total for device /dev/v4l-subdev4: 44, Succeeded: 44, Failed: 0, Warnings: 0
+
+---
+Stuart Burtner (2):
+      media: dt-bindings: Add Sony IMX728
+      media: i2c: Add driver for Sony IMX728
+
+ .../devicetree/bindings/media/i2c/sony,imx728.yaml |   95 +
+ MAINTAINERS                                        |    7 +
+ drivers/media/i2c/Kconfig                          |   12 +
+ drivers/media/i2c/Makefile                         |    1 +
+ drivers/media/i2c/imx728.c                         | 9628 ++++++++++++++++++++
+ 5 files changed, 9743 insertions(+)
+---
+base-commit: 23fdf46589db718d538fa3e65ab0d57362d50b4a
+change-id: 20250624-imx728-on-6-12-v4-443c55e49d7f
+
+Best regards,
+-- 
+Stuart Burtner <sburtner@d3embedded.com>
 
 
 
