@@ -1,108 +1,86 @@
-Return-Path: <linux-kernel+bounces-702523-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-702525-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id C15A7AE8373
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Jun 2025 14:58:29 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3460AAE8381
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Jun 2025 15:00:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 11B5E1BC7DA6
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Jun 2025 12:57:29 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 52CFC3BCF8C
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Jun 2025 12:57:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3C0A426158C;
-	Wed, 25 Jun 2025 12:55:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="EiYFioox"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.13])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1B79D2641E7;
+	Wed, 25 Jun 2025 12:56:32 +0000 (UTC)
+Received: from baidu.com (mx22.baidu.com [220.181.50.185])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 27FBF26158D;
-	Wed, 25 Jun 2025 12:55:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.13
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 41CD12620C4;
+	Wed, 25 Jun 2025 12:56:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.181.50.185
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750856148; cv=none; b=fpPxRb1rkw8LEMkDlMYwXfkeGdInon+x/e2t3bGaLL2HaPa2o+AOcnQf8guWTX+qW8HmsOK9BNJWN49SIY4Cro+ZiTKAjCb0EkLtirGxVsB5fNBgy0pn+mAVY0WwD1wRwXYeC/5veos0MfHpQZdG7pHx3sySh8ew1+e5aCOgpaE=
+	t=1750856191; cv=none; b=FKrNKpMt0QaPKpH/6rB9fpN09ajIV1n8lXwqwLPVHxQSQGdPC8jvZsl0JyUst61uq5neKt5zOafyXwcBTyUjRaf+ejyagZ8JrXKzjSd3vs3h5H1P0CCQHVcNaHNo0C1EOARxmazNdHgDwqw58L+Ksx4IV3gFS0fUTgtVxkjgMV4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750856148; c=relaxed/simple;
-	bh=JXLoTAc7ALhyjeGRQiJU1KcXwfT2CND0hfmI1qetiYE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=N/xDDPaXKUCpZHtoFWOOTC69Q9yykM9qVMJJ9ZS2MxqZemt+WmmJihaHYh6hofr0DCciNQmdkFWTbN0Hz3v5x/11uq8UjzvkQLaw9fvwqEC2CCyktIrhYLSon9FXMCaWpP8xW4E1BLRFDGBFp788QG1VLR7BN1ElsoXQ141x98A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=EiYFioox; arc=none smtp.client-ip=192.198.163.13
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1750856147; x=1782392147;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=JXLoTAc7ALhyjeGRQiJU1KcXwfT2CND0hfmI1qetiYE=;
-  b=EiYFiooxWZGeIy55qCQV5QVqdjnK7pYIECFV75kU3asp1ZVbLchsXjdC
-   dnHIRimyDQN3O/bRqqJiCsE+8/NNxjJUMABsDHwyVJ83+dqVjcJHZUEZ/
-   0pTVAG61o/dhjcZpMQvk1tUP/ME2Jofs7jjiYn0y00wN5KVO9+j9c6fdd
-   xVSaoXKGfQjyXZ9XndEiBN5Z8DIVP9UvMQKwt1dJrKUSOjrbCl2Ovrvm9
-   8xldtyD0yA5abEAGQ6hkv+32c5cM14ySZ7dyknIEGjsYRdlyhSaW85pH5
-   RkE0bq+2qdMnoACnMG4NxTC8L4fJyiT87Bnxmw1aB0RJjNKTN6iLwFUDV
-   Q==;
-X-CSE-ConnectionGUID: ZFurLcwGQoiTa8B4AArYkQ==
-X-CSE-MsgGUID: sLo93ohzT4y8U4r1vaDpuQ==
-X-IronPort-AV: E=McAfee;i="6800,10657,11474"; a="55752963"
-X-IronPort-AV: E=Sophos;i="6.16,264,1744095600"; 
-   d="scan'208";a="55752963"
-Received: from fmviesa004.fm.intel.com ([10.60.135.144])
-  by fmvoesa107.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 25 Jun 2025 05:55:46 -0700
-X-CSE-ConnectionGUID: 18evZZsoR4Kd5vv5zfMgmw==
-X-CSE-MsgGUID: i2Sdz5NYT8qFlryDPXfl1g==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.16,264,1744095600"; 
-   d="scan'208";a="157708959"
-Received: from black.fi.intel.com ([10.237.72.28])
-  by fmviesa004.fm.intel.com with ESMTP; 25 Jun 2025 05:55:35 -0700
-Received: by black.fi.intel.com (Postfix, from userid 1000)
-	id B7C9A207; Wed, 25 Jun 2025 15:55:33 +0300 (EEST)
-Date: Wed, 25 Jun 2025 15:55:33 +0300
-From: "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>
-To: Andy Lutomirski <luto@kernel.org>, 
-	Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>, 
-	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org, "H. Peter Anvin" <hpa@zytor.com>, 
-	Peter Zijlstra <peterz@infradead.org>, Ard Biesheuvel <ardb@kernel.org>, 
-	"Paul E. McKenney" <paulmck@kernel.org>, Josh Poimboeuf <jpoimboe@kernel.org>, 
-	Xiongwei Song <xiongwei.song@windriver.com>, Xin Li <xin3.li@intel.com>, 
-	"Mike Rapoport (IBM)" <rppt@kernel.org>, Brijesh Singh <brijesh.singh@amd.com>, 
-	Michael Roth <michael.roth@amd.com>, Tony Luck <tony.luck@intel.com>, 
-	Alexey Kardashevskiy <aik@amd.com>, Alexander Shishkin <alexander.shishkin@linux.intel.com>
-Cc: Jonathan Corbet <corbet@lwn.net>, Sohil Mehta <sohil.mehta@intel.com>, 
-	Ingo Molnar <mingo@kernel.org>, Pawan Gupta <pawan.kumar.gupta@linux.intel.com>, 
-	Daniel Sneddon <daniel.sneddon@linux.intel.com>, Kai Huang <kai.huang@intel.com>, 
-	Sandipan Das <sandipan.das@amd.com>, Breno Leitao <leitao@debian.org>, 
-	Rick Edgecombe <rick.p.edgecombe@intel.com>, Alexei Starovoitov <ast@kernel.org>, 
-	Hou Tao <houtao1@huawei.com>, Juergen Gross <jgross@suse.com>, 
-	Vegard Nossum <vegard.nossum@oracle.com>, Kees Cook <kees@kernel.org>, Eric Biggers <ebiggers@google.com>, 
-	Jason Gunthorpe <jgg@ziepe.ca>, "Masami Hiramatsu (Google)" <mhiramat@kernel.org>, 
-	Andrew Morton <akpm@linux-foundation.org>, Luis Chamberlain <mcgrof@kernel.org>, 
-	Yuntao Wang <ytcoode@gmail.com>, Rasmus Villemoes <linux@rasmusvillemoes.dk>, 
-	Christophe Leroy <christophe.leroy@csgroup.eu>, Tejun Heo <tj@kernel.org>, Changbin Du <changbin.du@huawei.com>, 
-	Huang Shijie <shijie@os.amperecomputing.com>, Geert Uytterhoeven <geert+renesas@glider.be>, 
-	Namhyung Kim <namhyung@kernel.org>, Arnaldo Carvalho de Melo <acme@redhat.com>, 
-	linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-efi@vger.kernel.org, 
-	linux-mm@kvack.org
-Subject: Re: [PATCH] x86/vsyscall: Do not require X86_PF_INSTR to emulate
- vsyscall
-Message-ID: <tlls63g3pslsdnegrahl7ayha6um6skpve5k2gotcqrnw4mub4@fkas3h7nd4gc>
-References: <20250625125112.3943745-1-kirill.shutemov@linux.intel.com>
- <20250625125112.3943745-3-kirill.shutemov@linux.intel.com>
+	s=arc-20240116; t=1750856191; c=relaxed/simple;
+	bh=w/RXprbaQVZvFx2iClbRZYtbtUhrHNEUJEAqm6qxX/k=;
+	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=fbiVWfc6pNWMYB6+4JYfJae+5ZRqKsZFesSvfgQQzvXI0wdGjryoWzCR86d6s9kVoW8J7+hkujC1C7OIH6e5G1hABgmBV8szDS6j86WCVqXc3bpx9cUm6kATssWodSTf78ei+hBPgjL96Vn3mKLWDYxsZJhm1bvHKiyE7tRRXqc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=baidu.com; spf=pass smtp.mailfrom=baidu.com; arc=none smtp.client-ip=220.181.50.185
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=baidu.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baidu.com
+From: Fushuai Wang <wangfushuai@baidu.com>
+To: <horms@kernel.org>
+CC: <andrew+netdev@lunn.ch>, <davem@davemloft.net>, <edumazet@google.com>,
+	<ioana.ciornei@nxp.com>, <kuba@kernel.org>, <linux-kernel@vger.kernel.org>,
+	<netdev@vger.kernel.org>, <pabeni@redhat.com>, <wangfushuai@baidu.com>
+Subject: Re: [PATCH net] dpaa2-eth: fix xdp_rxq_info leak in dpaa2_eth_setup_rx_flow
+Date: Wed, 25 Jun 2025 20:55:47 +0800
+Message-ID: <20250625125547.19602-1-wangfushuai@baidu.com>
+X-Mailer: git-send-email 2.39.2 (Apple Git-143)
+In-Reply-To: <20250625104339.GW1562@horms.kernel.org>
+References: <20250625104339.GW1562@horms.kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250625125112.3943745-3-kirill.shutemov@linux.intel.com>
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: bjhj-exc3.internal.baidu.com (172.31.3.13) To
+ bjkjy-mail-ex22.internal.baidu.com (172.31.50.16)
+X-FEAS-Client-IP: 172.31.50.16
+X-FE-Policy-ID: 52:10:53:SYSTEM
 
-Please ignore this patch. It was sent by mistake. The same patch included
-in the patchset in the right spot.
+>> When xdp_rxq_info_reg_mem_model() fails after a successful
+>> xdp_rxq_info_reg(), the kernel may leaks the registered RXQ
+>> info structure. Fix this by calling xdp_rxq_info_unreg() in
+>> the error path, ensuring proper cleanup when memory model
+>> registration fails.
+>>
+>> Fixes: d678be1dc1ec ("dpaa2-eth: add XDP_REDIRECT support")
+>> Signed-off-by: Fushuai Wang <wangfushuai@baidu.com>
+> 
+> Thanks, I agree this is needed.
+> 
+> Reviewed-by: Simon Horman <horms@kernel.org>
+> 
+> But I wonder how these resources are released in the following cases:
+> 
+> * Error in dpaa2_eth_bind_dpni() after at least one
+>   successful call to dpaa2_eth_setup_rx_flow()
+> 
+> * Error in dpaa2_eth_probe() after a successful call to
+>   dpaa2_eth_bind_dpni()
+> 
+> * Driver removal (dpaa2_eth_remove())
 
--- 
-  Kiryl Shutsemau / Kirill A. Shutemov
+Hi, Simon
+
+I think these paths also leak xdp_rxq_info.
+I'll add cleanup for them and send v2 shortly.
+
+--
+Regards,
+Wang
 
