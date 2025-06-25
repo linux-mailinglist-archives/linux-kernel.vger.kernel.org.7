@@ -1,83 +1,146 @@
-Return-Path: <linux-kernel+bounces-702585-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-702579-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0769BAE8463
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Jun 2025 15:22:14 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 828BFAE8434
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Jun 2025 15:18:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B4028173033
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Jun 2025 13:18:40 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A24274C08F7
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Jun 2025 13:16:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6F475264618;
-	Wed, 25 Jun 2025 13:16:46 +0000 (UTC)
-Received: from outgoing.mit.edu (outgoing-auth-1.mit.edu [18.9.28.11])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 65C13265CCF;
+	Wed, 25 Jun 2025 13:15:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Hi/sTCLH"
+Received: from mail-wm1-f42.google.com (mail-wm1-f42.google.com [209.85.128.42])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5CA072641EA
-	for <linux-kernel@vger.kernel.org>; Wed, 25 Jun 2025 13:16:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=18.9.28.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 06DBD264A7C;
+	Wed, 25 Jun 2025 13:15:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750857406; cv=none; b=p6/nKq35osPK9MpIwDYeZFsrBYuLNuXrL1dncGPVc+0N2lzGaYag8R4AEd0CghegNkIOUGB4Mb5jl4rdCA0DqSXSzkQcyAkRr95JWi9nz3AAw4CcANFlB8TU6A/RGGdvq55W8ZY48jckFZaCx6cDdCLd4lc2oy0fzJ/hAqHANuI=
+	t=1750857357; cv=none; b=GHB0ROSNNFKYArRq1eLqJRnYaHjkYJpQVlKeLynhU1Sxboi2M8IEz0qDZGRPaKgkFkWWTCN1RBEsh268trC9ykt0bve2VNmUMxJiQK7WPVFgdiw+O2ga8rAzLtMea4f4EuiDTvLmPb+OmO7ClTVj869s394s44lIzg8TM/WTyZc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750857406; c=relaxed/simple;
-	bh=4CpkSQhruvCRcQ20qi8I7WhktLgeu8TyxZ6Xjev41mw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=KgvYCYAL/8M6xRmNa5AzoSqbA74ritDJ3KwA8mlyeEXN264KZv5d4zoUWohdCuNzP6xL8dJW4y2UdKWPxdPubu+72jPx5CsxiMNoP9KmhH5HF354bfRVlzvnFutfWqLcsgG5e6Z5o3llCOy/OBGeNDo+goLVlBsEPUlx6ui5Fnc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=mit.edu; spf=pass smtp.mailfrom=mit.edu; arc=none smtp.client-ip=18.9.28.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=mit.edu
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mit.edu
-Received: from trampoline.thunk.org (pool-173-48-82-219.bstnma.fios.verizon.net [173.48.82.219])
-	(authenticated bits=0)
-        (User authenticated as tytso@ATHENA.MIT.EDU)
-	by outgoing.mit.edu (8.14.7/8.12.4) with ESMTP id 55PDFkYM012486
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 25 Jun 2025 09:15:46 -0400
-Received: by trampoline.thunk.org (Postfix, from userid 15806)
-	id DC9672E00D5; Wed, 25 Jun 2025 09:15:45 -0400 (EDT)
-Date: Wed, 25 Jun 2025 09:15:45 -0400
-From: "Theodore Ts'o" <tytso@mit.edu>
-To: "Lai, Yi" <yi1.lai@linux.intel.com>
-Cc: Zhang Yi <yi.zhang@huaweicloud.com>, linux-ext4@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        willy@infradead.org, adilger.kernel@dilger.ca, jack@suse.cz,
-        yi.zhang@huawei.com, libaokun1@huawei.com, yukuai3@huawei.com,
-        yangerkun@huawei.com, yi1.lai@intel.com
-Subject: Re: [PATCH v2 8/8] ext4: enable large folio for regular file
-Message-ID: <20250625131545.GD28249@mit.edu>
-References: <20250512063319.3539411-1-yi.zhang@huaweicloud.com>
- <20250512063319.3539411-9-yi.zhang@huaweicloud.com>
- <aFuv+bNk4LyqaSNU@ly-workstation>
+	s=arc-20240116; t=1750857357; c=relaxed/simple;
+	bh=1Ew8prqLY6S9T/f6MB6W2DVISyi22iiN0qriMIihJcU=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=HIYSTpIC05huOWaZugngYgYbK5cTpShHdWQ/TCwHaAvvd0Ks4Ikb3QDQuoZiGMtG/NPADpK++1SYuGhAYLVYTL0BDVOg+OWYzN+qVIuDuUIABXcFGLOPqNYeo0FRx46MXpffeWdMBYh9jTj7gfn60hpFx+qFYlmrMMVhUErpw8Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Hi/sTCLH; arc=none smtp.client-ip=209.85.128.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f42.google.com with SMTP id 5b1f17b1804b1-450ce671a08so41965915e9.3;
+        Wed, 25 Jun 2025 06:15:55 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1750857354; x=1751462154; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=myFzD7QWLL6mVi6x4ybFyj0pD8esGFOCmQhIz9MBaqQ=;
+        b=Hi/sTCLHFZcUVlrTf3cCRcmg0TUEtWHHx5UkFHCgNecYD/FpeLTgUZjv9YNXGMwqBs
+         Bw2idU4IkZMMwPqkYouvsQmYTkxRJBLx/qtjh4Jaf6JF52zIiubJenjQi8nq2ntP1nGp
+         afAblklFnTjGoea9lk2RiZsaN47aR32nOYHEnfD2QUxEKtvwj790+LsXxT3qizq9nM+p
+         3/psnVWVtHXnGAESWeseHuHhcgl7mG84zEi5zsfVFvzjbqREK2VikrAk+Rwl8pOVL5yP
+         PF/duCkTJpI8obwzgkqwVnBDjXc8e4WGd0v+Mjd7RCszthMmDMsYpOsbb3V79+vi/Meg
+         ew/Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1750857354; x=1751462154;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=myFzD7QWLL6mVi6x4ybFyj0pD8esGFOCmQhIz9MBaqQ=;
+        b=UsiW0vgZa/5iWEh9Zm6mK+GAIdDAGqcQ9gWSaJM5xq4NN6A44T4cpu7D4qjhNs99rk
+         Y3bwaLwdsyDIjvJ+Q9lvQw3mkAhmlnlLjqFuGEV+dHqfO/bkc8DKIGrXXKKtP68VwsbZ
+         MOke0Bu/F4Szaq3Kv2e3KKAO56xG7pxUmIc/H0tILhfpQ7EJI/Uwhg9Mf9000WrZh7ge
+         OvSdP9tr//39EI+9BznwEITV4FKHkPMMtAZfkJbM4ZhAoJbzUlicayTuj1WCBHXFn7f4
+         Aw4YAzdZswrdFUDm1nCEKsHc9Vv5dnCE3+89ec4ZrkCJ6cC39AQbBNHRkCcbyMr729rR
+         RP+Q==
+X-Forwarded-Encrypted: i=1; AJvYcCW0g30Z5ZbhoTYeNIj6oMBMx7k5CzS8bTbvT+bCmAVzccpOp2VeHQjqKgTavIzCd567tW9fbaLlO48=@vger.kernel.org, AJvYcCXdOAY80h64QwmQ+iCSeYYlbl2rZTXSSg6Hd0NWPYWfUDeijjbSJXz1akHKeltBZnlEdEehOFvLnv1I2Lk5@vger.kernel.org, AJvYcCXiJDR6gSlZeFUEeUAwza48/x2fKxAX17zKhdLm+aV6UBFpPNP1Ns79i99vEatL0LEXdVTRgaEnOl9YgL6t@vger.kernel.org
+X-Gm-Message-State: AOJu0YzgMkRMDAP8VWdI3Zopm3EajkdRwDESg/Axv2IxbwrgnokgO5Do
+	l/8/CBnSVpJA7KxjUSswDTGWlVpa+Elxgp/JsUM4RwRpoZNcHpq3LUNN
+X-Gm-Gg: ASbGncu8wXVuWc5dvExTw4J5tcdLTUVo5N2X3LyQek09bW2JGarHGcdV/+po9fq3Yld
+	xZTtTcx9vj6Nn0z7Ps7bSC0qll4gGejsLPqhpYhlNHeXpMfkoV8ZHUlAD9L84zsiIQTAojzp0qM
+	5FZLll5obgpnl+epZfgcquPfDvjLWzG+KSRhiuv4FYrRmUkfWYLgyEWY+vY32/C/a1QeElML+7f
+	lICi3MdRKR33h+Oz4oDD2XGwXRFR83vKRQuCVU0gZXTulJ0AvJ/tMia95TWwTNHCdaY/ReFVxGM
+	Rut5EsTMjkQF3kQOUZbJ1Atd3KdSaKnF1dvjz5xa88qxNw+Q76AdBsrCD/uhduOVbp/LWGi5Ul5
+	IfLjx7CNZrVxEG+ZS7x86iVONzWk=
+X-Google-Smtp-Source: AGHT+IHqyiRVjvoB8YSLe3HZosm1kBlsHb8xxS6UoEjuMcGWiykX94tFxvLlVox0eEJcWTFkCAve6Q==
+X-Received: by 2002:a05:6000:4014:b0:3a5:8a68:b839 with SMTP id ffacd0b85a97d-3a6ed67507amr2459464f8f.45.1750857353988;
+        Wed, 25 Jun 2025 06:15:53 -0700 (PDT)
+Received: from [192.168.20.170] (5D59A51C.catv.pool.telekom.hu. [93.89.165.28])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-453823ad1adsm19989575e9.24.2025.06.25.06.15.52
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 25 Jun 2025 06:15:53 -0700 (PDT)
+Message-ID: <84b94649-a248-46b0-a401-772aeb8777a2@gmail.com>
+Date: Wed, 25 Jun 2025 15:15:53 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <aFuv+bNk4LyqaSNU@ly-workstation>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3] interconnect: avoid memory allocation when
+ 'icc_bw_lock' is held
+To: Johan Hovold <johan@kernel.org>
+Cc: Georgi Djakov <djakov@kernel.org>,
+ Raviteja Laggyshetty <quic_rlaggysh@quicinc.com>,
+ Johan Hovold <johan+linaro@kernel.org>,
+ Bryan O'Donoghue <bryan.odonoghue@linaro.org>, linux-pm@vger.kernel.org,
+ linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20250625-icc-bw-lockdep-v3-1-2b8f8b8987c4@gmail.com>
+ <aFvr1zSkf4KmIcMT@hovoldconsulting.com>
+ <aFvuiVX0kMIqXQtZ@hovoldconsulting.com>
+Content-Language: hu
+From: Gabor Juhos <j4g8y7@gmail.com>
+In-Reply-To: <aFvuiVX0kMIqXQtZ@hovoldconsulting.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-It looks like this failure requires using madvise() with MADV_HWPOISON
-(which requires root) and MADV_PAGEOUT, and the stack trace is in deep
-in the an mm codepath:
+2025. 06. 25. 14:41 keltezéssel, Johan Hovold írta:
+> On Wed, Jun 25, 2025 at 02:30:15PM +0200, Johan Hovold wrote:
+>> On Wed, Jun 25, 2025 at 01:25:04PM +0200, Gabor Juhos wrote:
+> 
+>>> @@ -276,13 +276,17 @@ int qcom_icc_rpmh_probe(struct platform_device *pdev)
+>>>  		qcom_icc_bcm_init(qp->bcms[i], dev);
+>>>  
+>>>  	for (i = 0; i < num_nodes; i++) {
+>>> +		bool is_dyn_node = false;
+>>> +
+>>>  		qn = qnodes[i];
+>>>  		if (!qn)
+>>>  			continue;
+>>>  
+>>>  		if (desc->alloc_dyn_id) {
+>>> -			if (!qn->node)
+>>> +			if (!qn->node) {
+>>
+>> AFAICS, qn->node will currently never be set here and I'm not sure why
+>> commit 7f9560a3bebe ("interconnect: qcom: icc-rpmh: Add dynamic icc node
+>> id support") added this check, or even the node field to struct
+>> qcom_icc_desc for that matter.
+>>
+>> But if there's some future use case for this, then you may or may not
+>> need to make sure that a name is allocated also in that case.
+> 
+> Ok, I see what's going on. The qn->node may have been (pre-) allocated
+> in icc_link_nodes() dynamically, which means you need to make sure to
+> generate a name also in that case.
+> 
+>> And that could be done by simply checking if node->id >=
+>> ICC_DYN_ID_START instead of using a boolean flag below. That may be
+>> preferred either way.
+> 
+> So you should probably use node->id to determine this.
 
-   madvise_cold_or_pageout_pte_range+0x1cac/0x2800
-      reclaim_pages+0x393/0x560
-         reclaim_folio_list+0xe2/0x4c0
-            shrink_folio_list+0x44f/0x3d90
-                unmap_poisoned_folio+0x130/0x500
-                    try_to_unmap+0x12f/0x140
-                       rmap_walk+0x16b/0x1f0
-		       ...
+You are right. The problem is that ICC_DYN_ID_START is only visible from the
+core code. Either we have to move that into the 'interconnect-provider.h' header
+or we have to add an icc_node_is_dynamic() helper or something similar.
 
-The bisected commit is the one which enables using large folios, so
-while it's possible that this due to ext4 doing something not quite
-right when using large folios, it's also posible that this might be a
-bug in the folio/mm code paths.
+Which is the preferred solution?
 
-Does this reproduce on other file systems, such as XFS?
+Regards,
+Gabor
 
-     	  	       	     	  	   	- Ted
 
