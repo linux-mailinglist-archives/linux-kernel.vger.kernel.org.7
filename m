@@ -1,88 +1,94 @@
-Return-Path: <linux-kernel+bounces-701669-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-701671-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7EBB3AE77AD
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Jun 2025 09:01:48 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E0F21AE77B2
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Jun 2025 09:03:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 989573A5EB1
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Jun 2025 07:01:22 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1D85816BD51
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Jun 2025 07:03:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0904E1F8676;
-	Wed, 25 Jun 2025 07:01:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 362F81F5433;
+	Wed, 25 Jun 2025 07:03:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="VOG3Z5ye"
-Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="NWBqd0j2"
+Received: from mail-yw1-f195.google.com (mail-yw1-f195.google.com [209.85.128.195])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 41FF679F2;
-	Wed, 25 Jun 2025 07:01:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4165A1E5B63
+	for <linux-kernel@vger.kernel.org>; Wed, 25 Jun 2025 07:03:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.195
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750834896; cv=none; b=bRsdePZT8loIFec8CoR6rv2o09Bwge6+nFSVTgHj2NAdhteHOYaH601w/V44dH0GtOiSJenL9TGCZDiWsCbA7qYGpJCZS0RniCI6lHxwttWitFnAn/LojUJRLLKEA3vsvHz2V7LZynNMXHRMwpKs27rkx0+NIMnbcbgVFdDDjpU=
+	t=1750834997; cv=none; b=nNKyhPYf0CG8afxr/4jJe8snlwKFRed5GouT/0vnyidXwAeuvtvWbIJJJe7t/1BXE21PmwT9+wpsJBuCoLFArW+a12F2WIE4F8N6O3Gv6krp3l+chiyVPXE8Fqa2Y4AJFxx2K5ewkYZG+6buxS6wYDGpC2K9JqcMJ6lr6GSnE34=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750834896; c=relaxed/simple;
-	bh=gciUXRI5RoGH7MW8+6HdMvsnDB4tQnkO04ozRC3wZ7w=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=pJkmcL/hf+4ydxSo3bWqFDrGCAEf8GTiTq9DJS1Q4woX/NRfAzAH3lWUkLOxclf+eHwCjIW+DPCOkeSs7v0VsNANL3LRIbl6g49UDLOsvuo6pjnqQLMG0VV0kg+Sga5I++JG4QoGjusorP5MIKZufRnjk8Kq0QVLl9pY2TKlsaQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=VOG3Z5ye; arc=none smtp.client-ip=198.137.202.133
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=bombadil.20210309; h=In-Reply-To:Content-Type:MIME-Version
-	:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=VrBYzP+Ry2B3NbNU4hQ6PEn7rOjvDYFr3WIL5OkLT8Q=; b=VOG3Z5yeGtYSi/UAOL3xpTDAbm
-	fz2EeUA3u057vMgix5kVW07dJWOiEr903LETeJwVnXiU/0ZVvFIV/YOuHRePOukvDhQliskEU7VhG
-	6FR0jY469yZ/tOAlLCUw6X0WmEpBWEf6XRXrD6AtNwZoSsBU2onD4CmDJm6v4cy9lrTCOsG5zMfNe
-	dHvdDx/4+AgGVQhVNm4CAg5vNiDuBT4t/3u/9xxroRahvGs73uxhIq3AB8paSWNdqHswJygmye6tl
-	OSUQD22dr9bnUe3+txxV20WY/n1c6Cz6qTtvhT41XUOrinoeQQ//47E2xXby0a9qh1MNNxzqqGOsX
-	iaTikL/Q==;
-Received: from hch by bombadil.infradead.org with local (Exim 4.98.2 #2 (Red Hat Linux))
-	id 1uUK8U-00000007kXc-33oi;
-	Wed, 25 Jun 2025 07:01:34 +0000
-Date: Wed, 25 Jun 2025 00:01:34 -0700
-From: Christoph Hellwig <hch@infradead.org>
-To: Yafang Shao <laoar.shao@gmail.com>
-Cc: hch@infradead.org, david@fromorbit.com, djwong@kernel.org,
-	jlayton@kernel.org, linux-fsdevel@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-xfs@vger.kernel.org,
-	yc1082463@gmail.com
-Subject: Re: [PATCH] xfs: report a writeback error on a read() call
-Message-ID: <aFuezjrRG4L5dumV@infradead.org>
-References: <aFqyyUk9lO5mSguL@infradead.org>
- <51cc5d2e-b7b1-4e48-9a8c-d6563bbc5e2d@gmail.com>
+	s=arc-20240116; t=1750834997; c=relaxed/simple;
+	bh=1euIC+YTtUwRgy4g+dYXPW/+FM5Lhe962gVGmQcpphg=;
+	h=MIME-Version:From:Date:Message-ID:Subject:To:Content-Type; b=chCsQMtI7R3c0n1jB/hrMJsFp2lRDUnRn8JGo6Rx5qmInI9i1k0Sd9bXD0nPgGq7fXWlT+9Z8AZaSKOvCtxOdGUhHPPGRQGq2nirgZZStVHdznX+8EO8axZ/0jGwEMeCtSSXHg3Wzv8t1Yng+ldIdImI5PjjQiXWTQTMvsCCp/Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=NWBqd0j2; arc=none smtp.client-ip=209.85.128.195
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-yw1-f195.google.com with SMTP id 00721157ae682-711756ae8c9so11808857b3.3
+        for <linux-kernel@vger.kernel.org>; Wed, 25 Jun 2025 00:03:16 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1750834995; x=1751439795; darn=vger.kernel.org;
+        h=to:subject:message-id:date:from:mime-version:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=1euIC+YTtUwRgy4g+dYXPW/+FM5Lhe962gVGmQcpphg=;
+        b=NWBqd0j2ZMBQ368MhReXDwEnfEFwbU3s20+wLpVtxfxd8HByipAZBeBteYo523GT6W
+         xOpvQx3B4oZuf7Q4AHl+F2pIWK/QGgX6yPI+PvENP73zIQLYCFC26XgniFy0uBcND1NK
+         tJCofuCtA8O+CrymL4210aQJVzdBjvqfJC8z5bUZAn6iYqXDcWPyOzCr5kQ79zJcpOHM
+         ywdlD2dPfnfj0IJ7XtnHpNFTGWw2MEHDzOUMdPXqv73dTROLLB1n3Hm5RuogHTKFCXNm
+         U9dWfOk0pjZKyjRgiU4t9Cctjq9W/s1ePsJxO72gKyu7GZ29iYVTa3Y4aUuhNvQKjH7n
+         9fZg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1750834995; x=1751439795;
+        h=to:subject:message-id:date:from:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=1euIC+YTtUwRgy4g+dYXPW/+FM5Lhe962gVGmQcpphg=;
+        b=JFlZJ6cgfPyaZ22eue/coyZHdfH/Wbq+gRWqzZHP0mkN9PZAFSy2dmgQEByLJ/pbaC
+         LhHaGXaj7/2xxrXWYfhAWr5Q+rz4NALvoVn4WxTXLEWh1u76bk/tK2WPHxDjrVwE/Ut3
+         08hb/MrVR9o/YuYcQiKi6fCCaedLbjGcC4I2zruRoUtrhULr69RxTM6XZAnlzay0BE60
+         6uXqVpdyKvVXfyJovNi36TzUbzCo65XbXGUmyjAqHU1uWVWZHtRo6q6QyiULSRoNyQcy
+         quo8SzJvvjwEpm1rviZQiva2S5WwvpxY7CWVRkawRoWu+lJkLHoti9wZiTQlV7cJw0IH
+         BPYg==
+X-Gm-Message-State: AOJu0Ywod8z+OD9VgeJ0PVMNKNt+7IsO2NbA+a00O00PAdp61eQQxEzw
+	GEBaFOsHfTQqpqbUSt8Cm5Qa36ZKr+JUjS536rdZWfPnOyCySBjNXjNsHJg8y9HHos4/0ov/rSx
+	KAW4EHY6W23WKog+83sAWYl/Qz3inu8fYUEBm7q0YMg==
+X-Gm-Gg: ASbGncsvOLfOnpacpWuvNIa+PRWCG/mOY5diovDXU0h/JFGY7PcPkhk7udlpD8rQsoo
+	LozIl4GoNrsw5oqB6EE7B1CuuuysyhhiN69/FBPcR3SXjjwHmleE4zzYvhsoZkG0s19NDoLp8UF
+	JSrYgoyoLWEELMOgeGEWDATu9NKPpJVZ56Up3fXFSVYJkZKnI4qrjQUzW/vJ9Dz60bzJnJSBAEJ
+	/l+yA==
+X-Google-Smtp-Source: AGHT+IFP+KCnaf+qPgq1oe/i3QY36E+4AybnVOO6FwxB0VADhpL3jAgQaQO0xdqcw6GLhTxIcYqYuXdBQHZNRNmQUFA=
+X-Received: by 2002:a05:690c:360d:b0:70c:a57c:94ba with SMTP id
+ 00721157ae682-71406da0855mr25798947b3.17.1750834995078; Wed, 25 Jun 2025
+ 00:03:15 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <51cc5d2e-b7b1-4e48-9a8c-d6563bbc5e2d@gmail.com>
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
+From: Amit <amitchoudhary0523@gmail.com>
+Date: Wed, 25 Jun 2025 12:33:04 +0530
+X-Gm-Features: AX0GCFs0Asn4PGB2EoiGHuih24LeAjRKj2QO1cq4iEcQanjuJMt2RX_wIQ1VpIA
+Message-ID: <CAFf+5zhvusE2bPiTA40wJ39UZHCaW+TyiE7E1ZEERQJS9sLcdA@mail.gmail.com>
+Subject: Bash script to generate random ascii string lines (printable
+ characters only, including space) with lengths within a min-max range.
+To: linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-On Wed, Jun 25, 2025 at 10:44:57AM +0800, Yafang Shao wrote:
-> > That's really kernel wide policy and not something magic done by a
-> > single file system.
-> 
-> XFS already supports an optional policy for handling metadata errors via:
-> /sys/fs/xfs/<disk>/error/metadata/
-> 
-> It would be reasonable to introduce a similar optional policy for data
-> errors:
-> /sys/fs/xfs/<disk>/error/data/
-> 
-> This data error policy could allow the filesystem to shut down immediately
-> if corrupted data is detected that might otherwise be exposed to userspace.
+#!/bin/bash
 
-I fully agree on that part, and would in fact argue for making it the
-default.
+min=50
+max=110
 
-But reporting writeback errors on read just on one file system and with
-a specific option is really strange.
+while true; do
 
+len=`shuf -i $min-$max -n 1`
+
+tr -dc '[:print:]' < /dev/urandom | dd ibs=$len count=1 status=none; echo
+
+done
 
