@@ -1,59 +1,59 @@
-Return-Path: <linux-kernel+bounces-702891-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-702894-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 61C3CAE88ED
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Jun 2025 17:58:29 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id D97F8AE88F0
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Jun 2025 17:58:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 168843B2AF4
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Jun 2025 15:58:04 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B8BF7189BEBC
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Jun 2025 15:59:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 20EA829E0FA;
-	Wed, 25 Jun 2025 15:58:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8DABE2C1583;
+	Wed, 25 Jun 2025 15:58:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="mir5e81V"
-Received: from NAM12-MW2-obe.outbound.protection.outlook.com (mail-mw2nam12on2056.outbound.protection.outlook.com [40.107.244.56])
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="nOZp2bDs"
+Received: from NAM04-DM6-obe.outbound.protection.outlook.com (mail-dm6nam04on2042.outbound.protection.outlook.com [40.107.102.42])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E822913A3F7
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B0E5D26A0A7
 	for <linux-kernel@vger.kernel.org>; Wed, 25 Jun 2025 15:58:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.244.56
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.102.42
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750867103; cv=fail; b=mkPHImxUFmByeDDUjdl2rDLlgOuMdT7rj2n5uaxRS/cnhaliUejtJ2JtDhxwMLWQH95Ysv8oVqeLzKgNuYw2wsEjACyF3nZM/CP+bzA1zt2hszNMKv1vD5EWRnjf+1K65T0ZYG7D2akAHFPJ89uGHHYDamId6Ffm8VIYkvBZptI=
+	t=1750867106; cv=fail; b=D6XRmEBc5DzhX5vBaraOb1MeR1VCo/DzBRgRNaNcUI6aZvQLtdpcnXkMZ/ky4q0Yg0vuwQEBnixOPfnLJhaMHfB/3KwX/1x4sKBPx/4g0vVtkY6L+nO8ZGhW3gf6WkVB5jTdA1yYCYRjpKLAqaXEvgECpV7kucMgT/T/e/Op7Ho=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750867103; c=relaxed/simple;
-	bh=DHkN/IcCNJuO7kTols+zunFqNw2ZzI4xkoh5KSn/vUs=;
+	s=arc-20240116; t=1750867106; c=relaxed/simple;
+	bh=MtIkkb2l4LiU2huNGXMrSZxg/0WEXWR/bhSji30GxP0=;
 	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=Bswyo8oABRzzt2XBmYcCa8TIG/SJUmKnGrMAS53Hv5Gx+n3sGz8pgaiKjXADpEOQRFblKrWo/7A/P652yneULvN3dJQ69lSF3Z1TGsOS7+xfYaZwtgmk/zN9kyDfdhuAgce83NYqE243FnJbAuZjffwYvSPmTXAxhK45UQOgH3k=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=mir5e81V; arc=fail smtp.client-ip=40.107.244.56
+	 MIME-Version:Content-Type; b=NioUFElOuyQRsTjlIiZY/4pradAZU1Oh2LzsiHnKhxW5tkXpPweDc1eja/8IQ/Vm8aTwLqnYARxCnHAQbfGTF+h7ocHJKWAQyol6JsfcCS4bBUfFWA/58AnkPJxjPRGBo294YTjMhS28V9+VEPN6hI+6Ymu5yLWB349fD+q1viU=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=nOZp2bDs; arc=fail smtp.client-ip=40.107.102.42
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
 Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=y+BubwxyE0HI/wWERIBFvFkbrXLDcYLlJGntX80TBvWkyBZYSFTzJidO3q4UViARjRFeJol+/sr7w9UBLRVLv8Vuz8gfpbpboAD1UTxDBGtJSCfbUZhU2MrSCijSD+eYyzNQKF6Y7DZOUCheWx5BElfBKW4ONvIroSnJioN3aetgSsYaAE5SasbWSUqFjFOcTdVUSxzmNKDcj+oFRs0U3T4W1bT3HwSalXMyqzT2kSG65rAEyYD0A9/t95Q3mDw5armNziLmh5Xq1mn8L1PwL8IXu36oYK75O4U6ZWbNkvXhplCvFOBN3eQHKSrZxc5KVcpTLgYRP1X5yzMSR07v4w==
+ b=po2FWrHRghr85MAjd9tN1dJLVvtOu9LoFXEFD+YHQHlcEM+n5qZYaqCH/6r0yowIeYCymVyRZfk8LlTIoUsmt9mzTeVG8rYKnKFvtznqOm8c6aofxl75laMLrR76dV5+wO1WUof81obCXTQ3KV1ZNftivaA9xDa57vj7eHzvh8zTu3/us86V66/KfNlKJQRTjsA/6bQdRTCwL5VjhRsSXynUI0q8kh4a8Pn4+I68oopDDcpoYADgXHdVTocWf8HZZln1grCXiWbAp83F1HSnU8YiYtf9ZDdQLk8vHm7XDAHzL7fx2738J/yS8VnsybhEsUwXy3HFoXcddmtpvcJIGA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=wcmhzC5aCufZU9Gie9pZX64lPL3tXWnBeHErn0ElB2I=;
- b=Ckq9KTcG5o1y1y5E8clBEXuvZFO/qpO3x4OVIDZ8L7zXNVg8ZVkCx+/w6f8Mq8aifuZa1DMvLQ3Yl8eiZvwehpZgh2FjmE7Id/ScnauRjUxRKk7v4Dgb36KStmbHqaOdZB2A+RIZEI4k/PFNzqYfAQO6/iEWmXpOlLQEbM5VFqDSLeFxOAglpGb5iwKjsdInUyp/vgT1RCbojz1elwgqUVKEP3q5q5K5BcYy50D8TO/Q7U0lZ/44FnjYkjWpc25m0wOH9jb6Ddem+z5AIj6784CcRvIIhbAJtkdR0XRdxEoOOgFIRwsHkOw0cjfI/wQCkgkqL5aFkS0sAMaEiZLaCg==
+ bh=n6q2jhy9D3tPUDIKdLn5GFCk8XMhbbu08wQbzA+La3k=;
+ b=IO1Kybaqxu4B8AuuAk9BjnwNdzdoPnxWGCFu4vUqzQCO8m7dVGIeLsTWpXGxysZOF0qRuLG+5kil9noRxKSPNxw7Bp5FHgvaBzVMLp4GTKluIBE6fZNAIPggmprVUf8VoQedQ4ackWA6Qo5YGs5vvgswBUmM8izhddtaUTFCNgiFWUYsSF5JfDgCr8epD5WlaRQh+ibzEliH0tQJhrkLNw/Ivgd/pp7bTxllAQtuLh9aSajaoK8Uf94n1b88P4Tyig6D7jgan5z2K1QIK1iqBatGyUmVqrPCMziMW6fAuC8RgdFf8Lrj+4ZO8FydvJ0EseKkKOUcWkabNNYpJ506Mw==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
  165.204.84.17) smtp.rcpttodomain=linutronix.de smtp.mailfrom=amd.com;
  dmarc=pass (p=quarantine sp=quarantine pct=100) action=none
  header.from=amd.com; dkim=none (message not signed); arc=none (0)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=wcmhzC5aCufZU9Gie9pZX64lPL3tXWnBeHErn0ElB2I=;
- b=mir5e81VCRzrgpVicS8IMypDtha8Tv0oY1J30iukiG3cQE+s4jQpjFg8rEo2TJkrzrpDqDFByko1dsnyjdR+6m75aYsV/XrHvnVS5/XThrAS4PDIbRwerM6B5kS8nENtsWuMWlvtGVN4KIwm2s7RZzoa4xnRfYW/7agNjI2eKMw=
-Received: from MN2PR05CA0017.namprd05.prod.outlook.com (2603:10b6:208:c0::30)
- by SA1PR12MB8117.namprd12.prod.outlook.com (2603:10b6:806:334::14) with
+ bh=n6q2jhy9D3tPUDIKdLn5GFCk8XMhbbu08wQbzA+La3k=;
+ b=nOZp2bDsCNsnP440aetZZYSy+tS5ERNsUG9yANyHpp6cBg2GCMlwvYfsa2ZHruDUwln9JPJuR8OPjX1wexZF6UEX2vD1zj7O5rPL/YAi4TQkNaJbxNjNIMJtLdRmmOyJr5nj7Vqh1RNmrQZyzs0+8bk/M4uqRhQUlhalSNL9u+Q=
+Received: from MN2PR05CA0028.namprd05.prod.outlook.com (2603:10b6:208:c0::41)
+ by DS2PR12MB9774.namprd12.prod.outlook.com (2603:10b6:8:270::9) with
  Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8857.28; Wed, 25 Jun
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8857.25; Wed, 25 Jun
  2025 15:58:19 +0000
 Received: from BN2PEPF00004FBD.namprd04.prod.outlook.com
- (2603:10b6:208:c0:cafe::9) by MN2PR05CA0017.outlook.office365.com
- (2603:10b6:208:c0::30) with Microsoft SMTP Server (version=TLS1_3,
- cipher=TLS_AES_256_GCM_SHA384) id 15.20.8901.6 via Frontend Transport; Wed,
+ (2603:10b6:208:c0:cafe::92) by MN2PR05CA0028.outlook.office365.com
+ (2603:10b6:208:c0::41) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.20.8880.17 via Frontend Transport; Wed,
  25 Jun 2025 15:58:19 +0000
 X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
  smtp.mailfrom=amd.com; dkim=none (message not signed)
@@ -68,7 +68,7 @@ Received: from SATLEXMB04.amd.com (165.204.84.17) by
 Received: from tiny.amd.com (10.180.168.240) by SATLEXMB04.amd.com
  (10.181.40.145) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Wed, 25 Jun
- 2025 10:58:15 -0500
+ 2025 10:58:16 -0500
 From: David Kaplan <david.kaplan@amd.com>
 To: Thomas Gleixner <tglx@linutronix.de>, Borislav Petkov <bp@alien8.de>,
 	Peter Zijlstra <peterz@infradead.org>, Josh Poimboeuf <jpoimboe@kernel.org>,
@@ -76,9 +76,9 @@ To: Thomas Gleixner <tglx@linutronix.de>, Borislav Petkov <bp@alien8.de>,
 	<mingo@redhat.com>, Dave Hansen <dave.hansen@linux.intel.com>,
 	<x86@kernel.org>, "H . Peter Anvin" <hpa@zytor.com>
 CC: <linux-kernel@vger.kernel.org>
-Subject: [PATCH 1/3] x86/bugs: Add SRSO_MITIGATION_NOSMT
-Date: Wed, 25 Jun 2025 10:58:03 -0500
-Message-ID: <20250625155805.600376-2-david.kaplan@amd.com>
+Subject: [PATCH 2/3] x86/bugs: Use IBPB for retbleed if used by SRSO
+Date: Wed, 25 Jun 2025 10:58:04 -0500
+Message-ID: <20250625155805.600376-3-david.kaplan@amd.com>
 X-Mailer: git-send-email 2.34.1
 In-Reply-To: <20250625155805.600376-1-david.kaplan@amd.com>
 References: <20250625155805.600376-1-david.kaplan@amd.com>
@@ -94,113 +94,128 @@ X-ClientProxiedBy: SATLEXMB03.amd.com (10.181.40.144) To SATLEXMB04.amd.com
  (10.181.40.145)
 X-EOPAttributedMessage: 0
 X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: BN2PEPF00004FBD:EE_|SA1PR12MB8117:EE_
-X-MS-Office365-Filtering-Correlation-Id: 69239d95-1fd2-4fa0-cb44-08ddb4011a9a
+X-MS-TrafficTypeDiagnostic: BN2PEPF00004FBD:EE_|DS2PR12MB9774:EE_
+X-MS-Office365-Filtering-Correlation-Id: 8fb1923e-988f-44d3-732d-08ddb4011b0c
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
 X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|7416014|376014|82310400026|36860700013|1800799024;
+	BCL:0;ARA:13230040|376014|7416014|1800799024|82310400026|36860700013;
 X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?N9IQhqiucKBePNz5mc1m1n3mvgDlluNUpSdmtzuM+CB6woKkluX+gK0aUB97?=
- =?us-ascii?Q?NcWn3t2W4N3WBHvlpXCuj6M/sKdSKOWEr1RcAXt0PayKvyksZloN0lBD6rTq?=
- =?us-ascii?Q?I1b14ds6ppsGu/ewLFeTHoiutM7zftU5RD5d2YakRb0YRvMXtAD+GKw4YujV?=
- =?us-ascii?Q?8V7+mZ63QL6i5bP3UCspvoAFL52JktmS9rbWtiLChjf+nsYcPPZtOv1UvRtq?=
- =?us-ascii?Q?C6Tl5fhxDJQd0IyZih7XXCyQTXmBOXPn6w37eQW+HMmRqGeuYwLGXt8RIPw0?=
- =?us-ascii?Q?zJTSuIge5qAXp0Lyx73HI+Mmt0Al9FSwZiACkR1O7iWETM3bE3VtssFf7i/P?=
- =?us-ascii?Q?AMElTBHZiC3PjHDmA8j/aeFIiLeiCa3uFO4ESJPm1YAUES0gXj+lWvwaR9QC?=
- =?us-ascii?Q?ETa8cXXO32L2xIGSKm8/ft40WyC8iOEiGJynfvzw9u3TGLQZA1OTMaQTHQFG?=
- =?us-ascii?Q?C2SSKi018JwJsyWeaMbTdYhpbJLApf7WnMHxcLTFi1+ZtasepNt2R25osaeg?=
- =?us-ascii?Q?tkxGBP7kY8KYsOI4Xp+ZkjnsmjjcuHwSkQ5nEXR3Ac3ElhmVYImAtUSl/O52?=
- =?us-ascii?Q?kPrE485wiVCe2+bjjV0D7SeTtQA3Bd19KWwryHIoXevPawQTJKG40hLEv32v?=
- =?us-ascii?Q?PueP44hOErkuHK/vNe78MhJqEaGxohnxJZBFZOVammtyD1f+XCOEe7XlpLsz?=
- =?us-ascii?Q?yTGsFqw/JHq6j6qzff+XseU1cuZQFlXGg5cnrLh8W2MkSxZsyY9Y8lIz5Vb9?=
- =?us-ascii?Q?kM6GW0PQ7lPUK/6MpA5OoPHxyeCF4ihO2FwWRQbChNHi/e/Det4ebO45DvAx?=
- =?us-ascii?Q?NRDNAuHKTizyVjlHaTXuHFY9APD2E12ihVWM/mXxoY7frZf+uHSC8UapKp/r?=
- =?us-ascii?Q?RHNt/zKOl4AolaNR1TMiJM618rr8jFVPwbD5/nDkfTJr2LjCh5QCE/l1CLeH?=
- =?us-ascii?Q?r0FXnAHUqWuEW+J7soDR/+nWyr7m8ClH/RuIPHdmXniv7xlcXpd/ZlIvQaxj?=
- =?us-ascii?Q?fd/zZdM7LOHpdPFQlc8UCpFfooa0Jv3Ev/lU79gg5bGPAKYyF2fGReYPK6tS?=
- =?us-ascii?Q?IfHHrA9Xwhoz7SY2XARc19MujShV3GhSrBCdfZrChc9GEzUig+XtX8EZaojG?=
- =?us-ascii?Q?L/MY4UGBlwunRX31xSqCM+DTUkR/pBa5S91XQf3Q5BtvjLMleEqZhbI6BFR5?=
- =?us-ascii?Q?gEtebYRxc+NEE9nYRh+XapZSWUrQUth1h8B6ppmXnB4FvomWknVFpLmrmMI6?=
- =?us-ascii?Q?iHAGN8S/DDhNHwtr3bL66vPNwefzuanyDygRwdtvhBt8GVys/l7edksGnxqD?=
- =?us-ascii?Q?FCwEaQYP/79YjENFUGbGdfoIpqPEBriF9EUtBqC1fCaVWmkZhiAimqM4Mytj?=
- =?us-ascii?Q?iql7QDB4BMq1qVHnRaEeulEuF5bsxlIXmDz1gc1yeRO9JNaxnbEfLSfFKjRA?=
- =?us-ascii?Q?TKsG8g7VyKE8M+U3JbqlNr7rhTqCU5xO0W0BciKtVcFITsoNyfLVSOqv65xx?=
- =?us-ascii?Q?N4QniJsyRsEA10onpmeRKzARdioAck4anEiK?=
+	=?us-ascii?Q?ZIonYULDQNo76oMKYLyWW7qs0iy7l4rQ0ZRrQFzLEcFnk6jeS4Pzew1uOfw6?=
+ =?us-ascii?Q?5PU2NPSsfca78xrKJpqiEBU0YX3Lk3bvBjSpkAb8p8WSE/u9/w1mZ5Oa+N7t?=
+ =?us-ascii?Q?9TbRCsApDFsTfkRHE4Y83EHCtlNNC1u3kPOzaI2rp8vQaT/LlXdytqQsvbfW?=
+ =?us-ascii?Q?IbnVtFbbQJZNjoC0VNSQpVrZo1YB5AhpsLihROv8SzaHhpzEY0rH/QVWCRiK?=
+ =?us-ascii?Q?B1icuMGMddykZ167euCmdrH013Re3p8lEHO9iKDhJdg2HGNj3SO/oxlryBky?=
+ =?us-ascii?Q?5KhYyANGA37PLVkRa8ubpPSW+9saSCB9b8dPNXuSYBwMakEaOCW+M3mGQg2Q?=
+ =?us-ascii?Q?nY6pqcxDngCb7WQQai6pGxUNoyo2wdmagp/NdF5fGiIvfraANbn8qeu6p4LW?=
+ =?us-ascii?Q?7F+mc+8n6irhhkD5bphwbi1Q44MSDqFv7V+RDMSSWICOwFCx5l8/wzLOVF4m?=
+ =?us-ascii?Q?loa3oeIWSvJO7Obz8uUBkvfhzoCdeWxCzo0h3VANql1BkW4fjN/HR6+RYBwn?=
+ =?us-ascii?Q?ojq7+RZIGQgnCcBlZ/wO91UUJbCrtVKyq++oAr8BsRjN2hXxMBNrCo2BgRNC?=
+ =?us-ascii?Q?L39aXWgnjLlJayRBjwJiBzGD01XUkTJF2eooZKaEMYffOU0hPhfbI31GibCo?=
+ =?us-ascii?Q?TTdtRCc5dBfgBgY640sQlNJcCDPx7ilknE3zglyfA1swtIHSQBTJuDVzsE3a?=
+ =?us-ascii?Q?uMheLW9xK4cnwKO+KHxTUc9A8Ltc2OrJyChtEIDIOFD96wUEcanKAh1qbi8t?=
+ =?us-ascii?Q?JD6R2oWOigH914kG0g40rNZE4P5Mc40i/3fvw1/HNy7vdvZBUdwEdwoS1vr5?=
+ =?us-ascii?Q?OvuJhTI1jf77yB8y+PECnA/tvNBaIZiBSWQWKPfhV4MV+4EK+5W5W2tfbaL1?=
+ =?us-ascii?Q?PMFVar7/b5M7fxgq0pZLZaWGume3rnR+nxzvGFIWLGj6A3UVwaLs9dhuVev9?=
+ =?us-ascii?Q?hr2QTy0f8d87dQMKfU+PYRHN44yzg1HjUl9zmTyl0iAKujo/GJmrxY9N+ZoA?=
+ =?us-ascii?Q?mDaHl7hXBWpSYUoAjiEw63XiiS842uvHyG8qHoJ2HMQGwjg8ytF3heLqeNZN?=
+ =?us-ascii?Q?riTo5Om1ECdhc5AmUleA7VIBbyAMWvDvcs++cbV4bLOrA6BeiTNaTWkIp6o1?=
+ =?us-ascii?Q?nBC5apj0DvXJVtP/dLatuDirxVaPEwNy+5+RtD/AsqKKEBdhYgZ3YNJXG/5h?=
+ =?us-ascii?Q?4DoKEfsbXc2xnptIY/WrNeWzN/Vigrn0/Uo2lQqZ6MoPtiYEaFWukXPRLeoi?=
+ =?us-ascii?Q?MKhQLdiA9iqeqmNgHZbfybwzFZGRfbj7xsajlE05f79KeBesNguAcn078LGD?=
+ =?us-ascii?Q?F3RXBrY9RG/iEWfcoFPLdqNo4DIOr/yOMSsQXr7IklCHZn3jsrTD3lazBmkx?=
+ =?us-ascii?Q?2/YwauKM8hACkeRKPd8DrzR+sBkSUiRE+A4lmxxhF53iTF8DFuzaKOAZW10N?=
+ =?us-ascii?Q?0ZMDRN6rW0Ch5TtCPzo5baFy8g1P5dcPzXzB7Hl2682W+X/Tss1Ii9vILRrK?=
+ =?us-ascii?Q?VRz5CbkE0cpLQ/21BnCBiT/fD4CHkeEVcerf?=
 X-Forefront-Antispam-Report:
-	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:SATLEXMB04.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(7416014)(376014)(82310400026)(36860700013)(1800799024);DIR:OUT;SFP:1101;
+	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:SATLEXMB04.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(376014)(7416014)(1800799024)(82310400026)(36860700013);DIR:OUT;SFP:1101;
 X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 25 Jun 2025 15:58:19.0367
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 25 Jun 2025 15:58:19.7818
  (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 69239d95-1fd2-4fa0-cb44-08ddb4011a9a
+X-MS-Exchange-CrossTenant-Network-Message-Id: 8fb1923e-988f-44d3-732d-08ddb4011b0c
 X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
 X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[SATLEXMB04.amd.com]
 X-MS-Exchange-CrossTenant-AuthSource:
 	BN2PEPF00004FBD.namprd04.prod.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Anonymous
 X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SA1PR12MB8117
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DS2PR12MB9774
 
-Zen1 and Zen2 CPUs with SMT disabled are not vulnerable to SRSO.
-Instead of overloading the X86_FEATURE_SRSO_NO bit to indicate this,
-define a separate mitigation to make the code cleaner.
+If spec_rstack_overflow=ibpb then this mitigates retbleed as well.  This
+is relevant for Zen1 and Zen2 CPUs which are vulnerable to both bugs.
 
 Signed-off-by: David Kaplan <david.kaplan@amd.com>
 Reviewed-by: Borislav Petkov (AMD) <bp@alien8.de>
 ---
- arch/x86/kernel/cpu/bugs.c | 11 ++++-------
- 1 file changed, 4 insertions(+), 7 deletions(-)
+ arch/x86/kernel/cpu/bugs.c | 34 +++++++++++++++++++---------------
+ 1 file changed, 19 insertions(+), 15 deletions(-)
 
 diff --git a/arch/x86/kernel/cpu/bugs.c b/arch/x86/kernel/cpu/bugs.c
-index bdef2c9aa1b8..6c991afb7b78 100644
+index 6c991afb7b78..b26341983230 100644
 --- a/arch/x86/kernel/cpu/bugs.c
 +++ b/arch/x86/kernel/cpu/bugs.c
-@@ -2851,6 +2851,7 @@ enum srso_mitigation {
- 	SRSO_MITIGATION_UCODE_NEEDED,
- 	SRSO_MITIGATION_SAFE_RET_UCODE_NEEDED,
- 	SRSO_MITIGATION_MICROCODE,
+@@ -1171,6 +1171,21 @@ static enum retbleed_mitigation retbleed_mitigation __ro_after_init =
+ 
+ static int __ro_after_init retbleed_nosmt = false;
+ 
++enum srso_mitigation {
++	SRSO_MITIGATION_NONE,
++	SRSO_MITIGATION_AUTO,
++	SRSO_MITIGATION_UCODE_NEEDED,
++	SRSO_MITIGATION_SAFE_RET_UCODE_NEEDED,
++	SRSO_MITIGATION_MICROCODE,
 +	SRSO_MITIGATION_NOSMT,
- 	SRSO_MITIGATION_SAFE_RET,
- 	SRSO_MITIGATION_IBPB,
- 	SRSO_MITIGATION_IBPB_ON_VMEXIT,
-@@ -2862,6 +2863,7 @@ static const char * const srso_strings[] = {
- 	[SRSO_MITIGATION_UCODE_NEEDED]		= "Vulnerable: No microcode",
- 	[SRSO_MITIGATION_SAFE_RET_UCODE_NEEDED]	= "Vulnerable: Safe RET, no microcode",
- 	[SRSO_MITIGATION_MICROCODE]		= "Vulnerable: Microcode, no safe RET",
-+	[SRSO_MITIGATION_NOSMT]			= "Mitigation: SMT disabled",
- 	[SRSO_MITIGATION_SAFE_RET]		= "Mitigation: Safe RET",
- 	[SRSO_MITIGATION_IBPB]			= "Mitigation: IBPB",
- 	[SRSO_MITIGATION_IBPB_ON_VMEXIT]	= "Mitigation: IBPB on VMEXIT only",
-@@ -2914,8 +2916,7 @@ static void __init srso_select_mitigation(void)
- 		 * IBPB microcode has been applied.
- 		 */
- 		if (boot_cpu_data.x86 < 0x19 && !cpu_smt_possible()) {
--			setup_force_cpu_cap(X86_FEATURE_SRSO_NO);
--			srso_mitigation = SRSO_MITIGATION_NONE;
-+			srso_mitigation = SRSO_MITIGATION_NOSMT;
- 			return;
- 		}
- 	} else {
-@@ -2968,8 +2969,7 @@ static void __init srso_update_mitigation(void)
- 		srso_mitigation = SRSO_MITIGATION_IBPB;
- 
- 	if (boot_cpu_has_bug(X86_BUG_SRSO) &&
--	    !cpu_mitigations_off() &&
--	    !boot_cpu_has(X86_FEATURE_SRSO_NO))
-+	    !cpu_mitigations_off())
- 		pr_info("%s\n", srso_strings[srso_mitigation]);
- }
- 
-@@ -3265,9 +3265,6 @@ static ssize_t retbleed_show_state(char *buf)
- 
- static ssize_t srso_show_state(char *buf)
++	SRSO_MITIGATION_SAFE_RET,
++	SRSO_MITIGATION_IBPB,
++	SRSO_MITIGATION_IBPB_ON_VMEXIT,
++	SRSO_MITIGATION_BP_SPEC_REDUCE,
++};
++
++static enum srso_mitigation srso_mitigation __ro_after_init = SRSO_MITIGATION_AUTO;
++
+ static int __init retbleed_parse_cmdline(char *str)
  {
--	if (boot_cpu_has(X86_FEATURE_SRSO_NO))
--		return sysfs_emit(buf, "Mitigation: SMT disabled\n");
--
- 	return sysfs_emit(buf, "%s\n", srso_strings[srso_mitigation]);
- }
+ 	if (!str)
+@@ -1280,6 +1295,10 @@ static void __init retbleed_update_mitigation(void)
+ 	if (its_mitigation == ITS_MITIGATION_RETPOLINE_STUFF)
+ 		retbleed_mitigation = RETBLEED_MITIGATION_STUFF;
  
++	/* If SRSO is using IBPB, that works for retbleed too */
++	if (srso_mitigation == SRSO_MITIGATION_IBPB)
++		retbleed_mitigation = RETBLEED_MITIGATION_IBPB;
++
+ 	if (retbleed_mitigation == RETBLEED_MITIGATION_STUFF &&
+ 	    !cdt_possible(spectre_v2_enabled)) {
+ 		pr_err("WARNING: retbleed=stuff depends on retpoline\n");
+@@ -2845,19 +2864,6 @@ early_param("l1tf", l1tf_cmdline);
+ #undef pr_fmt
+ #define pr_fmt(fmt)	"Speculative Return Stack Overflow: " fmt
+ 
+-enum srso_mitigation {
+-	SRSO_MITIGATION_NONE,
+-	SRSO_MITIGATION_AUTO,
+-	SRSO_MITIGATION_UCODE_NEEDED,
+-	SRSO_MITIGATION_SAFE_RET_UCODE_NEEDED,
+-	SRSO_MITIGATION_MICROCODE,
+-	SRSO_MITIGATION_NOSMT,
+-	SRSO_MITIGATION_SAFE_RET,
+-	SRSO_MITIGATION_IBPB,
+-	SRSO_MITIGATION_IBPB_ON_VMEXIT,
+-	SRSO_MITIGATION_BP_SPEC_REDUCE,
+-};
+-
+ static const char * const srso_strings[] = {
+ 	[SRSO_MITIGATION_NONE]			= "Vulnerable",
+ 	[SRSO_MITIGATION_UCODE_NEEDED]		= "Vulnerable: No microcode",
+@@ -2870,8 +2876,6 @@ static const char * const srso_strings[] = {
+ 	[SRSO_MITIGATION_BP_SPEC_REDUCE]	= "Mitigation: Reduced Speculation"
+ };
+ 
+-static enum srso_mitigation srso_mitigation __ro_after_init = SRSO_MITIGATION_AUTO;
+-
+ static int __init srso_parse_cmdline(char *str)
+ {
+ 	if (!str)
 -- 
 2.34.1
 
