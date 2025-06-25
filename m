@@ -1,211 +1,171 @@
-Return-Path: <linux-kernel+bounces-701936-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-701938-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C80C5AE7B59
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Jun 2025 11:03:43 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1C9A6AE7B5F
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Jun 2025 11:04:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D670C5A6E8C
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Jun 2025 09:02:21 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CD15F1761B5
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Jun 2025 09:03:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BE15C28935D;
-	Wed, 25 Jun 2025 09:01:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C8D4B29827C;
+	Wed, 25 Jun 2025 09:02:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="kmWaOFjU"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="K88MIKtY";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="TzFhUtlf";
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="pDNU/pMD";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="kjIsMO7l"
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DD9A37E792;
-	Wed, 25 Jun 2025 09:01:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 77AAB295DB8
+	for <linux-kernel@vger.kernel.org>; Wed, 25 Jun 2025 09:02:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750842101; cv=none; b=ifo9NZ2Ng0YW2qk8Owyqx6J+gehrvQyVukJc3hsLXulN1vO33RoBJ9nmxIT6Q8bKGrpBjaaYIMtSkS3shjfg2mqRcrPkoJzULyfQ8DfkRS2iTRcgJrEgNisq5pJLWed9r9Ghk+lE2YruFP6vuwPOGGDKKzrRn+gxgpvV81+19dA=
+	t=1750842131; cv=none; b=slNifKIaC4YUaSnOHviyQLegCE1kqZnI37HeFuMs5ovZ5J34XAwQWqyEQW5oPcpP4w+DUYcM+OJi8ZTgxjJ2z5eaUPL6meXe7DA4AMeYtdujGzJuL1JVY2PHtovCFxG2SL3dca41aUIga0fRsavwGuhEw6ll/1r2o/9C8UqqkoU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750842101; c=relaxed/simple;
-	bh=OhdgF55PyBEbfC8aXgc9N1rHxO4doVes6/sM5CeG1ZU=;
+	s=arc-20240116; t=1750842131; c=relaxed/simple;
+	bh=w69PsKV0mtJP34RG1Oy9rkIyf8HycIJ0IGuxsGrYzfY=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=teMKDJDYBYBSDjpcayoA+WGPjv6AhAG0e6k1aHafTrr4D4gh5JAr953xLw6VLB0xuPVSLSovBLdYyJwf18FbI6xlKh8eS+UIr3ptSG9lX2SntSZnzk4zFEHXvkoP/u/es2kKujeL4AJUdQ4kPa8si5vG1llI7iHcXmPcI7g4Uok=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=kmWaOFjU; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id EA9ADC4CEEA;
-	Wed, 25 Jun 2025 09:01:35 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1750842100;
-	bh=OhdgF55PyBEbfC8aXgc9N1rHxO4doVes6/sM5CeG1ZU=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=kmWaOFjUT1wMib2gJdif3D7Ejx4H1upQdwnyg4IgRfaVtd5UkCyhMfOC76/FUKCgd
-	 vxAHh5XhTgPH4e9ON+kNB4QIpDFQ/8mWmCl83/GHhLyyjDp1vZvkEaecgSx8QtvX+a
-	 Sb6medYCTIPOU5fcM/Ff+yprIo/QdiK0Mjr3VOBABQvUXWYbkQksv7UAhdXb0ianvJ
-	 BRt0NEUZp8EKImSvLzdWddbpxzJqOo0edMBk+gtjyzAoRVhtTQMPeV+i6TGDdniD03
-	 uFi8a7/s5Fa5nOtywCjlBDJwWxf2Gmh8lUCG9O7yMGxOobFxqR4FXbXy6nSJAlQVcO
-	 wJyii3Wxvv+JA==
-Date: Wed, 25 Jun 2025 10:01:33 +0100
-From: Lee Jones <lee@kernel.org>
-To: Ming Yu <a0282524688@gmail.com>
-Cc: linus.walleij@linaro.org, brgl@bgdev.pl, andi.shyti@kernel.org,
-	mkl@pengutronix.de, mailhol.vincent@wanadoo.fr,
-	andrew+netdev@lunn.ch, davem@davemloft.net, edumazet@google.com,
-	kuba@kernel.org, pabeni@redhat.com, wim@linux-watchdog.org,
-	linux@roeck-us.net, jdelvare@suse.com,
-	alexandre.belloni@bootlin.com, linux-kernel@vger.kernel.org,
-	linux-gpio@vger.kernel.org, linux-i2c@vger.kernel.org,
-	linux-can@vger.kernel.org, netdev@vger.kernel.org,
-	linux-watchdog@vger.kernel.org, linux-hwmon@vger.kernel.org,
-	linux-rtc@vger.kernel.org, linux-usb@vger.kernel.org,
-	Ming Yu <tmyu0@nuvoton.com>
-Subject: Re: [PATCH v12 1/7] mfd: Add core driver for Nuvoton NCT6694
-Message-ID: <20250625090133.GP795775@google.com>
-References: <20250612140041.GF381401@google.com>
- <CAOoeyxVvZiD18qbGd5oUnqLNETKw50fJBjJO3vR50kon_a5_kA@mail.gmail.com>
- <20250612152313.GP381401@google.com>
- <CAOoeyxV-E_HQOBu0Pzfy0b0yJ2qbrW_C8pATCTWE4+PXqvHL6g@mail.gmail.com>
- <20250613131133.GR381401@google.com>
- <CAOoeyxXftk9QX_REgeQhuXSc9rEguzXkKVKDQdawU=NzGbo9oA@mail.gmail.com>
- <20250619115345.GL587864@google.com>
- <CAOoeyxXSTeypv2qQjcK1cSPtjch=gJGYzqoMsLQ-LJZ8Kwgd=w@mail.gmail.com>
- <20250619152814.GK795775@google.com>
- <CAOoeyxU7eQneBuxbBqepta29q_OHPzrkN4SKmj6RX72L3Euw5A@mail.gmail.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=BF8jOLhc+BquzIVhEzzLsNEJJStnR48TYpwV/PITSlmvcZ/T6NfXmpS8MQCy6OxEIXobt+LPQ+ltdZumn81wX6Twd8QQIYNHtsWzD7HEdRp3zUewXX7ROlbhRfzQHoESnLHsFAl3xKUHYVBM6x6oxkyF7SkEnCx9E0H2W8Y8cyU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=K88MIKtY; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=TzFhUtlf; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=pDNU/pMD; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=kjIsMO7l; arc=none smtp.client-ip=195.135.223.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
+Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out2.suse.de (Postfix) with ESMTPS id 543581F457;
+	Wed, 25 Jun 2025 09:02:06 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1750842127; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=VQkPVKL8Rc6BcG1xlmknHJTwR6rrtSmQUG7dRS6JaQI=;
+	b=K88MIKtY82CBpDzi6rQlT8OOPkg95o/p3QDoD2WpqwtqDG9ygD7FSVfzTnMIZ7K8uQHP/1
+	a++hTBSfkSdfFK/P6HtAVN7TfcxDBmnw1rgQV/OyCk2yOckW4xtXP8KZyePm3xsYVnDJS+
+	qcseI6zWccOfZ1VVNmzQcg2F9Ma33UU=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1750842127;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=VQkPVKL8Rc6BcG1xlmknHJTwR6rrtSmQUG7dRS6JaQI=;
+	b=TzFhUtlfsd2gpvUbQU498O7GUVWWT7ZHU7TLg3xy6oJ9oFZulfMtyjrmCdCh1Dc8Gt72rg
+	P/DStVSGf1mo1nAQ==
+Authentication-Results: smtp-out2.suse.de;
+	dkim=pass header.d=suse.de header.s=susede2_rsa header.b="pDNU/pMD";
+	dkim=pass header.d=suse.de header.s=susede2_ed25519 header.b=kjIsMO7l
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1750842126; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=VQkPVKL8Rc6BcG1xlmknHJTwR6rrtSmQUG7dRS6JaQI=;
+	b=pDNU/pMD3ceHkSNdLroWs06SZ+4g1lwFF7QW3K/tkoE2mMTb3gkLIDqm2lGc+KW1bkW2rW
+	GzjhQwoQrrEfxyO917+9puLYEuPgaGkH6x2PRDB2/zOsyZqx2AYxOkSydeSijePK6AaCdx
+	AM682U+M51EFr5F+lzgOVZumn85qvW4=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1750842126;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=VQkPVKL8Rc6BcG1xlmknHJTwR6rrtSmQUG7dRS6JaQI=;
+	b=kjIsMO7lE8qBubsM74x4X0Wczs7UPx+ikAJR1+7ZVgZY7b4ybJzMSyJuvtoN+MTFR9L/Hv
+	s0a8I/zchHyFNcDA==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id D8ABF13485;
+	Wed, 25 Jun 2025 09:02:04 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id a54nMgy7W2iZKgAAD6G6ig
+	(envelope-from <osalvador@suse.de>); Wed, 25 Jun 2025 09:02:04 +0000
+Date: Wed, 25 Jun 2025 11:02:03 +0200
+From: Oscar Salvador <osalvador@suse.de>
+To: David Hildenbrand <david@redhat.com>
+Cc: linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+	linux-mm@kvack.org, nvdimm@lists.linux.dev,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Juergen Gross <jgross@suse.com>,
+	Stefano Stabellini <sstabellini@kernel.org>,
+	Oleksandr Tyshchenko <oleksandr_tyshchenko@epam.com>,
+	Dan Williams <dan.j.williams@intel.com>,
+	Alistair Popple <apopple@nvidia.com>,
+	Matthew Wilcox <willy@infradead.org>, Jan Kara <jack@suse.cz>,
+	Alexander Viro <viro@zeniv.linux.org.uk>,
+	Christian Brauner <brauner@kernel.org>, Zi Yan <ziy@nvidia.com>,
+	Baolin Wang <baolin.wang@linux.alibaba.com>,
+	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
+	"Liam R. Howlett" <Liam.Howlett@oracle.com>,
+	Nico Pache <npache@redhat.com>, Ryan Roberts <ryan.roberts@arm.com>,
+	Dev Jain <dev.jain@arm.com>, Barry Song <baohua@kernel.org>,
+	Vlastimil Babka <vbabka@suse.cz>, Mike Rapoport <rppt@kernel.org>,
+	Suren Baghdasaryan <surenb@google.com>,
+	Michal Hocko <mhocko@suse.com>, Jann Horn <jannh@google.com>,
+	Pedro Falcato <pfalcato@suse.de>
+Subject: Re: [PATCH RFC 11/14] mm: remove "horrible special case to handle
+ copy-on-write behaviour"
+Message-ID: <aFu7C0S_SjSOqO8G@localhost.localdomain>
+References: <20250617154345.2494405-1-david@redhat.com>
+ <20250617154345.2494405-12-david@redhat.com>
+ <5f4c0a45-f219-4d95-b5d7-b4ca1bc9540b@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAOoeyxU7eQneBuxbBqepta29q_OHPzrkN4SKmj6RX72L3Euw5A@mail.gmail.com>
+In-Reply-To: <5f4c0a45-f219-4d95-b5d7-b4ca1bc9540b@redhat.com>
+X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
+X-Rspamd-Queue-Id: 543581F457
+X-Rspamd-Action: no action
+X-Spam-Flag: NO
+X-Spamd-Result: default: False [-6.51 / 50.00];
+	BAYES_HAM(-3.00)[99.99%];
+	DWL_DNSWL_MED(-2.00)[suse.de:dkim];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	R_DKIM_ALLOW(-0.20)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	MX_GOOD(-0.01)[];
+	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
+	ARC_NA(0.00)[];
+	RCPT_COUNT_TWELVE(0.00)[29];
+	MIME_TRACE(0.00)[0:+];
+	SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:97:from];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	RCVD_TLS_ALL(0.00)[];
+	DNSWL_BLOCKED(0.00)[2a07:de40:b281:106:10:150:64:167:received,2a07:de40:b281:104:10:150:64:97:from];
+	RCVD_COUNT_TWO(0.00)[2];
+	FROM_EQ_ENVFROM(0.00)[];
+	TO_DN_SOME(0.00)[];
+	RECEIVED_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:106:10:150:64:167:received];
+	MISSING_XM_UA(0.00)[];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	DKIM_TRACE(0.00)[suse.de:+];
+	R_RATELIMIT(0.00)[to_ip_from(RL88oxspsx4bg3gu1yybyqiqt4)];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:rdns,imap1.dmz-prg2.suse.org:helo,suse.de:dkim]
+X-Spam-Score: -6.51
+X-Spam-Level: 
 
-On Fri, 20 Jun 2025, Ming Yu wrote:
+On Wed, Jun 25, 2025 at 10:47:49AM +0200, David Hildenbrand wrote:
+> I'm still thinking about this patch here, and will likely send out the other
+> patches first as a v1, and come back to this one later.
 
-> Lee Jones <lee@kernel.org> 於 2025年6月19日 週四 下午11:28寫道：
-> >
-> > On Thu, 19 Jun 2025, Ming Yu wrote:
-> >
-> > > Lee Jones <lee@kernel.org> 於 2025年6月19日 週四 下午7:53寫道：
-> > > >
-> > > > On Fri, 13 Jun 2025, Ming Yu wrote:
-> > > >
-> > > > > Lee Jones <lee@kernel.org> 於 2025年6月13日 週五 下午9:11寫道：
-> > > > > >
-> > > > > > On Fri, 13 Jun 2025, Ming Yu wrote:
-> > > > > >
-> > > > > > > Lee Jones <lee@kernel.org> 於 2025年6月12日 週四 下午11:23寫道：
-> > > > > > > >
-> > > > > > > > On Thu, 12 Jun 2025, Ming Yu wrote:
-> > > > > > > >
-> > > > > > > > > Dear Lee,
-> > > > > > > > >
-> > > > > > > > > Thank you for reviewing,
-> > > > > > > > >
-> > > > > > > > > Lee Jones <lee@kernel.org> 於 2025年6月12日 週四 下午10:00寫道：
-> > > > > > > > > >
-> > > > > > > > > ...
-> > > > > > > > > > > +static const struct mfd_cell nct6694_devs[] = {
-> > > > > > > > > > > +     MFD_CELL_BASIC("nct6694-gpio", NULL, NULL, 0, 0),
-> > > > > > > > > > > +     MFD_CELL_BASIC("nct6694-gpio", NULL, NULL, 0, 1),
-> > > > > > > > > > > +     MFD_CELL_BASIC("nct6694-gpio", NULL, NULL, 0, 2),
-> > > > > > > > > > > +     MFD_CELL_BASIC("nct6694-gpio", NULL, NULL, 0, 3),
-> > > > > > > > > > > +     MFD_CELL_BASIC("nct6694-gpio", NULL, NULL, 0, 4),
-> > > > > > > > > > > +     MFD_CELL_BASIC("nct6694-gpio", NULL, NULL, 0, 5),
-> > > > > > > > > > > +     MFD_CELL_BASIC("nct6694-gpio", NULL, NULL, 0, 6),
-> > > > > > > > > > > +     MFD_CELL_BASIC("nct6694-gpio", NULL, NULL, 0, 7),
-> > > > > > > > > > > +     MFD_CELL_BASIC("nct6694-gpio", NULL, NULL, 0, 8),
-> > > > > > > > > > > +     MFD_CELL_BASIC("nct6694-gpio", NULL, NULL, 0, 9),
-> > > > > > > > > > > +     MFD_CELL_BASIC("nct6694-gpio", NULL, NULL, 0, 10),
-> > > > > > > > > > > +     MFD_CELL_BASIC("nct6694-gpio", NULL, NULL, 0, 11),
-> > > > > > > > > > > +     MFD_CELL_BASIC("nct6694-gpio", NULL, NULL, 0, 12),
-> > > > > > > > > > > +     MFD_CELL_BASIC("nct6694-gpio", NULL, NULL, 0, 13),
-> > > > > > > > > > > +     MFD_CELL_BASIC("nct6694-gpio", NULL, NULL, 0, 14),
-> > > > > > > > > > > +     MFD_CELL_BASIC("nct6694-gpio", NULL, NULL, 0, 15),
-> > > > > > > > > > > +
-> > > > > > > > > > > +     MFD_CELL_BASIC("nct6694-i2c", NULL, NULL, 0, 0),
-> > > > > > > > > > > +     MFD_CELL_BASIC("nct6694-i2c", NULL, NULL, 0, 1),
-> > > > > > > > > > > +     MFD_CELL_BASIC("nct6694-i2c", NULL, NULL, 0, 2),
-> > > > > > > > > > > +     MFD_CELL_BASIC("nct6694-i2c", NULL, NULL, 0, 3),
-> > > > > > > > > > > +     MFD_CELL_BASIC("nct6694-i2c", NULL, NULL, 0, 4),
-> > > > > > > > > > > +     MFD_CELL_BASIC("nct6694-i2c", NULL, NULL, 0, 5),
-> > > > > > > > > >
-> > > > > > > > > > Why have we gone back to this silly numbering scheme?
-> > > > > > > > > >
-> > > > > > > > > > What happened to using IDA in the child driver?
-> > > > > > > > > >
-> > > > > > > > >
-> > > > > > > > > In a previous version, I tried to maintain a static IDA in each
-> > > > > > > > > sub-driver. However, I didn’t consider the case where multiple NCT6694
-> > > > > > > > > devices are bound to the same driver — in that case, the IDs are not
-> > > > > > > > > fixed and become unusable for my purpose.
-> > > > > > > >
-> > > > > > > > Not sure I understand.
-> > > > > > > >
-> > > > > > >
-> > > > > > > As far as I know, if I maintain the IDA in the sub-drivers and use
-> > > > > > > multiple MFD_CELL_NAME("nct6694-gpio") entries in the MFD, the first
-> > > > > > > NCT6694 device bound to the GPIO driver will receive IDs 0~15.
-> > > > > > > However, when a second NCT6694 device is connected to the system, it
-> > > > > > > will receive IDs 16~31.
-> > > > > > > Because of this behavior, I switched back to using platform_device->id.
-> > > > > >
-> > > > > > Each of the devices will probe once.
-> > > > > >
-> > > > > > The first one will be given 0, the second will be given 1, etc.
-> > > > > >
-> > > > > > Why would you give multiple IDs to a single device bound to a driver?
-> > > > > >
-> > > > >
-> > > > > The device exposes multiple peripherals — 16 GPIO controllers, 6 I2C
-> > > > > adapters, 2 CAN FD controllers, and 2 watchdog timers. Each peripheral
-> > > > > is independently addressable, has its own register region, and can
-> > > > > operate in isolation. The IDs are used to distinguish between these
-> > > > > instances.
-> > > > > For example, the GPIO driver will be probed 16 times, allocating 16
-> > > > > separate gpio_chip instances to control 8 GPIO lines each.
-> > > > >
-> > > > > If another device binds to this driver, it is expected to expose
-> > > > > peripherals with the same structure and behavior.
-> > > >
-> > > > I still don't see why having a per-device IDA wouldn't render each
-> > > > probed device with its own ID.  Just as you have above.
-> > > >
-> > >
-> > > For example, when the MFD driver and the I2C sub-driver are loaded,
-> > > connecting the first NCT6694 USB device to the system results in 6
-> > > nct6694-i2c platform devices being created and bound to the
-> > > i2c-nct6694 driver. These devices receive IDs 0 through 5 via the IDA.
-> > >
-> > > However, when a second NCT6694 USB device is connected, its
-> > > corresponding nct6694-i2c platform devices receive IDs 6 through 11 —
-> > > instead of 0 through 5 as I originally expected.
-> > >
-> > > If I've misunderstood something, please feel free to correct me. Thank you!
-> >
-> > In the code above you register 6 I2C devices.  Each device will be
-> > assigned a platform ID 0 through 5. The .probe() function in the I2C
-> > driver will be executed 6 times.  In each of those calls to .probe(),
-> > instead of pre-allocating a contiguous assignment of IDs here, you
-> > should be able to use IDA in .probe() to allocate those same device IDs
-> > 0 through 5.
-> >
-> > What am I missing here?
-> >
-> 
-> You're absolutely right in the scenario where a single NCT6694 device
-> is present. However, I’m wondering how we should handle the case where
-> a second or even third NCT6694 device is bound to the same MFD driver.
-> In that situation, the sub-drivers using a static IDA will continue
-> allocating increasing IDs, rather than restarting from 0 for each
-> device. How should this be handled?
+Patch#12 depends on this one, but Patch#13 should be ok to review
+If I ignore the 'addr' parameter being dropped, right?
 
-I'd like to see the implementation of this before advising.
-
-In such a case, I assume there would be a differentiating factor between
-the two (or three) devices.  You would then use that to decide which IDA
-would need to be incremented.
-
-However, Greg is correct.  Hard-coding look-ups for userspace to use
-sounds like a terrible idea.
 
 -- 
-Lee Jones [李琼斯]
+Oscar Salvador
+SUSE Labs
 
