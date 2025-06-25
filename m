@@ -1,97 +1,122 @@
-Return-Path: <linux-kernel+bounces-702489-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-702483-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 19FE0AE82FD
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Jun 2025 14:43:42 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5F5DAAE82F2
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Jun 2025 14:42:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BFCAA3AE7B0
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Jun 2025 12:43:16 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A99D91C22BB7
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Jun 2025 12:42:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8C18D25F793;
-	Wed, 25 Jun 2025 12:43:35 +0000 (UTC)
-Received: from r3-20.sinamail.sina.com.cn (r3-20.sinamail.sina.com.cn [202.108.3.20])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 495A425FA03;
+	Wed, 25 Jun 2025 12:41:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=disroot.org header.i=@disroot.org header.b="CqpfjIX0"
+Received: from layka.disroot.org (layka.disroot.org [178.21.23.139])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 883E425E839
-	for <linux-kernel@vger.kernel.org>; Wed, 25 Jun 2025 12:43:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.108.3.20
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8969C2561A8;
+	Wed, 25 Jun 2025 12:41:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.21.23.139
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750855415; cv=none; b=mDNjyPg68Ppx6Uaku66bxtfe+1tRVJcdo25+SSvl918bBxoVuV+aNdQpfz/8XWVvldaR6b70d8x6DzXXKG5SRiGym6TaYukjBmM1gzXrduFCwJfSzanLQNJCIK4LNZr6e9P5WefoGC07dgVnVUbfIgfx20WE/HELlM6g1qrwEto=
+	t=1750855306; cv=none; b=s3v4a+ZFmkjfBVnTPaSUmtn9xzhI1HlP1/oCBH+pQuPrg3Z+M1CN00Ac17Syq0MKUby4rLfjTETu44IIYQCNF76ov1I8kRs9gZgXgWy+djyPLA3l/L9u3kYGpxEq3z0JDEG1U/OL3d7NU3ZX/2k51H5gzWcfCiWToUienFvDJRY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750855415; c=relaxed/simple;
-	bh=Dg7mH0vwJEi2eAh5xEyPZOekPMs11EObN+kXsnWP8fs=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=l50+JclYIHRKo+1sygt33Dpz4botXB9pyLq2s1WRBmexn/LZqKYbqGQ7dX6GToVWhxDabfZbYxUXzDPoV5rzzjk/NCukKJ1opN2U9cO2U1QeeU2jnFdesrYp/UH5tyt/i3erbupQupI28woxL6rS1XbSbgxL3N6pgM6DoccKemw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sina.com; spf=pass smtp.mailfrom=sina.com; arc=none smtp.client-ip=202.108.3.20
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sina.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sina.com
-X-SMAIL-HELO: localhost.localdomain
-Received: from unknown (HELO localhost.localdomain)([114.249.58.236])
-	by sina.com (10.54.253.32) with ESMTP
-	id 685BEE5E000047FB; Wed, 25 Jun 2025 20:41:04 +0800 (CST)
-X-Sender: hdanton@sina.com
-X-Auth-ID: hdanton@sina.com
-Authentication-Results: sina.com;
-	 spf=none smtp.mailfrom=hdanton@sina.com;
-	 dkim=none header.i=none;
-	 dmarc=none action=none header.from=hdanton@sina.com
-X-SMAIL-MID: 2724294456994
-X-SMAIL-UIID: CE051FA91B6D46C19CB0EFFAAB0AF47D-20250625-204104-1
-From: Hillf Danton <hdanton@sina.com>
-To: Qu Wenruo <quwenruo.btrfs@gmx.com>
-Cc: Edward Adam Davis <eadavis@qq.com>,
-	syzbot+fa90fcaa28f5cd4b1fc1@syzkaller.appspotmail.com,
-	clm@fb.com,
-	josef@toxicpanda.com,
-	linux-btrfs@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	syzkaller-bugs@googlegroups.com
-Subject: Re: [PATCH next] btrfs: fix deadlock in btrfs_read_chunk_tree
-Date: Wed, 25 Jun 2025 20:40:50 +0800
-Message-ID: <20250625124052.1778-1-hdanton@sina.com>
-In-Reply-To: <063b1e52-0769-403b-ae05-7b999223a1f2@gmx.com>
-References: <685aa401.050a0220.2303ee.0009.GAE@google.com> <tencent_C857B761776286CB137A836B096C03A34405@qq.com> <20250624235635.1661-1-hdanton@sina.com>
+	s=arc-20240116; t=1750855306; c=relaxed/simple;
+	bh=k73QcSebOPGkqpr02iIqO4RpQPNEizVB/wnyJVCI8+c=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=k3D+D8BfGztHZZ2RUaNAtYHWwokYa6yxCAnCQRVwYL1DBdtzxLmIn7MhBMn9lVkSq2kkhj9sZl8Opg1rQiMLr4vaxh/8ZnkSJLFNiewGfvx/dYqVjHTSyGhpiRdvmuAnVenvl0yyGMofn/LaJ1BnFam//3LaTRuVLOgURdmGjOg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=disroot.org; spf=pass smtp.mailfrom=disroot.org; dkim=pass (2048-bit key) header.d=disroot.org header.i=@disroot.org header.b=CqpfjIX0; arc=none smtp.client-ip=178.21.23.139
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=disroot.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=disroot.org
+Received: from mail01.disroot.lan (localhost [127.0.0.1])
+	by disroot.org (Postfix) with ESMTP id B4F8A2089E;
+	Wed, 25 Jun 2025 14:41:40 +0200 (CEST)
+X-Virus-Scanned: SPAM Filter at disroot.org
+Received: from layka.disroot.org ([127.0.0.1])
+ by localhost (disroot.org [127.0.0.1]) (amavis, port 10024) with ESMTP
+ id pqmGC6kMmVPd; Wed, 25 Jun 2025 14:41:39 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=disroot.org; s=mail;
+	t=1750855299; bh=k73QcSebOPGkqpr02iIqO4RpQPNEizVB/wnyJVCI8+c=;
+	h=From:Subject:Date:To:Cc;
+	b=CqpfjIX0vrZfmuIw1JegjdIoz5/uQ7w2ruLjtrZX39ZtjjvgY8dbnV4PEiqlDPIki
+	 +wOX+Owdkhr7Ppi6qrhgOtYhm4SWb2WCnHhkBfcX10Ua386UJIEF5w9tGSq608hNlq
+	 9DpFt9/XiqavU1fcykszaPRxPdFDJh1L1x0X1nuf1AbhXLj7k0dwo361lZJHI8HvyO
+	 fRS0pQsT8aSDa4nUZl8UAC5hu19K1ySU4AqqeBn6DJAg20GlBLx+P5cFRxZn0lLoeY
+	 CA7DeprVcEBFEIxJRxfBmLK66b1E2pFS/yo9ILIe/V5VA01jdc2XHrqMrI4nmTYfZJ
+	 H2nJ47Ilo5dog==
+From: Kaustabh Chakraborty <kauschluss@disroot.org>
+Subject: [PATCH v3 0/2] Add driver for Samsung S6E8AA5X01 panel controller
+Date: Wed, 25 Jun 2025 18:11:24 +0530
+Message-Id: <20250625-panel-samsung-s6e8aa5x01-v3-0-9a1494fe6c50@disroot.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAHTuW2gC/33NQQ6CMBCF4auYrq1pB1rQlfcwLgY6QBOlpMUGQ
+ 7i7BTe60OX/kvlmZoG8pcBOu5l5ijZY16fI9jtWd9i3xK1JzUCAEgoyPmBPNx7wHh59y4OmElF
+ NQnJCyI+asCGDLJ0Pnho7bfTlmrqzYXT+uX2Kcl3fqJbwG42SCy60qSsUhSTUZ2ODd248ON+yl
+ Y3wQYH6Q0GiclMVUJUFKsy/qWVZXqlx6fENAQAA
+X-Change-ID: 20250523-panel-samsung-s6e8aa5x01-ea2496eafeda
+To: Neil Armstrong <neil.armstrong@linaro.org>, 
+ Jessica Zhang <quic_jesszhan@quicinc.com>, David Airlie <airlied@gmail.com>, 
+ Simona Vetter <simona@ffwll.ch>, 
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
+ Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, 
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, 
+ Jessica Zhang <jessica.zhang@oss.qualcomm.com>
+Cc: dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, Kaustabh Chakraborty <kauschluss@disroot.org>, 
+ Conor Dooley <conor.dooley@microchip.com>
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1750855293; l=1632;
+ i=kauschluss@disroot.org; s=20250202; h=from:subject:message-id;
+ bh=k73QcSebOPGkqpr02iIqO4RpQPNEizVB/wnyJVCI8+c=;
+ b=1nh652G8FvfSm8XUQZ/LSfWGtOT4OSDseTLvDBIZSZguu58pl3Noi+AmpdGnPj0+8Kpk+ZRSR
+ eqgbJawYG6hA90oblpI0vuYMZz2lLvIcN4JWAlHroS+jou6rFxQdmpV
+X-Developer-Key: i=kauschluss@disroot.org; a=ed25519;
+ pk=h2xeR+V2I1+GrfDPAhZa3M+NWA0Cnbdkkq1bH3ct1hE=
 
-On Wed, 25 Jun 2025 20:19:06 +0930 Qu Wenruo wrote:
-> =E5=9C=A8 2025/6/25 09:26, Hillf Danton =E5=86=99=E9=81=93:
-> > On Wed, 25 Jun 2025 06:00:09 +0930 Qu Wenruo wrote:
-> >> =3DE5=3D9C=3DA8 2025/6/25 00:00, Edward Adam Davis =3DE5=3D86=3D99=3DE9=
-> =3D81=3D93:
-> >>> Remove the lock uuid_mutex outside of sget_fc() to avoid the deadlock
-> >>> reported by [1].
-> >>> =3D20
-> >>> [1]
-> >>> -> #1 (&type->s_umount_key#41/1){+.+.}-{4:4}:
-> >>>          lock_acquire+0x120/0x360 kernel/locking/lockdep.c:5871
-> >>>          down_write_nested+0x9d/0x200 kernel/locking/rwsem.c:1693
-> >>>          alloc_super+0x204/0x970 fs/super.c:345
-> >=20
-> > Given kzalloc [3], the syzbot report is false positive (a known lockdep
-> > issue) as nobody else should acquire s->s_umount lock.
-> >=20
-> > [3] https://web.git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.=
-> git/tree/fs/super.c?id=3D7aacdf6feed1#n319
-> 
-> Not a false alert either.
-> 
-> sget_fc() can return an existing super block, we can race between a=20
-> mount and an unmount on the same super block.
-> 
-> In that case it's going to cause problem.
-> 
-> This is already fixed in the v4 (and later v5) patchset:
-> 
-> https://lore.kernel.org/linux-btrfs/cover.1750724841.git.wqu@suse.com/
-> 
-Can v5 survive the syzbot test?
+This patch series introduces a driver for Samsung S6E8AA5X01, which is
+an AMOLED MIPI DSI panel controller. This panel is found in several
+(mostly Samsung) phones, in at least two different sizes - 720x1280 and
+720x1480.
+
+Signed-off-by: Kaustabh Chakraborty <kauschluss@disroot.org>
+---
+Changes in v3:
+- added brightness values for upto 500 nits.
+- removed unused mutex object from panel code.
+- Link to v2: https://lore.kernel.org/r/20250625-panel-samsung-s6e8aa5x01-v2-0-4db72b87a5a4@disroot.org
+
+Changes in v2:
+- fixed various dt_binding_check errors (conor)
+- simplified panel enable sequencing (tzimmermann)
+- did s/s6e8aa5x01_update_brightness/s6e8aa5x01_update_status (tzimmermann)
+- added check for panel enable in s6e8aa5x01_update_status() (tzimmermann)
+- used backlight_get_brightness() in appropriate places (tzimmermann)
+- Link to v1: https://lore.kernel.org/r/20250612-panel-samsung-s6e8aa5x01-v1-0-06dcba071ea6@disroot.org
+
+---
+Kaustabh Chakraborty (2):
+      dt-bindings: display: panel: document Samsung S6E8AA5X01 panel driver
+      drm: panel: add support for Samsung S6E8AA5X01 panel controller
+
+ .../bindings/display/panel/samsung,s6e8aa5x01.yaml |  78 ++
+ drivers/gpu/drm/panel/Kconfig                      |  11 +
+ drivers/gpu/drm/panel/Makefile                     |   1 +
+ drivers/gpu/drm/panel/panel-samsung-s6e8aa5x01.c   | 980 +++++++++++++++++++++
+ 4 files changed, 1070 insertions(+)
+---
+base-commit: 1b152eeca84a02bdb648f16b82ef3394007a9dcf
+change-id: 20250523-panel-samsung-s6e8aa5x01-ea2496eafeda
+
+Best regards,
+-- 
+Kaustabh Chakraborty <kauschluss@disroot.org>
+
 
