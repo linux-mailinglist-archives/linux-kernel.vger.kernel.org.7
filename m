@@ -1,86 +1,97 @@
-Return-Path: <linux-kernel+bounces-703336-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-703338-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 04BA1AE8EF1
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Jun 2025 21:46:52 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 493F8AE8EF8
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Jun 2025 21:49:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3B4353BA85D
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Jun 2025 19:46:22 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 29AA45A6DEB
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Jun 2025 19:48:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4FEFB20459A;
-	Wed, 25 Jun 2025 19:46:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1433A204863;
+	Wed, 25 Jun 2025 19:49:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="as2omF8E"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="HLHNDmS1"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A49003074B1;
-	Wed, 25 Jun 2025 19:46:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 64F4A3074B1;
+	Wed, 25 Jun 2025 19:49:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750880799; cv=none; b=fhnDnDEWQbmgCdz+mGvc4ipqoObHXHazDAcQQ9/gLccsfi3JOSpmHmhhfBd3/G6RZwXDXzFs7HwgpZFHxfsNTbtv6CfwIRPwUy4nmmaisyy8BL0XDr1O9L6Foz2pPed3rukEz8kRtmV5+CKf1RfO/cQP3EE9Ewn3RRH4OnSMlPg=
+	t=1750880940; cv=none; b=nSxP+t83A3/yLs5QySCxABQO505wVUMlPA00kJ+PqoB4Rg3ZHd46pFEGOzICArCWDu+z8mrWtRxBIzhvtMxNj2f22+TKxU1ipzZdjhlC6j3ucy8ixOnjNnli3ldsUAwwWg5tJjgyM2HxND0QQIsXkRIZoVPT6VUJ3eoTrxDZ4ak=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750880799; c=relaxed/simple;
-	bh=NODulXK9mLHVaLI9aDIG8467kKcmn3NIW0YaOkXodiY=;
+	s=arc-20240116; t=1750880940; c=relaxed/simple;
+	bh=x1oeVpcrF31Lt39XRUptcsup5ofQNvFnbEzOBrJUMSo=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=MUwxdiR2pSZIWBCDgigMQ6/CF44KgOoS/0hKDy8mzp+kckOyAOKeUPYKhzmou6qsY+Ajl8s4s9a+A0ymWG3xHxqPJ7KOZLemZHWDMmUiCCNZ7u3vsJt6dVj1463fefAmdRMzU07KiOK7ytUw36uHiM8MOwV05mEpDt91KFKpdl4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=as2omF8E; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 08D85C4CEEA;
-	Wed, 25 Jun 2025 19:46:37 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=NzVG+Lt2pVgC8YOKKu4esGqrovMJgO1vH4js/O77pBqkCwJKJA5uQW5UMeODiGPjGXCrPvBnhakKWROLq1HXWL7fFOpxx4GBG3CLlAkn/LFzh4Lxf4n02gPt6+IKBWev3FlEHCanL12EDfvMJBeLRN22xVmp3F34MqrKI/fPl8A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=HLHNDmS1; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6EF0CC4CEEE;
+	Wed, 25 Jun 2025 19:48:59 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1750880798;
-	bh=NODulXK9mLHVaLI9aDIG8467kKcmn3NIW0YaOkXodiY=;
+	s=k20201202; t=1750880939;
+	bh=x1oeVpcrF31Lt39XRUptcsup5ofQNvFnbEzOBrJUMSo=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=as2omF8Ee8BkRGXkdGdQQSLwl2mF2fOIbCOBaJx1KR9FgkLStWvbk2ML3Ql9DlQaI
-	 cd8bd4cxc9c6kyLTi2aYDkP7WW1cOEm8eePxXBbLDELH/sns1RTZwVUyk+cy8yJs7p
-	 DTFa+wXt+FXHAlI7jmD3NRZF3+qUz9yCQjGa0lQ12lVI+Q0pZSldXZbqyVTwGqkR2l
-	 s5Q3epf1dJy+GVOUU/IMgfQycUwcwjAMPWAcb+8qdEWcThi9SKKV6oLL4tW/DmKcdE
-	 0LLu2/p1YCrsNgEHnLZukj5qh0kWxq9DA7aCXEgpLqMUfBnQxV9us8KGVVE9Z2vnrH
-	 1xFNQRShp4G/g==
-Date: Wed, 25 Jun 2025 14:46:37 -0500
-From: "Rob Herring (Arm)" <robh@kernel.org>
-To: Varshini Rajendran <varshini.rajendran@microchip.com>
-Cc: alexandre.belloni@bootlin.com, devicetree@vger.kernel.org,
-	nicolas.ferre@microchip.com, linux-sound@vger.kernel.org,
-	lgirdwood@gmail.com, linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org, conor+dt@kernel.org,
-	broonie@kernel.org, krzk+dt@kernel.org, andrei.simion@microchip.com,
-	claudiu.beznea@tuxon.dev
-Subject: Re: [PATCH] ASoC: dt-bindings: atmel,at91-ssc: add
- microchip,sam9x7-ssc
-Message-ID: <175088079681.2102370.15282339476917735877.robh@kernel.org>
-References: <20250610065005.64070-1-varshini.rajendran@microchip.com>
+	b=HLHNDmS1fIQDJtbO2C5ffCiGuJJ5qc2EvzkCgDYcSR0pBt8mmZJxsuNvxfXDN9YYt
+	 ELxZz6/KYe0eAe5VYzSmKieK6PV6ZxJLbNJ4PPi3a6u+O2trabJ5pqcnRi+5i0byvU
+	 JxjBnMwvnADel8TxT53yUuuUM4+Rzps5qXGJ5+9RH1Ic9MvROqaxbikgA95eYTXoIb
+	 PZELChHCu8bwnxcOBYJ1jPKEeZvHvZeH6illJN1LFQCsu7cr2y5TtsAImK5WPU0Aaq
+	 j32B05XNLTL0JxnKhKgxAf5wFWPJBPyHjXu8spyU86A+XutyoSxpMKQ0UWZvQREbVm
+	 eNUFgMtenOV2w==
+Date: Wed, 25 Jun 2025 20:48:55 +0100
+From: Mark Brown <broonie@kernel.org>
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: stable@vger.kernel.org, patches@lists.linux.dev,
+	linux-kernel@vger.kernel.org, torvalds@linux-foundation.org,
+	akpm@linux-foundation.org, linux@roeck-us.net, shuah@kernel.org,
+	patches@kernelci.org, lkft-triage@lists.linaro.org, pavel@denx.de,
+	jonathanh@nvidia.com, f.fainelli@gmail.com,
+	sudipm.mukherjee@gmail.com, srw@sladewatkins.net, rwarsow@gmx.de,
+	conor@kernel.org, hargar@microsoft.com
+Subject: Re: [PATCH 6.15 000/588] 6.15.4-rc2 review
+Message-ID: <aFxSpzrT0XJ1cGXT@finisterre.sirena.org.uk>
+References: <20250624121449.136416081@linuxfoundation.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="1739lPO0Yzx431Qk"
+Content-Disposition: inline
+In-Reply-To: <20250624121449.136416081@linuxfoundation.org>
+X-Cookie: Do not cut switchbacks.
+
+
+--1739lPO0Yzx431Qk
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250610065005.64070-1-varshini.rajendran@microchip.com>
 
+On Tue, Jun 24, 2025 at 01:30:06PM +0100, Greg Kroah-Hartman wrote:
+> This is the start of the stable review cycle for the 6.15.4 release.
+> There are 588 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
 
-On Tue, 10 Jun 2025 12:20:05 +0530, Varshini Rajendran wrote:
-> Add microchip,sam9x7-ssc to DT bindings documentation.
-> 
-> Signed-off-by: Varshini Rajendran <varshini.rajendran@microchip.com>
-> ---
-> 
-> This patch is a rework (adapting to the newly converted yaml file) of the
-> leftout patch sent [1] as a part of the series adding support for sam9x7 SoC
-> and sam9x75 curiosity board.
-> 
-> [1] https://lore.kernel.org/lkml/20241010120345.92844-1-varshini.rajendran@microchip.com/
-> 
-> ---
->  .../devicetree/bindings/sound/atmel,at91-ssc.yaml     | 11 ++++++++---
->  1 file changed, 8 insertions(+), 3 deletions(-)
-> 
+Tested-by: Mark Brown <broonie@kernel.org>
 
-Acked-by: Rob Herring (Arm) <robh@kernel.org>
+--1739lPO0Yzx431Qk
+Content-Type: application/pgp-signature; name="signature.asc"
 
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmhcUqQACgkQJNaLcl1U
+h9DaIggAgXU66VMCb8bxwFrMjJJl5nIVr1bfSIThkFXw6SSbBHhyX+J+ENMM2qZ6
+H79yXrl0vE604SbZQIKm6UZbzInXJjQE+E9SZfy6RqSlay0Nz68mIU+N9AcmLz43
+HYwZ2w8l6XMVOAAcLg2V2IMHpqfckNFypFTCOSzUKkJ2M/OR1nk5DHCJ6XsPEVcq
+7wyyUh64tzg7A0WE29X7symx5dCGnlLmWYDMqLLs83yJ1nSlCUjE+s9yJgqWBlWE
+K/TNzsTsbc98ZuOPT2scmxu3tjwcPB2zs7gVoNOIdlfWNFFx8QD/OS4cAWFDDGA4
+iW59IDMoSxkfno5aXwt7+T6F4fD23g==
+=oSzd
+-----END PGP SIGNATURE-----
+
+--1739lPO0Yzx431Qk--
 
