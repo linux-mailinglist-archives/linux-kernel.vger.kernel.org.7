@@ -1,188 +1,114 @@
-Return-Path: <linux-kernel+bounces-702048-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-702054-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E1827AE7D6B
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Jun 2025 11:39:21 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id DF40AAE7D73
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Jun 2025 11:39:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A183D5A3F4C
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Jun 2025 09:37:17 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4534B16BF2E
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Jun 2025 09:39:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3A5A42BF01E;
-	Wed, 25 Jun 2025 09:26:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C2CD62D3215;
+	Wed, 25 Jun 2025 09:26:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="QG3FDG6/"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b="hRibJiBQ"
+Received: from mail.zeus03.de (zeus03.de [194.117.254.33])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 12EEA29B232;
-	Wed, 25 Jun 2025 09:26:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 570FA2BEC34
+	for <linux-kernel@vger.kernel.org>; Wed, 25 Jun 2025 09:26:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=194.117.254.33
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750843562; cv=none; b=seikPwRFIank/JqfSvgvyJDEzHJFesqRClfy0umwqCq6FxeG3dp7y6+iUzu3NCUPqS85XHnLH8gr+BnCMIDGXUWOr+cosC9gd20xcfN4sEdpYk+T7P/VMlTx/GD8o2fpn1wk6SBopa2mlZvVcwx1ZATTa478bz2aZYbxmCxyiUQ=
+	t=1750843578; cv=none; b=VLyYlR2IIoj5cIKhW5EF5gjOIb+wB99f3CdxoGnYhZtPpBh2DlkgR4ouGVdtkCfFOVpTAo8NJN3b37ZroY5EDQFfy1Ak+8ZnW/1HMbiokW5NOa8UnPXOBka0zjtz3ley2URG6KdwgetAZsQyfRZPTsDPH7KmDUfzqrcrYGIQHU8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750843562; c=relaxed/simple;
-	bh=DMxABzn9Q/LNeWIKjL84Poq2r4gHFJAc56xCHlCoZZM=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=h9addAA7MumYXbeZILnPDA68Cuj4j0Vdbcfni9siB3DhFbZa5Xe4nBE69McX9DaheqcbYs0n0G7Mgy2HXgF5qzBQ/kBd+lw2dywrF2eladwLuPADsa5vyPMeXW78JAhe2dqzDcc9nsKWvNBrKb1zZmRHs4U9OnCOWMXhBAPUr20=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=qualcomm.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=QG3FDG6/; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=qualcomm.com
-Received: from pps.filterd (m0279870.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 55P20Som032291;
-	Wed, 25 Jun 2025 09:25:49 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:date:from:in-reply-to:message-id
-	:mime-version:references:subject:to; s=qcppdkim1; bh=tcdcCjhN1kQ
-	qkrSRaE028Kk2TL8h/mHB4la3MB9/22o=; b=QG3FDG6/CFSon8Vvx4UzaQWqmzS
-	/wtWeMDYgnMl+NfsvjhaDjzaGUR5C62QT2Zspy8pEqUu5gXH+R/nxYP5ZFDO9fmb
-	st2qZFZHiUamifmZs+5aiedZBxlldkI1AQQohnEbl2wPOoEFjobmwHJuqYgD4Mjr
-	IP5reR19w6b5QrRMbco0Wo0t5W9Bo+2SKeFFRGI5zShmoT6RukhZC/6V5m2qf0K8
-	nHP2z+VWZpuwrit8s02LySiu3xWbxFeg6kHURBl/AOysq74EIlUURytBFuWbyQVQ
-	ZNjDNO+M0z6aeVuR4rc94QpS6cmVgaxxE60xtBXYuthQ8LlZmwZjNqF4fbQ==
-Received: from aptaippmta01.qualcomm.com (tpe-colo-wan-fw-bordernet.qualcomm.com [103.229.16.4])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 47fbm1ww5k-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 25 Jun 2025 09:25:49 +0000 (GMT)
-Received: from pps.filterd (APTAIPPMTA01.qualcomm.com [127.0.0.1])
-	by APTAIPPMTA01.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTP id 55P9PkK4024667;
-	Wed, 25 Jun 2025 09:25:46 GMT
-Received: from pps.reinject (localhost [127.0.0.1])
-	by APTAIPPMTA01.qualcomm.com (PPS) with ESMTPS id 47dntmauy9-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 25 Jun 2025 09:25:46 +0000
-Received: from APTAIPPMTA01.qualcomm.com (APTAIPPMTA01.qualcomm.com [127.0.0.1])
-	by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 55P9PkjD024662;
-	Wed, 25 Jun 2025 09:25:46 GMT
-Received: from cse-cd02-lnx.ap.qualcomm.com (cse-cd02-lnx.qualcomm.com [10.64.75.246])
-	by APTAIPPMTA01.qualcomm.com (PPS) with ESMTPS id 55P9PjBN024659
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 25 Jun 2025 09:25:46 +0000
-Received: by cse-cd02-lnx.ap.qualcomm.com (Postfix, from userid 4438065)
-	id D5D2F3866; Wed, 25 Jun 2025 17:25:42 +0800 (CST)
-From: Ziyue Zhang <quic_ziyuzhan@quicinc.com>
-To: andersson@kernel.org, konradybcio@kernel.org, robh@kernel.org,
-        krzk+dt@kernel.org, conor+dt@kernel.org, jingoohan1@gmail.com,
-        mani@kernel.org, lpieralisi@kernel.org, kwilczynski@kernel.org,
-        bhelgaas@google.com, johan+linaro@kernel.org, vkoul@kernel.org,
-        kishon@kernel.org, neil.armstrong@linaro.org, abel.vesa@linaro.org,
-        kw@linux.com
-Cc: linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org,
-        linux-phy@lists.infradead.org, qiang.yu@oss.qualcomm.com,
-        quic_krichai@quicinc.com, quic_vbadigan@quicinc.com,
-        Ziyue Zhang <quic_ziyuzhan@quicinc.com>,
-        Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-Subject: [PATCH v7 5/5] arm64: dts: qcom: qcs8300-ride: enable pcie1 interface
-Date: Wed, 25 Jun 2025 17:25:39 +0800
-Message-Id: <20250625092539.762075-6-quic_ziyuzhan@quicinc.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20250625092539.762075-1-quic_ziyuzhan@quicinc.com>
-References: <20250625092539.762075-1-quic_ziyuzhan@quicinc.com>
+	s=arc-20240116; t=1750843578; c=relaxed/simple;
+	bh=i5r60Tsu8spq+T7mS1rYkF5bymhbpl4o6cazscGpgX8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=irr9My0eb5hbZF/w1RMnklGVQBwxEzwJZfaoXNlCuT4FbZwYm87U8UDnOPPG2NDp0hZLvRCuW+fSpPjXlqt4B5x/79EVs3W2GJ1+nmlcmsc4aOvAmoiCt7B7V62hA7c3nHJwMCs04A6PnZC8fX7WriXUq5ka6jXP2r7Erb/VeTQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com; spf=pass smtp.mailfrom=sang-engineering.com; dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b=hRibJiBQ; arc=none smtp.client-ip=194.117.254.33
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sang-engineering.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	sang-engineering.com; h=date:from:to:cc:subject:message-id
+	:references:mime-version:content-type:in-reply-to; s=k1; bh=l1Pg
+	OZheUsI8ZgLgWtfmvgHNHnT9bsH9ajc2wwvcsMw=; b=hRibJiBQybeTM2v5XK0W
+	UYZ9wJcabp75bbZJz/bMN3Ed3oqI5dZERxrovMrgN5DcTPD82nsfgmpa0FMgYTyQ
+	v19+GPcv35o8CqI3tPbAJ5/X7Px6pntHECMBoIV4/KdcMa8B+xSQS77MgFYQy6EO
+	81t3HIf35IaYF8erAdQLzGxM4V0Smq2rtKgB0BuzOPwK6MygtXa6wtf/onqop6F7
+	2ZEdhmRW5kJp4tc5HaJ24aj7Q3WvKhnP4713++izPVv0PTzF6R69QkvsxVdDypM/
+	SC+t+AawO8uy0NgO+4gvgolKJyOZd5NjNjtIDn17welo08c6OtvJlyo6eZedVMIb
+	RQ==
+Received: (qmail 590769 invoked from network); 25 Jun 2025 11:25:53 +0200
+Received: by mail.zeus03.de with UTF8SMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 25 Jun 2025 11:25:53 +0200
+X-UD-Smtp-Session: l3s3148p1@2lP+B2I4oJhtKDAs
+Date: Wed, 25 Jun 2025 11:25:41 +0200
+From: Wolfram Sang <wsa+renesas@sang-engineering.com>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Wolfram Sang <wsa@kernel.org>, linux-i2c@vger.kernel.org,
+	linux-kernel@vger.kernel.org, Bartosz Golaszewski <brgl@bgdev.pl>,
+	Andi Shyti <andi.shyti@kernel.org>
+Subject: Re: [PULL REQUEST] i2c-for-6.16-rc3
+Message-ID: <aFvAlSQICukBzt7K@shikoro>
+References: <aFgDHBHwY5ElWILx@shikoro>
+ <CAHk-=wjCznJeOUSHcR5BszEUVv5BW6heO6jMX38MHXNaL3kbmQ@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-QCInternal: smtphost
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Authority-Analysis: v=2.4 cv=YYu95xRf c=1 sm=1 tr=0 ts=685bc09d cx=c_pps
- a=nuhDOHQX5FNHPW3J6Bj6AA==:117 a=nuhDOHQX5FNHPW3J6Bj6AA==:17
- a=6IFa9wvqVegA:10 a=EUspDBNiAAAA:8 a=COk6AnOGAAAA:8 a=0LYZJ8Fh9g_wO_RM1qMA:9
- a=TjNXssC_j7lpFel5tvFf:22
-X-Proofpoint-GUID: R6irlamBveMzrA2DZ2ui-7HJ_0Pxoalx
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNjI1MDA3MCBTYWx0ZWRfX1u02zJ8MPPFc
- si/KOM+3CdnnDHBLmY8r4MUwsrKLz0JK9zy6o+OWRZFGCO5jvE2X4WEgZu/OFCWWST9oaW720Dk
- V7ffkOIEYnijLcTqTBgHZySflvyu1qOT3DUuqqk0PJKtIE93xcy9pyxrsjDlIxxglHTN/jBaiTL
- 5qWcOgepIp4QEM5S7HJkbGixm5GeiBEqh4wCeW0Lt3yQSHSHTIZQgvx0lFLP8va93CDabUy9xB1
- /+BgJPCyfNCT9o2SKMjxQF3KNTcjPg/oxQxRRVsr0Bqa5G/BdOoQeDBtyXZTMYEECusSSOKncBp
- xbrAr4W9mANPd4+DuH6KJe0U6+PCNDGjYeH4dtXivByRSrIspe9j+bmC2qhnuiGJ+Ynzo7HSTm/
- jDaLlFgzOZeR6VjGGOqqFeJzvQZ82kIy6a3RzrZBahVraC0HRDSc2KwiOq7yOE64dbJ/a1Y2
-X-Proofpoint-ORIG-GUID: R6irlamBveMzrA2DZ2ui-7HJ_0Pxoalx
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.7,FMLib:17.12.80.40
- definitions=2025-06-25_02,2025-06-23_07,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- malwarescore=0 adultscore=0 spamscore=0 impostorscore=0 suspectscore=0
- lowpriorityscore=0 priorityscore=1501 phishscore=0 mlxlogscore=999
- clxscore=1015 mlxscore=0 bulkscore=0 classifier=spam authscore=0 authtc=n/a
- authcc= route=outbound adjust=0 reason=mlx scancount=1
- engine=8.19.0-2505280000 definitions=main-2506250070
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="JMbvFv9CHOhDS+6+"
+Content-Disposition: inline
+In-Reply-To: <CAHk-=wjCznJeOUSHcR5BszEUVv5BW6heO6jMX38MHXNaL3kbmQ@mail.gmail.com>
 
-Add configurations in devicetree for PCIe1, board related gpios,
-PMIC regulators, etc for qcs8300-ride platform.
 
-Reviewed-by: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-Signed-off-by: Ziyue Zhang <quic_ziyuzhan@quicinc.com>
----
- arch/arm64/boot/dts/qcom/qcs8300-ride.dts | 40 +++++++++++++++++++++++
- 1 file changed, 40 insertions(+)
+--JMbvFv9CHOhDS+6+
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-diff --git a/arch/arm64/boot/dts/qcom/qcs8300-ride.dts b/arch/arm64/boot/dts/qcom/qcs8300-ride.dts
-index e8e382db2b99..bec2905c5d8f 100644
---- a/arch/arm64/boot/dts/qcom/qcs8300-ride.dts
-+++ b/arch/arm64/boot/dts/qcom/qcs8300-ride.dts
-@@ -325,6 +325,23 @@ &pcie0_phy {
- 	status = "okay";
- };
- 
-+&pcie1 {
-+	perst-gpios = <&tlmm 23 GPIO_ACTIVE_LOW>;
-+	wake-gpios = <&tlmm 21 GPIO_ACTIVE_HIGH>;
-+
-+	pinctrl-0 = <&pcie1_default_state>;
-+	pinctrl-names = "default";
-+
-+	status = "okay";
-+};
-+
-+&pcie1_phy {
-+	vdda-phy-supply = <&vreg_l6a>;
-+	vdda-pll-supply = <&vreg_l5a>;
-+
-+	status = "okay";
-+};
-+
- &qupv3_id_0 {
- 	status = "okay";
- };
-@@ -388,6 +405,29 @@ perst-pins {
- 			bias-pull-down;
- 		};
- 	};
-+
-+   pcie1_default_state: pcie1-default-state {
-+		wake-pins {
-+			pins = "gpio21";
-+			function = "gpio";
-+			drive-strength = <2>;
-+			bias-pull-up;
-+		};
-+
-+		clkreq-pins {
-+			pins = "gpio22";
-+			function = "pcie1_clkreq";
-+			drive-strength = <2>;
-+			bias-pull-up;
-+		};
-+
-+		perst-pins {
-+			pins = "gpio23";
-+			function = "gpio";
-+			drive-strength = <2>;
-+			bias-pull-down;
-+		};
-+	};
- };
- 
- &uart7 {
--- 
-2.34.1
+Linus,
 
+> If you do conversions after the merge window, make them DAMN OBVIOUS.
+> Make them minimal, make them automated, and DO NOT DO OTHER RANDOM
+> CRAP AROUND THEM.
+
+Okay, I don't want to do annoying things, so let me rephrase what I got
+out of this. I should have 2 cleanup patches, one for the callback
+changes and one for the whitespace changes?
+
+Because I think the whitespace patch is needed. This is still the
+beginning of a larger refactoring and having struct members initialized
+according to coding style will greatly simplify next steps. And this
+paragraph should then be the commit message of the whitespace patch.
+
+I assumed that it was obvious that everything in this pull request was
+automated. I honestly really don't enjoy pushing whitespaces around
+manually.
+
+   Wolfram
+
+--JMbvFv9CHOhDS+6+
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAmhbwJUACgkQFA3kzBSg
+KbaoBhAAh88bS4Eu1XiE9ReKbEZYWw6wqEKTeq9gbsPvzdXWnQ5Z1VwspnaFqHUl
+UwlPAEW/OF4jAPqNBdfnd2PJBbS/A1lFWUPkSV2WlXT3PKGMULNCvdPL0BoVulbF
+N4giPCtygW0fImzmHj/S8th1VcZdtxd6IarVuzED3gYzPVTPfIeZFHg6GqDbeU9a
+P+FhzkGRNbkZs/k863PWLjzjN/cvh1Z9DOY3otEIbEzjk2FZ0Tux6RiEO0ASKkfj
+iN3IcOibkyVdMQAu7Hl9FEYCwQg8VJwdhkVl/MzQ/T9FVHl7AmfVr9qlcjh6uPPU
+25M4SxxmjU3i8IpE7mcYKF8y72JBr9E2HzMwDYkcmr/Y3yrUloo4WviYklecqWIw
+k39MSmE87d8DBg3Owwrd+ex9w/1zAMYYmYFB85izzQp5Yl2Cp6a2WYgwqXXY79gR
+vZIDeaRCbJm7baxxR2dxQtB/3AmhjcPlai9ARqW/cA4D7LoONU521oFFLWD7YWBR
+wMLCa2QBnmtg6XPQ/28OHT+dkaKAO5AL2mJFnz1InWK6fI6uHzXw5AFAp5xD+p/9
+XqY85k8fXr2urNzZ/R57p09Ff8Oc/0JtPBNCdMtyOjUqP8V0Gkr99cRfIPZXnjcm
+uz9GKiDXNmu5yyrEauDIZ/dLBPRJNpqSn6TFLeZ2OjccKsGQLTY=
+=B/56
+-----END PGP SIGNATURE-----
+
+--JMbvFv9CHOhDS+6+--
 
