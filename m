@@ -1,194 +1,182 @@
-Return-Path: <linux-kernel+bounces-702821-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-702823-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id E0B38AE87DA
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Jun 2025 17:22:41 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id C89D5AE87DE
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Jun 2025 17:23:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F04A717299F
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Jun 2025 15:22:27 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 159A74A3B01
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Jun 2025 15:22:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 170C928935A;
-	Wed, 25 Jun 2025 15:22:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 48DF02BDC11;
+	Wed, 25 Jun 2025 15:22:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="YvWb9N2M"
-Received: from mail-oa1-f45.google.com (mail-oa1-f45.google.com [209.85.160.45])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="ac74SO+b"
+Received: from mail-qt1-f177.google.com (mail-qt1-f177.google.com [209.85.160.177])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D2466288510
-	for <linux-kernel@vger.kernel.org>; Wed, 25 Jun 2025 15:22:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DB3A829C33A
+	for <linux-kernel@vger.kernel.org>; Wed, 25 Jun 2025 15:22:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750864922; cv=none; b=RMzjaDkiC5TjYs81/4qTRlS1hGKFZxoPxKwFVB7+49bH5YiKqzPZ+BDTwEJaV41y0zagyy51UZcS8PCQOQATiQFXAYqo+MEgX0FED7O3lcMK1Dso2XxydE0qfGgHhhk8uqhsmGIOnIy9AfAH2aCPap3OfoL+t+izYX94u+G4BWI=
+	t=1750864934; cv=none; b=D11/Cu4Xsh8cvSy58IQxGwLGsLUA/he+RZmLBBSFM4j+NVSv5VE21iN5YM2T0Czv+KeRcldl/e1udhBrN+Gb56M7H8L7ntVs/DWtXRkGYmRHhhhzZiY9tmGSv56mwOFm/8Mcmz9bhr12ugb5ilWBoUApqMIFYFwcmcWuoWNTGw0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750864922; c=relaxed/simple;
-	bh=FsgbM/deKE5Nup1GimM/CJFPtZWBQLrcuUGL1PVwo50=;
-	h=Message-ID:Date:From:To:Cc:Subject:MIME-Version:Content-Type:
-	 Content-Disposition; b=cnI1nTbdOm1WTztoIr0gB35HyktX7poKcyv12gso1hvYKSor9PhFoR3PXqpN3F4oNAWiy629H/BVFIc3vF8RbsJ6nKYl6fmSNe64n/l4XrN1q1fqYGgRN3v2qKb3fBrnmEzWzTtUl8oHn8VU4svDivpi1glL4n3WfTHuH7f9a1Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=YvWb9N2M; arc=none smtp.client-ip=209.85.160.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-oa1-f45.google.com with SMTP id 586e51a60fabf-2ea08399ec8so27937fac.1
-        for <linux-kernel@vger.kernel.org>; Wed, 25 Jun 2025 08:22:00 -0700 (PDT)
+	s=arc-20240116; t=1750864934; c=relaxed/simple;
+	bh=CkP4Zii5yEFnjEpnjpmU8yomUCDwhFbpaCZV6rMyG4o=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=I8uhGVyoxN57jgkdk0hHgsa+cLixbCmwfgHM0/jnNKbOjlMuMeZ/WzjwxuAzwd8KpkeGkI9E36sZGer0JGZScLnsh30uO6JaYuLOGChT01HAYkNP+zLsZ7131BsIWe9a6Ph5H6/EBfgnaOLPmxhnJDRDpvaEa2qIl/Etw0d8Oug=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=ac74SO+b; arc=none smtp.client-ip=209.85.160.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-qt1-f177.google.com with SMTP id d75a77b69052e-4a58ef58a38so175001cf.0
+        for <linux-kernel@vger.kernel.org>; Wed, 25 Jun 2025 08:22:12 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1750864920; x=1751469720; darn=vger.kernel.org;
-        h=content-disposition:mime-version:subject:cc:to:from:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=Og1GMQOpzfwXI+0cF3jnX9BInwec7Spgn25VRzS7t+E=;
-        b=YvWb9N2MzLVbth02VojolWfIo28lbrtiMxmB3feP7xc+eh3/ULOzU4Iyqg+G2ecLHz
-         6bU8Je9Ng1Hbdel3GjCJX6eoOU/UiWOZMKxgfTEbbMJx+4cU6aTqE9Haj+q1k4LNluxu
-         1UIAyy1PlIuR3wYOD7yt6yCHcYoHahagM0e6pYeRnHiS+Zy3idaeb3XzUqYb++kt4QFt
-         qvnte7xDhYoXlGJGQTPeeN4cl7wxyuYC6SA2gUqhH9/HAGkSL3laParOVWZHaoK6DSN3
-         EqOkuru5qOtLqcB8gWYaHlbCtzbZzvvq70Aalwdfcgsmg4l2KC2lyvtPsXQG570Lk6G6
-         whGA==
+        d=google.com; s=20230601; t=1750864932; x=1751469732; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=nJ5P0u/6xcg1NtaqnGcLvqTOCLTnaVcDdgVW1OPXhxk=;
+        b=ac74SO+bXQSpktt/NQgPXOw8n0qyYQEtL9Qu8SaqtLijnACeUk3QX0c4Gq3LLWwHvm
+         873xAuPBg563ut2+95zgEXaL3KKzEkSyHZ5lTaCVLbjjRKfxjR3tmUe0Irm4cOV2cCDd
+         YgRE/5pptYf23aV/5nHnJcvPg7LewX7ze+bYkygHMU0Wk+RqWB7KmJ6HPnURTXGxnLdw
+         8Un0uUZ9cgAPOaRAhRkiVUpWiJc7VHhYwH5UT+qnmGBMGKAKsPIeMIYUP1vSzNTPpEu8
+         ZKFrvfSTpFDTX0y2Bpn0Pc8jef0pWHerHaCbEsQS2Obg20aby8mMIWg/Jj/R5OAqpLpq
+         zPrA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1750864920; x=1751469720;
-        h=content-disposition:mime-version:subject:cc:to:from:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=Og1GMQOpzfwXI+0cF3jnX9BInwec7Spgn25VRzS7t+E=;
-        b=oCc5tYcMaXY4GvN7ldCPKLuyTr11kqpbzKe/5yn7slgISOEw0jMORDORjIBIg5cmKz
-         HD9wE7PEK+fpr5I/44oSCnAt02PrLWGJTqQgWFM9G9EjVhX6SPU4dLJ3QqB78Y7Lq2HO
-         7lc4yefaYyFONfOpn6bXybyorPZguKvXpkhm2W0v4FT/xGZ9ihUmohLhq/0jmObBlqtb
-         JUCwq2o2Er0eWR+wO6ve4xP35dYkcb1397G5S3zr2k4OlBk2KgEsc2HaVMl8kwxUXS4B
-         N31nQPbASmyRQPVT8iMxPT/v9QY1qOfLKD51omH3sE2VAai8a0XczImPRZuKle+mySeR
-         gMYg==
-X-Forwarded-Encrypted: i=1; AJvYcCXb9NMqWubqAyxW0gJUVp3pKoOknr+16T7yGVe4/LqH/lTJ8cbnluMBw8GEbNEu9SDVI1hC6jx4cKKuCME=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx5Mfs6U2ps/TO3e56bE6Kh3CA9HmDKlCGdSsBZ5JCpv2bP2Jf1
-	CCZ7d8ZSrPxWc50d0cn46mw2auJuvpsGGkJ5168wxDOgInl7ynfzyLVAUojRSh6cwPg=
-X-Gm-Gg: ASbGncs2ViCiD6dC5E92UV5mDy4IgUsR9Y77mycieTCh0ppQWO5EunUQEPpJtIluh0b
-	7FyIw7GNNftQM4m/XebjylsqX9SZs9WfX+co4uK60bgbguAeOdRrDLWf3M4x+pAuOr173PpwKXt
-	oIGaNLiJfHMQmvQKgkLpS3hYVNgLhGxU84bARBfN8LEaKgH7xRSrhTKKRSENdPE0yvWQww3g+Gk
-	vUHdzWXd1b2avAqZfwPSdI935K8xR5XgREBQ7GnsQ7iJ7YcbGFxghlqy8ZeHPOlkD4VKplzqw8/
-	Dw1NbGfnJxCejIyqJerMBVgjUT3Da51NU6o8eBhazZsHkz1FpvrQNTWpy5vUVU0lwqpWrg==
-X-Google-Smtp-Source: AGHT+IHjveoem5cNH6WAD1vk3qjNmqKvozrExi59Gv6OL5AFVt4hopks6BzgykjOruT+XmUJ/QJh/Q==
-X-Received: by 2002:a05:6870:b6aa:b0:2b3:55b3:e38 with SMTP id 586e51a60fabf-2efce2d2daamr69472fac.21.1750864919683;
-        Wed, 25 Jun 2025 08:21:59 -0700 (PDT)
-Received: from localhost ([2603:8080:b800:f700:1fca:a60b:12ab:43a3])
-        by smtp.gmail.com with UTF8SMTPSA id 586e51a60fabf-2ef93691e24sm951547fac.19.2025.06.25.08.21.59
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 25 Jun 2025 08:21:59 -0700 (PDT)
-Message-ID: <685c1417.050a0220.696f5.5c05@mx.google.com>
-X-Google-Original-Message-ID: <@sabinyo.mountain>
-Date: Wed, 25 Jun 2025 10:21:58 -0500
-From: Dan Carpenter <dan.carpenter@linaro.org>
-To: Jani Nikula <jani.nikula@linux.intel.com>
-Cc: Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
-	Rodrigo Vivi <rodrigo.vivi@intel.com>,
-	Tvrtko Ursulin <tursulin@ursulin.net>,
-	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
-	Frederic Weisbecker <frederic@kernel.org>,
-	Chris Wilson <chris@chris-wilson.co.uk>,
-	intel-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
-	linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
-Subject: [PATCH v2] drm/i915/selftests: Change mock_request() to return error
- pointers
+        d=1e100.net; s=20230601; t=1750864932; x=1751469732;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=nJ5P0u/6xcg1NtaqnGcLvqTOCLTnaVcDdgVW1OPXhxk=;
+        b=UvbmOrfLGkqTkkPUEjlFEGDTa+WxYfcvyxqcqtJ22hd6AqDZP6KRKeQLM60fO4KU8h
+         cuks4W7/umBdKuT+gv2NGDmZk9XCUY2Wo9NjAQ8hR3JfB1x1zGJtrqt4W2e+ofbumhR6
+         sUQqUJuZkequonF0hQpwV/mN+buzrnj0T/nQJjj3R7toFNZidE4xRSgtuKmt7cdAmLQY
+         p6ZzNJ2ZjnKmlxZCOydxF4R+qx+PjuT+vfA/VGCINQBs2mdwwaiJjP1wijhOIVq7QXgS
+         R0K0RSjlAfcpppUNZPnEd4eBolK2D1hPBhQJdx9DO1rMBjTLovoFmc0XBXC6UnOCTKCU
+         rVlw==
+X-Forwarded-Encrypted: i=1; AJvYcCUCx5h2GSJNlXYLgjriupDf0oTiqJH5H3+Rd4YGiVbmdxybsqNKPpRH/lpZXV74tqpk7DfBKRgSOAJ2s8Q=@vger.kernel.org
+X-Gm-Message-State: AOJu0YznEb2xaDRhGVP8IphhLeh9X142S45lZlHIRpqFMBbJjiHijt02
+	DvaipDypd3BwFIKkTHR+vPTngkflOimqahXgaKMLft8+/h0qJPeiYgv2gacpSu1oxhMNrhChMzc
+	mA3z+v8YuXqIvl4GQVgy/Vs4Zp9gEeShF3bMRpHjf
+X-Gm-Gg: ASbGncuWndF4P3A8+jEUls03WpV9IvNwZ8vt9NGNkKSqxj7KtL8iC72XTqNh3xkW/TP
+	UH9B8lgkhMhnSuPlhjBoaI0ZYyIyk62ncFQAKFPCPZTMatYF2C0JWzOjdlE9u3v++ydgCS55va4
+	f5NrmMVCitDiwpenjCGyw7XDYXo54eFOIBVg9F/RHBCg==
+X-Google-Smtp-Source: AGHT+IG8U6qG5KYMo+nkavpDTx/PPdha23r+RnimIC8ktx5xvsAvgguafO1U53hsdch5/27popiTWWkJKAGkT/NKfVc=
+X-Received: by 2002:a05:622a:85:b0:4a6:f9d2:b547 with SMTP id
+ d75a77b69052e-4a7c236b037mr3595081cf.20.1750864931337; Wed, 25 Jun 2025
+ 08:22:11 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-X-Mailer: git-send-email haha only kidding
+References: <20250624193359.3865351-1-surenb@google.com> <20250624193359.3865351-7-surenb@google.com>
+ <fd305c41-b2a3-4f0c-a64d-6e2358859529@lucifer.local>
+In-Reply-To: <fd305c41-b2a3-4f0c-a64d-6e2358859529@lucifer.local>
+From: Suren Baghdasaryan <surenb@google.com>
+Date: Wed, 25 Jun 2025 08:22:00 -0700
+X-Gm-Features: Ac12FXxttU6uD8NTsD-TnCGNT9pqqB3547DZqQ19Bc1hh7qCrrhXbmy4EDhP4xU
+Message-ID: <CAJuCfpEpshf7L-Axt4MJf=onoz4F=Sw4nk5Z1yVwvwkzSYx9qA@mail.gmail.com>
+Subject: Re: [PATCH v5 6/7] mm/maps: read proc/pid/maps under per-vma lock
+To: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
+Cc: akpm@linux-foundation.org, Liam.Howlett@oracle.com, david@redhat.com, 
+	vbabka@suse.cz, peterx@redhat.com, jannh@google.com, hannes@cmpxchg.org, 
+	mhocko@kernel.org, paulmck@kernel.org, shuah@kernel.org, adobriyan@gmail.com, 
+	brauner@kernel.org, josef@toxicpanda.com, yebin10@huawei.com, 
+	linux@weissschuh.net, willy@infradead.org, osalvador@suse.de, 
+	andrii@kernel.org, ryan.roberts@arm.com, christophe.leroy@csgroup.eu, 
+	tjmercier@google.com, kaleshsingh@google.com, linux-kernel@vger.kernel.org, 
+	linux-fsdevel@vger.kernel.org, linux-mm@kvack.org, 
+	linux-kselftest@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-There was an error pointer vs NULL bug in __igt_breadcrumbs_smoketest().
-The __mock_request_alloc() function implements the
-smoketest->request_alloc() function pointer.  It was supposed to return
-error pointers, but it propogates the NULL return from mock_request()
-so in the event of a failure, it would lead to a NULL pointer
-dereference.
+On Wed, Jun 25, 2025 at 5:30=E2=80=AFAM Lorenzo Stoakes
+<lorenzo.stoakes@oracle.com> wrote:
+>
+> This patch results in some spam :) there's a stray mmap_assert_locked() i=
+n
+> anon_vma_name() that triggers constantly.
 
-To fix this, change the mock_request() function to return error pointers
-and update all the callers to expect that.
+Ah, damn! This was triggered before and I completely forgot to fix it.
+Thanks for reporting it!
 
-Fixes: 52c0fdb25c7c ("drm/i915: Replace global breadcrumbs with per-context interrupt tracking")
-Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
----
-V2: In v1 I just updated __mock_request_alloc() to return an error pointer
-    but in v2, I changed mock_request() to update an error pointer and
-    updated all the callers.  It's a more extensive change, but hopefully
-    cleaner.
+>
+> Andrew - I attach a fix-patch for this, could you apply as at least a tem=
+porary
+> fix? As mm-new is broken at the moment with this patch.
 
- drivers/gpu/drm/i915/selftests/i915_request.c | 20 +++++++++----------
- drivers/gpu/drm/i915/selftests/mock_request.c |  2 +-
- 2 files changed, 11 insertions(+), 11 deletions(-)
+Yes please.Andrew, if you would prefer me to respin the series please
+let me know.
 
-diff --git a/drivers/gpu/drm/i915/selftests/i915_request.c b/drivers/gpu/drm/i915/selftests/i915_request.c
-index 88870844b5bd..2fb7a9e7efec 100644
---- a/drivers/gpu/drm/i915/selftests/i915_request.c
-+++ b/drivers/gpu/drm/i915/selftests/i915_request.c
-@@ -73,8 +73,8 @@ static int igt_add_request(void *arg)
- 	/* Basic preliminary test to create a request and let it loose! */
- 
- 	request = mock_request(rcs0(i915)->kernel_context, HZ / 10);
--	if (!request)
--		return -ENOMEM;
-+	if (IS_ERR(request))
-+		return PTR_ERR(request);
- 
- 	i915_request_add(request);
- 
-@@ -91,8 +91,8 @@ static int igt_wait_request(void *arg)
- 	/* Submit a request, then wait upon it */
- 
- 	request = mock_request(rcs0(i915)->kernel_context, T);
--	if (!request)
--		return -ENOMEM;
-+	if (IS_ERR(request))
-+		return PTR_ERR(request);
- 
- 	i915_request_get(request);
- 
-@@ -160,8 +160,8 @@ static int igt_fence_wait(void *arg)
- 	/* Submit a request, treat it as a fence and wait upon it */
- 
- 	request = mock_request(rcs0(i915)->kernel_context, T);
--	if (!request)
--		return -ENOMEM;
-+	if (IS_ERR(request))
-+		return PTR_ERR(request);
- 
- 	if (dma_fence_wait_timeout(&request->fence, false, T) != -ETIME) {
- 		pr_err("fence wait success before submit (expected timeout)!\n");
-@@ -219,8 +219,8 @@ static int igt_request_rewind(void *arg)
- 	GEM_BUG_ON(IS_ERR(ce));
- 	request = mock_request(ce, 2 * HZ);
- 	intel_context_put(ce);
--	if (!request) {
--		err = -ENOMEM;
-+	if (IS_ERR(request)) {
-+		err = PTR_ERR(request);
- 		goto err_context_0;
- 	}
- 
-@@ -237,8 +237,8 @@ static int igt_request_rewind(void *arg)
- 	GEM_BUG_ON(IS_ERR(ce));
- 	vip = mock_request(ce, 0);
- 	intel_context_put(ce);
--	if (!vip) {
--		err = -ENOMEM;
-+	if (IS_ERR(vip)) {
-+		err = PTR_ERR(vip);
- 		goto err_context_1;
- 	}
- 
-diff --git a/drivers/gpu/drm/i915/selftests/mock_request.c b/drivers/gpu/drm/i915/selftests/mock_request.c
-index 09f747228dff..1b0cf073e964 100644
---- a/drivers/gpu/drm/i915/selftests/mock_request.c
-+++ b/drivers/gpu/drm/i915/selftests/mock_request.c
-@@ -35,7 +35,7 @@ mock_request(struct intel_context *ce, unsigned long delay)
- 	/* NB the i915->requests slab cache is enlarged to fit mock_request */
- 	request = intel_context_create_request(ce);
- 	if (IS_ERR(request))
--		return NULL;
-+		return request;
- 
- 	request->mock.delay = delay;
- 	return request;
--- 
-2.47.2
+>
+> Suren - could you check and obviously suggest something more sensible if =
+you
+> feel this isn't right.
 
+This is exactly what I was planning to do but it slipped from my mind.
+
+>
+> I'm not actually sure if we'd always have the VMA read lock here, maybe w=
+e need
+> an 'assert mmap lock or vma lock' predicate?
+
+For now this is the only place that needs it. Maybe we can wait until
+there is more demand for it?
+
+>
+> Worth auditing other mmap lock asserts that might have been missed with t=
+his
+> change also.
+
+I'll go over it once more but this was the only reported issue with
+the previous version.
+Thanks,
+Suren.
+
+>
+> Cheers, Lorenzo
+>
+> ----8<----
+> From 1ed3bd12d43be1f8303fd6b7b714f5ef7e60728a Mon Sep 17 00:00:00 2001
+> From: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
+> Date: Wed, 25 Jun 2025 13:28:36 +0100
+> Subject: [PATCH] mm/madvise: fixup stray mmap lock assert in anon_vma_nam=
+e()
+>
+> anon_vma_name() is being called under VMA lock, but is assert mmap lock w=
+hich
+> won't necessarily be held.
+>
+> This results in the kernel spamming warnings about this on startup.
+>
+> Replace this with an open-coded 'mmap or VMA lock' assert to resolve.
+>
+> Signed-off-by: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
+
+Acked-by: Suren Baghdasaryan <surenb@google.com>
+
+> ---
+>  mm/madvise.c | 3 ++-
+>  1 file changed, 2 insertions(+), 1 deletion(-)
+>
+> diff --git a/mm/madvise.c b/mm/madvise.c
+> index c467ee42596f..0530d033b3dd 100644
+> --- a/mm/madvise.c
+> +++ b/mm/madvise.c
+> @@ -108,7 +108,8 @@ void anon_vma_name_free(struct kref *kref)
+>
+>  struct anon_vma_name *anon_vma_name(struct vm_area_struct *vma)
+>  {
+> -       mmap_assert_locked(vma->vm_mm);
+> +       if (!rwsem_is_locked(&vma->vm_mm->mmap_lock))
+> +               vma_assert_locked(vma);
+>
+>         return vma->anon_name;
+>  }
+> --
+> 2.50.0
 
