@@ -1,47 +1,47 @@
-Return-Path: <linux-kernel+bounces-701887-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-701889-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6DF1CAE7A9E
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Jun 2025 10:45:54 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3EA15AE7AA6
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Jun 2025 10:46:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id ABBED16A7E9
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Jun 2025 08:45:54 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4C1B4189F43D
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Jun 2025 08:46:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 71ED727AC2A;
-	Wed, 25 Jun 2025 08:44:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0587527FD7C;
+	Wed, 25 Jun 2025 08:45:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="PaA24/eV"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="UV05VOy8"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B5E9227280E;
-	Wed, 25 Jun 2025 08:44:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 662E828751F
+	for <linux-kernel@vger.kernel.org>; Wed, 25 Jun 2025 08:45:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750841097; cv=none; b=dl53133X46qQezdrOEPDIo8ShAkd115qluH/zfpRA1uKS1/I/5lJt8i8/ojEsRf3gOMVTukdSjPpSfMiy3G6CwZKNyyQWUsq/LvHai0zD5F0VHyuJoblCZHS/WZiTYT8rWd7r+o1Dv42uKT6QUSzCvoe9QiMnZLZdEMNR5y4/a8=
+	t=1750841110; cv=none; b=JOeh1zeE5tSkBFV+DcJVLgU+LjnVKnSkZrB9w7A0BQsZNO90BcTDQBcCH4RqTaGIBDnNM9kMEG/iLSljqGvog8yZhOU+4pl+pnUkufFmCTLmuJmnKFJKducJUJ1L2jbfap0CLpWPSaXrElnRmwkLIYHJ1EYb9vrKuSIiQyY3AT4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750841097; c=relaxed/simple;
-	bh=QMe3XkL13KplpKarUEsTie/WivYKB4KY46eqsvTmXj0=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=C07Kq+9vAJJZekyIc75EfHEc3rSWQ15Gpt66U3j7G6IJ3QMsMFbIQOJn+UEN/Pi2HMSV3MW8DeM3eABkjGVMLdmLz6eakOGz96Py3mDw5dMZf/XwXb3enZOhnl163OxQ36M0JTtkhg/TAUVELoddzRa2E9HBC/chGBvzMx/FB+k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=PaA24/eV; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 94280C4CEEA;
-	Wed, 25 Jun 2025 08:44:53 +0000 (UTC)
+	s=arc-20240116; t=1750841110; c=relaxed/simple;
+	bh=akGozF2xMqa27fiz+s8c9GDxo0IXK8cpAQzDW569FOc=;
+	h=Message-ID:Date:MIME-Version:Cc:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=FyaV833OYE0bDFBomho29vv+IfGOMvvwSjCNrjgBu2A0idqkPKb37Z3BQahngjp8B2yd0gIX3WwS2HO+YnZ0xYoJAQpOrG4XuWVOOtJCrHU7I9MM8y2Tee1GHnPxVgkeyvOE4lHuMCbX082Pzi4DTxCU8JL4JRueJrXvUPutOAI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=UV05VOy8; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1A723C4CEF1;
+	Wed, 25 Jun 2025 08:45:07 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1750841097;
-	bh=QMe3XkL13KplpKarUEsTie/WivYKB4KY46eqsvTmXj0=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=PaA24/eV01+iY8pBASJ6nbmiZdRwlrWwSSdFMwQYOw1pLQC5PwExDygUFOP6vc/57
-	 +U4ovRVeJudu2GlUCb5u4TvyDYA93gVSkuhknD3dhJJqQEJo9HnjSSOSMn0Ev+Z+gi
-	 e7xsOgq8JkgFEqtrKLMdESmtPzzzIvgiDfQ0Wf2yYIkybYA+Mt/oN7lue+nIB8WSqV
-	 N+SWZVrOVx8Me+fda9IZF77D6Tj9njEMp/n8jg0c3ZhNvJRTRCwjDunAIKcNpi+S3A
-	 8HNdOUbp1lfr8CBO8O0jYWRepXVjQ59P6Cclqwvubv+gsFYDrkhz8ApYj7SGiuvCrK
-	 0aJgnJyIVN95A==
-Message-ID: <b9767a66-ac0c-4399-9ccb-26677f2a4d34@kernel.org>
-Date: Wed, 25 Jun 2025 10:44:52 +0200
+	s=k20201202; t=1750841109;
+	bh=akGozF2xMqa27fiz+s8c9GDxo0IXK8cpAQzDW569FOc=;
+	h=Date:Cc:Subject:To:References:From:In-Reply-To:From;
+	b=UV05VOy86DshskpVnUKFSo5zPC2fD51gmvaD+ny+NX99Uznqh9vIPrEFZQGhk1zqo
+	 SDXlr9GI/6AeoW0Soh+TiWalcd5+IZOekzqCPqTld4YwntXszVbyoHR50WgLfugdxP
+	 rrt1iE0GaK84E1jLonzwvMKr4i0iQzrzJFhOnHOa2+WVTEA1toDPItblcty/fhagWn
+	 44yws5P6T1G7uGtbkayKhlFFAcPHK4Ito3kGhWAy0P3Y1chisnDvxWiUc3HbV7xlnZ
+	 rf0RwdgiPr+pNIH8CJV3fNaWSt/kozL3eFcCyO4ZCKb8yJCs6qS+4Vik4WVSXnW7XA
+	 8/CpVxLN4A+zQ==
+Message-ID: <d2ac0da9-3d47-4269-a7b0-a18719c64346@kernel.org>
+Date: Wed, 25 Jun 2025 16:45:06 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -49,84 +49,91 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v5 3/9] ASoC: qcom: dt-bindings: qcom,lpass-va-macro:
- Update bindings for clocks to support ADSP
-To: Prasad Kumpatla <quic_pkumpatl@quicinc.com>,
- Bjorn Andersson <andersson@kernel.org>,
- Linus Walleij <linus.walleij@linaro.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Srinivas Kandagatla <srini@kernel.org>,
- Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>,
- Konrad Dybcio <konradybcio@kernel.org>
-Cc: cros-qcom-dts-watchers@chromium.org, linux-arm-msm@vger.kernel.org,
- linux-gpio@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-sound@vger.kernel.org,
- kernel@oss.qualcomm.com, Mohammad Rafi Shaik <quic_mohs@quicinc.com>
-References: <20250625082927.31038-1-quic_pkumpatl@quicinc.com>
- <20250625082927.31038-4-quic_pkumpatl@quicinc.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
+Cc: chao@kernel.org, wanghui33@xiaomi.com, linux-kernel@vger.kernel.org,
+ Sheng Yong <shengyong1@xiaomi.com>
+Subject: Re: [PATCH v3] f2fs: avoid splitting bio when reading multiple pages
+To: Jianan Huang <huangjianan@xiaomi.com>,
+ linux-f2fs-devel@lists.sourceforge.net, jaegeuk@kernel.org
+References: <20250625064927.516586-1-huangjianan@xiaomi.com>
 Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 a/A=
-In-Reply-To: <20250625082927.31038-4-quic_pkumpatl@quicinc.com>
+From: Chao Yu <chao@kernel.org>
+In-Reply-To: <20250625064927.516586-1-huangjianan@xiaomi.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-On 25/06/2025 10:29, Prasad Kumpatla wrote:
-> From: Mohammad Rafi Shaik <quic_mohs@quicinc.com>
+On 6/25/25 14:49, Jianan Huang wrote:
+> When fewer pages are read, nr_pages may be smaller than nr_cpages. Due
+> to the nr_vecs limit, the compressed pages will be split into multiple
+> bios and then merged at the block level. In this case, nr_cpages should
+> be used to pre-allocate bvecs.
+> To handle this case, align max_nr_pages to cluster_size, which should be
+> enough for all compressed pages.
 > 
-> Manage clock settings for ADSP solution.
+> Signed-off-by: Jianan Huang <huangjianan@xiaomi.com>
+> Signed-off-by: Sheng Yong <shengyong1@xiaomi.com>
+> ---
+> Changes since v2:
+> - Initialize index only for compressed files.
+> Changes since v1:
+> - Use aligned nr_pages instead of nr_cpages to pre-allocate bvecs.
 > 
+>  fs/f2fs/data.c | 12 ++++++++++--
+>  1 file changed, 10 insertions(+), 2 deletions(-)
+> 
+> diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c
+> index 31e892842625..d071d9f6a811 100644
+> --- a/fs/f2fs/data.c
+> +++ b/fs/f2fs/data.c
+> @@ -2303,7 +2303,7 @@ int f2fs_read_multi_pages(struct compress_ctx *cc, struct bio **bio_ret,
+>  		}
+>  
+>  		if (!bio) {
+> -			bio = f2fs_grab_read_bio(inode, blkaddr, nr_pages,
+> +			bio = f2fs_grab_read_bio(inode, blkaddr, nr_pages - i,
 
-Please use subject prefixes matching the subsystem. You can get them for
-example with `git log --oneline -- DIRECTORY_OR_FILE` on the directory
-your patch is touching. For bindings, the preferred subjects are
-explained here:
-https://www.kernel.org/doc/html/latest/devicetree/bindings/submitting-patches.html#i-for-patch-submitters
+Jianan,
 
-There is no "qcom" prefix.
+Another case:
 
-Best regards,
-Krzysztof
+read page #0,1,2,3 from block #1000,1001,1002, cluster_size=4.
+
+nr_pages=4
+max_nr_pages=round_up(0+4,4)-round_down(0,4)=4
+
+f2fs_mpage_readpages() calls f2fs_read_multi_pages() when nr_pages=1, at
+that time, max_nr_pages equals to 1 as well.
+
+f2fs_grab_read_bio(..., 1 - 0,...) allocate bio w/ 1 vec capacity, however,
+we need at least 3 vecs to merge all cpages, right?
+
+Thanks,
+
+>  					f2fs_ra_op_flags(rac),
+>  					folio->index, for_write);
+>  			if (IS_ERR(bio)) {
+> @@ -2376,6 +2376,14 @@ static int f2fs_mpage_readpages(struct inode *inode,
+>  	unsigned max_nr_pages = nr_pages;
+>  	int ret = 0;
+>  
+> +#ifdef CONFIG_F2FS_FS_COMPRESSION
+> +	if (f2fs_compressed_file(inode)) {
+> +		index = rac ? readahead_index(rac) : folio->index;
+> +		max_nr_pages = round_up(index + nr_pages, cc.cluster_size) -
+> +				round_down(index, cc.cluster_size);
+> +	}
+> +#endif
+> +
+>  	map.m_pblk = 0;
+>  	map.m_lblk = 0;
+>  	map.m_len = 0;
+> @@ -2385,7 +2393,7 @@ static int f2fs_mpage_readpages(struct inode *inode,
+>  	map.m_seg_type = NO_CHECK_TYPE;
+>  	map.m_may_create = false;
+>  
+> -	for (; nr_pages; nr_pages--) {
+> +	for (; nr_pages; nr_pages--, max_nr_pages--) {
+>  		if (rac) {
+>  			folio = readahead_folio(rac);
+>  			prefetchw(&folio->flags);
+
 
