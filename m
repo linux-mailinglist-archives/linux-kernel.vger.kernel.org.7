@@ -1,79 +1,96 @@
-Return-Path: <linux-kernel+bounces-702809-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-702811-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 75DCDAE87B1
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Jun 2025 17:16:04 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id D97F5AE87C2
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Jun 2025 17:18:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 534EC7AAF3F
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Jun 2025 15:14:36 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 29E1C1BC5DDC
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Jun 2025 15:17:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CCC5E26B76B;
-	Wed, 25 Jun 2025 15:15:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 916D216A395;
+	Wed, 25 Jun 2025 15:16:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="BVwg/mlq"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.14])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ivU64cyW"
+Received: from mail-ed1-f44.google.com (mail-ed1-f44.google.com [209.85.208.44])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 45C0A16A395;
-	Wed, 25 Jun 2025 15:15:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.14
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B24464C92;
+	Wed, 25 Jun 2025 15:16:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750864520; cv=none; b=LRJsIrwL71HE6kgNwDq4sHFrLn/B4BiVgvEvmzlxeBrQf7AzTYVwsYvKapjV9PC2KmGBBnQ4FQHasKPbMdow/42huKFu7QEZHleIkZl+VIn8StmI7KAEVN2pzenKxwkyUZ6rJoaGYsegou6Olb5GAmXbnkBpmWUAgwLSEzIpqeA=
+	t=1750864606; cv=none; b=r9umEXQBOEzMIkzdxSsxnM5R/xmM5SWbE8BVm4wnaDEpnv8+S4FAcByjPhh7ig1AfW/i3LTxePt7m5Z+gPgwmILTYAoLgCikWWGNqmUCg5pmxW3//ZK+guJDYlGfeh8gJfGnVJOuhPG2mqC4lqwJRamfdZlD/GPk5jk6LbTxVlY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750864520; c=relaxed/simple;
-	bh=X+geANwj+e06vg9CyGf+Mrs07Xd21aM6EWzSmqpFrec=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=I4PjFcz9PO7A6Xkrq54XSL8n+meAeHrMn0+YJ9Qo8463Q37KL3WG4Yo3nIFgX6UtxWZVZj4IgH4bTjJf5NMDIJ90fGp3x50vXGI9wWKtk1sxYZ49O6BdHuNRPukRsoEuPiDYLvwVsn82Slj4QQ/VOA3BkueVoP82uvscHabmKJA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=BVwg/mlq; arc=none smtp.client-ip=198.175.65.14
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1750864519; x=1782400519;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=X+geANwj+e06vg9CyGf+Mrs07Xd21aM6EWzSmqpFrec=;
-  b=BVwg/mlqFIIQDcFI/laz/FDzZGUheABJwo2lXfxqiEpEO+f3yZy0Y1cl
-   9jomIMZTd2vvje0L8dSD3yb2ahrB/VJWYFIIMIMqcd64Cra8cro+ZQ0mF
-   M5gYJn0A4iz+CxiXDGBYxq1vgYGdG3zTOCV88BRAdmyokZLdr6/kzCjvT
-   z5yMIJWdXonvQhKDNyVS27DfNsH8vgtAV/F6Tflnqtlz23+ZB2mec9a4f
-   7ac0jYaiQfBZWEzuiaRpZ2tYRhtWMALMM1LDBbSxjWqDGC9sx15SH1/su
-   M/z2+39rxwaafKCyeTCeMA+F/5awDz1kmy+ouAj7JBoF0wO5jdWu+vRcC
-   g==;
-X-CSE-ConnectionGUID: AxH8bmpSQY6cFigpry/R2A==
-X-CSE-MsgGUID: fY+FM2zPS1S+igXfoommjw==
-X-IronPort-AV: E=McAfee;i="6800,10657,11475"; a="56925145"
-X-IronPort-AV: E=Sophos;i="6.16,265,1744095600"; 
-   d="scan'208";a="56925145"
-Received: from orviesa008.jf.intel.com ([10.64.159.148])
-  by orvoesa106.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 25 Jun 2025 08:15:18 -0700
-X-CSE-ConnectionGUID: Rw/epIH/SBarFV+yHcYMhA==
-X-CSE-MsgGUID: lqDVQTLsT5apT5AeknqQrQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.16,265,1744095600"; 
-   d="scan'208";a="152735245"
-Received: from smile.fi.intel.com ([10.237.72.52])
-  by orviesa008.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 25 Jun 2025 08:15:16 -0700
-Received: from andy by smile.fi.intel.com with local (Exim 4.98.2)
-	(envelope-from <andriy.shevchenko@intel.com>)
-	id 1uURqC-00000009oWM-1sWm;
-	Wed, 25 Jun 2025 18:15:12 +0300
-Date: Wed, 25 Jun 2025 18:15:12 +0300
-From: Andy Shevchenko <andriy.shevchenko@intel.com>
-To: LiangCheng Wang <zaq14760@gmail.com>
-Cc: Andy Shevchenko <andy@kernel.org>, Hans de Goede <hansg@kernel.org>,
-	Mauro Carvalho Chehab <mchehab@kernel.org>,
-	Sakari Ailus <sakari.ailus@linux.intel.com>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-staging@lists.linux.dev
-Subject: Re: [PATCH v5] staging: media: atomisp: fix tab/space issues in
- output1.0
-Message-ID: <aFwSgCtrK7DH3pIw@smile.fi.intel.com>
-References: <20250625-bar-v5-1-db960608b607@gmail.com>
+	s=arc-20240116; t=1750864606; c=relaxed/simple;
+	bh=5gzcU5lYVyaDltG2aptsCIuIuEFSrzU7kQ1MaPmQcyU=;
+	h=From:Date:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=LgKNDUWj251VujVgK6FuBvrJSVt2SRVr22pf3Po+Gw2HeC6cBbZDnGTk/i2tchrmL6J8Tr2Fn0FkL8KMnifhbnEMCthbrgiZe5D+eAhUdzn0qRmDByUl7Zp0HWDDgSGSih6eOXRw7jfK2qlHyEWkaW/lZ/ZTlSkoS9Smkm9szHQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ivU64cyW; arc=none smtp.client-ip=209.85.208.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ed1-f44.google.com with SMTP id 4fb4d7f45d1cf-606fdbd20afso3433571a12.1;
+        Wed, 25 Jun 2025 08:16:44 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1750864603; x=1751469403; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:date:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=E1Vd7rjX99Xeecq3johLhJAXQYPhI5NMHiZ59CBcF44=;
+        b=ivU64cyW+u+zRr0RwOzOzfb2OD43qtGp/Yu5AbRhGSVmE2JphtJ7wahFDqKc7p2Vve
+         eTAGQeNSURPsdLZIBM42BW9Hdxi4Scjrv8PBDH725l/+D0qrrl5tGBeEXJXCEVpdhB6z
+         yPJNrlm8yjNPWMg1k67ozvHvxQj9qBGTDNjzHGuj3FXxM9VRgsZXwQ6Rddtst+973i9p
+         i0Fo4Scdgiq3qHaNhiq95MJdOompfs3FomOrrXsOHwcTIT7ALNtEJX2K7YMgrRK3fFod
+         7NUaN66+MRP0GZrz7KusbW/6NPI6/3IEHB5BAny8ke/UQQNBzBQVTy0S5CRKv4z6+b15
+         H8Yg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1750864603; x=1751469403;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:date:from:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=E1Vd7rjX99Xeecq3johLhJAXQYPhI5NMHiZ59CBcF44=;
+        b=qwFnhMDntqy36oITwNs6kRIbP4MPpPCGCKkcN9OSGhTmIYutwzaW9U4yiNxX7olK2p
+         npbDyoksFI3ek1CC6qpo4McdqyUReW5+bORlbzPrB30niEJhdtLVLdqItQsIAWKzPc2N
+         SknfGGlGXcIQ3660OM2NGlKnyTXYG5tEdgNvVovJc/z/qRX+JTcn8E6nYvuqwgSWw0f0
+         CaqOFx05egWXcMDRiVnd5puBZTvpHiSs9LSBOtFv+hq9ghG+7EaMs4f0GF9tOWhGcaVQ
+         T9Q4mWT7z1R7JBRsuvuodkczEiYNdB1ZSBfsSgiufH1LVs5TX6WRWauZXdO/unMqK6nQ
+         N+Sw==
+X-Forwarded-Encrypted: i=1; AJvYcCU6Nm2a6TF8DbqIJrsAuO83jW5fcp0xeWaUe313Ki5iu/VJc1raaVgvwyQ839EuhamvqPA=@vger.kernel.org, AJvYcCUjbBl3e72V6MzViKT8bBEg/eC0T2Qf5gnosFFqZJc7sGR7XcXUzRLEASuIVLPYAVE5GGM40HWXXT/yZuamgodypw03@vger.kernel.org, AJvYcCXQMuTf7rRTfis/6M1OqZXNFTDqb3dU3+Qltcce7Ik2o/65zBEHGWMPNBmWl9MbtXo6gotp+DiWtNUcuJeW@vger.kernel.org
+X-Gm-Message-State: AOJu0YxR5DzpCcIY+cVL5WYAb/wwO2jx7JGZBmqOS4iwsdaA1I/jtzLQ
+	iYQEdkcduSBPfVjsrfs0uIO1HYJ/V1+WcCt9WPwECLXc9cTyPQZfm3oP
+X-Gm-Gg: ASbGnctaNX93Ob63iBpwD4mBdrh2yE0GZmmR41JbvJHzHIbJdQgS0nVJmCWNONEAJYJ
+	I/Pe4NYihFE4TPp64hKJ/6VrLaD2L02AjnIk3jvj1i276+1qk9Wddg45Zg3ThPm3nnnDbhRu/L5
+	uOh1LG2aPjvsUrmx0T8fXC3RCqx/TFt6eeXSGuR1iBm/TvuEVIgxP9In6Khiz1YYB02blSLvlGF
+	BcN8thodnG9M+tP79XMe2IW3qF2JvxC/IWnvW+d361QdO3NXnaCMPBlpIijUVo0v3TnZKVL+yN1
+	piu+K1YLOrImrFV9lHsposhwn+35OUxDpM+skq7cBiEF0g35mw==
+X-Google-Smtp-Source: AGHT+IGUKxVhzxYCbIyoITknvzZShVkYdCi+GTibaqaGfhvNfAbQjUzsgBS38MqE6qM6Hm5NGQhQ6Q==
+X-Received: by 2002:a17:906:7956:b0:ae0:b239:7fcc with SMTP id a640c23a62f3a-ae0bea8113amr381247066b.58.1750864602548;
+        Wed, 25 Jun 2025 08:16:42 -0700 (PDT)
+Received: from krava ([176.74.159.170])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ae054083406sm1066721466b.75.2025.06.25.08.16.41
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 25 Jun 2025 08:16:42 -0700 (PDT)
+From: Jiri Olsa <olsajiri@gmail.com>
+X-Google-Original-From: Jiri Olsa <jolsa@kernel.org>
+Date: Wed, 25 Jun 2025 17:16:40 +0200
+To: Masami Hiramatsu <mhiramat@kernel.org>
+Cc: Oleg Nesterov <oleg@redhat.com>, Peter Zijlstra <peterz@infradead.org>,
+	Andrii Nakryiko <andrii@kernel.org>, bpf@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org,
+	x86@kernel.org, Song Liu <songliubraving@fb.com>,
+	Yonghong Song <yhs@fb.com>,
+	John Fastabend <john.fastabend@gmail.com>,
+	Hao Luo <haoluo@google.com>, Steven Rostedt <rostedt@goodmis.org>,
+	Alan Maguire <alan.maguire@oracle.com>,
+	David Laight <David.Laight@aculab.com>,
+	Thomas =?iso-8859-1?Q?Wei=DFschuh?= <thomas@t-8ch.de>,
+	Ingo Molnar <mingo@kernel.org>
+Subject: Re: [PATCHv3 perf/core 08/22] uprobes/x86: Add mapping for optimized
+ uprobe trampolines
+Message-ID: <aFwS2EENyOFh7IbY@krava>
+References: <20250605132350.1488129-1-jolsa@kernel.org>
+ <20250605132350.1488129-9-jolsa@kernel.org>
+ <20250625172122.ad1e955ae2bc3957d9fb8546@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -82,69 +99,328 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250625-bar-v5-1-db960608b607@gmail.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - c/o Alberga Business Park, 6
- krs, Bertel Jungin Aukio 5, 02600 Espoo
+In-Reply-To: <20250625172122.ad1e955ae2bc3957d9fb8546@kernel.org>
 
-On Wed, Jun 25, 2025 at 11:04:31PM +0800, LiangCheng Wang wrote:
-> Fix indentation style issues by replacing spaces with tabs,
-> according to Linux kernel coding style.
+On Wed, Jun 25, 2025 at 05:21:22PM +0900, Masami Hiramatsu wrote:
+> On Thu,  5 Jun 2025 15:23:35 +0200
+> Jiri Olsa <jolsa@kernel.org> wrote:
 > 
-> This cleanup improves code readability and follows Linux kernel
-> coding standards.
+> > Adding support to add special mapping for user space trampoline with
+> > following functions:
+> > 
+> >   uprobe_trampoline_get - find or add uprobe_trampoline
+> >   uprobe_trampoline_put - remove or destroy uprobe_trampoline
+> > 
+> > The user space trampoline is exported as arch specific user space special
+> > mapping through tramp_mapping, which is initialized in following changes
+> > with new uprobe syscall.
+> > 
+> > The uprobe trampoline needs to be callable/reachable from the probed address,
+> > so while searching for available address we use is_reachable_by_call function
+> > to decide if the uprobe trampoline is callable from the probe address.
+> > 
+> > All uprobe_trampoline objects are stored in uprobes_state object and are
+> > cleaned up when the process mm_struct goes down. Adding new arch hooks
+> > for that, because this change is x86_64 specific.
+> > 
+> > Locking is provided by callers in following changes.
+> > 
+> > Acked-by: Oleg Nesterov <oleg@redhat.com>
+> > Signed-off-by: Jiri Olsa <jolsa@kernel.org>
+> > ---
+> >  arch/x86/kernel/uprobes.c | 115 ++++++++++++++++++++++++++++++++++++++
+> >  include/linux/uprobes.h   |   6 ++
+> >  kernel/events/uprobes.c   |  10 ++++
+> >  kernel/fork.c             |   1 +
+> >  4 files changed, 132 insertions(+)
+> > 
+> > diff --git a/arch/x86/kernel/uprobes.c b/arch/x86/kernel/uprobes.c
+> > index 77050e5a4680..0295cfb625c0 100644
+> > --- a/arch/x86/kernel/uprobes.c
+> > +++ b/arch/x86/kernel/uprobes.c
+> > @@ -608,6 +608,121 @@ static void riprel_post_xol(struct arch_uprobe *auprobe, struct pt_regs *regs)
+> >  		*sr = utask->autask.saved_scratch_register;
+> >  	}
+> >  }
+> > +
+> > +static int tramp_mremap(const struct vm_special_mapping *sm, struct vm_area_struct *new_vma)
+> > +{
+> > +	return -EPERM;
+> > +}
+> > +
+> > +static struct page *tramp_mapping_pages[2] __ro_after_init;
+> > +
+> > +static struct vm_special_mapping tramp_mapping = {
+> > +	.name   = "[uprobes-trampoline]",
+> > +	.mremap = tramp_mremap,
+> > +	.pages  = tramp_mapping_pages,
+> > +};
+> > +
+> > +struct uprobe_trampoline {
+> > +	struct hlist_node	node;
+> > +	unsigned long		vaddr;
+> > +};
+> > +
+> > +static bool is_reachable_by_call(unsigned long vtramp, unsigned long vaddr)
+> > +{
+> > +	long delta = (long)(vaddr + 5 - vtramp);
+> > +
+> > +	return delta >= INT_MIN && delta <= INT_MAX;
+> > +}
+> > +
+> > +static unsigned long find_nearest_page(unsigned long vaddr)
 > 
-> Signed-off-by: LiangCheng Wang <zaq14760@gmail.com>
-> ---
-> This patch addresses tab/space indentation issues in the
-> output_1.0 directory of the AtomISP driver under staging.
-> 
-> This patch is part of a broader effort to clean up the AtomISP
-> driver and is scoped only to tab/space fixes in one directory
-> to keep review manageable.
-> 
-> Further style fixes for other directories and issue types will
-> be submitted in subsequent patch revisions or series.
-> 
-> Fixes were identified using:
-> 
-> ./scripts/checkpatch.pl -f $(find drivers/staging/media/atomisp/pci/isp/kernels/output/output_1.0/ -type f \( -name "*.c" -o -name "*.h" \))
-> grep -Prn '^[ ]+' drivers/staging/media/atomisp/pci/isp/kernels/output/output_1.0
-> 
-> Only lines with space-based indentation (instead of tab) were changed.
-
-> Suggested-by: Andy Shevchenko <andy@kernel.org>
-> Link: https://lore.kernel.org/r/CAHp75VeijMvnbrCmRuqTeo_maxevCA9rB-r5URHaX+TrDNvyGA@mail.gmail.com
-
-These two lines should be just above your SoB in the commit message. Currently
-they will most likely be ignored (at least by `git am ...`.
+> nit: this does not return the nearest one, but the highest one?
 
 ...
 
->  void
->  ia_css_output_encode(
-> -    struct sh_css_isp_output_params *to,
-> -    const struct ia_css_output_config *from,
-> -    unsigned int size)
-> +	struct sh_css_isp_output_params *to,
-> +	const struct ia_css_output_config *from,
-> +	unsigned int size)
+> 
+> If you really need the nearest one, we need to call
+> vm_unmapped_area() twice.
+> 
+> [low_limit, call_end] with TOPDOWN flag and 
+> [call_end, high_limit] without TOPDOWN.
+> 
+> and choose the nearest one. But I don't think we need it.
 
-In cases like this you might want to also reshuffle the lines:
+ugh you're right, let's rename it.. find_reachable_page ?
 
-void ia_css_output_encode(struct sh_css_isp_output_params *to,
-			  const struct ia_css_output_config *from,
-			  unsigned int size)
+> 
+> > +{
+> > +	struct vm_unmapped_area_info info = {
+> > +		.length     = PAGE_SIZE,
+> > +		.align_mask = ~PAGE_MASK,
+> > +		.flags      = VM_UNMAPPED_AREA_TOPDOWN,
+> > +		.low_limit  = PAGE_SIZE,
+> > +		.high_limit = ULONG_MAX,
+> 
+> Maybe "TASK_SIZE" is better than ULONG_MAX?
 
-...
+ok
 
-Have you tried simply to run slang-format against the whole driver using the
-clang-format configuration from the kernel source tree?
+> 
+> > +	};
+> > +	unsigned long limit, call_end = vaddr + 5;
+> > +
+> > +	if (!check_add_overflow(call_end, INT_MIN, &limit))
+> > +		info.low_limit = limit;
+> > +	if (!check_add_overflow(call_end, INT_MAX, &limit))
+> > +		info.high_limit = limit;
+> > +	return vm_unmapped_area(&info);
+> > +}
+> > +
+> > +static struct uprobe_trampoline *create_uprobe_trampoline(unsigned long vaddr)
+> > +{
+> > +	struct pt_regs *regs = task_pt_regs(current);
+> > +	struct mm_struct *mm = current->mm;
+> > +	struct uprobe_trampoline *tramp;
+> > +	struct vm_area_struct *vma;
+> > +
+> > +	if (!user_64bit_mode(regs))
+> > +		return NULL;
+> > +
+> > +	vaddr = find_nearest_page(vaddr);
+> > +	if (IS_ERR_VALUE(vaddr))
+> > +		return NULL;
+> > +
+> > +	tramp = kzalloc(sizeof(*tramp), GFP_KERNEL);
+> > +	if (unlikely(!tramp))
+> > +		return NULL;
+> > +
+> > +	tramp->vaddr = vaddr;
+> > +	vma = _install_special_mapping(mm, tramp->vaddr, PAGE_SIZE,
+> 
+> Just make sure, this special mapped page is mapped 1 page for each
+> uprobe? (I think uprobe syscall trampoline size is far smaller
+> than the page size.)
 
-With it done, you may just make it as a single patch.
+so the trampoline is created for first uprobe within 4GB region of
+the probed address and will be reused by other uprobes in that region
 
--- 
-With Best Regards,
-Andy Shevchenko
+> 
+> > +				VM_READ|VM_EXEC|VM_MAYEXEC|VM_MAYREAD|VM_DONTCOPY|VM_IO,
+> > +				&tramp_mapping);
+> > +	if (IS_ERR(vma))
+> > +		goto free_area;
+> 
+> nit: To simplify the code, instead of goto,
+> 
+> if (IS_ERR(vma)) {
+> 	kfree(tramp);
+> 	return NULL;
+> }
 
+ok
 
+> 
+> > +	return tramp;
+> > +
+> > +free_area:
+> > +	kfree(tramp);
+> > +	return NULL;
+> > +}
+> > +
+> > +__maybe_unused
+> > +static struct uprobe_trampoline *get_uprobe_trampoline(unsigned long vaddr, bool *new)
+> > +{
+> > +	struct uprobes_state *state = &current->mm->uprobes_state;
+> > +	struct uprobe_trampoline *tramp = NULL;
+> > +
+> > +	hlist_for_each_entry(tramp, &state->head_tramps, node) {
+> > +		if (is_reachable_by_call(tramp->vaddr, vaddr))
+> 
+> This should set '*new = false;' here.
+
+right, will fix, thanks
+
+> 
+> > +			return tramp;
+> > +	}
+> > +
+> > +	tramp = create_uprobe_trampoline(vaddr);
+> > +	if (!tramp)
+> > +		return NULL;
+> > +
+> > +	*new = true;
+> > +	hlist_add_head(&tramp->node, &state->head_tramps);
+> > +	return tramp;
+> > +}
+> > +
+> > +static void destroy_uprobe_trampoline(struct uprobe_trampoline *tramp)
+> > +{
+> > +	hlist_del(&tramp->node);
+> > +	kfree(tramp);
+> 
+> Don't we need to unmap the tramp->vaddr?
+
+that's tricky because we have no way to make sure the application is
+no longer executing the trampoline, it's described in the changelog
+of following patch:
+
+    uprobes/x86: Add support to optimize uprobes
+
+    ...
+
+    We do not unmap and release uprobe trampoline when it's no longer needed,
+    because there's no easy way to make sure none of the threads is still
+    inside the trampoline. But we do not waste memory, because there's just
+    single page for all the uprobe trampoline mappings.
+
+    We do waste frame on page mapping for every 4GB by keeping the uprobe
+    trampoline page mapped, but that seems ok.
+
+    ...
+
+> 
+> > +}
+> > +
+> > +void arch_uprobe_init_state(struct mm_struct *mm)
+> > +{
+> > +	INIT_HLIST_HEAD(&mm->uprobes_state.head_tramps);
+> > +}
+> > +
+> > +void arch_uprobe_clear_state(struct mm_struct *mm)
+> > +{
+> > +	struct uprobes_state *state = &mm->uprobes_state;
+> > +	struct uprobe_trampoline *tramp;
+> > +	struct hlist_node *n;
+> > +
+> > +	hlist_for_each_entry_safe(tramp, n, &state->head_tramps, node)
+> > +		destroy_uprobe_trampoline(tramp);
+> > +}
+> >  #else /* 32-bit: */
+> >  /*
+> >   * No RIP-relative addressing on 32-bit
+> > diff --git a/include/linux/uprobes.h b/include/linux/uprobes.h
+> > index 5080619560d4..b40d33aae016 100644
+> > --- a/include/linux/uprobes.h
+> > +++ b/include/linux/uprobes.h
+> > @@ -17,6 +17,7 @@
+> >  #include <linux/wait.h>
+> >  #include <linux/timer.h>
+> >  #include <linux/seqlock.h>
+> > +#include <linux/mutex.h>
+> >  
+> >  struct uprobe;
+> >  struct vm_area_struct;
+> > @@ -185,6 +186,9 @@ struct xol_area;
+> >  
+> >  struct uprobes_state {
+> >  	struct xol_area		*xol_area;
+> > +#ifdef CONFIG_X86_64
+> 
+> Maybe we can introduce struct arch_uprobe_state{} here?
+
+ok, on top of that Andrii also asked for [1]:
+  - alloc 'struct uprobes_state' for mm_struct only when needed
+
+this could be part of that follow up? I'd rather not complicate this
+patchset any further
+
+[1] https://lore.kernel.org/bpf/CAEf4BzY2zKPM9JHgn_wa8yCr8q5KntE5w8g=AoT2MnrD2Dx6gA@mail.gmail.com/
+
+> 
+> > +	struct hlist_head	head_tramps;
+> > +#endif
+> >  };
+> >  
+> >  typedef int (*uprobe_write_verify_t)(struct page *page, unsigned long vaddr,
+> > @@ -233,6 +237,8 @@ extern void uprobe_handle_trampoline(struct pt_regs *regs);
+> >  extern void *arch_uretprobe_trampoline(unsigned long *psize);
+> >  extern unsigned long uprobe_get_trampoline_vaddr(void);
+> >  extern void uprobe_copy_from_page(struct page *page, unsigned long vaddr, void *dst, int len);
+> > +extern void arch_uprobe_clear_state(struct mm_struct *mm);
+> > +extern void arch_uprobe_init_state(struct mm_struct *mm);
+> >  #else /* !CONFIG_UPROBES */
+> >  struct uprobes_state {
+> >  };
+> > diff --git a/kernel/events/uprobes.c b/kernel/events/uprobes.c
+> > index 6795b8d82b9c..acec91a676b7 100644
+> > --- a/kernel/events/uprobes.c
+> > +++ b/kernel/events/uprobes.c
+> > @@ -1802,6 +1802,14 @@ static struct xol_area *get_xol_area(void)
+> >  	return area;
+> >  }
+> >  
+> > +void __weak arch_uprobe_clear_state(struct mm_struct *mm)
+> > +{
+> > +}
+> > +
+> > +void __weak arch_uprobe_init_state(struct mm_struct *mm)
+> > +{
+> > +}
+> > +
+> >  /*
+> >   * uprobe_clear_state - Free the area allocated for slots.
+> >   */
+> > @@ -1813,6 +1821,8 @@ void uprobe_clear_state(struct mm_struct *mm)
+> >  	delayed_uprobe_remove(NULL, mm);
+> >  	mutex_unlock(&delayed_uprobe_lock);
+> >  
+> > +	arch_uprobe_clear_state(mm);
+> > +
+> >  	if (!area)
+> >  		return;
+> >  
+> > diff --git a/kernel/fork.c b/kernel/fork.c
+> > index 1ee8eb11f38b..7108ca558518 100644
+> > --- a/kernel/fork.c
+> > +++ b/kernel/fork.c
+> > @@ -1010,6 +1010,7 @@ static void mm_init_uprobes_state(struct mm_struct *mm)
+> >  {
+> >  #ifdef CONFIG_UPROBES
+> >  	mm->uprobes_state.xol_area = NULL;
+> > +	arch_uprobe_init_state(mm);
+> >  #endif
+> 
+> Can't we make this uprobe_init_state(mm)?
+
+hum, there are other mm_init_* functions around, I guess we should keep
+the same pattern?
+
+unless you mean s/arch_uprobe_init_state/uprobe_init_state/ but that's
+arch code.. so probably not sure what you mean ;-)
+
+thanks for review,
+jirka
 
