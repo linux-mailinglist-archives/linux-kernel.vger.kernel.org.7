@@ -1,144 +1,134 @@
-Return-Path: <linux-kernel+bounces-701892-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-701894-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1C750AE7AAE
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Jun 2025 10:47:09 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 66F1BAE7AB4
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Jun 2025 10:47:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6808E1710E2
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Jun 2025 08:47:09 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 887021732BF
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Jun 2025 08:47:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 65EBC28ECEF;
-	Wed, 25 Jun 2025 08:45:44 +0000 (UTC)
-Received: from bmailout3.hostsharing.net (bmailout3.hostsharing.net [176.9.242.62])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1C7E629A326;
+	Wed, 25 Jun 2025 08:46:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="W/GEz3iG"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D501828A1D4;
-	Wed, 25 Jun 2025 08:45:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=176.9.242.62
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5E0402853F8;
+	Wed, 25 Jun 2025 08:46:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750841144; cv=none; b=gt6qPTOJ3U9pXjTPEyxwFAG+eN9AtXALV08NPyXDe8arMO+qdRiSY3uSEaBxAJI87CbndXWXo2wW+PDeVoRnV8GqRfUOy1axH7xT6LcLYoKle8wTrS6i8FmleaqApGfmL0/aZ3C4NPIYB9Ym0zvBQyEDU0M3HmVINU/S3LRJ170=
+	t=1750841177; cv=none; b=NyJQJC/Rs1Kl6DqvzmdQxCw8s+htvk1SO9bK17ky/C17W+RL8hedVS5BgdpjQuNeZZ8HIhsGLd0si7K5BBd3Ez2am4O+qrHiDwcd1wQhuD8Tz95hVFJs5S3P99UZ73Lv9WguYbuZLEmg7VRfrFh/0Cv2gUoey6S2e56Pvt1woMg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750841144; c=relaxed/simple;
-	bh=C1O7OsyYahrbb5xTlS/F31FLcQAAo/jwL30cSWQC9g0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=P8RLUSU5huk8Ds4ZQCwcOmIp1mXSs18eI2cn+4TDx9/2/KpLWLhBdMkoiXbAhGccIFxNL1zbEZxMvvYvsrXMa9HxfgoyOqoCMc+d4m3jQia/KqRRJvZLRk8B1etB3imF9YeBoBqcd/jFsnMNphMUqYn02+QZzL1eS6CzsZkehVM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=wunner.de; spf=none smtp.mailfrom=h08.hostsharing.net; arc=none smtp.client-ip=176.9.242.62
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=wunner.de
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=h08.hostsharing.net
-Received: from h08.hostsharing.net (h08.hostsharing.net [IPv6:2a01:37:1000::53df:5f1c:0])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256
-	 client-signature RSA-PSS (4096 bits) client-digest SHA256)
-	(Client CN "*.hostsharing.net", Issuer "RapidSSL TLS RSA CA G1" (verified OK))
-	by bmailout3.hostsharing.net (Postfix) with ESMTPS id 904BB2C05264;
-	Wed, 25 Jun 2025 10:45:38 +0200 (CEST)
-Received: by h08.hostsharing.net (Postfix, from userid 100393)
-	id 477423B709D; Wed, 25 Jun 2025 10:45:38 +0200 (CEST)
-Date: Wed, 25 Jun 2025 10:45:38 +0200
-From: Lukas Wunner <lukas@wunner.de>
-To: Timothy Pearson <tpearson@raptorengineering.com>
-Cc: Bjorn Helgaas <helgaas@kernel.org>,
-	linuxppc-dev <linuxppc-dev@lists.ozlabs.org>,
-	linux-kernel <linux-kernel@vger.kernel.org>,
-	linux-pci <linux-pci@vger.kernel.org>,
-	Madhavan Srinivasan <maddy@linux.ibm.com>,
-	Michael Ellerman <mpe@ellerman.id.au>,
-	christophe leroy <christophe.leroy@csgroup.eu>,
-	Naveen N Rao <naveen@kernel.org>,
-	Bjorn Helgaas <bhelgaas@google.com>,
-	Shawn Anastasio <sanastasio@raptorengineering.com>
-Subject: Re: [PATCH v2 2/6] pci/hotplug/pnv_php: Work around switches with
- broken
-Message-ID: <aFu3Mg9SqlaDTw9z@wunner.de>
-References: <20250618201722.GA1220739@bhelgaas>
- <1155677312.1313623.1750361373491.JavaMail.zimbra@raptorengineeringinc.com>
- <aFUTV87SMdpHRbt8@wunner.de>
- <318974284.1316210.1750437945118.JavaMail.zimbra@raptorengineeringinc.com>
+	s=arc-20240116; t=1750841177; c=relaxed/simple;
+	bh=Jd+qJw0ywMovb2fuA4VnIvQS86NthGtKClBkUbHwogo=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=H9WAwWKzzRkmHW5HpUzq9NhFs535H4ueqTqpmBSG5gSFvYE7u/H20dERBgPTlxgRBEJuDaR4q/LBAtWvUrkRcpVT7/BXrvg2c0LbgwJsMvd16eXKHN++Wk0STrDVMGXiW6hXHnIQNJjBSDYG8sonlf1Rhpdhli9AKj+TJx8TL4o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=W/GEz3iG; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C57F3C4CEEA;
+	Wed, 25 Jun 2025 08:46:11 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1750841175;
+	bh=Jd+qJw0ywMovb2fuA4VnIvQS86NthGtKClBkUbHwogo=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=W/GEz3iG9BjEmGJwmgktAcOa+QeVZ/U0bZ+a2XrAn1Nxbh4A4EujIH+TF68IYQ4w5
+	 X/PSRcvLvP+V31Iy4zsL05RfMp2+AT5RP/1ZvLAaF/qbancewcgrWUf7JDj+HkGca/
+	 7QdaTwSocNZjKFEFdAnHnvcP7Hy1nAr+ri7zjwA7RH6v8o0b6k1L7sMzcjLoyNO5pD
+	 LSDYUcHdHcidtz6r4GlEiZBI0wemFGVq/FKC1NWaud09sAgoB86XrsKYOHVWxgEvHN
+	 en5WEyrWVa2aupSgLNkJfCsuafm7eBdKIZodub/gE8p1CnblU43fxic8/h1FT4y1q/
+	 PnheY5bg1C95g==
+Message-ID: <46f3ca15-b638-4a05-ad61-88e8bb025915@kernel.org>
+Date: Wed, 25 Jun 2025 10:46:09 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <318974284.1316210.1750437945118.JavaMail.zimbra@raptorengineeringinc.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v5 2/9] dt-bindings: pinctrl:
+ qcom,sc7280-lpass-lpi-pinctrl: Document the clock property
+To: Prasad Kumpatla <quic_pkumpatl@quicinc.com>,
+ Bjorn Andersson <andersson@kernel.org>,
+ Linus Walleij <linus.walleij@linaro.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Srinivas Kandagatla <srini@kernel.org>,
+ Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>,
+ Konrad Dybcio <konradybcio@kernel.org>
+Cc: cros-qcom-dts-watchers@chromium.org, linux-arm-msm@vger.kernel.org,
+ linux-gpio@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-sound@vger.kernel.org,
+ kernel@oss.qualcomm.com, Mohammad Rafi Shaik <quic_mohs@quicinc.com>
+References: <20250625082927.31038-1-quic_pkumpatl@quicinc.com>
+ <20250625082927.31038-3-quic_pkumpatl@quicinc.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 a/A=
+In-Reply-To: <20250625082927.31038-3-quic_pkumpatl@quicinc.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Fri, Jun 20, 2025 at 11:45:45AM -0500, Timothy Pearson wrote:
-> From: "Lukas Wunner" <lukas@wunner.de>
-> > I don't know how much PCIe hotplug on PowerNV differs from native,
-> > spec-compliant PCIe hotplug.  If the differences are vast (and I
-> > get the feeling they might be if I read terms like "PHB" and
-> > "EEH unfreeze", which sound completely foreign to me), it might
-> > be easier to refactor pnv_php.c and copy patterns or code from
-> > pciehp, than to integrate the functionality from pnv_php.c into
-> > pciehp.
+On 25/06/2025 10:29, Prasad Kumpatla wrote:
+> From: Mohammad Rafi Shaik <quic_mohs@quicinc.com>
 > 
-> The differences at the root level (PHB) are quite significant -- the
-> controller is more advanced in many ways than standard PCIe root
-> complexes [1] -- and those differences need very special handling.
-> Once we are looking at devices downstream of the root complex,
-> standard PCIe hotplug and AER specifications apply, so we're in a
-> strange spot of really wanting to use pciehp (to handle all nested
-> downstream bridges), but pciehp still needs to understand how to deal
-> with our unqiue root complex.
+> Document the clock property for sc7280-lpass-lpi-pinctrl driver.
+
+Describe the hardware, not drivers.
+
+> Clock settings required for Audioreach solution.
 > 
-> One idea I had was to use the existing modularity of pciehp's source
-> and add a new pciehp_powernv.c file with all of our root complex
-> handling methods.  We could then #ifdef swap the assocated root complex
-> calls to that external file when compiled in PowerNV mode.
+> Signed-off-by: Mohammad Rafi Shaik <quic_mohs@quicinc.com>
+> Co-developed-by: Prasad Kumpatla <quic_pkumpatl@quicinc.com>
+> Signed-off-by: Prasad Kumpatla <quic_pkumpatl@quicinc.com>
+> ---
+>  .../pinctrl/qcom,sc7280-lpass-lpi-pinctrl.yaml   | 16 ++++++++++++++++
 
-We've traditionally dealt with such issues by inserting pcibios_*()
-hooks in generic code, with a __weak implementation (which is usually
-an empty stub) and a custom implementation in arch/powerpc/.
 
-The linker then chooses the custom implementation over the __weak one.
-
-You can find the existing hooks with:
-
-git grep "__weak .*pcibios" -- drivers/pci
-git grep pcibios -- arch/powerpc
-
-An alternative method is to add a callback to struct pci_host_bridge.
-
-> > One thing I don't quite understand is, it sounds like you've
-> > attached a PCIe switch to a Root Port and the hotplug ports
-> > are on the PCIe switch.  Aren't those hotplug ports just
-> > bog-standard ones that can be driven by pciehp?  My expectation
-> > would have been that a PowerNV-specific hotplug driver would
-> > only be necessary for hotplug-capable Root Ports.
-> 
-> That's the problem -- the pciehp driver assumes x86 root ports,
-
-Nah, there's nothing x86-specific about it.  pciehp is used on all
-kinds of arches, it's just an implementation of the PCIe Base Spec.
-
-> and the powernv driver ends up duplicating (badly) parts of the pciehp
-> functionality for downstream bridges.  That's one reason I'd like to
-> abstract the root port handling in pciehp and eventually move the
-> PowerNV root port handling into that module.
-
-Sounds like you're currently describing the Switch Downstream Ports with
-an "ibm,ioda-phb2" compatible string in the devicetree?  That would feel
-wrong since they're not host bridges.
-
-> [1] Among other interesting differences, it is both capable of and has
-> been tested to properly block and report all invalid accesses from a
-> PCIe device to system memory.  This breaks assumptions in many PCIe
-> device drivers, but is also a significant security advantage.
-> EEH freeze is effectively this security mechanism kicking in -- on
-> detecting an invalid access, the PHB itself will block the access and
-> put the PE into a frozen state where no PCIe traffic is permitted.
-
-That sounds somewhat similar to what the PCIe Access Control Services
-Capability provides.  I think at least some IOMMUs support raising an
-exception on illegal accesses, so the EEH functionality is probably not
-*that* special.
-
-Thanks,
-
-Lukas
+Best regards,
+Krzysztof
 
