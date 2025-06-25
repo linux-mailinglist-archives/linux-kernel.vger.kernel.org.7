@@ -1,448 +1,131 @@
-Return-Path: <linux-kernel+bounces-702075-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-702078-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7A860AE7DAB
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Jun 2025 11:44:36 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id AA435AE7DD1
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Jun 2025 11:47:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3B9947ADB9E
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Jun 2025 09:43:12 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 556A33B2A3E
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Jun 2025 09:44:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0BC4428936B;
-	Wed, 25 Jun 2025 09:37:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3944E29B20E;
+	Wed, 25 Jun 2025 09:39:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="ol/Y0rap"
-Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="UIiGv3X1"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.16])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AB40C273D67;
-	Wed, 25 Jun 2025 09:37:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B050A29A303;
+	Wed, 25 Jun 2025 09:39:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.16
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750844244; cv=none; b=sz2IBMG9siloMEj9ykGkpkDm3svMndVtkUoQwqP86W2nVrf5Cgxf/GfWHg/Hfse4sUfMwRH37X7vcR6S2t0PbejPoL4K+FJpN4gTfDBGpFy7p7sI29rVjSh/5SeD0SB/qDBYJRSNNJ1gtH8TuAQCvEXeA+CJdHi2E0DSGeS5nMA=
+	t=1750844366; cv=none; b=ojVZW7egchYuiU4dpBHWxS1uVNBKqEVXEQaG6ANcLBG36ia/GZa11rZcqNqi7/tR5FuHkjAkUZQLI6Bn0GB7ygq8kRWRdmDFzVkQzE9wSzkCPOA8jaAQKU8700y7vmGPksESJEchM11sIXXAgDJcqEfHrJ1TRY0wCGHLufrM3tY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750844244; c=relaxed/simple;
-	bh=QAAw8lHoQe88LywfWFJxKDuVBFv6U47HaKF8hR18sao=;
+	s=arc-20240116; t=1750844366; c=relaxed/simple;
+	bh=wsM2YbD+M0xXuq6ZAwS4w4/eJ5LnAfTL+ORhH1xoJ+Q=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=qfcqAQ9DdM76BqGwrE+lODPgUxyJuwm7mK/W+vtddikcnz5y4yp+Qi6Mh8xuuv56IBFq6RI98kVgTqclwT7Iqf5TqAMIfta7HUPvhubw3HfcBczHq4ZU98IgdviAW6ne0CUuRPm6yI/okAeRLCGCzwVwsRyAXZW39Pg6xNnWyNI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=ol/Y0rap; arc=none smtp.client-ip=148.163.156.1
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0360083.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 55P7VHJ3016009;
-	Wed, 25 Jun 2025 09:37:05 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
-	:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=pp1; bh=duIT7v
-	YThX9XWpWOLWRNfP/IrShB8W5j2qBMdKOPyRA=; b=ol/Y0rapTnRtY/ETlbu7JY
-	Ww6HEywCSzIYs2R5GVbPdm/Dd39AJJp3zB3TvzfTsQrIn1xmSziC2Uk5QQFaa9yh
-	QYBZeeR+X/DboLaAN2VqWJbgnYRtL78GDfcw0GAgO8G/75pcmS9TLQfrKqjJitwL
-	r8PHtrbXYkXHALSVHJmrjOTp5ztHSEPRSknu1SkPXvKQ4FnlqwsECvk835DtX7g+
-	AKNK38HwkSRC6kuIx0tTGVUt6gkbD0iPoJ/O4wlRZVFeKeU1L8gMNGuFuG0s9v2z
-	TraKml9ZmjY0wBBJataik3Rjlwxu1guzqqzN7ed+4ypL98wOTn5zbezKqdmFCcEg
-	==
-Received: from pps.reinject (localhost [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 47dm8jefss-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 25 Jun 2025 09:37:05 +0000 (GMT)
-Received: from m0360083.ppops.net (m0360083.ppops.net [127.0.0.1])
-	by pps.reinject (8.18.0.8/8.18.0.8) with ESMTP id 55P9UZG1027503;
-	Wed, 25 Jun 2025 09:37:04 GMT
-Received: from ppma11.dal12v.mail.ibm.com (db.9e.1632.ip4.static.sl-reverse.com [50.22.158.219])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 47dm8jefsd-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 25 Jun 2025 09:37:04 +0000 (GMT)
-Received: from pps.filterd (ppma11.dal12v.mail.ibm.com [127.0.0.1])
-	by ppma11.dal12v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 55P7SM4h014710;
-	Wed, 25 Jun 2025 09:37:01 GMT
-Received: from smtprelay07.fra02v.mail.ibm.com ([9.218.2.229])
-	by ppma11.dal12v.mail.ibm.com (PPS) with ESMTPS id 47e9s2gb4q-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 25 Jun 2025 09:37:01 +0000
-Received: from smtpav02.fra02v.mail.ibm.com (smtpav02.fra02v.mail.ibm.com [10.20.54.101])
-	by smtprelay07.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 55P9b0CG53084626
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Wed, 25 Jun 2025 09:37:00 GMT
-Received: from smtpav02.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 0E4B020043;
-	Wed, 25 Jun 2025 09:37:00 +0000 (GMT)
-Received: from smtpav02.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id C66F420040;
-	Wed, 25 Jun 2025 09:36:55 +0000 (GMT)
-Received: from li-06431bcc-2712-11b2-a85c-a6fe68df28f9.ibm.com (unknown [9.124.208.75])
-	by smtpav02.fra02v.mail.ibm.com (Postfix) with ESMTPS;
-	Wed, 25 Jun 2025 09:36:55 +0000 (GMT)
-Date: Wed, 25 Jun 2025 15:06:52 +0530
-From: Donet Tom <donettom@linux.ibm.com>
-To: Dev Jain <dev.jain@arm.com>
-Cc: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
-        Aboorva Devarajan <aboorvad@linux.ibm.com>, akpm@linux-foundation.org,
-        Liam.Howlett@oracle.com, shuah@kernel.org, pfalcato@suse.de,
-        david@redhat.com, ziy@nvidia.com, baolin.wang@linux.alibaba.com,
-        npache@redhat.com, ryan.roberts@arm.com, baohua@kernel.org,
-        linux-mm@kvack.org, linux-kselftest@vger.kernel.org,
-        linux-kernel@vger.kernel.org, ritesh.list@gmail.com
-Subject: Re: [PATCH 1/6] mm/selftests: Fix virtual_address_range test issues.
-Message-ID: <aFvDNPZWs2CA_MoU@li-06431bcc-2712-11b2-a85c-a6fe68df28f9.ibm.com>
-References: <c93110a4-19e4-4a1d-b044-6b7f521eaa0d@lucifer.local>
- <815793f1-6800-4b9a-852e-f13d6308f50f@arm.com>
- <2756fa2b-e8bf-4c66-bf9b-c85dc63dfc33@lucifer.local>
- <41d9a70d-9791-4212-af23-5b13d8e4a47d@arm.com>
- <aFPI_blZGhvKSbNJ@li-06431bcc-2712-11b2-a85c-a6fe68df28f9.ibm.com>
- <546d7aa5-9ea3-4fce-a604-b1676a61d6cd@arm.com>
- <aFbyFMjVs9F3KMex@li-06431bcc-2712-11b2-a85c-a6fe68df28f9.ibm.com>
- <2fc32719-1e38-4bf0-8ec5-5bcb452d939f@arm.com>
- <aFmPliw773p1VvAY@li-06431bcc-2712-11b2-a85c-a6fe68df28f9.ibm.com>
- <673c9442-7d69-408b-a2c4-2baa696a7e86@arm.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=itOPafxRWVd6wRKL3rM5nzJ4cqkvJahUehEvoCK7QIGT7YLo3gXUQSLU29CrEG9iDrfxK+r2VGRh3dCCD7ewN3OCq4ytWr+wukQ03loEomyhhemvuIKxrNTEED29JlQWEwrsiv/PL5DMJ0kPUVlUfeAL4r74vVt1rlubbII1fXg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=UIiGv3X1; arc=none smtp.client-ip=192.198.163.16
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1750844364; x=1782380364;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=wsM2YbD+M0xXuq6ZAwS4w4/eJ5LnAfTL+ORhH1xoJ+Q=;
+  b=UIiGv3X1IswA68W5hOY6ktto4m1D5sRKjrcweHy6G0KMBOCr0tTnyZ+k
+   Lqy6bjfDN7aM9uWKHIcezttZ5ontMJP77PzMpojz8vDBIV3oYJL2kRpmj
+   HX5BDoM1CgE1K/4PxgMfIdcRAiQ+B2wKjS5+UmOQc/12GOLKrj3524mnx
+   QcKb24X+yeJqwCRb+S2dgmYNS5zrsqyCSgp+N8BExuJxA9ejZVu5HZKUp
+   tjEjfu7+ZSNgU5mJck4vWItWIPgCZ3aQffcuurAXiy/HhN6W0Zi2ZXRLO
+   PgsPHYEFiU/SJ/x1AumBFNPx+M3MyQNBn8KRdLW5blshHPDZs6riuywhT
+   A==;
+X-CSE-ConnectionGUID: RdDEEVQ2Q4icNfq7s4LX6Q==
+X-CSE-MsgGUID: Ua0aXaRSRZmG0FO3ZVc+mw==
+X-IronPort-AV: E=McAfee;i="6800,10657,11474"; a="40726608"
+X-IronPort-AV: E=Sophos;i="6.16,264,1744095600"; 
+   d="scan'208";a="40726608"
+Received: from orviesa010.jf.intel.com ([10.64.159.150])
+  by fmvoesa110.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 25 Jun 2025 02:39:23 -0700
+X-CSE-ConnectionGUID: rE6PHxq3SY6amVbIO6+R9Q==
+X-CSE-MsgGUID: UXE3rrreQwWkT/nXb7LPYg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.16,264,1744095600"; 
+   d="scan'208";a="151584247"
+Received: from lkp-server01.sh.intel.com (HELO e8142ee1dce2) ([10.239.97.150])
+  by orviesa010.jf.intel.com with ESMTP; 25 Jun 2025 02:39:18 -0700
+Received: from kbuild by e8142ee1dce2 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1uUMb5-000SyA-2S;
+	Wed, 25 Jun 2025 09:39:15 +0000
+Date: Wed, 25 Jun 2025 17:38:18 +0800
+From: kernel test robot <lkp@intel.com>
+To: Mario Limonciello <superm1@kernel.org>,
+	Bjorn Helgaas <helgaas@kernel.org>
+Cc: oe-kbuild-all@lists.linux.dev, Alex Deucher <alexander.deucher@amd.com>,
+	Christian =?iso-8859-1?Q?K=F6nig?= <christian.koenig@amd.com>,
+	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+	Lukas Wunner <lukas@wunner.de>,
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+	Maxime Ripard <mripard@kernel.org>,
+	Thomas Zimmermann <tzimmermann@suse.de>,
+	David Woodhouse <dwmw2@infradead.org>,
+	Lu Baolu <baolu.lu@linux.intel.com>, Joerg Roedel <joro@8bytes.org>,
+	Will Deacon <will@kernel.org>, Robin Murphy <robin.murphy@arm.com>,
+	Alex Williamson <alex.williamson@redhat.com>,
+	Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>,
+	dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
+	"(open list:INTEL IOMMU (VT-d))" <iommu@lists.linux.dev>,
+	linux-pci@vger.kernel.org, kvm@vger.kernel.org,
+	linux-sound@vger.kernel.org, Daniel Dadap <ddadap@nvidia.com>,
+	Mario Limonciello <mario.limonciello@amd.com>
+Subject: Re: [PATCH v5 7/9] PCI/VGA: Replace vga_is_firmware_default() with a
+ screen info check
+Message-ID: <202506251749.fPKnHMH5-lkp@intel.com>
+References: <20250624203042.1102346-8-superm1@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <673c9442-7d69-408b-a2c4-2baa696a7e86@arm.com>
-X-TM-AS-GCONF: 00
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNjI1MDA2OSBTYWx0ZWRfX0iJZbH4RZkZK u0t2Zi/7WypS2huIG4OwOXtScs4HMFEvh2ZN5BOVuZKALBJBROM1uecgePSLKgn+uVDVWJAX20L ok4yRD+KKfuN5Rhg2bo3SnxOPykto1ALr64JeraenWVmqk6su3AMhOCNZejPcp3nylQuPkiUYiA
- SWpoNLRskT3W1YJH1qt0yik5z1CDl3LDguqS5hb5CM+rPNJW3pgVMJUb73CqOJW32aLw9Pre75C TunpOwtkSfjgM0d8SvzfaRFpKaTHOiddcKFwfHg+ucZmuxzuA3xJCqRuUD96Bw3XcXgjIGtA/72 F4mdHfhACEYN/oH1etHgrTsf6VjqCjxg6jKGuHVNfOSVk5lyLlVuBAGhPQDLQJEhaL4SqZ6RgEw
- XDRY8JNpOn4idAmfmay4z/otASuq6XzfSZg2QUHRns9a4jOr8kDEW1OQsk9cZ0DBFnJ38KsY
-X-Proofpoint-GUID: Z5r55ByDizHJ-aXph3TfBfNKCoelqRP3
-X-Proofpoint-ORIG-GUID: GITBJs78SYYz-Zab8GAvxJcLabiTrtcu
-X-Authority-Analysis: v=2.4 cv=combk04i c=1 sm=1 tr=0 ts=685bc341 cx=c_pps a=aDMHemPKRhS1OARIsFnwRA==:117 a=aDMHemPKRhS1OARIsFnwRA==:17 a=IkcTkHD0fZMA:10 a=6IFa9wvqVegA:10 a=CpnFgls9S9_tUT08MQ0A:9 a=3ZKOabzyN94A:10 a=QEXdDO2ut3YA:10
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.7,FMLib:17.12.80.40
- definitions=2025-06-25_02,2025-06-23_07,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 spamscore=0 adultscore=0 mlxlogscore=999 clxscore=1015
- impostorscore=0 suspectscore=0 mlxscore=0 phishscore=0 lowpriorityscore=0
- bulkscore=0 classifier=spam authscore=0 authtc=n/a authcc= route=outbound
- adjust=0 reason=mlx scancount=1 engine=8.19.0-2505280000
- definitions=main-2506250069
+In-Reply-To: <20250624203042.1102346-8-superm1@kernel.org>
 
-eOn Tue, Jun 24, 2025 at 11:45:09AM +0530, Dev Jain wrote:
-> 
-> On 23/06/25 11:02 pm, Donet Tom wrote:
-> > On Mon, Jun 23, 2025 at 10:23:02AM +0530, Dev Jain wrote:
-> > > On 21/06/25 11:25 pm, Donet Tom wrote:
-> > > > On Fri, Jun 20, 2025 at 08:15:25PM +0530, Dev Jain wrote:
-> > > > > On 19/06/25 1:53 pm, Donet Tom wrote:
-> > > > > > On Wed, Jun 18, 2025 at 08:13:54PM +0530, Dev Jain wrote:
-> > > > > > > On 18/06/25 8:05 pm, Lorenzo Stoakes wrote:
-> > > > > > > > On Wed, Jun 18, 2025 at 07:47:18PM +0530, Dev Jain wrote:
-> > > > > > > > > On 18/06/25 7:37 pm, Lorenzo Stoakes wrote:
-> > > > > > > > > > On Wed, Jun 18, 2025 at 07:28:16PM +0530, Dev Jain wrote:
-> > > > > > > > > > > On 18/06/25 5:27 pm, Lorenzo Stoakes wrote:
-> > > > > > > > > > > > On Wed, Jun 18, 2025 at 05:15:50PM +0530, Dev Jain wrote:
-> > > > > > > > > > > > Are you accounting for sys.max_map_count? If not, then you'll be hitting that
-> > > > > > > > > > > > first.
-> > > > > > > > > > > run_vmtests.sh will run the test in overcommit mode so that won't be an issue.
-> > > > > > > > > > Umm, what? You mean overcommit all mode, and that has no bearing on the max
-> > > > > > > > > > mapping count check.
-> > > > > > > > > > 
-> > > > > > > > > > In do_mmap():
-> > > > > > > > > > 
-> > > > > > > > > > 	/* Too many mappings? */
-> > > > > > > > > > 	if (mm->map_count > sysctl_max_map_count)
-> > > > > > > > > > 		return -ENOMEM;
-> > > > > > > > > > 
-> > > > > > > > > > 
-> > > > > > > > > > As well as numerous other checks in mm/vma.c.
-> > > > > > > > > Ah sorry, didn't look at the code properly just assumed that overcommit_always meant overriding
-> > > > > > > > > this.
-> > > > > > > > No problem! It's hard to be aware of everything in mm :)
-> > > > > > > > 
-> > > > > > > > > > I'm not sure why an overcommit toggle is even necessary when you could use
-> > > > > > > > > > MAP_NORESERVE or simply map PROT_NONE to avoid the OVERCOMMIT_GUESS limits?
-> > > > > > > > > > 
-> > > > > > > > > > I'm pretty confused as to what this test is really achieving honestly. This
-> > > > > > > > > > isn't a useful way of asserting mmap() behaviour as far as I can tell.
-> > > > > > > > > Well, seems like a useful way to me at least : ) Not sure if you are in the mood
-> > > > > > > > > to discuss that but if you'd like me to explain from start to end what the test
-> > > > > > > > > is doing, I can do that : )
-> > > > > > > > > 
-> > > > > > > > I just don't have time right now, I guess I'll have to come back to it
-> > > > > > > > later... it's not the end of the world for it to be iffy in my view as long as
-> > > > > > > > it passes, but it might just not be of great value.
-> > > > > > > > 
-> > > > > > > > Philosophically I'd rather we didn't assert internal implementation details like
-> > > > > > > > where we place mappings in userland memory. At no point do we promise to not
-> > > > > > > > leave larger gaps if we feel like it :)
-> > > > > > > You have a fair point. Anyhow a debate for another day.
-> > > > > > > 
-> > > > > > > > I'm guessing, reading more, the _real_ test here is some mathematical assertion
-> > > > > > > > about layout from HIGH_ADDR_SHIFT -> end of address space when using hints.
-> > > > > > > > 
-> > > > > > > > But again I'm not sure that achieves much and again also is asserting internal
-> > > > > > > > implementation details.
-> > > > > > > > 
-> > > > > > > > Correct behaviour of this kind of thing probably better belongs to tests in the
-> > > > > > > > userland VMA testing I'd say.
-> > > > > > > > 
-> > > > > > > > Sorry I don't mean to do down work you've done before, just giving an honest
-> > > > > > > > technical appraisal!
-> > > > > > > Nah, it will be rather hilarious to see it all go down the drain xD
-> > > > > > > 
-> > > > > > > > Anyway don't let this block work to fix the test if it's failing. We can revisit
-> > > > > > > > this later.
-> > > > > > > Sure. @Aboorva and Donet, I still believe that the correct approach is to elide
-> > > > > > > the gap check at the crossing boundary. What do you think?
-> > > > > > > 
-> > > > > > One problem I am seeing with this approach is that, since the hint address
-> > > > > > is generated randomly, the VMAs are also being created at randomly based on
-> > > > > > the hint address.So, for the VMAs created at high addresses, we cannot guarantee
-> > > > > > that the gaps between them will be aligned to MAP_CHUNK_SIZE.
-> > > > > > 
-> > > > > > High address VMAs
-> > > > > > -----------------
-> > > > > > 1000000000000-1000040000000 r--p 00000000 00:00 0
-> > > > > > 2000000000000-2000040000000 r--p 00000000 00:00 0
-> > > > > > 4000000000000-4000040000000 r--p 00000000 00:00 0
-> > > > > > 8000000000000-8000040000000 r--p 00000000 00:00 0
-> > > > > > e80009d260000-fffff9d260000 r--p 00000000 00:00 0
-> > > > > > 
-> > > > > > I have a different approach to solve this issue.
-> > > > > It is really weird that such a large amount of VA space
-> > > > > is left between the two VMAs yet mmap is failing.
-> > > > > 
-> > > > > 
-> > > > > 
-> > > > > Can you please do the following:
-> > > > > set /proc/sys/vm/max_map_count to the highest value possible.
-> > > > > If running without run_vmtests.sh, set /proc/sys/vm/overcommit_memory to 1.
-> > > > > In validate_complete_va_space:
-> > > > > 
-> > > > > if (start_addr >= HIGH_ADDR_MARK && found == false) {
-> > > > > 	found = true;
-> > > > > 	continue;
-> > > > > }
-> > > > Thanks Dev for the suggestion. I set max_map_count and set overcommit
-> > > > memory to 1, added this code change as well, and then tried. Still, the
-> > > > test is failing
-> > > > 
-> > > > > where found is initialized to false. This will skip the check
-> > > > > for the boundary.
-> > > > > 
-> > > > > After this can you tell whether the test is still failing.
-> > > > > 
-> > > > > Also can you give me the complete output of proc/pid/maps
-> > > > > after putting a sleep at the end of the test.
-> > > > > 
-> > > > on powerpc support DEFAULT_MAP_WINDOW is 128TB and with
-> > > > total address space size is 4PB With hint it can map upto
-> > > > 4PB. Since the hint addres is random in this test random hing VMAs
-> > > > are getting created. IIUC this is expected only.
-> > > > 
-> > > > 
-> > > > 10000000-10010000 r-xp 00000000 fd:05 134226638                          /home/donet/linux/tools/testing/selftests/mm/virtual_address_range
-> > > > 10010000-10020000 r--p 00000000 fd:05 134226638                          /home/donet/linux/tools/testing/selftests/mm/virtual_address_range
-> > > > 10020000-10030000 rw-p 00010000 fd:05 134226638                          /home/donet/linux/tools/testing/selftests/mm/virtual_address_range
-> > > > 30000000-10030000000 r--p 00000000 00:00 0                               [anon:virtual_address_range]
-> > > > 10030770000-100307a0000 rw-p 00000000 00:00 0                            [heap]
-> > > > 1004f000000-7fff8f000000 r--p 00000000 00:00 0                           [anon:virtual_address_range]
-> > > > 7fff8faf0000-7fff8fe00000 rw-p 00000000 00:00 0
-> > > > 7fff8fe00000-7fff90030000 r-xp 00000000 fd:00 792355                     /usr/lib64/libc.so.6
-> > > > 7fff90030000-7fff90040000 r--p 00230000 fd:00 792355                     /usr/lib64/libc.so.6
-> > > > 7fff90040000-7fff90050000 rw-p 00240000 fd:00 792355                     /usr/lib64/libc.so.6
-> > > > 7fff90050000-7fff90130000 r-xp 00000000 fd:00 792358                     /usr/lib64/libm.so.6
-> > > > 7fff90130000-7fff90140000 r--p 000d0000 fd:00 792358                     /usr/lib64/libm.so.6
-> > > > 7fff90140000-7fff90150000 rw-p 000e0000 fd:00 792358                     /usr/lib64/libm.so.6
-> > > > 7fff90160000-7fff901a0000 r--p 00000000 00:00 0                          [vvar]
-> > > > 7fff901a0000-7fff901b0000 r-xp 00000000 00:00 0                          [vdso]
-> > > > 7fff901b0000-7fff90200000 r-xp 00000000 fd:00 792351                     /usr/lib64/ld64.so.2
-> > > > 7fff90200000-7fff90210000 r--p 00040000 fd:00 792351                     /usr/lib64/ld64.so.2
-> > > > 7fff90210000-7fff90220000 rw-p 00050000 fd:00 792351                     /usr/lib64/ld64.so.2
-> > > > 7fffc9770000-7fffc9880000 rw-p 00000000 00:00 0                          [stack]
-> > > > 1000000000000-1000040000000 r--p 00000000 00:00 0                        [anon:virtual_address_range]
-> > > > 2000000000000-2000040000000 r--p 00000000 00:00 0                        [anon:virtual_address_range]
-> > > > 4000000000000-4000040000000 r--p 00000000 00:00 0                        [anon:virtual_address_range]
-> > > > 8000000000000-8000040000000 r--p 00000000 00:00 0                        [anon:virtual_address_range]
-> > > > eb95410220000-fffff90220000 r--p 00000000 00:00 0                        [anon:virtual_address_range]
-> > > > 
-> > > > 
-> > > > 
-> > > > 
-> > > > If I give the hint address serially from 128TB then the address
-> > > > space is contigous and gap is also MAP_SIZE, the test is passing.
-> > > > 
-> > > > 10000000-10010000 r-xp 00000000 fd:05 134226638                          /home/donet/linux/tools/testing/selftests/mm/virtual_address_range
-> > > > 10010000-10020000 r--p 00000000 fd:05 134226638                          /home/donet/linux/tools/testing/selftests/mm/virtual_address_range
-> > > > 10020000-10030000 rw-p 00010000 fd:05 134226638                          /home/donet/linux/tools/testing/selftests/mm/virtual_address_range
-> > > > 33000000-10033000000 r--p 00000000 00:00 0                               [anon:virtual_address_range]
-> > > > 10033380000-100333b0000 rw-p 00000000 00:00 0                            [heap]
-> > > > 1006f0f0000-10071000000 rw-p 00000000 00:00 0
-> > > > 10071000000-7fffb1000000 r--p 00000000 00:00 0                           [anon:virtual_address_range]
-> > > > 7fffb15d0000-7fffb1800000 r-xp 00000000 fd:00 792355                     /usr/lib64/libc.so.6
-> > > > 7fffb1800000-7fffb1810000 r--p 00230000 fd:00 792355                     /usr/lib64/libc.so.6
-> > > > 7fffb1810000-7fffb1820000 rw-p 00240000 fd:00 792355                     /usr/lib64/libc.so.6
-> > > > 7fffb1820000-7fffb1900000 r-xp 00000000 fd:00 792358                     /usr/lib64/libm.so.6
-> > > > 7fffb1900000-7fffb1910000 r--p 000d0000 fd:00 792358                     /usr/lib64/libm.so.6
-> > > > 7fffb1910000-7fffb1920000 rw-p 000e0000 fd:00 792358                     /usr/lib64/libm.so.6
-> > > > 7fffb1930000-7fffb1970000 r--p 00000000 00:00 0                          [vvar]
-> > > > 7fffb1970000-7fffb1980000 r-xp 00000000 00:00 0                          [vdso]
-> > > > 7fffb1980000-7fffb19d0000 r-xp 00000000 fd:00 792351                     /usr/lib64/ld64.so.2
-> > > > 7fffb19d0000-7fffb19e0000 r--p 00040000 fd:00 792351                     /usr/lib64/ld64.so.2
-> > > > 7fffb19e0000-7fffb19f0000 rw-p 00050000 fd:00 792351                     /usr/lib64/ld64.so.2
-> > > > 7fffc5470000-7fffc5580000 rw-p 00000000 00:00 0                          [stack]
-> > > > 800000000000-2aab000000000 r--p 00000000 00:00 0                         [anon:virtual_address_range]
-> > > > 
-> > > > 
-> > > Thank you for this output. I can't wrap my head around why this behaviour changes
-> > > when you generate the hint sequentially. The mmap() syscall is supposed to do the
-> > > following (irrespective of high VA space or not) - if the allocation at the hint
-> > Yes, it is working as expected. On PowerPC, the DEFAULT_MAP_WINDOW is
-> > 128TB, and the system can map up to 4PB.
-> > 
-> > In the test, the first mmap call maps memory up to 128TB without any
-> > hint, so the VMAs are created below the 128TB boundary.
-> > 
-> > In the second mmap call, we provide a hint starting from 256TB, and
-> > the hint address is generated randomly above 256TB. The mappings are
-> > correctly created at these hint addresses. Since the hint addresses
-> > are random, the resulting VMAs are also created at random locations.
-> > 
-> > So, what I tried is: mapping from 0 to 128TB without any hint, and
-> > then for the second mmap, instead of starting the hint from 256TB, I
-> > started from 128TB. Instead of using random hint addresses, I used
-> > sequential hint addresses from 128TB up to 512TB. With this change,
-> > the VMAs are created in order, and the test passes.
-> > 
-> > 800000000000-2aab000000000 r--p 00000000 00:00 0    128TB to 512TB VMA
-> > 
-> > I think we will see same behaviour on x86 with X86_FEATURE_LA57.
-> > 
-> > I will send the updated patch in V2.
-> 
-> Since you say it fails on both radix and hash, it means that the generic
-> code path is failing. I see that on my system, when I run the test with
-> LPA2 config, write() fails with errno set to -ENOMEM. Can you apply
-> the following diff and check whether the test fails still. Doing this
-> fixed it for arm64.
-> 
-> diff --git a/tools/testing/selftests/mm/virtual_address_range.c b/tools/testing/selftests/mm/virtual_address_range.c
-> 
-> index b380e102b22f..3032902d01f2 100644
-> 
-> --- a/tools/testing/selftests/mm/virtual_address_range.c
-> 
-> +++ b/tools/testing/selftests/mm/virtual_address_range.c
-> 
-> @@ -173,10 +173,6 @@ static int validate_complete_va_space(void)
-> 
->                  */
-> 
->                 hop = 0;
-> 
->                 while (start_addr + hop < end_addr) {
-> 
-> -                       if (write(fd, (void *)(start_addr + hop), 1) != 1)
-> 
-> -                               return 1;
-> 
-> -                       lseek(fd, 0, SEEK_SET);
-> 
-> -
-> 
->                         if (is_marked_vma(vma_name))
-> 
->                                 munmap((char *)(start_addr + hop), MAP_CHUNK_SIZE);
->
+Hi Mario,
 
-Even with this change, the test is still failing. In this case,
-we are allocating physical memory and writing into it, but our
-issue seems to be with the gap between VMAs, so I believe this
-might not be directly related.
+kernel test robot noticed the following build errors:
 
-I will send the next revision where the test passes and no
-issues are observed
+[auto build test ERROR on pci/next]
+[also build test ERROR on pci/for-linus tiwai-sound/for-next tiwai-sound/for-linus tip/x86/core linus/master v6.16-rc3 next-20250625]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
 
-Just curious — with LPA2, is the second mmap() call successful?
-And are the VMAs being created at the hint address as expected?
- 
-> > 
-> > > addr succeeds, then all is well, otherwise, do a top-down search for a large
-> > > enough gap. I am not aware of the nuances in powerpc but I really am suspecting
-> > > a bug in powerpc mmap code. Can you try to do some tracing - which function
-> > > eventually fails to find the empty gap?
-> > > 
-> > > Through my limited code tracing - we should end up in slice_find_area_topdown,
-> > > then we ask the generic code to find the gap using vm_unmapped_area. So I
-> > > suspect something is happening between this, probably slice_scan_available().
-> > > 
-> > > > > >    From 0 to 128TB, we map memory directly without using any hint. For the range above
-> > > > > > 256TB up to 512TB, we perform the mapping using hint addresses. In the current test,
-> > > > > > we use random hint addresses, but I have modified it to generate hint addresses linearly
-> > > > > > starting from 128TB.
-> > > > > > 
-> > > > > > With this change:
-> > > > > > 
-> > > > > > The 0–128TB range is mapped without hints and verified accordingly.
-> > > > > > 
-> > > > > > The 128TB–512TB range is mapped using linear hint addresses and then verified.
-> > > > > > 
-> > > > > > Below are the VMAs obtained with this approach:
-> > > > > > 
-> > > > > > 10000000-10010000 r-xp 00000000 fd:05 135019531
-> > > > > > 10010000-10020000 r--p 00000000 fd:05 135019531
-> > > > > > 10020000-10030000 rw-p 00010000 fd:05 135019531
-> > > > > > 20000000-10020000000 r--p 00000000 00:00 0
-> > > > > > 10020800000-10020830000 rw-p 00000000 00:00 0
-> > > > > > 1004bcf0000-1004c000000 rw-p 00000000 00:00 0
-> > > > > > 1004c000000-7fff8c000000 r--p 00000000 00:00 0
-> > > > > > 7fff8c130000-7fff8c360000 r-xp 00000000 fd:00 792355
-> > > > > > 7fff8c360000-7fff8c370000 r--p 00230000 fd:00 792355
-> > > > > > 7fff8c370000-7fff8c380000 rw-p 00240000 fd:00 792355
-> > > > > > 7fff8c380000-7fff8c460000 r-xp 00000000 fd:00 792358
-> > > > > > 7fff8c460000-7fff8c470000 r--p 000d0000 fd:00 792358
-> > > > > > 7fff8c470000-7fff8c480000 rw-p 000e0000 fd:00 792358
-> > > > > > 7fff8c490000-7fff8c4d0000 r--p 00000000 00:00 0
-> > > > > > 7fff8c4d0000-7fff8c4e0000 r-xp 00000000 00:00 0
-> > > > > > 7fff8c4e0000-7fff8c530000 r-xp 00000000 fd:00 792351
-> > > > > > 7fff8c530000-7fff8c540000 r--p 00040000 fd:00 792351
-> > > > > > 7fff8c540000-7fff8c550000 rw-p 00050000 fd:00 792351
-> > > > > > 7fff8d000000-7fffcd000000 r--p 00000000 00:00 0
-> > > > > > 7fffe9c80000-7fffe9d90000 rw-p 00000000 00:00 0
-> > > > > > 800000000000-2000000000000 r--p 00000000 00:00 0    -> High Address (128TB to 512TB)
-> > > > > > 
-> > > > > > diff --git a/tools/testing/selftests/mm/virtual_address_range.c b/tools/testing/selftests/mm/virtual_address_range.c
-> > > > > > index 4c4c35eac15e..0be008cba4b0 100644
-> > > > > > --- a/tools/testing/selftests/mm/virtual_address_range.c
-> > > > > > +++ b/tools/testing/selftests/mm/virtual_address_range.c
-> > > > > > @@ -56,21 +56,21 @@
-> > > > > >     #ifdef __aarch64__
-> > > > > >     #define HIGH_ADDR_MARK  ADDR_MARK_256TB
-> > > > > > -#define HIGH_ADDR_SHIFT 49
-> > > > > > +#define HIGH_ADDR_SHIFT 48
-> > > > > >     #define NR_CHUNKS_LOW   NR_CHUNKS_256TB
-> > > > > >     #define NR_CHUNKS_HIGH  NR_CHUNKS_3840TB
-> > > > > >     #else
-> > > > > >     #define HIGH_ADDR_MARK  ADDR_MARK_128TB
-> > > > > > -#define HIGH_ADDR_SHIFT 48
-> > > > > > +#define HIGH_ADDR_SHIFT 47
-> > > > > >     #define NR_CHUNKS_LOW   NR_CHUNKS_128TB
-> > > > > >     #define NR_CHUNKS_HIGH  NR_CHUNKS_384TB
-> > > > > >     #endif
-> > > > > > -static char *hint_addr(void)
-> > > > > > +static char *hint_addr(int hint)
-> > > > > >     {
-> > > > > > -       int bits = HIGH_ADDR_SHIFT + rand() % (63 - HIGH_ADDR_SHIFT);
-> > > > > > +       unsigned long addr = ((1UL << HIGH_ADDR_SHIFT) + (hint * MAP_CHUNK_SIZE));
-> > > > > > -       return (char *) (1UL << bits);
-> > > > > > +       return (char *) (addr);
-> > > > > >     }
-> > > > > >     static void validate_addr(char *ptr, int high_addr)
-> > > > > > @@ -217,7 +217,7 @@ int main(int argc, char *argv[])
-> > > > > >            }
-> > > > > >            for (i = 0; i < NR_CHUNKS_HIGH; i++) {
-> > > > > > -               hint = hint_addr();
-> > > > > > +               hint = hint_addr(i);
-> > > > > >                    hptr[i] = mmap(hint, MAP_CHUNK_SIZE, PROT_READ,
-> > > > > >                                   MAP_PRIVATE | MAP_ANONYMOUS, -1, 0);
-> > > > > > 
-> > > > > > 
-> > > > > > 
-> > > > > > Can we fix it this way?
+url:    https://github.com/intel-lab-lkp/linux/commits/Mario-Limonciello/PCI-Add-helper-for-checking-if-a-PCI-device-is-a-display-controller/20250625-043200
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/pci/pci.git next
+patch link:    https://lore.kernel.org/r/20250624203042.1102346-8-superm1%40kernel.org
+patch subject: [PATCH v5 7/9] PCI/VGA: Replace vga_is_firmware_default() with a screen info check
+config: x86_64-defconfig (https://download.01.org/0day-ci/archive/20250625/202506251749.fPKnHMH5-lkp@intel.com/config)
+compiler: gcc-11 (Debian 11.3.0-12) 11.3.0
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250625/202506251749.fPKnHMH5-lkp@intel.com/reproduce)
+
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202506251749.fPKnHMH5-lkp@intel.com/
+
+All errors (new ones prefixed by >>):
+
+   ld: vmlinux.o: in function `vga_arbiter_add_pci_device':
+>> vgaarb.c:(.text+0x5f8f90): undefined reference to `screen_info_pci_dev'
+>> ld: vgaarb.c:(.text+0x5f91f8): undefined reference to `screen_info_pci_dev'
+
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
