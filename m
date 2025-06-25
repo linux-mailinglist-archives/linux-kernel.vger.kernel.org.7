@@ -1,176 +1,124 @@
-Return-Path: <linux-kernel+bounces-702021-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-702016-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2A0E0AE7CE5
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Jun 2025 11:31:47 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 190E3AE7CB7
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Jun 2025 11:28:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A0BC87B7323
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Jun 2025 09:27:46 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C88793BA02C
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Jun 2025 09:27:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DBEDF2ED145;
-	Wed, 25 Jun 2025 09:19:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B47902EA163;
+	Wed, 25 Jun 2025 09:19:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=fairphone.com header.i=@fairphone.com header.b="IbA3LEyA"
-Received: from mail-ed1-f46.google.com (mail-ed1-f46.google.com [209.85.208.46])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="yVSS5ONl"
+Received: from mail-wm1-f48.google.com (mail-wm1-f48.google.com [209.85.128.48])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F1A8A2EACE9
-	for <linux-kernel@vger.kernel.org>; Wed, 25 Jun 2025 09:19:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 41C242D9EC4
+	for <linux-kernel@vger.kernel.org>; Wed, 25 Jun 2025 09:19:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750843152; cv=none; b=E0kHIIt3UU+ulr8mRQnCzQRbpQNRdZwu18MjupHnbuQwkFnzZQFLvrGJQjEu6f6KSNypoAkrsEB7nT6Wf8QAmRqTVrUpvBvymmzQbnLzI+5z99RVxIzoY1yB1AC70K/r8HWWXSmsCYhpAwF4kTZW/aqkkft8PBUyXe9MI5qnk4E=
+	t=1750843148; cv=none; b=SdbT+FqW63BqeiXoPt8TBFP4AGxfGzlas2/8//kHeS3lIWuTwTeC6+AdLE/TJ1OQbEFeweah6VdfpL8x96M3AUU74h+cq2BdsZYxUUkKdho5GhCN3ZD4s/s5h9SBTSNXvPbh8cJIaAIJ3gXqaMAvbOLhGl3jbsdsXVVzNcoLmts=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750843152; c=relaxed/simple;
-	bh=kgpatAn3UyZhRRylnSXWUsrYKcp8B/g//yfZm7DYI1o=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=SofDezPW/1INMJ/rP2Cb7xDsXr4bE1s2hsiXBUAlZuqG6GCkFJ/6H8Zz+gOpVYwY85/CxoqqE7RzRURN4QxWdaQGOa0ECIn/MBw3utCma5AKD6/yMFqpMmhDLxjvBTCci/UR7GWRkXqrQgClVrOx6F50dSoaCUmknC6b03u4pZg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=fairphone.com; spf=pass smtp.mailfrom=fairphone.com; dkim=pass (2048-bit key) header.d=fairphone.com header.i=@fairphone.com header.b=IbA3LEyA; arc=none smtp.client-ip=209.85.208.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=fairphone.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fairphone.com
-Received: by mail-ed1-f46.google.com with SMTP id 4fb4d7f45d1cf-60780d74c85so2148863a12.2
-        for <linux-kernel@vger.kernel.org>; Wed, 25 Jun 2025 02:19:09 -0700 (PDT)
+	s=arc-20240116; t=1750843148; c=relaxed/simple;
+	bh=20e3PphxG30T3V+Zob/qx0IQxDG73Gud5foeaYVbVvE=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=b7BfgTOXYiic+g+wfM2c2gqKUxv5swpQoFu5DMfAnqQho131skGaPrZBMNmc9cKk1aEkxDoH5Amtv7eiVsnoajrmP+04FPn0oQZ+ohYBj+8IqPJm2XcRkHXKYdmk+hUjuYl9j8TRlaP8MnlqPJY0bIcvfQHh3U+BoIqGlz9GaBE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=yVSS5ONl; arc=none smtp.client-ip=209.85.128.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wm1-f48.google.com with SMTP id 5b1f17b1804b1-4536b8c183cso4069775e9.0
+        for <linux-kernel@vger.kernel.org>; Wed, 25 Jun 2025 02:19:05 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=fairphone.com; s=fair; t=1750843148; x=1751447948; darn=vger.kernel.org;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=wuaucapIjbc/Nvst+f4WACJyvX0IAgOq6Rw0lW1hMjM=;
-        b=IbA3LEyAEnt6r4nQOn+ZddzhADWqXUS8d6EezQSZgVkquKGZ8j0FWOOSCwJhkzqeED
-         DwxRgKWu+8IRwfKZDVXKBax4BC2TVYbRbY9cnTTEXl+RldDwQxDohxoSWjfKRW1V+JSm
-         fdm1q5/5kctSHvRgqykJdDaca1HSOVBTPL8ffxeDUyYEPTI4n0BfsjNhsw1V7P8OTbXJ
-         izj3rg8QhHHKRr47RrC8a2UQCfvv+lNJ37CTtMzTDTXEiEa3vNCO1g44F1J5W0pAmuKp
-         RaZw2WtUvURKRU8GzbDamEuXekWcQuUL4uiJNmHUkPCvRzWXx87mfldAIfE8zf2RU/0r
-         0ogg==
+        d=linaro.org; s=google; t=1750843143; x=1751447943; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=ojAQtrqRfWE5uG2/EcUt6MJrN5Ulz0bDOzZRTcZgA5A=;
+        b=yVSS5ONlgQZLL68PH2r2KmK7ETejyMcCm5wiF5j70L9Vqdb3h9BBcWEk2B9ZP7ufC0
+         V53h6hyFMq6bEmwmovlKSZqLyLSD1O+ij+0VMJk6XrmfPUVTrusL/TaZT9y3miQ8C75k
+         1n0cIRrqKg2F828yMfKfD+giWFjaQNY+5cUX36nZFNp0uklf6TyQTbYvKs5BXyOYyHvE
+         6Lfh9KF/Ue6pfb+lDm+hirDnoK+x/tbgXf/Kh0e42jYU4VmvVXiauFRSy4E/KFXTmcdj
+         7eXd4Gi6OuLPWK0zWIun3Snav05yV2b4V2nK+94bX7cg1HUUYHzlBbpMQ7/Jod6y8KO2
+         zYkA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1750843148; x=1751447948;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=wuaucapIjbc/Nvst+f4WACJyvX0IAgOq6Rw0lW1hMjM=;
-        b=Z0hkHXJiactjs5XuhABJ8333tLyu2XQeLWyLxQGuu99yZFoDzkGZypDgzZfywe8QRV
-         PBlg3nhTryQXGxFdSf0D9cFoaSF1XBcobQhyTdfwHO95wlPYXTHsxbNdG9ABSmoOUb7T
-         xdUTedFdAuPCnTNkD9sU3oYkxxdIQvQqTn6zMsL5EvKKXSvhkijb9KcIpePMAda1FJMp
-         sR7XUUJfF171VFtbDN/CfMK6Kp+ZpMOpBDr0BLHXWgq4xpEzk04QHQRn5Kv0/us4gGKc
-         avTjva3REXDZNW8Z71Rjlk60f3PP0VgaOWY5qKpfMalRXojyKC2XGMC42PX6HiH8uSYl
-         xW2g==
-X-Forwarded-Encrypted: i=1; AJvYcCWdjJ2FwkvDeS6T74WXgMUGpQNlybWzm3/yX6H+Ec7t+Q/30w2CdIUD6+b83gt8JdqAtK7Jfa6un/Qoa24=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwBqxK2QCDVi01rlqUkQO0dCSJYkZCXzrrW2fL6OMHhbMVjByny
-	U9SqWd2LVRmui0pQVHalPRw1cGvGlp0mxicd0iEhvWTSJDjCF0hGXdsUKq9bgiAh6KE=
-X-Gm-Gg: ASbGncu2Hv6OQcEGBdXGhV5eUWVvsq8O78yZS+1/slTgOESP92uiwHeBCNpxVJK3jl/
-	aGdoUB4tt97yNUg3sy/YTC7kqqOAyZcV09x4CZLk5hXgG/lkGmcQucmO1kYS+JGTncog9M1nMP6
-	ozYb505dVd9ZOxU/0atc4qC2Caenko44JCyiG+brgQc/KPPHe8Q/7WOAvBfqge5lC7BbRaDeOIm
-	Valb/t9mKSsUA9dR8/fXaZIpCyAALvLE/pR/6PUgu+4/xDBAebdZGFR9jRE5/k3nJdqCe8/h16w
-	qdsmBAMAeHsecmhjnw3qsMY67fdIzSgrGfugV4JS5Dhyxb/qxvyfAuynyzXthc5r+Ave+8DZ+fq
-	uz582CmlEVh4UtbUDeEsVIot0hEtGRPz7
-X-Google-Smtp-Source: AGHT+IGf29aQsvkm8Kz0oGqiHGQjafT0bQ1zdGBqpvWbJxB7FTYbZYbTebbfduxcvKuny9uTfKYpAA==
-X-Received: by 2002:a05:6402:1d55:b0:60c:44d6:2817 with SMTP id 4fb4d7f45d1cf-60c4de9bbabmr1551640a12.20.1750843148144;
-        Wed, 25 Jun 2025 02:19:08 -0700 (PDT)
-Received: from otso.local (144-178-202-138.static.ef-service.nl. [144.178.202.138])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-60c2f196f84sm2194802a12.14.2025.06.25.02.19.07
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 25 Jun 2025 02:19:07 -0700 (PDT)
-From: Luca Weiss <luca.weiss@fairphone.com>
-Date: Wed, 25 Jun 2025 11:18:59 +0200
-Subject: [PATCH 4/4] regulator: qcom-rpmh: add support for pm7550
- regulators
+        d=1e100.net; s=20230601; t=1750843143; x=1751447943;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=ojAQtrqRfWE5uG2/EcUt6MJrN5Ulz0bDOzZRTcZgA5A=;
+        b=aHZ9hjPV+RcjlDTFFdyWuEVuraEaGiUVHpQB5QKNHGHudYbZU91LGwMk5Mof8Mvgsq
+         996xwyq+l0pMMxPD4tmQFUrWLlOGafQRqVVQTOIZX+DpDLdlhWtINQxmMi1hsM+jmZEG
+         1GjOKvYzRXUPlQeWEUsPT4uquQYFYDIA5BMJi2GFaY40b+bDIrGYE+mqvKM8li1fc2TV
+         kM7O88QtDLV07fAI4suh0qLVvz2HomhZFvTtva4lo2LaUW6l7Lj/cet0Mgj+v4I/0w02
+         A7fZQvJNAy9mcwC+3TihDKDSzQFYTF8RX61Z/X+BE92+voBJQ611VTpNcKeM+i/nXpp+
+         8Kdg==
+X-Forwarded-Encrypted: i=1; AJvYcCXnttiAnPafTXnKyLw9Am5X3O2anlEdg+BvEq/FgrpnyyHMXVIKGMOG4MzIIXlQwEtDHtlbNp/rdwng3Oo=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxbMM9wzkPZq82IQfORD/9P3HuOgx58GsnIVEBpQ1l77Gsw72AE
+	DUQTD09hBZJ62HsHovtJQMCVtxnzD/bvI9yjS1PHHRTMxgt5BDpRCt8P+/ftn5U02cI=
+X-Gm-Gg: ASbGnct/gekl7g1sw/EAnwXXTieXjwIuhWmnTeKK4CLT8L9xeItA9bMcJSPbni/CzCD
+	3qJEDsjP/RxFYtc5/CUwZwka2q9rmmlXQfvdtrUZ8rLMvPxfroJQcKQm39pv6CQMK16C6eJ31rf
+	Ha3fDeIkY0YraCybe3N1co2An7xpSQSqqypm6skMPIN7ywFSoFfFfX1ljNqfJYh4FSajvZAEV/m
+	4heTkAXIaZyqN8gO2XASFjWLZY2zRWAM96WAhFUTWzcUxaMd1o7xucsdfz0jmdgtEOO+Vs/yb99
+	du/oXaHTjqDhlDQRfDetvlp7mbtqnXEK89jE5+0fF5h/4zD+S2QtPhj8q2/KPc00QQA=
+X-Google-Smtp-Source: AGHT+IHH7ZCWqc0u7ZgOrAL3WMonYTs/JRdAzK3sDu8U1/EewCY+ihQcjBc/zfznNgiZP8hFENkJ8Q==
+X-Received: by 2002:a05:600c:450f:b0:43d:174:2668 with SMTP id 5b1f17b1804b1-4537b631db6mr57163895e9.0.1750843143517;
+        Wed, 25 Jun 2025 02:19:03 -0700 (PDT)
+Received: from [192.168.1.3] ([37.18.136.128])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3a6e80693c6sm3957051f8f.41.2025.06.25.02.19.02
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 25 Jun 2025 02:19:03 -0700 (PDT)
+Message-ID: <0c6c78da-575a-4d29-a79a-3903aa801b42@linaro.org>
+Date: Wed, 25 Jun 2025 10:19:02 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 3/6] spi: spi-fsl-dspi: Stub out DMA functions
+To: Arnd Bergmann <arnd@arndb.de>, Frank Li <Frank.li@nxp.com>
+Cc: Vladimir Oltean <olteanv@gmail.com>, Mark Brown <broonie@kernel.org>,
+ Vladimir Oltean <vladimir.oltean@nxp.com>,
+ Larisa Grigore <larisa.grigore@nxp.com>, Christoph Hellwig <hch@lst.de>,
+ linux-spi@vger.kernel.org, imx@lists.linux.dev, linux-kernel@vger.kernel.org
+References: <20250624-james-nxp-spi-dma-v3-0-e7d574f5f62c@linaro.org>
+ <20250624-james-nxp-spi-dma-v3-3-e7d574f5f62c@linaro.org>
+ <aFrSgJ5xZfccEX9x@lizhi-Precision-Tower-5810>
+ <290fc244-e88f-47a3-8dd3-0ec27eb5c60b@app.fastmail.com>
+Content-Language: en-US
+From: James Clark <james.clark@linaro.org>
+In-Reply-To: <290fc244-e88f-47a3-8dd3-0ec27eb5c60b@app.fastmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
-Message-Id: <20250625-pm7550-pmr735b-rpmh-regs-v1-4-cab8ef2e5c92@fairphone.com>
-References: <20250625-pm7550-pmr735b-rpmh-regs-v1-0-cab8ef2e5c92@fairphone.com>
-In-Reply-To: <20250625-pm7550-pmr735b-rpmh-regs-v1-0-cab8ef2e5c92@fairphone.com>
-To: Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, 
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, Bjorn Andersson <andersson@kernel.org>
-Cc: ~postmarketos/upstreaming@lists.sr.ht, phone-devel@vger.kernel.org, 
- Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>, 
- linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org, 
- devicetree@vger.kernel.org, Luca Weiss <luca.weiss@fairphone.com>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1750843144; l=3664;
- i=luca.weiss@fairphone.com; s=20250611; h=from:subject:message-id;
- bh=kgpatAn3UyZhRRylnSXWUsrYKcp8B/g//yfZm7DYI1o=;
- b=DjI1ewEOMhLXPrgnIicTOYSgqxg7FcxqxdagsIqlXVqmIr74DNe0c+qZVMPBGXDwyxSYsOq6k
- VIOE8NVnEXhDlVP0Lqu3VovgShcGjrfM2lQ+PFwD+vo3jW88HB0I4uG
-X-Developer-Key: i=luca.weiss@fairphone.com; a=ed25519;
- pk=O1aw+AAust5lEmgrNJ1Bs7PTY0fEsJm+mdkjExA69q8=
 
-Add RPMH regulators exposed by Qualcomm Technologies, Inc. PM7550 PMIC.
-It has 6 FTS525 (FT-SMPS) and 23 LDOs with 3 different types.
-L1-L11 are LDO515 LV NMOS, L12-L13 are LDO515 MV PMOS, L14-L23 are
-LDO512 MV PMOS.
 
-Signed-off-by: Luca Weiss <luca.weiss@fairphone.com>
----
- drivers/regulator/qcom-rpmh-regulator.c | 38 +++++++++++++++++++++++++++++++++
- 1 file changed, 38 insertions(+)
 
-diff --git a/drivers/regulator/qcom-rpmh-regulator.c b/drivers/regulator/qcom-rpmh-regulator.c
-index 7b1743d51fd145a44f98dd8e605b4ca410046654..ec25b324f80669a9291e41e613f09424361a28ca 100644
---- a/drivers/regulator/qcom-rpmh-regulator.c
-+++ b/drivers/regulator/qcom-rpmh-regulator.c
-@@ -1462,6 +1462,40 @@ static const struct rpmh_vreg_init_data pm7325_vreg_data[] = {
- 	{}
- };
- 
-+static const struct rpmh_vreg_init_data pm7550_vreg_data[] = {
-+	RPMH_VREG("smps1", "smp%s1",  &pmic5_ftsmps525,    "vdd-s1"),
-+	RPMH_VREG("smps2", "smp%s2",  &pmic5_ftsmps525,    "vdd-s2"),
-+	RPMH_VREG("smps3", "smp%s3",  &pmic5_ftsmps525,    "vdd-s3"),
-+	RPMH_VREG("smps4", "smp%s4",  &pmic5_ftsmps525,    "vdd-s4"),
-+	RPMH_VREG("smps5", "smp%s5",  &pmic5_ftsmps525,    "vdd-s5"),
-+	RPMH_VREG("smps6", "smp%s6",  &pmic5_ftsmps525,    "vdd-s6"),
-+	RPMH_VREG("ldo1",  "ldo%s1",  &pmic5_nldo515,      "vdd-l1"),
-+	RPMH_VREG("ldo2",  "ldo%s2",  &pmic5_nldo515,      "vdd-l2-l3"),
-+	RPMH_VREG("ldo3",  "ldo%s3",  &pmic5_nldo515,      "vdd-l2-l3"),
-+	RPMH_VREG("ldo4",  "ldo%s4",  &pmic5_nldo515,      "vdd-l4-l5"),
-+	RPMH_VREG("ldo5",  "ldo%s5",  &pmic5_nldo515,      "vdd-l4-l5"),
-+	RPMH_VREG("ldo6",  "ldo%s6",  &pmic5_nldo515,      "vdd-l6"),
-+	RPMH_VREG("ldo7",  "ldo%s7",  &pmic5_nldo515,      "vdd-l7"),
-+	RPMH_VREG("ldo8",  "ldo%s8",  &pmic5_nldo515,      "vdd-l8"),
-+	RPMH_VREG("ldo9",  "ldo%s9",  &pmic5_nldo515,      "vdd-l9-l10"),
-+	RPMH_VREG("ldo10", "ldo%s10", &pmic5_nldo515,      "vdd-l9-l10"),
-+	RPMH_VREG("ldo11", "ldo%s11", &pmic5_nldo515,      "vdd-l11"),
-+	RPMH_VREG("ldo12", "ldo%s12", &pmic5_pldo,         "vdd-l12-l14"),
-+	RPMH_VREG("ldo13", "ldo%s13", &pmic5_pldo,         "vdd-l13-l16"),
-+	RPMH_VREG("ldo14", "ldo%s14", &pmic5_pldo,         "vdd-l12-l14"),
-+	RPMH_VREG("ldo15", "ldo%s15", &pmic5_pldo,         "vdd-l15-l17-l18-l19-l20-l21-l22-l23"),
-+	RPMH_VREG("ldo16", "ldo%s16", &pmic5_pldo,         "vdd-l13-l16"),
-+	RPMH_VREG("ldo17", "ldo%s17", &pmic5_pldo,         "vdd-l15-l17-l18-l19-l20-l21-l22-l23"),
-+	RPMH_VREG("ldo18", "ldo%s18", &pmic5_pldo,         "vdd-l15-l17-l18-l19-l20-l21-l22-l23"),
-+	RPMH_VREG("ldo19", "ldo%s19", &pmic5_pldo,         "vdd-l15-l17-l18-l19-l20-l21-l22-l23"),
-+	RPMH_VREG("ldo20", "ldo%s20", &pmic5_pldo,         "vdd-l15-l17-l18-l19-l20-l21-l22-l23"),
-+	RPMH_VREG("ldo21", "ldo%s21", &pmic5_pldo,         "vdd-l15-l17-l18-l19-l20-l21-l22-l23"),
-+	RPMH_VREG("ldo22", "ldo%s22", &pmic5_pldo,         "vdd-l15-l17-l18-l19-l20-l21-l22-l23"),
-+	RPMH_VREG("ldo23", "ldo%s23", &pmic5_pldo,         "vdd-l15-l17-l18-l19-l20-l21-l22-l23"),
-+	RPMH_VREG("bob",   "bob%s1",  &pmic5_bob,          "vdd-bob"),
-+	{}
-+};
-+
- static const struct rpmh_vreg_init_data pmr735a_vreg_data[] = {
- 	RPMH_VREG("smps1",  "smp%s1",  &pmic5_ftsmps520, "vdd-s1"),
- 	RPMH_VREG("smps2",  "smp%s2",  &pmic5_ftsmps520, "vdd-s2"),
-@@ -1679,6 +1713,10 @@ static const struct of_device_id __maybe_unused rpmh_regulator_match_table[] = {
- 		.compatible = "qcom,pm7325-rpmh-regulators",
- 		.data = pm7325_vreg_data,
- 	},
-+	{
-+		.compatible = "qcom,pm7550-rpmh-regulators",
-+		.data = pm7550_vreg_data,
-+	},
- 	{
- 		.compatible = "qcom,pmr735a-rpmh-regulators",
- 		.data = pmr735a_vreg_data,
+On 24/06/2025 6:16 pm, Arnd Bergmann wrote:
+> On Tue, Jun 24, 2025, at 18:29, Frank Li wrote:
+>> On Tue, Jun 24, 2025 at 11:35:33AM +0100, James Clark wrote:
+>>> This will allow the build to succeed with !CONFIG_HAS_DMA, either due to
+>>> a randconfig build test or when the target only uses one of the non-DMA
+>>
+>> I supposed you met kbuild error. If yes, can you add kbuild build report
+>> tags.
+> 
+> Actually I would suggest making it a dependency on CONFIG_DMA_ENGINE
+> instead of CONFIG_HAS_DMA, since that is the more relevant symbol.
+> 
 
--- 
-2.50.0
+Makes sense.
+
+> It would also be simpler to enforce this in Kconfig if we only
+> care about users that use the DMA support.
+> 
+>        Arnd
+
+But most of the devices supported by the driver don't do any DMA. That 
+was the reason to stub them out rather than add the Kconfig depends.
 
 
