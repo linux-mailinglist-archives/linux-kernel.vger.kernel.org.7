@@ -1,52 +1,56 @@
-Return-Path: <linux-kernel+bounces-702647-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-702649-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 20DF1AE8523
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Jun 2025 15:48:45 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 82B13AE852A
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Jun 2025 15:49:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9588F174C69
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Jun 2025 13:48:23 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A7121166F8B
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Jun 2025 13:49:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F24F8263C92;
-	Wed, 25 Jun 2025 13:48:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9CF7945945;
+	Wed, 25 Jun 2025 13:49:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (3072-bit key) header.d=samba.org header.i=@samba.org header.b="DhjeCQpR"
-Received: from hr2.samba.org (hr2.samba.org [144.76.82.148])
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="HQu6sHKv"
+Received: from mailout1.w1.samsung.com (mailout1.w1.samsung.com [210.118.77.11])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 756241DE4E1;
-	Wed, 25 Jun 2025 13:48:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=144.76.82.148
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 41F831F9F51
+	for <linux-kernel@vger.kernel.org>; Wed, 25 Jun 2025 13:49:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.118.77.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750859295; cv=none; b=SNuYcGgh1XhIz9ZA+NomFvXndh/GWXlyz8Xi/0q99sbG0jPCTwmZl8wY6FcyrR3TmH/vCH5EnRXx5kJo8Jy5NfIzyN6YBPpn3Tp3UO61yT6odPxsABNCJBkPLIEuEb5JhOeiiCz3N5K95te7uAdozd2ITPmfOTTtExMwbpHaM+0=
+	t=1750859373; cv=none; b=oETGK+Ku6AThK62w3XXbqeKBMLZZMift+cEnD9tqQzNw1vWPi2hVcOgAnXq5rw2YHXhBW/qIgp7bAR+0TgA7Qigs1lbg0F0mNmbjys/2NzTTU7dPk1baNN4mtXHz70Eg/lE+udAUOOaBbt+SVhIJXh/zadRwHYBE4j4pOnRZx3s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750859295; c=relaxed/simple;
-	bh=WoUpDUkQ52ehBV8XR5bPssSjnfa1NUBpYCJH/wmVneA=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=QdJRu4PpA6gLSdcUoaXAyvNAsHo927jpJziC+IeeQjSQpuwNrkVmLs7pgZzui3iA6MlanBCP0JQA8O5mFlaEiz2FXwgLklzJWkhrztdE74Pl2QWWWisq+GPoQi+kdgaV4shI9/yEc6kPprSa9/DS/hLEL6JwtFm91VMxrowDeFs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=samba.org; spf=pass smtp.mailfrom=samba.org; dkim=pass (3072-bit key) header.d=samba.org header.i=@samba.org header.b=DhjeCQpR; arc=none smtp.client-ip=144.76.82.148
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=samba.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samba.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=samba.org;
-	s=42; h=From:Cc:To:Date:Message-ID;
-	bh=aWs4XPxVga8Db+MVfW593X9forR+xNmAeKVqvSTkGfY=; b=DhjeCQpRtERFlWTWARYo1MkdH8
-	1o+le+U4JsFue+5IGYTwb7A9+M70w0a2w31MRi56/eWR5dCrrDN8Oxq+qR1KP3MTsB2cr6trDqhTm
-	crgSwVWNTd6o0y59rMFIualSjUbNilNcoEsfVRwTYZYE6KhjO1UuWJTkTze6mFRnNCyhpZxVH7IvR
-	KkOXFct/rK+o1bg5N79/YEmaiURRxfj2z82dNDHydUg6BhqJp5Q4Rb553pnhCp2NHrR2lYgleLtvR
-	N5HosDdtlRsZPGSQXlxAsrXNU2abOdr2P6vmujeeQ/k1XgnlU7CiMn8/Rw8vyWjSOUNh5iK1KT8/K
-	T1czNf66OLtlR7cacmrnwBeEIsgtVzNmyUOPMzXj3O3KXqsvVYaHu8hJmT0OtSncG86kMG59bQ2aP
-	Uiu79rP1fkxdXB0sTBpxYpBroubXB6QWA22bwAmMSzeSDYVTsANeatGimMNjqp6ZybcRhrHzWXOEQ
-	Z2LhlMF1SVHSq/rZmxjj8u1w;
-Received: from [127.0.0.2] (localhost [127.0.0.1])
-	by hr2.samba.org with esmtpsa (TLS1.3:ECDHE_SECP256R1__RSA_PSS_RSAE_SHA256__CHACHA20_POLY1305:256)
-	(Exim)
-	id 1uUQTy-00CQN2-0C;
-	Wed, 25 Jun 2025 13:48:10 +0000
-Message-ID: <cc2483e7-88cd-40d1-92a5-f5040b09b662@samba.org>
-Date: Wed, 25 Jun 2025 15:48:08 +0200
+	s=arc-20240116; t=1750859373; c=relaxed/simple;
+	bh=Ez3h2hcedkCPo5tU5X3TK6D6K7FlG6mpkgJxcG02l30=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:From:In-Reply-To:
+	 Content-Type:References; b=WNzq6pXyskugkueKfScPmC5P9IGnk8yGjewGgvT179h90/65z70kleM2r8B5Nb3DxoHQIemXTBPyiMYhfVRzBIkSB3pa93VH6/ZOfjkMWyGgpIBH96fMUQMiemWYmxtZa+8bxUlJ1vSC+me3OSbI/eptPDUFuQfGYsJVSXJ/VRw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=HQu6sHKv; arc=none smtp.client-ip=210.118.77.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
+Received: from eucas1p2.samsung.com (unknown [182.198.249.207])
+	by mailout1.w1.samsung.com (KnoxPortal) with ESMTP id 20250625134929euoutp01b341705f638a60b72163cc822bdc9e56~MTVHyeEBI2044120441euoutp01c
+	for <linux-kernel@vger.kernel.org>; Wed, 25 Jun 2025 13:49:29 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.w1.samsung.com 20250625134929euoutp01b341705f638a60b72163cc822bdc9e56~MTVHyeEBI2044120441euoutp01c
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+	s=mail20170921; t=1750859369;
+	bh=jet5Z3oHYs+Jf13HfgUgZVZFfowNJyNZZd5QLwXLsCI=;
+	h=Date:Subject:To:Cc:From:In-Reply-To:References:From;
+	b=HQu6sHKvhjbMr5lVaeA2ReHrbImqud2jLsnzmbuml9ACbzaa475kFfb4bRZhxtkjP
+	 wfTM9ksJ1g/EW7ECpOw0oD8J4CkvTPk35uwYRm2pD5qresCgjM2Ah9dhritgHugYhV
+	 7hcnLuPtoyD8WqwSCzTGcorGSLk89uvlduamNDPk=
+Received: from eusmtip1.samsung.com (unknown [203.254.199.221]) by
+	eucas1p2.samsung.com (KnoxPortal) with ESMTPA id
+	20250625134928eucas1p20116c6f28849c9efd79be3d1c9f83e6d~MTVG8cjqV2648326483eucas1p2s;
+	Wed, 25 Jun 2025 13:49:28 +0000 (GMT)
+Received: from [192.168.1.44] (unknown [106.210.136.40]) by
+	eusmtip1.samsung.com (KnoxPortal) with ESMTPA id
+	20250625134927eusmtip15bc8d3e11211e663cc281314615c3b89~MTVF7n4xZ1371313713eusmtip1E;
+	Wed, 25 Jun 2025 13:49:27 +0000 (GMT)
+Message-ID: <4e2e770a-0b94-4c73-a98d-ce14c3e3c364@samsung.com>
+Date: Wed, 25 Jun 2025 15:49:27 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -54,135 +58,81 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] cifs: Fix the smbd_request and smbd_reponse slabs to
- allow usercopy
-To: David Howells <dhowells@redhat.com>, Steve French <stfrench@microsoft.com>
-Cc: Paulo Alcantara <pc@manguebit.com>, linux-cifs@vger.kernel.org,
- netfs@lists.linux.dev, linux-fsdevel@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <1372501.1750858644@warthog.procyon.org.uk>
+Subject: Re: [PATCH v6 4/8] drm/imagination: Use pwrseq for TH1520 GPU power
+ management
+To: Matt Coster <Matt.Coster@imgtec.com>
+Cc: Drew Fustini <drew@pdp7.com>, Guo Ren <guoren@kernel.org>, Fu Wei
+	<wefu@redhat.com>, Rob Herring <robh@kernel.org>, Krzysztof Kozlowski
+	<krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, Bartosz
+	Golaszewski <brgl@bgdev.pl>, Philipp Zabel <p.zabel@pengutronix.de>, Frank
+	Binns <Frank.Binns@imgtec.com>, Maarten Lankhorst
+	<maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>,
+	Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>,
+	Simona Vetter <simona@ffwll.ch>, Paul Walmsley <paul.walmsley@sifive.com>,
+	Palmer Dabbelt <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>,
+	Alexandre Ghiti <alex@ghiti.fr>, Ulf Hansson <ulf.hansson@linaro.org>, Marek
+	Szyprowski <m.szyprowski@samsung.com>, Bartosz Golaszewski
+	<bartosz.golaszewski@linaro.org>, "linux-riscv@lists.infradead.org"
+	<linux-riscv@lists.infradead.org>, "devicetree@vger.kernel.org"
+	<devicetree@vger.kernel.org>, "linux-kernel@vger.kernel.org"
+	<linux-kernel@vger.kernel.org>, "linux-pm@vger.kernel.org"
+	<linux-pm@vger.kernel.org>, "dri-devel@lists.freedesktop.org"
+	<dri-devel@lists.freedesktop.org>
 Content-Language: en-US
-From: Stefan Metzmacher <metze@samba.org>
-In-Reply-To: <1372501.1750858644@warthog.procyon.org.uk>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+From: Michal Wilczynski <m.wilczynski@samsung.com>
+In-Reply-To: <a265a20e-8908-40d8-b4e0-2c8b8f773742@imgtec.com>
 Content-Transfer-Encoding: 7bit
+X-CMS-MailID: 20250625134928eucas1p20116c6f28849c9efd79be3d1c9f83e6d
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+X-RootMTR: 20250623114433eucas1p1659c22d6696f3eb51d4169eee80b7cb2
+X-EPHeader: CA
+X-CMS-RootMailID: 20250623114433eucas1p1659c22d6696f3eb51d4169eee80b7cb2
+References: <20250623-apr_14_for_sending-v6-0-6583ce0f6c25@samsung.com>
+	<CGME20250623114433eucas1p1659c22d6696f3eb51d4169eee80b7cb2@eucas1p1.samsung.com>
+	<20250623-apr_14_for_sending-v6-4-6583ce0f6c25@samsung.com>
+	<a265a20e-8908-40d8-b4e0-2c8b8f773742@imgtec.com>
 
-Am 25.06.25 um 15:37 schrieb David Howells:
-> The handling of received data in the smbdirect client code involves using
-> copy_to_iter() to copy data from the smbd_reponse struct's packet trailer
-> to a folioq buffer provided by netfslib that encapsulates a chunk of
-> pagecache.
+
+
+On 6/24/25 15:53, Matt Coster wrote:
+> On 23/06/2025 12:42, Michal Wilczynski wrote:
+>> Update the Imagination PVR DRM driver to leverage the pwrseq framework
+>> for managing the power sequence of the GPU on the T-HEAD TH1520 SoC.
+>>
+>> To cleanly handle the TH1520's specific power requirements in the
+>> generic driver, this patch implements the "driver match data" pattern.
+>> The pvr_soc_data struct, associated with a compatible string in the
+>> of_device_id table, now holds pointers to platform-specific power_on and
+>> power_off functions.
+>>
+>> At probe time, the driver inspects the assigned power_on function
+>> pointer. If it points to the pwrseq variant, the driver calls
+>> devm_pwrseq_get("gpu-power"), requiring a valid sequencer and deferring
+>> probe on failure. Otherwise, it falls back to its standard manual reset
+>> initialization.
+>>
+>> The runtime PM callbacks, pvr_power_device_resume() and
+>> pvr_power_device_suspend(), call the power_on and power_off function
+>> pointers. Helper functions for both manual and pwrseq-based sequences
+>> are introduced to support this.
 > 
-> If, however, CONFIG_HARDENED_USERCOPY=y, this will result in the checks
-> then performed in copy_to_iter() oopsing with something like the following:
+> Hi Michal,
 > 
->   CIFS: Attempting to mount //172.31.9.1/test
->   CIFS: VFS: RDMA transport established
->   usercopy: Kernel memory exposure attempt detected from SLUB object 'smbd_response_0000000091e24ea1' (offset 81, size 63)!
->   ------------[ cut here ]------------
->   kernel BUG at mm/usercopy.c:102!
->   ...
->   RIP: 0010:usercopy_abort+0x6c/0x80
->   ...
->   Call Trace:
->    <TASK>
->    __check_heap_object+0xe3/0x120
->    __check_object_size+0x4dc/0x6d0
->    smbd_recv+0x77f/0xfe0 [cifs]
->    cifs_readv_from_socket+0x276/0x8f0 [cifs]
->    cifs_read_from_socket+0xcd/0x120 [cifs]
->    cifs_demultiplex_thread+0x7e9/0x2d50 [cifs]
->    kthread+0x396/0x830
->    ret_from_fork+0x2b8/0x3b0
->    ret_from_fork_asm+0x1a/0x30
+> My apologies for not responding to previous revisions of this series. In
+> general, my main earlier complaints were already addressed by others and
+> the series generally looks good to me.
 > 
-> The problem is that the smbd_response slab's packet field isn't marked as
-> being permitted for usercopy.
+> Just a few notes from me in this and subsequent patches.
 > 
-> Fix this by passing parameters to kmem_slab_create() to indicate that
-> copy_to_iter() is permitted from the packet region of the smbd_response
-> slab objects.
-> 
-> Further, do the same thing for smbd_request slab objects and their packet
-> field.
-> 
-> Fixes: ee4cdf7ba857 ("netfs: Speed up buffered reading")
-> Reported-by: Stefan Metzmacher <metze@samba.org>
-> Link: https://lore.kernel.org/r/acb7f612-df26-4e2a-a35d-7cd040f513e1@samba.org/
-> Signed-off-by: David Howells <dhowells@redhat.com>
-> cc: Steve French <stfrench@microsoft.com>
-> cc: Paulo Alcantara <pc@manguebit.com>
-> cc: linux-cifs@vger.kernel.org
-> cc: netfs@lists.linux.dev
-> cc: linux-fsdevel@vger.kernel.org
-> ---
->   fs/smb/client/smbdirect.c |   21 +++++++++++++++------
->   1 file changed, 15 insertions(+), 6 deletions(-)
-> 
-> diff --git a/fs/smb/client/smbdirect.c b/fs/smb/client/smbdirect.c
-> index ef6bf8d6808d..5915273636ad 100644
-> --- a/fs/smb/client/smbdirect.c
-> +++ b/fs/smb/client/smbdirect.c
-> @@ -1476,12 +1476,17 @@ static int allocate_caches_and_workqueue(struct smbd_connection *info)
->   	int rc;
->   
->   	scnprintf(name, MAX_NAME_LEN, "smbd_request_%p", info);
-> +	struct kmem_cache_args request_args = {
-> +		.align		= __alignof__(struct smbd_request),
-> +		.useroffset	= offsetof(struct smbd_request, packet),
-> +		.usersize	= sizeof(struct smbdirect_data_transfer),
+>>
 
-This looks wrong, the smbdirect_data_transfer header itself
-should be written by userspace.
+Thanks for the feedback.
 
-So I guess we don't need this at all.
+I will send an updated revision based on the linux-next and skip patches
+that have already been applied to Ulf's and Bartosz's trees.
 
-> +	};
->   	info->request_cache =
->   		kmem_cache_create(
->   			name,
->   			sizeof(struct smbd_request) +
->   				sizeof(struct smbdirect_data_transfer),
-> -			0, SLAB_HWCACHE_ALIGN, NULL);
-> +			&request_args, SLAB_HWCACHE_ALIGN);
->   	if (!info->request_cache)
->   		return -ENOMEM;
->   
-> @@ -1492,12 +1497,16 @@ static int allocate_caches_and_workqueue(struct smbd_connection *info)
->   		goto out1;
->   
->   	scnprintf(name, MAX_NAME_LEN, "smbd_response_%p", info);
-> +
-> +	struct kmem_cache_args response_args = {
-> +		.align		= __alignof__(struct smbd_response),
-> +		.useroffset	= offsetof(struct smbd_response, packet),
-> +		.usersize	= sp->max_recv_size,
-
-This should be have + sizeof(struct smbdirect_data_transfer) for useroffset
-and - sizeof(struct smbdirect_data_transfer) for usersize
-
-As the smbdirect_data_transfer header should not accessed by userspace.
-
-My attempt looks like this:
-
--               kmem_cache_create(
-+               kmem_cache_create_usercopy(
-                         name,
-                         sizeof(struct smbd_response) +
-                                 sp->max_recv_size,
--                       0, SLAB_HWCACHE_ALIGN, NULL);
-+                       __alignof__(struct smbd_response),
-+                       SLAB_HWCACHE_ALIGN,
-+                       /*
-+                        * only the payload should be exposed
-+                        */
-+                       offsetof(struct smbd_response, packet) +
-+                                sizeof(struct smbdirect_data_transfer),
-+                       sp->max_recv_size -
-+                               sizeof(struct smbdirect_data_transfer),
-+                       NULL);
-
-But I noticed that kmem_cache_create_usercopy is a legacy wrapper.
-
-
+Best regards,
+-- 
+Michal Wilczynski <m.wilczynski@samsung.com>
 
