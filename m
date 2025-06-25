@@ -1,218 +1,189 @@
-Return-Path: <linux-kernel+bounces-701545-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-701547-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 34F9CAE764A
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Jun 2025 07:04:13 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 622D1AE764E
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Jun 2025 07:05:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 77EEE17B947
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Jun 2025 05:04:13 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DA9315A1A57
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Jun 2025 05:05:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 743041DF26B;
-	Wed, 25 Jun 2025 05:04:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DA1001DF26B;
+	Wed, 25 Jun 2025 05:05:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="St5kISov"
-Received: from mail-qv1-f54.google.com (mail-qv1-f54.google.com [209.85.219.54])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b="juKnYdwY"
+Received: from PA4PR04CU001.outbound.protection.outlook.com (mail-francecentralazon11013002.outbound.protection.outlook.com [40.107.162.2])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2419F3074BC;
-	Wed, 25 Jun 2025 05:04:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.54
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750827845; cv=none; b=FxmV57832W4FW5Fs6bF7pHqEuk6tL/0NSh1qEW7pmtg9JdZKjUFK/sb0NJ8qmEZbUJNGgxFSA4Ei7dgI0VvtPWMiycnpANKo1w2tf63q0ZqRVsjTc5kW6pCWlx5zJXDDVO0j62FyqcCQZn79uFIW+TgScTxtYVdmAelx/lt7IPQ=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750827845; c=relaxed/simple;
-	bh=y5MCvutvHcvNX4Keb63b3B7N/mP9uFUORXHB07+l9GM=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=sByZT/n1Oyl9z5LL7pYSHXgxUlxjPQiuvAgcFN3Fh0XVd6c1T5lBMSbpqnCPVFX2Lr2mdujGYsheuvxYAxNeFcRyKwWJ/Ms+wnBAa86dDGOg80eGnSV0jzynF0kd+wHRzK8EpEZ2alrufPSRUhrTT9QUpiOLA/Vqg5PvYlR64YY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=St5kISov; arc=none smtp.client-ip=209.85.219.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qv1-f54.google.com with SMTP id 6a1803df08f44-6fac7147cb8so21438866d6.1;
-        Tue, 24 Jun 2025 22:04:02 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1750827842; x=1751432642; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=vmXcK6k38h6eC0gVXkVzWpNIJ0ZgWlljLA2mlEbIcz8=;
-        b=St5kISovzHMHKVLvedc+QERpo9Bq/xgshfvECzlIcKFpUJuHHsO4A3r5xafQFZf80o
-         atxE0j9Z4nkEnRpPJe13eV+ItRNQ1SiFrTyDtC/B2mTZzDlAUVJmzLiGLAH3lmuqpHYr
-         NwTIFvBmxF2qIYy7qqg2lf5McR2yuApV/etj7BMGZXYO0hi2pZuPqlzM2fiqh5wD1pmP
-         O4YMKaeEyxGguset9orju1qPYCzA6q/YceKInlJwd4ZE0AFSD6/pbmPFPSQNQjVVzwFX
-         h7cgN19JzjUUy8EtdohY0yPccoOoRezUKjoeGqgwZKOYuROZMQ1ZdwDe4GDj2NVy4ZS2
-         lhwg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1750827842; x=1751432642;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=vmXcK6k38h6eC0gVXkVzWpNIJ0ZgWlljLA2mlEbIcz8=;
-        b=BNttp1aL0jw4JH7qkJgMB6LZOTJY4XAY0Ik66cIMEarOIzjKKsOEn2pkhr5QfKW2Lz
-         r1yDMcCj2mlYq/mLWcZgqoALO+JT4YynTgV+jr2/Lv0m6BrQv2dd+2MuVZIraYrD1inm
-         1piFaqmx3tGNKWdacfyYjqiuz2ItOLPUhAf+OwNOEr4xVxBgyip6rLge+Vy4xZ4KQqTA
-         9/4yrp5NnCTppZzhfMtSLx56sxXBRN3nFMSLdwnRlBJRZCGBRdIk7jpNI/5qQThJxq0d
-         7UuyS9a9mboszMkdANIsxZhD8F7xby++lK1lY4kUnrMVKg1Hz/K0KM5SZygjj2oCM40d
-         yYFg==
-X-Forwarded-Encrypted: i=1; AJvYcCVa2c1FyRWpJktV3hbgCANSpJCVlovuDPWkYlG1GNfxVTs0Ny8uXgQsk7kdVJ2Iq9CMkhfXbyNSBlksvP4vRwg=@vger.kernel.org, AJvYcCXtCo/rO7jTXBYmEQlXCeLxq508HyxdNX4cjYEuPjuBVPOa/Qg+WOP7vfVA5xy9LIrGZ4dl6Zb0brHQIvSR@vger.kernel.org
-X-Gm-Message-State: AOJu0YzZJ9ycfCny06oOBgGz0k3oKU37KtzqVlOMjbHGpbfI7bV/XS8/
-	QPVHYVovmYviFt3TlUPKK3dH3TvlN9KtlInUCmBO+f2WzG8BfBobv4UI
-X-Gm-Gg: ASbGncuaAIWUc8/0vLrgJxO4tpGx7otJmrYuqHm5lBNmTg1v4MXgczBZ9NgvUD4v+VK
-	lmzzD70IkMXxDfWDrDiNWgQULgvtB5XyJIypLPZ4hR7u8IuvuMDUzXIwWVbq3bE4SIP7Gy/kkWD
-	VUVeMsV4CYNwIh8wJ1798wpvgXf0PL/oQ0mQj/xFkEMPjmcEFwM3O8dtP6idiwCEqGeMGnRJkxm
-	Jppif9LonCbYmmtndl5zZ6MJKe76mASDqrCCa4ySeiLr+iUDwMll0PmM+SU5iAUoMrlJMF0BYEF
-	/WUao7QcdcXHysFl6Nej9DJqGq8Rf4uNf0LpyFY28r+DXYZbMbmLSI1b7xamaalyrf/ReEoMTD2
-	qB3ErYfLGFgflYKk3LXzbHjDNHx+x
-X-Google-Smtp-Source: AGHT+IHFiUnt/9yqS8qbgYpDfozkJ+jkoQIKcpL8XgHkZUa+KLljdHbvDsB/7fAE6hG29v5mnBYmww==
-X-Received: by 2002:a05:6214:20cb:b0:6e8:ddf6:d11e with SMTP id 6a1803df08f44-6fd5ef83852mr25510976d6.21.1750827841892;
-        Tue, 24 Jun 2025 22:04:01 -0700 (PDT)
-Received: from fyre-x-redhat96-client-2.fyre.ibm.com ([129.41.87.1])
-        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6fd0959d85asm64173416d6.107.2025.06.24.22.04.00
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 24 Jun 2025 22:04:01 -0700 (PDT)
-From: Chelsy Ratnawat <chelsyratnawat2001@gmail.com>
-To: peterhuewe@gmx.de,
-	jarkko@kernel.org
-Cc: jgg@ziepe.ca,
-	linux-integrity@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Chelsy Ratnawat <chelsyratnawat2001@gmail.com>
-Subject: [PATCH v4] tpm: Replace scnprintf() with sysfs_emit() and sysfs_emit_at() in sysfs show functions
-Date: Tue, 24 Jun 2025 22:03:46 -0700
-Message-ID: <20250625050346.11500-1-chelsyratnawat2001@gmail.com>
-X-Mailer: git-send-email 2.47.1
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E30703074BC;
+	Wed, 25 Jun 2025 05:05:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.162.2
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1750827945; cv=fail; b=lI7ywbOVUdat38LPc4/TRyV47YoM5IcO/VoO4ZUFMntPeyQbi3K6HTZq45NIh2jW8MeoKQAoq41yFdKa8sJiI41qBbsSfUsbuMm0w7A2LpcgWKv2YnGmlQwYIGUJuNn9x9x3KL9iUhmlgx/LwQIEHxMoDGKuUj7xRECzKrTPJTE=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1750827945; c=relaxed/simple;
+	bh=hTMbb6c3IygAYAlriXSpNWhd4udNMp3WYzhZFqs1U60=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=WWVqyWAXR6AgcG9FnnvP2BKrcNUV89WfYR8fPM/7ZYJcBsed5zUIAeBBPRRWYZKXMA6PhUtJf86WAAobq00jI4/hi/LYrVv97ZoO5T6z6tkDvFaYA8bnkk8N9motvBehNBCreaX6sVItdf8eYtJ6E7krI4W9ixiaLfljsJnJt80=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b=juKnYdwY; arc=fail smtp.client-ip=40.107.162.2
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=YvdAd1lk+Sj6xiFeWWcU41HeGP5LzeGd7r+0PsFlhmmHL9uy9G31v+36RIonerViW/+yfOb35L7NgI5xdMiCJsj6kiHK1VJig8GEEJpodIE5aBdfztki0NAxoU3NJUjB96CeEc0YxIMlBNlsuaXU1HIbwdJijI/YzF3a2WxPMYh1Ndktgan5Ck8UrJGAeVgYHXZfLwKxI2WFYgikMBgOHKxKboocI2BlmhJyc7qIDS89AQ+tgjmvAHoR15U0nl95dKE/BtTR8t6kvD2XqfaUIPsirne5a6/4/lyPDWFtcVYpUVILonCsGaEfupM0B5AQHdde2/ojNM+Ix4EIfCbbrQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=Rr1uDwHZ+NbCbgpH9x2DZ5Qj5ugQ6pB4gCbLqqgUp4w=;
+ b=guvgV3R/7t9caIFx9SqPFXd214BzY+Gwz+M4ON6XMZjS3AMbdYSg2BP007M+tD9eHGXAleap39kKdmCvaN0qtUGk1l2almJ9/LWMzHJOE795IhfvvU9DC2yCfK1vSHScDLWgCcC8Z94xzJ2zrTP78WMdNJE0UTkj7Yh+I9rFxZPvhG3RCQ0/JBFhM4gMn4l6gy0505keV/7uefIyzniTLxNNSJiVKLc3xgUMDU0Plmg/WELiSPewLep/lPEvdJSBeH0AKqx1XVFwTbQbrep9PgsZbT7FpgSUy0YxjBRLKo7xkdl3GN7QZvTTzSZ6ysPRqgMyDTfWEOF6AnxdbMAPuw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
+ header.d=nxp.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=Rr1uDwHZ+NbCbgpH9x2DZ5Qj5ugQ6pB4gCbLqqgUp4w=;
+ b=juKnYdwYRN3yc0HbC0e3GHIsey6JUBFVUcZcBdgVSxH339Ih44ZF4IYFei6rVrLUE0Zq0URh916q8gATc9LoLzCo18Tx6ri377LqsgXm0PaE7Lsg26au6pmFRyghbo5uPn/xNNzzJLVuf9DAjh5Tlb4fspFuXMG0gLkDhh68pxJ1zvrhTkXhcG/4bMi9QvUSrlRRvfUey67C7ZjOOLs5yg1PVZjI0HlqppgB5NxTeqPn+6gT57VlzZ/VxX6obeuK5ginOlQLu96jUlGI5NbmxRSTeKOb39a0+qM4mBGSexOYLwyuGuWIilzgi7YKGAG2jNrkJXY2JkuLpGCKld9EwA==
+Received: from PAXPR04MB8510.eurprd04.prod.outlook.com (2603:10a6:102:211::7)
+ by PAWPR04MB9911.eurprd04.prod.outlook.com (2603:10a6:102:38b::22) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8857.28; Wed, 25 Jun
+ 2025 05:05:40 +0000
+Received: from PAXPR04MB8510.eurprd04.prod.outlook.com
+ ([fe80::a7c2:e2fa:8e04:40db]) by PAXPR04MB8510.eurprd04.prod.outlook.com
+ ([fe80::a7c2:e2fa:8e04:40db%5]) with mapi id 15.20.8857.026; Wed, 25 Jun 2025
+ 05:05:40 +0000
+From: Wei Fang <wei.fang@nxp.com>
+To: "shawnguo@kernel.org" <shawnguo@kernel.org>
+CC: "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+	"imx@lists.linux.dev" <imx@lists.linux.dev>,
+	"linux-arm-kernel@lists.infradead.org"
+	<linux-arm-kernel@lists.infradead.org>, "linux-kernel@vger.kernel.org"
+	<linux-kernel@vger.kernel.org>, "s.hauer@pengutronix.de"
+	<s.hauer@pengutronix.de>, "kernel@pengutronix.de" <kernel@pengutronix.de>,
+	"festevam@gmail.com" <festevam@gmail.com>, Frank Li <frank.li@nxp.com>,
+	"robh@kernel.org" <robh@kernel.org>, "krzk+dt@kernel.org"
+	<krzk+dt@kernel.org>, "conor+dt@kernel.org" <conor+dt@kernel.org>
+Subject: RE: [PATCH 0/3] update NETC node of i.MX95
+Thread-Topic: [PATCH 0/3] update NETC node of i.MX95
+Thread-Index: AQHbz64iZQNI2D52QkmeWki4M3kwB7QTfcuQ
+Date: Wed, 25 Jun 2025 05:05:39 +0000
+Message-ID:
+ <PAXPR04MB85100386B3BACA9724C05B7E887BA@PAXPR04MB8510.eurprd04.prod.outlook.com>
+References: <20250528083433.3861625-1-wei.fang@nxp.com>
+In-Reply-To: <20250528083433.3861625-1-wei.fang@nxp.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+authentication-results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nxp.com;
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: PAXPR04MB8510:EE_|PAWPR04MB9911:EE_
+x-ms-office365-filtering-correlation-id: d504beb8-1d39-46da-7b79-08ddb3a5ee0a
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam:
+ BCL:0;ARA:13230040|7416014|1800799024|366016|376014|38070700018;
+x-microsoft-antispam-message-info:
+ =?us-ascii?Q?w7U9XzrwqOeJVIwsMSmjoeLwlmc4yZSPJUlXSu8qocJrF8Yx9zz2j4kBERqA?=
+ =?us-ascii?Q?lc4p+yYMEEMOQ38c0JMEtN76hrOUHzn1Ld/H9o/DLaIguusqLhd0HuEzs+C/?=
+ =?us-ascii?Q?aWLbBjAaC3QTfKVe9XFXO4BqyQ0ZGyB+JLjsghkIqfMhPdafrQSK2XNt6f+O?=
+ =?us-ascii?Q?otYA3QssI/gMfP9/BT0jIAp9s2ZHNraZcrzzlZIWjxchq2YZz3da1IC+iY7Y?=
+ =?us-ascii?Q?Ug0mPtO6leXhZyVM1qaitGr4dDtlSQUVkC57r7ebdtOzfKe1Gm1ytlflDovR?=
+ =?us-ascii?Q?hJzYZUGg8uMkZIs7UPZzPGpVInqUjo3iKFls4j1gh12QJobHGhWmX3U4SIsJ?=
+ =?us-ascii?Q?Jf9o2rtSCCnl8slq07v7tl+KC+HAiwO11QVulqUuLDBMW71C6ANbSBtt7Wn3?=
+ =?us-ascii?Q?FiKM3YNzHe/iHgylpcv7Ykxb4XmIxFUQRJdKL0xo40rUMtSkJjUR6jXVuZ9y?=
+ =?us-ascii?Q?lTCP7ka9X6O7JTuUOFh6eW1LnJ8sbtm9FdARg9u72yqGcHL6XCWh4PUH+YGK?=
+ =?us-ascii?Q?UIlVciBYT6xLFpyuYqIho445Azy3BwZFnX6XIJ1xYr7EqASo1qfsZSCCxBi8?=
+ =?us-ascii?Q?I+GJpHmOKdpYlGotNRIx/ckWQUAY8acLnh0gCvB04warPIm5MXz/GvXQrd3o?=
+ =?us-ascii?Q?pTk07WOA/m6TmCsS/pt7kNuUvAueydxoqS8OgyjpZEaQHrH8sV3I84HM31tX?=
+ =?us-ascii?Q?7ZlzwXV70DBGX695Db4k8K9zyvU89chsmNQo9/KhYEd/+Ickdj5nVAvhefZU?=
+ =?us-ascii?Q?2TnJeSQTFpU89ZuuRlPWMO6IYJJZ2XapZjDZr0c23GDMnWi9b11bIQlyGG/1?=
+ =?us-ascii?Q?S5nPXWQvOr0LPJV/IFCtZK0gNzQ7K6tXEz5VaArQpcgYsP/C+4skJpyo3Mww?=
+ =?us-ascii?Q?I98C4d+QNKqHNZbjKRZaew8dJMF/SE/abWFh1kA2c+CJ5w1pgdYTYmC2X5+2?=
+ =?us-ascii?Q?hh1SL/e1WbRNSCsfUP3XqXjb6qsL5pMxmIy2mUAly48qlRWycl4yCQMLH8Ja?=
+ =?us-ascii?Q?Db/45l9r2x7ZT4wFbz5MopnE+10N2rrO9lVuyoGlla0mZsawEBvrqHfT+/zA?=
+ =?us-ascii?Q?LaQAOduOl3+tCK1FXR2C6k+raSE3u+QgPMwTiiG+K0lo6ZGHkWhlZbb0NV6T?=
+ =?us-ascii?Q?cn7xnilpaT9T03fNgoxzuk/Jbf8mlZRIX6YGpQPq/xjJVabcwvEH5EoAYSVz?=
+ =?us-ascii?Q?D2/M3E1RNkqZsIuUzpJUvHSvXeaFtgbnuB8Q2mroAgk+eCcN8pcqSa/Tc5EW?=
+ =?us-ascii?Q?sgij2lGTZoA1Kc09yXZnNvDF064ETDpZEMVFl5xWwfmALlb8feP64eYikivU?=
+ =?us-ascii?Q?Y5e188CxFNmL9H+o2akNi3OuDJwuzRAMgfCy7JxLsJig4wgOqL918Qg5HbaH?=
+ =?us-ascii?Q?Fahkrkxr+snZDgZFxSLs13hkK25wrhwYiAFLRL7T4WXZFpsLFkEfr943lspB?=
+ =?us-ascii?Q?kA47bqUbrg3AXr5ykzrCAxoK9hnqk6PZ/439Po3M8aXafGp6GocdzxIE3Tvo?=
+ =?us-ascii?Q?Ud06zsC0ImAfayE=3D?=
+x-forefront-antispam-report:
+ CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PAXPR04MB8510.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(7416014)(1800799024)(366016)(376014)(38070700018);DIR:OUT;SFP:1101;
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0:
+ =?us-ascii?Q?n/BdPDlA3NjpYuC+6iI+wJAkwdMjjhtvzQS7Yijo11TiOUoQ8EDAuFXGK75s?=
+ =?us-ascii?Q?KOH+tJhvs63o2l/+2gePKVbRSh8g06fLxdEQjsPmi9nunFIBHwqngNmekiNW?=
+ =?us-ascii?Q?HdLBH8tfXCnXM8O2fR+qKFq/HbaAi7Ze6x4m/oDp7f2nyNcrcFqOcdw+mdgz?=
+ =?us-ascii?Q?nTq7mkUM0n1ngE+1DVxj75hDMyM38CZvr0J86mi/ojleSZBzAkkivEABSXAg?=
+ =?us-ascii?Q?rQjlCgcEK1USjSoQK7rXyuaTC9hs/I+j21b4LG50S8QIBw9XWt2mtuC/Utqt?=
+ =?us-ascii?Q?1366JZpVh6IasDEvUPNmS6cax5+nOWFfgwyakVcxlxaHYoMAcsejcZ+eDxEN?=
+ =?us-ascii?Q?SrUnJpdOlUv+7ufo+29z6J99RYPe35EddAApIiQnFMqCFZrl+PIxkmfOSvBC?=
+ =?us-ascii?Q?tlaaztSZN3JLe1AQkfZ7E+i5cDczJ7KozRjDLkHUuZqxVg3iR9o78nGMsoTx?=
+ =?us-ascii?Q?+kPGa03SUa0DyuizDuJTbVy2ZGCnG0hkvTRcuTE4oLIboLHHX9yVMNyp4UF8?=
+ =?us-ascii?Q?mIq0gePkR32PtBtjUCdQRdjVrmvcz1+sbYAjozQ2+03PiWsMY4WRiXRyaA0T?=
+ =?us-ascii?Q?00BIwhYjTfNOkJ9+M6+5ZsiVwYI8T+E6HbLOrloOBop2fBXBgRw20CEDXKZ8?=
+ =?us-ascii?Q?pQinEHJSkaAmZ67IfjKEoKerkWbcdwa9BQx3L1ErRIMHn2ur8YuAp8Q86gCs?=
+ =?us-ascii?Q?JZHGt/xjR/E13GCAFScJcawSL4fYCkorLKncnq+xGoC3xgYIHaR0FKVGVhDP?=
+ =?us-ascii?Q?odYMxfgY4lc99Gjl3iq4nEbv3sGBzPuLXV3LAmOmuniAj2ppplGPA7a8qeZj?=
+ =?us-ascii?Q?27lqEcHCff1KL0fN2qbP1E/Y4WbiU3cUsZwDUsVGdrTYTIPwFbS6XjkLw4n7?=
+ =?us-ascii?Q?fFCgRWW1PSjnIJgiyOuXg+e0rqDZjZ655nOl1DUGfXqZXb88icJgxw03EeVA?=
+ =?us-ascii?Q?mBotuAV256e2vZ50EjYCstBL0+Xahzw1k3CG6iSkVuCb7j0P43+WOEpxkFCX?=
+ =?us-ascii?Q?Uk4Usco9yb4xuG4z+zbB4KGfmDDiUzGapDtKOFLrXnSLIZfYJ4aGXtKhXOuQ?=
+ =?us-ascii?Q?GlzDzGoWI1Mz4detPl8hU30AQYEJqnKT1djmY19E3YIdoOqOsolBjnFtjGTA?=
+ =?us-ascii?Q?tF/jO7DvBWR30i+NZdmOlQPmFhflQrNtFOF2Tuuk1D/ij1z7qej9JwaZge0P?=
+ =?us-ascii?Q?tM4x+zu7zLCNQQiAXQ+DKLlRQfhX135eG6VAkP0mFCbKnPgApIvuWBqYkS6I?=
+ =?us-ascii?Q?0v6Yzgb0RWCjyhKgIn2KZpCWXxwz3ukdB+lDAIwOMj2rWsWi4zJ4kjLElMhj?=
+ =?us-ascii?Q?4GxXTCVKDrKyhG19Hx6prReouruDsgdDSxzR7OuSvYCiyZKO1puF/+L53pLb?=
+ =?us-ascii?Q?/AFhuDg4r1qVm8n0DiZkkNBr11EFWcmqG8ZxF4mfW0GT0B5z2Mx4PiCiUVIz?=
+ =?us-ascii?Q?uJjst8T3Z7AgLUUffGcuSNiB83L2IfIOeU1+pyBqFBgtidn0o8MEKuqWbrhj?=
+ =?us-ascii?Q?OqRBQPHNo/EYE7ozWwz7xcdWfrJQFLr4kLMFVAzYJRnyBOsNsi/XCGYQrGcs?=
+ =?us-ascii?Q?hM24bqPseOn5dxqJYys=3D?=
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: PAXPR04MB8510.eurprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: d504beb8-1d39-46da-7b79-08ddb3a5ee0a
+X-MS-Exchange-CrossTenant-originalarrivaltime: 25 Jun 2025 05:05:40.0448
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: 5ZuwZxDkFO/t2snFij7ppJfPmv85RkKfyss2m8iQb4cw1xWE7T8FvD//gC6OfBeZqOcwlgRynvEh/gguxK3vDw==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PAWPR04MB9911
 
-Documentation/filesystems/sysfs.rst mentions that show() should only
-use sysfs_emit() or sysfs_emit_at() when formating the value to be
-returned to user space. So replace scnprintf() with sysfs_emit().
+> We found that NETC has an overshoot issue, so the drive strength of the r=
+elated
+> pins needs to be reduced. The first two patches are used to fix this issu=
+e. The
+> third patch adds SMMU support for NETC.
+>=20
+> Wei Fang (3):
+>   arm64: dts: imx95-19x19-evk: fix the overshoot issue of NETC
+>   arm64: dts: imx95-15x15-evk: fix the overshoot issue of NETC
+>   arm64: dts: imx95: add SMMU support for NETC
+>=20
+>  .../boot/dts/freescale/imx95-15x15-evk.dts    | 28 ++++++++++++-------
+>  .../boot/dts/freescale/imx95-19x19-evk.dts    | 12 ++++----
+>  arch/arm64/boot/dts/freescale/imx95.dtsi      |  8 ++++++
+>  3 files changed, 32 insertions(+), 16 deletions(-)
+>=20
+> --
+> 2.34.1
 
-Signed-off-by: Chelsy Ratnawat <chelsyratnawat2001@gmail.com>
----
-Changes in v4: 
-- updated the commit message.
- 
- drivers/char/tpm/tpm_ppi.c | 48 ++++++++++++++++++--------------------
- 1 file changed, 23 insertions(+), 25 deletions(-)
+Hi Shawn,
 
-diff --git a/drivers/char/tpm/tpm_ppi.c b/drivers/char/tpm/tpm_ppi.c
-index bc7b1b4501b3..50f64d9b53c8 100644
---- a/drivers/char/tpm/tpm_ppi.c
-+++ b/drivers/char/tpm/tpm_ppi.c
-@@ -52,7 +52,7 @@ static ssize_t tpm_show_ppi_version(struct device *dev,
- {
- 	struct tpm_chip *chip = to_tpm_chip(dev);
- 
--	return scnprintf(buf, PAGE_SIZE, "%s\n", chip->ppi_version);
-+	return sysfs_emit(buf, "%s\n", chip->ppi_version);
- }
- 
- static ssize_t tpm_show_ppi_request(struct device *dev,
-@@ -87,12 +87,10 @@ static ssize_t tpm_show_ppi_request(struct device *dev,
- 		else {
- 			req = obj->package.elements[1].integer.value;
- 			if (tpm_ppi_req_has_parameter(req))
--				size = scnprintf(buf, PAGE_SIZE,
--				    "%llu %llu\n", req,
-+				size = sysfs_emit(buf, "%llu %llu\n", req,
- 				    obj->package.elements[2].integer.value);
- 			else
--				size = scnprintf(buf, PAGE_SIZE,
--						"%llu\n", req);
-+				size = sysfs_emit(buf, "%llu\n", req);
- 		}
- 	} else if (obj->package.count == 2 &&
- 	    obj->package.elements[0].type == ACPI_TYPE_INTEGER &&
-@@ -100,7 +98,7 @@ static ssize_t tpm_show_ppi_request(struct device *dev,
- 		if (obj->package.elements[0].integer.value)
- 			size = -EFAULT;
- 		else
--			size = scnprintf(buf, PAGE_SIZE, "%llu\n",
-+			size = sysfs_emit(buf, "%llu\n",
- 				 obj->package.elements[1].integer.value);
- 	}
- 
-@@ -211,10 +209,10 @@ static ssize_t tpm_show_ppi_transition_action(struct device *dev,
- 	}
- 
- 	if (ret < ARRAY_SIZE(info) - 1)
--		status = scnprintf(buf, PAGE_SIZE, "%d: %s\n", ret, info[ret]);
-+		status = sysfs_emit(buf, "%d: %s\n", ret, info[ret]);
- 	else
--		status = scnprintf(buf, PAGE_SIZE, "%d: %s\n", ret,
--				   info[ARRAY_SIZE(info)-1]);
-+		status = sysfs_emit(buf, "%d: %s\n", ret,
-+				    info[ARRAY_SIZE(info)-1]);
- 	return status;
- }
- 
-@@ -255,23 +253,23 @@ static ssize_t tpm_show_ppi_response(struct device *dev,
- 	res = ret_obj[2].integer.value;
- 	if (req) {
- 		if (res == 0)
--			status = scnprintf(buf, PAGE_SIZE, "%llu %s\n", req,
--					   "0: Success");
-+			status = sysfs_emit(buf, "%llu %s\n", req,
-+					    "0: Success");
- 		else if (res == 0xFFFFFFF0)
--			status = scnprintf(buf, PAGE_SIZE, "%llu %s\n", req,
--					   "0xFFFFFFF0: User Abort");
-+			status = sysfs_emit(buf, "%llu %s\n", req,
-+					    "0xFFFFFFF0: User Abort");
- 		else if (res == 0xFFFFFFF1)
--			status = scnprintf(buf, PAGE_SIZE, "%llu %s\n", req,
--					   "0xFFFFFFF1: BIOS Failure");
-+			status = sysfs_emit(buf, "%llu %s\n", req,
-+					    "0xFFFFFFF1: BIOS Failure");
- 		else if (res >= 1 && res <= 0x00000FFF)
--			status = scnprintf(buf, PAGE_SIZE, "%llu %llu: %s\n",
--					   req, res, "Corresponding TPM error");
-+			status = sysfs_emit(buf, "%llu %llu: %s\n",
-+					    req, res, "Corresponding TPM error");
- 		else
--			status = scnprintf(buf, PAGE_SIZE, "%llu %llu: %s\n",
--					   req, res, "Error");
-+			status = sysfs_emit(buf, "%llu %llu: %s\n",
-+					    req, res, "Error");
- 	} else {
--		status = scnprintf(buf, PAGE_SIZE, "%llu: %s\n",
--				   req, "No Recent Request");
-+		status = sysfs_emit(buf, "%llu: %s\n",
-+				    req, "No Recent Request");
- 	}
- 
- cleanup:
-@@ -284,7 +282,7 @@ static ssize_t show_ppi_operations(acpi_handle dev_handle, char *buf, u32 start,
- {
- 	int i;
- 	u32 ret;
--	char *str = buf;
-+	int len = 0;
- 	union acpi_object *obj, tmp;
- 	union acpi_object argv = ACPI_INIT_DSM_ARGV4(1, &tmp);
- 
-@@ -314,11 +312,11 @@ static ssize_t show_ppi_operations(acpi_handle dev_handle, char *buf, u32 start,
- 		}
- 
- 		if (ret > 0 && ret < ARRAY_SIZE(info))
--			str += scnprintf(str, PAGE_SIZE, "%d %d: %s\n",
--					 i, ret, info[ret]);
-+			len += sysfs_emit_at(buf, len, "%d %d: %s\n",
-+					     i, ret, info[ret]);
- 	}
- 
--	return str - buf;
-+	return len;
- }
- 
- static ssize_t tpm_show_ppi_tcg_operations(struct device *dev,
--- 
-2.47.1
+Would you pick up this patch set?
 
 
