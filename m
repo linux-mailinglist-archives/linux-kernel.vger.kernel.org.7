@@ -1,151 +1,110 @@
-Return-Path: <linux-kernel+bounces-702281-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-702283-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 04308AE806A
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Jun 2025 12:57:43 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 61AB0AE8069
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Jun 2025 12:57:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D1E154A4A42
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Jun 2025 10:57:10 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 055B11C21D34
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Jun 2025 10:57:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 898C92BEFEE;
-	Wed, 25 Jun 2025 10:55:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="B9QTmq+I"
-Received: from mail-ed1-f74.google.com (mail-ed1-f74.google.com [209.85.208.74])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 239B22BDC38
-	for <linux-kernel@vger.kernel.org>; Wed, 25 Jun 2025 10:55:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.74
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7B755284671;
+	Wed, 25 Jun 2025 10:57:10 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B67502222CC
+	for <linux-kernel@vger.kernel.org>; Wed, 25 Jun 2025 10:57:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750848955; cv=none; b=KE5Jbo+/IYTcpmtPKwr/1a0IOpAUlUw1OmR6tTamlA7sIx/LgBzbdHKl7bt04YSaIRMqboxlvUDH6uvUf87NnbMQcd+VwSrFZQVs5QYoIdMwcYOu8aNsnwMPV6HNRUjTrpe+IzzuTdvOj5h0XP5j9w+Aa2VW+/sBsi6X7k0oXs8=
+	t=1750849030; cv=none; b=lMUvgSHdZyPVOpV65VyfNkVJtmDSSVemcADyNDNlas++3mMUAqq+PYrta9Y6iCT3Mrx97osOpmv+KM3zjy+HmGm5boaNb8wcVDUUxjj8zJmmGkARtDiy9VLhu8PUs4chObxellYZALs2RuGcfeNKfXSQK6g2zN6v7JVYUaILzIs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750848955; c=relaxed/simple;
-	bh=Y+NflATt1BbVg4AJe27l0CDfySeQP4HOlxRLdzEDkE4=;
-	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=GdJKstpnwGOB0CSTKHsL974qsFKrbgZBffrXW5JuL31FvgNN5QqwDQFeh4zhrAylGP/UZ6MasSyE7G7fdCCSJefpk2UlCEfY5PtujxgEjoxBeOcgggkZYK3fijLbxw3iHEhdsP+7LjQvC9jA+DuO6fuT0qklIGloN5kT98jzMmk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--qperret.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=B9QTmq+I; arc=none smtp.client-ip=209.85.208.74
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--qperret.bounces.google.com
-Received: by mail-ed1-f74.google.com with SMTP id 4fb4d7f45d1cf-60724177a1fso1460278a12.3
-        for <linux-kernel@vger.kernel.org>; Wed, 25 Jun 2025 03:55:52 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1750848951; x=1751453751; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:mime-version:date:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=V1GXLq2HqBHIx1U8RtZLo2I2pqPpplv4UNHwKqoIWBU=;
-        b=B9QTmq+Iwg9J5FChLsLUtVUd6CNYlFSTIk+ySvZdCDtjNmyw+uqbhAsgakNxe3kZId
-         ncn3TbmxH6FA30bypLLuK+IuscQlxBCGZkgqcXoGfke99eL04Yev1S0EuTMBptC9P/jI
-         bpSR2oW1KW5ESxf66D5SnlogsZTlcxxPihBQ3rVgB88/c8FYMJ30KneS2eW/dGhasP+H
-         7/EGr+fgosP5tArQtsW+oUzqBBkKzUiJ/2Ah7vEorR21JPyZ+pw7lE61ELHvNzMEF1ac
-         NjzqsrnNYm61YY2qLms7QPa9wEFEStdKInAg8Z/J0BqkAaSHFv2bZAe3JzGrFdUrfnxN
-         4xLg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1750848951; x=1751453751;
-        h=cc:to:from:subject:message-id:mime-version:date:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=V1GXLq2HqBHIx1U8RtZLo2I2pqPpplv4UNHwKqoIWBU=;
-        b=Kuot7M/rRZ/jJjBv2nxFgqUrG5J3sghgWLmLDPjz5YbXimGlrwmcbw2/AVWMGS8Ynb
-         D5XaMQP6vlJSA8XSjYp9rf7Sv9Ycoqq7D/LIbhFcUHT4/kdrMHISZWHsAtEq4L5p2nE0
-         X2MyTxWJVSbNxINBC2tgfEeeSGgsS946nfkSmOMd+Y/wsMnC0ue4feWkC0uEhiWgAZ9N
-         X4zYN2UnFxK1Fc8cH0lznRDfx/yt219NjVwzt87COc4hkF2zgmP920diwiOlzHeHyzUI
-         9HfEVWZRVhVukPr9hmPCHcHTq5KLyyrxwaMcXEF0gHaZbMiOQReaIr0nXkTPIbMiUTaW
-         fjtA==
-X-Forwarded-Encrypted: i=1; AJvYcCWYSgXwRg1517jvzcuUELAdLODj7psNBpdwop4julnaLf0AgBfzVMR/xtwUpktmGJQ4rs+pLcNpPHw+IjQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0YysXM1R8t61a5CV7gJgD54bIy5Cbns4PU0o10eAA2zcSdt4fbbz
-	AD35ieTwas5Zp/6QC9XJr07MA7Lc8+fNVQOEAMBjqKMlr5GpqX+gqEnchXqr/2M40NWceNlaMUK
-	LOXFENBNwNw==
-X-Google-Smtp-Source: AGHT+IHUR8NzJ9FFoX9Hr5oMdShDNs6NRkAE3kBsnjpl89mkWn7cGms6VUHj8zcgECBy48WdUiyOSlbMzG/D
-X-Received: from edtb19.prod.google.com ([2002:aa7:c913:0:b0:60c:5b8e:e20b])
- (user=qperret job=prod-delivery.src-stubby-dispatcher) by 2002:a05:6402:35d3:b0:608:8204:c600
- with SMTP id 4fb4d7f45d1cf-60c4d31789amr2084880a12.3.1750848951221; Wed, 25
- Jun 2025 03:55:51 -0700 (PDT)
-Date: Wed, 25 Jun 2025 10:55:48 +0000
+	s=arc-20240116; t=1750849030; c=relaxed/simple;
+	bh=3TQZ8ESGt0fV923f7tYZMTwoU2Q4ytVqepIAaG8soDE=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=av7sl+M2ZyTeUGYn/OJeJqVmSTvM8qV0RfrpeJFA6Ty2vWFGyE/GZ7bjeAqtho5XjVFjepY7d97SD7b5BOBBEnAoGar++h42AAKSu6lKrpaT4LNHptTy5XSCUlfHY6y3Cn3ICHI1lhS2w4n3FVS/hDCYzgzW6tFplAZGtFR+iQ0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 9837D106F;
+	Wed, 25 Jun 2025 03:56:49 -0700 (PDT)
+Received: from [10.57.84.221] (unknown [10.57.84.221])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 6E65E3F58B;
+	Wed, 25 Jun 2025 03:57:04 -0700 (PDT)
+Message-ID: <94e6bb2c-22b8-4911-a970-d030ec4ac501@arm.com>
+Date: Wed, 25 Jun 2025 11:57:02 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-X-Mailer: git-send-email 2.50.0.714.g196bf9f422-goog
-Message-ID: <20250625105548.984572-1-qperret@google.com>
-Subject: [PATCH] KVM: arm64: Adjust range correctly during host stage-2 faults
-From: Quentin Perret <qperret@google.com>
-To: Marc Zyngier <maz@kernel.org>, Oliver Upton <oliver.upton@linux.dev>, 
-	Joey Gouly <joey.gouly@arm.com>, Suzuki K Poulose <suzuki.poulose@arm.com>, 
-	Zenghui Yu <yuzenghui@huawei.com>, Catalin Marinas <catalin.marinas@arm.com>, 
-	Will Deacon <will@kernel.org>
-Cc: Quentin Perret <qperret@google.com>, linux-arm-kernel@lists.infradead.org, 
-	kvmarm@lists.linux.dev, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 1/2] arm64: pageattr: Use pagewalk API to change memory
+ permissions
+Content-Language: en-GB
+To: Dev Jain <dev.jain@arm.com>, Karim Manaouil <kmanaouil.dev@gmail.com>,
+ Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
+Cc: akpm@linux-foundation.org, david@redhat.com, catalin.marinas@arm.com,
+ will@kernel.org, Liam.Howlett@oracle.com, vbabka@suse.cz, rppt@kernel.org,
+ surenb@google.com, mhocko@suse.com, linux-mm@kvack.org,
+ linux-kernel@vger.kernel.org, suzuki.poulose@arm.com, steven.price@arm.com,
+ gshan@redhat.com, linux-arm-kernel@lists.infradead.org,
+ yang@os.amperecomputing.com, anshuman.khandual@arm.com
+References: <20250613134352.65994-1-dev.jain@arm.com>
+ <20250613134352.65994-2-dev.jain@arm.com>
+ <8077b321-8953-46aa-b06d-95c91823e6ce@lucifer.local>
+ <20250614145021.7yve56wcxf3dlvwg@ed.ac.uk>
+ <1c7ba21a-7038-4edf-8734-fdba0c617c52@arm.com>
+From: Ryan Roberts <ryan.roberts@arm.com>
+In-Reply-To: <1c7ba21a-7038-4edf-8734-fdba0c617c52@arm.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-host_stage2_adjust_range() tries to find the largest block mapping that
-fits within a memory or mmio region (represented by a kvm_mem_range in
-this function) during host stage-2 faults under pKVM. To do so, it walks
-the host stage-2 page-table, finds the faulting PTE and its level, and
-then progressively increments the level until it finds a granule of the
-appropriate size. However, the condition in the loop implementing the
-above is broken as it checks kvm_level_supports_block_mapping() for the
-next level instead of the current, so pKVM may attempt to map a region
-larger than can be covered with a single block.
+On 19/06/2025 05:03, Dev Jain wrote:
+> 
+> On 14/06/25 8:20 pm, Karim Manaouil wrote:
+>> On Fri, Jun 13, 2025 at 05:27:27PM +0100, Lorenzo Stoakes wrote:
+>>> On Fri, Jun 13, 2025 at 07:13:51PM +0530, Dev Jain wrote:
+>>>> +        if (WARN_ON_ONCE((next - addr) != PGDIR_SIZE))
+>>>> +            return -EINVAL;
+>>> I guess the point here is to assert that the searched range _entirely
+>>> spans_ the folio that the higher order leaf page table entry describes.
+>>>
+>>> I'm guessing this is desired.
+>>>
+>>> But I'm not sure this should be a warning?
+>>>
+>>> What if you happen to walk a range that isn't aligned like this?
+>> My understandging is that the caller must ensure that addr is
+>> pud/pmd/pte-aligned. But, imho, since -EINVAL is returned, I don't think
+>> the WARN_ON_ONCE() is needed.
+> 
+> I don't really have a strong opinion on this. Ryan may be better fitted
+> to answer.
 
-This is not a security problem and is quite rare in practice (the
-kvm_mem_range check usually forces host_stage2_adjust_range() to choose a
-smaller granule), but this is clearly not the expected behaviour.
+IMHO it's a pretty serious programming cock-up if we ever find this situation,
+so I'd prefer to emit the warning.
 
-Refactor the loop to fix the bug and improve readability.
+apply_to_page_range() (which we are replacing here) emits WARN_ON_ONCE() if it
+arrives at any non-page leaf mappings, which is stronger than what we have here;
+it expects only to modify permissions on regions that are pte-mapped. Here we
+are relaxing that requirement to only require that the region begin and end on a
+leaf mapping boundary, where the leaf can be at any level.
 
-Fixes: c4f0935e4d95 ("KVM: arm64: Optimize host memory aborts")
-Signed-off-by: Quentin Perret <qperret@google.com>
----
- arch/arm64/kvm/hyp/nvhe/mem_protect.c | 20 ++++++++++++--------
- 1 file changed, 12 insertions(+), 8 deletions(-)
+So for now, we still only expect this code to get called for regions that are
+fully pte-mapped.
 
-diff --git a/arch/arm64/kvm/hyp/nvhe/mem_protect.c b/arch/arm64/kvm/hyp/nvhe/mem_protect.c
-index 95d7534c9679..8957734d6183 100644
---- a/arch/arm64/kvm/hyp/nvhe/mem_protect.c
-+++ b/arch/arm64/kvm/hyp/nvhe/mem_protect.c
-@@ -479,6 +479,7 @@ static int host_stage2_adjust_range(u64 addr, struct kvm_mem_range *range)
- {
- 	struct kvm_mem_range cur;
- 	kvm_pte_t pte;
-+	u64 granule;
- 	s8 level;
- 	int ret;
- 
-@@ -496,18 +497,21 @@ static int host_stage2_adjust_range(u64 addr, struct kvm_mem_range *range)
- 		return -EPERM;
- 	}
- 
--	do {
--		u64 granule = kvm_granule_size(level);
-+	for (; level <= KVM_PGTABLE_LAST_LEVEL; level++) {
-+		if (!kvm_level_supports_block_mapping(level))
-+			continue;
-+		granule = kvm_granule_size(level);
- 		cur.start = ALIGN_DOWN(addr, granule);
- 		cur.end = cur.start + granule;
--		level++;
--	} while ((level <= KVM_PGTABLE_LAST_LEVEL) &&
--			!(kvm_level_supports_block_mapping(level) &&
--			  range_included(&cur, range)));
-+		if (!range_included(&cur, range))
-+			continue;
-+		*range = cur;
-+		return 0;
-+	}
- 
--	*range = cur;
-+	WARN_ON(1);
- 
--	return 0;
-+	return -EINVAL;
- }
- 
- int host_stage2_idmap_locked(phys_addr_t addr, u64 size,
--- 
-2.50.0.714.g196bf9f422-goog
+This series is an enabler to allow us to change that in future though. Yang Shi
+is working on a series which will ensure that a region that we want to change
+permissions for has its start and end on a leaf boundary by dynamically
+splitting the leaf mappings as needed (which can be done safely on arm64 when
+FEAT_BBM level 2 is supported). This will then open up the door to mapping the
+linear map and vmalloc with large leaf mappings by default. But due to the
+splitting we ensure never to trigger the warning; if we do, that is a bug.
+
+Thanks,
+Ryan
 
 
