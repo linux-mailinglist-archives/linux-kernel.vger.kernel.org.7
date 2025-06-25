@@ -1,87 +1,96 @@
-Return-Path: <linux-kernel+bounces-702434-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-702436-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DFE92AE826E
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Jun 2025 14:15:10 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 876FCAE8271
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Jun 2025 14:15:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EDD40174966
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Jun 2025 12:15:10 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1BBE1189FCCF
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Jun 2025 12:15:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A88A2258CF5;
-	Wed, 25 Jun 2025 12:15:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5DEBB221DB2;
+	Wed, 25 Jun 2025 12:15:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="EtQcZSTz"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	dkim=pass (2048-bit key) header.d=pobox.com header.i=@pobox.com header.b="GmkFJZ45";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="L4P/yTBb"
+Received: from fhigh-b4-smtp.messagingengine.com (fhigh-b4-smtp.messagingengine.com [202.12.124.155])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BA8FD25DAFF
-	for <linux-kernel@vger.kernel.org>; Wed, 25 Jun 2025 12:15:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6267E1ADFFB;
+	Wed, 25 Jun 2025 12:15:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.12.124.155
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750853703; cv=none; b=TXk4cpEFlBaBX2x7Eq45YJnlzhP2J5xizDX2hJv9xAgSOG2n8Flgw1kh8s4mjImBDcsxt5bL/YwdWhiZMYOHOMFgTEkMOroXls4DpwN994sr+ZlwoWNgc157NpyNAyRTkdMPOd7Yq5BPJombCsKIskt+k95OeRuL3pVp1gPc3dA=
+	t=1750853730; cv=none; b=PHWjwRjQQ/7wDepM7rPT2kljr0kHqp2aE1L13s8LgW38l7eKvVBR1DxEerqYx2c/wFZ7JsOIqkJ/TKYjsiIfk1v0oOIc0yQjobaZIT7FQiwtkXbJiGfomjqwbQ+GBfgY93lY/6YPYnmo0QdVdLb/PTZancis7yv0KCyff0UqNPY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750853703; c=relaxed/simple;
-	bh=BstwL6Lomg7h/FYZhuoW1Yju3H4iRMB3OKjgatbUJ3Y=;
+	s=arc-20240116; t=1750853730; c=relaxed/simple;
+	bh=30nOtmBlh3aA5ZF6uHRSVaCLZpCJBiyzVQGIhuSz7e8=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=AaQiH7AuxiivGksvO4O+2PDWyCNuB9iOMusFDWNB1hlj9HONez2+i2+YF07ytrPz4cQJVDCVSCv3I/fmFgJLmAKR9EWGuz7CdKF1KU3e34wWEr4TF0ow8GiYGVCBI+YAxlYKSmZFn5Hnta98RTUdv1yiFvqUorccXhu1Gi52c+0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=EtQcZSTz; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279862.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 55P9Gmiw031883
-	for <linux-kernel@vger.kernel.org>; Wed, 25 Jun 2025 12:15:01 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	S1gfzAeFtKqZIDDDtaPRRz5e9GMjTtPvXyVmnuqxQGU=; b=EtQcZSTztSRJXn5a
-	laHE6wOQWmi7B1EmsIVw/UsX1VQu0Doumpv20ZAQMBQiinVyY3OS3Lcknyyvm2SE
-	uutWc5ASA7rrp3KqhUUseYazm62o/692VUdCwDFlcQYvc+Ej8rXq9S/G/UgWZPlw
-	0XruIvrTb7JCc9kq5HS7yotXAzgEGLJvGrn0J7Kqm3PXFjx8fRMgQDA8RC4HqG/0
-	0rMwehEvC7dYuoCc+S8vTIpyRjnEQfExGLbhechktPPA39ayfL/E04t9Br+dyE5/
-	2wDur+P0Qm9lhcpgO+xyHK2IxaKtzf4GaGFUYBCQM50q7hC9gtFjYAxgDbKtS0w7
-	qlHeRA==
-Received: from mail-qk1-f198.google.com (mail-qk1-f198.google.com [209.85.222.198])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 47f4b3ymux-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Wed, 25 Jun 2025 12:15:00 +0000 (GMT)
-Received: by mail-qk1-f198.google.com with SMTP id af79cd13be357-7d3eeb07a05so89138885a.2
-        for <linux-kernel@vger.kernel.org>; Wed, 25 Jun 2025 05:15:00 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1750853699; x=1751458499;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=S1gfzAeFtKqZIDDDtaPRRz5e9GMjTtPvXyVmnuqxQGU=;
-        b=I2x3HkZLR6s8wEggk1pJP/O79WANbZQ5KiJQ4MucL2ule49lfGuzTxWg/xeLndXob5
-         JxAKQIo6h9VBviPV/9bV/J8iz8rj5fRM219Tapp8KhDzJlLwkTq733CMwWaNMFdTf4pq
-         lnrgbfBE7WCvt93uQYreDDwT+WIws+XTGI7SpzMVgdanS+iErNJ8zY0Kzv5WjOQN5Sf6
-         L2aW1SPLFo22VlnAa4LmhG0/6b8d6lWR2fnbARspGwbDvN80z84utbqkqXOmHfOEPat2
-         sZCGNz9omQsUPXn5gCLj7T4dTkqN7QmOHhpUk5kTL3oxFzUr12vNkP9fhrqEsBNxpQ+r
-         cOQQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXIguv1CHpmXGOPadqS6MFVAoB/AOQ4lGNOLqx8DRoFOJB1PtecToAlgLAlhiw7alG0Uj2O5rF4nKcokos=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzXWvkOsZa4SHehwlJI6u5Hac41oeTMiVrnuT7IWFDRS347i7eb
-	6O0JjnKRUnPA7cZHjq8Pe/K+AeRKOi6gy3Z4UfzwFtxBlWkjJcsQaytWu3cK89XI6O3j1znBr4u
-	+PdXNUkk7A/QGjCyqlFCb84mGGnQjcUXZN5n7nkZlJyYRDtC2NrM2okqN9rMAK1pLKc8=
-X-Gm-Gg: ASbGncs6OL0vA2PkbHYSeOGcFi1cX8UMQr+ejkCXcr3hjN72LpiunPdUi8LE9/5o1AE
-	+R7a71drd5DpZv2CuitJIxRQ03fDFXlMawba0XO3xD6gefyWD9hiarI0rvhnlJNGNsBgrYUiPLc
-	rjIPW9iKWhANMqgE0F5KXLdTZwHdEcAQMNSjfdHmt8RkrKlFmul1NzEjSix2yJzzwnWLdS1TYf1
-	wdN8J2X+Sief0TC5y5o6u0iLE58y99qMsCV9bB1bqdfxmGpxdkVsRCvD+qknxiR0SI8c92+rrAc
-	/SzWmwfxpR9AEvf9miFxI9Ayzlp9p8MJZ3/IzZ4q7asW3WFifX+9Ppi1U10PHO9udZwhtMASrPh
-	47N0=
-X-Received: by 2002:a05:620a:1b89:b0:7ce:e99e:bc87 with SMTP id af79cd13be357-7d4297074cfmr131708185a.6.1750853699425;
-        Wed, 25 Jun 2025 05:14:59 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IHUZq2S+jTksBRqpXBDAQ+dq49dxghyHxfABwCdBE4cKnYNFStTwAfphTFb+AxDCbzEKcboAQ==
-X-Received: by 2002:a05:620a:1b89:b0:7ce:e99e:bc87 with SMTP id af79cd13be357-7d4297074cfmr131705985a.6.1750853698953;
-        Wed, 25 Jun 2025 05:14:58 -0700 (PDT)
-Received: from [192.168.143.225] (078088045245.garwolin.vectranet.pl. [78.88.45.245])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ae0ae978180sm262145166b.46.2025.06.25.05.14.56
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 25 Jun 2025 05:14:58 -0700 (PDT)
-Message-ID: <da6daf53-11de-4ca1-892d-73754adb435f@oss.qualcomm.com>
-Date: Wed, 25 Jun 2025 14:14:56 +0200
+	 In-Reply-To:Content-Type; b=fjf+wRJP4KIsvEawmyKqA4mZq04jW2T3J51FsnJtUnJ/fkywx1f4ywMbafmhSyA5RjWoDo+OpF93Pbb0PZWI0QaraokRlv5IfaHl9ohMRekwE3g/2BCnIxLy+n/+0ciD7ADUlLp8UpYnROY1xPKKNLdAF/5apWG3HRdaprmfspM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=pobox.com; spf=pass smtp.mailfrom=pobox.com; dkim=pass (2048-bit key) header.d=pobox.com header.i=@pobox.com header.b=GmkFJZ45; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=L4P/yTBb; arc=none smtp.client-ip=202.12.124.155
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=pobox.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pobox.com
+Received: from phl-compute-06.internal (phl-compute-06.phl.internal [10.202.2.46])
+	by mailfhigh.stl.internal (Postfix) with ESMTP id 06D587A01A2;
+	Wed, 25 Jun 2025 08:15:27 -0400 (EDT)
+Received: from phl-frontend-02 ([10.202.2.161])
+  by phl-compute-06.internal (MEProxy); Wed, 25 Jun 2025 08:15:27 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=pobox.com; h=cc
+	:cc:content-transfer-encoding:content-type:content-type:date
+	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to; s=fm1; t=1750853726;
+	 x=1750940126; bh=o3GBtX60wx4Vf1WejvmFEtSL/L3MgcftL3fqrvCo7rw=; b=
+	GmkFJZ45ilwhO3E31M+777jvMNsjhf+Z4wa22BubFTySBV0OQYV/4IDuAHxQpTyd
+	2ie34HZ7VKDMne5aumyLjYEwv2XtFPR+JAI3S1+TMQqFi144xAIQfcDonKqcXwSm
+	1NEQhNu4q5fY8ayJdZGAQ/wFVXx+9vYAIDmguMGJe9V0mk1tCtMva1JY8SkPbhCf
+	WTP8tTpETqu5xWXpvTgQ2WKfIYFNQVhYs7x8VlUI9IDp1WR7UFk26Yjk9jwp4uE8
+	4f/IqASq5AejtXFSqjyEFKy2Q0KdZBNFFz9+CjA1dGB12NU7P5qcmzJHzq8lc9W4
+	kr0eueGWSsTf7nzmBUQLIg==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-transfer-encoding
+	:content-type:content-type:date:date:feedback-id:feedback-id
+	:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to:x-me-proxy
+	:x-me-sender:x-me-sender:x-sasl-enc; s=fm2; t=1750853726; x=
+	1750940126; bh=o3GBtX60wx4Vf1WejvmFEtSL/L3MgcftL3fqrvCo7rw=; b=L
+	4P/yTBb3a6APugNmTVULxjOeQuD4g832230VEZDJY1LQJpRXmu9mIWlAEVmWbmvC
+	wjR9kVzCCyHpvSyatkbU5ZgXriqpWpchN5167oecgnqOoykyPu0U6cq0oeGQsgK8
+	zVzeSa0XcRcWOCTYbhkVo26Msh7eLmH0zc99/m7X0WFA+d2rn7EUjrqxV0qqfwQS
+	9yAuc4fJyS66fWfhKRd9hILypsMgKwPagziwX30nD/t9fr0LW10i3Pr5evmBTiog
+	GlN5NPJ1I9B8SPheL1DO+MjTLtPYm21kyjFlpj8ykUSRqNIiSnQa7w+jHH4MniHX
+	8Wz+jJ8JAGNB3Z2LR1ODA==
+X-ME-Sender: <xms:XehbaEQ2dZ2I6hE87lLvn0WZfQrT-i7Jcgt0QeBEHe0lAEh0HQkFUw>
+    <xme:XehbaBxPT6BeaEixTM4EmIY6zFyJJDBIl0zLXdN03u3m892l_ogNiwUgO8UOCVam_
+    tAjCr43sUqU74uaZfI>
+X-ME-Received: <xmr:XehbaB0vCLDaHUY1WHdgNcLWJV1Y_aMsP1Gv3-C3gS02ot-2D3QGYlalqeTJxsyUG8KLWGzi1MA9BxDZ_II_kNk_j_TrnQ>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtddvgddvvdejhecutefuodetggdotefrod
+    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpuffrtefokffrpgfnqfghnecuuegr
+    ihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjug
+    hrpefkffggfgfuvfevfhfhjggtgfesthekredttddvjeenucfhrhhomhepfdeurghrrhih
+    ucfmrdcupfgrthhhrghnfdcuoegsrghrrhihnhesphhosghogidrtghomheqnecuggftrf
+    grthhtvghrnhepuddvtdelfeejffekgfekfeekgfekveelleehkeeuheetuedtvdevgeef
+    ieejteeknecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomh
+    epsggrrhhrhihnsehpohgsohigrdgtohhmpdhnsggprhgtphhtthhopedvuddpmhhouggv
+    pehsmhhtphhouhhtpdhrtghpthhtohephhholhhgvghrsegrphhplhhivgguqdgrshihnh
+    gthhhrohhnhidrtghomhdprhgtphhtthhopehgrhgvghhkhheslhhinhhugihfohhunhgu
+    rghtihhonhdrohhrghdprhgtphhtthhopehsthgrsghlvgesvhhgvghrrdhkvghrnhgvlh
+    drohhrghdprhgtphhtthhopehprghttghhvghssehlihhsthhsrdhlihhnuhigrdguvghv
+    pdhrtghpthhtoheplhhinhhugidqkhgvrhhnvghlsehvghgvrhdrkhgvrhhnvghlrdhorh
+    hgpdhrtghpthhtohepthhorhhvrghlughssehlihhnuhigqdhfohhunhgurghtihhonhdr
+    ohhrghdprhgtphhtthhopegrkhhpmheslhhinhhugidqfhhouhhnuggrthhiohhnrdhorh
+    hgpdhrtghpthhtoheplhhinhhugiesrhhovggtkhdquhhsrdhnvghtpdhrtghpthhtohep
+    shhhuhgrhheskhgvrhhnvghlrdhorhhg
+X-ME-Proxy: <xmx:XehbaICJbyfKQTyhySsX82c90BohFvUYP6gKw-0cnqfe7OHoHyHiTw>
+    <xmx:XehbaNhPSv40PdJqhW-jmEkwiLmFk1Dvglew3qiuwK4UIXp76Zi0SQ>
+    <xmx:XehbaEqrZnWnDZCKkO3ovsOtG5p4QD2AmGYMSb1uAsJ5prlbUSZliQ>
+    <xmx:XehbaAj8cMHXCkd2oKxmq3bzHRUYhyU1IKhcdcehtc7hOVCA-RqHtA>
+    <xmx:XuhbaBHwPQWVJ5xuPKAAx3kdAT_MJ5kDtugb5j90Gre3QUiukdlDoTAI>
+Feedback-ID: i6289494f:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Wed,
+ 25 Jun 2025 08:15:22 -0400 (EDT)
+Message-ID: <6d3b0f28-98cb-46dd-b971-8a11e3b69d68@pobox.com>
+Date: Wed, 25 Jun 2025 05:15:21 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -89,68 +98,75 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2] arm64: dts: qcom: ipq5424: Describe the 4-wire UART SE
-To: Kathiravan Thirumoorthy <kathiravan.thirumoorthy@oss.qualcomm.com>,
-        Bjorn Andersson <andersson@kernel.org>,
-        Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley
- <conor+dt@kernel.org>,
-        Mukesh Kumar Savaliya <quic_msavaliy@quicinc.com>,
-        Viken Dadhaniya <quic_vdadhani@quicinc.com>
-Cc: linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-References: <20250624-ipq5424_hsuart-v2-1-6566dabfe4a6@oss.qualcomm.com>
- <bdf7e3e4-f1d1-4f3f-aebe-ded7b8091884@oss.qualcomm.com>
- <3514a3af-ab7d-41e6-9e59-95defe9105b4@oss.qualcomm.com>
+Subject: Re: [PATCH 6.15 000/588] 6.15.4-rc2 review
+To: =?UTF-8?Q?Holger_Hoffst=C3=A4tte?= <holger@applied-asynchrony.com>,
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: stable@vger.kernel.org, patches@lists.linux.dev,
+ linux-kernel@vger.kernel.org, torvalds@linux-foundation.org,
+ akpm@linux-foundation.org, linux@roeck-us.net, shuah@kernel.org,
+ patches@kernelci.org, lkft-triage@lists.linaro.org, pavel@denx.de,
+ jonathanh@nvidia.com, f.fainelli@gmail.com, sudipm.mukherjee@gmail.com,
+ srw@sladewatkins.net, rwarsow@gmx.de, conor@kernel.org,
+ hargar@microsoft.com, broonie@kernel.org,
+ Christian Brauner <brauner@kernel.org>
+References: <20250624121449.136416081@linuxfoundation.org>
+ <e9249afe-f039-4180-d50d-b199c26dea26@applied-asynchrony.com>
+ <2025062511-tutor-judiciary-e3f9@gregkh>
+ <b875b110-277d-f427-412c-b2cb6512fccc@applied-asynchrony.com>
 Content-Language: en-US
-From: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-In-Reply-To: <3514a3af-ab7d-41e6-9e59-95defe9105b4@oss.qualcomm.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNjI1MDA5MCBTYWx0ZWRfX98/rkzKyEArM
- 4u/EL+kY8mEkITclS1S+729v82ye5bDs0jMBbXLaZoi6zGvSK7a6A0kGjbrTQ0+FMdJESMumUHb
- gGXEsPQrJV1HD5fuFewvii7CIiRr+zXEGRvWlQYEouX1t1LGc2UIEReT/H/wNpD9ln8ovy+mK+L
- bwE5wjZBTGaoVfEGTcS8ogUHQsD4t+ti6ak+igQTdMkoUokl6tkSGBOPXuUAYjDRM6NjEePielA
- fgz6Cwx9kL3LhMhZCfz9zlRHQl9jKCT5xgw1OaTy0DDI21ZWaGkiZuXZiimZwi+DnSFZIbTlCO4
- GnFGq2QcJBtUX+3h8UXI3HdsAv2f5VbE9s/fdvFscFfTu10TfFHuuvr8GQukBXBBIbpbTv2crGt
- zAJbvUGYgO6p6+7HcFOFgnQSa6k0gGdrw9q0F35QqD/LZ8GjePbC+5APKcA014l5Fzpc0+jK
-X-Proofpoint-ORIG-GUID: jMS-Q-STmyzfGNh3dgvt3s26mb_eRobC
-X-Proofpoint-GUID: jMS-Q-STmyzfGNh3dgvt3s26mb_eRobC
-X-Authority-Analysis: v=2.4 cv=A8BsP7WG c=1 sm=1 tr=0 ts=685be844 cx=c_pps
- a=qKBjSQ1v91RyAK45QCPf5w==:117 a=FpWmc02/iXfjRdCD7H54yg==:17
- a=IkcTkHD0fZMA:10 a=6IFa9wvqVegA:10 a=VwQbUJbxAAAA:8 a=EUspDBNiAAAA:8
- a=hHLQ3m-ZY_siiFXIcXAA:9 a=QEXdDO2ut3YA:10 a=NFOGd7dJGGMPyQGDc5-O:22
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.7,FMLib:17.12.80.40
- definitions=2025-06-25_03,2025-06-25_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- lowpriorityscore=0 mlxlogscore=688 malwarescore=0 spamscore=0 bulkscore=0
- phishscore=0 adultscore=0 impostorscore=0 suspectscore=0 mlxscore=0
- clxscore=1015 priorityscore=1501 classifier=spam authscore=0 authtc=n/a
- authcc= route=outbound adjust=0 reason=mlx scancount=1
- engine=8.19.0-2505280000 definitions=main-2506250090
+From: "Barry K. Nathan" <barryn@pobox.com>
+In-Reply-To: <b875b110-277d-f427-412c-b2cb6512fccc@applied-asynchrony.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-On 6/25/25 7:55 AM, Kathiravan Thirumoorthy wrote:
-> 
-> On 6/24/2025 8:08 PM, Konrad Dybcio wrote:
->> On 6/24/25 11:00 AM, Kathiravan Thirumoorthy wrote:
->>> QUPv3 in IPQ5424 consists of six Serial Engines (SEs). Describe the
->>> first SE, which supports a 4-wire UART configuration suitable for
->>> applications such as HS-UART.
+On 6/25/25 02:08, Holger Hoffstätte wrote:
+> On 2025-06-25 10:25, Greg Kroah-Hartman wrote:
+>> On Wed, Jun 25, 2025 at 10:00:56AM +0200, Holger Hoffstätte wrote:
+>>> (cc: Christian Brauner>
 >>>
->>> Note that the required initialization for this SE is not handled by the
->>> bootloader. Therefore, add the SE node in the device tree but keep it
->>> disabled. Enable it once Linux gains support for configuring the SE,
->>> allowing to use in relevant RDPs.
->> Do you mean fw loading support?
+>>> Since 6.15.4-rc1 I noticed that some KDE apps (kded6, kate (the text 
+>>> editor))
+>>> started going into a tailspin with 100% per-process CPU.
+>>>
+>>> The symptom is 100% reproducible: open a new file with kate, save 
+>>> empty file,
+>>> make changes, save, watch CPU go 100%. perf top shows copy_to_user 
+>>> running wild.
+>>>
+>>> First I tried to reproduce on 6.15.3 - no problem, everything works 
+>>> fine.
+>>>
+>>> After checking the list of patches for 6.15.4 I reverted the 
+>>> anon_inode series
+>>> (all 3 for the first attempt) and the problem is gone.
+>>>
+>>> Will try to reduce further & can gladly try additional fixes, but for 
+>>> now
+>>> I'd say these patches are not yet suitable for stable.
+>>
+>> Does this same issue also happen for you on 6.16-rc3?
 > 
-> SE0 is minicore, so we don't need to load the FW. But apart from FW , protocol specific configurations to be done in the SE's Image Configuration registers, which is taken care in the patch[1]
+> Curiously it does *not* happen on 6.16-rc3, so that's good.
+> I edited/saved several files and everything works as it should.
 > 
-> [1] [PATCH v5 0/5] Add support to load QUP SE firmware from <https://lore.kernel.org/linux-arm-msm/20250624095102.1587580-1-viken.dadhaniya@oss.qualcomm.com/T/#m37a6b739c66040cde5b6b0121a03da7ea6715842>
+> In 6.15.4-rc the problem occurs (as suspected) with:
+> anon_inode-use-a-proper-mode-internally.patch aka cfd86ef7e8e7 upstream.
+> 
+> thanks
+> Holger
 
-I've heard the 'minicore' or similar name before.. how does it differ
-from a "normal" SE? (+Mukesh & Viken)
+For what it's worth, I can confirm this reproduces easily and 
+consistently on Debian trixie's KDE (6.3.5), with either Wayland or X11. 
+It reproduces with kernel 6.15.4-rc2, and with 
+6.15.3+anon_inode-use-a-proper-mode-internally.patch, but not with 
+vanilla 6.15.3 or with 6.16-rc3.
 
-Konrad
+By the way, my test VM has both GNOME and KDE installed. If I boot one 
+of the affected kernels and log into a GNOME session, I don't get any 
+GNOME processes chewing up CPU the way that some of the KDE processes 
+do. However, if I then start kate within the GNOME session and follow 
+the steps to reproduce (create a new file, save it immediately, type a 
+few characters, save again), kate still starts using 100% CPU.
+-- 
+-Barry K. Nathan  <barryn@pobox.com>
 
