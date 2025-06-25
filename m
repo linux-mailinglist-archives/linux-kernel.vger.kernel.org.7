@@ -1,149 +1,130 @@
-Return-Path: <linux-kernel+bounces-701816-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-701818-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 90DDEAE79BE
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Jun 2025 10:16:36 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id E0766AE79C4
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Jun 2025 10:16:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 494C21BC6DDA
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Jun 2025 08:16:40 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0F1E53B7F23
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Jun 2025 08:16:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 232BD220698;
-	Wed, 25 Jun 2025 08:15:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 12B05214A9B;
+	Wed, 25 Jun 2025 08:16:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="MLWLEBRJ"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.15])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="OjAjNowm"
+Received: from mail-yw1-f175.google.com (mail-yw1-f175.google.com [209.85.128.175])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C2333211A15
-	for <linux-kernel@vger.kernel.org>; Wed, 25 Jun 2025 08:15:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.15
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DA99520E023;
+	Wed, 25 Jun 2025 08:15:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750839308; cv=none; b=cOvYrphh2HtWuL13GHXBl/5J8SH+y1zm4XA7Wd6VwYkMJ1agn3BvW0rSBeI1ALy4Jqjq+iCVXZtwg69X6WR5PqfvRwOfAT+fGiKoZ0t0fbypsdlHpID0e4IqKdWZZZLJGN+3JNqJ4ywVFu/hXKM/7d3ve4gMt0ZpJzi3rQ9muYQ=
+	t=1750839360; cv=none; b=Z5CjNxzXaSuNlrH/AzjA5WToAEDlHxNNTx6EztdF1POTL3JnSk+jw324/wag4Ws0Huzh7uzR58midDcLAQeS3D51XEtrUqa+Jo8CyK4QuwtIO1Wqltd/OeoAWz5oCqZbE6mOx6VoQtnkwT2XV4mjYb9Lr2Po8c73CjPrX0BjRDU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750839308; c=relaxed/simple;
-	bh=VcCasfOKf3wY7lXUeCooCr/f7j0f+z8fz2NB7sEXlwA=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=S2jdWmInapL2Zio3PdmD0TJE89A0Stj0tRhfP0uCZjUTxuigiHA26pBl0Q9KXmm2Y06bAXvQT93J378VP/qRAksvD/fAkA+fb9YJHHS0QP/KfsaajPMVEAAPRJUpUvFAY25Kz+aaNFmLuXrI8aOmWtYRDanBdCdc7f4yG/sj1Iw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=MLWLEBRJ; arc=none smtp.client-ip=198.175.65.15
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1750839307; x=1782375307;
-  h=from:to:cc:subject:date:message-id:mime-version:
-   content-transfer-encoding;
-  bh=VcCasfOKf3wY7lXUeCooCr/f7j0f+z8fz2NB7sEXlwA=;
-  b=MLWLEBRJ/myjFCWlLX9se9DU2PJb8Ke2D5RZXJCv37SHFADBhjvr6pjY
-   ZkEnh4l/1xOwC6FgJCQFzp7yXreQRthMcu08AYcZ/hwUSTiU8Ot8C/qCe
-   Rj3SwI2oTPRCZOMc5gvm1596bvFHPG69Bn2/UEcItcj83D/ZB9xeCGw6b
-   pCuWoa+wSv09yA2qdpVeiumch7rZV3AXdUi907haGLLaQKBlvfBqycRLy
-   ZGuWB7CCbfINqSgM1vnneYFtdpB3tiu3GbUUuGiNBn+p5iJwFCMsnkhFl
-   Pd4BgHF8tzzo+OB3WuyKmMY2LVbJtgGeGTioMhvqYOC8XBmnBluUoNG/G
-   A==;
-X-CSE-ConnectionGUID: F00JEZaeTKuzjaqN+DmZIg==
-X-CSE-MsgGUID: GCRU1pDBTmOgefFKAHpXnQ==
-X-IronPort-AV: E=McAfee;i="6800,10657,11474"; a="56775912"
-X-IronPort-AV: E=Sophos;i="6.16,264,1744095600"; 
-   d="scan'208";a="56775912"
-Received: from orviesa004.jf.intel.com ([10.64.159.144])
-  by orvoesa107.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 25 Jun 2025 01:15:06 -0700
-X-CSE-ConnectionGUID: SEsMtY16SReC2E4iL3FkOA==
-X-CSE-MsgGUID: 4EhfEAXgQKqA5x5dAH4ATw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.16,264,1744095600"; 
-   d="scan'208";a="156716161"
-Received: from klitkey1-mobl1.ger.corp.intel.com (HELO kekkonen.fi.intel.com) ([10.245.245.155])
-  by orviesa004-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 25 Jun 2025 01:15:04 -0700
-Received: from punajuuri.localdomain (unknown [192.168.240.130])
-	by kekkonen.fi.intel.com (Postfix) with ESMTP id C24FC11F742;
-	Wed, 25 Jun 2025 11:15:01 +0300 (EEST)
-Received: from sailus by punajuuri.localdomain with local (Exim 4.96)
-	(envelope-from <sakari.ailus@linux.intel.com>)
-	id 1uULHZ-009zq9-2U;
-	Wed, 25 Jun 2025 11:15:01 +0300
-Organization: Intel Finland Oy - BIC 0357606-4 - c/o Alberga Business Park, 6 krs, Bertel Jungin Aukio 5, 02600 Espoo
-From: Sakari Ailus <sakari.ailus@linux.intel.com>
-To: linux-mediatek@lists.infradead.org
-Cc: linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	Jassi Brar <jassisinghbrar@gmail.com>,
-	Matthias Brugger <matthias.bgg@gmail.com>,
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
-Subject: [PATCH] mailbox: mtk-cmdq: Switch to pm_runtime_put_autosuspend()
-Date: Wed, 25 Jun 2025 11:15:01 +0300
-Message-Id: <20250625081501.2382657-1-sakari.ailus@linux.intel.com>
-X-Mailer: git-send-email 2.39.5
+	s=arc-20240116; t=1750839360; c=relaxed/simple;
+	bh=B9FQ/xDTdaPFjALjUp4dGIQ/na1i4R5MHemjyoJtJVw=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=taXzEPL5XcnhlY2U059LjRQACH0k66byaOP6r29AnDRfJy9dCgeaPVRW0qdcmBXV2LxqWiChMCBILxtIV/tnfrnSo5sxsRTKA9Ws3TRtuLNCAvk7nVmArZaVLWKUByiq9tVvBFsswiwc5paRc+LEDopPTLbJVr77GS78a5ocZ1Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=OjAjNowm; arc=none smtp.client-ip=209.85.128.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-yw1-f175.google.com with SMTP id 00721157ae682-70834f92aaeso4462537b3.3;
+        Wed, 25 Jun 2025 01:15:58 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1750839358; x=1751444158; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=B9FQ/xDTdaPFjALjUp4dGIQ/na1i4R5MHemjyoJtJVw=;
+        b=OjAjNowm7EI8tLuGe/AvOhuTVpO4QPXaz/Xat3mG7KIEF7MCyhRnfEyJhuHC58O1ih
+         PzkuaVTu2SsMMZRcIQwHdRL+wFrAsS4kZ7g+J9UZl+xmc25cbuqzr0Uw3/hh2JFurxyY
+         wgTa2zj9x33OJaAoBVrDGiiqzZRCwbWDfBblVDA+e6FjS6H360IvY6EV+/Nj5pyTxucZ
+         afuwiaowF+9+CdmEiWiAAL4s30vQ8oE912rRb1zlo9PcDAqwUr/63fF1iddidnJPbOP1
+         RIbWxPdyMaD985+KQOtoBxj58XUKk9uO275utoehg9IvkofABtPxuUtDHXgxlDHjbuHU
+         w8/g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1750839358; x=1751444158;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=B9FQ/xDTdaPFjALjUp4dGIQ/na1i4R5MHemjyoJtJVw=;
+        b=ccaPnN3sFCpOoqPJ5QXQPiZARzwJCYUUcpBb8dtNoZ7mi5i16iLUNtbb9zhF4DldWc
+         k3m0x8YlkxQyXiypA1ZYO8cLeE1ZbQvvLzB76z5W4P20L1+ffA+b+rvP8RPGyPIpGHdh
+         4jjj0vZuBkFJmHfK4G1GOTjrfbtrFGj3UtA0ugHybmeJa/OWxbk5wshTIE/Nd5lnodMp
+         kKzRkRdA+1EPlt47Nmu7JfOPGdkowwe51SP40Pqfv6zCZIytGFu6JVcXbTcSmMTu57td
+         ULBrsWyM4OkcnC5v6GzfttqhkutCAKi7LFU7MgGy79QDVtAo54nEoszop5BdovN8celm
+         PCug==
+X-Forwarded-Encrypted: i=1; AJvYcCUrohKJl3Hod0lTojJkuovjSxoAGZIp0gydAx+TM0f6teFTx8kST1VXbd7QAxsvLe0MhHeSOoIjuMEg@vger.kernel.org, AJvYcCXWLnrgCdw40h9HiWwJaviVPi5oZBTOTKoooi/fxV0lDjev0ytqHhRSSIPPQmcvMZnXjmheQR7A9wo=@vger.kernel.org, AJvYcCXZZ2H5gjgy0egYi2cDF7XWf9KIwC1SOOTmuJx/4N/Ds3jcGn10iq4BVjpb28IdWiyPWJ+XXp34YKDCrxdC@vger.kernel.org
+X-Gm-Message-State: AOJu0YxgTy1xMkSBMc/jjgbEAi0fxFDiJ27uft9N9IF1SZt9B6TxeGsq
+	dSA9/uLi260xXRJUWsQOBQ+M6gkAmS/S5TX8MODEbz5Ffvaos0H3Wj81jsgwziWIjyHxPYvXkPt
+	RUL2qYyiloeBGGIJgQ24JXcT30vFdBqM=
+X-Gm-Gg: ASbGncuuDWqSqq4jTxn5NuGW7pkoVsaEFV5qGC0BQr7KFSsNlU3DZgjrTGh5ril9LDD
+	xo75jEe2iwOHF0RnlmC2u6E814k8wcpC28LznviYjMbRYg5T3HPgp8xHCN0bAOQRA3SSFDvCuDa
+	vIXARxFGBnu/xLK+xSE5J+Z8qLEH+zrvk4SoY2uI/XpyE=
+X-Google-Smtp-Source: AGHT+IErRBRd4ZEkZGGTpdiXkJHmurXTIOpZXK+xDiiziUhNlaNMwGpOR9VoKLkPFm/JlC7M4GtcD6m2pcR3WADrueM=
+X-Received: by 2002:a05:690c:7483:b0:712:c5f7:1f02 with SMTP id
+ 00721157ae682-71406c84c64mr12648157b3.1.1750839357660; Wed, 25 Jun 2025
+ 01:15:57 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20250615222258.117771-1-l.rubusch@gmail.com> <aFDBWztZT67hUF6I@archie.me>
+In-Reply-To: <aFDBWztZT67hUF6I@archie.me>
+From: Lothar Rubusch <l.rubusch@gmail.com>
+Date: Wed, 25 Jun 2025 10:15:21 +0200
+X-Gm-Features: AX0GCFsCKhxXsO9vDHgBQ6201WxKb_UPKCWTu4wT49puBY3PnYFj9m7uKV-mBTY
+Message-ID: <CAFXKEHaZ8aGw=WZiSDZhsrviATTNK5omRBOhNLd1xAsjxDAPmQ@mail.gmail.com>
+Subject: Re: [PATCH v5 0/8] iio: accel: adxl313: add power-save on activity/inactivity
+To: Bagas Sanjaya <bagasdotme@gmail.com>
+Cc: jic23@kernel.org, dlechner@baylibre.com, nuno.sa@analog.com, 
+	andy@kernel.org, corbet@lwn.net, lucas.p.stankus@gmail.com, lars@metafoo.de, 
+	Michael.Hennerich@analog.com, linux-iio@vger.kernel.org, 
+	linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-__pm_runtime_put_autosuspend() was meant to be used by callers that needed
-to put the Runtime PM usage_count without marking the device's last busy
-timestamp. It was however seen that the Runtime PM autosuspend related
-functions should include that call. Thus switch the driver to
-use pm_runtime_put_autosuspend().
+Hi Bagas Sanjaya
 
-Signed-off-by: Sakari Ailus <sakari.ailus@linux.intel.com>
----
- drivers/mailbox/mtk-cmdq-mailbox.c | 10 +++++-----
- 1 file changed, 5 insertions(+), 5 deletions(-)
+Sry, for the late reply.
 
-diff --git a/drivers/mailbox/mtk-cmdq-mailbox.c b/drivers/mailbox/mtk-cmdq-mailbox.c
-index ab4e8d1954a1..532929916e99 100644
---- a/drivers/mailbox/mtk-cmdq-mailbox.c
-+++ b/drivers/mailbox/mtk-cmdq-mailbox.c
-@@ -390,7 +390,7 @@ static int cmdq_mbox_send_data(struct mbox_chan *chan, void *data)
- 
- 	task = kzalloc(sizeof(*task), GFP_ATOMIC);
- 	if (!task) {
--		__pm_runtime_put_autosuspend(cmdq->mbox.dev);
-+		pm_runtime_put_autosuspend(cmdq->mbox.dev);
- 		return -ENOMEM;
- 	}
- 
-@@ -440,7 +440,7 @@ static int cmdq_mbox_send_data(struct mbox_chan *chan, void *data)
- 	list_move_tail(&task->list_entry, &thread->task_busy_list);
- 
- 	pm_runtime_mark_last_busy(cmdq->mbox.dev);
--	__pm_runtime_put_autosuspend(cmdq->mbox.dev);
-+	pm_runtime_put_autosuspend(cmdq->mbox.dev);
- 
- 	return 0;
- }
-@@ -488,7 +488,7 @@ static void cmdq_mbox_shutdown(struct mbox_chan *chan)
- 	spin_unlock_irqrestore(&thread->chan->lock, flags);
- 
- 	pm_runtime_mark_last_busy(cmdq->mbox.dev);
--	__pm_runtime_put_autosuspend(cmdq->mbox.dev);
-+	pm_runtime_put_autosuspend(cmdq->mbox.dev);
- }
- 
- static int cmdq_mbox_flush(struct mbox_chan *chan, unsigned long timeout)
-@@ -528,7 +528,7 @@ static int cmdq_mbox_flush(struct mbox_chan *chan, unsigned long timeout)
- out:
- 	spin_unlock_irqrestore(&thread->chan->lock, flags);
- 	pm_runtime_mark_last_busy(cmdq->mbox.dev);
--	__pm_runtime_put_autosuspend(cmdq->mbox.dev);
-+	pm_runtime_put_autosuspend(cmdq->mbox.dev);
- 
- 	return 0;
- 
-@@ -543,7 +543,7 @@ static int cmdq_mbox_flush(struct mbox_chan *chan, unsigned long timeout)
- 		return -EFAULT;
- 	}
- 	pm_runtime_mark_last_busy(cmdq->mbox.dev);
--	__pm_runtime_put_autosuspend(cmdq->mbox.dev);
-+	pm_runtime_put_autosuspend(cmdq->mbox.dev);
- 	return 0;
- }
- 
--- 
-2.39.5
+On Tue, Jun 17, 2025 at 3:14=E2=80=AFAM Bagas Sanjaya <bagasdotme@gmail.com=
+> wrote:
+>
+> On Sun, Jun 15, 2025 at 10:22:50PM +0000, Lothar Rubusch wrote:
+> > base-commit: 7461179e080df770240850a126cc7dbffad195c8
+> > prerequisite-patch-id: 263cdbf28524f1edc96717db1461d7a4be2319c2
+>
+> What prerequisite patch?
+>
+> Confused...
+>
 
+Interesting, tbh I'm not sure about the "prerequisite-patch-id",
+either. AFAIK there is some git command to verify and use it as rather
+an ID of the patch (series), as far as I can see in the documentation
+for format-patch:
+https://git-scm.com/docs/git-format-patch#_base_tree_information
+
+As mentioned the series is based on this fork and branch:
+https://git.kernel.org/pub/scm/linux/kernel/git/jic23/iio.git/log/?h=3Dtest=
+ing
+
+Actually, the base commit should be possible to identify (at least I
+could identify it in tig). AFAIK - or, as I needed to learn myself in
+the past - usually they check the series automatically first to rule
+out such things. E.g. they execute checkpatch, smatch, in case DT
+check,... on it. If anything fails here, I guess I would have received
+feedback within about 24h. Since there was no feedback, I assume there
+should not be an issue.
+
+Best regards,
+Lothar
+
+> --
+> An old man doll... just what I always wanted! - Clara
 
