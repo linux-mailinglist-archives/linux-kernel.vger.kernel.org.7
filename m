@@ -1,47 +1,47 @@
-Return-Path: <linux-kernel+bounces-702588-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-702587-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id E44B3AE8469
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Jun 2025 15:22:39 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9017FAE846B
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Jun 2025 15:22:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0A13C177A84
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Jun 2025 13:19:04 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B88991885022
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Jun 2025 13:19:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C169F265CCF;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A47E2265CB2;
 	Wed, 25 Jun 2025 13:17:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="k++/2pzA"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="f6QDsgUO"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 06E7C25FA31;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 04F23199E89;
 	Wed, 25 Jun 2025 13:17:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750857425; cv=none; b=jPl/YZ3moIzfpj6jkLziXQh2Q1z2rWAWzMIk8AuhC/We/4lrhRsjbnoBOy1BSu+f1EGUrbFOqsD3XnApJ7ph6NwHjECEyB1p4RkBQiFKmA0su3JbT57K3R42CfEc7mITeueAxQoaI82XxPwXiQT4LaxrvCBMWXMBffTVu0XuUs4=
+	t=1750857425; cv=none; b=AjkBgf+OijimIab84X586Tkm981Hhin4ygOsNslpyU/pXhX/J3DneXnQUVqoYigJUi/vD2gtYFVvX7e76voEI5/I6OfrLaAwkAGsKUmQUoWtZy4TvnqHb42SbdiTeVaxZV8XWnb8Q/CbapsD4Fqb94Bgw0lcRBAyG9FULCs4N0E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1750857425; c=relaxed/simple;
-	bh=bRr/5nBVNTrO8h20FoPhHm0wRk96HyeoMwIQD4LmilM=;
+	bh=2K6FEdZJxw9ltrH83HiFUwdVQ5PYFVVIBpHrVuk6Ijw=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=C8/5NEg5RqpM6NnA8ZgZEjAU8iKP77OdrA1Slm5qgRS5fanrAfYnrff7DbTTr5FBzcKSaSUfG02iEWgKaOh3n94+K+2DGEEUXuEeHXKm6VQqVj8XPhmnKJIv7/NKBWOr5+acPk8airOZZP1832AGwLq9vLUs0zjHeEvI4VNGfwM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=k++/2pzA; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B81D9C4AF09;
+	 MIME-Version; b=HQfuaGFdWqNkYsSly+P4JIrxOJm7SieoxgWMWVCX3ERMTw5joUmOYz8AuUrUWx4EDWSbJtGv55S8v9lOW1TJPR7KujPljdxXowzniA+P5k8xr7H45hiKgO+8yWy1/EaEcE9vmOLIoUwDobcnDJyM5vlO4TIFonZl62m1E1IfIHE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=f6QDsgUO; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B2E51C4CEEA;
 	Wed, 25 Jun 2025 13:17:04 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
 	s=k20201202; t=1750857424;
-	bh=bRr/5nBVNTrO8h20FoPhHm0wRk96HyeoMwIQD4LmilM=;
+	bh=2K6FEdZJxw9ltrH83HiFUwdVQ5PYFVVIBpHrVuk6Ijw=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=k++/2pzAGuY4XdUVV8YAqUHG2uxVs4d9ZCHK82L+bB0W50e04qc6lcpiQfnVenQNh
-	 yckW3BuZy9cXoG18Db6m5qQAB925pd+zfbEHFuu35UwK3929/pKQBDGmZRRgbWp2zN
-	 Wk8Ixx6u1BlyQMqKvSk296ltnMOFho3SIgAdKPge34Rpd+zckdRd7tsWqBcHQip5QA
-	 W21UkbwKpOc56N3/4x6EZEMkTnxwP67HjmSk/tXm6xK41WL+q1mRhA95T3nckRZVdS
-	 IkA3AlYHb/ujGaWRCYRq4QUT+u2Mj+VQYhCFpSQlX0k61vGKevF6dFtNgmsW1kztFL
-	 riqE1hn3lu6iw==
+	b=f6QDsgUOFY5Lh8fajygvvy0FpyEXt/rCNSAkPDbaNN2OL27rcGdP5KiwuTy++1hse
+	 U0Avlnmnro61MJlx3ENbtsF3LJFmwEtl1gZR8SL5whhzQnH0+D02BMfaUYeVItPN14
+	 dK6KxGyX3Q83M/b0Y4J5g5atQ9IXUeu1OcUXTvyhbH8xvCxLAyv29wxf9eJvej3UJ2
+	 HSsmkMErVkM3X7zKUGW4Qdoo7X0cz2ehR85cCt+lf9wGkJ0llyEanZRjKJpGHCwCWn
+	 hM26z/L2Sws/PqmpcuMtSHeAMpGDPAm0UvtFbyJU1ufuB9CO6tLCRpcF3X/SnffkpV
+	 +DBFWLKUe2Vrw==
 Received: by wens.tw (Postfix, from userid 1000)
-	id 5DFE05FF19; Wed, 25 Jun 2025 21:17:02 +0800 (CST)
+	id 6BEDF5FF51; Wed, 25 Jun 2025 21:17:02 +0800 (CST)
 From: Chen-Yu Tsai <wens@kernel.org>
 To: Rob Herring <robh@kernel.org>,
 	Krzysztof Kozlowski <krzk+dt@kernel.org>,
@@ -54,9 +54,9 @@ Cc: devicetree@vger.kernel.org,
 	linux-arm-kernel@lists.infradead.org,
 	linux-kernel@vger.kernel.org,
 	Andre Przywara <andre.przywara@arm.com>
-Subject: [PATCH v2 2/5] arm64: dts: allwinner: a523: Move mmc nodes to correct position
-Date: Wed, 25 Jun 2025 21:16:49 +0800
-Message-Id: <20250625131652.1667345-3-wens@kernel.org>
+Subject: [PATCH v2 3/5] arm64: dts: allwinner: a523: Move rgmii0 pins to correct location
+Date: Wed, 25 Jun 2025 21:16:50 +0800
+Message-Id: <20250625131652.1667345-4-wens@kernel.org>
 X-Mailer: git-send-email 2.39.5
 In-Reply-To: <20250625131652.1667345-1-wens@kernel.org>
 References: <20250625131652.1667345-1-wens@kernel.org>
@@ -70,161 +70,56 @@ Content-Transfer-Encoding: 8bit
 
 From: Chen-Yu Tsai <wens@csie.org>
 
-When the mmc nodes were added to the dtsi file, they were inserted in
-the incorrect position.
+Nodes are supposed to be sorted by address, or if no addresses
+apply, by node name. The rgmii0 pins are out of order, possibly
+due to multiple patches adding pin mux settings conflicting.
 
-Move them to the correct place.
+Move the rgmii0 pins to the correct location.
 
 Reviewed-by: Andre Przywara <andre.przywara@arm.com>
 Signed-off-by: Chen-Yu Tsai <wens@csie.org>
 ---
- .../arm64/boot/dts/allwinner/sun55i-a523.dtsi | 126 +++++++++---------
- 1 file changed, 63 insertions(+), 63 deletions(-)
+ .../arm64/boot/dts/allwinner/sun55i-a523.dtsi | 20 +++++++++----------
+ 1 file changed, 10 insertions(+), 10 deletions(-)
 
 diff --git a/arch/arm64/boot/dts/allwinner/sun55i-a523.dtsi b/arch/arm64/boot/dts/allwinner/sun55i-a523.dtsi
-index 8b7cbc2e78f5..458d7ecedacd 100644
+index 458d7ecedacd..30613a0b1124 100644
 --- a/arch/arm64/boot/dts/allwinner/sun55i-a523.dtsi
 +++ b/arch/arm64/boot/dts/allwinner/sun55i-a523.dtsi
-@@ -181,69 +181,6 @@ ccu: clock-controller@2001000 {
- 			#reset-cells = <1>;
- 		};
+@@ -126,16 +126,6 @@ pio: pinctrl@2000000 {
+ 			interrupt-controller;
+ 			#interrupt-cells = <3>;
  
--		mmc0: mmc@4020000 {
--			compatible = "allwinner,sun55i-a523-mmc",
--				     "allwinner,sun20i-d1-mmc";
--			reg = <0x04020000 0x1000>;
--			clocks = <&ccu CLK_BUS_MMC0>, <&ccu CLK_MMC0>;
--			clock-names = "ahb", "mmc";
--			resets = <&ccu RST_BUS_MMC0>;
--			reset-names = "ahb";
--			interrupts = <GIC_SPI 40 IRQ_TYPE_LEVEL_HIGH>;
--			pinctrl-names = "default";
--			pinctrl-0 = <&mmc0_pins>;
--			status = "disabled";
+-			rgmii0_pins: rgmii0-pins {
+-				pins = "PH0", "PH1", "PH2", "PH3", "PH4",
+-				       "PH5", "PH6", "PH7", "PH9", "PH10",
+-				       "PH14", "PH15", "PH16", "PH17", "PH18";
+-				allwinner,pinmux = <5>;
+-				function = "emac0";
+-				drive-strength = <40>;
+-				bias-disable;
+-			};
 -
--			max-frequency = <150000000>;
--			cap-sd-highspeed;
--			cap-mmc-highspeed;
--			cap-sdio-irq;
--			#address-cells = <1>;
--			#size-cells = <0>;
--		};
--
--		mmc1: mmc@4021000 {
--			compatible = "allwinner,sun55i-a523-mmc",
--				     "allwinner,sun20i-d1-mmc";
--			reg = <0x04021000 0x1000>;
--			clocks = <&ccu CLK_BUS_MMC1>, <&ccu CLK_MMC1>;
--			clock-names = "ahb", "mmc";
--			resets = <&ccu RST_BUS_MMC1>;
--			reset-names = "ahb";
--			interrupts = <GIC_SPI 41 IRQ_TYPE_LEVEL_HIGH>;
--			pinctrl-names = "default";
--			pinctrl-0 = <&mmc1_pins>;
--			status = "disabled";
--
--			max-frequency = <150000000>;
--			cap-sd-highspeed;
--			cap-mmc-highspeed;
--			cap-sdio-irq;
--			#address-cells = <1>;
--			#size-cells = <0>;
--		};
--
--		mmc2: mmc@4022000 {
--			compatible = "allwinner,sun55i-a523-mmc",
--				     "allwinner,sun20i-d1-mmc";
--			reg = <0x04022000 0x1000>;
--			clocks = <&ccu CLK_BUS_MMC2>, <&ccu CLK_MMC2>;
--			clock-names = "ahb", "mmc";
--			resets = <&ccu RST_BUS_MMC2>;
--			reset-names = "ahb";
--			interrupts = <GIC_SPI 42 IRQ_TYPE_LEVEL_HIGH>;
--			pinctrl-names = "default";
--			pinctrl-0 = <&mmc2_pins>;
--			status = "disabled";
--
--			max-frequency = <150000000>;
--			cap-sd-highspeed;
--			cap-mmc-highspeed;
--			cap-sdio-irq;
--			#address-cells = <1>;
--			#size-cells = <0>;
--		};
--
- 		wdt: watchdog@2050000 {
- 			compatible = "allwinner,sun55i-a523-wdt";
- 			reg = <0x2050000 0x20>;
-@@ -449,6 +386,69 @@ its: msi-controller@3440000 {
+ 			mmc0_pins: mmc0-pins {
+ 				pins = "PF0" ,"PF1", "PF2", "PF3", "PF4", "PF5";
+ 				allwinner,pinmux = <2>;
+@@ -163,6 +153,16 @@ mmc2_pins: mmc2-pins {
+ 				bias-pull-up;
  			};
- 		};
  
-+		mmc0: mmc@4020000 {
-+			compatible = "allwinner,sun55i-a523-mmc",
-+				     "allwinner,sun20i-d1-mmc";
-+			reg = <0x04020000 0x1000>;
-+			clocks = <&ccu CLK_BUS_MMC0>, <&ccu CLK_MMC0>;
-+			clock-names = "ahb", "mmc";
-+			resets = <&ccu RST_BUS_MMC0>;
-+			reset-names = "ahb";
-+			interrupts = <GIC_SPI 40 IRQ_TYPE_LEVEL_HIGH>;
-+			pinctrl-names = "default";
-+			pinctrl-0 = <&mmc0_pins>;
-+			status = "disabled";
++			rgmii0_pins: rgmii0-pins {
++				pins = "PH0", "PH1", "PH2", "PH3", "PH4",
++				       "PH5", "PH6", "PH7", "PH9", "PH10",
++				       "PH14", "PH15", "PH16", "PH17", "PH18";
++				allwinner,pinmux = <5>;
++				function = "emac0";
++				drive-strength = <40>;
++				bias-disable;
++			};
 +
-+			max-frequency = <150000000>;
-+			cap-sd-highspeed;
-+			cap-mmc-highspeed;
-+			cap-sdio-irq;
-+			#address-cells = <1>;
-+			#size-cells = <0>;
-+		};
-+
-+		mmc1: mmc@4021000 {
-+			compatible = "allwinner,sun55i-a523-mmc",
-+				     "allwinner,sun20i-d1-mmc";
-+			reg = <0x04021000 0x1000>;
-+			clocks = <&ccu CLK_BUS_MMC1>, <&ccu CLK_MMC1>;
-+			clock-names = "ahb", "mmc";
-+			resets = <&ccu RST_BUS_MMC1>;
-+			reset-names = "ahb";
-+			interrupts = <GIC_SPI 41 IRQ_TYPE_LEVEL_HIGH>;
-+			pinctrl-names = "default";
-+			pinctrl-0 = <&mmc1_pins>;
-+			status = "disabled";
-+
-+			max-frequency = <150000000>;
-+			cap-sd-highspeed;
-+			cap-mmc-highspeed;
-+			cap-sdio-irq;
-+			#address-cells = <1>;
-+			#size-cells = <0>;
-+		};
-+
-+		mmc2: mmc@4022000 {
-+			compatible = "allwinner,sun55i-a523-mmc",
-+				     "allwinner,sun20i-d1-mmc";
-+			reg = <0x04022000 0x1000>;
-+			clocks = <&ccu CLK_BUS_MMC2>, <&ccu CLK_MMC2>;
-+			clock-names = "ahb", "mmc";
-+			resets = <&ccu RST_BUS_MMC2>;
-+			reset-names = "ahb";
-+			interrupts = <GIC_SPI 42 IRQ_TYPE_LEVEL_HIGH>;
-+			pinctrl-names = "default";
-+			pinctrl-0 = <&mmc2_pins>;
-+			status = "disabled";
-+
-+			max-frequency = <150000000>;
-+			cap-sd-highspeed;
-+			cap-mmc-highspeed;
-+			cap-sdio-irq;
-+			#address-cells = <1>;
-+			#size-cells = <0>;
-+		};
-+
- 		usb_otg: usb@4100000 {
- 			compatible = "allwinner,sun55i-a523-musb",
- 				     "allwinner,sun8i-a33-musb";
+ 			uart0_pb_pins: uart0-pb-pins {
+ 				pins = "PB9", "PB10";
+ 				allwinner,pinmux = <2>;
 -- 
 2.39.5
 
