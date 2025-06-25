@@ -1,237 +1,175 @@
-Return-Path: <linux-kernel+bounces-702954-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-702949-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6F177AE89B6
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Jun 2025 18:25:54 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 0D541AE89A4
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Jun 2025 18:23:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 322EF1BC517A
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Jun 2025 16:25:02 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id AAAB9188322E
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Jun 2025 16:23:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7F80F2D540D;
-	Wed, 25 Jun 2025 16:24:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6106A1D5AD4;
+	Wed, 25 Jun 2025 16:23:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="RkiFCC9E"
-Received: from mail-pg1-f174.google.com (mail-pg1-f174.google.com [209.85.215.174])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="EsR4H0Ow"
+Received: from mout.web.de (mout.web.de [212.227.15.3])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2E20D2D5417;
-	Wed, 25 Jun 2025 16:24:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 205B929B224;
+	Wed, 25 Jun 2025 16:23:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.3
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750868653; cv=none; b=igdFKtgAZZAOo+nM1lk/v6H8JiHFtBHAY80LpN0/wS9gCMc8cZYc9jPDjRllkODEOpBstOJrf30cPOnEUIsh1aR4bKlk+XRMQZ21FxZTdV/YwBvne6mHYhtyIWuqybrqKxpYClNrK6Reh1tRZpitoB3nlhIBYQN0wSPMTio6+ac=
+	t=1750868610; cv=none; b=Wkqxqt+8k3RLAi00i+1A+ygIhRnu+Ywzu5VIR0DVtpVp+Y8yNizTotkeDXN7JNyDI9C6gp2lLTU+j4MuLIHtjisRKeJYZX/tWQ2kCpKW2Yo1zoyZj7eUo1L+rxzN63hktPZcbDDaEG95Jtvp+vVjvj84MSr1ynbm4A8RtQA0Bbs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750868653; c=relaxed/simple;
-	bh=ywTSbJW8cYBqryUVhQgNGBIBoeuXfaX+z0POB1nDl0Y=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=M3OmLkcA5NKT3KBFjVGeD0/Onmun4fDg/UBHAgOazoQHmhbx+DeiaIb01Ni2w4pbRsVJXCNAN9VyZPFcHjszLzbKMwpI4tQ2v7nQN1S7vB4gAf2KeFNZITF/lNe0U4PD3f2I789Reh2ogmJw4AHodlaGwdY7gLRXSIfZxggnARo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=RkiFCC9E; arc=none smtp.client-ip=209.85.215.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pg1-f174.google.com with SMTP id 41be03b00d2f7-b34a6d0c9a3so23663a12.3;
-        Wed, 25 Jun 2025 09:24:11 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1750868651; x=1751473451; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=3wMm8hdh+Q/9ZbtfahOgUMAt97QmDshyoisEFWqgnNg=;
-        b=RkiFCC9E9wgMGrd1HHAmlgz0S3P02WvIQCa7lnB3u2ErVYTuQtY0ETlttCa9gd4+Gb
-         IPAb6hIS/ZtEV7NnJeYyimSBhG9E8KdEMUAUWVzWU1LwBvUT3PbdvtYsX5zXT9lDlfeP
-         ggV64bgiGG28fFdKVOdMRC+6H1l5U1uPXgaKyxexXk6k6qM0eR8bHlOS1Vcyx3+FvviA
-         SNDVdpphz4XTOLsjCTxuy/YaC3YHuc+av30KvyEsIxXcBQQax/TL5Hq4SZ6EPaMnXZUE
-         Vqe7KJOsSEGwnJCavd0oy7xkIVgjVS9lvJXFgEgULAQAPPz18HGZSnaJfdU2yVdvKnj5
-         vKKg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1750868651; x=1751473451;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=3wMm8hdh+Q/9ZbtfahOgUMAt97QmDshyoisEFWqgnNg=;
-        b=VXSx+MaKVd3uzADk7LTPxToEJDfFKlHgYTarwgKEntu9bF1/K7C01kBBIEN5rSeyhd
-         AhQ/T4/F6gKgQqnb/Gsbli0bTVdw6a7K+YQBpWSRu5TtDBYlZ3b6vxjAYI/j5ba/t+7G
-         mP5Ey/GX3R+CDWEGZTskUjKLlFtKjxEcsj/ZIXPZSulwcbO1mJlAI+neRjZtbKKoE8qJ
-         vHpSMm5AOrj+zDn7vtEJnKIHXtMJRyadb1Qg9jLlILNZDD2cFOrQrrpkWlnaAI/EEKom
-         PelMp87ckKK2rTEknlusZmPxtST6tCFvgjZefNmlCCC90it1gMh36vfrWNK1jpA2URKV
-         3WOQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXnTRLSgQdDcNfrha6BWP/p+w0fj2/x+iKLBZbqb3vKqtMxF8xBjnq8/LgWK6zcCD5jiOQ39uxpamiJaGU=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyaW2uoi1lVMjhmtnkDoUA/nQMAiHdkz9YJzdBFbC3m4Tatn74+
-	dRakAQaQojt2wCyj7C1nmwlrB9gNSqFhZ6edq8fwPLYaXE+RiNNIbKLZ
-X-Gm-Gg: ASbGnctGMMo6MJQyBDNPYZo7wporubJotTByI0ed9iKRB1Mdg1gk/lQXvgUEBVaYsee
-	z9P+3JO7DOwx9RHp65ENsYE+DXAkwLh34q//KBLQwBjFufNyKdvXwKbJQT0af89pAU2UB6WoeGo
-	i4da04r7CaCwtcwxDwsIzdSyF9BN0SWhK654EtCqO4PtLUmag56JnoP4ENpw5i3h+T2+vh/Z/Ng
-	+kG/yBFdiMfMFZ/M/ACyqAkL3jjJXlpca2UgwguAwLWSUivjVv+/khwCqOkQ4vX/q2u4L/oQQb/
-	kYkgY3cJyUj/frT318HROloawOk2k22oXs9K8bIv5USarpennxw5ReQTdM0YpGE=
-X-Google-Smtp-Source: AGHT+IGDwm6wCLum9Gzh8sY5xTz2sH5DgJ2zOfsWrkKOS3YApynTyHXBPuBpCQ9ukE7xH7bR9sLRcg==
-X-Received: by 2002:a17:90b:164d:b0:311:a314:c2cf with SMTP id 98e67ed59e1d1-315f26a30ddmr5193570a91.30.1750868651228;
-        Wed, 25 Jun 2025 09:24:11 -0700 (PDT)
-Received: from localhost.localdomain ([2409:40f2:116a:400:f32b:ad5e:ec3f:b2dd])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-315f5386edbsm2311631a91.6.2025.06.25.09.24.07
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 25 Jun 2025 09:24:10 -0700 (PDT)
-From: Sai Vishnu M <saivishnu725@gmail.com>
-X-Google-Original-From: Sai Vishnu M
-To: corbet@lwn.net,
-	mchehab@kernel.org
-Cc: linux-doc@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	shuah@kernel.org,
-	Sai Vishnu M <saivishnu725@gmail.com>
-Subject: [PATCH 4/4] scripts: sphinx-pre-install: Integrate interactive mode
-Date: Wed, 25 Jun 2025 21:52:37 +0530
-Message-ID: <20250625162237.3996-4-saivishnu725@gmail.com>
-X-Mailer: git-send-email 2.49.0
-In-Reply-To: <20250625162237.3996-1-saivishnu725@gmail.com>
-References: <20250625162237.3996-1-saivishnu725@gmail.com>
+	s=arc-20240116; t=1750868610; c=relaxed/simple;
+	bh=pahHex26HOUO/gN4Ra9QFqX8Ff4cUSE150ANSsJr6M4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=m/Lm/nUb9zf+bmILyV6swUsAaLtZjGfBf/8TTs161vWTQxx5xwfozYwiyYIlFXq98yRJ/EoIkfOMl/tYZchJ1RyvUG0X1kFVmFsG7BDWi7Cdz4tSqYPKvOvfiXVuSEg1LZAQY+rt9L0dTLeOwW2yT5lnarbvrjULeUWv/C/xwSI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=EsR4H0Ow; arc=none smtp.client-ip=212.227.15.3
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
+	s=s29768273; t=1750868596; x=1751473396; i=markus.elfring@web.de;
+	bh=k/uwFNVOf2kHtk20NwkBpuFYn4pYTCvfzdocwdOvsDI=;
+	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:Subject:To:Cc:
+	 References:From:In-Reply-To:Content-Type:
+	 Content-Transfer-Encoding:cc:content-transfer-encoding:
+	 content-type:date:from:message-id:mime-version:reply-to:subject:
+	 to;
+	b=EsR4H0OwjOjz8558LlLHgGxJ9DDN46HZcG4HZcyd+dD9jDyKmOnGB+x5X6YJEvno
+	 g0av//3rHBD1wBdUyssE4PNTV04ug01GgvJxzKigHH4PQCh1e+TCgtwSNjq0K7EbR
+	 BqSetpvuzoP3MY1VJ6m1cnZ5j8E4bTkhlkd5fVmioit/+ECL1b7+BcKk2DOBwgFkv
+	 x3xnqgmIF6iZo/+JRYrEt1CHgwzk9F3zji4PmzgBmEmaNkpDNWWYXxRkJgOUaluN1
+	 nmLcps5GPi8Sj7UU+TdFgcDykObJo//ABRc1IupegxM7rnydQ0RVit3DhMB0Sk8lH
+	 mkU45hbmfXDMglXRbg==
+X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
+Received: from [192.168.178.29] ([94.31.69.192]) by smtp.web.de (mrweb005
+ [213.165.67.108]) with ESMTPSA (Nemesis) id 1M4sbr-1uUC3P2FaZ-00FZzf; Wed, 25
+ Jun 2025 18:23:16 +0200
+Message-ID: <7e6f8929-6665-45af-b01b-167a1aa80305@web.de>
+Date: Wed, 25 Jun 2025 18:23:15 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: can: ucan: Use usb_endpoint_type() rather than duplicating its
+ implementation
+To: Vincent Mailhol <mailhol.vincent@wanadoo.fr>, linux-can@vger.kernel.org
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org,
+ Chen Ni <nichen@iscas.ac.cn>, Marc Kleine-Budde <mkl@pengutronix.de>
+References: <48e217a7-b90e-4af3-b535-812c449dd3ba@web.de>
+ <bf5442d1-34e0-495f-8a56-4e47f53ca4ad@wanadoo.fr>
+ <a7a00125-b393-4283-a7dc-6c80ced8e7e6@web.de>
+ <c96a5d2c-0ee1-4e3e-a95d-d38a8f668feb@wanadoo.fr>
+ <0768a008-d4a9-41ec-bc47-1e7c63362296@web.de>
+ <c04376f2-6ab7-4256-8bdc-aa6ff3ea88b4@wanadoo.fr>
+Content-Language: en-GB, de-DE
+From: Markus Elfring <Markus.Elfring@web.de>
+In-Reply-To: <c04376f2-6ab7-4256-8bdc-aa6ff3ea88b4@wanadoo.fr>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:kqXcSaJmb4W3O4n7lgnydNK/7scLtPTya6sg0bL4issGjwrNOfr
+ mETEVZ7puYde0f1EVGi6RSu+hkS3JVbNiuhGCF7BtlT1g3eLRb1wE9x1IgIuEZ5z/clm6JZ
+ RiBwIWjlHLndNjYJ3Sc/l4QdFZ7kOqgStfKYuSLTRWDPv8kjhwqM/QX4kMAVSw04Y6N+VwN
+ YW+w9zfsEPyAg/fGE4oqw==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:0ghpVuMyHsE=;nSKsReRDf+67TfHoPm/PJdNE3RG
+ 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
+ LPPrZ1WEFyXhn4r7jZbULzKubGxud298=
 
-From: Sai Vishnu M <saivishnu725@gmail.com>
+> A real quick search shows me that this ucan driver is not an isolated ca=
+se.
+> Here is an example:
+>=20
+> https://elixir.bootlin.com/linux/v6.16-rc3/source/drivers/media/rc/imon.=
+c#L2137-L2148
 
-Replace direct printf calls with run_if_interactive for installation
-commands across all distro-specific hint subroutines, enabling user
-prompts in interactive mode.
+Thanks that you pointed another implementation detail out from
+the function =E2=80=9Cimon_find_endpoints=E2=80=9D.
 
-Signed-off-by: Sai Vishnu M <saivishnu725@gmail.com>
----
-Patch series history:
-1 -> implement the --interactive flag
-2 -> add run_if_interactive subroutine
-3 -> add fallback to unrecognized distributions
 
-Testing:
-========
+> But it does not seem to occur so often either. So not sure what is the b=
+est:
+> do a manual hunt
 
-Tested: Debian, Ubuntu, Fedora, openSUSE Tumbleweed, Mageia.
-Skipped: Gentoo (setup complexity but similarity in modification to others)
-Steps taken:
-1. Podman to download the containers:
-	podman pull docker.io/debian:bookworm
-	podman pull docker.io/ubuntu:24.04
-	podman pull docker.io/fedora:40
-	podman pull docker.io/opensuse/tumbleweed:latest
-	podman pull docker.io/mageia:9
-	podman pull docker.io/gentoo/stage3:latest
+Unlikely.
 
-2. Copy the script and related files to a temporary folder
-	mkdir -p /tmp/sphinx-test/Documentation/
-	cp ./scripts/sphinx-pre-install /tmp/sphinx-test
-	cp ./Documentation/conf.py /tmp/sphinx-test/Documentation
-	cd /tmp/sphinx-test
+I am unsure if such an aspect would become relevant for a code review
+by other contributors.
 
-3. Connect to the containers
-	podman run -it --rm -v $(pwd):/work:z CONTAINER:VERSION bash
-	Ex: podman run -it --rm -v $(pwd):/work:z debian:bookworm bash
-	
-4. Install perl and dependencies
-	# Debian/Ubuntu
-	apt-get update && apt-get install -y perl sudo
-	# Fedora
-	dnf install -y perl sudo
-	# OpenSUSE
-	zypper install -y perl sudo
-	# Mageia
-	dnf install -y perl sudo
-	# Gentoo (requires more setup)
-	emerge-webrsync && emerge dev-lang/perl
 
-5. Run the script
-	a. Interactive
-		cd /work; perl sphinx-pre-install --interactive
-	b. Non Interactive
-		cd /work; perl sphinx-pre-install
+>                  or write a coccinelle checker.
 
- scripts/sphinx-pre-install | 27 ++++++++++++++++++---------
- 1 file changed, 18 insertions(+), 9 deletions(-)
+I would find it more convenient to achieve corresponding adjustments
+to some degree with the help of such a development tool.
+I constructed scripts for the semantic patch language accordingly.
 
-diff --git a/scripts/sphinx-pre-install b/scripts/sphinx-pre-install
-index 87eef15650f2..c2e10170e6c1 100755
---- a/scripts/sphinx-pre-install
-+++ b/scripts/sphinx-pre-install
-@@ -436,7 +436,8 @@ sub give_debian_hints()
- 
- 	return if (!$need && !$optional);
- 	printf("You should run:\n") if ($verbose_warn_install);
--	printf("\n\tsudo apt-get install $install\n");
-+	my $command = "sudo apt-get install $install";
-+	run_if_interactive($command);
- }
- 
- sub give_redhat_hints()
-@@ -514,11 +515,13 @@ sub give_redhat_hints()
- 	if (!$old) {
- 		# dnf, for Fedora 18+
- 		printf("You should run:\n") if ($verbose_warn_install);
--		printf("\n\tsudo dnf install -y $install\n");
-+		my $command = "sudo dnf install -y $install";
-+		run_if_interactive($command);
- 	} else {
- 		# yum, for RHEL (and clones) or Fedora version < 18
- 		printf("You should run:\n") if ($verbose_warn_install);
--		printf("\n\tsudo yum install -y $install\n");
-+		my $command = "sudo yum install -y $install";
-+		run_if_interactive($command);
- 	}
- }
- 
-@@ -567,7 +570,8 @@ sub give_opensuse_hints()
- 
- 	return if (!$need && !$optional);
- 	printf("You should run:\n") if ($verbose_warn_install);
--	printf("\n\tsudo zypper install --no-recommends $install\n");
-+	my $command = "sudo zypper install --no-recommends $install";
-+	run_if_interactive($command);
- }
- 
- sub give_mageia_hints()
-@@ -612,7 +616,8 @@ sub give_mageia_hints()
- 
- 	return if (!$need && !$optional);
- 	printf("You should run:\n") if ($verbose_warn_install);
--	printf("\n\tsudo $packager_cmd $install\n");
-+	my $command = "sudo $packager_cmd $install";
-+	run_if_interactive($command);
- }
- 
- sub give_arch_linux_hints()
-@@ -643,7 +648,8 @@ sub give_arch_linux_hints()
- 
- 	return if (!$need && !$optional);
- 	printf("You should run:\n") if ($verbose_warn_install);
--	printf("\n\tsudo pacman -S $install\n");
-+	my $command = "sudo pacman -S $install";
-+	run_if_interactive($command);
- }
- 
- sub give_gentoo_hints()
-@@ -679,13 +685,16 @@ sub give_gentoo_hints()
- 	my $portage_cairo = "/etc/portage/package.use/graphviz";
- 
- 	if (qx(grep imagemagick $portage_imagemagick 2>/dev/null) eq "") {
--		printf("\tsudo su -c 'echo \"$imagemagick\" > $portage_imagemagick'\n")
-+		my $imagemagick_command = "sudo su -c 'echo \"$imagemagick\" > $portage_imagemagick'";
-+		run_if_interactive($imagemagick_command);
- 	}
- 	if (qx(grep graphviz $portage_cairo 2>/dev/null) eq  "") {
--		printf("\tsudo su -c 'echo \"$cairo\" > $portage_cairo'\n");
-+		my $portage_command = "sudo su -c 'echo \"$cairo\" > $portage_cairo'";
-+		run_if_interactive($portage_command);
- 	}
- 
--	printf("\tsudo emerge --ask $install\n");
-+	my $command = "sudo emerge --ask $install";
-+	run_if_interactive($command);
- 
- }
- 
--- 
-2.49.0
 
+>> Can the functions =E2=80=9Cusb_endpoint_is_bulk_in=E2=80=9D and =E2=80=
+=9Cusb_endpoint_is_bulk_out=E2=80=9D
+>> be applied here?
+>> https://elixir.bootlin.com/linux/v6.16-rc3/source/include/uapi/linux/us=
+b/ch9.h#L572-L595
+>=20
+> Further simplification, nice :)
+>=20
+> I didn't see that last one, so glad you found what seems to be the optim=
+al solution!
+I am unsure if the check reordering would be desirable for this function i=
+mplementation.
+
+Regards,
+Markus
 
