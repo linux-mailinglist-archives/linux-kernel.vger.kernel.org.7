@@ -1,125 +1,106 @@
-Return-Path: <linux-kernel+bounces-703053-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-703058-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id DF260AE8AFD
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Jun 2025 19:02:51 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id C11CBAE8B1F
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Jun 2025 19:07:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0B35A3B23F8
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Jun 2025 17:02:05 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7EBFF1C220BE
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Jun 2025 17:03:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A74CC2DF3D1;
-	Wed, 25 Jun 2025 16:56:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B44422E11CE;
+	Wed, 25 Jun 2025 16:56:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ls4mqaUX"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="isNlvr8z"
+Received: from mail-pj1-f47.google.com (mail-pj1-f47.google.com [209.85.216.47])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E877B2DECC9;
-	Wed, 25 Jun 2025 16:56:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B6E0A2E11A4;
+	Wed, 25 Jun 2025 16:56:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750870591; cv=none; b=VzJQ8eS3E85OgrO4g1oeGussT8Equ7ONMjmtaC9UQfxWUoogX6H6bZcZwZgxhnp3iyQDSeJERNTz0V2QVIcdpvGUHr6gK+5BmSknoGEH8uNrcRJZ62pbmTclCnaOjcBriWhIuzmu9pkBSqsNB1wrcjK8dFyn2zPvbWWkLwD2J6o=
+	t=1750870609; cv=none; b=STeTYtK/zaTtfc701EjE+sosMZ1KzQB7kGtXRBnOiSzxhC3tkFqPlH4/2EKc9dTNIx3i39EphCZ1Rwxarcsh4l7JuhEusarwEEaheu/dx9kYRDc41BTch70kFi8yfmd5rxj1sW3jDnu+ne3hqfeJ49rh9BVQxJzZ5xKEUCCMuRE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750870591; c=relaxed/simple;
-	bh=2EEecCr0u28ZPLu/TqGbdd1N5QSKHcQ+toYx/EPSRzw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Xrb3HPPvB3tqmdeQK0TnJIwbXtD+CYDFAhE3Imk8IjFM44wRwOxjxY+e8jYhi0cMNPKhJMhFpES81XuZukOplPl23dwdDAIGE/uwbJN0StNWJr+HpQWbMx5pMCDixOze0fDz0yZTAHUbDq9Itp8K9e89473sPYiepnxfA3bwh6s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ls4mqaUX; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7F553C4CEEA;
-	Wed, 25 Jun 2025 16:56:30 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1750870590;
-	bh=2EEecCr0u28ZPLu/TqGbdd1N5QSKHcQ+toYx/EPSRzw=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=ls4mqaUXvRwwJRy7QFqoK1TdfAanCnWMF0aAy3RygIeKqXF6zHvPwx7y2uk991ZU3
-	 v6LUzmfKluAoiqCeP1OqC58wjQZaW2mEDrLxYKyKnrCxJOmIWL6mRy94I5owJOXQKU
-	 rGmszgAvxAT0hqfzjlarLSW7zjEiZozBF8rQv/nBJviAzMvj+P+MJMwOiU64ZYBzIM
-	 ng+KBeqDdykIPOgxqSW3df2Xtw3BxxMUTWsOlZjMr0ueWu73g2iit/25w0isRRT0uX
-	 XIwqDGceGeurSLd2Gymzrs/w+7G17osNDd/XCEn1ZufORFB1rbGdHoGw5pCPCydrRK
-	 YmG9IBrAasbHQ==
-Date: Wed, 25 Jun 2025 09:56:30 -0700
-From: Kees Cook <kees@kernel.org>
-To: "Gustavo A. R. Silva" <gustavoars@kernel.org>
-Cc: Dan Williams <dan.j.williams@intel.com>,
-	Vishal Verma <vishal.l.verma@intel.com>,
-	Dave Jiang <dave.jiang@intel.com>, Ira Weiny <ira.weiny@intel.com>,
-	"Rafael J. Wysocki" <rafael@kernel.org>,
-	Len Brown <lenb@kernel.org>, nvdimm@lists.linux.dev,
-	linux-acpi@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-hardening@vger.kernel.org
-Subject: Re: [PATCH v3][next] acpi: nfit: intel: avoid multiple
- -Wflex-array-member-not-at-end warnings
-Message-ID: <202506250950.31C8A58E@keescook>
-References: <aEneid7gdAZr1_kR@kspp>
+	s=arc-20240116; t=1750870609; c=relaxed/simple;
+	bh=/yJuaZm1kfnnTUIDik8a/i5phYdhtcwPtDFfSM3pngE=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=ic/c96oNU5rA9xa+ub53HzdBrUc4zk0+R7wQnBkVvhmkO6FwG+Ww1cfT4EoKbODI2UZjdSmxyBi0QmqVaucXGk4HsQCgs1sZpllQB3vyxZpiwcxEiFUErNK7b6ju/a6rsCaZv+Kq67kRXLl1k6wo39NUm85g1/N4KBg/7bXDfc0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=isNlvr8z; arc=none smtp.client-ip=209.85.216.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pj1-f47.google.com with SMTP id 98e67ed59e1d1-312efc384fcso3838a91.3;
+        Wed, 25 Jun 2025 09:56:47 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1750870607; x=1751475407; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=W6WTH79hQK6NLtAht/80ecYDCXoA4J5POv3PkbpHQOc=;
+        b=isNlvr8z6fu/WF8SKmJxxuXv0H2QEpT0VkfDkfXxID00uhCEr4QGAquXitq0/Wa6hm
+         DZmCqa5IrVmn0KjdMsp1Zzo7VlCtXvUSBhhpqiRxzLHdS5f2FC8RbkJKfcG5uQJyiipk
+         d3RO1FWFjGY+TW6J7GbgDSa1jze5ZUbbPT0XcLdWTM+s6E+sZuhrfQ+CQkHAPYk5hJkZ
+         gplSnhyFDncZAdLYEBBosgu1x5VXUYjUz6lFj1wghhHEs/9S7hLY+nk5v+C48Xzb1Sb3
+         zHIdT+CxMGc9hhsB30vfUZIUBLFWxyaVWeziXj0a4M0SaRdSnES9oYdsXE+c6lGWvvZa
+         uzTg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1750870607; x=1751475407;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=W6WTH79hQK6NLtAht/80ecYDCXoA4J5POv3PkbpHQOc=;
+        b=SCb71nV55PZawtnWq9HAU6WPJDWHLUQjMNsinZCq9CSO78mn80cuf41B/qmQWWLRA6
+         bRwlyGQ8NCfLMts9Z/go8KBOW0GRKa3YuoN5VXoaRtDPjsKClMvVrHlDoSVW8NcNx8us
+         LFZfTwlPEAZuQfR9ZigYlbHRfqAR9oip4SC+uVkxLB4nX7WVcghJj84nb65r9r5OF5IV
+         wD42hA2AZp5tF8M//Efnt+BetYSE0txvbnVzomLBrG9zuOjdvg5OLZiBreNukcXpr02M
+         IGf4JYSzaj7tEqKS1GDzNQS41i6Q08M63YdGEWZZQTtxAfRJNkqZxqaL/XAk/LluA6JY
+         ESjA==
+X-Forwarded-Encrypted: i=1; AJvYcCWV0nfD05JrnBn7qKza9LuJwSJNjozowmdbgdBb8sARYL81eSGPhQxAAhLakQ4xHesCFw3zDK6N4G1mFa8=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxPRrBb685MA9vxllWA3A5gxHqe/hg/wTcs0rJNB404MjaAX+w4
+	a5jab0kiTP4GlSkHIxkizdk1onA7SYvv6ExIzywZCpsSHyP+LGVIKT5tYDErYnjJa1vT5Tcn/Kh
+	XVeqIOUowWrM7GPGbeXDeuDu9DMRJOXE=
+X-Gm-Gg: ASbGnctK6VylYDcv8pCY1sDbFctEluLzLIEGbIH7v6ga2Oauoe+BgM6GkXL+r4v481z
+	lTRtwPgihxcsyrp9OV6Z2L+oFwJNfLnW/xyIjsfJXHQtdhid0V/a+qBHJxoWaReOZV4KNrut/R9
+	wZKkZgrNMhduRii3nAEg7K3NhUvoc1zCLu+lkeYBKHSGE=
+X-Google-Smtp-Source: AGHT+IHgnR4DtVMaUu1NN1eLUP8fU01OtdtxkGKoYiBlYVDiZIDg6nSBdKUioPP8VzF4obtTDtEEYLx0DrhiLekpVBQ=
+X-Received: by 2002:a17:90b:35c6:b0:311:488:f506 with SMTP id
+ 98e67ed59e1d1-315f26b869fmr2043554a91.6.1750870606969; Wed, 25 Jun 2025
+ 09:56:46 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <aEneid7gdAZr1_kR@kspp>
+References: <20250625134245.14505-1-work@onurozkan.dev> <288841750859443@mail.yandex.com>
+In-Reply-To: <288841750859443@mail.yandex.com>
+From: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
+Date: Wed, 25 Jun 2025 18:56:32 +0200
+X-Gm-Features: Ac12FXxA_3SvkBY_uiyufmsKJE9szL1QD7gdDjzY-TXLBqKQ8FB9qg3HMXrDdlI
+Message-ID: <CANiq72mTvvNA+VGOA6vC5b=QTMKGDDG4TiidsRHbK6ceU_iZJA@mail.gmail.com>
+Subject: Re: [PATCH] rust: add fast path to `RBTree::find_mut` for empty tree
+To: =?UTF-8?Q?Onur_=C3=96zkan?= <work@onurozkan.dev>
+Cc: "rust-for-linux@vger.kernel.org" <rust-for-linux@vger.kernel.org>, 
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "ojeda@kernel.org" <ojeda@kernel.org>, 
+	"alex.gaynor@gmail.com" <alex.gaynor@gmail.com>, "boqun.feng@gmail.com" <boqun.feng@gmail.com>, 
+	"gary@garyguo.net" <gary@garyguo.net>, "bjorn3_gh@protonmail.com" <bjorn3_gh@protonmail.com>, 
+	"lossin@kernel.org" <lossin@kernel.org>, "a.hindborg@kernel.org" <a.hindborg@kernel.org>, 
+	"aliceryhl@google.com" <aliceryhl@google.com>, "tmgross@umich.edu" <tmgross@umich.edu>, 
+	"dakr@kernel.org" <dakr@kernel.org>, "mattgilbride@google.com" <mattgilbride@google.com>, 
+	"wedsonaf@gmail.com" <wedsonaf@gmail.com>, "tamird@gmail.com" <tamird@gmail.com>, 
+	"daniel@sedlak.dev" <daniel@sedlak.dev>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Wed, Jun 11, 2025 at 01:52:41PM -0600, Gustavo A. R. Silva wrote:
-> -Wflex-array-member-not-at-end was introduced in GCC-14, and we are
-> getting ready to enable it, globally.
-> 
-> Refactor multiple structs that contain flexible-array members in the
-> middle by replacing them with unions.
-> 
-> These changes preserve the memory layout while effectively adjusting
-> it so that the flexible-array member is always treated as the last
-> member.
-> 
-> With these changes, fix a dozen instances of the following type of
-> warning:
-> 
-> drivers/acpi/nfit/intel.c:692:35: warning: structure containing a flexible array member is not at the end of another structure [-Wflex-array-member-not-at-end]
-> 
-> Signed-off-by: Gustavo A. R. Silva <gustavoars@kernel.org>
-> ---
-> Changes in v3:
->  - Use union instead of DEFINE_RAW_FLEX().
+On Wed, Jun 25, 2025 at 3:52=E2=80=AFPM Onur =C3=96zkan <work@onurozkan.dev=
+> wrote:
+>
+> Oops, I didn't realize that `rb_node` was a pointer. Please don't take th=
+e patch seriously.  :)
 
-I think your TRAILING_OVERLAP macro[1] is perfect here. I'll try to get that
-landed for the next rc. Can you double-check that this works correctly
-in these cases?
+I think this reply didn't reach the lists because it uses HTML.
 
-> @@ -55,9 +55,16 @@ static unsigned long intel_security_flags(struct nvdimm *nvdimm,
->  {
->  	struct nfit_mem *nfit_mem = nvdimm_provider_data(nvdimm);
->  	unsigned long security_flags = 0;
-> -	struct {
-> +	/*
-> +	 * This effectively creates a union between the flexible-array member
-> +	 * and any members after _offset_to_fam.
-> +	 */
-> +	union {
->  		struct nd_cmd_pkg pkg;
-> -		struct nd_intel_get_security_state cmd;
-> +		struct {
-> +			u8 _offset_to_fam[offsetof(struct nd_cmd_pkg, nd_payload)];
-> +			struct nd_intel_get_security_state cmd;
-> +		};
->  	} nd_cmd = {
->  		.pkg = {
->  			.nd_command = NVDIMM_INTEL_GET_SECURITY_STATE,
-
-I think it would be a pretty small and direct replacement:
-
-	TRAILING_OVERLAP(struct nd_cmd_pkg, pkg, nd_payload,
-			 struct nd_intel_get_security_state cmd;
-	) nd_cmd = {
-		...
-
--Kees
-
-[1] https://web.git.kernel.org/pub/scm/linux/kernel/git/kees/linux.git/commit/?h=for-next/kspp&id=29bb79e9dbf1ba100125e39deb7147acd490903f
-
--- 
-Kees Cook
+Cheers,
+Miguel
 
