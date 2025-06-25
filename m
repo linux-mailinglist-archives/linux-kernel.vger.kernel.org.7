@@ -1,269 +1,251 @@
-Return-Path: <linux-kernel+bounces-703481-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-703484-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id F1E49AE90D4
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Jun 2025 00:11:11 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 926A7AE90E3
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Jun 2025 00:15:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9DF6E1C23277
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Jun 2025 22:11:27 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5978D18984AD
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Jun 2025 22:16:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C960226E70B;
-	Wed, 25 Jun 2025 22:11:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A4F572DA74F;
+	Wed, 25 Jun 2025 22:15:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=riscstar-com.20230601.gappssmtp.com header.i=@riscstar-com.20230601.gappssmtp.com header.b="fN7HkrO0"
-Received: from mail-io1-f45.google.com (mail-io1-f45.google.com [209.85.166.45])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="RoJD50ed"
+Received: from mail-pl1-f171.google.com (mail-pl1-f171.google.com [209.85.214.171])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DA2F726E6F1
-	for <linux-kernel@vger.kernel.org>; Wed, 25 Jun 2025 22:11:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7509229C323
+	for <linux-kernel@vger.kernel.org>; Wed, 25 Jun 2025 22:15:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750889466; cv=none; b=gnhxaOkw1L4Qp2qrT5Ot3ILRBiq+Fjaa+p7Y/uywTfSwyQmGdwez9w5+aVNaiEeyxtdZ/9WkEWXY/WCmGL/0ZPoe2n9HRkCBRSJV4iC/T7ZIh6Q551qR66FsaKnzNUxgLiNlcxBU6uhB4LlKGmxyWC1/j1FUC3QNr5Oe4eI8ddk=
+	t=1750889754; cv=none; b=nHRR2s1cej86aVgmnfe16O26mcy7HpViEzMqbvRuBRaeNxqwOXcIjXA0ofc+J1aBXGYl9H/f0fDEVWuBtoaV9udbz1Yi540au2LN9b4ZibV+W2a80CPF3uuTOj8XObRFf80z1RRgarudX51DJNWSdWnM4HkZYsqhIqUlcDmFozg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750889466; c=relaxed/simple;
-	bh=fMV7Fv3bE5reYHrMs+H+GDgGCXhMWYwP1GPWJORDReU=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=pnCnWx+yCjxO6vncjiw5uigjy86o5mNK8n+7q+qH/zZD/3yGA2B5zcYE1PwyKDiZOAKFrj99s5cO8xUwFZgjeo1aErUCTxBL6F3N7tyY3MEniGXS4k6Dg3kUxR63y31nH9VaRWis1DOxA/TV3R2cQGynZ8yzb2gBw5M6qrREPZQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=riscstar.com; spf=pass smtp.mailfrom=riscstar.com; dkim=pass (2048-bit key) header.d=riscstar-com.20230601.gappssmtp.com header.i=@riscstar-com.20230601.gappssmtp.com header.b=fN7HkrO0; arc=none smtp.client-ip=209.85.166.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=riscstar.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=riscstar.com
-Received: by mail-io1-f45.google.com with SMTP id ca18e2360f4ac-86d01686196so12649439f.1
-        for <linux-kernel@vger.kernel.org>; Wed, 25 Jun 2025 15:11:02 -0700 (PDT)
+	s=arc-20240116; t=1750889754; c=relaxed/simple;
+	bh=ylUWsqBdv7tvsvdpMfdW9ujSAH2BGmfxAz/cPhecY5Q=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=Wxo9OXlurWxE6nJGJCAPBe5x0CI7gMrXiYjidMJz4R3C+dBK1oHlSIxMjpo4f08ZrPP4S9zj7ZY7/RnLJyk11nd+1Jb9QEg8SomnOjwx9AG74TVLX8wGb6D1s4kCbxfdal898BhYg1XZ2iMKVvl+2ZZ2+qu6532N47VUvzEDm+8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=RoJD50ed; arc=none smtp.client-ip=209.85.214.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f171.google.com with SMTP id d9443c01a7336-236470b2dceso5083005ad.0
+        for <linux-kernel@vger.kernel.org>; Wed, 25 Jun 2025 15:15:52 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=riscstar-com.20230601.gappssmtp.com; s=20230601; t=1750889462; x=1751494262; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=XPg8khamQ0n3Un0f5D3NLY/jQXcOqvv2U1B/Sm+t1ps=;
-        b=fN7HkrO02IDzpsA/JrKw6Ou5K6HVqo+G9yiSXZhtGnkHjC6QbuuoOEjvEHwbZMktb+
-         Zrbw+WDOpY0gVpriquDlRew3A458HcSfWoYKgEjliWmjSJC9nHnQFwuNRj6PWQnBSp1v
-         YBdF+Inz0qY8/DkiKlqg53AUglnIoCWTTSBXXwTZlf3mtrE6tYExZOCLeQ1chckMHH3n
-         gGeLPPOwBABqTgM1XWzgjculDRp+ypX7iUCO1vj1SFxxvXNp2H6j5nW0zfYk9ZAmz4uJ
-         CY7WDLufqHcd1UOctlqerVtiF/dWNBo28wGWg8NFHHUJR6XWJ7R+kkq//kVfy0fMyTIo
-         5Dag==
+        d=gmail.com; s=20230601; t=1750889751; x=1751494551; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=i1/PgKpNQEL4CZ/x5npolCmb2YPYwo+H2VVcT6JHico=;
+        b=RoJD50edfT3eMAQwSA7TcU64911r/AUAquVs8QzEuwJOFuZi1CizQ5PkzabplJcZwT
+         xd+KIRPU/2SsSQ9mhm9vu209hbayh4Ew0NIR72f3aOibBgT4/IkjQTKULIiWAJ7y8LPD
+         qj9HC16qxuyjZpAr+cZJjzIjErYzCZ9jiV9cF08dqNyZ9LwZI2Ca0OlYv7rG/WjrH4Eh
+         P3WIfOzsq72xIsU4CVfAXz96OYLf40w73untwPcITwBqUpPApHuKpzKtz9r98AF/l2Mf
+         gbb3MxM7WcMMP6pUzv7uqazAilHSfKnhsJzXmN1UuAQ/8dHmkPaVjp03L1OIZfudzdWH
+         jmkQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1750889462; x=1751494262;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=XPg8khamQ0n3Un0f5D3NLY/jQXcOqvv2U1B/Sm+t1ps=;
-        b=XLfsviVo8CbctwAQzGeNJpEp1Y6OP2B16cwDPB04dY1zHixiJ9Db4JbYOgtakMTzMn
-         iVfKwkBsG4OCwREUSBld4uXIiYrEx5pBIl7dZHExTS4LMXBFuGGax8kjnipARDC4s9+q
-         8zUpvxoNuW19YgA3xtn2ibRC3BLm4Y7LiVRTrX81vn/A4Er1pwhHtiHykwdrfTMs+T6X
-         qoG3MYPdATJlNGUlHKLA4GetEydZkPew9YWWVA1wH93cPGeCwXgGmeIGx5zMpKEVhwsZ
-         T0sLqCMnz46AvFuzWY5NVPdJ+eFhBhFyrQf1lLTejUQvkc5JKvZAf4g4Xw8eceC+fGIg
-         cDCg==
-X-Forwarded-Encrypted: i=1; AJvYcCXluWn1lDApJdGr/xsrViQ1jewh6PWtIWaxbAJDtFsDL+tNdnF5/2WpMwq4Wpdw4/fQB5/xfqfgUztxiRk=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzCXR2F4dUcTkRjrVIBHqknaaDvntXPPqIgQNrPHdHrYMjb9qwL
-	A5QhBn7wfOOuBp7oGPpky1Jr61Ej5x4BbUqKOMGYrKnsF0lWSGtBkQtrLptTH9fKS+I=
-X-Gm-Gg: ASbGncs5ZKzvzQwtCl+xkJQ6mUqb1bcpGIWBedChPkuQrFtTcnwU4gAgccD++279mWG
-	HTeY1BKiIGDISspQ1QjGMcYtoE08hbUcSRiSePQyclQ3I+Cz6hfmZgpE4RoNV3NhRdM7nurnAnt
-	DlrMuEHR3UPh/3pRcnEsYdQAiMFGnCJXT+QLndUpqZ143nOWl7ySZzkl42dCvUxQ6p2I5hGk2SL
-	Jdb9gNnowhxMwjlE1mQL5BtQcNjxOobQXixktipFe/ANtSsPQ4Hgq3c2VNQbH85Mc/6zLJmY27N
-	FDIhUbQPMMeKgeeBNtosY5/PsgZvVe7+QEOznG2YAyCqUoC1zC64rgVgjIBy9pZ1zNZ5ytrChlz
-	oQ/y5julrTtZ70fiY+TQLs7StFw==
-X-Google-Smtp-Source: AGHT+IE+u9IjJy5DnG3IQAouxiGs+RqUt0Ha90G1K5TW/7uCSs9nbBzWj+oWsSVfWQZ0oTWVcwd35w==
-X-Received: by 2002:a05:6e02:16cb:b0:3df:3be7:59d1 with SMTP id e9e14a558f8ab-3df3be7658cmr35101075ab.11.1750889461833;
-        Wed, 25 Jun 2025 15:11:01 -0700 (PDT)
-Received: from [172.22.22.28] (c-73-228-159-35.hsd1.mn.comcast.net. [73.228.159.35])
-        by smtp.gmail.com with ESMTPSA id e9e14a558f8ab-3df2d32d228sm13202125ab.41.2025.06.25.15.10.55
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 25 Jun 2025 15:10:56 -0700 (PDT)
-Message-ID: <a99ad08a-99b2-4e39-a2d1-28302d312735@riscstar.com>
-Date: Wed, 25 Jun 2025 17:10:54 -0500
+        d=1e100.net; s=20230601; t=1750889751; x=1751494551;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=i1/PgKpNQEL4CZ/x5npolCmb2YPYwo+H2VVcT6JHico=;
+        b=aMzjLQcEkj+uPTmXytAtEDuTvDSj617bXFdX3LWbClOh4LGDEfIWzNnfLb7dJs07BF
+         ffdACnrzH7mv2vM18GJzF96u+Q+/Evr9wuTVpL1n0jz9PlWf1ygE8djS2a8t+6phY+mz
+         MLYHps2hr4XLibxnQ8mx313knsXFsyrW9k3yvIg/f6i5oNTrEPkM9nHVm8RWHWnOCrMk
+         HtTNDGbrxvJnXbltCwTmMZKfanduDgR52oJgUs8Z1S+LMv6o8PqHJWf908y0ITS1sil+
+         XpYd+M1RQ+miOSOEDZs/j2nKzjU1BYiY/R/tliK2oQG30BA6Q1he/xwREHYHWZSE23rU
+         uXig==
+X-Forwarded-Encrypted: i=1; AJvYcCUvio2FFwq5vqpigosRhQn2brscaoN0Mr/1XL/1ZjhWFhToCoeS5MSo3WCON2l8p822oorxRAZX6dYVREQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwJD9BwL5wwEYkA4hY6PAWBz5gLUwNHUmX6QNIYQbkLJBcfPPiZ
+	SSVh7DxRH7KJrvUifTyxTh2eAa4AbQZ7LeKbVSAX7A1o5N/6FmMuGIB0
+X-Gm-Gg: ASbGnctdkMSIZr56WCmV2+qWSTSHpWnrUkBfiVIP6IX0Sb1BcSJjnUaIFnFtvMk1AyT
+	PNEnedDav9d156+4AvVPKFNnWD1QFCVaDvevxU1S4Y8od7jHfFgsPGcqO2UZME0zuQNgDb7z8Ew
+	QN4cfGtNlIcnWW9xc44R707pN94PS0oGB41PIxAfD6PVxqwDBs+fG6ONZT4ANGhLFN5e5ygvVyl
+	n9q79jTdzeN4rNCAwOL/Z1AsymVWnKbj88BvMjQ0lFCdbLBa/OtnKYLAcnT7FL+oumOV3Cnboof
+	cwx3KSTEkX3JaGHzVGaQEMqcwI3gksq2EHSek1qYW2g2roqptuTvqOqX7HDJ1i/40+OjbD8YjtS
+	Fgow=
+X-Google-Smtp-Source: AGHT+IF447eXoeCPMZ9fSborn0oc0o77ApQohY3vn62RRe/f5MId9QjXnzTMTAtUShcwzCs4rGS+mw==
+X-Received: by 2002:a17:902:f684:b0:235:60e:3704 with SMTP id d9443c01a7336-23823fc3f99mr87140675ad.12.1750889751418;
+        Wed, 25 Jun 2025 15:15:51 -0700 (PDT)
+Received: from itsmeut.. ([103.215.237.70])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-237f7579cddsm84397535ad.202.2025.06.25.15.15.48
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 25 Jun 2025 15:15:50 -0700 (PDT)
+From: Utkarsh Singh <utkarsh.singh.em@gmail.com>
+To: agruenba@redhat.com
+Cc: gfs2@lists.linux.dev,
+	linux-kernel@vger.kernel.org,
+	skhan@linuxfoundation.org,
+	Utkarsh Singh <utkarsh.singh.em@gmail.com>
+Subject: [PATCH] gfs2/sysfs: Replace sprintf/snprintf with sysfs_emit()
+Date: Thu, 26 Jun 2025 03:41:38 +0530
+Message-Id: <20250625221137.108313-1-utkarsh.singh.em@gmail.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 4/7] rtc: spacemit: support the SpacemiT P1 RTC
-To: Alexandre Belloni <alexandre.belloni@bootlin.com>
-Cc: lee@kernel.org, lgirdwood@gmail.com, broonie@kernel.org, robh@kernel.org,
- krzk+dt@kernel.org, conor+dt@kernel.org, mat.jonczyk@o2.pl, dlan@gentoo.org,
- paul.walmsley@sifive.com, palmer@dabbelt.com, aou@eecs.berkeley.edu,
- alex@ghiti.fr, troymitchell988@gmail.com, linux-rtc@vger.kernel.org,
- devicetree@vger.kernel.org, linux-riscv@lists.infradead.org,
- spacemit@lists.linux.dev, linux-kernel@vger.kernel.org
-References: <20250625164119.1068842-1-elder@riscstar.com>
- <20250625164119.1068842-5-elder@riscstar.com>
- <202506252201262779aa6c@mail.local>
-Content-Language: en-US
-From: Alex Elder <elder@riscstar.com>
-In-Reply-To: <202506252201262779aa6c@mail.local>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-On 6/25/25 5:01 PM, Alexandre Belloni wrote:
-> On 25/06/2025 11:41:15-0500, Alex Elder wrote:
->> +/*
->> + * The P1 hardware documentation states that the register values are
->> + * latched to ensure a consistent time snapshot within the registers,
->> + * but these are in fact unstable due to a bug in the hardware design.
->> + * So we loop until we get two identical readings.
->> + */
->> +static int p1_rtc_read_time(struct device *dev, struct rtc_time *t)
->> +{
->> +	struct p1_rtc *p1 = dev_get_drvdata(dev);
->> +	struct regmap *regmap = p1->regmap;
->> +	u32 count = RTC_READ_TRIES;
->> +	u8 times[2][6];
->> +	size_t size;
->> +	u32 i = 0;
->> +	u8 *time;
->> +	int ret;
->> +
->> +	size = sizeof(times[0]);
->> +	ret = regmap_bulk_read(regmap, RTC_TIME, times[i], size);
->> +	if (ret)
->> +		return ret;
->> +
->> +	do {
->> +		i = 1 - i;
->> +		ret = regmap_bulk_read(regmap, RTC_TIME, times[i], size);
->> +		if (ret)
->> +			return ret;
->> +	} while (memcmp(times[i], times[1 - i], size) && --count);
-> 
-> Simply checking the seconds is enough, unless you expect regmap_bulk_read to ake
-> more than a minute so you don't need a two dimension array.
+Documentation/filesystems/sysfs.rst mentions that show() should only
+use sysfs_emit() or sysfs_emit_at() when formatting values returned
+to user space. This patch updates the GFS2 sysfs interface accordingly.
 
-I hadn't thought it through, but you're right.  I'll still
-do bulk reads but will save only the seconds register and
-compare it to the previous.
+It replaces uses of sprintf() and snprintf() in all *_show() functions
+with sysfs_emit() to align with current kernel sysfs API best practices.
+It also updates the GFS2_SHOW_UINT macro to use sysfs_emit() instead
+of snprintf().
 
-> 
->> +
->> +	if (!count)
->> +		return -EIO;
->> +
->> +	time = &times[0][0];
->> +
->> +	t->tm_sec = time[0] & GENMASK(5, 0);
->> +	t->tm_min = time[1] & GENMASK(5, 0);
->> +	t->tm_hour = time[2] & GENMASK(4, 0);
->> +	t->tm_mday = (time[3] & GENMASK(4, 0)) + 1;
->> +	t->tm_mon = time[4] & GENMASK(3, 0);
->> +	t->tm_year = (time[5] & GENMASK(5, 0)) + 100;
->> +
->> +	return 0;
->> +}
->> +
->> +/*
->> + * The P1 hardware documentation states that values in the registers are
->> + * latched so when written they represent a consistent time snapshot.
->> + * Nevertheless, this is not guaranteed by the implementation, so we must
->> + * disable the RTC while updating it.
->> + */
->> +static int p1_rtc_set_time(struct device *dev, struct rtc_time *t)
->> +{
->> +	struct p1_rtc *p1 = dev_get_drvdata(dev);
->> +	struct regmap *regmap = p1->regmap;
->> +	u8 time[6];
->> +	int ret2;
->> +	int ret;
->> +
->> +	time[0] = t->tm_sec;
->> +	time[1] = t->tm_min;
->> +	time[2] = t->tm_hour;
->> +	time[3] = t->tm_mday - 1;
->> +	time[4] = t->tm_mon;
->> +	time[5] = t->tm_year - 100;
->> +
->> +	/* Disable the RTC to update; re-enable again when done */
->> +	ret = regmap_update_bits(regmap, RTC_CTRL, RTC_EN, 0);
->> +	if (ret)
->> +		return ret;
->> +
->> +	ret = regmap_bulk_write(regmap, RTC_TIME, time, sizeof(time));
->> +
-> Honnestly, I'd simply go for
-> 
-> 	if (ret)
-> 		return ret;
-> 
-> Here, you are trying to set the time, I'm not sure it is worth trying to
-> reenable the rtc while hoping the previous time has been kept.
+Signed-off-by: Utkarsh Singh <utkarsh.singh.em@gmail.com>
+---
+ fs/gfs2/sys.c | 32 ++++++++++++++++----------------
+ 1 file changed, 16 insertions(+), 16 deletions(-)
 
-OK.  I normally at least try to return to the original state
-even when errors occur.
-
-I don't know who updates the RTC, but I suppose if any error
-occurs writing a value they should assume it's "not working".
-
-> This also shows that p1_rtc_read_time should check that RTC_EN is set, else it
-> knows the time has never been set and is invalid.
-
-That's a good point.  I'll add a check.  And with that it should
-be fine to return without re-enabling.
-
-Thanks for your review.  I'll wait until tomorrow to send the
-next version.
-
-					-Alex
-
->> +	ret2 = regmap_update_bits(regmap, RTC_CTRL, RTC_EN, RTC_EN);
->> +
->> +	return ret ? : ret2;		/* Return the first error */
-> 
-> 
->> +}
->> +
->> +static const struct rtc_class_ops p1_rtc_class_ops = {
->> +	.read_time = p1_rtc_read_time,
->> +	.set_time = p1_rtc_set_time,
->> +};
->> +
->> +static int p1_rtc_probe(struct platform_device *pdev)
->> +{
->> +	struct device *dev = &pdev->dev;
->> +	struct rtc_device *rtc;
->> +	struct p1_rtc *p1;
->> +
->> +	p1 = devm_kzalloc(dev, sizeof(*p1), GFP_KERNEL);
->> +	if (!p1)
->> +		return -ENOMEM;
->> +	dev_set_drvdata(dev, p1);
->> +
->> +	p1->regmap = dev_get_regmap(dev->parent, NULL);
->> +	if (!p1->regmap)
->> +		return dev_err_probe(dev, -ENODEV, "failed to get regmap\n");
->> +
->> +	rtc = devm_rtc_allocate_device(dev);
->> +	if (IS_ERR(rtc))
->> +		return dev_err_probe(dev, PTR_ERR(rtc),
->> +				     "error allocating device\n");
->> +	p1->rtc = rtc;
->> +
->> +	rtc->ops = &p1_rtc_class_ops;
->> +	rtc->range_min = RTC_TIMESTAMP_BEGIN_2000;
->> +	rtc->range_max = RTC_TIMESTAMP_END_2063;
->> +
->> +	clear_bit(RTC_FEATURE_ALARM, rtc->features);
->> +	clear_bit(RTC_FEATURE_UPDATE_INTERRUPT, rtc->features);
->> +
->> +	return devm_rtc_register_device(rtc);
->> +}
->> +
->> +static struct platform_driver p1_rtc_driver = {
->> +	.probe = p1_rtc_probe,
->> +	.driver = {
->> +		.name = MOD_NAME,
->> +	},
->> +};
->> +
->> +module_platform_driver(p1_rtc_driver);
->> +
->> +MODULE_DESCRIPTION("SpacemiT P1 RTC driver");
->> +MODULE_LICENSE("GPL");
->> +MODULE_ALIAS("platform:" MOD_NAME);
->> -- 
->> 2.45.2
->>
-> 
+diff --git a/fs/gfs2/sys.c b/fs/gfs2/sys.c
+index c3c8842920d2..77bd35b2f594 100644
+--- a/fs/gfs2/sys.c
++++ b/fs/gfs2/sys.c
+@@ -59,7 +59,7 @@ static struct kset *gfs2_kset;
+ 
+ static ssize_t id_show(struct gfs2_sbd *sdp, char *buf)
+ {
+-	return snprintf(buf, PAGE_SIZE, "%u:%u\n",
++	return sysfs_emit(buf, "%u:%u\n",
+ 			MAJOR(sdp->sd_vfs->s_dev), MINOR(sdp->sd_vfs->s_dev));
+ }
+ 
+@@ -68,7 +68,7 @@ static ssize_t status_show(struct gfs2_sbd *sdp, char *buf)
+ 	unsigned long f = sdp->sd_flags;
+ 	ssize_t s;
+ 
+-	s = snprintf(buf, PAGE_SIZE,
++	s = sysfs_emit(buf,
+ 		     "Journal Checked:          %d\n"
+ 		     "Journal Live:             %d\n"
+ 		     "Journal ID:               %d\n"
+@@ -140,7 +140,7 @@ static ssize_t status_show(struct gfs2_sbd *sdp, char *buf)
+ 
+ static ssize_t fsname_show(struct gfs2_sbd *sdp, char *buf)
+ {
+-	return snprintf(buf, PAGE_SIZE, "%s\n", sdp->sd_fsname);
++	return sysfs_emit(buf, "%s\n", sdp->sd_fsname);
+ }
+ 
+ static ssize_t uuid_show(struct gfs2_sbd *sdp, char *buf)
+@@ -150,7 +150,7 @@ static ssize_t uuid_show(struct gfs2_sbd *sdp, char *buf)
+ 	buf[0] = '\0';
+ 	if (uuid_is_null(&s->s_uuid))
+ 		return 0;
+-	return snprintf(buf, PAGE_SIZE, "%pUB\n", &s->s_uuid);
++	return sysfs_emit(buf, "%pUB\n", &s->s_uuid);
+ }
+ 
+ static ssize_t freeze_show(struct gfs2_sbd *sdp, char *buf)
+@@ -158,7 +158,7 @@ static ssize_t freeze_show(struct gfs2_sbd *sdp, char *buf)
+ 	struct super_block *sb = sdp->sd_vfs;
+ 	int frozen = (sb->s_writers.frozen == SB_UNFROZEN) ? 0 : 1;
+ 
+-	return snprintf(buf, PAGE_SIZE, "%d\n", frozen);
++	return sysfs_emit(buf, "%d\n", frozen);
+ }
+ 
+ static ssize_t freeze_store(struct gfs2_sbd *sdp, const char *buf, size_t len)
+@@ -194,7 +194,7 @@ static ssize_t freeze_store(struct gfs2_sbd *sdp, const char *buf, size_t len)
+ static ssize_t withdraw_show(struct gfs2_sbd *sdp, char *buf)
+ {
+ 	unsigned int b = gfs2_withdrawing_or_withdrawn(sdp);
+-	return snprintf(buf, PAGE_SIZE, "%u\n", b);
++	return sysfs_emit(buf, "%u\n", b);
+ }
+ 
+ static ssize_t withdraw_store(struct gfs2_sbd *sdp, const char *buf, size_t len)
+@@ -397,7 +397,7 @@ static struct kobj_type gfs2_ktype = {
+ static ssize_t proto_name_show(struct gfs2_sbd *sdp, char *buf)
+ {
+ 	const struct lm_lockops *ops = sdp->sd_lockstruct.ls_ops;
+-	return sprintf(buf, "%s\n", ops->lm_proto_name);
++	return sysfs_emit(buf, "%s\n", ops->lm_proto_name);
+ }
+ 
+ static ssize_t block_show(struct gfs2_sbd *sdp, char *buf)
+@@ -408,7 +408,7 @@ static ssize_t block_show(struct gfs2_sbd *sdp, char *buf)
+ 
+ 	if (test_bit(DFL_BLOCK_LOCKS, &ls->ls_recover_flags))
+ 		val = 1;
+-	ret = sprintf(buf, "%d\n", val);
++	ret = sysfs_emit(buf, "%d\n", val);
+ 	return ret;
+ }
+ 
+@@ -437,7 +437,7 @@ static ssize_t wdack_show(struct gfs2_sbd *sdp, char *buf)
+ {
+ 	int val = completion_done(&sdp->sd_wdack) ? 1 : 0;
+ 
+-	return sprintf(buf, "%d\n", val);
++	return sysfs_emit(buf, "%d\n", val);
+ }
+ 
+ static ssize_t wdack_store(struct gfs2_sbd *sdp, const char *buf, size_t len)
+@@ -459,7 +459,7 @@ static ssize_t wdack_store(struct gfs2_sbd *sdp, const char *buf, size_t len)
+ static ssize_t lkfirst_show(struct gfs2_sbd *sdp, char *buf)
+ {
+ 	struct lm_lockstruct *ls = &sdp->sd_lockstruct;
+-	return sprintf(buf, "%d\n", ls->ls_first);
++	return sysfs_emit(buf, "%d\n", ls->ls_first);
+ }
+ 
+ static ssize_t lkfirst_store(struct gfs2_sbd *sdp, const char *buf, size_t len)
+@@ -492,7 +492,7 @@ static ssize_t lkfirst_store(struct gfs2_sbd *sdp, const char *buf, size_t len)
+ static ssize_t first_done_show(struct gfs2_sbd *sdp, char *buf)
+ {
+ 	struct lm_lockstruct *ls = &sdp->sd_lockstruct;
+-	return sprintf(buf, "%d\n", !!test_bit(DFL_FIRST_MOUNT_DONE, &ls->ls_recover_flags));
++	return sysfs_emit(buf, "%d\n", !!test_bit(DFL_FIRST_MOUNT_DONE, &ls->ls_recover_flags));
+ }
+ 
+ int gfs2_recover_set(struct gfs2_sbd *sdp, unsigned jid)
+@@ -550,18 +550,18 @@ static ssize_t recover_store(struct gfs2_sbd *sdp, const char *buf, size_t len)
+ static ssize_t recover_done_show(struct gfs2_sbd *sdp, char *buf)
+ {
+ 	struct lm_lockstruct *ls = &sdp->sd_lockstruct;
+-	return sprintf(buf, "%d\n", ls->ls_recover_jid_done);
++	return sysfs_emit(buf, "%d\n", ls->ls_recover_jid_done);
+ }
+ 
+ static ssize_t recover_status_show(struct gfs2_sbd *sdp, char *buf)
+ {
+ 	struct lm_lockstruct *ls = &sdp->sd_lockstruct;
+-	return sprintf(buf, "%d\n", ls->ls_recover_jid_status);
++	return sysfs_emit(buf, "%d\n", ls->ls_recover_jid_status);
+ }
+ 
+ static ssize_t jid_show(struct gfs2_sbd *sdp, char *buf)
+ {
+-	return sprintf(buf, "%d\n", sdp->sd_lockstruct.ls_jid);
++	return sysfs_emit(buf, "%d\n", sdp->sd_lockstruct.ls_jid);
+ }
+ 
+ static ssize_t jid_store(struct gfs2_sbd *sdp, const char *buf, size_t len)
+@@ -626,7 +626,7 @@ static struct attribute *lock_module_attrs[] = {
+ 
+ static ssize_t quota_scale_show(struct gfs2_sbd *sdp, char *buf)
+ {
+-	return snprintf(buf, PAGE_SIZE, "%u %u\n",
++	return sysfs_emit(buf, "%u %u\n",
+ 			sdp->sd_tune.gt_quota_scale_num,
+ 			sdp->sd_tune.gt_quota_scale_den);
+ }
+@@ -679,7 +679,7 @@ static struct gfs2_attr tune_attr_##name = __ATTR(name, 0644, show, store)
+ #define TUNE_ATTR_2(name, store)                                              \
+ static ssize_t name##_show(struct gfs2_sbd *sdp, char *buf)                   \
+ {                                                                             \
+-	return snprintf(buf, PAGE_SIZE, "%u\n", sdp->sd_tune.gt_##name);      \
++	return sysfs_emit(buf, "%u\n", sdp->sd_tune.gt_##name);      \
+ }                                                                             \
+ TUNE_ATTR_3(name, name##_show, store)
+ 
+-- 
+2.34.1
 
 
