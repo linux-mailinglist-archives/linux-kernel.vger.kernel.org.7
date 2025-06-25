@@ -1,87 +1,202 @@
-Return-Path: <linux-kernel+bounces-702053-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-702055-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id AFB09AE7D74
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Jun 2025 11:40:11 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3489AAE7D7E
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Jun 2025 11:41:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5AD243BCF39
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Jun 2025 09:38:03 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E65BB5A2525
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Jun 2025 09:38:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 31D152E4246;
-	Wed, 25 Jun 2025 09:26:06 +0000 (UTC)
-Received: from mail-il1-f198.google.com (mail-il1-f198.google.com [209.85.166.198])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DD56529B229;
+	Wed, 25 Jun 2025 09:26:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ZwFFDBAg"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 422122C15A6
-	for <linux-kernel@vger.kernel.org>; Wed, 25 Jun 2025 09:26:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.198
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3D53328751F
+	for <linux-kernel@vger.kernel.org>; Wed, 25 Jun 2025 09:26:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750843565; cv=none; b=gtbqT2XESEy3E5VYohwwGEfjp1dqhZneO7TnvPBU6W2MX4ym9J6mseTkOC/8G4bWxHVBicBWULZ8yhkzqKxD3nmJ8vptRRZWCpt4XxFLdHNNE52IkXVUfi7yCVz/Q0EUiVu9iKvRgFPoq054jkHiPo0CHNdNWiCb7eFEsDfsF30=
+	t=1750843607; cv=none; b=sc+GmsGvF1lmzgYx44CEsNOY7FYwfpWlBLmgOmgR+SOMdUrIlm5WtmK99C7lerWA+hDXDNMkkrbJuw7R5QGpRaQiKERufdCsX8154i69mq/wFGvRk3OQ7hs1XvqpUjeZwEvwrpMS/+0x+qA4BYtpoJ3cWOh4wE15MA3mCgN6Nd8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750843565; c=relaxed/simple;
-	bh=qUPNZnfiHXpVJGIU/x+D5DTJ1JEYjPYS78iH53c62YY=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=IC2c0qVGEEmOMDEXmzmmkb7HRvNBDILdu9DUvz6z38coyuNsjjuCQfwUNwFbrkYqz8NZ7pkx4Gh4+CzdGIRLt9S+FXn/izykbB2D1/3FOH50G5Jly0sjQuxu0hU2Xj07kLTrUxlQfx9u++PW4wddG/doUjSdLZzs+wbPvQEv7TU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.198
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f198.google.com with SMTP id e9e14a558f8ab-3ddcb80387dso6826775ab.1
-        for <linux-kernel@vger.kernel.org>; Wed, 25 Jun 2025 02:26:04 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1750843563; x=1751448363;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=EDEC+2bl2jbOP+vy2256BRfU0S2KmDjZ98enuZrGuoc=;
-        b=iJpk2xW+gTv55ujd6jftQqN5BMPiw7AXlNzdbse7oPsA1bJ+UsO1R+5iEpN8Yuhsrk
-         0cI4p57zsPI87XQKNFpLFY4nAxlfRwRH7CoEEr5s+11eODwdg94o+mBP6wGmMvk1aw6I
-         zVDlxyjPzDnmf+LhiU+DIp74uULU7XmD4klrdFuKcbBNlHvhhyQA6ypDUuhJmtbtsSeN
-         UdNEX/8PTUXKqOnwaj4OtjwgsdX6+mcjKtk8O6v7SxFi58Y/RxBm0OTK8b7NxW/E500p
-         WvfeZvvudTrW0+WQqgvy6YYbHtMJb5OJ+Pr+he4j4UAUZpiTEXZjDHzZtJf88LsNgrSL
-         /myQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWjXq2cfVSD6tIeMlmGC/lFdd+/4a8MYYWh/25GSG89wCZkOuLkwnMK2PwZOUJkIuMjqrRdNukVdgUbvBk=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyNvSfWnoXn5f1z2quE36CGhhTqk6ZDgviadMjstUWcGqNn6PjE
-	53lFAC4cyf85dzrRIZjdhzkVffRvtq7NccuzUUjMQsN4j5oxIj4w7CQA+xVW4F/5Qqb1Or4CZnV
-	S8L8NcdqhdFATNuKD+hpO8j8fxc4fhVc3ar3tRySWhsde0ekZE5GE6EH2QaU=
-X-Google-Smtp-Source: AGHT+IEFNUo3zPx8PBwk3JcU7J1fDm/BHs2fK+Uz6glB15XNIr7uumAtXsVB8pHpEUIIT7lgi3ACSGnLmUciP66fSN1cXag4jed/
+	s=arc-20240116; t=1750843607; c=relaxed/simple;
+	bh=oU56uCoxi5MqAItg8ReBro2yvSnZ3Pqq4fySq91RXeU=;
+	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
+	 In-Reply-To:Content-Type; b=YcE0kq2e5GI1MVtlyPW+pdgvMFeM59gcpPXvObbZYt0saWNS3fjW6wYRslKe2LTnHHbBLj2T5MOuFLf98LLO5Xp98JCiJks8QXmedC6Z+rK7S/RU2V9K2EDZ0Facl790lswWEw9EF+rQnxHGTOehuuiW0GuP28BTh4YVMPz6p7M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ZwFFDBAg; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7AE20C4CEEA;
+	Wed, 25 Jun 2025 09:26:44 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1750843605;
+	bh=oU56uCoxi5MqAItg8ReBro2yvSnZ3Pqq4fySq91RXeU=;
+	h=Date:Subject:From:To:Cc:References:In-Reply-To:From;
+	b=ZwFFDBAgMnc9DfHIRY3jMSq3hkxd3C+cg8rfhzfQh0Eh0mX6cJ4ijvTBa6irliBpI
+	 m+5WZnF2suYVwclFCZ55QLxe+TyGVc9j9wAGEX1iXzLZyEZssm6LXdsF0fwiywvV1E
+	 i8s2ZTzHnqZuuMrI0yeQwRwgJ39+eDanfAtRpAAmcgyYA0as+i027VAab8RS1MtjR/
+	 7Y8YvtB4lHJhi6G/Epgai1yjHNUk05vE1RAQYorRv+MyaaGIMD6V4NjKq3WRmFM3xi
+	 nAvZKvuk79DKJ8yaJxxnCUIktyvzXvngyy3HFYdnQ5NIH48QldBRDHXVsECmiy0Ovl
+	 SvZi6Y4FrSKgg==
+Message-ID: <54f17c19-63d0-41a0-9d31-aff5fb73e99b@kernel.org>
+Date: Wed, 25 Jun 2025 11:26:42 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:178d:b0:3dd:c9e4:d46a with SMTP id
- e9e14a558f8ab-3df32c8ac64mr23277455ab.7.1750843563459; Wed, 25 Jun 2025
- 02:26:03 -0700 (PDT)
-Date: Wed, 25 Jun 2025 02:26:03 -0700
-In-Reply-To: <20250625082730.1756-1-hdanton@sina.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <685bc0ab.a00a0220.2e5631.00c2.GAE@google.com>
-Subject: Re: [syzbot] [hams?] KASAN: slab-use-after-free Read in rose_get_neigh
-From: syzbot <syzbot+e04e2c007ba2c80476cb@syzkaller.appspotmail.com>
-To: hdanton@sina.com, linux-kernel@vger.kernel.org, 
-	syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 06/10] mei: vsc: Event notifier fixes
+From: Hans de Goede <hansg@kernel.org>
+To: "Usyskin, Alexander" <alexander.usyskin@intel.com>,
+ Sakari Ailus <sakari.ailus@linux.intel.com>,
+ Stanislaw Gruszka <stanislaw.gruszka@linux.intel.com>
+Cc: Arnd Bergmann <arnd@arndb.de>,
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+References: <20250623085052.12347-1-hansg@kernel.org>
+ <20250623085052.12347-7-hansg@kernel.org>
+ <CY5PR11MB6366468BAEADAB94B7286AF6ED7BA@CY5PR11MB6366.namprd11.prod.outlook.com>
+ <9836099e-1162-4965-bf77-cded23fc811f@kernel.org>
+Content-Language: en-US, nl
+In-Reply-To: <9836099e-1162-4965-bf77-cded23fc811f@kernel.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Hello,
+On 25-Jun-25 11:23 AM, Hans de Goede wrote:
+> Hi,
+> 
+> On 25-Jun-25 11:12 AM, Usyskin, Alexander wrote:
+>>> Subject: [PATCH 06/10] mei: vsc: Event notifier fixes
+>>>
+>>> vsc_tp_register_event_cb() can race with vsc_tp_thread_isr(), add a mutex
+>>> to protect against this.
+>>>
+>>> Fixes: 566f5ca97680 ("mei: Add transport driver for IVSC device")
+>>> Signed-off-by: Hans de Goede <hansg@kernel.org>
+>>> ---
+>>>  drivers/misc/mei/vsc-tp.c | 12 +++++++++---
+>>>  1 file changed, 9 insertions(+), 3 deletions(-)
+>>>
+>>> diff --git a/drivers/misc/mei/vsc-tp.c b/drivers/misc/mei/vsc-tp.c
+>>> index 0feebffabdb3..76a6aa606a26 100644
+>>> --- a/drivers/misc/mei/vsc-tp.c
+>>> +++ b/drivers/misc/mei/vsc-tp.c
+>>> @@ -79,9 +79,8 @@ struct vsc_tp {
+>>>
+>>>  	vsc_tp_event_cb_t event_notify;
+>>>  	void *event_notify_context;
+>>> -
+>>> -	/* used to protect command download */
+>>> -	struct mutex mutex;
+>>> +	struct mutex event_notify_mutex;	/* protects event_notify +
+>>> context */
+>>> +	struct mutex mutex;			/* protects command
+>>> download */
+>>>  };
+>>>
+>>>  /* GPIO resources */
+>>> @@ -113,6 +112,8 @@ static irqreturn_t vsc_tp_thread_isr(int irq, void
+>>> *data)
+>>>  {
+>>>  	struct vsc_tp *tp = data;
+>>>
+>>
+>> The mutex overhead looks out of place here in the interrupt handler.
+>> Maybe it can be replaced with something lighter?
+> 
+> Using mutexes in *threaded* isr handlers is quite normal, e.g.
+> both the SPI core (used as transport here) and the I2C cor will
+> take + release a mutex for each data transfer over the bus and
+> a threaded ISR handler may do more then 1 data transfer for a single
+> interrupt.
+> 
+> As to using something lighter I could not come up with any lighter
+> solution then this.
 
-syzbot has tested the proposed patch and the reproducer did not trigger any issue:
+p.s.
 
-Reported-by: syzbot+e04e2c007ba2c80476cb@syzkaller.appspotmail.com
-Tested-by: syzbot+e04e2c007ba2c80476cb@syzkaller.appspotmail.com
+I forgot to mention that this interrupt also does not trigger
+that frequently that we really need to worry about overhead.
 
-Tested on:
+The VSC sits between the user-facing camera and the Intel
+CPU/SoC's CSI2 receiver. So we only need to talk to it
+(generating interrupts) on probe() and when starting/stopping
+streaming video from the camera. Each start/stop we'll get
+a bunch of interrupts but outside of that the interrupt never
+triggers. So overhead is not really a big worry here.
 
-commit:         7595b66a Merge tag 'selinux-pr-20250624' of git://git...
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=14e0d182580000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=4ec8b4e4d31ae914
-dashboard link: https://syzkaller.appspot.com/bug?extid=e04e2c007ba2c80476cb
-compiler:       Debian clang version 20.1.6 (++20250514063057+1e4d39e07757-1~exp1~20250514183223.118), Debian LLD 20.1.6
-patch:          https://syzkaller.appspot.com/x/patch.diff?x=17775182580000
+Regards,
 
-Note: testing is done by a robot and is best-effort only.
+Hans
+
+
+
+
+
+> Also note that this is moved to a workqueue later in the series,
+> since the threaded ISR actually waits for the wake_up() call
+> done by the hard part of the ISR and an ISR waiting for
+> the interrupt to trigger a second/third/... time inside the ISR
+> handler is just plain wrong.
+> 
+>> BTW is it possible to have interrupt before call to vsc_tp_register_event_c
+> 
+> The interrupt gets triggered by a GPIO connected to the VSC,
+> so if the VSC is well behaved then the interrupt should not
+> trigger. But we cannot really count on that.
+> 
+> Regards,
+> 
+> Hans
+> 
+> 
+> 
+>>> +	guard(mutex)(&tp->event_notify_mutex);
+>>> +
+>>>  	if (tp->event_notify)
+>>>  		tp->event_notify(tp->event_notify_context);
+>>>
+>>> @@ -399,6 +400,8 @@ EXPORT_SYMBOL_NS_GPL(vsc_tp_need_read,
+>>> "VSC_TP");
+>>>  int vsc_tp_register_event_cb(struct vsc_tp *tp, vsc_tp_event_cb_t event_cb,
+>>>  			    void *context)
+>>>  {
+>>> +	guard(mutex)(&tp->event_notify_mutex);
+>>> +
+>>>  	tp->event_notify = event_cb;
+>>>  	tp->event_notify_context = context;
+>>>
+>>> @@ -499,6 +502,7 @@ static int vsc_tp_probe(struct spi_device *spi)
+>>>  		return ret;
+>>>
+>>>  	mutex_init(&tp->mutex);
+>>> +	mutex_init(&tp->event_notify_mutex);
+>>>
+>>>  	/* only one child acpi device */
+>>>  	ret = acpi_dev_for_each_child(ACPI_COMPANION(dev),
+>>> @@ -523,6 +527,7 @@ static int vsc_tp_probe(struct spi_device *spi)
+>>>  err_destroy_lock:
+>>>  	free_irq(spi->irq, tp);
+>>>
+>>> +	mutex_destroy(&tp->event_notify_mutex);
+>>>  	mutex_destroy(&tp->mutex);
+>>>
+>>>  	return ret;
+>>> @@ -537,6 +542,7 @@ static void vsc_tp_remove(struct spi_device *spi)
+>>>
+>>>  	free_irq(spi->irq, tp);
+>>>
+>>> +	mutex_destroy(&tp->event_notify_mutex);
+>>>  	mutex_destroy(&tp->mutex);
+>>>  }
+>>>
+>>> --
+>>> 2.49.0
+>>
+> 
+
 
