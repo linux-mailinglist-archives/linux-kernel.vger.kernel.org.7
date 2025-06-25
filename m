@@ -1,157 +1,161 @@
-Return-Path: <linux-kernel+bounces-702466-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-702468-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id E44FCAE82BD
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Jun 2025 14:31:13 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 35E37AE82C1
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Jun 2025 14:32:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 02A3B1636CA
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Jun 2025 12:31:14 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 08E0C3B6EB4
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Jun 2025 12:31:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1399D1E4AE;
-	Wed, 25 Jun 2025 12:31:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 27E6525F785;
+	Wed, 25 Jun 2025 12:31:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="b7JWzUD5"
-Received: from mail-wm1-f73.google.com (mail-wm1-f73.google.com [209.85.128.73])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=sipsolutions.net header.i=@sipsolutions.net header.b="a7fCQE2H"
+Received: from sipsolutions.net (s3.sipsolutions.net [168.119.38.16])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E66CC20ED
-	for <linux-kernel@vger.kernel.org>; Wed, 25 Jun 2025 12:31:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.73
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EE4BA25F78A
+	for <linux-kernel@vger.kernel.org>; Wed, 25 Jun 2025 12:31:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=168.119.38.16
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750854667; cv=none; b=NBKlGsEaP/RkOrvg8hi83ncWUWLFR8I4isXkwVYoBVUCyRrWHz4qusgQ4mgqMKHha+q9ipT6MYKg4XwrRwrxRLq5I0PRg3Ma8Fbr+yOB4An5ZAxyzfFCgBK7+7wisAHpOjQvvQ4obCW5LVUi2RWrFQCzdrlRfZatt8qT0bZOhvY=
+	t=1750854693; cv=none; b=rwB8uMNsxr4GMU/5heJAMJnZpfpuhctvev6r13efDjTxZAhiL8a7vZX1ZaM/LASrBsyoW3snXsSbsKI2tq6y3af4NKRPZmGGZb/6AB6CFzpCssZbtGlgORBNKrJc8QCy7qdasfqS0XL6oa6cHpkRzO3yplz57TrY1N0y0SQx+Fk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750854667; c=relaxed/simple;
-	bh=qelaXKw8Ql/+34guQgLntK0jX11q7WZYCH/Gn7LwMUE=;
-	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=ACxae4pA/lqDEaJDJe4h+QpgdBmoj4oQ7+frMDYX7q3zTKNroj+G4jaJ6KqtspD7onuJV4g14mfGhB+OgAZwcNbAvP/lnNBa3Yab6y/pFxffXIdCGwHtDoHz+FY30APYFNdFZpxXa1GbKT4MiuCNn64IQP7HkgNTvrMHt87wziM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--smostafa.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=b7JWzUD5; arc=none smtp.client-ip=209.85.128.73
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--smostafa.bounces.google.com
-Received: by mail-wm1-f73.google.com with SMTP id 5b1f17b1804b1-453691d0a1dso27489275e9.0
-        for <linux-kernel@vger.kernel.org>; Wed, 25 Jun 2025 05:31:05 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1750854664; x=1751459464; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:mime-version:date:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=iRi13urPf1s8iS1Y5TOXOPMfOOng2yoJIcbPobf34Z4=;
-        b=b7JWzUD5zbBIq5kraWECcaK1nnVMNCRzyQoHup/lPi5NDcetKLc1CGiFu0mu6UGRu6
-         9UUHAC6m4Q8q33r3nZ9F8g2GEvKcbRfmZphlGPxQI77t4bwqMdWwgCwAPwcY81dQkMTT
-         zSkmDXYKXO05LvuahmCBgCULjCRs2CcRERcL6vkurJGEDzAWBJRTWokYIyTcjaLvY0mI
-         4D5H9Lf6I2HFs9q8mrDQBhtkgTlF9XtSRR6sF3FU0vGTc1/QMHM+9EjrJGaqJqgg79mH
-         lZXL3fUx9qZEGQrBLpG2so/qfAzyotgDZLay/59qMp6KRMpzJc6+K0Y/X2UIbq0R5HPL
-         u7ew==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1750854664; x=1751459464;
-        h=cc:to:from:subject:message-id:mime-version:date:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=iRi13urPf1s8iS1Y5TOXOPMfOOng2yoJIcbPobf34Z4=;
-        b=jlLXtxTuX33FZoGJ72X7FEd6oWyZvDgIXkLrMLWFqIsluQPkc+flhkF5lmQ6g3S1Us
-         j4UfPS7lcHzGtVJ2q9ZBfsNbjXg2Ac7LDBwhWS+hOMEnXzYCy+D5LxurcZMa3N5/i41f
-         bJGgHNlIo/0ywipDiwaG29sqq7sLLp1/gDmHZ0vNs4GQvNwtc/JEJqXwMsc1ggR27DE5
-         Pw2prdH57kVP3OMKXR5XOG9gu1GXcXcyU7udpJAWrEh4Qcmv9CXpihWlTd+HFoHt7FnI
-         HiCmZn5b5nkEsaHT6ZeWDm4Y8NRhTM0oRMf5XHiV/4QgtC9tBbR/OgAst0qzstj42xHk
-         4E1g==
-X-Gm-Message-State: AOJu0YwmILzmKo1+lzHPFtRs+aQjA/ABRbtt3hvIqbiL3yPN6dX3PmtZ
-	CEyH/AIfjoAjxzs9m2EqTBuS6m3PuBuCIdZMcLK3O+td3Z85PvowomtbESyWI+9x+bn00sC8l8B
-	RikKJIxHDvBM0qjKx7WwEMjWTl5NvB1Fu+In05On5m4N21zzHJlteah7iPW4JK1GcYhSjMUrnBI
-	SnjSfhOOZ2DwIPVoOW1gZcKS+rtfNOb4fgxu5SngkSAw/b1dfMfSMyXcA=
-X-Google-Smtp-Source: AGHT+IEwANlGVnDCXGN7hg9uNGMVTxicEuUKtoVCQA9kfAk4equFrtEicPN5MHaP2YqeylAONmjqdnnDHvce6g==
-X-Received: from wmqe9.prod.google.com ([2002:a05:600c:4e49:b0:44a:ebc5:9921])
- (user=smostafa job=prod-delivery.src-stubby-dispatcher) by
- 2002:a05:600c:34d5:b0:43c:fdbe:4398 with SMTP id 5b1f17b1804b1-45381a9f52bmr26163945e9.6.1750854664293;
- Wed, 25 Jun 2025 05:31:04 -0700 (PDT)
-Date: Wed, 25 Jun 2025 12:30:58 +0000
+	s=arc-20240116; t=1750854693; c=relaxed/simple;
+	bh=nGFTrLM1x130MEmLW9Uo5hqoBt/joa/UbPRhWusf7dY=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=auzdjiBu42BBqfm+1mrkxhywcH07x0w0RABeAqUASqNGfJKydp6GWxA8LjKs9b5BUBC6ePiD5rjWgRQFhF161bIQm46eVCMOumtrG9Vh0QCzOsIdy0DQgsvxXhN98Hjky+PkAVRdbkwIRXjyy8slmagAusZ1e6YX4xqobeBjFH8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sipsolutions.net; spf=pass smtp.mailfrom=sipsolutions.net; dkim=pass (2048-bit key) header.d=sipsolutions.net header.i=@sipsolutions.net header.b=a7fCQE2H; arc=none smtp.client-ip=168.119.38.16
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sipsolutions.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sipsolutions.net
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=sipsolutions.net; s=mail; h=MIME-Version:Content-Transfer-Encoding:
+	Content-Type:References:In-Reply-To:Date:Cc:To:From:Subject:Message-ID:Sender
+	:Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:Resent-To:
+	Resent-Cc:Resent-Message-ID; bh=mu+JBFMxFcmkWvemWRejcBfCpbK0S9r03CkeNyEZeTc=;
+	t=1750854692; x=1752064292; b=a7fCQE2HTlaIXmHlF3RvkDEshiiZaqeCmMCGMXhQ8Qsc0nP
+	nQBI/qfCSsrGhG536bTawfuIQNjku6UUB2RCjDGY0HdB0wDEQgdXwy2A7Wgnud5iZklDtoGSiphtS
+	NPXfo55T8eeTDBfTbiXEMSAZjbxzuM7TUA6A+9vx4KEcDWVlozyV3gGX+9ib/8LxyFgM6wtwUhFAE
+	o4IPFhlwkQ8WRF/62USMLvVkrgy5JVNrdO14k1M8SP329xzWuxyxSL+ULMs94aMLh6qluOXv07cwS
+	SlSAy3Vy8vzU/nWFF3fos4PB7++dDwv3j3NnRHBk/61fK0G1plm3doa/GhKB/LgA==;
+Received: by sipsolutions.net with esmtpsa (TLS1.3:ECDHE_X25519__RSA_PSS_RSAE_SHA256__AES_256_GCM:256)
+	(Exim 4.98.2)
+	(envelope-from <benjamin@sipsolutions.net>)
+	id 1uUPHh-00000009yMk-3tw7;
+	Wed, 25 Jun 2025 14:31:26 +0200
+Message-ID: <0e5eeb22a56e92ff377fcfb0cc0e768d71ed4ae9.camel@sipsolutions.net>
+Subject: Re: [PATCH RFC] um: time: fix userspace detection during tick
+ accounting
+From: Benjamin Berg <benjamin@sipsolutions.net>
+To: Thomas =?ISO-8859-1?Q?Wei=DFschuh?= <thomas.weissschuh@linutronix.de>, 
+ Richard Weinberger	 <richard@nod.at>, Anton Ivanov
+ <anton.ivanov@cambridgegreys.com>, Johannes Berg	
+ <johannes@sipsolutions.net>
+Cc: linux-um@lists.infradead.org, linux-kernel@vger.kernel.org, Thomas Meyer
+	 <thomas@m3y3r.de>, Anton Ivanov <aivanov@brocade.com>
+Date: Wed, 25 Jun 2025 14:31:24 +0200
+In-Reply-To: <20250617-uml-tick-timer-v1-1-01aab312f56b@linutronix.de>
+References: <20250617-uml-tick-timer-v1-1-01aab312f56b@linutronix.de>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.54.3 (3.54.3-1.fc41) 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-X-Mailer: git-send-email 2.50.0.714.g196bf9f422-goog
-Message-ID: <20250625123058.875179-1-smostafa@google.com>
-Subject: [PATCH v2] KVM: arm64: Fix error path in init_hyp_mode()
-From: Mostafa Saleh <smostafa@google.com>
-To: linux-kernel@vger.kernel.org, kvmarm@lists.linux.dev, 
-	linux-arm-kernel@lists.infradead.org
-Cc: maz@kernel.org, oliver.upton@linux.dev, joey.gouly@arm.com, 
-	suzuki.poulose@arm.com, yuzenghui@huawei.com, catalin.marinas@arm.com, 
-	will@kernel.org, qperret@google.com, Mostafa Saleh <smostafa@google.com>
-Content-Type: text/plain; charset="UTF-8"
+MIME-Version: 1.0
+X-malware-bazaar: not-scanned
 
-In the unlikely case pKVM failed to allocate carveout, the error path
-tries to access NULL ptr when it de-reference the SVE state from the
-uninitialized nVHE per-cpu base.
+Hi,
 
-[    1.575420] pstate: 61400005 (nZCv daif +PAN -UAO -TCO +DIT -SSBS BTYPE=--)
-[    1.576010] pc : teardown_hyp_mode+0xe4/0x180
-[    1.576920] lr : teardown_hyp_mode+0xd0/0x180
-[    1.577308] sp : ffff8000826fb9d0
-[    1.577600] x29: ffff8000826fb9d0 x28: 0000000000000000 x27: ffff80008209b000
-[    1.578383] x26: ffff800081dde000 x25: ffff8000820493c0 x24: ffff80008209eb00
-[    1.579180] x23: 0000000000000040 x22: 0000000000000001 x21: 0000000000000000
-[    1.579881] x20: 0000000000000002 x19: ffff800081d540b8 x18: 0000000000000000
-[    1.580544] x17: ffff800081205230 x16: 0000000000000152 x15: 00000000fffffff8
-[    1.581183] x14: 0000000000000008 x13: fff00000ff7f6880 x12: 000000000000003e
-[    1.581813] x11: 0000000000000002 x10: 00000000000000ff x9 : 0000000000000000
-[    1.582503] x8 : 0000000000000000 x7 : 7f7f7f7f7f7f7f7f x6 : 43485e525851ff30
-[    1.583140] x5 : fff00000ff6e9030 x4 : fff00000ff6e8f80 x3 : 0000000000000000
-[    1.583780] x2 : 0000000000000000 x1 : 0000000000000002 x0 : 0000000000000000
-[    1.584526] Call trace:
-[    1.584945]  teardown_hyp_mode+0xe4/0x180 (P)
-[    1.585578]  init_hyp_mode+0x920/0x994
-[    1.586005]  kvm_arm_init+0xb4/0x25c
-[    1.586387]  do_one_initcall+0xe0/0x258
-[    1.586819]  do_initcall_level+0xa0/0xd4
-[    1.587224]  do_initcalls+0x54/0x94
-[    1.587606]  do_basic_setup+0x1c/0x28
-[    1.587998]  kernel_init_freeable+0xc8/0x130
-[    1.588409]  kernel_init+0x20/0x1a4
-[    1.588768]  ret_from_fork+0x10/0x20
-[    1.589568] Code: f875db48 8b1c0109 f100011f 9a8903e8 (f9463100)
-[    1.590332] ---[ end trace 0000000000000000 ]---
+On Tue, 2025-06-17 at 15:52 +0200, Thomas Wei=C3=9Fschuh wrote:
+> The cpu usage timekeeping triggered by the tick credits passed time to
+> either the kernel or the currently running userspace process.
+> On UML, tick interrupts firing while userspace is running are not marked
+> correctly so this bookkeeping is broken and always credits the idle task.
+>=20
+> The rootcause is the following callchain always passing user_tick=3Dfalse
+> to account_process_tick():
+>=20
+> um_timer()
+> =C2=A0 -> handle_irq_event()
+> =C2=A0=C2=A0=C2=A0 -> tick_handle_periodic()
+> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 -> tick_periodic()
+> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 -> update_process_times(user_t=
+ick=3Duser_mode(get_irq_regs()))
+> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 -> account_process=
+_tick(task, user_tick=3Dfalse)
+>=20
+> As a result CPUCLOCK_VIRT does not advance,
+> breaking for example signal(SIGVTALRM).
+>=20
+> The issue can be reproduced easily with the selftest
+> tools/testing/selftests/timers/posix_timers.c,
+> which hangs in the ITIMER_VIRTUAL/SIGVTALRM testcase.
+>=20
+> Fix up the IRQ regs by correctly setting is_user in the IRQ registers.
 
-As Quentin pointed, the order of free is also wrong, we need to free
-SVE state first before freeing the per CPU ptrs.
+So, in principle, this looks like the right thing.
 
-I initially observed this on 6.12, but I could also repro in master.
+What I am not sure about is accounting if the userspace task is
+currently executing a syscall inside the kernel thread. The current
+code will incorrectly interrupt the userspace process in that case and
+you are now adding CPU time accounting on top of the same logic that is
+already not quite right.
 
-Signed-off-by: Mostafa Saleh <smostafa@google.com>
+Said differently, need to think about it a bit more. I suspect we might
+need to set/clear a flag in the userspace function for this.
 
----
-v2:
-- Address Quentin comments.
----
- arch/arm64/kvm/arm.c | 7 ++++++-
- 1 file changed, 6 insertions(+), 1 deletion(-)
+Benjamin
 
-diff --git a/arch/arm64/kvm/arm.c b/arch/arm64/kvm/arm.c
-index 38a91bb5d4c7..6bdf79bc5d95 100644
---- a/arch/arm64/kvm/arm.c
-+++ b/arch/arm64/kvm/arm.c
-@@ -2346,7 +2346,9 @@ static void __init teardown_hyp_mode(void)
- 	free_hyp_pgds();
- 	for_each_possible_cpu(cpu) {
- 		free_pages(per_cpu(kvm_arm_hyp_stack_base, cpu), NVHE_STACK_SHIFT - PAGE_SHIFT);
--		free_pages(kvm_nvhe_sym(kvm_arm_hyp_percpu_base)[cpu], nvhe_percpu_order());
-+
-+		if (!kvm_nvhe_sym(kvm_arm_hyp_percpu_base)[cpu])
-+			continue;
- 
- 		if (free_sve) {
- 			struct cpu_sve_state *sve_state;
-@@ -2354,6 +2356,9 @@ static void __init teardown_hyp_mode(void)
- 			sve_state = per_cpu_ptr_nvhe_sym(kvm_host_data, cpu)->sve_state;
- 			free_pages((unsigned long) sve_state, pkvm_host_sve_state_order());
- 		}
-+
-+		free_pages(kvm_nvhe_sym(kvm_arm_hyp_percpu_base)[cpu], nvhe_percpu_order());
-+
- 	}
- }
- 
--- 
-2.50.0.714.g196bf9f422-goog
+>=20
+> Fixes: 2eb5f31bc4ea ("um: Switch clocksource to hrtimers")
+> Signed-off-by: Thomas Wei=C3=9Fschuh <thomas.weissschuh@linutronix.de>
+> ---
+> I'm not familiar with UML, so this is probably not the right fix.
+> Feel free to treat it as a bugreport instead.
+> ---
+> =C2=A0arch/um/kernel/time.c | 7 ++++++-
+> =C2=A01 file changed, 6 insertions(+), 1 deletion(-)
+>=20
+> diff --git a/arch/um/kernel/time.c b/arch/um/kernel/time.c
+> index ae0fa2173778f43273fd0550f77fc99bbb1c3e3a..a6c17302403aeb3170a110411=
+7c4e713e3afdfe0 100644
+> --- a/arch/um/kernel/time.c
+> +++ b/arch/um/kernel/time.c
+> @@ -856,6 +856,7 @@ static struct clock_event_device timer_clockevent =3D=
+ {
+> =C2=A0
+> =C2=A0static irqreturn_t um_timer(int irq, void *dev)
+> =C2=A0{
+> +	struct pt_regs *regs;
+> =C2=A0	/*
+> =C2=A0	 * Interrupt the (possibly) running userspace process, technically=
+ this
+> =C2=A0	 * should only happen if userspace is currently executing.
+> @@ -864,9 +865,13 @@ static irqreturn_t um_timer(int irq, void *dev)
+> =C2=A0	 */
+> =C2=A0	if (time_travel_mode !=3D TT_MODE_INFCPU &&
+> =C2=A0	=C2=A0=C2=A0=C2=A0 time_travel_mode !=3D TT_MODE_EXTERNAL &&
+> -	=C2=A0=C2=A0=C2=A0 get_current()->mm)
+> +	=C2=A0=C2=A0=C2=A0 get_current()->mm) {
+> =C2=A0		os_alarm_process(get_current()->mm->context.id.pid);
+> =C2=A0
+> +		regs =3D get_irq_regs();
+> +		regs->regs.is_user =3D true;
+> +	}
+> +
+> =C2=A0	(*timer_clockevent.event_handler)(&timer_clockevent);
+> =C2=A0
+> =C2=A0	return IRQ_HANDLED;
+>=20
+> ---
+> base-commit: 9afe652958c3ee88f24df1e4a97f298afce89407
+> change-id: 20250617-uml-tick-timer-82ea89495cc6
+>=20
+> Best regards,
 
 
