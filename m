@@ -1,289 +1,140 @@
-Return-Path: <linux-kernel+bounces-702123-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-702127-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 87C53AE7E53
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Jun 2025 12:01:38 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id AF2C2AE7E57
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Jun 2025 12:02:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E4B927B00AE
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Jun 2025 09:59:45 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0962916D662
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Jun 2025 10:02:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0BEA529ACC5;
-	Wed, 25 Jun 2025 10:00:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B72C14315A;
+	Wed, 25 Jun 2025 10:01:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="kN3JT+Ek"
-Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
+	dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b="aSO5IlNj";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="eKaE3kNN"
+Received: from fhigh-b2-smtp.messagingengine.com (fhigh-b2-smtp.messagingengine.com [202.12.124.153])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 81AAF285CB1;
-	Wed, 25 Jun 2025 10:00:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B25CC239E75;
+	Wed, 25 Jun 2025 10:01:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.12.124.153
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750845652; cv=none; b=Cm19TCJ9vfXh2P1sh7Wc7AU4X/5USwaOMeG0Yo5ZFqiuke4GnWKbnEU4Z/RxIPdKvV44osMWJNfAZfLKS9tFuofVZw28VdOvjRMhPrEXWniNnQ+/7fHRc+guqMOyjw43Qq3yc4CFY+suKFje8RWh8RImRv0rrfLkjE/6bBeFuHI=
+	t=1750845673; cv=none; b=qRcip1a5cRV1o9n+HacNbjLZXp1ovTG5+HriFK06Exi3stVlxjczn/Q+dfSYU4ukRhZkGDkq0I8Wy6qyUH7Q+c0LD8Z7d7zQvCOAQx+QTESTYfDwyHrgNJihz6+IFXca+FtFykayBLJsVfG9k3509FgNkr3QNh5aG8SjUIbKA4A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750845652; c=relaxed/simple;
-	bh=Ewr/9YSg+4KSWKdVpkuiGc4fRNUXEVUrfoJAoNPfx1A=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=r84plxBBaDX/UdUvYgRPdXkENwDX92jD7rwJyPSvcrkW+32DIA0ezcK9sFep0SvRqXzFrJGXhZAkPMo58FbjODcsDu3ePk2XjU/fORDX8SsIcqUxGFujNRPDKMjgAtkA4Pb+zfPn6ff2Zcknaa+89ck7o/ffYQRiTEhOuh+0wqw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=kN3JT+Ek; arc=none smtp.client-ip=90.155.50.34
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=iqhhoiKp4vSBiJdf55jnDE3zxzap5f0PWAr4X6NeSW4=; b=kN3JT+Ek7JZ7sSUs+XXPMi9sBD
-	XEBe7jG/uPr4klTRLICC44HoiZ2EMITCuP0ILfLUOy3esgmPcCegIRBf6C86LKA9GFiFAaaCxqJtR
-	sK/n+7fhQzdXcbRjtNVulDf1apwo0mXSV1oND8/zAWUlwMLC7ftnkG0tn6qVHM8cUEVnVvuhD7MDI
-	jQWhqSOc5SWQdaANlDGsLMZcSQL5G30jyioSVU70fD4Y7IOBKKp0MhgP1H6cNWoET7EcLcbcblPFM
-	KdbHdGa3YLzPnIWDE+ww6wWC6fY7CThAajmwjtz+Wqyn5mZWA9WZBjdeoyV+bUmBdMRm4LiCUeEEs
-	hRoonpxg==;
-Received: from 77-249-17-252.cable.dynamic.v4.ziggo.nl ([77.249.17.252] helo=noisy.programming.kicks-ass.net)
-	by casper.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
-	id 1uUMvh-000000093BE-2l5l;
-	Wed, 25 Jun 2025 10:00:33 +0000
-Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
-	id B5F22307E4E; Wed, 25 Jun 2025 12:00:32 +0200 (CEST)
-Date: Wed, 25 Jun 2025 12:00:32 +0200
-From: Peter Zijlstra <peterz@infradead.org>
-To: Boqun Feng <boqun.feng@gmail.com>
-Cc: linux-kernel@vger.kernel.org, rcu@vger.kernel.org, lkmm@lists.linux.dev,
-	Ingo Molnar <mingo@kernel.org>, Will Deacon <will@kernel.org>,
-	Waiman Long <longman@redhat.com>,
-	Davidlohr Bueso <dave@stgolabs.net>,
-	"Paul E. McKenney" <paulmck@kernel.org>,
-	Josh Triplett <josh@joshtriplett.org>,
-	Frederic Weisbecker <frederic@kernel.org>,
-	Neeraj Upadhyay <neeraj.upadhyay@kernel.org>,
-	Joel Fernandes <joelagnelf@nvidia.com>,
-	Uladzislau Rezki <urezki@gmail.com>,
-	Steven Rostedt <rostedt@goodmis.org>,
-	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-	Lai Jiangshan <jiangshanlai@gmail.com>,
-	Zqiang <qiang.zhang@linux.dev>, Breno Leitao <leitao@debian.org>,
-	aeh@meta.com, netdev@vger.kernel.org, edumazet@google.com,
-	jhs@mojatatu.com, kernel-team@meta.com,
-	Erik Lundgren <elundgren@meta.com>
-Subject: Re: [PATCH 1/8] Introduce simple hazard pointers
-Message-ID: <20250625100032.GA1613376@noisy.programming.kicks-ass.net>
-References: <20250625031101.12555-1-boqun.feng@gmail.com>
- <20250625031101.12555-2-boqun.feng@gmail.com>
+	s=arc-20240116; t=1750845673; c=relaxed/simple;
+	bh=okf+uhv/zJ5RP4VyNn9+JcXWCFO9Ssru835UGwlg64I=;
+	h=MIME-Version:Date:From:To:Cc:Message-Id:In-Reply-To:References:
+	 Subject:Content-Type; b=PT2/6OmzHaRSAhvjdJ+iDXj+eq40Lap5aR4+/kHAEXGbnI6x72jkzwyFikrGITDIDegVEAGxJEp7t0EX0Y86vWz5lzWJO9hzzsvOj2gYI0h+BVVnEWPZ7+0LABVnHcutOPo4jmiFCubk28sNS9ZoRO0WJfrtApqFafXfOLXzHFs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de; spf=pass smtp.mailfrom=arndb.de; dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b=aSO5IlNj; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=eKaE3kNN; arc=none smtp.client-ip=202.12.124.153
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arndb.de
+Received: from phl-compute-05.internal (phl-compute-05.phl.internal [10.202.2.45])
+	by mailfhigh.stl.internal (Postfix) with ESMTP id ABEDC7A0033;
+	Wed, 25 Jun 2025 06:01:09 -0400 (EDT)
+Received: from phl-imap-02 ([10.202.2.81])
+  by phl-compute-05.internal (MEProxy); Wed, 25 Jun 2025 06:01:09 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arndb.de; h=cc
+	:cc:content-transfer-encoding:content-type:content-type:date
+	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to; s=fm1; t=1750845669;
+	 x=1750932069; bh=EfvRO+VLg3uMgXOHdRqJ5eu4+EMuM3Jf+0bB1Ld8A/4=; b=
+	aSO5IlNjFL/Xvlv9qEsBqBxGZ5d588t6Aw9UbV6KLH+3iZFUh47nom9d+qvjl1wM
+	NVCzpr/Fgz+avB975g7UEjvJbr1QAVj7yAbQtiTbr+w9fTIToUpYuilnF+9nAaBA
+	cxGfbDmeVAEymtlhcX3pA+Vp1/FqV5ac6jJNxoI3kL3F+EwhBJid25ojPbQESJbk
+	mS4BUEH+qE/1XPQ8ZFlj4BtY3R7OHMTji7B2KItH7kn2t1CKnzhrbLvreBZNQuL9
+	w1NgZQDlN1Y8L+P98WGBtOBgueCmxQpu+AFkIM/ihvzNLVWweqrps4gnCR+mnQ7M
+	tWbpuH51L+nRDfcq6+bB5g==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-transfer-encoding
+	:content-type:content-type:date:date:feedback-id:feedback-id
+	:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to:x-me-proxy
+	:x-me-sender:x-me-sender:x-sasl-enc; s=fm2; t=1750845669; x=
+	1750932069; bh=EfvRO+VLg3uMgXOHdRqJ5eu4+EMuM3Jf+0bB1Ld8A/4=; b=e
+	KaE3kNN7HJIEic2k6+1G+GF7ePJP0nA/wonf850w3ykY+yDhtpw8XzOy85ddKHGN
+	dRNBEF8LyT0T5ppzl9DnYIivWnXabW+dmG5Mo7yfFpUsDM9e7TCj3w9Bbh0yh0Ql
+	KaeU3/nM8aSw31Vvk5IDCnOviPbg+EeYu6m+S8Mz2D+g9ETAoXm2m/95JzFLlNSZ
+	+1lksCRxw8X5CckHAmtaZtdSwZ9ss6Fp0ZsWZw66v49OyR7YGkvUpp4kuTeMowDs
+	Qfnux7FQFoGH1Jh6OGwpNDEh2F8w34htIdmlTkhQq04klFvOx/eiWZc9yE/JOfdk
+	iFP0O4wap2QfVTEi3tUkA==
+X-ME-Sender: <xms:5chbaFjfUD7_TUCLeMDpbNYagpx7O4d5Eplfh9DQvs6dtn3I71GoPA>
+    <xme:5chbaKBELq7w4GfHsksQm6F2re8rNtyuZP0RoSg5U9wswKxH_CKby5Mca4AgpGMZG
+    eKnOOSVLX8najO_cgU>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtddvgddvvdegkecutefuodetggdotefrod
+    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpuffrtefokffrpgfnqfghnecuuegr
+    ihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjug
+    hrpefoggffhffvvefkjghfufgtgfesthejredtredttdenucfhrhhomhepfdetrhhnugcu
+    uegvrhhgmhgrnhhnfdcuoegrrhhnugesrghrnhgusgdruggvqeenucggtffrrghtthgvrh
+    hnpefhtdfhvddtfeehudekteeggffghfejgeegteefgffgvedugeduveelvdekhfdvieen
+    ucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpegrrhhnug
+    esrghrnhgusgdruggvpdhnsggprhgtphhtthhopedutddpmhhouggvpehsmhhtphhouhht
+    pdhrtghpthhtohepohhlthgvrghnvhesghhmrghilhdrtghomhdprhgtphhtthhopegsrh
+    hoohhnihgvsehkvghrnhgvlhdrohhrghdprhgtphhtthhopehjrghmvghsrdgtlhgrrhhk
+    sehlihhnrghrohdrohhrghdprhgtphhtthhopehimhigsehlihhsthhsrdhlihhnuhigrd
+    guvghvpdhrtghpthhtohephhgthheslhhsthdruggvpdhrtghpthhtohepfhhrrghnkhdr
+    lhhisehngihprdgtohhmpdhrtghpthhtoheplhgrrhhishgrrdhgrhhighhorhgvsehngi
+    hprdgtohhmpdhrtghpthhtohepvhhlrgguihhmihhrrdholhhtvggrnhesnhigphdrtgho
+    mhdprhgtphhtthhopehlihhnuhigqdhkvghrnhgvlhesvhhgvghrrdhkvghrnhgvlhdroh
+    hrgh
+X-ME-Proxy: <xmx:5chbaFFQO7awfCCnnjw9iCd3Gcw0yCmXlgAjmFW579u_osew0f6aJA>
+    <xmx:5chbaKRk-W492bLzwwrvLbkWVLAvc8DXnIbHHyCnI81cNazNZuswmg>
+    <xmx:5chbaCz2Dox169bEa-9sajgmj7jwvO6gVRUi4MgobpMS8Qfrd_4ruw>
+    <xmx:5chbaA71AK2aKmG56pTEbT2dczGklsfAR4mv0duP7W7bkFJ5XvCsrQ>
+    <xmx:5chbaDt4N_OcTNTD9DXLvhC-vrZzFR55wrgZf0KKO6J6C9ZmgnT7AfZK>
+Feedback-ID: i56a14606:Fastmail
+Received: by mailuser.phl.internal (Postfix, from userid 501)
+	id 0DD83700065; Wed, 25 Jun 2025 06:01:09 -0400 (EDT)
+X-Mailer: MessagingEngine.com Webmail Interface
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250625031101.12555-2-boqun.feng@gmail.com>
+X-ThreadId: T588a20d0ffbb3e40
+Date: Wed, 25 Jun 2025 12:00:38 +0200
+From: "Arnd Bergmann" <arnd@arndb.de>
+To: "James Clark" <james.clark@linaro.org>, "Frank Li" <Frank.li@nxp.com>
+Cc: "Vladimir Oltean" <olteanv@gmail.com>, "Mark Brown" <broonie@kernel.org>,
+ "Vladimir Oltean" <vladimir.oltean@nxp.com>,
+ "Larisa Grigore" <larisa.grigore@nxp.com>, "Christoph Hellwig" <hch@lst.de>,
+ linux-spi@vger.kernel.org, imx@lists.linux.dev, linux-kernel@vger.kernel.org
+Message-Id: <0f904f12-295c-48fe-96c7-c64c461cdbbd@app.fastmail.com>
+In-Reply-To: <0c6c78da-575a-4d29-a79a-3903aa801b42@linaro.org>
+References: <20250624-james-nxp-spi-dma-v3-0-e7d574f5f62c@linaro.org>
+ <20250624-james-nxp-spi-dma-v3-3-e7d574f5f62c@linaro.org>
+ <aFrSgJ5xZfccEX9x@lizhi-Precision-Tower-5810>
+ <290fc244-e88f-47a3-8dd3-0ec27eb5c60b@app.fastmail.com>
+ <0c6c78da-575a-4d29-a79a-3903aa801b42@linaro.org>
+Subject: Re: [PATCH v3 3/6] spi: spi-fsl-dspi: Stub out DMA functions
+Content-Type: text/plain
+Content-Transfer-Encoding: 7bit
 
-On Tue, Jun 24, 2025 at 08:10:54PM -0700, Boqun Feng wrote:
-> As its name suggests, simple hazard pointers (shazptr) is a
-> simplification of hazard pointers [1]: it has only one hazard pointer
-> slot per-CPU and is targeted for simple use cases where the read-side
-> already has preemption disabled. It's a trade-off between full features
-> of a normal hazard pointer implementation (multiple slots, dynamic slot
-> allocation, etc.) and the simple use scenario.
-> 
-> Since there's only one slot per-CPU, so shazptr read-side critical
-> section nesting is a problem that needs to be resolved, because at very
-> least, interrupts and NMI can introduce nested shazptr read-side
-> critical sections. A SHAZPTR_WILDCARD is introduced to resolve this:
-> SHAZPTR_WILDCARD is a special address value that blocks *all* shazptr
-> waiters. In an interrupt-causing shazptr read-side critical section
-> nesting case (i.e. an interrupt happens while the per-CPU hazard pointer
-> slot being used and tries to acquire a hazard pointer itself), the inner
-> critical section will switch the value of the hazard pointer slot into
-> SHAZPTR_WILDCARD, and let the outer critical section eventually zero the
-> slot. The SHAZPTR_WILDCARD still provide the correct protection because
-> it blocks all the waiters.
+On Wed, Jun 25, 2025, at 11:19, James Clark wrote:
+> On 24/06/2025 6:16 pm, Arnd Bergmann wrote:
+>> On Tue, Jun 24, 2025, at 18:29, Frank Li wrote:
+>
+>> It would also be simpler to enforce this in Kconfig if we only
+>> care about users that use the DMA support.
+>
+> But most of the devices supported by the driver don't do any DMA. That 
+> was the reason to stub them out rather than add the Kconfig depends.
 
-Don't we typically name such a thing a tombstone?
+Ah right. So even when running on SoCs that have a DMA engine,
+you can end up not using it?
 
-> It's true that once the wildcard mechanism is activated, shazptr
-> mechanism may be downgrade to something similar to RCU (and probably
-> with a worse implementation), which generally has longer wait time and
-> larger memory footprint compared to a typical hazard pointer
-> implementation. However, that can only happen with a lot of users using
-> hazard pointers, and then it's reasonable to introduce the
-> fully-featured hazard pointer implementation [2] and switch users to it.
-> 
-> Note that shazptr_protect() may be added later, the current potential
-> usage doesn't require it, and a shazptr_acquire(), which installs the
-> protected value to hazard pointer slot and proves the smp_mb(), is
-> enough for now.
-> 
-> [1]: M. M. Michael, "Hazard pointers: safe memory reclamation for
->      lock-free objects," in IEEE Transactions on Parallel and
->      Distributed Systems, vol. 15, no. 6, pp. 491-504, June 2004
-> 
-> Link: https://lore.kernel.org/lkml/20240917143402.930114-1-boqun.feng@gmail.com/ [2]
-> Signed-off-by: Boqun Feng <boqun.feng@gmail.com>
-> ---
->  include/linux/shazptr.h  | 73 ++++++++++++++++++++++++++++++++++++++++
->  kernel/locking/Makefile  |  2 +-
->  kernel/locking/shazptr.c | 29 ++++++++++++++++
->  3 files changed, 103 insertions(+), 1 deletion(-)
->  create mode 100644 include/linux/shazptr.h
->  create mode 100644 kernel/locking/shazptr.c
-> 
-> diff --git a/include/linux/shazptr.h b/include/linux/shazptr.h
-> new file mode 100644
-> index 000000000000..287cd04b4be9
-> --- /dev/null
-> +++ b/include/linux/shazptr.h
-> @@ -0,0 +1,73 @@
-> +/* SPDX-License-Identifier: GPL-2.0 */
-> +/*
-> + * Simple hazard pointers
-> + *
-> + * Copyright (c) 2025, Microsoft Corporation.
-> + *
-> + * Author: Boqun Feng <boqun.feng@gmail.com>
-> + *
-> + * A simple variant of hazard pointers, the users must ensure the preemption
-> + * is already disabled when calling a shazptr_acquire() to protect an address.
-> + * If one shazptr_acquire() is called after another shazptr_acquire() has been
-> + * called without the corresponding shazptr_clear() has been called, the later
-> + * shazptr_acquire() must be cleared first.
-> + *
-> + * The most suitable usage is when only one address need to be protected in a
-> + * preemption disabled critical section.
+In this case you could have an extra Kconfig symbol to configure
+DMA support for this driver and use that in the source code:
 
-It might be useful to have some example code included here to illustrate
-how this is supposed to be used etc.
+config SPI_FSL_DSPI_DMA
+      bool "Use DMA engine for offloading Freescale DSPI transfers"
+      depends on SPI_FSL_DSPI && DMA_ENGINE
+      help
+         ....
 
-> + */
-> +
-> +#ifndef _LINUX_SHAZPTR_H
-> +#define _LINUX_SHAZPTR_H
-> +
-> +#include <linux/cleanup.h>
-> +#include <linux/percpu.h>
-> +
-> +/* Make ULONG_MAX the wildcard value */
-> +#define SHAZPTR_WILDCARD ((void *)(ULONG_MAX))
 
-Right, I typically write that like: ((void *)-1L) or ((void *)~0UL)
-
-> +
-> +DECLARE_PER_CPU_SHARED_ALIGNED(void *, shazptr_slots);
-> +
-> +/* Represent a held hazard pointer slot */
-> +struct shazptr_guard {
-> +	void **slot;
-> +	bool use_wildcard;
-> +};
-
-Natural alignment ensures the LSB of that pointer is 0, which is enough
-space to stick that bool in, no?
-
-> +
-> +/*
-> + * Acquire a hazptr slot and begin the hazard pointer critical section.
-> + *
-> + * Must be called with preemption disabled, and preemption must remain disabled
-> + * until shazptr_clear().
-> + */
-> +static inline struct shazptr_guard shazptr_acquire(void *ptr)
-> +{
-> +	struct shazptr_guard guard = {
-> +		/* Preemption is disabled. */
-> +		.slot = this_cpu_ptr(&shazptr_slots),
-
-What you're trying to say with that comment is that: this_cpu_ptr(),
-will complain if preemption is not already disabled, and as such this
-verifies the assumption?
-
-You can also add:
-
-	lockdep_assert_preemption_disabled();
-
-at the start of this function and then all these comments can go in the
-bin, no?
-
-> +		.use_wildcard = false,
-> +	};
-> +
-> +	if (likely(!READ_ONCE(*guard.slot))) {
-> +		WRITE_ONCE(*guard.slot, ptr);
-> +	} else {
-> +		guard.use_wildcard = true;
-> +		WRITE_ONCE(*guard.slot, SHAZPTR_WILDCARD);
-> +	}
-> +
-> +	smp_mb(); /* Synchronize with smp_mb() at synchronize_shazptr(). */
-> +
-> +	return guard;
-> +}
-> +
-> +static inline void shazptr_clear(struct shazptr_guard guard)
-> +{
-> +	/* Only clear the slot when the outermost guard is released */
-> +	if (likely(!guard.use_wildcard))
-> +		smp_store_release(guard.slot, NULL); /* Pair with ACQUIRE at synchronize_shazptr() */
-> +}
-> +
-> +void synchronize_shazptr(void *ptr);
-> +
-> +DEFINE_CLASS(shazptr, struct shazptr_guard, shazptr_clear(_T),
-> +	     shazptr_acquire(ptr), void *ptr);
-> +#endif
-> diff --git a/kernel/locking/Makefile b/kernel/locking/Makefile
-> index a114949eeed5..1517076c98ec 100644
-> --- a/kernel/locking/Makefile
-> +++ b/kernel/locking/Makefile
-> @@ -3,7 +3,7 @@
->  # and is generally not a function of system call inputs.
->  KCOV_INSTRUMENT		:= n
->  
-> -obj-y += mutex.o semaphore.o rwsem.o percpu-rwsem.o
-> +obj-y += mutex.o semaphore.o rwsem.o percpu-rwsem.o shazptr.o
->  
->  # Avoid recursion lockdep -> sanitizer -> ... -> lockdep & improve performance.
->  KASAN_SANITIZE_lockdep.o := n
-> diff --git a/kernel/locking/shazptr.c b/kernel/locking/shazptr.c
-> new file mode 100644
-> index 000000000000..991fd1a05cfd
-> --- /dev/null
-> +++ b/kernel/locking/shazptr.c
-> @@ -0,0 +1,29 @@
-> +/* SPDX-License-Identifier: GPL-2.0 */
-> +/*
-> + * Simple hazard pointers
-> + *
-> + * Copyright (c) 2025, Microsoft Corporation.
-> + *
-> + * Author: Boqun Feng <boqun.feng@gmail.com>
-> + */
-> +
-> +#include <linux/atomic.h>
-> +#include <linux/cpumask.h>
-> +#include <linux/shazptr.h>
-> +
-> +DEFINE_PER_CPU_SHARED_ALIGNED(void *, shazptr_slots);
-> +EXPORT_PER_CPU_SYMBOL_GPL(shazptr_slots);
-> +
-> +void synchronize_shazptr(void *ptr)
-> +{
-> +	int cpu;
-
-	lockdep_assert_preemption_enabled();
-
-> +
-> +	smp_mb(); /* Synchronize with the smp_mb() in shazptr_acquire(). */
-> +	for_each_possible_cpu(cpu) {
-> +		void **slot = per_cpu_ptr(&shazptr_slots, cpu);
-> +		/* Pair with smp_store_release() in shazptr_clear(). */
-> +		smp_cond_load_acquire(slot,
-> +				      VAL != ptr && VAL != SHAZPTR_WILDCARD);
-> +	}
-> +}
-> +EXPORT_SYMBOL_GPL(synchronize_shazptr);
-> -- 
-> 2.39.5 (Apple Git-154)
-> 
+     Arnd
 
