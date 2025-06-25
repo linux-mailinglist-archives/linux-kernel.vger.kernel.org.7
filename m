@@ -1,108 +1,115 @@
-Return-Path: <linux-kernel+bounces-701352-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-701354-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id AAA7FAE7407
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Jun 2025 03:04:30 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 05815AE7409
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Jun 2025 03:08:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E7E4B7A6E4D
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Jun 2025 01:03:05 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B0E921923033
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Jun 2025 01:08:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 424398615A;
-	Wed, 25 Jun 2025 01:04:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7C5FF7FBAC;
+	Wed, 25 Jun 2025 01:08:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Tjv2LoFW"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="gVjLfvLo"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.17])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 96AE52869E;
-	Wed, 25 Jun 2025 01:04:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7334830748D;
+	Wed, 25 Jun 2025 01:08:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.17
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750813458; cv=none; b=GZSGOq0hm8kJKy+j0cfVwN4KP8JKa6IM3oTO1LOfiQj3NjzxMzTQ4Yn6UWbgaoceL9haSX8frbUqLPhEfpLQwU/fINWgN61tz2QHmceavWMDvTqRdagUlJTZlD+umJ/P4Uqr7DStFZOYDcoqrft7gMdaCK6rW0RTQCaHZg+l0Uc=
+	t=1750813708; cv=none; b=OS59aTmd+nWBpXQcllkTQxMLgAQ0oTwBVz0AG70mOAQddxl/FHsDSs4+FrSY5SJBm3/nlj5JJ1ICW1Ya/esumXdmVZ1p1Ejh3f4IABd4IktEYP/wEQdzsyTvgxoLrN20/YUj2u8UPklLTgc+NFkcJqSDtHDNc36pC1TiDVjeF5c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750813458; c=relaxed/simple;
-	bh=wyBT6Gqu2evLQ8PxUiJukzllO4b6g0W0O3IGbgvUIh8=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=O6uAtuul5rX3fzfvecu884aJkeRXu4XuzZT+5pNnglQ49aYLkCSNVjzqg01YrPPIfMcsdRWo3jdSAnkcjyncB+AC8fGqCEKLA0zAFK6OeYg8Ze0iqKq4BgbEY/qfWW+L2n1mDy3CSJFp3diVgHexzxWgL3sl7E8nnyrQlur1uzw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Tjv2LoFW; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id DEBC8C4CEE3;
-	Wed, 25 Jun 2025 01:04:16 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1750813458;
-	bh=wyBT6Gqu2evLQ8PxUiJukzllO4b6g0W0O3IGbgvUIh8=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=Tjv2LoFWbkC2mGwlVQcsGLLuzedVnVf62zVM/GBqCw5pye/4AnjQbRtGFvg0kLQQg
-	 sV7ciq/UQiXKCihpR/V8VVlqlJFK/US9Av6ifXQma34NqBaHeTDeM1sfIb2DyPADSF
-	 UM4SeYunazIwo/EiiNLbusQbG+6HvgNHOrTuorba5RixO/M8vUqUoPnF7D//INCEpa
-	 k8hneYe/b9Ahc30J3+hpT7sCQv0IQJa/eB03JxW6P2BjYHBlVwTRMQ5BXHeRacrZ2Q
-	 EdzFG1/se5jTSTFM+kpkW0Ct37aLoAua0D9ORAWZcOJ8yYsb+3VpahKkBPblv59fzp
-	 VDyWBb229cI8g==
-Date: Tue, 24 Jun 2025 18:04:15 -0700
-From: Jakub Kicinski <kuba@kernel.org>
-To: Fan Gong <gongfan1@huawei.com>
-Cc: Zhu Yikai <zhuyikai1@h-partners.com>, <netdev@vger.kernel.org>,
- <linux-kernel@vger.kernel.org>, "David S. Miller" <davem@davemloft.net>,
- Eric Dumazet <edumazet@google.com>, Paolo Abeni <pabeni@redhat.com>, Simon
- Horman <horms@kernel.org>, Andrew Lunn <andrew+netdev@lunn.ch>,
- <linux-doc@vger.kernel.org>, Jonathan Corbet <corbet@lwn.net>, Bjorn
- Helgaas <helgaas@kernel.org>, luosifu <luosifu@huawei.com>, Xin Guo
- <guoxin09@huawei.com>, Shen Chenyang <shenchenyang1@hisilicon.com>, Zhou
- Shuai <zhoushuai28@huawei.com>, Wu Like <wulike1@huawei.com>, Shi Jing
- <shijing34@huawei.com>, Meny Yossefi <meny.yossefi@huawei.com>, Gur Stavi
- <gur.stavi@huawei.com>, Lee Trager <lee@trager.us>, Michael Ellerman
- <mpe@ellerman.id.au>, Suman Ghosh <sumang@marvell.com>, Przemek Kitszel
- <przemyslaw.kitszel@intel.com>, Joe Damato <jdamato@fastly.com>, Christophe
- JAILLET <christophe.jaillet@wanadoo.fr>
-Subject: Re: [PATCH net-next v04 1/8] hinic3: Async Event Queue interfaces
-Message-ID: <20250624180415.54d0f9ab@kernel.org>
-In-Reply-To: <3fefa626dc1ad068d2994a3cd5d20fb7b8136990.1750665915.git.zhuyikai1@h-partners.com>
-References: <cover.1750665915.git.zhuyikai1@h-partners.com>
-	<3fefa626dc1ad068d2994a3cd5d20fb7b8136990.1750665915.git.zhuyikai1@h-partners.com>
+	s=arc-20240116; t=1750813708; c=relaxed/simple;
+	bh=g38j/4XIxhvMU4YULtA2oALcpzRtTtzUsypbIXm1jnY=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=cMS7ZSvib5W1bP6Tc/xKHa/NuaTSY0ZEnfZnA7oHFzn6z99SS9DsMBGbJT5VB8Afy88mLXx1S/9xGwmWmtYqlxjUQWkpJiwER32JbQSqYC4kVJIWbCTAUHPZqphRUh79i1ITW431RW+lo/Uoygbr8V8zYBIQKkJ+kjYShT/FaFs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=gVjLfvLo; arc=none smtp.client-ip=192.198.163.17
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1750813707; x=1782349707;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=g38j/4XIxhvMU4YULtA2oALcpzRtTtzUsypbIXm1jnY=;
+  b=gVjLfvLo4TUKc8+eNNu+y9NmxxNXufETaLD13ukh2mlFkKN3sQzD18ka
+   wNuU5KDedeIjEKzYI4+uz6eT76Md59nE8/2KuRXag13oHj8yyp5ky3Mm7
+   cKMDb5RLLlvWlVk90zHslmrgQo/SfvjFTH+5sm/uTtcegRSyqERcsNNxA
+   7fXGm+Wo0cnJKEkxC0t7SfO8zTNLuhUde0rd6ANcFdq6wTFTaMOFnxI5t
+   IdF0UCgFUNqmYW1PX2DwSJxfdYDsv41G4Qad6uFDBGQ6ht+L1maqTq/oa
+   sZ3xKrDhMT+3Fu/NGtPXoxYEHP3Fo3RVhGx8pWKWN43GeY51Wj8PShRtf
+   A==;
+X-CSE-ConnectionGUID: 4qMMDlf4SeOE64VhrGxf7g==
+X-CSE-MsgGUID: 2v9oBnJgR9S/LD/ZPV2jSQ==
+X-IronPort-AV: E=McAfee;i="6800,10657,11474"; a="53003633"
+X-IronPort-AV: E=Sophos;i="6.16,263,1744095600"; 
+   d="scan'208";a="53003633"
+Received: from orviesa003.jf.intel.com ([10.64.159.143])
+  by fmvoesa111.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 24 Jun 2025 18:08:27 -0700
+X-CSE-ConnectionGUID: l2DpKkGLQ3qLb8Cvp7iUiw==
+X-CSE-MsgGUID: exIVeGLpTDy61zdnj6gJ3Q==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.16,263,1744095600"; 
+   d="scan'208";a="156470218"
+Received: from rzhang1-mobl7.sh.intel.com ([10.238.6.124])
+  by orviesa003.jf.intel.com with ESMTP; 24 Jun 2025 18:08:23 -0700
+From: Zhang Rui <rui.zhang@intel.com>
+To: peterz@infradead.org
+Cc: mingo@redhat.com,
+	tglx@linutronix.de,
+	bp@alien8.de,
+	dave.hansen@linux.intel.com,
+	x86@kernel.org,
+	linux-perf-users@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	ak@linux.intel.com,
+	kan.liang@linux.intel.com
+Subject: [PATCH 1/2] perf/x86/intel/cstate: Remove PC3 support from LunarLake
+Date: Wed, 25 Jun 2025 09:08:21 +0800
+Message-ID: <20250625010822.250826-1-rui.zhang@intel.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-On Tue, 24 Jun 2025 08:14:22 +0800 Fan Gong wrote:
-> Add async event queue interfaces initialization.
-> It allows driver to handle async events reported by HW.
+LunarLake doesn't support Package C3. Remove the PC3 residency counter
+support from LunarLake.
 
-Unfortunately this patch does not build cleanly:
+Fixes: 26579860fbd5 ("perf/x86/intel/cstate: Add Lunarlake support")
+Signed-off-by: Zhang Rui <rui.zhang@intel.com>
+---
+ arch/x86/events/intel/cstate.c | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
 
-../drivers/net/ethernet/huawei/hinic3/hinic3_eqs.c:203:6: warning: variable 'err' is used uninitialized whenever 'if' condition is false [-Wsometimes-uninitialized]
-  203 |         if (eq->type == HINIC3_AEQ)
-      |             ^~~~~~~~~~~~~~~~~~~~~~
-../drivers/net/ethernet/huawei/hinic3/hinic3_eqs.c:206:22: note: uninitialized use occurs here
-  206 |         set_eq_cons_idx(eq, err ? HINIC3_EQ_NOT_ARMED :
-      |                             ^~~
-../drivers/net/ethernet/huawei/hinic3/hinic3_eqs.c:203:2: note: remove the 'if' if its condition is always true
-  203 |         if (eq->type == HINIC3_AEQ)
-      |         ^~~~~~~~~~~~~~~~~~~~~~~~~~~
-  204 |                 err = aeq_irq_handler(eq);
-../drivers/net/ethernet/huawei/hinic3/hinic3_eqs.c:201:9: note: initialize the variable 'err' to silence this warning
-  201 |         int err;
-      |                ^
-      |                 = 0
-../drivers/net/ethernet/huawei/hinic3/hinic3_eqs.c:346:6: warning: variable 'err' is used uninitialized whenever 'if' condition is false [-Wsometimes-uninitialized]
-  346 |         if (eq->type == HINIC3_AEQ) {
-      |             ^~~~~~~~~~~~~~~~~~~~~~
-../drivers/net/ethernet/huawei/hinic3/hinic3_eqs.c:355:9: note: uninitialized use occurs here
-  355 |         return err;
-      |                ^~~
-../drivers/net/ethernet/huawei/hinic3/hinic3_eqs.c:346:2: note: remove the 'if' if its condition is always true
-  346 |         if (eq->type == HINIC3_AEQ) {
-      |         ^~~~~~~~~~~~~~~~~~~~~~~~~~~
-../drivers/net/ethernet/huawei/hinic3/hinic3_eqs.c:344:9: note: initialize the variable 'err' to silence this warning
-  344 |         int err;
-      |                ^
-      |                 = 0
+diff --git a/arch/x86/events/intel/cstate.c b/arch/x86/events/intel/cstate.c
+index ec753e39b007..6f5286a99e0c 100644
+--- a/arch/x86/events/intel/cstate.c
++++ b/arch/x86/events/intel/cstate.c
+@@ -70,7 +70,7 @@
+  *			       perf code: 0x01
+  *			       Available model: NHM,WSM,SNB,IVB,HSW,BDW,SKL,KNL,
+  *						GLM,CNL,KBL,CML,ICL,TGL,TNT,RKL,
+- *						ADL,RPL,MTL,ARL,LNL
++ *						ADL,RPL,MTL,ARL
+  *			       Scope: Package (physical package)
+  *	MSR_PKG_C6_RESIDENCY:  Package C6 Residency Counter.
+  *			       perf code: 0x02
+@@ -522,7 +522,6 @@ static const struct cstate_model lnl_cstates __initconst = {
+ 				  BIT(PERF_CSTATE_CORE_C7_RES),
+ 
+ 	.pkg_events		= BIT(PERF_CSTATE_PKG_C2_RES) |
+-				  BIT(PERF_CSTATE_PKG_C3_RES) |
+ 				  BIT(PERF_CSTATE_PKG_C6_RES) |
+ 				  BIT(PERF_CSTATE_PKG_C10_RES),
+ };
 -- 
-pw-bot: cr
+2.43.0
+
 
