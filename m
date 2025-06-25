@@ -1,61 +1,60 @@
-Return-Path: <linux-kernel+bounces-703326-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-703328-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C7DEDAE8ED7
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Jun 2025 21:38:34 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id C779AAE8EDC
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Jun 2025 21:39:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6397B3B8CB1
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Jun 2025 19:38:09 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 340074A057A
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Jun 2025 19:39:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A4D2B2DBF66;
-	Wed, 25 Jun 2025 19:38:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7DD692DAFB5;
+	Wed, 25 Jun 2025 19:39:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="cB634nAy"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="qI74I42l"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F230D2BF00C;
-	Wed, 25 Jun 2025 19:38:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D0B74263889;
+	Wed, 25 Jun 2025 19:39:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750880303; cv=none; b=SjzKluEJ1Quu9l0T6kiGQ7K4g74VAis6A4Tg+pyAoRbY1br7s3gxj0i+ZbWivtVQFjyHLvssdSW+zi9/XfXV+Gj2yhkJ58XvkTejXyEtQ9BRRX3jQ8MRQkfpQV5q4lV6/1+m7q94cTzyrKiHFgiIFIHeg3n90bYhkK8FxVjsrXQ=
+	t=1750880370; cv=none; b=Cg5CbhmKWJ76HFv2aJFPuJ2zFuhW1J66t24Sc+PVb4SAEDd11KS5iAhay66XV/BT8lRSZCwhyuEsw8v3j1L8HTrdYeE7+SizfjxTpo0bqpGaf4chbRcWiGBh8ycgUrChpsspdLrYHzZ4JqUkkt7itqFM8HtMWOfl3KUqPXOzloY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750880303; c=relaxed/simple;
-	bh=pwFIsXgv0jLSLDkzwQ4SNkMiI5VIG0czRQZUAQtF9nQ=;
+	s=arc-20240116; t=1750880370; c=relaxed/simple;
+	bh=6DlABh1XUb+M1JsVeT5pGkKPi41UFB4YwPIf08LrXVw=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=pCjHbqbEMrIC6B5CY0if6xTQ2f1EsiCJgk24qPpzq3IYxJYBL0/6sn8jdiJLavO5BpQqb4CA6vBhLpcVLG7RFXv0fOdFQCIkD0S3ZJaS/vk1CAQw5VetQO7x4pWBx+GXWH9HDOSb/VL/3Fy1YD2CbXHsToHxqgBEbmzblos/fT8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=cB634nAy; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4A763C4CEEA;
-	Wed, 25 Jun 2025 19:38:22 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=kZR+DcLriN8gCT6z0U7eJE2eIOocAiC70UtstXPixkNOFkEzfAIqStBf5LFpKt9+5y8G7gssrX5COsZ6pRGMUDGB/O39ChOOKGhQCgp1kYBHGwz1p1H/Ye+CHHe1Q0EKvstSKRQSxH05JQtkaJTd+IAzQgOWxfRja70WVmsWyTs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=qI74I42l; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 287D9C4CEEE;
+	Wed, 25 Jun 2025 19:39:30 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1750880302;
-	bh=pwFIsXgv0jLSLDkzwQ4SNkMiI5VIG0czRQZUAQtF9nQ=;
+	s=k20201202; t=1750880370;
+	bh=6DlABh1XUb+M1JsVeT5pGkKPi41UFB4YwPIf08LrXVw=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=cB634nAyoPtk4yrpYunxkzaAwXgeq6j2V72DD3axaFkRazYJOULImQfq9yfJWRLNu
-	 nX7n0CK6pkoOmqxEgUmlpanBvXFrifyFBG9FGj5wbNJy7U9Cw/vh1scCUPuuayaqD+
-	 ZRfCmay010+kNuw7D9sK1hTu2jDs8OJmB1S4keojNgO/i4JfLi3uWc9QhuqtqLClYm
-	 FXMlgcsW1M9PnG+KmXeH048HTPN7/pCtsvCbiLAlxCPZ6Qrneo14F9zv3qfedY6knT
-	 VZxJ3xNF4e3WqEJv+4f4+D4GPFxltIV1zMn6fvFbMtbqALX//JBuR6HJLGVpAK8hAG
-	 FfDk3GQAJd8iw==
-Date: Wed, 25 Jun 2025 14:38:21 -0500
+	b=qI74I42ll82+zvFWcVZyXaVmuxMf7u+kk02cQ8TLcVhrTL52wWJdtmN+SJVzBNDT4
+	 xs0pmAXDwyLZ0FvAsy2Xs0y3ThFiOEh4sXze8nMvTzBRKSechWnTFLeilUvYMFRSXT
+	 aUEF8Ey9epIZRubAvMu8N0lkFuzszQ8OTC3AVLjz9YUPn3McrsNc0O/tngf6jUbO3E
+	 Jvx5rYw2OJK19QznYDnJa1K4oLCZ9tnPjmRa8Z4ctR6f7nWpcVMHlcT8KPxUdMIBOL
+	 1KGLmSIPtfLMB/UMGDoiuVyBokOCX22JABMKmZhSa7SSidbZvPWQ2rrDNO5V83FC75
+	 VpOeZBsZzwpXg==
+Date: Wed, 25 Jun 2025 14:39:29 -0500
 From: "Rob Herring (Arm)" <robh@kernel.org>
-To: Aaron Kling <webgeek1234@gmail.com>
-Cc: linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org,
-	linux-gpio@vger.kernel.org, devicetree@vger.kernel.org,
-	Linus Walleij <linus.walleij@linaro.org>,
-	Jonathan Hunter <jonathanh@nvidia.com>,
-	Bartosz Golaszewski <brgl@bgdev.pl>,
-	Conor Dooley <conor+dt@kernel.org>,
+To: Nick Chan <towinchenmi@gmail.com>
+Cc: asahi@lists.linux.dev, Stephen Boyd <sboyd@kernel.org>,
+	Sven Peter <sven@kernel.org>, linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	Conor Dooley <conor+dt@kernel.org>, Neal Gompa <neal@gompa.dev>,
 	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Thierry Reding <thierry.reding@gmail.com>
-Subject: Re: [PATCH v2 1/3] dt-bindings: pinctrl: Document Tegra186 pin
- controllers
-Message-ID: <175088030096.2091553.3144090820246144987.robh@kernel.org>
-References: <20250608-tegra186-pinctrl-v2-0-502d41f3eedd@gmail.com>
- <20250608-tegra186-pinctrl-v2-1-502d41f3eedd@gmail.com>
+	Sasha Finkelstein <fnkl.kernel@gmail.com>,
+	devicetree@vger.kernel.org, Janne Grunau <j@jannau.net>,
+	Alyssa Rosenzweig <alyssa@rosenzweig.io>
+Subject: Re: [PATCH 1/3] dt-bindings: spmi: Add Apple A11 and T2 compatible
+Message-ID: <175088036858.2092918.12040107423396326625.robh@kernel.org>
+References: <20250609-t8015-spmi-v1-0-b3c55ad01491@gmail.com>
+ <20250609-t8015-spmi-v1-1-b3c55ad01491@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -64,19 +63,19 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250608-tegra186-pinctrl-v2-1-502d41f3eedd@gmail.com>
+In-Reply-To: <20250609-t8015-spmi-v1-1-b3c55ad01491@gmail.com>
 
 
-On Sun, 08 Jun 2025 21:13:13 -0500, Aaron Kling wrote:
-> Tegra186 contains two pin controllers. Document their compatible strings
-> and describe the list of pins and functions that they provide.
+On Mon, 09 Jun 2025 22:59:40 +0800, Nick Chan wrote:
+> The SPMI bus found on Apple A11 and T2 SoCs are compatible with the
+> existing driver so add their compatibles.
 > 
-> Signed-off-by: Aaron Kling <webgeek1234@gmail.com>
+> Signed-off-by: Nick Chan <towinchenmi@gmail.com>
 > ---
->  .../bindings/pinctrl/nvidia,tegra186-pinmux.yaml   | 285 +++++++++++++++++++++
->  1 file changed, 285 insertions(+)
+>  Documentation/devicetree/bindings/spmi/apple,spmi.yaml | 2 ++
+>  1 file changed, 2 insertions(+)
 > 
 
-Reviewed-by: Rob Herring (Arm) <robh@kernel.org>
+Acked-by: Rob Herring (Arm) <robh@kernel.org>
 
 
