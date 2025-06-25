@@ -1,141 +1,109 @@
-Return-Path: <linux-kernel+bounces-703009-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-703016-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id B8690AE8AC0
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Jun 2025 18:54:22 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 75E35AE8ABD
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Jun 2025 18:54:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 40DEF18922A3
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Jun 2025 16:52:04 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 788A37B6163
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Jun 2025 16:51:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4A2441DDA32;
-	Wed, 25 Jun 2025 16:45:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4698C2E11A4;
+	Wed, 25 Jun 2025 16:45:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Q9GKGrT3"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="BtVjb9AH"
+Received: from relay5-d.mail.gandi.net (relay5-d.mail.gandi.net [217.70.183.197])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A1DCB1459FA;
-	Wed, 25 Jun 2025 16:45:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 792382DECCE
+	for <linux-kernel@vger.kernel.org>; Wed, 25 Jun 2025 16:45:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.197
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750869909; cv=none; b=D0KILTmPwg3Wq3+iRLKAyNtkf7phoXr9fTaWyeO75iYh0h8IX/DQs+1vbc+ndiLZ92w3CK0uMNm2nZ2hOAKFdgMPA9uAVXWsj+gayKtMS9Rn01G3dJuOtMh2IUzfHUb7pVCWsQBmlt4oB9TNNfBMsE6t1ZJa9PkfoLIVltbvmps=
+	t=1750869953; cv=none; b=iQtgT9ouWMY3a1KZa/LXPu7Wod/0mdXU/x1Pyk8PUnPYt95aC1aBMNqWxOq23UuFNNQoZmj5CawmTaiMA4CayW5iRd71HPPi4rbKbpQBiwH/q8nwsTbHmRLCngbycEHZ2JpMXpjM26kCLMu+gcNDNZtGET0/9x1QfA07stkhAhg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750869909; c=relaxed/simple;
-	bh=eHt7/sdhBm2wrbfo5b0J8+QgVHCBsUd1GoFda8/mRSc=;
-	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=P+4s1z5wKuPC9TJ4AQ88XUwJAamE+oiyeqv7UDcnbxByeohYzjRyo+H4DtOI2a5iPXkYj+rpyUXZKoZjVZmXdnciRXfleyoAMSKDl/rDhyNEZwqWWxvCHl9UlXGhRrkDx1aNrlDfbtg2Yha2+KfSWcym7/dh2ewK/1fIi+KuvyM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Q9GKGrT3; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 398E5C4CEEA;
-	Wed, 25 Jun 2025 16:45:09 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1750869909;
-	bh=eHt7/sdhBm2wrbfo5b0J8+QgVHCBsUd1GoFda8/mRSc=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=Q9GKGrT3HeuuBaZWhCu55yO6hFWUgZ/cQ+j5PCUiakBE2ABS86kqUWg+8/BqpkJr/
-	 hl4j9mOnMVadU8WXJuNm3BQ/fjaPx4B13//DEJU/hxyqZPad89TEL4zfsaA5cKMvrm
-	 BI2lSzhdJdsyookX3FSqyx2ASMzYwYXvD3zCoSJIa0BEn6TbdRftT1mYKa6u24QgA3
-	 IDPBX9cXJpYFw3GUxLSaEDXQvwh6e/0M5Vwosi8njgwImWGTkqzTM25T2+HqHu993X
-	 R5egqU0E3VS41dzlwqodzZtYHgUhdS/yw+qwct1KvX6xIG61nVmFPN5VmpbWK3iNRt
-	 tPNkqBoN8lrTQ==
-Received: from sofa.misterjones.org ([185.219.108.64] helo=goblin-girl.misterjones.org)
-	by disco-boy.misterjones.org with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.95)
-	(envelope-from <maz@kernel.org>)
-	id 1uUTFC-009xzP-Iu;
-	Wed, 25 Jun 2025 17:45:06 +0100
-Date: Wed, 25 Jun 2025 17:45:06 +0100
-Message-ID: <864iw3db3h.wl-maz@kernel.org>
-From: Marc Zyngier <maz@kernel.org>
-To: Wei-Lin Chang <r09922117@csie.ntu.edu.tw>
-Cc: linux-arm-kernel@lists.infradead.org,
-	kvmarm@lists.linux.dev,
-	linux-kernel@vger.kernel.org,
-	Oliver Upton <oliver.upton@linux.dev>,
-	Joey Gouly <joey.gouly@arm.com>,
-	Suzuki K Poulose <suzuki.poulose@arm.com>,
-	Zenghui Yu <yuzenghui@huawei.com>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Will Deacon <will@kernel.org>,
-	Jintack Lim <jintack@cs.columbia.edu>,
-	Christoffer Dall <christoffer.dall@arm.com>
-Subject: Re: [PATCH] KVM: arm64: nv: Fix MI line level calculation in vgic_v3_nested_update_mi()
-In-Reply-To: <20250625084709.3968844-1-r09922117@csie.ntu.edu.tw>
-References: <20250625084709.3968844-1-r09922117@csie.ntu.edu.tw>
-User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI-EPG/1.14.7 (Harue)
- FLIM-LB/1.14.9 (=?UTF-8?B?R29qxY0=?=) APEL-LB/10.8 EasyPG/1.0.0 Emacs/30.1
- (aarch64-unknown-linux-gnu) MULE/6.0 (HANACHIRUSATO)
+	s=arc-20240116; t=1750869953; c=relaxed/simple;
+	bh=MbgQx/APm01ekuiR7SkK3VaQgpHvTHxD6fAJjGrtAGU=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
+	 In-Reply-To:To:Cc; b=LkHqkfFvm7RkcnVNrUrRGMN282JO2tQNY8K+OPKI3xZL8fJuZF+bWnEjSonyAYY51jA3y4873dDY1vp43KfPp57WmNco1hd4zQK1Imi6ZVvc1XbKmz9dUMzRCYebZqKbxg0SPdxJekUw1yzqHq0jmNazAM5Ywtp7/RpE8szgozs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=BtVjb9AH; arc=none smtp.client-ip=217.70.183.197
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+Received: by mail.gandi.net (Postfix) with ESMTPSA id DB9C14437E;
+	Wed, 25 Jun 2025 16:45:42 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+	t=1750869944;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=Cma+Srfk20qGsHCkoDcXPBTLFyzqck33dFJ5ZFim5Pg=;
+	b=BtVjb9AHzge0TznNYOjLnxtsiWvJEfDOrwMXLBJb79bk4jpqdEcDcvupzt5i3Ru4DfB+Re
+	1C80V0Ms2Va8JosZlaHa2LidkYDeXsTmVeHgoC/zZ1fWDZtaTtLQ7muvDbXUFrMPZ9WNVY
+	NUaeGXsqywCGKAEg18bXEN+SnAPcmMiGWfncsHn3G6QIhfqaGN254zUBOOLnsH0DqWwPOQ
+	VSDHLgxEo85+8lDBAeS3f3SCbCzdE73xJxs88/uyfWyViR3Fz1iGFWtVBBSRveiBuQXPrb
+	VvGNLzgeFKGoQlf7QzYnbNUbsFqoGDQtJUDwT30+E/XEUoBQv4Rs+OdUrcBz/g==
+From: Luca Ceresoli <luca.ceresoli@bootlin.com>
+Date: Wed, 25 Jun 2025 18:45:07 +0200
+Subject: [PATCH 03/32] drm/bridge: nwl-dsi: remove redundant lanes number
+ check
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
-Content-Type: text/plain; charset=US-ASCII
-X-SA-Exim-Connect-IP: 185.219.108.64
-X-SA-Exim-Rcpt-To: r09922117@csie.ntu.edu.tw, linux-arm-kernel@lists.infradead.org, kvmarm@lists.linux.dev, linux-kernel@vger.kernel.org, oliver.upton@linux.dev, joey.gouly@arm.com, suzuki.poulose@arm.com, yuzenghui@huawei.com, catalin.marinas@arm.com, will@kernel.org, jintack@cs.columbia.edu, christoffer.dall@arm.com
-X-SA-Exim-Mail-From: maz@kernel.org
-X-SA-Exim-Scanned: No (on disco-boy.misterjones.org); SAEximRunCond expanded to false
+MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20250625-drm-dsi-host-no-device-ptr-v1-3-e36bc258a7c5@bootlin.com>
+References: <20250625-drm-dsi-host-no-device-ptr-v1-0-e36bc258a7c5@bootlin.com>
+In-Reply-To: <20250625-drm-dsi-host-no-device-ptr-v1-0-e36bc258a7c5@bootlin.com>
+To: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
+ Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, 
+ David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
+ Andrzej Hajda <andrzej.hajda@intel.com>, 
+ Neil Armstrong <neil.armstrong@linaro.org>, Robert Foss <rfoss@kernel.org>, 
+ Laurent Pinchart <Laurent.pinchart@ideasonboard.com>, 
+ Jonas Karlman <jonas@kwiboo.se>, Jernej Skrabec <jernej.skrabec@gmail.com>, 
+ Inki Dae <inki.dae@samsung.com>, Jagan Teki <jagan@amarulasolutions.com>, 
+ Marek Szyprowski <m.szyprowski@samsung.com>, 
+ Jani Nikula <jani.nikula@linux.intel.com>, 
+ Dmitry Baryshkov <lumag@kernel.org>
+Cc: Hui Pu <Hui.Pu@gehealthcare.com>, 
+ Thomas Petazzoni <thomas.petazzoni@bootlin.com>, 
+ dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org, 
+ linux-sunxi@lists.linux.dev, Luca Ceresoli <luca.ceresoli@bootlin.com>
+X-Mailer: b4 0.14.2
+X-GND-State: clean
+X-GND-Score: -100
+X-GND-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtddvgddvfedvkecutefuodetggdotefrodftvfcurfhrohhfihhlvgemucfitefpfffkpdcuggftfghnshhusghstghrihgsvgenuceurghilhhouhhtmecufedtudenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujfgurhephfffufggtgfgkfhfjgfvvefosehtjeertdertdejnecuhfhrohhmpefnuhgtrgcuvegvrhgvshholhhiuceolhhutggrrdgtvghrvghsohhlihessghoohhtlhhinhdrtghomheqnecuggftrfgrthhtvghrnhepieeiuedvffetgfeuudelheeutefggfejieettdetteekueeuueeukeevvedvueevnecukfhppedvrgdtvdemieejtdemvddtvddtmegvrgdtudemsggvgedumeelhegvjeemfeegfeemledufegvnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehinhgvthepvdgrtddvmeeijedtmedvtddvtdemvggrtddumegsvgegudemleehvgejmeefgeefmeeludefvgdphhgvlhhopegludelvddrudeikedrudejkedrjeehngdpmhgrihhlfhhrohhmpehluhgtrgdrtggvrhgvshholhhisegsohhothhlihhnrdgtohhmpdhnsggprhgtphhtthhopedvvddprhgtphhtthhopehjohhnrghssehkfihisghoohdrshgvpdhrtghpthhtohepthhhohhmrghsrdhpvghtrgiiiihonhhisegsohhothhlihhnrdgtohhmpdhrtghpthhtoheplhhinhhugidqshhunhigiheslhhishhtshdrlhhinhhugidruggvvhdpr
+ hgtphhtthhopehmrdhsiiihphhrohifshhkihesshgrmhhsuhhnghdrtghomhdprhgtphhtthhopehrfhhoshhssehkvghrnhgvlhdrohhrghdprhgtphhtthhopehmrggrrhhtvghnrdhlrghnkhhhohhrshhtsehlihhnuhigrdhinhhtvghlrdgtohhmpdhrtghpthhtohepnhgvihhlrdgrrhhmshhtrhhonhhgsehlihhnrghrohdrohhrghdprhgtphhtthhopehjrghnihdrnhhikhhulhgrsehlihhnuhigrdhinhhtvghlrdgtohhm
+X-GND-Sasl: luca.ceresoli@bootlin.com
 
-On Wed, 25 Jun 2025 09:47:09 +0100,
-Wei-Lin Chang <r09922117@csie.ntu.edu.tw> wrote:
-> 
-> The state of the vcpu's MI line should be asserted when its
-> ICH_HCR_EL2.En is set and ICH_MISR_EL2 is non-zero. Using bitwise AND
-> (&=) directly for this calculation will not give us the correct result
-> when the LSB of the vcpu's ICH_MISR_EL2 isn't set. Correct this by first
-> adjusting the return value of vgic_v3_get_misr() into 1 if it is
-> non-zero.
-> 
-> Signed-off-by: Wei-Lin Chang <r09922117@csie.ntu.edu.tw>
-> ---
->  arch/arm64/kvm/vgic/vgic-v3-nested.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/arch/arm64/kvm/vgic/vgic-v3-nested.c b/arch/arm64/kvm/vgic/vgic-v3-nested.c
-> index 4f6954c30674..ebffad632fd2 100644
-> --- a/arch/arm64/kvm/vgic/vgic-v3-nested.c
-> +++ b/arch/arm64/kvm/vgic/vgic-v3-nested.c
-> @@ -400,7 +400,7 @@ void vgic_v3_nested_update_mi(struct kvm_vcpu *vcpu)
->  
->  	level  = __vcpu_sys_reg(vcpu, ICH_HCR_EL2) & ICH_HCR_EL2_En;
->  	if (level)
-> -		level &= vgic_v3_get_misr(vcpu);
-> +		level &= !!vgic_v3_get_misr(vcpu);
->  	kvm_vgic_inject_irq(vcpu->kvm, vcpu,
->  			    vcpu->kvm->arch.vgic.mi_intid, level, vcpu);
->  }
+Checking that the number of lanes is > 0 is now done by the DRM MIPI DSI
+core in mipi_dsi_attach().
 
-Very well spotted, once more. Where were you when I posted all these
-patches? ;-)
+Signed-off-by: Luca Ceresoli <luca.ceresoli@bootlin.com>
+---
+ drivers/gpu/drm/bridge/nwl-dsi.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-We could make it even clearer with this:
-
-diff --git a/arch/arm64/kvm/vgic/vgic-v3-nested.c b/arch/arm64/kvm/vgic/vgic-v3-nested.c
-index a50fb7e6841f7..679aafe77de2e 100644
---- a/arch/arm64/kvm/vgic/vgic-v3-nested.c
-+++ b/arch/arm64/kvm/vgic/vgic-v3-nested.c
-@@ -401,9 +401,7 @@ void vgic_v3_nested_update_mi(struct kvm_vcpu *vcpu)
- {
- 	bool level;
+diff --git a/drivers/gpu/drm/bridge/nwl-dsi.c b/drivers/gpu/drm/bridge/nwl-dsi.c
+index 2f7429b24fc20db104dec17182f1119c6c75e600..ccce663192b35a795dad8cb479203d05b414173b 100644
+--- a/drivers/gpu/drm/bridge/nwl-dsi.c
++++ b/drivers/gpu/drm/bridge/nwl-dsi.c
+@@ -352,7 +352,7 @@ static int nwl_dsi_host_attach(struct mipi_dsi_host *dsi_host,
+ 	DRM_DEV_INFO(dev, "lanes=%u, format=0x%x flags=0x%lx\n", device->lanes,
+ 		     device->format, device->mode_flags);
  
--	level  = __vcpu_sys_reg(vcpu, ICH_HCR_EL2) & ICH_HCR_EL2_En;
--	if (level)
--		level &= vgic_v3_get_misr(vcpu);
-+	level = (__vcpu_sys_reg(vcpu, ICH_HCR_EL2) & ICH_HCR_EL2_En) && vgic_v3_get_misr(vcpu);
- 	kvm_vgic_inject_irq(vcpu->kvm, vcpu,
- 			    vcpu->kvm->arch.vgic.mi_intid, level, vcpu);
- }
-
-If you're OK with it, I'll use this, keeping your authorship of
-course.
-
-Thanks,
-
-	M.
+-	if (device->lanes < 1 || device->lanes > 4)
++	if (device->lanes > 4)
+ 		return -EINVAL;
+ 
+ 	dsi->lanes = device->lanes;
 
 -- 
-Without deviation from the norm, progress is not possible.
+2.49.0
+
 
