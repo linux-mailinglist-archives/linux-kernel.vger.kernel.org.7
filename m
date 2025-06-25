@@ -1,155 +1,292 @@
-Return-Path: <linux-kernel+bounces-701762-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-701765-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 351A6AE78F1
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Jun 2025 09:43:44 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id AF14BAE78F9
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Jun 2025 09:44:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5C26316B13E
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Jun 2025 07:43:44 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E7B7E17CB1D
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Jun 2025 07:44:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 43A0320CCD8;
-	Wed, 25 Jun 2025 07:43:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4BC81204F9B;
+	Wed, 25 Jun 2025 07:44:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="FfSWVFIx";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="2Z/DsRZT";
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="FfSWVFIx";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="2Z/DsRZT"
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+	dkim=pass (2048-bit key) header.d=lanxincomputing-com.20200927.dkim.feishu.cn header.i=@lanxincomputing-com.20200927.dkim.feishu.cn header.b="AL55rIKM"
+Received: from lf-1-19.ptr.blmpb.com (lf-1-19.ptr.blmpb.com [103.149.242.19])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CC30820C038
-	for <linux-kernel@vger.kernel.org>; Wed, 25 Jun 2025 07:43:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CDE101DB958
+	for <linux-kernel@vger.kernel.org>; Wed, 25 Jun 2025 07:44:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.149.242.19
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750837407; cv=none; b=jrTxIaXUsemj+tN8MQRQd0drCPElzG4fB6i094lHUj1YH8tWuWHaHsl50gKsC4NEOHRc+8PiCeWz8nbly+DQ44/syoDMAPOQ/Soa2gGY1u82ElPZ5Vo0bYr3+yIjXh63r5muaUXznGRAelDG6ne3BFNb9Xp6p0SpWKkW6i6gi9s=
+	t=1750837476; cv=none; b=UqsxreS7Sjl3ZnlFs0uJ4RgQdislS21YKHZl2UxwGTjnLghoxi4Bm/PA2TlDrEn8xWrTz6Vo3J5HjvtL87zKjl5MTHuiQKYSieoXxGJMEpkEhJhj8+3JgKE7xkGrHhmN9Myr2zqydf6W4ZOgxFXu+HXN/MoGL3c3y2zjStx8+So=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750837407; c=relaxed/simple;
-	bh=Fio2FSArnCcgo7shE/aKbg9RoXEubCUqkEwTyQ15U+o=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=VSQ40/n3D3LZJwq93tbagYKkdG87nw5dULNLKayms+bnmL219GSphUKJtuOOtbRfYQXA2nOpSJJG3lJpBLv1ZXnyiERPhQhkI3jaEvhBJaiHVtVhBlt9Mdz7LDCiGcIvzTxb96xlUtpkajy1/w8Eyc9XTKjZHG5urj8TwuQImmU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=FfSWVFIx; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=2Z/DsRZT; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=FfSWVFIx; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=2Z/DsRZT; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id C7ECE2118D;
-	Wed, 25 Jun 2025 07:43:23 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1750837403; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=ebHyLuUK14qItIBQuWhot/BcmESBtVunMH4Kh6YCI1Y=;
-	b=FfSWVFIx62fpcU15mEohvf5Ig24z1aCRrNGa8X3vyNxmv5pCI09VY2AxtQEn7Zb2p72gM5
-	LwjLKmyYzhVQG1r5MYTbZVWp+v8xhOvrDHwBsvoqno6aG2aRp0Jw1GoKL8S2lkO2y8LZrw
-	nYexw9AiOfaSBeORz4X9TP/gnHurlcc=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1750837403;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=ebHyLuUK14qItIBQuWhot/BcmESBtVunMH4Kh6YCI1Y=;
-	b=2Z/DsRZTh84cpG9jVAxL0XIMiRRioil1FzUBfjpEoa0BvQ9GlwY+zFLUxJa+EF40zGKTlu
-	YQFN24joKhyGQsAw==
-Authentication-Results: smtp-out1.suse.de;
-	dkim=pass header.d=suse.de header.s=susede2_rsa header.b=FfSWVFIx;
-	dkim=pass header.d=suse.de header.s=susede2_ed25519 header.b="2Z/DsRZT"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1750837403; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=ebHyLuUK14qItIBQuWhot/BcmESBtVunMH4Kh6YCI1Y=;
-	b=FfSWVFIx62fpcU15mEohvf5Ig24z1aCRrNGa8X3vyNxmv5pCI09VY2AxtQEn7Zb2p72gM5
-	LwjLKmyYzhVQG1r5MYTbZVWp+v8xhOvrDHwBsvoqno6aG2aRp0Jw1GoKL8S2lkO2y8LZrw
-	nYexw9AiOfaSBeORz4X9TP/gnHurlcc=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1750837403;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=ebHyLuUK14qItIBQuWhot/BcmESBtVunMH4Kh6YCI1Y=;
-	b=2Z/DsRZTh84cpG9jVAxL0XIMiRRioil1FzUBfjpEoa0BvQ9GlwY+zFLUxJa+EF40zGKTlu
-	YQFN24joKhyGQsAw==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 5DB6C13301;
-	Wed, 25 Jun 2025 07:43:23 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id sw0XFJuoW2h8DwAAD6G6ig
-	(envelope-from <osalvador@suse.de>); Wed, 25 Jun 2025 07:43:23 +0000
-Date: Wed, 25 Jun 2025 09:43:21 +0200
-From: Oscar Salvador <osalvador@suse.de>
-To: David Hildenbrand <david@redhat.com>
-Cc: Andrew Morton <akpm@linux-foundation.org>,
-	Muchun Song <muchun.song@linux.dev>, Peter Xu <peterx@redhat.com>,
-	Gavin Guo <gavinguo@igalia.com>, linux-mm@kvack.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 3/5] mm,hugetlb: Rename anon_rmap to new_anon_folio
- and make it boolean
-Message-ID: <aFuomf97EUK2YJDJ@localhost.localdomain>
-References: <20250620123014.29748-1-osalvador@suse.de>
- <20250620123014.29748-4-osalvador@suse.de>
- <7f8ac35d-89f0-41e7-acfb-bcf54991612e@redhat.com>
+	s=arc-20240116; t=1750837476; c=relaxed/simple;
+	bh=HGNOaFVshgBbanyfIn25e/OXjX3qvHdI1YJjgtD645s=;
+	h=Cc:From:Date:Content-Type:Mime-Version:Subject:To:Message-Id:
+	 In-Reply-To:References; b=PqKWnxl+n1QuwN/pmjw5WK5diKt65Ewihut7uaDdxmY+/O2By7kN2EIpQAtxXz9AyyNcKHPjfzVYY5frJzdGdkng3h2tw9fh4cLEhaHIBQw+3OlucPyx43lxi58u+neu7zv+Sadpxv9BxQhBubSL4rmnOZ0alxo72DkmR3G75TQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=lanxincomputing.com; spf=pass smtp.mailfrom=lanxincomputing.com; dkim=pass (2048-bit key) header.d=lanxincomputing-com.20200927.dkim.feishu.cn header.i=@lanxincomputing-com.20200927.dkim.feishu.cn header.b=AL55rIKM; arc=none smtp.client-ip=103.149.242.19
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=lanxincomputing.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lanxincomputing.com
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+ s=s1; d=lanxincomputing-com.20200927.dkim.feishu.cn; t=1750837409;
+  h=from:subject:mime-version:from:date:message-id:subject:to:cc:
+ reply-to:content-type:mime-version:in-reply-to:message-id;
+ bh=oGnmteCS7Y1cGbRip4TRzIH/m6fa6vD0sYRYRmitVFM=;
+ b=AL55rIKM7mvoV3OqGg0WItMPupsay1lsa/aY7NjNvEp7qKQMC72K5CkStaERm0JhpkVFmx
+ kQuc85PVKGPja7UMzosma1NFFEdING69ixdAtE36iKJZilzj+2Z7RsCsX4rpXuHOK7FlNT
+ RaOHwPSo27Z+5AI10vEK66yFY+rn8IC9sEFUkU5yl9GzOapK94NV6HBNcP42i0ew3NaGJ0
+ IQYY6qjzlEdPEDyFLUp7CUOQNpm6C6D4SJcU8fOTsSPqt5+mtLbrUZ4//QSFzavEBoVFuG
+ uhoxFzJ7L3NkL9+2NNN8M9dBsJ4OTNF8Gc4j4G7XBDKfWdIgRuD265qg0cWoqA==
+Cc: "Palmer Dabbelt" <palmer@dabbelt.com>, 
+	"Paul Walmsley" <paul.walmsley@sifive.com>, 
+	"Alexandre Ghiti" <alex@ghiti.fr>, 
+	"Andrew Jones" <ajones@ventanamicro.com>, 
+	"Anup Patel" <anup@brainfault.org>, <kvm@vger.kernel.org>, 
+	<kvm-riscv@lists.infradead.org>, <linux-riscv@lists.infradead.org>, 
+	<linux-kernel@vger.kernel.org>, "Atish Patra" <atishp@rivosinc.com>
+From: "Nutty Liu" <liujingqi@lanxincomputing.com>
+Date: Wed, 25 Jun 2025 15:43:25 +0800
+X-Original-From: Nutty Liu <liujingqi@lanxincomputing.com>
+Received: from [127.0.0.1] ([139.226.59.215]) by smtp.feishu.cn with ESMTPS; Wed, 25 Jun 2025 15:43:26 +0800
+Content-Type: text/plain; charset=UTF-8
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <7f8ac35d-89f0-41e7-acfb-bcf54991612e@redhat.com>
-X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
-X-Rspamd-Queue-Id: C7ECE2118D
-X-Rspamd-Action: no action
-X-Spam-Flag: NO
-X-Spamd-Result: default: False [-4.51 / 50.00];
-	BAYES_HAM(-3.00)[99.99%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	R_DKIM_ALLOW(-0.20)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	MIME_GOOD(-0.10)[text/plain];
-	MX_GOOD(-0.01)[];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	RCPT_COUNT_SEVEN(0.00)[7];
-	MIME_TRACE(0.00)[0:+];
-	MISSING_XM_UA(0.00)[];
-	ARC_NA(0.00)[];
-	RCVD_TLS_ALL(0.00)[];
-	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	FROM_EQ_ENVFROM(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	TO_DN_SOME(0.00)[];
-	RCVD_COUNT_TWO(0.00)[2];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.de:dkim];
-	DNSWL_BLOCKED(0.00)[2a07:de40:b281:104:10:150:64:97:from,2a07:de40:b281:106:10:150:64:167:received];
-	DKIM_TRACE(0.00)[suse.de:+]
-X-Spam-Score: -4.51
-X-Spam-Level: 
+Mime-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Content-Language: en-US
+Subject: Re: [PATCH v3 09/12] RISC-V: KVM: Introduce struct kvm_gstage_mapping
+Content-Transfer-Encoding: 7bit
+To: "Anup Patel" <apatel@ventanamicro.com>, 
+	"Atish Patra" <atish.patra@linux.dev>
+Message-Id: <8e8b241b-ef9d-4559-a451-e4cc1067c7fa@lanxincomputing.com>
+In-Reply-To: <20250618113532.471448-10-apatel@ventanamicro.com>
+X-Lms-Return-Path: <lba+2685ba89f+cb8104+vger.kernel.org+liujingqi@lanxincomputing.com>
+References: <20250618113532.471448-1-apatel@ventanamicro.com> <20250618113532.471448-10-apatel@ventanamicro.com>
 
-On Mon, Jun 23, 2025 at 04:13:17PM +0200, David Hildenbrand wrote:
-> > -	if (new_folio && !new_pagecache_folio)
-> > +	/* We only need to restore reservations for private mappings */
-> > +	if (new_folio && new_anon_folio)
-> 
-> Could this be simplified to
-> 
-> if (new_anon_folio) {
+On 6/18/2025 7:35 PM, Anup Patel wrote:
+> Introduce struct kvm_gstage_mapping which represents a g-stage
+> mapping at a particular g-stage page table level. Also, update
+> the kvm_riscv_gstage_map() to return the g-stage mapping upon
+> success.
+>
+> Reviewed-by: Atish Patra <atishp@rivosinc.com>
+> Signed-off-by: Anup Patel <apatel@ventanamicro.com>
+> ---
+>   arch/riscv/include/asm/kvm_mmu.h |  9 ++++-
+>   arch/riscv/kvm/mmu.c             | 58 ++++++++++++++++++--------------
+>   arch/riscv/kvm/vcpu_exit.c       |  3 +-
+>   3 files changed, 43 insertions(+), 27 deletions(-)
+>
+> diff --git a/arch/riscv/include/asm/kvm_mmu.h b/arch/riscv/include/asm/kvm_mmu.h
+> index 4e1654282ee4..91c11e692dc7 100644
+> --- a/arch/riscv/include/asm/kvm_mmu.h
+> +++ b/arch/riscv/include/asm/kvm_mmu.h
+> @@ -8,6 +8,12 @@
+>   
+>   #include <linux/kvm_types.h>
+>   
+> +struct kvm_gstage_mapping {
+> +	gpa_t addr;
+> +	pte_t pte;
+> +	u32 level;
+> +};
+> +
+>   int kvm_riscv_gstage_ioremap(struct kvm *kvm, gpa_t gpa,
+>   			     phys_addr_t hpa, unsigned long size,
+>   			     bool writable, bool in_atomic);
+> @@ -15,7 +21,8 @@ void kvm_riscv_gstage_iounmap(struct kvm *kvm, gpa_t gpa,
+>   			      unsigned long size);
+>   int kvm_riscv_gstage_map(struct kvm_vcpu *vcpu,
+>   			 struct kvm_memory_slot *memslot,
+> -			 gpa_t gpa, unsigned long hva, bool is_write);
+> +			 gpa_t gpa, unsigned long hva, bool is_write,
+> +			 struct kvm_gstage_mapping *out_map);
+>   int kvm_riscv_gstage_alloc_pgd(struct kvm *kvm);
+>   void kvm_riscv_gstage_free_pgd(struct kvm *kvm);
+>   void kvm_riscv_gstage_update_hgatp(struct kvm_vcpu *vcpu);
+> diff --git a/arch/riscv/kvm/mmu.c b/arch/riscv/kvm/mmu.c
+> index c1a3eb076df3..806614b3e46d 100644
+> --- a/arch/riscv/kvm/mmu.c
+> +++ b/arch/riscv/kvm/mmu.c
+> @@ -135,18 +135,18 @@ static void gstage_remote_tlb_flush(struct kvm *kvm, u32 level, gpa_t addr)
+>   	kvm_riscv_hfence_gvma_vmid_gpa(kvm, -1UL, 0, addr, BIT(order), order);
+>   }
+>   
+> -static int gstage_set_pte(struct kvm *kvm, u32 level,
+> -			   struct kvm_mmu_memory_cache *pcache,
+> -			   gpa_t addr, const pte_t *new_pte)
+> +static int gstage_set_pte(struct kvm *kvm,
+> +			  struct kvm_mmu_memory_cache *pcache,
+> +			  const struct kvm_gstage_mapping *map)
+>   {
+>   	u32 current_level = gstage_pgd_levels - 1;
+>   	pte_t *next_ptep = (pte_t *)kvm->arch.pgd;
+> -	pte_t *ptep = &next_ptep[gstage_pte_index(addr, current_level)];
+> +	pte_t *ptep = &next_ptep[gstage_pte_index(map->addr, current_level)];
+>   
+> -	if (current_level < level)
+> +	if (current_level < map->level)
+>   		return -EINVAL;
+>   
+> -	while (current_level != level) {
+> +	while (current_level != map->level) {
+>   		if (gstage_pte_leaf(ptep))
+>   			return -EEXIST;
+>   
+> @@ -165,13 +165,13 @@ static int gstage_set_pte(struct kvm *kvm, u32 level,
+>   		}
+>   
+>   		current_level--;
+> -		ptep = &next_ptep[gstage_pte_index(addr, current_level)];
+> +		ptep = &next_ptep[gstage_pte_index(map->addr, current_level)];
+>   	}
+>   
+> -	if (pte_val(*ptep) != pte_val(*new_pte)) {
+> -		set_pte(ptep, *new_pte);
+> +	if (pte_val(*ptep) != pte_val(map->pte)) {
+> +		set_pte(ptep, map->pte);
+>   		if (gstage_pte_leaf(ptep))
+> -			gstage_remote_tlb_flush(kvm, current_level, addr);
+> +			gstage_remote_tlb_flush(kvm, current_level, map->addr);
+>   	}
+>   
+>   	return 0;
+> @@ -181,14 +181,16 @@ static int gstage_map_page(struct kvm *kvm,
+>   			   struct kvm_mmu_memory_cache *pcache,
+>   			   gpa_t gpa, phys_addr_t hpa,
+>   			   unsigned long page_size,
+> -			   bool page_rdonly, bool page_exec)
+> +			   bool page_rdonly, bool page_exec,
+> +			   struct kvm_gstage_mapping *out_map)
+>   {
+> -	int ret;
+> -	u32 level = 0;
+> -	pte_t new_pte;
+>   	pgprot_t prot;
+> +	int ret;
+>   
+> -	ret = gstage_page_size_to_level(page_size, &level);
+> +	out_map->addr = gpa;
+> +	out_map->level = 0;
+> +
+> +	ret = gstage_page_size_to_level(page_size, &out_map->level);
+>   	if (ret)
+>   		return ret;
+>   
+> @@ -216,10 +218,10 @@ static int gstage_map_page(struct kvm *kvm,
+>   		else
+>   			prot = PAGE_WRITE;
+>   	}
+> -	new_pte = pfn_pte(PFN_DOWN(hpa), prot);
+> -	new_pte = pte_mkdirty(new_pte);
+> +	out_map->pte = pfn_pte(PFN_DOWN(hpa), prot);
+> +	out_map->pte = pte_mkdirty(out_map->pte);
+>   
+> -	return gstage_set_pte(kvm, level, pcache, gpa, &new_pte);
+> +	return gstage_set_pte(kvm, pcache, out_map);
+>   }
+>   
+>   enum gstage_op {
+> @@ -352,7 +354,6 @@ int kvm_riscv_gstage_ioremap(struct kvm *kvm, gpa_t gpa,
+>   			     phys_addr_t hpa, unsigned long size,
+>   			     bool writable, bool in_atomic)
+>   {
+> -	pte_t pte;
+>   	int ret = 0;
+>   	unsigned long pfn;
+>   	phys_addr_t addr, end;
+> @@ -360,22 +361,25 @@ int kvm_riscv_gstage_ioremap(struct kvm *kvm, gpa_t gpa,
+>   		.gfp_custom = (in_atomic) ? GFP_ATOMIC | __GFP_ACCOUNT : 0,
+>   		.gfp_zero = __GFP_ZERO,
+>   	};
+> +	struct kvm_gstage_mapping map;
+>   
+>   	end = (gpa + size + PAGE_SIZE - 1) & PAGE_MASK;
+>   	pfn = __phys_to_pfn(hpa);
+>   
+>   	for (addr = gpa; addr < end; addr += PAGE_SIZE) {
+> -		pte = pfn_pte(pfn, PAGE_KERNEL_IO);
+> +		map.addr = addr;
+> +		map.pte = pfn_pte(pfn, PAGE_KERNEL_IO);
+> +		map.level = 0;
+>   
+>   		if (!writable)
+> -			pte = pte_wrprotect(pte);
+> +			map.pte = pte_wrprotect(map.pte);
+>   
+>   		ret = kvm_mmu_topup_memory_cache(&pcache, gstage_pgd_levels);
+>   		if (ret)
+>   			goto out;
+>   
+>   		spin_lock(&kvm->mmu_lock);
+> -		ret = gstage_set_pte(kvm, 0, &pcache, addr, &pte);
+> +		ret = gstage_set_pte(kvm, &pcache, &map);
+>   		spin_unlock(&kvm->mmu_lock);
+>   		if (ret)
+>   			goto out;
+> @@ -593,7 +597,8 @@ bool kvm_test_age_gfn(struct kvm *kvm, struct kvm_gfn_range *range)
+>   
+>   int kvm_riscv_gstage_map(struct kvm_vcpu *vcpu,
+>   			 struct kvm_memory_slot *memslot,
+> -			 gpa_t gpa, unsigned long hva, bool is_write)
+> +			 gpa_t gpa, unsigned long hva, bool is_write,
+> +			 struct kvm_gstage_mapping *out_map)
+>   {
+>   	int ret;
+>   	kvm_pfn_t hfn;
+> @@ -608,6 +613,9 @@ int kvm_riscv_gstage_map(struct kvm_vcpu *vcpu,
+>   	unsigned long vma_pagesize, mmu_seq;
+>   	struct page *page;
+>   
+> +	/* Setup initial state of output mapping */
+> +	memset(out_map, 0, sizeof(*out_map));
+> +
+>   	/* We need minimum second+third level pages */
+>   	ret = kvm_mmu_topup_memory_cache(pcache, gstage_pgd_levels);
+>   	if (ret) {
+> @@ -677,10 +685,10 @@ int kvm_riscv_gstage_map(struct kvm_vcpu *vcpu,
+>   	if (writable) {
+>   		mark_page_dirty(kvm, gfn);
+>   		ret = gstage_map_page(kvm, pcache, gpa, hfn << PAGE_SHIFT,
+> -				      vma_pagesize, false, true);
+> +				      vma_pagesize, false, true, out_map);
+>   	} else {
+>   		ret = gstage_map_page(kvm, pcache, gpa, hfn << PAGE_SHIFT,
+> -				      vma_pagesize, true, true);
+> +				      vma_pagesize, true, true, out_map);
+>   	}
+>   
+>   	if (ret)
+> diff --git a/arch/riscv/kvm/vcpu_exit.c b/arch/riscv/kvm/vcpu_exit.c
+> index 965df528de90..6b4694bc07ea 100644
+> --- a/arch/riscv/kvm/vcpu_exit.c
+> +++ b/arch/riscv/kvm/vcpu_exit.c
+> @@ -15,6 +15,7 @@
+>   static int gstage_page_fault(struct kvm_vcpu *vcpu, struct kvm_run *run,
+>   			     struct kvm_cpu_trap *trap)
+>   {
+> +	struct kvm_gstage_mapping host_map;
+>   	struct kvm_memory_slot *memslot;
+>   	unsigned long hva, fault_addr;
+>   	bool writable;
+> @@ -43,7 +44,7 @@ static int gstage_page_fault(struct kvm_vcpu *vcpu, struct kvm_run *run,
+>   	}
+>   
+>   	ret = kvm_riscv_gstage_map(vcpu, memslot, fault_addr, hva,
+> -		(trap->scause == EXC_STORE_GUEST_PAGE_FAULT) ? true : false);
+> +		(trap->scause == EXC_STORE_GUEST_PAGE_FAULT) ? true : false, &host_map);
+>   	if (ret < 0)
+>   		return ret;
+>   
 
-Yes, definitely, will do in the next version.
+Reviewed-by: Nutty Liu <liujingqi@lanxincomputing.com>
 
- 
-
--- 
-Oscar Salvador
-SUSE Labs
+Thanks,
+Nutty
 
