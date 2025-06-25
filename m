@@ -1,162 +1,412 @@
-Return-Path: <linux-kernel+bounces-703000-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-703013-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DBB0DAE8A81
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Jun 2025 18:47:39 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 9D599AE8AC1
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Jun 2025 18:54:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E7D007B210C
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Jun 2025 16:45:43 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C03E77A314D
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Jun 2025 16:51:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 735212E8886;
-	Wed, 25 Jun 2025 16:43:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0498629B761;
+	Wed, 25 Jun 2025 16:45:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="GIZQoXRj"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="jVtQ+rTJ"
+Received: from relay5-d.mail.gandi.net (relay5-d.mail.gandi.net [217.70.183.197])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A85012D6620;
-	Wed, 25 Jun 2025 16:43:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C8E4E2DAFD9
+	for <linux-kernel@vger.kernel.org>; Wed, 25 Jun 2025 16:45:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.197
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750869791; cv=none; b=rTe5e68GD4dh5SjSbbLFTcLrcoZ3b4Mx7JnLIfw0DlkGa5lLbaYK6gDZoWyRuX9o93O2n2EjC1DUBRaTv1GDUfzyXG2HpeuX0v6oHaOwRPyX47MFsJfT+HLGpnQAGROPmit29GuFX10jh82pa5f0VrGuRyoisDhOdDK4CWKS1Ks=
+	t=1750869950; cv=none; b=HxR97uukF08Ip5R8491/134bE4PWw4U92tNpRKq7N8i2jftaZhW6Ty8CRKOazTcG0dNqE9f9qChLNFXwiQBMemcUchwq5XTNktXayLY8TWQAANwiQE5q8UEVz7bBstXTS0avH0Vl/szzL0Nixfv/+KqVbNoCDsxIjDsRbjDuOBo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750869791; c=relaxed/simple;
-	bh=cGUv2CNBzq8vRhYQyXdVewQNEc85rFT6i3y9uZ6djqo=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=KVcIBNDFWZTzQ/WdDJ9ru/Av54CcAkr/Kn4xiHIlzMSrWZl7m9+OM/iz/iPABGLyObsgVrzysqmkCtL5b0ru5gyXeuNAKo5CQFiZJLT0tvVQnQWbIsNasVYPgozq9/BDOFpyb2tW8YIxv0ZL6dHYjWL25/L59FZfc5KQD67BAhE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=GIZQoXRj; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D8898C4CEEA;
-	Wed, 25 Jun 2025 16:43:10 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1750869791;
-	bh=cGUv2CNBzq8vRhYQyXdVewQNEc85rFT6i3y9uZ6djqo=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=GIZQoXRjPJf7bB9nJwnxXrptTu7KAo3FIQNN/Qx3re80R0ixpmIIcKBYMXjFCjUYA
-	 j43xvw+D4pOPKMacA08z8ulicpCdbAd6bTcAGGGEzNPS3c7wJzraRzFRLOLZLP+TrS
-	 jTeVaHd0rWrr0EuC8p7EmHgsxw9LDe6eToUPBqLuj8BHWUvnEg2bIcWvCAN9jPAno6
-	 6SoixPbKPkFBb2PHl4RU4FQ98JrfsPd9c4CeyWnTvRBOPq+mYyrETHwXfvnvY/6diA
-	 sY2eWe7D5VJ8BPnpwcXRhMPHiGTKqZlbcLGxdTrwCbeZD6q3/4UWeOtORMAL45UzL5
-	 puI38zYxf1UJA==
-Date: Wed, 25 Jun 2025 19:43:07 +0300
-From: Jarkko Sakkinen <jarkko@kernel.org>
-To: Jonathan McDowell <noodles@earth.li>
-Cc: "Orlov, Ivan" <iorlov@amazon.co.uk>,
-	"peterhuewe@gmx.de" <peterhuewe@gmx.de>,
-	"jgg@ziepe.ca" <jgg@ziepe.ca>,
-	"linux-integrity@vger.kernel.org" <linux-integrity@vger.kernel.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"Woodhouse, David" <dwmw@amazon.co.uk>
-Subject: Re: [PATCH v2] tpm: Fix the timeout & use ktime
-Message-ID: <aFwnG--lzZO0mQgc@kernel.org>
-References: <20250620180828.98413-1-iorlov@amazon.com>
- <aFhtKrWTDzZbpTSh@earth.li>
+	s=arc-20240116; t=1750869950; c=relaxed/simple;
+	bh=cbtYnH/ognhQ8LKd/obMpR87K8zoyLgad/fUQgmWKtE=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=Y6ilst9OTsm1YRKm0WsKVu3ZWU2uwv9QO155BvHJzcZuzZlI7zs/JSwif/UMUufKvRxaQWqUzG4meIIBjxCA46KVM3n6WkAD/xPtycWMdTB9WZ7vbhVyDVLk2LM0rItmLfeBnMp8TEWodLpW5Wtn8OqHL0etejrvrPzm+MMMYlU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=jVtQ+rTJ; arc=none smtp.client-ip=217.70.183.197
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+Received: by mail.gandi.net (Postfix) with ESMTPSA id C80D744384;
+	Wed, 25 Jun 2025 16:45:35 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+	t=1750869939;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=UAePG0vUXhaRNj9mevWdeevJm5P79lMTjP9E/BZsM4I=;
+	b=jVtQ+rTJWj2SIXS/jzojK+YZSMt0Yt5pIWdj9uVZ6QUs1IBSI1JZc+PpD/hdKmuVpMz9HK
+	ZAYIa/gE0/iSapQaTdA6tTWM104NqqrMD7rVQq90kIXHF3HzVaiCthfIY5VETMM7krs5ax
+	8/p8WUwjoj+4WPaTgsuzF4Fv9zVTghreQlAHCAhW3vEDmgwJkALQ5sViZQTYYHkZsbBznG
+	eggj0SsP+vtk9ktSfiG3RdNw3Wzf1Nlz161v+kSfZ4Ltw3iIaqEGwCfu/7z12hlQjMwCvX
+	9lEDTY/dayfZC7tPS0fhVkWzYQJ/yPK3wflgiglNdE3APAJjsZUPo3iQZYD1Sg==
+From: Luca Ceresoli <luca.ceresoli@bootlin.com>
+Subject: [PATCH 00/32] drm/mipi-dsi: avoid DSI host drivers to have
+ pointers to DSI devices
+Date: Wed, 25 Jun 2025 18:45:04 +0200
+Message-Id: <20250625-drm-dsi-host-no-device-ptr-v1-0-e36bc258a7c5@bootlin.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <aFhtKrWTDzZbpTSh@earth.li>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+X-B4-Tracking: v=1; b=H4sIAJAnXGgC/x3MQQqEMAxA0atI1hOoxYp6FZmFmFSzsJVERBDvb
+ nH5Fv/fYKzCBkN1g/IpJjkV1L8K5nVKC6NQMXjng2t9QNINyQTXbAemjFSimXE/FH0IsYvkXN9
+ 0UAa7cpTrm4//53kBvpQt+2wAAAA=
+X-Change-ID: 20250625-drm-dsi-host-no-device-ptr-255f8fd00948
+To: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
+ Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, 
+ David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
+ Andrzej Hajda <andrzej.hajda@intel.com>, 
+ Neil Armstrong <neil.armstrong@linaro.org>, Robert Foss <rfoss@kernel.org>, 
+ Laurent Pinchart <Laurent.pinchart@ideasonboard.com>, 
+ Jonas Karlman <jonas@kwiboo.se>, Jernej Skrabec <jernej.skrabec@gmail.com>, 
+ Inki Dae <inki.dae@samsung.com>, Jagan Teki <jagan@amarulasolutions.com>, 
+ Marek Szyprowski <m.szyprowski@samsung.com>, 
+ Jani Nikula <jani.nikula@linux.intel.com>, 
+ Dmitry Baryshkov <lumag@kernel.org>
+Cc: Hui Pu <Hui.Pu@gehealthcare.com>, 
+ Thomas Petazzoni <thomas.petazzoni@bootlin.com>, 
+ dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org, 
+ linux-sunxi@lists.linux.dev, Luca Ceresoli <luca.ceresoli@bootlin.com>, 
+ Kevin Hilman <khilman@baylibre.com>, Jerome Brunet <jbrunet@baylibre.com>, 
+ Martin Blumenstingl <martin.blumenstingl@googlemail.com>, 
+ linux-amlogic@lists.infradead.org
+X-Mailer: b4 0.14.2
+X-GND-State: clean
+X-GND-Score: -100
+X-GND-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtddvgddvfedvkecutefuodetggdotefrodftvfcurfhrohhfihhlvgemucfitefpfffkpdcuggftfghnshhusghstghrihgsvgenuceurghilhhouhhtmecufedtudenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujfgurhephffufffkgggtgffvvefosehtkeertdertdejnecuhfhrohhmpefnuhgtrgcuvegvrhgvshholhhiuceolhhutggrrdgtvghrvghsohhlihessghoohhtlhhinhdrtghomheqnecuggftrfgrthhtvghrnhepjeejhffgffelveehhfefudehtdeftdettdekgfekueeihedtieefudevjeffveegnecuffhomhgrihhnpehfrhgvvgguvghskhhtohhprdhorhhgpdhkvghrnhgvlhdrohhrghenucfkphepvdgrtddvmeeijedtmedvtddvtdemvggrtddumegsvgegudemleehvgejmeefgeefmeeludefvgenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepihhnvghtpedvrgdtvdemieejtdemvddtvddtmegvrgdtudemsggvgedumeelhegvjeemfeegfeemledufegvpdhhvghloheplgduledvrdduieekrddujeekrdejhegnpdhmrghilhhfrhhomheplhhutggrrdgtvghrvghsohhlihessghoohhtlhhinhdrtghomhdpnhgspghrtghpthhtohepvdeipdhrtghpthhtohepjhhonhgrsheskhifihgsohhordhsvgdprhgtphhtthhopehthhhomhgrshdrphgvthgriiiiohhnihessghoohhtlhhinhdrtghomhdprhgtp
+ hhtthhopehlihhnuhigqdhsuhhngihisehlihhsthhsrdhlihhnuhigrdguvghvpdhrtghpthhtohepmhdrshiihihprhhofihskhhisehsrghmshhunhhgrdgtohhmpdhrtghpthhtoheprhhfohhssheskhgvrhhnvghlrdhorhhgpdhrtghpthhtohepmhgrrghrthgvnhdrlhgrnhhkhhhorhhstheslhhinhhugidrihhnthgvlhdrtghomhdprhgtphhtthhopehkhhhilhhmrghnsegsrgihlhhisghrvgdrtghomhdprhgtphhtthhopehnvghilhdrrghrmhhsthhrohhngheslhhinhgrrhhordhorhhg
+X-GND-Sasl: luca.ceresoli@bootlin.com
 
-On Sun, Jun 22, 2025 at 09:52:58PM +0100, Jonathan McDowell wrote:
-> On Fri, Jun 20, 2025 at 06:08:31PM +0000, Orlov, Ivan wrote:
-> > The current implementation of timeout detection works in the following
-> > way:
-> > 
-> > 1. Read completion status. If completed, return the data
-> > 2. Sleep for some time (usleep_range)
-> > 3. Check for timeout using current jiffies value. Return an error if
-> >   timed out
-> > 4. Goto 1
-> > 
-> > usleep_range doesn't guarantee it's always going to wake up strictly in
-> > (min, max) range, so such a situation is possible:
-> > 
-> > 1. Driver reads completion status. No completion yet
-> > 2. Process sleeps indefinitely. In the meantime, TPM responds
-> > 3. We check for timeout without checking for the completion again.
-> >   Result is lost.
-> > 
-> > Such a situation also happens for the guest VMs: if vCPU goes to sleep
-> > and doesn't get scheduled for some time, the guest TPM driver will
-> > timeout instantly after waking up without checking for the completion
-> > (which may already be in place).
-> > 
-> > Perform the completion check once again after exiting the busy loop in
-> > order to give the device the last chance to send us some data.
-> > 
-> > Since now we check for completion in two places, extract this check into
-> > a separate function.
-> > 
-> > Signed-off-by: Ivan Orlov <iorlov@amazon.com>
-> > ---
-> > V1 -> V2:
-> > - Exclude the jiffies -> ktime change from the patch
-> > - Instead of recording the time before checking for completion, check
-> >  for completion once again after leaving the loop
-> > 
-> > drivers/char/tpm/tpm-interface.c | 17 +++++++++++++++--
-> > 1 file changed, 15 insertions(+), 2 deletions(-)
-> > 
-> > diff --git a/drivers/char/tpm/tpm-interface.c b/drivers/char/tpm/tpm-interface.c
-> > index 8d7e4da6ed53..6960ee2798e1 100644
-> > --- a/drivers/char/tpm/tpm-interface.c
-> > +++ b/drivers/char/tpm/tpm-interface.c
-> > @@ -82,6 +82,13 @@ static bool tpm_chip_req_canceled(struct tpm_chip *chip, u8 status)
-> > 	return chip->ops->req_canceled(chip, status);
-> > }
-> > 
-> > +static bool tpm_transmit_completed(struct tpm_chip *chip)
-> > +{
-> > +	u8 status_masked = tpm_chip_status(chip) & chip->ops->req_complete_mask;
-> > +
-> > +	return status_masked == chip->ops->req_complete_val;
-> > +}
-> > +
-> > static ssize_t tpm_try_transmit(struct tpm_chip *chip, void *buf, size_t bufsiz)
-> > {
-> > 	struct tpm_header *header = buf;
-> > @@ -129,8 +136,7 @@ static ssize_t tpm_try_transmit(struct tpm_chip *chip, void *buf, size_t bufsiz)
-> > 	stop = jiffies + tpm_calc_ordinal_duration(chip, ordinal);
-> > 	do {
-> > 		u8 status = tpm_chip_status(chip);
-> > -		if ((status & chip->ops->req_complete_mask) ==
-> > -		    chip->ops->req_complete_val)
-> > +		if (tpm_transmit_completed(chip))
-> > 			goto out_recv;
-> 
-> The only thing I'd point out here is we end up doing a double status read
-> one after the other (once here, once in tpm_transmit_completed), and I'm
-> pretty sure I've seen instances where that caused a problem.
+This series is the first attempt at avoiding DSI host drivers to have
+pointers to DSI devices (struct mipi_dsi_device), as discussed during the
+Linux Plumbers Conference 2024 with Maxime and Dmitry.
 
-It would be easy to to prevent at least double reads after completion
-e.g., in tpm_chip_status():
+It is working, but I consider this a draft in order to discuss and
+challenge the proposed approach.
 
-/*
- * Read the chip status bitmask. After completion, the returned will mask will
- * return value cached at the point of completion up until the next transmit.
- */
-static u8 tpm_chip_status(struct tpm_chip *chip)
-{
-	u8 status_masked = chip->status & chip->ops_req_complete_mask;
+Overall work
+============
 
-	if (status_masked == chip->ops->req_complete_val)
-		return chip->status;
+This is part of the work towards removal of bridges from a still existing
+DRM pipeline without use-after-free. The grand plan as discussed in [1].
+Here's the work breakdown (➜ marks the current series):
 
-	chip->status = tpm_chip_status(chip);
+ 1. … add refcounting to DRM bridges (struct drm_bridge)
+    (based on devm_drm_bridge_alloc() [0])
+    A. ✔ add new alloc API and refcounting (in v6.16-rc1)
+    B. ✔ convert all bridge drivers to new API (now in drm-misc-next)
+    C. ✔ kunit tests (now in drm-misc-next)
+    D. … add get/put to drm_bridge_add/remove() + attach/detach()
+         and warn on old allocation pattern (under review)
+    E. … add get/put on drm_bridge accessors
+       1. … drm_bridge_chain_get_first_bridge() + add a cleanup action
+       2. … drm_bridge_chain_get_last_bridge()
+       3. drm_bridge_get_prev_bridge()
+       4. drm_bridge_get_next_bridge()
+       5. drm_for_each_bridge_in_chain()
+       6. drm_bridge_connector_init
+       7. of_drm_find_bridge
+       8. drm_of_find_panel_or_bridge, *_of_get_bridge
+    F. debugfs improvements
+ 2. handle gracefully atomic updates during bridge removal
+ 3. ➜ avoid DSI host drivers to have dangling pointers to DSI devices
+      (this series)
+ 4. finish the hotplug bridge work, removing the "always-disconnected"
+    connector, moving code to the core and potentially removing the
+    hotplug-bridge itself (this needs to be clarified as points 1-3 are
+    developed)
 
-	return chip->status;
-}
+[0] https://gitlab.freedesktop.org/drm/misc/kernel/-/commit/0cc6aadd7fc1e629b715ea3d1ba537ef2da95eec
+[1] https://lore.kernel.org/lkml/20250206-hotplug-drm-bridge-v6-0-9d6f2c9c3058@bootlin.com/t/#u
 
-I think tpm_chip_status() should be the gatekeeper for such event, or
-like the correct layer of abstraction here ...
+Motivation
+==========
 
-Then just reset chip->status to zero at the beginning of tpm_try_transmit().
+The motivation for this series is that with hot-pluggable hardware a DSI
+device can be disconnected from the DSI host at runtime, and later on
+reconnected, potentially with a different model having different bus
+parameters.
 
-BR, Jarkko
+DSI host drivers currently receive a struct mipi_dsi_device pointer in the
+attach callback and some store it permanently for later access to the bur
+format data (lanes, channel, pixel format etc). The stored pointer can
+become dangling if the device is removed, leading to a use-after-free.
+
+Currently the data exchange between DSI host and device happens primarily
+by two means:
+
+ * the device requests attach, detach and message transfer to the host by
+   calling mipi_dsi_attach/detach/transfer which in turn call the callbacks
+   in struct mipi_dsi_host_ops
+    - for this to work, struct mipi_dsi_device has a pointer to the host:
+      this is OK because the goal is supporting hotplug of the "remote"
+      part of the DRM pipeline
+ * the host accesses directly the fields of struct mipi_dsi_device, to
+   which it receives a pointer in the .attach and .detach callbacks
+
+The second bullet is the problematic one, which we want to remove.
+
+Strategy
+========
+
+I devised two possible strategies to address it:
+
+ 1. change the host ops to not pass a struct mipi_dsi_device, but instead
+    to pass only a copy of the needed information (bus format mainly), so
+    the host driver does never access any info from the device
+    
+ 2. let the host get info from the device as needed, but without having a
+    pointer to it; this is be based on:
+     - storing a __private mipi_dsi_device pointer in struct mipi_dsi_host
+     - adding getters to the DSI core for the host to query the needed
+       info, e.g. drm_mipi_dsi_host_get_device_lanes(host) (the getters
+       would be allowed to dereference the device pointer)
+
+This series implements strategy 1. It does so by adding a .attach_new host
+op, which does not take a mipi_dsi_device pointer, and converting most host
+drivers to it. Once all drivers are converted, the old op can be removed,
+and .attach_new renamed to .attach.
+
+Limitations of this series
+==========================
+
+I could not convert a few drivers is an obvious way, due to the use they
+make of the device pointer. Those are not converted in this series (thus
+the "draft" status mentioned above). They are described in a dedicated
+section below.
+
+Also, this series only address the .attach op. if the approach is generally
+agreed I will proceed to .detach as well, which I estimate to be much
+easier.
+
+It is important to note that while the DSI bus specification allows
+connecting multiple devices to the same bus using different channels, none
+of the drivers in the current Linux kernel appears to support it, and this
+series does not try to fill that gap.
+
+Series layout
+=============
+
+The core of this work is in part 4 (adding .attach_new) and the driver
+conversion in part 5.
+
+The first two parts are generic cleanups that I deem generally a good
+improvement and can be applied independently. They are in the same series
+only to avoid patch conflicts. Part 3 is also quite orthogonal to the main
+topic of the series. 
+
+The above results in lots of patches and lots of files, so I had to trim
+the recipients list in order to send a series that is comprehensive enough
+to show the main idea. I'm OK with splitting it in smaller series if the
+principle is OK. It would be nice if these 3 parts could be applied quickly
+though, to shave the number of simple patches to maintain over iterations.
+
+ * Generic cleanup: add lane number check in the core
+
+     drm/mipi-dsi: add sanity check of lane number in mipi_dsi_attach()
+     drm/hisilicon/kirin: remove redundant lanes number check
+     drm/bridge: nwl-dsi: remove redundant lanes number check
+     drm/mcde: remove redundant lanes number check
+
+ * Generic cleanup: move attach/detach logging to the core
+
+     drm/mipi-dsi: log DSI device attach and detach
+     drm/bridge: samsung-dsim: remove redundant logging
+     drm/bridge: nwl-dsi: remove redundant logging
+     drm/bridge: cdns-dsi: remove redundant logging
+     drm/mcde: remove redundant logging
+     drm/sun4i: dsi: remove redundant logging
+
+ * Remove some one-fo-a-kind mipi_dsi_device dereferences
+ 
+     drm/bridge: synopsys/dsi2: remove DSI device pointer from private callbacks
+     [RFC!] drm/meson: dsi: remove unneeded DSI device check
+
+ * Introduce .attach_new host op
+ 
+     drm/mipi-dsi: move format define above
+     drm/mipi-dsi: add .attach_new to mipi_dsi_host_ops
+
+ * Convert most drivers to attach_new (in increasing order of complexity)
+
+     drm: adp: mipi: convert to the .attach_new op
+     drm/kmb: dsi: convert to the .attach_new op
+     drm/i915/dsi: convert to the .attach_new op
+     drm/hisilicon/kirin: convert to the .attach_new op
+     drm/bridge: synopsys/dsi2: convert to the .attach_new op
+     drm/msm/dsi: convert to the .attach_new op
+     drm/rcar-du: dsi: convert to the .attach_new op
+     drm: renesas: rz-du: rzg2l_mipi_dsi: convert to the .attach_new op
+     drm/vc4: dsi: convert to the .attach_new op
+     drm/mediatek: dsi: convert to the .attach_new op
+     drm/bridge: nwl-dsi: convert to the .attach_new op
+     drm/bridge: cdns-dsi: convert to the .attach_new op
+     drm/bridge: tc358768: convert to the .attach_new op
+     drm/sprd: convert to the .attach_new op
+     drm/bridge: synopsys: dw-mipi-dsi: convert to the .attach_new op
+     drm/mcde: store a pointer to mipi_dsi_host to perform TE requests
+     drm/mcde: use the DSI host pointer in mcde_dsi_irq
+     drm/mcde: convert to the .attach_new op
+
+Problematic cases, not yet converted
+====================================
+
+Drivers requesting an IRQ in command mode
+-----------------------------------------
+
+Two host drivers register an IRQ when in DSI command mode, both using
+mipi_dsi_device.dev to get the TE GPIO.
+
+ * samsung-dsim.c (samsung_dsim_host_attach), which has an interesting
+   comment saying this should be changed:
+   
+ 	/*
+ 	 * This is a temporary solution and should be made by more generic way.
+ 	 *
+ 	 * If attached panel device is for command mode one, dsi should register
+ 	 * TE interrupt handler.
+ 	 */
+ 	if (!(device->mode_flags & MIPI_DSI_MODE_VIDEO)) {
+		ret = samsung_dsim_register_te_irq(dsi, &device->dev);
+
+ * omapdrm/dss/dsi.c (omap_dsi_host_attach), doing similarly but without
+   comments:
+ 
+ 	if (client->mode_flags & MIPI_DSI_MODE_VIDEO) {
+ 		dsi->mode = OMAP_DSS_DSI_VIDEO_MODE;
+ 	} else {
+		r = omap_dsi_register_te_irq(dsi, client);
+
+Maybe this could be handled by the core?
+
+Drivers looking for a panel
+---------------------------
+
+Two host drivers use mipi_dsi_device->dev.of_node to look up a panel via
+of_drm_find_panel() in .attach:
+
+ * sun6i_mipi_dsi.c (sun6i_dsi_attach):
+ 
+ 	struct sun6i_dsi *dsi = host_to_sun6i_dsi(host);
+	struct drm_panel *panel = of_drm_find_panel(device->dev.of_node);
+
+ * tegra/dsi.c, which additionally does some checks in .detach:
+ 
+    - tegra_dsi_host_attach:
+
+ 	if (!dsi->master) {
+ 		struct tegra_output *output = &dsi->output;
+ 
+		output->panel = of_drm_find_panel(device->dev.of_node);
+ 		if (IS_ERR(output->panel))
+ 			output->panel = NULL;
+		...	
+ 	}
+	
+    - tegra_dsi_host_detach -- not sure this check is really needed,
+      similarly to patch "[RFC!] drm/meson: dsi: remove unneeded DSI device
+      check" in this series:
+
+ 	struct tegra_dsi *dsi = host_to_tegra(host);
+ 	struct tegra_output *output = &dsi->output;
+ 
+	if (output->panel && &device->dev == output->panel->dev) {
+ 		output->panel = NULL;
+ 
+ 		if (output->connector.dev)
+ 			drm_helper_hpd_irq_event(output->connector.dev);
+ 	}
+
+Anusha, Maxime, do you think the ongoing work on panel lifetime and the
+panel_bridge can interact with this? DO you see any short-term soliution
+while that progresses?
+
+Best regards,
+Luca
+
+Signed-off-by: Luca Ceresoli <luca.ceresoli@bootlin.com>
+---
+Luca Ceresoli (32):
+      drm/mipi-dsi: add sanity check of lane number in mipi_dsi_attach()
+      drm/hisilicon/kirin: remove redundant lanes number check
+      drm/bridge: nwl-dsi: remove redundant lanes number check
+      drm/mcde: remove redundant lanes number check
+      drm/mipi-dsi: log DSI device attach and detach
+      drm/bridge: samsung-dsim: remove redundant logging
+      drm/bridge: nwl-dsi: remove redundant logging
+      drm/bridge: cdns-dsi: remove redundant logging
+      drm/mcde: remove redundant logging
+      drm/sun4i: dsi: remove redundant logging
+      drm/bridge: synopsys/dsi2: remove DSI device pointer from private callbacks
+      [RFC] drm/meson: dsi: remove unneeded DSI device check
+      drm/mipi-dsi: move format define above
+      drm/mipi-dsi: add .attach_new to mipi_dsi_host_ops
+      drm: adp: mipi: convert to the .attach_new op
+      drm/kmb: dsi: convert to the .attach_new op
+      drm/i915/dsi: convert to the .attach_new op
+      drm/hisilicon/kirin: convert to the .attach_new op
+      drm/bridge: synopsys/dsi2: convert to the .attach_new op
+      drm/msm/dsi: convert to the .attach_new op
+      drm/rcar-du: dsi: convert to the .attach_new op
+      drm: renesas: rz-du: rzg2l_mipi_dsi: convert to the .attach_new op
+      drm/vc4: dsi: convert to the .attach_new op
+      drm/mediatek: dsi: convert to the .attach_new op
+      drm/bridge: nwl-dsi: convert to the .attach_new op
+      drm/bridge: cdns-dsi: convert to the .attach_new op
+      drm/bridge: tc358768: convert to the .attach_new op
+      drm/sprd: convert to the .attach_new op
+      drm/bridge: synopsys: dw-mipi-dsi: convert to the .attach_new op
+      drm/mcde: store a pointer to mipi_dsi_host to perform TE requests
+      drm/mcde: use the DSI host pointer in mcde_dsi_irq
+      drm/mcde: convert to the .attach_new op
+
+ drivers/gpu/drm/adp/adp-mipi.c                   |   4 +-
+ drivers/gpu/drm/bridge/cadence/cdns-dsi-core.c   |  66 +++++++-------
+ drivers/gpu/drm/bridge/cadence/cdns-dsi-core.h   |   2 +-
+ drivers/gpu/drm/bridge/imx/imx93-mipi-dsi.c      |   4 +-
+ drivers/gpu/drm/bridge/nwl-dsi.c                 |  16 ++--
+ drivers/gpu/drm/bridge/samsung-dsim.c            |   5 --
+ drivers/gpu/drm/bridge/synopsys/dw-mipi-dsi.c    |  18 ++--
+ drivers/gpu/drm/bridge/synopsys/dw-mipi-dsi2.c   |  20 ++---
+ drivers/gpu/drm/bridge/tc358768.c                |  40 ++++-----
+ drivers/gpu/drm/drm_mipi_dsi.c                   |  38 +++++++-
+ drivers/gpu/drm/hisilicon/kirin/dw_drm_dsi.c     |  12 +--
+ drivers/gpu/drm/i915/display/icl_dsi.c           |   4 +-
+ drivers/gpu/drm/i915/display/vlv_dsi.c           |   4 +-
+ drivers/gpu/drm/kmb/kmb_dsi.c                    |   4 +-
+ drivers/gpu/drm/mcde/mcde_display.c              |  18 ++--
+ drivers/gpu/drm/mcde/mcde_drm.h                  |   8 +-
+ drivers/gpu/drm/mcde/mcde_dsi.c                  |  97 ++++++++++-----------
+ drivers/gpu/drm/mediatek/mtk_dsi.c               |  10 +--
+ drivers/gpu/drm/meson/meson_dw_mipi_dsi.c        |  21 ++---
+ drivers/gpu/drm/msm/dsi/dsi_host.c               |  18 ++--
+ drivers/gpu/drm/renesas/rcar-du/rcar_mipi_dsi.c  |  10 +--
+ drivers/gpu/drm/renesas/rz-du/rzg2l_mipi_dsi.c   |  18 ++--
+ drivers/gpu/drm/rockchip/dw-mipi-dsi-rockchip.c  |   2 +-
+ drivers/gpu/drm/rockchip/dw-mipi-dsi2-rockchip.c |   6 +-
+ drivers/gpu/drm/sprd/megacores_pll.c             |   2 +-
+ drivers/gpu/drm/sprd/sprd_dpu.c                  |   2 +-
+ drivers/gpu/drm/sprd/sprd_dsi.c                  |  28 +++---
+ drivers/gpu/drm/sprd/sprd_dsi.h                  |   2 +-
+ drivers/gpu/drm/sun4i/sun6i_mipi_dsi.c           |   2 -
+ drivers/gpu/drm/vc4/vc4_dsi.c                    |  12 +--
+ include/drm/bridge/dw_mipi_dsi.h                 |   3 +-
+ include/drm/bridge/dw_mipi_dsi2.h                |   6 +-
+ include/drm/drm_mipi_dsi.h                       | 105 ++++++++++++++---------
+ 33 files changed, 320 insertions(+), 287 deletions(-)
+---
+base-commit: 1174bf15bd601f17556f721798cd9183e169549a
+change-id: 20250625-drm-dsi-host-no-device-ptr-255f8fd00948
+
+Best regards,
+-- 
+Luca Ceresoli <luca.ceresoli@bootlin.com>
+
 
