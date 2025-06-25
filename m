@@ -1,82 +1,91 @@
-Return-Path: <linux-kernel+bounces-703402-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-703397-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id AD5FEAE8FA1
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Jun 2025 22:43:16 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7D32DAE8F91
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Jun 2025 22:34:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 931207A9871
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Jun 2025 20:41:52 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 403FF3A8757
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Jun 2025 20:33:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2E3F42DCC0C;
-	Wed, 25 Jun 2025 20:43:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 748A82DCC07;
+	Wed, 25 Jun 2025 20:33:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=os.amperecomputing.com header.i=@os.amperecomputing.com header.b="FQEEonD6"
-Received: from NAM04-MW2-obe.outbound.protection.outlook.com (mail-mw2nam04on2118.outbound.protection.outlook.com [40.107.101.118])
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="ObtTifYs"
+Received: from NAM04-MW2-obe.outbound.protection.outlook.com (mail-mw2nam04on2067.outbound.protection.outlook.com [40.107.101.67])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 05DC020E031;
-	Wed, 25 Jun 2025 20:43:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.101.118
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DD4BB20296C;
+	Wed, 25 Jun 2025 20:33:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.101.67
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750884186; cv=fail; b=F7BNj0yTuZHxTpJQ9UAGHujZXItbaZkqBydVj4adSnhHDYpV61VMdXHa8I2Qeq820kepdU4EMvyLXPAWpq9ModRyDwYoyYVR8hQlmH5i8MWPRyNQy8SdaPkeIr0bpC97Z8fNsnAhzPksAwRHf4ygvp7OMRR1ShKJFwSz0dtwASY=
+	t=1750883633; cv=fail; b=YB7VtxvE+d5ZqbJOdAu7Mprjre0/niTif5SYyiSKOny+HU8DmF55Mdo//Ql75SP0WgFHgHofO2pRaCJXWjNykdzCJD3khrWkKK/QeoAlnvFuKwt+1pobYLPv6I+1VE018tPS9zUYfdq+3Ve3HoHJdY9dJ6wRT6829AjWoEzOOFo=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750884186; c=relaxed/simple;
-	bh=IgGIU3rg2sYhRNu6SaB8dPR82MdNrwuRzGHKF79EWdY=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 Content-Type:MIME-Version; b=VGWkWA2011ZICVLMiSQOUAz1uqFe6T8Eq7v7jWblMy8va4YJlM09hTGONQptVjntq7FpjFj6J+bIVpLRUtJ0T3irXnIRmUrQ6RqOmFnp8YOwA7X+isOVYvRalXUM8zAEaxzXiFQGlNTcZwgcbWZsN75YlLT3DpeOln7IsPHmpFA=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=os.amperecomputing.com; spf=pass smtp.mailfrom=os.amperecomputing.com; dkim=pass (1024-bit key) header.d=os.amperecomputing.com header.i=@os.amperecomputing.com header.b=FQEEonD6; arc=fail smtp.client-ip=40.107.101.118
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=os.amperecomputing.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=os.amperecomputing.com
+	s=arc-20240116; t=1750883633; c=relaxed/simple;
+	bh=U3r8I/p86HKWeJ3XnolhN9xd5tC+nuO4E9o8cZ2+oW0=;
+	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=MR9rs4lcsU69r4GTt0he70hLAslz/I9WAAjm8sTIgBw6NAe/6aL7qNNLNvLgkwSSoVMlZ2ta/csXe4XJNzwqTtSr5mu+uVpGblevCdx5rYslJinp5F3Z77rql5ZtrIRAAAt6HZ+3IncrZ+AqxRroJKhi3pYb0yhNkSpRCWLNAD0=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=ObtTifYs; arc=fail smtp.client-ip=40.107.101.67
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=uFyzZL+eP/Bpgu9/6MPlLJgq+Wx3Uu6P4BKGoawaD6lC60ns40hP1L3VVAcaA3FidY9W5DjTVu568j4TOtNjoHbAY0TMOw1TfkJT5vUoVTvYnkrrjqwkzPeq6v7e4p5aV9tndqpewegoLZjNGTeQp4YhNBa4H0jk0ARn4SjsJ//+Jxw+/4DtObZx+0BjgZLVijaDtyOtYNBFxyTBQpp0YbgQmi0pXeZoW6vtOQrDqyoOIctAWQ/WBZ9FOwHdqWaVZjyPuZwIMWUjNNYr6kwpjxlD9UlHGtDH2CdhtFpezUKD9lzkYM6A5zi8nhcSel31WoLyEWSo6BwTXYnSO9UKcg==
+ b=po1hLx3ZxqstPf7bvARwvx2Ol9Bg/kz2yX2IcYj3y4SgH7XB+6D/zMpRUUt+/mnEGe2KGLCUtfItxrlGXTqt/y2vtnKuIPlgBwFDleY/1ZqeQbfT3lOHbKAlL6Bq2QNvwd8EBfsuPt/Cg0VtC2QWcI6+BJtwjXzTAynIcoWKVSf4WGrQ5H4t3bmBMjCEUw3mDtkQV82Tile/ZIRszcejgHRhFvX+ZdWf7gScjwrcHzsM4jSUQU4YbARcrJ2BR2FszNqcvNn/O5HZrqAL5fyIQGwMVKLxUpqb9I/c+3wp5Hahgotf4PIc1HZ41kpBuNibnPT9K6XII8EYcla5NL/Z0w==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=2Ji/Q+Cl2MhmQnfxQowgBH5dHffmLJ/MyVx1UdBSfW8=;
- b=PSV1Q7TKWKhVFyKDh7uVCdptigFjvz7VtifBWOJFGG6Gnbv76Hfs+sUPgYe7EX4ZOK0nFAK29QaVJ5aTGC0A3f7ut3KTjJuB8wlS+twQNwa4x7J+mB4BACiOtqem8GaJdzBfZuVyy03lPEoQ1eihAt8tN5R8v9OttF9iftu54XNA9yu8rlmxjCdOup7zsKUS7aoNAAeN4Y1m0PPgVi2X9Uj86gFi6FTdMra1hI7DsELrjH6/M5ACXHZZPPdnH1wmtZ9eaiNe41f3Hv4Spz5hrZh4lgbL2TV8Q2uTfeqsRcI/0CMafVVp4tn95/jNm/fV/NGLZcMl/G0K0ogKpGyKAQ==
+ bh=XS8hZ8J0shrpOkqXZDCmReWiqJnzbvjz/v8ZFucOBwA=;
+ b=gZ/eXpIVh+7LJDGt6nJOgn/MVYUPJxMvmJlVdFHjw+Pmht8/c3dkNBTcal5i+GL3muU+A1cQ/fhSwKf7erINC5+zsFqQuA4CjA1fPFZ63bPl8OgXpYBWJwA0F1aiC4Bt6dNcg+k9NSCkoe0Amp5i/cbv6q39XcrWweBMJ+qwa/mISQRrLzgG2rTCsp1JNk10/CEeAzFdEglDPguHqGuf5SgEBIbZObNJnOszElAJTW3xdwxuUdKFvuRSeMadGHnsLeF3xQd4yeHAalNbEkTuHkaOFo5OOIDrt7VEftI6q1fhivwgjUlhmrEaElaPrPu4ljBAM/YX3x4Z9Io6X1jfsA==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=os.amperecomputing.com; dmarc=pass action=none
- header.from=os.amperecomputing.com; dkim=pass
- header.d=os.amperecomputing.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=os.amperecomputing.com; s=selector2;
+ smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
+ header.d=amd.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=2Ji/Q+Cl2MhmQnfxQowgBH5dHffmLJ/MyVx1UdBSfW8=;
- b=FQEEonD6Z1T1hEO9124LpX9F3hygdChCrdUuSZpHn3gJULPFfYkC7WFJRVFJ4HeLut9zecZcP/z+zGcp1L39P76HxNUpCnHrdel4i2/5UHcrKFzu56cwU9GVEXI7Vm3FQ0nsMuH955Hz1lbAv3CjEHI2hZ+EsMbkGTliIBtfXg8=
+ bh=XS8hZ8J0shrpOkqXZDCmReWiqJnzbvjz/v8ZFucOBwA=;
+ b=ObtTifYsZ1ZpYJv/rpWzVjV8siIAaKP+vn0QWU3KVMRSjM2s3PEQktUM3he/69+O8cSxeOAVazSpDhwhxkv6I3v1fNcPn4VHWaQ4rd1g+XGzS/n+Suh10P1qZAoo4BiEXJ8v49sc4syqDepnLnnOWt9gj2Wq0w78o9oOmwlTIq4=
 Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=os.amperecomputing.com;
-Received: from LV2PR01MB7792.prod.exchangelabs.com (2603:10b6:408:14f::10) by
- PH0PR01MB7927.prod.exchangelabs.com (2603:10b6:510:289::20) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.8857.28; Wed, 25 Jun 2025 20:43:00 +0000
-Received: from LV2PR01MB7792.prod.exchangelabs.com
- ([fe80::2349:ebe6:2948:adb9]) by LV2PR01MB7792.prod.exchangelabs.com
- ([fe80::2349:ebe6:2948:adb9%4]) with mapi id 15.20.8880.015; Wed, 25 Jun 2025
- 20:42:58 +0000
-From: D Scott Phillips <scott@os.amperecomputing.com>
-To: Ilpo =?utf-8?Q?J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
-Cc: Bjorn Helgaas <bhelgaas@google.com>, linux-pci@vger.kernel.org,
- =?utf-8?Q?Micha=C5=82?=
- Winiarski <michal.winiarski@intel.com>, Igor Mammedov
- <imammedo@redhat.com>, LKML <linux-kernel@vger.kernel.org>, Mika
- Westerberg <mika.westerberg@linux.intel.com>
-Subject: Re: [PATCH 24/25] PCI: Perform reset_resource() and build fail list
- in sync
-In-Reply-To: <e20e3171-7aa5-0646-7934-e6b10cdefc4e@linux.intel.com>
-References: <20241216175632.4175-1-ilpo.jarvinen@linux.intel.com>
- <20241216175632.4175-25-ilpo.jarvinen@linux.intel.com>
- <86plf0lgit.fsf@scott-ph-mail.amperecomputing.com>
- <e20e3171-7aa5-0646-7934-e6b10cdefc4e@linux.intel.com>
-Date: Wed, 25 Jun 2025 13:33:20 -0700
-Message-ID: <86ms9vlfxr.fsf@scott-ph-mail.amperecomputing.com>
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
-X-ClientProxiedBy: MW4PR02CA0001.namprd02.prod.outlook.com
- (2603:10b6:303:16d::21) To LV2PR01MB7792.prod.exchangelabs.com
- (2603:10b6:408:14f::10)
+ header.d=none;dmarc=none action=none header.from=amd.com;
+Received: from MW3PR12MB4553.namprd12.prod.outlook.com (2603:10b6:303:2c::19)
+ by IA0PPFDC28CEE69.namprd12.prod.outlook.com (2603:10b6:20f:fc04::be8) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8835.26; Wed, 25 Jun
+ 2025 20:33:47 +0000
+Received: from MW3PR12MB4553.namprd12.prod.outlook.com
+ ([fe80::b0ef:2936:fec1:3a87]) by MW3PR12MB4553.namprd12.prod.outlook.com
+ ([fe80::b0ef:2936:fec1:3a87%7]) with mapi id 15.20.8857.026; Wed, 25 Jun 2025
+ 20:33:47 +0000
+Message-ID: <48d8a630-0d77-45b1-8951-6dd62185953d@amd.com>
+Date: Wed, 25 Jun 2025 15:33:42 -0500
+User-Agent: Mozilla Thunderbird
+Reply-To: babu.moger@amd.com
+Subject: Re: [PATCH v14 12/32] fs/resctrl: Introduce interface to display
+ number of assignable counter IDs
+To: Reinette Chatre <reinette.chatre@intel.com>, corbet@lwn.net,
+ tony.luck@intel.com, Dave.Martin@arm.com, james.morse@arm.com,
+ tglx@linutronix.de, mingo@redhat.com, bp@alien8.de,
+ dave.hansen@linux.intel.com
+Cc: x86@kernel.org, hpa@zytor.com, akpm@linux-foundation.org,
+ rostedt@goodmis.org, paulmck@kernel.org, thuth@redhat.com, ardb@kernel.org,
+ gregkh@linuxfoundation.org, seanjc@google.com, thomas.lendacky@amd.com,
+ pawan.kumar.gupta@linux.intel.com, manali.shukla@amd.com,
+ perry.yuan@amd.com, kai.huang@intel.com, peterz@infradead.org,
+ xiaoyao.li@intel.com, kan.liang@linux.intel.com, mario.limonciello@amd.com,
+ xin3.li@intel.com, gautham.shenoy@amd.com, xin@zytor.com,
+ chang.seok.bae@intel.com, fenghuay@nvidia.com, peternewman@google.com,
+ maciej.wieczor-retman@intel.com, eranian@google.com,
+ linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <cover.1749848714.git.babu.moger@amd.com>
+ <4ad1bac79c6100d347e333b9781b1c76196326fd.1749848715.git.babu.moger@amd.com>
+ <84b53541-ce7b-4634-86df-bc0ac9ca4e16@intel.com>
+Content-Language: en-US
+From: "Moger, Babu" <babu.moger@amd.com>
+In-Reply-To: <84b53541-ce7b-4634-86df-bc0ac9ca4e16@intel.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: SA9P221CA0020.NAMP221.PROD.OUTLOOK.COM
+ (2603:10b6:806:25::25) To MW3PR12MB4553.namprd12.prod.outlook.com
+ (2603:10b6:303:2c::19)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -84,386 +93,242 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: LV2PR01MB7792:EE_|PH0PR01MB7927:EE_
-X-MS-Office365-Filtering-Correlation-Id: 04191941-0e12-409c-ed50-08ddb428dec7
+X-MS-TrafficTypeDiagnostic: MW3PR12MB4553:EE_|IA0PPFDC28CEE69:EE_
+X-MS-Office365-Filtering-Correlation-Id: 3fd8344d-ddae-4da4-2705-08ddb427960d
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|1800799024|366016|376014|52116014|38350700014|7053199007;
+X-Microsoft-Antispam: BCL:0;ARA:13230040|7416014|376014|1800799024|366016;
 X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?L0FuOElMTXJjaFQrYkcyblU3ZlFjS3JkcDlpc0M0RUduMkRtbEUwL2dBRUxY?=
- =?utf-8?B?VGYxM0NTTERCdEdiSnJjODBIL3FiUTFVaS9OcUVhdlJYcVJVK0t3RHdJUk5S?=
- =?utf-8?B?NUEreFB1QnhCSmxlZ2lySDZaaU9ZOHMwa0ZFeVFKQ2JkdmZzZklpZzcyd3Zt?=
- =?utf-8?B?OWxXNkNORC9yQWZORnZmL2FLM0ZmU3MzZ0FnM3NQVjF3akkvSURoanBqSlM3?=
- =?utf-8?B?eFRvTWhzMEhiWWgrbVlYSDN3ejAxYm1wdG5HRFdJdTVTT2Zkc1BmWVp3TWFz?=
- =?utf-8?B?cmx3NjMxUGRZMEZrdjZic0MxK3drbU9RRlU0V3A5NW0vUWlZWmVaWGFhejE5?=
- =?utf-8?B?TmtmTXVSbHhONW12bWhGWkRZYUtxY0tRODJGZVQxTWVsYVp3ZmszZGxKMjVQ?=
- =?utf-8?B?YXc5ZllPZzhXcVhIek9YRk9pbThNWnIyc2Jmb2V0cG5RQS9HUDVzZTJrSVFx?=
- =?utf-8?B?aFVrZFJmUUs3VmM4T1hsSXR4L1JBOEU5WGV2eDdMbDFSQlBEdWpzc3o1KzlJ?=
- =?utf-8?B?ejNZNVF5dnNoU1VvU2lPY0FKU3NFOThrM0hjbE9iWk1PSzFVYnZobFNKTE1O?=
- =?utf-8?B?N1MwV2xtZ3ZaWGxqRnJodDQxUGF4dEpkU1B4OXlRdzNkNzZDeVhMZ1JIZHpL?=
- =?utf-8?B?UjZQeTdQZmFxSEVKZ2dQY3NFK09HbU81ZjQ4bFpTTHlxZEtncGtUUzEzUFdV?=
- =?utf-8?B?Ymp5em1iaDh2eVBpdmxlc01WNzhZc0wxdmZ5Q1dmc2NWVytZUHZvbUJxWmhk?=
- =?utf-8?B?M3B5d05aYm9qR1BXWHptbWNNL1liMmR4T28wTnpmcmFtamFjNVVhV2VhdUdt?=
- =?utf-8?B?dkxvSlFzRHZMUHVlZU1aNFRocVo4L0dQbEtnT2xHMHh3Y054bWN2dG9VeWpp?=
- =?utf-8?B?MkN5Z1pYMGRSU2FnZWF6YW9HUjdvV1dycThBdlJOalJxNmp0VDNiQzZLMFow?=
- =?utf-8?B?WlJnS0J3MFUwRUpYZjFKUkk2TW8zUnBBWm5URlBPeGRvNHhpcUdranlOZjhv?=
- =?utf-8?B?c0pkNEYxd1YxQi9sSXBnWEZNK0w5VVBJQ1lseHdIUTlFSHRSKzhjOS9OWmpl?=
- =?utf-8?B?bm4wWDFZUjRVU3JvazQ4WEJ5NkJkTWJVVU1jclVRdGs4eVRRVVlaQ2g1WTli?=
- =?utf-8?B?NTk4SXhhTmszRWdVNkVNVWlxVFZVaSttMVdLc0gxQUg4OHUxVEF2eFpUQVJU?=
- =?utf-8?B?OGYvUDJrLzFqb0JNWTJPMStpaCtTTHI1RjVtazlXRDJXQTAzc0J0QU1xbktx?=
- =?utf-8?B?M29rWlJyYmlYdmRiTmJFbkdNS3lreCs3T28yUnFjZEVQdXdiQ2JNczhZS3VF?=
- =?utf-8?B?YkVuczltK2grUVhCc1Q1TWgwcXJyWGx6d2lIR3BVVmVIeXZBMHlINjZBaGtP?=
- =?utf-8?B?eWplaUNZMk1ndzI2NFJuemlMbXFzbGlPNUFtRjN3K1JEVWI4RjZ2Um5CUytZ?=
- =?utf-8?B?cmxyWkNDSkhqMGxWd0ErV2pYSE5mL2VjMURkbm5NOEdVd2N5YytQTHVmd1NG?=
- =?utf-8?B?NzZUQVkyTXVTcGp3cXhjOXZPdU5Cc1dEc2t2VEhDSUwvWUdSRHBqcWFFSlMy?=
- =?utf-8?B?YTlCMEtBbENRRkhiQmhXdVZrR2o4NU1uZlkxRW1XSytIa09sSkRERGZzbUZv?=
- =?utf-8?B?eUlBbC8veFlycnZKck5QTnBvMWV1OWhKb3JoK2lTSWxWQWJtNTVuNVl6anRl?=
- =?utf-8?B?WXJUWW5FcTFENHBwRExqengyRFBVRC9rZkMzcTZXcmUvUDM1cm1sUW9Nd2F2?=
- =?utf-8?B?d3N4LzRSVWs0ZXJDVTZJTHp2SGNFUHdLS05zem1Mb250dkpWUE94cHF1RTl2?=
- =?utf-8?B?eUNpdW14MUJIT3VaR2VUSE95SEpZYzlkYTNmbklBb2dLZkltNXpSTmY4ZzRK?=
- =?utf-8?B?eGhWMCs0Rm5JR1hpWE03S1JaWWJuSzlVOGdjNENvN2dINm5YeUxuM0ZYbkJW?=
- =?utf-8?B?L2R5OFRUT0pucDNaT2l1UFJBbGNQcW1pY1pLcDlXYnBYOUhPclIvbkZkMHZu?=
- =?utf-8?Q?hXgKmCen6ccDevkSc0Wru0XqYavNKI=3D?=
+	=?utf-8?B?VGZPQlNkZU9jdHN1VFVHdUZxNzYvM29MbW80d3ZQaFR1MjcrWmVCdTlqV2sv?=
+ =?utf-8?B?RVJ0NnFhbjluUlIrWjBSek11dEdpWFJsQUdaNU9JdDk3cjNhMXFuWjhkdzkz?=
+ =?utf-8?B?UFc5bjRXS2xZOXdHZm16QTl5WlhjdzlKNTFEdmZiSnhuVXdtNUVVYnVDRXpN?=
+ =?utf-8?B?ZWwwODFLSWpPWWJOQUNUVjRuTmljbmRqWit5Rk9PdER2NSt5aDM0Zkw4NmtP?=
+ =?utf-8?B?MVY2a0ZPT0pDS3ZnWldEc2xMN05vVnl0YWRRYll5OUJiVEhwc2RxS3l2RnZs?=
+ =?utf-8?B?OTR1SzJyaWxoT2Z4RzlyMzRKU3IvMHJKWGxjN1RSL1VjSGxwNGh0MWVBbmVT?=
+ =?utf-8?B?NUhtVkh6OUNZSDZ0cW1FYXN1UHQ5WldwTEdwYlRkcE80VXNUUnFrdy9lSUN5?=
+ =?utf-8?B?MURUbm4wUSs3anYzbml0ZkVFcGVZR09PWmJ1Ny9nekt1dE5ZKzNEVEZjNmlO?=
+ =?utf-8?B?SE5TN0piU3lqRVlQMTgzVy9OTUJkS2lVR3haRnpsSG1Ec081elVVeHY2Ymcz?=
+ =?utf-8?B?QlIxdGg3SEx2LzdmWnE5bGdOTzZxM3o4cjVqcTdJUFZOeCtRVmVlY2E5WCtQ?=
+ =?utf-8?B?a0NPbHBuQlBnMnp0OFFPNThwTktyVDM0YjBadzFINzU5RUtiRUR0cUs5YzZx?=
+ =?utf-8?B?eXVicXNXWkREdVN6ckkyVzAxOU80aVRSRzRaYmZnUjh1bXpvZzM0WC9kMmpz?=
+ =?utf-8?B?VUIxM1pWRXJSTVN6MjFZem1HR1J0UXM5ZGYyS0RtOHQ2eDdsbU15YmJFWW0x?=
+ =?utf-8?B?a0JFYjlJUzVLajBranJSTU1iUzcyYTFBWVBUajEvcnFSTlJreW9iMXQvWEk5?=
+ =?utf-8?B?dXNaeHJqT3JEQ0hReE81M0Y3bngwUmtMVUpxRUJkeWR6YlhhWVZqeVAyWHBE?=
+ =?utf-8?B?NGlpczNRL09WVHNGdzJJa1pJSUNPamE4bG1TbTdtT3ArdnNPN3FHMzhta09l?=
+ =?utf-8?B?S1RCTGdPaXpYbVkyL0NMeXc4a0tuUXJmMWt0RzkwUDZ5MGk0akpwRVZSOG9o?=
+ =?utf-8?B?dGorUTZDaFU5dERSSXlKYzVZaTdBWUV6YjFOWnIvNng3ZjRqTlFjQWVnS1dP?=
+ =?utf-8?B?ckJJVU1pS3dkRlNvaVRSaTdnd0F6OXBxNXY0YjlvaE4yUEV3TUdEM3phU2FP?=
+ =?utf-8?B?YytDd3BLOGhLdkFMTHc2QkQvZm5rWDBXeUx3SCs0U09ZK3A1NkxUTDRFTkNR?=
+ =?utf-8?B?UmtRb292MkdoYVdTaGR1RHB2VEtXd0c1d3AwVFQzSVdhZ3hiY2hTOVJFZm9n?=
+ =?utf-8?B?eExPbFRPYU9MZS9WOExpZjFKVWVZM0Fobm9JVThGc1U1VTdoUytBVGpHOEdV?=
+ =?utf-8?B?dUtWTHhCRnhzU0J5OC9vK01WRzJGUXBiakJFUWF3WFJLM1BuYmRKSjlRSitG?=
+ =?utf-8?B?Rm9hOUFJT0QybkU0dGo3MHV1RUl5YUhITjI3R0VHRk80NkIzeStrOWtkMWVh?=
+ =?utf-8?B?ZE9XSmFQZ29ESWh3VjZLaWlGeVNVSkNpRmE1V3V2YUI3ODhLbEozbDcwcjJr?=
+ =?utf-8?B?NmJIRytvT01WZExseThkRjc0cGJ1SlB0dkpGYzRhMHFoeW50S0xNUFJPYzlO?=
+ =?utf-8?B?MlpIUHl2Z2NHMzY4RGFvM0JldWlUYXJadnZOaUVDWlZkUHVOVTRrVlpkR1Nr?=
+ =?utf-8?B?WXE3QUVBMUk5aUhwMTd0ejNhRWlmRW9WQ2ZVVjFJclgxa2JjTzFyTktHenRF?=
+ =?utf-8?B?bFV5VDlGUjd2Z0ZDTFJkeVdqYlpZbm94KzFsTHJxdW5RTEZ6L2xsRUNHMjhy?=
+ =?utf-8?B?aEhZZGxseG1YZjNZTTlTWGxHNi9QREtvdEFpVG8yZy85WnFEKzhEVnRSNXdk?=
+ =?utf-8?B?eGdQb2lpSDk1a3NEMHlsWGk1VzgzZEJWTGR2K3hUVWVpbFhHc1kzdmU2U0NH?=
+ =?utf-8?B?TzhEdGVDdXRmejllVFBwZWpDNjdMQnBZSE80bStQZUpIb1lGREkvdTUrZTZG?=
+ =?utf-8?Q?iO0T8cPaL9o=3D?=
 X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:LV2PR01MB7792.prod.exchangelabs.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(376014)(52116014)(38350700014)(7053199007);DIR:OUT;SFP:1102;
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:MW3PR12MB4553.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(7416014)(376014)(1800799024)(366016);DIR:OUT;SFP:1101;
 X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
 X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?di8zQSt6dUFwaGFXR3J1djN2UVM3YjM5N3RoUDZsb0xwWDBPTVFhM21maWJ2?=
- =?utf-8?B?Y3Q1aVlhV1FiK1hhSGFyRmxFZmdhOWdBeHFpcDU2QmN5L2MweDhPa1JEYi9N?=
- =?utf-8?B?N3pwbTJaZUFwWnQ5RlRFV1YyaFR0UEV5RWtZKzQ4V21FZlhHa2hkWFlLSW9j?=
- =?utf-8?B?bzlJMG9nVUpxVFhXN1FlS2ppbG1VR3FWQ1UyNHJFMWJyNGhXSHFsbkhSL2Nx?=
- =?utf-8?B?ZHNmVVR1ZFRuWWdSdThyYXcyZERkL1lXWWlOU3NMRWFiNzlzTHB6dkxmSGVh?=
- =?utf-8?B?Y3FWcnJRNkJ5SHIyWmpvcmNvL3hHTlhLN0VRVHptMjRLRkh6YzJwam41Mmhv?=
- =?utf-8?B?VHdscHorS1BZWFhjRW1ZY21TbXBjREdkNFZBODV3WVlUbS9BVHRWaFhJT1lP?=
- =?utf-8?B?Ly9BZUZoVE1NaytiSHY0c0dYcUtNSHFwMDh2ZmZkZmZkbDFmYWpqRE5EMGZq?=
- =?utf-8?B?WUhYcnJuc2dDRHlVT01mL3JjVkNzdjVSTkxvWDlETFlUTnozcWFaZEpabldv?=
- =?utf-8?B?c1g5WjFhN3NTemRCZUk0NzdLT01hdkFHd3NMcU1sRnliTlU3eWk4SDQrUzR3?=
- =?utf-8?B?S29SWkdTc2Z2SzZTS0xyVGRkWFRyWFhWclhlRWljSzdZcGtmckNRZG5QODl3?=
- =?utf-8?B?OXFTNFBDVi9xaGlRd2VnNmRkM2UrMTc1aXFHWkd5YTRXL2FyUDJFbm1kMmRt?=
- =?utf-8?B?SW1XUkFaNzV2UytGbGhIckJvUEh2bkVXaUVxYmZVQy9RKzJVcEVLK2JZSHVQ?=
- =?utf-8?B?Wk5PZCtjZ2RSNWZRKzZrUUtIODRyYllQZHhxM0o1OXp0KzRjREJpNVNEaFhQ?=
- =?utf-8?B?UXBLK3V2NXFFNGhzS05PbVVQUXliR3NGRU5MbVVqTXYxZFBpcUVESXlQVDg1?=
- =?utf-8?B?Vm5STytvaDB1N3ZhSWVSNjFrZCswRkVjQStpdkphZ0U3bkJ6WkVyd3NTVWhu?=
- =?utf-8?B?bVZmV3lYRDB2QUFZeWkvTElLSjhydjd5YkI4S2lWdFRIYytuZU5SQ0wvV1RH?=
- =?utf-8?B?MWhFRnV2eC9nL295R2JPVmpIS2ExM3d4ZWwvVFNuS1ZsN3c1NU9TR1NrU2RC?=
- =?utf-8?B?Nktwdmk1VTlQRFpQcmZ2K2FBYUVGRm1LREZPL3ovblYzSUJDUk1wUTlIWEpa?=
- =?utf-8?B?SkRLdHFOckNVelJJZEpKWjNLQ2tNd1d3d1NIV0FnL2Vic0FFWitJckNxckFQ?=
- =?utf-8?B?S0J4d3dtL2J1VlFDOHlDM2V4M0Iya1p2U08vT2lDUjNRMU1jNnNkZXVXUGhG?=
- =?utf-8?B?YlpqenN3d0h2dExoUHJrUUN6WGpyNWNiODlPVmV6Tk9MV0gzaXd5MFV6THFU?=
- =?utf-8?B?WGNqNUpZTUVuSXNDTDc1UEluenFtN08zQ3dhYThybEsrWndwSkovdGRVcHJa?=
- =?utf-8?B?OHVMR0VDNUcvdTk2Z1ZncUNCUjVPWXFOMTh2QXAvR3Y2VFRqRDBiMnVUUmF5?=
- =?utf-8?B?enFUMG4zWDl6SnZxb0Z3U2ZkaG5neDRERlBqREpSUlZaaW9MQ3VWcG1Pdkd2?=
- =?utf-8?B?RzJpWWViNWlhbldNdVg2dUVoV28yTGVYYXJ1SFp2Yk42c2R1aXZVdklRSUFK?=
- =?utf-8?B?Rzc3QWNwWDRjejRhUFZnL0gzVWZ5dGRIYVIwWWpRTXFBbFlsNUpzQ1hKRTdK?=
- =?utf-8?B?OTVuNHJac3htRzJ6dlN5TUZYS3p5eWdDT3ZRcStrcEhKTUladUIrQXBxYnFE?=
- =?utf-8?B?T25EZVJScUdHZk00ZjE5NkNSbXFuQlFXM0FjSE1LV29nS1NoYTBzSXVzUWNE?=
- =?utf-8?B?Z2dwYWsxZ2FsQ1I4UHNxT1FUaXVsZDV5aDVzd3U2VTNyYlAvbzBrQVloSTdy?=
- =?utf-8?B?a3QzS1FQdDNvQmZzcUV1bmtoTm9EWVgxN01KVE1BWkdlcGcwQ0ZxOTNMT1dB?=
- =?utf-8?B?UHRJc0h3ZHBPeHdiMjZSTXJRbzZJSktzUDBhQjZ1b3dyVXYvRW1RdWhwMWNK?=
- =?utf-8?B?SHYxV2RsckRyR2NEZzFGbDVyS3RNWjNPTVhhbEFDOFY2M2IwTHNxTnRWNmpk?=
- =?utf-8?B?bHNEeG1TNzVkaE9yWHBQMkIwd295cmt0RHpJUTFMQm9YL1hsVU1yTG9ITFhk?=
- =?utf-8?B?TGgvNlg4YzBxaE84YkJJY2pxY1ZQN1IwUUttNExad3FSeFRmWUtJU1RiRjEv?=
- =?utf-8?B?M2t6VjdPQzdzNUptOWZrenEvSTJFOXN5S292Y3YzL0taUFdreGUxMTNKaEZO?=
- =?utf-8?Q?WjQWAzUMZOv5+wtEO4SJxMs=3D?=
-X-OriginatorOrg: os.amperecomputing.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 04191941-0e12-409c-ed50-08ddb428dec7
-X-MS-Exchange-CrossTenant-AuthSource: LV2PR01MB7792.prod.exchangelabs.com
+	=?utf-8?B?QmZTbXFrNmRpWS9MTzQrWmVvN2dHT0IyRUhMUUNBM3dVakZSSG9iRHpjd2RK?=
+ =?utf-8?B?em5kdXlsSUZmb0JHSmI2OEFKRTlmOFNsSnRlWTJwM2hVTWZNUzZHeHdFMStN?=
+ =?utf-8?B?VTdWYUFURTBiY2JiMHRkNzc2VWE2dzhUbTVyS1lQK0daTmRHdVhhUUJIZkJM?=
+ =?utf-8?B?dmNINUE0VVpJM0tJemlVd2hiUk8xRkl0a3cyM3FGZUNDaFJwckVMc0RITFJJ?=
+ =?utf-8?B?dGYvSVNkSWtWb3NVOTFCT3dudEJFOXZhMWtQS2ZidEpYa0JORWRueDVaNkJr?=
+ =?utf-8?B?RGtWVkk3aUVMTEJWZ0w5T0FvMVk3T1lXWTNBWDlLazFqdklMMnNLMk1iWDc1?=
+ =?utf-8?B?TDJLUkpuWk5JYis2ZWxPemFzS01HVmNBcmtVSmRZT2l3bVlLbGZuS0FXVWZG?=
+ =?utf-8?B?anQ0YkNPYU44anhBbTFETjllR01yejg3cWhIcjdGWVAzb2tEY0QzMDF5Nldn?=
+ =?utf-8?B?UlJ1RlVTekdnZHduUVlTRWpmZGNBQXVEdkMybWJEd1I1L1pRR05FYUZMdGw1?=
+ =?utf-8?B?UUZhQjJ5VU0xenM4OEI4Zy9lc2FYckNzMDkyUnlwc2xDQnoxL1hWdzBaWWVF?=
+ =?utf-8?B?d1p4dlNOeUJneHpBV0lHUmhPS3VsRGQrbmpJM0NlWDEvUjlkZEtSSFdGZDNC?=
+ =?utf-8?B?dFZnVmcwbktRclB6M1FZSjZ3c0dOcFdZMkRFbXc5Q2NBeVNsaC8xUlBoK3N0?=
+ =?utf-8?B?MVdHNlk4ZDhTbElVTklNOVliY2pwSXE2Z05PdG9xenBVVWU0Z3FGdnZiVWo2?=
+ =?utf-8?B?M296S1JjUkx6L093WThVUFpFSkpZQWhvZ29jcWd0ZUxMdUsvUlRpbU43TUxR?=
+ =?utf-8?B?aFZRRkJLTGlWSitVKzArUGVtc3VrSFlWTXhoMllpYmQ3SHljVzZUZ1hWYmZG?=
+ =?utf-8?B?eWYzSGg2RUY3WUtIZEVvRFQwbVlaU1MzME4vVVhoZDI5VVlkU1hvR3RUMUcz?=
+ =?utf-8?B?OGo2RHBPM2haWlhTbmlEMmQxSHJEUDgxMTVrdlg2M3RHY1VBc01OaG1kZXpD?=
+ =?utf-8?B?cmdmdmxBaytJNWtNbE1EQ3VHTUpIeXhHN1JlTklacFB0Y1FuM2FGc2IwaTJT?=
+ =?utf-8?B?alFvb1loZy85UzlZd2ZvRjNoM2FsemFLbytLbXRlV09jSnd4eXZPK3RhRUJD?=
+ =?utf-8?B?V3kycWFtQ2Y5WmJRZlFVVytnVllEQS9zQUttNFk3ako5OVlzeThuUzBOOUcx?=
+ =?utf-8?B?aTQwNmFjNElwNDVycjZEV2lUVXc4RTd0eXAzcVp5c0ZveXpZTENuVDJ0ZzlV?=
+ =?utf-8?B?QmJJbXRwVkwwdzUzMzZCTHdXWisxbzduMmNDVE1QV2JCT3k1R1g0UURhODBT?=
+ =?utf-8?B?SS93eGhzUER3eFJVU210M1dyaSt0Zjk4cmx0M2Jvdm52bHR1eC9La2RrVU1u?=
+ =?utf-8?B?NS9kdlBvV3Jvd1NGUDFCRExlM0tvSzNJTkpUSkU2cWNHZ1dOaVhFcFR0RGJi?=
+ =?utf-8?B?Nk5SWUl2ZGlCamkyMzZzeFBUdE1yZ2x1dzBLejZ1ZEJUR3lNWTBRckRFUVhy?=
+ =?utf-8?B?SVJMT1FwdlNraWFENm1XNWVMR0s2RnhPdXgrOE1iLzVDNXE1MGxKenlLcWtn?=
+ =?utf-8?B?QS9mSmVaTnZCT3YrSVN5L29KWFdQUW4zR0dyUi9SNXJHSUZaS29hS05wcEVB?=
+ =?utf-8?B?c2hnT3lyZS8wS0pPazAzREw3RzJFZnMycmVpbkhsUXVxMjRwQm5hdmQ1dlZo?=
+ =?utf-8?B?cWtBRE5tc1Rad3NiVENLU0RvOEM0c29sUmxPOEdqanZOMk9uZ3ZPcjdHRXNH?=
+ =?utf-8?B?V2YzUEJaWUsxYUtpN3o5L0ptNGhvOGxNZW1NRDhaekpscGMrb2pCc3ZiL3JX?=
+ =?utf-8?B?RHV3OSswVk1xS3RkVGNrb0c3N0FmQ1JFcm9VanQzMTA1WTRnanU5VkliOXRi?=
+ =?utf-8?B?bVovOW54ZUowQWVCZUdoTGJOTC9KMFZYbkVLa0NhVVFCUnZlZVVhN1JiMVNk?=
+ =?utf-8?B?b0RRQXE1STRqWll1bk9seUcvWFhLTE1ORUg5c3BxaDUybDc2ZHF1cnRtaDhp?=
+ =?utf-8?B?eEZxcURxTFFlUDZGWm9xZlN2eWtKLzNyTXpBV0lRTGJxZjFiOHcxQzM0Wi9S?=
+ =?utf-8?B?SnZlQzhwK0pkdzJoK0lxY2NVN0I5cGY3VURuaEVsUFE5U3FLMDEvbnIyMG54?=
+ =?utf-8?Q?tqm8=3D?=
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 3fd8344d-ddae-4da4-2705-08ddb427960d
+X-MS-Exchange-CrossTenant-AuthSource: MW3PR12MB4553.namprd12.prod.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 25 Jun 2025 20:42:58.8986
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 25 Jun 2025 20:33:47.3252
  (UTC)
 X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 3bc2b170-fd94-476d-b0ce-4229bdc904a7
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
 X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: Ewy2b75twgerYMybPVyNr3Eh/2nIH5Aw6WEQtOhECn6TKeS3FaqFvkjeT7qMhIPsfEuVTMXx/tlxngR+BPHtbq/k5oqXDm36jpCcIgBKaRcMmMruEiWmUVZK/qtq45RN
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH0PR01MB7927
+X-MS-Exchange-CrossTenant-UserPrincipalName: Edb/nv6QQxcs/1qb3ePMsXpiZcdUeVS/V0I+ZzJDse8CNKH+wROhjYY/0HD2fWx+
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: IA0PPFDC28CEE69
 
-Ilpo J=C3=A4rvinen <ilpo.jarvinen@linux.intel.com> writes:
+Hi Reinette,
 
-> On Wed, 18 Jun 2025, D Scott Phillips wrote:
->
->> Ilpo J=C3=A4rvinen <ilpo.jarvinen@linux.intel.com> writes:
->>=20
->> > Resetting resource is problematic as it prevent attempting to allocate
->> > the resource later, unless something in between restores the resource.
->> > Similarly, if fail_head does not contain all resources that were reset=
-,
->> > those resource cannot be restored later.
->> >
->> > The entire reset/restore cycle adds complexity and leaving resources
->> > into reseted state causes issues to other code such as for checks done
->> > in pci_enable_resources(). Take a small step towards not resetting
->> > resources by delaying reset until the end of resource assignment and
->> > build failure list (fail_head) in sync with the reset to avoid leaving
->> > behind resources that cannot be restored (for the case where the calle=
-r
->> > provides fail_head in the first place to allow restore somewhere in th=
-e
->> > callchain, as is not all callers pass non-NULL fail_head).
->> >
->> > The Expansion ROM check is temporarily left in place while building th=
-e
->> > failure list until the upcoming change which reworks optional resource
->> > handling.
->> >
->> > Ideally, whole resource reset could be removed but doing that in a big
->> > step would make the impact non-tractable due to complexity of all
->> > related code.
->> >
->> > Signed-off-by: Ilpo J=C3=A4rvinen <ilpo.jarvinen@linux.intel.com>
->>=20
->> Hi Ilpo, I'm seeing a crash on arm64 at boot that I bisected to this
->> change. I don't think it's the same as the other issues reported. I've
->> confirmed the crash is still there after your follow up patches.  The
->> crash itself is below[1].
->>=20
->> It looks like the problem begins when:
->>=20
->> amdgpu_device_resize_fb_bar()
->>  pci_resize_resource()
->>   pci_reassign_bridge_resources()
->>    __pci_bus_size_bridges()
->>=20
->> adds pci_hotplug_io_size to `realloc_head`. The io resource allocation
->> has failed earlier because the root port doesn't have an io window[2].
->>=20
->> Then with this patch, pci_reassign_bridge_resources()'s call to
->> __pci_bridge_assign_resources() now returns the io added space for
->> hotplug in the `failed` list where the old code dropped it and did not.
->>=20
->> That sends pci_reassign_bridge_resources() into the `cleanup:` path,
->> where I think the cleanup code doesn't properly release the resources
->> that were assigned by __pci_bridge_assign_resources() and there's a
->> conflict reported in pci_claim_resource() where a restored resource is
->> found as conflicting with itself:
->>=20
->> > pcieport 000d:00:01.0: bridge window [mem 0x340000000000-0x340017fffff=
-f 64bit pref]: can't claim; address conflict with PCI Bus 000d:01 [mem 0x34=
-0000000000-0x340017ffffff 64bit pref]
->>=20
->> Setting `pci=3Dhpiosize=3D0` avoids this crash, as does this change:
->>=20
->> diff --git a/drivers/pci/setup-bus.c b/drivers/pci/setup-bus.c
->> index 16d5d390599a..59ece11702da 100644
->> --- a/drivers/pci/setup-bus.c
->> +++ b/drivers/pci/setup-bus.c
->> @@ -2442,7 +2442,7 @@ int pci_reassign_bridge_resources(struct pci_dev *=
-bridge, unsigned long type)
->>  	LIST_HEAD(saved);
->>  	LIST_HEAD(added);
->>  	LIST_HEAD(failed);
->> -	unsigned int i;
->> +	unsigned int i, relevant_fails;
->>  	int ret;
->> =20
->>  	down_read(&pci_bus_sem);
->> @@ -2490,7 +2490,16 @@ int pci_reassign_bridge_resources(struct pci_dev =
-*bridge, unsigned long type)
->>  	__pci_bridge_assign_resources(bridge, &added, &failed);
->>  	BUG_ON(!list_empty(&added));
->> =20
->> -	if (!list_empty(&failed)) {
->> +	relevant_fails =3D 0;
->> +	list_for_each_entry(dev_res, &failed, list) {
->> +		restore_dev_resource(dev_res);
->> +		if (((dev_res->res->flags ^ type) & PCI_RES_TYPE_MASK) =3D=3D 0)
->> +			relevant_fails++;
->> +	}
->> +	free_list(&failed);
+On 6/24/25 18:05, Reinette Chatre wrote:
+> Hi Babu,
+> 
+> There seems to be many places referring to user space assigning "counter IDs",
+> as I understand the interface the user has no control over the actual ID of the
+> counter being assigned. Please correct me if I am wrong.
+
+Yes. Agree. Users have no control over which counter is assigned.
+
+> Considering this, how about:
+> 	fs/resctrl: Add resctrl file to display number of assignable counters
+> 
+> If you agree, please check the whole series as this seems to be an often
+> copy&pasted term.
+
+Yes. Sure.
+
+> 
+> On 6/13/25 2:04 PM, Babu Moger wrote:
+>> The "mbm_event" mode allows users to assign a hardware counter ID to an
+> 
+> "a hardware counter ID" -> "a hardware counter"?
+> 
+>> RMID, event pair and monitor bandwidth usage as long as it is assigned.
+>> The hardware continues to track the assigned counter until it is
+>> explicitly unassigned by the user.
+>>
+>> Create 'num_mbm_cntrs' resctrl file that displays the number of counter
+>> IDs supported in each domain. 'num_mbm_cntrs' is only visible to user
+> 
+> "number of counter IDs" -> "number of counters"?
+> 
+>> space when the system supports "mbm_event" mode.
+>>
+>> Signed-off-by: Babu Moger <babu.moger@amd.com>
+>> ---
+> 
+> ...
+> 
+>> ---
+>>  Documentation/filesystems/resctrl.rst | 11 ++++++++++
+>>  fs/resctrl/monitor.c                  |  4 ++++
+>>  fs/resctrl/rdtgroup.c                 | 30 +++++++++++++++++++++++++++
+>>  3 files changed, 45 insertions(+)
+>>
+>> diff --git a/Documentation/filesystems/resctrl.rst b/Documentation/filesystems/resctrl.rst
+>> index 4e76e4ac5d3a..801914de0c81 100644
+>> --- a/Documentation/filesystems/resctrl.rst
+>> +++ b/Documentation/filesystems/resctrl.rst
+>> @@ -288,6 +288,17 @@ with the following files:
+>>  	result in misleading values or display "Unavailable" if no counter is assigned
+>>  	to the event.
+>>  
+>> +"num_mbm_cntrs":
+>> +	The maximum number of counter IDs (total of available and assigned counters)
+> 
+> "number of counter IDs" -> "number of counters"
+
+Sure.
+
+> 
+>> +	in each domain when the system supports mbm_event mode.
 >> +
->> +	/* Cleanup if we had failures in resources of interest */
->> +	if (relevant_fails !=3D 0) {
->>  		ret =3D -ENOSPC;
->>  		goto cleanup;
->>  	}
->> @@ -2509,11 +2518,6 @@ int pci_reassign_bridge_resources(struct pci_dev =
-*bridge, unsigned long type)
+>> +	For example, on a system with maximum of 32 memory bandwidth monitoring
+>> +	counters in each of its L3 domains:
+>> +	::
+>> +
+>> +	  # cat /sys/fs/resctrl/info/L3_MON/num_mbm_cntrs
+>> +	  0=32;1=32
+>> +
+>>  "max_threshold_occupancy":
+>>  		Read/write file provides the largest value (in
+>>  		bytes) at which a previously used LLC_occupancy
+>> diff --git a/fs/resctrl/monitor.c b/fs/resctrl/monitor.c
+>> index dcc6c00eb362..92a87aa97b0f 100644
+>> --- a/fs/resctrl/monitor.c
+>> +++ b/fs/resctrl/monitor.c
+>> @@ -924,6 +924,10 @@ int resctrl_mon_resource_init(void)
+>>  	else if (resctrl_is_mon_event_enabled(QOS_L3_MBM_TOTAL_EVENT_ID))
+>>  		mba_mbps_default_event = QOS_L3_MBM_TOTAL_EVENT_ID;
+>>  
+>> +	if (r->mon.mbm_cntr_assignable)
+>> +		resctrl_file_fflags_init("num_mbm_cntrs",
+>> +					 RFTYPE_MON_INFO | RFTYPE_RES_CACHE);
+>> +
 >>  	return 0;
->> =20
->>  cleanup:
->> -	/* Restore size and flags */
->> -	list_for_each_entry(dev_res, &failed, list)
->> -		restore_dev_resource(dev_res);
->> -	free_list(&failed);
->> -
->>  	/* Revert to the old configuration */
->>  	list_for_each_entry(dev_res, &saved, list) {
->>  		struct resource *res =3D dev_res->res;
->>=20
->> I don't know this code well enough to know if that changes is completely
->> bonkers or what.
->
-> Hi again,
->
-> Thanks for all the details what you think went wrong, it was really=20
-> useful. I think you have it towards the right direction but a more=20
-> targetted seems enough to address this (this needs to be confirmed, pleas=
-e
-> test the patch below).
->
-> The most correct solution would be to make all the resource fitting code=
-=20
-> to focus on the resources that match the type filter. However, that looks=
-=20
-> way too scary change at the moment to implement, and especially, let it=20
-> end up into stable (to fix this issue). So it looks this somewhat band-ai=
-d=20
-> solution similar to your attempt might be better as a fix for now.
->
-> In medium term, I'd want to avoid using type as a filter and base all=20
-> such decisions on matching the bridge window resource the dev resource=20
-> belongs to. I've some work towards that direction already which removes=20
-> lots of complexity in which bridge window is going to be selected as=20
-> there will be a single place to make always the same decision. That chang=
-e=20
-> is also going to simplify the internal interfaces between functions very=
-=20
-> noticably (but the change require more testing before I've enough=20
-> confidence to submit it). That work doesn't cover this resize side yet bu=
-t=20
-> it should be extended there as well.
->
-> So please test this somewhat band-aid patch:
->
-> From 971686ed85e341e7234f8fe8b666140187f63ad1 Mon Sep 17 00:00:00 2001
-> From: =3D?UTF-8?q?Ilpo=3D20J=3DC3=3DA4rvinen?=3D <ilpo.jarvinen@linux.int=
-el.com>
-> Date: Wed, 25 Jun 2025 20:30:43 +0300
-> Subject: [PATCH 1/1] PCI: Fix failure detectiong during resource resize
+>>  }
+>>  
+>> diff --git a/fs/resctrl/rdtgroup.c b/fs/resctrl/rdtgroup.c
+>> index ba7a9a68c5a6..967e4df62a19 100644
+>> --- a/fs/resctrl/rdtgroup.c
+>> +++ b/fs/resctrl/rdtgroup.c
+>> @@ -1829,6 +1829,30 @@ static int resctrl_mbm_assign_mode_show(struct kernfs_open_file *of,
+>>  	return 0;
+>>  }
+>>  
+>> +static int resctrl_num_mbm_cntrs_show(struct kernfs_open_file *of,
+>> +				      struct seq_file *s, void *v)
+>> +{
+>> +	struct rdt_resource *r = rdt_kn_parent_priv(of->kn);
+>> +	struct rdt_mon_domain *dom;
+>> +	bool sep = false;
+>> +
+>> +	cpus_read_lock();
+>> +	mutex_lock(&rdtgroup_mutex);
+>> +
+>> +	list_for_each_entry(dom, &r->mon_domains, hdr.list) {
+>> +		if (sep)
+>> +			seq_putc(s, ';');
+>> +
+>> +		seq_printf(s, "%d=%d", dom->hdr.id, r->mon.num_mbm_cntrs);
+>> +		sep = true;
+>> +	}
+>> +	seq_putc(s, '\n');
+>> +
+>> +	mutex_unlock(&rdtgroup_mutex);
+>> +	cpus_read_unlock();
+>> +	return 0;
+>> +}
+>> +
+>>  /* rdtgroup information files for one cache resource. */
+>>  static struct rftype res_common_files[] = {
+>>  	{
+>> @@ -1866,6 +1890,12 @@ static struct rftype res_common_files[] = {
+>>  		.seq_show	= rdt_default_ctrl_show,
+>>  		.fflags		= RFTYPE_CTRL_INFO | RFTYPE_RES_CACHE,
+>>  	},
+>> +	{
+>> +		.name		= "num_mbm_cntrs",
+>> +		.mode		= 0444,
+>> +		.kf_ops		= &rdtgroup_kf_single_ops,
+>> +		.seq_show	= resctrl_num_mbm_cntrs_show,
+>> +	},
+>>  	{
+>>  		.name		= "min_cbm_bits",
+>>  		.mode		= 0444,
+> 
+> Patch looks good.
+> 
+> Reinette
+> 
 
-detection
-
-> MIME-Version: 1.0
-> Content-Type: text/plain; charset=3DUTF-8
-> Content-Transfer-Encoding: 8bit
->
-> Since the commit 96336ec70264 ("PCI: Perform reset_resource() and build
-> fail list in sync") the failed list is always built and returned to let
-> the caller decide if what to do with the failures. The caller may want
-> to retry resource fitting and assignment and before that can happen,
-> the resources should be restored to their original state (a reset
-> effectively clears the struct resource), which requires returning them
-> on the failed list so that the original state remains stored in the
-> associated struct pci_dev_resource.
->
-> Resource resizing is different from the ordinary resource fitting and
-> assignment in that it only considers part of the resources. This means
-> failures for other resource types are not relevant at all and should be
-> ignored. As resize doesn't unassign such unrelated resources, those
-> resource ending up into the failed list implies assignment of that
-> resource must have failed before resize too. The check in
-> pci_reassign_bridge_resources() to decide if the whole assignment is
-> successful, however, is based on list emptiness which may cause false
-> negatives when the failed list resources with unrelated type.
->
-> If the failed list is not empty, call pci_required_resource_failed()
-> and extend it to be able to filter on specific resource types too (if
-> provided).
->
-> Calling pci_required_resource_failed() at this point is slightly
-> problematic because the resource itself is reset when the failed list
-> is constructed in __assign_resources_sorted(). As a result,
-> pci_resource_is_optional() does not have access to the original
-> resource flags. This could be worked around by restoring and
-> re-reseting the resource around the call to pci_resource_is_optional(),
-> however, it shouldn't cause issue as resource resizing is meant for
-> 64-bit prefetchable resources according to Christian K=C3=B6nig (see the
-> Link which unfortunately doesn't point directly to Christian's reply
-> because lore didn't store that email at all).
->
-> Link: https://lore.kernel.org/all/c5d1b5d8-8669-5572-75a7-0b480f581ac1@li=
-nux.intel.com/
-> Reported-by: D Scott Phillips <scott@os.amperecomputing.com>
-> Signed-off-by: Ilpo J=C3=A4rvinen <ilpo.jarvinen@linux.intel.com>
-> Cc: Christian K=C3=B6nig <christian.koenig@amd.com>
-> ---
->  drivers/pci/setup-bus.c | 26 ++++++++++++++++++--------
->  1 file changed, 18 insertions(+), 8 deletions(-)
->
-> diff --git a/drivers/pci/setup-bus.c b/drivers/pci/setup-bus.c
-> index 07c3d021a47e..8284bbdc44b4 100644
-> --- a/drivers/pci/setup-bus.c
-> +++ b/drivers/pci/setup-bus.c
-> @@ -28,6 +28,10 @@
->  #include <linux/acpi.h>
->  #include "pci.h"
-> =20
-> +#define PCI_RES_TYPE_MASK \
-> +	(IORESOURCE_IO | IORESOURCE_MEM | IORESOURCE_PREFETCH |\
-> +	 IORESOURCE_MEM_64)
-> +
->  unsigned int pci_flags;
->  EXPORT_SYMBOL_GPL(pci_flags);
-> =20
-> @@ -384,13 +388,19 @@ static bool pci_need_to_release(unsigned long mask,=
- struct resource *res)
->  }
-> =20
->  /* Return: @true if assignment of a required resource failed. */
-> -static bool pci_required_resource_failed(struct list_head *fail_head)
-> +static bool pci_required_resource_failed(struct list_head *fail_head,
-> +					 unsigned long type)
->  {
->  	struct pci_dev_resource *fail_res;
-> =20
-> +	type &=3D ~PCI_RES_TYPE_MASK;
-
-Is this meant to be `type &=3D PCI_RES_TYPE_MASK`? If not, then I think
-the new `if` check below is effectively just `if (type)`.
-
-FWIW, the patch in the current state is fixing the problem that I've
-been hitting.
-
-> +
->  	list_for_each_entry(fail_res, fail_head, list) {
->  		int idx =3D pci_resource_num(fail_res->dev, fail_res->res);
-> =20
-> +		if (type && (fail_res->flags & PCI_RES_TYPE_MASK) !=3D type)
-> +			continue;
-> +
->  		if (!pci_resource_is_optional(fail_res->dev, idx))
->  			return true;
->  	}
-> @@ -504,7 +514,7 @@ static void __assign_resources_sorted(struct list_hea=
-d *head,
->  	}
-> =20
->  	/* Without realloc_head and only optional fails, nothing more to do. */
-> -	if (!pci_required_resource_failed(&local_fail_head) &&
-> +	if (!pci_required_resource_failed(&local_fail_head, 0) &&
->  	    list_empty(realloc_head)) {
->  		list_for_each_entry(save_res, &save_head, list) {
->  			struct resource *res =3D save_res->res;
-> @@ -1704,10 +1714,6 @@ static void __pci_bridge_assign_resources(const st=
-ruct pci_dev *bridge,
->  	}
->  }
-> =20
-> -#define PCI_RES_TYPE_MASK \
-> -	(IORESOURCE_IO | IORESOURCE_MEM | IORESOURCE_PREFETCH |\
-> -	 IORESOURCE_MEM_64)
-> -
->  static void pci_bridge_release_resources(struct pci_bus *bus,
->  					 unsigned long type)
->  {
-> @@ -2445,8 +2451,12 @@ int pci_reassign_bridge_resources(struct pci_dev *=
-bridge, unsigned long type)
->  		free_list(&added);
-> =20
->  	if (!list_empty(&failed)) {
-> -		ret =3D -ENOSPC;
-> -		goto cleanup;
-> +		if (pci_required_resource_failed(&failed, type)) {
-> +			ret =3D -ENOSPC;
-> +			goto cleanup;
-> +		}
-> +		/* Only resources with unrelated types failed (again) */
-> +		free_list(&failed);
->  	}
-> =20
->  	list_for_each_entry(dev_res, &saved, list) {
->
-> base-commit: 19272b37aa4f83ca52bdf9c16d5d81bdd1354494
-> --=20
-> 2.39.5
+-- 
+Thanks
+Babu Moger
 
