@@ -1,132 +1,120 @@
-Return-Path: <linux-kernel+bounces-701995-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-702027-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id CFD6EAE7C71
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Jun 2025 11:22:48 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 3E6F4AE7D0D
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Jun 2025 11:33:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id DA4621C235F3
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Jun 2025 09:22:45 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 13F301C22C56
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Jun 2025 09:31:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BCFF22BE7C3;
-	Wed, 25 Jun 2025 09:15:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=fairphone.com header.i=@fairphone.com header.b="NyQikJkG"
-Received: from mail-ej1-f49.google.com (mail-ej1-f49.google.com [209.85.218.49])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 867F1292B32
-	for <linux-kernel@vger.kernel.org>; Wed, 25 Jun 2025 09:15:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1B0872DCBE5;
+	Wed, 25 Jun 2025 09:22:48 +0000 (UTC)
+Received: from mx-a.polytechnique.fr (mx-a.polytechnique.fr [129.104.30.14])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B6070252906;
+	Wed, 25 Jun 2025 09:22:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=129.104.30.14
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750842908; cv=none; b=Onf/XJrl81OqEIpvEhqxbbWpM+Zcc001fP+xMISEt9AYb/e3vR7z2eAqLyxJ2sIb6LkvHrxsUwSzZC+/DNI+Gh+XDnGWPdJkKX3xG9rWYQPqtmuSMvJI2+asm36GAY+dYrGPU5/vbTvhb9U6iyE5pWrmMLnA9Z+BKO1ahsQYX5M=
+	t=1750843367; cv=none; b=X57JH6hN+So72DGVQebtzaodA8ZKKSceqDKJOde4r2bVX0oL6qfUn606UtAh83S9YRE+GZJVtbDHS0Bs/Lwukaaqn6B6obO/nxvrrA4difFusdkmLiqnhsIq1FRhXduzU2DsP9h4Tdv0em0Ck78tQfwfM0LWm8dr7jbLVHPsHbs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750842908; c=relaxed/simple;
-	bh=ZJaHdZ8mGsEkim1yUHwLTnvHu86W+l4CWYVjRpNDmhU=;
-	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=XmpCBfmDd5/eLo93jiECdLVK6F4An8q1NVPqDKNScwDxDQvC+MKN5JN/9+JHudjjPs0NmIC51zuyveb2CV9aDYN0tbDacnofl3TOTBMZL8Wm1Ey/Owc+WVqwbnoLQYNR4wMN5Z1y6j8NXEo76TNTOHAcakJjcGfbqAYUxnr4Vg0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=fairphone.com; spf=pass smtp.mailfrom=fairphone.com; dkim=pass (2048-bit key) header.d=fairphone.com header.i=@fairphone.com header.b=NyQikJkG; arc=none smtp.client-ip=209.85.218.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=fairphone.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fairphone.com
-Received: by mail-ej1-f49.google.com with SMTP id a640c23a62f3a-ad883afdf0cso256762266b.0
-        for <linux-kernel@vger.kernel.org>; Wed, 25 Jun 2025 02:15:06 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=fairphone.com; s=fair; t=1750842905; x=1751447705; darn=vger.kernel.org;
-        h=cc:to:content-transfer-encoding:mime-version:message-id:date
-         :subject:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=0x17E1px+EqXNrObaDGYbqObszP+McDhL4Yp7KySDHU=;
-        b=NyQikJkGFJtIMxHruyCDMjgWMTMuCzgyxOQI2b9I8lz6BiaU6nR7sjMFxRuefjRNdC
-         qhp4JndzHcu4zfOtSlzS2YABx2dfA3GpbLDU4ffkHrcg9RFyquOUz2lYXbGl8l2pateD
-         DaQiSWStrCrXgdUnX3Lg+g7VFT15Ux15ZI7pvLXuGCArWp600t/QVFz0qiJjgizeTHUx
-         dDDcUi8ho1GpRh15qKyglYg6bMYl8AQ+hNiyQ91Q8QdzhuIMId2jV2wN4HEWkxYAPtvJ
-         mBjme7V9Snsb6UX+to/6dwICKaRdW8yxP4c3KLNVUwPuqW5Uc1Mg4la6v+Maulgotz6i
-         ZD9w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1750842905; x=1751447705;
-        h=cc:to:content-transfer-encoding:mime-version:message-id:date
-         :subject:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=0x17E1px+EqXNrObaDGYbqObszP+McDhL4Yp7KySDHU=;
-        b=qLySHMfKsa2Y+24WeJcxzMOCUTzkNZ9OykaE9Fh67HXK9DnzUqRl9gRZvr4SQOMHAL
-         hLJKpLls6qkfyCTdfx4rdcJUyIDEcsrqHL5nUIJqQvgLt3dD3ZPf4n9IYy5D55uB3kmY
-         6iYWK1rwvecO9S5hxMDlBysvFwhdXoTVKxg15+h0S7IT8LBcab75wAX+eS2ppmfJ3u9j
-         GfCS4wlizF3PmK7fAdWUCTf9CP2UMwmkndH0ZVy1sPys8ToTzsvm6JOCrS0xdX3A8AK2
-         S7k5RRPS/Cd60fTsD9DiUp4Ef7TI+gl9Didp+lZpMsE+G0jzg9ntnx7UOjm33jAB5NYd
-         5uAg==
-X-Forwarded-Encrypted: i=1; AJvYcCWPrkbEOr/uMEKgB4hshZpoilh/drEBQZiFLURnLRziLS7JYxTIGgF+dgH/UdUYH1mGPqHiuXwjiioaZVM=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw/MjRqNeLHRLNpVjphVnE4WeEbmp9kJjrTdWyBMFSx50R0YjEm
-	vMgM6Dne8dQ8WRc6WR8+zI8PPtYx6hk14PE1jh8xrQcWD2/x3OjlkbZ3cQ5e4mMltu4=
-X-Gm-Gg: ASbGncsTyThnbfjgkmoQDxxkRHvLN5+ocXsvwWH6wj+67jHMIs4Jt6x7CDGIv36hUx7
-	nlTOrKX1HwFJurJgXUDjUeWyInC6/TYBPP4+YjcV3vGZvJIFlWkC82h2rUX8DhCd/LA1B+vnuzn
-	jmyVmnOEo6Cj8kGyQsLJgnWkpy5ZwtHsazdGEf9ZK6PR9U1aQcW5wQXEDDfW/tt/HT5RZsmtiwB
-	JlPsqT3x0Kgixlc+hTodBWRqnqPMEu8Nnb3JIXPUSu2gW/IxbPpNigVQXu5HVqUKDODJ0+TIM0J
-	5sQbaabtJLOWn5TUyshtYI3HjXOt43+EFhV59WRyEO6scDTZOZhd51eMfmVhEVuhFDjervIY2u0
-	GxYnefDAcWPILmkLXo9Xs+ixlBdImalHH
-X-Google-Smtp-Source: AGHT+IHossRczIQDoFPo3XWwZlIhvHUPsFfJ84XHSqNsKPDmWvICk4145QI/+MNPKeaIC0aeiLBBgw==
-X-Received: by 2002:a17:907:c1e:b0:ae0:c6e5:9738 with SMTP id a640c23a62f3a-ae0c6e597ecmr107772766b.55.1750842904882;
-        Wed, 25 Jun 2025 02:15:04 -0700 (PDT)
-Received: from otso.local (144-178-202-138.static.ef-service.nl. [144.178.202.138])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ae053ee4c2bsm1008972266b.71.2025.06.25.02.15.04
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 25 Jun 2025 02:15:04 -0700 (PDT)
-From: Luca Weiss <luca.weiss@fairphone.com>
-Subject: [PATCH 0/4] Add support for eUSB2 repeater on PMIV0104
-Date: Wed, 25 Jun 2025 11:14:55 +0200
-Message-Id: <20250625-sm7635-eusb-repeater-v1-0-19d85541eb4c@fairphone.com>
+	s=arc-20240116; t=1750843367; c=relaxed/simple;
+	bh=qqM24CG38I0YgdVs6wHu9lNFb6fYyDWo79Ns61wNk2U=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=huTWsuma7Gpq8ikxn4DO/PR6wd1jLogj1rvPUitv/01AirQq/31RqwyZI8NVJrKVYpzXC+6Rq7FOL2cXOirwegGzdqL1tQ0Si93cRpbjby7fvlR1MseGpR6hh+5wWp0AoB4FMHQKXeQvGiaa4q2q6LO/ocsO5leMiJjokCnLz34=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com; spf=fail smtp.mailfrom=gmail.com; arc=none smtp.client-ip=129.104.30.14
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=gmail.com
+Received: from zimbra.polytechnique.fr (zimbra.polytechnique.fr [129.104.69.30])
+	by mx-a.polytechnique.fr (tbp 25.10.18/2.0.8) with ESMTP id 55P9EwnY023896;
+	Wed, 25 Jun 2025 11:14:58 +0200
+Received: from localhost (localhost [127.0.0.1])
+	by zimbra.polytechnique.fr (Postfix) with ESMTP id 8EA3B761E58;
+	Wed, 25 Jun 2025 11:14:58 +0200 (CEST)
+X-Virus-Scanned: amavis at zimbra.polytechnique.fr
+Received: from zimbra.polytechnique.fr ([127.0.0.1])
+ by localhost (zimbra.polytechnique.fr [127.0.0.1]) (amavis, port 10026)
+ with ESMTP id 0ewgABPHqW04; Wed, 25 Jun 2025 11:14:58 +0200 (CEST)
+Received: from [130.190.109.159] (webmail-69.polytechnique.fr [129.104.69.39])
+	by zimbra.polytechnique.fr (Postfix) with ESMTPSA id 181BE761F7F;
+	Wed, 25 Jun 2025 11:14:58 +0200 (CEST)
+Message-ID: <4c6deafe-a6ec-40bf-873f-dc0df1a72dc4@gmail.com>
+Date: Wed, 25 Jun 2025 11:14:56 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2] atm: idt77252: Add missing `dma_map_error()`
+To: Simon Horman <horms@kernel.org>
+Cc: Jakub Kicinski <kuba@kernel.org>, Chas Williams <3chas3@gmail.com>,
+        "moderated list:ATM" <linux-atm-general@lists.sourceforge.net>,
+        "open list:ATM" <netdev@vger.kernel.org>,
+        open list <linux-kernel@vger.kernel.org>
+References: <20250624064148.12815-3-fourier.thomas@gmail.com>
+ <20250624165128.GA1562@horms.kernel.org>
+Content-Language: en-US, fr
+From: Thomas Fourier <fourier.thomas@gmail.com>
+In-Reply-To: <20250624165128.GA1562@horms.kernel.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
-X-B4-Tracking: v=1; b=H4sIAA++W2gC/02NQQ7CIBREr0L+2m+ABqpcxXRB6aeyKFWgjUnTu
- 4t2ocs3k5m3QaYUKINhGyRaQw5zrCBODNzdxpEwDJVBcqm4lhzz1OpGIS25x0QPsoUS8qG9eKV
- aeeUe6vSRyIfX9/bWHZzoudT3coTQ20zo5mkKxbBVn4XG5AT8aw07pLX62ORPV5YY4ohe6aYRT
- vfCW7NK6Pb9DZsmrPjQAAAA
-X-Change-ID: 20250620-sm7635-eusb-repeater-0d78f557290f
-To: Vinod Koul <vkoul@kernel.org>, 
- Kishon Vijay Abraham I <kishon@kernel.org>, Rob Herring <robh@kernel.org>, 
- Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, Abel Vesa <abel.vesa@linaro.org>
-Cc: ~postmarketos/upstreaming@lists.sr.ht, phone-devel@vger.kernel.org, 
- linux-arm-msm@vger.kernel.org, linux-phy@lists.infradead.org, 
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
- Luca Weiss <luca.weiss@fairphone.com>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1750842904; l=1080;
- i=luca.weiss@fairphone.com; s=20250611; h=from:subject:message-id;
- bh=ZJaHdZ8mGsEkim1yUHwLTnvHu86W+l4CWYVjRpNDmhU=;
- b=wvQWFKLPrm1zGX2IzrnXnA2E17UIblNOckLeleDSLHmvgeMDGWHzUtWv8VsXxcuiFfqCEDyNh
- IxjlOTrg7kQC6ynnmpaa54qFXzMbTvmVd52L6Mww7I/gvqvzRvVb3+O
-X-Developer-Key: i=luca.weiss@fairphone.com; a=ed25519;
- pk=O1aw+AAust5lEmgrNJ1Bs7PTY0fEsJm+mdkjExA69q8=
 
-Add a new property qcom,tune-res-fsdif for the eUSB2 repeater and add
-the compatible for the repeater on the PMIV0104 PMIC.
+On 24/06/2025 18:51, Simon Horman wrote:
+> On Tue, Jun 24, 2025 at 08:41:47AM +0200, Thomas Fourier wrote:
+>> The DMA map functions can fail and should be tested for errors.
+>>
+>> Signed-off-by: Thomas Fourier <fourier.thomas@gmail.com>
+>> ---
+>>   drivers/atm/idt77252.c | 5 +++++
+>>   1 file changed, 5 insertions(+)
+>>
+>> diff --git a/drivers/atm/idt77252.c b/drivers/atm/idt77252.c
+>> index 1206ab764ba9..f2e91b7d79f0 100644
+>> --- a/drivers/atm/idt77252.c
+>> +++ b/drivers/atm/idt77252.c
+>> @@ -852,6 +852,8 @@ queue_skb(struct idt77252_dev *card, struct vc_map *vc,
+>>   
+>>   	IDT77252_PRV_PADDR(skb) = dma_map_single(&card->pcidev->dev, skb->data,
+>>   						 skb->len, DMA_TO_DEVICE);
+>> +	if (dma_mapping_error(&card->pcidev->dev, IDT77252_PRV_PADDR(skb)))
+>> +		return -ENOMEM;
+>>   
+>>   	error = -EINVAL;
+>>   
+>> @@ -1857,6 +1859,8 @@ add_rx_skb(struct idt77252_dev *card, int queue,
+>>   		paddr = dma_map_single(&card->pcidev->dev, skb->data,
+>>   				       skb_end_pointer(skb) - skb->data,
+>>   				       DMA_FROM_DEVICE);
+>> +		if (dma_mapping_error(&card->pcidev->dev, paddr))
+>> +			goto outpoolrm;
+>>   		IDT77252_PRV_PADDR(skb) = paddr;
+>>   
+>>   		if (push_rx_skb(card, skb, queue)) {
+>> @@ -1871,6 +1875,7 @@ add_rx_skb(struct idt77252_dev *card, int queue,
+>>   	dma_unmap_single(&card->pcidev->dev, IDT77252_PRV_PADDR(skb),
+>>   			 skb_end_pointer(skb) - skb->data, DMA_FROM_DEVICE);
+>>   
+>> +outpoolrm:
+>>   	handle = IDT77252_PRV_POOL(skb);
+>>   	card->sbpool[POOL_QUEUE(handle)].skb[POOL_INDEX(handle)] = NULL;
+> Hi Thomas,
+>
+> Can sb_pool_remove() be used here?
+> It seems to be the converse of sb_pool_add().
+> And safer than the code above.
+> But perhaps I'm missing something.
 
-Signed-off-by: Luca Weiss <luca.weiss@fairphone.com>
----
-Luca Weiss (4):
-      dt-bindings: phy: qcom,snps-eusb2-repeater: Document qcom,tune-res-fsdif
-      phy: qualcomm: phy-qcom-eusb2-repeater: Support tune-res-fsdif prop
-      dt-bindings: phy: qcom,snps-eusb2-repeater: Add compatible for PMIV0104
-      phy: qualcomm: phy-qcom-eusb2-repeater: Add support for PMIV0104
 
- .../devicetree/bindings/phy/qcom,snps-eusb2-repeater.yaml |  7 +++++++
- drivers/phy/qualcomm/phy-qcom-eusb2-repeater.c            | 15 +++++++++++++++
- 2 files changed, 22 insertions(+)
----
-base-commit: d9946fe286439c2aeaa7953b8c316efe5b83d515
-change-id: 20250620-sm7635-eusb-repeater-0d78f557290f
-prerequisite-change-id: 20250616-eusb2-repeater-tuning-f56331c6b1fa:v2
-prerequisite-patch-id: 5c504d171a4d1acd9ec376e01e0dd0fddbad92b8
-prerequisite-patch-id: 0c97dcf5472fbed8ef4cffbd482f3169fe1e972d
+Hi Simon,
 
-Best regards,
--- 
-Luca Weiss <luca.weiss@fairphone.com>
+I don't see any reason why this would be a problem,
+
+though, I don't think it is related and the change should be in the same 
+patch.
+
+Should I create another patch for that?
 
 
