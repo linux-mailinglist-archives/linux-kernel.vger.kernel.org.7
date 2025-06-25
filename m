@@ -1,87 +1,67 @@
-Return-Path: <linux-kernel+bounces-702747-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-702744-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6B3A8AE86BC
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Jun 2025 16:39:56 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id DB7A4AE86AE
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Jun 2025 16:38:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 59004179556
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Jun 2025 14:39:33 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 74F1C188F2F6
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Jun 2025 14:38:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2B7C4269AEE;
-	Wed, 25 Jun 2025 14:39:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2224D268FF1;
+	Wed, 25 Jun 2025 14:38:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="qmU78tPb"
-Received: from NAM12-MW2-obe.outbound.protection.outlook.com (mail-mw2nam12on2075.outbound.protection.outlook.com [40.107.244.75])
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="pFfPPfbC"
+Received: from mailout2.w1.samsung.com (mailout2.w1.samsung.com [210.118.77.12])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B1F982620E4
-	for <linux-kernel@vger.kernel.org>; Wed, 25 Jun 2025 14:39:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.244.75
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750862351; cv=fail; b=KRNmpW4xYDAgo0T8qGkg/6sqoi5VoE2Kk2HHyjlPdn/vPUlgVPLgMkQCzzyRlpareCu+GZ9gLzS6Vpjo/mwuw6cpQc2v52rB/FWW/B/oqW0hqxF2pGJXGnnUD0EYU3FhDSAx7eJ0RNdkiKN9E7fGjaNVWuVtb9tjBNBAlq7epis=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750862351; c=relaxed/simple;
-	bh=wWzJH74iY7h01bjK/c+vcS4INpa24/3jkvCfcNuaqnM=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=ExqsKogOqkHtenLqW66vBzcSxO0VzSk3vQyqwtzZ6V/4IXC4PetdIsdP2rRIXuTHSLU9ecHWbTk/Rhirzx+3WR1l6tMATdLoeQTn13X0w6mT7WN6leldxNeLBlEtfAwie4/rzb15iwvxaxO4yHI7vbFM9WnySIKC42VFs54xOYI=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=qmU78tPb; arc=fail smtp.client-ip=40.107.244.75
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=egEngZEkC2kBlplbGMkQBzC7LMaFxqHLCedEzLUaeYzv0RU4i4pMHtfIMjZYTYr24XIPWQi0oT01raiR3STpsuz2nEeeGMc5RSsQkv0b1Ah17+Gl2D9PQKYbpfPtOcGyCwmJYwjqgT75s+r0itHrmPzPZKO7oU+joTPZBePOeDMa4oxv8GRCNz6mZcFLZbfxxRx+7ObHkWashjBrpiu/jKZnZHDH3INNDWM7P+xJR7kL596ZIBuSmiz7Thx//Rsk3vQ4yvvU9drH2tAFRD+CJcqg4ANuU0isYFYS3QnwU4ZI1g1weeTknJcSnJRf1qluPXbF1OpMuNv/80af8WV+WA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=SMeY0tFBLh9BBJpgPG4zQckZCr5ZnsEaXDU/q13wy/Q=;
- b=RXtrHOr+irSwNMTYhGpO/EeT32lg+eNucmU776Bv9KjyOlqxVPvV7zqhw5T/C9t0FhA4/INacDQnrNW1Oa3B2zWpxIzDs9ZVOYS8dQptfvmmGHas9tDEKNUIQMhHyb3PRGCI61urokIZgQKf6mjMMBHs5gz6yCJtmdY/jhWTxDrcPrTxpxi8ivMjQjriyVoxZYzAEvtahLXLx+56lxiI9nEH2lnB5KvgTyyDxM2CLmSfavhLQsXheIE+cTCZFIsd24aEo9U3+ZgIqLYLVKUxdWk93y7VuDVHesjiVo1dhAayyM7MqF2R2IPO78fmB06fR2IWGoeJbeVd7plqjtV8ig==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 165.204.84.17) smtp.rcpttodomain=intel.com smtp.mailfrom=amd.com; dmarc=pass
- (p=quarantine sp=quarantine pct=100) action=none header.from=amd.com;
- dkim=none (message not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=SMeY0tFBLh9BBJpgPG4zQckZCr5ZnsEaXDU/q13wy/Q=;
- b=qmU78tPbmF/9cdMPxZjHyuR9witSm2xc5ymv1j6KhoBWFR25qg0dQGyjf/GXhcbRLxN0tR9P/UprXUWlUrM1g6A/0FkhJNGp+vUoGteNriCEGh9GlbGzcx3/TJ9mcUd+wvVLKqtwgIrrxkVQkMqD36B6/BLQ08PgxELxOCa0d/U=
-Received: from CH5P220CA0007.NAMP220.PROD.OUTLOOK.COM (2603:10b6:610:1ef::13)
- by CH2PR12MB4229.namprd12.prod.outlook.com (2603:10b6:610:a5::15) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8880.17; Wed, 25 Jun
- 2025 14:39:07 +0000
-Received: from CH2PEPF0000009B.namprd02.prod.outlook.com
- (2603:10b6:610:1ef:cafe::8b) by CH5P220CA0007.outlook.office365.com
- (2603:10b6:610:1ef::13) with Microsoft SMTP Server (version=TLS1_3,
- cipher=TLS_AES_256_GCM_SHA384) id 15.20.8880.17 via Frontend Transport; Wed,
- 25 Jun 2025 14:39:07 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
- smtp.mailfrom=amd.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=amd.com;
-Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
- 165.204.84.17 as permitted sender) receiver=protection.outlook.com;
- client-ip=165.204.84.17; helo=SATLEXMB04.amd.com; pr=C
-Received: from SATLEXMB04.amd.com (165.204.84.17) by
- CH2PEPF0000009B.mail.protection.outlook.com (10.167.244.23) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.20.8880.14 via Frontend Transport; Wed, 25 Jun 2025 14:39:07 +0000
-Received: from FRAPPELLOUX01.amd.com (10.180.168.240) by SATLEXMB04.amd.com
- (10.181.40.145) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Wed, 25 Jun
- 2025 09:39:05 -0500
-From: Pierre-Eric Pelloux-Prayer <pierre-eric.pelloux-prayer@amd.com>
-To: Matthew Brost <matthew.brost@intel.com>, Danilo Krummrich
-	<dakr@kernel.org>, Philipp Stanner <phasta@kernel.org>,
-	=?UTF-8?q?Christian=20K=C3=B6nig?= <ckoenig.leichtzumerken@gmail.com>,
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard
-	<mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, David Airlie
-	<airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, Tvrtko Ursulin
-	<tvrtko.ursulin@igalia.com>, Pierre-Eric Pelloux-Prayer
-	<pierre-eric.pelloux-prayer@amd.com>
-CC: <dri-devel@lists.freedesktop.org>, <linux-kernel@vger.kernel.org>
-Subject: [PATCH v1] drm/sched: Fix racy access to drm_sched_entity.dependency
-Date: Wed, 25 Jun 2025 16:37:21 +0200
-Message-ID: <20250625143722.55272-1-pierre-eric.pelloux-prayer@amd.com>
-X-Mailer: git-send-email 2.43.0
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 96F98267F53
+	for <linux-kernel@vger.kernel.org>; Wed, 25 Jun 2025 14:38:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.118.77.12
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1750862310; cv=none; b=TWS3MiNIc7RTUYJj6fCP9I3NwInOWpQUJ3Um/hPO6DwP3X01E6++N61lw8QiivHw/3N9s1WpXRnH4lGRYdrWe49AaCE67OaAUOVtxklAnjf52EU235XfRou2RlPlJcZCIu7fh9ktIv3HSnOkRxv05Zv1FLidExbrU6jqsbXsfEs=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1750862310; c=relaxed/simple;
+	bh=8XoLBFN4X2J53c6WkchgBiFl2rLtXlJ2Jsji10lKYfg=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:MIME-Version:
+	 Content-Type:References; b=r+tTwhFUYbpXS+0dXFjStSIBehPXF7SJosLZVic/kzfPwbWKRce17hUzzN/n7OTG3xB3IUYP5A7e8dSe1InFFURpyroRkuw0FieS83zyLv51ubHk8iZhoihNQAmCLnWYuVqz1dPo9uqdXfPk3nNVOeE2kBCPytFRXdYXX77NCWE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=pFfPPfbC; arc=none smtp.client-ip=210.118.77.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
+Received: from eucas1p2.samsung.com (unknown [182.198.249.207])
+	by mailout2.w1.samsung.com (KnoxPortal) with ESMTP id 20250625143825euoutp02bad9c106fff13684916fd381d7af86a4~MT-2ko6Gu2794127941euoutp02d
+	for <linux-kernel@vger.kernel.org>; Wed, 25 Jun 2025 14:38:25 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.w1.samsung.com 20250625143825euoutp02bad9c106fff13684916fd381d7af86a4~MT-2ko6Gu2794127941euoutp02d
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+	s=mail20170921; t=1750862305;
+	bh=8dqgP4LV8c4NLpBPDYGi8Zm3iZeMy9dNLyMC8hkw3Mc=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=pFfPPfbCvaLUthbd5ueG3UuOnIkNWM5+nnYQbrgJy/zkV7x6wH018ApoC5WRPVXVk
+	 DNqXV4XI3CTYG+bVZ6qbnlZv6X+lp5OeMpEOXB3KglVE0okmNNYHB7rZpHqlY1ijEy
+	 yKimBKL8bgumawwX1dKSSa4STJzAtrApaZ8K0Eek=
+Received: from eusmtip2.samsung.com (unknown [203.254.199.222]) by
+	eucas1p2.samsung.com (KnoxPortal) with ESMTPA id
+	20250625143825eucas1p2e95ba80552cd289b6e05db33f32ec14a~MT-2K9-ln3066230662eucas1p23;
+	Wed, 25 Jun 2025 14:38:25 +0000 (GMT)
+Received: from AMDC4515.digital.local (unknown [106.120.51.28]) by
+	eusmtip2.samsung.com (KnoxPortal) with ESMTPA id
+	20250625143824eusmtip2d3f64e540b8e66266a364f9237f7259e~MT-1hnkPv1779917799eusmtip2T;
+	Wed, 25 Jun 2025 14:38:24 +0000 (GMT)
+From: Mateusz Majewski <m.majewski2@samsung.com>
+To: linux.amoon@gmail.com
+Cc: alim.akhtar@samsung.com, bzolnier@gmail.com, daniel.lezcano@linaro.org,
+	krzk@kernel.org, linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
+	linux-samsung-soc@vger.kernel.org, lukasz.luba@arm.com,
+	m.majewski2@samsung.com, rafael@kernel.org, rui.zhang@intel.com
+Subject: Re: [RRC v1 1/3] thermal/drivers/exynos: Remove unused base_second
+ mapping and references
+Date: Wed, 25 Jun 2025 16:38:16 +0200
+Message-ID: <20250625143816.1146123-1-m.majewski2@samsung.com>
+X-Mailer: git-send-email 2.49.0
+In-Reply-To: <CANAwSgTBzpL+XMJGhG=38A7GOzeayZaG_2LTvsaE2=mF-pn5mg@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -89,133 +69,74 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: SATLEXMB04.amd.com (10.181.40.145) To SATLEXMB04.amd.com
- (10.181.40.145)
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: CH2PEPF0000009B:EE_|CH2PR12MB4229:EE_
-X-MS-Office365-Filtering-Correlation-Id: 02e5b052-2784-495e-8a4f-08ddb3f60a76
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|376014|36860700013|1800799024|7416014|82310400026|921020;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?NDjC63pypQdGXG8l/eVrmJXV1rMdgc04UTL/GpyDMfEfYG6I4abOoBtn9bqw?=
- =?us-ascii?Q?w6XPmLrOivYRgksN938ChXWsw89dE7rvsvJYvKHttudeB8CKUCXZm3wMKAsh?=
- =?us-ascii?Q?OlQiGwvBwJGzEm8t3spLunomqGHwNyoRbSKncwWGQ8xkHjIIEFE8xuxWR5Im?=
- =?us-ascii?Q?ZvRrmrs0Mq6yhZi2No+9ciM4AV9okhXSPDRscj7uST2N/EbjTc1ssrQ7eLad?=
- =?us-ascii?Q?dJEeHvEbE9tYK/qpNu9+bTOMbyHXQkpFGLlJvoJ2Pp4aoszZGbtETDb4t28B?=
- =?us-ascii?Q?49HXn2ajYPdrwa/TLeXUZSbLlyGR1Wr7/r9UFqJ+R9+61MlK3REOIW+uqf3g?=
- =?us-ascii?Q?+qN1etnfzxVVMm5dJZOZaNg512NS1yZI9VBfTj6MKGruQTeKExFMJdU7SLu2?=
- =?us-ascii?Q?wiiVZ1T0Co6z7pD7QL6A6xX774Vr3aFFsDHfZGC6J8M/W7VBi5fFdN+7dgDs?=
- =?us-ascii?Q?BpMFFXvU4hNfLdcpFMlQ1AVHLheaaPwdhQcJAAmaJAs8lW/hBgPmEZ4TvQ9d?=
- =?us-ascii?Q?fqhMvqfSxjt6nqYQHZq+4qH3lXKeh24ipoqLuJ8wmKBi71A76+eDvW08fiC/?=
- =?us-ascii?Q?pc+B6EUuXNY3WQ5we+QZ6O2MVORu1BwvnD8prKASD0EuL4rShOcZVxefKGS7?=
- =?us-ascii?Q?MqdbquQyWdwSmQ9ADdghiewPu2jr3thF1u8GrF1glJZYMrtx4UkirpdhcpOh?=
- =?us-ascii?Q?4Ex2Xn0Hrv3AFTzupUAmIwCrBG9eron1U8cHPPOg1z0HkDyLbYWJCMiKgxCy?=
- =?us-ascii?Q?3gnPnCCoH3ScHaMeGpWAhqp70dW2wbmsgiy62CKgIwd4zZWwCzDni5LQ/TNK?=
- =?us-ascii?Q?zxg+OXOy8ZdPqHhSODjsDTtJNVeDpiLZgayjUpCfKH73rXMCM8efZOAvMrXj?=
- =?us-ascii?Q?twd0VV+/fjUQCzFtnk66BqPUPrSucvlC5K8id+sEL3SYwE1C5jh9MNzPXRO1?=
- =?us-ascii?Q?5tYU8dVgb1FGCIHpZWNAQSLgCa+Kp6zazsSmFHdCFnT8FHWypsK8exSboHAQ?=
- =?us-ascii?Q?O/k3DwZNATjqfrip+8CCeWEszekGw1rN9CiuguU8lHSLAc7zZQDgfm7tqDyf?=
- =?us-ascii?Q?jCL/N/dB2dHnA/VsQWJSAL70X9Qh00mT65f3PgSZ2M8WlpulnWLd+H14XFEf?=
- =?us-ascii?Q?tb1Q1/ER6Xy5ithz8qluA6ZOYofRc49Zs6Ub8xXCxCiIHnWnBXsafT2ZBZ/l?=
- =?us-ascii?Q?MJK45n6356N0hhfGHfkDwtq7YCT+e/Wx/iFSpaSmyBhOQG22LTBT1z3ndlrk?=
- =?us-ascii?Q?0QrwxLtPRKtTQb2pYBDnVS2kDrzc/gHPOZbbQTuY4GpSQxjrlhDadKPqGrSE?=
- =?us-ascii?Q?/K44oHoO7789sITRstU1y+tyRDEvRt24Z2yZ6jAnC9Z6daNaKkQdJg0mHSav?=
- =?us-ascii?Q?B2YCLJysTRk8ehcpk3dDbeVRJC2ZRi+3LHArz9kegiO8XzYSldnJS1rHyAjy?=
- =?us-ascii?Q?x3lWYTpfNbocDiK9t07M/kF7XiBm2871k5ZbxdIIP+boNPjtriPzXSpbU4vh?=
- =?us-ascii?Q?P1dIMZ7wjeTemrXfH2Jzt4LUmEvLIH/iBnWKOtj0LxqnUxUHgxkd0biXGg?=
- =?us-ascii?Q?=3D=3D?=
-X-Forefront-Antispam-Report:
-	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:SATLEXMB04.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(376014)(36860700013)(1800799024)(7416014)(82310400026)(921020);DIR:OUT;SFP:1101;
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 25 Jun 2025 14:39:07.4799
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 02e5b052-2784-495e-8a4f-08ddb3f60a76
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[SATLEXMB04.amd.com]
-X-MS-Exchange-CrossTenant-AuthSource:
-	CH2PEPF0000009B.namprd02.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CH2PR12MB4229
+X-CMS-MailID: 20250625143825eucas1p2e95ba80552cd289b6e05db33f32ec14a
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+X-RootMTR: 20250625143825eucas1p2e95ba80552cd289b6e05db33f32ec14a
+X-EPHeader: CA
+X-CMS-RootMailID: 20250625143825eucas1p2e95ba80552cd289b6e05db33f32ec14a
+References: <CANAwSgTBzpL+XMJGhG=38A7GOzeayZaG_2LTvsaE2=mF-pn5mg@mail.gmail.com>
+	<CGME20250625143825eucas1p2e95ba80552cd289b6e05db33f32ec14a@eucas1p2.samsung.com>
 
-The drm_sched_job_unschedulable trace point can access
-entity->dependency after it was cleared by the callback
-installed in drm_sched_entity_add_dependency_cb, causing:
+> Can you check with with following changes
+> 
+> diff --git a/drivers/thermal/samsung/exynos_tmu.c
+> b/drivers/thermal/samsung/exynos_tmu.c
+> index 9fc085f4ea1a..0776801fafea 100644
+> --- a/drivers/thermal/samsung/exynos_tmu.c
+> +++ b/drivers/thermal/samsung/exynos_tmu.c
+> @@ -469,14 +469,11 @@ static void exynos4412_tmu_initialize(struct
+> platform_device *pdev)
+>         ctrl = readl(data->base + EXYNOS_TMU_TRIMINFO_CON2);
+>         ctrl = EXYNOS_TRIMINFO_RELOAD_ENABLE;
+>         writel(ctrl, data->base + EXYNOS_TMU_TRIMINFO_CON2);
+> +       return;
+>     }
+> 
+> -   /* On exynos5420 the triminfo register is in the shared space */
+> -   if (data->soc == SOC_ARCH_EXYNOS5420
+> -           data->soc == SOC_ARCH_EXYNOS5420_TRIMINFO) {
+> -       trim_info = readl(data->base + EXYNOS_TMU_REG_TRIMINFO);
+> -       sanitize_temp_error(data, trim_info);
+> -   }
+> +   trim_info = readl(data->base + EXYNOS_TMU_REG_TRIMINFO);
+> +   sanitize_temp_error(data, trim_info);
+> }
 
-BUG: kernel NULL pointer dereference, address: 0000000000000020
-Workqueue: comp_1.1.0 drm_sched_run_job_work [gpu_sched]
-RIP: 0010:trace_event_raw_event_drm_sched_job_unschedulable+0x70/0xd0 [gpu_sched]
+This does seem to work (tested on 3250 and on 5420) in the sense that I
+can read the temperatures, when they increase the state of the cooling
+device gets increased, and the values look reasonable and stay in a
+reasonable range. Hard to say if the trim and the temperature values are
+correct, though.
 
-To fix this we either need to take a reference of the fence before
-setting up the callbacks, or move the trace_drm_sched_job_unschedulable
-calls into drm_sched_entity_add_dependency_cb where they can be
-done earlier. The former option is the more correct one because with
-the latter we might emit the event and still be able to schedule the
-job if the fence is signaled in-between. Despite that, I've
-implemented the latter, since it's a bit simpler and the extra event
-is not a deal breaker for tools anyway.
+(FYI I will probably have a harder time regarding the drivers from
+GitHub you linked in 2/3, so no promises on testing them.)
 
-Fixes: 76d97c870f29 (drm/sched: Trace dependencies for GPU jobs)
+> As per my Exynos5422 user manual and DTS mapping
+> thermal-sensor tmu@10060000 is mapped to CPU0 with tmu_apbif clock
+> thermal-sensor tmu@10064000 is mapped to CPU1 with tmu_apbif clock
+> thermal-sensor tmu@10068000 is mapped to CPU2 with tmu_apbif clock
+> thermal-sensor tmu@1006c000 is mapped to CPU3 with tmu_apbif clock
+> thermal-sensor tmu@100a0000 is mapped to GPU with tmu_triminfo_apbif clock.
 
-Signed-off-by: Pierre-Eric Pelloux-Prayer <pierre-eric.pelloux-prayer@amd.com>
----
- drivers/gpu/drm/scheduler/sched_entity.c | 16 ++++++++++++----
- 1 file changed, 12 insertions(+), 4 deletions(-)
+Hmm, I might be missing something, but I think the DTS does link to two
+adresses and two clocks, for instance for GPU (in
+arch/arm/boot/dts/samsung/exynos5420.dtsi):
 
-diff --git a/drivers/gpu/drm/scheduler/sched_entity.c b/drivers/gpu/drm/scheduler/sched_entity.c
-index 5635b3a826d8..a23b204cac5c 100644
---- a/drivers/gpu/drm/scheduler/sched_entity.c
-+++ b/drivers/gpu/drm/scheduler/sched_entity.c
-@@ -401,7 +401,8 @@ EXPORT_SYMBOL(drm_sched_entity_set_priority);
-  * Add a callback to the current dependency of the entity to wake up the
-  * scheduler when the entity becomes available.
-  */
--static bool drm_sched_entity_add_dependency_cb(struct drm_sched_entity *entity)
-+static bool drm_sched_entity_add_dependency_cb(struct drm_sched_entity *entity,
-+					       struct drm_sched_job *sched_job)
- {
- 	struct drm_gpu_scheduler *sched = entity->rq->sched;
- 	struct dma_fence *fence = entity->dependency;
-@@ -429,6 +430,11 @@ static bool drm_sched_entity_add_dependency_cb(struct drm_sched_entity *entity)
- 		fence = dma_fence_get(&s_fence->scheduled);
- 		dma_fence_put(entity->dependency);
- 		entity->dependency = fence;
-+
-+		if (trace_drm_sched_job_unschedulable_enabled() &&
-+		    !dma_fence_is_signaled(fence))
-+			trace_drm_sched_job_unschedulable(sched_job, fence);
-+
- 		if (!dma_fence_add_callback(fence, &entity->cb,
- 					    drm_sched_entity_clear_dep))
- 			return true;
-@@ -438,6 +444,10 @@ static bool drm_sched_entity_add_dependency_cb(struct drm_sched_entity *entity)
- 		return false;
- 	}
- 
-+	if (trace_drm_sched_job_unschedulable_enabled() &&
-+	    !dma_fence_is_signaled(entity->dependency))
-+		trace_drm_sched_job_unschedulable(sched_job, entity->dependency);
-+
- 	if (!dma_fence_add_callback(entity->dependency, &entity->cb,
- 				    drm_sched_entity_wakeup))
- 		return true;
-@@ -478,10 +488,8 @@ struct drm_sched_job *drm_sched_entity_pop_job(struct drm_sched_entity *entity)
- 
- 	while ((entity->dependency =
- 			drm_sched_job_dependency(sched_job, entity))) {
--		if (drm_sched_entity_add_dependency_cb(entity)) {
--			trace_drm_sched_job_unschedulable(sched_job, entity->dependency);
-+		if (drm_sched_entity_add_dependency_cb(entity, sched_job))
- 			return NULL;
--		}
- 	}
- 
- 	/* skip jobs from entity that marked guilty */
--- 
-2.43.0
+		tmu_gpu: tmu@100a0000 {
+			compatible = "samsung,exynos5420-tmu-ext-triminfo";
+			reg = <0x100a0000 0x100>, <0x10068000 0x4>;
+			interrupts = <GIC_SPI 215 IRQ_TYPE_LEVEL_HIGH>;
+			clocks = <&clock CLK_TMU_GPU>, <&clock CLK_TMU>;
+			clock-names = "tmu_apbif", "tmu_triminfo_apbif";
+			#thermal-sensor-cells = <0>;
+		};
 
+The manual does indeed not say anything about this, but I feel like the
+current code in essence states that the manual is not correct. We
+probably should have some evidence that the current code is wrong and
+the manual was correct all along?
+
+Thank you,
+Mateusz Majewski
 
