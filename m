@@ -1,255 +1,288 @@
-Return-Path: <linux-kernel+bounces-702815-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-702819-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 20FB0AE87CA
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Jun 2025 17:19:17 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id AE624AE87D3
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Jun 2025 17:21:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DCC1A17CFBC
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Jun 2025 15:19:13 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 324293BD887
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Jun 2025 15:21:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5488D26B745;
-	Wed, 25 Jun 2025 15:19:02 +0000 (UTC)
-Received: from mail-oo1-f49.google.com (mail-oo1-f49.google.com [209.85.161.49])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C55A41C5D55;
+	Wed, 25 Jun 2025 15:21:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=ravnborg.org header.i=@ravnborg.org header.b="a1X3H2yL";
+	dkim=permerror (0-bit key) header.d=ravnborg.org header.i=@ravnborg.org header.b="an/A7ULk"
+Received: from mailrelay-egress4.pub.mailoutpod2-cph3.one.com (mailrelay-egress4.pub.mailoutpod2-cph3.one.com [46.30.211.179])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8DB0A19D071;
-	Wed, 25 Jun 2025 15:18:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.161.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 64814145355
+	for <linux-kernel@vger.kernel.org>; Wed, 25 Jun 2025 15:21:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.30.211.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750864741; cv=none; b=p11Y7lYCL5w5hdgLoT43xRnCt01e1K6k+UzTeDzeLuPEDWW9hvKkbfJ+3Ccc17a3mED1gOEfos+e3bLCWIKSN7PJsDOHVlVJEafRm19l4ujj/lCxlYXbV4yZzQUvNuCUhldHjhSPA+Q4sawdTGVlg+NXgup4bbfnnrNpjYbzUGQ=
+	t=1750864910; cv=none; b=MxhHLE3JZOg/Xe5lZ5F3+pv75bjt/+GIjoRyl48fcfKq4FcWtFBxArnH+ENmdvu4fkLy8hUKaHA0RT0qdeZvJdOvHpyCcl5n7/nWMmwVScWU6vkUgYxaoNcAUADhWQgIzLKvHxQX7sDd6S2ad2R1CU1NDNIK3pqrd9k0uachQ/0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750864741; c=relaxed/simple;
-	bh=lXLEkqm1AZbw1Xkeyz5RDqidMMn5p7Yuuae2E1tcWbc=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=cBjkk2E9HIjq3rmSy8F1PBLw9QSROZ01eCTUEjS1JcBtaP63/VfHpJ2XMvpuh4RQRhioBjdny+GRD/pBDLQ4yaK2KqJXovKGOY+fU6a0T5Vmhjo3CdIzLbBkZ8Cwt+id2jghbvH2cT5nr5gI+WPbjGciYQ55KQ7R1cOp7ulg6fI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.161.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-oo1-f49.google.com with SMTP id 006d021491bc7-6118c1775dbso2734eaf.1;
-        Wed, 25 Jun 2025 08:18:59 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1750864738; x=1751469538;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=61X6vtBiwIDcFwxAXL+mrWigIfgOJBa9v164n3CvTMU=;
-        b=VQ+/WctZES+ws4SDn4yzckyFUTIPe+WUWTvDKED8zlt7/6L5usVRItHLeJdWIwXKZc
-         MPMxQHg/ckdLYagYMjh15YMpFQNu4C6qVc/wR65MgutZT7vKAc0fk3zfz7K1h4vloc9r
-         MgdnKRvsvfTa/jhSI1nvqZMAaUpB/KZci7+YR98NPnhLoyHRgFJjnif1wJafbSXL6TkF
-         uwPQCIBe0Cv/cekyMELKPymERH1KsfVmWyxoxRTylaVb47tH0TScx2fj9Zk2Woe/Pv2F
-         rIYSS1X2ro2/hWVZNJqHG1U1x0LnkZ64JlqxVItI9iql8KUREJ4IGXFw53wdSwmkWkh7
-         RlxQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUC6HwMRbfPujTtprw4p8kahOIBH3Iny7kDeRfW/j8wjRWnFT+7yjaK95piPw2cfydY+cyKV9M4zSK/QemcU3eIPOc=@vger.kernel.org, AJvYcCV31aWyi7aEn7wsJ/S5tZInFoL+2APplER5sMdvz9/y7OGrqZ/RelW/ajjWmbrx0qlhtCVrTrte8EGN@vger.kernel.org, AJvYcCWNCuuYAPqZ44KcqXQQyoqWAvinlgJS+E21tDEGszd9cPVZKRIrcR3nIZxHNmIS4D2UqzjviCx0dncISR/V@vger.kernel.org, AJvYcCXII8iThfHOvbkmvbrpaxTDbAxBRnv4l3ducF8xN/qC6oRzEFWTgEPATgMMOc5Oe6hBQ8Z7EcJa@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxo1EtPR9Susvtsn7FK/aMCjbOMCZJCBNPm5pcp8F5DhZMqoDu0
-	mXSI0LKW1W3xJZXNQFcPG0aOrvLlGvb1JbgJTuREqzuJ1dtG8RkYEFUyEUojY5GY
-X-Gm-Gg: ASbGncv5g4oLssVcwqUairCRpUxc2ss3YT6CstIXDLvffQumwWV9Na4B1hWinn/mxYe
-	ORT6oqOCqUbywGDCO/OwsQL5ySkK8pV/FMKeBILyM+p5UM1H72NzM3iwj9BdlADYh76Mplamiya
-	IRvWqf76aZ9S11pCc+S77+v5MEG20YhSFzlQjuR55kQh5iz4t6+F/gRyhXwooeLudms0vReYNS6
-	VfwwIgE3RPDC9Ds22b6T1pENxwu40eZhMcHJJ2Ig3kbFNDjN0YhIJmveYLlzyZYYQPTLEqXZTte
-	JOqI33S6dyx0lshnhdnZHwlTiwX1LHjRXLBqNjIo3aQZokWpqX8y+e1Oup3a8vRyrEPLHoXtd00
-	6Yr5DqIbzH9Vkjq/YTLdaksoE/QiF
-X-Google-Smtp-Source: AGHT+IHhzeS9QhMVlC9Da5wv4xW71BdxK6MtLqfXrXQeP4+q51Hrr2d+t0dtfoHh8e12RX0D6LPqLw==
-X-Received: by 2002:a05:6808:210a:b0:3f9:2fdc:ee93 with SMTP id 5614622812f47-40b057f4f15mr2980265b6e.30.1750864738067;
-        Wed, 25 Jun 2025 08:18:58 -0700 (PDT)
-Received: from mail-oi1-f175.google.com (mail-oi1-f175.google.com. [209.85.167.175])
-        by smtp.gmail.com with ESMTPSA id 5614622812f47-40ac6d3af8esm2200265b6e.44.2025.06.25.08.18.57
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 25 Jun 2025 08:18:57 -0700 (PDT)
-Received: by mail-oi1-f175.google.com with SMTP id 5614622812f47-4080548891fso18744b6e.3;
-        Wed, 25 Jun 2025 08:18:57 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCUEgOdT1UDFUJKVKepGwxgn4+4jI7sOWV3jgSHL9etfSFuh/4B0tCu9wX5/MMDPzfTLT3RUZ4a8BcRt@vger.kernel.org, AJvYcCVWVtbt4f+VLkJ2ugiyzctOy5Vq4vB/3nuZGH7Iat3nJ+CjnGRHz9v5JZtmhuFKzvR1VEjyV8IJMoY+91RHAhcCBzo=@vger.kernel.org, AJvYcCWA4ZjVA9yhflhr222BgBu3z3GsZPfF3y0uEAgPI4fu7YUzj19ejWzyRZXpK98QJf2fVZ6cDxCy@vger.kernel.org, AJvYcCXVvqU4KZ/Lbn8DGnQ96+IzLNsIvy01ypFqHhUXV1d7fXNzkEqHSEwVn5JHhywuyuvzjYISNlWpaUJHk8Y+@vger.kernel.org
-X-Received: by 2002:a05:6808:144b:b0:403:3660:4130 with SMTP id
- 5614622812f47-40b057f1341mr2798969b6e.27.1750864737453; Wed, 25 Jun 2025
- 08:18:57 -0700 (PDT)
+	s=arc-20240116; t=1750864910; c=relaxed/simple;
+	bh=Nv4m85cnQM5lCBdZxqzQavDUdMWkhV6xtY3hfsIHTTE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=mLAJdkf4Q0OWYssu+8h4KZFe9gYqe8UIsrZQrO85UCsKY2IevPWIni/er4AqYmpsfqMxNSN5Vo6hSVgeDTiH0HP++YfKwMcUjFQzxPBA65eVrDzvsuV0a9nOB/WfN4MErhMKPz9/SaGemH8lspjgU53iY3VZAK0j96trRgbBM5w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ravnborg.org; spf=none smtp.mailfrom=ravnborg.org; dkim=pass (2048-bit key) header.d=ravnborg.org header.i=@ravnborg.org header.b=a1X3H2yL; dkim=permerror (0-bit key) header.d=ravnborg.org header.i=@ravnborg.org header.b=an/A7ULk; arc=none smtp.client-ip=46.30.211.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ravnborg.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ravnborg.org
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; t=1750864835; x=1751469635;
+	d=ravnborg.org; s=rsa1;
+	h=in-reply-to:content-type:mime-version:references:message-id:subject:cc:to:
+	 from:date:from;
+	bh=O4nu8mefJbyYB9Pt62QRGWGhat2XpUcP+oPL1CGj9B4=;
+	b=a1X3H2yL8v7P4SnvtjpcYSzYCDLMsRmv/8xxRbhh0VWKm1M+OM2Q2RBGLsZgXmCEzDEi7vEiLriV6
+	 sGSExYqKFH5YT+1nyGFYLTrXMVBODPYk6WBFPvjtYJ09djFErOtpncj+qw+7nEaIBeDUBmqE1jMzDd
+	 dx1v7v1JCv1MwqJibYHvCzGJyyvQkVfbgUzxwfVOa+uuuxczKKx/uuUxTr3dm1m7vjVTq9d7cCqxKm
+	 72qfB6lKxOL4vW+ChH3J4WsitteUF52qUWyMOEY0VB9m7t8xQsq6mjG6mwVDLbv+F82wBUXqnEOMS8
+	 L1GAn6TJt9eqNJoEp6Nguj0TnDPmNTQ==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; t=1750864835; x=1751469635;
+	d=ravnborg.org; s=ed1;
+	h=in-reply-to:content-type:mime-version:references:message-id:subject:cc:to:
+	 from:date:from;
+	bh=O4nu8mefJbyYB9Pt62QRGWGhat2XpUcP+oPL1CGj9B4=;
+	b=an/A7ULkJGe/vIKIMyryjrdRMnV19OwHwIWB1Fkwk2Rz76GeXX5uaPCxZUoLqCMtdTqgHtUnW2uIc
+	 81Zh8GgDQ==
+X-HalOne-ID: ef3a532b-51d7-11f0-8665-f78b1f841584
+Received: from ravnborg.org (2-105-16-150-cable.dk.customer.tdc.net [2.105.16.150])
+	by mailrelay1.pub.mailoutpod2-cph3.one.com (Halon) with ESMTPSA
+	id ef3a532b-51d7-11f0-8665-f78b1f841584;
+	Wed, 25 Jun 2025 15:20:34 +0000 (UTC)
+Date: Wed, 25 Jun 2025 17:20:33 +0200
+From: Sam Ravnborg <sam@ravnborg.org>
+To: Arnd Bergmann <arnd@kernel.org>
+Cc: Thomas Zimmermann <tzimmermann@suse.de>,
+	Simona Vetter <simona@ffwll.ch>, Helge Deller <deller@gmx.de>,
+	Arnd Bergmann <arnd@arndb.de>, Daniel Mack <daniel@zonque.org>,
+	Haojian Zhuang <haojian.zhuang@gmail.com>,
+	Robert Jarzmik <robert.jarzmik@free.fr>,
+	Javier Martinez Canillas <javierm@redhat.com>,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+	linux-fbdev@vger.kernel.org, dri-devel@lists.freedesktop.org
+Subject: Re: [PATCH 1/2] fbdev: remove fb_notify support
+Message-ID: <20250625152033.GA183878@ravnborg.org>
+References: <20250625131511.3366522-1-arnd@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250611061609.15527-1-john.madieu.xa@bp.renesas.com>
- <20250611061609.15527-2-john.madieu.xa@bp.renesas.com> <CAMuHMdXE-C4FAXOfzQv8xfgFytwpqkARDORGLkosZtCsjK8nmg@mail.gmail.com>
- <OSCPR01MB14647EFA0DA38119F00DF1D50FF72A@OSCPR01MB14647.jpnprd01.prod.outlook.com>
- <CAMuHMdWnz3VUeFaJBEgLc0F_gGkdm679H4YqFFuRAEVFKZd8OA@mail.gmail.com>
- <OSCPR01MB1464715327B4DDE8622B9B510FF7DA@OSCPR01MB14647.jpnprd01.prod.outlook.com>
- <CA+V-a8sF2wmLEAp7uhxhKaNx_u9xTf9SR_y8rafyvYYaUgxYDw@mail.gmail.com>
-In-Reply-To: <CA+V-a8sF2wmLEAp7uhxhKaNx_u9xTf9SR_y8rafyvYYaUgxYDw@mail.gmail.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Wed, 25 Jun 2025 17:18:44 +0200
-X-Gmail-Original-Message-ID: <CAMuHMdXdhYJ7ZKVa_f15PMBv7t1_xsDUuwR+uv+bOaHMxtr8Lg@mail.gmail.com>
-X-Gm-Features: Ac12FXxMuB3uVsmBJbD5APZ-b0irg6FYpOQOBb_DxbMkT4pEas9BrSWPeM1lx3I
-Message-ID: <CAMuHMdXdhYJ7ZKVa_f15PMBv7t1_xsDUuwR+uv+bOaHMxtr8Lg@mail.gmail.com>
-Subject: Re: [PATCH v2 1/3] clk: renesas: r9a09g047: Add clock and reset
- signals for the GBETH IPs
-To: John Madieu <john.madieu.xa@bp.renesas.com>
-Cc: "andrew+netdev@lunn.ch" <andrew+netdev@lunn.ch>, "conor+dt@kernel.org" <conor+dt@kernel.org>, 
-	"davem@davemloft.net" <davem@davemloft.net>, "edumazet@google.com" <edumazet@google.com>, 
-	"krzk+dt@kernel.org" <krzk+dt@kernel.org>, "kuba@kernel.org" <kuba@kernel.org>, 
-	"pabeni@redhat.com" <pabeni@redhat.com>, 
-	Prabhakar Mahadev Lad <prabhakar.mahadev-lad.rj@bp.renesas.com>, 
-	"robh@kernel.org" <robh@kernel.org>, Biju Das <biju.das.jz@bp.renesas.com>, 
-	"Lad, Prabhakar" <prabhakar.csengg@gmail.com>, 
-	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, 
-	"john.madieu@gmail.com" <john.madieu@gmail.com>, 
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, 
-	"linux-renesas-soc@vger.kernel.org" <linux-renesas-soc@vger.kernel.org>, 
-	"magnus.damm@gmail.com" <magnus.damm@gmail.com>, "netdev@vger.kernel.org" <netdev@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250625131511.3366522-1-arnd@kernel.org>
 
-Ho John,
+Hi Arnd.
 
-On Thu, 19 Jun 2025 at 10:22, Lad, Prabhakar <prabhakar.csengg@gmail.com> w=
-rote:
-> On Thu, Jun 19, 2025 at 5:34=E2=80=AFAM John Madieu
-> <john.madieu.xa@bp.renesas.com> wrote:
-> > > From: Geert Uytterhoeven <geert@linux-m68k.org>
-> > > On Wed, 18 Jun 2025 at 12:04, John Madieu <john.madieu.xa@bp.renesas.=
-com>
-> > > wrote:
-> > > > > From: Geert Uytterhoeven <geert@linux-m68k.org> On Wed, 11 Jun 20=
-25
-> > > > > at 11:02, John Madieu <john.madieu.xa@bp.renesas.com>
-> > > > > wrote:
-> > > > > > Add clock and reset entries for the Gigabit Ethernet Interfaces
-> > > > > > (GBETH
-> > > > > > 0-1) IPs found on the RZ/G3E SoC. This includes various PLLs,
-> > > > > > dividers, and mux clocks needed by these two GBETH IPs.
-> > > > > >
-> > > > > > Reviewed-by: Biju Das <biju.das.jz@bp.renesas.com>
-> > > > > > Tested-by: Biju Das <biju.das.jz@bp.renesas.com>
-> > > > > > Signed-off-by: John Madieu <john.madieu.xa@bp.renesas.com>
-> > > > >
-> > > > > Thanks for your patch!
-> > > > >
-> > > > > > --- a/drivers/clk/renesas/r9a09g047-cpg.c
-> > > > > > +++ b/drivers/clk/renesas/r9a09g047-cpg.c
-> > >
-> > > > > > @@ -214,6 +252,30 @@ static const struct rzv2h_mod_clk
-> > > > > r9a09g047_mod_clks[] __initconst =3D {
-> > > > > >                                                 BUS_MSTOP(8,
-> > > BIT(4))),
-> > > > > >         DEF_MOD("sdhi_2_aclk",
-> > > CLK_PLLDTY_ACPU_DIV4,
-> > > > > 10, 14, 5, 14,
-> > > > > >                                                 BUS_MSTOP(8,
-> > > > > > BIT(4))),
-> > > > > > +       DEF_MOD("gbeth_0_clk_tx_i",
-> > > CLK_SMUX2_GBE0_TXCLK,
-> > > > > 11, 8, 5, 24,
-> > > > > > +                                               BUS_MSTOP(8,
-> > > BIT(5))),
-> > > > > > +       DEF_MOD("gbeth_0_clk_rx_i",
-> > > CLK_SMUX2_GBE0_RXCLK,
-> > > > > 11, 9, 5, 25,
-> > > > > > +                                               BUS_MSTOP(8,
-> > > BIT(5))),
-> > > > > > +       DEF_MOD("gbeth_0_clk_tx_180_i",
-> > > CLK_SMUX2_GBE0_TXCLK,
-> > > > > 11, 10, 5, 26,
-> > > > > > +                                               BUS_MSTOP(8,
-> > > BIT(5))),
-> > > > > > +       DEF_MOD("gbeth_0_clk_rx_180_i",
-> > > CLK_SMUX2_GBE0_RXCLK,
-> > > > > 11, 11, 5, 27,
-> > > > > > +                                               BUS_MSTOP(8,
-> > > BIT(5))),
-> > > > > > +       DEF_MOD("gbeth_0_aclk_csr_i",           CLK_PLLDTY_DIV8=
-, 11,
-> > > 12,
-> > > > > 5, 28,
-> > > > > > +                                               BUS_MSTOP(8,
-> > > BIT(5))),
-> > > > > > +       DEF_MOD("gbeth_0_aclk_i",               CLK_PLLDTY_DIV8=
-, 11,
-> > > 13,
-> > > > > 5, 29,
-> > > > > > +                                               BUS_MSTOP(8,
-> > > BIT(5))),
-> > > > > > +       DEF_MOD("gbeth_1_clk_tx_i",
-> > > CLK_SMUX2_GBE1_TXCLK,
-> > > > > 11, 14, 5, 30,
-> > > > > > +                                               BUS_MSTOP(8,
-> > > BIT(6))),
-> > > > > > +       DEF_MOD("gbeth_1_clk_rx_i",
-> > > CLK_SMUX2_GBE1_RXCLK,
-> > > > > 11, 15, 5, 31,
-> > > > > > +                                               BUS_MSTOP(8,
-> > > BIT(6))),
-> > > > > > +       DEF_MOD("gbeth_1_clk_tx_180_i",
-> > > CLK_SMUX2_GBE1_TXCLK,
-> > > > > 12, 0, 6, 0,
-> > > > >
-> > > > > scripts/checkpatch.pl says:
-> > > > >
-> > > > >     WARNING: please, no space before tabs
-> > > > >
-> > > >
-> > > > Noted.
-> > > >
-> > > > > > +                                               BUS_MSTOP(8,
-> > > BIT(6))),
-> > > > > > +       DEF_MOD("gbeth_1_clk_rx_180_i",
-> > > CLK_SMUX2_GBE1_RXCLK,
-> > > > > 12, 1, 6, 1,
-> > > > > > +                                               BUS_MSTOP(8,
-> > > BIT(6))),
-> > > > > > +       DEF_MOD("gbeth_1_aclk_csr_i",           CLK_PLLDTY_DIV8=
-, 12,
-> > > 2,
-> > > > > 6, 2,
-> > > > > > +                                               BUS_MSTOP(8,
-> > > BIT(6))),
-> > > > > > +       DEF_MOD("gbeth_1_aclk_i",               CLK_PLLDTY_DIV8=
-, 12,
-> > > 3,
-> > > > > 6, 3,
-> > > > > > +                                               BUS_MSTOP(8,
-> > > > > > + BIT(6))),
-> > > > >
-> > > > > Shouldn't all of these use DEF_MOD_MUX_EXTERNAL() instead of
-> > > > > DEF_MOD(), like on RZ/V2H and RZ/V2N?
-> > > > >
-> > > >
-> > > > Do we really need to use DEF_MOD_MUX_EXTERNAL? Unlike for the RZ/V2=
-H,
-> > > > On G3E, unbind/bind works with DEF_MOD. I can however switch to
-> > > > DEF_MOD_MUX_EXTERNAL for consistency if required.
-> > > >
-> > > > Please let me know.
-> > >
-> > > Does that mean the monitor bits on RZ/G3E do reflect the correct stat=
-e of
-> > > external clocks? If yes, then DEF_MOD() is fine.
-> >
-> > Checked DEF_MOD() and had expected result. I'll then it and send v3.
-> >
-> Can you please share the devmem logs for external clocks please. I ask
-> because the HW team mentioned the below information will be added in
-> the RZ/V2H(P) HW manual. We need to check if below is not needed on
-> RZ/G3E.
->
-> "The clock gating cells require source clocks to operate correctly. If
-> the source clocks are stopped, these registers cannot be used."
+I remember I stared at this code before, good to see it gone.
+There is a bit more tidiying up you can do.
 
-Has this been sorted out yet? I see no change or mention of it in v3.
+Also, I suggest to split it in two patches, it itches me to see the
+driver specific part mixed up with the fb_notify removal.
 
-Thanks!
+	Sam
 
-Gr{oetje,eeting}s,
 
-                        Geert
+On Wed, Jun 25, 2025 at 03:12:22PM +0200, Arnd Bergmann wrote:
+> From: Arnd Bergmann <arnd@arndb.de>
+> 
+> Commit dc2139c0aa32 ("leds: backlight trigger: Replace fb events with a
+> dedicated function call") removed the FB_EVENT_BLANK notifier, and now
+> the only remaining user of the FB notifier is the metronomefb driver on
+> the PXA/AM200EPD board.
+> 
+> This was introduced in commit 922613436ae5 ("[ARM] 5200/1: am200epd: use
+> fb notifiers and gpio api"), which converted it from an earlier version,
+> but as far as I can tell this can never have worked because the notifier
+> is called after the data it passes down is accessed.
+> 
+> Commit 867187821e5e ("fbdev/metronomefb: Use struct fb_info.screen_buffer")
+> broke this further, and there are likely other parts of the driver that
+> no longer work.
+> 
+> The am200epd board support itself should have also been removed long ago,
+> as there are no users and it was never converted to devicetree format.
+> 
+> Mark the board as broken to prevent build failures and remove the now
+> unused notifiers.
+> 
+> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+> ---
+>  arch/arm/mach-pxa/Kconfig            |  1 +
+This is mixing things up a bit. I suggest
+splitting the "depends on BROKEN" out in a dedicated patch.
 
---=20
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k=
-.org
+>  drivers/video/fbdev/core/Makefile    |  1 -
+>  drivers/video/fbdev/core/fb_notify.c | 54 ----------------------------
+>  drivers/video/fbdev/core/fbmem.c     | 15 --------
+>  include/linux/fb.h                   | 21 -----------
+>  5 files changed, 1 insertion(+), 91 deletions(-)
+>  delete mode 100644 drivers/video/fbdev/core/fb_notify.c
+> 
+> diff --git a/arch/arm/mach-pxa/Kconfig b/arch/arm/mach-pxa/Kconfig
+> index 10e472f4fa43..edefc953e4f9 100644
+> --- a/arch/arm/mach-pxa/Kconfig
+> +++ b/arch/arm/mach-pxa/Kconfig
+> @@ -69,6 +69,7 @@ choice
+>  
+>  config GUMSTIX_AM200EPD
+>  	bool "Enable AM200EPD board support"
+> +	depends on BROKEN
+>  
+>  config GUMSTIX_AM300EPD
+>  	bool "Enable AM300EPD board support"
+> diff --git a/drivers/video/fbdev/core/Makefile b/drivers/video/fbdev/core/Makefile
+> index d15974759086..ac8036209501 100644
+> --- a/drivers/video/fbdev/core/Makefile
+> +++ b/drivers/video/fbdev/core/Makefile
+> @@ -1,5 +1,4 @@
+>  # SPDX-License-Identifier: GPL-2.0
+> -obj-$(CONFIG_FB_NOTIFY)           += fb_notify.o
+>  obj-$(CONFIG_FB_CORE)             += fb.o
+>  fb-y                              := fb_info.o \
+>                                       fbmem.o fbcmap.o \
+> diff --git a/drivers/video/fbdev/core/fb_notify.c b/drivers/video/fbdev/core/fb_notify.c
+> deleted file mode 100644
+> index 10e3b9a74adc..000000000000
+> --- a/drivers/video/fbdev/core/fb_notify.c
+> +++ /dev/null
+> @@ -1,54 +0,0 @@
+> -/*
+> - *  linux/drivers/video/fb_notify.c
+> - *
+> - *  Copyright (C) 2006 Antonino Daplas <adaplas@pol.net>
+> - *
+> - *	2001 - Documented with DocBook
+> - *	- Brad Douglas <brad@neruo.com>
+> - *
+> - * This file is subject to the terms and conditions of the GNU General Public
+> - * License.  See the file COPYING in the main directory of this archive
+> - * for more details.
+> - */
+> -#include <linux/fb.h>
+> -#include <linux/notifier.h>
+> -#include <linux/export.h>
+> -
+> -static BLOCKING_NOTIFIER_HEAD(fb_notifier_list);
+> -
+> -/**
+> - *	fb_register_client - register a client notifier
+> - *	@nb: notifier block to callback on events
+> - *
+> - *	Return: 0 on success, negative error code on failure.
+> - */
+> -int fb_register_client(struct notifier_block *nb)
+> -{
+> -	return blocking_notifier_chain_register(&fb_notifier_list, nb);
+> -}
+> -EXPORT_SYMBOL(fb_register_client);
+> -
+> -/**
+> - *	fb_unregister_client - unregister a client notifier
+> - *	@nb: notifier block to callback on events
+> - *
+> - *	Return: 0 on success, negative error code on failure.
+> - */
+> -int fb_unregister_client(struct notifier_block *nb)
+> -{
+> -	return blocking_notifier_chain_unregister(&fb_notifier_list, nb);
+> -}
+> -EXPORT_SYMBOL(fb_unregister_client);
+> -
+> -/**
+> - * fb_notifier_call_chain - notify clients of fb_events
+> - * @val: value passed to callback
+> - * @v: pointer passed to callback
+> - *
+> - * Return: The return value of the last notifier function
+> - */
+> -int fb_notifier_call_chain(unsigned long val, void *v)
+> -{
+> -	return blocking_notifier_call_chain(&fb_notifier_list, val, v);
+> -}
+> -EXPORT_SYMBOL_GPL(fb_notifier_call_chain);
+> diff --git a/drivers/video/fbdev/core/fbmem.c b/drivers/video/fbdev/core/fbmem.c
+> index dfcf5e4d1d4c..82ec7351e7da 100644
+> --- a/drivers/video/fbdev/core/fbmem.c
+> +++ b/drivers/video/fbdev/core/fbmem.c
+> @@ -498,14 +498,6 @@ static int do_register_framebuffer(struct fb_info *fb_info)
+>  	num_registered_fb++;
+>  	registered_fb[i] = fb_info;
+>  
+> -#ifdef CONFIG_GUMSTIX_AM200EPD
+> -	{
+> -		struct fb_event event;
+Drop the fb_event definition, it is no longer used.
 
-In personal conversations with technical people, I call myself a hacker. Bu=
-t
-when I'm talking to journalists I just say "programmer" or something like t=
-hat.
-                                -- Linus Torvalds
+> -		event.info = fb_info;
+> -		fb_notifier_call_chain(FB_EVENT_FB_REGISTERED, &event);
+Drop the define for FB_EVENT_FB_REGISTERED
+
+> -	}
+> -#endif
+> -
+>  	return fbcon_fb_registered(fb_info);
+>  }
+>  
+> @@ -544,13 +536,6 @@ static void do_unregister_framebuffer(struct fb_info *fb_info)
+>  	fb_destroy_modelist(&fb_info->modelist);
+>  	registered_fb[fb_info->node] = NULL;
+>  	num_registered_fb--;
+> -#ifdef CONFIG_GUMSTIX_AM200EPD
+> -	{
+> -		struct fb_event event;
+> -		event.info = fb_info;
+> -		fb_notifier_call_chain(FB_EVENT_FB_UNREGISTERED, &event);
+Drop the define for FB_EVENT_FB_UNREGISTERED
+
+> -	}
+> -#endif
+>  	fbcon_fb_unregistered(fb_info);
+>  
+>  	/* this may free fb info */
+> diff --git a/include/linux/fb.h b/include/linux/fb.h
+> index 05cc251035da..520ad870b8b2 100644
+> --- a/include/linux/fb.h
+> +++ b/include/linux/fb.h
+> @@ -151,27 +151,6 @@ struct fb_blit_caps {
+>  	u32 flags;
+>  };
+>  
+> -#ifdef CONFIG_FB_NOTIFY
+
+The Kconfig symbol FB_NOTIFY should be dropped as well.
+
+
+> -extern int fb_register_client(struct notifier_block *nb);
+Drop forward for notifier_block, last user in the file is gone.
+
+> -extern int fb_unregister_client(struct notifier_block *nb);
+> -extern int fb_notifier_call_chain(unsigned long val, void *v);
+> -#else
+> -static inline int fb_register_client(struct notifier_block *nb)
+> -{
+> -	return 0;
+> -};
+> -
+> -static inline int fb_unregister_client(struct notifier_block *nb)
+> -{
+> -	return 0;
+> -};
+> -
+> -static inline int fb_notifier_call_chain(unsigned long val, void *v)
+> -{
+> -	return 0;
+> -};
+> -#endif
+> -
+>  /*
+>   * Pixmap structure definition
+>   *
+> -- 
+> 2.39.5
 
