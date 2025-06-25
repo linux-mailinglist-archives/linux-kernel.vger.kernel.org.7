@@ -1,60 +1,55 @@
-Return-Path: <linux-kernel+bounces-703174-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-703176-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 61EBEAE8C9A
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Jun 2025 20:36:11 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6F584AE8C9E
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Jun 2025 20:37:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6EB713A6495
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Jun 2025 18:35:43 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 381071899400
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Jun 2025 18:37:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 857C82D9EF3;
-	Wed, 25 Jun 2025 18:35:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 698CB2D8DAF;
+	Wed, 25 Jun 2025 18:37:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Ijdc8opz"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="I1Di+KYC"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D18441DC98B;
-	Wed, 25 Jun 2025 18:35:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C47548634A;
+	Wed, 25 Jun 2025 18:37:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750876559; cv=none; b=Glr9DUmFyFlb/JJZ5F8T6DLPLUJhdXHpja435iGEvgfh1ib+VEQpIEUJ2oX7e44xmcdREDgm06xmeIbKKWKzQFZ/yG3UbUTIo7CxPxVT87jZ1Pcd+V8Baun8tw/6xkDqkRTtf/IU2xTNxJE8rn/hA7pCUVxVrelP7WW5B2efEHw=
+	t=1750876632; cv=none; b=YvwHISJKTHw7xvwwKRvD/vMgC1yRFXAo9FdNT6muLtG2Gqhue1HbvKHgAVodbe+Y171m7jDfOFyjtc6t08TJak7EKzNjTiL8Hyz88xMjyb3J9/8b1APYU8iYm23+Or2W6MxLJ29e2QqcAR1N5+tOkPrqC/ZBIyPFy539HFePXC0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750876559; c=relaxed/simple;
-	bh=rNYUfS+QC6CJz32WWVNOnG+NFAUPmM8wTr2iF+yy6i8=;
+	s=arc-20240116; t=1750876632; c=relaxed/simple;
+	bh=RthnF4fFeRyk9Gmg9wEI8C/dlSVpbxQt34w1wuFERRY=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=FX1M3kWLUhU1mwE9oZnCGRCZBu53n2w9LLTJbeqivBG2aMESn7iVOGW53LjyzBCavVs5vaNLx7U61Bu2L9TwcYQ3oBV5KwLg5Fpqg5p2DDhx7iPjawYJ8YDhbtg0Spa/VEzPEHtKYlWXLutiBV+jmeOuO4IBjB87KquVqNgOGgU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Ijdc8opz; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 522FBC4CEF0;
-	Wed, 25 Jun 2025 18:35:58 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=qYCKFOrC6BAFibJCjdhwfIrsra0fRWkSnC3r8u9qvD18VtP0r2b6yBN34OuflchRa9M6qOrWoLlQcxB9HGMUICX9ZIg2vz1SAacEBFWxpX0oGm2Davl6KxaEzMZ1VtpO132c7dC+US5Re54BSIqNCkMIk1X4VMUORuE3sc60/rI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=I1Di+KYC; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id AA82AC4CEEE;
+	Wed, 25 Jun 2025 18:37:10 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1750876558;
-	bh=rNYUfS+QC6CJz32WWVNOnG+NFAUPmM8wTr2iF+yy6i8=;
+	s=k20201202; t=1750876632;
+	bh=RthnF4fFeRyk9Gmg9wEI8C/dlSVpbxQt34w1wuFERRY=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=Ijdc8opzcaW6MuLyFnJUXGU1CZ8ABOCxbuSE1BtuDANMj48/SGChoOa92abfv1XIl
-	 qpZ7Eik37hF1LDo+2oq16TgoTRuffYQEJv5dNinJDTv0KjlynhGBlUfSuqBfcYJBxS
-	 lPZou+m+ADZbe/4SRat7B5eslYfTPKi+cG9iqYln3hpSJfKN/Xodl1GCNXHw+FVMca
-	 1uNRnYq3Jr/SIrOVVkdIr76t8VaP2vpk0oAX71sb/gnH8cLFLaJiUj+V1PIwN3Nrij
-	 PY/6j1sDx652jPiz36ANOKSrHBQhpZDbBVQ49L1nhVRLauVFBO5Qs8bW9uoCCVocg4
-	 PlOEm7rFGF8ug==
-Date: Wed, 25 Jun 2025 13:35:57 -0500
-From: "Rob Herring (Arm)" <robh@kernel.org>
-To: Frank Li <Frank.Li@nxp.com>
-Cc: linux-riscv@lists.infradead.org, spacemit@lists.linux.dev,
-	Yixun Lan <dlan@gentoo.org>, Conor Dooley <conor+dt@kernel.org>,
-	linux-kernel@vger.kernel.org, Jiri Slaby <jirislaby@kernel.org>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	imx@lists.linux.dev, Lubomir Rintel <lkundrak@v3.sk>,
-	devicetree@vger.kernel.org,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	linux-serial@vger.kernel.org
-Subject: Re: [PATCH 1/1] dt-bindings: serial: 8250: allow clock 'uartclk' and
- 'reg' for nxp,lpc1850-uart
-Message-ID: <175087655526.1993020.9662520639460479640.robh@kernel.org>
-References: <20250602142745.942568-1-Frank.Li@nxp.com>
+	b=I1Di+KYCjMGRzpFYKJprImcSUKNR0fL79BQVpBCRe6YbPAxIMlbxa04dbrOBaocQ5
+	 jOJVQGjzc9bLxptC9DSNe8RqHr/ZPp+Bf+i+Ygq3FCiY5wYdiok2n6LE1nJX4h/zk2
+	 Ho95+aLj1UNGlSc378i4m3332AXDoCxuPv8TRgmNhhhmIPWWGis3/4DWoVbNHPWTZ8
+	 ljKNhDzXNsk88fbs7MU0JPnkeAZ0RY13D2eTPbnhZbDdK2kHoRleEBxZssOhPdW9/t
+	 qcDe1wdTz3/CCH9dUaWSw4FEPXfVzg+V/VeAmd5ADvfZM7IdaocaVmrDKZXMZPS2Vk
+	 Ve+DrzXR8FrvA==
+Date: Wed, 25 Jun 2025 19:37:08 +0100
+From: Simon Horman <horms@kernel.org>
+To: Yue Haibing <yuehaibing@huawei.com>
+Cc: andrew+netdev@lunn.ch, davem@davemloft.net, edumazet@google.com,
+	kuba@kernel.org, pabeni@redhat.com, netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH net-next] net: Remove unused function
+ first_net_device_rcu()
+Message-ID: <20250625183708.GL1562@horms.kernel.org>
+References: <20250625102155.483570-1-yuehaibing@huawei.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -63,27 +58,14 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250602142745.942568-1-Frank.Li@nxp.com>
+In-Reply-To: <20250625102155.483570-1-yuehaibing@huawei.com>
 
+On Wed, Jun 25, 2025 at 06:21:55PM +0800, Yue Haibing wrote:
+> This is unused since commit f04565ddf52e ("dev: use name hash for
+> dev_seq_ops")
+> 
+> Signed-off-by: Yue Haibing <yuehaibing@huawei.com>
 
-On Mon, 02 Jun 2025 10:27:45 -0400, Frank Li wrote:
-> Allow clock 'uartclk' and 'reg' for nxp,lpc1850-uart to align existed
-> driver and dts. It is really old platform. Keep the same restriction for
-> others.
-> 
-> Allow dmas and dma-names property, which allow maxItems 4 because very old
-> platform (arch/arm/boot/dts/nxp/lpc/lpc18xx.dtsi) use duplicate "tx", "rx",
-> "tx", "rx" as dma-names.
-> 
-> Fix below CHECK_DTB warnings:
->   arch/arm/boot/dts/nxp/lpc/lpc4337-ciaa.dtb: serial@40081000 (nxp,lpc1850-uart): clock-names: ['uartclk', 'reg'] is too long
-> 
-> Signed-off-by: Frank Li <Frank.Li@nxp.com>
-> ---
->  .../devicetree/bindings/serial/8250.yaml      | 41 +++++++++++++++++--
->  1 file changed, 37 insertions(+), 4 deletions(-)
-> 
-
-Acked-by: Rob Herring (Arm) <robh@kernel.org>
+Reviewed-by: Simon Horman <horms@kernel.org>
 
 
