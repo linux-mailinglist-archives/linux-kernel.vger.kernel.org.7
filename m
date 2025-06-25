@@ -1,192 +1,102 @@
-Return-Path: <linux-kernel+bounces-702687-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-702689-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 18DB6AE85E1
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Jun 2025 16:14:11 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id F1EBEAE85DE
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Jun 2025 16:13:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 55BAF3AF4FE
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Jun 2025 14:11:40 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 00965188A65F
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Jun 2025 14:14:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BEB53265629;
-	Wed, 25 Jun 2025 14:11:58 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B97423074B2;
-	Wed, 25 Jun 2025 14:11:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F3024265CAD;
+	Wed, 25 Jun 2025 14:13:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=weissschuh.net header.i=@weissschuh.net header.b="NhKuR0EE"
+Received: from todd.t-8ch.de (todd.t-8ch.de [159.69.126.157])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 89F8E265629;
+	Wed, 25 Jun 2025 14:13:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.69.126.157
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750860718; cv=none; b=C5RmDyao49dkkdlc/WEEas/O1ZMkAOZIOhuivvL0s8qFvq3SSTvq/bqKL3iLJrwsoSEAre8FO9av7iC+TfnVAa7O0w9FTWMmS2kcqjNjq/evB8aW72CqTCoa58mldKcrllJ2kS83LqgD/6ldnI/boPI45J8bBObSgbYe/+jmXcc=
+	t=1750860819; cv=none; b=klpjdCeMf8cpRV9ohUo/GEdbmtnmhJ1SU4m7QAFXoFjVshRW2l4YREFumkqDLpu6OR19Q77VwRanTdEtBGv6C19ysgJ74HVdvqpCjpKwhTnr3wOFKz7P3m61DfF5dU9t0p2B4JeqCIJ864w79TWNi26xXcXkcbAZziwS4of+f60=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750860718; c=relaxed/simple;
-	bh=7IZbGNWinPEzWqIw4I3KtW3IGvy7Y1a+ymkBmDHcN2k=;
+	s=arc-20240116; t=1750860819; c=relaxed/simple;
+	bh=Xu+3guvzOiENbP4PGwXaQ6Dx/qzMgz+1EW/rhP7FAc8=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=gNq0ILoht9gb51vt3cG3eguO1W7MYjN4DRaJnBQyIqCv8uvui1FTClq1RULT6teJ4jvP5PP3AFoEGsIHdDJJSUYHEhrH735+uzkzYQX/6JmN5BTYzAooKASJW1+8GwxLwnrEgUxf9dWrkLN29h75YOkgO8jGn0MCrV3pPh9ZeKY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id C47A1106F;
-	Wed, 25 Jun 2025 07:11:37 -0700 (PDT)
-Received: from pluto (usa-sjc-mx-foss1.foss.arm.com [172.31.20.19])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 358D23F66E;
-	Wed, 25 Jun 2025 07:11:53 -0700 (PDT)
-Date: Wed, 25 Jun 2025 15:11:50 +0100
-From: Cristian Marussi <cristian.marussi@arm.com>
-To: Dan Carpenter <dan.carpenter@linaro.org>
-Cc: Cristian Marussi <cristian.marussi@arm.com>,
-	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	arm-scmi@vger.kernel.org, sudeep.holla@arm.com,
-	james.quinlan@broadcom.com, f.fainelli@gmail.com,
-	vincent.guittot@linaro.org, etienne.carriere@st.com,
-	peng.fan@oss.nxp.com, michal.simek@amd.com, quic_sibis@quicinc.com,
-	d-gole@ti.com, souvik.chakravarty@arm.com
-Subject: Re: [RFC PATCH 4/7] firmware: arm_scmi: Add System Telemetry driver
-Message-ID: <aFwDprdWI0mtglwe@pluto>
-References: <20250620192813.2463367-1-cristian.marussi@arm.com>
- <20250620192813.2463367-5-cristian.marussi@arm.com>
- <f2c0a0d9-6a1b-42c7-a180-e04e357dbbb5@suswa.mountain>
+	 Content-Type:Content-Disposition:In-Reply-To; b=t73pB72sxtuppZON2jS1fIe41drxCDB6LFrkH1POHLXipRB/uQd8B+kcoKyNSCwUM0HTZyZLtB5OJSivI8Ii1R94iBaqfGp26sXSPw6u+voUzx3i+eX2QwPunriIk1MEnTq7ukbd6aZfc/WZtrJbz/nT8oegfML/9B/m/lG2GYs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=weissschuh.net; spf=pass smtp.mailfrom=weissschuh.net; dkim=pass (1024-bit key) header.d=weissschuh.net header.i=@weissschuh.net header.b=NhKuR0EE; arc=none smtp.client-ip=159.69.126.157
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=weissschuh.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=weissschuh.net
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=weissschuh.net;
+	s=mail; t=1750860807;
+	bh=Xu+3guvzOiENbP4PGwXaQ6Dx/qzMgz+1EW/rhP7FAc8=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=NhKuR0EEiMHXSjz5JQyzoq4n7Itq6ws4JFS371iOgmwAxwHlweqitPurrklqdy1pK
+	 ugfqG9VVwZom2u4vJtyA9ACjhYhHy3tWuavX/l9vRO0l7/x1KYjTFUQ3VoN+a6NMYb
+	 PeCNP9M5APn/w9i9vNSDGGW6xu2Xp97PplrbhTyw=
+Date: Wed, 25 Jun 2025 16:13:26 +0200
+From: Thomas =?utf-8?Q?Wei=C3=9Fschuh?= <linux@weissschuh.net>
+To: Rob Landley <rob@landley.net>
+Cc: Yoshinori Sato <ysato@users.sourceforge.jp>, 
+	Rich Felker <dalias@libc.org>, John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>, 
+	Willy Tarreau <w@1wt.eu>, Shuah Khan <shuah@kernel.org>, linux-sh@vger.kernel.org, 
+	linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 0/3] tools/nolibc: add support for SuperH
+Message-ID: <ffeea73d-35e1-44b7-b90d-c1b45f85376b@t-8ch.de>
+References: <20250609-nolibc-sh-v1-0-9dcdb1b66bb5@weissschuh.net>
+ <16f63653-c5c9-4b32-8e0c-0a4910a9fdb9@landley.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <f2c0a0d9-6a1b-42c7-a180-e04e357dbbb5@suswa.mountain>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <16f63653-c5c9-4b32-8e0c-0a4910a9fdb9@landley.net>
 
-On Sat, Jun 21, 2025 at 12:27:03AM +0300, Dan Carpenter wrote:
-> On Fri, Jun 20, 2025 at 08:28:10PM +0100, Cristian Marussi wrote:
-> > +//TODO Review available interval show
-> > +#define BUF_SZ	1024
-> > +static inline ssize_t
-> > +__available_update_show(char *buf,
-> > +			const struct scmi_telemetry_update_interval *intervals)
-> > +{
-> > +	int len = 0, num_intervals = intervals->num;
-> > +	char available[BUF_SZ];
-> > +
-> > +	for (int i = 0; i < num_intervals; i++) {
-> > +		len += scnprintf(available + len, BUF_SZ - len, "%u ",
-> > +				 intervals->update_intervals[i]);
-> > +	}
-> > +
-> > +	available[len - 1] = '\0';
-> 
-> No need.  scnprintf() will already have put a NUL terminator there.
-> Unless num_intervals <= 0 in which case this will corrupt memory.
-> 
+Hi Rob,
 
-Yes, all of this routine has to be really reworked to avoid on the stack
-allocation too...
-
-> > +
-> > +	return sysfs_emit(buf, "%s\n", available);
-> > +}
+On 2025-06-24 21:41:14-0500, Rob Landley wrote:
+> On 6/9/25 04:28, Thomas Weißschuh wrote:
+> > Add support for SuperH/"sh" to nolibc.
+> > Only sh4 is tested for now.
+> > 
+> > This is only tested on QEMU so far.
+> > Additional testing would be very welcome.
 > 
-> [ snip ]
+> I ran this by Jeff Dionne (the j-core architect) who said:
 > 
-> > +static int scmi_telemetry_groups_initialize(struct device *dev,
-> > +					    struct scmi_tlm_instance *ti)
-> > +{
-> > +	int ret;
-> > +
-> > +	if (ti->info->num_groups == 0)
-> > +		return 0;
-> > +
-> > +	ret = scmi_telemetry_dev_register(&ti->groups_dev, &ti->dev, "groups");
-> > +	if (ret)
-> > +		return ret;
-> > +
-> > +	for (int i = 0; i < ti->info->num_groups; i++) {
-> > +		const struct scmi_telemetry_group *grp = &ti->info->des_groups[i];
-> > +		struct scmi_tlm_grp_dev *gdev;
-> > +		char name[16];
-> > +
-> > +		gdev = devm_kzalloc(dev, sizeof(*gdev), GFP_KERNEL);
-> > +		if (!gdev) {
-> > +			ret = -ENOMEM;
-> > +			goto err;
-> > +		}
-> > +
-> > +		gdev->tsp = ti->tsp;
-> > +		gdev->grp = grp;
-> > +		gdev->dev.groups = scmi_grp_groups;
-> > +
-> > +		snprintf(name, 8, "%d", grp->id);
+> > Looks correct to me.  There are no endian assumptions that I can see.
 > 
-> s/8/sizeof(name)/?
-
-indeed...
-
+> So you can put
 > 
-> > +		ret = scmi_telemetry_dev_register(&gdev->dev,
-> > +						  &ti->groups_dev, name);
-> > +		if (ret)
-> > +			goto err;
-> > +
-> > +		if (ti->info->per_group_config_support) {
-> > +			sysfs_add_file_to_group(&gdev->dev.kobj,
-> > +						&dev_attr_grp_current_update.attr,
-> > +						NULL);
-> > +			sysfs_add_file_to_group(&gdev->dev.kobj,
-> > +						&dev_attr_grp_intervals_discrete.attr,
-> > +						NULL);
-> > +			sysfs_add_file_to_group(&gdev->dev.kobj,
-> > +						&dev_attr_grp_available_intervals.attr,
-> > +						NULL);
-> > +		}
-> > +	}
-> > +
-> > +	dev_info(dev, "Found %d Telemetry GROUPS resources.\n",
-> > +		 ti->info->num_groups);
-> > +
-> > +	return 0;
-> > +
-> > +err:
-> > +	scmi_telemetry_dev_unregister(&ti->groups_dev);
-> > +
-> > +	return ret;
-> > +}
-> > +
-> > +static int scmi_telemetry_des_initialize(struct device *dev,
-> > +					 struct scmi_tlm_instance *ti)
-> > +{
-> > +	int ret;
-> > +
-> > +	ret = scmi_telemetry_dev_register(&ti->des_dev, &ti->dev, "des");
-> > +	if (ret)
-> > +		return ret;
-> > +
-> > +	for (int i = 0; i < ti->info->num_de; i++) {
-> > +		const struct scmi_telemetry_de *de = ti->info->des[i];
-> > +		struct scmi_tlm_de_dev *tdev;
-> > +		char name[16];
-> > +
-> > +		tdev = devm_kzalloc(dev, sizeof(*tdev), GFP_KERNEL);
-> > +		if (!tdev) {
-> > +			ret = -ENOMEM;
-> > +			goto err;
-> > +		}
-> > +
-> > +		tdev->tsp = ti->tsp;
-> > +		tdev->de = de;
-> > +		tdev->dev.groups = scmi_des_groups;
-> > +
-> > +		/*XXX What about of ID/name digits-length used ? */
-> > +		snprintf(name, 8, "0x%04X", de->id);
-> 
-> s/8/sizeof(name)/?
-> 
+> Acked-by: Rob Landley <rob@landley.net>
+> Acked-by: D. Jeff Dionne <jeff@coresemi.io>
 
-yes.
+Thanks!
 
-> regards,
-> dan carpenter
->
+> But neither of us really have a build environment set up to do much with it.
+> Is there a howto for this, or is just to run the kernel tests?
 
-Thanks,
-Cristian
+v2 of the series [0] has some test instructions.
+These should also work with v1, except that "-f Makefile.nolibc" needs
+to be removed.
+
+$ cd tools/testings/selftests/nolibc/
+$ make -f Makefile.nolibc ARCH=sh CROSS_COMPILE=sh4-linux- nolibc-test
+$ file nolibc-test
+nolibc-test: ELF 32-bit LSB executable, Renesas SH, version 1 (SYSV), statically linked, not stripped
+$ ./nolibc-test
+Running test 'startup'
+0 argc = 1                                                        [OK]
+...
+Total number of errors: 0
+Exiting with status 0
+
+[0] https://lore.kernel.org/lkml/20250623-nolibc-sh-v2-0-0f5b4b303025@weissschuh.net/
 
