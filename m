@@ -1,148 +1,120 @@
-Return-Path: <linux-kernel+bounces-702926-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-702923-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 08A7DAE8963
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Jun 2025 18:14:53 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id C1175AE895F
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Jun 2025 18:14:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3C54C4A7D9E
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Jun 2025 16:13:50 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 53F591C20688
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Jun 2025 16:13:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 804AB2BEC2B;
-	Wed, 25 Jun 2025 16:13:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F3A4C2BEC29;
+	Wed, 25 Jun 2025 16:12:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="d18ef1gJ"
-Received: from mail-lf1-f54.google.com (mail-lf1-f54.google.com [209.85.167.54])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="EbLzvMFR"
+Received: from mail-pf1-f202.google.com (mail-pf1-f202.google.com [209.85.210.202])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 159C82D29AA
-	for <linux-kernel@vger.kernel.org>; Wed, 25 Jun 2025 16:13:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E57E5189F43
+	for <linux-kernel@vger.kernel.org>; Wed, 25 Jun 2025 16:12:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.202
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750868000; cv=none; b=u9nwi3bGxGbGKpuw528Fo6hQ/2Rnn2CId6+sGUg33hcLWE82Fy2EKrakWL4Fp+s1V0C/80sPdmN3ZbFslwwwpGm7MwvdqtjeKGaPTxC2tEmaAueitPRBbemY8zVfp7OgITR1CwdiutMEEgUH+CZ2Ogbok6PrvIPOpCm2mpnVDfE=
+	t=1750867978; cv=none; b=ZqXuBzXAqHY/XZYneRrKdtL0om81q9dSNWkcWb2CVqlnMDP7falyKMCbSzF52NDrdJQq1TQ2oYvS0O2uk7NblyJvl1vBUs+fAuTBrCwbNSwuJQSI6QRniFd7CJ6zOmvAuyjKdaetPKI230byidW6ApnZZoJ5b1Kpdfup6pklFdo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750868000; c=relaxed/simple;
-	bh=NWTU9KjLztibLwJOI0I2c5PwZ/pOAGxqqconYH3Cu6w=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=SR/8dWu3hjsNSA7lSQQMv5K4IOoB/wNR2sFUrT9dj8tn62Na4XgxujhXYYnNaVnhfKzMAmK5jJNFJ2z77Jl8InFO6s+/9wYIvvD5P7dpgkakFSbkcC6hx/OVxgkjzbknu/ZmnuD48s8LeDJJj+K2aDSzcj0tiXq+/wM+dT1qI6Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=d18ef1gJ; arc=none smtp.client-ip=209.85.167.54
+	s=arc-20240116; t=1750867978; c=relaxed/simple;
+	bh=RMiNvzTmNQ6uGQUNTW8VoGhR52Bb9FCblhjSf+W7ab4=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=GAR2CBPcvTUws96VN44yoLfguV3RpP+VzoNEX1myAwZALj2PUgfkjCpdXrQD0WDg6cuVwFz2z7M0FDfrdsUjSOnF56WoDFGAwWGFmll4UUbHG8dg4h17KZhDf8pvsbLGlmwSxQXMtJJ62Y0Zspw7yD+3O0ojeI+bxozl/SW07JE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=EbLzvMFR; arc=none smtp.client-ip=209.85.210.202
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-lf1-f54.google.com with SMTP id 2adb3069b0e04-553644b8f56so24546e87.1
-        for <linux-kernel@vger.kernel.org>; Wed, 25 Jun 2025 09:13:18 -0700 (PDT)
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
+Received: by mail-pf1-f202.google.com with SMTP id d2e1a72fcca58-748d96b974cso62444b3a.2
+        for <linux-kernel@vger.kernel.org>; Wed, 25 Jun 2025 09:12:56 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1750867997; x=1751472797; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=NWTU9KjLztibLwJOI0I2c5PwZ/pOAGxqqconYH3Cu6w=;
-        b=d18ef1gJJayIhzCC0CNsLd/2Qze/q+j7hLkQfhBdhiTcZxM4uT4NNZdj0Girdi1acT
-         VJZcaWyHkcpcF/kntSP2kOG6J4Tp/0sXDN1fNfFYjqZJnC72A8HRShyPval3ElEYtkuP
-         5vlTmAI7zxhkcXNG8YYfB23poAKIYZEmTK91f75wv0pLI6i6v6UNjpMUof6HjQTBvuOO
-         SEceLBeWkkxksXbuMxm33yC2raH+GsGPpWqAoPvnIAdysjh/3aZ/X4ad+qO/JKvoaxDW
-         31Et4fd25h+fzq23RJ1WKxGWlxxiRTgQVfSu3WN3rFqkCUSkYS0WVvWGd4+G1qUeXe91
-         hFuw==
+        d=google.com; s=20230601; t=1750867976; x=1751472776; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:from:to:cc:subject:date:message-id:reply-to;
+        bh=lgTQMEzvYm9i1XdJKwLwAM5nfW1WsYbVr2cAlDFSC+k=;
+        b=EbLzvMFRdjPLDrlwvqXwto8aU0Xym3blFt3kYzt4Nee+YMtr4tAXiKavbvDlxq57c+
+         aewZDE2rsEEMGo6mrDRBWHgggxjuVksde/I6qQ7ZMRUpSM6MfbxFwAnhHGWmhqCQyfTb
+         nsuO0SkD0qX/Yb3e6+Bw/79FnMA8ZoQILQPzuW0inrhEiBGlakNXmRgycf/kaVJTXuAC
+         gW/w/du0vQ0CVJWgACK3Lw3GBkirVvUPwK/wg4Z/TDmspdW9HIU665IPILd6NCMvKHdH
+         3tfnxL5Vlg/9LP3KLAvCIYnKx2ocpPiMpfDFrTo3wigUqWt4mKzxyuZ96ep7VWHnuU+6
+         4yUg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1750867997; x=1751472797;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=NWTU9KjLztibLwJOI0I2c5PwZ/pOAGxqqconYH3Cu6w=;
-        b=AmXua82/IzC10vxvGnH0C7md2vzetR8xcudr8Zt4J2ZC/epzpncB/TIoYTL4O78kVC
-         FOVlI2bBMRK3xLdl/S745deWo04Me09busCeifrDtpzwyo/htPXYYdv1PVNwxC1F7i7C
-         hoiriGGGtBiqQTTUOqeVoO/ahG5Tlj9sGq2FZ8Du/o/jzeyADeUf+bJrHQmrc6EP0CyY
-         8ISSDAiS4v6Z7w98Ixvd5GEC4Ekjc72BQ/9+Xluu4hg6Nan+9d/wCcDheLk1++x1HQGj
-         ZaPTBvcS5cvtMo6RaicNoGkbh9I5xB7JJSR4KKYgJhvYie5WGGnAvHDyffe6Dpwvgp94
-         o+JQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXFR5D3fNoEwCRdUewYKCeMD+MuZTP3ZcBxOxerJaMfnVKB01YBE/mPyots/663W1YyEvStMbIET3jkwq0=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyZM6FrBkyyiVSClb2AZ3dTjkaWGTh5yYTCo0CH9lORBUddhNDz
-	PgB03xMI3kVx+FqkdkciBHd71Ur6kuUdD100eQrY7friAWoIl+TOZUEsrDfoSxWDXnrC479W1n4
-	GYixZfPDjuzWpKMzDeAZBoBWHmIobXTleTzcalZxG
-X-Gm-Gg: ASbGncuhqAGvPO1LYJqNviz6s1sQPRqt+YvNRH2OK2/faTwOL8EBjC+wReEmeCgTK8w
-	12+ISDxGI6+AkX5qfpKiRELApBhhiaoLUrTHr3XuBXIPSCrdcuHhoGTZJlYs7SHOInNIq2hdiQr
-	2kYCug3wupcFad09F7rIkPPa2YwrYedFOQonuocPDEN7Q=
-X-Google-Smtp-Source: AGHT+IEmyNKuINV9suiw750iH+/qWaKx6g6apKTMylHrEHA2ab9ubUUotR8hKdCWlG9C6/ymBT3mjUvzDbJ2PDC7/J0=
-X-Received: by 2002:a05:6512:132a:b0:553:ac33:ff24 with SMTP id
- 2adb3069b0e04-554fdfbcef6mr1162599e87.55.1750867996478; Wed, 25 Jun 2025
- 09:13:16 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1750867976; x=1751472776;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=lgTQMEzvYm9i1XdJKwLwAM5nfW1WsYbVr2cAlDFSC+k=;
+        b=IxkRZEu0mqiYM9Jmn2G6h0Qg7Fczn/PoNqOHWuQrGiWYGL5oniuZWcNqKddJmGy0ft
+         yl0BHmqU5NgIiHIfLfkmMnwLdkOSp9lWYVACQtDeGYz7tDGNCQFPVEYF13ntwmhOWCE9
+         /MY0uBMC2j0m5VUhWAlha5tUdSwgQCd1/GbOUcn1AwUuIncZzilOSKeumRML/7i7WVmw
+         1O3UTbiZk3GpBGnhRvNwATaQNP0FPUiAbiHhpBWn2NJepaAzpT0bFrHe+P6vFpMdlDnr
+         9KsVHzNZW27fK5lhupbQa/me0W+cGpOpbBT5MxgCEYZ1LQmauV7O6M04ZaycHXK9L6EX
+         PbYw==
+X-Forwarded-Encrypted: i=1; AJvYcCU64r57LBaz0iitIofGCmdQU65kK5uBO06PrO3qB7oZjUEsOoauzkudzB8xakDVCHlsyKWPmK3nX9Lb0Mc=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwI8EjocxMwObHLz8ywDBzrdI5X6GIkcHipRiroYbHQkH7NNKwg
+	UmGFomaIJKQfIW8xWZ3L1SXrBK0hUGB5UrCrgq4CLb3QBNvil3jKeH6OsAd7d62NGTIP7fS+x2b
+	pEu/sIg==
+X-Google-Smtp-Source: AGHT+IHPfmLt7+7XMJQuLzEkKxOsf28vsWzElmisjOeqLOeHoGCN67LZ+qxnj2nNyKOR2Qy/uJXYVvmjBDE=
+X-Received: from pfbhx20.prod.google.com ([2002:a05:6a00:8994:b0:748:dfd8:3949])
+ (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a05:6300:210b:b0:220:92f:4d97
+ with SMTP id adf61e73a8af0-2208c08a9a6mr687075637.4.1750867975980; Wed, 25
+ Jun 2025 09:12:55 -0700 (PDT)
+Date: Wed, 25 Jun 2025 09:12:54 -0700
+In-Reply-To: <543bcbd5-c217-41f7-b478-e32e6dcf66dc@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-References: <20250515182322.117840-1-pasha.tatashin@soleen.com>
- <20250515182322.117840-11-pasha.tatashin@soleen.com> <20250624-akzeptabel-angreifbar-9095f4717ca4@brauner>
- <CA+CK2bBu4ex9O5kPcR7++DVg3RM8ZWg3BCpcc6CboJ=aG8mVmQ@mail.gmail.com> <20250625-akrobatisch-libellen-352997eb08ef@brauner>
-In-Reply-To: <20250625-akrobatisch-libellen-352997eb08ef@brauner>
-From: David Matlack <dmatlack@google.com>
-Date: Wed, 25 Jun 2025 09:12:48 -0700
-X-Gm-Features: Ac12FXzsaTglwRDvyxmqrDF18P44C8borysbshJSxnL6KDEw4fT_csftD9wd1t8
-Message-ID: <CALzav=d+XgS1bUs-v7+ws5nYU9y=4uc1c8oVLHrJ16qLpnUi9Q@mail.gmail.com>
-Subject: Re: [RFC v2 10/16] luo: luo_ioctl: add ioctl interface
-To: Christian Brauner <brauner@kernel.org>
-Cc: Pasha Tatashin <pasha.tatashin@soleen.com>, pratyush@kernel.org, jasonmiu@google.com, 
-	graf@amazon.com, changyuanl@google.com, rppt@kernel.org, rientjes@google.com, 
-	corbet@lwn.net, rdunlap@infradead.org, ilpo.jarvinen@linux.intel.com, 
-	kanie@linux.alibaba.com, ojeda@kernel.org, aliceryhl@google.com, 
-	masahiroy@kernel.org, akpm@linux-foundation.org, tj@kernel.org, 
-	yoann.congal@smile.fr, mmaurer@google.com, roman.gushchin@linux.dev, 
-	chenridong@huawei.com, axboe@kernel.dk, mark.rutland@arm.com, 
-	jannh@google.com, vincent.guittot@linaro.org, hannes@cmpxchg.org, 
-	dan.j.williams@intel.com, david@redhat.com, joel.granados@kernel.org, 
-	rostedt@goodmis.org, anna.schumaker@oracle.com, song@kernel.org, 
-	zhangguopeng@kylinos.cn, linux@weissschuh.net, linux-kernel@vger.kernel.org, 
-	linux-doc@vger.kernel.org, linux-mm@kvack.org, gregkh@linuxfoundation.org, 
-	tglx@linutronix.de, mingo@redhat.com, bp@alien8.de, 
-	dave.hansen@linux.intel.com, x86@kernel.org, hpa@zytor.com, rafael@kernel.org, 
-	dakr@kernel.org, bartosz.golaszewski@linaro.org, cw00.choi@samsung.com, 
-	myungjoo.ham@samsung.com, yesanishhere@gmail.com, Jonathan.Cameron@huawei.com, 
-	quic_zijuhu@quicinc.com, aleksander.lobakin@intel.com, ira.weiny@intel.com, 
-	andriy.shevchenko@linux.intel.com, leon@kernel.org, lukas@wunner.de, 
-	bhelgaas@google.com, wagi@kernel.org, djeffery@redhat.com, 
-	stuart.w.hayes@gmail.com, ptyadav@amazon.de
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Mime-Version: 1.0
+References: <20250226181453.2311849-1-pbonzini@redhat.com> <20250226181453.2311849-24-pbonzini@redhat.com>
+ <543bcbd5-c217-41f7-b478-e32e6dcf66dc@intel.com>
+Message-ID: <aFwgBs2Gdvcj98nH@google.com>
+Subject: Re: [PATCH 23/33] KVM: TDX: create/destroy VM structure
+From: Sean Christopherson <seanjc@google.com>
+To: Dave Hansen <dave.hansen@intel.com>
+Cc: Paolo Bonzini <pbonzini@redhat.com>, linux-kernel@vger.kernel.org, kvm@vger.kernel.org, 
+	Yan Zhao <yan.y.zhao@intel.com>, Rick Edgecombe <rick.p.edgecombe@intel.com>, 
+	Isaku Yamahata <isaku.yamahata@intel.com>, Tony Lindgren <tony.lindgren@linux.intel.com>, 
+	Sean Christopherson <sean.j.christopherson@intel.com>, Kai Huang <kai.huang@intel.com>, 
+	Adrian Hunter <adrian.hunter@intel.com>
+Content-Type: text/plain; charset="us-ascii"
 
-On Wed, Jun 25, 2025 at 2:36=E2=80=AFAM Christian Brauner <brauner@kernel.o=
-rg> wrote:
-> >
-> > While I agree that a filesystem offers superior introspection and
-> > integration with standard tools, building this complex, stateful
-> > orchestration logic on top of VFS seemed to be forcing a square peg
-> > into a round hole. The ioctl interface, while more opaque, provides a
-> > direct and explicit way to command the state machine and manage these
-> > complex lifecycle and dependency rules.
->
-> I'm not going to argue that you have to switch to this kexecfs idea
-> but...
->
-> You're using a character device that's tied to devmptfs. In other words,
-> you're already using a filesystem interface. Literally the whole code
-> here is built on top of filesystem APIs. So this argument is just very
-> wrong imho. If you can built it on top of a character device using VFS
-> interfaces you can do it as a minimal filesystem.
->
-> You're free to define the filesystem interface any way you like it. We
-> have a ton of examples there. All your ioctls would just be tied to the
-> fileystem instance instead of the /dev/somethingsomething character
-> device. The state machine could just be implemented the same way.
->
-> One of my points is that with an fs interface you can have easy state
-> seralization on a per-service level. IOW, you have a bunch of virtual
-> machines running as services or some networking services or whatever.
-> You could just bind-mount an instance of kexecfs into the service and
-> the service can persist state into the instance and easily recover it
-> after kexec.
+On Wed, Jun 25, 2025, Dave Hansen wrote:
+> On 2/26/25 10:14, Paolo Bonzini wrote:
+> > +static void tdx_clear_page(struct page *page)
+> > +{
+> > +	const void *zero_page = (const void *) page_to_virt(ZERO_PAGE(0));
+> > +	void *dest = page_to_virt(page);
+> > +	unsigned long i;
+> > +
+> > +	/*
+> > +	 * The page could have been poisoned.  MOVDIR64B also clears
+> > +	 * the poison bit so the kernel can safely use the page again.
+> > +	 */
+> > +	for (i = 0; i < PAGE_SIZE; i += 64)
+> > +		movdir64b(dest + i, zero_page);
+> > +	/*
+> > +	 * MOVDIR64B store uses WC buffer.  Prevent following memory reads
+> > +	 * from seeing potentially poisoned cache.
+> > +	 */
+> > +	__mb();
+> > +}
+> 
+> Hey guys,
+> 
+> This ended up in KVM code when we already have the *VERY* similar
+> reset_tdx_pages().
+> 
+> Could we consolidate them, please? There's no reason to sprinkle
+> knowledge of movdir64b's memory ordering rules all across the tree.
+> 
+> Adrian, this is probably something to go do, first, before you try and
+> poke at this code that probably shouldn't be in KVM in the first place.
 
-This approach sounds worth exploring more. It would avoid the need for
-a centralized daemon to mediate the preservation and restoration of
-all file descriptors.
-
-I'm not sure that we can get rid of the machine-wide state machine
-though, as there is some kernel state that will necessarily cross
-these kexecfs domains (e.g. IOMMU driver state). So we still might
-need /dev/liveupdate for that.
++1
 
