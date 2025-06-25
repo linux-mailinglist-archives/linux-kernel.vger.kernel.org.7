@@ -1,145 +1,159 @@
-Return-Path: <linux-kernel+bounces-702965-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-702968-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 04AABAE89DC
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Jun 2025 18:31:58 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 61A07AE89E7
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Jun 2025 18:32:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0BEE53BFA73
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Jun 2025 16:31:26 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 106F83AA6A7
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Jun 2025 16:32:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6DC1C2D543F;
-	Wed, 25 Jun 2025 16:31:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2F4FA1DA21;
+	Wed, 25 Jun 2025 16:32:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="iMFv0L0I"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.10])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="1AoFpX+I"
+Received: from mail-pl1-f175.google.com (mail-pl1-f175.google.com [209.85.214.175])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D5F112D320B;
-	Wed, 25 Jun 2025 16:31:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.10
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 101E01D5AD4
+	for <linux-kernel@vger.kernel.org>; Wed, 25 Jun 2025 16:32:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750869083; cv=none; b=i9J27iDxUHXUO+cSD1bUNOxB/GeG2WPp/fiektO9TIrhdbXS+rhO8oFfp193zWi0oGGMEC6EOQyAug1LGT7nUbjc+iAarLFBLHUMMOG+3kru2KkW3135oBr0baSHhf9I3Ak1ZpHfJEpejCyvzmnAQpy7E0WpTnqEup2UZoNAV9M=
+	t=1750869152; cv=none; b=PfGv06YDewq8ujCjT2RKzZZ+HecofEtpGrJShS7gPdMvKaMN2i4VL73neVmYD8Qave4M5rQh+F/mVhFb7S2DCG+hklg8ri6584tiJGyuBid6WgESslRDbVk/Q+npBc+a7KeLIG5wiCU8jwX/f7yHF+8mZPw1Vwduy0TTbFqfWHU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750869083; c=relaxed/simple;
-	bh=cfvm2yMxR62gBPP9HqBHZX62gz5cZmnXqherGhd85YA=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=gX6/povck7e1SGMdJtG4kauqRQobMOyC2rgGqd687H0PWG8Y63pmEIor2hpyvbItogxWWpcfOceAJX9aVpxtLSjgpTyNUAbqQMKKS/XfMtRU62hAKL4IcW5gtvEMypGYTcxwaiEUsV3EM/PAEAe4b/MPan+k982Z4G4SLEaox94=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=iMFv0L0I; arc=none smtp.client-ip=198.175.65.10
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1750869082; x=1782405082;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=cfvm2yMxR62gBPP9HqBHZX62gz5cZmnXqherGhd85YA=;
-  b=iMFv0L0IFTn+YcM7ND1wcji+FBwEeRmTR7Nw8GLhx6H+QJRG5UHk8NAi
-   ShPeSMpM0Nday/PlM3nceyrlrmtzSXTVgS1ENr9MD52tx6hF9GW42rtLF
-   m14oUHZy2pPb3x6hnkxK1vga/LSbQVVj0qeGTsINTJdDHUlG4kJOCRN2n
-   q/z+bkWHSaNOsjul/+uKmgkOZ9R3UgqGQFGAg8PU7/zmYPenRkymKybit
-   3gP8/l/cJk5WVqeseqOZUptC3In3n7sXQZTOXepAd6JzLeBbzPdLDI1xR
-   nZ8YpcIQLC4ZmYyECgmvxjXx2LV1LUxDmnX7HO9Dbm0M4b3JrTxlOVRaC
-   g==;
-X-CSE-ConnectionGUID: JjPJ1tubRFSmWObcH5Zohw==
-X-CSE-MsgGUID: QEuF2nK0RJaoC6wmaiQwdw==
-X-IronPort-AV: E=McAfee;i="6800,10657,11475"; a="70580805"
-X-IronPort-AV: E=Sophos;i="6.16,265,1744095600"; 
-   d="scan'208";a="70580805"
-Received: from orviesa003.jf.intel.com ([10.64.159.143])
-  by orvoesa102.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 25 Jun 2025 09:31:20 -0700
-X-CSE-ConnectionGUID: o0pkp8ApTlC+GM81HtbAKA==
-X-CSE-MsgGUID: yP6spNRbSGa8nOaHtHdVYg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.16,265,1744095600"; 
-   d="scan'208";a="156659456"
-Received: from dwoodwor-mobl2.amr.corp.intel.com (HELO [10.125.108.244]) ([10.125.108.244])
-  by ORVIESA003-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 25 Jun 2025 09:31:19 -0700
-Message-ID: <8f05cd1c-74cf-4370-a39c-8e06cdf2c921@intel.com>
-Date: Wed, 25 Jun 2025 09:31:18 -0700
+	s=arc-20240116; t=1750869152; c=relaxed/simple;
+	bh=8TYcMGuvfrOPTqiK2suEA8nHlm5YxH4UZz2kZg9xykE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=p2tlH1Lf4TXZpNdL8BhEkhwQ97iZhiCfP72z8+fkKo9LQtm/B5YfKXNdIfSqXRcsccFzmRFYUo/o4BXDbxhGNtIFBOXlzpp6Vv6ffffcOYGRt5sw2vQm49cwrHJrUZKqJW7CGImOuNhY5jyWS7a66QjiUFD72RAJjLGsDOwqI88=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=1AoFpX+I; arc=none smtp.client-ip=209.85.214.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-pl1-f175.google.com with SMTP id d9443c01a7336-237f270513bso171895ad.1
+        for <linux-kernel@vger.kernel.org>; Wed, 25 Jun 2025 09:32:30 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1750869150; x=1751473950; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=ZNDCMsFM0dLcD3giL6El7GcEVgAj+FPi15dFWxjF5N4=;
+        b=1AoFpX+IAQZaIR7SoWqXFCveJKe22IDQWaH0KItEd5dfCR/A6Fh6rv8LeR7Hu2Xy8e
+         TwKLvFLAfu8Na85RO4AhnoJ/C4lCKVNPu+e7ea1INKnOFkLssIO7R4Gfta6UdLGYAqgM
+         Im9Ri3mwDsY9+Z50HRffs3a0G3WVOMDkQnEgkslnTZAQSM3SDuMvtbZK88AXI4lh5EtA
+         GGOkchjkHpYuKX2kiDldB50kTAaMTumGQvYwr4N+erPxESFKfvHXbu1PL7qUymNT2ZlA
+         u4v3+NwzpcmPECAvtJAvb3q2vOvnJKs8fPeGUC7C8nquD5mC4b/f7ALOI7l28gjpHW4J
+         lKBg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1750869150; x=1751473950;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=ZNDCMsFM0dLcD3giL6El7GcEVgAj+FPi15dFWxjF5N4=;
+        b=vJ6etpD7VNQMrjh6v12YUhwRtubZeW38Izl94LRKV1baK6R7eT+HnAhTYSZsZqZXjp
+         5vkpzxLUgT0Kd2XUe94Z1z2DDXURgxVuNzi7vqYg2lNn29ofRm+GMW9b6q5GTgRxikSF
+         Pr3p/FhuQKjMKxXa0rrG1IwQkRPZGElKkLeE00z+//q68elLjw3Ol8weBx7nwCFViShS
+         aUtkLhc/HWFz3x0g/n1HKH6CEOJJkGIi6ayJjzFxjucij0/w27Texh69HRrTPTYD3a3x
+         Ner6eJa7dcDTrRwDBTv/unywdNajPC2PZ6fxAt9MqOOlw+mIZ/gKUqGkyFbwe8iBiVHE
+         KLbw==
+X-Forwarded-Encrypted: i=1; AJvYcCWlRyw6tkU4bwWDoMoGlf/r7QV1BCV0lCzfOWgoz7pGeTbObyHTPPtGCGazzjVWCR1TeUxde23s6ajAMBQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxKiDS1eAH1vNgMKpqyv2V3RHE63bO8ymZcnlzQoxvdUhYzZV7+
+	uJnTeHSQJ6SpnsL6W8gmsILE0zWPKvet1rI2A2N+4Hxe2O77mOPNc3K/xgs8rkUXFQ==
+X-Gm-Gg: ASbGncv1dpKxQji7t2uTHkLyiIiI0ZEth46t5kdap+3Wc9jZXEFxgj8EXt+B2s5gjDS
+	YTH+Q9eYC4txYr9fnbJ54ZCYmySRicgiiyAP5ZBLUSUNvUcH/KVX0nU1dJa+uav6os6AgRBgymC
+	e7Y5ghsTFnHnYjGTaWm8BtFtLI9vvqjB98q/S6S3GGfIinleHX1QbtIGjScnWx59TYlHeqi7hlq
+	sJKCXkKsKbvC6Yc5hbg0yaFV/QKH6knGXXkObRNqTJRau09O64vyFFjn3lDRRW7QrYQCSBbVEZ5
+	iodmNPoY/JbqGAt190xfz1FoQ+sBq2JHkLYO2ENW32equyvNpGupItIupXZGOyfIZ61XyGQd7aK
+	WvxEKjkqRh6ud+d5biwnt
+X-Google-Smtp-Source: AGHT+IGPl5ZbRLp9CMT7E4DlPhiFrpFNfXgOWI+ELwfYYz5UC1jy4W18mFMj0Uk0hA0ox3edCzOrvA==
+X-Received: by 2002:a17:902:eccf:b0:234:8eeb:d81a with SMTP id d9443c01a7336-2382728934fmr3551785ad.16.1750869150129;
+        Wed, 25 Jun 2025 09:32:30 -0700 (PDT)
+Received: from google.com (60.89.247.35.bc.googleusercontent.com. [35.247.89.60])
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-b31f126a7d2sm11309303a12.68.2025.06.25.09.32.29
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 25 Jun 2025 09:32:29 -0700 (PDT)
+Date: Wed, 25 Jun 2025 09:32:24 -0700
+From: Vipin Sharma <vipinsh@google.com>
+To: Sean Christopherson <seanjc@google.com>
+Cc: Bjorn Helgaas <bhelgaas@google.com>, linux-pci@vger.kernel.org,
+	linux-kernel@vger.kernel.org, David Matlack <dmatlack@google.com>,
+	Aaron Lewis <aaronlewis@google.com>
+Subject: Re: [RFC PATCH] PCI: Support Immediate Readiness on devices without
+ PM capabilities
+Message-ID: <20250625163224.GA868055.vipinsh@google.com>
+References: <20250624171637.485616-1-seanjc@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 2/2] KVM: TDX: Do not clear poisoned pages
-To: Adrian Hunter <adrian.hunter@intel.com>,
- Vishal Annapurve <vannapurve@google.com>
-Cc: Tony Luck <tony.luck@intel.com>, pbonzini@redhat.com, seanjc@google.com,
- Borislav Petkov <bp@alien8.de>, Thomas Gleixner <tglx@linutronix.de>,
- Ingo Molnar <mingo@redhat.com>, Dave Hansen <dave.hansen@linux.intel.com>,
- x86@kernel.org, H Peter Anvin <hpa@zytor.com>, linux-edac@vger.kernel.org,
- linux-kernel@vger.kernel.org, kvm@vger.kernel.org,
- rick.p.edgecombe@intel.com, kirill.shutemov@linux.intel.com,
- kai.huang@intel.com, reinette.chatre@intel.com, xiaoyao.li@intel.com,
- tony.lindgren@linux.intel.com, binbin.wu@linux.intel.com,
- isaku.yamahata@intel.com, yan.y.zhao@intel.com, chao.gao@intel.com
-References: <20250618120806.113884-1-adrian.hunter@intel.com>
- <20250618120806.113884-3-adrian.hunter@intel.com>
- <68938275-3f6a-46fc-9b38-2c916fdec3d6@intel.com>
- <CAGtprH_cVwWhfXFkM-=rVzQZ0CpY_zcnkF=q5x1n_9Bzm1xKfw@mail.gmail.com>
- <bc492cb2-1d30-4a30-9eb9-d48b09cd29a9@intel.com>
-From: Dave Hansen <dave.hansen@intel.com>
-Content-Language: en-US
-Autocrypt: addr=dave.hansen@intel.com; keydata=
- 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
-In-Reply-To: <bc492cb2-1d30-4a30-9eb9-d48b09cd29a9@intel.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250624171637.485616-1-seanjc@google.com>
 
-On 6/25/25 09:25, Adrian Hunter wrote:
->> IIUC, even if movdir64b stores contents on hwpoisoned pages, it's not
->> going to cause any trouble.
-> No.  PageHWPoison(page) means the page should not be touched.  It must
-> be freed back to the allocator where it will never be allocated again.
+On 2025-06-24 10:16:37, Sean Christopherson wrote:
+> Query support for Immediate Readiness irrespective of whether or not the
+> device supports PM capabilities, as nothing in the PCIe spec suggests that
+> Immediate Readiness is in any way dependent on PM functionality.
 
-What's the end-user-visible effect if the page is touched in this
-specific function in this specific way (with movdir64b)?
+After reading spec I also arrived at the same conclusion, this can be
+done irrespective of PM functionality. For example, wait after FLR
+behavior which are done using PCI Express Capability is also covered by
+this Immediate Readiness bit.
 
-In other words, what does this patch do for end users?
+> 
+> Opportunistically add a comment to explain why "errors" during PM setup
+> are effectively ignored.
+> 
+> Fixes: d6112f8def51 ("PCI: Add support for Immediate Readiness")
+> Cc: David Matlack <dmatlack@google.com>
+> Cc: Vipin Sharma <vipinsh@google.com>
+> Cc: Aaron Lewis <aaronlewis@google.com>
+> Signed-off-by: Sean Christopherson <seanjc@google.com>
+> ---
+> 
+> RFC as I'm not entirely sure this is useful/correct.
+> 
+> Found by inspection when debugging a VFIO VF passthrough issue that turned out
+> to be 907a7a2e5bf4 ("PCI/PM: Set up runtime PM even for devices without PCI PM").
+> 
+> The folks on the Cc list are looking at parallelizing VF assignment to avoid
+> serializing the 100ms wait on FLR.  I'm hoping we'll get lucky and the VFs in
+> question do (or can) support PCI_STATUS_IMM_READY.
+> 
+>  drivers/pci/pci.c | 40 +++++++++++++++++++++++++---------------
+>  1 file changed, 25 insertions(+), 15 deletions(-)
+> 
+> +void pci_pm_init(struct pci_dev *dev)
+> +{
+> +	u16 status;
+> +
+> +	device_enable_async_suspend(&dev->dev);
+> +	dev->wakeup_prepared = false;
+> +
+> +	dev->pm_cap = 0;
+> +	dev->pme_support = 0;
+> +
+> +	/*
+> +	 * Note, support for the PCI PM spec is optional for legacy PCI devices
+> +	 * and for VFs.  Continue on even if no PM capabilities are supported.
+> +	 */
+> +	__pci_pm_init(dev);
+>  
+>  	pci_read_config_word(dev, PCI_STATUS, &status);
+>  	if (status & PCI_STATUS_IMM_READY)
+>  		dev->imm_ready = 1;
+
+I don't see a reason to keep it in pci_pm_init then. This should be
+moved out of this function, maybe in the caller or its own function.
+> -poweron:
+> +
+>  	pci_pm_power_up_and_verify_state(dev);
+>  	pm_runtime_forbid(&dev->dev);
+>  	pm_runtime_set_active(&dev->dev);
+> 
+> base-commit: 86731a2a651e58953fc949573895f2fa6d456841
+> -- 
+> 2.50.0.714.g196bf9f422-goog
+> 
 
