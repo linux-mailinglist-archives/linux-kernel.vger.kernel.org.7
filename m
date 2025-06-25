@@ -1,110 +1,162 @@
-Return-Path: <linux-kernel+bounces-702275-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-702277-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1CA02AE8055
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Jun 2025 12:56:11 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6A2F1AE805B
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Jun 2025 12:56:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2178A4A2D76
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Jun 2025 10:55:31 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E1D474A4D02
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Jun 2025 10:55:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CADF42BD5A2;
-	Wed, 25 Jun 2025 10:54:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A1BDC2C158D;
+	Wed, 25 Jun 2025 10:54:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=pankajraghav.com header.i=@pankajraghav.com header.b="TFx/Rzdg"
-Received: from mout-p-103.mailbox.org (mout-p-103.mailbox.org [80.241.56.161])
+	dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b="IviJ/koI";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="hmBVKdb2"
+Received: from fhigh-b3-smtp.messagingengine.com (fhigh-b3-smtp.messagingengine.com [202.12.124.154])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7E6EB25B2EB;
-	Wed, 25 Jun 2025 10:54:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.161
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 35C9B2BEFF9;
+	Wed, 25 Jun 2025 10:54:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.12.124.154
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750848855; cv=none; b=MP3fXdSVj3M9YV7GzT5D1ckx9IfE2dw3exgEMg07rZ8+bemLFkBFEGAMWrc7Su/g7QCOklJxjtVgzvjm0xb5IM/OCtHVOlLAbIerd/LgCtg5JFcJxfwcU+FC2UFcUe+6U5Z3cxO0Y4HYQ4CdszTFKvbMsPSoHlmoCgsQxL1J8OQ=
+	t=1750848865; cv=none; b=hABnj6qhK1Mf77NLTDo8l0MNlkPjojHqstNvDa6I55SR6obIbyUylw3IKgVJt53R/G19zMhrES0W9PEOfhRWsQjyk2fN6DZ8xPoBjR9heOIfnIys3SJjfqBM42NW3z8nIaCjEYw4aJg+ukkfhIYZFWXyESsn+meJ426iw8+cLXs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750848855; c=relaxed/simple;
-	bh=bHy/tsFUkk4MChMA7tjlZNXq6dQAUp54PElkCTKHIeE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Ie3FtYzHOYaKPcCYZOWYkuStrBFCAizHTCyk9F2DbkNOmcb9YizdRQCDr/KjieJKKVou+5FeOfByVkaRMU1JXYmxoioVqPCD+43DVjuMD+ge9envkAI8UMyFSsA6ktkXY53dyQBuGi/dDqzOVIEEaH24xQhPcfsn0vll62btuH4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=pankajraghav.com; spf=pass smtp.mailfrom=pankajraghav.com; dkim=pass (2048-bit key) header.d=pankajraghav.com header.i=@pankajraghav.com header.b=TFx/Rzdg; arc=none smtp.client-ip=80.241.56.161
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=pankajraghav.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pankajraghav.com
-Received: from smtp202.mailbox.org (smtp202.mailbox.org [10.196.197.202])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mout-p-103.mailbox.org (Postfix) with ESMTPS id 4bRzG425yTz9t9R;
-	Wed, 25 Jun 2025 12:54:04 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=pankajraghav.com;
-	s=MBO0001; t=1750848844;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=MI+jsWd8MF1hH5HPSJgI8R3f1cEcrL7qwGcueGBoZ+4=;
-	b=TFx/Rzdg2B+0ULH33/wOta/nIO45jbi2kbA8IfiB+iZl1W4cYeqtuYGMclkjoCDp38wt72
-	n1Hzne2t77hKl0LD3Ww/zjSY8Dm9dx07Il0uIYlo5ZU2snIHXQBsnIvjop3mDT1M+mWorv
-	jFP7vWkJTCSTTvQLJ8faT/SP7mRifhWa8/+dhODqQL2rp+tiax4X43J3m7weYBUIldSmyd
-	/PlKf+TZJyCqN0Cb+1UEQWv6cm4O41QnvD0BS+mz0ZiPVnCNlQ7SCB2WAjMsubPCpr3M5R
-	xRpJRg6l42z63dOcDsiMTCYn6EgIgWrn/ZblBbqf6juYlPoEgz/Hjp+Uazfw0A==
-Date: Wed, 25 Jun 2025 12:53:54 +0200
-From: "Pankaj Raghav (Samsung)" <kernel@pankajraghav.com>
-To: Jan Kara <jack@suse.cz>
-Cc: Pankaj Raghav <p.raghav@samsung.com>, 
-	Alexander Viro <viro@zeniv.linux.org.uk>, mcgrof@kernel.org, Christian Brauner <brauner@kernel.org>, 
-	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, gost.dev@samsung.com, 
-	Matthew Wilcox <willy@infradead.org>
-Subject: Re: [PATCH v3] fs/buffer: remove the min and max limit checks in
- __getblk_slow()
-Message-ID: <jbtntrppqjzaq6tdfzvwojjsnpacrdmg74vcvab4dc2z6hlhnl@ntotjsab5ice>
-References: <20250625083704.167993-1-p.raghav@samsung.com>
- <u7fadbfaq5wm7nqhn4yewbn43h3ahxuqm536ly473uch2v5qfl@hpgo2dfg77jp>
+	s=arc-20240116; t=1750848865; c=relaxed/simple;
+	bh=QrX85Qk8+fEb6NVTU9wtJF8ZOywbTwF2zcUmByN2bvc=;
+	h=MIME-Version:Date:From:To:Cc:Message-Id:In-Reply-To:References:
+	 Subject:Content-Type; b=qw7lu2FV4ub1jINJnQ4H2aPpe3P4T2uWiO4/uCHtyXJLY5Hd4NVqj6Z6vFcxqcuW+gwISVDpHKjJ06s//DXvaWYuF2Sm5jGVvog7zuxQpmyzfc/V1+RYwy0s9WYhxA6qWh/5eUCWMttwa2OnrLpg4RQqu5BmnzhLDEkVHSFcHGo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de; spf=pass smtp.mailfrom=arndb.de; dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b=IviJ/koI; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=hmBVKdb2; arc=none smtp.client-ip=202.12.124.154
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arndb.de
+Received: from phl-compute-05.internal (phl-compute-05.phl.internal [10.202.2.45])
+	by mailfhigh.stl.internal (Postfix) with ESMTP id 182227A0178;
+	Wed, 25 Jun 2025 06:54:23 -0400 (EDT)
+Received: from phl-imap-02 ([10.202.2.81])
+  by phl-compute-05.internal (MEProxy); Wed, 25 Jun 2025 06:54:23 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arndb.de; h=cc
+	:cc:content-transfer-encoding:content-type:content-type:date
+	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to; s=fm1; t=1750848862;
+	 x=1750935262; bh=Q5dyaO3jSBoJfpd1LXwtd5ZZDDPtXRhCCAifrLMtgYI=; b=
+	IviJ/koIrcB8hPHAZrglLq1oI90x4D5pgi6phAXBeDVtKK4ntPx+cM27UyZX70Jh
+	zKL+yH0ZaZHTOxkvU61I7BcvL/f70FgUlQlQjS5lXvdbzzsquI1MAsCcyDFpUptO
+	+6tbMsm3P1ePCGMTJt8TyPIJ0DvD/2hO4PSpdOxXUgDYOKLTsHAUKPAbZUbdfMfv
+	nm5nuiUHaGea76co97MAxu5l4vdztm5YiuTVEpQnTnYER0NxDIMqWwCMJg88Dkux
+	udr+KUyZJBaiRkSdB3kMz+iTSVf5KMFmi4w2p+OZ+cE6Q8e/+JHJ2MzzCI9aq2rr
+	UYBmY647rUjCctUCUnNqzQ==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-transfer-encoding
+	:content-type:content-type:date:date:feedback-id:feedback-id
+	:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to:x-me-proxy
+	:x-me-sender:x-me-sender:x-sasl-enc; s=fm2; t=1750848862; x=
+	1750935262; bh=Q5dyaO3jSBoJfpd1LXwtd5ZZDDPtXRhCCAifrLMtgYI=; b=h
+	mBVKdb2EGEVl9P/hu6cVlskdKonc6kBTr5iO+fl8VkDuEodtZYpy9fCVOAttkFkl
+	wf/pz1qRzXkwf+9iya+Dn8dbcKZIlR5l8jq6erDs+JUDz1eZdDECqJxwfI5QnlJf
+	Z/+GYeJHTqo0UlMMOY+5Oj9HNwyXKwzyKbKz6BLKG2Y2PdaHmSOsxPPmZyeNVeXR
+	sJiLpiWwRa1FWtaxVOQWHOy4TGsPidrL40fJXLBO38HX99q8B3xuFX04f4Y/yhhl
+	ei8296LW/2mJUgII2fH0xwnCAlqz5GfQtl7SHIY/p2y7RWCH9YnVh5Vh78ADZuV6
+	3Juz57yTaCp5AwU0nIQ2g==
+X-ME-Sender: <xms:XtVbaGsW2vsBl-CUeudkQbooqUKrAFFLaMMa0worurSJ3RALyS1DYQ>
+    <xme:XtVbaLfJmeiJG2rchMmRHWnbPCTc7RGWwZA8_rDCIgmOCDKBnM6OlkuG7b1IY13sL
+    gf6DPhuFKlefMUdUKQ>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtddvgddvvdehlecutefuodetggdotefrod
+    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpuffrtefokffrpgfnqfghnecuuegr
+    ihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjug
+    hrpefoggffhffvvefkjghfufgtgfesthejredtredttdenucfhrhhomhepfdetrhhnugcu
+    uegvrhhgmhgrnhhnfdcuoegrrhhnugesrghrnhgusgdruggvqeenucggtffrrghtthgvrh
+    hnpefhtdfhvddtfeehudekteeggffghfejgeegteefgffgvedugeduveelvdekhfdvieen
+    ucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpegrrhhnug
+    esrghrnhgusgdruggvpdhnsggprhgtphhtthhopedutddpmhhouggvpehsmhhtphhouhht
+    pdhrtghpthhtohepohhlthgvrghnvhesghhmrghilhdrtghomhdprhgtphhtthhopegsrh
+    hoohhnihgvsehkvghrnhgvlhdrohhrghdprhgtphhtthhopehjrghmvghsrdgtlhgrrhhk
+    sehlihhnrghrohdrohhrghdprhgtphhtthhopehimhigsehlihhsthhsrdhlihhnuhigrd
+    guvghvpdhrtghpthhtohephhgthheslhhsthdruggvpdhrtghpthhtohepfhhrrghnkhdr
+    lhhisehngihprdgtohhmpdhrtghpthhtoheplhgrrhhishgrrdhgrhhighhorhgvsehngi
+    hprdgtohhmpdhrtghpthhtohepvhhlrgguihhmihhrrdholhhtvggrnhesnhigphdrtgho
+    mhdprhgtphhtthhopehlihhnuhigqdhkvghrnhgvlhesvhhgvghrrdhkvghrnhgvlhdroh
+    hrgh
+X-ME-Proxy: <xmx:XtVbaBylydIhWBMIDzwS7NgF-ok3CrK0h5mJKkOcCq9Oa2KV84lAyw>
+    <xmx:XtVbaBPh5ayWHdjhaHdE_Cc0X2eu7Nq7J4CoSekFy51qfAbo9k4yGg>
+    <xmx:XtVbaG-r31mxLpOHBCCFm-LasbaMmwUxqw3zZsgNXLCQLW3k8WXtgQ>
+    <xmx:XtVbaJVUfAVFcPntLalkbFh5NZLavbapYMMLOV4jGMF-1e1RjwaXHg>
+    <xmx:XtVbaBp2SfdOSv5Okgh2WLL6JrNgVhTc_-YwW38zyk9lZkV4RH4gDfo3>
+Feedback-ID: i56a14606:Fastmail
+Received: by mailuser.phl.internal (Postfix, from userid 501)
+	id A2792700063; Wed, 25 Jun 2025 06:54:22 -0400 (EDT)
+X-Mailer: MessagingEngine.com Webmail Interface
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <u7fadbfaq5wm7nqhn4yewbn43h3ahxuqm536ly473uch2v5qfl@hpgo2dfg77jp>
+X-ThreadId: T588a20d0ffbb3e40
+Date: Wed, 25 Jun 2025 12:54:02 +0200
+From: "Arnd Bergmann" <arnd@arndb.de>
+To: "James Clark" <james.clark@linaro.org>, "Frank Li" <Frank.li@nxp.com>
+Cc: "Vladimir Oltean" <olteanv@gmail.com>, "Mark Brown" <broonie@kernel.org>,
+ "Vladimir Oltean" <vladimir.oltean@nxp.com>,
+ "Larisa Grigore" <larisa.grigore@nxp.com>, "Christoph Hellwig" <hch@lst.de>,
+ linux-spi@vger.kernel.org, imx@lists.linux.dev, linux-kernel@vger.kernel.org
+Message-Id: <82824032-26d4-42a6-8a92-3e4a410741c5@app.fastmail.com>
+In-Reply-To: <884e86be-112b-44dd-a827-30355a5fdba6@linaro.org>
+References: <20250624-james-nxp-spi-dma-v3-0-e7d574f5f62c@linaro.org>
+ <20250624-james-nxp-spi-dma-v3-3-e7d574f5f62c@linaro.org>
+ <aFrSgJ5xZfccEX9x@lizhi-Precision-Tower-5810>
+ <290fc244-e88f-47a3-8dd3-0ec27eb5c60b@app.fastmail.com>
+ <0c6c78da-575a-4d29-a79a-3903aa801b42@linaro.org>
+ <0f904f12-295c-48fe-96c7-c64c461cdbbd@app.fastmail.com>
+ <884e86be-112b-44dd-a827-30355a5fdba6@linaro.org>
+Subject: Re: [PATCH v3 3/6] spi: spi-fsl-dspi: Stub out DMA functions
+Content-Type: text/plain
+Content-Transfer-Encoding: 7bit
 
-On Wed, Jun 25, 2025 at 12:16:49PM +0200, Jan Kara wrote:
-> On Wed 25-06-25 10:37:04, Pankaj Raghav wrote:
-> > All filesystems will already check the max and min value of their block
-> > size during their initialization. __getblk_slow() is a very low-level
-> > function to have these checks. Remove them and only check for logical
-> > block size alignment.
-> > 
-> > Suggested-by: Matthew Wilcox <willy@infradead.org>
-> > Signed-off-by: Pankaj Raghav <p.raghav@samsung.com>
-> 
-> I know this is a bikeshedding but FWIW this is in the should never trigger
-> territory so I'd be inclined to just make it WARN_ON_ONCE() and completely
-> delete it once we refactor bh apis to make sure nobody can call bh
-> functions with anything else than sb->s_blocksize.
-> 
-Something like this:
+On Wed, Jun 25, 2025, at 12:19, James Clark wrote:
+> On 25/06/2025 11:00 am, Arnd Bergmann wrote:
+>> On Wed, Jun 25, 2025, at 11:19, James Clark wrote:
+>>> On 24/06/2025 6:16 pm, Arnd Bergmann wrote:
+>
+> Wouldn't that allow someone to break it by disabling (or not enabling) 
+> that option? The driver won't fall back to the other modes if DMA isn't 
+> configured, it just won't work. In this case it seems like it's better 
+> to depend directly on DMA_ENGINE because that fixes the randconfig 
+> issues, which is the whole reason for the discussion.
 
-diff --git a/fs/buffer.c b/fs/buffer.c
-index a1aa01ebc0ce..a49b4be37c62 100644
---- a/fs/buffer.c
-+++ b/fs/buffer.c
-@@ -1122,10 +1122,9 @@ __getblk_slow(struct block_device *bdev, sector_t block,
- {
-        bool blocking = gfpflags_allow_blocking(gfp);
- 
--       if (unlikely(size & (bdev_logical_block_size(bdev) - 1))) {
-+       if (WARN_ON_ONCE(size & (bdev_logical_block_size(bdev) - 1))) {
-                printk(KERN_ERR "getblk(): block size %d not aligned to logical block size %d\n",
-                       size, bdev_logical_block_size(bdev));
--               dump_stack();
-                return NULL;
-        }
+It would be the same as disabling DMA_ENGINE today when running on an
+SoC that supports DMA mode in DSPI. Ideally that should fall back
+to non-accelerated mode. I see a lot of checks for
+trans_mode == DSPI_DMA_MODE, and I it's probably best to change
+them to a function call like
 
-I assume we don't need the dump_stack() anymore as we will print them
-with WARN_ON_ONCE anyway?
+static inline bool dsp_dma_mode(struct fsl_dspi *dspi)
+{
+     if (!IS_ENABLED(CONFIG_DMA_ENGINE)) // or CONFIG_FSL_DSPI_USE_DMA
+          return false;
 
---
-Pankaj
+     return dspi->devtype_data->trans_mode == DSPI_DMA_MODE;
+}
+
+> Would someone really want an option to disable compilation of two 
+> functions if their DSPI device is one that doesn't use DMA? Seems like 
+> this option would always be on anyway.
+
+It's probably mainly relevant if they want to completely turn off
+CONFIG_DMA_ENGINE, which is substantially bigger. Using a check
+for that symbol in the driver is certainly simpler for the user,
+as they can't accidentally turn it off the custom symbol.
+
+In theory you may also want to turn off DMA mode for testing,
+which is supported by at least the DW_DMA driver.
+
+I see that SPI_TEGRA114 has a dependency on TEGRA20_APB_DMA,
+which is yet another variation. This is clearly done for
+usability purposes since that SPI driver only ever works with
+the specific DMA driver in practice, but it seems worse
+conceptually.
+
+     Arnd
 
