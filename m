@@ -1,78 +1,78 @@
-Return-Path: <linux-kernel+bounces-703293-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-703287-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2E7F4AE8E44
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Jun 2025 21:14:04 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id D995DAE8E2D
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Jun 2025 21:12:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 99C371C26EB2
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Jun 2025 19:13:59 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 15DF618859D7
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Jun 2025 19:12:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EBC242E11D8;
-	Wed, 25 Jun 2025 19:12:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CDF5E2DA755;
+	Wed, 25 Jun 2025 19:12:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="QOYtRWux"
-Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="dv3e16K4"
+Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C500A2E0B6F
-	for <linux-kernel@vger.kernel.org>; Wed, 25 Jun 2025 19:12:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 86CF21F4CB2
+	for <linux-kernel@vger.kernel.org>; Wed, 25 Jun 2025 19:12:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750878748; cv=none; b=EBEeJypyW8hpaL+71B5RI4xXKcZq98sfRqn0UNyh+5X12nNzTqhHiG05UaQl7HZZxmFuxhQZhA83yan8Wjm3g94uwaNpueO5AVF0FJQ9842XTt1BanP1vJve+DD0Q1OAiweKYJ8fygVAN0WOwJmOWqF+ovBwMwjUADYC5GweCcM=
+	t=1750878735; cv=none; b=rgQzsKhB23kitngGD5VyoLvqKyZx7w7V1qMvGABDbFhWxZbyps3iacMSeowKhOJQE9YmVgDKx1x1lXrkz7qGLhqd9k+0Ld3cg4looetGXOw2JvQc1olLE23fpqdVyIq0ktqmZte782Gb27La39KYhS3z7GzIkkbDAPwEV/Vdb9M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750878748; c=relaxed/simple;
-	bh=6ICt16FlRZ4JDL48MGhJc56KCIPgVIVwIpRZ+z0v6Fs=;
+	s=arc-20240116; t=1750878735; c=relaxed/simple;
+	bh=Btfe1JJoT1bBJQ1LlBy13zZSXC2J40co3/VJFf0Ji5U=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=ALZZ27lVR7ccBMlS1wqUwddSK7y+7efVRH6oacNbrrKTfgrkZNqz6J58BnjfOB0U2fgUNDM33pfvRdcnxlz9Vx1kHVDz6xMB1ZFfzRD3lwFDl7UNVV+52wfLU6xo46n1EqE3UkIgQfybJ/KEv1t2l6CQmICqRr4CyleCkzL04RM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=QOYtRWux; arc=none smtp.client-ip=148.163.156.1
+	 MIME-Version; b=Nvu+6wcbHxVV/DcfUqin8ONHKUSTYn1VYRWwPGYGQ70ZJxRgsqP4kZTeyd2oL4Ppa2nyoJXskjt5XMq8KshKYpwF9fPEAvNvWC6YZ+Hgt09WucIWbGd5v2cr/7DMb6x58iJPZ8sxybVniWOMjvmyLOdcHhEemE0SP2oL0QWqATU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=dv3e16K4; arc=none smtp.client-ip=148.163.158.5
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0356517.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 55PJ1kmo025790;
-	Wed, 25 Jun 2025 19:11:54 GMT
+Received: from pps.filterd (m0360072.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 55PEu5h4010225;
+	Wed, 25 Jun 2025 19:11:57 GMT
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
 	:content-transfer-encoding:date:from:in-reply-to:message-id
-	:mime-version:references:subject:to; s=pp1; bh=J0WdVmX9i2uAG/1q0
-	lIem3oIKzOaNA7LPwmwzJXNHRA=; b=QOYtRWuxScNDEwM19uzjP2upw0mmgRcru
-	dWWQkYZszG0FTS8MrLCvYsa+kwV67+qZHMgc2TydhuD2KTzDCxhN18yTGtEqpI8s
-	1OdCbhv3NI7ePs3w2YaEM6XkugI9TG75RrXDAA/8NBOxYPNU5PVnmKMBfwZhs8E/
-	fkaIQfhEVqcUzyeZcyTLfpDptMiqNLLcySNNqfPQk9qUw32x9oBL7b0c7d8yor57
-	30V4RTmoFh4MEvNUNJiPngrI41L1jd6WUj1G1AN+DZSLV3edW9aD44ddar9mkfKL
-	xM857TRUS2KkKQ37egTSL5pgYZIiTmOp9KSQtczc3+5nVbGnXuhWg==
+	:mime-version:references:subject:to; s=pp1; bh=HqW8nqT9xu/zbT7zA
+	lKagL9RxvS7Ysx5eO2iZlQyEhg=; b=dv3e16K4gyPcIGcVAEg0jy0QQ22eSMt7M
+	FCvOebd8SVQ8A+3ryh2ZOsDl3hyFsMISeGR68mtLgE9cu8NXYOq+46uq0iOqNcCX
+	XkByN5tBFGj1jKuP+jFjZGTN0ZbKBzIXTEzZJ1E1EWbSgQ9nRQeXP+CLB1Fswm5h
+	ZoyDSNp4ScPJK1jS3pKMqz117/ZafaIvEM7i5AuxjSzq6IUbkRYFuUfKp0fzesKf
+	05G/OnkRaXHRT+usnm/h7umytuaBe9L1TkT2b7Ni/Pjo99er0zpF2bAdK9ZgZVej
+	eeNNPUXwaZZI+LgktbAVAD8n8nlwdt8coCN7JDVVO8ZuDgGGeZ/MQ==
 Received: from pps.reinject (localhost [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 47gpwhr28e-1
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 47dmf394jy-1
 	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 25 Jun 2025 19:11:54 +0000 (GMT)
-Received: from m0356517.ppops.net (m0356517.ppops.net [127.0.0.1])
-	by pps.reinject (8.18.0.8/8.18.0.8) with ESMTP id 55PJ2DlY026724;
-	Wed, 25 Jun 2025 19:11:53 GMT
-Received: from ppma21.wdc07v.mail.ibm.com (5b.69.3da9.ip4.static.sl-reverse.com [169.61.105.91])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 47gpwhr286-1
+	Wed, 25 Jun 2025 19:11:57 +0000 (GMT)
+Received: from m0360072.ppops.net (m0360072.ppops.net [127.0.0.1])
+	by pps.reinject (8.18.0.8/8.18.0.8) with ESMTP id 55PJBuZu023746;
+	Wed, 25 Jun 2025 19:11:56 GMT
+Received: from ppma23.wdc07v.mail.ibm.com (5d.69.3da9.ip4.static.sl-reverse.com [169.61.105.93])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 47dmf394js-1
 	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 25 Jun 2025 19:11:53 +0000 (GMT)
-Received: from pps.filterd (ppma21.wdc07v.mail.ibm.com [127.0.0.1])
-	by ppma21.wdc07v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 55PHc9Zd006408;
-	Wed, 25 Jun 2025 19:11:52 GMT
-Received: from smtprelay07.fra02v.mail.ibm.com ([9.218.2.229])
-	by ppma21.wdc07v.mail.ibm.com (PPS) with ESMTPS id 47e82paxw3-1
+	Wed, 25 Jun 2025 19:11:56 +0000 (GMT)
+Received: from pps.filterd (ppma23.wdc07v.mail.ibm.com [127.0.0.1])
+	by ppma23.wdc07v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 55PHioES002471;
+	Wed, 25 Jun 2025 19:11:56 GMT
+Received: from smtprelay04.fra02v.mail.ibm.com ([9.218.2.228])
+	by ppma23.wdc07v.mail.ibm.com (PPS) with ESMTPS id 47e8jmasdn-1
 	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 25 Jun 2025 19:11:52 +0000
+	Wed, 25 Jun 2025 19:11:56 +0000
 Received: from smtpav03.fra02v.mail.ibm.com (smtpav03.fra02v.mail.ibm.com [10.20.54.102])
-	by smtprelay07.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 55PJBm1447448522
+	by smtprelay04.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 55PJBqd234341558
 	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Wed, 25 Jun 2025 19:11:48 GMT
+	Wed, 25 Jun 2025 19:11:52 GMT
 Received: from smtpav03.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 524F220043;
+	by IMSVA (Postfix) with ESMTP id 480882004B;
+	Wed, 25 Jun 2025 19:11:52 +0000 (GMT)
+Received: from smtpav03.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id ABFBE20040;
 	Wed, 25 Jun 2025 19:11:48 +0000 (GMT)
-Received: from smtpav03.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id B51B120040;
-	Wed, 25 Jun 2025 19:11:44 +0000 (GMT)
 Received: from li-7bb28a4c-2dab-11b2-a85c-887b5c60d769.ibm.com.com (unknown [9.124.209.143])
 	by smtpav03.fra02v.mail.ibm.com (Postfix) with ESMTP;
-	Wed, 25 Jun 2025 19:11:44 +0000 (GMT)
+	Wed, 25 Jun 2025 19:11:48 +0000 (GMT)
 From: Shrikanth Hegde <sshegde@linux.ibm.com>
 To: mingo@redhat.com, peterz@infradead.org, juri.lelli@redhat.com,
         vincent.guittot@linaro.org, tglx@linutronix.de, yury.norov@gmail.com,
@@ -82,9 +82,9 @@ Cc: sshegde@linux.ibm.com, vschneid@redhat.com, dietmar.eggemann@arm.com,
         srikar@linux.ibm.com, linux-kernel@vger.kernel.org,
         christophe.leroy@csgroup.eu, linuxppc-dev@lists.ozlabs.org,
         gregkh@linuxfoundation.org
-Subject: [RFC v2 5/9] sched/rt: Don't select CPU marked as avoid for wakeup and push/pull rt task
-Date: Thu, 26 Jun 2025 00:41:04 +0530
-Message-ID: <20250625191108.1646208-6-sshegde@linux.ibm.com>
+Subject: [RFC v2 6/9] sched/core: Push current task out if CPU is marked as avoid
+Date: Thu, 26 Jun 2025 00:41:05 +0530
+Message-ID: <20250625191108.1646208-7-sshegde@linux.ibm.com>
 X-Mailer: git-send-email 2.43.5
 In-Reply-To: <20250625191108.1646208-1-sshegde@linux.ibm.com>
 References: <20250625191108.1646208-1-sshegde@linux.ibm.com>
@@ -96,72 +96,117 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-TM-AS-GCONF: 00
-X-Proofpoint-GUID: Ozz5Ed7du4ZfDs1eVWS1h-yQTAzNspda
-X-Proofpoint-ORIG-GUID: qSKMqq6N81YKdhnVAAsFp4JXjrrY2Ypc
-X-Authority-Analysis: v=2.4 cv=dd+A3WXe c=1 sm=1 tr=0 ts=685c49fa cx=c_pps a=GFwsV6G8L6GxiO2Y/PsHdQ==:117 a=GFwsV6G8L6GxiO2Y/PsHdQ==:17 a=6IFa9wvqVegA:10 a=VnNF1IyMAAAA:8 a=mwiGFyDNcI-a1ZCKz0gA:9
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNjI1MDE0MSBTYWx0ZWRfXwn3poP0W8j0x dVHkbqSyPHUN6ZXg1fTuI6snLGTzh2MGQQ1sANMuAmvM37cXWNOV/573vjiHevCKbtfO76WLBZ6 vtXZGJjqhuV4dP2joF5phNWb5oBQM5E8siuVoWPj7mHWAqkgsZwQ91HeURWyA+ekOdovn9/Qow7
- 0D5w9TqlUfKB1U4/IqCypY3GRVuTvHWqbL5VB5oP1goDdc0Yk445Z4Ho6uh+HunK8lfvqALpoJy rY8OdmQiuSmeFTq8ABPvkms57DUXM3HfZnTu+HcG8tmq/8asi7SCibkWgUfdeYU6veRCNgUkwEb UFWlL3brOL/BaROHJmPBPLUIxrnh7FDmwMEHfo2/Zra1mqsimcw+Nofrggl2D5lCnXPJdlDIM7d
- Bpl131Gq7NiVuhsSz7omBQunRfJ9bJ9QCB1KMSXrCPba6CwnCTffuwLlmGfeV4N0bXfP4fQE
+X-Authority-Analysis: v=2.4 cv=M5FNKzws c=1 sm=1 tr=0 ts=685c49fd cx=c_pps a=3Bg1Hr4SwmMryq2xdFQyZA==:117 a=3Bg1Hr4SwmMryq2xdFQyZA==:17 a=6IFa9wvqVegA:10 a=VnNF1IyMAAAA:8 a=Dot9ObxFTPmaUP2n-pkA:9
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNjI1MDE0MSBTYWx0ZWRfX+CuQ7G4MP4RS 0BCK6pMAExM4hCUec36PEznclWOD/wJGxt77Alg7NG66bfJbExACF9w6m0ODCOlMVUmSrHWCXT2 CsgDQtKhYufgFvb54qhatEs1gWjTIWq6hdV9EtTqKW/53LnXSXczfmYhFFYYgag9RyPLlewx2Cc
+ UVX1T1NkUvJvdwqZ1Xn0tjZqwBMUng1qN+dvEQTTikPakt/wz5qAVOFqvS/9oMVEvMcG1ysbagw cZl0uzUCXD6Ed2WhGu+u60V6dypIgbVt8ZMC/DkBJVh6ycqeQJmj0KW6Om7PNj83bFoYGUUzV8Z 8T9nokAUpjccyNanJYQiqROLf6qGiZFeYj8y2g1+ZZpwfmG+o+2N0X9bhff9RVGt7S9w2cprKRF
+ mxijQIJfVYlOBc7rEDN08UeF/cHrwU4SncP0Q+MYsyJ34fpzjFzGtAzeZ0vAud/EUbUVXiaZ
+X-Proofpoint-GUID: V_KS9G9PtvUsA8fgxKxwlLHmIXl9DBl_
+X-Proofpoint-ORIG-GUID: zNTvoP9J2-vGjp_xxArM_75tWYqFc7R0
 X-Proofpoint-Virus-Version: vendor=baseguard
  engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.7,FMLib:17.12.80.40
  definitions=2025-06-25_06,2025-06-25_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 impostorscore=0 spamscore=0
- mlxlogscore=999 priorityscore=1501 mlxscore=0 clxscore=1015 adultscore=0
- phishscore=0 lowpriorityscore=0 malwarescore=0 bulkscore=0 suspectscore=0
- classifier=spam authscore=0 authtc=n/a authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.19.0-2505280000
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 lowpriorityscore=0
+ bulkscore=0 malwarescore=0 impostorscore=0 suspectscore=0
+ priorityscore=1501 phishscore=0 spamscore=0 clxscore=1011 adultscore=0
+ mlxscore=0 mlxlogscore=999 classifier=spam authscore=0 authtc=n/a authcc=
+ route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2505280000
  definitions=main-2506250141
 
-- While wakeup don't select the CPU if it marked as avoid. 
-- Don't pull a task if CPU is marked as avoid. 
-- Don't push a task to a CPU marked as Avoid. 
+Actively push out any task running on a CPU marked as avoid. 
+If a task is sleeping it is pushed out if it wakes up on that CPU. 
+
+Since the task is running, need to use the stopper class to push the 
+task out. Use __balance_push_cpu_stop to achieve that. 
+
+This currently works only CFS and RT. 
 
 Signed-off-by: Shrikanth Hegde <sshegde@linux.ibm.com>
 ---
- kernel/sched/rt.c | 9 +++++++--
- 1 file changed, 7 insertions(+), 2 deletions(-)
+ kernel/sched/core.c  | 44 ++++++++++++++++++++++++++++++++++++++++++++
+ kernel/sched/sched.h |  1 +
+ 2 files changed, 45 insertions(+)
 
-diff --git a/kernel/sched/rt.c b/kernel/sched/rt.c
-index 15d5855c542c..fd9df6f46135 100644
---- a/kernel/sched/rt.c
-+++ b/kernel/sched/rt.c
-@@ -1549,6 +1549,8 @@ select_task_rq_rt(struct task_struct *p, int cpu, int flags)
- 		if (!test && target != -1 && !rt_task_fits_capacity(p, target))
- 			goto out_unlock;
+diff --git a/kernel/sched/core.c b/kernel/sched/core.c
+index 13e44d7a0b90..aea4232e3ec4 100644
+--- a/kernel/sched/core.c
++++ b/kernel/sched/core.c
+@@ -5577,6 +5577,10 @@ void sched_tick(void)
  
-+		if (cpu_avoid(target))
-+			goto out_unlock;
- 		/*
- 		 * Don't bother moving it if the destination CPU is
- 		 * not running a lower priority task.
-@@ -1871,7 +1873,7 @@ static struct rq *find_lock_lowest_rq(struct task_struct *task, struct rq *rq)
- 	for (tries = 0; tries < RT_MAX_TRIES; tries++) {
- 		cpu = find_lowest_rq(task);
+ 	sched_clock_tick();
  
--		if ((cpu == -1) || (cpu == rq->cpu))
-+		if ((cpu == -1) || (cpu == rq->cpu) || cpu_avoid(cpu))
- 			break;
++	/* push the current task out if cpu is marked as avoid */
++	if (cpu_avoid(cpu))
++		push_current_task(rq);
++
+ 	rq_lock(rq, &rf);
+ 	donor = rq->donor;
  
- 		lowest_rq = cpu_rq(cpu);
-@@ -1969,7 +1971,7 @@ static int push_rt_task(struct rq *rq, bool pull)
- 			return 0;
+@@ -8028,6 +8032,43 @@ static void balance_hotplug_wait(void)
+ 			   TASK_UNINTERRUPTIBLE);
+ }
  
- 		cpu = find_lowest_rq(rq->curr);
--		if (cpu == -1 || cpu == rq->cpu)
-+		if (cpu == -1 || cpu == rq->cpu || cpu_avoid(cpu))
- 			return 0;
- 
- 		/*
-@@ -2232,6 +2234,9 @@ static void pull_rt_task(struct rq *this_rq)
- 	if (likely(!rt_overload_count))
- 		return;
- 
-+	if (cpu_avoid(this_rq->cpu))
++static DEFINE_PER_CPU(struct cpu_stop_work, push_task_work);
++
++/* A CPU is marked as Avoid when there is contention for underlying
++ * physical CPU and using this CPU will lead to hypervisor preemptions.
++ * It is better not to use this CPU.
++ *
++ * In case any task is scheduled on such CPU, move it out. In
++ * select_fallback_rq a non_avoid CPU will be chosen and henceforth
++ * task shouldn't come back to this CPU
++ */
++void push_current_task(struct rq *rq)
++{
++	struct task_struct *push_task = rq->curr;
++	unsigned long flags;
++
++	/* idle task can't be pused out */
++	if (rq->curr == rq->idle || !cpu_avoid(rq->cpu))
 +		return;
 +
- 	/*
- 	 * Match the barrier from rt_set_overloaded; this guarantees that if we
- 	 * see overloaded we must also see the rto_mask bit.
++	/* Do for only SCHED_NORMAL AND RT for now */
++	if (push_task->sched_class != &fair_sched_class &&
++	    push_task->sched_class != &rt_sched_class)
++		return;
++
++	if (kthread_is_per_cpu(push_task) ||
++	    is_migration_disabled(push_task))
++		return;
++
++	local_irq_save(flags);
++	get_task_struct(push_task);
++	preempt_disable();
++
++	stop_one_cpu_nowait(rq->cpu, __balance_push_cpu_stop, push_task,
++			    this_cpu_ptr(&push_task_work));
++	preempt_enable();
++	local_irq_restore(flags);
++}
+ #else /* !CONFIG_HOTPLUG_CPU: */
+ 
+ static inline void balance_push(struct rq *rq)
+@@ -8042,6 +8083,9 @@ static inline void balance_hotplug_wait(void)
+ {
+ }
+ 
++void push_current_task(struct rq *rq)
++{
++}
+ #endif /* !CONFIG_HOTPLUG_CPU */
+ 
+ void set_rq_online(struct rq *rq)
+diff --git a/kernel/sched/sched.h b/kernel/sched/sched.h
+index 105190b18020..b9614873762e 100644
+--- a/kernel/sched/sched.h
++++ b/kernel/sched/sched.h
+@@ -1709,6 +1709,7 @@ struct rq_flags {
+ };
+ 
+ extern struct balance_callback balance_push_callback;
++void push_current_task(struct rq *rq);
+ 
+ #ifdef CONFIG_SCHED_CLASS_EXT
+ extern const struct sched_class ext_sched_class;
 -- 
 2.43.0
 
