@@ -1,129 +1,139 @@
-Return-Path: <linux-kernel+bounces-703076-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-703077-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5F938AE8B4A
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Jun 2025 19:12:37 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B359EAE8B34
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Jun 2025 19:10:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id EAF321BC458B
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Jun 2025 17:07:53 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D3786163FF6
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Jun 2025 17:08:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2C6682D6600;
-	Wed, 25 Jun 2025 17:02:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 26B8F2DCBEC;
+	Wed, 25 Jun 2025 17:03:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="N9AlNk6X"
-Received: from mail-ed1-f49.google.com (mail-ed1-f49.google.com [209.85.208.49])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="qhUlDfOv"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D5C2028D8FE;
-	Wed, 25 Jun 2025 17:02:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8155C2DAFC4;
+	Wed, 25 Jun 2025 17:03:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750870955; cv=none; b=mHw6l3sAKvocJR8I12h2xDELXPNnMp9T9SZT+6uICkmtuiZle2/GifDqqmochpYnuEJvqaGIOTiOGvIU3VkJ9BkcAvnH6BThdlOjejJ8ved5i16p9eFadzS0VSnirOlO1im7oZO9mByc+byanhY+dsmCPE1AKtwGNq2Ex7UZGAY=
+	t=1750870992; cv=none; b=ne+b14SLAfG38rQJGxh8v5BOyD3n8nBSTVKNCWG/OEaxHcogObRd9JuDNVorgoiMglC2Tj5iDA0SOaWabvH3skxZK4xo0SiDsD7yQksRza8vSlN28x1YAsdBfKnh9E0qhKsM0ijPwlzWIVq0FPoJ/mBeqKKp7x2U0YETtklKXF0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750870955; c=relaxed/simple;
-	bh=N50hT8VEHYddcT/RAP1xOT9lPv83004F8OUxqy1UH5U=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=hBiF0z/leJ7PicPKkknub1F7FzSvODAK3O+WfWXbNE/mIV8KLuXCHy8sa95qoxRfUCwUpXiRzZ/RpyAuBPKahTNNrB+VdOyowosApUa4dNI3PEwz6KROFGFSCDDYs1GcDQlXFW5S3S/MtNN1d7tDGM7pPrlCmJcXMlwroyBI8Ms=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=N9AlNk6X; arc=none smtp.client-ip=209.85.208.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f49.google.com with SMTP id 4fb4d7f45d1cf-60bbfe9e864so8488a12.1;
-        Wed, 25 Jun 2025 10:02:33 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1750870952; x=1751475752; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=sOdk14vXFlLtpbY7hWGNpgAfHVc6f/iGH5twokX/P1Q=;
-        b=N9AlNk6XQExg59ct+1AWq0WHBPoOtgI0Fb8wWALUS+EhG9qLOsnE1vxX+OLOPiLJKf
-         6SfdJubCL9/db3fUKAfA3jO7wvw6RkD2CZ6uCZ93d4B0zBHdrRiQjs20y2o2M0KiTuxo
-         kwaJE6W2KIBBtTR80I0tDXKOY1QYObJ5NEHw6C1IdbCDxpGA6FJFcZjN9PKsAKZlDJLY
-         Ct7PCWhLnU9RRMEMJMlK6sTJpCvEV/QyLAbe/ZiX+S0j/m9jcALMx2erARXDcvQ2mCCI
-         01OgyK8sP30auQjGhH+jE9kSOdac6lV30fyfElBcxMe3Aqg/dsp0rUwvM/BxAKG5rufa
-         i9ow==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1750870952; x=1751475752;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=sOdk14vXFlLtpbY7hWGNpgAfHVc6f/iGH5twokX/P1Q=;
-        b=FRwibw3AW5Kyab4/wSQpa4jEXP9eFAqxOESNKELQA63vo4RMCL92Qu4zvAkY4VgUHP
-         aNvPn+8wBYKEkfnaReaOROoU+ZVUbEsnKBZIKD3yzr/auC7OSe13pXOL3tUTjDWP8Spc
-         By52+k2VxFR3vP1j7pQ82gK8pVjyr1OfKAhB9joaHCf7w0o3Aa3il0U4v38mTUt7/KJf
-         SOifGbs7bzhPaO95qaoGH5gEvjN4vYe19ZnZ9r8cZnpaCGSpvT5vSO51O/OSww/TMvqU
-         aOmc3yqwoWpQwaXSkfqNaNrX+/JPUm4A+/F/nuE5cG52ph0ynthVp1OVfPACQUkP2ZsI
-         3duQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXzVIs8I6xrW1nLFeFQ6S6qRPppFS4prrRU5CU1BuKMus5vuOGtawRvYh6JWIkxP+2xaASFtFV0rKsTnUg=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwkhBJoUvwb4Xl4AB3lsSgmPVw1URbi0NplljGpss+qqoAmWTzh
-	fZZ7rh9lPAd5Rd2T8nH2ahidV2XKKpjuO896aI72rtJ6PcO6mC7k2cJ8
-X-Gm-Gg: ASbGncspgOyhUAdpKxKuWLtqAymLLsZH80gh3kFJnmPjkVN2XQg1D1HDpmB7VEVRmij
-	PIM2JsslSMlFGvRJCAiVOBRFvcuV7vgFjtwYCD9iIdY7UvcktEeyt7ottCbMi5VE9uP/TYln3xs
-	P0jIpgIttFbKoNYI+8djRRzfPMEtVEf6bNsgfFlT7YXkedlhi2hDNOEhu6VgZq4UpebWyzQp+cp
-	1DCZO/64rKmFG8rgJEFdvig+1ntChTEUEnzpvFnMkQWMuMO1Vz/yQ/B9PROi8f3oDCZE5DWtfKL
-	7R41w9DaZM/U6NChXqubmQh+KHIj3Ju80QQVayKxUAz+Y2MtQ7T0AdVY6Lr1VS8dwNWTiSs6h/u
-	9+H1JuVDej++CG2iOS/Q9s3+XjFiKnEh6
-X-Google-Smtp-Source: AGHT+IGaZC9Rml1a4PR4Iq+dPLxqOVNQqzhj1FFaq7Sj6I5q5FQE9R2CNAYd3gQnL9ujbOk8ZkoyyQ==
-X-Received: by 2002:a17:907:1ca8:b0:ad8:aa3a:772b with SMTP id a640c23a62f3a-ae0bea37b6cmr139097066b.15.1750870952011;
-        Wed, 25 Jun 2025 10:02:32 -0700 (PDT)
-Received: from localhost.localdomain (84-72-156-211.dclient.hispeed.ch. [84.72.156.211])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ae0cb358618sm69249766b.102.2025.06.25.10.02.31
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 25 Jun 2025 10:02:31 -0700 (PDT)
-From: Lothar Rubusch <l.rubusch@gmail.com>
-To: mazziesaccount@gmail.com,
-	jic23@kernel.org,
-	dlechner@baylibre.com,
-	nuno.sa@analog.com,
-	andy@kernel.org
-Cc: linux-iio@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	l.rubusch@gmail.com
-Subject: [PATCH v1 2/2] iio: adc: ti-adc128s052: replace literal by unit expression
-Date: Wed, 25 Jun 2025 17:02:18 +0000
-Message-Id: <20250625170218.545654-3-l.rubusch@gmail.com>
-X-Mailer: git-send-email 2.39.5
-In-Reply-To: <20250625170218.545654-1-l.rubusch@gmail.com>
-References: <20250625170218.545654-1-l.rubusch@gmail.com>
+	s=arc-20240116; t=1750870992; c=relaxed/simple;
+	bh=R2ys2tdAkGhb2p11OPXkd5n53kwZkob3IDlhROQoduc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=CXpFSQq/iComMaeWlhk+gZov0JjrE4O4QksQSrAa15E3PF99bSIbJ2WRL/N67IumHqNm9j9crKRrThANxdwVILGUx5TAORCuYjv1OtqwfsyIUbxEtgosDbsJZuMrm2jMC2Ii7du+Dt1F4uqQTqtjBQhUZfehARTjtXNJyBsYGMM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=qhUlDfOv; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id BE0E2C4CEEB;
+	Wed, 25 Jun 2025 17:03:11 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1750870992;
+	bh=R2ys2tdAkGhb2p11OPXkd5n53kwZkob3IDlhROQoduc=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=qhUlDfOvKkvAcRx0Im/EG4SGVu4aIoZZNzNgkcuP8OaY08OcOY4nO8XmWdWgWneB+
+	 WsvqjMEaLe4K718UamBa4a7jjaejQ3P3iMLQJw+IwSNTt4w/D5QSA3PU0S28x94/bm
+	 a5FeCzuXlXGEvZD5YvewEkzp2d3J8DO7kqOUnvmVta6dlq4hg/KQlBvBBYQXEV61UZ
+	 kjWFenc8ptyK39MXNGAHX5SgP/j1I25cQDyNEW3D6g8MdvNnaB8A+G15f1YmTBraDd
+	 wNbe7O6Rfg4oAjrqt92N0aDAYeBfiX7dHNEZGTe76rLDbRPXrlc+WKc42ymChEtQIH
+	 WRyd6IMTwDf4Q==
+Date: Wed, 25 Jun 2025 20:03:08 +0300
+From: Jarkko Sakkinen <jarkko@kernel.org>
+To: Yeoreum Yun <yeoreum.yun@arm.com>
+Cc: sudeep.holla@arm.com, peterhuewe@gmx.de, jgg@ziepe.ca,
+	stuart.yoder@arm.com, linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org, linux-integrity@vger.kernel.org
+Subject: Re: [PATCH v4 2/2] tpm: tpm_crb_ffa: try to probe tpm_crb_ffa when
+ it's built-in
+Message-ID: <aFwrzEPUAbLaOAgY@kernel.org>
+References: <20250618102302.2379029-1-yeoreum.yun@arm.com>
+ <20250618102302.2379029-3-yeoreum.yun@arm.com>
+ <aFs02ZgVyGTg2cJx@kernel.org>
+ <aFvRePYyX/Xuxe8N@e129823.arm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <aFvRePYyX/Xuxe8N@e129823.arm.com>
 
-Replace the literal number 1000 by MILLI from linux/units.h
+On Wed, Jun 25, 2025 at 11:37:44AM +0100, Yeoreum Yun wrote:
+> Hi Jarkkok,
+> 
+> > > --- a/drivers/char/tpm/tpm_crb_ffa.c
+> > > +++ b/drivers/char/tpm/tpm_crb_ffa.c
+> > > @@ -115,6 +115,7 @@ struct tpm_crb_ffa {
+> > >  };
+> > >
+> > >  static struct tpm_crb_ffa *tpm_crb_ffa;
+> > > +static struct ffa_driver tpm_crb_ffa_driver;
+> > >
+> > >  static int tpm_crb_ffa_to_linux_errno(int errno)
+> > >  {
+> > > @@ -168,13 +169,23 @@ static int tpm_crb_ffa_to_linux_errno(int errno)
+> > >   */
+> > >  int tpm_crb_ffa_init(void)
+> > >  {
+> > > +	int ret = 0;
+> > > +
+> > > +	if (!IS_MODULE(CONFIG_TCG_ARM_CRB_FFA)) {
+> > > +		ret = ffa_register(&tpm_crb_ffa_driver);
+> > > +		if (ret) {
+> > > +			tpm_crb_ffa = ERR_PTR(-ENODEV);
+> > > +			return ret;
+> > > +		}
+> > > +	}
+> > > +
+> > >  	if (!tpm_crb_ffa)
+> > > -		return -ENOENT;
+> > > +		ret = -ENOENT;
+> > >
+> > >  	if (IS_ERR_VALUE(tpm_crb_ffa))
+> > > -		return -ENODEV;
+> > > +		ret = -ENODEV;
+> > >
+> > > -	return 0;
+> > > +	return ret;
+> > >  }
+> > >  EXPORT_SYMBOL_GPL(tpm_crb_ffa_init);
+> > >
+> > > @@ -369,7 +380,9 @@ static struct ffa_driver tpm_crb_ffa_driver = {
+> > >  	.id_table = tpm_crb_ffa_device_id,
+> > >  };
+> > >
+> > > +#ifdef MODULE
+> > >  module_ffa_driver(tpm_crb_ffa_driver);
+> > > +#endif
+> > >
+> > >  MODULE_AUTHOR("Arm");
+> > >  MODULE_DESCRIPTION("TPM CRB FFA driver");
+> > > --
+> > > LEVI:{C3F47F37-75D8-414A-A8BA-3980EC8A46D7}
+> > >
+> >
+> > NAK
+> 
+> If you NACK with your comment on the cover letter,
+> Would you check the my comments please?
+> 
+> Actually, this wouldn't be fixed with the Kconfig.
 
-Signed-off-by: Lothar Rubusch <l.rubusch@gmail.com>
----
- drivers/iio/adc/ti-adc128s052.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+I got into the same page (see my response to your response at 0/2) :-)
 
-diff --git a/drivers/iio/adc/ti-adc128s052.c b/drivers/iio/adc/ti-adc128s052.c
-index cf271c39e663..67bc7fbd52bc 100644
---- a/drivers/iio/adc/ti-adc128s052.c
-+++ b/drivers/iio/adc/ti-adc128s052.c
-@@ -18,6 +18,7 @@
- #include <linux/property.h>
- #include <linux/regulator/consumer.h>
- #include <linux/spi/spi.h>
-+#include <linux/units.h>
- 
- struct adc128_configuration {
- 	const struct iio_chan_spec	*channels;
-@@ -189,7 +190,7 @@ static int adc128_probe(struct spi_device *spi)
- 				     "failed to read '%s' voltage",
- 				     config->refname);
- 
--	adc->vref_mv = ret / 1000;
-+	adc->vref_mv = ret / MILLI;
- 
- 	if (config->num_other_regulators) {
- 		ret = devm_regulator_bulk_get_enable(&spi->dev,
--- 
-2.39.5
+Thanks for the patience.
 
+> 
+> Thanks
+> 
+> --
+> Sincerely,
+> Yeoreum Yun
+
+BR, Jarkko
 
