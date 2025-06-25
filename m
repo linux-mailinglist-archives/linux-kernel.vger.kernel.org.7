@@ -1,294 +1,186 @@
-Return-Path: <linux-kernel+bounces-702171-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-702173-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id B854EAE7EE8
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Jun 2025 12:17:08 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0789DAE7EEA
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Jun 2025 12:17:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A3D5F189B269
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Jun 2025 10:16:38 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4C38B168F0D
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Jun 2025 10:17:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9F3FE2882CA;
-	Wed, 25 Jun 2025 10:16:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E531227FD74;
+	Wed, 25 Jun 2025 10:17:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="j3qwddyl"
-Received: from mail-pj1-f44.google.com (mail-pj1-f44.google.com [209.85.216.44])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="oF+3MC25"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3E8322080C1
-	for <linux-kernel@vger.kernel.org>; Wed, 25 Jun 2025 10:16:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A713027A108;
+	Wed, 25 Jun 2025 10:17:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750846572; cv=none; b=VRC7DcT8Yy5g7vUxH0p0pKKq/WgDdckk7eqh6wT+LSYZ1axb8ckWUtpIifa33z2Z+Vw6S4X0G3zFhdEqoWu6z/N7MuOOggdlu1Y23//PoKR9SVvtdYt1HBPybu9WNBwXIkcGXrD+Ow4/5cDEtDKVMDsg8CKaj14i6aZoVQfDAsw=
+	t=1750846626; cv=none; b=gRy5Us75NlkH6qg7EbZi++3vm/8ApnxZ9WaOuCYlvD3jXdACG7gR42L3Z2op++9LOxotu0WTsY3aZqx1rmQ1saKM/EoDh1cNTV3y9gIbWWDCmudGYFsYTOUI953OfULP3k0qbqlCT2e/xR53kyFD/a9uPFGCrJt236HHY07ZJpE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750846572; c=relaxed/simple;
-	bh=/pP/DMCn/BG2BmwgbyypJMnbvQ1FiiNc5slgttyyyNc=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=U45pMuCkdXvW+02VpucPEzz5W9z3BMJoQ9hzOJ7E+5Zq5Xw14+EslFD7L1pkwB2i+zR7WDQAGHF0K2jWjV8sqMg33WmCG4F+8ixw47V6BBFOmbwdaarNaSOSd9hyLqHkuXlTXEg27YJsm8D7eqj12m3O7TFMqeg27xlvG/9aTu4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=j3qwddyl; arc=none smtp.client-ip=209.85.216.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-pj1-f44.google.com with SMTP id 98e67ed59e1d1-3138e64b3fcso4926308a91.2
-        for <linux-kernel@vger.kernel.org>; Wed, 25 Jun 2025 03:16:10 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1750846570; x=1751451370; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=AG6xDQrINUokgKFDlCqXGxqgTNa8CWmIrqjoT7AtA8o=;
-        b=j3qwddylbTS841ssnCi28oHD20g9sOjOmE5JB2G6+teNIC91VfKvztVHfT3Ux8Yp1T
-         IJ8XrlmGGHOfMiFLQ+mapojEXRmRFTUlDyQMaDNYsnijNz7nIH5gUKqe+xPnawa7//y8
-         ovx4TqNn5Us+GBl8TbZI+cbxebEsensagZPwgCAC+9vNmjob/NouofrVJnSC9+ak78OK
-         JJ/TM/yJkZ3laZdtpvkkDyb0xq+sPQsqmMG5tx3699pnEfbo4XqYy7N1Jmx4DNcaDH3J
-         jYbTD4m5vbmku3sob9tDJcyZCZeLlW+KS0C0hu60rZHNyErrFB83HYd38aSTzzHzx/nL
-         lJnA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1750846570; x=1751451370;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=AG6xDQrINUokgKFDlCqXGxqgTNa8CWmIrqjoT7AtA8o=;
-        b=CaWFbrASeuYyfTtqvouGxhCQ+XYxXz0FdltplYAkmAXC3l7gn6wk71OHnv7/Nx/JZN
-         1FJisiiKuF1RVN62KMm+QryhlRbjB6vqP37YWG/Ih/D3+12rg+p3sx6dhbAdw6fogyun
-         k/ihN4HI8TPas0CdqXHujho+RsY0GM17tn+58k+Kz7tojou3eqdbM3V22yjaMViAKEBU
-         Aa49MKMBjXpSnK4wEJXUA5t9fEjPqvNTHRxzz7p2+CjjnQZDW1or5GfboEwfh5biO3RH
-         rXKpsX+gcDAmATIoRp6WIz2kcTksLavjzXYqaCAoWTOkfhwQaNRraM2hHmGCiMCVKXmD
-         PwBg==
-X-Forwarded-Encrypted: i=1; AJvYcCUNG4ZDE60rd6509nKhnn6BvLNO9Sp1D6cxc8W1etLtvyPQYt0QSEHIu1ORjParVLJ2AnwqIlAsGy6CbPA=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzkI/i5kvQgtZCl5LrUj00Os75shdi0gyiB6Rby/Y9NRSUPG9rh
-	ahHPgkO8jqNO8nwwACNoyUjD2l2pVn8iJwIgtJEBADdHChMRgOu57DamkANhzIPgu8I2oRKnzV+
-	T5Rm53xqDAsItWKa3+URM7danxwZz2ATxw0hPcqdt0g==
-X-Gm-Gg: ASbGncs7MeyNDu1Yu3UWzq1DxL5VzriS7a7maZxmzcTEG4Lqj/TEpysYcsh3i8EjnI/
-	4yWl0QWDqy5BRS1HEYGto0ZewOTXtlQjSR1xMQRJ52bBFOt7Y0BvBXoaDRpuzxGSkSbixRFkQ+R
-	QEror3lUSZP7VWG0NCt1skTM5a1FAbp8UR0PydyyPAZ1RNnUmMGkeituUFowziYfY0y0Yn5SDjQ
-	7gA
-X-Google-Smtp-Source: AGHT+IFVAx09tJ/W+hcxC15Z++m4Fnij2LfPD0+rSVnQD7OzPyB5OrVIKV6garKV25gdDWYrE+xpu+RhOM7N7/rV8Bw=
-X-Received: by 2002:a17:90b:2b4e:b0:311:f30b:c21 with SMTP id
- 98e67ed59e1d1-315f269d920mr3170155a91.26.1750846570290; Wed, 25 Jun 2025
- 03:16:10 -0700 (PDT)
+	s=arc-20240116; t=1750846626; c=relaxed/simple;
+	bh=tm1noJylwz4/Equ8rThn/em8Uwy55/N71+M41irfK8Y=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=n8HhTNrpsWUJburqV2z8rpMMewLMRKJqGuKrdWMMngHKPzR1Bkq/j+cg+IReqGaaq6R7FpyO1We9+RVAVnNiJGufwp9BeovSUc1yVfj2BjWOFq9eHPrNjdeWfomXHHuPgKkonxvhafNNkzaWtzVB5DwBLrV/e9IGyOL0O+bTixU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=oF+3MC25; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279870.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 55P26qPU001108;
+	Wed, 25 Jun 2025 10:16:58 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=qcppdkim1; bh=OxANXZaRNYfzQugbzDlHAn
+	o44IrzaM+2nGw7Z96uKF8=; b=oF+3MC25u5mkmn9FAz3PtN02NhDZE+TqpCocEC
+	mOGWKnKzTCEqtnXaKsMFUsgXbAqRD7VVXaJ8Zit487bSEdq61kXccIPCFxkHzUmy
+	GTi0iapKoQDGU/lpfRYP2ZxGdOFNfCbMNnaTAnp7H2+BreQx6TIG11w1vZl2zhpF
+	U5nirtZwVgVyBtLyV4H/Pj0/VY6FWSWJmZcV3KfCL4+d479pd5N9hE1gqkq17b2p
+	Viroy1JWKGZCU1b2Kp/C6yprNB5rXjQnHZB/9UB8/ZVoA0IR+rLHxxtT2ouPzWJq
+	agoP4TJK3RtDAIyfj5N79PYcXHzX44K3S1bljLEB/jBfkWHQ==
+Received: from nasanppmta05.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 47fbm1x2sa-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 25 Jun 2025 10:16:58 +0000 (GMT)
+Received: from nasanex01a.na.qualcomm.com (nasanex01a.na.qualcomm.com [10.52.223.231])
+	by NASANPPMTA05.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 55PAGvUC031027
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 25 Jun 2025 10:16:57 GMT
+Received: from hu-akakum-hyd.qualcomm.com (10.80.80.8) by
+ nasanex01a.na.qualcomm.com (10.52.223.231) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.9; Wed, 25 Jun 2025 03:16:50 -0700
+From: Akash Kumar <quic_akakum@quicinc.com>
+To: Thinh Nguyen <Thinh.Nguyen@synopsys.com>,
+        Greg Kroah-Hartman
+	<gregkh@linuxfoundation.org>,
+        Felipe Balbi <balbi@kernel.org>, Jack Pham
+	<quic_jackp@quicinc.com>,
+        <kernel@quicinc.com>, Wesley Cheng
+	<quic_wcheng@quicinc.com>,
+        Laurent Pinchart
+	<laurent.pinchart@ideasonboard.com>,
+        Daniel Scally
+	<dan.scally@ideasonboard.com>
+CC: Vijayavardhan Vennapusa <quic_vvreddy@quicinc.com>,
+        Krishna Kurapati
+	<quic_kriskura@quicinc.com>,
+        <linux-usb@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        Akash Kumar <quic_akakum@quicinc.com>
+Subject: [PATCH] usb: gadget: uvc: Initialize color matching descriptors for frame-based
+Date: Wed, 25 Jun 2025 15:46:39 +0530
+Message-ID: <20250625101639.19788-1-quic_akakum@quicinc.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250624121449.136416081@linuxfoundation.org>
-In-Reply-To: <20250624121449.136416081@linuxfoundation.org>
-From: Naresh Kamboju <naresh.kamboju@linaro.org>
-Date: Wed, 25 Jun 2025 15:45:58 +0530
-X-Gm-Features: Ac12FXzd8RthilNJCW7WcxXTXyjhhbTTiUyFCV2MP6xvuvJz3W9NZP8_1yYKzMM
-Message-ID: <CA+G9fYuvqFY46E+UNzbH-b+dhf3SQPXUOdpCnxYkZ7iSX=NyCA@mail.gmail.com>
-Subject: Re: [PATCH 6.15 000/588] 6.15.4-rc2 review
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: stable@vger.kernel.org, patches@lists.linux.dev, 
-	linux-kernel@vger.kernel.org, torvalds@linux-foundation.org, 
-	akpm@linux-foundation.org, linux@roeck-us.net, shuah@kernel.org, 
-	patches@kernelci.org, lkft-triage@lists.linaro.org, pavel@denx.de, 
-	jonathanh@nvidia.com, f.fainelli@gmail.com, sudipm.mukherjee@gmail.com, 
-	srw@sladewatkins.net, rwarsow@gmx.de, conor@kernel.org, hargar@microsoft.com, 
-	broonie@kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nasanex01a.na.qualcomm.com (10.52.223.231)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Authority-Analysis: v=2.4 cv=YYu95xRf c=1 sm=1 tr=0 ts=685bcc9a cx=c_pps
+ a=JYp8KDb2vCoCEuGobkYCKw==:117 a=JYp8KDb2vCoCEuGobkYCKw==:17
+ a=GEpy-HfZoHoA:10 a=6IFa9wvqVegA:10 a=COk6AnOGAAAA:8 a=4A6tj2Yrg6pY0tqrda0A:9
+ a=TjNXssC_j7lpFel5tvFf:22
+X-Proofpoint-GUID: PBC8I-7gvdcxe104Z-LhrjMpVLU8SJJG
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNjI1MDA3NSBTYWx0ZWRfX4R/+Ezdj309R
+ Zf4sb8oEacf48AUXbJGe1PH3hwrf+Q19beLdX5zX08NPc+moH72lc9xnl2X1I5wkI83cV97RbMu
+ oY1JrScKGxPHXe0tZRbPSQI2BFCn2MheSmnDiTCKlNqLTcPUoK/+UFt37uxriOXvzwb0O/GzcHL
+ cGUc5vA6Gh6aXKFRCMWNyDOBl7hIRh81FgwlDsYcujGs9JCynaA3/eMAubbdfw8TBBAOT06/zpJ
+ kngUSnumO9nA4Qkg8mfxc/fZBBuYw+lxqE3H+oCR6IR1ET+TFT2tko1yFQbXSSkki/ppp7bEXXe
+ OJ69doUBRvP7HuAiCJmBseGK0p0zetCs9MG+l8/gnZvQOAjRhmA12RsmGcjgviveNRFNH2Edfqd
+ xowPaT6V8YGWLaN0nbunlJtRnJZDVHCiNUwjNSrucDpufNr2Mglv6Rg+Km4FJ+oNrqSaOM1M
+X-Proofpoint-ORIG-GUID: PBC8I-7gvdcxe104Z-LhrjMpVLU8SJJG
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.7,FMLib:17.12.80.40
+ definitions=2025-06-25_02,2025-06-23_07,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ malwarescore=0 adultscore=0 spamscore=0 impostorscore=0 suspectscore=0
+ lowpriorityscore=0 priorityscore=1501 phishscore=0 mlxlogscore=710
+ clxscore=1011 mlxscore=0 bulkscore=0 classifier=spam authscore=0 authtc=n/a
+ authcc= route=outbound adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2505280000 definitions=main-2506250075
 
-On Tue, 24 Jun 2025 at 18:00, Greg Kroah-Hartman
-<gregkh@linuxfoundation.org> wrote:
->
-> This is the start of the stable review cycle for the 6.15.4 release.
-> There are 588 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
->
-> Responses should be made by Thu, 26 Jun 2025 12:13:28 +0000.
-> Anything received after that time might be too late.
->
-> The whole patch series can be found in one patch at:
->         https://www.kernel.org/pub/linux/kernel/v6.x/stable-review/patch-6.15.4-rc2.gz
-> or in the git tree and branch at:
->         git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-6.15.y
-> and the diffstat can be found below.
->
-> thanks,
->
-> greg k-h
+Fix NULL pointer crash in uvcg_framebased_make due to uninitialize
+color matching descriptor for frame-based format.
 
-Regressions noticed on arm64 and x86_64 devices while running
-LTP syscalls readahead01 test case on the stable-rc 6.15.4-rc1 and
-6.15.4-rc2.
+[    2.771141][  T486] pc : __uvcg_fill_strm+0x198/0x2cc
+[    2.771145][  T486] lr : __uvcg_iter_strm_cls+0xc8/0x17c
+[    2.771146][  T486] sp : ffffffc08140bbb0
+[    2.771146][  T486] x29: ffffffc08140bbb0 x28: ffffff803bc81380 x27: ffffff8023bbd250
+[    2.771147][  T486] x26: ffffff8023bbd250 x25: ffffff803c361348 x24: ffffff803d8e6768
+[    2.771148][  T486] x23: 0000000000000004 x22: 0000000000000003 x21: ffffffc08140bc48
+[    2.771149][  T486] x20: 0000000000000000 x19: ffffffc08140bc48 x18: ffffffe9f8cf4a00
+[    2.771150][  T486] x17: 000000001bf64ec3 x16: 000000001bf64ec3 x15: ffffff8023bbd250
+[    2.771151][  T486] x14: 000000000000000f x13: 004c4b40000f4240 x12: 000a2c2a00051615
+[    2.771152][  T486] x11: 000000000000004f x10: ffffffe9f76b40ec x9 : ffffffe9f7e389d0
+[    2.771153][  T486] x8 : ffffff803d0d31ce x7 : 000f4240000a2c2a x6 : 0005161500028b0a
+[    2.771154][  T486] x5 : ffffff803d0d31ce x4 : 0000000000000003 x3 : 0000000000000000
+[    2.771155][  T486] x2 : ffffffc08140bc50 x1 : ffffffc08140bc48 x0 : 0000000000000000
+[    2.771156][  T486] Call trace:
+[    2.771157][  T486]  __uvcg_fill_strm+0x198/0x2cc
+[    2.771157][  T486]  __uvcg_iter_strm_cls+0xc8/0x17c
+[    2.771158][  T486]  uvcg_streaming_class_allow_link+0x240/0x290
+[    2.771159][  T486]  configfs_symlink+0x1f8/0x630
+[    2.771161][  T486]  vfs_symlink+0x114/0x1a0
+[    2.771163][  T486]  do_symlinkat+0x94/0x28c
+[    2.771164][  T486]  __arm64_sys_symlinkat+0x54/0x70
+[    2.771164][  T486]  invoke_syscall+0x58/0x114
+[    2.771166][  T486]  el0_svc_common+0x80/0xe0
+[    2.771168][  T486]  do_el0_svc+0x1c/0x28
+[    2.771169][  T486]  el0_svc+0x3c/0x70
+[    2.771172][  T486]  el0t_64_sync_handler+0x68/0xbc
+[    2.771173][  T486]  el0t_64_sync+0x1a8/0x1ac
 
-Test environments:
- - Dragonboard-410c
- - Dragonboard-845c
- - e850-96
- - Juno-r2
- - rk3399-rock-pi-4b
- - qemu-arm64
- - qemu-x86_64
- - x86_64
+Initialize color matching descriptor for frame-based format to prevent
+NULL pointer crash.
+This fix prevents a NULL pointer crash in uvcg_framebased_make due to
+an uninitialized color matching descriptor.
 
-Regression Analysis:
- - New regression? Yes
- - Reproducibility? Yes
+Signed-off-by: Akash Kumar <quic_akakum@quicinc.com>
+---
+ drivers/usb/gadget/function/uvc_configfs.c | 10 ++++++++++
+ 1 file changed, 10 insertions(+)
 
-Build regression: stable-rc 6.15.4-rc2 LTP syscalls TFAIL: readahead()
-on epoll succeeded
+diff --git a/drivers/usb/gadget/function/uvc_configfs.c b/drivers/usb/gadget/function/uvc_configfs.c
+index f131943254a4..a4a2d3dcb0d6 100644
+--- a/drivers/usb/gadget/function/uvc_configfs.c
++++ b/drivers/usb/gadget/function/uvc_configfs.c
+@@ -2916,8 +2916,15 @@ static struct config_group *uvcg_framebased_make(struct config_group *group,
+ 		'H',  '2',  '6',  '4', 0x00, 0x00, 0x10, 0x00,
+ 		0x80, 0x00, 0x00, 0xaa, 0x00, 0x38, 0x9b, 0x71
+ 	};
++	struct uvcg_color_matching *color_match;
++	struct config_item *streaming;
+ 	struct uvcg_framebased *h;
+ 
++	streaming = group->cg_item.ci_parent;
++	color_match = uvcg_format_get_default_color_match(streaming);
++	if (!color_match)
++		return ERR_PTR(-EINVAL);
++
+ 	h = kzalloc(sizeof(*h), GFP_KERNEL);
+ 	if (!h)
+ 		return ERR_PTR(-ENOMEM);
+@@ -2936,6 +2943,9 @@ static struct config_group *uvcg_framebased_make(struct config_group *group,
+ 
+ 	INIT_LIST_HEAD(&h->fmt.frames);
+ 	h->fmt.type = UVCG_FRAMEBASED;
++
++	h->fmt.color_matching = color_match;
++	color_match->refcnt++;
+ 	config_group_init_type_name(&h->fmt.group, name,
+ 				    &uvcg_framebased_type);
+ 
+-- 
+2.34.1
 
-Reported-by: Linux Kernel Functional Testing <lkft@linaro.org>
-
-## Test log
-readahead01 readahead01
-readahead01.c:34: TPASS: readahead() with fd = -1 : EBADF (9)
-readahead01.c:41: TPASS: readahead() with invalid fd : EBADF (9)
-readahead01.c:62: TPASS: readahead() on O_PATH file : EBADF (9)
-readahead01.c:62: TPASS: readahead() on directory : EINVAL (22)
-readahead01.c:62: TPASS: readahead() on /dev/zero : EINVAL (22)
-readahead01.c:62: TPASS: readahead() on pipe read end : EINVAL (22)
-readahead01.c:62: TPASS: readahead() on pipe write end : EBADF (9)
-readahead01.c:62: TPASS: readahead() on unix socket : EINVAL (22)
-readahead01.c:62: TPASS: readahead() on inet socket : EINVAL (22)
-readahead01.c:62: TFAIL: readahead() on epoll succeeded
-readahead01.c:62: TFAIL: readahead() on eventfd succeeded
-readahead01.c:62: TFAIL: readahead() on signalfd succeeded
-readahead01.c:62: TFAIL: readahead() on timerfd succeeded
-readahead01.c:62: TFAIL: readahead() on fanotify succeeded
-readahead01.c:62: TFAIL: readahead() on inotify succeeded
-readahead01.c:62: TFAIL: readahead() on perf event succeeded
-readahead01.c:62: TFAIL: readahead() on io uring succeeded
-readahead01.c:62: TFAIL: readahead() on bpf map succeeded
-readahead01.c:62: TFAIL: readahead() on fsopen succeeded
-readahead01.c:62: TFAIL: readahead() on fspick succeeded
-readahead01.c:62: TPASS: readahead() on open_tree : EBADF (9)
-
-## Test logs
-* Build details:
-https://regressions.linaro.org/lkft/linux-stable-rc-linux-6.15.y/v6.15.3-589-g0e4c88a0cd37/ltp-syscalls/readahead01/
-* Test log: https://qa-reports.linaro.org/api/testruns/28870061/log_file/
-* Test LAVA job 1:
-https://lkft.validation.linaro.org/scheduler/job/8330087#L31908
-* Test LAVA job 2:
-https://lkft.validation.linaro.org/scheduler/job/8329545#L28983
-* Build link: https://storage.tuxsuite.com/public/linaro/lkft/builds/2yxHG8Ax1HJmLWLj50iRxkZE4Lv/
-* Build config:
-https://storage.tuxsuite.com/public/linaro/lkft/builds/2yxHG8Ax1HJmLWLj50iRxkZE4Lv/config
-
-## Build
-* kernel: 6.15.4-rc2
-* git: https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git
-* git commit: 0e4c88a0cd37e785c1dbe6b9a9394d649a77cab4
-* git describe: v6.15.3-589-g0e4c88a0cd37
-* test details:
-https://qa-reports.linaro.org/lkft/linux-stable-rc-linux-6.15.y/build/v6.15.3-589-g0e4c88a0cd37
-
-## Test Regressions (compared to v6.15.1-816-gd878a60be557)
-* ltp-syscalls
-  - readahead01
-
-## Metric Regressions (compared to v6.15.1-816-gd878a60be557)
-
-## Test Fixes (compared to v6.15.1-816-gd878a60be557)
-
-## Metric Fixes (compared to v6.15.1-816-gd878a60be557)
-
-## Test result summary
-total: 256258, pass: 235037, fail: 6140, skip: 15081, xfail: 0
-
-## Build Summary
-* arc: 5 total, 5 passed, 0 failed
-* arm: 139 total, 133 passed, 2 failed, 4 skipped
-* arm64: 57 total, 51 passed, 0 failed, 6 skipped
-* i386: 18 total, 17 passed, 0 failed, 1 skipped
-* mips: 34 total, 27 passed, 6 failed, 1 skipped
-* parisc: 4 total, 4 passed, 0 failed
-* powerpc: 40 total, 39 passed, 1 failed
-* riscv: 25 total, 24 passed, 0 failed, 1 skipped
-* s390: 22 total, 22 passed, 0 failed
-* sh: 5 total, 5 passed, 0 failed
-* sparc: 4 total, 3 passed, 1 failed
-* x86_64: 49 total, 48 passed, 0 failed, 1 skipped
-
-## Test suites summary
-* boot
-* commands
-* kselftest-arm64
-* kselftest-breakpoints
-* kselftest-capabilities
-* kselftest-cgroup
-* kselftest-clone3
-* kselftest-core
-* kselftest-cpu-hotplug
-* kselftest-cpufreq
-* kselftest-efivarfs
-* kselftest-exec
-* kselftest-fpu
-* kselftest-ftrace
-* kselftest-futex
-* kselftest-gpio
-* kselftest-intel_pstate
-* kselftest-ipc
-* kselftest-kcmp
-* kselftest-kvm
-* kselftest-livepatch
-* kselftest-membarrier
-* kselftest-memfd
-* kselftest-mincore
-* kselftest-mm
-* kselftest-mqueue
-* kselftest-net
-* kselftest-net-mptcp
-* kselftest-openat2
-* kselftest-ptrace
-* kselftest-rseq
-* kselftest-rtc
-* kselftest-rust
-* kselftest-seccomp
-* kselftest-sigaltstack
-* kselftest-size
-* kselftest-tc-testing
-* kselftest-timers
-* kselftest-tmpfs
-* kselftest-tpm2
-* kselftest-user_events
-* kselftest-vDSO
-* kselftest-x86
-* kunit
-* kvm-unit-tests
-* lava
-* libgpiod
-* libhugetlbfs
-* log-parser-boot
-* log-parser-build-clang
-* log-parser-build-gcc
-* log-parser-test
-* ltp-capability
-* ltp-commands
-* ltp-containers
-* ltp-controllers
-* ltp-cpuhotplug
-* ltp-crypto
-* ltp-cve
-* ltp-dio
-* ltp-fcntl-locktests
-* ltp-fs
-* ltp-fs_bind
-* ltp-fs_perms_simple
-* ltp-hugetlb
-* ltp-math
-* ltp-mm
-* ltp-nptl
-* ltp-pty
-* ltp-sched
-* ltp-smoke
-* ltp-syscalls
-* ltp-tracing
-* modules
-* perf
-* rcutorture
-* rt-tests-cyclicdeadline
-* rt-tests-pi-stress
-* rt-tests-pmqtest
-* rt-tests-rt-migrate-test
-* rt-tests-signaltest
-
---
-Linaro LKFT
-https://lkft.linaro.org
 
