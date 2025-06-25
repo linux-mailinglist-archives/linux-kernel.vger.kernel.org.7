@@ -1,46 +1,47 @@
-Return-Path: <linux-kernel+bounces-702590-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-702589-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id B511BAE845E
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Jun 2025 15:21:33 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id C3B63AE847F
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Jun 2025 15:24:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9BE9D7B7B8E
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Jun 2025 13:18:27 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5B32E7B71EB
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Jun 2025 13:17:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 496A525F784;
-	Wed, 25 Jun 2025 13:17:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E442726656D;
+	Wed, 25 Jun 2025 13:17:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="fohGDIt2"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="tZFq04FJ"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7A5D4265CC5;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3F16E264FB3;
 	Wed, 25 Jun 2025 13:17:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750857427; cv=none; b=kD8eMGdbwWyJDUeAm4IOERdJDk8FAtCOmFoSBrvtpQEqicUnMqoB2BsHvgKj2rjd3zEwv1V2eTmbT/RH8Dv8/TMc14vt5ptlg9WHX6/1SG5OaGaUGn2Ar0KBUCxrI635fjxDIMj7u0JgZ7P0rzW8EuUNRvrC3Vgws7mZYxAtc9o=
+	t=1750857425; cv=none; b=mL5MO1Z7MuMpMZaAIW/Pq2Jdiqjl3D3ZSGHVnTjIFLbkXBXYIf0/E7XiVz9NFiFTLXxxwpmPFXqonwnohMMdf5ueh0+63dWWoa1G9Dg92ei11GoHlzwWsY1LZn3YBOB0RnwXcE7gMXa40DH8BrQ8TJzE5ggEQIgNP+25Nz04oCk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750857427; c=relaxed/simple;
-	bh=XAgpjW/O3CM0ZnOLk2RcDGdLgfzXfUkXBKJ3HCpD1Qk=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=apK8EP3U6uP81lx6M65pTdojAfAvsyf0CHGG1ZO3AJVVo/06cOZdWB2zT2MK8uIcOpAzs9KMxHGPMRwsQaIyhURdb6hhUaq0Y4WT0tWWufcPrSyLYq/ecEYfco8iGD8ah4IUyPp1/H35/aMoWTjq25+GDZsus5QD7GTcqtD5L1U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=fohGDIt2; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id DDF4DC4CEF3;
+	s=arc-20240116; t=1750857425; c=relaxed/simple;
+	bh=rY5b8vRqdXfrxDOAn0nZ9LkgMlPuDFO9Y76rv/I7xqs=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=qDCEe7g+YQA8s0UaFoK2uTMivNIzN+pYoU9uKlBBMo4yJRziGyeFCRdBemh7KW2ZS/12uqXzK7w9bEG/yMz9Se9NNnUUty6By9tGrT1AA7EHp6i/+PPKmTpmyQ8y9Vo8LokXXnfVpFODvy/niYVo01LDBK3Vp4PxasV1680HuZQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=tZFq04FJ; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id DBDD9C4CEF0;
 	Wed, 25 Jun 2025 13:17:04 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
 	s=k20201202; t=1750857425;
-	bh=XAgpjW/O3CM0ZnOLk2RcDGdLgfzXfUkXBKJ3HCpD1Qk=;
-	h=From:To:Cc:Subject:Date:From;
-	b=fohGDIt2S5dW8eGGmDkgtYKdXBnWVxx7EZCq9ZBJqvIvFqHEpmJsFQemA+NiTOmuk
-	 Z8D4iDoTqT+8q/rEwcLMGOTRDwwCN/jPdOIQ/rpRc8CUlXCX4D25l+YmMYVjOPNhGu
-	 XxsAqHH+GSDsSwbm5HuD7OwP9Q03l9IbFQnFDKQkgtBrcpnkCnEc5ku+3piBFcfa8d
-	 vGL3ebutZ3I1skb7vrhjs0oGPQYemnRSy3UgFa89E9i+pzpNzJ0O3CuM5bg7lmBoMp
-	 3tAogbbKgZD8b564kogcAbcVNKNSdkmQ4el/+BjxKF+cCTrpJLLED4uQVQCj2EmYfx
-	 ZvGas7sQMl9hw==
+	bh=rY5b8vRqdXfrxDOAn0nZ9LkgMlPuDFO9Y76rv/I7xqs=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=tZFq04FJczg0EJNQiggiT9bTqrGhHGfEryGsPeCBi4zbJnm9eHI+gjO4qQzu4MJgu
+	 j0ZzvH1Dg1GMBraQAtBe/EjWQg6RamqjKKaz6SgQfbvyHxJKurD0Ac0q/KSjaRcdON
+	 TNWBCs7dOb5BBdiTEz6Re1hxpuRe0bNd4E0aezKDvmSDWdjzmUs6P24EImmwRMGkyv
+	 u6RvSd/8etVRpK0eoxi+t4YCaeXN+pxYkuvLMVfbLgOmnfFzXowaWAZdo8d0alJuaH
+	 ukskJTj6qxHRhe1pqbXL9TNasHg9Rak9Euc8f/cUZrw/dlFsBhNm2M5nb+23y7yMUz
+	 rQrRU5muXWGkA==
 Received: by wens.tw (Postfix, from userid 1000)
-	id 4953A5FC6F; Wed, 25 Jun 2025 21:17:02 +0800 (CST)
+	id 587075FAC5; Wed, 25 Jun 2025 21:17:02 +0800 (CST)
 From: Chen-Yu Tsai <wens@kernel.org>
 To: Rob Herring <robh@kernel.org>,
 	Krzysztof Kozlowski <krzk+dt@kernel.org>,
@@ -52,11 +53,14 @@ Cc: devicetree@vger.kernel.org,
 	linux-sunxi@lists.linux.dev,
 	linux-arm-kernel@lists.infradead.org,
 	linux-kernel@vger.kernel.org,
-	Andre Przywara <andre.przywara@arm.com>
-Subject: [PATCH v2 0/5] arm64: allwinner: t527: Add OrangePi 4A board
-Date: Wed, 25 Jun 2025 21:16:47 +0800
-Message-Id: <20250625131652.1667345-1-wens@kernel.org>
+	Andre Przywara <andre.przywara@arm.com>,
+	Conor Dooley <conor.dooley@microchip.com>
+Subject: [PATCH v2 1/5] dt-bindings: arm: sunxi: Add Xunlong OrangePi 4A board
+Date: Wed, 25 Jun 2025 21:16:48 +0800
+Message-Id: <20250625131652.1667345-2-wens@kernel.org>
 X-Mailer: git-send-email 2.39.5
+In-Reply-To: <20250625131652.1667345-1-wens@kernel.org>
+References: <20250625131652.1667345-1-wens@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -67,68 +71,34 @@ Content-Transfer-Encoding: 8bit
 
 From: Chen-Yu Tsai <wens@csie.org>
 
-Hi everyone,
+The OrangePi 4A is a typical Raspberry Pi model B sized development
+board from Xunlong designed around an Allwinner T527 SoC.
 
-This is v2 of my OrangePi 4A series. Changes since v1:
-- Fixed regulator names for bldo3 and bldo4
-- Dropped labels for aldo1, bldo3, and bldo4, which are not really used
-- Added voltage constraints to aldo2, based on specifications from
-  schematic
-- Appended "-usb-0v9" to cpusldo's regulator name
-- Added comments to explain how axp323 aldo1 and dldo1 are tied together
+Add its compatible name to the list of valid ones.
 
-This series adds support for the OrangePi 4A board. This is a Raspberry
-Pi model B form factor development board based on the Allwinner T527
-SoC.
+Reviewed-by: Andre Przywara <andre.przywara@arm.com>
+Acked-by: Conor Dooley <conor.dooley@microchip.com>
+Signed-off-by: Chen-Yu Tsai <wens@csie.org>
+---
+ Documentation/devicetree/bindings/arm/sunxi.yaml | 5 +++++
+ 1 file changed, 5 insertions(+)
 
-The board has the following features:
-- Allwinner T527 SoC
-- AXP717B + AXP323 PMICs
-- Up to 4GB LPDDR4 DRAM
-- micro SD slot
-- optional eMMC module
-- M.2 slot for PCIe 2.0 x1
-- 16 MB SPI-NOR flash
-- 4x USB 2.0 type-A ports (one can be used in gadget mode)
-- 1x Gigabit ethernet w/ Motorcomm PHY (through yet to be supported GMAC200)
-- 3.5mm audio jack via internal audio codec
-- HDMI 2.0 output
-- eDP, MIPI CSI (2-lane and 4-lane) and MIPI DSI (4-lane) connectors
-- USB type-C port purely for power
-- AP6256 (Broadcom BCM4345) WiFi 5.0 + BT 5.0
-- unsoldered headers for ADC and an additional USB 2.0 host port
-- 40-pin GPIO header
-
-Patch 1 adds a new entry to the list of board compatibles.
-
-Patch 2 and 3 are minor cleanups.
-
-Patch 4 adds pins for UART1, which is used for BT on the board.
-
-Patch 5 adds a dts file for the new board.
-
-
-Please take a look. I will take all the patches through the sunxi tree.
-
-
-Thanks
-ChenYu
-
-
-Chen-Yu Tsai (5):
-  dt-bindings: arm: sunxi: Add Xunlong OrangePi 4A board
-  arm64: dts: allwinner: a523: Move mmc nodes to correct position
-  arm64: dts: allwinner: a523: Move rgmii0 pins to correct location
-  arm64: dts: allwinner: a523: Add UART1 pins
-  arm64: dts: allwinner: t527: Add OrangePi 4A board
-
- .../devicetree/bindings/arm/sunxi.yaml        |   5 +
- arch/arm64/boot/dts/allwinner/Makefile        |   1 +
- .../arm64/boot/dts/allwinner/sun55i-a523.dtsi | 160 ++++----
- .../dts/allwinner/sun55i-t527-orangepi-4a.dts | 383 ++++++++++++++++++
- 4 files changed, 476 insertions(+), 73 deletions(-)
- create mode 100644 arch/arm64/boot/dts/allwinner/sun55i-t527-orangepi-4a.dts
-
+diff --git a/Documentation/devicetree/bindings/arm/sunxi.yaml b/Documentation/devicetree/bindings/arm/sunxi.yaml
+index 7807ea613258..c41d0a0b89e6 100644
+--- a/Documentation/devicetree/bindings/arm/sunxi.yaml
++++ b/Documentation/devicetree/bindings/arm/sunxi.yaml
+@@ -996,6 +996,11 @@ properties:
+           - const: xunlong,orangepi-3
+           - const: allwinner,sun50i-h6
+ 
++      - description: Xunlong OrangePi 4A
++        items:
++          - const: xunlong,orangepi-4a
++          - const: allwinner,sun55i-t527
++
+       - description: Xunlong OrangePi Lite
+         items:
+           - const: xunlong,orangepi-lite
 -- 
 2.39.5
 
