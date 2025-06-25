@@ -1,99 +1,126 @@
-Return-Path: <linux-kernel+bounces-701946-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-701955-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id AB0C6AE7B84
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Jun 2025 11:07:48 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 979BCAE7BA7
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Jun 2025 11:11:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 172B73B612A
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Jun 2025 09:07:22 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DC5C7179D12
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Jun 2025 09:11:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 50FF7287507;
-	Wed, 25 Jun 2025 09:07:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D459F29AAF7;
+	Wed, 25 Jun 2025 09:10:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="eUztFy2h"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b="n0OFNoiS"
+Received: from esa.microchip.iphmx.com (esa.microchip.iphmx.com [68.232.154.123])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AEE6426B77F;
-	Wed, 25 Jun 2025 09:07:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 88858289E12;
+	Wed, 25 Jun 2025 09:10:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=68.232.154.123
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750842459; cv=none; b=RtQb4hjGfl+fPviuotmPZ4PmR4jhIst/IBAZxMz1jtBW8TKRi5raR9aikxkYZssp6EDXEpUvqj8FCqNjY1wT8d+V8jfeYobhXXilNTqJCYpDSWMeBugDUrRVWw8sm93VAVN5fHR4iCFGXR+ELD8XGL3mtLHGmX452VSpeKop464=
+	t=1750842619; cv=none; b=qRFStVhhFdcIXhMskBDg509rWDormWMNa7jYoD7cdTMRtK+UkrBevcXOR5E5Pp9JzL2a4acs6YVN/zCRg6/oDhiu4LMsQoE0mxadbTYahIk8gvBUKQuFXVWoqZDawbsgzJCGOZsIL7F3FPj38GDc41JG2TxJLqHqH587/xBTMwI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750842459; c=relaxed/simple;
-	bh=Wm/Qm170JnmvLoFVbqubHllu4LDDa//IX18AMk/c+g8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=IwFFForBVnhwUau6htvAD7EiCFz+ES5F3Na5zTiJegX4S09KZTjvuzzp8QgxpyMffeEJuPIodplpqbXLkATixs3EnOjjWy0Rqy6x/1m1ytSwefoaO7nevPDqUsamQWBVO+RPL2xQKCeetaxfzc/tO7c0WqLGZDaURl4b3IXomH8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=eUztFy2h; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A3E4BC4CEEA;
-	Wed, 25 Jun 2025 09:07:36 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1750842459;
-	bh=Wm/Qm170JnmvLoFVbqubHllu4LDDa//IX18AMk/c+g8=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=eUztFy2hS2wfsb8j77f2PVF4wB4X8iJeV6TVrk5esjbRwDb2d/nWAX7Qvgkencf+1
-	 LkOqcqQP36WgokaH0Rb4nb4VZPiyuLCttGVkE2+M9N07PTbboioekupa0qE8jXdssk
-	 ZWgLsKI4swkfWT0iGJpXtkppL87YR/otVdn740n9gKoumV1qt1v3gw5nqZqxJW5NMj
-	 oDKnzlGgCl7lJRkPWW7Cm+YretQ4cBy+ynGytnSY/GiKqs5QXvE5BthcpKF01dyyy3
-	 EJDVL6rAeK3loyeOgI500rxCGxYwH3DzNyak48FD9mGzmqPI6NqObJF/wlirXSqxCG
-	 PABnRRg0crxdQ==
-Date: Wed, 25 Jun 2025 10:07:34 +0100
-From: Simon Horman <horms@kernel.org>
-To: Jamie Bainbridge <jamie.bainbridge@gmail.com>
-Cc: Tony Nguyen <anthony.l.nguyen@intel.com>,
-	Przemek Kitszel <przemyslaw.kitszel@intel.com>,
-	Andrew Lunn <andrew+netdev@lunn.ch>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Michal Schmidt <mschmidt@redhat.com>,
-	Brett Creeley <brett.creeley@amd.com>,
-	Ivan Vecera <ivecera@redhat.com>, intel-wired-lan@lists.osuosl.org,
-	netdev@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 net] i40e: When removing VF MAC filters, only check
- PF-set MAC
-Message-ID: <20250625090734.GJ1562@horms.kernel.org>
-References: <c856f16e6ab37286733174c0fcf12bc72b677096.1750807588.git.jamie.bainbridge@gmail.com>
+	s=arc-20240116; t=1750842619; c=relaxed/simple;
+	bh=atWXI272KosC+H1LcVLe8DaxkOffIpJ+2UQelLC0JuI=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-ID:To:CC; b=X8RWgtjZKSdSG2BIqCcwShlf0hsohYn5dl/Yltzereo9S//m+pluQkKAY7Yq7eT3TzzDvNlVMP/+MkxEsvTussN3le6IRXflv3DJq8YF2oTaArmyTNuUf+HsOcfDhe5gK6ZKPxPqRwqKrPMSSFsbeeeqmar10UACy26OnvYSAiA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com; spf=pass smtp.mailfrom=microchip.com; dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b=n0OFNoiS; arc=none smtp.client-ip=68.232.154.123
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=microchip.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=microchip.com; i=@microchip.com; q=dns/txt; s=mchp;
+  t=1750842617; x=1782378617;
+  h=from:date:subject:mime-version:content-transfer-encoding:
+   message-id:to:cc;
+  bh=atWXI272KosC+H1LcVLe8DaxkOffIpJ+2UQelLC0JuI=;
+  b=n0OFNoiSqFg8RKH3BM5PVH08Az8s8NfYAt5VK9DnbALqSfuCvTGfI03M
+   NDCdNavJy8brlg8wdz4RMrl51F0PrGGJZHKdBf2XYR/cCojctgom8SyMo
+   iskT5gxNZq491S/6uz52r7eEj2WEUzDlGlmrpsAvZTUYMCFLRh1bcbMIN
+   pJTaz1Cutv6iYdEE4c5IdMTe5nHZHvl0l26xC249Otai0uqQDyvzYBJUr
+   mi914YPxXm4mpWXzgnlXEvaOq0UOmFHCBLdz+5Xiy1/XsZ/YPP6CUGRUO
+   3z+lMe1v1RmmFOSgxknh8utIdTzlFuNdBk7AJV14ff4Lxwu5Cocz0u8aP
+   g==;
+X-CSE-ConnectionGUID: sxBLGQKwQuaA8VjKmi+wng==
+X-CSE-MsgGUID: BMrW+8k5QGqrjaSZ5e4Xvg==
+X-IronPort-AV: E=Sophos;i="6.16,264,1744095600"; 
+   d="scan'208";a="43794891"
+X-Amp-Result: SKIPPED(no attachment in message)
+Received: from unknown (HELO email.microchip.com) ([170.129.1.10])
+  by esa2.microchip.iphmx.com with ESMTP/TLS/ECDHE-RSA-AES128-GCM-SHA256; 25 Jun 2025 02:09:14 -0700
+Received: from chn-vm-ex02.mchp-main.com (10.10.85.144) by
+ chn-vm-ex04.mchp-main.com (10.10.85.152) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.44; Wed, 25 Jun 2025 02:08:53 -0700
+Received: from [127.0.0.1] (10.10.85.11) by chn-vm-ex02.mchp-main.com
+ (10.10.85.144) with Microsoft SMTP Server id 15.1.2507.44 via Frontend
+ Transport; Wed, 25 Jun 2025 02:08:49 -0700
+From: Dharma Balasubiramani <dharma.b@microchip.com>
+Date: Wed, 25 Jun 2025 14:38:45 +0530
+Subject: [PATCH] ARM: dts: microchip: sam9x7: Add LVDS controller
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <c856f16e6ab37286733174c0fcf12bc72b677096.1750807588.git.jamie.bainbridge@gmail.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-ID: <20250625-b4-sam9x7-dts-v1-1-92aaee14ed16@microchip.com>
+X-B4-Tracking: v=1; b=H4sIAJy8W2gC/6tWKk4tykwtVrJSqFYqSi3LLM7MzwNyDHUUlJIzE
+ vPSU3UzU4B8JSMDI1MDMyNT3SQT3eLEXMsKc92UkmJdU5PEJCNDY2NLkyRDJaCegqLUtMwKsHn
+ RsbW1AFX2L6VfAAAA
+To: Nicolas Ferre <nicolas.ferre@microchip.com>, Alexandre Belloni
+	<alexandre.belloni@bootlin.com>, Claudiu Beznea <claudiu.beznea@tuxon.dev>,
+	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>
+CC: <linux-arm-kernel@lists.infradead.org>, <devicetree@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>, Dharma Balasubiramani
+	<dharma.b@microchip.com>
+X-Mailer: b4 0.13.0
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1750842526; l=1095;
+ i=dharma.b@microchip.com; s=20240209; h=from:subject:message-id;
+ bh=atWXI272KosC+H1LcVLe8DaxkOffIpJ+2UQelLC0JuI=;
+ b=DM1uwXN9vq1EFJdLT42C8y5Vx4i/g8XY8kgFhPfIPjKVE0Nj1ox5fdWU+bOjosWjWnI6UU6ol
+ uoT6GUrbLVBCDyvYGbtMzgHX42f1bo6qTVOj1AyFVhQu6Q3E0eHdmbM
+X-Developer-Key: i=dharma.b@microchip.com; a=ed25519;
+ pk=kCq31LcpLAe9HDfIz9ZJ1U7T+osjOi7OZSbe0gqtyQ4=
 
-On Wed, Jun 25, 2025 at 09:29:18AM +1000, Jamie Bainbridge wrote:
-> When the PF is processing an Admin Queue message to delete a VF's MACs
-> from the MAC filter, we currently check if the PF set the MAC and if
-> the VF is trusted.
-> 
-> This results in undesirable behaviour, where if a trusted VF with a
-> PF-set MAC sets itself down (which sends an AQ message to delete the
-> VF's MAC filters) then the VF MAC is erased from the interface.
-> 
-> This results in the VF losing its PF-set MAC which should not happen.
-> 
-> There is no need to check for trust at all, because an untrusted VF
-> cannot change its own MAC. The only check needed is whether the PF set
-> the MAC. If the PF set the MAC, then don't erase the MAC on link-down.
-> 
-> Resolve this by changing the deletion check only for PF-set MAC.
-> 
-> (the out-of-tree driver has also intentionally removed the check for VF
-> trust here with OOT driver version 2.26.8, this changes the Linux kernel
-> driver behaviour and comment to match the OOT driver behaviour)
-> 
-> Fixes: ea2a1cfc3b201 ("i40e: Fix VF MAC filter removal")
-> Signed-off-by: Jamie Bainbridge <jamie.bainbridge@gmail.com>
-> ---
-> v2: Reword commit message as suggested by Simon Horman.
+Add support for LVDS controller.
 
-Thanks for the update.
+Signed-off-by: Dharma Balasubiramani <dharma.b@microchip.com>
+---
+ arch/arm/boot/dts/microchip/sam9x7.dtsi | 9 +++++++++
+ 1 file changed, 9 insertions(+)
 
-Reviewed-by: Simon Horman <horms@kernel.org>
+diff --git a/arch/arm/boot/dts/microchip/sam9x7.dtsi b/arch/arm/boot/dts/microchip/sam9x7.dtsi
+index 2063507d0c50..66c07e642c3e 100644
+--- a/arch/arm/boot/dts/microchip/sam9x7.dtsi
++++ b/arch/arm/boot/dts/microchip/sam9x7.dtsi
+@@ -1115,6 +1115,15 @@ AT91_XDMAC_DT_PER_IF(1) |
+ 			};
+ 		};
+ 
++		lvds_controller: lvds-controller@f8060000 {
++			compatible = "microchip,sam9x75-lvds";
++			reg = <0xf8060000 0x100>;
++			interrupts = <56 IRQ_TYPE_LEVEL_HIGH 0>;
++			clocks = <&pmc PMC_TYPE_PERIPHERAL 56>;
++			clock-names = "pclk";
++			status = "disabled";
++		};
++
+ 		matrix: matrix@ffffde00 {
+ 			compatible = "microchip,sam9x7-matrix", "atmel,at91sam9x5-matrix", "syscon";
+ 			reg = <0xffffde00 0x200>;
+
+---
+base-commit: 1b152eeca84a02bdb648f16b82ef3394007a9dcf
+change-id: 20250625-b4-sam9x7-dts-54ab213394b1
+
+Best regards,
+-- 
+Dharma Balasubiramani <dharma.b@microchip.com>
+
 
