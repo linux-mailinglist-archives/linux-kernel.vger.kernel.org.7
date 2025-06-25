@@ -1,80 +1,108 @@
-Return-Path: <linux-kernel+bounces-703307-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-703314-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id C13E5AE8E76
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Jun 2025 21:20:35 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 51FD8AE8E94
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Jun 2025 21:26:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id AF3B71C210DB
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Jun 2025 19:20:48 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8E53B4A56A1
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Jun 2025 19:26:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AB4D22DECB7;
-	Wed, 25 Jun 2025 19:20:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5398C2E0B4C;
+	Wed, 25 Jun 2025 19:25:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="PoGIOwmJ"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=rjwysocki.net header.i=@rjwysocki.net header.b="K1aoIQuV"
+Received: from cloudserver094114.home.pl (cloudserver094114.home.pl [79.96.170.134])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0E0442DAFD5;
-	Wed, 25 Jun 2025 19:20:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D198F2DA76D;
+	Wed, 25 Jun 2025 19:25:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=79.96.170.134
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750879214; cv=none; b=CvpFqMaoKvm21Vg3SdimXEyXR7tETRPHhEygqzwj/u+QxvQ6Wlo0tb0q6tszG06DiSlSOakjCaynFsCezsDOOj4e+aHwQ3vOg+WUUdrXEufGAloo8VqPapz5/DGVcO5KFooDzWima5d3k92itQlPftrP1XtVZd4DJX+j/LU6aUc=
+	t=1750879551; cv=none; b=MH0JQK64EK7UOexp9IaOCw07bmRu2Vn+L1M4H7/6gCpl5HODhtcrvehxIeUYfajvjoo+nSxXbQkAJXIjnZA+iFjHFQS5GiNbmtgSL97xRq45ncEH3Iqtlfd7lXT1vFqlWEihJ3KEjCj4qO9XRMZnvxwnn5PUaOacK6OCpQH3+Ic=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750879214; c=relaxed/simple;
-	bh=sca62JZH9B7G+ctNvBdw9GUebLjtvA5SkuZvnF4DILI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=czocllUJ9eNXgHsZMjN1/gWk7TU4XM6BQng6gkRPje/wQWjBlR+m9vWQll4i9qdFeKrT9beUbzc9SO81YS63/bWYZN2iM6f6NEZrlbR9CkcRl9ewm7asmcBnSz5A/gHVuBpddry072gXaOVaZqnFBDhnCo1ZNuwoxnQ/cqXNYII=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=PoGIOwmJ; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7BB60C4CEEA;
-	Wed, 25 Jun 2025 19:20:13 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1750879213;
-	bh=sca62JZH9B7G+ctNvBdw9GUebLjtvA5SkuZvnF4DILI=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=PoGIOwmJsG0aWLCJxONJJ33xF2KR+Cq8zPFTXZ3/jcDW8a1G05z17E1otXTarIxnn
-	 Svgv00k99h6AQM9aHgvLibweNd3HPeoBeJdbhx+ChkboDTWekjolHPJX8vHBnSfcT1
-	 wzoMi+R16ZdmOumeMWBQUJbdIJIH4uGllxuLFHIuf5dlt+RBP9tS2ZGM9EiWmZHV/1
-	 0mINmFUxcAwB7ZncOfzuNT6Qw/+NYiFfmeV8//qVW7uB3fEUBmxTRnxL9TTg6aZNBl
-	 TN1KaAVYaMlKTAAdlWOneEm3RHZXM/L1IP7haxKFO/p827jzbKW1AC8BYzrlk7SutO
-	 rPypx71p5nVIw==
-Date: Wed, 25 Jun 2025 14:20:12 -0500
-From: "Rob Herring (Arm)" <robh@kernel.org>
-To: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
-Cc: Icenowy Zheng <uwu@icenowy.me>, linux-kernel@vger.kernel.org,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	devicetree@vger.kernel.org, Conor Dooley <conor+dt@kernel.org>,
-	linux-usb@vger.kernel.org, Krzysztof Kozlowski <krzk+dt@kernel.org>
-Subject: Re: [PATCH 2/2] dt-bindings: usb: genesys,gl850g: add downstream
- facing ports
-Message-ID: <175087921220.2067965.6337398694001968932.robh@kernel.org>
-References: <20250608-genesys-ports-v1-0-09ca19f6838e@oss.qualcomm.com>
- <20250608-genesys-ports-v1-2-09ca19f6838e@oss.qualcomm.com>
+	s=arc-20240116; t=1750879551; c=relaxed/simple;
+	bh=jxivFLr78nWv4zamdS1SvrfawUIvx3vEs3eExPVBSTM=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=XlZjas1lrXwDo5qp2QLIyBOefM5gjOU3atNwpI9FfWyqlT88OfqgS8JVNoXfLhNbBSCols1uc4m4HprwL3lMpCIDz04/92IbxEdQs8sgMa3vlyrmxrmIQUHP5K6SlCerY0rQn8QFSpO0vm+kGIeCeJrLpUFZe+5dutrwwxrLP1s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rjwysocki.net; spf=pass smtp.mailfrom=rjwysocki.net; dkim=pass (2048-bit key) header.d=rjwysocki.net header.i=@rjwysocki.net header.b=K1aoIQuV; arc=none smtp.client-ip=79.96.170.134
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rjwysocki.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rjwysocki.net
+Received: from kreacher.localnet (unknown [5.63.189.50])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by cloudserver094114.home.pl (Postfix) with ESMTPSA id 59CB366E7D9;
+	Wed, 25 Jun 2025 21:25:41 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=rjwysocki.net;
+	s=dkim; t=1750879541;
+	bh=jxivFLr78nWv4zamdS1SvrfawUIvx3vEs3eExPVBSTM=;
+	h=From:Subject:Date;
+	b=K1aoIQuVGm4Ei4fIvNNM/1LT7hvr0NfOp90BO34yYlzle9hGrktVQhNSr5MtKrBW6
+	 +eyARTvqYOhED5nv5KSXv2ulsW8Qan+h3gkG8VZcAHzBnm18Uuk+ItT8j6njXVsCiE
+	 YCv3f408hiyjGBTbehiuetyXGSg2k2zd3KYEAyM7kov6qlUbpx/yGez5ShmMV8989h
+	 QWVLf53VmptnWayMoxj6z+6j4rBtehgs+oh0+o4z8IRr3ULJKmm/Ejx5dK4dgEtthr
+	 gQ+QPQdLI32wlzDL4rxPVF3dpgCyUO8lOGx8+x7ZzQAfYF8hVbV3PSQa62CQ/yDjvM
+	 HQnujmmwoKA/A==
+From: "Rafael J. Wysocki" <rjw@rjwysocki.net>
+To: Linux PM <linux-pm@vger.kernel.org>
+Cc: LKML <linux-kernel@vger.kernel.org>,
+ Linux ACPI <linux-acpi@vger.kernel.org>,
+ Linux PCI <linux-pci@vger.kernel.org>, Ulf Hansson <ulf.hansson@linaro.org>,
+ Mika Westerberg <mika.westerberg@linux.intel.com>
+Subject: [PATCH v1 5/9] PM: Move needs_force_resume under CONFIG_PM_SLEEP
+Date: Wed, 25 Jun 2025 21:20:42 +0200
+Message-ID: <1947441.CQOukoFCf9@rjwysocki.net>
+In-Reply-To: <22759968.EfDdHjke4D@rjwysocki.net>
+References: <22759968.EfDdHjke4D@rjwysocki.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250608-genesys-ports-v1-2-09ca19f6838e@oss.qualcomm.com>
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="UTF-8"
+X-CLIENT-IP: 5.63.189.50
+X-CLIENT-HOSTNAME: 5.63.189.50
+X-VADE-SPAMSTATE: clean
+X-VADE-SPAMCAUSE: dmFkZTFU16MN1onAmfTggu3iKnPYA/STqEnOhMRWZkwNQSI5OpDf+u5DT2NkIXE+Nhe4mqxr9ks7U05Tnfbp21L5zWLAY+X8uGCUnkPai/a2KG4xxKx6eBqQiVngKpLwnPSZjvR8Q4dQfv5MKNDuphWx1Et6P/rcNTpUFGeZ3Ng1C9/8uA5jpLaNlvEnYZjWpU/0SCP+rHDTsSrswgF9Mks70F5evvoz0a/MhrLqsCe8JTvEOP0IBVuaTh/K6p4bcE/yKwFXFB6GIgqfD+zcy9GvwASdPeWl27ugbAiFeVCNlB4LFehOIpnBvg5juGRVEZAUcpiQXLbFVpM3kyVvpaAi61rFUVPziiGIl/qioLy9qJ3cNM0QfkBI1HMCZAPW9eawzWgdIbY7DDxrvfRGxZLBQvXnL+mnuvmI9vpRdJa0rytUUBRNEdJKpPW46gqiP8FsFNvlcDv08Wb4/+MAe+36v+8u5GRoWqTK3encyCtY48yHJiDO8aOF6v0nVNfqS3I2fvn9+UJn+QiSQP/J05CHXcV2AIK2fYSPDcokX6n42rRI/tuY5zGpTIBOvpi9ymlke5nHgrgncIPqWWk9ad12pzz66R0epSedwbhvaIj+xHNvoxgII1OSeQgPg25xls5+tugGxlQr3iIxIlztFCbUe7B90vAHSC+ZDeQj3Mazg/3AqA
+X-DCC--Metrics: v370.home.net.pl 1024; Body=6 Fuz1=6 Fuz2=6
+
+From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+
+All of the code using the needs_force_resume flag in struct dev_pm_info
+is under CONFIG_PM_SLEEP now, so move that flag under CONFIG_PM_SLEEP
+too.
+
+No intentional functional impact.
+
+Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+---
+ include/linux/pm.h |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+--- a/include/linux/pm.h
++++ b/include/linux/pm.h
+@@ -683,6 +683,7 @@
+ 	bool			smart_suspend:1;	/* Owned by the PM core */
+ 	bool			must_resume:1;		/* Owned by the PM core */
+ 	bool			may_skip_resume:1;	/* Set by subsystems */
++	bool			needs_force_resume:1;
+ #else
+ 	bool			should_wakeup:1;
+ #endif
+@@ -698,7 +699,6 @@
+ 	bool			idle_notification:1;
+ 	bool			request_pending:1;
+ 	bool			deferred_resume:1;
+-	bool			needs_force_resume:1;
+ 	bool			runtime_auto:1;
+ 	bool			ignore_children:1;
+ 	bool			no_callbacks:1;
 
 
-On Sun, 08 Jun 2025 19:07:31 +0300, Dmitry Baryshkov wrote:
-> In order to describe connections between Genesys GL850G hub and
-> corresponding Type-C connectors, follow example of RTS5411 and describe
-> downstream facing ports. Unline normal case of ports being connected to
-> a USB device, hotplug ports use OF graph representation.
-> 
-> Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
-> ---
->  Documentation/devicetree/bindings/usb/genesys,gl850g.yaml | 12 ++++++++++++
->  1 file changed, 12 insertions(+)
-> 
-
-Reviewed-by: Rob Herring (Arm) <robh@kernel.org>
 
 
