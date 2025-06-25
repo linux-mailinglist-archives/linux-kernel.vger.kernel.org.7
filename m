@@ -1,123 +1,113 @@
-Return-Path: <linux-kernel+bounces-703221-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-703234-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id E2684AE8D1F
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Jun 2025 20:56:28 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id F1ECFAE8D9C
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Jun 2025 21:00:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EC6194A190B
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Jun 2025 18:56:28 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1FE881BC0E10
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Jun 2025 19:00:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 80F9A2DCBEF;
-	Wed, 25 Jun 2025 18:56:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7042D2DECAE;
+	Wed, 25 Jun 2025 18:58:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Gff5cji2"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="qDmKZ1SP"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C1FBC1CAA7B;
-	Wed, 25 Jun 2025 18:56:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9F61E2DCC15
+	for <linux-kernel@vger.kernel.org>; Wed, 25 Jun 2025 18:58:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750877769; cv=none; b=A8qBfwJ9GH0yFSBIf0ykcRfC1ft9hlHylkehLbvqA5ijbPVvUh92rvjtiFfzjtT60lvBYoO84HNrZ4MP5M4v/BWcrOJ3TbZURw4I/l9vzMJH+Zzk4EU+X8wbpmVyfyBSRmRpH6AW0Ky62OmeikrQ3BUF2oOhevPXhTq3zpadl9k=
+	t=1750877909; cv=none; b=hbgn9BARel08uiG+CPLiZoFlYdLA8Ifpfd7+/Pl9P8zvH1ff+Tx3MWjrAyjimAy5IoF8Z6IecFqhuEX64BZPr9Ouuip21gb/FKg2NsVTITx2NenqUc9SzTFY8+h9mWzXHe7E6nhxC0yJpWzF1Za9ICgFg+3DCs/YYnQAgtfkuxw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750877769; c=relaxed/simple;
-	bh=6xdnTIn9JsUPsSYNpRZM+JxKZeDZmlbySNAsX2t+WTI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ou7V+M4w+0VrpHIjlkb4ssZCRyusQ0qGztpBoSwhDiwKmDZ89aiXYbhEeUtXay1u1KSk4Qxbfrj71kJcvoXNHqquhzMWR8w1xfbd+61fVN/se8PULGkw36yMcvICNzvE5scT+GbjzX7SqXvZCeMKmNSw6M/4RaKNlUQo2T05lh8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Gff5cji2; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 338B7C4CEEA;
-	Wed, 25 Jun 2025 18:56:09 +0000 (UTC)
+	s=arc-20240116; t=1750877909; c=relaxed/simple;
+	bh=RjlGb7w/AnhlwxzMhXI+xVDeW3FXUUnZ+ueqKPPcNeQ=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=QH6oURIKDRxxVwh31VsH8HsfL/o6RA5I3fhvrAJeOf8Rp0C9Wj3q+SahoDHBPwB/xdCTnNLXmEC1GiBCWpAL2Hg8rRBtmzyPFRZ6FdsK3zdb99OrFihH26IrmJj4E052nyiz6QQ5FzybYBrbda9gVUeKhylQKOllJp0T3mRderc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=qDmKZ1SP; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 26621C4CEF0;
+	Wed, 25 Jun 2025 18:58:27 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1750877769;
-	bh=6xdnTIn9JsUPsSYNpRZM+JxKZeDZmlbySNAsX2t+WTI=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=Gff5cji2w4rVgfmpej2qu34cYAMMr+BzZ4UHZaIH5XAbQTuM9i+g7mUq2U5j40fHZ
-	 Z1q5bI29k3jsZWhuNj5yhDbG1Cf2CK2Ja0Ff7LDDsR3OOFfZ9Vzt2j15k/nXxeuZkT
-	 9YjFuV7bOl1cksFgU80Bm0WScsAeKZPxiJYfl/Gw6Nw4fguHRhvgpQzb9a5DuxXi9k
-	 r0a99nd/yLYW3OjYml4ONi/ceLO8lUzrdNYHwjtC2OmZGRegktJ+ySI9PYIagF4iS1
-	 BZaw35eG2KRHrrYA05zBh06BuCSR5KKlQpVgpHHc3LUu/B0aN9NxM4wAvkXLn1IoOB
-	 S80u/83hMdyFA==
-Date: Wed, 25 Jun 2025 13:56:08 -0500
-From: Rob Herring <robh@kernel.org>
-To: Ricardo Ribalda <ribalda@chromium.org>
-Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-	Hans de Goede <hdegoede@redhat.com>,
-	Mauro Carvalho Chehab <mchehab@kernel.org>,
-	Hans Verkuil <hverkuil@xs4all.nl>,
-	Sakari Ailus <sakari.ailus@linux.intel.com>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Linus Walleij <linus.walleij@linaro.org>,
-	Bartosz Golaszewski <brgl@bgdev.pl>,
-	"Rafael J. Wysocki" <rafael@kernel.org>,
-	Len Brown <lenb@kernel.org>, linux-media@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-usb@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-gpio@vger.kernel.org,
-	linux-acpi@vger.kernel.org
-Subject: Re: [PATCH v2 06/12] dt-bindings: usb: usb-device: Add orientation
- and rotation
-Message-ID: <20250625185608.GA2010256-robh@kernel.org>
-References: <20250605-uvc-orientation-v2-0-5710f9d030aa@chromium.org>
- <20250605-uvc-orientation-v2-6-5710f9d030aa@chromium.org>
+	s=k20201202; t=1750877909;
+	bh=RjlGb7w/AnhlwxzMhXI+xVDeW3FXUUnZ+ueqKPPcNeQ=;
+	h=From:Date:Subject:To:Cc:From;
+	b=qDmKZ1SP9+00sFr8CcP0qy9BUZzeazvNkHopWl1nYQIasIjEgqQ6kkYeNucUIP0cf
+	 BR7t5fMsCokWi/6Yv2G7djfPU0dzcihUv/dbVF1YwLpAG686S1/sDW2WW5wXhrvJej
+	 gUbdQ08O7oCZBQ4jMCUOCdRQ2/6+/UR+P1C9OBJXul2a1t7Vq1DfAIkLCa6h03fFva
+	 4uuKlMSxTvTtz4zwO2avrO1opuF8BUSTesRdfP9gss2oKRlXOEI3R30ONd9uJMyiQO
+	 5R7tVFEVIw2Qw4mDBYdx/7ybzqP9fLTLOGfIX2LItxcAozEr+A8lBHgZoBWdVgabvm
+	 3eLTz5sMFjIHA==
+From: Mark Brown <broonie@kernel.org>
+Date: Wed, 25 Jun 2025 19:56:34 +0100
+Subject: [PATCH] arm64/gcs: Don't call gcs_free() when releasing
+ task_struct
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250605-uvc-orientation-v2-6-5710f9d030aa@chromium.org>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20250625-arm64-gcs-release-task-v1-1-54cbdc2db416@kernel.org>
+X-B4-Tracking: v=1; b=H4sIAGFGXGgC/x3MTQqDQAxA4atI1gYyVqfgVcRF1Kih/pGUUhDv7
+ uDyW7x3goupONTZCSY/dd23hJBn0M+8TYI6JENBRUUxELKtscSpdzRZhF3wy/7BF72HLtLIoSs
+ hxYfJqP9n3LTXdQNLq9FmaAAAAA==
+X-Change-ID: 20250610-arm64-gcs-release-task-307db60fa1b4
+To: Catalin Marinas <catalin.marinas@arm.com>, 
+ Will Deacon <will@kernel.org>
+Cc: linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
+ Mark Brown <broonie@kernel.org>
+X-Mailer: b4 0.15-dev-08c49
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1260; i=broonie@kernel.org;
+ h=from:subject:message-id; bh=RjlGb7w/AnhlwxzMhXI+xVDeW3FXUUnZ+ueqKPPcNeQ=;
+ b=owEBbQGS/pANAwAKASTWi3JdVIfQAcsmYgBoXEbTeUN5t/UlNloC7DPsJVvz95VmKcMJhv+lG
+ Sqh4xj8YY+JATMEAAEKAB0WIQSt5miqZ1cYtZ/in+ok1otyXVSH0AUCaFxG0wAKCRAk1otyXVSH
+ 0G+9B/9D8IUxvntv3DBKBNH2U8vBc2ndFy/Axie0znjeibUqabV9UqqSVUvDdfOBT2GrL2IWC6j
+ m7rd08BkjcCWu5XiquQP9lR4nLE77Q0PQHOre5TEPuYpEEDZQgTw9CMRYzZl/Y1h8Jp7CzIqGnn
+ kOqu0KjExJpzH1PDmJdYtQRkP4l3A2lQ40RwkwxNIgYHBiLTtP1DHfnUdk0LdJ/arTCLqkeqUC7
+ dy3DzLknQw2gPL0PGEhPGJ+ZHcNJt2JXAyFDeaFhnbG5T10QuNSJgNxYGyjhWYjr0dfpg8kHf8d
+ 1J8nSxrIwBHVUEimywPCeQ382SjQLGMjVurkweXkXuCCjKTE
+X-Developer-Key: i=broonie@kernel.org; a=openpgp;
+ fpr=3F2568AAC26998F9E813A1C5C3F436CA30F5D8EB
 
-On Thu, Jun 05, 2025 at 05:52:59PM +0000, Ricardo Ribalda wrote:
-> For some devices, such as cameras, the OS needs to know where they are
-> mounted.
-> 
-> ACPI has a property for this purpose, which is parsed by
-> acpi_get_physical_device_location():
-> https://uefi.org/htmlspecs/ACPI_Spec_6_4_html/06_Device_Configuration/Device_Configuration.html#pld-physical-location-of-device
-> 
-> In DT we have similar properties for video-interface-devices called
-> orientation and rotation:
-> Documentation/devicetree/bindings/media/video-interface-devices.yaml
-> 
-> Add rotation and orientation for usb-devices that matches the already
-> existing properties of video-interface-devices.
-> 
-> Signed-off-by: Ricardo Ribalda <ribalda@chromium.org>
-> ---
->  Documentation/devicetree/bindings/usb/usb-device.yaml | 10 ++++++++++
->  1 file changed, 10 insertions(+)
+Currently we call gcs_free() when releasing task_struct but this is
+redundant, it attempts to deallocate any kernel managed userspace GCS
+which should no longer be relevant and resets values in the struct we're
+in the process of freeing.
 
-Comments from v1 still apply. Add a schema for *your* device (i.e. one 
-that only matches the compatible string of your device). Look for 
-anything that includes usb-device.yaml for an example. Your schema 
-should have something like this if you want to use 
-video-interface-devices.yaml properties:
+By the time arch_release_task_struct() is called the mm will have been
+disassociated from the task so the check for a mm in gcs_free() will
+always be false, for threads that are exiting leaving the mm active
+deactivate_mm() will have been called previously and freed any kernel
+managed GCS.
 
-allOf:
-  - $ref: /schemas/usb/usb-device.yaml#
-  - $ref: /schemas/media/video-interface-devices.yaml#
+Signed-off-by: Mark Brown <broonie@kernel.org>
+---
+ arch/arm64/kernel/process.c | 1 -
+ 1 file changed, 1 deletion(-)
 
-> 
-> diff --git a/Documentation/devicetree/bindings/usb/usb-device.yaml b/Documentation/devicetree/bindings/usb/usb-device.yaml
-> index c676956810331b81f11f3624340fc3e612c98315..a44eb24c657993f88145377a4706ec419b6cd998 100644
-> --- a/Documentation/devicetree/bindings/usb/usb-device.yaml
-> +++ b/Documentation/devicetree/bindings/usb/usb-device.yaml
-> @@ -44,6 +44,14 @@ properties:
->        - minimum: 1
->          maximum: 255
->  
-> +  orientation:
-> +    description: If present, specifies the orientation of the usb device.
-> +    $ref: /schemas/media/video-interface-devices.yaml#/properties/orientation
+diff --git a/arch/arm64/kernel/process.c b/arch/arm64/kernel/process.c
+index 5954cec19660..5dcfab9ce012 100644
+--- a/arch/arm64/kernel/process.c
++++ b/arch/arm64/kernel/process.c
+@@ -341,7 +341,6 @@ void flush_thread(void)
+ void arch_release_task_struct(struct task_struct *tsk)
+ {
+ 	fpsimd_release_task(tsk);
+-	gcs_free(tsk);
+ }
+ 
+ int arch_dup_task_struct(struct task_struct *dst, struct task_struct *src)
 
-Again, this is generally the wrong way to add properties from another 
-schema for your device. Above is the right way.
+---
+base-commit: 86731a2a651e58953fc949573895f2fa6d456841
+change-id: 20250610-arm64-gcs-release-task-307db60fa1b4
 
-Rob
+Best regards,
+--  
+Mark Brown <broonie@kernel.org>
+
 
