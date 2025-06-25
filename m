@@ -1,121 +1,160 @@
-Return-Path: <linux-kernel+bounces-701558-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-701560-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DD1B4AE7660
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Jun 2025 07:21:32 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9079BAE7665
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Jun 2025 07:26:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 606CC3AD72F
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Jun 2025 05:21:07 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C033D17AD60
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Jun 2025 05:26:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A367615442A;
-	Wed, 25 Jun 2025 05:21:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 85D3B1E04AD;
+	Wed, 25 Jun 2025 05:26:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="dQimpEvD"
-Received: from mail-pf1-f170.google.com (mail-pf1-f170.google.com [209.85.210.170])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="V49jy8Wg"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.15])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AD25B79D0
-	for <linux-kernel@vger.kernel.org>; Wed, 25 Jun 2025 05:21:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DCE4A199FBA;
+	Wed, 25 Jun 2025 05:25:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.15
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750828886; cv=none; b=SSJSBMo4Ypfgb6kVOKwOxdZz+BL/qtGsJ6xsxRUNF0ThjYMSyM4f+TcJtqbEPcqiy+ee5ejCtUnyPWd69l9aN9ZzteKCvtYtAiJQgDDjaDlo85Uk5W+2QT5T7bCJ+WhTYARrMrdoWIC/j7MAHVIk2CmNM33co/ezTbBLsOxVo7s=
+	t=1750829162; cv=none; b=HYRzMOOZ5AqhgkzZjRkhsny+MqNVBzEw1NMF9ncUmupCFNhA1hwn05bClXV9Q3+48aTyA3jSA5H00eP0tkHs7RncmVzsel+FT/YVrvV2M5ZMYwUaDF1AAsypDaeUO2Eh22hIoMWuHACbOiurHiQRHbHvpfD0g9YohTO4X9UcHOQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750828886; c=relaxed/simple;
-	bh=xTCQ5Co7j4ZX7l03fJkRNZOE8GD7nb6sEADXr0HP+Sc=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=M4pOrIEhUsJdwvEhsNt3Zo5doNVemwb4E7BbafNVMa1tcDbtKtCBwyvoTsvhKANGTFEaSdhoIcroj3ebiBmQE5+QEXBfVdLOiEqiO18KzYGeNMGJLs3sQUVbL1ParRFJlTyQN0X0khV3BoRPAhw7WbFrAHoAiXHGm1njtr4k1zM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=dQimpEvD; arc=none smtp.client-ip=209.85.210.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
-Received: by mail-pf1-f170.google.com with SMTP id d2e1a72fcca58-74801bc6dc5so417815b3a.1
-        for <linux-kernel@vger.kernel.org>; Tue, 24 Jun 2025 22:21:24 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1750828884; x=1751433684; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=EdewN+OqwPnfjHa4kNqJuR+GOLJuDMWb9fhOCDaUpO4=;
-        b=dQimpEvDKErL8a7WGESUmAgtdMZ14xL4pOHHsK+Gs8MEgXvoItHHddcBJRK/32t2uB
-         NLycxL7AM5bJcXLapcD/EXJENXZNsSFH34hKdCZnncNHoqO+L0Zu8vKN+38ET+cmWqin
-         FSa/IJdttL/fWsE958dVXAkBOmhJIe26DVS+s=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1750828884; x=1751433684;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=EdewN+OqwPnfjHa4kNqJuR+GOLJuDMWb9fhOCDaUpO4=;
-        b=J9VQ6hQgD5r170zgyfHHzxYQE3aN1owMZp7KF3gDYdsa1mqOLUTtwPyyyFFRmDIF0Z
-         RoEIvM99LAtN2jHtsmcMOxwdtlJW7Afgq2Ak882t4wuXIkMt4GHdJRHAG5HHxumGju01
-         VDlOROFch6GvNoqGv5xcWdk2tAkv1XcXZpAltnVqWgazS3RFFNyzk+wH2Bwp5nDi3YBa
-         EGVDecOQrljXT3xmthtf5/MOIpKxOtzuavTIgr2WUpeXQAyDyOisXvpBu1EQWpB874TX
-         CbH6geqZFyr9Ooxx0swbUckgX0PJmRKTIrzU8KKv0EqJ2Z8QeqkuStY3DQ07S/8OAzMF
-         UwDg==
-X-Forwarded-Encrypted: i=1; AJvYcCXsb8tTlyDK9G4FwL6Ku0cjPcT9FEPFR11hTiaJ4m1YZDVBQsRqnKibRLJHinNzvcUfPh5U9Fjrphk197Y=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxvr00wNpu2siv2m4M8WSfPa00pNaGAcKVM8cI8eMMejAxDwxdB
-	G4h0pIr09WmG4C16L6vJDs6GDUoKKUqcU1l9A3a2b1xScZQeEPFwXwACJVVAA97+9A==
-X-Gm-Gg: ASbGncundiNwrDtMsNV6t5CGnV8Tfj3ZyiejAStvPaEiu2G7zu/SCUTLf68vRptNR64
-	wWz+92MhJ9s0n+/8BP5Xk6qnlKeLZB8rexff5ASECNmCqLM3jMra1jN6TXwUd/Qe+OKPByq+CGW
-	b8LWXMfT7KyfzDF4Y/mAW5lIw8Zy2FeKVcpdzKTs+4CggMIY+lbXZWB3sntVUza2QhxgNduu+pW
-	MaHl/8RVvjfafvnw0ZpGCZ45uGBUShY1fnfUu9k0hPpqO2n4zLdc7WW0gIEwC0IbhgrUV8Oponk
-	Z7wv3UB8rJojTT1rbe6Ry8yN5v4zvYd19Iqrqn8Wq4psdyNKmUkFWdlB1vRGfYnJmTX3CpwC71U
-	CI1nbnA0hvTcu
-X-Google-Smtp-Source: AGHT+IHtRUvI4BFjONg8E4iCJF2EoVUYaYsRjRtF6W4pN3FGjeweBp2iZqpmntUDbugSl88Vu2pCtA==
-X-Received: by 2002:a05:6a00:464f:b0:749:1e60:bdd with SMTP id d2e1a72fcca58-74ad4ad593emr2674902b3a.2.1750828884013;
-        Tue, 24 Jun 2025 22:21:24 -0700 (PDT)
-Received: from tigerii.tok.corp.google.com ([2401:fa00:8f:203:301e:ee9a:3fb5:c761])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-749c882cda6sm3536393b3a.96.2025.06.24.22.21.19
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 24 Jun 2025 22:21:23 -0700 (PDT)
-From: Sergey Senozhatsky <senozhatsky@chromium.org>
-To: Chaotian Jing <chaotian.jing@mediatek.com>,
-	Ulf Hansson <ulf.hansson@linaro.org>,
-	Matthias Brugger <matthias.bgg@gmail.com>,
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
-Cc: Masami Hiramatsu <mhiramat@kernel.org>,
-	Tomasz Figa <tfiga@chromium.org>,
-	linux-mmc@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-mediatek@lists.infradead.org,
-	Sergey Senozhatsky <senozhatsky@chromium.org>
-Subject: [PATCH] mtk-sd: reset host->mrq on prepare_data() error
-Date: Wed, 25 Jun 2025 14:20:37 +0900
-Message-ID: <20250625052106.584905-1-senozhatsky@chromium.org>
-X-Mailer: git-send-email 2.50.0.714.g196bf9f422-goog
-In-Reply-To: <174972756982.3337526.6755001617701603082.stgit@mhiramat.tok.corp.google.com>
-References: <174972756982.3337526.6755001617701603082.stgit@mhiramat.tok.corp.google.com>
+	s=arc-20240116; t=1750829162; c=relaxed/simple;
+	bh=0hRDN1u+td/ykRY2vm1L2kpHhMG55EsaPbIq6V+qxC0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=dUaWwW5pUoUqU+FFGy3lbf5mHMpq5lA90zlSFTz1fU4j1yAyxattttsZzkcnYNQoKULcYBr1zOJsg+U6JmOHkOfJfiv+2NDwYTo0hGEsZhL9h47L4UAF8SDf/F6ZEru14B3TUtM2clQ8McmCINy3WjNb8Z8dPos/O/PWpZPfqxI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=V49jy8Wg; arc=none smtp.client-ip=198.175.65.15
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1750829160; x=1782365160;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=0hRDN1u+td/ykRY2vm1L2kpHhMG55EsaPbIq6V+qxC0=;
+  b=V49jy8WgEE097EUng++RcmCiKAwGXnvmCh4UGrYlba8ZS8TMm32k9SX3
+   8sps8j3zBjymv/KBsWs6u4JTzxFfFClRhlE5JBx7Bt2+SMEuO3+8sKMBU
+   AWmN0Y7EYpMlDDzZ9k6jswAojsL3vNPuokpRhRs7zg3HPDGC1IYQ2qb4W
+   55d3T6Y1T5qEV/VuHxRIEC5BtTj3DHQRgmNoEvU4efYGHssquMMsxV5sv
+   oPKiiyRnBGA8Vqt5bJ5qBV3XG2z5N1H+VpCgdkDmXT0eJJlp3dMEogr8e
+   cQxPHb6L4YMcsBTvsIhYEP2+lFysx7U878RvwmrgzzPoc1YfCfV7I/9dO
+   A==;
+X-CSE-ConnectionGUID: chTQIwsrSWihjlNqMibTTw==
+X-CSE-MsgGUID: RUz+fDVpQxqeIaSrauA2Yw==
+X-IronPort-AV: E=McAfee;i="6800,10657,11474"; a="56761505"
+X-IronPort-AV: E=Sophos;i="6.16,263,1744095600"; 
+   d="scan'208";a="56761505"
+Received: from fmviesa003.fm.intel.com ([10.60.135.143])
+  by orvoesa107.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 24 Jun 2025 22:26:00 -0700
+X-CSE-ConnectionGUID: ixov8sJuSMyuGT/+aXJspQ==
+X-CSE-MsgGUID: rAcO2f4sTmWHpLFigXyuZQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.16,263,1744095600"; 
+   d="scan'208";a="156145722"
+Received: from lkp-server01.sh.intel.com (HELO e8142ee1dce2) ([10.239.97.150])
+  by fmviesa003.fm.intel.com with ESMTP; 24 Jun 2025 22:25:56 -0700
+Received: from kbuild by e8142ee1dce2 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1uUIdu-000Smg-1O;
+	Wed, 25 Jun 2025 05:25:54 +0000
+Date: Wed, 25 Jun 2025 13:25:08 +0800
+From: kernel test robot <lkp@intel.com>
+To: James Clark <james.clark@linaro.org>,
+	Vladimir Oltean <olteanv@gmail.com>,
+	Mark Brown <broonie@kernel.org>, Arnd Bergmann <arnd@arndb.de>,
+	Larisa Grigore <larisa.grigore@nxp.com>,
+	Frank Li <Frank.li@nxp.com>, Christoph Hellwig <hch@lst.de>
+Cc: oe-kbuild-all@lists.linux.dev, linux-spi@vger.kernel.org,
+	imx@lists.linux.dev, linux-kernel@vger.kernel.org,
+	James Clark <james.clark@linaro.org>
+Subject: Re: [PATCH v3 3/6] spi: spi-fsl-dspi: Stub out DMA functions
+Message-ID: <202506251332.thYB4ced-lkp@intel.com>
+References: <20250624-james-nxp-spi-dma-v3-3-e7d574f5f62c@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250624-james-nxp-spi-dma-v3-3-e7d574f5f62c@linaro.org>
 
-Do not leave host with dangling ->mrq pointer if we hit
-the msdc_prepare_data() error out path.
+Hi James,
 
-Signed-off-by: Sergey Senozhatsky <senozhatsky@chromium.org>
----
- drivers/mmc/host/mtk-sd.c | 1 +
- 1 file changed, 1 insertion(+)
+kernel test robot noticed the following build errors:
 
-diff --git a/drivers/mmc/host/mtk-sd.c b/drivers/mmc/host/mtk-sd.c
-index b12cfb9a5e5f..d7020e06dd55 100644
---- a/drivers/mmc/host/mtk-sd.c
-+++ b/drivers/mmc/host/mtk-sd.c
-@@ -1492,6 +1492,7 @@ static void msdc_ops_request(struct mmc_host *mmc, struct mmc_request *mrq)
- 	if (mrq->data) {
- 		msdc_prepare_data(host, mrq->data);
- 		if (!msdc_data_prepared(mrq->data)) {
-+			host->mrq = NULL;
- 			/*
- 			 * Failed to prepare DMA area, fail fast before
- 			 * starting any commands.
+[auto build test ERROR on 4f326fa6236787ca516ea6eab8e5e9dc5c236f03]
+
+url:    https://github.com/intel-lab-lkp/linux/commits/James-Clark/spi-spi-fsl-dspi-Clear-completion-counter-before-initiating-transfer/20250624-183952
+base:   4f326fa6236787ca516ea6eab8e5e9dc5c236f03
+patch link:    https://lore.kernel.org/r/20250624-james-nxp-spi-dma-v3-3-e7d574f5f62c%40linaro.org
+patch subject: [PATCH v3 3/6] spi: spi-fsl-dspi: Stub out DMA functions
+config: sh-allmodconfig (https://download.01.org/0day-ci/archive/20250625/202506251332.thYB4ced-lkp@intel.com/config)
+compiler: sh4-linux-gcc (GCC) 15.1.0
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250625/202506251332.thYB4ced-lkp@intel.com/reproduce)
+
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202506251332.thYB4ced-lkp@intel.com/
+
+All error/warnings (new ones prefixed by >>):
+
+   drivers/spi/spi-fsl-dspi.c: In function 'dspi_dma_xfer':
+>> drivers/spi/spi-fsl-dspi.c:729:9: error: 'sdpi' undeclared (first use in this function); did you mean 'dspi'?
+     729 |         sdpi->cur_msg->status = -EINVAL;
+         |         ^~~~
+         |         dspi
+   drivers/spi/spi-fsl-dspi.c:729:9: note: each undeclared identifier is reported only once for each function it appears in
+   drivers/spi/spi-fsl-dspi.c: At top level:
+>> drivers/spi/spi-fsl-dspi.c:474:12: warning: 'dspi_pop_tx_pushr' defined but not used [-Wunused-function]
+     474 | static u32 dspi_pop_tx_pushr(struct fsl_dspi *dspi)
+         |            ^~~~~~~~~~~~~~~~~
+
+
+vim +729 drivers/spi/spi-fsl-dspi.c
+
+   705	
+   706	static void dspi_release_dma(struct fsl_dspi *dspi)
+   707	{
+   708		int dma_bufsize = dspi->devtype_data->fifo_size * 2;
+   709		struct fsl_dspi_dma *dma = dspi->dma;
+   710	
+   711		if (!dma)
+   712			return;
+   713	
+   714		if (dma->chan_tx) {
+   715			dma_free_coherent(dma->chan_tx->device->dev, dma_bufsize,
+   716					  dma->tx_dma_buf, dma->tx_dma_phys);
+   717			dma_release_channel(dma->chan_tx);
+   718		}
+   719	
+   720		if (dma->chan_rx) {
+   721			dma_free_coherent(dma->chan_rx->device->dev, dma_bufsize,
+   722					  dma->rx_dma_buf, dma->rx_dma_phys);
+   723			dma_release_channel(dma->chan_rx);
+   724		}
+   725	}
+   726	#else
+   727	static void dspi_dma_xfer(struct fsl_dspi *dspi)
+   728	{
+ > 729		sdpi->cur_msg->status = -EINVAL;
+   730	}
+   731	static int dspi_request_dma(struct fsl_dspi *dspi, phys_addr_t phy_addr)
+   732	{
+   733		dev_err(&dspi->pdev->dev, "DMA support not enabled in kernel\n");
+   734		return -EINVAL;
+   735	}
+   736	static void dspi_release_dma(struct fsl_dspi *dspi) {}
+   737	#endif
+   738	
+
 -- 
-2.50.0.714.g196bf9f422-goog
-
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
