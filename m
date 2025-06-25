@@ -1,60 +1,66 @@
-Return-Path: <linux-kernel+bounces-703189-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-703192-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id C7B9DAE8CB9
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Jun 2025 20:41:23 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 499C0AE8CC7
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Jun 2025 20:43:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 15EAE4A508A
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Jun 2025 18:41:24 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 243865A17F4
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Jun 2025 18:42:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EE97B2E62C2;
-	Wed, 25 Jun 2025 18:38:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7DAE52DCC14;
+	Wed, 25 Jun 2025 18:39:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="o6Et6eyp"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="G8RXNkr5"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4C4B52E4275;
-	Wed, 25 Jun 2025 18:38:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C6F322C325B;
+	Wed, 25 Jun 2025 18:39:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750876732; cv=none; b=JPC0eUn1c/Z2T6h707oiDh4KODwdKpttzA6ZbVmNJD5cp6b3gMNes41W6dln70kq7mNUfMU6RKHZQnSbocGhPW6QQ+r0W2uj95swzCAEU1WSc/8N3UtnMU1l1qk5EWaGzRlNr9vT7SQIkmqxEGOiv2bySKYwDBrUhDW7WIFIuic=
+	t=1750876789; cv=none; b=eAeKfAJu+iGc5FrTqHjlIKkZ8N2ukfWDI+okaZkkt2zHYhY5wO/X4LInT1gJbSIr2paPoJegvBq2AnKcX9cRNSEQ3DrR5kRo9ClJZ1iwW/GbymucTLdH5f9MgJMELGHaqOUIk9PNoUMmJmNdnnBnFMFQKWfN5S+oyvLOWkKfscs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750876732; c=relaxed/simple;
-	bh=V4icwH68waoexuc0mmtBEz2gMdcHNXDMILpxUOfQ1O0=;
+	s=arc-20240116; t=1750876789; c=relaxed/simple;
+	bh=Ne3gQDGNR+fc9eT5DJJdL5V8H/ySv24dUclSgAsgI3I=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=HhE+eZ5MohY/+8yIQ+/XPytFziIVWIha4yyDV3sZdpsJao5dYMPiwUBrjSpZcQc3PGVGZSb+FtADch/YpJziaF7er1Qup11Wq1NkVakV45NRCUy6HsJ/+XZ4hJN0uJDwE+zr+VQwyF8OYjdRY1ZnxFnbowGqXwWlj2g1Jtwo4SM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=o6Et6eyp; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id BC205C4CEEE;
-	Wed, 25 Jun 2025 18:38:51 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=q+uTjlcI/geO8/E0z1WlczwXsJglCcfj5263rJCa/fu6pnAPqzFfbzixppTcFXzi1eGoVBnCWEt2KFHffO1EfP6BoA8/FUo586fbQuaJLbqQpSYcPZUzVOwYrucgzxQqT3WlOFzyLg2KCGg+XqaIMdAylMgX4C9HKaUrBoYBbQw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=G8RXNkr5; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1D290C4CEEA;
+	Wed, 25 Jun 2025 18:39:49 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1750876731;
-	bh=V4icwH68waoexuc0mmtBEz2gMdcHNXDMILpxUOfQ1O0=;
+	s=k20201202; t=1750876789;
+	bh=Ne3gQDGNR+fc9eT5DJJdL5V8H/ySv24dUclSgAsgI3I=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=o6Et6eypzNZPnzqhVij1b0Z1l7+8UhfT5ltLp664B5495JFelSrdHNreqHhXgyvK4
-	 MX7zuLek+Ls02TdkUNwZhWIeQrxayIKaEDSsmb3OwxWW9jxRY3Fy2LYCJK8QRkg4mX
-	 V8Uei6BeKd/PmoKalV7A0TrUmubbeAdmC+shE1QcxVsYxG6IIsqG09jWebwup2eHFf
-	 pxFRXqFxW+KyHZWedGETo8hLk3N76tGfVRr2gQcLcOi7nZ78yTHYzXTN7QG2fpdYXD
-	 Gn4GIzll2wMegj7jxfUkHhVKT7Ev3jhdkDAjruD+hBITaz+XAHGGfVBODt3FxcBait
-	 yMl+s+nwRAfkQ==
-Date: Wed, 25 Jun 2025 13:38:51 -0500
+	b=G8RXNkr5OwQEpMXK4RtS9V68i1Qvq4HEAJav6fuIAKALQUxJMU6tKWh8NO6ushrn5
+	 zCRTdqWH7DdODZySzkau7PCNaDBXcOw9jmstHn4bOYi5csSpCSFM4zvV+iOBhFjTI7
+	 iMocPlkq/T3MltzRWEZw4xMK9+ux8p79GjOx0pjCXPFruteFC7LB3WkubdO19Wvcy7
+	 deizZzbng8niI2ibvLX4zNp4sY3BOftfvri48XQNigiT5B5Q6xmer8ILjjschjt08f
+	 hxvb5jJlH6iJGfUuCIqFXOG8f1LMqC/ntianHDZzsH+pIK3Ea7XfCx/NA7a5G4oyRL
+	 /P0ol9R0EwZJw==
+Date: Wed, 25 Jun 2025 13:39:48 -0500
 From: "Rob Herring (Arm)" <robh@kernel.org>
-To: Frank Li <Frank.Li@nxp.com>
-Cc: linux-kernel@vger.kernel.org, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+To: Amelie Delaunay <amelie.delaunay@foss.st.com>
+Cc: linux-stm32@st-md-mailman.stormreply.com,
+	Liam Girdwood <lgirdwood@gmail.com>,
+	Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+	linux-kernel@vger.kernel.org,
+	Pascal Paillet <p.paillet@foss.st.com>,
+	Mark Brown <broonie@kernel.org>,
+	Alexandre Torgue <alexandre.torgue@foss.st.com>,
 	Conor Dooley <conor+dt@kernel.org>,
-	Thinh Nguyen <Thinh.Nguyen@synopsys.com>,
-	linux-arm-kernel@lists.infradead.org, linux-usb@vger.kernel.org,
-	Shawn Guo <shawnguo@kernel.org>, devicetree@vger.kernel.org,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	bjorn.andersson@oss.qualcomm.com
-Subject: Re: [PATCH 1/3] dt-bindings: usb: add missed compatible string for
- arm64 layerscape
-Message-ID: <175087673034.1996309.6332672675034782029.robh@kernel.org>
-References: <20250602-ls_dma_coherence-v1-0-c67484d6ab64@nxp.com>
- <20250602-ls_dma_coherence-v1-1-c67484d6ab64@nxp.com>
+	Etienne Carriere <etienne.carriere@foss.st.com>,
+	devicetree@vger.kernel.org,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Himanshu Bhavani <himanshu.bhavani@siliconsignals.io>,
+	linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH v2 3/7] dt-bindings: regulator: Add STM32MP15 SCMI
+ regulator identifiers
+Message-ID: <175087678758.1997493.17415728035364820579.robh@kernel.org>
+References: <20250603-stm32mp157f-dk2-v2-0-5be0854a9299@foss.st.com>
+ <20250603-stm32mp157f-dk2-v2-3-5be0854a9299@foss.st.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -63,27 +69,26 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250602-ls_dma_coherence-v1-1-c67484d6ab64@nxp.com>
+In-Reply-To: <20250603-stm32mp157f-dk2-v2-3-5be0854a9299@foss.st.com>
 
 
-On Mon, 02 Jun 2025 18:01:01 -0400, Frank Li wrote:
-> Add missed compatible string for arm64 layerscape platform. Allow these
-> fallback to fsl,ls1028a-dwc3.
+On Tue, 03 Jun 2025 11:02:09 +0200, Amelie Delaunay wrote:
+> From: Etienne Carriere <etienne.carriere@foss.st.com>
 > 
-> Remove fallback snps,dwc3 because layerscape dwc3 is not full compatible
-> with common snps,dwc3 device, a special value gsburstcfg0 need be set when
-> dma coherence enabled.
+> These bindings will be used for the SCMI voltage domain.
 > 
-> Allow iommus property.
+> Signed-off-by: Etienne Carriere <etienne.carriere@foss.st.com>
+> Signed-off-by: Pascal Paillet <p.paillet@foss.st.com>
+> Signed-off-by: Amelie Delaunay <amelie.delaunay@foss.st.com>
 > 
-> Change ref to snps,dwc3-common.yaml to use dwc3 flatten library.
-> 
-> Signed-off-by: Frank Li <Frank.Li@nxp.com>
 > ---
->  .../devicetree/bindings/usb/fsl,ls1028a.yaml       | 33 ++++++++++++----------
->  1 file changed, 18 insertions(+), 15 deletions(-)
+> Changes in v2:
+> - Add external regulators and Pascal's SoB
+> ---
+>  .../dt-bindings/regulator/st,stm32mp15-regulator.h | 40 ++++++++++++++++++++++
+>  1 file changed, 40 insertions(+)
 > 
 
-Reviewed-by: Rob Herring (Arm) <robh@kernel.org>
+Acked-by: Rob Herring (Arm) <robh@kernel.org>
 
 
