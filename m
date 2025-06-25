@@ -1,92 +1,78 @@
-Return-Path: <linux-kernel+bounces-703421-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-703423-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9B19CAE8FFE
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Jun 2025 23:10:11 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id B425BAE9001
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Jun 2025 23:10:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CC645171AF4
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Jun 2025 21:10:11 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id BD2677A80D1
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Jun 2025 21:09:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1ABD5211290;
-	Wed, 25 Jun 2025 21:10:05 +0000 (UTC)
-Received: from mail-io1-f72.google.com (mail-io1-f72.google.com [209.85.166.72])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 02793214A8B;
+	Wed, 25 Jun 2025 21:10:28 +0000 (UTC)
+Received: from mout-p-101.mailbox.org (mout-p-101.mailbox.org [80.241.56.151])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 129E120C46D
-	for <linux-kernel@vger.kernel.org>; Wed, 25 Jun 2025 21:10:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.72
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9AC5C215191
+	for <linux-kernel@vger.kernel.org>; Wed, 25 Jun 2025 21:10:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.151
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750885804; cv=none; b=qydMS0W8d5JeeHuROP/LMBYYoRK1gVXfD5Z5aijs3W/m72ZOWmuQGAbiI7xK6/9opWvShmkdbY4ZHaZwU16n4W2KeSHAZAnuuVjzGgd0rI9HROn3bZM983s0w4XFUmw9qowz5S/Xji1Nl0uWhjqsZeP4OZQx+3ZJebfsYm/snHI=
+	t=1750885827; cv=none; b=A8N/4h5h5d+pfo3LNycNuXL8OFwnkrBHiJQH9ypklSTsGHs9lbXZjLOVnb62l5FiLjj4Fwi8EkOrC5ky8gZbypTcd49J8U7qbrNAf9gvUBxs2BpT5W2sPDW4t4nikhxJJjnbfhy2sasLwYwynsRd9zyU2oMHWA8YJ5TbzVUnSno=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750885804; c=relaxed/simple;
-	bh=CNKw6tzEja4Qt6Nh8nMdXFeEWbdQjDHV1oVsSa0p4eQ=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=GUUNQTWqr1THPGHWuHxp3+4s0qQCKra9CuuWfp5GTN2+aCZ0jwPACwoG6kyNc3/gEIScu/zl+vcUJP6t5rNzRZVj5TLnq4HU+/LH+nd6zRlLaORagPlE884g/ePyzD72uUUX4GAWahBODpNiFZxzirYVZuGbiz2QJ+aKiz+v7bI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.72
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-io1-f72.google.com with SMTP id ca18e2360f4ac-86f4e2434b6so37343139f.2
-        for <linux-kernel@vger.kernel.org>; Wed, 25 Jun 2025 14:10:02 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1750885802; x=1751490602;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=Kc426aQB/Ls8eZ2ZTizs/1SQKrFEHeSjd9qsxqSJwL4=;
-        b=cixdyzG20K9e7KaJvSOBIS8GPjpnhd5m7w4v/P050CpD5QoELGAK2Vt31V0Uaxvydf
-         deo7dhSJ0PrOyVNXYQm9Ve/Y2lV4j4cVagTt9s6+u8uPjzlaOnClzC3bCElUYPy2a5GR
-         YubTo74Pw6qEuWPK4XS8Hq+YS47mZN4ZiDR/1/KbcnuwaazKhVLgJfT2RPeuyLf79dcr
-         SIZ0mMZB6PWAkqmLqdNIcYuJA43oJ3MmfvyUndwkCBZbWatAqxb3GrKDWg7kfaEZxGYD
-         9pwEtUn80afpHGXQl+bUyVxmu36HWXWSaODJFpCSCNsr7A61C8RIKhE8NrYYaRgk4Xx8
-         kVkQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVSFaV8Cp/eyhh+gW1013kG4caMFq/hXJSBkvQDnjuGFrsAa59VZwcsugmiKu+JOQ7iQ4ShTXVLSfWDxaU=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyVbvzYwwICcNFQgI0/Uv6dMsVtPw644Q5RJV5zYDzpBk02C2wo
-	Y1HW9PSf3O/4XGxEsci+3rO0c1F4jMZ9vNwX3xXmo/dTfBE9HvqZPx9iGTEtMWsw+K4pasu8tcE
-	XQ+n5qt2a3DZxYxjW9hx0WA9VsHPz9EEY9GZQQXZKLnER6TGmUvyOs7Oe+jg=
-X-Google-Smtp-Source: AGHT+IFsLSGcBbmWtt1GPA7otyFNGoqQ39LiKIQmsCWWO9urExGRsP2gl2q2dUeo/rc0DVTmtRh5fh/sIrBSXo3bSUXE3QaQI689
+	s=arc-20240116; t=1750885827; c=relaxed/simple;
+	bh=r4jn9tHz+MXvWO4G3rsiHj29sNyqHiwasPsKLfcihTs=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=iQqFuJe1t9XfnusnTMAsYMK7hcLXIL+fekVx7yv3Nn/dg1pfKO0I8BBzL3a3pHRrUVUgxV6S6nOi6sNo6RgwcYjGqrQXjYVFVdHOju/fJfONc3MFWmkjF6a6Qgxb2PgTaV0jFvaouCb+2vGpOnQJCC1TTElDoDuDLo4uXdvHDy0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org; spf=pass smtp.mailfrom=df7cb.de; arc=none smtp.client-ip=80.241.56.151
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=df7cb.de
+Received: from smtp1.mailbox.org (smtp1.mailbox.org [IPv6:2001:67c:2050:b231:465::1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mout-p-101.mailbox.org (Postfix) with ESMTPS id 4bSDx467Cxz9tkL;
+	Wed, 25 Jun 2025 23:10:16 +0200 (CEST)
+Date: Wed, 25 Jun 2025 23:10:13 +0200
+From: Christoph Berg <myon@debian.org>
+To: Andrew Morton <akpm@linux-foundation.org>
+Cc: David Hildenbrand <david@redhat.com>, Zi Yan <ziy@nvidia.com>,
+	Matthew Brost <matthew.brost@intel.com>,
+	Joshua Hahn <joshua.hahnjy@gmail.com>, Rakie Kim <rakie.kim@sk.com>,
+	Byungchul Park <byungchul@sk.com>,
+	Gregory Price <gourry@gourry.net>,
+	Ying Huang <ying.huang@linux.alibaba.com>,
+	Alistair Popple <apopple@nvidia.com>,
+	"open list:MEMORY MANAGEMENT - MEMORY POLICY AND MIGRATION" <linux-mm@kvack.org>,
+	open list <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] Fix do_pages_stat to use compat_uptr_t
+Message-ID: <aFxltX73iZLT2HGx@msg.df7cb.de>
+References: <aFrBhyHQFffJ4xgX@msg.df7cb.de>
+ <d42cc185-b774-4d5e-9a51-0581dd5f3962@arm.com>
+ <aFwUnu7ObizycCZ8@msg.df7cb.de>
+ <20250625133909.1a054c24d933cd97afd0027d@linux-foundation.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6602:a005:b0:86d:5b3:3b88 with SMTP id
- ca18e2360f4ac-8766b73e5f1mr592236639f.1.1750885802133; Wed, 25 Jun 2025
- 14:10:02 -0700 (PDT)
-Date: Wed, 25 Jun 2025 14:10:02 -0700
-In-Reply-To: <0000000000008905bf061fc61371@google.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <685c65aa.050a0220.2303ee.0098.GAE@google.com>
-Subject: Re: [syzbot] [xfs?] INFO: task hung in xfs_buf_item_unpin (2)
-From: syzbot <syzbot+837bcd54843dd6262f2f@syzkaller.appspotmail.com>
-To: axboe@kernel.dk, cem@kernel.org, chandan.babu@oracle.com, 
-	david@fromorbit.com, djwong@kernel.org, hch@lst.de, john.g.garry@oracle.com, 
-	linux-kernel@vger.kernel.org, linux-xfs@vger.kernel.org, 
-	syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250625133909.1a054c24d933cd97afd0027d@linux-foundation.org>
+X-Rspamd-Queue-Id: 4bSDx467Cxz9tkL
 
-syzbot suspects this issue was fixed by commit:
+Re: Andrew Morton
+> I'll update the Subject: as David suggests and I'll add a cc:stable,
+> thanks.  I'll also add a note that David suggested an alternative, so
+> please let's advance that option.
 
-commit b1e09178b73adf10dc87fba9aee7787a7ad26874
-Author: John Garry <john.g.garry@oracle.com>
-Date:   Wed May 7 21:18:31 2025 +0000
+Sorry, I'm new here. Do I have to do anything now? The above sounds
+like the alternative coding by David would be preferred, but the other
+mails say the patches have already been pushed to a hotfix branch? Or
+are we doing both, i.e. stable gets the simple fix and next the pretty
+one?
 
-    xfs: commit CoW-based atomic writes atomically
-
-bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=1078f70c580000
-start commit:   85652baa895b Merge tag 'block-6.11-20240824' of git://git...
-git tree:       upstream
-kernel config:  https://syzkaller.appspot.com/x/.config?x=92c0312151c4e32e
-dashboard link: https://syzkaller.appspot.com/bug?extid=837bcd54843dd6262f2f
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=12350ad5980000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=147927c5980000
-
-If the result looks correct, please mark the issue as fixed by replying with:
-
-#syz fix: xfs: commit CoW-based atomic writes atomically
-
-For information about bisection process see: https://goo.gl/tpsmEJ#bisection
+Christoph
 
