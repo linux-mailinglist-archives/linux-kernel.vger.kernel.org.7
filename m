@@ -1,75 +1,76 @@
-Return-Path: <linux-kernel+bounces-702870-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-702872-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D36B9AE8875
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Jun 2025 17:44:16 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 060B3AE8876
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Jun 2025 17:44:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id F2F677B4EC5
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Jun 2025 15:42:27 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 758985A5AF4
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Jun 2025 15:43:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D7ED228935E;
-	Wed, 25 Jun 2025 15:43:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4378329898E;
+	Wed, 25 Jun 2025 15:43:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="FOndpCKn"
-Received: from mail-pl1-f178.google.com (mail-pl1-f178.google.com [209.85.214.178])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Q8CEsXkI"
+Received: from mail-pl1-f182.google.com (mail-pl1-f182.google.com [209.85.214.182])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F2286267721;
-	Wed, 25 Jun 2025 15:43:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1530F26A08D;
+	Wed, 25 Jun 2025 15:43:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750866221; cv=none; b=RBaB+Fm02uTK7jul/KVdRMLL+PirvemcFmgFb3+mp8XoxsLs56WeIvywFVp4N95o2/CQ+EXdD98oWP3jOgPGs9lCPQtZXiUmaJKDwEDlMrOWeeYDi9c2Z6co25dSpQbaPSa6inx2dkvFLJG42POMERtehz2B3s3PR3h94+nJwWw=
+	t=1750866236; cv=none; b=Vyaa7QAD5OGIvA41uK05VcPl2cVIMVuDbewFXBuaVrlAaLbaaxRfQoyLdjCc9BlG3J7In5S3CxsZdaGa9v6XNC4ZRWRknIFoK7OVz86onop/SF/MzJGR0W+EwUeUFVqqQjwtxuyW8xRxV4sb06hFzQ42bpAZoFfXLi1BgGBFrJg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750866221; c=relaxed/simple;
-	bh=JaYterITZRL6AjGGz5dtVdkGliI0GZeB9bAcq7ml8Q0=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=qf6PcHXi5V2JeTTiVssUP7VjGRUEOxtbdX7GgteDI8M428slOB6LvXN2XGZd72PbRv6aFCNxqv3uX5C2F35AERRSzgaTOkqjMOJDXTWNOMc9qxB4zLJ0pftRLqvJtW6yq8gCU08CcU2aVlbkJO+8BKVYVCWHZQozfniNOeXVjG0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=FOndpCKn; arc=none smtp.client-ip=209.85.214.178
+	s=arc-20240116; t=1750866236; c=relaxed/simple;
+	bh=YC8xCXCQvhRvw7UfBSmZrmTpgNm5p4gRUHfAxCi3uBs=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=S/vTl/dSHqESBPt6fKhC0XCyHkdCrGHyKoRg9nfy6NQIqW12AYuSZUtQ6jUmmvKhutM7ZOD0MEa4v7OOpTVC+KT8skHYqPJPN/lZ5NbY6cDtsjMwCMBGKBqqseiRPDeK+1SkLq/UZNmYM1OXro7iGk8qFiuaoLg9KLHHGOs8Eog=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Q8CEsXkI; arc=none smtp.client-ip=209.85.214.182
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f178.google.com with SMTP id d9443c01a7336-2349f096605so335425ad.3;
-        Wed, 25 Jun 2025 08:43:37 -0700 (PDT)
+Received: by mail-pl1-f182.google.com with SMTP id d9443c01a7336-2363616a1a6so100245ad.3;
+        Wed, 25 Jun 2025 08:43:54 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1750866217; x=1751471017; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=YtI8ysHDGF8GpZRGmovRBTlbGiNf5VjMID2yRTeQRTU=;
-        b=FOndpCKncjLBPfH4MhroI8zQQXu3HxZ30lp5c2WmiBPOEiK5wupiESuwIlhFjgNzfT
-         T8fFrVndLT0WAgszeTGfjvoyNIdGurjIqRwnmm/CmPZJ9sT+OfiZvPexDqIG3/UG+mLV
-         3U1dOhWCt+DPkbcjzYBzlOkdKaSSJkW0EqtijS2RRKHUOhQFSj8itRVOc5PUu8pS8cLR
-         9ZHfv/hW3PSQnVkARa3aS0AfewxmQ1u9IxkT3Y1G7ke+mphVjmpXWFe49vbkGBlkDRbG
-         EaaQzWD85v+WWlbFOvrerKbVw6d/Y2Kd4CYbPMxScvYZG6Q3Kj+R/RNaia/BfE19KS8k
-         qBTQ==
+        d=gmail.com; s=20230601; t=1750866234; x=1751471034; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=zCwVhyi7LrS0Mr9IkZPeUKS3dkG/nZ+Hto/3dQfFA64=;
+        b=Q8CEsXkITgWhva8EjoUtmOrszAOVx/UYmUQdSjLgqA758Fceq2w6/EBUe13mniBWAX
+         1sdvAtFogd94ymaBmejkOwpz6xyKfkmL7WR3X7Sg/EMp0LPmF0K+44SrySkzPxqtImFv
+         J4WCwHUAhOA9z6kgBW6BfgpaXxpzxZRlTQoorHAgKYME3WIhOviqYZl3KLqu82qSLl3m
+         6I5HwVK61mf+GV7Rfvj9TFQSv450J3YnAtnloyhUE11sB7sEH4hU4tsR8pMxYjSX7J3W
+         BhaBZxgOt1n4fT9IFrrTglfePCYCX7T8P3VFkHMJQW2kPGLMAueYRApZ/r+VM2PexdP5
+         vDTg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1750866217; x=1751471017;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=YtI8ysHDGF8GpZRGmovRBTlbGiNf5VjMID2yRTeQRTU=;
-        b=bFnDc7W/U8IBVRFQDprus7jlHrB7SCVt74Fp+yd3EiIuOhHNAbJEOx4xUvMlhCyoyk
-         aSBBl3MISil7T2xjSca15mceP2SNffAASi0Uk7gkhfkXgV3dXBF/m/GZKwtIQkGa7mqd
-         ANXlVJEemnAiF8e8sGm62X7H/Nik6c0VpIkwG0btkG7h9wwWwA2PG5pof0hKAWI7Bw/q
-         KyVFW2AlhBisqqMtODrf5qKhoFfCkw7P0V8r0okxqBlqBSU6uPzb6FeaKfW+NkGDHoJt
-         Q1Irvbo9NSBQkrhZn0G+f6yhXZKq6ZatgKzbxh7dIjTGccEavOJW/GJUxfKQWqSJHbpZ
-         LmaA==
-X-Forwarded-Encrypted: i=1; AJvYcCUVtJIgkUFf2zjd5H/tO8YlGv5IJQjVPMMGRDvpSfIKzJ4HxD4I4EyvvZITD08eStOBigy2tOCVO7lz@vger.kernel.org, AJvYcCX728uM9bB947jRoDqD5u5qQtQHol6biaPMFOqV9XdOMYVsCAWqNLxHg6YjkOM0KpOKGgrGe/LHIWeR28js@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz3iHDvhMH5nFXB6qz0x/gUH/lMhwZfa8ficRAKxXFu8IBuVchI
-	bZ8o9yurtfDEuOJ7DbvUkviaKOySPy2wZnjHeQvW8NJWRp+DnfEX7Gk0
-X-Gm-Gg: ASbGnct4WzJdYotvZPIDXN/7bNsF8VmpfFHw8ljUBwZf6vPJ6Dr1Dy1f+KqjaC5tN84
-	1Oh/jf4vQ8d/EnaShaaSEm0vJzl5X3qLzNFAT6pHRjhTqG36xgf6QEIebztphIVAh4deeXQnsrS
-	iJ2jqr4v95FATL750Eynl5GzXRawsDr91DDw66+pnGAZ1pjOoKQGsBUsi6QLA/ITeeapsjN7Ac/
-	7qt6XY2+73EkxncvJsOaSL2nHXCWMkDCQ8snxJ721SjTm2SedjuUEZDGOeWh50BFsmvV6JJqPfp
-	DF5p8AjZiphbQ9RhWi9cwMUk5MUGaWKH9vgxCU0HQpj1Zmi47K+NkoHHCVuYbIAY5Ol0hofLR7O
-	Y
-X-Google-Smtp-Source: AGHT+IEojHuDEfhv+Il/aCDRUeJzWgS8kwDdwg7ziLognMyZb9CPBYDF5z+fFQk+f8Y8ClCOfvDCmQ==
-X-Received: by 2002:a17:902:f541:b0:235:129a:175f with SMTP id d9443c01a7336-2382404b2d6mr68604945ad.34.1750866217108;
-        Wed, 25 Jun 2025 08:43:37 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1750866234; x=1751471034;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=zCwVhyi7LrS0Mr9IkZPeUKS3dkG/nZ+Hto/3dQfFA64=;
+        b=cbzy7pujqJprXyr5Hj/9QFlZtKk5bA1IVM71cTzPbrU7+XHJryXb1iSC7lK9vy1HHT
+         zoUce9z2aoYJL7Ov+K0u+N/ZgYV7pa09WTTdJ4G1blH9HvFmyf2pRlQMt/+uJDTKRRMs
+         bdUAAeQKeXgxmWxRm7e1gMt0bFg+DPG0gKxFV8YoHYz7rJUnZJiICqH21KVeB4aY68yh
+         pVIhHuygfkxMPY0O52y+liL+gqUne0sXQALsDCQ7XRXJH1dZ5uaP69en4eFkg/N0Apl3
+         BMW4qSXK3iCkcfLfuVPncw0qnPs16edb1A9hnH/JL6NT+f4OJp2CvJPUrQji2eTjzbIM
+         1O5A==
+X-Forwarded-Encrypted: i=1; AJvYcCUiem6FC8J0r8zV14gBT5A2QHvwzm13Wc26PCgwLEdYElDvVpXCQPTuROf7oRbtR63NuDjTQG8H/V+WKJLR@vger.kernel.org, AJvYcCWHf8tAj9mRzkxyc4iiBt0rJgQPK2trINEHwPpB+lKjj8H2lqzQAiaQUGQozJy1ed9dh4WsRjmjnh7c@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz7AiAz7ZJ3Dd0fDo2CzHHTur3W4dyGcxE4y+QiSC6U9oq13kR1
+	wV9l/a3IqK5n8g1HeqXuTMYNDVabeD01K8mAhiP4daM2KRuwLlvGiPI4
+X-Gm-Gg: ASbGncuvaP+aXpi5CLC27r4D7jjrkfmBTb7lEJZyd68z5hav6G0J15lJEurQ3VrzhBX
+	duAKsFF/aR/kh4TrszU8LJH69VsZ//Yp1gYOYx+9Dor/vIBDd6s6EoaNEp7w+Gtpbs7J8/fa3wl
+	u09HTHnhDHFe4umiHLZ32V3DnbUZgtseczbVDLMM0ZCVloo5sq4rZRfG5fXVUOnRjtCQaEvRapN
+	rKrl9RSGnvqTwrq/27TVdzBdawPaYlZdG4o4Z4ou37sO55KXH+4Ap/c8mv3SIETpGBbqfhsocdr
+	ElZxJy3VAdXCNm+Rt2DooySSZbOP/zTyVKd+yGmAMfEr6XdoDlrQs/aAYOMKDuH+kg==
+X-Google-Smtp-Source: AGHT+IHN92Qo+dvAQ+28gXK4ziIoW7+YAMLhjXmIJg8gQMeMAzSdi5uWrQ0PalJRetFQ24Rbp1Pf8A==
+X-Received: by 2002:a17:902:e881:b0:234:909b:3dba with SMTP id d9443c01a7336-23823fe1503mr62865065ad.20.1750866234331;
+        Wed, 25 Jun 2025 08:43:54 -0700 (PDT)
 Received: from ubu24.. ([2400:2410:dfca:c200:951d:3a1e:f612:1525])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-237d86628ffsm134229795ad.156.2025.06.25.08.43.25
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-237d86628ffsm134229795ad.156.2025.06.25.08.43.45
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 25 Jun 2025 08:43:32 -0700 (PDT)
+        Wed, 25 Jun 2025 08:43:51 -0700 (PDT)
 From: Taishi Shimizu <s.taishi14142@gmail.com>
 To: Rob Herring <robh@kernel.org>,
 	Krzysztof Kozlowski <krzk+dt@kernel.org>,
@@ -84,10 +85,12 @@ Cc: linux-arm-kernel@lists.infradead.org,
 	Linus Walleij <linus.walleij@linaro.org>,
 	Stefan Wahren <wahrenst@gmx.net>,
 	Taishi Shimizu <s.taishi14142@gmail.com>
-Subject: [PATCH 1/2] dt-bindings: arm: bcm: Add support for Buffalo WXR-1750DHP
-Date: Thu, 26 Jun 2025 00:43:14 +0900
-Message-ID: <20250625154315.114139-1-s.taishi14142@gmail.com>
+Subject: [PATCH 2/2] ARM: dts: BCM5301X: Add support for Buffalo WXR-1750DHP
+Date: Thu, 26 Jun 2025 00:43:15 +0900
+Message-ID: <20250625154315.114139-2-s.taishi14142@gmail.com>
 X-Mailer: git-send-email 2.43.0
+In-Reply-To: <20250625154315.114139-1-s.taishi14142@gmail.com>
+References: <20250625154315.114139-1-s.taishi14142@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -96,25 +99,177 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Add Buffalo WXR-1750DHP under BCM4708 based boards.
+Add initial device tree support for the Buffalo WXR-1750DHP, a consumer Wi-Fi
+router based on the Broadcom BCM4708A0 SoC.
+
+Hardware specifications:
+* Processor: Broadcom BCM4708A0 dual-core @ 800 MHz
+* RAM: DDR3 256 MB
+* Ethernet Switch: Broadcom BCM53011 integrated via SRAB
+* NAND Flash: 128 MB (8-bit ECC)
+* SPI Flash: None
+* Ports: 4 LAN Ports, 1 WAN Port
+* USB: 1x USB 3.0 Type-A port
 
 Signed-off-by: Taishi Shimizu <s.taishi14142@gmail.com>
 ---
- Documentation/devicetree/bindings/arm/bcm/brcm,bcm4708.yaml | 1 +
- 1 file changed, 1 insertion(+)
+ arch/arm/boot/dts/broadcom/Makefile           |   1 +
+ .../broadcom/bcm4708-buffalo-wxr-1750dhp.dts  | 134 ++++++++++++++++++
+ 2 files changed, 135 insertions(+)
+ create mode 100644 arch/arm/boot/dts/broadcom/bcm4708-buffalo-wxr-1750dhp.dts
 
-diff --git a/Documentation/devicetree/bindings/arm/bcm/brcm,bcm4708.yaml b/Documentation/devicetree/bindings/arm/bcm/brcm,bcm4708.yaml
-index d925e7a3b5ef..f47d74a5b0b6 100644
---- a/Documentation/devicetree/bindings/arm/bcm/brcm,bcm4708.yaml
-+++ b/Documentation/devicetree/bindings/arm/bcm/brcm,bcm4708.yaml
-@@ -25,6 +25,7 @@ properties:
-           - enum:
-               - asus,rt-ac56u
-               - asus,rt-ac68u
-+              - buffalo,wxr-1750dhp
-               - buffalo,wzr-1166dhp
-               - buffalo,wzr-1166dhp2
-               - buffalo,wzr-1750dhp
+diff --git a/arch/arm/boot/dts/broadcom/Makefile b/arch/arm/boot/dts/broadcom/Makefile
+index 71062ff9adbe..2552e11b5e31 100644
+--- a/arch/arm/boot/dts/broadcom/Makefile
++++ b/arch/arm/boot/dts/broadcom/Makefile
+@@ -51,6 +51,7 @@ dtb-$(CONFIG_ARCH_BCMBCA) += \
+ dtb-$(CONFIG_ARCH_BCM_5301X) += \
+ 	bcm4708-asus-rt-ac56u.dtb \
+ 	bcm4708-asus-rt-ac68u.dtb \
++	bcm4708-buffalo-wxr-1750dhp.dtb \
+ 	bcm4708-buffalo-wzr-1750dhp.dtb \
+ 	bcm4708-buffalo-wzr-1166dhp.dtb \
+ 	bcm4708-buffalo-wzr-1166dhp2.dtb \
+diff --git a/arch/arm/boot/dts/broadcom/bcm4708-buffalo-wxr-1750dhp.dts b/arch/arm/boot/dts/broadcom/bcm4708-buffalo-wxr-1750dhp.dts
+new file mode 100644
+index 000000000000..43a4a8e58b40
+--- /dev/null
++++ b/arch/arm/boot/dts/broadcom/bcm4708-buffalo-wxr-1750dhp.dts
+@@ -0,0 +1,134 @@
++// SPDX-License-Identifier: GPL-2.0-or-later OR MIT
++/*
++ * Author: Taishi Shimizu <s.taishi14142@gmail.com>
++ */
++
++/dts-v1/;
++
++#include "bcm4708.dtsi"
++#include "bcm5301x-nand-cs0-bch8.dtsi"
++
++/ {
++	compatible = "buffalo,wxr-1750dhp", "brcm,bcm4708";
++	model = "Buffalo WXR-1750DHP";
++
++	chosen {
++		bootargs = "console=ttyS0,115200";
++	};
++
++	memory@0 {
++		reg = <0x00000000 0x08000000>,
++		      <0x88000000 0x08000000>;
++		device_type = "memory";
++	};
++
++	gpio-keys {
++		compatible = "gpio-keys";
++
++		button-aoss {
++			label = "AOSS";
++			linux,code = <KEY_WPS_BUTTON>;
++			gpios = <&chipcommon 2 GPIO_ACTIVE_LOW>;
++		};
++
++		/* GPIO 8 and 9 are a tri-state switch button with
++		 * ROUTER / AP / WB.
++		 */
++		button-bridge {
++			label = "WB";
++			linux,code = <BTN_2>;
++			linux,input-type = <EV_SW>;
++			gpios = <&chipcommon 8 GPIO_ACTIVE_HIGH>;
++		};
++
++		/* GPIO 3 is a switch button with AUTO / MANUAL. */
++		button-manual {
++			label = "MANUAL";
++			linux,code = <BTN_0>;
++			linux,input-type = <EV_SW>;
++			gpios = <&chipcommon 3 GPIO_ACTIVE_HIGH>;
++		};
++
++		button-restart {
++			label = "Reset";
++			linux,code = <KEY_RESTART>;
++			gpios = <&chipcommon 11 GPIO_ACTIVE_LOW>;
++		};
++
++		button-router {
++			label = "ROUTER";
++			linux,code = <BTN_1>;
++			linux,input-type = <EV_SW>;
++			gpios = <&chipcommon 9 GPIO_ACTIVE_HIGH>;
++		};
++	};
++
++	leds {
++		compatible = "gpio-leds";
++
++		led-power0 {
++			label = "bcm53xx:white:power";
++			linux,default-trigger = "default-on";
++			gpios = <&chipcommon 5 GPIO_ACTIVE_HIGH>;
++		};
++
++		led-power1 {
++			label = "bcm53xx:amber:power";
++			gpios = <&chipcommon 6 GPIO_ACTIVE_HIGH>;
++		};
++
++		led-router0 {
++			label = "bcm53xx:amber:router";
++			gpios = <&chipcommon 14 GPIO_ACTIVE_HIGH>;
++		};
++
++		led-router1 {
++			label = "bcm53xx:white:router";
++			gpios = <&chipcommon 15 GPIO_ACTIVE_HIGH>;
++		};
++
++		led-usb {
++			label = "bcm53xx:green:usb";
++			gpios = <&chipcommon 4 GPIO_ACTIVE_HIGH>;
++		};
++
++		led-wan {
++			label = "bcm53xx:white:wan";
++			gpios = <&chipcommon 7 GPIO_ACTIVE_HIGH>;
++		};
++	};
++};
++
++&srab {
++	status = "okay";
++
++	ports {
++		port@0 {
++			label = "wan";
++		};
++
++		port@1 {
++			label = "lan4";
++		};
++
++		port@2 {
++			label = "lan3";
++		};
++
++		port@3 {
++			label = "lan2";
++		};
++
++		port@4 {
++			label = "lan1";
++		};
++	};
++};
++
++&usb3 {
++	vcc-gpio = <&chipcommon 10 GPIO_ACTIVE_HIGH>;
++};
++
++&usb3_phy {
++	status = "okay";
++};
 -- 
 2.43.0
 
