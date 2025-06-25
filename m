@@ -1,180 +1,249 @@
-Return-Path: <linux-kernel+bounces-702567-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-702574-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5F800AE8419
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Jun 2025 15:15:45 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id D9E9BAE842F
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Jun 2025 15:18:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D72D218851DA
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Jun 2025 13:14:07 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 800281884B73
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Jun 2025 13:15:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 81319263C9B;
-	Wed, 25 Jun 2025 13:11:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7ACDD261573;
+	Wed, 25 Jun 2025 13:15:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="mdrpuFgG"
-Received: from mail-pl1-f171.google.com (mail-pl1-f171.google.com [209.85.214.171])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="nZirtRzj"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 17F22262FDE;
-	Wed, 25 Jun 2025 13:11:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C537B155C82;
+	Wed, 25 Jun 2025 13:15:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750857076; cv=none; b=avZUmsMSpm7WSQeYadZGToUCOsZMG9HDLpzu529NZz6C0IfiMHdaOIhmGHjT3B7uNpw17Fg7W3v2NW0LDRClmiXIZzG764TtZcyFm/yqnAN++IP/mSBqCsTBluynURX7Oyo+2fv7WB1BXWrvBDQN8mIhfSq+wPLjyyucPpoJcrA=
+	t=1750857318; cv=none; b=uMsEwRVPiImw/RgSNxbc2+lrrx6yadpeCOl/Triz0almwtXZ6aj6zDHsPONnMFQzii/a40uypw2Y/laRv17Wgyx1+sBE+zcaAC9M6J5V7Sb1t9fVGiP1CcUkEJPyTmgs6rt4P1P25LDvpgfrDNVSnuClht/IkqeM4QwA/finlqY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750857076; c=relaxed/simple;
-	bh=j8C2e6tDckdTRfkOURaqEkwk7kmVI0oyt3RA3Hwp+uI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=hNd8Bo1+vUojSm6iZVz1rgLa0/vQvBCv8+WQwjzF5Fgn3Uwr73lnlV0wbZF0jek9Ue8EpSPH9AhidGvy/6KeO32kleQ5cp48wWQvZLvbHLP7ntuoHkUg3IPGgrCQkj/UWVatInmh4RZl4moLtd0J1oaItrrnsvt2BeGbYX+N6pA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=mdrpuFgG; arc=none smtp.client-ip=209.85.214.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f171.google.com with SMTP id d9443c01a7336-2363e973db1so8376855ad.0;
-        Wed, 25 Jun 2025 06:11:14 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1750857074; x=1751461874; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:sender
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=pINmzrGfM7W/3B9anyGB+QhxgI2dWFZ69bm3f0khYUI=;
-        b=mdrpuFgGJJGA6TQkUtweiw5NkxOABpGpjP2rYDl0/eMNflyc8HI+uOi+CDX9RLp+P1
-         6VDxrm9UrHeuLnqbaMGoJ2TkU5Z2nj3GFXRS4+lq+4zNvHbxlwg1GORquijfNP2NvEiD
-         ltvb7kcRRkkMtc6ni0oF1w+m1LkcZlwoCkpuYyujXnAe/TmacYEt9EyYBjSeBXFuf3oA
-         QhTzq/I0FAAh2YQNOzPAVhlm65XbR8eRik1rsa6+X9/HgPbVMP+6atlssi0el9Ha1Vws
-         LuGWsEcXxtfDaQvepkrlDUQKNHoqGuqTwYFpyKt+7YP/9C/SbZH9Fq3B83nQo4XZO+Rd
-         +G9w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1750857074; x=1751461874;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:sender
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=pINmzrGfM7W/3B9anyGB+QhxgI2dWFZ69bm3f0khYUI=;
-        b=jyElNzbH5sYscs3qN1AwDlJkugjECQmRL8fWsgcpcYeOnUz6ljRTJkTEPi2TXdJ9of
-         jO4Ovq6fC6F1egwzo3bYc2fC/pvtTVYJCvuXSYa4Qd7d8cO6LUE/JOTNLBsc1EdKI+lI
-         WMhTyYa+1BW4dFDuTrOm7lhanRe4L93U24Kv/evuVeXkIiI+vaGzm0Q7c4el/Kdmn2fO
-         dh1i6KfsSxeQsKYcpF1FS4XUAtjHzRJX4brlE+z/VGcne2IcTYH91ykeqMDPS2BXWZiK
-         gzHrGcfWtf2YJzxpMsH1ju5aqrz8IF8zshf1vY0a2yZOFJZ/C6XqOSjCCpouqkTLcN94
-         r/Eg==
-X-Forwarded-Encrypted: i=1; AJvYcCV0khw1YQcU8Z1uT8hkfTDoBB94wRBMMHc7zhZfqum756ie0kzkuW+OANHS46DTLlDA5C9AoESQN+2/@vger.kernel.org, AJvYcCVCamQHF7x7JXcpQ2h7rtydTVypladjViJ15zvoV7Mm8QWFPQV8KuJWwU8lnowSG/GKknNrLDIB3SpWtTDk@vger.kernel.org, AJvYcCVMY1eLVWza1lABvFOH8lmIxFvcu12We3xWRcP+Px+Y/m0d3QfnDDf4H8Veuu2eGiAYFPCNbb7mDKeUzcY=@vger.kernel.org, AJvYcCXoGW8+rzcuoDEWZlpNSCaPgZAUgw66aLMNNc4TWja48zR/H5e+Tx4HZ0vVlEJ69yF42gz3bvOaq9lv@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy+fUbOmah72nEQV4GnqgxPpE9klFBn0+72bMFfn3warsRkfGA0
-	kIGx0nlt49gUnn9MYJI6DpGmC0uAUQiVfhQ0jIRZyYlag5Ia+X1InWra
-X-Gm-Gg: ASbGncueERItYGfptAeNePxTZDfl+Kc5KKm3kiSYEbVzxsL71v6g9pomOqx4M7nFwOo
-	TngfqlozJZv0ow4cHsSjQoADqjwLUtlsJhr4KLzOJIybGxPkSVdXzejbKDzzuk8OJkCDDFl8zEe
-	QUBHVNmQCA8wteRDlLz7le2hNvHUkfZGQIvBP7xfyTu3tweGN0xcosN8p15N5ilVJS9xTiMDKv7
-	Ik3ad2mRi4qrRnCfQ4z5mQ/DbyDZ39Z9psk+iGLQvqIqC1kQe7gtrRPn+7I7qzHswtaMIaMU/jd
-	RbBMeJl6qBWablywo4BeB6dOPw+SoOaPmvZYo/M8YVAqknNnR2NSTAQ+dzAm2FZHGSbb94tdAxA
-	=
-X-Google-Smtp-Source: AGHT+IGFwa6G2iKD65nivo9JPbJnbMdbeBIL5HNDz82Jr9/nArUgZKtC6neqtfHGwF4oRip87mYzHQ==
-X-Received: by 2002:a17:902:fc46:b0:234:b445:3f31 with SMTP id d9443c01a7336-238024b07b2mr133494025ad.17.1750857073974;
-        Wed, 25 Jun 2025 06:11:13 -0700 (PDT)
-Received: from server.roeck-us.net ([2600:1700:e321:62f0:da43:aeff:fecc:bfd5])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-237d839325fsm131346655ad.47.2025.06.25.06.11.13
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 25 Jun 2025 06:11:13 -0700 (PDT)
-Sender: Guenter Roeck <groeck7@gmail.com>
-Date: Wed, 25 Jun 2025 06:11:11 -0700
-From: Guenter Roeck <linux@roeck-us.net>
-To: =?utf-8?B?5ZCz5qKT6LGq?= <tzuhao.wtmh@gmail.com>
-Cc: Krzysztof Kozlowski <krzk@kernel.org>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Jean Delvare <jdelvare@suse.com>, Jonathan Corbet <corbet@lwn.net>,
-	Jonathan Cameron <Jonathan.Cameron@huawei.com>,
-	Naresh Solanki <naresh.solanki@9elements.com>,
-	Rodrigo Gobbi <rodrigo.gobbi.7@gmail.com>,
-	Michal Simek <michal.simek@amd.com>,
-	Fabio Estevam <festevam@gmail.com>,
-	Henry Wu <Henry_Wu@quantatw.com>,
-	Grant Peltier <grantpeltier93@gmail.com>,
-	Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-	Cedric Encarnacion <cedricjustine.encarnacion@analog.com>,
-	Kim Seer Paller <kimseer.paller@analog.com>,
-	Leo Yang <leo.yang.sy0@gmail.com>,
-	Ninad Palsule <ninad@linux.ibm.com>,
-	Alex Vdovydchenko <xzeol@yahoo.com>,
-	John Erasmus Mari Geronimo <johnerasmusmari.geronimo@analog.com>,
-	Nuno Sa <nuno.sa@analog.com>, Jerome Brunet <jbrunet@baylibre.com>,
-	Noah Wang <noahwang.wang@outlook.com>,
-	Mariel Tinaco <Mariel.Tinaco@analog.com>,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-hwmon@vger.kernel.org, linux-doc@vger.kernel.org
-Subject: Re: [PATCH 1/2] hwmon: (pmbus) Add support for MPS multi-phase
- mp2869a/mp29612a controllers
-Message-ID: <331d77c4-fa53-4d3b-a17e-22481bf72d32@roeck-us.net>
-References: <20250624074156.291176-1-Henry_Wu@quantatw.tw>
- <9bd05709-7702-4b74-85e1-3df25b57c535@kernel.org>
- <CAL3H=v3s6H4ZpnS=EhPrpEiu-9N-xFCkunHuwWW0xnkXbzY9Kg@mail.gmail.com>
+	s=arc-20240116; t=1750857318; c=relaxed/simple;
+	bh=2piF3483Pz4JDdFUQw6HgD2GVTOG3rmk2pWQMFIJEqU=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=q4zPdbCWRwB8jJ/BdpB0XKUtp0uWI3oIuovt7///Ge+qefr2qdn9tFaKF28/O+xOMLnUZAgwtGtVaZHCjS9ho4EwRTN7Dr8BAvq1I0zRY6Yha9r77UuLu3ACURvioKsl/86K6gyS367UQSMDdiV3npfn1a+p7xZc89V+WOq95LA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=nZirtRzj; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2F6A7C4CEEA;
+	Wed, 25 Jun 2025 13:15:16 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1750857318;
+	bh=2piF3483Pz4JDdFUQw6HgD2GVTOG3rmk2pWQMFIJEqU=;
+	h=From:To:Cc:Subject:Date:From;
+	b=nZirtRzj9JTpn1p5W94ReFTFR8aiBBfnf1QCvvu4lEv274VM0D2/phl5Ou5XseR+k
+	 6ayvzpOmRu5x7dPOlIfYOeCSFhDai8CKV7QfGqjZR2bgSNNwT0jFGt8scFtK3EY9Y7
+	 esGxANr+IuEqqxkT9FpNyUMpHb65MguGH6gjM/0qGYOf3SHUp4jLk6wvLZja4TIisT
+	 KAqt5XAKYEec/ZZU4q0C0odSWg5spOHD2+NaKvSw8Wr2ppJ9OF3wQqimXZ7Ffl6WGX
+	 HJSZ8h8nZIGnIlmK5IbNwKlCVet60O1ihKcqhE0Em3qzZJSDwE2619PPFx9Xl4eBVs
+	 DjnGZr7rErhyg==
+From: Arnd Bergmann <arnd@kernel.org>
+To: Thomas Zimmermann <tzimmermann@suse.de>,
+	Simona Vetter <simona@ffwll.ch>,
+	Helge Deller <deller@gmx.de>
+Cc: Arnd Bergmann <arnd@arndb.de>,
+	Daniel Mack <daniel@zonque.org>,
+	Haojian Zhuang <haojian.zhuang@gmail.com>,
+	Robert Jarzmik <robert.jarzmik@free.fr>,
+	Javier Martinez Canillas <javierm@redhat.com>,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	linux-fbdev@vger.kernel.org,
+	dri-devel@lists.freedesktop.org
+Subject: [PATCH 1/2] fbdev: remove fb_notify support
+Date: Wed, 25 Jun 2025 15:12:22 +0200
+Message-Id: <20250625131511.3366522-1-arnd@kernel.org>
+X-Mailer: git-send-email 2.39.5
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAL3H=v3s6H4ZpnS=EhPrpEiu-9N-xFCkunHuwWW0xnkXbzY9Kg@mail.gmail.com>
 
-On Wed, Jun 25, 2025 at 02:31:02PM +0800, 吳梓豪 wrote:
-> Krzysztof Kozlowski <krzk@kernel.org> 於 2025年6月24日 週二 下午3:48寫道：
-> >
-> > On 24/06/2025 09:41, tzuhao.wtmh@gmail.com wrote:
-> > > +static int
-> > > +MP2869A_read_byte_data(struct i2c_client *client, int page, int reg)
-> > > +{
-> > > +     switch (reg) {
-> > > +     case PMBUS_VOUT_MODE:
-> > > +             /* Enforce VOUT direct format. */
-> > > +             return PB_VOUT_MODE_DIRECT;
-> > > +     default:
-> > > +             return -ENODATA;
-> > > +     }
-> > > +}
-> > > +
-> > > +static int
-> > > +MP2869A_identify_vout_format(struct i2c_client *client,
-> >
-> > Use Linux coding style, so lowercase for variables, types and functions.
-> > Everywhere (except when coding style tells you different, so please read
-> > it).
-> >
-> > > +                         struct MP2869A_data *data)
-> > > +{
-> > > +     int i, ret;
-> > > +
-> > > +     for (i = 0; i < data->info.pages; i++) {
-> > > +             ret = i2c_smbus_write_byte_data(client, PMBUS_PAGE, i);
-> > > +             if (ret < 0)
-> > > +                     return ret;
-> > > +
-> > > +             ret = i2c_smbus_read_word_data(client, MP2869A_VOUT_MODE);
-> > > +             if (ret < 0)
-> > > +                     return ret;
-> > > +
-> > > +             switch (ret & MP2869A_VOUT_MODE_MASK) {
-> > > +             case MP2869A_VOUT_MODE_VID:
-> > > +                     data->vout_format[i] = vid;
-> > > +                     break;
-> > > +             default:
-> > > +             return -EINVAL;
-> > > +             }
-> > > +             }
-> >
-> > Messed indentation in multiple places.
-> >
-> > > +     return 0;
-> > > +}
-> > > +
-> > > +static struct pmbus_driver_info MP2869A_info = {
-> >
-> > This is const.
-> Since info will be modified by mp2869a_read_vout at runtime, I chose
-> not to make it constant
+From: Arnd Bergmann <arnd@arndb.de>
 
-That is a no-go. There can be multiple instances of the chip in a system,
-each requiring its own info data structure. If the structure is modified
-at runtime it needs to be copied first.
+Commit dc2139c0aa32 ("leds: backlight trigger: Replace fb events with a
+dedicated function call") removed the FB_EVENT_BLANK notifier, and now
+the only remaining user of the FB notifier is the metronomefb driver on
+the PXA/AM200EPD board.
 
-Guenter
+This was introduced in commit 922613436ae5 ("[ARM] 5200/1: am200epd: use
+fb notifiers and gpio api"), which converted it from an earlier version,
+but as far as I can tell this can never have worked because the notifier
+is called after the data it passes down is accessed.
+
+Commit 867187821e5e ("fbdev/metronomefb: Use struct fb_info.screen_buffer")
+broke this further, and there are likely other parts of the driver that
+no longer work.
+
+The am200epd board support itself should have also been removed long ago,
+as there are no users and it was never converted to devicetree format.
+
+Mark the board as broken to prevent build failures and remove the now
+unused notifiers.
+
+Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+---
+ arch/arm/mach-pxa/Kconfig            |  1 +
+ drivers/video/fbdev/core/Makefile    |  1 -
+ drivers/video/fbdev/core/fb_notify.c | 54 ----------------------------
+ drivers/video/fbdev/core/fbmem.c     | 15 --------
+ include/linux/fb.h                   | 21 -----------
+ 5 files changed, 1 insertion(+), 91 deletions(-)
+ delete mode 100644 drivers/video/fbdev/core/fb_notify.c
+
+diff --git a/arch/arm/mach-pxa/Kconfig b/arch/arm/mach-pxa/Kconfig
+index 10e472f4fa43..edefc953e4f9 100644
+--- a/arch/arm/mach-pxa/Kconfig
++++ b/arch/arm/mach-pxa/Kconfig
+@@ -69,6 +69,7 @@ choice
+ 
+ config GUMSTIX_AM200EPD
+ 	bool "Enable AM200EPD board support"
++	depends on BROKEN
+ 
+ config GUMSTIX_AM300EPD
+ 	bool "Enable AM300EPD board support"
+diff --git a/drivers/video/fbdev/core/Makefile b/drivers/video/fbdev/core/Makefile
+index d15974759086..ac8036209501 100644
+--- a/drivers/video/fbdev/core/Makefile
++++ b/drivers/video/fbdev/core/Makefile
+@@ -1,5 +1,4 @@
+ # SPDX-License-Identifier: GPL-2.0
+-obj-$(CONFIG_FB_NOTIFY)           += fb_notify.o
+ obj-$(CONFIG_FB_CORE)             += fb.o
+ fb-y                              := fb_info.o \
+                                      fbmem.o fbcmap.o \
+diff --git a/drivers/video/fbdev/core/fb_notify.c b/drivers/video/fbdev/core/fb_notify.c
+deleted file mode 100644
+index 10e3b9a74adc..000000000000
+--- a/drivers/video/fbdev/core/fb_notify.c
++++ /dev/null
+@@ -1,54 +0,0 @@
+-/*
+- *  linux/drivers/video/fb_notify.c
+- *
+- *  Copyright (C) 2006 Antonino Daplas <adaplas@pol.net>
+- *
+- *	2001 - Documented with DocBook
+- *	- Brad Douglas <brad@neruo.com>
+- *
+- * This file is subject to the terms and conditions of the GNU General Public
+- * License.  See the file COPYING in the main directory of this archive
+- * for more details.
+- */
+-#include <linux/fb.h>
+-#include <linux/notifier.h>
+-#include <linux/export.h>
+-
+-static BLOCKING_NOTIFIER_HEAD(fb_notifier_list);
+-
+-/**
+- *	fb_register_client - register a client notifier
+- *	@nb: notifier block to callback on events
+- *
+- *	Return: 0 on success, negative error code on failure.
+- */
+-int fb_register_client(struct notifier_block *nb)
+-{
+-	return blocking_notifier_chain_register(&fb_notifier_list, nb);
+-}
+-EXPORT_SYMBOL(fb_register_client);
+-
+-/**
+- *	fb_unregister_client - unregister a client notifier
+- *	@nb: notifier block to callback on events
+- *
+- *	Return: 0 on success, negative error code on failure.
+- */
+-int fb_unregister_client(struct notifier_block *nb)
+-{
+-	return blocking_notifier_chain_unregister(&fb_notifier_list, nb);
+-}
+-EXPORT_SYMBOL(fb_unregister_client);
+-
+-/**
+- * fb_notifier_call_chain - notify clients of fb_events
+- * @val: value passed to callback
+- * @v: pointer passed to callback
+- *
+- * Return: The return value of the last notifier function
+- */
+-int fb_notifier_call_chain(unsigned long val, void *v)
+-{
+-	return blocking_notifier_call_chain(&fb_notifier_list, val, v);
+-}
+-EXPORT_SYMBOL_GPL(fb_notifier_call_chain);
+diff --git a/drivers/video/fbdev/core/fbmem.c b/drivers/video/fbdev/core/fbmem.c
+index dfcf5e4d1d4c..82ec7351e7da 100644
+--- a/drivers/video/fbdev/core/fbmem.c
++++ b/drivers/video/fbdev/core/fbmem.c
+@@ -498,14 +498,6 @@ static int do_register_framebuffer(struct fb_info *fb_info)
+ 	num_registered_fb++;
+ 	registered_fb[i] = fb_info;
+ 
+-#ifdef CONFIG_GUMSTIX_AM200EPD
+-	{
+-		struct fb_event event;
+-		event.info = fb_info;
+-		fb_notifier_call_chain(FB_EVENT_FB_REGISTERED, &event);
+-	}
+-#endif
+-
+ 	return fbcon_fb_registered(fb_info);
+ }
+ 
+@@ -544,13 +536,6 @@ static void do_unregister_framebuffer(struct fb_info *fb_info)
+ 	fb_destroy_modelist(&fb_info->modelist);
+ 	registered_fb[fb_info->node] = NULL;
+ 	num_registered_fb--;
+-#ifdef CONFIG_GUMSTIX_AM200EPD
+-	{
+-		struct fb_event event;
+-		event.info = fb_info;
+-		fb_notifier_call_chain(FB_EVENT_FB_UNREGISTERED, &event);
+-	}
+-#endif
+ 	fbcon_fb_unregistered(fb_info);
+ 
+ 	/* this may free fb info */
+diff --git a/include/linux/fb.h b/include/linux/fb.h
+index 05cc251035da..520ad870b8b2 100644
+--- a/include/linux/fb.h
++++ b/include/linux/fb.h
+@@ -151,27 +151,6 @@ struct fb_blit_caps {
+ 	u32 flags;
+ };
+ 
+-#ifdef CONFIG_FB_NOTIFY
+-extern int fb_register_client(struct notifier_block *nb);
+-extern int fb_unregister_client(struct notifier_block *nb);
+-extern int fb_notifier_call_chain(unsigned long val, void *v);
+-#else
+-static inline int fb_register_client(struct notifier_block *nb)
+-{
+-	return 0;
+-};
+-
+-static inline int fb_unregister_client(struct notifier_block *nb)
+-{
+-	return 0;
+-};
+-
+-static inline int fb_notifier_call_chain(unsigned long val, void *v)
+-{
+-	return 0;
+-};
+-#endif
+-
+ /*
+  * Pixmap structure definition
+  *
+-- 
+2.39.5
+
 
