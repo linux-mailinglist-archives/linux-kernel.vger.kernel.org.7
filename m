@@ -1,78 +1,328 @@
-Return-Path: <linux-kernel+bounces-703217-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-703219-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 04EBAAE8D0F
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Jun 2025 20:53:29 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5E637AE8D16
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Jun 2025 20:53:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B43A43A5AEC
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Jun 2025 18:53:02 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E7204189FC19
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Jun 2025 18:54:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 05432285C82;
-	Wed, 25 Jun 2025 18:53:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3E6252DA742;
+	Wed, 25 Jun 2025 18:53:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="CVSRtwV/"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ppeUKjip"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 55FDF2D8DBB;
-	Wed, 25 Jun 2025 18:53:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6A5051CAA7B;
+	Wed, 25 Jun 2025 18:53:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750877598; cv=none; b=Fl1QGF70aC7gv3FwRGGhBckb7Ve4uoSDzJThso1lynBciZ21srkCz0aCfzcWCsgfSBP6xNJkKP8da8wtBpLSmCsGg6Rl9oRXL6UyFPrdfbRL4Kczr6vXOYNw4hpTfX5XD5bI+De614FHXAhSaCNjv2yqVcjAkALQ6ylM2z9SnFQ=
+	t=1750877624; cv=none; b=KzkY2rR7MQkK6FaTzpuR0D1Sw4q5UZ30xT3TVZgkBF4Kf491C9rZuSAZlxasdYOrDsUbG3oPmt5vBikwVYaB1t79PapejtK2xSheXGrS6Ss3EDL+QnP8LjqZyNyf97q4hd5CaIlWDEv2EtIes2+22wmaX7bYjyYCdVBavrn6Oo0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750877598; c=relaxed/simple;
-	bh=3wYCOYlwhfdQnUe00+EDf/165r80azUtSL9YyHaV/T0=;
-	h=Message-ID:From:To:Cc:Subject:Date; b=DFpaF5boqtn0LhxDmaQFHugIxFgvRLpqYk9TPms3yTgQWGU45k2yKuQrR76+1ZNW2krEoXl+GFlp0DgutW/OtBlS2xeNS2T+/vBM1xE6ikSPde8rJzUhheOAqwfvGArCaOa9uO32TVPDg5syzUi7oUhy9xI3mF5K4Iply6w1+yo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=CVSRtwV/; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4F0F3C4CEEA;
-	Wed, 25 Jun 2025 18:53:17 +0000 (UTC)
+	s=arc-20240116; t=1750877624; c=relaxed/simple;
+	bh=8MrvaYOz4FiqCxr7LmGqB3MEhbBqse7v9vTKMvsiFOM=;
+	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=MwmWUega1XUjaFRmVOf0J3eYwBBIm1hz5aVEoaAQlCF7b5iOfiEch9Tb0ZcfMqo4/H1/AbNdMtPjgR+PdyAs5iZS1sKmswP9IxdQyCk617Ls3kTkGvohhUoXSJr1AaugTbZoQ2IJhr8O5OD2eMVNQPssvHvJQJv7W6Q/zWzpv5s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ppeUKjip; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id BB210C4CEEA;
+	Wed, 25 Jun 2025 18:53:43 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1750877597;
-	bh=3wYCOYlwhfdQnUe00+EDf/165r80azUtSL9YyHaV/T0=;
-	h=From:To:Cc:Subject:Date:From;
-	b=CVSRtwV/MrKypcajCBrXjcZg/nC7B12T8B7lLJmQ3bq2arDvmqttE1eMHSDJGNYx9
-	 xH8ztUrrVWBA8NlFi0/yZgNlBM0U3PvKxjKS7gP3XCpnXo1FVuVmaCcEwpb5hD3ViS
-	 2aNzHdRipdYEqAmJMieDaWwvL4QALPmAOukPWaQObQAGAa6HTsVXSrszUAnFLB9C/J
-	 jAX9ybDzi5Svs70w61RUJY16aU6IOmaA6gb7czs9i8BrmnuDvWLv3decbx2A+jVuOv
-	 Py7uRfRgzX3yFd9g91ex/a5r9eSkIM++9WWyLm5VVuTZ3EnHe/7SvTBbwUftbSYkYd
-	 A7XumvavhwRsQ==
-Message-ID: <95ca93d21c843dd7a6ae15410596d123.broonie@kernel.org>
-From: Mark Brown <broonie@kernel.org>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: linux-spi@vger.kernel.org, linux-kernel@vger.kernel.org, Mark Brown <broonie@kernel.org>
-Subject: [GIT PULL] SPI fixes for v6.16-rc3
-Date: Wed, 25 Jun 2025 19:53:07 +0100
+	s=k20201202; t=1750877623;
+	bh=8MrvaYOz4FiqCxr7LmGqB3MEhbBqse7v9vTKMvsiFOM=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=ppeUKjipB2yJbHdKKPlRyVDqbUX77oJxRhZL7ud1YUoWYEEc27uWBBlAZLBezVolW
+	 ChewIFEAAclm7IdOJPUUGDjVZ3/MC0WzysEt8xqtZhMGJw4yJc6tZeINByuTKz+boE
+	 mhJR9E962ubHGzH0zDyasotU1RFr2cXiBV6mV/yQvTWXA5gDQ2BcKdR56Y3+jPDvJq
+	 wZvA5EjnucM0MTLaIkoACEQuaQo7rhBTC4CQ+sYZkwrsTT2uurEexbd/VVyqEs9Z3h
+	 9paYrB25VlQFRZ1OhgEbXOFw+pJLk1BlNon+BKDU+oehoL3sbV4KqlXl1PUIgVhP2Y
+	 vtjkp9a0WbjMw==
+Received: from sofa.misterjones.org ([185.219.108.64] helo=goblin-girl.misterjones.org)
+	by disco-boy.misterjones.org with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.95)
+	(envelope-from <maz@kernel.org>)
+	id 1uUVFd-00A04o-Gz;
+	Wed, 25 Jun 2025 19:53:41 +0100
+Date: Wed, 25 Jun 2025 19:53:41 +0100
+Message-ID: <861pr7d556.wl-maz@kernel.org>
+From: Marc Zyngier <maz@kernel.org>
+To: Lorenzo Pieralisi <lpieralisi@kernel.org>
+Cc: Thomas Gleixner <tglx@linutronix.de>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will@kernel.org>,
+	Arnd Bergmann <arnd@arndb.de>,
+	Sascha Bischoff <sascha.bischoff@arm.com>,
+	Jonathan Cameron <Jonathan.Cameron@huawei.com>,
+	Timothy Hayes <timothy.hayes@arm.com>,
+	Bjorn Helgaas <bhelgaas@google.com>,
+	"Liam R. Howlett" <Liam.Howlett@oracle.com>,
+	Peter Maydell <peter.maydell@linaro.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Jiri Slaby <jirislaby@kernel.org>,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-pci@vger.kernel.org
+Subject: Re: [PATCH v5 18/27] arm64: smp: Support non-SGIs for IPIs
+In-Reply-To: <20250618-gicv5-host-v5-18-d9e622ac5539@kernel.org>
+References: <20250618-gicv5-host-v5-0-d9e622ac5539@kernel.org>
+	<20250618-gicv5-host-v5-18-d9e622ac5539@kernel.org>
+User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI-EPG/1.14.7 (Harue)
+ FLIM-LB/1.14.9 (=?UTF-8?B?R29qxY0=?=) APEL-LB/10.8 EasyPG/1.0.0 Emacs/30.1
+ (aarch64-unknown-linux-gnu) MULE/6.0 (HANACHIRUSATO)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
+Content-Type: text/plain; charset=US-ASCII
+X-SA-Exim-Connect-IP: 185.219.108.64
+X-SA-Exim-Rcpt-To: lpieralisi@kernel.org, tglx@linutronix.de, robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org, catalin.marinas@arm.com, will@kernel.org, arnd@arndb.de, sascha.bischoff@arm.com, Jonathan.Cameron@huawei.com, timothy.hayes@arm.com, bhelgaas@google.com, Liam.Howlett@oracle.com, peter.maydell@linaro.org, mark.rutland@arm.com, jirislaby@kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, linux-pci@vger.kernel.org
+X-SA-Exim-Mail-From: maz@kernel.org
+X-SA-Exim-Scanned: No (on disco-boy.misterjones.org); SAEximRunCond expanded to false
 
-The following changes since commit 86731a2a651e58953fc949573895f2fa6d456841:
+On Wed, 18 Jun 2025 11:17:33 +0100,
+Lorenzo Pieralisi <lpieralisi@kernel.org> wrote:
+> 
+> From: Marc Zyngier <maz@kernel.org>
+> 
+> The arm64 arch has relied so far on GIC architectural software
+> generated interrupt (SGIs) to handle IPIs. Those are per-cpu
+> software generated interrupts.
+> 
+> arm64 architecture code that allocates the IPIs virtual IRQs and
+> IRQ descriptors was written accordingly.
+> 
+> On GICv5 systems, IPIs are implemented using LPIs that are not
+> per-cpu interrupts - they are just normal routable IRQs.
+> 
+> Add arch code to set-up IPIs on systems where they are handled
+> using normal routable IRQs.
+> 
+> For those systems, force the IRQ affinity (and make it immutable)
+> to the cpu a given IRQ was assigned to.
+> 
+> Signed-off-by: Marc Zyngier <maz@kernel.org>
+> [timothy.hayes@arm.com: fixed ipi/irq conversion, irq flags]
+> Signed-off-by: Timothy Hayes <timothy.hayes@arm.com>
+> [lpieralisi: changed affinity set-up, log]
+> Signed-off-by: Lorenzo Pieralisi <lpieralisi@kernel.org>
+> Cc: Will Deacon <will@kernel.org>
+> Cc: Catalin Marinas <catalin.marinas@arm.com>
+> ---
+>  arch/arm64/include/asm/smp.h |   7 ++-
+>  arch/arm64/kernel/smp.c      | 142 ++++++++++++++++++++++++++++++++-----------
+>  2 files changed, 114 insertions(+), 35 deletions(-)
+> 
+> diff --git a/arch/arm64/include/asm/smp.h b/arch/arm64/include/asm/smp.h
+> index 2510eec026f7..d6fd6efb66a6 100644
+> --- a/arch/arm64/include/asm/smp.h
+> +++ b/arch/arm64/include/asm/smp.h
+> @@ -53,7 +53,12 @@ extern void smp_init_cpus(void);
+>  /*
+>   * Register IPI interrupts with the arch SMP code
+>   */
+> -extern void set_smp_ipi_range(int ipi_base, int nr_ipi);
+> +extern void set_smp_ipi_range_percpu(int ipi_base, int nr_ipi, int ncpus);
+> +
+> +static inline void set_smp_ipi_range(int ipi_base, int n)
+> +{
+> +	set_smp_ipi_range_percpu(ipi_base, n, 0);
+> +}
+>  
+>  /*
+>   * Called from the secondary holding pen, this is the secondary CPU entry point.
+> diff --git a/arch/arm64/kernel/smp.c b/arch/arm64/kernel/smp.c
+> index 3b3f6b56e733..7fd6bec80750 100644
+> --- a/arch/arm64/kernel/smp.c
+> +++ b/arch/arm64/kernel/smp.c
+> @@ -83,7 +83,31 @@ enum ipi_msg_type {
+>  
+>  static int ipi_irq_base __ro_after_init;
+>  static int nr_ipi __ro_after_init = NR_IPI;
+> -static struct irq_desc *ipi_desc[MAX_IPI] __ro_after_init;
+> +
+> +struct ipi_descs {
+> +	struct irq_desc *descs[MAX_IPI];
+> +};
+> +
+> +static DEFINE_PER_CPU(struct ipi_descs, pcpu_ipi_desc);
 
-  Linux 6.16-rc3 (2025-06-22 13:30:08 -0700)
+I wish we would make this __ro_after_init, but it doesn't see to be
+possible to do that. At least make it read_mostly, which may help a
+bit.
 
-are available in the Git repository at:
+> +
+> +#define get_ipi_desc(__cpu, __ipi) (per_cpu_ptr(&pcpu_ipi_desc, __cpu)->descs[__ipi])
+> +
+> +static bool percpu_ipi_descs __ro_after_init;
+> +
+> +static int ipi_to_irq_percpu(int ipi, int cpu)
+> +{
+> +	return ipi_irq_base + (cpu * nr_ipi) + ipi;
+> +}
+> +
+> +static int ipi_to_irq(int ipi)
+> +{
+> +	return ipi_to_irq_percpu(ipi, 0);
+> +}
+> +
+> +static int irq_to_ipi(int irq)
+> +{
+> +	return (irq - ipi_irq_base) % nr_ipi;
+> +}
 
-  https://git.kernel.org/pub/scm/linux/kernel/git/broonie/spi.git tags/spi-fix-v6.16-rc3
+Most of these helpers are used only once, and they are so similar that
+I get cross-eyed. Consider expanding them in their calling spot.
 
-for you to fetch changes up to b07f349d1864abe29436f45e3047da2bdd476462:
+>  
+>  static bool crash_stop;
+>  
+> @@ -844,7 +868,7 @@ int arch_show_interrupts(struct seq_file *p, int prec)
+>  		seq_printf(p, "%*s%u:%s", prec - 1, "IPI", i,
+>  			   prec >= 4 ? " " : "");
+>  		for_each_online_cpu(cpu)
+> -			seq_printf(p, "%10u ", irq_desc_kstat_cpu(ipi_desc[i], cpu));
+> +			seq_printf(p, "%10u ", irq_desc_kstat_cpu(get_ipi_desc(cpu, i), cpu));
+>  		seq_printf(p, "      %s\n", ipi_types[i]);
+>  	}
+>  
+> @@ -919,7 +943,13 @@ static void __noreturn ipi_cpu_crash_stop(unsigned int cpu, struct pt_regs *regs
+>  
+>  static void arm64_backtrace_ipi(cpumask_t *mask)
+>  {
+> -	__ipi_send_mask(ipi_desc[IPI_CPU_BACKTRACE], mask);
+> +	unsigned int cpu;
+> +
+> +	if (!percpu_ipi_descs)
+> +		__ipi_send_mask(get_ipi_desc(0, IPI_CPU_BACKTRACE), mask);
+> +	else
+> +		for_each_cpu(cpu, mask)
+> +			__ipi_send_single(get_ipi_desc(cpu, IPI_CPU_BACKTRACE), cpu);
+>  }
+>  
+>  void arch_trigger_cpumask_backtrace(const cpumask_t *mask, int exclude_cpu)
+> @@ -944,7 +974,7 @@ void kgdb_roundup_cpus(void)
+>  		if (cpu == this_cpu)
+>  			continue;
+>  
+> -		__ipi_send_single(ipi_desc[IPI_KGDB_ROUNDUP], cpu);
+> +		__ipi_send_single(get_ipi_desc(cpu, IPI_KGDB_ROUNDUP), cpu);
+>  	}
+>  }
+>  #endif
+> @@ -1013,14 +1043,21 @@ static void do_handle_IPI(int ipinr)
+>  
+>  static irqreturn_t ipi_handler(int irq, void *data)
+>  {
+> -	do_handle_IPI(irq - ipi_irq_base);
+> +	do_handle_IPI(irq_to_ipi(irq));
+>  	return IRQ_HANDLED;
+>  }
+>  
+>  static void smp_cross_call(const struct cpumask *target, unsigned int ipinr)
+>  {
+> +	unsigned int cpu;
+> +
+>  	trace_ipi_raise(target, ipi_types[ipinr]);
+> -	__ipi_send_mask(ipi_desc[ipinr], target);
+> +
+> +	if (!percpu_ipi_descs)
+> +		__ipi_send_mask(get_ipi_desc(0, ipinr), target);
+> +	else
+> +		for_each_cpu(cpu, target)
+> +			__ipi_send_single(get_ipi_desc(cpu, ipinr), cpu);
 
-  spi: spi-cadence-quadspi: Fix pm runtime unbalance (2025-06-24 16:40:31 +0100)
+Having a helper for this construct would definitely be a good thing:
 
-----------------------------------------------------------------
-spi: Fix for v6.16
+@@ -924,15 +919,20 @@ static void __noreturn ipi_cpu_crash_stop(unsigned int cpu, struct pt_regs *regs
+ #endif
+ }
+ 
+-static void arm64_backtrace_ipi(cpumask_t *mask)
++static void arm64_send_ipi(const cpumask_t *mask, unsigned int nr)
+ {
+ 	unsigned int cpu;
+ 
+ 	if (!percpu_ipi_descs)
+-		__ipi_send_mask(get_ipi_desc(0, IPI_CPU_BACKTRACE), mask);
++		__ipi_send_mask(get_ipi_desc(0, nr), mask);
+ 	else
+ 		for_each_cpu(cpu, mask)
+-			__ipi_send_single(get_ipi_desc(cpu, IPI_CPU_BACKTRACE), cpu);
++			__ipi_send_single(get_ipi_desc(cpu, nr), cpu);
++}
++
++static void arm64_backtrace_ipi(cpumask_t *mask)
++{
++	arm64_send_ipi(mask, IPI_CPU_BACKTRACE);
+ }
+ 
+and similarly for smp_cross_call().
 
-One fix here, for a runtime PM underflow when removing the Cadence
-QuadSPI driver.
+>  }
+>  
+>  static bool ipi_should_be_nmi(enum ipi_msg_type ipi)
+> @@ -1046,11 +1083,15 @@ static void ipi_setup(int cpu)
+>  		return;
+>  
+>  	for (i = 0; i < nr_ipi; i++) {
+> -		if (ipi_should_be_nmi(i)) {
+> -			prepare_percpu_nmi(ipi_irq_base + i);
+> -			enable_percpu_nmi(ipi_irq_base + i, 0);
+> +		if (!percpu_ipi_descs) {
+> +			if (ipi_should_be_nmi(i)) {
+> +				prepare_percpu_nmi(ipi_irq_base + i);
+> +				enable_percpu_nmi(ipi_irq_base + i, 0);
+> +			} else {
+> +				enable_percpu_irq(ipi_irq_base + i, 0);
+> +			}
+>  		} else {
+> -			enable_percpu_irq(ipi_irq_base + i, 0);
+> +			enable_irq(irq_desc_get_irq(get_ipi_desc(cpu, i)));
+>  		}
+>  	}
+>  }
+> @@ -1064,44 +1105,77 @@ static void ipi_teardown(int cpu)
+>  		return;
+>  
+>  	for (i = 0; i < nr_ipi; i++) {
+> -		if (ipi_should_be_nmi(i)) {
+> -			disable_percpu_nmi(ipi_irq_base + i);
+> -			teardown_percpu_nmi(ipi_irq_base + i);
+> +		if (!percpu_ipi_descs) {
+> +			if (ipi_should_be_nmi(i)) {
+> +				disable_percpu_nmi(ipi_irq_base + i);
+> +				teardown_percpu_nmi(ipi_irq_base + i);
+> +			} else {
+> +				disable_percpu_irq(ipi_irq_base + i);
+> +			}
+>  		} else {
+> -			disable_percpu_irq(ipi_irq_base + i);
+> +			disable_irq(irq_desc_get_irq(get_ipi_desc(cpu, i)));
+>  		}
+>  	}
+>  }
+>  #endif
+>  
+> -void __init set_smp_ipi_range(int ipi_base, int n)
+> +static void ipi_setup_ppi(int ipi)
 
-----------------------------------------------------------------
-Khairul Anuar Romli (1):
-      spi: spi-cadence-quadspi: Fix pm runtime unbalance
+This sets up SGIs, not PPIs. They are indeed Per Processor Interrupts,
+but given that you use "lpi" for GICv5, consider naming it
+consistently.
 
- drivers/spi/spi-cadence-quadspi.c | 12 +++++++-----
- 1 file changed, 7 insertions(+), 5 deletions(-)
+Thanks,
+
+	M.
+
+-- 
+Without deviation from the norm, progress is not possible.
 
