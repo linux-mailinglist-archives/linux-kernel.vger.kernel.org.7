@@ -1,183 +1,142 @@
-Return-Path: <linux-kernel+bounces-702009-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-702006-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id AB533AE7C9D
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Jun 2025 11:26:05 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id B8576AE7CA3
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Jun 2025 11:26:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1E3757B5EBE
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Jun 2025 09:24:21 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 60FE5188AF3D
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Jun 2025 09:25:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2F6DD2D0283;
-	Wed, 25 Jun 2025 09:18:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1ACF92C08D9;
+	Wed, 25 Jun 2025 09:18:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="T8nYTZ2O"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.17])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=fairphone.com header.i=@fairphone.com header.b="bdI0cXv4"
+Received: from mail-ej1-f45.google.com (mail-ej1-f45.google.com [209.85.218.45])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EDFBD29B23B;
-	Wed, 25 Jun 2025 09:18:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.17
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5E881283CBD
+	for <linux-kernel@vger.kernel.org>; Wed, 25 Jun 2025 09:18:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750843103; cv=none; b=U4Xh276xbWPzQuOgttYqX0zsMomhnGDseFVwEgoZ9VlJKpXaKhZcnTSBmf4vg5Zdypm+BCA9ZaUIDkXHfbBMm5j2X1G9IM0ZI/fFv9F1fvSlVeShJsoOaI/ykzjqpW4SsYzu/qcNDxWXr8vyHwSIvBhF+uym10Z3Kjk4ihlUSWk=
+	t=1750843101; cv=none; b=UZsgjG8uQdhkPNi6IF3qare8ms3hm+mmHT7uQdD++y51DAhqGWLx5GeNCGSTO5UH59tXRUjzYbtBdeJL4IZtxh7XCiq1VLyFq6DjJiiOVLIO3JGiCgeXd+rgKSFqQgdYqsgNFR4j5FUSB4/vCalB5oBylSReE/hNEOQZbxUYMmE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750843103; c=relaxed/simple;
-	bh=t4E/+UT8fmI9fR5q5fWeoyUhS4+biJF4voTPqNOEia0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Fc6ErvtaSKvEXE9LBYcoYyydud8cxOmDby0HcfKJlubmyv15JUCa8CCNU5o0JLYIXGoIYApx2n0dgrDIs7YNOI8qT+qzuOh0yp2jeiXj4hnN3fDmyyi6lvsabO93pHvmnqcdq6rBjOhEU+Urs6IulPe1eugP0bnh0kCj/5QYIlk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=T8nYTZ2O; arc=none smtp.client-ip=198.175.65.17
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1750843100; x=1782379100;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=t4E/+UT8fmI9fR5q5fWeoyUhS4+biJF4voTPqNOEia0=;
-  b=T8nYTZ2OtmDDWiys+1XlzItMIsMXFMbfA+VL9SN6C/RgFT+/CdkfO+C6
-   Kp8v51eh9INMs32y71jlspqEqCtIbhG94uazAHBaeIPiFYKoNW6rq4rHN
-   qb9n+0sxhw268L9h7rnkCcA7T1l+jMJfMqevM0MpTqvsL55zO/XlM3BLj
-   SCDrGM0L1P877BkO7ns91z3VoDIn3/lBycTaUOjr6470XCgtrhNJiL/ym
-   wUG23RHSXCaBWwZEHYvh3+hKnocp/4se2EgzDe1QxP60eMMumo/F1Y86d
-   ZpUHVkGqYSs9f7Qr2ht7UtHs9A1BFLpzAa9AmynENrno4JvsBASyH5y/H
-   g==;
-X-CSE-ConnectionGUID: u3tryakDSxWfeFvKVVZqLQ==
-X-CSE-MsgGUID: ADxTI3ipT5OW4Tqvd/tX0Q==
-X-IronPort-AV: E=McAfee;i="6800,10657,11474"; a="53072787"
-X-IronPort-AV: E=Sophos;i="6.16,264,1744095600"; 
-   d="scan'208";a="53072787"
-Received: from orviesa005.jf.intel.com ([10.64.159.145])
-  by orvoesa109.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 25 Jun 2025 02:18:19 -0700
-X-CSE-ConnectionGUID: Pu8/GqJxQ9Wf4jSmGYdK6Q==
-X-CSE-MsgGUID: yJ8Gcn95QCiXtZkX+gKVcw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.16,264,1744095600"; 
-   d="scan'208";a="157934397"
-Received: from lkp-server01.sh.intel.com (HELO e8142ee1dce2) ([10.239.97.150])
-  by orviesa005.jf.intel.com with ESMTP; 25 Jun 2025 02:18:15 -0700
-Received: from kbuild by e8142ee1dce2 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1uUMGj-000SwA-29;
-	Wed, 25 Jun 2025 09:18:13 +0000
-Date: Wed, 25 Jun 2025 17:17:47 +0800
-From: kernel test robot <lkp@intel.com>
-To: Vikas Gupta <vikas.gupta@broadcom.com>, davem@davemloft.net,
-	edumazet@google.com, kuba@kernel.org, pabeni@redhat.com,
-	andrew+netdev@lunn.ch, horms@kernel.org
-Cc: oe-kbuild-all@lists.linux.dev, netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org, michael.chan@broadcom.com,
-	pavan.chebbi@broadcom.com, vsrama-krishna.nemani@broadcom.com,
-	Vikas Gupta <vikas.gupta@broadcom.com>,
-	Bhargava Chenna Marreddy <bhargava.marreddy@broadcom.com>,
-	Rajashekar Hudumula <rajashekar.hudumula@broadcom.com>
-Subject: Re: [net-next, 08/10] bng_en: Add irq allocation support
-Message-ID: <202506251636.aTzmB45K-lkp@intel.com>
-References: <20250618144743.843815-9-vikas.gupta@broadcom.com>
+	s=arc-20240116; t=1750843101; c=relaxed/simple;
+	bh=++8tpkdPFuMzMYNmzWCbpHolnN0VwNt0g40Ud+3vh9g=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=ZrlV87x0pWWS8LEv8Nx3TGo4JaEk4iSIkJoFUVa0qLkHzawKnCYtsR/9ZWiZjKmYBY2CMktru0+U5whgJPa6n66vJiYgfSVXkdS3iFkjvff9kmMOnehnw8WHiaUqzGpWNryGUSyvQznXvftPCKcsx64naz7S/Svz+zbRt2IWjp4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=fairphone.com; spf=pass smtp.mailfrom=fairphone.com; dkim=pass (2048-bit key) header.d=fairphone.com header.i=@fairphone.com header.b=bdI0cXv4; arc=none smtp.client-ip=209.85.218.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=fairphone.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fairphone.com
+Received: by mail-ej1-f45.google.com with SMTP id a640c23a62f3a-ae0c571f137so75978566b.0
+        for <linux-kernel@vger.kernel.org>; Wed, 25 Jun 2025 02:18:17 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=fairphone.com; s=fair; t=1750843096; x=1751447896; darn=vger.kernel.org;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=cfeGnw+d+Kzu3IEv8ekNTJRu6MZvUT/JsOK2K76oOBc=;
+        b=bdI0cXv4WTlA9lEiXxIFdMl5rNk6qoZVltetUn5rzEu1ZrzQzZo5o2ITEskBW81rgk
+         qxo7dyBKOWMO7IGQA3GTis43FuhZXf8vXgxULUC3s4zBzotsTyo4Vtb3Cuef5Aos/4xm
+         Elc0Eplxxw2i3tR9t9LPY2nKRBi4VqJylCBkcQAz8ochMdal9JD4qHYIOu6m6CZysdgJ
+         9MjIoNbvxhSJnh62cuQkRC+8ql2k9i1gGAt4dJufRYTW7wjf/sH50dqzQvhMPgA7kqjH
+         SdK1yKfkf5k1usnL/RmWiV1ev1dSU81S69IpzmDq6IciT9JwCd5Iima3QVlk4H7HqFcc
+         n7Gw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1750843096; x=1751447896;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=cfeGnw+d+Kzu3IEv8ekNTJRu6MZvUT/JsOK2K76oOBc=;
+        b=IEbHlpnKlwDdZdbyBDOPnWg8rvq8oYXkaGcP3ovUGgjB+CRxzrr8aYxYuZLXGrk2EV
+         PaxgKvSog4StOElAxrK8Nno00jH0fEicWZUIyM0Sr0/MdX73ScH/iGMaSaBPNum5YzEW
+         uU9BH1fHDyYjPwOkmmUQAdqrKIA3Ht3pL507Wx6jA5NC36smOYxl6IpuOIvDAgjuplOC
+         T0ICDUqns5onaUAtz6c4PRqpP1rEm9MF9dvfuCDpZk4LVUo7+kPT/6VAW91xg/PrjnFC
+         JllAGAKKzMCCIoGprz4GGN2iH0W0j10dBBQBPevcNA8e+ax6vmKDIwosMTmSg0OXGyLg
+         NMuw==
+X-Forwarded-Encrypted: i=1; AJvYcCXyZaGZs5DIR/4vSsedV6zYFtCwlNidlSUfblgaaBBKtD7RdS7gG1UzEwMYBvL+g7/EsGNuXlTTABcx0cY=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwXZsR6uSuqO2LCMuk9t9ig0hahNWSMHKml8BrkGVp7UwjjHXb6
+	xsUl7BJccTeezfZi6nBBIr+Xar6sgaqCD7eRM5+V1c3siUyN25B8a7EJGz0ZW4dq2Ck=
+X-Gm-Gg: ASbGncsxYWsZkhO+vOkI5YvPV0MAlLnJE2axi2qHbjQGfLN2CLtXrHOoWx81dZri73c
+	SbH3dbc+wfCuk+gUqWYAfTRdxbw6VXyYRBovTGu9jtPT1i2E3siVfimYn9Yo/7qaNb2lmXsLZ+4
+	WFr/xSAYYSt7AMvBIf//lo9v2oKHOoL/Rt166gk6nMAZRVugu464PCN+jaXq13vwaTplqBIgE2x
+	rcw6T3dK4FyBvCXnDFgJnWdcO83oblY5r/lYhJXx6yNKr7hk4xc9yUAqHXAmkUNpwCh4DiUjyk2
+	zMBNqJPAjBXlZhCPA/6dKertn5OlEXtoZU/uz0U+BpFf78o/kJvrhDvO/ZphlM90DC12aXay+vn
+	IFqZ+mNVxCGwZ1w/rwgFO4bH7u+qIBKXJ
+X-Google-Smtp-Source: AGHT+IGN6O/Pb4prPG2JZZSnB8sceSoAzDmx52f7W/LnMi89wzQjcfcFFch1scJfwQxaqsIw8dWK/w==
+X-Received: by 2002:a17:907:fd01:b0:ad8:a04e:dbd9 with SMTP id a640c23a62f3a-ae0bf154a67mr213304566b.31.1750843095781;
+        Wed, 25 Jun 2025 02:18:15 -0700 (PDT)
+Received: from otso.local (144-178-202-138.static.ef-service.nl. [144.178.202.138])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ae054209c85sm1009952366b.160.2025.06.25.02.18.14
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 25 Jun 2025 02:18:15 -0700 (PDT)
+From: Luca Weiss <luca.weiss@fairphone.com>
+Subject: [PATCH 0/4] Add support for PMIV0104 PMIC
+Date: Wed, 25 Jun 2025 11:18:01 +0200
+Message-Id: <20250625-sm7635-pmiv0104-v1-0-68d287c4b630@fairphone.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250618144743.843815-9-vikas.gupta@broadcom.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAMm+W2gC/13MQQ7CIBRF0a0Qxn4DtICwFdMBLb/KgFqhJSZN9
+ y7agYnD+5J3NpoxBczUko0mLCGHx1SDnwgd7m66IQRfmwomJFOCQY5aNRLmGArjrIWmdUob02h
+ vPK2vOeEYXl/x2h2d8LlWeDnGn2vJv4pr7iHhjG7BBMzryyilFoaNtvCP3ruMMDxiDIslRZ25g
+ jRw2u37G4U81h3KAAAA
+X-Change-ID: 20250620-sm7635-pmiv0104-34a679937d9d
+To: Lee Jones <lee@kernel.org>, Rob Herring <robh@kernel.org>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, Stephen Boyd <sboyd@kernel.org>, 
+ Bjorn Andersson <andersson@kernel.org>, 
+ Linus Walleij <linus.walleij@linaro.org>, 
+ Konrad Dybcio <konradybcio@kernel.org>
+Cc: ~postmarketos/upstreaming@lists.sr.ht, phone-devel@vger.kernel.org, 
+ linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org, 
+ Luca Weiss <luca.weiss@fairphone.com>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1750843094; l=1415;
+ i=luca.weiss@fairphone.com; s=20250611; h=from:subject:message-id;
+ bh=++8tpkdPFuMzMYNmzWCbpHolnN0VwNt0g40Ud+3vh9g=;
+ b=abfm9BCmpgE8TIw7teCAFpzQAAI/NGSQHPbCljUXMjiOSXMhEBfh6tckQOJk0WSlYyyzTvcwP
+ vNQLVOaaPuhBFN8AFOk8gvHK7dsq3xm986EQLPdo32+04ZwQ5EB1jV8
+X-Developer-Key: i=luca.weiss@fairphone.com; a=ed25519;
+ pk=O1aw+AAust5lEmgrNJ1Bs7PTY0fEsJm+mdkjExA69q8=
 
-Hi Vikas,
+The PMIV0104 PMIC is used in conjuction with SM7635. Add binding docs,
+GPIO support and the devicetree description for it.
 
-kernel test robot noticed the following build warnings:
+Depends on the eUSB2 repeater patchset, as specified by the b4 deps.
 
-[auto build test WARNING on linus/master]
-[also build test WARNING on v6.16-rc3 next-20250624]
-[cannot apply to horms-ipvs/master]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
+Signed-off-by: Luca Weiss <luca.weiss@fairphone.com>
+---
+Luca Weiss (4):
+      dt-bindings: mfd: qcom,spmi-pmic: Document PMIV0104
+      dt-bindings: pinctrl: qcom,pmic-gpio: Add PMIV0104 support
+      pinctrl: qcom: spmi: Add PMIV0104
+      arm64: dts: qcom: Add PMIV0104 PMIC
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Vikas-Gupta/bng_en-Add-PCI-interface/20250618-173130
-base:   linus/master
-patch link:    https://lore.kernel.org/r/20250618144743.843815-9-vikas.gupta%40broadcom.com
-patch subject: [net-next, 08/10] bng_en: Add irq allocation support
-config: parisc-randconfig-r073-20250619 (https://download.01.org/0day-ci/archive/20250625/202506251636.aTzmB45K-lkp@intel.com/config)
-compiler: hppa-linux-gcc (GCC) 8.5.0
+ .../devicetree/bindings/mfd/qcom,spmi-pmic.yaml    |  1 +
+ .../bindings/pinctrl/qcom,pmic-gpio.yaml           |  2 +
+ arch/arm64/boot/dts/qcom/pmiv0104.dtsi             | 63 ++++++++++++++++++++++
+ drivers/pinctrl/qcom/pinctrl-spmi-gpio.c           |  1 +
+ 4 files changed, 67 insertions(+)
+---
+base-commit: d9946fe286439c2aeaa7953b8c316efe5b83d515
+change-id: 20250620-sm7635-pmiv0104-34a679937d9d
+prerequisite-change-id: 20250620-sm7635-eusb-repeater-0d78f557290f:v1
+prerequisite-patch-id: 5c504d171a4d1acd9ec376e01e0dd0fddbad92b8
+prerequisite-patch-id: 0c97dcf5472fbed8ef4cffbd482f3169fe1e972d
+prerequisite-patch-id: a618abb349c3de5b49f79b4b0f86d9ab502ad500
+prerequisite-patch-id: 09f91ff3a25c16a0375bdfec80604a64eab0b4fb
+prerequisite-patch-id: 8fca8b09d70409c5c78f9f1b77d0a4c75bce38cf
+prerequisite-patch-id: f5c2c24d2baefcd7ff91718529ab2f2c264ab99f
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202506251636.aTzmB45K-lkp@intel.com/
-
-smatch warnings:
-drivers/net/ethernet/broadcom/bnge/bnge_resc.c:347 bnge_alloc_irqs() warn: unsigned 'irqs_demand' is never less than zero.
-
-vim +/irqs_demand +347 drivers/net/ethernet/broadcom/bnge/bnge_resc.c
-
-   329	
-   330	int bnge_alloc_irqs(struct bnge_dev *bd)
-   331	{
-   332		u16 aux_msix, tx_cp, num_entries;
-   333		u16 irqs_demand, max, min = 1;
-   334		int i, rc = 0;
-   335	
-   336		irqs_demand = bnge_nqs_demand(bd);
-   337		max = bnge_get_max_func_irqs(bd);
-   338		if (irqs_demand > max)
-   339			irqs_demand = max;
-   340	
-   341		if (!(bd->flags & BNGE_EN_SHARED_CHNL))
-   342			min = 2;
-   343	
-   344		irqs_demand = pci_alloc_irq_vectors(bd->pdev, min, irqs_demand,
-   345						    PCI_IRQ_MSIX);
-   346		aux_msix = bnge_aux_get_msix(bd);
- > 347		if (irqs_demand < 0 || irqs_demand < aux_msix) {
-   348			rc = -ENODEV;
-   349			goto err_free_irqs;
-   350		}
-   351	
-   352		num_entries = irqs_demand;
-   353		if (pci_msix_can_alloc_dyn(bd->pdev))
-   354			num_entries = max;
-   355		bd->irq_tbl = kcalloc(num_entries, sizeof(*bd->irq_tbl), GFP_KERNEL);
-   356		if (!bd->irq_tbl) {
-   357			rc = -ENOMEM;
-   358			goto err_free_irqs;
-   359		}
-   360	
-   361		for (i = 0; i < irqs_demand; i++)
-   362			bd->irq_tbl[i].vector = pci_irq_vector(bd->pdev, i);
-   363	
-   364		bd->irqs_acquired = irqs_demand;
-   365		/* Reduce rings based upon num of vectors allocated.
-   366		 * We dont need to consider NQs as they have been calculated
-   367		 * and must be more than irqs_demand.
-   368		 */
-   369		rc = bnge_adjust_rings(bd, &bd->rx_nr_rings,
-   370				       &bd->tx_nr_rings,
-   371				       irqs_demand - aux_msix, min == 1);
-   372		if (rc)
-   373			goto err_free_irqs;
-   374	
-   375		tx_cp = bnge_num_tx_to_cp(bd, bd->tx_nr_rings);
-   376		bd->nq_nr_rings = (min == 1) ?
-   377			max_t(u16, tx_cp, bd->rx_nr_rings) :
-   378			tx_cp + bd->rx_nr_rings;
-   379	
-   380		/* Readjust tx_nr_rings_per_tc */
-   381		if (!bd->num_tc)
-   382			bd->tx_nr_rings_per_tc = bd->tx_nr_rings;
-   383	
-   384		return 0;
-   385	
-   386	err_free_irqs:
-   387		dev_err(bd->dev, "Failed to allocate IRQs err = %d\n", rc);
-   388		bnge_free_irqs(bd);
-   389		return rc;
-   390	}
-   391	
-
+Best regards,
 -- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+Luca Weiss <luca.weiss@fairphone.com>
+
 
