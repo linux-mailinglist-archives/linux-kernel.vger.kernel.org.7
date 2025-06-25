@@ -1,86 +1,75 @@
-Return-Path: <linux-kernel+bounces-702473-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-702476-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0494BAE82D1
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Jun 2025 14:36:02 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1CC95AE82D4
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Jun 2025 14:36:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8B14B3AB382
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Jun 2025 12:35:36 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 418934A4413
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Jun 2025 12:36:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C0B3725B31F;
-	Wed, 25 Jun 2025 12:35:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 800DE25C83F;
+	Wed, 25 Jun 2025 12:36:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="GYsfV+vB"
-Received: from mail-ej1-f42.google.com (mail-ej1-f42.google.com [209.85.218.42])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="h5DayNCK"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 780B81E4AE
-	for <linux-kernel@vger.kernel.org>; Wed, 25 Jun 2025 12:35:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C05B7F50F
+	for <linux-kernel@vger.kernel.org>; Wed, 25 Jun 2025 12:36:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750854954; cv=none; b=fzLe5bcvuq5ogy7Ijv2kHFie0uG5t8jWEgis2UM7qi5ieDZBIuEnocNYOffs1vUET4bhCi7k4pKEoZI6UNqZitZrHl3QpVyUdiEgnGc1+dqMwhC9HtWtaTqGcFUx94kCXmg9lzhm7XXaLwl6Bqlx1NdMGPtdKzG7CLEXX/D6+N8=
+	t=1750854980; cv=none; b=C7v9mZK25GQJFEwM/mNDLhDChA/mc0Y7rbv74UkGPZCfjk/XPGZ9cbE0LVKPplkY8tbVbLoyIVt1GBz+oYs+5qAhJDaVqrosxNFTOfCHVw65KjSeob1uauK3Dns2v8BH24EtXaA66jNculS6O2BZXnJEMT9wKh+hY+QHjbvxY0E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750854954; c=relaxed/simple;
-	bh=SLebeACRWk6qkca7RgE5fIsKlUh7V/TWthkOW1zhXWs=;
+	s=arc-20240116; t=1750854980; c=relaxed/simple;
+	bh=1iWuKOp+rFc82fGN+3WK27u0fVFde2nYJsvLQGFjvJk=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=BXdys17IL3i1Tnnnf4Bq3SnTRgkyFqyJTY4kEX9+4Wnhwx9YMklkMDByAW4qnxuA0oB0of/c34w30oa/ORPGNj74D7poEE6KLpKPtDyift6nVYpDq7K5wI4CV3r8emqD6nXmbRziIAaW24syJjQ7kl1NvoGCbeheCmX51IlFZJ8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=GYsfV+vB; arc=none smtp.client-ip=209.85.218.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-ej1-f42.google.com with SMTP id a640c23a62f3a-adb2bd27c7bso1004815166b.2
-        for <linux-kernel@vger.kernel.org>; Wed, 25 Jun 2025 05:35:52 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1750854951; x=1751459751; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=2q90HEwNHGnz4Upnp0RKX2HlMlf/DYcXUBx0PZgzyaI=;
-        b=GYsfV+vBdq2r/fCfRNo6xqUgbZWjHpoC67wkOZGQz8HFEGXQbaJGy4tL3j2hKe1qxq
-         17kZKj91GWEVG06h0X8V5Djk7L4DjEWU2xd2xkPWEHqRM7BsN/pktt3nUJ8b/xRNMlgd
-         GHkKAnoY9ilXLdql1LcSUF/T3fbb5zGlsXbmpgbQ+IETtYIHer51dFFyXCfIknavxKwA
-         8qkSD6a8n3sFfoeDPWpkKzBbaZmI6NzdEabK08tLxmSQnleEkOp78KUcxdaIucS2KKJm
-         cT52RjPEFT89TRG+yrle8SQJnlZYZbTB5w+UY2jz9Ctl1UhKehRwPEb14mRHAYBlB0OU
-         aFPQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1750854951; x=1751459751;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=2q90HEwNHGnz4Upnp0RKX2HlMlf/DYcXUBx0PZgzyaI=;
-        b=Oe3mnybJLUnUHH6Bo7geM7RCW3Yx5UZ0Rokljs2tXL2WtiETb6Y3q9aqz7DnHLdBSJ
-         /Aags/xX44mDo1aVFPVZDGHx7v8OIKwio5qqYZmQ8H0tPbCxuyrAkIDa9DJ0ztgTDWmQ
-         BROkDmdlTS4ddmljD1HfYrV8JGO+gl5wFzPDbi0cXiOgk9aoPOBkHtGqwxk4W8EKsV41
-         77qmy2z8Y/PVR4geauoH/2/ACrVaXdKle+v3CoE5U1mBxAG/FK/qxh6AIDi4Mt0RqRdO
-         KTDDZsnwQYg20KwfVhKDTns7rrDtkcheXalEMn+h13V6khdWa24Sc1ghli2mi7qZqtH/
-         O0BA==
-X-Gm-Message-State: AOJu0YySmR0jR5FNOFdhuSGb7FDC6W1YIRSGFZxZMU6CyWQucA/HCbbR
-	m6+Cm4KjSURapoWTN5j43LzqdYucglRDvo/CdkySbNvQmJ/UTqAdY1FhPfroj/zgke5vY86mxUL
-	0uNKEvKRU
-X-Gm-Gg: ASbGncuUKmmwuQ7wbpUd6ocSQJMhtm3NvaWoe1loY2gGaQ49ulkcp9mRxgIUk1bxT97
-	0hA4qpdwP5o6GAZ6G6h6vB4s8gCOGvKCANL1J1exETOYf7CuCtjT8PfUUCZnGhcdFrfHzWA80bx
-	t7EVapDrTiVmxufdj09zZ0jDmyQPKe+C4+heo5EL+oJj7kHeQfQed0MWl3A+esR6Udd6mj3MBxm
-	Q5MIVPaIBVp5pRoaM9s5vTpG7Bd+Y6pJTCkzI9FvLLOPAg3m7DR4bOXCcf4C9xVFKp8kLenA5lD
-	nVyjJ56pEDKykPL7DAdmhbvi5ghnD01viAh9fCxFxL92vbvO+FXErJz3Wpig5n/RfJCD1ivnCvh
-	pxu2IeuIfABNVqsaCU3+p/zbdquNFuUY=
-X-Google-Smtp-Source: AGHT+IGeu1vPbCuiY2js0cAMuyaqjySismzGJ98ewnju3a81TdzXuUCosTL/BoTdvitPihCLhN4tkg==
-X-Received: by 2002:a17:907:7254:b0:ae0:c5a6:80e7 with SMTP id a640c23a62f3a-ae0c5a6ad05mr220312566b.16.1750854950527;
-        Wed, 25 Jun 2025 05:35:50 -0700 (PDT)
-Received: from google.com (8.239.204.35.bc.googleusercontent.com. [35.204.239.8])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ae085beb7e8sm604860966b.41.2025.06.25.05.35.49
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 25 Jun 2025 05:35:49 -0700 (PDT)
-Date: Wed, 25 Jun 2025 12:35:46 +0000
-From: Quentin Perret <qperret@google.com>
-To: Mostafa Saleh <smostafa@google.com>
-Cc: linux-kernel@vger.kernel.org, kvmarm@lists.linux.dev,
-	linux-arm-kernel@lists.infradead.org, maz@kernel.org,
-	oliver.upton@linux.dev, joey.gouly@arm.com, suzuki.poulose@arm.com,
-	yuzenghui@huawei.com, catalin.marinas@arm.com, will@kernel.org
-Subject: Re: [PATCH v2] KVM: arm64: Fix error path in init_hyp_mode()
-Message-ID: <aFvtIn5SuoAmlvvD@google.com>
-References: <20250625123058.875179-1-smostafa@google.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=ODVlOsuraBRYMMVLjKxCAZNIcdrpaekvpfXbRDpYWVzeBefP8gyjoaMnEYzoWW2TkvwaDpmVBrl1ftYECwvnqAxrd0Bb7IOS+hd+PtDdWE18/+vE78POL7NtyTb4Z9/4v6wdMJUXiBBoSuyGgTcpHT+2NMmMXK0/X+jiwbz2ezk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=h5DayNCK; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1750854976;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=NY9vw9curyJ7/8LzORISM7uwDPvCxbSxMJ+ZZchZ3k8=;
+	b=h5DayNCK1fpG8GbdPI3JAsS3O7xnM60WfTjmaB4WIuJZ2iU2/D+zWCFBViCYC0kGssfQQo
+	p0m8VkpoU6xuW6HY85yYuT+mpG1g9Cwd5MIKGFzhEOBTroDBtFPaWAWHFjLpNagSMbJsvO
+	2TuJgLsptMgxYBPw9EYX7iKz4v9Vei0=
+Received: from mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-606-k1aCep3vMS60dFeISDepPw-1; Wed,
+ 25 Jun 2025 08:36:13 -0400
+X-MC-Unique: k1aCep3vMS60dFeISDepPw-1
+X-Mimecast-MFC-AGG-ID: k1aCep3vMS60dFeISDepPw_1750854972
+Received: from mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.40])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id BCE1B1809C9B;
+	Wed, 25 Jun 2025 12:36:11 +0000 (UTC)
+Received: from pauld.westford.csb (unknown [10.22.88.237])
+	by mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id CB2FF19560A3;
+	Wed, 25 Jun 2025 12:36:08 +0000 (UTC)
+Date: Wed, 25 Jun 2025 08:36:06 -0400
+From: Phil Auld <pauld@redhat.com>
+To: Jemmy Wong <jemmywong512@gmail.com>
+Cc: Ingo Molnar <mingo@redhat.com>, Peter Zijlstra <peterz@infradead.org>,
+	Juri Lelli <juri.lelli@redhat.com>,
+	Vincent Guittot <vincent.guittot@linaro.org>,
+	Dietmar Eggemann <dietmar.eggemann@arm.com>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	Ben Segall <bsegall@google.com>, Mel Gorman <mgorman@suse.de>,
+	Valentin Schneider <vschneid@redhat.com>,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v1] sched: Move curr check into __enqueue_entity and
+ __dequeue_entity
+Message-ID: <20250625123606.GB57862@pauld.westford.csb>
+References: <20250621142055.7110-1-jemmywong512@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -89,56 +78,157 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250625123058.875179-1-smostafa@google.com>
+In-Reply-To: <20250621142055.7110-1-jemmywong512@gmail.com>
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.40
 
-On Wednesday 25 Jun 2025 at 12:30:58 (+0000), Mostafa Saleh wrote:
-> In the unlikely case pKVM failed to allocate carveout, the error path
-> tries to access NULL ptr when it de-reference the SVE state from the
-> uninitialized nVHE per-cpu base.
+Hi Jemmy,
+
+On Sat, Jun 21, 2025 at 10:20:55PM +0800 Jemmy Wong wrote:
+> The check for se == cfs_rq->curr is common logic used before calling
+> __enqueue_entity and __dequeue_entity. Move this check into the respective
+> function bodies to simplify the code.
+
+
+I'm not sure this simpifies the code.  The pattern is generally that
+the underscore prefixed function just does the required work and the
+non-underscore-prefixed one does the checks. That's a pattern used
+in lots of places.
+
+Also, unless these end up unlined (I didn't check but they are not
+explicitly called out as such) you are adding an extra function
+call. 
+
 > 
-> [    1.575420] pstate: 61400005 (nZCv daif +PAN -UAO -TCO +DIT -SSBS BTYPE=--)
-> [    1.576010] pc : teardown_hyp_mode+0xe4/0x180
-> [    1.576920] lr : teardown_hyp_mode+0xd0/0x180
-> [    1.577308] sp : ffff8000826fb9d0
-> [    1.577600] x29: ffff8000826fb9d0 x28: 0000000000000000 x27: ffff80008209b000
-> [    1.578383] x26: ffff800081dde000 x25: ffff8000820493c0 x24: ffff80008209eb00
-> [    1.579180] x23: 0000000000000040 x22: 0000000000000001 x21: 0000000000000000
-> [    1.579881] x20: 0000000000000002 x19: ffff800081d540b8 x18: 0000000000000000
-> [    1.580544] x17: ffff800081205230 x16: 0000000000000152 x15: 00000000fffffff8
-> [    1.581183] x14: 0000000000000008 x13: fff00000ff7f6880 x12: 000000000000003e
-> [    1.581813] x11: 0000000000000002 x10: 00000000000000ff x9 : 0000000000000000
-> [    1.582503] x8 : 0000000000000000 x7 : 7f7f7f7f7f7f7f7f x6 : 43485e525851ff30
-> [    1.583140] x5 : fff00000ff6e9030 x4 : fff00000ff6e8f80 x3 : 0000000000000000
-> [    1.583780] x2 : 0000000000000000 x1 : 0000000000000002 x0 : 0000000000000000
-> [    1.584526] Call trace:
-> [    1.584945]  teardown_hyp_mode+0xe4/0x180 (P)
-> [    1.585578]  init_hyp_mode+0x920/0x994
-> [    1.586005]  kvm_arm_init+0xb4/0x25c
-> [    1.586387]  do_one_initcall+0xe0/0x258
-> [    1.586819]  do_initcall_level+0xa0/0xd4
-> [    1.587224]  do_initcalls+0x54/0x94
-> [    1.587606]  do_basic_setup+0x1c/0x28
-> [    1.587998]  kernel_init_freeable+0xc8/0x130
-> [    1.588409]  kernel_init+0x20/0x1a4
-> [    1.588768]  ret_from_fork+0x10/0x20
-> [    1.589568] Code: f875db48 8b1c0109 f100011f 9a8903e8 (f9463100)
-> [    1.590332] ---[ end trace 0000000000000000 ]---
+> Signed-off-by: Jemmy Wong <jemmywong512@gmail.com>
 > 
-> As Quentin pointed, the order of free is also wrong, we need to free
-> SVE state first before freeing the per CPU ptrs.
+> ---
+>  kernel/sched/fair.c | 32 +++++++++++++++-----------------
+>  1 file changed, 15 insertions(+), 17 deletions(-)
 > 
-> I initially observed this on 6.12, but I could also repro in master.
+> diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
+> index 7a14da5396fb..24cbb4b6c3fb 100644
+> --- a/kernel/sched/fair.c
+> +++ b/kernel/sched/fair.c
+> @@ -849,6 +849,9 @@ RB_DECLARE_CALLBACKS(static, min_vruntime_cb, struct sched_entity,
+>   */
+>  static void __enqueue_entity(struct cfs_rq *cfs_rq, struct sched_entity *se)
+>  {
+> +	if (unlikely(se == cfs_rq->curr))
+> +		return;
+> +
+>  	avg_vruntime_add(cfs_rq, se);
+>  	se->min_vruntime = se->vruntime;
+>  	se->min_slice = se->slice;
+> @@ -858,6 +861,9 @@ static void __enqueue_entity(struct cfs_rq *cfs_rq, struct sched_entity *se)
 > 
-> Signed-off-by: Mostafa Saleh <smostafa@google.com>
+>  static void __dequeue_entity(struct cfs_rq *cfs_rq, struct sched_entity *se)
+>  {
+> +	if (unlikely(se == cfs_rq->curr))
+> +		return;
+> +
+>  	rb_erase_augmented_cached(&se->run_node, &cfs_rq->tasks_timeline,
+>  				  &min_vruntime_cb);
+>  	avg_vruntime_sub(cfs_rq, se);
+> @@ -3797,8 +3803,6 @@ static void place_entity(struct cfs_rq *cfs_rq, struct sched_entity *se, int fla
+>  static void reweight_entity(struct cfs_rq *cfs_rq, struct sched_entity *se,
+>  			    unsigned long weight)
+>  {
+> -	bool curr = cfs_rq->curr == se;
+> -
+>  	if (se->on_rq) {
+>  		/* commit outstanding execution time */
+>  		update_curr(cfs_rq);
+> @@ -3806,8 +3810,7 @@ static void reweight_entity(struct cfs_rq *cfs_rq, struct sched_entity *se,
+>  		se->deadline -= se->vruntime;
+>  		se->rel_deadline = 1;
+>  		cfs_rq->nr_queued--;
+> -		if (!curr)
+> -			__dequeue_entity(cfs_rq, se);
+> +		__dequeue_entity(cfs_rq, se);
+>  		update_load_sub(&cfs_rq->load, se->load.weight);
+>  	}
+>  	dequeue_load_avg(cfs_rq, se);
+> @@ -3834,8 +3837,7 @@ static void reweight_entity(struct cfs_rq *cfs_rq, struct sched_entity *se,
+>  	if (se->on_rq) {
+>  		place_entity(cfs_rq, se, 0);
+>  		update_load_add(&cfs_rq->load, se->load.weight);
+> -		if (!curr)
+> -			__enqueue_entity(cfs_rq, se);
+> +		__enqueue_entity(cfs_rq, se);
+>  		cfs_rq->nr_queued++;
+> 
+>  		/*
+> @@ -5363,8 +5365,7 @@ enqueue_entity(struct cfs_rq *cfs_rq, struct sched_entity *se, int flags)
+> 
+>  	check_schedstat_required();
+>  	update_stats_enqueue_fair(cfs_rq, se, flags);
+> -	if (!curr)
+> -		__enqueue_entity(cfs_rq, se);
+> +	__enqueue_entity(cfs_rq, se);
+>  	se->on_rq = 1;
+> 
+>  	if (cfs_rq->nr_queued == 1) {
+> @@ -5506,8 +5507,7 @@ dequeue_entity(struct cfs_rq *cfs_rq, struct sched_entity *se, int flags)
+>  		se->rel_deadline = 1;
+>  	}
+> 
+> -	if (se != cfs_rq->curr)
+> -		__dequeue_entity(cfs_rq, se);
+> +	__dequeue_entity(cfs_rq, se);
+>  	se->on_rq = 0;
+>  	account_entity_dequeue(cfs_rq, se);
+> 
+> @@ -5624,14 +5624,14 @@ static void put_prev_entity(struct cfs_rq *cfs_rq, struct sched_entity *prev)
+>  	/* throttle cfs_rqs exceeding runtime */
+>  	check_cfs_rq_runtime(cfs_rq);
+> 
+> +	WARN_ON_ONCE(cfs_rq->curr != prev);
+>  	if (prev->on_rq) {
+>  		update_stats_wait_start_fair(cfs_rq, prev);
+> -		/* Put 'current' back into the tree. */
+> -		__enqueue_entity(cfs_rq, prev);
+>  		/* in !on_rq case, update occurred at dequeue */
+>  		update_load_avg(cfs_rq, prev, 0);
+> +		cfs_rq->curr = NULL;
+> +		__enqueue_entity(cfs_rq, prev);
+>  	}
+> -	WARN_ON_ONCE(cfs_rq->curr != prev);
+>  	cfs_rq->curr = NULL;
+>  }
 
-Probably worth adding:
+And here you are changing things around a bit more. 
 
-  Fixes: 66d5b53e20a6 ("KVM: arm64: Allocate memory mapped at hyp for host sve state in pKVM")
+Plus possibly clearing curr twice. 
 
-With that:
+Anyway, others may feel differently. But I don't think this patch is
+needed.
 
-  Reviewed-by: Quentin Perret <qperret@google.com>
 
-Thanks,
-Quentin
+Cheers,
+Phil
+
+
+
+> 
+> @@ -6910,12 +6910,10 @@ requeue_delayed_entity(struct sched_entity *se)
+>  		update_entity_lag(cfs_rq, se);
+>  		if (se->vlag > 0) {
+>  			cfs_rq->nr_queued--;
+> -			if (se != cfs_rq->curr)
+> -				__dequeue_entity(cfs_rq, se);
+> +			__dequeue_entity(cfs_rq, se);
+>  			se->vlag = 0;
+>  			place_entity(cfs_rq, se, 0);
+> -			if (se != cfs_rq->curr)
+> -				__enqueue_entity(cfs_rq, se);
+> +			__enqueue_entity(cfs_rq, se);
+>  			cfs_rq->nr_queued++;
+>  		}
+>  	}
+> --
+> 2.43.0
+> 
+
+-- 
+
 
