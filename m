@@ -1,263 +1,167 @@
-Return-Path: <linux-kernel+bounces-702854-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-702858-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 569B0AE8852
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Jun 2025 17:36:52 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 974D9AE883F
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Jun 2025 17:34:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id DA3BE18871BF
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Jun 2025 15:33:31 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 50CC53A36E7
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Jun 2025 15:34:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 38A191E1C3F;
-	Wed, 25 Jun 2025 15:32:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C5DDE2BEC25;
+	Wed, 25 Jun 2025 15:34:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="fAh4BV5u"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="EPceV2E+"
+Received: from mail-pf1-f172.google.com (mail-pf1-f172.google.com [209.85.210.172])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AC5BE1D63C7
-	for <linux-kernel@vger.kernel.org>; Wed, 25 Jun 2025 15:32:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A7A411A5B8C;
+	Wed, 25 Jun 2025 15:34:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750865573; cv=none; b=gJaFNkOKf54+I80VlucM73d3v3BpWSGgB28DKCVPwy9B1M658FNELeMHRZrBXjHVoedB1HS7Az7nWRuOj16nGor3lkog/VwRhlELfzZgNw1yNCac2L/urdbT3Zia1sGl8QR4dPGFpZh5jXbPYRHOdUu0F3jUqER2n9KuG7d6I/o=
+	t=1750865649; cv=none; b=WyNUTHNs1WmMviXVaf5ZVDOuozDnnjtm5zqi5oJ7bHnQaeT6T5NdHOZyHFVQnkiq/Lu3wbEKlJvFcAaKY/VsHWWQfbl7UuTNsjVdUfokFpOMSVtCe3DrV1xPOYehtsx9NUVE5b2IPn5fPQoX6HyaIPCJdo2EdXyZGO/TuteCqxM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750865573; c=relaxed/simple;
-	bh=rxG1Fpa+yn5i/wwFiiv5CEkQzxJmuuBU0suGJvB4zQ8=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=T5sJ3SvEXnJiXt0kkpuL/qDhqnN7YaX8w+Llmkod7sCoHpo1cAsCRx1pRkoQek/fWpcMMMyfhKa/ybbJWtzxfh+415sJJKgJE9cApam0q9S+GCpXzDvrnJmbGOnOJ+xpVSW2pZzyiPhHllDyd8Rzi5AE8arMuTaQvYkkYET1JpE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=fAh4BV5u; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1750865570;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=uOzxKH9ZqEQ7oDloP0t3FhIryvy8z7MUCsI93EXD9io=;
-	b=fAh4BV5ullrwVwnfFF9RsesLGFxoYVcgBKIKJoTh6DFEoYuMUh0BXe7/3MZ0rXrCW9GCC2
-	uW2TKuME8imWvHVM3OXGTaqSxBObDu2H/Zs6Vgs2yuc226XfmX70hqMo9oerK00U7cwrrH
-	vu1CKGYuhtrYoE+rjR+pSJG5J20gxGA=
-Received: from mail-wm1-f72.google.com (mail-wm1-f72.google.com
- [209.85.128.72]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-380-wTXI1TovM9COPHKdllJelA-1; Wed, 25 Jun 2025 11:32:49 -0400
-X-MC-Unique: wTXI1TovM9COPHKdllJelA-1
-X-Mimecast-MFC-AGG-ID: wTXI1TovM9COPHKdllJelA_1750865568
-Received: by mail-wm1-f72.google.com with SMTP id 5b1f17b1804b1-45311704d1fso43463275e9.1
-        for <linux-kernel@vger.kernel.org>; Wed, 25 Jun 2025 08:32:49 -0700 (PDT)
+	s=arc-20240116; t=1750865649; c=relaxed/simple;
+	bh=GO8/l9hZdF/FDZm2vS40Wtzn+Q/5nvto7+1zvwL9SiY=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=acqSnD1iy3ld24SWq2CgcQhvDxK4OxxTrnB1BkxG7JkHf12RhNAfm2azmh9jVp/m3RqGGExJDzTxpAQTyb4OimznrddUTLlWlfcuiBXIvKA7Q+fd0NYMY1tHi0hbTr85ye1GVdSPHKqNETqwvYMbGSyN5RtXz2SHBv/0csYWS5E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=EPceV2E+; arc=none smtp.client-ip=209.85.210.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f172.google.com with SMTP id d2e1a72fcca58-74264d1832eso139959b3a.0;
+        Wed, 25 Jun 2025 08:34:07 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1750865647; x=1751470447; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=/XVVjse7SLe3BXVW5yyOf89DyqZxU9QrMZCJroaokII=;
+        b=EPceV2E+qgp3zudMaH2HwtBhmy2B4Nw7EFCSmeO7JjdevPzlYLszyznOCpEzEyCkE5
+         DbXUlT7JDpTlIy8S+RVBL0dFmqEx6JTegaYzU9xoL6DVGdLQfGerjq0MPt+sUyeg31qi
+         NoOLLMAmI+MUueSFvvFdEfE5b5z9eO+7jOUQyEdNKE935XBjvbsqYuG5eTtcr+UfemWe
+         KYAwfwE8iXmWtnuLOhJmK9Z6pVcZQ0ef6NOnlJKroA0Lrq4fgQBrtJhN708RLZwnHASA
+         1Ggcbm+Gl+IVbFwyife9b1IVRspbM12gq59HWxkVKnqUNsAr5F8ozj/JBugRznlu/yLQ
+         DDxw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1750865568; x=1751470368;
-        h=mime-version:message-id:date:references:in-reply-to:subject:cc:to
-         :from:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=uOzxKH9ZqEQ7oDloP0t3FhIryvy8z7MUCsI93EXD9io=;
-        b=dTE0GUPWS1WE3cvP+vBfUlL51mQuDfg8dZt7jeI8VQc2Zb2aNlYpo++7I8kMjfJa5c
-         wMU3mm0eXYPFQWUcveJfggRzKiovoSUpwRmVsXCxeM7oAfyZdh/bCu7L1iwKjQSLZYzl
-         QVhMTHg3ZHGlhHEEj7Kbz1mitXmZ6i1V/6uacvBkLZ/ektzX7T7kReNTOJmmMensUU4+
-         hSncVke4t/SNLN9mRutIMTWBjK0qAvGH+eNXNMIJLWlROWN8eObr5AjUHtCRQOGon2Jk
-         jhSvjkX4frTzg/lMydTZyhHzBDoAxyGjs9qqPkuDcygYQENlC25vu1It2+GxoXXZaQXq
-         Gvqw==
-X-Forwarded-Encrypted: i=1; AJvYcCWGfSQdMN+W5kdR2EoEL5I9Ux72gbCIAur070qHO753yjqECmHu/uD3GTD8m1x+Uv9Uho/woB7YZra4feU=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz9O2ybDbjsCBLkEww8MdmS6xYHGJHwJnEG65/VRCAkqqQj49HD
-	khu9pGCM4qLGq00ml5LM2POCtzkgcc8Hcw1PFD1ke6hyVcVp49MICzmkkq8RgolnJsLnnykA95r
-	ewmM3i/V8LGsBtIztJEhcQ36QInztQyB8rengFRLNkumrf86iRPFj2iwFq8xdzFM5Hg==
-X-Gm-Gg: ASbGnct/hLnqD8Ky7tZGV13LrBayI3idihTGtafMNm1SNigKPQvkONWoVe8O7n2DNHq
-	MECm8bLTnk1Yp++nb44Znxtk6NhaDYMmlOVRCkmMejWbnWoUJeE2tcICD6uCXn6pT9OdbXVUDNH
-	BVTvtZvq8Eqtzk2zBIThzGcs9DSt7Wz6N1VAra/6GaMzIsXPpZVVPL2TMl7y3wW0i3z4Ld6R0ZN
-	C75mxcp2rLH6+nW8gYqzTchEK5AAWR4Nv9sd/vh9qgWWG9yZs1U91NLSzT/jUOzdUO8K5a4CmTh
-	+7hNds3NXz1HLoMjT5TEgqNNF+soFU42rg3D9MbUJIFSCv7tjzhr4PnjqHwHgOJ43twamB2sJ+b
-	252GSHw8=
-X-Received: by 2002:a05:600c:620b:b0:43b:ca39:6c7d with SMTP id 5b1f17b1804b1-45381aaff81mr39464015e9.3.1750865567832;
-        Wed, 25 Jun 2025 08:32:47 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IG3NxmZy17uXte6Caxn+L+3Rf3Nho297KIrtG45Gu/BYgznhslbpO6yv1wQ51L4rPgpSs1DsA==
-X-Received: by 2002:a05:600c:620b:b0:43b:ca39:6c7d with SMTP id 5b1f17b1804b1-45381aaff81mr39463495e9.3.1750865567446;
-        Wed, 25 Jun 2025 08:32:47 -0700 (PDT)
-Received: from vschneid-thinkpadt14sgen2i.remote.csb (213-44-135-146.abo.bbox.fr. [213.44.135.146])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3a6e8069467sm4815430f8f.42.2025.06.25.08.32.46
+        d=1e100.net; s=20230601; t=1750865647; x=1751470447;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=/XVVjse7SLe3BXVW5yyOf89DyqZxU9QrMZCJroaokII=;
+        b=fmyFsbK50n7gRLzLdh+tgFyu79LvzBxH8UXpntq04w1zcsLLemRufojW90sPIaQJ9D
+         soodrxYHb21OvO9eYQCmDNYSKCswqedS3sTaIKMgi6YDYItKJHgFspx9MxjdUldDRLxM
+         vdlKgHBCZhS6O5JDuxcmSiuDGFTw+9BA1RXvA4D9KZrDnMm4iMfU7nY9apMmHp+US7fP
+         9AlcymbNsbTAVp3P2NIxXglf9IXxfoelJKRjF21OG9+1pOKjkFcnIu1PTJcR4Ifz7v6d
+         9Hl9gUZl19CQ6waBm4A3eyNbDlzadG7H951jdg3RC6FQ9bdogiEBqfUFz93BbG/k878M
+         iafQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUerbwfTykDAsXeOUOYoegTkl0cp4AV1+2LW0oTFn+0GCR/j8+Id9t3mjlW36EksKETb4Z7P17s4El5X1A=@vger.kernel.org, AJvYcCVCsJVs5dATw65kQIv5r2/Dtmnd5x2fGf3KJdMQQ4V8oS/xVphcDImWf7/p9597gVdFUbIFe+GXoUMaCcEQvdo4@vger.kernel.org, AJvYcCVI6EBaJTwCdpHS5DUHGHpvsshg0murH0/FlTSPpp32BlYOkE1h/we9YRUsXQWCi7TU2a1uPwnB@vger.kernel.org
+X-Gm-Message-State: AOJu0YzXezlqRCYf7GtNrEhOxDSGxtAHDFh3NidV/1BOo5aqITILTJfP
+	O04BOVjr91ln4miF7qYQvOs6CVW1DPGOHt7tQSXn77gOpanGQz1Y0s6N
+X-Gm-Gg: ASbGnctYsJtEf9NbZ8wGI4fCaFN0h7bxQqpOxQQUWVSpS8w84k23NAfNywhL4J46+td
+	aAQq2NQ0xmElQeCaqMsgHHwCoKT/Anf2TRi8EhnJAyCZEz7IV/viWU76zhg4XNlTcWa1jbVc2uQ
+	utiLe72gG+8Y4A4MDMNGFZ6CjreuMf9CG9xxlIjdkmq6npAAU/Gvi71aC0SubDMllr+QHAUOYjx
+	MKBGPBiM0/b8sYpIozb8Vz2gm7tgh7z7x++hSTBzvGYZTuf8H23nMpxNK2uWLoMuF+mh1KkkejO
+	q516ej/FPwAXDHp+y2BfwntRZF08tHAC6+ImsIOwZECs4Mohm6arnR7USd1OMYgEjeKrgeJnE/V
+	oG3E8rZOIT+WWV3aevRf44/drN7a9vlwcSQ==
+X-Google-Smtp-Source: AGHT+IGEsigkbjsnTclJYWdU60y2qHEdvcVG9LRVDW0dYPsNGLYx5hAXrCi7negqVdxFafDSDMwEyQ==
+X-Received: by 2002:a05:6a20:1581:b0:215:fac3:2ce2 with SMTP id adf61e73a8af0-2207f28f8bfmr5849761637.23.1750865646715;
+        Wed, 25 Jun 2025 08:34:06 -0700 (PDT)
+Received: from malayaVM.mrout-thinkpadp16vgen1.punetw6.csb ([103.133.229.223])
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-b31f1241f07sm13043969a12.37.2025.06.25.08.34.02
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 25 Jun 2025 08:32:46 -0700 (PDT)
-From: Valentin Schneider <vschneid@redhat.com>
-To: K Prateek Nayak <kprateek.nayak@amd.com>, Ingo Molnar
- <mingo@redhat.com>, Peter Zijlstra <peterz@infradead.org>, Juri Lelli
- <juri.lelli@redhat.com>, Vincent Guittot <vincent.guittot@linaro.org>,
- Leon Romanovsky <leon@kernel.org>, linux-kernel@vger.kernel.org
-Cc: Steve Wahl <steve.wahl@hpe.com>, Dietmar Eggemann
- <dietmar.eggemann@arm.com>, Steven Rostedt <rostedt@goodmis.org>, Ben
- Segall <bsegall@google.com>, Mel Gorman <mgorman@suse.de>, Madadi Vineeth
- Reddy <vineethr@linux.ibm.com>, K
- Prateek Nayak <kprateek.nayak@amd.com>
-Subject: Re: [PATCH] sched/topology: Correct "sched_domains_curr_level" in
- topology_span_sane()
-In-Reply-To: <20250624041235.1589-1-kprateek.nayak@amd.com>
-References: <20250624041235.1589-1-kprateek.nayak@amd.com>
-Date: Wed, 25 Jun 2025 17:32:45 +0200
-Message-ID: <xhsmhy0tfhm5e.mognet@vschneid-thinkpadt14sgen2i.remote.csb>
+        Wed, 25 Jun 2025 08:34:06 -0700 (PDT)
+From: Malaya Kumar Rout <malayarout91@gmail.com>
+To: malayarout91@gmail.com
+Cc: Andrew Lunn <andrew+netdev@lunn.ch>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>,
+	Paolo Abeni <pabeni@redhat.com>,
+	Shuah Khan <shuah@kernel.org>,
+	netdev@vger.kernel.org,
+	linux-kselftest@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH] selftests: net: fix resource leak  in napi_id_helper.c
+Date: Wed, 25 Jun 2025 21:03:07 +0530
+Message-ID: <20250625153334.434747-1-malayarout91@gmail.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Transfer-Encoding: 8bit
 
-Hey,
+Resolve minor resource leaks reported by cppcheck in napi_id_helper.c
 
-First of all, thanks for looking into this!
+cppcheck output before this patch:
+tools/testing/selftests/drivers/net/napi_id_helper.c:37:3: error: Resource leak: server [resourceLeak]
+tools/testing/selftests/drivers/net/napi_id_helper.c:46:3: error: Resource leak: server [resourceLeak]
+tools/testing/selftests/drivers/net/napi_id_helper.c:51:3: error: Resource leak: server [resourceLeak]
+tools/testing/selftests/drivers/net/napi_id_helper.c:59:3: error: Resource leak: server [resourceLeak]
+tools/testing/selftests/drivers/net/napi_id_helper.c:67:3: error: Resource leak: server [resourceLeak]
+tools/testing/selftests/drivers/net/napi_id_helper.c:76:3: error: Resource leak: server [resourceLeak]
 
-On 24/06/25 04:12, K Prateek Nayak wrote:
-> The updated topology_span_sane() algorithm in commit ce29a7da84cd
-> ("sched/topology: Refinement to topology_span_sane speedup") works on
-> the "sched_domain_topology_level" hierarchy to detect overlap in
-> !SDTL_OVERLAP domains using the tl->mask() as opposed to the
-> sched_domain hierarchy (and the sched_domain_span()) in the previous
-> approach.
->
+cppcheck output after this patch:
+No resource leaks found
 
-The previous approach also used tl->mask() directly, but it happened
-to be called *before* the build_sched_domain() loop, so the NODE iteration
-happened with sched_domain_curr_level at its default static value of
-0... For the first SD build that is, I assume that was then broken for any
-subsequent rebuild.
+Signed-off-by: Malaya Kumar Rout <malayarout91@gmail.com>
+---
+ tools/testing/selftests/drivers/net/napi_id_helper.c | 6 ++++++
+ 1 file changed, 6 insertions(+)
 
-> For NODE domain, the cpumask retunred by tl->mask() depends on the
-> "sched_domains_curr_level". Unless the "sched_domains_curr_level" is
-> reset during topology_span_sane(), it reflects the "numa_level" of the
-> last sched_domain created which is incorrect.
->
-> Reset the "sched_domains_curr_level" to the "tl->numa_level" during
-> topology_span_sane(). Although setting "topology_span_sane" to 0 in
-> topology_span_sane() should be enough since all domains with
-> numa_level > 0 currently set SDTL_OVERLAP flag, setting it to
-> "tl->numa_level" makes it more explicit and future proof against changes
-> in the same area.
->
-> Cc: Steve Wahl <steve.wahl@hpe.com>
-> Reported-by: Leon Romanovsky <leon@kernel.org>
-> Closes: https://lore.kernel.org/lkml/20250610110701.GA256154@unreal/
-> Fixes: ce29a7da84cd ("sched/topology: Refinement to topology_span_sane speedup")
-
-Per the above, this could probably be:
-
-Fixes: ccf74128d66c ("sched/topology: Assert non-NUMA topology masks don't (partially) overlap")
-
-> Signed-off-by: K Prateek Nayak <kprateek.nayak@amd.com>
-> ---
-> This issue can be reproduced on a setup with the following NUMA topology
-> shared by Leon:
->
->     $ sudo numactl -H
->     available: 5 nodes (0-4)
->     node 0 cpus: 0 1
->     node 0 size: 2927 MB
->     node 0 free: 1603 MB
->     node 1 cpus: 2 3
->     node 1 size: 3023 MB
->     node 1 free: 3008 MB
->     node 2 cpus: 4 5
->     node 2 size: 3023 MB
->     node 2 free: 3007 MB
->     node 3 cpus: 6 7
->     node 3 size: 3023 MB
->     node 3 free: 3002 MB
->     node 4 cpus: 8 9
->     node 4 size: 3022 MB
->     node 4 free: 2718 MB
->     node distances:
->     node   0   1   2   3   4
->       0:  10  39  38  37  36
->       1:  39  10  38  37  36
->       2:  38  38  10  37  36
->       3:  37  37  37  10  36
->       4:  36  36  36  36  10
->
->
-> This topology can be emulated using QEMU with the following cmdline used
-> in my testing:
->
->      sudo ~/dev/qemu/build/qemu-system-x86_64 -enable-kvm \
->      -cpu host \
->      -m 20G -smp cpus=10,sockets=10 -machine q35 \
->      -object memory-backend-ram,size=4G,id=m0 \
->      -object memory-backend-ram,size=4G,id=m1 \
->      -object memory-backend-ram,size=4G,id=m2 \
->      -object memory-backend-ram,size=4G,id=m3 \
->      -object memory-backend-ram,size=4G,id=m4 \
->      -numa node,cpus=0-1,memdev=m0,nodeid=0 \
->      -numa node,cpus=2-3,memdev=m1,nodeid=1 \
->      -numa node,cpus=4-5,memdev=m2,nodeid=2 \
->      -numa node,cpus=6-7,memdev=m3,nodeid=3 \
->      -numa node,cpus=8-9,memdev=m4,nodeid=4 \
->      -numa dist,src=0,dst=1,val=39 \
->      -numa dist,src=0,dst=2,val=38 \
->      -numa dist,src=0,dst=3,val=37 \
->      -numa dist,src=0,dst=4,val=36 \
->      -numa dist,src=1,dst=0,val=39 \
->      -numa dist,src=1,dst=2,val=38 \
->      -numa dist,src=1,dst=3,val=37 \
->      -numa dist,src=1,dst=4,val=36 \
->      -numa dist,src=2,dst=0,val=38 \
->      -numa dist,src=2,dst=1,val=38 \
->      -numa dist,src=2,dst=3,val=37 \
->      -numa dist,src=2,dst=4,val=36 \
->      -numa dist,src=3,dst=0,val=37 \
->      -numa dist,src=3,dst=1,val=37 \
->      -numa dist,src=3,dst=2,val=37 \
->      -numa dist,src=3,dst=4,val=36 \
->      -numa dist,src=4,dst=0,val=36 \
->      -numa dist,src=4,dst=1,val=36 \
->      -numa dist,src=4,dst=2,val=36 \
->      -numa dist,src=4,dst=3,val=36 \
->      ...
->
-
-It's a bit of a mouthful but I would keep that in the changelog itself
-given that it's part of reproducing the bug.
-
->
-> Changes are based on tip:sched/urgent at commit 914873bc7df9 ("Merge tag
-> 'x86-build-2025-05-25' of
-> git://git.kernel.org/pub/scm/linux/kernel/git/tip/tip")
-> ---
->  kernel/sched/topology.c | 9 +++++++++
->  1 file changed, 9 insertions(+)
->
-> diff --git a/kernel/sched/topology.c b/kernel/sched/topology.c
-> index a2a38e1b6f18..1d634862c8df 100644
-> --- a/kernel/sched/topology.c
-> +++ b/kernel/sched/topology.c
-> @@ -2426,6 +2426,15 @@ static bool topology_span_sane(const struct cpumask *cpu_map)
->               cpumask_clear(covered);
->               cpumask_clear(id_seen);
->
-> +#ifdef CONFIG_NUMA
-> +		/*
-> +		 * Reuse the sched_domains_curr_level hack since
-> +		 * tl->mask() below can resolve to sd_numa_mask()
-> +		 * for the NODE domain.
-> +		 */
-> +		sched_domains_curr_level = tl->numa_level;
-> +#endif
-> +
-
-Urgh... Given this is now invoked after the build_sched_domain() loop, what
-if we directly used the sched_domain_span(), instead, i.e. use
-
-   sched_domain_mask(per_cpu_ptr(tl->data->sd, cpu))
-
-instead of
-
-   tl->mask(id)
-
-which means no indrect use of sched_domains_curr_level. Note that I'm
-currently running out of brain juice so this might be a really stupid idea :-)
-
->               /*
->                * Non-NUMA levels cannot partially overlap - they must be either
->                * completely equal or completely disjoint. Otherwise we can end up
->
-> base-commit: 914873bc7df913db988284876c16257e6ab772c6
-> --
-> 2.34.1
+diff --git a/tools/testing/selftests/drivers/net/napi_id_helper.c b/tools/testing/selftests/drivers/net/napi_id_helper.c
+index eecd610c2109..1441b8d49b91 100644
+--- a/tools/testing/selftests/drivers/net/napi_id_helper.c
++++ b/tools/testing/selftests/drivers/net/napi_id_helper.c
+@@ -34,6 +34,7 @@ int main(int argc, char *argv[])
+ 
+ 	if (setsockopt(server, SOL_SOCKET, SO_REUSEADDR, &opt, sizeof(opt))) {
+ 		perror("setsockopt");
++		close(server);
+ 		return 1;
+ 	}
+ 
+@@ -43,11 +44,13 @@ int main(int argc, char *argv[])
+ 
+ 	if (bind(server, (struct sockaddr *)&address, sizeof(address)) < 0) {
+ 		perror("bind failed");
++		close(server);
+ 		return 1;
+ 	}
+ 
+ 	if (listen(server, 1) < 0) {
+ 		perror("listen");
++		close(server);
+ 		return 1;
+ 	}
+ 
+@@ -56,6 +59,7 @@ int main(int argc, char *argv[])
+ 	client = accept(server, NULL, 0);
+ 	if (client < 0) {
+ 		perror("accept");
++		close(server);
+ 		return 1;
+ 	}
+ 
+@@ -64,6 +68,7 @@ int main(int argc, char *argv[])
+ 			 &optlen);
+ 	if (ret != 0) {
+ 		perror("getsockopt");
++		close(server);
+ 		return 1;
+ 	}
+ 
+@@ -73,6 +78,7 @@ int main(int argc, char *argv[])
+ 
+ 	if (napi_id == 0) {
+ 		fprintf(stderr, "napi ID is 0\n");
++		close(server);
+ 		return 1;
+ 	}
+ 
+-- 
+2.43.0
 
 
