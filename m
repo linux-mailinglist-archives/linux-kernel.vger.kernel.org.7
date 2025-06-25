@@ -1,102 +1,101 @@
-Return-Path: <linux-kernel+bounces-701442-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-701444-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 36E32AE7515
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Jun 2025 05:04:47 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B17BDAE751A
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Jun 2025 05:06:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B8DC417214F
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Jun 2025 03:04:47 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 848925A171E
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Jun 2025 03:06:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A528E3074BF;
-	Wed, 25 Jun 2025 03:04:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="OtYiRk7K"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 05B942AC17;
-	Wed, 25 Jun 2025 03:04:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A0B061D516C;
+	Wed, 25 Jun 2025 03:06:48 +0000 (UTC)
+Received: from outboundhk.mxmail.xiaomi.com (outboundhk.mxmail.xiaomi.com [118.143.206.90])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 38EC13074BF
+	for <linux-kernel@vger.kernel.org>; Wed, 25 Jun 2025 03:06:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=118.143.206.90
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750820680; cv=none; b=vGrR/HgXCiIFd2F9rg5MOCee84nOhBT0ThmklP8dVwmRTi4WZYYMr7kR4Any3GlvjVsvEMji3FA2UrUg4BTdBZAJuaZCB7zgD0qio97My+GrBAoIim8VaEZ7iCFgJiBUQwUXOvpUO4IBpkqeH+jyXoxrWeBhgsIfPaXuJUI6lEw=
+	t=1750820808; cv=none; b=WLKll200bpugVxbDTvgbfQ+1ya1r1cAkK2n11mAMyFMbyO99XVAReawWFv0HQyAMybj/fE5rJCZkix7OdIL4zVKUKvUNEgR5XKlGQjJKvYUGJdaN47W3G/oyDNO0sbkoPZKvXclOxEW8TIDegZ51OCQTmoOhwnQgJF64oxPnz30=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750820680; c=relaxed/simple;
-	bh=/UygT9wn3aJnZqLyjymuRu9rP0E91Bor+TDWg/1ZU3k=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=D02txxqpMH0h7h84IlbrO2WWbmsolGF3TwLIX6DaBq4ecJuJY5JuBnW4ZY0JdjEQ4xMPCN537M7PpeS7B/MDIwvE6gWgzhP94KA6I3ZII8Kfil2VFLTx68MMzfA37vAeoEVPy8XvceeE9wt18208z3TMgwMeSgAJKjx7xWEUWnc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=OtYiRk7K; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 444E3C4CEF0;
-	Wed, 25 Jun 2025 03:04:39 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1750820679;
-	bh=/UygT9wn3aJnZqLyjymuRu9rP0E91Bor+TDWg/1ZU3k=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=OtYiRk7KjYFVfe0hPGv0yLSMZZ/cj9pepD9RGv02lA1mEeEwLfgpiUfmCZ4u2lc5t
-	 ws9pk0P1hkZaEn0Xo9v9claCOZVyWePa7ujkeva7xsC5xKpH59fGMPvbYQlZfIKf60
-	 Z1GQJs/5OsMjtUfAohIUUbb6ksH6ksDXBv3WUDlwe2PvTTqDOwR3lsREcuBKfygf6V
-	 AkgupYpOvXq8rBAdtBu1dQhYgzLgb0TdoBaoCfUX7D1QooH/ZNWYpwaqwEQO7GWgaJ
-	 1qWfGDyRgGDXTYd1n4hyYf0keWmETWxtIgtvyVusNxUjWpBeVZleIw4w7yuuTC0+W9
-	 bgso5iI8E50CQ==
-Date: Tue, 24 Jun 2025 20:04:04 -0700
-From: Eric Biggers <ebiggers@kernel.org>
-To: Herbert Xu <herbert@gondor.apana.org.au>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>,
-	"David S. Miller" <davem@davemloft.net>,
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-	Linux Crypto Mailing List <linux-crypto@vger.kernel.org>
-Subject: Re: [GIT PULL] Crypto Fixes for 6.16
-Message-ID: <20250625030404.GA8962@sol>
-References: <aFtidDP6MLX1V2A6@gondor.apana.org.au>
+	s=arc-20240116; t=1750820808; c=relaxed/simple;
+	bh=/nvn8sGirlYLcE4sgPudY9wrp9atW0WJBPYbWZk257c=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=kExzZSsBu0XLgR6SPUbbX8FlSHCs4MWS7Zpeon/qJRF30A4pw/xK3yPaVzbG58EwuwonjDY0Nt2a/ifBVUGrVuG5minTS3cFxfi61frkl7Zry6NXpmfR+rvDEE6l0wpq7ig/nWs2TjAnlU7ZZSQp8eIxms6mF9qSLaMHcbx26Z4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=xiaomi.com; spf=pass smtp.mailfrom=xiaomi.com; arc=none smtp.client-ip=118.143.206.90
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=xiaomi.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=xiaomi.com
+X-CSE-ConnectionGUID: 6GE/u/CcQSCHQrYibRIOSA==
+X-CSE-MsgGUID: lZBYxcdjQCu8ISDLQ3vnEQ==
+X-IronPort-AV: E=Sophos;i="6.16,263,1744041600"; 
+   d="scan'208";a="118501602"
+From: Huang Jianan <huangjianan@xiaomi.com>
+To: "linux-f2fs-devel@lists.sourceforge.net"
+	<linux-f2fs-devel@lists.sourceforge.net>, "chao@kernel.org"
+	<chao@kernel.org>, "jaegeuk@kernel.org" <jaegeuk@kernel.org>
+CC: =?utf-8?B?546L6L6J?= <wanghui33@xiaomi.com>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	=?utf-8?B?55ub5YuH?= <shengyong1@xiaomi.com>
+Subject: Re: [PATCH v2] f2fs: avoid splitting bio when reading multiple pages
+Thread-Topic: [PATCH v2] f2fs: avoid splitting bio when reading multiple pages
+Thread-Index: AQHb4Clh9I6efU1o50+xgPlNPKHQtrQStZiA
+Date: Wed, 25 Jun 2025 03:05:32 +0000
+Message-ID: <2af57d55-1dd8-44ab-85fe-7ad181a42434@xiaomi.com>
+References: <20250617055542.218681-1-huangjianan@xiaomi.com>
+ <20250618081705.260239-1-huangjianan@xiaomi.com>
+In-Reply-To: <20250618081705.260239-1-huangjianan@xiaomi.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+Content-Type: text/plain; charset="utf-8"
+Content-ID: <6E81B61A40C2BC49AAF723C7BD7D9A78@xiaomi.com>
+Content-Transfer-Encoding: base64
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <aFtidDP6MLX1V2A6@gondor.apana.org.au>
 
-On Wed, Jun 25, 2025 at 10:44:04AM +0800, Herbert Xu wrote:
-> Hi Linus:
-> 
-> The following changes since commit df29f60369ccec0aa17d7eed7e2ae1fcdc9be6d4:
-> 
->   crypto: ahash - Fix infinite recursion in ahash_def_finup (2025-06-18 17:02:02 +0800)
-> 
-> are available in the Git repository at:
-> 
->   git://git.kernel.org/pub/scm/linux/kernel/git/herbert/crypto-2.6.git tags/v6.16-p6
-> 
-> for you to fetch changes up to 20d71750cc72e80859d52548cf5c2a7513983b0d:
-> 
->   crypto: wp512 - Use API partial block handling (2025-06-23 16:56:56 +0800)
-> 
-> ----------------------------------------------------------------
-> This push fixes a regression where wp512 can no longer be used
-> with hmac.
-> ----------------------------------------------------------------
-> 
-> Herbert Xu (1):
->       crypto: wp512 - Use API partial block handling
-> 
-
-Wouldn't it make more sense to revert the "Crypto API partial block handling"
-stuff?  It's been causing a huge number of problems, and it's been getting
-superseded by the librarification changes anyway.
-
-This is already the fourth 6.16 fixes pull request for regressions caused by
-your partial block handling changes.  And I have another one queued in
-libcrypto-fixes.  I expect there will need to be more...
-
-Indeed, I just found that a lot of drivers in drivers/crypto/ haven't been
-updated to be aware of the extra byte that comes back from
-crypto_shash_export().  So there are a bunch of buffer overflows there too.
-(Not like drivers/crypto/ actually matters, but apparently your changes are for
-its benefit?  So it's interesting that it was actually broken by them.)
-
-- Eric
+T24gMjAyNS82LzE4IDE2OjE3LCBKaWFuYW4gSHVhbmcgd3JvdGU6DQo+IFdoZW4gZmV3ZXIgcGFn
+ZXMgYXJlIHJlYWQsIG5yX3BhZ2VzIG1heSBiZSBzbWFsbGVyIHRoYW4gbnJfY3BhZ2VzLiBEdWUN
+Cj4gdG8gdGhlIG5yX3ZlY3MgbGltaXQsIHRoZSBjb21wcmVzc2VkIHBhZ2VzIHdpbGwgYmUgc3Bs
+aXQgaW50byBtdWx0aXBsZQ0KPiBiaW9zIGFuZCB0aGVuIG1lcmdlZCBhdCB0aGUgYmxvY2sgbGV2
+ZWwuIEluIHRoaXMgY2FzZSwgbnJfY3BhZ2VzIHNob3VsZA0KPiBiZSB1c2VkIHRvIHByZS1hbGxv
+Y2F0ZSBidmVjcy4NCj4gVG8gaGFuZGxlIHRoaXMgY2FzZSwgYWxpZ24gbWF4X25yX3BhZ2VzIHRv
+IGNsdXN0ZXJfc2l6ZSwgd2hpY2ggc2hvdWxkIGJlDQo+IGVub3VnaCBmb3IgYWxsIGNvbXByZXNz
+ZWQgcGFnZXMuDQo+DQo+IFNpZ25lZC1vZmYtYnk6IEppYW5hbiBIdWFuZyA8aHVhbmdqaWFuYW5A
+eGlhb21pLmNvbT4NCj4gU2lnbmVkLW9mZi1ieTogU2hlbmcgWW9uZyA8c2hlbmd5b25nMUB4aWFv
+bWkuY29tPg0KPiAtLS0NCj4gQ2hhbmdlcyBzaW5jZSB2MToNCj4gLSBVc2UgYWxpZ25lZCBucl9w
+YWdlcyBpbnN0ZWFkIG9mIG5yX2NwYWdlcyB0byBwcmUtYWxsb2NhdGUgYnZlY3MuDQo+DQo+ICAg
+ZnMvZjJmcy9kYXRhLmMgfCAxMiArKysrKysrKystLS0NCj4gICAxIGZpbGUgY2hhbmdlZCwgOSBp
+bnNlcnRpb25zKCspLCAzIGRlbGV0aW9ucygtKQ0KPg0KPiBkaWZmIC0tZ2l0IGEvZnMvZjJmcy9k
+YXRhLmMgYi9mcy9mMmZzL2RhdGEuYw0KPiBpbmRleCAzMWU4OTI4NDI2MjUuLjJkOTQ4NTg2ZmVh
+MCAxMDA2NDQNCj4gLS0tIGEvZnMvZjJmcy9kYXRhLmMNCj4gKysrIGIvZnMvZjJmcy9kYXRhLmMN
+Cj4gQEAgLTIzMDMsNyArMjMwMyw3IEBAIGludCBmMmZzX3JlYWRfbXVsdGlfcGFnZXMoc3RydWN0
+IGNvbXByZXNzX2N0eCAqY2MsIHN0cnVjdCBiaW8gKipiaW9fcmV0LA0KPiAgIAkJfQ0KPiAgIA0K
+PiAgIAkJaWYgKCFiaW8pIHsNCj4gLQkJCWJpbyA9IGYyZnNfZ3JhYl9yZWFkX2Jpbyhpbm9kZSwg
+YmxrYWRkciwgbnJfcGFnZXMsDQo+ICsJCQliaW8gPSBmMmZzX2dyYWJfcmVhZF9iaW8oaW5vZGUs
+IGJsa2FkZHIsIG5yX3BhZ2VzIC0gaSwNCj4gICAJCQkJCWYyZnNfcmFfb3BfZmxhZ3MocmFjKSwN
+Cj4gICAJCQkJCWZvbGlvLT5pbmRleCwgZm9yX3dyaXRlKTsNCj4gICAJCQlpZiAoSVNfRVJSKGJp
+bykpIHsNCj4gQEAgLTIzNzAsMTIgKzIzNzAsMTggQEAgc3RhdGljIGludCBmMmZzX21wYWdlX3Jl
+YWRwYWdlcyhzdHJ1Y3QgaW5vZGUgKmlub2RlLA0KPiAgIAkJLm5yX2NwYWdlcyA9IDAsDQo+ICAg
+CX07DQo+ICAgCXBnb2ZmX3QgbmNfY2x1c3Rlcl9pZHggPSBOVUxMX0NMVVNURVI7DQo+IC0JcGdv
+ZmZfdCBpbmRleDsNCj4gKwlwZ29mZl90IGluZGV4ID0gcmFjID8gcmVhZGFoZWFkX2luZGV4KHJh
+YykgOiBmb2xpby0+aW5kZXg7DQo+ICAgI2VuZGlmDQo+ICAgCXVuc2lnbmVkIG5yX3BhZ2VzID0g
+cmFjID8gcmVhZGFoZWFkX2NvdW50KHJhYykgOiAxOw0KPiAgIAl1bnNpZ25lZCBtYXhfbnJfcGFn
+ZXMgPSBucl9wYWdlczsNCj4gICAJaW50IHJldCA9IDA7DQo+ICAgDQo+ICsjaWZkZWYgQ09ORklH
+X0YyRlNfRlNfQ09NUFJFU1NJT04NCj4gKwlpZiAoZjJmc19jb21wcmVzc2VkX2ZpbGUoaW5vZGUp
+KQ0KPiArCQltYXhfbnJfcGFnZXMgPSByb3VuZF91cChpbmRleCArIG5yX3BhZ2VzLCBjYy5jbHVz
+dGVyX3NpemUpIC0NCj4gKwkJCQlyb3VuZF9kb3duKGluZGV4LCBjYy5jbHVzdGVyX3NpemUpOw0K
+PiArI2VuZGlmDQo+ICsNCj4gICAJbWFwLm1fcGJsayA9IDA7DQo+ICAgCW1hcC5tX2xibGsgPSAw
+Ow0KPiAgIAltYXAubV9sZW4gPSAwOw0KPiBAQCAtMjM4NSw3ICsyMzkxLDcgQEAgc3RhdGljIGlu
+dCBmMmZzX21wYWdlX3JlYWRwYWdlcyhzdHJ1Y3QgaW5vZGUgKmlub2RlLA0KPiAgIAltYXAubV9z
+ZWdfdHlwZSA9IE5PX0NIRUNLX1RZUEU7DQo+ICAgCW1hcC5tX21heV9jcmVhdGUgPSBmYWxzZTsN
+Cj4gICANCj4gLQlmb3IgKDsgbnJfcGFnZXM7IG5yX3BhZ2VzLS0pIHsNCj4gKwlmb3IgKDsgbnJf
+cGFnZXM7IG5yX3BhZ2VzLS0sIG1heF9ucl9wYWdlcy0tKSB7DQo+ICAgCQlpZiAocmFjKSB7DQo+
+ICAgCQkJZm9saW8gPSByZWFkYWhlYWRfZm9saW8ocmFjKTsNCj4gICAJCQlwcmVmZXRjaHcoJmZv
+bGlvLT5mbGFncyk7DQoNCnBpbmd+DQoNCg==
 
