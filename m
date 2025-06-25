@@ -1,196 +1,112 @@
-Return-Path: <linux-kernel+bounces-703383-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-703373-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 50A69AE8F7D
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Jun 2025 22:29:37 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id B2F83AE8F63
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Jun 2025 22:24:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4CA704A828E
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Jun 2025 20:29:37 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 072B44A7E08
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Jun 2025 20:24:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6A0AC2DCBEF;
-	Wed, 25 Jun 2025 20:29:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0FFEC2DCBE4;
+	Wed, 25 Jun 2025 20:24:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=konsulko.se header.i=@konsulko.se header.b="xlWYxEIt";
-	dkim=permerror (0-bit key) header.d=konsulko.se header.i=@konsulko.se header.b="e1VP2Tqq"
-Received: from mailrelay6-3.pub.mailoutpod3-cph3.one.com (mailrelay6-3.pub.mailoutpod3-cph3.one.com [46.30.212.11])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="YmihI4nf"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 50D552BCF6F
-	for <linux-kernel@vger.kernel.org>; Wed, 25 Jun 2025 20:29:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.30.212.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 643461FE47B;
+	Wed, 25 Jun 2025 20:24:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750883368; cv=none; b=nXMAUVk2OcZClpMNHV+xxUdv6yIP7jOsHcbUVMniF+v3BDct6gyVan/fiNEs9WQ8Vpwae+WzWdZrXc02cb4SoR1mLi5B3TPqMNlc0VqdS1fgqA5DC2PPtiWLYsfF09TgjQ3xsfHEUEIj3GkcQSfYFGi84yAV8toOJB58NaR0O6E=
+	t=1750883080; cv=none; b=VF/G9In62Hmf8zEChRxX8JS1kMEGp6KC//ZYKoYLC29GzWpxNPm6ORUqndSoayfOngRhbM4RgkSXhYBHfm6LfoCMtiJHhT6zT3ubcZnSyNxEgS+8tZ+qwapSl3+FPclZmQPcP6dWjD2CNZMnqNbc/rmczIAUOR69wDgZOEErkvk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750883368; c=relaxed/simple;
-	bh=vuzj/xayTr95WcffBwjHoYH2sEOFOq8LE0VUip3uJHQ=;
-	h=Content-Type:Mime-Version:Subject:From:In-Reply-To:Date:Cc:
-	 Message-Id:References:To; b=UBjcas7QwI3p8MkzPSvuxgEi68d8T2aiHC2DF/4v8noEl+w5AFwP9MqRMBnEttgHhxfiZuwlpTnl5qK9GC7Pr05GseBJvpYlE0HWnSRVSPZJexnz0iwymsc36Q1xyYn0OK45uIqSL8CsyMiucOHWwCSTGRzXpn3dxlyDk/zGd+M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=konsulko.se; spf=none smtp.mailfrom=konsulko.se; dkim=pass (2048-bit key) header.d=konsulko.se header.i=@konsulko.se header.b=xlWYxEIt; dkim=permerror (0-bit key) header.d=konsulko.se header.i=@konsulko.se header.b=e1VP2Tqq; arc=none smtp.client-ip=46.30.212.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=konsulko.se
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=konsulko.se
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; t=1750883356; x=1751488156;
-	d=konsulko.se; s=rsa1;
-	h=to:references:message-id:content-transfer-encoding:cc:date:in-reply-to:from:
-	 subject:mime-version:content-type:from;
-	bh=mFicMW97oCaFX3ytmFZghvLQmZgDqR8OgB6iTx+baCA=;
-	b=xlWYxEIt96EYtxtxqfAkDKuAn42RhF4BXnMhnbDT4tX9n8AZs/S7PBTGJHkJtZWCDOwujMmd8Hvpx
-	 uA+V1ub2XXvaGc68ADH67NAcIJJ8JI8+Jqq0WwwJ1b9mMR+p9g2jb7Wsc3BqFmdRtUEFVGcYSjRVKI
-	 kn3pTyP6IM96YqO9zGtHY/2Al0BBJoHSpXDlZD8nyIpP3flgxtOdLsrwRjfe+2gES0gI7faSJJ5ud0
-	 fPo6ZBy4GifEPHmRBAiyg8DicoqJW3k7ovWISrZAM0sdNUe0kp+so0+inW71+UBy3jB2dv3nbWStNw
-	 5ru0KiBrS8KyqjQc+6phNWvVRrUTHBg==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; t=1750883356; x=1751488156;
-	d=konsulko.se; s=ed1;
-	h=to:references:message-id:content-transfer-encoding:cc:date:in-reply-to:from:
-	 subject:mime-version:content-type:from;
-	bh=mFicMW97oCaFX3ytmFZghvLQmZgDqR8OgB6iTx+baCA=;
-	b=e1VP2TqqOq6P+uUeLxOSceSYWSkdKhkMQ7NYvr4vQ2yjSIBjR4EMk8hv2ppLiDME9rAD+XXA5HRFg
-	 UmXUSZqDQ==
-X-HalOne-ID: 0f22a303-5203-11f0-843b-417246ffdc90
-Received: from smtpclient.apple (c188-150-224-8.bredband.tele2.se [188.150.224.8])
-	by mailrelay6.pub.mailoutpod3-cph3.one.com (Halon) with ESMTPSA
-	id 0f22a303-5203-11f0-843b-417246ffdc90;
-	Wed, 25 Jun 2025 20:29:16 +0000 (UTC)
-Content-Type: text/plain;
-	charset=utf-8
+	s=arc-20240116; t=1750883080; c=relaxed/simple;
+	bh=6vn+kLxbQhu5UtYwr42P74lvX4VcfqteslgQ0wu8pu0=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=g1RSBg5RDE2SldaRZJ1a7JOO27Em5htU14LnmnfPABt+0HXqnf0hK1sPun5ZX9J+md9+TCetdBu/EUzhI4mBkVtksu/8rdP/4mvKSS8nDqcf3hB+F5GM6KrOEp4x+h2srXxd9eWWH/zQDd4D8KiopnJN+La/ZPVn96EXyfO29jA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=YmihI4nf; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7C5F4C4CEEA;
+	Wed, 25 Jun 2025 20:24:39 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1750883079;
+	bh=6vn+kLxbQhu5UtYwr42P74lvX4VcfqteslgQ0wu8pu0=;
+	h=From:To:Cc:Subject:Date:From;
+	b=YmihI4nfxJF1lM5rLydHVopSgzisZDkMDPFBaM/CJWoB5+knCt6G6r9LIhqpJFLvv
+	 E0BRLrbz4klBnRbm2MV8fBQKTzYHDefHN09BuSbxfOUfKu0/3JnrKd4rTZcesc8GRj
+	 0W/1a/13K7WHVowr9sxWuhNhxi/E34nH7u0PShRqR68uZx47VHjVi3Emq3XQ9bTGqV
+	 0+Zp5hwEFyLeydiSkkn6mlofyjdqvYTOU9umoF6gWDNX/OnwPB7KAMybYM0fgiG50w
+	 ISuJNGQGD1JVCqWiJs56oI6ljAkZGGs4UkdnKWQm2CYxvqecTixFEP8irsGRnfLV5S
+	 wsw91urZSvfgA==
+From: Eric Biggers <ebiggers@kernel.org>
+To: linux-perf-users@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org,
+	Peter Zijlstra <peterz@infradead.org>,
+	Ingo Molnar <mingo@redhat.com>,
+	Arnaldo Carvalho de Melo <acme@kernel.org>,
+	Namhyung Kim <namhyung@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+	Jiri Olsa <jolsa@kernel.org>,
+	Ian Rogers <irogers@google.com>,
+	Adrian Hunter <adrian.hunter@intel.com>,
+	Liang Kan <kan.liang@linux.intel.com>,
+	Yuzhuo Jing <yuzhuo@google.com>
+Subject: [PATCH v3 0/4] perf: Remove libcrypto dependency
+Date: Wed, 25 Jun 2025 13:23:07 -0700
+Message-ID: <20250625202311.23244-1-ebiggers@kernel.org>
+X-Mailer: git-send-email 2.50.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3826.200.121\))
-Subject: Re: [PATCH v3 2/2] rust: support align and NUMA id in allocations
-From: Vitaly Wool <vitaly.wool@konsulko.se>
-In-Reply-To: <aFxI-rjvktSe3h8M@cassiopeiae>
-Date: Wed, 25 Jun 2025 22:22:36 +0200
-Cc: linux-mm@kvack.org,
- akpm@linux-foundation.org,
- linux-kernel@vger.kernel.org,
- Uladzislau Rezki <urezki@gmail.com>,
- Alice Ryhl <aliceryhl@google.com>,
- rust-for-linux@vger.kernel.org
-Content-Transfer-Encoding: quoted-printable
-Message-Id: <C349F54D-348D-44FE-A02F-E75C78608734@konsulko.se>
-References: <20250625062917.3379804-1-vitaly.wool@konsulko.se>
- <20250625063026.3379921-1-vitaly.wool@konsulko.se>
- <aFxGQWG_81Peu7mP@cassiopeiae> <aFxI-rjvktSe3h8M@cassiopeiae>
-To: Danilo Krummrich <dakr@kernel.org>
-X-Mailer: Apple Mail (2.3826.200.121)
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
+
+This is a reworked version of
+https://lore.kernel.org/all/20250521225307.743726-1-yuzhuo@google.com/.
+I've changed it to add a new minimal SHA-1 implementation, instead of
+trying to pull in the kernel's SHA-1 implementation which is not really
+designed to be extracted into userspace programs.  I also added a test.
+
+Changed in v3:
+   - Rebased onto perf-tools-next
+   - Removed unnecessary parentheses in array indices in sha1.c
+   - Updated my email address.  I've started consistently using my
+     kernel.org email address.
+
+Eric Biggers (2):
+  perf build: enable -fno-strict-aliasing
+  perf util: add a basic SHA-1 implementation
+
+Yuzhuo Jing (2):
+  perf genelf: Remove libcrypto dependency and use built-in sha1()
+  tools: Remove libcrypto dependency
+
+ tools/build/Makefile.feature            |  2 -
+ tools/build/feature/Makefile            |  4 -
+ tools/build/feature/test-all.c          |  5 --
+ tools/build/feature/test-libcrypto.c    | 25 -------
+ tools/perf/Documentation/perf-check.txt |  1 -
+ tools/perf/Makefile.config              | 17 +----
+ tools/perf/Makefile.perf                |  3 -
+ tools/perf/builtin-check.c              |  1 -
+ tools/perf/tests/make                   |  4 +-
+ tools/perf/tests/util.c                 | 45 +++++++++++-
+ tools/perf/util/Build                   |  1 +
+ tools/perf/util/genelf.c                | 85 +---------------------
+ tools/perf/util/sha1.c                  | 97 +++++++++++++++++++++++++
+ tools/perf/util/sha1.h                  |  6 ++
+ 14 files changed, 156 insertions(+), 140 deletions(-)
+ delete mode 100644 tools/build/feature/test-libcrypto.c
+ create mode 100644 tools/perf/util/sha1.c
+ create mode 100644 tools/perf/util/sha1.h
 
 
-
-> On Jun 25, 2025, at 9:07=E2=80=AFPM, Danilo Krummrich =
-<dakr@kernel.org> wrote:
->=20
-> On Wed, Jun 25, 2025 at 08:56:05PM +0200, Danilo Krummrich wrote:
->> On Wed, Jun 25, 2025 at 08:30:26AM +0200, Vitaly Wool wrote:
->>> Add support for large (> PAGE_SIZE) alignments in Rust allocators
->>> (Kmalloc support for large alignments is limited to the requested
->>> size, which is a reasonable limitation anyway).
->>=20
->> Please split this..
->>=20
->>> Besides, add support for NUMA id to Vmalloc.
->>=20
->> and this into separate patches.
->>=20
->> Please also add some information to the commit message what you need =
-node
->> support for. Do you also have patches to add node support to Box and =
-Vec?
-
-No, but there is a zswap backend implementation written in Rust and it =
-should be  NUMA id aware.
-I=E2=80=99m planning on submitting that basically as soon as this piece =
-gets accepted.
-
->>=20
->>>=20
->>> Signed-off-by: Vitaly Wool <vitaly.wool@konsulko.se>
->>> ---
->>> rust/helpers/slab.c            |  8 +++++--
->>> rust/helpers/vmalloc.c         |  4 ++--
->>> rust/kernel/alloc.rs           | 28 ++++++++++++++++++++++--
->>> rust/kernel/alloc/allocator.rs | 40 =
-+++++++++++++++++++---------------
->>> rust/kernel/alloc/kvec.rs      |  3 ++-
->>> 5 files changed, 59 insertions(+), 24 deletions(-)
->>>=20
->>> diff --git a/rust/helpers/slab.c b/rust/helpers/slab.c
->>> index a842bfbddcba..221c517f57a1 100644
->>> --- a/rust/helpers/slab.c
->>> +++ b/rust/helpers/slab.c
->>> @@ -3,13 +3,17 @@
->>> #include <linux/slab.h>
->>>=20
->>> void * __must_check __realloc_size(2)
->>> -rust_helper_krealloc(const void *objp, size_t new_size, gfp_t =
-flags)
->>> +rust_helper_krealloc(const void *objp, size_t new_size, unsigned =
-long align, gfp_t flags, int nid)
->>=20
->> This should have a comment making it obvious why the function has two =
-arguments
->> that are discarded. I think we should even separate it with an =
-additional inline
->> function.
->>=20
->> I do agree with discarding the align argument, given that it's not =
-exposed to
->> users though the Allocator API.
->=20
-> What I meant is that proper alignment is implied when krealloc() =
-succeeds.
-
-I agree, I need to add some comments explaining this.
-
->=20
->> I do disagree with discarding the nid argument though, since you =
-change the
->> generic Allocator::realloc() API to take a node argument, which for =
-KREALLOC and
->> KVREALLOC is silently discarded. If we introduce it, we should do so =
-for all
->> three allocators.
->>=20
->>> {
->>> + if (WARN_ON(new_size & (align - 1)))
->>> + return NULL;
->>=20
->> I don't think we should have this WARN_ON(). If we want to warn about =
-this, we
->> should already do so on the Rust side. The helper functions in this =
-file should
->> not contain any logic.
-
-Agreed.
-
->>=20
->>> return krealloc(objp, new_size, flags);
->>> }
->>>=20
->>> void * __must_check __realloc_size(2)
->>> -rust_helper_kvrealloc(const void *p, size_t size, gfp_t flags)
->>> +rust_helper_kvrealloc(const void *p, size_t size, unsigned long =
-align, gfp_t flags, int nid)
->>> {
->>> + if (WARN_ON(size & (align - 1)))
->>> + return NULL;
->>> return kvrealloc(p, size, flags);
->>> }
->>=20
->> Same as above.
->=20
-> This is actually different though, here kvrealloc() may succeed even =
-if the
-> requested alignment is not fulfilled, so this is incorrect.
-
-I can move this logic to the Rust part, too. My point here is, for =
-Kvrealloc with a large alignment we=E2=80=99ll just make the decision to =
-use vmalloc, period. We can indeed do that on the Rust side.
-
-~Vitaly
+base-commit: 9c9f4a27eb1096beb650f312a1ce996a9960b56c
+-- 
+2.50.0
 
 
