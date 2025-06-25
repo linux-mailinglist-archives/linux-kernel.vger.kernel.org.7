@@ -1,61 +1,65 @@
-Return-Path: <linux-kernel+bounces-703363-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-703370-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2F893AE8F4E
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Jun 2025 22:19:07 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 75F2DAE8F5E
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Jun 2025 22:21:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CD90F6A136A
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Jun 2025 20:18:41 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 759497A1FFD
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Jun 2025 20:20:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CFCD02D6624;
-	Wed, 25 Jun 2025 20:19:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D0B3A2DAFA0;
+	Wed, 25 Jun 2025 20:21:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="a51YSCHQ"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="iL/rNrXO"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 369BDBA42;
-	Wed, 25 Jun 2025 20:19:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3820D1DE3B5;
+	Wed, 25 Jun 2025 20:21:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750882741; cv=none; b=pP2cNdlv7Rhbk9Bc+8pwftmkuBjJFVERvf7URqYj/BQDMbtF/HCWLRNCZVXEnzbZfiTsDhhV3dMT8LrBNkLhprPAFRihgUnS3CzpOOOvBIZ2q/UfbhSJUevWtW7UPnrTJRYkIHf76uIyG3PEBEjZjH72GUxPN/cPh2Cmv04Hb5M=
+	t=1750882880; cv=none; b=S2KtMyB3q6xjXBe4VXpEQ+zNao3CI3ylCl9de0ot4e3TsuPjlHcWaUdReoWhJHlLL+MDsDqzNa8E+DyNIsqdvtjwYkwOucQgzYYlIs8alyf9HvKfnTyyTbpk32iALPXov/MoypE7bhF6A8qU8wH7/jiuhDGCkRDKr70fuKLmSGo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750882741; c=relaxed/simple;
-	bh=X8y57/DSW13hsUqIu35etDFyp3CqHDXuhzGZsw7USn8=;
+	s=arc-20240116; t=1750882880; c=relaxed/simple;
+	bh=Qhy65bNDD2Cm+pL3IZhUWPZBKCfxrDQnhAq7vRn8LxQ=;
 	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=KYiv44k12xpylyupczzq9RyQrzzJkNx7Qou5gB3AwC4fif6oI2Hl3z63WLrLSLlwfu9RrCK5EuYsoGZ7fa/66AvqQRPtDs5FInaQkx7MvmiuuE90ildg95/anztlKR6f2eOoZB4q8F22v1zgzbtoLnjaCvKv22VNLXDOgH+lOOY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=a51YSCHQ; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B25B0C4CEEA;
-	Wed, 25 Jun 2025 20:18:59 +0000 (UTC)
+	 MIME-Version:Content-Type; b=hL1yAxJm1g1idgJj8DD6p+aij1fPzi0BkdgUKtoZVK7GnaeeNH2BniJ+5I183Xod/R2BVCIVtBLkZ8OsQcRnTK4KXQRU1eWktTA3sRkkRyY25xv5T4v8bxrdb2x0+M0zOan/X6bys6+uAPEsUiu0o06TfEgmWNpYDBIPURDzK00=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=iL/rNrXO; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7AF0FC4CEEA;
+	Wed, 25 Jun 2025 20:21:18 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1750882740;
-	bh=X8y57/DSW13hsUqIu35etDFyp3CqHDXuhzGZsw7USn8=;
+	s=k20201202; t=1750882878;
+	bh=Qhy65bNDD2Cm+pL3IZhUWPZBKCfxrDQnhAq7vRn8LxQ=;
 	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=a51YSCHQhHhdIMc516ezsCyhdueG+iqHxYodRZwY89LIUGcy2x/jFe0i9V4yaheZl
-	 Y7fDhgPPVr28mjujzOSvTvmEbx/nYxo79ZhyWjcbetxXEnmKgv3y03HZAQg6k+CoW7
-	 RnIO66fwWygKitmSCM7NwMn87aTDVlTizmrs9/CLt1J6/Hnw0pqRPRoJiUlp3oAm7I
-	 Te+UM8oOLOe2pzxhtUL1AMc6w5Duu7MAGf/Xn0RrCc2zrtp2tolTY04I8NdeNwp7rS
-	 anMcbNah+UKFyaTgUlGcDUMnLQc4JsdGLlda2aAFbwb4NAGTI5ZAHRG4I3ELBlFpAM
-	 A4wxB5OI4g8Dw==
-Date: Wed, 25 Jun 2025 22:18:56 +0200
-From: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
-To: Jonathan Corbet <corbet@lwn.net>
-Cc: Akira Yokosawa <akiyks@gmail.com>, linux-kernel@vger.kernel.org, Linux
- Doc Mailing List <linux-doc@vger.kernel.org>
-Subject: Re: [PATCH v3 15/15] docs: conf.py: Check Sphinx and docutils
- version
-Message-ID: <20250625221856.326e5ce6@foz.lan>
-In-Reply-To: <875xgjacr2.fsf@trenco.lwn.net>
-References: <cover.1750571906.git.mchehab+huawei@kernel.org>
-	<972673b0a5bf5537d47780d6f8e70ae45456e751.1750571906.git.mchehab+huawei@kernel.org>
-	<c05dd5dc-1e30-4a2c-80dc-70e8b62cc681@gmail.com>
-	<87v7ona3z7.fsf@trenco.lwn.net>
-	<20250622235052.05804137@foz.lan>
-	<875xgjacr2.fsf@trenco.lwn.net>
-X-Mailer: Claws Mail 4.3.1 (GTK 3.24.49; x86_64-redhat-linux-gnu)
+	b=iL/rNrXOKOGUP0A3SUGxdwoUEoA+teDqfAA/OjHGGQ9ixO+L/kr3iC04J8m6pFqPc
+	 aqjgjrGCV/hgDE5c1i9JBeiYZAG9jFxYRP7Z4x9jL7p8oHSVnRbdRL+L+P0979/bfR
+	 xToHNBG1ogbdvT3QIOuKNQD2BIQchVpkR5QLmQPVyCVTEtU9BAYY5uhzgjP9E4h2Og
+	 49CXkmlixrJP3W6qyfQWQYhu/uDnypgHD2qfSeUyFtbtD5/YrX3frCRYVVeKJ0wEjp
+	 VeWZy8sVLZx0nIQ0vYCaOrym2989ffkQlanJ6iejHDwMiYFthxQAaRm3q+oaSe9of2
+	 da/v07j/RpaVQ==
+Date: Wed, 25 Jun 2025 13:21:17 -0700
+From: Jakub Kicinski <kuba@kernel.org>
+To: Oleksij Rempel <o.rempel@pengutronix.de>
+Cc: "David S. Miller" <davem@davemloft.net>, Eric Dumazet
+ <edumazet@google.com>, Paolo Abeni <pabeni@redhat.com>, Simon Horman
+ <horms@kernel.org>, kernel@pengutronix.de, linux-kernel@vger.kernel.org,
+ netdev@vger.kernel.org, Maxime Chevallier <maxime.chevallier@bootlin.com>
+Subject: Re: [PATCH net-next v4 0/4] net: selftest: improve test string
+ formatting and checksum handling
+Message-ID: <20250625132117.1b3264e8@kernel.org>
+In-Reply-To: <aFuEHpbjGILWich1@pengutronix.de>
+References: <20250515083100.2653102-1-o.rempel@pengutronix.de>
+	<20250516184510.2b84fab4@kernel.org>
+	<aFU9o5F4RG3QVygb@pengutronix.de>
+	<20250621064600.035b83b3@kernel.org>
+	<aFk-Za778Bk38Dxn@pengutronix.de>
+	<20250623101920.69d5c731@kernel.org>
+	<aFphGj_57XnwyhW1@pengutronix.de>
+	<20250624090953.1b6d28e6@kernel.org>
+	<aFuEHpbjGILWich1@pengutronix.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -65,62 +69,30 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 
-Em Wed, 25 Jun 2025 12:37:37 -0600
-Jonathan Corbet <corbet@lwn.net> escreveu:
-
-> Mauro Carvalho Chehab <mchehab+huawei@kernel.org> writes:
+On Wed, 25 Jun 2025 07:07:42 +0200 Oleksij Rempel wrote:
+> Hm... at least part of this behavior can be verified with self-tests:
 > 
-> > Em Sun, 22 Jun 2025 14:58:04 -0600
-> > Jonathan Corbet <corbet@lwn.net> escreveu:
-> >  
-> >> Akira Yokosawa <akiyks@gmail.com> writes:
-> >>   
-> >> > On Sun, 22 Jun 2025 08:02:44 +0200, Mauro Carvalho Chehab wrote:    
-> >> >> As reported by Akira, there were incompatibility issues with
-> >> >> Sphinx and docutils with docutils 0.19. There's already
-> >> >> a fix for it, but, as there are incompatibility issues with
-> >> >> different versions, better to add a check to verify if the
-> >> >> combination is supported/tested.
-> >> >>     
-> >> >
-> >> > I've been skeptical of adding such checks in conf.py.    
-> >> 
-> >> I have to kind of agree with this concern.  We have managed without this
-> >> complexity so far.  It looks like we could always be behind on
-> >> maintaining it going forward.  Do we *really* need this one?  
-> >
-> > IMO having a check is interesting, as the dependency between
-> > Sphinx and docutils is high. Yet, with the testing script, this may
-> > not be needed, provided that we run it to check if changes at Sphinx
-> > extensions won't cause regressions. Still, the dependency check
-> > at test_doc_build.py is not complete.
-> >
-> > Anyway, if you prefer, don't pick this one. We can revisit it later
-> > when needed.  
+> - Send a TCP packet with an intentionally incorrect checksum,
+>   ensuring its state is CHECKSUM_NONE so the transmit path doesn't change it.
+> - Test if we receive this packet back via the PHY loopback.
+>    - If received: The test checks the ip_summed status of the
+>      received packet.
+>       - A status of CHECKSUM_NONE indicates the hardware correctly passed
+>         the packet up without validating it.
+
+_NONE or _COMPLETE are both fine in this case.
+
+>       - A status of CHECKSUM_UNNECESSARY indicates a failure, as the hardware
+>         or driver incorrectly marked a bad checksum as good.
+>    - If not received (after a timeout): The test then checks the device's
+>      error statistics.
+>       - If the rx_errors counter has incremented
+>       - If the counter has not incremented, the packet was lost for an unknown
+>         reason, and the test fails.
 > 
-> I've left it out for now, but applied the rest of the series.  Keep it
-> around, we may yet decide we need it...
+> What do you think?
 
-Ok, I placed on my scratch tree on github, on a separate branch:
-	https://github.com/mchehab/linux/commits/check_sphinx_at_conf_py/
-
-The patch is here:
-	https://github.com/mchehab/linux/commit/178f37fce4aa16592b0c0b567ea0ffca744c3af5
-
-(I'm documenting here just in case we forget and need it again ;-) )
-
-Regards,
-Mauro
-
-
-
-> 
-> Thanks,
-> 
-> jon
-
-
-
-Thanks,
-Mauro
+Sounds like a good idea! Not sure if I'd bother with the rx_error
+handling. Hopefully the drivers can be configured to pass the packet
+thru.
 
