@@ -1,477 +1,763 @@
-Return-Path: <linux-kernel+bounces-703519-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-703523-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 48F77AE915D
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Jun 2025 00:54:59 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4C243AE916D
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Jun 2025 00:57:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C207D1C27DF3
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Jun 2025 22:55:14 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C55854A7811
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Jun 2025 22:57:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8F1692F3C16;
-	Wed, 25 Jun 2025 22:54:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="Yy1h14tB"
-Received: from mail-pg1-f201.google.com (mail-pg1-f201.google.com [209.85.215.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AD53E2F549B;
+	Wed, 25 Jun 2025 22:57:05 +0000 (UTC)
+Received: from relay.hostedemail.com (smtprelay0013.hostedemail.com [216.40.44.13])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CC663217707
-	for <linux-kernel@vger.kernel.org>; Wed, 25 Jun 2025 22:54:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A1EAD2F4334;
+	Wed, 25 Jun 2025 22:57:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=216.40.44.13
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750892088; cv=none; b=iEvhP9cyUU6JSWdr9KI3etnA7UA7SYoAByyfrajHrVHhUVMKRXsoggawc0KXokCyuI3+v8pbTpC+dLIsTN2ej5OA9VhUHEtMXu2iHHwsTkchZvWuetrWoabonIhBz5l94YdN7JZQn86z9VonIXBMtHPiLUBEEZ+iuIDW7WCSH2g=
+	t=1750892224; cv=none; b=Oec4cl4FnQKFq1I59op5AiYJEEZtEtxqZhdzHsmumHkgBYH21NQvQk3qQcATgYcxwotFAPOuTcfIgKfbA/OBwlc66R4M1xNqpSNyRL5PqTZaTC+s4vqmpOKe9U3hoAE7cyBpBRVFe6qCjBfdrj3FD4Cd49sdvcgfwKLzg9hv13A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750892088; c=relaxed/simple;
-	bh=HEfJPWdCSSFS+ASivH78C0lg7gqi/7RDBA+T2IZ3uo8=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=ugKlPGpTuTG6jxG/P0d2VhlCpj6rSa4SusLcF8RT9Je1zgNwyxBnZp21UCA9K5z4lSoI2m3x7FhyDC2Pg5Ncg2+AXrmxsAkXQ00Yzq6h5Xf37MX4UrAWOO6QmzMqtwWx/+t/k0NGxUwmIJdi3BhbEf1fw5tYcjHotM3iqjDx+Qo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--ackerleytng.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=Yy1h14tB; arc=none smtp.client-ip=209.85.215.201
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--ackerleytng.bounces.google.com
-Received: by mail-pg1-f201.google.com with SMTP id 41be03b00d2f7-b2c36d3f884so217748a12.2
-        for <linux-kernel@vger.kernel.org>; Wed, 25 Jun 2025 15:54:46 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1750892086; x=1751496886; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:from:subject:message-id:references
-         :mime-version:in-reply-to:date:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=jVxFMBb/sntNrVg4iPMTgUrHj+NwKt88HjNTcpkE/WA=;
-        b=Yy1h14tBMsi+mv0AQVkX/wIFfsNoB1xWHE6KfPqKqXVGuA8gvtfPCuQsUhnHrs/h5J
-         7RyT/VJgw5p9SSXSX7FVceKHPUpunWbcD33p7rNIdT8hi/fWCW4S/T2D0nLii7dN9gth
-         dcyX5Ly+CRAT3U2hP9uZAsqb1aihdPEPhwz4BvRr8tkqRyPH18l2750xO6gLL0nC5R4u
-         ktHjVwQBwwGA4te+QkuawJYRc9z4lZ+FDmcU6+8OHPyoYCyw5K6q6d+2iSEQtslk8wBZ
-         MUDnN02rB3zdTpEIw433U/tJy38W6bfLIxMxxXegqijzRXWwuaMN7D3/7ew9lmg6fKFE
-         VLkw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1750892086; x=1751496886;
-        h=content-transfer-encoding:cc:to:from:subject:message-id:references
-         :mime-version:in-reply-to:date:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=jVxFMBb/sntNrVg4iPMTgUrHj+NwKt88HjNTcpkE/WA=;
-        b=daKeyIcTGMKDinrbWyzCyO8fe3KwLoQMOhMhfjYPpX7WSLeRvRQe+i2FySuCDrltyN
-         nLM9VAjwxUT/0H1eya32qver3p8YKofUQUX9qZyRKGZYfCBKPwIJ29cD9NhFmhWIX3E4
-         +y/16nx8gejMef7jV/7AXY0xK+32ukp5Fs2ZYPqHNFzQTXqFgUQFitHA4kU2a0nt9KC5
-         TPS03qj1vEvVDIYTOigEhpDftNR7hPtx0/htOC7EQmQbrSIAOVFeiEolOK0m1/yTy38r
-         7G4yrBv5mxwelP8oD9igU8WgYSK2PXdzlADS1nCC7rGm0q7ALnLKiGe0tuzBQ/rq4c2S
-         94wg==
-X-Forwarded-Encrypted: i=1; AJvYcCVco2Il+a2tjrMA/p1POZvy8Y4oRB2/qstdSQrZ22lpJFf/C7S8IQZJMPb5L/TGM5wfvm/yK3BFDInVcU0=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxzFerkvHQZ9jvaVBcJbIxnKrALBuDWPH0UjFMbX9yuCqWBBGLk
-	td+W+0dYFxHyeRHg5v/TSPMLlHeRkdbltWFpIbgrA6NSn2KKDzfWcc8lzDMSgj36lQp+fXWHHHv
-	qCOz6GPTvX+C4uwoi3ziPC7f8rQ==
-X-Google-Smtp-Source: AGHT+IF0Vs1oph1wvu7WrIfD42vnAsw01GJuRYxL+r6kkTUnsEXAv69JKOmRzT9QMp88/AiomiMLd3SmuWFWtrX8PA==
-X-Received: from pfbdh9.prod.google.com ([2002:a05:6a00:4789:b0:747:abae:78e8])
- (user=ackerleytng job=prod-delivery.src-stubby-dispatcher) by
- 2002:a05:6a21:6b0a:b0:21f:86f1:e2dd with SMTP id adf61e73a8af0-2207f1c4c56mr6857359637.11.1750892086023;
- Wed, 25 Jun 2025 15:54:46 -0700 (PDT)
-Date: Wed, 25 Jun 2025 15:54:44 -0700
-In-Reply-To: <aFugbDVJJDrK4n9V@yzhao56-desk.sh.intel.com>
+	s=arc-20240116; t=1750892224; c=relaxed/simple;
+	bh=YSiwQWiMmvDUkDl9n3Ni1ByZ/YOz7AKyXoQfzAxC6uI=;
+	h=Message-ID:Date:From:To:Cc:Subject; b=BJSq3HgEmZRxpxvOczv7drrHWMwq6E2nWzEku6ruogy70Qbti1gWc/ElGzZFIxqN2KTV3WfpHwwtTY6jXurE26y74pYrJ/1ntpaDG8Tv2XI9FszcnfAyYxEvtwOihSozI+0NaCd6mYrKHP685dbxJMlFDRcgLAI1SQ36jPZ0ZM4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org; spf=pass smtp.mailfrom=goodmis.org; arc=none smtp.client-ip=216.40.44.13
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=goodmis.org
+Received: from omf09.hostedemail.com (a10.router.float.18 [10.200.18.1])
+	by unirelay08.hostedemail.com (Postfix) with ESMTP id 2CA0C1406B4;
+	Wed, 25 Jun 2025 22:56:53 +0000 (UTC)
+Received: from [HIDDEN] (Authenticated sender: nevets@goodmis.org) by omf09.hostedemail.com (Postfix) with ESMTPA id 1178E20030;
+	Wed, 25 Jun 2025 22:56:50 +0000 (UTC)
+Received: from rostedt by gandalf with local (Exim 4.98.2)
+	(envelope-from <rostedt@goodmis.org>)
+	id 1uUZ3K-000000043co-3zEt;
+	Wed, 25 Jun 2025 18:57:14 -0400
+Message-ID: <20250625225600.555017347@goodmis.org>
+User-Agent: quilt/0.68
+Date: Wed, 25 Jun 2025 18:56:00 -0400
+From: Steven Rostedt <rostedt@goodmis.org>
+To: linux-kernel@vger.kernel.org,
+ linux-trace-kernel@vger.kernel.org,
+ bpf@vger.kernel.org,
+ x86@kernel.org
+Cc: Masami Hiramatsu <mhiramat@kernel.org>,
+ Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+ Josh Poimboeuf <jpoimboe@kernel.org>,
+ Peter Zijlstra <peterz@infradead.org>,
+ Ingo Molnar <mingo@kernel.org>,
+ Jiri Olsa <jolsa@kernel.org>,
+ Namhyung Kim <namhyung@kernel.org>,
+ Thomas Gleixner <tglx@linutronix.de>,
+ Andrii Nakryiko <andrii@kernel.org>,
+ Indu Bhagat <indu.bhagat@oracle.com>,
+ "Jose E. Marchesi" <jemarch@gnu.org>,
+ Beau Belgrave <beaub@linux.microsoft.com>,
+ Jens Remus <jremus@linux.ibm.com>,
+ Linus Torvalds <torvalds@linux-foundation.org>,
+ Andrew Morton <akpm@linux-foundation.org>,
+ Jens Axboe <axboe@kernel.dk>
+Subject: [PATCH v11 00/14] unwind_user: x86: Deferred unwinding infrastructure
+X-Stat-Signature: bs1dhgoixppk9dqgspzboertzugf8cm3
+X-Rspamd-Server: rspamout05
+X-Rspamd-Queue-Id: 1178E20030
+X-Session-Marker: 6E657665747340676F6F646D69732E6F7267
+X-Session-ID: U2FsdGVkX1+GlUwz+i7EvWtvl7SxEO6gbuJtk3lINN0=
+X-HE-Tag: 1750892210-561781
+X-HE-Meta: U2FsdGVkX1/NLV6uUwR8ETdou/BgYyyYn76oUqVTTGkd+QADsW9v0YFcwyWjnx0NsznILBXAC2bn/o+6L4AdB8bCrRTma4o61gVStzNkPLsIACXLvFFVHh7Td9kB9i9jyZTAaILJ4ppifT3guYvsvbwgphaKjJiWVKUtglMgGwvrJpWoJ7NTpywZ0Hr7w29kSwe8CnDc+HLc6waE+JYUc5wiEe2tRJ89IVtqihWqYSCQHFgUjVSJ6HOGxhU9u7+hZX2eEw4pPXoxXKD2QrHBWNPUwEo1HXy4Lz5g+NRwNMemuhxcVLt7wVbAWSo7K1Q6ddZy0ruLL2aS8OSEUPZRsGwSYB0BGHmzgan9lQwWdcWOz9nvsL5ghsU33koojJrnjcJUDzP0/3qNE+Lkz2cHGWSeyjniiyiuZFdoMf2uYv0T3EcMToBb2g==
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <9169a530e769dea32164c8eee5edb12696646dfb.camel@intel.com>
- <aFDHF51AjgtbG8Lz@yzhao56-desk.sh.intel.com> <6afbee726c4d8d95c0d093874fb37e6ce7fd752a.camel@intel.com>
- <aFIGFesluhuh2xAS@yzhao56-desk.sh.intel.com> <0072a5c0cf289b3ba4d209c9c36f54728041e12d.camel@intel.com>
- <aFkeBtuNBN1RrDAJ@yzhao56-desk.sh.intel.com> <draft-diqzh606mcz0.fsf@ackerleytng-ctop.c.googlers.com>
- <diqzy0tikran.fsf@ackerleytng-ctop.c.googlers.com> <c69ed125c25cd3b7f7400ed3ef9206cd56ebe3c9.camel@intel.com>
- <diqz34bolnta.fsf@ackerleytng-ctop.c.googlers.com> <aFugbDVJJDrK4n9V@yzhao56-desk.sh.intel.com>
-Message-ID: <diqzplerjutn.fsf@ackerleytng-ctop.c.googlers.com>
-Subject: Re: [RFC PATCH 08/21] KVM: TDX: Increase/decrease folio ref for huge pages
-From: Ackerley Tng <ackerleytng@google.com>
-To: Yan Zhao <yan.y.zhao@intel.com>
-Cc: "Edgecombe, Rick P" <rick.p.edgecombe@intel.com>, 
-	"quic_eberman@quicinc.com" <quic_eberman@quicinc.com>, "Li, Xiaoyao" <xiaoyao.li@intel.com>, 
-	"Du, Fan" <fan.du@intel.com>, "Hansen, Dave" <dave.hansen@intel.com>, 
-	"david@redhat.com" <david@redhat.com>, "thomas.lendacky@amd.com" <thomas.lendacky@amd.com>, 
-	"tabba@google.com" <tabba@google.com>, "vbabka@suse.cz" <vbabka@suse.cz>, 
-	"Shutemov, Kirill" <kirill.shutemov@intel.com>, "michael.roth@amd.com" <michael.roth@amd.com>, 
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "seanjc@google.com" <seanjc@google.com>, 
-	"pbonzini@redhat.com" <pbonzini@redhat.com>, 
-	"binbin.wu@linux.intel.com" <binbin.wu@linux.intel.com>, "Yamahata, Isaku" <isaku.yamahata@intel.com>, 
-	"Peng, Chao P" <chao.p.peng@intel.com>, "Weiny, Ira" <ira.weiny@intel.com>, 
-	"kvm@vger.kernel.org" <kvm@vger.kernel.org>, "Annapurve, Vishal" <vannapurve@google.com>, 
-	"jroedel@suse.de" <jroedel@suse.de>, "Miao, Jun" <jun.miao@intel.com>, 
-	"Li, Zhiquan1" <zhiquan1.li@intel.com>, "pgonda@google.com" <pgonda@google.com>, 
-	"x86@kernel.org" <x86@kernel.org>
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: quoted-printable
 
-Yan Zhao <yan.y.zhao@intel.com> writes:
+This is the first patch series of a set that will make it possible to be able
+to use SFrames[1] in the Linux kernel. A quick recap of the motivation for
+doing this.
 
-> On Tue, Jun 24, 2025 at 04:30:57PM -0700, Ackerley Tng wrote:
->> "Edgecombe, Rick P" <rick.p.edgecombe@intel.com> writes:
->>=20
->> > On Mon, 2025-06-23 at 15:48 -0700, Ackerley Tng wrote:
->> >> Let me try and summarize the current state of this discussion:
->> >>=20
->> >> Topic 1: Does TDX need to somehow indicate that it is using a page?
->> >>=20
->> >> This patch series uses refcounts to indicate that TDX is using a page=
-,
->> >> but that complicates private-to-shared conversions.
->> >>=20
->> >> During a private-to-shared conversion, guest_memfd assumes that
->> >> guest_memfd is trusted to manage private memory. TDX and other users
->> >> should trust guest_memfd to keep the memory around.
->> >>=20
->> >> Yan's position is that holding a refcount is in line with how IOMMU
->> >> takes a refcount when a page is mapped into the IOMMU [1].
->> >>=20
->> >> Yan had another suggestion, which is to indicate using a page flag [2=
-].
->> >>=20
->> >> I think we're in agreement that we don't want to have TDX hold a
->> >> refcount while the page is mapped into the Secure EPTs, but taking a
->> >> step back, do we really need to indicate (at all) that TDX is using a
->> >> page?
->> >>=20
->> >> In [3] Yan said
->> >>=20
->> >> > If TDX does not hold any refcount, guest_memfd has to know that whi=
-ch
->> >> > private
->> >> > page is still mapped. Otherwise, the page may be re-assigned to oth=
-er
->> >> > kernel
->> >> > components while it may still be mapped in the S-EPT.
->> >>=20
->> >> If the private page is mapped for regular VM use as private memory,
->> >> guest_memfd is managing that, and the same page will not be re-assign=
-ed
->> >> to any other kernel component. guest_memfd does hold refcounts in
->> >> guest_memfd's filemap.
->> >>=20
->> >> If the private page is still mapped because there was an unmapping
->> >> failure, we can discuss that separately under error handling in Topic=
- 2.
->> >>=20
->> >> With this, can I confirm that we are in agreement that TDX does not n=
-eed
->> >> to indicate that it is using a page, and can trust guest_memfd to kee=
-p
->> >> the page around for the VM?
->> >
->> > Minor correction here. Yan was concerned about *bugs* happening when f=
-reeing
->> > pages that are accidentally still mapped in the S-EPT. My opinion is t=
-hat this
->> > is not especially risky to happen here vs other similar places, but it=
- could be
->> > helpful if there was a way to catch such bugs. The page flag, or page_=
-ext
->> > direction came out of a discussion with Dave and Kirill. If it could r=
-un all the
->> > time that would be great, but if not a debug config could be sufficien=
-t. For
->> > example like CONFIG_PAGE_TABLE_CHECK. It doesn't need to support vmemm=
-ap
->> > optimizations because the debug checking doesn't need to run all the t=
-ime.
->> > Overhead for debug settings is very normal.
->> >
->>=20
->> I see, let's call debug checking Topic 3 then, to separate it from Topic
->> 1, which is TDX indicating that it is using a page for production
->> kernels.
->>=20
->> Topic 3: How should TDX indicate use of a page for debugging?
->>=20
->> I'm okay if for debugging, TDX uses anything other than refcounts for
->> checking, because refcounts will interfere with conversions.
->>=20
->> Rick's other email is correct. The correct link should be
->> https://lore.kernel.org/all/aFJjZFFhrMWEPjQG@yzhao56-desk.sh.intel.com/.
->>=20
->> [INTERFERE WITH CONVERSIONS]
->>=20
->> To summarize, if TDX uses refcounts to indicate that it is using a page,
->> or to indicate anything else, then we cannot easily split a page on
->> private to shared conversions.
->>=20
->> Specifically, consider the case where only the x-th subpage of a huge
->> folio is mapped into Secure-EPTs. When the guest requests to convert
->> some subpage to shared, the huge folio has to be split for
->> core-mm. Core-mm, which will use the shared page, must have split folios
->> to be able to accurately and separately track refcounts for subpages.
->>=20
->> During splitting, guest_memfd would see refcount of 512 (for 2M page
->> being in the filemap) + 1 (if TDX indicates that the x-th subpage is
->> mapped using a refcount), but would not be able to tell that the 513th
->> refcount belongs to the x-th subpage. guest_memfd can't split the huge
->> folio unless it knows how to distribute the 513th refcount.
-> In my POC, https://lore.kernel.org/all/aE%2Fq9VKkmaCcuwpU@yzhao56-desk.sh=
-.intel.com/
-> kvm_gmem_private_has_safe_refcount() was introduce to check the folio ref=
- count.
-> It rejects private-to-shared conversion after splitting and unmapping KVM=
-'s
-> secondary page tables if the refcount exceeds a valid threshold.
->
-> Though in
-> https://lore.kernel.org/all/aFJjZFFhrMWEPjQG@yzhao56-desk.sh.intel.com/, =
-we
-> agreed that "EAGAIN is not the right code in case of "extra" refcounts he=
-ld by
-> TDX", this does not imply that rejecting the conversion itself is incorre=
-ct.
->
-> This is why we are exploring alternative solutions instead of having TDX =
-hold
-> the page refcount.
->
-> So, either a per-page flag, per-folio flag or solutions e,f,g should be g=
-ood.
->
-> IMO, regardless of the final choice, guest_memfd needs to identify proble=
-matic
-> folios to:
-> - reject the private-to-shared conversion
-> - prevent further recycling after kvm_gmem_free_folio()
->
+Currently the only way to get a user space stack trace from a stack
+walk (and not just copying large amount of user stack into the kernel
+ring buffer) is to use frame pointers. This has a few issues. The biggest
+one is that compiling frame pointers into every application and library
+has been shown to cause performance overhead.
 
-Agreed!
+Another issue is that the format of the frames may not always be consistent
+between different compilers and some architectures (s390) has no defined
+format to do a reliable stack walk. The only way to perform user space
+profiling on these architectures is to copy the user stack into the kernel
+buffer.
 
->> One might say guest_memfd could clear all the refcounts that TDX is
->> holding on the huge folio by unmapping the entire huge folio from the
->> Secure-EPTs, but unmapping the entire huge folio for TDX means zeroing
->> the contents and requiring guest re-acceptance. Both of these would mess
->> up guest operation.
->>=20
->> Hence, guest_memfd's solution is to require that users of guest_memfd
->> for private memory trust guest_memfd to maintain the pages around and
->> not take any refcounts.
->>=20
->> So back to Topic 1, for production kernels, is it okay that TDX does not
->> need to indicate that it is using a page, and can trust guest_memfd to
->> keep the page around for the VM?
-> If the "TDX does not need to indicate that it is using a page" means "do =
-not
-> take page refcount", I'm ok.
->
+SFrames is now supported in gcc binutils and soon will also be supported
+by LLVM. SFrames acts more like ORC, and lives in the ELF executable
+file as its own section. Like ORC it has two tables where the first table
+is sorted by instruction pointers (IP) and using the current IP and finding
+it's entry in the first table, it will take you to the second table which
+will tell you where the return address of the current function is located
+and then you can use that address to look it up in the first table to find
+the return address of that function, and so on. This performs a user
+space stack walk.
 
-Yes, I was trying to generalize "do not take page refcount" to "TDX does
-not need to indicate that it is using a page", but I guess TDX can
-indicate that it is using a page for debugging as long as it doesn't
-use refcounts or otherwise interfere with conversions. So I believe we
-are in agreement on Topic 1 :)
+Now because the SFrame section lives in the ELF file it needs to be faulted
+into memory when it is used. This means that walking the user space stack
+requires being in a faultable context. As profilers like perf request a stack
+trace in interrupt or NMI context, it cannot do the walking when it is
+requested. Instead it must be deferred until it is safe to fault in user
+space. One place this is known to be safe is when the task is about to return
+back to user space.
 
->> >>=20
->> >> Topic 2: How to handle unmapping/splitting errors arising from TDX?
->> >>=20
->> >> Previously I was in favor of having unmap() return an error (Rick
->> >> suggested doing a POC, and in a more recent email Rick asked for a
->> >> diffstat), but Vishal and I talked about this and now I agree having
->> >> unmapping return an error is not a good approach for these reasons.
->> >
->> > Ok, let's close this option then.
->> >
->> >>=20
->> >> 1. Unmapping takes a range, and within the range there could be more
->> >> =C2=A0=C2=A0 than one unmapping error. I was previously thinking that=
- unmap()
->> >> =C2=A0=C2=A0 could return 0 for success and the failed PFN on error. =
-Returning a
->> >> =C2=A0=C2=A0 single PFN on error is okay-ish but if there are more er=
-rors it could
->> >> =C2=A0=C2=A0 get complicated.
->> >>=20
->> >> =C2=A0=C2=A0 Another error return option could be to return the folio=
- where the
->> >> =C2=A0=C2=A0 unmapping/splitting issue happened, but that would not b=
-e
->> >> =C2=A0=C2=A0 sufficiently precise, since a folio could be larger than=
- 4K and we
->> >> =C2=A0=C2=A0 want to track errors as precisely as we can to reduce me=
-mory loss due
->> >> =C2=A0=C2=A0 to errors.
->> >>=20
->> >> 2. What I think Yan has been trying to say: unmap() returning an erro=
-r
->> >> =C2=A0=C2=A0 is non-standard in the kernel.
->> >>=20
->> >> I think (1) is the dealbreaker here and there's no need to do the
->> >> plumbing POC and diffstat.
->> >>=20
->> >> So I think we're all in support of indicating unmapping/splitting iss=
-ues
->> >> without returning anything from unmap(), and the discussed options ar=
-e
->> >>=20
->> >> a. Refcounts: won't work - mostly discussed in this (sub-)thread
->> >> =C2=A0=C2=A0 [3]. Using refcounts makes it impossible to distinguish =
-between
->> >> =C2=A0=C2=A0 transient refcounts and refcounts due to errors.
->> >>=20
->> >> b. Page flags: won't work with/can't benefit from HVO.
->> >
->> > As above, this was for the purpose of catching bugs, not for guestmemf=
-d to
->> > logically depend on it.
->> >
->> >>=20
->> >> Suggestions still in the running:
->> >>=20
->> >> c. Folio flags are not precise enough to indicate which page actually
->> >> =C2=A0=C2=A0 had an error, but this could be sufficient if we're will=
-ing to just
->> >> =C2=A0=C2=A0 waste the rest of the huge page on unmapping error.
->> >
->> > For a scenario of TDX module bug, it seems ok to me.
->> >
->> >>=20
->> >> d. Folio flags with folio splitting on error. This means that on
->> >> =C2=A0=C2=A0 unmapping/Secure EPT PTE splitting error, we have to spl=
-it the
->> >> =C2=A0=C2=A0 (larger than 4K) folio to 4K, and then set a flag on the=
- split folio.
->> >>=20
->> >> =C2=A0=C2=A0 The issue I see with this is that splitting pages with H=
-VO applied
->> >> =C2=A0=C2=A0 means doing allocations, and in an error scenario there =
-may not be
->> >> =C2=A0=C2=A0 memory left to split the pages.
->> >>=20
->> >> e. Some other data structure in guest_memfd, say, a linked list, and =
-a
->> >> =C2=A0=C2=A0 function like kvm_gmem_add_error_pfn(struct page *page) =
-that would
->> >> =C2=A0=C2=A0 look up the guest_memfd inode from the page and add the =
-page's pfn to
->> >> =C2=A0=C2=A0 the linked list.
->> >>=20
->> >> =C2=A0=C2=A0 Everywhere in guest_memfd that does unmapping/splitting =
-would then
->> >> =C2=A0=C2=A0 check this linked list to see if the unmapping/splitting
->> >> =C2=A0=C2=A0 succeeded.
->> >>=20
->> >> =C2=A0=C2=A0 Everywhere in guest_memfd that allocates pages will also=
- check this
->> >> =C2=A0=C2=A0 linked list to make sure the pages are functional.
->> >>=20
->> >> =C2=A0=C2=A0 When guest_memfd truncates, if the page being truncated =
-is on the
->> >> =C2=A0=C2=A0 list, retain the refcount on the page and leak that page=
-.
->> >
->> > I think this is a fine option.
->> >
->> >>=20
->> >> f. Combination of c and e, something similar to HugeTLB's
->> >> =C2=A0=C2=A0 folio_set_hugetlb_hwpoison(), which sets a flag AND adds=
- the pages in
->> >> =C2=A0=C2=A0 trouble to a linked list on the folio.
->> >>=20
->> >> g. Like f, but basically treat an unmapping error as hardware poisoni=
-ng.
->> >>=20
->> >> I'm kind of inclined towards g, to just treat unmapping errors as
->> >> HWPOISON and buying into all the HWPOISON handling requirements. What=
- do
->> >> yall think? Can a TDX unmapping error be considered as memory poisoni=
-ng?
->> >
->> > What does HWPOISON bring over refcounting the page/folio so that it ne=
-ver
->> > returns to the page allocator?
->>=20
->> For Topic 2 (handling TDX unmapping errors), HWPOISON is better than
->> refcounting because refcounting interferes with conversions (see
->> [INTERFERE WITH CONVERSIONS] above).
->>=20
->> > We are bugging the TD in these cases.
->>=20
->> Bugging the TD does not help to prevent future conversions from being
->> interfered with.
->>=20
->> 1. Conversions involves unmapping, so we could actually be in a
->>    conversion, the unmapping is performed and fails, and then we try to
->>    split and enter an infinite loop since private to shared conversions
->>    assumes guest_memfd holds the only refcounts on guest_memfd memory.
-> We should bail out conversion even with the HWPOISON.
-> e.g.,
-> 1. user triggers private-to-shared ioctl to convert 4K page A within a 2M=
-B folio
->    B to shared.
-> 2. kvm_gmem_convert_should_proceed() executes kvm_gmem_split_private() an=
-d
->    kvm_gmem_zap().
-> 3. kvm_gmem_convert_should_proceed() checks kvm_gmem_has_invalid_folio()
->    (Suppose TDX sets HWPOISON to page A or folio B after kvm_gmem_zap(), =
-then
->      kvm_gmem_has_invalid_folio() should return true).
-> 4. Return -EFAULT.
->
-> If we allow the actual conversion to proceed after step 3, folio B will b=
-e split
-> into 4KB folios, with page A being converted to a shared 4KB folio, which
-> becomes accessible by userspace.
->
-> This could cause a machine check (#MC) on certain platforms. We should av=
-oid
-> this scenario when possible.
->
->
+Josh originally wrote the PoC of this code and his last version he posted
+was back in January:
 
-Thanks for pointing this out. This is a good point and will definitely
-have to be handled separately under "what to do when there was some
-issue on a page (possibly caused by unmapping)", or as Yan pointed out
-above, what to do when "handling problematic folios".
+   https://lore.kernel.org/all/cover.1737511963.git.jpoimboe@kernel.org/
 
-Regarding handling errors, or recording errors, or communicating errors
-to guest_memfd, Yan seems in favor of some kind of page flag. I know
-Rick is suggesting option e. Can we do something between f and g? I'm
-thinking that the easiest page flag to use is the HWpoison flag, because
+That series contained everything from adding a new faultable user space
+stack walking code, deferring the stack walk, implementing sframes,
+fixing up x86 (VDSO), and even added both the kernel and user space side
+of perf to make it work. But Josh also ran out of time to work on it and
+I picked it up. As there's several parts to this series, I also broke
+it out. Especially since there's parts of his series that do not depend
+on each other.
 
-1. HWpoison checking is already part of guest_memfd, or should
-   be.
+This series contains only the core infrastructure that all the rest needs.
+Of the 14 patches, only 3 are x86 specific. The rest is simply the unwinding
+code that s390 can build against. I moved the 3 x86 specific to the end
+of the series too.
 
-   guest_memfd already checks HWpoison for kvm_gmem_get_pfn(), and
-   __do_fault() checks HWpoison for guest_memfd [5]. As Yan pointed out
-   above, it should definitely check and deal with HWpoison on
-   conversion. Perhaps on truncation it should look at HWpoison, or very
-   likely memory_failure() will need special handling for guest_memfd
-   folios. I'll look into this separately as part of HugeTLB support
-   patch series.
+Since multiple tracers (like perf, ftrace, bpf, etc) can attach to the
+deferred unwinder and each of these tracers can attach to some or all
+of the tasks to trace, there is a many to many relationship. This relationship
+needs to be made in interrupt or NMI context so it can not rely on any
+allocation. To handle this, a bitmask is used. There's a global bitmask of
+size long which will allocate a single bit when a tracer registers for
+deferred stack traces. The task struct will also have a bitmask where a
+request comes in from one of the tracers to have a deferred stack trace, it
+will set the corresponding bit for that tracer it its mask. As one of the bits
+represents that a request has been made, this means at most 31 on 32 bit
+systems or 63 on 64 bit systems of tracers may be registered at a given time.
+This should not be an issue as only one perf application, or ftrace instance
+should request a bit. BPF should also use only one bit and handle any
+multiplexing for its users.
 
-2. HWpoison support (especially tracking of sub-folio HWpoison) in
-   folio_set_hugetlb_hwpoison() can hopefully be reused for guest_memfd.
+When the first request is made for a deferred stack trace from a task, it will
+take a timestamp. This timestamp will be used as the identifier for the user
+space stack trace. As the user space stack trace does not change while the
+task is in the kernel, requests that come in after the first request and
+before the task goes back to user space will get the same timestamp. This
+timestamp also serves the purpose of knowing how far back a given user space
+stack trace goes. If there's dropped events, and the events dropped miss a
+task entering user space and coming back to the kernel, the new stack trace
+taken when it goes back to user space should not be used with the events
+before the drop happened.
 
-3. For now, no need to invent a new tracking mechanism or data structure
-   to support option e.
+When a tracer makes a request, it gets this timestamp, and the tasks bitmask
+sets the bit for the requesting tracer. A task work is used to have the task
+do the callbacks before it goes back to user space. When it does, it will scan
+its bitmask and call all the callbacks for the tracers that have their
+representing bit set. The callback will receive the user space stack trace as
+well as the timestamp that was used.
 
-4. HWpoison is kind of "part of guest_memfd" if you consider that
-   guest_memfd folios to be pretty much always owned by some guest_memfd
-   inode, and if the HWpoison flag is checked at the appropriate places.
+That's the basic idea. Obviously there's more to it than the above
+explanation, but each patch explains what it is doing, and it is broken up
+step by step.
 
-Could we (at least for the next RFC of this TDX huge page support for
-private memory series, or as a first cut), use HWpoison, and then if we
-identify that the concept of HWpoison is being overloaded/polluted, then
-try another flag/mechanism for tracking?
+I run two SFrame meetings once a month (one in Asia friendly timezone and
+the other in Europe friendly). We have developers from Google, Oracle, Red Hat,
+IBM, EfficiOS, Meta, Microsoft, and more that attend. (If anyone is interested
+in attending let me know). I have been running this since December of 2024.
+Last year in GNU Cauldron, a few of us got together to discuss the design
+and such. We are pretty confident that the current design is sound. We have
+working code on top of this and have been testing it.
 
-I plan to work on HWpoison/kvm_gmem_error_folio() handling for HugeTLB
-soon and then I can keep the community updated if I find anything new or
-incompatible.
+Since the s390 folks want to start working on this (they have patches to
+sframes already from working on the prototypes), I would like this series
+to be a separate branch based on top of v6.16-rc2. Then all the subsystems
+that want to work on top of this can as there's no real dependency between
+them.
 
->> 2. The conversion ioctl is a guest_memfd ioctl, not a VM ioctl, and so
->>    there is no check that the VM is not dead. There shouldn't be any
->>    check on the VM, because shareability is a property of the memory and
->>    should be changeable independent of the associated VM.
->>=20
->> > Ohhh... Is
->> > this about the code to allow gmem fds to be handed to new VMs?
->>=20
->> Nope, it's not related to linking. The proposed KVM_LINK_GUEST_MEMFD
->> ioctl [4] also doesn't check if the source VM is dead. There shouldn't
->> be any check on the source VM, since the memory is from guest_memfd and
->> should be independently transferable to a new VM.
->>=20
->> [4] https://lore.kernel.org/lkml/cover.1747368092.git.afranji@google.com=
-/T/
+I have more patches on top of this series that add perf support, ftrace
+support, sframe support and the x86 fix ups (for VDSO). But each of those
+patch series can be worked on independently, but they all depend on this
+series (although the x86 specific patches at the end isn't necessarily
+needed, at least for other architectures).
 
-[5] https://lore.kernel.org/all/diqzv7ojjxyd.fsf@ackerleytng-ctop.c.googler=
-s.com/
+Please review, and if you are happy with them, lets get them in a branch
+that we all can use. I'm happy to take it in my tree if I can get acks on the
+x86 code. Or it can be in the tip tree as a separate branch on top of 6.16-rc2
+(or rc3 if someone finds some issues), and I'll just base my work on top of
+that. Doesn't matter either way.
+
+Thanks!
+
+-- Steve
+
+
+[1] https://sourceware.org/binutils/wiki/sframe
+
+Changes since v10: https://lore.kernel.org/linux-trace-kernel/20250611005421.144238328@goodmis.org/
+
+[ Full diff between v11 and 10 at end of this message. ]
+
+- Rename "the_end" label to "done" in unwind_user_next() to be more consistent
+  to what the kernel uses. (Peter Zijlstra)
+
+- Add a comment about what cfa and ra stand for. (Peter Zijlstra)
+
+- Rename compat_state() to compat_fp_state() for consistency. (Peter Zijlstra)
+
+- Lowercase macro UNWIND_GET_USER_LONG() to unwind_get_user_long()
+  (Peter Zijlstra and Linus Torvalds)
+
+- Move the functions arch_unwind_user_init() and arch_unwind_user_next() to
+  the later patches when they are used. (Peter Zijlstra).
+
+- Updated the change log of ("unwind_user/deferred: Add
+  unwind_user_faultable()")
+
+- Removed extra tab in Makefile (Peter Zijlstra)
+
+- Renamed unwind_deferred_trace() to unwind_user_faultable()
+
+- Rename unwind_exit_to_user_mode() to unwind_reset_info() as it is called
+  in a noinstr section and the current name looks like it does
+  instrumentation (Peter Zijlstra)
+
+- Make the allocated cache fit inside a 4K page. (Peter Zijlstra)
+
+- Added comment stating that the clock used for the timestamp must have a
+  resolution that will guarantee that two system called back to back will
+  have a different timestamp.
+
+- Update change log to mention that each perf program and ftrace intance
+  will register with the deferred unwinder. (Peter Zijlstra).
+
+- Reworked to simply use a 64bit cmpxchg to update the timestamp.
+
+- Switch timestamp to local64_t type and pending to local_t type.
+
+- Use __clear_bit() and __set_bit() consistently with the global variable
+  unwind_mask.  (Peter Zijlstra)
+
+- Use clear_bit() and set_bit() consistently with the task unwind_mask,
+  as it can race with NMIs.
+
+- Use "bit" that was acquired by READ_ONCE() in test_and_set_bit() in
+  unwind_deferred_request() instead of reading work->bit again.
+
+
+Josh Poimboeuf (8):
+      unwind_user: Add user space unwinding API
+      unwind_user: Add frame pointer support
+      unwind_user: Add compat mode frame pointer support
+      unwind_user/deferred: Add unwind cache
+      unwind_user/deferred: Add deferred unwinding interface
+      unwind_user/x86: Enable frame pointer unwinding on x86
+      perf/x86: Rename and move get_segment_base() and make it global
+      unwind_user/x86: Enable compat mode frame pointer unwinding on x86
+
+Steven Rostedt (6):
+      unwind_user/deferred: Add unwind_user_faultable()
+      unwind_user/deferred: Make unwind deferral requests NMI-safe
+      unwind deferred: Use bitmask to determine which callbacks to call
+      unwind deferred: Use SRCU unwind_deferred_task_work()
+      unwind: Clear unwind_mask on exit back to user space
+      unwind: Finish up unwind when a task exits
+
+----
+ MAINTAINERS                              |   8 +
+ arch/Kconfig                             |  11 +
+ arch/x86/Kconfig                         |   2 +
+ arch/x86/events/core.c                   |  44 +---
+ arch/x86/include/asm/ptrace.h            |   2 +
+ arch/x86/include/asm/unwind_user.h       |  60 ++++++
+ arch/x86/include/asm/unwind_user_types.h |  17 ++
+ arch/x86/kernel/ptrace.c                 |  38 ++++
+ include/asm-generic/Kbuild               |   2 +
+ include/asm-generic/unwind_user.h        |   5 +
+ include/asm-generic/unwind_user_types.h  |   5 +
+ include/linux/entry-common.h             |   2 +
+ include/linux/sched.h                    |   5 +
+ include/linux/unwind_deferred.h          |  76 +++++++
+ include/linux/unwind_deferred_types.h    |  20 ++
+ include/linux/unwind_user.h              |  45 ++++
+ include/linux/unwind_user_types.h        |  39 ++++
+ kernel/Makefile                          |   1 +
+ kernel/exit.c                            |   2 +
+ kernel/fork.c                            |   4 +
+ kernel/unwind/Makefile                   |   1 +
+ kernel/unwind/deferred.c                 | 354 +++++++++++++++++++++++++++++++
+ kernel/unwind/user.c                     | 130 ++++++++++++
+ 23 files changed, 834 insertions(+), 39 deletions(-)
+ create mode 100644 arch/x86/include/asm/unwind_user.h
+ create mode 100644 arch/x86/include/asm/unwind_user_types.h
+ create mode 100644 include/asm-generic/unwind_user.h
+ create mode 100644 include/asm-generic/unwind_user_types.h
+ create mode 100644 include/linux/unwind_deferred.h
+ create mode 100644 include/linux/unwind_deferred_types.h
+ create mode 100644 include/linux/unwind_user.h
+ create mode 100644 include/linux/unwind_user_types.h
+ create mode 100644 kernel/unwind/Makefile
+ create mode 100644 kernel/unwind/deferred.c
+ create mode 100644 kernel/unwind/user.c
+
+Diff between v10 and v11:
+
+
+diff --git a/include/linux/entry-common.h b/include/linux/entry-common.h
+index 6e850c9d3f0c..8908b8eeb99b 100644
+--- a/include/linux/entry-common.h
++++ b/include/linux/entry-common.h
+@@ -363,7 +363,7 @@ static __always_inline void exit_to_user_mode(void)
+ 	lockdep_hardirqs_on_prepare();
+ 	instrumentation_end();
+ 
+-	unwind_exit_to_user_mode();
++	unwind_reset_info();
+ 	user_enter_irqoff();
+ 	arch_exit_to_user_mode();
+ 	lockdep_hardirqs_on(CALLER_ADDR0);
+diff --git a/include/linux/unwind_deferred.h b/include/linux/unwind_deferred.h
+index bf0cc0477b2e..5cfd09a8708f 100644
+--- a/include/linux/unwind_deferred.h
++++ b/include/linux/unwind_deferred.h
+@@ -29,7 +29,7 @@ enum {
+ void unwind_task_init(struct task_struct *task);
+ void unwind_task_free(struct task_struct *task);
+ 
+-int unwind_deferred_trace(struct unwind_stacktrace *trace);
++int unwind_user_faultable(struct unwind_stacktrace *trace);
+ 
+ int unwind_deferred_init(struct unwind_work *work, unwind_callback_t func);
+ int unwind_deferred_request(struct unwind_work *work, u64 *timestamp);
+@@ -37,7 +37,7 @@ void unwind_deferred_cancel(struct unwind_work *work);
+ 
+ void unwind_deferred_task_exit(struct task_struct *task);
+ 
+-static __always_inline void unwind_exit_to_user_mode(void)
++static __always_inline void unwind_reset_info(void)
+ {
+ 	struct unwind_task_info *info = &current->unwind_info;
+ 	unsigned long bits;
+@@ -55,7 +55,7 @@ static __always_inline void unwind_exit_to_user_mode(void)
+ 
+ 	if (likely(info->cache))
+ 		info->cache->nr_entries = 0;
+-	info->timestamp = 0;
++	local64_set(&current->unwind_info.timestamp, 0);
+ }
+ 
+ #else /* !CONFIG_UNWIND_USER */
+@@ -63,12 +63,13 @@ static __always_inline void unwind_exit_to_user_mode(void)
+ static inline void unwind_task_init(struct task_struct *task) {}
+ static inline void unwind_task_free(struct task_struct *task) {}
+ 
+-static inline int unwind_deferred_trace(struct unwind_stacktrace *trace) { return -ENOSYS; }
++static inline int unwind_user_faultable(struct unwind_stacktrace *trace) { return -ENOSYS; }
+ static inline int unwind_deferred_init(struct unwind_work *work, unwind_callback_t func) { return -ENOSYS; }
+ static inline int unwind_deferred_request(struct unwind_work *work, u64 *timestamp) { return -ENOSYS; }
+ static inline void unwind_deferred_cancel(struct unwind_work *work) {}
++
+ static inline void unwind_deferred_task_exit(struct task_struct *task) {}
+-static inline void unwind_exit_to_user_mode(void) {}
++static inline void unwind_reset_info(void) {}
+ 
+ #endif /* !CONFIG_UNWIND_USER */
+ 
+diff --git a/include/linux/unwind_deferred_types.h b/include/linux/unwind_deferred_types.h
+index f384e7f45783..4308367f1887 100644
+--- a/include/linux/unwind_deferred_types.h
++++ b/include/linux/unwind_deferred_types.h
+@@ -2,6 +2,9 @@
+ #ifndef _LINUX_UNWIND_USER_DEFERRED_TYPES_H
+ #define _LINUX_UNWIND_USER_DEFERRED_TYPES_H
+ 
++#include <asm/local64.h>
++#include <asm/local.h>
++
+ struct unwind_cache {
+ 	unsigned int		nr_entries;
+ 	unsigned long		entries[];
+@@ -11,8 +14,7 @@ struct unwind_task_info {
+ 	struct unwind_cache	*cache;
+ 	struct callback_head	work;
+ 	unsigned long		unwind_mask;
+-	u64			timestamp;
+-	u64			nmi_timestamp;
++	local64_t		timestamp;
+ };
+ 
+ #endif /* _LINUX_UNWIND_USER_DEFERRED_TYPES_H */
+diff --git a/include/linux/unwind_user.h b/include/linux/unwind_user.h
+index c70da8f7e54c..46f995cda606 100644
+--- a/include/linux/unwind_user.h
++++ b/include/linux/unwind_user.h
+@@ -14,10 +14,22 @@
+  #define in_compat_mode(regs) false
+ #endif
+ 
++/*
++ * If an architecture needs to initialize the state for a specific
++ * reason, for example, it may need to do something different
++ * in compat mode, it can define arch_unwind_user_init to a
++ * function that will perform this initialization.
++ */
+ #ifndef arch_unwind_user_init
+ static inline void arch_unwind_user_init(struct unwind_user_state *state, struct pt_regs *reg) {}
+ #endif
+ 
++/*
++ * If an architecture requires some more updates to the state between
++ * stack frames, it can define arch_unwind_user_next to a function
++ * that will update the state between reading stack frames during
++ * the user space stack walk.
++ */
+ #ifndef arch_unwind_user_next
+ static inline void arch_unwind_user_next(struct unwind_user_state *state) {}
+ #endif
+diff --git a/kernel/unwind/Makefile b/kernel/unwind/Makefile
+index 6752ac96d7e2..eae37bea54fd 100644
+--- a/kernel/unwind/Makefile
++++ b/kernel/unwind/Makefile
+@@ -1 +1 @@
+- obj-$(CONFIG_UNWIND_USER)		+= user.o deferred.o
++ obj-$(CONFIG_UNWIND_USER)	+= user.o deferred.o
+diff --git a/kernel/unwind/deferred.c b/kernel/unwind/deferred.c
+index 6c95f484568e..c783d273a2dc 100644
+--- a/kernel/unwind/deferred.c
++++ b/kernel/unwind/deferred.c
+@@ -8,10 +8,42 @@
+ #include <linux/task_work.h>
+ #include <linux/kernel.h>
+ #include <linux/sched.h>
++#include <linux/sizes.h>
+ #include <linux/slab.h>
+ #include <linux/mm.h>
+ 
+-#define UNWIND_MAX_ENTRIES 512
++/*
++ * For requesting a deferred user space stack trace from NMI context
++ * the architecture must support a 64bit safe cmpxchg in NMI context.
++ * For those architectures that do not have that, then it cannot ask
++ * for a deferred user space stack trace from an NMI context. If it
++ * does, then it will get -EINVAL.
++ */
++#if defined(CONFIG_ARCH_HAVE_NMI_SAFE_CMPXCHG) && \
++	!defined(CONFIG_GENERIC_ATOMIC64)
++# define CAN_USE_IN_NMI		1
++static inline u64 assign_timestamp(struct unwind_task_info *info,
++				   u64 timestamp)
++{
++	u64 old = 0;
++	if (!local64_try_cmpxchg(&info->timestamp, &old, timestamp))
++		timestamp = old;
++	return timestamp;
++}
++#else
++# define CAN_USE_IN_NMI		0
++static inline u64 assign_timestamp(struct unwind_task_info *info,
++				   u64 timestamp)
++{
++	/* For archs that do not allow NMI here */
++	local64_set(&info->timestamp, timestamp);
++	return timestamp;
++}
++#endif
++
++/* Make the cache fit in a 4K page */
++#define UNWIND_MAX_ENTRIES					\
++	((SZ_4K - sizeof(struct unwind_cache)) / sizeof(long))
+ 
+ /* Guards adding to or removing from the list of callbacks */
+ static DEFINE_MUTEX(callback_mutex);
+@@ -27,9 +59,16 @@ static inline bool unwind_pending(struct unwind_task_info *info)
+ /*
+  * Read the task context timestamp, if this is the first caller then
+  * it will set the timestamp.
++ *
++ * For this to work properly, the timestamp (local_clock()) must
++ * have a resolution that will guarantee a different timestamp
++ * everytime a task makes a system call. That is, two short
++ * system calls back to back must have a different timestamp.
+  */
+ static u64 get_timestamp(struct unwind_task_info *info)
+ {
++	u64 timestamp;
++
+ 	lockdep_assert_irqs_disabled();
+ 
+ 	/*
+@@ -38,27 +77,15 @@ static u64 get_timestamp(struct unwind_task_info *info)
+ 	 * this request and it means that this request will be
+ 	 * valid for the stracktrace.
+ 	 */
+-	if (!info->timestamp) {
+-		WRITE_ONCE(info->timestamp, local_clock());
+-		barrier();
+-		/*
+-		 * If an NMI came in and set a timestamp, it means that
+-		 * it happened before this timestamp was set (otherwise
+-		 * the NMI would have used this one). Use the NMI timestamp
+-		 * instead.
+-		 */
+-		if (unlikely(info->nmi_timestamp)) {
+-			WRITE_ONCE(info->timestamp, info->nmi_timestamp);
+-			barrier();
+-			WRITE_ONCE(info->nmi_timestamp, 0);
+-		}
+-	}
++	timestamp = local64_read(&info->timestamp);
++	if (timestamp)
++		return timestamp;
+ 
+-	return info->timestamp;
++	return assign_timestamp(info, local_clock());
+ }
+ 
+ /**
+- * unwind_deferred_trace - Produce a user stacktrace in faultable context
++ * unwind_user_faultable - Produce a user stacktrace in faultable context
+  * @trace: The descriptor that will store the user stacktrace
+  *
+  * This must be called in a known faultable context (usually when entering
+@@ -69,7 +96,7 @@ static u64 get_timestamp(struct unwind_task_info *info)
+  * Return: 0 on success and negative on error
+  *         On success @trace will contain the user space stacktrace
+  */
+-int unwind_deferred_trace(struct unwind_stacktrace *trace)
++int unwind_user_faultable(struct unwind_stacktrace *trace)
+ {
+ 	struct unwind_task_info *info = &current->unwind_info;
+ 	struct unwind_cache *cache;
+@@ -131,21 +158,14 @@ static void process_unwind_deferred(struct task_struct *task)
+ 	trace.nr = 0;
+ 	trace.entries = NULL;
+ 
+-	unwind_deferred_trace(&trace);
+-
+-	/* Check if the timestamp was only set by NMI */
+-	if (info->nmi_timestamp) {
+-		WRITE_ONCE(info->timestamp, info->nmi_timestamp);
+-		barrier();
+-		WRITE_ONCE(info->nmi_timestamp, 0);
+-	}
++	unwind_user_faultable(&trace);
+ 
+-	timestamp = info->timestamp;
++	timestamp = local64_read(&info->timestamp);
+ 
+ 	idx = srcu_read_lock(&unwind_srcu);
+ 	list_for_each_entry_srcu(work, &callbacks, list,
+ 				 srcu_read_lock_held(&unwind_srcu)) {
+-		if (bits & BIT(work->bit))
++		if (test_bit(work->bit, &bits))
+ 			work->func(work, &trace, timestamp);
+ 	}
+ 	srcu_read_unlock(&unwind_srcu, idx);
+@@ -168,62 +188,6 @@ void unwind_deferred_task_exit(struct task_struct *task)
+ 	task_work_cancel(task, &info->work);
+ }
+ 
+-static int unwind_deferred_request_nmi(struct unwind_work *work, u64 *timestamp)
+-{
+-	struct unwind_task_info *info = &current->unwind_info;
+-	bool inited_timestamp = false;
+-	int ret;
+-
+-	/* Always use the nmi_timestamp first */
+-	*timestamp = info->nmi_timestamp ? : info->timestamp;
+-
+-	if (!*timestamp) {
+-		/*
+-		 * This is the first unwind request since the most recent entry
+-		 * from user space. Initialize the task timestamp.
+-		 *
+-		 * Don't write to info->timestamp directly, otherwise it may race
+-		 * with an interruption of get_timestamp().
+-		 */
+-		info->nmi_timestamp = local_clock();
+-		*timestamp = info->nmi_timestamp;
+-		inited_timestamp = true;
+-	}
+-
+-	/* Is this already queued */
+-	if (info->unwind_mask & BIT(work->bit)) {
+-		return unwind_pending(info) ? UNWIND_ALREADY_PENDING :
+-			UNWIND_ALREADY_EXECUTED;
+-	}
+-
+-	if (unwind_pending(info))
+-		goto out;
+-
+-	ret = task_work_add(current, &info->work, TWA_NMI_CURRENT);
+-	if (ret < 0) {
+-		/*
+-		 * If this set nmi_timestamp and is not using it,
+-		 * there's no guarantee that it will be used.
+-		 * Set it back to zero.
+-		 */
+-		if (inited_timestamp)
+-			info->nmi_timestamp = 0;
+-		return ret;
+-	}
+-
+-	/*
+-	 * This is the first to set the PENDING_BIT, clear all others
+-	 * as any other bit has already had their callback called, and
+-	 * those callbacks should not be called again because of this
+-	 * new callback. If they request another callback, then they
+-	 * will get a new one.
+-	 */
+-	info->unwind_mask = UNWIND_PENDING;
+-out:
+-	return test_and_set_bit(work->bit, &info->unwind_mask) ?
+-		UNWIND_ALREADY_PENDING : 0;
+-}
+-
+ /**
+  * unwind_deferred_request - Request a user stacktrace on task exit
+  * @work: Unwind descriptor requesting the trace
+@@ -238,6 +202,9 @@ static int unwind_deferred_request_nmi(struct unwind_work *work, u64 *timestamp)
+  * Its value will also be passed to the callback function.  It can be
+  * used to stitch kernel and user stack traces together in post-processing.
+  *
++ * Note, the architecture must have a local_clock() implementation that
++ * guarantees a different timestamp per task systemcall.
++ *
+  * It's valid to call this function multiple times for the same @work within
+  * the same task entry context.  Each call will return the same timestamp
+  * while the task hasn't left the kernel. If the callback is not pending because
+@@ -264,8 +231,9 @@ int unwind_deferred_request(struct unwind_work *work, u64 *timestamp)
+ 	    !user_mode(task_pt_regs(current)))
+ 		return -EINVAL;
+ 
+-	if (in_nmi())
+-		return unwind_deferred_request_nmi(work, timestamp);
++	/* NMI requires having safe 64 bit cmpxchg operations */
++	if (!CAN_USE_IN_NMI && in_nmi())
++		return -EINVAL;
+ 
+ 	/* Do not allow cancelled works to request again */
+ 	bit = READ_ONCE(work->bit);
+@@ -279,7 +247,7 @@ int unwind_deferred_request(struct unwind_work *work, u64 *timestamp)
+ 	old = READ_ONCE(info->unwind_mask);
+ 
+ 	/* Is this already queued */
+-	if (old & BIT(bit)) {
++	if (test_bit(bit, &old)) {
+ 		/*
+ 		 * If pending is not set, it means this work's callback
+ 		 * was already called.
+@@ -305,8 +273,12 @@ int unwind_deferred_request(struct unwind_work *work, u64 *timestamp)
+ 	 * the pending bit as well as cleared the other bits. Just
+ 	 * jump to setting the bit for this work.
+ 	 */
+-	if (!try_cmpxchg(&info->unwind_mask, &old, bits))
+-		goto out;
++	if (CAN_USE_IN_NMI) {
++		if (!try_cmpxchg(&info->unwind_mask, &old, bits))
++			goto out;
++	} else {
++		info->unwind_mask = bits;
++	}
+ 
+ 	/* The work has been claimed, now schedule it. */
+ 	ret = task_work_add(current, &info->work, TWA_RESUME);
+@@ -315,9 +287,8 @@ int unwind_deferred_request(struct unwind_work *work, u64 *timestamp)
+ 		WRITE_ONCE(info->unwind_mask, 0);
+ 
+ 	return ret;
+-
+  out:
+-	return test_and_set_bit(work->bit, &info->unwind_mask) ?
++	return test_and_set_bit(bit, &info->unwind_mask) ?
+ 		UNWIND_ALREADY_PENDING : 0;
+ }
+ 
+@@ -336,7 +307,7 @@ void unwind_deferred_cancel(struct unwind_work *work)
+ 	/* Do not allow any more requests and prevent callbacks */
+ 	work->bit = -1;
+ 
+-	clear_bit(bit, &unwind_mask);
++	__clear_bit(bit, &unwind_mask);
+ 
+ 	synchronize_srcu(&unwind_srcu);
+ 
+@@ -358,7 +329,7 @@ int unwind_deferred_init(struct unwind_work *work, unwind_callback_t func)
+ 		return -EBUSY;
+ 
+ 	work->bit = ffz(unwind_mask);
+-	unwind_mask |= BIT(work->bit);
++	__set_bit(work->bit, &unwind_mask);
+ 
+ 	list_add_rcu(&work->list, &callbacks);
+ 	work->func = func;
+diff --git a/kernel/unwind/user.c b/kernel/unwind/user.c
+index 29e1f497a26e..2bb7995c3f23 100644
+--- a/kernel/unwind/user.c
++++ b/kernel/unwind/user.c
+@@ -22,16 +22,16 @@ static inline bool fp_state(struct unwind_user_state *state)
+ 	       state->type == UNWIND_USER_TYPE_FP;
+ }
+ 
+-static inline bool compat_state(struct unwind_user_state *state)
++static inline bool compat_fp_state(struct unwind_user_state *state)
+ {
+ 	return IS_ENABLED(CONFIG_HAVE_UNWIND_USER_COMPAT_FP) &&
+ 	       state->type == UNWIND_USER_TYPE_COMPAT_FP;
+ }
+ 
+-#define UNWIND_GET_USER_LONG(to, from, state)				\
++#define unwind_get_user_long(to, from, state)				\
+ ({									\
+ 	int __ret;							\
+-	if (compat_state(state))					\
++	if (compat_fp_state(state))					\
+ 		__ret = get_user(to, (u32 __user *)(from));		\
+ 	else								\
+ 		__ret = get_user(to, (unsigned long __user *)(from));	\
+@@ -46,24 +46,26 @@ int unwind_user_next(struct unwind_user_state *state)
+ 	if (state->done)
+ 		return -EINVAL;
+ 
+-	if (compat_state(state))
++	if (compat_fp_state(state))
+ 		frame = &compat_fp_frame;
+ 	else if (fp_state(state))
+ 		frame = &fp_frame;
+ 	else
+-		goto the_end;
++		goto done;
+ 
++	/* Get the Canonical Frame Address (CFA) */
+ 	cfa = (frame->use_fp ? state->fp : state->sp) + frame->cfa_off;
+ 
+ 	/* stack going in wrong direction? */
+ 	if (cfa <= state->sp)
+-		goto the_end;
++		goto done;
+ 
+-	if (UNWIND_GET_USER_LONG(ra, cfa + frame->ra_off, state))
+-		goto the_end;
++	/* Find the Return Address (RA) */
++	if (unwind_get_user_long(ra, cfa + frame->ra_off, state))
++		goto done;
+ 
+-	if (frame->fp_off && UNWIND_GET_USER_LONG(fp, cfa + frame->fp_off, state))
+-		goto the_end;
++	if (frame->fp_off && unwind_get_user_long(fp, cfa + frame->fp_off, state))
++		goto done;
+ 
+ 	state->ip = ra;
+ 	state->sp = cfa;
+@@ -74,7 +76,7 @@ int unwind_user_next(struct unwind_user_state *state)
+ 
+ 	return 0;
+ 
+-the_end:
++done:
+ 	state->done = true;
+ 	return -EINVAL;
+ }
 
