@@ -1,140 +1,127 @@
-Return-Path: <linux-kernel+bounces-703130-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-703132-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 09080AE8BE8
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Jun 2025 20:02:11 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4DB55AE8BF1
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Jun 2025 20:04:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5D4697AE989
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Jun 2025 18:00:41 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BEA424A3F0F
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Jun 2025 18:04:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0D08B1E102D;
-	Wed, 25 Jun 2025 18:01:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9A6802D6608;
+	Wed, 25 Jun 2025 18:04:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="kzpRA+T5"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.15])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Zy2Ew1gh"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.19])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F1BA01DDA3E;
-	Wed, 25 Jun 2025 18:01:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.15
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A56501E102D;
+	Wed, 25 Jun 2025 18:04:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.19
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750874515; cv=none; b=POj7T3RF0L4VuTrJ8ObwnzflTMJtM7ga3xlW6WTg/dax0A248TjWqyQ0LG+EVJ/vE86OOI72I86EijohDoCV9asTvm+Dj71h8N1REjXCg4mshnhsh1F4N6H1kTIQB3EudH6/OFH+dCXky+Hi/p7aNzVU4HYG4UokkGM5WP7FJRI=
+	t=1750874650; cv=none; b=Utm7sPxIqzd8pRW6nin50jhn8int/dVpY2uRquDmxnXvsMnbmJVD0JweQ2IbUiCl1LV1rQMROCInqyP1Sr2+MsCFQmNTqsh3B2nhCuh7CJP7q768vkwCCefoRXmGTqxg83pjNpJWJhZAMo/dwefTyM0R4oJ/3a6AguhQ8pmAnMY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750874515; c=relaxed/simple;
-	bh=9zt9kSH4ydaeYpW47pmNj8ouiqsks2pwtnnh3nCsl3Q=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=bv/00Q5IS+9vNWUG22fh6Kl9lthBEi7DTIvu7fgsub4eukDKUBQbp5Se+04SRcQDyvME3P7PutWY1mbYUGw8oXAEbfZvgfLJ+v2hh/eQqeoXW6Q7tn/p/GddewQ9pZ734O8YFnvIhlNXtRIpv2OpJld2vvj7T5lGHbZZsGkklmQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=kzpRA+T5; arc=none smtp.client-ip=192.198.163.15
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+	s=arc-20240116; t=1750874650; c=relaxed/simple;
+	bh=LO7e4EYBmszs0563Cc+0GGuHijUvLUmeQHP/hczX230=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=PVgWOkpWATGoXl43wwBzKOg2o0zx5vqMFsUrnou/asHo8Iy+RbY5MSs82q167GJpKwM0SC1pm9NQARetS3uTdxgQVvmw3Ktssxj5qEt65GQPCm6wRPCkrXiA+7zsfYL9ObV/EzGCLFvOMv3IDycNgOE4HSIRBOcMY8AwAyayJPg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Zy2Ew1gh; arc=none smtp.client-ip=192.198.163.19
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1750874514; x=1782410514;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=9zt9kSH4ydaeYpW47pmNj8ouiqsks2pwtnnh3nCsl3Q=;
-  b=kzpRA+T5lz37LJgVu7WxLAGU02sMllm9VxzgkmZkZO4JShHKHTb1Buig
-   o6vXG0zcK5L1b/PE6OZeVmBPOq0l6GetwmIM05hL7Sno99rpiB6f8Vdlg
-   sroc6PZJ6JIQmPnyjz1QmReVtGSmJvYgI5ats/enXfX9iFPnukuA4oeQH
-   iNS90xKDyq8S9UTkX4oNy77jums+COQ9t+K2Cm54e7qOrDmWEm2xBqrCA
-   L0ja7U5KyJN6+IfZnl0U98XrL6rsg5+QTE7TT5m1QGo96ASxoqSRP3vZA
-   6c/90wOQtyFBGI+fN+2Li1Nn8W2AIg4iDNexXSqY6lRz5R0hVGdcW+kXm
-   Q==;
-X-CSE-ConnectionGUID: HHB05st/RumNzyE4c9Mltg==
-X-CSE-MsgGUID: 6f8pSK76Ttev8ey0WvPJKg==
-X-IronPort-AV: E=McAfee;i="6800,10657,11475"; a="53296393"
+  t=1750874648; x=1782410648;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=LO7e4EYBmszs0563Cc+0GGuHijUvLUmeQHP/hczX230=;
+  b=Zy2Ew1ghhpLK7XXzXsdvirnVeX1PpauNTuA42L5MGxitCAN7qaa5oTvI
+   Xi4FvcevvpaaE8op2D2NbK/TmkWZvDvrciJw78CmtFa8HrGAgY8n9mPNB
+   m4IJrMJskh3SCZGj1ncQ7HkrleAhmgKbHF0PTg2rgl+XStT2QnKgMkE+f
+   zvFS2QsBs01IwpVpT6SGKoGmWd23V30A0La7fCR8pNt6LRXFAJaCvdkFS
+   8l/mDfZsb+5RVSW7P09nBShQULGXrmTNOHJYX8PyT51Bd93vMyU/jjtcw
+   jLfBkCOWbXDtnNNcbPVn+JVBjMgM2Sqp4fp2iMDEqXhdAjpy3vD4KrGs/
+   g==;
+X-CSE-ConnectionGUID: dlahOxbaQJabvcg3X5hHwA==
+X-CSE-MsgGUID: 69rROCZpRZiL2fkj6WYIcw==
+X-IronPort-AV: E=McAfee;i="6800,10657,11475"; a="52273586"
 X-IronPort-AV: E=Sophos;i="6.16,265,1744095600"; 
-   d="scan'208";a="53296393"
-Received: from orviesa001.jf.intel.com ([10.64.159.141])
-  by fmvoesa109.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 25 Jun 2025 11:01:53 -0700
-X-CSE-ConnectionGUID: CHMemTsbRn67OS14w2k8PQ==
-X-CSE-MsgGUID: GEVg6mkGQyKBBOnAMhZIqw==
+   d="scan'208";a="52273586"
+Received: from orviesa002.jf.intel.com ([10.64.159.142])
+  by fmvoesa113.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 25 Jun 2025 11:03:49 -0700
+X-CSE-ConnectionGUID: uELhlDWxSTyeEUw9vjZDlA==
+X-CSE-MsgGUID: KDGSD49BQPWFxBi9pcDm1w==
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="6.16,265,1744095600"; 
-   d="scan'208";a="189472348"
-Received: from dwoodwor-mobl2.amr.corp.intel.com (HELO [10.125.108.244]) ([10.125.108.244])
-  by smtpauth.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 25 Jun 2025 11:01:53 -0700
-Message-ID: <a1c95555-aa68-4c54-b411-7ae259636921@intel.com>
-Date: Wed, 25 Jun 2025 11:01:52 -0700
+   d="scan'208";a="183317707"
+Received: from smile.fi.intel.com ([10.237.72.52])
+  by orviesa002.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 25 Jun 2025 11:03:46 -0700
+Received: from andy by smile.fi.intel.com with local (Exim 4.98.2)
+	(envelope-from <andriy.shevchenko@linux.intel.com>)
+	id 1uUUTH-00000009w7a-0FA5;
+	Wed, 25 Jun 2025 21:03:43 +0300
+Date: Wed, 25 Jun 2025 21:03:42 +0300
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To: "Limonciello, Mario" <Mario.Limonciello@amd.com>
+Cc: Mario Limonciello <superm1@kernel.org>,
+	Hans de Goede <hansg@kernel.org>,
+	Mika Westerberg <westeri@kernel.org>,
+	Linus Walleij <linus.walleij@linaro.org>,
+	Bartosz Golaszewski <brgl@bgdev.pl>,
+	Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+	"open list:GPIO ACPI SUPPORT" <linux-gpio@vger.kernel.org>,
+	"open list:GPIO ACPI SUPPORT" <linux-acpi@vger.kernel.org>,
+	open list <linux-kernel@vger.kernel.org>,
+	"open list:INPUT (KEYBOARD, MOUSE, JOYSTICK, TOUCHSCREEN)..." <linux-input@vger.kernel.org>
+Subject: Re: [PATCH 2/2] Revert "Input: soc_button_array - debounce the
+ buttons"
+Message-ID: <aFw5_rnz2dPdQcNG@smile.fi.intel.com>
+References: <1f8c0262-b376-43cb-b2c5-5b60e8cbf678@kernel.org>
+ <92ab85ff-6314-4db0-ae12-9803ddde5037@kernel.org>
+ <625952d3-01e9-426e-9739-86fe5cdfeb35@kernel.org>
+ <7b2f02ef-0274-480b-aecc-bc1165d15fd7@amd.com>
+ <aFwRZO30wf8GxQea@smile.fi.intel.com>
+ <be57dcd1-a9ba-44f6-af9e-9b40f2b5c870@amd.com>
+ <aFwTCUXQydxRVEfk@smile.fi.intel.com>
+ <6c0514e5-0ea6-4f66-9bc0-4230d7ef0d4b@amd.com>
+ <aFw3yhVUkdtNnWXT@smile.fi.intel.com>
+ <eb0a872e-0c96-43be-a583-49d221db661d@amd.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCHv2.1 04/12] x86/virt/tdx: Add tdx_alloc/free_page() helpers
-To: "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>, chao.gao@intel.com
-Cc: bp@alien8.de, dave.hansen@linux.intel.com, isaku.yamahata@intel.com,
- kai.huang@intel.com, kvm@vger.kernel.org, linux-coco@lists.linux.dev,
- linux-kernel@vger.kernel.org, mingo@redhat.com, pbonzini@redhat.com,
- rick.p.edgecombe@intel.com, seanjc@google.com, tglx@linutronix.de,
- x86@kernel.org, yan.y.zhao@intel.com
-References: <aEeaJH1KqZ38tgKi@intel.com>
- <20250610145116.2502206-1-kirill.shutemov@linux.intel.com>
-From: Dave Hansen <dave.hansen@intel.com>
-Content-Language: en-US
-Autocrypt: addr=dave.hansen@intel.com; keydata=
- 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
-In-Reply-To: <20250610145116.2502206-1-kirill.shutemov@linux.intel.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <eb0a872e-0c96-43be-a583-49d221db661d@amd.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - c/o Alberga Business Park, 6
+ krs, Bertel Jungin Aukio 5, 02600 Espoo
 
-Kirill (and anybody else reading this),
+On Wed, Jun 25, 2025 at 05:59:50PM +0000, Limonciello, Mario wrote:
+> On 6/25/25 12:54 PM, Andy Shevchenko wrote:
+> > On Wed, Jun 25, 2025 at 03:34:55PM +0000, Limonciello, Mario wrote:
+> >> On 6/25/25 10:17 AM, Andy Shevchenko wrote:
 
-Please stop doing these vXXX.1 patches. b4 can't deal with them. I don't
-know if it's _supposed_ to be able to, but I'm not sure I even want
-Konstantin spending time on making b4 handle this kind of thing. I
-honestly don't want to make my scripts deal with them either.
+...
 
-It's one thing to post a whole new series 2 hours after the old one.
-It's a very different thing to resend a series in the 2 *weeks* since
-you updated it.
+> > Probably gpiod_set_debounce() should become a no-op in this case?
+> 
+> But my point is this 50 needs to be a quirk /somewhere/.  It shouldn't 
+> be a default behavior.
+> 
+> It can be in the GPIO driver(s), it can be in soc-button-array, or it 
+> can be in gpio_keys.
+> 
+> I've got an idea mocked up for a v2, I'll send that out and I think we 
+> can discuss the merits of it on that series.
 
-I'd much rather you resend the series than just leave these tangles for
-the maintainers to unwind.
+Sure, thanks!
+
+-- 
+With Best Regards,
+Andy Shevchenko
+
+
 
