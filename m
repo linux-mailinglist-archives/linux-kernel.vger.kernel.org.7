@@ -1,167 +1,164 @@
-Return-Path: <linux-kernel+bounces-702100-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-702111-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 03738AE7E19
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Jun 2025 11:53:39 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7DCB4AE7E30
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Jun 2025 11:56:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2157D3B500B
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Jun 2025 09:52:12 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4FA9F3BBAE0
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Jun 2025 09:54:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 345F22868BF;
-	Wed, 25 Jun 2025 09:52:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 226A129B233;
+	Wed, 25 Jun 2025 09:53:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Z+N3SKJF"
-Received: from mail-wm1-f52.google.com (mail-wm1-f52.google.com [209.85.128.52])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Jprfp27f"
+Received: from mail-lj1-f181.google.com (mail-lj1-f181.google.com [209.85.208.181])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AA98427FB27
-	for <linux-kernel@vger.kernel.org>; Wed, 25 Jun 2025 09:52:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C728B2877F8;
+	Wed, 25 Jun 2025 09:53:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750845148; cv=none; b=i5uTSNt6F9AtXu239WpxlF1PzpFG96ricRJ9OgvO/zq2/NsVfl8qpOw59f7zTZxU05lWYEn55467Kr6GR8QzufAxCWciS+5MiTGktrJxQKUTLkTR824RiIzrlwR04WPHnoB899b6E2ct+8wEn0FxdKgIb3yuYxmdQjgkvgl0k/k=
+	t=1750845220; cv=none; b=YrWx11fNOTmv5ixXPWmXinj5GB1XMitTduxo98jS9Wu5POUZU95Q/lfuF7Iu8m8+oh4G/KBq/4Jo6CXVaEH+MwfICyY8TuwfEc6isCTmWYCGZHWWsjvO6CNq7LR2dAQW7bPw6xPYN7rl02vZrBbnRoS7m/mQXM4HJb7y/MXlvvs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750845148; c=relaxed/simple;
-	bh=MrRga72y9s3IG9s+3PWdhvyFhlYCAnz1dBzKqnRtsvw=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=UtATED/xLbbDDLaAp5IwJVPKUiCT5aaUmPEc3Igy3Cp5hSNAPHL5HyrQ2PKSb4aSnEXCm3iZzLPUBAKGFcEReMwCeJrMO7zVSLCF8FOdvT8bXQspSpwCthFqIuXPDNlJevOYGgLKnImubwreWQHYcBVpp5Bu8Fwhm8OSHTDMOz8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=Z+N3SKJF; arc=none smtp.client-ip=209.85.128.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wm1-f52.google.com with SMTP id 5b1f17b1804b1-4537fdec33bso9052085e9.1
-        for <linux-kernel@vger.kernel.org>; Wed, 25 Jun 2025 02:52:26 -0700 (PDT)
+	s=arc-20240116; t=1750845220; c=relaxed/simple;
+	bh=9TRhdQ972K330SQZmWrhzPzVpDmeg4Vy1yztZoga44U=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=YPn/VzhqvxoUSAlYU0z/PtIHfrsd/A1NnlkmqSZzCEHYgHwR6vKYg9cITHOYLUO8UheCAqFfCd5zhyRgjqBd/UfhnL6wDLit6+MHocnyXyOEXnboW4caxUFLH62nktzq10eZtRdXDD45RtRYbOSCiuhZiIKd1PgvBwJt/nPhNqI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Jprfp27f; arc=none smtp.client-ip=209.85.208.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lj1-f181.google.com with SMTP id 38308e7fff4ca-32b78b5aa39so65438521fa.1;
+        Wed, 25 Jun 2025 02:53:35 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1750845145; x=1751449945; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=gvynr5GPXAD7xF14LG7ABlRKJ5SF08nktafK/D9Sp4o=;
-        b=Z+N3SKJFuiPHaejrVN9ql6f/eYo9opFv/34l4t2kNyVuZJoBMnnz2r80ZfEdoA7aGF
-         DIptkYPQkY6kZN0bdSZ7qmNxmL39a/iO4moJUt+f+vTQYU74Au060W+0sd3pYH12oA7L
-         WqbiDn2SACu1YYwbIkJ/tvlju7kWkm/bqnXrTfhXD3HoRUD23mW/PXhZREFK5dSg1yxp
-         10oajCPwXJBUR45kT2ut/FjQYbCCrx68A4utXijV2vWube1lMdXXwCxknADrZiYoQZMh
-         LVBjhtH0FMZsY1nDewk2b0yoV+jpgSM5C/Meek/+ZTe52ohRptW+qk0xEAg+cZpzVFra
-         lt5A==
+        d=gmail.com; s=20230601; t=1750845214; x=1751450014; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=BEyx1UFRvpVo+G4N42POvQdsD1hWzSpAcJ0U0Tlc1dQ=;
+        b=Jprfp27fzlQQT7CxVTX+Od8aXOtzPsyzUnDT8NtfibwdVJ704rr6nflSkeizla1+fJ
+         /Atj9QQ+AePV403dtsztyiyenRxawn0vcggHFpvoDsKNBUMByVAk/7oE674M22+looRV
+         c9z0F060eOWrcPIQzajNtZGQ7vSU0EWKNw0m1UwPUnM8p5VSyixwbia+UQHLRTuC+t1m
+         hUuDA9nZ891C2a5SadY7gWMxE+LFeQ4UG6Of+51YCDWDORYYmhjA9Ufbjupu/y2BHiNe
+         vHT6xo2y+jRI+bi0I6mBAewDL6uXicOh45fW1dCHHxZTA+zuIC1iZxl6dBXaLya+g7ze
+         EFqw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1750845145; x=1751449945;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=gvynr5GPXAD7xF14LG7ABlRKJ5SF08nktafK/D9Sp4o=;
-        b=PyoUVyvz9TgHgTJM8XYtHa9rHbnk7Lz6tVxh4scPuaI/bbtCuSIUu/RP0Qqus+kYMQ
-         4fk0U0gTicacQFhEq9myyWlY4W9KeRgqvQPd0WEDvY5d1c9yypjHBs6Qnr1+Nv/zAx2n
-         frRMC4b8nlz6a/4lIDZLUjecUW8NQfewtFnn35+xqwddsvp11M8BYCzALaJuDnt0MGUQ
-         cExprEvQX6fPvWZz31gUebofra4fWRFjeAwek3W6Zx8fyEM4RxTSUFwPjXHaN47gEBO3
-         dKGv5afb7qVVxdOpuOsYvfndJ6b/VKhw545Pz2eXEgoIgJGwVutWdUWD2jBxMK3o1TM0
-         1YmA==
-X-Forwarded-Encrypted: i=1; AJvYcCVV43X/qAxVq695XFmRJk6X/nxxMzEosT3/9934NRTcnUmNFNeHXbvnXUYq2Bf6nDTpn1kQe2nVN/bFIW8=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzUoL3Yt2sHUGeekonkslP49N1IzjJHHX9LTZ29RwdRGdYD9AiJ
-	SsXnZB8/vqqb5oKfV85ToV32N63mFywSEmUzehI11W7399/b76g8/GOx3zcyKTmLFOY=
-X-Gm-Gg: ASbGncuBFh56Z1bhtmBktv4iXtiLsLR7cEUANw50J/UlCnO1NsLDMSsyucnkDeZIMhU
-	tMcaaaGs7g5AQqyxxav33H8qczUJaw+N0wRuztGT9Rl79Y6+BpxWsMA1Wnf9PMwLnMghXVmPfuN
-	8JCl3DGcpHFBwo8dgmECqF+bIsFqEb1/6ztYlCFR2qNiKELrYoyu1lKTTAwDmPvOYot4yLmOoAF
-	vPCMQk232+pam2XxBcihV+9I/WM7MB5LTIlP78U6Lijpvefti/ylP0UOl4JikME4RhlW5CPuKQG
-	Apz7/tcVm2aSecxhezse9Pu6J3oqPd1/mn6rx74FhQkQLGWtu2f8mAEiVJjJ8TKQNBQ=
-X-Google-Smtp-Source: AGHT+IGWhnH2ozWlkqt9r0oHgwgVkhzmM8aFffesqO/fLKJ2oKRNU+kDEm/CqDK4ln1Y/aAeqeYL2g==
-X-Received: by 2002:a05:600c:8b70:b0:442:cab1:e092 with SMTP id 5b1f17b1804b1-45381ab1724mr20000025e9.11.1750845144979;
-        Wed, 25 Jun 2025 02:52:24 -0700 (PDT)
-Received: from [192.168.1.3] ([37.18.136.128])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-453822c3084sm15607705e9.0.2025.06.25.02.52.23
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 25 Jun 2025 02:52:24 -0700 (PDT)
-Message-ID: <3eddec49-f41a-4b59-972f-92693677bb7c@linaro.org>
-Date: Wed, 25 Jun 2025 10:52:23 +0100
+        d=1e100.net; s=20230601; t=1750845214; x=1751450014;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=BEyx1UFRvpVo+G4N42POvQdsD1hWzSpAcJ0U0Tlc1dQ=;
+        b=lmwl6pXA8OEmXVK2A5JUVjbofgxfC13XPzA39byhyvcsHq8v7O9/I6atwXvRGcUPD8
+         iEJWhnhqzz3F2QjtiTcJfLqQMCxENMNo/9BWfd+g433dkvAhZq45/Jcmf05HWn1EMZsV
+         OEz5g59xyicqx1cAFFSeiFogqwYwqbAwOXemKH6fAK0pQMYRWn7FW5/5xX4GVxUPaPi0
+         n9m15gmEt2UR9HFrW93iQvHKdqluW14IsuJJzPvA/p4APKDEbuChb8ZBhpwa0nVotJfd
+         KriAXgBjvIYlAm3rUHonskeZHGjhNjJMAgOoA7woCJASLUbjD0y4js2CLlsZNLxwWsJD
+         46dA==
+X-Forwarded-Encrypted: i=1; AJvYcCWjxQo5W+ifcaSjKMu8Z7SRtNoNCRkAnTXEcKexw8pf8rikD/YnWmDk2R5Dr4vINO1G5l8/bHKqLDwovO4=@vger.kernel.org, AJvYcCXNSsUby5IcUtsREV1RTiba45UwvVHnqSHf2XytpCi+Z40oYjEpZr6/EpxpcKZPI8Xik3fX/5J8oGBMLQ==@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzjz3oICco50rAqU+BpRqeGQnl2FQ6eN52RGk3PSenchDPt99kA
+	Lt3DQRQ1yMyjYZyCZYPG8bQBVCVwPq4UD62Rns88bt+ksk28Bet3+Ye0
+X-Gm-Gg: ASbGncvVi4QEmdy/7SXs+1zybuFECBnJZXd8izkZ/o0moYWVsrdQIKX4K7sYC0KlC54
+	XHPVK5x3H8Co0x7BNqx8q5kvmd371oN48eeHL54lpzOVxtqO6JDUBixLuMDNjyGMTjUY6+TZZ84
+	wPZEXpJpPgFLERlOUHhVO5bMHsCPuLkMBDIkz7+7h6XevtDmDoocoopY9XbeLd02n+CVIfklXuS
+	ngoKm4T6rbGyfXZO+x6Otv7K5Q9dNkz12YsY+PPBF1P7Cuvb7rTxQQDU2Q099l5wqkeZTnBwWMj
+	0TYR3CU8MMhsVTqUWgoVevnjMugWPB6vzJMNB4pBkmzcCJl1Rzk3Jq7cfja4DIYd0OEduv2o6gx
+	/T4rgAOgBmhhu/rF/UBCfJ8DoICttmg==
+X-Google-Smtp-Source: AGHT+IEcjLY1beu9wht7welDNsEE9aAi3GLekIAB8d1qrA4KC0EwxtCdVmkKJY06lTM1Yl9RfqTm0Q==
+X-Received: by 2002:a05:651c:514:b0:32b:3c94:992d with SMTP id 38308e7fff4ca-32cc65755dbmr8009981fa.28.1750845213516;
+        Wed, 25 Jun 2025 02:53:33 -0700 (PDT)
+Received: from localhost.localdomain (2.135.54.165.dynamic.telecom.kz. [2.135.54.165])
+        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-32b980a36c0sm19311851fa.62.2025.06.25.02.53.28
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 25 Jun 2025 02:53:33 -0700 (PDT)
+From: Sabyrzhan Tasbolatov <snovitoll@gmail.com>
+To: ryabinin.a.a@gmail.com,
+	glider@google.com,
+	andreyknvl@gmail.com,
+	dvyukov@google.com,
+	vincenzo.frascino@arm.com,
+	catalin.marinas@arm.com,
+	will@kernel.org,
+	chenhuacai@kernel.org,
+	kernel@xen0n.name,
+	maddy@linux.ibm.com,
+	mpe@ellerman.id.au,
+	npiggin@gmail.com,
+	christophe.leroy@csgroup.eu,
+	hca@linux.ibm.com,
+	gor@linux.ibm.com,
+	agordeev@linux.ibm.com,
+	borntraeger@linux.ibm.com,
+	svens@linux.ibm.com,
+	richard@nod.at,
+	anton.ivanov@cambridgegreys.com,
+	johannes@sipsolutions.net,
+	dave.hansen@linux.intel.com,
+	luto@kernel.org,
+	peterz@infradead.org,
+	tglx@linutronix.de,
+	mingo@redhat.com,
+	bp@alien8.de,
+	x86@kernel.org,
+	hpa@zytor.com,
+	chris@zankel.net,
+	jcmvbkbc@gmail.com,
+	akpm@linux-foundation.org
+Cc: guoweikang.kernel@gmail.com,
+	geert@linux-m68k.org,
+	rppt@kernel.org,
+	tiwei.btw@antgroup.com,
+	richard.weiyang@gmail.com,
+	benjamin.berg@intel.com,
+	kevin.brodsky@arm.com,
+	kasan-dev@googlegroups.com,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	loongarch@lists.linux.dev,
+	linuxppc-dev@lists.ozlabs.org,
+	linux-s390@vger.kernel.org,
+	linux-um@lists.infradead.org,
+	linux-mm@kvack.org,
+	snovitoll@gmail.com
+Subject: [PATCH 8/9] kasan/s390: call kasan_init_generic in kasan_init
+Date: Wed, 25 Jun 2025 14:52:23 +0500
+Message-Id: <20250625095224.118679-9-snovitoll@gmail.com>
+X-Mailer: git-send-email 2.34.1
+In-Reply-To: <20250625095224.118679-1-snovitoll@gmail.com>
+References: <20250625095224.118679-1-snovitoll@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 1/6] spi: spi-fsl-dspi: Clear completion counter before
- initiating transfer
-To: Frank Li <Frank.li@nxp.com>
-Cc: Vladimir Oltean <olteanv@gmail.com>, Mark Brown <broonie@kernel.org>,
- Vladimir Oltean <vladimir.oltean@nxp.com>, Arnd Bergmann <arnd@arndb.de>,
- Larisa Grigore <larisa.grigore@nxp.com>, Christoph Hellwig <hch@lst.de>,
- linux-spi@vger.kernel.org, imx@lists.linux.dev, linux-kernel@vger.kernel.org
-References: <20250624-james-nxp-spi-dma-v3-0-e7d574f5f62c@linaro.org>
- <20250624-james-nxp-spi-dma-v3-1-e7d574f5f62c@linaro.org>
- <aFrLMCq6hRJj5FjI@lizhi-Precision-Tower-5810>
-Content-Language: en-US
-From: James Clark <james.clark@linaro.org>
-In-Reply-To: <aFrLMCq6hRJj5FjI@lizhi-Precision-Tower-5810>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
+Call kasan_init_generic() which enables the static flag
+to mark generic KASAN initialized, otherwise it's an inline stub.
+Also prints the banner from the single place.
 
+Closes: https://bugzilla.kernel.org/show_bug.cgi?id=218315
+Signed-off-by: Sabyrzhan Tasbolatov <snovitoll@gmail.com>
+---
+ arch/s390/kernel/early.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-On 24/06/2025 4:58 pm, Frank Li wrote:
-> On Tue, Jun 24, 2025 at 11:35:31AM +0100, James Clark wrote:
->> In target mode, extra interrupts can be received between the end of a
->> transfer and halting the module if the host continues sending more data.
->> If the interrupt from this occurs after the reinit_completion() then the
->> completion counter is left at a non-zero value. The next unrelated
->> transfer initiated by userspace will then complete immediately without
->> waiting for the interrupt or writing to the RX buffer.
->>
->> Fix it by resetting the counter before the transfer so that lingering
->> values are cleared. This is done after clearing the FIFOs and the
->> status register but before the transfer is initiated, so no interrupts
->> should be received at this point resulting in other race conditions.
->>
->> Fixes: 4f5ee75ea171 ("spi: spi-fsl-dspi: Replace interruptible wait queue with a simple completion")
->> Signed-off-by: James Clark <james.clark@linaro.org>
->> ---
->>   drivers/spi/spi-fsl-dspi.c | 10 +++++++++-
->>   1 file changed, 9 insertions(+), 1 deletion(-)
->>
->> diff --git a/drivers/spi/spi-fsl-dspi.c b/drivers/spi/spi-fsl-dspi.c
->> index 04c88d090c4d..744dfc561db2 100644
->> --- a/drivers/spi/spi-fsl-dspi.c
->> +++ b/drivers/spi/spi-fsl-dspi.c
->> @@ -1122,11 +1122,19 @@ static int dspi_transfer_one_message(struct spi_controller *ctlr,
->>   		if (dspi->devtype_data->trans_mode == DSPI_DMA_MODE) {
->>   			status = dspi_dma_xfer(dspi);
->>   		} else {
->> +			/*
->> +			 * Reset completion counter to clear any extra
->> +			 * complete()s from spurious interrupts that may have
->> +			 * happened after the last message's completion but
->> +			 * before the module was fully in stop mode.
->> +			 */
-> 
-> I think you change is correct. reinit_completion() should be called before
-> dspi_fifo_write().
-> 
-> comments is quite confused. how about below comments?
-> 
-> /*
->   * Reinitialize the completion before transferring data to avoid the case where
->   * it might remain in the done state due to a spurious interrupt from a previous
->   * transfer. This could falsely signal that the current transfer has completed.
->   */
-> 
-> Frank
-
-Will do
-
->> +			if (dspi->irq)
->> +				reinit_completion(&dspi->xfer_done);
->> +
->>   			dspi_fifo_write(dspi);
->>
->>   			if (dspi->irq) {
->>   				wait_for_completion(&dspi->xfer_done);
->> -				reinit_completion(&dspi->xfer_done);
->>   			} else {
->>   				do {
->>   					status = dspi_poll(dspi);
->>
->> --
->> 2.34.1
->>
+diff --git a/arch/s390/kernel/early.c b/arch/s390/kernel/early.c
+index 54cf0923050..da7a13d9ab7 100644
+--- a/arch/s390/kernel/early.c
++++ b/arch/s390/kernel/early.c
+@@ -65,7 +65,7 @@ static void __init kasan_early_init(void)
+ {
+ #ifdef CONFIG_KASAN
+ 	init_task.kasan_depth = 0;
+-	pr_info("KernelAddressSanitizer initialized\n");
++	kasan_init_generic();
+ #endif
+ }
+ 
+-- 
+2.34.1
 
 
