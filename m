@@ -1,149 +1,269 @@
-Return-Path: <linux-kernel+bounces-703138-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-703140-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id C77E3AE8BFB
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Jun 2025 20:06:30 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9055AAE8BFF
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Jun 2025 20:07:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1CB2E4A4DEE
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Jun 2025 18:06:31 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 18A8F1C20B38
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Jun 2025 18:07:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BD9092D5C8D;
-	Wed, 25 Jun 2025 18:06:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Z4cTvdXP"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.13])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 180302D6608;
+	Wed, 25 Jun 2025 18:06:50 +0000 (UTC)
+Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BDDE228C87D;
-	Wed, 25 Jun 2025 18:06:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.13
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9C91628C87D
+	for <linux-kernel@vger.kernel.org>; Wed, 25 Jun 2025 18:06:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750874780; cv=none; b=qe9euby48mV8+Bie+vC+SiMfUsrMqQI1q23dmwSNRcieDtL4hK+J++ZNVTWN3U+NQ63d3LyUw/vKjQED/G022jjnLEnQpJz2VDdgTmoosrYo5oczwaIJumlpBLXaT1YEFq+mMgN78Nc7AOQXuOM1hcCAqcE91hwzMJ7+I7NS2Ng=
+	t=1750874809; cv=none; b=KAqKEO+JgRC8176/Pvx6CM8M6Q9e4HoaHXrk1v5zBiiYjmk0vNU3hRJ6jIAvjeUUsBor0gfS7Q50MmLOhJRCMJcEedqLvDVhW+inlo4WLvNFrMl+XFfhnkUpWZClsK1cVURkP6hkg4DO0Ay4YzmbK0nzwtaetYybCzb7N8YKMdg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750874780; c=relaxed/simple;
-	bh=57TV/0cm68AKOGsdQMvjSH9dG+6SjsHff+gvbD5Q3bY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=AeKShd10urp7F5UVG18iPBN6k7AhZQHK5QYIEk5qhbsSzu3eCHXqa13i7UK3i7TVR0q4urRKwQ9pI/ACI7t7Dtwe1+a5jQ7K1UD5p7rdei2GtZzdFSqnPOSfIcYcX5GTXCV4WJ22yVCfOecW4XoA39GwErV2lhhTvnCZ8/3aWv0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Z4cTvdXP; arc=none smtp.client-ip=198.175.65.13
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1750874779; x=1782410779;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=57TV/0cm68AKOGsdQMvjSH9dG+6SjsHff+gvbD5Q3bY=;
-  b=Z4cTvdXPdZB3HvH3+jrvQUVkT4Czt/7kCTXWLMcxUaas41FFb2BVTNJh
-   6cVPbGvpyNXwnRgPNe6bNcEO9IjTkT47A6FGleFu9QMMeST8peO/G4s/v
-   6A1vrDdX06HzO7pc4h9j3cY1+0VJHHOwFNbSDsoBR6rNzK+x6IjHtdx3f
-   nZnItWAzxZ911TUiVqamVzljwTkTUtzUDPeosNFwk+mRc4mSlkbZ/OQLW
-   sS07bJuVrzijTmcAMwy7RcGrPXiQrc8bapLVM359qGu+ZGisjTBxUt+aF
-   iw7ngpXkNC5bRRmD60IIBR72SX+8Eyl2TyVlMjXFRbshPfl8oa2PxUOS4
-   A==;
-X-CSE-ConnectionGUID: rTwkgATiSuy7ncGAboUHuw==
-X-CSE-MsgGUID: /eXimZDtTHOpauKekAOZKQ==
-X-IronPort-AV: E=McAfee;i="6800,10657,11475"; a="64215365"
-X-IronPort-AV: E=Sophos;i="6.16,265,1744095600"; 
-   d="scan'208";a="64215365"
-Received: from orviesa006.jf.intel.com ([10.64.159.146])
-  by orvoesa105.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 25 Jun 2025 11:06:18 -0700
-X-CSE-ConnectionGUID: Yy1+5wX+Q9OvjvZbAbQxlg==
-X-CSE-MsgGUID: N33EmClCTDK64va82lX10A==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.16,265,1744095600"; 
-   d="scan'208";a="151807781"
-Received: from dwoodwor-mobl2.amr.corp.intel.com (HELO [10.125.108.244]) ([10.125.108.244])
-  by orviesa006-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 25 Jun 2025 11:06:18 -0700
-Message-ID: <c3f77974-f1d6-4a22-bd1d-2678427a9fb1@intel.com>
-Date: Wed, 25 Jun 2025 11:06:16 -0700
+	s=arc-20240116; t=1750874809; c=relaxed/simple;
+	bh=yZ3bmJ5oFOTAfYkpkakXUT8e+YKqYTNbuX9Iu5rR8Pw=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=ZrnxWXvMf7pR9uhQYHAAOYfiNBy4w3lJRLFnRx9DkTwKXS3tMvqsjNuvnE8hhATJyfRumGPLdKt3+Y2Z5RT8aQgJ3HF8fPwwwWAz9r8HcBwfr8UiZhmvS+/bJf4LYocx58bTnOOehFGEUe157BpzRQ4ZFTl+dvfIOpsyupZCRmI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
+Received: from ptz.office.stw.pengutronix.de ([2a0a:edc0:0:900:1d::77] helo=[IPv6:::1])
+	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+	(Exim 4.92)
+	(envelope-from <l.stach@pengutronix.de>)
+	id 1uUUW2-0001i3-Nl; Wed, 25 Jun 2025 20:06:34 +0200
+Message-ID: <5a094e3b95f1219435056d87ca4f643398bcb1d3.camel@pengutronix.de>
+Subject: Re: [PATCH net-next v2 1/1] phy: micrel: add Signal Quality
+ Indicator (SQI) support for KSZ9477 switch PHYs
+From: Lucas Stach <l.stach@pengutronix.de>
+To: Oleksij Rempel <o.rempel@pengutronix.de>, Andrew Lunn <andrew@lunn.ch>, 
+ Heiner Kallweit <hkallweit1@gmail.com>, "David S. Miller"
+ <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,  Jakub Kicinski
+ <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>
+Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+ kernel@pengutronix.de,  Russell King <linux@armlinux.org.uk>
+Date: Wed, 25 Jun 2025 20:06:32 +0200
+In-Reply-To: <20250625124127.4176960-1-o.rempel@pengutronix.de>
+References: <20250625124127.4176960-1-o.rempel@pengutronix.de>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.52.4 (3.52.4-2.fc40) 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCHv2 02/12] x86/virt/tdx: Allocate page bitmap for Dynamic
- PAMT
-To: "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
- pbonzini@redhat.com, seanjc@google.com, dave.hansen@linux.intel.com
-Cc: rick.p.edgecombe@intel.com, isaku.yamahata@intel.com,
- kai.huang@intel.com, yan.y.zhao@intel.com, chao.gao@intel.com,
- tglx@linutronix.de, mingo@redhat.com, bp@alien8.de, kvm@vger.kernel.org,
- x86@kernel.org, linux-coco@lists.linux.dev, linux-kernel@vger.kernel.org
-References: <20250609191340.2051741-1-kirill.shutemov@linux.intel.com>
- <20250609191340.2051741-3-kirill.shutemov@linux.intel.com>
-From: Dave Hansen <dave.hansen@intel.com>
-Content-Language: en-US
-Autocrypt: addr=dave.hansen@intel.com; keydata=
- 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
-In-Reply-To: <20250609191340.2051741-3-kirill.shutemov@linux.intel.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+X-SA-Exim-Connect-IP: 2a0a:edc0:0:900:1d::77
+X-SA-Exim-Mail-From: l.stach@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 
->  /*
->   * Locate a NUMA node which should hold the allocation of the @tdmr
->   * PAMT.  This node will have some memory covered by the TDMR.  The
-> @@ -522,7 +534,16 @@ static int tdmr_set_up_pamt(struct tdmr_info *tdmr,
->  	 * and the total PAMT size.
->  	 */
->  	tdmr_pamt_size = 0;
-> -	for (pgsz = TDX_PS_4K; pgsz < TDX_PS_NR; pgsz++) {
-> +	pgsz = TDX_PS_4K;
+Hi Oleksij,
+
+Am Mittwoch, dem 25.06.2025 um 14:41 +0200 schrieb Oleksij Rempel:
+> Add support for the Signal Quality Index (SQI) feature on KSZ9477 family
+> switches. This feature provides a relative measure of receive signal
+> quality.
+>=20
+> The KSZ9477 PHY provides four separate SQI values for a 1000BASE-T link,
+> one for each differential pair (Channel A-D). Since the current get_sqi
+> UAPI only supports returning a single value per port, this
+> implementation reads the SQI from Channel A as a representative metric.
+
+I wonder if it wouldn't be more useful to report the worst SQI from all
+the channels instead.
+
+> This can be extended to provide per-channel readings once the UAPI is
+> enhanced for multi-channel support.
+>=20
+> The hardware provides a raw 7-bit SQI value (0-127), where lower is
+> better. This raw value is converted to the standard 0-7 scale to provide
+> a usable, interoperable metric for userspace tools, abstracting away
+> hardware-specifics. The mapping to the standard 0-7 SQI scale was
+> determined empirically by injecting a 30MHz sine wave into the receive
+> pair with a signal generator. It was observed that the link becomes
+> unstable and drops when the raw SQI value reaches 8. This
+> implementation is based on these test results.
+>=20
+> Signed-off-by: Oleksij Rempel <o.rempel@pengutronix.de>
+> ---
+> changes v2:
+> - Reword commit message
+> - Fix SQI value inversion
+> - Implement an empirically-derived, non-linear mapping to the standard
+>   0-7 SQI scale
+> ---
+>  drivers/net/phy/micrel.c | 124 +++++++++++++++++++++++++++++++++++++++
+>  1 file changed, 124 insertions(+)
+>=20
+> diff --git a/drivers/net/phy/micrel.c b/drivers/net/phy/micrel.c
+> index d0429dc8f561..6422d9a7c09f 100644
+> --- a/drivers/net/phy/micrel.c
+> +++ b/drivers/net/phy/micrel.c
+> @@ -2173,6 +2173,128 @@ static void kszphy_get_phy_stats(struct phy_devic=
+e *phydev,
+>  	stats->rx_errors =3D priv->phy_stats.rx_err_pkt_cnt;
+>  }
+> =20
+> +/* Base register for Signal Quality Indicator (SQI) - Channel A
+> + *
+> + * MMD Address: MDIO_MMD_PMAPMD (0x01)
+> + * Register:    0xAC (Channel A)
+> + * Each channel (pair) has its own register:
+> + *   Channel A: 0xAC
+> + *   Channel B: 0xAD
+> + *   Channel C: 0xAE
+> + *   Channel D: 0xAF
+> + */
+> +#define KSZ9477_MMD_SIGNAL_QUALITY_CHAN_A	0xAC
 > +
-> +	/* With Dynamic PAMT, PAMT_4K is replaced with a bitmap */
-> +	if (tdx_supports_dynamic_pamt(&tdx_sysinfo)) {
-> +		pamt_size[pgsz] = tdmr_get_pamt_bitmap_sz(tdmr);
-> +		tdmr_pamt_size += pamt_size[pgsz];
-> +		pgsz++;
+> +/* SQI field mask for bits [14:8]
+> + *
+> + * SQI indicates relative quality of the signal.
+> + * A lower value indicates better signal quality.
+> + */
+> +#define KSZ9477_MMD_SQI_MASK			GENMASK(14, 8)
+> +
+> +#define KSZ9477_SQI_MAX				7
+> +
+> +/* Delay between consecutive SQI register reads in microseconds.
+> + *
+> + * Reference: KSZ9477S Datasheet DS00002392C, Section 4.1.11 (page 26)
+> + * The register is updated every 2 =C2=B5s. Use 3 =C2=B5s to avoid redun=
+dant reads.
+> + */
+> +#define KSZ9477_MMD_SQI_READ_DELAY_US		3
+> +
+> +/* Number of SQI samples to average for a stable result.
+> + *
+> + * Reference: KSZ9477S Datasheet DS00002392C, Section 4.1.11 (page 26)
+> + * For noisy environments, a minimum of 30=E2=80=9350 readings is recomm=
+ended.
+> + */
+> +#define KSZ9477_SQI_SAMPLE_COUNT		40
+> +
+> +/* The hardware SQI register provides a raw value from 0-127, where a lo=
+wer
+> + * value indicates better signal quality. However, empirical testing has
+> + * shown that only the 0-7 range is relevant for a functional link. A ra=
+w
+> + * value of 8 or higher was measured directly before link drop. This ali=
+gns
+> + * with the OPEN Alliance recommendation that SQI=3D0 should represent t=
+he
+> + * pre-failure state.
+> + *
+> + * This table provides a non-linear mapping from the useful raw hardware
+> + * values (0-7) to the standard 0-7 SQI scale, where higher is better.
+> + */
+> +static const u8 ksz_sqi_mapping[] =3D {
+> +	7, /* raw 0 -> SQI 7 */
+> +	7, /* raw 1 -> SQI 7 */
+> +	6, /* raw 2 -> SQI 6 */
+> +	5, /* raw 3 -> SQI 5 */
+> +	4, /* raw 4 -> SQI 4 */
+> +	3, /* raw 5 -> SQI 3 */
+> +	2, /* raw 6 -> SQI 2 */
+> +	1, /* raw 7 -> SQI 1 */
+> +};
+> +
+> +/**
+> + * kszphy_get_sqi - Read, average, and map Signal Quality Index (SQI)
+> + * @phydev: the PHY device
+> + *
+> + * This function reads and processes the raw Signal Quality Index from t=
+he
+> + * PHY. Based on empirical testing, a raw value of 8 or higher indicates=
+ a
+> + * pre-failure state and is mapped to SQI 0. Raw values from 0-7 are
+> + * mapped to the standard 0-7 SQI scale via a lookup table.
+> + *
+> + * Return: SQI value (0=E2=80=937), or a negative errno on failure.
+> + */
+> +static int kszphy_get_sqi(struct phy_device *phydev)
+> +{
+> +	int sum =3D 0;
+> +	int i, val, raw_sqi, avg_raw_sqi;
+> +	u8 channels;
+> +
+> +	/* Determine applicable channels based on link speed */
+> +	if (phydev->speed =3D=3D SPEED_1000)
+> +		/* TODO: current SQI API only supports 1 channel. */
+> +		channels =3D 1;
+> +	else if (phydev->speed =3D=3D SPEED_100)
+> +		channels =3D 1;
+> +	else
+> +		return -EOPNOTSUPP;
+> +
+> +	/*
+> +	 * Sample and accumulate SQI readings for each pair (currently only one=
+).
+> +	 *
+> +	 * Reference: KSZ9477S Datasheet DS00002392C, Section 4.1.11 (page 26)
+> +	 * - The SQI register is updated every 2 =C2=B5s.
+> +	 * - Values may fluctuate significantly, even in low-noise environments=
+.
+> +	 * - For reliable estimation, average a minimum of 30=E2=80=9350 sample=
+s
+> +	 *   (recommended for noisy environments)
+> +	 * - In noisy environments, individual readings are highly unreliable.
+> +	 *
+> +	 * We use 40 samples per pair with a delay of 3 =C2=B5s between each
+> +	 * read to ensure new values are captured (2 =C2=B5s update interval).
+> +	 */
+> +	for (i =3D 0; i < KSZ9477_SQI_SAMPLE_COUNT; i++) {
+> +		val =3D phy_read_mmd(phydev, MDIO_MMD_PMAPMD,
+> +				   KSZ9477_MMD_SIGNAL_QUALITY_CHAN_A);
+> +		if (val < 0)
+> +			return val;
+> +
+> +		raw_sqi =3D FIELD_GET(KSZ9477_MMD_SQI_MASK, val);
+> +		sum +=3D raw_sqi;
+> +
+> +		udelay(KSZ9477_MMD_SQI_READ_DELAY_US);
+
+This ends up spending a sizable amount of time just spinning the CPU to
+collect the samples for the averaging. Given that only very low values
+seem to indicate a working link, I wonder how significant the
+fluctuations in reported link quality are in reality. Is it really
+worth spending 120us of CPU time to average those values?
+
+Maybe a running average updated with a new sample each time this
+function is called would be sufficient?
+
+Regards,
+Lucas
+
 > +	}
+> +
+> +	avg_raw_sqi =3D sum / KSZ9477_SQI_SAMPLE_COUNT;
+> +
+> +	/* Handle the pre-fail/failed state first. */
+> +	if (avg_raw_sqi >=3D ARRAY_SIZE(ksz_sqi_mapping))
+> +		return 0;
+> +
+> +	/* Use the lookup table for the good signal range. */
+> +	return ksz_sqi_mapping[avg_raw_sqi];
+> +}
+> +
+> +static int kszphy_get_sqi_max(struct phy_device *phydev)
+> +{
+> +	return KSZ9477_SQI_MAX;
+> +}
+> +
+>  static void kszphy_enable_clk(struct phy_device *phydev)
+>  {
+>  	struct kszphy_priv *priv =3D phydev->priv;
+> @@ -5801,6 +5923,8 @@ static struct phy_driver ksphy_driver[] =3D {
+>  	.update_stats	=3D kszphy_update_stats,
+>  	.cable_test_start	=3D ksz9x31_cable_test_start,
+>  	.cable_test_get_status	=3D ksz9x31_cable_test_get_status,
+> +	.get_sqi	=3D kszphy_get_sqi,
+> +	.get_sqi_max	=3D kszphy_get_sqi_max,
+>  } };
+> =20
+>  module_phy_driver(ksphy_driver);
 
-This is the wrong place to do this.
-
-Hide it in tdmr_get_pamt_sz(). Don't inject it in the main code flow
-here and complicate the for loop.
 
