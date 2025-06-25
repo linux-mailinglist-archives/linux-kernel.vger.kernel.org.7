@@ -1,190 +1,238 @@
-Return-Path: <linux-kernel+bounces-701414-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-701412-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id B796FAE74B6
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Jun 2025 04:18:54 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 31589AE74AD
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Jun 2025 04:15:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 31D8317E172
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Jun 2025 02:18:55 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AA43B3AA866
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Jun 2025 02:15:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DBD391A7264;
-	Wed, 25 Jun 2025 02:18:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3D91517CA17;
+	Wed, 25 Jun 2025 02:15:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b="OfdRks2S"
-Received: from PA4PR04CU001.outbound.protection.outlook.com (mail-francecentralazon11013032.outbound.protection.outlook.com [40.107.162.32])
+	dkim=pass (2048-bit key) header.d=fujitsu.com header.i=@fujitsu.com header.b="i+rYGofY"
+Received: from esa5.hc1455-7.c3s2.iphmx.com (esa5.hc1455-7.c3s2.iphmx.com [68.232.139.130])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C04B133E1;
-	Wed, 25 Jun 2025 02:18:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.162.32
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750817923; cv=fail; b=HHalhh5SkE/Yjkk0g/pp6nZ8gD6v+f7o0mCUQVpCaeTLKpENYHmBS0oqBc4iuub4V8X0l35wiyL3arWjrMQfcB62l0FOuBcHO0S2eBvTqdZZHBE4o27ncI8PYyjLimnPp1p8IBKKW946pbTCVM+IGTug1IUdAnG8Bbl5eVjcHy0=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750817923; c=relaxed/simple;
-	bh=7M7wNKw2C/aBC9vSUOVcbYezEDS6HNXnPE2t2Gwq1+8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=P0hkSmUnkBtNnpbanncZRr4zfi+2l9usByT6p4bwFgqZpRbiGzhqZefMeRB/NzIadccuLOQj1GMWFWBc121klfUICIqi2A9Xh23PbCXki4IMuJtF5S11ZGSh+dyU506+U0l75G5i+PYwxiP1IqYUGe0PPwQ26lJdpglvSQ/8yeg=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b=OfdRks2S; arc=fail smtp.client-ip=40.107.162.32
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=xIRX/ZgaKuhG90GNl+jEHSeCZXUsGU25+RR62dybkpYB0FzY3+KioEJf2jkAvmUK1keog4NzI9M1aPNJTOEpS+1WK/52/IyoVFz4UAUQa/vHmR8adqq7yWljqppxkrG7OldeTPtLyju1syvTQYVXS59ExMqqGOXpCfP37ppStkJf9NTM4IGhrjfZEu2vQOZMBVtAC8fsSaOS1Uv7mjsBoTElWemxlLj0dUL1Pa4IgeysilbvlcTxcZD0h+Hf8I5ieUL7yPBptfphRNjVSKPqF601XlA3LNAkrX+kNO3NUGHmaVjc/OTSg6nfKEkS2cMlz1dWRdEv/kx3qZvcj0t9Xg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=+Q3eNKHIU7mDhLKgAvJLDncBUoSwoSWppvLwrh0dTs0=;
- b=NXwe20XL9vU8+J7JKweB180/xQ8Cxj/XNmof1b+fxGwia0Ki2x2uQTDFbrk1QsUi23sKcHtRDupc/dmPywd4w87OrgrjfPcXyKM8LvR0e1GWpSfDl878ZN9NolM75yS/HWcHudWuUhdfl7N8FOjf4FcV1u28bUBigLzlWL/1XF05bG/FIddWvKyUvUOi6sE/JWs5Avag3UODYBvCjVMHWwRHGP7VScaZWn7ys9IM4QwtWv02BZ0IlRg8sO2nYOZsnUoQe7xOtKUNsOiurQIqVampwKo/4S/nHm1JY+X4FR7prP4M+QpuA5Xbbbbjl17HSuqoxICLNn1lVBIiQBXfWw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
- header.d=nxp.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=+Q3eNKHIU7mDhLKgAvJLDncBUoSwoSWppvLwrh0dTs0=;
- b=OfdRks2SCCqxRTKYrs4IBG23A6/4r2nEU8D66fA+yf8RJEJkj4RrUF/FaKXFCKQrhXZv+WoxgbSwJiYyhg06BKnrT4n5dbDX3W2fqXLyrGT8LY/Y8x7CDTZhVGAnM38jHfJ3uF+8mghad5ABNqhywv7SHu2hxE1fgleeqmWLJ+DYFVOlwlVxUgB9HgexTKw60SKJqFjYe/iV0nD4xwrFlxsVXcEho3mvmofG+OeI2PA/ZzWEUBK3m9VXY6fd1KwufDDU+AQy17pE2lCN1IOSle8kEaZmSP/npqgX7fJtACGbgcFytpnaITRHjZGI9dbav7MyIgcStuxF4zOvWTd2Nw==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nxp.com;
-Received: from DU2PR04MB8822.eurprd04.prod.outlook.com (2603:10a6:10:2e1::11)
- by GVXPR04MB9831.eurprd04.prod.outlook.com (2603:10a6:150:11c::8) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8857.29; Wed, 25 Jun
- 2025 02:18:35 +0000
-Received: from DU2PR04MB8822.eurprd04.prod.outlook.com
- ([fe80::4e24:c2c7:bd58:c5c7]) by DU2PR04MB8822.eurprd04.prod.outlook.com
- ([fe80::4e24:c2c7:bd58:c5c7%6]) with mapi id 15.20.8880.015; Wed, 25 Jun 2025
- 02:18:35 +0000
-Date: Wed, 25 Jun 2025 10:13:48 +0800
-From: Xu Yang <xu.yang_2@nxp.com>
-To: Markus Elfring <Markus.Elfring@web.de>
-Cc: linux-usb@vger.kernel.org, 
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Peter Chen <peter.chen@kernel.org>, 
-	LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Chen Ni <nichen@iscas.ac.cn>
-Subject: Re: [PATCH] usb: chipidea: udc: Use usb_endpoint_is_isoc_in() rather
- than duplicating its implementation
-Message-ID: <igmzazos37rffzpuvyy5ubrwozfznphtenkdwosjceq7gcakzw@dtdxbfzhy64v>
-References: <e9b363cb-1223-41fa-8613-73ff9a1d4a30@web.de>
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <e9b363cb-1223-41fa-8613-73ff9a1d4a30@web.de>
-X-ClientProxiedBy: MA0P287CA0007.INDP287.PROD.OUTLOOK.COM
- (2603:1096:a01:d9::18) To DU2PR04MB8822.eurprd04.prod.outlook.com
- (2603:10a6:10:2e1::11)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 12A3233086
+	for <linux-kernel@vger.kernel.org>; Wed, 25 Jun 2025 02:15:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=68.232.139.130
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1750817723; cv=none; b=lzf7wTR7mEDeVbFBlRUuKue9I/gtQnsxwyQ+qwq6G5NDfijytBC1gI/RXCwEeUjDknXpBpuErwKBX0OPVMWT/cFvhUIre3QWpv5mYIq7S43RJVwNZEfowZ9ZO4S2LkXiQsqrMdzlwcBI6Bf/7eY3Z0FHgeyEFf6u+5+LWBj+x9M=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1750817723; c=relaxed/simple;
+	bh=FzxUUqh0xMibWP3tI2gdghaU5jOpT5eCOiDlKcYLzUw=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=RcQ26eGMYz64vV73lxpFZ+RwaDUdfu+4liaDIOSrh9Dm/YW+wZmaAWnCS0F2j4JgeMeHZ9I4j0RgGzqoSlw2WhbYPoabJqrvuSlzLq1jT+3TMMBoSrgwWp00XZU3yWk/wnGrBCq3Z4v1PeJZvM9dyccIP5eBj9yVYbHt0LJG5I8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=fujitsu.com; spf=pass smtp.mailfrom=fujitsu.com; dkim=pass (2048-bit key) header.d=fujitsu.com header.i=@fujitsu.com header.b=i+rYGofY; arc=none smtp.client-ip=68.232.139.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=fujitsu.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fujitsu.com
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
+  d=fujitsu.com; i=@fujitsu.com; q=dns/txt; s=fj2;
+  t=1750817721; x=1782353721;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=FzxUUqh0xMibWP3tI2gdghaU5jOpT5eCOiDlKcYLzUw=;
+  b=i+rYGofYcTVaqdXyxD+C/eU1rU6uJip+i+lXzdcLBMn9mAfO2yVt6oHY
+   oDovvyZv48TRPx7J1by9AMRe5GC0Mt0XTU4EASASO4HjrKr7JWB3xK02D
+   zefHEkf0RbyiGgBb03Rg1wwJr+3BlP5NEea9srOOTPPVUMDobz72Rp1Bd
+   pkFZWmDAg6bP+9U6mj6vPn8ZH08/+jInVM31MABNACCcXhdC6eq0TOWjQ
+   gztC3aF5yBUF5HHZO1+iOyoR7gpwg0erZ+BLWTHU/Lko6+jB3VKOsGygS
+   SvH2eXzqHtyCkT3XP55jNF+exOGucXX8vFc+IQM3Fj4oj4IYLlED4Vzhu
+   g==;
+X-CSE-ConnectionGUID: cVmwckgmQDqEJU0ckWJuMA==
+X-CSE-MsgGUID: 07BO5NyjRoOMys7JblvUmQ==
+X-IronPort-AV: E=McAfee;i="6800,10657,11474"; a="203088323"
+X-IronPort-AV: E=Sophos;i="6.16,263,1744038000"; 
+   d="scan'208";a="203088323"
+Received: from unknown (HELO az2uksmgr1.o.css.fujitsu.com) ([52.151.125.128])
+  by esa5.hc1455-7.c3s2.iphmx.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 25 Jun 2025 11:14:10 +0900
+Received: from az2uksmgm2.o.css.fujitsu.com (unknown [10.151.22.199])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by az2uksmgr1.o.css.fujitsu.com (Postfix) with ESMTPS id 13B1B1C01685
+	for <linux-kernel@vger.kernel.org>; Wed, 25 Jun 2025 02:14:10 +0000 (UTC)
+Received: from yto-m2.gw.nic.fujitsu.com (yto-m2.gw.nic.fujitsu.com [10.128.47.163])
+	by az2uksmgm2.o.css.fujitsu.com (Postfix) with ESMTP id 5081218001FB
+	for <linux-kernel@vger.kernel.org>; Wed, 25 Jun 2025 02:14:09 +0000 (UTC)
+Received: from edo.cn.fujitsu.com (edo.cn.fujitsu.com [10.167.33.5])
+	by yto-m2.gw.nic.fujitsu.com (Postfix) with ESMTP id C0D49D50F4
+	for <linux-kernel@vger.kernel.org>; Wed, 25 Jun 2025 11:14:07 +0900 (JST)
+Received: from FNSTPC.g08.fujitsu.local (unknown [10.167.135.44])
+	by edo.cn.fujitsu.com (Postfix) with ESMTP id 3D9EC1A000B;
+	Wed, 25 Jun 2025 10:14:05 +0800 (CST)
+From: Li Zhijian <lizhijian@fujitsu.com>
+To: linux-mm@kvack.org
+Cc: akpm@linux-foundation.org,
+	linux-kernel@vger.kernel.org,
+	y-goto@fujitsu.com,
+	Li Zhijian <lizhijian@fujitsu.com>,
+	Huang Ying <ying.huang@linux.alibaba.com>,
+	Ingo Molnar <mingo@redhat.com>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Juri Lelli <juri.lelli@redhat.com>,
+	Vincent Guittot <vincent.guittot@linaro.org>,
+	Dietmar Eggemann <dietmar.eggemann@arm.com>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	Ben Segall <bsegall@google.com>,
+	Mel Gorman <mgorman@suse.de>,
+	Valentin Schneider <vschneid@redhat.com>,
+	lkp@intel.com
+Subject: [PATCH RFC v2] mm: memory-tiering: Fix PGPROMOTE_CANDIDATE accounting
+Date: Wed, 25 Jun 2025 10:13:52 +0800
+Message-ID: <20250625021352.2291544-1-lizhijian@fujitsu.com>
+X-Mailer: git-send-email 2.41.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DU2PR04MB8822:EE_|GVXPR04MB9831:EE_
-X-MS-Office365-Filtering-Correlation-Id: 851841b3-f40a-4c40-7510-08ddb38e96c6
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|376014|52116014|1800799024|366016|38350700014;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?uqPTYwKU5MkchUe8Thbznu9fNd0+Pbg3gZnF9PDWn/v+1PS080ApVRwV6si1?=
- =?us-ascii?Q?qvum4iyMTWvqwdlWA729qwUNv8BzF8FxKmyLN/tS2U2s+QdVTIxt+xewRNhh?=
- =?us-ascii?Q?/g0m3B9D5UkyVStH1yFfEtgtgDzFsbDo1nolrIea+Rps9vJe8z6g9nYbSqWg?=
- =?us-ascii?Q?HJO7G7p6Lc+86eiOPc5t5NAOzAC1m8y03jlmWMEIKQNZs9Ass3EXpHHs/2w3?=
- =?us-ascii?Q?L6pc8SdBJ1oY+Cfi50XDxYPLw3CVPOICTGPX1TyCouLyOCGAB1CzSgXylO9r?=
- =?us-ascii?Q?YX9b9aB2w56e4luZf98Y9hDQJkZVkXvEqrQ9hqWaHNUcyJvWzzw5mtC9hH1/?=
- =?us-ascii?Q?w3qJrFURjq0ivdma9lYUF9ZB80npeGARmW9XcYP7/TR4tlN4uTZzWX0hojcq?=
- =?us-ascii?Q?tr1UydL1E19QRsCT+tmJKElwNExt+TFiQS7GOv1JfKCEErpGhx1w1nDXVwbc?=
- =?us-ascii?Q?RT902+3fCi81jCA0Ohaix5Yi6rrc8W5JFCBIQsDvcUzVFAyfwAodwnt8QZjs?=
- =?us-ascii?Q?2fjXUzC3rbsr2FwFrFVvGc6Ed85V3gt7uM+1gGgquIeSj84JBNPrdMKQKvb1?=
- =?us-ascii?Q?RGFKBKayjem8PnSejqDwgYNBNc6Nvh+/RIJdpyykaRxrv/88ee8YbrPGlwam?=
- =?us-ascii?Q?RPvQbRx5J4CCEEKSOH8mkD1SZZtFp89CyhMvj4CwqrhZU6RggSY10Hvpzk28?=
- =?us-ascii?Q?0DYizJsPHHDUhulzA2JSLrNozxaFZxS9Xh+gVIZuND+JEGoWyYCBAVwP0gMS?=
- =?us-ascii?Q?iIxCrhzf5r/lXE13XTVSmxSdzXxlC8JyIUblfE+vAEGSmsJOvm4jxsm21M1N?=
- =?us-ascii?Q?25rZOqOtAbh/aVjbSTsttW21ynqpinoYafluRJakHui5lx4i4JQCdG9n7yb7?=
- =?us-ascii?Q?DelmkiLUAOzYLEyP5b4ibEKHlfRIvz5qOCaOB596cpRs+t7YJlgYJ4FfjRyp?=
- =?us-ascii?Q?Q0JitEt5lQFPlyvpGHuVqARGqgcnN45Vgnsmz6x9O4UjsymLVKlpuwLqqMvy?=
- =?us-ascii?Q?pkmIc0OHNDw13VgP8rpnLQ6XOq7DHmIE00do85+tif27oDcwJ+pDKSFPna+P?=
- =?us-ascii?Q?HOxrLZCBKKie4XHAwev+8+lSqfrTil5o/n1AS9Br04CLZLCi2SAQwpaSVnYo?=
- =?us-ascii?Q?aLufAflTH+ViEr3cZ/f7+Cdi7z+LBfDcmVM4HhZKhatTtpoUEhI6ka3Y4UeW?=
- =?us-ascii?Q?nmlUco/5YaRuPW0CFoJCAx4rtLQ/1PJXwdcGtclfI7ddOR0lN0dAMtHeZYTT?=
- =?us-ascii?Q?ncJ2VbKqmkztxjbTpUx+FkugCpQmFiRYVIZS8KJSSZZgUm5qicDLgRQTlLL4?=
- =?us-ascii?Q?RbqBVEkVzerhpV+GfLEeyIlE4yBlrQjrVsCco546M0dhPDbeBGrUZCLI6dzh?=
- =?us-ascii?Q?NzkUNH1vILForcrBuob2qiH/yTQG2C/rKryNLw64N1CJwPFOO6WFOV3FjSCD?=
- =?us-ascii?Q?1Pt/yEG9ItLQQ5qrxKRJv1AO2klLMoaxAaBZzu6bGX8dOlqvhh8FWA=3D=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DU2PR04MB8822.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(52116014)(1800799024)(366016)(38350700014);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?Pl4YKArUxLPXhl4tKLhpd3IJXa8AxVnSwTo+h7vHbkBlMt83R/+xlC78T1A+?=
- =?us-ascii?Q?yS+unAUgzcmGpoRBdhg1KBoloYLOhp3s17hRRVS9+GZjNYYCRlx3SKbN7eOe?=
- =?us-ascii?Q?UnN734jeEnqLEllvhOs/xf4O9MHtH7MhGCOEQVSPINnEakYusjb2zkVyyA7s?=
- =?us-ascii?Q?q4xnoUycKWW6nBmfcTH9S+kGWylnU2HFp4xDkr9QV+XN+qfCHi3VRqoSHqUs?=
- =?us-ascii?Q?aS06JCAU/DHcnHX1kS8taxfsJFNVUhAzM4zYz4ZGsD0FmeNPEn4CaQJd4urR?=
- =?us-ascii?Q?c6+/RvgRMWwro2yHnMu7SR4lsu2sgDilV3t2YGYuiKxj5LyVvTzym0t5iGoB?=
- =?us-ascii?Q?1xYhD7mHzLsYKaVYFK2jWQz132mq/LYnhDWQRUdvY57vyL6UXxBLMCYXNQtN?=
- =?us-ascii?Q?+ZvrXXlLqDWWciXqVXwPZAGpLswk5wee2Lq8uqjVQWGUS1Ct/mdYnvTIN2zf?=
- =?us-ascii?Q?+5aOJ8AUxrVOZJyWQVi8FvVXlFXrxAhXBVLIfjBlDvLov+zJpr8COqQoKcRY?=
- =?us-ascii?Q?ki95ZXm8MpxN+gHjl+mN0MUMQmEsmVDeLw6n7hqT+1yQV+lWweLqVav0BFao?=
- =?us-ascii?Q?qFJxUzdx30h39n53r1S3l2Yo4JuD+hohQ3KkD5hO4JRs4qMKzskCWh38rbpr?=
- =?us-ascii?Q?h26qku+6gTkhimPcIgKtKwOn8K3NKJyey710hcAy7JlsrqnJqnP2k03RE2UC?=
- =?us-ascii?Q?+EvyuNkzI2Glx1otKX45uaqxyZzGMDv1BezWgDftFWtGR27GAlyo+HTZU1h9?=
- =?us-ascii?Q?/ULuPZUJi0gdIGSaLnURBOCydbgN9GAScZEHVSY/s3BfOkw+BmYXFTo+RUzy?=
- =?us-ascii?Q?jn/u1YPpAFmlp2vG8/aOIanPLLVm8ftCU94+VBrJaNuwfc3IiijWKyfKmtQ2?=
- =?us-ascii?Q?G/rrHAkTUXIDGjOeEI7E/NHAtOOczduE9PabfnVs3JZh4bq1XZeWc0HJtw3g?=
- =?us-ascii?Q?UnFle2CqX+Mk6WM4fIDatodZhVdIuqvQWThkNyG23Y2U/g4OfBFgLa9slqSX?=
- =?us-ascii?Q?rfQuDokxwZ3wsH3wDadKBbJapgZWjkmltMEsj9MDXIrhXcALMu/U1Kaj7xgz?=
- =?us-ascii?Q?uiCtmJafQlRrJJLBm0aq1plDrjdWxES2dppV42qIzyhOPsqi1Qspk2voEtFL?=
- =?us-ascii?Q?QBREKj4eDoIZhZeiao/V8X+tRVRtwhjrLagZQih5Kw+D5j1Qm1S8kX5H75ID?=
- =?us-ascii?Q?VaO8GnK5PiyiMUQKSIXAtj5tQ75Bnd5tYHwQdZEHchgiKYNnywze6/dRT1Kc?=
- =?us-ascii?Q?yyJc8KqiOdjv0EcFzhmbLSZqxidM+b9eWdoGV3pE3nED48Drtxv4tfoJvhQ5?=
- =?us-ascii?Q?lHWjYzRfQZh7HrOU4jAlGP4QCmVXDS/PFDRRGIQZ81ONpC3b25LHOJavm0gt?=
- =?us-ascii?Q?vEqXkhiv51s9sn/JIF65p/bpQ+q8J4Y3NSTVHckRrvBiA8XCIuq5yNwVn7TL?=
- =?us-ascii?Q?kv51t+xc26xdwUWIfwUXmuuX7fG4bAOff96JOt5YpWdUpg3tbzTATVGBKtwg?=
- =?us-ascii?Q?i0asglxzut/uiaVk+xPDMC6HDj2tOjjoHVVLKupiC7n30hePnrIQgV6FyMpm?=
- =?us-ascii?Q?W76eicbxG2YY05WJ3vwzAOtzlGZ0OgKhvRPi9svw?=
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 851841b3-f40a-4c40-7510-08ddb38e96c6
-X-MS-Exchange-CrossTenant-AuthSource: DU2PR04MB8822.eurprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 25 Jun 2025 02:18:35.4271
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: SQPEL+TA+2UmshMk4lgkjxIANLqBTYquUQTvVerSJIEgZk5Yf96EtNxMpi03oi9W7n9DeF7wAnfcKaP1vdUdPw==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: GVXPR04MB9831
+Content-Transfer-Encoding: 8bit
 
-On Tue, Jun 24, 2025 at 05:40:17PM +0200, Markus Elfring wrote:
-> From: Markus Elfring <elfring@users.sourceforge.net>
-> Date: Tue, 24 Jun 2025 17:30:52 +0200
-> 
-> Reuse existing functionality from usb_endpoint_is_isoc_in() instead of
-> keeping duplicate source code.
-> 
-> The source code was transformed by using the Coccinelle software.
-> 
-> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
-> ---
->  drivers/usb/chipidea/udc.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/usb/chipidea/udc.c b/drivers/usb/chipidea/udc.c
-> index 64a421ae0f05..75705089136c 100644
-> --- a/drivers/usb/chipidea/udc.c
-> +++ b/drivers/usb/chipidea/udc.c
-> @@ -1992,7 +1992,7 @@ static struct usb_ep *ci_udc_match_ep(struct usb_gadget *gadget,
->  	struct ci_hdrc *ci = container_of(gadget, struct ci_hdrc, gadget);
->  	struct usb_ep *ep;
->  
-> -	if (usb_endpoint_xfer_isoc(desc) && usb_endpoint_dir_in(desc)) {
-> +	if (usb_endpoint_is_isoc_in(desc)) {
->  		list_for_each_entry_reverse(ep, &ci->gadget.ep_list, ep_list) {
->  			if (ep->caps.dir_in && !ep->claimed)
->  				return ep;
+Goto-san reported confusing pgpromote statistics where
+the pgpromote_success count significantly exceeded pgpromote_candidate.
 
-Ok for me.
-Reviewed-by: Xu Yang <xu.yang_2@nxp.com>
+On a system with three nodes (nodes 0-1: DRAM 4GB, node 2: NVDIMM 4GB):
+ # Enable demotion only
+ echo 1 > /sys/kernel/mm/numa/demotion_enabled
+ numactl -m 0-1 memhog -r200 3500M >/dev/null &
+ pid=$!
+ sleep 2
+ numactl memhog -r100 2500M >/dev/null &
+ sleep 10
+ kill -9 $pid # terminate the 1st memhog
+ # Enable promotion
+ echo 2 > /proc/sys/kernel/numa_balancing
 
-> -- 
-> 2.50.0
-> 
+After a few seconds, we observeed `pgpromote_candidate < pgpromote_success`
+$ grep -e pgpromote /proc/vmstat
+pgpromote_success 2579
+pgpromote_candidate 0
+
+In this scenario, after terminating the first memhog, the conditions for
+pgdat_free_space_enough() are quickly met, triggering promotion.
+However, these migrated pages are only accounted for in PGPROMOTE_SUCCESS,
+not in PGPROMOTE_CANDIDATE.
+
+This update increments PGPROMOTE_CANDIDATE within the free space branch
+when a promotion decision is made, which may alter the mechanism of the
+rate limit. Consequently, it becomes easier to reach the rate limit than
+it was previously.
+
+For example:
+Rate Limit = 100 pages/sec
+Scenario:
+  T0: 90 free-space migrations
+  T0+100ms: 20-page migration request
+
+Before:
+  Rate limit is *not* reached: 0 + 20 = 20 < 100
+  PGPROMOTE_CANDIDATE: 20
+After:
+  Rate limit is reached: 90 + 20 = 110 > 100
+  PGPROMOTE_CANDIDATE: 110
+
+Due to the fact that the rate limit mechanism recalculates every second,
+theoretically, only within that one second can the transition from
+pgdat_free_space_enough() to !pgdat_free_space_enough() in top-tier
+remaining memory be affected.
+
+Moreover, previously, within this one-second span, promotions caused by
+pgdat_free_space_enough() are not restricted by rate limits.
+This theoretically makes it easier to cause application latency.
+
+The current modification can better control the rate limit in cases of
+transition from pgdat_free_space_enough() to !pgdat_free_space_enough()
+within one second.
+
+Cc: Huang Ying <ying.huang@linux.alibaba.com>
+Cc: Ingo Molnar <mingo@redhat.com>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Juri Lelli <juri.lelli@redhat.com>
+Cc: Vincent Guittot <vincent.guittot@linaro.org>
+Cc: Dietmar Eggemann <dietmar.eggemann@arm.com>
+Cc: Steven Rostedt <rostedt@goodmis.org>
+Cc: Ben Segall <bsegall@google.com>
+Cc: Mel Gorman <mgorman@suse.de>
+Cc: Valentin Schneider <vschneid@redhat.com>
+Reported-by: Yasunori Gotou (Fujitsu) <y-goto@fujitsu.com>
+Signed-off-by: Li Zhijian <lizhijian@fujitsu.com>
+---
+V2:
+Fix compiling error # Reported by LKP
+
+As Ying suggested, we need to assess whether this change causes regression.
+However, considering the stringent conditions this patch involves,
+properly evaluating it may be challenging, as the outcomes depend on your
+perspective. Much like in a zero-sum game, if someone benefits, another
+might lose.
+
+If there are subsequent results, I will update them here.
+
+Cc: lkp@intel.com
+Here, I hope to leverage the existing LKP benchmark to evaluate the
+potential impacts. The ideal evaluation conditions are:
+1. Installed with DRAM + NVDIMM (which can be simulated).
+2. NVDIMM is used as system RAM (configurable via daxctl).
+3. Promotion is enabled (`echo 2 > /proc/sys/kernel/numa_balancing`).
+
+Alternative:
+We can indeed eliminate the potential impact within
+pgdat_free_space_enough(), so that the rate limit behavior remains as
+before.
+
+For instance, consider the following change:
+                if (pgdat_free_space_enough(pgdat)) {
+                        /* workload changed, reset hot threshold */
+                        pgdat->nbp_threshold = 0;
++                        pgdat->nbp_rl_nr_cand += nr;
+                        mod_node_page_state(pgdat, PGPROMOTE_CANDIDATE, nr);
+                        return true;
+                }
+
+RFC:
+I am uncertain whether we originally intended for this discrepancy or if
+it was overlooked.
+
+However, the current situation where pgpromote_candidate < pgpromote_success
+is indeed confusing when interpreted literally.
+---
+ kernel/sched/fair.c | 5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
+
+diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
+index 7a14da5396fb..505b40f8897a 100644
+--- a/kernel/sched/fair.c
++++ b/kernel/sched/fair.c
+@@ -1940,11 +1940,13 @@ bool should_numa_migrate_memory(struct task_struct *p, struct folio *folio,
+ 		struct pglist_data *pgdat;
+ 		unsigned long rate_limit;
+ 		unsigned int latency, th, def_th;
++		long nr = folio_nr_pages(folio);
+ 
+ 		pgdat = NODE_DATA(dst_nid);
+ 		if (pgdat_free_space_enough(pgdat)) {
+ 			/* workload changed, reset hot threshold */
+ 			pgdat->nbp_threshold = 0;
++			mod_node_page_state(pgdat, PGPROMOTE_CANDIDATE, nr);
+ 			return true;
+ 		}
+ 
+@@ -1958,8 +1960,7 @@ bool should_numa_migrate_memory(struct task_struct *p, struct folio *folio,
+ 		if (latency >= th)
+ 			return false;
+ 
+-		return !numa_promotion_rate_limit(pgdat, rate_limit,
+-						  folio_nr_pages(folio));
++		return !numa_promotion_rate_limit(pgdat, rate_limit, nr);
+ 	}
+ 
+ 	this_cpupid = cpu_pid_to_cpupid(dst_cpu, current->pid);
+-- 
+2.41.0
+
 
