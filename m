@@ -1,292 +1,307 @@
-Return-Path: <linux-kernel+bounces-702058-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-702065-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id F1FEAAE7D9D
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Jun 2025 11:43:14 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id D895EAE7DAF
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Jun 2025 11:44:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2E3EA188E3DF
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Jun 2025 09:40:08 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B0E521BC0BA7
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Jun 2025 09:41:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3286F2D8785;
-	Wed, 25 Jun 2025 09:27:31 +0000 (UTC)
-Received: from mail-il1-f207.google.com (mail-il1-f207.google.com [209.85.166.207])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C11BC2DA751;
+	Wed, 25 Jun 2025 09:31:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="T2dxzGpX"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.19])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B81362D8762
-	for <linux-kernel@vger.kernel.org>; Wed, 25 Jun 2025 09:27:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.207
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750843650; cv=none; b=jjwJuMsfzknhbMiRCWdI17irkdAMtMOTZhR3McJJvD5yN/oHYJZQpM/RkF4UjtGrGxjMwUWnlrZz9SZSsnGtfxx/qSOXmf9c+RkSQ2oQGoDgVOJz+AQrIa86+5y2HmhjdMiIYwB0kZI0F0ebltxX8xPSBKjbY8pXQ0pD4es0JHg=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750843650; c=relaxed/simple;
-	bh=Y1GFk7PlOHEcJ2m/1GUfA/nDryFjwkCMIcwJyWxHb6c=;
-	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=JLz5iHXKLxJF8uzmyDFHjq0jxJ3hM1WMyKpVnNdb2weT0ojUBPdQxCWVS1Kvy9X8Nr8QWronlis6M+SD0qNjfkl7eYKD6v959BGiz5mEwDWZLnEcogmwqA27RS56oqbSWQZvMOzSAJH4waLdVd/H/pFPp1aFMoUwspY1Co5PCUs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.207
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f207.google.com with SMTP id e9e14a558f8ab-3ddafe52d04so190864035ab.1
-        for <linux-kernel@vger.kernel.org>; Wed, 25 Jun 2025 02:27:28 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1750843648; x=1751448448;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=2//FEPqslWZgdnOt/F+B4Qf0RlshSMYBAitdIwd7syY=;
-        b=oNLDhwlq0NJMFJemJoAD8/lO98Y9J3agoDsdaZsFVth9fjZnAb4+W1shffcPppPUv7
-         LJKBrUW/Tau98MYyy+VIYS6IX7eX3Lzm8xm6Rc9nWpZ1n1DMHaeiMY17l314gwZjikaD
-         By/umQIZyeIDvJS5UJ/9NBu8SJpVYDZiCZ7Pbo4b0/ug+hZuXSs75sdzIRlNVihbCYSQ
-         A+6Rc+PBXD5AEH2kBsua/M5G/tp7ljnS0zVDs/SW2Z54+K8y9JszBFva9eDPUY4iQmNd
-         YEFijV2Hkx4sI/L3/iaLQfWG9DqRtz/dDAZtjqh897CI5JKUGZLlnlYnt+vbI0B+eHWd
-         K/IQ==
-X-Forwarded-Encrypted: i=1; AJvYcCU8xnfFP8lfDbnFxtg9xI+KZY33m1wj8aRlpaOpfDXKBIDYXn3JPGyeTesfDCmZSejxYiVHuRe20t/LOno=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyMgQU5GJS/Fn54GvlEO38zOiHfyHUhX90T4YC3w5FrjtA1uS1C
-	sHU6x8q0ZXEDxb6QuzsqnQayGM3PCNIl01xgj1cIElvcmP743U+Dp1aD4cZkM+nDMxmezQL2rXV
-	q7c4aRchhj+2TwuPSFVb6Y8a5iQlvB5ioPo7DFJkh5pz8j2mL2sLDKK1m1a4=
-X-Google-Smtp-Source: AGHT+IGxHe+HnCO0XkYhoudVoHvfr8xfezkGjrVEFeCPQwTlmGhHMzpRtMLWiiaL9ITshEbgHFEbwZhastD95ONcYl2MatwblD88
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2DB90288522;
+	Wed, 25 Jun 2025 09:31:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=192.198.163.19
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1750843870; cv=fail; b=LpGa2/x9ErUu1NYXk0JKSgwtOljGZ38JpEvjXhaaaD/gX9vpKlULUK4CqV0jRv7keKRouGlU7LTJSoM0auqnuv98MpbGTNHSI48ShbFEJwq+1F5cS/HSC+Kuan6grWhNinNoeOgU9NdgDENprKtga3bIOOMmgKpidX1THhsePlM=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1750843870; c=relaxed/simple;
+	bh=5nX4ECBRPhu2OckT2vpAFlrBQr0q+8WERTs3481L+eQ=;
+	h=Date:From:To:CC:Subject:Message-ID:References:Content-Type:
+	 Content-Disposition:In-Reply-To:MIME-Version; b=aLF5tQZp+jsSzhNjVhSDqcpA3gDv3dMcIGutUXdGqTGyhJLyyr05AjBFp8JyFCP9so0A52GiPZicEZbAnqtNeIoroT9CVhYLXW6a7lXFRwziUUhogpbvtl9ZW/sntptaL0fzbUM66gLMsQr33RGtNAtFz7wzZrMRPLDxHEuIgTw=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=T2dxzGpX; arc=fail smtp.client-ip=192.198.163.19
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1750843869; x=1782379869;
+  h=date:from:to:cc:subject:message-id:reply-to:references:
+   in-reply-to:mime-version;
+  bh=5nX4ECBRPhu2OckT2vpAFlrBQr0q+8WERTs3481L+eQ=;
+  b=T2dxzGpXYr59FMMny9ir8zsnHj/lUwYB3/e6ZPCbwesBaHJcXlzry+K6
+   6O65A342GIYpjbCy4OsLP8qjhCXRdejBispKTaMv+Ymq3aYWlkhdPpH1D
+   Gj8GrMfAX+EGYE+0XvMTyhbdeemGP/I+usZO+l16AcQhRzM5JE1NKIHT7
+   RNG3ln7VoZSE9f0RyCnkz6r2eEEO8kWWFicY3bp1yx0IvNMoqFp1PFwin
+   rta10BTSfw/Sdr8djSQb8GEzXlyFKEL2kpQFNAlwV5AEcqiM5jtBZMkNO
+   43ESSxORuw/nKD2egDKewD6I7r0Kf1zmH2OtP1IuxRg5rbWvgiD1Bdhvf
+   Q==;
+X-CSE-ConnectionGUID: +fQ5Hm00TL6Y6kF8w6EDFA==
+X-CSE-MsgGUID: BHH494/XRaS9tlJDRmrcoQ==
+X-IronPort-AV: E=McAfee;i="6800,10657,11474"; a="52220998"
+X-IronPort-AV: E=Sophos;i="6.16,264,1744095600"; 
+   d="scan'208";a="52220998"
+Received: from fmviesa003.fm.intel.com ([10.60.135.143])
+  by fmvoesa113.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 25 Jun 2025 02:31:08 -0700
+X-CSE-ConnectionGUID: EOFxNWnYSomotUCWp6DwAg==
+X-CSE-MsgGUID: f2VNWu4vT7m515mkhMaPsQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.16,264,1744095600"; 
+   d="scan'208";a="156199557"
+Received: from orsmsx902.amr.corp.intel.com ([10.22.229.24])
+  by fmviesa003.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 25 Jun 2025 02:31:08 -0700
+Received: from ORSMSX902.amr.corp.intel.com (10.22.229.24) by
+ ORSMSX902.amr.corp.intel.com (10.22.229.24) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.25; Wed, 25 Jun 2025 02:31:07 -0700
+Received: from ORSEDG902.ED.cps.intel.com (10.7.248.12) by
+ ORSMSX902.amr.corp.intel.com (10.22.229.24) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.25 via Frontend Transport; Wed, 25 Jun 2025 02:31:07 -0700
+Received: from NAM11-BN8-obe.outbound.protection.outlook.com (40.107.236.48)
+ by edgegateway.intel.com (134.134.137.112) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.25; Wed, 25 Jun 2025 02:31:06 -0700
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=x4JBMbUYdX+Rlor2x8KXcX3Wo1IzsKaYv1WDmi6kDvanZxTqfbjTYBBFSCIyPJlwA7Gy5QaMO1DQ8en6GjxJe/MV1oojFsrDYyerHNh57M7rZafYO2C7gOP4If09pBU0Xkp73cxc+CChy7K9/OIAlwdt+wDDO5t0pp9GSBVn0Ba0hY3+pvSMN6ys+QTCA0Nq3xKOCGdCs5jfJ7FWECw3/n5+JxU3Cd4HGb+veZ32OMOgkH2aL7bFzB3GR6To2HpewdR1P046Jb8HwS199xBlSWpId8So3087RS9QPmD2odLbAo/XIA0iLC0QbnSpLSACmEafsKy9bjmRZuTDoqvrTg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=05fVZieOaTJgtq7gCMuV2vDc5MfostLE2S+ZIf+2LUM=;
+ b=qCb2MVsByyu45ilo6sKvaSadOCASmevLnwuHestfaiY66zAHt7zdYr4gptmHzz1AdZpnG+rQ1AzMADWsyoWryS4/edp5imHGRuRrzb9JeL6W57IkUpc2ZLb5r1vl0e9l5tYsrTTg9JQFvw8W2QSo3mQ+x4zIjJHM+WQc4RgkOlS2FisH58X1O8WUnjG7UAVhvwdis7AQifCx31XTpCIdN2P75jkIn8E+4y7dqMitlaN7GQsChyR1N1p6vwpXGo0dWQznb1Q9myHmMHLQGWj66KXybCfonFIdC1fX23pERe6WrAiAUkpFzgf35zO7k6Q7La9HKYgrDaI8xIjbl9N3IA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
+ dkim=pass header.d=intel.com; arc=none
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=intel.com;
+Received: from DS7PR11MB5966.namprd11.prod.outlook.com (2603:10b6:8:71::6) by
+ SJ2PR11MB7597.namprd11.prod.outlook.com (2603:10b6:a03:4c6::10) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8857.27; Wed, 25 Jun
+ 2025 09:30:56 +0000
+Received: from DS7PR11MB5966.namprd11.prod.outlook.com
+ ([fe80::e971:d8f4:66c4:12ca]) by DS7PR11MB5966.namprd11.prod.outlook.com
+ ([fe80::e971:d8f4:66c4:12ca%5]) with mapi id 15.20.8857.025; Wed, 25 Jun 2025
+ 09:30:56 +0000
+Date: Wed, 25 Jun 2025 17:28:22 +0800
+From: Yan Zhao <yan.y.zhao@intel.com>
+To: "Edgecombe, Rick P" <rick.p.edgecombe@intel.com>
+CC: "quic_eberman@quicinc.com" <quic_eberman@quicinc.com>, "Li, Xiaoyao"
+	<xiaoyao.li@intel.com>, "Huang, Kai" <kai.huang@intel.com>, "Du, Fan"
+	<fan.du@intel.com>, "Hansen, Dave" <dave.hansen@intel.com>,
+	"david@redhat.com" <david@redhat.com>, "thomas.lendacky@amd.com"
+	<thomas.lendacky@amd.com>, "vbabka@suse.cz" <vbabka@suse.cz>, "Li, Zhiquan1"
+	<zhiquan1.li@intel.com>, "Shutemov, Kirill" <kirill.shutemov@intel.com>,
+	"michael.roth@amd.com" <michael.roth@amd.com>, "seanjc@google.com"
+	<seanjc@google.com>, "Weiny, Ira" <ira.weiny@intel.com>, "Peng, Chao P"
+	<chao.p.peng@intel.com>, "pbonzini@redhat.com" <pbonzini@redhat.com>,
+	"Yamahata, Isaku" <isaku.yamahata@intel.com>, "linux-kernel@vger.kernel.org"
+	<linux-kernel@vger.kernel.org>, "binbin.wu@linux.intel.com"
+	<binbin.wu@linux.intel.com>, "ackerleytng@google.com"
+	<ackerleytng@google.com>, "kvm@vger.kernel.org" <kvm@vger.kernel.org>,
+	"Annapurve, Vishal" <vannapurve@google.com>, "tabba@google.com"
+	<tabba@google.com>, "jroedel@suse.de" <jroedel@suse.de>, "Miao, Jun"
+	<jun.miao@intel.com>, "pgonda@google.com" <pgonda@google.com>,
+	"x86@kernel.org" <x86@kernel.org>
+Subject: Re: [RFC PATCH 09/21] KVM: TDX: Enable 2MB mapping size after TD is
+ RUNNABLE
+Message-ID: <aFvBNromdrkEtPp6@yzhao56-desk.sh.intel.com>
+Reply-To: Yan Zhao <yan.y.zhao@intel.com>
+References: <aEyj_5WoC-01SPsV@google.com>
+ <4312a9a24f187b3e2d3f2bf76b2de6c8e8d3cf91.camel@intel.com>
+ <aE+L/1YYdTU2z36K@yzhao56-desk.sh.intel.com>
+ <ffb401e800363862c5dd90664993e8e234c7361b.camel@intel.com>
+ <aFC8YThVdrIyAsuS@yzhao56-desk.sh.intel.com>
+ <aFIIsSwv5Si+rG3Z@yzhao56-desk.sh.intel.com>
+ <aFWM5P03NtP1FWsD@google.com>
+ <7312b64e94134117f7f1ef95d4ccea7a56ef0402.camel@intel.com>
+ <aFp2iPsShmw3rYYs@yzhao56-desk.sh.intel.com>
+ <a6ffe23fb97e64109f512fa43e9f6405236ed40a.camel@intel.com>
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+In-Reply-To: <a6ffe23fb97e64109f512fa43e9f6405236ed40a.camel@intel.com>
+X-ClientProxiedBy: SG2P153CA0019.APCP153.PROD.OUTLOOK.COM (2603:1096:4:c7::6)
+ To DS7PR11MB5966.namprd11.prod.outlook.com (2603:10b6:8:71::6)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:2181:b0:3dd:d6c2:51fb with SMTP id
- e9e14a558f8ab-3df329224b9mr25836475ab.10.1750843648019; Wed, 25 Jun 2025
- 02:27:28 -0700 (PDT)
-Date: Wed, 25 Jun 2025 02:27:28 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <685bc100.a00a0220.2e5631.00c3.GAE@google.com>
-Subject: [syzbot] [bridge?] KASAN: slab-use-after-free Read in br_multicast_has_router_adjacent
-From: syzbot <syzbot+f53271ac312b49be132b@syzkaller.appspotmail.com>
-To: bridge@lists.linux.dev, davem@davemloft.net, edumazet@google.com, 
-	horms@kernel.org, idosch@nvidia.com, kuba@kernel.org, 
-	linux-kernel@vger.kernel.org, netdev@vger.kernel.org, pabeni@redhat.com, 
-	razor@blackwall.org, syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: DS7PR11MB5966:EE_|SJ2PR11MB7597:EE_
+X-MS-Office365-Filtering-Correlation-Id: c5f9e4ef-ad2a-4d9c-0c83-08ddb3cafcb8
+X-LD-Processed: 46c98d88-e344-4ed4-8496-4ed7712e255d,ExtAddr
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|376014|1800799024|7416014|366016;
+X-Microsoft-Antispam-Message-Info: =?us-ascii?Q?bOnbIDNg/kP8R+A2vJjF83xFpWgh2ex5DhejRYKWMRxgO0mRAdpUae30/nwk?=
+ =?us-ascii?Q?38jqvvdnyGGZqtPAA+rszwl2BqQkRUtynkQolP9+pFfj1JCBh9FSBF/gMJfk?=
+ =?us-ascii?Q?M2J9YPvG3nYHwL1UE+Fa4h5ldzrfnfCj4KKUjTSniEP3Wz3yyu2wIgVpO3TG?=
+ =?us-ascii?Q?UuBhO9M4sBu+O6nepWSEGmbB1Igk5ZV42pUMCefIHPMt7+0SoUihiLFz5I6M?=
+ =?us-ascii?Q?oqhrrVDvb3p12SQD3g0NZTsxrz17SkP57b33b5YG3BMeNblydiy9NWCGqlr+?=
+ =?us-ascii?Q?o0IRpCZtfm/OuDvZ7tNY7ps3JvOtzjMj4d2RrFNuwLsCouVdiCL55QqudWls?=
+ =?us-ascii?Q?ePfXFSd6Vvrln370nBziKYu0t7aRZRu1j7S6f/tL+as9XhdCSa6jgYK4sJSz?=
+ =?us-ascii?Q?od1dTzBjpMd8owwhY5rX5nGB2VR+xs2d8L9atlWVN/ZmCwYwDOf5DTPljdtK?=
+ =?us-ascii?Q?CqGwMNTo5blGRRBly88ZLd4Ny+RteOWJC+EOFti6CW25vDjjIYCCkOaUpOBu?=
+ =?us-ascii?Q?028crfhb5pjKwqOGmdhWokDK2UYhHw71TYmp/oT0x93RNq8O+v8xiWh/kq82?=
+ =?us-ascii?Q?v8ntGMqToNVBXasirjWSn5xNn9wxsDHZzQXLuQpF1e7trRpgnSA5MOv/Shxd?=
+ =?us-ascii?Q?grxkwjhn66nhXRUgo+czfEg83YIgJ1ehFC99yljdzRLDmKtBVUCx3c2JOcfM?=
+ =?us-ascii?Q?HhGssPLDjflApHpQ6m3InIA/ayO0SCvv1EyzXJvEAxMB7UNO7LO4qo97H1ne?=
+ =?us-ascii?Q?KHGy07zB/PMJRBBjo2mhH2af4/ru9YpfQ1uh3alKVnQocakASnzyoLeg5+7Z?=
+ =?us-ascii?Q?t5hXyv87CGX3aJ9m9Kh3SI6KuhRwd7Vf+D6zYytxKmYOsjwnc5LUgeC2cJ0E?=
+ =?us-ascii?Q?c7sd76LEK8eH2KeQSNASFhtZ0IYmiHVZrOJlzlrSXsHRuor69sVdw+M5lJcD?=
+ =?us-ascii?Q?vYQGE4r0WzORbTlB8MQeI6YpFPvbs8qWPXUkHOoXCxsVv9aBpW1bvBxOp+Q8?=
+ =?us-ascii?Q?zSrLvtsKMghjckqD6WvnIJ8Um3vB0iq11LBEWdq7rXzTx/XqIEiCqd1SbOJo?=
+ =?us-ascii?Q?bjxDXP7ZDz94ISP3EUf754j+LE+Z3M20mnhKe1FDQ9FOC0oIeVmekMN5RWn+?=
+ =?us-ascii?Q?O4sY/ZGlZG+WgK7bcXCBLUHWHJMgvEMTP3t/wLWJ9oW7CuBAC7p5BT/TXymr?=
+ =?us-ascii?Q?8y31POFc/Xd4p01JG4MEiSJqOG9DChcjPlvDASLU3l0RMo3XiucM/Em/9vX3?=
+ =?us-ascii?Q?J/MwvXzpgzhmpcLGJn7FDbEs+c7vqvdgT0bxphEFXEGUBv4Jlu3xdW2IsvVV?=
+ =?us-ascii?Q?XdiK2IZ0NEyZWX6evpaUnwseq5ljlCC8kTKMnPgEIL4X0HdefVAdzxTAhsj9?=
+ =?us-ascii?Q?Dt+Cyu1T4JygeQDNRi8q6/py72u/ATTUT5RTn0xyeXe3p7jvk8HOOLXNJVdq?=
+ =?us-ascii?Q?cZHC4w2Ncc4=3D?=
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DS7PR11MB5966.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(1800799024)(7416014)(366016);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?gIaE1wu/qDAXuImFSWrt6/Lh6uPuJJap232MpJt666TUGozRFs4fu/6kIjMd?=
+ =?us-ascii?Q?Gh5wRmDeFNSU8WaQpBCjfpIJ6OLJGsq8TqTx21O5kHQlLoavpPNv+b0rD3UE?=
+ =?us-ascii?Q?Cf0ZCKvg1cq/9MWCVqJPZVDIz9uKmZZ/58SiW4cKXHsBzUVnZHpE+DVPgqo4?=
+ =?us-ascii?Q?YOzsy4RVSrx5JHGanEiuOshid0m3Yx3E57IVvDYcziDJqoMjp5nnyWtqpufi?=
+ =?us-ascii?Q?vnonoKN4g5lYGcdfOPLw7LGiMSYTGpTpHkh/XGWNu2cGZU0/TnhvxYEAxQUs?=
+ =?us-ascii?Q?ock/qYRtq9EK7gaYZNyfUEj8uJ9HjWj5v8JrRg8mUs9WvOh5wKHWaBJ8yQhX?=
+ =?us-ascii?Q?YsRlnM5v1+ob66xxwg5XvfWcqlWzclXOenZI4rKv20tt24TYpTiqTlblysz+?=
+ =?us-ascii?Q?KHVchrqHChi+ZBryvwJH9e2QdMEt958hQr25ZXeOmscSxyIYNUCMVnusmjB1?=
+ =?us-ascii?Q?LPzSshiBP16dSBAegJSGNW18Ozl9elxAdy69EchdLakYr0Ugw/OL4mAkYpuB?=
+ =?us-ascii?Q?NyhY/ZT2W/S36gaXOx5TsJOXK0XfBjyqkgck5HIb0GVd8cua56X7ep64MZre?=
+ =?us-ascii?Q?ZKqnKPeJTelV+nT89tMFPCkuNHocUVrLU04LBu/EyYPblcEpiYwxU493sKXo?=
+ =?us-ascii?Q?GhQd6FkFiW0KkJR1Y6IPxurYr13SR0imjCQxIr7j+7WyOg8pY9IJtzM7n0lO?=
+ =?us-ascii?Q?xtxMKEaPdKeDXWRC86++eIFgnwaXOV9ZiO/biwoIovIAKMitDPt1ZD5z7qoy?=
+ =?us-ascii?Q?VXssh8JoetNbTlkBWuGDgWTNz32AfHhbcv8rGqi68/DieeI9/SUKShZPTpdD?=
+ =?us-ascii?Q?5WxRCsJpTDCu2E5e44k3j/o0JDr3z9zxzgDh/lqJU5rTWTBdz30H+zmfIosv?=
+ =?us-ascii?Q?OarTKUcrT2w1IVwbhkNjaCskCD1tYe94giG22N2DuB8CX2eD8EOa8piyudtu?=
+ =?us-ascii?Q?ZVA2dRUYZZVqZZO6TI1T31c4kqLMVeyNkIzNwbloDqTjJoT4X9kozC0klAn6?=
+ =?us-ascii?Q?kHFztU7vjZTl0Z7v/w65vwJ8lytEs74pUHgEi/IYz+kOKuUNU18EaKmniov8?=
+ =?us-ascii?Q?uwkqd2MPDTxXt8dRnwr93vGrJApPx/mxZki3nb4PB3R4R13Zn1mqvrn9u+8D?=
+ =?us-ascii?Q?WikOOJAzXW8/QfILq6F8S6a+RgAepEvVghp2lCUTEr8CfV2oU1lfxqb1AwMx?=
+ =?us-ascii?Q?cCwJrY9AU1yEFpHBgkBFEfKTOBZj/Jz/HyEiThpBs5RgujS1+r2SCPu7iJKy?=
+ =?us-ascii?Q?adf++wjilcTMgzREZ/bL2l2f88EDP2ItB5O9RnExSNI72sAckdLOQlN/3OMm?=
+ =?us-ascii?Q?R12cbz2rqKPTCm8j5xDmLyY/tDpMdkYNO1T3mNDS2b38J9x0CDWyAsZz++To?=
+ =?us-ascii?Q?DggAswA/diV/bYul3GCOzEV9v59Edv+KL+mzMshyOt4N7gisQ3PxuOItqJYT?=
+ =?us-ascii?Q?/J5LiNZ5xwXAeZ24fvd9vYG1LGvFd7qLzu2xZ0eWMd29CcRhyMinMkWgP2Rl?=
+ =?us-ascii?Q?J2R4XZwHvWUkZqLdGcIqfEPPyEY52pjJKHJyiwQ1gshM/s00CC0YppmcyCwY?=
+ =?us-ascii?Q?PFsXUN+uBZlMhT7DC4WjPTJWO18vo0PTrBPKFSev?=
+X-MS-Exchange-CrossTenant-Network-Message-Id: c5f9e4ef-ad2a-4d9c-0c83-08ddb3cafcb8
+X-MS-Exchange-CrossTenant-AuthSource: DS7PR11MB5966.namprd11.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 25 Jun 2025 09:30:56.3235
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: RDHtAMKSFr7B2mBsF90UKqoo4H9d8XJI1XLphkrfTlCYWLB42jXXqLm2bjC2qNpXdQenWqNK+cKOlDuCOrw+ug==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SJ2PR11MB7597
+X-OriginatorOrg: intel.com
 
-Hello,
+On Wed, Jun 25, 2025 at 02:35:59AM +0800, Edgecombe, Rick P wrote:
+> On Tue, 2025-06-24 at 17:57 +0800, Yan Zhao wrote:
+> > Could we provide the info via the private_max_mapping_level hook (i.e. via
+> > tdx_gmem_private_max_mapping_level())?
+> 
+> This is one of the previous two methods discussed. Can you elaborate on what you
+> are trying to say?
+I don't get why we can't use the existing tdx_gmem_private_max_mapping_level()
+to convey the max_level info at which a vendor hopes a GFN to be mapped.
 
-syzbot found the following issue on:
+Before TDX huge pages, tdx_gmem_private_max_mapping_level() always returns 4KB;
+after TDX huge pages, it returns
+- 4KB during the TD build stage
+- at TD runtime: 4KB or 2MB
 
-HEAD commit:    714db279942b CREDITS: Add entry for Shannon Nelson
-git tree:       net
-console output: https://syzkaller.appspot.com/x/log.txt?x=11a59b0c580000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=d11f52d3049c3790
-dashboard link: https://syzkaller.appspot.com/bug?extid=f53271ac312b49be132b
-compiler:       Debian clang version 20.1.6 (++20250514063057+1e4d39e07757-1~exp1~20250514183223.118), Debian LLD 20.1.6
+Why does KVM need to care how the vendor determines this max_level?
+I think a vendor should have its freedom to decide based on software limitation,
+guest's wishes, hardware bugs or whatever.
 
-Unfortunately, I don't have any reproducer for this issue yet.
+> > Or what about introducing a vendor hook in __kvm_mmu_max_mapping_level() for a
+> > private fault?
+> > 
+> > > Maybe we could have EPT violations that contain 4k accept sizes first update the
+> > > attribute for the GFN to be accepted or not, like have tdx.c call out to set
+> > > kvm_lpage_info->disallow_lpage in the rarer case of 4k accept size? Or something
+> > Something like kvm_lpage_info->disallow_lpage would disallow later page
+> > promotion, though we don't support it right now.
+> 
+> Well I was originally thinking it would not set kvm_lpage_info->disallow_lpage
+> directly, but rely on the logic that checks for mixed attributes. But more
+> below...
+> 
+> > 
+> > > like that. Maybe set a "accepted" attribute, or something. Not sure if could be
+> > Setting "accepted" attribute in the EPT violation handler?
+> > It's a little odd, as the accept operation is not yet completed.
+> 
+> I guess the question in both of these comments is: what is the life cycle. Guest
+> could call TDG.MEM.PAGE.RELEASE to unaccept it as well. Oh, geez. It looks like
+> TDG.MEM.PAGE.RELEASE will give the same size hints in the EPT violation. So an
+> accept attribute is not going work, at least without TDX module changes.
+> 
+> 
+> Actually, the problem we have doesn't fit the mixed attributes behavior. If many
+> vCPU's accept at 2MB region at 4k page size, the entire 2MB range could be non-
+> mixed and then individual accepts would fail.
+> 
+> 
+> So instead there could be a KVM_LPAGE_GUEST_INHIBIT that doesn't get cleared
+Set KVM_LPAGE_GUEST_INHIBIT via a TDVMCALL ?
 
-Downloadable assets:
-disk image: https://storage.googleapis.com/syzbot-assets/4af647f77fe2/disk-714db279.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/df9d2caceadd/vmlinux-714db279.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/f05e60d250ae/bzImage-714db279.xz
+Or just set the KVM_LPAGE_GUEST_INHIBIT when an EPT violation contains 4KB
+level info?
 
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+f53271ac312b49be132b@syzkaller.appspotmail.com
+I guess it's the latter one as it can avoid modification to both EDK2 and Linux
+guest.  I observed ~2710 instances of "guest accepts at 4KB when KVM can map at
+2MB" during the boot-up of a TD with 4GB memory.
 
-==================================================================
-BUG: KASAN: slab-use-after-free in br_multicast_has_router_adjacent+0x401/0x4e0 net/bridge/br_multicast.c:5005
-Read of size 8 at addr ffff8880584e11b0 by task kworker/u8:7/3505
+But does it mean TDX needs to hold write mmu_lock in the EPT violation handler
+and set KVM_LPAGE_GUEST_INHIBIT on finding a violation carries 4KB level info?
 
-CPU: 0 UID: 0 PID: 3505 Comm: kworker/u8:7 Not tainted 6.16.0-rc2-syzkaller-00161-g714db279942b #0 PREEMPT(full) 
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 05/07/2025
-Workqueue: bat_events batadv_mcast_mla_update
-Call Trace:
- <TASK>
- dump_stack_lvl+0x189/0x250 lib/dump_stack.c:120
- print_address_description mm/kasan/report.c:408 [inline]
- print_report+0xd2/0x2b0 mm/kasan/report.c:521
- kasan_report+0x118/0x150 mm/kasan/report.c:634
- br_multicast_has_router_adjacent+0x401/0x4e0 net/bridge/br_multicast.c:5005
- batadv_mcast_mla_rtr_flags_bridge_get net/batman-adv/multicast.c:203 [inline]
- batadv_mcast_mla_rtr_flags_get net/batman-adv/multicast.c:232 [inline]
- batadv_mcast_mla_flags_get net/batman-adv/multicast.c:287 [inline]
- __batadv_mcast_mla_update net/batman-adv/multicast.c:909 [inline]
- batadv_mcast_mla_update+0x598/0x3670 net/batman-adv/multicast.c:948
- process_one_work kernel/workqueue.c:3238 [inline]
- process_scheduled_works+0xae1/0x17b0 kernel/workqueue.c:3321
- worker_thread+0x8a0/0xda0 kernel/workqueue.c:3402
- kthread+0x70e/0x8a0 kernel/kthread.c:464
- ret_from_fork+0x3f9/0x770 arch/x86/kernel/process.c:148
- ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:245
- </TASK>
+> based on mixed attributes. It would be one way. It would need to get set by
+> something like kvm_write_track_add_gfn() that lives in tdx.c and is called
+> before going into the fault handler on 4k accept size. It would have to take mmu
+> write lock I think, which would kill scalability in the 4k accept case (but not
+> the normal 2MB one). But as long as mmu_write lock is held, demote will be no
+> problem, which the operation would also need to do.
+> 
+> I think it actually makes KVM's behavior easier to understand. We don't need to
+> worry about races between multiple accept sizes and things like that. It also
+> leaves the core MMU code mostly untouched. Performance/scalability wise it only
+> punishes the rare case.
+Write down my understanding to check if it's correct:
 
-Allocated by task 5849:
- kasan_save_stack mm/kasan/common.c:47 [inline]
- kasan_save_track+0x3e/0x80 mm/kasan/common.c:68
- poison_kmalloc_redzone mm/kasan/common.c:377 [inline]
- __kasan_kmalloc+0x93/0xb0 mm/kasan/common.c:394
- kasan_kmalloc include/linux/kasan.h:260 [inline]
- __kmalloc_cache_noprof+0x230/0x3d0 mm/slub.c:4359
- kmalloc_noprof include/linux/slab.h:905 [inline]
- kzalloc_noprof include/linux/slab.h:1039 [inline]
- new_nbp+0x188/0x440 net/bridge/br_if.c:431
- br_add_if+0x28e/0xec0 net/bridge/br_if.c:599
- do_set_master+0x533/0x6d0 net/core/rtnetlink.c:2946
- do_setlink+0xcf0/0x41c0 net/core/rtnetlink.c:3148
- rtnl_changelink net/core/rtnetlink.c:3759 [inline]
- __rtnl_newlink net/core/rtnetlink.c:3918 [inline]
- rtnl_newlink+0x160b/0x1c70 net/core/rtnetlink.c:4055
- rtnetlink_rcv_msg+0x7cf/0xb70 net/core/rtnetlink.c:6944
- netlink_rcv_skb+0x205/0x470 net/netlink/af_netlink.c:2534
- netlink_unicast_kernel net/netlink/af_netlink.c:1313 [inline]
- netlink_unicast+0x758/0x8d0 net/netlink/af_netlink.c:1339
- netlink_sendmsg+0x805/0xb30 net/netlink/af_netlink.c:1883
- sock_sendmsg_nosec net/socket.c:712 [inline]
- __sock_sendmsg+0x219/0x270 net/socket.c:727
- __sys_sendto+0x3bd/0x520 net/socket.c:2180
- __do_sys_sendto net/socket.c:2187 [inline]
- __se_sys_sendto net/socket.c:2183 [inline]
- __x64_sys_sendto+0xde/0x100 net/socket.c:2183
- do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
- do_syscall_64+0xfa/0x3b0 arch/x86/entry/syscall_64.c:94
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
+- when a TD is NOT configured to support KVM_LPAGE_GUEST_INHIBIT TDVMCALL, KVM
+  always maps at 4KB
 
-Freed by task 23:
- kasan_save_stack mm/kasan/common.c:47 [inline]
- kasan_save_track+0x3e/0x80 mm/kasan/common.c:68
- kasan_save_free_info+0x46/0x50 mm/kasan/generic.c:576
- poison_slab_object mm/kasan/common.c:247 [inline]
- __kasan_slab_free+0x62/0x70 mm/kasan/common.c:264
- kasan_slab_free include/linux/kasan.h:233 [inline]
- slab_free_hook mm/slub.c:2381 [inline]
- slab_free mm/slub.c:4643 [inline]
- kfree+0x18e/0x440 mm/slub.c:4842
- kobject_cleanup lib/kobject.c:689 [inline]
- kobject_release lib/kobject.c:720 [inline]
- kref_put include/linux/kref.h:65 [inline]
- kobject_put+0x22b/0x480 lib/kobject.c:737
- rcu_do_batch kernel/rcu/tree.c:2576 [inline]
- rcu_core+0xca5/0x1710 kernel/rcu/tree.c:2832
- handle_softirqs+0x286/0x870 kernel/softirq.c:579
- run_ksoftirqd+0x9b/0x100 kernel/softirq.c:968
- smpboot_thread_fn+0x53f/0xa60 kernel/smpboot.c:164
- kthread+0x70e/0x8a0 kernel/kthread.c:464
- ret_from_fork+0x3f9/0x770 arch/x86/kernel/process.c:148
- ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:245
+- When a TD is configured to support KVM_LPAGE_GUEST_INHIBIT TDVMCALL,
 
-Last potentially related work creation:
- kasan_save_stack+0x3e/0x60 mm/kasan/common.c:47
- kasan_record_aux_stack+0xbd/0xd0 mm/kasan/generic.c:548
- __call_rcu_common kernel/rcu/tree.c:3090 [inline]
- call_rcu+0x142/0x990 kernel/rcu/tree.c:3210
- br_del_if+0x146/0x320 net/bridge/br_if.c:739
- do_set_master+0x30f/0x6d0 net/core/rtnetlink.c:2930
- do_setlink+0xcf0/0x41c0 net/core/rtnetlink.c:3148
- rtnl_group_changelink net/core/rtnetlink.c:3773 [inline]
- __rtnl_newlink net/core/rtnetlink.c:3927 [inline]
- rtnl_newlink+0x149f/0x1c70 net/core/rtnetlink.c:4055
- rtnetlink_rcv_msg+0x7cf/0xb70 net/core/rtnetlink.c:6944
- netlink_rcv_skb+0x205/0x470 net/netlink/af_netlink.c:2534
- netlink_unicast_kernel net/netlink/af_netlink.c:1313 [inline]
- netlink_unicast+0x758/0x8d0 net/netlink/af_netlink.c:1339
- netlink_sendmsg+0x805/0xb30 net/netlink/af_netlink.c:1883
- sock_sendmsg_nosec net/socket.c:712 [inline]
- __sock_sendmsg+0x219/0x270 net/socket.c:727
- ____sys_sendmsg+0x505/0x830 net/socket.c:2566
- ___sys_sendmsg+0x21f/0x2a0 net/socket.c:2620
- __sys_sendmsg net/socket.c:2652 [inline]
- __do_sys_sendmsg net/socket.c:2657 [inline]
- __se_sys_sendmsg net/socket.c:2655 [inline]
- __x64_sys_sendmsg+0x19b/0x260 net/socket.c:2655
- do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
- do_syscall_64+0xfa/0x3b0 arch/x86/entry/syscall_64.c:94
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
+(a)
+1. guest accepts at 4KB
+2. TDX sets KVM_LPAGE_GUEST_INHIBIT and try splitting.(with write mmu_lock)
+3. KVM maps at 4KB (with read mmu_lock)
+4. guest's 4KB accept succeeds.
 
-The buggy address belongs to the object at ffff8880584e1000
- which belongs to the cache kmalloc-1k of size 1024
-The buggy address is located 432 bytes inside of
- freed 1024-byte region [ffff8880584e1000, ffff8880584e1400)
+(b)
+1. guest accepts at 2MB.
+2. KVM maps at 4KB due to a certain reason.
+3. guest's accept 2MB fails with TDACCEPT_SIZE_MISMATCH.
+4. guest accepts at 4KB
+5. guest's 4KB accept succeeds.
 
-The buggy address belongs to the physical page:
-page: refcount:0 mapcount:0 mapping:0000000000000000 index:0xffff8880584e6800 pfn:0x584e0
-head: order:3 mapcount:0 entire_mapcount:0 nr_pages_mapped:0 pincount:0
-flags: 0xfff00000000240(workingset|head|node=0|zone=1|lastcpupid=0x7ff)
-page_type: f5(slab)
-raw: 00fff00000000240 ffff88801a441dc0 ffffea0001f4b610 ffffea0001f43610
-raw: ffff8880584e6800 000000000010000b 00000000f5000000 0000000000000000
-head: 00fff00000000240 ffff88801a441dc0 ffffea0001f4b610 ffffea0001f43610
-head: ffff8880584e6800 000000000010000b 00000000f5000000 0000000000000000
-head: 00fff00000000003 ffffea0001613801 00000000ffffffff 00000000ffffffff
-head: ffffffffffffffff 0000000000000000 00000000ffffffff 0000000000000008
-page dumped because: kasan: bad access detected
-page_owner tracks the page as allocated
-page last allocated via order 3, migratetype Unmovable, gfp_mask 0xd2820(GFP_ATOMIC|__GFP_NOWARN|__GFP_NORETRY|__GFP_COMP|__GFP_NOMEMALLOC), pid 5849, tgid 5849 (syz-executor), ts 81278653145, free_ts 27530166521
- set_page_owner include/linux/page_owner.h:32 [inline]
- post_alloc_hook+0x240/0x2a0 mm/page_alloc.c:1704
- prep_new_page mm/page_alloc.c:1712 [inline]
- get_page_from_freelist+0x21e4/0x22c0 mm/page_alloc.c:3669
- __alloc_frozen_pages_noprof+0x181/0x370 mm/page_alloc.c:4959
- alloc_pages_mpol+0x232/0x4a0 mm/mempolicy.c:2419
- alloc_slab_page mm/slub.c:2451 [inline]
- allocate_slab+0x8a/0x3b0 mm/slub.c:2619
- new_slab mm/slub.c:2673 [inline]
- ___slab_alloc+0xbfc/0x1480 mm/slub.c:3859
- __slab_alloc mm/slub.c:3949 [inline]
- __slab_alloc_node mm/slub.c:4024 [inline]
- slab_alloc_node mm/slub.c:4185 [inline]
- __do_kmalloc_node mm/slub.c:4327 [inline]
- __kmalloc_node_track_caller_noprof+0x2f8/0x4e0 mm/slub.c:4347
- kmalloc_reserve+0x136/0x290 net/core/skbuff.c:601
- __alloc_skb+0x142/0x2d0 net/core/skbuff.c:670
- alloc_skb include/linux/skbuff.h:1336 [inline]
- nlmsg_new include/net/netlink.h:1041 [inline]
- br_info_notify+0x105/0x260 net/bridge/br_netlink.c:647
- br_add_if+0xbd9/0xec0 net/bridge/br_if.c:690
- do_set_master+0x533/0x6d0 net/core/rtnetlink.c:2946
- do_setlink+0xcf0/0x41c0 net/core/rtnetlink.c:3148
- rtnl_changelink net/core/rtnetlink.c:3759 [inline]
- __rtnl_newlink net/core/rtnetlink.c:3918 [inline]
- rtnl_newlink+0x160b/0x1c70 net/core/rtnetlink.c:4055
- rtnetlink_rcv_msg+0x7cf/0xb70 net/core/rtnetlink.c:6944
- netlink_rcv_skb+0x205/0x470 net/netlink/af_netlink.c:2534
-page last free pid 1 tgid 1 stack trace:
- reset_page_owner include/linux/page_owner.h:25 [inline]
- free_pages_prepare mm/page_alloc.c:1248 [inline]
- __free_frozen_pages+0xc71/0xe70 mm/page_alloc.c:2706
- __free_pages mm/page_alloc.c:5071 [inline]
- free_contig_range+0x1bd/0x4a0 mm/page_alloc.c:6927
- destroy_args+0x7e/0x5d0 mm/debug_vm_pgtable.c:1009
- debug_vm_pgtable+0x412/0x450 mm/debug_vm_pgtable.c:1389
- do_one_initcall+0x233/0x820 init/main.c:1274
- do_initcall_level+0x137/0x1f0 init/main.c:1336
- do_initcalls+0x69/0xd0 init/main.c:1352
- kernel_init_freeable+0x3d9/0x570 init/main.c:1584
- kernel_init+0x1d/0x1d0 init/main.c:1474
- ret_from_fork+0x3f9/0x770 arch/x86/kernel/process.c:148
- ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:245
-
-Memory state around the buggy address:
- ffff8880584e1080: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
- ffff8880584e1100: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
->ffff8880584e1180: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
-                                     ^
- ffff8880584e1200: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
- ffff8880584e1280: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
-==================================================================
-
-
----
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
-
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
-
-If the report is already addressed, let syzbot know by replying with:
-#syz fix: exact-commit-title
-
-If you want to overwrite report's subsystems, reply with:
-#syz set subsystems: new-subsystem
-(See the list of subsystem names on the web dashboard)
-
-If the report is a duplicate of another one, reply with:
-#syz dup: exact-subject-of-another-report
-
-If you want to undo deduplication, reply with:
-#syz undup
+> For leaving the option open to promote the GFNs in the future, a GHCI interface
+> or similar could be defined for the guest to say "I don't care about page size
+> anymore for this gfn". So it won't close it off forever.
+ok.
 
