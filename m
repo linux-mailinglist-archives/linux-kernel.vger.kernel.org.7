@@ -1,154 +1,134 @@
-Return-Path: <linux-kernel+bounces-702385-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-702412-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2EB45AE81CB
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Jun 2025 13:44:45 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 65273AE8234
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Jun 2025 13:59:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B6B9C189D44F
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Jun 2025 11:44:03 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B03535A47A2
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Jun 2025 11:56:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BB94E25C6EF;
-	Wed, 25 Jun 2025 11:43:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6D8FE2609EC;
+	Wed, 25 Jun 2025 11:55:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="UvOROsfN"
-Received: from mail-oi1-f180.google.com (mail-oi1-f180.google.com [209.85.167.180])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=yadro.com header.i=@yadro.com header.b="quS6p1z9";
+	dkim=pass (2048-bit key) header.d=yadro.com header.i=@yadro.com header.b="bp4AjYu9"
+Received: from mta-03.yadro.com (mta-03.yadro.com [89.207.88.253])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E8BCB1917D6
-	for <linux-kernel@vger.kernel.org>; Wed, 25 Jun 2025 11:43:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 26B1E25DAFF;
+	Wed, 25 Jun 2025 11:54:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=89.207.88.253
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750851823; cv=none; b=IGZH3oV6texurWASgtE67KyYUGqCp15sIEBMMvbjq6loJGw2RFgV5myowxWqOsvn/Wz5zX524mxWXh4T9LOBclkZHE9dSV/8zydX7objolKqie6VkmolPFIlBhxuBmUTbx0WNb1FUl1MAgrGcMKl9RUC8LATC/4ik4EF9aFEkYk=
+	t=1750852500; cv=none; b=UdjOTLiYzUCE8wyiwXAhOcSax4DyPlf4iamXduM0N5sv1Sj84P1G6FNQ9cJDv5PKFUSBBOn4qn/f3nc3Y6gKqOYSSQhwTiTT8ztjkSOKczZDe5VDacaRQJgFbLr/cI7pAujg+VYoXl/jc/ITOSUQzAUMVukLx6LQNr+3C+DkpfQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750851823; c=relaxed/simple;
-	bh=cEDi9ZKMQju5O/ESIIPxFOhF8RL9fAcN9hpv1FMsk10=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=EOzvSjR0oPmkhX0yIougYHCsQtbsfplhHqNJnfB8Nl3JUG+7h9nc6dUZ7PqFvicatxraP7I5FnsOG1vsm/3Yk7RUnBis2WKODFcCYnmWmcPF1TMTsP5gp0TCDTE+hAe3MRMHvWhrt3dQasqVTDw7lBMPp73lya41p8Jc/+fybG4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=UvOROsfN; arc=none smtp.client-ip=209.85.167.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-oi1-f180.google.com with SMTP id 5614622812f47-40a4de175a3so4388500b6e.0
-        for <linux-kernel@vger.kernel.org>; Wed, 25 Jun 2025 04:43:40 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1750851820; x=1751456620; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=XR0h6nvp/9pR9PG0WAomd1E7a7QNXrG2eff2Y2JJpOo=;
-        b=UvOROsfNS0XCVqB+C1kcFiBIj6X7jF/2vt2WJzGjDj2D7bbb6CMWCD0dAr1gU8IWwq
-         IDnKoDUJBvKUdDZ48pfRhsYx0x4Cutmn8owqBzAqgj2XwLmYp7x6ptvDMfcyf05Miw7m
-         ykQMoN8hvsj2RA13igKti4BfwyGLpMRan7pFWtr7kLHfdN1K1tO7VhP8knz2Pe4oLVya
-         ZgKUfF5NihPUgrMckMf6YlUAaD8yXzANGRKEeHP47qC2pfDiUSU0ov5/3+0TZX3kSS6o
-         Tv+4zOjadDPgxgkB8OnyLEWrnHfHiB9vaNHjaftbqliBsEG4SlnaBOaMdxZZ7t+RWNBC
-         a1Iw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1750851820; x=1751456620;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=XR0h6nvp/9pR9PG0WAomd1E7a7QNXrG2eff2Y2JJpOo=;
-        b=c8TvejrVd95wKqUyA7ZQNUfhzR1QzQfsLlrMNqI6avXEOxJVxRMaNq0aYrWq3/yFTB
-         +teY+ny++4wWrQecbi/pe4/if/lB2282U1CrH8BAmUhuVXGipAHHHeOtNPSRlRummkgl
-         LKOel0IOcrul/rqBpmea4umhaI3us+At94NS1asjG0Qt2AwBzbAVyxkIhB6cC86ob0yy
-         cldmbiLUTEBMbhSva4pjI56iRuoktEg0MuzZnhXQuNaxUkvUzUt2P0XydVkNaEUB42y/
-         dnKLP6B5XAIuaUmyLMgD3M9eNSLzqCSbRVQWN9EDtPqhlnP5uqtODlaxmCWgj2A2hnZq
-         riRQ==
-X-Gm-Message-State: AOJu0YwNu09pGjeyTI5LlCMxtrNvohBhq04MzkuLR0332zHRm56RF3QQ
-	zetmwVmIkcPw+eMBtWnuQJAWCgIqkSN5EzFDt2TTE9MMcPYqa643QTMWU6xxPqvaCYA=
-X-Gm-Gg: ASbGncsAOK9ubG0QgMZt5CsiATaJmFwEOyJh3uAiEgd7d8m1hsN0Oy4saPzSRB9xVBg
-	/B1pQ3a0N5djdDC9SCHt7NJvf88YWnd4RyFyIFsi1F8nTIlLgjOlFEIOCLk1kqfB7JFmEISoQCU
-	/IDu++KNiLrVqh9s09PJir7fBVUaeu9zaErAkBoFGg7xxkapcsB/uk55Bv6XsG/UNFvfiq9+D4C
-	/f5YQWjmhJORJ98qgBQmX5m5Xua6JnCj0/JU1M8DQ6OzXhDFZM7rLDYkHtmd58YzHm2ndTmhkDH
-	5pqne5zpi4weiF2XVuPHJn0oMiW0JNo8gFGmxc/JjIoPo0MhZKSeUNFec/iupuK7+Ouvlw==
-X-Google-Smtp-Source: AGHT+IGHbPCyH1l2CklT51825R4v7DezvBt+8FBSn2k+YzHNVnUrJ0xW7pjHWydN10rMm8JVVrtnNw==
-X-Received: by 2002:a05:6808:30a7:b0:3fa:7909:2716 with SMTP id 5614622812f47-40b058246b3mr2209518b6e.39.1750851819874;
-        Wed, 25 Jun 2025 04:43:39 -0700 (PDT)
-Received: from localhost ([2603:8080:b800:f700:22c9:dcd3:f442:dd1d])
-        by smtp.gmail.com with ESMTPSA id 006d021491bc7-6115b7a1cf9sm1601911eaf.24.2025.06.25.04.43.37
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 25 Jun 2025 04:43:38 -0700 (PDT)
-Date: Wed, 25 Jun 2025 14:43:35 +0300
-From: Dan Carpenter <dan.carpenter@linaro.org>
-To: Akshay Gupta <akshay.gupta@amd.com>
-Cc: linux-kernel@vger.kernel.org, gregkh@linuxfoundation.org, arnd@arndb.de,
-	shyam-sundar.s-k@amd.com, gautham.shenoy@amd.com,
-	mario.limonciello@amd.com, naveenkrishna.chatradhi@amd.com,
-	anand.umarji@amd.com
-Subject: Re: [PATCH v2 2/2] misc: amd-sbi: Address copy_to/from_user()
- warning reported in smatch
-Message-ID: <0d18ed52-86cf-44a3-913a-d514f7b8d4a7@suswa.mountain>
-References: <20250625110707.315489-1-akshay.gupta@amd.com>
- <20250625110707.315489-2-akshay.gupta@amd.com>
+	s=arc-20240116; t=1750852500; c=relaxed/simple;
+	bh=jiudyTm6de+eb570mlyoWFRyNxgO4jOMKOdAxyojKDw=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=UmjenSU1eTB8xOTKl0OYx2Jn/sq1V4tkKcngAq6wU1P6jjB1ZkGkaM9llgxE0Xr99Z9i+iOACJSyvdhVnq3aLw87oQZf042F/DgM6569A8i7YecMLQVxuUirEBmVSdGV2x7Mi4NoQt86yL2LCnBYh4dJ3Juyl6Vt1AKxA3YbRSg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=yadro.com; spf=pass smtp.mailfrom=yadro.com; dkim=pass (2048-bit key) header.d=yadro.com header.i=@yadro.com header.b=quS6p1z9; dkim=pass (2048-bit key) header.d=yadro.com header.i=@yadro.com header.b=bp4AjYu9; arc=none smtp.client-ip=89.207.88.253
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=yadro.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=yadro.com
+Received: from mta-03.yadro.com (localhost [127.0.0.1])
+	by mta-03.yadro.com (Postfix) with ESMTP id D538BE000A;
+	Wed, 25 Jun 2025 14:45:50 +0300 (MSK)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mta-03.yadro.com D538BE000A
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yadro.com; s=mta-04;
+	t=1750851950; bh=qPYba+iSHjLpzCbKcEcctCJst/76kJf0E4zmJ6khlis=;
+	h=From:To:Subject:Date:Message-ID:MIME-Version:Content-Type:From;
+	b=quS6p1z9nzv2AI795fRB+i2jcuVO/J6gkA+U2SR9Cr0PWgDrSs263CWnZ0EV00hLS
+	 4e7DbkZ3/lghLuit6VhQlH/c9OYVso4Go7D2xchnk0kuaIk5von4WX2JqwLb9QaTpG
+	 C6lzRtPGE2zydzBbjNp8VnfcCOyw1mXzjnEGqzKpGI5W/+1WY7oHwHMl6mf9jVOZ+h
+	 HKimiK8XWcyh2HpLX6myW8f4+FYyZJmMTGz9fzRYeDhpbUa/AkixCyvj4VhBio/f0i
+	 c234wrsovJwQMaVDfNjALD/5qCI2c6SjpMN0frJ7+iZh4lHFd1W7BTC2lk9RitNzLb
+	 Dcugq4l8DtcuA==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yadro.com; s=mta-03;
+	t=1750851950; bh=qPYba+iSHjLpzCbKcEcctCJst/76kJf0E4zmJ6khlis=;
+	h=From:To:Subject:Date:Message-ID:MIME-Version:Content-Type:From;
+	b=bp4AjYu9Cts8L+B6z093nYPksiTjJlUjxOFu0MYG5ymyv37WkdCryvznK6VfqXIm1
+	 PZo5j47ThNNUCmez2NCOxqdNMu4m3koTUveHqystqDxNeacb/jfa5KYom1/PCPh+lY
+	 W/72P2J/lAAj97YP/5w+6UCFThhrogxfX+td/fRXMIKUpiQD0NlVtcCTJz4Rvkugsj
+	 m9OScW59evQVoGaV9FxA20oLv587O9WpgMw+yC6iDJKDZSmk7ufgdWFGFj4gOij61I
+	 th6aPzVFtRKsZBuxXEuCoD2oiL0j9yUw/0hDC2tga71ddoRV+0l5uoxngewgQjFTaL
+	 QcfdA1ukor8Wg==
+Received: from T-EXCH-10.corp.yadro.com (T-EXCH-10.corp.yadro.com [172.17.11.60])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by mta-03.yadro.com (Postfix) with ESMTPS;
+	Wed, 25 Jun 2025 14:45:49 +0300 (MSK)
+Received: from T-EXCH-12.corp.yadro.com (172.17.11.143) by
+ T-EXCH-10.corp.yadro.com (172.17.11.60) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1118.9; Wed, 25 Jun 2025 14:45:48 +0300
+Received: from NB-591.corp.yadro.com (172.17.34.54) by
+ T-EXCH-12.corp.yadro.com (172.17.11.143) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1258.12; Wed, 25 Jun 2025 14:45:48 +0300
+From: Dmitry Bogdanov <d.bogdanov@yadro.com>
+To: Christoph Hellwig <hch@lst.de>, Sagi Grimberg <sagi@grimberg.me>,
+	Chaitanya Kulkarni <kch@nvidia.com>, <linux-nvme@lists.infradead.org>,
+	<linux-kernel@vger.kernel.org>
+CC: <linux@yadro.com>, Dmitry Bogdanov <d.bogdanov@yadro.com>,
+	<stable@vger.kernel.org>
+Subject: [PATCH] nvmet: fix memory leak of bio integrity
+Date: Wed, 25 Jun 2025 14:45:33 +0300
+Message-ID: <20250625114533.24041-1-d.bogdanov@yadro.com>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250625110707.315489-2-akshay.gupta@amd.com>
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: RTM-EXCH-03.corp.yadro.com (10.34.9.203) To
+ T-EXCH-12.corp.yadro.com (172.17.11.143)
+X-KSMG-AntiPhishing: not scanned, disabled by settings
+X-KSMG-AntiSpam-Interceptor-Info: not scanned
+X-KSMG-AntiSpam-Status: not scanned, disabled by settings
+X-KSMG-AntiVirus: Kaspersky Secure Mail Gateway, version 2.1.1.8310, bases: 2025/06/25 10:41:00 #27589862
+X-KSMG-AntiVirus-Status: NotDetected, skipped
+X-KSMG-KATA-Status: Not Scanned
+X-KSMG-LinksScanning: NotDetected, bases: 2025/06/25 11:16:00
+X-KSMG-Message-Action: skipped
+X-KSMG-Rule-ID: 5
 
-On Wed, Jun 25, 2025 at 11:07:07AM +0000, Akshay Gupta wrote:
-> Smatch warnings are reported for below commit,
-> 
-> Commit bb13a84ed6b7 ("misc: amd-sbi: Add support for CPUID protocol")
-> from Apr 28, 2025 (linux-next), leads to the following Smatch static
-> checker warning:
-> 
-> drivers/misc/amd-sbi/rmi-core.c:376 apml_rmi_reg_xfer() warn: maybe return -EFAULT instead of the bytes remaining?
-> drivers/misc/amd-sbi/rmi-core.c:394 apml_mailbox_xfer() warn: maybe return -EFAULT instead of the bytes remaining?
-> drivers/misc/amd-sbi/rmi-core.c:411 apml_cpuid_xfer() warn: maybe return -EFAULT instead of the bytes remaining?
-> drivers/misc/amd-sbi/rmi-core.c:428 apml_mcamsr_xfer() warn: maybe return -EFAULT instead of the bytes remaining?
-> 
-> copy_to/from_user() returns number of bytes, not copied.
-> In case data not copied, return "-EFAULT".
-> 
-> Reported-by: Dan Carpenter <dan.carpenter@linaro.org>
-> Closes: https://lore.kernel.org/all/aDVyO8ByVsceybk9@stanley.mountain/
-> Reviewed-by: Naveen Krishna Chatradhi <naveenkrishna.chatradhi@amd.com>
-> Signed-off-by: Akshay Gupta <akshay.gupta@amd.com>
-> ---
-> Changes from v1:
->  - Split patch as per Greg's suggestion
->  drivers/misc/amd-sbi/rmi-core.c | 15 +++++++++++----
->  1 file changed, 11 insertions(+), 4 deletions(-)
-> 
-> diff --git a/drivers/misc/amd-sbi/rmi-core.c b/drivers/misc/amd-sbi/rmi-core.c
-> index 3570f3b269a9..9048517c088c 100644
-> --- a/drivers/misc/amd-sbi/rmi-core.c
-> +++ b/drivers/misc/amd-sbi/rmi-core.c
-> @@ -372,7 +372,8 @@ static int apml_rmi_reg_xfer(struct sbrmi_data *data,
->  	mutex_unlock(&data->lock);
->  
->  	if (msg.rflag && !ret)
+If nvmet receives commands with metadata there is a continuous memory leak
+of kmalloc-128 slab or more precisely bio->bi_integrity.
 
-Unrelated to this patch, but it's always better to do if (ret) {.
-Do error handling not success handling etc.
+Since that [1] patch series the integrity is not get free at bio_end_io
+for submitter owned integrity. It has to free explicitly.
 
-> -		return copy_to_user(arg, &msg, sizeof(struct apml_reg_xfer_msg));
-> +		if (copy_to_user(arg, &msg, sizeof(struct apml_reg_xfer_msg)))
-> +			return -EFAULT;
->  	return ret;
->  }
->  
-> @@ -390,7 +391,9 @@ static int apml_mailbox_xfer(struct sbrmi_data *data, struct apml_mbox_msg __use
->  	if (ret && ret != -EPROTOTYPE)
->  		return ret;
->  
-> -	return copy_to_user(arg, &msg, sizeof(struct apml_mbox_msg));
-> +	if (copy_to_user(arg, &msg, sizeof(struct apml_mbox_msg)))
-> +		return -EFAULT;
-> +	return ret;
+After commit bf4c89fc8797  ("block: don't call bio_uninit from bio_endio")
+each user of bio_init has to use bio_uninit as well. Otherwise the bio
+integrity is not getting free. Nvmet uses bio_init for inline bios.
 
-This fixes the -EPROTOTYPE as well.  In the original code, it would
-return success where -EPROTOTYPE was intended.  It's probably worth
-mentioning that in the commit message and maybe adding a test cases to
-your test platform.
+Uninit the inline bio to complete deallocation of integrity in bio.
 
-regards,
-dan carpenter
+[1] https://lore.kernel.org/all/20240702151047.1746127-1-hch@lst.de/
+
+Cc: stable@vger.kernel.org # 6.11
+Signed-off-by: Dmitry Bogdanov <d.bogdanov@yadro.com>
+---
+ drivers/nvme/target/nvmet.h | 2 ++
+ 1 file changed, 2 insertions(+)
+
+diff --git a/drivers/nvme/target/nvmet.h b/drivers/nvme/target/nvmet.h
+index df69a9dee71c..51df72f5e89b 100644
+--- a/drivers/nvme/target/nvmet.h
++++ b/drivers/nvme/target/nvmet.h
+@@ -867,6 +867,8 @@ static inline void nvmet_req_bio_put(struct nvmet_req *req, struct bio *bio)
+ {
+ 	if (bio != &req->b.inline_bio)
+ 		bio_put(bio);
++	else
++		bio_uninit(bio);
+ }
+ 
+ #ifdef CONFIG_NVME_TARGET_TCP_TLS
+-- 
+2.25.1
 
 
