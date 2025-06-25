@@ -1,338 +1,102 @@
-Return-Path: <linux-kernel+bounces-701526-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-701524-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 087DCAE7618
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Jun 2025 06:39:36 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5F90FAE760F
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Jun 2025 06:38:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 444884A1866
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Jun 2025 04:39:02 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0D8F61BC5B23
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Jun 2025 04:38:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D2C9A1FCFFB;
-	Wed, 25 Jun 2025 04:37:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1985F1F460B;
+	Wed, 25 Jun 2025 04:36:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="aBJLjz96"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	dkim=pass (1024-bit key) header.d=onurozkan.dev header.i=@onurozkan.dev header.b="nC2dcisv"
+Received: from forward103d.mail.yandex.net (forward103d.mail.yandex.net [178.154.239.214])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 84B661F8F04;
-	Wed, 25 Jun 2025 04:37:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A1F175103F;
+	Wed, 25 Jun 2025 04:36:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.154.239.214
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750826227; cv=none; b=R+a+rFSnitRI4EMOIWiRDlXmdUmGgj9n88uycERQccF4ijzgqGYl+S7IXj9qrKaYm7rk3WFHGjWQciebKCgRA76HJcOS9FIKa0v7421PA3aR+uIkQ/Qr5J7nh3GL4utwCBwWBCStWA+Ibd+MufzTJf8bIK5egVeQePrKMc2z4H4=
+	t=1750826217; cv=none; b=ToQzKPq+FpTK2YCp723IjQq3HFioaR2mixkR1qWL2yzK2/pqO/WTdDT/pQtUD2Adqs1+Vnfc0VvT6bVXdiarxAdSEziYEQ1LbCl+cWtzQsrVdzMrVgf9FPrJSnmbaJfRaz+ZXgUd/LwxLPY5d5DUml+fYjh1GVgKf6mtd7SgVE4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750826227; c=relaxed/simple;
-	bh=pWn49LNA4I1yycTiwukHdmKBrPI5OFgqhgwsK4Mf4LE=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=IN9vpHtK/jwhqdaDf3yUjhcB/6YqCguv1i95hWEZAbhOF9p0hVyQBQtI1CfexcYDj8PAXCdUc8RZROV/4ngv4YZtORIofcQP6z3QkVmMU325X2IwjbbxOCXonzK1aFAHRWbYNPALprrjYph2GiYscP1zgrRALMFHC9fJ97QsfVs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=aBJLjz96; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279870.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 55P4Cllq012117;
-	Wed, 25 Jun 2025 04:36:56 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	GoM+/GB7+CXx13oQ0cP6U3HrmC9OcVEyI/bcNQ4231s=; b=aBJLjz96YPShbWOK
-	V+xDsVJ18iBpogq5j9NSl5/MhFU/DvMsZZvhHdcysLzF9obu5mccvKbHM8xrFKfc
-	wJNkp4FaA4cWtAiqPHcIQnYFfvqZS1RM0vPrHNe67NDKGotRmnc3D0+iLr1E0wl/
-	o/iq/uXn50JAgeXfoT17r9dFOU806i8Mx4K9o73Uk6E1Ie+vzQjs0OcwUA0I0mbP
-	GxIC20m/AADJcnUsNP/hMqdHz9bUdLuYfH8/wJANQVjHyyhn2/LiZV1zRN2uRazp
-	t34ostVzlF1ND3kNnF406t0YwOdmxnsqzqHa/Q9EeDeIdnG/a50PBT7HRsD5Guds
-	dKb1UA==
-Received: from nasanppmta02.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 47fbm1w1hk-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 25 Jun 2025 04:36:56 +0000 (GMT)
-Received: from nasanex01b.na.qualcomm.com (nasanex01b.na.qualcomm.com [10.46.141.250])
-	by NASANPPMTA02.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 55P4atDl020263
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 25 Jun 2025 04:36:55 GMT
-Received: from hu-gkohli-hyd.qualcomm.com (10.80.80.8) by
- nasanex01b.na.qualcomm.com (10.46.141.250) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.9; Tue, 24 Jun 2025 21:36:51 -0700
-From: Gaurav Kohli <quic_gkohli@quicinc.com>
-To: <amitk@kernel.org>, <daniel.lezcano@linaro.org>, <rui.zhang@intel.com>,
-        <lukasz.luba@arm.com>, <robh@kernel.org>, <krzk+dt@kernel.org>,
-        <andersson@kernel.org>, <konradybcio@kernel.org>
-CC: <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <linux-arm-msm@vger.kernel.org>, <quic_manafm@quicinc.com>,
-        Gaurav Kohli
-	<quic_gkohli@quicinc.com>
-Subject: [PATCH v5 2/2] arm64: dts: qcom: qcs615: Enable TSENS support for QCS615 SoC
-Date: Wed, 25 Jun 2025 10:06:26 +0530
-Message-ID: <20250625043626.2743155-3-quic_gkohli@quicinc.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20250625043626.2743155-1-quic_gkohli@quicinc.com>
-References: <20250625043626.2743155-1-quic_gkohli@quicinc.com>
+	s=arc-20240116; t=1750826217; c=relaxed/simple;
+	bh=cCupKY9Hndwkwgmd2K/71AI2364rhm4+f+AMl670xM0=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=u4Qh/9eZ+J/JjloYL1TINJ6gssXxEjHmtbAQPKGJLYl3Zv73IV4Y8hf2ePny50ozAKwMZ1TkOzQexirtP4x6S++hVaUtvyfDqUhd/1mIc+PLPop4eFHNDr/wxBYvdynOlZfR8ZN+r09OhXZE3JbRmeWR3KLiCzFMjkhHyhWNPEU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=onurozkan.dev; spf=pass smtp.mailfrom=onurozkan.dev; dkim=pass (1024-bit key) header.d=onurozkan.dev header.i=@onurozkan.dev header.b=nC2dcisv; arc=none smtp.client-ip=178.154.239.214
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=onurozkan.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=onurozkan.dev
+Received: from mail-nwsmtp-smtp-production-main-80.klg.yp-c.yandex.net (mail-nwsmtp-smtp-production-main-80.klg.yp-c.yandex.net [IPv6:2a02:6b8:c42:31ca:0:640:ced4:0])
+	by forward103d.mail.yandex.net (Yandex) with ESMTPS id F0A6F60058;
+	Wed, 25 Jun 2025 07:36:45 +0300 (MSK)
+Received: by mail-nwsmtp-smtp-production-main-80.klg.yp-c.yandex.net (smtp/Yandex) with ESMTPSA id WaLA94GLnuQ0-LsZqoE3S;
+	Wed, 25 Jun 2025 07:36:45 +0300
+X-Yandex-Fwd: 1
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=onurozkan.dev;
+	s=mail; t=1750826205;
+	bh=kOV7I3utxcKTGzVyLqwhw09KsqwttzfWXuoRmExx5OM=;
+	h=Message-ID:Date:Cc:Subject:To:From;
+	b=nC2dcisvSrJORapX3rgau3c0XydiNfbUZPupW6xVEUSl+YK95O2UWSiK0/Svj1wrA
+	 wPcYSSpvZVE/Kdd8t5tnF8Th4dgkR+XZXbPK41I2d3YFFAVEblFr8GxrNnZC1+ntRv
+	 JylT+evZl4k4un+T2jCilolaQHbQy8ras05jz/BM=
+Authentication-Results: mail-nwsmtp-smtp-production-main-80.klg.yp-c.yandex.net; dkim=pass header.i=@onurozkan.dev
+From: =?UTF-8?q?Onur=20=C3=96zkan?= <work@onurozkan.dev>
+To: rust-for-linux@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Cc: gregkh@linuxfoundation.org,
+	rafael@kernel.org,
+	dakr@kernel.org,
+	ojeda@kernel.org,
+	alex.gaynor@gmail.com,
+	boqun.feng@gmail.com,
+	gary@garyguo.net,
+	bjorn3_gh@protonmail.com,
+	lossin@kernel.org,
+	a.hindborg@kernel.org,
+	aliceryhl@google.com,
+	tmgross@umich.edu,
+	=?UTF-8?q?Onur=20=C3=96zkan?= <work@onurozkan.dev>
+Subject: [PATCH] rust: simplify `Adapter::id_info`
+Date: Wed, 25 Jun 2025 07:36:30 +0300
+Message-ID: <20250625043630.7677-1-work@onurozkan.dev>
+X-Mailer: git-send-email 2.50.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nasanex01b.na.qualcomm.com (10.46.141.250)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Authority-Analysis: v=2.4 cv=YYu95xRf c=1 sm=1 tr=0 ts=685b7ce8 cx=c_pps
- a=JYp8KDb2vCoCEuGobkYCKw==:117 a=JYp8KDb2vCoCEuGobkYCKw==:17
- a=GEpy-HfZoHoA:10 a=6IFa9wvqVegA:10 a=COk6AnOGAAAA:8 a=3mcCAZ4DCuo2i6UhkvcA:9
- a=TjNXssC_j7lpFel5tvFf:22
-X-Proofpoint-GUID: 8bzI6lswgQ9f81e4x5IumXPDbEJ7DXRP
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNjI1MDAzMyBTYWx0ZWRfXynE8DiqijWDt
- A5YwCMW5AJYx9Iw977XuVA2nnhRc6ovA2YJYD3KsYftGbJaajpApvAOh6bW550C539gMjagGYRS
- Uh1M7r9BqnOcA+d0dBKFa8Q+7XKor9CvnJBSQWPeVAfCORBXGGEt0tZUtXr1L2pgnMhmjq4Yb6U
- ZJGawllD6Hun/mNsqXWtim6REneQA4buQbLrZXKFVRGLxaedP27DCmz4jG5CRKIEURtwrEDM2g5
- chWg8rweyhPTUMGw/Ytbzm2kIikWCak568b9jtmyCEv3S0HKmdL3s+a2Ke4iB+OnEwRgDKrW/fA
- t6f4XwxF76xomhilh5qmjXaAJjvxQYgD2VjWi2+71wDJY1mxzRNUHwiVhu3QIOyckNa7py52Kd6
- 9EvbDsW945rdYqtB4dtI6yxShU43uMhHC4Pa49Qb+BHFZz73SFGXXxdzqazFgugvvTg6koUn
-X-Proofpoint-ORIG-GUID: 8bzI6lswgQ9f81e4x5IumXPDbEJ7DXRP
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.7,FMLib:17.12.80.40
- definitions=2025-06-25_01,2025-06-23_07,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- malwarescore=0 adultscore=0 spamscore=0 impostorscore=0 suspectscore=0
- lowpriorityscore=0 priorityscore=1501 phishscore=0 mlxlogscore=755
- clxscore=1015 mlxscore=0 bulkscore=0 classifier=spam authscore=0 authtc=n/a
- authcc= route=outbound adjust=0 reason=mlx scancount=1
- engine=8.19.0-2505280000 definitions=main-2506250033
 
-Add TSENS and thermal devicetree node for QCS615 SoC.
+It was obviously unnecessary to check if `id` is `Some`.
 
-Signed-off-by: Gaurav Kohli <quic_gkohli@quicinc.com>
+Signed-off-by: Onur Özkan <work@onurozkan.dev>
 ---
- arch/arm64/boot/dts/qcom/qcs615.dtsi | 205 +++++++++++++++++++++++++++
- 1 file changed, 205 insertions(+)
+ rust/kernel/driver.rs | 7 +------
+ 1 file changed, 1 insertion(+), 6 deletions(-)
 
-diff --git a/arch/arm64/boot/dts/qcom/qcs615.dtsi b/arch/arm64/boot/dts/qcom/qcs615.dtsi
-index bb8b6c3ebd03..c20e98f8399f 100644
---- a/arch/arm64/boot/dts/qcom/qcs615.dtsi
-+++ b/arch/arm64/boot/dts/qcom/qcs615.dtsi
-@@ -3692,6 +3692,17 @@ usb_2_dwc3: usb@a800000 {
- 				maximum-speed = "high-speed";
- 			};
- 		};
-+
-+		tsens0: thermal-sensor@c222000 {
-+			compatible = "qcom,qcs615-tsens", "qcom,tsens-v2";
-+			reg = <0x0 0x0c263000 0x0 0x1ff>,
-+				<0x0 0x0c222000 0x0 0x8>;
-+			interrupts = <GIC_SPI 506 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 508 IRQ_TYPE_LEVEL_HIGH>;
-+			interrupt-names = "uplow", "critical";
-+			#qcom,sensors = <16>;
-+			#thermal-sensor-cells = <1>;
-+		};
- 	};
- 
- 	arch_timer: timer {
-@@ -3701,4 +3712,198 @@ arch_timer: timer {
- 			     <GIC_PPI 3 (GIC_CPU_MASK_SIMPLE(8) | IRQ_TYPE_LEVEL_LOW)>,
- 			     <GIC_PPI 0 (GIC_CPU_MASK_SIMPLE(8) | IRQ_TYPE_LEVEL_LOW)>;
- 	};
-+
-+	thermal-zones {
-+		aoss-thermal {
-+			thermal-sensors = <&tsens0 0>;
-+
-+			trips {
-+				aoss-critical {
-+					temperature = <115000>;
-+					hysteresis = <1000>;
-+					type = "critical";
-+				};
-+			};
-+		};
-+
-+		cpuss-0-thermal {
-+			thermal-sensors = <&tsens0 1>;
-+
-+			trips {
-+				cpuss0-critical {
-+					temperature = <115000>;
-+					hysteresis = <1000>;
-+					type = "critical";
-+				};
-+			};
-+		};
-+
-+		cpuss-1-thermal {
-+			thermal-sensors = <&tsens0 2>;
-+
-+			trips {
-+				cpuss1-critical {
-+					temperature = <115000>;
-+					hysteresis = <1000>;
-+					type = "critical";
-+				};
-+			};
-+		};
-+
-+		cpuss-2-thermal {
-+			thermal-sensors = <&tsens0 3>;
-+
-+			trips {
-+				cpuss2-critical {
-+					temperature = <115000>;
-+					hysteresis = <1000>;
-+					type = "critical";
-+				};
-+			};
-+		};
-+
-+		cpuss-3-thermal {
-+			thermal-sensors = <&tsens0 4>;
-+
-+			trips {
-+				cpuss3-critical {
-+					temperature = <115000>;
-+					hysteresis = <1000>;
-+					type = "critical";
-+				};
-+			};
-+		};
-+
-+		cpu-1-0-thermal {
-+			thermal-sensors = <&tsens0 5>;
-+
-+			trips {
-+				cpu-critical {
-+					temperature = <115000>;
-+					hysteresis = <1000>;
-+					type = "critical";
-+				};
-+			};
-+		};
-+
-+		cpu-1-1-thermal {
-+			thermal-sensors = <&tsens0 6>;
-+
-+			trips {
-+				cpu-critical {
-+					temperature = <115000>;
-+					hysteresis = <1000>;
-+					type = "critical";
-+				};
-+			};
-+		};
-+
-+		cpu-1-2-thermal {
-+			thermal-sensors = <&tsens0 7>;
-+
-+			trips {
-+				cpu-critical {
-+					temperature = <115000>;
-+					hysteresis = <1000>;
-+					type = "critical";
-+				};
-+			};
-+		};
-+
-+		cpu-1-3-thermal {
-+			thermal-sensors = <&tsens0 8>;
-+
-+			trips {
-+				cpu-critical {
-+					temperature = <115000>;
-+					hysteresis = <1000>;
-+					type = "critical";
-+				};
-+			};
-+		};
-+
-+		gpu-thermal {
-+			thermal-sensors = <&tsens0 9>;
-+
-+			trips {
-+				gpu-critical {
-+					temperature = <115000>;
-+					hysteresis = <1000>;
-+					type = "critical";
-+				};
-+			};
-+		};
-+
-+		q6-hvx-thermal {
-+			thermal-sensors = <&tsens0 10>;
-+
-+			trips {
-+				q6-hvx-critical {
-+					temperature = <115000>;
-+					hysteresis = <1000>;
-+					type = "critical";
-+				};
-+			};
-+		};
-+
-+		mdm-core-thermal {
-+			thermal-sensors = <&tsens0 11>;
-+
-+			trips {
-+				mdm-core-critical {
-+					temperature = <115000>;
-+					hysteresis = <1000>;
-+					type = "critical";
-+				};
-+			};
-+		};
-+
-+		camera-thermal {
-+			thermal-sensors = <&tsens0 12>;
-+
-+			trips {
-+				camera-critical {
-+					temperature = <115000>;
-+					hysteresis = <1000>;
-+					type = "critical";
-+				};
-+			};
-+		};
-+
-+		wlan-thermal {
-+			thermal-sensors = <&tsens0 13>;
-+
-+			trips {
-+				wlan-critical {
-+					temperature = <115000>;
-+					hysteresis = <1000>;
-+					type = "critical";
-+				};
-+			};
-+		};
-+
-+		display-thermal {
-+			thermal-sensors = <&tsens0 14>;
-+
-+			trips {
-+				display-critical {
-+					temperature = <115000>;
-+					hysteresis = <1000>;
-+					type = "critical";
-+				};
-+			};
-+		};
-+
-+		video-thermal {
-+			thermal-sensors = <&tsens0 15>;
-+
-+			trips {
-+				video-critical {
-+					temperature = <115000>;
-+					hysteresis = <1000>;
-+					type = "critical";
-+				};
-+			};
-+		};
-+	};
- };
--- 
-2.34.1
+diff --git a/rust/kernel/driver.rs b/rust/kernel/driver.rs
+index ec9166cedfa7..1036755cb27d 100644
+--- a/rust/kernel/driver.rs
++++ b/rust/kernel/driver.rs
+@@ -178,11 +178,6 @@ fn of_id_info(_dev: &device::Device) -> Option<&'static Self::IdInfo> {
+     /// If this returns `None`, it means that there is no match in any of the ID tables directly
+     /// associated with a [`device::Device`].
+     fn id_info(dev: &device::Device) -> Option<&'static Self::IdInfo> {
+-        let id = Self::of_id_info(dev);
+-        if id.is_some() {
+-            return id;
+-        }
+-
+-        None
++        Self::of_id_info(dev)
+     }
+ }
+--
+2.50.0
 
 
