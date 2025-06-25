@@ -1,137 +1,164 @@
-Return-Path: <linux-kernel+bounces-702440-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-702442-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id AB714AE827D
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Jun 2025 14:19:51 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1CDC3AE8283
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Jun 2025 14:20:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D684C7AB9F1
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Jun 2025 12:18:23 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 528183B5A6F
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Jun 2025 12:19:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 41D3A25C815;
-	Wed, 25 Jun 2025 12:19:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1D6FC25F98C;
+	Wed, 25 Jun 2025 12:19:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="HN8bGoMs"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="K/gCwCFk"
+Received: from mail-wm1-f53.google.com (mail-wm1-f53.google.com [209.85.128.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9CA3522ACEF;
-	Wed, 25 Jun 2025 12:19:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 57DF525CC49
+	for <linux-kernel@vger.kernel.org>; Wed, 25 Jun 2025 12:19:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750853978; cv=none; b=F5y94eMIAma05nSdINRqk7CPrlgMhn+jDHtNAC/+8cAcNAS+RaYx3XKxL4ildLhlVl+bOhqOOhoq5QI6W10BT5KabQY9xZuxS4SSneSdhJE8t7YLqjVqfUCHorgAH8RxGpQa1lZoikMrpl4aoEsoWYeHfYNvTQwhmWTlr4E9/vY=
+	t=1750853981; cv=none; b=TJLKqu9TPn2U6ElXueLNKP0nEQd9RRWKGYHtPOlpLchcXN8HEYfBFLQ2E/Rc5JwQL/69kpzqL7lnZeaoJXxD17+zv5DnHlLRUtZk6wH1iRU+puj1QfRX3alsx3y3c83HREJ1EZK/NKdvrud32u+EAu08+HswDyPHJn4MSHOKJrc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750853978; c=relaxed/simple;
-	bh=d3hbjcTYZBHF9JdqXaMJzsaAqNIFdJ1GVA4EtXfbBgQ=;
+	s=arc-20240116; t=1750853981; c=relaxed/simple;
+	bh=XRVu8I1TW50eEO7yMqUltjODw6rALvnLW/kAKL0wlng=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=KwI49KnBrNLYTpGX/52jpBHXH9VzMH0PhhWF5xfIInZCtX4cuLltme93m4esiJrV6JPMLfeMKRL0bES+X7JmUEOJWfFHhdoErzNKrMBRbzUx8qC+rvkHdtNvpqKIdGbz7h7pjQU/TJbuupi6VfoTWaa9XJe5WLGpddL70totJy8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=HN8bGoMs; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id EBC8DC4CEEA;
-	Wed, 25 Jun 2025 12:19:33 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1750853976;
-	bh=d3hbjcTYZBHF9JdqXaMJzsaAqNIFdJ1GVA4EtXfbBgQ=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=HN8bGoMsKzd/xuQcs7r8vd48xPW98SCfE5ZrcTZ2rNmeQHATmVlLUMI6exKSbZ7sV
-	 lQ6ls+h+LPIWl62qfsdXwl1dNkrgSPj8bHsxLzYam/42u1Up2DKqMjtSBy1TYtxKem
-	 PdNJ6YekDw7uXoa04zqYIlDEeJHAhf+p5oYOEm5BsiVdtifv20cg5KSzy9BC9tJCDz
-	 Y7Vnc0okIzpdxh/oNCgiyPmpqGfGuS6D5pLyauAkwMRPaKDiwDl4/FC1Qdq3IjL5gV
-	 ruJwA6+lNKJcoUPoJRJvWmjuW5vEWEZNdUGsDhB5rswgk9UThn1+KqDjH8eoRRoVkU
-	 qNGO0oc6VXZtQ==
-Date: Wed, 25 Jun 2025 13:19:32 +0100
-From: Simon Horman <horms@kernel.org>
-To: Jacek Kowalski <jacek@jacekk.info>
-Cc: Tony Nguyen <anthony.l.nguyen@intel.com>,
-	Przemek Kitszel <przemyslaw.kitszel@intel.com>,
-	Andrew Lunn <andrew+netdev@lunn.ch>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	intel-wired-lan@lists.osuosl.org, netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 1/4] e1000: drop checksum constant cast to u16 in
- comparisons
-Message-ID: <20250625121932.GC1562@horms.kernel.org>
-References: <46b2b70d-bf53-4b0a-a9f3-dfd8493295b9@jacekk.info>
- <20250625121828.GB1562@horms.kernel.org>
+	 Content-Type:Content-Disposition:In-Reply-To; b=OdNJzRMSBYgyzkLQkMYkRHtSLk9ScA71q8OV0qkmtM9/+0/TuAsRg8xoI5GNP5wQytBM+Ve0ndWKDN2qRIEdoREGw7gYJrNyxEwiNNffq8XnLQPBQoLJSL7LxxzYNCTojooKW53J2LBkM7y+Q6Iysht5dPNX12jlnsvYLsjQoQY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=K/gCwCFk; arc=none smtp.client-ip=209.85.128.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
+Received: by mail-wm1-f53.google.com with SMTP id 5b1f17b1804b1-451d7b50815so52312095e9.2
+        for <linux-kernel@vger.kernel.org>; Wed, 25 Jun 2025 05:19:38 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=suse.com; s=google; t=1750853977; x=1751458777; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=XRVu8I1TW50eEO7yMqUltjODw6rALvnLW/kAKL0wlng=;
+        b=K/gCwCFk09WX0H0oWIXqs2wjgQli14b25T0WLHKCUyiWLMs/ywCJ2Xt/IXJIfskPYY
+         MzCP/P2BH5j4uav3CpM5H1YjNsFSuKltV/62YVnZA31GDuO9LnHmeQK9283KWtm7o2oL
+         cveGVKjk6nvnSy6ARfJHyHa7aNTHh4J39udXRrkqicXb3x2/QWvoA5NtCjX8Iq24DIe2
+         MZZp96OLryDmicqZHfgCNXdhOP8q5sh8YJbCEwbfLl4qsYfVTC3Q3kUqo8mA9lJu6Dcu
+         P8Lmhj2AcYBE30z58yZZ2gIXJBBbknPouGx7vO/LLWbvTtzbj2B95k31m+JSm22G8hXg
+         +Txw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1750853977; x=1751458777;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=XRVu8I1TW50eEO7yMqUltjODw6rALvnLW/kAKL0wlng=;
+        b=qZBLG0B+84/s0KfEKHvRyqhN/TBdcUJIoYMT6wpflGkP8vwTwSYj3+k2vcmI1SiSi2
+         VK9+4fWBGp511h0SonTdDRQMKKLJVYgpV97Rtbc5kuUCDnueXw1+drxs7ViAE0dCaGSL
+         5THmr8hwRUzgtYCONCmcM6Z6Mx5TWDa777CCcdSrEnMkNovYhlBtKeFFlquWJaTq4wdJ
+         NTRNgyO5urDBZx1GmWDZt3D6w1MVL8DowptwvyXATkqfEAlKKUbIzbWeems8MnLX5pnN
+         M8bU2GvrKYi73ZJZCaUWwpXa408M2dNUBthQ6Xx2XZtHm35Y67PBFnGwMbZnBUnGMXo/
+         huZQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVYtwiGFbDCy0N3ew9dEhsZbT0j9Tob50ZWLjFB7GAYF8kMeLE9vaFSHvtzCMeAt4hPVSVstJWzKZc7mvk=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyH3K2C5vG2r7TjPJ4CCnu1eetspbh6y0AHK2N1ECfklHLN3Xb7
+	tUS/FlZDi9mmdmgMzZlKMP9L5UxewugG9c32NbQAju6CvSssYxD1KCW2NXOt1qJ+J18=
+X-Gm-Gg: ASbGncsrd/feD95bdEt7xJawiUkIyypL0wekruA7xi0eU7EBPXPGxByXepKH1m6ZeQV
+	wiOfLAUVrP/1qHYARzmLkKR/DY3myIb9xsTmL3JkQDapIzSouhhvyQrt+KvCSz11Eed8PMevRGd
+	O1950U8+TJONJ+31UEvTOcywnY2xn1OmWIOJ3WJk65LGTj9ht0GsQ0xXS9GvkzfGEptocfhAB3S
+	SGc+rUK0WVWeKs/nO3PB0Jc3YCOFHbBJRhSSMbyLXWrxUX5UNn/vCGFmuMyl8Ep9EO5an93gI6L
+	HqRocB3z9Z89JcANDSzS3iFuOLRHtC7P9vCshSDa1fhGrET6jWueYzAvLrZnTcAi
+X-Google-Smtp-Source: AGHT+IFenLT6lFTGDmYC2ik7lE03eZEeBOn7sNQj0UmfMjCUA6i2rdTwHxLvkI7uVFxXLFUNIq0hTQ==
+X-Received: by 2002:a5d:5c0b:0:b0:3a4:ee3f:8e1e with SMTP id ffacd0b85a97d-3a6ed652736mr2376381f8f.39.1750853977443;
+        Wed, 25 Jun 2025 05:19:37 -0700 (PDT)
+Received: from blackdock.suse.cz ([193.86.92.181])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3a6e80ff561sm4581365f8f.68.2025.06.25.05.19.36
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 25 Jun 2025 05:19:37 -0700 (PDT)
+Date: Wed, 25 Jun 2025 14:19:35 +0200
+From: Michal =?utf-8?Q?Koutn=C3=BD?= <mkoutny@suse.com>
+To: Chen Yu <yu.c.chen@intel.com>
+Cc: Jonathan Corbet <corbet@lwn.net>, 
+	Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, 
+	Shakeel Butt <shakeel.butt@linux.dev>, Juri Lelli <juri.lelli@redhat.com>, 
+	Ben Segall <bsegall@google.com>, Libo Chen <libo.chen@oracle.com>, Mel Gorman <mgorman@suse.de>, 
+	Valentin Schneider <vschneid@redhat.com>, Andrew Morton <akpm@linux-foundation.org>, 
+	"Liam R. Howlett" <Liam.Howlett@oracle.com>, Lorenzo Stoakes <lorenzo.stoakes@oracle.com>, 
+	Vlastimil Babka <vbabka@suse.cz>, Phil Auld <pauld@redhat.com>, Tejun Heo <tj@kernel.org>, 
+	Daniel Jordan <daniel.m.jordan@oracle.com>, Jann Horn <jannh@google.com>, Pedro Falcato <pfalcato@suse.de>, 
+	Aubrey Li <aubrey.li@intel.com>, Tim Chen <tim.c.chen@intel.com>, 
+	"Huang, Ying" <ying.huang@linux.alibaba.com>, linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-mm@kvack.org
+Subject: Re: [PATCH v2] sched/numa: Introduce per cgroup numa balance control
+Message-ID: <ldyynnd3ngxnu3bie7ezuavewshgfepro5kjids6cuxy4imzy5@nt5id7nj5kt7>
+References: <20250625102337.3128193-1-yu.c.chen@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="taxhvss7yhmjcw3c"
 Content-Disposition: inline
-In-Reply-To: <20250625121828.GB1562@horms.kernel.org>
+In-Reply-To: <20250625102337.3128193-1-yu.c.chen@intel.com>
 
-On Wed, Jun 25, 2025 at 01:18:28PM +0100, Simon Horman wrote:
-> On Tue, Jun 24, 2025 at 09:29:43PM +0200, Jacek Kowalski wrote:
-> 
-> Hi Jacek,
-> 
-> Thanks for the patchset.
-> 
-> Some feedback at a high level:
-> 
-> 1. It's normal for patch-sets, to have a cover letter.
->    That provides a handy place for high level comments,
->    perhaps ironically, such as this one.
-> 
-> 2. Please provide some text in the patch description.
->    I know these changes are trivial. But we'd like to have something there.
->    E.g.
-> 
->    Remove unnecessary cast of constants to u16,
->    allowing the C type system to do it's thing.
-> 
->    No behavioural change intended.
->    Compile tested only.
-> 
-> 3. This patchset should probably be targeted at iwl-next, like this:
-> 
-> 	Subject: [PATCH iwl-next] ...
-> 
-> 4. Please make sure the patchset applies cleanly to it's target tree.
->    It seems that in it's current form the patchset doesn't
->    apply to iwl-next or net-next.
-> 
-> 5. It's up to you. But in general there is no need
->    to CC linux-kernel@vger.kernel.org on Networking patches
-> 
-> > Signed-off-by: Jacek Kowalski <Jacek@jacekk.info>
-> > Suggested-by: Simon Horman <horms@kernel.org>
-> 
-> As for this patch itself, it looks good to me.
-> But I think you missed two.
-> 
-> diff --git a/drivers/net/ethernet/intel/e1000/e1000_hw.c b/drivers/net/ethernet/intel/e1000/e1000_hw.c
-> index b5a31e8d84f4..0e5de52b1067 100644
-> --- a/drivers/net/ethernet/intel/e1000/e1000_hw.c
-> +++ b/drivers/net/ethernet/intel/e1000/e1000_hw.c
-> @@ -3997,7 +3997,7 @@ s32 e1000_update_eeprom_checksum(struct e1000_hw *hw)
->  		}
->  		checksum += eeprom_data;
->  	}
-> -	checksum = (u16)EEPROM_SUM - checksum;
-> +	checksum = EEPROM_SUM - checksum;
->  	if (e1000_write_eeprom(hw, EEPROM_CHECKSUM_REG, 1, &checksum) < 0) {
->  		e_dbg("EEPROM Write Error\n");
->  		return -E1000_ERR_EEPROM;
-> diff --git a/drivers/net/ethernet/intel/e1000e/nvm.c b/drivers/net/ethernet/intel/e1000e/nvm.c
-> index 1c9071396b3c..556dbefdcef9 100644
-> --- a/drivers/net/ethernet/intel/e1000e/nvm.c
-> +++ b/drivers/net/ethernet/intel/e1000e/nvm.c
-> @@ -588,7 +588,7 @@ s32 e1000e_update_nvm_checksum_generic(struct e1000_hw *hw)
->  		}
->  		checksum += nvm_data;
->  	}
-> -	checksum = (u16)NVM_SUM - checksum;
-> +	checksum = NVM_SUM - checksum;
->  	ret_val = e1000_write_nvm(hw, NVM_CHECKSUM_REG, 1, &checksum);
->  	if (ret_val)
->  		e_dbg("NVM Write Error while updating checksum.\n");
 
-Sorry, I now see that the 2nd of the two hunks above is for patch 2/4.
+--taxhvss7yhmjcw3c
+Content-Type: text/plain; protected-headers=v1; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+Subject: Re: [PATCH v2] sched/numa: Introduce per cgroup numa balance control
+MIME-Version: 1.0
+
+On Wed, Jun 25, 2025 at 06:23:37PM +0800, Chen Yu <yu.c.chen@intel.com> wro=
+te:
+> [Problem Statement]
+> Currently, NUMA balancing is configured system-wide.
+> However, in some production environments, different
+> cgroups may have varying requirements for NUMA balancing.
+> Some cgroups are CPU-intensive, while others are
+> memory-intensive. Some do not benefit from NUMA balancing
+> due to the overhead associated with VMA scanning, while
+> others prefer NUMA balancing as it helps improve memory
+> locality. In this case, system-wide NUMA balancing is
+> usually disabled to avoid causing regressions.
+>=20
+> [Proposal]
+> Introduce a per-cgroup interface to enable NUMA balancing
+> for specific cgroups.
+
+The balancing works with task granularity already and this new attribute
+is not much of a resource to control.
+Have you considered a per-task attribute? (sched_setattr(), prctl() or
+similar) That one could be inherited and respective cgroups would be
+seeded with a process with intended values. And cpuset could be
+traditionally used to restrict the scope of balancing of such tasks.
+
+WDYT?
+
+> This interface is associated with the CPU subsystem, which
+> does not support threaded subtrees, and close to CPU bandwidth
+> control.
+ (??) does support
+
+> The system administrator needs to set the NUMA balancing mode to
+> NUMA_BALANCING_CGROUP=3D4 to enable this feature. When the system is in
+> NUMA_BALANCING_CGROUP mode, NUMA balancing for all cgroups is disabled
+> by default. After the administrator enables this feature for a
+> specific cgroup, NUMA balancing for that cgroup is enabled.
+
+How much dynamic do you such changes to be? In relation to given
+cgroup's/process's lifecycle.
+
+Thanks,
+Michal
+
+--taxhvss7yhmjcw3c
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYKAB0WIQRCE24Fn/AcRjnLivR+PQLnlNv4CAUCaFvpVAAKCRB+PQLnlNv4
+CKYLAP40v6E11draiFGguEeqd7Lo4UR4CFcKxIm+6hw1tSGtPQEA4pB22MPLn2Lb
+ThLQgnota7Zcd4S/rZoMXEwsCHHU/Qs=
+=BfMT
+-----END PGP SIGNATURE-----
+
+--taxhvss7yhmjcw3c--
 
