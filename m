@@ -1,77 +1,116 @@
-Return-Path: <linux-kernel+bounces-701667-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-701670-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 99D40AE779F
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Jun 2025 08:57:58 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 77BDCAE77B1
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Jun 2025 09:02:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3A19D3B7393
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Jun 2025 06:57:33 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 16DBA1BC5D68
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Jun 2025 07:02:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B5A501F4703;
-	Wed, 25 Jun 2025 06:57:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3B6491F873E;
+	Wed, 25 Jun 2025 07:02:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="tglTcBxl"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=yeah.net header.i=@yeah.net header.b="TvFkXXUs"
+Received: from mail-m16.yeah.net (mail-m16.yeah.net [220.197.32.17])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 22DCB1E32BE
-	for <linux-kernel@vger.kernel.org>; Wed, 25 Jun 2025 06:57:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 793683074B1;
+	Wed, 25 Jun 2025 07:02:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.197.32.17
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750834673; cv=none; b=op2O01cIAuEkWDxC51QIedPqmidSLDr22EYc72/mER/a7Z5arAViWAl46/YXVLH9Wn3kibs8t2QOQnPuohTNhQrj7Bq/YMCWlmu6dQIazCq8ALUbJ1XTQ75cBzYCPFRe04Fj8VDSGhZ0dlTOHvTZ40CFw/JWl1wWnC+ffU3GLc8=
+	t=1750834950; cv=none; b=G/peOUSzNTcouNzcE6Dl5v8nD7ouBm0rYc6wF44Xx/iclkw1wW0HubK6CalGhcCgNZMelBizCXjvJnia082M3GNyMilzVjtTQCdBcsjvA9dLYxSqDx9/+mLvXlYz/7jwIa3Kqs/i1quVZT5o8rrM8k0n1s836U6NuLHGNXZdjS4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750834673; c=relaxed/simple;
-	bh=TH2Sh4xVmeTr5CC8o4+TFv9M1ig1OcnOG6XJmVoW7cU=;
-	h=Message-ID:Date:From:To:Subject:In-Reply-To:References:Cc; b=K8cUYI564uAAEnEG1zPGVvh2XKKqCgZKsM9cyNkubNXoJ7h6/TNnxsgAjUu0oYZRidh5E1bb0U0qnXvu39XVdA1WCU4P+GtyhhVwEGtyAbGNYTjrGzXPczww/OGSN5MSm+jZ40XT6D1rb/E6OGVlQ2DCWa0YqKtrfg1A5tyZ0aI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=tglTcBxl; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9E546C4CEEA;
-	Wed, 25 Jun 2025 06:57:52 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1750834673;
-	bh=TH2Sh4xVmeTr5CC8o4+TFv9M1ig1OcnOG6XJmVoW7cU=;
-	h=Date:From:To:Subject:In-Reply-To:References:Cc:From;
-	b=tglTcBxlcQageCvCnz+ngh4sx8zeege1NpLDgdHvb5KyKa3cE7XX66xmfaYExpfS6
-	 D5m4fZvgdoGVKdXSsbpA25tLTJvUAb133Amk21SnOHSOGgEc/PB+JTYYaEq9UFcb8t
-	 3t/dno+vJhuYaqv6hNpLvXc0rVsOW45BGucKZGQQK2qh964bpgb/Br3l36G3GrjAIK
-	 K/Glsuu5jJsHkhOZQHXD06B/odNvZxIEI4ZZuugtKOoG9mkNwn7v1AcCrWGL1Jm8U4
-	 fdgkd5zycrnDHjitGZgd2JvTQvjFZC4WisrGkcp0KmvLWEbxy6EPUB1cFdzN2j+PQm
-	 ozwcOgfAOTYwQ==
-Message-ID: <0a152b0fc2b95835cce7a0703745793b@kernel.org>
-Date: Wed, 25 Jun 2025 06:57:50 +0000
-From: "Maxime Ripard" <mripard@kernel.org>
-To: "Dharma Balasubiramani" <dharma.b@microchip.com>
-Subject: Re: [PATCH v5 4/4] drm/bridge: microchip-lvds: fix bus format
- mismatch with VESA displays
-In-Reply-To: <20250625-microchip-lvds-v5-4-624cf72b2651@microchip.com>
-References: <20250625-microchip-lvds-v5-4-624cf72b2651@microchip.com>
-Cc: dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org, "Andrzej
- Hajda" <andrzej.hajda@intel.com>, "David Airlie" <airlied@gmail.com>, DharmaBalasubiramani <dharma.b@microchip.com>, JernejSkrabec <jernej.skrabec@gmail.com>, "Jonas
- Karlman" <jonas@kwiboo.se>, "Laurent Pinchart" <Laurent.pinchart@ideasonboard.com>, "Maarten
- Lankhorst" <maarten.lankhorst@linux.intel.com>, "Manikandan Muralidharan" <manikandan.m@microchip.com>, "Maxime
- Ripard" <mripard@kernel.org>, "Neil Armstrong" <neil.armstrong@linaro.org>, "Robert
- Foss" <rfoss@kernel.org>, "Sandeep Sheriker M" <sandeep.sheriker@microchip.com>, "Simona
- Vetter" <simona@ffwll.ch>, "Thomas Zimmermann" <tzimmermann@suse.de>
-Content-Transfer-Encoding: 7bit
+	s=arc-20240116; t=1750834950; c=relaxed/simple;
+	bh=lu8GW/xf4kOX1REuCn/SZZoVJUNSBI+oSTHjyIo0pcE=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=it/9lBSEQFT69aUZ1Vozk8WyTfnhdXDNPw5VdK9LkbVXVLiDv2cdnUhK0WiF+DRaCoFF28OyROdNN/qrfZ99qG92V73X/abTL8cIdwAltWMAWjLjgZo3re1q4Fuxg5TqRkeHyrKyfJhABDLBsyGNQoh6+g2KAYLvvSLKrsYVFpk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=yeah.net; spf=pass smtp.mailfrom=yeah.net; dkim=pass (1024-bit key) header.d=yeah.net header.i=@yeah.net header.b=TvFkXXUs; arc=none smtp.client-ip=220.197.32.17
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=yeah.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=yeah.net
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yeah.net;
+	s=s110527; h=From:To:Subject:Date:Message-Id:MIME-Version; bh=g3
+	1EdVqBUgF/JJ4ImsjTsW7cIn3BR3/DuJ4lZMKdllE=; b=TvFkXXUsorLCyPPXTV
+	YYE8LHQH0/FOwXUHbCKEukFL9ddsyr1Xs/lu73Owb6btAYFNEOoIRF9QbkrDWnOG
+	KFUJtKqVvXuQzp5eXbIAfuuG3HrBRCqElEU1KHpQJzhENebMWCb2IY05tMeBvA2E
+	Wn1OJGuD3ZVXCVWvlc1l2rUe4=
+Received: from mps-HP-EliteBook-840-G3.monolithicpower.com (unknown [])
+	by gzsmtp3 (Coremail) with SMTP id M88vCgDnHgyTnltoDJZ4AQ--.61670S2;
+	Wed, 25 Jun 2025 15:00:38 +0800 (CST)
+From: wenswang@yeah.net
+To: robh@kernel.org,
+	krzk+dt@kernel.org,
+	conor+dt@kernel.org,
+	jdelvare@suse.com,
+	linux@roeck-us.net,
+	corbet@lwn.net
+Cc: Jonathan.Cameron@huawei.com,
+	michal.simek@amd.com,
+	naresh.solanki@9elements.com,
+	festevam@gmail.com,
+	rodrigo.gobbi.7@gmail.com,
+	grantpeltier93@gmail.com,
+	laurent.pinchart@ideasonboard.com,
+	cedricjustine.encarnacion@analog.com,
+	nuno.sa@analog.com,
+	ninad@linux.ibm.com,
+	jbrunet@baylibre.com,
+	kimseer.paller@analog.com,
+	xzeol@yahoo.com,
+	leo.yang.sy0@gmail.com,
+	Mariel.Tinaco@analog.com,
+	johnerasmusmari.geronimo@analog.com,
+	linux@weissschuh.net,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-hwmon@vger.kernel.org,
+	linux-doc@vger.kernel.org,
+	Wensheng Wang <wenswang@yeah.net>
+Subject: [PATCH 0/4] hwmon: Add support for MPS mp2869,mp29502 chip
+Date: Wed, 25 Jun 2025 14:59:56 +0800
+Message-Id: <20250625065956.964759-1-wenswang@yeah.net>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:M88vCgDnHgyTnltoDJZ4AQ--.61670S2
+X-Coremail-Antispam: 1Uf129KBjvdXoW7Jry7CF1DGF4rZFWfWry5XFb_yoWfuFXEkw
+	42gFZrAr1UJFs5WFZrCr1kuryUtr4FgFyxJ3ZIy398AFW3Z3ZxWrykX3sFva47ArWUuF13
+	Z3ykCws5AF17KjkaLaAFLSUrUUUUjb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
+	9fnUUvcSsGvfC2KfnxnUUI43ZEXa7IU0eBT3UUUUU==
+X-CM-SenderInfo: 5zhq24xdqjq5hhdkh0dhw/1tbiEhB3pGhbdHKTSAAAs-
 
-On Wed, 25 Jun 2025 10:26:12 +0530, Dharma Balasubiramani wrote:
-> The LVDS controller was hardcoded to JEIDA mapping, which leads to
-> distorted output on panels expecting VESA mapping.
-> 
-> Update the driver to dynamically select the appropriate mapping and
-> pixel size based on the panel's advertised media bus format. This
-> 
-> [ ... ]
+From: Wensheng Wang <wenswang@yeah.net>
 
-Reviewed-by: Maxime Ripard <mripard@kernel.org>
+Add mp2869,mp29502 driver in hwmon and add dt-bindings for them.
 
-Thanks!
-Maxime
+Wensheng Wang (4):
+  dt-bindings: hwmon: Add MPS mp2869 series
+  hwmon: add MP2869 series driver
+  dt-bindings: hwmon: Add MPS mp29502
+  hwmon: add MP29502 driver
+
+ .../devicetree/bindings/trivial-devices.yaml  |  10 +
+ Documentation/hwmon/index.rst                 |   2 +
+ Documentation/hwmon/mp2869.rst                | 166 ++++
+ Documentation/hwmon/mp29502.rst               | 104 +++
+ MAINTAINERS                                   |  14 +
+ drivers/hwmon/pmbus/Kconfig                   |  18 +
+ drivers/hwmon/pmbus/Makefile                  |   2 +
+ drivers/hwmon/pmbus/mp2869.c                  | 711 ++++++++++++++++++
+ drivers/hwmon/pmbus/mp29502.c                 | 691 +++++++++++++++++
+ 9 files changed, 1718 insertions(+)
+ create mode 100644 Documentation/hwmon/mp2869.rst
+ create mode 100644 Documentation/hwmon/mp29502.rst
+ create mode 100644 drivers/hwmon/pmbus/mp2869.c
+ create mode 100644 drivers/hwmon/pmbus/mp29502.c
+
+-- 
+2.25.1
+
 
