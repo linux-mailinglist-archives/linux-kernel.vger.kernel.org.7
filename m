@@ -1,238 +1,332 @@
-Return-Path: <linux-kernel+bounces-702276-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-702278-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 92C4CAE8053
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Jun 2025 12:55:45 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id C34D4AE805C
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Jun 2025 12:56:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4796A3B314D
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Jun 2025 10:55:20 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D0E383A393A
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Jun 2025 10:56:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0F5B52BEFE4;
-	Wed, 25 Jun 2025 10:54:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4FC022D6612;
+	Wed, 25 Jun 2025 10:54:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="aT0USNZ9"
-Received: from mail-pg1-f179.google.com (mail-pg1-f179.google.com [209.85.215.179])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="KuvgTef4"
+Received: from mail-yb1-f181.google.com (mail-yb1-f181.google.com [209.85.219.181])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6D71C2BF00A
-	for <linux-kernel@vger.kernel.org>; Wed, 25 Jun 2025 10:54:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8E2882D2389;
+	Wed, 25 Jun 2025 10:54:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750848864; cv=none; b=A/gN+gl9qtR2JMorLt86kS+kY9/Ndn+io7c5uHWqz36vE8dKtHEprDFKlk5baPhs85gjRflus22wOuk0HHlBIyr9XBbf6hDFyZSo8aOVK9gt6TE5wqzlCzozPMKu8gJnKq9V+YmMggFs7WYQvJaojdRowYy5IzTI0HUCeLQD+uw=
+	t=1750848878; cv=none; b=tQ9P5I9SnWGeNp2GAaejB+mTMf/X3VxA9ZuUUKFXXk1xyYIjfghvOsZs/5bL34B7FCdtIuGtoe7SHJbE0X1sMIm5lDKX4bRx2ysY8IvpVyv0SBkDFCxTFhBIp7icDdD4CzwIAScfzkUA7zMwN3O/BTslKlc6bkH/P+25uBRl0zI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750848864; c=relaxed/simple;
-	bh=oWw3YvvIIyZMO9LMr45beiGm0PsyuB9vcsoRXkosJKM=;
+	s=arc-20240116; t=1750848878; c=relaxed/simple;
+	bh=1pw+uqroMWF349QulkbaV2L+xoGUQiIDrgQhwjrbgLU=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=CqaY/CdsN27LzhYjKmCvxlTcvFXuASfpDkBZpYXDLHwaISawmVnUG74Y0eUjHEtlF5/vrJ9jNtA5eBvlBJ6eIS6Ex/LqKdJvkst5PU+Gs+mycOZwYBY8x5VORX3DrYkNsx0pp12RbaJhI8h+H5Mcl0yz3C3ksSNcfb86IWLZqes=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=aT0USNZ9; arc=none smtp.client-ip=209.85.215.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-pg1-f179.google.com with SMTP id 41be03b00d2f7-b31d8dd18cbso1880133a12.3
-        for <linux-kernel@vger.kernel.org>; Wed, 25 Jun 2025 03:54:22 -0700 (PDT)
+	 To:Cc:Content-Type; b=S6DVZ1tgLPatQ9bmvdRHVOAsyUykXc9I/29LzoUHWA7lPG4crMqXQNupyOHxTlB8SWzMaTQcOpYlaCEEmpueJMb2dcN42x6ssmnHZgh+dxrxhRG3uMF4BG1iWZx2NqX4tTCY9lPR4qBaWIC5DIalE+gXul/qy1xit94LRZLNyE8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=KuvgTef4; arc=none smtp.client-ip=209.85.219.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-yb1-f181.google.com with SMTP id 3f1490d57ef6-e7311e66a8eso5606420276.2;
+        Wed, 25 Jun 2025 03:54:36 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1750848862; x=1751453662; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1750848875; x=1751453675; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=fMQOsT+mdqoi8lnfK5N5XyAR9UzojfvCMCTObb86FVk=;
-        b=aT0USNZ9ShDL/4pPXa6PzRTtQNlnpQmOFm/3u1w0msLeBHMotUl8fZ+okNois4hm7t
-         YidGfb0Sbf3GlLqY6bdDbZAe9+OMSwGY7XZYVxMJE+qAenBVsOPLu/cQa1V3Hpt+qRtx
-         RTeCyPHAibwQ1b5IenmXVjuhTpq41SAFnSuXUfsttAAo5tehnzD+bCLO6NT9JA5R90e4
-         9gW5hb31f4QZfoZh4hCpnlWojQNp7Jn3ao/aaQ0Oajnz9rCHMYfKpE7dUsuAswJih03Y
-         R1O0CDuQYr4aclSfVNSucr2SenWRpv1yHlNUhhFfqBUvIuSV8LvCwjQ3habQ2fyl2wCj
-         s7sg==
+        bh=cilMFj2BlrrsofpUWF0eRD8610fy8kvLozLNgBSSemY=;
+        b=KuvgTef4Sem4pyBuzeuGbV+ddyxuQOWsDiMlUbXu0HUcQdy7OG+B9YuRDLn0pcH8bf
+         J+OQE+Jqsgkp4UQOD7xVN1eUFqMDQgu/ta1Cjr1vhdtZ5oli3CXf11+OLSM+bSYFTNoI
+         4hUAMLRHVYWHKWjyjzuF67esK7aq75b3hOXYwnIftGlTC/ATj01nUoOhCXHRRClcXzuj
+         oIKzAWLmoWA3E/R6Aju9NE6WpyzVtBi26Zw4l6QvCw+CTGFxCksyEJlbF+/YZ98ljJ7w
+         VR+fXv0nYXJqkFptBOcpSygc+ObtkqDPt2cHZlnmAZPVPNJK4jIsHOulO5xRuJExsXRi
+         qvKA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1750848862; x=1751453662;
+        d=1e100.net; s=20230601; t=1750848875; x=1751453675;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=fMQOsT+mdqoi8lnfK5N5XyAR9UzojfvCMCTObb86FVk=;
-        b=Z1BaBKxYgoa6dJdTC1Q0OqZuxS35WcMacC3CbPruwNtxvBQteYSKoEDAdEm2Yhmcta
-         KBDYKJAvCAhH0+nciLCjuLALWxs+pRRw03Oofhw16iCRKeQ6BKBRzNmpqOWr1M9doK0c
-         9dI90KZPPPUdP+TiPlPzLCMb1g2v/21gDqnNbTI9cZlCEF4+A2EK2bA9GvA8uuA3HSOP
-         VcQ/8zIXOreN8jhovyBeDV+EZJAhYwC/NtmBjh7IonL3KDfNeqy2V1/JwBNNHoDW848G
-         jwF2cUD9amCTm26TAWuECDS5vczMoA8K7x0/TBPijQSe9yagUblSFnc+tzplsQByPRoP
-         GeFw==
-X-Forwarded-Encrypted: i=1; AJvYcCXHXgcyv+MD9xoSR5fWNpM2ccoDzKiqGMynU4KSe5UvjruZ1Vp78RxDNIQgr+XzhayVBR5VuqBRBWRp1XE=@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywzv0hJFgrhNENPYiqbLbhXLCKXbLaDP3X3k9JKhOZZfX4UvbJ7
-	3kdPYtdv7tQ4lHJCKWc0plVhn3z5FmbMDJZj7fSxBBr1nD8c8GbaVcd3Hzjl7h0O2m+b5lZZfBg
-	1iIlpBsgz3ToHsqx+wjG+6bUoXgv5dvG84ouK/RCSvg==
-X-Gm-Gg: ASbGncsHNzJHXhXjfr5a7NWSFKcWtfMVtajU6niKGba39wNgUwn5ROSn5w2Q38IHOw3
-	bO3hjYKGXc2PKwjCEWO+ZIo9dKRHnbKgcWmrgiAsJB5+9VwQdvFHCRH7aFZNZwVQaIvAV4dLPMy
-	rQZTwmU52CIr5oFHkd/Zx2Z1aE6hVQJvC4mOynfa2czGeEPlu4yQTg906KC/6uW8o7hYoYjvzwW
-	AOC
-X-Google-Smtp-Source: AGHT+IHiEEGI2cB5HHq+2rW2I162fZGpGjKdx9vFcpygnRYRBtx9ITlyUhy0ssBTVpCEGfR518CwQjoRlvHR7iSKwUs=
-X-Received: by 2002:a17:90b:1d05:b0:311:9c1f:8516 with SMTP id
- 98e67ed59e1d1-315f26192efmr4507300a91.15.1750848861645; Wed, 25 Jun 2025
- 03:54:21 -0700 (PDT)
+        bh=cilMFj2BlrrsofpUWF0eRD8610fy8kvLozLNgBSSemY=;
+        b=mrKDqHIVdVkR1FkbLM3+r3YyEsLzm7t0WcIzq3YQUiro34Pcwtc8kjTcYhQm5Wv/Sl
+         uQtrhadkf4Qtf/ZX34S2htkniE4tBBFUZQJTbFjMY8usovId7t3BKRETvG7gh5ztPKPN
+         LcF+yMcLzrnljCT0+MBCgyOPGNUocLhc5IP5SvQRwbhECW3/33QjAYJ3Ozi070zKP3KX
+         z+Z6YvOVY4pFdgZknvbrp+43qBrYRlTgIbt/B2npj7vGSEO/lrMfBHBEEWBLy1fjVIce
+         wk0YdTg49Q0UCavfRDHGInp1G0jqXfMB0spnUbWD2CktMNCfMXsLuJpPM5MAZ/J0EK1K
+         w7cQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVBHJ85O+xBvW6pu0EaTOOu0LeuVZuJHtrOeNu43R2eXKhQnl8RG2db+rrS0csM71NAmoDyi6/Qg+Nv@vger.kernel.org, AJvYcCVBvi1OEgetd9M/VsgcBBYVrZNCJYomCOc2QnJJiyJEoy7lbhB00wt83R/MY8xCfhkn2lxJfeSZm9k=@vger.kernel.org, AJvYcCVKsHjuf3Z8ZzdqV/EW2npVJGbn2Cnmd9JaNhmksHM0cpz4jN2lScn2Y0kJA0JWmlP/quJtz6vGCrp4BfN6xEw=@vger.kernel.org, AJvYcCWdSu82R3PJ0L1TAPIaYqKeHI2DG/8D+Jh81jCgB07grxXzA6JdzZT80aoRZmDUq/XJaSWSQlgBHHmh@vger.kernel.org, AJvYcCX1cUepK3vR5s+CCUTk1H8hQHO2ffqh9eBOAiLGO2D94K1YJn9pKEOTPUUtUyWTAmXhL/Q3yQGXzFcH/YQ=@vger.kernel.org, AJvYcCXc6fPhNXDlCgYaHuq+5xWuOLH8GEHT0D5xHZZlkbMY0J8oMfIhKRXS/Sz2UbN4YGB7hsXWknGVtm1GMA==@vger.kernel.org, AJvYcCXfjJnLQCos9DuPaQY/YUAHQaACR2hDK8lG8X8TQopkmXaFBWcLKUTb/nGPw7XjQCvWI90Jek5exmnn@vger.kernel.org, AJvYcCXhlGAlMvYy6+r9lSEqT0gNNqw0wYGidkJv6qE5CtMxOS9uTSE8JTrv1NT9kTEAtFxNfq/PXVZv@vger.kernel.org, AJvYcCXihyNHvvrBHw59ROpM7XLn3/0YGIiBng8igjW4NHONyaiTbo02vN4Wo0C7iTMY3/WPMU/jI8PxImWk2wXD@vger.kernel.org
+X-Gm-Message-State: AOJu0YxWrtGAwjcIWGMqVnCysk3Twd6Ljgq0dudpCSmfE31rfyTKL8R/
+	TIq2EMKnNP0PHieep4ERASw7d+nxQ5weHau86YWTTFXVxktV/jixkEo0fMciPy50j0zGjHiPvrU
+	waFrG2IaUXznyPMj4A9SLD0AWM8FaSBs=
+X-Gm-Gg: ASbGncvkLqNfuPrPaDIoquE4xF72u35Cjqtvwwx01zHy8p3wiprykwkOKUbLRpeU0GE
+	x5eFoEFx5Qf0Q/YnHJUaQXC8c/+Ktsb9EnnBQJsyGnfOsOVUcrxbbypbAfIH1/Gdz4R09t7a7cc
+	0Zo+Hoi9/uFz1jwTHI2Bk4utfbv2njMkgWWUQ+U2mu7uauHjehnZN39orJ0S5qruKJoXw4ZkmAA
+	XDh8A==
+X-Google-Smtp-Source: AGHT+IEu+R//w0LIcJJxZLM8KxbNtqpVsxRk+v2CqE6RW+SjfC+UBYI6SfhQaDEj74VCCVaHizUOSlRb/0YomJcnvOo=
+X-Received: by 2002:a05:690c:6384:b0:709:197d:5d3c with SMTP id
+ 00721157ae682-71406cd24f9mr36191427b3.11.1750848875500; Wed, 25 Jun 2025
+ 03:54:35 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250624121409.093630364@linuxfoundation.org>
-In-Reply-To: <20250624121409.093630364@linuxfoundation.org>
-From: Naresh Kamboju <naresh.kamboju@linaro.org>
-Date: Wed, 25 Jun 2025 16:24:10 +0530
-X-Gm-Features: Ac12FXz97GBM2balbdrYLnqrqpEMD_cJZ26q0A3b3jEWkftx66qzM1sifzdDU30
-Message-ID: <CA+G9fYt_Z-Vtoan2z-OEoArWuNy=A9wwAoTyRF=G8zobZBaDvA@mail.gmail.com>
-Subject: Re: [PATCH 6.6 000/288] 6.6.95-rc2 review
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: stable@vger.kernel.org, patches@lists.linux.dev, 
-	linux-kernel@vger.kernel.org, torvalds@linux-foundation.org, 
-	akpm@linux-foundation.org, linux@roeck-us.net, shuah@kernel.org, 
-	patches@kernelci.org, lkft-triage@lists.linaro.org, pavel@denx.de, 
-	jonathanh@nvidia.com, f.fainelli@gmail.com, sudipm.mukherjee@gmail.com, 
-	srw@sladewatkins.net, rwarsow@gmx.de, conor@kernel.org, hargar@microsoft.com, 
-	broonie@kernel.org
+References: <20250612140041.GF381401@google.com> <CAOoeyxVvZiD18qbGd5oUnqLNETKw50fJBjJO3vR50kon_a5_kA@mail.gmail.com>
+ <20250612152313.GP381401@google.com> <CAOoeyxV-E_HQOBu0Pzfy0b0yJ2qbrW_C8pATCTWE4+PXqvHL6g@mail.gmail.com>
+ <20250613131133.GR381401@google.com> <CAOoeyxXftk9QX_REgeQhuXSc9rEguzXkKVKDQdawU=NzGbo9oA@mail.gmail.com>
+ <20250619115345.GL587864@google.com> <CAOoeyxXSTeypv2qQjcK1cSPtjch=gJGYzqoMsLQ-LJZ8Kwgd=w@mail.gmail.com>
+ <20250619152814.GK795775@google.com> <CAOoeyxU7eQneBuxbBqepta29q_OHPzrkN4SKmj6RX72L3Euw5A@mail.gmail.com>
+ <20250625090133.GP795775@google.com>
+In-Reply-To: <20250625090133.GP795775@google.com>
+From: Ming Yu <a0282524688@gmail.com>
+Date: Wed, 25 Jun 2025 18:54:20 +0800
+X-Gm-Features: Ac12FXyG2HoWaId__CawR23MZ8rb9Qa6uz_UMfhCNFjrCMpzymOvuItjHHgDfoE
+Message-ID: <CAOoeyxWoxC-n3JjjFe8Ruq_VydXk=jev=mopKfL5B7gsaSg=Ag@mail.gmail.com>
+Subject: Re: [PATCH v12 1/7] mfd: Add core driver for Nuvoton NCT6694
+To: Lee Jones <lee@kernel.org>
+Cc: linus.walleij@linaro.org, brgl@bgdev.pl, andi.shyti@kernel.org, 
+	mkl@pengutronix.de, mailhol.vincent@wanadoo.fr, andrew+netdev@lunn.ch, 
+	davem@davemloft.net, edumazet@google.com, kuba@kernel.org, pabeni@redhat.com, 
+	wim@linux-watchdog.org, linux@roeck-us.net, jdelvare@suse.com, 
+	alexandre.belloni@bootlin.com, linux-kernel@vger.kernel.org, 
+	linux-gpio@vger.kernel.org, linux-i2c@vger.kernel.org, 
+	linux-can@vger.kernel.org, netdev@vger.kernel.org, 
+	linux-watchdog@vger.kernel.org, linux-hwmon@vger.kernel.org, 
+	linux-rtc@vger.kernel.org, linux-usb@vger.kernel.org, 
+	Ming Yu <tmyu0@nuvoton.com>
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Tue, 24 Jun 2025 at 17:59, Greg Kroah-Hartman
-<gregkh@linuxfoundation.org> wrote:
+Dear Greg and Lee,
+
+Thank you for your comments.
+I've reviewed your suggestions, but would appreciate your feedback on
+a few remaining points.
+
+Lee Jones <lee@kernel.org> =E6=96=BC 2025=E5=B9=B46=E6=9C=8825=E6=97=A5 =E9=
+=80=B1=E4=B8=89 =E4=B8=8B=E5=8D=885:01=E5=AF=AB=E9=81=93=EF=BC=9A
 >
-> This is the start of the stable review cycle for the 6.6.95 release.
-> There are 288 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
+> On Fri, 20 Jun 2025, Ming Yu wrote:
 >
-> Responses should be made by Thu, 26 Jun 2025 12:13:28 +0000.
-> Anything received after that time might be too late.
+> > Lee Jones <lee@kernel.org> =E6=96=BC 2025=E5=B9=B46=E6=9C=8819=E6=97=A5=
+ =E9=80=B1=E5=9B=9B =E4=B8=8B=E5=8D=8811:28=E5=AF=AB=E9=81=93=EF=BC=9A
+> > >
+> > > On Thu, 19 Jun 2025, Ming Yu wrote:
+> > >
+> > > > Lee Jones <lee@kernel.org> =E6=96=BC 2025=E5=B9=B46=E6=9C=8819=E6=
+=97=A5 =E9=80=B1=E5=9B=9B =E4=B8=8B=E5=8D=887:53=E5=AF=AB=E9=81=93=EF=BC=9A
+> > > > >
+> > > > > On Fri, 13 Jun 2025, Ming Yu wrote:
+> > > > >
+> > > > > > Lee Jones <lee@kernel.org> =E6=96=BC 2025=E5=B9=B46=E6=9C=8813=
+=E6=97=A5 =E9=80=B1=E4=BA=94 =E4=B8=8B=E5=8D=889:11=E5=AF=AB=E9=81=93=EF=BC=
+=9A
+> > > > > > >
+> > > > > > > On Fri, 13 Jun 2025, Ming Yu wrote:
+> > > > > > >
+> > > > > > > > Lee Jones <lee@kernel.org> =E6=96=BC 2025=E5=B9=B46=E6=9C=
+=8812=E6=97=A5 =E9=80=B1=E5=9B=9B =E4=B8=8B=E5=8D=8811:23=E5=AF=AB=E9=81=93=
+=EF=BC=9A
+> > > > > > > > >
+> > > > > > > > > On Thu, 12 Jun 2025, Ming Yu wrote:
+> > > > > > > > >
+> > > > > > > > > > Dear Lee,
+> > > > > > > > > >
+> > > > > > > > > > Thank you for reviewing,
+> > > > > > > > > >
+> > > > > > > > > > Lee Jones <lee@kernel.org> =E6=96=BC 2025=E5=B9=B46=E6=
+=9C=8812=E6=97=A5 =E9=80=B1=E5=9B=9B =E4=B8=8B=E5=8D=8810:00=E5=AF=AB=E9=81=
+=93=EF=BC=9A
+> > > > > > > > > > >
+> > > > > > > > > > ...
+> > > > > > > > > > > > +static const struct mfd_cell nct6694_devs[] =3D {
+> > > > > > > > > > > > +     MFD_CELL_BASIC("nct6694-gpio", NULL, NULL, 0,=
+ 0),
+> > > > > > > > > > > > +     MFD_CELL_BASIC("nct6694-gpio", NULL, NULL, 0,=
+ 1),
+> > > > > > > > > > > > +     MFD_CELL_BASIC("nct6694-gpio", NULL, NULL, 0,=
+ 2),
+> > > > > > > > > > > > +     MFD_CELL_BASIC("nct6694-gpio", NULL, NULL, 0,=
+ 3),
+> > > > > > > > > > > > +     MFD_CELL_BASIC("nct6694-gpio", NULL, NULL, 0,=
+ 4),
+> > > > > > > > > > > > +     MFD_CELL_BASIC("nct6694-gpio", NULL, NULL, 0,=
+ 5),
+> > > > > > > > > > > > +     MFD_CELL_BASIC("nct6694-gpio", NULL, NULL, 0,=
+ 6),
+> > > > > > > > > > > > +     MFD_CELL_BASIC("nct6694-gpio", NULL, NULL, 0,=
+ 7),
+> > > > > > > > > > > > +     MFD_CELL_BASIC("nct6694-gpio", NULL, NULL, 0,=
+ 8),
+> > > > > > > > > > > > +     MFD_CELL_BASIC("nct6694-gpio", NULL, NULL, 0,=
+ 9),
+> > > > > > > > > > > > +     MFD_CELL_BASIC("nct6694-gpio", NULL, NULL, 0,=
+ 10),
+> > > > > > > > > > > > +     MFD_CELL_BASIC("nct6694-gpio", NULL, NULL, 0,=
+ 11),
+> > > > > > > > > > > > +     MFD_CELL_BASIC("nct6694-gpio", NULL, NULL, 0,=
+ 12),
+> > > > > > > > > > > > +     MFD_CELL_BASIC("nct6694-gpio", NULL, NULL, 0,=
+ 13),
+> > > > > > > > > > > > +     MFD_CELL_BASIC("nct6694-gpio", NULL, NULL, 0,=
+ 14),
+> > > > > > > > > > > > +     MFD_CELL_BASIC("nct6694-gpio", NULL, NULL, 0,=
+ 15),
+> > > > > > > > > > > > +
+> > > > > > > > > > > > +     MFD_CELL_BASIC("nct6694-i2c", NULL, NULL, 0, =
+0),
+> > > > > > > > > > > > +     MFD_CELL_BASIC("nct6694-i2c", NULL, NULL, 0, =
+1),
+> > > > > > > > > > > > +     MFD_CELL_BASIC("nct6694-i2c", NULL, NULL, 0, =
+2),
+> > > > > > > > > > > > +     MFD_CELL_BASIC("nct6694-i2c", NULL, NULL, 0, =
+3),
+> > > > > > > > > > > > +     MFD_CELL_BASIC("nct6694-i2c", NULL, NULL, 0, =
+4),
+> > > > > > > > > > > > +     MFD_CELL_BASIC("nct6694-i2c", NULL, NULL, 0, =
+5),
+> > > > > > > > > > >
+> > > > > > > > > > > Why have we gone back to this silly numbering scheme?
+> > > > > > > > > > >
+> > > > > > > > > > > What happened to using IDA in the child driver?
+> > > > > > > > > > >
+> > > > > > > > > >
+> > > > > > > > > > In a previous version, I tried to maintain a static IDA=
+ in each
+> > > > > > > > > > sub-driver. However, I didn=E2=80=99t consider the case=
+ where multiple NCT6694
+> > > > > > > > > > devices are bound to the same driver =E2=80=94 in that =
+case, the IDs are not
+> > > > > > > > > > fixed and become unusable for my purpose.
+> > > > > > > > >
+> > > > > > > > > Not sure I understand.
+> > > > > > > > >
+> > > > > > > >
+> > > > > > > > As far as I know, if I maintain the IDA in the sub-drivers =
+and use
+> > > > > > > > multiple MFD_CELL_NAME("nct6694-gpio") entries in the MFD, =
+the first
+> > > > > > > > NCT6694 device bound to the GPIO driver will receive IDs 0~=
+15.
+> > > > > > > > However, when a second NCT6694 device is connected to the s=
+ystem, it
+> > > > > > > > will receive IDs 16~31.
+> > > > > > > > Because of this behavior, I switched back to using platform=
+_device->id.
+> > > > > > >
+> > > > > > > Each of the devices will probe once.
+> > > > > > >
+> > > > > > > The first one will be given 0, the second will be given 1, et=
+c.
+> > > > > > >
+> > > > > > > Why would you give multiple IDs to a single device bound to a=
+ driver?
+> > > > > > >
+> > > > > >
+> > > > > > The device exposes multiple peripherals =E2=80=94 16 GPIO contr=
+ollers, 6 I2C
+> > > > > > adapters, 2 CAN FD controllers, and 2 watchdog timers. Each per=
+ipheral
+> > > > > > is independently addressable, has its own register region, and =
+can
+> > > > > > operate in isolation. The IDs are used to distinguish between t=
+hese
+> > > > > > instances.
+> > > > > > For example, the GPIO driver will be probed 16 times, allocatin=
+g 16
+> > > > > > separate gpio_chip instances to control 8 GPIO lines each.
+> > > > > >
+> > > > > > If another device binds to this driver, it is expected to expos=
+e
+> > > > > > peripherals with the same structure and behavior.
+> > > > >
+> > > > > I still don't see why having a per-device IDA wouldn't render eac=
+h
+> > > > > probed device with its own ID.  Just as you have above.
+> > > > >
+> > > >
+> > > > For example, when the MFD driver and the I2C sub-driver are loaded,
+> > > > connecting the first NCT6694 USB device to the system results in 6
+> > > > nct6694-i2c platform devices being created and bound to the
+> > > > i2c-nct6694 driver. These devices receive IDs 0 through 5 via the I=
+DA.
+> > > >
+> > > > However, when a second NCT6694 USB device is connected, its
+> > > > corresponding nct6694-i2c platform devices receive IDs 6 through 11=
+ =E2=80=94
+> > > > instead of 0 through 5 as I originally expected.
+> > > >
+> > > > If I've misunderstood something, please feel free to correct me. Th=
+ank you!
+> > >
+> > > In the code above you register 6 I2C devices.  Each device will be
+> > > assigned a platform ID 0 through 5. The .probe() function in the I2C
+> > > driver will be executed 6 times.  In each of those calls to .probe(),
+> > > instead of pre-allocating a contiguous assignment of IDs here, you
+> > > should be able to use IDA in .probe() to allocate those same device I=
+Ds
+> > > 0 through 5.
+> > >
+> > > What am I missing here?
+> > >
+> >
+> > You're absolutely right in the scenario where a single NCT6694 device
+> > is present. However, I=E2=80=99m wondering how we should handle the cas=
+e where
+> > a second or even third NCT6694 device is bound to the same MFD driver.
+> > In that situation, the sub-drivers using a static IDA will continue
+> > allocating increasing IDs, rather than restarting from 0 for each
+> > device. How should this be handled?
 >
-> The whole patch series can be found in one patch at:
->         https://www.kernel.org/pub/linux/kernel/v6.x/stable-review/patch-=
-6.6.95-rc2.gz
-> or in the git tree and branch at:
->         git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable=
--rc.git linux-6.6.y
-> and the diffstat can be found below.
+> I'd like to see the implementation of this before advising.
 >
-> thanks,
+> In such a case, I assume there would be a differentiating factor between
+> the two (or three) devices.  You would then use that to decide which IDA
+> would need to be incremented.
 >
-> greg k-h
+> However, Greg is correct.  Hard-coding look-ups for userspace to use
+> sounds like a terrible idea.
+>
 
-Results from Linaro=E2=80=99s test farm.
-No regressions on arm64, arm, x86_64, and i386.
+I understand.
+Do you think it would be better to pass the index via platform_data
+and use PLATFORM_DEVID_AUTO together with mfd_add_hotplug_devices()
+instead?
+For example:
+struct nct6694_platform_data {
+    int index;
+};
 
-Tested-by: Linux Kernel Functional Testing <lkft@linaro.org>
+static struct nct6694_platform_data i2c_data[] =3D {
+    { .index =3D 0 }, { .index =3D 1 }, { .index =3D 2 }, { .index =3D 3 },=
+ {
+.index =3D 4 }, { .index =3D 5 },
+};
 
-## Build
-* kernel: 6.6.95-rc2
-* git: https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-=
-rc.git
-* git commit: 33e06c71265b793ab2b3f3358952f6995d09e793
-* git describe: v6.6.94-289-g33e06c71265b
-* test details:
-https://qa-reports.linaro.org/lkft/linux-stable-rc-linux-6.6.y/build/v6.6.9=
-4-289-g33e06c71265b
+static const struct mfd_cell nct6694_devs[] =3D {
+    MFD_CELL_BASIC("nct6694-i2c", NULL, &i2c_data[0], sizeof(struct
+nct6694_platform_data), 0),
+    MFD_CELL_BASIC("nct6694-i2c", NULL, &i2c_data[1], sizeof(struct
+nct6694_platform_data), 0),
+    MFD_CELL_BASIC("nct6694-i2c", NULL, &i2c_data[2], sizeof(struct
+nct6694_platform_data), 0),
+    MFD_CELL_BASIC("nct6694-i2c", NULL, &i2c_data[3], sizeof(struct
+nct6694_platform_data), 0),
+    MFD_CELL_BASIC("nct6694-i2c", NULL, &i2c_data[4], sizeof(struct
+nct6694_platform_data), 0),
+    MFD_CELL_BASIC("nct6694-i2c", NULL, &i2c_data[5], sizeof(struct
+nct6694_platform_data), 0),
+};
+...
+mfd_add_hotplug_devices(dev, nct6694_devs, ARRAY_SIZE(nct6694_devs));
+...
 
-## Test Regressions (compared to v6.6.93-357-g7ef12da06319)
+Thank you again for your support.
 
-## Metric Regressions (compared to v6.6.93-357-g7ef12da06319)
 
-## Test Fixes (compared to v6.6.93-357-g7ef12da06319)
-
-## Metric Fixes (compared to v6.6.93-357-g7ef12da06319)
-
-## Test result summary
-total: 233901, pass: 212419, fail: 5723, skip: 15315, xfail: 444
-
-## Build Summary
-* arc: 5 total, 5 passed, 0 failed
-* arm: 129 total, 128 passed, 0 failed, 1 skipped
-* arm64: 44 total, 41 passed, 0 failed, 3 skipped
-* i386: 23 total, 23 passed, 0 failed
-* mips: 26 total, 25 passed, 1 failed
-* parisc: 4 total, 4 passed, 0 failed
-* powerpc: 32 total, 30 passed, 1 failed, 1 skipped
-* riscv: 15 total, 14 passed, 0 failed, 1 skipped
-* s390: 14 total, 12 passed, 1 failed, 1 skipped
-* sh: 10 total, 10 passed, 0 failed
-* sparc: 7 total, 7 passed, 0 failed
-* x86_64: 37 total, 37 passed, 0 failed
-
-## Test suites summary
-* boot
-* commands
-* kselftest-arm64
-* kselftest-breakpoints
-* kselftest-capabilities
-* kselftest-cgroup
-* kselftest-clone3
-* kselftest-core
-* kselftest-cpu-hotplug
-* kselftest-cpufreq
-* kselftest-efivarfs
-* kselftest-exec
-* kselftest-fpu
-* kselftest-ftrace
-* kselftest-futex
-* kselftest-gpio
-* kselftest-intel_pstate
-* kselftest-ipc
-* kselftest-kcmp
-* kselftest-kvm
-* kselftest-livepatch
-* kselftest-membarrier
-* kselftest-memfd
-* kselftest-mincore
-* kselftest-mm
-* kselftest-mqueue
-* kselftest-net
-* kselftest-net-mptcp
-* kselftest-openat2
-* kselftest-ptrace
-* kselftest-rseq
-* kselftest-rtc
-* kselftest-seccomp
-* kselftest-sigaltstack
-* kselftest-size
-* kselftest-tc-testing
-* kselftest-timers
-* kselftest-tmpfs
-* kselftest-tpm2
-* kselftest-user_events
-* kselftest-vDSO
-* kselftest-x86
-* kunit
-* kvm-unit-tests
-* lava
-* libgpiod
-* libhugetlbfs
-* log-parser-boot
-* log-parser-build-clang
-* log-parser-build-gcc
-* log-parser-test
-* ltp-capability
-* ltp-commands
-* ltp-containers
-* ltp-controllers
-* ltp-cpuhotplug
-* ltp-crypto
-* ltp-cve
-* ltp-dio
-* ltp-fcntl-locktests
-* ltp-fs
-* ltp-fs_bind
-* ltp-fs_perms_simple
-* ltp-hugetlb
-* ltp-math
-* ltp-mm
-* ltp-nptl
-* ltp-pty
-* ltp-sched
-* ltp-smoke
-* ltp-syscalls
-* ltp-tracing
-* modules
-* perf
-* rcutorture
-
---
-Linaro LKFT
-https://lkft.linaro.org
+Best regards,
+Ming
 
