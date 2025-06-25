@@ -1,189 +1,199 @@
-Return-Path: <linux-kernel+bounces-701863-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-701867-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3622BAE7A54
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Jun 2025 10:34:51 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 46E9EAE7A64
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Jun 2025 10:37:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B55C34A1F7B
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Jun 2025 08:34:19 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id DA4041889A69
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Jun 2025 08:37:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8FA72273D6F;
-	Wed, 25 Jun 2025 08:32:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D3B59279323;
+	Wed, 25 Jun 2025 08:36:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="YYF9suUm";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="97EOmAoR";
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="YYF9suUm";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="97EOmAoR"
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b="SqHnV/Gq"
+Received: from mx07-00178001.pphosted.com (mx08-00178001.pphosted.com [91.207.212.93])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 45AB326D4D7
-	for <linux-kernel@vger.kernel.org>; Wed, 25 Jun 2025 08:32:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4ACF8275B05;
+	Wed, 25 Jun 2025 08:36:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.207.212.93
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750840365; cv=none; b=KepqmDN5j4ndho3aCDCpi8bDlUUKXDIeoWqeAt2ah2D1Xo9ufBr5VHSr7FcsmnUfrjgy72ZiJRrmbAkhluqEmFgcATL2gLx6Q9O3261+B474e6foOWLdTbNSMkxmMVWPkS08O8t76ZfnNJZOE/ZU2QE7NvgkyhcCFJfbN4NaNhI=
+	t=1750840608; cv=none; b=spKLMAwMQkVsyzXeVHut6OBwLIkYRoAc8kX6Gi0Wj+MPfhbPZlTkivwqJFXTzPh+LKFt3VCSHr28RomHohMsKDDbLuUyzb0hmonJVigvBMgLgG/i4G3zWtXD/kXc2YCdiWNJT1mOXlINy2Mrg9DeBce6v+bYISFnCuHFnNVzm28=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750840365; c=relaxed/simple;
-	bh=cLGO2tGWKLpFxyW5gkHqKwbizuk9GuQYNaXUCEwpD/0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=DCYvYfXA4V2aZ59NpPoR7DPv85P7nuCBrNoMWjUW/E6a334GnezSYFl4xi19lOyahxCEubkcCPiMRPRB1RlcbglEkjHuMeZ6N3XVP8cV6+49e1IvcMEbrzG/2j0vca3kuGJcrfJ6JpRKCLh5dbGoLnVNEWYYdnbAf1WXX7uufu8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=YYF9suUm; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=97EOmAoR; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=YYF9suUm; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=97EOmAoR; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id 8E4F51F441;
-	Wed, 25 Jun 2025 08:32:42 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1750840362; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=LvsxlS0cmtKd50SAarkgxXsJSJ8SVxlr6YRJZ0Kuw7w=;
-	b=YYF9suUmqmsov29mUAAwTXmEGnJGN45O8sq947w5kqRNGYS+c3eM3cjVel9o32Us7nww5O
-	bAaC+RrllO1XzTVObIC+llSCBi2NGUP1kJIiALEUlJaXL7CkrISEVDW3m6hVmfuvM13li2
-	ZPyssUu75btHyCNPVDdh19o37/jPh1g=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1750840362;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=LvsxlS0cmtKd50SAarkgxXsJSJ8SVxlr6YRJZ0Kuw7w=;
-	b=97EOmAoRfGyaaxwucVMLIn0KlgNXHwc+mku6jg9ohXLjfVZ4r6DPBYIL6zMF7QbFF8iALe
-	mYWwvaGcbzAujkCQ==
-Authentication-Results: smtp-out2.suse.de;
-	dkim=pass header.d=suse.de header.s=susede2_rsa header.b=YYF9suUm;
-	dkim=pass header.d=suse.de header.s=susede2_ed25519 header.b=97EOmAoR
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1750840362; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=LvsxlS0cmtKd50SAarkgxXsJSJ8SVxlr6YRJZ0Kuw7w=;
-	b=YYF9suUmqmsov29mUAAwTXmEGnJGN45O8sq947w5kqRNGYS+c3eM3cjVel9o32Us7nww5O
-	bAaC+RrllO1XzTVObIC+llSCBi2NGUP1kJIiALEUlJaXL7CkrISEVDW3m6hVmfuvM13li2
-	ZPyssUu75btHyCNPVDdh19o37/jPh1g=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1750840362;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=LvsxlS0cmtKd50SAarkgxXsJSJ8SVxlr6YRJZ0Kuw7w=;
-	b=97EOmAoRfGyaaxwucVMLIn0KlgNXHwc+mku6jg9ohXLjfVZ4r6DPBYIL6zMF7QbFF8iALe
-	mYWwvaGcbzAujkCQ==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 218C713485;
-	Wed, 25 Jun 2025 08:32:41 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id QkyABSm0W2jmHwAAD6G6ig
-	(envelope-from <osalvador@suse.de>); Wed, 25 Jun 2025 08:32:41 +0000
-Date: Wed, 25 Jun 2025 10:32:31 +0200
-From: Oscar Salvador <osalvador@suse.de>
-To: David Hildenbrand <david@redhat.com>
-Cc: linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-	linux-mm@kvack.org, nvdimm@lists.linux.dev,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Juergen Gross <jgross@suse.com>,
-	Stefano Stabellini <sstabellini@kernel.org>,
-	Oleksandr Tyshchenko <oleksandr_tyshchenko@epam.com>,
-	Dan Williams <dan.j.williams@intel.com>,
-	Alistair Popple <apopple@nvidia.com>,
-	Matthew Wilcox <willy@infradead.org>, Jan Kara <jack@suse.cz>,
-	Alexander Viro <viro@zeniv.linux.org.uk>,
-	Christian Brauner <brauner@kernel.org>, Zi Yan <ziy@nvidia.com>,
-	Baolin Wang <baolin.wang@linux.alibaba.com>,
-	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
-	"Liam R. Howlett" <Liam.Howlett@oracle.com>,
-	Nico Pache <npache@redhat.com>, Ryan Roberts <ryan.roberts@arm.com>,
-	Dev Jain <dev.jain@arm.com>, Barry Song <baohua@kernel.org>,
-	Vlastimil Babka <vbabka@suse.cz>, Mike Rapoport <rppt@kernel.org>,
-	Suren Baghdasaryan <surenb@google.com>,
-	Michal Hocko <mhocko@suse.com>, Jann Horn <jannh@google.com>,
-	Pedro Falcato <pfalcato@suse.de>
-Subject: Re: [PATCH RFC 08/14] mm/huge_memory: mark PMD mappings of the huge
- zero folio special
-Message-ID: <aFu0H_AgdM2W2-R_@localhost.localdomain>
-References: <20250617154345.2494405-1-david@redhat.com>
- <20250617154345.2494405-9-david@redhat.com>
+	s=arc-20240116; t=1750840608; c=relaxed/simple;
+	bh=EbK0U+OP5CIqfg71sOAF4oAM+5LmkeILjjLQ3geqK5s=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=EChmczUceWR1raU8nR5IZ0qXJdPftEdCibO9qbERnSwR6k4SC7aou3g7N0uWtN+RTuK3f3CeXIDm/0bkBFmpVrO2rVGUM6Zw6n5jSilw2jkrWVLjl9y3ZO1ILbNa41GVmRjkrLqPI2YH0moHxlRdS+kxIaVOBtumfsKFvG1y+v0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com; spf=pass smtp.mailfrom=foss.st.com; dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b=SqHnV/Gq; arc=none smtp.client-ip=91.207.212.93
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=foss.st.com
+Received: from pps.filterd (m0046661.ppops.net [127.0.0.1])
+	by mx07-00178001.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 55P6nksJ008379;
+	Wed, 25 Jun 2025 10:36:23 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foss.st.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=selector1; bh=
+	5iWKPTMFpX+lonpPcbekR/V8/MBsHrjUivVDN79opdU=; b=SqHnV/GqxnozxlFn
+	ObEanHvfEI2F+FZtdB/7rtcovax1mQOyY1mVLlQ1BSYzN3yIdeS4b9QiEoUlf22n
+	cTk3tMwbAYEgr0NzY+C6Hu4ePlqFtc4ohf3c5cI1MVAtveM2SqSkuPOgaXVJl9t2
+	lNCnLxNPGVWfXjSSFjGP4wGMV2SqlxyIdFceC6pGRDWYwmmr/huHgqdJtS0AtyK8
+	zzxhKbVp4Gp7CwnIsip3EpIf8VWMfTaCJeNLMvIY5aPom3oUeQlg0pEMpwG3qDpL
+	WCHhLTWw5LXNeUKngpRNl/Swhe1B9upvwpikOj5INAqO+91z2RN6R3qE/iQ39qUX
+	HZIp/w==
+Received: from beta.dmz-ap.st.com (beta.dmz-ap.st.com [138.198.100.35])
+	by mx07-00178001.pphosted.com (PPS) with ESMTPS id 47dkmjrekf-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 25 Jun 2025 10:36:23 +0200 (MEST)
+Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
+	by beta.dmz-ap.st.com (STMicroelectronics) with ESMTP id A845540047;
+	Wed, 25 Jun 2025 10:35:03 +0200 (CEST)
+Received: from Webmail-eu.st.com (shfdag1node2.st.com [10.75.129.70])
+	by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id 36FE8B0C401;
+	Wed, 25 Jun 2025 10:33:50 +0200 (CEST)
+Received: from [10.48.86.185] (10.48.86.185) by SHFDAG1NODE2.st.com
+ (10.75.129.70) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Wed, 25 Jun
+ 2025 10:33:49 +0200
+Message-ID: <e2400615-f21e-40bf-84f8-384242632193@foss.st.com>
+Date: Wed, 25 Jun 2025 10:33:48 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250617154345.2494405-9-david@redhat.com>
-X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
-X-Rspamd-Queue-Id: 8E4F51F441
-X-Rspamd-Action: no action
-X-Spam-Flag: NO
-X-Spamd-Result: default: False [-4.51 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	R_DKIM_ALLOW(-0.20)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	MX_GOOD(-0.01)[];
-	FROM_HAS_DN(0.00)[];
-	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	ARC_NA(0.00)[];
-	RCPT_COUNT_TWELVE(0.00)[29];
-	MIME_TRACE(0.00)[0:+];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	RCVD_TLS_ALL(0.00)[];
-	DKIM_TRACE(0.00)[suse.de:+];
-	DNSWL_BLOCKED(0.00)[2a07:de40:b281:106:10:150:64:167:received,2a07:de40:b281:104:10:150:64:97:from];
-	RCVD_COUNT_TWO(0.00)[2];
-	FROM_EQ_ENVFROM(0.00)[];
-	TO_DN_SOME(0.00)[];
-	RECEIVED_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:106:10:150:64:167:received];
-	MISSING_XM_UA(0.00)[];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	R_RATELIMIT(0.00)[to_ip_from(RL88oxspsx4bg3gu1yybyqiqt4)];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.de:dkim,suse.de:email,imap1.dmz-prg2.suse.org:rdns,imap1.dmz-prg2.suse.org:helo]
-X-Spam-Score: -4.51
-X-Spam-Level: 
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 06/13] perf: stm32: introduce DDRPERFM driver
+To: Krzysztof Kozlowski <krzk@kernel.org>, Will Deacon <will@kernel.org>,
+        Mark
+ Rutland <mark.rutland@arm.com>, Rob Herring <robh@kernel.org>,
+        Krzysztof
+ Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>,
+        Maxime
+ Coquelin <mcoquelin.stm32@gmail.com>,
+        Alexandre Torgue
+	<alexandre.torgue@foss.st.com>,
+        Philipp Zabel <p.zabel@pengutronix.de>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Gatien Chevallier
+	<gatien.chevallier@foss.st.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Gabriel Fernandez
+	<gabriel.fernandez@foss.st.com>
+CC: <linux-arm-kernel@lists.infradead.org>, <linux-perf-users@vger.kernel.org>,
+        <devicetree@vger.kernel.org>,
+        <linux-stm32@st-md-mailman.stormreply.com>,
+        <linux-kernel@vger.kernel.org>, <linux-doc@vger.kernel.org>,
+        <linux-clk@vger.kernel.org>
+References: <20250623-ddrperfm-upstream-v1-0-7dffff168090@foss.st.com>
+ <20250623-ddrperfm-upstream-v1-6-7dffff168090@foss.st.com>
+ <9cb1575e-ae27-4a78-adb7-8a9e7072375e@kernel.org>
+ <5044c733-8836-43bd-85d7-0f552b000fb1@foss.st.com>
+ <49483568-b287-45ca-a66c-1e0ad0490225@kernel.org>
+Content-Language: en-US
+From: Clement LE GOFFIC <clement.legoffic@foss.st.com>
+In-Reply-To: <49483568-b287-45ca-a66c-1e0ad0490225@kernel.org>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: SHFCAS1NODE1.st.com (10.75.129.72) To SHFDAG1NODE2.st.com
+ (10.75.129.70)
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.7,FMLib:17.12.80.40
+ definitions=2025-06-25_01,2025-06-23_07,2025-03-28_01
 
-On Tue, Jun 17, 2025 at 05:43:39PM +0200, David Hildenbrand wrote:
-> The huge zero folio is refcounted (+mapcounted -- is that a word?)
-> differently than "normal" folios, similarly (but different) to the ordinary
-> shared zeropage.
+On 6/25/25 08:35, Krzysztof Kozlowski wrote:
+> On 24/06/2025 12:43, Clement LE GOFFIC wrote:
+>> On 6/23/25 11:45, Krzysztof Kozlowski wrote:
+>> [...]
+>>
+>> Hi Krzysztof,
+>>
+>> Sorry I forgot to address comments below.
+>>
+>>>> +
+>>>> +static const struct stm32_ddr_pmu_cfg stm32_ddr_pmu_cfg_mp1 = {
+>>>> +	.regs = &stm32_ddr_pmu_regspec_mp1,
+>>>> +	.attribute = stm32_ddr_pmu_attr_groups_mp1,
+>>>> +	.counters_nb = MP1_CNT_NB,
+>>>> +	.evt_counters_nb = MP1_CNT_NB - 1, /* Time counter is not an event counter */
+>>>> +	.time_cnt_idx = MP1_TIME_CNT_IDX,
+>>>> +	.get_counter = stm32_ddr_pmu_get_event_counter_mp1,
+>>>> +};
+>>>> +
+>>>> +static const struct stm32_ddr_pmu_cfg stm32_ddr_pmu_cfg_mp2 = {
+>>>> +	.regs = &stm32_ddr_pmu_regspec_mp2,
+>>>> +	.attribute = stm32_ddr_pmu_attr_groups_mp2,
+>>>> +	.counters_nb = MP2_CNT_NB,
+>>>> +	.evt_counters_nb = MP2_CNT_NB - 1, /* Time counter is an event counter */
+>>>> +	.time_cnt_idx = MP2_TIME_CNT_IDX,
+>>>> +	.get_counter = stm32_ddr_pmu_get_event_counter_mp2,
+>>>> +};
+>>>> +
+>>>> +static const struct dev_pm_ops stm32_ddr_pmu_pm_ops = {
+>>>> +	SET_SYSTEM_SLEEP_PM_OPS(NULL, stm32_ddr_pmu_device_resume)
+>>>> +};
+>>>> +
+>>>> +static const struct of_device_id stm32_ddr_pmu_of_match[] = {
+>>>> +	{
+>>>> +		.compatible = "st,stm32mp131-ddr-pmu",
+>>>> +		.data = &stm32_ddr_pmu_cfg_mp1
+>>>> +	},
+>>>> +	{
+>>>> +		.compatible = "st,stm32mp151-ddr-pmu",
+>>>> +		.data = &stm32_ddr_pmu_cfg_mp1
+>>>
+>>> So devices are compatible, thus express it correctly and drop this.
+>>
+>> Ok so I assume this comes with your comment in the bindings and
+>> basically don't get you point here.
+>> Can you please be more precise ?
 > 
-> For this reason, we special-case these pages in
-> vm_normal_page*/vm_normal_folio*, and only allow selected callers to
-> still use them (e.g., GUP can still take a reference on them).
+> Express compatibility in the bindings, like 90% of SoCs are doing, so
+> with proper fallback and drop this entry in the table. My comment was
+> pretty precise, because this is completely standard pattern, also used
+> already in stm32.
 > 
-> vm_normal_page_pmd() already filters out the huge zero folio. However,
-> so far we are not marking it as special like we do with the ordinary
-> shared zeropage. Let's mark it as special, so we can further refactor
-> vm_normal_page_pmd() and vm_normal_page().
-> 
-> While at it, update the doc regarding the shared zero folios.
-> 
-> Signed-off-by: David Hildenbrand <david@redhat.com>
 
-Reviewed-by: Oscar Salvador <osalvador@suse.de>
+Ok I remember your discussion with Alex in my V1 of pinctrl-hdp :
+https://lore.kernel.org/all/1de58672-5355-4b75-99f4-c48687017d2f@kernel.org/
 
-While doing this, would it make sense to update vm_normal_page_pmd()
-comments to refelect that pmd_special will also catch huge_zero_folio()?
-It only mentions huge pfnmaps.
+Does it suits you :
+In the SoC DT:
+MP13: compatible = "st,stm32mp131-ddr-pmu", "st,stm32mp1-ddr-pmu";
+MP15: compatible = "st,stm32mp151-ddr-pmu", "st,stm32mp1-ddr-pmu";
+MP25: compatible = "st,stm32mp251-ddr-pmu";
 
-It might not be worth doing since you remove that code later on, but
-maybe if someone stares at this commit alone..
+In the bindings:
+properties:
+   compatible:
+     enum:
+       - st,stm32mp1-ddr-pmu
+       - st,stm32mp131-ddr-pmu
+       - st,stm32mp151-ddr-pmu
+       - st,stm32mp251-ddr-pmu
 
+In the driver:
+static const struct of_device_id stm32_ddr_pmu_of_match[] = {
+	{
+		.compatible = "st,stm32mp1-ddr-pmu",
+		.data = &stm32_ddr_pmu_cfg_mp1
+	},
+	{
+		.compatible = "st,stm32mp251-ddr-pmu",
+		.data = &stm32_ddr_pmu_cfg_mp2
+	},
+	{ },
+};
 
--- 
-Oscar Salvador
-SUSE Labs
+Best regards,
+Clément
+
+> Best regards,
+> Krzysztof
+
 
