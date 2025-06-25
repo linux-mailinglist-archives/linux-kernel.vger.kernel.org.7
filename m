@@ -1,57 +1,116 @@
-Return-Path: <linux-kernel+bounces-701908-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-701910-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3B44DAE7AE8
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Jun 2025 10:52:57 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 9AD8DAE7AEB
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Jun 2025 10:53:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5473D4A08AA
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Jun 2025 08:52:57 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CE535168780
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Jun 2025 08:53:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AF5FD2820B6;
-	Wed, 25 Jun 2025 08:52:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3F19B281366;
+	Wed, 25 Jun 2025 08:53:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="ilQxjYbW"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="cyy+NN0h";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="rGwHmcrF";
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="cyy+NN0h";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="rGwHmcrF"
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F07E42750F8;
-	Wed, 25 Jun 2025 08:52:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0FF1027D784
+	for <linux-kernel@vger.kernel.org>; Wed, 25 Jun 2025 08:53:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750841572; cv=none; b=ZEgyFaqWlEs7dbssdoQ0IsZwdxlD2qEW2bkb8GNv0ntFkU0xwxwr/sjlgTN50q31WEW5wCYzUuH0VTbhj3oV0bxhRsK5+MsX6yK6DmV7IexaSPuWmX/PI8ChrNvs+XVMVq96wCM36ruPbmDt7/01nBHhBsgNsgrZRqAQiuADf6k=
+	t=1750841612; cv=none; b=L0RURsgCDErLDDNEs6fnHnt1RKB+pOdS8z6HlS4ah33I9dxn33BNDQFXygmG6/kVALD9ck2n8+ksVLQAoSkXFzukjp1uAuCBqwlcIidPcxbcwE+PKhX3dRTumc6B6kg5Ol/WcOt2UZTrrub7dw+ok0KrLd905z/3v+ESLwW+rq8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750841572; c=relaxed/simple;
-	bh=SF3bLEabkpsMFTOBi7CdbNK4kPMG1GvDh9vgEQ/j9xM=;
+	s=arc-20240116; t=1750841612; c=relaxed/simple;
+	bh=tZbZp/vtpw2+MpssFSXFUMkGQYHFpzOZjs1LC9c5oNk=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ZGGKCqiuzaWasCXNVIyV3aY6vd/yTWnYXNe6NP0H/RHHOG43AinIqlvz4F2Hk+vviOw8OYE05bhfY8H975tdRHHp+MSzdasoeTkNA49ZykewizTbDzYQgokjOvGD2kVlG7bRqjBfVoY/l5Lm6miC+NYehT3xvMN9QPilPdtrw64=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=ilQxjYbW; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id EF550C4CEEA;
-	Wed, 25 Jun 2025 08:52:50 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1750841571;
-	bh=SF3bLEabkpsMFTOBi7CdbNK4kPMG1GvDh9vgEQ/j9xM=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=ilQxjYbWiAqEXKQVEksDS67eR3x2Rz+JpKAEMXa3PUr4dzW3lHpUKjqwVJkVpaWqT
-	 TJtEkP3k49gedFELsxQnqiB7KWfiO/jtgBekLKy1MbXdi2a6qRwn0h0UE1UCxS/1jo
-	 k2yH6HZhXfVebcZy7KWxZrEUrwa0ZqnBOnAQR9dY=
-Date: Wed, 25 Jun 2025 09:52:49 +0100
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To: Jon Hunter <jonathanh@nvidia.com>
-Cc: patches@lists.linux.dev, linux-kernel@vger.kernel.org,
-	torvalds@linux-foundation.org, akpm@linux-foundation.org,
-	linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org,
-	lkft-triage@lists.linaro.org, pavel@denx.de, f.fainelli@gmail.com,
-	sudipm.mukherjee@gmail.com, srw@sladewatkins.net, rwarsow@gmx.de,
-	conor@kernel.org, hargar@microsoft.com, broonie@kernel.org,
-	linux-tegra@vger.kernel.org, stable@vger.kernel.org
-Subject: Re: [PATCH 5.4 000/222] 5.4.295-rc1 review
-Message-ID: <2025062530-friend-certainly-f8e4@gregkh>
-References: <20250623130611.896514667@linuxfoundation.org>
- <cf271495-270e-4a0a-a93e-fe8c44e4eabd@rnnvmail204.nvidia.com>
- <c84768f2-17d7-4edd-8f6e-d0f2a74ef559@nvidia.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=Vf+G6LkJvB2JkvbBtMgLYeZDhCA+MPWKfXeOQsjrV+VRhc4/dHn1GDiiHMdu/UJNiy1LU4K6pSlGs2osCm0FbxPbeW/J1hP54iseZP2SNzjGJR3wVNrShdpZvN15XW/i52m2g/5i5oKpc+4Girqj4ydJL3VufbXLxP1TQ36wPrw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=cyy+NN0h; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=rGwHmcrF; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=cyy+NN0h; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=rGwHmcrF; arc=none smtp.client-ip=195.135.223.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
+Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out2.suse.de (Postfix) with ESMTPS id 2D6291F441;
+	Wed, 25 Jun 2025 08:53:29 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1750841609; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=GAfGh4tYtysketyE4fbGkajM3VhOr88Hy7D0kXgBIiU=;
+	b=cyy+NN0hrseRtAGCGBieJVuers0yS9mDOnwBsQkfjvA4vTfElXF9LBcFPJC5g42YcOWnnf
+	kTFWduHPeuZsjTb3MlzoftZVmCB9Myqt0knmJq3lwBuY5kijYGEJSKM8mftl6YDrUndxeq
+	YTGo4dnpA209BaBqWWNpNViantAlXFc=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1750841609;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=GAfGh4tYtysketyE4fbGkajM3VhOr88Hy7D0kXgBIiU=;
+	b=rGwHmcrFlj+nV2KdEQwWN3n5vfoo/k7CBzpbQ0xp+u+NAsLjhNM2V4rMA5UpDFNC+jAbud
+	neEzhTu5DnXfcHBg==
+Authentication-Results: smtp-out2.suse.de;
+	none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1750841609; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=GAfGh4tYtysketyE4fbGkajM3VhOr88Hy7D0kXgBIiU=;
+	b=cyy+NN0hrseRtAGCGBieJVuers0yS9mDOnwBsQkfjvA4vTfElXF9LBcFPJC5g42YcOWnnf
+	kTFWduHPeuZsjTb3MlzoftZVmCB9Myqt0knmJq3lwBuY5kijYGEJSKM8mftl6YDrUndxeq
+	YTGo4dnpA209BaBqWWNpNViantAlXFc=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1750841609;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=GAfGh4tYtysketyE4fbGkajM3VhOr88Hy7D0kXgBIiU=;
+	b=rGwHmcrFlj+nV2KdEQwWN3n5vfoo/k7CBzpbQ0xp+u+NAsLjhNM2V4rMA5UpDFNC+jAbud
+	neEzhTu5DnXfcHBg==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id B604713485;
+	Wed, 25 Jun 2025 08:53:27 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id TjjbKQe5W2ikJwAAD6G6ig
+	(envelope-from <osalvador@suse.de>); Wed, 25 Jun 2025 08:53:27 +0000
+Date: Wed, 25 Jun 2025 10:53:26 +0200
+From: Oscar Salvador <osalvador@suse.de>
+To: David Hildenbrand <david@redhat.com>
+Cc: linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+	linux-mm@kvack.org, nvdimm@lists.linux.dev,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Juergen Gross <jgross@suse.com>,
+	Stefano Stabellini <sstabellini@kernel.org>,
+	Oleksandr Tyshchenko <oleksandr_tyshchenko@epam.com>,
+	Dan Williams <dan.j.williams@intel.com>,
+	Alistair Popple <apopple@nvidia.com>,
+	Matthew Wilcox <willy@infradead.org>, Jan Kara <jack@suse.cz>,
+	Alexander Viro <viro@zeniv.linux.org.uk>,
+	Christian Brauner <brauner@kernel.org>, Zi Yan <ziy@nvidia.com>,
+	Baolin Wang <baolin.wang@linux.alibaba.com>,
+	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
+	"Liam R. Howlett" <Liam.Howlett@oracle.com>,
+	Nico Pache <npache@redhat.com>, Ryan Roberts <ryan.roberts@arm.com>,
+	Dev Jain <dev.jain@arm.com>, Barry Song <baohua@kernel.org>,
+	Vlastimil Babka <vbabka@suse.cz>, Mike Rapoport <rppt@kernel.org>,
+	Suren Baghdasaryan <surenb@google.com>,
+	Michal Hocko <mhocko@suse.com>, Jann Horn <jannh@google.com>,
+	Pedro Falcato <pfalcato@suse.de>
+Subject: Re: [PATCH RFC 10/14] mm/memory: factor out common code from
+ vm_normal_page_*()
+Message-ID: <aFu5Bn2APcr2sf7k@localhost.localdomain>
+References: <20250617154345.2494405-1-david@redhat.com>
+ <20250617154345.2494405-11-david@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -60,73 +119,69 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <c84768f2-17d7-4edd-8f6e-d0f2a74ef559@nvidia.com>
+In-Reply-To: <20250617154345.2494405-11-david@redhat.com>
+X-Spam-Flag: NO
+X-Spam-Score: -4.30
+X-Spamd-Result: default: False [-4.30 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	NEURAL_HAM_SHORT(-0.20)[-0.999];
+	MIME_GOOD(-0.10)[text/plain];
+	MISSING_XM_UA(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	RCPT_COUNT_TWELVE(0.00)[29];
+	ARC_NA(0.00)[];
+	TO_DN_SOME(0.00)[];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	RCVD_TLS_ALL(0.00)[];
+	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	FROM_EQ_ENVFROM(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	R_RATELIMIT(0.00)[to_ip_from(RLhwqoz3wsm4df3nfubx4grhps)];
+	RCVD_COUNT_TWO(0.00)[2];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.de:email,imap1.dmz-prg2.suse.org:helo]
+X-Spam-Level: 
 
-On Wed, Jun 25, 2025 at 08:34:47AM +0100, Jon Hunter wrote:
-> Hi Greg,
+On Tue, Jun 17, 2025 at 05:43:41PM +0200, David Hildenbrand wrote:
+> Let's reduce the code duplication and factor out the non-pte/pmd related
+> magic into vm_normal_page_pfn().
 > 
-> On 25/06/2025 08:16, Jon Hunter wrote:
-> > On Mon, 23 Jun 2025 15:05:35 +0200, Greg Kroah-Hartman wrote:
-> > > This is the start of the stable review cycle for the 5.4.295 release.
-> > > There are 222 patches in this series, all will be posted as a response
-> > > to this one.  If anyone has any issues with these being applied, please
-> > > let me know.
-> > > 
-> > > Responses should be made by Wed, 25 Jun 2025 13:05:50 +0000.
-> > > Anything received after that time might be too late.
-> > > 
-> > > The whole patch series can be found in one patch at:
-> > > 	https://www.kernel.org/pub/linux/kernel/v5.x/stable-review/patch-5.4.295-rc1.gz
-> > > or in the git tree and branch at:
-> > > 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-5.4.y
-> > > and the diffstat can be found below.
-> > > 
-> > > thanks,
-> > > 
-> > > greg k-h
-> > 
-> > Failures detected for Tegra ...
-> > 
-> > Test results for stable-v5.4:
-> >      10 builds:	7 pass, 3 fail
-> >      18 boots:	18 pass, 0 fail
-> >      39 tests:	39 pass, 0 fail
-> > 
-> > Linux version:	5.4.295-rc1-gca8c5417d1e6
-> > Boards tested:	tegra124-jetson-tk1, tegra186-p2771-0000,
-> >                  tegra194-p2972-0000, tegra20-ventana,
-> >                  tegra210-p2371-2180, tegra210-p3450-0000,
-> >                  tegra30-cardhu-a04
-> > 
-> > Builds failed:	arm+multi_v7
+> To keep it simpler, check the pfn against both zero folios. We could
+> optimize this, but as it's only for the !CONFIG_ARCH_HAS_PTE_SPECIAL
+> case, it's not a compelling micro-optimization.
 > 
+> With CONFIG_ARCH_HAS_PTE_SPECIAL we don't have to check anything else,
+> really.
 > 
-> I am seeing the following build error for ARM with the
-> multi_v7_defconfig on our builders ...
+> It's a good question if we can even hit the !CONFIG_ARCH_HAS_PTE_SPECIAL
+> scenario in the PMD case in practice: but doesn't really matter, as
+> it's now all unified in vm_normal_page_pfn().
 > 
->   CC      drivers/firmware/qcom_scm-32.o
-> /tmp/cc9gP1cd.s: Assembler messages:
-> /tmp/cc9gP1cd.s:45: Error: selected processor does not support `smc #0' in ARM mode
-> /tmp/cc9gP1cd.s:94: Error: selected processor does not support `smc #0' in ARM mode
-> /tmp/cc9gP1cd.s:160: Error: selected processor does not support `smc #0' in ARM mode
-> /tmp/cc9gP1cd.s:295: Error: selected processor does not support `smc #0' in ARM mode
-> make[3]: *** [/home/jonathanh/nvidia/mlt-linux_next/kernel/scripts/Makefile.build:262: drivers/firmware/qcom_scm-32.o] Error 1
+> While at it, add a check that pmd_special() is really only set where we
+> would expect it.
 > 
+> No functional change intended.
 > 
-> Bisect is pointing to ...
-> 
-> # first bad commit: [0c23125c509b41be51f0d5acb843b079a098a40c] kbuild: Update assembler calls to use proper flags and language target
-> 
-> Reverting this fixes it but I also needed to revert the following due to dependencies ...
-> 
-> Nathan Chancellor <nathan@kernel.org>
->     kbuild: Add KBUILD_CPPFLAGS to as-option invocation
-> 
-> Nathan Chancellor <nathan@kernel.org>
->     kbuild: Add CLANG_FLAGS to as-instr
+> Signed-off-by: David Hildenbrand <david@redhat.com>
 
-I've also dropped the others in this series and will push out a -rc2
-soon, thanks for testing and letting me know.
+Reviewed-by: Oscar Salvador <osalvador@suse.de>
 
-greg k-h
+Comment below
+
+>  struct folio *vm_normal_folio(struct vm_area_struct *vma, unsigned long addr,
+> @@ -650,35 +661,12 @@ struct page *vm_normal_page_pmd(struct vm_area_struct *vma, unsigned long addr,
+>  {
+>  	unsigned long pfn = pmd_pfn(pmd);
+>  
+> -	/* Currently it's only used for huge pfnmaps */
+
+Although the check kind of spells it out, we could leave this one and also add
+that huge_zero_pfn, to make it more explicit.
+ 
+
+-- 
+Oscar Salvador
+SUSE Labs
 
