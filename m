@@ -1,171 +1,94 @@
-Return-Path: <linux-kernel+bounces-703401-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-703403-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7A618AE8F9F
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Jun 2025 22:43:04 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id B34A9AE8FA4
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Jun 2025 22:43:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 931877A8DE9
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Jun 2025 20:41:39 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EF8E1164921
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Jun 2025 20:43:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 29CEE2DCC07;
-	Wed, 25 Jun 2025 20:42:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ECDCA2DCC14;
+	Wed, 25 Jun 2025 20:43:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="U5TLu1SR"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="WKNaIsye"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6EB3220E031;
-	Wed, 25 Jun 2025 20:42:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 537BF20E031;
+	Wed, 25 Jun 2025 20:43:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750884173; cv=none; b=IhiwSgoMgx5u5K1TdTI/MTdxWEx+MkW+brrTfRRBbarwJClcEWAh7GlI6syjxuiLWeGCSDNUY0V/xNQABytgs+X3YfeIbU0MXdtUYuCpCX1vG+AVSA8MVL2C1FmQpqsYsrunZZQ8DLJ5E2InrlIL1u6HoLyQUD3ovA5X5dQWA9c=
+	t=1750884221; cv=none; b=KYQiBBX6n5Gg4HHhvHHE7lc9hsZY9Rf/OvRZxUcd22+AZq21l4UYCFayGhslKPkaLfyt+ocjbOb28lq6Oig9ivrT6cEv/tPNH34hZphEnmvhM1YQsCvW43TlED2N0qU/uNnXl+D7hHJjm+OJpwouNd52c4LelDKQGRi//ULIdlE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750884173; c=relaxed/simple;
-	bh=TQ2yeYtVxpuEcSzjUBWcAiYEI/WKnqX64t4Owb5qOrA=;
+	s=arc-20240116; t=1750884221; c=relaxed/simple;
+	bh=Rmz67o9XCjNjggKR0sYTYAf42AfBsHBAtQO+D5/ooAU=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=gJicKXXIUlkCaYxPmr2wBhKK9W5369h/RHr0gCT96ERVtJKUUcZ3OQZT4vnfdoMXfgsFjOZP+po174HhWymr3Qw12oZQhGum46wZN++GrrPxSNvmGkXVYkk97pWQp96R/FADIAAEhCEOry60lX/YBByincQmXQCe+1/rZOEywwY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=U5TLu1SR; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B9EEDC4CEEA;
-	Wed, 25 Jun 2025 20:42:52 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=fqLN9PN2EY4C3bc1k+ccJDe6tPKUoiJLbhuhZtk3fe13UvJZIbmLWnaao2YDIWaSFBCJwYLzDhrUzPTrrMHdKnCJDFMZalHkMEorXXVQksq5B02eBc4vVLFAhP9kJt2PT1+S00lAkQyIXfFyR5H85+2n82gsF3k73hD/W3l/Fh4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=WKNaIsye; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 42AB8C4CEEA;
+	Wed, 25 Jun 2025 20:43:38 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1750884172;
-	bh=TQ2yeYtVxpuEcSzjUBWcAiYEI/WKnqX64t4Owb5qOrA=;
+	s=k20201202; t=1750884220;
+	bh=Rmz67o9XCjNjggKR0sYTYAf42AfBsHBAtQO+D5/ooAU=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=U5TLu1SR2eFmHmjOKeSx3aKCAWxa4XTEYdF8wwxUrjql02hOZ09fD7Ik0plJ4vBoe
-	 AS237xzFgsf5hfHMH/KUE+PxIcr73d6Ck6KTq68abVVJFDYB9fbHdhtDY2GtiEz7cA
-	 WTTKhgFQPy9PRD1aYqTPsqRAUc+/riXd10J7jTDsMCYQNLLBoxmbWajwTq4B5LIaiO
-	 VcXlESrEBruI46HNCXmJYbHDMNwwPVyfv2R7LrpEpvvSPgk+boj603uMj71yJU7nf0
-	 D4DYtZjhSYagenKy+5N3BLKiht1FthT8rNrUABrxCkP932kq32xsVcyOaIZgj2ogdq
-	 3eQ/kT5FUWLgQ==
-Date: Wed, 25 Jun 2025 15:42:52 -0500
-From: Rob Herring <robh@kernel.org>
-To: Andrew Jeffery <andrew@codeconstruct.com.au>
-Cc: Ryan Chen <ryan_chen@aspeedtech.com>,
-	Catalin Marinas <catalin.marinas@arm.com>, soc@lists.linux.dev,
-	Mo Elbadry <elbadrym@google.com>, Arnd Bergmann <arnd@arndb.de>,
-	William Kennington <wak@google.com>,
-	Taniya Das <quic_tdas@quicinc.com>, linux-kernel@vger.kernel.org,
-	spuranik@nvidia.com, Eric Biggers <ebiggers@google.com>,
-	Joel Stanley <joel@jms.id.au>, linux-aspeed@lists.ozlabs.org,
-	Will Deacon <will@kernel.org>, Conor Dooley <conor+dt@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Nishanth Menon <nm@ti.com>,
-	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>,
-	nfraprado@collabora.com, linux-arm-kernel@lists.infradead.org,
-	Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
-	Rom Lemarchand <romlem@google.com>, devicetree@vger.kernel.org,
-	Geert Uytterhoeven <geert@linux-m68k.org>, leohu@nvidia.com,
-	Bjorn Andersson <bjorn.andersson@oss.qualcomm.com>,
-	Yuxiao Zhang <yuxiaozhang@google.com>, dkodihalli@nvidia.com,
-	wthai@nvidia.com
-Subject: Re: [PATCH v0 0/5] Add initial AST2700 SoC support
-Message-ID: <20250625204252.GA2143810-robh@kernel.org>
-References: <20250612100933.3007673-1-ryan_chen@aspeedtech.com>
- <174975871838.2916138.1953670783794758715.robh@kernel.org>
- <7b3be5c104b1fe1033570f2f3e2391991b6d9d42.camel@codeconstruct.com.au>
+	b=WKNaIsye7g8Rg3qVVbuy2Lk5kWIddPlp9RSWtHLoIoZM0aT0NMFPWTb9E4jueZxMr
+	 T2Dpq++mzgkhWNxKX7VS5VzdMTaN/FKR7CgYHHbpCQgJ8v/sVQ4a3XKzrUWjfExafm
+	 PCMsJ70wD/o+qHdYujGiK5WB7MvT/EJdRsSME4dgxldcmuGoPf7Kv3HpE8jMT7GQRW
+	 hxvG8PJh7avy0zPYxweVD9qL/KK/keR7GuXoSosvye75e6Cbm92HVSEXBf3l8dhxyu
+	 b+Qxroxc6Mc3vpWcT19fEy9ntSvzPJamySh874XFmCStND03I2dqNIV972IZRZbfzt
+	 7I2P4Ppfq5cAQ==
+Date: Wed, 25 Jun 2025 22:43:35 +0200
+From: Andi Shyti <andi.shyti@kernel.org>
+To: Lukasz Kucharczyk <lukasz.kucharczyk@leica-geosystems.com>
+Cc: Oleksij Rempel <o.rempel@pengutronix.de>, 
+	stefan.eichenberger@toradex.com, Pengutronix Kernel Team <kernel@pengutronix.de>, 
+	Shawn Guo <shawnguo@kernel.org>, Sascha Hauer <s.hauer@pengutronix.de>, 
+	Fabio Estevam <festevam@gmail.com>, "open list:FREESCALE IMX I2C DRIVER" <linux-i2c@vger.kernel.org>, 
+	"open list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE" <imx@lists.linux.dev>, 
+	"moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE" <linux-arm-kernel@lists.infradead.org>, open list <linux-kernel@vger.kernel.org>, 
+	bsp-development.geo@leica-geosystems.com, customers.leicageo@pengutronix.de
+Subject: Re: [PATCH] i2c: imx: fix emulated smbus block read
+Message-ID: <mp3b6yjebdqgkatx5wnezmhmdbmhhkdyddy3yr24ryla36ozmr@4wyb2y3zura5>
+References: <20250520122252.1475403-1-lukasz.kucharczyk@leica-geosystems.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <7b3be5c104b1fe1033570f2f3e2391991b6d9d42.camel@codeconstruct.com.au>
+In-Reply-To: <20250520122252.1475403-1-lukasz.kucharczyk@leica-geosystems.com>
 
-On Fri, Jun 13, 2025 at 02:59:43PM +0930, Andrew Jeffery wrote:
-> On Thu, 2025-06-12 at 15:12 -0500, Rob Herring (Arm) wrote:
-> > 
-> > On Thu, 12 Jun 2025 18:09:28 +0800, Ryan Chen wrote:
-> > > This patch series introduces initial support for the Aspeed AST2700 SoC
-> > > and the AST2700 Evaluation Board (EVB) to the Linux kernel. The AST2700
-> > > is the 7th generation Baseboard Management Controller (BMC) SoC from Aspeed,
-> > > featuring improved performance, enhanced security, and expanded I/O
-> > > capabilities compared to previous generations.
-> > > 
-> > > The patchset includes the following changes:
-> > > - Device tree bindings for AST2700 boards.
-> > > - Addition of the AST2700 platform to the Kconfig menu.
-> > > - Basic device tree for the AST2700 SoC.
-> > > - Device tree for the AST2700-EVB.
-> > > - Updated defconfig to enable essential options for AST2700.
-> > > 
-> > > Ryan Chen (5):
-> > >   dt-bindings: arm: aspeed: Add AST2700 board compatible
-> > >   arm64: Kconfig: Add Aspeed SoC family (ast2700) platform option
-> > >   arm64: dts: aspeed: Add initial AST2700 SoC device tree
-> > >   arm64: dts: aspeed: Add AST2700 EVB device tree
-> > >   arm64: configs: Update defconfig for AST2700 platform support
-> > > 
-> > >  .../bindings/arm/aspeed/aspeed.yaml           |   5 +
-> > >  arch/arm64/Kconfig.platforms                  |   6 +
-> > >  arch/arm64/boot/dts/Makefile                  |   1 +
-> > >  arch/arm64/boot/dts/aspeed/Makefile           |   4 +
-> > >  arch/arm64/boot/dts/aspeed/aspeed-g7.dtsi     | 380 ++++++++++++++++++
-> > >  arch/arm64/boot/dts/aspeed/ast2700-evb.dts    |  54 +++
-> > >  arch/arm64/configs/defconfig                  |   1 +
-> > >  7 files changed, 451 insertions(+)
-> > >  create mode 100644 arch/arm64/boot/dts/aspeed/Makefile
-> > >  create mode 100644 arch/arm64/boot/dts/aspeed/aspeed-g7.dtsi
-> > >  create mode 100644 arch/arm64/boot/dts/aspeed/ast2700-evb.dts
-> > > 
-> > > --
-> > > 2.34.1
-> > > 
-> > > 
-> > > 
-> > 
-> > 
-> > My bot found new DTB warnings on the .dts files added or changed in this
-> > series.
-> > 
-> > Some warnings may be from an existing SoC .dtsi. Or perhaps the warnings
-> > are fixed by another series. Ultimately, it is up to the platform
-> > maintainer whether these warnings are acceptable or not. No need to reply
-> > unless the platform maintainer has comments.
-> > 
-> > If you already ran DT checks and didn't see these error(s), then
-> > make sure dt-schema is up to date:
-> > 
-> >   pip3 install dtschema --upgrade
-> > 
-> > 
-> > This patch series was applied (using b4) to base:
-> >  Base: attempting to guess base-commit...
-> >  Base: tags/v6.16-rc1 (exact match)
-> > 
-> > If this is not the correct base, please add 'base-commit' tag
-> > (or use b4 which does this automatically)
-> > 
-> > New warnings running 'make CHECK_DTBS=y for arch/arm64/boot/dts/aspeed/' for 20250612100933.3007673-1-ryan_chen@aspeedtech.com:
-> > 
-> > arch/arm64/boot/dts/aspeed/ast2700-evb.dtb: serial@14c33b00 (ns16550a): 'pinctrl-0' is a dependency of 'pinctrl-names'
-> >         from schema $id: http://devicetree.org/schemas/pinctrl/pinctrl-consumer.yaml#
-> > arch/arm64/boot/dts/aspeed/ast2700-evb.dtb: interrupt-controller@100 (aspeed,ast2700-intc-ic): interrupts-extended: [[6, 0, 3844]] is too short
-> >         from schema $id: http://devicetree.org/schemas/interrupt-controller/aspeed,ast2700-intc.yaml#
-> > arch/arm64/boot/dts/aspeed/ast2700-evb.dtb: interrupt-controller@110 (aspeed,ast2700-intc-ic): interrupts-extended: [[6, 1, 3844]] is too short
-> >         from schema $id: http://devicetree.org/schemas/interrupt-controller/aspeed,ast2700-intc.yaml#
-> > arch/arm64/boot/dts/aspeed/ast2700-evb.dtb: interrupt-controller@120 (aspeed,ast2700-intc-ic): interrupts-extended: [[6, 2, 3844]] is too short
-> >         from schema $id: http://devicetree.org/schemas/interrupt-controller/aspeed,ast2700-intc.yaml#
-> > arch/arm64/boot/dts/aspeed/ast2700-evb.dtb: interrupt-controller@130 (aspeed,ast2700-intc-ic): interrupts-extended: [[6, 3, 3844]] is too short
-> >         from schema $id: http://devicetree.org/schemas/interrupt-controller/aspeed,ast2700-intc.yaml#
-> > arch/arm64/boot/dts/aspeed/ast2700-evb.dtb: interrupt-controller@140 (aspeed,ast2700-intc-ic): interrupts-extended: [[6, 4, 3844]] is too short
-> >         from schema $id: http://devicetree.org/schemas/interrupt-controller/aspeed,ast2700-intc.yaml#
-> > arch/arm64/boot/dts/aspeed/ast2700-evb.dtb: interrupt-controller@150 (aspeed,ast2700-intc-ic): interrupts-extended: [[6, 5, 3844]] is too short
-> >         from schema $id: http://devicetree.org/schemas/interrupt-controller/aspeed,ast2700-intc.yaml#
-> > 
+Hi Lukasz,
+
+On Tue, May 20, 2025 at 02:22:52PM +0200, Lukasz Kucharczyk wrote:
+> Acknowledge the byte count submitted by the target.
+> When I2C_SMBUS_BLOCK_DATA read operation is executed by
+> i2c_smbus_xfer_emulated(), the length of the second (read) message is set
+> to 1. Length of the block is supposed to be obtained from the target by the
+> underlying bus driver.
+> The i2c_imx_isr_read() function should emit the acknowledge on i2c bus
+> after reading the first byte (i.e., byte count) while processing such
+> message (as defined in Section 6.5.7 of System Management Bus
+> Specification [1]). Without this acknowledge, the target does not submit
+> subsequent bytes and the controller only reads 0xff's.
 > 
-> To draw a line in the sand here: while the existing Aspeed devicetrees
-> (AST2600 and below) produce warnings, I won't accept devicetree patches
-> for the AST2700 and related boards unless they are warning-free.
+> In addition, store the length of block data obtained from the target in
+> the buffer provided by i2c_smbus_xfer_emulated() - otherwise the first
+> byte of actual data is erroneously interpreted as length of the data
+> block.
+> 
+> [1] https://smbus.org/specs/SMBus_3_3_20240512.pdf
+> 
+> Fixes: 5f5c2d4579ca ("i2c: imx: prevent rescheduling in non dma mode")
+> Signed-off-by: Lukasz Kucharczyk <lukasz.kucharczyk@leica-geosystems.com>
 
-Thank you. If you hadn't said it, I would have. Hopefully there's some 
-IP reuse that will get the older stuff fixed (if the fix is in the 
-schema).
+merged to i2c/i2c-host-fixes.
 
-Rob
+Thanks,
+Andi
 
