@@ -1,144 +1,158 @@
-Return-Path: <linux-kernel+bounces-702927-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-702929-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id DC81FAE8967
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Jun 2025 18:15:55 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E03BDAE897B
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Jun 2025 18:17:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E872E188C449
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Jun 2025 16:14:21 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2E879683BFE
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Jun 2025 16:14:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C89392D5419;
-	Wed, 25 Jun 2025 16:13:29 +0000 (UTC)
-Received: from mail-il1-f205.google.com (mail-il1-f205.google.com [209.85.166.205])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3AC0229C344;
+	Wed, 25 Jun 2025 16:13:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="baVx0Gzn"
+Received: from mail-pf1-f172.google.com (mail-pf1-f172.google.com [209.85.210.172])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B37682BE7D6
-	for <linux-kernel@vger.kernel.org>; Wed, 25 Jun 2025 16:13:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.205
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E582529B768
+	for <linux-kernel@vger.kernel.org>; Wed, 25 Jun 2025 16:13:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750868009; cv=none; b=i5XOCYhylmwUzo7b0yQ7/G8F7ZMvHdFx7PyW48ej56Waxj5jsOkVTdN160aJ3x0piq412G+oTuVfKVNiVBKUyNQcSfi7odmn5BwJZ/Kz+JSiGxihhE8f8E7AUnywCTsNiGor3odQ8t8n4UCGlGUpIFywD69IgtuxhKBeCbNF9fQ=
+	t=1750868037; cv=none; b=M6pHu+EZXaUPL5YWKa6UglVD2K+es72WMVqormTEPR33ZhCJnzhzXWe4dAPotjN3BUZLjnzX4+jqd04Taaj4bJyg+hGEYjquXLuRVyN/kNiBURjIVue59arjs6ifWLqMOMvtBUlmLDMl7LdBfPcl+dw6w99dqyjDoIG8+WZvOwo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750868009; c=relaxed/simple;
-	bh=WT7ivMV9qqeQwMyuD6mdADCPzfCCXz2Dy8zS7veJoMs=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=rmESF45Ghl6EIr/JpB6XdT8QNGWHgxn1XE1oCtHO7/CpJiX/TZ2homFoGhcEf91wXx2PGo4OGp0JSmDVg4aFjsJn7hbU3I3b94U9JfbGODP6PVZky9P3kKshMNwPwNf/VhbjKEqfE+BKmTMvmUpe0wXt723WBwX1BMrIXZ2dzLI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.205
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f205.google.com with SMTP id e9e14a558f8ab-3df33d97436so8744035ab.1
-        for <linux-kernel@vger.kernel.org>; Wed, 25 Jun 2025 09:13:27 -0700 (PDT)
+	s=arc-20240116; t=1750868037; c=relaxed/simple;
+	bh=4QNLkEkuI4EdTUnOIb2grO6q4rrhmfxNLIwjC1OPtDA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=fNa5emNWX0A+HMxSBZPM6rEi3WJtA7tdqzduyqU0RlkDV5USQlKvCINWJuPLZSdI1txhfYmOYHsQlB1Q5LbQiRmnnQgaJ3QQz/JkZQA41fmH+iVa+w0TghlpSR23knee903XZOvQR6i5f1iArRqDiiRFc3TxB3Y6meRl/oupeJ0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=baVx0Gzn; arc=none smtp.client-ip=209.85.210.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-pf1-f172.google.com with SMTP id d2e1a72fcca58-748da522e79so85504b3a.1
+        for <linux-kernel@vger.kernel.org>; Wed, 25 Jun 2025 09:13:55 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1750868035; x=1751472835; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=vCD23FijRiGDMDI+6SLBJ6sq7ACBPYUWzeLA8BmQJ3k=;
+        b=baVx0Gznwd0r88DchaN7RIfItLtoO0CfPZoLUZg6nuzG19L5tXdUj2/Et2NQ5BH0/p
+         tvjFLK1pMiRQnTwofbYvRVHhyDe7u/qp6orgLFOSMu/KmUvChbdXxJr/ly+L4sFOsFkN
+         bhfHVO1theAZQDk711odr0eVfekOPQCIs7oHmraSyDSHnNdyq4F7Ob+JS6q8RoGIOWzi
+         8LkES5LctGCT4aoFNBCVA6YMFB03k8lXmHnNO/9Rijt2Z1e6Ld/e7PHJ7KZxNxaNoo6O
+         ryAAA/ChFNWb7G22eCsN7x+efn5wI7eIDFS9kdvP1L/7sGFMneb1ebqMEDgK2TRLcpk/
+         UJTw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1750868007; x=1751472807;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=skryBwueoVvpqeh7d4a3noBeWswe7fbsQ/e6Mb6+Dhg=;
-        b=Smn/O6ZM9WQEZ9dkeq6KQVNtZuR1J8Ddc66dBHqMyvs/IqWYgZhxNKyoMhLQ1gU3hW
-         91t4YLz9g1inXHkYjQoFqnUWfRnjZQL06dhPWleo1TZQSo7Jh2AUkDHIlswrkJlXaoqh
-         YJXGhKHRjpjsN4eOjc4Dccwkm72XKrlaLVUhavneby2tXQydljcc2Txkews6YgydBdKd
-         Vor5gInCTBWweVy6pAXZbQucWj7ciL5EmYMokezUdCfFmlM4IMzYRaBVjpgGS2hGn2O9
-         swlGi+C5jAzmpGl8dJX3nF2jGg9gJhK0oyoOVYFUDU9UFsa3KcVdSgTsjbvMkVcCsG3p
-         VjjQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUAbvdlvroW+SdM30TrENAVsBCYI5gPZiQlvywiaflPuT1DFPsU+Y+l0dNDrcdMuE1UoeW0KBjSCsIdoso=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxMD8yFqvQOPsHDlUTGtiFCmDftHCK8sqfh53lZl1knAunVnyoN
-	6v5xlQ85EtU0mNRmnyae0zfrmL+7+T1+7Nfpie7st6qzpwoi4EYmKWfvRCu9APfpxVR6SPTi45/
-	8rS3pFF4MNhqEm0sWOTnSEs72jO8mxWPbsykxOHnF9kmOoPXcO7024wFrMIk=
-X-Google-Smtp-Source: AGHT+IHEz0cNg0RdHPrZ5I5pzxpMHNh8tbp3gQEx4kycm9WGHRLb0EAHML2SkO+hC86Kl93MyXmubTW2rKIIYeVrG3p/J+gYps7h
+        d=1e100.net; s=20230601; t=1750868035; x=1751472835;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=vCD23FijRiGDMDI+6SLBJ6sq7ACBPYUWzeLA8BmQJ3k=;
+        b=MbYilgiBAHvxqyfb5wzyHEqJRKlcnW5ZYz6hoA5LnlmZogOPUnj2TqSJCJy5neyfzu
+         S9P3GThEgo+H+5q43RHKDnsdxn1UB8q243wWNac/ePIdiaTPdXIVPYZGxaNKP95zkHac
+         tkD6jQoAB0a1cNTqW1FXke6Sej4Q6b0smWoDyLWtE1wLo59OGC7YBY4g78lfpxyMg+pM
+         0ZmzoBnlh98NC0EYDYxKbJnVy9lYwR4FHj/wQRsmiS5sM1Uzwi7aZVqPWbLj11DHjmsd
+         RR8xtoCbqJ2QmDmpacYLYQSOgJ2vuwOvppT0QiH5DNhtiOuo3mpaJRAdn8c4ySAQ1CZc
+         UgwA==
+X-Forwarded-Encrypted: i=1; AJvYcCXwk/4hpUmhE2vte6BhiaGPHB8kcl6Ot55TGMLzVGPZvhSWKXFUOA/58SlLv526kgECZBfXJRHECps/9G4=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy94W58sFt7XKq6vxXUtgENIgt2dQpsn8IsLCMqO2mmIRJJvZh0
+	eA3v4DhLeiUWft/pSYQHjvjdT2WDgRv0Sxd+Hbl93BrekPEeizlV7YLtWiPVtD4RH14=
+X-Gm-Gg: ASbGncsRAPa7zGPyIJp3Hr+JLkJV2kZg7DaqcteEbivjYN0QmOy6IC/A2KXax5oTx4D
+	FMzhKhX2xoq/IrFaCQh8y2ynSD8CsQ8Jczs+fcYC3sMsvpF9Wyh7bSNleKK43ACQ83vStFLbdJR
+	CWbW8wEBBrmTOssuuqgr/nLh15FlEWf26PLgeMB37PHJ5UNT/EaeiPDbUc8k/qjx8rS7rbPFsoV
+	fo44vhob7c9Gj443zHkxSPHK1R9hvyQCzdmIwrdTCn5sjKXslq9KOaohCzzLlMO1yBBRCSxruRx
+	9p0LNi1MXQfY72W5nn3OiIVcfZpNJwwmVeFN1R86Ykes6CRgZ0hrG3ymRLSEAvl9mQ==
+X-Google-Smtp-Source: AGHT+IEaq7judiTDhY4LEdwCxHhEeJO96l2aFLRZebjujuoodpXvyb7qOhHSrHTIPCIkDRJZva9x1g==
+X-Received: by 2002:a17:90b:2709:b0:311:ff02:3fcc with SMTP id 98e67ed59e1d1-315f26265a6mr5857836a91.14.1750868035161;
+        Wed, 25 Jun 2025 09:13:55 -0700 (PDT)
+Received: from p14s ([2604:3d09:148c:c800:2ed4:4c68:6e76:7d6f])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-315f53d94b1sm2124536a91.33.2025.06.25.09.13.53
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 25 Jun 2025 09:13:54 -0700 (PDT)
+Date: Wed, 25 Jun 2025 10:13:52 -0600
+From: Mathieu Poirier <mathieu.poirier@linaro.org>
+To: Andrew Davis <afd@ti.com>
+Cc: Bjorn Andersson <andersson@kernel.org>, Hari Nagalla <hnagalla@ti.com>,
+	Beleswar Padhi <b-padhi@ti.com>, linux-remoteproc@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2] rpmsg: char: Export alias for RPMSG ID rpmsg-raw from
+ table
+Message-ID: <aFwgQJ8B7EcjM1q7@p14s>
+References: <20250619205722.133827-1-afd@ti.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:1889:b0:3dc:7b3d:6a45 with SMTP id
- e9e14a558f8ab-3df3e0b23dbmr3533975ab.0.1750868006912; Wed, 25 Jun 2025
- 09:13:26 -0700 (PDT)
-Date: Wed, 25 Jun 2025 09:13:26 -0700
-In-Reply-To: <683265d3.a70a0220.253bc2.0079.GAE@google.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <685c2026.a00a0220.34b642.00c6.GAE@google.com>
-Subject: Re: [syzbot] [net?] WARNING in ah6_output
-From: syzbot <syzbot+01b0667934cdceb4451c@syzkaller.appspotmail.com>
-To: davem@davemloft.net, dsahern@kernel.org, edumazet@google.com, 
-	herbert@gondor.apana.org.au, horms@kernel.org, kuba@kernel.org, 
-	linux-kernel@vger.kernel.org, netdev@vger.kernel.org, pabeni@redhat.com, 
-	steffen.klassert@secunet.com, syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250619205722.133827-1-afd@ti.com>
 
-syzbot has found a reproducer for the following issue on:
+Good day,
 
-HEAD commit:    9caca6ac0e26 bnxt: properly flush XDP redirect lists
-git tree:       net
-console+strace: https://syzkaller.appspot.com/x/log.txt?x=16254f0c580000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=d11f52d3049c3790
-dashboard link: https://syzkaller.appspot.com/bug?extid=01b0667934cdceb4451c
-compiler:       Debian clang version 20.1.6 (++20250514063057+1e4d39e07757-1~exp1~20250514183223.118), Debian LLD 20.1.6
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=1252bdd4580000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=1715d182580000
+On Thu, Jun 19, 2025 at 03:57:22PM -0500, Andrew Davis wrote:
+> Module aliases are used by userspace to identify the correct module to
+> load for a detected hardware. The currently supported RPMSG device IDs for
+> this module include "rpmsg-raw", but the module alias is "rpmsg_chrdev".
+> 
+> Use the helper macro MODULE_DEVICE_TABLE(rpmsg) to export the correct
+> supported IDs. And while here, to keep backwards compatibility we also add
+> the other ID "rpmsg_chrdev" so that it is also still exported as an alias.
+> 
+> This has the side benefit of adding support for some legacy firmware
+> which still uses the original "rpmsg_chrdev" ID. This was the ID used for
+> this driver before it was upstreamed (as reflected by the module alias).
 
-Downloadable assets:
-disk image: https://storage.googleapis.com/syzbot-assets/b5b575608bd0/disk-9caca6ac.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/5c5f5f06115c/vmlinux-9caca6ac.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/d833e4fd921e/bzImage-9caca6ac.xz
+I was surprised to receive this patch - my question from almost a year back is
+still pending.
 
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+01b0667934cdceb4451c@syzkaller.appspotmail.com
+> 
+> Signed-off-by: Andrew Davis <afd@ti.com>
+> Acked-by: Hari Nagalla <hnagalla@ti.com>
+> Tested-by: Hari Nagalla <hnagalla@ti.com>
+> ---
+> 
+> Changes for v2:
+>  - Rebased on v6.16-rc1
+>  - Added Acked/Tested-by
+> 
+> [v1] https://www.spinics.net/lists/linux-remoteproc/msg18959.html
+> 
+>  drivers/rpmsg/rpmsg_char.c | 3 ++-
+>  1 file changed, 2 insertions(+), 1 deletion(-)
+> 
+> diff --git a/drivers/rpmsg/rpmsg_char.c b/drivers/rpmsg/rpmsg_char.c
+> index eec7642d26863..96fcdd2d7093c 100644
+> --- a/drivers/rpmsg/rpmsg_char.c
+> +++ b/drivers/rpmsg/rpmsg_char.c
+> @@ -522,8 +522,10 @@ static void rpmsg_chrdev_remove(struct rpmsg_device *rpdev)
+>  
+>  static struct rpmsg_device_id rpmsg_chrdev_id_table[] = {
+>  	{ .name	= "rpmsg-raw" },
+> +	{ .name	= "rpmsg_chrdev" },
+>  	{ },
+>  };
+> +MODULE_DEVICE_TABLE(rpmsg, rpmsg_chrdev_id_table);
 
-------------[ cut here ]------------
-memcpy: detected field-spanning write (size 40) of single field "&top_iph->saddr" at net/ipv6/ah6.c:439 (size 16)
-WARNING: CPU: 0 PID: 5841 at net/ipv6/ah6.c:439 ah6_output+0xece/0x1510 net/ipv6/ah6.c:439
-Modules linked in:
-CPU: 0 UID: 0 PID: 5841 Comm: syz-executor125 Not tainted 6.16.0-rc2-syzkaller-00179-g9caca6ac0e26 #0 PREEMPT(full) 
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 05/07/2025
-RIP: 0010:ah6_output+0xece/0x1510 net/ipv6/ah6.c:439
-Code: ff e8 e6 09 91 f7 c6 05 d6 c0 5b 05 01 90 b9 10 00 00 00 48 c7 c7 60 64 a0 8c 4c 89 f6 48 c7 c2 c0 66 a0 8c e8 73 b4 54 f7 90 <0f> 0b 90 90 e9 ab fe ff ff e8 c4 14 37 01 48 8b 4c 24 28 80 e1 07
-RSP: 0018:ffffc900041a70a0 EFLAGS: 00010246
-RAX: 6316bcc3c9618000 RBX: ffff888030ed5808 RCX: ffff888079c1da00
-RDX: 0000000000000000 RSI: 0000000000000001 RDI: 0000000000000002
-RBP: ffffc900041a7230 R08: 0000000000000003 R09: 0000000000000004
-R10: dffffc0000000000 R11: fffffbfff1bfa9ec R12: dffffc0000000000
-R13: 1ffff92000834e34 R14: 0000000000000028 R15: 0000000000000030
-FS:  000055556d6c9380(0000) GS:ffff888125c51000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 00007fe027d09e9c CR3: 0000000074d90000 CR4: 00000000003526f0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-Call Trace:
- <TASK>
- xfrm_output_one net/xfrm/xfrm_output.c:555 [inline]
- xfrm_output_resume+0x2c55/0x6170 net/xfrm/xfrm_output.c:590
- __xfrm6_output+0x2eb/0x1070 net/ipv6/xfrm6_output.c:103
- NF_HOOK_COND include/linux/netfilter.h:306 [inline]
- xfrm6_output+0x1c6/0x4f0 net/ipv6/xfrm6_output.c:108
- ip6_send_skb+0x1d5/0x390 net/ipv6/ip6_output.c:1982
- l2tp_ip6_sendmsg+0x12ee/0x17c0 net/l2tp/l2tp_ip6.c:661
- sock_sendmsg_nosec net/socket.c:712 [inline]
- __sock_sendmsg+0x19c/0x270 net/socket.c:727
- ____sys_sendmsg+0x505/0x830 net/socket.c:2566
- ___sys_sendmsg+0x21f/0x2a0 net/socket.c:2620
- __sys_sendmsg net/socket.c:2652 [inline]
- __do_sys_sendmsg net/socket.c:2657 [inline]
- __se_sys_sendmsg net/socket.c:2655 [inline]
- __x64_sys_sendmsg+0x19b/0x260 net/socket.c:2655
- do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
- do_syscall_64+0xfa/0x3b0 arch/x86/entry/syscall_64.c:94
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-RIP: 0033:0x7f1b7b30bc79
-Code: 28 00 00 00 75 05 48 83 c4 28 c3 e8 c1 17 00 00 90 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 b8 ff ff ff f7 d8 64 89 01 48
-RSP: 002b:00007ffdde4e6fd8 EFLAGS: 00000246 ORIG_RAX: 000000000000002e
-RAX: ffffffffffffffda RBX: 0000000000000000 RCX: 00007f1b7b30bc79
-RDX: 0000000000000800 RSI: 0000200000000540 RDI: 0000000000000005
-RBP: 0000000000000000 R08: 0000000000000006 R09: 0000000000000006
-R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000000
-R13: 0000000000000000 R14: 0000000000000001 R15: 0000000000000001
- </TASK>
+... and I still don't understand why this patch is needed.  What is broken that
+this patch fixes?
 
+Thanks,
+Mathieu
 
----
-If you want syzbot to run the reproducer, reply with:
-#syz test: git://repo/address.git branch-or-commit-hash
-If you attach or paste a git patch, syzbot will apply it before testing.
+>  
+>  static struct rpmsg_driver rpmsg_chrdev_driver = {
+>  	.probe = rpmsg_chrdev_probe,
+> @@ -565,6 +567,5 @@ static void rpmsg_chrdev_exit(void)
+>  }
+>  module_exit(rpmsg_chrdev_exit);
+>  
+> -MODULE_ALIAS("rpmsg:rpmsg_chrdev");
+>  MODULE_DESCRIPTION("RPMSG device interface");
+>  MODULE_LICENSE("GPL v2");
+> -- 
+> 2.39.2
+> 
 
