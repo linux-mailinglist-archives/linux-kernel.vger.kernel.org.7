@@ -1,191 +1,138 @@
-Return-Path: <linux-kernel+bounces-702573-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-702576-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 52F2FAE8426
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Jun 2025 15:16:58 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2EA1BAE8433
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Jun 2025 15:18:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 881884A81BC
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Jun 2025 13:15:22 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 65202188AD54
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Jun 2025 13:16:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C0C95264611;
-	Wed, 25 Jun 2025 13:14:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5760E2638B5;
+	Wed, 25 Jun 2025 13:15:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b="NgQ4wJnQ"
-Received: from smtp-bc0d.mail.infomaniak.ch (smtp-bc0d.mail.infomaniak.ch [45.157.188.13])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="JMQlUKrK"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EB9BE263889
-	for <linux-kernel@vger.kernel.org>; Wed, 25 Jun 2025 13:14:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.157.188.13
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 92616262FD3;
+	Wed, 25 Jun 2025 13:15:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750857262; cv=none; b=SzNYylK89r7vxwHOIqDr9aCRw3ccg73BEM6fWqGNtHfTFdApp2zwG7cXwoOhQTTPu55o6adOIbqdDeUhenoy25yTDjC7Fc7vuRKofNXrP93YCBwdYYYGm+hW0c5mx0Rhdpk2Ho9z4fmXGHUAAu9rg8oVcQFWcsjtlSRisXmruX4=
+	t=1750857351; cv=none; b=hyqGNdcUUdlTj0x2VNY23NAV0+LD389TmhBjhXYO7dbsuejL75IV02WvMmdhU83zsH7XPwM6E2uNATfMd/x36QqRyQpeqwTz+ipZwyZnMMfjKsbN4ep7ouuHStpqLMGHcxQekxDz/zfwzNO96NLTr4hECsJqNyjfcUsi7n5DI7E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750857262; c=relaxed/simple;
-	bh=VyVL4KpvH5PpIzU7d6A8maGwHpB/XkUHFTH7hoYbrgc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=afPjAz0u5FDEcJYlv2/TviwS5pFQNG1cgTvTRmnSwfUXW1UPcuXAwmGSUKfeAeVgamLOKy9wfuLl0MOZL1usEqNfhfZ6NfPBLAF3svRkn998ysIoPHx4NAaww+Xcr6WIJNNqXf0nIZ2zev/PhRznXhKjJMx59CVLkKG8u+b+bDc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net; spf=pass smtp.mailfrom=digikod.net; dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b=NgQ4wJnQ; arc=none smtp.client-ip=45.157.188.13
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=digikod.net
-Received: from smtp-4-0000.mail.infomaniak.ch (smtp-4-0000.mail.infomaniak.ch [10.7.10.107])
-	by smtp-4-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4bS2Mk28xSz4gR;
-	Wed, 25 Jun 2025 15:14:10 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=digikod.net;
-	s=20191114; t=1750857250;
-	bh=43gwrFzk4hwmv82prep9JmI9Q2MWI5mtLdOFVMSWLhk=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=NgQ4wJnQug59/VS2Oh7JY+Jr/FDR5DtjwhxRri1FhNkqbFQ98Q56GFLR7DHBsCkGs
-	 bvo158SXQyDMKoVRoSSsTcsyjc2FcyOfMwWoXW3XKFbYOrhVFjX0so85UBO99Rclv7
-	 jweEbF7djyq7VG+JJ+1QixEJ2MLc5oAIhHG6EUWA=
-Received: from unknown by smtp-4-0000.mail.infomaniak.ch (Postfix) with ESMTPA id 4bS2Mj0pxCzMjj;
-	Wed, 25 Jun 2025 15:14:09 +0200 (CEST)
-Date: Wed, 25 Jun 2025 15:14:08 +0200
-From: =?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>
-To: NeilBrown <neil@brown.name>
-Cc: Song Liu <song@kernel.org>, bpf@vger.kernel.org, 
-	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-security-module@vger.kernel.org, brauner@kernel.org, kernel-team@meta.com, andrii@kernel.org, 
-	eddyz87@gmail.com, ast@kernel.org, daniel@iogearbox.net, martin.lau@linux.dev, 
-	viro@zeniv.linux.org.uk, jack@suse.cz, kpsingh@kernel.org, mattbobrowski@google.com, 
-	Tingmao Wang <m@maowtm.org>, =?utf-8?Q?G=C3=BCnther?= Noack <gnoack@google.com>
-Subject: Re: [PATCH v5 bpf-next 0/5] bpf path iterator
-Message-ID: <20250625.Ee2Ci6chae8h@digikod.net>
-References: <>
- <20250624.xahShi0iCh7t@digikod.net>
- <175080113326.2280845.18404947256630567790@noble.neil.brown.name>
+	s=arc-20240116; t=1750857351; c=relaxed/simple;
+	bh=QT4Ls4Wox6hJ1R8TPcQdFcVFzO8CzbDCEi/cBTj/91g=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type; b=jkNElPX5atiSoOPx9/ngHujGAwl2HSESsdRrXTdWyu67pRnF0tix/E9sBaV9c1TRo8nwWey84CJPpVCFlTz83U9MxcSzCN5aaEzMIG0neBPk2ezCXlKYm9P+D8IaOW7eurvFabE8drg275swA5rNGcbghYNxbEfdnwoyZ3nGEV0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=JMQlUKrK; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D4A0CC4CEEA;
+	Wed, 25 Jun 2025 13:15:48 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1750857351;
+	bh=QT4Ls4Wox6hJ1R8TPcQdFcVFzO8CzbDCEi/cBTj/91g=;
+	h=From:To:Cc:Subject:Date:From;
+	b=JMQlUKrK1jWsbryOHxePSEPvlIqL/2M4lOGuf8p6kfgSgiubupWLBwnd/8ucRJB2M
+	 tnr3oO9W9gktF4txRMrp6FmTvAzJtt5IP49tObBfJlujbCRZJV/9PAULHULn9Nk2Nj
+	 sldeH+VKMjCAGpu2KN7ElGFJjCwhCR5+3AJXp1MIu1YH9rlRS7OkUeAUlLA0waVqaD
+	 tYCIBdpdoXs6Wmi0OXycazK9Yh5WT+QvGGhOghjnWNYzX2+rlGb0tY2thhW2OMEFSI
+	 GN/cQDjrroJL0EkNMlO381we5zQuKhuEq2Q/wEHJlHC5/tdzAABYToEOe4SH/41NyQ
+	 Af9ZRUsT30nfA==
+From: Will Deacon <will@kernel.org>
+To: linux-kernel@vger.kernel.org
+Cc: Will Deacon <will@kernel.org>,
+	Keir Fraser <keirf@google.com>,
+	Steven Moreland <smoreland@google.com>,
+	Frederick Mayle <fmayle@google.com>,
+	Stefan Hajnoczi <stefanha@redhat.com>,
+	Stefano Garzarella <sgarzare@redhat.com>,
+	"Michael S. Tsirkin" <mst@redhat.com>,
+	Jason Wang <jasowang@redhat.com>,
+	=?UTF-8?q?Eugenio=20P=C3=A9rez?= <eperezma@redhat.com>,
+	netdev@vger.kernel.org,
+	virtualization@lists.linux.dev
+Subject: [PATCH 0/5] vsock/virtio: SKB allocation improvements
+Date: Wed, 25 Jun 2025 14:15:38 +0100
+Message-Id: <20250625131543.5155-1-will@kernel.org>
+X-Mailer: git-send-email 2.39.5
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <175080113326.2280845.18404947256630567790@noble.neil.brown.name>
-X-Infomaniak-Routing: alpha
 
-On Wed, Jun 25, 2025 at 07:38:53AM +1000, NeilBrown wrote:
-> On Wed, 25 Jun 2025, Mickaël Salaün wrote:
-> > On Fri, Jun 20, 2025 at 02:59:17PM -0700, Song Liu wrote:
-> > > Hi Christian, Mickaël, and folks,
-> > > 
-> > > Could you please share your comments on this version? Does this
-> > > look sane?
-> > 
-> > This looks good to me but we need to know what is the acceptable next
-> > step to support RCU.  If we can go with another _rcu helper, I'm good
-> > with the current approach, otherwise we need to figure out a way to
-> > leverage the current helper to make it compatible with callers being in
-> > a RCU read-side critical section while leveraging safe path walk (i.e.
-> > several calls to path_walk_parent).
-> 
-> Can you spell out the minimum that you need?
+Hi folks,
 
-Sure.  We'd like to call this new helper in a RCU
-read-side critical section and leverage this capability to speed up path
-walk when there is no concurrent hierarchy modification.  This use case
-is similar to handle_dots() with LOOKUP_RCU calling follow_dotdot_rcu().
+We're using vsock extensively in Android as a channel over which we can
+route binder transactions to/from virtual machines managed by the
+Android Virtualisation Framework. However, we have been observing some
+issues in production builds when using vsock in a low-memory environment
+(on the host and the guest) such as:
 
-The main issue with this approach is to keep some state of the path walk
-to know if the next call to "path_walk_parent_rcu()" would be valid
-(i.e. something like a very light version of nameidata, mainly sequence
-integers), and to get back to the non-RCU version otherwise.
+  * The host receive path hanging forever, despite the guest performing
+    a successful write to the socket.
 
-> 
-> My vague impression is that you want to search up from a given strut path,
-> no further then some other given path, looking for a dentry that matches
-> some rule.  Is that correct?
+  * Page allocation failures in the vhost receive path (this is a likely
+    contributor to the above)
 
-Yes
+  * -ENOMEM coming back from sendmsg()
 
-> 
-> In general, the original dentry could be moved away from under the
-> dentry you find moments after the match is reported.  What mechanisms do
-> you have in place to ensure this doesn't happen, or that it doesn't
-> matter?
+This series aims to improve the vsock SKB allocation for both the host
+(vhost) and the guest when using the virtio transport to help mitigate
+these issues. Specifically:
 
-In the case of Landlock, by default, a set of access rights are denied
-and can only be allowed by an element in the file hierarchy.  The goal
-is to only allow access to files under a specific directory (or directly
-a specific file).  That's why we only care of the file hierarchy at the
-time of access check.  It's not an issue if the file/directory was
-moved or is being moved as long as we can walk its "current" hierarchy.
-Furthermore, a sandboxed process is restricted from doing arbitrary
-mounts (and renames/links are controlled with the
-LANDLOCK_ACCESS_FS_REFER right).
+  - Avoid single allocations of order > PAGE_ALLOC_COSTLY_ORDER
 
-However, we need to get a valid "snapshot" of the set of dentries that
-(could) lead to the evaluated file/directory.
+  - Use non-linear SKBs for the transmit and vhost receive paths
 
-> 
-> Would it be sufficient to have an iterator which reported successive
-> ancestors in turn, or reported that you need to restart because something
-> changed?  Would you need to know that a restart happened or would it be
-> acceptable to transparently start again at the parent of the starting
-> point?
+  - Reduce the guest RX buffers to a single page
 
-If the path walk is being invalidated, we need to reset the collected
-access right and start again the path walk to get all the access rights
-from a consistent/real file hierarchy.
+There are more details in the individual commit messages but overall
+this results in less wasted memory and puts less pressure on the
+allocator.
 
-> 
-> Or do you really need a "one step at a time" interface?
+This is my first time looking at this stuff, so all feedback is welcome.
 
-We need to check each component of the path walk, so either we call an
-helper to get each of them and we do our check after that (we should be
-able to do that in RCU), or we provide a callback function which is
-called by the path walk helper.
+Patches based on v6.16-rc3.
 
-> 
-> Do you need more complex movements around the tree, or is just walking
-> up sufficient?
+Cheers,
 
-Just walking up.
+Will
 
-> 
-> If this has been discussed or documented elsewhere I'd be happy for you
-> just to provide a reference, and I can come back with follow-up
-> questions if needed.
+Cc: Keir Fraser <keirf@google.com>
+Cc: Steven Moreland <smoreland@google.com>
+Cc: Frederick Mayle <fmayle@google.com>
+Cc: Stefan Hajnoczi <stefanha@redhat.com>
+Cc: Stefano Garzarella <sgarzare@redhat.com>
+Cc: "Michael S. Tsirkin" <mst@redhat.com>
+Cc: Jason Wang <jasowang@redhat.com>
+Cc: "Eugenio Pérez" <eperezma@redhat.com>
+Cc: netdev@vger.kernel.org 
+Cc: virtualization@lists.linux.dev
 
-Tingmao initially described the goal here:
-https://lore.kernel.org/all/afe77383-fe56-4029-848e-1401e3297139@maowtm.org/
+--->8
 
-and she sent an RFC to illustrate that:
-https://lore.kernel.org/all/cover.1748997840.git.m@maowtm.org/
+Will Deacon (5):
+  vhost/vsock: Avoid allocating arbitrarily-sized SKBs
+  vsock/virtio: Resize receive buffers so that each SKB fits in a page
+  vhost/vsock: Allocate nonlinear SKBs for handling large receive
+    buffers
+  vsock/virtio: Rename virtio_vsock_skb_rx_put() to
+    virtio_vsock_skb_put()
+  vhost/vsock: Allocate nonlinear SKBs for handling large transmit
+    buffers
 
-The discussion mainly raised two questions:
-- Should we have one or two APIs?
-- How to store the state of the walk without exposing VFS internals to
-  the rest of the kernel?
+ drivers/vhost/vsock.c                   | 21 +++++++++------
+ include/linux/virtio_vsock.h            | 36 +++++++++++++++++++------
+ net/vmw_vsock/virtio_transport.c        |  2 +-
+ net/vmw_vsock/virtio_transport_common.c |  9 +++++--
+ 4 files changed, 49 insertions(+), 19 deletions(-)
 
-Thanks
+-- 
+2.50.0.714.g196bf9f422-goog
 
-> 
-> Thanks,
-> NeilBrown
-> 
-> 
-> > 
-> > > 
-> > > Thanks,
-> > > Song
-> > > 
-> > > On Mon, Jun 16, 2025 at 11:11 PM Song Liu <song@kernel.org> wrote:
-> > > >
-> > > > In security use cases, it is common to apply rules to VFS subtrees.
-> > > > However, filtering files in a subtree is not straightforward [1].
-> > > >
-> > > > One solution to this problem is to start from a path and walk up the VFS
-> > > > tree (towards the root). Among in-tree LSMs, Landlock uses this solution.
-> > > >
-> > > 
-> > > [...]
-> > > 
-> > 
-> 
-> 
 
