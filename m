@@ -1,194 +1,99 @@
-Return-Path: <linux-kernel+bounces-703569-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-703575-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id C638AAE9211
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Jun 2025 01:19:23 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5FA92AE921D
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Jun 2025 01:21:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 298E516B4BF
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Jun 2025 23:19:01 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7FE4F6A7796
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Jun 2025 23:20:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B3C382FC01E;
-	Wed, 25 Jun 2025 23:16:06 +0000 (UTC)
-Received: from relay.hostedemail.com (smtprelay0010.hostedemail.com [216.40.44.10])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 72A3630749E;
+	Wed, 25 Jun 2025 23:16:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="onhSnqGs"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F16F12F3C06;
-	Wed, 25 Jun 2025 23:16:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=216.40.44.10
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BF5FE2FE337;
+	Wed, 25 Jun 2025 23:16:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750893365; cv=none; b=rcfKoLcgrwE3wSVu4lrpM+EaG54lDBClzcTFR3r3rIH4QcKc3XdC4CFjfM1YB6dkFgssg0ArhuU95HOuWqskEwEU96Jf32NEf2amTHjtTzpgtR3NqE07XlYX8Px9ZoMtIQVeqBjjMwg8ZP7dfp5lKnjco9sazC67vnG0rWhe07k=
+	t=1750893388; cv=none; b=TwLATK1dvL9GpMJoM19+OiAvKegcL4/QU8Fgax37WcjixXqsMv4EoSP7KImoF5n7AJ708nok465MIkaXpooiOxWflay5sCIWJ+ef3oJd14Dxne2WOt5oX9hmTiTny57X8iu2xdbtJTnBn3GPjUh+Ml/eEFwCmSnqpCRSsqGiCoY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750893365; c=relaxed/simple;
-	bh=uOx5DfUnBLxP9fI1uU9zO1GwRE8LdxHgs3BL/mHcvYk=;
-	h=Message-ID:Date:From:To:Cc:Subject:References:MIME-Version:
-	 Content-Type; b=ssQ74/ouAGWmpaQxwhPqKkQpSy1h2PKWTwpqU/VPupi0eZNOIgDEXsEhXU3yU0ivUyf+GGEtGB3P939yk93biiKfwqa+l2wz58WekM/Uy4lS6l6KodPnlw/RNUyJ7/ADheMgEZbIJnegHSM3ZwNlvUKbRv9FI+ZAHYvKpKFIKb4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org; spf=pass smtp.mailfrom=goodmis.org; arc=none smtp.client-ip=216.40.44.10
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=goodmis.org
-Received: from omf03.hostedemail.com (a10.router.float.18 [10.200.18.1])
-	by unirelay08.hostedemail.com (Postfix) with ESMTP id 6DE801407C1;
-	Wed, 25 Jun 2025 23:16:01 +0000 (UTC)
-Received: from [HIDDEN] (Authenticated sender: nevets@goodmis.org) by omf03.hostedemail.com (Postfix) with ESMTPA id 29DF86000F;
-	Wed, 25 Jun 2025 23:15:58 +0000 (UTC)
-Received: from rostedt by gandalf with local (Exim 4.98.2)
-	(envelope-from <rostedt@goodmis.org>)
-	id 1uUZLr-000000044ji-1LZ0;
-	Wed, 25 Jun 2025 19:16:23 -0400
-Message-ID: <20250625231623.181524553@goodmis.org>
-User-Agent: quilt/0.68
-Date: Wed, 25 Jun 2025 19:15:50 -0400
-From: Steven Rostedt <rostedt@goodmis.org>
-To: linux-kernel@vger.kernel.org,
- linux-trace-kernel@vger.kernel.org,
- bpf@vger.kernel.org,
- x86@kernel.org
-Cc: Masami Hiramatsu <mhiramat@kernel.org>,
- Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
- Josh Poimboeuf <jpoimboe@kernel.org>,
- Peter Zijlstra <peterz@infradead.org>,
- Ingo Molnar <mingo@kernel.org>,
- Jiri Olsa <jolsa@kernel.org>,
- Namhyung Kim <namhyung@kernel.org>,
- Thomas Gleixner <tglx@linutronix.de>,
- Andrii Nakryiko <andrii@kernel.org>,
- Indu Bhagat <indu.bhagat@oracle.com>,
- "Jose E. Marchesi" <jemarch@gnu.org>,
- Beau Belgrave <beaub@linux.microsoft.com>,
- Jens Remus <jremus@linux.ibm.com>,
- Linus Torvalds <torvalds@linux-foundation.org>,
- Andrew Morton <akpm@linux-foundation.org>,
- Jens Axboe <axboe@kernel.dk>
-Subject: [PATCH v11 09/11] perf record: Enable defer_callchain for user callchains
-References: <20250625231541.584226205@goodmis.org>
+	s=arc-20240116; t=1750893388; c=relaxed/simple;
+	bh=dK+2/mGZs3BeJZdh1c11SgFNt34ye/oUR3HoFd4zv+M=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=sVlfVCKGg3G4JbuFYdMVNEKnc2pRW9y4HaD9T+BsDuPpC/OXyHEMNPGnaH1TjmTZxvc96eMyxsDFv3gPOHOQl3jPlGs67SIq8/27zjDC0bC45Eh9NI094H2Oh4y4+TYTyHYifyC5nSo7rUGxx1YfO+bwvpP4ZUyrj7TmTf3Ag5k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=onhSnqGs; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id CD4B9C4CEEA;
+	Wed, 25 Jun 2025 23:16:23 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1750893388;
+	bh=dK+2/mGZs3BeJZdh1c11SgFNt34ye/oUR3HoFd4zv+M=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=onhSnqGsj0lnR2SC/tzrp9hE3Z+Eb3eWXxFQfHKZWPmfHPaJ80G8o3qz3GxkKme7J
+	 ZCam9xkRKlRUT7CZJlX8xLSRsEPQVm0Er/T8HLBvBf48ftVzmI2aglDL65E4wfLvlP
+	 oxvSCHGytc27qeKUa3ZgzEg6OUJmsJ8GL0K8lW+cUuYb3eIxeK5qjv2D+yVCYbdwYA
+	 rjxfEx4DsUVmZ4YIrqf+iUmTDeS3UCQNrpGVBLJHhmA2K5l+tIM2zsio3L7Qw/ooNd
+	 4/I1HrAbCjeCA2uhDv0aLUsSmMvruZquCDRtS2dwA67JiXPAMsuzsWvvpSSCOVlzLe
+	 fynGEdZ1SvWDQ==
+From: Miguel Ojeda <ojeda@kernel.org>
+To: gregkh@linuxfoundation.org
+Cc: akpm@linux-foundation.org,
+	broonie@kernel.org,
+	conor@kernel.org,
+	f.fainelli@gmail.com,
+	hargar@microsoft.com,
+	jonathanh@nvidia.com,
+	linux-kernel@vger.kernel.org,
+	linux@roeck-us.net,
+	lkft-triage@lists.linaro.org,
+	patches@kernelci.org,
+	patches@lists.linux.dev,
+	pavel@denx.de,
+	rwarsow@gmx.de,
+	shuah@kernel.org,
+	srw@sladewatkins.net,
+	stable@vger.kernel.org,
+	sudipm.mukherjee@gmail.com,
+	torvalds@linux-foundation.org,
+	Miguel Ojeda <ojeda@kernel.org>
+Subject: Re: [PATCH 6.15 000/588] 6.15.4-rc2 review
+Date: Thu, 26 Jun 2025 01:16:17 +0200
+Message-ID: <20250625231617.952195-1-ojeda@kernel.org>
+In-Reply-To: <20250624121449.136416081@linuxfoundation.org>
+References: <20250624121449.136416081@linuxfoundation.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-X-Rspamd-Server: rspamout02
-X-Rspamd-Queue-Id: 29DF86000F
-X-Stat-Signature: 4mk4s9infhjyx3447tsg687s1cxrscxj
-X-Session-Marker: 6E657665747340676F6F646D69732E6F7267
-X-Session-ID: U2FsdGVkX18xXZaT/jfb217i4lEktUc0qNEfZqCYGtc=
-X-HE-Tag: 1750893358-116092
-X-HE-Meta: U2FsdGVkX18eVzlLpfctSdzhsJC5l0rTb2uPMErOIBQO3q40i/YA90x/KozHdzxVdgLgdQ6wq6n4tizCQD2oOPSJajdiB2LboK2Xqa++vs8YwEWhPCUJBLgHhSPQvoYE8MLwlwCbU0AtYLg8T2b1qu4z180tTUDfjv4hAyH+godDBgKbz1LPNxkGBIrfnRbfkngpVDlU9qLO78Rkrp4OyQj8S9oyJy28fIFDj2j7Wsk5wAcaVBPpo+DNlTf54j/rR+Ck1iQpHxBq10MHxe4mwZvNR9YSp6/O7xkaVD1rY7pRO1fYThI1s4MpqAhZBN/9GnB+maNSPFE72VEHCHnRsnA6nF0iofEcoJ+8mp2LYH/iWjn5KeKdHSOwwK3EEInroXYH3ARFB7Wp5fOsFr/G7VyxLPxaihs3z+jkuxGybkY=
+Content-Transfer-Encoding: 8bit
 
-From: Namhyung Kim <namhyung@kernel.org>
+On Tue, 24 Jun 2025 13:30:06 +0100 Greg Kroah-Hartman <gregkh@linuxfoundation.org> wrote:
+>
+> This is the start of the stable review cycle for the 6.15.4 release.
+> There are 588 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
+>
+> Responses should be made by Thu, 26 Jun 2025 12:13:28 +0000.
+> Anything received after that time might be too late.
 
-And add the missing feature detection logic to clear the flag on old
-kernels.
+Boot-tested under QEMU for Rust x86_64, arm64 and riscv64; built-tested
+for loongarch64:
 
-  $ perf record -g -vv true
-  ...
-  ------------------------------------------------------------
-  perf_event_attr:
-    type                             0 (PERF_TYPE_HARDWARE)
-    size                             136
-    config                           0 (PERF_COUNT_HW_CPU_CYCLES)
-    { sample_period, sample_freq }   4000
-    sample_type                      IP|TID|TIME|CALLCHAIN|PERIOD
-    read_format                      ID|LOST
-    disabled                         1
-    inherit                          1
-    mmap                             1
-    comm                             1
-    freq                             1
-    enable_on_exec                   1
-    task                             1
-    sample_id_all                    1
-    mmap2                            1
-    comm_exec                        1
-    ksymbol                          1
-    bpf_event                        1
-    defer_callchain                  1
-  ------------------------------------------------------------
-  sys_perf_event_open: pid 162755  cpu 0  group_fd -1  flags 0x8
-  sys_perf_event_open failed, error -22
-  switching off deferred callchain support
+Tested-by: Miguel Ojeda <ojeda@kernel.org>
 
-Signed-off-by: Namhyung Kim <namhyung@kernel.org>
-Signed-off-by: Josh Poimboeuf <jpoimboe@kernel.org>
-Signed-off-by: Steven Rostedt (Google) <rostedt@goodmis.org>
----
- tools/perf/util/evsel.c | 24 ++++++++++++++++++++++++
- tools/perf/util/evsel.h |  1 +
- 2 files changed, 25 insertions(+)
+(-rc1 did fail to build for all those, as reported by others, but it is
+fine now in -rc2)
 
-diff --git a/tools/perf/util/evsel.c b/tools/perf/util/evsel.c
-index 6176c31b57ea..c942983b870e 100644
---- a/tools/perf/util/evsel.c
-+++ b/tools/perf/util/evsel.c
-@@ -1076,6 +1076,14 @@ static void __evsel__config_callchain(struct evsel *evsel, struct record_opts *o
- 		}
- 	}
- 
-+	if (param->record_mode == CALLCHAIN_FP && !attr->exclude_callchain_user) {
-+		/*
-+		 * Enable deferred callchains optimistically.  It'll be switched
-+		 * off later if the kernel doesn't support it.
-+		 */
-+		attr->defer_callchain = 1;
-+	}
-+
- 	if (function) {
- 		pr_info("Disabling user space callchains for function trace event.\n");
- 		attr->exclude_callchain_user = 1;
-@@ -2124,6 +2132,8 @@ static int __evsel__prepare_open(struct evsel *evsel, struct perf_cpu_map *cpus,
- 
- static void evsel__disable_missing_features(struct evsel *evsel)
- {
-+	if (perf_missing_features.defer_callchain)
-+		evsel->core.attr.defer_callchain = 0;
- 	if (perf_missing_features.inherit_sample_read && evsel->core.attr.inherit &&
- 	    (evsel->core.attr.sample_type & PERF_SAMPLE_READ))
- 		evsel->core.attr.inherit = 0;
-@@ -2398,6 +2408,15 @@ static bool evsel__detect_missing_features(struct evsel *evsel, struct perf_cpu
- 
- 	/* Please add new feature detection here. */
- 
-+	attr.defer_callchain = true;
-+	attr.sample_type = PERF_SAMPLE_CALLCHAIN;
-+	if (has_attr_feature(&attr, /*flags=*/0))
-+		goto found;
-+	perf_missing_features.defer_callchain = true;
-+	pr_debug2("switching off deferred callchain support\n");
-+	attr.defer_callchain = false;
-+	attr.sample_type = 0;
-+
- 	attr.inherit = true;
- 	attr.sample_type = PERF_SAMPLE_READ;
- 	if (has_attr_feature(&attr, /*flags=*/0))
-@@ -2509,6 +2528,11 @@ static bool evsel__detect_missing_features(struct evsel *evsel, struct perf_cpu
- 	errno = old_errno;
- 
- check:
-+	if (evsel->core.attr.defer_callchain &&
-+	    evsel->core.attr.sample_type & PERF_SAMPLE_CALLCHAIN &&
-+	    perf_missing_features.defer_callchain)
-+		return true;
-+
- 	if (evsel->core.attr.inherit &&
- 	    (evsel->core.attr.sample_type & PERF_SAMPLE_READ) &&
- 	    perf_missing_features.inherit_sample_read)
-diff --git a/tools/perf/util/evsel.h b/tools/perf/util/evsel.h
-index 6dbc9690e0c9..a01c1de8f95f 100644
---- a/tools/perf/util/evsel.h
-+++ b/tools/perf/util/evsel.h
-@@ -221,6 +221,7 @@ struct perf_missing_features {
- 	bool branch_counters;
- 	bool aux_action;
- 	bool inherit_sample_read;
-+	bool defer_callchain;
- };
- 
- extern struct perf_missing_features perf_missing_features;
--- 
-2.47.2
+Thanks!
 
-
+Cheers,
+Miguel
 
