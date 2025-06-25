@@ -1,120 +1,137 @@
-Return-Path: <linux-kernel+bounces-702027-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-701996-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3E6F4AE7D0D
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Jun 2025 11:33:47 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 35852AE7C6E
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Jun 2025 11:22:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 13F301C22C56
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Jun 2025 09:31:49 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CA9853ACDDA
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Jun 2025 09:22:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1B0872DCBE5;
-	Wed, 25 Jun 2025 09:22:48 +0000 (UTC)
-Received: from mx-a.polytechnique.fr (mx-a.polytechnique.fr [129.104.30.14])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B6070252906;
-	Wed, 25 Jun 2025 09:22:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=129.104.30.14
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E48FB2BEC5F;
+	Wed, 25 Jun 2025 09:15:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=fairphone.com header.i=@fairphone.com header.b="QF0rBibs"
+Received: from mail-ed1-f54.google.com (mail-ed1-f54.google.com [209.85.208.54])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 857512BE7A5
+	for <linux-kernel@vger.kernel.org>; Wed, 25 Jun 2025 09:15:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750843367; cv=none; b=X57JH6hN+So72DGVQebtzaodA8ZKKSceqDKJOde4r2bVX0oL6qfUn606UtAh83S9YRE+GZJVtbDHS0Bs/Lwukaaqn6B6obO/nxvrrA4difFusdkmLiqnhsIq1FRhXduzU2DsP9h4Tdv0em0Ck78tQfwfM0LWm8dr7jbLVHPsHbs=
+	t=1750842909; cv=none; b=n1pQ+WXNIKZ0Um/o6q8jscm6FlhQ36Lr5qYIjm7K2on5oCeU5Erm7eNLK4Wk87KYRxK6H9WFpPJACPFTONRMz0KXtB/BBrMhW3w1PwIVW5ivmmwN85vY0OHwy6+D5B4PTJyGY+yxPzv8/DAxaoWCzCs6Tbnx4dDtOTg/DbArHY0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750843367; c=relaxed/simple;
-	bh=qqM24CG38I0YgdVs6wHu9lNFb6fYyDWo79Ns61wNk2U=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=huTWsuma7Gpq8ikxn4DO/PR6wd1jLogj1rvPUitv/01AirQq/31RqwyZI8NVJrKVYpzXC+6Rq7FOL2cXOirwegGzdqL1tQ0Si93cRpbjby7fvlR1MseGpR6hh+5wWp0AoB4FMHQKXeQvGiaa4q2q6LO/ocsO5leMiJjokCnLz34=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com; spf=fail smtp.mailfrom=gmail.com; arc=none smtp.client-ip=129.104.30.14
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=gmail.com
-Received: from zimbra.polytechnique.fr (zimbra.polytechnique.fr [129.104.69.30])
-	by mx-a.polytechnique.fr (tbp 25.10.18/2.0.8) with ESMTP id 55P9EwnY023896;
-	Wed, 25 Jun 2025 11:14:58 +0200
-Received: from localhost (localhost [127.0.0.1])
-	by zimbra.polytechnique.fr (Postfix) with ESMTP id 8EA3B761E58;
-	Wed, 25 Jun 2025 11:14:58 +0200 (CEST)
-X-Virus-Scanned: amavis at zimbra.polytechnique.fr
-Received: from zimbra.polytechnique.fr ([127.0.0.1])
- by localhost (zimbra.polytechnique.fr [127.0.0.1]) (amavis, port 10026)
- with ESMTP id 0ewgABPHqW04; Wed, 25 Jun 2025 11:14:58 +0200 (CEST)
-Received: from [130.190.109.159] (webmail-69.polytechnique.fr [129.104.69.39])
-	by zimbra.polytechnique.fr (Postfix) with ESMTPSA id 181BE761F7F;
-	Wed, 25 Jun 2025 11:14:58 +0200 (CEST)
-Message-ID: <4c6deafe-a6ec-40bf-873f-dc0df1a72dc4@gmail.com>
+	s=arc-20240116; t=1750842909; c=relaxed/simple;
+	bh=9GiaZ2p/nxP//ytqx6Na68602XUJeae7knZz2N0Hquo=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
+	 In-Reply-To:To:Cc; b=oQv6++HF5GcfefDzqZKQLOKxfkGyuJhan24PMF+IBuJ4Mi1lwt7fHojMs0TIfw2xUOMlilplj/r/cjuq1uDJNLomq1kHmKtGkuHBYwaKvHwN68ME7SmXKS7t1k2gSZQzw9tziMuF2GlHyJjO9gZQK9AnjJ8VnZ9Ia01tX0KWomk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=fairphone.com; spf=pass smtp.mailfrom=fairphone.com; dkim=pass (2048-bit key) header.d=fairphone.com header.i=@fairphone.com header.b=QF0rBibs; arc=none smtp.client-ip=209.85.208.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=fairphone.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fairphone.com
+Received: by mail-ed1-f54.google.com with SMTP id 4fb4d7f45d1cf-60c5b7cae8bso307776a12.1
+        for <linux-kernel@vger.kernel.org>; Wed, 25 Jun 2025 02:15:07 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=fairphone.com; s=fair; t=1750842906; x=1751447706; darn=vger.kernel.org;
+        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
+         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=mAzlUWY2EqvaD05NI5pov78EMSJ4+ZBWhP35Qs35mcY=;
+        b=QF0rBibsJUxWvNxlZloxVVGmOhSfA+p5wDTpTowR36aa7k9qmR44ocil47QiutAWsP
+         DX81zXZ/iDvj0HW2UCxV0kSQnpdSkKkLycUJ1KxHBdQ5JTGl0KRQ6q/aWwdVN8MXbB44
+         F5vD3AIWXEpKbQLRzWT3rFGeL2iAobPrfc4CbS9u0S9h2zWl0uyK/AO0iIxLU/4IH8xG
+         17TFNZaJTaN9+biv9+72/z6AvwB6Jy1AnymdXSTBhmZQBeK4+MzKYY2n6NEseECRszHc
+         /a60F3PuVVjSkj+bWnJ39wttOV2Z3UJ2Cz9cgFXBmJ9tux7eIIHicQaXzMBiHs4MG6xn
+         ltCQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1750842906; x=1751447706;
+        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
+         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=mAzlUWY2EqvaD05NI5pov78EMSJ4+ZBWhP35Qs35mcY=;
+        b=rt4SAXn9mPkQdm9FtVlYv4gKDFinPLjuJZ2mJVwr27/xRukTKDfRjbiobOLRwpXeBo
+         BTg9taZLzp2F2t1ujocRKsCnB19GLtdMMFVWwYPPiDaNB3R4PAVyFaMPPqSgK9Rtf5oh
+         IrzU5Yt2U99GqShzO6rKEz7iab9Najezfqk8vIwgqg1HA6OqyiqKaHfnSbEMfzfpG6Q+
+         RaOBSZ49+wpaZglSrU3B8MXCaQg8w6Yv+Kq5jmL5ik+nDPKmc1HIC9nnWDMaGQEHwWny
+         JG4LQvxnaPzWLPckldysb+8zuHeoT7cqDHpeBk+JgHY1W8MXpbnZfsel2y+39Vl47Gx1
+         0Wnw==
+X-Forwarded-Encrypted: i=1; AJvYcCWc1NhTR6wmk2RH9sbS3fy/nSg7Crc4eJEM5BWTAPHSc2xxnPvn43ytjszsPuOPsiraezxAusIPc5f1iX4=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwCk/o3/tFmFHnlMp478Y67h9HVHBrpqg+4+tAmJACPQv3HcIr9
+	EeEzxHUdk4dPtUG72EN9sdjanEuAKOUKJ99ex1pcEPEn6WzxWMQ29JAuQVLMueDWOVHFUuX66t/
+	EZmYp
+X-Gm-Gg: ASbGncuoOW4ae1y5+i9ABJfiUyAmqilhpM3vZvC831suVC6XiYyULlUEAksHn9H0NKB
+	qBhB63X7TMWHidkRRiTw3JgJKu08NO3Qajm0gKNvBLJIjl7B4HPkceSEu9cnXyp0bcjznte7zYd
+	ME9wDIq+Dr49Rd6V88NMBwNMGemyc6SaDnngjDz4l1eeSCuIKYHppbqymrZ4aZV3w0iCkj+p7E+
+	6Gl+VSGpI8YeyAnkHS9+OGV+WgwiCti0FPDxBccOhP8AJKkkvKe+YRVTwfUMbcFDcBS4nV/Iwkk
+	BaMyqRTcWz2EUqs3yfUNOTrJsIILKuLUnrn0fv+zNLCPzWR/iCvw6EcWx7pH5iYHsZCFt80wBgk
+	KYkJRzfLxqNoBwzqfEXOlOWe2Z1pAFmlp
+X-Google-Smtp-Source: AGHT+IHfcb1R/5G1p1D1Z8iqejyo/Aq/XvPrfI1iFMiH4aK59J/B9AcF8vW1nRksr4D+XAcktFDzpA==
+X-Received: by 2002:a17:907:d29:b0:ad2:3fa9:7511 with SMTP id a640c23a62f3a-ae0beaba4aemr215314466b.41.1750842905839;
+        Wed, 25 Jun 2025 02:15:05 -0700 (PDT)
+Received: from otso.local (144-178-202-138.static.ef-service.nl. [144.178.202.138])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ae053ee4c2bsm1008972266b.71.2025.06.25.02.15.05
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 25 Jun 2025 02:15:05 -0700 (PDT)
+From: Luca Weiss <luca.weiss@fairphone.com>
 Date: Wed, 25 Jun 2025 11:14:56 +0200
+Subject: [PATCH 1/4] dt-bindings: phy: qcom,snps-eusb2-repeater: Document
+ qcom,tune-res-fsdif
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2] atm: idt77252: Add missing `dma_map_error()`
-To: Simon Horman <horms@kernel.org>
-Cc: Jakub Kicinski <kuba@kernel.org>, Chas Williams <3chas3@gmail.com>,
-        "moderated list:ATM" <linux-atm-general@lists.sourceforge.net>,
-        "open list:ATM" <netdev@vger.kernel.org>,
-        open list <linux-kernel@vger.kernel.org>
-References: <20250624064148.12815-3-fourier.thomas@gmail.com>
- <20250624165128.GA1562@horms.kernel.org>
-Content-Language: en-US, fr
-From: Thomas Fourier <fourier.thomas@gmail.com>
-In-Reply-To: <20250624165128.GA1562@horms.kernel.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
+Message-Id: <20250625-sm7635-eusb-repeater-v1-1-19d85541eb4c@fairphone.com>
+References: <20250625-sm7635-eusb-repeater-v1-0-19d85541eb4c@fairphone.com>
+In-Reply-To: <20250625-sm7635-eusb-repeater-v1-0-19d85541eb4c@fairphone.com>
+To: Vinod Koul <vkoul@kernel.org>, 
+ Kishon Vijay Abraham I <kishon@kernel.org>, Rob Herring <robh@kernel.org>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, Abel Vesa <abel.vesa@linaro.org>
+Cc: ~postmarketos/upstreaming@lists.sr.ht, phone-devel@vger.kernel.org, 
+ linux-arm-msm@vger.kernel.org, linux-phy@lists.infradead.org, 
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ Luca Weiss <luca.weiss@fairphone.com>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1750842904; l=988;
+ i=luca.weiss@fairphone.com; s=20250611; h=from:subject:message-id;
+ bh=9GiaZ2p/nxP//ytqx6Na68602XUJeae7knZz2N0Hquo=;
+ b=sZOd6X/TTKsIXlQi1c49HslZ89NGfRuZaXpOsS2usgmdvQDgC8Ef8q5d5SXdJbjhaG1+NGSM4
+ E6Ygjl8H9IFCR/3SZaedBtkip9bwaE0PYLi08jVFwrmWLgDWEbiKmun
+X-Developer-Key: i=luca.weiss@fairphone.com; a=ed25519;
+ pk=O1aw+AAust5lEmgrNJ1Bs7PTY0fEsJm+mdkjExA69q8=
 
-On 24/06/2025 18:51, Simon Horman wrote:
-> On Tue, Jun 24, 2025 at 08:41:47AM +0200, Thomas Fourier wrote:
->> The DMA map functions can fail and should be tested for errors.
->>
->> Signed-off-by: Thomas Fourier <fourier.thomas@gmail.com>
->> ---
->>   drivers/atm/idt77252.c | 5 +++++
->>   1 file changed, 5 insertions(+)
->>
->> diff --git a/drivers/atm/idt77252.c b/drivers/atm/idt77252.c
->> index 1206ab764ba9..f2e91b7d79f0 100644
->> --- a/drivers/atm/idt77252.c
->> +++ b/drivers/atm/idt77252.c
->> @@ -852,6 +852,8 @@ queue_skb(struct idt77252_dev *card, struct vc_map *vc,
->>   
->>   	IDT77252_PRV_PADDR(skb) = dma_map_single(&card->pcidev->dev, skb->data,
->>   						 skb->len, DMA_TO_DEVICE);
->> +	if (dma_mapping_error(&card->pcidev->dev, IDT77252_PRV_PADDR(skb)))
->> +		return -ENOMEM;
->>   
->>   	error = -EINVAL;
->>   
->> @@ -1857,6 +1859,8 @@ add_rx_skb(struct idt77252_dev *card, int queue,
->>   		paddr = dma_map_single(&card->pcidev->dev, skb->data,
->>   				       skb_end_pointer(skb) - skb->data,
->>   				       DMA_FROM_DEVICE);
->> +		if (dma_mapping_error(&card->pcidev->dev, paddr))
->> +			goto outpoolrm;
->>   		IDT77252_PRV_PADDR(skb) = paddr;
->>   
->>   		if (push_rx_skb(card, skb, queue)) {
->> @@ -1871,6 +1875,7 @@ add_rx_skb(struct idt77252_dev *card, int queue,
->>   	dma_unmap_single(&card->pcidev->dev, IDT77252_PRV_PADDR(skb),
->>   			 skb_end_pointer(skb) - skb->data, DMA_FROM_DEVICE);
->>   
->> +outpoolrm:
->>   	handle = IDT77252_PRV_POOL(skb);
->>   	card->sbpool[POOL_QUEUE(handle)].skb[POOL_INDEX(handle)] = NULL;
-> Hi Thomas,
->
-> Can sb_pool_remove() be used here?
-> It seems to be the converse of sb_pool_add().
-> And safer than the code above.
-> But perhaps I'm missing something.
+Document the FS Differential TX Output Resistance Tuning value found on
+the eUSB2 repeater on Qualcomm PMICs.
 
+Signed-off-by: Luca Weiss <luca.weiss@fairphone.com>
+---
+ Documentation/devicetree/bindings/phy/qcom,snps-eusb2-repeater.yaml | 6 ++++++
+ 1 file changed, 6 insertions(+)
 
-Hi Simon,
+diff --git a/Documentation/devicetree/bindings/phy/qcom,snps-eusb2-repeater.yaml b/Documentation/devicetree/bindings/phy/qcom,snps-eusb2-repeater.yaml
+index 27f064a71c9fb8cb60e8333fb285f0510a4af94f..6bfd11657e2992735998063b3ca390e04a03930d 100644
+--- a/Documentation/devicetree/bindings/phy/qcom,snps-eusb2-repeater.yaml
++++ b/Documentation/devicetree/bindings/phy/qcom,snps-eusb2-repeater.yaml
+@@ -52,6 +52,12 @@ properties:
+     minimum: 0
+     maximum: 7
+ 
++  qcom,tune-res-fsdif:
++    $ref: /schemas/types.yaml#/definitions/uint8
++    description: FS Differential TX Output Resistance Tuning
++    minimum: 0
++    maximum: 7
++
+ required:
+   - compatible
+   - reg
 
-I don't see any reason why this would be a problem,
-
-though, I don't think it is related and the change should be in the same 
-patch.
-
-Should I create another patch for that?
+-- 
+2.50.0
 
 
