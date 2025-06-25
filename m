@@ -1,208 +1,90 @@
-Return-Path: <linux-kernel+bounces-701407-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-701404-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id ADBB2AE74A2
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Jun 2025 04:06:45 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 626C0AE7499
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Jun 2025 04:04:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C84AA7A7B87
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Jun 2025 02:05:21 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id BDEB21922B9E
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Jun 2025 02:04:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3D97919E97B;
-	Wed, 25 Jun 2025 02:06:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="EXSQfTDY"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5573719CCF5;
+	Wed, 25 Jun 2025 02:04:15 +0000 (UTC)
+Received: from szxga05-in.huawei.com (szxga05-in.huawei.com [45.249.212.191])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F2A173074BD;
-	Wed, 25 Jun 2025 02:06:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 07070A31;
+	Wed, 25 Jun 2025 02:04:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.191
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750817194; cv=none; b=t9RIEOY8LLOaXla8yi6qJOdNvowncsdR2bSWt+C/bEsMGbcBt545puc6RdgLNJS8c6wpVtqre+0lu+kP2jBsA9RT2FhX+tv0SwhbXZQBzzM4pk/xu5w+17PIPeWSP18rtqzo1uK+LT+JpFltAjB41V08vWcnMphtYz4dbrvlWwc=
+	t=1750817055; cv=none; b=XyGKeaI+1eO2EjNuN6arsUNCLIqfs0aKVYQBwMA/2wroLp2ndZZMN0COXJ8ZBJ5ZrxWxTwBDUi0BkgbVGIL2NGPJActKQhhOjXt47THXgPM4IrToK96gQPS4usaoXcSvRElAiaRFlg3NFfbVd829qDSC6oKF4KKd7GtFiVnM/Rw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750817194; c=relaxed/simple;
-	bh=YT+KkhqdiCNkSCu7M3gdcOkidLb2vRWJFnSJ3zsGz1w=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=eHi4w+l6COeak/980CK/LTj7tqOBv3YS0dN/LxQHGG6oiKCFI3GN1ai4BiWivSSqksCiBUZEE6TBgL4yf6VSZwo5HAOe3CvgkTZkUA7VBrnZcQJx+VvvIcAL8nEBUHF7lHU3LYELLlWKn+hUBuEZMrcTLo160B3SUjXJwzuWzyo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=EXSQfTDY; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279871.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 55OGnrjD015264;
-	Wed, 25 Jun 2025 02:06:27 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	r/1N/ZEHKCn7//UMBjQ6dKobWUiWwTZry94pyLxUFIc=; b=EXSQfTDYn62Gc/PU
-	9y4u6ymqb8ow7wg26bnQB4wkVDfbPeKXW1qY2/Sq8saVFPtsVWXlN/DaQo1Kw5k8
-	eMICcUlEUEhZCxQK4BaKB1J7OQryX6NR2PB+rdT7QpjpYbYGN3CbWnv+Ajyu+HLD
-	46659Q14bXYB3A6cugfVNRmOWvOYk03D7/pWxVkhXiUfcKCuGht5/oRKTv9YDoVM
-	NnOkPiG6X+Ai3oAZfC0DeAlC6bMcGgo5TfQxl2Jw7EDqeFQQ4rxxhmjyr0vZsWoe
-	s8rt6mJkeUrIovv+YxmHXxFPLSJeHhLMa7RIg1GVLUfVQzWWIQLTorqFDrvi5Ps8
-	I99Iug==
-Received: from nalasppmta01.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 47fbhqmnmn-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 25 Jun 2025 02:06:27 +0000 (GMT)
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-	by NALASPPMTA01.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 55P26QRt020815
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 25 Jun 2025 02:06:26 GMT
-Received: from [10.231.195.67] (10.80.80.8) by nalasex01a.na.qualcomm.com
- (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Tue, 24 Jun
- 2025 19:06:24 -0700
-Message-ID: <70b25ff3-b366-4e2d-a52a-0b2d50ce88c4@quicinc.com>
-Date: Wed, 25 Jun 2025 10:06:21 +0800
+	s=arc-20240116; t=1750817055; c=relaxed/simple;
+	bh=jwrXniQ29yzeVwdFRhFL2lJ1UY/qZ4FD5cjDhU77lE4=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=LTQQit8clRWrqZQ3FCpkDFXZPHtv/aGDH0pXRQ1ykfeDJ5Mkf//duwQZ9H+KwcsFMGzNVOHiIUFye6loQGJUKG6uStQ7hHnRidkzF4soP+69OGyNPjZWimhb1C9wduM4pqu0psp7tEAMaPOONgUKOpRiwG7JmkOnmMVvFmqshN0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.191
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.88.214])
+	by szxga05-in.huawei.com (SkyGuard) with ESMTP id 4bRlRn0XT0z1W3V2;
+	Wed, 25 Jun 2025 10:01:41 +0800 (CST)
+Received: from dggpemf500002.china.huawei.com (unknown [7.185.36.57])
+	by mail.maildlp.com (Postfix) with ESMTPS id CD0951A016C;
+	Wed, 25 Jun 2025 10:04:08 +0800 (CST)
+Received: from huawei.com (10.175.124.27) by dggpemf500002.china.huawei.com
+ (7.185.36.57) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Wed, 25 Jun
+ 2025 10:04:07 +0800
+From: Yue Haibing <yuehaibing@huawei.com>
+To: <davem@davemloft.net>, <dsahern@kernel.org>, <edumazet@google.com>,
+	<kuba@kernel.org>, <pabeni@redhat.com>, <horms@kernel.org>,
+	<kuniyu@google.com>
+CC: <netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+	<yuehaibing@huawei.com>
+Subject: [PATCH v2 net-next] ipv4: fib: Remove unnecessary encap_type check
+Date: Wed, 25 Jun 2025 10:20:59 +0800
+Message-ID: <20250625022059.3958215-1-yuehaibing@huawei.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/3] wifi: ath11k: fix dest ring-buffer corruption
-To: Johan Hovold <johan+linaro@kernel.org>, Jeff Johnson <jjohnson@kernel.org>
-CC: Miaoqing Pan <quic_miaoqing@quicinc.com>, <linux-wireless@vger.kernel.org>,
-        <ath11k@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
-        <stable@vger.kernel.org>
-References: <20250526114803.2122-1-johan+linaro@kernel.org>
- <20250526114803.2122-2-johan+linaro@kernel.org>
-Content-Language: en-US
-From: Baochen Qiang <quic_bqiang@quicinc.com>
-In-Reply-To: <20250526114803.2122-2-johan+linaro@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: 9wFME6JHaVT7uTiZXT16ajUDsX2b25Hq
-X-Authority-Analysis: v=2.4 cv=Id+HWXqa c=1 sm=1 tr=0 ts=685b59a3 cx=c_pps
- a=ouPCqIW2jiPt+lZRy3xVPw==:117 a=ouPCqIW2jiPt+lZRy3xVPw==:17
- a=GEpy-HfZoHoA:10 a=IkcTkHD0fZMA:10 a=6IFa9wvqVegA:10 a=VwQbUJbxAAAA:8
- a=ISufsDh2QXdYQW1nCwMA:9 a=QEXdDO2ut3YA:10
-X-Proofpoint-GUID: 9wFME6JHaVT7uTiZXT16ajUDsX2b25Hq
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNjI1MDAxNSBTYWx0ZWRfX3S28tbICocQ9
- VLmPHfXR6UhLNOz5QkCsolXN44KhR3xp8oqIT+J5Ink7DFL4DgZQZ30dkOk2TCUyV8OwnOSJH5e
- 15jT9z8TkTH6sRM7hiZKV+6HZTmodIYfnTa+awBEePGEEKyD5ThEZwO6YijeuybtHeacIbrnvZ8
- khJil14J+l1ae9JQUbv4XrQHYSkmd6B4rZ0uRz1MSEsAwKzOWXvX0FrqcuDDG2oNhZzsxflRRD6
- KqhwsmM0C2xrEm9bHj0+Hbc3QMFrIhBn7ssVzPC+QE37pKng8GT4WK6c/xZ67aJK7OezJGkSq9B
- Eu03g3zZApNCGhXQz4eoGAkSA8CEOHA7SzwnbJLkNTVUrw/cq8jRaO9gD9Od96afgvjj2MhDuNI
- XDowaX4HfJ9T242r/2xe/wGbxMuREVii4QRXn5wLKfAPsVNTGEAqoYFx0qecsh7awd5cfr3/
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.7,FMLib:17.12.80.40
- definitions=2025-06-24_06,2025-06-23_07,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- spamscore=0 priorityscore=1501 mlxlogscore=634 phishscore=0 bulkscore=0
- clxscore=1015 impostorscore=0 mlxscore=0 lowpriorityscore=0 malwarescore=0
- suspectscore=0 adultscore=0 classifier=spam authscore=0 authtc=n/a authcc=
- route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2505280000
- definitions=main-2506250015
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: kwepems200001.china.huawei.com (7.221.188.67) To
+ dggpemf500002.china.huawei.com (7.185.36.57)
 
+lwtunnel_build_state() has check validity of encap_type,
+so no need to do this before call it.
 
+Signed-off-by: Yue Haibing <yuehaibing@huawei.com>
+---
+v2: Restore encap_type check in fib_encap_match()
+---
+ net/ipv4/fib_semantics.c | 5 -----
+ 1 file changed, 5 deletions(-)
 
-On 5/26/2025 7:48 PM, Johan Hovold wrote:
-> Add the missing memory barriers to make sure that destination ring
-> descriptors are read after the head pointers to avoid using stale data
-> on weakly ordered architectures like aarch64.
-> 
-> Tested-on: WCN6855 hw2.1 WLAN.HSP.1.1-03125-QCAHSPSWPL_V1_V2_SILICONZ_LITE-3.6510.41
-> 
-> Fixes: d5c65159f289 ("ath11k: driver for Qualcomm IEEE 802.11ax devices")
-> Cc: stable@vger.kernel.org	# 5.6
-> Signed-off-by: Johan Hovold <johan+linaro@kernel.org>
-> ---
->  drivers/net/wireless/ath/ath11k/dp_rx.c | 19 +++++++++++++++++++
->  drivers/net/wireless/ath/ath11k/dp_tx.c |  3 +++
->  2 files changed, 22 insertions(+)
-> 
-> diff --git a/drivers/net/wireless/ath/ath11k/dp_rx.c b/drivers/net/wireless/ath/ath11k/dp_rx.c
-> index ea2959305dec..dfe2d889c20f 100644
-> --- a/drivers/net/wireless/ath/ath11k/dp_rx.c
-> +++ b/drivers/net/wireless/ath/ath11k/dp_rx.c
-> @@ -3851,6 +3851,9 @@ int ath11k_dp_process_rx_err(struct ath11k_base *ab, struct napi_struct *napi,
->  
->  	ath11k_hal_srng_access_begin(ab, srng);
->  
-> +	/* Make sure descriptor is read after the head pointer. */
-> +	dma_rmb();
-> +
->  	while (budget &&
->  	       (desc = ath11k_hal_srng_dst_get_next_entry(ab, srng))) {
->  		struct hal_reo_dest_ring *reo_desc = (struct hal_reo_dest_ring *)desc;
-> @@ -4154,6 +4157,9 @@ int ath11k_dp_rx_process_wbm_err(struct ath11k_base *ab,
->  
->  	ath11k_hal_srng_access_begin(ab, srng);
->  
-> +	/* Make sure descriptor is read after the head pointer. */
-> +	dma_rmb();
-> +
->  	while (budget) {
->  		rx_desc = ath11k_hal_srng_dst_get_next_entry(ab, srng);
->  		if (!rx_desc)
-> @@ -4280,6 +4286,9 @@ int ath11k_dp_process_rxdma_err(struct ath11k_base *ab, int mac_id, int budget)
->  
->  	ath11k_hal_srng_access_begin(ab, srng);
->  
-> +	/* Make sure descriptor is read after the head pointer. */
-> +	dma_rmb();
-> +
->  	while (quota-- &&
->  	       (desc = ath11k_hal_srng_dst_get_next_entry(ab, srng))) {
->  		ath11k_hal_rx_reo_ent_paddr_get(ab, desc, &paddr, &desc_bank);
-> @@ -4353,6 +4362,9 @@ void ath11k_dp_process_reo_status(struct ath11k_base *ab)
->  
->  	ath11k_hal_srng_access_begin(ab, srng);
->  
-> +	/* Make sure descriptor is read after the head pointer. */
-> +	dma_rmb();
-> +
->  	while ((reo_desc = ath11k_hal_srng_dst_get_next_entry(ab, srng))) {
->  		tag = FIELD_GET(HAL_SRNG_TLV_HDR_TAG, *reo_desc);
->  
-> @@ -5168,6 +5180,9 @@ static void ath11k_dp_rx_mon_dest_process(struct ath11k *ar, int mac_id,
->  	rx_bufs_used = 0;
->  	rx_mon_stats = &pmon->rx_mon_stats;
->  
-> +	/* Make sure descriptor is read after the head pointer. */
-> +	dma_rmb();
-> +
->  	while ((ring_entry = ath11k_hal_srng_dst_peek(ar->ab, mon_dst_srng))) {
->  		struct sk_buff *head_msdu, *tail_msdu;
->  
-> @@ -5630,6 +5645,10 @@ static int ath11k_dp_full_mon_process_rx(struct ath11k_base *ab, int mac_id,
->  	spin_lock_bh(&mon_dst_srng->lock);
->  
->  	ath11k_hal_srng_access_begin(ar->ab, mon_dst_srng);
-> +
-> +	/* Make sure descriptor is read after the head pointer. */
-> +	dma_rmb();
-> +
->  	while ((ring_entry = ath11k_hal_srng_dst_peek(ar->ab, mon_dst_srng))) {
->  		head_msdu = NULL;
->  		tail_msdu = NULL;
-> diff --git a/drivers/net/wireless/ath/ath11k/dp_tx.c b/drivers/net/wireless/ath/ath11k/dp_tx.c
-> index 8522c67baabf..549d17d90503 100644
-> --- a/drivers/net/wireless/ath/ath11k/dp_tx.c
-> +++ b/drivers/net/wireless/ath/ath11k/dp_tx.c
-> @@ -700,6 +700,9 @@ void ath11k_dp_tx_completion_handler(struct ath11k_base *ab, int ring_id)
->  
->  	ath11k_hal_srng_access_begin(ab, status_ring);
->  
-> +	/* Make sure descriptor is read after the head pointer. */
-> +	dma_rmb();
-> +
->  	while ((ATH11K_TX_COMPL_NEXT(tx_ring->tx_status_head) !=
->  		tx_ring->tx_status_tail) &&
->  	       (desc = ath11k_hal_srng_dst_get_next_entry(ab, status_ring))) {
-
-Johan, dma_rmb() is put inside _srng_access_begin() for ath12k, but here inside each
-caller. Can we achieve consistency between two drivers?
-
-
+diff --git a/net/ipv4/fib_semantics.c b/net/ipv4/fib_semantics.c
+index f7c9c6a9f53e..a2f04992f579 100644
+--- a/net/ipv4/fib_semantics.c
++++ b/net/ipv4/fib_semantics.c
+@@ -625,11 +625,6 @@ int fib_nh_common_init(struct net *net, struct fib_nh_common *nhc,
+ 	if (encap) {
+ 		struct lwtunnel_state *lwtstate;
+ 
+-		if (encap_type == LWTUNNEL_ENCAP_NONE) {
+-			NL_SET_ERR_MSG(extack, "LWT encap type not specified");
+-			err = -EINVAL;
+-			goto lwt_failure;
+-		}
+ 		err = lwtunnel_build_state(net, encap_type, encap,
+ 					   nhc->nhc_family, cfg, &lwtstate,
+ 					   extack);
+-- 
+2.34.1
 
 
