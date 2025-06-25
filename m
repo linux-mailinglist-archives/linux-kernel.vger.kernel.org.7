@@ -1,79 +1,62 @@
-Return-Path: <linux-kernel+bounces-702117-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-702119-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 81987AE7E41
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Jun 2025 11:59:35 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1BAC7AE7E47
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Jun 2025 12:00:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B776D16BFD9
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Jun 2025 09:59:35 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 52DB616C2A2
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Jun 2025 10:00:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 507E9288522;
-	Wed, 25 Jun 2025 09:59:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3036D299A8E;
+	Wed, 25 Jun 2025 09:59:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="bpDpaVfg"
-Received: from mail-ed1-f46.google.com (mail-ed1-f46.google.com [209.85.208.46])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="DEJONGvZ"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3E431273D90
-	for <linux-kernel@vger.kernel.org>; Wed, 25 Jun 2025 09:59:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2A3C92868BF;
+	Wed, 25 Jun 2025 09:59:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750845566; cv=none; b=FMZUNxfS5xXIXA/Ye72Bv34ASRqPPRUFiM1al9H9b60b5okzYO/JFFYB3zHpEimG1JDA8rmJGobh6Mn9LAVe3dIvhQX+Eqki4j9AkcQShFFkkJkvZci6Xak6W02pkG2i3wR03KVz7/45RL7FELyJE0UmfvKb2XxSoJC9DEtlGyc=
+	t=1750845582; cv=none; b=HlpvKXBZJT5Ok4jJiIFG9LEt5ION9YEOxvLrOacRqfI32eDXSiB2rbOy8Nq8zchrNaG7YQKm32Nw2NhvgtT9OyW1Jxh0ty7qBz9DeaN8ZChTHPkMJnDoARGDIm8Nz9Hwwn536upg9rYtfOmZd8eJiOKGEpCLyHo2tYWWvbmmQns=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750845566; c=relaxed/simple;
-	bh=cFnBptv+cEjizScxWA4ecMmtuAjgra2P61De7cgQDRQ=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=s19T4VtCPvB7aTG1yHpwm95aIe+jYlpYzkTpPBCihVw4PyZ9WedYBinM7huY2HEr1oiKuokAhDr2qesIX1PCEsQs6H4FyH790vbN7o994cAXw3Mo/vyA/q6v4QSOo0crUdhGqn3unDcpZ2PzTBkhbpCN6evFG/IDupyy2jBduuE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=bpDpaVfg; arc=none smtp.client-ip=209.85.208.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
-Received: by mail-ed1-f46.google.com with SMTP id 4fb4d7f45d1cf-60780d74c8cso9810480a12.2
-        for <linux-kernel@vger.kernel.org>; Wed, 25 Jun 2025 02:59:23 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=suse.com; s=google; t=1750845562; x=1751450362; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=1HkHNQkF6J6bQHOPxz3P6si0rFdmtFlxDkrWkhObb2U=;
-        b=bpDpaVfgJcCToznCMG5KgFmTIYQWrYI9jdQWdOjmZuxMp6wANfDwC4w7aGUYRAY7Vw
-         YaG2vw6cbRuq8RLbarBfcy9hzBJU2w8K6E9N/dVCOjU4wrscEDKTp8VolWsvJTT/vaBX
-         n3f0+G7bwXkqdkT4aRc7eF4V2IA0EaeWbE3+Xba01s9lNRb0VCXroiD4XXBOoZOIDQJE
-         mAoMsGRICakcYHWeUNqyQFN9JPE5WsBd6vG5fZlSqe/gK/UryhDPq7Q+jwZ5FrIg08Lg
-         eUNovbfpvPHc7eBgd6DECdplWTRPmf3oBMOPB/CQGNFezhq+Fl8/aQ00bUoitmBpBQiR
-         fQ9g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1750845562; x=1751450362;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=1HkHNQkF6J6bQHOPxz3P6si0rFdmtFlxDkrWkhObb2U=;
-        b=HEt2gs7kjQ5lwvnqybIeZb8mlZnpxpCwK/kwQCAs3unGtzC0eRvH23nGMamFCGB8K5
-         jjJeldgnRozGX6mArFxVAUlRg3LpuiBkbghYb2Xs7ycW/bU0Hz3R0TRT9sBGixsnyhCu
-         +ENWjenXsdoFm5b0T2NWTpt9igoTHvYY/H56RXqlX5GhanyeJGgjuYUy15Jn4dHmXr9+
-         4bMPhRksLDyLoDD4InIxTx0ypkZcZ4tOUFQM35DL4sYv4NEAfl/SbvLRRWxCe/6a0A2a
-         QgefMWVmDsjFUbEuAER0Js9CK8E+v5wfeLTsSwo0HCuNUO0nbdjwO+xv26GXySCH0Oit
-         NtVA==
-X-Forwarded-Encrypted: i=1; AJvYcCXrdPgJUottSVvWOSBQy9GWgiNt1W1phdd/B4mAd668QiVTxc8gILrRuarfiRL43+3b/CRFMS4ctf5D9tM=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxW8kTsk07qeOfiGOgmEikvUR3B/3mLzarEGQsSG2nyv9f10xFZ
-	PFXXbCDdt/NxjYyUnN9DP7CyiRL3lZJqdbuFTmfIKJ+D8pWXFNaJL0WgiLGO3r0y0zI=
-X-Gm-Gg: ASbGncv9Bcyg8wqQO5Rm0cC3wgBcmWErAK15re8sgLofjAmD9PUqholCwO2ZG18q9uT
-	H8kQhCnhDGM91swol1j+uLlZPPb24ZWm2gGAnT/6FPtmThg+cJUbAba7ep+4+KdKdO8eqPpS0Lf
-	nIHwbONAcCPh0vCzJURD5M0MeDcRPiDL3KLPhLJaixqDL3jbCHncMWNbPD5FdW/XMLZ7dVZM5zm
-	RyW4nl86ByEtFvp3YmBRQlZhnG59L+AioFmWpvoYubgpCRT8idJd0P8jTHoHddwkfL4Ukorh0GO
-	jcmQWbstSQ8RIPR8dQYP3DeeU1bdEc2ANAmU+xo/q8K3Oiv4UfvAQBCuIS/qXXhhDKisNlyhEqp
-	hAOK2HUMt90fSjrTSkyCkchGQmC0E
-X-Google-Smtp-Source: AGHT+IG1ZjETG8I5bt+vYaSkcyoOGGYtm+H7RyWj9p0Bpq15R/4ZBu1T0KeziY6socGnAfBD/EZ5tA==
-X-Received: by 2002:a05:6402:40c5:b0:60c:5853:5b7f with SMTP id 4fb4d7f45d1cf-60c58535dabmr924882a12.32.1750845562427;
-        Wed, 25 Jun 2025 02:59:22 -0700 (PDT)
-Received: from ?IPV6:2001:a61:1387:7b01:1baf:e0d0:c695:846a? ([2001:a61:1387:7b01:1baf:e0d0:c695:846a])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-60c2f468468sm2331921a12.41.2025.06.25.02.59.21
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 25 Jun 2025 02:59:22 -0700 (PDT)
-Message-ID: <e028a659-9535-4cf9-92c1-373f72fae3cf@suse.com>
-Date: Wed, 25 Jun 2025 11:59:21 +0200
+	s=arc-20240116; t=1750845582; c=relaxed/simple;
+	bh=AZQgeq+wzaP6c1NxNqLyOELLBKFnx3cpL59HyFLTKVA=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=GyrDWoN8XsaPnazNhLwC75KmDfAVwJ6C5D2RWde0tQ7xiIfSiIrfv0BlRoNfA5Lo2uCrsIGh475u/jAk89HDKl2v16t+pnR+NPEKHztcUhHBCuoiqVN7eeOLWGLXLbhKMvpn4Dr+Cz7WDs2eTW7/x94/2mV7Ij1BLO11kjtSSf4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=DEJONGvZ; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279864.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 55P4Mr9p021510;
+	Wed, 25 Jun 2025 09:59:34 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	WAJGmVLkcSHj7fVRUBSlZ3mqVrP+vEQzKX4QGAJkaOw=; b=DEJONGvZX4VsQRtq
+	w8qS9BebcGoZPEfrZV7eYnWhLTlHl3EzikfqIOuMDM8KjHSA/h0LWqiVtaWDeY6e
+	6NeVnDJvrSXljE6Yl4K9WZRXrRQ1ZeC5Eya8Gfy8GbiITZIGQqzWQtXsQdEq1p+h
+	o6GzA10dNGJSZQZoz0O+8aoPGtGs4DHgVgOpV1048/oe04FJnSKVYGKjOT3F/UGy
+	X/wJIEZ0eoD4FnvJKe98a5olatgvXR2wjP/Yt9EZjy/Nea3MwJOX3O6CMth0wWsk
+	OqyIIi9xXgpvVOf20XseSJGlBBWsfN1wU9R1wVfv6pGcYscCbIz6gkZhVNnZ4aVc
+	decuYw==
+Received: from nalasppmta01.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 47esa4rn1b-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 25 Jun 2025 09:59:34 +0000 (GMT)
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+	by NALASPPMTA01.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 55P9xXmd014301
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 25 Jun 2025 09:59:33 GMT
+Received: from [10.133.33.71] (10.80.80.8) by nalasex01a.na.qualcomm.com
+ (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Wed, 25 Jun
+ 2025 02:59:32 -0700
+Message-ID: <2e72da79-e443-4168-979d-43722493001f@quicinc.com>
+Date: Wed, 25 Jun 2025 17:59:29 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -81,265 +64,74 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [RFC PATCH 2/4] usb: core: Introduce usb authentication feature
-To: nicolas.bouchinet@oss.cyber.gouv.fr,
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: Alan Stern <stern@rowland.harvard.edu>,
- Kannappan R <r.kannappan@intel.com>,
- Sabyrzhan Tasbolatov <snovitoll@gmail.com>,
- Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
- Stefan Eichenberger <stefan.eichenberger@toradex.com>,
- Thomas Gleixner <tglx@linutronix.de>, Pawel Laszczak <pawell@cadence.com>,
- Ma Ke <make_ruc2021@163.com>, Jeff Johnson <jeff.johnson@oss.qualcomm.com>,
- Luc Bonnafoux <luc.bonnafoux@ssi.gouv.fr>,
- Luc Bonnafoux <luc.bonnafoux@oss.cyber.gouv.fr>,
- Nicolas Bouchinet <nicolas.bouchinet@ssi.gouv.fr>,
- linux-kernel@vger.kernel.org, linux-usb@vger.kernel.org
-References: <20250620-usb_authentication-v1-0-0d92261a5779@ssi.gouv.fr>
- <20250620-usb_authentication-v1-2-0d92261a5779@ssi.gouv.fr>
+Subject: Re: [PATCH v2 2/5] wifi: ath11k: use plain access for descriptor
+ length
+To: Johan Hovold <johan+linaro@kernel.org>, Jeff Johnson <jjohnson@kernel.org>
+CC: Miaoqing Pan <quic_miaoqing@quicinc.com>, <linux-wireless@vger.kernel.org>,
+        <ath11k@lists.infradead.org>, <linux-kernel@vger.kernel.org>
+References: <20250604143457.26032-1-johan+linaro@kernel.org>
+ <20250604143457.26032-3-johan+linaro@kernel.org>
 Content-Language: en-US
-From: Oliver Neukum <oneukum@suse.com>
-In-Reply-To: <20250620-usb_authentication-v1-2-0d92261a5779@ssi.gouv.fr>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+From: Baochen Qiang <quic_bqiang@quicinc.com>
+In-Reply-To: <20250604143457.26032-3-johan+linaro@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Authority-Analysis: v=2.4 cv=eLYTjGp1 c=1 sm=1 tr=0 ts=685bc886 cx=c_pps
+ a=ouPCqIW2jiPt+lZRy3xVPw==:117 a=ouPCqIW2jiPt+lZRy3xVPw==:17
+ a=GEpy-HfZoHoA:10 a=IkcTkHD0fZMA:10 a=6IFa9wvqVegA:10 a=VwQbUJbxAAAA:8
+ a=COk6AnOGAAAA:8 a=ijPAINBQZKyftGx5nG4A:9 a=QEXdDO2ut3YA:10
+ a=TjNXssC_j7lpFel5tvFf:22
+X-Proofpoint-GUID: NeFfw4ZHt0MuwvFnFKj7ouEZ9c_oM_4s
+X-Proofpoint-ORIG-GUID: NeFfw4ZHt0MuwvFnFKj7ouEZ9c_oM_4s
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNjI1MDA3NCBTYWx0ZWRfX8DC/yWYfjyN/
+ kfcyHQ7julZ++IIbfjFA1PQWWt1a/Rdtp0fW/1iHwUQni3FWlM0JR3SvaHaPU2yhexSggcpVtUh
+ 36pRjqFPUoZXy6JeVEXijAD31pXHX2YIT8qHqsSEWzX+UaUpR2Kl6XG6m6mSoSzRluS81xjT0wh
+ i0Q7owJPt2BqJ48QJjjuntkWbmW15uHCQPg1Z/fz7vg3rJiGJCMjXEi+JOq67OqpLwkYj1712vm
+ nLLByO7SvPkTdpbNV7tss0x6Y0e0mHP0uS3Puv7N2x6CqR05h/D83AvC7UyRveOOp0AbCOCkwxr
+ yI/YiR/Q5lDa5L2X2QHYbbobZohHSPe08wNWO3lreRpf6obNcGhwJWA8xydHE+2lnykcOjzI+ZU
+ TJ8/nYf+z2YmJm0oMH4p22XkeX2XeOGbexkXMGOJ8TJcnMFWfrxdjK+/ZXwh7kQwPpJiOENe
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.7,FMLib:17.12.80.40
+ definitions=2025-06-25_02,2025-06-23_07,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ phishscore=0 priorityscore=1501 mlxscore=0 clxscore=1015 mlxlogscore=870
+ suspectscore=0 bulkscore=0 impostorscore=0 lowpriorityscore=0 malwarescore=0
+ adultscore=0 spamscore=0 classifier=spam authscore=0 authtc=n/a authcc=
+ route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2505280000
+ definitions=main-2506250074
 
 
 
-On 20.06.25 16:27, nicolas.bouchinet@oss.cyber.gouv.fr wrote:
+On 6/4/2025 10:34 PM, Johan Hovold wrote:
+> The read memory barrier added by commit 6d037a372f81 ("wifi: ath11k: fix
+> ring-buffer corruption") is enough to guarantee ordering also for plain
+> descriptor accesses if the length helper is ever inlined so drop the
+> unnecessary READ_ONCE().
+> 
+> Tested-on: WCN6855 hw2.1 WLAN.HSP.1.1-03125-QCAHSPSWPL_V1_V2_SILICONZ_LITE-3.6510.41
+> 
+> Signed-off-by: Johan Hovold <johan+linaro@kernel.org>
+> ---
+>  drivers/net/wireless/ath/ath11k/hal.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/drivers/net/wireless/ath/ath11k/hal.c b/drivers/net/wireless/ath/ath11k/hal.c
+> index 921114686ba3..b1f5a927dddd 100644
+> --- a/drivers/net/wireless/ath/ath11k/hal.c
+> +++ b/drivers/net/wireless/ath/ath11k/hal.c
+> @@ -599,7 +599,7 @@ u32 ath11k_hal_ce_dst_status_get_length(void *buf)
+>  	struct hal_ce_srng_dst_status_desc *desc = buf;
+>  	u32 len;
+>  
+> -	len = FIELD_GET(HAL_CE_DST_STATUS_DESC_FLAGS_LEN, READ_ONCE(desc->flags));
+> +	len = FIELD_GET(HAL_CE_DST_STATUS_DESC_FLAGS_LEN, desc->flags);
+>  	desc->flags &= ~HAL_CE_DST_STATUS_DESC_FLAGS_LEN;
+>  
+>  	return len;
 
-> +/**
-> + * usb_authent_req_digest - Check if device is known via its digest
-> + * @dev:		[in]  pointer to the usb device to query
-> + * @buffer:     [inout] buffer to hold request data
-> + * @digest:     [out] device digest
-> + *
-> + * Context: task context, might sleep.
-> + *
-> + * This function sends a digest request to the usb device.
-> + *
-> + * Possible errors:
-> + *  - ECOMM : failed to send or received a message to the device
-> + *  - EINVAL : if buffer or mask is NULL
-> + *
-> + * Return: If successful, zero. Otherwise, a negative  error number.
-> + */
-> +static int usb_authent_req_digest(struct usb_device *dev, uint8_t *const buffer,
-
-How can buffer be const if it is used for output?
-
-[..]
-> +struct usb_auth_cert_req {
-> +	uint16_t offset;
-> +	uint16_t length;
-> +} __packed;
-
-Endianness?
-
-
-> +/**
-> + * usb_authent_read_certificate - Read a device certificate
-> + * @dev:		[in] pointer to the usb device to query
-> + * @buffer:		[inout] buffer to hold request data, caller allocated
-> + * @slot:		[in] certificate chain to be read
-> + * @cert_der:   [out] buffer to hold received certificate chain
-> + * @cert_len:   [out] length of received certificate
-> + *
-> + * Context: task context, might sleep.
-> + *
-> + * Possible errors:
-> + *  - EINVAL : NULL pointer or invalid slot value
-> + *  - ECOMM  : failed to send request to device
-> + *  - ENOMEM : failed to allocate memory for certificate
-> + *
-> + * Return: If successful, zero. Otherwise, a negative  error number.
-> + */
-> +static int usb_authent_read_certificate(struct usb_device *dev, uint8_t *const buffer,
-> +					uint8_t slot, uint8_t **cert_der, size_t *cert_len)
-> +{
-> +	uint16_t read_offset = 0;
-> +	uint16_t read_length = 0;
-> +	uint8_t chain_part[64] = { 0 };
-> +
-> +	if (unlikely(slot >= 8 || buffer == NULL || cert_der == NULL || cert_len == NULL)) {
-> +		pr_err("invalid arguments\n");
-> +		return -EINVAL;
-> +	}
-> +
-> +	// First request to get certificate chain length
-> +	if (usb_auth_read_cert_part(dev, buffer, slot, 0,
-> +				    USB_AUTH_CHAIN_HEADER_SIZE,
-> +				    chain_part) != 0) {
-> +		pr_err("Failed to get first certificate part\n");
-> +		return -ECOMM;
-> +	}
-> +
-> +	// Extract total length
-> +	*cert_len = ((uint16_t *)chain_part)[0];
-
-Endianness
-
-
-> +
-> +/**
-> + * usb_authent_challenge_dev - Challenge a device
-> + * @dev:				[in] pointer to the usb device to query
-> + * @buffer:			[in] pointer to the buffer allocated for USB query
-> + * @slot:				[in] certificate chain to be used
-> + * @slot_mask:	[in] slot mask of the device
-> + * @nonce:			[in] nonce to use for the challenge, 32 bytes long
-> + * @chall:			[out] buffer for chall response, 204 bytes long, caller allocated
-> + *
-> + * Context: task context, might sleep.
-> + *
-> + * Possible errors:
-> + *  - EINVAL : NULL input pointer or invalid slot value
-> + *  - ECOMM  : failed to send or receive message from the device
-> + *
-> + * Return: If successful, zero. Otherwise, a negative  error number.
-> + */
-> +static int usb_authent_challenge_dev(struct usb_device *dev, uint8_t *buffer,
-> +	const uint8_t slot, const uint8_t slot_mask, const uint8_t *const nonce,
-> +	uint8_t *const chall)
-> +{
-> +	int ret = -1;
-> +
-> +	if (unlikely(buffer == NULL || slot >= 8 || nonce == NULL)) {
-> +		pr_err("invalid arguments\n");
-> +		return -EINVAL;
-> +	}
-> +
-> +	// AUTH OUT challenge request transfer
-> +	memcpy(buffer, nonce, 32);
-> +	ret = usb_control_msg(dev, usb_sndctrlpipe(dev, 0), AUTH_OUT,
-> +			      USB_DIR_OUT,
-> +			      (USB_SECURITY_PROTOCOL_VERSION << 8) +
-> +				      USB_AUTHENT_CHALLENGE_REQ_TYPE,
-> +			      (slot << 8), buffer, 32, USB_CTRL_GET_TIMEOUT);
-> +	if (ret < 0) {
-> +		pr_err("Failed to send challenge request: %d\n", ret);
-> +		ret = -ECOMM;
-> +		goto cleanup;
-> +	}
-> +
-> +	// Complete the challenge with the request
-> +	chall[1] = USB_SECURITY_PROTOCOL_VERSION;
-> +	chall[0] = USB_AUTHENT_CHALLENGE_REQ_TYPE;
-> +	chall[2] = slot;
-> +	chall[3] = 0x00;
-> +	memcpy(chall+4, nonce, 32);
-
-This may be worth a definition.
-> +
-> +	// AUTH IN challenge response transfer
-> +	ret = usb_control_msg(dev, usb_rcvctrlpipe(dev, 0), AUTH_IN, USB_DIR_IN,
-> +			      (USB_SECURITY_PROTOCOL_VERSION << 8) +
-> +				      USB_AUTHENT_CHALLENGE_RESP_TYPE,
-> +			      (slot << 8) + slot_mask, buffer, 168,
-> +			      USB_CTRL_GET_TIMEOUT);
-> +	if (ret < 0) {
-> +		pr_err("Failed to get challenge response: %d\n", ret);
-> +		ret = -ECOMM;
-> +		goto cleanup;
-> +	}
-> +
-> +	pr_notice("received challenge response\n");
-> +
-> +	// Complete last part of the challenge with what is returned by the device
-> +	memcpy(chall+USB_AUTH_CHAIN_HEADER_SIZE, buffer, 168);
-
-The 168 comes whence?
-
-> +
-> +	ret = 0;
-> +
-> +cleanup:
-> +
-> +	return ret;
-> +}
-
-
-> +/**
-> + * @brief Check that the authentication can resume after a sleep
-> + *
-> + * @param [in] dev : the usb device
-> + * @param [in] hub : the parent hub
-> + *
-> + * Possible error codes:
-> + *  - ENODEV : hub has been disconnected
-> + *
-> + * @return 0 if possible to resume, else an error code
-> + */
-> +static int usb_auth_try_resume(struct usb_device *dev, struct usb_device *hub)
-> +{
-> +	// Test if the hub or the device has been disconnected
-> +	if (unlikely(hub == NULL || dev == NULL ||
-> +		     dev->port_is_suspended == 1 ||
-> +		     dev->reset_in_progress == 1)) {
-> +		return -ENODEV;
-> +	}
-> +
-> +	// TODO: test if the device has not been disconnected
-> +	// TODO: test if the device has not been disconnected then replaced with another one
-> +
-> +	return 0;
-> +}
-> +
-> +/**
-> + * usb_authenticate_device - Challenge a device
-> + * @dev:		[inout] pointer to device
-> + *
-> + * Context: task context, might sleep.
-> + *
-> + * Authentication is done in the following steps:
-> + *  1. Get device certificates digest to determine if it is already known
-> + *       if yes, go to 3.
-> + *  2. Get device certificates
-> + *  3. Challenge device
-> + *  4. Based on previous result, determine if device is allowed under local
-> + *     security policy.
-> + *
-> + * Possible error code:
-> + *  - ENOMEM : failed to allocate memory for exchange
-> + *  - TODO: complete all possible error case
-> + *
-> + * Return: If successful, zero. Otherwise, a negative  error number.
-> + */
-> +int usb_authenticate_device(struct usb_device *dev)
-> +{
-> +	int ret = 0;
-> +
-> +	uint8_t is_valid = 0;
-> +	uint8_t is_known = 0;
-> +	uint8_t is_blocked = 0;
-> +	uint8_t chain_nb = 0;
-> +	uint8_t slot_mask = 0;
-> +	uint8_t slot = 0;
-> +	uint8_t digests[256] = { 0 };
-> +	uint8_t nonce[32] = {0};
-> +	uint8_t chall[204] = {0};
-> +	uint32_t dev_id = 0;
-> +	size_t ctx_size = 0;
-> +	int i = 0;
-> +
-> +	uint8_t *cert_der = NULL;
-> +	size_t cert_len = 0;
-> +
-> +	if (unlikely(dev == NULL || dev->parent == NULL))
-> +		return -ENODEV;
-> +
-> +	struct usb_device *hub = dev->parent;
-> +
-> +	// By default set authorization status at false
-> +	dev->authorized = 0;
-> +	dev->authenticated = 0;
-> +
-> +	uint8_t *buffer = NULL;
-> +	// Buffer to hold responses
-> +	buffer = kzalloc(512, GFP_KERNEL);
-
-Should this not be cached for comparison after resume?
-
-	Regards
-		Oliver
-
+Reviewed-by: Baochen Qiang <quic_bqiang@quicinc.com>
 
