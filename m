@@ -1,160 +1,185 @@
-Return-Path: <linux-kernel+bounces-701430-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-701434-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 02038AE74DF
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Jun 2025 04:39:49 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 97639AE74ED
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Jun 2025 04:44:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A9C82189D2FA
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Jun 2025 02:40:05 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 11A633B88DB
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Jun 2025 02:44:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D387F1C5D5E;
-	Wed, 25 Jun 2025 02:39:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CBB791C9DE5;
+	Wed, 25 Jun 2025 02:44:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="IW5Z1A32"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.14])
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="V3AWpWLV"
+Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7FDCE1B4F0A;
-	Wed, 25 Jun 2025 02:39:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.14
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D9E7A1C5D59;
+	Wed, 25 Jun 2025 02:44:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750819182; cv=none; b=K9TsR3L6TYdl/2e9zvQ1kcDnncE/AvBs+vXpixekpRE7k3GOjEEWFsTrNH/EU/eiNkUpMamDS0Ql576fGGVZAcqGgYG69d9t3UFrI6jFN/RykbspnFHNBYaYIwlJylRmVioZpiweg1MXRRQ2Qpy5/87quum6SWSzuE9V+tsSt9k=
+	t=1750819492; cv=none; b=HRV24GOPt3fuppkVIn3ROcQNwDE0bXH7OP3+ftsNUWjqNpoWC/a+/O3D8g3r1YRQf4dqDUdk+xnF9T+a0wo7a6SUvzq2SnsaJybEwdCpnQP9S0eCqYjNb2B1D7VSC2cOuIlL4EJtdBYnDhxjIkb/FmjXtRztnnlwPAXt0v8vU8I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750819182; c=relaxed/simple;
-	bh=WAerYuAXgqsAgcla018iotDoPRumUCAOOHyW2IVFyXk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=kopL4lXWGR8gOWDY/ONaQpTl0HTffFuAnVNg/8n80gLKerrMvHPAvcEvT4Kh5jJ19OIo3ZmD/eqjR9qdBnfwN28s47CpGAN7ycC8HKbUmdmYlPzjTSGiu0lxeAkAV+461lSgUqQpiZwB65Hh0+jdvM0vXAUTlNlSwFASD+3AWQY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=IW5Z1A32; arc=none smtp.client-ip=192.198.163.14
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1750819180; x=1782355180;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=WAerYuAXgqsAgcla018iotDoPRumUCAOOHyW2IVFyXk=;
-  b=IW5Z1A322VM+NyF7LmrxhMrpGwr20V5eG2J8VfD/dDJGuIVMVns/9Ah3
-   QXjVf0CqWOEf5sFVjePcXMun0rwHlT//w9WitYU3W9ujE767UPx0q1L3y
-   9WNS+VNKMZSkxKujdinQ+EUJJzNW2UD3Nipmj3/jX3hS8lOz7MHGUfiyI
-   SeRTfiPnORDwdkiuLJLZpS9MhM91zvYq2Lz11oJuKkVcUPjo3smHg5Lxl
-   jE7whNCLdOVhiGGo3GDzvPayUDt7jIWLRFTkniZ5VnYTd0ugrnMc56noA
-   VOBMCaicvaO4/mLTRKxpTJnsvVATOUlsPKBjUDXvUPd10ig0em0rJdVOR
-   w==;
-X-CSE-ConnectionGUID: r6/sbV+HSfW1IIJq0ySZLw==
-X-CSE-MsgGUID: ng7y4UbYTbiAONABew7nfQ==
-X-IronPort-AV: E=McAfee;i="6800,10657,11474"; a="53143018"
-X-IronPort-AV: E=Sophos;i="6.16,263,1744095600"; 
-   d="scan'208";a="53143018"
-Received: from orviesa002.jf.intel.com ([10.64.159.142])
-  by fmvoesa108.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 24 Jun 2025 19:39:39 -0700
-X-CSE-ConnectionGUID: A5XXVkmVQDKrUq5PVqT0tQ==
-X-CSE-MsgGUID: mI7++jFoSCSUNFPwrZwNVQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.16,263,1744095600"; 
-   d="scan'208";a="183124331"
-Received: from lkp-server01.sh.intel.com (HELO e8142ee1dce2) ([10.239.97.150])
-  by orviesa002.jf.intel.com with ESMTP; 24 Jun 2025 19:39:35 -0700
-Received: from kbuild by e8142ee1dce2 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1uUG2v-000ShS-1A;
-	Wed, 25 Jun 2025 02:39:33 +0000
-Date: Wed, 25 Jun 2025 10:39:29 +0800
-From: kernel test robot <lkp@intel.com>
-To: "Christian S. Lima" <christiansantoslima21@gmail.com>,
-	Miguel Ojeda <ojeda@kernel.org>,
-	Alex Gaynor <alex.gaynor@gmail.com>,
-	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>,
-	=?iso-8859-1?Q?Bj=F6rn?= Roy Baron <bjorn3_gh@protonmail.com>,
-	Benno Lossin <benno.lossin@proton.me>,
-	Andreas Hindborg <a.hindborg@kernel.org>,
-	Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>,
-	Danilo Krummrich <dakr@kernel.org>, rust-for-linux@vger.kernel.org,
-	linux-kernel@vger.kernel.org, ~lkcamp/patches@lists.sr.ht,
-	richard120310@gmail.com
-Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev
-Subject: Re: [PATCH v8] rust: transmute: Add methods for FromBytes trait
-Message-ID: <202506251052.onsnGcvR-lkp@intel.com>
-References: <20250624042802.105623-1-christiansantoslima21@gmail.com>
+	s=arc-20240116; t=1750819492; c=relaxed/simple;
+	bh=KMalwzn3BoF9rtZrZXblBqSJlr49R7PWwYfW/jcTElw=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=AtkorZbg+k4twXeeK09Uf1+8akdkUUMoag1f/C003F7C74j772jml20PQkinMGazviB+ZyTc7423Xfh/abFUjcRL2AEHhEFaQ0A8VPB/VcFwPXRkz4FwKOE/3Wmc0+5q5aEYymdeGuFdN/fl7J/r4KIs8hMQbf65bsGV1GoBxS8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=V3AWpWLV; arc=none smtp.client-ip=90.155.50.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=casper.20170209; h=Content-Transfer-Encoding:Content-Type:
+	In-Reply-To:From:References:Cc:To:Subject:MIME-Version:Date:Message-ID:Sender
+	:Reply-To:Content-ID:Content-Description;
+	bh=QhOKuwEXUK6jChw5nZdyTrOBXqUWrLJ8kphrotwMKFI=; b=V3AWpWLVWaDzC98R8eWDkEMmoz
+	AivrGnORKy304ztblnzcBMPzXPxEKXGbdH99j4qF7S78JSwFp/LBJTkOJUcUr0az22YhbpTQ0EnFj
+	M4v5NR7/fHmsLvQ8Efnak0zRQJWT2hIkvbsmV81xmvoZKIBBlYevYE09dT/LDqdcPM5d0HIKogOTU
+	Oi+Dhq3ob5GW4Sb9eK7nGqnUXfDESXfJn28csgxoEOAPUebMAiw3Otb3c54ZV9BrnvS53zNflGn7k
+	FFtoKWYgye7s2OhG3/9GybXhfOH1gljjpQmjG9p/cmUnOGPxbynQBMuW1/JItCzc4HEu4SrFFXgjw
+	FFJDi9IQ==;
+Received: from [50.53.25.54] (helo=[192.168.254.17])
+	by casper.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
+	id 1uUG40-00000008GCY-2IGy;
+	Wed, 25 Jun 2025 02:40:40 +0000
+Message-ID: <5ea93880-72fa-46c7-b69b-82e2021aa567@infradead.org>
+Date: Tue, 24 Jun 2025 19:40:37 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250624042802.105623-1-christiansantoslima21@gmail.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 5/8] docs: dma-api: remove duplicate description of the
+ DMA pool API
+To: Petr Tesarik <ptesarik@suse.com>, Jonathan Corbet <corbet@lwn.net>,
+ Morton <akpm@linux-foundation.org>
+Cc: Marek Szyprowski <m.szyprowski@samsung.com>,
+ Leon Romanovsky <leon@kernel.org>, Keith Busch <kbusch@kernel.org>,
+ Caleb Sander Mateos <csander@purestorage.com>,
+ Sagi Grimberg <sagi@grimberg.me>, Jens Axboe <axboe@kernel.dk>,
+ John Garry <john.g.garry@oracle.com>,
+ "open list:DOCUMENTATION" <linux-doc@vger.kernel.org>,
+ open list <linux-kernel@vger.kernel.org>,
+ "open list:MEMORY MANAGEMENT" <linux-mm@kvack.org>
+References: <20250624133923.1140421-1-ptesarik@suse.com>
+ <20250624133923.1140421-6-ptesarik@suse.com>
+Content-Language: en-US
+From: Randy Dunlap <rdunlap@infradead.org>
+In-Reply-To: <20250624133923.1140421-6-ptesarik@suse.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Hi Christian,
+Hi,
 
-kernel test robot noticed the following build errors:
+On 6/24/25 6:39 AM, Petr Tesarik wrote:
+> The DMA pool API is documented in Memory Management APIs. Do not duplicate
+> it in DMA API documentation.
+> 
 
-[auto build test ERROR on rust/rust-next]
-[also build test ERROR on linus/master v6.16-rc3 next-20250624]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
+This looks like it works (from just visual inspection), but I'm wondering
+why not just move all DMA API interfaces to dma-api.rst and don't have any
+in mm-api.rst... ?
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Christian-S-Lima/rust-transmute-Add-methods-for-FromBytes-trait/20250624-123012
-base:   https://github.com/Rust-for-Linux/linux rust-next
-patch link:    https://lore.kernel.org/r/20250624042802.105623-1-christiansantoslima21%40gmail.com
-patch subject: [PATCH v8] rust: transmute: Add methods for FromBytes trait
-config: x86_64-rhel-9.4-rust (https://download.01.org/0day-ci/archive/20250625/202506251052.onsnGcvR-lkp@intel.com/config)
-compiler: clang version 18.1.8 (https://github.com/llvm/llvm-project 3b5b5c1ec4a3095ab096dd780e84d7ab81f3d7ff)
-rustc: rustc 1.78.0 (9b00956e5 2024-04-29)
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250625/202506251052.onsnGcvR-lkp@intel.com/reproduce)
+Thanks.
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202506251052.onsnGcvR-lkp@intel.com/
-
-All errors (new ones prefixed by >>):
-
->> error[E0658]: use of unstable library feature 'pointer_is_aligned'
-   --> rust/kernel/transmute.rs:74:68
-   |
-   74 |         if bytes.len() == ::core::mem::size_of::<T>() && slice_ptr.is_aligned() {
-   |                                                                    ^^^^^^^^^^
-   |
-   = note: see issue #96284 <https://github.com/rust-lang/rust/issues/96284> for more information
-   = help: add `#![feature(pointer_is_aligned)]` to the crate attributes to enable
-   = note: this compiler was built on 2024-04-29; consider upgrading it if it is out of date
---
->> error[E0658]: use of unstable library feature 'pointer_is_aligned'
-   --> rust/kernel/transmute.rs:87:68
-   |
-   87 |         if bytes.len() == ::core::mem::size_of::<T>() && slice_ptr.is_aligned() {
-   |                                                                    ^^^^^^^^^^
-   |
-   = note: see issue #96284 <https://github.com/rust-lang/rust/issues/96284> for more information
-   = help: add `#![feature(pointer_is_aligned)]` to the crate attributes to enable
-   = note: this compiler was built on 2024-04-29; consider upgrading it if it is out of date
---
->> error[E0658]: use of unstable library feature 'pointer_is_aligned'
-   --> rust/kernel/transmute.rs:101:72
-   |
-   101 |         if bytes.len() % ::core::mem::size_of::<T>() == 0 && slice_ptr.is_aligned() {
-   |                                                                        ^^^^^^^^^^
-   |
-   = note: see issue #96284 <https://github.com/rust-lang/rust/issues/96284> for more information
-   = help: add `#![feature(pointer_is_aligned)]` to the crate attributes to enable
-   = note: this compiler was built on 2024-04-29; consider upgrading it if it is out of date
---
->> error[E0658]: use of unstable library feature 'pointer_is_aligned'
-   --> rust/kernel/transmute.rs:114:72
-   |
-   114 |         if bytes.len() % ::core::mem::size_of::<T>() == 0 && slice_ptr.is_aligned() {
-   |                                                                        ^^^^^^^^^^
-   |
-   = note: see issue #96284 <https://github.com/rust-lang/rust/issues/96284> for more information
-   = help: add `#![feature(pointer_is_aligned)]` to the crate attributes to enable
-   = note: this compiler was built on 2024-04-29; consider upgrading it if it is out of date
+> Signed-off-by: Petr Tesarik <ptesarik@suse.com>
+> ---
+>  Documentation/core-api/dma-api.rst | 62 +-----------------------------
+>  Documentation/core-api/mm-api.rst  |  2 +
+>  2 files changed, 4 insertions(+), 60 deletions(-)
+> 
+> diff --git a/Documentation/core-api/dma-api.rst b/Documentation/core-api/dma-api.rst
+> index 3e89e3b0ecfd..f7fddaf7510c 100644
+> --- a/Documentation/core-api/dma-api.rst
+> +++ b/Documentation/core-api/dma-api.rst
+> @@ -83,66 +83,8 @@ much like a struct kmem_cache, except that they use the DMA-coherent allocator,
+>  not __get_free_pages().  Also, they understand common hardware constraints
+>  for alignment, like queue heads needing to be aligned on N-byte boundaries.
+>  
+> -
+> -::
+> -
+> -	struct dma_pool *
+> -	dma_pool_create(const char *name, struct device *dev,
+> -			size_t size, size_t align, size_t alloc);
+> -
+> -dma_pool_create() initializes a pool of DMA-coherent buffers
+> -for use with a given device.  It must be called in a context which
+> -can sleep.
+> -
+> -The "name" is for diagnostics (like a struct kmem_cache name); dev and size
+> -are like what you'd pass to dma_alloc_coherent().  The device's hardware
+> -alignment requirement for this type of data is "align" (which is expressed
+> -in bytes, and must be a power of two).  If your device has no boundary
+> -crossing restrictions, pass 0 for alloc; passing 4096 says memory allocated
+> -from this pool must not cross 4KByte boundaries.
+> -
+> -::
+> -
+> -	void *
+> -	dma_pool_zalloc(struct dma_pool *pool, gfp_t mem_flags,
+> -		        dma_addr_t *handle)
+> -
+> -Wraps dma_pool_alloc() and also zeroes the returned memory if the
+> -allocation attempt succeeded.
+> -
+> -
+> -::
+> -
+> -	void *
+> -	dma_pool_alloc(struct dma_pool *pool, gfp_t gfp_flags,
+> -		       dma_addr_t *dma_handle);
+> -
+> -This allocates memory from the pool; the returned memory will meet the
+> -size and alignment requirements specified at creation time.  Pass
+> -GFP_ATOMIC to prevent blocking, or if it's permitted (not
+> -in_interrupt, not holding SMP locks), pass GFP_KERNEL to allow
+> -blocking.  Like dma_alloc_coherent(), this returns two values:  an
+> -address usable by the CPU, and the DMA address usable by the pool's
+> -device.
+> -
+> -::
+> -
+> -	void
+> -	dma_pool_free(struct dma_pool *pool, void *vaddr,
+> -		      dma_addr_t addr);
+> -
+> -This puts memory back into the pool.  The pool is what was passed to
+> -dma_pool_alloc(); the CPU (vaddr) and DMA addresses are what
+> -were returned when that routine allocated the memory being freed.
+> -
+> -::
+> -
+> -	void
+> -	dma_pool_destroy(struct dma_pool *pool);
+> -
+> -dma_pool_destroy() frees the resources of the pool.  It must be
+> -called in a context which can sleep.  Make sure you've freed all allocated
+> -memory back to the pool before you destroy it.
+> +See :ref:`Documentation/core-api/mm-api.rst <dma_pools>` for a detailed
+> +description of the DMA pools API.
+>  
+>  
+>  Part Ic - DMA addressing limitations
+> diff --git a/Documentation/core-api/mm-api.rst b/Documentation/core-api/mm-api.rst
+> index a61766328ac0..de0bab6e3fdd 100644
+> --- a/Documentation/core-api/mm-api.rst
+> +++ b/Documentation/core-api/mm-api.rst
+> @@ -91,6 +91,8 @@ Memory pools
+>  .. kernel-doc:: mm/mempool.c
+>     :export:
+>  
+> +.. _dma_pools:
+> +
+>  DMA pools
+>  =========
+>  
 
 -- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+~Randy
+
 
