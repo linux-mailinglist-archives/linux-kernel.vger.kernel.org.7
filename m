@@ -1,149 +1,170 @@
-Return-Path: <linux-kernel+bounces-702810-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-702813-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id AA11AAE87B3
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Jun 2025 17:16:35 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7020CAE87C8
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Jun 2025 17:19:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9BF373BB578
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Jun 2025 15:15:49 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4A5011C20747
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Jun 2025 15:18:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9A33F265CCD;
-	Wed, 25 Jun 2025 15:16:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7559426A1DD;
+	Wed, 25 Jun 2025 15:17:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="TkY2tMZ3"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="KVi3WHpC"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.15])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EB83E263C8E
-	for <linux-kernel@vger.kernel.org>; Wed, 25 Jun 2025 15:16:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DD4CB4C92;
+	Wed, 25 Jun 2025 15:17:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.15
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750864569; cv=none; b=FIIhf0f8MIrLpbkTD0V1wP5V4Jsg+O6PP1Hf1fgsrSxV/Q1h5J1uSTJNxtn2BwpwnCet1DqmRoUoTjYhxrObXjcennkdgARoAvj/Airmp/PaMN67S1cucwjB3JtAOcmXkf+EGSMgy7GG7zyOyXs2MQK0m6WjArayKHBbCvIK1Us=
+	t=1750864658; cv=none; b=CQ0sQtxG2v/Kiu4sPO3zqaJ7pagYR4mTloU8DooanNwc/PCUI+TpKD09dCx6gIvHwscfIAAvCH3mQKG8KPhZjbhtukf+Bh49Ag9cssHaAr+d7F2EXyhzdete/4XhXlwzbpxh0DRurXSwqqC0uqvb8f0hd+BTV0kNhNZDIePPV1Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750864569; c=relaxed/simple;
-	bh=9uiCx//aBaD0yGFQdVerDfD2PgBCP5+9oifVTXlFXYI=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=r+2Xi5baCFOIEibUM/7JLa9BS9mhATjTpwL4x0YQTrJ8gMe3WaiywfjlfbWhY66DHHCiSbWw74KYf6OZYQ0++9lFC9kWsXeiF8/fdWzuk8VQYhpVTF1cIa+tMch39BGbaVWHtvltvRC9FBUJm5hi3YXq5rodUOjWN97kHWFQ7Vk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=TkY2tMZ3; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8384DC4CEF4
-	for <linux-kernel@vger.kernel.org>; Wed, 25 Jun 2025 15:16:08 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1750864568;
-	bh=9uiCx//aBaD0yGFQdVerDfD2PgBCP5+9oifVTXlFXYI=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=TkY2tMZ3PpuUyBYnhjn4aUhRen6PKOzLvqdf9sEQ2MwIeSuY+OeWjpUz2PKtzLDcz
-	 B84x5fB6r7hubY0bv9YGtCoqxtdkIEWLmfxvtkr4mJFWPNCgpBEawz4PePI9B2rsew
-	 Y/TVEsbzNYX88CF76bS+1UQtqUL7rhtZ95IrAMBDlOamfYc1LxzY1/K46E3gkcDhTM
-	 agcKiFkTGBV/YYJVbNCFH9UiYh0Mem0GuCe0I+QL/I7wp0sPdyM7B1gT1p9MMKQu+h
-	 5ct8o2FcCLTqx3nT4+VhEK6gcP/VA1NuCOu3nzYDSEc5w2pAi6w4YnSsaTBqcj3b3H
-	 LGmbVz2tI4yIQ==
-Received: by mail-pj1-f47.google.com with SMTP id 98e67ed59e1d1-313154270bbso7617669a91.2
-        for <linux-kernel@vger.kernel.org>; Wed, 25 Jun 2025 08:16:08 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCXMmG1SzaMfeY+vk9qH1IsfblAWH0JYELIcNCxBrfOad5lICILJDoUjxvBsxbw8pjQJUQnuHvpf/nIiYP4=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzt0tTgRLEq7DmCqqvtJUDEw7npYNhLOuN4g6BiWk6mDRJcTWFE
-	28hCT5W0AC2nsWgvyoAaHcREkXF9iYweo5edDdbVDTWrXZip0Wg4VVuDc8gW5OM3NOyu0a4hJlP
-	FbrP4QsLb35HOJ+DtM0XuFhjsO1W3eQ==
-X-Google-Smtp-Source: AGHT+IHtRKCKayH+Lzht6QxsgoVvjQ6oWe0lLgYe2Cl+JRUJ/z1lS3uwRu/T5Q4f9oAnyB42TUycr2B2CpGFTJDpP5w=
-X-Received: by 2002:a17:90b:2b47:b0:313:f83a:e473 with SMTP id
- 98e67ed59e1d1-315f25ed7e8mr5611684a91.15.1750864568023; Wed, 25 Jun 2025
- 08:16:08 -0700 (PDT)
+	s=arc-20240116; t=1750864658; c=relaxed/simple;
+	bh=VAIMJsEXUJBRtuANssi1i4L6RoyEQfqrRrxpCMh/jXU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=YckCV6hcUjnwlbeGqJHQ3CAyMcvuDJ5Wdg/0KQMNVDbF585ucFcEbIo19fz0RAfWajPYyeHd9TuKBW9ysOLnXB9QqmDA+580dNeqKEckVtNl9+bWdbG4nk44bs316G1CLPy90kWjwY3djIy9xCpS46sOh4TXhxgZGmKopjlR1Zc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=KVi3WHpC; arc=none smtp.client-ip=192.198.163.15
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1750864657; x=1782400657;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:content-transfer-encoding:in-reply-to;
+  bh=VAIMJsEXUJBRtuANssi1i4L6RoyEQfqrRrxpCMh/jXU=;
+  b=KVi3WHpCodDmZxN/gy0ab6i7kPX2yKaox7pDVYdXDIRoMOxupJa74wka
+   IicWmYTdY3UAR/E46CU2/EgEB7cRrUB0bZJ3v8ZgOM9FZCbBBx7rFfjXH
+   GjOxSkRstTX15atVm9Fysb2t8LZ4hOWO33Ya4//ZRr7TrOAiBIJYBaL5D
+   gqCsD/UzJxboCWTkxwNxcS+vpwQykofohTEgteWp7KSqPpG58n1jsrh5r
+   OuZj3EiRB7aXwHpfZuqFRZ9QadIZCw4gSMDv0GXsSxz+DRxpPLXNZnp0b
+   VvQaOEDwI4erXetHEOmHdiVHu5n3MZeIxm0kfEGu8SAQhFENbaC7dKVf8
+   A==;
+X-CSE-ConnectionGUID: 9Z0vX/8+Tt2sb2GggMjWNg==
+X-CSE-MsgGUID: A79YH8HETgePQQvM5JZdag==
+X-IronPort-AV: E=McAfee;i="6800,10657,11475"; a="53279580"
+X-IronPort-AV: E=Sophos;i="6.16,265,1744095600"; 
+   d="scan'208";a="53279580"
+Received: from fmviesa009.fm.intel.com ([10.60.135.149])
+  by fmvoesa109.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 25 Jun 2025 08:17:35 -0700
+X-CSE-ConnectionGUID: DvVR5OVsTUiiXisDpTF6lg==
+X-CSE-MsgGUID: l+R2EqbSQtaauRITvfxcjQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.16,265,1744095600"; 
+   d="scan'208";a="152538509"
+Received: from smile.fi.intel.com ([10.237.72.52])
+  by fmviesa009.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 25 Jun 2025 08:17:32 -0700
+Received: from andy by smile.fi.intel.com with local (Exim 4.98.2)
+	(envelope-from <andriy.shevchenko@linux.intel.com>)
+	id 1uURsP-00000009oYL-3XHe;
+	Wed, 25 Jun 2025 18:17:29 +0300
+Date: Wed, 25 Jun 2025 18:17:29 +0300
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To: "Limonciello, Mario" <Mario.Limonciello@amd.com>
+Cc: Mario Limonciello <superm1@kernel.org>,
+	Hans de Goede <hansg@kernel.org>,
+	Mika Westerberg <westeri@kernel.org>,
+	Linus Walleij <linus.walleij@linaro.org>,
+	Bartosz Golaszewski <brgl@bgdev.pl>,
+	Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+	"open list:GPIO ACPI SUPPORT" <linux-gpio@vger.kernel.org>,
+	"open list:GPIO ACPI SUPPORT" <linux-acpi@vger.kernel.org>,
+	open list <linux-kernel@vger.kernel.org>,
+	"open list:INPUT (KEYBOARD, MOUSE, JOYSTICK, TOUCHSCREEN)..." <linux-input@vger.kernel.org>
+Subject: Re: [PATCH 2/2] Revert "Input: soc_button_array - debounce the
+ buttons"
+Message-ID: <aFwTCUXQydxRVEfk@smile.fi.intel.com>
+References: <20250624202211.1088738-1-superm1@kernel.org>
+ <20250624202211.1088738-3-superm1@kernel.org>
+ <4a4d577b-a085-46e8-97b9-6df27461c870@kernel.org>
+ <1f8c0262-b376-43cb-b2c5-5b60e8cbf678@kernel.org>
+ <92ab85ff-6314-4db0-ae12-9803ddde5037@kernel.org>
+ <625952d3-01e9-426e-9739-86fe5cdfeb35@kernel.org>
+ <7b2f02ef-0274-480b-aecc-bc1165d15fd7@amd.com>
+ <aFwRZO30wf8GxQea@smile.fi.intel.com>
+ <be57dcd1-a9ba-44f6-af9e-9b40f2b5c870@amd.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250606-mtk_dpi-mt8195-fix-wrong-color-v1-1-47988101b798@collabora.com>
-In-Reply-To: <20250606-mtk_dpi-mt8195-fix-wrong-color-v1-1-47988101b798@collabora.com>
-From: Chun-Kuang Hu <chunkuang.hu@kernel.org>
-Date: Wed, 25 Jun 2025 23:17:13 +0800
-X-Gmail-Original-Message-ID: <CAAOTY__=3Pb2Tsr87b5FWG_DrQNdfeDC5yAE2XFo+TiP7hO6BA@mail.gmail.com>
-X-Gm-Features: AX0GCFsC1n-RCC-W67WMTwPw4kHzfcK5gDHEnXA5e3PZAISJh-AfZvkzSrkcFBc
-Message-ID: <CAAOTY__=3Pb2Tsr87b5FWG_DrQNdfeDC5yAE2XFo+TiP7hO6BA@mail.gmail.com>
-Subject: Re: [PATCH] drm/mediatek: mtk_dpi: Reorder output formats on MT8195/88
-To: Louis-Alexis Eyraud <louisalexis.eyraud@collabora.com>
-Cc: Chun-Kuang Hu <chunkuang.hu@kernel.org>, Philipp Zabel <p.zabel@pengutronix.de>, 
-	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
-	Matthias Brugger <matthias.bgg@gmail.com>, 
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, kernel@collabora.com, 
-	dri-devel@lists.freedesktop.org, linux-mediatek@lists.infradead.org, 
-	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <be57dcd1-a9ba-44f6-af9e-9b40f2b5c870@amd.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - c/o Alberga Business Park, 6
+ krs, Bertel Jungin Aukio 5, 02600 Espoo
 
-Hi, Louis:
+On Wed, Jun 25, 2025 at 03:14:40PM +0000, Limonciello, Mario wrote:
+> On 6/25/25 10:10 AM, Andy Shevchenko wrote:
+> > On Wed, Jun 25, 2025 at 03:02:18PM +0000, Limonciello, Mario wrote:
+> >> On 6/25/25 9:41 AM, Mario Limonciello wrote:
+> >>> On 6/25/25 9:31 AM, Hans de Goede wrote:
+> >>>> On 25-Jun-25 4:09 PM, Mario Limonciello wrote:
+> >>>>> On 6/25/25 4:09 AM, Hans de Goede wrote:
+> >>>>>> On 24-Jun-25 10:22 PM, Mario Limonciello wrote:
 
-Louis-Alexis Eyraud <louisalexis.eyraud@collabora.com> =E6=96=BC 2025=E5=B9=
-=B46=E6=9C=886=E6=97=A5 =E9=80=B1=E4=BA=94 =E4=B8=8B=E5=8D=888:52=E5=AF=AB=
-=E9=81=93=EF=BC=9A
->
-> Reorder output format arrays in both MT8195 DPI and DP_INTF block
-> configuration by decreasing preference order instead of alphanumeric
-> one, as expected by the atomic_get_output_bus_fmts callback function
-> of drm_bridge controls, so the RGB ones are used first during the
-> bus format negotiation process.
+...
 
-Applied to mediatek-drm-fixes [1], thanks.
+> >>>> Ok, so specifically the gpiod_set_debounce() call with 50 ms
+> >>>> done by gpio_keys.c is the problem I guess?
+> >>>
+> >>> Yep.
+> >>>
+> >>>> So amd_gpio_set_debounce() does accept the 50 ms debounce
+> >>>> passed to it by gpio_keys.c as a valid value and then setting
+> >>>> that breaks the wake from suspend?
+> >>>
+> >>> That's right.
+> > 
+> >>>>> Also comparing the GPIO register in Windows (where things work)
+> >>>>> Windows never programs a debounce.
+> >>>>
+> >>>> So maybe the windows ACPI0011 driver always uses a software-
+> >>>> debounce for the buttons? Windows not debouncing the mechanical
+> >>>> switches at all seems unlikely.
+> >>>>
+> >>>> I think the best way to fix this might be to add a no-hw-debounce
+> >>>> flag to the data passed from soc_button_array.c to gpio_keys.c
+> >>>> and have gpio_keys.c not call gpiod_set_debounce()  when the
+> >>>> no-hw-debounce flag is set.
+> >>>>
+> >>>> I've checked and both on Bay Trail and Cherry Trail devices
+> >>>> where soc_button_array is used a lot hw-debouncing is already
+> >>>> unused. pinctrl-baytrail.c does not accept 50 ms as a valid
+> >>>> value and pinctrl-cherryview.c does not support hw debounce
+> >>>> at all.
+> >>>
+> >>> That sounds a like a generally good direction to me.
+> > 
+> > Thinking a bit more of this, perhaps the HW debounce support flag should be
+> > per-GPIO-descriptor thingy. In such cases we don't need to distinguish the
+> > platforms, the GPIO ACPI lib may simply set that flag based on 0 read from
+> > the ACPI tables. It will also give a clue to any driver that uses GPIOs
+> > (not only gpio-keys).
+> 
+> But 0 doesn't mean hardware debounce support is there, 0 means that 
+> hardware debounce is not required to be programmed for this GPIO.
+> 
+> That is - if another system had a non-zero value in the GpioInt entry I 
+> would expect this to be translated into the GPIO register.
 
-[1] https://git.kernel.org/pub/scm/linux/kernel/git/chunkuang.hu/linux.git/=
-log/?h=3Dmediatek-drm-fixes
+Correct. The question is only about 0. So the flow will look like
 
-Regards,
-Chun-Kuang.
+1) if the GPIO is defined with 0 debounce, set the flag;
+2) if the GPIO is defined with non-zero value, try to apply it;
+3) if the step 2) fails, warn and set the flag.
 
->
-> Fixes: 20fa6a8fc588 ("drm/mediatek: mtk_dpi: Allow additional output form=
-ats on MT8195/88")
-> Signed-off-by: Louis-Alexis Eyraud <louisalexis.eyraud@collabora.com>
-> ---
->  drivers/gpu/drm/mediatek/mtk_dpi.c | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
->
-> diff --git a/drivers/gpu/drm/mediatek/mtk_dpi.c b/drivers/gpu/drm/mediate=
-k/mtk_dpi.c
-> index 6fb85bc6487a019cdcdb3770dc06a1deab8d5bda..a2fdceadf209f6d2166e7523b=
-82ca18c82c7d435 100644
-> --- a/drivers/gpu/drm/mediatek/mtk_dpi.c
-> +++ b/drivers/gpu/drm/mediatek/mtk_dpi.c
-> @@ -1095,7 +1095,6 @@ static const u32 mt8183_output_fmts[] =3D {
->  };
->
->  static const u32 mt8195_dpi_output_fmts[] =3D {
-> -       MEDIA_BUS_FMT_BGR888_1X24,
->         MEDIA_BUS_FMT_RGB888_1X24,
->         MEDIA_BUS_FMT_RGB888_2X12_LE,
->         MEDIA_BUS_FMT_RGB888_2X12_BE,
-> @@ -1103,18 +1102,19 @@ static const u32 mt8195_dpi_output_fmts[] =3D {
->         MEDIA_BUS_FMT_YUYV8_1X16,
->         MEDIA_BUS_FMT_YUYV10_1X20,
->         MEDIA_BUS_FMT_YUYV12_1X24,
-> +       MEDIA_BUS_FMT_BGR888_1X24,
->         MEDIA_BUS_FMT_YUV8_1X24,
->         MEDIA_BUS_FMT_YUV10_1X30,
->  };
->
->  static const u32 mt8195_dp_intf_output_fmts[] =3D {
-> -       MEDIA_BUS_FMT_BGR888_1X24,
->         MEDIA_BUS_FMT_RGB888_1X24,
->         MEDIA_BUS_FMT_RGB888_2X12_LE,
->         MEDIA_BUS_FMT_RGB888_2X12_BE,
->         MEDIA_BUS_FMT_RGB101010_1X30,
->         MEDIA_BUS_FMT_YUYV8_1X16,
->         MEDIA_BUS_FMT_YUYV10_1X20,
-> +       MEDIA_BUS_FMT_BGR888_1X24,
->         MEDIA_BUS_FMT_YUV8_1X24,
->         MEDIA_BUS_FMT_YUV10_1X30,
->  };
->
-> ---
-> base-commit: b3bded85d838336326ce78e394e7818445e11f20
-> change-id: 20250606-mtk_dpi-mt8195-fix-wrong-color-5aab0f6d2d27
->
-> Best regards,
-> --
-> Louis-Alexis Eyraud <louisalexis.eyraud@collabora.com>
->
+Would it make sense?
+Hans?
+
+-- 
+With Best Regards,
+Andy Shevchenko
+
+
 
