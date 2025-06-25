@@ -1,159 +1,119 @@
-Return-Path: <linux-kernel+bounces-702825-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-702924-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id B3AB5AE87E6
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Jun 2025 17:24:25 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 805D5AE895E
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Jun 2025 18:14:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E5570170CD4
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Jun 2025 15:23:27 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B33F216A29D
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Jun 2025 16:13:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 53B8A2C3242;
-	Wed, 25 Jun 2025 15:22:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B09782BE7D2;
+	Wed, 25 Jun 2025 16:13:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="flaElob/"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.10])
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=codethink.co.uk header.i=@codethink.co.uk header.b="jzstCVC1"
+Received: from imap4.hz.codethink.co.uk (imap4.hz.codethink.co.uk [188.40.203.114])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B40CC286412;
-	Wed, 25 Jun 2025 15:22:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.10
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5ADAB2BD012
+	for <linux-kernel@vger.kernel.org>; Wed, 25 Jun 2025 16:13:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=188.40.203.114
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750864938; cv=none; b=PaXmC1uHoTbfe2C/MK85OQngEA1axuaxwP9dzT4fnpS6VrPZbMAUPGqB4rKJ9eEDdu8+Ma4sZW3WBb2VCniwpoO8bDzaVjiY5x9tkMq6U4jtoWnRYFa9QCv8ZWOhZMAg2lv8xNY1eA/QhP1sDDiy/6nsD62P07TYQbP/Dm4ZPR4=
+	t=1750867989; cv=none; b=pBiPEB4Ewi+C9pUTnwe0qGNNs5E1yHD65qTw2q+qn7S+RIzQWqAi1Dn5nB0CQ3Pf9lxpJjnX6d4w4MKU0PdGmu1nhBR8ZDiQ09wNR9tSwNu2dYL/Wrg9yIYJ95DVuyp95Ex+K44mbKxhNZlOrvZhWT91hExoUs0RgQe1etRdeQY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750864938; c=relaxed/simple;
-	bh=udi9Dj+TB3DzEDfD+VOVtv+BMkNrVkihkKNjVOl4DgA=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=e/+onam0kIeoEi79Ba3HyPuTrigAuobE+4lWtUi+Ggxu1ngRtOQxKb/LG+P0uTZFWdb8tKRYfd2h98dCDS2FxySx3eM7C+a/Zy3fJrSZkmcWkUqU4UgTswygKnRxOiH4z8/Qf5bPOq9WLC8sFTbkk0GAx/mM9jhIyq1gMYx5zFw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=flaElob/; arc=none smtp.client-ip=198.175.65.10
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1750864937; x=1782400937;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=udi9Dj+TB3DzEDfD+VOVtv+BMkNrVkihkKNjVOl4DgA=;
-  b=flaElob/J2R/Jgu0XLlOe7ij9fkaaXt38hWSbjZpkUBmWUWTfz9VDpZC
-   pczwJ0To2lFTxveY/kTKFlHWJBBOfm/qsQWU/LfclgAJuvXSkq/uMT2og
-   evzfAxzPS5p9c+WlVJh+BfH/WpSz4hZf7M7zy1h4vcOI/m0Uqd1LCBgZX
-   pmGlutNk5VvbJM9f34/n3X+DqLvvq5XRnwC6tA/ikgv1R5YSvRgkuhb/y
-   pSrXz5KoI1vRsG8iDHvR6DO7mqz8JVtm2BZNXlLhJJHDiFQzVJr2Yp1w/
-   o7FfdO+9+dr3VZabIZc0lXGp3ZKaRXS0oHKaUuCpD55iVusIaIIbLUP3h
-   g==;
-X-CSE-ConnectionGUID: jyJbm1bXSWWUQKd0pOdAIg==
-X-CSE-MsgGUID: ZJjdFP+nSdGfuv7UzO0i4g==
-X-IronPort-AV: E=McAfee;i="6800,10657,11475"; a="70573260"
-X-IronPort-AV: E=Sophos;i="6.16,265,1744095600"; 
-   d="scan'208";a="70573260"
-Received: from orviesa009.jf.intel.com ([10.64.159.149])
-  by orvoesa102.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 25 Jun 2025 08:22:16 -0700
-X-CSE-ConnectionGUID: WPMLVT8JSx+gj9sU/NfDJQ==
-X-CSE-MsgGUID: snl4U3dqQUyLma4P7zG57g==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.16,265,1744095600"; 
-   d="scan'208";a="152018305"
-Received: from linux-pnp-server-27.sh.intel.com ([10.239.147.41])
-  by orviesa009.jf.intel.com with ESMTP; 25 Jun 2025 08:22:13 -0700
-From: Tianyou Li <tianyou.li@intel.com>
-To: Peter Zijlstra <peterz@infradead.org>,
-	Ingo Molnar <mingo@redhat.com>,
-	Arnaldo Carvalho de Melo <acme@kernel.org>,
-	Namhyung Kim <namhyung@kernel.org>
-Cc: Mark Rutland <mark.rutland@arm.com>,
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-	Jiri Olsa <jolsa@kernel.org>,
-	Ian Rogers <irogers@google.com>,
-	Adrian Hunter <adrian.hunter@intel.com>,
-	Kan Liang <kan.liang@linux.intel.com>,
-	tianyou.li@intel.com,
-	wangyang.guo@intel.com,
-	linux-perf-users@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH V2] tools/perf: Add --exclude-buildids option to perf archive command
-Date: Thu, 26 Jun 2025 00:14:01 +0800
-Message-ID: <20250625161509.2599646-1-tianyou.li@intel.com>
-X-Mailer: git-send-email 2.47.1
-In-Reply-To: <aFrzSpvzzWeHdyJ5 () google ! com>
-References: <aFrzSpvzzWeHdyJ5 () google ! com>
+	s=arc-20240116; t=1750867989; c=relaxed/simple;
+	bh=LCmVYzcicQcfc9PycYENKWsQI+SrO5VS0yMxVxxlBA8=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=lHtGyl01OEhWUh7W3+EAqvfVA7YWyEZhUpdCJMTIhuRsWSLf5JicPBeRcOOFAlDC9zT/v/4Qht5kzgyECw2jnTmYPJP1yD6QkDaIZ6uLhizH1ekqeU17koocLOzQ7FK2CD6eb73IJS69jxW4dmfnB44FJ3Df8gEb87UQbqDjKcA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=codethink.co.uk; spf=pass smtp.mailfrom=codethink.co.uk; dkim=pass (2048-bit key) header.d=codethink.co.uk header.i=@codethink.co.uk header.b=jzstCVC1; arc=none smtp.client-ip=188.40.203.114
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=codethink.co.uk
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=codethink.co.uk
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=codethink.co.uk; s=imap4-20230908; h=Sender:MIME-Version:
+	Content-Transfer-Encoding:Content-Type:References:In-Reply-To:Date:Cc:To:From
+	:Subject:Message-ID:Reply-To:Content-ID:Content-Description:Resent-Date:
+	Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+	List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=LCmVYzcicQcfc9PycYENKWsQI+SrO5VS0yMxVxxlBA8=; b=jzstCVC11lb3etE8xLUHsGb9lJ
+	PhWxbniocHYopv5SoUvCd3RNb6fyMb+PVyaELQAJ6p4kZwlJy1DTtHk69Q5AlRfSprKrDe6da8vtD
+	19pH0ms0keRjdzFziaKlEntmST3a1xjZb/UZgYTUQ7tWnO4lI0WtYszzC/fXf03e9HPPlxzhXUVdw
+	L2W3nmuJEh3zEisjoY3/r7l6WTL4SaAyHKYWkJqi1JOwxzX50RK/5x9fW+a1i46WceCzVUbMkxWs4
+	fwMayra45oZoHI9wxZAsHVZKpJjnFWV5GebXN6K7Rk+/UX3/mAjBITfvhteQzzDyhxokH6A72HKIG
+	Aal1x3Zg==;
+Received: from [208.115.91.132] (helo=[10.39.247.83])
+	by imap4.hz.codethink.co.uk with esmtpsa  (Exim 4.94.2 #2 (Debian))
+	id 1uUSU6-003hZc-RB; Wed, 25 Jun 2025 16:56:28 +0100
+Message-ID: <e8f17a35f4bc2701fc3f6a34341a507fb89573fe.camel@codethink.co.uk>
+Subject: Re: SCHED_DEADLINE tasks missing their deadline with
+ SCHED_FLAG_RECLAIM jobs in the mix (using GRUB)
+From: Marcel Ziswiler <marcel.ziswiler@codethink.co.uk>
+To: Juri Lelli <juri.lelli@redhat.com>, luca abeni
+ <luca.abeni@santannapisa.it>
+Cc: linux-kernel@vger.kernel.org, Ingo Molnar <mingo@redhat.com>, Peter
+ Zijlstra <peterz@infradead.org>, Vineeth Pillai <vineeth@bitbyteword.org>
+Date: Wed, 25 Jun 2025 09:55:49 -0600
+In-Reply-To: <aFqhId-qMFNyPD1s@jlelli-thinkpadt14gen4.remote.csb>
+References: <aDgrOWgYKb1_xMT6@jlelli-thinkpadt14gen4.remote.csb>
+	 <8d6dd3013b05225541821132398cb7615cdd874e.camel@codethink.co.uk>
+	 <aFFdseGAqImLtVCH@jlelli-thinkpadt14gen4.remote.csb>
+	 <880890e699117e02d984ba2bb391c63be5fd71e8.camel@codethink.co.uk>
+	 <aFUqELdqM8VcyNCh@jlelli-thinkpadt14gen4.remote.csb>
+	 <20250620113745.6833bccb@luca64> <20250620161606.2ff81fb1@nowhere>
+	 <aFV-HEwOTq0a37ax@jlelli-thinkpadt14gen4.remote.csb>
+	 <20250620185248.634101cc@nowhere>
+	 <aFpYl53ZMThWjQai@jlelli-thinkpadt14gen4.remote.csb>
+	 <aFqhId-qMFNyPD1s@jlelli-thinkpadt14gen4.remote.csb>
+Organization: Codethink
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.56.1 (by Flathub.org) 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Sender: marcel.ziswiler@codethink.co.uk
 
-When make a perf archive, it may contains the binaries that user did not want to ship with,
-add --exclude-buildids option to specify a file which contains the buildids need to be
-excluded. The file can be generated from command:
+Hi Juri
 
-    perf buildid-list -i perf.data --with-hits | grep -v "^ " > exclude-buildids.txt
+On Tue, 2025-06-24 at 14:59 +0200, Juri Lelli wrote:
+> Hello again,
+>=20
+> On 24/06/25 09:49, Juri Lelli wrote:
+>=20
+> ...
+>=20
+> > The following seem to at least cure the problem after boot. Things are
+> > still broken after cpusets creation. Moving to look into that, but
+> > wanted to share where I am so that we don't duplicate work.
+>=20
+> I ended up with two additional patches that seem to make things a little
+> better at my end. You can find them at
+>=20
+> https://github.com/jlelli/linux/tree/upstream/fix-grub
+>=20
+> Marcel, Luca, can you please give them a quick try to check if they do
+> any good?
 
-Then remove the lines from the exclude-buildids.txt for buildids should be included.
+I gave this a try yesterday and run a first longer test in our CI. While th=
+at now only run for 16 hours doing
+30+ mio. tests on NUCs and 75+ mio. on ROCK 5B it really looks promising so=
+ far.
 
-Signed-off-by: Tianyou Li <tianyou.li@intel.com>
-Reviewed-by: Wangyang Guo <wangyang.guo@intel.com>
----
- tools/perf/perf-archive.sh | 35 ++++++++++++++++++++++++++++++-----
- 1 file changed, 30 insertions(+), 5 deletions(-)
+I will now update to your latest patches and re-run those tests. Usually we=
+ need 40+ hours of testing to really
+be confident in our statistics around those tests.
 
-diff --git a/tools/perf/perf-archive.sh b/tools/perf/perf-archive.sh
-index 6ed7e52ab881..7977e9b0a5ea 100755
---- a/tools/perf/perf-archive.sh
-+++ b/tools/perf/perf-archive.sh
-@@ -16,6 +16,13 @@ while [ $# -gt 0 ] ; do
- 	elif [ $1 == "--unpack" ]; then
- 		UNPACK=1
- 		shift
-+	elif [ $1 == "--exclude-buildids" ]; then
-+		EXCLUDE_BUILDIDS="$2"
-+		if [ ! -e "$EXCLUDE_BUILDIDS" ]; then
-+			echo "Provided exclude-buildids file $EXCLUDE_BUILDIDS does not exist"
-+			exit 1
-+		fi
-+		shift 2
- 	else
- 		PERF_DATA=$1
- 		UNPACK_TAR=$1
-@@ -86,11 +93,29 @@ fi
- 
- BUILDIDS=$(mktemp /tmp/perf-archive-buildids.XXXXXX)
- 
--perf buildid-list -i $PERF_DATA --with-hits | grep -v "^ " > $BUILDIDS
--if [ ! -s $BUILDIDS ] ; then
--	echo "perf archive: no build-ids found"
--	rm $BUILDIDS || true
--	exit 1
-+#
-+# EXCLUDE_BUILDIDS is an optional file that contains build-ids to be excluded from the
-+# archive. It is a list of build-ids, one per line, without any leading or trailing spaces.
-+# If the file is empty, all build-ids will be included in the archive. To create a exclude-
-+# buildids file, you can use the following command:
-+# 	perf buildid-list -i perf.data --with-hits | grep -v "^ " > exclude_buildids.txt
-+# You can edit the file to remove the lines that you want to keep in the archive, then:
-+# 	perf archive --exclude-buildids exclude_buildids.txt
-+#
-+if [ -s "$EXCLUDE_BUILDIDS" ]; then
-+	perf buildid-list -i $PERF_DATA --with-hits | grep -v "^ " | grep -Fv -f $EXCLUDE_BUILDIDS > $BUILDIDS
-+	if [ ! -s "$BUILDIDS" ] ; then
-+		echo "perf archive: no build-ids found after applying exclude-buildids file"
-+		rm $BUILDIDS || true
-+		exit 1
-+	fi
-+else
-+	perf buildid-list -i $PERF_DATA --with-hits | grep -v "^ " > $BUILDIDS
-+	if [ ! -s "$BUILDIDS" ] ; then
-+		echo "perf archive: no build-ids found"
-+		rm $BUILDIDS || true
-+		exit 1
-+	fi
- fi
- 
- MANIFEST=$(mktemp /tmp/perf-archive-manifest.XXXXXX)
--- 
-2.47.1
+> Thanks!
 
+Thank you!
+
+> Juri
+
+Cheers from the OSS NA/ELC in Denver
+
+Marcel
 
