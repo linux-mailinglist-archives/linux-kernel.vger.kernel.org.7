@@ -1,133 +1,104 @@
-Return-Path: <linux-kernel+bounces-701460-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-701462-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 59978AE753B
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Jun 2025 05:26:55 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 21E25AE7544
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Jun 2025 05:33:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2ACD27AA15F
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Jun 2025 03:25:30 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 10BFC16CE5F
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Jun 2025 03:33:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 018641D63EF;
-	Wed, 25 Jun 2025 03:26:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 896AA1DB92A;
+	Wed, 25 Jun 2025 03:33:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="gvmc2jOT"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="rA6JgHpW"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 56C8819E96A
-	for <linux-kernel@vger.kernel.org>; Wed, 25 Jun 2025 03:26:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E14D619E97A;
+	Wed, 25 Jun 2025 03:33:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750822005; cv=none; b=ZM/CkGzoUKw21PbDC8HQkB07pmglTKHN7OvIXAn4yv1i6n5Yeh6FXWXpz+kUQY3YUPw0ozUjUUTgyrqlUaaUupcMIkC23QiRmJOMKkPWs9ayxQrcIiA9ZzkLJUVJRBgtuWwmyrkWWCxaQNjKtV4u03SUWmrzTk8Eo7gS3i/yy1c=
+	t=1750822394; cv=none; b=jr3UiSKp3WNwdfDfnTKKcxm9MGUVTgXiRpjFSg9p+BAU86lk6cNF5cKMTvQrdLl7IVYLkBti9k0qArjPZJ5Bi9dEDHVD3Qu233/r/6y/shlgKrKmpyvtFFwiO3yQ2CiZjeHPTdbs/ssehfzNqhH39oW5q1g3qmsxQ1KCCdyBN4I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750822005; c=relaxed/simple;
-	bh=mU1F3RUhNdk4UiLc1UjPfNsL6ir3JdMqJQbzgDnm9HI=;
-	h=Message-ID:Date:MIME-Version:Cc:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=gzQHRFeBYdlJcL5GlqjYYKvzcBn94XtnLkbjODKCQoUJ0I1hZt1WedPkVnJb261oA02wKxYvDk/t/MRaeTI7rWmnqP9mVrGxi/u/F16KX9vIow6qwK6XULMeVqsCYi3IHVl4nDkw+X0tvyuHeuwv+5Pcf+q1X/k2WEHBZRgRfeo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=gvmc2jOT; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5F914C4CEE3;
-	Wed, 25 Jun 2025 03:26:43 +0000 (UTC)
+	s=arc-20240116; t=1750822394; c=relaxed/simple;
+	bh=S+zg+bDlCpe9lZBLnDQTYS3NMqzgftreSFsZWS6275U=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=kCjhiNdctDtiuNVFFJQlRTpCgXA2GycDvOV49Os/VBzqLzVoDcKAb9HFdKdhJaIE6PNb1SgLX3IIjuBktZO9DQmwgz1lz/ifuxFBvzP0F1GKywUAdGXQjVCM95FzobX9YusYtwb5u+NIBNzwJuwRZH8J/MQeIaJWlhid/B/cQhY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=rA6JgHpW; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 367C2C4CEE3;
+	Wed, 25 Jun 2025 03:33:13 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1750822004;
-	bh=mU1F3RUhNdk4UiLc1UjPfNsL6ir3JdMqJQbzgDnm9HI=;
-	h=Date:Cc:Subject:To:References:From:In-Reply-To:From;
-	b=gvmc2jOTNq5BnKN4qV3mGOUAFbAbd7ROpWJ9PK5ReuXKS0tUxcVnZVPrw061GP1vq
-	 zYy/XnoAApKMZD2D2DwbD5a3nwL9SD/qgMyypwLd5zzk/pRsK6JN17thu2a1y02Aq2
-	 g8DlxS+Xwn60hqjTPV/t1qdzCRwNJRx9J6Qae9o+yN4DTNrOlcMUapkPqoqT7nSnZd
-	 ye68G98qEUsNPL+FY1BUp+ZQQ6HTjY3AVZGU0mIjDYw9nxGd58+h8taGALsxin5dTh
-	 LK6ZHAwHy+2Ioz6osrTR36fLs3quHMbRY4hYHeoo8K92fx/6kNgmCMYxWz/w58QyKs
-	 o3Pc89hCfA25w==
-Message-ID: <c91bcaf4-083d-4d5c-96a7-de7d2171f576@kernel.org>
-Date: Wed, 25 Jun 2025 11:26:41 +0800
+	s=k20201202; t=1750822393;
+	bh=S+zg+bDlCpe9lZBLnDQTYS3NMqzgftreSFsZWS6275U=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=rA6JgHpWauA80ED/D0iBM35ETh5YQCVIJAVCd4ZmH05hGpM/zJPRyn0QezCvWOkLv
+	 tGegv6/Z5RsrdrRX1xzibmSQP4sgiAuiUrxgl5eY/uyNFcvjS3QC5Kpn9hkx9ulIV3
+	 kYadut0+Nl9zkVXi9yd4vqaJdc3W7IA89t6BQZmNsZcg7jPSzeLzD+17uXp4pOAvBu
+	 MYeswK3aPHcyoC3Aey+bahq5GhzEjEVAPZnz7d6RMswdDDRgoUvbRm15SshgXCJris
+	 J/UdA9JQE3vXUU6Ua9HU0Tak4dIRIjFEhMzK+KDUeIhSxyONGYhzohzlghw2Lztcjy
+	 Oxxf2EjIixOiw==
+Date: Tue, 24 Jun 2025 20:32:38 -0700
+From: Eric Biggers <ebiggers@kernel.org>
+To: Herbert Xu <herbert@gondor.apana.org.au>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>,
+	"David S. Miller" <davem@davemloft.net>,
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+	Linux Crypto Mailing List <linux-crypto@vger.kernel.org>
+Subject: Re: [GIT PULL] Crypto Fixes for 6.16
+Message-ID: <20250625033238.GB8962@sol>
+References: <aFtidDP6MLX1V2A6@gondor.apana.org.au>
+ <20250625030404.GA8962@sol>
+ <aFtpj5y4HtzVDChg@gondor.apana.org.au>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Cc: chao@kernel.org, wanghui33@xiaomi.com, linux-kernel@vger.kernel.org,
- Sheng Yong <shengyong1@xiaomi.com>
-Subject: Re: [PATCH v2] f2fs: avoid splitting bio when reading multiple pages
-To: Jianan Huang <huangjianan@xiaomi.com>,
- linux-f2fs-devel@lists.sourceforge.net, jaegeuk@kernel.org
-References: <20250617055542.218681-1-huangjianan@xiaomi.com>
- <20250618081705.260239-1-huangjianan@xiaomi.com>
-Content-Language: en-US
-From: Chao Yu <chao@kernel.org>
-In-Reply-To: <20250618081705.260239-1-huangjianan@xiaomi.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <aFtpj5y4HtzVDChg@gondor.apana.org.au>
 
-On 6/18/25 16:17, Jianan Huang wrote:
-> When fewer pages are read, nr_pages may be smaller than nr_cpages. Due
-> to the nr_vecs limit, the compressed pages will be split into multiple
-> bios and then merged at the block level. In this case, nr_cpages should
-> be used to pre-allocate bvecs.
-> To handle this case, align max_nr_pages to cluster_size, which should be
-> enough for all compressed pages.
+On Wed, Jun 25, 2025 at 11:14:23AM +0800, Herbert Xu wrote:
+> On Tue, Jun 24, 2025 at 08:04:04PM -0700, Eric Biggers wrote:
+> >
+> > Wouldn't it make more sense to revert the "Crypto API partial block handling"
+> > stuff?  It's been causing a huge number of problems, and it's been getting
+> > superseded by the librarification changes anyway.
 > 
-> Signed-off-by: Jianan Huang <huangjianan@xiaomi.com>
-> Signed-off-by: Sheng Yong <shengyong1@xiaomi.com>
-> ---
-> Changes since v1:
-> - Use aligned nr_pages instead of nr_cpages to pre-allocate bvecs.
+> The partial block handling simplifies the implementation of both
+> software and hardware hash algorithms.  Just look at the diffstat.
+
+Not software, since the library functions have to handle partial blocks anyway.
+There will be a negative diffstat for algorithms that haven't been converted to
+have a library API yet, but it will go away once they are.
+
+> > Indeed, I just found that a lot of drivers in drivers/crypto/ haven't been
+> > updated to be aware of the extra byte that comes back from
+> > crypto_shash_export().  So there are a bunch of buffer overflows there too.
+> > (Not like drivers/crypto/ actually matters, but apparently your changes are for
+> > its benefit?  So it's interesting that it was actually broken by them.)
 > 
->  fs/f2fs/data.c | 12 +++++++++---
->  1 file changed, 9 insertions(+), 3 deletions(-)
+> If anything this proves that enforcing a consistent hash format
+> is the right thing to do.  All those buggy code paths were assuming
+> that the export format is fixed which was not the case prior to the
+> partial blocks work.
 > 
-> diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c
-> index 31e892842625..2d948586fea0 100644
-> --- a/fs/f2fs/data.c
-> +++ b/fs/f2fs/data.c
-> @@ -2303,7 +2303,7 @@ int f2fs_read_multi_pages(struct compress_ctx *cc, struct bio **bio_ret,
->  		}
->  
->  		if (!bio) {
-> -			bio = f2fs_grab_read_bio(inode, blkaddr, nr_pages,
-> +			bio = f2fs_grab_read_bio(inode, blkaddr, nr_pages - i,
->  					f2fs_ra_op_flags(rac),
->  					folio->index, for_write);
->  			if (IS_ERR(bio)) {
-> @@ -2370,12 +2370,18 @@ static int f2fs_mpage_readpages(struct inode *inode,
->  		.nr_cpages = 0,
->  	};
->  	pgoff_t nc_cluster_idx = NULL_CLUSTER;
-> -	pgoff_t index;
-> +	pgoff_t index = rac ? readahead_index(rac) : folio->index;
+> But thanks for pointing me to these buggy drivers and I will send
+> out fixes for them.
 
-For non-compressed file, it's redundant.
+Well, they (reasonably enough) assume the format that all the CPU-based code
+previously used.  So they weren't really broken until your changes.
 
->  #endif
->  	unsigned nr_pages = rac ? readahead_count(rac) : 1;
->  	unsigned max_nr_pages = nr_pages;
->  	int ret = 0;
->  
-> +#ifdef CONFIG_F2FS_FS_COMPRESSION
-> +	if (f2fs_compressed_file(inode))
+Of course, the lack of type safety here is an artificial problem created by the
+generic crypto API which uses a 'void *' state.  The library functions simply
+use the C type system, so they just work and do not have this sort of silly
+issue where different places disagree about what struct a 'void *' points to...
 
-index = rac ? readahead_index(rac) : folio->index;
+These legacy drivers should just use the library functions.
 
-Thanks,
-
-> +		max_nr_pages = round_up(index + nr_pages, cc.cluster_size) -
-> +				round_down(index, cc.cluster_size);
-> +#endif
-> +
->  	map.m_pblk = 0;
->  	map.m_lblk = 0;
->  	map.m_len = 0;
-> @@ -2385,7 +2391,7 @@ static int f2fs_mpage_readpages(struct inode *inode,
->  	map.m_seg_type = NO_CHECK_TYPE;
->  	map.m_may_create = false;
->  
-> -	for (; nr_pages; nr_pages--) {
-> +	for (; nr_pages; nr_pages--, max_nr_pages--) {
->  		if (rac) {
->  			folio = readahead_folio(rac);
->  			prefetchw(&folio->flags);
-
+- Eric
 
