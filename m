@@ -1,194 +1,88 @@
-Return-Path: <linux-kernel+bounces-701965-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-701949-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 651C1AE7BCB
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Jun 2025 11:13:56 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id E9453AE7B91
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Jun 2025 11:09:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1150C3AD9DE
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Jun 2025 09:13:31 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8C5FA1BC7698
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Jun 2025 09:09:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1CBED29CB5A;
-	Wed, 25 Jun 2025 09:12:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 04AC128641D;
+	Wed, 25 Jun 2025 09:09:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b="Vwf8UUn5"
-Received: from mx07-00178001.pphosted.com (mx07-00178001.pphosted.com [185.132.182.106])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="TBQh9TG1"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AE71429A9FE;
-	Wed, 25 Jun 2025 09:12:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.132.182.106
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5850C28689C;
+	Wed, 25 Jun 2025 09:09:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750842746; cv=none; b=HDvqEOWjsItnd1mqZ40jpQIh9JAaMf5mau18klSZLGEO+YwaQ3KEMOOz7JkJZBTpigGTvb67i0JINVDJG97w6MBfjHT25ZxIK0Ckj8mNrvR2A4MV8r5gwUHD8V75nBzQZlhP6Xqi5qWfYLtDkPTTPdSQyxbsJ/3fEYAAtiio1Cs=
+	t=1750842559; cv=none; b=pbrxX1j3NnMXzMF32QBf8PCITQslqAEsp8WO6lsfo+ivqKudPJE3o4PRt3aUmw1tVb4Te+yhqBd4G/fHQdlvKeODOdDRF3jC17kjcIELRzM39IbnU3zaYHrrBAhtNyBW7wFvwEYocRUZUMyZnYquiDM4YETm4ywdXM7ihC4+WRY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750842746; c=relaxed/simple;
-	bh=Ku1JP3VucsE7gqGwrbjDhzOU4k9tMt5YcgLvazIy0lg=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=bKaT/+Xr347j8c8MVxeUt9pq58o/WTKO8m7wBPhfvJZo3a/okHnWrMMUgSAJx/D1znPW+ZGXVJyYwKIN+wsVA3kLAB7aX4cubxCdjegN4mNNsz8NJrTCLvAK8jM8ywhXaZEZ5/KtJVoDLY0YMc43X/VV0qQY+iX2wxgEYGMfCy0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com; spf=pass smtp.mailfrom=foss.st.com; dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b=Vwf8UUn5; arc=none smtp.client-ip=185.132.182.106
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=foss.st.com
-Received: from pps.filterd (m0369458.ppops.net [127.0.0.1])
-	by mx07-00178001.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 55P510l9032381;
-	Wed, 25 Jun 2025 11:12:05 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foss.st.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=selector1; bh=
-	7ONVBi6t27yoHOLom4q+9fNttcSqpjkl1fBEaeAnNkw=; b=Vwf8UUn5XqH75K2i
-	fscZ6KsiCvCjx7WJPqQv23IzCGzpmhbdb1xkGE7uHQA9PyER1EFSCXUkQPBiHlW+
-	4uwmJYQWpOhdd6Xqb43cGBt89mdGyI4ppGLqD0yH1sy3yZx/kSdVbeJbpm7/B+03
-	Z9f1dnJinZdTX1NVip71mTOSvnuabKIaG0/CX1WLLaIsmVKwNQzNqUc9OI0pJPJR
-	+iV48oYu9RNwLmIxPb3rBTaniPK+oj3phiUfDazp0779JUqdQ6+GrWs/PsBHyMyh
-	9Jjsu1AigmntTDkS0pGejX+t7nZFk2GI47Nkl0M9/6Pv5QZ3GQ6LWYth0Mh1SWTm
-	kubHIA==
-Received: from beta.dmz-ap.st.com (beta.dmz-ap.st.com [138.198.100.35])
-	by mx07-00178001.pphosted.com (PPS) with ESMTPS id 47e6a6pxh5-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 25 Jun 2025 11:12:05 +0200 (MEST)
-Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
-	by beta.dmz-ap.st.com (STMicroelectronics) with ESMTP id B9BB140045;
-	Wed, 25 Jun 2025 11:10:18 +0200 (CEST)
-Received: from Webmail-eu.st.com (shfdag1node2.st.com [10.75.129.70])
-	by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id 4176DB29C43;
-	Wed, 25 Jun 2025 11:09:07 +0200 (CEST)
-Received: from [10.48.86.185] (10.48.86.185) by SHFDAG1NODE2.st.com
- (10.75.129.70) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Wed, 25 Jun
- 2025 11:09:06 +0200
-Message-ID: <dabecbc6-967e-4912-8297-4d53fd2d9cc1@foss.st.com>
-Date: Wed, 25 Jun 2025 11:09:05 +0200
+	s=arc-20240116; t=1750842559; c=relaxed/simple;
+	bh=5BsdWC9xczjMvTnwn2wUphK7xUMrIoc7oipvBOeF87k=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
+	 MIME-Version:Content-Type; b=uvOMs9yYV7ADBRG7b10Rlz8wK0IzdR13em6pTOOpIVTT6SgPfmblvUd6RfcKJDAc9XMqBY04Ob/KWeoyLX714oSF3zFd8qGR7AJoZt3uHdIWKibJi7m3AfJL6U6aKbppBP0kYS4Lyrzd7z8VvAe4JQ0tB9T17M9Hg0GKBJHg86E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=TBQh9TG1; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 42DAFC4CEF3;
+	Wed, 25 Jun 2025 09:09:16 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1750842557;
+	bh=5BsdWC9xczjMvTnwn2wUphK7xUMrIoc7oipvBOeF87k=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
+	b=TBQh9TG1aniBSi5f3cWQ+/x6rD/Vk+D1PG7qplE+6UkJCuEdZFweZcRD1mO6IrXyo
+	 ujdDfrUbCRsachKdDg2NiHFOrdMhIvE14XBM5yToNNbcUctAPSl30Q6qdBwsdbHF1k
+	 TUCjG/swZX6JI9awMc/xUBfv2WhHcKELVHflLx6lp+2LqQllmn4I35MorjMND9mL9l
+	 OQMewdAtR/gf8MVxuvAkcIknwH7kYhOMUJJAlglP02fRmx5pApUN6J0mtC0s9iYpCI
+	 rrcHRqCjclc3fvhT6q99TjyboXG3Y3iRW8+F2jCBX+RRRGurIrddcx/6F6QaT3hb6D
+	 gQvwZ8wzLzgRw==
+From: Lee Jones <lee@kernel.org>
+To: Lee Jones <lee@kernel.org>, Chen-Yu Tsai <wens@kernel.org>
+Cc: Chen-Yu Tsai <wens@csie.org>, linux-sunxi@lists.linux.dev, 
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
+ Andre Przywara <andre.przywara@arm.com>, 
+ Chris Morgan <macroalpha82@gmail.com>, 
+ Vasily Khoruzhick <anarsoul@gmail.com>
+In-Reply-To: <20250619173207.3367126-1-wens@kernel.org>
+References: <20250619173207.3367126-1-wens@kernel.org>
+Subject: Re: (subset) [PATCH] mfd: axp20x: Set explicit ID for AXP313
+ regulator
+Message-Id: <175084255601.4077397.7103143558285168372.b4-ty@kernel.org>
+Date: Wed, 25 Jun 2025 10:09:16 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 06/13] perf: stm32: introduce DDRPERFM driver
-To: Krzysztof Kozlowski <krzk@kernel.org>, Will Deacon <will@kernel.org>,
-        Mark
- Rutland <mark.rutland@arm.com>, Rob Herring <robh@kernel.org>,
-        Krzysztof
- Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>,
-        Maxime
- Coquelin <mcoquelin.stm32@gmail.com>,
-        Alexandre Torgue
-	<alexandre.torgue@foss.st.com>,
-        Philipp Zabel <p.zabel@pengutronix.de>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Gatien Chevallier
-	<gatien.chevallier@foss.st.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Gabriel Fernandez
-	<gabriel.fernandez@foss.st.com>
-CC: <linux-arm-kernel@lists.infradead.org>, <linux-perf-users@vger.kernel.org>,
-        <devicetree@vger.kernel.org>,
-        <linux-stm32@st-md-mailman.stormreply.com>,
-        <linux-kernel@vger.kernel.org>, <linux-doc@vger.kernel.org>,
-        <linux-clk@vger.kernel.org>
-References: <20250623-ddrperfm-upstream-v1-0-7dffff168090@foss.st.com>
- <20250623-ddrperfm-upstream-v1-6-7dffff168090@foss.st.com>
- <9cb1575e-ae27-4a78-adb7-8a9e7072375e@kernel.org>
- <5044c733-8836-43bd-85d7-0f552b000fb1@foss.st.com>
- <49483568-b287-45ca-a66c-1e0ad0490225@kernel.org>
- <e2400615-f21e-40bf-84f8-384242632193@foss.st.com>
- <a6440cbf-f7b5-4bce-8e2b-8aa3ec4d2342@kernel.org>
-Content-Language: en-US
-From: Clement LE GOFFIC <clement.legoffic@foss.st.com>
-In-Reply-To: <a6440cbf-f7b5-4bce-8e2b-8aa3ec4d2342@kernel.org>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: SHFCAS1NODE1.st.com (10.75.129.72) To SHFDAG1NODE2.st.com
- (10.75.129.70)
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.7,FMLib:17.12.80.40
- definitions=2025-06-25_02,2025-06-23_07,2025-03-28_01
+X-Mailer: b4 0.15-dev-c81fc
 
-On 6/25/25 10:48, Krzysztof Kozlowski wrote:
-> On 25/06/2025 10:33, Clement LE GOFFIC wrote:
->> On 6/25/25 08:35, Krzysztof Kozlowski wrote:
->>> On 24/06/2025 12:43, Clement LE GOFFIC wrote:
->>>> On 6/23/25 11:45, Krzysztof Kozlowski wrote:
->>>> [...]
->>>>
->>>> Hi Krzysztof,
->>>>
->>>> Sorry I forgot to address comments below.
->>>>
->>>>>> +
->>>>>> +static const struct stm32_ddr_pmu_cfg stm32_ddr_pmu_cfg_mp1 = {
->>>>>> +	.regs = &stm32_ddr_pmu_regspec_mp1,
->>>>>> +	.attribute = stm32_ddr_pmu_attr_groups_mp1,
->>>>>> +	.counters_nb = MP1_CNT_NB,
->>>>>> +	.evt_counters_nb = MP1_CNT_NB - 1, /* Time counter is not an event counter */
->>>>>> +	.time_cnt_idx = MP1_TIME_CNT_IDX,
->>>>>> +	.get_counter = stm32_ddr_pmu_get_event_counter_mp1,
->>>>>> +};
->>>>>> +
->>>>>> +static const struct stm32_ddr_pmu_cfg stm32_ddr_pmu_cfg_mp2 = {
->>>>>> +	.regs = &stm32_ddr_pmu_regspec_mp2,
->>>>>> +	.attribute = stm32_ddr_pmu_attr_groups_mp2,
->>>>>> +	.counters_nb = MP2_CNT_NB,
->>>>>> +	.evt_counters_nb = MP2_CNT_NB - 1, /* Time counter is an event counter */
->>>>>> +	.time_cnt_idx = MP2_TIME_CNT_IDX,
->>>>>> +	.get_counter = stm32_ddr_pmu_get_event_counter_mp2,
->>>>>> +};
->>>>>> +
->>>>>> +static const struct dev_pm_ops stm32_ddr_pmu_pm_ops = {
->>>>>> +	SET_SYSTEM_SLEEP_PM_OPS(NULL, stm32_ddr_pmu_device_resume)
->>>>>> +};
->>>>>> +
->>>>>> +static const struct of_device_id stm32_ddr_pmu_of_match[] = {
->>>>>> +	{
->>>>>> +		.compatible = "st,stm32mp131-ddr-pmu",
->>>>>> +		.data = &stm32_ddr_pmu_cfg_mp1
->>>>>> +	},
->>>>>> +	{
->>>>>> +		.compatible = "st,stm32mp151-ddr-pmu",
->>>>>> +		.data = &stm32_ddr_pmu_cfg_mp1
->>>>>
->>>>> So devices are compatible, thus express it correctly and drop this.
->>>>
->>>> Ok so I assume this comes with your comment in the bindings and
->>>> basically don't get you point here.
->>>> Can you please be more precise ?
->>>
->>> Express compatibility in the bindings, like 90% of SoCs are doing, so
->>> with proper fallback and drop this entry in the table. My comment was
->>> pretty precise, because this is completely standard pattern, also used
->>> already in stm32.
->>>
->>
->> Ok I remember your discussion with Alex in my V1 of pinctrl-hdp :
->> https://lore.kernel.org/all/1de58672-5355-4b75-99f4-c48687017d2f@kernel.org/
->>
->> Does it suits you :
->> In the SoC DT:
->> MP13: compatible = "st,stm32mp131-ddr-pmu", "st,stm32mp1-ddr-pmu";
->> MP15: compatible = "st,stm32mp151-ddr-pmu", "st,stm32mp1-ddr-pmu";
+On Fri, 20 Jun 2025 01:32:07 +0800, Chen-Yu Tsai wrote:
+> On newer boards featuring the A523 SoC, the AXP323 (related to the
+> AXP313) is paired with the AXP717 and serves as a secondary PMIC
+> providing additional regulator outputs. However the mfd cells are all
+> registered with PLATFORM_DEVID_NONE, which causes the regulator cells
+> to conflict with each other.
 > 
-> No, because I did not say to change other entry in the table. Please
-> read again what I asked: drop this. "This" means ONLY this entry. "Drop
-> this" does not mean "change something else". Do not change other entries
-> by introducing some generic compatible. That's not the pattern ever
-> endorsed by DT maintainers. Add front compatible and you are done,
-> smallest amount of changes, most obvious code.
->
+> Commit e37ec3218870 ("mfd: axp20x: Allow multiple regulators") attempted
+> to fix this by switching to PLATFORM_DEVID_AUTO so that the device names
+> would all be different, however that broke IIO channel mapping, which is
+> also tied to the device names. As a result the change was later reverted.
+> 
+> [...]
 
-Ok so in the SoC DT I'll keep:
-MP13: compatible = "st,stm32mp131-ddr-pmu";
-MP15: compatible = "st,stm32mp151-ddr-pmu", "st,stm32mp131-ddr-pmu";
+Applied, thanks!
 
-Thanks for clarifying.
+[1/1] mfd: axp20x: Set explicit ID for AXP313 regulator
+      commit: 77f6b46f199b8a483e0cfa176b7a629f75a2c4c4
 
-Best regards,
-Clément
-
-> Best regards,
-> Krzysztof
+--
+Lee Jones [李琼斯]
 
 
