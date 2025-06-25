@@ -1,122 +1,134 @@
-Return-Path: <linux-kernel+bounces-703300-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-703303-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id AC81BAE8E5A
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Jun 2025 21:17:54 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6661DAE8E6C
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Jun 2025 21:19:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 69C271C2042F
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Jun 2025 19:18:10 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 630D85A7493
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Jun 2025 19:18:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 082752DCC12;
-	Wed, 25 Jun 2025 19:17:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C1C252DECAE;
+	Wed, 25 Jun 2025 19:18:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Zj7hSevz"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=collabora.com header.i=daniel.almeida@collabora.com header.b="PN0Oge+T"
+Received: from sender4-pp-f112.zoho.com (sender4-pp-f112.zoho.com [136.143.188.112])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 585051DE3A4;
-	Wed, 25 Jun 2025 19:17:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750879057; cv=none; b=nuJhWSPZ5YCRahXU3w80fgdB6DcjuU2IdX1DHNzysarFy3q5uX7r6c0KrjKsT0gqqCOOObmacqRp13rZJuPRpeEtWoUQuxzVp/zSWmq1FzOv9275xYmasX/7q71dn8SKsv6dev9QHGMO/xsaskvy7K6AnPwHvps7PDiHqaGmy9Y=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750879057; c=relaxed/simple;
-	bh=e6mdajjaaY5koL3e5Crmq60SgZT4vYU/Wk5mcE5cq1s=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=nw3traYNo8u9iCpnyLSfJnBOrLt7+rUvEDPryV/Lr/UN10RUdTrQ7qzMHJaBM8MweJz7F63ckncpt4XPLEHmJoEQ63G6Y2NxkdTdYZExLqTyMcWSepwc09AZ6fygm6Dff+QU78voq02fqhDpad7EtEoZjBf/q6+8iMdJVWlMhGs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Zj7hSevz; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9715BC4CEEA;
-	Wed, 25 Jun 2025 19:17:36 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1750879056;
-	bh=e6mdajjaaY5koL3e5Crmq60SgZT4vYU/Wk5mcE5cq1s=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=Zj7hSevzFjb9nv0J7kpQsGJy2uqoqv/HX/Syg50/I+VKdIlWz5Ct06R68BfydP4ak
-	 OWofz6fZdZ8o7zke1xi9L5JvMnkTnsC3vwwqSBEfYLWUou+uyuewdc5mMWeu6svGz3
-	 aPPPpk9Vk1YTFlDIfry6lPaJoEa2oA7lMLFXRvq3CNoK1o6DEC/PoVOeU2/8Ucha9F
-	 ZTIrHr0nU/srtYm5KMh+ysaprYtF48Rf6HpnyQ3kYKeGGFldsA1l3p2OuUU1qcYalT
-	 +8pfDNBZGj2cUuvB7BLrG1tPmX5idHxcgBGuqvy2SVh9zltJRM+3Y0M8tGAgF0uasH
-	 4GSjy+3D9tS6g==
-Date: Wed, 25 Jun 2025 12:17:01 -0700
-From: Eric Biggers <ebiggers@kernel.org>
-To: Maxime MERE <maxime.mere@foss.st.com>
-Cc: Simon Richter <Simon.Richter@hogyros.de>, linux-fscrypt@vger.kernel.org,
-	linux-crypto@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-mtd@lists.infradead.org, linux-ext4@vger.kernel.org,
-	linux-f2fs-devel@lists.sourceforge.net, ceph-devel@vger.kernel.org
-Subject: Re: [PATCH] fscrypt: don't use hardware offload Crypto API drivers
-Message-ID: <20250625191701.GC1703@sol>
-References: <20250611205859.80819-1-ebiggers@kernel.org>
- <7f63be76-289b-4a99-b802-afd72e0512b8@hogyros.de>
- <20250612005914.GA546455@google.com>
- <20250612062521.GA1838@sol>
- <20250625063252.GD8962@sol>
- <f174540e-4b9a-4dc1-9ab8-f4f36fe1f837@foss.st.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 940282DAFD5;
+	Wed, 25 Jun 2025 19:18:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.112
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1750879100; cv=pass; b=WlNHJ41qFSdaRUKQ2CAeQbX7kwReKTuKsXBpPeR2QFuN6fRmafa0f8nyTn2RJ3MIC187gSa3N4PbwobyOtaSGsTkrLZqioPQJGu0HzIePiSgM0L0EK3cdW1QOP7b+WwXweU3nQmDRjprHo3qGls/n4waNll/YslvQFUBqxXUuBc=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1750879100; c=relaxed/simple;
+	bh=uyy4xiNlMjh21MUqTmqBPBeeB97sutVHpJnk3zwpGiI=;
+	h=Content-Type:Mime-Version:Subject:From:In-Reply-To:Date:Cc:
+	 Message-Id:References:To; b=RmtZQClBLu8PiL9bFIi0ctW0akRIO+SZn/dpIhlEabv5t5VaTkItYasUMaQ2pqKpF07DGpFZxrg+OjB3AtByf+HaoVpSWQT0FJdc770VHjDh2fFXQJyL3DfFCNcA6nW2vhLNHLakEBZ4oCIjiHNJD8Utq9xFZIUIGCcg800zJa4=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=daniel.almeida@collabora.com header.b=PN0Oge+T; arc=pass smtp.client-ip=136.143.188.112
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+ARC-Seal: i=1; a=rsa-sha256; t=1750879071; cv=none; 
+	d=zohomail.com; s=zohoarc; 
+	b=UqET5Z3qZJFBe6aSFk/n/qpxfMIlbohNMpS4qaUD7wsZxDNVH/5K+fNrrGkel5tYw8wtxBjo2z66U9omjU59QK4hhC/g7XA+B24WqHwtOQCHWGYxQF+W8lqt3WA63wzEOBHwk6OzhCHeaLbxuMLbIT6RV420mDfOwCovkkcSpfo=
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
+	t=1750879071; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
+	bh=dHw1fcw6yCMKDuaRUUmcQkZkXANFxT243nZxfiY1M6I=; 
+	b=iGsGrCAxuU1kE2CWKUlQIQdxdSz+I/4sLPr68FwvaalROom8waebR8SQ/937q0m+A8axgV8HYRFLR6K7cIKsbjeo1CU4UWdhzEooF+WTe+JY/rVWdaSVfpmpvIWM1l5ZHOWmFeVIiesbnuKN9rgP9QktfZnUiRpU4pbMl/DE5ac=
+ARC-Authentication-Results: i=1; mx.zohomail.com;
+	dkim=pass  header.i=collabora.com;
+	spf=pass  smtp.mailfrom=daniel.almeida@collabora.com;
+	dmarc=pass header.from=<daniel.almeida@collabora.com>
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1750879071;
+	s=zohomail; d=collabora.com; i=daniel.almeida@collabora.com;
+	h=Content-Type:Mime-Version:Subject:Subject:From:From:In-Reply-To:Date:Date:Cc:Cc:Content-Transfer-Encoding:Message-Id:Message-Id:References:To:To:Reply-To;
+	bh=dHw1fcw6yCMKDuaRUUmcQkZkXANFxT243nZxfiY1M6I=;
+	b=PN0Oge+TTYcSdiDSd3aXm/0E+ddTAJxm0dS7Nup2dbcXCpiZwLIZIf3I/U5u3mTw
+	Y2ShIAkD43R+DzRaY9rNq1UFQG15HQZ8v7uZl4LLeOFgq7JhccBAfHgXJqLwXlvlOn9
+	gsZYk+2LAxsEVInprpbycQAutRMKQsNEm4Wp7epE=
+Received: by mx.zohomail.com with SMTPS id 1750879068314974.8188270241737;
+	Wed, 25 Jun 2025 12:17:48 -0700 (PDT)
+Content-Type: text/plain;
+	charset=utf-8
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <f174540e-4b9a-4dc1-9ab8-f4f36fe1f837@foss.st.com>
+Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3826.600.51.1.1\))
+Subject: Re: [PATCH] rust: drm: mm: Add DRM MM Range Allocator abstraction
+From: Daniel Almeida <daniel.almeida@collabora.com>
+In-Reply-To: <CANiq72k07PuSodVgb+LDNw1jZVWhKt1BuYSULfBY8DBH1EJbBA@mail.gmail.com>
+Date: Wed, 25 Jun 2025 16:17:33 -0300
+Cc: David Airlie <airlied@gmail.com>,
+ Simona Vetter <simona@ffwll.ch>,
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+ Maxime Ripard <mripard@kernel.org>,
+ Thomas Zimmermann <tzimmermann@suse.de>,
+ Miguel Ojeda <ojeda@kernel.org>,
+ Alex Gaynor <alex.gaynor@gmail.com>,
+ Boqun Feng <boqun.feng@gmail.com>,
+ Gary Guo <gary@garyguo.net>,
+ =?utf-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>,
+ Benno Lossin <lossin@kernel.org>,
+ Andreas Hindborg <a.hindborg@kernel.org>,
+ Alice Ryhl <aliceryhl@google.com>,
+ Trevor Gross <tmgross@umich.edu>,
+ Danilo Krummrich <dakr@kernel.org>,
+ linux-kernel@vger.kernel.org,
+ dri-devel@lists.freedesktop.org,
+ rust-for-linux@vger.kernel.org,
+ Asahi Lina <lina+kernel@asahilina.net>
+Content-Transfer-Encoding: quoted-printable
+Message-Id: <3E03D94C-5446-4857-BC94-D7EA1646E54A@collabora.com>
+References: <20250623-topics-tyr-drm_mm-v1-1-82fe8104a6f5@collabora.com>
+ <CANiq72k07PuSodVgb+LDNw1jZVWhKt1BuYSULfBY8DBH1EJbBA@mail.gmail.com>
+To: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
+X-Mailer: Apple Mail (2.3826.600.51.1.1)
+X-ZohoMailClient: External
 
-On Wed, Jun 25, 2025 at 06:29:26PM +0200, Maxime MERE wrote:
-> Hi,
-> 
-> On 6/25/25 08:32, Eric Biggers wrote:
-> > That was the synchronous throughput.  However, submitting multiple requests
-> > asynchronously (which again, fscrypt doesn't actually do) barely helps.
-> > Apparently the STM32 crypto engine has only one hardware queue.
-> > 
-> > I already strongly suspected that these non-inline crypto engines aren't worth
-> > using.  But I didn't realize they are quite this bad.  Even with AES on a
-> > Cortex-A7 CPU that lacks AES instructions, the CPU is much faster!
-> 
-> From a performance perspective, using hardware crypto offloads the CPU,
-> which is important in real-world applications where the CPU must handle
-> multiple tasks. Our processors are often single-core and not the highest
-> performing, so hardware acceleration is valuable.
-> 
-> I can show you performance test realized with openSSL (3.2.4) who shows,
-> less CPU usage and better performance for large block of data when our
-> driver is used (via afalg):
-> 
-> command used: ```openssl speed -evp aes-256-cbc -engine afalg -elapsed```
-> 
-> +--------------------+--------------+-----------------+
-> | Block Size (bytes) | AFALG (MB/s) | SW BASED (MB/s) |
-> +--------------------+--------------+-----------------+
-> | 16                 | 0.09         | 9.44            |
-> | 64                 | 0.34         | 11.43           |
-> | 256                | 1.31         | 12.08           |
-> | 1024               | 4.96         | 12.27           |
-> | 8192               | 18.18        | 12.33           |
-> | 16384              | 22.48        | 12.33           |
-> +--------------------+--------------+-----------------+
-> 
-> to test CPU usage I've used a monocore stm32mp157f.
-> here with afalg, we have an average CPU usage of ~75%, with the sw based
-> approach CPU is used at ~100%
-> 
-> Maxime
+Hi Miguel
 
-fscrypt is almost always used with 4096-byte blocks, which in my benchmark took
-about 1300 μs each with AES-128-CBC-ESSIV w/ STM32 engine, 264 μs each with
-AES-128-CBC-ESSIV w/ CPU, or 77 μs each with Adiantum w/ CPU.  The CPU-based
-times seem short enough that there isn't much time for another task to be
-usefully scheduled while waiting for each block.  It's important to consider (a)
-driver overhead, (b) scheduling overhead, and (c) the low instructions per
-second of this processor in the first place.
+> On 25 Jun 2025, at 09:47, Miguel Ojeda =
+<miguel.ojeda.sandonis@gmail.com> wrote:
+>=20
+> On Tue, Jun 24, 2025 at 12:13=E2=80=AFAM Daniel Almeida
+> <daniel.almeida@collabora.com> wrote:
+>>=20
+>> Signed-off-by: Asahi Lina <lina@asahilina.net>
+>=20
+> Patches from others also need to be signed off by you as carrier.
 
-By the way, the board I have (STM32MP157F-DK2) is actually multi-core.  It seems
-this is common among ST's offerings that are intended to run Linux?  (Of course,
-the microcontrollers that don't run Linux are another story.)
+Thanks for catching that. This was indeed forgotten on this patch.
 
-- Eric
+>=20
+>> Changes from v0:
+>=20
+> I assume you mean the RFC patch from more than 2 years ago, i.e.
+>=20
+>    =
+https://lore.kernel.org/rust-for-linux/20230307-rust-drm-v1-7-917ff5bc80a8=
+@asahilina.net/
+>=20
+> Right?
+
+Yes
+
+>=20
+> (In general, it is very useful to have a link to the previous version
+> in the changelog, especially when it is a very long time ago, when
+> titles change, when it is non-obvious in general, etc.).
+>=20
+> Thanks!
+>=20
+> Cheers,
+> Miguel
+>=20
+
+
+Ack, will fix this in v2.
+
+=E2=80=94 Daniel=
 
