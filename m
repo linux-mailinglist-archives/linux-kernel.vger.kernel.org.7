@@ -1,293 +1,143 @@
-Return-Path: <linux-kernel+bounces-702253-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-702328-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id AF16EAE8023
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Jun 2025 12:50:09 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id F2013AE80F3
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Jun 2025 13:26:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EB20616D344
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Jun 2025 10:50:09 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 43DCE1C2247A
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Jun 2025 11:26:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C08182BD598;
-	Wed, 25 Jun 2025 10:48:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0DF822D6608;
+	Wed, 25 Jun 2025 11:25:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="BWB+hSf9"
-Received: from out-177.mta1.migadu.com (out-177.mta1.migadu.com [95.215.58.177])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="sfW3mKV7"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1D6BE8F5B
-	for <linux-kernel@vger.kernel.org>; Wed, 25 Jun 2025 10:48:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5F4022BEFF7;
+	Wed, 25 Jun 2025 11:25:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750848492; cv=none; b=M9fWQ8tpzHwTKuD8OffVNmd0brfedqTVx4xbZ1KYe+ivjah5a6g+wbzGfTmRNTwNrf++D96Zwsqtp21GLTR8VWSugq/daE+qltLXXyYn5ppDG61reHzURS4DJJwe+oEkiwEjzX2C3GOUSBZRY6IxWMRwuCe+l00pKHrKCYvLXdo=
+	t=1750850702; cv=none; b=TKDL3q2nboNTzHbpHLStEZRcHgXn743pMvlSoVtrMjnnTMu4xtBqpNhAlWXKZ4dPB/xSwDxVWS6+tWv6JJaUJ3vWawjo3jjrMT62Eu5YcEJknNsj/pCu9NUU6tn7S+1SnbHTVd2GQBIpY7vWWHtHnQZBKvqj0iax3CLrscPAZL4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750848492; c=relaxed/simple;
-	bh=ohKYVBjLzuE44bFrbh1c5o+/XEd3tbE2iUIkC1bfg90=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=O2T1wHeKV9gDWVPF6pqx98IiJrtJknwU3HU5Uv4g3RZBlSfMcYY3+VuKFqlfmxdzr2QdDKD8BLBDcZO+Di02jGUCCS+QJ9Sn3KjL3Ptds9iLneJ5N0qzj2vdjpenkuoF1BGPn6zWDfc9fvNmZ4QAgf/3lXRlTxcO4woWW0hMBn0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=BWB+hSf9; arc=none smtp.client-ip=95.215.58.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Message-ID: <938c4726-b93e-46df-bceb-65c7574714a6@linux.dev>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1750848488;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=csN3NGyJz0Plq+DSLlEX2Pakhu0xabELB8Wjy8HXAeM=;
-	b=BWB+hSf9s40JKUag99JUhdHNhY+hi/eWwJYO4YD9eHSuRniIiKbey15lYX6sZe0B1ZFnok
-	sZPk4HhuguE7ZuMeAVTkLE7Zes+IVipMQAhigbH1G++5xpJpTMC8j8KZxnXpNdNO2AFCWs
-	FaaRff8WSDn24xARtP5xY/nLqjGRjxI=
-Date: Wed, 25 Jun 2025 18:47:55 +0800
+	s=arc-20240116; t=1750850702; c=relaxed/simple;
+	bh=d5H7XLcR4Rtj+Rj6OZQAl1e1bSehEWOuVd1drKJeL5c=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
+	 In-Reply-To:To:Cc; b=AFhIUufTD0IUDHYKpuQcIjblkfN9tzG1kAessk7r7cWOXtw5j/APq8w5GgwjnV8B4i5criTVm5jzGs5HkA8r/llHDwz5C5a/WnVHajsc+uZlKEt8vNtNaLGwbTkWHjUVfv+mFKTKV0v3JcnxMlBqaL4mtjqatdJCZDhvqWDtXxU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=sfW3mKV7; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 75EE6C4CEEE;
+	Wed, 25 Jun 2025 11:24:58 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1750850701;
+	bh=d5H7XLcR4Rtj+Rj6OZQAl1e1bSehEWOuVd1drKJeL5c=;
+	h=From:Date:Subject:References:In-Reply-To:To:Cc:From;
+	b=sfW3mKV7Ytdx8hMQecRd1Vqsdsyv9tMqqvbXxxGz4vUcj/8dYYK1Nw/GxPDn09xtS
+	 Buyl3MoaZdLtapEnnidcsQ7KflQc3XNl4ri0lGuoViKl7CKqAYA7z3KjXdEd/TcHHq
+	 BSHvp6QSKvGWiwX+N3pfDZiQbWMfhXYdHP9KZ+rywoDtJ6AaVzV0Sy6Lu6XLAeegDH
+	 RtC8YQt9PBtfM66e4odB4QQADewstFig8Z2HueAjD+DnhdEvyH+pLEQvetjbs7CPiA
+	 RXRNNKlDt47VJXbzkmF/6o6Mi+sV1ynjcwuNp0947wXcX9VD2qRF5zK2Au3wyRhwjv
+	 HvVaeTGt0eytA==
+From: Mark Brown <broonie@kernel.org>
+Date: Wed, 25 Jun 2025 11:47:55 +0100
+Subject: [PATCH v6 04/28] arm64/fpsimd: Determine maximum virtualisable SME
+ vector length
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Subject: Re: [PATCH v4 3/4] mm: Support batched unmap for lazyfree large
- folios during reclamation
-Content-Language: en-US
-To: David Hildenbrand <david@redhat.com>
-Cc: 21cnbao@gmail.com, akpm@linux-foundation.org,
- baolin.wang@linux.alibaba.com, chrisl@kernel.org, kasong@tencent.com,
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
- linux-mm@kvack.org, linux-riscv@lists.infradead.org,
- lorenzo.stoakes@oracle.com, ryan.roberts@arm.com, v-songbaohua@oppo.com,
- x86@kernel.org, ying.huang@intel.com, zhengtangquan@oppo.com,
- Lance Yang <ioworker0@gmail.com>
-References: <2c19a6cf-0b42-477b-a672-ed8c1edd4267@redhat.com>
- <20250624162503.78957-1-ioworker0@gmail.com>
- <27d174e0-c209-4851-825a-0baeb56df86f@redhat.com>
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Lance Yang <lance.yang@linux.dev>
-In-Reply-To: <27d174e0-c209-4851-825a-0baeb56df86f@redhat.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-Migadu-Flow: FLOW_OUT
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20250625-kvm-arm64-sme-v6-4-114cff4ffe04@kernel.org>
+References: <20250625-kvm-arm64-sme-v6-0-114cff4ffe04@kernel.org>
+In-Reply-To: <20250625-kvm-arm64-sme-v6-0-114cff4ffe04@kernel.org>
+To: Marc Zyngier <maz@kernel.org>, Oliver Upton <oliver.upton@linux.dev>, 
+ Joey Gouly <joey.gouly@arm.com>, Catalin Marinas <catalin.marinas@arm.com>, 
+ Suzuki K Poulose <suzuki.poulose@arm.com>, Will Deacon <will@kernel.org>, 
+ Paolo Bonzini <pbonzini@redhat.com>, Jonathan Corbet <corbet@lwn.net>, 
+ Shuah Khan <shuah@kernel.org>
+Cc: Dave Martin <Dave.Martin@arm.com>, Fuad Tabba <tabba@google.com>, 
+ Mark Rutland <mark.rutland@arm.com>, linux-arm-kernel@lists.infradead.org, 
+ kvmarm@lists.linux.dev, linux-kernel@vger.kernel.org, kvm@vger.kernel.org, 
+ linux-doc@vger.kernel.org, linux-kselftest@vger.kernel.org, 
+ Mark Brown <broonie@kernel.org>
+X-Mailer: b4 0.15-dev-08c49
+X-Developer-Signature: v=1; a=openpgp-sha256; l=2177; i=broonie@kernel.org;
+ h=from:subject:message-id; bh=d5H7XLcR4Rtj+Rj6OZQAl1e1bSehEWOuVd1drKJeL5c=;
+ b=owEBbQGS/pANAwAKASTWi3JdVIfQAcsmYgBoW9xo98IrSXv5WTcOKPpKcGTvEVAPF5A7vwGuy
+ 5NSYUKsOk6JATMEAAEKAB0WIQSt5miqZ1cYtZ/in+ok1otyXVSH0AUCaFvcaAAKCRAk1otyXVSH
+ 0CLQB/0a9lvwCPmsjyKYw7c9zx/gaw7CFvWQ2jEkPLj6mcsahRGzA3bvQ3D2/eT05lo4pEItT7X
+ ssPLYuvowOxyFN3ALLOqFxNOqUVFXV9n03XVCyq1YpfLQ/7UFVVsGaEG58kP4nw5ssnu6LpYBKU
+ P4fBVhvlTkH1sR8eiVT1K8cimB6v/OEt+a5ZeFILF0wtFHHjKeC8btXlloGN5hj0x61Ds7U6YO6
+ z1KkgnahzMu5Ns7s7lINHiqrxK3EmZ2AAMPiH/UXFgVXJTtiqj2sjELzP+Xh6Jq2DHZwfSg/ZTK
+ dDsKGYYeeBJqO1Qz3B2zni0kZkP83slF5/ShVXQ1IwawPTS3
+X-Developer-Key: i=broonie@kernel.org; a=openpgp;
+ fpr=3F2568AAC26998F9E813A1C5C3F436CA30F5D8EB
 
+As with SVE we can only virtualise SME vector lengths that are supported by
+all CPUs in the system, implement similar checks to those for SVE. Since
+unlike SVE there are no specific vector lengths that are architecturally
+required the handling is subtly different, we report a system where this
+happens with a maximum vector length of -1.
 
+Signed-off-by: Mark Brown <broonie@kernel.org>
+---
+ arch/arm64/kernel/fpsimd.c | 23 ++++++++++++++++++++++-
+ 1 file changed, 22 insertions(+), 1 deletion(-)
 
-On 2025/6/25 18:00, David Hildenbrand wrote:
-> On 24.06.25 18:25, Lance Yang wrote:
->> On 2025/6/24 23:34, David Hildenbrand wrote:
->>> On 24.06.25 17:26, Lance Yang wrote:
->>>> On 2025/6/24 20:55, David Hildenbrand wrote:
->>>>> On 14.02.25 10:30, Barry Song wrote:
->>>>>> From: Barry Song <v-songbaohua@oppo.com>
->>>> [...]
->>>>>> diff --git a/mm/rmap.c b/mm/rmap.c
->>>>>> index 89e51a7a9509..8786704bd466 100644
->>>>>> --- a/mm/rmap.c
->>>>>> +++ b/mm/rmap.c
->>>>>> @@ -1781,6 +1781,25 @@ void folio_remove_rmap_pud(struct folio 
->>>>>> *folio,
->>>>>> struct page *page,
->>>>>>     #endif
->>>>>>     }
->>>>>> +/* We support batch unmapping of PTEs for lazyfree large folios */
->>>>>> +static inline bool can_batch_unmap_folio_ptes(unsigned long addr,
->>>>>> +            struct folio *folio, pte_t *ptep)
->>>>>> +{
->>>>>> +    const fpb_t fpb_flags = FPB_IGNORE_DIRTY | 
->>>>>> FPB_IGNORE_SOFT_DIRTY;
->>>>>> +    int max_nr = folio_nr_pages(folio);
->>>>>
->>>>> Let's assume we have the first page of a folio mapped at the last page
->>>>> table entry in our page table.
->>>>
->>>> Good point. I'm curious if it is something we've seen in practice ;)
->>>
->>> I challenge you to write a reproducer :P I assume it might be doable
->>> through simple mremap().
->>>
->>>>
->>>>>
->>>>> What prevents folio_pte_batch() from reading outside the page table?
->>>>
->>>> Assuming such a scenario is possible, to prevent any chance of an
->>>> out-of-bounds read, how about this change:
->>>>
->>>> diff --git a/mm/rmap.c b/mm/rmap.c
->>>> index fb63d9256f09..9aeae811a38b 100644
->>>> --- a/mm/rmap.c
->>>> +++ b/mm/rmap.c
->>>> @@ -1852,6 +1852,25 @@ static inline bool
->>>> can_batch_unmap_folio_ptes(unsigned long addr,
->>>>        const fpb_t fpb_flags = FPB_IGNORE_DIRTY | 
->>>> FPB_IGNORE_SOFT_DIRTY;
->>>>        int max_nr = folio_nr_pages(folio);
->>>>        pte_t pte = ptep_get(ptep);
->>>> +    unsigned long end_addr;
->>>> +
->>>> +    /*
->>>> +     * To batch unmap, the entire folio's PTEs must be contiguous
->>>> +     * and mapped within the same PTE page table, which corresponds to
->>>> +     * a single PMD entry. Before calling folio_pte_batch(), which 
->>>> does
->>>> +     * not perform boundary checks itself, we must verify that the
->>>> +     * address range covered by the folio does not cross a PMD 
->>>> boundary.
->>>> +     */
->>>> +    end_addr = addr + (max_nr * PAGE_SIZE) - 1;
->>>> +
->>>> +    /*
->>>> +     * A fast way to check for a PMD boundary cross is to align both
->>>> +     * the start and end addresses to the PMD boundary and see if they
->>>> +     * are different. If they are, the range spans across at least two
->>>> +     * different PMD-managed regions.
->>>> +     */
->>>> +    if ((addr & PMD_MASK) != (end_addr & PMD_MASK))
->>>> +        return false;
->>>
->>> You should not be messing with max_nr = folio_nr_pages(folio) here at
->>> all. folio_pte_batch() takes care of that.
->>>
->>> Also, way too many comments ;)
->>>
->>> You may only batch within a single VMA and within a single page table.
->>>
->>> So simply align the addr up to the next PMD, and make sure it does not
->>> exceed the vma end.
->>>
->>> ALIGN and friends can help avoiding excessive comments.
->>
->> Thanks! How about this updated version based on your suggestion:
->>
->> diff --git a/mm/rmap.c b/mm/rmap.c
->> index fb63d9256f09..241d55a92a47 100644
->> --- a/mm/rmap.c
->> +++ b/mm/rmap.c
->> @@ -1847,12 +1847,25 @@ void folio_remove_rmap_pud(struct folio 
->> *folio, struct page *page,
->>   /* We support batch unmapping of PTEs for lazyfree large folios */
->>   static inline bool can_batch_unmap_folio_ptes(unsigned long addr,
->> -            struct folio *folio, pte_t *ptep)
->> +                          struct folio *folio, pte_t *ptep,
->> +                          struct vm_area_struct *vma)
->>   {
->>       const fpb_t fpb_flags = FPB_IGNORE_DIRTY | FPB_IGNORE_SOFT_DIRTY;
->> +    unsigned long next_pmd, vma_end, end_addr;
->>       int max_nr = folio_nr_pages(folio);
->>       pte_t pte = ptep_get(ptep);
->> +    /*
->> +     * Limit the batch scan within a single VMA and within a single
->> +     * page table.
->> +     */
->> +    vma_end = vma->vm_end;
->> +    next_pmd = ALIGN(addr + 1, PMD_SIZE);
->> +    end_addr = addr + (unsigned long)max_nr * PAGE_SIZE;
->> +
->> +    if (end_addr > min(next_pmd, vma_end))
->> +        return false;
-> 
-> May I suggest that we clean all that up as we fix it?
+diff --git a/arch/arm64/kernel/fpsimd.c b/arch/arm64/kernel/fpsimd.c
+index de2897d6208c..fbc586813f6a 100644
+--- a/arch/arm64/kernel/fpsimd.c
++++ b/arch/arm64/kernel/fpsimd.c
+@@ -1244,7 +1244,8 @@ void cpu_enable_sme(const struct arm64_cpu_capabilities *__always_unused p)
+ void __init sme_setup(void)
+ {
+ 	struct vl_info *info = &vl_info[ARM64_VEC_SME];
+-	int min_bit, max_bit;
++	DECLARE_BITMAP(tmp_map, SVE_VQ_MAX);
++	int min_bit, max_bit, b;
+ 
+ 	if (!system_supports_sme())
+ 		return;
+@@ -1274,12 +1275,32 @@ void __init sme_setup(void)
+ 	 */
+ 	set_sme_default_vl(find_supported_vector_length(ARM64_VEC_SME, 32));
+ 
++	bitmap_andnot(tmp_map, info->vq_partial_map, info->vq_map,
++		      SVE_VQ_MAX);
++
++	b = find_last_bit(tmp_map, SVE_VQ_MAX);
++	if (b >= SVE_VQ_MAX)
++		/* All VLs virtualisable */
++		info->max_virtualisable_vl = SVE_VQ_MAX;
++	else if (b == SVE_VQ_MAX - 1)
++		/* No virtualisable VLs */
++		info->max_virtualisable_vl = -1;
++	else
++		info->max_virtualisable_vl = sve_vl_from_vq(__bit_to_vq(b +  1));
++
++	if (info->max_virtualisable_vl > info->max_vl)
++		info->max_virtualisable_vl = info->max_vl;
++
+ 	pr_info("SME: minimum available vector length %u bytes per vector\n",
+ 		info->min_vl);
+ 	pr_info("SME: maximum available vector length %u bytes per vector\n",
+ 		info->max_vl);
+ 	pr_info("SME: default vector length %u bytes per vector\n",
+ 		get_sme_default_vl());
++
++	/* KVM decides whether to support mismatched systems. Just warn here: */
++	if (info->max_virtualisable_vl < info->max_vl)
++		pr_warn("SME: unvirtualisable vector lengths present\n");
+ }
+ 
+ void sme_suspend_exit(void)
 
-Yeah, that looks much better. Thanks for the suggestion!
-
-> 
-> Maybe something like this:
-> 
-> diff --git a/mm/rmap.c b/mm/rmap.c
-> index 3b74bb19c11dd..11fbddc6ad8d6 100644
-> --- a/mm/rmap.c
-> +++ b/mm/rmap.c
-> @@ -1845,23 +1845,38 @@ void folio_remove_rmap_pud(struct folio *folio, 
-> struct page *page,
->   #endif
->   }
-> 
-> -/* We support batch unmapping of PTEs for lazyfree large folios */
-> -static inline bool can_batch_unmap_folio_ptes(unsigned long addr,
-> -                       struct folio *folio, pte_t *ptep)
-> +static inline unsigned int folio_unmap_pte_batch(struct folio *folio,
-> +               struct page_vma_mapped_walk *pvmw, enum ttu_flags flags,
-> +               pte_t pte)
->   {
->          const fpb_t fpb_flags = FPB_IGNORE_DIRTY | FPB_IGNORE_SOFT_DIRTY;
-> -       int max_nr = folio_nr_pages(folio);
-> -       pte_t pte = ptep_get(ptep);
-> +       struct vm_area_struct *vma = pvmw->vma;
-> +       unsigned long end_addr, addr = pvmw->address;
-> +       unsigned int max_nr;
-> +
-> +       if (flags & TTU_HWPOISON)
-> +               return 1;
-> +       if (!folio_test_large(folio))
-> +               return 1;
-> +
-> +       /* We may only batch within a single VMA and a single page 
-> table. */
-> +       end_addr = min_t(unsigned long, ALIGN(addr + 1, PMD_SIZE), vma- 
->  >vm_end);
-> +       max_nr = (end_addr - addr) >> PAGE_SHIFT;
-> 
-> +       /* We only support lazyfree batching for now ... */
->          if (!folio_test_anon(folio) || folio_test_swapbacked(folio))
-> -               return false;
-> +               return 1;
->          if (pte_unused(pte))
-> -               return false;
-> -       if (pte_pfn(pte) != folio_pfn(folio))
-> -               return false;
-> +               return 1;
-> +       /* ... where we must be able to batch the whole folio. */
-> +       if (pte_pfn(pte) != folio_pfn(folio) || max_nr != 
-> folio_nr_pages(folio))
-> +               return 1;
-> +       max_nr = folio_pte_batch(folio, addr, pvmw->pte, pte, max_nr, 
-> fpb_flags,
-> +                                NULL, NULL, NULL);
-> 
-> -       return folio_pte_batch(folio, addr, ptep, pte, max_nr, 
-> fpb_flags, NULL,
-> -                              NULL, NULL) == max_nr;
-> +       if (max_nr != folio_nr_pages(folio))
-> +               return 1;
-> +       return max_nr;
->   }
-> 
->   /*
-> @@ -2024,9 +2039,7 @@ static bool try_to_unmap_one(struct folio *folio, 
-> struct vm_area_struct *vma,
->                          if (pte_dirty(pteval))
->                                  folio_mark_dirty(folio);
->                  } else if (likely(pte_present(pteval))) {
-> -                       if (folio_test_large(folio) && !(flags & 
-> TTU_HWPOISON) &&
-> -                           can_batch_unmap_folio_ptes(address, folio, 
-> pvmw.pte))
-> -                               nr_pages = folio_nr_pages(folio);
-> +                       nr_pages = folio_unmap_pte_batch(folio, &pvmw, 
-> flags, pteval);
->                          end_addr = address + nr_pages * PAGE_SIZE;
->                          flush_cache_range(vma, address, end_addr);
-> 
-> 
-> Note that I don't quite understand why we have to batch the whole thing 
-> or fallback to
-> individual pages. Why can't we perform other batches that span only some 
-> PTEs? What's special
-> about 1 PTE vs. 2 PTEs vs. all PTEs?
-
-That's a good point about the "all-or-nothing" batching logic ;)
-
-It seems the "all-or-nothing" approach is specific to the lazyfree use
-case, which needs to unmap the entire folio for reclamation. If that's
-not possible, it falls back to the single-page slow path.
-
-Also, supporting partial batches would be useful, but not common case
-I guess, so let's leave it as is ;p
-
-Thanks,
-Lance
-
-> 
-> 
-> Can someone enlighten me why that is required?
-> 
+-- 
+2.39.5
 
 
