@@ -1,53 +1,53 @@
-Return-Path: <linux-kernel+bounces-703012-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-703015-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9313CAE8ABB
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Jun 2025 18:53:58 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 31339AE8AC4
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Jun 2025 18:55:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 975603B074B
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Jun 2025 16:51:56 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2429A7B7AAC
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Jun 2025 16:51:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0687C2DECC3;
-	Wed, 25 Jun 2025 16:45:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 233592DFA49;
+	Wed, 25 Jun 2025 16:45:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="fQE3MK2K"
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="LYy6gzOu"
 Received: from relay5-d.mail.gandi.net (relay5-d.mail.gandi.net [217.70.183.197])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5F2242DAFDB
-	for <linux-kernel@vger.kernel.org>; Wed, 25 Jun 2025 16:45:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3C20B2DAFD3
+	for <linux-kernel@vger.kernel.org>; Wed, 25 Jun 2025 16:45:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.197
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750869950; cv=none; b=Pof30puaA9DROfvTHRro4eOvUQI7edmIwgkqkqqFSTXa8UCxVpzgp0gbFgz6vBobBf9AZB+NHIx1CCQJEwqQiHJ0Z/RFygu3m49BX+msH+t8AILQb3GHAXP1mtRA8MDYLMICodAQrtBI2MIbPIpJQOPEOLbLZOjdtrScPG1Sv3Q=
+	t=1750869952; cv=none; b=eNVRi1A46nEBRKWdafVpn0CZhHOrSgvqcW4M1P7ubetPhoDRrdmFC5dX/+dcY4POKR/L3HaDNvCv1+7G5iSu2dqMwdq7KMB2Q7mQkdP9+3MBJV+au8aQU1o7Xwbl9hGbsCQGMe0Wh/Ri4boDEyGusl/OMfXtsJJRuPo7jcGRtYE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750869950; c=relaxed/simple;
-	bh=ih4o1cXJDJEoX+H/u65YPGMOSBTgqPs3G0/83Y/lLX4=;
+	s=arc-20240116; t=1750869952; c=relaxed/simple;
+	bh=0tAuVOqypex+mKP0o0RDpiHIhb0cbbVYLpj5BxX78ZA=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=MD7GLvbYbkvBoIvbPQrA7lioC0BG748m4K6th43MqjQGZu25dUbVPlAeQu95ZK7STmIFmZZUcA20tZiGCWG3BFP84A3QhBwCK4VBtGXW8lB/uxyjzbxif5U/hQ19X2vy+B5J8d8aZ1sAHdQYC1YrrlsIHmXcMetoruLw2FXcI1A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=fQE3MK2K; arc=none smtp.client-ip=217.70.183.197
+	 In-Reply-To:To:Cc; b=qkBqSdgSEEPMIbMIP484hZS3+Z2IyhYq1lcig9bB8rirFt3YC0LOT9z+u4zi1W6eIYzsWMIMDWdWr7UkFtrvAEniFWh/qyaDfaJuOGVkFyGlft/HGBgJ6RuwegeSDq6ag4kNe8cC5sWO8Cv8T/k+laxGfKEZ8jB83lHHu0SsdbY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=LYy6gzOu; arc=none smtp.client-ip=217.70.183.197
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: by mail.gandi.net (Postfix) with ESMTPSA id 7D6C144385;
-	Wed, 25 Jun 2025 16:45:39 +0000 (UTC)
+Received: by mail.gandi.net (Postfix) with ESMTPSA id 2A8CF4437D;
+	Wed, 25 Jun 2025 16:45:41 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-	t=1750869941;
+	t=1750869942;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=AXCxhWG7+TwYnqcCH1bbu1V1drghoo3o25zXzfcMhR0=;
-	b=fQE3MK2KKKWZHSHpw/EOuCoGF8aaQpjXtXTKgLDEfZFrVd71HsENBSa9zfQ935i/ZiAr6U
-	Zue6+swKxKCX2qDuZq9nwmBMGmyS5hy0wrXRiEy7j9+DuCI8EayCfTLrQEKXCzayL8PyAm
-	DIvVkcv6iGYmlD5D/SVxrhN8rYSBRiLHYKJ7Of8/y2mpjhdivQ6a/I5fagLrezCITdcn8U
-	H1287RI3xWyRT7jN7LoiLS9M/k5XnJerLk8jLnTH5cZ/1SFEvOx00pz5RD+UGtiNuMPIfe
-	pmWjg588UvmhPsWq/PrpI1EvEoMGJkFKXfCkgti73xrJJ7SwktiqsI1k/jCcZA==
+	bh=KmAGn/VrnjYqlycoq46COahRcnHDMs9lXWBMwv0U3Z4=;
+	b=LYy6gzOuPnf5GOVONzhJHxWS2TOAmEL54FRQp8iM2QtWaf1PK4EgHq/kXwqyU39C8/4cyR
+	JimImRh50Fd5ybCqRzGV27Tf1fZEUyUEJXVXP2UOayNSWHqa3cfTJNcwCNlEJptugu+ovI
+	zwg7wlw95vKsOIr7/5tOIQvg2+yA2alaztH7bKsi38hYb0O8BAT4ferEm/wq4cKj3br3HW
+	dZ9lMx4V/ON6PDvGxOFq3F7FXf/peRZcNwphsKXMPy1uUMXMHpvF5earQhYb97j1LKhbFa
+	Q8XpUX5RNbw08K1L3pPEqmyh6iexgSRIr2BmGWuing+gBTdc7J7MEchxZszhcg==
 From: Luca Ceresoli <luca.ceresoli@bootlin.com>
-Date: Wed, 25 Jun 2025 18:45:05 +0200
-Subject: [PATCH 01/32] drm/mipi-dsi: add sanity check of lane number in
- mipi_dsi_attach()
+Date: Wed, 25 Jun 2025 18:45:06 +0200
+Subject: [PATCH 02/32] drm/hisilicon/kirin: remove redundant lanes number
+ check
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -56,7 +56,7 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20250625-drm-dsi-host-no-device-ptr-v1-1-e36bc258a7c5@bootlin.com>
+Message-Id: <20250625-drm-dsi-host-no-device-ptr-v1-2-e36bc258a7c5@bootlin.com>
 References: <20250625-drm-dsi-host-no-device-ptr-v1-0-e36bc258a7c5@bootlin.com>
 In-Reply-To: <20250625-drm-dsi-host-no-device-ptr-v1-0-e36bc258a7c5@bootlin.com>
 To: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
@@ -81,35 +81,27 @@ X-GND-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtddvgddvfedvkecutefuodetggdotef
  hgtphhtthhopehmrdhsiiihphhrohifshhkihesshgrmhhsuhhnghdrtghomhdprhgtphhtthhopehrfhhoshhssehkvghrnhgvlhdrohhrghdprhgtphhtthhopehmrggrrhhtvghnrdhlrghnkhhhohhrshhtsehlihhnuhigrdhinhhtvghlrdgtohhmpdhrtghpthhtohepnhgvihhlrdgrrhhmshhtrhhonhhgsehlihhnrghrohdrohhrghdprhgtphhtthhopehjrghnihdrnhhikhhulhgrsehlihhnuhigrdhinhhtvghlrdgtohhm
 X-GND-Sasl: luca.ceresoli@bootlin.com
 
-Several drivers do some sanity checks on the lane number. Checking it is
-non-zero will allow to remove such checks.
-
-Additionally, we are about to move to an .attach_new host op which won't
-pass a pointer that the host driver can store. This will prevent host
-drivers to check for the presence of a device by storing such pointer and
-checking whether it is NULL. As a replacement, host drivers will be able to
-check the lane number to be non-zero, so ensuring a zero value is never
-passed along will make such checks robust.
+Checking that the number of lanes is > 0 is now done by the DRM MIPI DSI
+core in mipi_dsi_attach().
 
 Signed-off-by: Luca Ceresoli <luca.ceresoli@bootlin.com>
 ---
- drivers/gpu/drm/drm_mipi_dsi.c | 3 +++
- 1 file changed, 3 insertions(+)
+ drivers/gpu/drm/hisilicon/kirin/dw_drm_dsi.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/gpu/drm/drm_mipi_dsi.c b/drivers/gpu/drm/drm_mipi_dsi.c
-index a00d76443128e4972f939a8c9e26d949d2b30bb9..82d4f9c1de5fbc60f32d0b0baf41e1bd2991ebe4 100644
---- a/drivers/gpu/drm/drm_mipi_dsi.c
-+++ b/drivers/gpu/drm/drm_mipi_dsi.c
-@@ -379,6 +379,9 @@ int mipi_dsi_attach(struct mipi_dsi_device *dsi)
- 	if (!ops || !ops->attach)
- 		return -ENOSYS;
+diff --git a/drivers/gpu/drm/hisilicon/kirin/dw_drm_dsi.c b/drivers/gpu/drm/hisilicon/kirin/dw_drm_dsi.c
+index e80debdc41763357cb2cf321205c0dfac80a911e..1a5b97abae86a187c751b4b579d7c22f206e4c90 100644
+--- a/drivers/gpu/drm/hisilicon/kirin/dw_drm_dsi.c
++++ b/drivers/gpu/drm/hisilicon/kirin/dw_drm_dsi.c
+@@ -728,7 +728,7 @@ static int dsi_host_attach(struct mipi_dsi_host *host,
+ 	struct device *dev = host->dev;
+ 	int ret;
  
-+	if (dsi->lanes < 1)
-+		return dev_err_probe(&dsi->dev, -EINVAL, "Incorrect lanes number\n");
-+
- 	ret = ops->attach(dsi->host, dsi);
- 	if (ret)
- 		return ret;
+-	if (mdsi->lanes < 1 || mdsi->lanes > 4) {
++	if (mdsi->lanes > 4) {
+ 		DRM_ERROR("dsi device params invalid\n");
+ 		return -EINVAL;
+ 	}
 
 -- 
 2.49.0
