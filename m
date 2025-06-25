@@ -1,170 +1,116 @@
-Return-Path: <linux-kernel+bounces-702022-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-702028-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 58D72AE7CDD
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Jun 2025 11:30:57 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 891B7AE7CF2
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Jun 2025 11:32:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 35A45188C047
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Jun 2025 09:29:56 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1A5B27B9231
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Jun 2025 09:30:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3FA4129A9FA;
-	Wed, 25 Jun 2025 09:20:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 30C202DCC1D;
+	Wed, 25 Jun 2025 09:22:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="miKXzUfe";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="Pp4+T8OW";
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="miKXzUfe";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="Pp4+T8OW"
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=marvell.com header.i=@marvell.com header.b="Czhzmarc"
+Received: from mx0b-0016f401.pphosted.com (mx0a-0016f401.pphosted.com [67.231.148.174])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 21007285CB8
-	for <linux-kernel@vger.kernel.org>; Wed, 25 Jun 2025 09:20:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1F349273F9;
+	Wed, 25 Jun 2025 09:22:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=67.231.148.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750843231; cv=none; b=DDv1nLI9SWfD7rZi++eKm+hcqznmIIa4oeQ8BbqZ2m5+bgnHgP/xv+bSkQKDj6tn8tgyB+PcEZqzX3Fxlry9mj4R7hP0et3qmLxHv/Wu6uli542DmBsfDtrG2Wpu6WG8RsMSufLYiHHzCctD5b9lxZWjw6NWJmrvSuUglKBzz+I=
+	t=1750843368; cv=none; b=qoMjWB2F4dLEumuWe/OkeO3JXz9pNRiS7vwC5EYnClb5r/7QUMy5fJFlb5T/me06qYFLatJzqEuUkRiYa6UZS7oU1zbfN4jtfKVeY5yA1VixeCjuynlEA8njUL2MOt0by6wDWpDPa42YS9XM3AdiewcIK6gbU9SnKkhd171czMY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750843231; c=relaxed/simple;
-	bh=uDafNFhTllkTUBhR+Oa68ZEnc3lAmutJazclJcROfpo=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=eoVvmO0/xMxcQw5lLC2De2vAjtOqWYC7bIDB4sSjzpXssvqxA+3Tep0PX4ZMJKyIwDMoTec2bya/X8Lq9BsZ34kLiK1BnZACXDPbFEDtJi9teL/zABSTCh81y2omjpx0FwlleDhGnhRAy1O6Q4jdzDfIO539ninYcP9ZmEVm6+8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=miKXzUfe; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=Pp4+T8OW; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=miKXzUfe; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=Pp4+T8OW; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id 7590B21175;
-	Wed, 25 Jun 2025 09:20:28 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1750843228; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=4q3oGP7adTB8xOiBgLxnYABFNkmwV9fipjngdpsbJoI=;
-	b=miKXzUfeGl2pjydsa10CWxnBe2+CHlKnhDyCPKT646v6UehiSg9+biAVtawaFBQJo8aQin
-	cdgi38gDEtnz6+PbEP83t/UT9CgHsh9WL3l6nmLJiY4thRTvACpfvA99l3pGdRz6liynY9
-	qTjReKMPsEMjCSHjFPlG77NrYjPdvXQ=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1750843228;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=4q3oGP7adTB8xOiBgLxnYABFNkmwV9fipjngdpsbJoI=;
-	b=Pp4+T8OWBB+ZZNZMVIItKcc5NnUoHOmitTzyHMdjD/Ru3J27KyA2yro2T4sTGDoOZWuswY
-	vMG6X6WHMBNBodDg==
-Authentication-Results: smtp-out1.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1750843228; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=4q3oGP7adTB8xOiBgLxnYABFNkmwV9fipjngdpsbJoI=;
-	b=miKXzUfeGl2pjydsa10CWxnBe2+CHlKnhDyCPKT646v6UehiSg9+biAVtawaFBQJo8aQin
-	cdgi38gDEtnz6+PbEP83t/UT9CgHsh9WL3l6nmLJiY4thRTvACpfvA99l3pGdRz6liynY9
-	qTjReKMPsEMjCSHjFPlG77NrYjPdvXQ=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1750843228;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=4q3oGP7adTB8xOiBgLxnYABFNkmwV9fipjngdpsbJoI=;
-	b=Pp4+T8OWBB+ZZNZMVIItKcc5NnUoHOmitTzyHMdjD/Ru3J27KyA2yro2T4sTGDoOZWuswY
-	vMG6X6WHMBNBodDg==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id E8C3213485;
-	Wed, 25 Jun 2025 09:20:26 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id 9mrjNVq/W2h9MAAAD6G6ig
-	(envelope-from <osalvador@suse.de>); Wed, 25 Jun 2025 09:20:26 +0000
-Date: Wed, 25 Jun 2025 11:20:21 +0200
-From: Oscar Salvador <osalvador@suse.de>
-To: David Hildenbrand <david@redhat.com>
-Cc: linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-	linux-mm@kvack.org, nvdimm@lists.linux.dev,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Juergen Gross <jgross@suse.com>,
-	Stefano Stabellini <sstabellini@kernel.org>,
-	Oleksandr Tyshchenko <oleksandr_tyshchenko@epam.com>,
-	Dan Williams <dan.j.williams@intel.com>,
-	Alistair Popple <apopple@nvidia.com>,
-	Matthew Wilcox <willy@infradead.org>, Jan Kara <jack@suse.cz>,
-	Alexander Viro <viro@zeniv.linux.org.uk>,
-	Christian Brauner <brauner@kernel.org>, Zi Yan <ziy@nvidia.com>,
-	Baolin Wang <baolin.wang@linux.alibaba.com>,
-	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
-	"Liam R. Howlett" <Liam.Howlett@oracle.com>,
-	Nico Pache <npache@redhat.com>, Ryan Roberts <ryan.roberts@arm.com>,
-	Dev Jain <dev.jain@arm.com>, Barry Song <baohua@kernel.org>,
-	Vlastimil Babka <vbabka@suse.cz>, Mike Rapoport <rppt@kernel.org>,
-	Suren Baghdasaryan <surenb@google.com>,
-	Michal Hocko <mhocko@suse.com>, Jann Horn <jannh@google.com>,
-	Pedro Falcato <pfalcato@suse.de>
-Subject: Re: [PATCH RFC 10/14] mm/memory: factor out common code from
- vm_normal_page_*()
-Message-ID: <aFu_VeTRSk4Pz-ZL@localhost.localdomain>
-References: <20250617154345.2494405-1-david@redhat.com>
- <20250617154345.2494405-11-david@redhat.com>
- <aFu5Bn2APcr2sf7k@localhost.localdomain>
- <1ea2de52-7684-4e27-a8e9-233390f63eeb@redhat.com>
+	s=arc-20240116; t=1750843368; c=relaxed/simple;
+	bh=BXTwXG/QzO6u1XNLD87/IzNVSJyF6sBtIFpnTngt3Yk=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=NRnNIsZ1RJdU/qU9QZBjsvcfrPOEAlFYLJmFF9aZDRRLbZtEh0QmGyAmrGawnelcgxGqzCqbk4y6rQemQ7koSOt1Jjlf1jey+u8zVGOzM4hXJfNFi4XXTvPH91HmihZ+vWH6xCu1MD7GjyrMxv/9T7I3lFJTGRUNmYU4FHKCFHw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=marvell.com; spf=pass smtp.mailfrom=marvell.com; dkim=pass (2048-bit key) header.d=marvell.com header.i=@marvell.com header.b=Czhzmarc; arc=none smtp.client-ip=67.231.148.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=marvell.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=marvell.com
+Received: from pps.filterd (m0045849.ppops.net [127.0.0.1])
+	by mx0a-0016f401.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 55P6jEwu017602;
+	Wed, 25 Jun 2025 02:21:18 -0700
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=marvell.com; h=
+	cc:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=pfpt0220; bh=yM1XFNaBNgpqbCZ5K8XLwlM
+	71AV44uTsxqGf72BIZl8=; b=CzhzmarcZp1VZY1vHQo1taA2kl1GZwKh7N1pUjq
+	cGEqiiivcOqV17gL3HPiwxVbwgQWmpkYku2vdwjNXrVf3DsUYfwmA6PWMI+XsqTG
+	5SQZ/iVoi9OLwusRrf+bqfPNzOO1pW4ISw6q70hw0ZICTGKAHsewW/f+CPJsFUjQ
+	erZDZbhk+I8iQ75vKpgMtovAf00aoEon5eavh4Hd2uo53iURh4aR4tbKBSrHu76y
+	sKJM93o1U5air+Izy9+zJagLCqtu8pgNs08SxxldMkuE61VNyS97wdykpHyHEmU+
+	2Q1wqhGk97BZ5xger5BXqNLVf17SAAV0gLIiFB6bDGiBMVA==
+Received: from dc6wp-exch02.marvell.com ([4.21.29.225])
+	by mx0a-0016f401.pphosted.com (PPS) with ESMTPS id 47gc3kgad5-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 25 Jun 2025 02:21:17 -0700 (PDT)
+Received: from DC6WP-EXCH02.marvell.com (10.76.176.209) by
+ DC6WP-EXCH02.marvell.com (10.76.176.209) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.4; Wed, 25 Jun 2025 02:21:16 -0700
+Received: from maili.marvell.com (10.69.176.80) by DC6WP-EXCH02.marvell.com
+ (10.76.176.209) with Microsoft SMTP Server id 15.2.1544.4 via Frontend
+ Transport; Wed, 25 Jun 2025 02:21:16 -0700
+Received: from test-OptiPlex-Tower-Plus-7010.marvell.com (unknown [10.29.37.157])
+	by maili.marvell.com (Postfix) with ESMTP id C05813F704F;
+	Wed, 25 Jun 2025 02:21:08 -0700 (PDT)
+From: Hariprasad Kelam <hkelam@marvell.com>
+To: <netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+CC: <kuba@kernel.org>, <davem@davemloft.net>, <sgoutham@marvell.com>,
+        <gakula@marvell.com>, <jerinj@marvell.com>, <lcherian@marvell.com>,
+        <sbhatta@marvell.com>, <hkelam@marvell.com>, <naveenm@marvell.com>,
+        <edumazet@google.com>, <pabeni@redhat.com>, <andrew+netdev@lunn.ch>,
+        <bbhushan2@marvell.com>
+Subject: [net-next 0/3] Octeontx2-pf: extend link modes support
+Date: Wed, 25 Jun 2025 14:51:04 +0530
+Message-ID: <20250625092107.9746-1-hkelam@marvell.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1ea2de52-7684-4e27-a8e9-233390f63eeb@redhat.com>
-X-Spamd-Result: default: False [-4.30 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	MISSING_XM_UA(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	RCPT_COUNT_TWELVE(0.00)[29];
-	ARC_NA(0.00)[];
-	TO_DN_SOME(0.00)[];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	RCVD_TLS_ALL(0.00)[];
-	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	FROM_EQ_ENVFROM(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	R_RATELIMIT(0.00)[to_ip_from(RLhwqoz3wsm4df3nfubx4grhps)];
-	RCVD_COUNT_TWO(0.00)[2];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo,localhost.localdomain:mid]
-X-Spam-Level: 
-X-Spam-Flag: NO
-X-Spam-Score: -4.30
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-Proofpoint-GUID: ZOiaDZqfK0UXBYuDfJIqg4j285MC_8jT
+X-Proofpoint-ORIG-GUID: ZOiaDZqfK0UXBYuDfJIqg4j285MC_8jT
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNjI1MDA2OSBTYWx0ZWRfX434TGp3hrFVe FMzRWgxCqZq+LG+GIKD1klh4CdWQGDUZaCYkjg+zuJ1szwOVvTEspWzNvpe3gNn3luAc6wbl27m 7Mooq5pSTMiI+8dYU0kYFZkd1wT/JIC6HWdP7bzvdnpJYKwxSTdTQDMa65kzCtJdXRYaCMo/LqF
+ qN12c1SOLvlabE24tIgn5LBq5/z1mm+2wvP9i9EzN/soHVZ24wkqHjoBlmw8XQGGTiXjI+qfwcg RS12LtkDy8gZ1Ni2Bxe5jaYHGHwtrZogmlFYtzmdcuz21iFrV8d6C7cDAliuTZ/GZXtejLw147D Bi1AVmvFDwl0q0flutuBNxg8KtZF2KupX3IwllZv/Uie4NJwzYb3p6bECGvrZ1wdHXMgkwZignB
+ e7WSlKaDhb966QZEP2yAacjz2ReAMdnGvlwkaatlLtYEqs0HUO2KKyiy2l3d/KfHEMz4k9Pd
+X-Authority-Analysis: v=2.4 cv=D4ZHKuRj c=1 sm=1 tr=0 ts=685bbf8d cx=c_pps a=gIfcoYsirJbf48DBMSPrZA==:117 a=gIfcoYsirJbf48DBMSPrZA==:17 a=6IFa9wvqVegA:10 a=xG7LojJKveJkHGXijn4A:9
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.7,FMLib:17.12.80.40
+ definitions=2025-06-25_02,2025-06-23_07,2025-03-28_01
 
-On Wed, Jun 25, 2025 at 10:57:39AM +0200, David Hildenbrand wrote:
-> I don't think that comment is required anymore -- we do exactly what
-> vm_normal_page() does + documents,
-> 
-> What the current users are is not particularly important anymore.
-> 
-> Or why do you think it would still be important?
+This series of patches adds multi advertise mode support along with
+other improvements in link mode management code flow.
 
-Maybe the current users are not important, but at least a comment directing 
-to vm_normal_page like "See comment in vm_normal_page".
-Here, and in vm_normal_page_pud().
+Patch1: Currently all SGMII modes 10/100/1000baseT are mapped with
+        single firmware mode. This patch updates these link modes
+        with corresponding firmware modes.
 
-Just someone has it clear why we're only checking for X and Y when we find a
-pte/pmd/pud special.
+Patch2: Due to limitation in current kernel <-> firmware communication,
+        link modes are divided into multiple groups, and identified
+        with their group index.
 
-But not really a strong opinion here, just I think that it might be helpful.
+Patch3: Adds support for multi advertise mode.
 
+Hariprasad Kelam (3):
+  Octeontx-pf: Update SGMII mode mapping
+  Octeontx2-af: Introduce mode group index
+  Octeontx2-pf: ethtool: support multi advertise mode
+
+ .../net/ethernet/marvell/octeontx2/af/cgx.c   | 55 ++++++++++------
+ .../net/ethernet/marvell/octeontx2/af/cgx.h   |  1 +
+ .../ethernet/marvell/octeontx2/af/cgx_fw_if.h | 33 +++++++++-
+ .../net/ethernet/marvell/octeontx2/af/mbox.h  |  9 ++-
+ .../ethernet/marvell/octeontx2/af/rvu_cgx.c   |  9 ++-
+ .../marvell/octeontx2/nic/otx2_ethtool.c      | 62 +++++++++----------
+ 6 files changed, 113 insertions(+), 56 deletions(-)
 
 -- 
-Oscar Salvador
-SUSE Labs
+2.34.1
+
 
