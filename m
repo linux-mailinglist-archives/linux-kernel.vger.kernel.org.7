@@ -1,387 +1,221 @@
-Return-Path: <linux-kernel+bounces-702631-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-702630-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 22396AE84DE
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Jun 2025 15:35:29 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0020BAE84D8
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Jun 2025 15:34:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 608ED16BEE4
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Jun 2025 13:35:00 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B7A8B3B818F
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Jun 2025 13:34:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CD3F7266F00;
-	Wed, 25 Jun 2025 13:34:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A24AC265CC5;
+	Wed, 25 Jun 2025 13:33:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=treblig.org header.i=@treblig.org header.b="ckAOgRla"
-Received: from mx.treblig.org (mx.treblig.org [46.235.229.95])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ZwD25OEC"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 24CB4262FED;
-	Wed, 25 Jun 2025 13:33:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.229.95
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D32802620D2;
+	Wed, 25 Jun 2025 13:33:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750858441; cv=none; b=Fon/yfy4XSZEtGehfJGkb2hrfNBLsYTYyt+0bQ5B4ehBEm4GzHkDtV3oiN96AWVlUzN2w/WVpWQY1QGn+YI/tx/9YnTCAzd6raECh35Xz8JsaAw9ivlcLw1J8N3a1tpUwG/IWaii+AscTkJEl3Hfwc5hEsBZ+2prEFlU35/kFGs=
+	t=1750858432; cv=none; b=Q2JED0sEhUYjG6uBr9RtX6E1yO63ow1QFLN8LPWaiL0lj4zD1rJ0grD63JVq37YuhJJJ0LRo4A7ELRVc7N31ES8NpH218YJMdE+s8T8Zzmd9lgkoLFjOsDZtI1dF7ly53bUObHMPrdL9+T038RfMesNPMGgnJcquH/kV2/WuXFA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750858441; c=relaxed/simple;
-	bh=fdUE94Aj6Ygf+wI5w/JTwDSyh/44/wu4RIvM8ZbTejk=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=YqbyJJD16smNIb47nVllj6tLHKH3jEW03eyzkVRQ4eR+dZnWhPmcz9J/yS9nAMQaabzl5wGTIL318VTeSRspy+/hVmP+Goyo5T/bJlprG/xAEYj0Zp7GX8EeHoQuH82f9kZhWxwgwOvrRMoFgDAEzJMRg5tWqQ6g5BwoPLyvZFw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=treblig.org; spf=pass smtp.mailfrom=treblig.org; dkim=pass (2048-bit key) header.d=treblig.org header.i=@treblig.org header.b=ckAOgRla; arc=none smtp.client-ip=46.235.229.95
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=treblig.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=treblig.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=treblig.org
-	; s=bytemarkmx; h=MIME-Version:Message-ID:Date:Subject:From:Content-Type:From
-	:Subject; bh=j+Zl/OfD2HpnWuD+SJA6Yd9g8QDqyJtr8RJOf4icl70=; b=ckAOgRlauISsMc1s
-	s3mEmhKHOTfrh0j1ewYzpyrEjnV0wltS3kTu43Nw7O85dujeFXobsk7i0nhrMpVXCeuprl4UmZOrY
-	U6OlYASzo8YJ0mgmO1yToub0fF0okRz46KZDQWeGbUlJklmvYjDW1fus/+OFVwLreKSUBAEn4QeQJ
-	QMCRQzMku7o+mo9H0KH7vGoGAurk/LWsktoC1YZB+TF4B8o2uZwIDXiy02/7SiF0BM0+vIimaVe1R
-	n1lZbKywmFZ6h7dM/h4pRrjtxHZuBHLtSq43HITfu0YqThqBRhxRs6hS8IUB/5d0I62gSWYiF3gy9
-	cPwdazLwZoT7Ph/u/A==;
-Received: from localhost ([127.0.0.1] helo=dalek.home.treblig.org)
-	by mx.treblig.org with esmtp (Exim 4.96)
-	(envelope-from <linux@treblig.org>)
-	id 1uUQG8-00Bvly-2R;
-	Wed, 25 Jun 2025 13:33:52 +0000
-From: linux@treblig.org
-To: arnd@arndb.de,
-	lee@kernel.org,
-	mchehab@kernel.org,
-	lgirdwood@gmail.com,
-	broonie@kernel.org,
-	perex@perex.cz,
-	tiwai@suse.com
-Cc: linux-media@vger.kernel.org,
-	linux-sound@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	"Dr. David Alan Gilbert" <linux@treblig.org>
-Subject: [PATCH 4/4] mfd: wl1273-core: Remove the header
-Date: Wed, 25 Jun 2025 14:32:58 +0100
-Message-ID: <20250625133258.78133-5-linux@treblig.org>
-X-Mailer: git-send-email 2.49.0
-In-Reply-To: <20250625133258.78133-1-linux@treblig.org>
-References: <20250625133258.78133-1-linux@treblig.org>
+	s=arc-20240116; t=1750858432; c=relaxed/simple;
+	bh=5bv7+U7nnAG09/EUeVfNCF6vC1VSNp7LCmluSKx+V1Y=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=AiZA185/LbtAotX/S4Q1XhzuGHNN2IQG7/17slx+T9InazA+/YtptgtRQKosYGB6bhPu39CMaDXk2FNDRn66XGJs+Hh8QNagbrWUrw67uSaiAQ7pff4DoGUA7FrStMhM8StpzLKKVJ+krRxM9g7o6sQjmhT+8TrDdkNpsiRrWqI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ZwD25OEC; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2503EC4CEEF;
+	Wed, 25 Jun 2025 13:33:48 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1750858432;
+	bh=5bv7+U7nnAG09/EUeVfNCF6vC1VSNp7LCmluSKx+V1Y=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=ZwD25OECifOJ1XdOx/F1AthVoH+pnNjkiLHqyp4F8hUjFBtsoCPqgYzHkBrJ5Ir8a
+	 uyNZzswqHEYrbRzT2Y3H8j6KMOMMl+Hc2SBanWN5acDeEIfU7ZtcKRBm5WsQYXL9fA
+	 fGKQrtWTl0hTwR/Nq1hREfz64/v8aR1HVxVLRstmAlrhNTHEugEdtYnWPmPGRyhVh4
+	 T6VEoQSBGUe9s1CKYdZ3cviEZtppKPLzBun40I5K4YoHi9oqYx7DQDQ3zOQI7vo4wX
+	 VXxFiKTjXJrzOIrm0cC1OmOeBMvjDIGdoLAI+Z2fh6AOH8oTxrG/TA6+qDBWzui/cd
+	 mHD2Cg1QFE05A==
+Date: Wed, 25 Jun 2025 14:33:46 +0100
+From: Lee Jones <lee@kernel.org>
+To: Alex Elder <elder@riscstar.com>
+Cc: lgirdwood@gmail.com, broonie@kernel.org, robh@kernel.org,
+	krzk+dt@kernel.org, conor+dt@kernel.org, dlan@gentoo.org,
+	paul.walmsley@sifive.com, palmer@dabbelt.com, aou@eecs.berkeley.edu,
+	alex@ghiti.fr, troymitchell988@gmail.com, guodong@riscstar.com,
+	devicetree@vger.kernel.org, linux-riscv@lists.infradead.org,
+	spacemit@lists.linux.dev, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 2/6] mfd: spacemit: add support for SpacemiT PMICs
+Message-ID: <20250625133346.GW795775@google.com>
+References: <20250613210150.1468845-1-elder@riscstar.com>
+ <20250613210150.1468845-3-elder@riscstar.com>
+ <20250619144023.GG795775@google.com>
+ <8126de92-0338-4cd0-98fc-4f8c37500201@riscstar.com>
+ <20250625082149.GO795775@google.com>
+ <5005ba79-d5a5-4d6f-ab0c-4df51407a549@riscstar.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <5005ba79-d5a5-4d6f-ab0c-4df51407a549@riscstar.com>
 
-From: "Dr. David Alan Gilbert" <linux@treblig.org>
+On Wed, 25 Jun 2025, Alex Elder wrote:
 
-The wl1273 FM radio is on Arnd's unused driver list:
-  https://lore.kernel.org/lkml/a15bb180-401d-49ad-a212-0c81d613fbc8@app.fastmail.com/
+> On 6/25/25 3:21 AM, Lee Jones wrote:
+> > On Fri, 20 Jun 2025, Alex Elder wrote:
+> > 
+> > > On 6/19/25 9:40 AM, Lee Jones wrote:
+> > > > On Fri, 13 Jun 2025, Alex Elder wrote:
+> > > > 
+> > > > > Add support for SpacemiT PMICs. Initially only the P1 PMIC is supported
+> > > > > but the driver is structured to allow support for others to be added.
+> > > > > 
+> > > > > The P1 PMIC is controlled by I2C, and is normally implemented with the
+> > > > > SpacemiT K1 SoC.  This PMIC provides six buck converters and 12 LDO
+> > > > 
+> > > > six or 12.  Please pick a format and remain consistent.
+> > > 
+> > > "Numbers smaller than ten should be spelled out."
+> > 
+> > Never heard of that before Googling it.  Formal writing is odd. :)
+> > 
+> > > But I'll use 6 and 12.
+> 
+> . . .
+> 
+> > > > > +/* The name field defines the *driver* name that should bind to the device */
+> > > > 
+> > > > This comment is superfluous.
+> > > 
+> > > I'll delete it.
+> > > 
+> > > I was expecting the driver to recognize the device, not
+> > > the device specifying what driver to use, but I guess
+> > > I'm used to the DT model.
+> > 
+> > Even in DT, the *driver* compatible is specified.
+> > 
+> >    .driver.of_match_table->compatible
+> 
+> I guess I just interpret that differently than you do.  I think
+> of the device compatible string as saying "this is what I am,"
+> much like a VID/PID in USB or PCI.
+> 
+> Then the driver's of_match table says "if a device claims to
+> be compatible with any of these it should be bound to me."
+> 
+> Meanwhile, the MFD device method has the device (cell) saying
+> "I should be bound to the driver having this name."
 
-Other patches have removed the core, the ASoC code and the Radio code.
-With all those in, remove the header.
+In all cases that I'm aware of (platform code, DT, ACPI, etc), and as
+far back as I can remember, the platform devices specify some predefined
+data (IDs or strings) that is associated with (hard-coded directly into
+the driver in fact) the driver it wishes to be bound to.  This
+pre-defined identifier is stored in the driver's data structure:
 
-Also, tidy the ref in the docs.
+struct device_driver {
+        const char              	*name;
+        const struct of_device_id       *of_match_table;
+        const struct acpi_device_id     *acpi_match_table;
+};
 
-Signed-off-by: Dr. David Alan Gilbert <linux@treblig.org>
----
- .../admin-guide/media/radio-cardlist.rst      |   1 -
- include/linux/mfd/wl1273-core.h               | 277 ------------------
- 2 files changed, 278 deletions(-)
- delete mode 100644 include/linux/mfd/wl1273-core.h
+All of these are statically hard-coded items which a device can specify
+in order to be bound to the driver.
 
-diff --git a/Documentation/admin-guide/media/radio-cardlist.rst b/Documentation/admin-guide/media/radio-cardlist.rst
-index a82a146bf912..cec724256812 100644
---- a/Documentation/admin-guide/media/radio-cardlist.rst
-+++ b/Documentation/admin-guide/media/radio-cardlist.rst
-@@ -30,7 +30,6 @@ radio-terratec         TerraTec ActiveRadio ISA Standalone
- radio-timb             Enable the Timberdale radio driver
- radio-trust            Trust FM radio card
- radio-typhoon          Typhoon Radio (a.k.a. EcoRadio)
--radio-wl1273           Texas Instruments WL1273 I2C FM Radio
- fm_drv                 ISA radio devices
- fm_drv                 ISA radio devices
- radio-zoltrix          Zoltrix Radio
-diff --git a/include/linux/mfd/wl1273-core.h b/include/linux/mfd/wl1273-core.h
-deleted file mode 100644
-index c28cf76d5c31..000000000000
---- a/include/linux/mfd/wl1273-core.h
-+++ /dev/null
-@@ -1,277 +0,0 @@
--/* SPDX-License-Identifier: GPL-2.0-only */
--/*
-- * include/linux/mfd/wl1273-core.h
-- *
-- * Some definitions for the wl1273 radio receiver/transmitter chip.
-- *
-- * Copyright (C) 2010 Nokia Corporation
-- * Author: Matti J. Aaltonen <matti.j.aaltonen@nokia.com>
-- */
--
--#ifndef WL1273_CORE_H
--#define WL1273_CORE_H
--
--#include <linux/i2c.h>
--#include <linux/mfd/core.h>
--
--#define WL1273_FM_DRIVER_NAME	"wl1273-fm"
--#define RX71_FM_I2C_ADDR	0x22
--
--#define WL1273_STEREO_GET		0
--#define WL1273_RSSI_LVL_GET		1
--#define WL1273_IF_COUNT_GET		2
--#define WL1273_FLAG_GET			3
--#define WL1273_RDS_SYNC_GET		4
--#define WL1273_RDS_DATA_GET		5
--#define WL1273_FREQ_SET			10
--#define WL1273_AF_FREQ_SET		11
--#define WL1273_MOST_MODE_SET		12
--#define WL1273_MOST_BLEND_SET		13
--#define WL1273_DEMPH_MODE_SET		14
--#define WL1273_SEARCH_LVL_SET		15
--#define WL1273_BAND_SET			16
--#define WL1273_MUTE_STATUS_SET		17
--#define WL1273_RDS_PAUSE_LVL_SET	18
--#define WL1273_RDS_PAUSE_DUR_SET	19
--#define WL1273_RDS_MEM_SET		20
--#define WL1273_RDS_BLK_B_SET		21
--#define WL1273_RDS_MSK_B_SET		22
--#define WL1273_RDS_PI_MASK_SET		23
--#define WL1273_RDS_PI_SET		24
--#define WL1273_RDS_SYSTEM_SET		25
--#define WL1273_INT_MASK_SET		26
--#define WL1273_SEARCH_DIR_SET		27
--#define WL1273_VOLUME_SET		28
--#define WL1273_AUDIO_ENABLE		29
--#define WL1273_PCM_MODE_SET		30
--#define WL1273_I2S_MODE_CONFIG_SET	31
--#define WL1273_POWER_SET		32
--#define WL1273_INTX_CONFIG_SET		33
--#define WL1273_PULL_EN_SET		34
--#define WL1273_HILO_SET			35
--#define WL1273_SWITCH2FREF		36
--#define WL1273_FREQ_DRIFT_REPORT	37
--
--#define WL1273_PCE_GET			40
--#define WL1273_FIRM_VER_GET		41
--#define WL1273_ASIC_VER_GET		42
--#define WL1273_ASIC_ID_GET		43
--#define WL1273_MAN_ID_GET		44
--#define WL1273_TUNER_MODE_SET		45
--#define WL1273_STOP_SEARCH		46
--#define WL1273_RDS_CNTRL_SET		47
--
--#define WL1273_WRITE_HARDWARE_REG	100
--#define WL1273_CODE_DOWNLOAD		101
--#define WL1273_RESET			102
--
--#define WL1273_FM_POWER_MODE		254
--#define WL1273_FM_INTERRUPT		255
--
--/* Transmitter API */
--
--#define WL1273_CHANL_SET			55
--#define WL1273_SCAN_SPACING_SET			56
--#define WL1273_REF_SET				57
--#define WL1273_POWER_ENB_SET			90
--#define WL1273_POWER_ATT_SET			58
--#define WL1273_POWER_LEV_SET			59
--#define WL1273_AUDIO_DEV_SET			60
--#define WL1273_PILOT_DEV_SET			61
--#define WL1273_RDS_DEV_SET			62
--#define WL1273_PUPD_SET				91
--#define WL1273_AUDIO_IO_SET			63
--#define WL1273_PREMPH_SET			64
--#define WL1273_MONO_SET				66
--#define WL1273_MUTE				92
--#define WL1273_MPX_LMT_ENABLE			67
--#define WL1273_PI_SET				93
--#define WL1273_ECC_SET				69
--#define WL1273_PTY				70
--#define WL1273_AF				71
--#define WL1273_DISPLAY_MODE			74
--#define WL1273_RDS_REP_SET			77
--#define WL1273_RDS_CONFIG_DATA_SET		98
--#define WL1273_RDS_DATA_SET			99
--#define WL1273_RDS_DATA_ENB			94
--#define WL1273_TA_SET				78
--#define WL1273_TP_SET				79
--#define WL1273_DI_SET				80
--#define WL1273_MS_SET				81
--#define WL1273_PS_SCROLL_SPEED			82
--#define WL1273_TX_AUDIO_LEVEL_TEST		96
--#define WL1273_TX_AUDIO_LEVEL_TEST_THRESHOLD	73
--#define WL1273_TX_AUDIO_INPUT_LEVEL_RANGE_SET	54
--#define WL1273_RX_ANTENNA_SELECT		87
--#define WL1273_I2C_DEV_ADDR_SET			86
--#define WL1273_REF_ERR_CALIB_PARAM_SET		88
--#define WL1273_REF_ERR_CALIB_PERIODICITY_SET	89
--#define WL1273_SOC_INT_TRIGGER			52
--#define WL1273_SOC_AUDIO_PATH_SET		83
--#define WL1273_SOC_PCMI_OVERRIDE		84
--#define WL1273_SOC_I2S_OVERRIDE			85
--#define WL1273_RSSI_BLOCK_SCAN_FREQ_SET		95
--#define WL1273_RSSI_BLOCK_SCAN_START		97
--#define WL1273_RSSI_BLOCK_SCAN_DATA_GET		5
--#define WL1273_READ_FMANT_TUNE_VALUE		104
--
--#define WL1273_RDS_OFF		0
--#define WL1273_RDS_ON		1
--#define WL1273_RDS_RESET	2
--
--#define WL1273_AUDIO_DIGITAL	0
--#define WL1273_AUDIO_ANALOG	1
--
--#define WL1273_MODE_RX		BIT(0)
--#define WL1273_MODE_TX		BIT(1)
--#define WL1273_MODE_OFF		BIT(2)
--#define WL1273_MODE_SUSPENDED	BIT(3)
--
--#define WL1273_RADIO_CHILD	BIT(0)
--#define WL1273_CODEC_CHILD	BIT(1)
--
--#define WL1273_RX_MONO		1
--#define WL1273_RX_STEREO	0
--#define WL1273_TX_MONO		0
--#define WL1273_TX_STEREO	1
--
--#define WL1273_MAX_VOLUME	0xffff
--#define WL1273_DEFAULT_VOLUME	0x78b8
--
--/* I2S protocol, left channel first, data width 16 bits */
--#define WL1273_PCM_DEF_MODE		0x00
--
--/* Rx */
--#define WL1273_AUDIO_ENABLE_I2S		BIT(0)
--#define WL1273_AUDIO_ENABLE_ANALOG	BIT(1)
--
--/* Tx */
--#define WL1273_AUDIO_IO_SET_ANALOG	0
--#define WL1273_AUDIO_IO_SET_I2S		1
--
--#define WL1273_PUPD_SET_OFF		0x00
--#define WL1273_PUPD_SET_ON		0x01
--#define WL1273_PUPD_SET_RETENTION	0x10
--
--/* I2S mode */
--#define WL1273_IS2_WIDTH_32	0x0
--#define WL1273_IS2_WIDTH_40	0x1
--#define WL1273_IS2_WIDTH_22_23	0x2
--#define WL1273_IS2_WIDTH_23_22	0x3
--#define WL1273_IS2_WIDTH_48	0x4
--#define WL1273_IS2_WIDTH_50	0x5
--#define WL1273_IS2_WIDTH_60	0x6
--#define WL1273_IS2_WIDTH_64	0x7
--#define WL1273_IS2_WIDTH_80	0x8
--#define WL1273_IS2_WIDTH_96	0x9
--#define WL1273_IS2_WIDTH_128	0xa
--#define WL1273_IS2_WIDTH	0xf
--
--#define WL1273_IS2_FORMAT_STD	(0x0 << 4)
--#define WL1273_IS2_FORMAT_LEFT	(0x1 << 4)
--#define WL1273_IS2_FORMAT_RIGHT	(0x2 << 4)
--#define WL1273_IS2_FORMAT_USER	(0x3 << 4)
--
--#define WL1273_IS2_MASTER	(0x0 << 6)
--#define WL1273_IS2_SLAVEW	(0x1 << 6)
--
--#define WL1273_IS2_TRI_AFTER_SENDING	(0x0 << 7)
--#define WL1273_IS2_TRI_ALWAYS_ACTIVE	(0x1 << 7)
--
--#define WL1273_IS2_SDOWS_RR	(0x0 << 8)
--#define WL1273_IS2_SDOWS_RF	(0x1 << 8)
--#define WL1273_IS2_SDOWS_FR	(0x2 << 8)
--#define WL1273_IS2_SDOWS_FF	(0x3 << 8)
--
--#define WL1273_IS2_TRI_OPT	(0x0 << 10)
--#define WL1273_IS2_TRI_ALWAYS	(0x1 << 10)
--
--#define WL1273_IS2_RATE_48K	(0x0 << 12)
--#define WL1273_IS2_RATE_44_1K	(0x1 << 12)
--#define WL1273_IS2_RATE_32K	(0x2 << 12)
--#define WL1273_IS2_RATE_22_05K	(0x4 << 12)
--#define WL1273_IS2_RATE_16K	(0x5 << 12)
--#define WL1273_IS2_RATE_12K	(0x8 << 12)
--#define WL1273_IS2_RATE_11_025	(0x9 << 12)
--#define WL1273_IS2_RATE_8K	(0xa << 12)
--#define WL1273_IS2_RATE		(0xf << 12)
--
--#define WL1273_I2S_DEF_MODE	(WL1273_IS2_WIDTH_32 | \
--				 WL1273_IS2_FORMAT_STD | \
--				 WL1273_IS2_MASTER | \
--				 WL1273_IS2_TRI_AFTER_SENDING | \
--				 WL1273_IS2_SDOWS_RR | \
--				 WL1273_IS2_TRI_OPT | \
--				 WL1273_IS2_RATE_48K)
--
--#define SCHAR_MIN (-128)
--#define SCHAR_MAX 127
--
--#define WL1273_FR_EVENT			BIT(0)
--#define WL1273_BL_EVENT			BIT(1)
--#define WL1273_RDS_EVENT		BIT(2)
--#define WL1273_BBLK_EVENT		BIT(3)
--#define WL1273_LSYNC_EVENT		BIT(4)
--#define WL1273_LEV_EVENT		BIT(5)
--#define WL1273_IFFR_EVENT		BIT(6)
--#define WL1273_PI_EVENT			BIT(7)
--#define WL1273_PD_EVENT			BIT(8)
--#define WL1273_STIC_EVENT		BIT(9)
--#define WL1273_MAL_EVENT		BIT(10)
--#define WL1273_POW_ENB_EVENT		BIT(11)
--#define WL1273_SCAN_OVER_EVENT		BIT(12)
--#define WL1273_ERROR_EVENT		BIT(13)
--
--#define TUNER_MODE_STOP_SEARCH		0
--#define TUNER_MODE_PRESET		1
--#define TUNER_MODE_AUTO_SEEK		2
--#define TUNER_MODE_AF			3
--#define TUNER_MODE_AUTO_SEEK_PI		4
--#define TUNER_MODE_AUTO_SEEK_BULK	5
--
--#define RDS_BLOCK_SIZE	3
--
--struct wl1273_fm_platform_data {
--	int (*request_resources) (struct i2c_client *client);
--	void (*free_resources) (void);
--	void (*enable) (void);
--	void (*disable) (void);
--
--	u8 forbidden_modes;
--	unsigned int children;
--};
--
--#define WL1273_FM_CORE_CELLS	2
--
--#define WL1273_BAND_OTHER	0
--#define WL1273_BAND_JAPAN	1
--
--#define WL1273_BAND_JAPAN_LOW	76000
--#define WL1273_BAND_JAPAN_HIGH	90000
--#define WL1273_BAND_OTHER_LOW	87500
--#define WL1273_BAND_OTHER_HIGH	108000
--
--#define WL1273_BAND_TX_LOW	76000
--#define WL1273_BAND_TX_HIGH	108000
--
--struct wl1273_core {
--	struct mfd_cell cells[WL1273_FM_CORE_CELLS];
--	struct wl1273_fm_platform_data *pdata;
--
--	unsigned int mode;
--	unsigned int i2s_mode;
--	unsigned int volume;
--	unsigned int audio_mode;
--	unsigned int channel_number;
--	struct mutex lock; /* for serializing fm radio operations */
--
--	struct i2c_client *client;
--
--	int (*read)(struct wl1273_core *core, u8, u16 *);
--	int (*write)(struct wl1273_core *core, u8, u16);
--	int (*write_data)(struct wl1273_core *core, u8 *, u16);
--	int (*set_audio)(struct wl1273_core *core, unsigned int);
--	int (*set_volume)(struct wl1273_core *core, unsigned int);
--};
--
--#endif	/* ifndef WL1273_CORE_H */
+> > > > > +	/* We currently have no need for a device-specific structure */
+> > > > 
+> > > > Then why are we adding one?
+> > > 
+> > > I don't understand, but it might be moot once I add support
+> > > for another (sub)device.
+> > 
+> > There are 2 rules in play here:
+> > 
+> >    - Only add what you need, when you need it
+> >    - MFDs must contain more than 1 device
+> > 
+> > ... and you're right.  The second rule moots the first here.
+> 
+> What the comment meant to say is "we have no need to kzalloc()
+> any special structure here" as most drivers do. Simply adding
+> the set of MFDs defined by the cells is enough.  The same is
+> true in "simple-mfd-i2c.c".
+
+I see.  Driver data is not compulsory.  There are plenty of drivers
+which refrain from storing data for the child to make use of.
+
+> But this entire source file is gone now, so it's moot for that
+> reason.
+> 
+> . . .
+> 
+> > > > > +static const struct of_device_id spacemit_pmic_match[] = {
+> > > > > +	{
+> > > > > +		.compatible	= "spacemit,p1",
+> > > > > +		.data		= &p1_pmic_data,
+> > > > 
+> > > > Ah, now I see.
+> > > > 
+> > > > We do not allow one data from registration mechanism (MFD) to be piped
+> > > > through another (OF).  If you have to match platform data to device (you
+> > > > don't), then pass through identifiers and match on those in a switch()
+> > > > statement instead.
+> > > 
+> > > I haven't done an MFD driver before and it took some time
+> > > to get this working.  I'll tell you what led me to it.
+> > > 
+> > > I used code posted by Troy Mitchell (plus downstream) as a
+> > > starting point.
+> > >    https://lore.kernel.org/lkml/20241230-k1-p1-v1-0-aa4e02b9f993@gmail.com/
+> > > 
+> > > Krzysztof Kozlowski made this comment on Troy's DT binding:
+> > >    Drop compatible, regulators are not re-usable blocks.
+> > > 
+> > > So my goal was to have the PMIC regulators get bound to a
+> > > driver without specifying a DT compatible string, and I
+> > > found this worked.
+> > > 
+> > > You say I don't need to match platform data to device, but
+> > > if I did I would pass through identifiers.  Can you refer
+> > > me to an example of code that correctly does what I should
+> > > be doing instead?
+> > 
+> > git grep -A5 compatible -- drivers/mfd | grep -E "\.data = .*[A-Z]+"
+> > 
+> > Those identifiers are usually matched in a swtich() statement.
+> 
+> OK now I see what you you're talking about.  But these
+> compatible strings (and data) are for the PMIC.  I was
+> trying to avoid using compatible strings for the *regulators*,
+> based on Krzysztof's comment.  And in the process I learned
+> that the MFD cell needs to specify the name of a driver,
+> not a compatible string.
+
+That's correct.  The compatible attribute is voluntary.
+
+> > > One other comment/question:
+> > >    This driver is structured as if it could support a different
+> > >    PMIC (in addition to P1).  Should I *not* do that, and simply
+> > >    make a source file hard-coded for this one PMIC?
+> > 
+> > This comes back to the "add only what you need, when you need it" rule.
+> 
+> Yes, and I agree with that rule.  Thanks for your clarifications.
+> 
+> Using simple-mfd-i2c.c is much better.  I was surprised (and I guess
+> pleased) to see that it was almost *identical* to what I came up with.
+
+*thumbs-up*
+
 -- 
-2.49.0
-
+Lee Jones [李琼斯]
 
