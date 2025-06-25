@@ -1,158 +1,289 @@
-Return-Path: <linux-kernel+bounces-702121-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-702123-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 08139AE7E4E
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Jun 2025 12:00:50 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 87C53AE7E53
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Jun 2025 12:01:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id DBFEE7AABFF
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Jun 2025 09:59:15 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E4B927B00AE
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Jun 2025 09:59:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 04E0929B768;
-	Wed, 25 Jun 2025 10:00:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0BEA529ACC5;
+	Wed, 25 Jun 2025 10:00:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="R95V02ej"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="kN3JT+Ek"
+Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BE1D2221DB9;
-	Wed, 25 Jun 2025 10:00:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 81AAF285CB1;
+	Wed, 25 Jun 2025 10:00:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750845614; cv=none; b=u0xx3JNeHs7PartUAz/jtFkAcbp3LJhvWqim2BJp7iiQ0aGM3GeVSKN1bczOostsDP2ZrQrOv0lig9SXG4/4s7zlKxocYZGL0extPdN1/whIR1GQTuOa4XAVWbFqNUsLhepQxwFTvix1x7fT80LAc+YmdOWM1Hu+Rfa4c1I+p0M=
+	t=1750845652; cv=none; b=Cm19TCJ9vfXh2P1sh7Wc7AU4X/5USwaOMeG0Yo5ZFqiuke4GnWKbnEU4Z/RxIPdKvV44osMWJNfAZfLKS9tFuofVZw28VdOvjRMhPrEXWniNnQ+/7fHRc+guqMOyjw43Qq3yc4CFY+suKFje8RWh8RImRv0rrfLkjE/6bBeFuHI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750845614; c=relaxed/simple;
-	bh=BeaMRImxY9Rsxe0eAq/JVZzac9qi2Y4iE4QKSUZLtwg=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=fc+9vvwDjBvilVPgalO8KRKSerXC8o9v1NRFpheAFLDAe0IdRKAyuTbSQXyu19+mpwkJ7OK7DUxJi071jgX4QmJz1Elqy11TW78Ku/kelXAT7CKJtbKQ9ZcWyweo0HpPbbUkuZRlMw2ZQjd/6S2KzMyrks7sUxL0jIbRXDAFa90=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=R95V02ej; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279867.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 55P1pgjl001551;
-	Wed, 25 Jun 2025 10:00:09 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	IkadxbS0FqUhIvXtyau88bHjaVqtYdQSG74nCpxQAg8=; b=R95V02ejD2GPCf/Z
-	Yu5G1gLJ0szhGITc7Uhi+GacaX6E03wIczps3ngAOzBAwb32uWHbJUUT3BFngt13
-	UWF1q67EnJqT+5/TC0H0DBmHzKIg4qHQC3HPj1WB/4HMMdUfjiv54GKqJG3x2GXY
-	rKzs8fN/jZFO+7ZGf37qJdtBTeeDft1e6xPiqQJ5j7Ajhnkw73d5N4dVauWVUmJR
-	NqDVrc7lu3JmO013kuyNrD1hezN557VFMUzw8EcqNIgi+/142YNp/N+He55uUkIs
-	VHfu6bAX8LAyDSWYerdeAfbbiRLJtLFkkhe2BhsEDsu+cJjeOq0x/l9Pt9I7NuzK
-	dCEpFA==
-Received: from nalasppmta04.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 47g7td98tx-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 25 Jun 2025 10:00:09 +0000 (GMT)
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-	by NALASPPMTA04.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 55PA086e019975
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 25 Jun 2025 10:00:08 GMT
-Received: from [10.133.33.71] (10.80.80.8) by nalasex01a.na.qualcomm.com
- (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Wed, 25 Jun
- 2025 03:00:06 -0700
-Message-ID: <73e7548b-fb23-4887-a575-dfa0f681a0dd@quicinc.com>
-Date: Wed, 25 Jun 2025 18:00:04 +0800
+	s=arc-20240116; t=1750845652; c=relaxed/simple;
+	bh=Ewr/9YSg+4KSWKdVpkuiGc4fRNUXEVUrfoJAoNPfx1A=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=r84plxBBaDX/UdUvYgRPdXkENwDX92jD7rwJyPSvcrkW+32DIA0ezcK9sFep0SvRqXzFrJGXhZAkPMo58FbjODcsDu3ePk2XjU/fORDX8SsIcqUxGFujNRPDKMjgAtkA4Pb+zfPn6ff2Zcknaa+89ck7o/ffYQRiTEhOuh+0wqw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=kN3JT+Ek; arc=none smtp.client-ip=90.155.50.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=iqhhoiKp4vSBiJdf55jnDE3zxzap5f0PWAr4X6NeSW4=; b=kN3JT+Ek7JZ7sSUs+XXPMi9sBD
+	XEBe7jG/uPr4klTRLICC44HoiZ2EMITCuP0ILfLUOy3esgmPcCegIRBf6C86LKA9GFiFAaaCxqJtR
+	sK/n+7fhQzdXcbRjtNVulDf1apwo0mXSV1oND8/zAWUlwMLC7ftnkG0tn6qVHM8cUEVnVvuhD7MDI
+	jQWhqSOc5SWQdaANlDGsLMZcSQL5G30jyioSVU70fD4Y7IOBKKp0MhgP1H6cNWoET7EcLcbcblPFM
+	KdbHdGa3YLzPnIWDE+ww6wWC6fY7CThAajmwjtz+Wqyn5mZWA9WZBjdeoyV+bUmBdMRm4LiCUeEEs
+	hRoonpxg==;
+Received: from 77-249-17-252.cable.dynamic.v4.ziggo.nl ([77.249.17.252] helo=noisy.programming.kicks-ass.net)
+	by casper.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
+	id 1uUMvh-000000093BE-2l5l;
+	Wed, 25 Jun 2025 10:00:33 +0000
+Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
+	id B5F22307E4E; Wed, 25 Jun 2025 12:00:32 +0200 (CEST)
+Date: Wed, 25 Jun 2025 12:00:32 +0200
+From: Peter Zijlstra <peterz@infradead.org>
+To: Boqun Feng <boqun.feng@gmail.com>
+Cc: linux-kernel@vger.kernel.org, rcu@vger.kernel.org, lkmm@lists.linux.dev,
+	Ingo Molnar <mingo@kernel.org>, Will Deacon <will@kernel.org>,
+	Waiman Long <longman@redhat.com>,
+	Davidlohr Bueso <dave@stgolabs.net>,
+	"Paul E. McKenney" <paulmck@kernel.org>,
+	Josh Triplett <josh@joshtriplett.org>,
+	Frederic Weisbecker <frederic@kernel.org>,
+	Neeraj Upadhyay <neeraj.upadhyay@kernel.org>,
+	Joel Fernandes <joelagnelf@nvidia.com>,
+	Uladzislau Rezki <urezki@gmail.com>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+	Lai Jiangshan <jiangshanlai@gmail.com>,
+	Zqiang <qiang.zhang@linux.dev>, Breno Leitao <leitao@debian.org>,
+	aeh@meta.com, netdev@vger.kernel.org, edumazet@google.com,
+	jhs@mojatatu.com, kernel-team@meta.com,
+	Erik Lundgren <elundgren@meta.com>
+Subject: Re: [PATCH 1/8] Introduce simple hazard pointers
+Message-ID: <20250625100032.GA1613376@noisy.programming.kicks-ass.net>
+References: <20250625031101.12555-1-boqun.feng@gmail.com>
+ <20250625031101.12555-2-boqun.feng@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 4/5] wifi: ath11k: fix source ring-buffer corruption
-To: Johan Hovold <johan+linaro@kernel.org>, Jeff Johnson <jjohnson@kernel.org>
-CC: Miaoqing Pan <quic_miaoqing@quicinc.com>, <linux-wireless@vger.kernel.org>,
-        <ath11k@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
-        <stable@vger.kernel.org>
-References: <20250604143457.26032-1-johan+linaro@kernel.org>
- <20250604143457.26032-5-johan+linaro@kernel.org>
-Content-Language: en-US
-From: Baochen Qiang <quic_bqiang@quicinc.com>
-In-Reply-To: <20250604143457.26032-5-johan+linaro@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Authority-Analysis: v=2.4 cv=CPYqXQrD c=1 sm=1 tr=0 ts=685bc8a9 cx=c_pps
- a=ouPCqIW2jiPt+lZRy3xVPw==:117 a=ouPCqIW2jiPt+lZRy3xVPw==:17
- a=GEpy-HfZoHoA:10 a=IkcTkHD0fZMA:10 a=6IFa9wvqVegA:10 a=VwQbUJbxAAAA:8
- a=COk6AnOGAAAA:8 a=WnX9ENNIfPvkDGQfGdAA:9 a=QEXdDO2ut3YA:10
- a=TjNXssC_j7lpFel5tvFf:22
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNjI1MDA3NCBTYWx0ZWRfX3KV2ow5qkjf9
- fxa070+XiKv/KShaAXXYTgl6/EN61JgNQC3NaqJ2tSD0Sms3XD0Z2evgnqknpvXnd1bdtz7zuFy
- n/GWLKZythALOa7bTDhFyBO6g85KDaeUejJ15m6WoKi4IC0C9SPEfLSPmODSWFwKNWQujyoGxi7
- dka1RZlwlxQR6O5gKmhA/uqMLYYNZI+BbU/lsaHJwrcFnCrkT8iXqkWosPAc3bk54JqPs0e6wmn
- dIDvlAgwXZYn/C1/Qulci/U5ML4+5Zm+qTOiGaaLzGzOfZUQGgRxr+TVfVa5JirPN9n2fEA4hPv
- 9c6zh0hbbWQPt+prkSlMSPkU0wG06a6z2v+/slan7Wi+WpPqZML5Src8/Z98uaMyIjghuszQhNe
- MqdQa8jxCBEQgPa/gJoxKbRrfWZEMRjjqLYJK2pR4+oVh98bQbTudIY2vQnNozZld8U48Xuk
-X-Proofpoint-GUID: ExzvcJTQUntCBxMsBmWJ1C5ihX3GB_zD
-X-Proofpoint-ORIG-GUID: ExzvcJTQUntCBxMsBmWJ1C5ihX3GB_zD
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.7,FMLib:17.12.80.40
- definitions=2025-06-25_02,2025-06-23_07,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- bulkscore=0 phishscore=0 mlxlogscore=433 lowpriorityscore=0 malwarescore=0
- impostorscore=0 suspectscore=0 clxscore=1015 spamscore=0 priorityscore=1501
- adultscore=0 mlxscore=0 classifier=spam authscore=0 authtc=n/a authcc=
- route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2505280000
- definitions=main-2506250074
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250625031101.12555-2-boqun.feng@gmail.com>
 
+On Tue, Jun 24, 2025 at 08:10:54PM -0700, Boqun Feng wrote:
+> As its name suggests, simple hazard pointers (shazptr) is a
+> simplification of hazard pointers [1]: it has only one hazard pointer
+> slot per-CPU and is targeted for simple use cases where the read-side
+> already has preemption disabled. It's a trade-off between full features
+> of a normal hazard pointer implementation (multiple slots, dynamic slot
+> allocation, etc.) and the simple use scenario.
+> 
+> Since there's only one slot per-CPU, so shazptr read-side critical
+> section nesting is a problem that needs to be resolved, because at very
+> least, interrupts and NMI can introduce nested shazptr read-side
+> critical sections. A SHAZPTR_WILDCARD is introduced to resolve this:
+> SHAZPTR_WILDCARD is a special address value that blocks *all* shazptr
+> waiters. In an interrupt-causing shazptr read-side critical section
+> nesting case (i.e. an interrupt happens while the per-CPU hazard pointer
+> slot being used and tries to acquire a hazard pointer itself), the inner
+> critical section will switch the value of the hazard pointer slot into
+> SHAZPTR_WILDCARD, and let the outer critical section eventually zero the
+> slot. The SHAZPTR_WILDCARD still provide the correct protection because
+> it blocks all the waiters.
 
+Don't we typically name such a thing a tombstone?
 
-On 6/4/2025 10:34 PM, Johan Hovold wrote:
-> Add the missing memory barrier to make sure that LMAC source ring
-> descriptors are written before updating the head pointer to avoid
-> passing stale data to the firmware on weakly ordered architectures like
-> aarch64.
+> It's true that once the wildcard mechanism is activated, shazptr
+> mechanism may be downgrade to something similar to RCU (and probably
+> with a worse implementation), which generally has longer wait time and
+> larger memory footprint compared to a typical hazard pointer
+> implementation. However, that can only happen with a lot of users using
+> hazard pointers, and then it's reasonable to introduce the
+> fully-featured hazard pointer implementation [2] and switch users to it.
 > 
-> Note that non-LMAC rings use MMIO write accessors which have the
-> required write memory barrier.
+> Note that shazptr_protect() may be added later, the current potential
+> usage doesn't require it, and a shazptr_acquire(), which installs the
+> protected value to hazard pointer slot and proves the smp_mb(), is
+> enough for now.
 > 
-> Tested-on: WCN6855 hw2.1 WLAN.HSP.1.1-03125-QCAHSPSWPL_V1_V2_SILICONZ_LITE-3.6510.41
+> [1]: M. M. Michael, "Hazard pointers: safe memory reclamation for
+>      lock-free objects," in IEEE Transactions on Parallel and
+>      Distributed Systems, vol. 15, no. 6, pp. 491-504, June 2004
 > 
-> Fixes: d5c65159f289 ("ath11k: driver for Qualcomm IEEE 802.11ax devices")
-> Cc: stable@vger.kernel.org      # 5.6
-> Signed-off-by: Johan Hovold <johan+linaro@kernel.org>
+> Link: https://lore.kernel.org/lkml/20240917143402.930114-1-boqun.feng@gmail.com/ [2]
+> Signed-off-by: Boqun Feng <boqun.feng@gmail.com>
 > ---
->  drivers/net/wireless/ath/ath11k/hal.c | 10 +++++++++-
->  1 file changed, 9 insertions(+), 1 deletion(-)
+>  include/linux/shazptr.h  | 73 ++++++++++++++++++++++++++++++++++++++++
+>  kernel/locking/Makefile  |  2 +-
+>  kernel/locking/shazptr.c | 29 ++++++++++++++++
+>  3 files changed, 103 insertions(+), 1 deletion(-)
+>  create mode 100644 include/linux/shazptr.h
+>  create mode 100644 kernel/locking/shazptr.c
 > 
-> diff --git a/drivers/net/wireless/ath/ath11k/hal.c b/drivers/net/wireless/ath/ath11k/hal.c
-> index b1f5a927dddd..927ed2bc3fbf 100644
-> --- a/drivers/net/wireless/ath/ath11k/hal.c
-> +++ b/drivers/net/wireless/ath/ath11k/hal.c
-> @@ -862,7 +862,11 @@ void ath11k_hal_srng_access_end(struct ath11k_base *ab, struct hal_srng *srng)
->  		if (srng->ring_dir == HAL_SRNG_DIR_SRC) {
->  			srng->u.src_ring.last_tp =
->  				*(volatile u32 *)srng->u.src_ring.tp_addr;
-> -			*srng->u.src_ring.hp_addr = srng->u.src_ring.hp;
-> +			/* Make sure descriptor is written before updating the
-> +			 * head pointer.
-> +			 */
-> +			dma_wmb();
-> +			WRITE_ONCE(*srng->u.src_ring.hp_addr, srng->u.src_ring.hp);
->  		} else {
->  			srng->u.dst_ring.last_hp = *srng->u.dst_ring.hp_addr;
->  			*srng->u.dst_ring.tp_addr = srng->u.dst_ring.tp;
-> @@ -871,6 +875,10 @@ void ath11k_hal_srng_access_end(struct ath11k_base *ab, struct hal_srng *srng)
->  		if (srng->ring_dir == HAL_SRNG_DIR_SRC) {
->  			srng->u.src_ring.last_tp =
->  				*(volatile u32 *)srng->u.src_ring.tp_addr;
-> +			/* Assume implementation use an MMIO write accessor
-> +			 * which has the required wmb() so that the descriptor
-> +			 * is written before the updating the head pointer.
-> +			 */
->  			ath11k_hif_write32(ab,
->  					   (unsigned long)srng->u.src_ring.hp_addr -
->  					   (unsigned long)ab->mem,
+> diff --git a/include/linux/shazptr.h b/include/linux/shazptr.h
+> new file mode 100644
+> index 000000000000..287cd04b4be9
+> --- /dev/null
+> +++ b/include/linux/shazptr.h
+> @@ -0,0 +1,73 @@
+> +/* SPDX-License-Identifier: GPL-2.0 */
+> +/*
+> + * Simple hazard pointers
+> + *
+> + * Copyright (c) 2025, Microsoft Corporation.
+> + *
+> + * Author: Boqun Feng <boqun.feng@gmail.com>
+> + *
+> + * A simple variant of hazard pointers, the users must ensure the preemption
+> + * is already disabled when calling a shazptr_acquire() to protect an address.
+> + * If one shazptr_acquire() is called after another shazptr_acquire() has been
+> + * called without the corresponding shazptr_clear() has been called, the later
+> + * shazptr_acquire() must be cleared first.
+> + *
+> + * The most suitable usage is when only one address need to be protected in a
+> + * preemption disabled critical section.
 
-Reviewed-by: Baochen Qiang <quic_bqiang@quicinc.com>
+It might be useful to have some example code included here to illustrate
+how this is supposed to be used etc.
 
+> + */
+> +
+> +#ifndef _LINUX_SHAZPTR_H
+> +#define _LINUX_SHAZPTR_H
+> +
+> +#include <linux/cleanup.h>
+> +#include <linux/percpu.h>
+> +
+> +/* Make ULONG_MAX the wildcard value */
+> +#define SHAZPTR_WILDCARD ((void *)(ULONG_MAX))
+
+Right, I typically write that like: ((void *)-1L) or ((void *)~0UL)
+
+> +
+> +DECLARE_PER_CPU_SHARED_ALIGNED(void *, shazptr_slots);
+> +
+> +/* Represent a held hazard pointer slot */
+> +struct shazptr_guard {
+> +	void **slot;
+> +	bool use_wildcard;
+> +};
+
+Natural alignment ensures the LSB of that pointer is 0, which is enough
+space to stick that bool in, no?
+
+> +
+> +/*
+> + * Acquire a hazptr slot and begin the hazard pointer critical section.
+> + *
+> + * Must be called with preemption disabled, and preemption must remain disabled
+> + * until shazptr_clear().
+> + */
+> +static inline struct shazptr_guard shazptr_acquire(void *ptr)
+> +{
+> +	struct shazptr_guard guard = {
+> +		/* Preemption is disabled. */
+> +		.slot = this_cpu_ptr(&shazptr_slots),
+
+What you're trying to say with that comment is that: this_cpu_ptr(),
+will complain if preemption is not already disabled, and as such this
+verifies the assumption?
+
+You can also add:
+
+	lockdep_assert_preemption_disabled();
+
+at the start of this function and then all these comments can go in the
+bin, no?
+
+> +		.use_wildcard = false,
+> +	};
+> +
+> +	if (likely(!READ_ONCE(*guard.slot))) {
+> +		WRITE_ONCE(*guard.slot, ptr);
+> +	} else {
+> +		guard.use_wildcard = true;
+> +		WRITE_ONCE(*guard.slot, SHAZPTR_WILDCARD);
+> +	}
+> +
+> +	smp_mb(); /* Synchronize with smp_mb() at synchronize_shazptr(). */
+> +
+> +	return guard;
+> +}
+> +
+> +static inline void shazptr_clear(struct shazptr_guard guard)
+> +{
+> +	/* Only clear the slot when the outermost guard is released */
+> +	if (likely(!guard.use_wildcard))
+> +		smp_store_release(guard.slot, NULL); /* Pair with ACQUIRE at synchronize_shazptr() */
+> +}
+> +
+> +void synchronize_shazptr(void *ptr);
+> +
+> +DEFINE_CLASS(shazptr, struct shazptr_guard, shazptr_clear(_T),
+> +	     shazptr_acquire(ptr), void *ptr);
+> +#endif
+> diff --git a/kernel/locking/Makefile b/kernel/locking/Makefile
+> index a114949eeed5..1517076c98ec 100644
+> --- a/kernel/locking/Makefile
+> +++ b/kernel/locking/Makefile
+> @@ -3,7 +3,7 @@
+>  # and is generally not a function of system call inputs.
+>  KCOV_INSTRUMENT		:= n
+>  
+> -obj-y += mutex.o semaphore.o rwsem.o percpu-rwsem.o
+> +obj-y += mutex.o semaphore.o rwsem.o percpu-rwsem.o shazptr.o
+>  
+>  # Avoid recursion lockdep -> sanitizer -> ... -> lockdep & improve performance.
+>  KASAN_SANITIZE_lockdep.o := n
+> diff --git a/kernel/locking/shazptr.c b/kernel/locking/shazptr.c
+> new file mode 100644
+> index 000000000000..991fd1a05cfd
+> --- /dev/null
+> +++ b/kernel/locking/shazptr.c
+> @@ -0,0 +1,29 @@
+> +/* SPDX-License-Identifier: GPL-2.0 */
+> +/*
+> + * Simple hazard pointers
+> + *
+> + * Copyright (c) 2025, Microsoft Corporation.
+> + *
+> + * Author: Boqun Feng <boqun.feng@gmail.com>
+> + */
+> +
+> +#include <linux/atomic.h>
+> +#include <linux/cpumask.h>
+> +#include <linux/shazptr.h>
+> +
+> +DEFINE_PER_CPU_SHARED_ALIGNED(void *, shazptr_slots);
+> +EXPORT_PER_CPU_SYMBOL_GPL(shazptr_slots);
+> +
+> +void synchronize_shazptr(void *ptr)
+> +{
+> +	int cpu;
+
+	lockdep_assert_preemption_enabled();
+
+> +
+> +	smp_mb(); /* Synchronize with the smp_mb() in shazptr_acquire(). */
+> +	for_each_possible_cpu(cpu) {
+> +		void **slot = per_cpu_ptr(&shazptr_slots, cpu);
+> +		/* Pair with smp_store_release() in shazptr_clear(). */
+> +		smp_cond_load_acquire(slot,
+> +				      VAL != ptr && VAL != SHAZPTR_WILDCARD);
+> +	}
+> +}
+> +EXPORT_SYMBOL_GPL(synchronize_shazptr);
+> -- 
+> 2.39.5 (Apple Git-154)
+> 
 
