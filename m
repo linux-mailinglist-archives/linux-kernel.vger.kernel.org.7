@@ -1,225 +1,130 @@
-Return-Path: <linux-kernel+bounces-701898-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-701890-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6F24EAE7AC3
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Jun 2025 10:49:13 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 71108AE7AA8
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Jun 2025 10:46:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6C9381BC734B
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Jun 2025 08:49:10 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 258451BC3F03
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Jun 2025 08:46:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3877829AB1D;
-	Wed, 25 Jun 2025 08:47:12 +0000 (UTC)
-Received: from leonov.paulk.fr (leonov.paulk.fr [185.233.101.22])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AB9FC26C3BF;
+	Wed, 25 Jun 2025 08:45:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=csie.ntu.edu.tw header.i=@csie.ntu.edu.tw header.b="JaqFfUzx"
+Received: from mail-pj1-f48.google.com (mail-pj1-f48.google.com [209.85.216.48])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D4A2228DF36;
-	Wed, 25 Jun 2025 08:47:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.233.101.22
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 21C211C84DF
+	for <linux-kernel@vger.kernel.org>; Wed, 25 Jun 2025 08:45:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750841231; cv=none; b=ir9lKydMHDKN7CY5m1jQ3pCowSxwlQckv1Sbrurehx3xc8QqYq2ccARiTFbUQgLYEG1BetK28SzA6CauiQiaWcbvhz8L9Kh7VHF4Dt5c7pkQYp6JqdytnLCehI4YYqkKdK2KjQe9AV7vyvVDFG8Eqd3mg0yD5q2WcKAJXiwuf1g=
+	t=1750841116; cv=none; b=KVYM7VIYG3Sv+mkooscWvDRHZZcbxZdU7qN9k4rUUWPFzPq00VEQNDfhGKm3qSG/AB57Cn8n3RDlPMaiWPywf6vDSdno4eXJ6LQl9Xr7cgFPzWQ4RhFmiq7tTQgStXK3irc+nUC1kK2Smi46Rqg/AhwMgNOCADEVlimlwoXzLPg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750841231; c=relaxed/simple;
-	bh=5DFnaMl8KPQFxZg9FtmxKd82C1J6wGByoHO9CIwmHDk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=HOAWwkWwkdp/iphM1JxTHT/nKcR0seXrJDUopdoFlXMntIMIEwI58HXuLgKN7uhyFMH8b7rDLSjT45Od9+DBMYe72/dlWauv3vRPDYdj33bngbEz/+bijeH8YF4miTIWydz1BA2cBUEDixDkLWhDmQCliu7YFOHZDYHPrdXpDgE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sys-base.io; spf=pass smtp.mailfrom=sys-base.io; arc=none smtp.client-ip=185.233.101.22
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sys-base.io
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sys-base.io
-Received: from laika.paulk.fr (12.234.24.109.rev.sfr.net [109.24.234.12])
-	by leonov.paulk.fr (Postfix) with ESMTPS id A55D21F00057;
-	Wed, 25 Jun 2025 08:47:00 +0000 (UTC)
-Received: by laika.paulk.fr (Postfix, from userid 65534)
-	id A8CA9AC7A6A; Wed, 25 Jun 2025 08:46:57 +0000 (UTC)
-X-Spam-Level: 
-Received: from shepard (unknown [192.168.1.1])
-	by laika.paulk.fr (Postfix) with ESMTPSA id B42DBAC7A56;
-	Wed, 25 Jun 2025 08:46:54 +0000 (UTC)
-Date: Wed, 25 Jun 2025 10:46:52 +0200
-From: Paul Kocialkowski <paulk@sys-base.io>
-To: Parthiban Nallathambi <parthiban@linumiz.com>
-Cc: Joerg Roedel <joro@8bytes.org>, Will Deacon <will@kernel.org>,
-	Robin Murphy <robin.murphy@arm.com>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>, Chen-Yu Tsai <wens@csie.org>,
-	Jernej Skrabec <jernej.skrabec@gmail.com>,
-	Samuel Holland <samuel@sholland.org>,
-	Maxime Ripard <mripard@kernel.org>,
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	Thomas Zimmermann <tzimmermann@suse.de>,
-	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>,
-	Philipp Zabel <p.zabel@pengutronix.de>,
-	Linus Walleij <linus.walleij@linaro.org>,
-	Vinod Koul <vkoul@kernel.org>,
-	Kishon Vijay Abraham I <kishon@kernel.org>, iommu@lists.linux.dev,
-	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-sunxi@lists.linux.dev, linux-kernel@vger.kernel.org,
-	dri-devel@lists.freedesktop.org, linux-clk@vger.kernel.org,
-	linux-gpio@vger.kernel.org, linux-phy@lists.infradead.org
-Subject: Re: [PATCH 10/22] pinctrl: sunxi: add missed lvds pins for a100/a133
-Message-ID: <aFu3fAMa8KPwjPbX@shepard>
-References: <20241227-a133-display-support-v1-0-13b52f71fb14@linumiz.com>
- <20241227-a133-display-support-v1-10-13b52f71fb14@linumiz.com>
+	s=arc-20240116; t=1750841116; c=relaxed/simple;
+	bh=hXBmUgYnqVV/obrfQE+ffzHO/KP6BaKG11lXO0yJS1w=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=CtuPF0eNU+Mk8HTz5AoB8W1smqoVYr3Tsy9j9PGyKandNYzdBF5JOzw+wCbIussgbZwYwGmwaeCTCD7HpiCwwICtjg3Yl/REaVp3F+apUhR8UPl3UxircE5xR+gHmld0Sm+xL1AfMd0NBvedd3nhkd3UrJ1yj1iOpRAx+rgw2os=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=csie.ntu.edu.tw; spf=pass smtp.mailfrom=csie.ntu.edu.tw; dkim=pass (2048-bit key) header.d=csie.ntu.edu.tw header.i=@csie.ntu.edu.tw header.b=JaqFfUzx; arc=none smtp.client-ip=209.85.216.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=csie.ntu.edu.tw
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=csie.ntu.edu.tw
+Received: by mail-pj1-f48.google.com with SMTP id 98e67ed59e1d1-3138e64b42aso1667728a91.0
+        for <linux-kernel@vger.kernel.org>; Wed, 25 Jun 2025 01:45:12 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=csie.ntu.edu.tw; s=google; t=1750841112; x=1751445912; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=/ZgnHfrvb1ohAxqWBg7xDt3QN8B0f9Jh9ZGClguGU7k=;
+        b=JaqFfUzx6PtBZE8TWNop/t5SsaMWNEQ2mbs+b7J0pDAw+EU+T55BPlSAHcdpDAXnrD
+         6gW9zOXVAeWRKSNea9mBhFWJ7wyekBC/uekGy2TCsALJ8PTfpuBEAqqgjbs4BWFsxmkM
+         5i1n/DGOKBcBrSjq+oOIe8cq60uKeT8JP0zpkosnXF6zdRSnBRn+Ckycwv4McosOcoB+
+         jIz1D9xGi5ikBcgxWTqsEz7No6s22D6e0MYxpRjF6dt5TKEvM8ivR4d248vxEN7Dr/Nx
+         uEZSabvrhjifSZduByFhlXBkKkc/qyS/UFdTTOCmTEmVo9zbUAZC6/hpy+l5BCzFbYhU
+         P+eQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1750841112; x=1751445912;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=/ZgnHfrvb1ohAxqWBg7xDt3QN8B0f9Jh9ZGClguGU7k=;
+        b=X3LYr0L7FxVB6BfI4T6tgydb2YyN9oqG6pwF4BG4rGR2FLs2u6qp3VQUTqsMy+nwid
+         R9tPPQpM9e6qNJSmBZcdrktUlEPbadCRYBpzLpdt+XFYCUep/s400BubPX9jat3w8bP2
+         QxsoVXWb/Jy5uqv7DZHOXiRhsOb0+26V1RLaFEL3rGNUS2BQmo/TIwXb8G4KKJR2qJJu
+         JQ+yswHIWZoa4rQCo6OstZOBL/BfFeAYFN38+TnUJNp8xhetWKl3GnRRhY4Xzj1Aox1H
+         GPmoWLasQFGmgtHS0jG1ra+ONQ9OEafp6meHpVE0ueKIcYOPa6+D0TwTY468xw+06o/o
+         8h3A==
+X-Forwarded-Encrypted: i=1; AJvYcCUrRMPRxTkXMLai4CJ5+d2k0dp6PQGCI/Q4sgnosttcPzJq+IUrMt7OqeUdVlam5XNpVA1pCYHf5/hOUCQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxut3rT9dRnchpV+dSlB/4tRnSkAAgpruPLOfBElW/1SvLovgzL
+	Fhj00opOFAlhc+247rp8DcP3ZQHy8tI3vX+q7mJi+ULwRZDYwd57i06c04JTbFWw0nDQN1XbGX0
+	RHLKRi+vrClpI6bbR1OUwyne82VvkPzU9VzryYyEDpIcDn7Jpr0WqfkR98q4=
+X-Gm-Gg: ASbGncuV0gMjeX9JCJpOW/ySz491QQaBFoY76Y4Q1M+iIZXfuf3z4CcM1kMfJsJwLrK
+	zo5lp9BoU6NgEAUektjoTSoMqUUhXdBH753zpVD1KkGmQF4WMmIUpnNXMLVWQ6eioC3TMUeUcY8
+	X+0XL3wTucN6hSV1iozNsFLPgPIDS5AOx5uNTcpGyJRc1tk6+aTZZB8BH2vbGkbjRwFWUHQFBCU
+	WvqvnkeqH8Acveg/2JAaul4PtAvYxt7lQhx9jo6iJ9KawI3e2fIN8OpWdyxROTbePlB2BLHXgMC
+	xNZZwgLdgfnDMtmPYSmKE9OjtHJaSIsF1ssWX4dKHifToJVxW9HcUB6dIuojGhtOiJBVmX0GnjY
+	bPJ1QQIC6elqjrILyrnRwJDYnfMqeH1zrTO/VMkU6RaTDYLnWbWY=
+X-Google-Smtp-Source: AGHT+IGyy6YLwss+HffP5SUP+oihK3m9EHxjRmtYMYfXhWdxLxeKPaeGlxm77RQZMQ31nRdwQyAxaQ==
+X-Received: by 2002:a17:90b:1a88:b0:311:c970:c9ce with SMTP id 98e67ed59e1d1-315f268a5f6mr3098742a91.28.1750841112061;
+        Wed, 25 Jun 2025 01:45:12 -0700 (PDT)
+Received: from localhost.localdomain (36-228-0-244.dynamic-ip.hinet.net. [36.228.0.244])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-315f5441770sm1264154a91.48.2025.06.25.01.45.09
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 25 Jun 2025 01:45:11 -0700 (PDT)
+From: Wei-Lin Chang <r09922117@csie.ntu.edu.tw>
+To: linux-arm-kernel@lists.infradead.org,
+	kvmarm@lists.linux.dev,
+	linux-kernel@vger.kernel.org
+Cc: Marc Zyngier <maz@kernel.org>,
+	Oliver Upton <oliver.upton@linux.dev>,
+	Joey Gouly <joey.gouly@arm.com>,
+	Suzuki K Poulose <suzuki.poulose@arm.com>,
+	Zenghui Yu <yuzenghui@huawei.com>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Wei-Lin Chang <r09922117@csie.ntu.edu.tw>,
+	Will Deacon <will@kernel.org>,
+	Jintack Lim <jintack@cs.columbia.edu>,
+	Christoffer Dall <christoffer.dall@arm.com>
+Subject: [PATCH] KVM: arm64: nv: Fix MI line level calculation in vgic_v3_nested_update_mi()
+Date: Wed, 25 Jun 2025 16:47:09 +0800
+Message-ID: <20250625084709.3968844-1-r09922117@csie.ntu.edu.tw>
+X-Mailer: git-send-email 2.49.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="eDJzuACllP3V3fib"
-Content-Disposition: inline
-In-Reply-To: <20241227-a133-display-support-v1-10-13b52f71fb14@linumiz.com>
+Content-Transfer-Encoding: 8bit
+X-Gm-Spam: 0
+X-Gm-Phishy: 0
 
+The state of the vcpu's MI line should be asserted when its
+ICH_HCR_EL2.En is set and ICH_MISR_EL2 is non-zero. Using bitwise AND
+(&=) directly for this calculation will not give us the correct result
+when the LSB of the vcpu's ICH_MISR_EL2 isn't set. Correct this by first
+adjusting the return value of vgic_v3_get_misr() into 1 if it is
+non-zero.
 
---eDJzuACllP3V3fib
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Signed-off-by: Wei-Lin Chang <r09922117@csie.ntu.edu.tw>
+---
+ arch/arm64/kvm/vgic/vgic-v3-nested.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Hi and thanks for your work!
+diff --git a/arch/arm64/kvm/vgic/vgic-v3-nested.c b/arch/arm64/kvm/vgic/vgic-v3-nested.c
+index 4f6954c30674..ebffad632fd2 100644
+--- a/arch/arm64/kvm/vgic/vgic-v3-nested.c
++++ b/arch/arm64/kvm/vgic/vgic-v3-nested.c
+@@ -400,7 +400,7 @@ void vgic_v3_nested_update_mi(struct kvm_vcpu *vcpu)
+ 
+ 	level  = __vcpu_sys_reg(vcpu, ICH_HCR_EL2) & ICH_HCR_EL2_En;
+ 	if (level)
+-		level &= vgic_v3_get_misr(vcpu);
++		level &= !!vgic_v3_get_misr(vcpu);
+ 	kvm_vgic_inject_irq(vcpu->kvm, vcpu,
+ 			    vcpu->kvm->arch.vgic.mi_intid, level, vcpu);
+ }
+-- 
+2.49.0
 
-On Fri 27 Dec 24, 16:37, Parthiban Nallathambi wrote:
-> lvds, lcd, dsi all shares the same GPIO D bank and lvds0
-> data 3 lines and lvds1 pins are missed, add them.
-
-Would it also make sense to submit device-tree pin definitions here?
-
-Thanks!
-
-Paul
-
-> Signed-off-by: Parthiban Nallathambi <parthiban@linumiz.com>
-> ---
->  drivers/pinctrl/sunxi/pinctrl-sun50i-a100.c | 12 ++++++++++++
->  1 file changed, 12 insertions(+)
->=20
-> diff --git a/drivers/pinctrl/sunxi/pinctrl-sun50i-a100.c b/drivers/pinctr=
-l/sunxi/pinctrl-sun50i-a100.c
-> index df90c75fb3c5..b97de80ae2f3 100644
-> --- a/drivers/pinctrl/sunxi/pinctrl-sun50i-a100.c
-> +++ b/drivers/pinctrl/sunxi/pinctrl-sun50i-a100.c
-> @@ -256,72 +256,84 @@ static const struct sunxi_desc_pin a100_pins[] =3D {
->  		  SUNXI_FUNCTION(0x0, "gpio_in"),
->  		  SUNXI_FUNCTION(0x1, "gpio_out"),
->  		  SUNXI_FUNCTION(0x2, "lcd0"),		/* D12 */
-> +		  SUNXI_FUNCTION(0x3, "lvds0"),		/* D3P */
->  		  SUNXI_FUNCTION(0x4, "dsi0"),		/* DP3 */
->  		  SUNXI_FUNCTION_IRQ_BANK(0x6, 2, 8)),
->  	SUNXI_PIN(SUNXI_PINCTRL_PIN(D, 9),
->  		  SUNXI_FUNCTION(0x0, "gpio_in"),
->  		  SUNXI_FUNCTION(0x1, "gpio_out"),
->  		  SUNXI_FUNCTION(0x2, "lcd0"),		/* D13 */
-> +		  SUNXI_FUNCTION(0x3, "lvds0"),		/* D3N */
->  		  SUNXI_FUNCTION(0x4, "dsi0"),		/* DM3 */
->  		  SUNXI_FUNCTION_IRQ_BANK(0x6, 2, 9)),
->  	SUNXI_PIN(SUNXI_PINCTRL_PIN(D, 10),
->  		  SUNXI_FUNCTION(0x0, "gpio_in"),
->  		  SUNXI_FUNCTION(0x1, "gpio_out"),
->  		  SUNXI_FUNCTION(0x2, "lcd0"),		/* D14 */
-> +		  SUNXI_FUNCTION(0x3, "lvds1"),		/* D0P */
->  		  SUNXI_FUNCTION(0x4, "spi1"),		/* CS */
->  		  SUNXI_FUNCTION_IRQ_BANK(0x6, 2, 10)),
->  	SUNXI_PIN(SUNXI_PINCTRL_PIN(D, 11),
->  		  SUNXI_FUNCTION(0x0, "gpio_in"),
->  		  SUNXI_FUNCTION(0x1, "gpio_out"),
->  		  SUNXI_FUNCTION(0x2, "lcd0"),		/* D15 */
-> +		  SUNXI_FUNCTION(0x3, "lvds1"),		/* D0N */
->  		  SUNXI_FUNCTION(0x4, "spi1"),		/* CLK */
->  		  SUNXI_FUNCTION_IRQ_BANK(0x6, 2, 11)),
->  	SUNXI_PIN(SUNXI_PINCTRL_PIN(D, 12),
->  		  SUNXI_FUNCTION(0x0, "gpio_in"),
->  		  SUNXI_FUNCTION(0x1, "gpio_out"),
->  		  SUNXI_FUNCTION(0x2, "lcd0"),		/* D18 */
-> +		  SUNXI_FUNCTION(0x3, "lvds1"),		/* D1P */
->  		  SUNXI_FUNCTION(0x4, "spi1"),		/* MOSI */
->  		  SUNXI_FUNCTION_IRQ_BANK(0x6, 2, 12)),
->  	SUNXI_PIN(SUNXI_PINCTRL_PIN(D, 13),
->  		  SUNXI_FUNCTION(0x0, "gpio_in"),
->  		  SUNXI_FUNCTION(0x1, "gpio_out"),
->  		  SUNXI_FUNCTION(0x2, "lcd0"),		/* D19 */
-> +		  SUNXI_FUNCTION(0x3, "lvds1"),		/* D1N */
->  		  SUNXI_FUNCTION(0x4, "spi1"),		/* MISO */
->  		  SUNXI_FUNCTION_IRQ_BANK(0x6, 2, 13)),
->  	SUNXI_PIN(SUNXI_PINCTRL_PIN(D, 14),
->  		  SUNXI_FUNCTION(0x0, "gpio_in"),
->  		  SUNXI_FUNCTION(0x1, "gpio_out"),
->  		  SUNXI_FUNCTION(0x2, "lcd0"),		/* D20 */
-> +		  SUNXI_FUNCTION(0x3, "lvds1"),		/* D2P */
->  		  SUNXI_FUNCTION(0x4, "uart3"),		/* TX */
->  		  SUNXI_FUNCTION_IRQ_BANK(0x6, 2, 14)),
->  	SUNXI_PIN(SUNXI_PINCTRL_PIN(D, 15),
->  		  SUNXI_FUNCTION(0x0, "gpio_in"),
->  		  SUNXI_FUNCTION(0x1, "gpio_out"),
->  		  SUNXI_FUNCTION(0x2, "lcd0"),		/* D21 */
-> +		  SUNXI_FUNCTION(0x3, "lvds1"),		/* D2N */
->  		  SUNXI_FUNCTION(0x4, "uart3"),		/* RX */
->  		  SUNXI_FUNCTION_IRQ_BANK(0x6, 2, 15)),
->  	SUNXI_PIN(SUNXI_PINCTRL_PIN(D, 16),
->  		  SUNXI_FUNCTION(0x0, "gpio_in"),
->  		  SUNXI_FUNCTION(0x1, "gpio_out"),
->  		  SUNXI_FUNCTION(0x2, "lcd0"),		/* D22 */
-> +		  SUNXI_FUNCTION(0x3, "lvds1"),		/* CKP */
->  		  SUNXI_FUNCTION(0x4, "uart3"),		/* RTS */
->  		  SUNXI_FUNCTION_IRQ_BANK(0x6, 2, 16)),
->  	SUNXI_PIN(SUNXI_PINCTRL_PIN(D, 17),
->  		  SUNXI_FUNCTION(0x0, "gpio_in"),
->  		  SUNXI_FUNCTION(0x1, "gpio_out"),
->  		  SUNXI_FUNCTION(0x2, "lcd0"),		/* D23 */
-> +		  SUNXI_FUNCTION(0x3, "lvds1"),		/* CKN */
->  		  SUNXI_FUNCTION(0x4, "uart3"),		/* CTS */
->  		  SUNXI_FUNCTION_IRQ_BANK(0x6, 2, 17)),
->  	SUNXI_PIN(SUNXI_PINCTRL_PIN(D, 18),
->  		  SUNXI_FUNCTION(0x0, "gpio_in"),
->  		  SUNXI_FUNCTION(0x1, "gpio_out"),
->  		  SUNXI_FUNCTION(0x2, "lcd0"),		/* CLK */
-> +		  SUNXI_FUNCTION(0x3, "lvds1"),		/* D3P */
->  		  SUNXI_FUNCTION(0x4, "uart4"),		/* TX */
->  		  SUNXI_FUNCTION_IRQ_BANK(0x6, 2, 18)),
->  	SUNXI_PIN(SUNXI_PINCTRL_PIN(D, 19),
->  		  SUNXI_FUNCTION(0x0, "gpio_in"),
->  		  SUNXI_FUNCTION(0x1, "gpio_out"),
->  		  SUNXI_FUNCTION(0x2, "lcd0"),		/* DE */
-> +		  SUNXI_FUNCTION(0x3, "lvds1"),		/* D3N */
->  		  SUNXI_FUNCTION(0x4, "uart4"),		/* RX */
->  		  SUNXI_FUNCTION_IRQ_BANK(0x6, 2, 19)),
->  	SUNXI_PIN(SUNXI_PINCTRL_PIN(D, 20),
->=20
-> --=20
-> 2.39.5
->=20
-
---=20
-Paul Kocialkowski,
-
-Independent contractor - sys-base - https://www.sys-base.io/
-Free software developer - https://www.paulk.fr/
-
-Expert in multimedia, graphics and embedded hardware support with Linux.
-
---eDJzuACllP3V3fib
-Content-Type: application/pgp-signature; name=signature.asc
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAEBCgAdFiEEAbcMXZQMtj1fphLChP3B6o/ulQwFAmhbt3wACgkQhP3B6o/u
-lQyEFg//TrQuoq7rBWw2GiGLkr841GKFMfwbOgCvkZ1O7uCpLuCvW5wITVjF4qW8
-flSBcs6qcLbz66ZXQS/86ukYfNUAvm1r4vfhJ3Ptf7m3ko5sCrkCNC3jtlukzG+k
-Eq4GzElnseT7TosPmjtImNkDjp3u/Vh/pxOdRnUHzi6N7+jGWLvU72LcF6LJKq4d
-ftamg9783Xb1QAjNnot6b+fLooAtozg34ftrIe2SE2KXt+U7qeiXtrxNerNAd6Br
-Ld34QB2oMk23sar7GQTPgvoJRCiLUNEV3hJexXf/FNHz9OviwE8irhf6BBjNz7eQ
-XwnsDeqkt5p2IF/ClwfrlsviI8HRAzqX1G7WDtuPqHTsDm67QJb8LztQ4hAUqpmS
-hUjh+BowsXfez8fVAqyp+onplRVK07SebprsBd026Uhb/cG5kBMtg3Z5H+ENCFXg
-TDLc46jsp32Mplo6wP3CVFHz0qurThqF6L8XyzIn6VoreU5uX/FRkN8jAuWtmXup
-rYNpDSE54yEL5c5P0bO1fLMtwBNKZlHEhgxHlZJCNvxgegJrtXT9hDJfYC0cnCoa
-mjeOwFuo2wZziH22TX/5QxhZzUZzOVR0CeMPn+TjJhX/qgTRXwS4DO8RexsKHHm2
-u2Fj8LAaR6bglReFWl4F+LKIeo2AswAzTyS6581R7n62JhNuXGk=
-=9BCo
------END PGP SIGNATURE-----
-
---eDJzuACllP3V3fib--
 
