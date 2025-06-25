@@ -1,161 +1,135 @@
-Return-Path: <linux-kernel+bounces-702584-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-702590-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 08972AE8461
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Jun 2025 15:21:52 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id B511BAE845E
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Jun 2025 15:21:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D7B6A16BEC8
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Jun 2025 13:18:23 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9BE9D7B7B8E
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Jun 2025 13:18:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0E109262FD3;
-	Wed, 25 Jun 2025 13:16:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 496A525F784;
+	Wed, 25 Jun 2025 13:17:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="AWbrss6L"
-Received: from mail-wr1-f45.google.com (mail-wr1-f45.google.com [209.85.221.45])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="fohGDIt2"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BF18625FA0F;
-	Wed, 25 Jun 2025 13:16:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7A5D4265CC5;
+	Wed, 25 Jun 2025 13:17:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750857392; cv=none; b=ax7C7pgMh3aCFhXJ/Cp8oxshniRa8SJwCpItu5BuDiEbqdfRdUV3ViFOtP0cAFzd/ZjSJG8qO1lhc3TkdaW7AbL1Dz48M3kxr3X4pV9mCBw0tVMQ4HTvglTwfHGagtFVK5EfG5mUHO57tY1apJJzg32F590LFmkNGNpHQkuM/kI=
+	t=1750857427; cv=none; b=kD8eMGdbwWyJDUeAm4IOERdJDk8FAtCOmFoSBrvtpQEqicUnMqoB2BsHvgKj2rjd3zEwv1V2eTmbT/RH8Dv8/TMc14vt5ptlg9WHX6/1SG5OaGaUGn2Ar0KBUCxrI635fjxDIMj7u0JgZ7P0rzW8EuUNRvrC3Vgws7mZYxAtc9o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750857392; c=relaxed/simple;
-	bh=17ImiBrvIC1hj8JzSb1O1aUHchtP9UQvsq/M13ZSMhI=;
-	h=Message-ID:Date:From:To:Cc:Subject:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ds7u8AEVtInbR/T74fYBy6ErVE/g3rZANcY5NPLwA6MJAvSKnRKFQpkKrh95YEEFkRH4Yq1a2zOzq1lTZZdwazTGV59fW3STDiSls+MKzFk4AhVV72UnPNrzUEzdou6AmpOwxWMttOLqIKC3bKsT1Grnex9xngcDDfecbUa6Yvg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=AWbrss6L; arc=none smtp.client-ip=209.85.221.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f45.google.com with SMTP id ffacd0b85a97d-3a522224582so838048f8f.3;
-        Wed, 25 Jun 2025 06:16:30 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1750857389; x=1751462189; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:subject:cc
-         :to:from:date:message-id:from:to:cc:subject:date:message-id:reply-to;
-        bh=kNNms1cqXOggVNTVVI9ToDIchXGpgIDdlrqJ7bT7Z3I=;
-        b=AWbrss6LETXrQnLnzWjkb1JQJHUSMV/3xK/ms9eWf65Fs5w8EYBSfnyTnHeYQCNKtx
-         TOGR2ZLul2ReI14A8oUp41d9EB2iouwuMJsOuWyP+JUza48dGbtgDYcJdl2THZGDd17w
-         zvCu2Faxj4BArBqRpb/1UN+gBqM1Abu5DOc8dlamw9DGqzgzPWb+P+jAfQwPTptbY3tO
-         1B04zlyNxdRprZh7Y2Gg8uajR/881IC0EnXg4fVHmlVNgrc1XBYbwPcqDqtLvowuzHDZ
-         g6LOyrwaVrgiuVHxfDW7/sfvTGe4Jqq3js1HghuOhPMHdSSaXCjs2Y0xL2KDfQRzVLy6
-         XtmQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1750857389; x=1751462189;
-        h=in-reply-to:content-disposition:mime-version:references:subject:cc
-         :to:from:date:message-id:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=kNNms1cqXOggVNTVVI9ToDIchXGpgIDdlrqJ7bT7Z3I=;
-        b=LnrVKD4T4lerjEUGh9xpvkJckC0q6KK+t6kPp/Z5xOd+KwZUhI5LViORDpqEKjLs3j
-         HqwhDOdaaqaJkaJmGIdeHXZ077jQf4kvUVyJDqfyazShDB9m/FsHGUZ3/tGK59MBRxRO
-         21EhVeMlVFJuk51aj+am8AMkzJijWcwPmgNMGjQkezFkqNN6fi5LsBxwIA+NBfLOhM6K
-         JQkcRxtBobcAVcMcjug+8sP7iFvNhQBJ3J10UVPLzrzewkRflsq+S+Z3WkM8cBMj5e7B
-         7IDofIEHKEU+Oo5EeYiVpipPVtuTSBpWtm1XUQSehgntKfPiB9/OLdyoLXPSYTSppgWi
-         kqZQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUxbNegHE1oYcBh8QbbVNTweOcNXVF9g9rV1Mvudw2Qg+jijhdolJTWbil1gFFcTUg3gFTKqR4jZLbF@vger.kernel.org, AJvYcCW7y5exFeC2YSB+gczW6e6dPaNIiaqoSOCOslJ4G4AplVLK7hHcwRUbEOCn/howcIXAVhaFG8XCECxUEQE=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz5gp6VQwRdIAWMvZwMpT58GJrNlA4FGv6b3mS3Br//lAa7k07i
-	BSVX0nFSU5YZ5Fy5KiFhHDuC6Iyiz/6Yp/mrs6TDRrbFOYfTz+zY7vvn
-X-Gm-Gg: ASbGncs5P4JJ9AiewVf7HkqghLtB4fPDrsf2Z3878ExlV0QY5XJjzrudX/sfYdTOSTp
-	Jthbo0pLpjkxrZSTeXAh5cRPwXLZLphCNgGdwuu3UIY/KaqUN0eGijDwSoxr6ZbaRsIVgme7y2x
-	9SvRe26D9fRYJf++aSzqstkQsRK0wAf9uTjRFsaZlS4BGBhTiwvSD7WJWaNNWYcs1DaYQ19PA1v
-	mDz1ZBVWvqtuCvlQw4rHq6Lbn5xZJlap6+zwloYXdAexoZl58QVZNTVCDDKYn5C6l/P+Z0Lxhy/
-	YqRQBW5oIXFNmHnAMvn1bnHiEsyF6eD4VsZdNuvy//ZvFr9hCsqUQZj2pj5eiX9HCXPtgcHjulp
-	ecM7D3G2G89jghGEZJQ==
-X-Google-Smtp-Source: AGHT+IHb3Q0fgemYtR23g+jZRPWflFpdrZhbF17TvO7pkjsqXfR8YQ4Ku28UgCKOYBTi2n6UQD4jJQ==
-X-Received: by 2002:a5d:5f4d:0:b0:3a4:f7ae:77e8 with SMTP id ffacd0b85a97d-3a6ed620053mr2616782f8f.15.1750857388773;
-        Wed, 25 Jun 2025 06:16:28 -0700 (PDT)
-Received: from Ansuel-XPS. (93-34-88-225.ip49.fastwebnet.it. [93.34.88.225])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-45382376ff7sm20503605e9.35.2025.06.25.06.16.27
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 25 Jun 2025 06:16:28 -0700 (PDT)
-Message-ID: <685bf6ac.050a0220.357231.66b2@mx.google.com>
-X-Google-Original-Message-ID: <aFv2qTBCCSwmj1y3@Ansuel-XPS.>
-Date: Wed, 25 Jun 2025 15:16:25 +0200
-From: Christian Marangi <ansuelsmth@gmail.com>
-To: Andy Shevchenko <andriy.shevchenko@intel.com>
-Cc: Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= <ukleinek@kernel.org>,
-	linux-kernel@vger.kernel.org, linux-pwm@vger.kernel.org
-Subject: Re: [PATCH v16 1/2] math64.h: provide rounddown_u64 variant for
- rounddown macro
-References: <20250625000059.20040-1-ansuelsmth@gmail.com>
- <aFvf4c6Jp-cgBssA@smile.fi.intel.com>
+	s=arc-20240116; t=1750857427; c=relaxed/simple;
+	bh=XAgpjW/O3CM0ZnOLk2RcDGdLgfzXfUkXBKJ3HCpD1Qk=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=apK8EP3U6uP81lx6M65pTdojAfAvsyf0CHGG1ZO3AJVVo/06cOZdWB2zT2MK8uIcOpAzs9KMxHGPMRwsQaIyhURdb6hhUaq0Y4WT0tWWufcPrSyLYq/ecEYfco8iGD8ah4IUyPp1/H35/aMoWTjq25+GDZsus5QD7GTcqtD5L1U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=fohGDIt2; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id DDF4DC4CEF3;
+	Wed, 25 Jun 2025 13:17:04 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1750857425;
+	bh=XAgpjW/O3CM0ZnOLk2RcDGdLgfzXfUkXBKJ3HCpD1Qk=;
+	h=From:To:Cc:Subject:Date:From;
+	b=fohGDIt2S5dW8eGGmDkgtYKdXBnWVxx7EZCq9ZBJqvIvFqHEpmJsFQemA+NiTOmuk
+	 Z8D4iDoTqT+8q/rEwcLMGOTRDwwCN/jPdOIQ/rpRc8CUlXCX4D25l+YmMYVjOPNhGu
+	 XxsAqHH+GSDsSwbm5HuD7OwP9Q03l9IbFQnFDKQkgtBrcpnkCnEc5ku+3piBFcfa8d
+	 vGL3ebutZ3I1skb7vrhjs0oGPQYemnRSy3UgFa89E9i+pzpNzJ0O3CuM5bg7lmBoMp
+	 3tAogbbKgZD8b564kogcAbcVNKNSdkmQ4el/+BjxKF+cCTrpJLLED4uQVQCj2EmYfx
+	 ZvGas7sQMl9hw==
+Received: by wens.tw (Postfix, from userid 1000)
+	id 4953A5FC6F; Wed, 25 Jun 2025 21:17:02 +0800 (CST)
+From: Chen-Yu Tsai <wens@kernel.org>
+To: Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Chen-Yu Tsai <wens@csie.org>,
+	Jernej Skrabec <jernej@kernel.org>,
+	Samuel Holland <samuel@sholland.org>
+Cc: devicetree@vger.kernel.org,
+	linux-sunxi@lists.linux.dev,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	Andre Przywara <andre.przywara@arm.com>
+Subject: [PATCH v2 0/5] arm64: allwinner: t527: Add OrangePi 4A board
+Date: Wed, 25 Jun 2025 21:16:47 +0800
+Message-Id: <20250625131652.1667345-1-wens@kernel.org>
+X-Mailer: git-send-email 2.39.5
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <aFvf4c6Jp-cgBssA@smile.fi.intel.com>
+Content-Transfer-Encoding: 8bit
 
-On Wed, Jun 25, 2025 at 02:39:13PM +0300, Andy Shevchenko wrote:
-> On Wed, Jun 25, 2025 at 02:00:38AM +0200, Christian Marangi wrote:
-> > There is currently a problem with the usage of rounddown() macro with
-> > u64 dividends. This causes compilation error on specific arch where
-> > 64-bit division is done on 32-bit system.
-> > 
-> > To be more specific GCC try to optimize the function and replace it
-> > with __umoddi3() but this is actually not compiled in the kernel.
-> > 
-> > Example:
-> > pwm-airoha.c:(.text+0x8f8): undefined reference to `__umoddi3'
-> > 
-> > To better handle this, introduce a variant of rounddown() macro,
-> > rounddown_u64() that can be used exactly for this scenario.
-> > 
-> > The new rounddown_u64() in math64.h uses do_div() to do the heavy work
-> > of handling internally all the magic for the 64-bit division on 32-bit
-> > (and indirectly fix the compilation error).
-> 
-> ...
-> 
-> > static inline u64 roundup_u64(u64 x, u32 y)
-> >  {
-> >  	return DIV_U64_ROUND_UP(x, y) * y;
-> >  }
-> 
-> ...
-> 
-> > +static inline u64 rounddown_u64(u64 x, u32 y)
-> > +{
-> > +	u64 tmp = x;
-> > +	return x - do_div(tmp, y);
-> > +}
-> 
-> Can it be implemented as above?
-> 
-> 	return DIV_U64_ROUND_DOWN(x, y) * y;
-> 
-> (yes, it seems we are missing the DIV_U64_ROUND_DOWN() implementation).
-> 
+From: Chen-Yu Tsai <wens@csie.org>
 
-Guess it would be
+Hi everyone,
 
-#define DIV_U64_ROUND_DOWN(ll, d)		\
-	({ u32 _tmp = (d); div_u64((ll), _tmp); })
+This is v2 of my OrangePi 4A series. Changes since v1:
+- Fixed regulator names for bldo3 and bldo4
+- Dropped labels for aldo1, bldo3, and bldo4, which are not really used
+- Added voltage constraints to aldo2, based on specifications from
+  schematic
+- Appended "-usb-0v9" to cpusldo's regulator name
+- Added comments to explain how axp323 aldo1 and dldo1 are tied together
+
+This series adds support for the OrangePi 4A board. This is a Raspberry
+Pi model B form factor development board based on the Allwinner T527
+SoC.
+
+The board has the following features:
+- Allwinner T527 SoC
+- AXP717B + AXP323 PMICs
+- Up to 4GB LPDDR4 DRAM
+- micro SD slot
+- optional eMMC module
+- M.2 slot for PCIe 2.0 x1
+- 16 MB SPI-NOR flash
+- 4x USB 2.0 type-A ports (one can be used in gadget mode)
+- 1x Gigabit ethernet w/ Motorcomm PHY (through yet to be supported GMAC200)
+- 3.5mm audio jack via internal audio codec
+- HDMI 2.0 output
+- eDP, MIPI CSI (2-lane and 4-lane) and MIPI DSI (4-lane) connectors
+- USB type-C port purely for power
+- AP6256 (Broadcom BCM4345) WiFi 5.0 + BT 5.0
+- unsoldered headers for ADC and an additional USB 2.0 host port
+- 40-pin GPIO header
+
+Patch 1 adds a new entry to the list of board compatibles.
+
+Patch 2 and 3 are minor cleanups.
+
+Patch 4 adds pins for UART1, which is used for BT on the board.
+
+Patch 5 adds a dts file for the new board.
 
 
-But isn't that just directly div_u64?? (maybe the dividend is enforced
-u32 with the cast)
+Please take a look. I will take all the patches through the sunxi tree.
 
-and in math.h I can also notice
 
-#define DIV_ROUND_DOWN_ULL(ll, d) \
-	({ unsigned long long _tmp = (ll); do_div(_tmp, d); _tmp; })
+Thanks
+ChenYu
 
-tons of macro that do the same thing ahhahah
 
-Really seems I'm opening a can of worm.
+Chen-Yu Tsai (5):
+  dt-bindings: arm: sunxi: Add Xunlong OrangePi 4A board
+  arm64: dts: allwinner: a523: Move mmc nodes to correct position
+  arm64: dts: allwinner: a523: Move rgmii0 pins to correct location
+  arm64: dts: allwinner: a523: Add UART1 pins
+  arm64: dts: allwinner: t527: Add OrangePi 4A board
 
-Also also division + subtraction isn't less CPU intensive than division
-+ multiplication?
-
-I know the compiler does magic on these internally but still...
+ .../devicetree/bindings/arm/sunxi.yaml        |   5 +
+ arch/arm64/boot/dts/allwinner/Makefile        |   1 +
+ .../arm64/boot/dts/allwinner/sun55i-a523.dtsi | 160 ++++----
+ .../dts/allwinner/sun55i-t527-orangepi-4a.dts | 383 ++++++++++++++++++
+ 4 files changed, 476 insertions(+), 73 deletions(-)
+ create mode 100644 arch/arm64/boot/dts/allwinner/sun55i-t527-orangepi-4a.dts
 
 -- 
-	Ansuel
+2.39.5
+
 
