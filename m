@@ -1,103 +1,183 @@
-Return-Path: <linux-kernel+bounces-702004-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-702009-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4D824AE7C8C
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Jun 2025 11:24:53 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id AB533AE7C9D
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Jun 2025 11:26:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 86E69168D01
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Jun 2025 09:24:53 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1E3757B5EBE
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Jun 2025 09:24:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 02769298981;
-	Wed, 25 Jun 2025 09:17:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2F6DD2D0283;
+	Wed, 25 Jun 2025 09:18:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="XIFaz6HA"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="T8nYTZ2O"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.17])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 347A027FB28;
-	Wed, 25 Jun 2025 09:17:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EDFBD29B23B;
+	Wed, 25 Jun 2025 09:18:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.17
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750843067; cv=none; b=rqHToYY2/qKbI0ZnJnQ+fNlW5M5KVUhWJrEmEmfTR4QyXc9Ptuu7mH/xk4Q26nWrzdxKcIh2A5lVeDI02oW0fly5AvWpPq75i5IAisL6WMQ+QEFDxHxwRsXPxUdRTT58crHk5QntVxQEo+edPqAfyp9mzqqJ133j+Up34Ykxacc=
+	t=1750843103; cv=none; b=U4Xh276xbWPzQuOgttYqX0zsMomhnGDseFVwEgoZ9VlJKpXaKhZcnTSBmf4vg5Zdypm+BCA9ZaUIDkXHfbBMm5j2X1G9IM0ZI/fFv9F1fvSlVeShJsoOaI/ykzjqpW4SsYzu/qcNDxWXr8vyHwSIvBhF+uym10Z3Kjk4ihlUSWk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750843067; c=relaxed/simple;
-	bh=lzpnOdON6DVOT5w6AYitAh53ABW/+efYEjeRFM+K+0I=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Kxlgh2lSiaOotCO8Oq6N7ILbsX9Jof1d39D76oQwKl4WuVBZeb3ZFrKz++h4XtAwnbuzCmfgNe6JsdGLTFUS444h7YQRgLgETsR0CAlL4uX/UNr/3puwJsiCuQ84+SJf1ZP7ez0NzAcKAjwK4XKws2dOcTKCpDHTX6bQUU5IwIM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=XIFaz6HA; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 96E5EC4CEFC;
-	Wed, 25 Jun 2025 09:17:46 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1750843066;
-	bh=lzpnOdON6DVOT5w6AYitAh53ABW/+efYEjeRFM+K+0I=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=XIFaz6HAp30XC5+3kqWdbXtioch/sN2GYVla67EpZbZur7OMiWAmaWk+mVMmQjq7h
-	 xWUkKD+6vJNDyOBeSsHwjpwIqsWGm/tBIvAVKheCu/e9tpTOjHd+75Jq4gmLFMw2os
-	 /sY/85yf0wnByP76jCTiSiw9WgxezQacG7tUYcIkAj9GG3REgJR8nsBem1NNxfc2/D
-	 xbD1foSYRScGYKvWqMymjo5Ff89TmWU28FLjE2oOoiOn04Y9UT23ASghVz4gPcfbYQ
-	 YkAWMyhdPj/jkyF0Bkajv9n31IeX60kr0CslyJVzFdHSp+YnTbPE0n2UuNvp4JtF7o
-	 +8G0CsvspQGMQ==
-Received: by mail-oo1-f41.google.com with SMTP id 006d021491bc7-60ef07eb7f4so3340198eaf.3;
-        Wed, 25 Jun 2025 02:17:46 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCWiEhFJM8CTNvkSpjjQGcYY1FQn2yDiZBdmMpDsyo1K3CXStMcllxuiVWa4GfwYbZyT/V3drg3B9Bb1zP3V@vger.kernel.org, AJvYcCXV/xggpJvnQe2r1FNbuHYnk5C8XPqNMrUnUa8sAJeI4Vy+lzYzT2ncCKtHUTae+XnXDuPqbzqr4hzMNf82Vv8=@vger.kernel.org, AJvYcCXb/b9X5Go/HbxN9hmY12Msyy1UH8yexaimP1zv1OVt0uTjf3ihIptKWNKAEFUD8Qitfnvf6ViQ0O7K@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw4P6CEtEh6BLEmFOL9EMxFZU3qiENWsFEVg6B7X72lY0VhjKZo
-	lyeqbZgjQw8rUlP4jtcXxnVbS0IPd2F7furhzgK0ko0WDdLMvc6sWZ2scZloufuDyuBtM96hNuE
-	hqEi7vOtAHLJoNGQPYpSLX8gk1cdKrMc=
-X-Google-Smtp-Source: AGHT+IGwmHiP0k0AYczEQyTJX9RAeJkddhKZ8nYsuI6oroN+azy2At44HmYTpTB4O/qsehu29og+iFkdUwWY8+oAXOs=
-X-Received: by 2002:a05:6820:4c0d:b0:611:75a8:f6ca with SMTP id
- 006d021491bc7-6119d87e6c2mr1465775eaf.6.1750843065563; Wed, 25 Jun 2025
- 02:17:45 -0700 (PDT)
+	s=arc-20240116; t=1750843103; c=relaxed/simple;
+	bh=t4E/+UT8fmI9fR5q5fWeoyUhS4+biJF4voTPqNOEia0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Fc6ErvtaSKvEXE9LBYcoYyydud8cxOmDby0HcfKJlubmyv15JUCa8CCNU5o0JLYIXGoIYApx2n0dgrDIs7YNOI8qT+qzuOh0yp2jeiXj4hnN3fDmyyi6lvsabO93pHvmnqcdq6rBjOhEU+Urs6IulPe1eugP0bnh0kCj/5QYIlk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=T8nYTZ2O; arc=none smtp.client-ip=198.175.65.17
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1750843100; x=1782379100;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=t4E/+UT8fmI9fR5q5fWeoyUhS4+biJF4voTPqNOEia0=;
+  b=T8nYTZ2OtmDDWiys+1XlzItMIsMXFMbfA+VL9SN6C/RgFT+/CdkfO+C6
+   Kp8v51eh9INMs32y71jlspqEqCtIbhG94uazAHBaeIPiFYKoNW6rq4rHN
+   qb9n+0sxhw268L9h7rnkCcA7T1l+jMJfMqevM0MpTqvsL55zO/XlM3BLj
+   SCDrGM0L1P877BkO7ns91z3VoDIn3/lBycTaUOjr6470XCgtrhNJiL/ym
+   wUG23RHSXCaBWwZEHYvh3+hKnocp/4se2EgzDe1QxP60eMMumo/F1Y86d
+   ZpUHVkGqYSs9f7Qr2ht7UtHs9A1BFLpzAa9AmynENrno4JvsBASyH5y/H
+   g==;
+X-CSE-ConnectionGUID: u3tryakDSxWfeFvKVVZqLQ==
+X-CSE-MsgGUID: ADxTI3ipT5OW4Tqvd/tX0Q==
+X-IronPort-AV: E=McAfee;i="6800,10657,11474"; a="53072787"
+X-IronPort-AV: E=Sophos;i="6.16,264,1744095600"; 
+   d="scan'208";a="53072787"
+Received: from orviesa005.jf.intel.com ([10.64.159.145])
+  by orvoesa109.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 25 Jun 2025 02:18:19 -0700
+X-CSE-ConnectionGUID: Pu8/GqJxQ9Wf4jSmGYdK6Q==
+X-CSE-MsgGUID: yJ8Gcn95QCiXtZkX+gKVcw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.16,264,1744095600"; 
+   d="scan'208";a="157934397"
+Received: from lkp-server01.sh.intel.com (HELO e8142ee1dce2) ([10.239.97.150])
+  by orviesa005.jf.intel.com with ESMTP; 25 Jun 2025 02:18:15 -0700
+Received: from kbuild by e8142ee1dce2 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1uUMGj-000SwA-29;
+	Wed, 25 Jun 2025 09:18:13 +0000
+Date: Wed, 25 Jun 2025 17:17:47 +0800
+From: kernel test robot <lkp@intel.com>
+To: Vikas Gupta <vikas.gupta@broadcom.com>, davem@davemloft.net,
+	edumazet@google.com, kuba@kernel.org, pabeni@redhat.com,
+	andrew+netdev@lunn.ch, horms@kernel.org
+Cc: oe-kbuild-all@lists.linux.dev, netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org, michael.chan@broadcom.com,
+	pavan.chebbi@broadcom.com, vsrama-krishna.nemani@broadcom.com,
+	Vikas Gupta <vikas.gupta@broadcom.com>,
+	Bhargava Chenna Marreddy <bhargava.marreddy@broadcom.com>,
+	Rajashekar Hudumula <rajashekar.hudumula@broadcom.com>
+Subject: Re: [net-next, 08/10] bng_en: Add irq allocation support
+Message-ID: <202506251636.aTzmB45K-lkp@intel.com>
+References: <20250618144743.843815-9-vikas.gupta@broadcom.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250613133517.1229722-1-igor.korotin.linux@gmail.com>
- <20250613135407.1233005-1-igor.korotin.linux@gmail.com> <aFB2FZEFcXUsW8lN@pollux>
- <f29b4eba-bd79-4f74-940c-8cff65495ae0@gmail.com> <aFGisAm-n6Mt70Hd@pollux>
-In-Reply-To: <aFGisAm-n6Mt70Hd@pollux>
-From: "Rafael J. Wysocki" <rafael@kernel.org>
-Date: Wed, 25 Jun 2025 11:17:33 +0200
-X-Gmail-Original-Message-ID: <CAJZ5v0hBG-ccWdhiKtcasAVOph+===AZoOroznf2k5OG0BOnkg@mail.gmail.com>
-X-Gm-Features: Ac12FXzgbtqeoG_UDw0GugtkAlia8IsWynCbV-x9VcnNKKiUERwayNEWl_bRE4s
-Message-ID: <CAJZ5v0hBG-ccWdhiKtcasAVOph+===AZoOroznf2k5OG0BOnkg@mail.gmail.com>
-Subject: Re: [PATCH v6 6/6] samples: rust: add ACPI match table example to
- platform driver
-To: Danilo Krummrich <dakr@kernel.org>, Igor Korotin <igor.korotin.linux@gmail.com>
-Cc: ojeda@kernel.org, alex.gaynor@gmail.com, rafael@kernel.org, 
-	gregkh@linuxfoundation.org, linux-kernel@vger.kernel.org, 
-	rust-for-linux@vger.kernel.org, linux-acpi@vger.kernel.org, 
-	boqun.feng@gmail.com, gary@garyguo.net, bjorn3_gh@protonmail.com, 
-	benno.lossin@proton.me, a.hindborg@kernel.org, aliceryhl@google.com, 
-	tmgross@umich.edu, lenb@kernel.org, wedsonaf@gmail.com, 
-	viresh.kumar@linaro.org, alex.hung@amd.com, dingxiangfei2009@gmail.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250618144743.843815-9-vikas.gupta@broadcom.com>
 
-On Tue, Jun 17, 2025 at 7:15=E2=80=AFPM Danilo Krummrich <dakr@kernel.org> =
-wrote:
->
-> On Tue, Jun 17, 2025 at 05:39:07PM +0100, Igor Korotin wrote:
-> > I could suggest on of the following:
-> > DRV0001
-> > DRVR0001
-> > PDRV0001
->
-> This one looks reasonable to me.
->
-> > TEST0001
-> > TST0001
+Hi Vikas,
 
-Can we please avoid using made up device IDs in the code, even if it
-is just sample code?
+kernel test robot noticed the following build warnings:
 
-It is way better to use a real one that's been reserved already as
-"never use in real ACPI tables" for some reason.  I think I can find a
-few of these for you if need be.
+[auto build test WARNING on linus/master]
+[also build test WARNING on v6.16-rc3 next-20250624]
+[cannot apply to horms-ipvs/master]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
 
-Thanks!
+url:    https://github.com/intel-lab-lkp/linux/commits/Vikas-Gupta/bng_en-Add-PCI-interface/20250618-173130
+base:   linus/master
+patch link:    https://lore.kernel.org/r/20250618144743.843815-9-vikas.gupta%40broadcom.com
+patch subject: [net-next, 08/10] bng_en: Add irq allocation support
+config: parisc-randconfig-r073-20250619 (https://download.01.org/0day-ci/archive/20250625/202506251636.aTzmB45K-lkp@intel.com/config)
+compiler: hppa-linux-gcc (GCC) 8.5.0
+
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202506251636.aTzmB45K-lkp@intel.com/
+
+smatch warnings:
+drivers/net/ethernet/broadcom/bnge/bnge_resc.c:347 bnge_alloc_irqs() warn: unsigned 'irqs_demand' is never less than zero.
+
+vim +/irqs_demand +347 drivers/net/ethernet/broadcom/bnge/bnge_resc.c
+
+   329	
+   330	int bnge_alloc_irqs(struct bnge_dev *bd)
+   331	{
+   332		u16 aux_msix, tx_cp, num_entries;
+   333		u16 irqs_demand, max, min = 1;
+   334		int i, rc = 0;
+   335	
+   336		irqs_demand = bnge_nqs_demand(bd);
+   337		max = bnge_get_max_func_irqs(bd);
+   338		if (irqs_demand > max)
+   339			irqs_demand = max;
+   340	
+   341		if (!(bd->flags & BNGE_EN_SHARED_CHNL))
+   342			min = 2;
+   343	
+   344		irqs_demand = pci_alloc_irq_vectors(bd->pdev, min, irqs_demand,
+   345						    PCI_IRQ_MSIX);
+   346		aux_msix = bnge_aux_get_msix(bd);
+ > 347		if (irqs_demand < 0 || irqs_demand < aux_msix) {
+   348			rc = -ENODEV;
+   349			goto err_free_irqs;
+   350		}
+   351	
+   352		num_entries = irqs_demand;
+   353		if (pci_msix_can_alloc_dyn(bd->pdev))
+   354			num_entries = max;
+   355		bd->irq_tbl = kcalloc(num_entries, sizeof(*bd->irq_tbl), GFP_KERNEL);
+   356		if (!bd->irq_tbl) {
+   357			rc = -ENOMEM;
+   358			goto err_free_irqs;
+   359		}
+   360	
+   361		for (i = 0; i < irqs_demand; i++)
+   362			bd->irq_tbl[i].vector = pci_irq_vector(bd->pdev, i);
+   363	
+   364		bd->irqs_acquired = irqs_demand;
+   365		/* Reduce rings based upon num of vectors allocated.
+   366		 * We dont need to consider NQs as they have been calculated
+   367		 * and must be more than irqs_demand.
+   368		 */
+   369		rc = bnge_adjust_rings(bd, &bd->rx_nr_rings,
+   370				       &bd->tx_nr_rings,
+   371				       irqs_demand - aux_msix, min == 1);
+   372		if (rc)
+   373			goto err_free_irqs;
+   374	
+   375		tx_cp = bnge_num_tx_to_cp(bd, bd->tx_nr_rings);
+   376		bd->nq_nr_rings = (min == 1) ?
+   377			max_t(u16, tx_cp, bd->rx_nr_rings) :
+   378			tx_cp + bd->rx_nr_rings;
+   379	
+   380		/* Readjust tx_nr_rings_per_tc */
+   381		if (!bd->num_tc)
+   382			bd->tx_nr_rings_per_tc = bd->tx_nr_rings;
+   383	
+   384		return 0;
+   385	
+   386	err_free_irqs:
+   387		dev_err(bd->dev, "Failed to allocate IRQs err = %d\n", rc);
+   388		bnge_free_irqs(bd);
+   389		return rc;
+   390	}
+   391	
+
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
