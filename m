@@ -1,316 +1,195 @@
-Return-Path: <linux-kernel+bounces-702332-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-702337-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CB8A1AE810C
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Jun 2025 13:28:49 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id D6874AE8118
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Jun 2025 13:29:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5CACC7AEAD8
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Jun 2025 11:26:21 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 485FC7B098A
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Jun 2025 11:27:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B11042DAFA8;
-	Wed, 25 Jun 2025 11:25:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1B3C52E06CD;
+	Wed, 25 Jun 2025 11:25:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="W9Jy0X5c"
-Received: from mail-wm1-f48.google.com (mail-wm1-f48.google.com [209.85.128.48])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="mfA1jad3"
+Received: from NAM12-DM6-obe.outbound.protection.outlook.com (mail-dm6nam12on2059.outbound.protection.outlook.com [40.107.243.59])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DA6202DA740;
-	Wed, 25 Jun 2025 11:25:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.48
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750850715; cv=none; b=fy0+jUjiQx67a/y595lFdI71MAfDdDkoBpKZ9rm6e5E7jAcnN6sGxKK88lwCCoC7cyLWouZ83Iw6yxiTZ9Uh+9j6uo/K0MUU5Tq0KA+Kcky1/oJPDtYe8Asf0Yk5vMV8lMuJKGzBXqrqTwfp5OtlQ+8uQ2Yvj/gsS0/6OMkzm2A=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750850715; c=relaxed/simple;
-	bh=Sj5tdg3WN3OUfbAEd9VRq4imt6Z4ASAMrzQsxj8b3OU=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=BDxAJ9vy5nGJrJ+hZs2da7FDold+mBAZ0uj0gkLiZNa+zBRGhveS2DWPSF1ojQrP+IcAskPvdiR5OcP0CBq2pmdX/6FaBpFNp+lZkx3Q0M9h/HSKlrLKketZ7x2I2TM3EUV6D6j7f5DUpTRrXGSEzg8zhdl3RgaPBcobzW6qr1A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=W9Jy0X5c; arc=none smtp.client-ip=209.85.128.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f48.google.com with SMTP id 5b1f17b1804b1-451d54214adso10310185e9.3;
-        Wed, 25 Jun 2025 04:25:13 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1750850712; x=1751455512; darn=vger.kernel.org;
-        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
-         :date:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=cIFXHNMMz/rnn3fp04SvsZG+L3Mgm1adSAVXhKCv578=;
-        b=W9Jy0X5cIEUPGkL1g754Zyst9lUcnRsB/0mWfHiq+EXFUl3qyGr/CxWE7N/8ikDChc
-         vSNrSwfQpdrAZHgQrGcwcr7ms4EaxIAj5TpaVCbfYnSlI70BoYgWaS6ZjO9Vddr1g3TK
-         QqdMuMaPPBDRZSisdtaB8ZHiArJcMlWjvOY5RxSzNqhuTUHamUm/atGIymcVZCQtXCLn
-         r3tRfaiVMr4stoaddqjb9KOtQbU5hoLHEGySXk05J8pL3b/e4tCKRK7sq//8zxiVYIfV
-         Co4qZ6DQR2aWyD+LOmU5F9qjiDNOLzepjWYE0Bng8FhM7WB+SgAPQ9YVZc1WCUL/GX8p
-         vq3Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1750850712; x=1751455512;
-        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
-         :date:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=cIFXHNMMz/rnn3fp04SvsZG+L3Mgm1adSAVXhKCv578=;
-        b=KDUA2mm0OdjczDV/RI0N4hfDbaHMjWkRb6hXudcEKZy65s6fwGDKTy0eehgUzaHLct
-         DbRs6j5YV4CX58Fy85zaA/wn68xqilqGx9WJ+0IGaoIpwypJwtq7RtwbK0opfVwxWk+A
-         T55dOrunK+Vs8yD/PZM0Sm760Fz9X+XZikBModn0ajXzXJw/ha7g7r4LEszibiDeSn8t
-         Vtp/IyRKKOei8JbYbsbZTuZiTkGHyZOKM8eTTRrI5SIhfy6SX8fEuGlX1HtK4kGiVh/C
-         Bi0RNQUaif3pXirLOAQO2I2pURHr/M63sGLurMP0toX8zj3/5vt+92/f27X8IZM/XS/r
-         YY4w==
-X-Forwarded-Encrypted: i=1; AJvYcCUW/xIrPU6XL1rRgpkZFjwwg/J9NXVcaCwVDMuDrtHYfs8UQZLyjMtJd2y4FGfPDHFtgq/PBGwI8yzfN2lG@vger.kernel.org, AJvYcCV52hloHLqTM627qyFJ/DqRZTKIz0TPXnLRssoVbCJ6u302zHqcbfP/xnAYFVusskAOdEhxva+OUdFMVnj5@vger.kernel.org
-X-Gm-Message-State: AOJu0YzUfOCjeGxsjeAke9VNwgU4RhFeSbbWn8kbBdfykYaA3HkqcgKa
-	cwxbM/yqGdJsvSj51liwk+9NDXf9kcjT1ANisKIkRtskrFBVz2gVZRZWQmxLDg==
-X-Gm-Gg: ASbGncv+mrBYq//1j4I9sh3YanbyWeJfInw/R9L2Y5VKCZ9ekCM8eKcxBUyHpdXt+za
-	KWGwASiHUGauXVd5mRkIstO3TD6qjiRe7xdqWFDWMcJE+AYM+cUluIKKPtNopTGrO8woiiEypSO
-	js/MdIbzHohs8oHgTn1shg0/CjMoFTzXdpeoY0+YaOnDfMIcYjVsKhEzXH/gY8BgOiFVdPyCRkD
-	ElE3nPdSiVFS24LDy4Gu/bSQ7boPq6yrzPtqzKszKQv+qtTtaceLA6YnZD8d85YXTPcuUoapqBq
-	K87RFDaX2ypGBAEWhiuYS3HIqKKo0XnVOCPcr54JHnPApYPV3vbH/x95OqR3QkFsAsBYDGjV9/S
-	Z4yd0IjZ6PuIBwzQ=
-X-Google-Smtp-Source: AGHT+IF/l2TTEwk7mY0FbHtJZWfy+l5zfhEIGiynhEEsNVF/kg3NtLIcHyU0wbAYZN6bOw1uR3Q5TQ==
-X-Received: by 2002:a05:6000:2910:b0:3a5:1f2:68f3 with SMTP id ffacd0b85a97d-3a6ed66e655mr1844816f8f.46.1750850712019;
-        Wed, 25 Jun 2025 04:25:12 -0700 (PDT)
-Received: from [192.168.0.253] (5D59A51C.catv.pool.telekom.hu. [93.89.165.28])
-        by smtp.googlemail.com with ESMTPSA id ffacd0b85a97d-3a6e81106b8sm4428642f8f.91.2025.06.25.04.25.10
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 25 Jun 2025 04:25:11 -0700 (PDT)
-From: Gabor Juhos <j4g8y7@gmail.com>
-Date: Wed, 25 Jun 2025 13:25:04 +0200
-Subject: [PATCH v3] interconnect: avoid memory allocation when
- 'icc_bw_lock' is held
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3269A2DECD1;
+	Wed, 25 Jun 2025 11:25:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.243.59
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1750850728; cv=fail; b=IS0CXFtztJZmrLUFn8lQokY0TI6IP24btdJXf78CWMByzsUxdtxZ54wCTCuLDo2YIBaTxQhwgwzx0EXHWf74FdEOutuJr6/gf0oKwbQzPXIAY0xyg/ZWRGtr9cgrrbmfvgtcJQ6zt4hNZRs9Q7MmomKsdHnfhSgTiy366KNqtpA=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1750850728; c=relaxed/simple;
+	bh=9yyaMyDheEgUfc+o9vYzxKLZTqyHLs24kfyvzpie5TQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
+	 Content-Disposition:In-Reply-To:MIME-Version; b=gNTqKf43sHW2FdKcVmIwCD/H85dn0O+VrpxE9mHqMiJNT2aVsa76vwBIpcBmeTvG42J2hfskYt7r4E+vssDLjO47iVXjtyt/ntDtuOGgrev8FREY6XxbeUSsXMo3bs1mpp9CNA5hcpCaWQdl2lY4O/uTZ0BnbGEGXYQQYIqF0TE=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=mfA1jad3; arc=fail smtp.client-ip=40.107.243.59
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=yUi+DlNdX75elUyUDbPfpBBmUi6zsC5YLgghmaRDoep37zajycn4+hKV4Xbi4M9Z9FwcTGiB2JgOJhru95jz3/LfPt8Krbnwp/46uRAycv9PNATf1tNRSDn8OVakf+vwPsLZ2O2BHo+mQ5emHtE+Z+yc+tVV/0TUEzBnMX+XOzhyr8fuHRyqHRL12Cc7PHYe+S097QMtU4frK3LuL32li/PKdszCfwGoJV9vMg1dIIbCrWE6Dk+xd6y4zVIhKfAAbc2nazPjDJGSZ+czN18Jb0Tq9Z3b6Hb5HoCKnJ8xGJa/a0yzQYwzqDChAShGIoDb48oSanEdsbt2Qwh/1uvgng==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=YQbvbPfBU2rysM+2CxvERo3qEc/mVkd735DWn4Td5NY=;
+ b=fPv0hWRdL20vQ7vsK1nVTqkaf4vsmNjDUFscHQOPj8VyZ2yGvXr01sgfm++1fIVe79WQrCYZyzzNU5Lm/0NC/5y/rDqocgYTmi+xTUpgUwS3/1LFZbjuF9qyreiTxrZ+qWlbOX6rEGRYYeSyyu3zCChQp6kHnUy4HRxu92W5a9lezJscLTsSst3j6Ks5qSSOkyoqXAu/VQFq4MC3J9A4Z7AswZYq1nbVl+cux8SGB5hsy7jHZF986GrFVl62N1coxG953Qq/lvemQErJjM9xvgVT01mjZTvNe3uPFRaovXw09UFsWtq+ZauF5OaYxzx+KXnhFQ3km227cBF7fI1InQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
+ dkim=pass header.d=nvidia.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=YQbvbPfBU2rysM+2CxvERo3qEc/mVkd735DWn4Td5NY=;
+ b=mfA1jad3IYYIl4AXst1+WONmnzvcarWPMxUbWlH/2So18O/OsIFKys9vkgJGDu+00qyh4zS03jhNtHQRU3+cPp4B/uFScPpJ1oMCAV36Cg/AWRDlJSlZYJHgsfvPicuoh/XqzQhxEuDNARHjZxluRjMs1ZM4E+WcZpJ8sO5sIYucDGRHVarq46mr+GKR126EWevoe/ScI1ALBm6vHAsrhP72/8YezRzFjrMTYhPPvqP+L2bE9CoT4aOpijoYPvEx3AMx+mIIEHVQKdJKv76nizKLS+BYoqyLLDmTr25nZHk/6K+8SLzL2u+medcjbY45/2tGUtN9jFQH5u+F+f7LGQ==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nvidia.com;
+Received: from SA3PR12MB7901.namprd12.prod.outlook.com (2603:10b6:806:306::12)
+ by PH7PR12MB7843.namprd12.prod.outlook.com (2603:10b6:510:27e::11) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8880.17; Wed, 25 Jun
+ 2025 11:25:22 +0000
+Received: from SA3PR12MB7901.namprd12.prod.outlook.com
+ ([fe80::66fc:f8a2:1bfb:6de8]) by SA3PR12MB7901.namprd12.prod.outlook.com
+ ([fe80::66fc:f8a2:1bfb:6de8%6]) with mapi id 15.20.8857.026; Wed, 25 Jun 2025
+ 11:25:22 +0000
+Date: Wed, 25 Jun 2025 14:25:08 +0300
+From: Ido Schimmel <idosch@nvidia.com>
+To: syzbot <syzbot+f53271ac312b49be132b@syzkaller.appspotmail.com>
+Cc: bridge@lists.linux.dev, davem@davemloft.net, edumazet@google.com,
+	horms@kernel.org, kuba@kernel.org, linux-kernel@vger.kernel.org,
+	netdev@vger.kernel.org, pabeni@redhat.com, razor@blackwall.org,
+	syzkaller-bugs@googlegroups.com
+Subject: Re: [syzbot] [bridge?] KASAN: slab-use-after-free Read in
+ br_multicast_has_router_adjacent
+Message-ID: <aFvclK0Qy6KyDO17@shredder>
+References: <685bc100.a00a0220.2e5631.00c3.GAE@google.com>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <685bc100.a00a0220.2e5631.00c3.GAE@google.com>
+X-ClientProxiedBy: TLZP290CA0004.ISRP290.PROD.OUTLOOK.COM
+ (2603:1096:950:9::15) To SA3PR12MB7901.namprd12.prod.outlook.com
+ (2603:10b6:806:306::12)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250625-icc-bw-lockdep-v3-1-2b8f8b8987c4@gmail.com>
-X-B4-Tracking: v=1; b=H4sIAI/cW2gC/3XM0Q6CIBiG4VtpHEeDH0XpqPtoHSCQ/kvFQaOa8
- 95DT2prHX7f9rwziS6gi+S4m0lwCSP6MQ+x3xHT6bF1FG3eBBiUrARF0RjaPGjvzc26iTrLBLO
- 1As0VyWgK7orPLXi+5N1hvPvw2vqJr+/fVOKUU2ErXjRSK1EVp3bQ2B+MH8iaSvDhktc/HFYOI
- KwWhaxk+c2XZXkDLT9IT+sAAAA=
-X-Change-ID: 20250529-icc-bw-lockdep-ed030d892a19
-To: Georgi Djakov <djakov@kernel.org>, 
- Raviteja Laggyshetty <quic_rlaggysh@quicinc.com>, 
- Johan Hovold <johan+linaro@kernel.org>, 
- Bryan O'Donoghue <bryan.odonoghue@linaro.org>
-Cc: linux-pm@vger.kernel.org, linux-arm-msm@vger.kernel.org, 
- linux-kernel@vger.kernel.org, Gabor Juhos <j4g8y7@gmail.com>
-X-Mailer: b4 0.14.2
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: SA3PR12MB7901:EE_|PH7PR12MB7843:EE_
+X-MS-Office365-Filtering-Correlation-Id: 85deb790-b4cd-4040-3bda-08ddb3daf90b
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|1800799024|376014|7416014|366016|7053199007;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?Uoich2tnR6IxpnXbYuTzcLmeuv9vlwyQlIHdJ2vzrpZsDRMBGvbreoAjxsJq?=
+ =?us-ascii?Q?9xsv1sOIu3ltox1YFEtK90XEbQNof5oKjZAET7KxViWKODD80he5PpyMSSOT?=
+ =?us-ascii?Q?r1gCoXfvIUul2ThwEyj9ZXgIVpAQEAT0qUlvcc5v0HKBQgwnQoM+ul8UCLK2?=
+ =?us-ascii?Q?V2yXTqZCSEwp5sxMh1QMNdhzmvjjtUgb1akCZYTEuhY1ZA1D0sDrVM0LlsTA?=
+ =?us-ascii?Q?556jEnhQ6siejjwiRDVGI21NPsTjtTT57+wajrkdlYHi7d530LZPNVY145R2?=
+ =?us-ascii?Q?O/bm/8tLQbb8UgS21hU800kWRCpj0jIAQuhcC79Yv9ykgSzWKmVWqta9+ff4?=
+ =?us-ascii?Q?k5sy2BVd6HbEqsPN2gQI50H6SsigTRRwPaqUvX9FqlSfswPgf7KeP2HM7iko?=
+ =?us-ascii?Q?uF4kXD9oOwrP/FIVdLVmWgbH6AS73QL/8av4L4HynFehNJVpvllabsvzodxx?=
+ =?us-ascii?Q?KXoqtb5Hpr0Q2+ch5Osx6ePIbzDtiNo554pRXcBRZX4U6ctfGm3MsgmneRaK?=
+ =?us-ascii?Q?5kmssXVLVhrPwnvQyP/Bs3E594cr2wdKcvgHzz16/LXalatMlnxqyJ4X5cGd?=
+ =?us-ascii?Q?BLy7ROxK1M1fTcHNzPIqmc8aVUDa7tt2Dibn5X/LXcXNYOqGUDCuzDOXkOmV?=
+ =?us-ascii?Q?7WfwyUk7Hf9XlS0l9aa6kGu4NubYgBRH2XzsfKi1IFcqwBDByzp0QuUnnLCi?=
+ =?us-ascii?Q?XoAwfDt5PQGvtGCTt85EdSaRVyh7iuKNbR/rbKA9HFAEHAXhaMgQmsxttb1T?=
+ =?us-ascii?Q?BLMzdIouUv3AD4wDJxKSxUVGMAwSMJSLA1K3NuahT/imfTiCy8mfusHhQZA+?=
+ =?us-ascii?Q?N2Yd6sClDz7TMUWGaWxLXWUXb+bus4UdZQ0F1ftVB0L6mYaxC35w2N/9jqF3?=
+ =?us-ascii?Q?TX2DSiYmSBEpCzbWGWfz7AEmPaf9/Aj+7TX1aNRp7AX+Ir4GYAf8XW0MwuVu?=
+ =?us-ascii?Q?E2hNI6vd6z04++YgMnux39k0HxTzKLVYXwYp9J/neA4SPP5yp1Fu8Ut9dziM?=
+ =?us-ascii?Q?Y2LqYlHwS+H6r+Id45YdQIEqSieG1FKULRHHTriBwwdgk95hASVm1wDkj/JU?=
+ =?us-ascii?Q?YllzOXl3EmdMrX26yC6zLdzJnf6wRgQX7Lm9xU1AyLzKbvaJbgIKnzEaj6Il?=
+ =?us-ascii?Q?fDziw2QrCBOVPbtY8Kbs97H9ygz0wxygLs8DzUe2DV1CmDNRLag7mU5oDQG/?=
+ =?us-ascii?Q?os6a27JpqI6H2f8ghVfwMv1BPkrQRUi+5xdLRTgOSIhyIGKqjS6LTT292l7O?=
+ =?us-ascii?Q?zQZlKZ6x9r4iWiBYa3QavBnV2YrLkVlJym1yV9MKTV+nOuXQ8xJm3B6JU2GR?=
+ =?us-ascii?Q?STkT5hMu6UqZdSzmjhprE6wmtReBceeVoFwTzS+foyQcDjCk0WL5p8UAh6fQ?=
+ =?us-ascii?Q?AiZZsuMLS0uJA8AdiXfdtgdwKXRP619gcbc/KBjeM1z4hIOp56fCwYq2dXYo?=
+ =?us-ascii?Q?gAwbdqdTuhw=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SA3PR12MB7901.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(376014)(7416014)(366016)(7053199007);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?8Ro2myvAxBJB+LZx7EBJBZ17wisGjzCXpwUALt/dAiqUDXBi3Bw/8cY5GtCy?=
+ =?us-ascii?Q?Wh/GENNgetmT2F6v8Dy+F3pnzlJp4d3fgrYYoeSN3e8xqPa5F/kQ+oGlE/se?=
+ =?us-ascii?Q?eeUnaR+aEBEQMGRqlxXSvlgnW/lkidsxGZVwbRM6COsXieO7kvq/HaZ2ajyw?=
+ =?us-ascii?Q?Ou2MItEDt3PWg2r/Nc3TVBY7PdJdHBZ3mML8MfLESa9nbTjzc+u5Nrjwsm0E?=
+ =?us-ascii?Q?BbiLyosV7mMkXiCYZNvrRGdzAvkA8z00iZzWhM/g1Xclj8E/ODGbXnTomszo?=
+ =?us-ascii?Q?PAeWJNjChg6OqiPSjlwkiWNglBsobVzxcPFv0tHu8ok4W7nWbbrtZDQM5qVz?=
+ =?us-ascii?Q?Ayq1Y17mDcdxSPu+y7fgqQccP4gtwI4K6nDvE4SKCMm6IC7kw/VNlgqSpXOq?=
+ =?us-ascii?Q?CI62iX7THtjPIo9qSm8TiKfWEKlJPfSTAqZqXP2XG7pwyP7/PRO0IWyHQjbA?=
+ =?us-ascii?Q?ajTICiPzfeTys4oo2LS/UV8Z9WZwx8jqLSrH1+6fjzfULI5xgSqjJGNTELAV?=
+ =?us-ascii?Q?l1VWtDfWfoAkkYiY+ppAp9haM4H7qsP9+ULWnOsNIAPvTjrz1v1b5hly00pe?=
+ =?us-ascii?Q?Xbe4Xo7WO3szKv8SyAJXHIQmIZJmjSUyVBx9ZjIDN7TKJz0DzV9ISF7KpiAc?=
+ =?us-ascii?Q?rdGd3vQ1daUx9WUxKQ3nfHDO4cxADiPiRDSZ8EsarpemtvrbO+QTVTvk45Bd?=
+ =?us-ascii?Q?e9juX8QXuD1C5CLRoB8kg672PoD+wO5qs9dgUFx+H2U2p5h1hyrTJgcDP0PY?=
+ =?us-ascii?Q?8YHTeKs5Y4qlRA+Mhp30BjP6iK/8cOdGo0WPWum4aUcelbjanHVCJ97+qI7u?=
+ =?us-ascii?Q?W2vTCDp8HJSwWzH4FVgtXHm7HzKg10Or+lAf5M1rMyxmEPGm3SsWAE7IPVEa?=
+ =?us-ascii?Q?Ke9k85AHYE7qhntOqdINx/2YlprCAjqoXo5Sk4Oi3KqMFFefPDtHoiHCmk6G?=
+ =?us-ascii?Q?Wx8bYTSUEPfvvLcm+YEgUkmpgDIOc5MDUHrDqiDHDj+rEv5+UsEaQUU97/X9?=
+ =?us-ascii?Q?U5d2jNKgQs2IfUcLY0y27OybF5nfgOw1zyRGA6qQBldGy6eH9A+zw+pRo2M5?=
+ =?us-ascii?Q?md4HW0yNEpAkvFPDFpttwFX+wtG/4dOyd/njshWEBBwEHtvPl7DOkUO7nuVx?=
+ =?us-ascii?Q?Le/n9Fmy9JoK6MbUrIBKjT2p29vwf7370IPAycVTW10YyBN1kOb9YTblOcUZ?=
+ =?us-ascii?Q?3okqBBQvefoq3wwS/S0zGZ+1AdR4TvvMxd7UVJowVyh4LG3bRRPKoOgOF3Lq?=
+ =?us-ascii?Q?q+RPSXNJQSZzgqXxfCbsxVI2Xo1BXnFFoCYh5HMYo1iVIjkZqhpaKtUCnDjl?=
+ =?us-ascii?Q?E25vHrL/28iYsDY5BBVYo2HtvsSAapeczedYES0+UfZkeeTm0p7xYOIa6xvI?=
+ =?us-ascii?Q?u/g/IL+ahmch00REOyjSvuyzXj0J4HgGmcwrNKojYbh21yyWUoAaxwZPyVBA?=
+ =?us-ascii?Q?EpJdjK73NftOvJHQ9TSh/qVHDIXjPoXKm0hA+lJjO/gAW+nhBeqvCooFS9cQ?=
+ =?us-ascii?Q?8gVWH+vlMHU/uIkBYt4UzdqPDr7BYZp6bXT3bO/AA3ilaV8O0mfyatqr2LLb?=
+ =?us-ascii?Q?/Snt/XOkvi2uUTh9lf4nGJJcanSOXWv8XI0uVl1r?=
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 85deb790-b4cd-4040-3bda-08ddb3daf90b
+X-MS-Exchange-CrossTenant-AuthSource: SA3PR12MB7901.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 25 Jun 2025 11:25:22.1526
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: dPJ4b4gscNdDYmGnaDJW8JnRxCB2JMn9NpcFjdDbYd+PYuQzDCK1SvH+mwvazmzFmGtGPMuI8b+O/h57Dp2GJw==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH7PR12MB7843
 
-The 'icc_bw_lock' mutex is introduced in commit af42269c3523
-("interconnect: Fix locking for runpm vs reclaim") in order
-to decouple serialization of bw aggregation from codepaths
-that require memory allocation.
+On Wed, Jun 25, 2025 at 02:27:28AM -0700, syzbot wrote:
+> syzbot found the following issue on:
+> 
+> HEAD commit:    714db279942b CREDITS: Add entry for Shannon Nelson
 
-However commit d30f83d278a9 ("interconnect: core: Add dynamic
-id allocation support") added a devm_kasprintf() call into a
-path protected by the 'icc_bw_lock' which causes this lockdep
-warning (at least on the IPQ9574 platform):
+Which does not include 7544f3f5b0b5 ("bridge: mcast: Fix use-after-free
+during router port configuration").
 
-    ======================================================
-    WARNING: possible circular locking dependency detected
-    6.15.0-next-20250529 #0 Not tainted
-    ------------------------------------------------------
-    swapper/0/1 is trying to acquire lock:
-    ffffffc081df57d8 (icc_bw_lock){+.+.}-{4:4}, at: icc_init+0x8/0x108
+> git tree:       net
+> console output: https://syzkaller.appspot.com/x/log.txt?x=11a59b0c580000
+> kernel config:  https://syzkaller.appspot.com/x/.config?x=d11f52d3049c3790
+> dashboard link: https://syzkaller.appspot.com/bug?extid=f53271ac312b49be132b
+> compiler:       Debian clang version 20.1.6 (++20250514063057+1e4d39e07757-1~exp1~20250514183223.118), Debian LLD 20.1.6
+> 
+> Unfortunately, I don't have any reproducer for this issue yet.
+> 
+> Downloadable assets:
+> disk image: https://storage.googleapis.com/syzbot-assets/4af647f77fe2/disk-714db279.raw.xz
+> vmlinux: https://storage.googleapis.com/syzbot-assets/df9d2caceadd/vmlinux-714db279.xz
+> kernel image: https://storage.googleapis.com/syzbot-assets/f05e60d250ae/bzImage-714db279.xz
+> 
+> IMPORTANT: if you fix the issue, please add the following tag to the commit:
+> Reported-by: syzbot+f53271ac312b49be132b@syzkaller.appspotmail.com
+> 
+> ==================================================================
+> BUG: KASAN: slab-use-after-free in br_multicast_has_router_adjacent+0x401/0x4e0 net/bridge/br_multicast.c:5005
 
-    but task is already holding lock:
-    ffffffc081d7db10 (fs_reclaim){+.+.}-{0:0}, at: icc_init+0x28/0x108
+Use-after-free in the multicast router list which should be fixed by
+7544f3f5b0b5 ("bridge: mcast: Fix use-after-free during router port
+configuration").
 
-    which lock already depends on the new lock.
+[...]
 
-    the existing dependency chain (in reverse order) is:
+> If the report is already addressed, let syzbot know by replying with:
+> #syz fix: exact-commit-title
 
-    -> #1 (fs_reclaim){+.+.}-{0:0}:
-           fs_reclaim_acquire+0x7c/0xb8
-           slab_alloc_node.isra.0+0x48/0x188
-           __kmalloc_node_track_caller_noprof+0xa4/0x2b8
-           devm_kmalloc+0x5c/0x138
-           devm_kvasprintf+0x6c/0xb8
-           devm_kasprintf+0x50/0x68
-           icc_node_add+0xbc/0x160
-           icc_clk_register+0x15c/0x230
-           devm_icc_clk_register+0x20/0x90
-           qcom_cc_really_probe+0x320/0x338
-           nss_cc_ipq9574_probe+0xac/0x1e8
-           platform_probe+0x70/0xd0
-           really_probe+0xdc/0x3b8
-           __driver_probe_device+0x94/0x178
-           driver_probe_device+0x48/0xf0
-           __driver_attach+0x13c/0x208
-           bus_for_each_dev+0x6c/0xb8
-           driver_attach+0x2c/0x40
-           bus_add_driver+0x100/0x250
-           driver_register+0x68/0x138
-           __platform_driver_register+0x2c/0x40
-           nss_cc_ipq9574_driver_init+0x24/0x38
-           do_one_initcall+0x88/0x340
-           kernel_init_freeable+0x2ac/0x4f8
-           kernel_init+0x28/0x1e8
-           ret_from_fork+0x10/0x20
-
-    -> #0 (icc_bw_lock){+.+.}-{4:4}:
-           __lock_acquire+0x1348/0x2090
-           lock_acquire+0x108/0x2d8
-           icc_init+0x50/0x108
-           do_one_initcall+0x88/0x340
-           kernel_init_freeable+0x2ac/0x4f8
-           kernel_init+0x28/0x1e8
-           ret_from_fork+0x10/0x20
-
-    other info that might help us debug this:
-
-     Possible unsafe locking scenario:
-
-           CPU0                    CPU1
-           ----                    ----
-      lock(fs_reclaim);
-                                   lock(icc_bw_lock);
-                                   lock(fs_reclaim);
-      lock(icc_bw_lock);
-
-     *** DEADLOCK ***
-
-    1 lock held by swapper/0/1:
-     #0: ffffffc081d7db10 (fs_reclaim){+.+.}-{0:0}, at: icc_init+0x28/0x108
-
-    stack backtrace:
-    CPU: 3 UID: 0 PID: 1 Comm: swapper/0 Not tainted 6.15.0-next-20250529 #0 NONE
-    Hardware name: Qualcomm Technologies, Inc. IPQ9574/AP-AL02-C7 (DT)
-    Call trace:
-     show_stack+0x20/0x38 (C)
-     dump_stack_lvl+0x90/0xd0
-     dump_stack+0x18/0x28
-     print_circular_bug+0x334/0x448
-     check_noncircular+0x12c/0x140
-     __lock_acquire+0x1348/0x2090
-     lock_acquire+0x108/0x2d8
-     icc_init+0x50/0x108
-     do_one_initcall+0x88/0x340
-     kernel_init_freeable+0x2ac/0x4f8
-     kernel_init+0x28/0x1e8
-     ret_from_fork+0x10/0x20
-
-The icc_node_add() functions is not designed to fail, and as such it
-should not do any memory allocation. In order to avoid this, move the
-name generation directly into the functions which are using the dynamic
-id feature.
-
-The change in the icc core has been tested on the IPQ9574 platform,
-where it eliminates the lockdep splat indicated above. The changes in
-the 'icc-rpmh' and 'osm-l3' drivers are compile tested only due to lack
-of suitable hardware.
-
-Fixes: d30f83d278a9 ("interconnect: core: Add dynamic id allocation support")
-Signed-off-by: Gabor Juhos <j4g8y7@gmail.com>
----
-Changes in v3:
-  - move memory allocation out from the icc_node_add() function directly into
-    the users of the dynamic id feature
-  - adjust commit description according to the changes
-  - Link to v2: https://lore.kernel.org/r/20250618-icc-bw-lockdep-v2-1-3223da346765@gmail.com
-
-Changes in v2:
-  - move memory allocation outside of icc_lock
-  - issue a warning and return without modifying the node name in case of
-    memory allocation failure, and adjust the commit description
-  - remove offered tags from Johan and Bryan
-    Note: since I was not sure that that the added WARN_ON() is a substantial
-    change or not, I have removed the offered tags intentionally to be on the
-    safe side
-  - Link to v1: https://lore.kernel.org/r/20250529-icc-bw-lockdep-v1-1-3d714b6a9374@gmail.com
----
- drivers/interconnect/core.c          |  4 ----
- drivers/interconnect/qcom/icc-rpmh.c | 20 ++++++++++++++++++--
- drivers/interconnect/qcom/osm-l3.c   | 10 +++++++++-
- 3 files changed, 27 insertions(+), 7 deletions(-)
-
-diff --git a/drivers/interconnect/core.c b/drivers/interconnect/core.c
-index 1a41e59c77f85a811f78986e98401625f4cadfa3..f0bdcdcf222af133fcb0a346fa347c5a829e62e6 100644
---- a/drivers/interconnect/core.c
-+++ b/drivers/interconnect/core.c
-@@ -1038,10 +1038,6 @@ void icc_node_add(struct icc_node *node, struct icc_provider *provider)
- 	node->avg_bw = node->init_avg;
- 	node->peak_bw = node->init_peak;
- 
--	if (node->id >= ICC_DYN_ID_START)
--		node->name = devm_kasprintf(provider->dev, GFP_KERNEL, "%s@%s",
--					    node->name, dev_name(provider->dev));
--
- 	if (node->avg_bw || node->peak_bw) {
- 		if (provider->pre_aggregate)
- 			provider->pre_aggregate(node);
-diff --git a/drivers/interconnect/qcom/icc-rpmh.c b/drivers/interconnect/qcom/icc-rpmh.c
-index 41bfc6e7ee1d53d34b919dd8afa97698bc69d79c..fa4ef78678eff10e83557035ba572010b51ff50c 100644
---- a/drivers/interconnect/qcom/icc-rpmh.c
-+++ b/drivers/interconnect/qcom/icc-rpmh.c
-@@ -276,13 +276,17 @@ int qcom_icc_rpmh_probe(struct platform_device *pdev)
- 		qcom_icc_bcm_init(qp->bcms[i], dev);
- 
- 	for (i = 0; i < num_nodes; i++) {
-+		bool is_dyn_node = false;
-+
- 		qn = qnodes[i];
- 		if (!qn)
- 			continue;
- 
- 		if (desc->alloc_dyn_id) {
--			if (!qn->node)
-+			if (!qn->node) {
- 				qn->node = icc_node_create_dyn();
-+				is_dyn_node = true;
-+			}
- 			node = qn->node;
- 		} else {
- 			node = icc_node_create(qn->id);
-@@ -293,7 +297,19 @@ int qcom_icc_rpmh_probe(struct platform_device *pdev)
- 			goto err_remove_nodes;
- 		}
- 
--		node->name = qn->name;
-+		if (is_dyn_node) {
-+			node->name = devm_kasprintf(provider->dev, GFP_KERNEL,
-+						    "%s@%s", qn->name,
-+						    dev_name(provider->dev));
-+			if (!node->name) {
-+				icc_node_destroy(node->id);
-+				ret = -ENOMEM;
-+				goto err_remove_nodes;
-+			}
-+		} else {
-+			node->name = qn->name;
-+		}
-+
- 		node->data = qn;
- 		icc_node_add(node, provider);
- 
-diff --git a/drivers/interconnect/qcom/osm-l3.c b/drivers/interconnect/qcom/osm-l3.c
-index baecbf2533f76cbf92bb2451979c4db57f8e4a2b..ed59fa73f0d70a5dfdb658ff606ef82977f04bcb 100644
---- a/drivers/interconnect/qcom/osm-l3.c
-+++ b/drivers/interconnect/qcom/osm-l3.c
-@@ -236,7 +236,15 @@ static int qcom_osm_l3_probe(struct platform_device *pdev)
- 			goto err;
- 		}
- 
--		node->name = qnodes[i]->name;
-+		node->name = devm_kasprintf(provider->dev, GFP_KERNEL, "%s@%s",
-+					    qnodes[i]->name,
-+					    dev_name(provider->dev));
-+		if (!node->name) {
-+			icc_node_destroy(node->id);
-+			ret = -ENOMEM;
-+			goto err;
-+		}
-+
- 		/* Cast away const and add it back in qcom_osm_l3_set() */
- 		node->data = (void *)qnodes[i];
- 		icc_node_add(node, provider);
-
----
-base-commit: 19272b37aa4f83ca52bdf9c16d5d81bdd1354494
-change-id: 20250529-icc-bw-lockdep-ed030d892a19
-
-Best regards,
--- 
-Gabor Juhos <j4g8y7@gmail.com>
-
+#syz fix: bridge: mcast: Fix use-after-free during router port configuration
 
