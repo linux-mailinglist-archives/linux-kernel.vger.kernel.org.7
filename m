@@ -1,138 +1,166 @@
-Return-Path: <linux-kernel+bounces-703559-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-703563-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2D6ACAE91F8
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Jun 2025 01:16:41 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2A82EAE9206
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Jun 2025 01:18:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 974647B5AC0
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Jun 2025 23:14:53 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D50227B70B7
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Jun 2025 23:16:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 682EA2FE33C;
-	Wed, 25 Jun 2025 23:13:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BBD4F2F49EE;
+	Wed, 25 Jun 2025 23:14:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b="vDS0zxQ3"
-Received: from relay.smtp-ext.broadcom.com (relay.smtp-ext.broadcom.com [192.19.144.207])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="jRLpBRrp"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.10])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 991742FA622;
-	Wed, 25 Jun 2025 23:13:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.19.144.207
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6A8152F4326;
+	Wed, 25 Jun 2025 23:14:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.10
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750893200; cv=none; b=m53hebLhVJRJ/bWaipav31BviBrG/FDH4kF+sMBihJ776b1kRjfYl4Zhg7dQwwZKPjOHrActsvjy3heAwXgkvnlJrkmibCDICLcdPKya8Va51/8O/gzRjXwwzkrgjPcz3ZgXLqYxk2qkBCpvv4S5fbMHlN8dbCI+dzYr3K6jPeE=
+	t=1750893286; cv=none; b=NVGC+T6Bugw5Bzay/md20v/2wRukEkj4QR1eEVMHy91rPOnXQU8WM9vvqkQ+Vd9jebMOwNZuSkuNZZeLrrLQYwysFnH8ETM8Ck2nIndf5g5oGVIwe9B3zrtSZzx8xeSmWHpMRUKvAFYcS4gtQnAXRp9oXBL3Hwpu7riFoAvnlvU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750893200; c=relaxed/simple;
-	bh=qh6e2Biw2maAV/F+E7c145v0o7b/d5cfpu9qQV/HZTs=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=PsCK/08ivwDMC3XIuciqmR0FCF+FtUuTbDnIMc6jif6fM133QHYWgoBDsuejtuogUKAhh2v1nh8wHLe2rwPUpYa9ys8/ggIksccubIKpx0CjRnpy06fIcHfnEK01cO+mQhndQ2uQ573uDOZ3d05gkhtGf5/2wZkhx2p5sVJC4gE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com; spf=fail smtp.mailfrom=broadcom.com; dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b=vDS0zxQ3; arc=none smtp.client-ip=192.19.144.207
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=broadcom.com
-Received: from mail-lvn-it-01.broadcom.com (mail-lvn-it-01.lvn.broadcom.net [10.36.132.253])
-	by relay.smtp-ext.broadcom.com (Postfix) with ESMTP id 50141C003AD4;
-	Wed, 25 Jun 2025 16:13:14 -0700 (PDT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 relay.smtp-ext.broadcom.com 50141C003AD4
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=broadcom.com;
-	s=dkimrelay; t=1750893194;
-	bh=qh6e2Biw2maAV/F+E7c145v0o7b/d5cfpu9qQV/HZTs=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=vDS0zxQ3vRlPv9pB+nKxiJ30rqUxh4hltdcXpbKIuo5r5CnI4NtrDe/EbKkhRlItw
-	 p+Gq2rufI+6i3pGprnVeU4OY2DHtHmEPk42prRO/rL+MpDQBCPoqtOWBoQLCz4rp9U
-	 QRFWUFInjmoj4fx7fQp7+ISW8J5j4EIWBwIGyyU0=
-Received: from fainelli-desktop.igp.broadcom.net (fainelli-desktop.dhcp.broadcom.net [10.67.48.245])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mail-lvn-it-01.broadcom.com (Postfix) with ESMTPSA id B8AF118000530;
-	Wed, 25 Jun 2025 16:13:13 -0700 (PDT)
-From: Florian Fainelli <florian.fainelli@broadcom.com>
-To: linux-kernel@vger.kernel.org
-Cc: Florian Fainelli <florian.fainelli@broadcom.com>,
-	Jan Kiszka <jan.kiszka@siemens.com>,
-	Kieran Bingham <kbingham@kernel.org>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>,
-	Dennis Zhou <dennis@kernel.org>,
-	Tejun Heo <tj@kernel.org>,
-	Christoph Lameter <cl@gentwo.org>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	"Rafael J. Wysocki" <rafael@kernel.org>,
-	Danilo Krummrich <dakr@kernel.org>,
-	Petr Mladek <pmladek@suse.com>,
-	Steven Rostedt <rostedt@goodmis.org>,
-	John Ogness <john.ogness@linutronix.de>,
-	Sergey Senozhatsky <senozhatsky@chromium.org>,
-	Ulf Hansson <ulf.hansson@linaro.org>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Andrey Ryabinin <ryabinin.a.a@gmail.com>,
-	Alexander Potapenko <glider@google.com>,
-	Andrey Konovalov <andreyknvl@gmail.com>,
-	Dmitry Vyukov <dvyukov@google.com>,
-	Vincenzo Frascino <vincenzo.frascino@arm.com>,
-	"Liam R. Howlett" <Liam.Howlett@oracle.com>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Luis Chamberlain <mcgrof@kernel.org>,
-	Petr Pavlu <petr.pavlu@suse.com>,
-	Sami Tolvanen <samitolvanen@google.com>,
-	Daniel Gomez <da.gomez@samsung.com>,
-	Kent Overstreet <kent.overstreet@linux.dev>,
-	Anna-Maria Behnsen <anna-maria@linutronix.de>,
-	Frederic Weisbecker <frederic@kernel.org>,
-	Alexander Viro <viro@zeniv.linux.org.uk>,
-	Christian Brauner <brauner@kernel.org>,
-	Jan Kara <jack@suse.cz>,
-	Uladzislau Rezki <urezki@gmail.com>,
-	Matthew Wilcox <willy@infradead.org>,
-	Kuan-Ying Lee <kuan-ying.lee@canonical.com>,
-	Ilya Leoshkevich <iii@linux.ibm.com>,
-	Etienne Buira <etienne.buira@free.fr>,
-	Antonio Quartulli <antonio@mandelbit.com>,
-	Illia Ostapyshyn <illia@yshyn.com>,
-	linux-clk@vger.kernel.org (open list:COMMON CLK FRAMEWORK),
-	linux-mm@kvack.org (open list:PER-CPU MEMORY ALLOCATOR),
-	linux-pm@vger.kernel.org (open list:GENERIC PM DOMAINS),
-	kasan-dev@googlegroups.com (open list:KASAN),
-	maple-tree@lists.infradead.org (open list:MAPLE TREE),
-	linux-modules@vger.kernel.org (open list:MODULE SUPPORT),
-	linux-fsdevel@vger.kernel.org (open list:PROC FILESYSTEM)
-Subject: [PATCH 16/16] MAINTAINERS: Include vfs.py under FILESYSTEMS entry
-Date: Wed, 25 Jun 2025 16:10:53 -0700
-Message-ID: <20250625231053.1134589-17-florian.fainelli@broadcom.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20250625231053.1134589-1-florian.fainelli@broadcom.com>
-References: <20250625231053.1134589-1-florian.fainelli@broadcom.com>
+	s=arc-20240116; t=1750893286; c=relaxed/simple;
+	bh=q+Xgk6gY7XYxDUH0slZtZV1r6bW0xVVA1X7mSXJHpKA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=lr3kUniIxdSTbgLbQJW0P4CSf86/u+QCF860xKsX3hkw89sKfsnVj6PC/0ho/Zhibnt9PT4Ids4iTPiVCNPcSSag90MGdsNzcx4yu4TKWPgPUcC7TuSwsRG5NdBtYTIiUUNGiB+6keIBq6IHlNk8hAU/yKgnG2FKwhI+DfWIZfU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=jRLpBRrp; arc=none smtp.client-ip=192.198.163.10
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1750893284; x=1782429284;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=q+Xgk6gY7XYxDUH0slZtZV1r6bW0xVVA1X7mSXJHpKA=;
+  b=jRLpBRrpOFLwacBmxvo8gnb9n+sva/YNn6hHhoBamIAOHVrrZ5IW2zhs
+   62EtMI3g6kDuDPg5bioH2qRJ8cuhw/RDDA01QBOimGmh0lVTydPgG64EZ
+   nWmUDlptGjqYChLqfWzPiOvcAjPXjNag0G+GJiZ+vuGwSXJZLuJeq5oDt
+   57kYmLzjF1c9sL72kO5KAZJYRJAJ6iDhOTBQWuIvYNpne6sYi1dDlvinw
+   Mh/6mTOqkH8wo9itzdiJgLp0s3cD2Xnnwv5h8d6FhIP0Paj4S/N6HYjmA
+   3er50gSu4B6x7MO1AiUSNV4k0FnKOtY6yqYlF3/vUULOeri0ENkRGMgJ8
+   g==;
+X-CSE-ConnectionGUID: gS8cdfx3SLq2S9BlQTolug==
+X-CSE-MsgGUID: y79klQh9T7+g9wKIXsHIjg==
+X-IronPort-AV: E=McAfee;i="6800,10657,11475"; a="64534621"
+X-IronPort-AV: E=Sophos;i="6.16,265,1744095600"; 
+   d="scan'208";a="64534621"
+Received: from orviesa005.jf.intel.com ([10.64.159.145])
+  by fmvoesa104.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 25 Jun 2025 16:14:43 -0700
+X-CSE-ConnectionGUID: wzR4hzHxQJWM2Z80q5tYIw==
+X-CSE-MsgGUID: nGIuA4g5T4+jfVIKBXXyCw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.16,265,1744095600"; 
+   d="scan'208";a="158107202"
+Received: from lkp-server01.sh.intel.com (HELO e8142ee1dce2) ([10.239.97.150])
+  by orviesa005.jf.intel.com with ESMTP; 25 Jun 2025 16:14:40 -0700
+Received: from kbuild by e8142ee1dce2 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1uUZKA-000TW6-05;
+	Wed, 25 Jun 2025 23:14:38 +0000
+Date: Thu, 26 Jun 2025 07:14:01 +0800
+From: kernel test robot <lkp@intel.com>
+To: Wen Gu <guwen@linux.alibaba.com>, richardcochran@gmail.com,
+	andrew+netdev@lunn.ch, davem@davemloft.net, edumazet@google.com,
+	kuba@kernel.org, pabeni@redhat.com
+Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
+	xuanzhuo@linux.alibaba.com, dust.li@linux.alibaba.com,
+	netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+	guwen@linux.alibaba.com
+Subject: Re: [PATCH net-next] ptp: add Alibaba CIPU PTP clock driver
+Message-ID: <202506260725.kFmPHRIJ-lkp@intel.com>
+References: <20250625132549.93614-1-guwen@linux.alibaba.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250625132549.93614-1-guwen@linux.alibaba.com>
 
-Include the GDB scripts file under scripts/gdb/linux/vfs.py under the
-FILESYSTEMS (VFS and infrastructure) subsystem since it parses internal
-data structures that depend upon that subsystem.
+Hi Wen,
 
-Signed-off-by: Florian Fainelli <florian.fainelli@broadcom.com>
----
- MAINTAINERS | 1 +
- 1 file changed, 1 insertion(+)
+kernel test robot noticed the following build errors:
 
-diff --git a/MAINTAINERS b/MAINTAINERS
-index a90d926c90a0..a292012a3ff1 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -9290,6 +9290,7 @@ F:	include/uapi/linux/openat2.h
- F:	Documentation/driver-api/early-userspace/buffer-format.rst
- F:	init/do_mounts*
- F:	init/*initramfs*
-+F:	scripts/gdb/linux/vfs.py
- 
- FILESYSTEMS [EXPORTFS]
- M:	Chuck Lever <chuck.lever@oracle.com>
+[auto build test ERROR on net-next/main]
+
+url:    https://github.com/intel-lab-lkp/linux/commits/Wen-Gu/ptp-add-Alibaba-CIPU-PTP-clock-driver/20250625-212835
+base:   net-next/main
+patch link:    https://lore.kernel.org/r/20250625132549.93614-1-guwen%40linux.alibaba.com
+patch subject: [PATCH net-next] ptp: add Alibaba CIPU PTP clock driver
+config: x86_64-buildonly-randconfig-002-20250626 (https://download.01.org/0day-ci/archive/20250626/202506260725.kFmPHRIJ-lkp@intel.com/config)
+compiler: clang version 20.1.7 (https://github.com/llvm/llvm-project 6146a88f60492b520a36f8f8f3231e15f3cc6082)
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250626/202506260725.kFmPHRIJ-lkp@intel.com/reproduce)
+
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202506260725.kFmPHRIJ-lkp@intel.com/
+
+All errors (new ones prefixed by >>):
+
+>> drivers/ptp/ptp_cipu.c:775:8: error: call to undeclared function 'pci_request_irq'; ISO C99 and later do not support implicit function declarations [-Wimplicit-function-declaration]
+     775 |                 rc = pci_request_irq(pdev, i, irq_ctx[i].irq_func, NULL,
+         |                      ^
+   drivers/ptp/ptp_cipu.c:775:8: note: did you mean 'pci_request_acs'?
+   include/linux/pci.h:2570:6: note: 'pci_request_acs' declared here
+    2570 | void pci_request_acs(void);
+         |      ^
+>> drivers/ptp/ptp_cipu.c:784:3: error: call to undeclared function 'pci_free_irq'; ISO C99 and later do not support implicit function declarations [-Wimplicit-function-declaration]
+     784 |                 pci_free_irq(pdev, i, ptp_ctx);
+         |                 ^
+>> drivers/ptp/ptp_cipu.c:785:2: error: call to undeclared function 'pci_free_irq_vectors'; ISO C99 and later do not support implicit function declarations [-Wimplicit-function-declaration]
+     785 |         pci_free_irq_vectors(pdev);
+         |         ^
+   drivers/ptp/ptp_cipu.c:785:2: note: did you mean 'pci_alloc_irq_vectors'?
+   include/linux/pci.h:2139:1: note: 'pci_alloc_irq_vectors' declared here
+    2139 | pci_alloc_irq_vectors(struct pci_dev *dev, unsigned int min_vecs,
+         | ^
+   drivers/ptp/ptp_cipu.c:796:3: error: call to undeclared function 'pci_free_irq'; ISO C99 and later do not support implicit function declarations [-Wimplicit-function-declaration]
+     796 |                 pci_free_irq(pdev, i, ptp_ctx);
+         |                 ^
+   drivers/ptp/ptp_cipu.c:797:2: error: call to undeclared function 'pci_free_irq_vectors'; ISO C99 and later do not support implicit function declarations [-Wimplicit-function-declaration]
+     797 |         pci_free_irq_vectors(pdev);
+         |         ^
+   5 errors generated.
+
+
+vim +/pci_request_irq +775 drivers/ptp/ptp_cipu.c
+
+   763	
+   764	static int ptp_cipu_init_irq(struct ptp_cipu_ctx *ptp_ctx)
+   765	{
+   766		struct pci_dev *pdev = ptp_ctx->pdev;
+   767		int i, rc;
+   768	
+   769		rc = pci_alloc_irq_vectors(pdev, PTP_CIPU_IRQ_NUM,
+   770					   PTP_CIPU_IRQ_NUM, PCI_IRQ_MSIX);
+   771		if (rc < 0)
+   772			goto out;
+   773	
+   774		for (i = 0; i < PTP_CIPU_IRQ_NUM; i++) {
+ > 775			rc = pci_request_irq(pdev, i, irq_ctx[i].irq_func, NULL,
+   776					     ptp_ctx, "ptp-cipu");
+   777			if (rc)
+   778				goto out_vec;
+   779		}
+   780		return 0;
+   781	
+   782	out_vec:
+   783		for (i = i - 1; i >= 0; i--)
+ > 784			pci_free_irq(pdev, i, ptp_ctx);
+ > 785		pci_free_irq_vectors(pdev);
+   786	out:
+   787		return rc;
+   788	}
+   789	
+
 -- 
-2.43.0
-
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
