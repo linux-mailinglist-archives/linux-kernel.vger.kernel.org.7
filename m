@@ -1,212 +1,96 @@
-Return-Path: <linux-kernel+bounces-703180-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-703191-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3957AAE8CA8
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Jun 2025 20:39:24 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 384D0AE8CBF
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Jun 2025 20:42:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0496E7B65AF
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Jun 2025 18:37:44 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7D1074A7360
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Jun 2025 18:42:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E0EBA2DBF78;
-	Wed, 25 Jun 2025 18:38:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 33B672DCBE7;
+	Wed, 25 Jun 2025 18:39:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="Xi6jQYE/";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="e6qeYh+G"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Q3gbLHlg"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B88D42D8DBD;
-	Wed, 25 Jun 2025 18:38:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7129B2DAFBC;
+	Wed, 25 Jun 2025 18:39:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750876715; cv=none; b=aNBmSECL5NBMPlvZl94fjTgjmAEJOP/AtGrmmUEinGKOV3VbwftkdkwKbiHEw2QQEkqMjT9dl5ikhjgQLJi27H5ByxKOi2aj2fdMrKj7a4ID/YcxILO+E56VYxykUK/QR+AlhD0ggeEC05E0o4yVOeZ63tpaw/G/MiNpW3WpLF8=
+	t=1750876747; cv=none; b=WObQjS41eZj/mcgFUoajdZDsVKvKM/ZZhk2kxkmQDlJveM8e8dwhGeVqT5VvR/9KjCZl3BFGC5ha09petX0eJ2P9zu37icRaPZDHqAFbeLrhG96Xp38m3NF4PqP/KCHIoPHQDBBZG/1LFX/Z3NDTsna7MpwO8Z/HJzGzdHf/h+Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750876715; c=relaxed/simple;
-	bh=D1P6//gGLnJK/BUkGyyzg8j12UrrtDCjbavWR9nLcig=;
-	h=Message-ID:From:To:Cc:Subject:References:MIME-Version:
-	 Content-Type:Date; b=F/ccX0EHyTB+RDu0gjKYrKIEXfeGnHpFblB4UCN5GfW3S/ZgLFWmmHA64gCt9Q8xhVPM0Ks1YL8szouHGki6e1AibxECUv1dQqDNYpR4bKt2G9ec3YIWlU+zlsVToG7qhfN2UcMM/add/GlO7vdUdYtT2tcqyMVZhNi5mJYx8V4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=Xi6jQYE/; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=e6qeYh+G; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Message-ID: <20250625183757.868342628@linutronix.de>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1750876711;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 references:references; bh=gYeMVqE9QiE6MqwPDRadjXqz6IU75/CthgeCFNFFOMA=;
-	b=Xi6jQYE/dZAcbkNiP5oRzWup9TqPo9WT/C488F77EnlXjQIuf1Uw9OjCJle/7TDnIQwIeA
-	02Ehzzji2TRrmqpYDE6DkjMp2Jap2rwvGevzDhkb83HpEGCJpo3Nd+wQgPAdqUSiILfFjX
-	cvYaQdCMbuhnyc0zybonb7o/ZHqgnzPWKJZ1vr1TJie5qDaL2FxEa8Mee0ITGOMsmDBRjg
-	gXYxhRf6W/SswZ0VhcNlTBK5BatXmKzt8MW7bsPeljVyxIKkD7zaf7NbVE0l19Uxcis/9f
-	2BdcwBTOdVfOmPPn7tiXz8vIIYlVktnnIxzZAK0blIexT5UJ6bowLZXCdSqsAw==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1750876711;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 references:references; bh=gYeMVqE9QiE6MqwPDRadjXqz6IU75/CthgeCFNFFOMA=;
-	b=e6qeYh+GTsUclrushjwH6Kcu1pNUfzBbqY1df4VEozvyPhSfbDz35WQqz7kep6ZEPF7syp
-	v3jDw0nygG1Bm6Cw==
-From: Thomas Gleixner <tglx@linutronix.de>
-To: LKML <linux-kernel@vger.kernel.org>
-Cc: netdev@vger.kernel.org,
- Richard Cochran <richardcochran@gmail.com>,
- Christopher Hall <christopher.s.hall@intel.com>,
- John Stultz <jstultz@google.com>,
- Frederic Weisbecker <frederic@kernel.org>,
- Anna-Maria Behnsen <anna-maria@linutronix.de>,
- Miroslav Lichvar <mlichvar@redhat.com>,
- Werner Abt <werner.abt@meinberg-usa.com>,
- David Woodhouse <dwmw2@infradead.org>,
- Stephen Boyd <sboyd@kernel.org>,
- =?UTF-8?q?Thomas=20Wei=C3=9Fschuh?= <thomas.weissschuh@linutronix.de>,
- Kurt Kanzenbach <kurt@linutronix.de>,
- Nam Cao <namcao@linutronix.de>,
- Antoine Tenart <atenart@kernel.org>
-Subject: [patch V3 02/11] timekeeping: Provide time getters for auxiliary
- clocks
-References: <20250625182951.587377878@linutronix.de>
+	s=arc-20240116; t=1750876747; c=relaxed/simple;
+	bh=WRHYPzI57hddDK7CE8Wr1nJ8heCzKe+3hF0K0wP3ejc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=F4vGnjV6QPXIxIpwTWjbZqcgnwDQAY6AY+6Ao/hPvv7l2tBubueTlvZ3QE+uBb7AxPRTnwvE+MIBA0ixAsK0RdirgrZUMGEF3mQ1v9diTl1+UDM9TJxsLEWyrGquPvY6yoiw9AhHUfwEhVegQl6WVK/GGBf2QqbAaqweVZ5/TZQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Q3gbLHlg; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id BE3C0C4CEEA;
+	Wed, 25 Jun 2025 18:39:06 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1750876747;
+	bh=WRHYPzI57hddDK7CE8Wr1nJ8heCzKe+3hF0K0wP3ejc=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=Q3gbLHlg+Xr2KnUs3hglU2onJJoUGSlohkLlIO0HiHKEfzcHm7gbBX7ehcf6RPYV/
+	 +lZdqAI4YsE3A8mHgnUfSM9Qr3Uqr4VhCyGtockNTKWG0+lc/YO91ybT2218qYd9B8
+	 jOIucmU2Yi99l/8qd4aJIkS2fkjuIddv1w1bJOwL0xgoqCDcWZy9KQ2abe8KvHwn3Y
+	 BpA+FSQrIB4THuqB3RMyQi/a0HkIxNqAHE5vcpF0mV4D0ZBT/g9VXKCrxMjPY5B9lC
+	 SRv0AlpeaFxq62qgpTMg5AGtCYq6KdpB/doP2ovkMnfKnZJimNdBjGwPNThRlOjZ0r
+	 N27ijJqi/rVSg==
+Date: Wed, 25 Jun 2025 11:38:31 -0700
+From: Eric Biggers <ebiggers@kernel.org>
+To: Theodore Ts'o <tytso@mit.edu>
+Cc: Simon Richter <Simon.Richter@hogyros.de>, linux-fscrypt@vger.kernel.org,
+	linux-crypto@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-mtd@lists.infradead.org, linux-ext4@vger.kernel.org,
+	linux-f2fs-devel@lists.sourceforge.net, ceph-devel@vger.kernel.org
+Subject: Re: [PATCH] fscrypt: don't use hardware offload Crypto API drivers
+Message-ID: <20250625183831.GA1703@sol>
+References: <20250611205859.80819-1-ebiggers@kernel.org>
+ <7f63be76-289b-4a99-b802-afd72e0512b8@hogyros.de>
+ <20250612005914.GA546455@google.com>
+ <20250612062521.GA1838@sol>
+ <20250625063252.GD8962@sol>
+ <20250625124445.GC28249@mit.edu>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Date: Wed, 25 Jun 2025 20:38:31 +0200 (CEST)
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250625124445.GC28249@mit.edu>
 
-Provide interfaces similar to the ktime_get*() family which provide access
-to the auxiliary clocks.
+On Wed, Jun 25, 2025 at 08:44:45AM -0400, Theodore Ts'o wrote:
+> On Tue, Jun 24, 2025 at 11:32:52PM -0700, Eric Biggers wrote:
+> > 
+> > That was the synchronous throughput.  However, submitting multiple requests
+> > asynchronously (which again, fscrypt doesn't actually do) barely helps.
+> > Apparently the STM32 crypto engine has only one hardware queue.
+> > 
+> > I already strongly suspected that these non-inline crypto engines
+> > aren't worth using.  But I didn't realize they are quite this bad.
+> > Even with AES on a Cortex-A7 CPU that lacks AES instructions, the
+> > CPU is much faster!
+> 
+> I wonder if the primary design goal of the STM32 crypto engine is that
+> it might reduce power consumption --- after all, one of the primary
+> benchmarketing metrics that vendors care about is "hours of You Tube
+> watch time" --- and decryptoing a video stream doesn't require high
+> performance.
+> 
+> Given that the typical benchmarketing number which handset vendors
+> tend to care about is SQLite transactions per second, maybe they
+> wouldn't be all that eager to use the crypto engine.  :-)
+> 
 
-These interfaces have a boolean return value, which indicates whether the
-accessed clock is valid or not.
+My STM32MP157F-DK2 board (with screen removed) is pulling 1.5W regardless of
+whether it's running the benchmark with the STM32 crypto engine or with the NEON
+bit-sliced code.  However, the NEON bit-sliced code finishes 5 times faster.
 
-Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
----
-V3: Remove misleading TAI comment and use aux_tkd* for clarity - John
----
- include/linux/posix-timers.h |    5 +++
- include/linux/timekeeping.h  |   11 +++++++
- kernel/time/timekeeping.c    |   65 +++++++++++++++++++++++++++++++++++++++++++
- 3 files changed, 81 insertions(+)
----
-
---- a/include/linux/posix-timers.h
-+++ b/include/linux/posix-timers.h
-@@ -37,6 +37,11 @@ static inline int clockid_to_fd(const cl
- 	return ~(clk >> 3);
- }
- 
-+static inline bool clockid_aux_valid(clockid_t id)
-+{
-+	return IS_ENABLED(CONFIG_POSIX_AUX_CLOCKS) && id >= CLOCK_AUX && id <= CLOCK_AUX_LAST;
-+}
-+
- #ifdef CONFIG_POSIX_TIMERS
- 
- #include <linux/signal_types.h>
---- a/include/linux/timekeeping.h
-+++ b/include/linux/timekeeping.h
-@@ -263,6 +263,17 @@ extern bool timekeeping_rtc_skipresume(v
- 
- extern void timekeeping_inject_sleeptime64(const struct timespec64 *delta);
- 
-+/*
-+ * Auxiliary clock interfaces
-+ */
-+#ifdef CONFIG_POSIX_AUX_CLOCKS
-+extern bool ktime_get_aux(clockid_t id, ktime_t *kt);
-+extern bool ktime_get_aux_ts64(clockid_t id, struct timespec64 *kt);
-+#else
-+static inline bool ktime_get_aux(clockid_t id, ktime_t *kt) { return false; }
-+static inline bool ktime_get_aux_ts64(clockid_t id, struct timespec64 *kt) { return false; }
-+#endif
-+
- /**
-  * struct system_time_snapshot - simultaneous raw/real time capture with
-  *				 counter value
---- a/kernel/time/timekeeping.c
-+++ b/kernel/time/timekeeping.c
-@@ -2659,6 +2659,18 @@ EXPORT_SYMBOL(hardpps);
- /* Bitmap for the activated auxiliary timekeepers */
- static unsigned long aux_timekeepers;
- 
-+static inline unsigned int clockid_to_tkid(unsigned int id)
-+{
-+	return TIMEKEEPER_AUX_FIRST + id - CLOCK_AUX;
-+}
-+
-+static inline struct tk_data *aux_get_tk_data(clockid_t id)
-+{
-+	if (!clockid_aux_valid(id))
-+		return NULL;
-+	return &timekeeper_data[clockid_to_tkid(id)];
-+}
-+
- /* Invoked from timekeeping after a clocksource change */
- static void tk_aux_update_clocksource(void)
- {
-@@ -2679,6 +2691,59 @@ static void tk_aux_update_clocksource(vo
- 	}
- }
- 
-+/**
-+ * ktime_get_aux - Get time for a AUX clock
-+ * @id:	ID of the clock to read (CLOCK_AUX...)
-+ * @kt:	Pointer to ktime_t to store the time stamp
-+ *
-+ * Returns: True if the timestamp is valid, false otherwise
-+ */
-+bool ktime_get_aux(clockid_t id, ktime_t *kt)
-+{
-+	struct tk_data *aux_tkd = aux_get_tk_data(id);
-+	struct timekeeper *aux_tk;
-+	unsigned int seq;
-+	ktime_t base;
-+	u64 nsecs;
-+
-+	WARN_ON(timekeeping_suspended);
-+
-+	if (!aux_tkd)
-+		return false;
-+
-+	aux_tk = &aux_tkd->timekeeper;
-+	do {
-+		seq = read_seqcount_begin(&aux_tkd->seq);
-+		if (!aux_tk->clock_valid)
-+			return false;
-+
-+		base = ktime_add(aux_tk->tkr_mono.base, aux_tk->offs_aux);
-+		nsecs = timekeeping_get_ns(&aux_tk->tkr_mono);
-+	} while (read_seqcount_retry(&aux_tkd->seq, seq));
-+
-+	*kt = ktime_add_ns(base, nsecs);
-+	return true;
-+}
-+EXPORT_SYMBOL_GPL(ktime_get_aux);
-+
-+/**
-+ * ktime_get_aux_ts64 - Get time for a AUX clock
-+ * @id:	ID of the clock to read (CLOCK_AUX...)
-+ * @ts:	Pointer to timespec64 to store the time stamp
-+ *
-+ * Returns: True if the timestamp is valid, false otherwise
-+ */
-+bool ktime_get_aux_ts64(clockid_t id, struct timespec64 *ts)
-+{
-+	ktime_t now;
-+
-+	if (!ktime_get_aux(id, &now))
-+		return false;
-+	*ts = ktime_to_timespec64(now);
-+	return true;
-+}
-+EXPORT_SYMBOL_GPL(ktime_get_aux_ts64);
-+
- static __init void tk_aux_setup(void)
- {
- 	for (int i = TIMEKEEPER_AUX_FIRST; i <= TIMEKEEPER_AUX_LAST; i++)
-
+- Eric
 
