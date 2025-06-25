@@ -1,104 +1,128 @@
-Return-Path: <linux-kernel+bounces-702212-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-702215-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id DD2F6AE7F91
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Jun 2025 12:35:59 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id AEEC8AE7F9E
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Jun 2025 12:37:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 952515A428F
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Jun 2025 10:35:34 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BC8F84A14D6
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Jun 2025 10:37:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 919642D5C77;
-	Wed, 25 Jun 2025 10:33:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="C7nKcv10";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="M1lX4h+W"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7D6962BDC39;
+	Wed, 25 Jun 2025 10:34:49 +0000 (UTC)
+Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4CF022D3A8C;
-	Wed, 25 Jun 2025 10:33:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7337E2BDC11
+	for <linux-kernel@vger.kernel.org>; Wed, 25 Jun 2025 10:34:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750847635; cv=none; b=mOTDthLvwiwNHVuC/jEiaQeS0mqCYhDS2YqwXCUj8b1T5wDYMmuuXXN5dg22+bYK+OzOhhf/ohJ+MK7b9qrbxZwWGu5Lvn+RVZP2iCKCsm+c2wELt+UF3ls4wEdLTiQMs1bcMYVoapCM92w9gAPeolCKA6RcXAtqsn004bQsRrQ=
+	t=1750847689; cv=none; b=Q4pnGsQjD3inLpNiBjX+CqgFe7wi17tR1eI4heM6VfTrrcBEdgDDp7ZXocNWXkQcNnmkOnGnmGUtgt6vqvkJXI0IUJflCCT7F221n165FeXO/UOfDr5sQJQGh4hZWWEf38bJzeKPOCigUdoK/73T2Au0afUO6/DN+lGjpNLi/KY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750847635; c=relaxed/simple;
-	bh=u2JL3FczzXcYtFQ+pSya9xx54ScgFCYZ3yXRPtod8d8=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=CyulyUXJ4NjLqP5hARtQIRJDvyc6PadyoVV7TiJjPK13Z4H11v65ZIIivW0cKVfiqjR1yuHNFkWUK8EQQoGqf6O2lIebZ5kM1LGdT+3I1vtVLsSIigUc8fAV6N4xEeoDP+wlYU6CnZ68arW96nWt5MT+egJqrVu2YZdD2Zna+F0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=C7nKcv10; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=M1lX4h+W; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-From: Thomas Gleixner <tglx@linutronix.de>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1750847630;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=qS6j5Ud4Qg98bvTPqfEkTAjFzlZLvEpnPb7sBn/6J2s=;
-	b=C7nKcv10PjDtpZWxlW9pXi3qXgMwERA0tp2jp8bAUfPULc59b16dAsTVfszFSpVMPW0O+L
-	raoe3dlxusFPIq7J9QlFkruKRA52JarS1EHM4p1wHxjR7tY7Mgd6oB/w8TFBb0voUcQ7Ke
-	80IEWbb82LsBNDv2LiZd8MjSKTLPRRLKhzJDNe59g8kTBdZevRi2BY1ZzmYpCIKv4uaxoH
-	mko4vwSABGGo6ntRAt9SmoKWXU6DA/hBprR8T1fFaTMRSCN9Vvkdnxlrw5wSdpuHe2w1wH
-	QJRZMYMdDn9GJgs/gdJGsVHNQoS/R3YXadX+YUUAUPtEL8KmHcQYjFWQxWFl1A==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1750847630;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=qS6j5Ud4Qg98bvTPqfEkTAjFzlZLvEpnPb7sBn/6J2s=;
-	b=M1lX4h+WkCPuP3pfhTegwN2nuqTnB/U/ZQTpdRI1p1XTEg3ctbLdvLz5eDWTVq2OdMwDZa
-	ijiPqw+ctrXqWYCQ==
-To: Jakub Kicinski <kuba@kernel.org>
-Cc: LKML <linux-kernel@vger.kernel.org>, Richard Cochran
- <richardcochran@gmail.com>, netdev@vger.kernel.org
-Subject: Re: [patch 13/13] ptp: Convert ptp_open/read() to __free()
-In-Reply-To: <20250624093600.17c655a8@kernel.org>
-References: <20250620130144.351492917@linutronix.de>
- <20250620131944.533741574@linutronix.de>
- <20250624093600.17c655a8@kernel.org>
-Date: Wed, 25 Jun 2025 12:33:50 +0200
-Message-ID: <87cyasaz5d.ffs@tglx>
+	s=arc-20240116; t=1750847689; c=relaxed/simple;
+	bh=MN0a0M5SY8qVye0UR6x7OgeBX33RCLWkHTWSqb1SIG0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=OSxWzF5VTj4QWQMj2FEZIaqxVQUEo+QBrtOzyukXwzQnQu+qIaVvmqK3lCkaUIRpMVu4OS8oDXnO7NJwTsTMuC6aTUe9z9t7p3bLr6NuRgKd6L6kCy+Wf8GfLr7lCxS7or+jhcGSBJnZZ5udjaO2HeQAEFwtyIeM+ko2CsfSJMg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
+Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
+	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+	(Exim 4.92)
+	(envelope-from <mfe@pengutronix.de>)
+	id 1uUNSO-0007Kd-Gq; Wed, 25 Jun 2025 12:34:20 +0200
+Received: from pty.whiteo.stw.pengutronix.de ([2a0a:edc0:2:b01:1d::c5])
+	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.96)
+	(envelope-from <mfe@pengutronix.de>)
+	id 1uUNSO-005GSi-08;
+	Wed, 25 Jun 2025 12:34:20 +0200
+Received: from mfe by pty.whiteo.stw.pengutronix.de with local (Exim 4.96)
+	(envelope-from <mfe@pengutronix.de>)
+	id 1uUNSN-00H7jR-2z;
+	Wed, 25 Jun 2025 12:34:19 +0200
+Date: Wed, 25 Jun 2025 12:34:19 +0200
+From: Marco Felsch <m.felsch@pengutronix.de>
+To: Pankaj Gupta <pankaj.gupta@nxp.com>
+Cc: Jonathan Corbet <corbet@lwn.net>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>, Shawn Guo <shawnguo@kernel.org>,
+	Sascha Hauer <s.hauer@pengutronix.de>,
+	Pengutronix Kernel Team <kernel@pengutronix.de>,
+	Fabio Estevam <festevam@gmail.com>, devicetree@vger.kernel.org,
+	imx@lists.linux.dev, linux-doc@vger.kernel.org,
+	Frank Li <Frank.Li@nxp.com>, linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH v18 0/7] firmware: imx: driver for NXP secure-enclave
+Message-ID: <20250625103419.h32apyxfjztpoi7k@pengutronix.de>
+References: <20250619-imx-se-if-v18-0-c98391ba446d@nxp.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250619-imx-se-if-v18-0-c98391ba446d@nxp.com>
+X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
+X-SA-Exim-Mail-From: mfe@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 
-On Tue, Jun 24 2025 at 09:36, Jakub Kicinski wrote:
-> On Fri, 20 Jun 2025 15:24:50 +0200 (CEST) Thomas Gleixner wrote:
->> Get rid of the kfree() and goto maze and just return error codes directly.
->
-> Maybe just skip this patch?  FWIW we prefer not to use __free()
-> within networking code.  But this is as much time as networking
-> so up to you.
->
->   Using device-managed and cleanup.h constructs
->   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
->
->    [...]
->
->   Low level cleanup constructs (such as ``__free()``) can be used when building
->   APIs and helpers, especially scoped iterators. However, direct use of
->   ``__free()`` within networking core and drivers is discouraged.
->   Similar guidance applies to declaring variables mid-function.
+Hi Pankaj,
 
-Interesting decision, unfortunately it lacks a rationale in that
-documentation.
+thank you for the patchset and sorry for jumping late.
 
-I reworked the patch without the __free(), which still cleans up the mix
-of goto exit and return ERRCODE inconsistencies.
+On 25-06-19, Pankaj Gupta wrote:
 
-Let me send out V3 with that and network/ptp people can still decided to
-ignore it :)
+...
+> ---
+> Pankaj Gupta (7):
+>       Documentation/firmware: add imx/se to other_interfaces
+>       dt-bindings: arm: fsl: add imx-se-fw binding doc
+>       firmware: imx: add driver for NXP EdgeLock Enclave
+>       firmware: imx: device context dedicated to priv
+>       firmware: drivers: imx: adds miscdev
 
-Thanks,
+I didn't had the time for a detailed review but the patches3-5 (e.g. all
+firmware: *) can be squashed. In patch3 you add a set of files which
+you're going to patch in patch4 and patch5.
 
-        tglx
+Please have a look at my comment on patch3.
 
+Regards,
+  Marco
 
+>       arm64: dts: imx8ulp: add secure enclave node
+>       arm64: dts: imx8ulp-evk: add reserved memory property
+> 
+>  Documentation/ABI/testing/se-cdev                  |   43 +
+>  .../devicetree/bindings/firmware/fsl,imx-se.yaml   |   91 ++
+>  .../driver-api/firmware/other_interfaces.rst       |  123 +++
+>  arch/arm64/boot/dts/freescale/imx8ulp-evk.dts      |   12 +-
+>  arch/arm64/boot/dts/freescale/imx8ulp.dtsi         |   11 +-
+>  drivers/firmware/imx/Kconfig                       |   13 +
+>  drivers/firmware/imx/Makefile                      |    2 +
+>  drivers/firmware/imx/ele_base_msg.c                |  269 +++++
+>  drivers/firmware/imx/ele_base_msg.h                |   95 ++
+>  drivers/firmware/imx/ele_common.c                  |  354 ++++++
+>  drivers/firmware/imx/ele_common.h                  |   49 +
+>  drivers/firmware/imx/se_ctrl.c                     | 1145 ++++++++++++++++++++
+>  drivers/firmware/imx/se_ctrl.h                     |  128 +++
+>  include/linux/firmware/imx/se_api.h                |   14 +
+>  include/uapi/linux/se_ioctl.h                      |   97 ++
+>  15 files changed, 2443 insertions(+), 3 deletions(-)
+> ---
+> base-commit: 9e9eef5925a5d2b1938484c4edc906e384145959
+> change-id: 20240507-imx-se-if-a40055093dc6
+> 
+> Best regards,
+> -- 
+> Pankaj Gupta <pankaj.gupta@nxp.com>
+> 
+> 
+> 
 
