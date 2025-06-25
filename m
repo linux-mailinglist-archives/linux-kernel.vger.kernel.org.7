@@ -1,184 +1,156 @@
-Return-Path: <linux-kernel+bounces-702592-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-702601-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 47FD6AE8477
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Jun 2025 15:24:14 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 80296AE846C
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Jun 2025 15:23:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C15FB18981CD
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Jun 2025 13:20:43 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CC5D03B6C11
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Jun 2025 13:22:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D59022620CB;
-	Wed, 25 Jun 2025 13:19:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C711D26B757;
+	Wed, 25 Jun 2025 13:19:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="leSlgYCU"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="C9cgz6wT"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.9])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B66F925E44D
-	for <linux-kernel@vger.kernel.org>; Wed, 25 Jun 2025 13:19:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 61B4426AA83
+	for <linux-kernel@vger.kernel.org>; Wed, 25 Jun 2025 13:19:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.9
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750857554; cv=none; b=azHuiSVnzoVpPeINwHX73Fwps0maTszJ2teEdMm3lqgyBWNSHtm3UjIyt76BXKfovFuA4tH66gXXMpnGbjA8ZMaQHB6SOf0U2xmSmLHQUbVll83twJ/speyHNEwhLLn6Z7N1HAP1A+A4OcEQnWr8cDa/wWo7vq/ZXgH70UAyO+o=
+	t=1750857583; cv=none; b=NM6kGCoUGglpjN5QgM7h6Qc4JBiXG5OJGLarRUp0DxfSSnuVbx5UpKuGr8cgv9Ib078ll+q0sFFDOEYwYcT9aDn393BtSz2bqAQvJBLTWWJVLxjLFR99bRROPA0zYdTBGuiOSM3YJy0d4xqOd6Fc1VPB+vVKeFwivIGNGJzYdzU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750857554; c=relaxed/simple;
-	bh=OLbZLCeEIh/QhsKvBR05z93Lz887to7p39N5x/NgpCM=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=HK8jOqpw1S/I5ulYBjPHSh4tVFNbP0iEFClw0YKMLrxhH3ljIJm/cVCaNKWwNmr/mbZH36LiVpCEULTwshewAkVO0c4RCh1SlYHDfbJ3sJJSzKxczCMLtNhikdNRLXGdb3je2SKkfmlL9FI0pUD81m5Sn7KGFve+STiBJYOUBwA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=leSlgYCU; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279867.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 55PAL9lN001286
-	for <linux-kernel@vger.kernel.org>; Wed, 25 Jun 2025 13:19:12 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	6eQaxjKeabn3poKnIk9ut7d7cX6un1MCActTxh/vj5s=; b=leSlgYCU4S2q3GBB
-	1lbhTVp292Jsbnzfu0mSgY8HM9o8ujQDXR2hA0Lr4FXdf1xNMALD5mzetNA+vDkc
-	ymcLd2JH60xEunoIq19CPr02YjJgwkxcCdMy6HUtmBXUv2GEr5JFDwR8XG0iaiiB
-	XWrw2I0lN3ZJHcg8MLfqhdk+QpWN3gk/vxZhYvrfv+7u+0HCK2NOZPNx0RS9vt8T
-	5o7CFjYS4psQ1pzk01QmWvB38mo8lNG651C612lyekzXDTNq8wD3d+OLQEKcXObU
-	FB5qcVE3hteNuy6OfEL3hG2RgLEpZP3/sVjJ3bk58UwNwvqKL4LdBEqEddJntp7k
-	pl3bKw==
-Received: from mail-qt1-f199.google.com (mail-qt1-f199.google.com [209.85.160.199])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 47g7td9uny-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Wed, 25 Jun 2025 13:19:11 +0000 (GMT)
-Received: by mail-qt1-f199.google.com with SMTP id d75a77b69052e-4a6f59d5ac6so15031481cf.0
-        for <linux-kernel@vger.kernel.org>; Wed, 25 Jun 2025 06:19:11 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1750857550; x=1751462350;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=6eQaxjKeabn3poKnIk9ut7d7cX6un1MCActTxh/vj5s=;
-        b=h1dwteXh1HwPj9SsUwbfeIWHIRHsijV7XOGbWbO7zA8XJGRZ98Vc3nCVT9ubNoURl2
-         7oh4cj4z4Y/IFw68bSl2tWHjd+HZC2TzJ+1TDcydCQg1zRSmxxbhYzUJTc2f08r7Jj9/
-         QihZ9S2loRnsz1CgYBsD8UMxLUv6HzNKhXU4sz+9ih7YND04fr5T3b6hytwzcldm/UVH
-         RCrxfudhBITyI3xzMkiZX9GrqN8/sUDC0uh8QGJmVNnbn3ScPp9qinLiZW7v/t/O6QtC
-         XQ1/MJSWguEQBPUbTCL9t2C0ZtgBt+yOZIYKLiJ4SWf9FMV1f4qlassGkVQxQg97GQHa
-         r4AQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVT3AKnfuJUjtxGA0ZURAYMoVY/Lc4VETVnFDIfpxjB7XI2y+3t6/VMkXAnyamg6ZPmryZmW6YYxDFOy7g=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw4438WXr8oHzPO5uvDaAk11Ci163e2I9ICpL4P9amXsAErupI4
-	8aGXmv94WwxZUJerrMEf6rqDeGCEeG3vmBJW+APl54hCL3HvB88txPfGBIAdbG/T0bYsqQrJ5Ht
-	N9JPrx1u0OdWG/AuzmDZMbPb1n5bLMZzmot9xInlXDEvyZvr67aHjMCZ33sHsrck30g8=
-X-Gm-Gg: ASbGnctRGrsUL/OBurrzQAJRpyKftPDPCuUeEIhA8JZsdnxwiB+0ORdMLnZjUEWERcz
-	lKprdkiXNgqmxomGa5jyfw//KFedTRzAPFajoddfQPiAgxat5XiHBWEIDnMS7wCop5hmGBIhAw5
-	u0OCSHLBtnZYn4KR9sT9C947jOdbAS3kw0uU1TUG94cFhGCyoK3kIXa9nawSq3zZMNSCihdq0DS
-	Dlf90pKK3Dy4VPDdeBavZyhS6OfdZmdHvcj569AtPdYjpDyuRhp1IyOQh36EjfoM/ItfPdVdtQA
-	/mkdjrKJCmxunBUnDhhUch91z9ELVtNRBRY39mq1us4IfRgGMHP+Bb8rjy/f7nk+5o5RTZ2ecbh
-	Nx4U=
-X-Received: by 2002:a05:620a:8801:b0:7d3:cf9b:511f with SMTP id af79cd13be357-7d4296eabdemr154347485a.5.1750857550484;
-        Wed, 25 Jun 2025 06:19:10 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IGqGtKUmkLUVvMQx5KRJ0CRLAplizpPsb2y5iNrRAnX06UrCQE5yCFeuIbo7mZ8pru90VrR1g==
-X-Received: by 2002:a05:620a:8801:b0:7d3:cf9b:511f with SMTP id af79cd13be357-7d4296eabdemr154344985a.5.1750857550072;
-        Wed, 25 Jun 2025 06:19:10 -0700 (PDT)
-Received: from [192.168.143.225] (078088045245.garwolin.vectranet.pl. [78.88.45.245])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-60c3ca7b8cbsm1919553a12.5.2025.06.25.06.19.07
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 25 Jun 2025 06:19:09 -0700 (PDT)
-Message-ID: <50fd7271-5311-475d-91ff-03c3c593866f@oss.qualcomm.com>
-Date: Wed, 25 Jun 2025 15:19:06 +0200
+	s=arc-20240116; t=1750857583; c=relaxed/simple;
+	bh=qrhKZPYkGxL/+D8ghgoJ0NSDadgal0sGTErP2Yn0lrU=;
+	h=Date:From:To:Cc:Subject:Message-ID; b=QOFNAEoeS8fIxJUQRPszIaCNju6DR4rn9CgZMyf05XBxUwBmKZS/vmqzHMBfAyXtNukQF/RBqirZ8CzmL3/DpT5qr3ovrKfS3W5fyhNXC4tKw9EbFHkGEKEJTGf1mtU20Dg2VnTIKbtZxOYBEqqn4aOyEFMRVWtaJskuLbNnqjE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=C9cgz6wT; arc=none smtp.client-ip=198.175.65.9
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1750857581; x=1782393581;
+  h=date:from:to:cc:subject:message-id;
+  bh=qrhKZPYkGxL/+D8ghgoJ0NSDadgal0sGTErP2Yn0lrU=;
+  b=C9cgz6wTW8DbmSC2p8zYXX/njnnTwxn2U8W/+Jt2fZ/gsu1LPgzRS11e
+   ZsCkqxTWjHD9fcCDnEUisYqiYUX2/A1tEl3YfQxfngRPw7QMqdZHDZw7C
+   q4ElpAZOs9CHSMnOJP61glr1ZaJXDcITeJjps/KFQFCzlFthstoWvUgFr
+   v45B/T+npVZXTmznv8nsbiLF+LkbGKDJ7lo8l0+XW8tYtuPFQeICFO0wH
+   Mig4nWZdCAt8gg+9OwSs7E68FN0AEHpagqOxfnOyiZzZR5RwSUAuyRn/1
+   CQzVhKigPLlk6kdxPWzTzdmTsaMBxnR76mVpE9E2+c1/VMIbxo5Hu7b4t
+   A==;
+X-CSE-ConnectionGUID: x6O/c5QXSQ6ZILOiwXmghA==
+X-CSE-MsgGUID: PJsbCONkSLG2QS4u/xAytA==
+X-IronPort-AV: E=McAfee;i="6800,10657,11474"; a="75666091"
+X-IronPort-AV: E=Sophos;i="6.16,264,1744095600"; 
+   d="scan'208";a="75666091"
+Received: from fmviesa005.fm.intel.com ([10.60.135.145])
+  by orvoesa101.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 25 Jun 2025 06:19:41 -0700
+X-CSE-ConnectionGUID: F09t3e2jTkO1itgCGsRRKw==
+X-CSE-MsgGUID: RPUc/UdqTNKNhAt/C2AHcA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.16,264,1744095600"; 
+   d="scan'208";a="156494645"
+Received: from lkp-server01.sh.intel.com (HELO e8142ee1dce2) ([10.239.97.150])
+  by fmviesa005.fm.intel.com with ESMTP; 25 Jun 2025 06:19:40 -0700
+Received: from kbuild by e8142ee1dce2 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1uUQ2L-000T8I-2K;
+	Wed, 25 Jun 2025 13:19:37 +0000
+Date: Wed, 25 Jun 2025 21:19:25 +0800
+From: kernel test robot <lkp@intel.com>
+To: "Paul E. McKenney" <paulmck@kernel.org>
+Cc: linux-kernel@vger.kernel.org
+Subject: [paulmck-rcu:dev.2025.06.09a] BUILD SUCCESS
+ 55edf54333c0d306ea89acff59dd9209d0e42c6e
+Message-ID: <202506252115.cujce3Z7-lkp@intel.com>
+User-Agent: s-nail v14.9.24
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 4/4] arm64: dts: qcom: Add PMIV0104 PMIC
-To: Luca Weiss <luca.weiss@fairphone.com>, Lee Jones <lee@kernel.org>,
-        Rob Herring <robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>, Stephen Boyd <sboyd@kernel.org>,
-        Bjorn Andersson <andersson@kernel.org>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Konrad Dybcio <konradybcio@kernel.org>
-Cc: ~postmarketos/upstreaming@lists.sr.ht, phone-devel@vger.kernel.org,
-        linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org
-References: <20250625-sm7635-pmiv0104-v1-0-68d287c4b630@fairphone.com>
- <20250625-sm7635-pmiv0104-v1-4-68d287c4b630@fairphone.com>
-Content-Language: en-US
-From: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-In-Reply-To: <20250625-sm7635-pmiv0104-v1-4-68d287c4b630@fairphone.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Authority-Analysis: v=2.4 cv=CPYqXQrD c=1 sm=1 tr=0 ts=685bf74f cx=c_pps
- a=WeENfcodrlLV9YRTxbY/uA==:117 a=FpWmc02/iXfjRdCD7H54yg==:17
- a=IkcTkHD0fZMA:10 a=6IFa9wvqVegA:10 a=6H0WHjuAAAAA:8 a=EUspDBNiAAAA:8
- a=gG0EGFSrpznu9jIhvzsA:9 a=QEXdDO2ut3YA:10 a=kacYvNCVWA4VmyqE58fU:22
- a=Soq9LBFxuPC4vsCAQt-j:22
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNjI1MDA5NyBTYWx0ZWRfX662tuPWgRRpe
- hc/oR3FpcSz90oSnL7o0euXV07ZB/y7CgTmXSAiHczkCmNVXzNqdnbSAUvBAUbaIaKyKA25zFO9
- qklfuoUK2PTN66gZnF01B8WkP3cbqvDJAQBTDp5UuRYqeBdUCsQ5QC3WKfG8Y4HHeFHULIY+Kvi
- V+00a0tOy73q6ixNmpTRjBp/9GYAlJIPCKhEnisx8uj7PO0VRLkwKgaAnx7vh6GbQ2uMeSjktBp
- XZS6nA1J0OdbYgv+dHIhyisMexyiZKCN+8XkBki6UCOVmQWfKQpFDyfuRHanWlObsF3phO8ZBGG
- CLBhAyDLqW5XJpdaSYdbaJmJUy7JP1y/GBhuEpym5PJhJDt0lXFzgP2VbsiU3/ZGzoYwBTgiQp5
- YjhqNTE6E/stGN8yHwTt78AFUqU203GF7yEjSSTw5+UpZC0zMOJqfIc+2FQhK5wKiT8nZwj9
-X-Proofpoint-GUID: ootEA46B2e5C04YyBGEShpQCy_EuFd3R
-X-Proofpoint-ORIG-GUID: ootEA46B2e5C04YyBGEShpQCy_EuFd3R
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.7,FMLib:17.12.80.40
- definitions=2025-06-25_03,2025-06-25_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- bulkscore=0 phishscore=0 mlxlogscore=999 lowpriorityscore=0 malwarescore=0
- impostorscore=0 suspectscore=0 clxscore=1015 spamscore=0 priorityscore=1501
- adultscore=0 mlxscore=0 classifier=spam authscore=0 authtc=n/a authcc=
- route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2505280000
- definitions=main-2506250097
 
-On 6/25/25 11:18 AM, Luca Weiss wrote:
-> Add a dts for the PMIC used e.g. with SM7635 devices.
-> 
-> Signed-off-by: Luca Weiss <luca.weiss@fairphone.com>
-> ---
->  arch/arm64/boot/dts/qcom/pmiv0104.dtsi | 63 ++++++++++++++++++++++++++++++++++
->  1 file changed, 63 insertions(+)
-> 
-> diff --git a/arch/arm64/boot/dts/qcom/pmiv0104.dtsi b/arch/arm64/boot/dts/qcom/pmiv0104.dtsi
-> new file mode 100644
-> index 0000000000000000000000000000000000000000..04d929db76f409c49c47ef0147a3de568006973a
-> --- /dev/null
-> +++ b/arch/arm64/boot/dts/qcom/pmiv0104.dtsi
-> @@ -0,0 +1,63 @@
-> +// SPDX-License-Identifier: BSD-3-Clause
-> +/*
-> + * Copyright (c) 2025, Luca Weiss <luca.weiss@fairphone.com>
-> + */
-> +
-> +#include <dt-bindings/interrupt-controller/irq.h>
-> +#include <dt-bindings/spmi/spmi.h>
-> +
-> +/ {
-> +	thermal-zones {
-> +		pmiv0104-thermal {
-> +			polling-delay-passive = <100>;
-> +
-> +			thermal-sensors = <&pmiv0104_temp_alarm>;
-> +
-> +			trips {
-> +				trip0 {
-> +					temperature = <95000>;
-> +					hysteresis = <0>;
-> +					type = "passive";
-> +				};
-> +
-> +				trip1 {
-> +					temperature = <115000>;
-> +					hysteresis = <0>;
-> +					type = "hot";
-> +				};
+tree/branch: https://git.kernel.org/pub/scm/linux/kernel/git/paulmck/linux-rcu.git dev.2025.06.09a
+branch HEAD: 55edf54333c0d306ea89acff59dd9209d0e42c6e  rcu: Document that rcu_barrier() hurries lazy callbacks
 
-Please also include a 145C critical trip, which is probably the
-most important one
+elapsed time: 1453m
 
-otherwise:
+configs tested: 64
+configs skipped: 1
 
-Reviewed-by: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+The following configs have been built successfully.
+More configs may be tested in the coming days.
 
-Konrad
+tested configs:
+alpha                             allnoconfig    gcc-15.1.0
+alpha                            allyesconfig    gcc-15.1.0
+arc                               allnoconfig    gcc-15.1.0
+arc                   randconfig-001-20250624    gcc-12.4.0
+arc                   randconfig-002-20250624    gcc-8.5.0
+arm                               allnoconfig    clang-21
+arm                   randconfig-001-20250624    gcc-13.3.0
+arm                   randconfig-002-20250624    gcc-8.5.0
+arm                   randconfig-003-20250624    gcc-12.4.0
+arm                   randconfig-004-20250624    clang-17
+arm64                             allnoconfig    gcc-15.1.0
+arm64                 randconfig-001-20250624    clang-21
+arm64                 randconfig-002-20250624    gcc-10.5.0
+arm64                 randconfig-003-20250624    clang-21
+arm64                 randconfig-004-20250624    clang-21
+csky                              allnoconfig    gcc-15.1.0
+hexagon                          allmodconfig    clang-17
+hexagon                           allnoconfig    clang-21
+hexagon                          allyesconfig    clang-21
+i386                             allmodconfig    gcc-12
+i386                              allnoconfig    gcc-12
+i386        buildonly-randconfig-001-20250624    clang-20
+i386        buildonly-randconfig-002-20250624    gcc-12
+i386        buildonly-randconfig-003-20250624    clang-20
+i386        buildonly-randconfig-004-20250624    clang-20
+i386        buildonly-randconfig-005-20250624    clang-20
+i386        buildonly-randconfig-006-20250624    gcc-12
+i386                                defconfig    clang-20
+loongarch                        allmodconfig    gcc-15.1.0
+loongarch                         allnoconfig    gcc-15.1.0
+m68k                             allmodconfig    gcc-15.1.0
+m68k                              allnoconfig    gcc-15.1.0
+m68k                             allyesconfig    gcc-15.1.0
+microblaze                       allmodconfig    gcc-15.1.0
+microblaze                        allnoconfig    gcc-15.1.0
+microblaze                       allyesconfig    gcc-15.1.0
+mips                              allnoconfig    gcc-15.1.0
+nios2                             allnoconfig    gcc-14.2.0
+openrisc                          allnoconfig    gcc-15.1.0
+parisc                            allnoconfig    gcc-15.1.0
+powerpc                           allnoconfig    gcc-15.1.0
+riscv                             allnoconfig    gcc-15.1.0
+s390                             allmodconfig    clang-18
+s390                              allnoconfig    clang-21
+s390                             allyesconfig    gcc-15.1.0
+sh                               allmodconfig    gcc-15.1.0
+sh                                allnoconfig    gcc-15.1.0
+sh                               allyesconfig    gcc-15.1.0
+sparc                            allmodconfig    gcc-15.1.0
+sparc                             allnoconfig    gcc-15.1.0
+um                               allmodconfig    clang-19
+um                                allnoconfig    clang-21
+um                               allyesconfig    gcc-12
+x86_64                            allnoconfig    clang-20
+x86_64                           allyesconfig    clang-20
+x86_64      buildonly-randconfig-001-20250625    gcc-12
+x86_64      buildonly-randconfig-002-20250625    clang-20
+x86_64      buildonly-randconfig-003-20250625    clang-20
+x86_64      buildonly-randconfig-004-20250625    clang-20
+x86_64      buildonly-randconfig-005-20250625    clang-20
+x86_64      buildonly-randconfig-006-20250625    clang-20
+x86_64                              defconfig    gcc-11
+x86_64                          rhel-9.4-rust    clang-18
+xtensa                            allnoconfig    gcc-15.1.0
+
+--
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
