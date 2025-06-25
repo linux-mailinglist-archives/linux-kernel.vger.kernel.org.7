@@ -1,63 +1,47 @@
-Return-Path: <linux-kernel+bounces-702274-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-702229-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 05E92AE804F
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Jun 2025 12:55:15 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C7EBDAE7FD0
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Jun 2025 12:42:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 82C303B1572
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Jun 2025 10:54:49 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4A07E5A7567
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Jun 2025 10:42:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 919A12BF01C;
-	Wed, 25 Jun 2025 10:53:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C018229B77A;
+	Wed, 25 Jun 2025 10:42:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b="qhnEOBWS"
-Received: from out203-205-221-155.mail.qq.com (out203-205-221-155.mail.qq.com [203.205.221.155])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="DdZlfoNl"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0F12529E103;
-	Wed, 25 Jun 2025 10:53:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.205.221.155
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E6EE829B23C;
+	Wed, 25 Jun 2025 10:42:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750848801; cv=none; b=YX4Revj3gxpa3VcDwRGtxsNWwoZKE71sEsV5DldOb0COQ/z3Txp5E3zc4TS6GxXrtK01LV9Pz1X144yvP+uF8WA4uAjVxfcQldEuNQHpL7CRaCEaFPx1+wX2O3F2gMnb0N1LWPqyjzIM9Qm9an1bDhLJqQ0G4e8nwRp92vh4qK8=
+	t=1750848134; cv=none; b=mwo+G4gzDyFlM8knymqBFeuNf9w5GfgaGIkNusujK/MU/IO8Gqw/LDx7AOPSQb2Waqv/Gqw1UZ6+OIxztMYn/Exv2z+qz5nuSXnSMwBqZtwoslo/ub0m0xMnCP8n+689Qac08L7WHHI6l/A6kp4OEXVwYDbHcrlvB2bHbwUFqAE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750848801; c=relaxed/simple;
-	bh=bVTQKiW4WJsF7lVIrAjNgK8DHJH4bRFEnocFDPoC7lw=;
-	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:References:
-	 In-Reply-To:Content-Type; b=W8c51B4lEmXjwUvgGp5S5YKZFG/8mtaOQ2pZo+1YrTshL8SXipGX9memul0hfl96XBf2D4GU5y+DMsM6+Zh42ThMWkUdQflC2Z7B9cPloJ+DMIE4Hh8QahqDV8QdVOoxsklMw5zXBd45t/eTxEOR2ptpHQQCt1N250rsL4/rDJg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com; spf=pass smtp.mailfrom=qq.com; dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b=qhnEOBWS; arc=none smtp.client-ip=203.205.221.155
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=qq.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qq.com; s=s201512;
-	t=1750848487; bh=tgd2pHPm2RnMeqq7Vwih1WR3E04pB2uiTC5jxE+M+kQ=;
-	h=Date:From:Subject:To:Cc:References:In-Reply-To;
-	b=qhnEOBWSxtRyXSoZkn6l7HUS44VXx4qEHQPF8kInnWqiU7crYtLTU7BtTVBVBie+z
-	 7H8ybhSTw7teK539iWcDYcaGtb3XIIAU6vvvR4KlnGdgKuzPh5R/U5gul6aSaJX9fe
-	 dRGzvkqYIS1+ZB+YR5wvknIdp7LiSxcPxJ5SH5rU=
-Received: from [172.25.20.158] ([111.202.154.66])
-	by newxmesmtplogicsvrszgpuc5-0.qq.com (NewEsmtp) with SMTP
-	id A7A2CCF1; Wed, 25 Jun 2025 18:41:58 +0800
-X-QQ-mid: xmsmtpt1750848118tykbxfohr
-Message-ID: <tencent_E8315EB273FA16ECA8DD46FDA3FC2A320A09@qq.com>
-X-QQ-XMAILINFO: N2/jAoEINgTTVmeFMsiQejiordXzU686AwuiVeg+WQ4hfHy1G68V9KJ6U8soDk
-	 FjqFfgCWPLze8PgyLk7XU3TyBnoQfb/6XHBeUMmHQrBEmBgnDoi3RLdIL7DFy1Tbc73yQn54bT9d
-	 e8FPcpQMT9NBuMMSNx8DJ/c2ds9Ja9LgEiomZK+KbGDaSgYXcZwkCDF6fI3zu0XkWRiU7oyPz1b4
-	 s1+99sUHA4eDOQpG0p32kSjphMvpHz6fsEm17ecmsTkj5r2l5sIYZ5/GrJYVK6nlRRfGw1V4palu
-	 BKxljpr2g3ZkATbXVN6Lsq92oxwdWEyRNI043fQtWEk0N9eXhdsRX1xz8T7c6IoWd1m06XwwIz3B
-	 hzNhUAy/jwdqsIdYaVvkekGTlZRK/EEUWBL1Chvck7J8MPv2iQ92tNfRoC72L+0kkkbdo6Cn4NyO
-	 jsA6SdPiD4STfr+cAUcUD6hDZSMkasYyQpGswLVN0Cpy3f3AlFWhlj+FEWWjmXAeULfxW3J+lpCQ
-	 v9ssZMsa8xz+JaI46jlkFCYR/vwCC9b/fx/FcX3bSHOEdKqzxCSe8oZQ0hvXrPsa/bxxLsb9h/E5
-	 ap+HjwZX3us+AfQIDtSNaps7EJLOXF/eOBJFsoVV58OX7Ay4Pj1UAtNaWefhruNwV8MJgqjKyQLv
-	 fv0rst6CtxHchFxqL5yfSwW7bHY1W/B3jixOXQx0JTRjZHQjRIEXus7+pS5a1TB4qZOrDJe3Atzp
-	 lK2qjRb0O27krp6uyzhBMCt71AHe0Y99+fT8jxrKe6aMgYUpSWgX4bCMJFbUZFqoUMA9NOPuDYgV
-	 JNYVsqTtnrhHE5C7zy92bEFT9guuboAFnk2cldlPo2tVG/diO3McJd8V0dboAwpu+NpMbb0wiR/v
-	 4lPYdscRlzPfyanf4I7w0nZ+gGbB0mxnWt0yOuTAr9auSf4qV1jB4EEsvxO/ym9FjO32VllWG2+t
-	 KnTXNqOhT0D1Oj+2/IPYgB3xm/FKr2JjU/7Vyy3X+Lwlmvd0XTWw==
-X-QQ-XMRINFO: NyFYKkN4Ny6FSmKK/uo/jdU=
-X-OQ-MSGID: <dedbc70d-36f6-43bb-b6bf-a87103b6bb24@qq.com>
-Date: Wed, 25 Jun 2025 18:41:58 +0800
+	s=arc-20240116; t=1750848134; c=relaxed/simple;
+	bh=KhFN1TxOoGEmZA8OZHUI01EMEP3LX35H19OmFZ+F6GY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=mRGPggS9kfg5pP4JLIY6HXijXZgbh0nApOd2AwDtxG7RrutsqEcl8Sz6q5U+NRcwYqamZhiThKuS4xiCoXBURVjKeFp0KrAfCO6d8t1WKHbXyiwXSOeOWarIuqsgCC5PWUMkJZe22u+hLbjZiS5/hTq6I5tEPSlDSaPyBWy/wwA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=DdZlfoNl; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id F1486C4CEEA;
+	Wed, 25 Jun 2025 10:42:09 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1750848133;
+	bh=KhFN1TxOoGEmZA8OZHUI01EMEP3LX35H19OmFZ+F6GY=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=DdZlfoNlv/H7Af1L1xaYMvRGXMUgDT6xnCPcQxGoruRELBvqLyCfYCryua+hOi6aK
+	 QlwhkKD4HctTsYZVYHzfaSC9sQFWnSLGTNFXb2qUfGhUM4Xw59I2bZbJgCmV0ma8TH
+	 YsPr0egj300IuGlPpIENtBm8DTnIyo1qmeowAmFre7+KVfIaW2cuKVxbNDdHg4igqo
+	 Qwc19o4YJQ4g+AwcJ5blORv2P1DZeiGTP/etdLfoiiWLyR5esfmZ0Ou1lvRrthTeAP
+	 Z99cZf2w2w8dyAA3gXZVF23Z9/hUpeamI6AycNq/z8Xs6gazVipKx+g1Rs63DngSW4
+	 DGmam5kfZJtXA==
+Message-ID: <33c99324-a50b-4e0f-bcc7-012d3244d47a@kernel.org>
+Date: Wed, 25 Jun 2025 12:42:08 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -65,51 +49,125 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-From: Chentaotao <chentao325@qq.com>
-Subject: Re: [PATCH v2 1/5] drm/i915: Use kernel_write() in shmem object
- create
-To: Matthew Wilcox <willy@infradead.org>,
- =?UTF-8?B?6ZmI5rab5rabIFRhb3RhbyBDaGVu?= <chentaotao@didiglobal.com>
-Cc: "tytso@mit.edu" <tytso@mit.edu>, "hch@infradead.org" <hch@infradead.org>,
- "adilger.kernel@dilger.ca" <adilger.kernel@dilger.ca>,
- "brauner@kernel.org" <brauner@kernel.org>,
- "jani.nikula@linux.intel.com" <jani.nikula@linux.intel.com>,
- "rodrigo.vivi@intel.com" <rodrigo.vivi@intel.com>,
- "tursulin@ursulin.net" <tursulin@ursulin.net>,
- "airlied@gmail.com" <airlied@gmail.com>,
- "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
- "linux-ext4@vger.kernel.org" <linux-ext4@vger.kernel.org>,
- "linux-block@vger.kernel.org" <linux-block@vger.kernel.org>,
- "intel-gfx@lists.freedesktop.org" <intel-gfx@lists.freedesktop.org>,
- "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
- "linux-mm@kvack.org" <linux-mm@kvack.org>,
- "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>,
- "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-References: <20250624121149.2927-1-chentaotao@didiglobal.com>
- <20250624121149.2927-2-chentaotao@didiglobal.com>
- <aFqYq-tLtjZjU0Ko@casper.infradead.org>
-In-Reply-To: <aFqYq-tLtjZjU0Ko@casper.infradead.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Subject: Re: [PATCH RFT 2/6] gpio: mmio: get chip label and GPIO base from
+ device properties
+To: Bartosz Golaszewski <brgl@bgdev.pl>
+Cc: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>,
+ Linus Walleij <linus.walleij@linaro.org>, Lee Jones <lee@kernel.org>,
+ Liviu Dudau <liviu.dudau@arm.com>, Sudeep Holla <sudeep.holla@arm.com>,
+ Lorenzo Pieralisi <lpieralisi@kernel.org>,
+ Aaro Koskinen <aaro.koskinen@iki.fi>,
+ Janusz Krzysztofik <jmkrzyszt@gmail.com>, Tony Lindgren <tony@atomide.com>,
+ Russell King <linux@armlinux.org.uk>, Alim Akhtar <alim.akhtar@samsung.com>,
+ linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-omap@vger.kernel.org,
+ patches@opensource.cirrus.com, linux-samsung-soc@vger.kernel.org
+References: <20250624-gpio-mmio-pdata-v1-0-a58c72eb556a@linaro.org>
+ <20250624-gpio-mmio-pdata-v1-2-a58c72eb556a@linaro.org>
+ <CACRpkdavsQJTfiwn-F+ML5MK6ADtr-31bBxLA4gV7MTAYR0YGQ@mail.gmail.com>
+ <CACMJSestPPEvsUrWaqz7yZ8OxZTMEOBY7htE7c8BV-VBumj1Lw@mail.gmail.com>
+ <6c64751d-67f6-4c30-a312-af289d9f432e@kernel.org>
+ <CAMRc=MdEZkjoDR83JFg5OPP07_DkAfeZixN9C+uxhkqkxaKypg@mail.gmail.com>
+ <b9c6f5bf-ac43-497a-9354-6448cfb2839c@kernel.org>
+ <CAMRc=MdEWmgj8hTY3fQrXnDDv6pmK9XPvT9gE=5oGEs8R7GOVA@mail.gmail.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ xsFNBFVDQq4BEAC6KeLOfFsAvFMBsrCrJ2bCalhPv5+KQF2PS2+iwZI8BpRZoV+Bd5kWvN79
+ cFgcqTTuNHjAvxtUG8pQgGTHAObYs6xeYJtjUH0ZX6ndJ33FJYf5V3yXqqjcZ30FgHzJCFUu
+ JMp7PSyMPzpUXfU12yfcRYVEMQrmplNZssmYhiTeVicuOOypWugZKVLGNm0IweVCaZ/DJDIH
+ gNbpvVwjcKYrx85m9cBVEBUGaQP6AT7qlVCkrf50v8bofSIyVa2xmubbAwwFA1oxoOusjPIE
+ J3iadrwpFvsZjF5uHAKS+7wHLoW9hVzOnLbX6ajk5Hf8Pb1m+VH/E8bPBNNYKkfTtypTDUCj
+ NYcd27tjnXfG+SDs/EXNUAIRefCyvaRG7oRYF3Ec+2RgQDRnmmjCjoQNbFrJvJkFHlPeHaeS
+ BosGY+XWKydnmsfY7SSnjAzLUGAFhLd/XDVpb1Een2XucPpKvt9ORF+48gy12FA5GduRLhQU
+ vK4tU7ojoem/G23PcowM1CwPurC8sAVsQb9KmwTGh7rVz3ks3w/zfGBy3+WmLg++C2Wct6nM
+ Pd8/6CBVjEWqD06/RjI2AnjIq5fSEH/BIfXXfC68nMp9BZoy3So4ZsbOlBmtAPvMYX6U8VwD
+ TNeBxJu5Ex0Izf1NV9CzC3nNaFUYOY8KfN01X5SExAoVTr09ewARAQABzSVLcnp5c3p0b2Yg
+ S296bG93c2tpIDxrcnprQGtlcm5lbC5vcmc+wsGVBBMBCgA/AhsDBgsJCAcDAgYVCAIJCgsE
+ FgIDAQIeAQIXgBYhBJvQfg4MUfjVlne3VBuTQ307QWKbBQJoF1BKBQkWlnSaAAoJEBuTQ307
+ QWKbHukP/3t4tRp/bvDnxJfmNdNVn0gv9ep3L39IntPalBFwRKytqeQkzAju0whYWg+R/rwp
+ +r2I1Fzwt7+PTjsnMFlh1AZxGDmP5MFkzVsMnfX1lGiXhYSOMP97XL6R1QSXxaWOpGNCDaUl
+ ajorB0lJDcC0q3xAdwzRConxYVhlgmTrRiD8oLlSCD5baEAt5Zw17UTNDnDGmZQKR0fqLpWy
+ 786Lm5OScb7DjEgcA2PRm17st4UQ1kF0rQHokVaotxRM74PPDB8bCsunlghJl1DRK9s1aSuN
+ hL1Pv9VD8b4dFNvCo7b4hfAANPU67W40AaaGZ3UAfmw+1MYyo4QuAZGKzaP2ukbdCD/DYnqi
+ tJy88XqWtyb4UQWKNoQqGKzlYXdKsldYqrLHGoMvj1UN9XcRtXHST/IaLn72o7j7/h/Ac5EL
+ 8lSUVIG4TYn59NyxxAXa07Wi6zjVL1U11fTnFmE29ALYQEXKBI3KUO1A3p4sQWzU7uRmbuxn
+ naUmm8RbpMcOfa9JjlXCLmQ5IP7Rr5tYZUCkZz08LIfF8UMXwH7OOEX87Y++EkAB+pzKZNNd
+ hwoXulTAgjSy+OiaLtuCys9VdXLZ3Zy314azaCU3BoWgaMV0eAW/+gprWMXQM1lrlzvwlD/k
+ whyy9wGf0AEPpLssLVt9VVxNjo6BIkt6d1pMg6mHsUEVzsFNBFVDXDQBEADNkrQYSREUL4D3
+ Gws46JEoZ9HEQOKtkrwjrzlw/tCmqVzERRPvz2Xg8n7+HRCrgqnodIYoUh5WsU84N03KlLue
+ MNsWLJBvBaubYN4JuJIdRr4dS4oyF1/fQAQPHh8Thpiz0SAZFx6iWKB7Qrz3OrGCjTPcW6ei
+ OMheesVS5hxietSmlin+SilmIAPZHx7n242u6kdHOh+/SyLImKn/dh9RzatVpUKbv34eP1wA
+ GldWsRxbf3WP9pFNObSzI/Bo3kA89Xx2rO2roC+Gq4LeHvo7ptzcLcrqaHUAcZ3CgFG88CnA
+ 6z6lBZn0WyewEcPOPdcUB2Q7D/NiUY+HDiV99rAYPJztjeTrBSTnHeSBPb+qn5ZZGQwIdUW9
+ YegxWKvXXHTwB5eMzo/RB6vffwqcnHDoe0q7VgzRRZJwpi6aMIXLfeWZ5Wrwaw2zldFuO4Dt
+ 91pFzBSOIpeMtfgb/Pfe/a1WJ/GgaIRIBE+NUqckM+3zJHGmVPqJP/h2Iwv6nw8U+7Yyl6gU
+ BLHFTg2hYnLFJI4Xjg+AX1hHFVKmvl3VBHIsBv0oDcsQWXqY+NaFahT0lRPjYtrTa1v3tem/
+ JoFzZ4B0p27K+qQCF2R96hVvuEyjzBmdq2esyE6zIqftdo4MOJho8uctOiWbwNNq2U9pPWmu
+ 4vXVFBYIGmpyNPYzRm0QPwARAQABwsF8BBgBCgAmAhsMFiEEm9B+DgxR+NWWd7dUG5NDfTtB
+ YpsFAmgXUF8FCRaWWyoACgkQG5NDfTtBYptO0w//dlXJs5/42hAXKsk+PDg3wyEFb4NpyA1v
+ qmx7SfAzk9Hf6lWwU1O6AbqNMbh6PjEwadKUk1m04S7EjdQLsj/MBSgoQtCT3MDmWUUtHZd5
+ RYIPnPq3WVB47GtuO6/u375tsxhtf7vt95QSYJwCB+ZUgo4T+FV4hquZ4AsRkbgavtIzQisg
+ Dgv76tnEv3YHV8Jn9mi/Bu0FURF+5kpdMfgo1sq6RXNQ//TVf8yFgRtTUdXxW/qHjlYURrm2
+ H4kutobVEIxiyu6m05q3e9eZB/TaMMNVORx+1kM3j7f0rwtEYUFzY1ygQfpcMDPl7pRYoJjB
+ dSsm0ZuzDaCwaxg2t8hqQJBzJCezTOIkjHUsWAK+tEbU4Z4SnNpCyM3fBqsgYdJxjyC/tWVT
+ AQ18NRLtPw7tK1rdcwCl0GFQHwSwk5pDpz1NH40e6lU+NcXSeiqkDDRkHlftKPV/dV+lQXiu
+ jWt87ecuHlpL3uuQ0ZZNWqHgZoQLXoqC2ZV5KrtKWb/jyiFX/sxSrodALf0zf+tfHv0FZWT2
+ zHjUqd0t4njD/UOsuIMOQn4Ig0SdivYPfZukb5cdasKJukG1NOpbW7yRNivaCnfZz6dTawXw
+ XRIV/KDsHQiyVxKvN73bThKhONkcX2LWuD928tAR6XMM2G5ovxLe09vuOzzfTWQDsm++9UKF a/A=
+In-Reply-To: <CAMRc=MdEWmgj8hTY3fQrXnDDv6pmK9XPvT9gE=5oGEs8R7GOVA@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 
+On 25/06/2025 12:28, Bartosz Golaszewski wrote:
+> On Wed, Jun 25, 2025 at 12:26 PM Krzysztof Kozlowski <krzk@kernel.org> wrote:
+>>
+>>>>>> I wouldn't be stoked to see device trees abusing the "gpio-mmio,base"
+>>>>>> property all of a sudden just because it now exists as a device
+>>>>>> property though... I kind of wish we had a way to opt out of exposing
+>>>>>> this to all the sub-property paths. But it seems tiresome, so:
+>>>>>>
+>>>>>> Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
+>>>>>>
+>>>>>> Yours,
+>>>>>> Linus Walleij
+>>>>>
+>>>>> That's not a problem - this property is not in any DT bindings and as
+>>>>> such is not an allowed property in DT sources. For out-of-tree DTs? We
+>>>>> don't care about those.
+>>>> That's not true, we do care about implied ABI. Try changing/breaking
+>>>> this later, when users complain their out of tree DTS is affected, and
+>>>> explaining this all to Greg.
+>>>>
+>>>
+>>> Wait, seriously? I thought that the upstream bindings are the source
+>>> of truth for device-tree sources...
+>>
+>>
+>> They are, until they are not... ok, we don't really care that much about
+>> out of tree DTS, but in-tree DTS still could use these and don't care
+>> about bindings check, right?
+>>
+> 
+> Could they though? I can imagine this happening by accident but in
+> general: you'd expect new sources to follow the bindings and be
 
-在 2025/6/24 20:23, Matthew Wilcox 写道:
-> On Tue, Jun 24, 2025 at 12:12:04PM +0000, 陈涛涛 Taotao Chen wrote:
->> +++ b/drivers/gpu/drm/i915/gem/i915_gem_shmem.c
->> @@ -637,8 +637,7 @@ i915_gem_object_create_shmem_from_data(struct drm_i915_private *i915,
->>   {
->>   	struct drm_i915_gem_object *obj;
->>   	struct file *file;
->> -	const struct address_space_operations *aops;
->> -	loff_t pos;
->> +	loff_t pos = 0;
->>   	int err;
-> I think 'err' needs to become ssize_t to avoid writes larger than 2GB
-> from being misinterpreted as errors.
+Yes, that is what I would expect.
 
-Thanks for the great catch! I’ve changed int err; to ssize_t err; as you 
-suggested.
+> verifiable against them? Otherwise, what's the point of the schema?
 
+Of course, but do you really think most SoC maintainers even run
+dtbs_check on their existing or new code?
 
+I think some maintainers pay attention, but RISC-V and my tree are the
+only ones actually actively checking this for existing and new code.
+Except me, no other maintainer even referenced maintainer-soc-clean-dts
+profile.
 
+I can easily imagine DTS with warnings and undocumented ABI gets merged
+and then released in some kernel. And when you release such kernel in
+v6.17 with DTS and drivers, isn't this already an implied ABI?
+
+Best regards,
+Krzysztof
 
