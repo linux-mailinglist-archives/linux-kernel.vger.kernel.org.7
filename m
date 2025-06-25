@@ -1,113 +1,134 @@
-Return-Path: <linux-kernel+bounces-703234-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-703222-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id F1ECFAE8D9C
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Jun 2025 21:00:05 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3507DAE8D23
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Jun 2025 20:57:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1FE881BC0E10
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Jun 2025 19:00:18 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 710234A1823
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Jun 2025 18:57:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7042D2DECAE;
-	Wed, 25 Jun 2025 18:58:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 79D872D8DA9;
+	Wed, 25 Jun 2025 18:56:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="qDmKZ1SP"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="L2upaEwt"
+Received: from mail-pf1-f181.google.com (mail-pf1-f181.google.com [209.85.210.181])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9F61E2DCC15
-	for <linux-kernel@vger.kernel.org>; Wed, 25 Jun 2025 18:58:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7A9E91CAA7B;
+	Wed, 25 Jun 2025 18:56:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750877909; cv=none; b=hbgn9BARel08uiG+CPLiZoFlYdLA8Ifpfd7+/Pl9P8zvH1ff+Tx3MWjrAyjimAy5IoF8Z6IecFqhuEX64BZPr9Ouuip21gb/FKg2NsVTITx2NenqUc9SzTFY8+h9mWzXHe7E6nhxC0yJpWzF1Za9ICgFg+3DCs/YYnQAgtfkuxw=
+	t=1750877818; cv=none; b=rIjsS3gYSrs8fQbizw3SphVp+gUg6p8vc6k8Kdnj5LCifq5iVxeQ247nsAQGkobe3TGTSm/7ghhfkXV9hPJDqCVihkZ79ArfrfZVqcVFtyeCrLZSTVEsU7XK7XMzE4H1rsRnnYpwjnyhjPC2Ds+QKfVFXPchF89rBZQyZn9jzF4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750877909; c=relaxed/simple;
-	bh=RjlGb7w/AnhlwxzMhXI+xVDeW3FXUUnZ+ueqKPPcNeQ=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=QH6oURIKDRxxVwh31VsH8HsfL/o6RA5I3fhvrAJeOf8Rp0C9Wj3q+SahoDHBPwB/xdCTnNLXmEC1GiBCWpAL2Hg8rRBtmzyPFRZ6FdsK3zdb99OrFihH26IrmJj4E052nyiz6QQ5FzybYBrbda9gVUeKhylQKOllJp0T3mRderc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=qDmKZ1SP; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 26621C4CEF0;
-	Wed, 25 Jun 2025 18:58:27 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1750877909;
-	bh=RjlGb7w/AnhlwxzMhXI+xVDeW3FXUUnZ+ueqKPPcNeQ=;
-	h=From:Date:Subject:To:Cc:From;
-	b=qDmKZ1SP9+00sFr8CcP0qy9BUZzeazvNkHopWl1nYQIasIjEgqQ6kkYeNucUIP0cf
-	 BR7t5fMsCokWi/6Yv2G7djfPU0dzcihUv/dbVF1YwLpAG686S1/sDW2WW5wXhrvJej
-	 gUbdQ08O7oCZBQ4jMCUOCdRQ2/6+/UR+P1C9OBJXul2a1t7Vq1DfAIkLCa6h03fFva
-	 4uuKlMSxTvTtz4zwO2avrO1opuF8BUSTesRdfP9gss2oKRlXOEI3R30ONd9uJMyiQO
-	 5R7tVFEVIw2Qw4mDBYdx/7ybzqP9fLTLOGfIX2LItxcAozEr+A8lBHgZoBWdVgabvm
-	 3eLTz5sMFjIHA==
-From: Mark Brown <broonie@kernel.org>
-Date: Wed, 25 Jun 2025 19:56:34 +0100
-Subject: [PATCH] arm64/gcs: Don't call gcs_free() when releasing
- task_struct
+	s=arc-20240116; t=1750877818; c=relaxed/simple;
+	bh=pAJn+E8Fw6rpPtJHLwOdSAsmjfHdVW9rBS7PDzny0P0=;
+	h=From:Date:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ai3/mJ1esK01B//KBhYl1YUjOUT1cSVS46qXn7V4UNyLBLET3YtTDBlEduwOXCzLIddC3Sbu+XN8/pAFwFpytG2+C3to3CD7CxEv5uCkL7e9AcSqrWqFRNNgzEq50Gxjng0BIOnmK/YqxJyreCclGm89tKebHlSfMh/da1coIog=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=L2upaEwt; arc=none smtp.client-ip=209.85.210.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f181.google.com with SMTP id d2e1a72fcca58-7494999de5cso216655b3a.3;
+        Wed, 25 Jun 2025 11:56:57 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1750877817; x=1751482617; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:date:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=EDnCmso9gBvKQ5z3Nhbls9AMHlpp/w95LXYj9Nsfg4A=;
+        b=L2upaEwtYSEYpyp5mTarR1lqxBMJg31McQst14LZtZB90R8fHrvTpQ0fuFefB0ZFIZ
+         Iy/nGZTShKgJApMB+dhAaZU89XUqn9T2kX6e300K7MTIZq8tZBQ6b2KGIKElst7vniiI
+         BGmLh55aONnIhBK/U982O0rjtvuOzapXOTS0x/PerqdY5IJIMEo4wQGXee+SQiofichi
+         /e3gWmfwmuY/XIiPx/1HfzZP4be8dmcDDmkOq+rWJcfBaVU1tJhGIBC+UrfjN1DlGuYk
+         KEtA2idP1tq76IUKegWAQphA0UnSYEgUYNtR13uqidBNUOHL3jF3GHaoQoh3ePdQ8DEO
+         ElUg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1750877817; x=1751482617;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:date:from:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=EDnCmso9gBvKQ5z3Nhbls9AMHlpp/w95LXYj9Nsfg4A=;
+        b=rplJWXNDqTLOEaKybtM6ZxL75ci6IP3OdVqctQuaZDYNc1+yFKoiCQS3bvqA2QDtKU
+         kTaFEFwa7BEFTcXG1Zpq9FIkzt4fxv8WL0W7jNXRpuKQrxG2NOsuGFbMyp+s5PUl7QcV
+         oOG+TZVMRWoN+WrztG3KtO+Qot5oeHk/LBVR0VZJu3pkUZXuqOawzzguAFUACM6vEE0S
+         4G8pNGVd9scqe9qXO3WlKHolgYksgbjJFHe/fvoeyd7M2CUEcNT0BaxE89BBXxbks2zS
+         a80xG6crIvc9BJzH1ro0yWx6OuZb5h7NlqaJ2hYL48/1cwT+p7Fd5IWtYV5+FHtaf2+N
+         Qegw==
+X-Forwarded-Encrypted: i=1; AJvYcCUyIeTwjFj7yixjbH/luwC6WhdbL0dNpOL3CsUwWmEGnLpTs1xWYW4cbp6zXuW7G6v2f8zPBGWxPFdfOjKK@vger.kernel.org, AJvYcCXIgruuDf5VnpOKrGsdG3xPbOL27aExW0ZW1+1hfM3K55NeAMjK1KaK6H/LaGRGEGNFe5/2mwp21Mw=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzNxvi7CjFnL0itqHDoqEKom37t26m+uPmkmNI/b1+g38ut5AQH
+	C8bUpXoy31FcLaTTbh4w1qLFusFIrGJ4W6t4CivH8PJck7kY9x9TY3Mi
+X-Gm-Gg: ASbGncuhWT1KY6WgEIGUD3sYoP87wvAs13hlHFLkf+KPK5JppCEpyDPf73axbFaIwti
+	bJ3fMs3aoRr8KKcfhJOMSVOln+5604IPOu6S7BJMFQarvlALUzbfRLtTbpJ6xG2Y5+8NUGBKnGY
+	9DibY/QZ9+KLKdqzeDVJGLDcmP35ME2ba11y8c9oNRPsAvQfto90N0BeBrcNtUvci7uze+I1Aid
+	UPKH1fqBCWYIAI+ZjwqJhFbuzMRHZ7uXJwCOUenwT7sqoNLq9cXaxjtfQYlsRjf3AwwK/AWTMGO
+	b9yhDDmJM75UTap8krl20qJq5jvHrjtmUlND1GRCClOe8Sh0N5tt
+X-Google-Smtp-Source: AGHT+IHAmiu6mVphq9BC1ZY3m5KyI9JcC0kxXAC4zKALvQ9VxCyB18aOPPH+wNJPHim21oO/qofqNA==
+X-Received: by 2002:a05:6a20:2449:b0:21f:ef96:49ab with SMTP id adf61e73a8af0-2207f26a286mr6640946637.27.1750877816565;
+        Wed, 25 Jun 2025 11:56:56 -0700 (PDT)
+Received: from lg ([2601:646:8f03:9fee:4510:8d70:ea8c:c110])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-749c88714a3sm5108046b3a.146.2025.06.25.11.56.55
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 25 Jun 2025 11:56:56 -0700 (PDT)
+From: Fan Ni <nifan.cxl@gmail.com>
+X-Google-Original-From: Fan Ni <fan.ni@samsung.com>
+Date: Wed, 25 Jun 2025 11:56:52 -0700
+To: Li Ming <ming.li@zohomail.com>
+Cc: dave@stgolabs.net, jonathan.cameron@huawei.com, dave.jiang@intel.com,
+	alison.schofield@intel.com, vishal.l.verma@intel.com,
+	ira.weiny@intel.com, dan.j.williams@intel.com,
+	shiju.jose@huawei.com, linux-cxl@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 1/1] cxl/edac: Fix using wrong repair type to check dram
+ event record
+Message-ID: <aFxGdIceR2DeG07K@lg>
+References: <20250620052924.138892-1-ming.li@zohomail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250625-arm64-gcs-release-task-v1-1-54cbdc2db416@kernel.org>
-X-B4-Tracking: v=1; b=H4sIAGFGXGgC/x3MTQqDQAxA4atI1gYyVqfgVcRF1Kih/pGUUhDv7
- uDyW7x3goupONTZCSY/dd23hJBn0M+8TYI6JENBRUUxELKtscSpdzRZhF3wy/7BF72HLtLIoSs
- hxYfJqP9n3LTXdQNLq9FmaAAAAA==
-X-Change-ID: 20250610-arm64-gcs-release-task-307db60fa1b4
-To: Catalin Marinas <catalin.marinas@arm.com>, 
- Will Deacon <will@kernel.org>
-Cc: linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
- Mark Brown <broonie@kernel.org>
-X-Mailer: b4 0.15-dev-08c49
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1260; i=broonie@kernel.org;
- h=from:subject:message-id; bh=RjlGb7w/AnhlwxzMhXI+xVDeW3FXUUnZ+ueqKPPcNeQ=;
- b=owEBbQGS/pANAwAKASTWi3JdVIfQAcsmYgBoXEbTeUN5t/UlNloC7DPsJVvz95VmKcMJhv+lG
- Sqh4xj8YY+JATMEAAEKAB0WIQSt5miqZ1cYtZ/in+ok1otyXVSH0AUCaFxG0wAKCRAk1otyXVSH
- 0G+9B/9D8IUxvntv3DBKBNH2U8vBc2ndFy/Axie0znjeibUqabV9UqqSVUvDdfOBT2GrL2IWC6j
- m7rd08BkjcCWu5XiquQP9lR4nLE77Q0PQHOre5TEPuYpEEDZQgTw9CMRYzZl/Y1h8Jp7CzIqGnn
- kOqu0KjExJpzH1PDmJdYtQRkP4l3A2lQ40RwkwxNIgYHBiLTtP1DHfnUdk0LdJ/arTCLqkeqUC7
- dy3DzLknQw2gPL0PGEhPGJ+ZHcNJt2JXAyFDeaFhnbG5T10QuNSJgNxYGyjhWYjr0dfpg8kHf8d
- 1J8nSxrIwBHVUEimywPCeQ382SjQLGMjVurkweXkXuCCjKTE
-X-Developer-Key: i=broonie@kernel.org; a=openpgp;
- fpr=3F2568AAC26998F9E813A1C5C3F436CA30F5D8EB
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250620052924.138892-1-ming.li@zohomail.com>
 
-Currently we call gcs_free() when releasing task_struct but this is
-redundant, it attempts to deallocate any kernel managed userspace GCS
-which should no longer be relevant and resets values in the struct we're
-in the process of freeing.
+On Fri, Jun 20, 2025 at 01:29:24PM +0800, Li Ming wrote:
+> cxl_find_rec_dram() is used to find a DRAM event record based on the
+> inputted attributes. Different repair_type of the inputted attributes
+> will check the DRAM event record in different ways.
+> When EDAC driver is performing a memory rank sparing, it should use
+> CXL_RANK_SPARING rather than CXL_BANK_SPARING as repair_type for DRAM
+> event record checking.
+> 
+> Fixes: 588ca944c277 ("cxl/edac: Add CXL memory device memory sparing control feature")
+> Signed-off-by: Li Ming <ming.li@zohomail.com>
+> ---
 
-By the time arch_release_task_struct() is called the mm will have been
-disassociated from the task so the check for a mm in gcs_free() will
-always be false, for threads that are exiting leaving the mm active
-deactivate_mm() will have been called previously and freed any kernel
-managed GCS.
+Reviewed-by: Fan Ni <fan.ni@samsung.com>
 
-Signed-off-by: Mark Brown <broonie@kernel.org>
----
- arch/arm64/kernel/process.c | 1 -
- 1 file changed, 1 deletion(-)
+> base-commit: 3c70ec71abdaf4e4fa48cd8fdfbbd864d78235a8 cxl/fixes
+> ---
+>  drivers/cxl/core/edac.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/drivers/cxl/core/edac.c b/drivers/cxl/core/edac.c
+> index d725ee954199..623aaa4439c4 100644
+> --- a/drivers/cxl/core/edac.c
+> +++ b/drivers/cxl/core/edac.c
+> @@ -1323,7 +1323,7 @@ cxl_mem_get_rec_dram(struct cxl_memdev *cxlmd,
+>  		attrbs.bank = ctx->bank;
+>  	break;
+>  	case EDAC_REPAIR_RANK_SPARING:
+> -		attrbs.repair_type = CXL_BANK_SPARING;
+> +		attrbs.repair_type = CXL_RANK_SPARING;
+>  		break;
+>  	default:
+>  		return NULL;
+> -- 
+> 2.34.1
+> 
 
-diff --git a/arch/arm64/kernel/process.c b/arch/arm64/kernel/process.c
-index 5954cec19660..5dcfab9ce012 100644
---- a/arch/arm64/kernel/process.c
-+++ b/arch/arm64/kernel/process.c
-@@ -341,7 +341,6 @@ void flush_thread(void)
- void arch_release_task_struct(struct task_struct *tsk)
- {
- 	fpsimd_release_task(tsk);
--	gcs_free(tsk);
- }
- 
- int arch_dup_task_struct(struct task_struct *dst, struct task_struct *src)
-
----
-base-commit: 86731a2a651e58953fc949573895f2fa6d456841
-change-id: 20250610-arm64-gcs-release-task-307db60fa1b4
-
-Best regards,
---  
-Mark Brown <broonie@kernel.org>
-
+-- 
+Fan Ni
 
