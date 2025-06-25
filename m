@@ -1,141 +1,84 @@
-Return-Path: <linux-kernel+bounces-701950-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-701956-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id DA8C3AE7B98
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Jun 2025 11:09:59 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 93130AE7BA9
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Jun 2025 11:11:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 04DFE1BC7CCC
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Jun 2025 09:10:02 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2A31D3A5855
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Jun 2025 09:10:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D724028ECEF;
-	Wed, 25 Jun 2025 09:09:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4575D29ACCE;
+	Wed, 25 Jun 2025 09:10:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Aeb4qS6+"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="DVHE+tab"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3511F2868B0;
-	Wed, 25 Jun 2025 09:09:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9A36129827B;
+	Wed, 25 Jun 2025 09:10:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750842570; cv=none; b=Ij2yBAdDR7yp8Q7SVzk9MGmtrRk9/HbdPRbFtn4XROyv1cpqdsON+zI4UzV4pfIzoNFLmrkbom6kHPI96RMHir8lfLTtmcJtecmYTDpk6XjSHu5r0H6TjR60NoYbD2oD91W/h8ctQcOK7epgKh7k4warQWan79yBWj8ojs7JJvY=
+	t=1750842624; cv=none; b=bUmhoSceIOpFT7oHT2sZ8+L0xunRYEwAzUliv9vyLJfmjb7R1JwpJQ9WkkpmfrvRhEiRH7+Yez5GgbFe+WLpUe64Kppml4iU7qQ4xnGvCkGK7EG/B/IYub4VN0WOyiHVo0g/mQAesjJvDIgVozMuU6TJA1D2Zr20P5g2gUhp0uQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750842570; c=relaxed/simple;
-	bh=V7vBNEydW/amovR7HdFYagGMzsF2AlhBDhoAZzPiFLg=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=sE9TbEjk7AjEZnv9Ye83wOZQxdHQZAkCJBM10YRyGBWX6YnzKSGRakDNa3nNACbv+ocMoy7V3iVx2/s6yxDkPDsOoNBun8aD19ViH5p3UraNaSlnM8d3eOJ8Ui5YG+3tMrTpSsKD15049EiCqAJcVR/ixTJ5qwuGB3Gg8Vo0wv0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Aeb4qS6+; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9490AC4CEEA;
-	Wed, 25 Jun 2025 09:09:27 +0000 (UTC)
+	s=arc-20240116; t=1750842624; c=relaxed/simple;
+	bh=TwT/5Vz8Ma7wzxLrrCHG2vsifHompVEwcDYXvMtMbqQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=kClSYxb9P6AeNvRfzBTRYvyCRNlir6bVz/ZKEkfcI6c3nYt8FTZE4sEJZzmpATRijDWENjhxFHy7BW8sEEikiLB564tgB5j4wa1AKs/uHWnYpJYaTBTSLczRcsytN1EGdLM3dYavkEU6GvtSZL4WgQsNvNYgGzw66yPyAgJrz7A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=DVHE+tab; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id CAFA3C4CEEA;
+	Wed, 25 Jun 2025 09:10:22 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1750842569;
-	bh=V7vBNEydW/amovR7HdFYagGMzsF2AlhBDhoAZzPiFLg=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=Aeb4qS6+iSx5NBdAf2CwapAU13Y0cQ8XFTH1s3biTjv3vB+OqElVo0KBd7L0j5hQc
-	 c3LNriL7pCBmZWwznVJWhkwhywx028azM7lgM5RtdhHZxknoMNi038iLXwT3iXv/Qn
-	 qOS3vyiAnZVxUWgI2VNEY+rEHLl91Kds/xRp+/lDx3lMWfkJzFwFtQ9Nq+behErpJg
-	 4srLJl/OZfOlhlbSSgdFEtALl2CwBLZSdEGTDqqkBDNSX7ieevsaI48AFhOFLIK8eB
-	 oTzzGZpmQo4ZC5Hl+yTHds3+93791L9dMIlT1+wsx3cbPYorHXIr01c6Cym7eBKQok
-	 +WcolL9/ZziZw==
-Message-ID: <4a4d577b-a085-46e8-97b9-6df27461c870@kernel.org>
-Date: Wed, 25 Jun 2025 11:09:25 +0200
+	s=k20201202; t=1750842624;
+	bh=TwT/5Vz8Ma7wzxLrrCHG2vsifHompVEwcDYXvMtMbqQ=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=DVHE+tabPYjCqC9CRXPdH59I/hn7aoJ965K6683K1f8OVMEIzCkyUf/ReIBMKb/08
+	 +1vhb9G0uUwR1zNnPUW+/RX+w4odXjrA6Gnil38rKsk5/2YVs7Te1aiVt0AJw+djzl
+	 2QZ3Z8hVJ1eFpEEcfZDef8TOgLy2LsHNcpGnrEFkdOOo3Vc2iNZhDCxhPUJCAZyA+9
+	 aBMV0Tvu7yTt584Bh9Kutq69mStSppWCW6zLVeHEFYUn/qno2T0aYoATsnuWdzhPE1
+	 dUPM06KPdTK0sdNMVe2lSEBsi2QF+VSWnWuFdLwTK2Cj9ZmHkDQMUtxA3tN+yn1sPY
+	 yjZNZM3S3wa/w==
+Date: Wed, 25 Jun 2025 10:10:20 +0100
+From: Lee Jones <lee@kernel.org>
+To: Abinash <abinashlalotra@gmail.com>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>,
+	Abinash Singh <abinashsinghlalotra@gmail.com>,
+	Arnd Bergmann <arnd@arndb.de>,
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+	Linux Next Mailing List <linux-next@vger.kernel.org>
+Subject: Re: linux-next: manual merge of the mfd tree with the mfd-fixes tree
+Message-ID: <20250625091020.GR795775@google.com>
+References: <20250620160345.48fd2d50@canb.auug.org.au>
+ <CAJZ91LDiQM2kSpmDM6TvnY5m8MEqK03fXJBWa=itxx5mdX1ifw@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 2/2] Revert "Input: soc_button_array - debounce the
- buttons"
-To: Mario Limonciello <superm1@kernel.org>,
- Mika Westerberg <westeri@kernel.org>,
- Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
- Linus Walleij <linus.walleij@linaro.org>, Bartosz Golaszewski
- <brgl@bgdev.pl>, Dmitry Torokhov <dmitry.torokhov@gmail.com>
-Cc: "open list:GPIO ACPI SUPPORT" <linux-gpio@vger.kernel.org>,
- "open list:GPIO ACPI SUPPORT" <linux-acpi@vger.kernel.org>,
- open list <linux-kernel@vger.kernel.org>,
- "open list:INPUT (KEYBOARD, MOUSE, JOYSTICK, TOUCHSCREEN)..."
- <linux-input@vger.kernel.org>, Mario Limonciello <mario.limonciello@amd.com>
-References: <20250624202211.1088738-1-superm1@kernel.org>
- <20250624202211.1088738-3-superm1@kernel.org>
-Content-Language: en-US, nl
-From: Hans de Goede <hansg@kernel.org>
-In-Reply-To: <20250624202211.1088738-3-superm1@kernel.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAJZ91LDiQM2kSpmDM6TvnY5m8MEqK03fXJBWa=itxx5mdX1ifw@mail.gmail.com>
 
-Hi Mario,
+On Fri, 20 Jun 2025, Abinash wrote:
 
-On 24-Jun-25 10:22 PM, Mario Limonciello wrote:
-> From: Mario Limonciello <mario.limonciello@amd.com>
+> Hi Stephen, Lee,
 > 
-> commit 5c4fa2a6da7fb ("Input: soc_button_array - debounce the buttons")
-> hardcoded all soc-button-array devices to use a 50ms debounce timeout
-> but this doesn't work on all hardware.  The hardware I have on hand
-> actually prescribes in the ASL that the timeout should be 0:
+> Thanks for the heads-up. I'm the author of the patch:
 > 
-> GpioInt (Edge, ActiveBoth, Exclusive, PullUp, 0x0000,
->          "\\_SB.GPIO", 0x00, ResourceConsumer, ,)
-> {   // Pin list
->     0x0000
-> }
+>   "mfd: twl4030-irq: Remove redundant 'node' variable"
 > 
-> Let the GPIO core program the debounce instead of hardcoding it into a
-> driver.
+> It looks like Arnd’s patch in `for-mfd-fixes` already removes the same
+> variable and improves compatibility by switching to `dev_fwnode()`.
 > 
-> This reverts commit 5c4fa2a6da7fbc76290d1cb54a7e35633517a522.
+> Given the overlap, my patch can be safely dropped from `for-mfd-next`
+> during rebase if it's now redundant.
 
-This is going to cause problems I'm afraid I just checked and
-based on randomly checking a few DSDTs of the tablets this driver
-is used on, it seems the DSDT always specifies a debounce timeout
-of 0 like your example above. And on many many devices using
-the soc_button_array driver debouncing is actually necessary.
+Done.
 
-May I ask what problem you are seeing with the 50ms debounce timeout /
-what problem you are exactly trying to fix here ?
-
-drivers/input/keyboard/gpio_keys.c first will call gpiod_set_debounce()
-it self with the 50 ms provided by soc_button_array and if that does
-not work it will fall back to software debouncing. So I don't see how
-the 50 ms debounce can cause problems, other then maybe making
-really really (impossible?) fast double-clicks register as a single
-click .
-
-These buttons (e.g. volume up/down) are almost always simply mechanical
-switches and these definitely will need debouncing, the 0 value from
-the DSDT is plainly just wrong. There is no such thing as a not bouncing
-mechanical switch.
-
-Regards,
-
-Hans
-
-
-
-> 
-> Cc: Hans de Goede <hansg@kernel.org>
-> Signed-off-by: Mario Limonciello <mario.limonciello@amd.com>
-> ---
->  drivers/input/misc/soc_button_array.c | 2 --
->  1 file changed, 2 deletions(-)
-> 
-> diff --git a/drivers/input/misc/soc_button_array.c b/drivers/input/misc/soc_button_array.c
-> index b8cad415c62ca..99490df42b6f2 100644
-> --- a/drivers/input/misc/soc_button_array.c
-> +++ b/drivers/input/misc/soc_button_array.c
-> @@ -219,8 +219,6 @@ soc_button_device_create(struct platform_device *pdev,
->  		gpio_keys[n_buttons].active_low = info->active_low;
->  		gpio_keys[n_buttons].desc = info->name;
->  		gpio_keys[n_buttons].wakeup = info->wakeup;
-> -		/* These devices often use cheap buttons, use 50 ms debounce */
-> -		gpio_keys[n_buttons].debounce_interval = 50;
->  		n_buttons++;
->  	}
->  
-
+-- 
+Lee Jones [李琼斯]
 
