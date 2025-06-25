@@ -1,105 +1,179 @@
-Return-Path: <linux-kernel+bounces-703212-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-703216-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id F205EAE8CFF
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Jun 2025 20:51:24 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 92AE9AE8D0B
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Jun 2025 20:53:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C303F189EFE6
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Jun 2025 18:51:40 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 869A03AB2A9
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Jun 2025 18:52:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E9FE92D5C99;
-	Wed, 25 Jun 2025 18:51:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1CAF72D9EC7;
+	Wed, 25 Jun 2025 18:52:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=denx.de header.i=@denx.de header.b="bwHWBHGe"
-Received: from mx.denx.de (mx.denx.de [89.58.32.78])
+	dkim=pass (2048-bit key) header.d=zytor.com header.i=@zytor.com header.b="T4uM1rib"
+Received: from mail.zytor.com (terminus.zytor.com [198.137.202.136])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CF98128C87D;
-	Wed, 25 Jun 2025 18:51:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=89.58.32.78
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 338901CAA7B;
+	Wed, 25 Jun 2025 18:52:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.136
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750877478; cv=none; b=jGt/YcZTXeaO5lhq2SOR2psPUPWEjUrgtp/y3jMPgG/MEWB1Fa8fNGWgV0EXdXQAHiKNLsTR1Ro2fP/YfM6Ozb6ZuaRbeC1PXFDPD/93BdOB7ZQhEhIkhD7eJNmlgH3JhHV+u9tLZv28ZL5CXWL14I8J1Vt/9FMKt7Hu6erP8l8=
+	t=1750877562; cv=none; b=Ow3LrPGL7PDsiKLeECCw7P7XLD+I6O/bzUU1FxxlGXA7RcostDhTv5/ax/onVH9f2YQNxl9G80nDZHrNQaDL/CE9y5WVe26spRUyHHjklmbyLYRbg1gXdmiXvhQnicspTP5wJQwevss5quvGxQCA0hpB0C+6joHfgt8nifyq77A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750877478; c=relaxed/simple;
-	bh=GOwMqggfWGFUJbVRAI2R5MYzIJqxWUXGv8uKyDDss6o=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=qCq4OijfII1RkOBZIRLPpi1ognNbFJks6wSgpCsxQbUG6P4mBTCx/zxYhhfg7U97WCvd6a7434yBLEj3sULYplJghw/1q6eYMIXiwcqZlNSx9F6fa0kXSfTCrVoUqtctiW+FrLY7S4nv8OlhRKOHkYZbjpOUvO1ykDETf/7x8lM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=denx.de; spf=pass smtp.mailfrom=denx.de; dkim=pass (2048-bit key) header.d=denx.de header.i=@denx.de header.b=bwHWBHGe; arc=none smtp.client-ip=89.58.32.78
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=denx.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=denx.de
-Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 2A9A51039BD02;
-	Wed, 25 Jun 2025 20:51:10 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=denx.de; s=mx-20241105;
-	t=1750877474; h=from:subject:date:message-id:to:cc:mime-version:content-type:
-	 in-reply-to:references; bh=21Z0yMVEXCgCsmxoQSwB3wsw+cYQrZlQ2JyZVd3GU/E=;
-	b=bwHWBHGeHNyJchkmK2xaFAO5P9470MnlLM8YkckhBfDWHgs1p2VRNh+w5dhMtlwLZyPOOm
-	710O91ZVilg5Z+ZxyQg1teMPiPLopR2lJrn1B+I6+kmqwD7g/d7ZYf4dQDBGMyxgkMZS9e
-	B65AOdOr/ogyBgypqwsOXfRvXm8FLBnsZLhVqislG2RY4UBvN9UuI0GVf1o0cN6KQS56Ye
-	lVSGX8UfRAT3J+oHiccN17U8P6lroR8dO39Pq3WpN34XGm5hjKlNkKTkXpedq2Hkd0VVVX
-	6+bUikzwshCzGeVyINAxrEWN5BfdvVz5X310490rCuMc7xwQpiI7HbHPVDlGNQ==
-Date: Wed, 25 Jun 2025 20:51:08 +0200
-From: Pavel Machek <pavel@denx.de>
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: stable@vger.kernel.org, patches@lists.linux.dev,
-	linux-kernel@vger.kernel.org, torvalds@linux-foundation.org,
-	akpm@linux-foundation.org, linux@roeck-us.net, shuah@kernel.org,
-	patches@kernelci.org, lkft-triage@lists.linaro.org,
-	jonathanh@nvidia.com, f.fainelli@gmail.com,
-	sudipm.mukherjee@gmail.com, srw@sladewatkins.net, rwarsow@gmx.de,
-	conor@kernel.org, hargar@microsoft.com, broonie@kernel.org
-Subject: Re: [PATCH 6.1 000/507] 6.1.142-rc2 review
-Message-ID: <aFxFHJqr4MC77gHr@duo.ucw.cz>
-References: <20250624123036.124991422@linuxfoundation.org>
+	s=arc-20240116; t=1750877562; c=relaxed/simple;
+	bh=2nvC8O6b/AQv/t5IaxRmHCt0KR1zV8JbPK258zgApyo=;
+	h=Date:From:To:CC:Subject:In-Reply-To:References:Message-ID:
+	 MIME-Version:Content-Type; b=NAzPBP+qWSqZ9aV+SznAfBA8HtgKmYqjOCgfoSzToKZmLJQ72ihdkX991xzxRdC5TcPn0wSYY10el53SyIdv7uYLRNdaTZJ/bE3IFGTb0WBl8Xbp1RshVbyXO3GbtLUPlRoaHB/8GqeYzq6Xq4cgi8sEgHsQuylozQCXitA907E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zytor.com; spf=pass smtp.mailfrom=zytor.com; dkim=pass (2048-bit key) header.d=zytor.com header.i=@zytor.com header.b=T4uM1rib; arc=none smtp.client-ip=198.137.202.136
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zytor.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zytor.com
+Received: from [127.0.0.1] (c-76-133-66-138.hsd1.ca.comcast.net [76.133.66.138])
+	(authenticated bits=0)
+	by mail.zytor.com (8.18.1/8.17.1) with ESMTPSA id 55PIpReE1893008
+	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NO);
+	Wed, 25 Jun 2025 11:51:28 -0700
+DKIM-Filter: OpenDKIM Filter v2.11.0 mail.zytor.com 55PIpReE1893008
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zytor.com;
+	s=2025062101; t=1750877492;
+	bh=N2YGqiZBGlO6E2pCvNxokF1iVnO9tprfKl6nqK15f7Q=;
+	h=Date:From:To:CC:Subject:In-Reply-To:References:From;
+	b=T4uM1ribSNJKs3WHN1pHdyHhSope6PhIW4wyzfSNMx2tpP1w2IBhSFlFMiaHsho/m
+	 7Wz/UJGtehR+fUj4tSpmUubhuu+k47y9Yz+imDe03hW32zObTCMViWML+TQybmWkF4
+	 7sTE5spXJx1bKzdDxKLjkBVvZOfzIgax3hg98CCfNFroUV56fnJQ12QTDpfipSYmq6
+	 XBrmJ4G1G1naZF09+cdJDMJI+ZWRR01dL64c4gcEy6p5RulFiQJJGe92XnAUpZ4mSB
+	 QsTa1c5PNASclR2hntJQ2dT9nJ+AT7KZa2JgOVoicw0rP7V3jfWNyw0yWfmnhmGHGA
+	 KEAYnAkOGVr0Q==
+Date: Wed, 25 Jun 2025 11:51:28 -0700
+From: "H. Peter Anvin" <hpa@zytor.com>
+To: Sohil Mehta <sohil.mehta@intel.com>,
+        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
+        Dave Hansen <dave.hansen@linux.intel.com>
+CC: Jonathan Corbet <corbet@lwn.net>, Ingo Molnar <mingo@kernel.org>,
+        Pawan Gupta <pawan.kumar.gupta@linux.intel.com>,
+        Daniel Sneddon <daniel.sneddon@linux.intel.com>,
+        Kai Huang <kai.huang@intel.com>, Sandipan Das <sandipan.das@amd.com>,
+        Breno Leitao <leitao@debian.org>,
+        Rick Edgecombe <rick.p.edgecombe@intel.com>,
+        Alexei Starovoitov <ast@kernel.org>, Hou Tao <houtao1@huawei.com>,
+        Juergen Gross <jgross@suse.com>,
+        Vegard Nossum <vegard.nossum@oracle.com>, Kees Cook <kees@kernel.org>,
+        Eric Biggers <ebiggers@google.com>, Jason Gunthorpe <jgg@ziepe.ca>,
+        "Masami Hiramatsu (Google)" <mhiramat@kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Luis Chamberlain <mcgrof@kernel.org>, Yuntao Wang <ytcoode@gmail.com>,
+        Rasmus Villemoes <linux@rasmusvillemoes.dk>,
+        Christophe Leroy <christophe.leroy@csgroup.eu>,
+        Tejun Heo <tj@kernel.org>, Changbin Du <changbin.du@huawei.com>,
+        Huang Shijie <shijie@os.amperecomputing.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Namhyung Kim <namhyung@kernel.org>,
+        Arnaldo Carvalho de Melo <acme@redhat.com>, linux-doc@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-efi@vger.kernel.org,
+        linux-mm@kvack.org, Yian Chen <yian.chen@intel.com>,
+        Andy Lutomirski <luto@kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
+        Borislav Petkov <bp@alien8.de>, x86@kernel.org,
+        Peter Zijlstra <peterz@infradead.org>,
+        Ard Biesheuvel <ardb@kernel.org>,
+        "Paul E. McKenney" <paulmck@kernel.org>,
+        Josh Poimboeuf <jpoimboe@kernel.org>,
+        Xiongwei Song <xiongwei.song@windriver.com>,
+        Xin Li <xin3.li@intel.com>, "Mike Rapoport (IBM)" <rppt@kernel.org>,
+        Brijesh Singh <brijesh.singh@amd.com>,
+        Michael Roth <michael.roth@amd.com>, Tony Luck <tony.luck@intel.com>,
+        Alexey Kardashevskiy <aik@amd.com>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>
+Subject: Re: [PATCHv6 01/16] x86/cpu: Enumerate the LASS feature bits
+User-Agent: K-9 Mail for Android
+In-Reply-To: <248e272c-79ec-4c11-a3a8-dff1de2147c0@intel.com>
+References: <20250620135325.3300848-1-kirill.shutemov@linux.intel.com> <20250620135325.3300848-2-kirill.shutemov@linux.intel.com> <248e272c-79ec-4c11-a3a8-dff1de2147c0@intel.com>
+Message-ID: <91ACE1D6-851A-413E-9F1F-F015A36FE49C@zytor.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="e+WKpGqP9A0PBaPG"
-Content-Disposition: inline
-In-Reply-To: <20250624123036.124991422@linuxfoundation.org>
-X-Last-TLS-Session-Version: TLSv1.3
-
-
---e+WKpGqP9A0PBaPG
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Content-Type: text/plain;
+ charset=utf-8
 Content-Transfer-Encoding: quoted-printable
 
-Hi!
+On June 20, 2025 11:14:56 AM PDT, Sohil Mehta <sohil=2Emehta@intel=2Ecom> w=
+rote:
+>On 6/20/2025 6:53 AM, Kirill A=2E Shutemov wrote:
+>> =20
+>> +/*
+>> + * The CLAC/STAC instructions toggle enforcement of X86_FEATURE_SMAP=
+=2E
+>> + *
+>> + * X86_FEATURE_LASS requires flipping the AC flag when accessing the l=
+ower half
+>> + * of the virtual address space, regardless of the _PAGE_BIT_USER bit =
+in the
+>> + * page tables=2E lass_clac/stac() should be used for these cases=2E
+>> + *
+>
+>Is this supposed to be "regardless" or only when the _PAGE_BIT_USER bit
+>it set? The way the sentence is worded it would seem that the kernel
+>could always use lass_clac()/stac() since the value in _PAGE_BIT_USER
+>doesn't matter=2E
+>
+>Please correct me if I am wrong, but here is my understanding:
+>
+>X86_FEATURE_SMAP and X86_FEATURE_LASS both complain when the kernel
+>tries to access the lower half of the virtual addresses=2E
+>
+>SMAP flags an issue if _PAGE_BIT_USER is not set=2E LASS would #GP in bot=
+h
+>cases with or without the _PAGE_BIT_USER being set=2E
+>
+>However, in terms of usage, we want to use LASS specific stac()/clac()
+>only when _PAGE_BIT_USER is set=2E Since this won't be flagged by SMAP=2E
+>
+>@Dave Hansen, you had suggested separating out the SMAP/LASS AC toggle
+>functions=2E But, the difference in usage between both of them seems very
+>subtle=2E Could this be easily misused?
+>
+>For example, there is no failure that would happen if someone
+>incorrectly uses the SMAP specific clac()/stac() calls instead of the
+>LASS ones=2E
+>
+>> + * Note: a barrier is implicit in alternative()=2E
+>> + */
+>> +
+>>  static __always_inline void clac(void)
+>>  {
+>> -	/* Note: a barrier is implicit in alternative() */
+>>  	alternative("", "clac", X86_FEATURE_SMAP);
+>>  }
+>> =20
+>>  static __always_inline void stac(void)
+>>  {
+>> -	/* Note: a barrier is implicit in alternative() */
+>>  	alternative("", "stac", X86_FEATURE_SMAP);
+>>  }
+>> =20
+>> +static __always_inline void lass_clac(void)
+>> +{
+>> +	alternative("", "clac", X86_FEATURE_LASS);
+>> +}
+>> +
+>> +static __always_inline void lass_stac(void)
+>> +{
+>> +	alternative("", "stac", X86_FEATURE_LASS);
+>> +}
+>> +
 
-> This is the start of the stable review cycle for the 6.1.142 release.
-> There are 507 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
+"Regardless" is correct=2E LASS only considers which hemisphere the virtua=
+l address is located in, because it is explicitly designed to prevent walki=
+ng the page tables in the "wrong" hemisphere and therefore speculative acce=
+sses that happen to form pointers into user space addresses will not cause =
+TLB or cache fills that might be possible to probe=2E
 
-CIP testing did not find any problems here:
-
-https://gitlab.com/cip-project/cip-testing/linux-stable-rc-ci/-/tree/linux-=
-6.1.y
-
-Tested-by: Pavel Machek (CIP) <pavel@denx.de>
-
-Best regards,
-                                                                Pavel
---=20
-DENX Software Engineering GmbH,        Managing Director: Erika Unter
-HRB 165235 Munich, Office: Kirchenstr.5, D-82194 Groebenzell, Germany
-
---e+WKpGqP9A0PBaPG
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iF0EABECAB0WIQRPfPO7r0eAhk010v0w5/Bqldv68gUCaFxFHAAKCRAw5/Bqldv6
-8ozaAJ4vSo8FNlWSETNHgrvurNxZbCKunACeKzmRfHDTWzBM48XQJm97phY59pQ=
-=7Cyj
------END PGP SIGNATURE-----
-
---e+WKpGqP9A0PBaPG--
+The obvious exception is when the kernel is intentionally performing acces=
+ses on behalf of user space, which is exactly what SMAP tells the hardware =
+already=2E
 
