@@ -1,239 +1,357 @@
-Return-Path: <linux-kernel+bounces-703627-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-703629-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 80CD9AE92D6
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Jun 2025 01:40:50 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5C807AE92E9
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Jun 2025 01:45:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id EF603188B0F4
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Jun 2025 23:41:05 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id CCCF17A580A
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Jun 2025 23:43:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DB2BD2D3EE1;
-	Wed, 25 Jun 2025 23:40:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 238FB2D3EF2;
+	Wed, 25 Jun 2025 23:44:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="B9WYYBXf"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.18])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=soleen-com.20230601.gappssmtp.com header.i=@soleen-com.20230601.gappssmtp.com header.b="lGaQVf+M"
+Received: from mail-qt1-f176.google.com (mail-qt1-f176.google.com [209.85.160.176])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9535F287266;
-	Wed, 25 Jun 2025 23:40:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=192.198.163.18
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750894840; cv=fail; b=Xe5yharHnB/gKUudhr8I1S2v8xRSwVvaJ/AUFqeVUFdE4CH+P8KA5pzJSV9PddmA6JKXuKXTy1tt6BCVnniyUkAm9VsYckYUOwqmr+qbYliFqOsFA/Vm4pCID2++3Yrc7hKd2Y3INTcVi55P9L+ZO1oNGJ/Pe9X7c1eZV4FkNrA=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750894840; c=relaxed/simple;
-	bh=93bR2xFbtu46QBH0obE97PhEcBk4rzjy1YfMdgmLLpM=;
-	h=Message-ID:Date:Subject:To:CC:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=jukNdGkUUsJANnZBB3191lRoQ1JRBa0HooVrsRk7qoWJThvhu0lH116LMknfXnSfKEA9lMwS5GzNBaY2bqHDMlfUUxi9dvrrJXIXncqHX9PDKOKt4RRyMqSBxnNr1yF2hPyDj0FVI8pGvkEiU1Ae/LmYdBAXf34cWllQLwVrqhU=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=B9WYYBXf; arc=fail smtp.client-ip=192.198.163.18
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1750894839; x=1782430839;
-  h=message-id:date:subject:to:cc:references:from:
-   in-reply-to:content-transfer-encoding:mime-version;
-  bh=93bR2xFbtu46QBH0obE97PhEcBk4rzjy1YfMdgmLLpM=;
-  b=B9WYYBXfQL8pvU0jjH0baLxISZbzLtiPAn+rWFESB3MZsqviLPV/adg7
-   YEUK6Re/pfqHCCT9vzUJjcc6EHCT8bmBZWkpZCnGGpw4tFnMqOUcU/IqG
-   ///C8UYO+2SgYR3QLCAb5d3axQpKCY6NCJNdP6hzQsMXppJBG7srzlK+p
-   8hu6cPVfKLsdHdLAy1YERCrd2DSY56qA+JrCJ1pEFdn7gifktQfkl06fF
-   5polMspeniX72CwoKolYKFTB8wj4SLbGG70pj8FTymhs8WNyCaAfSb6Gr
-   qnNtCnhwuBbHhuykL6LZ1OwYdiHKcWhi0YUHW5fQU1hvUH4VYpre2Cak4
-   A==;
-X-CSE-ConnectionGUID: pMI0PNtjSN6nKx7+68nNSA==
-X-CSE-MsgGUID: juQgKw0XSLWNweOa1VuHmw==
-X-IronPort-AV: E=McAfee;i="6800,10657,11475"; a="52407567"
-X-IronPort-AV: E=Sophos;i="6.16,266,1744095600"; 
-   d="scan'208";a="52407567"
-Received: from fmviesa009.fm.intel.com ([10.60.135.149])
-  by fmvoesa112.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 25 Jun 2025 16:40:37 -0700
-X-CSE-ConnectionGUID: ahpB3JOXSDKSnpgv3Em1tg==
-X-CSE-MsgGUID: 0opS+lZnSSGrjEuCr+fzFA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.16,266,1744095600"; 
-   d="scan'208";a="152655721"
-Received: from orsmsx901.amr.corp.intel.com ([10.22.229.23])
-  by fmviesa009.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 25 Jun 2025 16:40:36 -0700
-Received: from ORSMSX901.amr.corp.intel.com (10.22.229.23) by
- ORSMSX901.amr.corp.intel.com (10.22.229.23) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.25; Wed, 25 Jun 2025 16:40:35 -0700
-Received: from ORSEDG902.ED.cps.intel.com (10.7.248.12) by
- ORSMSX901.amr.corp.intel.com (10.22.229.23) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.25 via Frontend Transport; Wed, 25 Jun 2025 16:40:35 -0700
-Received: from NAM04-BN8-obe.outbound.protection.outlook.com (40.107.100.52)
- by edgegateway.intel.com (134.134.137.112) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.25; Wed, 25 Jun 2025 16:40:35 -0700
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=NWcla5nu+FRS69BzoKt2NRX6saEHc2c5IOnnjD4pozFyB8288MFfifc3aKUcEfDo45ULG3aWtG1bxKuCI3u3KXECDDLjbOXJpvIphqh8XbycpzflPe+YYG2UybQ+HQNyF7UqP1SsIUbLwKJariF6Afsgq+JtDgN+Bob0RgEQW+dl53jQfgIxO2VwrZKc3iRAWzGPd4IWWhXVSsa2FgXoJczkXzGKCoC5iy1ItSzuECp4/vp1DMZlP06/fh40pWhkufujpauSObDTEiiGhrm8y59izpb6C6xOa2zBqz73iI/yZ8MHfmbnAX0EKRj4RGlrqQFKtFy1/Q6+M9TZG+/x3Q==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=W1sVOsBCcSf6QUloFdZQ7H2IrzKYhGE65jExIzL+a00=;
- b=Unk5mgr0tDoWYYbSvZTJL9u2gZYF52GceQjk3wqPPxg/Ks0ZcojMhKjkvcrHiAT0OZQcgG8w3yqcH0GWbBhPh38uD4f6gpAm4O6s1kQTEsTuogFBZcYjGgkl7Q1Y/ejokzZdjv5R1pYI9oNUOmDetkpCFHkLcHxdwf6Dx1ehgUzPyCxt611oQfz0I4txIynVbS3Ax7csJBJ48BEHSmKEsJGTUyaTNg0quKbhmol5CnoSYKwgRsBmfsPMSdRp9otfCsgGVJ+cU5F6k1gCbOShR37aPfBkFM7nMAddGBpYZtO/+ogzE8MWG7soyBcKA2G/bQmYYH/n+y+YySGc5ieJ1Q==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
- dkim=pass header.d=intel.com; arc=none
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=intel.com;
-Received: from SJ2PR11MB7573.namprd11.prod.outlook.com (2603:10b6:a03:4d2::10)
- by LV3PR11MB8744.namprd11.prod.outlook.com (2603:10b6:408:215::7) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8857.26; Wed, 25 Jun
- 2025 23:40:32 +0000
-Received: from SJ2PR11MB7573.namprd11.prod.outlook.com
- ([fe80::61a:aa57:1d81:a9cf]) by SJ2PR11MB7573.namprd11.prod.outlook.com
- ([fe80::61a:aa57:1d81:a9cf%6]) with mapi id 15.20.8792.034; Wed, 25 Jun 2025
- 23:40:32 +0000
-Message-ID: <367717a1-97e4-48ff-81dc-d6db90129016@intel.com>
-Date: Wed, 25 Jun 2025 16:40:28 -0700
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v14 32/32] x86/resctrl: Configure mbm_event mode if
- supported
-To: Babu Moger <babu.moger@amd.com>, <corbet@lwn.net>, <tony.luck@intel.com>,
-	<Dave.Martin@arm.com>, <james.morse@arm.com>, <tglx@linutronix.de>,
-	<mingo@redhat.com>, <bp@alien8.de>, <dave.hansen@linux.intel.com>
-CC: <x86@kernel.org>, <hpa@zytor.com>, <akpm@linux-foundation.org>,
-	<rostedt@goodmis.org>, <paulmck@kernel.org>, <thuth@redhat.com>,
-	<ardb@kernel.org>, <gregkh@linuxfoundation.org>, <seanjc@google.com>,
-	<thomas.lendacky@amd.com>, <pawan.kumar.gupta@linux.intel.com>,
-	<manali.shukla@amd.com>, <perry.yuan@amd.com>, <kai.huang@intel.com>,
-	<peterz@infradead.org>, <xiaoyao.li@intel.com>, <kan.liang@linux.intel.com>,
-	<mario.limonciello@amd.com>, <xin3.li@intel.com>, <gautham.shenoy@amd.com>,
-	<xin@zytor.com>, <chang.seok.bae@intel.com>, <fenghuay@nvidia.com>,
-	<peternewman@google.com>, <maciej.wieczor-retman@intel.com>,
-	<eranian@google.com>, <linux-doc@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>
-References: <cover.1749848714.git.babu.moger@amd.com>
- <d0924000e0de931f414c7cc1697919f6d3beeff9.1749848715.git.babu.moger@amd.com>
-Content-Language: en-US
-From: Reinette Chatre <reinette.chatre@intel.com>
-In-Reply-To: <d0924000e0de931f414c7cc1697919f6d3beeff9.1749848715.git.babu.moger@amd.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: MW4P221CA0023.NAMP221.PROD.OUTLOOK.COM
- (2603:10b6:303:8b::28) To SJ2PR11MB7573.namprd11.prod.outlook.com
- (2603:10b6:a03:4d2::10)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 46F8B287266
+	for <linux-kernel@vger.kernel.org>; Wed, 25 Jun 2025 23:44:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.176
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1750895095; cv=none; b=uPjfILXSeOqiGWaWc2w5mGOOwAvVJAHHN8pWdnSxiwlOhALsE9rcYexg6dnIj5uREAbUGDbH5xFLmJ8pga8E5nH/YAMDZFsNeAtlT92ZnZuOCtLV8T69PuK7IiLC9nsYTWeqgELt8fQRW0pJObNQ/4E7AeDDYIADbx+ghinbBNk=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1750895095; c=relaxed/simple;
+	bh=bg3Ch3oaeSTn0gw9pOu0G8fmMZicuhfiYO3wgc/W9g4=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=nSqn/tR7Ditzx0W7XgTlHRg3dh9VMkmWw3FCoYUab13qU4WZhXjHiFE7p7T7J4os0dUsU7F5micCshcXEhidzdXrIaA78Huu+4XbKfkSDxw9m7puvvSdXmg7NP5/1fRRcCiWWI8qTAkSsFhb3tZgjZ8vDn7/lGAam+tGSl1FxVo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=soleen.com; spf=pass smtp.mailfrom=soleen.com; dkim=pass (2048-bit key) header.d=soleen-com.20230601.gappssmtp.com header.i=@soleen-com.20230601.gappssmtp.com header.b=lGaQVf+M; arc=none smtp.client-ip=209.85.160.176
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=soleen.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=soleen.com
+Received: by mail-qt1-f176.google.com with SMTP id d75a77b69052e-4a6f3f88613so6334451cf.1
+        for <linux-kernel@vger.kernel.org>; Wed, 25 Jun 2025 16:44:53 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=soleen-com.20230601.gappssmtp.com; s=20230601; t=1750895092; x=1751499892; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=FK7GsFF88lqGjvQm8ZMWAKGf8qGndWj9zjttanlA1xU=;
+        b=lGaQVf+MWTUO6Prrql7qBABPKF7bQhXoUPoZMOtU40/XioQy4/hGdqA7dFgcybjzxb
+         KqqAe2RhYb/Vf2+oapsaza/a2XmXKUUHdJCnu1PSOejoKGmi7tNCi4TfhOmndap8RDSy
+         A0jWv7IdCDJvEtV+oYyLC8W/J23oSfTLCQwSZPQze2frfpzSz1i2kuFTmPRmJ4QLqwxM
+         kKPiWflEZYwCwgvQpFJGojlekwKGcZtkAT45E+lJieMJn7RXwVj3iufuBxRURwdqm2ww
+         GfDLnxv1zqG9673BfdZ1+smjU1r6P0TzSgbxbk8hViHCvuAlBPpngkbMyWT2QWTm5ekw
+         q/sg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1750895092; x=1751499892;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=FK7GsFF88lqGjvQm8ZMWAKGf8qGndWj9zjttanlA1xU=;
+        b=s/l4agdcMfyJE7jjhfwjtIf1ZBv6SS+xtImTszOQ/5J7EYCS8k6VReZOlVMUv/w9J/
+         RlIs5PY9s+L0IrokPCujAV6UNNgQMdHIe9EGgNOnczigYXRp6Mmc2C9HpK9qleD2qQuk
+         sXRoaWDfpu9r4Wy0FkZcwUWflHUlc4M0PIX2XMZy3qrRh7HPzB/xfvtpzj06T2Un+ETA
+         i/Fq8kGK6ruPYW7q8xuPNeBl7MligWamgTNu3X1v57/Dfokc9nkKAp1U0UbQSJB7e1Tb
+         hLw0GC2Z797ZyoMtQlfkkcjCUEBElkcDRdsHPO5qduF/sT1zhVmQiYYoc5v7YygWWSAD
+         ZYRA==
+X-Forwarded-Encrypted: i=1; AJvYcCUsvJlOdA4U9jAe5GRgers/We9RThrDYC89opfAJBHaah9dhbU1UY4kC4GvP3kjCkeXHJp2dmg0FyeqwaM=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxeZf/nQdr/6KyOTRJLnCZFeeeDOTvUnw/poXi5qGIdpNq3gaUL
+	RjrIdWENQdLNS4HRUOApv43rKxkKbugdz/GHbnnk0PxTMX0DMOzC6Xe/kRfOLyqn2QklkoBsE2t
+	j6EXhw8C2dnwEpMacoYlAeAW71XKaybJFX+OhccX41g==
+X-Gm-Gg: ASbGncvYe1WxS9nHocyt9IEYT7QLT70Tp4CaWgK4f66+Yt7Mvj4FMm3j+Borr84fqtz
+	i/CkexhpinMoVdmJSnzvRRP5qDm4bhb3d8VcT1Vk9n8ObTEVwvC/6lujrcGqyYSp2h+v2mkozyD
+	LBIFnN1vMWQdUj150oQa74TjIQjYOFRslIlYt7PQRE9Q==
+X-Google-Smtp-Source: AGHT+IFA1dw/Tbh1ngrhBlKF8dPXkDASOz9bRitH3ybBqQXjF3c1snI3GefczU+R9hvfnnbVRHa47Akh8WxSx3KKBaU=
+X-Received: by 2002:a05:622a:1aa3:b0:4a4:3449:2b82 with SMTP id
+ d75a77b69052e-4a7c0675de3mr94942221cf.13.1750895091918; Wed, 25 Jun 2025
+ 16:44:51 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: SJ2PR11MB7573:EE_|LV3PR11MB8744:EE_
-X-MS-Office365-Filtering-Correlation-Id: ffb984db-b2ef-458b-5024-08ddb441ac9c
-X-LD-Processed: 46c98d88-e344-4ed4-8496-4ed7712e255d,ExtAddr
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|7416014|376014|366016|1800799024;
-X-Microsoft-Antispam-Message-Info: =?utf-8?B?YnJJY0JxNkF1Rlg1ZnhLdlg4ZG9YT0pkbEpKeEVWSzR1RlU4UUdEbjJsa3FE?=
- =?utf-8?B?K2dZRHZBZklaQ3JLWkIweDVuWWpyVjMxSXdUVmJDTlJBNGh0eUo4a2F1R2Fs?=
- =?utf-8?B?Z0pTV2l2Umo4cWxFTTdIb2p0RUUwdjdPYTNoSGZPbDVQck9IMnB3ZXdScXNv?=
- =?utf-8?B?dVVXSCthalhaU0RxaDJ6NFc1NWw1cjN0L2R4LzVsU1liZTY5Y2laZCtqbjJP?=
- =?utf-8?B?aFJMQytCbTNsQzVaOFI5K0ZpRWxGanFVK1RRd3hOQXZXb3JacFlBcFhTOStI?=
- =?utf-8?B?SWxoQm5TdXByS2VvSFhsZTQxZFFiS3htWTcranltMXFQSTk5NzBGWWo2Undj?=
- =?utf-8?B?UWZ2Nnl2dUNsREs2aHc4TFZjeVpVNVlmMmFmckdqQUV1emhLZW16OCtiaFRn?=
- =?utf-8?B?SlU0YkN4UEo4K2dvWkhybSsyUTFWeXhYK01rS1ZZRDByMVVjaE1zc3NkMWlK?=
- =?utf-8?B?d01RMjJpZythMXhqVnk0RHhxdUlyZE9idkYzUUtFLzV5L3J6SThLbU8rVWZP?=
- =?utf-8?B?MlF0YnJoT2VDWUR1ZzNXT3RaS0V0OWxhV0F0RGtpdTZzWE1CdjJKcG9jN2dW?=
- =?utf-8?B?T0V1R0ZxUnJqc3ZWSmNEOXkycHRCOGsvREQwVFVRbFY0N3ZDR1V6WFFmOHRR?=
- =?utf-8?B?ZjVEK0ZQTkt2aFZGKytlWHFGOTJxRStQbEJnQjNmWHpWS1djWktxdHUxazRZ?=
- =?utf-8?B?cWNTQzZKTkVTUkxEUStVTnJwV0FwbXdtalFQWWp3cHJjbVhsdVoxdDZEaGtm?=
- =?utf-8?B?K3E5UXozbGZUNWhlM2ZxS2JtWWpHMzBIUGJZYjNFYzNJWWVyY2swUWNVZEd5?=
- =?utf-8?B?Ui9CZ01rYnA0U1liUVU3WjlXVTQ2bmd4UHZYVmt6MTRReEtZVnlNVStITlpv?=
- =?utf-8?B?T3NxZzNaZjhWZVVBWUlxb0RPYmgydEZTZVNja20rRmdHMkovM2F4dytyQ3FT?=
- =?utf-8?B?a1BDVDJRcEVyVDBybHRmTWRVeGhuaVF4NHFrSmRMdHBJUHFtSndFRXZQeHlt?=
- =?utf-8?B?ZWpxYmNjaEFlelRNaDErS0dSRldOSDhlalI4Z3RDMEx0eW9iZGZOWVloU0wz?=
- =?utf-8?B?MEY2TDlYZDh2bzdiRzZXUnBhQ2NIQjZBR2Nmc1cwbWtlK1AxWGt0eGpUdEdu?=
- =?utf-8?B?Ujg1RG0xcytNZThKdFh1RksxZlYrVTU3UlovY3NiZUdPUEowUVdYcTNYUExY?=
- =?utf-8?B?K1JJTForZHNJbUlXTzNyMWxHMTBtQmtLWjFPN28rMXIxNE1jZU5NSjFpOTRy?=
- =?utf-8?B?Mzd4bk14b0E1Q1l3SXpYYmZMZElINTRBU2xVR1RPTjdpeng3cWxvQUxZRjdQ?=
- =?utf-8?B?ck9ZdExDWktCbXdzYmRUT3B5SjgrK1NUbEZhZlBqSFVrK0FsVHJtTTZvT0ZH?=
- =?utf-8?B?aENicDlJcFJwR1lMSytwUTRCZ1h3eHFoNmtpQ3RZYmRpTER6NTZHNVh5dzZR?=
- =?utf-8?B?cjVxbTJ2bFY4WkR4R2ZGSmFJYndPeXVJQmcwQkxMYjR4cEhBV0xVakxINzk0?=
- =?utf-8?B?Y3VjVnlmRGtRWklKRllYRWpaNkk3WFZFVU5RVDNoUXlDV1ByM1lveXNRcmJB?=
- =?utf-8?B?VnBiRWplcm9IR2dXSFpoWGhPaUE3aHc3d3NVVjhpSkw3eEkyTUVlU0FLdEhq?=
- =?utf-8?B?eG9JSHh5ZVNiWHJ3bUE5aVkvOHYvc2ZUT1JIOFVzWUhlaXQzMkZySkNJWXdY?=
- =?utf-8?B?azJBUDBBMG8rWHF2Yzh4MFNTV2R6M0hXdkZHaFpiclUzU1ErTGZPRzVrOTBP?=
- =?utf-8?B?TlFIcGFaWU5JOW9FbGZLRm9Gb2JDS01JMnZSaTZZbENYOWFNRzZkMC96Tm5U?=
- =?utf-8?B?bjRqTk1TV1VFVlFiZFlqVWhOc3dBU1Nhc1dUdlJzRkNUNmNxTkdwTlZnQmRk?=
- =?utf-8?B?cHV6dlVrMlFoZnpvOFpHdkVSWS9XVVdGckV2bitPRGhvY1UzR2g4djdhVkMx?=
- =?utf-8?Q?TAs3/nBNqig=3D?=
-X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SJ2PR11MB7573.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(7416014)(376014)(366016)(1800799024);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?utf-8?B?OG0xNFBDU1FacXFnQjBIWWlwakNocC9UU2cyNlZmTHpoNmhlR0hHNE9wSzM1?=
- =?utf-8?B?YkUxL2xMQWlFRTRtQy9iR09FK2JsbU5zMlUrME9sN254UGlJdGNoOG9rS2Nh?=
- =?utf-8?B?N1A1WE9HTitHYjg3VktEYkIzQ1pac0gwVHFMZk9lQ2RYSzl0RS9UcklLc09T?=
- =?utf-8?B?MGRmSkJwSHdYNGljRmd5eHNQQ2dmWVI2bE1jeVVGTHQrbGRJbG9US1ducGhC?=
- =?utf-8?B?U1BvUDE1b2ZrdjQzK2ZNU2ZYelIrQ294elF3K2NVVkp1ZmxyKzY1Q3J6MVVy?=
- =?utf-8?B?TVZyR2hNYkZOdXRuYktEbUc1SjVIQjJxQmhFQ3lhUnNBaWVLT1V2T1JXa3lG?=
- =?utf-8?B?MGFKaGZOQ0QyVHJINUJ6UjA2VUFVTG0xVi83L2x5VlBUQkxjYjZvY0NvNUlE?=
- =?utf-8?B?bjE2Y3FhWERkS3BrWkwrVkdEZERwQlZWem5aV2kzZUx5eC9VQ0NxaGNhSkhr?=
- =?utf-8?B?QUtlekp5bm55UzZGUkIxRkpZb1k3OHVEdmF2K2JBbXhZeUZOSzFJcTU2V2hn?=
- =?utf-8?B?WTk3Y3g4eE5MdHliVWovd0g5VTNYSk1hek0vSXY1RExSZWlGekhsRmN1clpX?=
- =?utf-8?B?cytLZUdlVzg3ZGdUOXhWV0RPbWszbFJLekZuTXRneXduSjdLMFZDbTA0b1pQ?=
- =?utf-8?B?Ry9UWkYzaUhEQ1RXT3duczFRcVZoTGVvTU5Nd1QvV0daKy9vTjAvQU1pb2hU?=
- =?utf-8?B?eWFrMkx3SjBHU0lEc3Vkdk5XMjhuSjFOZTRuZWppeW5kWmFpSjhRUnhuOUVN?=
- =?utf-8?B?Ri9VN3RpeXhoS3gxQWdMN1AzT1ArWWdQYkd5OWtwZTJnMC9meUkreUE0NWhs?=
- =?utf-8?B?a3dOa2JUNERxbkUvR0gwNjNHQ29XNlNQYjV6YXZkcHArRlYzaC9tVW9wa0xt?=
- =?utf-8?B?Q2xqU01BWXkvcDI0R2p4Q2dzbWxnL3JkSHJzaVdLUDZOYUZvK0NRWEJBenlR?=
- =?utf-8?B?MC9TLzZ1SGlEZVRyMk5jUkRoTEg0blhRWDAvL3hsSXJVbVN3NFdXakRZUVhU?=
- =?utf-8?B?WU9zN2UyZG5SL1FjbTVkQitvZmdvVDV5ZGhHTWJtRytuVkRwWFA0cmQycm1R?=
- =?utf-8?B?ZFBJclZienJ0Z0pDV0FkVHQrZGlEc05UTmhKdFdqUlZSbVh5Ty9kYnAvSU14?=
- =?utf-8?B?dWx0Ui9GemRwWXJTQm1yeENENEtpbkZlYzJZZUo2SUdJV0tNbDlwVWtWRFZs?=
- =?utf-8?B?WDhDUnZZRmpHQTg3bjgxRmQ5L3pudU1YMWJtelNLTStja1hqN21SNVF6QjJQ?=
- =?utf-8?B?dUErdTNVUmdONmt2UDVFcTIvQ2Z5ZndiTlhxTHJrUHBNcVVZZDZDTFN6SnFF?=
- =?utf-8?B?ZjVyM3VEVWcxTFMzTUFqTzZRdFFVK25NRXdGbTcvbE03VFlVODVwVnRCREZa?=
- =?utf-8?B?VEE2TXBUMEU2S2FPcllHc0Q4QmdLQmNtNFU0djUyVzYwZTFKZURXbS9NaGdw?=
- =?utf-8?B?VkJJWDFjeXYwOURCRDV2OERKWXZiWGFXOW0rV3g2ajdwTHg1WktZTU03RzNy?=
- =?utf-8?B?VjdJVGx0RllONHVJdGl1bkllZjJHeXh2MVdESDZGQkl3WUFCM2RLSTZNdTNV?=
- =?utf-8?B?NFhrUHBKUTE0ZEptOURxdjMxSkMvRitOVTFuZGNzWDB2a3VwcDRjdTNKWjlE?=
- =?utf-8?B?RmdWVjZkUk1IN1RldDVydk56Zm80L1JibEEyZzVnMHVrbm82WkkrSUlaZktV?=
- =?utf-8?B?Sy9mazFhLzVYNzBVZjdPWnQzeGsrcERFSmViVVFGY0JtNmRRMnZOVVN2aE91?=
- =?utf-8?B?WUdBRXdheXZORk1WekM3MXRHK08zK1ZxRlVJOUFZcDFvbXhIbllzN1E2V1k2?=
- =?utf-8?B?cFhmWUgwcGI1a2NWUzNtNnhJczJVaTZ0NWxiTWZZMzJuNU5TYUh5bG5tUEtW?=
- =?utf-8?B?MmxkT21KQmdOQTBRNTVlV2JlL3RYY1ZzZXpVN3F3cFJtNzNkUmtTNElLNHpE?=
- =?utf-8?B?MHlhWkR6VWVYNTd2TVpRcTUvTWhQSjFpbkFKQnB3WFVSM2IrOXdUMTkrN2VY?=
- =?utf-8?B?eXRHUklBWGpPVTJ2a2FhcDY5Mlltb0N1aVJ4Y2NPc2VVcHhqQkphQlg5R3ZP?=
- =?utf-8?B?NVF5ZDdjQ3kzakRFVzNpRlVmbDZuejZnRXRFQSthb0graHBvbnRsOUxGZUJV?=
- =?utf-8?B?Um5vUnVOblBiVXppYlU5U3FjUktUb3ZGeG9rK0dkR3hUbXlTZTdqUjRqWjVr?=
- =?utf-8?B?Q1E9PQ==?=
-X-MS-Exchange-CrossTenant-Network-Message-Id: ffb984db-b2ef-458b-5024-08ddb441ac9c
-X-MS-Exchange-CrossTenant-AuthSource: SJ2PR11MB7573.namprd11.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 25 Jun 2025 23:40:31.9494
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: /yDsDRnFaakQrKQsagBcUoZWkKfbp23+s3XFlTkxF5LIZANX1HLkmdQkmGpgpXUUDQ4hzMj4MGsa0RajmowAjUgSlslQ6Ai2siC0qpxZ7w0=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: LV3PR11MB8744
-X-OriginatorOrg: intel.com
+References: <20250625231838.1897085-1-pasha.tatashin@soleen.com> <20250625232653.GJ369@kvack.org>
+In-Reply-To: <20250625232653.GJ369@kvack.org>
+From: "pasha.tatashin" <pasha.tatashin@soleen.com>
+Date: Wed, 25 Jun 2025 19:44:12 -0400
+X-Gm-Features: Ac12FXw9JQy4g0DzAGeQjJ73rJNx0LH5nXFC6RmoGr5lfqNnNC58y1Z2DsYDqVc
+Message-ID: <CA+CK2bAsz4Zz2_Kp8QMKxG5taY52ykhhykROd0di85ax5eeOrw@mail.gmail.com>
+Subject: Re: [PATCH v1 00/32] Live Update Orchestrator
+To: Benjamin LaHaise <bcrl@kvack.org>
+Cc: pratyush@kernel.org, jasonmiu@google.com, graf@amazon.com, 
+	changyuanl@google.com, rppt@kernel.org, dmatlack@google.com, 
+	rientjes@google.com, corbet@lwn.net, rdunlap@infradead.org, 
+	ilpo.jarvinen@linux.intel.com, kanie@linux.alibaba.com, ojeda@kernel.org, 
+	aliceryhl@google.com, masahiroy@kernel.org, akpm@linux-foundation.org, 
+	tj@kernel.org, yoann.congal@smile.fr, mmaurer@google.com, 
+	roman.gushchin@linux.dev, chenridong@huawei.com, axboe@kernel.dk, 
+	mark.rutland@arm.com, jannh@google.com, vincent.guittot@linaro.org, 
+	hannes@cmpxchg.org, dan.j.williams@intel.com, david@redhat.com, 
+	joel.granados@kernel.org, rostedt@goodmis.org, anna.schumaker@oracle.com, 
+	song@kernel.org, zhangguopeng@kylinos.cn, linux@weissschuh.net, 
+	linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org, linux-mm@kvack.org, 
+	gregkh@linuxfoundation.org, tglx@linutronix.de, mingo@redhat.com, 
+	bp@alien8.de, dave.hansen@linux.intel.com, x86@kernel.org, hpa@zytor.com, 
+	rafael@kernel.org, dakr@kernel.org, bartosz.golaszewski@linaro.org, 
+	cw00.choi@samsung.com, myungjoo.ham@samsung.com, yesanishhere@gmail.com, 
+	Jonathan.Cameron@huawei.com, quic_zijuhu@quicinc.com, 
+	aleksander.lobakin@intel.com, ira.weiny@intel.com, 
+	andriy.shevchenko@linux.intel.com, leon@kernel.org, lukas@wunner.de, 
+	bhelgaas@google.com, wagi@kernel.org, djeffery@redhat.com, 
+	stuart.w.hayes@gmail.com, ptyadav@amazon.de, lennart@poettering.net, 
+	brauner@kernel.org, linux-api@vger.kernel.org, linux-fsdevel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hi Babu,
+On Wed, Jun 25, 2025 at 7:26=E2=80=AFPM Benjamin LaHaise <bcrl@kvack.org> w=
+rote:
+>
+> FYI: Every one of your emails to the list for this series was bounced by
+> all the recipients using @gmail.com email addresses.
+>
+>                 -ben (owner-linux-mm)
 
-On 6/13/25 2:05 PM, Babu Moger wrote:
+This is extremely annoying, I will need to figure out why this is
+happening. soleen.com uses google workspace.
 
-> @@ -537,6 +540,10 @@ static void domain_add_cpu_mon(int cpu, struct rdt_resource *r)
->  	d->ci_id = ci->id;
->  	cpumask_set_cpu(cpu, &d->hdr.cpu_mask);
->  
-> +	/* Update the mbm_mbm_assign state for the CPU if supported */
+Pasha
 
-"mbm_mbm_assign" -> "mbm_assign_mode"?
-
-> +	if (r->mon.mbm_cntr_assignable)
-> +		resctrl_arch_mbm_cntr_assign_set_one(r);
-> +
->  	arch_mon_domain_online(r, d);
->  
->  	if (arch_domain_mbm_alloc(r->mon.num_rmid, hw_dom)) {
-
-Reinette
+>
+> On Wed, Jun 25, 2025 at 11:17:47PM +0000, Pasha Tatashin wrote:
+> > This series introduces the LUO, a kernel subsystem designed to
+> > facilitate live kernel updates with minimal downtime,
+> > particularly in cloud delplyoments aiming to update without fully
+> > disrupting running virtual machines.
+> >
+> > This series builds upon KHO framework by adding programmatic
+> > control over KHO's lifecycle and leveraging KHO for persisting LUO's
+> > own metadata across the kexec boundary. The git branch for this series
+> > can be found at:
+> >
+> > https://github.com/googleprodkernel/linux-liveupdate/tree/luo/v1
+> >
+> > Changelog from rfc-v2:
+> > - Addressed review comments from Mike Rapoport, Pratyush Yadav,
+> >   David Matlack
+> > - Moved everything under kernel/liveupdate including KHO.
+> > - Added a number fixes to KHO that were discovered.
+> > - luo_files is not a registred as a subsystem.
+> > - Added sessions support to preserved files.
+> > - Added support for memfd (Pratyush Yadav)
+> > - Added libluo (proposed as RFC) (Pratyush Yadav)
+> > - Removed notifiers from KHO (Mike Rapoport)
+> >
+> > What is Live Update?
+> > Live Update is a kexec based reboot process where selected kernel
+> > resources (memory, file descriptors, and eventually devices) are kept
+> > operational or their state preserved across a kernel transition. For
+> > certain resources, DMA and interrupt activity might continue with
+> > minimal interruption during the kernel reboot.
+> >
+> > LUO provides a framework for coordinating live updates. It features:
+> > State Machine: Manages the live update process through states:
+> > NORMAL, PREPARED, FROZEN, UPDATED.
+> >
+> > KHO Integration:
+> >
+> > LUO programmatically drives KHO's finalization and abort sequences.
+> > KHO's debugfs interface is now optional configured via
+> > CONFIG_KEXEC_HANDOVER_DEBUG.
+> >
+> > LUO preserves its own metadata via KHO's kho_add_subtree and
+> > kho_preserve_phys() mechanisms.
+> >
+> > Subsystem Participation: A callback API liveupdate_register_subsystem()
+> > allows kernel subsystems (e.g., KVM, IOMMU, VFIO, PCI) to register
+> > handlers for LUO events (PREPARE, FREEZE, FINISH, CANCEL) and persist a
+> > u64 payload via the LUO FDT.
+> >
+> > File Descriptor Preservation: Infrastructure
+> > liveupdate_register_filesystem, luo_register_file, luo_retrieve_file to
+> > allow specific types of file descriptors (e.g., memfd, vfio) to be
+> > preserved and restored.
+> >
+> > Handlers for specific file types can be registered to manage their
+> > preservation and restoration, storing a u64 payload in the LUO FDT.
+> >
+> > User-space Interface:
+> >
+> > ioctl (/dev/liveupdate): The primary control interface for
+> > triggering LUO state transitions (prepare, freeze, finish, cancel)
+> > and managing the preservation/restoration of file descriptors.
+> > Access requires CAP_SYS_ADMIN.
+> >
+> > sysfs (/sys/kernel/liveupdate/state): A read-only interface for
+> > monitoring the current LUO state. This allows userspace services to
+> > track progress and coordinate actions.
+> >
+> > Selftests: Includes kernel-side hooks and userspace selftests to
+> > verify core LUO functionality, particularly subsystem registration and
+> > basic state transitions.
+> >
+> > LUO State Machine and Events:
+> >
+> > NORMAL:   Default operational state.
+> > PREPARED: Initial preparation complete after LIVEUPDATE_PREPARE
+> >           event. Subsystems have saved initial state.
+> > FROZEN:   Final "blackout window" state after LIVEUPDATE_FREEZE
+> >           event, just before kexec. Workloads must be suspended.
+> > UPDATED:  Next kernel has booted via live update. Awaiting restoration
+> >           and LIVEUPDATE_FINISH.
+> >
+> > Events:
+> > LIVEUPDATE_PREPARE: Prepare for reboot, serialize state.
+> > LIVEUPDATE_FREEZE:  Final opportunity to save state before kexec.
+> > LIVEUPDATE_FINISH:  Post-reboot cleanup in the next kernel.
+> > LIVEUPDATE_CANCEL:  Abort prepare or freeze, revert changes.
+> >
+> > RFC v1: https://lore.kernel.org/all/20250320024011.2995837-1-pasha.tata=
+shin@soleen.com
+> > RFC v2: https://lore.kernel.org/all/20250515182322.117840-1-pasha.tatas=
+hin@soleen.com/
+> >
+> > Changyuan Lyu (1):
+> >   kho: add interfaces to unpreserve folios and physical memory ranges
+> >
+> > Mike Rapoport (Microsoft) (1):
+> >   kho: drop notifiers
+> >
+> > Pasha Tatashin (22):
+> >   kho: init new_physxa->phys_bits to fix lockdep
+> >   kho: mm: Don't allow deferred struct page with KHO
+> >   kho: warn if KHO is disabled due to an error
+> >   kho: allow to drive kho from within kernel
+> >   kho: make debugfs interface optional
+> >   kho: don't unpreserve memory during abort
+> >   liveupdate: kho: move to kernel/liveupdate
+> >   liveupdate: luo_core: Live Update Orchestrator
+> >   liveupdate: luo_core: integrate with KHO
+> >   liveupdate: luo_subsystems: add subsystem registration
+> >   liveupdate: luo_subsystems: implement subsystem callbacks
+> >   liveupdate: luo_files: add infrastructure for FDs
+> >   liveupdate: luo_files: implement file systems callbacks
+> >   liveupdate: luo_ioctl: add ioctl interface
+> >   liveupdate: luo_sysfs: add sysfs state monitoring
+> >   reboot: call liveupdate_reboot() before kexec
+> >   liveupdate: luo_files: luo_ioctl: session-based file descriptor
+> >     tracking
+> >   kho: move kho debugfs directory to liveupdate
+> >   liveupdate: add selftests for subsystems un/registration
+> >   selftests/liveupdate: add subsystem/state tests
+> >   docs: add luo documentation
+> >   MAINTAINERS: add liveupdate entry
+> >
+> > Pratyush Yadav (8):
+> >   mm: shmem: use SHMEM_F_* flags instead of VM_* flags
+> >   mm: shmem: allow freezing inode mapping
+> >   mm: shmem: export some functions to internal.h
+> >   luo: allow preserving memfd
+> >   docs: add documentation for memfd preservation via LUO
+> >   tools: introduce libluo
+> >   libluo: introduce luoctl
+> >   libluo: add tests
+> >
+> >  .../ABI/testing/sysfs-kernel-liveupdate       |  51 +
+> >  Documentation/admin-guide/index.rst           |   1 +
+> >  Documentation/admin-guide/liveupdate.rst      |  16 +
+> >  Documentation/core-api/index.rst              |   1 +
+> >  Documentation/core-api/kho/concepts.rst       |   2 +-
+> >  Documentation/core-api/liveupdate.rst         |  57 ++
+> >  Documentation/mm/index.rst                    |   1 +
+> >  Documentation/mm/memfd_preservation.rst       | 138 +++
+> >  Documentation/userspace-api/index.rst         |   1 +
+> >  .../userspace-api/ioctl/ioctl-number.rst      |   2 +
+> >  Documentation/userspace-api/liveupdate.rst    |  25 +
+> >  MAINTAINERS                                   |  20 +-
+> >  include/linux/kexec_handover.h                |  53 +-
+> >  include/linux/liveupdate.h                    | 235 +++++
+> >  include/linux/shmem_fs.h                      |  23 +
+> >  include/uapi/linux/liveupdate.h               | 265 +++++
+> >  init/Kconfig                                  |   2 +
+> >  kernel/Kconfig.kexec                          |  14 -
+> >  kernel/Makefile                               |   2 +-
+> >  kernel/liveupdate/Kconfig                     |  90 ++
+> >  kernel/liveupdate/Makefile                    |  13 +
+> >  kernel/{ =3D> liveupdate}/kexec_handover.c      | 556 +++++-----
+> >  kernel/liveupdate/kexec_handover_debug.c      | 222 ++++
+> >  kernel/liveupdate/kexec_handover_internal.h   |  45 +
+> >  kernel/liveupdate/luo_core.c                  | 525 ++++++++++
+> >  kernel/liveupdate/luo_files.c                 | 946 ++++++++++++++++++
+> >  kernel/liveupdate/luo_internal.h              |  47 +
+> >  kernel/liveupdate/luo_ioctl.c                 | 192 ++++
+> >  kernel/liveupdate/luo_selftests.c             | 344 +++++++
+> >  kernel/liveupdate/luo_selftests.h             |  84 ++
+> >  kernel/liveupdate/luo_subsystems.c            | 420 ++++++++
+> >  kernel/liveupdate/luo_sysfs.c                 |  92 ++
+> >  kernel/reboot.c                               |   4 +
+> >  mm/Makefile                                   |   1 +
+> >  mm/internal.h                                 |   6 +
+> >  mm/memblock.c                                 |  56 +-
+> >  mm/memfd_luo.c                                | 501 ++++++++++
+> >  mm/shmem.c                                    |  46 +-
+> >  tools/lib/luo/LICENSE                         | 165 +++
+> >  tools/lib/luo/Makefile                        |  45 +
+> >  tools/lib/luo/README.md                       | 166 +++
+> >  tools/lib/luo/cli/.gitignore                  |   1 +
+> >  tools/lib/luo/cli/Makefile                    |  18 +
+> >  tools/lib/luo/cli/luoctl.c                    | 178 ++++
+> >  tools/lib/luo/include/libluo.h                | 128 +++
+> >  tools/lib/luo/include/liveupdate.h            | 265 +++++
+> >  tools/lib/luo/libluo.c                        | 203 ++++
+> >  tools/lib/luo/tests/.gitignore                |   1 +
+> >  tools/lib/luo/tests/Makefile                  |  18 +
+> >  tools/lib/luo/tests/test.c                    | 848 ++++++++++++++++
+> >  tools/testing/selftests/Makefile              |   1 +
+> >  tools/testing/selftests/liveupdate/.gitignore |   1 +
+> >  tools/testing/selftests/liveupdate/Makefile   |   7 +
+> >  tools/testing/selftests/liveupdate/config     |   6 +
+> >  .../testing/selftests/liveupdate/liveupdate.c | 356 +++++++
+> >  55 files changed, 7091 insertions(+), 415 deletions(-)
+> >  create mode 100644 Documentation/ABI/testing/sysfs-kernel-liveupdate
+> >  create mode 100644 Documentation/admin-guide/liveupdate.rst
+> >  create mode 100644 Documentation/core-api/liveupdate.rst
+> >  create mode 100644 Documentation/mm/memfd_preservation.rst
+> >  create mode 100644 Documentation/userspace-api/liveupdate.rst
+> >  create mode 100644 include/linux/liveupdate.h
+> >  create mode 100644 include/uapi/linux/liveupdate.h
+> >  create mode 100644 kernel/liveupdate/Kconfig
+> >  create mode 100644 kernel/liveupdate/Makefile
+> >  rename kernel/{ =3D> liveupdate}/kexec_handover.c (74%)
+> >  create mode 100644 kernel/liveupdate/kexec_handover_debug.c
+> >  create mode 100644 kernel/liveupdate/kexec_handover_internal.h
+> >  create mode 100644 kernel/liveupdate/luo_core.c
+> >  create mode 100644 kernel/liveupdate/luo_files.c
+> >  create mode 100644 kernel/liveupdate/luo_internal.h
+> >  create mode 100644 kernel/liveupdate/luo_ioctl.c
+> >  create mode 100644 kernel/liveupdate/luo_selftests.c
+> >  create mode 100644 kernel/liveupdate/luo_selftests.h
+> >  create mode 100644 kernel/liveupdate/luo_subsystems.c
+> >  create mode 100644 kernel/liveupdate/luo_sysfs.c
+> >  create mode 100644 mm/memfd_luo.c
+> >  create mode 100644 tools/lib/luo/LICENSE
+> >  create mode 100644 tools/lib/luo/Makefile
+> >  create mode 100644 tools/lib/luo/README.md
+> >  create mode 100644 tools/lib/luo/cli/.gitignore
+> >  create mode 100644 tools/lib/luo/cli/Makefile
+> >  create mode 100644 tools/lib/luo/cli/luoctl.c
+> >  create mode 100644 tools/lib/luo/include/libluo.h
+> >  create mode 100644 tools/lib/luo/include/liveupdate.h
+> >  create mode 100644 tools/lib/luo/libluo.c
+> >  create mode 100644 tools/lib/luo/tests/.gitignore
+> >  create mode 100644 tools/lib/luo/tests/Makefile
+> >  create mode 100644 tools/lib/luo/tests/test.c
+> >  create mode 100644 tools/testing/selftests/liveupdate/.gitignore
+> >  create mode 100644 tools/testing/selftests/liveupdate/Makefile
+> >  create mode 100644 tools/testing/selftests/liveupdate/config
+> >  create mode 100644 tools/testing/selftests/liveupdate/liveupdate.c
+> >
+> > --
+> > 2.50.0.727.gbf7dc18ff4-goog
+> >
+>
+> --
+> "Thought is the essence of where you are now."
 
