@@ -1,143 +1,283 @@
-Return-Path: <linux-kernel+bounces-702501-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-702505-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 18AD1AE832A
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Jun 2025 14:51:15 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 904DEAE8338
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Jun 2025 14:52:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B82513BF6E5
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Jun 2025 12:50:49 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id ED8F8189D43D
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Jun 2025 12:52:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4173E2609FB;
-	Wed, 25 Jun 2025 12:51:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 652AE264604;
+	Wed, 25 Jun 2025 12:51:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ChxHDxM0"
-Received: from mail-lf1-f54.google.com (mail-lf1-f54.google.com [209.85.167.54])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="OujIIgrZ"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.14])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 040421E4AE;
-	Wed, 25 Jun 2025 12:51:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E713125D1E0;
+	Wed, 25 Jun 2025 12:51:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.14
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750855867; cv=none; b=rRt7IeH1ReAYxYnKf8WmVvcvciZMwwVLOKjWTSHQ77DDOiw+7kxnjGp5dvHHhzKWMqfygPKcyze/7965yFj9Do+CdnsKXgcGTkAZH7xYqBH6BrOYf3PcX059609GuFbsgbyunV+X/UoWjpWwf/dIn0IMvsYtLmwAWrm4EuWhixE=
+	t=1750855889; cv=none; b=Pf0jSWUnzPEAS/uTtd6tAoEH3ZXShwixmSdhu0QSu1S+vku7OaAHZwv8FpIgldBP3I1hDemuhTz+zelgK7JYkHNJrTdo/b7pY9b6rl5eASOhwRgYQUfyR3O1h+FclwlXkowN35lOVg85nGm+qClBanzbfV3mOVXEtmWCVmgOlEI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750855867; c=relaxed/simple;
-	bh=CRwRhM1MtMEUcOGQgquJfle4LDepcccXWla+ZKxsdwI=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=jwaLVQdzNktI9jxw4zSlN1ssmyfwEVLDTp+vu9rxeHWi2rmC6uold47bGSXwLcaW0lfRraDEItjhpz/zF9MqgpsUhnpimE+nrf/BRTZqfyOuhkQqwlCiSdgq/VkJw1sfV5dG/zEh8tLxq5rb8DSEPKNakH5WPPtnNXkPwETRLCQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ChxHDxM0; arc=none smtp.client-ip=209.85.167.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lf1-f54.google.com with SMTP id 2adb3069b0e04-555024588b1so22054e87.1;
-        Wed, 25 Jun 2025 05:51:05 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1750855864; x=1751460664; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=CRwRhM1MtMEUcOGQgquJfle4LDepcccXWla+ZKxsdwI=;
-        b=ChxHDxM0oreHKDK8D8eoA5qosDZ9oozJ7EkiKDJPm9z1nBAZnJGldW6EpwSimFuleT
-         d3iiN/BxAehuY2/4QaUIkaEdwuVTdAX7fkql9ZNi4FzheZOM1qbjXRTM/UGU+2vwejdn
-         sJkw5zaJhm4cs2YhoHWICfjlP78aXY0SQP41kGr0LGmDwo2fVDCCGZBM+PfHn4Ih6wm3
-         EqNWT1QlcUyyJpWddf23L4uIT+luWdsfHp5QIdi31CajZmflgzSqanZsLKoEZ7TBFswK
-         Qi8PWEelbZc55oGxbCQfdqXstgmvfAGJLGr7l6fk91rnvDGGRxlcWGlWNIaRYpGo/eAQ
-         KbGw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1750855864; x=1751460664;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=CRwRhM1MtMEUcOGQgquJfle4LDepcccXWla+ZKxsdwI=;
-        b=ujBcojSZbqbJ2688BFCZmX8y88Cpb6e2c1VxreoI0GluE9g0EFe1jLrCLdkW5lgLCq
-         rZRs1GpQ7AbmA+rKK01LTRWH1qsWqFhNwESOx5wyAZ6PCQ5r8yPMR9lLH2FeCWXVRvvc
-         RXTlSy6S0TfobwINu3G6EJJHu6u4nPJaGqFGzKgql8UiZ06TIFPDYhY/h7ybd3YmDgTa
-         HMBTSvQcLN0aE5Ui38Ihve/bCQnwpawEvasxMfe4/sTqpiS3bG9WrO0zPYhyNEp7fQ6N
-         wdGS6SlNscPGTQpj4JREp9S5xe3JRfpx9zge1hB+SURM28LImzXAMckKRciYt15Rj8bv
-         nQ3Q==
-X-Forwarded-Encrypted: i=1; AJvYcCXWSLoawUrTYAe26lmVw4fosk9b6JdZrl9tn9K9vILNtcV/rJ3/PdQylb4eAzuj2/EeE0ktkygA5QgRmxk=@vger.kernel.org, AJvYcCXZ0VCsFzN5XT2MOJ9rqIdo+/XCv42GAqDu5HaEtcOD1NToRDEnhFFZup4xvS86HaUhcevyuKcyFJ5baQ==@vger.kernel.org
-X-Gm-Message-State: AOJu0YxL38bXNMi0wZegT1mdueJ6QFZjPCggGys7KLnfppsO7SssOPzv
-	udsNx/1+YqOcb3AlNaMoGnbAFy0MdJGN5RcS6HNaG0BDigyWgWun0aTWONDrXsAKRLSI7e0jIgM
-	ECKat+mgxCP3VQulEEvkJ4L3GisyojWw=
-X-Gm-Gg: ASbGncu078D/ke3ylg+kAZmGVE2yc1n8V68+hmTnQSihBYAQtXpj8y7WQ+5yo9XNe5d
-	mtvB1xyC6cqYr2xyshpBlj1U0Wpd9KMongAA+sZZ9T2b0QAtPbOCVep5U6qTO8hsS3NYuo8UtBI
-	V48E5XkgANtzAQt73w4nrnYqju7dxGk2OXhTsLAkMLwQ==
-X-Google-Smtp-Source: AGHT+IH4AdTi7obPWXsCps0Kqqd3RJ5D/he3Lezfcy1G4Eg5fA0HGJmj1VDSyHt6qyIqHAybfxlMpWZQjVgI2Xx3Mto=
-X-Received: by 2002:a05:6512:4011:b0:553:297b:3d45 with SMTP id
- 2adb3069b0e04-554fde58124mr1020525e87.43.1750855863865; Wed, 25 Jun 2025
- 05:51:03 -0700 (PDT)
+	s=arc-20240116; t=1750855889; c=relaxed/simple;
+	bh=J/XJ6+xmfFKORYYpWw3+uArYtB52OjCqTuAslERqGTM=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=KfWUR7cQ2oanZfRjIojaRd3zFy8fYoLcnPiwLQkQTSF1I1FHSPed717+5kxOZSPPQYLWG16k4Sc5DVw2yoT4xNZmTkjBNclXO/SnTRYAy1+k5209SfNJ7Slehr52XeNkWr0CqKEjeSFvh/oHRMD08AAuFHwFEud5b3xxr11DGVs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.helo=mgamail.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=OujIIgrZ; arc=none smtp.client-ip=192.198.163.14
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.helo=mgamail.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1750855887; x=1782391887;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=J/XJ6+xmfFKORYYpWw3+uArYtB52OjCqTuAslERqGTM=;
+  b=OujIIgrZSPoCZ47EMiw+Ek5wib0utRNtAiNZ544dz2sD3YbY3MalgFBO
+   7E3d42qvWtXJtSjXXvBjIboKgDCW2mOKgd9CJGTEP9Yqz63lhdTErd9ig
+   ob8hZZ9egd9qqae+/cAI8IiKoqsHZ4HDp+9c8Pyu0LGrXg3QqbxGXffgI
+   AsMtSGdfoiw86PbD20NBT9t7RWO8yI67EZG/Y5OfSpx+gbLFo/ekbbMOf
+   pi3086pJe3/NShZJcMbvsFDbN+MmAuGHGFFlRJkPJhspmjY8UcFpA+sZW
+   wbkxeIcLZLAhLzMiO1XvVvEDY4+lwbpfuJ8Mk7Nq2lMmAcwqygqVC2X3J
+   g==;
+X-CSE-ConnectionGUID: iiGMpRfoS66OwNzxpPj1/A==
+X-CSE-MsgGUID: /LYGxtEfS1ObarH0ol/9oQ==
+X-IronPort-AV: E=McAfee;i="6800,10657,11474"; a="53189474"
+X-IronPort-AV: E=Sophos;i="6.16,264,1744095600"; 
+   d="scan'208";a="53189474"
+Received: from fmviesa007.fm.intel.com ([10.60.135.147])
+  by fmvoesa108.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 25 Jun 2025 05:51:24 -0700
+X-CSE-ConnectionGUID: 2ko/mDNGQ/6Gl7ruYpwhcg==
+X-CSE-MsgGUID: lYQ/hmEhQNynm11ozJujjg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.16,264,1744095600"; 
+   d="scan'208";a="151830929"
+Received: from black.fi.intel.com ([10.237.72.28])
+  by fmviesa007.fm.intel.com with ESMTP; 25 Jun 2025 05:51:13 -0700
+Received: by black.fi.intel.com (Postfix, from userid 1000)
+	id 42AB8207; Wed, 25 Jun 2025 15:51:12 +0300 (EEST)
+From: "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>
+To: Andy Lutomirski <luto@kernel.org>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Ingo Molnar <mingo@redhat.com>,
+	Borislav Petkov <bp@alien8.de>,
+	Dave Hansen <dave.hansen@linux.intel.com>,
+	x86@kernel.org,
+	"H. Peter Anvin" <hpa@zytor.com>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Ard Biesheuvel <ardb@kernel.org>,
+	"Paul E. McKenney" <paulmck@kernel.org>,
+	Josh Poimboeuf <jpoimboe@kernel.org>,
+	Xiongwei Song <xiongwei.song@windriver.com>,
+	Xin Li <xin3.li@intel.com>,
+	"Mike Rapoport (IBM)" <rppt@kernel.org>,
+	Brijesh Singh <brijesh.singh@amd.com>,
+	Michael Roth <michael.roth@amd.com>,
+	Tony Luck <tony.luck@intel.com>,
+	Alexey Kardashevskiy <aik@amd.com>,
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>
+Cc: Jonathan Corbet <corbet@lwn.net>,
+	Sohil Mehta <sohil.mehta@intel.com>,
+	Ingo Molnar <mingo@kernel.org>,
+	Pawan Gupta <pawan.kumar.gupta@linux.intel.com>,
+	Daniel Sneddon <daniel.sneddon@linux.intel.com>,
+	Kai Huang <kai.huang@intel.com>,
+	Sandipan Das <sandipan.das@amd.com>,
+	Breno Leitao <leitao@debian.org>,
+	Rick Edgecombe <rick.p.edgecombe@intel.com>,
+	Alexei Starovoitov <ast@kernel.org>,
+	Hou Tao <houtao1@huawei.com>,
+	Juergen Gross <jgross@suse.com>,
+	Vegard Nossum <vegard.nossum@oracle.com>,
+	Kees Cook <kees@kernel.org>,
+	Eric Biggers <ebiggers@google.com>,
+	Jason Gunthorpe <jgg@ziepe.ca>,
+	"Masami Hiramatsu (Google)" <mhiramat@kernel.org>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Luis Chamberlain <mcgrof@kernel.org>,
+	Yuntao Wang <ytcoode@gmail.com>,
+	Rasmus Villemoes <linux@rasmusvillemoes.dk>,
+	Christophe Leroy <christophe.leroy@csgroup.eu>,
+	Tejun Heo <tj@kernel.org>,
+	Changbin Du <changbin.du@huawei.com>,
+	Huang Shijie <shijie@os.amperecomputing.com>,
+	Geert Uytterhoeven <geert+renesas@glider.be>,
+	Namhyung Kim <namhyung@kernel.org>,
+	Arnaldo Carvalho de Melo <acme@redhat.com>,
+	linux-doc@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-efi@vger.kernel.org,
+	linux-mm@kvack.org
+Subject: [PATCHv7 00/16] x86: Enable Linear Address Space Separation support
+Date: Wed, 25 Jun 2025 15:50:52 +0300
+Message-ID: <20250625125112.3943745-1-kirill.shutemov@linux.intel.com>
+X-Mailer: git-send-email 2.47.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250625095224.118679-1-snovitoll@gmail.com> <20250625095224.118679-3-snovitoll@gmail.com>
- <750b6617-7abf-4adc-b3e6-6194ff10c547@csgroup.eu> <81a8b60be5b99ecd9b322d188738016376aff4aa.camel@sipsolutions.net>
-In-Reply-To: <81a8b60be5b99ecd9b322d188738016376aff4aa.camel@sipsolutions.net>
-From: Sabyrzhan Tasbolatov <snovitoll@gmail.com>
-Date: Wed, 25 Jun 2025 17:50:46 +0500
-X-Gm-Features: Ac12FXwt1iee6Yaba3PMavifTn-RFaMv0HhE7s3qnJv0p52DgpRl1n7RcMDkzZs
-Message-ID: <CACzwLxgCH6KuVDRS3d9MrmA=wY_rMA6R5TPB_v37BkD8-A9yuw@mail.gmail.com>
-Subject: Re: [PATCH 2/9] kasan: replace kasan_arch_is_ready with kasan_enabled
-To: Johannes Berg <johannes@sipsolutions.net>
-Cc: Christophe Leroy <christophe.leroy@csgroup.eu>, ryabinin.a.a@gmail.com, glider@google.com, 
-	andreyknvl@gmail.com, dvyukov@google.com, vincenzo.frascino@arm.com, 
-	catalin.marinas@arm.com, will@kernel.org, chenhuacai@kernel.org, 
-	kernel@xen0n.name, maddy@linux.ibm.com, mpe@ellerman.id.au, npiggin@gmail.com, 
-	hca@linux.ibm.com, gor@linux.ibm.com, agordeev@linux.ibm.com, 
-	borntraeger@linux.ibm.com, svens@linux.ibm.com, richard@nod.at, 
-	anton.ivanov@cambridgegreys.com, dave.hansen@linux.intel.com, luto@kernel.org, 
-	peterz@infradead.org, tglx@linutronix.de, mingo@redhat.com, bp@alien8.de, 
-	x86@kernel.org, hpa@zytor.com, chris@zankel.net, jcmvbkbc@gmail.com, 
-	akpm@linux-foundation.org, guoweikang.kernel@gmail.com, geert@linux-m68k.org, 
-	rppt@kernel.org, tiwei.btw@antgroup.com, richard.weiyang@gmail.com, 
-	benjamin.berg@intel.com, kevin.brodsky@arm.com, kasan-dev@googlegroups.com, 
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
-	loongarch@lists.linux.dev, linuxppc-dev@lists.ozlabs.org, 
-	linux-s390@vger.kernel.org, linux-um@lists.infradead.org, linux-mm@kvack.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-On Wed, Jun 25, 2025 at 5:24=E2=80=AFPM Johannes Berg <johannes@sipsolution=
-s.net> wrote:
->
-> On Wed, 2025-06-25 at 12:27 +0200, Christophe Leroy wrote:
-> >
-> > Le 25/06/2025 =C3=A0 11:52, Sabyrzhan Tasbolatov a =C3=A9crit :
-> > > Replace the existing kasan_arch_is_ready() calls with kasan_enabled()=
-.
-> > > Drop checks where the caller is already under kasan_enabled() conditi=
-on.
-> >
-> > If I understand correctly, it means that KASAN won't work anymore
-> > between patch 2 and 9, because until the arch calls kasan_init_generic(=
-)
-> > kasan_enabled() will return false.
-> >
-> > The transition should be smooth and your series should remain bisectabl=
-e.
-> >
-> > Or am I missing something ?
-> >
->
-> Seems right to me, it won't work for architectures that define
-> kasan_arch_is_ready themselves I think?
->
-> But since they have to literally #define it, could #ifdef on that
-> temporarily?
+Linear Address Space Separation (LASS) is a security feature that intends to
+prevent malicious virtual address space accesses across user/kernel mode.
 
-Thanks for catching it. You're right. I need to change the order of patches=
- :
+Such mode based access protection already exists today with paging and features
+such as SMEP and SMAP. However, to enforce these protections, the processor
+must traverse the paging structures in memory.  Malicious software can use
+timing information resulting from this traversal to determine details about the
+paging structures, and these details may also be used to determine the layout
+of the kernel memory.
 
-- kasan: unify static kasan_flag_enabled across modes
+The LASS mechanism provides the same mode-based protections as paging but
+without traversing the paging structures. Because the protections enforced by
+LASS are applied before paging, software will not be able to derive
+paging-based timing information from the various caching structures such as the
+TLBs, mid-level caches, page walker, data caches, etc. LASS can avoid probing
+using double page faults, TLB flush and reload, and SW prefetch instructions.
+See [2], [3] and [4] for some research on the related attack vectors.
 
-, then we should apply arch specific changes
-where we call kasan_init_generic in kasan_init.
+Had it been available, LASS alone would have mitigated Meltdown. (Hindsight is
+20/20 :)
 
-- kasan: replace kasan_arch_is_ready with kasan_enabled
+In addition, LASS prevents an attack vector described in a Spectre LAM (SLAM)
+whitepaper [7].
 
->
-> johannes
+LASS enforcement relies on the typical kernel implementation to divide the
+64-bit virtual address space into two halves:
+  Addr[63]=0 -> User address space
+  Addr[63]=1 -> Kernel address space
+Any data access or code execution across address spaces typically results in a
+#GP fault.
+
+Kernel accesses usually only happen to the kernel address space. However, there
+are valid reasons for kernel to access memory in the user half. For these cases
+(such as text poking and EFI runtime accesses), the kernel can temporarily
+suspend the enforcement of LASS by toggling SMAP (Supervisor Mode Access
+Prevention) using the stac()/clac() instructions and in one instance a downright
+disabling LASS for an EFI runtime call.
+
+User space cannot access any kernel address while LASS is enabled.
+Unfortunately, legacy vsyscall functions are located in the address range
+0xffffffffff600000 - 0xffffffffff601000 and emulated in kernel.  To avoid
+breaking user applications when LASS is enabled, extend the vsyscall emulation
+in execute (XONLY) mode to the #GP fault handler.
+
+In contrast, the vsyscall EMULATE mode is deprecated and not expected to be
+used by anyone.  Supporting EMULATE mode with LASS would need complex
+instruction decoding in the #GP fault handler and is probably not worth the
+hassle. Disable LASS in this rare case when someone absolutely needs and
+enables vsyscall=emulate via the command line.
+
+Changes from v6[10]:
+- Rewrok #SS handler to work properly on FRED;
+- Do not require X86_PF_INSTR to emulate vsyscall;
+- Move lass_clac()/stac() definition to the patch where they are used;
+- Rename lass_clac/stac() to lass_disable/enable_enforcement();
+- Fix several build issues around inline memcpy and memset;
+- Fix sparse warning;
+- Adjust comments and commit messages;
+- Drop "x86/efi: Move runtime service initialization to arch/x86" patch
+  as it got applied;
+
+Changes from v5[9]:
+- Report LASS violation as NULL pointer dereference if the address is in the
+  first page frame;
+- Provide helpful error message on #SS due to LASS violation;
+- Fold patch for vsyscall=emulate documentation into patch
+  that disables LASS with vsyscall=emulate;
+- Rewrite __inline_memeset() and __inline_memcpy();
+- Adjust comments and commit messages;
+
+Changes from v4[8]:
+- Added PeterZ's Originally-by and SoB to 2/16
+- Added lass_clac()/lass_stac() to differentiate from SMAP necessitated
+  clac()/stac() and to be NOPs on CPUs that don't support LASS
+- Moved LASS enabling patch to the end to avoid rendering machines
+  unbootable between until the patch that disables LASS around EFI
+  initialization
+- Reverted Pawan's LAM disabling commit
+
+Changes from v3[6]:
+- Made LAM dependent on LASS
+- Moved EFI runtime initialization to x86 side of things
+- Suspended LASS validation around EFI set_virtual_address_map call
+- Added a message for the case of kernel side LASS violation
+- Moved inline memset/memcpy versions to the common string.h
+
+Changes from v2[5]:
+- Added myself to the SoB chain
+
+Changes from v1[1]:
+- Emulate vsyscall violations in execute mode in the #GP fault handler
+- Use inline memcpy and memset while patching alternatives
+- Remove CONFIG_X86_LASS
+- Make LASS depend on SMAP
+- Dropped the minimal KVM enabling patch
+
+
+[1] https://lore.kernel.org/lkml/20230110055204.3227669-1-yian.chen@intel.com/
+[2] “Practical Timing Side Channel Attacks against Kernel Space ASLR”,
+https://www.ieee-security.org/TC/SP2013/papers/4977a191.pdf
+[3] “Prefetch Side-Channel Attacks: Bypassing SMAP and Kernel ASLR”, http://doi.acm.org/10.1145/2976749.2978356
+[4] “Harmful prefetch on Intel”, https://ioactive.com/harmful-prefetch-on-intel/ (H/T Anders)
+[5] https://lore.kernel.org/all/20230530114247.21821-1-alexander.shishkin@linux.intel.com/
+[6] https://lore.kernel.org/all/20230609183632.48706-1-alexander.shishkin@linux.intel.com/
+[7] https://download.vusec.net/papers/slam_sp24.pdf
+[8] https://lore.kernel.org/all/20240710160655.3402786-1-alexander.shishkin@linux.intel.com/
+[9] https://lore.kernel.org/all/20241028160917.1380714-1-alexander.shishkin@linux.intel.com
+[10] https://lore.kernel.org/all/20250620135325.3300848-1-kirill.shutemov@linux.intel.com/
+
+Alexander Shishkin (4):
+  x86/cpu: Defer CR pinning setup until after EFI initialization
+  efi: Disable LASS around set_virtual_address_map() EFI call
+  x86/traps: Communicate a LASS violation in #GP message
+  x86/cpu: Make LAM depend on LASS
+
+Kirill A. Shutemov (4):
+  x86/asm: Introduce inline memcpy and memset
+  x86/vsyscall: Do not require X86_PF_INSTR to emulate vsyscall
+  x86/traps: Handle LASS thrown #SS
+  x86: Re-enable Linear Address Masking
+
+Sohil Mehta (7):
+  x86/cpu: Enumerate the LASS feature bits
+  x86/alternatives: Disable LASS when patching kernel alternatives
+  x86/vsyscall: Reorganize the #PF emulation code
+  x86/traps: Consolidate user fixups in exc_general_protection()
+  x86/vsyscall: Add vsyscall emulation for #GP
+  x86/vsyscall: Disable LASS if vsyscall mode is set to EMULATE
+  x86/cpu: Enable LASS during CPU initialization
+
+Yian Chen (1):
+  x86/cpu: Set LASS CR4 bit as pinning sensitive
+
+ .../admin-guide/kernel-parameters.txt         |  4 +-
+ arch/x86/Kconfig                              |  1 -
+ arch/x86/Kconfig.cpufeatures                  |  4 +
+ arch/x86/entry/vsyscall/vsyscall_64.c         | 69 +++++++++++------
+ arch/x86/include/asm/cpufeatures.h            |  1 +
+ arch/x86/include/asm/smap.h                   | 27 ++++++-
+ arch/x86/include/asm/string.h                 | 46 ++++++++++++
+ arch/x86/include/asm/uaccess_64.h             | 38 +++-------
+ arch/x86/include/asm/vsyscall.h               | 14 +++-
+ arch/x86/include/uapi/asm/processor-flags.h   |  2 +
+ arch/x86/kernel/alternative.c                 | 14 +++-
+ arch/x86/kernel/cpu/common.c                  | 21 ++++--
+ arch/x86/kernel/cpu/cpuid-deps.c              |  2 +
+ arch/x86/kernel/traps.c                       | 75 +++++++++++++++----
+ arch/x86/kernel/umip.c                        |  3 +
+ arch/x86/lib/clear_page_64.S                  | 10 ++-
+ arch/x86/mm/fault.c                           |  2 +-
+ arch/x86/platform/efi/efi.c                   | 15 ++++
+ tools/arch/x86/include/asm/cpufeatures.h      |  1 +
+ 19 files changed, 264 insertions(+), 85 deletions(-)
+
+-- 
+2.47.2
+
 
