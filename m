@@ -1,153 +1,151 @@
-Return-Path: <linux-kernel+bounces-702795-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-702797-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4D67FAE877E
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Jun 2025 17:09:25 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B3631AE8785
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Jun 2025 17:10:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5515A16EC64
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Jun 2025 15:09:25 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 401351753F6
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Jun 2025 15:10:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9684A269B08;
-	Wed, 25 Jun 2025 15:09:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BC98426A0C6;
+	Wed, 25 Jun 2025 15:10:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="mHgmM4BX"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="IBWyN1jp"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.17])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ECAB7263F40
-	for <linux-kernel@vger.kernel.org>; Wed, 25 Jun 2025 15:09:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7DCAA263F40;
+	Wed, 25 Jun 2025 15:10:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.17
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750864160; cv=none; b=BXvi++tGsPd38QcEsECYtvBFuUh3w4keMe496P4JlJuzCUGG7AvKZLrH0VzWMhothtuqDZO04wOClSV+5S6WSd52Dn+OZJ9YU+ArEXOBGhA/CvXv9UKvl/ALsPGIT0xrcpGkChyTAFfDBVN3pLN0DkyNSfpsCwV80fo5+W6Akr4=
+	t=1750864238; cv=none; b=m+Z+LHRCEujUvk2PCom3RKY1hXfmfsrpekxrC7poogxySgldSlhAmElFfCOTTpTn5iEirY+G11U5q3mgubrBWoBxnGQ1H6Dwx5nJL/kTi1crLzZi2/3RDMDAhWQQuO3kt8+8GZuS9AO4TGCiReK4LaU/cXLQuyXKqtxe1J0iZ84=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750864160; c=relaxed/simple;
-	bh=K4mYB4tBUdPUMeyYHKQeTaMy0h6gvtr/bFiZgucNrGA=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=nufZjyRIq1CwvbThFVrqb3xJV2XsIrcAHy30Z7MH1Xp7xCpVqxRFJz4cTNddpqk3CR9QeLZ+3LZKG+zUEsaw72HRBFEZTCTgACpCauVeAFaUtAV9EMMdiczpgkwCVi4AKopkUf08gfaTIq2ZwEF0KfPC7irV5Cn91DiIuNS1mBY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=mHgmM4BX; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 80C88C4CEEF
-	for <linux-kernel@vger.kernel.org>; Wed, 25 Jun 2025 15:09:17 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1750864157;
-	bh=K4mYB4tBUdPUMeyYHKQeTaMy0h6gvtr/bFiZgucNrGA=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=mHgmM4BXZJdRLA0AG8FpjshWGQcHIqK9vLXP8xrXwqtKjH22HXCsv7UYj10oqkN8z
-	 /LtHvk9uB6Yqvbg54izwnIFlWrolCXxgYCLU+9Ja2dMbiDosKca4o9IYdGzUsVuadL
-	 /U1rd74XDe9OV+FGDFgI+a5+P3HwwmB7bsYlo6CDUHT/Eemt9BvChK3orbvOn3llqk
-	 n9oNrj2ors43SO9zV7V8ebymMt700XOF19CF8WItb0PgFmxMJVYfPafMVqgAIe+9oV
-	 l79yWiLyXnnSwK/S0REqytiLrnXK5ntYSrNe6n2mzp8+K//SrwW/JHfca66U7ij3iI
-	 YiNUbuIIeSoVw==
-Received: by mail-pj1-f48.google.com with SMTP id 98e67ed59e1d1-31223a4cddeso5285327a91.1
-        for <linux-kernel@vger.kernel.org>; Wed, 25 Jun 2025 08:09:17 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCV2LMXjhc+g0Q4LOjjwWa3YaMb5B6E6bu1QY8hVN4pGEHVvJQYI+zL9S6wZgNLzYoLZSQjqBPNG8cZHv8w=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzRDgcJnOEhdlrK2mcz1TTzSC8JFuOvZqBEg6RGjch9uICi8aAv
-	SwllY8J8kvwqF6KZN/Q7xpm9oUfeQXV3xrOzPDr0kVRgkBclXO/rLphr+pmO1Y2j2b4nqAqnHch
-	So0KIsybUS8MFjjGpu5viibLrs5F8NQ==
-X-Google-Smtp-Source: AGHT+IHrqFJYwexIy4K3H44OAiL9zqXRsG/mR2uBGM9V193N8VPfdgtjIMDquzLnT+KvD4r/VPBCj9+QTqb0x8H7bj4=
-X-Received: by 2002:a17:90b:4a0e:b0:313:287c:74bd with SMTP id
- 98e67ed59e1d1-315f26b8a00mr5619136a91.33.1750864157037; Wed, 25 Jun 2025
- 08:09:17 -0700 (PDT)
+	s=arc-20240116; t=1750864238; c=relaxed/simple;
+	bh=2vYg8CGu9BAqmlZuYpCFtNSeJb0sljjiAyb9B6pMNPM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=RlBSWxChr1SsvQgp4gGawLuL2HVhh+xnOaQvvjALBhkreCMGMHI/hadMLZlM6CPfYvXjMVSD0KLnUYc1lc/6nLruAEO8lVoxUqVYqA0K2RZjU14zzSWQr3JLHTKinnapsyzKoWRA44JFWQFKfDTU+ylKLs6aZ4uMRMgwXq/yFjQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=IBWyN1jp; arc=none smtp.client-ip=192.198.163.17
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1750864236; x=1782400236;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:content-transfer-encoding:in-reply-to;
+  bh=2vYg8CGu9BAqmlZuYpCFtNSeJb0sljjiAyb9B6pMNPM=;
+  b=IBWyN1jpG5aGB1YxaC/45ayPe3CDHzlZTT/1KaGXisAknt+JQU0T4UZm
+   L9bdHIrNWEDjgFDOCROsDPBE1+lpKR1CYzo4mfJF8tK6808XHRQut8tUz
+   KLAOXRAkNqBmfx0KHtvTughjeZ1LAvctq6527bSSiGKaaccvPXfHVxSyb
+   doHSw6DmVMooRsCs8NM/HiEqchexlVtte9TU/RRDv9diJC8uFJ0UIuIo3
+   AafyeI5XbhgfqwQfwJXdFpzhVllNBjB9/m47BSDPeKuSpK8dLCkP/5Hbu
+   xATq+PO9nBaPHpdl3U9ZnJ/t8RirXYhhpsKqXjoIOwxcobgZr3CwLll1V
+   w==;
+X-CSE-ConnectionGUID: 8ZIgltamR1Cc/0jLIBe7CQ==
+X-CSE-MsgGUID: WDK5Z55NTLieJrA1NLn+0g==
+X-IronPort-AV: E=McAfee;i="6800,10657,11475"; a="53074329"
+X-IronPort-AV: E=Sophos;i="6.16,265,1744095600"; 
+   d="scan'208";a="53074329"
+Received: from orviesa009.jf.intel.com ([10.64.159.149])
+  by fmvoesa111.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 25 Jun 2025 08:10:35 -0700
+X-CSE-ConnectionGUID: vz/s4aTuQoaXCf0RhIfy1Q==
+X-CSE-MsgGUID: hnpThCZdRQKZftIn4Ys6Mg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.16,265,1744095600"; 
+   d="scan'208";a="152014619"
+Received: from smile.fi.intel.com ([10.237.72.52])
+  by orviesa009.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 25 Jun 2025 08:10:32 -0700
+Received: from andy by smile.fi.intel.com with local (Exim 4.98.2)
+	(envelope-from <andriy.shevchenko@linux.intel.com>)
+	id 1uURld-00000009oSY-08xw;
+	Wed, 25 Jun 2025 18:10:29 +0300
+Date: Wed, 25 Jun 2025 18:10:28 +0300
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To: "Limonciello, Mario" <Mario.Limonciello@amd.com>
+Cc: Mario Limonciello <superm1@kernel.org>,
+	Hans de Goede <hansg@kernel.org>,
+	Mika Westerberg <westeri@kernel.org>,
+	Linus Walleij <linus.walleij@linaro.org>,
+	Bartosz Golaszewski <brgl@bgdev.pl>,
+	Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+	"open list:GPIO ACPI SUPPORT" <linux-gpio@vger.kernel.org>,
+	"open list:GPIO ACPI SUPPORT" <linux-acpi@vger.kernel.org>,
+	open list <linux-kernel@vger.kernel.org>,
+	"open list:INPUT (KEYBOARD, MOUSE, JOYSTICK, TOUCHSCREEN)..." <linux-input@vger.kernel.org>
+Subject: Re: [PATCH 2/2] Revert "Input: soc_button_array - debounce the
+ buttons"
+Message-ID: <aFwRZO30wf8GxQea@smile.fi.intel.com>
+References: <20250624202211.1088738-1-superm1@kernel.org>
+ <20250624202211.1088738-3-superm1@kernel.org>
+ <4a4d577b-a085-46e8-97b9-6df27461c870@kernel.org>
+ <1f8c0262-b376-43cb-b2c5-5b60e8cbf678@kernel.org>
+ <92ab85ff-6314-4db0-ae12-9803ddde5037@kernel.org>
+ <625952d3-01e9-426e-9739-86fe5cdfeb35@kernel.org>
+ <7b2f02ef-0274-480b-aecc-bc1165d15fd7@amd.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250624113223.443274-1-jason-jh.lin@mediatek.com>
- <669aae01778b4dbd49420fff053a6fa59078a9b1.camel@mediatek.com> <6e7ab8ab603ed8ac06c7a6b639f339c1d87f9ad0.camel@mediatek.com>
-In-Reply-To: <6e7ab8ab603ed8ac06c7a6b639f339c1d87f9ad0.camel@mediatek.com>
-From: Chun-Kuang Hu <chunkuang.hu@kernel.org>
-Date: Wed, 25 Jun 2025 23:10:22 +0800
-X-Gmail-Original-Message-ID: <CAAOTY_9SKSwikTwog9aGL1LOdsgbnBFz-7wHRNWxa4fY36_dQg@mail.gmail.com>
-X-Gm-Features: AX0GCFvhdG4cEt57zmk3oZRU1MyycMA7E8SYirD5Luit-6MBhB9-QKGa6QYUkZk
-Message-ID: <CAAOTY_9SKSwikTwog9aGL1LOdsgbnBFz-7wHRNWxa4fY36_dQg@mail.gmail.com>
-Subject: Re: [PATCH v2] drm/mediatek: Add wait_event_timeout when disabling plane
-To: =?UTF-8?B?SmFzb24tSkggTGluICjmnpfnnb/npaUp?= <Jason-JH.Lin@mediatek.com>
-Cc: =?UTF-8?B?Q0sgSHUgKOiDoeS/iuWFiSk=?= <ck.hu@mediatek.com>, 
-	"chunkuang.hu@kernel.org" <chunkuang.hu@kernel.org>, 
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, 
-	"airlied@gmail.com" <airlied@gmail.com>, =?UTF-8?B?U2lyaXVzIFdhbmcgKOeOi+eak+aYsSk=?= <Sirius.Wang@mediatek.com>, 
-	=?UTF-8?B?TmFuY3kgTGluICjmnpfmrKPonqIp?= <Nancy.Lin@mediatek.com>, 
-	=?UTF-8?B?WGlhbmRvbmcgV2FuZyAo546L5YWI5YasKQ==?= <Xiandong.Wang@mediatek.com>, 
-	"daniel@ffwll.ch" <daniel@ffwll.ch>, 
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, 
-	"linux-mediatek@lists.infradead.org" <linux-mediatek@lists.infradead.org>, 
-	=?UTF-8?B?UGF1bC1wbCBDaGVuICjpmbPmn4/pnJYp?= <Paul-pl.Chen@mediatek.com>, 
-	=?UTF-8?B?WmhlbnhpbmcgUWluICjnp6bmjK/lhbQp?= <Zhenxing.Qin@mediatek.com>, 
-	Project_Global_Chrome_Upstream_Group <Project_Global_Chrome_Upstream_Group@mediatek.com>, 
-	=?UTF-8?B?WW9uZ3FpYW5nIE5pdSAo54mb5rC45by6KQ==?= <yongqiang.niu@mediatek.com>, 
-	"p.zabel@pengutronix.de" <p.zabel@pengutronix.de>, 
-	=?UTF-8?B?U2luZ28gQ2hhbmcgKOW8teiIiOWciyk=?= <Singo.Chang@mediatek.com>, 
-	"wenst@chromium.org" <wenst@chromium.org>, 
-	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, 
-	=?UTF-8?B?SmFycmllZCBMaW4gKOael+ijleWTsik=?= <Jarried.Lin@mediatek.com>, 
-	=?UTF-8?B?WGF2aWVyIENoYW5nICjlvLXnjbvmlocp?= <Xavier.Chang@mediatek.com>, 
-	"matthias.bgg@gmail.com" <matthias.bgg@gmail.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <7b2f02ef-0274-480b-aecc-bc1165d15fd7@amd.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - c/o Alberga Business Park, 6
+ krs, Bertel Jungin Aukio 5, 02600 Espoo
 
-Hi, Jason:
+On Wed, Jun 25, 2025 at 03:02:18PM +0000, Limonciello, Mario wrote:
+> On 6/25/25 9:41 AM, Mario Limonciello wrote:
+> > On 6/25/25 9:31 AM, Hans de Goede wrote:
+> >> On 25-Jun-25 4:09 PM, Mario Limonciello wrote:
+> >>> On 6/25/25 4:09 AM, Hans de Goede wrote:
+> >>>> On 24-Jun-25 10:22 PM, Mario Limonciello wrote:
 
-Jason-JH Lin (=E6=9E=97=E7=9D=BF=E7=A5=A5) <Jason-JH.Lin@mediatek.com> =E6=
-=96=BC 2025=E5=B9=B46=E6=9C=8825=E6=97=A5 =E9=80=B1=E4=B8=89 =E4=B8=8B=E5=
-=8D=883:40=E5=AF=AB=E9=81=93=EF=BC=9A
->
-> On Wed, 2025-06-25 at 06:54 +0000, CK Hu (=E8=83=A1=E4=BF=8A=E5=85=89) wr=
-ote:
-> > On Tue, 2025-06-24 at 19:31 +0800, Jason-JH Lin wrote:
-> > > Our hardware registers are set through GCE, not by the CPU.
-> > > DRM might assume the hardware is disabled immediately after calling
-> > > atomic_disable() of drm_plane, but it is only truly disabled after
-> > > the
-> > > GCE IRQ is triggered.
-> > >
-> > > Additionally, the cursor plane in DRM uses async_commit, so DRM
-> > > will
-> > > not wait for vblank and will free the buffer immediately after
-> > > calling
-> > > atomic_disable().
-> > >
-> > > To prevent the framebuffer from being freed before the layer
-> > > disable
-> > > settings are configured into the hardware, which can cause an IOMMU
-> > > fault error, a wait_event_timeout has been added to wait for the
-> > > ddp_cmdq_cb() callback,indicating that the GCE IRQ has been
-> > > triggered.
-> > >
-> > > Fixes: 119f5173628a ("drm/mediatek: Add DRM Driver for Mediatek SoC
-> > > MT8173.")
-> >
-> > This patch looks good to me, so
-> >
-> > Reviewed-by: CK Hu <ck.hu@mediatek.com>
-> >
-> > But fixes patch is not correct.
-> > In "drm/mediatek: Add DRM Driver for Mediatek SoC MT8173.", it does
-> > not support cmdq.
-> > The first patch to support cmdq is 2f965be7f900 "drm/mediatek: apply
-> > CMDQ control flow"
-> > I would change fixes tag when I apply this patch.
-> >
->
-> Thank you very much!
->
-> Regards,
-> Jason-JH Lin
+...
 
-Applied to mediatek-drm-fixes [1], thanks.
+> >> Ok, so specifically the gpiod_set_debounce() call with 50 ms
+> >> done by gpio_keys.c is the problem I guess?
+> > 
+> > Yep.
+> > 
+> >> So amd_gpio_set_debounce() does accept the 50 ms debounce
+> >> passed to it by gpio_keys.c as a valid value and then setting
+> >> that breaks the wake from suspend?
+> > 
+> > That's right.
 
-[1] https://git.kernel.org/pub/scm/linux/kernel/git/chunkuang.hu/linux.git/=
-log/?h=3Dmediatek-drm-fixes
+> >>> Also comparing the GPIO register in Windows (where things work) 
+> >>> Windows never programs a debounce.
+> >>
+> >> So maybe the windows ACPI0011 driver always uses a software-
+> >> debounce for the buttons? Windows not debouncing the mechanical
+> >> switches at all seems unlikely.
+> >>
+> >> I think the best way to fix this might be to add a no-hw-debounce
+> >> flag to the data passed from soc_button_array.c to gpio_keys.c
+> >> and have gpio_keys.c not call gpiod_set_debounce()  when the
+> >> no-hw-debounce flag is set.
+> >>
+> >> I've checked and both on Bay Trail and Cherry Trail devices
+> >> where soc_button_array is used a lot hw-debouncing is already
+> >> unused. pinctrl-baytrail.c does not accept 50 ms as a valid
+> >> value and pinctrl-cherryview.c does not support hw debounce
+> >> at all.
+> > 
+> > That sounds a like a generally good direction to me.
 
-Regards,
-Chun-Kuang.
+Thinking a bit more of this, perhaps the HW debounce support flag should be
+per-GPIO-descriptor thingy. In such cases we don't need to distinguish the
+platforms, the GPIO ACPI lib may simply set that flag based on 0 read from
+the ACPI tables. It will also give a clue to any driver that uses GPIOs
+(not only gpio-keys).
 
->
-> > > Signed-off-by: Jason-JH Lin <jason-jh.lin@mediatek.com>
-> > > Reviewed-by: AngeloGioacchino Del Regno
-> > > <angelogioacchino.delregno@collabora.com>
->
+-- 
+With Best Regards,
+Andy Shevchenko
+
+
 
