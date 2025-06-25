@@ -1,163 +1,142 @@
-Return-Path: <linux-kernel+bounces-702126-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-702124-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id AF4CDAE7E55
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Jun 2025 12:01:56 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 76E66AE7E56
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Jun 2025 12:01:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9929916CC7C
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Jun 2025 10:01:56 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3B458188D18B
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Jun 2025 10:01:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A980F29AB07;
-	Wed, 25 Jun 2025 10:01:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F33E829B78C;
+	Wed, 25 Jun 2025 10:00:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="pHrpTZFs"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="BQXALOwF"
+Received: from mail-pf1-f170.google.com (mail-pf1-f170.google.com [209.85.210.170])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 69D67239E75;
-	Wed, 25 Jun 2025 10:01:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CF3F129AB16;
+	Wed, 25 Jun 2025 10:00:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750845664; cv=none; b=u9a/t4ze3j0xZq3UCIJEXMBe0s4UHIsUkVEVTYvVCxDHtDwCwPoejnWAwIqKyptdk2haPZfbOS+ne52kcMER8sG+8woqjtMEeP7/PDThPfpmIahYkCorl4UhZdtBvXuiJlRlAsIlW+I4jwK5daHcp//0SfPi3UKk8r216SuORSo=
+	t=1750845654; cv=none; b=EgZ5kjR3E7raFwzmvbJhorLQ2ZMJYQ3LsYhwqMa7surTxm8rinasK+DR28+ErFaKgR1LzqYRP1glxEZQiiP26bM8Qqf/RDv+qWus0Tz7nmR9ILV7m1SFG8popM9HlFXOBNiveg3+t+Rb5zYtB219CqAlVvMufTb8smqxqraXP7s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750845664; c=relaxed/simple;
-	bh=RWoz2wakwwNGLi4sl9X6dVMEZLDMU2hECt5/SC4AQ6g=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=uMr98V/Pde4lSsx6U2pP+IPyKcZq3OpLzRQyzuhv1jzdTe74s0l5FOrgOw9OOkuX2oEKftHhovEI/Qu9P52K6YFxiU86QXv6R8PfbBxqDgGv1i7nYU8EY3Y1CbdrlZECyUYZr6fE3wQs92OJdz7g8QRdSJ1tVfAm/91qsVAAvpM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=pHrpTZFs; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279871.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 55P3VefR027585;
-	Wed, 25 Jun 2025 10:00:52 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	vVfbmAL9nuta9hPZ9Nq1gX/UlCRXU0dU44mdWz4B17A=; b=pHrpTZFsUM+eQDdW
-	KP1bxe8k3CXM2AZk37Z0VZwe5ZDMcTjdciP4RhxH/xJw5w1Exby9cMDRcZDAR18V
-	tDoYqN61JOfgOYmZY2OSaige+Q4eE+NLonZ4XGteLhI4VeSxEdatszkqtRxp9jvg
-	9NKxlSVfinZTlXt87VOaEL/RcaYPTMOsbuY02wFnO4hP7j777OibXwqkOEpxcgMA
-	V+CK28WXdLHQtCmWQOYnJM+nT+hKf8ZFzk2ffIvjBpGh5VfVFOWzth7Ceg5V0USP
-	tfnomaFhuWfkYqeGbKd+RIC6EkTULlu15MQ09osXdQfzb2t3otBbfNN5sCrO5YtA
-	m6OqiA==
-Received: from nalasppmta01.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 47fbhqnxek-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 25 Jun 2025 10:00:52 +0000 (GMT)
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-	by NALASPPMTA01.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 55PA0pKp017026
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 25 Jun 2025 10:00:51 GMT
-Received: from [10.133.33.71] (10.80.80.8) by nalasex01a.na.qualcomm.com
- (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Wed, 25 Jun
- 2025 03:00:48 -0700
-Message-ID: <d163080d-61ee-4af1-a783-5a77cbc525d1@quicinc.com>
-Date: Wed, 25 Jun 2025 18:00:46 +0800
+	s=arc-20240116; t=1750845654; c=relaxed/simple;
+	bh=Jt3T0HQ3GeZ1y+N94xavrriGZmklMiW7iXKEQmfXT+w=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=XJR7HqZ+BEUQESRyWRx4HuQ6q0Pbu0STuq2yeOM9+bO1cv10fDl9Qwp0RSUvpZGZrIZ0ArO3RsZx+3/KJ+htel4vCNAP5jAH4lHUaKMKjs8nCYXmw/VpUY0APFcCmsysgDpn7tdX00nsBGJTkA7fzTuyN7D8KPEmUS7PPftViBQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=BQXALOwF; arc=none smtp.client-ip=209.85.210.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f170.google.com with SMTP id d2e1a72fcca58-748f5a4a423so3721861b3a.1;
+        Wed, 25 Jun 2025 03:00:52 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1750845652; x=1751450452; darn=vger.kernel.org;
+        h=user-agent:in-reply-to:content-disposition:mime-version:references
+         :message-id:subject:cc:to:from:date:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=/nE/xoeiXLoLfvvWXUYGG8I4opWimXJchag+i7e4+lY=;
+        b=BQXALOwFp8ePKxBu7tqjFRsXRoWhfu9+MUjLIebAyJiINruIF3qWK2uCfLOm+38qzl
+         oADinDjevRz1CMuvPnIY/333njj5/kLbRmNvtYxUYveNXuvOnLwifNXBWBmPwtGRl2G5
+         1CyUcvjSy2RMgEFiTPAKXPJMvlEQR3QJrqo7mdES4HGXTezpHtYUce9q5gyQWQTqHK3O
+         EwM0gUuXQ0c6Apr7m5qRFBTnsNf0SvTctYFTdLoSfqz2SLOZIoWKvYyyuDtTCf4wmEF/
+         3wrNyNxounpVoGgVQ2HG+1wQE0xntusUjdG04Km1MT7MSPg3XGLuJ0BUZcko3KRCrh1f
+         I7tw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1750845652; x=1751450452;
+        h=user-agent:in-reply-to:content-disposition:mime-version:references
+         :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=/nE/xoeiXLoLfvvWXUYGG8I4opWimXJchag+i7e4+lY=;
+        b=XVOri3GpraiXIRyslQQByfdVyvAh8MJoE5I72evyv5ooS5e/hr8dVYA6b4GWWvOb12
+         ylLGzq8YFogE8hm/s10ZCyvtVqvlKoEq8UCDg0iioTgjieSNonV31kIHFjpTGy0oZxSK
+         91FJK5wMym3axs11qgtIJhHgY2euX6G+UbeAVuJBKJdcRVEJLK5gGQHQywFFP8DpH2qh
+         rQV/wWiqJircinuWCXjITWydimA4dEvmIz40X7RHJilLa3UkRQs1crFEKfGboLvfdGPK
+         DtpPc+PVblOKlx0woT2FL3CqFPw9JM7Iq7WLI6tub4f27K1jKWv70gxskRWOO2Pub23F
+         h1hA==
+X-Forwarded-Encrypted: i=1; AJvYcCW2upXsqRBO18r7RL3wpN8brRd2SI54+2/6zUFOc8t1CGRd3RkxAHvnxpFlMCBPX65rZVyPDTDm6A==@vger.kernel.org
+X-Gm-Message-State: AOJu0YwB5aOnu9eCY4Tl7o82g41cuAp/LvfRG17lXM3lDSDqIEWJEaw3
+	7ESYrfjd49ukB2893+RpzYRDSDrcqAkvGP6+qXb83YyTvBD+Xvq2aDL6
+X-Gm-Gg: ASbGncvjN81dfkQVdy9m81xdoth/84JB7uWAmO9S4DRTXIZfRwnpT4M+PePbbKnpkah
+	5IO+y/2bbnNV/aIRXlRhwfNk6xlUhdkXPbBb4feqZ0J64lOKDm2j+Vy0eFs1B06xHv+jq2P5r50
+	SO6eAfHsMeRTKslQdrDUWJwS7ix1iWiCv+1DGdPvLoKjhFKPjF0YvTL1+NGYVfbSpqexrWsliB7
+	457t/JdAoFaTQbltZdMrqM5dWc/JujAEnf/LPsh8hF6N/Zhd4xMN3hAxwA8xbV6rhENBZWnz65u
+	+v4eCndDQqTfh2kM2ZoxqCZUcEx9zjN6S73UWiljG/FF9vCAfX+BJxzl01IukQn22Fz0Vt070T6
+	tOtvCxQ==
+X-Google-Smtp-Source: AGHT+IGe2/V/k4PpTXuJNGl/+i3mhT8xlzbiU3E4SpB2neBSdvprsnezlBbn0qsqleRJifV3SDrHAg==
+X-Received: by 2002:a05:6a21:6d8b:b0:1f3:33bf:6640 with SMTP id adf61e73a8af0-2207f20ad67mr4404858637.18.1750845651728;
+        Wed, 25 Jun 2025 03:00:51 -0700 (PDT)
+Received: from localhost ([202.43.239.100])
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-b31f125d668sm10708354a12.54.2025.06.25.03.00.51
+        (version=TLS1_2 cipher=ECDHE-ECDSA-CHACHA20-POLY1305 bits=256/256);
+        Wed, 25 Jun 2025 03:00:51 -0700 (PDT)
+Date: Wed, 25 Jun 2025 18:00:49 +0800
+From: Jiazi Li <jqqlijiazi@gmail.com>
+To: Steven Rostedt <rostedt@goodmis.org>
+Cc: linux-kernel@vger.kernel.org, "peixuan.qiu" <peixuan.qiu@transsion.com>,
+	Jens Axboe <axboe@kernel.dk>, io-uring@vger.kernel.org
+Subject: Re: [PATCH] stacktrace: do not trace user stack for user_worker tasks
+Message-ID: <20250625100049.GA17376@Jiazi.Li>
+References: <20250623115914.12076-1-jqqlijiazi@gmail.com>
+ <20250624130744.602c5b5f@batman.local.home>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 5/5] wifi: ath11k: fix dest ring-buffer corruption when
- ring is full
-To: Johan Hovold <johan+linaro@kernel.org>, Jeff Johnson <jjohnson@kernel.org>
-CC: Miaoqing Pan <quic_miaoqing@quicinc.com>, <linux-wireless@vger.kernel.org>,
-        <ath11k@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
-        <stable@vger.kernel.org>
-References: <20250604143457.26032-1-johan+linaro@kernel.org>
- <20250604143457.26032-6-johan+linaro@kernel.org>
-Content-Language: en-US
-From: Baochen Qiang <quic_bqiang@quicinc.com>
-In-Reply-To: <20250604143457.26032-6-johan+linaro@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: vx5Yl7wNXEWKorOCHEJ7MqcFJEe5imyX
-X-Authority-Analysis: v=2.4 cv=Id+HWXqa c=1 sm=1 tr=0 ts=685bc8d4 cx=c_pps
- a=ouPCqIW2jiPt+lZRy3xVPw==:117 a=ouPCqIW2jiPt+lZRy3xVPw==:17
- a=GEpy-HfZoHoA:10 a=IkcTkHD0fZMA:10 a=6IFa9wvqVegA:10 a=VwQbUJbxAAAA:8
- a=COk6AnOGAAAA:8 a=3Go43yyQdFlCKqBfqAEA:9 a=QEXdDO2ut3YA:10
- a=TjNXssC_j7lpFel5tvFf:22
-X-Proofpoint-GUID: vx5Yl7wNXEWKorOCHEJ7MqcFJEe5imyX
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNjI1MDA3NCBTYWx0ZWRfX2c8mFj9e0oaI
- 5Xz9MCz1PRScfjD5M7sb3oG42qD3NB2w3ni/MOqbpUxJSGKaLTjyUOnTXOsfv5cLW6yAnj8iLw/
- S6qfXNtsVHyaoqcOmMQOondctl6t/ebZcsO3+VrWuIfvTjL31Bh3QwjrzphjJlOcFHDfActAeMT
- OJs28HGVCiyaJVSf68APwqmoiHBYJ3QPwwOQYcaKz91CnMXqNruRybgayPS3t1paIbMHmNmPTTF
- 7Pzcow5Ix6t6ASnUQSfrQwqNmoKcoHZUZQFrLfCZyVEBIKOIKBrD222bjp82XXblJNAJDPugneo
- SVUHl/aVYRID2c/YCPgm7T2ZEbEsWO0IPR6496hySa3zZjhUlMx3xeLdZSjWvGCMENaSQVG88iA
- 8wXxQEszSS/zMeDiJH4FWEIGgs5xWPiGVBIIvS5i3B1/ZCPHSJ6sDTkVDHiRXJixIuZz/vzy
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.7,FMLib:17.12.80.40
- definitions=2025-06-25_02,2025-06-23_07,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- spamscore=0 priorityscore=1501 mlxlogscore=632 phishscore=0 bulkscore=0
- clxscore=1015 impostorscore=0 mlxscore=0 lowpriorityscore=0 malwarescore=0
- suspectscore=0 adultscore=0 classifier=spam authscore=0 authtc=n/a authcc=
- route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2505280000
- definitions=main-2506250074
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250624130744.602c5b5f@batman.local.home>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 
-
-
-On 6/4/2025 10:34 PM, Johan Hovold wrote:
-> Add the missing memory barriers to make sure that destination ring
-> descriptors are read before updating the tail pointer (and passing
-> ownership to the device) to avoid memory corruption on weakly ordered
-> architectures like aarch64 when the ring is full.
+On Tue, Jun 24, 2025 at 01:07:44PM -0400, Steven Rostedt wrote:
+> On Mon, 23 Jun 2025 19:59:11 +0800
+> Jiazi Li <jqqlijiazi@gmail.com> wrote:
 > 
-> Tested-on: WCN6855 hw2.1 WLAN.HSP.1.1-03125-QCAHSPSWPL_V1_V2_SILICONZ_LITE-3.6510.41
+> > Tasks with PF_USER_WORKER flag also only run in kernel space,
+> > so do not trace user stack for these tasks.
 > 
-> Fixes: d5c65159f289 ("ath11k: driver for Qualcomm IEEE 802.11ax devices")
-> Cc: stable@vger.kernel.org      # 5.6
-> Signed-off-by: Johan Hovold <johan+linaro@kernel.org>
-> ---
->  drivers/net/wireless/ath/ath11k/hal.c | 11 +++++++++--
->  1 file changed, 9 insertions(+), 2 deletions(-)
+> What exactly is the difference between PF_KTHREAD and PF_USER_WORKER?
 > 
-> diff --git a/drivers/net/wireless/ath/ath11k/hal.c b/drivers/net/wireless/ath/ath11k/hal.c
-> index 927ed2bc3fbf..7eeffb36899e 100644
-> --- a/drivers/net/wireless/ath/ath11k/hal.c
-> +++ b/drivers/net/wireless/ath/ath11k/hal.c
-> @@ -854,7 +854,6 @@ void ath11k_hal_srng_access_end(struct ath11k_base *ab, struct hal_srng *srng)
->  {
->  	lockdep_assert_held(&srng->lock);
->  
-> -	/* TODO: See if we need a write memory barrier here */
->  	if (srng->flags & HAL_SRNG_FLAGS_LMAC_RING) {
->  		/* For LMAC rings, ring pointer updates are done through FW and
->  		 * hence written to a shared memory location that is read by FW
-> @@ -869,7 +868,11 @@ void ath11k_hal_srng_access_end(struct ath11k_base *ab, struct hal_srng *srng)
->  			WRITE_ONCE(*srng->u.src_ring.hp_addr, srng->u.src_ring.hp);
->  		} else {
->  			srng->u.dst_ring.last_hp = *srng->u.dst_ring.hp_addr;
-> -			*srng->u.dst_ring.tp_addr = srng->u.dst_ring.tp;
-> +			/* Make sure descriptor is read before updating the
-> +			 * tail pointer.
-> +			 */
-> +			dma_mb();
-> +			WRITE_ONCE(*srng->u.dst_ring.tp_addr, srng->u.dst_ring.tp);
->  		}
->  	} else {
->  		if (srng->ring_dir == HAL_SRNG_DIR_SRC) {
-> @@ -885,6 +888,10 @@ void ath11k_hal_srng_access_end(struct ath11k_base *ab, struct hal_srng *srng)
->  					   srng->u.src_ring.hp);
->  		} else {
->  			srng->u.dst_ring.last_hp = *srng->u.dst_ring.hp_addr;
-> +			/* Make sure descriptor is read before updating the
-> +			 * tail pointer.
-> +			 */
-> +			mb();
->  			ath11k_hif_write32(ab,
->  					   (unsigned long)srng->u.dst_ring.tp_addr -
->  					   (unsigned long)ab->mem,
-
-Reviewed-by: Baochen Qiang <quic_bqiang@quicinc.com>
+I think that apart from never return to user space, PF_USER_WORKER is
+basically the same as user space task.
+> Has all the locations that test for PF_KTHREAD been audited to make
+> sure that PF_USER_WORKER isn't also needed?
+> 
+No.
+> I'm working on other code that needs to differentiate between user
+> tasks and kernel tasks, and having to have multiple flags to test is
+> becoming quite a burden.
+> 
+Yes, so only check both PF_KTHREAD and PF_USER_WORKER before access 
+user space stack?
+> -- Steve
+> 
+> 
+> > 
+> > Signed-off-by: Jiazi Li <jqqlijiazi@gmail.com>
+> > Signed-off-by: peixuan.qiu <peixuan.qiu@transsion.com>
+> > ---
+> >  kernel/stacktrace.c | 4 ++--
+> >  1 file changed, 2 insertions(+), 2 deletions(-)
+> > 
+> > diff --git a/kernel/stacktrace.c b/kernel/stacktrace.c
+> > index afb3c116da91..82fbccdd1a24 100644
+> > --- a/kernel/stacktrace.c
+> > +++ b/kernel/stacktrace.c
+> > @@ -228,8 +228,8 @@ unsigned int stack_trace_save_user(unsigned long *store, unsigned int size)
+> >  		.size	= size,
+> >  	};
+> >  
+> > -	/* Trace user stack if not a kernel thread */
+> > -	if (current->flags & PF_KTHREAD)
+> > +	/* Skip tasks that do not return to userspace */
+> > +	if (current->flags & (PF_KTHREAD | PF_USER_WORKER))
+> >  		return 0;
+> >  
+> >  	arch_stack_walk_user(consume_entry, &c, task_pt_regs(current));
+> 
 
