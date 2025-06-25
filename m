@@ -1,83 +1,85 @@
-Return-Path: <linux-kernel+bounces-702488-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-702490-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E2492AE82FE
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Jun 2025 14:43:43 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id AF2F8AE8303
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Jun 2025 14:45:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 52C25167693
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Jun 2025 12:43:21 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6D2F01738AE
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Jun 2025 12:45:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 12C1A25E477;
-	Wed, 25 Jun 2025 12:43:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="PLE+I5Io"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 20081260567;
+	Wed, 25 Jun 2025 12:45:16 +0000 (UTC)
+Received: from outgoing.mit.edu (outgoing-auth-1.mit.edu [18.9.28.11])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7602E1494C3
-	for <linux-kernel@vger.kernel.org>; Wed, 25 Jun 2025 12:43:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4BF352609F1
+	for <linux-kernel@vger.kernel.org>; Wed, 25 Jun 2025 12:45:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=18.9.28.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750855392; cv=none; b=nwqka7/IVOtyJADPq6BduYLZO1+4hiH63qiaI3mfjFw91dzGRVA04wKEq2Ae7MNVCbenQ++FpdG1KhsFMbS386Xp/+mPMqtakwxxwbVt6fLsnR0T2Y+tToWVIVgG8KmIRJQjqPn9DfmmsLKSqV/DYg38xLobBnZWnxqlchn3zJQ=
+	t=1750855515; cv=none; b=TbKcJAOtEslG7karqnOHM6jnsUDt2VjcDZ0QoKzT52lz04UeXFGsMBXRZXO2NTRyAtPJNf9MPSoomSZSkoNhYUR6KjypgEtL8NC4uxCgkmuu7QU1rLbTGg9hqdhwwuwUe1/BpevlpI6pZ0jJprkH4o6Y/rQbA55WUn5ozrqjWw0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750855392; c=relaxed/simple;
-	bh=uUm8z4DDqnoyzeKE8J+2e5V5wvfZ5wjvDsnffS2MKQk=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=a/iARWE6t+kLNArk3ZVsvpY73QxW/c5IqwsuPk3wJ4o9ObJSNDlyjJvREekwlx4dMhn2Qn+KBbZOohOeqt+wyRO40sddmG/NUrKKb7KbPsbQzMVZd9//hvMTNR+vudb4NCXWgZG7QKUAmIveBiYzL7+48E+OZgFhidfBVDDJHCM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=PLE+I5Io; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 113D1C4CEEA;
-	Wed, 25 Jun 2025 12:43:10 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1750855392;
-	bh=uUm8z4DDqnoyzeKE8J+2e5V5wvfZ5wjvDsnffS2MKQk=;
-	h=From:Date:Subject:To:Cc:From;
-	b=PLE+I5IoVX+EzU+d5TW9oOdwxeMSzQjJtzaO/igi5QqlXIs3h2D+1qQIzHlYqRpv6
-	 +XzmGQFqffBpIRKfHWzOWOYnASppKDADgZ+7MLEmt+EjQ3Nz1CfU+0qe6+Cxizjl/W
-	 zrNLBw8hIbaA5lFsF8zRdjphVGonT54SWLrBw0jEfzYaMdwyjcWZVYWb5j/60QVOQg
-	 czCZIzH/wRkIe1CCjCqBe6RwB89d7ElrNaMVjK8wO5OUiR0xlFMk/LXXmklhqMHjYO
-	 jsewZdUJUens+dPoZx44UjCMiLPHZ9mntxooZsTi4suxRF3nJ0Dly1Hx8TGLeWJI7H
-	 OBRYh72ZIt1ZA==
-From: Simon Horman <horms@kernel.org>
-Date: Wed, 25 Jun 2025 13:43:05 +0100
-Subject: [PATCH] compiler_types: correct spelling of suppressing
+	s=arc-20240116; t=1750855515; c=relaxed/simple;
+	bh=U6MI2PdJBFWRH5pUrWIaLIFI8PrLyw/SMKOxte+tblQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=tCFGRGyUHdQ7dR2WHB8NYpUXqCAX89/9sSdtTPBFcwXnUkwjoPavrAC8+i4P/gdgmVE9Qmt9Wthz57yiyQVClkEYKuU7nBe9Bhf56w2UHTPz5O5xkK9xKtsipb505TPzqrPpGSzC7mLXI3Ozu00zuOAQlNz96gYK2P5di0d649Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=mit.edu; spf=pass smtp.mailfrom=mit.edu; arc=none smtp.client-ip=18.9.28.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=mit.edu
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mit.edu
+Received: from trampoline.thunk.org (pool-173-48-82-219.bstnma.fios.verizon.net [173.48.82.219])
+	(authenticated bits=0)
+        (User authenticated as tytso@ATHENA.MIT.EDU)
+	by outgoing.mit.edu (8.14.7/8.12.4) with ESMTP id 55PCijuO005260
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 25 Jun 2025 08:44:46 -0400
+Received: by trampoline.thunk.org (Postfix, from userid 15806)
+	id 067412E00D5; Wed, 25 Jun 2025 08:44:45 -0400 (EDT)
+Date: Wed, 25 Jun 2025 08:44:45 -0400
+From: "Theodore Ts'o" <tytso@mit.edu>
+To: Eric Biggers <ebiggers@kernel.org>
+Cc: Simon Richter <Simon.Richter@hogyros.de>, linux-fscrypt@vger.kernel.org,
+        linux-crypto@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-mtd@lists.infradead.org, linux-ext4@vger.kernel.org,
+        linux-f2fs-devel@lists.sourceforge.net, ceph-devel@vger.kernel.org
+Subject: Re: [PATCH] fscrypt: don't use hardware offload Crypto API drivers
+Message-ID: <20250625124445.GC28249@mit.edu>
+References: <20250611205859.80819-1-ebiggers@kernel.org>
+ <7f63be76-289b-4a99-b802-afd72e0512b8@hogyros.de>
+ <20250612005914.GA546455@google.com>
+ <20250612062521.GA1838@sol>
+ <20250625063252.GD8962@sol>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250625-compiler-types-spell-v1-1-8fc747fed6e0@kernel.org>
-X-B4-Tracking: v=1; b=H4sIANjuW2gC/x3MQQqDMBBG4avIrDtgRyLYqxQXrf7RgVRDRsQSv
- LvB5bd4L5MhKYxeVaaEXU3XpeD5qGiYP8sE1rGYpBZXt+J4WH9RAxJv/whjiwiBpYGHiBu/Hai
- kMcHrcW/f/Xle1AcixWYAAAA=
-To: Andrew Morton <akpm@linux-foundation.org>
-Cc: Kees Cook <kees@kernel.org>, Miguel Ojeda <ojeda@kernel.org>, 
- linux-kernel@vger.kernel.org, Simon Horman <horms@kernel.org>
-X-Mailer: b4 0.14.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250625063252.GD8962@sol>
 
-Correct spelling of suppressing as flagged by codespell.
+On Tue, Jun 24, 2025 at 11:32:52PM -0700, Eric Biggers wrote:
+> 
+> That was the synchronous throughput.  However, submitting multiple requests
+> asynchronously (which again, fscrypt doesn't actually do) barely helps.
+> Apparently the STM32 crypto engine has only one hardware queue.
+> 
+> I already strongly suspected that these non-inline crypto engines
+> aren't worth using.  But I didn't realize they are quite this bad.
+> Even with AES on a Cortex-A7 CPU that lacks AES instructions, the
+> CPU is much faster!
 
-Signed-off-by: Simon Horman <horms@kernel.org>
----
- include/linux/compiler_types.h | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+I wonder if the primary design goal of the STM32 crypto engine is that
+it might reduce power consumption --- after all, one of the primary
+benchmarketing metrics that vendors care about is "hours of You Tube
+watch time" --- and decryptoing a video stream doesn't require high
+performance.
 
-diff --git a/include/linux/compiler_types.h b/include/linux/compiler_types.h
-index 2b77d12e07b2..aa9de144c15b 100644
---- a/include/linux/compiler_types.h
-+++ b/include/linux/compiler_types.h
-@@ -392,7 +392,7 @@ struct ftrace_likely_data {
-  *  1) the original use -- identifying if a CPU is 'stuck' in idle state based
-  *     on it's instruction pointer. See cpu_in_idle().
-  *
-- *  2) supressing instrumentation around where cpuidle disables RCU; where the
-+ *  2) suppressing instrumentation around where cpuidle disables RCU; where the
-  *     function isn't strictly required for #1, this is interchangeable with
-  *     noinstr.
-  */
+Given that the typical benchmarketing number which handset vendors
+tend to care about is SQLite transactions per second, maybe they
+wouldn't be all that eager to use the crypto engine.  :-)
 
+    	     	      	      	     	      - Ted
 
