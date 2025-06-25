@@ -1,55 +1,83 @@
-Return-Path: <linux-kernel+bounces-702232-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-702273-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id C1402AE7FD6
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Jun 2025 12:43:52 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 56BFAAE8048
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Jun 2025 12:55:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 034B41888F10
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Jun 2025 10:44:08 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 713B21883263
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Jun 2025 10:55:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5EC4929E0F8;
-	Wed, 25 Jun 2025 10:43:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1E97F2D542A;
+	Wed, 25 Jun 2025 10:52:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="JsbOkdtR"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="GMrhQOFE"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.13])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B5E3529B224;
-	Wed, 25 Jun 2025 10:43:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A538D29E103;
+	Wed, 25 Jun 2025 10:52:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.13
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750848223; cv=none; b=hxcKOK39sKLS3FrcQ21FJo11ON8cwoPgYD/2Njsl7lkeKigSjmnVnDuXCje2wwCvJKQ/oumIRS3BVRK9y0Dd5d+rb/vVnqqLaB/lDj6nHKv+90wAtqWE1w8cQgYaXHR7nrnCcy/Z9TMEDhw2CHHEtB4nJSTvTSooc4gRhYHzogM=
+	t=1750848768; cv=none; b=tUmmPW9Af3Y4nsI0DE0OWFAaIAMb1YzlocvP5dWi8D4CwAOL9kfpn+b5Jkbb/yo+8VCO29HNdp6pMAK3hq5C7IdvQg4b9g/93uX9VHaAXY3CGuv+1lZCu6qteSNryy4xRZFybu212CItO38+HIkIURWGsFdy0DiW7Ps2iFDLoR0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750848223; c=relaxed/simple;
-	bh=bPlTIiXfUd4DLH+842hTOjtrbMNlSyt5bBcTD2L4g3k=;
+	s=arc-20240116; t=1750848768; c=relaxed/simple;
+	bh=L2E1mHlLHz7wbD1s3c/UvvxtaaMR/FMov2jR+AourPo=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=OUYmI73qDVAIX3czKnT+vaWdnUwMm07UQp6aumqK8j/NU9Zu+5pQa+Q2KUyINFIlvvxP/bBVJG1NFtNtO9Ot8Db2Ouv1l6MxQVchqF8tTdf1F0xYVs3rqU6pNm1uygSrogKIEUZaW55rudx3KF+x7UQKOtFMCqKvumKXxJzneUk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=JsbOkdtR; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B9FCDC4CEEA;
-	Wed, 25 Jun 2025 10:43:41 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1750848223;
-	bh=bPlTIiXfUd4DLH+842hTOjtrbMNlSyt5bBcTD2L4g3k=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=JsbOkdtRLcaCkhOSZ8PRBUBq4c+P+L+UO4z98C/dRX0wUePeojz9BlUORQiBXp9Hl
-	 GxyZ3y6AlTCECjQdrxyY8fAuIfETAGYJSfOkR6dQDvYJSrSADahMGM/eFH+6A+nBrk
-	 SBLenAr6ocFh+GCFOBZtPoA3gehv46YWP+91u+jtedI/d3Gb3m9xuIbKSJar2C6mcR
-	 mq5xlRvjUL3UtgUsHk5Oyd8/zH1FPR72UjEceTWTr2xoKA7JGM2xlD/MsaNry1z+2g
-	 OFTTJX7RNvDrggZEJa4nYlOEODnGL07FHLEdACCcjneHewzIrajDwaKR1mX4VcbBvZ
-	 170u8DL6DKGiQ==
-Date: Wed, 25 Jun 2025 11:43:39 +0100
-From: Simon Horman <horms@kernel.org>
-To: Fushuai Wang <wangfushuai@baidu.com>
-Cc: ioana.ciornei@nxp.com, andrew+netdev@lunn.ch, davem@davemloft.net,
-	edumazet@google.com, kuba@kernel.org, pabeni@redhat.com,
-	netdev@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH net] dpaa2-eth: fix xdp_rxq_info leak in
- dpaa2_eth_setup_rx_flow
-Message-ID: <20250625104339.GW1562@horms.kernel.org>
-References: <20250624144235.69622-1-wangfushuai@baidu.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=WyWG24r8zGL5xgOI3insY8DwF7JT2+fw9WcbYrZzb5VawzhDPcrne9Bxq/Dgb3kcXKYSIVjFL//daVhbs21Kzkb228Km+oW9sk+E0sTt8iV66Ue3hieSMcQmhuU/uJIQ3eIXgEgIoVZP5uxNDkEnPwGNUC8r9Lt2Cf/G7EwmLJU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=GMrhQOFE; arc=none smtp.client-ip=198.175.65.13
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1750848767; x=1782384767;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=L2E1mHlLHz7wbD1s3c/UvvxtaaMR/FMov2jR+AourPo=;
+  b=GMrhQOFEicb8altn3mGUaVAKKDR3cfJzVgoVw6yzlus8ZefB483/x00d
+   xvAPLdpyq+/JJjOZzo90gXrwycnXSoN/WPLs1IC1GPZK68Ttj2zeTATF0
+   XaHa4d+rtfvleBdBgIxcsdYT3ML9Sf2noszZ2J9V8yqMZO9mclOt8FLWO
+   DMmM4QGWYcne2MUhc42OwEpxQB2c/zi5J6jxy0vr5uEZ/HjC2xTov0kzY
+   xbF2HmdBoJ3JHrSn8mxLxhyQACt1b5I/qcBDRi1pGa6/xA4XoHwaEg5V9
+   gH8tl77RYg1oCwv79C9no8eUxf1duNM4/39EhpoXtGh4v802rSY6r6RFc
+   Q==;
+X-CSE-ConnectionGUID: HrwcsdjPTb26dsXhRyQu7g==
+X-CSE-MsgGUID: rLNn5fx2Q/WY2HpLjGyWIg==
+X-IronPort-AV: E=McAfee;i="6800,10657,11474"; a="64172256"
+X-IronPort-AV: E=Sophos;i="6.16,264,1744095600"; 
+   d="scan'208";a="64172256"
+Received: from fmviesa001.fm.intel.com ([10.60.135.141])
+  by orvoesa105.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 25 Jun 2025 03:52:46 -0700
+X-CSE-ConnectionGUID: WvY+25yWSNy9ZVBI9nCQAQ==
+X-CSE-MsgGUID: Srouzp+WTZKyngVqfHLDdA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.16,264,1744095600"; 
+   d="scan'208";a="183073412"
+Received: from yilunxu-optiplex-7050.sh.intel.com (HELO localhost) ([10.239.159.165])
+  by fmviesa001.fm.intel.com with ESMTP; 25 Jun 2025 03:52:40 -0700
+Date: Wed, 25 Jun 2025 18:45:03 +0800
+From: Xu Yilun <yilun.xu@linux.intel.com>
+To: Alexey Kardashevskiy <aik@amd.com>
+Cc: kvm@vger.kernel.org, sumit.semwal@linaro.org, christian.koenig@amd.com,
+	pbonzini@redhat.com, seanjc@google.com, alex.williamson@redhat.com,
+	jgg@nvidia.com, dan.j.williams@intel.com,
+	linux-coco@lists.linux.dev, dri-devel@lists.freedesktop.org,
+	linux-media@vger.kernel.org, linaro-mm-sig@lists.linaro.org,
+	vivek.kasireddy@intel.com, yilun.xu@intel.com,
+	linux-kernel@vger.kernel.org, lukas@wunner.de, yan.y.zhao@intel.com,
+	daniel.vetter@ffwll.ch, leon@kernel.org, baolu.lu@linux.intel.com,
+	zhenzhong.duan@intel.com, tao1.su@intel.com,
+	linux-pci@vger.kernel.org, zhiw@nvidia.com, simona.vetter@ffwll.ch,
+	shameerali.kolothum.thodi@huawei.com, aneesh.kumar@kernel.org,
+	iommu@lists.linux.dev, kevin.tian@intel.com
+Subject: Re: [RFC PATCH 00/30] Host side (KVM/VFIO/IOMMUFD) support for TDISP
+ using TSM
+Message-ID: <aFvTL6MUkVZrPoBS@yilunxu-OptiPlex-7050>
+References: <20250529053513.1592088-1-yilun.xu@linux.intel.com>
+ <e886855f-25cc-4274-9f11-fe0e5b025284@amd.com>
+ <f5958bda-838a-4ed6-84c6-fef62cd0b28f@amd.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -58,30 +86,24 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250624144235.69622-1-wangfushuai@baidu.com>
+In-Reply-To: <f5958bda-838a-4ed6-84c6-fef62cd0b28f@amd.com>
 
-On Tue, Jun 24, 2025 at 10:42:35PM +0800, Fushuai Wang wrote:
-> When xdp_rxq_info_reg_mem_model() fails after a successful
-> xdp_rxq_info_reg(), the kernel may leaks the registered RXQ
-> info structure. Fix this by calling xdp_rxq_info_unreg() in
-> the error path, ensuring proper cleanup when memory model
-> registration fails.
+On Sat, Jun 21, 2025 at 11:07:24AM +1000, Alexey Kardashevskiy wrote:
 > 
-> Fixes: d678be1dc1ec ("dpaa2-eth: add XDP_REDIRECT support")
-> Signed-off-by: Fushuai Wang <wangfushuai@baidu.com>
+> 
+> On 11/6/25 11:55, Alexey Kardashevskiy wrote:
+> > Hi,
+> > 
+> > Is there a QEMU tree using this somewhere?
+> 
+> Ping? Thanks,
 
-Thanks, I agree this is needed.
+Sorry for late. I've finally got a public tree.
 
-Reviewed-by: Simon Horman <horms@kernel.org>
+https://github.com/yiliu1765/qemu/tree/zhenzhong/devsec_tsm
 
-But I wonder how these resources are released in the following cases:
+Again, I think the changes are far from good, just work for enabling.
 
-* Error in dpaa2_eth_bind_dpni() after at least one
-  successful call to dpaa2_eth_setup_rx_flow()
-
-* Error in dpaa2_eth_probe() after a successful call to
-  dpaa2_eth_bind_dpni()
-
-* Driver removal (dpaa2_eth_remove())
-
+Thanks,
+Yilun
 
