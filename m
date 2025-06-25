@@ -1,105 +1,171 @@
-Return-Path: <linux-kernel+bounces-703066-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-703071-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8F536AE8B32
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Jun 2025 19:09:52 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 311F7AE8B3E
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Jun 2025 19:10:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id F41CC18959D1
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Jun 2025 17:05:32 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 061F97BC608
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Jun 2025 17:05:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 720CD2EE28F;
-	Wed, 25 Jun 2025 16:57:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 84D0E2D6607;
+	Wed, 25 Jun 2025 17:00:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="mNgLB8Ds"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.14])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="iAUuB3il"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 854402EE26A
-	for <linux-kernel@vger.kernel.org>; Wed, 25 Jun 2025 16:57:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.14
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C808529B8D2;
+	Wed, 25 Jun 2025 17:00:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750870628; cv=none; b=YC1J6NCcgfGVeCkmnpYcfFnBDvmKuKjiv2Jf9tYEvNToDr6JIvfkFdVneiOJuP7XU0BiVxyL+hRvQnIVqLg3gzBk7T78I8CTIiKZcAkEWNlod50ToJrqrFeQIC09ZXOhlZ+1H6Pk4S4nswJPbYjjPknAuuf36B721qeT8Y/22fU=
+	t=1750870843; cv=none; b=MtwZ9shNbCBdHAjagKr+0xylmkHaHAtIiQG+8WVwCWGgapmcQ3HwNxKsrNX7ny3mBrWKVRrPeNMY6RqFr3zWymE8cnWZqSxVlr46oRLDnGKyNb6ktDxj8xykTjZurHqqvSs+d6i2gXvxHYpHbpjHLM/yudjx4yWjV1UMi8LYlHQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750870628; c=relaxed/simple;
-	bh=wBhqdHFT6q92MdaZKb3oeHHxeJu1lqs/E+7CU/KnemU=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=rpWaPlNQ2Vv0OB6fPdQQNkTKjX6AU8aWK7P9/+YG1kGtasAnmr5S3HRWWe/qmj+vUH9a+XaS6KlOjM28CKMULVCY6+BuC37GY+0bykXWWxYfnaDXOx++qjORb9H/IzCqL/Hczo0SFKCCVXboAak96Uxu+eyfsl3P3YiB63NsZLE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=mNgLB8Ds; arc=none smtp.client-ip=192.198.163.14
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1750870627; x=1782406627;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=wBhqdHFT6q92MdaZKb3oeHHxeJu1lqs/E+7CU/KnemU=;
-  b=mNgLB8Ds2bQQs4PRPvP/CvxKXLcsQqxIgP92RizEQYzIRMyYkTifpe5y
-   gnUgf9FiZql14xEsgCaTePt4Xx1XYaJvzpZ9ULDA1fZdryp/QpnK7DacX
-   o5o3vJzbY1Vy568WIoI63oQwhRyad/k3F818UJusDWtIV64fBuH0ovZz1
-   UbjT8Yv+Ftv5EgKIGxjvBOWmHn27aZCPeVlRZ+XDlxCD9USZQvVN0G08a
-   /jFUZHSsHNfyzkXfg1lJoqCWKaeQpJiH13OPsq9M7/LtBWoEwIWD9FNUJ
-   Mh4w9ebF9CMKjHyI+LLG8vYcOlNjjbNth6h9vrLlQZLT1GB81CrqWJcfn
-   g==;
-X-CSE-ConnectionGUID: yDV8OeL1T5WQXEWXpKV1+A==
-X-CSE-MsgGUID: RoCu3jsiS0G+9lu/8A1aJQ==
-X-IronPort-AV: E=McAfee;i="6800,10657,11475"; a="53214467"
-X-IronPort-AV: E=Sophos;i="6.16,265,1744095600"; 
-   d="scan'208";a="53214467"
-Received: from orviesa010.jf.intel.com ([10.64.159.150])
-  by fmvoesa108.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 25 Jun 2025 09:57:07 -0700
-X-CSE-ConnectionGUID: 3X4X4U68Ttq5Zj9Z5nIKSw==
-X-CSE-MsgGUID: TapVp8apSniM0HuyJr/5Cg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.16,265,1744095600"; 
-   d="scan'208";a="151696740"
-Received: from unknown (HELO bnilawar-desk2.iind.intel.com) ([10.190.239.41])
-  by orviesa010-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 25 Jun 2025 09:57:04 -0700
-From: Badal Nilawar <badal.nilawar@intel.com>
-To: intel-xe@lists.freedesktop.org,
-	dri-devel@lists.freedesktop.org,
-	linux-kernel@vger.kernel.org
-Cc: anshuman.gupta@intel.com,
-	rodrigo.vivi@intel.com,
-	alexander.usyskin@intel.com,
-	gregkh@linuxfoundation.org,
-	daniele.ceraolospurio@intel.com
-Subject: [PATCH v4 10/10] drm/xe/xe_late_bind_fw: Select INTEL_MEI_LATE_BIND for CI
-Date: Wed, 25 Jun 2025 22:30:15 +0530
-Message-Id: <20250625170015.33912-11-badal.nilawar@intel.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20250625170015.33912-1-badal.nilawar@intel.com>
-References: <20250625170015.33912-1-badal.nilawar@intel.com>
+	s=arc-20240116; t=1750870843; c=relaxed/simple;
+	bh=aPBndkhU0szBl/yyozdzHv6sCe4/Iyvy8ufD1xZzuOY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=KHyZamlA8BnC977N8gX4ppx+lJDasocFxa9/xQDaBJFFVM4YWmk4JzLeE8c8d1E/+87dnercGT4kSlHiqTy4yepOeD6Q03v4zRi8kHBTWC3uThaZHKVw1hVZAhyiLqwBJ3vSpblUb6D/dezvBJczjT7T4tCeTOqFuHoeVy6sLOE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=iAUuB3il; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3314BC4CEEB;
+	Wed, 25 Jun 2025 17:00:43 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1750870843;
+	bh=aPBndkhU0szBl/yyozdzHv6sCe4/Iyvy8ufD1xZzuOY=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=iAUuB3ildS9YIRI1zWU4suFBTWHJwoIspAtUQKSKlGIk3McJAzG0QyyVDSjybD0aq
+	 bIeHpP1mfKi/wCqv806aSohjJ9s2YCKdeI/t1v/L36QS7YIOMAtPeM0NwvjCA6SIQq
+	 m3+YuCP1HK6y2Qfy3bpVkpXKeTQbwwvFuIZHTQoB3kLJxfNCW+cSt6yyEosAX/v6hI
+	 1RiquTH5U5MUPAJctL21s7cjFoHNhxuIeYoYzhW34zvFTnYWUigK313N+xZcq3zUb0
+	 S8h5eLf8r73g7tACAqaMILjyXDLqq3cPS0WFxqCzkbe9pwyGTLqb0ibmihHjaFjx/s
+	 7mjEiqD6izBYQ==
+Date: Wed, 25 Jun 2025 12:00:42 -0500
+From: "Seth Forshee (DigitalOcean)" <sforshee@kernel.org>
+To: Jay Vosburgh <jv@jvosburgh.net>
+Cc: Andrew Lunn <andrew+netdev@lunn.ch>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Carlos Bilbao <carlos.bilbao@kernel.org>,
+	Tonghao Zhang <tonghao@bamaicloud.com>
+Subject: Re: [PATCH] bonding: don't force LACPDU tx to ~333 ms boundaries
+Message-ID: <aFwrOs73E03Ifr-i@do-x1carbon>
+References: <20250625-fix-lacpdu-jitter-v1-1-4d0ee627e1ba@kernel.org>
+ <2545704.1750869056@famine>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <2545704.1750869056@famine>
 
-Do not review
+On Wed, Jun 25, 2025 at 09:30:56AM -0700, Jay Vosburgh wrote:
+> Seth Forshee (DigitalOcean) <sforshee@kernel.org> wrote:
+> 
+> >The timer which ensures that no more than 3 LACPDUs are transmitted in
+> >a second rearms itself every 333ms regardless of whether an LACPDU is
+> >transmitted when the timer expires. This causes LACPDU tx to be delayed
+> >until the next expiration of the timer, which effectively aligns LACPDUs
+> >to ~333ms boundaries. This results in a variable amount of jitter in the
+> >timing of periodic LACPDUs.
+> 
+> 	To be clear, the "3 per second" limitation that all of this
+> should to conform to is from IEEE 802.1AX-2014, 6.4.16 Transmit machine:
+> 
+> 	"When the LACP_Enabled variable is TRUE and the NTT (6.4.7)
+> 	variable is TRUE, the Transmit machine shall ensure that a
+> 	properly formatted LACPDU (6.4.2) is transmitted [i.e., issue a
+> 	CtrlMuxN:M_UNITDATA.Request(LACPDU) service primitive], subject
+> 	to the restriction that no more than three LACPDUs may be
+> 	transmitted in any Fast_Periodic_Time interval. If NTT is set to
+> 	TRUE when this limit is in force, the transmission shall be
+> 	delayed until such a time as the restriction is no longer in
+> 	force. The NTT variable shall be set to FALSE when the Transmit
+> 	machine has transmitted a LACPDU."
+> 
+> 	The current implementation conforms to this as you describe: by
+> aligning transmission to 1/3 second boundaries, no more than 3 can ever
+> be sent in one second.
+> 
+> 	If, hypothetically, the state machine were to transition, or a
+> user updates port settings (either of which would set NTT each time)
+> more than 3 times in a second, would your patched code obey this
+> restriction?
 
-Signed-off-by: Badal Nilawar <badal.nilawar@intel.com>
----
- drivers/gpu/drm/xe/Kconfig | 1 +
- 1 file changed, 1 insertion(+)
+As long as the transition doesn't reset sm_tx_timer_counter to something
+smaller than ad_ticks_per_sec/AD_MAX_TX_IN_SECOND, which nothing does
+currently (and if it did it would be at risk of sending more than 3 in a
+second already). The timer is reset on each tx, so no two consecutive
+LACPDUs can be sent less than 300ms apart, therefore no more than 3 can
+be per second. If a state machine transition sets NTT within 300ms of
+the previous tx, it will not send another until the timer expires.
 
-diff --git a/drivers/gpu/drm/xe/Kconfig b/drivers/gpu/drm/xe/Kconfig
-index 30ed74ad29ab..b161e1156c73 100644
---- a/drivers/gpu/drm/xe/Kconfig
-+++ b/drivers/gpu/drm/xe/Kconfig
-@@ -44,6 +44,7 @@ config DRM_XE
- 	select WANT_DEV_COREDUMP
- 	select AUXILIARY_BUS
- 	select HMM_MIRROR
-+	select INTEL_MEI_LATE_BIND
- 	help
- 	  Driver for Intel Xe2 series GPUs and later. Experimental support
- 	  for Xe series is also available.
--- 
-2.34.1
 
+> 	For completeness, and to make this email as complicated as
+> possible, I'll note that 802.1AX-2020 removes this particular
+> restriction in favor of incorporating the 802.3 generic limit on
+> transmission rates for Slow Protocols (of which LACP is one) to 10 per
+> second (802.3-2022, 30.3.1.1.38) into the state machine (802.1AX-2020,
+> 6.4.7, see "txOpportunity" and 6.4.14 LACP Transmit machine).  Linux
+> bonding doesn't implement the 802.1AX-2020 state machines, though, so I
+> don't think we can reasonably pick and choose arbitrary pieces from two
+> differing editions of a standard.
+> 
+> 	-J
+> 
+> >Change this to only rearm the timer when an LACPDU is actually sent,
+> >allowing tx at any point after the timer has expired.
+> >
+> >Signed-off-by: Seth Forshee (DigitalOcean) <sforshee@kernel.org>
+> >---
+> > drivers/net/bonding/bond_3ad.c | 11 ++++++-----
+> > 1 file changed, 6 insertions(+), 5 deletions(-)
+> >
+> >diff --git a/drivers/net/bonding/bond_3ad.c b/drivers/net/bonding/bond_3ad.c
+> >index c6807e473ab706afed9560bcdb5e6eca1934f5b7..a8d8aaa169fc09d7d5c201ff298b37b3f11a7ded 100644
+> >--- a/drivers/net/bonding/bond_3ad.c
+> >+++ b/drivers/net/bonding/bond_3ad.c
+> >@@ -1378,7 +1378,7 @@ static void ad_tx_machine(struct port *port)
+> > 	/* check if tx timer expired, to verify that we do not send more than
+> > 	 * 3 packets per second
+> > 	 */
+> >-	if (port->sm_tx_timer_counter && !(--port->sm_tx_timer_counter)) {
+> >+	if (!port->sm_tx_timer_counter || !(--port->sm_tx_timer_counter)) {
+> > 		/* check if there is something to send */
+> > 		if (port->ntt && (port->sm_vars & AD_PORT_LACP_ENABLED)) {
+> > 			__update_lacpdu_from_port(port);
+> >@@ -1393,12 +1393,13 @@ static void ad_tx_machine(struct port *port)
+> > 				 * again until demanded
+> > 				 */
+> > 				port->ntt = false;
+> >+
+> >+				/* restart tx timer(to verify that we will not
+> >+				 * exceed AD_MAX_TX_IN_SECOND
+> >+				 */
+> >+				port->sm_tx_timer_counter = ad_ticks_per_sec / AD_MAX_TX_IN_SECOND;
+> > 			}
+> > 		}
+> >-		/* restart tx timer(to verify that we will not exceed
+> >-		 * AD_MAX_TX_IN_SECOND
+> >-		 */
+> >-		port->sm_tx_timer_counter = ad_ticks_per_sec/AD_MAX_TX_IN_SECOND;
+> > 	}
+> > }
+> > 
+> >
+> >---
+> >base-commit: 86731a2a651e58953fc949573895f2fa6d456841
+> >change-id: 20250625-fix-lacpdu-jitter-1554d9f600ab
+> >
+> >Best regards,
+> >-- 
+> >Seth Forshee (DigitalOcean) <sforshee@kernel.org>
+> 
+> ---
+> 	-Jay Vosburgh, jv@jvosburgh.net
 
