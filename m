@@ -1,208 +1,121 @@
-Return-Path: <linux-kernel+bounces-702077-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-702080-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 03AA3AE7DCE
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Jun 2025 11:47:14 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id DF5C7AE7DD8
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Jun 2025 11:47:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4EC9E3BA0BF
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Jun 2025 09:44:36 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4A0E73AD3C2
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Jun 2025 09:45:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4BA2E284671;
-	Wed, 25 Jun 2025 09:39:02 +0000 (UTC)
-Received: from OS8PR02CU002.outbound.protection.outlook.com (mail-japanwestazon11022111.outbound.protection.outlook.com [40.107.75.111])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7F7E52D191F;
+	Wed, 25 Jun 2025 09:40:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="mFqWk2Ed"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2DE4129B79A;
-	Wed, 25 Jun 2025 09:38:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.75.111
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750844341; cv=fail; b=PC21AAU0o20Fw47O0SNPe5KVSx3oZbTyQ9JRI4b60ffvsvQFhADBUIvbqy2vm3OGY2muTivez4K8t3wIerj4qLv2NJ2mEkqkbPDvTdsiEQ24uu4T/PsM85kdb/8RBI10cy+LTi7kiOJYhtnTwxt3FhdoEOByaBBFB0o4Q1sCAoE=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750844341; c=relaxed/simple;
-	bh=2fzlXw1lguCXNf7+iLj+PebV6Qsh5XUi9fh0kYUQAB8=;
-	h=Message-ID:Date:Cc:Subject:To:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=sIdgTmxdY9x3OE8BWVMyhNCndwmj45+ToZK0gEASH/HRqGKFdYu5mKlvNyB9Pzc6HiLjjC338v5m99IfsH+LZVVvsUTc72S4rKLD/uqV4Jagh7rub0qsgpdfHy2YkpxUZjRb6lNgBQhA3Q64oKv1x9A8o0+Zlv0ancwybD1ObyU=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linumiz.com; spf=pass smtp.mailfrom=linumiz.com; arc=fail smtp.client-ip=40.107.75.111
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linumiz.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linumiz.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=L3GWGk3o5lXEk4nO5KiIdeg592kj0KJXbeMv5znM332N+BBdkTVaxTfYae0Oze8Hd/ysQd5VhcKyl3hqpNOh73pbZk3kAM+XNPXny/eqcK2VSpASSt8LWB7mggF5MQfpADnbQX/Gu+75EiGDmQWBwMhQ4D6rkyuxZGk9ABrYPMcaykVYg+4XJAhc0N7gRf7vDOFFTP5b50wn4kedz2MboUmcTJoWu06+ajeeP0Ia6FjddS9hxQXeyhnc6OWS+7Ji8pC21g6Ehl5sMTqLYXFJzr7j0P73TVVZkWPIb5m8dlcbGuwmLI+hEyvLs5YRDHiDse80XKhwst6H5jf79y9SEw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=rUbZ9IvPgkSJSTfY6J9UGAtOE6QoWmj0aUu7FoRkYt4=;
- b=Li8AEADWLhjnpE28Hl9VTgtWxR3413lWoG6OnBs5RcoU1yTW33R0DlJlaLKZAE6Tnci1FZqB1tkGBuuUqhwPcIlLeJV/rAV9Fc4uQwmX6rtMWaUpWsTT/hSbz0e1MjydjE2Czm/CoIwDQRy60DfE4JZCHH9dE4HqRQ6W1Ck5PrJxU9YoTr99my48JbawSreK3Uyim4xQQmyBnyCcwvpNxWWrpLUXRTW4cvD26EPQWTvQc+KHvb4VpJGTgfagr5XB0z240MKgxvB3RqRfuHngKCjCgtU/T3HIgNgkIDBmH1E45LyE+VXq8brYMr3N3sRxa5ueJTAcxERcDnvFp6Nv2w==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=linumiz.com; dmarc=pass action=none header.from=linumiz.com;
- dkim=pass header.d=linumiz.com; arc=none
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=linumiz.com;
-Received: from TYZPR06MB6935.apcprd06.prod.outlook.com (2603:1096:405:3c::9)
- by SEYPR06MB5718.apcprd06.prod.outlook.com (2603:1096:101:ba::11) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8857.30; Wed, 25 Jun
- 2025 09:38:56 +0000
-Received: from TYZPR06MB6935.apcprd06.prod.outlook.com
- ([fe80::9e42:3253:9a2e:b565]) by TYZPR06MB6935.apcprd06.prod.outlook.com
- ([fe80::9e42:3253:9a2e:b565%7]) with mapi id 15.20.8857.026; Wed, 25 Jun 2025
- 09:38:56 +0000
-Message-ID: <98860c75-6899-4911-8298-f70e3eab5791@linumiz.com>
-Date: Wed, 25 Jun 2025 15:08:48 +0530
-User-Agent: Mozilla Thunderbird
-Cc: parthiban@linumiz.com, Joerg Roedel <joro@8bytes.org>,
- Will Deacon <will@kernel.org>, Robin Murphy <robin.murphy@arm.com>,
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, Chen-Yu Tsai <wens@csie.org>,
- Jernej Skrabec <jernej.skrabec@gmail.com>,
- Samuel Holland <samuel@sholland.org>, Maxime Ripard <mripard@kernel.org>,
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
- Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>,
- Simona Vetter <simona@ffwll.ch>, Michael Turquette
- <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>,
- Philipp Zabel <p.zabel@pengutronix.de>,
- Linus Walleij <linus.walleij@linaro.org>, Vinod Koul <vkoul@kernel.org>,
- Kishon Vijay Abraham I <kishon@kernel.org>, iommu@lists.linux.dev,
- devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-sunxi@lists.linux.dev, linux-kernel@vger.kernel.org,
- dri-devel@lists.freedesktop.org, linux-clk@vger.kernel.org,
- linux-gpio@vger.kernel.org, linux-phy@lists.infradead.org
-Subject: Re: [PATCH 17/22] phy: allwinner: phy-sun6i-mipi-dphy: add LVDS
- support
-To: Paul Kocialkowski <paulk@sys-base.io>
-References: <20241227-a133-display-support-v1-0-13b52f71fb14@linumiz.com>
- <20241227-a133-display-support-v1-17-13b52f71fb14@linumiz.com>
- <aFu2VBhCIEdLIPv3@shepard>
-Content-Language: en-US
-From: Parthiban <parthiban@linumiz.com>
-Organization: Linumiz
-In-Reply-To: <aFu2VBhCIEdLIPv3@shepard>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: MAXP287CA0014.INDP287.PROD.OUTLOOK.COM
- (2603:1096:a00:49::25) To TYZPR06MB6935.apcprd06.prod.outlook.com
- (2603:1096:405:3c::9)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CF38329ACFA;
+	Wed, 25 Jun 2025 09:40:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1750844416; cv=none; b=rsSl/L4Hmlwl9auqiiRUz3Ha1kjv+x7cSmq2fgXDGSffDsYg9BflwFqPe3JtNBKkkwMF4TZHhJiJlgvP7BImu70MxIx4+VNfTVbBJm+h0MdWynttKuBdw+rPZIAxGl69BfvZsl4EiwcYpdUqykfmLoe6TmICTt0xp4zSE2QE8ns=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1750844416; c=relaxed/simple;
+	bh=Dz/zi2vBTU9RAcB3YC2BaOA4M6ssvm3AVyFc4F415Bs=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=cVW1dha5u4rIi/zkc3MZc5BakfAAEi6KBGK+QxmBcWGaAlK8UuoqyLTQdoOAyChlX3qAyrhVY2odTcBbiz56nD3z00T56WF0NDowoDRkxFuim8JRND4qFYjhKeqDxPQVga30JelDeKtmTtyTtnWGdSnggz0NyH7QjLzqPGgDv8g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=mFqWk2Ed; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4E0EAC4CEEA;
+	Wed, 25 Jun 2025 09:40:15 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1750844416;
+	bh=Dz/zi2vBTU9RAcB3YC2BaOA4M6ssvm3AVyFc4F415Bs=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=mFqWk2EdHJG0FIVnRH1+BUssUZak2X4ezgO8WnQ1exyCJk6rVpBOiUxU1jgCbjLsU
+	 wSKwDamV2ht7PkEYJxk3V77YQ68bk1jkeVPClCExZ/2evkqZ01rMLX2lO3hugV9yTZ
+	 Of+inbxwb8/FOT3AMXqIMRqXgKyF4JAR31/bU5fxlzPGxjRyzqvJQzSw9rG+wbK9st
+	 8RLJAUtDobLmUO8plCeVBCf86KEHicIt/zBdhDCcgeg24agCI4DjGNiriWdoyRtrgR
+	 USpm+uGVmhGa+cPX4sxLoeSI0N3GEw3ZuGa3Pdfgp+4eT1oZxwe3sMQEKzp3kv0imK
+	 naLSjrsW2PU8g==
+Date: Wed, 25 Jun 2025 10:40:13 +0100
+From: Simon Horman <horms@kernel.org>
+To: Thomas Fourier <fourier.thomas@gmail.com>
+Cc: Jakub Kicinski <kuba@kernel.org>, Chas Williams <3chas3@gmail.com>,
+	"moderated list:ATM" <linux-atm-general@lists.sourceforge.net>,
+	"open list:ATM" <netdev@vger.kernel.org>,
+	open list <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v2] atm: idt77252: Add missing `dma_map_error()`
+Message-ID: <20250625094013.GL1562@horms.kernel.org>
+References: <20250624064148.12815-3-fourier.thomas@gmail.com>
+ <20250624165128.GA1562@horms.kernel.org>
+ <4c6deafe-a6ec-40bf-873f-dc0df1a72dc4@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: TYZPR06MB6935:EE_|SEYPR06MB5718:EE_
-X-MS-Office365-Filtering-Correlation-Id: 0c28babd-ad35-4cd5-30f7-08ddb3cc1a90
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|376014|7416014|366016;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?elA0UWlEYk9maW1WQm5NTElpS2ZQQWwzcWp4aUt0NWlNYnhzRHR3Z3p2YmdQ?=
- =?utf-8?B?TUozSUUyWlZGSG5iVGhhSmphTU9od0tWYkZQd3NZUTVvNTdHVWFtMWpvamN1?=
- =?utf-8?B?ei9sanJ5UXNvYUNGWEFwSE93bWtVdjk4ckV0Q2FPMmlTbUlmQWRiYkNwZW0y?=
- =?utf-8?B?NmZDMWpNd0I4NG1YZldFNlF2ZzcvaEVic3JMZThTSUgvQU5mTkJ5MGM1WC96?=
- =?utf-8?B?V2JuWFhRbGNWdFVKR21WUGpsNklwUHU2TW5HMHJQbVpHN3RwaU1wZ3MrMEtK?=
- =?utf-8?B?UFhvWkVlMlJ2NTMzOFMwY0c0UjdTd0RSWEFOZWpNUEtnWUZ3RUpjNE1BSndW?=
- =?utf-8?B?VUhxSDV4OFBtWXBQcEhwS0ZBakUzTkZiSXFmSklKekNTZ3VHdmlseUY1OUxi?=
- =?utf-8?B?amNXN2VKd3BJcmFGTjRZOU05WHJjNWdBS2ZDN1ZrVFdqcVJlT09uMHdxRDJx?=
- =?utf-8?B?enhPaUdFSS91RHpDRUNSNGZiWFE4Mmk0VVAxQ0FjYmpoVWRZYUhUZ1FibGxN?=
- =?utf-8?B?eFhiTzJ0OWhYcy8rSEJUNXltTXBYN3QySzc3ZDBPL0JjWXBrTmpRU2FjN2lz?=
- =?utf-8?B?ZjVsU25MVnY2TzhSWlBHOFFWZFN0dEhNcW1NRmRwNWNGdE1uR1pCU2tUdVZS?=
- =?utf-8?B?bWRqVVVwWTJUb1hleTJpblFQV3MzdVhJNFVPWFZ2bm1Odm9YaHVDanFzU3pj?=
- =?utf-8?B?ajFaaDNmYTdURVAxdmc2V3BGWk9mS3IxMFRTb24zNzFnVW52aXFpb0E2bkhP?=
- =?utf-8?B?NkVQMkhqYXpWNXpKbUgxU1NtWVlpOEJBTTZIVFVpS1lmc3IvWTFCM0FweDUx?=
- =?utf-8?B?b09qSndOc0FnRlpUTStoY1hHaE5iSmFETzlYM1J6bXl4Z3RRTG1OVHFMS0t2?=
- =?utf-8?B?YjdCRFlKZ0tLT3ZQMVVZNUVDYlFBTE5UdWRETXludFlMSnhxZ2tpb2pJWThO?=
- =?utf-8?B?RmxaejFURG5KdGU5bjBMQjJtdUNyRHhzMG55aUJzZ1Vla3JSUU16L0F6RnVD?=
- =?utf-8?B?UVlBQWJubTRpR3FzYjVSdmtVcjZYL0VYeU5iZmE5WFJNdmV4REs0dHBmS05C?=
- =?utf-8?B?cWZCbURram0zSHIvV2dKcjUvdHpvM01lTk9MY0hXLzNxY01GajB3bDVEYzRo?=
- =?utf-8?B?UVE3QWdTRFQ1dmc2citMdHNmaUlrZ1lxWWVQQXpSWEp1dEpQSVpJc0VoQzIy?=
- =?utf-8?B?U1Q5YXhsWXkrdHNFYWQrdjc1YW5vaGt2L3lmM0VOdUd3Ry95U0FObCtEL1Iw?=
- =?utf-8?B?dDRWRUdrQlA3bXRsYkxRQkhKc1J3ZW1iUXNwNnY0R1Z0QlY5ck1wZkRLSG5D?=
- =?utf-8?B?R25sWFdLcDRkWmV0TkdwcnkvNWs2ZCtNdEs1aWZCU2NsQ0hlQVZHZUFKNmRB?=
- =?utf-8?B?Yjl0dTFZRWJPeTYxcitqWlNzUEd1cUUvUEt6ai92MlJkN3VZbzRrRVU5TVM3?=
- =?utf-8?B?VGZkd21rckIwMG9XUnphc2RmaElyaFh1LzA3Mk16RldhLzhnR3JBY1oxdy9N?=
- =?utf-8?B?MU81aVUvekJGOHV6bWFBdXM4dDZFWGNrYUFGbUowaVhpR0hycDV1L1lMOEhv?=
- =?utf-8?B?TU9xMU9rZS83bStmN1NqTmpCYytKY0JTRlZ3amZDM29ET2wvWnRVOWIzY3cx?=
- =?utf-8?B?UVZ2bWJ4V3VXTkkyalZDdzQ4NGNwTmEycFJsSnhmUW93UHRNN0lFNmo2dTFm?=
- =?utf-8?B?ek84blU5Q25LTFFIbWo0cGY1TkM4V1VrdCtvZWNmU3RsUlVpbTVwalk5US8y?=
- =?utf-8?B?Z2dwS1g5R2NQOTNPenVTbnZEYzlST2tFdE96LzNNVUpVNXZpZ1RjL3BUYWp1?=
- =?utf-8?Q?QzxJr8OB1I6tIOOR+zUsWuojD9UAImvEStm5U=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:TYZPR06MB6935.apcprd06.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(376014)(7416014)(366016);DIR:OUT;SFP:1102;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?WDY1OVZZODM1UjVEdWtzUG9yVVFNbFdSUmZJUVlEazRoV2lmWjBZL2dKZ00y?=
- =?utf-8?B?V1NucDNTamxZUGQvdGhQV0lNeTRwbmdZQzFIVElMbVZpa3VDVDZiNTZPcnky?=
- =?utf-8?B?V1JFQjlyR2hhQzcwTE1iVlB3K1FvbU1reWVSZEZwbnVaVlRycDkzUWZRN3l3?=
- =?utf-8?B?OGt1NGNMZjZDemkxZXJHams4MFl6bWFJbEpEL2JCSjFjdG96RmhMM3Bzcnh5?=
- =?utf-8?B?TFRnOXdOdVJ5T2FPWG5wSjRXSi8rdm1DcUFpcHdkVXZYKzFHMjhyaE0rcGox?=
- =?utf-8?B?WGdWb3EvK0FESExQV3UvZXpGUU1FSEozRHhYblByNTA1TmN0WnV3emx1WEo4?=
- =?utf-8?B?amVBMkEzdExpVmhZL3Y5UjJsT3o2U0VvZEVXdGVIYklKRU9IV0ZZdkVQMGVQ?=
- =?utf-8?B?dnVGRTQ5cFlqdkNBYUN1TGVIQlNiNmhTMlM4S2QxVy9pMGNPYVhtK2tISkJG?=
- =?utf-8?B?Q3FUNFVPWEpZR2xUelNONXU1M3hEUlRFUXZ5a2tGa1AyM2t6a3Y5dlMweS9l?=
- =?utf-8?B?eFN6QlNDVVdPZkQ3Vjg5dGN0WGswOUEvYU9taWgzV1BSYndBMVA1Q0d5K3c4?=
- =?utf-8?B?Z3J6QUhjZG1qNW5YQ09ma3JGa0RFZWY5TWhQUjJCUC9JTDZjVXB6V2RuOHE4?=
- =?utf-8?B?bDRWTVprdGxxc2JwMTBxOWpaZ3RqdVpYd1FkOWZ1aWFiWlpTekRzNGNpK0xH?=
- =?utf-8?B?aXhrTVlPYnIxWThKWVZjTDloOFI1TUVEVGhzOFJEVkI2QkdGM3g4TUlhK0pv?=
- =?utf-8?B?azFWM1ZuMVBwMlI1NFlRRHRLZnZZRHNBZlV4SDZ4dXZ5ZHh1VFFlblozWWhu?=
- =?utf-8?B?UkVhWGNudWxBMTlSWkpQSWdPeHppL0Y4LzhIRTR0THBhRVljc2RweWFub0hD?=
- =?utf-8?B?YUViQVpCL05rTVNwR1V6eVo2UXZhMm5SWjRNTHQyaWtRWXIxYkVoZTREQTdR?=
- =?utf-8?B?N1JiYnFTK3M3aEpBRFRPVkNDY21WRmltRHJ6QmNIay8rOGhOb1N3WEszdmR3?=
- =?utf-8?B?dmNnSngwQldMcnhxeUVBYmIyblNmcXp2MEFQZ1A5TjJtZ2d5ZDlXam5XTXFI?=
- =?utf-8?B?WHVSV21meGoreW03NmZhNUQrb0VuUjU1ZXhtZEpMMUMvb3E0OGc2YmtucHBt?=
- =?utf-8?B?N0hWeFZ6ZHVyeXRFRDUzZ0tsWlJYVDFlM1E3NExlb0JPdGF5ZHpGSElPZjRI?=
- =?utf-8?B?b2QwcXJEaWxZM1F3NDRISzJZT2U3cUptbmszQ3FwTzlSVS9yZzJFRmVmdmo3?=
- =?utf-8?B?Y2JOZWg0eVYrNGt4M2RRNEJ0N3lHaXBnWWhJbjk4WjNXb2NWaXU1cGR2RjNq?=
- =?utf-8?B?VFFDT0JJT0lMajFLTDQ4MzZSWXFqSTdhRUx5SHJxNUt5WmF3NWora0wrSEFP?=
- =?utf-8?B?REhvSFB0WVhBTjUvallwZXkxWnBZanB0VDRVc05PS21JNnR0SURyYmRKZE4x?=
- =?utf-8?B?SmllelFqZnhtZEo1VTJlRFhXNnkrVC8veXBKRUJmMEUzMHZyT0FlcEh6ZXlY?=
- =?utf-8?B?Ylk4NE42MTJ3dTdYTWw3N3JZcGwyRVZIVXRzZytkSzdPc0Vya0M4ZGs2TXVj?=
- =?utf-8?B?WjcrZXo2TmJUMXBvellJdGU2d3kzamwxck1pSEdHcXE0VHV5dFVWaXp1QXJD?=
- =?utf-8?B?S25iem42Yk9XdGFHd3ZwR3pzS0V1TlI0WEpiOUVsMk5TMVlKVTBxT1JzazJU?=
- =?utf-8?B?VU5xb1h4d3FGNDU5WE5EakE5cEdVVFpXbFNIMFVVVVdGb1YwTnpjckR2QTh4?=
- =?utf-8?B?TWlKcDlTU1NUWTUxdXdJbkdXeU9GRjluWGJxRUtiVjVkRWJBYXIraFZ0aTcx?=
- =?utf-8?B?YVlrQ2F2b3ZMSHN5S1U1Qmc3OEcwTWZ1QnluWWY0TTNMQWsyOGloM0RHS3JK?=
- =?utf-8?B?eHg5SEM2N2lzRnJIRStpaE8rM1lkWHAvZ0FXTkF2am93cDBFYlVtZGZld29k?=
- =?utf-8?B?ZnVrWUVCQzJpMEdBanZqbG1ETEVtOVVyZW9KMjI4MTJvS00wNHVCeFRvcnFj?=
- =?utf-8?B?TlNVVElFdVhlZlcvSUVPblVrUkRyNHhsdENWK0lXclROSHNPdGhLYlJGeXgr?=
- =?utf-8?B?eUJZRWw5NWVKMyt0SEtGR1FvajIrb3VmR3VZNEhXdzdlb0xJdzhwZ3pFZkhK?=
- =?utf-8?B?Z2dLS3VJejFLVXFROUV6cFd2VktMMnlMREt2YXdNTXNDWUZTeTkyM3pFVEFq?=
- =?utf-8?B?U1E9PQ==?=
-X-OriginatorOrg: linumiz.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 0c28babd-ad35-4cd5-30f7-08ddb3cc1a90
-X-MS-Exchange-CrossTenant-AuthSource: TYZPR06MB6935.apcprd06.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 25 Jun 2025 09:38:55.9345
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 808466aa-232a-41f4-ac23-289e3a6840d4
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: c6V8ikuhCG03qNkqGnLHdwCVivxW8KN/5k2OIaXpCiHgPXH8LT6ldCR6XSkwLRvsynsBqDkuRlaweEjDTdyEYA==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SEYPR06MB5718
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <4c6deafe-a6ec-40bf-873f-dc0df1a72dc4@gmail.com>
 
-On 6/25/25 2:11 PM, Paul Kocialkowski wrote:
-> Similar work was already submitted for D1/T113-S3 LVDS support, which seems to
-> be the exact same situation as the A133.
+On Wed, Jun 25, 2025 at 11:14:56AM +0200, Thomas Fourier wrote:
+> On 24/06/2025 18:51, Simon Horman wrote:
+> > On Tue, Jun 24, 2025 at 08:41:47AM +0200, Thomas Fourier wrote:
+> > > The DMA map functions can fail and should be tested for errors.
+> > > 
+> > > Signed-off-by: Thomas Fourier <fourier.thomas@gmail.com>
+> > > ---
+> > >   drivers/atm/idt77252.c | 5 +++++
+> > >   1 file changed, 5 insertions(+)
+> > > 
+> > > diff --git a/drivers/atm/idt77252.c b/drivers/atm/idt77252.c
+> > > index 1206ab764ba9..f2e91b7d79f0 100644
+> > > --- a/drivers/atm/idt77252.c
+> > > +++ b/drivers/atm/idt77252.c
+> > > @@ -852,6 +852,8 @@ queue_skb(struct idt77252_dev *card, struct vc_map *vc,
+> > >   	IDT77252_PRV_PADDR(skb) = dma_map_single(&card->pcidev->dev, skb->data,
+> > >   						 skb->len, DMA_TO_DEVICE);
+> > > +	if (dma_mapping_error(&card->pcidev->dev, IDT77252_PRV_PADDR(skb)))
+> > > +		return -ENOMEM;
+> > >   	error = -EINVAL;
+> > > @@ -1857,6 +1859,8 @@ add_rx_skb(struct idt77252_dev *card, int queue,
+> > >   		paddr = dma_map_single(&card->pcidev->dev, skb->data,
+> > >   				       skb_end_pointer(skb) - skb->data,
+> > >   				       DMA_FROM_DEVICE);
+> > > +		if (dma_mapping_error(&card->pcidev->dev, paddr))
+> > > +			goto outpoolrm;
+> > >   		IDT77252_PRV_PADDR(skb) = paddr;
+> > >   		if (push_rx_skb(card, skb, queue)) {
+> > > @@ -1871,6 +1875,7 @@ add_rx_skb(struct idt77252_dev *card, int queue,
+> > >   	dma_unmap_single(&card->pcidev->dev, IDT77252_PRV_PADDR(skb),
+> > >   			 skb_end_pointer(skb) - skb->data, DMA_FROM_DEVICE);
+> > > +outpoolrm:
+> > >   	handle = IDT77252_PRV_POOL(skb);
+> > >   	card->sbpool[POOL_QUEUE(handle)].skb[POOL_INDEX(handle)] = NULL;
+> > Hi Thomas,
+> > 
+> > Can sb_pool_remove() be used here?
+> > It seems to be the converse of sb_pool_add().
+> > And safer than the code above.
+> > But perhaps I'm missing something.
 > 
-> See: https://patchwork.freedesktop.org/series/145276/
 > 
-> I just made a review of that series and find it more elegant in various ways
-> (especially since configuring the registers in set_mode is not the right place).
-> So you probably want to follow-up on that series instead.
+> Hi Simon,
 > 
-> Note that both D1/T113-S3 and A133 support a second LVDS output, LVDS1, which
-> uses the traditional TCON0 LVDS PHY. It would be great to be able to support
-> both outputs as well as dual-link modes!
+> I don't see any reason why this would be a problem,
+> 
+> though, I don't think it is related and the change should be in the same
+> patch.
 
-Thanks for the inputs. Yes, am aware of that series in open. I couldn't find time
-last weeks to clean this patch. Will do it in a week or two.
+Yes, good point. In that case this patch looks good to me.
 
-Thanks,
-Parthiban
+Reviewed-by: Simon Horman <horms@kernel.org>
 
-> 
-> All the best,
-> 
-> Paul
+> Should I create another patch for that?
+
+I think that would be nice. But let's wait for this patch to land first.
 
