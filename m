@@ -1,103 +1,89 @@
-Return-Path: <linux-kernel+bounces-702741-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-702743-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 00A64AE86A1
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Jun 2025 16:36:22 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id CBCD6AE86AB
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Jun 2025 16:37:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 59C757AA9E1
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Jun 2025 14:34:56 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1524C4A654C
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Jun 2025 14:37:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 60880267F4C;
-	Wed, 25 Jun 2025 14:36:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="TUs6Z62B"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1A6EF268688;
+	Wed, 25 Jun 2025 14:37:45 +0000 (UTC)
+Received: from outgoing.mit.edu (outgoing-auth-1.mit.edu [18.9.28.11])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BBAF92620CB;
-	Wed, 25 Jun 2025 14:36:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2ABE7268C42
+	for <linux-kernel@vger.kernel.org>; Wed, 25 Jun 2025 14:37:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=18.9.28.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750862171; cv=none; b=lT4lzuEyVkyuLlKqPChjan2BF0M5lJMoahHE2pQRaSiaHs5apOr3ADoNhf2xhXzJqfPGIFmUF2rsc4h8yR4XNQawXSZh8jHFk1f6XxzsTfPjfeI2iFBPa7KY3GSSW4PxXPe+yxTLWN4IDejGNgBuQB1kjF3ZBLTZT0nLlKZ4Ibw=
+	t=1750862264; cv=none; b=c1mcN6PwFY1qpVZRuSRaIIPE3cmWjq+X6vfCnCx2FpKLXSqtWqWVzYuc/StmrlfG/uAZbMhMk/z99reDnPF8nu1L+pIR24IFuoKBz8TZsBGOjoDJeaJAeqMUei4BRRacsDTkuS1T/qvwsH7uM0TEP68oHo1RA+rPEKlLjIaJISM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750862171; c=relaxed/simple;
-	bh=npr7ljrTyVoRoiWeAfu97UY4v00ATqhUkRJIlcT0wtI=;
-	h=From:To:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=PNZq8sMimGEzMt2uIsBJOP2WkCm0DhFWdsfjCCB/PLqO/vgHj0VpS5MuPEL89IuQdX4+AeZyRQkky4zwHucV6d9Vm3p2s+eo1fILTD2fWOttwwH5lSoDMkqUNK0Z7kS1YD6fMcjY/BA0r8nTINZZWKBTQpBboC8ezUAqUkUpKX4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=TUs6Z62B; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E60F3C4CEEA;
-	Wed, 25 Jun 2025 14:36:07 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1750862170;
-	bh=npr7ljrTyVoRoiWeAfu97UY4v00ATqhUkRJIlcT0wtI=;
-	h=From:To:In-Reply-To:References:Subject:Date:From;
-	b=TUs6Z62BbL7y+hgRQR/MfusG7tfCjGkqCoWOgJOBb47ekPV+N9ou6IIVKp1RYQt5G
-	 /JGmqoHD9yWwrwJ0yHy3WJFAewMqytdg/PCl2EVW/fsMLbaC/94Zzs/O3x/JRvVzWq
-	 nsxYClX8nVipaRh8BUn0hBLZCduVR2cpW+bu/hCeVrolZgifHTos2iIKy17tGqfDG+
-	 svqqpHrsefKnfSvEFQJj5GWgZOykkKuI9H8EWvHhBYiUKfzTUwfD/CuGOPKmfVnOIl
-	 Y0pglt57LBgNCsMs7pZZXhLZKF+evj7gJHNG+QGW7d2fJo7LrqpsrzwsbT5RhURkdu
-	 gcoeu4wMW13hg==
-From: Mark Brown <broonie@kernel.org>
-To: lgirdwood@gmail.com, perex@perex.cz, tiwai@suse.com, 
- patches@opensource.cirrus.com, linux-sound@vger.kernel.org, 
- linux-kernel@vger.kernel.org, shengjiu.wang@gmail.com, 
- Shengjiu Wang <shengjiu.wang@nxp.com>
-In-Reply-To: <20250620021403.624303-1-shengjiu.wang@nxp.com>
-References: <20250620021403.624303-1-shengjiu.wang@nxp.com>
-Subject: Re: [PATCH v3] ASoC: wm8524: enable constraints when sysclk is
- configured.
-Message-Id: <175086216755.125160.10337591577571856214.b4-ty@kernel.org>
-Date: Wed, 25 Jun 2025 15:36:07 +0100
+	s=arc-20240116; t=1750862264; c=relaxed/simple;
+	bh=M5okF5B9MWiMgNs9aBUuLFkqgEnpbEJzIAQvkOzh0GI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Y4pF7+OttShTh/IFaG4NApmOwe6YEQb62s6UuNDEQeiG2aJiFPTPi6C0R5uq0Wxn3ZfMvHihG6SuLLMXIlYTRn5zmZ6AKoL9tHRWIPyKoF3lpFn/yp4aoAU0QlGAJ8KDcpgTZrXeHALk8opy3Bn8/Qcj17t3w6OTjN/ST7BRq3c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=mit.edu; spf=pass smtp.mailfrom=mit.edu; arc=none smtp.client-ip=18.9.28.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=mit.edu
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mit.edu
+Received: from trampoline.thunk.org (pool-173-48-82-219.bstnma.fios.verizon.net [173.48.82.219])
+	(authenticated bits=0)
+        (User authenticated as tytso@ATHENA.MIT.EDU)
+	by outgoing.mit.edu (8.14.7/8.12.4) with ESMTP id 55PEatLG000596
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 25 Jun 2025 10:36:56 -0400
+Received: by trampoline.thunk.org (Postfix, from userid 15806)
+	id 82F0F2E00D5; Wed, 25 Jun 2025 10:36:55 -0400 (EDT)
+Date: Wed, 25 Jun 2025 10:36:55 -0400
+From: "Theodore Ts'o" <tytso@mit.edu>
+To: =?utf-8?B?6ZmI5rab5rab?= Taotao Chen <chentaotao@didiglobal.com>
+Cc: "hch@infradead.org" <hch@infradead.org>,
+        "adilger.kernel@dilger.ca" <adilger.kernel@dilger.ca>,
+        "willy@infradead.org" <willy@infradead.org>,
+        "brauner@kernel.org" <brauner@kernel.org>,
+        "jani.nikula@linux.intel.com" <jani.nikula@linux.intel.com>,
+        "rodrigo.vivi@intel.com" <rodrigo.vivi@intel.com>,
+        "tursulin@ursulin.net" <tursulin@ursulin.net>,
+        "airlied@gmail.com" <airlied@gmail.com>,
+        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
+        "linux-ext4@vger.kernel.org" <linux-ext4@vger.kernel.org>,
+        "linux-block@vger.kernel.org" <linux-block@vger.kernel.org>,
+        "intel-gfx@lists.freedesktop.org" <intel-gfx@lists.freedesktop.org>,
+        "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
+        "linux-mm@kvack.org" <linux-mm@kvack.org>,
+        "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "chentao325@qq.com" <chentao325@qq.com>
+Subject: Re: [PATCH v2 5/5] ext4: declare support for FOP_DONTCACHE
+Message-ID: <20250625143655.GF28249@mit.edu>
+References: <20250624121149.2927-1-chentaotao@didiglobal.com>
+ <20250624121149.2927-6-chentaotao@didiglobal.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Mailer: b4 0.15-dev-08c49
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20250624121149.2927-6-chentaotao@didiglobal.com>
 
-On Fri, 20 Jun 2025 10:14:03 +0800, Shengjiu Wang wrote:
-> In some cases, the sysclk won't be configured on init, and sysclk can be
-> changed in hw_params() according to different sample rate, for example,
-> for 44kHz sample rate, the sysclk is 11.2896MHz, for 48kHz sample rate,
-> the sysclk is 12.288MHz.
+On Tue, Jun 24, 2025 at 12:12:10PM +0000, 陈涛涛 Taotao Chen wrote:
+> From: Taotao Chen <chentaotao@didiglobal.com>
 > 
-> In order to support the above case, only enable constraints when sysclk
-> is configured, and check the rate in hw_params.
+> Set the FOP_DONTCACHE flag in ext4_file_operations to indicate that
+> ext4 supports IOCB_DONTCACHE handling in buffered write paths.
 > 
-> [...]
+> Part of a series refactoring address_space_operations write_begin and
+> write_end callbacks to use struct kiocb for passing write context and
+> flags.
+> 
+> Signed-off-by: Taotao Chen <chentaotao@didiglobal.com>
 
-Applied to
+I agree that it would be better to combine the ext4 patches.
 
-   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git for-next
-
-Thanks!
-
-[1/1] ASoC: wm8524: enable constraints when sysclk is configured.
-      commit: 17cc308b183308bf5ada36e164284fff7eb064ba
-
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent to Linus during
-the next merge window (or sooner if it is a bug fix), however if
-problems are discovered then the patch may be dropped or reverted.
-
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
-
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
-
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
-
-Thanks,
-Mark
-
+Acked-by: Theodore Ts'o <tytso@mit.edu>
 
