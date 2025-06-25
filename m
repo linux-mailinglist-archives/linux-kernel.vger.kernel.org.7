@@ -1,243 +1,275 @@
-Return-Path: <linux-kernel+bounces-702076-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-702093-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 38CCAAE7DC0
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Jun 2025 11:46:18 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 76D37AE7E0C
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Jun 2025 11:52:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8ADAA1677A9
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Jun 2025 09:44:47 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 103371896F44
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Jun 2025 09:49:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CB0FE29B228;
-	Wed, 25 Jun 2025 09:38:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 35DAC285CB5;
+	Wed, 25 Jun 2025 09:46:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="b1hc0nf5"
-Received: from mail-vk1-f173.google.com (mail-vk1-f173.google.com [209.85.221.173])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Dq9LtvWA"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.18])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D196B27FB07
-	for <linux-kernel@vger.kernel.org>; Wed, 25 Jun 2025 09:38:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A007E2066CE
+	for <linux-kernel@vger.kernel.org>; Wed, 25 Jun 2025 09:46:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750844317; cv=none; b=NpLDSF0+ubDztR3ySjbiixxfqw0VZ+kxIMBMJMGUmF3x5N86tX8bhCqKH67Ctz7J7uwjs+BmoEG5vfSNbWZtfOvvxY3kHcSpyf4/sTJYObqQxrFD+ZpzcMuy737Q8XSyDzAEJuMNQbl7qkR/OC3DWlo75P6RpD/CE6u52EvT5/c=
+	t=1750844790; cv=none; b=o7vlzyfpRUYlpK1MrLZkpdJ2OIHPgXGKS93YgzFRspEHkgw6ZNJTyDWxkr4QBdXFtDtDAXra7TEhHIVWD4rRZ6W1ZBA6RAsxVLJBXA6D6yBG6PbFvr/U1KvbhB6kr3lLPDrvEVoncEziImlOU8Q3ewBe+G+/I7wZAQbD3+9/dlA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750844317; c=relaxed/simple;
-	bh=jk4Hhh427Dopn8B/4mWSQYIGFRTAUvXboyajkL1+37o=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=apnk0fgMga+RsFJe1A2bI8SJKupek+SY1eGqbezHnZDrSvn+BARIHHlS9uprdhJOQhHpPXHE+52XpBIwsy7oLNbic7lkKQSM3IFdF1OstQV9T/rfx7ey/5GdR59H81BSXKWiagygsGTuEtKPSAXDGnSP7Sk9AyGl4xlM7ch3Hwo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=b1hc0nf5; arc=none smtp.client-ip=209.85.221.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-vk1-f173.google.com with SMTP id 71dfb90a1353d-531b4da8189so1484151e0c.1
-        for <linux-kernel@vger.kernel.org>; Wed, 25 Jun 2025 02:38:34 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1750844313; x=1751449113; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Ik/O3lKW8D4PX3b9RKMi5Pl8dRCbo+JtmwcqMh8DqL4=;
-        b=b1hc0nf53oD80hoYVnnpcZEp2egs/u2pkricymLmDGYC4SWI6kI/hK5mX0kqbUmZye
-         rjOBm43PPJi/u459coiZY2+7dqHTWgS37+u/lTHelKRyeVKMNjQJc/tJYLi/6nD6RjXX
-         J6E37QzFd+GwqHz7zI5qHiYSEF9zHRKgI17DhDm0XNv/dbMQsJqI2XdM8ORJepw9KPUT
-         OGwZSoCxjhioUm2Z4geyaHqa56xdm7El5X2f+W37k0rFHX73tMaVJEGF/gWfW6WxbsOm
-         6yxENUBzAdsn+4mnQh1GKzRiVyt6dG2S7T0blGUccAH3Re5UbejN7sk9VfE29c34HpLT
-         zmgw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1750844313; x=1751449113;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=Ik/O3lKW8D4PX3b9RKMi5Pl8dRCbo+JtmwcqMh8DqL4=;
-        b=B+Htk1eMDmdyJj23a3lqTCTYcfKJuhV6v/rKnPZwNxpQF8WS8ekveUbRfk2PkVLNu2
-         iFffW4Xv9g4OamJ7Hakjd1J6M3LbBmbqQD+0hEC51U0NMj9ChRDNBcvurxqxQGHBs/M+
-         CCxqo2iC3rmxSpV/zwmHva/1A5M7Nn5RURZBBTT36zohlW155r5uryknNtc6R6sQYjep
-         seAD6MZmcnmy7OgMf1rkRPKgU/BAUaRFq+txOYldMb0WxAy8YZ0d2chUFERHrxVN0gWb
-         Rz7JIE7koKJ0heELlzjoUUEW7usNvxu3hE96aGd2J5iqwyM/uAznHdNzVAECMCHT5O7C
-         VAWw==
-X-Forwarded-Encrypted: i=1; AJvYcCWhFcNhBzrbGBw0oNxj8bhYwvgITUQX5uxB4KwCb1KSG9mFa2xTOqj5XcS0fITmBrFQLuue6p8N76qFSCg=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxTWQTBlh+oc2uWEnrdppSofSg6rNsz2qnx0DCy2QMkEwMO4uGv
-	Wu/AhcBS+8sRjr9z/bjPv9d953QNF4bGntL4LdNfCdyfdUJ50zP4rO1tCMVzO34BJXhWNXWmt+j
-	Gt6+5/Qn/FlFIkFjhwKQPxjxNnEU+wm4=
-X-Gm-Gg: ASbGncv3CxWbeUIuMtYQzquIh1k/gP9rQYPK4ujol414qJh3W8C9u3q49fOe0oOV1Ju
-	dqkhmrxCFITmszjmZk7vr58EStpypJskMSqZJT718wQDHTcxXBfuszNLGF61FXTvEydpmRmrZk4
-	A/iBA5VWVamgynyxdHCpJjH/Q1K9doBEVxdSxgW+cRnXg=
-X-Google-Smtp-Source: AGHT+IHFsEjf8mVqrGJlOglZXBqK+LXUAHLKDnHRegX9xwHltPGn1BuflQtnpCujXSYlVduWzyct2ogezPY53n9zi2Q=
-X-Received: by 2002:a05:6122:2516:b0:530:81ac:51be with SMTP id
- 71dfb90a1353d-532ef6cc1e4mr985532e0c.8.1750844313457; Wed, 25 Jun 2025
- 02:38:33 -0700 (PDT)
+	s=arc-20240116; t=1750844790; c=relaxed/simple;
+	bh=VahF800RD6awzaPHIvyJkfnSmFed4yTzKvqtc6h4VSY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=L3voto5Lqd/9JGmWnNJIlxmlL9tGx5UEB6VLhWJQ0xzb4YaTWhzzrPcv/jCl4r1oqSUu5qkTD+aLr9K+8vM4xo20ytyiyUcaVKODQ4HbsFZagRaXtlQg62I3nhyMX9l7akNh8XHwMIoYOCFTQn5tpdaX0+qPs/L/7bwb5e50/xI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Dq9LtvWA; arc=none smtp.client-ip=192.198.163.18
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1750844789; x=1782380789;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=VahF800RD6awzaPHIvyJkfnSmFed4yTzKvqtc6h4VSY=;
+  b=Dq9LtvWAJyv8Do22ksoIMS8pFKJgBPNfFVrCk+SAfVdaSaGdWbWOL7L5
+   JPphI7ENi0Z/dRGhxeKv1v7N3s/T7IA9r80pZGWz0WYY40ot91xzfJcKe
+   Y9cFF+pCjhBaeEQGre2Yq0ZRF1I2AZJU8e8u7ZVE4n80w90fap+HcFTQj
+   dR2M8S87P9kQk8C8WPjo9VUPazs1CjkHEcurqZBCb57AB5cbETI1CLByr
+   CWv3Br8/NW4gUH9QSvOdtYTx/9Dr4s7R7sWl9EZRYARNKAxfbMV42sxAk
+   TSGD59Nd9Zcw1GVFmBDRSTEPZ16L66HP3ICzNC9C8M5KSfEuVHlDP7LMH
+   Q==;
+X-CSE-ConnectionGUID: YUTWFZ93SmyeksnmRojK3Q==
+X-CSE-MsgGUID: QGmmclJrSqOxzlZ8fA94RA==
+X-IronPort-AV: E=McAfee;i="6800,10657,11474"; a="52337923"
+X-IronPort-AV: E=Sophos;i="6.16,264,1744095600"; 
+   d="scan'208";a="52337923"
+Received: from orviesa006.jf.intel.com ([10.64.159.146])
+  by fmvoesa112.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 25 Jun 2025 02:46:28 -0700
+X-CSE-ConnectionGUID: UA3V2zXlRkS4ZS9/NnWkrQ==
+X-CSE-MsgGUID: /m4EyaggQxm2KjJxNyFJVw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.16,264,1744095600"; 
+   d="scan'208";a="151681300"
+Received: from yilunxu-optiplex-7050.sh.intel.com (HELO localhost) ([10.239.159.165])
+  by orviesa006.jf.intel.com with ESMTP; 25 Jun 2025 02:46:25 -0700
+Date: Wed, 25 Jun 2025 17:38:48 +0800
+From: Xu Yilun <yilun.xu@linux.intel.com>
+To: "Aneesh Kumar K.V" <aneesh.kumar@kernel.org>
+Cc: jgg@nvidia.com, jgg@ziepe.ca, kevin.tian@intel.com, will@kernel.org,
+	iommu@lists.linux.dev, linux-kernel@vger.kernel.org,
+	joro@8bytes.org, robin.murphy@arm.com, shuah@kernel.org,
+	nicolinc@nvidia.com, aik@amd.com, dan.j.williams@intel.com,
+	baolu.lu@linux.intel.com, yilun.xu@intel.com
+Subject: Re: [PATCH v2 3/4] iommufd: Destroy vdevice on idevice destroy
+Message-ID: <aFvDqAGAM3RbPh8G@yilunxu-OptiPlex-7050>
+References: <20250623094946.1714996-1-yilun.xu@linux.intel.com>
+ <20250623094946.1714996-4-yilun.xu@linux.intel.com>
+ <yq5a1pr85noj.fsf@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <2c19a6cf-0b42-477b-a672-ed8c1edd4267@redhat.com> <20250624162503.78957-1-ioworker0@gmail.com>
-In-Reply-To: <20250624162503.78957-1-ioworker0@gmail.com>
-From: Barry Song <21cnbao@gmail.com>
-Date: Wed, 25 Jun 2025 21:38:21 +1200
-X-Gm-Features: Ac12FXwzgBA5qA6Bu1rSIUYx-JEmY2u59OAGcqCQlCXMv4jDK2aouZ9-YNF9zfQ
-Message-ID: <CAGsJ_4x+YaF3bVjMuNv2iJtdoD2-GgGsbJA__cpxb7U5YtK9ig@mail.gmail.com>
-Subject: Re: [PATCH v4 3/4] mm: Support batched unmap for lazyfree large
- folios during reclamation
-To: Lance Yang <ioworker0@gmail.com>
-Cc: david@redhat.com, akpm@linux-foundation.org, baolin.wang@linux.alibaba.com, 
-	chrisl@kernel.org, kasong@tencent.com, linux-arm-kernel@lists.infradead.org, 
-	linux-kernel@vger.kernel.org, linux-mm@kvack.org, 
-	linux-riscv@lists.infradead.org, lorenzo.stoakes@oracle.com, 
-	ryan.roberts@arm.com, v-songbaohua@oppo.com, x86@kernel.org, 
-	ying.huang@intel.com, zhengtangquan@oppo.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <yq5a1pr85noj.fsf@kernel.org>
 
-On Wed, Jun 25, 2025 at 4:27=E2=80=AFAM Lance Yang <ioworker0@gmail.com> wr=
-ote:
->
-> On 2025/6/24 23:34, David Hildenbrand wrote:
-> > On 24.06.25 17:26, Lance Yang wrote:
-> >> On 2025/6/24 20:55, David Hildenbrand wrote:
-> >>> On 14.02.25 10:30, Barry Song wrote:
-> >>>> From: Barry Song <v-songbaohua@oppo.com>
-> >> [...]
-> >>>> diff --git a/mm/rmap.c b/mm/rmap.c
-> >>>> index 89e51a7a9509..8786704bd466 100644
-> >>>> --- a/mm/rmap.c
-> >>>> +++ b/mm/rmap.c
-> >>>> @@ -1781,6 +1781,25 @@ void folio_remove_rmap_pud(struct folio *foli=
-o,
-> >>>> struct page *page,
-> >>>>    #endif
-> >>>>    }
-> >>>> +/* We support batch unmapping of PTEs for lazyfree large folios */
-> >>>> +static inline bool can_batch_unmap_folio_ptes(unsigned long addr,
-> >>>> +            struct folio *folio, pte_t *ptep)
-> >>>> +{
-> >>>> +    const fpb_t fpb_flags =3D FPB_IGNORE_DIRTY | FPB_IGNORE_SOFT_DI=
-RTY;
-> >>>> +    int max_nr =3D folio_nr_pages(folio);
-> >>>
-> >>> Let's assume we have the first page of a folio mapped at the last pag=
-e
-> >>> table entry in our page table.
-> >>
-> >> Good point. I'm curious if it is something we've seen in practice ;)
+On Wed, Jun 25, 2025 at 12:10:28PM +0530, Aneesh Kumar K.V wrote:
+> Xu Yilun <yilun.xu@linux.intel.com> writes:
+> 
+> > Destroy iommufd_vdevice(vdev) on iommufd_idevice(idev) destroy so that
+> > vdev can't outlive idev.
 > >
-> > I challenge you to write a reproducer :P I assume it might be doable
-> > through simple mremap().
+> > iommufd_device(idev) represents the physical device bound to iommufd,
+> > while the iommufd_vdevice(vdev) represents the virtual instance of the
+> > physical device in the VM. The lifecycle of the vdev should not be
+> > longer than idev. This doesn't cause real problem on existing use cases
+> > cause vdev doesn't impact the physical device, only provides
+> > virtualization information. But to extend vdev for Confidential
+> > Computing(CC), there are needs to do secure configuration for the vdev,
+> > e.g. TSM Bind/Unbind. These configurations should be rolled back on idev
+> > destroy, or the external driver(VFIO) functionality may be impact.
 > >
-> >>
-> >>>
-> >>> What prevents folio_pte_batch() from reading outside the page table?
-> >>
-> >> Assuming such a scenario is possible, to prevent any chance of an
-> >> out-of-bounds read, how about this change:
-> >>
-> >> diff --git a/mm/rmap.c b/mm/rmap.c
-> >> index fb63d9256f09..9aeae811a38b 100644
-> >> --- a/mm/rmap.c
-> >> +++ b/mm/rmap.c
-> >> @@ -1852,6 +1852,25 @@ static inline bool
-> >> can_batch_unmap_folio_ptes(unsigned long addr,
-> >>       const fpb_t fpb_flags =3D FPB_IGNORE_DIRTY | FPB_IGNORE_SOFT_DIR=
-TY;
-> >>       int max_nr =3D folio_nr_pages(folio);
-> >>       pte_t pte =3D ptep_get(ptep);
-> >> +    unsigned long end_addr;
-> >> +
-> >> +    /*
-> >> +     * To batch unmap, the entire folio's PTEs must be contiguous
-> >> +     * and mapped within the same PTE page table, which corresponds t=
-o
-> >> +     * a single PMD entry. Before calling folio_pte_batch(), which do=
-es
-> >> +     * not perform boundary checks itself, we must verify that the
-> >> +     * address range covered by the folio does not cross a PMD bounda=
-ry.
-> >> +     */
-> >> +    end_addr =3D addr + (max_nr * PAGE_SIZE) - 1;
-> >> +
-> >> +    /*
-> >> +     * A fast way to check for a PMD boundary cross is to align both
-> >> +     * the start and end addresses to the PMD boundary and see if the=
-y
-> >> +     * are different. If they are, the range spans across at least tw=
-o
-> >> +     * different PMD-managed regions.
-> >> +     */
-> >> +    if ((addr & PMD_MASK) !=3D (end_addr & PMD_MASK))
-> >> +        return false;
+> > Building the association between idev & vdev requires the two objects
+> > pointing each other, but not referencing each other. This requires
+> > proper locking. This is done by reviving some of Nicolin's patch [1].
 > >
-> > You should not be messing with max_nr =3D folio_nr_pages(folio) here at
-> > all. folio_pte_batch() takes care of that.
+> > There are 3 cases on idev destroy:
 > >
-> > Also, way too many comments ;)
+> >   1. vdev is already destroyed by userspace. No extra handling needed.
+> >   2. vdev is still alive. Use iommufd_object_tombstone_user() to
+> >      destroy vdev and tombstone the vdev ID.
+> >   3. vdev is being destroyed by userspace. The vdev ID is already freed,
+> >      but vdev destroy handler is not complete. The idev destroy handler
+> >      should wait for vdev destroy completion.
 > >
-> > You may only batch within a single VMA and within a single page table.
+> > [1]: https://lore.kernel.org/all/53025c827c44d68edb6469bfd940a8e8bc6147a5.1729897278.git.nicolinc@nvidia.com/
 > >
-> > So simply align the addr up to the next PMD, and make sure it does not
-> > exceed the vma end.
-> >
-> > ALIGN and friends can help avoiding excessive comments.
->
-> Thanks! How about this updated version based on your suggestion:
->
-> diff --git a/mm/rmap.c b/mm/rmap.c
-> index fb63d9256f09..241d55a92a47 100644
-> --- a/mm/rmap.c
-> +++ b/mm/rmap.c
-> @@ -1847,12 +1847,25 @@ void folio_remove_rmap_pud(struct folio *folio, s=
-truct page *page,
->
->  /* We support batch unmapping of PTEs for lazyfree large folios */
->  static inline bool can_batch_unmap_folio_ptes(unsigned long addr,
-> -                       struct folio *folio, pte_t *ptep)
-> +                                             struct folio *folio, pte_t =
-*ptep,
-> +                                             struct vm_area_struct *vma)
+> > Original-by: Nicolin Chen <nicolinc@nvidia.com>
+> > Original-by: Aneesh Kumar K.V (Arm) <aneesh.kumar@kernel.org>
+> > Signed-off-by: Xu Yilun <yilun.xu@linux.intel.com>
+> 
+> This is the latest version I have. But as Jason suggested we can
+> possibly switch to short term users to avoid parallel destroy returning
+> EBUSY.
+
+We can discuss in that thread, I have the same question as Kevin.
+
+> I am using a mutex lock to block parallel vdevice destroy.
+
+I don't find reason to add a new lock rather than reuse the
+idev->igroup->lock, which is already reviewed in Nicolin's series.
+
+[...]
+
+> diff --git a/drivers/iommu/iommufd/main.c b/drivers/iommu/iommufd/main.c
+> index 3df468f64e7d..fd82140e6320 100644
+> --- a/drivers/iommu/iommufd/main.c
+> +++ b/drivers/iommu/iommufd/main.c
+> @@ -81,14 +81,16 @@ void iommufd_object_abort_and_destroy(struct iommufd_ctx *ictx,
+>  struct iommufd_object *iommufd_get_object(struct iommufd_ctx *ictx, u32 id,
+>  					  enum iommufd_object_type type)
 >  {
->         const fpb_t fpb_flags =3D FPB_IGNORE_DIRTY | FPB_IGNORE_SOFT_DIRT=
-Y;
-> +       unsigned long next_pmd, vma_end, end_addr;
->         int max_nr =3D folio_nr_pages(folio);
->         pte_t pte =3D ptep_get(ptep);
->
-> +       /*
-> +        * Limit the batch scan within a single VMA and within a single
-> +        * page table.
-> +        */
-> +       vma_end =3D vma->vm_end;
-> +       next_pmd =3D ALIGN(addr + 1, PMD_SIZE);
-> +       end_addr =3D addr + (unsigned long)max_nr * PAGE_SIZE;
+> +	XA_STATE(xas, &ictx->objects, id);
+>  	struct iommufd_object *obj;
+>  
+>  	if (iommufd_should_fail())
+>  		return ERR_PTR(-ENOENT);
+>  
+>  	xa_lock(&ictx->objects);
+> -	obj = xa_load(&ictx->objects, id);
+> -	if (!obj || (type != IOMMUFD_OBJ_ANY && obj->type != type) ||
+> +	obj = xas_load(&xas);
+> +	if (!obj || xa_is_zero(obj) ||
+
+xas_load() & filter out zero entries, then what's the difference from
+xa_load()?
+
+> +	    (type != IOMMUFD_OBJ_ANY && obj->type != type) ||
+>  	    !iommufd_lock_obj(obj))
+>  		obj = ERR_PTR(-ENOENT);
+>  	xa_unlock(&ictx->objects);
+
+[...]
+
+>  static int iommufd_destroy(struct iommufd_ucmd *ucmd)
+>  {
+> +	int ret;
+>  	struct iommu_destroy *cmd = ucmd->cmd;
+> +	struct iommufd_object *obj;
+> +	struct iommufd_device *idev = NULL;
 > +
-> +       if (end_addr > min(next_pmd, vma_end))
-> +               return false;
+> +	obj = iommufd_get_object(ucmd->ictx, cmd->id, IOMMUFD_OBJ_ANY);
+> +	/* Destroying vdevice requires an idevice lock */
+> +	if (!IS_ERR(obj) && obj->type == IOMMUFD_OBJ_VDEVICE) {
+> +		struct iommufd_vdevice *vdev =
+> +			container_of(obj, struct iommufd_vdevice, obj);
+> +		/*
+> +		 * since vdev have an refcount on idev, this is safe.
+> +		 */
+> +		idev = vdev->idev;
+> +		mutex_lock(&idev->lock);
+> +		/* drop the additonal reference taken above */
+> +		iommufd_put_object(ucmd->ictx, obj);
+> +	}
 > +
+> +	ret = iommufd_object_remove(ucmd->ictx, NULL, cmd->id, 0);
+> +	if (idev)
+> +		mutex_unlock(&idev->lock);
 
-I had a similar check in do_swap_page() for both forward and backward
-out-of-bounds page tables, but I forgot to add it for this unmap path.
+I'm trying best not to add vdev/idev specific things to generic
+code. I also don't prefer adding a idev specific lock around generic
+object remove flow. That makes idev/vdev way to special. So for these
+locking things, I prefer more to Nicolin's v5 and revives them.
 
-this is do_swap_page():
+>  
+> -	return iommufd_object_remove(ucmd->ictx, NULL, cmd->id, 0);
+> +	return ret;
+>  }
+>  
 
-        if (folio_test_large(folio) && folio_test_swapcache(folio)) {
-                int nr =3D folio_nr_pages(folio);
-                unsigned long idx =3D folio_page_idx(folio, page);
-                unsigned long folio_start =3D address - idx * PAGE_SIZE;
-                unsigned long folio_end =3D folio_start + nr * PAGE_SIZE;
+[...]
 
-                pte_t *folio_ptep;
-                pte_t folio_pte;
+> @@ -147,10 +160,17 @@ int iommufd_vdevice_alloc_ioctl(struct iommufd_ucmd *ucmd)
+>  	if (rc)
+>  		goto out_abort;
+>  	iommufd_object_finalize(ucmd->ictx, &vdev->obj);
+> -	goto out_put_idev;
+> +	/* don't allow idev free without vdev free */
+> +	refcount_inc(&idev->obj.users);
 
-                if (unlikely(folio_start < max(address & PMD_MASK,
-vma->vm_start)))
-                        goto check_folio;
-                if (unlikely(folio_end > pmd_addr_end(address, vma->vm_end)=
-))
-                        goto check_folio;
-       }
+IIRC, it has been suggested no long term refcount to kernel created
+object. Besides, you actually disallow nothing.
 
-So maybe something like folio_end > pmd_addr_end(address, vma->vm_end)?
+> +	vdev->idev = idev;
+> +	/* vdev lifecycle now managed by idev */
+> +	idev->vdev = vdev;
+> +	goto out_put_idev_unlock;
+>  
+>  out_abort:
+>  	iommufd_object_abort_and_destroy(ucmd->ictx, &vdev->obj);
+> +out_put_idev_unlock:
+> +	mutex_unlock(&idev->lock);
+>  out_put_idev:
+>  	iommufd_put_object(ucmd->ictx, &idev->obj);
+>  out_put_viommu:
+> diff --git a/drivers/vfio/pci/vfio_pci_core.c b/drivers/vfio/pci/vfio_pci_core.c
+> index 6328c3a05bcd..0bf4f8b7f8d2 100644
+> --- a/drivers/vfio/pci/vfio_pci_core.c
+> +++ b/drivers/vfio/pci/vfio_pci_core.c
+> @@ -694,6 +694,12 @@ void vfio_pci_core_close_device(struct vfio_device *core_vdev)
+>  #if IS_ENABLED(CONFIG_EEH)
+>  	eeh_dev_release(vdev->pdev);
+>  #endif
+> +
+> +	/* destroy vdevice which involves tsm unbind before we disable pci disable */
+> +	if (core_vdev->iommufd_device)
+> +		iommufd_device_tombstone_vdevice(core_vdev->iommufd_device);
 
-Thanks
-Barry
+Ah.. I think all our effort to destroy vdevice on idevice destruction
+is to hide the sequence details from VFIO.
+
+> +
+> +	/* tsm unbind should happen before this */
+>  	vfio_pci_core_disable(vdev);
+
+I did mention there is still issue when vdevice lifecycle problem is
+solved. That VFIO for now do device disable configurations before
+iommufd_device_unbind() and cause problem. But my quick idea would
+be (not tested):
+
+@@ -544,12 +544,14 @@ static void vfio_df_device_last_close(struct vfio_device_file *df)
+
+        lockdep_assert_held(&device->dev_set->lock);
+
+-       if (device->ops->close_device)
+-               device->ops->close_device(device);
+        if (iommufd)
+                vfio_df_iommufd_unbind(df);
+        else
+                vfio_device_group_unuse_iommu(device);
++
++       if (device->ops->close_device)
++               device->ops->close_device(device);
+
+>  
+>  	mutex_lock(&vdev->igate);
+> diff --git a/include/linux/iommufd.h b/include/linux/iommufd.h
+> index 34b6e6ca4bfa..8de3d903bfc0 100644
+> --- a/include/linux/iommufd.h
+> +++ b/include/linux/iommufd.h
+> @@ -63,6 +63,7 @@ void iommufd_device_detach(struct iommufd_device *idev, ioasid_t pasid);
+>  
+>  struct iommufd_ctx *iommufd_device_to_ictx(struct iommufd_device *idev);
+>  u32 iommufd_device_to_id(struct iommufd_device *idev);
+> +void iommufd_device_tombstone_vdevice(struct iommufd_device *idev);
+>  
+>  struct iommufd_access_ops {
+>  	u8 needs_pin_pages : 1;
 
