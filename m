@@ -1,200 +1,368 @@
-Return-Path: <linux-kernel+bounces-701882-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-701884-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3177EAE7AB0
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Jun 2025 10:47:35 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4A9C6AE7A96
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Jun 2025 10:44:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 45A277B22B1
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Jun 2025 08:42:59 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0090A3BB696
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Jun 2025 08:44:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CA0EB28643E;
-	Wed, 25 Jun 2025 08:43:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DE86F286418;
+	Wed, 25 Jun 2025 08:44:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Ehjd1MSk"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="lNVrJck7"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1023A286417
-	for <linux-kernel@vger.kernel.org>; Wed, 25 Jun 2025 08:43:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 37D7F1DF247;
+	Wed, 25 Jun 2025 08:44:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750841007; cv=none; b=VnBQVDz7tMx6WLHJa6ODdok5BhoZQhWO25xOZUZW0dUZRvFgfRaQSSjjrOgLYMvMFofu4QUkG34pPnMvEow8tMOJKX9K8URPWe6Zu3oMsTz1Tr1eadrFcamSjqnF+a/6XIwMzHaLPyJCId9N2XxHumbgTcibwuQ5bW6zfprR1zc=
+	t=1750841061; cv=none; b=oEwV8+fgxOWCpNLQ76oUIm6S+VTruvdcT9tdDIADwIMyt08sTjW09lTSjxezum5i2MFf+RZZ46l+LGCe27M33UtCciVOAuNGzs5a49D6QuggzsJ/GdjcF4+TAvYybV/D8dnpm0MOyarSaXozvtdrcuAZBzPqQGDqc+hXlF6fz6c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750841007; c=relaxed/simple;
-	bh=BKtDcFi1Di1ki3VEVQwPsdVZaQrBBaEmFv2TZrKgRUk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=IPtCLFNK4PQOpIK3BlkGa/jwVnSASbOewO50TRDkNljwx42zNphC8C+CUVnvWkPhu+i8U0ZrZX6monjCOkIza26BCostfXqeNP9V3lnfLeUZsQ7Y0PFxFKSZfXztGeCM5xs+Jv0dVH0Te1QUcGgRPgr7y8cxJzSu9EWFdDJTSs0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Ehjd1MSk; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1750841004;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=fBqo0mSOQ7uYPQmFn/GbeEwpagKUqVWJtoBByFsAo4c=;
-	b=Ehjd1MSkvhjTlx03oy4I3RO9VY2YCKhhylowJ8ptvq0lBxVCJKbuFdvQqVIK6NnqnuR00W
-	wg07tTR5uX5bnjErS3yia0I85XaymRmpEJ8NDgkLLMZB22WtN9/a9AuJU8Y5TqUZxbR8MX
-	uuwDsdYuS8D2LrdvXv6N1964hsQddxM=
-Received: from mail-wr1-f70.google.com (mail-wr1-f70.google.com
- [209.85.221.70]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-442-hw2xBu8CNaa_UBZ5Yqw2JA-1; Wed, 25 Jun 2025 04:43:22 -0400
-X-MC-Unique: hw2xBu8CNaa_UBZ5Yqw2JA-1
-X-Mimecast-MFC-AGG-ID: hw2xBu8CNaa_UBZ5Yqw2JA_1750841001
-Received: by mail-wr1-f70.google.com with SMTP id ffacd0b85a97d-3a5780e8137so338214f8f.1
-        for <linux-kernel@vger.kernel.org>; Wed, 25 Jun 2025 01:43:22 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1750841001; x=1751445801;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=fBqo0mSOQ7uYPQmFn/GbeEwpagKUqVWJtoBByFsAo4c=;
-        b=gkd8VH3kAXdXR6jVrnj5dNsW+f0n7O/uc1YyT+UgahYiZUVseVz8bJ+Kk5fvOBJZHG
-         86U+XxXlqlI+6jYEzyEw2hSecBTPtbFE0N/7cr8P8nEjgn+oGPFeK0AJprn7tyP5XwdI
-         YaV51TNkgS2RWvcbkCY3av1ldhlsCSXMlAsD7MnSop1FIVvoIinAefwDj6lIGMSNVU5c
-         5H3iVJgzTp2huOkFvoWDrsxbPNOTlGMybZkIw8Pp+vfBCa1MIBUC0xSRs56VX4PXJybt
-         TSJEu0bGxdcXst0/PdPY3QGx44oC1zrveeeITct/fbc9M+9R7e3Lx9cjn9eHEusZb01m
-         V7pw==
-X-Forwarded-Encrypted: i=1; AJvYcCVFz8MfL8PCi4cCL7nOQ+7Br3bfn0VF+GfpYAZEyZJgc6UoSHW34U3HP/nhfwrCO4AT70pVUdiIyQyo2qg=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwkR1hh6IwdqEXyM8Vze3Ow7s2HZ5jKn77vgyaoych+MAvXYZdq
-	RIyeq9TzM8ZI1RCRoAnMUswKEYov7Njh9H22Zie/+7EbIUJei9oYs2xqpf+Hv7/QWz1+wwQrNPb
-	LKicQbJex5B2VV2QwUDIdnpFNpp3dTa7C4/EuPqHs9BTKEayut0qSFass6tUN+iHOhQ==
-X-Gm-Gg: ASbGncvJNnke3f/KwXS0zq8P1NMd+CqxbCSKLecTTcaM3wBamBhvL7jY9QQYzQZUqCO
-	is/A6mIKrTgtShLUqkvx1PWXave/fPrUzhzDuzFG83y53zFuu9NpGqTzUeDrC/C+cNXvGXOWe2h
-	YpzAKiw9YRYAmVfKVJ0+U84otcF4jDBBf9Fqt+Lee/wP534FrrUrWcb1OyooYzSu431+tWS4Gic
-	YZKW6yJw6AzGc25Vu+qkhLKQ7DpQxzf9XH4IKxRY6fD0poO0Rw8U+w6iy6aRBualHL8kFHnw/g5
-	2cFZGKyBTbSBfD2h0daJxxro+SFw
-X-Received: by 2002:a5d:64e6:0:b0:3a4:f722:a46b with SMTP id ffacd0b85a97d-3a6e71ff6aamr5892466f8f.15.1750841000855;
-        Wed, 25 Jun 2025 01:43:20 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IEwLmN7pgjPo42yw5pKV9YdU4xug/vMd5HIXDLqwYvt3dwxUtKIILfncsdF1q/xkL+ig67Dmg==
-X-Received: by 2002:a5d:64e6:0:b0:3a4:f722:a46b with SMTP id ffacd0b85a97d-3a6e71ff6aamr5892437f8f.15.1750841000364;
-        Wed, 25 Jun 2025 01:43:20 -0700 (PDT)
-Received: from sgarzare-redhat ([193.207.151.122])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-45382363f7fsm12918295e9.27.2025.06.25.01.43.18
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 25 Jun 2025 01:43:19 -0700 (PDT)
-Date: Wed, 25 Jun 2025 10:43:12 +0200
-From: Stefano Garzarella <sgarzare@redhat.com>
-To: Michal Luczaj <mhal@rbox.co>
-Cc: "David S. Miller" <davem@davemloft.net>, 
-	Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, 
-	Paolo Abeni <pabeni@redhat.com>, Simon Horman <horms@kernel.org>, 
-	Stefan Hajnoczi <stefanha@redhat.com>, virtualization@lists.linux.dev, netdev@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH RFC net v2 1/3] vsock: Fix transport_{g2h,h2g} TOCTOU
-Message-ID: <zdiqu6pszqwb4y5o7oqzdovfvzkbrvc6ijuxoef2iloklahyoy@njsnvn7hfwye>
-References: <20250620-vsock-transports-toctou-v2-0-02ebd20b1d03@rbox.co>
- <20250620-vsock-transports-toctou-v2-1-02ebd20b1d03@rbox.co>
+	s=arc-20240116; t=1750841061; c=relaxed/simple;
+	bh=RP1SCe23A6ubPmDnlSwR40v3qDMdUtqrQd3omt0OMh0=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=EtYKPiMfOhETJaxIdnCkVn3ZrrRh4zH9+PORO39WEN5b6Wg8/XIipR42hZXieUog0oUidzpBJ/BUrr4Pyd+eGuPFIZ58vjc7es5htIKwIKxHd+nZj+mw5+8GP5kSNkiaWQzXKttGR/ZtdQButeNj/kkLZcxIcX8Z22givmU9oyY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=lNVrJck7; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279866.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 55P0hSbO007242;
+	Wed, 25 Jun 2025 08:44:02 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	fCyBUr31GwUjVNOw1JrfARK8nDg07jSUAIW9Q3UeD0o=; b=lNVrJck7DOALz4sW
+	vI/tnFzd5X4QBkRD0XkDItdDHmtqWyHyqqQLtOGzl+Kj3KDNqfgkwffswvb2i4NQ
+	Bu5W4Rtx75aW3D/pyxDFeH+37JD8CIWiakNijQDB4wGhhcdAXYz80wx2smOXoVpH
+	Hj0IM8ndqO8BMpyTfmQ2l4u14Sw/k+01gD85ToRA2qBSJ1Z688gpOQ18PIFOvhK2
+	q+oblWuRY3qNFX5BFN6aYkCwSfN2F43hhGRA3OmPSNQMmHmabmArCgCcmhb0AhA/
+	aLWNpFLW8xlLX3FxW0dZF9rkeg8IqGluqmXbBwbExh8q9KZ9iluw2a+UK/ckVzWQ
+	zSA4fg==
+Received: from nalasppmta04.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 47ec269cn2-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 25 Jun 2025 08:44:02 +0000 (GMT)
+Received: from nalasex01c.na.qualcomm.com (nalasex01c.na.qualcomm.com [10.47.97.35])
+	by NALASPPMTA04.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 55P8i1fT020356
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 25 Jun 2025 08:44:01 GMT
+Received: from [10.253.74.126] (10.80.80.8) by nalasex01c.na.qualcomm.com
+ (10.47.97.35) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1748.10; Wed, 25 Jun
+ 2025 01:43:57 -0700
+Message-ID: <326bbd02-f414-48e3-a396-4b94f19054f7@quicinc.com>
+Date: Wed, 25 Jun 2025 16:43:55 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii; format=flowed
-Content-Disposition: inline
-In-Reply-To: <20250620-vsock-transports-toctou-v2-1-02ebd20b1d03@rbox.co>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 01/38] drm/msm/dp: split msm_dp_panel_read_sink_caps()
+ into two parts and drop panel drm_edid
+To: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
+CC: Rob Clark <robin.clark@oss.qualcomm.com>,
+        Abhinav Kumar
+	<abhinav.kumar@linux.dev>,
+        Jessica Zhang <jessica.zhang@oss.qualcomm.com>,
+        Sean Paul <sean@poorly.run>,
+        Marijn Suijten <marijn.suijten@somainline.org>,
+        David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+        <linux-arm-msm@vger.kernel.org>, <dri-devel@lists.freedesktop.org>,
+        <freedreno@lists.freedesktop.org>, <linux-kernel@vger.kernel.org>,
+        "Abhinav
+ Kumar" <quic_abhinavk@quicinc.com>
+References: <20250609-msm-dp-mst-v2-0-a54d8902a23d@quicinc.com>
+ <20250609-msm-dp-mst-v2-1-a54d8902a23d@quicinc.com>
+ <g6wqvbszbrw6gnvxz7cjmhx4rc53kyulcr5wjekfjaisontikl@723odzngtlnd>
+Content-Language: en-US
+From: Yongxing Mou <quic_yongmou@quicinc.com>
+In-Reply-To: <g6wqvbszbrw6gnvxz7cjmhx4rc53kyulcr5wjekfjaisontikl@723odzngtlnd>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nalasex01c.na.qualcomm.com (10.47.97.35)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNjI1MDA2NCBTYWx0ZWRfX3jWNZbWVTxVL
+ ly/niwpImwcHTNjrDrrmCGew0lcbqsUWYeqIU6nDNuyG8o0nCEPh8oz707XZNaxy7LZ69ClUrvg
+ 2s4F2mQhlCIoAXhuZEYn0VyvChIdPE7a5BL28132ov/9cyTEtH5sh/rS8kvIcl/db8u1X+6ql0h
+ taLKVqSJR3IiuMwiQUHXcspv9G5BPZwfvtfTQzncO7ivV5Nzjz9Xgkq5u9wyPsZxCwD/ve1LB0n
+ 4090Hl9GcShE9k75UseuVN9LT7CfrZEIj1T8j9aGxe4WawprSI2ikQd1zusTuJfgQHCUsE9e+ad
+ haYJ9AuAvU6+UjC+Mgs7N1GIweA2SEFoefYbFGFtLNVghXGV50QRUEdhG8WKRdEABIQeojUjzt5
+ 90Qwi+O8uYHdMQYRhXm1OyFwGwphtjJofwYIpZWbHQlb7PpYcDylziqxZjiLPsGZ4+NMNPaR
+X-Authority-Analysis: v=2.4 cv=XPQwSRhE c=1 sm=1 tr=0 ts=685bb6d2 cx=c_pps
+ a=ouPCqIW2jiPt+lZRy3xVPw==:117 a=ouPCqIW2jiPt+lZRy3xVPw==:17
+ a=GEpy-HfZoHoA:10 a=IkcTkHD0fZMA:10 a=6IFa9wvqVegA:10 a=COk6AnOGAAAA:8
+ a=TqKEzCPVLb6d4rQsPy4A:9 a=QEXdDO2ut3YA:10 a=TjNXssC_j7lpFel5tvFf:22
+X-Proofpoint-GUID: qVRLKYIYnueoOfiKRFMl2R8OqstgcvBU
+X-Proofpoint-ORIG-GUID: qVRLKYIYnueoOfiKRFMl2R8OqstgcvBU
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.7,FMLib:17.12.80.40
+ definitions=2025-06-25_02,2025-06-23_07,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ lowpriorityscore=0 impostorscore=0 clxscore=1015 suspectscore=0 mlxscore=0
+ spamscore=0 phishscore=0 malwarescore=0 mlxlogscore=999 bulkscore=0
+ priorityscore=1501 adultscore=0 classifier=spam authscore=0 authtc=n/a
+ authcc= route=outbound adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2505280000 definitions=main-2506250064
 
-On Fri, Jun 20, 2025 at 09:52:43PM +0200, Michal Luczaj wrote:
->vsock_find_cid() and vsock_dev_do_ioctl() may race with module unload.
->transport_{g2h,h2g} may become NULL after the NULL check.
->
->Introduce vsock_transport_local_cid() to protect from a potential
->null-ptr-deref.
->
->KASAN: null-ptr-deref in range [0x0000000000000118-0x000000000000011f]
->RIP: 0010:vsock_find_cid+0x47/0x90
->Call Trace:
-> __vsock_bind+0x4b2/0x720
-> vsock_bind+0x90/0xe0
-> __sys_bind+0x14d/0x1e0
-> __x64_sys_bind+0x6e/0xc0
-> do_syscall_64+0x92/0x1c0
-> entry_SYSCALL_64_after_hwframe+0x4b/0x53
->
->KASAN: null-ptr-deref in range [0x0000000000000118-0x000000000000011f]
->RIP: 0010:vsock_dev_do_ioctl.isra.0+0x58/0xf0
->Call Trace:
-> __x64_sys_ioctl+0x12d/0x190
-> do_syscall_64+0x92/0x1c0
-> entry_SYSCALL_64_after_hwframe+0x4b/0x53
->
->Fixes: c0cfa2d8a788 ("vsock: add multi-transports support")
->Suggested-by: Stefano Garzarella <sgarzare@redhat.com>
->Signed-off-by: Michal Luczaj <mhal@rbox.co>
->---
-> net/vmw_vsock/af_vsock.c | 23 +++++++++++++++++------
-> 1 file changed, 17 insertions(+), 6 deletions(-)
->
->diff --git a/net/vmw_vsock/af_vsock.c b/net/vmw_vsock/af_vsock.c
->index 2e7a3034e965db30b6ee295370d866e6d8b1c341..63a920af5bfe6960306a3e5eeae0cbf30648985e 100644
->--- a/net/vmw_vsock/af_vsock.c
->+++ b/net/vmw_vsock/af_vsock.c
->@@ -531,9 +531,21 @@ int vsock_assign_transport(struct vsock_sock *vsk, struct vsock_sock *psk)
-> }
-> EXPORT_SYMBOL_GPL(vsock_assign_transport);
->
->+static u32 vsock_transport_local_cid(const struct vsock_transport **transport)
 
-Why we need double pointer?
 
->+{
->+	u32 cid = VMADDR_CID_ANY;
->+
->+	mutex_lock(&vsock_register_mutex);
->+	if (*transport)
->+		cid = (*transport)->get_local_cid();
->+	mutex_unlock(&vsock_register_mutex);
->+
->+	return cid;
->+}
->+
-> bool vsock_find_cid(unsigned int cid)
-> {
->-	if (transport_g2h && cid == transport_g2h->get_local_cid())
->+	if (cid == vsock_transport_local_cid(&transport_g2h))
-> 		return true;
->
-> 	if (transport_h2g && cid == VMADDR_CID_HOST)
->@@ -2536,18 +2548,17 @@ static long vsock_dev_do_ioctl(struct file *filp,
-> 			       unsigned int cmd, void __user *ptr)
-> {
-> 	u32 __user *p = ptr;
->-	u32 cid = VMADDR_CID_ANY;
-> 	int retval = 0;
->+	u32 cid;
->
-> 	switch (cmd) {
-> 	case IOCTL_VM_SOCKETS_GET_LOCAL_CID:
-> 		/* To be compatible with the VMCI behavior, we prioritize the
-> 		 * guest CID instead of well-know host CID (VMADDR_CID_HOST).
-> 		 */
->-		if (transport_g2h)
->-			cid = transport_g2h->get_local_cid();
->-		else if (transport_h2g)
->-			cid = transport_h2g->get_local_cid();
->+		cid = vsock_transport_local_cid(&transport_g2h);
->+		if (cid == VMADDR_CID_ANY)
->+			cid = vsock_transport_local_cid(&transport_h2g);
-
-I still prefer the old `if ... else if ...`, what is the reason of this
-change? I may miss the point.
-
-But overall LGTM!
-
-Thanks,
-Stefano
-
->
-> 		if (put_user(cid, p) != 0)
-> 			retval = -EFAULT;
->
->-- 
->2.49.0
->
+On 2025/6/9 20:41, Dmitry Baryshkov wrote:
+> On Mon, Jun 09, 2025 at 08:21:20PM +0800, Yongxing Mou wrote:
+>> From: Abhinav Kumar <quic_abhinavk@quicinc.com>
+>>
+>> In preparation of DP MST where link caps are read for the
+>> immediate downstream device and the edid is read through
+> 
+> EDID, not edid. Please review all your patches for up/down case.
+> 
+Got it. Thanks~
+>> sideband messaging, split the msm_dp_panel_read_sink_caps() into
+>> two parts which read the link parameters and the edid parts
+>> respectively. Also drop the panel drm_edid cached as we actually
+>> don't need it.
+> 
+> Also => separate change.
+> 
+Got it.
+>>
+>> Signed-off-by: Abhinav Kumar <quic_abhinavk@quicinc.com>
+>> Signed-off-by: Yongxing Mou <quic_yongmou@quicinc.com>
+>> ---
+>>   drivers/gpu/drm/msm/dp/dp_display.c | 13 +++++----
+>>   drivers/gpu/drm/msm/dp/dp_panel.c   | 55 ++++++++++++++++++++-----------------
+>>   drivers/gpu/drm/msm/dp/dp_panel.h   |  6 ++--
+>>   3 files changed, 40 insertions(+), 34 deletions(-)
+>>
+>> diff --git a/drivers/gpu/drm/msm/dp/dp_display.c b/drivers/gpu/drm/msm/dp/dp_display.c
+>> index 6f05a939ce9e648e9601597155999b6f85adfcff..4a9b65647cdef1ed6c3bb851f93df0db8be977af 100644
+>> --- a/drivers/gpu/drm/msm/dp/dp_display.c
+>> +++ b/drivers/gpu/drm/msm/dp/dp_display.c
+>> @@ -389,7 +389,11 @@ static int msm_dp_display_process_hpd_high(struct msm_dp_display_private *dp)
+>>   
+>>   	dp->link->lttpr_count = msm_dp_display_lttpr_init(dp, dpcd);
+>>   
+>> -	rc = msm_dp_panel_read_sink_caps(dp->panel, connector);
+>> +	rc = msm_dp_panel_read_link_caps(dp->panel);
+>> +	if (rc)
+>> +		goto end;
+>> +
+>> +	rc = msm_dp_panel_read_edid(dp->panel, connector);
+>>   	if (rc)
+>>   		goto end;
+>>   
+>> @@ -720,7 +724,6 @@ static int msm_dp_irq_hpd_handle(struct msm_dp_display_private *dp, u32 data)
+>>   static void msm_dp_display_deinit_sub_modules(struct msm_dp_display_private *dp)
+>>   {
+>>   	msm_dp_audio_put(dp->audio);
+>> -	msm_dp_panel_put(dp->panel);
+>>   	msm_dp_aux_put(dp->aux);
+>>   }
+>>   
+>> @@ -783,7 +786,7 @@ static int msm_dp_init_sub_modules(struct msm_dp_display_private *dp)
+>>   		rc = PTR_ERR(dp->ctrl);
+>>   		DRM_ERROR("failed to initialize ctrl, rc = %d\n", rc);
+>>   		dp->ctrl = NULL;
+>> -		goto error_ctrl;
+>> +		goto error_link;
+>>   	}
+>>   
+>>   	dp->audio = msm_dp_audio_get(dp->msm_dp_display.pdev, dp->catalog);
+>> @@ -791,13 +794,11 @@ static int msm_dp_init_sub_modules(struct msm_dp_display_private *dp)
+>>   		rc = PTR_ERR(dp->audio);
+>>   		pr_err("failed to initialize audio, rc = %d\n", rc);
+>>   		dp->audio = NULL;
+>> -		goto error_ctrl;
+>> +		goto error_link;
+>>   	}
+>>   
+>>   	return rc;
+>>   
+>> -error_ctrl:
+>> -	msm_dp_panel_put(dp->panel);
+>>   error_link:
+>>   	msm_dp_aux_put(dp->aux);
+>>   error:
+>> diff --git a/drivers/gpu/drm/msm/dp/dp_panel.c b/drivers/gpu/drm/msm/dp/dp_panel.c
+>> index 4e8ab75c771b1e3a2d62f75e9993e1062118482b..d9041e235104a74b3cc50ff2e307eae0c4301ef3 100644
+>> --- a/drivers/gpu/drm/msm/dp/dp_panel.c
+>> +++ b/drivers/gpu/drm/msm/dp/dp_panel.c
+>> @@ -118,14 +118,13 @@ static u32 msm_dp_panel_get_supported_bpp(struct msm_dp_panel *msm_dp_panel,
+>>   	return min_supported_bpp;
+>>   }
+>>   
+>> -int msm_dp_panel_read_sink_caps(struct msm_dp_panel *msm_dp_panel,
+>> -	struct drm_connector *connector)
+>> +int msm_dp_panel_read_link_caps(struct msm_dp_panel *msm_dp_panel)
+>>   {
+>>   	int rc, bw_code;
+>>   	int count;
+>>   	struct msm_dp_panel_private *panel;
+>>   
+>> -	if (!msm_dp_panel || !connector) {
+>> +	if (!msm_dp_panel) {
+>>   		DRM_ERROR("invalid input\n");
+>>   		return -EINVAL;
+>>   	}
+>> @@ -160,26 +159,29 @@ int msm_dp_panel_read_sink_caps(struct msm_dp_panel *msm_dp_panel,
+>>   
+>>   	rc = drm_dp_read_downstream_info(panel->aux, msm_dp_panel->dpcd,
+>>   					 msm_dp_panel->downstream_ports);
+>> -	if (rc)
+>> -		return rc;
+>> +	return rc;
+>> +}
+>>   
+>> -	drm_edid_free(msm_dp_panel->drm_edid);
+>> +int msm_dp_panel_read_edid(struct msm_dp_panel *msm_dp_panel, struct drm_connector *connector)
+>> +{
+>> +	struct msm_dp_panel_private *panel;
+>> +	const struct drm_edid *drm_edid;
+>> +
+>> +	panel = container_of(msm_dp_panel, struct msm_dp_panel_private, msm_dp_panel);
+>>   
+>> -	msm_dp_panel->drm_edid = drm_edid_read_ddc(connector, &panel->aux->ddc);
+>> +	drm_edid = drm_edid_read_ddc(connector, &panel->aux->ddc);
+>>   
+>> -	drm_edid_connector_update(connector, msm_dp_panel->drm_edid);
+>> +	drm_edid_connector_update(connector, drm_edid);
+>>   
+>> -	if (!msm_dp_panel->drm_edid) {
+>> +	if (!drm_edid) {
+>>   		DRM_ERROR("panel edid read failed\n");
+>>   		/* check edid read fail is due to unplug */
+>>   		if (!msm_dp_catalog_link_is_connected(panel->catalog)) {
+>> -			rc = -ETIMEDOUT;
+>> -			goto end;
+>> +			return -ETIMEDOUT;
+>>   		}
+>>   	}
+>>   
+>> -end:
+>> -	return rc;
+>> +	return 0;
+>>   }
+>>   
+>>   u32 msm_dp_panel_get_mode_bpp(struct msm_dp_panel *msm_dp_panel,
+>> @@ -208,15 +210,20 @@ u32 msm_dp_panel_get_mode_bpp(struct msm_dp_panel *msm_dp_panel,
+>>   int msm_dp_panel_get_modes(struct msm_dp_panel *msm_dp_panel,
+>>   	struct drm_connector *connector)
+>>   {
+>> +	struct msm_dp_panel_private *panel;
+>> +	const struct drm_edid *drm_edid;
+>> +
+>>   	if (!msm_dp_panel) {
+>>   		DRM_ERROR("invalid input\n");
+>>   		return -EINVAL;
+>>   	}
+>>   
+>> -	if (msm_dp_panel->drm_edid)
+>> -		return drm_edid_connector_add_modes(connector);
+>> +	panel = container_of(msm_dp_panel, struct msm_dp_panel_private, msm_dp_panel);
+>> +
+>> +	drm_edid = drm_edid_read_ddc(connector, &panel->aux->ddc);
+>> +	drm_edid_connector_update(connector, drm_edid);
+> 
+> If EDID has been read and processed after HPD high event, why do we need
+> to re-read it again? Are we expecting that EDID will change?
+> 
+Here we indeed don't need to read the EDID again, so we can directly 
+call drm_edid_connector_add_modes. Thanks.
+>>   
+>> -	return 0;
+>> +	return drm_edid_connector_add_modes(connector);
+>>   }
+>>   
+>>   static u8 msm_dp_panel_get_edid_checksum(const struct edid *edid)
+>> @@ -229,6 +236,7 @@ static u8 msm_dp_panel_get_edid_checksum(const struct edid *edid)
+>>   void msm_dp_panel_handle_sink_request(struct msm_dp_panel *msm_dp_panel)
+>>   {
+>>   	struct msm_dp_panel_private *panel;
+>> +	const struct drm_edid *drm_edid;
+>>   
+>>   	if (!msm_dp_panel) {
+>>   		DRM_ERROR("invalid input\n");
+>> @@ -238,8 +246,13 @@ void msm_dp_panel_handle_sink_request(struct msm_dp_panel *msm_dp_panel)
+>>   	panel = container_of(msm_dp_panel, struct msm_dp_panel_private, msm_dp_panel);
+>>   
+>>   	if (panel->link->sink_request & DP_TEST_LINK_EDID_READ) {
+>> +		drm_edid = drm_edid_read_ddc(msm_dp_panel->connector, &panel->aux->ddc);
+> 
+> And again....
+> 
+Here we need the struct edid,since we drop the cached drm_edid, so we 
+need to read it again. Or we can return the drm_edid from 
+msm_dp_panel_read_edid and pass it to msm_dp_panel_handle_sink_request, 
+then we don't need to read drm_edid here. Emm, I'm still a bit curious 
+why we can't cache the drm_edid? It would help us to access it when 
+needed. Emm, i see other drivers also cache it.
+>> +
+>> +		if (!drm_edid)
+>> +			return;
+>> +
+>>   		/* FIXME: get rid of drm_edid_raw() */
+>> -		const struct edid *edid = drm_edid_raw(msm_dp_panel->drm_edid);
+>> +		const struct edid *edid = drm_edid_raw(drm_edid);
+>>   		u8 checksum;
+>>   
+>>   		if (edid)
+>> @@ -515,11 +528,3 @@ struct msm_dp_panel *msm_dp_panel_get(struct device *dev, struct drm_dp_aux *aux
+>>   
+>>   	return msm_dp_panel;
+>>   }
+>> -
+>> -void msm_dp_panel_put(struct msm_dp_panel *msm_dp_panel)
+>> -{
+>> -	if (!msm_dp_panel)
+>> -		return;
+>> -
+>> -	drm_edid_free(msm_dp_panel->drm_edid);
+>> -}
+> 
+> Too many changes to be stuffed under the hood of "Also perform foo"
+> 
+Got it, thanks , will split  this patch and refactor the commit msg.
+>> diff --git a/drivers/gpu/drm/msm/dp/dp_panel.h b/drivers/gpu/drm/msm/dp/dp_panel.h
+>> index 4906f4f09f2451cfed3c1007f38b4db7dfdb1d90..7f139478e1012d5b8f1f745f0de5fc3943745428 100644
+>> --- a/drivers/gpu/drm/msm/dp/dp_panel.h
+>> +++ b/drivers/gpu/drm/msm/dp/dp_panel.h
+>> @@ -32,7 +32,6 @@ struct msm_dp_panel {
+>>   	u8 downstream_ports[DP_MAX_DOWNSTREAM_PORTS];
+>>   
+>>   	struct msm_dp_link_info link_info;
+>> -	const struct drm_edid *drm_edid;
+>>   	struct drm_connector *connector;
+>>   	struct msm_dp_display_mode msm_dp_mode;
+>>   	struct msm_dp_panel_psr psr_cap;
+>> @@ -51,7 +50,9 @@ int msm_dp_panel_timing_cfg(struct msm_dp_panel *msm_dp_panel);
+>>   int msm_dp_panel_read_sink_caps(struct msm_dp_panel *msm_dp_panel,
+>>   		struct drm_connector *connector);
+>>   u32 msm_dp_panel_get_mode_bpp(struct msm_dp_panel *msm_dp_panel, u32 mode_max_bpp,
+>> -			u32 mode_pclk_khz);
+>> +			      u32 mode_pclk_khz);
+>> +int msm_dp_panel_read_link_caps(struct msm_dp_panel *dp_panel);
+>> +int msm_dp_panel_read_edid(struct msm_dp_panel *dp_panel, struct drm_connector *connector);
+>>   int msm_dp_panel_get_modes(struct msm_dp_panel *msm_dp_panel,
+>>   		struct drm_connector *connector);
+>>   void msm_dp_panel_handle_sink_request(struct msm_dp_panel *msm_dp_panel);
+>> @@ -86,5 +87,4 @@ static inline bool is_lane_count_valid(u32 lane_count)
+>>   
+>>   struct msm_dp_panel *msm_dp_panel_get(struct device *dev, struct drm_dp_aux *aux,
+>>   			      struct msm_dp_link *link, struct msm_dp_catalog *catalog);
+>> -void msm_dp_panel_put(struct msm_dp_panel *msm_dp_panel);
+>>   #endif /* _DP_PANEL_H_ */
+>>
+>> -- 
+>> 2.34.1
+>>
+> 
 
 
