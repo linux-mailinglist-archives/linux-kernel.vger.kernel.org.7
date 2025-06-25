@@ -1,153 +1,105 @@
-Return-Path: <linux-kernel+bounces-702533-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-702535-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8292EAE8395
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Jun 2025 15:03:46 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id D99A2AE839B
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Jun 2025 15:04:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D451C16B833
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Jun 2025 13:03:40 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 57C8918868AC
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Jun 2025 13:04:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E3D82261586;
-	Wed, 25 Jun 2025 13:03:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D6AB7261586;
+	Wed, 25 Jun 2025 13:03:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=jacekk.info header.i=@jacekk.info header.b="SRZtoZyb"
-Received: from mail-wr1-f50.google.com (mail-wr1-f50.google.com [209.85.221.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="aXqM0Hh2"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.13])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E26DF8633A
-	for <linux-kernel@vger.kernel.org>; Wed, 25 Jun 2025 13:03:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D1CE9223704;
+	Wed, 25 Jun 2025 13:03:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.13
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750856612; cv=none; b=V4mwqTiQ1R5VE3Rk29bdsepFWFRx6YJUWaO42z4108V2Nv/ubTMs/Jaokq7Acr15YkA+4++zGzR4mOFU5W8O26+VnwnoHA+az8v5Cjro9+6K/DW1qP2e81CE+bH5/9qwrAE3XJSwjCYBm1V/Ysv96yNoG6w1rotMyCWGPIvnSq8=
+	t=1750856628; cv=none; b=PCPXeFpagNvhKF8HC33APi2i+uSsUEDK0DRgbmqAXYR2LzEPBxuEsYVvNI4o8QLF5eBT+AejT0oZ7mpnIx4WShxQAjjPpgFFQ+yrsrdNKN93hNIQvhWBcrYPD6q2m1PKBDZStyxY/Ho4OMpvMIBFONTJPm6VadnrlFmzVDIBxCY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750856612; c=relaxed/simple;
-	bh=X2a6bqPFcCqZOdUd0nAAfcySHkqblc2JtB5nNaZZass=;
-	h=From:Message-ID:Date:MIME-Version:Subject:To:Cc:References:
-	 In-Reply-To:Content-Type; b=SctAk+hCrzFDF4U6ePTpiJ8cNFek+yZNcLmo25qdDi6c70O89GPOFVqohBUijuwMe73TDWkFoiLNpwVqbFo7wzjMBuOjptOmBA1RWHZ926ZWm38abga58bHQddJHNf0zDOdPNeB7tL0+MmBQ21XHoT7LXpZK/eB9PkIXvICHjFc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=jacekk.info; spf=pass smtp.mailfrom=jacekk.info; dkim=pass (2048-bit key) header.d=jacekk.info header.i=@jacekk.info header.b=SRZtoZyb; arc=none smtp.client-ip=209.85.221.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=jacekk.info
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=jacekk.info
-Received: by mail-wr1-f50.google.com with SMTP id ffacd0b85a97d-3a548a73ff2so1527603f8f.0
-        for <linux-kernel@vger.kernel.org>; Wed, 25 Jun 2025 06:03:29 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=jacekk.info; s=g2024; t=1750856608; x=1751461408; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:content-language:references
-         :cc:to:subject:user-agent:mime-version:date:message-id:from:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=R67vbOcUZfWm73DIVUMK1L7ghH4UOTOk4lzaOIIxPrs=;
-        b=SRZtoZybsEUzO2clrhTmINgsU6cevKwEwVVcvlh9eyiP1+Co4Aar74t366p44JvcUY
-         bPsI4oDM90ISY0NHQi47k/vtv+Miqe3uylbUp3BEsiD0uxAtQDicz0qQ5y8tzbBWjDXu
-         zrroXO1TVgHwwvP+58PGm9qdb+SLNsSPVA0AO4mQp+151ThY8qIBl+oxwJRlHRwCqYa8
-         OMgxRspppNlwcB3lJwYq//4VfqAS2jsMBW7KV7A2Myih/O50DK1320HPcHbMKfIkfB1Q
-         DzdAD56W2tcBt+HrlDNr1GhbFFwQDU2DGEVayr8NSamaNI9GuAVh5jLCxMUENJCzHrjX
-         u2VA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1750856608; x=1751461408;
-        h=content-transfer-encoding:in-reply-to:content-language:references
-         :cc:to:subject:user-agent:mime-version:date:message-id:from
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=R67vbOcUZfWm73DIVUMK1L7ghH4UOTOk4lzaOIIxPrs=;
-        b=LqnfxhUjYGJCzYWjFyu0RvkScnsOIL2R7eA+ecb7dn+Lb/RYHqThp1nG/fvhNfztTp
-         e8BtdD1k3lKJjWec/FxMbF79YwUql4p3nJqlxaCqY9jGdJ7Uah9qHUfuBNMd9MY1Cjgi
-         N4/ZXG4Ws7YDYmT1D/vkvNZBhavFPfgTH73Hcj9YWzZtK9qqm1Ra1og1WGsZfBfhTmDt
-         fFao4wDnVfMDHg/BhPM7mLxELoDJJK8ts7FsL5lGW8a2Ti3yzAaZs5DJm6ZiQlArB/oC
-         bFgbc1KhECoGKN5Rc3ATr+taD2jwksMT6uPuFX7az9Ee6bP8FSAcUbfvRig6pntIl6N/
-         xWaw==
-X-Forwarded-Encrypted: i=1; AJvYcCX7K/SQxoRFpFkIks5R+9bg5T1I0DlbxKuHdKe3r+UmJAwR/9j/7CfzPL66v4YssZ2VzoP2sR/Wqvu5Ldk=@vger.kernel.org
-X-Gm-Message-State: AOJu0YynGEYhEzkTsLz39D/4Ixe0IFWQBJuEQK1at+f6PvLg/tCGYx78
-	s/c1tSgRnFWNWZeqFu4M08q1v2NM1LjyJNw3OYNMiQ3ycLYvkbcG99MD1QgGh1O1+g==
-X-Gm-Gg: ASbGnctlsyCENBwMb4c2QUFTj7t0CCo4tbdQyCOry6VWYq4AQs48lb1EL2JzemSD3uk
-	hrrinIimFa73GjQMoT0y6zGBivLX10Aqsx8WVv8bzkBTk48B3qASgIZIypkBL/L3ghpcKxQlje0
-	1jWy4JwNvn46eQQyedqHmnpRPTY0uIY2qlveBlxRVixdyRho1hOx20GrZz5/11+HrhgS4BDDpZg
-	1wL0wDNz3f5xH4kVtW7BhE5eppA/JLIqpiAXPISO83AenJFB3tHXWVmRbUuKI5JN38go7dkYDnk
-	0S+LmOY2g1PHkUozs+J83FyGdIQ26MSrdBxPkxvbv2T48e2TZLiTsdAIlFOdAcnN
-X-Google-Smtp-Source: AGHT+IFgMJIq/eGyoizczszmR53QE4J3SMmdHR+AgUSfMQ6K9taH4rprzgWuCxaybgUuO0JGEwa4hg==
-X-Received: by 2002:a05:6000:2406:b0:3a1:fe77:9e1d with SMTP id ffacd0b85a97d-3a6ed5da5bdmr2064474f8f.16.1750856607388;
-        Wed, 25 Jun 2025 06:03:27 -0700 (PDT)
-Received: from [192.168.0.114] ([91.196.212.106])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ae0bddcc68asm151660966b.174.2025.06.25.06.03.26
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 25 Jun 2025 06:03:26 -0700 (PDT)
-From: Jacek Kowalski <jacek@jacekk.info>
-X-Google-Original-From: Jacek Kowalski <Jacek@jacekk.info>
-Message-ID: <41ea8706-ffb2-48c6-8a2f-5c4c51dc1a0e@jacekk.info>
-Date: Wed, 25 Jun 2025 15:03:24 +0200
+	s=arc-20240116; t=1750856628; c=relaxed/simple;
+	bh=6U88q7TOKdSVgEqMDSSDTApj1e+MmNyr/LKmIeBvLt0=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
+	 MIME-Version:Content-Type; b=Qata8tXH1rkk0iNAqct593HnErCjE46W38xg2g/OKEQTUZ57Zp9x5SqhdagXywInKCdhhyG5Iqfg/3SV6Ycog1+dxjUjyL0JSUbKHDuNxmUAoFmdF+k3g4e1Vuo6Iuwpvfs3D/4E1by//a+lAjHMyDsPAcEkMRdp5W9rkkXH338=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=aXqM0Hh2; arc=none smtp.client-ip=198.175.65.13
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1750856627; x=1782392627;
+  h=from:to:cc:in-reply-to:references:subject:message-id:
+   date:mime-version:content-transfer-encoding;
+  bh=6U88q7TOKdSVgEqMDSSDTApj1e+MmNyr/LKmIeBvLt0=;
+  b=aXqM0Hh2hCd5g8Src0H4+m3WWZSKNUfteJFHDyxXs9eTRUPr03cI681s
+   eJKYSEpMT+L5D80I4kQZP1dW8iISx0pMY4rrVa1mS+ZJRmKSeg+YgWH8s
+   5aSCkf2mAxWXnJ5lU7i0IrfC3DyAmJyHXIn4h0pnhNb96I6PaAnbG3PX7
+   1sozgn4BRZfhykCoH/gnp7Ff/BIDiw1P3IHF0h0gN1acCxJdXtFC89dSv
+   iL8KEuro6xyvUVGS7Gy1Be72qSmJbbAZ+Y0BpHvz1VHbXZyuGCCMDiAYU
+   GVAqDW5Q9QP9MbOv3w7xb0VhcokyfMGYLBhDJNshGVD6sy5yWRfuZcikD
+   g==;
+X-CSE-ConnectionGUID: o+tHfElVRay5KPJewcUAwA==
+X-CSE-MsgGUID: UncaI0ONT+mzVQdfAQiTAQ==
+X-IronPort-AV: E=McAfee;i="6800,10657,11474"; a="64185296"
+X-IronPort-AV: E=Sophos;i="6.16,264,1744095600"; 
+   d="scan'208";a="64185296"
+Received: from orviesa010.jf.intel.com ([10.64.159.150])
+  by orvoesa105.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 25 Jun 2025 06:03:46 -0700
+X-CSE-ConnectionGUID: UHYkEejIRNqw1qeBhngccg==
+X-CSE-MsgGUID: TsnVDkPrTDm9joJJ+31IVw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.16,264,1744095600"; 
+   d="scan'208";a="151633868"
+Received: from ijarvine-mobl1.ger.corp.intel.com (HELO localhost) ([10.245.244.13])
+  by orviesa010-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 25 Jun 2025 06:03:43 -0700
+From: =?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
+To: Mark Pearson <mpearson-lenovo@squebb.ca>
+Cc: hmh@hmh.eng.br, ibm-acpi-devel@lists.sourceforge.net, 
+ platform-driver-x86@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ Damjan Georgievski <gdamjan@gmail.com>, Hans de Goede <hansg@kernel.org>
+In-Reply-To: <20250620181119.2519546-1-mpearson-lenovo@squebb.ca>
+References: <mpearson-lenovo@squebb.ca>
+ <20250620181119.2519546-1-mpearson-lenovo@squebb.ca>
+Subject: Re: [PATCH] platform/x86: thinkpad_acpi: handle HKEY 0x1402 event
+Message-Id: <175085661917.8098.8803611578218025120.b4-ty@linux.intel.com>
+Date: Wed, 25 Jun 2025 16:03:39 +0300
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/4] e1000: drop checksum constant cast to u16 in
- comparisons
-To: Simon Horman <horms@kernel.org>
-Cc: Tony Nguyen <anthony.l.nguyen@intel.com>,
- Przemek Kitszel <przemyslaw.kitszel@intel.com>,
- Andrew Lunn <andrew+netdev@lunn.ch>, "David S. Miller"
- <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
- Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
- intel-wired-lan@lists.osuosl.org, netdev@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <46b2b70d-bf53-4b0a-a9f3-dfd8493295b9@jacekk.info>
- <20250625121828.GB1562@horms.kernel.org>
-Content-Language: en-US
-In-Reply-To: <20250625121828.GB1562@horms.kernel.org>
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
+X-Mailer: b4 0.13.0
 
-Hey,
+On Fri, 20 Jun 2025 14:11:10 -0400, Mark Pearson wrote:
 
-> 1. It's normal for patch-sets, to have a cover letter.
->    That provides a handy place for high level comments,
->    perhaps ironically, such as this one.
-
-I'll add it in a second iteration.
-
-
-> 2. Please provide some text in the patch description.
->    I know these changes are trivial. But we'd like to have something there.
->    E.g.
+> 2025 Thinkpads F11 key launch the Intel Unison app on Windows,
+> which does some sort of smart sharing between laptop and phone.
 > 
->    Remove unnecessary cast of constants to u16,
->    allowing the C type system to do it's thing.
+> Map this key event to KEY_LINK_PHONE as the closest thing we have.
+> This prevents an error message being displayed on key press.
 > 
->    No behavioural change intended.
->    Compile tested only.
-
-Wilco.
+> 
+> [...]
 
 
-> 4. Please make sure the patchset applies cleanly to it's target tree.
->    It seems that in it's current form the patchset doesn't
->    apply to iwl-next or net-next.
+Thank you for your contribution, it has been applied to my local
+review-ilpo-fixes branch. Note it will show up in the public
+platform-drivers-x86/review-ilpo-fixes branch only once I've pushed my
+local branch there, which might take a while.
 
-Just to be sure, iwl-next is this one:
-git://git.kernel.org/pub/scm/linux/kernel/git/tnguy/linux.git
-refs/heads/for-next
-?
+The list of commits applied:
+[1/1] platform/x86: thinkpad_acpi: handle HKEY 0x1402 event
+      commit: b511bbfe4242e14c27a4f80da95dabc4a99d73b2
 
-
-> 5. It's up to you. But in general there is no need
->    to CC linux-kernel@vger.kernel.org on Networking patches
-
-I've just followed get_maintainers.pl output to the letter.
-
-
-> As for this patch itself, it looks good to me.
-> But I think you missed two.
-
-Rather: I have not touched subtraction on purpose.
-
-But checking the compiler output - yes, it can be dropped as well.
-
-I'll prepare an updated patch set with subtraction changes across Intel drivers included.
-
--- 
-Best regards,
-  Jacek Kowalski
+--
+ i.
 
 
