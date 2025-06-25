@@ -1,130 +1,126 @@
-Return-Path: <linux-kernel+bounces-703369-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-703363-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 51C5BAE8F56
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Jun 2025 22:20:02 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2F893AE8F4E
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Jun 2025 22:19:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 138194A7AC0
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Jun 2025 20:19:56 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CD90F6A136A
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Jun 2025 20:18:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 37E542E0B56;
-	Wed, 25 Jun 2025 20:19:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CFCD02D6624;
+	Wed, 25 Jun 2025 20:19:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="WzgU+FC6"
-Received: from mail-oi1-f176.google.com (mail-oi1-f176.google.com [209.85.167.176])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="a51YSCHQ"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1F8992DFA58
-	for <linux-kernel@vger.kernel.org>; Wed, 25 Jun 2025 20:19:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 369BDBA42;
+	Wed, 25 Jun 2025 20:19:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750882757; cv=none; b=R0v+knV4fRtgls2b2JX6UyQq6LMzTOocJrEYeyyJ5B0vPNh3Z6N/a7HR5KLzR8zZCDcIGhN81qTMW4o9oQukemKPMOcG+fA2BPW5PrZJdgdjLAzDYx7ZFueQwE+hancV+DTcxJDr1k8a+KUuWp8peTDSWbSozV7G+82wbNtuwW0=
+	t=1750882741; cv=none; b=pP2cNdlv7Rhbk9Bc+8pwftmkuBjJFVERvf7URqYj/BQDMbtF/HCWLRNCZVXEnzbZfiTsDhhV3dMT8LrBNkLhprPAFRihgUnS3CzpOOOvBIZ2q/UfbhSJUevWtW7UPnrTJRYkIHf76uIyG3PEBEjZjH72GUxPN/cPh2Cmv04Hb5M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750882757; c=relaxed/simple;
-	bh=UghlVNqiIgpdScPnDJwUCgMkfLA9c8dgrWlNZ4F4kJI=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=On2f8ZNqQ1R59dDhAHOwJGLvG9r+V5tgdhMdwIuVihGsTApwcqe7wh7Hhvf8dKJbcvulyi+HqQf09GO3M44++Y81SRDauQRCtkzI4IrgTa80lrX8aSqEDttGbUb5UrbLUeXwruFQu0BHjIRYdKR7w5Uq4g8k//rWSmaKZUA0V7g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=WzgU+FC6; arc=none smtp.client-ip=209.85.167.176
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-oi1-f176.google.com with SMTP id 5614622812f47-40a4de175a3so218420b6e.0
-        for <linux-kernel@vger.kernel.org>; Wed, 25 Jun 2025 13:19:15 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1750882755; x=1751487555; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=u+kL5Owd/b/uNVufMn9kQ7uWapXNIP2yBqmENsKSMRw=;
-        b=WzgU+FC6DdUkuBpN/NERAF7SKWjYrA8E4lrdWUPljUkSSM0YWeQppIKDRq9Bihbvkh
-         WBGjpKNcpm0rWkFJNOiCR90B+i4algKh88m4v9Vk0642oAFkIWJMmFfwf3r1viOuFk53
-         uf5SZF8CAWJd2a7Zb9GDGEyGsnXfoVrlgX+QdRspskJNdJY0jQ35COonVIxM+JkZJh88
-         1J/NF1ZW1mUAJhN91huTqm2jrjiRugsTBHyc3BWU321vtRKAmjsO1XymgHpGFIp/LJ7i
-         fbO7oOHJdzgKhCjjlsomM8OrN6A850Hj/OqlgazUO0UxTokf8pKshsqVYrvLmcepo6f6
-         57ww==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1750882755; x=1751487555;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=u+kL5Owd/b/uNVufMn9kQ7uWapXNIP2yBqmENsKSMRw=;
-        b=NgwHwvJGMP1uTBzyIbhEuGcOsatlhuVNZOibOEZNboZ2IMOKivVDjqj2dpLfvt9rNp
-         aiAicf6qruyrQCnLOnaoFui1ubH56lv4n0LFHbysIdJXEKoIwMO22N9UeLu31b1SHP3B
-         iyXhfQYQrey4b/oCffBfusbZLMG5y87fkIyuHOi1diX50Q2kLJSWhQjbXL0PEPNLs7qQ
-         yv1mTolqzkWC7FEb6cyX33sAu/nuz9MouxU2vWo6k8k0TYyMxNoO7UJFvNI3zZt9x119
-         TduqlmERjAdOiR2w/R3wckCZ98QTzn7T/1puHRIMMsGnZGxhXv1dCxpb4Ww4AxElUbPD
-         Dahg==
-X-Gm-Message-State: AOJu0YwbEXFz9dJptQzIAYNnzFnsq22TT1Oo40PwyBVPPIQXpcFSPYrQ
-	PE/aQ0KSFmkF8xUql0oyVPQaV1zOlOusghhRrGx3eYMB9YiTO3RsyTtOIPE+j9W6
-X-Gm-Gg: ASbGncvUrjifjx53g6oZEqxMGzu10RtWcbJ9Wpli4y6JEn7L/+kw7+Csq2VdyuCvsy+
-	x4lQgkQZjOVgWhwPgPW0rItCpyotRqoHnOLSU5lyXu2a4Jxxd5FbILFOFF7lQoXR18OEOk11LyX
-	PKfXY1FaAGwiqRT2RnURkSbTMiLhMANbV7XzcKKEpeghBkuDwiXxxVlfJg2ZI+2hkRNyqnh/afJ
-	4w5LyyP58pIUzqH9KeOwTZp8sHLHaaHYrI81Cy+lX41vJU5xLxfL3pNHLRgF+vOsMY7hfyS1WAM
-	v67Jb2pAwTshLuNaJvY2lafypBodd9jkcFWBZAwwSAqGUM57hT73eut6Z5jxkCJc+UFjKSqpAQW
-	5YUZu0ec=
-X-Google-Smtp-Source: AGHT+IErlKTN6Obe2eJ+hIRHlWBHfaYeu4HODg60y4Vj953Lq/di1qxS4riYzV3zaqb0HmNNI5o1iQ==
-X-Received: by 2002:a05:6808:14d1:b0:40a:57cc:d9f0 with SMTP id 5614622812f47-40b057d76f4mr3175226b6e.25.1750882755168;
-        Wed, 25 Jun 2025 13:19:15 -0700 (PDT)
-Received: from localhost.localdomain ([143.166.81.254])
-        by smtp.gmail.com with ESMTPSA id 5614622812f47-40ac6d22c23sm2319188b6e.42.2025.06.25.13.19.14
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 25 Jun 2025 13:19:14 -0700 (PDT)
-From: Stuart Hayes <stuart.w.hayes@gmail.com>
-To: linux-kernel@vger.kernel.org,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	"Rafael J . Wysocki" <rafael@kernel.org>,
-	Martin Belanger <Martin.Belanger@dell.com>,
-	Oliver O'Halloran <oohall@gmail.com>,
-	Daniel Wagner <dwagner@suse.de>,
-	Keith Busch <kbusch@kernel.org>,
-	Lukas Wunner <lukas@wunner.de>,
-	David Jeffery <djeffery@redhat.com>,
-	Jeremy Allison <jallison@ciq.com>,
-	Jens Axboe <axboe@fb.com>,
-	Christoph Hellwig <hch@lst.de>,
-	Sagi Grimberg <sagi@grimberg.me>,
-	linux-nvme@lists.infradead.org,
-	Nathan Chancellor <nathan@kernel.org>,
-	Jan Kiszka <jan.kiszka@seimens.com>,
-	Bert Karwatzki <spasswolf@web.de>
-Cc: Stuart Hayes <stuart.w.hayes@gmail.com>
-Subject: [PATCH v10 5/5] nvme-pci: Make driver prefer asynchronous shutdown
-Date: Wed, 25 Jun 2025 15:18:53 -0500
-Message-Id: <20250625201853.84062-6-stuart.w.hayes@gmail.com>
-X-Mailer: git-send-email 2.39.3
-In-Reply-To: <20250625201853.84062-1-stuart.w.hayes@gmail.com>
-References: <20250625201853.84062-1-stuart.w.hayes@gmail.com>
+	s=arc-20240116; t=1750882741; c=relaxed/simple;
+	bh=X8y57/DSW13hsUqIu35etDFyp3CqHDXuhzGZsw7USn8=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=KYiv44k12xpylyupczzq9RyQrzzJkNx7Qou5gB3AwC4fif6oI2Hl3z63WLrLSLlwfu9RrCK5EuYsoGZ7fa/66AvqQRPtDs5FInaQkx7MvmiuuE90ildg95/anztlKR6f2eOoZB4q8F22v1zgzbtoLnjaCvKv22VNLXDOgH+lOOY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=a51YSCHQ; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B25B0C4CEEA;
+	Wed, 25 Jun 2025 20:18:59 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1750882740;
+	bh=X8y57/DSW13hsUqIu35etDFyp3CqHDXuhzGZsw7USn8=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=a51YSCHQhHhdIMc516ezsCyhdueG+iqHxYodRZwY89LIUGcy2x/jFe0i9V4yaheZl
+	 Y7fDhgPPVr28mjujzOSvTvmEbx/nYxo79ZhyWjcbetxXEnmKgv3y03HZAQg6k+CoW7
+	 RnIO66fwWygKitmSCM7NwMn87aTDVlTizmrs9/CLt1J6/Hnw0pqRPRoJiUlp3oAm7I
+	 Te+UM8oOLOe2pzxhtUL1AMc6w5Duu7MAGf/Xn0RrCc2zrtp2tolTY04I8NdeNwp7rS
+	 anMcbNah+UKFyaTgUlGcDUMnLQc4JsdGLlda2aAFbwb4NAGTI5ZAHRG4I3ELBlFpAM
+	 A4wxB5OI4g8Dw==
+Date: Wed, 25 Jun 2025 22:18:56 +0200
+From: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
+To: Jonathan Corbet <corbet@lwn.net>
+Cc: Akira Yokosawa <akiyks@gmail.com>, linux-kernel@vger.kernel.org, Linux
+ Doc Mailing List <linux-doc@vger.kernel.org>
+Subject: Re: [PATCH v3 15/15] docs: conf.py: Check Sphinx and docutils
+ version
+Message-ID: <20250625221856.326e5ce6@foz.lan>
+In-Reply-To: <875xgjacr2.fsf@trenco.lwn.net>
+References: <cover.1750571906.git.mchehab+huawei@kernel.org>
+	<972673b0a5bf5537d47780d6f8e70ae45456e751.1750571906.git.mchehab+huawei@kernel.org>
+	<c05dd5dc-1e30-4a2c-80dc-70e8b62cc681@gmail.com>
+	<87v7ona3z7.fsf@trenco.lwn.net>
+	<20250622235052.05804137@foz.lan>
+	<875xgjacr2.fsf@trenco.lwn.net>
+X-Mailer: Claws Mail 4.3.1 (GTK 3.24.49; x86_64-redhat-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-Set the driver default to enable asynchronous shutdown.
+Em Wed, 25 Jun 2025 12:37:37 -0600
+Jonathan Corbet <corbet@lwn.net> escreveu:
 
-Signed-off-by: Stuart Hayes <stuart.w.hayes@gmail.com>
-Signed-off-by: David Jeffery <djeffery@redhat.com>
----
- drivers/nvme/host/pci.c | 1 +
- 1 file changed, 1 insertion(+)
+> Mauro Carvalho Chehab <mchehab+huawei@kernel.org> writes:
+> 
+> > Em Sun, 22 Jun 2025 14:58:04 -0600
+> > Jonathan Corbet <corbet@lwn.net> escreveu:
+> >  
+> >> Akira Yokosawa <akiyks@gmail.com> writes:
+> >>   
+> >> > On Sun, 22 Jun 2025 08:02:44 +0200, Mauro Carvalho Chehab wrote:    
+> >> >> As reported by Akira, there were incompatibility issues with
+> >> >> Sphinx and docutils with docutils 0.19. There's already
+> >> >> a fix for it, but, as there are incompatibility issues with
+> >> >> different versions, better to add a check to verify if the
+> >> >> combination is supported/tested.
+> >> >>     
+> >> >
+> >> > I've been skeptical of adding such checks in conf.py.    
+> >> 
+> >> I have to kind of agree with this concern.  We have managed without this
+> >> complexity so far.  It looks like we could always be behind on
+> >> maintaining it going forward.  Do we *really* need this one?  
+> >
+> > IMO having a check is interesting, as the dependency between
+> > Sphinx and docutils is high. Yet, with the testing script, this may
+> > not be needed, provided that we run it to check if changes at Sphinx
+> > extensions won't cause regressions. Still, the dependency check
+> > at test_doc_build.py is not complete.
+> >
+> > Anyway, if you prefer, don't pick this one. We can revisit it later
+> > when needed.  
+> 
+> I've left it out for now, but applied the rest of the series.  Keep it
+> around, we may yet decide we need it...
 
-diff --git a/drivers/nvme/host/pci.c b/drivers/nvme/host/pci.c
-index 8ff12e415cb5..727527ef3896 100644
---- a/drivers/nvme/host/pci.c
-+++ b/drivers/nvme/host/pci.c
-@@ -3831,6 +3831,7 @@ static struct pci_driver nvme_driver = {
- 	.shutdown	= nvme_shutdown,
- 	.driver		= {
- 		.probe_type	= PROBE_PREFER_ASYNCHRONOUS,
-+		.async_shutdown_enable	= true,
- #ifdef CONFIG_PM_SLEEP
- 		.pm		= &nvme_dev_pm_ops,
- #endif
--- 
-2.39.3
+Ok, I placed on my scratch tree on github, on a separate branch:
+	https://github.com/mchehab/linux/commits/check_sphinx_at_conf_py/
 
+The patch is here:
+	https://github.com/mchehab/linux/commit/178f37fce4aa16592b0c0b567ea0ffca744c3af5
+
+(I'm documenting here just in case we forget and need it again ;-) )
+
+Regards,
+Mauro
+
+
+
+> 
+> Thanks,
+> 
+> jon
+
+
+
+Thanks,
+Mauro
 
