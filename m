@@ -1,134 +1,170 @@
-Return-Path: <linux-kernel+bounces-703296-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-703298-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id E063DAE8E50
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Jun 2025 21:17:01 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C3798AE8E55
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Jun 2025 21:17:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F12803A6649
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Jun 2025 19:14:49 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 390153ABD0E
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Jun 2025 19:16:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CC7C62D660E;
-	Wed, 25 Jun 2025 19:15:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B2D8B2DA755;
+	Wed, 25 Jun 2025 19:16:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="fLpnq0jh"
-Received: from mail-lf1-f51.google.com (mail-lf1-f51.google.com [209.85.167.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="FA/FL83a"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.19])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DA7B22D8DC0
-	for <linux-kernel@vger.kernel.org>; Wed, 25 Jun 2025 19:15:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 52DDA2D660E;
+	Wed, 25 Jun 2025 19:16:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.19
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750878908; cv=none; b=T1HbnELUGC8l8V+DyuFP3obI2T6WvAzP8BpNs0v6GDwF50P4xUYO/9SQglOQZx9QJoFvuT6FtdGp16V03TPxGWo7zyiBKrcNe8WJmP3h/P7soHs5mW05A68BRwa1lVAdt7wuZ7rNOr6tpvpMwCQA/ojcQtlBKlJ4l5WAKkvtoMw=
+	t=1750878987; cv=none; b=U4LyPL8a2vOGt1TyF1KuHKln0C9qyYlbxMaYE5RDq9R8hd2UbqqJBw2KJW5t8VDHh6c62A9hbJ+pKT9yYBmIb757+y6LKngBCm5Mic1auVlbEg10Bzh9DckEFAk9MOezKyEtk/XvqEK/7tHAivYV144ka9jmUKG7DtMcUles6gM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750878908; c=relaxed/simple;
-	bh=ZovO7nkOrLL9nxNDPkAositSdpf1H/zY80uV73Q8ZrQ=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=ru6YbMyQECTX/i5HyKcYLF9CzYgL8ftbz14etGTcvaDjn1w2Ew8bgsSRU9efdEDr86Dsr1Tycr/R4bpcUbWxYIupB5q1tUdfBIdi4fa58pzXn4dbgciR0PsvRxutq6waESPa65+lJsvTP/mZyTEcKqAWTe7C/9/baNKkDVtxSLI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=fLpnq0jh; arc=none smtp.client-ip=209.85.167.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
-Received: by mail-lf1-f51.google.com with SMTP id 2adb3069b0e04-5532a30ac45so277687e87.0
-        for <linux-kernel@vger.kernel.org>; Wed, 25 Jun 2025 12:15:05 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1750878904; x=1751483704; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=z+nO7EW7s/VWpRpXMmnbCZRaJqIoHvIZE+sg3t4NDGI=;
-        b=fLpnq0jhBTUamh1+q29Gn67BH6xXxBTITB4Nl0+VAeH1Wok6gSKFqJ/pZOmjhnqcch
-         vBQb67m9FqdpsMJrpYGsYrxPlSTu2VJ2lCXHuS77uH+oj+icHS5FKI5wDL/P8AJEoG94
-         WWhMh50ATqDziJ0L37/cj40nzj9FWgyGn7pUNA0DLSO99VCSezCvgkGOxcr5z5MWRu3L
-         RbZFU5SGo5bqyNISRsn4VJBN9hfr5zuWX0hcg4gADRcu76YdEz7QuoNsSIeXY/27SHWn
-         FQeLnSSFvR+azacn676//wnbO723oskygb9BpImAQEf97nQx0LG3qMfvmxOg+rGzYoLc
-         9Law==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1750878904; x=1751483704;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=z+nO7EW7s/VWpRpXMmnbCZRaJqIoHvIZE+sg3t4NDGI=;
-        b=pVdkj2quVh1LimGoP8h0c1me0L1nh25MCx3ILKzImd6Vx8vB1rxsuGqSA0Pf3vqTYW
-         dWMQSUejATM4cGKzJrpyefZ0D1wOyiWUH0/crHp/hsf0kX8flr1G173N9TaXJXQEsxEQ
-         FJAaTajCs9iVRU3E1wvp6f+l/h/j9sNuh4pi/sON7ETveRsziFvKH0FvhptcCgZ9zwWh
-         3KPWKNl2obDWN6J/VOWNWdjVck6R5yUIQmUsyIzgsi5dwav9kU8Sgy/v9LKW3F+UyVzh
-         vl/4jxmin6Xo3McEW1/KtE2xk4f9C4ipY6/JBbUL/yrNI6orHRZ88L1mxFJcUWhC4VFT
-         namw==
-X-Forwarded-Encrypted: i=1; AJvYcCUD7/etR0mJrRes21JkIXZ/21GlXtYdqI/zeD5xaauRBWbQuNAERi9iA1mhcd/gFKdiYwub2XncbaQyIYM=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyZFK+CzG5tKUuotJDWGFgclb5E2+SpSfVE9RMuA6pYXXXjXLWD
-	inS6oO4NXRMlIHeZRXrAL1ZWeIq3WU1LiN/bJmweCA5d03TOPhItLrS3RgTW4bYfqzbeHHsDK9H
-	uhNIUZmV+1D0Gadj/DMTlsHxwYHcF7VdyVVH6Xe+NbQ==
-X-Gm-Gg: ASbGncszcj+5mZu2rGvdR6tsgKgT6udzeNYcOcyKJcTxciXzXzJ4Xa2thAWekzF+Fas
-	jnNKD39aUuOI+Sv7wH4+yHDMfBNyGYYMtRc/TpMZoLaq/Hyx9Eqf2IHmkfGpeSp90oqHxqtdoJH
-	marceIltk2i1yU7EF3g9k9bI94XBm6FkZaYWENRXY09pVU3ASw2pw0JV+nQaj8CQtKC3lHxvSHT
-	mc=
-X-Google-Smtp-Source: AGHT+IHiy8uQHEJstlc44iLzXYCv+/voqeXmoVlZJZj8RwfXYP5wtTyCCwGrLUkGxOoxzeeSzpmhiDT6FCJq3MOd9Vs=
-X-Received: by 2002:a05:6512:3b97:b0:550:d4fc:a0d with SMTP id
- 2adb3069b0e04-55502caae30mr266969e87.24.1750878903790; Wed, 25 Jun 2025
- 12:15:03 -0700 (PDT)
+	s=arc-20240116; t=1750878987; c=relaxed/simple;
+	bh=jQ6meuQJB7EAkIgLMqxwrSHNKFvoSijnin1Z/61bJus=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=MoZkLKIfL4m9YVLds0SftTCVeW9h/NhZy+/+xVL/R4uxxvCFIjIjTr6ZsOOW6eKVWCL0Q0qR/+MrC5LZGxzR+UTxu+E6Acw3ZSjKZC5f0CSCpHqUkxKGyDD/TNqlwJj4tghsnhjZsvBrH/7goYOpzRBfNA4u4umUuY4kVEE5x88=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=FA/FL83a; arc=none smtp.client-ip=192.198.163.19
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1750878985; x=1782414985;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=jQ6meuQJB7EAkIgLMqxwrSHNKFvoSijnin1Z/61bJus=;
+  b=FA/FL83aA+RpaGRoyKYQe8Ovykv+IC1jLgXgdO8dNmRFodAMAiRdaN2y
+   U51yX3DJXopYXkJNy6gE+3YBTEjuEVe+rUr03tqC2D1npyT190MeZWSQo
+   dpDLip262afZsx0g+rtE8EiahIWVksp2kVzx+AHI89KfOr6j5lEZkqD1n
+   jyr/B8GhcLxG6zp9zMVdE1JYjtGSJmmByupqr0yFQtwZMu9KreKqSqVvd
+   lkkbQIk2olnhH2WQJwbMW81AN7WWXal7wlAe3ReUJT+DX42vsNYGb8oaK
+   ridnYYyCHCNFb2F4ZpN68HM/GcyQMZHmpJNMuru6Q8umLnNeOCIYWEg+W
+   w==;
+X-CSE-ConnectionGUID: HvMehxhzRhOnZUXyR4WYUQ==
+X-CSE-MsgGUID: wmW+hECQQIm3Z1ttJMqFTA==
+X-IronPort-AV: E=McAfee;i="6800,10657,11475"; a="52280289"
+X-IronPort-AV: E=Sophos;i="6.16,265,1744095600"; 
+   d="scan'208";a="52280289"
+Received: from fmviesa004.fm.intel.com ([10.60.135.144])
+  by fmvoesa113.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 25 Jun 2025 12:16:24 -0700
+X-CSE-ConnectionGUID: DiGq+pIDQrWqFy1yzVRG6g==
+X-CSE-MsgGUID: NNEVO8+jQdi+eQljjP0tqw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.16,265,1744095600"; 
+   d="scan'208";a="157800608"
+Received: from lkp-server01.sh.intel.com (HELO e8142ee1dce2) ([10.239.97.150])
+  by fmviesa004.fm.intel.com with ESMTP; 25 Jun 2025 12:16:18 -0700
+Received: from kbuild by e8142ee1dce2 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1uUVbU-000TQO-28;
+	Wed, 25 Jun 2025 19:16:16 +0000
+Date: Thu, 26 Jun 2025 03:15:55 +0800
+From: kernel test robot <lkp@intel.com>
+To: Ziyue Zhang <quic_ziyuzhan@quicinc.com>, andersson@kernel.org,
+	konradybcio@kernel.org, robh@kernel.org, krzk+dt@kernel.org,
+	conor+dt@kernel.org, jingoohan1@gmail.com, mani@kernel.org,
+	lpieralisi@kernel.org, kwilczynski@kernel.org, bhelgaas@google.com,
+	johan+linaro@kernel.org, vkoul@kernel.org, kishon@kernel.org,
+	neil.armstrong@linaro.org, abel.vesa@linaro.org, kw@linux.com
+Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
+	linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org,
+	linux-phy@lists.infradead.org, qiang.yu@oss.qualcomm.com,
+	quic_krichai@quicinc.com, quic_vbadigan@quicinc.com,
+	Ziyue Zhang <quic_ziyuzhan@quicinc.com>
+Subject: Re: [PATCH v3 1/3] PCI: qcom: Add equalization settings for 8.0 GT/s
+Message-ID: <202506260310.BUxJgnmS-lkp@intel.com>
+References: <20250625085801.526669-2-quic_ziyuzhan@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250625-topic-wcn6855_pwrseq-v1-1-cfb96d599ff8@oss.qualcomm.com>
-In-Reply-To: <20250625-topic-wcn6855_pwrseq-v1-1-cfb96d599ff8@oss.qualcomm.com>
-From: Bartosz Golaszewski <brgl@bgdev.pl>
-Date: Wed, 25 Jun 2025 21:14:52 +0200
-X-Gm-Features: Ac12FXydmvIBgtZ0Bi7QXSKV1DZmvRjRc8QGW87jPOBPQsfn7d_l6wCJbPac4qE
-Message-ID: <CAMRc=MeUU842TVDsPNn_Wcy8KtCQ_nz0qYt+muQJEn87g0kS+g@mail.gmail.com>
-Subject: Re: [PATCH] power: sequencing: qcom-wcn: Fix bluetooth-wifi copypasta
- for WCN6855
-To: Konrad Dybcio <konradybcio@kernel.org>
-Cc: Dmitry Baryshkov <lumag@kernel.org>, Marijn Suijten <marijn.suijten@somainline.org>, 
-	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>, linux-pm@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250625085801.526669-2-quic_ziyuzhan@quicinc.com>
 
-On Wed, Jun 25, 2025 at 5:55=E2=80=AFPM Konrad Dybcio <konradybcio@kernel.o=
-rg> wrote:
->
-> From: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
->
-> Prevent a name conflict (which is surprisingly not caught by the
-> framework).
->
-> Fixes: bd4c8bafcf50 ("power: sequencing: qcom-wcn: improve support for wc=
-n6855")
-> Signed-off-by: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-> ---
->  drivers/power/sequencing/pwrseq-qcom-wcn.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->
-> diff --git a/drivers/power/sequencing/pwrseq-qcom-wcn.c b/drivers/power/s=
-equencing/pwrseq-qcom-wcn.c
-> index e8f5030f2639a69254ad5efe0a313d2f3d10fa1d..7d8d6b3407495c28a780d5bb0=
-668b2b35837b48a 100644
-> --- a/drivers/power/sequencing/pwrseq-qcom-wcn.c
-> +++ b/drivers/power/sequencing/pwrseq-qcom-wcn.c
-> @@ -155,7 +155,7 @@ static const struct pwrseq_unit_data pwrseq_qcom_wcn_=
-bt_unit_data =3D {
->  };
->
->  static const struct pwrseq_unit_data pwrseq_qcom_wcn6855_bt_unit_data =
-=3D {
-> -       .name =3D "wlan-enable",
-> +       .name =3D "bluetooth-enable",
->         .deps =3D pwrseq_qcom_wcn6855_unit_deps,
->         .enable =3D pwrseq_qcom_wcn_bt_enable,
->         .disable =3D pwrseq_qcom_wcn_bt_disable,
->
-> ---
+Hi Ziyue,
 
-Thanks for the catch. Unlike target names, the unit names are mostly
-for human convenience. That's why it didn't really break anything. If
-you have no objections, I will queue it for v6.17 as I have already a
-bunch of changes queued up and there's no point bothering Torvalds
-with a one-liner that's not urgent.
+kernel test robot noticed the following build warnings:
 
-Bartosz
+[auto build test WARNING on e04c78d86a9699d136910cfc0bdcf01087e3267e]
+
+url:    https://github.com/intel-lab-lkp/linux/commits/Ziyue-Zhang/PCI-qcom-Add-equalization-settings-for-8-0-GT-s/20250625-170049
+base:   e04c78d86a9699d136910cfc0bdcf01087e3267e
+patch link:    https://lore.kernel.org/r/20250625085801.526669-2-quic_ziyuzhan%40quicinc.com
+patch subject: [PATCH v3 1/3] PCI: qcom: Add equalization settings for 8.0 GT/s
+config: i386-buildonly-randconfig-002-20250626 (https://download.01.org/0day-ci/archive/20250626/202506260310.BUxJgnmS-lkp@intel.com/config)
+compiler: clang version 20.1.7 (https://github.com/llvm/llvm-project 6146a88f60492b520a36f8f8f3231e15f3cc6082)
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250626/202506260310.BUxJgnmS-lkp@intel.com/reproduce)
+
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202506260310.BUxJgnmS-lkp@intel.com/
+
+All warnings (new ones prefixed by >>):
+
+>> drivers/pci/controller/dwc/pcie-qcom-common.c:15:17: warning: unused variable 'dev' [-Wunused-variable]
+      15 |         struct device *dev = pci->dev;
+         |                        ^~~
+   1 warning generated.
+
+
+vim +/dev +15 drivers/pci/controller/dwc/pcie-qcom-common.c
+
+    10	
+    11	void qcom_pcie_common_set_equalization(struct dw_pcie *pci)
+    12	{
+    13		u32 reg;
+    14		u16 speed, max_speed = PCIE_SPEED_16_0GT;
+  > 15		struct device *dev = pci->dev;
+    16	
+    17		/*
+    18		 * GEN3_RELATED_OFF register is repurposed to apply equalization
+    19		 * settings at various data transmission rates through registers namely
+    20		 * GEN3_EQ_*. The RATE_SHADOW_SEL bit field of GEN3_RELATED_OFF
+    21		 * determines the data rate for which these equalization settings are
+    22		 * applied.
+    23		 */
+    24		if (pcie_link_speed[pci->max_link_speed] < PCIE_SPEED_32_0GT)
+    25			max_speed = pcie_link_speed[pci->max_link_speed];
+    26	
+    27		for (speed = PCIE_SPEED_8_0GT; speed <= max_speed; ++speed) {
+    28			reg = dw_pcie_readl_dbi(pci, GEN3_RELATED_OFF);
+    29			reg &= ~GEN3_RELATED_OFF_GEN3_ZRXDC_NONCOMPL;
+    30			reg &= ~GEN3_RELATED_OFF_RATE_SHADOW_SEL_MASK;
+    31			reg |= FIELD_PREP(GEN3_RELATED_OFF_RATE_SHADOW_SEL_MASK,
+    32				  speed - PCIE_SPEED_8_0GT);
+    33			dw_pcie_writel_dbi(pci, GEN3_RELATED_OFF, reg);
+    34	
+    35			reg = dw_pcie_readl_dbi(pci, GEN3_EQ_FB_MODE_DIR_CHANGE_OFF);
+    36			reg &= ~(GEN3_EQ_FMDC_T_MIN_PHASE23 |
+    37				GEN3_EQ_FMDC_N_EVALS |
+    38				GEN3_EQ_FMDC_MAX_PRE_CUSROR_DELTA |
+    39				GEN3_EQ_FMDC_MAX_POST_CUSROR_DELTA);
+    40			reg |= FIELD_PREP(GEN3_EQ_FMDC_T_MIN_PHASE23, 0x1) |
+    41				FIELD_PREP(GEN3_EQ_FMDC_N_EVALS, 0xd) |
+    42				FIELD_PREP(GEN3_EQ_FMDC_MAX_PRE_CUSROR_DELTA, 0x5) |
+    43				FIELD_PREP(GEN3_EQ_FMDC_MAX_POST_CUSROR_DELTA, 0x5);
+    44			dw_pcie_writel_dbi(pci, GEN3_EQ_FB_MODE_DIR_CHANGE_OFF, reg);
+    45	
+    46			reg = dw_pcie_readl_dbi(pci, GEN3_EQ_CONTROL_OFF);
+    47			reg &= ~(GEN3_EQ_CONTROL_OFF_FB_MODE |
+    48				GEN3_EQ_CONTROL_OFF_PHASE23_EXIT_MODE |
+    49				GEN3_EQ_CONTROL_OFF_FOM_INC_INITIAL_EVAL |
+    50				GEN3_EQ_CONTROL_OFF_PSET_REQ_VEC);
+    51			dw_pcie_writel_dbi(pci, GEN3_EQ_CONTROL_OFF, reg);
+    52		}
+    53	}
+    54	EXPORT_SYMBOL_GPL(qcom_pcie_common_set_equalization);
+    55	
+
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
