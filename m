@@ -1,251 +1,98 @@
-Return-Path: <linux-kernel+bounces-703484-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-703482-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 926A7AE90E3
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Jun 2025 00:15:57 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C33C1AE90D9
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Jun 2025 00:13:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5978D18984AD
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Jun 2025 22:16:13 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 434D9161DBE
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Jun 2025 22:13:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A4F572DA74F;
-	Wed, 25 Jun 2025 22:15:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2D0E22877F0;
+	Wed, 25 Jun 2025 22:12:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="RoJD50ed"
-Received: from mail-pl1-f171.google.com (mail-pl1-f171.google.com [209.85.214.171])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ZhhVQukH"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7509229C323
-	for <linux-kernel@vger.kernel.org>; Wed, 25 Jun 2025 22:15:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7FC9127B4E4;
+	Wed, 25 Jun 2025 22:12:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750889754; cv=none; b=nHRR2s1cej86aVgmnfe16O26mcy7HpViEzMqbvRuBRaeNxqwOXcIjXA0ofc+J1aBXGYl9H/f0fDEVWuBtoaV9udbz1Yi540au2LN9b4ZibV+W2a80CPF3uuTOj8XObRFf80z1RRgarudX51DJNWSdWnM4HkZYsqhIqUlcDmFozg=
+	t=1750889571; cv=none; b=jtdDv6/WlOTS/84YaYA+BNQ4kK3zhf6MyfYcFvkuBw5tIfRnQCfEEM0WA3wxwn6LOF18Tq080ooWA4FoItW6DO+HntHeA2PGsTkkZn048g+EjWce0nGLB/2vUftYtk9/HV+vMaXlrDcjP+QZSgniRY/rMG7E7WG7jDYH8YXaINY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750889754; c=relaxed/simple;
-	bh=ylUWsqBdv7tvsvdpMfdW9ujSAH2BGmfxAz/cPhecY5Q=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=Wxo9OXlurWxE6nJGJCAPBe5x0CI7gMrXiYjidMJz4R3C+dBK1oHlSIxMjpo4f08ZrPP4S9zj7ZY7/RnLJyk11nd+1Jb9QEg8SomnOjwx9AG74TVLX8wGb6D1s4kCbxfdal898BhYg1XZ2iMKVvl+2ZZ2+qu6532N47VUvzEDm+8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=RoJD50ed; arc=none smtp.client-ip=209.85.214.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f171.google.com with SMTP id d9443c01a7336-236470b2dceso5083005ad.0
-        for <linux-kernel@vger.kernel.org>; Wed, 25 Jun 2025 15:15:52 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1750889751; x=1751494551; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=i1/PgKpNQEL4CZ/x5npolCmb2YPYwo+H2VVcT6JHico=;
-        b=RoJD50edfT3eMAQwSA7TcU64911r/AUAquVs8QzEuwJOFuZi1CizQ5PkzabplJcZwT
-         xd+KIRPU/2SsSQ9mhm9vu209hbayh4Ew0NIR72f3aOibBgT4/IkjQTKULIiWAJ7y8LPD
-         qj9HC16qxuyjZpAr+cZJjzIjErYzCZ9jiV9cF08dqNyZ9LwZI2Ca0OlYv7rG/WjrH4Eh
-         P3WIfOzsq72xIsU4CVfAXz96OYLf40w73untwPcITwBqUpPApHuKpzKtz9r98AF/l2Mf
-         gbb3MxM7WcMMP6pUzv7uqazAilHSfKnhsJzXmN1UuAQ/8dHmkPaVjp03L1OIZfudzdWH
-         jmkQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1750889751; x=1751494551;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=i1/PgKpNQEL4CZ/x5npolCmb2YPYwo+H2VVcT6JHico=;
-        b=aMzjLQcEkj+uPTmXytAtEDuTvDSj617bXFdX3LWbClOh4LGDEfIWzNnfLb7dJs07BF
-         ffdACnrzH7mv2vM18GJzF96u+Q+/Evr9wuTVpL1n0jz9PlWf1ygE8djS2a8t+6phY+mz
-         MLYHps2hr4XLibxnQ8mx313knsXFsyrW9k3yvIg/f6i5oNTrEPkM9nHVm8RWHWnOCrMk
-         HtTNDGbrxvJnXbltCwTmMZKfanduDgR52oJgUs8Z1S+LMv6o8PqHJWf908y0ITS1sil+
-         XpYd+M1RQ+miOSOEDZs/j2nKzjU1BYiY/R/tliK2oQG30BA6Q1he/xwREHYHWZSE23rU
-         uXig==
-X-Forwarded-Encrypted: i=1; AJvYcCUvio2FFwq5vqpigosRhQn2brscaoN0Mr/1XL/1ZjhWFhToCoeS5MSo3WCON2l8p822oorxRAZX6dYVREQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwJD9BwL5wwEYkA4hY6PAWBz5gLUwNHUmX6QNIYQbkLJBcfPPiZ
-	SSVh7DxRH7KJrvUifTyxTh2eAa4AbQZ7LeKbVSAX7A1o5N/6FmMuGIB0
-X-Gm-Gg: ASbGnctdkMSIZr56WCmV2+qWSTSHpWnrUkBfiVIP6IX0Sb1BcSJjnUaIFnFtvMk1AyT
-	PNEnedDav9d156+4AvVPKFNnWD1QFCVaDvevxU1S4Y8od7jHfFgsPGcqO2UZME0zuQNgDb7z8Ew
-	QN4cfGtNlIcnWW9xc44R707pN94PS0oGB41PIxAfD6PVxqwDBs+fG6ONZT4ANGhLFN5e5ygvVyl
-	n9q79jTdzeN4rNCAwOL/Z1AsymVWnKbj88BvMjQ0lFCdbLBa/OtnKYLAcnT7FL+oumOV3Cnboof
-	cwx3KSTEkX3JaGHzVGaQEMqcwI3gksq2EHSek1qYW2g2roqptuTvqOqX7HDJ1i/40+OjbD8YjtS
-	Fgow=
-X-Google-Smtp-Source: AGHT+IF447eXoeCPMZ9fSborn0oc0o77ApQohY3vn62RRe/f5MId9QjXnzTMTAtUShcwzCs4rGS+mw==
-X-Received: by 2002:a17:902:f684:b0:235:60e:3704 with SMTP id d9443c01a7336-23823fc3f99mr87140675ad.12.1750889751418;
-        Wed, 25 Jun 2025 15:15:51 -0700 (PDT)
-Received: from itsmeut.. ([103.215.237.70])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-237f7579cddsm84397535ad.202.2025.06.25.15.15.48
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 25 Jun 2025 15:15:50 -0700 (PDT)
-From: Utkarsh Singh <utkarsh.singh.em@gmail.com>
-To: agruenba@redhat.com
-Cc: gfs2@lists.linux.dev,
-	linux-kernel@vger.kernel.org,
-	skhan@linuxfoundation.org,
-	Utkarsh Singh <utkarsh.singh.em@gmail.com>
-Subject: [PATCH] gfs2/sysfs: Replace sprintf/snprintf with sysfs_emit()
-Date: Thu, 26 Jun 2025 03:41:38 +0530
-Message-Id: <20250625221137.108313-1-utkarsh.singh.em@gmail.com>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1750889571; c=relaxed/simple;
+	bh=QmYH8iz7I+hLnHHXLpT4R2xRHfQmPJ3xgDQkAv1dxvA=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=P0j6y3Mnof8/+DjERQRxa/MFggNKV6Ic0f3xWyxLcUaQ2amZMQOR5oYUxSYUOLqBFOZwp9CBbJ29QZnw9XeNx8/3YnPhUMeKw/JPgnmp1a0LKWB98L4cIdBi8KOqOfUvw6Z1WMpqaBZ/Pe1yxb0o59Bdm6IVFVK7ppJAruYFc5E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ZhhVQukH; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9B0B0C4CEEA;
+	Wed, 25 Jun 2025 22:12:50 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1750889571;
+	bh=QmYH8iz7I+hLnHHXLpT4R2xRHfQmPJ3xgDQkAv1dxvA=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=ZhhVQukHhyp2I54I7VvZp1jd++sQGhmz8Be2pEFbQLlKF+/sp4JBVT5rSuj5+O2VV
+	 PxQ67Rtl3Xm2ZgWqqGl4qBZReImW0Sw2RsjX/z3vgdvk7NMp8t6Pa5k4sGv2HVxok5
+	 x4TqZJPdT5Kpw5IhDkMetGmjsxP5jUjIiR6SqBbSiuTWu+oQG7A3f/aEwXc+G8YobP
+	 GVKSs/ZWKr5IIsq/rWWgODE4m4KCQVBgTMO6+KLpEYcOUIFXNTdeopo9uTAjpSSO2h
+	 A/cuwuz3dU58gvu23Hagf2H5RTF6zc6RcFZ6JvAJ/GSvFORMO6QaXX6xBcw0NAPJ5J
+	 eyjb/JrANp26g==
+Date: Wed, 25 Jun 2025 15:12:49 -0700
+From: Jakub Kicinski <kuba@kernel.org>
+To: Breno Leitao <leitao@debian.org>
+Cc: Andrew Lunn <andrew+netdev@lunn.ch>, "David S. Miller"
+ <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, Paolo Abeni
+ <pabeni@redhat.com>, Shuah Khan <shuah@kernel.org>, Simon Horman
+ <horms@kernel.org>, linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
+ linux-kselftest@vger.kernel.org, Willem de Bruijn
+ <willemdebruijn.kernel@gmail.com>, bpf@vger.kernel.org, gustavold@gmail.com
+Subject: Re: [PATCH net-next v2 1/4] selftests: drv-net: add helper/wrapper
+ for bpftrace
+Message-ID: <20250625151249.14e5cd79@kernel.org>
+In-Reply-To: <20250625-netpoll_test-v2-1-47d27775222c@debian.org>
+References: <20250625-netpoll_test-v2-0-47d27775222c@debian.org>
+	<20250625-netpoll_test-v2-1-47d27775222c@debian.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-Documentation/filesystems/sysfs.rst mentions that show() should only
-use sysfs_emit() or sysfs_emit_at() when formatting values returned
-to user space. This patch updates the GFS2 sysfs interface accordingly.
+On Wed, 25 Jun 2025 04:39:46 -0700 Breno Leitao wrote:
+> From: Jakub Kicinski <kuba@kernel.org>
+> 
+> bpftrace is very useful for low level driver testing. perf or trace-cmd
+> would also do for collecting data from tracepoints, but they require
+> much more post-processing.
+> 
+> Add a wrapper for running bpftrace and sanitizing its output.
+> bpftrace has JSON output, which is great, but it prints loose objects
+> and in a slightly inconvenient format. We have to read the objects
+> line by line, and while at it return them indexed by the map name.
 
-It replaces uses of sprintf() and snprintf() in all *_show() functions
-with sysfs_emit() to align with current kernel sysfs API best practices.
-It also updates the GFS2_SHOW_UINT macro to use sysfs_emit() instead
-of snprintf().
+Could you squash this in? Otherwise pylint can't find it
 
-Signed-off-by: Utkarsh Singh <utkarsh.singh.em@gmail.com>
----
- fs/gfs2/sys.c | 32 ++++++++++++++++----------------
- 1 file changed, 16 insertions(+), 16 deletions(-)
+diff --git a/tools/testing/selftests/drivers/net/lib/py/__init__.py b/tools/testing/selftests/drivers/net/lib/py/__init__.py
+index 9ed1d8f70524..98829a0f7a02 100644
+--- a/tools/testing/selftests/drivers/net/lib/py/__init__.py
++++ b/tools/testing/selftests/drivers/net/lib/py/__init__.py
+@@ -14,7 +14,8 @@ KSFT_DIR = (Path(__file__).parent / "../../../..").resolve()
+     from net.lib.py import EthtoolFamily, NetdevFamily, NetshaperFamily, \
+         NlError, RtnlFamily
+     from net.lib.py import CmdExitFailure
+-    from net.lib.py import bkg, cmd, defer, ethtool, fd_read_timeout, ip, \
++    from net.lib.py import bkg, cmd, bpftrace, defer, ethtool, \
++        fd_read_timeout, ip, \
+         rand_port, tool, wait_port_listen
+     from net.lib.py import fd_read_timeout
+     from net.lib.py import KsftSkipEx, KsftFailEx, KsftXfailEx
 
-diff --git a/fs/gfs2/sys.c b/fs/gfs2/sys.c
-index c3c8842920d2..77bd35b2f594 100644
---- a/fs/gfs2/sys.c
-+++ b/fs/gfs2/sys.c
-@@ -59,7 +59,7 @@ static struct kset *gfs2_kset;
- 
- static ssize_t id_show(struct gfs2_sbd *sdp, char *buf)
- {
--	return snprintf(buf, PAGE_SIZE, "%u:%u\n",
-+	return sysfs_emit(buf, "%u:%u\n",
- 			MAJOR(sdp->sd_vfs->s_dev), MINOR(sdp->sd_vfs->s_dev));
- }
- 
-@@ -68,7 +68,7 @@ static ssize_t status_show(struct gfs2_sbd *sdp, char *buf)
- 	unsigned long f = sdp->sd_flags;
- 	ssize_t s;
- 
--	s = snprintf(buf, PAGE_SIZE,
-+	s = sysfs_emit(buf,
- 		     "Journal Checked:          %d\n"
- 		     "Journal Live:             %d\n"
- 		     "Journal ID:               %d\n"
-@@ -140,7 +140,7 @@ static ssize_t status_show(struct gfs2_sbd *sdp, char *buf)
- 
- static ssize_t fsname_show(struct gfs2_sbd *sdp, char *buf)
- {
--	return snprintf(buf, PAGE_SIZE, "%s\n", sdp->sd_fsname);
-+	return sysfs_emit(buf, "%s\n", sdp->sd_fsname);
- }
- 
- static ssize_t uuid_show(struct gfs2_sbd *sdp, char *buf)
-@@ -150,7 +150,7 @@ static ssize_t uuid_show(struct gfs2_sbd *sdp, char *buf)
- 	buf[0] = '\0';
- 	if (uuid_is_null(&s->s_uuid))
- 		return 0;
--	return snprintf(buf, PAGE_SIZE, "%pUB\n", &s->s_uuid);
-+	return sysfs_emit(buf, "%pUB\n", &s->s_uuid);
- }
- 
- static ssize_t freeze_show(struct gfs2_sbd *sdp, char *buf)
-@@ -158,7 +158,7 @@ static ssize_t freeze_show(struct gfs2_sbd *sdp, char *buf)
- 	struct super_block *sb = sdp->sd_vfs;
- 	int frozen = (sb->s_writers.frozen == SB_UNFROZEN) ? 0 : 1;
- 
--	return snprintf(buf, PAGE_SIZE, "%d\n", frozen);
-+	return sysfs_emit(buf, "%d\n", frozen);
- }
- 
- static ssize_t freeze_store(struct gfs2_sbd *sdp, const char *buf, size_t len)
-@@ -194,7 +194,7 @@ static ssize_t freeze_store(struct gfs2_sbd *sdp, const char *buf, size_t len)
- static ssize_t withdraw_show(struct gfs2_sbd *sdp, char *buf)
- {
- 	unsigned int b = gfs2_withdrawing_or_withdrawn(sdp);
--	return snprintf(buf, PAGE_SIZE, "%u\n", b);
-+	return sysfs_emit(buf, "%u\n", b);
- }
- 
- static ssize_t withdraw_store(struct gfs2_sbd *sdp, const char *buf, size_t len)
-@@ -397,7 +397,7 @@ static struct kobj_type gfs2_ktype = {
- static ssize_t proto_name_show(struct gfs2_sbd *sdp, char *buf)
- {
- 	const struct lm_lockops *ops = sdp->sd_lockstruct.ls_ops;
--	return sprintf(buf, "%s\n", ops->lm_proto_name);
-+	return sysfs_emit(buf, "%s\n", ops->lm_proto_name);
- }
- 
- static ssize_t block_show(struct gfs2_sbd *sdp, char *buf)
-@@ -408,7 +408,7 @@ static ssize_t block_show(struct gfs2_sbd *sdp, char *buf)
- 
- 	if (test_bit(DFL_BLOCK_LOCKS, &ls->ls_recover_flags))
- 		val = 1;
--	ret = sprintf(buf, "%d\n", val);
-+	ret = sysfs_emit(buf, "%d\n", val);
- 	return ret;
- }
- 
-@@ -437,7 +437,7 @@ static ssize_t wdack_show(struct gfs2_sbd *sdp, char *buf)
- {
- 	int val = completion_done(&sdp->sd_wdack) ? 1 : 0;
- 
--	return sprintf(buf, "%d\n", val);
-+	return sysfs_emit(buf, "%d\n", val);
- }
- 
- static ssize_t wdack_store(struct gfs2_sbd *sdp, const char *buf, size_t len)
-@@ -459,7 +459,7 @@ static ssize_t wdack_store(struct gfs2_sbd *sdp, const char *buf, size_t len)
- static ssize_t lkfirst_show(struct gfs2_sbd *sdp, char *buf)
- {
- 	struct lm_lockstruct *ls = &sdp->sd_lockstruct;
--	return sprintf(buf, "%d\n", ls->ls_first);
-+	return sysfs_emit(buf, "%d\n", ls->ls_first);
- }
- 
- static ssize_t lkfirst_store(struct gfs2_sbd *sdp, const char *buf, size_t len)
-@@ -492,7 +492,7 @@ static ssize_t lkfirst_store(struct gfs2_sbd *sdp, const char *buf, size_t len)
- static ssize_t first_done_show(struct gfs2_sbd *sdp, char *buf)
- {
- 	struct lm_lockstruct *ls = &sdp->sd_lockstruct;
--	return sprintf(buf, "%d\n", !!test_bit(DFL_FIRST_MOUNT_DONE, &ls->ls_recover_flags));
-+	return sysfs_emit(buf, "%d\n", !!test_bit(DFL_FIRST_MOUNT_DONE, &ls->ls_recover_flags));
- }
- 
- int gfs2_recover_set(struct gfs2_sbd *sdp, unsigned jid)
-@@ -550,18 +550,18 @@ static ssize_t recover_store(struct gfs2_sbd *sdp, const char *buf, size_t len)
- static ssize_t recover_done_show(struct gfs2_sbd *sdp, char *buf)
- {
- 	struct lm_lockstruct *ls = &sdp->sd_lockstruct;
--	return sprintf(buf, "%d\n", ls->ls_recover_jid_done);
-+	return sysfs_emit(buf, "%d\n", ls->ls_recover_jid_done);
- }
- 
- static ssize_t recover_status_show(struct gfs2_sbd *sdp, char *buf)
- {
- 	struct lm_lockstruct *ls = &sdp->sd_lockstruct;
--	return sprintf(buf, "%d\n", ls->ls_recover_jid_status);
-+	return sysfs_emit(buf, "%d\n", ls->ls_recover_jid_status);
- }
- 
- static ssize_t jid_show(struct gfs2_sbd *sdp, char *buf)
- {
--	return sprintf(buf, "%d\n", sdp->sd_lockstruct.ls_jid);
-+	return sysfs_emit(buf, "%d\n", sdp->sd_lockstruct.ls_jid);
- }
- 
- static ssize_t jid_store(struct gfs2_sbd *sdp, const char *buf, size_t len)
-@@ -626,7 +626,7 @@ static struct attribute *lock_module_attrs[] = {
- 
- static ssize_t quota_scale_show(struct gfs2_sbd *sdp, char *buf)
- {
--	return snprintf(buf, PAGE_SIZE, "%u %u\n",
-+	return sysfs_emit(buf, "%u %u\n",
- 			sdp->sd_tune.gt_quota_scale_num,
- 			sdp->sd_tune.gt_quota_scale_den);
- }
-@@ -679,7 +679,7 @@ static struct gfs2_attr tune_attr_##name = __ATTR(name, 0644, show, store)
- #define TUNE_ATTR_2(name, store)                                              \
- static ssize_t name##_show(struct gfs2_sbd *sdp, char *buf)                   \
- {                                                                             \
--	return snprintf(buf, PAGE_SIZE, "%u\n", sdp->sd_tune.gt_##name);      \
-+	return sysfs_emit(buf, "%u\n", sdp->sd_tune.gt_##name);      \
- }                                                                             \
- TUNE_ATTR_3(name, name##_show, store)
- 
--- 
-2.34.1
-
+and with that I think it should be possible to make pylint clean on the
+past patch?
 
