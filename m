@@ -1,196 +1,181 @@
-Return-Path: <linux-kernel+bounces-701559-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-701561-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id AE6B1AE7662
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Jun 2025 07:25:41 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8B592AE766D
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Jun 2025 07:31:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5B7743AB728
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Jun 2025 05:25:16 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7ECB57A93CF
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Jun 2025 05:29:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5F4311DF991;
-	Wed, 25 Jun 2025 05:25:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9E7A81E1DEC;
+	Wed, 25 Jun 2025 05:30:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="fwwrhAhM"
-Received: from NAM11-DM6-obe.outbound.protection.outlook.com (mail-dm6nam11on2059.outbound.protection.outlook.com [40.107.223.59])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ScHwaS5W"
+Received: from mail-pf1-f177.google.com (mail-pf1-f177.google.com [209.85.210.177])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 63E8715442A;
-	Wed, 25 Jun 2025 05:25:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.223.59
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750829132; cv=fail; b=AWeZ2iGki7bzAsSrK0G6N2px3SYmsS6viL5KMR9TSS8TATemjHZU10KSxKIvK9UwXNfSsYU40yg0YGU6MOZZ6/gBySs2ejog7QxkmztPD9FI01RxO3sd2jJpUVxR5uMV41Vm4qCR+FhmF5H6Pjul+f0hTQslbYart+TVWvTFsxA=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750829132; c=relaxed/simple;
-	bh=TwDe/SwQExH45BHMSoRiSK6gGdYoyftdHARTU4KsBu0=;
-	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=Ts61YsO/taDHp73F5ZJWNJzFRgmCOMXiWXJJ45xt5xlm52JEwUuGxGq66kR7pyJ6TtIVGh/oNh5ZVwBxaVdRKOXteLeKoAtvLQfopeELA/H/lKNjjO5Ngh7niSsHULXy7DiuAuxfH35OKH01zL4XXJfd9I0kUAXgC63pB2AQIO0=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=fwwrhAhM; arc=fail smtp.client-ip=40.107.223.59
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=Zw/+urHzcDlRyzKOxUgrASs2IJGajCGGx7SZs5t9dMBXcE45HsDfqRL8EprELnd7c+TgN9OnlgADgYNfxj3VIj+c/muf0a2OFhjATDtGDuX7KVRPzQfB34qedjVAgL/h7oGtlBvlvnsCFrh9u4V/Mnm+KKRhAuCkK0wTpN7C+fTnOoTh6s4XnY+ft2tKEOILElN9YQ0EAMJNO+K/BwwfhA9u9K1/So5KEWC4GDSzQfXTHcfHzJpnFRBQZ4IYQvG8UEAJHdwlXHZz/1y4MmxEagzVyKzNVhA1+zk4yAcXAXuDDV8UeHqLNxC2/3gXiDX6htofKe0Un0DBz+2S8nXVqg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=3DIkfbf3v2wrWflH1V0gAoj9GwlQ2cy1PStqMrYYCPQ=;
- b=YJ9Ud0yXiDUnzskmwD8dRlDsOX4KhAUoeV/kOsL8lQuWmpZpbNEuX+4uy4Qp2b1rorfYBHuAnSAxgwwjB1iRXN/60mJaMRiXDf4yxoi83UpQmoIAGe7Z4U/gAUdd4RLoRhQC3/+B2DOLBFUrm98aNYUSwgSvoJj2FfXNSdJ9yD1ALVdHgRLmHa4OUQsrm+hMMQEjYPC64z5yWdYdZLDwilEO9uVhdF2V2+ZdX6snIU7T3SfuS2If5NCdei8O21YbXw1Rvd6+Phx5ih5068zDS0ezyDe8GuZBh8vBYluIZZalZF8cyPU/Sy5RGUUA/tH7NZjYAjaL4gDPh9FUkyPgaw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
- header.d=amd.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=3DIkfbf3v2wrWflH1V0gAoj9GwlQ2cy1PStqMrYYCPQ=;
- b=fwwrhAhMZDHt+CqcmMWpzuM0ypPPB05qFUonzME/AI0t6OAoH1xUC3e573mXD5PfShQy4yLr9bDkJ4UgFD+cP5p4t7RcasPfkHyeTnMmIqzYuGf7Jj8d/fQ0Kbf/iMRxBVzc7e5F6ycEQ28ZUCZsKPa7NaH/2KA7QQhDtJ+Ix1E=
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=amd.com;
-Received: from SJ5PPFF6E64BC2C.namprd12.prod.outlook.com
- (2603:10b6:a0f:fc02::9aa) by SA1PR12MB9004.namprd12.prod.outlook.com
- (2603:10b6:806:388::7) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8835.28; Wed, 25 Jun
- 2025 05:25:27 +0000
-Received: from SJ5PPFF6E64BC2C.namprd12.prod.outlook.com
- ([fe80::40bb:ae48:4c30:c3bf]) by SJ5PPFF6E64BC2C.namprd12.prod.outlook.com
- ([fe80::40bb:ae48:4c30:c3bf%8]) with mapi id 15.20.8722.031; Wed, 25 Jun 2025
- 05:25:27 +0000
-Message-ID: <91554c83-a7d6-4e5a-a9a0-32b6d2653cbc@amd.com>
-Date: Wed, 25 Jun 2025 10:55:20 +0530
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] KVM: guest_memfd: Remove redundant kvm_gmem_getattr
- implementation
-To: Sean Christopherson <seanjc@google.com>,
- Ackerley Tng <ackerleytng@google.com>
-Cc: pbonzini@redhat.com, kvm@vger.kernel.org, linux-kernel@vger.kernel.org,
- bharata@amd.com, tabba@google.com
-References: <20250602172317.10601-1-shivankg@amd.com>
- <diqzv7pdq5lc.fsf@ackerleytng-ctop.c.googlers.com>
- <aFsDGvK98BRXOu1h@google.com>
-Content-Language: en-US
-From: Shivank Garg <shivankg@amd.com>
-In-Reply-To: <aFsDGvK98BRXOu1h@google.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: PN2P287CA0008.INDP287.PROD.OUTLOOK.COM
- (2603:1096:c01:21b::13) To IA0PPFDC28CEE69.namprd12.prod.outlook.com
- (2603:10b6:20f:fc04::be8)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8D380800;
+	Wed, 25 Jun 2025 05:30:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.177
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1750829456; cv=none; b=qdBK07c3rxOhmWZVK0/9CuPOTsvo0KHiKmZHmCrhONlhXK1dNKe9QF+KuYcik6YAfBm41xIKPrfokQtaNqAK9NrjJu7QSBKJdbYKCP9SC7Eb++9DTJOuPEEAGB2Tr/wegHCxb07Q3i6O9RiTX58hDyn7xdCOHh73xOUnJFBX13Q=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1750829456; c=relaxed/simple;
+	bh=qkqTrWqvL045MNwIzcxOuCzXWF8cU9oUhMgOHUeD7+I=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=MAaQDSAX/JB412XcUEMMau+whKUHQdiRsLJ8v18bsoIz/vc196MO8S6h/hjiOB1reK3WlbB9P9M9gI3SRnZduY28lkHxjIHuxRtLYaKmRNUVciaRRn8sjoT/aGl5HQYyK5t+axyxxYOmC/mhwtQCqV3pELdkZYTqAWT1Pf3N9XE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ScHwaS5W; arc=none smtp.client-ip=209.85.210.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f177.google.com with SMTP id d2e1a72fcca58-7490702fc7cso615379b3a.1;
+        Tue, 24 Jun 2025 22:30:54 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1750829454; x=1751434254; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=3evY/iE1wXVw/hvubL4CLnB0sjjyjXrMSBwjFohfH+0=;
+        b=ScHwaS5WDUL3b0jbCfj7OTEn0t8mq7YOMzZ5nOGjkjuSX3GVRSta7Uv9q8zdHKkCWh
+         MNmF+KdDHKpFoj2yBnPa5Eobj4gOP4qYECpIKx8/FxtTNC1aEIdMO5vurw48LdLQ8HID
+         FyZnpLHMCw4eQE3QH8QMyodP8bowhPl/+hYMyE+tLcqTGR6lRY737+cnn30E3fNsgnBe
+         AhLfyu6+kci7CHRWsULn1gFqwX/JzI6em7Ugb0SM7azvskuwYTlZ7BNwLks1bv5E/0N4
+         dknq+d+SbXfSZeDT7wD0K9IWyE2HqFRybdEB06ouRI9MSXbb13bzEtgupNvWaoENho5A
+         d9rg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1750829454; x=1751434254;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=3evY/iE1wXVw/hvubL4CLnB0sjjyjXrMSBwjFohfH+0=;
+        b=oSRXfmFemDtRhP5+TQmBngPMWehhvbAlgMfSdC05E4eFKpAZg53zOZwfi8n/Kh0jo+
+         uQ2ahV8FbnjEoKoED13gTQ5h/wWJMqMMMeTrpIYBgz+c7XN6HgsivvWhTypV5KmnJolv
+         3MTh+yc9cBmWZ82NBWDmv4loIwT8xDxtCgIipXGTw+Pj0P1iVnalFpqsqFGeZGcYetkz
+         pm0/wybwN6WE82BeT0UrThtiHg6Tnz2yLy45n1hOpDUim7tLhMKvuiJp+PjrPcw14afv
+         b6naTKDBbGAlyE+uCbBrjKTY8ftzG1fZlMLJdOby3DkXukRj2cpFygZR7NWjb1lXkhiJ
+         iT/A==
+X-Forwarded-Encrypted: i=1; AJvYcCVeytrn1MLiRtDx81WoLTZH4k7J5Zb2RYM+lpff8wxgZOF6LmMpnUGd6AkR6vR7h0VAZc830XT18dLiueQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw+6a3esO4G0486I5cj64Q1LsFTfkic8y6WgCHqH2RTOZC1IRQh
+	HyoxwFJRNJgfYxSa+RmKpwLbkJsGC9DrCF1PJ1FWdLA5CRQDLvqzRfYd
+X-Gm-Gg: ASbGncsr//hnj3mZXZbR7dYNkZQeBpBRDymA74tgnjK996q+YuX2EXN6tKRGpThQX3S
+	euIR0qByObHKrJp22xNOdEWat/57oOspMk+0pDXNCR0nDxEyWmFtTTuLhhnpcBUYYsjuXpPiQxm
+	aVq8erv5mKq9tJRniYse84xniFiFb8fPEWzungJlpVjHGNLhKBiHItZoeSmtMfScovU2+aO2e+y
+	f3FycFp85e5T0wdt9OKI5xNXScxzVjwI3GkTiH8uYTZgRJ56DpBHHoxF8KwWfUf2YhY4nCDd6bD
+	7eX4C7+Ap/0t7uq2vKJmCorChvr4/1HDXO93x+HaztdC2H0XQiDoLQdC7swxQQ==
+X-Google-Smtp-Source: AGHT+IHBdzLEkklY0D9WmBJ64Xf7XejTse4UFiLRQR7hUrfFiqMI5K/Q7/CZsR5GOmtfYhbLVMFxmw==
+X-Received: by 2002:a05:6300:8e1b:b0:220:81e2:eae4 with SMTP id adf61e73a8af0-22081e2eaf6mr1165303637.39.1750829453617;
+        Tue, 24 Jun 2025 22:30:53 -0700 (PDT)
+Received: from deliz-1.. ([154.91.3.20])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-749b5e21466sm3297606b3a.49.2025.06.24.22.30.51
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 24 Jun 2025 22:30:53 -0700 (PDT)
+From: Deli Zhang <deli.zhang21th@gmail.com>
+To: michael.chan@broadcom.com
+Cc: netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Deli Zhang <deli.zhang21th@gmail.com>
+Subject: [PATCH] bnxt_en: Add parameter disable_vf_bind
+Date: Wed, 25 Jun 2025 13:30:05 +0800
+Message-ID: <20250625053005.79845-1-deli.zhang21th@gmail.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: SJ5PPFF6E64BC2C:EE_|SA1PR12MB9004:EE_
-X-MS-Office365-Filtering-Correlation-Id: 6f1ff8f8-39cd-4ba1-055f-08ddb3a8b0d6
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|376014|1800799024|366016;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?MHNUSG9FcnRkU3p1c0ZQQ2JFRDVwV2VmbVNCZW5CeDY1ZkdDbkdWNHhPVGZO?=
- =?utf-8?B?RTBBT1M1a09uOCs4Uys3VHdkbHoxN1NEZkNuMkRlQUZjVGhWcDdkNFZsdVF5?=
- =?utf-8?B?TjNhSGhML003c1k4dVUvczdkc1ZQa2xUVWVuNmNsbzI2TGVRRDFFMzdGVWVU?=
- =?utf-8?B?enk0TTcwRmIveVU1Vno4TDh5bXlnOG9lQU54K1BJVE9DRThRMG5BWkhHQU0y?=
- =?utf-8?B?WFJ0UDZ4dEZQQ21BM21Kb1kyMHR4bTNtNHVJOWdJRnkveThHMkxDaS9nZXdH?=
- =?utf-8?B?VDdnMGpTbXZNdTdRZ2tzcXRnRnloUTA4MUF6UWdSWTBkWjJPaFlqMnkxcFR3?=
- =?utf-8?B?T2tJWHRpSUM3SXpXRnY2Ui9QTEM3cm1EWDhEZ3h6a2NleVFWVkY5Q2lOYm8z?=
- =?utf-8?B?bkh2TC9CVUo1U3ltYitjRHVpMk9UYUJSa2VNUDE5MjJnMlpENXlkbVNRdzhy?=
- =?utf-8?B?cXhlS1VNTmE3MCtWRy9PSjJXYVFDQ2NoSXBzUUZzSSt6OEJwUnVHUjgxclJW?=
- =?utf-8?B?UmNTbTFqNXhUMEdyR0dKbFlyeExCV0NqallXcTE2eHp2enhGSUt5UXJpbXR5?=
- =?utf-8?B?WHgwTHMzT0FKQ2p1TVcvYXdvcmNoaVJRM0JJTG44WXY0VnZiMGhWNUtFN3Vm?=
- =?utf-8?B?SVprWWd2R29MclVjREU4cW1TOXk5dlFIaG5ubXF0amdTSDZBV0VZK2xkbU1H?=
- =?utf-8?B?NUV6VlA1bWFHcTQ3a2RjTHd0SFo2NkNobm1BZ0xmSm5rbkgwTFpob3dTT0Vz?=
- =?utf-8?B?RkUwL2xGUTRrRkpYT0MzOTZTK2hZZUhNakxRQVBoY0N2S2FGbys5UThwbWU2?=
- =?utf-8?B?N3RUbWpLZHpvYTF5N1c3bXBEa1d3K1BlWnMwempROGQ3L0czZXVjZVhzVGNE?=
- =?utf-8?B?VVk0R1pybGwrMWJBbXFMenNCNGY5RkhuN2Fock9NbTNCTm8wTEt3TGxrT3ls?=
- =?utf-8?B?cGFZa1hWSUVjVUtNa2hNS2UybldIUCs0SDRaZW5zL0xmY1lzYzlSQmx2ejB0?=
- =?utf-8?B?SVBZYWlJRUd1VUJzWERvODRXMmhuMDJDa3l2amRhSCs4eU9BR2hDN3kvUlNy?=
- =?utf-8?B?MXJ3K3Urekcwam8rMGdXMEJmRjQzWnVweUJQNWNDcWhqR2toODI3bkp1Y2Uv?=
- =?utf-8?B?d2NSQTd4Mk9XbzhJWWtmN3RYczUyMWdjNGFaLy9GZHRwMWcrR2ZrVmNNNHZq?=
- =?utf-8?B?TTk1U2srWS96Q0JSSU4vTU1nclJMYUNOT1JKcnhuNEpKMlFrMEQ3cCtKNnVH?=
- =?utf-8?B?MStHREFBaEVLWjFSWmVOU1B2aDdiMDVrb25kZTdKa0x1cjEyTTM1TVc4bVNq?=
- =?utf-8?B?Y0gxMVRXbnIybmV2Y3NnV0Y4Z3M3R0t5ODFuL2IyUFQzTHN3NVc3eUkxSkUy?=
- =?utf-8?B?L1dqcTNSRktVUTloeTdCRm9WaS9xTVkwbUVKUllxZ0JHbWtpd2xlUXBmekQy?=
- =?utf-8?B?SHJZTFNveEN5MEUrbmN0eDE1Nk5XYnJtUG1mYzFvZlFZQVhneG1yT2U0UFFa?=
- =?utf-8?B?QklHTFpHRjNpT1dqN0gzTXJ4WHh1c3Jla3I5T0QwVHpWc0FyK3UwNkI4VG1Q?=
- =?utf-8?B?V3EreHZmcysxTFRwQS9LaGduTWxBQVdpUVZNbEQvMjEvczJpQno1dUNMMm1F?=
- =?utf-8?B?d1JlYWs4dVBMUVlKVUIvR0hkTkp0WGhsVnpqR0VNc1FIamh2NTJ3MThoYXpn?=
- =?utf-8?B?YXBQckZaTG1pTnlQQU4ybU83aTQ0WlVzcWkwSVdkOVVxbmplbHRscmRuaGw2?=
- =?utf-8?B?bFY0T090eFR0MFJTcHNNajBkRHFMNjFYT3lDaXowSGNoU1lnWEdURjFGakRW?=
- =?utf-8?B?OHBZYVlkKy9oR3VuMkdpOTN5Z0crMVpDb3dEc1Y5VVgzajFrVkZVYWpwT0cr?=
- =?utf-8?B?OEhvK1pHSVE4SyszdjNqSGhhci8zL0NwZWw0K0M3bTNMOXF1TkRubnBoM1Vs?=
- =?utf-8?Q?Pub8k9gsip4=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SJ5PPFF6E64BC2C.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(1800799024)(366016);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?cFFPaklNd0crbFRkV280b0VxQTNoZ1VpMzJWbjJ5M293YTdIbFB1NVZjWEZz?=
- =?utf-8?B?dXdPQlZQRmlnSWtzeWp0MG4vemdxVTJPRnBVVVkraTkwb0hHcngrWFljL2I0?=
- =?utf-8?B?YVFpdDBuT0d1SGZFVmVCeXVnVHlqTm40WHcwcGM0eDI5OGpXOVQyc05qMGJ2?=
- =?utf-8?B?RHF1U1FmdWoySGFKYS9sSk8ybWdiK01aeWVXRmtCMVY5ZHhnZWt4RSt1K2VI?=
- =?utf-8?B?bUxrRS9sTUZLN1luZjlKejdUTzVZUDh6cWtOS3RrWC9kZk41SnUzQ2RrU21P?=
- =?utf-8?B?MW16VjhPdWJJUmVtOVVOVjc2RmJWZXVhY24rSlpiUFhXRWVsalVpem1pTUxv?=
- =?utf-8?B?a0FuZDY3bCtubXNydjBmR0ljNUdmTWxvRDNNaUlBclZVM3hVclBNYlk0Rjgw?=
- =?utf-8?B?Rjh6dzlrcnp4TmFKaE5KQUlETHNiYWFqRkxxelNUdmliWlB4bnZMaW04d2R6?=
- =?utf-8?B?SVN3WWl2Q0FERjQ2d0hqQzZRVHRxMTQ0U3R6RWYyVjlrdStDYlE2dzhtbVRD?=
- =?utf-8?B?TWw5QzhRb1V5ZEI3WW9QQjFqSCt0dHZyMHl2cHVnWFFIQTZib2d6RW9XdWJE?=
- =?utf-8?B?TE5CLzROU29ZbVBPV3lObkZ2SnhiK3Rsa2NvM0YwM2MzNHFBTDlIanhwUFdw?=
- =?utf-8?B?bzFmMUlyU3EzUllrenMzc1FjWjlCUFN2elB5a2ZLb2N0ZGxzU1lRQnVkNFhR?=
- =?utf-8?B?UjNxZ1QyQ2drKzROVVQrYTJnMVgrYWVDTGlRVzJhUjJNcW1nRDd1bjV1MFMz?=
- =?utf-8?B?WjlySGVXM0loTnpjdFBXaXgxSkJ3QmlOQTBBeG82Lzd0NVhRY1pNdTN1d0Nt?=
- =?utf-8?B?OExYcmtmMFhQeDk2MFM1MVdZenZSTDFORVJ2Um1FK1krNFpHTUl3SUkxQ3ZP?=
- =?utf-8?B?UERZY1dqMjkrMU0yTzFaNjVxcUNnL2xOSmZwUFE0NXFEYUwvOXpPSWJkOWla?=
- =?utf-8?B?SXRjRHFHUjVvcHFOWS8zVVpTbnFRUTZPcHM5RURLSFJJRVBqTnNJZkFXMm1u?=
- =?utf-8?B?RExRQ01EYTc2ZCtVbzRvOGU1YzAvMmFJdTBWUjJNclRJOTI0RzRzQnhqUTlT?=
- =?utf-8?B?b2tQRzZhd290Ym8vNGgvRFpUeHlqb3lueTFjdU94V3k5a2VJZGlTOFpleEQ0?=
- =?utf-8?B?N21GRmQ0OGpjRXJJTlAzMnhKaFpHOUV3VUxCb2FCTVduaEJlK0RhMEZZSnRG?=
- =?utf-8?B?L0hBQTQ3bVluTUtmR0QwTG1jOWNxZFZDdnphYWQzalZoaXMzMnR0L2pGNms1?=
- =?utf-8?B?c0tmM1A1d2hIM2d0TnR4MzFPSnBHZmFYR2JMWm5CNXRzYU5VTXJ6SWNuLzFW?=
- =?utf-8?B?S09HczV6WWFnOGZweittZGtiZlZuZ2hpd3VEcVk0MS9kN0M3bExRaWlkSTMy?=
- =?utf-8?B?eWZTYzZFeHY0cnJodTJ1YkJQWlJveHF4eEhVVUsrZ3NXT2hkSlJlNktYZkZR?=
- =?utf-8?B?d1VpR1JIVS9lWk1xZFd1a2Jqc3ppRHVxOWRkR2FKaDBwd3N1Sno2NkZpZ1JO?=
- =?utf-8?B?cHg0aWpRRTVLVWRURlEwTnVrRWViYm5jaGRDNUlvdnVpcXBTcFlxUjE1WUpX?=
- =?utf-8?B?UTJYR1pzNVZLS0ZxUFM4NmltUmxxcEZ2Q3RBUVdMeGxMRkZnbnc5N3RQeTZM?=
- =?utf-8?B?NEsxR095QWE5SlVTWnNmMHpydGVhcHNjMllPR1pVVGFUcWsvSmJxQnZ3aHdP?=
- =?utf-8?B?ZEhnQldud2xYSUdzK21MQkJoU1hjZkYvZk94dzJmU1VJeHdvWnVmVVIzYUNL?=
- =?utf-8?B?Z1Ftczk5V0lpd25RTlJFVTlGeUtqbTdlMUxBNEEzdC84cXR2Z0FCSFVHd0RE?=
- =?utf-8?B?QzltQzg5VlRCbVRiV3VleXowSlU4ZUNZc3ArNEMyamRFMXVpNGZoNFJQS3Rt?=
- =?utf-8?B?eW1pNXlOMGdXR25HamdXeGJ5R011enlnY2tSYWNqVEZibUY4UWRBckEwVGJY?=
- =?utf-8?B?VFFEQTFXSk9FY3FVVEZqd2F2RkRqalltbDMxTjMwdG9IYW5QTysveVEyV3FU?=
- =?utf-8?B?eFpkVm1PS1FvZ2dxYkplbjMzNk1KSDZwUGlzZEVtbHVaQmxEVE0rL2l3Q21y?=
- =?utf-8?B?Ymw3T25DYW9aUStwVEZqV3ZNczhuOGdBSGMvUVBHajdUUFZqb3hhRnVYblVh?=
- =?utf-8?Q?4Ot4Re20w20Mb8/u3D3Wo364p?=
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 6f1ff8f8-39cd-4ba1-055f-08ddb3a8b0d6
-X-MS-Exchange-CrossTenant-AuthSource: IA0PPFDC28CEE69.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 25 Jun 2025 05:25:27.7335
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: f5YLtg0s/9p8km8Qm/CwfoSVTK/DI5cauMQO6lWDHs+kWqXfr7B5os4DWqFhsKOadNSOS/RF14eb74WUH22NiA==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SA1PR12MB9004
+Content-Transfer-Encoding: 8bit
 
+In virtualization, VF is usually not bound by native drivers, instead
+should be passthrough to VM. Most PF and VF drivers provide separate
+names, e.g. "igb" and "igbvf", so that the hypervisor can control
+whether to use VF devices locally. The "bnxt_en" driver is a special
+case, it can drive both PF and VF devices, so here add a parameter
+"disable_vf_bind" to allow users to control.
 
+Signed-off-by: Deli Zhang <deli.zhang21th@gmail.com>
+---
+ drivers/net/ethernet/broadcom/bnxt/bnxt.c | 41 +++++++++++++++++++++--
+ 1 file changed, 39 insertions(+), 2 deletions(-)
 
-On 6/25/2025 1:27 AM, Sean Christopherson wrote:
-> On Mon, Jun 02, 2025, Ackerley Tng wrote:
->>
->> Reviewed-By: Ackerley Tng <ackerleytng@google.com>
-> 
-> Ackerley,
-> 
-> FYI, your mail doesn't appear to have made it to the lists, e.g. isn't available
-> on lore.  I don't see anything obviously wrong (though that means almost nothing).
-> Hopefully it's just a one-off glitch?
+diff --git a/drivers/net/ethernet/broadcom/bnxt/bnxt.c b/drivers/net/ethernet/broadcom/bnxt/bnxt.c
+index 2cb3185c442c..89897182a71d 100644
+--- a/drivers/net/ethernet/broadcom/bnxt/bnxt.c
++++ b/drivers/net/ethernet/broadcom/bnxt/bnxt.c
+@@ -88,6 +88,12 @@ MODULE_DESCRIPTION("Broadcom NetXtreme network driver");
+ 
+ #define BNXT_TX_PUSH_THRESH 164
+ 
++#ifdef CONFIG_BNXT_SRIOV
++static bool disable_vf_bind;
++module_param(disable_vf_bind, bool, 0);
++MODULE_PARM_DESC(disable_vf_bind, "Whether to disable binding to virtual functions (VFs)");
++#endif
++
+ /* indexed by enum board_idx */
+ static const struct {
+ 	char *name;
+@@ -144,7 +150,12 @@ static const struct {
+ 	[NETXTREME_E_P7_VF] = { "Broadcom BCM5760X Virtual Function" },
+ };
+ 
+-static const struct pci_device_id bnxt_pci_tbl[] = {
++/* The boundary between PF and VF devices in bnxt_pci_tbl */
++#ifdef CONFIG_BNXT_SRIOV
++#define FIRST_VF_DEV_ID 0x1606
++#endif
++
++static struct pci_device_id bnxt_pci_tbl[] = {
+ 	{ PCI_VDEVICE(BROADCOM, 0x1604), .driver_data = BCM5745x_NPAR },
+ 	{ PCI_VDEVICE(BROADCOM, 0x1605), .driver_data = BCM5745x_NPAR },
+ 	{ PCI_VDEVICE(BROADCOM, 0x1614), .driver_data = BCM57454 },
+@@ -196,7 +207,7 @@ static const struct pci_device_id bnxt_pci_tbl[] = {
+ 	{ PCI_VDEVICE(BROADCOM, 0xd802), .driver_data = BCM58802 },
+ 	{ PCI_VDEVICE(BROADCOM, 0xd804), .driver_data = BCM58804 },
+ #ifdef CONFIG_BNXT_SRIOV
+-	{ PCI_VDEVICE(BROADCOM, 0x1606), .driver_data = NETXTREME_E_VF },
++	{ PCI_VDEVICE(BROADCOM, FIRST_VF_DEV_ID), .driver_data = NETXTREME_E_VF },
+ 	{ PCI_VDEVICE(BROADCOM, 0x1607), .driver_data = NETXTREME_E_VF_HV },
+ 	{ PCI_VDEVICE(BROADCOM, 0x1608), .driver_data = NETXTREME_E_VF_HV },
+ 	{ PCI_VDEVICE(BROADCOM, 0x1609), .driver_data = NETXTREME_E_VF },
+@@ -17129,10 +17140,36 @@ static struct pci_driver bnxt_pci_driver = {
+ #endif
+ };
+ 
++#ifdef CONFIG_BNXT_SRIOV
++static void bnxt_vf_bind_init(void)
++{
++	s32 idx;
++
++	if (!disable_vf_bind)
++		return;
++
++	for (idx = 0; bnxt_pci_tbl[idx].device != 0; idx++) {
++		if (bnxt_pci_tbl[idx].device == FIRST_VF_DEV_ID) {
++			/* Truncate off VF devices */
++			memset(&bnxt_pci_tbl[idx], 0, sizeof(struct pci_device_id));
++			pr_info("%s: Disabled VF binding, id table offset %u",
++				DRV_MODULE_NAME, idx);
++			return;
++		}
++	}
++
++	/* Should not reach here! */
++	pr_crit("%s: Unknown VF dev id %u", DRV_MODULE_NAME, FIRST_VF_DEV_ID);
++}
++#endif
++
+ static int __init bnxt_init(void)
+ {
+ 	int err;
+ 
++#ifdef CONFIG_BNXT_SRIOV
++	bnxt_vf_bind_init();
++#endif
+ 	bnxt_debug_init();
+ 	err = pci_register_driver(&bnxt_pci_driver);
+ 	if (err) {
+-- 
+2.47.0
 
-Hi Sean,
-
-I can find it on lore:
-https://lore.kernel.org/all/diqzv7pdq5lc.fsf@ackerleytng-ctop.c.googlers.com
-
-Thanks,
-Shivank
 
