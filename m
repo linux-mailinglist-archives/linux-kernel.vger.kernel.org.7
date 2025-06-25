@@ -1,131 +1,243 @@
-Return-Path: <linux-kernel+bounces-702078-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-702076-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id AA435AE7DD1
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Jun 2025 11:47:29 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 38CCAAE7DC0
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Jun 2025 11:46:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 556A33B2A3E
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Jun 2025 09:44:53 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8ADAA1677A9
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Jun 2025 09:44:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3944E29B20E;
-	Wed, 25 Jun 2025 09:39:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CB0FE29B228;
+	Wed, 25 Jun 2025 09:38:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="UIiGv3X1"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.16])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="b1hc0nf5"
+Received: from mail-vk1-f173.google.com (mail-vk1-f173.google.com [209.85.221.173])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B050A29A303;
-	Wed, 25 Jun 2025 09:39:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.16
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D196B27FB07
+	for <linux-kernel@vger.kernel.org>; Wed, 25 Jun 2025 09:38:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750844366; cv=none; b=ojVZW7egchYuiU4dpBHWxS1uVNBKqEVXEQaG6ANcLBG36ia/GZa11rZcqNqi7/tR5FuHkjAkUZQLI6Bn0GB7ygq8kRWRdmDFzVkQzE9wSzkCPOA8jaAQKU8700y7vmGPksESJEchM11sIXXAgDJcqEfHrJ1TRY0wCGHLufrM3tY=
+	t=1750844317; cv=none; b=NpLDSF0+ubDztR3ySjbiixxfqw0VZ+kxIMBMJMGUmF3x5N86tX8bhCqKH67Ctz7J7uwjs+BmoEG5vfSNbWZtfOvvxY3kHcSpyf4/sTJYObqQxrFD+ZpzcMuy737Q8XSyDzAEJuMNQbl7qkR/OC3DWlo75P6RpD/CE6u52EvT5/c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750844366; c=relaxed/simple;
-	bh=wsM2YbD+M0xXuq6ZAwS4w4/eJ5LnAfTL+ORhH1xoJ+Q=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=itOPafxRWVd6wRKL3rM5nzJ4cqkvJahUehEvoCK7QIGT7YLo3gXUQSLU29CrEG9iDrfxK+r2VGRh3dCCD7ewN3OCq4ytWr+wukQ03loEomyhhemvuIKxrNTEED29JlQWEwrsiv/PL5DMJ0kPUVlUfeAL4r74vVt1rlubbII1fXg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=UIiGv3X1; arc=none smtp.client-ip=192.198.163.16
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1750844364; x=1782380364;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=wsM2YbD+M0xXuq6ZAwS4w4/eJ5LnAfTL+ORhH1xoJ+Q=;
-  b=UIiGv3X1IswA68W5hOY6ktto4m1D5sRKjrcweHy6G0KMBOCr0tTnyZ+k
-   Lqy6bjfDN7aM9uWKHIcezttZ5ontMJP77PzMpojz8vDBIV3oYJL2kRpmj
-   HX5BDoM1CgE1K/4PxgMfIdcRAiQ+B2wKjS5+UmOQc/12GOLKrj3524mnx
-   QcKb24X+yeJqwCRb+S2dgmYNS5zrsqyCSgp+N8BExuJxA9ejZVu5HZKUp
-   tjEjfu7+ZSNgU5mJck4vWItWIPgCZ3aQffcuurAXiy/HhN6W0Zi2ZXRLO
-   PgsPHYEFiU/SJ/x1AumBFNPx+M3MyQNBn8KRdLW5blshHPDZs6riuywhT
-   A==;
-X-CSE-ConnectionGUID: RdDEEVQ2Q4icNfq7s4LX6Q==
-X-CSE-MsgGUID: Ua0aXaRSRZmG0FO3ZVc+mw==
-X-IronPort-AV: E=McAfee;i="6800,10657,11474"; a="40726608"
-X-IronPort-AV: E=Sophos;i="6.16,264,1744095600"; 
-   d="scan'208";a="40726608"
-Received: from orviesa010.jf.intel.com ([10.64.159.150])
-  by fmvoesa110.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 25 Jun 2025 02:39:23 -0700
-X-CSE-ConnectionGUID: rE6PHxq3SY6amVbIO6+R9Q==
-X-CSE-MsgGUID: UXE3rrreQwWkT/nXb7LPYg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.16,264,1744095600"; 
-   d="scan'208";a="151584247"
-Received: from lkp-server01.sh.intel.com (HELO e8142ee1dce2) ([10.239.97.150])
-  by orviesa010.jf.intel.com with ESMTP; 25 Jun 2025 02:39:18 -0700
-Received: from kbuild by e8142ee1dce2 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1uUMb5-000SyA-2S;
-	Wed, 25 Jun 2025 09:39:15 +0000
-Date: Wed, 25 Jun 2025 17:38:18 +0800
-From: kernel test robot <lkp@intel.com>
-To: Mario Limonciello <superm1@kernel.org>,
-	Bjorn Helgaas <helgaas@kernel.org>
-Cc: oe-kbuild-all@lists.linux.dev, Alex Deucher <alexander.deucher@amd.com>,
-	Christian =?iso-8859-1?Q?K=F6nig?= <christian.koenig@amd.com>,
-	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
-	Lukas Wunner <lukas@wunner.de>,
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	Maxime Ripard <mripard@kernel.org>,
-	Thomas Zimmermann <tzimmermann@suse.de>,
-	David Woodhouse <dwmw2@infradead.org>,
-	Lu Baolu <baolu.lu@linux.intel.com>, Joerg Roedel <joro@8bytes.org>,
-	Will Deacon <will@kernel.org>, Robin Murphy <robin.murphy@arm.com>,
-	Alex Williamson <alex.williamson@redhat.com>,
-	Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>,
-	dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
-	"(open list:INTEL IOMMU (VT-d))" <iommu@lists.linux.dev>,
-	linux-pci@vger.kernel.org, kvm@vger.kernel.org,
-	linux-sound@vger.kernel.org, Daniel Dadap <ddadap@nvidia.com>,
-	Mario Limonciello <mario.limonciello@amd.com>
-Subject: Re: [PATCH v5 7/9] PCI/VGA: Replace vga_is_firmware_default() with a
- screen info check
-Message-ID: <202506251749.fPKnHMH5-lkp@intel.com>
-References: <20250624203042.1102346-8-superm1@kernel.org>
+	s=arc-20240116; t=1750844317; c=relaxed/simple;
+	bh=jk4Hhh427Dopn8B/4mWSQYIGFRTAUvXboyajkL1+37o=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=apnk0fgMga+RsFJe1A2bI8SJKupek+SY1eGqbezHnZDrSvn+BARIHHlS9uprdhJOQhHpPXHE+52XpBIwsy7oLNbic7lkKQSM3IFdF1OstQV9T/rfx7ey/5GdR59H81BSXKWiagygsGTuEtKPSAXDGnSP7Sk9AyGl4xlM7ch3Hwo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=b1hc0nf5; arc=none smtp.client-ip=209.85.221.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-vk1-f173.google.com with SMTP id 71dfb90a1353d-531b4da8189so1484151e0c.1
+        for <linux-kernel@vger.kernel.org>; Wed, 25 Jun 2025 02:38:34 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1750844313; x=1751449113; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Ik/O3lKW8D4PX3b9RKMi5Pl8dRCbo+JtmwcqMh8DqL4=;
+        b=b1hc0nf53oD80hoYVnnpcZEp2egs/u2pkricymLmDGYC4SWI6kI/hK5mX0kqbUmZye
+         rjOBm43PPJi/u459coiZY2+7dqHTWgS37+u/lTHelKRyeVKMNjQJc/tJYLi/6nD6RjXX
+         J6E37QzFd+GwqHz7zI5qHiYSEF9zHRKgI17DhDm0XNv/dbMQsJqI2XdM8ORJepw9KPUT
+         OGwZSoCxjhioUm2Z4geyaHqa56xdm7El5X2f+W37k0rFHX73tMaVJEGF/gWfW6WxbsOm
+         6yxENUBzAdsn+4mnQh1GKzRiVyt6dG2S7T0blGUccAH3Re5UbejN7sk9VfE29c34HpLT
+         zmgw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1750844313; x=1751449113;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=Ik/O3lKW8D4PX3b9RKMi5Pl8dRCbo+JtmwcqMh8DqL4=;
+        b=B+Htk1eMDmdyJj23a3lqTCTYcfKJuhV6v/rKnPZwNxpQF8WS8ekveUbRfk2PkVLNu2
+         iFffW4Xv9g4OamJ7Hakjd1J6M3LbBmbqQD+0hEC51U0NMj9ChRDNBcvurxqxQGHBs/M+
+         CCxqo2iC3rmxSpV/zwmHva/1A5M7Nn5RURZBBTT36zohlW155r5uryknNtc6R6sQYjep
+         seAD6MZmcnmy7OgMf1rkRPKgU/BAUaRFq+txOYldMb0WxAy8YZ0d2chUFERHrxVN0gWb
+         Rz7JIE7koKJ0heELlzjoUUEW7usNvxu3hE96aGd2J5iqwyM/uAznHdNzVAECMCHT5O7C
+         VAWw==
+X-Forwarded-Encrypted: i=1; AJvYcCWhFcNhBzrbGBw0oNxj8bhYwvgITUQX5uxB4KwCb1KSG9mFa2xTOqj5XcS0fITmBrFQLuue6p8N76qFSCg=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxTWQTBlh+oc2uWEnrdppSofSg6rNsz2qnx0DCy2QMkEwMO4uGv
+	Wu/AhcBS+8sRjr9z/bjPv9d953QNF4bGntL4LdNfCdyfdUJ50zP4rO1tCMVzO34BJXhWNXWmt+j
+	Gt6+5/Qn/FlFIkFjhwKQPxjxNnEU+wm4=
+X-Gm-Gg: ASbGncv3CxWbeUIuMtYQzquIh1k/gP9rQYPK4ujol414qJh3W8C9u3q49fOe0oOV1Ju
+	dqkhmrxCFITmszjmZk7vr58EStpypJskMSqZJT718wQDHTcxXBfuszNLGF61FXTvEydpmRmrZk4
+	A/iBA5VWVamgynyxdHCpJjH/Q1K9doBEVxdSxgW+cRnXg=
+X-Google-Smtp-Source: AGHT+IHFsEjf8mVqrGJlOglZXBqK+LXUAHLKDnHRegX9xwHltPGn1BuflQtnpCujXSYlVduWzyct2ogezPY53n9zi2Q=
+X-Received: by 2002:a05:6122:2516:b0:530:81ac:51be with SMTP id
+ 71dfb90a1353d-532ef6cc1e4mr985532e0c.8.1750844313457; Wed, 25 Jun 2025
+ 02:38:33 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250624203042.1102346-8-superm1@kernel.org>
+References: <2c19a6cf-0b42-477b-a672-ed8c1edd4267@redhat.com> <20250624162503.78957-1-ioworker0@gmail.com>
+In-Reply-To: <20250624162503.78957-1-ioworker0@gmail.com>
+From: Barry Song <21cnbao@gmail.com>
+Date: Wed, 25 Jun 2025 21:38:21 +1200
+X-Gm-Features: Ac12FXwzgBA5qA6Bu1rSIUYx-JEmY2u59OAGcqCQlCXMv4jDK2aouZ9-YNF9zfQ
+Message-ID: <CAGsJ_4x+YaF3bVjMuNv2iJtdoD2-GgGsbJA__cpxb7U5YtK9ig@mail.gmail.com>
+Subject: Re: [PATCH v4 3/4] mm: Support batched unmap for lazyfree large
+ folios during reclamation
+To: Lance Yang <ioworker0@gmail.com>
+Cc: david@redhat.com, akpm@linux-foundation.org, baolin.wang@linux.alibaba.com, 
+	chrisl@kernel.org, kasong@tencent.com, linux-arm-kernel@lists.infradead.org, 
+	linux-kernel@vger.kernel.org, linux-mm@kvack.org, 
+	linux-riscv@lists.infradead.org, lorenzo.stoakes@oracle.com, 
+	ryan.roberts@arm.com, v-songbaohua@oppo.com, x86@kernel.org, 
+	ying.huang@intel.com, zhengtangquan@oppo.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hi Mario,
+On Wed, Jun 25, 2025 at 4:27=E2=80=AFAM Lance Yang <ioworker0@gmail.com> wr=
+ote:
+>
+> On 2025/6/24 23:34, David Hildenbrand wrote:
+> > On 24.06.25 17:26, Lance Yang wrote:
+> >> On 2025/6/24 20:55, David Hildenbrand wrote:
+> >>> On 14.02.25 10:30, Barry Song wrote:
+> >>>> From: Barry Song <v-songbaohua@oppo.com>
+> >> [...]
+> >>>> diff --git a/mm/rmap.c b/mm/rmap.c
+> >>>> index 89e51a7a9509..8786704bd466 100644
+> >>>> --- a/mm/rmap.c
+> >>>> +++ b/mm/rmap.c
+> >>>> @@ -1781,6 +1781,25 @@ void folio_remove_rmap_pud(struct folio *foli=
+o,
+> >>>> struct page *page,
+> >>>>    #endif
+> >>>>    }
+> >>>> +/* We support batch unmapping of PTEs for lazyfree large folios */
+> >>>> +static inline bool can_batch_unmap_folio_ptes(unsigned long addr,
+> >>>> +            struct folio *folio, pte_t *ptep)
+> >>>> +{
+> >>>> +    const fpb_t fpb_flags =3D FPB_IGNORE_DIRTY | FPB_IGNORE_SOFT_DI=
+RTY;
+> >>>> +    int max_nr =3D folio_nr_pages(folio);
+> >>>
+> >>> Let's assume we have the first page of a folio mapped at the last pag=
+e
+> >>> table entry in our page table.
+> >>
+> >> Good point. I'm curious if it is something we've seen in practice ;)
+> >
+> > I challenge you to write a reproducer :P I assume it might be doable
+> > through simple mremap().
+> >
+> >>
+> >>>
+> >>> What prevents folio_pte_batch() from reading outside the page table?
+> >>
+> >> Assuming such a scenario is possible, to prevent any chance of an
+> >> out-of-bounds read, how about this change:
+> >>
+> >> diff --git a/mm/rmap.c b/mm/rmap.c
+> >> index fb63d9256f09..9aeae811a38b 100644
+> >> --- a/mm/rmap.c
+> >> +++ b/mm/rmap.c
+> >> @@ -1852,6 +1852,25 @@ static inline bool
+> >> can_batch_unmap_folio_ptes(unsigned long addr,
+> >>       const fpb_t fpb_flags =3D FPB_IGNORE_DIRTY | FPB_IGNORE_SOFT_DIR=
+TY;
+> >>       int max_nr =3D folio_nr_pages(folio);
+> >>       pte_t pte =3D ptep_get(ptep);
+> >> +    unsigned long end_addr;
+> >> +
+> >> +    /*
+> >> +     * To batch unmap, the entire folio's PTEs must be contiguous
+> >> +     * and mapped within the same PTE page table, which corresponds t=
+o
+> >> +     * a single PMD entry. Before calling folio_pte_batch(), which do=
+es
+> >> +     * not perform boundary checks itself, we must verify that the
+> >> +     * address range covered by the folio does not cross a PMD bounda=
+ry.
+> >> +     */
+> >> +    end_addr =3D addr + (max_nr * PAGE_SIZE) - 1;
+> >> +
+> >> +    /*
+> >> +     * A fast way to check for a PMD boundary cross is to align both
+> >> +     * the start and end addresses to the PMD boundary and see if the=
+y
+> >> +     * are different. If they are, the range spans across at least tw=
+o
+> >> +     * different PMD-managed regions.
+> >> +     */
+> >> +    if ((addr & PMD_MASK) !=3D (end_addr & PMD_MASK))
+> >> +        return false;
+> >
+> > You should not be messing with max_nr =3D folio_nr_pages(folio) here at
+> > all. folio_pte_batch() takes care of that.
+> >
+> > Also, way too many comments ;)
+> >
+> > You may only batch within a single VMA and within a single page table.
+> >
+> > So simply align the addr up to the next PMD, and make sure it does not
+> > exceed the vma end.
+> >
+> > ALIGN and friends can help avoiding excessive comments.
+>
+> Thanks! How about this updated version based on your suggestion:
+>
+> diff --git a/mm/rmap.c b/mm/rmap.c
+> index fb63d9256f09..241d55a92a47 100644
+> --- a/mm/rmap.c
+> +++ b/mm/rmap.c
+> @@ -1847,12 +1847,25 @@ void folio_remove_rmap_pud(struct folio *folio, s=
+truct page *page,
+>
+>  /* We support batch unmapping of PTEs for lazyfree large folios */
+>  static inline bool can_batch_unmap_folio_ptes(unsigned long addr,
+> -                       struct folio *folio, pte_t *ptep)
+> +                                             struct folio *folio, pte_t =
+*ptep,
+> +                                             struct vm_area_struct *vma)
+>  {
+>         const fpb_t fpb_flags =3D FPB_IGNORE_DIRTY | FPB_IGNORE_SOFT_DIRT=
+Y;
+> +       unsigned long next_pmd, vma_end, end_addr;
+>         int max_nr =3D folio_nr_pages(folio);
+>         pte_t pte =3D ptep_get(ptep);
+>
+> +       /*
+> +        * Limit the batch scan within a single VMA and within a single
+> +        * page table.
+> +        */
+> +       vma_end =3D vma->vm_end;
+> +       next_pmd =3D ALIGN(addr + 1, PMD_SIZE);
+> +       end_addr =3D addr + (unsigned long)max_nr * PAGE_SIZE;
+> +
+> +       if (end_addr > min(next_pmd, vma_end))
+> +               return false;
+> +
 
-kernel test robot noticed the following build errors:
+I had a similar check in do_swap_page() for both forward and backward
+out-of-bounds page tables, but I forgot to add it for this unmap path.
 
-[auto build test ERROR on pci/next]
-[also build test ERROR on pci/for-linus tiwai-sound/for-next tiwai-sound/for-linus tip/x86/core linus/master v6.16-rc3 next-20250625]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
+this is do_swap_page():
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Mario-Limonciello/PCI-Add-helper-for-checking-if-a-PCI-device-is-a-display-controller/20250625-043200
-base:   https://git.kernel.org/pub/scm/linux/kernel/git/pci/pci.git next
-patch link:    https://lore.kernel.org/r/20250624203042.1102346-8-superm1%40kernel.org
-patch subject: [PATCH v5 7/9] PCI/VGA: Replace vga_is_firmware_default() with a screen info check
-config: x86_64-defconfig (https://download.01.org/0day-ci/archive/20250625/202506251749.fPKnHMH5-lkp@intel.com/config)
-compiler: gcc-11 (Debian 11.3.0-12) 11.3.0
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250625/202506251749.fPKnHMH5-lkp@intel.com/reproduce)
+        if (folio_test_large(folio) && folio_test_swapcache(folio)) {
+                int nr =3D folio_nr_pages(folio);
+                unsigned long idx =3D folio_page_idx(folio, page);
+                unsigned long folio_start =3D address - idx * PAGE_SIZE;
+                unsigned long folio_end =3D folio_start + nr * PAGE_SIZE;
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202506251749.fPKnHMH5-lkp@intel.com/
+                pte_t *folio_ptep;
+                pte_t folio_pte;
 
-All errors (new ones prefixed by >>):
+                if (unlikely(folio_start < max(address & PMD_MASK,
+vma->vm_start)))
+                        goto check_folio;
+                if (unlikely(folio_end > pmd_addr_end(address, vma->vm_end)=
+))
+                        goto check_folio;
+       }
 
-   ld: vmlinux.o: in function `vga_arbiter_add_pci_device':
->> vgaarb.c:(.text+0x5f8f90): undefined reference to `screen_info_pci_dev'
->> ld: vgaarb.c:(.text+0x5f91f8): undefined reference to `screen_info_pci_dev'
+So maybe something like folio_end > pmd_addr_end(address, vma->vm_end)?
 
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+Thanks
+Barry
 
