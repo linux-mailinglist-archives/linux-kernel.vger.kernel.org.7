@@ -1,86 +1,87 @@
-Return-Path: <linux-kernel+bounces-702824-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-702826-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 749D3AE87DD
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Jun 2025 17:23:08 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 00656AE87E1
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Jun 2025 17:23:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 876727AEB0B
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Jun 2025 15:21:42 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2BB2F5A119F
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Jun 2025 15:23:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0D4572BEFE6;
-	Wed, 25 Jun 2025 15:22:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F405D2D191F;
+	Wed, 25 Jun 2025 15:22:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="p4zTCpIm"
-Received: from mail-ot1-f50.google.com (mail-ot1-f50.google.com [209.85.210.50])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="w/OqBbMw"
+Received: from mail-oa1-f48.google.com (mail-oa1-f48.google.com [209.85.160.48])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CCB702BCF72
-	for <linux-kernel@vger.kernel.org>; Wed, 25 Jun 2025 15:22:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CBC2D2C1593
+	for <linux-kernel@vger.kernel.org>; Wed, 25 Jun 2025 15:22:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750864935; cv=none; b=G8RW1HwVmQZoYwJVR4JsiPCbwxa9IyNCEemRnL512hfl/KbB+9gyYtH/zvb5XN4Z4IMeogXSJaIWjFtbGqX2qTLJIblGBHtDEvDGaTs4uQemv2+s8pabvmUvmeXP01Qq81jtKMfY988xqyvPpJbr1ENpZDPIMisgKatHxM5nUrw=
+	t=1750864939; cv=none; b=ajG7/Sctil3Eq1Grnow9AjDVtYabstBZXMY4CswBSIe2Zqgwd7wx+3BAI7dz4izCv5YIQ2T++QaQNirBWlzLslsZFj+FYgEqMG9FjmyvPkH6cVpkFkh1WmHWVTAUMA0+4Qa/D8OP1C6gm2nZ7IOQXgDyT/jubxQ8xBjZcleXqI8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750864935; c=relaxed/simple;
-	bh=aTkJQnR/3DETZjCrMFipfbUfY5SsPpOZ1VX4D8ujLV0=;
+	s=arc-20240116; t=1750864939; c=relaxed/simple;
+	bh=5JYFEh/B1NhPLzWK+CJdykCD+u6h119UFbAkSy5RZmE=;
 	h=Message-ID:Date:From:To:Cc:Subject:MIME-Version:Content-Type:
-	 Content-Disposition; b=XzDapm1f3YPnA3AQmOZg9vyW+mlVEQ28OkTsdS9iwQXmaQ0mLlzz8da3U+GLCltI8Rd0KMgk58UsGi9itLvICHh7p2pJ+kgQ7QJKN7x7e7MpuX7SxOQPOTd34cHOcJ8kAuBMwvzC7Y++BS2oYWLWeT2WbR4HDcP7yiG7z88oiPA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=p4zTCpIm; arc=none smtp.client-ip=209.85.210.50
+	 Content-Disposition; b=g93mBvyIcgdc1x3zIgeYUhV6ls7OLKOqX1frvQ4STNApzFabwpji9m0uLoq9nZUhzC3gxdWeu6AJgcIESiRBwY6N2zcUFQZfIaS5mS1OePhfOh4owz6bCDGZwxzPiwg7cYAVCZMhpggWiKePtBFblcYOO4XOhRmVPIw/O1nfiH8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=w/OqBbMw; arc=none smtp.client-ip=209.85.160.48
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-ot1-f50.google.com with SMTP id 46e09a7af769-73a44512c8aso554619a34.0
-        for <linux-kernel@vger.kernel.org>; Wed, 25 Jun 2025 08:22:13 -0700 (PDT)
+Received: by mail-oa1-f48.google.com with SMTP id 586e51a60fabf-2ef461b9daeso22947fac.2
+        for <linux-kernel@vger.kernel.org>; Wed, 25 Jun 2025 08:22:17 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1750864933; x=1751469733; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1750864937; x=1751469737; darn=vger.kernel.org;
         h=content-disposition:mime-version:subject:cc:to:from:date:message-id
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=u98SmNY03cRBjpwBKU5+I1U9gP6hvTPRDks/D5f8cPE=;
-        b=p4zTCpImNNnbGlWsO67b4H/W/CW0sjDE6vYfK0JTfFywa0bcYYIzVSNig62b/x39R4
-         JDGiM/OHl+d8uz7zpjMy6OtMtzBDY8iG3Bbg8qBV1FEsh6ZtefUqNxxFM6lsTZyO+eKW
-         UYsD/uFynkjrMFgA/W80A+pGH853Kg2iu0zxZ07hF6K7t07q0qK8ynWNoszVl0mK+iSI
-         IflvDX4+qiZ6LrKrFNAAiSC8sCCkRULMqZ0GpGCWtsmjk5ViyhtHQGcYbvQKIM8bV7hc
-         /TCo+PocYltKNpxDCeHBCsEvTVl46HykTQsXZUt99IqDf6qKQtCzhk5+jhbNqBK/0Uhc
-         d96A==
+        bh=U+WU1qicrpfWVxiSKMDNqBCOmYnFjqwgecK16bJOOCw=;
+        b=w/OqBbMwHZOSNUVqi+Oi00ejnZH4Hgk3KZLyBAfsqABeI7u0R1/kUqG9wXPtnpH10E
+         nWhwgVPkBNkbyXij5hrvpdQrcUmaYhgRRxV0ojB+r2gP69p/K+ztzZIYsxdFNmYgmQDU
+         0qr53s1CuCK1V4cvA5h3AkRKxAmQPBIvr+CoBAsuagPghLF8GFL3RiX2dWbaWW+/PPrm
+         QpOavzRlLrCJaGZ1B3uTEyvvtGC3nl1f+sNBhPJKC0RCDRgGJP45pXjBvZJDXx8LnCaU
+         wdAUzDPZ16WdXQxCHmNoguYVFRum07XQvMiagHefKrm58IiRpEUdyWYva/Lxju3/U3aJ
+         kvfQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1750864933; x=1751469733;
+        d=1e100.net; s=20230601; t=1750864937; x=1751469737;
         h=content-disposition:mime-version:subject:cc:to:from:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=u98SmNY03cRBjpwBKU5+I1U9gP6hvTPRDks/D5f8cPE=;
-        b=cpy09smP0c14t1Z6lUbO8KL593sgw0VLuFcR+MIuoe5PtUGp8Fj9MZxe79MUhm9C8g
-         LsYENbJPcXOaq8VOP3KpdrEnzsJvFYTsxdAD2zS9QGpJqQtivTBZbk9DKAnLm3h1geeM
-         TJwZG3DGQI0g7VKS1NoGRcVT7hPV2vV3y4WvVsxDL9WYFIU2wlpRiYw4VhfBB4RnQtWw
-         aKXFFwxkUTGhYj8hTdrgBBO2UNtjwbHTEuJJeU6HxP+GB2BlA7dOl61UEqXM25lOlaV0
-         zSBuFOz9tRP2wP1PbFsTHjlUUZp/WQ4ckashh8RodVN8VLbvzZaBkC7kZFPapdbh/vsQ
-         F1pw==
-X-Forwarded-Encrypted: i=1; AJvYcCUxrI9tQr35EIka+abcgatYJCuyVSRszAnpUnkYi7ygWlNUOZfNjh285oTICcmq4bY9DRYiMk9PgyNRaWI=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwxsGaN22vIQKZGCBhNnmB3Mo2XnJTGxZIABSgWgOPY9m1uNR9F
-	wePsRP0VxZI9R4resR/yp3hYK6hy9ndMKZfhb9Wreslvt6tQmbqhQzbKwmubQ1LQwWxrJ5on5h+
-	8Sh13
-X-Gm-Gg: ASbGncsIsn25/bRLytrgxD3TyiglDegqXYRL+2h04CQ2znLNdoh7+333rptAHcuZIL3
-	PVqUjh8CFqXTQjsBgLz9xqs+t6+IzFZlGovDdGnBVakNg5cWZKw+z0xy7pJsxJinLcOMrzFL2jC
-	QBiDw+9Ru1z2fdynOhzOHciFqqTWM+Wr4xOD14liP2K0G4slj7JUScnPPQbttOyyo7CZBRCftBJ
-	AozXYw4+TR4gXr7jJ4Gi/sUCiHZEpEtJUh++8sX7b4djkzdoinzkA/9A1CdbnNnvBOG7xA2Gs4l
-	VyJ8RrXaqq05XEAJCfoQ2ROIgzRtKyqO5dq50FXdriPXl4mVIPwuZ2y+vNLEW39DU2+X3Q==
-X-Google-Smtp-Source: AGHT+IHkG6dat7iqtvzwTRnE7a7/Ug1VTKQvcFownkvnX4pRkEWxDAtT4ssRBcmMzlRv3IfqQ4RMqQ==
-X-Received: by 2002:a05:6830:8088:b0:72b:7cc8:422 with SMTP id 46e09a7af769-73adc7eb8eemr1793945a34.20.1750864932939;
-        Wed, 25 Jun 2025 08:22:12 -0700 (PDT)
+        bh=U+WU1qicrpfWVxiSKMDNqBCOmYnFjqwgecK16bJOOCw=;
+        b=wgW19YcpacG/uQgvcqIPekdVa5Gk9ubZgNdUAsV1jUnjrVbiEllnXKpMxLQD/mD8Ho
+         DqIRfHT/QnqzU2PXC+px3iQIC8OAitFrgZAkmaAUg9Hq/TCnQAyE/QGE7pRsZhxp9zHN
+         4VrgoxEefVE4+PCy1HQHbje96KD6Qiz/20tRAvXwETqYXqpIsT9VJ8bNkVjxDAC58QPT
+         7f0B54Sxo4NhySTupi5E8OEBRptX2o4IQsdZnT1MxFRwfJry5WD/41ASuxGERa+D+gc9
+         WK4jkZ6jv8R4d0TM/OgUqoAycWjY6ipo2klszJ4ShFMmZEWYnr0vyIlCaIPmywRv3KMt
+         qtXA==
+X-Forwarded-Encrypted: i=1; AJvYcCVfDM/3IypA6s/elJXVBqhnTQbFdLGMssuXi8OBKbezATCosuOwqBi5JPbyIKTjCYU6Pralp0A5gCpQeMg=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy3EABbI8dR8iUctvPyy2MBvCOqCDMzMYx5F6OYCK7NhBJsSQsS
+	AUkH/q+XaMPqH+bTAmDStS9NXiPjjXdrVfsxZMr08Htc4gH7TyGbuhY1e7rizzA9Fk6hLIltEVs
+	lDCzf
+X-Gm-Gg: ASbGncvG+9JdLVyHCY2tRrFV9MqFoBmPTNUsMPqCW6rSf/+X84Q6vOtzh0okUP196mV
+	k9f8nYhcK7zj2OS/GH7OGaE83Ov05+wwLCetcUW0ZzqLXDGnDQ8PWabk24ZFRitxRuB/6CKng+f
+	KfrjPeF/x6AUg0eGvVmrDfjPW7aYEPiMI/IvDz5D4SUxZ8EWHFd+OFKifvj8v+UbypyXmhdPluv
+	Ia6wEd5ffNsZ+JCfskcjhYuzcw0g0w1/eqe6dL0bvox+4RXnNjC19l1k+KhpYeeR62RAOaNNgHU
+	sok0jsA+3DPEscur3uy06vLUvqPFbjiRfb6v56Jw60wij+P2EPPCpsvRvo8TjUVnKqo0RA==
+X-Google-Smtp-Source: AGHT+IErLXYfNY1HcYwO06oS9rTd+ujnf6KFvXKf60FWeDN2HmwrG9jFGq4oLf9AmCw0fBHgkeUDew==
+X-Received: by 2002:a05:6870:e254:b0:2b7:f58d:6dcf with SMTP id 586e51a60fabf-2efce2d359amr92580fac.18.1750864936838;
+        Wed, 25 Jun 2025 08:22:16 -0700 (PDT)
 Received: from localhost ([2603:8080:b800:f700:1fca:a60b:12ab:43a3])
-        by smtp.gmail.com with UTF8SMTPSA id 46e09a7af769-73a90ca9c12sm2236713a34.50.2025.06.25.08.22.12
+        by smtp.gmail.com with UTF8SMTPSA id 586e51a60fabf-2ee8dd151d9sm2595012fac.33.2025.06.25.08.22.16
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 25 Jun 2025 08:22:12 -0700 (PDT)
-Message-ID: <685c1424.050a0220.baa8.d6a1@mx.google.com>
+        Wed, 25 Jun 2025 08:22:16 -0700 (PDT)
+Message-ID: <685c1428.050a0220.346d5e.eafa@mx.google.com>
 X-Google-Original-Message-ID: <@sabinyo.mountain>
-Date: Wed, 25 Jun 2025 10:22:11 -0500
+Date: Wed, 25 Jun 2025 10:22:15 -0500
 From: Dan Carpenter <dan.carpenter@linaro.org>
-To: Xiubo Li <xiubli@redhat.com>
-Cc: Ilya Dryomov <idryomov@gmail.com>,
+To: David Hildenbrand <david@redhat.com>
+Cc: Oscar Salvador <osalvador@suse.de>,
 	Andrew Morton <akpm@linux-foundation.org>,
-	"Matthew Wilcox (Oracle)" <willy@infradead.org>,
-	ceph-devel@vger.kernel.org, linux-kernel@vger.kernel.org,
-	kernel-janitors@vger.kernel.org
-Subject: [PATCH] ceph: fix NULL vs IS_ERR() bug in ceph_zero_partial_page()
+	Harry Yoo <harry.yoo@oracle.com>,
+	Jonathan Cameron <Jonathan.Cameron@huawei.com>,
+	Vlastimil Babka <vbabka@suse.cz>, linux-mm@kvack.org,
+	linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+Subject: [PATCH] mm,memory_hotplug: set failure reason in offline_pages()
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -91,40 +92,29 @@ Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 X-Mailer: git-send-email haha only kidding
 
-The filemap_lock_folio() never returns NULL.  It returns error pointers.
-Update the checking to match.
+The "reason" variable is uninitialized on this error path.  It's supposed
+to explain why the function failed.
 
-Fixes: 483239f03149 ("ceph: convert ceph_zero_partial_page() to use a folio")
+Fixes: e4e2806b639c ("mm,memory_hotplug: implement numa node notifier")
 Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
 ---
- fs/ceph/file.c | 13 +++++++------
- 1 file changed, 7 insertions(+), 6 deletions(-)
+ mm/memory_hotplug.c | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
-diff --git a/fs/ceph/file.c b/fs/ceph/file.c
-index d5c674d2ba8a..f6e63265c516 100644
---- a/fs/ceph/file.c
-+++ b/fs/ceph/file.c
-@@ -2536,12 +2536,13 @@ static inline void ceph_zero_partial_page(struct inode *inode,
- 	struct folio *folio;
+diff --git a/mm/memory_hotplug.c b/mm/memory_hotplug.c
+index 4d864b4fb891..e954f81b55a0 100644
+--- a/mm/memory_hotplug.c
++++ b/mm/memory_hotplug.c
+@@ -1977,8 +1977,10 @@ int offline_pages(unsigned long start_pfn, unsigned long nr_pages,
+ 		node_arg.nid = node;
+ 		ret = node_notify(NODE_REMOVING_LAST_MEMORY, &node_arg);
+ 		ret = notifier_to_errno(ret);
+-		if (ret)
++		if (ret) {
++			reason = "nr_pages more than present_pages";
+ 			goto failed_removal_isolated;
++		}
+ 	}
  
- 	folio = filemap_lock_folio(inode->i_mapping, offset >> PAGE_SHIFT);
--	if (folio) {
--		folio_wait_writeback(folio);
--		folio_zero_range(folio, offset_in_folio(folio, offset), size);
--		folio_unlock(folio);
--		folio_put(folio);
--	}
-+	if (IS_ERR(folio))
-+		return;
-+
-+	folio_wait_writeback(folio);
-+	folio_zero_range(folio, offset_in_folio(folio, offset), size);
-+	folio_unlock(folio);
-+	folio_put(folio);
- }
- 
- static void ceph_zero_pagecache_range(struct inode *inode, loff_t offset,
--- 
-2.47.2
-
+ 	ret = memory_notify(MEM_GOING_OFFLINE, &mem_arg);
 
