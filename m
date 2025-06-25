@@ -1,147 +1,207 @@
-Return-Path: <linux-kernel+bounces-701388-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-701392-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id BA65FAE746C
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Jun 2025 03:47:52 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id D9B6BAE747C
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Jun 2025 03:50:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A1EA11921F20
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Jun 2025 01:48:08 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 46352192215E
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Jun 2025 01:50:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7C1D918A6C4;
-	Wed, 25 Jun 2025 01:47:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DB0C219C566;
+	Wed, 25 Jun 2025 01:50:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="dmWqUbmB"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.16])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="anMMQg//"
+Received: from mail-wm1-f49.google.com (mail-wm1-f49.google.com [209.85.128.49])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 12BDF3D76;
-	Wed, 25 Jun 2025 01:47:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.16
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 159781EB3E;
+	Wed, 25 Jun 2025 01:50:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750816063; cv=none; b=VH3lLtCM1SLJR2xzBJmz3J1ToF9A8gcjTVfPrkvduL0D+NR97RCTTxC9O6JKz6QrVDEkrjDkJc4yttAnKZ85tP964Nv/Y50XjfUShWtaDgHJ2x8MIqiStfQTKgty+eOungXksgq13su+1mUzDR2ZkkHIO/CE2iuNc2Xy6Nv2Owk=
+	t=1750816233; cv=none; b=pc8Lda6u4ypU72Umw9DeO5xyPwUX52suncmxSFvxQNZeh7WkIr1ZwSh3WgDk8C//CzSsgyWEKJblzUewWgRCuky7n182ImktRsvTnhjlC4LHuCER9/vVQz8lOGmMxfbuXGG85s/g6cSG8i3jGrC8JLj+TmP6W/QxcLJR4jnRcxo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750816063; c=relaxed/simple;
-	bh=4H38wenJUcrfZeBiwfo2NC94xpjgMDEVgcu3+QfB6S4=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=eprKmMcwlNbiYDOgSDeJmIzuPL+KHFVajqdcCw1GsM+mxxE/vVrhryqcRVX1JNAiHFdCdLldV1Gc4vLc79HauCA6o8JN4j6kIgJioVAPi4X28xoID8KPRA5Jj1aiifYsjF9JnlkEia9UTMW1oMh/pErIZtinElOTUeY7VluK6B8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=dmWqUbmB; arc=none smtp.client-ip=198.175.65.16
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1750816062; x=1782352062;
-  h=from:to:cc:subject:date:message-id:mime-version:
-   content-transfer-encoding;
-  bh=4H38wenJUcrfZeBiwfo2NC94xpjgMDEVgcu3+QfB6S4=;
-  b=dmWqUbmBDEWj81dPqT5P9iTVHiYYMKhSavDh6Iy5zbwq+Rg8TLHJ/Wnp
-   6Df4vnPYB1UMAtbzOt6BQpXxEVmnKo3pBRujvkHW3u4VJYN2TUZhIWbb0
-   fAja81waFuWp3S/X/WrhqMqUktseE1ow4PxsEczS8+2poNVED1lU4zJac
-   JC53SBWYll3USJaHGqKGisMJL1sr318mZe94t7eDQWtTcCYc8l2oFjsMA
-   kMTBuk9VtLHCstW6h69vkJ92IEqMpjtDHudb7ki3omutpAjJoLFtmVSeD
-   zpEV/0i4KYmOfOgH0jPox1VA+2pj37atksOV93oZeR5sHlH3Ir0FhliSL
-   g==;
-X-CSE-ConnectionGUID: nAP3sBciQ3ec7YZ1cfHIXQ==
-X-CSE-MsgGUID: wloRlYVtQ5CGcnA8a+NBjg==
-X-IronPort-AV: E=McAfee;i="6800,10657,11474"; a="53170568"
-X-IronPort-AV: E=Sophos;i="6.16,263,1744095600"; 
-   d="scan'208";a="53170568"
-Received: from fmviesa006.fm.intel.com ([10.60.135.146])
-  by orvoesa108.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 24 Jun 2025 18:47:41 -0700
-X-CSE-ConnectionGUID: hocKXkiEQ7u8Il5YkEybIQ==
-X-CSE-MsgGUID: 9gYgb96GTlyJqTz3sU83/w==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.16,263,1744095600"; 
-   d="scan'208";a="152204636"
-Received: from litbin-desktop.sh.intel.com ([10.239.156.93])
-  by fmviesa006-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 24 Jun 2025 18:47:38 -0700
-From: Binbin Wu <binbin.wu@linux.intel.com>
-To: pbonzini@redhat.com,
-	seanjc@google.com,
-	kvm@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Cc: sfr@canb.auug.org.au,
-	rick.p.edgecombe@intel.com,
-	kai.huang@intel.com,
-	adrian.hunter@intel.com,
-	reinette.chatre@intel.com,
-	xiaoyao.li@intel.com,
-	tony.lindgren@intel.com,
-	isaku.yamahata@intel.com,
-	yan.y.zhao@intel.com,
-	binbin.wu@linux.intel.com
-Subject: [PATCH] Documentation: KVM: Fix unexpected unindent warnings
-Date: Wed, 25 Jun 2025 09:48:29 +0800
-Message-ID: <20250625014829.82289-1-binbin.wu@linux.intel.com>
-X-Mailer: git-send-email 2.46.0
+	s=arc-20240116; t=1750816233; c=relaxed/simple;
+	bh=bmUWLcvye+1nPz4fQShxjm3W8AY6KuwuhJhKpVqruLk=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=GkjnEJXOWx8pl97u+dVGK4VzpfLWb0MDddSow+e6z4NxqAGwDaYcr+ozIX+IlpfXVwcEEI+m8U9S1bXKZb34Z3djvAjuF/OLWZz5TZQj5IKHXwm2wenEEimcTkO4V7nKp23UKFxWbS9iUo/wkUloh9gsB4p6NnArHOHdxI1D1WY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=anMMQg//; arc=none smtp.client-ip=209.85.128.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f49.google.com with SMTP id 5b1f17b1804b1-450ccda1a6eso50451095e9.2;
+        Tue, 24 Jun 2025 18:50:30 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1750816229; x=1751421029; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=cmKV4DiMx7DurtNkNx3vlHszT8EImdBOR7C1+LIzwOc=;
+        b=anMMQg//zNheK7Up+SYS1tUeh/wsrC+dnay36lYB25vI3mXffIfRrbqSvKj8NGJlc3
+         yw360bXB32B4/GpvtWoYtF3benMXLngtpRMf9lecA4RRhn5aQ4Fh2JjheBE4scpXVnmz
+         oibVNMq6fLSLIahj9fHzoW4bgC4sJBD4N5I1vVSVRU2xhE6erqFvivTObHqK5IirrZAP
+         jaZ2M3M7iw92CzTWLavbvg9ChTbsrCcQ2MAN3Ilte0YD5Rh4qjk+cSShFKm46weUH+1a
+         QaU+QWx6m8H9n6wW5cHibjl7ekyzvVWHk3Vhg/H8U3Dz/fnjIidi4Hqkl7iTOzcWNYIO
+         gw3g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1750816229; x=1751421029;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=cmKV4DiMx7DurtNkNx3vlHszT8EImdBOR7C1+LIzwOc=;
+        b=gZIWMQTSpQUi3TPqO6BLCZosl4lBE0Q8xWJPywDcKsA8MYXbJln3RN2yqn6Z+7oW6S
+         APTzFMgNe0La5CcMBk8D5NWQSr3A+LNBPsbEfSWHCuEuJHnu+Ub9dJM0s74sTfZaIA8E
+         iF5YOXun96CPQR8eftAuAr/TbS3d1LDm2oS3pEy38ohCjDHYbswzBJIEFYJCgSDglZ3F
+         A6fRdAdKMAkswAszfI05dF43twf0/hCXBVtvo6vxsYfoCZg5RAlK8QVxEgZU4OCNKnIY
+         Yb5Q7XNl9gypNaJEEH1OU+4I621np6PBtvECyeetML7RK8wSu5lQNLZm0RZxsnIduBub
+         wKTQ==
+X-Forwarded-Encrypted: i=1; AJvYcCV+1keg2//pDlFcjK3oBl/LyWOC/cxnkxY7Rm3SIHxdQmSTZqOIaUe2A1ikL9oMXgdWRKVmQY/V+z7blTFZ@vger.kernel.org, AJvYcCVZuob4WCxU2vfRezTz4zFU5NoqrGVdBw6r4OrVaLfABYHUw/oOAbeP7t5iYfxTrJ3F3aM=@vger.kernel.org, AJvYcCWtflyAtYlxV0RxTIyh6dehQNQDBYH5M8OeUfHiAdQHc4htnayTqIQlzoe2buGivEt2Y5PPiTJItaS05dX5CijW@vger.kernel.org
+X-Gm-Message-State: AOJu0YxZ5SjGzmsdeDJgv055e9+66giTebommmtiH4T/o72xSduFr9ek
+	OGeTimBMRbZEEewgaPkzY2/z5IPNgJkMp476D5i4fZdZS9laI6XP1Phri0jiuIuCuJ5f0jCbVnt
+	jIQyWwHmrydXs3LCD2E2+q56yJMo5no4=
+X-Gm-Gg: ASbGncs8reTd/9atCVCsIsnZaoooqrrib4x2gdi8TnIj06GwBAENV1+lRrNSHYBubqC
+	V+7a03zHOFr2r4MhyfBiex2/eikIVO8d5IfgL+Tb7hijfedcvhEc0JYcz1t44aJF17CeVqLmP5W
+	vD19x3Wf6v53tm3Vdrl/zwORujvZnKY1UgRYy1RzPKAttchVVuQSqJl6LvE+H0AnkfCs9iTk8w6
+	O2LFlgBpnk=
+X-Google-Smtp-Source: AGHT+IHXxkeFcIQ6qo4NCCDqiWhSLyoD2Fiv7nrmmoIMkv2T+Le98qhHLkhH0F3/G3QoKqgoAPX9KtxakULN1fBZHuY=
+X-Received: by 2002:a05:600c:3b03:b0:453:a88:d509 with SMTP id
+ 5b1f17b1804b1-45381aa4972mr10831985e9.10.1750816229085; Tue, 24 Jun 2025
+ 18:50:29 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20250623040359.343235-1-harishankar.vishwanathan@gmail.com>
+ <20250623040359.343235-3-harishankar.vishwanathan@gmail.com> <460a82dd188203e9da23cf0606845b593097faaf.camel@gmail.com>
+In-Reply-To: <460a82dd188203e9da23cf0606845b593097faaf.camel@gmail.com>
+From: Alexei Starovoitov <alexei.starovoitov@gmail.com>
+Date: Tue, 24 Jun 2025 18:50:18 -0700
+X-Gm-Features: Ac12FXzx7oB21zF2yDcot5XaMWhet-BLNLYGDMmhhW0JjMTK0ZFnDhllw0LJdA8
+Message-ID: <CAADnVQL6ivxjMdej3Lp+fww4_0C1bKhq3SFtCj597qRjSRjMCQ@mail.gmail.com>
+Subject: Re: [PATCH v3 2/2] selftests/bpf: Add testcases for BPF_ADD and BPF_SUB
+To: Eduard Zingerman <eddyz87@gmail.com>
+Cc: Harishankar Vishwanathan <harishankar.vishwanathan@gmail.com>, Alexei Starovoitov <ast@kernel.org>, 
+	Matan Shachnai <m.shachnai@rutgers.edu>, Srinivas Narayana <srinivas.narayana@rutgers.edu>, 
+	Santosh Nagarakatte <santosh.nagarakatte@rutgers.edu>, Daniel Borkmann <daniel@iogearbox.net>, 
+	John Fastabend <john.fastabend@gmail.com>, Andrii Nakryiko <andrii@kernel.org>, 
+	Martin KaFai Lau <martin.lau@linux.dev>, Song Liu <song@kernel.org>, 
+	Yonghong Song <yonghong.song@linux.dev>, KP Singh <kpsingh@kernel.org>, 
+	Stanislav Fomichev <sdf@fomichev.me>, Hao Luo <haoluo@google.com>, Jiri Olsa <jolsa@kernel.org>, 
+	Mykola Lysenko <mykolal@fb.com>, Shuah Khan <shuah@kernel.org>, Matan Shachnai <m.shachnai@gmail.com>, 
+	Henriette Herzog <henriette.herzog@rub.de>, Luis Gerhorst <luis.gerhorst@fau.de>, 
+	Kumar Kartikeya Dwivedi <memxor@gmail.com>, bpf <bpf@vger.kernel.org>, 
+	LKML <linux-kernel@vger.kernel.org>, 
+	"open list:KERNEL SELFTEST FRAMEWORK" <linux-kselftest@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Add proper indentations to bullet list items to resolve the warning:
-"Bullet list ends without a blank line; unexpected unindent."
+On Tue, Jun 24, 2025 at 3:45=E2=80=AFPM Eduard Zingerman <eddyz87@gmail.com=
+> wrote:
+>
+> On Mon, 2025-06-23 at 00:03 -0400, Harishankar Vishwanathan wrote:
+> > The previous commit improves the precision in scalar(32)_min_max_add,
+> > and scalar(32)_min_max_sub. The improvement in precision occurs in case=
+s
+> > when all outcomes overflow or underflow, respectively.
+> >
+> > This commit adds selftests that exercise those cases.
+> >
+> > This commit also adds selftests for cases where the output register
+> > state bounds for u(32)_min/u(32)_max are conservatively set to unbounde=
+d
+> > (when there is partial overflow or underflow).
+> >
+> > Signed-off-by: Harishankar Vishwanathan <harishankar.vishwanathan@gmail=
+.com>
+> > Co-developed-by: Matan Shachnai <m.shachnai@rutgers.edu>
+> > Signed-off-by: Matan Shachnai <m.shachnai@rutgers.edu>
+> > Suggested-by: Eduard Zingerman <eddyz87@gmail.com>
+> > ---
+>
+> Thank you for adding these tests.  Even with "human readable" numbers
+> took me 15-20 minutes to verify the numbers :)
+>
+> Acked-by: Eduard Zingerman <eddyz87@gmail.com>
+>
+> >  .../selftests/bpf/progs/verifier_bounds.c     | 161 ++++++++++++++++++
+> >  1 file changed, 161 insertions(+)
+> >
+> > diff --git a/tools/testing/selftests/bpf/progs/verifier_bounds.c b/tool=
+s/testing/selftests/bpf/progs/verifier_bounds.c
+> > index 30e16153fdf1..31986f6c609e 100644
+> > --- a/tools/testing/selftests/bpf/progs/verifier_bounds.c
+> > +++ b/tools/testing/selftests/bpf/progs/verifier_bounds.c
+> > @@ -1371,4 +1371,165 @@ __naked void mult_sign_ovf(void)
+> >         __imm(bpf_skb_store_bytes)
+> >       : __clobber_all);
+> >  }
+> > +
+> > +SEC("socket")
+> > +__description("64-bit addition, all outcomes overflow")
+> > +__success __log_level(2)
+> > +__msg("5: (0f) r3 +=3D r3 {{.*}} R3_w=3Dscalar(umin=3D0x40000000000000=
+00,umax=3D0xfffffffffffffffe)")
+> > +__retval(0)
+> > +__naked void add64_full_overflow(void)
+> > +{
+> > +     asm volatile (
+> > +     "r4 =3D 0;"
+> > +     "r4 =3D -r4;"
+>
+> Nit: there is a change in the workings that would make range
+>      propagation in negation instruction, a better way to get unbound
+>      scalar here is e.g. call to bpf_get_prandom_u32() or read from a
+>      constant global map.
+>      Depending on order in which patches would be accepted this rework
+>      would be either on you or on the other patch-set author.
 
-Fixes: cf207eac06f6 ("KVM: TDX: Handle TDG.VP.VMCALL<GetQuote>")
-Fixes: 25e8b1dd4883 ("KVM: TDX: Exit to userspace for GetTdVmCallInfo")
-Reported-by: Stephen Rothwell <sfr@canb.auug.org.au>
-Closes:https://lore.kernel.org/kvm/20250623162110.6e2f4241@canb.auug.org.au/
-Signed-off-by: Binbin Wu <binbin.wu@linux.intel.com>
----
-The fix for the same issue in Linux Next due to the patch
-"KVM: TDX: Exit to userspace for SetupEventNotifyInterrupt" is not included.
----
- Documentation/virt/kvm/api.rst | 30 +++++++++++++++---------------
- 1 file changed, 15 insertions(+), 15 deletions(-)
+Fixed them up like below while applying:
 
-diff --git a/Documentation/virt/kvm/api.rst b/Documentation/virt/kvm/api.rst
-index 9abf93ee5f65..a7dbe08dc376 100644
---- a/Documentation/virt/kvm/api.rst
-+++ b/Documentation/virt/kvm/api.rst
-@@ -7210,21 +7210,21 @@ number from register R11.  The remaining field of the union provide the
- inputs and outputs of the TDVMCALL.  Currently the following values of
- ``nr`` are defined:
- 
--* ``TDVMCALL_GET_QUOTE``: the guest has requested to generate a TD-Quote
--signed by a service hosting TD-Quoting Enclave operating on the host.
--Parameters and return value are in the ``get_quote`` field of the union.
--The ``gpa`` field and ``size`` specify the guest physical address
--(without the shared bit set) and the size of a shared-memory buffer, in
--which the TDX guest passes a TD Report.  The ``ret`` field represents
--the return value of the GetQuote request.  When the request has been
--queued successfully, the TDX guest can poll the status field in the
--shared-memory area to check whether the Quote generation is completed or
--not. When completed, the generated Quote is returned via the same buffer.
--
--* ``TDVMCALL_GET_TD_VM_CALL_INFO``: the guest has requested the support
--status of TDVMCALLs.  The output values for the given leaf should be
--placed in fields from ``r11`` to ``r14`` of the ``get_tdvmcall_info``
--field of the union.
-+ * ``TDVMCALL_GET_QUOTE``: the guest has requested to generate a TD-Quote
-+   signed by a service hosting TD-Quoting Enclave operating on the host.
-+   Parameters and return value are in the ``get_quote`` field of the union.
-+   The ``gpa`` field and ``size`` specify the guest physical address
-+   (without the shared bit set) and the size of a shared-memory buffer, in
-+   which the TDX guest passes a TD Report.  The ``ret`` field represents
-+   the return value of the GetQuote request.  When the request has been
-+   queued successfully, the TDX guest can poll the status field in the
-+   shared-memory area to check whether the Quote generation is completed or
-+   not. When completed, the generated Quote is returned via the same buffer.
-+
-+ * ``TDVMCALL_GET_TD_VM_CALL_INFO``: the guest has requested the support
-+   status of TDVMCALLs.  The output values for the given leaf should be
-+   placed in fields from ``r11`` to ``r14`` of the ``get_tdvmcall_info``
-+   field of the union.
- 
- KVM may add support for more values in the future that may cause a userspace
- exit, even without calls to ``KVM_ENABLE_CAP`` or similar.  In this case,
+diff --git a/tools/testing/selftests/bpf/progs/verifier_bounds.c
+b/tools/testing/selftests/bpf/progs/verifier_bounds.c
+index 31986f6c609e..e52a24e15b34 100644
+--- a/tools/testing/selftests/bpf/progs/verifier_bounds.c
++++ b/tools/testing/selftests/bpf/progs/verifier_bounds.c
+@@ -1380,15 +1380,15 @@ __retval(0)
+ __naked void add64_full_overflow(void)
+ {
+        asm volatile (
+-       "r4 =3D 0;"
+-       "r4 =3D -r4;"
++       "call %[bpf_get_prandom_u32];"
++       "r4 =3D r0;"
+        "r3 =3D 0xa000000000000000 ll;"
+        "r3 |=3D r4;"
+        "r3 +=3D r3;"
+        "r0 =3D 0;"
+        "exit"
+        :
+-       :
++       : __imm(bpf_get_prandom_u32)
+        : __clobber_all);
+ }
 
-base-commit: 86731a2a651e58953fc949573895f2fa6d456841
--- 
-2.46.0
+@@ -1400,15 +1400,15 @@ __retval(0)
+ __naked void add64_partial_overflow(void)
+ {
+        asm volatile (
+-       "r4 =3D 0;"
+-       "r4 =3D -r4;"
++       "call %[bpf_get_prandom_u32];"
++       "r4 =3D r0;"
+        "r3 =3D 2;"
+        "r3 |=3D r4;"
+        "r3 +=3D r3;"
+        "r0 =3D 0;"
+        "exit"
+        :
+-       :
++       : __imm(bpf_get_prandom_u32)
+        : __clobber_all);
+ }
 
+etc
 
