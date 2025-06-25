@@ -1,199 +1,147 @@
-Return-Path: <linux-kernel+bounces-701867-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-701864-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 46E9EAE7A64
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Jun 2025 10:37:00 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id D9E0DAE7A55
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Jun 2025 10:34:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id DA4041889A69
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Jun 2025 08:37:15 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9B03D1BC4E4B
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Jun 2025 08:34:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D3B59279323;
-	Wed, 25 Jun 2025 08:36:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C3DF120297E;
+	Wed, 25 Jun 2025 08:34:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b="SqHnV/Gq"
-Received: from mx07-00178001.pphosted.com (mx08-00178001.pphosted.com [91.207.212.93])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="DRyZ5gYW"
+Received: from mail-wr1-f51.google.com (mail-wr1-f51.google.com [209.85.221.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4ACF8275B05;
-	Wed, 25 Jun 2025 08:36:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.207.212.93
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 802CA1F461D
+	for <linux-kernel@vger.kernel.org>; Wed, 25 Jun 2025 08:34:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750840608; cv=none; b=spKLMAwMQkVsyzXeVHut6OBwLIkYRoAc8kX6Gi0Wj+MPfhbPZlTkivwqJFXTzPh+LKFt3VCSHr28RomHohMsKDDbLuUyzb0hmonJVigvBMgLgG/i4G3zWtXD/kXc2YCdiWNJT1mOXlINy2Mrg9DeBce6v+bYISFnCuHFnNVzm28=
+	t=1750840460; cv=none; b=IQq7fJMg9N7DT8LmtaudstidvCP+giBEdJw5vhJGYeh9U/S9hClJrWvyvQug2V2+lJqTeIKDF73ognsELoPeMzwQyKHiuSHzl54TczU7+CwZBCUvtZsdGCNBZtamQB7IOQqL0uLNlqqu0KIyxuGonMHyq+XMK3tDa/pFhLd6p4A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750840608; c=relaxed/simple;
-	bh=EbK0U+OP5CIqfg71sOAF4oAM+5LmkeILjjLQ3geqK5s=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=EChmczUceWR1raU8nR5IZ0qXJdPftEdCibO9qbERnSwR6k4SC7aou3g7N0uWtN+RTuK3f3CeXIDm/0bkBFmpVrO2rVGUM6Zw6n5jSilw2jkrWVLjl9y3ZO1ILbNa41GVmRjkrLqPI2YH0moHxlRdS+kxIaVOBtumfsKFvG1y+v0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com; spf=pass smtp.mailfrom=foss.st.com; dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b=SqHnV/Gq; arc=none smtp.client-ip=91.207.212.93
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=foss.st.com
-Received: from pps.filterd (m0046661.ppops.net [127.0.0.1])
-	by mx07-00178001.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 55P6nksJ008379;
-	Wed, 25 Jun 2025 10:36:23 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foss.st.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=selector1; bh=
-	5iWKPTMFpX+lonpPcbekR/V8/MBsHrjUivVDN79opdU=; b=SqHnV/GqxnozxlFn
-	ObEanHvfEI2F+FZtdB/7rtcovax1mQOyY1mVLlQ1BSYzN3yIdeS4b9QiEoUlf22n
-	cTk3tMwbAYEgr0NzY+C6Hu4ePlqFtc4ohf3c5cI1MVAtveM2SqSkuPOgaXVJl9t2
-	lNCnLxNPGVWfXjSSFjGP4wGMV2SqlxyIdFceC6pGRDWYwmmr/huHgqdJtS0AtyK8
-	zzxhKbVp4Gp7CwnIsip3EpIf8VWMfTaCJeNLMvIY5aPom3oUeQlg0pEMpwG3qDpL
-	WCHhLTWw5LXNeUKngpRNl/Swhe1B9upvwpikOj5INAqO+91z2RN6R3qE/iQ39qUX
-	HZIp/w==
-Received: from beta.dmz-ap.st.com (beta.dmz-ap.st.com [138.198.100.35])
-	by mx07-00178001.pphosted.com (PPS) with ESMTPS id 47dkmjrekf-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 25 Jun 2025 10:36:23 +0200 (MEST)
-Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
-	by beta.dmz-ap.st.com (STMicroelectronics) with ESMTP id A845540047;
-	Wed, 25 Jun 2025 10:35:03 +0200 (CEST)
-Received: from Webmail-eu.st.com (shfdag1node2.st.com [10.75.129.70])
-	by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id 36FE8B0C401;
-	Wed, 25 Jun 2025 10:33:50 +0200 (CEST)
-Received: from [10.48.86.185] (10.48.86.185) by SHFDAG1NODE2.st.com
- (10.75.129.70) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Wed, 25 Jun
- 2025 10:33:49 +0200
-Message-ID: <e2400615-f21e-40bf-84f8-384242632193@foss.st.com>
-Date: Wed, 25 Jun 2025 10:33:48 +0200
+	s=arc-20240116; t=1750840460; c=relaxed/simple;
+	bh=+QtwyR1NK6SfC2uELTLQv9t/n+xX9pp+Bk+GvUshkug=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=lT8DTQm8CqD7PXyo7ex2r9zysmQxtvZ/4BONpoxU+S2RgZ/U0fxWAj2r6bd6ABqpCFXs2EGgU6SENfnJt6U8uIeqFGLMCqSAbhs1g5Hlt2U7fR2QeMFu44GUWXwk2yVS9j6+BQnq6KK2ftAEisE/TLTkbz+ifdhg1OxYgz8JIko=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=DRyZ5gYW; arc=none smtp.client-ip=209.85.221.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wr1-f51.google.com with SMTP id ffacd0b85a97d-3a50fc819f2so1181823f8f.2
+        for <linux-kernel@vger.kernel.org>; Wed, 25 Jun 2025 01:34:18 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1750840457; x=1751445257; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:subject:cc:to:from:date:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=RzsHE0Dm+vaKIDZxCmSo57hINCBe8Wa9oOmgUaoD+0o=;
+        b=DRyZ5gYWo9v0nmeBMeAyqVJmcRt+Tkq0lo93uJShkqzc2w0L7qyMGnRsmcjizEZ6kb
+         664X/U4Cr5D1D/dm60GnanY55dS/TT1drT09WgQBbmA5CPqH3X0XppwFCrxXKzsReEBc
+         uhHHOyVF9VTE1bRbQvYg7EOvp5Y+eXqH38dT2HCweZ38iaZOBARkBY1BsvB69rLOLtxG
+         S0YPTmI6G01aGXK7hlUb567yRqtSsdF5dDDP5XoVjZ1WEWSzP6KvOJ5nqcJm8fmN9KgS
+         etAEE6ZbKFG7iqqe7Wadbg0m1t3KGLH0l75aoAr4K6qZZwMHSV75a/fMqpFW2xVmyfTy
+         3N5Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1750840457; x=1751445257;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=RzsHE0Dm+vaKIDZxCmSo57hINCBe8Wa9oOmgUaoD+0o=;
+        b=uIhFWrtqwGQenRscEkEtTjseccCQcPeb9Cc7CdN5owWdWaTU7Njfx4IW2CMrNi3Pr7
+         4/EPzVPxW5yOAHRtHdOU6DJuh/gJBoUg8f7D3fb5Uenzk62oaBR7tsUEjaV977LUXzkD
+         rYCieuqdFTsgRQACk6tLUBSlEw+eXh4dHNmCEkBBPl2xKUhr4H32j8DGHATwn1XR2zLK
+         5q0b9Yj/7W+FKELfy3A5hvuFrLqc0QEGjLzbG9273iiKCRUxKlQ4lVC3wGBKTs636KO8
+         GC3dM30e5yyOza4OrOHiEs4MukYcPp6xs7NAfr6UDVBhib2j6if4G/8QH/LI+zs6TIzs
+         KPjA==
+X-Forwarded-Encrypted: i=1; AJvYcCU0+5sQrFpHYq5UKzoQ+si0NVDWGIX7ADkvqDejaL6LovPQEpFbrU2gAsIZVWDwKN4Oc7o/Dq4ZSEsmIj8=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx5TRTQRI9VkGW6H4BJlQKanxLj5Ysh4ByFuePm4CqhuwTdXAnu
+	yilogcAiadwIMRRgnVB6+eOZ6Ef+JUpm2+H16Lw1afxts9ncw2MOJfhS
+X-Gm-Gg: ASbGnctBXb4c2FFj/lEYg677mM7h+PgfFvl7rku649WpBXzbYYEHeA+hpc6jvRvGI/Z
+	MpQKg+OCzcjJSLysxri09bki5fSF1Q+gNEI+h4ZAfqq7KtJIbSRrwTCPmxk0OwS6l99BcRlXMJY
+	Bozh8UopkeFq6DBax4aPlLN3rS97HMWv77Qf4A5hzJXsIh5yA0+tNCtrcclvH81LHUb2sIag6wV
+	6RrJwZ7Ll6c9WNlTmRQhjcJFdQ62uOZPtCmKvp1eFT4o/MojdjMJbE9s51sKUdYjEwOy3yRjWTK
+	45QXyWHyoXn1c0W3zUu+oOrygAykSV7U2onTuBx5T+NpGg/DvIqdZUSF3CVMHKUSbMMgzY7G1oS
+	HJN2DL0Wa8kGfIHskpQN2LGTW
+X-Google-Smtp-Source: AGHT+IG4iG1MpnnxD3c0z3g1108nyY/UfjDrLLLTyFBsEARnqSoXsXoPNJxtt7ch3KoKN+2Mq6N5Pw==
+X-Received: by 2002:a05:6000:1449:b0:3a4:dbac:2dc1 with SMTP id ffacd0b85a97d-3a6ed6506a3mr1622991f8f.54.1750840456547;
+        Wed, 25 Jun 2025 01:34:16 -0700 (PDT)
+Received: from pumpkin (82-69-66-36.dsl.in-addr.zen.co.uk. [82.69.66.36])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4538238198asm12803765e9.39.2025.06.25.01.34.16
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 25 Jun 2025 01:34:16 -0700 (PDT)
+Date: Wed, 25 Jun 2025 09:34:15 +0100
+From: David Laight <david.laight.linux@gmail.com>
+To: Radim =?UTF-8?B?S3LEjW3DocWZ?= <rkrcmar@ventanamicro.com>
+Cc: "Palmer Dabbelt" <palmer@dabbelt.com>,
+ <linux-riscv@lists.infradead.org>, <linux-kernel@vger.kernel.org>, "Paul
+ Walmsley" <paul.walmsley@sifive.com>, <aou@eecs.berkeley.edu>, "Alexandre
+ Ghiti" <alex@ghiti.fr>, "Atish Patra" <atishp@rivosinc.com>,
+ <ajones@ventanamicro.com>, <cleger@rivosinc.com>,
+ <apatel@ventanamicro.com>, <thomas.weissschuh@linutronix.de>, "Jeff Law"
+ <jlaw@ventanamicro.com>
+Subject: Re: [PATCH v2 3/2] RISC-V: sbi: remove sbi_ecall tracepoints
+Message-ID: <20250625093415.53fd21cf@pumpkin>
+In-Reply-To: <DAVG8M70SJ4Q.ZSTC5VSJWGSK@ventanamicro.com>
+References: <20250619190315.2603194-4-rkrcmar@ventanamicro.com>
+	<mhng-516082EA-5A9A-4A76-9448-70828749F95F@palmerdabbelt-mac>
+	<DAUSD38QIV6D.1YO5ASNI3EUGV@ventanamicro.com>
+	<DAVG8M70SJ4Q.ZSTC5VSJWGSK@ventanamicro.com>
+X-Mailer: Claws Mail 4.1.1 (GTK 3.24.38; arm-unknown-linux-gnueabihf)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 06/13] perf: stm32: introduce DDRPERFM driver
-To: Krzysztof Kozlowski <krzk@kernel.org>, Will Deacon <will@kernel.org>,
-        Mark
- Rutland <mark.rutland@arm.com>, Rob Herring <robh@kernel.org>,
-        Krzysztof
- Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>,
-        Maxime
- Coquelin <mcoquelin.stm32@gmail.com>,
-        Alexandre Torgue
-	<alexandre.torgue@foss.st.com>,
-        Philipp Zabel <p.zabel@pengutronix.de>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Gatien Chevallier
-	<gatien.chevallier@foss.st.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Gabriel Fernandez
-	<gabriel.fernandez@foss.st.com>
-CC: <linux-arm-kernel@lists.infradead.org>, <linux-perf-users@vger.kernel.org>,
-        <devicetree@vger.kernel.org>,
-        <linux-stm32@st-md-mailman.stormreply.com>,
-        <linux-kernel@vger.kernel.org>, <linux-doc@vger.kernel.org>,
-        <linux-clk@vger.kernel.org>
-References: <20250623-ddrperfm-upstream-v1-0-7dffff168090@foss.st.com>
- <20250623-ddrperfm-upstream-v1-6-7dffff168090@foss.st.com>
- <9cb1575e-ae27-4a78-adb7-8a9e7072375e@kernel.org>
- <5044c733-8836-43bd-85d7-0f552b000fb1@foss.st.com>
- <49483568-b287-45ca-a66c-1e0ad0490225@kernel.org>
-Content-Language: en-US
-From: Clement LE GOFFIC <clement.legoffic@foss.st.com>
-In-Reply-To: <49483568-b287-45ca-a66c-1e0ad0490225@kernel.org>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: SHFCAS1NODE1.st.com (10.75.129.72) To SHFDAG1NODE2.st.com
- (10.75.129.70)
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.7,FMLib:17.12.80.40
- definitions=2025-06-25_01,2025-06-23_07,2025-03-28_01
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
 
-On 6/25/25 08:35, Krzysztof Kozlowski wrote:
-> On 24/06/2025 12:43, Clement LE GOFFIC wrote:
->> On 6/23/25 11:45, Krzysztof Kozlowski wrote:
->> [...]
->>
->> Hi Krzysztof,
->>
->> Sorry I forgot to address comments below.
->>
->>>> +
->>>> +static const struct stm32_ddr_pmu_cfg stm32_ddr_pmu_cfg_mp1 = {
->>>> +	.regs = &stm32_ddr_pmu_regspec_mp1,
->>>> +	.attribute = stm32_ddr_pmu_attr_groups_mp1,
->>>> +	.counters_nb = MP1_CNT_NB,
->>>> +	.evt_counters_nb = MP1_CNT_NB - 1, /* Time counter is not an event counter */
->>>> +	.time_cnt_idx = MP1_TIME_CNT_IDX,
->>>> +	.get_counter = stm32_ddr_pmu_get_event_counter_mp1,
->>>> +};
->>>> +
->>>> +static const struct stm32_ddr_pmu_cfg stm32_ddr_pmu_cfg_mp2 = {
->>>> +	.regs = &stm32_ddr_pmu_regspec_mp2,
->>>> +	.attribute = stm32_ddr_pmu_attr_groups_mp2,
->>>> +	.counters_nb = MP2_CNT_NB,
->>>> +	.evt_counters_nb = MP2_CNT_NB - 1, /* Time counter is an event counter */
->>>> +	.time_cnt_idx = MP2_TIME_CNT_IDX,
->>>> +	.get_counter = stm32_ddr_pmu_get_event_counter_mp2,
->>>> +};
->>>> +
->>>> +static const struct dev_pm_ops stm32_ddr_pmu_pm_ops = {
->>>> +	SET_SYSTEM_SLEEP_PM_OPS(NULL, stm32_ddr_pmu_device_resume)
->>>> +};
->>>> +
->>>> +static const struct of_device_id stm32_ddr_pmu_of_match[] = {
->>>> +	{
->>>> +		.compatible = "st,stm32mp131-ddr-pmu",
->>>> +		.data = &stm32_ddr_pmu_cfg_mp1
->>>> +	},
->>>> +	{
->>>> +		.compatible = "st,stm32mp151-ddr-pmu",
->>>> +		.data = &stm32_ddr_pmu_cfg_mp1
->>>
->>> So devices are compatible, thus express it correctly and drop this.
->>
->> Ok so I assume this comes with your comment in the bindings and
->> basically don't get you point here.
->> Can you please be more precise ?
-> 
-> Express compatibility in the bindings, like 90% of SoCs are doing, so
-> with proper fallback and drop this entry in the table. My comment was
-> pretty precise, because this is completely standard pattern, also used
-> already in stm32.
-> 
+On Wed, 25 Jun 2025 09:51:45 +0200
+Radim Kr=C4=8Dm=C3=A1=C5=99 <rkrcmar@ventanamicro.com> wrote:
 
-Ok I remember your discussion with Alex in my V1 of pinctrl-hdp :
-https://lore.kernel.org/all/1de58672-5355-4b75-99f4-c48687017d2f@kernel.org/
+> 2025-06-24T15:09:09+02:00, Radim Kr=C4=8Dm=C3=A1=C5=99 <rkrcmar@ventanami=
+cro.com>:
+> > For another example, let's have the following function:
+> >
+> >   struct sbiret some_sbi_ecall(uintptr_t a0, uintptr_t a1)
+> >   {
+> >     return sbi_ecall(123, 456, a0, a1);
+> >   }
+> >
+...
+>=20
+> GCC 15.1 still leaves "mv" outside the branch, but at least seems to be
+> on the right track (undesired overhead is marked with leading stars):
+>=20
+>    0xffffffff800236e8 <+0>:	addi	sp,sp,-48
+>    0xffffffff800236ea <+2>:	sd	s0,32(sp)
+>    0xffffffff800236ec <+4>:	sd	ra,40(sp)
+>    0xffffffff800236ee <+6>:	addi	s0,sp,48
+> *  0xffffffff800236f0 <+8>:	mv	a4,a0
+> *  0xffffffff800236f2 <+10>:	mv	a5,a1
+>    0xffffffff800236f4 <+12>:	nop
+> *  0xffffffff800236f8 <+16>:	mv	a0,a4
+> *  0xffffffff800236fa <+18>:	mv	a1,a5
+>    0xffffffff800236fc <+20>:	li	a7,123
+>    0xffffffff80023700 <+24>:	li	a6,456
+>    0xffffffff80023704 <+28>:	ecall
+> *  0xffffffff80023708 <+32>:	mv	a5,a0
+> *  0xffffffff8002370a <+34>:	mv	a2,a1
+>    0xffffffff8002370c <+36>:	nop
+>    0xffffffff80023710 <+40>:	ld	ra,40(sp)
+>    0xffffffff80023712 <+42>:	ld	s0,32(sp)
+> *  0xffffffff80023714 <+44>:	mv	a0,a5
+> *  0xffffffff80023716 <+46>:	mv	a1,a2
+>    0xffffffff80023718 <+48>:	addi	sp,sp,48
+>    0xffffffff8002371a <+50>:	ret
+>    [Tracing goes to +126]
 
-Does it suits you :
-In the SoC DT:
-MP13: compatible = "st,stm32mp131-ddr-pmu", "st,stm32mp1-ddr-pmu";
-MP15: compatible = "st,stm32mp151-ddr-pmu", "st,stm32mp1-ddr-pmu";
-MP25: compatible = "st,stm32mp251-ddr-pmu";
+How much do a few register moves/spills matter compared to the
+cost of the called code?
+There will but much worse things out there if you look.
 
-In the bindings:
-properties:
-   compatible:
-     enum:
-       - st,stm32mp1-ddr-pmu
-       - st,stm32mp131-ddr-pmu
-       - st,stm32mp151-ddr-pmu
-       - st,stm32mp251-ddr-pmu
-
-In the driver:
-static const struct of_device_id stm32_ddr_pmu_of_match[] = {
-	{
-		.compatible = "st,stm32mp1-ddr-pmu",
-		.data = &stm32_ddr_pmu_cfg_mp1
-	},
-	{
-		.compatible = "st,stm32mp251-ddr-pmu",
-		.data = &stm32_ddr_pmu_cfg_mp2
-	},
-	{ },
-};
-
-Best regards,
-Clément
-
-> Best regards,
-> Krzysztof
-
+	David
 
