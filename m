@@ -1,110 +1,149 @@
-Return-Path: <linux-kernel+bounces-701897-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-702167-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A8539AE7AD4
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Jun 2025 10:50:49 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 61E63AE7EDC
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Jun 2025 12:16:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5742B7B6D2E
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Jun 2025 08:47:24 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 668373A994F
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Jun 2025 10:14:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CBB5E29AAFE;
-	Wed, 25 Jun 2025 08:47:11 +0000 (UTC)
-Received: from szxga07-in.huawei.com (szxga07-in.huawei.com [45.249.212.35])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9C19929B22A;
+	Wed, 25 Jun 2025 10:13:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="RhvAFWiT"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.10])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5D920288CBD;
-	Wed, 25 Jun 2025 08:47:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.35
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 76DA529ACFD
+	for <linux-kernel@vger.kernel.org>; Wed, 25 Jun 2025 10:13:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.10
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750841231; cv=none; b=ddlHHDnNBcDiMS7XLkjx275XREBZA7MozWnUfWw9NsmjNek7+i541UATGn+pCM95/mujHaPQeWQFKEy+uLBRPwLSLJaFPBXnoU/qHLe4x7557ytHLVSJiPbs80ul+CHsHpMgdWpWpAVSa0uOxQLJuAT+bw43JKCFCxXJDe+nVe4=
+	t=1750846425; cv=none; b=J9vRlFzqf/1OWhmzQxcr8b7rmdV8mtbwdBreqi70n/p7LSFRV+MJmbjarqKQeiXtyCv4qcfouk5IB3yIySNsEHoA7lbzt0aCLcPYRvdA0VdMz6Ung4g4eWhA1kCvANSt3QfkuDLBxR1SDaXAkK2nHLRgbBoNK9dn5KEx8eJMpRw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750841231; c=relaxed/simple;
-	bh=xDezQu8rUpcvHFAGt+r8ic9Do8WqjCafJJfUU47daxg=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=KwhOwmzTUgkXJLbjZlfRJcBUeYutFyuFDyk9AbZNIoHWNe1GPC35b9kJc7acpbXmfEQ9WFaaT9OM7IfnLKWvZZZxnfsVAiNbiUZRRjxQDzg8OSosmvWBJODVrj9nj3f9spAa1OzwAjWMLsVlnddJaM6JzGg3d+ALgNYMzmq6FCU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.35
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.88.214])
-	by szxga07-in.huawei.com (SkyGuard) with ESMTP id 4bRwPf47x6z1QBp1;
-	Wed, 25 Jun 2025 16:45:26 +0800 (CST)
-Received: from kwepemp200004.china.huawei.com (unknown [7.202.195.99])
-	by mail.maildlp.com (Postfix) with ESMTPS id 7B6B01A016C;
-	Wed, 25 Jun 2025 16:47:04 +0800 (CST)
-Received: from huawei.com (10.175.124.27) by kwepemp200004.china.huawei.com
- (7.202.195.99) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Wed, 25 Jun
- 2025 16:47:03 +0800
-From: zhangjian <zhangjian496@huawei.com>
-To: <gregkh@linuxfoundation.org>, <darrick.wong@oracle.com>,
-	<dhowells@redhat.com>
-CC: <linux-kernel@vger.kernel.org>, <linux-nfs@vger.kernel.org>,
-	<stable@vger.kernel.org>
-Subject: [PATCH] [5.10-LTS NFS] fix assert failure in __fscache_disable_cookie
-Date: Thu, 26 Jun 2025 10:00:35 +0800
-Message-ID: <20250626020035.1043638-1-zhangjian496@huawei.com>
-X-Mailer: git-send-email 2.33.0
+	s=arc-20240116; t=1750846425; c=relaxed/simple;
+	bh=La7GgC9uIfvzuyiHzJNM4y+6GPHrM0tMUJEgqMvWOLY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=uQVgJLAf1MuywU6VPg++NWB7rMDNKfvaQMHcddA01owFlyEocZ0LtK7LcSU0KSkLkd84pUGr3vMgV61LEh2H3E47t7qbI0PB4h9phOmob0/wCKB1WCy9+EGt8Bv9Vc+sgnfyDL8ulJGVrKdtTQfvTidI1Cvu8BvSs19QsNN7Jc0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=RhvAFWiT; arc=none smtp.client-ip=192.198.163.10
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1750846423; x=1782382423;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=La7GgC9uIfvzuyiHzJNM4y+6GPHrM0tMUJEgqMvWOLY=;
+  b=RhvAFWiTGWbazt3360/+Y9d4ZzoPIQXJA3pXCEgbxcGAigqKHmBMkg1s
+   /ZJodJLK8Ejv119dxm8B9BJWP+20gR7I3/nWhWpE1bj0nuAuwwe/g3us2
+   uDi5lUUfJdNEJs2KwBc5307qMtBId9LnIw6lZtmOoOgm0MmJu23X93sTl
+   VCH9rD5YLX/lrIn1bqwBt+gk67j4jCnl1zBcHqqwb2MDmQJa6mnCrt2et
+   pKIMQ7GbLWzmWURA9e8slMkmCDWlW0swdO6JrOeBQH2Kxem5UGXjwI4ML
+   9bQWR6/F4D732Uu2gDdosHbzHosdCsdM6i5Uqyh2wqfC9SjCs49TiQLLZ
+   g==;
+X-CSE-ConnectionGUID: sOZhhIplTBq1sfjZ41FPaw==
+X-CSE-MsgGUID: 0B6NO1e3QJGXms0Rd/cTkw==
+X-IronPort-AV: E=McAfee;i="6800,10657,11474"; a="64467644"
+X-IronPort-AV: E=Sophos;i="6.16,264,1744095600"; 
+   d="scan'208";a="64467644"
+Received: from orviesa003.jf.intel.com ([10.64.159.143])
+  by fmvoesa104.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 25 Jun 2025 03:13:42 -0700
+X-CSE-ConnectionGUID: 1DnGF/pASteKc/ORLLwOyA==
+X-CSE-MsgGUID: /l0bhpQvToinaTLv9HEU4Q==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.16,264,1744095600"; 
+   d="scan'208";a="156572481"
+Received: from yilunxu-optiplex-7050.sh.intel.com (HELO localhost) ([10.239.159.165])
+  by orviesa003.jf.intel.com with ESMTP; 25 Jun 2025 03:13:37 -0700
+Date: Wed, 25 Jun 2025 18:06:00 +0800
+From: Xu Yilun <yilun.xu@linux.intel.com>
+To: Jason Gunthorpe <jgg@nvidia.com>
+Cc: kevin.tian@intel.com, will@kernel.org, aneesh.kumar@kernel.org,
+	iommu@lists.linux.dev, linux-kernel@vger.kernel.org,
+	joro@8bytes.org, robin.murphy@arm.com, shuah@kernel.org,
+	nicolinc@nvidia.com, aik@amd.com, dan.j.williams@intel.com,
+	baolu.lu@linux.intel.com, yilun.xu@intel.com
+Subject: Re: [PATCH v2 3/4] iommufd: Destroy vdevice on idevice destroy
+Message-ID: <aFvKCEt6FadGtYr+@yilunxu-OptiPlex-7050>
+References: <20250623094946.1714996-1-yilun.xu@linux.intel.com>
+ <20250623094946.1714996-4-yilun.xu@linux.intel.com>
+ <20250624145346.GC150753@nvidia.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: kwepems100002.china.huawei.com (7.221.188.206) To
- kwepemp200004.china.huawei.com (7.202.195.99)
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250624145346.GC150753@nvidia.com>
 
-Multi write opens will go into __fscache_disable_cookie and cookie->n_active
-may be zero for a short window. Move this assertion under locking to avoid
-assert failure for ASSERTCMP(atomic_read(&cookie->n_active), >, 0).
+On Tue, Jun 24, 2025 at 11:53:46AM -0300, Jason Gunthorpe wrote:
+> On Mon, Jun 23, 2025 at 05:49:45PM +0800, Xu Yilun wrote:
+> > +static void iommufd_device_remove_vdev(struct iommufd_device *idev)
+> > +{
+> > +	bool vdev_removing = false;
+> > +
+> > +	mutex_lock(&idev->igroup->lock);
+> > +	if (idev->vdev) {
+> > +		struct iommufd_vdevice *vdev;
+> > +
+> > +		vdev = iommufd_get_vdevice(idev->ictx, idev->vdev->obj.id);
+> > +		if (IS_ERR(vdev)) {
+> 
+> This incrs obj.users which will cause a concurrent
+> iommufd_object_remove() to fail with -EBUSY, which we are trying to
+> avoid.
 
-stack is as following:
+I have the same question as Kevin, leave this to that thread.
 
- fscache_disable_cookie include/linux/fscache.h:854 [inline]
- nfs_fscache_open_file+0x3ba/0x430 fs/nfs/fscache.c:319
- nfs4_file_open+0x4ff/0x780 fs/nfs/nfs4file.c:90
- do_dentry_open+0x6ea/0x1170 fs/open.c:826
- do_open.isra.0+0x9dc/0xf50 fs/namei.c:3316
- path_openat+0x336/0x810 fs/namei.c:3434
- do_filp_open+0x1b9/0x290 fs/namei.c:3461
- do_sys_openat2+0x5be/0x9b0 fs/open.c:1231
- do_sys_open+0xc8/0x150 fs/open.c:1248
- do_syscall_64+0x33/0x40 arch/x86/entry/common.c:46
- entry_SYSCALL_64_after_hwframe+0x67/0xd1
+[...]
 
-Signed-off-by: zhangjian <zhangjian496@huawei.com>
----
- fs/fscache/cookie.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+> 	/*
+> 	 * We don't know what thread is actually going to destroy the vdev, but
+> 	 * once the vdev is destroyed the pointer is NULL'd. At this
+> 	 * point idev->users is 0 so no other thread can set a new vdev.
+> 	 */
+> 	if (!wait_event_timeout(idev->ictx->destroy_wait,
+> 				!READ_ONCE(idev->vdev),
+> 				msecs_to_jiffies(60000)))
+> 		pr_crit("Time out waiting for iommufd vdevice removed\n");
+> }
+> 
+> Though there is a cleaner option here, you could do:
+> 
+> 	mutex_lock(&idev->igroup->lock);
+> 	if (idev->vdev)
+> 		iommufd_vdevice_abort(&idev->vdev->obj);
+> 	mutex_unlock(&idev->igroup->lock);
+> 
+> And make it safe to call abort twice, eg by setting dev to NULL and
+> checking for that. First thread to get to the igroup lock, either via
+> iommufd_vdevice_destroy() or via the above will do the actual abort
+> synchronously without any wait_event_timeout. That seems better??
 
-diff --git a/fs/fscache/cookie.c b/fs/fscache/cookie.c
-index 6104f627c..30f0e2b41 100644
---- a/fs/fscache/cookie.c
-+++ b/fs/fscache/cookie.c
-@@ -703,6 +703,9 @@ void __fscache_disable_cookie(struct fscache_cookie *cookie,
- 
- 	_enter("%p,%u", cookie, invalidate);
- 
-+	wait_on_bit_lock(&cookie->flags, FSCACHE_COOKIE_ENABLEMENT_LOCK,
-+			 TASK_UNINTERRUPTIBLE);
-+
- 	trace_fscache_disable(cookie);
- 
- 	ASSERTCMP(atomic_read(&cookie->n_active), >, 0);
-@@ -713,9 +716,6 @@ void __fscache_disable_cookie(struct fscache_cookie *cookie,
- 		BUG();
- 	}
- 
--	wait_on_bit_lock(&cookie->flags, FSCACHE_COOKIE_ENABLEMENT_LOCK,
--			 TASK_UNINTERRUPTIBLE);
--
- 	fscache_update_aux(cookie, aux_data);
- 
- 	if (!test_and_clear_bit(FSCACHE_COOKIE_ENABLED, &cookie->flags))
--- 
-2.33.0
+I'm good to both options, but slightly tend not to make vdevice so
+special from other objects, so still prefer the wait_event option.
 
+> 
+> > +	/* vdev can't outlive idev, vdev->idev is always valid, need no refcnt */
+> > +	vdev->idev = idev;
+> 
+> So this means a soon as 'idev->vdev = NULL;' happens idev is an
+> invalid pointer. Need a WRITE_ONCE there.
+> 
+> I would rephrase the comment as 
+>  iommufd_device_destroy() waits until idev->vdev is NULL before
+>  freeing the idev, which only happens once the vdev is finished
+>  destruction. Thus we do not need refcounting on either idev->vdev or
+>  vdev->idev.
+> 
+> and group both assignments together.
+
+Good to me.
+
+Thanks,
+Yilun
 
