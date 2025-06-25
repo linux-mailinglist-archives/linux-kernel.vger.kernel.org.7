@@ -1,442 +1,443 @@
-Return-Path: <linux-kernel+bounces-703392-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-703395-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8114BAE8F87
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Jun 2025 22:32:57 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8794DAE8F8D
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Jun 2025 22:33:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5784A7AA62E
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Jun 2025 20:31:33 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 91EAD1C2834C
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Jun 2025 20:34:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AA77B2E4264;
-	Wed, 25 Jun 2025 20:31:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 407972E0B72;
+	Wed, 25 Jun 2025 20:32:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="Jo5R9Auf"
-Received: from mail-pf1-f201.google.com (mail-pf1-f201.google.com [209.85.210.201])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="VstkG157"
+Received: from mail-yw1-f174.google.com (mail-yw1-f174.google.com [209.85.128.174])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A96632DCC0C
-	for <linux-kernel@vger.kernel.org>; Wed, 25 Jun 2025 20:31:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 52A8C2E06D1
+	for <linux-kernel@vger.kernel.org>; Wed, 25 Jun 2025 20:32:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750883492; cv=none; b=ltVNrIv/QwlNTBZZs9+P5OiPb3jmSidCWfjeof0bHoWZujNVFi0PSSo3R5vGY7jYKq10zlPyKDjuYUx07nPoihtGyRwEw382KxHbWcw2ESoorMBxBDGUn9D6kCQL5zZTxammssaxIYLZQ0qRBI1O+4wfISFyTC5lDheo6QZnxbA=
+	t=1750883549; cv=none; b=T5N2SzN3IWyrS+ffdgrR/+zTkqgA5AdCglUmj+XeWnCAYK4pmn5gMOWfdQ4fIeU6HK+sQwNeXL11AgjrYxOuqyS6zZPY05r/5I4Wyu70urmgIa5LtMPZh1SP7vxxVGP0U3q4ReRPGNZ3o4mRMyZJGK1g1DjE/YuJT9eCmEKdMoA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750883492; c=relaxed/simple;
-	bh=eEGbTUhehreNHJJcHfYFZqQbpQHx5PlflpLC6KOfwLo=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=HOG4Xc6tbTCd+XpmoTlWCoc2lmsf9OdE9KrXc7V0hFpxusd8QFe8bA7d2YSehqIjjG7seXdMjA+YFTmr7SOZZXKSG0owC4O9o4ba+y4xCQKa3fbJA6+jJaBV1Nu2zB+P+VIgxbM0d9cWnkKzCI7GfNhSPvp04upRCVrMqok/gi0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--jstultz.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=Jo5R9Auf; arc=none smtp.client-ip=209.85.210.201
+	s=arc-20240116; t=1750883549; c=relaxed/simple;
+	bh=V1H77vjIowyrgyx1L2sPlLCmDxVAVzKy9Ihe1IyUPb0=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=JXhrCvM9BQtnVZJ8x6U2NDd+YgJdJTkj07xvsthN0L7e0jQ6WEBHwW9aLCV7VT04GtQObskndSmF6T8+kbwdFJaFhLOaIEUqvgiGQhnwj2YDXNPfezBNEBoyOjBwdTjeoEIHvt7kc1uDUq67Pe4okp3dIVq6tpE064kIgBFoO3A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=VstkG157; arc=none smtp.client-ip=209.85.128.174
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--jstultz.bounces.google.com
-Received: by mail-pf1-f201.google.com with SMTP id d2e1a72fcca58-748f3d4c7e7so239161b3a.3
-        for <linux-kernel@vger.kernel.org>; Wed, 25 Jun 2025 13:31:30 -0700 (PDT)
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-yw1-f174.google.com with SMTP id 00721157ae682-714078015edso3230427b3.2
+        for <linux-kernel@vger.kernel.org>; Wed, 25 Jun 2025 13:32:27 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1750883490; x=1751488290; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=yGWjwWeoIfXjnW6VujAMlFOzBqf8NJo/hzIiehZaI4M=;
-        b=Jo5R9AufxBdN96dV06AmJ21iybtZU/8iHyOpOMs2rEsXeuBEOBM1x0+b4QssgW8PZ/
-         z1cXQxx/ZQourEkwATIljPOaNtSnxUcC1c5YxoSj9YGGCK5I0gYJjqjQBmkbYNBnyeui
-         q5FcjJwE8ZnourSHueKyYXf6dNwxdkrjEkR4CNSxicSScKCuTPWz+r+5Atc3mCm8WED4
-         tJ2lJ3+zk/5uA/IGvpCSwb5fUvYkMVI3/aKUhVCcq7Qk94BZvm6QEDqBBqRgFeMrzmXC
-         Vc19g6ach+rEtnb1KVWors6cZ5HeuAtEBoS62ZNqM7BOjgPqFbIu5Z6861xJ5YVVxKnr
-         uMzg==
+        d=google.com; s=20230601; t=1750883546; x=1751488346; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=SLFYUt98P2q0h/fZsXZ99NhjaWK3IxRzSYbzaWT17Y4=;
+        b=VstkG157LAHA7EvzkXxJZIBGTy3TF3CKXY8T7EpcieJSFnCXDZIOlq4Yz224celtcq
+         DZAVJFZhk5n69n7detolRa2LA1eqrHWnl+dnDFTFDjlBMUASNSUe4NYZO49WrNXkAk0G
+         S4xLAyM2AgitA5hGvVshkzlICdcEfa76FlvMVsobAoCClto/aMXx+h366dfnEgF8A5OJ
+         x0s/i1qdloZk/ETaNGDawu+qZJJj0Mv//5d/9j/6tLfNa2GsgQxoY9xusmzGpgNxi/8V
+         qbLFQgDV0ST4wmD7FmJwDlBeHWH4pp0h3XzB1kWMyexkVT0FNx5fhPlIvxh+Y1i3XUSQ
+         GjVg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1750883490; x=1751488290;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=yGWjwWeoIfXjnW6VujAMlFOzBqf8NJo/hzIiehZaI4M=;
-        b=AR/IB+WaQNp3blQIXO5jHt7Arms5+4sQskekVuwqpyuxDQlhsSmtvZJQvol0iwSMPK
-         kbJNtc94JZ1fgv7cWheZBxi3yEX6h6UmvzWNGI2fTbokIwRQRNf1hCDwSfyv/m0PLwLN
-         qLI1RRXfmum6RfDOi4PleJvGroDPQBTKfRwqQa37NT30sFH2YlrRyVO9p+NYR5uSjL4Y
-         YGIo8JV1VgZr5ydjWRBfv3aqbB3BqZBvJO9JOXKoQx2jsak4nGRPNY0MsOx8vM5cfd1A
-         TjqPap4rkZYP2v1zWS7OJRQVEbJ2jWpGrJpj54z4o3G6zUNO9uudY+LdvVezLINjv9yL
-         qAZg==
-X-Gm-Message-State: AOJu0Yy1qaj0yorkrLhKD1HTky0kdE+crLrEvNzfj0ESTRBhIlfaRV3T
-	trJEnPUl6CJn7jNqpixvbo8QBZ3Ntw1LdGjJXsQkH19NA+mxin0gTRGPYu14FhCVwLXjhqwVrgd
-	f1y/tTCH+U0ifjUHvG1eKudKba9qr97MOPbudWF15q2CCYxUhTeRlir002e4vjmGSeh7tC4LsXR
-	zadzByj9Jza7btFh5CE0ccLsRwwmZ5PwzCWWXz7bqXueg/85We
-X-Google-Smtp-Source: AGHT+IEqs5f8XRv7rHPGYoDkgavkdCUmUkG8ZyD9wKvrccGxxaEgqULooPwub1kfQqVHhIN1j9jPGtID56OS
-X-Received: from pgy33.prod.google.com ([2002:a63:1861:0:b0:b31:cdc2:ff97])
- (user=jstultz job=prod-delivery.src-stubby-dispatcher) by 2002:a05:6a21:3298:b0:1f5:591b:4f7a
- with SMTP id adf61e73a8af0-2207f31ac43mr7293136637.38.1750883489863; Wed, 25
- Jun 2025 13:31:29 -0700 (PDT)
-Date: Wed, 25 Jun 2025 20:31:01 +0000
-In-Reply-To: <20250625203110.2299275-1-jstultz@google.com>
+        d=1e100.net; s=20230601; t=1750883546; x=1751488346;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=SLFYUt98P2q0h/fZsXZ99NhjaWK3IxRzSYbzaWT17Y4=;
+        b=dbBSf2BhgprrfxbPRQdRsbVa5eAaCmiUFAZovM4wwchJ4OexI1CZRWMi9xFmkLJN83
+         bOkCnOoITzbRjSa4QniCNggtUFcVXhDC9e6wSbtF4O0yqldK+ZaUt+u+9hJji3ln38vD
+         +153PLNkBrjzI2ee45ZRecHnE69P60ZpyV9ENdgm5KGM0E0psTIrkiYNXPcPCM5eKjWF
+         XeambGcrKyCmczm8YdVN11RAvoFlrtvdqR3LoXgCbbkJYxE+7X+/t4S+9iQ5s6mc1ck6
+         wa+Ot98y/Tz+PpMzNJs/mQi8RDUyxLOUnl1mOJvpu+/yHFYcvjcaM7RH0o6dJ5dz4z2p
+         jvFQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVL2YIK0Cvfgir9P6Pt5TSqN8nT4W96M/vArH0y9vTQ159ICteqxUsEq0Wkhix1cEIo5Fx/AFvkBoxTl6w=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz10kBVePBLHQlw5e4yOlI/XdnccsdoXHBsUMW5GtnNuYTkF0gN
+	JEuBhZLGNXk5KcbYrimyl2WRMiwlNoNkADW/+Pct3rOc4l8ax+t4CY6blFfVyo82mjiuqjf2AlR
+	qqmVhroR50N8auCrW3/u6lgNl0AJl74yUlXtOu790
+X-Gm-Gg: ASbGnctxCJHm2ynB7OhYG02vDpFvxgIdIthQqSrzkmTUFbRKClD0mUzrqGlkzHl8T8D
+	Eap9GLYJ5swktz7AGy/l7WbTBpsPJx8KytHSs7TjPrQZUsAmwhjGQGpU4695oBJbYV4oOVRWTD1
+	L9YXWzCqn8fMeMKfyrO6jrpnr1vTUD5VAfo0Pe5URMGxGBEcVavF8htpEMzJYaiGnmjxd5vQo6
+X-Google-Smtp-Source: AGHT+IHhfR6/VlJVSXraZCY/fQlZAWZbH/2E7bRPGkB0TTeVRkt1lIwuCEsaLSMizSmISjMwsYtat4LpSX+OYWyJJ70=
+X-Received: by 2002:a05:690c:85:b0:712:e2b5:e61b with SMTP id
+ 00721157ae682-71406ca2e13mr70129327b3.13.1750883545165; Wed, 25 Jun 2025
+ 13:32:25 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20250625203110.2299275-1-jstultz@google.com>
-X-Mailer: git-send-email 2.50.0.727.gbf7dc18ff4-goog
-Message-ID: <20250625203110.2299275-9-jstultz@google.com>
-Subject: [PATCH v18 8/8] sched: Start blocked_on chain processing in find_proxy_task()
-From: John Stultz <jstultz@google.com>
-To: LKML <linux-kernel@vger.kernel.org>
-Cc: Peter Zijlstra <peterz@infradead.org>, Juri Lelli <juri.lelli@redhat.com>, 
-	Valentin Schneider <valentin.schneider@arm.com>, "Connor O'Brien" <connoro@google.com>, 
-	John Stultz <jstultz@google.com>, Joel Fernandes <joelagnelf@nvidia.com>, 
-	Qais Yousef <qyousef@layalina.io>, Ingo Molnar <mingo@redhat.com>, 
-	Vincent Guittot <vincent.guittot@linaro.org>, Dietmar Eggemann <dietmar.eggemann@arm.com>, 
-	Valentin Schneider <vschneid@redhat.com>, Steven Rostedt <rostedt@goodmis.org>, 
-	Ben Segall <bsegall@google.com>, Zimuzo Ezeozue <zezeozue@google.com>, Mel Gorman <mgorman@suse.de>, 
-	Will Deacon <will@kernel.org>, Waiman Long <longman@redhat.com>, Boqun Feng <boqun.feng@gmail.com>, 
-	"Paul E. McKenney" <paulmck@kernel.org>, Metin Kaya <Metin.Kaya@arm.com>, 
-	Xuewen Yan <xuewen.yan94@gmail.com>, K Prateek Nayak <kprateek.nayak@amd.com>, 
-	Thomas Gleixner <tglx@linutronix.de>, Daniel Lezcano <daniel.lezcano@linaro.org>, 
-	Suleiman Souhlal <suleiman@google.com>, kuyo chang <kuyo.chang@mediatek.com>, hupu <hupu.gm@gmail.com>, 
-	kernel-team@android.com
+MIME-Version: 1.0
+References: <20250620190342.1780170-1-peterx@redhat.com> <20250620190342.1780170-5-peterx@redhat.com>
+In-Reply-To: <20250620190342.1780170-5-peterx@redhat.com>
+From: James Houghton <jthoughton@google.com>
+Date: Wed, 25 Jun 2025 13:31:49 -0700
+X-Gm-Features: Ac12FXzgcuNaEB-qFo3pCvx2b2klwV6rpJlAl6SRM316awXTv0oTOGmJj0ZOazg
+Message-ID: <CADrL8HVZccikHRZ+PP4EfKQBkgXZ0E9S3GFtwWVYLD2NMhg7EA@mail.gmail.com>
+Subject: Re: [PATCH 4/4] mm: Apply vm_uffd_ops API to core mm
+To: Peter Xu <peterx@redhat.com>
+Cc: linux-mm@kvack.org, linux-kernel@vger.kernel.org, 
+	Nikita Kalyazin <kalyazin@amazon.com>, Hugh Dickins <hughd@google.com>, 
+	Oscar Salvador <osalvador@suse.de>, Michal Hocko <mhocko@suse.com>, 
+	David Hildenbrand <david@redhat.com>, Muchun Song <muchun.song@linux.dev>, 
+	Andrea Arcangeli <aarcange@redhat.com>, Ujwal Kundur <ujwal.kundur@gmail.com>, 
+	Suren Baghdasaryan <surenb@google.com>, Andrew Morton <akpm@linux-foundation.org>, 
+	Vlastimil Babka <vbabka@suse.cz>, "Liam R . Howlett" <Liam.Howlett@oracle.com>, 
+	Mike Rapoport <rppt@kernel.org>, Lorenzo Stoakes <lorenzo.stoakes@oracle.com>, 
+	Axel Rasmussen <axelrasmussen@google.com>
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-From: Peter Zijlstra <peterz@infradead.org>
+On Fri, Jun 20, 2025 at 12:04=E2=80=AFPM Peter Xu <peterx@redhat.com> wrote=
+:
+>
+> This patch completely moves the old userfaultfd core to use the new
+> vm_uffd_ops API.  After this change, existing file systems will start to
+> use the new API for userfault operations.
+>
+> When at it, moving vma_can_userfault() into mm/userfaultfd.c instead,
+> because it's getting too big.  It's only used in slow paths so it shouldn=
+'t
+> be an issue.
+>
+> This will also remove quite some hard-coded checks for either shmem or
+> hugetlbfs.  Now all the old checks should still work but with vm_uffd_ops=
+.
+>
+> Note that anonymous memory will still need to be processed separately
+> because it doesn't have vm_ops at all.
+>
+> Signed-off-by: Peter Xu <peterx@redhat.com>
+> ---
+>  include/linux/shmem_fs.h      |  14 -----
+>  include/linux/userfaultfd_k.h |  46 ++++----------
+>  mm/shmem.c                    |   2 +-
+>  mm/userfaultfd.c              | 115 +++++++++++++++++++++++++---------
+>  4 files changed, 101 insertions(+), 76 deletions(-)
+>
+> diff --git a/include/linux/shmem_fs.h b/include/linux/shmem_fs.h
+> index 6d0f9c599ff7..2f5b7b295cf6 100644
+> --- a/include/linux/shmem_fs.h
+> +++ b/include/linux/shmem_fs.h
+> @@ -195,20 +195,6 @@ static inline pgoff_t shmem_fallocend(struct inode *=
+inode, pgoff_t eof)
+>  extern bool shmem_charge(struct inode *inode, long pages);
+>  extern void shmem_uncharge(struct inode *inode, long pages);
+>
+> -#ifdef CONFIG_USERFAULTFD
+> -#ifdef CONFIG_SHMEM
+> -extern int shmem_mfill_atomic_pte(pmd_t *dst_pmd,
+> -                                 struct vm_area_struct *dst_vma,
+> -                                 unsigned long dst_addr,
+> -                                 unsigned long src_addr,
+> -                                 uffd_flags_t flags,
+> -                                 struct folio **foliop);
+> -#else /* !CONFIG_SHMEM */
+> -#define shmem_mfill_atomic_pte(dst_pmd, dst_vma, dst_addr, \
+> -                              src_addr, flags, foliop) ({ BUG(); 0; })
+> -#endif /* CONFIG_SHMEM */
+> -#endif /* CONFIG_USERFAULTFD */
+> -
+>  /*
+>   * Used space is stored as unsigned 64-bit value in bytes but
+>   * quota core supports only signed 64-bit values so use that
+> diff --git a/include/linux/userfaultfd_k.h b/include/linux/userfaultfd_k.=
+h
+> index e79c724b3b95..4e56ad423a4a 100644
+> --- a/include/linux/userfaultfd_k.h
+> +++ b/include/linux/userfaultfd_k.h
+> @@ -85,9 +85,14 @@ extern vm_fault_t handle_userfault(struct vm_fault *vm=
+f, unsigned long reason);
+>  #define MFILL_ATOMIC_FLAG(nr) ((__force uffd_flags_t) MFILL_ATOMIC_BIT(n=
+r))
+>  #define MFILL_ATOMIC_MODE_MASK ((__force uffd_flags_t) (MFILL_ATOMIC_BIT=
+(0) - 1))
+>
+> +static inline enum mfill_atomic_mode uffd_flags_get_mode(uffd_flags_t fl=
+ags)
+> +{
+> +       return (enum mfill_atomic_mode)(flags & MFILL_ATOMIC_MODE_MASK);
+> +}
+> +
+>  static inline bool uffd_flags_mode_is(uffd_flags_t flags, enum mfill_ato=
+mic_mode expected)
+>  {
+> -       return (flags & MFILL_ATOMIC_MODE_MASK) =3D=3D ((__force uffd_fla=
+gs_t) expected);
+> +       return uffd_flags_get_mode(flags) =3D=3D expected;
+>  }
+>
+>  static inline uffd_flags_t uffd_flags_set_mode(uffd_flags_t flags, enum =
+mfill_atomic_mode mode)
+> @@ -196,41 +201,16 @@ static inline bool userfaultfd_armed(struct vm_area=
+_struct *vma)
+>         return vma->vm_flags & __VM_UFFD_FLAGS;
+>  }
+>
+> -static inline bool vma_can_userfault(struct vm_area_struct *vma,
+> -                                    unsigned long vm_flags,
+> -                                    bool wp_async)
+> +static inline const vm_uffd_ops *vma_get_uffd_ops(struct vm_area_struct =
+*vma)
+>  {
+> -       vm_flags &=3D __VM_UFFD_FLAGS;
+> -
+> -       if (vma->vm_flags & VM_DROPPABLE)
+> -               return false;
+> -
+> -       if ((vm_flags & VM_UFFD_MINOR) &&
+> -           (!is_vm_hugetlb_page(vma) && !vma_is_shmem(vma)))
+> -               return false;
+> -
+> -       /*
+> -        * If wp async enabled, and WP is the only mode enabled, allow an=
+y
+> -        * memory type.
+> -        */
+> -       if (wp_async && (vm_flags =3D=3D VM_UFFD_WP))
+> -               return true;
+> -
+> -#ifndef CONFIG_PTE_MARKER_UFFD_WP
+> -       /*
+> -        * If user requested uffd-wp but not enabled pte markers for
+> -        * uffd-wp, then shmem & hugetlbfs are not supported but only
+> -        * anonymous.
+> -        */
+> -       if ((vm_flags & VM_UFFD_WP) && !vma_is_anonymous(vma))
+> -               return false;
+> -#endif
 
-Start to flesh out the real find_proxy_task() implementation,
-but avoid the migration cases for now, in those cases just
-deactivate the donor task and pick again.
+Hi Peter,
 
-To ensure the donor task or other blocked tasks in the chain
-aren't migrated away while we're running the proxy, also tweak
-the fair class logic to avoid migrating donor or mutex blocked
-tasks.
+Thanks for this cleanup!
 
-Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
-Signed-off-by: Juri Lelli <juri.lelli@redhat.com>
-Signed-off-by: Valentin Schneider <valentin.schneider@arm.com>
-Signed-off-by: Connor O'Brien <connoro@google.com>
-[jstultz: This change was split out from the larger proxy patch]
-Signed-off-by: John Stultz <jstultz@google.com>
----
-v5:
-* Split this out from larger proxy patch
-v7:
-* Minor refactoring of core find_proxy_task() function
-* Minor spelling and corrections suggested by Metin Kaya
-* Dropped an added BUG_ON that was frequently tripped
-v8:
-* Fix issue if proxy_deactivate fails, we don't leave task
-  BO_BLOCKED
-* Switch to WARN_ON from BUG_ON checks
-v9:
-* Improve comments suggested by Metin
-* Minor cleanups
-v11:
-* Previously we checked next==rq->idle && prev==rq->idle, but I
-  think we only really care if next==rq->idle from find_proxy_task,
-  as we will still want to resched regardless of what prev was.
-v12:
-* Commit message rework for selected -> donor rewording
-v13:
-* Address new delayed dequeue condition (deactivate donor for now)
-* Next to donor renaming in find_proxy_task
-* Improved comments for find_proxy_task
-* Rework for proxy_deactivate cleanup
-v14:
-* Fix build error from __mutex_owner() with CONFIG_PREEMPT_RT
-v15:
-* Reworks for moving blocked_on_state to later in the series
-v16:
-* Pull down fix from later in the series where a deactivated
-  task could pass the (task_cpu(owner) == this_cpu) check
-  then have it be activated on a different cpu, so it passes
-  the on_rq check. Thus double check the values in the opposite
-  order to make sure nothing slips by.
-* Add resched_idle label to simplify common exit path
-* Get rid of preserve_need_resched flag and rework per Peter's
-  suggestion
-* Rework find_proxy_task() to use guard to cleanup the exit gotos
-  as Peter suggested.
-v18:
-* Minor tweak to order of logic in find_proxy_task() to enable
-  an optimization later in the full series suggested by Suleiman
-* Use READ_ONCE calls to on_rq references as I hit a bug where
-  the compiler was optimizing out some of the reads.
+It looks like the above two checks, the wp-async one and the PTE
+marker check, have been reordered in this patch. Does this result in a
+functional difference?
 
-Cc: Joel Fernandes <joelagnelf@nvidia.com>
-Cc: Qais Yousef <qyousef@layalina.io>
-Cc: Ingo Molnar <mingo@redhat.com>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Juri Lelli <juri.lelli@redhat.com>
-Cc: Vincent Guittot <vincent.guittot@linaro.org>
-Cc: Dietmar Eggemann <dietmar.eggemann@arm.com>
-Cc: Valentin Schneider <vschneid@redhat.com>
-Cc: Steven Rostedt <rostedt@goodmis.org>
-Cc: Ben Segall <bsegall@google.com>
-Cc: Zimuzo Ezeozue <zezeozue@google.com>
-Cc: Mel Gorman <mgorman@suse.de>
-Cc: Will Deacon <will@kernel.org>
-Cc: Waiman Long <longman@redhat.com>
-Cc: Boqun Feng <boqun.feng@gmail.com>
-Cc: "Paul E. McKenney" <paulmck@kernel.org>
-Cc: Metin Kaya <Metin.Kaya@arm.com>
-Cc: Xuewen Yan <xuewen.yan94@gmail.com>
-Cc: K Prateek Nayak <kprateek.nayak@amd.com>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: Daniel Lezcano <daniel.lezcano@linaro.org>
-Cc: Suleiman Souhlal <suleiman@google.com>
-Cc: kuyo chang <kuyo.chang@mediatek.com>
-Cc: hupu <hupu.gm@gmail.com>
-Cc: kernel-team@android.com
----
- kernel/locking/mutex.h |   3 +-
- kernel/sched/core.c    | 143 ++++++++++++++++++++++++++++++++++-------
- kernel/sched/fair.c    |  11 +++-
- 3 files changed, 132 insertions(+), 25 deletions(-)
+The rest of this series looks fine to me. :)
 
-diff --git a/kernel/locking/mutex.h b/kernel/locking/mutex.h
-index cbff35b9b7ae3..2e8080a9bee37 100644
---- a/kernel/locking/mutex.h
-+++ b/kernel/locking/mutex.h
-@@ -6,7 +6,7 @@
-  *
-  *  Copyright (C) 2004, 2005, 2006 Red Hat, Inc., Ingo Molnar <mingo@redhat.com>
-  */
--
-+#ifndef CONFIG_PREEMPT_RT
- /*
-  * This is the control structure for tasks blocked on mutex, which resides
-  * on the blocked task's kernel stack:
-@@ -70,3 +70,4 @@ extern void debug_mutex_init(struct mutex *lock, const char *name,
- # define debug_mutex_unlock(lock)			do { } while (0)
- # define debug_mutex_init(lock, name, key)		do { } while (0)
- #endif /* !CONFIG_DEBUG_MUTEXES */
-+#endif /* CONFIG_PREEMPT_RT */
-diff --git a/kernel/sched/core.c b/kernel/sched/core.c
-index 98a802e0a3f36..1c7573d0cd312 100644
---- a/kernel/sched/core.c
-+++ b/kernel/sched/core.c
-@@ -96,6 +96,7 @@
- #include "../workqueue_internal.h"
- #include "../../io_uring/io-wq.h"
- #include "../smpboot.h"
-+#include "../locking/mutex.h"
- 
- EXPORT_TRACEPOINT_SYMBOL_GPL(ipi_send_cpu);
- EXPORT_TRACEPOINT_SYMBOL_GPL(ipi_send_cpumask);
-@@ -2965,8 +2966,15 @@ static int affine_move_task(struct rq *rq, struct task_struct *p, struct rq_flag
- 	struct set_affinity_pending my_pending = { }, *pending = NULL;
- 	bool stop_pending, complete = false;
- 
--	/* Can the task run on the task's current CPU? If so, we're done */
--	if (cpumask_test_cpu(task_cpu(p), &p->cpus_mask)) {
-+	/*
-+	 * Can the task run on the task's current CPU? If so, we're done
-+	 *
-+	 * We are also done if the task is the current donor, boosting a lock-
-+	 * holding proxy, (and potentially has been migrated outside its
-+	 * current or previous affinity mask)
-+	 */
-+	if (cpumask_test_cpu(task_cpu(p), &p->cpus_mask) ||
-+	    (task_current_donor(rq, p) && !task_current(rq, p))) {
- 		struct task_struct *push_task = NULL;
- 
- 		if ((flags & SCA_MIGRATE_ENABLE) &&
-@@ -6695,36 +6703,124 @@ static struct task_struct *proxy_deactivate(struct rq *rq, struct task_struct *d
- }
- 
- /*
-- * Initial simple sketch that just deactivates the blocked task
-- * chosen by pick_next_task() so we can then pick something that
-- * isn't blocked.
-+ * Find runnable lock owner to proxy for mutex blocked donor
-+ *
-+ * Follow the blocked-on relation:
-+ *   task->blocked_on -> mutex->owner -> task...
-+ *
-+ * Lock order:
-+ *
-+ *   p->pi_lock
-+ *     rq->lock
-+ *       mutex->wait_lock
-+ *
-+ * Returns the task that is going to be used as execution context (the one
-+ * that is actually going to be run on cpu_of(rq)).
-  */
- static struct task_struct *
- find_proxy_task(struct rq *rq, struct task_struct *donor, struct rq_flags *rf)
- {
-+	struct task_struct *owner = NULL;
-+	int this_cpu = cpu_of(rq);
-+	struct task_struct *p;
- 	struct mutex *mutex;
- 
--	mutex = donor->blocked_on;
--	/* Something changed in the chain, so pick again */
--	if (!mutex)
--		return NULL;
--	/*
--	 * By taking mutex->wait_lock we hold off concurrent mutex_unlock()
--	 * and ensure @owner sticks around.
--	 */
--	guard(raw_spinlock)(&mutex->wait_lock);
-+	/* Follow blocked_on chain. */
-+	for (p = donor; task_is_blocked(p); p = owner) {
-+		mutex = p->blocked_on;
-+		/* Something changed in the chain, so pick again */
-+		if (!mutex)
-+			return NULL;
-+		/*
-+		 * By taking mutex->wait_lock we hold off concurrent mutex_unlock()
-+		 * and ensure @owner sticks around.
-+		 */
-+		guard(raw_spinlock)(&mutex->wait_lock);
- 
--	/* Check again that donor is blocked with blocked_lock held */
--	if (!task_is_blocked(donor) || mutex != __get_task_blocked_on(donor)) {
-+		/* Check again that p is blocked with wait_lock held */
-+		if (mutex != __get_task_blocked_on(p)) {
-+			/*
-+			 * Something changed in the blocked_on chain and
-+			 * we don't know if only at this level. So, let's
-+			 * just bail out completely and let __schedule()
-+			 * figure things out (pick_again loop).
-+			 */
-+			return NULL;
-+		}
-+
-+		owner = __mutex_owner(mutex);
-+		if (!owner) {
-+			__clear_task_blocked_on(p, mutex);
-+			return p;
-+		}
-+
-+		if (!READ_ONCE(owner->on_rq) || owner->se.sched_delayed) {
-+			/* XXX Don't handle blocked owners/delayed dequeue yet */
-+			return proxy_deactivate(rq, donor);
-+		}
-+
-+		if (task_cpu(owner) != this_cpu) {
-+			/* XXX Don't handle migrations yet */
-+			return proxy_deactivate(rq, donor);
-+		}
-+
-+		if (task_on_rq_migrating(owner)) {
-+			/*
-+			 * One of the chain of mutex owners is currently migrating to this
-+			 * CPU, but has not yet been enqueued because we are holding the
-+			 * rq lock. As a simple solution, just schedule rq->idle to give
-+			 * the migration a chance to complete. Much like the migrate_task
-+			 * case we should end up back in find_proxy_task(), this time
-+			 * hopefully with all relevant tasks already enqueued.
-+			 */
-+			return proxy_resched_idle(rq);
-+		}
-+
-+		/*
-+		 * Its possible to race where after we check owner->on_rq
-+		 * but before we check (owner_cpu != this_cpu) that the
-+		 * task on another cpu was migrated back to this cpu. In
-+		 * that case it could slip by our  checks. So double check
-+		 * we are still on this cpu and not migrating. If we get
-+		 * inconsistent results, try again.
-+		 */
-+		if (!task_on_rq_queued(owner) || task_cpu(owner) != this_cpu)
-+			return NULL;
-+
-+		if (owner == p) {
-+			/*
-+			 * It's possible we interleave with mutex_unlock like:
-+			 *
-+			 *				lock(&rq->lock);
-+			 *				  find_proxy_task()
-+			 * mutex_unlock()
-+			 *   lock(&wait_lock);
-+			 *   donor(owner) = current->blocked_donor;
-+			 *   unlock(&wait_lock);
-+			 *
-+			 *   wake_up_q();
-+			 *     ...
-+			 *       ttwu_runnable()
-+			 *         __task_rq_lock()
-+			 *				  lock(&wait_lock);
-+			 *				  owner == p
-+			 *
-+			 * Which leaves us to finish the ttwu_runnable() and make it go.
-+			 *
-+			 * So schedule rq->idle so that ttwu_runnable() can get the rq
-+			 * lock and mark owner as running.
-+			 */
-+			return proxy_resched_idle(rq);
-+		}
- 		/*
--		 * Something changed in the blocked_on chain and
--		 * we don't know if only at this level. So, let's
--		 * just bail out completely and let __schedule()
--		 * figure things out (pick_again loop).
-+		 * OK, now we're absolutely sure @owner is on this
-+		 * rq, therefore holding @rq->lock is sufficient to
-+		 * guarantee its existence, as per ttwu_remote().
- 		 */
--		return NULL; /* do pick_next_task() again */
- 	}
--	return proxy_deactivate(rq, donor);
-+
-+	WARN_ON_ONCE(owner && !owner->on_rq);
-+	return owner;
- }
- #else /* SCHED_PROXY_EXEC */
- static struct task_struct *
-@@ -6876,10 +6972,13 @@ static void __sched notrace __schedule(int sched_mode)
- 		next = find_proxy_task(rq, next, &rf);
- 		if (!next)
- 			goto pick_again;
-+		if (next == rq->idle)
-+			goto keep_resched;
- 	}
- picked:
- 	clear_tsk_need_resched(prev);
- 	clear_preempt_need_resched();
-+keep_resched:
- 	rq->last_seen_need_resched_ns = 0;
- 
- 	is_switch = prev != next;
-diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
-index c34e0891193a7..ea4331ed6bc23 100644
---- a/kernel/sched/fair.c
-+++ b/kernel/sched/fair.c
-@@ -9415,7 +9415,8 @@ int can_migrate_task(struct task_struct *p, struct lb_env *env)
- 	 * 2) throttled_lb_pair, or
- 	 * 3) cannot be migrated to this CPU due to cpus_ptr, or
- 	 * 4) running (obviously), or
--	 * 5) are cache-hot on their current CPU.
-+	 * 5) are cache-hot on their current CPU or
-+	 * 6) are blocked on mutexes (if SCHED_PROXY_EXEC is enabled)
- 	 */
- 	if ((p->se.sched_delayed) && (env->migration_type != migrate_load))
- 		return 0;
-@@ -9437,6 +9438,9 @@ int can_migrate_task(struct task_struct *p, struct lb_env *env)
- 	if (kthread_is_per_cpu(p))
- 		return 0;
- 
-+	if (task_is_blocked(p))
-+		return 0;
-+
- 	if (!cpumask_test_cpu(env->dst_cpu, p->cpus_ptr)) {
- 		int cpu;
- 
-@@ -9472,7 +9476,8 @@ int can_migrate_task(struct task_struct *p, struct lb_env *env)
- 	/* Record that we found at least one task that could run on dst_cpu */
- 	env->flags &= ~LBF_ALL_PINNED;
- 
--	if (task_on_cpu(env->src_rq, p)) {
-+	if (task_on_cpu(env->src_rq, p) ||
-+	    task_current_donor(env->src_rq, p)) {
- 		schedstat_inc(p->stats.nr_failed_migrations_running);
- 		return 0;
- 	}
-@@ -9515,6 +9520,8 @@ static void detach_task(struct task_struct *p, struct lb_env *env)
- 		schedstat_inc(env->sd->lb_hot_gained[env->idle]);
- 		schedstat_inc(p->stats.nr_forced_migrations);
- 	}
-+	WARN_ON(task_current(env->src_rq, p));
-+	WARN_ON(task_current_donor(env->src_rq, p));
- 
- 	deactivate_task(env->src_rq, p, DEQUEUE_NOCLOCK);
- 	set_task_cpu(p, env->dst_cpu);
--- 
-2.50.0.727.gbf7dc18ff4-goog
-
+> -
+> -       /* By default, allow any of anon|shmem|hugetlb */
+> -       return vma_is_anonymous(vma) || is_vm_hugetlb_page(vma) ||
+> -           vma_is_shmem(vma);
+> +       if (vma->vm_ops && vma->vm_ops->userfaultfd_ops)
+> +               return vma->vm_ops->userfaultfd_ops;
+> +       return NULL;
+>  }
+>
+> +bool vma_can_userfault(struct vm_area_struct *vma,
+> +                      unsigned long vm_flags, bool wp_async);
+> +
+>  static inline bool vma_has_uffd_without_event_remap(struct vm_area_struc=
+t *vma)
+>  {
+>         struct userfaultfd_ctx *uffd_ctx =3D vma->vm_userfaultfd_ctx.ctx;
+> diff --git a/mm/shmem.c b/mm/shmem.c
+> index bd0a29000318..4d71fc7be358 100644
+> --- a/mm/shmem.c
+> +++ b/mm/shmem.c
+> @@ -3158,7 +3158,7 @@ static int shmem_uffd_get_folio(struct inode *inode=
+, pgoff_t pgoff,
+>         return shmem_get_folio(inode, pgoff, 0, folio, SGP_NOALLOC);
+>  }
+>
+> -int shmem_mfill_atomic_pte(pmd_t *dst_pmd,
+> +static int shmem_mfill_atomic_pte(pmd_t *dst_pmd,
+>                            struct vm_area_struct *dst_vma,
+>                            unsigned long dst_addr,
+>                            unsigned long src_addr,
+> diff --git a/mm/userfaultfd.c b/mm/userfaultfd.c
+> index 879505c6996f..61783ff2d335 100644
+> --- a/mm/userfaultfd.c
+> +++ b/mm/userfaultfd.c
+> @@ -14,12 +14,48 @@
+>  #include <linux/userfaultfd_k.h>
+>  #include <linux/mmu_notifier.h>
+>  #include <linux/hugetlb.h>
+> -#include <linux/shmem_fs.h>
+>  #include <asm/tlbflush.h>
+>  #include <asm/tlb.h>
+>  #include "internal.h"
+>  #include "swap.h"
+>
+> +bool vma_can_userfault(struct vm_area_struct *vma,
+> +                      unsigned long vm_flags, bool wp_async)
+> +{
+> +       unsigned long supported;
+> +
+> +       if (vma->vm_flags & VM_DROPPABLE)
+> +               return false;
+> +
+> +       vm_flags &=3D __VM_UFFD_FLAGS;
+> +
+> +#ifndef CONFIG_PTE_MARKER_UFFD_WP
+> +       /*
+> +        * If user requested uffd-wp but not enabled pte markers for
+> +        * uffd-wp, then any file system (like shmem or hugetlbfs) are no=
+t
+> +        * supported but only anonymous.
+> +        */
+> +       if ((vm_flags & VM_UFFD_WP) && !vma_is_anonymous(vma))
+> +               return false;
+> +#endif
+> +       /*
+> +        * If wp async enabled, and WP is the only mode enabled, allow an=
+y
+> +        * memory type.
+> +        */
+> +       if (wp_async && (vm_flags =3D=3D VM_UFFD_WP))
+> +               return true;
+> +
+> +       if (vma_is_anonymous(vma))
+> +               /* Anonymous has no page cache, MINOR not supported */
+> +               supported =3D VM_UFFD_MISSING | VM_UFFD_WP;
+> +       else if (vma_get_uffd_ops(vma))
+> +               supported =3D vma_get_uffd_ops(vma)->uffd_features;
+> +       else
+> +               return false;
+> +
+> +       return !(vm_flags & (~supported));
+> +}
+> +
+>  static __always_inline
+>  bool validate_dst_vma(struct vm_area_struct *dst_vma, unsigned long dst_=
+end)
+>  {
+> @@ -384,11 +420,15 @@ static int mfill_atomic_pte_continue(pmd_t *dst_pmd=
+,
+>  {
+>         struct inode *inode =3D file_inode(dst_vma->vm_file);
+>         pgoff_t pgoff =3D linear_page_index(dst_vma, dst_addr);
+> +       const vm_uffd_ops *uffd_ops =3D vma_get_uffd_ops(dst_vma);
+>         struct folio *folio;
+>         struct page *page;
+>         int ret;
+>
+> -       ret =3D shmem_get_folio(inode, pgoff, 0, &folio, SGP_NOALLOC);
+> +       if (WARN_ON_ONCE(!uffd_ops || !uffd_ops->uffd_get_folio))
+> +               return -EINVAL;
+> +
+> +       ret =3D uffd_ops->uffd_get_folio(inode, pgoff, &folio);
+>         /* Our caller expects us to return -EFAULT if we failed to find f=
+olio */
+>         if (ret =3D=3D -ENOENT)
+>                 ret =3D -EFAULT;
+> @@ -504,18 +544,6 @@ static __always_inline ssize_t mfill_atomic_hugetlb(
+>         u32 hash;
+>         struct address_space *mapping;
+>
+> -       /*
+> -        * There is no default zero huge page for all huge page sizes as
+> -        * supported by hugetlb.  A PMD_SIZE huge pages may exist as used
+> -        * by THP.  Since we can not reliably insert a zero page, this
+> -        * feature is not supported.
+> -        */
+> -       if (uffd_flags_mode_is(flags, MFILL_ATOMIC_ZEROPAGE)) {
+> -               up_read(&ctx->map_changing_lock);
+> -               uffd_mfill_unlock(dst_vma);
+> -               return -EINVAL;
+> -       }
+> -
+>         src_addr =3D src_start;
+>         dst_addr =3D dst_start;
+>         copied =3D 0;
+> @@ -686,14 +714,55 @@ static __always_inline ssize_t mfill_atomic_pte(pmd=
+_t *dst_pmd,
+>                         err =3D mfill_atomic_pte_zeropage(dst_pmd,
+>                                                  dst_vma, dst_addr);
+>         } else {
+> -               err =3D shmem_mfill_atomic_pte(dst_pmd, dst_vma,
+> -                                            dst_addr, src_addr,
+> -                                            flags, foliop);
+> +               const vm_uffd_ops *uffd_ops =3D vma_get_uffd_ops(dst_vma)=
+;
+> +
+> +               if (WARN_ON_ONCE(!uffd_ops || !uffd_ops->uffd_copy)) {
+> +                       err =3D -EINVAL;
+> +               } else {
+> +                       err =3D uffd_ops->uffd_copy(dst_pmd, dst_vma,
+> +                                                 dst_addr, src_addr,
+> +                                                 flags, foliop);
+> +               }
+>         }
+>
+>         return err;
+>  }
+>
+> +static inline bool
+> +vma_uffd_ops_supported(struct vm_area_struct *vma, uffd_flags_t flags)
+> +{
+> +       enum mfill_atomic_mode mode =3D uffd_flags_get_mode(flags);
+> +       const vm_uffd_ops *uffd_ops;
+> +       unsigned long uffd_ioctls;
+> +
+> +       if ((flags & MFILL_ATOMIC_WP) && !(vma->vm_flags & VM_UFFD_WP))
+> +               return false;
+> +
+> +       /* Anonymous supports everything except CONTINUE */
+> +       if (vma_is_anonymous(vma))
+> +               return mode !=3D MFILL_ATOMIC_CONTINUE;
+> +
+> +       uffd_ops =3D vma_get_uffd_ops(vma);
+> +       if (!uffd_ops)
+> +               return false;
+> +
+> +       uffd_ioctls =3D uffd_ops->uffd_ioctls;
+> +       switch (mode) {
+> +       case MFILL_ATOMIC_COPY:
+> +               return uffd_ioctls & BIT(_UFFDIO_COPY);
+> +       case MFILL_ATOMIC_ZEROPAGE:
+> +               return uffd_ioctls & BIT(_UFFDIO_ZEROPAGE);
+> +       case MFILL_ATOMIC_CONTINUE:
+> +               if (!(vma->vm_flags & VM_SHARED))
+> +                       return false;
+> +               return uffd_ioctls & BIT(_UFFDIO_CONTINUE);
+> +       case MFILL_ATOMIC_POISON:
+> +               return uffd_ioctls & BIT(_UFFDIO_POISON);
+> +       default:
+> +               return false;
+> +       }
+> +}
+> +
+>  static __always_inline ssize_t mfill_atomic(struct userfaultfd_ctx *ctx,
+>                                             unsigned long dst_start,
+>                                             unsigned long src_start,
+> @@ -752,11 +821,7 @@ static __always_inline ssize_t mfill_atomic(struct u=
+serfaultfd_ctx *ctx,
+>             dst_vma->vm_flags & VM_SHARED))
+>                 goto out_unlock;
+>
+> -       /*
+> -        * validate 'mode' now that we know the dst_vma: don't allow
+> -        * a wrprotect copy if the userfaultfd didn't register as WP.
+> -        */
+> -       if ((flags & MFILL_ATOMIC_WP) && !(dst_vma->vm_flags & VM_UFFD_WP=
+))
+> +       if (!vma_uffd_ops_supported(dst_vma, flags))
+>                 goto out_unlock;
+>
+>         /*
+> @@ -766,12 +831,6 @@ static __always_inline ssize_t mfill_atomic(struct u=
+serfaultfd_ctx *ctx,
+>                 return  mfill_atomic_hugetlb(ctx, dst_vma, dst_start,
+>                                              src_start, len, flags);
+>
+> -       if (!vma_is_anonymous(dst_vma) && !vma_is_shmem(dst_vma))
+> -               goto out_unlock;
+> -       if (!vma_is_shmem(dst_vma) &&
+> -           uffd_flags_mode_is(flags, MFILL_ATOMIC_CONTINUE))
+> -               goto out_unlock;
+> -
+>         while (src_addr < src_start + len) {
+>                 pmd_t dst_pmdval;
+>
+> --
+> 2.49.0
+>
 
