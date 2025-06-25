@@ -1,162 +1,128 @@
-Return-Path: <linux-kernel+bounces-702372-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-702376-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 51BF0AE8196
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Jun 2025 13:40:55 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id AB505AE81CA
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Jun 2025 13:44:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 011F3167021
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Jun 2025 11:40:05 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 59E2A3A91A3
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Jun 2025 11:40:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3101025C70F;
-	Wed, 25 Jun 2025 11:39:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="dtuawZ46"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0468E25F989;
+	Wed, 25 Jun 2025 11:40:05 +0000 (UTC)
+Received: from mail-ej1-f51.google.com (mail-ej1-f51.google.com [209.85.218.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 26BD6282E1
-	for <linux-kernel@vger.kernel.org>; Wed, 25 Jun 2025 11:39:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BB03825E80E;
+	Wed, 25 Jun 2025 11:40:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750851595; cv=none; b=FgGa8qH8IckMJDS4H+qpwkK3TmWIWiTNpsZn1miPVThfhwdWtv3dItXBzGAdBCMKGAbA1kpa3Q5AGY+2eXjMj9p8Q1G4oq97nc/kDdcqganeB8wrflzbHFAx1OO9IXicvDinhWmnMVpmxxrRnnQlJWOle4SmFzUfIIt+b72j/Qg=
+	t=1750851604; cv=none; b=SQaEPeYnVLgck0mtNYvLbDwQEzb40+XjqEj7HTzum0ryIecso/A2iDbLjlS6eLakMbPQkDnFDZbun2uEyQWPJAP4gVec67uI9g45yZtSaoDr5YVU0LK3xf5alCjnaV+astSQkOt65hrF7mbOW/0blG83c0M+YxIqQLdUqX1SnR0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750851595; c=relaxed/simple;
-	bh=C3JAMLbqJIpHXlQHI7FHWU33nNzthOTI2jHEkI8oJJ8=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=czyl42IQX9X1rEau7Z2KNFSY/NfzpIFvbrG7AacDGQA/Ixb99hVieI+84+ysnBgmZG/SrlapqK7AG+Yftw7z4vSzfEWhZU/JlqGxMXg5cB6OHaKiYtbSy7dLYu99sirndXnEHug7ibZSW+idPY74msofY9B3P6Vv0bux/DElaSM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=dtuawZ46; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279869.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 55P3fT2S005791
-	for <linux-kernel@vger.kernel.org>; Wed, 25 Jun 2025 11:39:53 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	D/9kOiApQXYH8AwtMI7zEvaiwqs42vrGQZ099rTXvMA=; b=dtuawZ46TwaUfPPj
-	dya5rvusbKlmKciCKyMBZ3czC27aqrvA+878dsSLIZKCgSQy2mWSmaMGUtVMq1tV
-	mF/9siDnq1I0PA6rxmFfab+wa+bPMZm2TUkdGHm2RakDaGViJMebpxm9RCnUi1YN
-	vxsnaTVe4fYB8rftWcC5++0d5bOPhH36COoHiIsNRYAzlqUa8HQdq5eQnlermD+Q
-	+VM2VBBum9TDrB7gJ62pbRQPJjs9obgQ+/8JSDRyRjlB6GjjP8tQtAQ8S4Xrocz6
-	o+6AXBFEWWxkHmgkpUXah557wRpNQLv1OAIcLtWsKoaAcXF/QDA0Itf75TMdx78V
-	udox/g==
-Received: from mail-qv1-f70.google.com (mail-qv1-f70.google.com [209.85.219.70])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 47f3bgfqtm-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Wed, 25 Jun 2025 11:39:52 +0000 (GMT)
-Received: by mail-qv1-f70.google.com with SMTP id 6a1803df08f44-6facbe71504so13097106d6.2
-        for <linux-kernel@vger.kernel.org>; Wed, 25 Jun 2025 04:39:52 -0700 (PDT)
+	s=arc-20240116; t=1750851604; c=relaxed/simple;
+	bh=XNs8x8ajNJh0fetiIm2YiGOf+JuBt4IW4h9OB4WhzIE=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
+	 In-Reply-To:To:Cc; b=FBjXp7xxsqJpcFg6uNeYFtIMXiH6rN0tg/fqZoGf/oQqpxlUVRccQfdtoE/5nbRAbuTcHRDA6Z8kRiTC16V4nOXwRvc+6gNRwh+6QI25Xfd/CfxQIK/t95QQOSpApoctvuycgCrkkkVzRcpZhIcljKeuYHKeKRgU23I6gyeOvKo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.218.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f51.google.com with SMTP id a640c23a62f3a-ade4679fba7so263301766b.2;
+        Wed, 25 Jun 2025 04:40:02 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1750851592; x=1751456392;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=D/9kOiApQXYH8AwtMI7zEvaiwqs42vrGQZ099rTXvMA=;
-        b=UX+Xrvc468S0NfSmjoDpjJbDBgghAzuQNdmGoWSQXwfKnUwRQ7rKmc1IVuZKpB1fVj
-         C4Mc4jlQNf8wwyNzqUUvIBq5nG3xw/x5vEShIvUE8LV6+IBijVOmJhVSzz0vu792nT4s
-         /HObW2b89KkoV0qkkZYpzpPHZIhI9nXPchQTNL3e8TlIu8BS43jhAbRraqkZUj3sJWGJ
-         YgpLrVm9JhoRLTI7EMSq0zqgRgYJ3lFPe4HKjn5K0eLyDf2UP8BUanKANvcG9QbQiycV
-         4mIeYBYmjfLBiJ0b6iM+UgHv7PFDlQRaaMnpPU3BIYrYW+gfOhkHhW5hAbVRGe0fNpHW
-         7R7A==
-X-Forwarded-Encrypted: i=1; AJvYcCXXB4xskN8RI8Dvs663w1AViRR0fuiMcQ7aLsg452+hooXfz6opEQsgFrokVZdP+AUNkOW4DGEEhTOFEYE=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwlXYGNKO4iItxRjMpJPIfz/yqlhmteK9dfBzAIaxLEb1z1IXJb
-	gfE0swKpliEoyUg1HJMS1B0wTDUxooJyPo+/OQOJT0oj7Xmn5EM07ZUTWA+mUDth/SQAIoVbnHf
-	pAQ9Cyf5nFf1o/wwenJ4SfBlBJeEyLLbfVSALH2Li1all6FpY0K3cSojrCfY/NSt4N1I=
-X-Gm-Gg: ASbGncvlJAPBaIgHH8djbZanqKpAhqqHd9aVsl/EUyXl7IcZe6u3wAQcLD0IJh4oMbU
-	Qv2NveJIpijvLYk4/qZ86AvKpWYMSu762DudI5u63c+xg4I151yboTWtEl9nvpHJGdxiYYULyNn
-	EvRo+6wdDv7QrskzFzWiw9cqRgd5h6tjlYbVpkFQcT+ZjT0nP3iKZmmqPsYkSzjPyJvOFDsJYnK
-	LHKYLlYroKbf9EEaM9Ae0j4fP8Si/J5j8Wlqsu7ssMVblL5qOjwNkqJ32JPv0m9ers3X8ow6/xJ
-	az7jiNa8Hs7UdfmD9VaXE+0I6pv457x3kYiauC4b6OOnnil0sZe9KGEJLd0XZ0cGHFSCs0+G/B0
-	k3Bw=
-X-Received: by 2002:a05:620a:2552:b0:7d3:c69e:267 with SMTP id af79cd13be357-7d42976a0cemr132720985a.12.1750851592125;
-        Wed, 25 Jun 2025 04:39:52 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IGH6OiOdnFqNQFHZY08dzGnG49pbYdELxhLBkXKRuNNZyM0qKripYKhU48YUIEPhjYcS4p0BQ==
-X-Received: by 2002:a05:620a:2552:b0:7d3:c69e:267 with SMTP id af79cd13be357-7d42976a0cemr132719985a.12.1750851591653;
-        Wed, 25 Jun 2025 04:39:51 -0700 (PDT)
-Received: from [192.168.143.225] (078088045245.garwolin.vectranet.pl. [78.88.45.245])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ae0ba7a3fcasm160221966b.117.2025.06.25.04.39.49
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 25 Jun 2025 04:39:51 -0700 (PDT)
-Message-ID: <1bc82082-32aa-429d-afcc-5b7050c82518@oss.qualcomm.com>
-Date: Wed, 25 Jun 2025 13:39:48 +0200
+        d=1e100.net; s=20230601; t=1750851601; x=1751456401;
+        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
+         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=XBluJOszNCTRK8dAY0/F78ijOirMy7nuGhXV+efUFY0=;
+        b=aE0DvOqIa2/tIzLY6dv1Mzhqtqgw54OCVqlKZ1Lhv4Y3cAMXPx3v2QJV+zdoYkPhfB
+         DiTOfKPTX4TCQX1hKq6NiGGlg2Z7i1QmY2eoT6oKy8DDhCvvu21IbnknKIE0xLeZoywp
+         +C+NRKWL8Zhv4WZG7mcJRmvZLvNqCuv+8w3sROGWa1vkRJtSAwM2Hoe+Bn1j+Mumk8Vu
+         vR1YMHn8uVhPIBHvPkFoe5Gj1gpXUb12DA0Bag7g0Oy41dQyINUpsJTqJLpXw979KqBd
+         rmT23q9K40tgwk4RsYzFwe51vUwyFIcAjS8k32E+pooh7rmdiAOgtqyt9t5zLu6BkuN8
+         n99g==
+X-Forwarded-Encrypted: i=1; AJvYcCUWOtjqS3YC+T2paT4ZGStNkptFH3WSRlCBeqmc0QwoVtA1E0j1quo/iWbv3Fho9re2IxB6C9IAJMAhNiuB/wg5@vger.kernel.org, AJvYcCW0Val+2CSvvks4kGSrkufZlVCrQxt8BvTPRlXJWeRhUQcm0r2p5W4VJEKdRredl5FyE9ZJ5HK/@vger.kernel.org, AJvYcCWqPcIQCkkFCyT7oUTYx3NzbmnL8x3E102JP28D5uVyGZGJEubcb4WDIRWYd2S2oYh+gs8=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx22iMF/lNaPRMW99vr7kQMivp3jpEA48cCbph3vTNNjt7vJjOv
+	NGBQJgXMwwNFHORxtWvpie+3dPS2eHLIZVfqgntBvBNDV9GpHNw359Ki
+X-Gm-Gg: ASbGncsv9n74C6Q+mi6nSoThKSveT1ACrfSfKbUjlPPe8Aix1kE8fv1GPKcU2EcvJJH
+	v5d+mHe6OOyPB/cJZIIrALwajwyKvdpfTLqwARps2PxiIivyOHu/eCelsnYv/ls1EVAqVYJAzgl
+	NAEM5/IO4yDkeTrh+Qqwbdsc5NS+u9yzfx8hvuCxTUi4XG5j+dChMkCQ87aO/pI9StTIw51WXcy
+	nO31WvH15RYGkxjb+HOWcwuXQTAWNu8l/AG9/E3e/ordc3Nb+mzzTb2fl5bbZmZe21FAFq/MVNQ
+	E0wXW3tA02W+p4jP1XrFqxMYG8CyPpJwbql0ERxtlrLoY9U0Jw7K
+X-Google-Smtp-Source: AGHT+IHpNTp1W7tJfq4L4KfthhwdbcUMxxT1qFXk9AO0VZ5Xmv20HUmqkjjmbnLK3RPqlKFIixNxPg==
+X-Received: by 2002:a17:907:d24:b0:adf:f3c5:c858 with SMTP id a640c23a62f3a-ae0bf018b47mr264620566b.15.1750851600679;
+        Wed, 25 Jun 2025 04:40:00 -0700 (PDT)
+Received: from localhost ([2a03:2880:30ff:1::])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ae054209b81sm1049408566b.171.2025.06.25.04.40.00
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 25 Jun 2025 04:40:00 -0700 (PDT)
+From: Breno Leitao <leitao@debian.org>
+Date: Wed, 25 Jun 2025 04:39:48 -0700
+Subject: [PATCH net-next v2 3/4] selftests: drv-net: Strip '@' prefix from
+ bpftrace map keys
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] arm64: dts: qcom: pmk8550: Correct gpio node name
-To: Luca Weiss <luca.weiss@fairphone.com>,
-        Bjorn Andersson <andersson@kernel.org>,
-        Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley
- <conor+dt@kernel.org>,
-        Neil Armstrong <neil.armstrong@linaro.org>
-Cc: ~postmarketos/upstreaming@lists.sr.ht, phone-devel@vger.kernel.org,
-        linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-References: <20250625-pmk8550-gpio-name-v1-1-58402849f365@fairphone.com>
-Content-Language: en-US
-From: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-In-Reply-To: <20250625-pmk8550-gpio-name-v1-1-58402849f365@fairphone.com>
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-X-Proofpoint-ORIG-GUID: vGD9yZMzMb88lxwQTv8izRug6Zlk_lpq
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNjI1MDA4NyBTYWx0ZWRfX2ik/geKQ4NIl
- ZalXKHwsRbwtCAIrh4O9DYdq89bwXMuAsUeKHloIyEYpp8cc6CFKmcD61ybalQiQBTz74/wZEMJ
- Qa/lsmtxxA/DJdX7DwRrvd0QAVImovhJprBWIoo9o37LEjxc+YgOtIBteIY0aFtUQultKksg08X
- 0ChzzzJwduEKWCguNoBZudh3iSF+0jTRAmwvz362hB/nXmWk5U0BtfgY/GnUueySxgOkEf4mo0J
- eQV32mxXmTETz/9oJnuxzX2MvfOUym7rCjQIG58iAlpByptM7XtiJYZXLkZcg1u4k98ElPqWEuS
- 2IcKvg/FLWGVJVZj0YtFGoZZbKLvB6tB10j+AF2sF0Af45vc6TmIqYlJaXkNasrYS50hs/pyKc5
- +0F0kNsodPFcIDtI6bc6ALCmq6J7TxIjF8WPvgPl5K5jnligCsFdzl1V9huxQBUcWavPHQ1F
-X-Authority-Analysis: v=2.4 cv=L4kdQ/T8 c=1 sm=1 tr=0 ts=685be009 cx=c_pps
- a=oc9J++0uMp73DTRD5QyR2A==:117 a=FpWmc02/iXfjRdCD7H54yg==:17
- a=IkcTkHD0fZMA:10 a=6IFa9wvqVegA:10 a=6H0WHjuAAAAA:8 a=EUspDBNiAAAA:8
- a=l60TpK_hX5jhcLL__Y8A:9 a=QEXdDO2ut3YA:10 a=iYH6xdkBrDN1Jqds4HTS:22
- a=Soq9LBFxuPC4vsCAQt-j:22
-X-Proofpoint-GUID: vGD9yZMzMb88lxwQTv8izRug6Zlk_lpq
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.7,FMLib:17.12.80.40
- definitions=2025-06-25_03,2025-06-25_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- mlxscore=0 malwarescore=0 bulkscore=0 clxscore=1015 suspectscore=0
- adultscore=0 priorityscore=1501 impostorscore=0 lowpriorityscore=0
- spamscore=0 phishscore=0 mlxlogscore=999 classifier=spam authscore=0
- authtc=n/a authcc= route=outbound adjust=0 reason=mlx scancount=1
- engine=8.19.0-2505280000 definitions=main-2506250087
+Message-Id: <20250625-netpoll_test-v2-3-47d27775222c@debian.org>
+References: <20250625-netpoll_test-v2-0-47d27775222c@debian.org>
+In-Reply-To: <20250625-netpoll_test-v2-0-47d27775222c@debian.org>
+To: Andrew Lunn <andrew+netdev@lunn.ch>, 
+ "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
+ Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, 
+ Shuah Khan <shuah@kernel.org>, Simon Horman <horms@kernel.org>
+Cc: linux-kernel@vger.kernel.org, netdev@vger.kernel.org, 
+ linux-kselftest@vger.kernel.org, 
+ Willem de Bruijn <willemdebruijn.kernel@gmail.com>, bpf@vger.kernel.org, 
+ gustavold@gmail.com, Breno Leitao <leitao@debian.org>
+X-Mailer: b4 0.15-dev-dd21f
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1053; i=leitao@debian.org;
+ h=from:subject:message-id; bh=XNs8x8ajNJh0fetiIm2YiGOf+JuBt4IW4h9OB4WhzIE=;
+ b=owEBbQKS/ZANAwAIATWjk5/8eHdtAcsmYgBoW+AKh0+jsKLXI3AbZ4DZBx1prGQzTY0cOOwSR
+ +rkK0YH/BSJAjMEAAEIAB0WIQSshTmm6PRnAspKQ5s1o5Of/Hh3bQUCaFvgCgAKCRA1o5Of/Hh3
+ bU5oD/95q5BM8Sr+/mJTE4kLrtVtHnpMdYsy+kVaSn+Q56G33qiiAaxHOOuwCOh1zQ/g1DtoYn+
+ 1t9CRBo8caWK7E4W3gTZ/p4xj9mzacSN4InF2PR/AzPUkSNswXPgHXqKKBKsHqqhZzbkZq7lL/7
+ iX8VhcHi+j3gUZEVOwU8L5k06DNRr1WOGP39pvGIeeZywM+DKGwI9FnWYKTwt2rgGthJujk3M6W
+ 5fTTuN6BZuX7LcHFlgMrocmhX459FiYI2SY5VhGA1YG+vfRF0dXAxxIyeXaYVfOvvrCT8/RT39B
+ hxUxAPelYRk3tocZgn9n2eHGyrhiJDdkUPJfToVkF9Ukoa3QCe6P68FQoKO1IEDMAfqVivKtOGH
+ 2k95KzqJz60FcyYQPIvPFmxYNQTDc7zMqT8hHNXlwg2vKG3xR9TZ01OHnHqmKmU0N5USNF6D0p8
+ 4+3FADzczgjJLhnEAaKzpTH+j/6FasG7wSpFY7AInadPC4znJnyRCjiM5xPaa/SG2EeaFSXLmMZ
+ LJ/FAgVb0XZwSWpgyjavhTqQgzZigPMrZtdkNyXNZ4YXJHk27DPa5NnP5ltsEWPfOPg6/GmpnWQ
+ t0bEb3fOJXCV2ANzemPwXTLq3QdIuzTblQKSTwvTQ8JLBIVNEewqwsN9vFpsLsBmTNju44TYd9E
+ J5DCgwQ/su8812A==
+X-Developer-Key: i=leitao@debian.org; a=openpgp;
+ fpr=AC8539A6E8F46702CA4A439B35A3939FFC78776D
 
-On 6/25/25 11:11 AM, Luca Weiss wrote:
-> The reg for the GPIOs is 0xb800 and not 0x8800, so fix this copy-paste
-> mistake.
-> 
-> Fixes: e9c0a4e48489 ("arm64: dts: qcom: Add PMK8550 pmic dtsi")
-> Signed-off-by: Luca Weiss <luca.weiss@fairphone.com>
-> ---
->  arch/arm64/boot/dts/qcom/pmk8550.dtsi | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/arch/arm64/boot/dts/qcom/pmk8550.dtsi b/arch/arm64/boot/dts/qcom/pmk8550.dtsi
-> index c7ac9b2eaacfe6e8363448d9d2ffb4ac8f5f4dd2..583f61fc16ad570972ac166aef12183382ebb4c5 100644
-> --- a/arch/arm64/boot/dts/qcom/pmk8550.dtsi
-> +++ b/arch/arm64/boot/dts/qcom/pmk8550.dtsi
-> @@ -64,7 +64,7 @@ reboot_reason: reboot-reason@48 {
->  			};
->  		};
->  
-> -		pmk8550_gpios: gpio@8800 {
-> +		pmk8550_gpios: gpio@b800 {
->  			compatible = "qcom,pmk8550-gpio", "qcom,spmi-gpio";
->  			reg = <0xb800>;
+The '@' prefix in bpftrace map keys is specific to bpftrace and can be
+safely removed when processing results. This patch modifies the bpftrace
+utility to strip the '@' from map keys before storing them in the result
+dictionary, making the keys more consistent with Python conventions.
 
-I was surprised DTC hasn't caught this, but it seems like the
-relevant check only runs for `simple-bus`..
+Signed-off-by: Breno Leitao <leitao@debian.org>
+---
+ tools/testing/selftests/net/lib/py/utils.py | 2 ++
+ 1 file changed, 2 insertions(+)
 
-Reviewed-by: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+diff --git a/tools/testing/selftests/net/lib/py/utils.py b/tools/testing/selftests/net/lib/py/utils.py
+index c4e26567ee6fb..31d4d63621c5f 100644
+--- a/tools/testing/selftests/net/lib/py/utils.py
++++ b/tools/testing/selftests/net/lib/py/utils.py
+@@ -216,6 +216,8 @@ def bpftrace(expr, json=None, ns=None, host=None, timeout=None):
+             if one.get('type') != 'map':
+                 continue
+             for k, v in one["data"].items():
++                if k.startswith('@'):
++                    k = k.lstrip('@')
+                 ret[k] = v
+         return ret
+     return cmd_obj
 
-Konrad
+-- 
+2.47.1
+
 
