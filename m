@@ -1,130 +1,92 @@
-Return-Path: <linux-kernel+bounces-701869-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-701855-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7E945AE7A68
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Jun 2025 10:37:53 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id A8937AE7A41
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Jun 2025 10:32:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3651B3B7F77
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Jun 2025 08:37:28 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4EB141BC72DB
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Jun 2025 08:32:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 34C63275AED;
-	Wed, 25 Jun 2025 08:37:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 11E55273D7C;
+	Wed, 25 Jun 2025 08:30:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="NH02XYi7"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.19])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Cpd6syaX"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 24BAB26B973
-	for <linux-kernel@vger.kernel.org>; Wed, 25 Jun 2025 08:37:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.19
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 58BCC27381E;
+	Wed, 25 Jun 2025 08:30:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750840667; cv=none; b=cnY+2APVlAocza9QJh2RxqZo/ejn0R6FTF9CCB+QsBqKJ4gebv3sGiSrYjc5dyj/3ufm9HMX2A5IBGwvSkhYQneM9XTfCJ/FFvAWcdOKabBHT3Uh1AF8woIVCHIASbh80HaMKYL+3P16mX0lKOAOBcydtfuyq8dDS30gEWA69/A=
+	t=1750840214; cv=none; b=aw3XOoDa2f7V1l99S9adjMSw/tLmaZ8reqbijGpP/upaYoyPNPFGNRCWdM10Qv3YR56bb4jfZ85QkgYiwhF5FU31HF2dl5QAg+T/lR9QVTlD//H4gVQHWQbUVoATDrWfb8jUyESUm8Mfy5SZY2Oh4x+57OsSBualIbKjA54Vq7I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750840667; c=relaxed/simple;
-	bh=EwvPZo7oTwprahWbVv9CKBqzmPZmEw39Hs2j42qQ/og=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=E1M8yk4r6Sp05fMzNcgLpt5CRMZlyyJsINeL5tjOAaMce+AoON/ShKtqQo14I5FixWy+5I+fl4La0VUvnpjRrPKMI965h8BUPWKLpXYckiU8LeXDmbPzmz4p/SsVhfy/nSow31S4pFOPAUfwS+ytUMb/q2vUv8nIeqApZeSqo5o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=NH02XYi7; arc=none smtp.client-ip=198.175.65.19
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1750840667; x=1782376667;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=EwvPZo7oTwprahWbVv9CKBqzmPZmEw39Hs2j42qQ/og=;
-  b=NH02XYi769r1+YHwfSulY1PSz9hXh+MDin5jWDeTln+cNwBlR/uq6Fiu
-   3PTexSS7kAiV7CC+bXqyLJ4iaaK8FycV1OSyNlE54oWfV9y72n9M/pwlN
-   N5UaWIOGn1RDcFHAo179jQdpIrqEhBbJMS7G5q4Kf9/R92RUtbOnSAXLL
-   /Lc+2z7SNqsiPaVZu+jLumonIz9w9BafQoL8rRe16Ddzwp92axnEVtcSR
-   M74DMjJn/84UZ1/vLYTlY0t4FxB2Ltq7V7zgffSyIyEi5Wdc0/rCchDYm
-   NRGBYpmahgkuX0A9YViAD+p/D1yUThRTLuH6IT8julytpNXiqfhZx3UH7
-   Q==;
-X-CSE-ConnectionGUID: 1jbn6YWOSLCGFVZwKrLRiQ==
-X-CSE-MsgGUID: rIJFN/HTRWiDD8oyylzvPA==
-X-IronPort-AV: E=McAfee;i="6800,10657,11474"; a="52973198"
-X-IronPort-AV: E=Sophos;i="6.16,264,1744095600"; 
-   d="scan'208";a="52973198"
-Received: from fmviesa003.fm.intel.com ([10.60.135.143])
-  by orvoesa111.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 25 Jun 2025 01:37:39 -0700
-X-CSE-ConnectionGUID: whELoIkaQLOb2fMkjiX5Eg==
-X-CSE-MsgGUID: WWOHAobDSV6gRb7pT1MS+w==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.16,264,1744095600"; 
-   d="scan'208";a="156186620"
-Received: from yilunxu-optiplex-7050.sh.intel.com (HELO localhost) ([10.239.159.165])
-  by fmviesa003.fm.intel.com with ESMTP; 25 Jun 2025 01:37:36 -0700
-Date: Wed, 25 Jun 2025 16:29:59 +0800
-From: Xu Yilun <yilun.xu@linux.intel.com>
-To: Jason Gunthorpe <jgg@nvidia.com>
-Cc: kevin.tian@intel.com, will@kernel.org, aneesh.kumar@kernel.org,
-	iommu@lists.linux.dev, linux-kernel@vger.kernel.org,
-	joro@8bytes.org, robin.murphy@arm.com, shuah@kernel.org,
-	nicolinc@nvidia.com, aik@amd.com, dan.j.williams@intel.com,
-	baolu.lu@linux.intel.com, yilun.xu@intel.com
-Subject: Re: [PATCH v2 4/4] iommufd/selftest: Add coverage for vdevice
- tombstone
-Message-ID: <aFuzh4OPmjfemD8I@yilunxu-OptiPlex-7050>
-References: <20250623094946.1714996-1-yilun.xu@linux.intel.com>
- <20250623094946.1714996-5-yilun.xu@linux.intel.com>
- <20250624134145.GB150753@nvidia.com>
+	s=arc-20240116; t=1750840214; c=relaxed/simple;
+	bh=ZMYcV0v+/lOBTq3uVM5tv5E1P/nDL0elBHzgrXYiC5g=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=oNrO428l3nm8rzOuI8aHLJetK7Eq97sMmcXCPIFtyHUUBIiqTmHLkkrUtGSeMHESdJSmrqVTl6AjYrothn7wEfN/w6H3/zY/I7b5zHJhZHPI87mWqTN27JmHtklc3NGiNbApBxpJ88YtItxMA+68xxDAVtnkI0fiHxrhhh5wLiM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Cpd6syaX; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3EFD0C4CEEA;
+	Wed, 25 Jun 2025 08:30:10 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1750840213;
+	bh=ZMYcV0v+/lOBTq3uVM5tv5E1P/nDL0elBHzgrXYiC5g=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
+	b=Cpd6syaXk0hxiMytORKNWNPS6j7d/MGIi91z6ajhWMiVWLz9gB4/MZBhH8edvvJcw
+	 lBLktn3CwHdO9W90pORMAc2TyeGFS61u3fNjXuq5O1SwF6L0RCBkVCtqHJThLm57zG
+	 mdMBU0mK7yWcijctfJ+zePSHqjM126HO83k9DCO49hwgyPgXPn/PF8GeqPO1K8N8Nd
+	 rY8j6Tu4E/O2jdXraDysEFpz3t6Gl23sEq6fhWDQiXvH+zJBz8VQYGB9J+5aM1fevZ
+	 BCjqEhBtniN3wQ6V52lff2e7uXqR6ik+O9xiKcKQp9gIUDAo1HI3DZeGkhW94EZ4nR
+	 5Z11nuxCJCAkQ==
+From: Andreas Hindborg <a.hindborg@kernel.org>
+To: "Miguel Ojeda" <miguel.ojeda.sandonis@gmail.com>
+Cc: "FUJITA Tomonori" <fujita.tomonori@gmail.com>,  <alex.gaynor@gmail.com>,
+  <ojeda@kernel.org>,  <aliceryhl@google.com>,  <anna-maria@linutronix.de>,
+  <bjorn3_gh@protonmail.com>,  <boqun.feng@gmail.com>,  <dakr@kernel.org>,
+  <frederic@kernel.org>,  <gary@garyguo.net>,  <jstultz@google.com>,
+  <linux-kernel@vger.kernel.org>,  <lossin@kernel.org>,
+  <lyude@redhat.com>,  <rust-for-linux@vger.kernel.org>,
+  <sboyd@kernel.org>,  <tglx@linutronix.de>,  <tmgross@umich.edu>
+Subject: Re: [PATCH v3 0/5] rust: time: Convert hrtimer to use Instant and
+ Delta
+In-Reply-To: <CANiq72mTKTh+GSWUW5aZwkqpdMFZ5VwA6djwubtsVn2KOy362Q@mail.gmail.com>
+ (Miguel
+	Ojeda's message of "Wed, 25 Jun 2025 10:11:56 +0200")
+References: <CANiq72nwaxszEbn6O3xZi6H9P+U=5N0ugK1n9qBRteQwKXQSaw@mail.gmail.com>
+	<87wm912sjg.fsf@kernel.org>
+	<CANiq72kHocyULzwqxS51XeSEhsJpccfNFc+QYE67yvfvS8BApw@mail.gmail.com>
+	<20250625.083037.1910124819838055415.fujita.tomonori@gmail.com>
+	<3zCWvNSS_nriw1U9HytX_Lh6WWrEJelevyNQ_pWrzbxvSoUPNd-NTs1koz4PY2rIzkOBeVL82dj0NTR4_R5nyw==@protonmail.internalid>
+	<CANiq72mTKTh+GSWUW5aZwkqpdMFZ5VwA6djwubtsVn2KOy362Q@mail.gmail.com>
+User-Agent: mu4e 1.12.9; emacs 30.1
+Date: Wed, 25 Jun 2025 10:30:04 +0200
+Message-ID: <87v7ok1awj.fsf@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250624134145.GB150753@nvidia.com>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 
-On Tue, Jun 24, 2025 at 10:41:45AM -0300, Jason Gunthorpe wrote:
-> On Mon, Jun 23, 2025 at 05:49:46PM +0800, Xu Yilun wrote:
-> > diff --git a/tools/testing/selftests/iommu/iommufd.c b/tools/testing/selftests/iommu/iommufd.c
-> > index 1a8e85afe9aa..092e1344447e 100644
-> > --- a/tools/testing/selftests/iommu/iommufd.c
-> > +++ b/tools/testing/selftests/iommu/iommufd.c
-> > @@ -3014,6 +3014,19 @@ TEST_F(iommufd_viommu, vdevice_cache)
-> >  	}
-> >  }
-> >  
-> > +TEST_F(iommufd_viommu, vdevice_tombstone)
-> > +{
-> > +	uint32_t viommu_id = self->viommu_id;
-> > +	uint32_t dev_id = self->device_id;
-> > +	uint32_t vdev_id = 0;
-> > +
-> > +	if (dev_id) {
-> 
-> Why the if? The test should work or skip, not silently skip.
-> 
-> self->device_id is setup by the fixture, it can't be absent.
+"Miguel Ojeda" <miguel.ojeda.sandonis@gmail.com> writes:
 
-It can, when the variant no_viommu.
+> On Wed, Jun 25, 2025 at 1:30=E2=80=AFAM FUJITA Tomonori
+> <fujita.tomonori@gmail.com> wrote:
+>>
+>> Just to clarify, Delta implements Copy:
+>
+> Sorry, that was a typo: I meant it is `Copy` (the table says `into_*`
+> is for non`-`Copy` types).
 
-I agree this should not be silently skipped, see below changes:
-Should also apply to viommu_alloc_nested_iopf, vdevice_cache.
+The confusions will have no end.
 
-+TEST_F(iommufd_viommu, vdevice_tombstone)
-+{
-+       uint32_t viommu_id = self->viommu_id;
-+       uint32_t dev_id = self->device_id;
-+       uint32_t vdev_id = 0;
-+
-+       if (!dev_id)
-+               SKIP(return, "Skipping test for variant no_viommu");
-+
-+       test_cmd_vdevice_alloc(viommu_id, dev_id, 0x99, &vdev_id);
-+       test_ioctl_destroy(self->stdev_id);
-+       EXPECT_ERRNO(ENOENT, _test_ioctl_destroy(self->fd, vdev_id));
-+}
+Best regards,
+Andreas Hindborg
 
-Thanks,
-Yilun
 
-> 
-> Jason
+
 
