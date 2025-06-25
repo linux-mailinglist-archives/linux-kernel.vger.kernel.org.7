@@ -1,90 +1,104 @@
-Return-Path: <linux-kernel+bounces-701404-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-701437-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 626C0AE7499
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Jun 2025 04:04:22 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 6F1A5AE74F9
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Jun 2025 04:53:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id BDEB21922B9E
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Jun 2025 02:04:37 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3D9981921524
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Jun 2025 02:53:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5573719CCF5;
-	Wed, 25 Jun 2025 02:04:15 +0000 (UTC)
-Received: from szxga05-in.huawei.com (szxga05-in.huawei.com [45.249.212.191])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 391C31D6195;
+	Wed, 25 Jun 2025 02:53:00 +0000 (UTC)
+Received: from mx1.zhaoxin.com (MX1.ZHAOXIN.COM [210.0.225.12])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 07070A31;
-	Wed, 25 Jun 2025 02:04:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.191
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 761471BD9C9
+	for <linux-kernel@vger.kernel.org>; Wed, 25 Jun 2025 02:52:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.0.225.12
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750817055; cv=none; b=XyGKeaI+1eO2EjNuN6arsUNCLIqfs0aKVYQBwMA/2wroLp2ndZZMN0COXJ8ZBJ5ZrxWxTwBDUi0BkgbVGIL2NGPJActKQhhOjXt47THXgPM4IrToK96gQPS4usaoXcSvRElAiaRFlg3NFfbVd829qDSC6oKF4KKd7GtFiVnM/Rw=
+	t=1750819979; cv=none; b=m7zDqE/HOYICzsBFpOnG5YUMTZ4LaIHp923rwICmFj4pLi4uxvXH+ZX5rfZvx5ctggGpmkfDDd2kpje+EcYPbl0sjRAK4n43dmFahp5i9wvIGiqsaKfTMxXfiEB51crrkEI6B7Xx+tIIwCIhPjMLEKT0UJ6k+XTYgxAwDSueQd4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750817055; c=relaxed/simple;
-	bh=jwrXniQ29yzeVwdFRhFL2lJ1UY/qZ4FD5cjDhU77lE4=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=LTQQit8clRWrqZQ3FCpkDFXZPHtv/aGDH0pXRQ1ykfeDJ5Mkf//duwQZ9H+KwcsFMGzNVOHiIUFye6loQGJUKG6uStQ7hHnRidkzF4soP+69OGyNPjZWimhb1C9wduM4pqu0psp7tEAMaPOONgUKOpRiwG7JmkOnmMVvFmqshN0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.191
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.88.214])
-	by szxga05-in.huawei.com (SkyGuard) with ESMTP id 4bRlRn0XT0z1W3V2;
-	Wed, 25 Jun 2025 10:01:41 +0800 (CST)
-Received: from dggpemf500002.china.huawei.com (unknown [7.185.36.57])
-	by mail.maildlp.com (Postfix) with ESMTPS id CD0951A016C;
-	Wed, 25 Jun 2025 10:04:08 +0800 (CST)
-Received: from huawei.com (10.175.124.27) by dggpemf500002.china.huawei.com
- (7.185.36.57) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Wed, 25 Jun
- 2025 10:04:07 +0800
-From: Yue Haibing <yuehaibing@huawei.com>
-To: <davem@davemloft.net>, <dsahern@kernel.org>, <edumazet@google.com>,
-	<kuba@kernel.org>, <pabeni@redhat.com>, <horms@kernel.org>,
-	<kuniyu@google.com>
-CC: <netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-	<yuehaibing@huawei.com>
-Subject: [PATCH v2 net-next] ipv4: fib: Remove unnecessary encap_type check
-Date: Wed, 25 Jun 2025 10:20:59 +0800
-Message-ID: <20250625022059.3958215-1-yuehaibing@huawei.com>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1750819979; c=relaxed/simple;
+	bh=5Vc/UGNf9cacJtpbOxvWORJCZbxG0TDrntdUXMei9cg=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=kO11XIhvrDjCIVtWY6ZzaLbW8iBmfDBrDQv3AO5hYT4GL5YOmjnXBxPPRSSmoCXA7qrsU1Zh7f8Pcxm72lJDMgILEiZP/fuYvnX+5xUG5ANpVoBFjBtzGSq6pktLuTHeO7WIQTeKwBMXDWzzqSbRLEBQIg12ai7aBciGL1ZUZwk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=zhaoxin.com; spf=pass smtp.mailfrom=zhaoxin.com; arc=none smtp.client-ip=210.0.225.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=zhaoxin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zhaoxin.com
+X-ASG-Debug-ID: 1750819244-086e2327854ec60001-xx1T2L
+Received: from ZXSHMBX2.zhaoxin.com (ZXSHMBX2.zhaoxin.com [10.28.252.164]) by mx1.zhaoxin.com with ESMTP id 9lNAzvJPGrj7CAlD (version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NO); Wed, 25 Jun 2025 10:40:44 +0800 (CST)
+X-Barracuda-Envelope-From: AlanSong-oc@zhaoxin.com
+X-Barracuda-RBL-Trusted-Forwarder: 10.28.252.164
+Received: from ZXSHMBX1.zhaoxin.com (10.28.252.163) by ZXSHMBX2.zhaoxin.com
+ (10.28.252.164) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.44; Wed, 25 Jun
+ 2025 10:40:43 +0800
+Received: from ZXSHMBX1.zhaoxin.com ([::1]) by ZXSHMBX1.zhaoxin.com
+ ([fe80::2c07:394e:4919:4dc1%7]) with mapi id 15.01.2507.044; Wed, 25 Jun 2025
+ 10:40:43 +0800
+X-Barracuda-RBL-Trusted-Forwarder: 10.28.252.164
+Received: from [10.32.65.156] (10.32.65.156) by ZXBJMBX02.zhaoxin.com
+ (10.29.252.6) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.44; Wed, 25 Jun
+ 2025 09:51:57 +0800
+Message-ID: <bcaaccf4-4048-48a0-a9f9-64902a16a049@zhaoxin.com>
+Date: Wed, 25 Jun 2025 09:51:56 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: kwepems200001.china.huawei.com (7.221.188.67) To
- dggpemf500002.china.huawei.com (7.185.36.57)
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] crypto: padlock-sha - Add support for Zhaoxin processor
+To: Herbert Xu <herbert@gondor.apana.org.au>
+X-ASG-Orig-Subj: Re: [PATCH] crypto: padlock-sha - Add support for Zhaoxin processor
+CC: <davem@davemloft.net>, <linux-crypto@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>, <CobeChen@zhaoxin.com>,
+	<TonyWWang-oc@zhaoxin.com>, <YunShen@zhaoxin.com>, <GeorgeXue@zhaoxin.com>,
+	<LeoLiu-oc@zhaoxin.com>, <HansHu@zhaoxin.com>
+References: <20250611101750.6839-1-AlanSong-oc@zhaoxin.com>
+ <aEpgKQ1I0VDSfhO0@gondor.apana.org.au>
+ <0575ec9d-a6b8-4932-a1aa-9646813957a2@zhaoxin.com>
+ <aFkdNoQFmr8-x4cu@gondor.apana.org.au>
+From: AlanSong-oc <AlanSong-oc@zhaoxin.com>
+In-Reply-To: <aFkdNoQFmr8-x4cu@gondor.apana.org.au>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: zxbjmbx1.zhaoxin.com (10.29.252.163) To
+ ZXBJMBX02.zhaoxin.com (10.29.252.6)
+X-Moderation-Data: 6/25/2025 10:40:42 AM
+X-Barracuda-Connect: ZXSHMBX2.zhaoxin.com[10.28.252.164]
+X-Barracuda-Start-Time: 1750819244
+X-Barracuda-Encrypted: ECDHE-RSA-AES128-GCM-SHA256
+X-Barracuda-URL: https://10.28.252.35:4443/cgi-mod/mark.cgi
+X-Virus-Scanned: by bsmtpd at zhaoxin.com
+X-Barracuda-Scan-Msg-Size: 479
+X-Barracuda-BRTS-Status: 1
+X-Barracuda-Bayes: INNOCENT GLOBAL 0.0000 1.0000 -2.0210
+X-Barracuda-Spam-Score: -2.02
+X-Barracuda-Spam-Status: No, SCORE=-2.02 using global scores of TAG_LEVEL=1000.0 QUARANTINE_LEVEL=1000.0 KILL_LEVEL=9.0 tests=
+X-Barracuda-Spam-Report: Code version 3.2, rules version 3.2.3.143354
+	Rule breakdown below
+	 pts rule name              description
+	---- ---------------------- --------------------------------------------------
 
-lwtunnel_build_state() has check validity of encap_type,
-so no need to do this before call it.
+On 6/23/2025 5:24 PM, Herbert Xu wrote:
+> Thanks for the explanation.  There is no requirement to use struct
+> sha1_state.  Just supply a custom version of the struct for the
+> shash descriptor that includes the necessary space.
+> 
+> IOW do the copy in the rarely used export/import functions, instead
+> of on every hash operation.
 
-Signed-off-by: Yue Haibing <yuehaibing@huawei.com>
----
-v2: Restore encap_type check in fib_encap_match()
----
- net/ipv4/fib_semantics.c | 5 -----
- 1 file changed, 5 deletions(-)
+Sorry for the late reply. Thank you for your suggestion and review.
 
-diff --git a/net/ipv4/fib_semantics.c b/net/ipv4/fib_semantics.c
-index f7c9c6a9f53e..a2f04992f579 100644
---- a/net/ipv4/fib_semantics.c
-+++ b/net/ipv4/fib_semantics.c
-@@ -625,11 +625,6 @@ int fib_nh_common_init(struct net *net, struct fib_nh_common *nhc,
- 	if (encap) {
- 		struct lwtunnel_state *lwtstate;
- 
--		if (encap_type == LWTUNNEL_ENCAP_NONE) {
--			NL_SET_ERR_MSG(extack, "LWT encap type not specified");
--			err = -EINVAL;
--			goto lwt_failure;
--		}
- 		err = lwtunnel_build_state(net, encap_type, encap,
- 					   nhc->nhc_family, cfg, &lwtstate,
- 					   extack);
--- 
-2.34.1
+I will send an updated patch soon.
+
+Best Regards
+AlanSong-oc
 
 
