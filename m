@@ -1,47 +1,86 @@
-Return-Path: <linux-kernel+bounces-701937-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-701939-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1D716AE7B60
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3F31FAE7B61
 	for <lists+linux-kernel@lfdr.de>; Wed, 25 Jun 2025 11:04:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 87E8B5A7E30
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Jun 2025 09:02:38 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E95F21C2068B
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Jun 2025 09:03:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 782752951A8;
-	Wed, 25 Jun 2025 09:02:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BF0B17E792;
+	Wed, 25 Jun 2025 09:03:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="NuZCt9yX"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="TY7d4kth"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BDEB9285CBD;
-	Wed, 25 Jun 2025 09:02:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7F44427FB28
+	for <linux-kernel@vger.kernel.org>; Wed, 25 Jun 2025 09:03:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750842127; cv=none; b=gc6HAtkMzk8BE3SI5MKQ59gPYDVY6Yj4+FfD3UpysM5mkC5T+AsdJ7GteHu3wUxtSKFk4HfYk1ZGg9or/oeeg+ezphzfEZLK6pTC+bHugqQviyTXb8YWjwqCS7WthvbGqK7Y7ZBB9PA9LTBE9zPeXjcYLFg9fGwBXawCD9nCzx0=
+	t=1750842202; cv=none; b=Kq0aMCQpZccyEe+SCrKYbwbaT3Ze22Yvda9+FMlUyIHVtz5Q2NLgW+IOo0dL7dJNT/pe47Zm3HGa/a5FPgNsQ+LwNczYJbRFy37Jo9VAI5gJk21/RrCAL8iY19fyd+Qb/OSfi4n9eUIlCgkvWS7xfTtBx+rdG4tUyISz2uSJG1Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750842127; c=relaxed/simple;
-	bh=1W7arUVBB1d15aM5ROHQioZU9ZN5vTbbjFufqTMljjI=;
+	s=arc-20240116; t=1750842202; c=relaxed/simple;
+	bh=JW2s+9q4qPQQc93v2PMvhmcFWFvDhURahsiJZzoXovw=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=jgu+yErlp1k5B7chxZp+U980JXDQpgdhcYKjCTPIZRf9LPu4PNp8AMKYimIaYctFWdJe0TlWVB1ACXh6XVFjd0hMhW/Zxhjf2Rk3MDv8qAnftEo5j5pDxGMVhblCS9kkX7/dLU4hFb1FSftztZd52BYPWDzZGuiKFo8i1f7Gsr4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=NuZCt9yX; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 407C7C4CEEA;
-	Wed, 25 Jun 2025 09:02:05 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1750842127;
-	bh=1W7arUVBB1d15aM5ROHQioZU9ZN5vTbbjFufqTMljjI=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=NuZCt9yXs3wPNf5vWm1VKzHQk2Xsdu2t355zrjpHl3z7VDgv/9R4whsVEFtVjGeov
-	 Ll3QlWDSXyZo6H3mZMA8+tC2bu2Xp5ytUln7P2i33ZwvYD6Z1WpCa3FwVR6fBzz4jh
-	 dUhZ1LKeBEMcp3/85ZGZP2daRCfl3w6nuTlVgqtZ+w9Wvc/9GR8OAr5brHEtIvlTaa
-	 +N6nVA2GoKuFW/YoGnvxBCgQd4vdIMf5uYC/AaHwHatYlqEQqlrgVCxUvyI4Ku2bgS
-	 dt+sqrlWl27aQeiOKU7f0FRCflB3LLNvFmkFTQLYXScpgVHhlCmxI6KyqE2TweJJ/B
-	 W3tAqYOhTz2LQ==
-Message-ID: <3f653a9f-e838-4298-9758-95e6fbec52bb@kernel.org>
-Date: Wed, 25 Jun 2025 11:02:03 +0200
+	 In-Reply-To:Content-Type; b=A2LIrj3f0ywKhiS4IAILLlYBPkubKOAIQluy3+GlcT3CzJKqXWqgDdsNyabHWdcRiB7TZcBAPtAf8vB7U3Z+FVOLKDVhh1UWLCm5QX/pNdNYaPaCLUKBDAEE/ymNY2iLoOuHV0tEh46fVYWv1+JkpMeG26ivR4AP3cSMR9fRC8c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=TY7d4kth; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1750842198;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=j6SPvABO8EkhAEJk1LKxiZOae6QeSJKDl11RtcagWeI=;
+	b=TY7d4kthwpAqOp6vhzlGBygn0HAQvUHtZwZRJPYtzZ7vkHe95Qmd+EXuRrX0puxf+QEwDJ
+	0JI7Bjer1gA4HuIJULBPJxnPFostDdSDa+NYB4CcyCCWMJw3UJD5LmZdfi0JXX6RORSj4b
+	2X40Y+kyYFzyDF02wRGoYLxFRPasHME=
+Received: from mail-wr1-f71.google.com (mail-wr1-f71.google.com
+ [209.85.221.71]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-25-cFBIFPDVPx2F_idaCxf4xg-1; Wed, 25 Jun 2025 05:03:16 -0400
+X-MC-Unique: cFBIFPDVPx2F_idaCxf4xg-1
+X-Mimecast-MFC-AGG-ID: cFBIFPDVPx2F_idaCxf4xg_1750842195
+Received: by mail-wr1-f71.google.com with SMTP id ffacd0b85a97d-3a4f3796779so706644f8f.1
+        for <linux-kernel@vger.kernel.org>; Wed, 25 Jun 2025 02:03:16 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1750842195; x=1751446995;
+        h=content-transfer-encoding:in-reply-to:organization:autocrypt
+         :content-language:from:references:cc:to:subject:user-agent
+         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=j6SPvABO8EkhAEJk1LKxiZOae6QeSJKDl11RtcagWeI=;
+        b=WtVwGKirkQGkYfOX24kxVUIaVmW3lKtHM2LdMkF+8sLPeBf2np/q4xMW5e4315y/eO
+         bhcawarx3nlVxBzJVrIh08ATfwrlDc34wMLMvYPeyeb9K/bQWV0mg1ejJznXhHOIzbZg
+         EQcDWhGRuv6wSqfKp4zfxeJ3DDwvEdh2QBrFm4G9Vyd6mGdMPLkSHtln+7R89Hp2GbAg
+         5/eMKCytemm4oRbaKYNQZDSk24Cin3QpO2C5R+MxsHzc5Y7WjgdqiULuhy5yVJr7GmVS
+         JNgXx8M3j0kT7NhLBDS6DMOxquqhwteHvqdt8jxbPnTp2rtsNC6VtjgNidL75oVqS9xV
+         i5OA==
+X-Gm-Message-State: AOJu0Yze5nkkQsrELhjuLnZSOoGoPhNIHEJVDvFKBwRWt6fIPe2aqL6D
+	pBmWihsFP5iGFDG5uOVFeqXEeEX4tjVRSNvc+Lq7+I+roSiuUGvuejkMrOMV7uK9HmDWyuqintN
+	cYa+gpJuf9fBnvulgkdxcFdm2xJQHp8jw0ky1ZDPeTdANAKEuLhOGMfm/sGgmVXsMKA==
+X-Gm-Gg: ASbGncsK8/kvL8zwO0/bTV9JZvrOCyA5SPuMPxcbAMdW70PcJYuPFiW29hP+nkTsOMA
+	9gJw0JseKDEAfbTS+OGm8VR6o08MV56fh+0P7ENlfMFRqQjIokc2DrYMVxWAPqEDBN47J2DTxfA
+	c2SPedINIq6W2W3CAYjv/okDsefuurcJDHQinpo9RFk71czLb6E3FuQjoZ0hFUfe1mRygkY9j2A
+	of8AvYKnwi/I52b0LogvPErnORjuJljHJ8yEvQ2e7FJ/9T3Z9PC+8ndBKgJgkUEuqKhbqX0Q6bP
+	GQ1t4hHCK9sGyKvSQ5id7sZ1UEN+IdHr9tFW6iUV5xcFGcwOecf7aYRdsKUMc/n6fmcEv+6henY
+	p/jnTJP9f7HdsbBiKOA564rX4MJAe0W1SSJQoXDsjuAD1
+X-Received: by 2002:a05:6000:2709:b0:3a4:fe9d:1b10 with SMTP id ffacd0b85a97d-3a6ed646c16mr1271810f8f.45.1750842195148;
+        Wed, 25 Jun 2025 02:03:15 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IHazW5nWUfQCM5Vf0SuwnpR0088kA+f/uiZKl6Om44U23eQf/ruKZPkuQodKAJMBqp+4oD7Fw==
+X-Received: by 2002:a05:6000:2709:b0:3a4:fe9d:1b10 with SMTP id ffacd0b85a97d-3a6ed646c16mr1271782f8f.45.1750842194712;
+        Wed, 25 Jun 2025 02:03:14 -0700 (PDT)
+Received: from ?IPV6:2003:d8:2f12:1b00:5d6b:db26:e2b7:12? (p200300d82f121b005d6bdb26e2b70012.dip0.t-ipconnect.de. [2003:d8:2f12:1b00:5d6b:db26:e2b7:12])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3a6e805d342sm4022122f8f.21.2025.06.25.02.03.12
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 25 Jun 2025 02:03:14 -0700 (PDT)
+Message-ID: <74acb38f-da34-448d-9b73-37433a5e342c@redhat.com>
+Date: Wed, 25 Jun 2025 11:03:11 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -49,87 +88,101 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/2] gpiolib: acpi: Program debounce when finding GPIO
-To: Mario Limonciello <superm1@kernel.org>,
- Mika Westerberg <westeri@kernel.org>,
- Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
- Linus Walleij <linus.walleij@linaro.org>, Bartosz Golaszewski
- <brgl@bgdev.pl>, Dmitry Torokhov <dmitry.torokhov@gmail.com>
-Cc: "open list:GPIO ACPI SUPPORT" <linux-gpio@vger.kernel.org>,
- "open list:GPIO ACPI SUPPORT" <linux-acpi@vger.kernel.org>,
- open list <linux-kernel@vger.kernel.org>,
- "open list:INPUT (KEYBOARD, MOUSE, JOYSTICK, TOUCHSCREEN)..."
- <linux-input@vger.kernel.org>, Mario Limonciello <mario.limonciello@amd.com>
-References: <20250624202211.1088738-1-superm1@kernel.org>
- <20250624202211.1088738-2-superm1@kernel.org>
-Content-Language: en-US, nl
-From: Hans de Goede <hansg@kernel.org>
-In-Reply-To: <20250624202211.1088738-2-superm1@kernel.org>
-Content-Type: text/plain; charset=UTF-8
+Subject: Re: [PATCH RFC 07/14] fs/dax: use vmf_insert_folio_pmd() to insert
+ the huge zero folio
+To: Alistair Popple <apopple@nvidia.com>
+Cc: linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+ linux-mm@kvack.org, nvdimm@lists.linux.dev,
+ Andrew Morton <akpm@linux-foundation.org>, Juergen Gross <jgross@suse.com>,
+ Stefano Stabellini <sstabellini@kernel.org>,
+ Oleksandr Tyshchenko <oleksandr_tyshchenko@epam.com>,
+ Dan Williams <dan.j.williams@intel.com>, Matthew Wilcox
+ <willy@infradead.org>, Jan Kara <jack@suse.cz>,
+ Alexander Viro <viro@zeniv.linux.org.uk>,
+ Christian Brauner <brauner@kernel.org>, Zi Yan <ziy@nvidia.com>,
+ Baolin Wang <baolin.wang@linux.alibaba.com>,
+ Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
+ "Liam R. Howlett" <Liam.Howlett@oracle.com>, Nico Pache <npache@redhat.com>,
+ Ryan Roberts <ryan.roberts@arm.com>, Dev Jain <dev.jain@arm.com>,
+ Barry Song <baohua@kernel.org>, Vlastimil Babka <vbabka@suse.cz>,
+ Mike Rapoport <rppt@kernel.org>, Suren Baghdasaryan <surenb@google.com>,
+ Michal Hocko <mhocko@suse.com>, Jann Horn <jannh@google.com>,
+ Pedro Falcato <pfalcato@suse.de>
+References: <20250617154345.2494405-1-david@redhat.com>
+ <20250617154345.2494405-8-david@redhat.com>
+ <cneygxe547b73gcfyjqfgdv2scxjeluwj5cpcsws4gyhx7ejgr@nxkrhie7o2th>
+From: David Hildenbrand <david@redhat.com>
+Content-Language: en-US
+Autocrypt: addr=david@redhat.com; keydata=
+ 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
+ WNyWQQ==
+Organization: Red Hat
+In-Reply-To: <cneygxe547b73gcfyjqfgdv2scxjeluwj5cpcsws4gyhx7ejgr@nxkrhie7o2th>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 
-Hi Mario,
-
-On 24-Jun-25 10:22 PM, Mario Limonciello wrote:
-> From: Mario Limonciello <mario.limonciello@amd.com>
+On 24.06.25 03:16, Alistair Popple wrote:
+> On Tue, Jun 17, 2025 at 05:43:38PM +0200, David Hildenbrand wrote:
+>> Let's convert to vmf_insert_folio_pmd().
+>>
+>> In the unlikely case there is already something mapped, we'll now still
+>> call trace_dax_pmd_load_hole() and return VM_FAULT_NOPAGE.
+>>
+>> That should probably be fine, no need to add special cases for that.
 > 
-> When soc-button-array looks up the GPIO to use it calls acpi_find_gpio()
-> which will parse _CRS.
-> 
-> acpi_find_gpio.cold (drivers/gpio/gpiolib-acpi-core.c:953)
-> gpiod_find_and_request (drivers/gpio/gpiolib.c:4598 drivers/gpio/gpiolib.c:4625)
-> gpiod_get_index (drivers/gpio/gpiolib.c:4877)
-> 
-> The GPIO is setup basically, but the debounce information is discarded.
-> The platform will assert what debounce should be in _CRS, so program it
-> at the time it's available.
-> 
-> Cc: Hans de Goede <hansg@kernel.org>
-> Signed-off-by: Mario Limonciello <mario.limonciello@amd.com>
-> ---
->  drivers/gpio/gpiolib-acpi-core.c | 4 ++++
->  1 file changed, 4 insertions(+)
-> 
-> diff --git a/drivers/gpio/gpiolib-acpi-core.c b/drivers/gpio/gpiolib-acpi-core.c
-> index 12b24a717e43f..475cac2d95aa1 100644
-> --- a/drivers/gpio/gpiolib-acpi-core.c
-> +++ b/drivers/gpio/gpiolib-acpi-core.c
-> @@ -944,6 +944,7 @@ struct gpio_desc *acpi_find_gpio(struct fwnode_handle *fwnode,
->  	bool can_fallback = acpi_can_fallback_to_crs(adev, con_id);
->  	struct acpi_gpio_info info;
->  	struct gpio_desc *desc;
-> +	int ret;
->  
->  	desc = __acpi_find_gpio(fwnode, con_id, idx, can_fallback, &info);
->  	if (IS_ERR(desc))
-> @@ -957,6 +958,9 @@ struct gpio_desc *acpi_find_gpio(struct fwnode_handle *fwnode,
->  
->  	acpi_gpio_update_gpiod_flags(dflags, &info);
->  	acpi_gpio_update_gpiod_lookup_flags(lookupflags, &info);
-> +	ret = gpio_set_debounce_timeout(desc, info.debounce * 10);
-> +	if (ret)
-> +		return ERR_PTR(ret);
+> I'm not sure about that. Consider dax_iomap_pmd_fault() -> dax_fault_iter() ->
+> dax_pmd_load_hole(). It calls split_huge_pmd() in response to VM_FAULT_FALLBACK
+> which will no longer happen, what makes that ok?
 
-IIRC this is going to fail sometimes, depending on which range of
-debounce values the GPIO controller support. Note that there already
-is another code-path in gpiolib-acpi-core.c which calls
-gpio_set_debounce_timeout() in acpi_request_own_gpiod() and it does:
+My reasoning was that this is the exact same behavior other 
+vmf_insert_folio_pmd() users here would result in.
 
-        /* ACPI uses hundredths of milliseconds units */
-        ret = gpio_set_debounce_timeout(desc, agpio->debounce_timeout * 10);
-        if (ret)
-                dev_warn(chip->parent,
-                         "Failed to set debounce-timeout for pin 0x%04X, err %d\n",
-                         pin, ret);
+But let me dig into the details.
 
-Making this a warning was done in commit cef0d022f553 ("gpiolib: acpi: Make
-set-debounce-timeout failures non fatal").
+-- 
+Cheers,
 
-Otherwise I think this is fine.
-
-Regards,
-
-Hans
-
+David / dhildenb
 
 
