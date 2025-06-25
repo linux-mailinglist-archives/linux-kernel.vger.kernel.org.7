@@ -1,159 +1,250 @@
-Return-Path: <linux-kernel+bounces-702968-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-702969-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 61A07AE89E7
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Jun 2025 18:32:53 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id CBE6AAE89EF
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Jun 2025 18:35:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 106F83AA6A7
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Jun 2025 16:32:28 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1012817FF24
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Jun 2025 16:35:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2F4FA1DA21;
-	Wed, 25 Jun 2025 16:32:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3EBA72D3206;
+	Wed, 25 Jun 2025 16:34:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="1AoFpX+I"
-Received: from mail-pl1-f175.google.com (mail-pl1-f175.google.com [209.85.214.175])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b="D7RtyE6f"
+Received: from AS8PR03CU001.outbound.protection.outlook.com (mail-westeuropeazon11012061.outbound.protection.outlook.com [52.101.71.61])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 101E01D5AD4
-	for <linux-kernel@vger.kernel.org>; Wed, 25 Jun 2025 16:32:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.175
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750869152; cv=none; b=PfGv06YDewq8ujCjT2RKzZZ+HecofEtpGrJShS7gPdMvKaMN2i4VL73neVmYD8Qave4M5rQh+F/mVhFb7S2DCG+hklg8ri6584tiJGyuBid6WgESslRDbVk/Q+npBc+a7KeLIG5wiCU8jwX/f7yHF+8mZPw1Vwduy0TTbFqfWHU=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750869152; c=relaxed/simple;
-	bh=8TYcMGuvfrOPTqiK2suEA8nHlm5YxH4UZz2kZg9xykE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=p2tlH1Lf4TXZpNdL8BhEkhwQ97iZhiCfP72z8+fkKo9LQtm/B5YfKXNdIfSqXRcsccFzmRFYUo/o4BXDbxhGNtIFBOXlzpp6Vv6ffffcOYGRt5sw2vQm49cwrHJrUZKqJW7CGImOuNhY5jyWS7a66QjiUFD72RAJjLGsDOwqI88=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=1AoFpX+I; arc=none smtp.client-ip=209.85.214.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-pl1-f175.google.com with SMTP id d9443c01a7336-237f270513bso171895ad.1
-        for <linux-kernel@vger.kernel.org>; Wed, 25 Jun 2025 09:32:30 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1750869150; x=1751473950; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=ZNDCMsFM0dLcD3giL6El7GcEVgAj+FPi15dFWxjF5N4=;
-        b=1AoFpX+IAQZaIR7SoWqXFCveJKe22IDQWaH0KItEd5dfCR/A6Fh6rv8LeR7Hu2Xy8e
-         TwKLvFLAfu8Na85RO4AhnoJ/C4lCKVNPu+e7ea1INKnOFkLssIO7R4Gfta6UdLGYAqgM
-         Im9Ri3mwDsY9+Z50HRffs3a0G3WVOMDkQnEgkslnTZAQSM3SDuMvtbZK88AXI4lh5EtA
-         GGOkchjkHpYuKX2kiDldB50kTAaMTumGQvYwr4N+erPxESFKfvHXbu1PL7qUymNT2ZlA
-         u4v3+NwzpcmPECAvtJAvb3q2vOvnJKs8fPeGUC7C8nquD5mC4b/f7ALOI7l28gjpHW4J
-         lKBg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1750869150; x=1751473950;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=ZNDCMsFM0dLcD3giL6El7GcEVgAj+FPi15dFWxjF5N4=;
-        b=vJ6etpD7VNQMrjh6v12YUhwRtubZeW38Izl94LRKV1baK6R7eT+HnAhTYSZsZqZXjp
-         5vkpzxLUgT0Kd2XUe94Z1z2DDXURgxVuNzi7vqYg2lNn29ofRm+GMW9b6q5GTgRxikSF
-         Pr3p/FhuQKjMKxXa0rrG1IwQkRPZGElKkLeE00z+//q68elLjw3Ol8weBx7nwCFViShS
-         aUtkLhc/HWFz3x0g/n1HKH6CEOJJkGIi6ayJjzFxjucij0/w27Texh69HRrTPTYD3a3x
-         Ner6eJa7dcDTrRwDBTv/unywdNajPC2PZ6fxAt9MqOOlw+mIZ/gKUqGkyFbwe8iBiVHE
-         KLbw==
-X-Forwarded-Encrypted: i=1; AJvYcCWlRyw6tkU4bwWDoMoGlf/r7QV1BCV0lCzfOWgoz7pGeTbObyHTPPtGCGazzjVWCR1TeUxde23s6ajAMBQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxKiDS1eAH1vNgMKpqyv2V3RHE63bO8ymZcnlzQoxvdUhYzZV7+
-	uJnTeHSQJ6SpnsL6W8gmsILE0zWPKvet1rI2A2N+4Hxe2O77mOPNc3K/xgs8rkUXFQ==
-X-Gm-Gg: ASbGncv1dpKxQji7t2uTHkLyiIiI0ZEth46t5kdap+3Wc9jZXEFxgj8EXt+B2s5gjDS
-	YTH+Q9eYC4txYr9fnbJ54ZCYmySRicgiiyAP5ZBLUSUNvUcH/KVX0nU1dJa+uav6os6AgRBgymC
-	e7Y5ghsTFnHnYjGTaWm8BtFtLI9vvqjB98q/S6S3GGfIinleHX1QbtIGjScnWx59TYlHeqi7hlq
-	sJKCXkKsKbvC6Yc5hbg0yaFV/QKH6knGXXkObRNqTJRau09O64vyFFjn3lDRRW7QrYQCSBbVEZ5
-	iodmNPoY/JbqGAt190xfz1FoQ+sBq2JHkLYO2ENW32equyvNpGupItIupXZGOyfIZ61XyGQd7aK
-	WvxEKjkqRh6ud+d5biwnt
-X-Google-Smtp-Source: AGHT+IGPl5ZbRLp9CMT7E4DlPhiFrpFNfXgOWI+ELwfYYz5UC1jy4W18mFMj0Uk0hA0ox3edCzOrvA==
-X-Received: by 2002:a17:902:eccf:b0:234:8eeb:d81a with SMTP id d9443c01a7336-2382728934fmr3551785ad.16.1750869150129;
-        Wed, 25 Jun 2025 09:32:30 -0700 (PDT)
-Received: from google.com (60.89.247.35.bc.googleusercontent.com. [35.247.89.60])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-b31f126a7d2sm11309303a12.68.2025.06.25.09.32.29
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 25 Jun 2025 09:32:29 -0700 (PDT)
-Date: Wed, 25 Jun 2025 09:32:24 -0700
-From: Vipin Sharma <vipinsh@google.com>
-To: Sean Christopherson <seanjc@google.com>
-Cc: Bjorn Helgaas <bhelgaas@google.com>, linux-pci@vger.kernel.org,
-	linux-kernel@vger.kernel.org, David Matlack <dmatlack@google.com>,
-	Aaron Lewis <aaronlewis@google.com>
-Subject: Re: [RFC PATCH] PCI: Support Immediate Readiness on devices without
- PM capabilities
-Message-ID: <20250625163224.GA868055.vipinsh@google.com>
-References: <20250624171637.485616-1-seanjc@google.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 99CBA1519B9;
+	Wed, 25 Jun 2025 16:34:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.71.61
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1750869290; cv=fail; b=Dp9zH9MEJQ+itZwZfsm9i9IQVcQO/8nKm4dlW9sZLsRySdZH0yE1TPHsVtw3t0MF4k34qX0nj+jlkicQZAI7yScoYyltUV0odZNky3/VUuJ1vEB11BJmJyxmZqtRESlsUa46OW7DMnPA135bRF5rARpw+jD01HZajA6RslHZFGI=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1750869290; c=relaxed/simple;
+	bh=F/t0fE/bTY30Q65zyJxDX5eT22j5KUnxsnICrDlCV0M=;
+	h=From:To:Cc:Subject:Date:Message-Id:Content-Type:MIME-Version; b=miRWVLteIL0xREi4AHTAqfsJj4pyK1E5jbYibLoMxwReEIMgoLsrERe1TUDC34fnIafCqDbZEyomfQSxUp/7T0WTajLX7Q9nAOcDPQaBbYLCPsSKz4a5/KtH1atjuRaAuhaHYYkn/HVX/kNxzYKOa3a6RFm9K/JKyVQXFRJu3tw=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b=D7RtyE6f; arc=fail smtp.client-ip=52.101.71.61
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=qBocD2roPLtH6lmR37LNu+VIk1dRNHvhSfOHknX7yE1E7wjIkZ1zGLG5OWVNXa8E/dVkZLkzxbZcZe6eV8mYOE4yMRkU3l1OARgYVzgQv8mIaj8YMWbDu9+kOS6WqH06WY9RIv0ar0mkAUWjUvjHxzFf0OjJ6N4Jwbzlyu4O7mYiiQOQYDrkwI74gwaduxhrHqndTSbBwZThH8BIyjobSo0rks0vJkO3b2RW8FcSk+136s3KgywiEvMQz7iux8J27QeJ+Toy4uoqQPrBsvE7SjMbIHdk/eMViei4tpQpEFsJRzzhmShO3tiXAe6LkYzqrZlYaRA/YNQK7Bw2d9QuhA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=/2ky4PcCJa3ZDeDS7ugGnHG12FPATlRJwSWTuvcUYV4=;
+ b=mW3Gn13/d6xIXOEP8yWydSZmB730S5VmDrINxWZG9WBpwpQC9FkxrvP9g40V3V3oRcAS8R/B/OJowJm+CoiabLYoJsV1CikcpLyirKPbbC/c4aVF5bE0FgCy0VbF9RrHaPRkv6JCEYAwaxQaqea2p3uJEo3tWe/VEyC22/uwAvMQJbGQ6P9Thi0ZW59UwGIlgnTk6ZVV2F4n3ltLBZADJfWqaU+t3eD7DZqVIQypf0hT1gdU949F1l9Vlnn9pQUDDFa1WoTPT2ZUkXv1gBvLr+M3dG1mIibbDfwm6Bg7qy/+gi2TSvrHzPDqnF21xOrOnUt5gYpFrfNndNTIylR4GQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
+ header.d=nxp.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=/2ky4PcCJa3ZDeDS7ugGnHG12FPATlRJwSWTuvcUYV4=;
+ b=D7RtyE6fS8P+orHKylk2kJzjc/wqwMFotcTiIw7y0+epf3LXW1IBeDsLQLSbldJfAaPFE0oqyO8gKvyOKkBHTRV7iFuKl5Ae1T1ufUxvcG80dRZhpHMweJTQJVh/CAOg25FBb9Y/tfGjCKnYdpwCZfx4VxITwcwKP5FMB4PjVgEku9lv7A3CXc5N3Nu1+Q/lUj8dosLJqS6D4vIQhLpHyy33tjL4Kki5m/maaYfqr5rQKO5LdzGJ04RUG2k0m87UWqGp4NHLpEdteuT63M485pGVo3Ow16jix0qGPda5yrVmq3ktdoo+TZXgFOUuSHjw9MG/lL+Q31kPR0WwkpF1Rg==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nxp.com;
+Received: from PAXPR04MB9642.eurprd04.prod.outlook.com (2603:10a6:102:240::14)
+ by PAWPR04MB10007.eurprd04.prod.outlook.com (2603:10a6:102:387::8) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8857.27; Wed, 25 Jun
+ 2025 16:34:44 +0000
+Received: from PAXPR04MB9642.eurprd04.prod.outlook.com
+ ([fe80::9126:a61e:341d:4b06]) by PAXPR04MB9642.eurprd04.prod.outlook.com
+ ([fe80::9126:a61e:341d:4b06%7]) with mapi id 15.20.8880.015; Wed, 25 Jun 2025
+ 16:34:44 +0000
+From: Frank Li <Frank.Li@nxp.com>
+To: Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Vladimir Zapolskiy <vz@mleia.com>,
+	Piotr Wojtaszczyk <piotr.wojtaszczyk@timesys.com>,
+	linux-input@vger.kernel.org (open list:INPUT (KEYBOARD, MOUSE, JOYSTICK, TOUCHSCREEN)...),
+	devicetree@vger.kernel.org (open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS),
+	linux-arm-kernel@lists.infradead.org (moderated list:ARM/LPC32XX SOC SUPPORT),
+	linux-kernel@vger.kernel.org (open list)
+Cc: imx@lists.linux.dev
+Subject: [PATCH v2 1/1] dt-bindings: input: touchscreen: convert lpc32xx-tsc.txt to yaml format
+Date: Wed, 25 Jun 2025 12:34:28 -0400
+Message-Id: <20250625163431.2543597-1-Frank.Li@nxp.com>
+X-Mailer: git-send-email 2.34.1
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: AM8P190CA0012.EURP190.PROD.OUTLOOK.COM
+ (2603:10a6:20b:219::17) To PAXPR04MB9642.eurprd04.prod.outlook.com
+ (2603:10a6:102:240::14)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250624171637.485616-1-seanjc@google.com>
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: PAXPR04MB9642:EE_|PAWPR04MB10007:EE_
+X-MS-Office365-Filtering-Correlation-Id: 042bccbf-9c7a-4c0c-642c-08ddb40630cf
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|7416014|376014|366016|1800799024|52116014|38350700014|921020;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?mMNp3GOgC5Gxf4FkkyKo6ggHO1Qn+BKYCe5PjLjv5Nm+H4PUlgM1w9mObCqB?=
+ =?us-ascii?Q?gLyiMI39BIRIzGBmnpNPrrzVx/3wEYxoCRejG82n8t+ulLsDt+8T5aCyXSCY?=
+ =?us-ascii?Q?rbPt4xDwCPB6k9mKLumtfUGEYqaGD76qQrQqAXdnNAsSS8Ui6QR076F2uZUw?=
+ =?us-ascii?Q?XGmBBCV1+uE7HvDrgb0/3SPkkHLPjYf/5pobQZwNQPYdiKtOfwNqcXX90ra6?=
+ =?us-ascii?Q?gQuds+PHN09OwlBSkcV1iQJw8Y6Ijiaxdl3N0h+6l5ZQztz0Ok187WxPAAnw?=
+ =?us-ascii?Q?2gOwGRs1BuJNWyZIpfyNLz1YOwNca0D8VA/ebK6pFdMtglJCzzokz98fLpJM?=
+ =?us-ascii?Q?Wlf6rL7CWOe9jZu6FI0s9R7YLL+XPyyMcGpAvNmRyWr/+wz4g39CI1X4mjQq?=
+ =?us-ascii?Q?5mD8mVoEmeL0C0B3MpkFTMWad+Z2fYWV2oh9zyXHeBW9BSb+Bqp8A7L+6yHp?=
+ =?us-ascii?Q?oj04yg/a1VSoOKjTxitS0UHokhhIz0JAmfpSaXyA/hzWkpblz3rCz+sH8s75?=
+ =?us-ascii?Q?bS1XMm1zg/vDz6SEcNLlKuELiVWlap3m63zLVhP8/faF8W51XhcobXfhTR+M?=
+ =?us-ascii?Q?cFiq1RH2IozliRdj/fPoM0Mt27cgq5AltdPFM7o9VlxkLjpRXXPWy4RUpH3c?=
+ =?us-ascii?Q?lF05EjWHTAlxdIXaymd3T82GZHaksIE6m645IoQ8heizVaCKci3kmzCVqMIn?=
+ =?us-ascii?Q?uoR3q5dUqnc6SeGN5js6aJJWdQy8Xf5duOKSYMxS/sR1Vrxzx/9H+cVgGP6j?=
+ =?us-ascii?Q?wA+Zct6w6XacZEQE7cYYl9s4g3+mRxRX+HaNntcO/L+c+D1iyq2em4KVKnZo?=
+ =?us-ascii?Q?vj4TSRbXr8tkD7ey1pmFSqGjBfzTJpgS1i/1x8zKNPJVL1BwwgJyP0itJvaj?=
+ =?us-ascii?Q?ZeB0qFkrH9cuJolQvYho6FCXE3+10X0JlMWWKTgbh/j2PjyMHKWBHfUEMiPc?=
+ =?us-ascii?Q?XO5BRsXVoIm1IZUsyC17tK+oOGdD0RYLBUuUYJokrtumPEXG2Yz7z9OqD6Ci?=
+ =?us-ascii?Q?I03jwz9Fse56OJAEhnRybXpybKFjliNAM3tjwOM6sfFcyHiQ9y5jFWpb5XnI?=
+ =?us-ascii?Q?WreeX0kI/1tEghL2t/lZopHn/ZxTZ3f0wKEjnDAFwbj8QqkR9ohBTBhy6Dcb?=
+ =?us-ascii?Q?5jNaZu0H9vv2G9bipejVoIJMUlX30lA9GNnpEJbcF6oC4ciGIQPt29AZi/kg?=
+ =?us-ascii?Q?LxyTqxcj9e4gb2Tjt7PI3XsYg5KhtMeLfh2i1iTjMeubpkNUpf28jmK1xRP+?=
+ =?us-ascii?Q?4D521kmHxPqBlWGQSlY3BqjWf42HXHcCDXaIbmWrANEox/IwVbKx4YJJepVK?=
+ =?us-ascii?Q?MQipedXNpgcX3IogsvyRQiRPlMr+/Tc9ICbgZvPSypXTYaW2zP2QWYPq/fdy?=
+ =?us-ascii?Q?1OG/8MgIuXgU5yXLOZHSxSOUZEl5n11UAWKQeiFtbpX9QGa0HI+OnepbFp2e?=
+ =?us-ascii?Q?F9yOI1psgx4Oz+pVBZ0dch9VSFuaLhOt?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PAXPR04MB9642.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(7416014)(376014)(366016)(1800799024)(52116014)(38350700014)(921020);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?/Rpj8oRIf7W6rzGKo3YykdT59QNmg9jGdQl8I48wpEcykK5mTPOBUMIyKQqe?=
+ =?us-ascii?Q?q5OzG0OUhc2C9Aol4TRB7rnd2gCwMKrzGRgMzwDBa+u89g43z7pYA7Y+3qpB?=
+ =?us-ascii?Q?4LCr6UepMEr95Ftjhh7WH2C7nD20j6n9wxNGRMo0vIBYK9MMkvZw5vFLDzid?=
+ =?us-ascii?Q?gfDlj9aH8go1OOXrjasx+rP2BOLRUL6TvwEZMe2TsLegx7TWI8lzzNJNNFaJ?=
+ =?us-ascii?Q?SZ5+HIgOA5K8NQXgYbAleKUl4Ol45PlqZ/ZfhJCBxW++wPN85PjWZDkeQH41?=
+ =?us-ascii?Q?7Q/3I6ZebX9VRtAYro69J30B6dA7AN98wTVtXTxFuYeaDSa1xzeOYyl8JeAd?=
+ =?us-ascii?Q?tNnLMNV36546+EjQg7ZfI5mv2pg03sg/Co3+TGnpOsabWxeeIKBMbGJEUv/2?=
+ =?us-ascii?Q?2R8r+YHdQQjHYSNovPdmJ8iWt/h+CyCyJ67O5qe9MqNVl48S1Ix8L1Ih9bS7?=
+ =?us-ascii?Q?CRrLLDxRVHC/kTpLkLWVMoVCi5rIqoKBa8LtrV8xH/9SJ0byRU+8TE9ALvjv?=
+ =?us-ascii?Q?86YCc2RBHgOZMsb9N2knkfXYgrIQ/AZ/HVNIDbIVTNqrzV8pwFS7lxohQwFq?=
+ =?us-ascii?Q?AyXFy1P3XcN7b1uO82LK4+NfjEydbBGJu4hTT38ayia0649CLqzsP6SMhF4s?=
+ =?us-ascii?Q?t87+T1gfbqc9vDJfmq1lVyOYFJOJH+swPq2fYqisCoPW2b7iU7rfKAIS13x8?=
+ =?us-ascii?Q?NG5ej8Z+h38HFdG1vs3+CdUOAn2vzIv7ADqlhr0TSBURzZFgJ2WGmA0rIPn4?=
+ =?us-ascii?Q?dN5jkLfP1uBUn/zqSqsi6A5yNTU+8D2Wf7kHZEHW0kIDASLDSTYpl8HXFei2?=
+ =?us-ascii?Q?zmSuIDbzQmqHfs8cSMzhgCOZuzskL8XGNoa80Is2Z8B9fxESPiLk/PN+dYpu?=
+ =?us-ascii?Q?nKwzlwR/QqkbuZ24AT6VN3GbHo+3sA5fVNjpjAtVsGgP8FMhqaRVHZIeIRnd?=
+ =?us-ascii?Q?WM3oI/xhA2ogAjP0OsoaujjpsU7fm7Q+4Lp9PoU5FYsuZOP/8LaLIv9B0Xtq?=
+ =?us-ascii?Q?HqWDvEFKGDpJmyjIXxneumhmDLa1XRL8RDZhwUDyub6GqkwPx4wqozP1iUxY?=
+ =?us-ascii?Q?RBHIH4mVjYrv3nXmuCGuDq4AwJ2wAX+vlPZJEgVRO5gYlBIqc2MDEfzJa6ev?=
+ =?us-ascii?Q?zUUxEVgge0suV/YMV2m+LuAG2DvSpFZBI9D+mEywO3mi0kFVL8wiS5RticaB?=
+ =?us-ascii?Q?bNZx7Xup8FwtiBussH7AL563fbV55lrolJ9svlKIalkRJEg2m20PJfRUxbUI?=
+ =?us-ascii?Q?42V0MlhpMiI+hndcnRI4NJqR4ysIdozH0RL8bGwPiZaF4JoXoRepI50IlnaS?=
+ =?us-ascii?Q?u29jItajOYgPG+G7tr+31v6EUQMCZ8fPJxwGxeIC+EAHwpBGDQCg4Y/KrAJx?=
+ =?us-ascii?Q?HqFzxc8PYd3cLN8nupN7jAZrtYlWWlPC37gjM3XiYlPYpHUCVhTOXCwrsik1?=
+ =?us-ascii?Q?W6rPSOIBd2eEqPGlylcm3nXTHupaj6r7X3VyliTmc3Q3hvI/mYrbk7mmnix9?=
+ =?us-ascii?Q?WbCm24a0GEU7E+k6XEJs/9v0D19DnYf1OM01ca1jINgXArdk2DmSiLdKqR9H?=
+ =?us-ascii?Q?vlHJWZBJFmYjn+SM4g4PN4UT7OBoTFazEXOf1/oX?=
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 042bccbf-9c7a-4c0c-642c-08ddb40630cf
+X-MS-Exchange-CrossTenant-AuthSource: PAXPR04MB9642.eurprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 25 Jun 2025 16:34:44.0916
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: qypsxX3oSjPNjg6USsCqx4GgqSQbNDJ9D266bV+U1D6WpE8Ge4KS0/weSqt/zT+YNcThIFRwwO68w+/UUv7SQg==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PAWPR04MB10007
 
-On 2025-06-24 10:16:37, Sean Christopherson wrote:
-> Query support for Immediate Readiness irrespective of whether or not the
-> device supports PM capabilities, as nothing in the PCIe spec suggests that
-> Immediate Readiness is in any way dependent on PM functionality.
+Convert lpc32xx-tsc.txt to yaml format.
 
-After reading spec I also arrived at the same conclusion, this can be
-done irrespective of PM functionality. For example, wait after FLR
-behavior which are done using PCI Express Capability is also covered by
-this Immediate Readiness bit.
+Additional changes:
+- add clocks and put it into required list to match existed lpc32xx.dtsi.
 
-> 
-> Opportunistically add a comment to explain why "errors" during PM setup
-> are effectively ignored.
-> 
-> Fixes: d6112f8def51 ("PCI: Add support for Immediate Readiness")
-> Cc: David Matlack <dmatlack@google.com>
-> Cc: Vipin Sharma <vipinsh@google.com>
-> Cc: Aaron Lewis <aaronlewis@google.com>
-> Signed-off-by: Sean Christopherson <seanjc@google.com>
-> ---
-> 
-> RFC as I'm not entirely sure this is useful/correct.
-> 
-> Found by inspection when debugging a VFIO VF passthrough issue that turned out
-> to be 907a7a2e5bf4 ("PCI/PM: Set up runtime PM even for devices without PCI PM").
-> 
-> The folks on the Cc list are looking at parallelizing VF assignment to avoid
-> serializing the 100ms wait on FLR.  I'm hoping we'll get lucky and the VFs in
-> question do (or can) support PCI_STATUS_IMM_READY.
-> 
->  drivers/pci/pci.c | 40 +++++++++++++++++++++++++---------------
->  1 file changed, 25 insertions(+), 15 deletions(-)
-> 
-> +void pci_pm_init(struct pci_dev *dev)
-> +{
-> +	u16 status;
-> +
-> +	device_enable_async_suspend(&dev->dev);
-> +	dev->wakeup_prepared = false;
-> +
-> +	dev->pm_cap = 0;
-> +	dev->pme_support = 0;
-> +
-> +	/*
-> +	 * Note, support for the PCI PM spec is optional for legacy PCI devices
-> +	 * and for VFs.  Continue on even if no PM capabilities are supported.
-> +	 */
-> +	__pci_pm_init(dev);
->  
->  	pci_read_config_word(dev, PCI_STATUS, &status);
->  	if (status & PCI_STATUS_IMM_READY)
->  		dev->imm_ready = 1;
+Signed-off-by: Frank Li <Frank.Li@nxp.com>
+---
+changes in v2
+- add clocks and put it into required list to match existed lpc32xx.dtsi.
+---
+ .../input/touchscreen/lpc32xx-tsc.txt         | 16 -------
+ .../input/touchscreen/nxp,lpc3220-tsc.yaml    | 43 +++++++++++++++++++
+ 2 files changed, 43 insertions(+), 16 deletions(-)
+ delete mode 100644 Documentation/devicetree/bindings/input/touchscreen/lpc32xx-tsc.txt
+ create mode 100644 Documentation/devicetree/bindings/input/touchscreen/nxp,lpc3220-tsc.yaml
 
-I don't see a reason to keep it in pci_pm_init then. This should be
-moved out of this function, maybe in the caller or its own function.
-> -poweron:
-> +
->  	pci_pm_power_up_and_verify_state(dev);
->  	pm_runtime_forbid(&dev->dev);
->  	pm_runtime_set_active(&dev->dev);
-> 
-> base-commit: 86731a2a651e58953fc949573895f2fa6d456841
-> -- 
-> 2.50.0.714.g196bf9f422-goog
-> 
+diff --git a/Documentation/devicetree/bindings/input/touchscreen/lpc32xx-tsc.txt b/Documentation/devicetree/bindings/input/touchscreen/lpc32xx-tsc.txt
+deleted file mode 100644
+index 41cbf4b7a670d..0000000000000
+--- a/Documentation/devicetree/bindings/input/touchscreen/lpc32xx-tsc.txt
++++ /dev/null
+@@ -1,16 +0,0 @@
+-* NXP LPC32xx SoC Touchscreen Controller (TSC)
+-
+-Required properties:
+-- compatible: must be "nxp,lpc3220-tsc"
+-- reg: physical base address of the controller and length of memory mapped
+-  region.
+-- interrupts: The TSC/ADC interrupt
+-
+-Example:
+-
+-	tsc@40048000 {
+-		compatible = "nxp,lpc3220-tsc";
+-		reg = <0x40048000 0x1000>;
+-		interrupt-parent = <&mic>;
+-		interrupts = <39 0>;
+-	};
+diff --git a/Documentation/devicetree/bindings/input/touchscreen/nxp,lpc3220-tsc.yaml b/Documentation/devicetree/bindings/input/touchscreen/nxp,lpc3220-tsc.yaml
+new file mode 100644
+index 0000000000000..b6feda127c7b5
+--- /dev/null
++++ b/Documentation/devicetree/bindings/input/touchscreen/nxp,lpc3220-tsc.yaml
+@@ -0,0 +1,43 @@
++# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
++%YAML 1.2
++---
++$id: http://devicetree.org/schemas/input/touchscreen/nxp,lpc3220-tsc.yaml#
++$schema: http://devicetree.org/meta-schemas/core.yaml#
++
++title: NXP LPC32xx SoC Touchscreen Controller (TSC)
++
++maintainers:
++  - Frank Li <Frank.Li@nxp.com>
++
++properties:
++  compatible:
++    const: nxp,lpc3220-tsc
++
++  reg:
++    maxItems: 1
++
++  clocks:
++    maxItems: 1
++
++  interrupts:
++    maxItems: 1
++
++required:
++  - compatible
++  - reg
++  - clocks
++  - interrupts
++
++additionalProperties: false
++
++examples:
++  - |
++    #include <dt-bindings/clock/lpc32xx-clock.h>
++
++    touchscreen@40048000 {
++        compatible = "nxp,lpc3220-tsc";
++        reg = <0x40048000 0x1000>;
++        interrupt-parent = <&mic>;
++        interrupts = <39 0>;
++        clocks = <&clk LPC32XX_CLK_ADC>;
++    };
+-- 
+2.34.1
+
 
