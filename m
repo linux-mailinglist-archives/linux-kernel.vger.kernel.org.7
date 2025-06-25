@@ -1,184 +1,217 @@
-Return-Path: <linux-kernel+bounces-701776-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-701781-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id CBB63AE7924
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Jun 2025 09:55:48 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 1A58DAE7935
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Jun 2025 09:57:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3122C4A0664
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Jun 2025 07:55:49 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 784A71759C9
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Jun 2025 07:57:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 30AEE20DD40;
-	Wed, 25 Jun 2025 07:55:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0ED7121146C;
+	Wed, 25 Jun 2025 07:56:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="R5wIjtJC";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="J2dZhp5t";
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="CDSxgEzK";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="wBMuvC/o"
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+	dkim=pass (2048-bit key) header.d=lanxincomputing-com.20200927.dkim.feishu.cn header.i=@lanxincomputing-com.20200927.dkim.feishu.cn header.b="mBTR6Pgj"
+Received: from va-1-15.ptr.blmpb.com (va-1-15.ptr.blmpb.com [209.127.230.15])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A933A20B1F5
-	for <linux-kernel@vger.kernel.org>; Wed, 25 Jun 2025 07:55:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2B98120CCDC
+	for <linux-kernel@vger.kernel.org>; Wed, 25 Jun 2025 07:56:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.127.230.15
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750838135; cv=none; b=jvpeTPFTjAOZrJ6TGYuo0+DSn+5bz05DsTyXkavu4ED71/z0m0ukT06ZMp4dN+BaGWfB9G8TBKfmnnYWXVy9oDTMAhq4YVdam8ojfhcTNU/sOa3n0SLpz3hO+ZcGo7WSpbR0eR28PB5g/5R3mW7x9x6WgkhmXqmgcsT7wAgEf1w=
+	t=1750838183; cv=none; b=r9TN3Olh3MZWh/YwC0WA3WL2MJEI2FUEGUFbKSu/mS+ZSctxOVuh4SdFeK8S4UCPrnX0S+SCeFglHMFe1Cng8A+haR42K2+tZf3kH1G36SoxzCvFBrVBVqpgQ30MRSUNNFBRaGvCj8dmxpxnGqMb+gfXyoEJ8H6oZbpOSe4bHco=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750838135; c=relaxed/simple;
-	bh=ZYcK/QhUWG4a3uuHz4avqRso0r+r5J9nI7/Ht04+45E=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=KLDEwNNNN723R09EZGrpdRaVd9IrywKrT33X/CyLcqur+bnVNl1byuypsj/9KVuofW4qSnhoTBTsSmJN+OjSkouR1T3xW3VLzrAZtu3p8pfNjZFpInbauwpDwRQoKn8UnGHIvPrgip86fnUL1dM898/mjGZXd1srbimSBi1Gmzo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=R5wIjtJC; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=J2dZhp5t; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=CDSxgEzK; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=wBMuvC/o; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id ED1132118D;
-	Wed, 25 Jun 2025 07:55:31 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1750838132; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=XWM6hseW4eoKZZAbk3Im6Bzz3XY09qGq4SXJ9GVOPfk=;
-	b=R5wIjtJCZn1i/1vm/mBuJQHs+s0hkuaOVnLnLaT9RXCW6RE4+MDHcAWOxPiiPWLJgn7w7N
-	uXgdi+nafBJjfEAzHvfm87SbLEan1PGtM7ph7Of001x4Fx9h9upaYaOxJLPKY09i+5dmv2
-	WSJ8LDp2b0XRSCoHXS+tKNxIAiUU8/w=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1750838132;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=XWM6hseW4eoKZZAbk3Im6Bzz3XY09qGq4SXJ9GVOPfk=;
-	b=J2dZhp5tZ/XnuGQtjxU5BNEasaCrXiNAYOJ/dtx2OHDHuuXqFTPOSfq94RGXAfMzhdgQKT
-	FLUfS0dn03WpX/Cw==
-Authentication-Results: smtp-out1.suse.de;
-	dkim=pass header.d=suse.de header.s=susede2_rsa header.b=CDSxgEzK;
-	dkim=pass header.d=suse.de header.s=susede2_ed25519 header.b="wBMuvC/o"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1750838131; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=XWM6hseW4eoKZZAbk3Im6Bzz3XY09qGq4SXJ9GVOPfk=;
-	b=CDSxgEzKPP2x/qWOIVC72xSenHdukkNiDUUHhWDhCmn9JX4R2Vi/y2uR7NNn5CONywZVGF
-	e04B/LcpA4C9WBw8hZNYrH34sWXJmeWq9cCwGhVKYELFi2YJXPW9kCyHLJVa0kLXOLzIGS
-	kDTkvybRoiXgp7ly1sgbUcSihJDaZsg=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1750838131;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=XWM6hseW4eoKZZAbk3Im6Bzz3XY09qGq4SXJ9GVOPfk=;
-	b=wBMuvC/o1iuEL3o5PfUUQUDBp4AOyBXEu/z5ji4u8mx2yR4p4SAp+FYyc4PcKSjAlKRcAs
-	R8oVO+hz5WcxosDQ==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 7B02313301;
-	Wed, 25 Jun 2025 07:55:30 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id yv9IG3KrW2hUEwAAD6G6ig
-	(envelope-from <osalvador@suse.de>); Wed, 25 Jun 2025 07:55:30 +0000
-Date: Wed, 25 Jun 2025 09:55:24 +0200
-From: Oscar Salvador <osalvador@suse.de>
-To: David Hildenbrand <david@redhat.com>
-Cc: linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-	linux-mm@kvack.org, nvdimm@lists.linux.dev,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Juergen Gross <jgross@suse.com>,
-	Stefano Stabellini <sstabellini@kernel.org>,
-	Oleksandr Tyshchenko <oleksandr_tyshchenko@epam.com>,
-	Dan Williams <dan.j.williams@intel.com>,
-	Alistair Popple <apopple@nvidia.com>,
-	Matthew Wilcox <willy@infradead.org>, Jan Kara <jack@suse.cz>,
-	Alexander Viro <viro@zeniv.linux.org.uk>,
-	Christian Brauner <brauner@kernel.org>, Zi Yan <ziy@nvidia.com>,
-	Baolin Wang <baolin.wang@linux.alibaba.com>,
-	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
-	"Liam R. Howlett" <Liam.Howlett@oracle.com>,
-	Nico Pache <npache@redhat.com>, Ryan Roberts <ryan.roberts@arm.com>,
-	Dev Jain <dev.jain@arm.com>, Barry Song <baohua@kernel.org>,
-	Vlastimil Babka <vbabka@suse.cz>, Mike Rapoport <rppt@kernel.org>,
-	Suren Baghdasaryan <surenb@google.com>,
-	Michal Hocko <mhocko@suse.com>, Jann Horn <jannh@google.com>,
-	Pedro Falcato <pfalcato@suse.de>
-Subject: Re: [PATCH RFC 01/14] mm/memory: drop highest_memmap_pfn sanity
- check in vm_normal_page()
-Message-ID: <aFurbAYy_F1LT9LD@localhost.localdomain>
-References: <20250617154345.2494405-1-david@redhat.com>
- <20250617154345.2494405-2-david@redhat.com>
+	s=arc-20240116; t=1750838183; c=relaxed/simple;
+	bh=hW3k6z49kKwNRejfAMcgIdFU5548Dv/b8lnlYkL2ZcM=;
+	h=From:Date:References:Message-Id:To:Cc:Subject:Content-Type:
+	 In-Reply-To:Mime-Version; b=O/bsMPRYVoGrRUhWIyx3jj+14Upx79TuA1B+nXevH98b7HElkneweOBxGSW7vzrxa9Viu0bvsXazSYoD97YXDzYCd+5n70m8iCXHzJSHQtvN9863xlSMjccW/tNKrk/fhZE/Pfle+fWVxusQrhKn1sOsIYy7WmX+MDzZsyFyF60=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=lanxincomputing.com; spf=pass smtp.mailfrom=lanxincomputing.com; dkim=pass (2048-bit key) header.d=lanxincomputing-com.20200927.dkim.feishu.cn header.i=@lanxincomputing-com.20200927.dkim.feishu.cn header.b=mBTR6Pgj; arc=none smtp.client-ip=209.127.230.15
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=lanxincomputing.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lanxincomputing.com
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+ s=s1; d=lanxincomputing-com.20200927.dkim.feishu.cn; t=1750838130;
+  h=from:subject:mime-version:from:date:message-id:subject:to:cc:
+ reply-to:content-type:mime-version:in-reply-to:message-id;
+ bh=Uwcz+ylJEsmNE1CVgp+CscW5a5nPPX8eXKPrXaxr/uc=;
+ b=mBTR6PgjmCU+frhNcEwLlXR8N78NYFR8ZiLbDiT1l99f1D6q6v6n28ASL4Jth+22MTKN5R
+ od9MIDiPk92CTCB68s4YSWslGs0z5R/hFySbeZxwLvuaA3lIJDCkijGpShrs008oP1ZYLG
+ Ty0N2gbiXvW57po93CoX3okpkXIZJgImBlZKD0npBeUS/nwMQgG35eHcRakGfSQ6zeabf+
+ LiUXO0kpinv+JCj3aRVRGSWA3RzORVORACUy6QXDZ5+cbehoAIcoIv1wU5oFDLxZjQdyXG
+ BaN2X0DNNaLwAL4HmPkzfS1Ap2yU29Wz5a+a06BUMlvWjfnIHRHQWYTrW0txfg==
+From: "Nutty Liu" <liujingqi@lanxincomputing.com>
+Date: Wed, 25 Jun 2025 15:55:25 +0800
+Content-Transfer-Encoding: 7bit
+Content-Language: en-US
+References: <20250618113532.471448-1-apatel@ventanamicro.com> <20250618113532.471448-11-apatel@ventanamicro.com>
+Message-Id: <e074d79d-a8c6-42c6-bffb-543112778c1b@lanxincomputing.com>
+To: "Anup Patel" <apatel@ventanamicro.com>, 
+	"Atish Patra" <atish.patra@linux.dev>
+Cc: "Palmer Dabbelt" <palmer@dabbelt.com>, 
+	"Paul Walmsley" <paul.walmsley@sifive.com>, 
+	"Alexandre Ghiti" <alex@ghiti.fr>, 
+	"Andrew Jones" <ajones@ventanamicro.com>, 
+	"Anup Patel" <anup@brainfault.org>, <kvm@vger.kernel.org>, 
+	<kvm-riscv@lists.infradead.org>, <linux-riscv@lists.infradead.org>, 
+	<linux-kernel@vger.kernel.org>, "Atish Patra" <atishp@rivosinc.com>
+Subject: Re: [PATCH v3 10/12] RISC-V: KVM: Add vmid field to struct kvm_riscv_hfence
+Content-Type: text/plain; charset=UTF-8
+In-Reply-To: <20250618113532.471448-11-apatel@ventanamicro.com>
+User-Agent: Mozilla Thunderbird
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250617154345.2494405-2-david@redhat.com>
-X-Spamd-Result: default: False [-4.51 / 50.00];
-	BAYES_HAM(-3.00)[99.99%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	R_DKIM_ALLOW(-0.20)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	MX_GOOD(-0.01)[];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	TO_DN_SOME(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	ARC_NA(0.00)[];
-	RCPT_COUNT_TWELVE(0.00)[29];
-	MISSING_XM_UA(0.00)[];
-	RCVD_TLS_ALL(0.00)[];
-	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	FROM_EQ_ENVFROM(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	R_RATELIMIT(0.00)[to_ip_from(RL88oxspsx4bg3gu1yybyqiqt4)];
-	RCVD_COUNT_TWO(0.00)[2];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[localhost.localdomain:mid,suse.de:dkim,suse.de:email];
-	DNSWL_BLOCKED(0.00)[2a07:de40:b281:106:10:150:64:167:received,2a07:de40:b281:104:10:150:64:97:from];
-	DKIM_TRACE(0.00)[suse.de:+]
-X-Spam-Level: 
-X-Spam-Flag: NO
-X-Rspamd-Queue-Id: ED1132118D
-X-Rspamd-Action: no action
-X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
-X-Spam-Score: -4.51
+Mime-Version: 1.0
+X-Original-From: Nutty Liu <liujingqi@lanxincomputing.com>
+Received: from [127.0.0.1] ([139.226.59.215]) by smtp.feishu.cn with ESMTPS; Wed, 25 Jun 2025 15:55:27 +0800
+X-Lms-Return-Path: <lba+2685bab70+0d7a2a+vger.kernel.org+liujingqi@lanxincomputing.com>
 
-On Tue, Jun 17, 2025 at 05:43:32PM +0200, David Hildenbrand wrote:
-> In 2009, we converted a VM_BUG_ON(!pfn_valid(pfn)) to the current
-> highest_memmap_pfn sanity check in commit 22b31eec63e5 ("badpage:
-> vm_normal_page use print_bad_pte"), because highest_memmap_pfn was
-> readily available.
-> 
-> Nowadays, this is the last remaining highest_memmap_pfn user, and this
-> sanity check is not really triggering ... frequently.
-> 
-> Let's convert it to VM_WARN_ON_ONCE(!pfn_valid(pfn)), so we can
-> simplify and get rid of highest_memmap_pfn. Checking for
-> pfn_to_online_page() might be even better, but it would not handle
-> ZONE_DEVICE properly.
-> 
-> Do the same in vm_normal_page_pmd(), where we don't even report a
-> problem at all ...
-> 
-> What might be better in the future is having a runtime option like
-> page-table-check to enable such checks dynamically on-demand. Something
-> for the future.
-> 
-> Signed-off-by: David Hildenbrand <david@redhat.com>
+On 6/18/2025 7:35 PM, Anup Patel wrote:
+> Currently, the struct kvm_riscv_hfence does not have vmid field
+> and various hfence processing functions always pick vmid assigned
+> to the guest/VM. This prevents us from doing hfence operation on
+> arbitrary vmid hence add vmid field to struct kvm_riscv_hfence
+> and use it wherever applicable.
+>
+> Reviewed-by: Atish Patra <atishp@rivosinc.com>
+> Signed-off-by: Anup Patel <apatel@ventanamicro.com>
+> ---
+>   arch/riscv/include/asm/kvm_tlb.h |  1 +
+>   arch/riscv/kvm/tlb.c             | 30 ++++++++++++++++--------------
+>   2 files changed, 17 insertions(+), 14 deletions(-)
+>
+> diff --git a/arch/riscv/include/asm/kvm_tlb.h b/arch/riscv/include/asm/kvm_tlb.h
+> index cd00c9a46cb1..f67e03edeaec 100644
+> --- a/arch/riscv/include/asm/kvm_tlb.h
+> +++ b/arch/riscv/include/asm/kvm_tlb.h
+> @@ -19,6 +19,7 @@ enum kvm_riscv_hfence_type {
+>   struct kvm_riscv_hfence {
+>   	enum kvm_riscv_hfence_type type;
+>   	unsigned long asid;
+> +	unsigned long vmid;
+>   	unsigned long order;
+>   	gpa_t addr;
+>   	gpa_t size;
+> diff --git a/arch/riscv/kvm/tlb.c b/arch/riscv/kvm/tlb.c
+> index 6fc4361c3d75..349fcfc93f54 100644
+> --- a/arch/riscv/kvm/tlb.c
+> +++ b/arch/riscv/kvm/tlb.c
+> @@ -237,49 +237,43 @@ static bool vcpu_hfence_enqueue(struct kvm_vcpu *vcpu,
+>   
+>   void kvm_riscv_hfence_process(struct kvm_vcpu *vcpu)
+>   {
+> -	unsigned long vmid;
+>   	struct kvm_riscv_hfence d = { 0 };
+> -	struct kvm_vmid *v = &vcpu->kvm->arch.vmid;
+>   
+>   	while (vcpu_hfence_dequeue(vcpu, &d)) {
+>   		switch (d.type) {
+>   		case KVM_RISCV_HFENCE_UNKNOWN:
+>   			break;
+>   		case KVM_RISCV_HFENCE_GVMA_VMID_GPA:
+> -			vmid = READ_ONCE(v->vmid);
+>   			if (kvm_riscv_nacl_available())
+> -				nacl_hfence_gvma_vmid(nacl_shmem(), vmid,
+> +				nacl_hfence_gvma_vmid(nacl_shmem(), d.vmid,
+>   						      d.addr, d.size, d.order);
+>   			else
+> -				kvm_riscv_local_hfence_gvma_vmid_gpa(vmid, d.addr,
+> +				kvm_riscv_local_hfence_gvma_vmid_gpa(d.vmid, d.addr,
+>   								     d.size, d.order);
+>   			break;
+>   		case KVM_RISCV_HFENCE_VVMA_ASID_GVA:
+>   			kvm_riscv_vcpu_pmu_incr_fw(vcpu, SBI_PMU_FW_HFENCE_VVMA_ASID_RCVD);
+> -			vmid = READ_ONCE(v->vmid);
+>   			if (kvm_riscv_nacl_available())
+> -				nacl_hfence_vvma_asid(nacl_shmem(), vmid, d.asid,
+> +				nacl_hfence_vvma_asid(nacl_shmem(), d.vmid, d.asid,
+>   						      d.addr, d.size, d.order);
+>   			else
+> -				kvm_riscv_local_hfence_vvma_asid_gva(vmid, d.asid, d.addr,
+> +				kvm_riscv_local_hfence_vvma_asid_gva(d.vmid, d.asid, d.addr,
+>   								     d.size, d.order);
+>   			break;
+>   		case KVM_RISCV_HFENCE_VVMA_ASID_ALL:
+>   			kvm_riscv_vcpu_pmu_incr_fw(vcpu, SBI_PMU_FW_HFENCE_VVMA_ASID_RCVD);
+> -			vmid = READ_ONCE(v->vmid);
+>   			if (kvm_riscv_nacl_available())
+> -				nacl_hfence_vvma_asid_all(nacl_shmem(), vmid, d.asid);
+> +				nacl_hfence_vvma_asid_all(nacl_shmem(), d.vmid, d.asid);
+>   			else
+> -				kvm_riscv_local_hfence_vvma_asid_all(vmid, d.asid);
+> +				kvm_riscv_local_hfence_vvma_asid_all(d.vmid, d.asid);
+>   			break;
+>   		case KVM_RISCV_HFENCE_VVMA_GVA:
+>   			kvm_riscv_vcpu_pmu_incr_fw(vcpu, SBI_PMU_FW_HFENCE_VVMA_RCVD);
+> -			vmid = READ_ONCE(v->vmid);
+>   			if (kvm_riscv_nacl_available())
+> -				nacl_hfence_vvma(nacl_shmem(), vmid,
+> +				nacl_hfence_vvma(nacl_shmem(), d.vmid,
+>   						 d.addr, d.size, d.order);
+>   			else
+> -				kvm_riscv_local_hfence_vvma_gva(vmid, d.addr,
+> +				kvm_riscv_local_hfence_vvma_gva(d.vmid, d.addr,
+>   								d.size, d.order);
+>   			break;
+>   		default:
+> @@ -336,10 +330,12 @@ void kvm_riscv_hfence_gvma_vmid_gpa(struct kvm *kvm,
+>   				    gpa_t gpa, gpa_t gpsz,
+>   				    unsigned long order)
+>   {
+> +	struct kvm_vmid *v = &kvm->arch.vmid;
+>   	struct kvm_riscv_hfence data;
+>   
+>   	data.type = KVM_RISCV_HFENCE_GVMA_VMID_GPA;
+>   	data.asid = 0;
+> +	data.vmid = READ_ONCE(v->vmid);
+>   	data.addr = gpa;
+>   	data.size = gpsz;
+>   	data.order = order;
+> @@ -359,10 +355,12 @@ void kvm_riscv_hfence_vvma_asid_gva(struct kvm *kvm,
+>   				    unsigned long gva, unsigned long gvsz,
+>   				    unsigned long order, unsigned long asid)
+>   {
+> +	struct kvm_vmid *v = &kvm->arch.vmid;
+>   	struct kvm_riscv_hfence data;
+>   
+>   	data.type = KVM_RISCV_HFENCE_VVMA_ASID_GVA;
+>   	data.asid = asid;
+> +	data.vmid = READ_ONCE(v->vmid);
+>   	data.addr = gva;
+>   	data.size = gvsz;
+>   	data.order = order;
+> @@ -374,10 +372,12 @@ void kvm_riscv_hfence_vvma_asid_all(struct kvm *kvm,
+>   				    unsigned long hbase, unsigned long hmask,
+>   				    unsigned long asid)
+>   {
+> +	struct kvm_vmid *v = &kvm->arch.vmid;
+>   	struct kvm_riscv_hfence data;
+>   
+>   	data.type = KVM_RISCV_HFENCE_VVMA_ASID_ALL;
+>   	data.asid = asid;
+> +	data.vmid = READ_ONCE(v->vmid);
+>   	data.addr = data.size = data.order = 0;
+>   	make_xfence_request(kvm, hbase, hmask, KVM_REQ_HFENCE,
+>   			    KVM_REQ_HFENCE_VVMA_ALL, &data);
+> @@ -388,10 +388,12 @@ void kvm_riscv_hfence_vvma_gva(struct kvm *kvm,
+>   			       unsigned long gva, unsigned long gvsz,
+>   			       unsigned long order)
+>   {
+> +	struct kvm_vmid *v = &kvm->arch.vmid;
+>   	struct kvm_riscv_hfence data;
+>   
+>   	data.type = KVM_RISCV_HFENCE_VVMA_GVA;
+>   	data.asid = 0;
+> +	data.vmid = READ_ONCE(v->vmid);
+>   	data.addr = gva;
+>   	data.size = gvsz;
+>   	data.order = order;
 
-Reviewed-by: Oscar Salvador <osalvador@suse.de>
+Reviewed-by: Nutty Liu <liujingqi@lanxincomputing.com>
 
-
--- 
-Oscar Salvador
-SUSE Labs
+Thanks,
+Nutty
 
