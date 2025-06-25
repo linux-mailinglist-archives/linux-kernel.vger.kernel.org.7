@@ -1,216 +1,299 @@
-Return-Path: <linux-kernel+bounces-702696-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-702702-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CCE63AE85F6
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Jun 2025 16:16:58 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 98710AE8610
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Jun 2025 16:18:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 92D187AE755
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Jun 2025 14:15:21 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 215726A187E
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Jun 2025 14:17:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CE5FB1E531;
-	Wed, 25 Jun 2025 14:16:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 79B5C267AEB;
+	Wed, 25 Jun 2025 14:17:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=live.com header.i=@live.com header.b="oqR8MTm5"
-Received: from PNZPR01CU001.outbound.protection.outlook.com (mail-centralindiaazolkn19011027.outbound.protection.outlook.com [52.103.68.27])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="N7L142gl"
+Received: from mail-wr1-f54.google.com (mail-wr1-f54.google.com [209.85.221.54])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2442025BF0F;
-	Wed, 25 Jun 2025 14:16:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.103.68.27
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750860985; cv=fail; b=VKiSMK0ARuO4OmmhxFvOiWnR7iP1s7nea4If23SjzzqLdtHhNeVrgl4M0ABmnfzJyGAY0vsXDnX9o/rFkQaVT7nh012jXI6xjCH2GQbc7Z4LQBdLKJY1ZAlnx1wAtVtyJ6HI5hOXAtcUA6ArQvL9Yn9HkdHNN0AnXT+CYvS/a9U=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750860985; c=relaxed/simple;
-	bh=fX32WhIZwch6xBBuhpEtzcqtCA+OANhM+ISdG8ldkO8=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=HX5iBaMwc+fHBYfqDIgf5wAwpgz3CrXxSeMrA3Bv07RSTW9mUV49ApCWsFT0suo+EfCcW+NPwxOIbR8GBAqkGIeuP4Da7lm2sH75Ls4WiKFYJDNBy6wGSuBb6VYiE0cxkhG/NV+CPZBuoKOpAvQn8CBCKKEMKSS1FBAXe9INQYM=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=live.com; spf=pass smtp.mailfrom=live.com; dkim=pass (2048-bit key) header.d=live.com header.i=@live.com header.b=oqR8MTm5; arc=fail smtp.client-ip=52.103.68.27
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=live.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=live.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=o6I3RznQmL9YjBgGcwkNnoMCyYs0voxvaLjsug6MUm0m6i8gJ/3zi7h+r5lYiw1ZuBAiU+2+kb4UprzZwYvqLViqYy1oJt1g7NfpCRyMwJdFlv87bIU2RldxqcA2L5j/Vxv+7SX2dGKy46rP1hDunaEMaJO2xeYKUoKpz51azerz4s0yfMurrWFOq0Vd6mnHHmlEYmjmUveLUs5yNSjGR2nH+f5gtHeLjOyEMeGq9BUYEsv/oiAMZvdtFE5c4sR8m+HJZHEhAZRxKvF4soESmdFSN3y5q+PTd+OGKZgeWzkEjOxr1Db4Acd8A1yL47QdRuUfkmwOBVMcQfS25XvmRw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=eSiwcWVte/O0L8VbxuJVTXHGCFuPMp8ue+LChg7USjQ=;
- b=IoYMVgO/X+EeOj4MFannGKAQ2waFg058DF0EK9hHJoFa1Ut+gI7QBY3yoHTtXwIw7OSe+16HtgTeaK8HQxVXx7v88LvNZ6BLtqRk8GhVltR8rOnyPWcXi8UGJXaapcRVxEKVpKzSSDJrx3CXAQO32kEcMynUm6sNLWvK0scl70coOvVTtkEJfjiOnNRA/AsY8qYBoAdXYgx71G0c3OqZ8AYAspE+IMR/CgcjVA3RC9snr7YERgcZkN6lGpRcIJ6EXF0DpqVBOhXRbWAyMfqwg2e9Rt9kHarYT8Q9Xx4yHiBdA/5KBrG+EzfjnVBxXU5OsVgHCj0ZQixno1f9rAkjvw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=none; dmarc=none;
- dkim=none; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=live.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=eSiwcWVte/O0L8VbxuJVTXHGCFuPMp8ue+LChg7USjQ=;
- b=oqR8MTm5OFE0G4nVbSViBFNiF20OeciJ4L4Tbz1YUErZ/hkMUjGFHv/69Kw6kiu0CQBO8WwErD58PpICr33c6ZrfHA9gVGBCP2G+sLInzswssC+kgjl89MDJEkceiCYxnzphj5KtxKIcwmibmMseZ8zYyxQyIG1qPaMdSPB2qOWcd9WidGVpXRIGINr/1Zav64cbI0ezKHCrykzawxZhblFMAk302PXVT5QAovrr3B8qAv4RctBzCmiUtae0gzC4YsDFdhsVwbPtUd08QXt1w6b1EN2OMqgfAwjq6NI1nYd5K9tkQvlH6oWAkwLDc9pY6w0DpdKkcdHKH54neeXB+A==
-Received: from PN3PR01MB9597.INDPRD01.PROD.OUTLOOK.COM (2603:1096:c01:f7::14)
- by MA0PR01MB8883.INDPRD01.PROD.OUTLOOK.COM (2603:1096:a01:bc::5) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8857.29; Wed, 25 Jun
- 2025 14:16:18 +0000
-Received: from PN3PR01MB9597.INDPRD01.PROD.OUTLOOK.COM
- ([fe80::324:c085:10c8:4e77]) by PN3PR01MB9597.INDPRD01.PROD.OUTLOOK.COM
- ([fe80::324:c085:10c8:4e77%5]) with mapi id 15.20.8857.026; Wed, 25 Jun 2025
- 14:16:18 +0000
-From: Aditya Garg <gargaditya08@live.com>
-To: Jiri Kosina <jikos@kernel.org>,
-	Benjamin Tissoires <bentiss@kernel.org>
-Cc: linux-input@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	=?UTF-8?q?Jos=C3=A9=20Exp=C3=B3sito?= <jose.exposito89@gmail.com>
-Subject: [PATCH 2/2] HID: magicmouse: avoid setting up battery timer when not needed
-Date: Wed, 25 Jun 2025 19:46:04 +0530
-Message-ID:
- <PN3PR01MB95970C5D46483D0367C1D63CB87BA@PN3PR01MB9597.INDPRD01.PROD.OUTLOOK.COM>
-X-Mailer: git-send-email 2.49.0
-In-Reply-To: <PN3PR01MB95973218D6B4ECDAE8ECF60BB87BA@PN3PR01MB9597.INDPRD01.PROD.OUTLOOK.COM>
-References: <PN3PR01MB95973218D6B4ECDAE8ECF60BB87BA@PN3PR01MB9597.INDPRD01.PROD.OUTLOOK.COM>
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: PN2PR01CA0193.INDPRD01.PROD.OUTLOOK.COM
- (2603:1096:c01:e8::16) To PN3PR01MB9597.INDPRD01.PROD.OUTLOOK.COM
- (2603:1096:c01:f7::14)
-X-Microsoft-Original-Message-ID:
- <20250625141604.35609-3-gargaditya08@live.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CAC02265CB2;
+	Wed, 25 Jun 2025 14:17:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.54
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1750861042; cv=none; b=Mo9iBfTLD12TWrMp9uRd2FMSOZbTXnK5rIsyrYJxtYHzL2kIVQHvHw5bFY5jF1z6DydhZduEIY0Utet3xHJauq46WXNiYIQGI7MMmZbT4DGvypvojz1dmmNntygfT3HOVxTqTV6292E7VEPE2PQKGz1RY68CPKqn2fLxHNLaIVk=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1750861042; c=relaxed/simple;
+	bh=+GfldJ4gZJGB6dPyzVGJSpSltBFxK3fT2SzfzSOPozM=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=MJXLyUSUvevweCC1hOobbgWPVVZsb7yomJlmSOUYiZiHtBWOlAKNWLHXONdoFi2eyMAX+sY5cyy60szXU5ZzVDWRRtKTsO7Gv0t+gbzn3X+ZFtgVJDmh/HIglCrw5v/l5zCF2h+IijovE/JE+qPsJmsU+pB7TsAfgSIlsY84pFQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=N7L142gl; arc=none smtp.client-ip=209.85.221.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wr1-f54.google.com with SMTP id ffacd0b85a97d-3a4eb4dfd8eso986257f8f.2;
+        Wed, 25 Jun 2025 07:17:19 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1750861038; x=1751465838; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=r3IMo45Na8Lp/CTW3S/kof3+wzA6MPWzTKCzK0BuB/8=;
+        b=N7L142glfIgXdPiURVsQ8BblaUdYB8dqth41hWQkvkR1OY7Q3ileXdfGssUetPd2H7
+         OQdR0uDqaBkowzUDFWvdDTSMoz5SnKOU3JILxkLb177BpiOtcKtLU1QGOjnKjiaWHT+l
+         snw4Dqqo+nvdOT3UL4/hKGz2IuCuZmWlZEL6mAH6NG9phGVPw1VEvHXjV8FPUQp1LRTA
+         LOmkJW6IW3aWc49wFHNgPtkdrA30UUQtP35hZFyby13C/O2lV0dlkDBYqjX7EX/rLRYq
+         3/qM/JgKEVbY1YrUqUI79xxjltdXi1t8qpQWvBEV/bQvfVH/XFqN2sOdsuuLeoOpIWD6
+         LmOw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1750861038; x=1751465838;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=r3IMo45Na8Lp/CTW3S/kof3+wzA6MPWzTKCzK0BuB/8=;
+        b=N4v2xIY+jIcQSZ1P3S4Boc2xnjkOea8R9A08g0tdtBmssgjljk+lY8zf0UOao6X18d
+         +HQsWBqxP4/zoQcWWYK7VC/JiSl3yMp6CeNu8VgPnYPxj8+aQcgeJFs7qbF00ODq69rf
+         iI7tuv9Njtxu5CRU2dM+fYAEg8N/H4QxycPMcjSwu+L8ZlPhVhNG5zOP7IH5hQYpeRoO
+         +cCs47RfnODc4psuVwe7SeTH/OTb3egKUueDvQPWOk9u/Fh1XmaWYSOmymv0n9Xy1VgX
+         m9BchJRLYSW4QASk9H7RWJmEKf+X/Dj1lsZn4HJp5z3zZsGHawdb0sFqyOjxyewhT6gz
+         gnUg==
+X-Forwarded-Encrypted: i=1; AJvYcCUsxZ6UY/snOMnU7r5uMa35MtnugHP6LwWLYpfk3qMZjx2aVhVofBMCGCDl7LdIZS/w6ln4NvgZ@vger.kernel.org, AJvYcCV1SxJ/gu9ByQER/p/RiKer/tUXhsCUSPjPvpfrcevaiiBQbmiTkNUZi1Lc0BV4voNlSM5iIIIIgYKl20E=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyIeugh0ZsTuQAHlf/vmUTz+SQAvXemSpescWBKtPxky2x3GIEF
+	A7E5iR5RkB5c3Xf9zjDk1IZLR/IPa7fOBapcWTUS2XrrbOdHp1prsa9Q
+X-Gm-Gg: ASbGncuSW8Oa+SGfX2WvLnUsZyfOuHGtkZY+7uhu7iS7Jr6/whniMVb+S1Ie5f4gGvO
+	X+G99VaeiKYyd5GbMcqSpHCtd5z/GC674EGbXS3wcNuJswgwWYZl4nS1DuzV6WVPRC1mKowqI+z
+	9C+g1DBOij6MtfJnIDrcLois3HseG0Fk5+i4ealebjsfd6uqxShwxGexuAlUV3elYtKRvy2Ci3X
+	0TNllZqo+T21Negy0Wpa1Ul7A+vhA+U8oF0/CFL8KN3YTacYLE2GWgCj30PV/LVzPzMBSM9vrTi
+	Nt1flGsfpnE4O5z1Ii2Xe5ZBIcmtOj7pUtwZoR4j8I2j5k/v+3g+btbYMAahuCDAgBCnhuRGQv8
+	LZ58Lb55Ott/oevk=
+X-Google-Smtp-Source: AGHT+IHndLRQxSH8p69eXB2XsYkfjjNACURFNOcBsbmQyvqS2dPyDaLO3LLfqsG7+PNeed4YB0hhtA==
+X-Received: by 2002:a05:6000:250d:b0:3a4:f7ae:7801 with SMTP id ffacd0b85a97d-3a6ed612bb7mr943826f8f.8.1750861037746;
+        Wed, 25 Jun 2025 07:17:17 -0700 (PDT)
+Received: from thomas-precision3591.imag.fr ([2001:660:5301:24:96fa:351c:3ff5:5a7f])
+        by smtp.googlemail.com with ESMTPSA id 5b1f17b1804b1-4538233c4acsm21059925e9.1.2025.06.25.07.17.16
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 25 Jun 2025 07:17:17 -0700 (PDT)
+From: Thomas Fourier <fourier.thomas@gmail.com>
+To: 
+Cc: Thomas Fourier <fourier.thomas@gmail.com>,
+	Chris Snook <chris.snook@gmail.com>,
+	Andrew Lunn <andrew+netdev@lunn.ch>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>,
+	Paolo Abeni <pabeni@redhat.com>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Ingo Molnar <mingo@kernel.org>,
+	Jeff Garzik <jeff@garzik.org>,
+	netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH net v5] ethernet: atl1: Add missing DMA mapping error checks and count errors
+Date: Wed, 25 Jun 2025 16:16:24 +0200
+Message-ID: <20250625141629.114984-2-fourier.thomas@gmail.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-Exchange-MessageSentRepresentingType: 1
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: PN3PR01MB9597:EE_|MA0PR01MB8883:EE_
-X-MS-Office365-Filtering-Correlation-Id: 2731efa0-439f-4d93-a35d-08ddb3f2da30
-X-Microsoft-Antispam:
-	BCL:0;ARA:14566002|15080799009|461199028|5072599009|19110799006|8060799009|7092599006|41001999006|440099028|52005399003|3412199025|40105399003;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?XKGZ7Nqk6a7VWO/Vle1E1uwmn43cIuOqDArHM78mJ/P2wg2zKjLvZwB3UcTJ?=
- =?us-ascii?Q?NOeRhhYyYO/WtUIFopK+0U0g2+cDanYnx932G0d8d2qKEcJcka7YB4PLyxGE?=
- =?us-ascii?Q?xF2ysAV41YYxAri8uR5PRyGT3e6s5CvoUSctMWVIZ5qbchT/FiSxnlCTx+Qi?=
- =?us-ascii?Q?M3FKyiMwf47bZeAEmL3/0XChHYs9+WXsfh77uH5Pk2pVUZ4RA3IXZ1eMmbbV?=
- =?us-ascii?Q?RWUbHsYxZBkE3aHKGmH29dNEcABk7n6l/PmdwnCoyMNP0LQA7vb3Uz+wEu2Z?=
- =?us-ascii?Q?d4wJOw7k8Xy5dZldiEg3Ffk2Eq8/zqzMyY3XbGO0jPSd0NkGWoBm+L5VjIKJ?=
- =?us-ascii?Q?ELK6zf7I59mabJn/WRw3MN6ePkwueSohpLABVaX2hjjKO4l9+5pXsKnT0rAj?=
- =?us-ascii?Q?OcFJxhlxbtR3v6bfRDpxpYKWBz7h7k1w4eGIP3o8G/+KPpAf4NnUs95GLlVZ?=
- =?us-ascii?Q?/Ies9atV4OuOTdT6T8mJzjRKHW5VUg9u3MPPXvXC8aaiZQl4nFxc4bUgc3Gn?=
- =?us-ascii?Q?Z1/YGURLuYm46DvFMkyuvVMePhfMyEXO+PGLieBCDJzPb8R/WOhdYXJ+8hEh?=
- =?us-ascii?Q?BmRBb40qCowtLaosqgGZ4l5g3SF9zXN0apR8d/htvl819CupPvHGziG1L3Zv?=
- =?us-ascii?Q?NPZpXtry3SGffhvxaftimnE7whJfA7hcMiYQgZr/jVdxDdHa2UsfbmYJVgU6?=
- =?us-ascii?Q?U/kUQdc3KdopCd+NOgrUkYjliZY2QE3BjU2yrBHippRb9cg8G1WhQCh+MS45?=
- =?us-ascii?Q?Ghjus2KtQ8tUZgYaLUr0dXesQB7XVd3Oc3mP45kLt4gRLcLYrbv5r+iMVK+7?=
- =?us-ascii?Q?Nh4a0PJW16cIT4mY+8rsAMD5+P/ujw26E1r1E/Hsf8Zb8i2K/aaOnpPRV0zQ?=
- =?us-ascii?Q?CcR4HcJkSL0vCW7HfqW1CguxBtf3u6J3MQlNE2RerG56hiSJ5TFUV9OW/2Ue?=
- =?us-ascii?Q?1l/CI61uukYaCMtKM9oLypSEZR+dvvqjE80i7NVqgn2shavPkZZVS7w8xcv9?=
- =?us-ascii?Q?ZzDR+rzf/jPM0DNhgclvVUWneYMT4kXgUV5PDoO8t+uUhq3izLY977XYtn/I?=
- =?us-ascii?Q?5x34hCkjxtaaij/FYUUtKV1FOdG3JOS2NA17ClBk5BeKbq9gI19NzsMR5OPP?=
- =?us-ascii?Q?dTYZIpSkQruUbMlI/4Xr1KFGSDgjMPkzIdLAfW9pb/9DVEXkGr9Enn9ICwNB?=
- =?us-ascii?Q?J2FVWfrRyIAw7+6iWxp3lBLUTVq3Xu27rE3QTA=3D=3D?=
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?hyv+nVxsnmQv53GdI6YLWnipChF77VWNSsZH+oln1vR5ECfLFMJGD+OGCDmr?=
- =?us-ascii?Q?PTgjMVTXC21D3jTqHUmqTBJnQdxiZN57ZkeXAYP3HTENglAnm+6XJvYBWq20?=
- =?us-ascii?Q?1CEgcQwGmuL7lBaQSfnxBuwbcUGjgF/0eLNkmvVeJZ57m12NVK3NJk3D2kMJ?=
- =?us-ascii?Q?L3NXwWdsoDSKY5i1YLMdEggVPSd74MU0Z1xds7QbNPOQghP0PzzzJq/a7MmW?=
- =?us-ascii?Q?jq+z1j70xLBAy0LmbXREIflNQkTq72ljsfirF96b9V3h3ryTXYCpXdXmNvE6?=
- =?us-ascii?Q?VPirtyGau9ydfraQ6Z3UTX/T6KCiYkrg8+GM8ELy2a0DYO1127TnV7rBZLvU?=
- =?us-ascii?Q?FxS2GwDlij5Sv/rGFrzSniupGdat7mwwTbb0nwwuo53pzDNWDx8HRmxWC48k?=
- =?us-ascii?Q?BIgnxqBcKdsw8wWjKGzzIpCyr8fYDz0CUASi89Pin/u9PwzhM2D2JeF7vABA?=
- =?us-ascii?Q?BXq0bXJUPulRpy0pcCfdw1/G7lpChvesrHc8tSxYtm5jK8warO/3lPIjkABT?=
- =?us-ascii?Q?cwNa+gkuRk45HNgf6OX/twkkPzVnQgcNSJaQ4DiuL4mkpz9xWoHeABEL3Xza?=
- =?us-ascii?Q?q/bFPW4ukhhxdsU79at6x9LfUnay5SsBZqvYFQ+Mv6sm6S7e2h/x555qOkbr?=
- =?us-ascii?Q?HcXPi6WRqI4E2QG/dpA6/0C0Z9lyRu9OjH0UYxXRZZb3k7UzuZWGCIDyEMQ5?=
- =?us-ascii?Q?sxOwDwyqR5HUaJmXiQXb9KxXQ761HoHlLETkaMqYz8tkb9uS5FZqkIPzOepm?=
- =?us-ascii?Q?C6NaruLmHkbZ93uWwyVS1UEk3H2tamE0jrJQcwm8qpI4wBYIE5mgy5T9qX9H?=
- =?us-ascii?Q?+zNCknNl9qMRFJVnT2dc88WSKYgqJ50bZzQ1pdp74sxngNfw2Hqothj2XY7V?=
- =?us-ascii?Q?RQlaFDA6jVPfSCjLinIiTq0DhqNsAGwDeJuqOjSgFg5J1/Y6LrXfTLmdxlOc?=
- =?us-ascii?Q?/AZlm2RE4rDb5DsbFRYJDop88bSk2UX27SEC0BF4EfFAE9f3gmqFTj/5FFit?=
- =?us-ascii?Q?dh9yPsY40kJhOMPvPwiDexF4neCb2RMa/ymFmNJ98CHXgKnV3uSqEn58PFM7?=
- =?us-ascii?Q?rboa/uZGHnOsIwDTdyFmJ4V5D8Vp7fvOIEXb7L/2mHRmnj3OvZ7tKeE3LeuG?=
- =?us-ascii?Q?3sOn2d3+Bf4z48qr4IUqupaoXOWPv4iKk6FNkD92SJ5FQJJn95Y4fDvjQQ/g?=
- =?us-ascii?Q?LiRu3WyKvT9kbmLekuVc/D/JDbY3OSZGyXwMa6CebaDCpu6AkB5Be+LHqoU9?=
- =?us-ascii?Q?EIlJtTKfwsPxQwH3c2FgZzzRvTLeRn8FX5RK9YLOC1DWQEESbBGjetg8nTsO?=
- =?us-ascii?Q?eVPHrVb2EyWTijsn9btbUZar?=
-X-OriginatorOrg: sct-15-20-8813-0-msonline-outlook-f2c18.templateTenant
-X-MS-Exchange-CrossTenant-Network-Message-Id: 2731efa0-439f-4d93-a35d-08ddb3f2da30
-X-MS-Exchange-CrossTenant-AuthSource: PN3PR01MB9597.INDPRD01.PROD.OUTLOOK.COM
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 25 Jun 2025 14:16:18.4498
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 84df9e7f-e9f6-40af-b435-aaaaaaaaaaaa
-X-MS-Exchange-CrossTenant-RMS-PersistedConsumerOrg:
-	00000000-0000-0000-0000-000000000000
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: MA0PR01MB8883
+Content-Transfer-Encoding: 8bit
 
-Currently, the battery timer is set up for all devices using
-hid-magicmouse, irrespective of whether they actually need it or not.
+The `dma_map_XXX()` functions can fail and must be checked using
+`dma_mapping_error()`.  This patch adds proper error handling for all
+DMA mapping calls.
 
-The current implementation requires the battery timer for Magic Mouse 2
-and Magic Trackpad 2 when connected via USB only. Add checks to ensure
-that the battery timer is only set up when they are connected via USB.
+In `atl1_alloc_rx_buffers()`, if DMA mapping fails, the buffer is
+deallocated and marked accordingly.
 
-Fixes: 0b91b4e4dae6 ("HID: magicmouse: Report battery level over USB")
-Cc: stable@vger.kernel.org
-Signed-off-by: Aditya Garg <gargaditya08@live.com>
+In `atl1_tx_map()`, previously mapped buffers are unmapped and the
+packet is dropped on failure.
+
+If `atl1_xmit_frame()` drops the packet, increment the tx_error counter.
+
+Fixes: f3cc28c79760 ("Add Attansic L1 ethernet driver.")
+Signed-off-by: Thomas Fourier <fourier.thomas@gmail.com>
 ---
- drivers/hid/hid-magicmouse.c | 36 +++++++++++++++++++++++-------------
- 1 file changed, 23 insertions(+), 13 deletions(-)
+ drivers/net/ethernet/atheros/atlx/atl1.c | 79 +++++++++++++++++-------
+ 1 file changed, 57 insertions(+), 22 deletions(-)
 
-diff --git a/drivers/hid/hid-magicmouse.c b/drivers/hid/hid-magicmouse.c
-index f49405d38..3e531905b 100644
---- a/drivers/hid/hid-magicmouse.c
-+++ b/drivers/hid/hid-magicmouse.c
-@@ -863,18 +863,22 @@ static int magicmouse_probe(struct hid_device *hdev,
- 		return ret;
- 	}
+diff --git a/drivers/net/ethernet/atheros/atlx/atl1.c b/drivers/net/ethernet/atheros/atlx/atl1.c
+index cfdb546a09e7..98a4d089270e 100644
+--- a/drivers/net/ethernet/atheros/atlx/atl1.c
++++ b/drivers/net/ethernet/atheros/atlx/atl1.c
+@@ -1861,14 +1861,21 @@ static u16 atl1_alloc_rx_buffers(struct atl1_adapter *adapter)
+ 			break;
+ 		}
  
--	timer_setup(&msc->battery_timer, magicmouse_battery_timer_tick, 0);
--	mod_timer(&msc->battery_timer,
--		  jiffies + msecs_to_jiffies(USB_BATTERY_TIMEOUT_MS));
--	magicmouse_fetch_battery(hdev);
--
--	if (id->vendor == USB_VENDOR_ID_APPLE &&
--	    (id->product == USB_DEVICE_ID_APPLE_MAGICMOUSE2 ||
--	     id->product == USB_DEVICE_ID_APPLE_MAGICMOUSE2_USBC ||
--	     ((id->product == USB_DEVICE_ID_APPLE_MAGICTRACKPAD2 ||
--	       id->product == USB_DEVICE_ID_APPLE_MAGICTRACKPAD2_USBC) &&
--	      hdev->type != HID_TYPE_USBMOUSE)))
--		return 0;
-+	if (id->vendor == USB_VENDOR_ID_APPLE) {
-+		bool is_mouse2 = (id->product == USB_DEVICE_ID_APPLE_MAGICMOUSE2 ||
-+				  id->product == USB_DEVICE_ID_APPLE_MAGICMOUSE2_USBC);
-+		bool is_trackpad2 = (id->product == USB_DEVICE_ID_APPLE_MAGICTRACKPAD2 ||
-+				     id->product == USB_DEVICE_ID_APPLE_MAGICTRACKPAD2_USBC);
-+
-+		if (is_mouse2 || is_trackpad2) {
-+			timer_setup(&msc->battery_timer, magicmouse_battery_timer_tick, 0);
-+			mod_timer(&msc->battery_timer,
-+				  jiffies + msecs_to_jiffies(USB_BATTERY_TIMEOUT_MS));
-+			magicmouse_fetch_battery(hdev);
+-		buffer_info->alloced = 1;
+-		buffer_info->skb = skb;
+-		buffer_info->length = (u16) adapter->rx_buffer_len;
+ 		page = virt_to_page(skb->data);
+ 		offset = offset_in_page(skb->data);
+ 		buffer_info->dma = dma_map_page(&pdev->dev, page, offset,
+ 						adapter->rx_buffer_len,
+ 						DMA_FROM_DEVICE);
++		if (dma_mapping_error(&pdev->dev, buffer_info->dma)) {
++			kfree_skb(skb);
++			adapter->soft_stats.rx_dropped++;
++			break;
 +		}
 +
-+		if (is_mouse2 || (is_trackpad2 && hdev->type != HID_TYPE_USBMOUSE))
-+			return 0;
-+	}
- 
- 	if (!msc->input) {
- 		hid_err(hdev, "magicmouse input not registered\n");
-@@ -947,7 +951,13 @@ static void magicmouse_remove(struct hid_device *hdev)
- 
- 	if (msc) {
- 		cancel_delayed_work_sync(&msc->work);
--		timer_delete_sync(&msc->battery_timer);
-+		if (hdev->vendor == USB_VENDOR_ID_APPLE &&
-+		    (hdev->product == USB_DEVICE_ID_APPLE_MAGICMOUSE2 ||
-+		     hdev->product == USB_DEVICE_ID_APPLE_MAGICMOUSE2_USBC ||
-+		     hdev->product == USB_DEVICE_ID_APPLE_MAGICTRACKPAD2 ||
-+		     hdev->product == USB_DEVICE_ID_APPLE_MAGICTRACKPAD2_USBC))
++		buffer_info->alloced = 1;
++		buffer_info->skb = skb;
++		buffer_info->length = (u16)adapter->rx_buffer_len;
 +
-+			timer_delete_sync(&msc->battery_timer);
+ 		rfd_desc->buffer_addr = cpu_to_le64(buffer_info->dma);
+ 		rfd_desc->buf_len = cpu_to_le16(adapter->rx_buffer_len);
+ 		rfd_desc->coalese = 0;
+@@ -2183,8 +2190,8 @@ static int atl1_tx_csum(struct atl1_adapter *adapter, struct sk_buff *skb,
+ 	return 0;
+ }
+ 
+-static void atl1_tx_map(struct atl1_adapter *adapter, struct sk_buff *skb,
+-	struct tx_packet_desc *ptpd)
++static bool atl1_tx_map(struct atl1_adapter *adapter, struct sk_buff *skb,
++			struct tx_packet_desc *ptpd)
+ {
+ 	struct atl1_tpd_ring *tpd_ring = &adapter->tpd_ring;
+ 	struct atl1_buffer *buffer_info;
+@@ -2194,6 +2201,7 @@ static void atl1_tx_map(struct atl1_adapter *adapter, struct sk_buff *skb,
+ 	unsigned int nr_frags;
+ 	unsigned int f;
+ 	int retval;
++	u16 first_mapped;
+ 	u16 next_to_use;
+ 	u16 data_len;
+ 	u8 hdr_len;
+@@ -2201,6 +2209,7 @@ static void atl1_tx_map(struct atl1_adapter *adapter, struct sk_buff *skb,
+ 	buf_len -= skb->data_len;
+ 	nr_frags = skb_shinfo(skb)->nr_frags;
+ 	next_to_use = atomic_read(&tpd_ring->next_to_use);
++	first_mapped = next_to_use;
+ 	buffer_info = &tpd_ring->buffer_info[next_to_use];
+ 	BUG_ON(buffer_info->skb);
+ 	/* put skb in last TPD */
+@@ -2216,6 +2225,8 @@ static void atl1_tx_map(struct atl1_adapter *adapter, struct sk_buff *skb,
+ 		buffer_info->dma = dma_map_page(&adapter->pdev->dev, page,
+ 						offset, hdr_len,
+ 						DMA_TO_DEVICE);
++		if (dma_mapping_error(&adapter->pdev->dev, buffer_info->dma))
++			goto dma_err;
+ 
+ 		if (++next_to_use == tpd_ring->count)
+ 			next_to_use = 0;
+@@ -2242,6 +2253,9 @@ static void atl1_tx_map(struct atl1_adapter *adapter, struct sk_buff *skb,
+ 								page, offset,
+ 								buffer_info->length,
+ 								DMA_TO_DEVICE);
++				if (dma_mapping_error(&adapter->pdev->dev,
++						      buffer_info->dma))
++					goto dma_err;
+ 				if (++next_to_use == tpd_ring->count)
+ 					next_to_use = 0;
+ 			}
+@@ -2254,6 +2268,8 @@ static void atl1_tx_map(struct atl1_adapter *adapter, struct sk_buff *skb,
+ 		buffer_info->dma = dma_map_page(&adapter->pdev->dev, page,
+ 						offset, buf_len,
+ 						DMA_TO_DEVICE);
++		if (dma_mapping_error(&adapter->pdev->dev, buffer_info->dma))
++			goto dma_err;
+ 		if (++next_to_use == tpd_ring->count)
+ 			next_to_use = 0;
+ 	}
+@@ -2277,6 +2293,9 @@ static void atl1_tx_map(struct atl1_adapter *adapter, struct sk_buff *skb,
+ 			buffer_info->dma = skb_frag_dma_map(&adapter->pdev->dev,
+ 				frag, i * ATL1_MAX_TX_BUF_LEN,
+ 				buffer_info->length, DMA_TO_DEVICE);
++			if (dma_mapping_error(&adapter->pdev->dev,
++					      buffer_info->dma))
++				goto dma_err;
+ 
+ 			if (++next_to_use == tpd_ring->count)
+ 				next_to_use = 0;
+@@ -2285,6 +2304,22 @@ static void atl1_tx_map(struct atl1_adapter *adapter, struct sk_buff *skb,
+ 
+ 	/* last tpd's buffer-info */
+ 	buffer_info->skb = skb;
++
++	return true;
++
++ dma_err:
++	while (first_mapped != next_to_use) {
++		buffer_info = &tpd_ring->buffer_info[first_mapped];
++		dma_unmap_page(&adapter->pdev->dev,
++			       buffer_info->dma,
++			       buffer_info->length,
++			       DMA_TO_DEVICE);
++		buffer_info->dma = 0;
++
++		if (++first_mapped == tpd_ring->count)
++			first_mapped = 0;
++	}
++	return false;
+ }
+ 
+ static void atl1_tx_queue(struct atl1_adapter *adapter, u16 count,
+@@ -2355,10 +2390,8 @@ static netdev_tx_t atl1_xmit_frame(struct sk_buff *skb,
+ 
+ 	len = skb_headlen(skb);
+ 
+-	if (unlikely(skb->len <= 0)) {
+-		dev_kfree_skb_any(skb);
+-		return NETDEV_TX_OK;
+-	}
++	if (unlikely(skb->len <= 0))
++		goto drop_packet;
+ 
+ 	nr_frags = skb_shinfo(skb)->nr_frags;
+ 	for (f = 0; f < nr_frags; f++) {
+@@ -2371,10 +2404,9 @@ static netdev_tx_t atl1_xmit_frame(struct sk_buff *skb,
+ 	if (mss) {
+ 		if (skb->protocol == htons(ETH_P_IP)) {
+ 			proto_hdr_len = skb_tcp_all_headers(skb);
+-			if (unlikely(proto_hdr_len > len)) {
+-				dev_kfree_skb_any(skb);
+-				return NETDEV_TX_OK;
+-			}
++			if (unlikely(proto_hdr_len > len))
++				goto drop_packet;
++
+ 			/* need additional TPD ? */
+ 			if (proto_hdr_len != len)
+ 				count += (len - proto_hdr_len +
+@@ -2406,23 +2438,26 @@ static netdev_tx_t atl1_xmit_frame(struct sk_buff *skb,
  	}
  
- 	hid_hw_stop(hdev);
+ 	tso = atl1_tso(adapter, skb, ptpd);
+-	if (tso < 0) {
+-		dev_kfree_skb_any(skb);
+-		return NETDEV_TX_OK;
+-	}
++	if (tso < 0)
++		goto drop_packet;
+ 
+ 	if (!tso) {
+ 		ret_val = atl1_tx_csum(adapter, skb, ptpd);
+-		if (ret_val < 0) {
+-			dev_kfree_skb_any(skb);
+-			return NETDEV_TX_OK;
+-		}
++		if (ret_val < 0)
++			goto drop_packet;
+ 	}
+ 
+-	atl1_tx_map(adapter, skb, ptpd);
++	if (!atl1_tx_map(adapter, skb, ptpd))
++		goto drop_packet;
++
+ 	atl1_tx_queue(adapter, count, ptpd);
+ 	atl1_update_mailbox(adapter);
+ 	return NETDEV_TX_OK;
++
++drop_packet:
++	adapter->soft_stats.tx_errors++;
++	dev_kfree_skb_any(skb);
++	return NETDEV_TX_OK;
+ }
+ 
+ static int atl1_rings_clean(struct napi_struct *napi, int budget)
 -- 
 2.43.0
 
