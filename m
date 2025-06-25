@@ -1,90 +1,83 @@
-Return-Path: <linux-kernel+bounces-702905-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-702825-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id D9CBDAE8915
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Jun 2025 18:04:12 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id B3AB5AE87E6
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Jun 2025 17:24:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5808F1883A57
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Jun 2025 16:03:53 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E5570170CD4
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Jun 2025 15:23:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ED10729E0FA;
-	Wed, 25 Jun 2025 16:03:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 53B8A2C3242;
+	Wed, 25 Jun 2025 15:22:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="lV6mRoz9"
-Received: from mail-ej1-f47.google.com (mail-ej1-f47.google.com [209.85.218.47])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="flaElob/"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.10])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 812C72701D8
-	for <linux-kernel@vger.kernel.org>; Wed, 25 Jun 2025 16:03:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B40CC286412;
+	Wed, 25 Jun 2025 15:22:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.10
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750867410; cv=none; b=dmy2wB0Pu2BPU+c8QhhUAPv9qKNy1q7KTfb3y2PVUpgMhVG2Q0ggf6MHJJf98W6pXF2GCs3SNKjUtVAB+0hTBcdwUvUbf1TZpY77wff+w7nra0iifhOziTS+JRfG/FFyHq2hvhip9PyHci/ifVUYKnT5RL35FOxNFBN+svLVidI=
+	t=1750864938; cv=none; b=PaXmC1uHoTbfe2C/MK85OQngEA1axuaxwP9dzT4fnpS6VrPZbMAUPGqB4rKJ9eEDdu8+Ma4sZW3WBb2VCniwpoO8bDzaVjiY5x9tkMq6U4jtoWnRYFa9QCv8ZWOhZMAg2lv8xNY1eA/QhP1sDDiy/6nsD62P07TYQbP/Dm4ZPR4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750867410; c=relaxed/simple;
-	bh=+Tn3XMEuIl+oO9cH/X4OHCBkfYT4u93OoaGdjpzI3x8=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=TFokm6/4lOqBtY8dsPKp+LyQEIgCjzBoBQnNtlTaamnJilvO5q9TgQ9LgIKFE3EQAxJHMPtPOmV84pc4Ahp2KhC56K6KL1mbTBvxyFX9QA0Oj8optSKxcwIZa0p/gWsY0DrrBD1ameCPS6/lESX8X/E3lCzn8U4CGgjqDPnMzKw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=lV6mRoz9; arc=none smtp.client-ip=209.85.218.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f47.google.com with SMTP id a640c23a62f3a-addcea380eeso12481766b.0
-        for <linux-kernel@vger.kernel.org>; Wed, 25 Jun 2025 09:03:28 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1750867407; x=1751472207; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=j+o7xhfLbwy8knh/+QcuI0nvWF/uzyMkygKurrRJTxE=;
-        b=lV6mRoz9A2v4sYATJE9A0R0osKQbbWfgMtYOlSABpAGUIA11KWH6BIUwWMfn0EwtUR
-         tnkmFy5dnmSxxfcBifeXV1E6znPnHRKstHqdTQ5Ewp0Kjb+WCCv9DNeWW4riIjAAZI2o
-         xc1mJaqYhqzfg5tmNm3ZxTBwcW2xpZYvJcDzvRO7xq67VApgQblLo2XuyRbK0m76VUIG
-         9KKXgv9F2ZHzuDWjBeJFvlKv6jJOcsIg+Sxz+tlfTHtlIkghBjqyculRI+hunvSVCNIV
-         Kue5XWbma5HfIE21e2dDA0hGH2IetGqkv1ka5tmalHdn9e1cqfhilSvSqiKW0n4UtpIY
-         GkDA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1750867407; x=1751472207;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=j+o7xhfLbwy8knh/+QcuI0nvWF/uzyMkygKurrRJTxE=;
-        b=qNFhpe4zL1Jlqq0vv38crIXsvSs0kTJfmuddR0z7K/YBTdTlL0q60it+TsBqTgCsQi
-         Y6k+L1H94UxgBDFnUtNnf1Gp7UqI2liYdc0tkg0yTZ5X0/s846OfZSVByM9468sz79Y7
-         8xERSeO1mUpNSimia6/ewwbFgfHp2kS+dCe0blK5OYmpiroas3PycDzMKJC4L6dug966
-         5jhtrS9GcBYRVk8Mr6l4hWJhQns6abD55Hb9nGXbXFdjVfq9U+Onjj/TeuDZKwEID2Yd
-         OWoe5IRYo6TGJthRAX0/gsbiNBouiqPQOJN/NBNHcCPMhXlc1bRoUYjhUas8VAoF6fP3
-         Tprw==
-X-Forwarded-Encrypted: i=1; AJvYcCVSpOgisnwhwtt6FZl5zc79r/G6qEkl+T4P2msLUBvQnbvalPSbl3dsLnoqlz/9yu5vBPfxFG4azu+Cr2I=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz14pKx7c5+WlXMQGasZld1E1dbB+/4JtkO3XCsb5FgXBodndop
-	slEYXjO+eKv3OLmGfQXusLZ7DOBRPNmJN4SdVF3kG1Lj9Iv/LOSmZtYp
-X-Gm-Gg: ASbGncvnxEGoGcLDOlbs9yWRS5V46CCxR+nq590TdYtMee7WmkPCuPiZH3FbvIUDAUS
-	q2WzVWDePttV+77fHt+/+HQiKEW56MsVsZmgIXdXTnQjQfA+V5kdTOW1bHH4x905aDYKgdwhJM+
-	RBfs/0SJ/0PkV74qOx8Zi1aMRgOSZWp7ZgnXl7BQs2mwT13APIfphNb1kKiuHqQri+0gQsBku7K
-	A38JBH+qKH4aalZmxdftLPoZt8VW22SeT6ymFkcXjUQSYxhvvx6909pMzxbO4c3T2BW6fb1l4Wg
-	PL08MNUOaM2U4+bmi1A4lqpQWeygy/8rJ9qRLR7oTy5KuuFr5mx4p/yhzCBoGKtbVwyBv8B+869
-	OsVEBO8pYuCs=
-X-Google-Smtp-Source: AGHT+IGoycNFcDmuSvIbsMjNAdlhKOWh4IkP3o5+4CJMpXCvYqdA912JS855QdwUKDvPZ0uITUoQQQ==
-X-Received: by 2002:a17:906:c10a:b0:ae0:628a:5093 with SMTP id a640c23a62f3a-ae0be7fdd39mr435167866b.3.1750867406425;
-        Wed, 25 Jun 2025 09:03:26 -0700 (PDT)
-Received: from localhost.localdomain ([41.79.198.24])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ae0c8f2b340sm87299966b.122.2025.06.25.09.03.24
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 25 Jun 2025 09:03:25 -0700 (PDT)
-From: Khalid Ali <khaliidcaliy@gmail.com>
-X-Google-Original-From: Khalid Ali <khaliidcaliy@gmail.com
-To: tglx@linutronix.de,
-	mingo@redhat.com,
-	bp@alien8.de,
-	dave.hansen@linux.intel.com
-Cc: x86@kernel.org,
-	hpa@zytor.com,
-	linux-kernel@vger.kernel.org,
-	Khalid Ali <khaliidcaliy@gmail.com>,
-	Kai Huang <kai.huang@intel.com>
-Subject: [RESEND PATCH v5] x86/boot: Don't return encryption mask from __startup_64()
-Date: Wed, 25 Jun 2025 16:02:36 +0000
-Message-ID: <20250625160238.734-1-khaliidcaliy@gmail.com>
-X-Mailer: git-send-email 2.49.0
+	s=arc-20240116; t=1750864938; c=relaxed/simple;
+	bh=udi9Dj+TB3DzEDfD+VOVtv+BMkNrVkihkKNjVOl4DgA=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=e/+onam0kIeoEi79Ba3HyPuTrigAuobE+4lWtUi+Ggxu1ngRtOQxKb/LG+P0uTZFWdb8tKRYfd2h98dCDS2FxySx3eM7C+a/Zy3fJrSZkmcWkUqU4UgTswygKnRxOiH4z8/Qf5bPOq9WLC8sFTbkk0GAx/mM9jhIyq1gMYx5zFw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=flaElob/; arc=none smtp.client-ip=198.175.65.10
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1750864937; x=1782400937;
+  h=from:to:cc:subject:date:message-id:in-reply-to:
+   references:mime-version:content-transfer-encoding;
+  bh=udi9Dj+TB3DzEDfD+VOVtv+BMkNrVkihkKNjVOl4DgA=;
+  b=flaElob/J2R/Jgu0XLlOe7ij9fkaaXt38hWSbjZpkUBmWUWTfz9VDpZC
+   pczwJ0To2lFTxveY/kTKFlHWJBBOfm/qsQWU/LfclgAJuvXSkq/uMT2og
+   evzfAxzPS5p9c+WlVJh+BfH/WpSz4hZf7M7zy1h4vcOI/m0Uqd1LCBgZX
+   pmGlutNk5VvbJM9f34/n3X+DqLvvq5XRnwC6tA/ikgv1R5YSvRgkuhb/y
+   pSrXz5KoI1vRsG8iDHvR6DO7mqz8JVtm2BZNXlLhJJHDiFQzVJr2Yp1w/
+   o7FfdO+9+dr3VZabIZc0lXGp3ZKaRXS0oHKaUuCpD55iVusIaIIbLUP3h
+   g==;
+X-CSE-ConnectionGUID: jyJbm1bXSWWUQKd0pOdAIg==
+X-CSE-MsgGUID: ZJjdFP+nSdGfuv7UzO0i4g==
+X-IronPort-AV: E=McAfee;i="6800,10657,11475"; a="70573260"
+X-IronPort-AV: E=Sophos;i="6.16,265,1744095600"; 
+   d="scan'208";a="70573260"
+Received: from orviesa009.jf.intel.com ([10.64.159.149])
+  by orvoesa102.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 25 Jun 2025 08:22:16 -0700
+X-CSE-ConnectionGUID: WPMLVT8JSx+gj9sU/NfDJQ==
+X-CSE-MsgGUID: snl4U3dqQUyLma4P7zG57g==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.16,265,1744095600"; 
+   d="scan'208";a="152018305"
+Received: from linux-pnp-server-27.sh.intel.com ([10.239.147.41])
+  by orviesa009.jf.intel.com with ESMTP; 25 Jun 2025 08:22:13 -0700
+From: Tianyou Li <tianyou.li@intel.com>
+To: Peter Zijlstra <peterz@infradead.org>,
+	Ingo Molnar <mingo@redhat.com>,
+	Arnaldo Carvalho de Melo <acme@kernel.org>,
+	Namhyung Kim <namhyung@kernel.org>
+Cc: Mark Rutland <mark.rutland@arm.com>,
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+	Jiri Olsa <jolsa@kernel.org>,
+	Ian Rogers <irogers@google.com>,
+	Adrian Hunter <adrian.hunter@intel.com>,
+	Kan Liang <kan.liang@linux.intel.com>,
+	tianyou.li@intel.com,
+	wangyang.guo@intel.com,
+	linux-perf-users@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH V2] tools/perf: Add --exclude-buildids option to perf archive command
+Date: Thu, 26 Jun 2025 00:14:01 +0800
+Message-ID: <20250625161509.2599646-1-tianyou.li@intel.com>
+X-Mailer: git-send-email 2.47.1
+In-Reply-To: <aFrzSpvzzWeHdyJ5 () google ! com>
+References: <aFrzSpvzzWeHdyJ5 () google ! com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -93,117 +86,74 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-From: Khalid Ali <khaliidcaliy@gmail.com>
+When make a perf archive, it may contains the binaries that user did not want to ship with,
+add --exclude-buildids option to specify a file which contains the buildids need to be
+excluded. The file can be generated from command:
 
-Currently, __startup_64() returns encryption mask to the caller, however
-caller can directly access the encryption.
+    perf buildid-list -i perf.data --with-hits | grep -v "^ " > exclude-buildids.txt
 
-The C code can access encryption by including
-arch/x86/include/asm/setup.h and calling sme_get_me_mask(). The assembly
-code can access directly via "sme_me_mask" variable.
+Then remove the lines from the exclude-buildids.txt for buildids should be included.
 
-This patches accounts that, by adjusting __startup_64() to not return
-encryption mask, and update startup_64() to access "sme_me_mask" only if
-CONFIG_AMD_MEM_ENCRYPT is set.
-
-This cleans up the function and does seperation of concern.
-__startup_64() should focus on action like encrypting the kernel, and
-let the caller retrieve the mask directly.
-
-CHanges in v5:
- * Improve commit message for better clarity.
- * Fix some issues returned by kernel test robot.
- * Add Huang, Kai Ack tag.
-
-Signed-off-by: Khalid Ali <khaliidcaliy@gmail.com>
-Acked-by: Kai Huang <kai.huang@intel.com>
+Signed-off-by: Tianyou Li <tianyou.li@intel.com>
+Reviewed-by: Wangyang Guo <wangyang.guo@intel.com>
 ---
- arch/x86/boot/startup/map_kernel.c | 11 +++--------
- arch/x86/include/asm/setup.h       |  2 +-
- arch/x86/kernel/head_64.S          |  8 +++-----
- 3 files changed, 7 insertions(+), 14 deletions(-)
+ tools/perf/perf-archive.sh | 35 ++++++++++++++++++++++++++++++-----
+ 1 file changed, 30 insertions(+), 5 deletions(-)
 
-diff --git a/arch/x86/boot/startup/map_kernel.c b/arch/x86/boot/startup/map_kernel.c
-index 332dbe6688c4..0425d49be16e 100644
---- a/arch/x86/boot/startup/map_kernel.c
-+++ b/arch/x86/boot/startup/map_kernel.c
-@@ -30,7 +30,7 @@ static inline bool check_la57_support(void)
- 	return true;
- }
+diff --git a/tools/perf/perf-archive.sh b/tools/perf/perf-archive.sh
+index 6ed7e52ab881..7977e9b0a5ea 100755
+--- a/tools/perf/perf-archive.sh
++++ b/tools/perf/perf-archive.sh
+@@ -16,6 +16,13 @@ while [ $# -gt 0 ] ; do
+ 	elif [ $1 == "--unpack" ]; then
+ 		UNPACK=1
+ 		shift
++	elif [ $1 == "--exclude-buildids" ]; then
++		EXCLUDE_BUILDIDS="$2"
++		if [ ! -e "$EXCLUDE_BUILDIDS" ]; then
++			echo "Provided exclude-buildids file $EXCLUDE_BUILDIDS does not exist"
++			exit 1
++		fi
++		shift 2
+ 	else
+ 		PERF_DATA=$1
+ 		UNPACK_TAR=$1
+@@ -86,11 +93,29 @@ fi
  
--static unsigned long __head sme_postprocess_startup(struct boot_params *bp,
-+static void __head sme_postprocess_startup(struct boot_params *bp,
- 						    pmdval_t *pmd,
- 						    unsigned long p2v_offset)
- {
-@@ -68,11 +68,6 @@ static unsigned long __head sme_postprocess_startup(struct boot_params *bp,
- 		}
- 	}
+ BUILDIDS=$(mktemp /tmp/perf-archive-buildids.XXXXXX)
  
--	/*
--	 * Return the SME encryption mask (if SME is active) to be used as a
--	 * modifier for the initial pgdir entry programmed into CR3.
--	 */
--	return sme_get_me_mask();
- }
+-perf buildid-list -i $PERF_DATA --with-hits | grep -v "^ " > $BUILDIDS
+-if [ ! -s $BUILDIDS ] ; then
+-	echo "perf archive: no build-ids found"
+-	rm $BUILDIDS || true
+-	exit 1
++#
++# EXCLUDE_BUILDIDS is an optional file that contains build-ids to be excluded from the
++# archive. It is a list of build-ids, one per line, without any leading or trailing spaces.
++# If the file is empty, all build-ids will be included in the archive. To create a exclude-
++# buildids file, you can use the following command:
++# 	perf buildid-list -i perf.data --with-hits | grep -v "^ " > exclude_buildids.txt
++# You can edit the file to remove the lines that you want to keep in the archive, then:
++# 	perf archive --exclude-buildids exclude_buildids.txt
++#
++if [ -s "$EXCLUDE_BUILDIDS" ]; then
++	perf buildid-list -i $PERF_DATA --with-hits | grep -v "^ " | grep -Fv -f $EXCLUDE_BUILDIDS > $BUILDIDS
++	if [ ! -s "$BUILDIDS" ] ; then
++		echo "perf archive: no build-ids found after applying exclude-buildids file"
++		rm $BUILDIDS || true
++		exit 1
++	fi
++else
++	perf buildid-list -i $PERF_DATA --with-hits | grep -v "^ " > $BUILDIDS
++	if [ ! -s "$BUILDIDS" ] ; then
++		echo "perf archive: no build-ids found"
++		rm $BUILDIDS || true
++		exit 1
++	fi
+ fi
  
- /*
-@@ -84,7 +79,7 @@ static unsigned long __head sme_postprocess_startup(struct boot_params *bp,
-  * the 1:1 mapping of memory. Kernel virtual addresses can be determined by
-  * subtracting p2v_offset from the RIP-relative address.
-  */
--unsigned long __head __startup_64(unsigned long p2v_offset,
-+void __head __startup_64(unsigned long p2v_offset,
- 				  struct boot_params *bp)
- {
- 	pmd_t (*early_pgts)[PTRS_PER_PMD] = rip_rel_ptr(early_dynamic_pgts);
-@@ -213,5 +208,5 @@ unsigned long __head __startup_64(unsigned long p2v_offset,
- 	for (; i < PTRS_PER_PMD; i++)
- 		pmd[i] &= ~_PAGE_PRESENT;
- 
--	return sme_postprocess_startup(bp, pmd, p2v_offset);
-+	sme_postprocess_startup(bp, pmd, p2v_offset);
- }
-diff --git a/arch/x86/include/asm/setup.h b/arch/x86/include/asm/setup.h
-index 692af46603a1..29ea24bb85ff 100644
---- a/arch/x86/include/asm/setup.h
-+++ b/arch/x86/include/asm/setup.h
-@@ -50,7 +50,7 @@ extern unsigned long acpi_realmode_flags;
- 
- extern void reserve_standard_io_resources(void);
- extern void i386_reserve_resources(void);
--extern unsigned long __startup_64(unsigned long p2v_offset, struct boot_params *bp);
-+extern void __startup_64(unsigned long p2v_offset, struct boot_params *bp);
- extern void startup_64_setup_gdt_idt(void);
- extern void startup_64_load_idt(void *vc_handler);
- extern void early_setup_idt(void);
-diff --git a/arch/x86/kernel/head_64.S b/arch/x86/kernel/head_64.S
-index 4d654ed7982e..c46a175a2a12 100644
---- a/arch/x86/kernel/head_64.S
-+++ b/arch/x86/kernel/head_64.S
-@@ -106,18 +106,16 @@ SYM_CODE_START_NOALIGN(startup_64)
- 
- 	/*
- 	 * Perform pagetable fixups. Additionally, if SME is active, encrypt
--	 * the kernel and retrieve the modifier (SME encryption mask if SME
--	 * is active) to be added to the initial pgdir entry that will be
--	 * programmed into CR3.
-+	 * the kernel.
- 	 */
- 	movq	%r15, %rsi
- 	call	__startup_64
- 
- 	/* Form the CR3 value being sure to include the CR3 modifier */
--	leaq	early_top_pgt(%rip), %rcx
--	addq	%rcx, %rax
-+	leaq	early_top_pgt(%rip), %rax
- 
- #ifdef CONFIG_AMD_MEM_ENCRYPT
-+	addq	sme_me_mask(%rip), %rax
- 	mov	%rax, %rdi
- 
- 	/*
+ MANIFEST=$(mktemp /tmp/perf-archive-manifest.XXXXXX)
 -- 
-2.49.0
+2.47.1
 
 
