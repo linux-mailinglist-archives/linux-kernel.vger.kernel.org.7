@@ -1,193 +1,213 @@
-Return-Path: <linux-kernel+bounces-701619-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-701617-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 61A52AE7721
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Jun 2025 08:34:24 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 38538AE7712
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Jun 2025 08:33:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8F4273A99FB
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9130617C35B
 	for <lists+linux-kernel@lfdr.de>; Wed, 25 Jun 2025 06:33:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 213741FECB0;
-	Wed, 25 Jun 2025 06:32:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1455B143748;
+	Wed, 25 Jun 2025 06:32:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="bfAs61uU"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="BDQx1S1H"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C38811F4CBE;
-	Wed, 25 Jun 2025 06:32:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 50C6818A6C4;
+	Wed, 25 Jun 2025 06:32:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750833163; cv=none; b=EsNhv5MVnfFbiAIElslE3elFBqN3xv7S6OKIQkY4JYlCTN1wh45tazlrklcH5nv1yWqkg6xR2l63SBGBQEt29hvAwvJkeQ4g3faAIYjBvss7IzGM3YjMn3KeMEusRYTpqDlHx1BHre56H19vgT4ZgoldTQWlAtElhHFRUYOF34s=
+	t=1750833153; cv=none; b=oxbkoTtY8w/557eiiAsDyoARmex4sGEhFAVPxmLo+ElfXxEVBoJLuaOQ5s43KrRhAb6/fiyxqBTOwAh8/WNwaVOvgPeEwnsZlQvM5tIvzoEztWKVh0/thD4n855hg/M7zthj85CSLSv+tlNM/md8LWjEClNjjNi919X0ZHTfMbI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750833163; c=relaxed/simple;
-	bh=J2cIrhTJb1tAt+xF0cRJxyboRXrNf66T5q+wxh2vAbA=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=BBo+zbEajem0cB2aqkAU34tDcmJsjvWPryR6p5lLTGFn8WOBuRwajxw7pOh86l8Df/GVG5XtMnWVQwWsISC/iwVGgbLX8apq2/BN4oniChYV7R0O0eZCzIgP/bGkkp5RzRfzvpk5Q0ij0EkQWKK5zzC8y9NjFbVVP9hCGaq90tE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=qualcomm.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=bfAs61uU; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=qualcomm.com
-Received: from pps.filterd (m0279869.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 55P2eiS0005909;
-	Wed, 25 Jun 2025 06:32:31 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:date:from:in-reply-to:message-id
-	:mime-version:references:subject:to; s=qcppdkim1; bh=tikAt8XZpHo
-	ce+4trJX3SM0Syq+g0NPg1ReVquG7As4=; b=bfAs61uUPxubwsjzr6ldYEXY+aq
-	ST+9cjcqhO87rOpLzAP5vpjBhKdwXg9BhAFBXpRf8e1SsDdAd+KHTM6vH04wH2Xr
-	0VZJsyItCPvdoCyQEFePtGKHE+nCR1a7CEQopnhxBpXdbD3nxjkLx1SWdDGNVGue
-	luw6IrhZ4BX2GB0sT5AEuba2hdCIszCJDt8IKlzY9d+SUFxabYPoQNfZkHrYMjWu
-	zc+YAEX4b0v/r+fQBCoY8sfNmroN5IPBoWqN8+kOPGTilqiK6sdhTEdvC6aP1H+c
-	IjNIgb/Vsj8WMKTwoHJ28ij7g75EdmDqzZajJlS+oDGbXN+8YJIs9O2UFiQ==
-Received: from aptaippmta01.qualcomm.com (tpe-colo-wan-fw-bordernet.qualcomm.com [103.229.16.4])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 47f3bgess5-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 25 Jun 2025 06:32:30 +0000 (GMT)
-Received: from pps.filterd (APTAIPPMTA01.qualcomm.com [127.0.0.1])
-	by APTAIPPMTA01.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTP id 55P6WSGS009137;
-	Wed, 25 Jun 2025 06:32:28 GMT
-Received: from pps.reinject (localhost [127.0.0.1])
-	by APTAIPPMTA01.qualcomm.com (PPS) with ESMTPS id 47dntma31p-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 25 Jun 2025 06:32:28 +0000
-Received: from APTAIPPMTA01.qualcomm.com (APTAIPPMTA01.qualcomm.com [127.0.0.1])
-	by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 55P6WRO3009130;
-	Wed, 25 Jun 2025 06:32:28 GMT
-Received: from cse-cd02-lnx.ap.qualcomm.com (cse-cd02-lnx.qualcomm.com [10.64.75.246])
-	by APTAIPPMTA01.qualcomm.com (PPS) with ESMTPS id 55P6WRt0009124
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 25 Jun 2025 06:32:27 +0000
-Received: by cse-cd02-lnx.ap.qualcomm.com (Postfix, from userid 4438065)
-	id 1020D3839; Wed, 25 Jun 2025 14:32:26 +0800 (CST)
-From: Ziyue Zhang <quic_ziyuzhan@quicinc.com>
-To: andersson@kernel.org, konradybcio@kernel.org, robh@kernel.org,
-        krzk+dt@kernel.org, conor+dt@kernel.org, jingoohan1@gmail.com,
-        mani@kernel.org, lpieralisi@kernel.org, kwilczynski@kernel.org,
-        bhelgaas@google.com, johan+linaro@kernel.org, vkoul@kernel.org,
-        kishon@kernel.org, neil.armstrong@linaro.org, abel.vesa@linaro.org,
-        kw@linux.com
-Cc: linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org,
-        linux-phy@lists.infradead.org, qiang.yu@oss.qualcomm.com,
-        quic_krichai@quicinc.com, quic_vbadigan@quicinc.com,
-        Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>,
-        Ziyue Zhang <quic_ziyuzhan@quicinc.com>
-Subject: [PATCH v6 3/3] arm64: dts: qcom: qcs615-ride: Enable PCIe interface
-Date: Wed, 25 Jun 2025 14:32:13 +0800
-Message-Id: <20250625063213.1416442-4-quic_ziyuzhan@quicinc.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20250625063213.1416442-1-quic_ziyuzhan@quicinc.com>
-References: <20250625063213.1416442-1-quic_ziyuzhan@quicinc.com>
+	s=arc-20240116; t=1750833153; c=relaxed/simple;
+	bh=2fz72wdEOHN12Hrp4x5DN2tgOHb8xAEfLxxCTvKe0GI=;
+	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
+	 Mime-Version:Content-Type; b=UeeGEetFKpKBzUmoci5kxX1vNkM8V2hnXlYydoVxqZoI2y6LxMV9Pkulheo95tsfFANOnaTDmuTKVq9HOvXxpRJSekxWdIPh0kzjDoeARbfF65lIynMixc/73FDLgMneklxk2U4KIGmvF4r4w6FLaDb2ONsdPZaTPhwieaBmqWU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=BDQx1S1H; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A03B2C4CEEA;
+	Wed, 25 Jun 2025 06:32:30 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1750833152;
+	bh=2fz72wdEOHN12Hrp4x5DN2tgOHb8xAEfLxxCTvKe0GI=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=BDQx1S1HFvbpSyi0OWj0BM2UU2EI3ELm2y4BQCLW7gQA3ZA5TFFmoCRaTsd2kTc4d
+	 EbTUTS1c9XPpIhxgG6oaJi60M3VFVBVWNe0nBcVYN8KuOk/ic9e/niIzGoFqwESOaH
+	 zFwpPTqID/wKO7RP5rJnW16KZXnKoF5vXJPnQ/6rbnW5VUmH78LRuEk0OUqBfKKssn
+	 ZE+OVSHJEk0Oc5QFITY7cGQlCUWjX2jP3hesASrMYneiRH1P+kb5lKE35vDEPrKBz2
+	 H9JdoWR0jqYBaGaAmB7o0ulCdoSv7r0ekeVWCMAFoRWiNUefJEKCn1s6/PEKD6g5rr
+	 qjAq/bQgeOHuQ==
+Date: Wed, 25 Jun 2025 15:32:29 +0900
+From: Masami Hiramatsu (Google) <mhiramat@kernel.org>
+To: Jiri Olsa <jolsa@kernel.org>
+Cc: Oleg Nesterov <oleg@redhat.com>, Peter Zijlstra <peterz@infradead.org>,
+ Andrii Nakryiko <andrii@kernel.org>, bpf@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org,
+ x86@kernel.org, Song Liu <songliubraving@fb.com>, Yonghong Song
+ <yhs@fb.com>, John Fastabend <john.fastabend@gmail.com>, Hao Luo
+ <haoluo@google.com>, Steven Rostedt <rostedt@goodmis.org>, Masami Hiramatsu
+ <mhiramat@kernel.org>, Alan Maguire <alan.maguire@oracle.com>, David Laight
+ <David.Laight@ACULAB.COM>, Thomas =?UTF-8?B?V2Vpw59zY2h1aA==?=
+ <thomas@t-8ch.de>, Ingo Molnar <mingo@kernel.org>
+Subject: Re: [PATCHv3 perf/core 06/22] uprobes: Add is_register argument to
+ uprobe_write and uprobe_write_opcode
+Message-Id: <20250625153229.f39c1a1a99ce986380769150@kernel.org>
+In-Reply-To: <20250605132350.1488129-7-jolsa@kernel.org>
+References: <20250605132350.1488129-1-jolsa@kernel.org>
+	<20250605132350.1488129-7-jolsa@kernel.org>
+X-Mailer: Sylpheed 3.8.0beta1 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-QCInternal: smtphost
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: VLh9eUt4YB79w6quYwANEg8H5udDFVwr
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNjI1MDA0NyBTYWx0ZWRfX6j1PtgGtCJ5z
- 6rWnGBRCxOZJvNv6qIZ7bvH9uHARbTQcdKnbHQtts/QkVohp/70meUmPQufEsZM5yInT1X8hQ8R
- EfXaMWUTZ5ApoQBORu20g5sgFRNlPtkCgXXzxVs3+JSJn13DDhI6trcUOCVirWPB1voYQ2d03RP
- EB+rzM7OjLAztftx1qYpEhP/J4mj8RNNenDa8HlpqzM+L7BJ4ew3aX/HesRdtGL4y9Ae8zp3/cP
- /JQQamsmlGXtcC2Xz5dNSm5OV4cTdsUF664nWYwO385IXfsbT2Lum99hk2aIPin9FagREAEMuQV
- aQYR8tPu8l8TC0XOBkjeFwcyqmWq0LQEI+Kho5JfYazV6bgk4QVtk1MrA6L+/7TRIKC10ZdENJG
- g46a9I74G8SRCzaY3PZRfsrHX8THckMIfqvyHdtpB9d+Nay599qmvoXfkpe02nQDT+3CFWkd
-X-Authority-Analysis: v=2.4 cv=L4kdQ/T8 c=1 sm=1 tr=0 ts=685b97fe cx=c_pps
- a=nuhDOHQX5FNHPW3J6Bj6AA==:117 a=nuhDOHQX5FNHPW3J6Bj6AA==:17
- a=6IFa9wvqVegA:10 a=COk6AnOGAAAA:8 a=EUspDBNiAAAA:8 a=3zbVK_edIv7hY8gRkFcA:9
- a=TjNXssC_j7lpFel5tvFf:22
-X-Proofpoint-GUID: VLh9eUt4YB79w6quYwANEg8H5udDFVwr
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.7,FMLib:17.12.80.40
- definitions=2025-06-25_01,2025-06-23_07,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- mlxscore=0 malwarescore=0 bulkscore=0 clxscore=1015 suspectscore=0
- adultscore=0 priorityscore=1501 impostorscore=0 lowpriorityscore=0
- spamscore=0 phishscore=0 mlxlogscore=999 classifier=spam authscore=0
- authtc=n/a authcc= route=outbound adjust=0 reason=mlx scancount=1
- engine=8.19.0-2505280000 definitions=main-2506250047
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-From: Krishna chaitanya chundru <quic_krichai@quicinc.com>
+On Thu,  5 Jun 2025 15:23:33 +0200
+Jiri Olsa <jolsa@kernel.org> wrote:
 
-Add platform configurations in devicetree for PCIe, board related
-gpios, PMIC regulators, etc.
+> The uprobe_write has special path to restore the original page when we
+> write original instruction back. This happens when uprobe_write detects
+> that we want to write anything else but breakpoint instruction.
+> 
+> Moving the detection away and passing it to uprobe_write as argument,
+> so it's possible to write different instructions (other than just
+> breakpoint and rest).
 
-Reviewed-by: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-Signed-off-by: Krishna chaitanya chundru <quic_krichai@quicinc.com>
-Signed-off-by: Ziyue Zhang <quic_ziyuzhan@quicinc.com>
----
- arch/arm64/boot/dts/qcom/qcs615-ride.dts | 42 ++++++++++++++++++++++++
- 1 file changed, 42 insertions(+)
+Looks good to me.
 
-diff --git a/arch/arm64/boot/dts/qcom/qcs615-ride.dts b/arch/arm64/boot/dts/qcom/qcs615-ride.dts
-index a6652e4817d1..011f8ae077c2 100644
---- a/arch/arm64/boot/dts/qcom/qcs615-ride.dts
-+++ b/arch/arm64/boot/dts/qcom/qcs615-ride.dts
-@@ -217,6 +217,23 @@ &gcc {
- 		 <&sleep_clk>;
- };
- 
-+&pcie {
-+	perst-gpios = <&tlmm 101 GPIO_ACTIVE_LOW>;
-+	wake-gpios = <&tlmm 100 GPIO_ACTIVE_HIGH>;
-+
-+	pinctrl-0 = <&pcie_default_state>;
-+	pinctrl-names = "default";
-+
-+	status = "okay";
-+};
-+
-+&pcie_phy {
-+	vdda-phy-supply = <&vreg_l5a>;
-+	vdda-pll-supply = <&vreg_l12a>;
-+
-+	status = "okay";
-+};
-+
- &pm8150_gpios {
- 	usb2_en: usb2-en-state {
- 		pins = "gpio10";
-@@ -256,6 +273,31 @@ &rpmhcc {
- 	clocks = <&xo_board_clk>;
- };
- 
-+&tlmm {
-+	pcie_default_state: pcie-default-state {
-+		clkreq-pins {
-+			pins = "gpio90";
-+			function = "pcie_clk_req";
-+			drive-strength = <2>;
-+			bias-pull-up;
-+		};
-+
-+		perst-pins {
-+			pins = "gpio101";
-+			function = "gpio";
-+			drive-strength = <2>;
-+			bias-pull-down;
-+		};
-+
-+		wake-pins {
-+			pins = "gpio100";
-+			function = "gpio";
-+			drive-strength = <2>;
-+			bias-pull-up;
-+		};
-+	};
-+};
-+
- &sdhc_1 {
- 	pinctrl-0 = <&sdc1_state_on>;
- 	pinctrl-1 = <&sdc1_state_off>;
+Acked-by: Masami Hiramatsu (Google) <mhiramat@kernel.org>
+
+Thanks,
+
+
+> 
+> Acked-by: Andrii Nakryiko <andrii@kernel.org>
+> Acked-by: Oleg Nesterov <oleg@redhat.com>
+> Signed-off-by: Jiri Olsa <jolsa@kernel.org>
+> ---
+>  arch/arm/probes/uprobes/core.c |  2 +-
+>  include/linux/uprobes.h        |  5 +++--
+>  kernel/events/uprobes.c        | 21 +++++++++++----------
+>  3 files changed, 15 insertions(+), 13 deletions(-)
+> 
+> diff --git a/arch/arm/probes/uprobes/core.c b/arch/arm/probes/uprobes/core.c
+> index 885e0c5e8c20..3d96fb41d624 100644
+> --- a/arch/arm/probes/uprobes/core.c
+> +++ b/arch/arm/probes/uprobes/core.c
+> @@ -30,7 +30,7 @@ int set_swbp(struct arch_uprobe *auprobe, struct vm_area_struct *vma,
+>  	     unsigned long vaddr)
+>  {
+>  	return uprobe_write_opcode(auprobe, vma, vaddr,
+> -		   __opcode_to_mem_arm(auprobe->bpinsn));
+> +		   __opcode_to_mem_arm(auprobe->bpinsn), true);
+>  }
+>  
+>  bool arch_uprobe_ignore(struct arch_uprobe *auprobe, struct pt_regs *regs)
+> diff --git a/include/linux/uprobes.h b/include/linux/uprobes.h
+> index 147c4a0a1af9..518b26756469 100644
+> --- a/include/linux/uprobes.h
+> +++ b/include/linux/uprobes.h
+> @@ -197,9 +197,10 @@ extern bool is_swbp_insn(uprobe_opcode_t *insn);
+>  extern bool is_trap_insn(uprobe_opcode_t *insn);
+>  extern unsigned long uprobe_get_swbp_addr(struct pt_regs *regs);
+>  extern unsigned long uprobe_get_trap_addr(struct pt_regs *regs);
+> -extern int uprobe_write_opcode(struct arch_uprobe *auprobe, struct vm_area_struct *vma, unsigned long vaddr, uprobe_opcode_t);
+> +extern int uprobe_write_opcode(struct arch_uprobe *auprobe, struct vm_area_struct *vma, unsigned long vaddr, uprobe_opcode_t,
+> +			       bool is_register);
+>  extern int uprobe_write(struct arch_uprobe *auprobe, struct vm_area_struct *vma, const unsigned long opcode_vaddr,
+> -			uprobe_opcode_t *insn, int nbytes, uprobe_write_verify_t verify);
+> +			uprobe_opcode_t *insn, int nbytes, uprobe_write_verify_t verify, bool is_register);
+>  extern struct uprobe *uprobe_register(struct inode *inode, loff_t offset, loff_t ref_ctr_offset, struct uprobe_consumer *uc);
+>  extern int uprobe_apply(struct uprobe *uprobe, struct uprobe_consumer *uc, bool);
+>  extern void uprobe_unregister_nosync(struct uprobe *uprobe, struct uprobe_consumer *uc);
+> diff --git a/kernel/events/uprobes.c b/kernel/events/uprobes.c
+> index f7feb7417a2c..1e5dc3b30707 100644
+> --- a/kernel/events/uprobes.c
+> +++ b/kernel/events/uprobes.c
+> @@ -402,10 +402,10 @@ static bool orig_page_is_identical(struct vm_area_struct *vma,
+>  
+>  static int __uprobe_write(struct vm_area_struct *vma,
+>  		struct folio_walk *fw, struct folio *folio,
+> -		unsigned long insn_vaddr, uprobe_opcode_t *insn, int nbytes)
+> +		unsigned long insn_vaddr, uprobe_opcode_t *insn, int nbytes,
+> +		bool is_register)
+>  {
+>  	const unsigned long vaddr = insn_vaddr & PAGE_MASK;
+> -	const bool is_register = !!is_swbp_insn(insn);
+>  	bool pmd_mappable;
+>  
+>  	/* For now, we'll only handle PTE-mapped folios. */
+> @@ -488,26 +488,27 @@ static int __uprobe_write(struct vm_area_struct *vma,
+>   * Return 0 (success) or a negative errno.
+>   */
+>  int uprobe_write_opcode(struct arch_uprobe *auprobe, struct vm_area_struct *vma,
+> -		const unsigned long opcode_vaddr, uprobe_opcode_t opcode)
+> +		const unsigned long opcode_vaddr, uprobe_opcode_t opcode,
+> +		bool is_register)
+>  {
+> -	return uprobe_write(auprobe, vma, opcode_vaddr, &opcode, UPROBE_SWBP_INSN_SIZE, verify_opcode);
+> +	return uprobe_write(auprobe, vma, opcode_vaddr, &opcode, UPROBE_SWBP_INSN_SIZE,
+> +			    verify_opcode, is_register);
+>  }
+>  
+>  int uprobe_write(struct arch_uprobe *auprobe, struct vm_area_struct *vma,
+>  		 const unsigned long insn_vaddr, uprobe_opcode_t *insn, int nbytes,
+> -		 uprobe_write_verify_t verify)
+> +		 uprobe_write_verify_t verify, bool is_register)
+>  {
+>  	const unsigned long vaddr = insn_vaddr & PAGE_MASK;
+>  	struct mm_struct *mm = vma->vm_mm;
+>  	struct uprobe *uprobe;
+> -	int ret, is_register, ref_ctr_updated = 0;
+> +	int ret, ref_ctr_updated = 0;
+>  	unsigned int gup_flags = FOLL_FORCE;
+>  	struct mmu_notifier_range range;
+>  	struct folio_walk fw;
+>  	struct folio *folio;
+>  	struct page *page;
+>  
+> -	is_register = is_swbp_insn(insn);
+>  	uprobe = container_of(auprobe, struct uprobe, arch);
+>  
+>  	if (WARN_ON_ONCE(!is_cow_mapping(vma->vm_flags)))
+> @@ -569,7 +570,7 @@ int uprobe_write(struct arch_uprobe *auprobe, struct vm_area_struct *vma,
+>  	/* Walk the page tables again, to perform the actual update. */
+>  	if (folio_walk_start(&fw, vma, vaddr, 0)) {
+>  		if (fw.page == page)
+> -			ret = __uprobe_write(vma, &fw, folio, insn_vaddr, insn, nbytes);
+> +			ret = __uprobe_write(vma, &fw, folio, insn_vaddr, insn, nbytes, is_register);
+>  		folio_walk_end(&fw, vma);
+>  	}
+>  
+> @@ -611,7 +612,7 @@ int uprobe_write(struct arch_uprobe *auprobe, struct vm_area_struct *vma,
+>  int __weak set_swbp(struct arch_uprobe *auprobe, struct vm_area_struct *vma,
+>  		unsigned long vaddr)
+>  {
+> -	return uprobe_write_opcode(auprobe, vma, vaddr, UPROBE_SWBP_INSN);
+> +	return uprobe_write_opcode(auprobe, vma, vaddr, UPROBE_SWBP_INSN, true);
+>  }
+>  
+>  /**
+> @@ -627,7 +628,7 @@ int __weak set_orig_insn(struct arch_uprobe *auprobe,
+>  		struct vm_area_struct *vma, unsigned long vaddr)
+>  {
+>  	return uprobe_write_opcode(auprobe, vma, vaddr,
+> -			*(uprobe_opcode_t *)&auprobe->insn);
+> +			*(uprobe_opcode_t *)&auprobe->insn, false);
+>  }
+>  
+>  /* uprobe should have guaranteed positive refcount */
+> -- 
+> 2.49.0
+> 
+
+
 -- 
-2.34.1
-
+Masami Hiramatsu (Google) <mhiramat@kernel.org>
 
