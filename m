@@ -1,78 +1,87 @@
-Return-Path: <linux-kernel+bounces-703422-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-703424-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C7BF7AE9000
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Jun 2025 23:10:31 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 36297AE9005
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Jun 2025 23:10:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 411233BFFFF
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Jun 2025 21:10:06 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id ECC455A0273
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Jun 2025 21:10:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1CCA2212F89;
-	Wed, 25 Jun 2025 21:10:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 73A88210198;
+	Wed, 25 Jun 2025 21:10:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="pcFFMpAb"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="N9j7sG+l"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 67E6C20E718;
-	Wed, 25 Jun 2025 21:10:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B204820C46D;
+	Wed, 25 Jun 2025 21:10:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750885823; cv=none; b=lbyFcN9zTwtB0a+22cRrib2HoWb0BEy3l+VaSDy5CdUBPNaTn/rhzWOvu0eOvTsJv312elatAimOlXn0fg8mEhiGHMrT9nfXap8QUH7Z0RKcY+31PpU9JCXZgMKaw1juH9h+a52whE5d/DcHDOGodkrq97UQWoL0dIJ2yhgpZLw=
+	t=1750885849; cv=none; b=tziVBK5kD3zR2iC8KLuXo/RCM7CNSMZADpGWlaWOmpvLM1HznGt1hYQ4Ge3Yh1zyunVqQyl1Xg2Cx6rTF6mxLoA0E/lwXTlmNxd0SqCZy2qs8NqOWmEvoFy8f5hdhpl/ovWHD9gCGJJIWv4lcesGfc9q2kBJh7ba2CDv/J+cR5E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750885823; c=relaxed/simple;
-	bh=3FY5VhHPBZMZpbIPePeTd9+JfFK5KBxlcvCVBGzgSNo=;
-	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
-	 Mime-Version:Content-Type; b=p7TQKiutOfOSu2qqWuCl0jju/noKmZ/UJG2UTA5XlNHnUm50qkKPRNbEb54zjkwEoxl6NHXvmrS8w3GJv6jyPXtj0RBG4gICvD3vkUfNGuhRN/4oxeGEQN+kxCfgX5MOaj2YAzYLIVjPUJn51MMOUsvmtd3ZKU8tmDZzVApFgAI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=pcFFMpAb; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id DCA41C4CEEA;
-	Wed, 25 Jun 2025 21:10:22 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linux-foundation.org;
-	s=korg; t=1750885823;
-	bh=3FY5VhHPBZMZpbIPePeTd9+JfFK5KBxlcvCVBGzgSNo=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=pcFFMpAbu8cX03ubR9iuhPVjg27xEvWqhCXWCurpilKoL1TJfhdeGgfetui7Fc2Ch
-	 pW6H4Spfd60aHvdxnKcjcKSQqR6L2/nDzb1M3PX1UCVOLw4KolhP2GvpVs+UKq9u1i
-	 aEtHd1Z5A0GCCYjtQRqqjDtZT3c/QRJ6z1wsscrM=
-Date: Wed, 25 Jun 2025 14:10:22 -0700
-From: Andrew Morton <akpm@linux-foundation.org>
-To: Vitaly Wool <vitaly.wool@konsulko.se>
-Cc: linux-mm@kvack.org, linux-kernel@vger.kernel.org, Uladzislau Rezki
- <urezki@gmail.com>, Danilo Krummrich <dakr@kernel.org>, Alice Ryhl
- <aliceryhl@google.com>, rust-for-linux@vger.kernel.org
-Subject: Re: [PATCH v3 0/2] support large align and nid in Rust allocators
-Message-Id: <20250625141022.e65e4a9b8377d4879ad7065e@linux-foundation.org>
-In-Reply-To: <20250625062917.3379804-1-vitaly.wool@konsulko.se>
-References: <20250625062917.3379804-1-vitaly.wool@konsulko.se>
-X-Mailer: Sylpheed 3.7.0 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1750885849; c=relaxed/simple;
+	bh=CdZaIG6cxotiCXbEsy417Cx3IBnw+TAhglshYAGkRaw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=TnTt7I6+UY7ops8YuhMSvAqKSfTQEm0SKousr7A+JwuRhRfc7WDuZVPZQbTQ4IPYwvWMWUp0kjPmh42vyONjV8rvl50LOljRdp2UWttX5v3sEahK3CqvaWk6VGTpGCZOoo6CAmovjTLQS4z2PBidINAebA32lxpqJfQjnsWQUlw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=N9j7sG+l; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5C0CBC4CEEA;
+	Wed, 25 Jun 2025 21:10:48 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1750885849;
+	bh=CdZaIG6cxotiCXbEsy417Cx3IBnw+TAhglshYAGkRaw=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=N9j7sG+lbV/z/3Qr/ejg/YiL9FUMtkF6/V6l+/Shtq7Ls80WDr3FIqh5Oa1Gofg3r
+	 omrnsCGupI7SofgUm1tLRRcI7y/hcvS741P9rM5gR+Zmfanj7OU36hckuqK7q1Si2l
+	 9QU7qyPPqApIjB/047dP+8SI0+el38nF7pH81KWI8Irw6iRdwReV47OqptpyK7H5Y9
+	 JuMgJ6h/LMPU2FM590G8nYr7z2S8Tjyiue+tLVqD9Eeug1rYcmY0nuKVP6vkk1gmhh
+	 fECW3Fo3gOOEAn3pxjO2D3+x0ZbXyQM2A1diysl2ReT/38Qm6KjEWjted3eiml99Av
+	 GlqzrE+E5sz/g==
+Date: Wed, 25 Jun 2025 23:10:44 +0200
+From: Andi Shyti <andi.shyti@kernel.org>
+To: Ilpo =?utf-8?B?SsOkcnZpbmVu?= <ilpo.jarvinen@linux.intel.com>
+Cc: Pratap Nirujogi <pratap.nirujogi@amd.com>, rdunlap@infradead.org, 
+	Hans de Goede <hdegoede@redhat.com>, sfr@canb.auug.org.au, linux-next@vger.kernel.org, 
+	linux-i2c@vger.kernel.org, platform-driver-x86@vger.kernel.org, 
+	LKML <linux-kernel@vger.kernel.org>, benjamin.chan@amd.com, bin.du@amd.com, 
+	gjorgji.rosikopulos@amd.com, king.li@amd.com, dantony@amd.com
+Subject: Re: [PATCH v4 3/3] platform/x86: Use i2c adapter name to fix build
+ errors
+Message-ID: <4exmux33fq3nyene6qbjgtum7e7zczqvzf4aqimyszzlztsewm@hvl7umgvvlov>
+References: <20250609155601.1477055-1-pratap.nirujogi@amd.com>
+ <20250609155601.1477055-4-pratap.nirujogi@amd.com>
+ <570c7765-b3bc-77cd-dddb-d19e85611114@linux.intel.com>
+ <2a74c711-0d9c-8013-dc92-82ffd0d7d416@linux.intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+MIME-Version: 1.0
+Content-Type: text/plain; charset=iso-8859-15
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <2a74c711-0d9c-8013-dc92-82ffd0d7d416@linux.intel.com>
 
-On Wed, 25 Jun 2025 08:29:17 +0200 Vitaly Wool <vitaly.wool@konsulko.se> wrote:
+Hi Ilpo,
 
-> The coming patches provide the ability for Rust allocators to set
-> NUMA node and large alignment.
+On Tue, Jun 24, 2025 at 03:07:16PM +0300, Ilpo Järvinen wrote:
+> Hi Andi,
+> 
+> (ping)
+> 
+> It seems by now people are starting to send workaround fixes (build only 
+> with =m) as this series is still pending and compile is breaking because 
+> of it.
+> 
+> I'm fine with you taking the entire series through i2c, or just let me 
+> know if you want me to take it through pdx86 tree instead.
 
-Including a diffstat would be nice.
+Sorry for the late reply, I've been off the radar for some time
+and now I'm catching up. I will take all the series, thanks.
 
- include/linux/vmalloc.h        |    8 +++---
- mm/nommu.c                     |    3 +-
- mm/vmalloc.c                   |   16 ++++++++++--
- rust/helpers/slab.c            |    8 ++++--
- rust/helpers/vmalloc.c         |    4 +--
- rust/kernel/alloc.rs           |   28 ++++++++++++++++++++-
- rust/kernel/alloc/allocator.rs |   40 +++++++++++++++++--------------
- rust/kernel/alloc/kvec.rs      |    3 +-
- 8 files changed, 79 insertions(+), 31 deletions(-)
-
-What is the preferred merge path for this series?
+Andi
 
