@@ -1,333 +1,167 @@
-Return-Path: <linux-kernel+bounces-703638-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-703642-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 77FE7AE9314
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Jun 2025 01:56:22 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7AEC9AE9321
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Jun 2025 01:59:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 227B23A038E
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Jun 2025 23:55:57 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 03451167900
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Jun 2025 23:59:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6365829ACF3;
-	Wed, 25 Jun 2025 23:56:10 +0000 (UTC)
-Received: from kanga.kvack.org (kanga.kvack.org [205.233.56.17])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C22212F1FCB;
-	Wed, 25 Jun 2025 23:56:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.233.56.17
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B668B2877CB;
+	Wed, 25 Jun 2025 23:58:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=arunraghavan.net header.i=@arunraghavan.net header.b="hFYrc8cX";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="S55TUUup"
+Received: from fout-a6-smtp.messagingengine.com (fout-a6-smtp.messagingengine.com [103.168.172.149])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 32E1A287252;
+	Wed, 25 Jun 2025 23:58:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.149
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750895769; cv=none; b=S2qdpndLa1mZQ1YYVNPZKzJsv1UchBs9+zc9eLf9IvkHfFViJEHsZ5M/IfUsJsNRsU5yPtLuGu+s0MQJJFY+BPs0N3+5O0z/lgErmpVXqN2DGgmfak8JbVru0en5+BmQd5if1QEEbpmRXqxR7tJ326DbZeIEHqYNIBkpOH9xm7o=
+	t=1750895933; cv=none; b=U99seVtZu71jlMaKCYqdr7v6ISUlmHX994ULqoCX6eG7kmj//4aV22ZHcj6WvcBWRH5xklIlwlAtwQFxyC+p1PuVhCPRFePkkspNxCTsm3BHQZqlMv6B/6pTnCXccXoyQOj6q/Exvm5RHYb8SNAINJJ4du38dCSsH92+/bW/VJs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750895769; c=relaxed/simple;
-	bh=39d+tPLtJ9/uI3MWKjucqoxl869Jow+eCKdxQ6Ca6dU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:Mime-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ohNrLEyDawL3UYNkF8QuPiXO5GWaNmA+bO13hvo5uyy2/lsYp7j807pCyEm1qeOTu9/EOpfoNDE+TFtlbaVlec7ueGVMzqaIBPM4S5vH1rdojkV/upy5HKN1gm9zirIqHvtOuEHa4u/KybGKNgWyFK6XqdilUKGmVCvxow5txm0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kvack.org; spf=pass smtp.mailfrom=kvack.org; arc=none smtp.client-ip=205.233.56.17
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kvack.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kvack.org
-Received: by kanga.kvack.org (Postfix, from userid 63042)
-	id 390936B00D9; Wed, 25 Jun 2025 19:56:07 -0400 (EDT)
-Date: Wed, 25 Jun 2025 19:56:07 -0400
-From: Benjamin LaHaise <bcrl@kvack.org>
-To: "pasha.tatashin" <pasha.tatashin@soleen.com>
-Cc: pratyush@kernel.org, jasonmiu@google.com, graf@amazon.com,
-	changyuanl@google.com, rppt@kernel.org, dmatlack@google.com,
-	rientjes@google.com, corbet@lwn.net, rdunlap@infradead.org,
-	ilpo.jarvinen@linux.intel.com, kanie@linux.alibaba.com,
-	ojeda@kernel.org, aliceryhl@google.com, masahiroy@kernel.org,
-	akpm@linux-foundation.org, tj@kernel.org, yoann.congal@smile.fr,
-	mmaurer@google.com, roman.gushchin@linux.dev, chenridong@huawei.com,
-	axboe@kernel.dk, mark.rutland@arm.com, jannh@google.com,
-	vincent.guittot@linaro.org, hannes@cmpxchg.org,
-	dan.j.williams@intel.com, david@redhat.com,
-	joel.granados@kernel.org, rostedt@goodmis.org,
-	anna.schumaker@oracle.com, song@kernel.org, zhangguopeng@kylinos.cn,
-	linux@weissschuh.net, linux-kernel@vger.kernel.org,
-	linux-doc@vger.kernel.org, linux-mm@kvack.org,
-	gregkh@linuxfoundation.org, tglx@linutronix.de, mingo@redhat.com,
-	bp@alien8.de, dave.hansen@linux.intel.com, x86@kernel.org,
-	hpa@zytor.com, rafael@kernel.org, dakr@kernel.org,
-	bartosz.golaszewski@linaro.org, cw00.choi@samsung.com,
-	myungjoo.ham@samsung.com, yesanishhere@gmail.com,
-	Jonathan.Cameron@huawei.com, quic_zijuhu@quicinc.com,
-	aleksander.lobakin@intel.com, ira.weiny@intel.com,
-	andriy.shevchenko@linux.intel.com, leon@kernel.org, lukas@wunner.de,
-	bhelgaas@google.com, wagi@kernel.org, djeffery@redhat.com,
-	stuart.w.hayes@gmail.com, ptyadav@amazon.de, lennart@poettering.net,
-	brauner@kernel.org, linux-api@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH v1 00/32] Live Update Orchestrator
-Message-ID: <20250625235607.GK369@kvack.org>
-References: <20250625231838.1897085-1-pasha.tatashin@soleen.com> <20250625232653.GJ369@kvack.org> <CA+CK2bAsz4Zz2_Kp8QMKxG5taY52ykhhykROd0di85ax5eeOrw@mail.gmail.com>
+	s=arc-20240116; t=1750895933; c=relaxed/simple;
+	bh=dvEesDSwiBt0Jop3jpMeVHjCHKSIuew6oU8iajJpkLk=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=p5D61VcW8yrG6FqikVMkKW36swi6FiMlywJfGRZkvqJHWGvCMa54mDJN/tVcii+Tm4mV8lVnIqe38a98ynSZ3Pjpdp9hmx+i55g6c4aHhOXbzXmPVK3Xjr9JOX4aU9z/CLcG1fRcynOzTxzK4EkkHqNdJ3AGxFTWFv7AWXr8N54=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=arunraghavan.net; spf=pass smtp.mailfrom=arunraghavan.net; dkim=pass (2048-bit key) header.d=arunraghavan.net header.i=@arunraghavan.net header.b=hFYrc8cX; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=S55TUUup; arc=none smtp.client-ip=103.168.172.149
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=arunraghavan.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arunraghavan.net
+Received: from phl-compute-06.internal (phl-compute-06.phl.internal [10.202.2.46])
+	by mailfout.phl.internal (Postfix) with ESMTP id 2C0D5EC006C;
+	Wed, 25 Jun 2025 19:58:50 -0400 (EDT)
+Received: from phl-mailfrontend-02 ([10.202.2.163])
+  by phl-compute-06.internal (MEProxy); Wed, 25 Jun 2025 19:58:50 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	arunraghavan.net; h=cc:cc:content-transfer-encoding:content-type
+	:date:date:from:from:in-reply-to:in-reply-to:message-id
+	:mime-version:references:reply-to:subject:subject:to:to; s=fm1;
+	 t=1750895930; x=1750982330; bh=CD1lNkNuFLFWeglbXsOJf1Gqo9Ci9AUb
+	2FltuLTlbM4=; b=hFYrc8cXITwzHzjT/F/aPQJ77rnx5e+MBO/a13cIGRb5tj+7
+	cUyJsyBF2SicL9lKAm3/KxBlyEFCfshn3SBHBrCrgWwiBCOSGXdWMjxSKCLMz2X6
+	JruQ62JUmJn+GNYOJYhTraKa/k9STkzhfUSNzeNCHjRYFuc2Yp+DrqgqJ3+bwxcl
+	Kx+yWK44kS9p4EuJTsw0r6cMJs50FNRUFdsq1VK+3fNnQ9bSHy3W1l4FbPhgbpNu
+	ti+uicl4HXSgJxqVhvlyfqt46EsPR0Mk4lOk8xABD8rnDT8K2sKLkNmBgP4l7Pwt
+	3WBkGMQPM6Ys6IYEmauBpx48PPkZxz5D/pvmWw==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-transfer-encoding
+	:content-type:date:date:feedback-id:feedback-id:from:from
+	:in-reply-to:in-reply-to:message-id:mime-version:references
+	:reply-to:subject:subject:to:to:x-me-proxy:x-me-sender
+	:x-me-sender:x-sasl-enc; s=fm2; t=1750895930; x=1750982330; bh=C
+	D1lNkNuFLFWeglbXsOJf1Gqo9Ci9AUb2FltuLTlbM4=; b=S55TUUup7W5nUabXM
+	5GrKoGJCLCdjhlQbM7P7XI6R1dv/nXq0EtPndoA1j6Y1mcKR9gNylRXGqs9e/rUL
+	u67CmAmErYTLZydXyiMBEC9EvU3ywfOqYUex2PQbpZmar/rJMQPBRC3fjPCR02bT
+	G4p7zPuaRbKeNh1E6UPDVwSBX3PRn3o9eE7mFOraaL63otc1XrMqGGQbAqXwI4eA
+	Bk4UhlDAlBaCHDkrXzMqK5wesk9Ok2oaDyodLWcp67PLeSrYdDz3U2lisOc9fAaa
+	qSUaULQNGfsNPJ/eG67P+t7bOZfh+iRTXLIYK2/iS5SB0WoZV2i+kJOW+wW1QokK
+	Ns3gA==
+X-ME-Sender: <xms:OY1caGS5hhhT6f4CjOJ-dl7nvFlvkdzxY2FMxZCbBGM-Tl50THJJbg>
+    <xme:OY1caLzjEmTQG1o7c1Zsm6hUy83R2QA7DRWnfV-9V_NInwT6v-QRpWvpIQfytabZ1
+    1MNgMoDRffyNwFXng>
+X-ME-Received: <xmr:OY1caD03VoUDuA3YRdsrOFe1_iVCtdx_Vuvmlnux0dWrtcHxqW5yUufNQWQn5UL7>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtddvgddvgeduhecutefuodetggdotefrod
+    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpuffrtefokffrpgfnqfghnecuuegr
+    ihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjug
+    hrpefhvfevufffkffojghfggfgsedtkeertdertddtnecuhfhrohhmpeetrhhunhcutfgr
+    ghhhrghvrghnuceorghruhhnsegrrhhunhhrrghghhgrvhgrnhdrnhgvtheqnecuggftrf
+    grthhtvghrnhepieduheehtedukeeuheeiudevgeelgfelvdelgeeftedutdeutdefjeek
+    feejfeelnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomh
+    eprghruhhnsegrrhhunhhrrghghhgrvhgrnhdrnhgvthdpnhgspghrtghpthhtohepudef
+    pdhmohguvgepshhmthhpohhuthdprhgtphhtthhopehshhgvnhhgjhhiuhdrfigrnhhgse
+    hgmhgrihhlrdgtohhmpdhrtghpthhtohepgihiuhgsohdrlhgvvgesghhmrghilhdrtgho
+    mhdprhgtphhtthhopehfvghsthgvvhgrmhesghhmrghilhdrtghomhdprhgtphhtthhope
+    hnihgtohhlvghothhsuhhkrgesghhmrghilhdrtghomhdprhgtphhtthhopehlghhirhgu
+    fihoohgusehgmhgrihhlrdgtohhmpdhrtghpthhtohepsghrohhonhhivgeskhgvrhhnvg
+    hlrdhorhhgpdhrtghpthhtohepphgvrhgvgiesphgvrhgvgidrtgiipdhrtghpthhtohep
+    thhifigrihesshhushgvrdgtohhmpdhrtghpthhtohepphdrtggrmhgvrhhlhihntghkse
+    htvghlvghvihgtrdgtohhm
+X-ME-Proxy: <xmx:OY1caCC_dVKYHIlC4s3YEUEVi3EQEA_1-fTdfIneZE3dUoLt3JMOAQ>
+    <xmx:OY1caPjknBNGroiNcNWnGDngbv4tTWukNiQD71-d6XRCnqMiWTYp9A>
+    <xmx:OY1caOrpCvXLDXEJxG-FpXmikX1mow5PYnPKUJg6y9i0rsp0zYVJJQ>
+    <xmx:OY1caChmIyY52nia4tniWmsAjJhAb45YPGk1nBTa88poAeKTm2kyVw>
+    <xmx:Oo1caNwtsxehlSruYPtKNWHbl-gn7HkGmXPL_YSbY_8VvuYkXaTtwsNA>
+Feedback-ID: i42c0435e:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Wed,
+ 25 Jun 2025 19:58:48 -0400 (EDT)
+From: Arun Raghavan <arun@arunraghavan.net>
+To: Shengjiu Wang <shengjiu.wang@gmail.com>,
+	Xiubo Li <Xiubo.Lee@gmail.com>
+Cc: Fabio Estevam <festevam@gmail.com>,
+	Nicolin Chen <nicoleotsuka@gmail.com>,
+	Liam Girdwood <lgirdwood@gmail.com>,
+	Mark Brown <broonie@kernel.org>,
+	Jaroslav Kysela <perex@perex.cz>,
+	Takashi Iwai <tiwai@suse.com>,
+	Pieterjan Camerlynck <p.camerlynck@televic.com>,
+	linux-sound@vger.kernel.org,
+	linuxppc-dev@lists.ozlabs.org,
+	linux-kernel@vger.kernel.org,
+	Arun Raghavan <arun@asymptotic.io>
+Subject: [PATCH v2] ASoC: fsl_sai: Force a software reset when starting in consumer mode
+Date: Wed, 25 Jun 2025 19:56:16 -0400
+Message-ID: <20250625235757.68058-3-arun@arunraghavan.net>
+X-Mailer: git-send-email 2.49.0
+In-Reply-To: <20250625130648.201331-1-arun@arunraghavan.net>
+References: <20250625130648.201331-1-arun@arunraghavan.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
+MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <CA+CK2bAsz4Zz2_Kp8QMKxG5taY52ykhhykROd0di85ax5eeOrw@mail.gmail.com>
-User-Agent: Mutt/1.4.2.2i
 
-On Wed, Jun 25, 2025 at 07:44:12PM -0400, pasha.tatashin wrote:
-> On Wed, Jun 25, 2025 at 7:26 PM Benjamin LaHaise <bcrl@kvack.org> wrote:
-> >
-> > FYI: Every one of your emails to the list for this series was bounced by
-> > all the recipients using @gmail.com email addresses.
-> >
-> >                 -ben (owner-linux-mm)
-> 
-> This is extremely annoying, I will need to figure out why this is
-> happening. soleen.com uses google workspace.
+From: Arun Raghavan <arun@asymptotic.io>
 
-I'm close to kicking all the @gmail.com subscribers off the mailing lists
-given how bad this is getting.  My general advice to anyone posting to
-mailing lists these days is to assume that anyone reading email via any of
-Google's service isn't going to see your mailing list posts.  It keeps
-getting worse, and nobody at the platform companies seems to care.
+In a setup with an external clock provider, when running the receiver
+(arecord) and triggering an xrun with xrun_injection, we see a channel
+swap/offset. This happens sometimes when running only the receiver, but
+occurs reliably if a transmitter (aplay) is also concurrently running.
 
-		-ben
+The theory is that SAI seems to lose track of frame sync during the
+trigger stop -> trigger start cycle that occurs during an xrun. Doing
+just a FIFO reset in this case does not suffice, and only a software
+reset seems to get it back on track.
 
-> Pasha
-> 
-> >
-> > On Wed, Jun 25, 2025 at 11:17:47PM +0000, Pasha Tatashin wrote:
-> > > This series introduces the LUO, a kernel subsystem designed to
-> > > facilitate live kernel updates with minimal downtime,
-> > > particularly in cloud delplyoments aiming to update without fully
-> > > disrupting running virtual machines.
-> > >
-> > > This series builds upon KHO framework by adding programmatic
-> > > control over KHO's lifecycle and leveraging KHO for persisting LUO's
-> > > own metadata across the kexec boundary. The git branch for this series
-> > > can be found at:
-> > >
-> > > https://github.com/googleprodkernel/linux-liveupdate/tree/luo/v1
-> > >
-> > > Changelog from rfc-v2:
-> > > - Addressed review comments from Mike Rapoport, Pratyush Yadav,
-> > >   David Matlack
-> > > - Moved everything under kernel/liveupdate including KHO.
-> > > - Added a number fixes to KHO that were discovered.
-> > > - luo_files is not a registred as a subsystem.
-> > > - Added sessions support to preserved files.
-> > > - Added support for memfd (Pratyush Yadav)
-> > > - Added libluo (proposed as RFC) (Pratyush Yadav)
-> > > - Removed notifiers from KHO (Mike Rapoport)
-> > >
-> > > What is Live Update?
-> > > Live Update is a kexec based reboot process where selected kernel
-> > > resources (memory, file descriptors, and eventually devices) are kept
-> > > operational or their state preserved across a kernel transition. For
-> > > certain resources, DMA and interrupt activity might continue with
-> > > minimal interruption during the kernel reboot.
-> > >
-> > > LUO provides a framework for coordinating live updates. It features:
-> > > State Machine: Manages the live update process through states:
-> > > NORMAL, PREPARED, FROZEN, UPDATED.
-> > >
-> > > KHO Integration:
-> > >
-> > > LUO programmatically drives KHO's finalization and abort sequences.
-> > > KHO's debugfs interface is now optional configured via
-> > > CONFIG_KEXEC_HANDOVER_DEBUG.
-> > >
-> > > LUO preserves its own metadata via KHO's kho_add_subtree and
-> > > kho_preserve_phys() mechanisms.
-> > >
-> > > Subsystem Participation: A callback API liveupdate_register_subsystem()
-> > > allows kernel subsystems (e.g., KVM, IOMMU, VFIO, PCI) to register
-> > > handlers for LUO events (PREPARE, FREEZE, FINISH, CANCEL) and persist a
-> > > u64 payload via the LUO FDT.
-> > >
-> > > File Descriptor Preservation: Infrastructure
-> > > liveupdate_register_filesystem, luo_register_file, luo_retrieve_file to
-> > > allow specific types of file descriptors (e.g., memfd, vfio) to be
-> > > preserved and restored.
-> > >
-> > > Handlers for specific file types can be registered to manage their
-> > > preservation and restoration, storing a u64 payload in the LUO FDT.
-> > >
-> > > User-space Interface:
-> > >
-> > > ioctl (/dev/liveupdate): The primary control interface for
-> > > triggering LUO state transitions (prepare, freeze, finish, cancel)
-> > > and managing the preservation/restoration of file descriptors.
-> > > Access requires CAP_SYS_ADMIN.
-> > >
-> > > sysfs (/sys/kernel/liveupdate/state): A read-only interface for
-> > > monitoring the current LUO state. This allows userspace services to
-> > > track progress and coordinate actions.
-> > >
-> > > Selftests: Includes kernel-side hooks and userspace selftests to
-> > > verify core LUO functionality, particularly subsystem registration and
-> > > basic state transitions.
-> > >
-> > > LUO State Machine and Events:
-> > >
-> > > NORMAL:   Default operational state.
-> > > PREPARED: Initial preparation complete after LIVEUPDATE_PREPARE
-> > >           event. Subsystems have saved initial state.
-> > > FROZEN:   Final "blackout window" state after LIVEUPDATE_FREEZE
-> > >           event, just before kexec. Workloads must be suspended.
-> > > UPDATED:  Next kernel has booted via live update. Awaiting restoration
-> > >           and LIVEUPDATE_FINISH.
-> > >
-> > > Events:
-> > > LIVEUPDATE_PREPARE: Prepare for reboot, serialize state.
-> > > LIVEUPDATE_FREEZE:  Final opportunity to save state before kexec.
-> > > LIVEUPDATE_FINISH:  Post-reboot cleanup in the next kernel.
-> > > LIVEUPDATE_CANCEL:  Abort prepare or freeze, revert changes.
-> > >
-> > > RFC v1: https://lore.kernel.org/all/20250320024011.2995837-1-pasha.tatashin@soleen.com
-> > > RFC v2: https://lore.kernel.org/all/20250515182322.117840-1-pasha.tatashin@soleen.com/
-> > >
-> > > Changyuan Lyu (1):
-> > >   kho: add interfaces to unpreserve folios and physical memory ranges
-> > >
-> > > Mike Rapoport (Microsoft) (1):
-> > >   kho: drop notifiers
-> > >
-> > > Pasha Tatashin (22):
-> > >   kho: init new_physxa->phys_bits to fix lockdep
-> > >   kho: mm: Don't allow deferred struct page with KHO
-> > >   kho: warn if KHO is disabled due to an error
-> > >   kho: allow to drive kho from within kernel
-> > >   kho: make debugfs interface optional
-> > >   kho: don't unpreserve memory during abort
-> > >   liveupdate: kho: move to kernel/liveupdate
-> > >   liveupdate: luo_core: Live Update Orchestrator
-> > >   liveupdate: luo_core: integrate with KHO
-> > >   liveupdate: luo_subsystems: add subsystem registration
-> > >   liveupdate: luo_subsystems: implement subsystem callbacks
-> > >   liveupdate: luo_files: add infrastructure for FDs
-> > >   liveupdate: luo_files: implement file systems callbacks
-> > >   liveupdate: luo_ioctl: add ioctl interface
-> > >   liveupdate: luo_sysfs: add sysfs state monitoring
-> > >   reboot: call liveupdate_reboot() before kexec
-> > >   liveupdate: luo_files: luo_ioctl: session-based file descriptor
-> > >     tracking
-> > >   kho: move kho debugfs directory to liveupdate
-> > >   liveupdate: add selftests for subsystems un/registration
-> > >   selftests/liveupdate: add subsystem/state tests
-> > >   docs: add luo documentation
-> > >   MAINTAINERS: add liveupdate entry
-> > >
-> > > Pratyush Yadav (8):
-> > >   mm: shmem: use SHMEM_F_* flags instead of VM_* flags
-> > >   mm: shmem: allow freezing inode mapping
-> > >   mm: shmem: export some functions to internal.h
-> > >   luo: allow preserving memfd
-> > >   docs: add documentation for memfd preservation via LUO
-> > >   tools: introduce libluo
-> > >   libluo: introduce luoctl
-> > >   libluo: add tests
-> > >
-> > >  .../ABI/testing/sysfs-kernel-liveupdate       |  51 +
-> > >  Documentation/admin-guide/index.rst           |   1 +
-> > >  Documentation/admin-guide/liveupdate.rst      |  16 +
-> > >  Documentation/core-api/index.rst              |   1 +
-> > >  Documentation/core-api/kho/concepts.rst       |   2 +-
-> > >  Documentation/core-api/liveupdate.rst         |  57 ++
-> > >  Documentation/mm/index.rst                    |   1 +
-> > >  Documentation/mm/memfd_preservation.rst       | 138 +++
-> > >  Documentation/userspace-api/index.rst         |   1 +
-> > >  .../userspace-api/ioctl/ioctl-number.rst      |   2 +
-> > >  Documentation/userspace-api/liveupdate.rst    |  25 +
-> > >  MAINTAINERS                                   |  20 +-
-> > >  include/linux/kexec_handover.h                |  53 +-
-> > >  include/linux/liveupdate.h                    | 235 +++++
-> > >  include/linux/shmem_fs.h                      |  23 +
-> > >  include/uapi/linux/liveupdate.h               | 265 +++++
-> > >  init/Kconfig                                  |   2 +
-> > >  kernel/Kconfig.kexec                          |  14 -
-> > >  kernel/Makefile                               |   2 +-
-> > >  kernel/liveupdate/Kconfig                     |  90 ++
-> > >  kernel/liveupdate/Makefile                    |  13 +
-> > >  kernel/{ => liveupdate}/kexec_handover.c      | 556 +++++-----
-> > >  kernel/liveupdate/kexec_handover_debug.c      | 222 ++++
-> > >  kernel/liveupdate/kexec_handover_internal.h   |  45 +
-> > >  kernel/liveupdate/luo_core.c                  | 525 ++++++++++
-> > >  kernel/liveupdate/luo_files.c                 | 946 ++++++++++++++++++
-> > >  kernel/liveupdate/luo_internal.h              |  47 +
-> > >  kernel/liveupdate/luo_ioctl.c                 | 192 ++++
-> > >  kernel/liveupdate/luo_selftests.c             | 344 +++++++
-> > >  kernel/liveupdate/luo_selftests.h             |  84 ++
-> > >  kernel/liveupdate/luo_subsystems.c            | 420 ++++++++
-> > >  kernel/liveupdate/luo_sysfs.c                 |  92 ++
-> > >  kernel/reboot.c                               |   4 +
-> > >  mm/Makefile                                   |   1 +
-> > >  mm/internal.h                                 |   6 +
-> > >  mm/memblock.c                                 |  56 +-
-> > >  mm/memfd_luo.c                                | 501 ++++++++++
-> > >  mm/shmem.c                                    |  46 +-
-> > >  tools/lib/luo/LICENSE                         | 165 +++
-> > >  tools/lib/luo/Makefile                        |  45 +
-> > >  tools/lib/luo/README.md                       | 166 +++
-> > >  tools/lib/luo/cli/.gitignore                  |   1 +
-> > >  tools/lib/luo/cli/Makefile                    |  18 +
-> > >  tools/lib/luo/cli/luoctl.c                    | 178 ++++
-> > >  tools/lib/luo/include/libluo.h                | 128 +++
-> > >  tools/lib/luo/include/liveupdate.h            | 265 +++++
-> > >  tools/lib/luo/libluo.c                        | 203 ++++
-> > >  tools/lib/luo/tests/.gitignore                |   1 +
-> > >  tools/lib/luo/tests/Makefile                  |  18 +
-> > >  tools/lib/luo/tests/test.c                    | 848 ++++++++++++++++
-> > >  tools/testing/selftests/Makefile              |   1 +
-> > >  tools/testing/selftests/liveupdate/.gitignore |   1 +
-> > >  tools/testing/selftests/liveupdate/Makefile   |   7 +
-> > >  tools/testing/selftests/liveupdate/config     |   6 +
-> > >  .../testing/selftests/liveupdate/liveupdate.c | 356 +++++++
-> > >  55 files changed, 7091 insertions(+), 415 deletions(-)
-> > >  create mode 100644 Documentation/ABI/testing/sysfs-kernel-liveupdate
-> > >  create mode 100644 Documentation/admin-guide/liveupdate.rst
-> > >  create mode 100644 Documentation/core-api/liveupdate.rst
-> > >  create mode 100644 Documentation/mm/memfd_preservation.rst
-> > >  create mode 100644 Documentation/userspace-api/liveupdate.rst
-> > >  create mode 100644 include/linux/liveupdate.h
-> > >  create mode 100644 include/uapi/linux/liveupdate.h
-> > >  create mode 100644 kernel/liveupdate/Kconfig
-> > >  create mode 100644 kernel/liveupdate/Makefile
-> > >  rename kernel/{ => liveupdate}/kexec_handover.c (74%)
-> > >  create mode 100644 kernel/liveupdate/kexec_handover_debug.c
-> > >  create mode 100644 kernel/liveupdate/kexec_handover_internal.h
-> > >  create mode 100644 kernel/liveupdate/luo_core.c
-> > >  create mode 100644 kernel/liveupdate/luo_files.c
-> > >  create mode 100644 kernel/liveupdate/luo_internal.h
-> > >  create mode 100644 kernel/liveupdate/luo_ioctl.c
-> > >  create mode 100644 kernel/liveupdate/luo_selftests.c
-> > >  create mode 100644 kernel/liveupdate/luo_selftests.h
-> > >  create mode 100644 kernel/liveupdate/luo_subsystems.c
-> > >  create mode 100644 kernel/liveupdate/luo_sysfs.c
-> > >  create mode 100644 mm/memfd_luo.c
-> > >  create mode 100644 tools/lib/luo/LICENSE
-> > >  create mode 100644 tools/lib/luo/Makefile
-> > >  create mode 100644 tools/lib/luo/README.md
-> > >  create mode 100644 tools/lib/luo/cli/.gitignore
-> > >  create mode 100644 tools/lib/luo/cli/Makefile
-> > >  create mode 100644 tools/lib/luo/cli/luoctl.c
-> > >  create mode 100644 tools/lib/luo/include/libluo.h
-> > >  create mode 100644 tools/lib/luo/include/liveupdate.h
-> > >  create mode 100644 tools/lib/luo/libluo.c
-> > >  create mode 100644 tools/lib/luo/tests/.gitignore
-> > >  create mode 100644 tools/lib/luo/tests/Makefile
-> > >  create mode 100644 tools/lib/luo/tests/test.c
-> > >  create mode 100644 tools/testing/selftests/liveupdate/.gitignore
-> > >  create mode 100644 tools/testing/selftests/liveupdate/Makefile
-> > >  create mode 100644 tools/testing/selftests/liveupdate/config
-> > >  create mode 100644 tools/testing/selftests/liveupdate/liveupdate.c
-> > >
-> > > --
-> > > 2.50.0.727.gbf7dc18ff4-goog
-> > >
-> >
-> > --
-> > "Thought is the essence of where you are now."
-> 
+Signed-off-by: Arun Raghavan <arun@asymptotic.io>
+Reported-by: Pieterjan Camerlynck <p.camerlynck@televic.com>
+---
 
+v2:
+- Address build warning from kernel test robot
+
+ sound/soc/fsl/fsl_sai.c | 12 ++++++++++++
+ 1 file changed, 12 insertions(+)
+
+diff --git a/sound/soc/fsl/fsl_sai.c b/sound/soc/fsl/fsl_sai.c
+index af1a168d35e3..d158352c7640 100644
+--- a/sound/soc/fsl/fsl_sai.c
++++ b/sound/soc/fsl/fsl_sai.c
+@@ -841,6 +841,18 @@ static int fsl_sai_trigger(struct snd_pcm_substream *substream, int cmd,
+ 	case SNDRV_PCM_TRIGGER_START:
+ 	case SNDRV_PCM_TRIGGER_RESUME:
+ 	case SNDRV_PCM_TRIGGER_PAUSE_RELEASE:
++		/*
++		 * Force a software reset if we are not the clock provider, as we
++		 * might have lost frame sync during xrun recovery.
++		 */
++		if (sai->is_consumer_mode[tx]) {
++			regmap_update_bits(sai->regmap,
++					FSL_SAI_xCSR(tx, ofs), FSL_SAI_CSR_SR,
++					FSL_SAI_CSR_SR);
++			regmap_update_bits(sai->regmap,
++					FSL_SAI_xCSR(tx, ofs), FSL_SAI_CSR_SR,
++					0);
++		}
+ 		regmap_update_bits(sai->regmap, FSL_SAI_xCSR(tx, ofs),
+ 				   FSL_SAI_CSR_FRDE, FSL_SAI_CSR_FRDE);
+ 
 -- 
-"Thought is the essence of where you are now."
+2.49.0
+
 
