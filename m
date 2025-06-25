@@ -1,161 +1,107 @@
-Return-Path: <linux-kernel+bounces-702886-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-702888-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 76B63AE88E0
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Jun 2025 17:55:28 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7FEC9AE88E5
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Jun 2025 17:56:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7DFFA1899CAF
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Jun 2025 15:55:43 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9421B3AF032
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Jun 2025 15:55:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 788ED29E0F4;
-	Wed, 25 Jun 2025 15:55:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1200A2BEFF0;
+	Wed, 25 Jun 2025 15:55:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (3072-bit key) header.d=samba.org header.i=@samba.org header.b="Vq2k33H2"
-Received: from hr2.samba.org (hr2.samba.org [144.76.82.148])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="BEBD4hb/"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6A5871A7264;
-	Wed, 25 Jun 2025 15:55:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=144.76.82.148
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6A3FB1C5489;
+	Wed, 25 Jun 2025 15:55:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750866919; cv=none; b=TF3OkT/4IBjchi1PDmEdTSeBHAoJK5NoPSSiDjH7ZXE/FC23kyQY+1CU/5hAZ131RQskdlcqFjHijQRSrO0DWkyEigaQQ3jxF0rLp2SRJmdXoOZ6jHcJn4M6zVTF6Ljyycs187XXXlRyOrtekeYRGFMuNWYTQYNms1WFS1rnca4=
+	t=1750866950; cv=none; b=BLRmAPfaPBmudffIvv0HafYrAH+jk6V33x7a75Bhh3LT0Z8mJwOgLZPg9DugQEefVrSO2Ri4yGWErC2098kGLS+zU2EUYH9mdY/xcC+FaF6meRloZM8IKjN7V3ff/3946YuTDeViBtPPtMOWu5HJQSnTRcmfiZiyLAcc0MBttsg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750866919; c=relaxed/simple;
-	bh=nMg/fmRzABUVMBMxW77r3Z5ilmHMlpfCmcUZk5LUX2k=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=PmiL2Y1d2jA/IZT/H25fkrnnWuBs+02h6O1w5sS/kYg74FEdA7WlccdpELkM/sTuFPrFgDQ7CZ1mcnQz2U9wb4HJZ7AklC7PkUbvdEYjf4existBNPb7QhZMrUHXWj0pZSBf6QkToz4ItRj06bbHsXREtP7L7vfAz6rXpEmvyuM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=samba.org; spf=pass smtp.mailfrom=samba.org; dkim=pass (3072-bit key) header.d=samba.org header.i=@samba.org header.b=Vq2k33H2; arc=none smtp.client-ip=144.76.82.148
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=samba.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samba.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=samba.org;
-	s=42; h=From:Cc:To:Date:Message-ID;
-	bh=vQ2ISujzgMsOuy0zYRu3RYmEVeMJJSS3rBIsIzJ2HbY=; b=Vq2k33H2AlmHKFttx/KWXpfyFV
-	nTP11K6mYya9sN2RyU3h9dUPIdisAgozsweNkF/oC/mlmrU+Eu5GE8jCBc8fl20lYAlRogduMqX3l
-	O1I/qtDgFSwwtGSE4NfGnORUl5mqnItsTfDrQcEHOXXx/8mnMht3n5mQN84U4IOqttrY+yq8BGxno
-	dlRRbQcNyUjDflXXvAqVk6hPPfDSROThMUml8cQjXFXBj1r72gKMOsXS7f1N5uU/1rZWiWV7Ty67u
-	Q8K3yhthMZN9j61zUn/oMvDTLhCvp/Vv3GNQdEeZ2eDOiKmv5rQ1VWW+QVxwM/e/YPK8Dy3ifvpvF
-	FVqT+zzPpTD/0q4kICF2ZgmlVdtZP+5KLQL6+qFQUePThJKbTx8P2p406RCun3RsUAQq0p62ANYMb
-	MW1phQGkQ1hi2szjFwzIqB8d3CpY4tJEeOKR/ZoCOiXrjP3FPPy1TW6QJnF5wl9skAmwH8vwWgGEy
-	ecCkskJul48CvOmrdxBv/4lD;
-Received: from [127.0.0.2] (localhost [127.0.0.1])
-	by hr2.samba.org with esmtpsa (TLS1.3:ECDHE_SECP256R1__RSA_PSS_RSAE_SHA256__CHACHA20_POLY1305:256)
-	(Exim)
-	id 1uUSSw-00CRa4-38;
-	Wed, 25 Jun 2025 15:55:15 +0000
-Message-ID: <011ec23b-d151-4ef8-bbe7-ba79e3678ae7@samba.org>
-Date: Wed, 25 Jun 2025 17:55:14 +0200
+	s=arc-20240116; t=1750866950; c=relaxed/simple;
+	bh=0j0akyBk6oQld4bN9tG/Rx9YD8D+rRhxa5mPhKSc6H0=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=RO/d3FTyr6oGxqsfRxresgiZtRBekyOvFDArqgf1ehEF+C/zuzSGuPt6xeGSsGGKnIaDGpkQJCDxLQLPRD8xFgI9uN9CmeG+rwW+Vvc4FxyfIXAe3Zn0lUmMHOVxl0HvJYrP5kUbFD3vL5+SLstjAy99jAb2ze1KFP4GLi3qm5s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=BEBD4hb/; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 65274C4AF09;
+	Wed, 25 Jun 2025 15:55:48 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1750866949;
+	bh=0j0akyBk6oQld4bN9tG/Rx9YD8D+rRhxa5mPhKSc6H0=;
+	h=From:Date:Subject:To:Cc:From;
+	b=BEBD4hb/5OWP7R/2N6ogA3Vtbfktn1v98YFG/Ur/IjltKG9UddZqBBrWsFcqIqh/V
+	 /oRPYzCkoIvUVR8VvRNYklYE4mPfDNTwO9UCGS28sH86uRzwHcB/1oGPZ06vJeRAvD
+	 bQtOvLEAvh2INsMj9zbo1FZOZbcPyIDoR3DPLAOeUkzeHOp+09QkuVAm6lMq7L2LDx
+	 xAh9Vrbs/xdBLs2FeZJZ8Ysi/3m8j3jSRt95OI2vId3DkUyvzuF57y6n8TDVLhkMe3
+	 fNzLzsVFGBUyPHK3Kb/Ia4ZSyQnLozu3iqZmpT1AXacjUJis1eznk36Mw1bQIcVeqc
+	 mJ6uL14oS77Cg==
+From: Konrad Dybcio <konradybcio@kernel.org>
+Date: Wed, 25 Jun 2025 17:55:43 +0200
+Subject: [PATCH] power: sequencing: qcom-wcn: Fix bluetooth-wifi copypasta
+ for WCN6855
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2] cifs: Fix the smbd_request and smbd_reponse slabs to
- allow usercopy
-To: David Howells <dhowells@redhat.com>, Steve French <stfrench@microsoft.com>
-Cc: Paulo Alcantara <pc@manguebit.com>, linux-cifs@vger.kernel.org,
- netfs@lists.linux.dev, linux-fsdevel@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <1372501.1750858644@warthog.procyon.org.uk>
- <1382992.1750862802@warthog.procyon.org.uk>
-Content-Language: en-US
-From: Stefan Metzmacher <metze@samba.org>
-In-Reply-To: <1382992.1750862802@warthog.procyon.org.uk>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
+Message-Id: <20250625-topic-wcn6855_pwrseq-v1-1-cfb96d599ff8@oss.qualcomm.com>
+X-B4-Tracking: v=1; b=H4sIAP4bXGgC/x3MQQqAIBBA0avErBNM0aKrRETZVLMxGyOD6O5Jy
+ 7f4/4GITBihLR5gvCjS7jOqsgC3jX5FQXM2KKmMtMqIcw/kRHLeNsYMIXHEQ8i6lnbRk3ZzAzk
+ NjAvd/7br3/cDNLolemYAAAA=
+X-Change-ID: 20250625-topic-wcn6855_pwrseq-07706f3b3cd8
+To: Bartosz Golaszewski <brgl@bgdev.pl>, 
+ Dmitry Baryshkov <lumag@kernel.org>
+Cc: Marijn Suijten <marijn.suijten@somainline.org>, 
+ Bartosz Golaszewski <bartosz.golaszewski@linaro.org>, 
+ linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1750866948; l=1175;
+ i=konrad.dybcio@oss.qualcomm.com; s=20230215; h=from:subject:message-id;
+ bh=u/0JVYWkgvI137HLdQQO/HO3teeewn/2ooWhSaU/+Bw=;
+ b=XJ7PcsaNxOpJhh+h+vkT/0EQI4i/FftTvFFBYvaFbjq41OAl0wkaeTAQgG3s7uo99xSrxlMXr
+ DOtD9hBeex1ACg/54aYe8hcPbjbG70I2U9OrlNEHwSLec3/wMWu46MO
+X-Developer-Key: i=konrad.dybcio@oss.qualcomm.com; a=ed25519;
+ pk=iclgkYvtl2w05SSXO5EjjSYlhFKsJ+5OSZBjOkQuEms=
 
-reviewed-by and tested-by: Stefan Metzmacher <metze@samba.org>
+From: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
 
-Am 25.06.25 um 16:46 schrieb David Howells:
->      
-> The handling of received data in the smbdirect client code involves using
-> copy_to_iter() to copy data from the smbd_reponse struct's packet trailer
-> to a folioq buffer provided by netfslib that encapsulates a chunk of
-> pagecache.
-> 
-> If, however, CONFIG_HARDENED_USERCOPY=y, this will result in the checks
-> then performed in copy_to_iter() oopsing with something like the following:
-> 
->   CIFS: Attempting to mount //172.31.9.1/test
->   CIFS: VFS: RDMA transport established
->   usercopy: Kernel memory exposure attempt detected from SLUB object 'smbd_response_0000000091e24ea1' (offset 81, size 63)!
->   ------------[ cut here ]------------
->   kernel BUG at mm/usercopy.c:102!
->   ...
->   RIP: 0010:usercopy_abort+0x6c/0x80
->   ...
->   Call Trace:
->    <TASK>
->    __check_heap_object+0xe3/0x120
->    __check_object_size+0x4dc/0x6d0
->    smbd_recv+0x77f/0xfe0 [cifs]
->    cifs_readv_from_socket+0x276/0x8f0 [cifs]
->    cifs_read_from_socket+0xcd/0x120 [cifs]
->    cifs_demultiplex_thread+0x7e9/0x2d50 [cifs]
->    kthread+0x396/0x830
->    ret_from_fork+0x2b8/0x3b0
->    ret_from_fork_asm+0x1a/0x30
-> 
-> The problem is that the smbd_response slab's packet field isn't marked as
-> being permitted for usercopy.
-> 
-> Fix this by passing parameters to kmem_slab_create() to indicate that
-> copy_to_iter() is permitted from the packet region of the smbd_response
-> slab objects, less the header space.
-> 
-> Fixes: ee4cdf7ba857 ("netfs: Speed up buffered reading")
-> Reported-by: Stefan Metzmacher <metze@samba.org>
-> Link: https://lore.kernel.org/r/acb7f612-df26-4e2a-a35d-7cd040f513e1@samba.org/
-> Signed-off-by: David Howells <dhowells@redhat.com>
-> cc: Steve French <stfrench@microsoft.com>
-> cc: Paulo Alcantara <pc@manguebit.com>
-> cc: linux-cifs@vger.kernel.org
-> cc: netfs@lists.linux.dev
-> cc: linux-fsdevel@vger.kernel.org
-> ---
->   fs/smb/client/smbdirect.c |   18 +++++++++++++-----
->   1 file changed, 13 insertions(+), 5 deletions(-)
-> 
-> diff --git a/fs/smb/client/smbdirect.c b/fs/smb/client/smbdirect.c
-> index ef6bf8d6808d..f9773cc0d562 100644
-> --- a/fs/smb/client/smbdirect.c
-> +++ b/fs/smb/client/smbdirect.c
-> @@ -1475,6 +1475,9 @@ static int allocate_caches_and_workqueue(struct smbd_connection *info)
->   	char name[MAX_NAME_LEN];
->   	int rc;
->   
-> +	if (WARN_ON_ONCE(sp->max_recv_size < sizeof(struct smbdirect_data_transfer)))
-> +		return -ENOMEM;
-> +
->   	scnprintf(name, MAX_NAME_LEN, "smbd_request_%p", info);
->   	info->request_cache =
->   		kmem_cache_create(
-> @@ -1492,12 +1495,17 @@ static int allocate_caches_and_workqueue(struct smbd_connection *info)
->   		goto out1;
->   
->   	scnprintf(name, MAX_NAME_LEN, "smbd_response_%p", info);
-> +
-> +	struct kmem_cache_args response_args = {
-> +		.align		= __alignof__(struct smbd_response),
-> +		.useroffset	= (offsetof(struct smbd_response, packet) +
-> +				   sizeof(struct smbdirect_data_transfer)),
-> +		.usersize	= sp->max_recv_size - sizeof(struct smbdirect_data_transfer),
-> +	};
->   	info->response_cache =
-> -		kmem_cache_create(
-> -			name,
-> -			sizeof(struct smbd_response) +
-> -				sp->max_recv_size,
-> -			0, SLAB_HWCACHE_ALIGN, NULL);
-> +		kmem_cache_create(name,
-> +				  sizeof(struct smbd_response) + sp->max_recv_size,
-> +				  &response_args, SLAB_HWCACHE_ALIGN);
->   	if (!info->response_cache)
->   		goto out2;
->   
+Prevent a name conflict (which is surprisingly not caught by the
+framework).
+
+Fixes: bd4c8bafcf50 ("power: sequencing: qcom-wcn: improve support for wcn6855")
+Signed-off-by: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+---
+ drivers/power/sequencing/pwrseq-qcom-wcn.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/power/sequencing/pwrseq-qcom-wcn.c b/drivers/power/sequencing/pwrseq-qcom-wcn.c
+index e8f5030f2639a69254ad5efe0a313d2f3d10fa1d..7d8d6b3407495c28a780d5bb0668b2b35837b48a 100644
+--- a/drivers/power/sequencing/pwrseq-qcom-wcn.c
++++ b/drivers/power/sequencing/pwrseq-qcom-wcn.c
+@@ -155,7 +155,7 @@ static const struct pwrseq_unit_data pwrseq_qcom_wcn_bt_unit_data = {
+ };
+ 
+ static const struct pwrseq_unit_data pwrseq_qcom_wcn6855_bt_unit_data = {
+-	.name = "wlan-enable",
++	.name = "bluetooth-enable",
+ 	.deps = pwrseq_qcom_wcn6855_unit_deps,
+ 	.enable = pwrseq_qcom_wcn_bt_enable,
+ 	.disable = pwrseq_qcom_wcn_bt_disable,
+
+---
+base-commit: 2ae2aaafb21454f4781c30734959cf223ab486ef
+change-id: 20250625-topic-wcn6855_pwrseq-07706f3b3cd8
+
+Best regards,
+-- 
+Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
 
 
