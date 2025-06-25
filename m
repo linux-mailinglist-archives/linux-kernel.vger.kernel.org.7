@@ -1,121 +1,102 @@
-Return-Path: <linux-kernel+bounces-703195-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-703197-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C7C54AE8CE0
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Jun 2025 20:44:54 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 53DB6AE8CE1
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Jun 2025 20:44:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 412C07B721A
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Jun 2025 18:41:56 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5D5F77B9452
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Jun 2025 18:42:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 935622E0B4F;
-	Wed, 25 Jun 2025 18:41:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 77F5D2E11C3;
+	Wed, 25 Jun 2025 18:41:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="h+vlhtDq"
-Received: from mail-oo1-f41.google.com (mail-oo1-f41.google.com [209.85.161.41])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=lwn.net header.i=@lwn.net header.b="OhhgXNji"
+Received: from ms.lwn.net (ms.lwn.net [45.79.88.28])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 71A042DA76E
-	for <linux-kernel@vger.kernel.org>; Wed, 25 Jun 2025 18:41:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.161.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3995F2E06CE;
+	Wed, 25 Jun 2025 18:41:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.79.88.28
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750876862; cv=none; b=fjY0ePZeg9nfHXtitC4nlcFH8MMgfxgq7HBDgtn1cDIY4uVLB/6pHyJsfg1y5FTMdu2YCJEbD4nljNQxd10SK/WXvQu9CH99bLU8blvkozm5CAKTWZML0xi6kvdAgP4DAG09PC7bYWf3PcLXZeAEQoiUZPN7Q17040kP8RbfM/Y=
+	t=1750876864; cv=none; b=sw7oHT2kMSQIH2/xXz9swaDKYL38bcqQ5Ain9F/HiBnZmmOWMjDoYNMArNNsSz3qJcvgpflaUsH3wC21GNho1HH5vNInK15mwywq7vnNboOc7pmuBmgJTjcb9ApYT5H/aHPzJ0W0Kf3B+jo0DVXlyAP3ZcFVtxn+LdwRl4eNuAs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750876862; c=relaxed/simple;
-	bh=N1GrLsO5rn46Kd+qcM63O/s4L2k9YjjCFe0dE2dULaE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=WRBxbbCsrikg4oNNZN3NaNt2y9K5qxmbXBy4F2lsz1kxQiicuPgCuc90ccSf6SsLGuXDHtqHqqIhRZNRQlC9RBEvGZofnewlTVSDAfl3T1TWut1Pu1MBGkt49qpflRC6+CJXSq7gg1HMVGoECjdZhC9AT5twv1ghbbXtQ2IdWec=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=h+vlhtDq; arc=none smtp.client-ip=209.85.161.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-oo1-f41.google.com with SMTP id 006d021491bc7-606440d92eeso104377eaf.2
-        for <linux-kernel@vger.kernel.org>; Wed, 25 Jun 2025 11:41:00 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1750876859; x=1751481659; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=Kb/xkqJYQLzIZ67OSg3QEbtD8orcI+NoBMOMxQAdNnU=;
-        b=h+vlhtDqwBMBdZ3GGagXoA12jRQPy5RmdQZ9h/wCF5TPLzd+CB3ucvNtVQhE1fzsx2
-         psTfFcQolc1oYKpqof5UfBznbCvjDfDH1l/0YzMeDr6x0JiJhmF9tTxApa0Eprl5C8XC
-         74l7BIpdjxsf5ro1TGlZWq+8VXgrcVQqusnDX+jbwry3+MUGhtL+NPOxj9JONmpodWrZ
-         b7CBxNTZZDlD4hpTvOQSMRYwAsbrjJVYrQebp+bdVICAN555le4ZlZQRJbk9ULGkABX4
-         /yxZeCm/BQkCxAKIdYrmAKv4i4xQMllQIJxeuvuMyAjhy1hmyXUOAF6vQF2CKzfv/Eq+
-         hkTg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1750876859; x=1751481659;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Kb/xkqJYQLzIZ67OSg3QEbtD8orcI+NoBMOMxQAdNnU=;
-        b=xFsx3Yz/4xVaeOzKN9tyjMOvExhn2PBcL6ksqEXXsOr7De+vD15uTg298GqkyYiMoD
-         qjQEPK6GSIeKuh5AkxMIXmNK+mb33ZOLCpty9Lf6bVieojytuS+js6y3Ukxwx7t2nu+V
-         siCqhbZV/9j5wDNJBBtuSuh1Rqq3XeZIFjcv0a2P4zsXbSvdqGXXsuU4U+XeFOyA3Pgv
-         AKNKL2/Kn+cC+2LeKaBoVinFHK5RxpXlNw0eXZJaRfoQtmrWw/tmtlpaaKERSkAyjYCn
-         J4TpvOZgjKTYS7mAo8uaTWcyXyAE1yOyHEP4qfYPDj/T6esEDU21/MiqZnUYEqc9Zyxv
-         g7vw==
-X-Forwarded-Encrypted: i=1; AJvYcCW/XIpoQLtHd/3BdbjwTfb2ejwd4xN7nWLh5pCts5oShSSDyCfXw/pZXPCg0P+hD/2NG8cN1/L/PEQ/ePs=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyvR6jOnluSFFWkp2veyRzNt9MYBhxl9ICOcdksRImcx2YYtO+p
-	BdCg0jpsMcSHf7JwbgXFB58Y4jPeXXDkLZmiO4AaVLngnRwoCLM6BnWxgQl5lqQF5Q0=
-X-Gm-Gg: ASbGncui8rfvlTvYYRj1HoM1qATPkM2m4sJnj89z2+3Xu7zFJBcyvm6UeGSv2lpE8h5
-	pO91LvZ0Br23Jhsl25NicKF3nzrmp2B206y7gnPncS3hS5QJxe1hiU8FMgQK6Sozom2McNFVayg
-	f56yhLqhdD6kTrLY8NCDhMyF32QrEIngMDZVFjuoDJrAgKGlgPLH9Dve2T0NQItLkYrUkUayAhO
-	01sAEOUVyZORCC219P8+F3HAszbj/KLdc9JO8FLxM0Etk9eff32FhSKm1OZuVz/mKaScypbHVu7
-	Vyl1h61EOH7B7reWP4/W4o1dIkd8CGADVbAmh4+ON0a2fGpW05t2my9D7iGBT/1cj93sPRuITmB
-	PHA==
-X-Google-Smtp-Source: AGHT+IG+FodkH8YjDqJZ084eAzz89kwRqhC0U0FmJInHRKqb6H43Svn4QKtYMZJI20MCcSldmzryog==
-X-Received: by 2002:a05:6871:e488:b0:296:a67c:d239 with SMTP id 586e51a60fabf-2efb21af511mr3039710fac.12.1750876859338;
-        Wed, 25 Jun 2025 11:40:59 -0700 (PDT)
-Received: from localhost ([2603:8080:b800:f700:3ee4:904:206f:ad8])
-        by smtp.gmail.com with ESMTPSA id 586e51a60fabf-2ee66559db2sm2665582fac.11.2025.06.25.11.40.57
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 25 Jun 2025 11:40:58 -0700 (PDT)
-Date: Wed, 25 Jun 2025 21:40:56 +0300
-From: Dan Carpenter <dan.carpenter@linaro.org>
-To: "Luck, Tony" <tony.luck@intel.com>
-Cc: Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= <u.kleine-koenig@baylibre.com>,
-	Zaid Alali <zaidal@os.amperecomputing.com>,
-	"Rafael J. Wysocki" <rafael@kernel.org>,
-	Len Brown <lenb@kernel.org>, James Morse <james.morse@arm.com>,
-	Borislav Petkov <bp@alien8.de>, "Weiny, Ira" <ira.weiny@intel.com>,
-	Jonathan Cameron <Jonathan.Cameron@huawei.com>,
-	"Williams, Dan J" <dan.j.williams@intel.com>,
-	Al Viro <viro@zeniv.linux.org.uk>,
-	Sudeep Holla <sudeep.holla@arm.com>,
-	"linux-acpi@vger.kernel.org" <linux-acpi@vger.kernel.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>
-Subject: Re: [PATCH v2 next] ACPI: APEI: EINJ: prevent memory corruption in
- error_type_set()
-Message-ID: <be2b886f-4de7-46b5-9cc6-cc5299b1af02@suswa.mountain>
-References: <c71e7ba6-f127-4f49-acbf-20063dd26553@sabinyo.mountain>
- <ks34mfmv2vhwojpxlzv7tyordcjdo6zclcflplvs2wsl6gkbn5@3v5kguelmita>
- <757b5117-a865-4d31-b566-248048f87b29@suswa.mountain>
- <SJ1PR11MB6083603821632C25DA5D8EEBFC7BA@SJ1PR11MB6083.namprd11.prod.outlook.com>
+	s=arc-20240116; t=1750876864; c=relaxed/simple;
+	bh=N8KAbfRi0RddkxyTLunLtcuV4EjHcAqtD9UrYd82kek=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=Q73HbrDSZzpm0+I21llTgpz61T9UMPKc53LAtTGcMf/Sew5CmeDSewG11A28sMzB2HLhagmsjk+p6YsMLiNcFaFsTG/txhauXhnID2GvTsTSa5845Bein5xeBEEm7rFEXqIWUx4EuTqheIQcaQec0WFLitdGk/RxP/gp958xm78=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lwn.net; spf=pass smtp.mailfrom=lwn.net; dkim=pass (2048-bit key) header.d=lwn.net header.i=@lwn.net header.b=OhhgXNji; arc=none smtp.client-ip=45.79.88.28
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lwn.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lwn.net
+DKIM-Filter: OpenDKIM Filter v2.11.0 ms.lwn.net 612AA40AB1
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=lwn.net; s=20201203;
+	t=1750876862; bh=x6s2YijYDaBMGstr0IWTtlUcKWkfuU6d/pRw+UB67B4=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
+	b=OhhgXNjiOqKwgTPfRtK54tO6ou/mdMU9uvW3ky0bHXuSdyjigrtGObpW2hvDfk1xX
+	 gICjrDf3maIfS+dembgrgZqHhOkXN42nzaQP8hFuCg3QVALYQhXefMMPbnIJ0ujMyX
+	 mJNWv5v1O9uTci6IlnT9bn55Gm+VDvzGkQks9hq46rpK3fx0kExHWI737+5GLfPD27
+	 vIxIvUXVvBMmoF4WtyHjzfp9eWYrur05TS/MsKpcuKmj5ASuLzINxy6f/bUeuUc+9K
+	 iGwkelpRc5AsxlQangtdNZk4B2n9MDyFGKqgpQ6FHpVS4W/fKATsuk3L4xY3nycURT
+	 qdr540HZMxs2Q==
+Received: from localhost (c-73-14-55-248.hsd1.co.comcast.net [73.14.55.248])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by ms.lwn.net (Postfix) with ESMTPSA id 612AA40AB1;
+	Wed, 25 Jun 2025 18:41:02 +0000 (UTC)
+From: Jonathan Corbet <corbet@lwn.net>
+To: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>, Linux Doc Mailing
+ List <linux-doc@vger.kernel.org>
+Cc: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>, Mauro Carvalho Chehab
+ <mchehab+huawei@kernel.org>, Akira Yokosawa <akiyks@gmail.com>, Kees Cook
+ <mchehab+huawei@kernel.org>, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] docs: sphinx: add missing SPDX tags
+In-Reply-To: <1a62226c5fe524eb87bdb80b33bc7ec880a68880.1750585188.git.mchehab+huawei@kernel.org>
+References: <1a62226c5fe524eb87bdb80b33bc7ec880a68880.1750585188.git.mchehab+huawei@kernel.org>
+Date: Wed, 25 Jun 2025 12:41:01 -0600
+Message-ID: <871pr7acle.fsf@trenco.lwn.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <SJ1PR11MB6083603821632C25DA5D8EEBFC7BA@SJ1PR11MB6083.namprd11.prod.outlook.com>
+Content-Type: text/plain
 
-On Wed, Jun 25, 2025 at 06:22:57PM +0000, Luck, Tony wrote:
-> > > +	if (count > sizeof(einj_buf))
-> 
-> Why not:
-> 	/* Leave the last character for the NUL terminator */
-> 	if (count > sizeof(einj_buf) - 1)
-> 		return -EINVAL;
-> 
-> here. Then skip the min(...) addition below.
+Mauro Carvalho Chehab <mchehab+huawei@kernel.org> writes:
 
-Yeah.  You're right.  That's a better fix.
+> Several Sphinx extensions and tools are missing SPDX tags.
+> Add them.
+>
+> Signed-off-by: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
+> ---
+>  Documentation/sphinx/cdomain.py           | 1 +
+>  Documentation/sphinx/kernel_include.py    | 1 +
+>  Documentation/sphinx/kerneldoc.py         | 1 +
+>  Documentation/sphinx/kfigure.py           | 1 +
+>  Documentation/sphinx/load_config.py       | 1 +
+>  Documentation/sphinx/min_requirements.txt | 1 +
+>  Documentation/sphinx/parse-headers.pl     | 5 ++++-
+>  Documentation/sphinx/requirements.txt     | 1 +
+>  Documentation/sphinx/rstFlatTable.py      | 1 +
+>  9 files changed, 12 insertions(+), 1 deletion(-)
 
-regards,
-dan carpenter
+I've applied this, but the patch led me to wonder...
 
+> diff --git a/Documentation/sphinx/cdomain.py b/Documentation/sphinx/cdomain.py
+> index e8ea80d4324c..3dc285dc70f5 100644
+> --- a/Documentation/sphinx/cdomain.py
+> +++ b/Documentation/sphinx/cdomain.py
+> @@ -1,4 +1,5 @@
+>  # -*- coding: utf-8; mode: python -*-
+
+Do we really need these lines?  UTF8 should be the default almost
+anywhere, and Emacs understands that a .py file will require Python
+mode...
+
+Thanks,
+
+jon
 
