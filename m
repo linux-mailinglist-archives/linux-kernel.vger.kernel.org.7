@@ -1,112 +1,121 @@
-Return-Path: <linux-kernel+bounces-702495-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-702497-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2EBD1AE8316
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Jun 2025 14:46:40 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 62E2CAE831D
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Jun 2025 14:47:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 139541C23075
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Jun 2025 12:46:46 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0A59B6801E3
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Jun 2025 12:47:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 523E6261573;
-	Wed, 25 Jun 2025 12:46:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9A2212609EC;
+	Wed, 25 Jun 2025 12:47:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="SGFjyBvH"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.13])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="gshbbXz5"
+Received: from mail-pj1-f43.google.com (mail-pj1-f43.google.com [209.85.216.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4DD2E25C711;
-	Wed, 25 Jun 2025 12:46:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.13
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BB28D1AF0BB;
+	Wed, 25 Jun 2025 12:47:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750855566; cv=none; b=dIc48kKNef+rZFS/RUsMH6Vd52XJ+uXAVxec31todKM7UCC0ukiqo3bsxTlb0X1ucY8CuU01ZdHcZlembQqM2Eb17aqQpS88XDES4WG3n5l/6ifiZro6/bXpzIjS/O+oekrDCbqetHTcID+x99rK2viDfGxP67p8Zu4FmC/rRbc=
+	t=1750855671; cv=none; b=EQJrJ0qRD0BkEMaUJA+B5ukqCz03t2deJ48f7fl/x7v9wXxDxYq4DXMG4fXLMUH89e57sX3tR88+1FZo7po0eAy5TtPyxA3rBEHUSYmHH1ekx0dy/PF/VdZGgPRwX+eNTjpeGvo7RODJL0Yes7+lAdb93LWAJba3+GhINQMoqJQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750855566; c=relaxed/simple;
-	bh=H2Q5pv8/n1x+u1urkiz+OyiZd1H1/C8DF5+taITB/dQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=EIU42x3Et68+YdVx5svdmHr8umwZ6JWnBS5xm737PsMTcIPQV3k/eMO/hfsz2kJpVun6Da/Y8vNWaVxan1k6eEVU0DU88YFvZTec4gbarWW7VMx2oCbBb0eSSnvBEh3stpdpNgVCDelLYgPPsccbfJBJ+dY2/9Hj2if89yCK4Xc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=SGFjyBvH; arc=none smtp.client-ip=198.175.65.13
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1750855565; x=1782391565;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=H2Q5pv8/n1x+u1urkiz+OyiZd1H1/C8DF5+taITB/dQ=;
-  b=SGFjyBvHYZyp1+Pj80VuazIyIe4+NXu/RHEYLH8RbCBg8g4gFVuoVl/S
-   NIJAH2OEsCPcaXBJ3LSQNdDvjfHz3/7PbEN/xOwg9WcRMaQUMg2YA1byI
-   EQrVUt/T69x+/501sXGOu2GTHrQ8znO21Nxr42HBI/DwxO1Hkt3VUqWYl
-   cJGxU9jznsFBtd3kZFrPrlnaVGEClAJB99OprKb/NWLExGwZ8cklzgOXo
-   hfDUAb29w4ZFaBRv8J4oa9VWGqqbZ/Ho8/6hWforADfuSzhpjgCMtAfyg
-   mXxzF644MLqnWKKUW5Mp9KqdC/MHLVTxaETz2epQ5COi9EuChMGIjoxid
-   Q==;
-X-CSE-ConnectionGUID: whiPltgcQeSLFtqXb5zUrg==
-X-CSE-MsgGUID: wzyvLOQ+Tfe+93x+GLPy2Q==
-X-IronPort-AV: E=McAfee;i="6800,10657,11474"; a="64183624"
-X-IronPort-AV: E=Sophos;i="6.16,264,1744095600"; 
-   d="scan'208";a="64183624"
-Received: from orviesa010.jf.intel.com ([10.64.159.150])
-  by orvoesa105.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 25 Jun 2025 05:46:04 -0700
-X-CSE-ConnectionGUID: BJ7SMdQuSVmu4Q7VYDrZEw==
-X-CSE-MsgGUID: OM33N+tETeSr9vYH4S1pZg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.16,264,1744095600"; 
-   d="scan'208";a="151629821"
-Received: from smile.fi.intel.com ([10.237.72.52])
-  by orviesa010.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 25 Jun 2025 05:46:01 -0700
-Received: from andy by smile.fi.intel.com with local (Exim 4.98.2)
-	(envelope-from <andriy.shevchenko@linux.intel.com>)
-	id 1uUPVl-00000009lm4-01Fh;
-	Wed, 25 Jun 2025 15:45:57 +0300
-Date: Wed, 25 Jun 2025 15:45:56 +0300
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To: Bartosz Golaszewski <brgl@bgdev.pl>
-Cc: Ludovic Desroches <ludovic.desroches@microchip.com>,
-	Linus Walleij <linus.walleij@linaro.org>,
-	Andy Shevchenko <andy@kernel.org>,
-	Thorsten Scherer <t.scherer@eckelmann.de>,
-	Pengutronix Kernel Team <kernel@pengutronix.de>,
-	Orson Zhai <orsonzhai@gmail.com>,
-	Baolin Wang <baolin.wang@linux.alibaba.com>,
-	Chunyan Zhang <zhang.lyra@gmail.com>,
-	Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-	Alexandre Torgue <alexandre.torgue@foss.st.com>,
-	linux-arm-kernel@lists.infradead.org, linux-gpio@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-stm32@st-md-mailman.stormreply.com,
-	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-Subject: Re: [PATCH 11/12] gpio: tangier: use new GPIO line value setter
- callbacks
-Message-ID: <aFvvhAo9BRFpy7Uy@smile.fi.intel.com>
-References: <20250625-gpiochip-set-rv-gpio-round2-v1-0-bc110a3b52ff@linaro.org>
- <20250625-gpiochip-set-rv-gpio-round2-v1-11-bc110a3b52ff@linaro.org>
+	s=arc-20240116; t=1750855671; c=relaxed/simple;
+	bh=BU3167g77+eBh3FQcZRn67ZUlMzren6rPxnJ6rrLr6s=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=REI3Q9K8jpb9/rZruWP9caCOX8a2LFjd62y7yD4nb5Vo444IW4ZB+g5RQg71eJjxiGKx9YVzCQ2hMw0ayp8ZnbyEj/xn8IToss7kTwT3/UzJanKiAB3ui5A4qHZepbK6xiGdm6K4UBzClDIcuW8a1VkMKWiyhEt9kNBU54l0Au0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=gshbbXz5; arc=none smtp.client-ip=209.85.216.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pj1-f43.google.com with SMTP id 98e67ed59e1d1-31306794b30so828382a91.2;
+        Wed, 25 Jun 2025 05:47:49 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1750855669; x=1751460469; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=xRdtBmMzlAb9QIbZaGxD9UlH4C68HhmhN0SNfJyz9VA=;
+        b=gshbbXz5/SsZ7hQ26jZvnlLorw82vS9epkibt48qKQ+I3QRnqDYp4oAFU6eKP1wYG4
+         Pj9ebSQHVeCcnlQzOdTDUk/I9oCxkQzBa2LVDhbAPJ8zoDL+B0oIERtc4K5J4QSCXNSP
+         tYfeKbVWuC+iRvqCe1LhtNg0ymG0evi4Y/1ZED3iI8Tc9pul3latsoTKJD8ZDT1/1pQB
+         +teY42Upi/JSNFxbD1DZD5LMADrRhnTrIYbNYli1T5Q9Y314YQYzaSf4mJn4MOZ9FJ1o
+         NfuGJHY3etuNnivspCvUDHPL4Gl0qEiiMs7mdVpWbq5suvb3lPiuYeEqh6b7qOTtw7yQ
+         9YBA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1750855669; x=1751460469;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=xRdtBmMzlAb9QIbZaGxD9UlH4C68HhmhN0SNfJyz9VA=;
+        b=cFp46Lb+azDWNMfMSxjoOXG/4i6RQSJAiJHBxN4XmXzDvpbQAXSl1BFOrPxdNrYge9
+         9SP9KqCbLtKNNL+vmS68n+ZPpeAuemRpJwLQc8kz1SvRjDaboprsh14nPq5PZmKW5rm0
+         vVZWHQOrH5ynqTBdrQ8SGYMvR3FjFh3qtrn9NbSLrov/ovcSJ4F1ps2xjvTMDH3eEzKT
+         yls4Iu8l95MVoeC4tFsLstEQKlacyaRGzGzH6KSm693r+myK3k23pd/kQO7L5+3/t4vM
+         85HC/TKobaCwq1ZeoOB5DfdtljLtFfUE8jYEVr/NlOcyvC9uBDXx7arJ3Ncnp+xawH5l
+         kDmQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUa/bjYF/7GmUmESIwvE0J5eZCAg6SH9OSiVa6qsobUq5cHp7KWfpFmXwV/0Csq5pxtJe7BVUUHhEn2peM=@vger.kernel.org, AJvYcCVrUG1Tm24Btu71/h4AfadRnSj4TrWF1C0A/Hvcgj/QzcNyYwLkwDceKzo1G+USS7Ztkj+tjnDt46iSfn7YbQM=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzJNARyqt4rSTkOLcWDvRce9XTdasy/B/QYo75VkcFrqYt40wq2
+	+0YGgvNQH+wT8793XLbPL9N3erGaF91TnwYh2JBoAC/HC6wx0C8lLytfNEN7VyI5ztgMCJCQarA
+	tewwwbGDqqN48e4SgfYeibEKHA8ClSHo=
+X-Gm-Gg: ASbGncthO7D+cDzBJx/ADsJWKqnEqXBvIaLWwijwk1V8vVCgXtBRMRxVeDINYwIGa4I
+	TXSiRguY0V1lKdR2F0+5Z1tV1N555hU92q3dsbNTL+8cmRTZs6ZLQho388d/6rMLhFe0/4joUMv
+	6IUsnO5y65Tuhan27OzZfmZjcewBOhgCIUqV6FY6glAFo=
+X-Google-Smtp-Source: AGHT+IHnvlarZCuv/RCxHiq29Qi7ylrCmEZXswOwHX+FJluU1B6A+ro+JsxQXvsVUnAYNWJueug97Vcpgz4xDNQHbpo=
+X-Received: by 2002:a17:90b:51c6:b0:30a:80bc:ad4 with SMTP id
+ 98e67ed59e1d1-315f25545b6mr1686463a91.0.1750855668951; Wed, 25 Jun 2025
+ 05:47:48 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250625-gpiochip-set-rv-gpio-round2-v1-11-bc110a3b52ff@linaro.org>
-Organization: Intel Finland Oy - BIC 0357606-4 - c/o Alberga Business Park, 6
- krs, Bertel Jungin Aukio 5, 02600 Espoo
+References: <20250623-topics-tyr-drm_mm-v1-1-82fe8104a6f5@collabora.com>
+In-Reply-To: <20250623-topics-tyr-drm_mm-v1-1-82fe8104a6f5@collabora.com>
+From: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
+Date: Wed, 25 Jun 2025 14:47:36 +0200
+X-Gm-Features: Ac12FXyWwIT-f0p09GbrWuQHLM0OEITTFnrLijUbU8qrHeVE1B6UgsCWrUJVsP0
+Message-ID: <CANiq72k07PuSodVgb+LDNw1jZVWhKt1BuYSULfBY8DBH1EJbBA@mail.gmail.com>
+Subject: Re: [PATCH] rust: drm: mm: Add DRM MM Range Allocator abstraction
+To: Daniel Almeida <daniel.almeida@collabora.com>
+Cc: David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>, 
+	Thomas Zimmermann <tzimmermann@suse.de>, Miguel Ojeda <ojeda@kernel.org>, 
+	Alex Gaynor <alex.gaynor@gmail.com>, Boqun Feng <boqun.feng@gmail.com>, 
+	Gary Guo <gary@garyguo.net>, =?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
+	Benno Lossin <lossin@kernel.org>, Andreas Hindborg <a.hindborg@kernel.org>, 
+	Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>, 
+	Danilo Krummrich <dakr@kernel.org>, linux-kernel@vger.kernel.org, 
+	dri-devel@lists.freedesktop.org, rust-for-linux@vger.kernel.org, 
+	Asahi Lina <lina+kernel@asahilina.net>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Wed, Jun 25, 2025 at 12:33:34PM +0200, Bartosz Golaszewski wrote:
-> From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-> 
-> struct gpio_chip now has callbacks for setting line values that return
-> an integer, allowing to indicate failures. Convert the driver to using
-> them.
+On Tue, Jun 24, 2025 at 12:13=E2=80=AFAM Daniel Almeida
+<daniel.almeida@collabora.com> wrote:
+>
+> Signed-off-by: Asahi Lina <lina@asahilina.net>
 
-Acked-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Patches from others also need to be signed off by you as carrier.
 
--- 
-With Best Regards,
-Andy Shevchenko
+> Changes from v0:
 
+I assume you mean the RFC patch from more than 2 years ago, i.e.
 
+    https://lore.kernel.org/rust-for-linux/20230307-rust-drm-v1-7-917ff5bc8=
+0a8@asahilina.net/
+
+Right?
+
+(In general, it is very useful to have a link to the previous version
+in the changelog, especially when it is a very long time ago, when
+titles change, when it is non-obvious in general, etc.).
+
+Thanks!
+
+Cheers,
+Miguel
 
