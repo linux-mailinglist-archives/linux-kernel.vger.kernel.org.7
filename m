@@ -1,117 +1,100 @@
-Return-Path: <linux-kernel+bounces-702191-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-702270-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 21B76AE7F3A
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Jun 2025 12:27:57 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1D522AE803F
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Jun 2025 12:53:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 740B57A72A2
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Jun 2025 10:25:59 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C7A223ACE83
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Jun 2025 10:53:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A9CAA3074A3;
-	Wed, 25 Jun 2025 10:27:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="LP3h28ZG"
-Received: from mail-pl1-f175.google.com (mail-pl1-f175.google.com [209.85.214.175])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B43EB280CE0;
-	Wed, 25 Jun 2025 10:27:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 652BC29E0F4;
+	Wed, 25 Jun 2025 10:50:47 +0000 (UTC)
+Received: from pegase1.c-s.fr (pegase1.c-s.fr [93.17.236.30])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8CC112DAFAB;
+	Wed, 25 Jun 2025 10:50:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=93.17.236.30
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750847233; cv=none; b=Pa11VCd+7J8mN4GpdMdbz3zu1mNmUvev/ao8Nd8vLhOxzpc+hvCsujjvvkB0FqboT8O6rGwyPLYf3HDWVU9hykLRuPAoU7Ffeap8M9JD4FmPxH7Pw44hMSyz8tyj2j2sJg02qwLFCzgaH84/Ma9hzIvJQ9zl9sNbuLFxObpIp1Y=
+	t=1750848647; cv=none; b=ddTGu6/NvOlLdr4TmPlL/OjFNFzizAvWy/hgrSYmiioCCxbkXacctUbwgJv7wefJ+sqUFDK74+RHzDv4b4svQcNeCx4by+A7yZfTf7ZTA9T9kdmAQ8ybJZjo7UErsvY5RzPBfJFi6XBJErSPJx6dfHVpUw5fNVnB4cKPpnk6dRs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750847233; c=relaxed/simple;
-	bh=HSCjCiEHKsROo2fk/Ce1a6UUAjVcLaJv73jMuM0kV+4=;
-	h=From:To:Cc:Subject:Date:Message-Id; b=oPiCZO2YgAnp2SNZTo6oqQiByQ6+D5fh4hyes800rL7H1p/EB6qETP1AgNxlI29rSGPXPMrz+mMaFgueLsf0K3Y2waxPTfBmktBJRRVPfCe3lzHQrWM1VOyqLSuTrIffAxxqczRym+S+K8OCd0SEf/JAkWPO3ss08GhUVGaWZP4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=LP3h28ZG; arc=none smtp.client-ip=209.85.214.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f175.google.com with SMTP id d9443c01a7336-2360ff7ac1bso12488255ad.3;
-        Wed, 25 Jun 2025 03:27:11 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1750847231; x=1751452031; darn=vger.kernel.org;
-        h=message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=zY7fKC/qV7ZHlYsM900r395rGJcUyLQ039J8xew1IFA=;
-        b=LP3h28ZGYVkcW4utc6U0bmY5yN5+kt0Gw85yN2hR8F2s7OatGoiQwg8iILAyAIm6Pz
-         5y4bnKHu21qx3HFvvZYc6Slr/7AcC1tB8N9hvne8lo7ER/RQk2UwcJpFVrv80QhaueNc
-         XahJb0XCDfK/7nGa6iuIIr6dQK93HKEYIfCKarfFujugFxYNtOj3uVr6Z8y4UVTVWrkM
-         46Xr0I3g1fHkH7MAecFltyfJRH1J3olktYUuKipzHvBJNFFGH5IAxq4DX/iJiwSAbg9Z
-         5+VqouXAz34Qzuvr0f5fYF5lGcyTZTIJ1JPJEfkL1ES/MM/enHVLBL2WN3KDG0E6ZZmm
-         Yd5Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1750847231; x=1751452031;
-        h=message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=zY7fKC/qV7ZHlYsM900r395rGJcUyLQ039J8xew1IFA=;
-        b=YzGkfXOsuQMt5DT+tJUF8l3RJkGzSeGVOZnwbUbZwloV8mqCXfHK9D/xRXx0krkuYU
-         5cAGcyJt24/XLLce0Qii+URM6M1hs1x5TO0wue98KxRtZ49dzvYKtyqn6nG55S8fh5DN
-         lSZK8rvYK2H4e1YzkEbex45LNPIOnzbuwP86uj5eZDjsERBog/9fFT7cLQ+CrbM7iB0O
-         n4HIZ8G8wl837ceEbuT9F9atx+JxHbHkNmq38T8rng0NosmlSKw2/2C9WfvmXS/rQft8
-         q9kFGwU2RobSv/dv60yFsFDkEriHYymL4HgTEyOw4zrjKk1HRvssWdYbXYltTg7w6TI3
-         wmAA==
-X-Forwarded-Encrypted: i=1; AJvYcCXsLkhHhiwRC14F4ZdDf0kQFJkYcO8TF14DzILLpREMMo2IYMDqiZ8PlhgCWkTriKbtMhPAOpkwegvWw/k=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwzARBZ6ms2biRZlTMkY4CHi0SN6vUdUIIKBsQXri/l0NZg7yyW
-	C+c6YpX9vnIhpxHd6v5KD8FadfCQwQQROdrsj0EK1mXFmUvAPTuFas56
-X-Gm-Gg: ASbGncsRvQQZUc6T+edR3jF646PkxaL/ZtlCFSXRJjiyC5BBjg5XghgWvKItEyDjFql
-	A8AbmeOjDgJtDOMvZahNGSVj9PHVik1u6k7jaHULR84hnLaA6xHAPJbQWcBRIndrNluin43ZDJi
-	poONkjU7T3RdAzhsggzGRqPxH3TV1Q42NQ/Sn2iNZ4sQRsR254bfwwMJuw1zY5PVQsBpsQ6wftY
-	hBqCntYOc+n6YagRFHRrBMqGDE6Scyx9URbkZ/lBpmbyTA9Dxbl1ozC1un1A/oCzmOR52Bd2ajS
-	18xF/dCjVPJuiqvY/ZQLZdfiLGRhiLHCtGF7l8sYDkcJkPsxWrIzp0XrC6lbFyNxuDrrv6ofqUb
-	0OkrB8HGg
-X-Google-Smtp-Source: AGHT+IFlIjrksnX9+mThUlVZlM9ouOL4FyPUOwuFYKC6Nsq007BT2Fo3tCOGrcfFXd8IRbbqNkRUQQ==
-X-Received: by 2002:a17:903:2304:b0:234:1163:ff99 with SMTP id d9443c01a7336-2382478cecemr47637105ad.43.1750847230907;
-        Wed, 25 Jun 2025 03:27:10 -0700 (PDT)
-Received: from ubuntu.localdomain ([27.213.151.84])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-237d8640c61sm134185795ad.141.2025.06.25.03.27.08
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 25 Jun 2025 03:27:10 -0700 (PDT)
-From: Penglei Jiang <superman.xpt@gmail.com>
-To: axboe@kernel.dk
-Cc: io-uring@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	asml.silence@gmail.com,
-	Penglei Jiang <superman.xpt@gmail.com>
-Subject: [PATCH] io_uring: fix resource leak in io_import_dmabuf()
-Date: Wed, 25 Jun 2025 03:27:03 -0700
-Message-Id: <20250625102703.68336-1-superman.xpt@gmail.com>
-X-Mailer: git-send-email 2.17.1
+	s=arc-20240116; t=1750848647; c=relaxed/simple;
+	bh=ApxE6M1Ke6N9jdaZibKhAIInp2ndrZn6PPTj4Ntr1CE=;
+	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:References:
+	 In-Reply-To:Content-Type; b=WpcAZOZG+HemUiZpAgaEOiGaXKPcHIUMespFFt5ecVd/QRfiS4i4+s151uqtDpFNtRwWUWbFy1K1kW6ygqwsmdqOUIffS4ZZriJMAvEJMGfiPIQi7mcRNZO2Okluww+GkHBeeYz1oaWSHCkpJnoYm3fUBoXYZYev043xyVnV4Ec=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=csgroup.eu; spf=pass smtp.mailfrom=csgroup.eu; arc=none smtp.client-ip=93.17.236.30
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=csgroup.eu
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=csgroup.eu
+Received: from localhost (mailhub3.si.c-s.fr [192.168.12.233])
+	by localhost (Postfix) with ESMTP id 4bRyfz3MTKz9vBt;
+	Wed, 25 Jun 2025 12:27:07 +0200 (CEST)
+X-Virus-Scanned: amavisd-new at c-s.fr
+Received: from pegase1.c-s.fr ([192.168.12.234])
+	by localhost (pegase1.c-s.fr [127.0.0.1]) (amavisd-new, port 10024)
+	with ESMTP id p2o-Y-FdKUAQ; Wed, 25 Jun 2025 12:27:07 +0200 (CEST)
+Received: from messagerie.si.c-s.fr (messagerie.si.c-s.fr [192.168.25.192])
+	by pegase1.c-s.fr (Postfix) with ESMTP id 4bRyfz2RdKz9vBC;
+	Wed, 25 Jun 2025 12:27:07 +0200 (CEST)
+Received: from localhost (localhost [127.0.0.1])
+	by messagerie.si.c-s.fr (Postfix) with ESMTP id 435058B7B7;
+	Wed, 25 Jun 2025 12:27:07 +0200 (CEST)
+X-Virus-Scanned: amavisd-new at c-s.fr
+Received: from messagerie.si.c-s.fr ([127.0.0.1])
+	by localhost (messagerie.si.c-s.fr [127.0.0.1]) (amavisd-new, port 10023)
+	with ESMTP id vvosXbHhLt2e; Wed, 25 Jun 2025 12:27:07 +0200 (CEST)
+Received: from [192.168.235.99] (unknown [192.168.235.99])
+	by messagerie.si.c-s.fr (Postfix) with ESMTP id 0BC418B7A7;
+	Wed, 25 Jun 2025 12:27:04 +0200 (CEST)
+Message-ID: <750b6617-7abf-4adc-b3e6-6194ff10c547@csgroup.eu>
+Date: Wed, 25 Jun 2025 12:27:04 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+From: Christophe Leroy <christophe.leroy@csgroup.eu>
+Subject: Re: [PATCH 2/9] kasan: replace kasan_arch_is_ready with kasan_enabled
+To: Sabyrzhan Tasbolatov <snovitoll@gmail.com>, ryabinin.a.a@gmail.com,
+ glider@google.com, andreyknvl@gmail.com, dvyukov@google.com,
+ vincenzo.frascino@arm.com, catalin.marinas@arm.com, will@kernel.org,
+ chenhuacai@kernel.org, kernel@xen0n.name, maddy@linux.ibm.com,
+ mpe@ellerman.id.au, npiggin@gmail.com, hca@linux.ibm.com, gor@linux.ibm.com,
+ agordeev@linux.ibm.com, borntraeger@linux.ibm.com, svens@linux.ibm.com,
+ richard@nod.at, anton.ivanov@cambridgegreys.com, johannes@sipsolutions.net,
+ dave.hansen@linux.intel.com, luto@kernel.org, peterz@infradead.org,
+ tglx@linutronix.de, mingo@redhat.com, bp@alien8.de, x86@kernel.org,
+ hpa@zytor.com, chris@zankel.net, jcmvbkbc@gmail.com,
+ akpm@linux-foundation.org
+Cc: guoweikang.kernel@gmail.com, geert@linux-m68k.org, rppt@kernel.org,
+ tiwei.btw@antgroup.com, richard.weiyang@gmail.com, benjamin.berg@intel.com,
+ kevin.brodsky@arm.com, kasan-dev@googlegroups.com,
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+ loongarch@lists.linux.dev, linuxppc-dev@lists.ozlabs.org,
+ linux-s390@vger.kernel.org, linux-um@lists.infradead.org, linux-mm@kvack.org
+References: <20250625095224.118679-1-snovitoll@gmail.com>
+ <20250625095224.118679-3-snovitoll@gmail.com>
+Content-Language: fr-FR
+In-Reply-To: <20250625095224.118679-3-snovitoll@gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-Replace the return statement with setting ret = -EINVAL and jumping to
-the err label to ensure resources are released via io_release_dmabuf.
 
-Fixes: a5c98e942457 ("io_uring/zcrx: dmabuf backed zerocopy receive")
-Signed-off-by: Penglei Jiang <superman.xpt@gmail.com>
----
- io_uring/zcrx.c | 6 ++++--
- 1 file changed, 4 insertions(+), 2 deletions(-)
 
-diff --git a/io_uring/zcrx.c b/io_uring/zcrx.c
-index 797247a34cb7..085eeed8cd50 100644
---- a/io_uring/zcrx.c
-+++ b/io_uring/zcrx.c
-@@ -106,8 +106,10 @@ static int io_import_dmabuf(struct io_zcrx_ifq *ifq,
- 	for_each_sgtable_dma_sg(mem->sgt, sg, i)
- 		total_size += sg_dma_len(sg);
- 
--	if (total_size < off + len)
--		return -EINVAL;
-+	if (total_size < off + len) {
-+		ret = -EINVAL;
-+		goto err;
-+	}
- 
- 	mem->dmabuf_offset = off;
- 	mem->size = len;
--- 
-2.17.1
+Le 25/06/2025 à 11:52, Sabyrzhan Tasbolatov a écrit :
+> Replace the existing kasan_arch_is_ready() calls with kasan_enabled().
+> Drop checks where the caller is already under kasan_enabled() condition.
+
+If I understand correctly, it means that KASAN won't work anymore 
+between patch 2 and 9, because until the arch calls kasan_init_generic() 
+kasan_enabled() will return false.
+
+The transition should be smooth and your series should remain bisectable.
+
+Or am I missing something ?
+
+Christophe
 
 
