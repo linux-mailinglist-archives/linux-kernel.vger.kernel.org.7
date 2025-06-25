@@ -1,133 +1,110 @@
-Return-Path: <linux-kernel+bounces-702449-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-702451-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 904F4AE8298
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Jun 2025 14:23:06 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4DD42AE82A2
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Jun 2025 14:24:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 239791BC1481
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Jun 2025 12:23:22 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6A646162B94
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Jun 2025 12:24:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D0A5B25C815;
-	Wed, 25 Jun 2025 12:22:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7E8BF25E452;
+	Wed, 25 Jun 2025 12:24:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="CCkUBFo0"
-Received: from mail-ed1-f49.google.com (mail-ed1-f49.google.com [209.85.208.49])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=sipsolutions.net header.i=@sipsolutions.net header.b="deQNk4HU"
+Received: from sipsolutions.net (s3.sipsolutions.net [168.119.38.16])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 726AD25BF19
-	for <linux-kernel@vger.kernel.org>; Wed, 25 Jun 2025 12:22:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 803CE25BF19;
+	Wed, 25 Jun 2025 12:24:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=168.119.38.16
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750854177; cv=none; b=XpzpbHCPOGoFPAIhd5/kM2ymIgP4R7/zYq3EzlgX+JDQtvQn68yWs4Vk5iKTX73EN/Aa8gBe17ZUN9olFXd4ERiYMPRY15Db3/+z2dTVJfRH/89W/IOWB6o9P4YCNY/taqsdLdTXH1P3hYPfSML47Uet6CfqB/+Gms6OC4KUW0E=
+	t=1750854264; cv=none; b=kXc9irVM6NKaS+UkxUZOw06xSql4osFQYkXL2csha/Ifc7/hP7VsT1OqgNq7aHpCZoXAfO3fbOSfjQrkrP4lhI3NbOW45ISXiKZC6YnfRmkt0XE+M4bD2Q/Hs4Ac86k0asJANDwOWsLVlZ3ocxYrKZVWj+3Ry5c3VdLEUUa/iEY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750854177; c=relaxed/simple;
-	bh=PsQfHCEp6q5tQuX0x3zpsjWToWnh6oGziT5EQjTRAgU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=h0ZRBuwl9lnRRCb3W5CptLfwzrbZn/Ymn7Uyu0ZZxFd8z5zaD9XsVIYiqODksZaLu0fOCyaAufCsUQhSe1knLm+xGR4h5LR99qOBPaGWGYuwZvlukrXf1/OPoU/oHyIyXXxmgeu+3MfxsFLdfq3xaYvffNUQnu5BpnTz3t348tI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=CCkUBFo0; arc=none smtp.client-ip=209.85.208.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-ed1-f49.google.com with SMTP id 4fb4d7f45d1cf-60c4521ae2cso1874276a12.0
-        for <linux-kernel@vger.kernel.org>; Wed, 25 Jun 2025 05:22:55 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1750854174; x=1751458974; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=OiG8sr1KaclHSbf6egC7naRu8LsxzyFDngHY6EqehU8=;
-        b=CCkUBFo08RV9mwv/My2zY+JomS+EdxLdXYwQt3AO5S+Mx9uf56OOgAiI3Rf6IwyQcB
-         WI5ubRZYNZ5SA0y14frj3SWRacmOfg3HGgEy+KKMn6lOjGiOdkpfICO/nDVSXR5NAiID
-         QQl860zh0dezLjQkD+yuQkQsmnY8zN8riyIqepLb8S/liGcTp5qYvcLOB8KvTFodTz0y
-         BVR1dxydusZkX8fTWF1ThqQtCt0PqD+ZliEumVkBE9N4auAvyE65wRS5Bcv8CfaaZKiL
-         LOL+NWxOl2ybxLtMFnBwbworXLYk7lHKNSrRcqcYGoH+cykazwPvfS7amKXRVcmVWcHh
-         Xr+g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1750854174; x=1751458974;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=OiG8sr1KaclHSbf6egC7naRu8LsxzyFDngHY6EqehU8=;
-        b=qN0mCmYwMTve1LUH0gr37yXc7Y9Kj012JyFtxE93Wzznq0sk6FbjFGJrku9oN+9sxJ
-         jY2tdRK5HJDFVW1QWP4fi6sVn4PbhHKNbzz9GCUF4+ru9Ah06LNitPXR62Yoeri5rhd3
-         lFo7gQ383aXyev3WEEutsH1IMwmPJ04EXw1qHOQxpxSW7wuW/hQ/SCUBODWAY96Lt6NW
-         A2oZVbuoTdXQBtBnkhbPmw4lDpTSPBc2zkXjIccyF2QYbQV3AVPvtUnw1MVmuBopmRl9
-         Lc9rExSCXAnu6HnZcxqa8hntrgnArqtfprJi6cbup9IL78VEjUPBogUor0tIvFZo9gd3
-         TWew==
-X-Gm-Message-State: AOJu0Yx+nlw2oM09rCbozCwy5WD9qcdbI5iUMWko2m1oCNnFgASpNal5
-	fFg3qLb7JjxACcgvIjVGDCBaSkdxZUt1CPcme0grHc5LKAMgmsRJcLUDpKVGLk8+2Q==
-X-Gm-Gg: ASbGncsnNPxu2ZHiP6EfNT3tAqvu8IOLafQ62ThwwSJHO+zg9rxv+cVOj3gbU+E189l
-	mfOUkkD9qfOLuhOrvK9N2n4H0JgWmnpsTxmwk8gyYVgsSjn0tnHzsMXYU5F6UzY/IdCJjmcv7yr
-	bmWz5pqEMrN24mDMjri616FB+RvUpvG0i9hENdJaTGjIXnBMBhDfLtRwngkFIG5o+JT7+yO8Hf9
-	R+zUqKtgnW2O9LFRAKsZJ14aEGkrCvYipm6P4C30GfHDPVrkwTs/Dp8UVX7YP+1UdV7HyiLg7ik
-	QzljWDO9qHtZfGFFvMoadIUNN7YI5WXkjS1LsLKGqJbFeyYYU/9fBix7mEC/kkihl0Fmx7EpPfW
-	S1AyJR0gLdwhWTzyxFtIV
-X-Google-Smtp-Source: AGHT+IGcp1aoFc2EzYV/tl3RR8TA0Ug87fzOHVR52rNGNEdbDQoI9r/5HqWjJE0hOyK5C5jflubayA==
-X-Received: by 2002:a05:6402:27d2:b0:607:ea0c:65b2 with SMTP id 4fb4d7f45d1cf-60c4de78e8amr1953498a12.31.1750854173425;
-        Wed, 25 Jun 2025 05:22:53 -0700 (PDT)
-Received: from google.com (8.239.204.35.bc.googleusercontent.com. [35.204.239.8])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-60c2f4681a8sm2391073a12.38.2025.06.25.05.22.50
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 25 Jun 2025 05:22:51 -0700 (PDT)
-Date: Wed, 25 Jun 2025 12:22:45 +0000
-From: Quentin Perret <qperret@google.com>
-To: Mostafa Saleh <smostafa@google.com>
-Cc: linux-kernel@vger.kernel.org, kvmarm@lists.linux.dev,
-	linux-arm-kernel@lists.infradead.org, maz@kernel.org,
-	oliver.upton@linux.dev, joey.gouly@arm.com, suzuki.poulose@arm.com,
-	yuzenghui@huawei.com, catalin.marinas@arm.com, will@kernel.org
-Subject: Re: [PATCH] KVM: arm64: Fix error path in init_hyp_mode()
-Message-ID: <aFvqFdwNYI0-3zWY@google.com>
-References: <20250625113301.580253-1-smostafa@google.com>
+	s=arc-20240116; t=1750854264; c=relaxed/simple;
+	bh=SJ5NkjC+cOiMPwKXMdsR+3xgXJFhGnL3/wL1U2zUcWg=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=CbwLjtuX35yZQLJ6KpL4NsHxJzIMsBmMQO+VDJf6YjJft4xC18ofFqeNPGZq1j2q3Ts12JJT6Gml37+aG6TX7aOXJR1o3D1vQy6Utnmcs6tGbMLx0Mhoej561Sk6o/5G+q2PnbYlJaQYcIaDrY7bXKu0IAnNYs7/nRcyr2uh+sw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sipsolutions.net; spf=pass smtp.mailfrom=sipsolutions.net; dkim=pass (2048-bit key) header.d=sipsolutions.net header.i=@sipsolutions.net header.b=deQNk4HU; arc=none smtp.client-ip=168.119.38.16
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sipsolutions.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sipsolutions.net
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=sipsolutions.net; s=mail; h=MIME-Version:Content-Transfer-Encoding:
+	Content-Type:References:In-Reply-To:Date:Cc:To:From:Subject:Message-ID:Sender
+	:Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:Resent-To:
+	Resent-Cc:Resent-Message-ID; bh=SJ5NkjC+cOiMPwKXMdsR+3xgXJFhGnL3/wL1U2zUcWg=;
+	t=1750854263; x=1752063863; b=deQNk4HU4w9n6Q8YM9nROna5D6UmUkojSYkeC7SyJS9vG2k
+	m5YaFzxq+paAWGwrpk0U0BrBUtLZpwVtrXmOqmQz51P3vib/jGV2ZFInyuQOO9FgwS3hMDpVgDDwb
+	wYRiDsDXzQXlaxHt8zYDGpEeiow5sPWKHgQYmRA3Cl4CCSGWzwa+h+R2XuhElJNpcUtFA89xYiyUj
+	50DNayGV1i57mfzR1A4uQulxN4Wc45SczI2y4vEHTCuHxEjAckeXEGFgXkjIDF3cDYxjKqAyscjJs
+	GDOvT2np43KU62jyCcgbth7wtOb8uRYRhtVsO+kwjUkpkCSUyb20jLbplEDuPvYg==;
+Received: by sipsolutions.net with esmtpsa (TLS1.3:ECDHE_X25519__RSA_PSS_RSAE_SHA256__AES_256_GCM:256)
+	(Exim 4.98.2)
+	(envelope-from <johannes@sipsolutions.net>)
+	id 1uUPAV-00000009xvR-1M4X;
+	Wed, 25 Jun 2025 14:23:59 +0200
+Message-ID: <81a8b60be5b99ecd9b322d188738016376aff4aa.camel@sipsolutions.net>
+Subject: Re: [PATCH 2/9] kasan: replace kasan_arch_is_ready with
+ kasan_enabled
+From: Johannes Berg <johannes@sipsolutions.net>
+To: Christophe Leroy <christophe.leroy@csgroup.eu>, Sabyrzhan Tasbolatov	
+ <snovitoll@gmail.com>, ryabinin.a.a@gmail.com, glider@google.com, 
+	andreyknvl@gmail.com, dvyukov@google.com, vincenzo.frascino@arm.com, 
+	catalin.marinas@arm.com, will@kernel.org, chenhuacai@kernel.org,
+ kernel@xen0n.name, 	maddy@linux.ibm.com, mpe@ellerman.id.au,
+ npiggin@gmail.com, hca@linux.ibm.com, 	gor@linux.ibm.com,
+ agordeev@linux.ibm.com, borntraeger@linux.ibm.com, 	svens@linux.ibm.com,
+ richard@nod.at, anton.ivanov@cambridgegreys.com, 
+	dave.hansen@linux.intel.com, luto@kernel.org, peterz@infradead.org, 
+	tglx@linutronix.de, mingo@redhat.com, bp@alien8.de, x86@kernel.org,
+ hpa@zytor.com, 	chris@zankel.net, jcmvbkbc@gmail.com,
+ akpm@linux-foundation.org
+Cc: guoweikang.kernel@gmail.com, geert@linux-m68k.org, rppt@kernel.org, 
+	tiwei.btw@antgroup.com, richard.weiyang@gmail.com, benjamin.berg@intel.com,
+ 	kevin.brodsky@arm.com, kasan-dev@googlegroups.com, 
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
+	loongarch@lists.linux.dev, linuxppc-dev@lists.ozlabs.org, 
+	linux-s390@vger.kernel.org, linux-um@lists.infradead.org, linux-mm@kvack.org
+Date: Wed, 25 Jun 2025 14:23:57 +0200
+In-Reply-To: <750b6617-7abf-4adc-b3e6-6194ff10c547@csgroup.eu>
+References: <20250625095224.118679-1-snovitoll@gmail.com>
+	 <20250625095224.118679-3-snovitoll@gmail.com>
+	 <750b6617-7abf-4adc-b3e6-6194ff10c547@csgroup.eu>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.56.2 (3.56.2-1.fc42) 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250625113301.580253-1-smostafa@google.com>
+X-malware-bazaar: not-scanned
 
-On Wednesday 25 Jun 2025 at 11:33:01 (+0000), Mostafa Saleh wrote:
-> diff --git a/arch/arm64/kvm/arm.c b/arch/arm64/kvm/arm.c
-> index 38a91bb5d4c7..5bb36c3b06b5 100644
-> --- a/arch/arm64/kvm/arm.c
-> +++ b/arch/arm64/kvm/arm.c
-> @@ -2344,15 +2344,22 @@ static void __init teardown_hyp_mode(void)
->  	int cpu;
->  
->  	free_hyp_pgds();
-> +	/* Order matches the order of initialization init_hyp_mode() */
->  	for_each_possible_cpu(cpu) {
-> +		if (!per_cpu(kvm_arm_hyp_stack_base, cpu))
-> +			continue;
->  		free_pages(per_cpu(kvm_arm_hyp_stack_base, cpu), NVHE_STACK_SHIFT - PAGE_SHIFT);
-> +
-> +		if (!kvm_nvhe_sym(kvm_arm_hyp_percpu_base)[cpu])
-> +			continue;
->  		free_pages(kvm_nvhe_sym(kvm_arm_hyp_percpu_base)[cpu], nvhe_percpu_order());
->  
->  		if (free_sve) {
->  			struct cpu_sve_state *sve_state;
->  
->  			sve_state = per_cpu_ptr_nvhe_sym(kvm_host_data, cpu)->sve_state;
-> -			free_pages((unsigned long) sve_state, pkvm_host_sve_state_order());
-> +			if (sve_state)
-> +				free_pages((unsigned long) sve_state, pkvm_host_sve_state_order());
+On Wed, 2025-06-25 at 12:27 +0200, Christophe Leroy wrote:
+>=20
+> Le 25/06/2025 =C3=A0 11:52, Sabyrzhan Tasbolatov a =C3=A9crit=C2=A0:
+> > Replace the existing kasan_arch_is_ready() calls with kasan_enabled().
+> > Drop checks where the caller is already under kasan_enabled() condition=
+.
+>=20
+> If I understand correctly, it means that KASAN won't work anymore=20
+> between patch 2 and 9, because until the arch calls kasan_init_generic()=
+=20
+> kasan_enabled() will return false.
+>=20
+> The transition should be smooth and your series should remain bisectable.
+>=20
+> Or am I missing something ?
+>=20
 
-I'm a bit confused by these extra checks -- free_pages() should be safe
-to call on NULL?
+Seems right to me, it won't work for architectures that define
+kasan_arch_is_ready themselves I think?
 
-IIUC correctly, the actual issue is that per_cpu_ptr_nvhe_sym() will
-dereference the per-cpu pages to find the sve state, which is entirely
-bogus if the per-cpu pages have not been allocated. Now, looking at
-this, it looks like the bigger problem is that we literally free the
-per-cpu pages right before the sve state...
+But since they have to literally #define it, could #ifdef on that
+temporarily?
 
-Should we at least change the freeing order here?
-
-Thanks,
-Quentin
+johannes
 
