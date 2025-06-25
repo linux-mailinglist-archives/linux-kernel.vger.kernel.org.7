@@ -1,332 +1,189 @@
-Return-Path: <linux-kernel+bounces-702278-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-702280-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id C34D4AE805C
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Jun 2025 12:56:37 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 19DDCAE8064
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Jun 2025 12:57:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D0E383A393A
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Jun 2025 10:56:00 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 11DC93B1DC9
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Jun 2025 10:56:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4FC022D6612;
-	Wed, 25 Jun 2025 10:54:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ABCC42BDC2C;
+	Wed, 25 Jun 2025 10:55:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="KuvgTef4"
-Received: from mail-yb1-f181.google.com (mail-yb1-f181.google.com [209.85.219.181])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="JtmZcM8g"
+Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8E2882D2389;
-	Wed, 25 Jun 2025 10:54:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 29BA78F5B;
+	Wed, 25 Jun 2025 10:55:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750848878; cv=none; b=tQ9P5I9SnWGeNp2GAaejB+mTMf/X3VxA9ZuUUKFXXk1xyYIjfghvOsZs/5bL34B7FCdtIuGtoe7SHJbE0X1sMIm5lDKX4bRx2ysY8IvpVyv0SBkDFCxTFhBIp7icDdD4CzwIAScfzkUA7zMwN3O/BTslKlc6bkH/P+25uBRl0zI=
+	t=1750848940; cv=none; b=EjymI1g9KXQZLhoHtDgEzjHVS7rLtn58hwNf61RdHh5vBsMYuIIGkoTpkMOB3ie0jjTJTaGKIvtChYv2qGtcIe8dtCqCFVVETZW/D/M3jjJdZXznxgQv1PYmVeq02i243WYP4OlTQ5YAT5qFf9it66dt0jaSDfO7aGnZvWQ2Q2A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750848878; c=relaxed/simple;
-	bh=1pw+uqroMWF349QulkbaV2L+xoGUQiIDrgQhwjrbgLU=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=S6DVZ1tgLPatQ9bmvdRHVOAsyUykXc9I/29LzoUHWA7lPG4crMqXQNupyOHxTlB8SWzMaTQcOpYlaCEEmpueJMb2dcN42x6ssmnHZgh+dxrxhRG3uMF4BG1iWZx2NqX4tTCY9lPR4qBaWIC5DIalE+gXul/qy1xit94LRZLNyE8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=KuvgTef4; arc=none smtp.client-ip=209.85.219.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-yb1-f181.google.com with SMTP id 3f1490d57ef6-e7311e66a8eso5606420276.2;
-        Wed, 25 Jun 2025 03:54:36 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1750848875; x=1751453675; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=cilMFj2BlrrsofpUWF0eRD8610fy8kvLozLNgBSSemY=;
-        b=KuvgTef4Sem4pyBuzeuGbV+ddyxuQOWsDiMlUbXu0HUcQdy7OG+B9YuRDLn0pcH8bf
-         J+OQE+Jqsgkp4UQOD7xVN1eUFqMDQgu/ta1Cjr1vhdtZ5oli3CXf11+OLSM+bSYFTNoI
-         4hUAMLRHVYWHKWjyjzuF67esK7aq75b3hOXYwnIftGlTC/ATj01nUoOhCXHRRClcXzuj
-         oIKzAWLmoWA3E/R6Aju9NE6WpyzVtBi26Zw4l6QvCw+CTGFxCksyEJlbF+/YZ98ljJ7w
-         VR+fXv0nYXJqkFptBOcpSygc+ObtkqDPt2cHZlnmAZPVPNJK4jIsHOulO5xRuJExsXRi
-         qvKA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1750848875; x=1751453675;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=cilMFj2BlrrsofpUWF0eRD8610fy8kvLozLNgBSSemY=;
-        b=mrKDqHIVdVkR1FkbLM3+r3YyEsLzm7t0WcIzq3YQUiro34Pcwtc8kjTcYhQm5Wv/Sl
-         uQtrhadkf4Qtf/ZX34S2htkniE4tBBFUZQJTbFjMY8usovId7t3BKRETvG7gh5ztPKPN
-         LcF+yMcLzrnljCT0+MBCgyOPGNUocLhc5IP5SvQRwbhECW3/33QjAYJ3Ozi070zKP3KX
-         z+Z6YvOVY4pFdgZknvbrp+43qBrYRlTgIbt/B2npj7vGSEO/lrMfBHBEEWBLy1fjVIce
-         wk0YdTg49Q0UCavfRDHGInp1G0jqXfMB0spnUbWD2CktMNCfMXsLuJpPM5MAZ/J0EK1K
-         w7cQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVBHJ85O+xBvW6pu0EaTOOu0LeuVZuJHtrOeNu43R2eXKhQnl8RG2db+rrS0csM71NAmoDyi6/Qg+Nv@vger.kernel.org, AJvYcCVBvi1OEgetd9M/VsgcBBYVrZNCJYomCOc2QnJJiyJEoy7lbhB00wt83R/MY8xCfhkn2lxJfeSZm9k=@vger.kernel.org, AJvYcCVKsHjuf3Z8ZzdqV/EW2npVJGbn2Cnmd9JaNhmksHM0cpz4jN2lScn2Y0kJA0JWmlP/quJtz6vGCrp4BfN6xEw=@vger.kernel.org, AJvYcCWdSu82R3PJ0L1TAPIaYqKeHI2DG/8D+Jh81jCgB07grxXzA6JdzZT80aoRZmDUq/XJaSWSQlgBHHmh@vger.kernel.org, AJvYcCX1cUepK3vR5s+CCUTk1H8hQHO2ffqh9eBOAiLGO2D94K1YJn9pKEOTPUUtUyWTAmXhL/Q3yQGXzFcH/YQ=@vger.kernel.org, AJvYcCXc6fPhNXDlCgYaHuq+5xWuOLH8GEHT0D5xHZZlkbMY0J8oMfIhKRXS/Sz2UbN4YGB7hsXWknGVtm1GMA==@vger.kernel.org, AJvYcCXfjJnLQCos9DuPaQY/YUAHQaACR2hDK8lG8X8TQopkmXaFBWcLKUTb/nGPw7XjQCvWI90Jek5exmnn@vger.kernel.org, AJvYcCXhlGAlMvYy6+r9lSEqT0gNNqw0wYGidkJv6qE5CtMxOS9uTSE8JTrv1NT9kTEAtFxNfq/PXVZv@vger.kernel.org, AJvYcCXihyNHvvrBHw59ROpM7XLn3/0YGIiBng8igjW4NHONyaiTbo02vN4Wo0C7iTMY3/WPMU/jI8PxImWk2wXD@vger.kernel.org
-X-Gm-Message-State: AOJu0YxWrtGAwjcIWGMqVnCysk3Twd6Ljgq0dudpCSmfE31rfyTKL8R/
-	TIq2EMKnNP0PHieep4ERASw7d+nxQ5weHau86YWTTFXVxktV/jixkEo0fMciPy50j0zGjHiPvrU
-	waFrG2IaUXznyPMj4A9SLD0AWM8FaSBs=
-X-Gm-Gg: ASbGncvkLqNfuPrPaDIoquE4xF72u35Cjqtvwwx01zHy8p3wiprykwkOKUbLRpeU0GE
-	x5eFoEFx5Qf0Q/YnHJUaQXC8c/+Ktsb9EnnBQJsyGnfOsOVUcrxbbypbAfIH1/Gdz4R09t7a7cc
-	0Zo+Hoi9/uFz1jwTHI2Bk4utfbv2njMkgWWUQ+U2mu7uauHjehnZN39orJ0S5qruKJoXw4ZkmAA
-	XDh8A==
-X-Google-Smtp-Source: AGHT+IEu+R//w0LIcJJxZLM8KxbNtqpVsxRk+v2CqE6RW+SjfC+UBYI6SfhQaDEj74VCCVaHizUOSlRb/0YomJcnvOo=
-X-Received: by 2002:a05:690c:6384:b0:709:197d:5d3c with SMTP id
- 00721157ae682-71406cd24f9mr36191427b3.11.1750848875500; Wed, 25 Jun 2025
- 03:54:35 -0700 (PDT)
+	s=arc-20240116; t=1750848940; c=relaxed/simple;
+	bh=Zkdx4N98+NMi7SrLDt480xNdU+Tzr4w2vmisc6vX5As=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=H+UV6i4QPl35YrSgrAd0yqK61IO6fa7AbVFEDEGHn2PIYItPRsJAWmb6j0sgVgMzvi4K3RVgafm5TEPCJgGbVNHzLDFNG4BDjkykLQGmm5si/hwxD3NKx2+BU1X7h9jZ7VO9398ISAAV8jpVAgyGgi9UU/HvYBx79W7dVaV+lVM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=JtmZcM8g; arc=none smtp.client-ip=148.163.158.5
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0356516.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 55P9YYEC012677;
+	Wed, 25 Jun 2025 10:55:14 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
+	:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=pp1; bh=5pvIga
+	Ado15YeKemezHuojdrBVvkoL3iZSzPinkaKec=; b=JtmZcM8g55nPhs59guFTQV
+	rsi4pWs4FXqTw6EVqkXfM2OAFBMmxKILKw34k20z4MZbw6mDV+pe2vme01BStHye
+	bcw33gaTqDOgAFDoRTOysXwV/lI3d1H4ZwhfCgwYEMi3gkbpNr63JuP+T+C6KAWs
+	4EQsw/eO+iR+xsZnEVxRzNK5jOVO08ZDbRnkB0kpUwz1RmYPZAlvf/i0RQCnCiCR
+	NgPhXovva6KVgrMI1yXcZ3mLX2wbR5W/r6b164nmucj1QCZfY0SaFJaq5J0ekJlM
+	y7e1wrnHflQCOpYJZ+YaY/T6chiArg8YWxlyeigB2se6N2UzDWI9ItfZfnx509ZA
+	==
+Received: from pps.reinject (localhost [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 47dj5txt34-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 25 Jun 2025 10:55:13 +0000 (GMT)
+Received: from m0356516.ppops.net (m0356516.ppops.net [127.0.0.1])
+	by pps.reinject (8.18.0.8/8.18.0.8) with ESMTP id 55PAqHIO011226;
+	Wed, 25 Jun 2025 10:55:13 GMT
+Received: from ppma23.wdc07v.mail.ibm.com (5d.69.3da9.ip4.static.sl-reverse.com [169.61.105.93])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 47dj5txt2y-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 25 Jun 2025 10:55:13 +0000 (GMT)
+Received: from pps.filterd (ppma23.wdc07v.mail.ibm.com [127.0.0.1])
+	by ppma23.wdc07v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 55PArp5r002908;
+	Wed, 25 Jun 2025 10:55:12 GMT
+Received: from smtprelay02.fra02v.mail.ibm.com ([9.218.2.226])
+	by ppma23.wdc07v.mail.ibm.com (PPS) with ESMTPS id 47e8jm8st8-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 25 Jun 2025 10:55:12 +0000
+Received: from smtpav01.fra02v.mail.ibm.com (smtpav01.fra02v.mail.ibm.com [10.20.54.100])
+	by smtprelay02.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 55PAtAg029556996
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Wed, 25 Jun 2025 10:55:10 GMT
+Received: from smtpav01.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 6CAE12004D;
+	Wed, 25 Jun 2025 10:55:10 +0000 (GMT)
+Received: from smtpav01.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id CB73E20043;
+	Wed, 25 Jun 2025 10:55:07 +0000 (GMT)
+Received: from [9.109.241.85] (unknown [9.109.241.85])
+	by smtpav01.fra02v.mail.ibm.com (Postfix) with ESMTP;
+	Wed, 25 Jun 2025 10:55:07 +0000 (GMT)
+Message-ID: <078c1b43-4574-4b11-b474-f37a139af62d@linux.ibm.com>
+Date: Wed, 25 Jun 2025 16:25:06 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250612140041.GF381401@google.com> <CAOoeyxVvZiD18qbGd5oUnqLNETKw50fJBjJO3vR50kon_a5_kA@mail.gmail.com>
- <20250612152313.GP381401@google.com> <CAOoeyxV-E_HQOBu0Pzfy0b0yJ2qbrW_C8pATCTWE4+PXqvHL6g@mail.gmail.com>
- <20250613131133.GR381401@google.com> <CAOoeyxXftk9QX_REgeQhuXSc9rEguzXkKVKDQdawU=NzGbo9oA@mail.gmail.com>
- <20250619115345.GL587864@google.com> <CAOoeyxXSTeypv2qQjcK1cSPtjch=gJGYzqoMsLQ-LJZ8Kwgd=w@mail.gmail.com>
- <20250619152814.GK795775@google.com> <CAOoeyxU7eQneBuxbBqepta29q_OHPzrkN4SKmj6RX72L3Euw5A@mail.gmail.com>
- <20250625090133.GP795775@google.com>
-In-Reply-To: <20250625090133.GP795775@google.com>
-From: Ming Yu <a0282524688@gmail.com>
-Date: Wed, 25 Jun 2025 18:54:20 +0800
-X-Gm-Features: Ac12FXyG2HoWaId__CawR23MZ8rb9Qa6uz_UMfhCNFjrCMpzymOvuItjHHgDfoE
-Message-ID: <CAOoeyxWoxC-n3JjjFe8Ruq_VydXk=jev=mopKfL5B7gsaSg=Ag@mail.gmail.com>
-Subject: Re: [PATCH v12 1/7] mfd: Add core driver for Nuvoton NCT6694
-To: Lee Jones <lee@kernel.org>
-Cc: linus.walleij@linaro.org, brgl@bgdev.pl, andi.shyti@kernel.org, 
-	mkl@pengutronix.de, mailhol.vincent@wanadoo.fr, andrew+netdev@lunn.ch, 
-	davem@davemloft.net, edumazet@google.com, kuba@kernel.org, pabeni@redhat.com, 
-	wim@linux-watchdog.org, linux@roeck-us.net, jdelvare@suse.com, 
-	alexandre.belloni@bootlin.com, linux-kernel@vger.kernel.org, 
-	linux-gpio@vger.kernel.org, linux-i2c@vger.kernel.org, 
-	linux-can@vger.kernel.org, netdev@vger.kernel.org, 
-	linux-watchdog@vger.kernel.org, linux-hwmon@vger.kernel.org, 
-	linux-rtc@vger.kernel.org, linux-usb@vger.kernel.org, 
-	Ming Yu <tmyu0@nuvoton.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 6/6] pci/hotplug/pnv_php: Enable third attention
+ indicator
+To: Lukas Wunner <lukas@wunner.de>
+Cc: linuxppc-dev@lists.ozlabs.org,
+        Timothy Pearson <tpearson@raptorengineering.com>,
+        Shawn Anastasio <sanastasio@raptorengineering.com>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        "\"linux-pci\"," <linux-pci@vger.kernel.org>,
+        Madhavan Srinivasan <maddy@linux.ibm.com>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        christophe leroy <christophe.leroy@csgroup.eu>,
+        Naveen N Rao <naveen@kernel.org>,
+        "\"Bjorn Helgaas\"," <bhelgaas@google.com>
+References: <20250618190146.GA1213349@bhelgaas>
+ <1469323476.1312174.1750293474949.JavaMail.zimbra@raptorengineeringinc.com>
+ <19689b53-ac23-4b48-97c7-b26f360a7b75@linux.ibm.com>
+ <aFaCfYre9N52ARWH@wunner.de>
+ <f13a2d2b-af52-4934-b4fa-66bc1e5ece32@linux.ibm.com>
+ <aFuuYq0m0hDAdPRF@wunner.de>
+Content-Language: en-US
+From: Krishna Kumar <krishnak@linux.ibm.com>
+In-Reply-To: <aFuuYq0m0hDAdPRF@wunner.de>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-TM-AS-GCONF: 00
+X-Proofpoint-ORIG-GUID: UVMRLJIp6nSttSK4sEd_QX8wv_4g4aZE
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNjI1MDA4MSBTYWx0ZWRfX93uHIVC08qIZ zDSS78SGvIrATgrTrST909ZZiczGHqfZya585/kQLhm61ZiZsV6c9gJHmspkQjAOOZ79f2CBx6x e5tL+4QHcqFLyIMg/RXsVwXFzNjjVOpBG3y/F2Wzd2dmmmWTluDDcmRW9w12VEBHbP3EmpVNAZk
+ hoZH1fknP9AhFjHTL0s1w3unJbCdxNY8G0UXLofmk6RUaRxQawd9Oz950Bepo1xxFWQR7XKmvUp pxTUozMTqwljPfSz7BCNOPANc88exVf1xFp90C4WuKqhUKfHcPkT2wh5SG8APpDARFH4/hnSowx fR45VlOavuNAc8RgukU0AIPz258JYrIwjJ46t5rtELsSEbmYY/yYgo+CCk9WtBs5yVMZ/OESGa9
+ /eS/Knm2jWLWexJs5KRCMXetMwnWDj1KMu3/0Ek0RunxGz9rIrNvYA6nkHV2hCBntf0vkoYg
+X-Authority-Analysis: v=2.4 cv=MshS63ae c=1 sm=1 tr=0 ts=685bd591 cx=c_pps a=3Bg1Hr4SwmMryq2xdFQyZA==:117 a=3Bg1Hr4SwmMryq2xdFQyZA==:17 a=IkcTkHD0fZMA:10 a=6IFa9wvqVegA:10 a=-dPevh-D5Ufp4ETwuQAA:9 a=QEXdDO2ut3YA:10
+X-Proofpoint-GUID: WqtxR-q0R8Z9YnxnNh7wpkSOl1In-mR0
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.7,FMLib:17.12.80.40
+ definitions=2025-06-25_03,2025-06-23_07,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxscore=0 bulkscore=0
+ lowpriorityscore=0 spamscore=0 mlxlogscore=933 impostorscore=0
+ clxscore=1015 phishscore=0 malwarescore=0 suspectscore=0 adultscore=0
+ priorityscore=1501 classifier=spam authscore=0 authtc=n/a authcc=
+ route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2505280000
+ definitions=main-2506250081
 
-Dear Greg and Lee,
 
-Thank you for your comments.
-I've reviewed your suggestions, but would appreciate your feedback on
-a few remaining points.
-
-Lee Jones <lee@kernel.org> =E6=96=BC 2025=E5=B9=B46=E6=9C=8825=E6=97=A5 =E9=
-=80=B1=E4=B8=89 =E4=B8=8B=E5=8D=885:01=E5=AF=AB=E9=81=93=EF=BC=9A
+On 6/25/25 1:38 PM, Lukas Wunner wrote:
+> On Wed, Jun 25, 2025 at 09:38:19AM +0530, Krishna Kumar wrote:
+>> On 6/21/25 3:29 PM, Lukas Wunner wrote:
+>>> On Fri, Jun 20, 2025 at 02:56:51PM +0530, Krishna Kumar wrote:
+>>>> 5. If point 3 and 4 does not solve the problem, then only we should
+>>>> move to pciehp.c. But AFAIK, PPC/Powernv is DT based while pciehp.c
+>>>> may be only supporting acpi (I have to check it on this). We need to
+>>>> provide PHB related information via DTB and maintain the related
+>>>> topology information via dtb and then it can be doable.
+>>> pciehp is not ACPI-specific.  The PCIe port service driver in
+>>> drivers/pci/pcie/portdrv.c binds to any PCIe port, examines the
+>>> port's capabilities (e.g. hotplug, AER, DPC, ...) and instantiates
+>>> sub-devices to which pciehp and the other drivers such as aer bind.
+>> 1. If we get PHB info from mmcfg via acpi table in x86 and create a
+>>    root port from there with some address/entity and if this Acpi and
+>>    associated entity is not present for PPC, then it can be a problem.
+>>
+>> 2. PPC is normally based on DTB entity and it identifies PHB and pcie
+>>    devices from there. If this all the information is correctly map
+>>    via portdrv.c then there is no problem and whatever you are telling
+>>    is correct and it will work.
+>>
+>> 3. But if point 2 is not handled correctly we need to just aligned with
+>>    port related data structure to make it work.
+> PCI devices do not have to be enumerated in the devicetree (or in ACPI
+> DSDT) because PCI is an enumerable bus (like USB).  Only the host bridge
+> has to be enumerated in the devicetree or DSDT.  The kernel can find the
+> PCI devices below the host bridge itself.
+Yes in DFS manner (once it gets to know the PHB address via -acpi in X86 and via DTB in PPC)
+>   Hot-plugged devices are
+> usually not described in the devicetree or DSDT because one doesn't
+> know their properties in advance.
 >
-> On Fri, 20 Jun 2025, Ming Yu wrote:
+> pnv_php.c seems to search the devicetree for hotplug slots and
+> instantiates them.  My expectation would be that any hotplug-capable
+> PCIe Root Port or Downstream Port, which is *not* described in the
+> devicetree such that pnv_php.c creates a slot for it, is handled by
+> pciehp.
+Your are correct, pnv_php.c heavily depends on slot id and DTB nodes. Thats how its designed. Can we decouple it via DTB nodes, I will come back on this.
 >
-> > Lee Jones <lee@kernel.org> =E6=96=BC 2025=E5=B9=B46=E6=9C=8819=E6=97=A5=
- =E9=80=B1=E5=9B=9B =E4=B8=8B=E5=8D=8811:28=E5=AF=AB=E9=81=93=EF=BC=9A
-> > >
-> > > On Thu, 19 Jun 2025, Ming Yu wrote:
-> > >
-> > > > Lee Jones <lee@kernel.org> =E6=96=BC 2025=E5=B9=B46=E6=9C=8819=E6=
-=97=A5 =E9=80=B1=E5=9B=9B =E4=B8=8B=E5=8D=887:53=E5=AF=AB=E9=81=93=EF=BC=9A
-> > > > >
-> > > > > On Fri, 13 Jun 2025, Ming Yu wrote:
-> > > > >
-> > > > > > Lee Jones <lee@kernel.org> =E6=96=BC 2025=E5=B9=B46=E6=9C=8813=
-=E6=97=A5 =E9=80=B1=E4=BA=94 =E4=B8=8B=E5=8D=889:11=E5=AF=AB=E9=81=93=EF=BC=
-=9A
-> > > > > > >
-> > > > > > > On Fri, 13 Jun 2025, Ming Yu wrote:
-> > > > > > >
-> > > > > > > > Lee Jones <lee@kernel.org> =E6=96=BC 2025=E5=B9=B46=E6=9C=
-=8812=E6=97=A5 =E9=80=B1=E5=9B=9B =E4=B8=8B=E5=8D=8811:23=E5=AF=AB=E9=81=93=
-=EF=BC=9A
-> > > > > > > > >
-> > > > > > > > > On Thu, 12 Jun 2025, Ming Yu wrote:
-> > > > > > > > >
-> > > > > > > > > > Dear Lee,
-> > > > > > > > > >
-> > > > > > > > > > Thank you for reviewing,
-> > > > > > > > > >
-> > > > > > > > > > Lee Jones <lee@kernel.org> =E6=96=BC 2025=E5=B9=B46=E6=
-=9C=8812=E6=97=A5 =E9=80=B1=E5=9B=9B =E4=B8=8B=E5=8D=8810:00=E5=AF=AB=E9=81=
-=93=EF=BC=9A
-> > > > > > > > > > >
-> > > > > > > > > > ...
-> > > > > > > > > > > > +static const struct mfd_cell nct6694_devs[] =3D {
-> > > > > > > > > > > > +     MFD_CELL_BASIC("nct6694-gpio", NULL, NULL, 0,=
- 0),
-> > > > > > > > > > > > +     MFD_CELL_BASIC("nct6694-gpio", NULL, NULL, 0,=
- 1),
-> > > > > > > > > > > > +     MFD_CELL_BASIC("nct6694-gpio", NULL, NULL, 0,=
- 2),
-> > > > > > > > > > > > +     MFD_CELL_BASIC("nct6694-gpio", NULL, NULL, 0,=
- 3),
-> > > > > > > > > > > > +     MFD_CELL_BASIC("nct6694-gpio", NULL, NULL, 0,=
- 4),
-> > > > > > > > > > > > +     MFD_CELL_BASIC("nct6694-gpio", NULL, NULL, 0,=
- 5),
-> > > > > > > > > > > > +     MFD_CELL_BASIC("nct6694-gpio", NULL, NULL, 0,=
- 6),
-> > > > > > > > > > > > +     MFD_CELL_BASIC("nct6694-gpio", NULL, NULL, 0,=
- 7),
-> > > > > > > > > > > > +     MFD_CELL_BASIC("nct6694-gpio", NULL, NULL, 0,=
- 8),
-> > > > > > > > > > > > +     MFD_CELL_BASIC("nct6694-gpio", NULL, NULL, 0,=
- 9),
-> > > > > > > > > > > > +     MFD_CELL_BASIC("nct6694-gpio", NULL, NULL, 0,=
- 10),
-> > > > > > > > > > > > +     MFD_CELL_BASIC("nct6694-gpio", NULL, NULL, 0,=
- 11),
-> > > > > > > > > > > > +     MFD_CELL_BASIC("nct6694-gpio", NULL, NULL, 0,=
- 12),
-> > > > > > > > > > > > +     MFD_CELL_BASIC("nct6694-gpio", NULL, NULL, 0,=
- 13),
-> > > > > > > > > > > > +     MFD_CELL_BASIC("nct6694-gpio", NULL, NULL, 0,=
- 14),
-> > > > > > > > > > > > +     MFD_CELL_BASIC("nct6694-gpio", NULL, NULL, 0,=
- 15),
-> > > > > > > > > > > > +
-> > > > > > > > > > > > +     MFD_CELL_BASIC("nct6694-i2c", NULL, NULL, 0, =
-0),
-> > > > > > > > > > > > +     MFD_CELL_BASIC("nct6694-i2c", NULL, NULL, 0, =
-1),
-> > > > > > > > > > > > +     MFD_CELL_BASIC("nct6694-i2c", NULL, NULL, 0, =
-2),
-> > > > > > > > > > > > +     MFD_CELL_BASIC("nct6694-i2c", NULL, NULL, 0, =
-3),
-> > > > > > > > > > > > +     MFD_CELL_BASIC("nct6694-i2c", NULL, NULL, 0, =
-4),
-> > > > > > > > > > > > +     MFD_CELL_BASIC("nct6694-i2c", NULL, NULL, 0, =
-5),
-> > > > > > > > > > >
-> > > > > > > > > > > Why have we gone back to this silly numbering scheme?
-> > > > > > > > > > >
-> > > > > > > > > > > What happened to using IDA in the child driver?
-> > > > > > > > > > >
-> > > > > > > > > >
-> > > > > > > > > > In a previous version, I tried to maintain a static IDA=
- in each
-> > > > > > > > > > sub-driver. However, I didn=E2=80=99t consider the case=
- where multiple NCT6694
-> > > > > > > > > > devices are bound to the same driver =E2=80=94 in that =
-case, the IDs are not
-> > > > > > > > > > fixed and become unusable for my purpose.
-> > > > > > > > >
-> > > > > > > > > Not sure I understand.
-> > > > > > > > >
-> > > > > > > >
-> > > > > > > > As far as I know, if I maintain the IDA in the sub-drivers =
-and use
-> > > > > > > > multiple MFD_CELL_NAME("nct6694-gpio") entries in the MFD, =
-the first
-> > > > > > > > NCT6694 device bound to the GPIO driver will receive IDs 0~=
-15.
-> > > > > > > > However, when a second NCT6694 device is connected to the s=
-ystem, it
-> > > > > > > > will receive IDs 16~31.
-> > > > > > > > Because of this behavior, I switched back to using platform=
-_device->id.
-> > > > > > >
-> > > > > > > Each of the devices will probe once.
-> > > > > > >
-> > > > > > > The first one will be given 0, the second will be given 1, et=
-c.
-> > > > > > >
-> > > > > > > Why would you give multiple IDs to a single device bound to a=
- driver?
-> > > > > > >
-> > > > > >
-> > > > > > The device exposes multiple peripherals =E2=80=94 16 GPIO contr=
-ollers, 6 I2C
-> > > > > > adapters, 2 CAN FD controllers, and 2 watchdog timers. Each per=
-ipheral
-> > > > > > is independently addressable, has its own register region, and =
-can
-> > > > > > operate in isolation. The IDs are used to distinguish between t=
-hese
-> > > > > > instances.
-> > > > > > For example, the GPIO driver will be probed 16 times, allocatin=
-g 16
-> > > > > > separate gpio_chip instances to control 8 GPIO lines each.
-> > > > > >
-> > > > > > If another device binds to this driver, it is expected to expos=
-e
-> > > > > > peripherals with the same structure and behavior.
-> > > > >
-> > > > > I still don't see why having a per-device IDA wouldn't render eac=
-h
-> > > > > probed device with its own ID.  Just as you have above.
-> > > > >
-> > > >
-> > > > For example, when the MFD driver and the I2C sub-driver are loaded,
-> > > > connecting the first NCT6694 USB device to the system results in 6
-> > > > nct6694-i2c platform devices being created and bound to the
-> > > > i2c-nct6694 driver. These devices receive IDs 0 through 5 via the I=
-DA.
-> > > >
-> > > > However, when a second NCT6694 USB device is connected, its
-> > > > corresponding nct6694-i2c platform devices receive IDs 6 through 11=
- =E2=80=94
-> > > > instead of 0 through 5 as I originally expected.
-> > > >
-> > > > If I've misunderstood something, please feel free to correct me. Th=
-ank you!
-> > >
-> > > In the code above you register 6 I2C devices.  Each device will be
-> > > assigned a platform ID 0 through 5. The .probe() function in the I2C
-> > > driver will be executed 6 times.  In each of those calls to .probe(),
-> > > instead of pre-allocating a contiguous assignment of IDs here, you
-> > > should be able to use IDA in .probe() to allocate those same device I=
-Ds
-> > > 0 through 5.
-> > >
-> > > What am I missing here?
-> > >
-> >
-> > You're absolutely right in the scenario where a single NCT6694 device
-> > is present. However, I=E2=80=99m wondering how we should handle the cas=
-e where
-> > a second or even third NCT6694 device is bound to the same MFD driver.
-> > In that situation, the sub-drivers using a static IDA will continue
-> > allocating increasing IDs, rather than restarting from 0 for each
-> > device. How should this be handled?
+> Timothy was talking about a Microsemi PCIe switch below the Root Port.
+> My understanding is that the Downstream Ports of that switch are
+> hotplug-capable. 
+I understand it.
+>  So unless you've disabled CONFIG_HOTPLUG_PCI_PCIE,
+> I'd expect those ports to be handled by pciehp. 
+I need to check it and test it, but yeah- it may or maynot work and I will confirm it only after some study and testing (maybe in 1-2 week)
+>  Assuming they're not
+> described as a "ibm,ioda2-phb" compatible device in the devicetree,
+> but why would they?
+HW topology and DTB is based on IODA and it will keep changing, not frequently but eventually.
 >
-> I'd like to see the implementation of this before advising.
+> Thanks,
 >
-> In such a case, I assume there would be a differentiating factor between
-> the two (or three) devices.  You would then use that to decide which IDA
-> would need to be incremented.
->
-> However, Greg is correct.  Hard-coding look-ups for userspace to use
-> sounds like a terrible idea.
->
-
-I understand.
-Do you think it would be better to pass the index via platform_data
-and use PLATFORM_DEVID_AUTO together with mfd_add_hotplug_devices()
-instead?
-For example:
-struct nct6694_platform_data {
-    int index;
-};
-
-static struct nct6694_platform_data i2c_data[] =3D {
-    { .index =3D 0 }, { .index =3D 1 }, { .index =3D 2 }, { .index =3D 3 },=
- {
-.index =3D 4 }, { .index =3D 5 },
-};
-
-static const struct mfd_cell nct6694_devs[] =3D {
-    MFD_CELL_BASIC("nct6694-i2c", NULL, &i2c_data[0], sizeof(struct
-nct6694_platform_data), 0),
-    MFD_CELL_BASIC("nct6694-i2c", NULL, &i2c_data[1], sizeof(struct
-nct6694_platform_data), 0),
-    MFD_CELL_BASIC("nct6694-i2c", NULL, &i2c_data[2], sizeof(struct
-nct6694_platform_data), 0),
-    MFD_CELL_BASIC("nct6694-i2c", NULL, &i2c_data[3], sizeof(struct
-nct6694_platform_data), 0),
-    MFD_CELL_BASIC("nct6694-i2c", NULL, &i2c_data[4], sizeof(struct
-nct6694_platform_data), 0),
-    MFD_CELL_BASIC("nct6694-i2c", NULL, &i2c_data[5], sizeof(struct
-nct6694_platform_data), 0),
-};
-...
-mfd_add_hotplug_devices(dev, nct6694_devs, ARRAY_SIZE(nct6694_devs));
-...
-
-Thank you again for your support.
+> Lukas
 
 
-Best regards,
-Ming
+Best Regards,
+
+Krishna
+
 
