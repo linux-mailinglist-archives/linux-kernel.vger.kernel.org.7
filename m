@@ -1,77 +1,144 @@
-Return-Path: <linux-kernel+bounces-703447-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-703449-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 608D7AE904A
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Jun 2025 23:43:42 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8EB2FAE904F
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Jun 2025 23:44:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B36DC5A64CC
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Jun 2025 21:43:16 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7E2135A6659
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Jun 2025 21:43:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 45FE82561D4;
-	Wed, 25 Jun 2025 21:43:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D54DB258CE1;
+	Wed, 25 Jun 2025 21:43:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="XtaxId2P"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=embeddedor.com header.i=@embeddedor.com header.b="WXvUjmL4"
+Received: from omta34.uswest2.a.cloudfilter.net (omta34.uswest2.a.cloudfilter.net [35.89.44.33])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 94905C8EB;
-	Wed, 25 Jun 2025 21:43:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 55FB72580C7
+	for <linux-kernel@vger.kernel.org>; Wed, 25 Jun 2025 21:43:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=35.89.44.33
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750887814; cv=none; b=NvgWEkqYUBaWiK54+xevpw3kGGRNywBJcrkilFSYljZ/F4O7RCJ11uKMfm4LKbG4nT7ER9xIOefvQZHFgWeQZ2U+j0z9VvR59RIIc2ccY6q3AQmqytghPDUNrLU0LCCCo3WDmjh+5RW9jhK0Gic3liBSWl2oDwMqBfezvanfNqA=
+	t=1750887837; cv=none; b=FdY/Lc5aB9+HpJOC/oSAq/7kFndVKBEC9YSh+iGzTgqsdN94FVorRzDwYTfSddpxE13ElgDRqojV6S+omxe0wTjyGN3yPtKH4kgJqF6eROafDiApsRZQKGMk50Tom5BBneUaaHXkKtkvbLkpEqN8DrdAD0PHCToUm4oyMkjJWJk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750887814; c=relaxed/simple;
-	bh=acqOVqgS38j/Eu84gwmws25WYtMUHCP1ti+D3iZ62T8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Z4PDrdMGHM8za4B6NPweJnt6La1GJo+OAUo9pOB+Rp+w0QKAunzOQLhI5IiaU0pA8vkAaO3bb4fzZ5LTwri6exIgROXxlGiXO79sGXter372x8zU6LtjSGPdffKP5GK7SZIXu7NHqMooLwJCT4sIGiaT4BrFJI0R/9quIsVhImU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=XtaxId2P; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3F6BDC4CEEA;
-	Wed, 25 Jun 2025 21:43:32 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1750887814;
-	bh=acqOVqgS38j/Eu84gwmws25WYtMUHCP1ti+D3iZ62T8=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=XtaxId2P29xaxb03HTMt9SrDePyl6Pp0MaUSsglUx9RPOqMysb/TYhNZJ6ypunsb8
-	 Upyw0zSmkshwLsLS5KTMyJrqiN6sQnK8UwhPVj8gPOlw15r1VauzCTMdQJuLqCUpp5
-	 pgw5CTOiz4nC2xW0f6RTUnbcIN15S0avO0l86kes6W/pXQFOrqAG+KfeaPPjXH0Ayq
-	 yZFVA+DkeughNzuPPVhbOQA9z7ghWR717Ebi/LhWUge5p+VSRY4k+4D68DJ0PYKBEZ
-	 /SLO7CcUV6DHNgT+ywdVWNM13W232LR+npZ8TmRtEH76UH2w9d4xBiKef1A4vTSQ+x
-	 ccXA++SGpC44A==
-Date: Wed, 25 Jun 2025 23:43:29 +0200
-From: Andi Shyti <andi.shyti@kernel.org>
-To: Pratap Nirujogi <pratap.nirujogi@amd.com>
-Cc: ilpo.jarvinen@linux.intel.com, rdunlap@infradead.org, 
-	hdegoede@redhat.com, sfr@canb.auug.org.au, linux-next@vger.kernel.org, 
-	linux-i2c@vger.kernel.org, platform-driver-x86@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, benjamin.chan@amd.com, bin.du@amd.com, 
-	gjorgji.rosikopulos@amd.com, king.li@amd.com, dantony@amd.com
-Subject: Re: [PATCH v4 0/3] Fix build issue when CONFIG_MODULES is not set
-Message-ID: <a4aja2xsya3titlnalacf2pfioj5zrddan5a2wazgfl7l4eu46@oe4f27vdmrnf>
-References: <20250609155601.1477055-1-pratap.nirujogi@amd.com>
+	s=arc-20240116; t=1750887837; c=relaxed/simple;
+	bh=5lynVMriVClgMthsFZJ0Tvkpa1tGB9Lp6lL6aLGaCBE=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=TN3NTFjq6kJJDAGl0QFFLXpeXjIXwIjfm247RL/vphTDLCGHtnlKSluAiZ2/CdIA9XK0R4iTqk8B5Gzpljdy/ZObyt2k3UqkvKfgBrcRqcr70MyiQYKtPcTxfGRbB73cUWeGWjZn71meMTq2TDMm8eMa0hieUZUWbJEc8PYU4jU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=embeddedor.com; spf=pass smtp.mailfrom=embeddedor.com; dkim=pass (2048-bit key) header.d=embeddedor.com header.i=@embeddedor.com header.b=WXvUjmL4; arc=none smtp.client-ip=35.89.44.33
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=embeddedor.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=embeddedor.com
+Received: from eig-obgw-5005a.ext.cloudfilter.net ([10.0.29.234])
+	by cmsmtp with ESMTPS
+	id UVvGuAf9WWuHKUXuMu6qa4; Wed, 25 Jun 2025 21:43:54 +0000
+Received: from gator4166.hostgator.com ([108.167.133.22])
+	by cmsmtp with ESMTPS
+	id UXuLuGzj6q3CNUXuMuoXh5; Wed, 25 Jun 2025 21:43:54 +0000
+X-Authority-Analysis: v=2.4 cv=VpfoAP2n c=1 sm=1 tr=0 ts=685c6d9a
+ a=1YbLdUo/zbTtOZ3uB5T3HA==:117 a=y7jUFFJD1EYPe7d4fIfORw==:17
+ a=IkcTkHD0fZMA:10 a=6IFa9wvqVegA:10 a=7T7KSl7uo7wA:10 a=QyXUC8HyAAAA:8
+ a=h90DJapn4poTkUJIt3kA:9 a=QEXdDO2ut3YA:10 a=xYX6OU9JNrHFPr8prv8u:22
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=embeddedor.com; s=default; h=Content-Transfer-Encoding:Content-Type:
+	In-Reply-To:From:References:Cc:To:Subject:MIME-Version:Date:Message-ID:Sender
+	:Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:
+	Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
+	List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=WSgqlLPFusC6Fal/vnl5EKpDH7EySq/W8ghCEckfU5w=; b=WXvUjmL4YQUvHcCnKTe5kb8SCL
+	rnsv9zd6wvXpCP6BdUJEdEbS31FOYKxFzF5vK8xh1+91vJAqPlhKhBaWKsraEtwzk01P9PrbHxwcq
+	I/v7ZOHYGKSTvVY/M84F+sJ4bP7RfEjL4yLqdGRy+lQeah6WgGWd1L7sQ9J3E43eBzflxqbqqvT7k
+	tiAPJXW+zpRgDpS3hwJgcwJjIWx8UYfPrl/b+sEBSLpn7qDUpZNXng7jeq2w5mmOxnemOTgLyJv4x
+	zMvUMqT8j0WOX59MfgQq4dAKM5geL3mQrqWmRTk+LecokoXvh1oy6OAU35KAWqAx570X5V4+YQCIm
+	YB8ybK4A==;
+Received: from [177.238.16.137] (port=49324 helo=[192.168.0.27])
+	by gator4166.hostgator.com with esmtpsa  (TLS1.2) tls TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256
+	(Exim 4.98.1)
+	(envelope-from <gustavo@embeddedor.com>)
+	id 1uUXuJ-00000000LhW-3HeQ;
+	Wed, 25 Jun 2025 16:43:51 -0500
+Message-ID: <ade0c2e6-0698-4829-8c7e-cec3c486aac7@embeddedor.com>
+Date: Wed, 25 Jun 2025 15:43:41 -0600
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250609155601.1477055-1-pratap.nirujogi@amd.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3][next] acpi: nfit: intel: avoid multiple
+ -Wflex-array-member-not-at-end warnings
+To: dan.j.williams@intel.com, Kees Cook <kees@kernel.org>,
+ "Gustavo A. R. Silva" <gustavoars@kernel.org>
+Cc: Vishal Verma <vishal.l.verma@intel.com>, Dave Jiang
+ <dave.jiang@intel.com>, Ira Weiny <ira.weiny@intel.com>,
+ "Rafael J. Wysocki" <rafael@kernel.org>, Len Brown <lenb@kernel.org>,
+ nvdimm@lists.linux.dev, linux-acpi@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-hardening@vger.kernel.org
+References: <aEneid7gdAZr1_kR@kspp> <202506250950.31C8A58E@keescook>
+ <e0adad17-5d4f-4309-9975-81971597da65@embeddedor.com>
+ <685c5d0062f2b_1608bd10051@dwillia2-xfh.jf.intel.com.notmuch>
+ <685c653a6fe42_1608bd100d0@dwillia2-xfh.jf.intel.com.notmuch>
+Content-Language: en-US
+From: "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+In-Reply-To: <685c653a6fe42_1608bd100d0@dwillia2-xfh.jf.intel.com.notmuch>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - embeddedor.com
+X-BWhitelist: no
+X-Source-IP: 177.238.16.137
+X-Source-L: No
+X-Exim-ID: 1uUXuJ-00000000LhW-3HeQ
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
+X-Source-Sender: ([192.168.0.27]) [177.238.16.137]:49324
+X-Source-Auth: gustavo@embeddedor.com
+X-Email-Count: 2
+X-Org: HG=hgshared;ORG=hostgator;
+X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
+X-Local-Domain: yes
+X-CMAE-Envelope: MS4xfFco2aHKmAz4zRuC9VMJA+ZTkJb3NHIuzLDFPJsvCCF55RciwA0Djf6aVUUmNoXn9lZ/GO8jXiqDkVd4C9bGy/yNchniZ7PMkY2ioqPjLTiymIrF81aZ
+ 0Xyzv0hxmbEIH2vmja1JrA1HzWpqmSLVNfhe3R7uenXhjWVXPO9tnLfXYrm+QfOlb0gPVUXeRDi+1hE6nZMJNvhfFDkOM8OVKW1mHaG0Ipwx6jPpIPE7SMCb
 
-Hi Pratap,
 
-> Pratap Nirujogi (3):
->   i2c: designware: Initialize adapter name only when not set
->   i2c: amd-isp: Initialize unique adapter name
->   platform/x86: Use i2c adapter name to fix build errors
 
-I merged this entire series in i2c/i2c-host-fixes. For the last
-patch I added the "Requires:" tag in order to include non-Fixes
-patches in the fixes pull request.
+On 25/06/25 15:08, dan.j.williams@intel.com wrote:
+> dan.j.williams@ wrote:
+>> Gustavo A. R. Silva wrote:
+>> [..]
+>>>> I think it would be a pretty small and direct replacement:
+>>>>
+>>>> 	TRAILING_OVERLAP(struct nd_cmd_pkg, pkg, nd_payload,
+>>>> 			 struct nd_intel_get_security_state cmd;
+>>>> 	) nd_cmd = {
+>>>> 		...
+>>>
+>>> Yes, this works. Hopefully, maintainers will comment on this and let us
+>>> know what they prefer. :)
+>>
+>> Hey Gustavo, apologies for the latency here. I think TRAILING_OVERLAP()
+>> looks lovely for this if only because I can read that and have an idea
+>> what it means vs wondering what this _offset_to_fam is about and needing
+>> to read the comment.
+>>
+>> If you can get me that patch on top of the TRAILING_OVERLAP() branch I
+>> can test it out and ack it to let it do in through the KSPP tree.
+> 
+> Just to move this along, I gave this conversion a try and all looks good
+> here. So feel free to fold this in and add:
+> 
+> Acked-by: Dan Williams <dan.j.williams@intel.com>
+> Tested-by: Dan Williams <dan.j.williams@intel.com>
+> 
+> ...and take it through the KSPP tree with the TRAILING_OVERLAP() merge.
 
-Thanks,
-Andi
+Thank you, Dan! :)
+
+-Gustavo
 
