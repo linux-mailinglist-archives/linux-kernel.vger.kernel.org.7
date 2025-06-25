@@ -1,93 +1,137 @@
-Return-Path: <linux-kernel+bounces-702912-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-702914-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6190CAE893A
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Jun 2025 18:09:07 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 908E1AE8943
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Jun 2025 18:10:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8060C1893B48
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Jun 2025 16:08:51 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6E4331897EBF
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Jun 2025 16:10:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DE8E429AB02;
-	Wed, 25 Jun 2025 16:08:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 015F52C15A3;
+	Wed, 25 Jun 2025 16:10:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="tmYDLEut"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="U54K+onJ"
+Received: from mail-pl1-f175.google.com (mail-pl1-f175.google.com [209.85.214.175])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4464825E803;
-	Wed, 25 Jun 2025 16:08:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0FCB929DB99;
+	Wed, 25 Jun 2025 16:09:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750867707; cv=none; b=KOp+rbFJn9dGvbq2lx8WAfSdEx9+5iHDVDfUrXdPEi01FWsSpjX8cDKkCZ3Det38uz03u69vWT4uR0VGGySk7dKBEfxFLvZNVCs+DO/l8tWBn6P0hL4aWWpv/sOFEy1y73YXW+69KwUrqiqpnPzCPa87bZ29nmQ4zf8Hy0FkjHY=
+	t=1750867800; cv=none; b=LMCE1N+JmMhyZO4Lfq3IFtTf/StMr41TIm5moPDlXkNLQlfxuBkGqrCFEzfSDYNmOtzuJital4MXCeD6TYioCDH/ZyoOEz233kqpsRt3YmyH4tOPAKTVtnKlHR5QxTTYs6Y3Z6d/g2uhE5On6rsVbnsbTQUej0mwj86csN4WcGo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750867707; c=relaxed/simple;
-	bh=BTlJ1RmUpaujJ0EmKDLMF0jllMSYXyhOOUgPEVzg2sM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=TgjR/zC7576pJe8sMlI3XtfzVBU+lUoP0bG6flGyczaGLvC2MZE3+BVn4kg+TSicZUbxRXoabkR6OLizaV21mqIMC6/2xMH/kL/ZnvkR6b1aMSY7Kb+ILizlHK8gV4iL/T32XRgPTs/pWDud0+fTqi2gKV1EPXyLOGvJwNTPeOY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=tmYDLEut; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 012C1C4CEEA;
-	Wed, 25 Jun 2025 16:08:22 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1750867706;
-	bh=BTlJ1RmUpaujJ0EmKDLMF0jllMSYXyhOOUgPEVzg2sM=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=tmYDLEutTKPozey9jE6pu0FKkRL8dSHlAlF3HZr5kYZ1ghFttO9NgLIW3uIW1C5sT
-	 DFaMMR4w82wuIPHfEVYLK2SQJ5Kk495T0rw/l3vlmMu+RQf4bhW7QGm2BLGkTGnrHg
-	 hvn3NInm8RruYB/AVyXhlu8iiUai/V2jgJEUuGbpCVUnRt4lSS+6C0Aj7R6GQW/EXD
-	 Uzi504qgXSrUdOAsFValQSqiSZRLuM1opQRFRtOxb7xEwFVHOH63HQRNYXxFGdAmyk
-	 wGMgFhc3yoqlkG6+7QQ+0K9VnOFmJ2CtwvBW32KfQSCdICjz8hDnYeMIIW4RJhrCDA
-	 AUBcAZPExly9g==
-Date: Wed, 25 Jun 2025 18:08:20 +0200
-From: Danilo Krummrich <dakr@kernel.org>
-To: Remo Senekowitsch <remo@buenzli.dev>
-Cc: Rob Herring <robh@kernel.org>, Saravana Kannan <saravanak@google.com>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	"Rafael J. Wysocki" <rafael@kernel.org>,
-	Miguel Ojeda <ojeda@kernel.org>,
-	Alex Gaynor <alex.gaynor@gmail.com>,
-	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>,
-	=?iso-8859-1?Q?Bj=F6rn?= Roy Baron <bjorn3_gh@protonmail.com>,
-	Benno Lossin <lossin@kernel.org>,
-	Andreas Hindborg <a.hindborg@kernel.org>,
-	Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>,
-	Mark Brown <broonie@kernel.org>,
-	Dirk Behme <dirk.behme@de.bosch.com>, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, rust-for-linux@vger.kernel.org
-Subject: Re: [PATCH v1 0/3] Add Rust bindings for device property child nodes
- and reference args
-Message-ID: <aFwe9MD4QpBEked3@pollux>
-References: <20250616154511.1862909-1-remo@buenzli.dev>
+	s=arc-20240116; t=1750867800; c=relaxed/simple;
+	bh=Bts4sKMHlh38RUT+rVnq3w77/m2jbHWWcUQgUFHHQww=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=GdmPihL5EJCUp2UmYozENaYUoar96C2qJW50SBcFZpNNSg8gnbqZS5kww8PsdLGHw1vtdV46PaXy4R54LGrilSvQU83wQmBGP712X0UWIlebWIvPYRckjjRP3jWE0N4tZrrUko3U9vWbphKakiFf39sYETiYMUw+HDyf6l5nfZ4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=U54K+onJ; arc=none smtp.client-ip=209.85.214.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f175.google.com with SMTP id d9443c01a7336-22c33677183so772875ad.2;
+        Wed, 25 Jun 2025 09:09:58 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1750867798; x=1751472598; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=Eb0acdpdU/b+qFj+DYgvVF8IZl61dx31CclH/vhkiBE=;
+        b=U54K+onJB9SvbfAWu8BHLHhBtOBEKUKKgpO+jd3dBUM2r0xaZZKobwQYiypEB4sdoV
+         C7oPr37iM+j1mjCM6XFaJsEGsEOgNLH7I/r99dwQVBpk9MxKUcBrleFAGtd3TGqTvQH3
+         6u2BzDI3CrRnz8+JOzgwCOPG2NpbqHlmt7p7VmBHlzs7tzM4wVjMysjvdbZPBdkgQaTx
+         ULzhbZIal1m8X2w/L2TepTJIFf9sU47Ibnbyk2wBbkWOHp0d0p7fruQyadQc3UZPSibf
+         06QD389RtWQkIXvgZKtlBPzuY8aE+X1tBvemgZL+CQB5aJaGEth8zDslFDNEkByIjBy1
+         atmw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1750867798; x=1751472598;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=Eb0acdpdU/b+qFj+DYgvVF8IZl61dx31CclH/vhkiBE=;
+        b=T4MzVbDFL4Y26i/RKSCSDBgr2AkRm+4aQzKaltN3cNfrSN8NfmVU80F2iGwHPOCTaw
+         +E4/M91C2sLHkk97+tCH5pCjtb7oEPhjNzRXkoL/kNHZLVFIzPqF/wLZe/fpS6R/L1OW
+         F8/EKMSWUXe0junC9hvpihsUbmJ9M+aQKSFkKVlWidJmYBiZLOJGMjpWn0H2G/PIG6xv
+         +xkskG1ZNeYtLZqv0CdILP6ywcfdGmRyOXXQmYMRb+9Qzz9i+LV06F5Yi38mt9eBGs7v
+         TqXapsZDboArCXV4uSn929CQNdvZ6T9H6DZGjnrwP6naDvEX0ZsjSorWYJeUe76qwBdo
+         G5MQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVk0BdIykqT4tvwfaqsHBq3uYzzCImiL5L8jgzE2WKd6h5+8O7qISfPB0JDgsSkLT9tUk0=@vger.kernel.org, AJvYcCXS01gqLTzOJfmx3Un54IwSoQa85q6AHl3uzPag6MCDcmvzflDWuJ7RN8TqlH9l0mj7VU5VLkap7wCaK/Q+@vger.kernel.org
+X-Gm-Message-State: AOJu0YxiT3CQe92Ega37STk0DgRwaK687gqxxGYuDPyIu5/di6G3hY5Y
+	7EUGHs5BRkWPPbiBntDOgondptQcPnrA572Qei0wBOGYrUSN4VUskzZOCibe3g==
+X-Gm-Gg: ASbGnctWBc9o9PYBNhMNxXVml29/Ex6NKD7LnD2iygBTyql0AFAg/VK1c/xh7Pg+BCF
+	eeF4ntVaUgtfCNoFant4n6jY15/v/D7QDsj/vKRlGjd/xUv+3PZgPWTQN92fy4GbIuVzqBxWe1a
+	sV3QimXcLkGkYhvrAkajz/8DVpHYkhPMkD8qxa7bGbZ5gRSZxbdH60Rh0zAp7ZKXJWIHrqsseZC
+	WbZq6nl7TYT/9pt0b/uq1aeI0s3e5AtJycpRAkGLDKi/kmK/lJxHvjckzcY3bJ2Q54b+NxeRqF1
+	CsFZO2x/9ghSAQ/GfkcCYeeGaIYxR2M3Sj7+GfGRv67v+xzODSznBEQ+87aEFTL7uoWxsVSIjH2
+	8qQ==
+X-Google-Smtp-Source: AGHT+IFGkbVCJI4WQD7GIL1MO4VOQNGAkZ5VrytP8PK7QMxS5HOrsRj0liKcJ/cDXDkibp5t5sKjLA==
+X-Received: by 2002:a17:903:42cf:b0:236:15b7:62f6 with SMTP id d9443c01a7336-2382424be2amr48545785ad.34.1750867797808;
+        Wed, 25 Jun 2025 09:09:57 -0700 (PDT)
+Received: from minh.192.168.1.1 ([2001:ee0:4f0e:fb30:1cf0:45c2:bdd1:b92d])
+        by smtp.googlemail.com with ESMTPSA id d9443c01a7336-237d873845esm143219175ad.243.2025.06.25.09.09.41
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 25 Jun 2025 09:09:49 -0700 (PDT)
+From: Bui Quang Minh <minhquangbui99@gmail.com>
+To: netdev@vger.kernel.org
+Cc: "Michael S. Tsirkin" <mst@redhat.com>,
+	Jason Wang <jasowang@redhat.com>,
+	Xuan Zhuo <xuanzhuo@linux.alibaba.com>,
+	=?UTF-8?q?Eugenio=20P=C3=A9rez?= <eperezma@redhat.com>,
+	Andrew Lunn <andrew+netdev@lunn.ch>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>,
+	Paolo Abeni <pabeni@redhat.com>,
+	Alexei Starovoitov <ast@kernel.org>,
+	Daniel Borkmann <daniel@iogearbox.net>,
+	Jesper Dangaard Brouer <hawk@kernel.org>,
+	John Fastabend <john.fastabend@gmail.com>,
+	Stanislav Fomichev <sdf@fomichev.me>,
+	virtualization@lists.linux.dev,
+	linux-kernel@vger.kernel.org,
+	bpf@vger.kernel.org,
+	Bui Quang Minh <minhquangbui99@gmail.com>
+Subject: [PATCH net 0/4] virtio-net: fixes for mergeable XDP receive path
+Date: Wed, 25 Jun 2025 23:08:45 +0700
+Message-ID: <20250625160849.61344-1-minhquangbui99@gmail.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250616154511.1862909-1-remo@buenzli.dev>
+Content-Transfer-Encoding: 8bit
 
-On Mon, Jun 16, 2025 at 05:45:08PM +0200, Remo Senekowitsch wrote:
-> This patch series was split-off from an earlier one. [1]
-> 
-> [1] https://lore.kernel.org/lkml/20250611102908.212514-1-remo@buenzli.dev/
+Hi everyone,
 
-Applied to driver-core-testing, thanks!
+This series contains fixes for XDP receive path in virtio-net
+- Patch 1: add a missing check for the received data length with our
+allocated buffer size in mergeable mode
+- Patch 2: remove a redundant truesize check with PAGE_SIZE in mergeable
+mode
+- Patch 3: add a helper for mergeable received data length check to avoid
+repeated code
+- Patch 4: fix the flaky drivers/net/ping.py selftest due to frame drop
+when the receive buffer is prefilled before XDP is set but is used after
+XDP is set. It's because of current restriction that
+headroom + frame's length + tailroom < PAGE_SIZE. XDP does not have this
+restriction, so we can lift the restriction here and continue processing
+the frame.
 
-> Remo Senekowitsch (3):
->   rust: device: Add child accessor and iterator
->   rust: device: Add property_get_reference_args
+Thanks,
+Quang Minh.
 
-    [ Move up NArgs; refer to FwNodeReferenceArgs in NArgs doc-comment.
-      - Danilo ]
+Bui Quang Minh (4):
+  virtio-net: ensure the received length does not exceed allocated size
+  virtio-net: remove redundant truesize check with PAGE_SIZE
+  virtio-net: create a helper to check received mergeable buffer's
+    length
+  virtio-net: allow more allocated space for mergeable XDP
 
->   samples: rust: platform: Add property child and reference args
->     examples
+ drivers/net/virtio_net.c | 91 ++++++++++++++++++++++++----------------
+ 1 file changed, 54 insertions(+), 37 deletions(-)
 
-    [ Convert 'child@{0,1}' to 'child-{0,1}'; skip child nodes without
-      'compatible' property in of_unittest_platform_populate() as proposed
-      by Rob Herring. - Danilo]
+-- 
+2.43.0
+
 
