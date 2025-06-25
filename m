@@ -1,71 +1,71 @@
-Return-Path: <linux-kernel+bounces-701729-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-701633-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id D97D7AE7896
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Jun 2025 09:32:25 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 837A0AE7748
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Jun 2025 08:40:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 665CE1BC09EE
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Jun 2025 07:32:41 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CF53A17B39A
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Jun 2025 06:40:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D0B6920C004;
-	Wed, 25 Jun 2025 07:31:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7F5871F463C;
+	Wed, 25 Jun 2025 06:40:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="VktehCTG"
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="ZVTsY4iu"
 Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8F43B72626
-	for <linux-kernel@vger.kernel.org>; Wed, 25 Jun 2025 07:31:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 390EC1F417B
+	for <linux-kernel@vger.kernel.org>; Wed, 25 Jun 2025 06:40:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750836718; cv=none; b=BY0iaP4T4s4TBPdAdLWhuVzwqXb0s56wNwbtJ9p4j+u5D4v8Am9aFJ9VcxsOj1+6pVGUxaIHQu938nk0FtG3WdQy+rUijuZnopxSAgGAP9d+sahHgZQkzyZfgWqaHbcUHRheXP8hD4iSVX9tMqFLU+yxJaiP3phpWTZmbc6IGO4=
+	t=1750833604; cv=none; b=BCYvcCe2d2QXXitkJOsuSoqaHbcmiIHFaur6/qYz6ZtdB5a2xaHA2jJaopUMa9IFIBaRNU3xVcjc+NkXV7c5AMlyvC32vbbMTOEHV7DhqHF/K29aS0//jCjCC1PuznSByT91Bs8m6NEE/Q/0RT/kxY87moOI/OFtUJT1ON+2MrQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750836718; c=relaxed/simple;
-	bh=9JpOMejwJgVNJPk7rP4XaqoP2Aqz+pY9nJn9mG9SPQg=;
+	s=arc-20240116; t=1750833604; c=relaxed/simple;
+	bh=AlFRqGPfVPlsS/JrN+TTx7xmwCM5gQLROXynUoae7+Q=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=GIZVxwDLMKTWDPnHCcm0+xfcTCe68Pmvjw1Irp99GxPOL0gp1qk4TjCxytmOAYPbHhn4WiVznFTDPq97M9pbi6KkObqDsz2T4YrQN7mvjV+COIXEbF3h/wX6hKgl5AwR98Vin6fWzG+bd0sqyEqA8a+CjXatKEOGlwI8tvaIyPc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=VktehCTG; arc=none smtp.client-ip=148.163.158.5
+	 MIME-Version; b=RjdTyIk+RsjNuKwCIo+EoZrXM3F/u0j1m8xspkAXrd0glnX8Glx1bP4lQ0pRF+MA2n58iLQWxMXeZLG6Dk9NOnqu+YGnU8y+MmaiHo3pBWd9pEULyqq3nB8yDVS8p4t5Hc43dwL8m07vF6PvE0OhOt5CRqgSDuxbH3kp6whX8lA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=ZVTsY4iu; arc=none smtp.client-ip=148.163.158.5
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0360072.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 55P1KH3s014893;
-	Wed, 25 Jun 2025 07:31:40 GMT
+Received: from pps.filterd (m0356516.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 55P6KIFC027197;
+	Wed, 25 Jun 2025 06:39:49 GMT
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
 	:content-transfer-encoding:date:from:in-reply-to:message-id
-	:mime-version:references:subject:to; s=pp1; bh=KTExvezmyrjLwuMrG
-	2EpbzYH4/i3a/AxfBsx419ijTU=; b=VktehCTG/F5v4EI2Mg4Bq25oW6QPAVlDE
-	3jaP6s9qozgScWAYl0u3cNM2pov8LTQ7hoOM6/XMaAFeoaEeDjjFzq5SLwzw3Koy
-	EhTe37HxmeMo+ClDjo0M4owvPRozPI7efgQtVjXRTN50PVwQeyjIDLzGWEoBF8bT
-	wvWyKAUyKyBctM+nxDccL36esIhTWKg7sigbrjWU272C1zJi2Rc5PcilU1koFBP+
-	NLf5OahJekdXzHyNykc40usJTdCcaTnrPNZhPdKnhMeiFCsocsMcyvtGI8rwPd5I
-	HvpBa+Ye4tuLU1DvGyUAc33tWiYvinPvwNYt9LIG8kjIJjcluJASA==
-Received: from ppma12.dal12v.mail.ibm.com (dc.9e.1632.ip4.static.sl-reverse.com [50.22.158.220])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 47dmf35e3p-1
+	:mime-version:references:subject:to; s=pp1; bh=y0uGGjTwvQMXqwA8b
+	HmeHWGWvFDAhSVWPCqT+UWRp/M=; b=ZVTsY4iuseNAEkMz5aUAtf20YjK87OvHJ
+	pgiY16o8tHB6B3VQm34YNet81excWdAZN0ARDY9xDvouCYKksesrqL995PempcPG
+	vMZCS2AFNTNt26GaHOxjsWsd4Jfu0bsZftDu5NR4FsuDeTareXKit3lSU7Hl9QsL
+	eiRZEjHwBn8IvJXAPOxGiUYg6DYAPeW3YMnpwTJLx0213bzh44e53EpHrdLz0X5J
+	zZq5oGQQ3nr4VO6znGbhwWYqOWM9dPaB62lEsSGkKH/M6hfJ+f9mhunL3YTDD0aB
+	L7xO0S71Cq91L++yG2hhM2Ko7Z2Pp2ZMtwBD7B0qSoZPZID7d5VWw==
+Received: from ppma21.wdc07v.mail.ibm.com (5b.69.3da9.ip4.static.sl-reverse.com [169.61.105.91])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 47dj5twg89-1
 	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 25 Jun 2025 07:31:39 +0000 (GMT)
-Received: from pps.filterd (ppma12.dal12v.mail.ibm.com [127.0.0.1])
-	by ppma12.dal12v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 55P4uDSh015028;
-	Wed, 25 Jun 2025 07:31:38 GMT
-Received: from smtprelay03.dal12v.mail.ibm.com ([172.16.1.5])
-	by ppma12.dal12v.mail.ibm.com (PPS) with ESMTPS id 47e72trbjc-1
+	Wed, 25 Jun 2025 06:39:49 +0000 (GMT)
+Received: from pps.filterd (ppma21.wdc07v.mail.ibm.com [127.0.0.1])
+	by ppma21.wdc07v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 55P65rBf006329;
+	Wed, 25 Jun 2025 06:39:48 GMT
+Received: from smtprelay02.wdc07v.mail.ibm.com ([172.16.1.69])
+	by ppma21.wdc07v.mail.ibm.com (PPS) with ESMTPS id 47e82p8012-1
 	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 25 Jun 2025 07:31:38 +0000
+	Wed, 25 Jun 2025 06:39:48 +0000
 Received: from smtpav02.dal12v.mail.ibm.com (smtpav02.dal12v.mail.ibm.com [10.241.53.101])
-	by smtprelay03.dal12v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 55P7VbOd19595784
+	by smtprelay02.wdc07v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 55P6dlxV47251908
 	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Wed, 25 Jun 2025 07:31:37 GMT
+	Wed, 25 Jun 2025 06:39:47 GMT
 Received: from smtpav02.dal12v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 517FA58912;
+	by IMSVA (Postfix) with ESMTP id 6A9A058932;
+	Wed, 25 Jun 2025 06:39:40 +0000 (GMT)
+Received: from smtpav02.dal12v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id F152558913;
 	Wed, 25 Jun 2025 06:39:24 +0000 (GMT)
-Received: from smtpav02.dal12v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id BA92058907;
-	Wed, 25 Jun 2025 06:39:19 +0000 (GMT)
 Received: from jarvis.ozlabs.ibm.com.com (unknown [9.36.18.35])
 	by smtpav02.dal12v.mail.ibm.com (Postfix) with ESMTP;
-	Wed, 25 Jun 2025 06:39:19 +0000 (GMT)
+	Wed, 25 Jun 2025 06:39:24 +0000 (GMT)
 From: Andrew Donnellan <ajd@linux.ibm.com>
 To: linuxppc-dev@lists.ozlabs.org, pasha.tatashin@soleen.com,
         akpm@linux-foundation.org
@@ -73,9 +73,9 @@ Cc: linux-kernel@vger.kernel.org, x86@kernel.org,
         linux-riscv@lists.infradead.org, linux-arm-kernel@lists.infradead.org,
         linux-mm@kvack.org, sweettea-kernel@dorminy.me,
         christophe.leroy@csgroup.eu, mingo@kernel.org
-Subject: [PATCH v15 10/13] powerpc: mm: Add pud_pfn() stub
-Date: Wed, 25 Jun 2025 16:37:50 +1000
-Message-ID: <20250625063753.77511-11-ajd@linux.ibm.com>
+Subject: [PATCH v15 11/13] powerpc: mm: Implement *_user_accessible_page() for ptes
+Date: Wed, 25 Jun 2025 16:37:51 +1000
+Message-ID: <20250625063753.77511-12-ajd@linux.ibm.com>
 X-Mailer: git-send-email 2.49.0
 In-Reply-To: <20250625063753.77511-1-ajd@linux.ibm.com>
 References: <20250625063753.77511-1-ajd@linux.ibm.com>
@@ -87,63 +87,131 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-TM-AS-GCONF: 00
-X-Authority-Analysis: v=2.4 cv=M5FNKzws c=1 sm=1 tr=0 ts=685ba5dc cx=c_pps a=bLidbwmWQ0KltjZqbj+ezA==:117 a=bLidbwmWQ0KltjZqbj+ezA==:17 a=6IFa9wvqVegA:10 a=VnNF1IyMAAAA:8 a=7ipKWUHlAAAA:8 a=3n-1MRHmzzeYtLK0-mgA:9 a=gpc5p9EgBqZVLdJeV_V1:22
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNjI1MDA1MyBTYWx0ZWRfX9D81NOvPqLgK HN7zOOeUE4aCUmZuT9JMZU9/tq0eX3ANMGeGlS1QqJsDpX0AVL+N8j7sqCiR2CMwmFCfbijPB/O K35l38b7U+zqadJLwhM9xFjQI0ej2n8ukixxH7vh0VxLGhTUZBJQJHfdlPO6r6/3SCnHH3B6JY3
- kVDKqLmmIdI6rzfIrdieFm/1DsA2Ie851/g3TtXZ4s+vgrmIP7Cdz0IdbKJEP4aLsWMr61phYPM iI0/SBXi7iIElwD/k7kyPOaAnOiTaLrUXqvoX6Ipi/ps/yBjEvJbp1nboEKBwW6C19iOK2FkQKy KiGzeYK1F9tGETr6DpIQS1HiwG8bJQayeFL2STOrLbw1Nx8i8e9wY2lI4T5GwM0VK7E2bilM41v
- vbxl9a4ETDw/FWESiqvvVqur53DtGnaEsIyJJ6EY+ha1rk6oy/8ClKU12V+3lh3wzscinbq3
-X-Proofpoint-GUID: L8iYEZiAifJZIo-x0G4zMm2PVAPXPEQY
-X-Proofpoint-ORIG-GUID: L8iYEZiAifJZIo-x0G4zMm2PVAPXPEQY
+X-Proofpoint-ORIG-GUID: o8pwN8EwYal227quZlaJ3Sf4w3pndpWK
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNjI1MDA0NSBTYWx0ZWRfX/r2U2Vc/ajCp bxsk6+xpiyEKaboTL+EmY/t/cFJaZuaZichgUtjlkdAvasA29qP2hCPbFcI1lbO577y3aQem6KE 71z4G3FuhONrOr5KROK5VkunB2NBAYb5WBzFTfnTbJ2uUcwNpgAsFWz++yrgbPc4eSfantOty6e
+ hTXJcsG2W4MBNRzZuGXgYWgiLit9rIPiuPccmbSQ/7Ppwb/7bPqvj9gXNyit86BC7NZLK/39yGW y1YO2Hky4EwTzlhpnMeMj6eISDXZdZZu1z+l3jKiMbu/cr0m8UrOQ2vQ8+I/+C2bev6ppY6EILf HlJ8LYFyUh0nkS3mXBAecPKECm3FPacnmng+Q/j52GBoYS3AK8DdkMMevf/0TKjw1D0TLNf0WA3
+ JFp/KHCimzIj1NX/oSzyY9gfxMfUUJAU5wbgcEBFp84EeJbtrhGdEaC25cegM3OTd5Mutnpl
+X-Authority-Analysis: v=2.4 cv=MshS63ae c=1 sm=1 tr=0 ts=685b99b5 cx=c_pps a=GFwsV6G8L6GxiO2Y/PsHdQ==:117 a=GFwsV6G8L6GxiO2Y/PsHdQ==:17 a=6IFa9wvqVegA:10 a=VnNF1IyMAAAA:8 a=7ipKWUHlAAAA:8 a=a65a1E2n8xkc5m_RgcEA:9 a=gpc5p9EgBqZVLdJeV_V1:22
+X-Proofpoint-GUID: o8pwN8EwYal227quZlaJ3Sf4w3pndpWK
 X-Proofpoint-Virus-Version: vendor=baseguard
  engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.7,FMLib:17.12.80.40
  definitions=2025-06-25_01,2025-06-23_07,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 lowpriorityscore=0
- bulkscore=0 malwarescore=0 impostorscore=0 suspectscore=0
- priorityscore=1501 phishscore=0 spamscore=0 clxscore=1015 adultscore=0
- mlxscore=0 mlxlogscore=948 classifier=spam authscore=0 authtc=n/a authcc=
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxscore=0 bulkscore=0
+ lowpriorityscore=0 spamscore=0 mlxlogscore=673 impostorscore=0
+ clxscore=1011 phishscore=0 malwarescore=0 suspectscore=0 adultscore=0
+ priorityscore=1501 classifier=spam authscore=0 authtc=n/a authcc=
  route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2505280000
- definitions=main-2506250053
+ definitions=main-2506250045
 
 From: Rohan McLure <rmclure@linux.ibm.com>
 
-The page table check feature requires that pud_pfn() be defined
-on each consuming architecture.
+Page table checking depends on architectures providing an
+implementation of p{te,md,ud}_user_accessible_page. With
+refactorisations made on powerpc/mm, the pte_access_permitted() and
+similar methods verify whether a userland page is accessible with the
+required permissions.
 
-On powerpc, only book3s64 platforms allow for hugepages at this upper
-level, and thus only book3s64 currently defines pud_pfn().
+Since page table checking is the only user of
+p{te,md,ud}_user_accessible_page(), implement these for all platforms,
+using some of the same preliminary checks taken by pte_access_permitted()
+on that platform.
 
-The page table check code that calls pud_pfn() is gated by a call to
-pud_user_accessible_page(), which will always return false on any platform
-other than book3s64.
+Since commit 8e9bd41e4ce1 ("powerpc/nohash: Replace pte_user() by pte_read()")
+pte_user() is no longer required to be present on all platforms as it
+may be equivalent to or implied by pte_read(). Hence implementations of
+pte_user_accessible_page() are specialised.
 
-Add a stub implementation of pud_pfn() for all platforms other than
-book3s64. As it will never actually be used and should always be compiled
-out, raise a BUILD_BUG() error.
-
-[ajd@linux.ibm.com: clarify commit message]
+[ajd@linux.ibm.com: rebase and fix commit message]
 Signed-off-by: Rohan McLure <rmclure@linux.ibm.com>
 Reviewed-by: Pasha Tatashin <pasha.tatashin@soleen.com>
 Signed-off-by: Andrew Donnellan <ajd@linux.ibm.com>
 ---
-v15: clarify commit message
----
- arch/powerpc/include/asm/pgtable.h | 9 +++++++++
- 1 file changed, 9 insertions(+)
+ arch/powerpc/include/asm/book3s/32/pgtable.h |  5 +++++
+ arch/powerpc/include/asm/book3s/64/pgtable.h | 17 +++++++++++++++++
+ arch/powerpc/include/asm/nohash/pgtable.h    |  5 +++++
+ arch/powerpc/include/asm/pgtable.h           |  8 ++++++++
+ 4 files changed, 35 insertions(+)
 
+diff --git a/arch/powerpc/include/asm/book3s/32/pgtable.h b/arch/powerpc/include/asm/book3s/32/pgtable.h
+index 92d21c6faf1e..b225967f85ea 100644
+--- a/arch/powerpc/include/asm/book3s/32/pgtable.h
++++ b/arch/powerpc/include/asm/book3s/32/pgtable.h
+@@ -437,6 +437,11 @@ static inline bool pte_access_permitted(pte_t pte, bool write)
+ 	return true;
+ }
+ 
++static inline bool pte_user_accessible_page(pte_t pte, unsigned long addr)
++{
++	return pte_present(pte) && !is_kernel_addr(addr);
++}
++
+ /* Conversion functions: convert a page and protection to a page entry,
+  * and a page entry and page directory to the page they refer to.
+  *
+diff --git a/arch/powerpc/include/asm/book3s/64/pgtable.h b/arch/powerpc/include/asm/book3s/64/pgtable.h
+index a2ddcbb3fcb9..5de04302c6f4 100644
+--- a/arch/powerpc/include/asm/book3s/64/pgtable.h
++++ b/arch/powerpc/include/asm/book3s/64/pgtable.h
+@@ -540,6 +540,11 @@ static inline bool pte_access_permitted(pte_t pte, bool write)
+ 	return arch_pte_access_permitted(pte_val(pte), write, 0);
+ }
+ 
++static inline bool pte_user_accessible_page(pte_t pte, unsigned long addr)
++{
++	return pte_present(pte) && pte_user(pte);
++}
++
+ /*
+  * Conversion functions: convert a page and protection to a page entry,
+  * and a page entry and page directory to the page they refer to.
+@@ -1430,5 +1435,17 @@ static inline bool is_pte_rw_upgrade(unsigned long old_val, unsigned long new_va
+ 	return false;
+ }
+ 
++#define pmd_user_accessible_page pmd_user_accessible_page
++static inline bool pmd_user_accessible_page(pmd_t pmd, unsigned long addr)
++{
++	return pmd_leaf(pmd) && pte_user_accessible_page(pmd_pte(pmd), addr);
++}
++
++#define pud_user_accessible_page pud_user_accessible_page
++static inline bool pud_user_accessible_page(pud_t pud, unsigned long addr)
++{
++	return pud_leaf(pud) && pte_user_accessible_page(pud_pte(pud), addr);
++}
++
+ #endif /* __ASSEMBLY__ */
+ #endif /* _ASM_POWERPC_BOOK3S_64_PGTABLE_H_ */
+diff --git a/arch/powerpc/include/asm/nohash/pgtable.h b/arch/powerpc/include/asm/nohash/pgtable.h
+index 7d6b9e5b286e..a8bc4f24beb1 100644
+--- a/arch/powerpc/include/asm/nohash/pgtable.h
++++ b/arch/powerpc/include/asm/nohash/pgtable.h
+@@ -243,6 +243,11 @@ static inline bool pte_access_permitted(pte_t pte, bool write)
+ 	return true;
+ }
+ 
++static inline bool pte_user_accessible_page(pte_t pte, unsigned long addr)
++{
++	return pte_present(pte) && !is_kernel_addr(addr);
++}
++
+ /* Conversion functions: convert a page and protection to a page entry,
+  * and a page entry and page directory to the page they refer to.
+  *
 diff --git a/arch/powerpc/include/asm/pgtable.h b/arch/powerpc/include/asm/pgtable.h
-index 93d77ad5a92f..0f73a9ade0ed 100644
+index 0f73a9ade0ed..d0938e9c33fb 100644
 --- a/arch/powerpc/include/asm/pgtable.h
 +++ b/arch/powerpc/include/asm/pgtable.h
-@@ -214,6 +214,15 @@ static inline bool arch_supports_memmap_on_memory(unsigned long vmemmap_size)
+@@ -223,6 +223,14 @@ static inline int pud_pfn(pud_t pud)
+ }
+ #endif
  
- #endif /* CONFIG_PPC64 */
- 
-+#ifndef pud_pfn
-+#define pud_pfn pud_pfn
-+static inline int pud_pfn(pud_t pud)
-+{
-+	BUILD_BUG();
-+	return 0;
-+}
++#ifndef pmd_user_accessible_page
++#define pmd_user_accessible_page(pmd, addr)	false
++#endif
++
++#ifndef pud_user_accessible_page
++#define pud_user_accessible_page(pud, addr)	false
 +#endif
 +
  #endif /* __ASSEMBLY__ */
