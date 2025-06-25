@@ -1,178 +1,191 @@
-Return-Path: <linux-kernel+bounces-702520-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-702522-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id A8F06AE8368
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Jun 2025 14:57:34 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id AA226AE8379
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Jun 2025 14:58:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id CD8721882F2F
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Jun 2025 12:56:32 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5ECD93AAFB6
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Jun 2025 12:56:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 287DC263C8F;
-	Wed, 25 Jun 2025 12:53:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 550452620CA;
+	Wed, 25 Jun 2025 12:53:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="OxtAGA5L"
-Received: from mail-pl1-f201.google.com (mail-pl1-f201.google.com [209.85.214.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="MqvdsWfu"
+Received: from mailout1.w1.samsung.com (mailout1.w1.samsung.com [210.118.77.11])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0DAF9261390
-	for <linux-kernel@vger.kernel.org>; Wed, 25 Jun 2025 12:53:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5BAA026462B
+	for <linux-kernel@vger.kernel.org>; Wed, 25 Jun 2025 12:53:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.118.77.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750856009; cv=none; b=mOY26UxIXFhQIv2zt/AtpHckEPQKwpyTcAN50e653PTh31dx7jmo5Moh2Kggq661jONwEFe/ttTYAkPVAlGT+3F2v28bLYtP2+h+GdaHChciBButarzwh3qIGwd4N2E/er/agmhN0vP4OC1x1UBeXu1RqDLboPd9AjtGeQdBAeU=
+	t=1750856035; cv=none; b=jL+p/XCatLmaxH6L8L9c+ZvkuQJeH4iottm8Q/0hPCTICDsI1CKUt2Mre5r1/5zq2R5QduVIVDKxGvdNsBF59Yp3y6AusWcolkt/uhhs/po2kZ9wC5Yx22ryhdcgZPXBApdxobeJjwITHl6uAN3nHjDWOY+mguG5qKQmJc80ceU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750856009; c=relaxed/simple;
-	bh=LyYQDcnXmGsVu73bpfzmTVDLBrEXLKs1lCcXT5WkdYU=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=ErfXmfHTdH1PGaGrZKAx0k+b2LXa3zZPepVKZgFmXk7KcnjB6sug5b8e90MUMrrrnm/oLyaUkHv7vIwP77EUDTwBtFSyu+B1SkR5zMhUngiIEOxYKqFOomFaeo7Fm+mINiV5dxpHcZh5XncZVtpUR0zloVsiyAy01oiC/QtBjlc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=OxtAGA5L; arc=none smtp.client-ip=209.85.214.201
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
-Received: by mail-pl1-f201.google.com with SMTP id d9443c01a7336-2356ce55d33so25785695ad.0
-        for <linux-kernel@vger.kernel.org>; Wed, 25 Jun 2025 05:53:27 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1750856007; x=1751460807; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=Qm9UdCmx0AUjdXCDjy0dtaSU1yfF/6cv13NPsG0xoPg=;
-        b=OxtAGA5LpfPL2vRuPmjdvZ7zVnn59HhhsUiL8FIsXqJRLO9Cc5nrrTiy6F4g92OxJa
-         zVPdPo0f1m5O4Ix5vHfhg2brORVyqSNuRdtOd0zFMedqOpFo+yLRuVZIkUPKZSgpFLUX
-         9aUQs75xPjeBX+95fV1qwEYZ0KuuieKZ/m1u0pecY419oQM+rdi65CQlA9XtvLiuyGkU
-         H5Wtf9iLyjxLK9ZwPw8PFQAgIqOUqJjUowa9iFHaMcyfDFqrUo9KyEe7FojwSetAxYPX
-         HRXxKA7vxeFSiFIJPQtfvM+z8BnT1eBVidaKnHYwBs72SVHVJEQbzaDYSXHOTOTSmRl0
-         9Q7Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1750856007; x=1751460807;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=Qm9UdCmx0AUjdXCDjy0dtaSU1yfF/6cv13NPsG0xoPg=;
-        b=ViirWEfi83gY1p9ZPdUqMfRvEURAJnBbYBhgn0Ppx4+9mxW9neE2OnxSV5kv0aaiOd
-         cBI22XqO9qHER7GQqnSB89Q9b3SPQBw4I4VHONqWRIpSBWVQPfnFZl0S1iMNQaoWnk1J
-         +Ps0CCF2J0kbiXKpNP2CLF6lYMwVn5JEejnPWEp8H0PyqtvsFS+YzxQKNHs6F/LIMdpm
-         0JD2p/0l5FeCHAEz+psSeCW5tyyWcI6huQrY6Bjylq4blF5lMvRisVF3WkQxtkBhhVLH
-         DNgYGXukVbokNosTNgTDg9rhMEGshLClng2mWZMNrlWO5fyrYuwyQyBKzavd0ZBvXbz2
-         1akQ==
-X-Gm-Message-State: AOJu0Yzu2QT9U4iHkI1IANX4cDA1gHzk3hflZz2/uFcX9Pcgkz1CETpy
-	WLF9rDwESfNvzklmZTc/l7t61523KftDTug74hoY/UcTvSrIoibO9WF6Ph0j1KjzXywQmrtHUGl
-	EKe6xpw==
-X-Google-Smtp-Source: AGHT+IFkzNNA6kVoA+2D6FAE4AOHOnEwMQn/97TNwefolAE17lsZ+t6y3XTUeyFLF/Yx7w++6g2MSRnkPqg=
-X-Received: from plbmv13.prod.google.com ([2002:a17:903:b8d:b0:235:54f:4f12])
- (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a17:903:2bcc:b0:235:5a9:976f
- with SMTP id d9443c01a7336-23824030ccdmr68655075ad.24.1750856007263; Wed, 25
- Jun 2025 05:53:27 -0700 (PDT)
-Date: Wed, 25 Jun 2025 05:53:25 -0700
-In-Reply-To: <20250610175424.209796-2-Neeraj.Upadhyay@amd.com>
+	s=arc-20240116; t=1750856035; c=relaxed/simple;
+	bh=V5vRw37irrlS8OlidSqX3//zwRh1Kiq+TQw+3YvYvnA=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:From:In-Reply-To:
+	 Content-Type:References; b=L+STnRDwbfuN5NqmDHO2hVwgapZCU/L8eGjHFsPTWOD3+xfma7/jPYSYln+VtsU2GYS2p2Zm3/1PL5y1y6uaKo6KTSwQv2mVbCfCtLnmWJQP9e7WYELduZaB/60llo9iGGrxAVq5zqKwUJw5ZRqxeq6nX/gNVNyxr7jNiF7EGAU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=MqvdsWfu; arc=none smtp.client-ip=210.118.77.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
+Received: from eucas1p1.samsung.com (unknown [182.198.249.206])
+	by mailout1.w1.samsung.com (KnoxPortal) with ESMTP id 20250625125350euoutp01aeb6adeb173de81a1e9e64546aaf9725~MSkiRQQBS2094820948euoutp01C
+	for <linux-kernel@vger.kernel.org>; Wed, 25 Jun 2025 12:53:50 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.w1.samsung.com 20250625125350euoutp01aeb6adeb173de81a1e9e64546aaf9725~MSkiRQQBS2094820948euoutp01C
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+	s=mail20170921; t=1750856030;
+	bh=aHXPUrYiaWgQA8BN5Zf+BoDPK1tGYC0F+73wV5XjTXY=;
+	h=Date:Subject:To:Cc:From:In-Reply-To:References:From;
+	b=MqvdsWfuDOMUFFdpZ++uCNDRxIxCYkqgAv84879K/bIrv/0/5F8bSGtujVlCGo0Mi
+	 2TWRc/cy9lNQA6MawjAhJV+EChId0q2Qo+ybYx2viknaXnZ5ZFh++pV8cpExALdK+e
+	 AnqE2vKquHMcYIQjfNAMwsCUKOQJY7GIO+5WumIA=
+Received: from eusmtip1.samsung.com (unknown [203.254.199.221]) by
+	eucas1p1.samsung.com (KnoxPortal) with ESMTPA id
+	20250625125350eucas1p1dad14e84a8cc44516174ecc9053727b1~MSkhvbtf41252112521eucas1p14;
+	Wed, 25 Jun 2025 12:53:50 +0000 (GMT)
+Received: from [192.168.1.44] (unknown [106.210.136.40]) by
+	eusmtip1.samsung.com (KnoxPortal) with ESMTPA id
+	20250625125349eusmtip10a4e23d9061b04dad7c3aa6ff3064088~MSkgtbupw0720807208eusmtip1C;
+	Wed, 25 Jun 2025 12:53:48 +0000 (GMT)
+Message-ID: <0b3d2deb-7f27-4390-b43e-353d4ba17bd7@samsung.com>
+Date: Wed, 25 Jun 2025 14:53:48 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20250610175424.209796-1-Neeraj.Upadhyay@amd.com> <20250610175424.209796-2-Neeraj.Upadhyay@amd.com>
-Message-ID: <aFvxRctwWEtRde08@google.com>
-Subject: Re: [RFC PATCH v7 01/37] KVM: lapic: Remove __apic_test_and_{set|clear}_vector()
-From: Sean Christopherson <seanjc@google.com>
-To: Neeraj Upadhyay <Neeraj.Upadhyay@amd.com>
-Cc: linux-kernel@vger.kernel.org, bp@alien8.de, tglx@linutronix.de, 
-	mingo@redhat.com, dave.hansen@linux.intel.com, Thomas.Lendacky@amd.com, 
-	nikunj@amd.com, Santosh.Shukla@amd.com, Vasant.Hegde@amd.com, 
-	Suravee.Suthikulpanit@amd.com, David.Kaplan@amd.com, x86@kernel.org, 
-	hpa@zytor.com, peterz@infradead.org, pbonzini@redhat.com, kvm@vger.kernel.org, 
-	kirill.shutemov@linux.intel.com, huibo.wang@amd.com, naveen.rao@amd.com, 
-	francescolavra.fl@gmail.com, tiala@microsoft.com
-Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v6 8/8] drm/imagination: Enable PowerVR driver for
+ RISC-V
+To: Matt Coster <Matt.Coster@imgtec.com>
+Cc: Drew Fustini <drew@pdp7.com>, Guo Ren <guoren@kernel.org>, Fu Wei
+	<wefu@redhat.com>, Rob Herring <robh@kernel.org>, Krzysztof Kozlowski
+	<krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, Bartosz
+	Golaszewski <brgl@bgdev.pl>, Philipp Zabel <p.zabel@pengutronix.de>, Frank
+	Binns <Frank.Binns@imgtec.com>, Maarten Lankhorst
+	<maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>,
+	Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>,
+	Simona Vetter <simona@ffwll.ch>, Paul Walmsley <paul.walmsley@sifive.com>,
+	Palmer Dabbelt <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>,
+	Alexandre Ghiti <alex@ghiti.fr>, Ulf Hansson <ulf.hansson@linaro.org>, Marek
+	Szyprowski <m.szyprowski@samsung.com>, Bartosz Golaszewski
+	<bartosz.golaszewski@linaro.org>, "linux-riscv@lists.infradead.org"
+	<linux-riscv@lists.infradead.org>, "devicetree@vger.kernel.org"
+	<devicetree@vger.kernel.org>, "linux-kernel@vger.kernel.org"
+	<linux-kernel@vger.kernel.org>, "linux-pm@vger.kernel.org"
+	<linux-pm@vger.kernel.org>, "dri-devel@lists.freedesktop.org"
+	<dri-devel@lists.freedesktop.org>
+Content-Language: en-US
+From: Michal Wilczynski <m.wilczynski@samsung.com>
+In-Reply-To: <ff96ee1f-23ad-4e7f-9ac1-11f410e459e3@imgtec.com>
+Content-Transfer-Encoding: 7bit
+X-CMS-MailID: 20250625125350eucas1p1dad14e84a8cc44516174ecc9053727b1
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+X-RootMTR: 20250623114439eucas1p17e4405b95a5693a972bf40a3b3ecdc11
+X-EPHeader: CA
+X-CMS-RootMailID: 20250623114439eucas1p17e4405b95a5693a972bf40a3b3ecdc11
+References: <20250623-apr_14_for_sending-v6-0-6583ce0f6c25@samsung.com>
+	<CGME20250623114439eucas1p17e4405b95a5693a972bf40a3b3ecdc11@eucas1p1.samsung.com>
+	<20250623-apr_14_for_sending-v6-8-6583ce0f6c25@samsung.com>
+	<ff96ee1f-23ad-4e7f-9ac1-11f410e459e3@imgtec.com>
 
-"KVM: x86:" for the scope.  That goes for all of the relevant shortlogs.
 
-And for this one in particular, maybe something like:
 
-  KVM: x86: Open code setting/clearing of bits in the ISR
-
-because seeing "Remove" in the shortlog reads like it's a straight deletion of
-code.
-
-On Tue, Jun 10, 2025, Neeraj Upadhyay wrote:
-> Remove __apic_test_and_set_vector() and __apic_test_and_clear_vector(),
-> because the _only_ register that's safe to modify with a non-atomic
-> operation is ISR, because KVM isn't running the vCPU, i.e. hardware can't
-> service an IRQ or process an EOI for the relevant (virtual) APIC.
+On 6/24/25 15:54, Matt Coster wrote:
+> On 23/06/2025 12:42, Michal Wilczynski wrote:
+>> Several RISC-V boards feature Imagination GPUs that are compatible with
+>> the PowerVR driver. An example is the IMG BXM-4-64 GPU on the Lichee Pi
+>> 4A board. This commit adjusts the driver's Kconfig dependencies to allow
+>> the PowerVR driver to be compiled on the RISC-V architecture.
+>>
+>> By enabling compilation on RISC-V, we expand support for these GPUs,
+>> providing graphics acceleration capabilities and enhancing hardware
+>> compatibility on RISC-V platforms.
+>>
+>> Add a dependency on MMU to fix a build warning on RISC-V configurations
+>> without an MMU.
+>>
+>> Reviewed-by: Ulf Hansson <ulf.hansson@linaro.org>
+>> Reviewed-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+>> Signed-off-by: Michal Wilczynski <m.wilczynski@samsung.com>
+>> ---
+>>  drivers/gpu/drm/imagination/Kconfig | 3 ++-
+>>  1 file changed, 2 insertions(+), 1 deletion(-)
+>>
+>> diff --git a/drivers/gpu/drm/imagination/Kconfig b/drivers/gpu/drm/imagination/Kconfig
+>> index 5f9fff43d6baadc42ebf48d91729bfbf27e06caa..a7da858a5b301e8f088e3e22f5641feb2e078681 100644
+>> --- a/drivers/gpu/drm/imagination/Kconfig
+>> +++ b/drivers/gpu/drm/imagination/Kconfig
+>> @@ -3,9 +3,10 @@
+>>  
+>>  config DRM_POWERVR
+>>  	tristate "Imagination Technologies PowerVR (Series 6 and later) & IMG Graphics"
+>> -	depends on ARM64
+>> +	depends on (ARM64 || RISCV)
 > 
-> No functional change intended.
+> There were two issues you encountered when enabling COMPILE_TEST in v5,
+> both of which are somewhat simple to workaround but expose underlying
+> assumptions we made during early development.
 > 
-> Suggested-by: Sean Christopherson <seanjc@google.com>
-> [Neeraj: Add "inline" for apic_vector_to_isr()]
-> Signed-off-by: Neeraj Upadhyay <Neeraj.Upadhyay@amd.com>
-> ---
-> Changes since v6:
+> The first [1] is due to us assuming a 64-bit platform, which was never a
+> problem with the ARM64 dependency, but may actually be a problem with
+> RISCV given this allows for 32-bit as well. You should probably make
+> this (RISCV && 64BIT) until the implicit 64-bit dependency can be worked
+> out.
+
+Yeah will incude that in next revision.
+
 > 
->  - New change.
+> Somewhat related, we also assume a little-endian host. Technically ARM64
+> can also be big-endian, you just don't encounter that in the wild too
+> often so it's never been a "real" issue. I do wonder if swapping out
+> (ARM64 || RISCV) for (64BIT && CPU_LITTLE_ENDIAN) entirely would be a
+> reasonable change, perhaps for another day though...
 > 
->  arch/x86/kvm/lapic.c | 19 +++++++------------
->  1 file changed, 7 insertions(+), 12 deletions(-)
+> The other [2] is slightly more subtle. To keep things straightforward,
+> we currently map CPU pages to GPU pages 1:1, meaning we use the CPU page
+> size to define the GPU page size. That GPU page size is configurable,
+> but does not support every possible size the CPU could support on any
+> architecture. The failing test there was sparc64 with an 8K page size
+> causing no GPU page size to be defined. See the #if/#elif ladder at the
+> top of pvr_mmu.c for the supported sizes and the doc comment above
+> PVR_DEVICE_PAGE_SIZE in pvr_mmu.h for the acknowledgement of the page
+> size restrictions.
 > 
-> diff --git a/arch/x86/kvm/lapic.c b/arch/x86/kvm/lapic.c
-> index 73418dc0ebb2..11e57f351ce5 100644
-> --- a/arch/x86/kvm/lapic.c
-> +++ b/arch/x86/kvm/lapic.c
-> @@ -125,16 +125,6 @@ bool kvm_apic_pending_eoi(struct kvm_vcpu *vcpu, int vector)
->  		apic_test_vector(vector, apic->regs + APIC_IRR);
->  }
->  
-> -static inline int __apic_test_and_set_vector(int vec, void *bitmap)
-> -{
-> -	return __test_and_set_bit(VEC_POS(vec), (bitmap) + REG_POS(vec));
-> -}
-> -
-> -static inline int __apic_test_and_clear_vector(int vec, void *bitmap)
-> -{
-> -	return __test_and_clear_bit(VEC_POS(vec), (bitmap) + REG_POS(vec));
-> -}
-> -
->  __read_mostly DEFINE_STATIC_KEY_FALSE(kvm_has_noapic_vcpu);
->  EXPORT_SYMBOL_GPL(kvm_has_noapic_vcpu);
->  
-> @@ -744,9 +734,14 @@ void kvm_apic_clear_irr(struct kvm_vcpu *vcpu, int vec)
->  }
->  EXPORT_SYMBOL_GPL(kvm_apic_clear_irr);
->  
-> +static inline void *apic_vector_to_isr(int vec, struct kvm_lapic *apic)
+> The "proper" fix here would be for us to make these two sizes
+> independent, but that's not a trivial change. The "quick" fix I suppose
+> would be to depend on one of the supported page sizes, so maybe
+> (PAGE_SIZE_4KB || PAGE_SIZE_16KB || PAGE_SIZE_64KB || PAGE_SIZE_256KB)
+> since the larger page sizes appear unsupported (probably for good
+> reason).
 
-<formletter>
+Thanks for a great explanation !
 
-Do not use "inline" for functions that are visible only to the local compilation
-unit.  "inline" is just a hint, and modern compilers are smart enough to inline
-functions when appropriate without a hint.
-
-A longer explanation/rant here: https://lore.kernel.org/all/ZAdfX+S323JVWNZC@google.com
-
-</formletter>
-
-Ignoring the existing code below, there's lots of crusty old code in KVM (that
-isn't "bad" per se, i.e. isn't worth fixing unless a prime opportunity arises).
-
-> +{
-> +	return apic->regs + APIC_ISR + REG_POS(vec);
-> +}
-> +
->  static inline void apic_set_isr(int vec, struct kvm_lapic *apic)
->  {
-> -	if (__apic_test_and_set_vector(vec, apic->regs + APIC_ISR))
-> +	if (__test_and_set_bit(VEC_POS(vec), apic_vector_to_isr(vec, apic)))
->  		return;
->  
->  	/*
-> @@ -789,7 +784,7 @@ static inline int apic_find_highest_isr(struct kvm_lapic *apic)
->  
->  static inline void apic_clear_isr(int vec, struct kvm_lapic *apic)
->  {
-> -	if (!__apic_test_and_clear_vector(vec, apic->regs + APIC_ISR))
-> +	if (!__test_and_clear_bit(VEC_POS(vec), apic_vector_to_isr(vec, apic)))
->  		return;
->  
->  	/*
-> -- 
-> 2.34.1
 > 
+>>  	depends on DRM
+>>  	depends on PM
+>> +	depends on MMU
+> 
+> Nit: can you keep this alphabetical?
+> 
+> Cheers,
+> Matt
+> 
+> [1]: https://lore.kernel.org/r/202506191323.zD1fszQb-lkp@intel.com/
+> [2]: https://lore.kernel.org/r/202506201103.GX6DA9Gx-lkp@intel.com/
+> 
+>>  	select DRM_EXEC
+>>  	select DRM_GEM_SHMEM_HELPER
+>>  	select DRM_SCHED
+>>
+> 
+> 
+
+Best regards,
+-- 
+Michal Wilczynski <m.wilczynski@samsung.com>
 
