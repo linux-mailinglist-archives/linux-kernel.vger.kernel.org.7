@@ -1,100 +1,140 @@
-Return-Path: <linux-kernel+bounces-702270-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-702193-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1D522AE803F
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Jun 2025 12:53:51 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 04763AE7F41
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Jun 2025 12:29:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C7A223ACE83
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Jun 2025 10:53:25 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AF7443A559C
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Jun 2025 10:29:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 652BC29E0F4;
-	Wed, 25 Jun 2025 10:50:47 +0000 (UTC)
-Received: from pegase1.c-s.fr (pegase1.c-s.fr [93.17.236.30])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8CC112DAFAB;
-	Wed, 25 Jun 2025 10:50:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=93.17.236.30
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 617BA1F3BB5;
+	Wed, 25 Jun 2025 10:29:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="I3NaFcSK"
+Received: from mail-lf1-f50.google.com (mail-lf1-f50.google.com [209.85.167.50])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 32CDE29ACF3
+	for <linux-kernel@vger.kernel.org>; Wed, 25 Jun 2025 10:29:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750848647; cv=none; b=ddTGu6/NvOlLdr4TmPlL/OjFNFzizAvWy/hgrSYmiioCCxbkXacctUbwgJv7wefJ+sqUFDK74+RHzDv4b4svQcNeCx4by+A7yZfTf7ZTA9T9kdmAQ8ybJZjo7UErsvY5RzPBfJFi6XBJErSPJx6dfHVpUw5fNVnB4cKPpnk6dRs=
+	t=1750847352; cv=none; b=OHcneKChx5YqMtszvuRe6Uiq9rftYZKs339Xjyu4F0ViOKLMmdtyoSu1jYgeghJGwC/d/E4EuEJYX0z1Av9xO0lp+sSgdmlZ3Km7ufaHusj7vPooZ9lddH7dnywQtUnpXNeAbXB6cnA5N2xbioIRnFB5mSMGOrz3vGo75mevEWA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750848647; c=relaxed/simple;
-	bh=ApxE6M1Ke6N9jdaZibKhAIInp2ndrZn6PPTj4Ntr1CE=;
-	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:References:
-	 In-Reply-To:Content-Type; b=WpcAZOZG+HemUiZpAgaEOiGaXKPcHIUMespFFt5ecVd/QRfiS4i4+s151uqtDpFNtRwWUWbFy1K1kW6ygqwsmdqOUIffS4ZZriJMAvEJMGfiPIQi7mcRNZO2Okluww+GkHBeeYz1oaWSHCkpJnoYm3fUBoXYZYev043xyVnV4Ec=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=csgroup.eu; spf=pass smtp.mailfrom=csgroup.eu; arc=none smtp.client-ip=93.17.236.30
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=csgroup.eu
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=csgroup.eu
-Received: from localhost (mailhub3.si.c-s.fr [192.168.12.233])
-	by localhost (Postfix) with ESMTP id 4bRyfz3MTKz9vBt;
-	Wed, 25 Jun 2025 12:27:07 +0200 (CEST)
-X-Virus-Scanned: amavisd-new at c-s.fr
-Received: from pegase1.c-s.fr ([192.168.12.234])
-	by localhost (pegase1.c-s.fr [127.0.0.1]) (amavisd-new, port 10024)
-	with ESMTP id p2o-Y-FdKUAQ; Wed, 25 Jun 2025 12:27:07 +0200 (CEST)
-Received: from messagerie.si.c-s.fr (messagerie.si.c-s.fr [192.168.25.192])
-	by pegase1.c-s.fr (Postfix) with ESMTP id 4bRyfz2RdKz9vBC;
-	Wed, 25 Jun 2025 12:27:07 +0200 (CEST)
-Received: from localhost (localhost [127.0.0.1])
-	by messagerie.si.c-s.fr (Postfix) with ESMTP id 435058B7B7;
-	Wed, 25 Jun 2025 12:27:07 +0200 (CEST)
-X-Virus-Scanned: amavisd-new at c-s.fr
-Received: from messagerie.si.c-s.fr ([127.0.0.1])
-	by localhost (messagerie.si.c-s.fr [127.0.0.1]) (amavisd-new, port 10023)
-	with ESMTP id vvosXbHhLt2e; Wed, 25 Jun 2025 12:27:07 +0200 (CEST)
-Received: from [192.168.235.99] (unknown [192.168.235.99])
-	by messagerie.si.c-s.fr (Postfix) with ESMTP id 0BC418B7A7;
-	Wed, 25 Jun 2025 12:27:04 +0200 (CEST)
-Message-ID: <750b6617-7abf-4adc-b3e6-6194ff10c547@csgroup.eu>
-Date: Wed, 25 Jun 2025 12:27:04 +0200
+	s=arc-20240116; t=1750847352; c=relaxed/simple;
+	bh=u1FZ9sKjGBQmPcnWwNmy+m7HReciKhzXM/5uOouRfEU=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Cozm5EGywnuAE9zVuH6yERNRWEG0zjHgiYejQGVcsZlhlfEBYfp5d/Z7Swgvd+2HGRp6Sl5oPgyXbY3If/emsjrJ2b9yFKJGPlOHLKJQ+cfEAGAE1GiVPKBzSd4StdUmtHEAdLhUeZvySgSDyQj79JtRQoLWPdrqFN96xU97JGU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=I3NaFcSK; arc=none smtp.client-ip=209.85.167.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
+Received: by mail-lf1-f50.google.com with SMTP id 2adb3069b0e04-54b09cb06b0so6670360e87.1
+        for <linux-kernel@vger.kernel.org>; Wed, 25 Jun 2025 03:29:10 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1750847349; x=1751452149; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=u1FZ9sKjGBQmPcnWwNmy+m7HReciKhzXM/5uOouRfEU=;
+        b=I3NaFcSKs3ENXH7B6k93+HJ7IyG0OeA4wkTNm+efTbpCqxJyfA6M6cykV5lT1leRYG
+         C7q4sMJG/2BwcvRYC8+zj/vAFOKdblP5AS+W5M3g3eAFvdvdG8zPdB2E0iSRDAiIFHmH
+         +tGSyTZ7k5cSZBx3QTuxAdplKrK5w+S4tofjumZFRA53N6NQnvpl444ErPN2otIX0hPX
+         P4y+N0nTiSB2qNEJZFWyzzJdTrF+fctF0HoLMwL5Ff+hg6N4N5jYR74xND58I0LTNoxl
+         arj5iE+jwkOjRw/au5vrVb08MZcww7jnDNNgDVOTjTGYghs/rjIUEOCW/uO75et28N5U
+         j/5w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1750847349; x=1751452149;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=u1FZ9sKjGBQmPcnWwNmy+m7HReciKhzXM/5uOouRfEU=;
+        b=JMI9mueW7DZACxg1GYKosubyu/JBcF9CMv6g9VrLvnRAoTZDUdSZ9WIg5ZYAcEPDNf
+         qCf2tzBa0NOp98JFEErCMO9tcxpccJN0RTkk21MZ5/SDqOrVfJKbhDajucUBaeroGbTv
+         stUkbE9lymN3ssAn+mPUu1cB2AWNThYDiCEOjcvUDqaf6gmiAet5teLXah0H4V5VcXTV
+         dsB4iZjS3LEQPLBvaeu5tgsh36W5PpDXaKnaXbWI4A4bj7FE/fYKZStHYgx2NcX+IHrX
+         MFhXnsoF2wIz0zaQ8W1lwnu1pCBUm9oCoH4j7QE8x491Uorv6rj6ZyqPYCwIGXJpWus7
+         YbTg==
+X-Forwarded-Encrypted: i=1; AJvYcCXCatDVK9eOJAfq47AOt6aFgg6+wgoZNMkRi7acNeNRjbhNjze9M3ZiW5NYyliZ351nMAnpNiOhXj9yFHE=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy+BM7OZchqVkrMd8kpeu9XYl9wS724o2ly2uTVjUshogn5Rx+0
+	bHDbSDBKFrJe8nQ9Wt/4l/lYpg2xqTZa7ERnbLZrz03f3uscpQRniL1BMKqeLRb9+pQl64+KqQ8
+	7/9evkU6SEGwQzTh079GAdPW64MuJkF6/5v6LlPgXBQ==
+X-Gm-Gg: ASbGncuEFKFi9YCiBxSRrn+sKjcPMlDveZE34gZTVzHe6+YZwTanVKBENJDTU9YAY2w
+	+86Hl8HzF2R9bHrxebNUQIOIB4YZQYHVn+Dj51EEE7CgmWDMHbjd2EA2G2LR2GP/eOTGKctv/Wt
+	g0gC9mmNfp6dXFmNnC7KkepmQ6q/5ARzNGJUfxCzppkVfr6Cw7hlSwCFbFvcB6ezNXmD0dP5zls
+	7g=
+X-Google-Smtp-Source: AGHT+IEkX13bQ28turRcuObCkfo4NVlXNRfNs11ryLaB3cUvZvJYNYOL/9JsCJbedp2nhQty0KHggcVYo7rajlWmaTg=
+X-Received: by 2002:a05:6512:1153:b0:553:2ef3:f731 with SMTP id
+ 2adb3069b0e04-554fdd1b6a9mr686994e87.29.1750847349350; Wed, 25 Jun 2025
+ 03:29:09 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-From: Christophe Leroy <christophe.leroy@csgroup.eu>
-Subject: Re: [PATCH 2/9] kasan: replace kasan_arch_is_ready with kasan_enabled
-To: Sabyrzhan Tasbolatov <snovitoll@gmail.com>, ryabinin.a.a@gmail.com,
- glider@google.com, andreyknvl@gmail.com, dvyukov@google.com,
- vincenzo.frascino@arm.com, catalin.marinas@arm.com, will@kernel.org,
- chenhuacai@kernel.org, kernel@xen0n.name, maddy@linux.ibm.com,
- mpe@ellerman.id.au, npiggin@gmail.com, hca@linux.ibm.com, gor@linux.ibm.com,
- agordeev@linux.ibm.com, borntraeger@linux.ibm.com, svens@linux.ibm.com,
- richard@nod.at, anton.ivanov@cambridgegreys.com, johannes@sipsolutions.net,
- dave.hansen@linux.intel.com, luto@kernel.org, peterz@infradead.org,
- tglx@linutronix.de, mingo@redhat.com, bp@alien8.de, x86@kernel.org,
- hpa@zytor.com, chris@zankel.net, jcmvbkbc@gmail.com,
- akpm@linux-foundation.org
-Cc: guoweikang.kernel@gmail.com, geert@linux-m68k.org, rppt@kernel.org,
- tiwei.btw@antgroup.com, richard.weiyang@gmail.com, benjamin.berg@intel.com,
- kevin.brodsky@arm.com, kasan-dev@googlegroups.com,
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
- loongarch@lists.linux.dev, linuxppc-dev@lists.ozlabs.org,
- linux-s390@vger.kernel.org, linux-um@lists.infradead.org, linux-mm@kvack.org
-References: <20250625095224.118679-1-snovitoll@gmail.com>
- <20250625095224.118679-3-snovitoll@gmail.com>
-Content-Language: fr-FR
-In-Reply-To: <20250625095224.118679-3-snovitoll@gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+References: <20250624-gpio-mmio-pdata-v1-0-a58c72eb556a@linaro.org>
+ <20250624-gpio-mmio-pdata-v1-2-a58c72eb556a@linaro.org> <CACRpkdavsQJTfiwn-F+ML5MK6ADtr-31bBxLA4gV7MTAYR0YGQ@mail.gmail.com>
+ <CACMJSestPPEvsUrWaqz7yZ8OxZTMEOBY7htE7c8BV-VBumj1Lw@mail.gmail.com>
+ <6c64751d-67f6-4c30-a312-af289d9f432e@kernel.org> <CAMRc=MdEZkjoDR83JFg5OPP07_DkAfeZixN9C+uxhkqkxaKypg@mail.gmail.com>
+ <b9c6f5bf-ac43-497a-9354-6448cfb2839c@kernel.org>
+In-Reply-To: <b9c6f5bf-ac43-497a-9354-6448cfb2839c@kernel.org>
+From: Bartosz Golaszewski <brgl@bgdev.pl>
+Date: Wed, 25 Jun 2025 12:28:58 +0200
+X-Gm-Features: AX0GCFu-paz-Z_NsdxNyvXdu5K3BHS4b3n8YPIt0hLxqGr7Teq3_mQG0oOp06mE
+Message-ID: <CAMRc=MdEWmgj8hTY3fQrXnDDv6pmK9XPvT9gE=5oGEs8R7GOVA@mail.gmail.com>
+Subject: Re: [PATCH RFT 2/6] gpio: mmio: get chip label and GPIO base from
+ device properties
+To: Krzysztof Kozlowski <krzk@kernel.org>
+Cc: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>, 
+	Linus Walleij <linus.walleij@linaro.org>, Lee Jones <lee@kernel.org>, 
+	Liviu Dudau <liviu.dudau@arm.com>, Sudeep Holla <sudeep.holla@arm.com>, 
+	Lorenzo Pieralisi <lpieralisi@kernel.org>, Aaro Koskinen <aaro.koskinen@iki.fi>, 
+	Janusz Krzysztofik <jmkrzyszt@gmail.com>, Tony Lindgren <tony@atomide.com>, 
+	Russell King <linux@armlinux.org.uk>, Alim Akhtar <alim.akhtar@samsung.com>, 
+	linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-arm-kernel@lists.infradead.org, linux-omap@vger.kernel.org, 
+	patches@opensource.cirrus.com, linux-samsung-soc@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
+On Wed, Jun 25, 2025 at 12:26=E2=80=AFPM Krzysztof Kozlowski <krzk@kernel.o=
+rg> wrote:
+>
+> >>>> I wouldn't be stoked to see device trees abusing the "gpio-mmio,base=
+"
+> >>>> property all of a sudden just because it now exists as a device
+> >>>> property though... I kind of wish we had a way to opt out of exposin=
+g
+> >>>> this to all the sub-property paths. But it seems tiresome, so:
+> >>>>
+> >>>> Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
+> >>>>
+> >>>> Yours,
+> >>>> Linus Walleij
+> >>>
+> >>> That's not a problem - this property is not in any DT bindings and as
+> >>> such is not an allowed property in DT sources. For out-of-tree DTs? W=
+e
+> >>> don't care about those.
+> >> That's not true, we do care about implied ABI. Try changing/breaking
+> >> this later, when users complain their out of tree DTS is affected, and
+> >> explaining this all to Greg.
+> >>
+> >
+> > Wait, seriously? I thought that the upstream bindings are the source
+> > of truth for device-tree sources...
+>
+>
+> They are, until they are not... ok, we don't really care that much about
+> out of tree DTS, but in-tree DTS still could use these and don't care
+> about bindings check, right?
+>
 
+Could they though? I can imagine this happening by accident but in
+general: you'd expect new sources to follow the bindings and be
+verifiable against them? Otherwise, what's the point of the schema?
 
-Le 25/06/2025 à 11:52, Sabyrzhan Tasbolatov a écrit :
-> Replace the existing kasan_arch_is_ready() calls with kasan_enabled().
-> Drop checks where the caller is already under kasan_enabled() condition.
-
-If I understand correctly, it means that KASAN won't work anymore 
-between patch 2 and 9, because until the arch calls kasan_init_generic() 
-kasan_enabled() will return false.
-
-The transition should be smooth and your series should remain bisectable.
-
-Or am I missing something ?
-
-Christophe
-
+Bart
 
