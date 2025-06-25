@@ -1,111 +1,199 @@
-Return-Path: <linux-kernel+bounces-702772-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-702774-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7A4AEAE871E
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Jun 2025 16:52:49 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id DD342AE872A
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Jun 2025 16:53:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B37D23B335C
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7EE377A936C
 	for <lists+linux-kernel@lfdr.de>; Wed, 25 Jun 2025 14:52:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8BB451D6193;
-	Wed, 25 Jun 2025 14:52:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B6EB82690ED;
+	Wed, 25 Jun 2025 14:53:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="2LJqB9Az"
-Received: from mail-pl1-f177.google.com (mail-pl1-f177.google.com [209.85.214.177])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="vEVPBNft"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C94821D5170
-	for <linux-kernel@vger.kernel.org>; Wed, 25 Jun 2025 14:52:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E6D1F1D5165;
+	Wed, 25 Jun 2025 14:53:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750863161; cv=none; b=rWZcBDjFw94ETELxsd96pHGKvYSvr2Du1yjeGGOw473uEY2b1gMvZH7xij6CUjaP0p8kXoj8uxiznt7HLzO5bPlQvdKPVkoOeI9nm+zM6Hfie3YnaJRPQNN+16oVLilIruhVQkEGzbKB56AwLHNnpSBwSDPzRC1/3fMrkz4QcQs=
+	t=1750863209; cv=none; b=kU4zPKBm8njAFWmdB2XmLsZyVnDL64sEsZxyfZZONdNCOP+884WlIyUS1DpXY+2YdN7THbmsxabFVj3eV92/K/gQkJWEhZouk7iLCp+4zUPFt67K1Nta41DuogIXy/S7ZKTWN9ZOItIZczy6vWHo58kR5AMO9hykH0lxsokxsK0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750863161; c=relaxed/simple;
-	bh=blqNeUBeq4tjvuy/9Ly0dt0wfjN65t72jilSiX/+g7U=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=IVSJAfzZOvP2h7CshKgvr5wu1i1l8JAKDMSI5PXoFasAQ3CaUPbQ3kFJOhJfrJTmm9hRV9dKobhjzlbViCoKd535f8BTMq2bCYQE5BW5KmQsQbeq2qeuKaf2iPlt0i7JQ604sBjrxfUbtF8Pe3+Ao5z5zjTBnCqyGjxbEadTXvo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=2LJqB9Az; arc=none smtp.client-ip=209.85.214.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
-Received: by mail-pl1-f177.google.com with SMTP id d9443c01a7336-23636167b30so66535035ad.1
-        for <linux-kernel@vger.kernel.org>; Wed, 25 Jun 2025 07:52:37 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1750863157; x=1751467957; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:date:message-id:subject
-         :references:in-reply-to:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=wz1Ak0wbeYwkM41lDzZf9Pz6IYC6aH7Ol1qRTwbIEuM=;
-        b=2LJqB9AzZ/XP6a6SKHG3xY37oXE3RqXGG3LcZhJij6/Co6eFDabh/uXgLX8/9TWcC6
-         Af0N4vTCc3YK1w1bHfG3NcA6cKhJGAzSiI3upkLqc1/X4zvCkLyitbeSBTl+hRDr7ifk
-         jVtGrvO9grwELQsDwN19/LHdl70au5fcTVNwJW7TuANpqAGWi67bPoXFI1Ar1ImmxUoX
-         ZiTIAeX7xyOBnYpJ7N1ly5Vq2h6/uh/VObTdvRcYbfahpm6c3rjYYcvNKDP4G+C4Hki/
-         W9n5EgCR7ymNVFKz26fLeVR5YT340D9kW41vU+fbbhyuCL7YuydTrndVqJyR32gdhgwN
-         Trbg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1750863157; x=1751467957;
-        h=content-transfer-encoding:mime-version:date:message-id:subject
-         :references:in-reply-to:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=wz1Ak0wbeYwkM41lDzZf9Pz6IYC6aH7Ol1qRTwbIEuM=;
-        b=HN+pzJeDxIYzdk/7/6dvsBl+UMajKakEqCpGkcGDnkrnVqWeNb9oYkV8dBingzuSuv
-         1liAZQn78BVizAsezjS+WJfTXFMi/VOQAAVL+nNQ+BCWpMMRhLDb5NefrYXGdh09CW3p
-         DrRgaMMeD6Ik4XkS/YE0rARKYkuaEYNt8OojYyX5k2w6hpBAUS7nIhKqcSz2//OotSki
-         vJ5FmKlJIevLZosDbx84at+2Wo4yk8RTFYtQE03GForH/2lf26sWojDnljHjb5FHuXQ+
-         7Y+JJwmER2IqKP+Pxwwqj4l/R+LoVJldPhjxfXDiRqeOwOlau3BV4ewdZU+XkBJ8Zy7x
-         /wCA==
-X-Forwarded-Encrypted: i=1; AJvYcCVJ0RrbYKDCdtXea8BzPWO8jXGgy+pJr5KIgbnT6VFFQoo0Qu9JGmgf/WRca697l884GtsmFJqpfj6ltfU=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxeVfVdeAWAfw62TN8OtUVcikcr25MFVMQ/BjPWqfARPaGElT6P
-	1N4SDdC6Kpe1uno1Y6ksXx7Zh1DZ7k6lGZRy64qtnxqaXo10/rZ47FTkZ2yeqr1umYM=
-X-Gm-Gg: ASbGncuqLVyeF/DntvnKeBpwRG4QAjwMr+X25Rtu43e882GOYmvTwjLWVq+V4hJPdc9
-	ZIGP+ox4UmFukAL7u7rR4+WUk/JNHSAT6QqJeRbApl/FtsnpFtoni+GsZkgyu57ibq/iQH2izzQ
-	xbaF1Jnm/bThCYeVia370sxpjqBSDq2MCWpct7IZw0VcUfkcL+3FTbQJF0CHE+is04aWINM2xIu
-	fVjA8Td5CwctxMwp6rKrMQ86QejMtsUHkaKb1zJqU6XQR1pJYXNVV+HTnKyeHPCUCdnqzSGCC76
-	mXKMkGJ4480e7xIpqxOeqWWJ9NaIbu3b/zBQnkyrn38Is/X/EclVrw==
-X-Google-Smtp-Source: AGHT+IH1ttY22NoB2TLT5LMAa1LZM20YfAQYpf+mdNR1+XahCsy7uPx4SRjp6id1ToSCVSVCJE/K2w==
-X-Received: by 2002:a17:902:dac4:b0:234:bfcb:5bfa with SMTP id d9443c01a7336-23823fc4f7cmr57992235ad.15.1750863156996;
-        Wed, 25 Jun 2025 07:52:36 -0700 (PDT)
-Received: from [127.0.0.1] ([12.48.65.201])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-237d867f5cfsm133029065ad.181.2025.06.25.07.52.35
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 25 Jun 2025 07:52:36 -0700 (PDT)
-From: Jens Axboe <axboe@kernel.dk>
-To: Penglei Jiang <superman.xpt@gmail.com>
-Cc: io-uring@vger.kernel.org, linux-kernel@vger.kernel.org, 
- asml.silence@gmail.com
-In-Reply-To: <20250625102703.68336-1-superman.xpt@gmail.com>
-References: <20250625102703.68336-1-superman.xpt@gmail.com>
-Subject: Re: [PATCH] io_uring: fix resource leak in io_import_dmabuf()
-Message-Id: <175086315592.128628.9014300764157579909.b4-ty@kernel.dk>
-Date: Wed, 25 Jun 2025 08:52:35 -0600
+	s=arc-20240116; t=1750863209; c=relaxed/simple;
+	bh=IJe6mOkdno5hFkqOuZzP6lWj3MzgBpaudeFCugaeW5w=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=nAt1tjPIzZkIJoIYkr0k3ztq16seMjP5OlFLwx5w6umNWdUV9k5Ks5ogMJWUTHt8beFoObIk1koseH25F2THMP2hqTb2m0V2ukh0WTZvtrdgqs3nWzP068ylvqTKb0036VMZg2aN7V23ciQOH1RtEjaY1k/a7J2ClgAslOUnkqM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=vEVPBNft; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4ECC9C4CEEA;
+	Wed, 25 Jun 2025 14:53:24 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1750863208;
+	bh=IJe6mOkdno5hFkqOuZzP6lWj3MzgBpaudeFCugaeW5w=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=vEVPBNft67yFnyq10OuAhQPYNrznG7vdFztn5fo09zOvfI1ukOyexva0fcqBcgH1+
+	 Poc+Rb0Q5wYPAF/RBKgwIjSfT2BhCBTKF+H8lEqIVVYj1XhQ6eqImEr0zIkf9KMqw7
+	 wiDedspcBMpswvzBkjaXn7mWBDM8TOacEww3P7XsmLAiB3sIDsxxwTjSwKOjvnR7Q1
+	 1NxF/XUkzI+5ZbrxOPPItZejLHz6Wxesu97Cz+s5IctHQ6Mtt4IqKBjldDxRny3SM9
+	 0ysMFTmtKsCs2h7HEwnIh6QfiPwtGQI/kkcruqpQN+baPGTpL/7UmgHyPI+QBY9a7o
+	 2QdK6TZwf1GhQ==
+Date: Wed, 25 Jun 2025 15:53:21 +0100
+From: Lee Jones <lee@kernel.org>
+To: Ming Yu <a0282524688@gmail.com>
+Cc: linus.walleij@linaro.org, brgl@bgdev.pl, andi.shyti@kernel.org,
+	mkl@pengutronix.de, mailhol.vincent@wanadoo.fr,
+	andrew+netdev@lunn.ch, davem@davemloft.net, edumazet@google.com,
+	kuba@kernel.org, pabeni@redhat.com, wim@linux-watchdog.org,
+	linux@roeck-us.net, jdelvare@suse.com,
+	alexandre.belloni@bootlin.com, linux-kernel@vger.kernel.org,
+	linux-gpio@vger.kernel.org, linux-i2c@vger.kernel.org,
+	linux-can@vger.kernel.org, netdev@vger.kernel.org,
+	linux-watchdog@vger.kernel.org, linux-hwmon@vger.kernel.org,
+	linux-rtc@vger.kernel.org, linux-usb@vger.kernel.org,
+	Ming Yu <tmyu0@nuvoton.com>
+Subject: Re: [PATCH v12 1/7] mfd: Add core driver for Nuvoton NCT6694
+Message-ID: <20250625145321.GZ795775@google.com>
+References: <20250613131133.GR381401@google.com>
+ <CAOoeyxXftk9QX_REgeQhuXSc9rEguzXkKVKDQdawU=NzGbo9oA@mail.gmail.com>
+ <20250619115345.GL587864@google.com>
+ <CAOoeyxXSTeypv2qQjcK1cSPtjch=gJGYzqoMsLQ-LJZ8Kwgd=w@mail.gmail.com>
+ <20250619152814.GK795775@google.com>
+ <CAOoeyxU7eQneBuxbBqepta29q_OHPzrkN4SKmj6RX72L3Euw5A@mail.gmail.com>
+ <20250625090133.GP795775@google.com>
+ <CAOoeyxWoxC-n3JjjFe8Ruq_VydXk=jev=mopKfL5B7gsaSg=Ag@mail.gmail.com>
+ <20250625134634.GY795775@google.com>
+ <CAOoeyxVuu-kKoQa84mGOX=thAc0hnzQU8L=MnycoRRhzoZMnNw@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Mailer: b4 0.14.3-dev-d7477
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAOoeyxVuu-kKoQa84mGOX=thAc0hnzQU8L=MnycoRRhzoZMnNw@mail.gmail.com>
 
+[...]
 
-On Wed, 25 Jun 2025 03:27:03 -0700, Penglei Jiang wrote:
-> Replace the return statement with setting ret = -EINVAL and jumping to
-> the err label to ensure resources are released via io_release_dmabuf.
+> > > > > > In the code above you register 6 I2C devices.  Each device will be
+> > > > > > assigned a platform ID 0 through 5. The .probe() function in the I2C
+> > > > > > driver will be executed 6 times.  In each of those calls to .probe(),
+> > > > > > instead of pre-allocating a contiguous assignment of IDs here, you
+> > > > > > should be able to use IDA in .probe() to allocate those same device IDs
+> > > > > > 0 through 5.
+> > > > > >
+> > > > > > What am I missing here?
+> > > > > >
+> > > > >
+> > > > > You're absolutely right in the scenario where a single NCT6694 device
+> > > > > is present. However, I’m wondering how we should handle the case where
+> > > > > a second or even third NCT6694 device is bound to the same MFD driver.
+> > > > > In that situation, the sub-drivers using a static IDA will continue
+> > > > > allocating increasing IDs, rather than restarting from 0 for each
+> > > > > device. How should this be handled?
+> > > >
+> > > > I'd like to see the implementation of this before advising.
+> > > >
+> > > > In such a case, I assume there would be a differentiating factor between
+> > > > the two (or three) devices.  You would then use that to decide which IDA
+> > > > would need to be incremented.
+> > > >
+> > > > However, Greg is correct.  Hard-coding look-ups for userspace to use
+> > > > sounds like a terrible idea.
+> > > >
+> > >
+> > > I understand.
+> > > Do you think it would be better to pass the index via platform_data
+> > > and use PLATFORM_DEVID_AUTO together with mfd_add_hotplug_devices()
+> > > instead?
+> > > For example:
+> > > struct nct6694_platform_data {
+> > >     int index;
+> > > };
+> > >
+> > > static struct nct6694_platform_data i2c_data[] = {
+> > >     { .index = 0 }, { .index = 1 }, { .index = 2 }, { .index = 3 }, {
+> > > .index = 4 }, { .index = 5 },
+> > > };
+> > >
+> > > static const struct mfd_cell nct6694_devs[] = {
+> > >     MFD_CELL_BASIC("nct6694-i2c", NULL, &i2c_data[0], sizeof(struct
+> > > nct6694_platform_data), 0),
+> > >     MFD_CELL_BASIC("nct6694-i2c", NULL, &i2c_data[1], sizeof(struct
+> > > nct6694_platform_data), 0),
+> > >     MFD_CELL_BASIC("nct6694-i2c", NULL, &i2c_data[2], sizeof(struct
+> > > nct6694_platform_data), 0),
+> > >     MFD_CELL_BASIC("nct6694-i2c", NULL, &i2c_data[3], sizeof(struct
+> > > nct6694_platform_data), 0),
+> > >     MFD_CELL_BASIC("nct6694-i2c", NULL, &i2c_data[4], sizeof(struct
+> > > nct6694_platform_data), 0),
+> > >     MFD_CELL_BASIC("nct6694-i2c", NULL, &i2c_data[5], sizeof(struct
+> > > nct6694_platform_data), 0),
+> > > };
+> > > ...
+> > > mfd_add_hotplug_devices(dev, nct6694_devs, ARRAY_SIZE(nct6694_devs));
+> > > ...
+> >
+> > No, that's clearly way worse.  =:-)
+> >
+> > The clean-up that this provides is probably not worth all of this
+> > discussion.  I _still_ think this enumeration should be done in the
+> > driver.  But if you really can't make it work, I'll accept the .id
+> > patch.
+> >
 > 
+> Okay, I would like to ask for your advice regarding the implementation of IDA.
 > 
+> Using a global IDA in the sub-driver like this:
+> (in i2c-nct6694.c)
+> static DEFINE_IDA(nct6694_i2c_ida);
+> 
+> static int nct6694_i2c_probe(struct platform_device *pdev)
+> {
+>     ida_alloc(&nct6694_i2c_ida, GFP_KERNEL);
+>     ...
+> }
+> 
+> causes IDs to be globally incremented across all devices. For example,
+> the first NCT6694 device gets probed 6 times and receives IDs 0–5, but
+> when a second NCT6694 device is added, it receives IDs starting from
+> 6, rather than starting again from 0. This makes per-device ID mapping
+> unreliable.
+> 
+> To solve this, I believe the right approach is to have each NCT6694
+> instance maintain its own IDA, managed by the MFD driver's private
+> data. As mentioned earlier, for example:
+> (in nct6694.c)
+> struct nct6694 {
+>     struct device *dev;
+>     struct ida i2c_ida;
+> };
+> 
+> static int nct6694_probe(struct platform_device *pdev)
+> {
+>     ...
+>     ida_init(&nct6694->i2c_ida);
+>     ...
+> }
+> 
+> (in i2c-nct6694.c)
+> static int nct6694_i2c_probe(struct platform_device *pdev)
+> {
+>     id = ida_alloc(&nct6694->i2c_ida, GFP_KERNEL);
+> }
+> 
+> This way, each device allocates IDs independently, and each set of
+> I2C/GPIO instances gets predictable IDs starting from 0 per device. I
+> think this resolves the original issue without relying on hardcoded
+> platform IDs.
+> Please let me know if this implementation aligns with what you had in mind.
 
-Applied, thanks!
+This sounds like an acceptable way forward.
 
-[1/1] io_uring: fix resource leak in io_import_dmabuf()
-      commit: 7cac633a42a7b3c8146eb1db76fb80dc652998de
-
-Best regards,
 -- 
-Jens Axboe
-
-
-
+Lee Jones [李琼斯]
 
