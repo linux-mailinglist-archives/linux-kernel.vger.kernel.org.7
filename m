@@ -1,250 +1,147 @@
-Return-Path: <linux-kernel+bounces-701900-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-701877-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4AE2BAE7AF0
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Jun 2025 10:54:04 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1E105AE7A85
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Jun 2025 10:42:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 640637B7327
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Jun 2025 08:48:16 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BF59C3BA63E
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Jun 2025 08:42:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7265C2877FB;
-	Wed, 25 Jun 2025 08:48:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0DCB9279DCB;
+	Wed, 25 Jun 2025 08:42:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="kSpzmy7H"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.8])
+	dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b="DOlnJhau"
+Received: from esa.microchip.iphmx.com (esa.microchip.iphmx.com [68.232.153.233])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9243C26C3BF
-	for <linux-kernel@vger.kernel.org>; Wed, 25 Jun 2025 08:48:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.8
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F21A7204592
+	for <linux-kernel@vger.kernel.org>; Wed, 25 Jun 2025 08:42:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=68.232.153.233
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750841302; cv=none; b=m7ATm7DG95kGIG20k7jt43+xjBRj2Q3IDSVKAjJwyDydLzsFBk4O+CU7dm0gRl3mXaw4M2V8zZFXpzn8Gwm1ZH85TiUUobV8vFAlu7M7U7mSno2WG17PBCZJjD1MWFcRoCZs+S9v7C30eCxu1PKx9p5+mieViRD7zUKWj1Xa5EY=
+	t=1750840964; cv=none; b=uGUcHV+00roTJrC8ONLDsMDILOcTpGdzUEnDP5zwJu1Qap0oq494qXo0kkW4wwLLy4dbMWNH++LlAWX13ksKir23cViTJ+3gG4qKtbhmR9ce/wFJdXGl7/dI9HASRt/Qp90crJBVN9Yzlozfm166+9iAvnuJomqSyuLV9JHZ4gk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750841302; c=relaxed/simple;
-	bh=8CxCRl0Lj4fz10PG0ihHzNx5FOrMIdCEzi0JMM7ABYU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=HY+/dZ6QC+9Fc03K3kzk+l2E8LGF7MXuYpnuQv/TFdaq3LVulb/AyE24q0mS3QF/C19uchZHhVYmWKsFmr7hAbQ15X2irn3IvTjZr+ACb1/gKtn87/kx/7/QEKIH/q04dqTEzVR3LCUu3EqByYMob+pAfDSpkF6q1qvQo+nU1uk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=kSpzmy7H; arc=none smtp.client-ip=192.198.163.8
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+	s=arc-20240116; t=1750840964; c=relaxed/simple;
+	bh=AgfmR+lhxzq9qE/cCzTj3NsR+LtMrBgmhkOkNgkRvbE=;
+	h=From:Subject:Date:Message-ID:MIME-Version:Content-Type:To:CC; b=hm6Vaa/rYow92jugay28ObRmbxzGCqsAWxTebHA7bGHw7WJsOYnRpRlpnnWyREqhlJK1BDk7XuG+HQYaYsixhMnn3q2esdQxU8lf17t2cbFQKM8BBYceUG0sy1pJ8JzMWffCbR7dQ+tmCTX4ErBJz89W8jYWT+Z4eV/qceSF+70=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com; spf=pass smtp.mailfrom=microchip.com; dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b=DOlnJhau; arc=none smtp.client-ip=68.232.153.233
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=microchip.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1750841301; x=1782377301;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=8CxCRl0Lj4fz10PG0ihHzNx5FOrMIdCEzi0JMM7ABYU=;
-  b=kSpzmy7HQqSGgK3cpLdBAuotHO+jwyJDWpfPL1KMM1OMpSQ9KV1T8NGq
-   +UrzUT/NC6dLqPhTlWXR2SDmu+f6iEdx8teSTVAxGyGp5EpkyvJAy4l9+
-   fnmZ6yXxhJWWbEBTD92iRLZorq3H8+kg+2a/nm+PSYjGFLsxetfKqtVoA
-   dxR0p/N0oF8XuGXmlndfkH0lTaiBLPa0CXyuO/NW32Ao8BTuoRWqloLUU
-   WAPMobFa88wvGEP5c/h4+0T+H8Khn1asPIj6EQvftreFGNgBQQtMFnQIb
-   wye+kJ17KodxppZrI9XquKjWKE6IlGBx2ns3AJEX1qwhjClcSymHGE+W7
-   w==;
-X-CSE-ConnectionGUID: nyIxYoLsTIysqjwcV2gaCg==
-X-CSE-MsgGUID: HZHKDfJsSW6OI4hnTydNKw==
-X-IronPort-AV: E=McAfee;i="6800,10657,11474"; a="70674664"
+  d=microchip.com; i=@microchip.com; q=dns/txt; s=mchp;
+  t=1750840963; x=1782376963;
+  h=from:subject:date:message-id:mime-version:
+   content-transfer-encoding:to:cc;
+  bh=AgfmR+lhxzq9qE/cCzTj3NsR+LtMrBgmhkOkNgkRvbE=;
+  b=DOlnJhauu3jiBZwP9H3yrjlzTcdHnWOsz7xRO2toXVIR2I4aow+PMd6G
+   eggJnuGE3feLoEyEwKScPqbOGtDu/S70l3SfvXON49sCbkE4xmrQukO1+
+   XR13mx4yXncteKGFQByT7oOTfSgi1/xtheHicRUEP5ozhHP64lo/cmYlT
+   2O7FcyN9IvqiGAs7reApbitxEqXt3vqaVPs0lMctCsXf3AH9i0+ixYF/V
+   Dvi7MRJI3uceR6nVHugyzUrQ5aFdgre2bflf5bBUXfRxCPJZBD6irWbOF
+   11XtHyKbxdJbtGJuLVbMdnD5QKLPSMlraljfG/EuRl1l/AwhmJ3tRVf5E
+   Q==;
+X-CSE-ConnectionGUID: cBHfqEUaQkGtLTAUKVdw1g==
+X-CSE-MsgGUID: hNePXEIxQ/yCocbJ+jqyTA==
 X-IronPort-AV: E=Sophos;i="6.16,264,1744095600"; 
-   d="scan'208";a="70674664"
-Received: from orviesa003.jf.intel.com ([10.64.159.143])
-  by fmvoesa102.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 25 Jun 2025 01:48:20 -0700
-X-CSE-ConnectionGUID: 0liW6ewcRDywxXsmdIrHnw==
-X-CSE-MsgGUID: Qy7hfrfOSu+xQ0N04iDCgQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.16,264,1744095600"; 
-   d="scan'208";a="156557524"
-Received: from yilunxu-optiplex-7050.sh.intel.com (HELO localhost) ([10.239.159.165])
-  by orviesa003.jf.intel.com with ESMTP; 25 Jun 2025 01:48:17 -0700
-Date: Wed, 25 Jun 2025 16:40:40 +0800
-From: Xu Yilun <yilun.xu@linux.intel.com>
-To: "Aneesh Kumar K.V" <aneesh.kumar@kernel.org>
-Cc: jgg@nvidia.com, jgg@ziepe.ca, kevin.tian@intel.com, will@kernel.org,
-	iommu@lists.linux.dev, linux-kernel@vger.kernel.org,
-	joro@8bytes.org, robin.murphy@arm.com, shuah@kernel.org,
-	nicolinc@nvidia.com, aik@amd.com, dan.j.williams@intel.com,
-	baolu.lu@linux.intel.com, yilun.xu@intel.com
-Subject: Re: [PATCH v2 1/4] iommufd: Add iommufd_object_tombstone_user()
- helper
-Message-ID: <aFu2CKWt+IazDiiz@yilunxu-OptiPlex-7050>
-References: <20250623094946.1714996-1-yilun.xu@linux.intel.com>
- <20250623094946.1714996-2-yilun.xu@linux.intel.com>
- <yq5a4iw45pyk.fsf@kernel.org>
+   d="scan'208";a="274587524"
+X-Amp-Result: SKIPPED(no attachment in message)
+Received: from unknown (HELO email.microchip.com) ([170.129.1.10])
+  by esa5.microchip.iphmx.com with ESMTP/TLS/ECDHE-RSA-AES128-GCM-SHA256; 25 Jun 2025 01:42:42 -0700
+Received: from chn-vm-ex02.mchp-main.com (10.10.85.144) by
+ chn-vm-ex03.mchp-main.com (10.10.85.151) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.44; Wed, 25 Jun 2025 01:42:03 -0700
+Received: from [127.0.0.1] (10.10.85.11) by chn-vm-ex02.mchp-main.com
+ (10.10.85.144) with Microsoft SMTP Server id 15.1.2507.44 via Frontend
+ Transport; Wed, 25 Jun 2025 01:41:58 -0700
+From: Dharma Balasubiramani <dharma.b@microchip.com>
+Subject: [PATCH v6 0/3] drm/bridge: microchip-lvds: clean up and fix bus
+ formats
+Date: Wed, 25 Jun 2025 14:11:52 +0530
+Message-ID: <20250625-microchip-lvds-v6-0-7ce91f89d35a@microchip.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <yq5a4iw45pyk.fsf@kernel.org>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAFC2W2gC/33Mz2rDMAwG8FcpPs/Flv8k2WnvMXZwZGUxrE2xh
+ 2kpefepPZTQpEPo8H1Iv6solBMV8b67ikw1lTQdOfi3ncAxHL9JpshZgAKnvG7lIWGecEwn+VN
+ jkX2jnY6dV50Ngp9OmYZ0voOfX5zHVH6nfLn7Vd/al1TVkocCuYCxCS18PA72OB3EjauwIMCsC
+ GCiJexDj57XbhFmSdgVYZhAg37QZJXTfouw/xNWKtmZJloIFhR1W4RbEm5FOCaYxqGBHrzTz8Q
+ 8z38I6IkLvAEAAA==
+To: Manikandan Muralidharan <manikandan.m@microchip.com>, Andrzej Hajda
+	<andrzej.hajda@intel.com>, Neil Armstrong <neil.armstrong@linaro.org>,
+	"Robert Foss" <rfoss@kernel.org>, Laurent Pinchart
+	<Laurent.pinchart@ideasonboard.com>, Jonas Karlman <jonas@kwiboo.se>, "Jernej
+ Skrabec" <jernej.skrabec@gmail.com>, Maarten Lankhorst
+	<maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>,
+	Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>,
+	Simona Vetter <simona@ffwll.ch>
+CC: <dri-devel@lists.freedesktop.org>, <linux-kernel@vger.kernel.org>, "Dharma
+ Balasubiramani" <dharma.b@microchip.com>, Sandeep Sheriker M
+	<sandeep.sheriker@microchip.com>
+X-Mailer: b4 0.13.0
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1750840915; l=1937;
+ i=dharma.b@microchip.com; s=20240209; h=from:subject:message-id;
+ bh=AgfmR+lhxzq9qE/cCzTj3NsR+LtMrBgmhkOkNgkRvbE=;
+ b=Mf8wv5D25BHqDvCaMeHbWd1cSaimpkQ9U8fYdudOyAM/Zx2T0hOHPbRvqHiiH7s9H809/7lZP
+ oR6jYa5dyhUCrmOsAUDG0zMiChN6EPCed0hqI6a1apUUPHLFhNiPNpt
+X-Developer-Key: i=dharma.b@microchip.com; a=ed25519;
+ pk=kCq31LcpLAe9HDfIz9ZJ1U7T+osjOi7OZSbe0gqtyQ4=
 
-On Wed, Jun 25, 2025 at 11:21:15AM +0530, Aneesh Kumar K.V wrote:
-> Xu Yilun <yilun.xu@linux.intel.com> writes:
-> 
-> > Add the iommufd_object_tombstone_user() helper, which allows the caller
-> > to destroy an iommufd object created by userspace.
-> >
-> > This is useful on some destroy paths when the kernel caller finds the
-> > object should have been removed by userspace but is still alive. With
-> > this helper, the caller destroys the object but leave the object ID
-> > reserved (so called tombstone). The tombstone prevents repurposing the
-> > object ID without awareness from the original user.
-> >
-> > Since this happens for abnomal userspace behavior, for simplicity, the
-> > tombstoned object ID would be permanently leaked until
-> > iommufd_fops_release(). I.e. the original user gets an error when
-> > calling ioctl(IOMMU_DESTROY) on that ID.
-> >
-> > The first use case would be to ensure the iommufd_vdevice can't outlive
-> > the associated iommufd_device.
-> >
-> > Suggested-by: Jason Gunthorpe <jgg@nvidia.com>
-> > Signed-off-by: Xu Yilun <yilun.xu@linux.intel.com>
-> > ---
-> >  drivers/iommu/iommufd/iommufd_private.h | 23 +++++++++++++++++-
-> >  drivers/iommu/iommufd/main.c            | 31 ++++++++++++++++++-------
-> >  2 files changed, 45 insertions(+), 9 deletions(-)
-> >
-> > diff --git a/drivers/iommu/iommufd/iommufd_private.h b/drivers/iommu/iommufd/iommufd_private.h
-> > index 9ccc83341f32..fbc9ef78d81f 100644
-> > --- a/drivers/iommu/iommufd/iommufd_private.h
-> > +++ b/drivers/iommu/iommufd/iommufd_private.h
-> > @@ -187,7 +187,8 @@ void iommufd_object_finalize(struct iommufd_ctx *ictx,
-> >  			     struct iommufd_object *obj);
-> >  
-> >  enum {
-> > -	REMOVE_WAIT_SHORTTERM = 1,
-> > +	REMOVE_WAIT_SHORTTERM	= BIT(0),
-> > +	REMOVE_OBJ_TOMBSTONE	= BIT(1),
-> >  };
-> >  int iommufd_object_remove(struct iommufd_ctx *ictx,
-> >  			  struct iommufd_object *to_destroy, u32 id,
-> > @@ -213,6 +214,26 @@ static inline void iommufd_object_destroy_user(struct iommufd_ctx *ictx,
-> >  	WARN_ON(ret);
-> >  }
-> >  
-> > +/*
-> > + * Similar to iommufd_object_destroy_user(), except that the object ID is left
-> > + * reserved/tombstoned.
-> > + */
-> > +static inline void iommufd_object_tombstone_user(struct iommufd_ctx *ictx,
-> > +						 struct iommufd_object *obj)
-> > +{
-> > +	int ret;
-> > +
-> > +	ret = iommufd_object_remove(ictx, obj, obj->id,
-> > +				    REMOVE_WAIT_SHORTTERM | REMOVE_OBJ_TOMBSTONE);
-> > +
-> > +	/*
-> > +	 * If there is a bug and we couldn't destroy the object then we did put
-> > +	 * back the caller's users refcount and will eventually try to free it
-> > +	 * again during close.
-> > +	 */
-> > +	WARN_ON(ret);
-> > +}
-> > +
-> >  /*
-> >   * The HWPT allocated by autodomains is used in possibly many devices and
-> >   * is automatically destroyed when its refcount reaches zero.
-> > diff --git a/drivers/iommu/iommufd/main.c b/drivers/iommu/iommufd/main.c
-> > index 3df468f64e7d..5fd75aba068b 100644
-> > --- a/drivers/iommu/iommufd/main.c
-> > +++ b/drivers/iommu/iommufd/main.c
-> > @@ -167,7 +167,7 @@ int iommufd_object_remove(struct iommufd_ctx *ictx,
-> >  		goto err_xa;
-> >  	}
-> >  
-> > -	xas_store(&xas, NULL);
-> > +	xas_store(&xas, (flags & REMOVE_OBJ_TOMBSTONE) ? XA_ZERO_ENTRY : NULL);
-> >  	if (ictx->vfio_ioas == container_of(obj, struct iommufd_ioas, obj))
-> >  		ictx->vfio_ioas = NULL;
-> >  	xa_unlock(&ictx->objects);
-> > @@ -238,6 +238,7 @@ static int iommufd_fops_release(struct inode *inode, struct file *filp)
-> >  	struct iommufd_ctx *ictx = filp->private_data;
-> >  	struct iommufd_sw_msi_map *next;
-> >  	struct iommufd_sw_msi_map *cur;
-> > +	XA_STATE(xas, &ictx->objects, 0);
-> >  	struct iommufd_object *obj;
-> >  
-> >  	/*
-> > @@ -251,16 +252,30 @@ static int iommufd_fops_release(struct inode *inode, struct file *filp)
-> >  	 */
-> >  	while (!xa_empty(&ictx->objects)) {
-> >  		unsigned int destroyed = 0;
-> > -		unsigned long index;
-> >  
-> > -		xa_for_each(&ictx->objects, index, obj) {
-> > -			if (!refcount_dec_if_one(&obj->users))
-> > -				continue;
-> > +		xas_set(&xas, 0);
-> > +		for (;;) {
-> > +			rcu_read_lock();
-> > +			obj = xas_find(&xas, ULONG_MAX);
-> > +			rcu_read_unlock();
-> >
-> 
-> What is the need for the rcu_read_lock()? 
+This patch series drops the unsed panel field, switches to atomic variants
+and adds support to select between the two supported formats (JEIDA and
+VESA) by the LVDSC.
 
-To surpress rcu warning in xas_find().
+Signed-off-by: Dharma Balasubiramani <dharma.b@microchip.com>
+---
+Changes in v6:
+- Drop pre and post hooks as they are not neccessary now.
+- Drop turning off the serialiser.
+- Link to v5: https://lore.kernel.org/r/20250625-microchip-lvds-v5-0-624cf72b2651@microchip.com
 
-> 
-> > +
-> > +			if (!obj)
-> > +				break;
-> > +
-> > +			if (!xa_is_zero(obj)) {
-> > +				if (!refcount_dec_if_one(&obj->users))
-> > +					continue;
-> > +
-> > +				iommufd_object_ops[obj->type].destroy(obj);
-> > +				kfree(obj);
-> > +			}
-> > +
-> >  			destroyed++;
-> > -			xa_erase(&ictx->objects, index);
-> > -			iommufd_object_ops[obj->type].destroy(obj);
-> > -			kfree(obj);
-> > +			xas_lock(&xas);
-> > +			xas_store(&xas, NULL);
-> > +			xas_unlock(&xas);
-> 
-> is that xas_lock needed?. we can't run a xarray update parallel to this
-> because neither iommufd ioctl not vfio cdev unbind can happen in parallel.
+Changes in v5:
+- Drop the redundant port node lookup.
+- Split the commits adding atomic bridge ops into 2.
+- Update commit messages accordingly.
+- Link to v4: https://lore.kernel.org/r/20250624-microchip-lvds-v4-0-937d42a420e9@microchip.com
 
-That's true, but also to surpress warning in xas_store().
+Changes in v4:
+- Split the commits into 3.
+- Drop <drm/drm_panel.h>
+- Link to v3: https://lore.kernel.org/r/20250624-microchip-lvds-v3-1-c3c6f1e40516@microchip.com
 
-> 
-> I have this as an additonal comment added to the function in my change.
-> 
-> /*
->  * We don't need additional locks because the iommufd_fops_release() function is
->  * only triggered when the iommufd descriptor is released. At that point, no
->  * other iommufd-based ioctl operations can be running concurrently.
->  *
->  * The destruction of the vdevice via idevice unbind is also safe:
->  * iommufd_fops_release() can only be called after the idevice has been unbound.
->  * The idevice bind operation takes a reference to the iommufd descriptor,
->  * preventing early release.
->  */
+Changes in v3:
+- Use BIT(0) instead of 1.
+- Drop the panel field of the mchp_lvds structure.
+- Drop the inner parentheses in write in serialiser_on().
+- Link to v2: https://lore.kernel.org/r/20250623-microchip-lvds-v2-1-8ecbabc6abc4@microchip.com
 
-That's good. But Jason has another suggestion that no need to clear
-tombstones on fops_release(), so we don't need these changes at all.
+Changes in v2:
+- Switch to atomic bridge functions
+- Drop custom connector creation
+- Use drm_atomic_get_new_connector_for_encoder()
+- Link to v1: https://lore.kernel.org/r/20250618-microchip-lvds-v1-1-1eae5acd7a82@microchip.com
 
-Thanks,
-Yilun
+---
+Dharma Balasubiramani (3):
+      drm/bridge: microchip-lvds: Remove unused drm_panel and redundant port node lookup
+      drm/bridge: microchip-lvds: migrate to atomic bridge ops
+      drm/bridge: microchip-lvds: fix bus format mismatch with VESA displays
 
-> 
-> 
-> >  		}
-> > +
-> >  		/* Bug related to users refcount */
-> >  		if (WARN_ON(!destroyed))
-> >  			break;
-> > -- 
-> > 2.25.1
-> 
-> -aneesh
+ drivers/gpu/drm/bridge/microchip-lvds.c | 63 +++++++++++++++++++--------------
+ 1 file changed, 37 insertions(+), 26 deletions(-)
+---
+base-commit: 4325743c7e209ae7845293679a4de94b969f2bef
+change-id: 20250618-microchip-lvds-b7151d96094a
+
+Best regards,
+-- 
+Dharma Balasubiramani <dharma.b@microchip.com>
+
 
