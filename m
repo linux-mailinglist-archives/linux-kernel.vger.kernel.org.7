@@ -1,130 +1,99 @@
-Return-Path: <linux-kernel+bounces-701866-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-701868-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 77D42AE7A5F
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Jun 2025 10:36:47 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 351FCAE7A66
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Jun 2025 10:37:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id CA105188EAA6
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Jun 2025 08:37:02 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 75B17164BA7
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Jun 2025 08:37:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3107D27E059;
-	Wed, 25 Jun 2025 08:36:41 +0000 (UTC)
-Received: from leonov.paulk.fr (leonov.paulk.fr [185.233.101.22])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D8B18275AED;
+	Wed, 25 Jun 2025 08:37:19 +0000 (UTC)
+Received: from mout-p-102.mailbox.org (mout-p-102.mailbox.org [80.241.56.152])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 511D927C15C;
-	Wed, 25 Jun 2025 08:36:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.233.101.22
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8EB6820D4E7;
+	Wed, 25 Jun 2025 08:37:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.152
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750840600; cv=none; b=mHxujKopVyWREexParCcqYy9xAHfT3yZe94yzFVrWvUjHWUCwt2Aear04h7W06YOXRBqREjsqOzFKqUVWDJcY7HCcvnFYbzXOaQb5unuWixsOBaOc5HCKpZ9Xgqwo3A4rI7aX6kaDzBzyXwxaqtwlBALnWTFzeRVduRi5tXD2zY=
+	t=1750840639; cv=none; b=Vub0wcinjVz0oTXyassEreTLYYxmL35GsBDyWqQ9cZEkT1TRzOvQG2IfFZhSIka99aLZT6Ib65oCVrVklyIMiX8/OyUlZArhHCi7pB7b+5pSVtlcN7M4sPHvtOk9KdzS+KTnOBNlgAV35eM1AVusPDLTraDk8+yulj7qnLhnh9Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750840600; c=relaxed/simple;
-	bh=qCNgTNRRzKT+qYd/55FmcZR0Rrpdw8ahO3hzjmRU+/k=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=mTkIwDpQnoAtPgIE1Lt8nNyVFjenPHRDejPASCKA0LYSnDsq3j6G5AKq/0CotGKR8FHUgkggHeaddOEZV5DAZ5mTFXVfhBi5s8Lw300Sf2Jtdiu9Z9z6Nxd24R1hqt5MbELB6gwo7xoYY0+Rlwa8PVLMPrqp18y8Ou+Dk+D/6r4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sys-base.io; spf=pass smtp.mailfrom=sys-base.io; arc=none smtp.client-ip=185.233.101.22
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sys-base.io
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sys-base.io
-Received: from laika.paulk.fr (12.234.24.109.rev.sfr.net [109.24.234.12])
-	by leonov.paulk.fr (Postfix) with ESMTPS id 5BAF81F00055;
-	Wed, 25 Jun 2025 08:36:33 +0000 (UTC)
-Received: by laika.paulk.fr (Postfix, from userid 65534)
-	id D4FEAAC7A37; Wed, 25 Jun 2025 08:36:31 +0000 (UTC)
-X-Spam-Level: 
-Received: from shepard (unknown [192.168.1.1])
-	by laika.paulk.fr (Postfix) with ESMTPSA id 0CA55AC7A32;
-	Wed, 25 Jun 2025 08:36:30 +0000 (UTC)
-Date: Wed, 25 Jun 2025 10:36:28 +0200
-From: Paul Kocialkowski <paulk@sys-base.io>
-To: Kuba =?utf-8?Q?Szczodrzy=C5=84ski?= <kuba@szczodrzynski.pl>
-Cc: Maxime Ripard <mripard@kernel.org>,
-	Samuel Holland <samuel@sholland.org>, Chen-Yu Tsai <wens@csie.org>,
-	Jernej Skrabec <jernej.skrabec@gmail.com>,
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	Thomas Zimmermann <tzimmermann@suse.de>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
-	linux-arm-kernel@lists.infradead.org, linux-sunxi@lists.linux.dev,
-	linux-kernel@vger.kernel.org, linux-riscv@lists.infradead.org,
-	linux-phy@lists.infradead.org, devicetree@vger.kernel.org,
-	dri-devel@lists.freedesktop.org
-Subject: Re: [PATCH 2/5] drm/sun4i: Support LVDS using MIPI DSI combo D-PHY
-Message-ID: <aFu1DC4eGtYmAuSf@shepard>
-References: <20250221161751.1278049-1-kuba@szczodrzynski.pl>
- <20250221161751.1278049-3-kuba@szczodrzynski.pl>
- <aFutWCScsMNgXUAu@shepard>
+	s=arc-20240116; t=1750840639; c=relaxed/simple;
+	bh=+ymYFCYyzrhnTDccGkxrXRgCQ9ZpY4v1A/adjJaSuu8=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Ww4NtSamupKUyCq+7raH2CO/pJoXn5ractWNRt6byDqDQZb4O970yhL5+niq6wcz/l57swTjNxb+nVuFF4cwKX1BHqLCtqgTy3mdqzt8BJG6J2aCgyzuqp9sQDZnzIQxNf5JcfvUtsjM6+sHONLJjHqSYhelLwnr+g7v6Voa8Ug=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=pankajraghav.com; arc=none smtp.client-ip=80.241.56.152
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=samsung.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pankajraghav.com
+Received: from smtp1.mailbox.org (smtp1.mailbox.org [IPv6:2001:67c:2050:b231:465::1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mout-p-102.mailbox.org (Postfix) with ESMTPS id 4bRwD84mDJz9tWd;
+	Wed, 25 Jun 2025 10:37:12 +0200 (CEST)
+From: Pankaj Raghav <p.raghav@samsung.com>
+To: Alexander Viro <viro@zeniv.linux.org.uk>,
+	Jan Kara <jack@suse.cz>,
+	mcgrof@kernel.org,
+	Christian Brauner <brauner@kernel.org>
+Cc: kernel@pankajraghav.com,
+	linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	gost.dev@samsung.com,
+	Pankaj Raghav <p.raghav@samsung.com>,
+	Matthew Wilcox <willy@infradead.org>
+Subject: [PATCH v3] fs/buffer: remove the min and max limit checks in __getblk_slow()
+Date: Wed, 25 Jun 2025 10:37:04 +0200
+Message-ID: <20250625083704.167993-1-p.raghav@samsung.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="mMddwFhTjlnTEsAi"
-Content-Disposition: inline
-In-Reply-To: <aFutWCScsMNgXUAu@shepard>
+Content-Transfer-Encoding: 8bit
+X-Rspamd-Queue-Id: 4bRwD84mDJz9tWd
 
+All filesystems will already check the max and min value of their block
+size during their initialization. __getblk_slow() is a very low-level
+function to have these checks. Remove them and only check for logical
+block size alignment.
 
---mMddwFhTjlnTEsAi
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Suggested-by: Matthew Wilcox <willy@infradead.org>
+Signed-off-by: Pankaj Raghav <p.raghav@samsung.com>
+---
+Changes since v2:
+- Removed the max and min checks in __getblk_slow().
 
-On Wed 25 Jun 25, 10:03, Paul Kocialkowski wrote:
-> On Fri 21 Feb 25, 17:17, Kuba Szczodrzy=C5=84ski wrote:
-> > @@ -183,6 +184,8 @@ static void sun4i_tcon_lvds_set_status(struct sun4i=
-_tcon *tcon,
-> >  	} else {
-> >  		regmap_update_bits(tcon->regs, SUN4I_TCON0_LVDS_IF_REG,
-> >  				   SUN4I_TCON0_LVDS_IF_EN, 0);
->=20
-> Does the T113-S3/D1 also have LVDS support in TCON regsiters?
-> My understanding is that it only has the combo-phy, so this register write
-> should not take place.
->=20
-> I think it would be easier to just move this to a common callback for use=
-rs of
-> the tcon0 lvds phy and always call=20
+ fs/buffer.c | 10 +++-------
+ 1 file changed, 3 insertions(+), 7 deletions(-)
 
-Nevermind this comment, the LVDS_IF writes are actually necessary and
-independent from the LVDS PHY configuration.
+diff --git a/fs/buffer.c b/fs/buffer.c
+index a14d281c6a74..a1aa01ebc0ce 100644
+--- a/fs/buffer.c
++++ b/fs/buffer.c
+@@ -1122,13 +1122,9 @@ __getblk_slow(struct block_device *bdev, sector_t block,
+ {
+ 	bool blocking = gfpflags_allow_blocking(gfp);
+ 
+-	if (unlikely(size & (bdev_logical_block_size(bdev) - 1) ||
+-		     (size < 512 || size > PAGE_SIZE))) {
+-		printk(KERN_ERR "getblk(): invalid block size %d requested\n",
+-					size);
+-		printk(KERN_ERR "logical block size: %d\n",
+-					bdev_logical_block_size(bdev));
+-
++	if (unlikely(size & (bdev_logical_block_size(bdev) - 1))) {
++		printk(KERN_ERR "getblk(): block size %d not aligned to logical block size %d\n",
++		       size, bdev_logical_block_size(bdev));
+ 		dump_stack();
+ 		return NULL;
+ 	}
 
-All the best,
+base-commit: 6ae58121126dcf8efcc2611f216a36a5e50b8ad9
+-- 
+2.49.0
 
-Paul
-
---=20
-Paul Kocialkowski,
-
-Independent contractor - sys-base - https://www.sys-base.io/
-Free software developer - https://www.paulk.fr/
-
-Expert in multimedia, graphics and embedded hardware support with Linux.
-
---mMddwFhTjlnTEsAi
-Content-Type: application/pgp-signature; name=signature.asc
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAEBCgAdFiEEAbcMXZQMtj1fphLChP3B6o/ulQwFAmhbtQwACgkQhP3B6o/u
-lQxNJQ/+NRLOuDtviPYOloG5xp+nX3B4qO2FXp19IWGBOrz/SEL34AfiP1Bb30fu
-7uwvYvURCKtY9J68zna5ovG4mex4pLo5sA81xZVc/1Cs5+7pMV2F2ixnPkAWHP6i
-um3pIEKP5amDFP9DCAVAchAAQdZHD5D4+FZlu9Mw5CCWt0XToXkUpmfcExA07kzD
-KnlpKPJhc1DPgXku5izWrAkrgAC0k8uMlENVclI0djMw67aO7vOyqIJpABp5ZOe4
-oHIsanTWy3/2PWx2RyrXdvrXwUaZRcJUmbezq+VOxyqtVY+IytVWHj13l2CzL+eu
-dyKm538s55HpwBvEbo9vYiFvLMRaMct637GGK9Z3TG2khO6LJHtBZ8nvfEHCBVmu
-vUxTCl6/Mm7HEm6Wkg2wOzeBc94OsYYib2WDnPJ2TnmB2vWua9Nk96t5TQ48qOQT
-J/N1sRyvy3iBX2U+gYCS9bb2SmQ+yVDSoIulX25hTqypn5peaJgQh9miq4UtC21M
-4F73RP0zjS6Dn/1Hw7lE3l/M7Pd169b5ymguuxorKg+rGDpz62TMsClNQr/tPg9M
-NPUZK7YW4s+O3VOXjkAy/aj+iQ8gTVvifRn14lB+lYQFPcnb82l2Ra+x6YnRTo//
-6VzXsjUgV9sGRYKxcau8DQPfRDfKrZNpruYazhAOToyO96tvKiY=
-=o01Z
------END PGP SIGNATURE-----
-
---mMddwFhTjlnTEsAi--
 
