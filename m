@@ -1,141 +1,134 @@
-Return-Path: <linux-kernel+bounces-703319-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-703296-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id E1485AE8EA9
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Jun 2025 21:27:34 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id E063DAE8E50
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Jun 2025 21:17:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BEEA13BC055
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Jun 2025 19:27:03 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F12803A6649
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Jun 2025 19:14:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9F1D52E62A7;
-	Wed, 25 Jun 2025 19:25:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CC7C62D660E;
+	Wed, 25 Jun 2025 19:15:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=rjwysocki.net header.i=@rjwysocki.net header.b="QWjWKb8k"
-Received: from cloudserver094114.home.pl (cloudserver094114.home.pl [79.96.170.134])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="fLpnq0jh"
+Received: from mail-lf1-f51.google.com (mail-lf1-f51.google.com [209.85.167.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D2E922E06CB;
-	Wed, 25 Jun 2025 19:25:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=79.96.170.134
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DA7B22D8DC0
+	for <linux-kernel@vger.kernel.org>; Wed, 25 Jun 2025 19:15:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750879553; cv=none; b=PGs5vgYm/XqFVqyCoF38gJyYrWLRtvvgt1VYt7wO3L1zpm/i6YX96Cl9Izk9pWeD0oA2nKzhCuNKd3d0nYGx0yt/wF7QuFHYdEdxaWgdkvoLSepDJ2hPTJ8NDueBRWGNOwW1/TdlVyNxwQT++ZWuAjpOvSXwB6u4KaSAUxhe6QM=
+	t=1750878908; cv=none; b=T1HbnELUGC8l8V+DyuFP3obI2T6WvAzP8BpNs0v6GDwF50P4xUYO/9SQglOQZx9QJoFvuT6FtdGp16V03TPxGWo7zyiBKrcNe8WJmP3h/P7soHs5mW05A68BRwa1lVAdt7wuZ7rNOr6tpvpMwCQA/ojcQtlBKlJ4l5WAKkvtoMw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750879553; c=relaxed/simple;
-	bh=hmrKts0Cj5W0Nq/BZNCa1eR3tuKdtdeIKoLG3NRiGOQ=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=CKRqY+TuWY2ojlc1XFmDfquQ5YO930OwuFclyUMMCZXFp3emmdP4NGYF5n2r0IHUIwUSvsCJiaAtHBoUa2O5+CEBOS4gD1WvHmMem4i6vjeVaRwFJ/0Z/BHYU7BCp8xn8/HKrEz3xj/7my3jNdtizl91g6iDPXbkBwVvc4iW89g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rjwysocki.net; spf=pass smtp.mailfrom=rjwysocki.net; dkim=pass (2048-bit key) header.d=rjwysocki.net header.i=@rjwysocki.net header.b=QWjWKb8k; arc=none smtp.client-ip=79.96.170.134
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rjwysocki.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rjwysocki.net
-Received: from kreacher.localnet (unknown [5.63.189.50])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by cloudserver094114.home.pl (Postfix) with ESMTPSA id F2FCA66E81B;
-	Wed, 25 Jun 2025 21:25:46 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=rjwysocki.net;
-	s=dkim; t=1750879547;
-	bh=hmrKts0Cj5W0Nq/BZNCa1eR3tuKdtdeIKoLG3NRiGOQ=;
-	h=From:Subject:Date;
-	b=QWjWKb8kjgJAe5MM8mnD7FCCICRawJecc+y+G8Vri5UUqmeYPCucE2MAmxk6nsqoW
-	 lkMiziGdNlfTGRVx05tTMJPj3qLMej7Yu1siidZ3Sh3SgpQ/UHPGNC0h/kpZXhzBli
-	 HHhXI29iI4MT4YiTRB3DeNZiHHGB8nrQ8W5N9JeNeKjiT6DXotIizOY1edhqzesmeH
-	 pP2AAFKiuraIWd/rY43t2fu/wJhHEhr3qmMzavrtbmO+MzKkNsJ1BD2DyDHP/aT3Hd
-	 iDoeGWKPxKrhFV8zMIdgGcrbD/s+v1YvGmWXes7O0tZxl28PTyPKtsceYwx11qxpzL
-	 PRyDkbsZlVWCg==
-From: "Rafael J. Wysocki" <rjw@rjwysocki.net>
-To: Linux PM <linux-pm@vger.kernel.org>
-Cc: LKML <linux-kernel@vger.kernel.org>,
- Linux ACPI <linux-acpi@vger.kernel.org>,
- Linux PCI <linux-pci@vger.kernel.org>, Ulf Hansson <ulf.hansson@linaro.org>,
- Mika Westerberg <mika.westerberg@linux.intel.com>
-Subject:
- [PATCH v1 0/9] PM: Reconcile different driver options for runtime PM
- integration with system sleep
-Date: Wed, 25 Jun 2025 21:14:49 +0200
-Message-ID: <22759968.EfDdHjke4D@rjwysocki.net>
+	s=arc-20240116; t=1750878908; c=relaxed/simple;
+	bh=ZovO7nkOrLL9nxNDPkAositSdpf1H/zY80uV73Q8ZrQ=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=ru6YbMyQECTX/i5HyKcYLF9CzYgL8ftbz14etGTcvaDjn1w2Ew8bgsSRU9efdEDr86Dsr1Tycr/R4bpcUbWxYIupB5q1tUdfBIdi4fa58pzXn4dbgciR0PsvRxutq6waESPa65+lJsvTP/mZyTEcKqAWTe7C/9/baNKkDVtxSLI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=fLpnq0jh; arc=none smtp.client-ip=209.85.167.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
+Received: by mail-lf1-f51.google.com with SMTP id 2adb3069b0e04-5532a30ac45so277687e87.0
+        for <linux-kernel@vger.kernel.org>; Wed, 25 Jun 2025 12:15:05 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1750878904; x=1751483704; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=z+nO7EW7s/VWpRpXMmnbCZRaJqIoHvIZE+sg3t4NDGI=;
+        b=fLpnq0jhBTUamh1+q29Gn67BH6xXxBTITB4Nl0+VAeH1Wok6gSKFqJ/pZOmjhnqcch
+         vBQb67m9FqdpsMJrpYGsYrxPlSTu2VJ2lCXHuS77uH+oj+icHS5FKI5wDL/P8AJEoG94
+         WWhMh50ATqDziJ0L37/cj40nzj9FWgyGn7pUNA0DLSO99VCSezCvgkGOxcr5z5MWRu3L
+         RbZFU5SGo5bqyNISRsn4VJBN9hfr5zuWX0hcg4gADRcu76YdEz7QuoNsSIeXY/27SHWn
+         FQeLnSSFvR+azacn676//wnbO723oskygb9BpImAQEf97nQx0LG3qMfvmxOg+rGzYoLc
+         9Law==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1750878904; x=1751483704;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=z+nO7EW7s/VWpRpXMmnbCZRaJqIoHvIZE+sg3t4NDGI=;
+        b=pVdkj2quVh1LimGoP8h0c1me0L1nh25MCx3ILKzImd6Vx8vB1rxsuGqSA0Pf3vqTYW
+         dWMQSUejATM4cGKzJrpyefZ0D1wOyiWUH0/crHp/hsf0kX8flr1G173N9TaXJXQEsxEQ
+         FJAaTajCs9iVRU3E1wvp6f+l/h/j9sNuh4pi/sON7ETveRsziFvKH0FvhptcCgZ9zwWh
+         3KPWKNl2obDWN6J/VOWNWdjVck6R5yUIQmUsyIzgsi5dwav9kU8Sgy/v9LKW3F+UyVzh
+         vl/4jxmin6Xo3McEW1/KtE2xk4f9C4ipY6/JBbUL/yrNI6orHRZ88L1mxFJcUWhC4VFT
+         namw==
+X-Forwarded-Encrypted: i=1; AJvYcCUD7/etR0mJrRes21JkIXZ/21GlXtYdqI/zeD5xaauRBWbQuNAERi9iA1mhcd/gFKdiYwub2XncbaQyIYM=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyZFK+CzG5tKUuotJDWGFgclb5E2+SpSfVE9RMuA6pYXXXjXLWD
+	inS6oO4NXRMlIHeZRXrAL1ZWeIq3WU1LiN/bJmweCA5d03TOPhItLrS3RgTW4bYfqzbeHHsDK9H
+	uhNIUZmV+1D0Gadj/DMTlsHxwYHcF7VdyVVH6Xe+NbQ==
+X-Gm-Gg: ASbGncszcj+5mZu2rGvdR6tsgKgT6udzeNYcOcyKJcTxciXzXzJ4Xa2thAWekzF+Fas
+	jnNKD39aUuOI+Sv7wH4+yHDMfBNyGYYMtRc/TpMZoLaq/Hyx9Eqf2IHmkfGpeSp90oqHxqtdoJH
+	marceIltk2i1yU7EF3g9k9bI94XBm6FkZaYWENRXY09pVU3ASw2pw0JV+nQaj8CQtKC3lHxvSHT
+	mc=
+X-Google-Smtp-Source: AGHT+IHiy8uQHEJstlc44iLzXYCv+/voqeXmoVlZJZj8RwfXYP5wtTyCCwGrLUkGxOoxzeeSzpmhiDT6FCJq3MOd9Vs=
+X-Received: by 2002:a05:6512:3b97:b0:550:d4fc:a0d with SMTP id
+ 2adb3069b0e04-55502caae30mr266969e87.24.1750878903790; Wed, 25 Jun 2025
+ 12:15:03 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
+References: <20250625-topic-wcn6855_pwrseq-v1-1-cfb96d599ff8@oss.qualcomm.com>
+In-Reply-To: <20250625-topic-wcn6855_pwrseq-v1-1-cfb96d599ff8@oss.qualcomm.com>
+From: Bartosz Golaszewski <brgl@bgdev.pl>
+Date: Wed, 25 Jun 2025 21:14:52 +0200
+X-Gm-Features: Ac12FXydmvIBgtZ0Bi7QXSKV1DZmvRjRc8QGW87jPOBPQsfn7d_l6wCJbPac4qE
+Message-ID: <CAMRc=MeUU842TVDsPNn_Wcy8KtCQ_nz0qYt+muQJEn87g0kS+g@mail.gmail.com>
+Subject: Re: [PATCH] power: sequencing: qcom-wcn: Fix bluetooth-wifi copypasta
+ for WCN6855
+To: Konrad Dybcio <konradybcio@kernel.org>
+Cc: Dmitry Baryshkov <lumag@kernel.org>, Marijn Suijten <marijn.suijten@somainline.org>, 
+	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>, linux-pm@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
 Content-Type: text/plain; charset="UTF-8"
-X-CLIENT-IP: 5.63.189.50
-X-CLIENT-HOSTNAME: 5.63.189.50
-X-VADE-SPAMSTATE: clean
-X-VADE-SPAMCAUSE: dmFkZTE5RyGhYEnHKx0FDugxbJmCauj5vYnYws48HjIhwkhXJIvFh9Qz8A3kiS3Rl6dQYOtmcKcRmnGzimuTmjw1uDJMOjQZUdFpWBn+d6wykJwlUNqhFD3l0irdhng27N06IRY3qi/I3q90b26XqOrlbON3RLb4gIi1zrVyDD4clJf/azOQcDVYdgTMc9KbWgZNdm5NjCzxZbrne92LZ/dueTMYMm5U9aYl1x0R+t+BVYNpH023sP/UVLouANhfxoQ68ovBTHGKTI9h3reC8oQ0DzmF1Du1IDnkA7M4Y/gAq1X2Ehx7syvr/teP+YHR/a/cqgLXQfT1DddfQqncTqNzIyiVGOMKlZWO9T7bB8f5hetCkn8VAGt8Vx4j++VWN9Xclnk0sGrmo0xGiWSqXH/Tozb04B4Ie7ccc1nIyeYSniDEDP0MCvCYBKFdhaourSaSX3E2AwKYNuCuDwMvN/QA6is/ky6yBSZQTOlfIxTh9sOmY6f+n5N4eYeRykAHQSkkSGBU6o4TZ5QB1uLuKVOhNN+45gybkIlfeFMtl/y/KLGg2oHQX1mWc95oUHXohK8Qx6YA77kBiqgCiAjzuGz7g4nutfjzLfkMwcDH6XAckLKPjBK0z6/vJi5nU7vPs8XUFfv+EmQjYm/T02tbMSfuEy6EMwZTHeJ56GE0LPRlzYnQkQ
-X-DCC--Metrics: v370.home.net.pl 1024; Body=6 Fuz1=6 Fuz2=6
+Content-Transfer-Encoding: quoted-printable
 
-Hi Everyone,
+On Wed, Jun 25, 2025 at 5:55=E2=80=AFPM Konrad Dybcio <konradybcio@kernel.o=
+rg> wrote:
+>
+> From: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+>
+> Prevent a name conflict (which is surprisingly not caught by the
+> framework).
+>
+> Fixes: bd4c8bafcf50 ("power: sequencing: qcom-wcn: improve support for wc=
+n6855")
+> Signed-off-by: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+> ---
+>  drivers/power/sequencing/pwrseq-qcom-wcn.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+>
+> diff --git a/drivers/power/sequencing/pwrseq-qcom-wcn.c b/drivers/power/s=
+equencing/pwrseq-qcom-wcn.c
+> index e8f5030f2639a69254ad5efe0a313d2f3d10fa1d..7d8d6b3407495c28a780d5bb0=
+668b2b35837b48a 100644
+> --- a/drivers/power/sequencing/pwrseq-qcom-wcn.c
+> +++ b/drivers/power/sequencing/pwrseq-qcom-wcn.c
+> @@ -155,7 +155,7 @@ static const struct pwrseq_unit_data pwrseq_qcom_wcn_=
+bt_unit_data =3D {
+>  };
+>
+>  static const struct pwrseq_unit_data pwrseq_qcom_wcn6855_bt_unit_data =
+=3D {
+> -       .name =3D "wlan-enable",
+> +       .name =3D "bluetooth-enable",
+>         .deps =3D pwrseq_qcom_wcn6855_unit_deps,
+>         .enable =3D pwrseq_qcom_wcn_bt_enable,
+>         .disable =3D pwrseq_qcom_wcn_bt_disable,
+>
+> ---
 
-This series addresses a couple of issues related to the integration of runtime
-PM with system sleep I was talking about at the OSMP-summit 2025:
+Thanks for the catch. Unlike target names, the unit names are mostly
+for human convenience. That's why it didn't really break anything. If
+you have no objections, I will queue it for v6.17 as I have already a
+bunch of changes queued up and there's no point bothering Torvalds
+with a one-liner that's not urgent.
 
-https://lwn.net/Articles/1021332/
-
-Most importantly, DPM_FLAG_SMART_SUSPEND cannot be used along with
-pm_runtime_force_suspend/resume() due to some conflicting expectations
-about the handling of device runtime PM status between these functions
-and the PM core.
-
-Also pm_runtime_force_suspend/resume() currently cannot be used in PCI
-drivers and in drivers that collaborate with the general ACPI PM domain
-because they both don't expect their mid-layer runtime PM callbacks to
-be invoked during system-wide suspend and resume.
-
-Patch [1/9] is a preparatory cleanup changing the code to use 'true' and
-'false' as needs_force_resume flag values for consistency.
-
-Patch [2/9] makes pm_runtime_force_suspend() check needs_force_resume along
-with the device's runtime PM status upfront, and bail out if it is set,
-which allows runtime PM status updates to be eliminated from both that function
-and pm_runtime_force_resume().
-
-Patch [3/9] causes the smart_suspend flag to be taken into account by
-pm_runtime_force_resume() which allows it to resume devices with smart_suspend
-set whose runtime PM status has been changed to RPM_ACTIVE by the PM core at
-the beginning of system resume.  After this patch, drivers that use
-pm_runtime_force_suspend/resume() can also set DPM_FLAG_SMART_SUSPEND which
-may be useful, for example, if devices handled by them are involved in
-dependency chains with other devices setting DPM_FLAG_SMART_SUSPEND.
-
-The next two patches, [4-5/9], put pm_runtime_force_suspend/resume()
-and needs_force_resume under CONFIG_PM_SLEEP for consistency and also
-because using them outside system-wide PM transitions really doesn't make
-sense.
-
-Patch [6/9] makes the code for getting a runtime PM callback for a device
-a bit more straightforward in preparation for the subsequent changes.
-
-Patch [7/9] introduces a new device PM flag called strict_midlayer that
-can be set by middle layer code which doesn't want its runtime PM
-callbacks to be used during system-wide PM transitions, like the PCI bus
-type and the ACPI PM domain, and updates pm_runtime_force_suspend/resume()
-to take that flag into account.
-
-Patch [8/9] modifies the general ACPI PM domain to use strict_midlayer
-which allows drivers collaborating with it to use pm_runtime_force_suspend/resume().
-That may be useful if such a driver wants to be able to work with different
-PM domains on different systems.  It may want to work with the general ACPI PM
-domain on systems using ACPI, or with another PM domain (or even multiple PM
-domains at the same time) on systems without ACPI, and it may want to use
-pm_runtime_force_suspend/resume() as its system-wide PM callbacks.
-
-Patch [9/9] updates the PCI bus type to set strict_midlayer for all PCI devices
-in case some PCI drivers want to use pm_runtime_force_suspend/resume() in the
-future.  They will still need to set DPM_FLAG_SMART_SUSPEND to avoid resuming
-their devices during system suspend, but now they may also use
-pm_runtime_force_suspend/resume() as suspend callbacks for the "regular suspend"
-phase of device suspend (or invoke these functions from their suspend callbacks).
-
-As usual, please refer to individual patch changelogs for more details.
-
-Thanks!
-
-
-
+Bartosz
 
