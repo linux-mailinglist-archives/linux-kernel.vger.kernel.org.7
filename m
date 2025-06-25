@@ -1,110 +1,167 @@
-Return-Path: <linux-kernel+bounces-701384-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-701386-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2295CAE7461
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Jun 2025 03:44:52 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id D1D53AE7465
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Jun 2025 03:45:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 649DE7ADC4B
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Jun 2025 01:43:28 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9C9FA1921E73
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Jun 2025 01:46:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7E46518DB37;
-	Wed, 25 Jun 2025 01:44:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2B4C92E630;
+	Wed, 25 Jun 2025 01:45:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="hoRdAXwd"
-Received: from mx0a-00069f02.pphosted.com (mx0a-00069f02.pphosted.com [205.220.165.32])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="P6h6W/T6"
+Received: from mail-pj1-f48.google.com (mail-pj1-f48.google.com [209.85.216.48])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8D1F97FBA2;
-	Wed, 25 Jun 2025 01:44:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.165.32
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7501111713
+	for <linux-kernel@vger.kernel.org>; Wed, 25 Jun 2025 01:45:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750815879; cv=none; b=uVSyfUngGXfI6jzr5iGhG+oWLSwc58W9wRkYD8T6mwYFst87+4/bPzLi9q3QufAe1ng0LyNAX50bMDb2csdIyJ93pILYUzec+kpQCdH/N8VSDtSFKPSLReq7/uX1+mrqbZAcsbJ/u3d5VrzPw+X6ZwXuDihBA1hZL+iji1OBn3c=
+	t=1750815939; cv=none; b=K/gau3igAh7eAFmy4w6ojHJ9al22sXp3GLEwKKewHcPPwWdkhced1VrDobJyK8mYqIjE00JoCT+DaNfEcQoEhqVp/3wWfOVqKuxsNu0cU1KbvkvNJXjPZZVovADJT+IQDJdKYwDOFLb2SoLLGPnlNLGXczZfX1JvT/DzTLIB3FM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750815879; c=relaxed/simple;
-	bh=q+lkR+Q3myJnU2BTFnhJ0dpoNElPjaRLuyXtNOyzILs=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=J3yhVXiBhLfcfdpZnz1JL3q6HgSdIkMqQ/H9YI9Y9Ydj4exTXDFen24IYteaMzPxII7RTYgnx+jJTurwA2iRl6avR+TSnY1s0K61NV7NBhil8MIYZt1pnY4URwXoWcg7Jzwh/8Kq4UfzzdlY/4afk6NxWM9+aAIPOSHEY4Sj7vo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=hoRdAXwd; arc=none smtp.client-ip=205.220.165.32
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oracle.com
-Received: from pps.filterd (m0246617.ppops.net [127.0.0.1])
-	by mx0b-00069f02.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 55OMie1E029818;
-	Wed, 25 Jun 2025 01:44:34 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=cc
-	:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=
-	corp-2025-04-25; bh=HeMUlAcC4+ccYJknpN9DQDGn0GxQoyBhn8A0w16DCws=; b=
-	hoRdAXwdgQUw8oQPjKghRTHeEcVeH7lbq6M9X84GD9m306IEgiCtEJZzQjxgdQhZ
-	h4ulmRGqiJFqU0nSb6gBVG6DfmHCiYDBExXYfSlFa+A2EnNm91AUAYcWETyhTSno
-	qLH9thQ6Dk92kpFPnM/dP41SqKkLUAoj/nREKgWs0XSqvJgaL7voUOfQwSq5TF3v
-	NbhZobhCxHWJjoYGzyAmdEprJ7pp6aztmN/8KFKAouoTwa7K33uOqOtm3hi2gwnd
-	fQR+0/uwcuRNhR52lNGtWexkET9eMu0ZKXsV0NJQ+GG2j3tLdQMv25pwmaOqDvsq
-	Kk6B1zRPFHv6gT9TtNb2vA==
-Received: from phxpaimrmta02.imrmtpd1.prodappphxaev1.oraclevcn.com (phxpaimrmta02.appoci.oracle.com [147.154.114.232])
-	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 47ds8y6d1a-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Wed, 25 Jun 2025 01:44:34 +0000 (GMT)
-Received: from pps.filterd (phxpaimrmta02.imrmtpd1.prodappphxaev1.oraclevcn.com [127.0.0.1])
-	by phxpaimrmta02.imrmtpd1.prodappphxaev1.oraclevcn.com (8.18.1.2/8.18.1.2) with ESMTP id 55ONhWUK005652;
-	Wed, 25 Jun 2025 01:44:33 GMT
-Received: from pps.reinject (localhost [127.0.0.1])
-	by phxpaimrmta02.imrmtpd1.prodappphxaev1.oraclevcn.com (PPS) with ESMTPS id 47ehq4e6r1-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Wed, 25 Jun 2025 01:44:33 +0000
-Received: from phxpaimrmta02.imrmtpd1.prodappphxaev1.oraclevcn.com (phxpaimrmta02.imrmtpd1.prodappphxaev1.oraclevcn.com [127.0.0.1])
-	by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 55P1iVGC007157;
-	Wed, 25 Jun 2025 01:44:33 GMT
-Received: from ca-mkp2.ca.oracle.com.com (mpeterse-ol9.allregionaliads.osdevelopmeniad.oraclevcn.com [100.100.251.135])
-	by phxpaimrmta02.imrmtpd1.prodappphxaev1.oraclevcn.com (PPS) with ESMTP id 47ehq4e6pm-3;
-	Wed, 25 Jun 2025 01:44:33 +0000
-From: "Martin K. Petersen" <martin.petersen@oracle.com>
-To: Jack Wang <jinpu.wang@cloud.ionos.com>,
-        "James E.J. Bottomley" <James.Bottomley@HansenPartnership.com>,
-        Francisco Gutierrez <frankramirez@google.com>
-Cc: "Martin K . Petersen" <martin.petersen@oracle.com>,
-        linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] scsi: pm80xx: Free allocated tags after failure
-Date: Tue, 24 Jun 2025 21:44:02 -0400
-Message-ID: <175069824519.1717808.5921410148275001864.b4-ty@oracle.com>
-X-Mailer: git-send-email 2.48.1
-In-Reply-To: <20250617210443.989058-1-frankramirez@google.com>
-References: <20250617210443.989058-1-frankramirez@google.com>
+	s=arc-20240116; t=1750815939; c=relaxed/simple;
+	bh=2zBoULgm03Dwl2J+U7HJ4pssYFLjwhSqOKEIgLREwF0=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=cinBn38ChvpSsU5iQ2odh+6mEsVCNfauUqz7FibTpmzUXNyRDdPKK+y1fI0yLs++BOtBvJA/a3nG0WvoIPeCG5NSN4hlEwkeo7k9w1Um2b5U67xpP8WGBM83djuTXpCH/dnHL8n5haLVpENytCQbtJqZ1M4xE3O+s7ccNzxkE8w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=P6h6W/T6; arc=none smtp.client-ip=209.85.216.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-pj1-f48.google.com with SMTP id 98e67ed59e1d1-311ef4fb43dso4932370a91.3
+        for <linux-kernel@vger.kernel.org>; Tue, 24 Jun 2025 18:45:37 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1750815937; x=1751420737; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=n32Ce14vCqr9g7FIDP6NZp2SFABeqo2yehV//w/3vO8=;
+        b=P6h6W/T69DXyWlzD+7eCOysWcfED/TU3007xxBtLjeTcC/bW99eQzhpNXuGkUu3yq7
+         o5kV3PmxP07lZGZJMoBTyNsMwdMovDcq7GKq7EpehZDb6dskhBXKq+zB62MK5n76dPtb
+         5x1SAz4xbGKD1owKgHgCOG7fdTnCF2OfTjscLly4t8OR1XI1+1zKAnQ1zAjeFZFsUibw
+         CDgxzfH7y0hzwwVeLbxf7H0cqAEc9On/PZRqNy+cQQJCwBZ2FfRo7kDyKcJYpGnVMuF6
+         le8gkbyEdpzFNz3NSs3h+GFmahEkv4Kvw5yNIpfvANAoLo1lgxPayhBaJ+G2Co4/pLqy
+         ak6w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1750815937; x=1751420737;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=n32Ce14vCqr9g7FIDP6NZp2SFABeqo2yehV//w/3vO8=;
+        b=o9Ax7flwmPIY3j7CkMYJSHwAnM6+7IVRwNVrClBCKfptv0M6VYmY+PIEchp36tPBdL
+         jj9bGfs+7LpBw2rM1lMEXljiuP3AV5W+vSXLNz7nFZ/5azNvM9gUUsHAlNRMFzKgsP36
+         3pJnxYsDvO+hhl8tUfckbnSTfuGE9J99mUC768Pqd8vwZNsF9fMLogB19xmgyHR+cRwC
+         WmkkzgUQO9KRfEbe+6oDqHl7uScsj1mp2e3NmZkhrWOc+fae1zb8pgBB0h1MsT/29Kxv
+         KJ5D0ikGmGeGvZxYc+98knf2XHJjoYBHa77cQf4ij0QVbgjcsgYGNd+giBiNnDr28mkf
+         TaRw==
+X-Forwarded-Encrypted: i=1; AJvYcCV6upuk8kMJCwx8WkzyPJkV0XuviKfp/t8utZtPn/3ofzyE9LzGgGVTTqrert2JBH5peMg2vJ9r9mIeu3o=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzJxcnpA5d/OM+L+k6l7Kb0njuZ8btGBHOOdbQS/vlmjtlGBYDP
+	MOoY2q+r06sNpzqFL5eSqUmfQk9mg7/U/sXbjqD4yjJP3TXXTQOUya7juSg3PCRBmLqNBYafh4W
+	wYLmNz+yeGBeugGA3gqvBdiHw0yJ7EcHEN5Hx/3KtTQ==
+X-Gm-Gg: ASbGncsGp92/UIoekfg32TqPAIQUfMYUnbhXQWl0XAdByqcV9RLRahzjM4iQL4FTEDD
+	0UmMGJ7+eaZVXBPmIniJLmMVHiiRPaB7lMNSsX9BgbUdduRbHgDPWU4zQR2kd+bB8i+In0/g6Pm
+	SxCxFARePxugPvgX8VPJsyYScXU4lg+u5lfU/xe+2YYHEvuEI4Nh90FG3bgiv1SplLqo3A7oNDn
+	RX4
+X-Google-Smtp-Source: AGHT+IEZZrjLJfPFgFgffQ9aiYWL3xtkwNj6XtyL+U8CZwF0zuyVUsKj+smjdUpouvDzUZibEu7iucvZo4MMreOA8eU=
+X-Received: by 2002:a17:90b:4a0e:b0:313:287c:74bd with SMTP id
+ 98e67ed59e1d1-315f26b8a00mr1754310a91.33.1750815936613; Tue, 24 Jun 2025
+ 18:45:36 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.7,FMLib:17.12.80.40
- definitions=2025-06-24_06,2025-06-23_07,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 adultscore=0 mlxlogscore=715
- spamscore=0 malwarescore=0 suspectscore=0 mlxscore=0 bulkscore=0
- phishscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2505160000 definitions=main-2506250012
-X-Proofpoint-ORIG-GUID: fJJbJzNyZzigXGhNIDZXQd8AcV_14Ga5
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNjI1MDAxMiBTYWx0ZWRfX/DPXXq22KPju SaiEYByx3gukV8Vssf9kjuOf1RFp5gbS3/GZh47nRet6sCKc8wILMeIdyqM+h1P0bqMivhMsM7H +5S0HN7kH7GOv5wXd2LuzT8lfuGMgVwtS3yd17CI48evNbUViKpSBmpk0YlAfH0WHs7NGTzNqJy
- vqPbIW/pQ2zyIzOhjlRdgK3KgV1ZtOkSqyYXCfVbW+iqMU/6F5ANoH7uBuGRzxXZ2ENH8HUWk9P IcdjZgvnXgXGpH8sr6LWP4jfgJ9dP9XbLkIqnSKO5MKD2sfFsyK9X0AB0n8k7IMiNH7nE1KNdEc kJP+Izam5mit3LxSt2IwaSU8PiebkTYMz4Ww7fTQn+Tp52/kJHjfb5ksWXOE8G0lr7qKbB2d8/A
- TmEjjFzTYvv44DqB4YoQ4tzvRabS37PQydRqV4Kzd8V9WE4pEyKWWGdgQu3uT0mtS3p10lO4
-X-Proofpoint-GUID: fJJbJzNyZzigXGhNIDZXQd8AcV_14Ga5
-X-Authority-Analysis: v=2.4 cv=PqSTbxM3 c=1 sm=1 tr=0 ts=685b5482 cx=c_pps a=OOZaFjgC48PWsiFpTAqLcw==:117 a=OOZaFjgC48PWsiFpTAqLcw==:17 a=IkcTkHD0fZMA:10 a=6IFa9wvqVegA:10 a=VwQbUJbxAAAA:8 a=0gEqvKy8egvCYf2HugAA:9 a=QEXdDO2ut3YA:10
+References: <20250623130632.993849527@linuxfoundation.org> <CA+G9fYuU5uSG1MKdYPoaC6O=-w5z6BtLtwd=+QBzrtZ1uQ8VXg@mail.gmail.com>
+ <2025062439-tamer-diner-68e9@gregkh>
+In-Reply-To: <2025062439-tamer-diner-68e9@gregkh>
+From: Naresh Kamboju <naresh.kamboju@linaro.org>
+Date: Wed, 25 Jun 2025 07:15:24 +0530
+X-Gm-Features: Ac12FXwfYJX4c32g79VHYXDiATL5pbXpMHEnfwCL6cyaQQoQ60FwmMr-U4O_s64
+Message-ID: <CA+G9fYvUG9=yGCp1W9-9+dhA6xLRo7mrL=7x9kBNJmzg7TCn7w@mail.gmail.com>
+Subject: Re: [PATCH 5.15 000/411] 5.15.186-rc1 review
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: stable@vger.kernel.org, patches@lists.linux.dev, 
+	linux-kernel@vger.kernel.org, torvalds@linux-foundation.org, 
+	akpm@linux-foundation.org, linux@roeck-us.net, shuah@kernel.org, 
+	patches@kernelci.org, lkft-triage@lists.linaro.org, pavel@denx.de, 
+	jonathanh@nvidia.com, f.fainelli@gmail.com, sudipm.mukherjee@gmail.com, 
+	srw@sladewatkins.net, rwarsow@gmx.de, conor@kernel.org, hargar@microsoft.com, 
+	broonie@kernel.org, Russell King - ARM Linux <linux@armlinux.org.uk>, 
+	"James E.J. Bottomley" <jejb@linux.ibm.com>, "Martin K. Petersen" <martin.petersen@oracle.com>, kees@kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-On Tue, 17 Jun 2025 21:04:43 +0000, Francisco Gutierrez wrote:
+On Tue, 24 Jun 2025 at 15:48, Greg Kroah-Hartman
+<gregkh@linuxfoundation.org> wrote:
+>
+> On Tue, Jun 24, 2025 at 02:12:05AM +0530, Naresh Kamboju wrote:
+> > On Mon, 23 Jun 2025 at 18:39, Greg Kroah-Hartman
+> > <gregkh@linuxfoundation.org> wrote:
+> > >
+> > > This is the start of the stable review cycle for the 5.15.186 release.
+> > > There are 411 patches in this series, all will be posted as a response
+> > > to this one.  If anyone has any issues with these being applied, please
+> > > let me know.
+> > >
+> > > Responses should be made by Wed, 25 Jun 2025 13:05:51 +0000.
+> > > Anything received after that time might be too late.
+> > >
+> > > The whole patch series can be found in one patch at:
+> > >         https://www.kernel.org/pub/linux/kernel/v5.x/stable-review/patch-5.15.186-rc1.gz
+> > > or in the git tree and branch at:
+> > >         git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-5.15.y
+> > > and the diffstat can be found below.
+> > >
+> > > thanks,
+> > >
+> > > greg k-h
+> >
+> > Regressions on arm64 allyesconfig builds with gcc-12 and clang failed on
+> > the Linux stable-rc 5.15.186-rc1.
+> >
+> > Regressions found on arm64
+> > * arm64, build
+> >   - gcc-12-allyesconfig
+> >
+> > Regression Analysis:
+> >  - New regression? Yes
+> >  - Reproducibility? Yes
+> >
+> > Build regression: stable-rc 5.15.186-rc1 arm64
+> > drivers/scsi/qedf/qedf_main.c:702:9: error: positional initialization
+> > of field in 'struct' declared with 'designated_init' attribute
+> >
+> > Reported-by: Linux Kernel Functional Testing <lkft@linaro.org>
+> >
+> > ## Build errors
+> > drivers/scsi/qedf/qedf_main.c:702:9: error: positional initialization
+> > of field in 'struct' declared with 'designated_init' attribute
+> > [-Werror=designated-init]
+> >   702 |         {
+> >       |         ^
+> > drivers/scsi/qedf/qedf_main.c:702:9: note: (near initialization for
+> > 'qedf_cb_ops')
+> > cc1: all warnings being treated as errors
+>
+> I saw this locally, at times, it's random, not always showing up.  Turn
+> off the gcc randconfig build option and it goes away, which explains the
+> randomness I guess.
+>
+> If you can bisect this to a real change that causes it, please let me
+> know, I couldn't figure it out and so just gave up as I doubt anyone is
+> really using that gcc plugin for that kernel version.
 
-> This change frees resources after an error is detected.
-> 
-> 
+You are right !
+The reported arm64 allyesconfig build failures are due to,
 
-Applied to 6.17/scsi-queue, thanks!
+  randstruct: gcc-plugin: Remove bogus void member
+  [ Upstream commit e136a4062174a9a8d1c1447ca040ea81accfa6a8 ]
 
-[1/1] scsi: pm80xx: Free allocated tags after failure
-      https://git.kernel.org/mkp/scsi/c/258a0a196217
+- Naresh
 
--- 
-Martin K. Petersen	Oracle Linux Engineering
+>
+> thanks,
+>
+> greg k-h
 
