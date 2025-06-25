@@ -1,105 +1,97 @@
-Return-Path: <linux-kernel+bounces-702481-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-702489-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 09409AE82E9
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Jun 2025 14:41:21 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 19FE0AE82FD
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Jun 2025 14:43:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 425D17B3230
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Jun 2025 12:39:47 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BFCAA3AE7B0
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Jun 2025 12:43:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F052E25C822;
-	Wed, 25 Jun 2025 12:40:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="APH1KeW1"
-Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8C18D25F793;
+	Wed, 25 Jun 2025 12:43:35 +0000 (UTC)
+Received: from r3-20.sinamail.sina.com.cn (r3-20.sinamail.sina.com.cn [202.108.3.20])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3807125F7B7;
-	Wed, 25 Jun 2025 12:40:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 883E425E839
+	for <linux-kernel@vger.kernel.org>; Wed, 25 Jun 2025 12:43:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.108.3.20
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750855247; cv=none; b=u6zCZBBu+uptu4kPCt73hoEjn5Pkx5AuACKiOtRUTTN7bs7Nd9Ux2VI0CojiRvqO/uNif7buOUYMYDh84ssGfOfcgNguC+LSVj96a50A2QD4XFvrFtVE95aJ3XXmyyXh1yLkovWGmzf7HYNbfq6ApGuoJqy1ywZzcFwXCbxDva4=
+	t=1750855415; cv=none; b=mDNjyPg68Ppx6Uaku66bxtfe+1tRVJcdo25+SSvl918bBxoVuV+aNdQpfz/8XWVvldaR6b70d8x6DzXXKG5SRiGym6TaYukjBmM1gzXrduFCwJfSzanLQNJCIK4LNZr6e9P5WefoGC07dgVnVUbfIgfx20WE/HELlM6g1qrwEto=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750855247; c=relaxed/simple;
-	bh=3piVdJ5Rpoay1vw4fI4wqae5TWO4qrTJb4cY0WDEBlw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=KSBQmBc4+VFfuhuwvo9x1ccag77Ehms0WmV0FNb3xSbfDdev0/Y5XOvM6VkewQWYDieqDlBFtMbtRgnNKMbvpHMDhyJZbX0pJlTodcGVpYdSN9OplTY05l8nongukEMIb/Meor4gAu39V0cwezse18zj+Xgv0m5H0L168t2r8lw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=APH1KeW1; arc=none smtp.client-ip=65.109.113.108
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
-Received: from localhost (localhost.localdomain [127.0.0.1])
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id 7E7A440E019C;
-	Wed, 25 Jun 2025 12:40:36 +0000 (UTC)
-X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
-Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
-	header.d=alien8.de
-Received: from mail.alien8.de ([127.0.0.1])
-	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
-	with ESMTP id 4Sglr0zU2P5r; Wed, 25 Jun 2025 12:40:33 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
-	t=1750855233; bh=Qu0uqHS6hS+NYYsyy4KTtifG0A6XpwmdiXwgTehuKT0=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=APH1KeW1XE225jC7yQvxkqrpLTXdlfBPvQGqhrUXh0IGjNbB7HohLrhXgaIcj5ph/
-	 AiFGR1OIKJyL+jYlP73gBurq1OmR/9xCHkfnwEnnNU/utjSoYTkccpc0vDBUpD2i8C
-	 GRlT0uw+17R4AKuqwIJs2daPAMavYTdGVRMXciI36Ae3nPAWxXEPubBW9+vI8SgBJf
-	 C8dNYDjBS9mzSVzi9vuItH00H2UDeubMKwdDgkVAnmUBhfixXbQAQMmi5gLMHSWMEx
-	 pcNJ0gCVlE45qW6ly5YOhGiLHZydFEoiEG7TfqiGbi+BAhsOUglks+iASLgsJmkjg0
-	 aW0j2V945zMiVn4RytCUk/V40ojvI4xIqp0JzLdOcpcbOGTYvKaieUJDJmvs1zZbU1
-	 9kI/PLd2cz7sT/Ez7LuU9PqMUOECQohWng5GK+WHG7G7NURCFKdh+Dd9om3aG2W5WP
-	 1SnpHy+0HhGIgiezHeZNhSHO1hDNKNqC/qcNq17tzysgYNIv0uj60pTD9Qem7UsjMb
-	 Z2Eebte5Peo+VtgdVi77LMBA49RIr0htzv6H9IYYS4ri6kIV+35D7G/u7b1AzneLZl
-	 7TxrbYHt1zLvgR4mne3L7zFHjs+KTj4E0viZzqKPkWNHDy277SEUMXQsOrlEjAIOEm
-	 95/mgwy/Cq9vBQ7udgdSG3Es=
-Received: from zn.tnic (p57969c58.dip0.t-ipconnect.de [87.150.156.88])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
-	(No client certificate requested)
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id E3F6A40E00CE;
-	Wed, 25 Jun 2025 12:40:21 +0000 (UTC)
-Date: Wed, 25 Jun 2025 14:40:16 +0200
-From: Borislav Petkov <bp@alien8.de>
-To: Gerd Hoffmann <kraxel@redhat.com>
-Cc: linux-coco@lists.linux.dev, kvm@vger.kernel.org,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Ingo Molnar <mingo@redhat.com>,
-	Dave Hansen <dave.hansen@linux.intel.com>,
-	"maintainer:X86 ARCHITECTURE (32-BIT AND 64-BIT)" <x86@kernel.org>,
-	"H. Peter Anvin" <hpa@zytor.com>, Ard Biesheuvel <ardb@kernel.org>,
-	"open list:X86 ARCHITECTURE (32-BIT AND 64-BIT)" <linux-kernel@vger.kernel.org>,
-	"open list:EXTENSIBLE FIRMWARE INTERFACE (EFI)" <linux-efi@vger.kernel.org>
-Subject: Re: [PATCH v2 2/2] x86/sev: let sev_es_efi_map_ghcbs map the caa
- pages too
-Message-ID: <20250625124016.GCaFvuMA9oApInTVyI@fat_crate.local>
-References: <20250602105050.1535272-1-kraxel@redhat.com>
- <20250602105050.1535272-3-kraxel@redhat.com>
- <20250624130158.GIaFqhxjE8-lQqq7mt@fat_crate.local>
- <rite3te5udzekwbbujmga5kyyjjm5gfphhqoxlhtsncgckq6rm@7m7owl5jgubz>
+	s=arc-20240116; t=1750855415; c=relaxed/simple;
+	bh=Dg7mH0vwJEi2eAh5xEyPZOekPMs11EObN+kXsnWP8fs=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=l50+JclYIHRKo+1sygt33Dpz4botXB9pyLq2s1WRBmexn/LZqKYbqGQ7dX6GToVWhxDabfZbYxUXzDPoV5rzzjk/NCukKJ1opN2U9cO2U1QeeU2jnFdesrYp/UH5tyt/i3erbupQupI28woxL6rS1XbSbgxL3N6pgM6DoccKemw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sina.com; spf=pass smtp.mailfrom=sina.com; arc=none smtp.client-ip=202.108.3.20
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sina.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sina.com
+X-SMAIL-HELO: localhost.localdomain
+Received: from unknown (HELO localhost.localdomain)([114.249.58.236])
+	by sina.com (10.54.253.32) with ESMTP
+	id 685BEE5E000047FB; Wed, 25 Jun 2025 20:41:04 +0800 (CST)
+X-Sender: hdanton@sina.com
+X-Auth-ID: hdanton@sina.com
+Authentication-Results: sina.com;
+	 spf=none smtp.mailfrom=hdanton@sina.com;
+	 dkim=none header.i=none;
+	 dmarc=none action=none header.from=hdanton@sina.com
+X-SMAIL-MID: 2724294456994
+X-SMAIL-UIID: CE051FA91B6D46C19CB0EFFAAB0AF47D-20250625-204104-1
+From: Hillf Danton <hdanton@sina.com>
+To: Qu Wenruo <quwenruo.btrfs@gmx.com>
+Cc: Edward Adam Davis <eadavis@qq.com>,
+	syzbot+fa90fcaa28f5cd4b1fc1@syzkaller.appspotmail.com,
+	clm@fb.com,
+	josef@toxicpanda.com,
+	linux-btrfs@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	syzkaller-bugs@googlegroups.com
+Subject: Re: [PATCH next] btrfs: fix deadlock in btrfs_read_chunk_tree
+Date: Wed, 25 Jun 2025 20:40:50 +0800
+Message-ID: <20250625124052.1778-1-hdanton@sina.com>
+In-Reply-To: <063b1e52-0769-403b-ae05-7b999223a1f2@gmx.com>
+References: <685aa401.050a0220.2303ee.0009.GAE@google.com> <tencent_C857B761776286CB137A836B096C03A34405@qq.com> <20250624235635.1661-1-hdanton@sina.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <rite3te5udzekwbbujmga5kyyjjm5gfphhqoxlhtsncgckq6rm@7m7owl5jgubz>
+Content-Transfer-Encoding: 8bit
 
-On Wed, Jun 25, 2025 at 01:52:58PM +0200, Gerd Hoffmann wrote:
-> The kernel allocates the caa page(s) only when running under svsm, see
-> alloc_runtime_data(), so this is not correct.  I think we either have to
-> return to the original behavior of only doing something in case address
-> is not NULL
-
-Yes, we're doing something only when the address is not NULL.
-
-Or maybe I'm missing what you're trying to tell me...
-
--- 
-Regards/Gruss,
-    Boris.
-
-https://people.kernel.org/tglx/notes-about-netiquette
+On Wed, 25 Jun 2025 20:19:06 +0930 Qu Wenruo wrote:
+> =E5=9C=A8 2025/6/25 09:26, Hillf Danton =E5=86=99=E9=81=93:
+> > On Wed, 25 Jun 2025 06:00:09 +0930 Qu Wenruo wrote:
+> >> =3DE5=3D9C=3DA8 2025/6/25 00:00, Edward Adam Davis =3DE5=3D86=3D99=3DE9=
+> =3D81=3D93:
+> >>> Remove the lock uuid_mutex outside of sget_fc() to avoid the deadlock
+> >>> reported by [1].
+> >>> =3D20
+> >>> [1]
+> >>> -> #1 (&type->s_umount_key#41/1){+.+.}-{4:4}:
+> >>>          lock_acquire+0x120/0x360 kernel/locking/lockdep.c:5871
+> >>>          down_write_nested+0x9d/0x200 kernel/locking/rwsem.c:1693
+> >>>          alloc_super+0x204/0x970 fs/super.c:345
+> >=20
+> > Given kzalloc [3], the syzbot report is false positive (a known lockdep
+> > issue) as nobody else should acquire s->s_umount lock.
+> >=20
+> > [3] https://web.git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.=
+> git/tree/fs/super.c?id=3D7aacdf6feed1#n319
+> 
+> Not a false alert either.
+> 
+> sget_fc() can return an existing super block, we can race between a=20
+> mount and an unmount on the same super block.
+> 
+> In that case it's going to cause problem.
+> 
+> This is already fixed in the v4 (and later v5) patchset:
+> 
+> https://lore.kernel.org/linux-btrfs/cover.1750724841.git.wqu@suse.com/
+> 
+Can v5 survive the syzbot test?
 
