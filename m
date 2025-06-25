@@ -1,130 +1,216 @@
-Return-Path: <linux-kernel+bounces-701890-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-701899-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 71108AE7AA8
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Jun 2025 10:46:45 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id B6848AE7AC4
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Jun 2025 10:49:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 258451BC3F03
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Jun 2025 08:46:52 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0EC5016BDEF
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Jun 2025 08:49:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AB9FC26C3BF;
-	Wed, 25 Jun 2025 08:45:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9D62E286422;
+	Wed, 25 Jun 2025 08:47:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=csie.ntu.edu.tw header.i=@csie.ntu.edu.tw header.b="JaqFfUzx"
-Received: from mail-pj1-f48.google.com (mail-pj1-f48.google.com [209.85.216.48])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="K9OxsoaZ"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 21C211C84DF
-	for <linux-kernel@vger.kernel.org>; Wed, 25 Jun 2025 08:45:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5A2B71FE474
+	for <linux-kernel@vger.kernel.org>; Wed, 25 Jun 2025 08:47:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750841116; cv=none; b=KVYM7VIYG3Sv+mkooscWvDRHZZcbxZdU7qN9k4rUUWPFzPq00VEQNDfhGKm3qSG/AB57Cn8n3RDlPMaiWPywf6vDSdno4eXJ6LQl9Xr7cgFPzWQ4RhFmiq7tTQgStXK3irc+nUC1kK2Smi46Rqg/AhwMgNOCADEVlimlwoXzLPg=
+	t=1750841277; cv=none; b=W8aI3h2SqwamRlmWjMdkwxixs7u7Cak7V9Io8baxOPMi3munIo3F1lDI7AEB0uuaSfLX8V2LQdlcKDhiPrwC6Ne/5wzJg57c3Jh1JfzK2WPqyYT8CFQT4NhlnpoGVEhUT9fAO0rI1Nd57+90JfjvTw144FOvUkeZCIvXNG8oIHU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750841116; c=relaxed/simple;
-	bh=hXBmUgYnqVV/obrfQE+ffzHO/KP6BaKG11lXO0yJS1w=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=CtuPF0eNU+Mk8HTz5AoB8W1smqoVYr3Tsy9j9PGyKandNYzdBF5JOzw+wCbIussgbZwYwGmwaeCTCD7HpiCwwICtjg3Yl/REaVp3F+apUhR8UPl3UxircE5xR+gHmld0Sm+xL1AfMd0NBvedd3nhkd3UrJ1yj1iOpRAx+rgw2os=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=csie.ntu.edu.tw; spf=pass smtp.mailfrom=csie.ntu.edu.tw; dkim=pass (2048-bit key) header.d=csie.ntu.edu.tw header.i=@csie.ntu.edu.tw header.b=JaqFfUzx; arc=none smtp.client-ip=209.85.216.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=csie.ntu.edu.tw
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=csie.ntu.edu.tw
-Received: by mail-pj1-f48.google.com with SMTP id 98e67ed59e1d1-3138e64b42aso1667728a91.0
-        for <linux-kernel@vger.kernel.org>; Wed, 25 Jun 2025 01:45:12 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=csie.ntu.edu.tw; s=google; t=1750841112; x=1751445912; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=/ZgnHfrvb1ohAxqWBg7xDt3QN8B0f9Jh9ZGClguGU7k=;
-        b=JaqFfUzx6PtBZE8TWNop/t5SsaMWNEQ2mbs+b7J0pDAw+EU+T55BPlSAHcdpDAXnrD
-         6gW9zOXVAeWRKSNea9mBhFWJ7wyekBC/uekGy2TCsALJ8PTfpuBEAqqgjbs4BWFsxmkM
-         5i1n/DGOKBcBrSjq+oOIe8cq60uKeT8JP0zpkosnXF6zdRSnBRn+Ckycwv4McosOcoB+
-         jIz1D9xGi5ikBcgxWTqsEz7No6s22D6e0MYxpRjF6dt5TKEvM8ivR4d248vxEN7Dr/Nx
-         uEZSabvrhjifSZduByFhlXBkKkc/qyS/UFdTTOCmTEmVo9zbUAZC6/hpy+l5BCzFbYhU
-         P+eQ==
+	s=arc-20240116; t=1750841277; c=relaxed/simple;
+	bh=+75bRSx55q7a3q51KmTmkCkt4z6ob3kNXIU1Sj5jtEU=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=nCoZFnmnfxpYNHj0u72NQ32DIubShSAigm427D9M0yQD8AuLAs80mKmSpZZKZKzH8S5rZKRtgtkJm/U7TKn/rM63WJy0QamPTd2o2WXpu8NY2o4u1RhiTLItgs7tNW8LToYRWxXsR3V1DgqGFfiZs1azxRTqtqwZUyy9pjn5GGI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=K9OxsoaZ; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1750841275;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=1xd9WPpFgl5LHUWhMgoti0ghzp6p9niA9oyQicHDlpo=;
+	b=K9OxsoaZNyxVvUpdt/wBxAkx74fR3EHXZxNM0U7sfQXIRuqbdTZFLUDu8093GqoLptMgi4
+	R1+uynDLAxggkHhmXEBQ0BwmhitsGiQWKs3o6vZx+ZhUKkQADVbShwDOtF6qcS0O+jWOPE
+	mQHu8CJivbsO1Zekjh6NcsyKlOdAidA=
+Received: from mail-wm1-f72.google.com (mail-wm1-f72.google.com
+ [209.85.128.72]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-569-q9FpU3ZwOpWlQhiSF6M9Nw-1; Wed, 25 Jun 2025 04:47:54 -0400
+X-MC-Unique: q9FpU3ZwOpWlQhiSF6M9Nw-1
+X-Mimecast-MFC-AGG-ID: q9FpU3ZwOpWlQhiSF6M9Nw_1750841273
+Received: by mail-wm1-f72.google.com with SMTP id 5b1f17b1804b1-4535ee06160so44271485e9.3
+        for <linux-kernel@vger.kernel.org>; Wed, 25 Jun 2025 01:47:53 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1750841112; x=1751445912;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=/ZgnHfrvb1ohAxqWBg7xDt3QN8B0f9Jh9ZGClguGU7k=;
-        b=X3LYr0L7FxVB6BfI4T6tgydb2YyN9oqG6pwF4BG4rGR2FLs2u6qp3VQUTqsMy+nwid
-         R9tPPQpM9e6qNJSmBZcdrktUlEPbadCRYBpzLpdt+XFYCUep/s400BubPX9jat3w8bP2
-         QxsoVXWb/Jy5uqv7DZHOXiRhsOb0+26V1RLaFEL3rGNUS2BQmo/TIwXb8G4KKJR2qJJu
-         JQ+yswHIWZoa4rQCo6OstZOBL/BfFeAYFN38+TnUJNp8xhetWKl3GnRRhY4Xzj1Aox1H
-         GPmoWLasQFGmgtHS0jG1ra+ONQ9OEafp6meHpVE0ueKIcYOPa6+D0TwTY468xw+06o/o
-         8h3A==
-X-Forwarded-Encrypted: i=1; AJvYcCUrRMPRxTkXMLai4CJ5+d2k0dp6PQGCI/Q4sgnosttcPzJq+IUrMt7OqeUdVlam5XNpVA1pCYHf5/hOUCQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxut3rT9dRnchpV+dSlB/4tRnSkAAgpruPLOfBElW/1SvLovgzL
-	Fhj00opOFAlhc+247rp8DcP3ZQHy8tI3vX+q7mJi+ULwRZDYwd57i06c04JTbFWw0nDQN1XbGX0
-	RHLKRi+vrClpI6bbR1OUwyne82VvkPzU9VzryYyEDpIcDn7Jpr0WqfkR98q4=
-X-Gm-Gg: ASbGncuV0gMjeX9JCJpOW/ySz491QQaBFoY76Y4Q1M+iIZXfuf3z4CcM1kMfJsJwLrK
-	zo5lp9BoU6NgEAUektjoTSoMqUUhXdBH753zpVD1KkGmQF4WMmIUpnNXMLVWQ6eioC3TMUeUcY8
-	X+0XL3wTucN6hSV1iozNsFLPgPIDS5AOx5uNTcpGyJRc1tk6+aTZZB8BH2vbGkbjRwFWUHQFBCU
-	WvqvnkeqH8Acveg/2JAaul4PtAvYxt7lQhx9jo6iJ9KawI3e2fIN8OpWdyxROTbePlB2BLHXgMC
-	xNZZwgLdgfnDMtmPYSmKE9OjtHJaSIsF1ssWX4dKHifToJVxW9HcUB6dIuojGhtOiJBVmX0GnjY
-	bPJ1QQIC6elqjrILyrnRwJDYnfMqeH1zrTO/VMkU6RaTDYLnWbWY=
-X-Google-Smtp-Source: AGHT+IGyy6YLwss+HffP5SUP+oihK3m9EHxjRmtYMYfXhWdxLxeKPaeGlxm77RQZMQ31nRdwQyAxaQ==
-X-Received: by 2002:a17:90b:1a88:b0:311:c970:c9ce with SMTP id 98e67ed59e1d1-315f268a5f6mr3098742a91.28.1750841112061;
-        Wed, 25 Jun 2025 01:45:12 -0700 (PDT)
-Received: from localhost.localdomain (36-228-0-244.dynamic-ip.hinet.net. [36.228.0.244])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-315f5441770sm1264154a91.48.2025.06.25.01.45.09
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 25 Jun 2025 01:45:11 -0700 (PDT)
-From: Wei-Lin Chang <r09922117@csie.ntu.edu.tw>
-To: linux-arm-kernel@lists.infradead.org,
-	kvmarm@lists.linux.dev,
-	linux-kernel@vger.kernel.org
-Cc: Marc Zyngier <maz@kernel.org>,
-	Oliver Upton <oliver.upton@linux.dev>,
-	Joey Gouly <joey.gouly@arm.com>,
-	Suzuki K Poulose <suzuki.poulose@arm.com>,
-	Zenghui Yu <yuzenghui@huawei.com>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Wei-Lin Chang <r09922117@csie.ntu.edu.tw>,
-	Will Deacon <will@kernel.org>,
-	Jintack Lim <jintack@cs.columbia.edu>,
-	Christoffer Dall <christoffer.dall@arm.com>
-Subject: [PATCH] KVM: arm64: nv: Fix MI line level calculation in vgic_v3_nested_update_mi()
-Date: Wed, 25 Jun 2025 16:47:09 +0800
-Message-ID: <20250625084709.3968844-1-r09922117@csie.ntu.edu.tw>
-X-Mailer: git-send-email 2.49.0
+        d=1e100.net; s=20230601; t=1750841273; x=1751446073;
+        h=content-transfer-encoding:in-reply-to:organization:autocrypt
+         :content-language:from:references:cc:to:subject:user-agent
+         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=1xd9WPpFgl5LHUWhMgoti0ghzp6p9niA9oyQicHDlpo=;
+        b=M5LdA9GpCqrVoBSbt8w3ySEebrjAj6gCRpy+4oq1vvstT5/F70UfhmtP/zE9p7EJuJ
+         C4aiQz9Z8up+pDm3atOv/PWoWcu21h3X8Xp9gf+B9L37bkvcZ/i3Ot/MyAGgj2DF5qQD
+         cDEtxqRrN2LZnvCyFntRFPQg4t1eJr6qbP9BmFPjj7Y5IuyMa77nojlIedB6xBKycVp4
+         jP58bkv7t9JwPCws7bC0TJbOVM/FQ4AjITVBWjjTN4QHKz2BfqCBYB89uRSzUFaRTdxj
+         jWGDGAG/BEJpbA/97bt/iPv5PaTHno/H87YQE23Iqd2EGQy/fJhfaK+pXTcI7uEl2U6Y
+         77Vg==
+X-Gm-Message-State: AOJu0YyCs1RbHYI9TM7bc0LCtYXqTzE47rsT0Or1ZkxRvIL/0aWPhzrX
+	igICDGT1ZToacQtKvKbXz7NKOHnOfA44txADLQhnECauUGbSg4GTTz/Ki+sCzkjxb0Id1BpDUIe
+	Wc+SvO4PSy3LtBN6ix1VOxRaQNeLsLG5aKeaMUE8+sPrQzE4jPNXx76Fj1/1Hl6n4AJ32f+E72D
+	iMSRgTHnGDFglpC45DTn2bFK5MyD/x56Oipy419YD38BCwPg==
+X-Gm-Gg: ASbGncuwbebqkdlMWox6fgwrlM9bj3VONIF1M4pr98jOjlZ+tsfT+WlZoSDUzjODpkF
+	vJWv8sU27W+i/ZA7nSssRKRBDkaHbxVCQJU/qK3qi844g+zgiBmGRTeKS8/+U1wy005vvgsOCV0
+	SwdjjFOa950MnOlkpnm8qpTtwkmWjqwGmIrPHpNdxr0IW7PhK/GRgepKwrbxqYYf3JwLN1YWqvH
+	sFMKLSNCP5EJrKa2ZpVrA9AVc7FwwvOK0iDsFvK6HRpSjcF6HY0F1YPjvx49yQ933RU3Lln3KGf
+	uEWnH3beeU2hGtdPeMZI2KHXK5c76WLohtbI1qZKkzHOLkZ8YQFZVRSTidK2SWXipRuNK3bu5eQ
+	y/E5dmEDA/H3dJNbKumimV8RybJ8/tt7uTqMfihoi6jlw
+X-Received: by 2002:a05:600c:154e:b0:44a:b478:1387 with SMTP id 5b1f17b1804b1-45381ae3576mr22314255e9.17.1750841272842;
+        Wed, 25 Jun 2025 01:47:52 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IFAYS0X8N7xEFzwTzklctg8lKH7oKBXzgFBqyrisxcav/ySIelpP/IwsIPf2LcVX8aOeVVltQ==
+X-Received: by 2002:a05:600c:154e:b0:44a:b478:1387 with SMTP id 5b1f17b1804b1-45381ae3576mr22313605e9.17.1750841272285;
+        Wed, 25 Jun 2025 01:47:52 -0700 (PDT)
+Received: from ?IPV6:2003:d8:2f12:1b00:5d6b:db26:e2b7:12? (p200300d82f121b005d6bdb26e2b70012.dip0.t-ipconnect.de. [2003:d8:2f12:1b00:5d6b:db26:e2b7:12])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-453823b913esm12703805e9.33.2025.06.25.01.47.50
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 25 Jun 2025 01:47:51 -0700 (PDT)
+Message-ID: <5f4c0a45-f219-4d95-b5d7-b4ca1bc9540b@redhat.com>
+Date: Wed, 25 Jun 2025 10:47:49 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Gm-Spam: 0
-X-Gm-Phishy: 0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH RFC 11/14] mm: remove "horrible special case to handle
+ copy-on-write behaviour"
+To: linux-kernel@vger.kernel.org
+Cc: linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
+ nvdimm@lists.linux.dev, Andrew Morton <akpm@linux-foundation.org>,
+ Juergen Gross <jgross@suse.com>, Stefano Stabellini
+ <sstabellini@kernel.org>,
+ Oleksandr Tyshchenko <oleksandr_tyshchenko@epam.com>,
+ Dan Williams <dan.j.williams@intel.com>, Alistair Popple
+ <apopple@nvidia.com>, Matthew Wilcox <willy@infradead.org>,
+ Jan Kara <jack@suse.cz>, Alexander Viro <viro@zeniv.linux.org.uk>,
+ Christian Brauner <brauner@kernel.org>, Zi Yan <ziy@nvidia.com>,
+ Baolin Wang <baolin.wang@linux.alibaba.com>,
+ Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
+ "Liam R. Howlett" <Liam.Howlett@oracle.com>, Nico Pache <npache@redhat.com>,
+ Ryan Roberts <ryan.roberts@arm.com>, Dev Jain <dev.jain@arm.com>,
+ Barry Song <baohua@kernel.org>, Vlastimil Babka <vbabka@suse.cz>,
+ Mike Rapoport <rppt@kernel.org>, Suren Baghdasaryan <surenb@google.com>,
+ Michal Hocko <mhocko@suse.com>, Jann Horn <jannh@google.com>,
+ Pedro Falcato <pfalcato@suse.de>
+References: <20250617154345.2494405-1-david@redhat.com>
+ <20250617154345.2494405-12-david@redhat.com>
+From: David Hildenbrand <david@redhat.com>
+Content-Language: en-US
+Autocrypt: addr=david@redhat.com; keydata=
+ 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
+ WNyWQQ==
+Organization: Red Hat
+In-Reply-To: <20250617154345.2494405-12-david@redhat.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-The state of the vcpu's MI line should be asserted when its
-ICH_HCR_EL2.En is set and ICH_MISR_EL2 is non-zero. Using bitwise AND
-(&=) directly for this calculation will not give us the correct result
-when the LSB of the vcpu's ICH_MISR_EL2 isn't set. Correct this by first
-adjusting the return value of vgic_v3_get_misr() into 1 if it is
-non-zero.
+On 17.06.25 17:43, David Hildenbrand wrote:
+> Let's make the kernel a bit less horrible, by removing the
+> linearity requirement in CoW PFNMAP mappings with
+> !CONFIG_ARCH_HAS_PTE_SPECIAL. In particular, stop messing with
+> vma->vm_pgoff in weird ways.
+> 
+> Simply lookup in applicable (i.e., CoW PFNMAP) mappings whether we
+> have an anon folio.
+> 
+> Nobody should ever try mapping anon folios using PFNs, that just screams
+> for other possible issues. To be sure, let's sanity-check when inserting
+> PFNs. Are they really required? Probably not, but it's a good safety net
+> at least for now.
+> 
+> The runtime overhead should be limited: there is nothing to do for !CoW
+> mappings (common case), and archs that care about performance
+> (i.e., GUP-fast) should be supporting CONFIG_ARCH_HAS_PTE_SPECIAL
+> either way.
+> 
+> Likely the sanity checks added in mm/huge_memory.c are not required for
+> now, because that code is probably only wired up with
+> CONFIG_ARCH_HAS_PTE_SPECIAL, but this way is certainly cleaner and
+> more consistent -- and doesn't really cost us anything in the cases we
+> really care about.
+> 
+> Signed-off-by: David Hildenbrand <david@redhat.com>
+> ---
 
-Signed-off-by: Wei-Lin Chang <r09922117@csie.ntu.edu.tw>
----
- arch/arm64/kvm/vgic/vgic-v3-nested.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+I'm still thinking about this patch here, and will likely send out the 
+other patches first as a v1, and come back to this one later.
 
-diff --git a/arch/arm64/kvm/vgic/vgic-v3-nested.c b/arch/arm64/kvm/vgic/vgic-v3-nested.c
-index 4f6954c30674..ebffad632fd2 100644
---- a/arch/arm64/kvm/vgic/vgic-v3-nested.c
-+++ b/arch/arm64/kvm/vgic/vgic-v3-nested.c
-@@ -400,7 +400,7 @@ void vgic_v3_nested_update_mi(struct kvm_vcpu *vcpu)
- 
- 	level  = __vcpu_sys_reg(vcpu, ICH_HCR_EL2) & ICH_HCR_EL2_En;
- 	if (level)
--		level &= vgic_v3_get_misr(vcpu);
-+		level &= !!vgic_v3_get_misr(vcpu);
- 	kvm_vgic_inject_irq(vcpu->kvm, vcpu,
- 			    vcpu->kvm->arch.vgic.mi_intid, level, vcpu);
- }
+Really, someone mapping random memory using /dev/mem, and then getting 
+anonymous memory in there is the (nasty) corner case I ignored.
+
+There are rather nasty ways of trying to detect if an anon folio really 
+fits into a VMA, but I'd like to avoid that.
+
+What I am thinking about right now is that we could, for these special 
+architectures, simply disallow CoW faults on /dev/mem.
+
+So we would still allow MAP_PRIVATE mappings (e.g., random app opening 
+/dev/mem using MAP_PRIVATE but never actually writing to that memory), 
+but the actual CoW faults would fail without pte_special().
+
+Some more thinking to do ...
+
 -- 
-2.49.0
+Cheers,
+
+David / dhildenb
 
 
