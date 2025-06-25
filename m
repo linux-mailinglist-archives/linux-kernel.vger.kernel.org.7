@@ -1,175 +1,116 @@
-Return-Path: <linux-kernel+bounces-703297-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-703316-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 97209AE8E52
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Jun 2025 21:17:15 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 058BEAE8EA6
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Jun 2025 21:27:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F37E63B0B8E
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Jun 2025 19:15:55 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3C9EF3B959E
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Jun 2025 19:26:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 10F762DAFBC;
-	Wed, 25 Jun 2025 19:16:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2C1752E4260;
+	Wed, 25 Jun 2025 19:25:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ll2ev9x+"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=rjwysocki.net header.i=@rjwysocki.net header.b="LQqwJrkH"
+Received: from cloudserver094114.home.pl (cloudserver094114.home.pl [79.96.170.134])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 656C7189F43;
-	Wed, 25 Jun 2025 19:16:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D2E202E06CA;
+	Wed, 25 Jun 2025 19:25:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=79.96.170.134
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750878974; cv=none; b=UMu/ATjqmb4npbzfdh7Ywc+djMOnK8ykhjMt9qCK3TkiyaftKAhhmON9Obvr1XbaKMYUtr/dqmK6bdIaT6fe2l9XoOwpwRpekduXNVYuO6480YyWODBq41JJPaARcCv7vP1lkgtEk2/+3AYr+qK50i2V4CZzxUN+45+l9M1OqUs=
+	t=1750879553; cv=none; b=IYNTIEVwQ2q4h1a30JVAE4NMsFO40/q09YBLMfFLz9c+LnlCPJlslRx5rHv7npT54zs8PpU8T0stFKfSChLk+lbbEpxrFOAMOdNJwfFLK8mdk9y/uNWmcXdLNt+gB9C8sSawb4GwdPqf8Y0uGqqeBDXzj/Nc2RFna1ELu1PnPSA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750878974; c=relaxed/simple;
-	bh=3xx8v1UwfRqi0ZG+i5McWZ2XEzZuimQytzqJT5SglHc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=b/NP2UBoP+JfdB9dgc1liNs+BtdP+bvqIoliDfVJ/PZBPzNBYKX1opv8IXRCL13mHVOpf+pLdaTwyCNPLk90CqF3O++UuV0QKLFE526nqod4kFHCt0pkYIglmlzyG9OVnsYoevklPEC/zixI/1pEc8ZS8ASUqQO1EHhJfwWEcgg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ll2ev9x+; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D58DBC4CEEA;
-	Wed, 25 Jun 2025 19:16:13 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1750878974;
-	bh=3xx8v1UwfRqi0ZG+i5McWZ2XEzZuimQytzqJT5SglHc=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=ll2ev9x+mDm8fPwuaepM18THd82jsyPWzG1/HqjPrZGqYpAzaSSUdOof59nOSs7rO
-	 2u3wLcOS0vbFia4CRWStDdB+amoW4c7rRUfueX91+SbCUNc5BdtdepjG4dus7voYR+
-	 HtwGuwjRm+c2GtlaamNxkd819845Wo0pT0gRxPhoOsosCJGyVKqBLrVB/SlLHZQKI0
-	 32owTpKRMV7oaDrPeMCMSBy95Or3G9HSoVih9qazQ4LZpKfwnHCUVJytV4JgCF/xvd
-	 b5Gk1VBplToldZh8xhEKFCiO7EcenEo2YdWqXI53zv4pOOvUPJf1uC2LXHbqXCUMAq
-	 IaV6JW0gJ6bTA==
-Date: Wed, 25 Jun 2025 14:16:13 -0500
-From: Rob Herring <robh@kernel.org>
-To: Junhui Liu <junhui.liu@pigmoral.tech>
-Cc: Bjorn Andersson <andersson@kernel.org>,
-	Mathieu Poirier <mathieu.poirier@linaro.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Chen Wang <unicorn_wang@outlook.com>,
-	Inochi Amaoto <inochiama@gmail.com>,
-	Philipp Zabel <p.zabel@pengutronix.de>,
-	Paul Walmsley <paul.walmsley@sifive.com>,
-	Palmer Dabbelt <palmer@dabbelt.com>,
-	Albert Ou <aou@eecs.berkeley.edu>, Alexandre Ghiti <alex@ghiti.fr>,
-	linux-remoteproc@vger.kernel.org, devicetree@vger.kernel.org,
-	sophgo@lists.linux.dev, linux-kernel@vger.kernel.org,
-	linux-riscv@lists.infradead.org
-Subject: Re: [PATCH 1/2] dt-bindings: remoteproc: Add C906L rproc for Sophgo
- CV1800B SoC
-Message-ID: <20250625191613.GA2059062-robh@kernel.org>
-References: <20250608-cv1800-rproc-v1-0-57cf66cdf6a3@pigmoral.tech>
- <20250608-cv1800-rproc-v1-1-57cf66cdf6a3@pigmoral.tech>
+	s=arc-20240116; t=1750879553; c=relaxed/simple;
+	bh=jitevF2LM49CrS922leO0FhKCTCoG60LelCLKUFcPGg=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=ksqciw7KvEfDsDrwn2S0j898oTeW8GRm+mH+Nb4Jm0VIQ7r+EiZBjJUSF5ilQXWlsCaC+oVqtesjooRV6HdsVk9Xgz4LtBFn5HAJkgNK88C3h+UTrXSBfKqVoAwTBUYMd9xB0wR4TgeOhlSs7e0/dSpqKNVO8BLok8UuOCOIv80=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rjwysocki.net; spf=pass smtp.mailfrom=rjwysocki.net; dkim=pass (2048-bit key) header.d=rjwysocki.net header.i=@rjwysocki.net header.b=LQqwJrkH; arc=none smtp.client-ip=79.96.170.134
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rjwysocki.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rjwysocki.net
+Received: from kreacher.localnet (unknown [5.63.189.50])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by cloudserver094114.home.pl (Postfix) with ESMTPSA id 166BE66E811;
+	Wed, 25 Jun 2025 21:25:46 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=rjwysocki.net;
+	s=dkim; t=1750879546;
+	bh=jitevF2LM49CrS922leO0FhKCTCoG60LelCLKUFcPGg=;
+	h=From:Subject:Date;
+	b=LQqwJrkH6yzL5ZUSztC1yFHsYVVRJ9h1gv/tNnp+ZZ5bh4LpaSrWaiDQOsn+hTYDq
+	 WZaVugQP2hgvuOXMdKia/BOkXvCGLXfndsmYafedtV9wxEJbVUQPtfvgI9xqtfyogN
+	 KaXaiGeMEKR99HCNWHJW2gimk1lAEcX+vdRjV8MClzDbK+hXfpipKON9Nn95y6y+QX
+	 6SY8xsDMyY+fHxmJCsaPkYayf0hhGbXGlFNgD9BpV+OkTR+gSNQu8OWKpH2DGK9iC/
+	 i7NDca0ZFR4cx11tdPteVxbGic2QPmaSHRt9/EadlMbFLghgTuSBBzJL1Y52ZmzAm3
+	 UBpUltTYaf0xg==
+From: "Rafael J. Wysocki" <rjw@rjwysocki.net>
+To: Linux PM <linux-pm@vger.kernel.org>
+Cc: LKML <linux-kernel@vger.kernel.org>,
+ Linux ACPI <linux-acpi@vger.kernel.org>,
+ Linux PCI <linux-pci@vger.kernel.org>, Ulf Hansson <ulf.hansson@linaro.org>,
+ Mika Westerberg <mika.westerberg@linux.intel.com>
+Subject: [PATCH v1 1/9] PM: Use true/false as power.needs_force_resume values
+Date: Wed, 25 Jun 2025 21:16:25 +0200
+Message-ID: <3903497.kQq0lBPeGt@rjwysocki.net>
+In-Reply-To: <22759968.EfDdHjke4D@rjwysocki.net>
+References: <22759968.EfDdHjke4D@rjwysocki.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250608-cv1800-rproc-v1-1-57cf66cdf6a3@pigmoral.tech>
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="UTF-8"
+X-CLIENT-IP: 5.63.189.50
+X-CLIENT-HOSTNAME: 5.63.189.50
+X-VADE-SPAMSTATE: clean
+X-VADE-SPAMCAUSE: dmFkZTG4CnQAyPiKDc4jTltm7NHnLCVtZKhxHwU/mx8re2dPOhVfeN2eNC/e4rO1ylH7/jVRItFrHJw0alo6q5EY6ycicQVAxpI/D4AkyVUs+mfLX3ZcB3xxv7uahSbIs4J2st+V8cgyyC8VUBcQvaIZl2zWD9dzBr3uiNVX2NjAuTH/gnfcGRRYyxzbuVPNjhWSx8dOqRKOQvf1IglMg/3h7ogdqmaycOwfsL5s2iPEhjShLQY0WqSSxys77Ch18Xb2QGNEyhuCzh8rm8ulzZuyR45HOwqbaOFBEnnHJsxbFQlE2kQLfuFrUSAdGFgOeJNT/FpqijQgMN89RLqtpvna+1fHkTzLrr2TnxJ+BuWpZjbF9tqBAy9YUdaa5zzFwRroWx7WVX8k2rCqSCISXebKeQuoRrXyeo6BIjIY5MrYMVfYNsnwqvU9Jo3KNlBUtyFPBFvO54+BOJhh3sH4dSFfewTnfk2c04meav9ZffBSbEk2oza8IJKEd1+xitusCEHjclNZQ/zBd3+eKlW4h4ie5kkWa2kzdq5gzg/qvAN5pRnmoLNEP2mQ7ppimTtPhkgh4qaB7CapUbQ37nAbr8VB6v5gXG8pgJY5bIzd1heuYtWmggrevT5S3a8bHhgkbeNk/eKPedjlEABV3jCcMIun5//Y8GEN0C7blgqGpKdpNPeEUw
+X-DCC--Metrics: v370.home.net.pl 1024; Body=6 Fuz1=6 Fuz2=6
 
-On Sun, Jun 08, 2025 at 10:37:39AM +0800, Junhui Liu wrote:
-> Add C906L remote processor for CV1800B SoC, which is an asymmetric
-> processor typically running RTOS.
-> 
-> Signed-off-by: Junhui Liu <junhui.liu@pigmoral.tech>
-> ---
->  .../bindings/remoteproc/sophgo,cv1800b-c906l.yaml  | 68 ++++++++++++++++++++++
->  1 file changed, 68 insertions(+)
-> 
-> diff --git a/Documentation/devicetree/bindings/remoteproc/sophgo,cv1800b-c906l.yaml b/Documentation/devicetree/bindings/remoteproc/sophgo,cv1800b-c906l.yaml
-> new file mode 100644
-> index 0000000000000000000000000000000000000000..455e957dec01c16424c49ebe5ef451883b0c3d4a
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/remoteproc/sophgo,cv1800b-c906l.yaml
-> @@ -0,0 +1,68 @@
-> +# SPDX-License-Identifier: (GPL-2.0 OR BSD-2-Clause)
-> +%YAML 1.2
-> +---
-> +$id: http://devicetree.org/schemas/remoteproc/sophgo,cv1800b-c906l.yaml#
-> +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> +
-> +title: Sophgo C906L remote processor controller for CV1800B SoC
-> +
-> +maintainers:
-> +  - Junhui Liu <junhui.liu@pigmoral.tech>
-> +
-> +description:
-> +  Document the bindings for the C906L remoteproc component that loads and boots
-> +  firmwares on the CV1800B SoC.
-> +
-> +properties:
-> +  compatible:
-> +    const: sophgo,cv1800b-c906l
-> +
-> +  firmware-name:
-> +    $ref: /schemas/types.yaml#/definitions/string
+From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
 
-Already has a type. You just need 'maxItems: 1'.
+Since power.needs_force_resume is a bool field, use true/false
+as its values instead of 1/0, respectively.
 
-> +    description:
-> +      The name of the firmware file to load for this remote processor, relative
-> +      to the firmware search path (typically /lib/firmware/).
+Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+---
+ drivers/base/power/runtime.c |    6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
-That's the same for every 'firmware-name' instance. So drop.
+--- a/drivers/base/power/runtime.c
++++ b/drivers/base/power/runtime.c
+@@ -1827,7 +1827,7 @@
+ 	dev->power.request_pending = false;
+ 	dev->power.request = RPM_REQ_NONE;
+ 	dev->power.deferred_resume = false;
+-	dev->power.needs_force_resume = 0;
++	dev->power.needs_force_resume = false;
+ 	INIT_WORK(&dev->power.work, pm_runtime_work);
+ 
+ 	dev->power.timer_expires = 0;
+@@ -1997,7 +1997,7 @@
+ 		pm_runtime_set_suspended(dev);
+ 	} else {
+ 		__update_runtime_status(dev, RPM_SUSPENDED);
+-		dev->power.needs_force_resume = 1;
++		dev->power.needs_force_resume = true;
+ 	}
+ 
+ 	return 0;
+@@ -2047,7 +2047,7 @@
+ 
+ 	pm_runtime_mark_last_busy(dev);
+ out:
+-	dev->power.needs_force_resume = 0;
++	dev->power.needs_force_resume = false;
+ 	pm_runtime_enable(dev);
+ 	return ret;
+ }
 
-Is there a default name?
 
-> +
-> +  memory-region:
 
-       maxItems: 1
-
-> +    description:
-> +      Phandle to a reserved memory region that is used to load the firmware for
-> +      this remote processor. The remote processor will use this memory region
-> +      as its execution memory.
-> +
-> +  resets:
-> +    maxItems: 1
-> +
-> +  sophgo,syscon:
-> +    $ref: /schemas/types.yaml#/definitions/phandle
-> +    description:
-> +      A phandle to the SEC_SYS region, used for configuration of the remote processor.
-> +
-> +required:
-> +  - compatible
-> +  - firmware-name
-> +  - memory-region
-> +  - resets
-> +  - sophgo,syscon
-> +
-> +additionalProperties: false
-> +
-> +examples:
-> +  - |
-> +    reserved-memory {
-> +        #address-cells = <1>;
-> +        #size-cells = <1>;
-> +        ranges;
-> +
-> +        c906l_mem: region@83f40000 {
-> +            reg = <0x83f40000 0xc0000>;
-> +            no-map;
-> +        };
-> +    };
-
-Drop. No need to show how /reserved-memory works here.
-
-> +
-> +    c906l-rproc {
-> +        compatible = "sophgo,cv1800b-c906l";
-> +        firmware-name = "c906l-firmware.elf";
-> +        memory-region = <&c906l_mem>;
-> +        resets = <&rst 294>;
-> +        sophgo,syscon = <&sec_sys>;
-> +    };
-> 
-> -- 
-> 2.49.0
-> 
 
