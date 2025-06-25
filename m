@@ -1,116 +1,109 @@
-Return-Path: <linux-kernel+bounces-702971-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-702977-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4729DAE89F5
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Jun 2025 18:35:55 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 5FA50AE8A0C
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Jun 2025 18:38:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 64ED4189BFDA
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Jun 2025 16:35:43 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5CCD71C20614
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Jun 2025 16:37:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C3FA52D29A5;
-	Wed, 25 Jun 2025 16:35:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 437EC2D5436;
+	Wed, 25 Jun 2025 16:36:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="r1uCeWDX"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="dV+Q44u2"
+Received: from mail-qv1-f49.google.com (mail-qv1-f49.google.com [209.85.219.49])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 225601519B9;
-	Wed, 25 Jun 2025 16:35:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 34FD426B76F
+	for <linux-kernel@vger.kernel.org>; Wed, 25 Jun 2025 16:36:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750869304; cv=none; b=H9C+jM+X1lzEERP2krBf5YKDHYTHslfR2CE9UsrgSyGiLr0JJjoAZMDT0psg9VlVxYaiIJUD0mO/c9pPlJDmKdqFAWyJ+KR+J36uL9YKNNQS0rAGiNK47q4VD4qQj0ABSqklpO68Me1ihfVMShipqZ1e+1t9s/nrL18yMtcslOA=
+	t=1750869400; cv=none; b=AsNbriFIupyN08dPwNml9pM2wn9xaL3ywbqayc/iF7pbn8EIVUnxfpRARVcdUZhS9ijVOTOxOztKDgCYtubMoNpFUXEsb509H9DSUoo6eKuSQy8bCsQ5oj7GI82PvNUS1HETbTdCDyRHKkjB0a3hcb/FP2VQ03nSdhVSuMQEILY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750869304; c=relaxed/simple;
-	bh=t/AgadN8uMX4Cd7yqzT2AU8W961H4oHAN2sIoXx/DAE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=aF8NhY4veB34lYjWGiTtf4eL7Zgan0mmUQKn+3vSAy/ZbshihljuIG+euHjZ8RrBHI3NvJl49GRmhKXC0DxTseY+pIhTT66bgXeEFtDs+ol8SHy19EXS3WQIvscHqqWxWdFA0sr/97RTFfEvGh+MpYt58lfCtRwphTES1j5lWXY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=r1uCeWDX; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 560CAC4CEEA;
-	Wed, 25 Jun 2025 16:35:01 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1750869303;
-	bh=t/AgadN8uMX4Cd7yqzT2AU8W961H4oHAN2sIoXx/DAE=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=r1uCeWDXPm10kCy2w1o/C5S8k3Xg9otCN1jOSmouZUvVLWmZ5BlctOCHlWTemtNM8
-	 a5PSis+vaBh1fi+5t4/Q3VXKYxG1i0+GIwFuhV4ivrbLztsa/XIov23Iq43hrzvXwR
-	 662CV5Hh4a04vgjQihrG2R86CsLouSFs+Sd35LQTzy9wjJKftLD0e8RYEq7bbUJDcY
-	 wXEODdTdx4BGMbKWU0wTzeTN5Pb4Omn3Adr6SehqQQCHem7sVO6tqtJeGgU72JtiMn
-	 f7+3yhaBEXCRVyPAidv3Uy1ytJxQNS2oExTq3n0aF2kW1L/wWyrcHQOEu3lIgBYA5N
-	 9bK+C6MWFpXvw==
-Date: Wed, 25 Jun 2025 17:34:59 +0100
-From: Simon Horman <horms@kernel.org>
-To: Wei Fang <wei.fang@nxp.com>
-Cc: Jakub Kicinski <kuba@kernel.org>,
-	Claudiu Manoil <claudiu.manoil@nxp.com>,
-	Vladimir Oltean <vladimir.oltean@nxp.com>,
-	Clark Wang <xiaoning.wang@nxp.com>,
-	"andrew+netdev@lunn.ch" <andrew+netdev@lunn.ch>,
-	"davem@davemloft.net" <davem@davemloft.net>,
-	"edumazet@google.com" <edumazet@google.com>,
-	"pabeni@redhat.com" <pabeni@redhat.com>,
-	"netdev@vger.kernel.org" <netdev@vger.kernel.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"imx@lists.linux.dev" <imx@lists.linux.dev>
-Subject: Re: [PATCH v2 net-next 0/3] change some statistics to 64-bit
-Message-ID: <20250625163459.GD152961@horms.kernel.org>
-References: <20250624101548.2669522-1-wei.fang@nxp.com>
- <20250624181143.6206a518@kernel.org>
- <PAXPR04MB8510EDB597AD25F666C450ED887BA@PAXPR04MB8510.eurprd04.prod.outlook.com>
+	s=arc-20240116; t=1750869400; c=relaxed/simple;
+	bh=4ear9BR5ao8w41aTFfDMqeoxM9P/vLl4dJGEeI5wa5Q=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=F2W6SSqEjTS+lN3tZlJ5xbHfwmGjKg/zaF9FwwNkAPHcILwNHc9CPirCGs28es9LxNe+IEFm25Z2aLe1ZYUGvEf3i7oAmw8PnxZG63ETNO1mu7ztXcF4EfkuV9g3JFysakeEG7wSZfwPSo8026Kw4LCaUeXsRU107qOsqIPSZUM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=dV+Q44u2; arc=none smtp.client-ip=209.85.219.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-qv1-f49.google.com with SMTP id 6a1803df08f44-6fad8b4c927so1475786d6.0
+        for <linux-kernel@vger.kernel.org>; Wed, 25 Jun 2025 09:36:38 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1750869398; x=1751474198; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=5Qu2toIg5Y0E5CCzKk1BSuXsD4Z10VADvrjtzkS7+XE=;
+        b=dV+Q44u2gW9sn4FwaZBSXBP0t1tS9BDNY1voMu0XmwnMe7Jijz0lz99Dxwl50AppZE
+         oeqaHqo0dhX1WbPo1LqQj1GSUB3S6FMBDNcT9AxGgXx8cGsvxbPwJpMVMsOvplGTUKjq
+         Ya8R50dH6rWtM6axGT8SOADvDAoZSHuCE2lq2yKMGhXuqd9DJUtxQw0gzFIk2CB/zWZN
+         JJ3LIxVw8KmsDwwOIwxecVQOEMGDsirsubSfrUuS1A7wy9+kxdHLX7jMgx2FBtgos9kf
+         c+kwIa7gbulB9zqtPOrMDzI72+tMZ59gDK9A8HkNPeMGWLsfw+X0+wPNywSEnlYYMLab
+         6SzA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1750869398; x=1751474198;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=5Qu2toIg5Y0E5CCzKk1BSuXsD4Z10VADvrjtzkS7+XE=;
+        b=HfwUSCqQEU16peef7gpssqJepEWOfPIU5qvJKUFRcw4Y/WMHR/t5HHFjPGDS1SSNkC
+         Mt6nS0DJxMjURPIwsU0iF7XUueqac9A10ETk1TzlN7GqHDQ+zjvSTpgWIduyq4LPS/b6
+         AuapRSvYnH+5Jx9wa/msC1WozdIpYH+gUw7ZjVR1iqV3ayXa/fU4MKer+cZk81nNuJ6L
+         CphCT6GFCI1C0G0ddoPBXfjpHJph0J63M0E4QSmGMFERIWp1s6EkFph3pRt04AbhB93c
+         PU6eioFA+HLO7o+zPX4JFTDSO79JrySNIgG/CKZVTVu3lhuJuHmyXXj82S78Vuju1mMH
+         UFDg==
+X-Forwarded-Encrypted: i=1; AJvYcCUBkek//aO5bU3gEOC7jM62i7rKwQBr/nRlMkyUAI8kWh5/VE8jjeJ/hmSyX+GtT9KRCaPDsnbugZ4lY9A=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz27cJKLEULThMNEjXiWXpXT/xx0G6Owq/35aY8RqUQsmfMKpNM
+	fcld2z0t002pvp19VGvmjS13RtqJVpNIQlEA5YQg6+F4FbK0M2Wr5V2z8cVd4lc/4MWj9ieyJkW
+	kyfRDtY1p4vXM8qrsMlnfHozrjWSYQq20wK1Fgq6c
+X-Gm-Gg: ASbGncuCVE97QlMCBPS07Kh+0ZR4NbdTDiLVumlISl6wwPPQdPoSr0Hk/yOkkweYX8N
+	vv55w02EIP+epXwB/M1tmVdzN2FGGe86WLxkbf1pv/3EvsV9HvBpzp0d//F1jl6RM8IaSnCJpaD
+	mr3gTbN2QMyJ9dDbpDVuLg6OR0i74zJB5Cyht/G9WiLNOau2az8s60SLmxk0TL9psijh4O9Wq+k
+	Q==
+X-Google-Smtp-Source: AGHT+IFZinRWAqduPvYBiu6AREGfW3a4FxXXe9a7oF0NjBS65KTQQh6k+1MviZFF7u3Go36WFMDFt838XqF18XbijEI=
+X-Received: by 2002:a05:6214:e84:b0:6fa:b954:2c32 with SMTP id
+ 6a1803df08f44-6fd5efba51dmr59869306d6.35.1750869397725; Wed, 25 Jun 2025
+ 09:36:37 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <PAXPR04MB8510EDB597AD25F666C450ED887BA@PAXPR04MB8510.eurprd04.prod.outlook.com>
+References: <20250416085446.480069-1-glider@google.com> <20250416085446.480069-3-glider@google.com>
+ <CANpmjNNCf+ep-1-jZV9GURy7UkVX5CJF7sE_sGXV8KWoL6QPtQ@mail.gmail.com>
+In-Reply-To: <CANpmjNNCf+ep-1-jZV9GURy7UkVX5CJF7sE_sGXV8KWoL6QPtQ@mail.gmail.com>
+From: Alexander Potapenko <glider@google.com>
+Date: Wed, 25 Jun 2025 18:36:00 +0200
+X-Gm-Features: Ac12FXyGrTNxbXgGGfhFeRYZAXPZadlkZ6ZWurZ6L_D0Ky6s5cgzx6IHfa3uFrc
+Message-ID: <CAG_fn=VwC3hx3TqWNwR7G_SKYXnVHTjX3OKHvABD3=31L8y3bA@mail.gmail.com>
+Subject: Re: [PATCH 2/7] kcov: factor out struct kcov_state
+To: Marco Elver <elver@google.com>
+Cc: quic_jiangenj@quicinc.com, linux-kernel@vger.kernel.org, 
+	kasan-dev@googlegroups.com, Aleksandr Nogikh <nogikh@google.com>, 
+	Andrey Konovalov <andreyknvl@gmail.com>, Borislav Petkov <bp@alien8.de>, 
+	Dave Hansen <dave.hansen@linux.intel.com>, Dmitry Vyukov <dvyukov@google.com>, 
+	Ingo Molnar <mingo@redhat.com>, Josh Poimboeuf <jpoimboe@kernel.org>, 
+	Peter Zijlstra <peterz@infradead.org>, Thomas Gleixner <tglx@linutronix.de>
+Content-Type: text/plain; charset="UTF-8"
 
-On Wed, Jun 25, 2025 at 02:22:54AM +0000, Wei Fang wrote:
-> > On Tue, 24 Jun 2025 18:15:45 +0800 Wei Fang wrote:
-> > > The port MAC counters of ENETC are 64-bit registers and the statistics
-> > > of ethtool are also u64 type, so add enetc_port_rd64() helper function
-> > > to read 64-bit statistics from these registers, and also change the
-> > > statistics of ring to unsigned long type to be consistent with the
-> > > statistics type in struct net_device_stats.
-> > 
-> > this series adds almost 100 sparse warnings please trying building it with C=1
-> > --
-> > pw-bot: cr
-> 
-> Hi Jakub,
-> 
-> Simon has posted a patch [1] to fix the sparse warnings. Do I need to wait until
-> Simon's patch is applied to the net-next tree and then resend this patch set?
-> 
-> [1] https://lore.kernel.org/imx/20250624-etnetc-le-v1-1-a73a95d96e4e@kernel.org/
+> >         if (data->saved_kcov) {
+> > -               kcov_start(t, data->saved_kcov, data->saved_size,
+> > -                          data->saved_area, data->saved_mode,
+> > -                          data->saved_sequence);
+> > -               data->saved_mode = 0;
+> > -               data->saved_size = 0;
+> > -               data->saved_area = NULL;
+> > -               data->saved_sequence = 0;
+> > +               kcov_start(t, data->saved_kcov, &data->saved_state);
+> > +               data->saved_state = (struct kcov_state){ 0 };
+>
+> Unsure how the compiler optimizes this (does it create a temporary and
+> then assigns it?). Maybe just memset is clearer.
 
-Yes, I have confirmed that with patch[1] applied this patch-set
-does not introduce any Sparse warnings (in my environment).
-
-I noticed the Sparse warnings that are otherwise introduced when reviewing
-v1 of this patchset which is why I crated patch[1].
-
-The issue is that there is are long standing Sparse warnings - which
-highlight a driver bug, albeit one that doesn't manifest with in tree
-users. They is due to an unnecessary call to le64_to_cpu(). The warnings
-are:
-
-  .../enetc_hw.h:513:16: warning: cast to restricted __le64
-  .../enetc_hw.h:513:16: warning: restricted __le64 degrades to integer
-  .../enetc_hw.h:513:16: warning: cast to restricted __le64
-
-Patches 2/3 and 3/3 multiply the incidence of the above 3 warnings because
-they increase the callers of the inline function where the problem lies.
-
-But I'd argue that, other than noise, they don't make things worse.
-The bug doesn't manifest for in-tree users (and if it did, it would
-have been manifesting anyway).
-
-So I'd advocate accepting this series (or not) independent of resolving
-the Sparse warnings. Which should disappear when patch[1], or some variant
-thereof, is accepted (via net or directly into net-next).
+Missed this one - I am not convinced a memset is clearer, but recent
+patches mention that '{ }' is preferred over '{ 0 }'.
 
