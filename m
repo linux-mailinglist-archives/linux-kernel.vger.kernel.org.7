@@ -1,134 +1,243 @@
-Return-Path: <linux-kernel+bounces-702412-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-702386-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 65273AE8234
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Jun 2025 13:59:10 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id F20C8AE81E0
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Jun 2025 13:46:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B03535A47A2
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Jun 2025 11:56:53 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7FF7E188CF1D
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Jun 2025 11:47:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6D8FE2609EC;
-	Wed, 25 Jun 2025 11:55:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8345B25D547;
+	Wed, 25 Jun 2025 11:46:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=yadro.com header.i=@yadro.com header.b="quS6p1z9";
-	dkim=pass (2048-bit key) header.d=yadro.com header.i=@yadro.com header.b="bp4AjYu9"
-Received: from mta-03.yadro.com (mta-03.yadro.com [89.207.88.253])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="n8vED+Ix"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 26B1E25DAFF;
-	Wed, 25 Jun 2025 11:54:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=89.207.88.253
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B7A3B205E02;
+	Wed, 25 Jun 2025 11:46:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750852500; cv=none; b=UdjOTLiYzUCE8wyiwXAhOcSax4DyPlf4iamXduM0N5sv1Sj84P1G6FNQ9cJDv5PKFUSBBOn4qn/f3nc3Y6gKqOYSSQhwTiTT8ztjkSOKczZDe5VDacaRQJgFbLr/cI7pAujg+VYoXl/jc/ITOSUQzAUMVukLx6LQNr+3C+DkpfQ=
+	t=1750852006; cv=none; b=A8UbSrZ7Pwcoed1sX2EFWRA/F0b97nN5udp1XW1SkYso1+b3wlm9nzX0NjoOHYJ5F0x4uUVQSjwasX1qyx6xvMD3/yarWQC6qnA8PimeqM2qRRfTnld2vNlMUzbmINJxfHkYIhA/jCkFiaWkFpbk/B40GXrjbnkY6KUPcQjR8i0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750852500; c=relaxed/simple;
-	bh=jiudyTm6de+eb570mlyoWFRyNxgO4jOMKOdAxyojKDw=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=UmjenSU1eTB8xOTKl0OYx2Jn/sq1V4tkKcngAq6wU1P6jjB1ZkGkaM9llgxE0Xr99Z9i+iOACJSyvdhVnq3aLw87oQZf042F/DgM6569A8i7YecMLQVxuUirEBmVSdGV2x7Mi4NoQt86yL2LCnBYh4dJ3Juyl6Vt1AKxA3YbRSg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=yadro.com; spf=pass smtp.mailfrom=yadro.com; dkim=pass (2048-bit key) header.d=yadro.com header.i=@yadro.com header.b=quS6p1z9; dkim=pass (2048-bit key) header.d=yadro.com header.i=@yadro.com header.b=bp4AjYu9; arc=none smtp.client-ip=89.207.88.253
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=yadro.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=yadro.com
-Received: from mta-03.yadro.com (localhost [127.0.0.1])
-	by mta-03.yadro.com (Postfix) with ESMTP id D538BE000A;
-	Wed, 25 Jun 2025 14:45:50 +0300 (MSK)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mta-03.yadro.com D538BE000A
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yadro.com; s=mta-04;
-	t=1750851950; bh=qPYba+iSHjLpzCbKcEcctCJst/76kJf0E4zmJ6khlis=;
-	h=From:To:Subject:Date:Message-ID:MIME-Version:Content-Type:From;
-	b=quS6p1z9nzv2AI795fRB+i2jcuVO/J6gkA+U2SR9Cr0PWgDrSs263CWnZ0EV00hLS
-	 4e7DbkZ3/lghLuit6VhQlH/c9OYVso4Go7D2xchnk0kuaIk5von4WX2JqwLb9QaTpG
-	 C6lzRtPGE2zydzBbjNp8VnfcCOyw1mXzjnEGqzKpGI5W/+1WY7oHwHMl6mf9jVOZ+h
-	 HKimiK8XWcyh2HpLX6myW8f4+FYyZJmMTGz9fzRYeDhpbUa/AkixCyvj4VhBio/f0i
-	 c234wrsovJwQMaVDfNjALD/5qCI2c6SjpMN0frJ7+iZh4lHFd1W7BTC2lk9RitNzLb
-	 Dcugq4l8DtcuA==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yadro.com; s=mta-03;
-	t=1750851950; bh=qPYba+iSHjLpzCbKcEcctCJst/76kJf0E4zmJ6khlis=;
-	h=From:To:Subject:Date:Message-ID:MIME-Version:Content-Type:From;
-	b=bp4AjYu9Cts8L+B6z093nYPksiTjJlUjxOFu0MYG5ymyv37WkdCryvznK6VfqXIm1
-	 PZo5j47ThNNUCmez2NCOxqdNMu4m3koTUveHqystqDxNeacb/jfa5KYom1/PCPh+lY
-	 W/72P2J/lAAj97YP/5w+6UCFThhrogxfX+td/fRXMIKUpiQD0NlVtcCTJz4Rvkugsj
-	 m9OScW59evQVoGaV9FxA20oLv587O9WpgMw+yC6iDJKDZSmk7ufgdWFGFj4gOij61I
-	 th6aPzVFtRKsZBuxXEuCoD2oiL0j9yUw/0hDC2tga71ddoRV+0l5uoxngewgQjFTaL
-	 QcfdA1ukor8Wg==
-Received: from T-EXCH-10.corp.yadro.com (T-EXCH-10.corp.yadro.com [172.17.11.60])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by mta-03.yadro.com (Postfix) with ESMTPS;
-	Wed, 25 Jun 2025 14:45:49 +0300 (MSK)
-Received: from T-EXCH-12.corp.yadro.com (172.17.11.143) by
- T-EXCH-10.corp.yadro.com (172.17.11.60) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1118.9; Wed, 25 Jun 2025 14:45:48 +0300
-Received: from NB-591.corp.yadro.com (172.17.34.54) by
- T-EXCH-12.corp.yadro.com (172.17.11.143) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1258.12; Wed, 25 Jun 2025 14:45:48 +0300
-From: Dmitry Bogdanov <d.bogdanov@yadro.com>
-To: Christoph Hellwig <hch@lst.de>, Sagi Grimberg <sagi@grimberg.me>,
-	Chaitanya Kulkarni <kch@nvidia.com>, <linux-nvme@lists.infradead.org>,
-	<linux-kernel@vger.kernel.org>
-CC: <linux@yadro.com>, Dmitry Bogdanov <d.bogdanov@yadro.com>,
-	<stable@vger.kernel.org>
-Subject: [PATCH] nvmet: fix memory leak of bio integrity
-Date: Wed, 25 Jun 2025 14:45:33 +0300
-Message-ID: <20250625114533.24041-1-d.bogdanov@yadro.com>
-X-Mailer: git-send-email 2.25.1
+	s=arc-20240116; t=1750852006; c=relaxed/simple;
+	bh=z0XG3Bw6TLmnXq/PjkcVsBymSm1jVI29doeIVoNJiSw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=U5AwNPt9d/RftjMoFNXtaW84K8IlkD5Ro7/6BJMoIVSEFlwCIp/28guCp4Dl8SDIZ4luyUJZaFcZcq9W6lpcmc13bEhSbjiTnjgI/1q9Wmwkfx64sStaul6gh0yG8s5dM0YXll1WiJbv8W3UxGyIsd4M6HO8sJRl5qPkV7F94aI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=n8vED+Ix; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B55EFC4CEEA;
+	Wed, 25 Jun 2025 11:46:45 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1750852006;
+	bh=z0XG3Bw6TLmnXq/PjkcVsBymSm1jVI29doeIVoNJiSw=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=n8vED+Ixnm6GXHKMbmqqW2ZMWMwnjPrlReJbEoNfv9Y0gj9ADIZmCPB2vvWThRjnD
+	 1M/7AeX/HMARmgPGjA35x7qD8peBoF6O+l9fXQjuocKR2Y2/FmQcSfrPbXUI/R19oX
+	 oNKWYHe98z7krpsHN/u/liBM2RzLYDPIK+SGppc2mYx8LFBpCX/TJ2bz2CwsHexGkg
+	 LS5Q2N9cCTLYdL3UyXdpdMl/LGDzdG7HW4FHMQmDyMGr3nJ4mKcKYLDf2oKia3VNFa
+	 FWvqX3mqqAcNt93zYaj/f3mLrE6/t5iMLmKq2ZUFE66+Ol8EQQA7QoEUSuc5MWsEcq
+	 YMXdnWJ/+1d7g==
+Date: Wed, 25 Jun 2025 14:46:42 +0300
+From: Jarkko Sakkinen <jarkko@kernel.org>
+To: Lee Jones <lee@kernel.org>
+Cc: Qunqin Zhao <zhaoqunqin@loongson.cn>, herbert@gondor.apana.org.au,
+	linux-kernel@vger.kernel.org, loongarch@lists.linux.dev,
+	davem@davemloft.net, linux-crypto@vger.kernel.org,
+	peterhuewe@gmx.de, jgg@ziepe.ca, linux-integrity@vger.kernel.org,
+	Yinggang Gu <guyinggang@loongson.cn>,
+	Huacai Chen <chenhuacai@loongson.cn>
+Subject: Re: [PATCH v11 3/4] tpm: Add a driver for Loongson TPM device
+Message-ID: <aFvhorr3kZSuzVpv@kernel.org>
+References: <20250619025138.2854-1-zhaoqunqin@loongson.cn>
+ <20250619025138.2854-4-zhaoqunqin@loongson.cn>
+ <aFs2RDOeOKvWUN2L@kernel.org>
+ <20250625080527.GN795775@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: RTM-EXCH-03.corp.yadro.com (10.34.9.203) To
- T-EXCH-12.corp.yadro.com (172.17.11.143)
-X-KSMG-AntiPhishing: not scanned, disabled by settings
-X-KSMG-AntiSpam-Interceptor-Info: not scanned
-X-KSMG-AntiSpam-Status: not scanned, disabled by settings
-X-KSMG-AntiVirus: Kaspersky Secure Mail Gateway, version 2.1.1.8310, bases: 2025/06/25 10:41:00 #27589862
-X-KSMG-AntiVirus-Status: NotDetected, skipped
-X-KSMG-KATA-Status: Not Scanned
-X-KSMG-LinksScanning: NotDetected, bases: 2025/06/25 11:16:00
-X-KSMG-Message-Action: skipped
-X-KSMG-Rule-ID: 5
+In-Reply-To: <20250625080527.GN795775@google.com>
 
-If nvmet receives commands with metadata there is a continuous memory leak
-of kmalloc-128 slab or more precisely bio->bi_integrity.
+On Wed, Jun 25, 2025 at 09:05:27AM +0100, Lee Jones wrote:
+> On Wed, 25 Jun 2025, Jarkko Sakkinen wrote:
+> 
+> > On Thu, Jun 19, 2025 at 10:51:37AM +0800, Qunqin Zhao wrote:
+> > > Loongson Security Engine supports random number generation, hash,
+> > > symmetric encryption and asymmetric encryption. Based on these
+> > > encryption functions, TPM2 have been implemented in the Loongson
+> > > Security Engine firmware. This driver is responsible for copying data
+> > > into the memory visible to the firmware and receiving data from the
+> > > firmware.
+> > > 
+> > > Co-developed-by: Yinggang Gu <guyinggang@loongson.cn>
+> > > Signed-off-by: Yinggang Gu <guyinggang@loongson.cn>
+> > > Signed-off-by: Qunqin Zhao <zhaoqunqin@loongson.cn>
+> > > Reviewed-by: Huacai Chen <chenhuacai@loongson.cn>
+> > > ---
+> > >  drivers/char/tpm/Kconfig        |  9 ++++
+> > >  drivers/char/tpm/Makefile       |  1 +
+> > >  drivers/char/tpm/tpm_loongson.c | 84 +++++++++++++++++++++++++++++++++
+> > >  3 files changed, 94 insertions(+)
+> > >  create mode 100644 drivers/char/tpm/tpm_loongson.c
+> > > 
+> > > diff --git a/drivers/char/tpm/Kconfig b/drivers/char/tpm/Kconfig
+> > > index dddd702b2..ba3924eb1 100644
+> > > --- a/drivers/char/tpm/Kconfig
+> > > +++ b/drivers/char/tpm/Kconfig
+> > > @@ -189,6 +189,15 @@ config TCG_IBMVTPM
+> > >  	  will be accessible from within Linux.  To compile this driver
+> > >  	  as a module, choose M here; the module will be called tpm_ibmvtpm.
+> > >  
+> > > +config TCG_LOONGSON
+> > > +	tristate "Loongson TPM Interface"
+> > > +	depends on MFD_LOONGSON_SE
+> > > +	help
+> > > +	  If you want to make Loongson TPM support available, say Yes and
+> > > +	  it will be accessible from within Linux. To compile this
+> > > +	  driver as a module, choose M here; the module will be called
+> > > +	  tpm_loongson.
+> > > +
+> > >  config TCG_XEN
+> > >  	tristate "XEN TPM Interface"
+> > >  	depends on TCG_TPM && XEN
+> > > diff --git a/drivers/char/tpm/Makefile b/drivers/char/tpm/Makefile
+> > > index 9de1b3ea3..5b5cdc0d3 100644
+> > > --- a/drivers/char/tpm/Makefile
+> > > +++ b/drivers/char/tpm/Makefile
+> > > @@ -46,3 +46,4 @@ obj-$(CONFIG_TCG_ARM_CRB_FFA) += tpm_crb_ffa.o
+> > >  obj-$(CONFIG_TCG_VTPM_PROXY) += tpm_vtpm_proxy.o
+> > >  obj-$(CONFIG_TCG_FTPM_TEE) += tpm_ftpm_tee.o
+> > >  obj-$(CONFIG_TCG_SVSM) += tpm_svsm.o
+> > > +obj-$(CONFIG_TCG_LOONGSON) += tpm_loongson.o
+> > > diff --git a/drivers/char/tpm/tpm_loongson.c b/drivers/char/tpm/tpm_loongson.c
+> > > new file mode 100644
+> > > index 000000000..5cbdb37f8
+> > > --- /dev/null
+> > > +++ b/drivers/char/tpm/tpm_loongson.c
+> > > @@ -0,0 +1,84 @@
+> > > +// SPDX-License-Identifier: GPL-2.0
+> > > +/* Copyright (c) 2025 Loongson Technology Corporation Limited. */
+> > > +
+> > > +#include <linux/device.h>
+> > > +#include <linux/mfd/loongson-se.h>
+> > > +#include <linux/platform_device.h>
+> > > +#include <linux/wait.h>
+> > > +
+> > > +#include "tpm.h"
+> > > +
+> > > +struct tpm_loongson_cmd {
+> > > +	u32 cmd_id;
+> > > +	u32 data_off;
+> > > +	u32 data_len;
+> > > +	u32 pad[5];
+> > > +};
+> > > +
+> > > +static int tpm_loongson_recv(struct tpm_chip *chip, u8 *buf, size_t count)
+> > > +{
+> > > +	struct loongson_se_engine *tpm_engine = dev_get_drvdata(&chip->dev);
+> > > +	struct tpm_loongson_cmd *cmd_ret = tpm_engine->command_ret;
+> > > +
+> > > +	if (cmd_ret->data_len > count)
+> > > +		return -EIO;
+> > > +
+> > > +	memcpy(buf, tpm_engine->data_buffer, cmd_ret->data_len);
+> > > +
+> > > +	return cmd_ret->data_len;
+> > > +}
+> > > +
+> > > +static int tpm_loongson_send(struct tpm_chip *chip, u8 *buf, size_t count)
+> > > +{
+> > > +	struct loongson_se_engine *tpm_engine = dev_get_drvdata(&chip->dev);
+> > > +	struct tpm_loongson_cmd *cmd = tpm_engine->command;
+> > > +
+> > > +	if (count > tpm_engine->buffer_size)
+> > > +		return -E2BIG;
+> > > +
+> > > +	cmd->data_len = count;
+> > > +	memcpy(tpm_engine->data_buffer, buf, count);
+> > > +
+> > > +	return loongson_se_send_engine_cmd(tpm_engine);
+> > > +}
+> > > +
+> > > +static const struct tpm_class_ops tpm_loongson_ops = {
+> > > +	.flags = TPM_OPS_AUTO_STARTUP,
+> > > +	.recv = tpm_loongson_recv,
+> > > +	.send = tpm_loongson_send,
+> > > +};
+> > > +
+> > > +static int tpm_loongson_probe(struct platform_device *pdev)
+> > > +{
+> > > +	struct loongson_se_engine *tpm_engine;
+> > > +	struct device *dev = &pdev->dev;
+> > > +	struct tpm_loongson_cmd *cmd;
+> > > +	struct tpm_chip *chip;
+> > > +
+> > > +	tpm_engine = loongson_se_init_engine(dev->parent, SE_ENGINE_TPM);
+> > > +	if (!tpm_engine)
+> > > +		return -ENODEV;
+> > > +	cmd = tpm_engine->command;
+> > > +	cmd->cmd_id = SE_CMD_TPM;
+> > > +	cmd->data_off = tpm_engine->buffer_off;
+> > > +
+> > > +	chip = tpmm_chip_alloc(dev, &tpm_loongson_ops);
+> > > +	if (IS_ERR(chip))
+> > > +		return PTR_ERR(chip);
+> > > +	chip->flags = TPM_CHIP_FLAG_TPM2 | TPM_CHIP_FLAG_IRQ;
+> > > +	dev_set_drvdata(&chip->dev, tpm_engine);
+> > > +
+> > > +	return tpm_chip_register(chip);
+> > > +}
+> > > +
+> > > +static struct platform_driver tpm_loongson = {
+> > > +	.probe   = tpm_loongson_probe,
+> > > +	.driver  = {
+> > > +		.name  = "loongson-tpm",
+> > 
+> > This patch looks otherwise great but I'd prefer here tho use
+> > "tpm_loongson_probe" for the value of the name field.
+> 
+> Where does this stipulation come from?  No other driver does this [0].
+> driver.name should be a nicely formatted, human readable string
+> describing the name of the device.  Not a function name.
 
-Since that [1] patch series the integrity is not get free at bio_end_io
-for submitter owned integrity. It has to free explicitly.
+What defines "human-readable" here? I see both as somewhat the
+same level of "readability" ;-)
 
-After commit bf4c89fc8797  ("block: don't call bio_uninit from bio_endio")
-each user of bio_init has to use bio_uninit as well. Otherwise the bio
-integrity is not getting free. Nvmet uses bio_init for inline bios.
+> 
+> [0] git grep -A15 "static struct platform_driver" | grep ".name = .*probe"
 
-Uninit the inline bio to complete deallocation of integrity in bio.
+What I'm getting:
 
-[1] https://lore.kernel.org/all/20240702151047.1746127-1-hch@lst.de/
+$ git grep -l -e platform_driver_register --or -e module_platform_driver
+drivers/char/tpm | xargs git grep "\.name"
+drivers/char/tpm/tpm_atmel.c:           .name = "tpm_atmel",
+drivers/char/tpm/tpm_ftpm_tee.c:                .name = "ftpm-tee",
+drivers/char/tpm/tpm_ftpm_tee.c:                .name           =
+"optee-ftpm",
+drivers/char/tpm/tpm_nsc.c:             .name    = "tpm_nsc",
+drivers/char/tpm/tpm_svsm.c:            .name = "tpm-svsm",
+drivers/char/tpm/tpm_tis.c:     .name = "tpm_tis",
+drivers/char/tpm/tpm_tis.c:             .name           = "tpm_tis",
+drivers/char/tpm/tpm_tis_synquacer.c:           .name           =
+"tpm_tis_synquacer",
 
-Cc: stable@vger.kernel.org # 6.11
-Signed-off-by: Dmitry Bogdanov <d.bogdanov@yadro.com>
----
- drivers/nvme/target/nvmet.h | 2 ++
- 1 file changed, 2 insertions(+)
+Do you consider e.g, "tpm_tis" as "less human-readable".
 
-diff --git a/drivers/nvme/target/nvmet.h b/drivers/nvme/target/nvmet.h
-index df69a9dee71c..51df72f5e89b 100644
---- a/drivers/nvme/target/nvmet.h
-+++ b/drivers/nvme/target/nvmet.h
-@@ -867,6 +867,8 @@ static inline void nvmet_req_bio_put(struct nvmet_req *req, struct bio *bio)
- {
- 	if (bio != &req->b.inline_bio)
- 		bio_put(bio);
-+	else
-+		bio_uninit(bio);
- }
- 
- #ifdef CONFIG_NVME_TARGET_TCP_TLS
--- 
-2.25.1
+I don't necessarily fight against the name chosen. Your arguments
+just plain no make sense, so I just merely want to understand this.
+That's all.
 
+> 
+> -- 
+> Lee Jones [李琼斯]
+
+BR, Jarkko
 
