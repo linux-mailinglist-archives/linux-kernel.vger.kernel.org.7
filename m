@@ -1,167 +1,126 @@
-Return-Path: <linux-kernel+bounces-701865-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-701883-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9761DAE7A5B
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Jun 2025 10:35:45 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8F26CAE7A99
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Jun 2025 10:45:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D52D53A76E6
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Jun 2025 08:35:12 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 957CB7B3B86
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Jun 2025 08:43:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 64901272819;
-	Wed, 25 Jun 2025 08:35:33 +0000 (UTC)
-Received: from leonov.paulk.fr (leonov.paulk.fr [185.233.101.22])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0DCE228689D;
+	Wed, 25 Jun 2025 08:43:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=onurozkan.dev header.i=@onurozkan.dev header.b="S9yRZF4s"
+Received: from forward500b.mail.yandex.net (forward500b.mail.yandex.net [178.154.239.144])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D0D19271A9A;
-	Wed, 25 Jun 2025 08:35:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.233.101.22
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 15A5A285C95;
+	Wed, 25 Jun 2025 08:43:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.154.239.144
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750840533; cv=none; b=OzjV9nGheicNOtnQmAGCQpLVI1HTnfI8hxseI1A5fDy6hUnEdumhetPqAwXB/4/NAX2YONkRYLCDagtl+k4XZkTCgZc6QRg+KeJNsLVYfaMDAwDWoVywtsX06XdiNx0ZDLSnVP/8dfjWn4XY825GhWTJ1SNL9eLqtwaRFXn2Mm0=
+	t=1750841018; cv=none; b=SX6ThaRyWbr4FKSEgO8D/de2HDM33IQPFuHlAoh1ZfzRRzXjnCGnm7izJaGVtyC6Id07Mm49SOCqARQW8MHO4OZTQaOtDLx3jy1WKDg+4YaRYiz4qj1uB1S7bdl6xirgMNggxNcV+eNZekAeJnf3NDUMUxoCjQwDuu0k1tOWKLk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750840533; c=relaxed/simple;
-	bh=ASrITMP/6f0gfIsNfvcsAiCPafZTrPR6wOt9JZi1Ia0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=s0R4lFOgaazEK38NNlZdRg6PXj3aNggHMwpdK6osj6TbMI1OliibaVe6z/rYfB1lzeUaPHRvRXdWAMgjNdyg+fMbvaoJTlgO57FDERyAyVkHMpnDfArqGW9/phKDwEHj9FuuHT9FGwOunphWZnZJ4heQQzGjCG1slLmk24Mc3To=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sys-base.io; spf=pass smtp.mailfrom=sys-base.io; arc=none smtp.client-ip=185.233.101.22
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sys-base.io
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sys-base.io
-Received: from laika.paulk.fr (12.234.24.109.rev.sfr.net [109.24.234.12])
-	by leonov.paulk.fr (Postfix) with ESMTPS id 981A31F00036;
-	Wed, 25 Jun 2025 08:35:22 +0000 (UTC)
-Received: by laika.paulk.fr (Postfix, from userid 65534)
-	id 857E4AC7A3B; Wed, 25 Jun 2025 08:35:20 +0000 (UTC)
-X-Spam-Level: 
-Received: from shepard (unknown [192.168.1.1])
-	by laika.paulk.fr (Postfix) with ESMTPSA id 4EC5EAC7A2F;
-	Wed, 25 Jun 2025 08:35:18 +0000 (UTC)
-Date: Wed, 25 Jun 2025 10:35:16 +0200
-From: Paul Kocialkowski <paulk@sys-base.io>
-To: Kuba =?utf-8?Q?Szczodrzy=C5=84ski?= <kuba@szczodrzynski.pl>
-Cc: Maxime Ripard <mripard@kernel.org>,
-	Samuel Holland <samuel@sholland.org>, Chen-Yu Tsai <wens@csie.org>,
-	Jernej Skrabec <jernej.skrabec@gmail.com>,
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	Thomas Zimmermann <tzimmermann@suse.de>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
-	linux-arm-kernel@lists.infradead.org, linux-sunxi@lists.linux.dev,
-	linux-kernel@vger.kernel.org, linux-riscv@lists.infradead.org,
-	linux-phy@lists.infradead.org, devicetree@vger.kernel.org,
-	dri-devel@lists.freedesktop.org
-Subject: Re: [PATCH 0/5] drm/sun4i: Support LVDS on D1s/T113 combo D-PHY
-Message-ID: <aFu0xIHURuDttwJn@shepard>
-References: <20250221161751.1278049-1-kuba@szczodrzynski.pl>
+	s=arc-20240116; t=1750841018; c=relaxed/simple;
+	bh=Kmjw/sEqs7FMYsHa4Eb74upYl9Drag+iPdh6H3DgEKw=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=nSZtHo9WBOJCaXXj1FOqelL+A5p/dD6keIqrKbXrjZkZCWVAFmmbnfEgA3QT9MrQMdrTaP6w3rbZePmK0qjfp0WVhFcN8QFl20NzpmXDs0kxi9m8ZkzR5It6+ffdfiiW1wVJto9s/Wzk9PAuqfO2+XoscsgZBoB3fGYjtYIbyCU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=onurozkan.dev; spf=pass smtp.mailfrom=onurozkan.dev; dkim=pass (1024-bit key) header.d=onurozkan.dev header.i=@onurozkan.dev header.b=S9yRZF4s; arc=none smtp.client-ip=178.154.239.144
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=onurozkan.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=onurozkan.dev
+Received: from mail-nwsmtp-smtp-production-canary-88.sas.yp-c.yandex.net (mail-nwsmtp-smtp-production-canary-88.sas.yp-c.yandex.net [IPv6:2a02:6b8:c23:23c6:0:640:5e87:0])
+	by forward500b.mail.yandex.net (Yandex) with ESMTPS id E74A6619F2;
+	Wed, 25 Jun 2025 11:36:08 +0300 (MSK)
+Received: by mail-nwsmtp-smtp-production-canary-88.sas.yp-c.yandex.net (smtp/Yandex) with ESMTPSA id 4aPD9A1LaGk0-i5mfQuPq;
+	Wed, 25 Jun 2025 11:36:07 +0300
+X-Yandex-Fwd: 1
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=onurozkan.dev;
+	s=mail; t=1750840568;
+	bh=eiH/JiqtJBziHS6aXO1G2AAC4szfxmuQl4LgCpv/bVM=;
+	h=Cc:Message-ID:Subject:Date:References:To:From:In-Reply-To;
+	b=S9yRZF4sw2RvUCoMxIiH39YP2HsOD7+6usSiXuZ00Oh1aMZqt+dNZLuiuQsqdcVAi
+	 +0gvobYfHG4sKEfHm2TCJz25n2NMmsZkcd+qx6WB9r48xym4gwF955MZh0PcH0Iwep
+	 MCz00s+/kuCX6BkXeM0FfyyVWtI30XCDb+mwfqX0=
+Authentication-Results: mail-nwsmtp-smtp-production-canary-88.sas.yp-c.yandex.net; dkim=pass header.i=@onurozkan.dev
+Date: Wed, 25 Jun 2025 11:36:04 +0300
+From: Onur <work@onurozkan.dev>
+To: Danilo Krummrich <dakr@kernel.org>
+Cc: rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org,
+ gregkh@linuxfoundation.org, rafael@kernel.org, ojeda@kernel.org,
+ alex.gaynor@gmail.com, boqun.feng@gmail.com, gary@garyguo.net,
+ bjorn3_gh@protonmail.com, lossin@kernel.org, a.hindborg@kernel.org,
+ aliceryhl@google.com, tmgross@umich.edu
+Subject: Re: [PATCH] rust: simplify `Adapter::id_info`
+Message-ID: <20250625113604.21a6ec4a@nimda>
+In-Reply-To: <aFux2MUDAGEYY49I@pollux>
+References: <20250625043630.7677-1-work@onurozkan.dev>
+	<aFux2MUDAGEYY49I@pollux>
+X-Mailer: Claws Mail 4.3.1 (GTK 3.24.49; x86_64-unknown-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="lE79oaprNLAlqRlL"
-Content-Disposition: inline
-In-Reply-To: <20250221161751.1278049-1-kuba@szczodrzynski.pl>
-
-
---lE79oaprNLAlqRlL
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: quoted-printable
 
-Hi,
+On Wed, 25 Jun 2025 10:22:48 +0200
+Danilo Krummrich <dakr@kernel.org> wrote:
 
-Thanks for your work!
-
-On Fri 21 Feb 25, 17:17, Kuba Szczodrzy=C5=84ski wrote:
-> Some Allwinner chips (notably the D1s/T113 and the A100) have a "combo
-> MIPI DSI D-PHY" which is required when using single-link LVDS0. The same
-> PD0..PD9 pins are used for either DSI or LVDS.
+> On Wed, Jun 25, 2025 at 07:36:30AM +0300, Onur =C3=96zkan wrote:
+> > It was obviously unnecessary to check if `id` is `Some`.
+> >=20
+> > Signed-off-by: Onur =C3=96zkan <work@onurozkan.dev>
+> > ---
+> >  rust/kernel/driver.rs | 7 +------
+> >  1 file changed, 1 insertion(+), 6 deletions(-)
+> >=20
+> > diff --git a/rust/kernel/driver.rs b/rust/kernel/driver.rs
+> > index ec9166cedfa7..1036755cb27d 100644
+> > --- a/rust/kernel/driver.rs
+> > +++ b/rust/kernel/driver.rs
+> > @@ -178,11 +178,6 @@ fn of_id_info(_dev: &device::Device) ->
+> > Option<&'static Self::IdInfo> { /// If this returns `None`, it
+> > means that there is no match in any of the ID tables directly ///
+> > associated with a [`device::Device`]. fn id_info(dev:
+> > &device::Device) -> Option<&'static Self::IdInfo> {
+> > -        let id =3D Self::of_id_info(dev);
+> > -        if id.is_some() {
+> > -            return id;
+> > -        }
+> > -
+> > -        None
 >=20
-> Other than having to use the combo D-PHY, LVDS output is configured in
-> the same way as on older chips.
-
-=46rom what I understand of section 5.1.4.2 LVDS Mode Configuration Process
-there's two LVDS outputs:
-- LVDS0, driven by the combo-phy
-- LVDS1, driven by the usual TCON0 LVDS PHY
-
-As far as I understand the LVDS_IF register still has to be configured for
-LVDS0. The D1 manual mentions a LVDS1_IF register at offset 0x244 (which I =
-don't
-see in the T113-S3 manual, but is probably also there), which is liekely us=
-ed to
-configure LVDS1. Then we find our LVDS_ANA0/ANA1 registers that are likely =
-just
-used for LVDS1.
-
-While this series adds support for LVDS0 only, it would be good to also be =
-able
-to support LVDS1, including dual-link modes. So eventually we'd need a way =
-to
-actually support both cases.
-
-It would be great if you could include these details somewhere so they don'=
-t get
-lost. And this seems to be the exact same situation as the A133 by the way.
-
-All the best,
-
-Paul
-
-> This series enables the sun6i MIPI D-PHY to also work in LVDS mode. It
-> is then configured by the LCD TCON, which allows connecting a
-> single-link LVDS display panel.
+> This was intentional, since I anticipated we'll get [1] eventually. :)
 >=20
-> Kuba Szczodrzy=C5=84ski (5):
->   phy: allwinner: phy-sun6i-mipi-dphy: Support LVDS in combo D-PHY
->   drm/sun4i: Support LVDS using MIPI DSI combo D-PHY
->   drm/sun4i: Enable LVDS output on sun20i D1s/T113
->   riscv: dts: allwinner: d1s-t113: Add D-PHY to TCON LCD0
->   riscv: dts: allwinner: d1s-t113: Add LVDS0 pins
+> [1]
+> https://lore.kernel.org/lkml/20250620153914.295679-1-igor.korotin.linux@g=
+mail.com/
 >=20
->  .../boot/dts/allwinner/sunxi-d1s-t113.dtsi    | 10 +++
->  drivers/gpu/drm/sun4i/sun4i_tcon.c            | 40 ++++++++++++
->  drivers/gpu/drm/sun4i/sun4i_tcon.h            |  6 ++
->  drivers/phy/allwinner/phy-sun6i-mipi-dphy.c   | 65 ++++++++++++++++++-
->  4 files changed, 119 insertions(+), 2 deletions(-)
->=20
-> --=20
-> 2.25.1
->=20
->=20
+> > +        Self::of_id_info(dev)
+> >      }
+> >  }
+> > --
+> > 2.50.0
+> >=20
 
---=20
-Paul Kocialkowski,
+Even with that, it can be something like this:
 
-Independent contractor - sys-base - https://www.sys-base.io/
-Free software developer - https://www.paulk.fr/
+fn id_info(dev: &device::Device) -> Option<&'static Self::IdInfo> {
+    let id =3D Self::acpi_id_info(dev);
+    if id.is_some() {
+        return id;
+    }
 
-Expert in multimedia, graphics and embedded hardware support with Linux.
+    Self::of_id_info(dev)
+}
 
---lE79oaprNLAlqRlL
-Content-Type: application/pgp-signature; name=signature.asc
+or maybe even this:
 
------BEGIN PGP SIGNATURE-----
-
-iQIzBAEBCgAdFiEEAbcMXZQMtj1fphLChP3B6o/ulQwFAmhbtMQACgkQhP3B6o/u
-lQy1gA/+Iu8VPy90JA8o66lrxeIiIPWu6Xc+0rbfnad0J7/iNziGmCOxQ3XaZbd7
-W5L9p+yX9ByxxHM5Ijwujnq47fMWfOSXRCtwxN7BR2rlpp9F6RmnI7qxRnv14n74
-ygKt4UEbPCsvtLj6X7w76NQK1qotvnQYwwdkoRKM0zKKvah2N49FFgSmue/AI3QZ
-rDbK/WWXOdxuEIv8kp6L3zlWLsm9Rdc9NprRjlXzTESyHfFlE7be8hiKs1OLwoh2
-jy9PFCzCSSbWx6ePb6pjPq07gVmjQxr4IQys0EHgxWvNeq4d/AdLzzijuiWR9sbM
-FfzTvWtV/eSrg1cedRGejZqY9K+rHC1naCmaJaxXppqBcTveO/coAb3Gt3HJh6PL
-NU+LWe1mFgKS1iU+PZX8Kz2eRmeqYBxPHNIpgLsqGlnqeHG1yNODCgj84PJF5nN6
-1vnELm6+dBfMhg7LYv/N0Z1kaYHAyFPU7F0Cq3L+NHRiqBCZK2nSRnb7DhqNt4Nn
-jcQbee+prBnM+tMoH5qtJLQ8vZ37XNZwbmHKOP/f5mzS04YUsWI2cvdSvXReMgLZ
-TfJjvNYmIZdarxMFsA6+E0TeZp7l7zLuxMFAO/v83VpxtmRnx5w+kYc4VJG7vAe3
-cMlHuxed0U8beaagiB+SYqTPx4VFjBLAw2SY8RYS4HuovYh4v5o=
-=RNKR
------END PGP SIGNATURE-----
-
---lE79oaprNLAlqRlL--
+fn id_info(dev: &device::Device) -> Option<&'static Self::IdInfo> {
+    Self::acpi_id_info(dev).or_else(|| Self::of_id_info(dev))
+}
 
