@@ -1,136 +1,110 @@
-Return-Path: <linux-kernel+bounces-702272-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-702275-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7ECC1AE8044
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Jun 2025 12:54:27 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1CA02AE8055
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Jun 2025 12:56:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 30CA83A9424
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Jun 2025 10:54:02 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2178A4A2D76
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Jun 2025 10:55:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8ECA32D321D;
-	Wed, 25 Jun 2025 10:52:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CADF42BD5A2;
+	Wed, 25 Jun 2025 10:54:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="Ij4auXQo"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	dkim=pass (2048-bit key) header.d=pankajraghav.com header.i=@pankajraghav.com header.b="TFx/Rzdg"
+Received: from mout-p-103.mailbox.org (mout-p-103.mailbox.org [80.241.56.161])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8AA5A3074A3;
-	Wed, 25 Jun 2025 10:52:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7E6EB25B2EB;
+	Wed, 25 Jun 2025 10:54:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.161
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750848727; cv=none; b=tGeXica6EGRkhn/P6m1BB8UZb1kmH6fPXTYGjDnFf3IKU0fZGOGWZuWlFC27CUL9/R0BBmVM1n443VO0Lu00is1zMKt9zp0sM/cdcDzCV+hEa7PwQWlpYLbIJsJeWHhfaeNkYbm4gKEBQ5YevA9dZaZNjWrnZiX04VHG9qaSakM=
+	t=1750848855; cv=none; b=MP3fXdSVj3M9YV7GzT5D1ckx9IfE2dw3exgEMg07rZ8+bemLFkBFEGAMWrc7Su/g7QCOklJxjtVgzvjm0xb5IM/OCtHVOlLAbIerd/LgCtg5JFcJxfwcU+FC2UFcUe+6U5Z3cxO0Y4HYQ4CdszTFKvbMsPSoHlmoCgsQxL1J8OQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750848727; c=relaxed/simple;
-	bh=1YHsKIdOqJMrsX2Kpl5DnLJEoFjWsPIpEHyTFgeqMmM=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=K1ii9iZVBmirzUm66gxuaVbbKMZEGOzcdSSDOuo5BqjtZ3IxOGHB6oT9euMZqlRh0/vVBW83cpcPXeIOsvfzoMvG3fV1l4Q63WkzMLOmIOydI2/wmjv58rkTqdp7Lz8bbQvTaT8H0Al1uni7STY3EYp8To6Sqg5/ourTrZG5JCE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=Ij4auXQo; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279870.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 55PAI6H2013820;
-	Wed, 25 Jun 2025 10:52:03 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	f5PY3URjo6lfFndro9HnX+YLREKT8H3OWjeSoal0FdE=; b=Ij4auXQoXpzCQt7J
-	nIgOQEXW5y1QvYNKCssm+Udjz9Qt9laPnT5wvqRWCVzZMWdY79mT5zXrF/gOszsN
-	m85jPjDFGD8ANXBH+fo3xwcpjooGxAZ8u1dikYmPeOS937YnBJoEwP43eJ2JAiM+
-	LON6Rn94tZEFxen+u70zW4QwWxAzqsa+9ekHsvcribTWgNEFV5P3dpcDO2PYpbco
-	ryMHxemvFAXFJYdXfBAzwgNsNKvjQM7/6KqmoS4boKATGxsAp46ZWdu7ubHcxs+s
-	/Wj9V1YPh4eCSjYmfWuSJOMgLDTdBO3STTEU9q/tIZ+AiCNpBhxd89TBdCrCgYCi
-	vxeZhg==
-Received: from nalasppmta02.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 47fbm1x5ny-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 25 Jun 2025 10:52:03 +0000 (GMT)
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-	by NALASPPMTA02.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 55PAq2gI025275
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 25 Jun 2025 10:52:02 GMT
-Received: from [10.217.217.109] (10.80.80.8) by nalasex01a.na.qualcomm.com
- (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Wed, 25 Jun
- 2025 03:51:57 -0700
-Message-ID: <b71479b9-2f54-4d87-b384-04a948325328@quicinc.com>
-Date: Wed, 25 Jun 2025 16:21:54 +0530
+	s=arc-20240116; t=1750848855; c=relaxed/simple;
+	bh=bHy/tsFUkk4MChMA7tjlZNXq6dQAUp54PElkCTKHIeE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Ie3FtYzHOYaKPcCYZOWYkuStrBFCAizHTCyk9F2DbkNOmcb9YizdRQCDr/KjieJKKVou+5FeOfByVkaRMU1JXYmxoioVqPCD+43DVjuMD+ge9envkAI8UMyFSsA6ktkXY53dyQBuGi/dDqzOVIEEaH24xQhPcfsn0vll62btuH4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=pankajraghav.com; spf=pass smtp.mailfrom=pankajraghav.com; dkim=pass (2048-bit key) header.d=pankajraghav.com header.i=@pankajraghav.com header.b=TFx/Rzdg; arc=none smtp.client-ip=80.241.56.161
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=pankajraghav.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pankajraghav.com
+Received: from smtp202.mailbox.org (smtp202.mailbox.org [10.196.197.202])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mout-p-103.mailbox.org (Postfix) with ESMTPS id 4bRzG425yTz9t9R;
+	Wed, 25 Jun 2025 12:54:04 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=pankajraghav.com;
+	s=MBO0001; t=1750848844;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=MI+jsWd8MF1hH5HPSJgI8R3f1cEcrL7qwGcueGBoZ+4=;
+	b=TFx/Rzdg2B+0ULH33/wOta/nIO45jbi2kbA8IfiB+iZl1W4cYeqtuYGMclkjoCDp38wt72
+	n1Hzne2t77hKl0LD3Ww/zjSY8Dm9dx07Il0uIYlo5ZU2snIHXQBsnIvjop3mDT1M+mWorv
+	jFP7vWkJTCSTTvQLJ8faT/SP7mRifhWa8/+dhODqQL2rp+tiax4X43J3m7weYBUIldSmyd
+	/PlKf+TZJyCqN0Cb+1UEQWv6cm4O41QnvD0BS+mz0ZiPVnCNlQ7SCB2WAjMsubPCpr3M5R
+	xRpJRg6l42z63dOcDsiMTCYn6EgIgWrn/ZblBbqf6juYlPoEgz/Hjp+Uazfw0A==
+Date: Wed, 25 Jun 2025 12:53:54 +0200
+From: "Pankaj Raghav (Samsung)" <kernel@pankajraghav.com>
+To: Jan Kara <jack@suse.cz>
+Cc: Pankaj Raghav <p.raghav@samsung.com>, 
+	Alexander Viro <viro@zeniv.linux.org.uk>, mcgrof@kernel.org, Christian Brauner <brauner@kernel.org>, 
+	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, gost.dev@samsung.com, 
+	Matthew Wilcox <willy@infradead.org>
+Subject: Re: [PATCH v3] fs/buffer: remove the min and max limit checks in
+ __getblk_slow()
+Message-ID: <jbtntrppqjzaq6tdfzvwojjsnpacrdmg74vcvab4dc2z6hlhnl@ntotjsab5ice>
+References: <20250625083704.167993-1-p.raghav@samsung.com>
+ <u7fadbfaq5wm7nqhn4yewbn43h3ahxuqm536ly473uch2v5qfl@hpgo2dfg77jp>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 0/2] Add support for clock controllers and CPU scaling
- for QCS615
-To: Bjorn Andersson <andersson@kernel.org>
-CC: Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>,
-        Ajit Pandey <quic_ajipan@quicinc.com>,
-        Imran Shaik
-	<quic_imrashai@quicinc.com>,
-        Jagadeesh Kona <quic_jkona@quicinc.com>,
-        <linux-arm-msm@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>,
-        Konrad Dybcio
-	<konrad.dybcio@oss.qualcomm.com>
-References: <20250612-qcs615-mm-cpu-dt-v3-v3-0-721d5db70342@quicinc.com>
- <jtirzyxqdffbqwlhuepgspyepimn7tx3btcovutfhzveynlk33@3xnoc4awrbma>
-Content-Language: en-US
-From: Taniya Das <quic_tdas@quicinc.com>
-In-Reply-To: <jtirzyxqdffbqwlhuepgspyepimn7tx3btcovutfhzveynlk33@3xnoc4awrbma>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Authority-Analysis: v=2.4 cv=YYu95xRf c=1 sm=1 tr=0 ts=685bd4d3 cx=c_pps
- a=ouPCqIW2jiPt+lZRy3xVPw==:117 a=ouPCqIW2jiPt+lZRy3xVPw==:17
- a=GEpy-HfZoHoA:10 a=IkcTkHD0fZMA:10 a=6IFa9wvqVegA:10 a=VwQbUJbxAAAA:8
- a=COk6AnOGAAAA:8 a=ig_1wT9v4rekqANRyDEA:9 a=QEXdDO2ut3YA:10
- a=TjNXssC_j7lpFel5tvFf:22
-X-Proofpoint-GUID: kUIEfbVIeSNk_M-ScQQn6TY_mOloYmIX
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNjI1MDA4MSBTYWx0ZWRfX3SaAwO3275vV
- UjdtBrtmN16H5PfLJCQ0KKlD8lgOZfhKFw0CvbXnWgBQGxH5ijwsAxeXmXZKwKSOxw61ajwfeJJ
- 59Bq1NMxNPYOdQmb/FLNWfYFSRkmEpfnitf+495M+Hn7BRpGj16S1BX3QAbxH37mDDQ/Jk/LtsE
- +Z3Sn2/ItMpT3TzIw999OmbSlBdDc94nlfd7KOBamEwDH/u0Tjwo1ya25loFkNypabxZYdLjQTx
- 9tUQgJnN76SeduqLxA0cId6tc2x894hrzZB0crpjg31QVGZrvi5ohEI3/eqp4+mSc43OXBGnD4F
- MdJa9/SJGsV+S5+MK3oQJG6BzMroEr3Fro3G3o/lG+n39Cu0XbstK/0IPzhhJ5toHqKJEqw2qEL
- DaLcjH+ydwFliqARcc3/gotnSOuGatJ+qgAvOWDZZ5WCHeIieYEjkyDN6cpJM7DxtJrtf1JR
-X-Proofpoint-ORIG-GUID: kUIEfbVIeSNk_M-ScQQn6TY_mOloYmIX
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.7,FMLib:17.12.80.40
- definitions=2025-06-25_03,2025-06-23_07,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- malwarescore=0 adultscore=0 spamscore=0 impostorscore=0 suspectscore=0
- lowpriorityscore=0 priorityscore=1501 phishscore=0 mlxlogscore=571
- clxscore=1015 mlxscore=0 bulkscore=0 classifier=spam authscore=0 authtc=n/a
- authcc= route=outbound adjust=0 reason=mlx scancount=1
- engine=8.19.0-2505280000 definitions=main-2506250081
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <u7fadbfaq5wm7nqhn4yewbn43h3ahxuqm536ly473uch2v5qfl@hpgo2dfg77jp>
 
-
-
-On 6/19/2025 2:51 AM, Bjorn Andersson wrote:
-> On Thu, Jun 12, 2025 at 03:47:19PM +0530, Taniya Das wrote:
->> Add the video, camera, display and gpu clock controller nodes and the
->> cpufreq-hw node to support cpu scaling.
->>
->> Clock Dependency:
->> https://lore.kernel.org/all/20250119-qcs615-mm-v4-clockcontroller-v4-0-5d1bdb5a140c@quicinc.com/
->>
+On Wed, Jun 25, 2025 at 12:16:49PM +0200, Jan Kara wrote:
+> On Wed 25-06-25 10:37:04, Pankaj Raghav wrote:
+> > All filesystems will already check the max and min value of their block
+> > size during their initialization. __getblk_slow() is a very low-level
+> > function to have these checks. Remove them and only check for logical
+> > block size alignment.
+> > 
+> > Suggested-by: Matthew Wilcox <willy@infradead.org>
+> > Signed-off-by: Pankaj Raghav <p.raghav@samsung.com>
 > 
-> This was rejected 6 months ago.
+> I know this is a bikeshedding but FWIW this is in the should never trigger
+> territory so I'd be inclined to just make it WARN_ON_ONCE() and completely
+> delete it once we refactor bh apis to make sure nobody can call bh
+> functions with anything else than sb->s_blocksize.
 > 
+Something like this:
 
-I will update it to the correct latest link.
+diff --git a/fs/buffer.c b/fs/buffer.c
+index a1aa01ebc0ce..a49b4be37c62 100644
+--- a/fs/buffer.c
++++ b/fs/buffer.c
+@@ -1122,10 +1122,9 @@ __getblk_slow(struct block_device *bdev, sector_t block,
+ {
+        bool blocking = gfpflags_allow_blocking(gfp);
+ 
+-       if (unlikely(size & (bdev_logical_block_size(bdev) - 1))) {
++       if (WARN_ON_ONCE(size & (bdev_logical_block_size(bdev) - 1))) {
+                printk(KERN_ERR "getblk(): block size %d not aligned to logical block size %d\n",
+                       size, bdev_logical_block_size(bdev));
+-               dump_stack();
+                return NULL;
+        }
 
-> Regards,
-> Bjorn
-> 
+I assume we don't need the dump_stack() anymore as we will print them
+with WARN_ON_ONCE anyway?
 
+--
+Pankaj
 
