@@ -1,190 +1,138 @@
-Return-Path: <linux-kernel+bounces-702738-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-702735-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 66620AE869B
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Jun 2025 16:34:30 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id BCEA7AE8693
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Jun 2025 16:34:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 25F123A3C44
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Jun 2025 14:34:05 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A4DE37A7458
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Jun 2025 14:32:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CF91426A0C5;
-	Wed, 25 Jun 2025 14:33:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="TeQIkKdQ"
-Received: from lelvem-ot01.ext.ti.com (lelvem-ot01.ext.ti.com [198.47.23.234])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A2EBA2686A0;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A8D9C268C42;
 	Wed, 25 Jun 2025 14:33:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.23.234
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="FLZcWRah"
+Received: from mail-pl1-f171.google.com (mail-pl1-f171.google.com [209.85.214.171])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B89502673BD
+	for <linux-kernel@vger.kernel.org>; Wed, 25 Jun 2025 14:33:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750862038; cv=none; b=nBFUOtFJSSh4ZUu6g1hD75siOvyX+eqCPQZSBaEwGQeewLJOH4+Ng0ihE7CKZCU/13o2bc2GPtg5bBcNO68AuR+LeB3DREr/Gzh9AydgeRyIXAutHdjvY2fkG8h9uauGslGmhcXUa/6HScYtrxYmJl0b7ylfJphKr3p00W3BGnA=
+	t=1750862036; cv=none; b=Bw0m9CsZsABUGGaOSG0Mfpo0l5nNr707kaOXqhbknXSR3Io/EFRgkzdMHFXV1Aa8jH+7pd2QIgyw52yf7IEx8Gua/cK5WEN4RrPYRE96JGh7lfQmgxeZ7jqwXnRj3m2zybVNw/WSefxd7HhNjCoEEJbJO2J/CoeFDAb7K7z/VjE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750862038; c=relaxed/simple;
-	bh=kQ7HcopwAvd+1DfEiqpINyGl6QY1J0L14xhjyAXrLrA=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=u5KzzLZAZq4oMifQWWcqQPAS6SA8xm4DE3hnGc/2W/h9RXvJtcqO711+3HXZxRpeMGcHTz6xYvmpaKtNtW4siG9T90YTHmIM6rwhS9UU6ABSmAxQCaSIV+nQrlr0IlVE1zucm7o2fBuHH/J+2fzfr80Owbi+8QxvxYCYZzfbLpo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=TeQIkKdQ; arc=none smtp.client-ip=198.47.23.234
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
-Received: from fllvem-sh03.itg.ti.com ([10.64.41.86])
-	by lelvem-ot01.ext.ti.com (8.15.2/8.15.2) with ESMTP id 55PEXdKG1479925;
-	Wed, 25 Jun 2025 09:33:39 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-	s=ti-com-17Q1; t=1750862019;
-	bh=qnpxRjv/UYQnJpJGafGpdC2NiDlk6JmsWkDSwjy9X9Y=;
-	h=From:To:CC:Subject:Date:In-Reply-To:References;
-	b=TeQIkKdQaOr6epG/hRCorGEbCFILPdUOIH+DyraPk1us/qjlmhZjoQh9c27ZqwzcK
-	 8grCAM6C6k0iNJ5mu74585jzoiSKvKeXytny8DPjmJ5g2l4CyziWwvWe/x+xus/6aQ
-	 AmPwQUK4gksX42lOFwnybL8nJsvoqUUzBHvD3twA=
-Received: from DLEE108.ent.ti.com (dlee108.ent.ti.com [157.170.170.38])
-	by fllvem-sh03.itg.ti.com (8.18.1/8.18.1) with ESMTPS id 55PEXd9e1077390
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-SHA256 bits=128 verify=FAIL);
-	Wed, 25 Jun 2025 09:33:39 -0500
-Received: from DLEE104.ent.ti.com (157.170.170.34) by DLEE108.ent.ti.com
- (157.170.170.38) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.55; Wed, 25
- Jun 2025 09:33:38 -0500
-Received: from lelvem-mr05.itg.ti.com (10.180.75.9) by DLEE104.ent.ti.com
- (157.170.170.34) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.55 via
- Frontend Transport; Wed, 25 Jun 2025 09:33:38 -0500
-Received: from judy-hp.dhcp.ti.com (judy-hp.dhcp.ti.com [128.247.81.105])
-	by lelvem-mr05.itg.ti.com (8.18.1/8.18.1) with ESMTP id 55PEXco33804070;
-	Wed, 25 Jun 2025 09:33:39 -0500
-From: Judith Mendez <jm@ti.com>
-To: Judith Mendez <jm@ti.com>, Wim Van Sebroeck <wim@linux-watchdog.org>,
-        Guenter Roeck <linux@roeck-us.net>, Rob Herring <robh@kernel.org>,
-        Krzysztof
- Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>
-CC: Vignesh Raghavendra <vigneshr@ti.com>, Tero Kristo <kristo@kernel.org>,
-        <linux-watchdog@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>
-Subject: [PATCH v2 2/2] watchdog: rti_wdt: Add reaction control
-Date: Wed, 25 Jun 2025 09:33:38 -0500
-Message-ID: <20250625143338.2381726-3-jm@ti.com>
-X-Mailer: git-send-email 2.49.0
-In-Reply-To: <20250625143338.2381726-1-jm@ti.com>
-References: <20250625143338.2381726-1-jm@ti.com>
+	s=arc-20240116; t=1750862036; c=relaxed/simple;
+	bh=k/9Jmpcevuw9DPLUN7lxWq/HVRKdkSC2nfzszYCDb30=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=nKT/hi1GcyHPqKL0V+t3KKCA7iLK0SZF9mXEcDmLGxrUCNhZScMe0csAxL1MfJyDG/Csn80FG3B9SmVYxyZ1lCkoKMKu1UCtjE8DOaRscoPx6KywB7RByYYXLGZN6wWPtw8s8Fpq8Cc/Jejc6kY8tGjUMMgyXcc+OAu6KmuTk1c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=FLZcWRah; arc=none smtp.client-ip=209.85.214.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-pl1-f171.google.com with SMTP id d9443c01a7336-237f270513bso147225ad.1
+        for <linux-kernel@vger.kernel.org>; Wed, 25 Jun 2025 07:33:54 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1750862034; x=1751466834; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=BdV48kTp/uRROljNRCynqJ7h0+dKwD9pZid+7Ju9vko=;
+        b=FLZcWRahed/cn0x/habzbVuKXmZ8smUrK0DytAimjUAB29yqxoUhuNkSZSeo7lmqoO
+         P53EXbq32TNb2FE/dcII/rv8m5wlWMUqK/9UMvfB/jhN3slPF0Akw6gbHqS6li+F6bIU
+         3cwRdkH2PtAu/6OoQFOGDxODEZF/m0r/52USX1JlXUxkmyZFMusihN9lYR9d0+7O9V1i
+         3doBljxT0RCG9PjDTIppWmVZkGOkx0ute/e1XSaIj36DfYx/RsVuc7uUCAw0Y4TLhr7D
+         drAAsgAc7j3YLJEDQQmsE0w6dGyUatd16vZrjNUdbhXAw1Ph1Cgy7gGu1V49qb56hPNl
+         KlCg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1750862034; x=1751466834;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=BdV48kTp/uRROljNRCynqJ7h0+dKwD9pZid+7Ju9vko=;
+        b=XdGJvilW6stNNfuHGxb2blBs2+BE2TBfYBB8ZwB6SC/2HaSay5apI2KjAXrJVy6WL+
+         7009luPiiE1Ejl7UarypDpxLKzqs4+oVapLEsT4NP6YTK3JL5vQ1MguXYdSM64LmAx0z
+         e89DFEElxIG98Na1OwrzPz6XZx2/B5SuK6iXzvrQOeGovfBRi824NGKtCXDl107UGNUL
+         gOpmRE3z6RIH+FDj4AinSTSHKr992gcXph2LH1h7U3/6IhGxP1ZNnL6oI1BwzPfoO50q
+         ccd9eXxqxYQzF/bkeRPNSxS/kol+ZNr3kSbKfyGOBfhUVOyzTVutSHQ4Gr6Fe962vv5/
+         cTTA==
+X-Forwarded-Encrypted: i=1; AJvYcCXRrvEC/1R393RTSh9adf3qpKKK36UvO/kNcEZB4qkxE1eo/aycv6rUOzWQrT3vaGiVwq5h5C/+o10oki0=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzFVeQgDEUZwgB/zQ/B56t/v/1kSmbcSCDzv9bbv0fKSOsRuMuY
+	R12vx4fV/9YSNlbjr+mVEJwtZNRTQGXqDEwFa7hOC29lzYaHYvDsuviVPCuW/RNi0HKvRr/2HEZ
+	W1FoZmPljB7IZiiOOKEwuVSDiVGJEQ4LXGa2JzbdX
+X-Gm-Gg: ASbGncvjBr/9mTjho/fvHtU5XOfpDIfKZAGQpMiDmymmqopSLrPh1+7XH9O9OfOzFzF
+	HX30uhYa0a7upsg38+bc5MghTrPn81qBCZyI3MB+kQPPW5kG3kCRT9mnNrbKckDHGApRNADGdD5
+	1eR9lAduS29vWmx0ZOmmBFYDADfDWqjBe8DarMMfW5QyWrgNtVIgX1MbnnYWiZMjdLSDqVsyXKb
+	TkI
+X-Google-Smtp-Source: AGHT+IHOl4ROtzPHTK+wA3RxqSQB0nXvE1X3o8JvmI/Y5HuW89eI98s0XYuUXqOg4//IZvRW47fajZljsA5Du+i3Zig=
+X-Received: by 2002:a17:903:178b:b0:235:f298:cbbb with SMTP id
+ d9443c01a7336-23827442ec7mr2061555ad.26.1750862033549; Wed, 25 Jun 2025
+ 07:33:53 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
+References: <20250618120806.113884-1-adrian.hunter@intel.com>
+ <20250618120806.113884-3-adrian.hunter@intel.com> <68938275-3f6a-46fc-9b38-2c916fdec3d6@intel.com>
+In-Reply-To: <68938275-3f6a-46fc-9b38-2c916fdec3d6@intel.com>
+From: Vishal Annapurve <vannapurve@google.com>
+Date: Wed, 25 Jun 2025 07:33:41 -0700
+X-Gm-Features: AX0GCFtcX4EHPJezVuR03z_zvYB0b1sB8iUGWdlclbBZyL1LJyYQEWzO3JG3LhQ
+Message-ID: <CAGtprH_cVwWhfXFkM-=rVzQZ0CpY_zcnkF=q5x1n_9Bzm1xKfw@mail.gmail.com>
+Subject: Re: [PATCH 2/2] KVM: TDX: Do not clear poisoned pages
+To: Dave Hansen <dave.hansen@intel.com>
+Cc: Adrian Hunter <adrian.hunter@intel.com>, Tony Luck <tony.luck@intel.com>, pbonzini@redhat.com, 
+	seanjc@google.com, Borislav Petkov <bp@alien8.de>, Thomas Gleixner <tglx@linutronix.de>, 
+	Ingo Molnar <mingo@redhat.com>, Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org, 
+	H Peter Anvin <hpa@zytor.com>, linux-edac@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	kvm@vger.kernel.org, rick.p.edgecombe@intel.com, 
+	kirill.shutemov@linux.intel.com, kai.huang@intel.com, 
+	reinette.chatre@intel.com, xiaoyao.li@intel.com, 
+	tony.lindgren@linux.intel.com, binbin.wu@linux.intel.com, 
+	isaku.yamahata@intel.com, yan.y.zhao@intel.com, chao.gao@intel.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-This allows to configure reaction between NMI and reset for WWD.
+On Wed, Jun 18, 2025 at 7:58=E2=80=AFAM Dave Hansen <dave.hansen@intel.com>=
+ wrote:
+>
+> On 6/18/25 05:08, Adrian Hunter wrote:
+> > --- a/arch/x86/kvm/vmx/tdx.c
+> > +++ b/arch/x86/kvm/vmx/tdx.c
+> > @@ -282,10 +282,10 @@ static void tdx_clear_page(struct page *page)
+> >       void *dest =3D page_to_virt(page);
+> >       unsigned long i;
+> >
+> > -     /*
+> > -      * The page could have been poisoned.  MOVDIR64B also clears
+> > -      * the poison bit so the kernel can safely use the page again.
+> > -      */
+> > +     /* Machine check handler may have poisoned the page */
+> > +     if (PageHWPoison(page))
+> > +             return;
 
-On K3 SoC's other than AM62L SoC [0], watchdog reset output is routed
-to the ESM module which can subsequently route the signal to safety
-master or SoC reset. On AM62L, the watchdog reset output is routed
-to the SoC HW reset block. So, add a new compatible for AM62l to add
-SoC data and configure reaction to reset instead of NMI.
+IIUC, even if movdir64b stores contents on hwpoisoned pages, it's not
+going to cause any trouble.
 
-[0] https://www.ti.com/product/AM62L
-Signed-off-by: Judith Mendez <jm@ti.com>
----
-Changes since v1-resend:
-- no change
----
- drivers/watchdog/rti_wdt.c | 31 +++++++++++++++++++++++++++----
- 1 file changed, 27 insertions(+), 4 deletions(-)
+This check should be (unlikely(PageHWPoison(page)) and even better
+probably should be omitted altogether if there are no side effects of
+direct store to hwpoisoned pages.
 
-diff --git a/drivers/watchdog/rti_wdt.c b/drivers/watchdog/rti_wdt.c
-index d1f9ce4100a8..d419884c86c4 100644
---- a/drivers/watchdog/rti_wdt.c
-+++ b/drivers/watchdog/rti_wdt.c
-@@ -35,7 +35,8 @@
- #define RTIWWDRXCTRL	0xa4
- #define RTIWWDSIZECTRL	0xa8
- 
--#define RTIWWDRX_NMI	0xa
-+#define RTIWWDRXN_RST	0x5
-+#define RTIWWDRXN_NMI	0xa
- 
- #define RTIWWDSIZE_50P		0x50
- #define RTIWWDSIZE_25P		0x500
-@@ -63,22 +64,29 @@
- 
- static int heartbeat;
- 
-+struct rti_wdt_data {
-+	bool reset;
-+};
-+
- /*
-  * struct to hold data for each WDT device
-  * @base - base io address of WD device
-  * @freq - source clock frequency of WDT
-  * @wdd  - hold watchdog device as is in WDT core
-+ * @data - hold configuration data
-  */
- struct rti_wdt_device {
- 	void __iomem		*base;
- 	unsigned long		freq;
- 	struct watchdog_device	wdd;
-+	const struct rti_wdt_data *data;
- };
- 
- static int rti_wdt_start(struct watchdog_device *wdd)
- {
- 	u32 timer_margin;
- 	struct rti_wdt_device *wdt = watchdog_get_drvdata(wdd);
-+	u8 reaction;
- 	int ret;
- 
- 	ret = pm_runtime_resume_and_get(wdd->parent);
-@@ -101,8 +109,12 @@ static int rti_wdt_start(struct watchdog_device *wdd)
- 	 */
- 	wdd->min_hw_heartbeat_ms = 520 * wdd->timeout + MAX_HW_ERROR;
- 
--	/* Generate NMI when wdt expires */
--	writel_relaxed(RTIWWDRX_NMI, wdt->base + RTIWWDRXCTRL);
-+	/* Generate reset or NMI when timer expires/serviced outside of window */
-+	reaction = RTIWWDRXN_NMI;
-+	if (wdt->data->reset)
-+		reaction = RTIWWDRXN_RST;
-+
-+	writel_relaxed(reaction, wdt->base + RTIWWDRXCTRL);
- 
- 	/* Open window size 50%; this is the largest window size available */
- 	writel_relaxed(RTIWWDSIZE_50P, wdt->base + RTIWWDSIZECTRL);
-@@ -255,6 +267,8 @@ static int rti_wdt_probe(struct platform_device *pdev)
- 	wdd->timeout = DEFAULT_HEARTBEAT;
- 	wdd->parent = dev;
- 
-+	wdt->data = of_device_get_match_data(dev);
-+
- 	watchdog_set_drvdata(wdd, wdt);
- 	watchdog_set_nowayout(wdd, 1);
- 	watchdog_set_restart_priority(wdd, 128);
-@@ -369,8 +383,17 @@ static void rti_wdt_remove(struct platform_device *pdev)
- 	pm_runtime_disable(&pdev->dev);
- }
- 
-+static struct rti_wdt_data j7_wdt = {
-+	.reset = false,
-+};
-+
-+static struct rti_wdt_data am62l_wdt = {
-+	.reset = true,
-+};
-+
- static const struct of_device_id rti_wdt_of_match[] = {
--	{ .compatible = "ti,j7-rti-wdt", },
-+	{ .compatible = "ti,j7-rti-wdt", .data = &j7_wdt },
-+	{ .compatible = "ti,am62l-rti-wdt", .data = &am62l_wdt },
- 	{},
- };
- MODULE_DEVICE_TABLE(of, rti_wdt_of_match);
--- 
-2.49.0
+>
+> I think the old comment needs to stay in some form.
+>
+> There are two kinds of poisons here: One from an integrity mismatch and
+> the other because the hardware decided the memory is bad. MOVDIR64B
+> clears the integrity one, but not the hardware one obviously.
 
+To ensure I understand correctly, Am I correct in saying: movdir64b
+clearing the integrity poison is just hardware clearing the poison
+bit, software will still treat that page as poisoned?
+
+>
+> Could we make that clear in the comment, please?
+>
+>
 
