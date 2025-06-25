@@ -1,195 +1,133 @@
-Return-Path: <linux-kernel+bounces-702148-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-702183-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C71C8AE7EA0
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Jun 2025 12:10:47 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6263CAE7F2E
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Jun 2025 12:26:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A46743AC188
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Jun 2025 10:09:25 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1A3D57B5B3B
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Jun 2025 10:23:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CDDF229DB7F;
-	Wed, 25 Jun 2025 10:08:03 +0000 (UTC)
-Received: from szxga08-in.huawei.com (szxga08-in.huawei.com [45.249.212.255])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2152329E104;
+	Wed, 25 Jun 2025 10:24:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="oXw8yLoF"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 465DB29C352;
-	Wed, 25 Jun 2025 10:08:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.255
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2C77E280CE0;
+	Wed, 25 Jun 2025 10:24:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750846083; cv=none; b=Nzpfi+ALTcONxqJZnS3StGUNB7keeQ8tBzge6UeTGZjoMrIKiQL7+GOKrIzgd5BqP49KejxSmKQYPyNTWuJR2q3W4A0wLyGjpgr/0pDam37+mQrQ3TEPF+GnHAzTlHHAKh2JjjDJ0TqXWmFbEAVJGIEwGMzmbI4hLse+wBSuCKk=
+	t=1750847073; cv=none; b=GWrCSvA79ugiP8QlZa7i3iYnT1q6ApQZ4cD514UOUHemp5NVra3WbX+I801Ku4HoAdaV5Fbzjc+qaoPQcOnCja8oD35M5pZWarhOpPsKRHhmCM15aGNc7NZQuLDV/phjITBKQ6rhxbYTX4lu+l6LNcP+iYYFeCYveXNbfrAdbcA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750846083; c=relaxed/simple;
-	bh=kMxe1IHoqXviFECo0NKuCfqjgpHzYP3h12Li81qEz7g=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=gORBeIZEwfIASO15eGqd1GGg8rJztDSuujmqDZB9c92h9SyhoELzKqtvQFH1mJq4AmrHq8Im1Q3iJBQ3JoQpALdIgcUu7Nhy53Nlj2uLeGAlBPZGbOmymrq4gFFC9gZkBA+7SUpXLhP+VRE+ICiW773syeCRRGb4pqVs1xljta0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.255
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.162.254])
-	by szxga08-in.huawei.com (SkyGuard) with ESMTP id 4bRyB44FdLz1d1hq;
-	Wed, 25 Jun 2025 18:05:32 +0800 (CST)
-Received: from dggpemf500002.china.huawei.com (unknown [7.185.36.57])
-	by mail.maildlp.com (Postfix) with ESMTPS id 2B8DF180480;
-	Wed, 25 Jun 2025 18:07:53 +0800 (CST)
-Received: from huawei.com (10.175.124.27) by dggpemf500002.china.huawei.com
- (7.185.36.57) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Wed, 25 Jun
- 2025 18:07:52 +0800
-From: Yue Haibing <yuehaibing@huawei.com>
-To: <davem@davemloft.net>, <edumazet@google.com>, <kuba@kernel.org>,
-	<pabeni@redhat.com>, <horms@kernel.org>
-CC: <netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-	<yuehaibing@huawei.com>
-Subject: [PATCH net-next] lwtunnel: Add lwtunnel_encap_type_check() helper
-Date: Wed, 25 Jun 2025 18:24:13 +0800
-Message-ID: <20250625102413.483743-1-yuehaibing@huawei.com>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1750847073; c=relaxed/simple;
+	bh=EX7R+Z7b7tyVqTJhTx0O4xL8KA2yl7sOtvNha5cobFU=;
+	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ml2WHMYE+vmMVPI6uMEk3vmZqJbtAFO1c5E+jy1yZFi78Z3uXiPSCmNJHzrFXmz8+U2vt8O+Dbro3mKqHu2UT77CWeqzpqQzeZRQ00gTiNi7iEPLCNDE0PaoO9ja77EHiBETSU94Vr0sCwCBTZCspLFiKt1S7qWVEvq+q/YMlrk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=oXw8yLoF; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279866.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 55P2w3bS021620;
+	Wed, 25 Jun 2025 10:24:29 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-type:date:from:in-reply-to:message-id:mime-version
+	:references:subject:to; s=qcppdkim1; bh=EX7R+Z7b7tyVqTJhTx0O4xL8
+	KA2yl7sOtvNha5cobFU=; b=oXw8yLoFW9GCJeGal+So2iKvWGBzRb2dQkwCqItp
+	Zlxt9zax9MP+w0W8IbnLwFoQPzfjKxc+TGdX7NUe0kBb4PqVaSnTlAiWpdZ3YDho
+	Drso6/NL20JCmDD6iQkiJZ2KywrDrZ3X3MKtlccR5PnybzGZZvp3YL2nHdBDFfaL
+	iojcEh2JEuR27rm76sJdMo3fnayXCp5lo6oRgMdG68fH3TXjHBzwIPn7rkWtILfG
+	3il3KV9eSVk1Lxq6l3c8YKm9TAnGlsvjyprNQoD/gC/59p2eelZCvx/TdJkQBu8/
+	cRG+GlUwZozVV8N9wgIj8i8ogTvN+a9IGnw+Vj/L4xuxjQ==
+Received: from nasanppmta05.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 47ec269q59-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 25 Jun 2025 10:24:28 +0000 (GMT)
+Received: from nasanex01b.na.qualcomm.com (nasanex01b.na.qualcomm.com [10.46.141.250])
+	by NASANPPMTA05.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 55PAOSwJ013441
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 25 Jun 2025 10:24:28 GMT
+Received: from hu-varada-blr.qualcomm.com (10.80.80.8) by
+ nasanex01b.na.qualcomm.com (10.46.141.250) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.9; Wed, 25 Jun 2025 03:24:25 -0700
+Date: Wed, 25 Jun 2025 15:54:21 +0530
+From: Varadarajan Narayanan <quic_varada@quicinc.com>
+To: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+CC: <andersson@kernel.org>, <konradybcio@kernel.org>, <robh@kernel.org>,
+        <krzk+dt@kernel.org>, <conor+dt@kernel.org>, <lumag@kernel.org>,
+        <linux-arm-msm@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] arm64: dts: qcom: ipq9574: Fix 'l2' regulator min/max
+ voltages
+Message-ID: <aFvOVebZiP/ZxA+N@hu-varada-blr.qualcomm.com>
+References: <20250623113227.1754156-1-quic_varada@quicinc.com>
+ <465751c4-a45a-41ce-ab65-ebddb71dd916@oss.qualcomm.com>
+ <aFpA4mk2L/sxlpO1@hu-varada-blr.qualcomm.com>
+ <99afe9f1-f6a0-46ee-b8f3-2374dc196494@oss.qualcomm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: kwepems200001.china.huawei.com (7.221.188.67) To
- dggpemf500002.china.huawei.com (7.185.36.57)
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+In-Reply-To: <99afe9f1-f6a0-46ee-b8f3-2374dc196494@oss.qualcomm.com>
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nasanex01b.na.qualcomm.com (10.46.141.250)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNjI1MDA3NyBTYWx0ZWRfX58FdAr7Q85fB
+ 4eK8/C6q1VZD0pp9ZBz3YtyLdiD8Vufj/TsBJ59ZNm/jPxKB22O6BsX2bhHnZhASGzdb2WCbV55
+ 0ND+/3DN1yugj6GieIBX7lsrm1wAOIActEjkKWtbBCUoqPDoFDj4pFYXpYhARgB3ke96LBL3tDU
+ /GNE2HCxaYtev4L44itOAJtv60gKKBE3TgXEkmaIAYEPHIHZpdti6ZxOpnmHEc28Wj7wk0NU+g+
+ CtAa2YT5cjFCMTn9t2k30RDtRwRx+chHK7L6KrCfNTk7gd2xSKxJNnz4ICSDtJqltmiK6QdJhR2
+ rEcsaxVtkW2BJPPlihe/ec87LJXMl3rSJpHQpp0MLTnjdhSXz+tzdtVksPNj9OI3UP8qIQuLzL7
+ NA2BlYbdd29XiGXpnuuaSKXow94VtCxF8uN5uHNX9uwnYkN/4NiqCmwCuPuda1P9RrDMUBMP
+X-Authority-Analysis: v=2.4 cv=XPQwSRhE c=1 sm=1 tr=0 ts=685bce5c cx=c_pps
+ a=JYp8KDb2vCoCEuGobkYCKw==:117 a=JYp8KDb2vCoCEuGobkYCKw==:17
+ a=GEpy-HfZoHoA:10 a=kj9zAlcOel0A:10 a=6IFa9wvqVegA:10 a=COk6AnOGAAAA:8
+ a=qalDLaGJQC-KPr74lQ0A:9 a=CjuIK1q_8ugA:10 a=TjNXssC_j7lpFel5tvFf:22
+X-Proofpoint-GUID: wtlXvUJbgz6IBKRJSKHwHp8opUByrLUF
+X-Proofpoint-ORIG-GUID: wtlXvUJbgz6IBKRJSKHwHp8opUByrLUF
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.7,FMLib:17.12.80.40
+ definitions=2025-06-25_02,2025-06-23_07,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ lowpriorityscore=0 impostorscore=0 clxscore=1015 suspectscore=0 mlxscore=0
+ spamscore=0 phishscore=0 malwarescore=0 mlxlogscore=597 bulkscore=0
+ priorityscore=1501 adultscore=0 classifier=spam authscore=0 authtc=n/a
+ authcc= route=outbound adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2505280000 definitions=main-2506250077
 
-Consolidate encap_type check to dedicated helper for code clean.
+On Tue, Jun 24, 2025 at 04:38:59PM +0200, Konrad Dybcio wrote:
+> On 6/24/25 8:08 AM, Varadarajan Narayanan wrote:
+> > On Mon, Jun 23, 2025 at 01:34:22PM +0200, Konrad Dybcio wrote:
+> >> On 6/23/25 1:32 PM, Varadarajan Narayanan wrote:
+> >>> The min and max voltages on l2 regulator is 850000uV. This was
+> >>> incorrectly set at 1800000uV earlier and that affected the
+> >>> stability of the networking subsystem.
+> >>>
+> >>> Fixes: d5506524d9d9 ("arm64: dts: qcom: ipq9574: Add LDO regulator node")
+> >>> Signed-off-by: Varadarajan Narayanan <quic_varada@quicinc.com>
+> >>> ---
+> >>
+> >> Shouldn't there be a consumer for it, instead of it being always-on?
+> >
+> > The uniphy block is the consumer of this voltage. The PMIC configures it
+> > to 850000uV based on OTP settings and s/w doesn't change it as uniphy
+> > doesn't do scaling.
+>
+> Is there a chance something in the networking part can probe before
+> the regulator driver, resulting in a momentary undervolting?
 
-Signed-off-by: Yue Haibing <yuehaibing@huawei.com>
----
- net/core/lwtunnel.c | 46 ++++++++++++++++++++++-----------------------
- 1 file changed, 22 insertions(+), 24 deletions(-)
+No. The PMIC configures it to 850000uV based on OTP at power up itself,
+before Linux driver probe.
 
-diff --git a/net/core/lwtunnel.c b/net/core/lwtunnel.c
-index f9d76d85d04f..f9453f278715 100644
---- a/net/core/lwtunnel.c
-+++ b/net/core/lwtunnel.c
-@@ -79,10 +79,18 @@ EXPORT_SYMBOL_GPL(lwtunnel_state_alloc);
- static const struct lwtunnel_encap_ops __rcu *
- 		lwtun_encaps[LWTUNNEL_ENCAP_MAX + 1] __read_mostly;
- 
-+static inline int lwtunnel_encap_type_check(unsigned int encap_type)
-+{
-+	if (encap_type == LWTUNNEL_ENCAP_NONE ||
-+	    encap_type > LWTUNNEL_ENCAP_MAX)
-+		return -EINVAL;
-+	return 0;
-+}
-+
- int lwtunnel_encap_add_ops(const struct lwtunnel_encap_ops *ops,
- 			   unsigned int num)
- {
--	if (num > LWTUNNEL_ENCAP_MAX)
-+	if (lwtunnel_encap_type_check(num) < 0)
- 		return -ERANGE;
- 
- 	return !cmpxchg((const struct lwtunnel_encap_ops **)
-@@ -96,8 +104,7 @@ int lwtunnel_encap_del_ops(const struct lwtunnel_encap_ops *ops,
- {
- 	int ret;
- 
--	if (encap_type == LWTUNNEL_ENCAP_NONE ||
--	    encap_type > LWTUNNEL_ENCAP_MAX)
-+	if (lwtunnel_encap_type_check(encap_type) < 0)
- 		return -ERANGE;
- 
- 	ret = (cmpxchg((const struct lwtunnel_encap_ops **)
-@@ -117,10 +124,10 @@ int lwtunnel_build_state(struct net *net, u16 encap_type,
- {
- 	const struct lwtunnel_encap_ops *ops;
- 	bool found = false;
--	int ret = -EINVAL;
-+	int ret;
- 
--	if (encap_type == LWTUNNEL_ENCAP_NONE ||
--	    encap_type > LWTUNNEL_ENCAP_MAX) {
-+	ret = lwtunnel_encap_type_check(encap_type);
-+	if (ret < 0) {
- 		NL_SET_ERR_MSG_ATTR(extack, encap,
- 				    "Unknown LWT encapsulation type");
- 		return ret;
-@@ -152,10 +159,10 @@ EXPORT_SYMBOL_GPL(lwtunnel_build_state);
- int lwtunnel_valid_encap_type(u16 encap_type, struct netlink_ext_ack *extack)
- {
- 	const struct lwtunnel_encap_ops *ops;
--	int ret = -EINVAL;
-+	int ret;
- 
--	if (encap_type == LWTUNNEL_ENCAP_NONE ||
--	    encap_type > LWTUNNEL_ENCAP_MAX) {
-+	ret = lwtunnel_encap_type_check(encap_type);
-+	if (ret < 0) {
- 		NL_SET_ERR_MSG(extack, "Unknown lwt encapsulation type");
- 		return ret;
- 	}
-@@ -236,8 +243,7 @@ int lwtunnel_fill_encap(struct sk_buff *skb, struct lwtunnel_state *lwtstate,
- 	if (!lwtstate)
- 		return 0;
- 
--	if (lwtstate->type == LWTUNNEL_ENCAP_NONE ||
--	    lwtstate->type > LWTUNNEL_ENCAP_MAX)
-+	if (lwtunnel_encap_type_check(lwtstate->type) < 0)
- 		return 0;
- 
- 	nest = nla_nest_start_noflag(skb, encap_attr);
-@@ -275,8 +281,7 @@ int lwtunnel_get_encap_size(struct lwtunnel_state *lwtstate)
- 	if (!lwtstate)
- 		return 0;
- 
--	if (lwtstate->type == LWTUNNEL_ENCAP_NONE ||
--	    lwtstate->type > LWTUNNEL_ENCAP_MAX)
-+	if (lwtunnel_encap_type_check(lwtstate->type) < 0)
- 		return 0;
- 
- 	rcu_read_lock();
-@@ -303,8 +308,7 @@ int lwtunnel_cmp_encap(struct lwtunnel_state *a, struct lwtunnel_state *b)
- 	if (a->type != b->type)
- 		return 1;
- 
--	if (a->type == LWTUNNEL_ENCAP_NONE ||
--	    a->type > LWTUNNEL_ENCAP_MAX)
-+	if (lwtunnel_encap_type_check(a->type) < 0)
- 		return 0;
- 
- 	rcu_read_lock();
-@@ -339,9 +343,7 @@ int lwtunnel_output(struct net *net, struct sock *sk, struct sk_buff *skb)
- 		goto drop;
- 	}
- 	lwtstate = dst->lwtstate;
--
--	if (lwtstate->type == LWTUNNEL_ENCAP_NONE ||
--	    lwtstate->type > LWTUNNEL_ENCAP_MAX) {
-+	if (lwtunnel_encap_type_check(lwtstate->type) < 0) {
- 		ret = 0;
- 		goto out;
- 	}
-@@ -393,9 +395,7 @@ int lwtunnel_xmit(struct sk_buff *skb)
- 	}
- 
- 	lwtstate = dst->lwtstate;
--
--	if (lwtstate->type == LWTUNNEL_ENCAP_NONE ||
--	    lwtstate->type > LWTUNNEL_ENCAP_MAX) {
-+	if (lwtunnel_encap_type_check(lwtstate->type) < 0) {
- 		ret = 0;
- 		goto out;
- 	}
-@@ -446,9 +446,7 @@ int lwtunnel_input(struct sk_buff *skb)
- 		goto drop;
- 	}
- 	lwtstate = dst->lwtstate;
--
--	if (lwtstate->type == LWTUNNEL_ENCAP_NONE ||
--	    lwtstate->type > LWTUNNEL_ENCAP_MAX)
-+	if (lwtunnel_encap_type_check(lwtstate->type) < 0)
- 		return 0;
- 
- 	ret = -EOPNOTSUPP;
--- 
-2.34.1
-
+Thanks
+Varada
 
