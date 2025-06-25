@@ -1,172 +1,136 @@
-Return-Path: <linux-kernel+bounces-702436-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-702438-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 876FCAE8271
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Jun 2025 14:15:38 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 04383AE8276
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Jun 2025 14:18:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1BBE1189FCCF
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Jun 2025 12:15:54 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 41A2C177C50
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Jun 2025 12:18:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5DEBB221DB2;
-	Wed, 25 Jun 2025 12:15:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F0A6E25BF12;
+	Wed, 25 Jun 2025 12:18:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=pobox.com header.i=@pobox.com header.b="GmkFJZ45";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="L4P/yTBb"
-Received: from fhigh-b4-smtp.messagingengine.com (fhigh-b4-smtp.messagingengine.com [202.12.124.155])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="SjI9DPZC"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6267E1ADFFB;
-	Wed, 25 Jun 2025 12:15:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.12.124.155
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5599F1DFCB;
+	Wed, 25 Jun 2025 12:18:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750853730; cv=none; b=PHWjwRjQQ/7wDepM7rPT2kljr0kHqp2aE1L13s8LgW38l7eKvVBR1DxEerqYx2c/wFZ7JsOIqkJ/TKYjsiIfk1v0oOIc0yQjobaZIT7FQiwtkXbJiGfomjqwbQ+GBfgY93lY/6YPYnmo0QdVdLb/PTZancis7yv0KCyff0UqNPY=
+	t=1750853913; cv=none; b=nhVEa3Cl68VEY2dvxqUdJyzIvgnEXCxoFEr2dT7gNoNlrEiqcHNGn6O6xZlCqAU1+fBsFzESmLmAnCUnyVV0PIQM4hVSKEKtzzwFJ41DaGeL0Szt7EAuQisbXhaXvapze/XvplCOaY3EAiDUztXRQSW2CGNrYaijz43bNtmzAeI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750853730; c=relaxed/simple;
-	bh=30nOtmBlh3aA5ZF6uHRSVaCLZpCJBiyzVQGIhuSz7e8=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=fjf+wRJP4KIsvEawmyKqA4mZq04jW2T3J51FsnJtUnJ/fkywx1f4ywMbafmhSyA5RjWoDo+OpF93Pbb0PZWI0QaraokRlv5IfaHl9ohMRekwE3g/2BCnIxLy+n/+0ciD7ADUlLp8UpYnROY1xPKKNLdAF/5apWG3HRdaprmfspM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=pobox.com; spf=pass smtp.mailfrom=pobox.com; dkim=pass (2048-bit key) header.d=pobox.com header.i=@pobox.com header.b=GmkFJZ45; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=L4P/yTBb; arc=none smtp.client-ip=202.12.124.155
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=pobox.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pobox.com
-Received: from phl-compute-06.internal (phl-compute-06.phl.internal [10.202.2.46])
-	by mailfhigh.stl.internal (Postfix) with ESMTP id 06D587A01A2;
-	Wed, 25 Jun 2025 08:15:27 -0400 (EDT)
-Received: from phl-frontend-02 ([10.202.2.161])
-  by phl-compute-06.internal (MEProxy); Wed, 25 Jun 2025 08:15:27 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=pobox.com; h=cc
-	:cc:content-transfer-encoding:content-type:content-type:date
-	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to; s=fm1; t=1750853726;
-	 x=1750940126; bh=o3GBtX60wx4Vf1WejvmFEtSL/L3MgcftL3fqrvCo7rw=; b=
-	GmkFJZ45ilwhO3E31M+777jvMNsjhf+Z4wa22BubFTySBV0OQYV/4IDuAHxQpTyd
-	2ie34HZ7VKDMne5aumyLjYEwv2XtFPR+JAI3S1+TMQqFi144xAIQfcDonKqcXwSm
-	1NEQhNu4q5fY8ayJdZGAQ/wFVXx+9vYAIDmguMGJe9V0mk1tCtMva1JY8SkPbhCf
-	WTP8tTpETqu5xWXpvTgQ2WKfIYFNQVhYs7x8VlUI9IDp1WR7UFk26Yjk9jwp4uE8
-	4f/IqASq5AejtXFSqjyEFKy2Q0KdZBNFFz9+CjA1dGB12NU7P5qcmzJHzq8lc9W4
-	kr0eueGWSsTf7nzmBUQLIg==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:content-type:date:date:feedback-id:feedback-id
-	:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to:x-me-proxy
-	:x-me-sender:x-me-sender:x-sasl-enc; s=fm2; t=1750853726; x=
-	1750940126; bh=o3GBtX60wx4Vf1WejvmFEtSL/L3MgcftL3fqrvCo7rw=; b=L
-	4P/yTBb3a6APugNmTVULxjOeQuD4g832230VEZDJY1LQJpRXmu9mIWlAEVmWbmvC
-	wjR9kVzCCyHpvSyatkbU5ZgXriqpWpchN5167oecgnqOoykyPu0U6cq0oeGQsgK8
-	zVzeSa0XcRcWOCTYbhkVo26Msh7eLmH0zc99/m7X0WFA+d2rn7EUjrqxV0qqfwQS
-	9yAuc4fJyS66fWfhKRd9hILypsMgKwPagziwX30nD/t9fr0LW10i3Pr5evmBTiog
-	GlN5NPJ1I9B8SPheL1DO+MjTLtPYm21kyjFlpj8ykUSRqNIiSnQa7w+jHH4MniHX
-	8Wz+jJ8JAGNB3Z2LR1ODA==
-X-ME-Sender: <xms:XehbaEQ2dZ2I6hE87lLvn0WZfQrT-i7Jcgt0QeBEHe0lAEh0HQkFUw>
-    <xme:XehbaBxPT6BeaEixTM4EmIY6zFyJJDBIl0zLXdN03u3m892l_ogNiwUgO8UOCVam_
-    tAjCr43sUqU74uaZfI>
-X-ME-Received: <xmr:XehbaB0vCLDaHUY1WHdgNcLWJV1Y_aMsP1Gv3-C3gS02ot-2D3QGYlalqeTJxsyUG8KLWGzi1MA9BxDZ_II_kNk_j_TrnQ>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtddvgddvvdejhecutefuodetggdotefrod
-    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpuffrtefokffrpgfnqfghnecuuegr
-    ihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjug
-    hrpefkffggfgfuvfevfhfhjggtgfesthekredttddvjeenucfhrhhomhepfdeurghrrhih
-    ucfmrdcupfgrthhhrghnfdcuoegsrghrrhihnhesphhosghogidrtghomheqnecuggftrf
-    grthhtvghrnhepuddvtdelfeejffekgfekfeekgfekveelleehkeeuheetuedtvdevgeef
-    ieejteeknecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomh
-    epsggrrhhrhihnsehpohgsohigrdgtohhmpdhnsggprhgtphhtthhopedvuddpmhhouggv
-    pehsmhhtphhouhhtpdhrtghpthhtohephhholhhgvghrsegrphhplhhivgguqdgrshihnh
-    gthhhrohhnhidrtghomhdprhgtphhtthhopehgrhgvghhkhheslhhinhhugihfohhunhgu
-    rghtihhonhdrohhrghdprhgtphhtthhopehsthgrsghlvgesvhhgvghrrdhkvghrnhgvlh
-    drohhrghdprhgtphhtthhopehprghttghhvghssehlihhsthhsrdhlihhnuhigrdguvghv
-    pdhrtghpthhtoheplhhinhhugidqkhgvrhhnvghlsehvghgvrhdrkhgvrhhnvghlrdhorh
-    hgpdhrtghpthhtohepthhorhhvrghlughssehlihhnuhigqdhfohhunhgurghtihhonhdr
-    ohhrghdprhgtphhtthhopegrkhhpmheslhhinhhugidqfhhouhhnuggrthhiohhnrdhorh
-    hgpdhrtghpthhtoheplhhinhhugiesrhhovggtkhdquhhsrdhnvghtpdhrtghpthhtohep
-    shhhuhgrhheskhgvrhhnvghlrdhorhhg
-X-ME-Proxy: <xmx:XehbaICJbyfKQTyhySsX82c90BohFvUYP6gKw-0cnqfe7OHoHyHiTw>
-    <xmx:XehbaNhPSv40PdJqhW-jmEkwiLmFk1Dvglew3qiuwK4UIXp76Zi0SQ>
-    <xmx:XehbaEqrZnWnDZCKkO3ovsOtG5p4QD2AmGYMSb1uAsJ5prlbUSZliQ>
-    <xmx:XehbaAj8cMHXCkd2oKxmq3bzHRUYhyU1IKhcdcehtc7hOVCA-RqHtA>
-    <xmx:XuhbaBHwPQWVJ5xuPKAAx3kdAT_MJ5kDtugb5j90Gre3QUiukdlDoTAI>
-Feedback-ID: i6289494f:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Wed,
- 25 Jun 2025 08:15:22 -0400 (EDT)
-Message-ID: <6d3b0f28-98cb-46dd-b971-8a11e3b69d68@pobox.com>
-Date: Wed, 25 Jun 2025 05:15:21 -0700
+	s=arc-20240116; t=1750853913; c=relaxed/simple;
+	bh=YcD58soRZs6EhUzGV8q+5DJoG2q3WNRV/I6q3HlGoI0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=eFOtBr6VQwxLS77lZGV7xz3qXSQ3DvyTpSQVo+AxgLgPiep/mjrQa0OuTda7YW9gTliGxtvFEYfx5JSMb101dJfL+i7N3fF5Ny9anOYoS3QU8NuCoGsrTC11k0ixYi0WCyxqx1D1qHEjpCBrZfIMk+XfCsqZPf5+pqRTzNgBnAA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=SjI9DPZC; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id BE704C4CEEE;
+	Wed, 25 Jun 2025 12:18:30 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1750853912;
+	bh=YcD58soRZs6EhUzGV8q+5DJoG2q3WNRV/I6q3HlGoI0=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=SjI9DPZCwGR1deh3fSwu1ILgyrtOM8spHBVFLmLlUx+zMR6QzfUK99kYAaHP6Dsv+
+	 aTVzSgm1kNY+HTSMCetYQ4H/q5wqjyuZ/CeBSg2dXt8jMs//57nvenmXP1kqWZZJ/f
+	 zWZf3bc1X6Y3OrW7bF1QpNbabl4Sp+J+a8zopi7igGuzvWeEabiFXJn5VTVfuSkQYD
+	 G6fGtAN0dy6s3/kYxGpAkYgrruwj1vbJ8m7z3dE9BxEETF3Xe05+kaNDy+xU7KAI7D
+	 311zoO8jJmbt9vElQ7SQUNOOXpKw4GfcjNNNwWjupgdnQtDWq7Lu80ZdrgVWylMUfp
+	 nDuc7l5NK3HAg==
+Date: Wed, 25 Jun 2025 13:18:28 +0100
+From: Simon Horman <horms@kernel.org>
+To: Jacek Kowalski <jacek@jacekk.info>
+Cc: Tony Nguyen <anthony.l.nguyen@intel.com>,
+	Przemek Kitszel <przemyslaw.kitszel@intel.com>,
+	Andrew Lunn <andrew+netdev@lunn.ch>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	intel-wired-lan@lists.osuosl.org, netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 1/4] e1000: drop checksum constant cast to u16 in
+ comparisons
+Message-ID: <20250625121828.GB1562@horms.kernel.org>
+References: <46b2b70d-bf53-4b0a-a9f3-dfd8493295b9@jacekk.info>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 6.15 000/588] 6.15.4-rc2 review
-To: =?UTF-8?Q?Holger_Hoffst=C3=A4tte?= <holger@applied-asynchrony.com>,
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: stable@vger.kernel.org, patches@lists.linux.dev,
- linux-kernel@vger.kernel.org, torvalds@linux-foundation.org,
- akpm@linux-foundation.org, linux@roeck-us.net, shuah@kernel.org,
- patches@kernelci.org, lkft-triage@lists.linaro.org, pavel@denx.de,
- jonathanh@nvidia.com, f.fainelli@gmail.com, sudipm.mukherjee@gmail.com,
- srw@sladewatkins.net, rwarsow@gmx.de, conor@kernel.org,
- hargar@microsoft.com, broonie@kernel.org,
- Christian Brauner <brauner@kernel.org>
-References: <20250624121449.136416081@linuxfoundation.org>
- <e9249afe-f039-4180-d50d-b199c26dea26@applied-asynchrony.com>
- <2025062511-tutor-judiciary-e3f9@gregkh>
- <b875b110-277d-f427-412c-b2cb6512fccc@applied-asynchrony.com>
-Content-Language: en-US
-From: "Barry K. Nathan" <barryn@pobox.com>
-In-Reply-To: <b875b110-277d-f427-412c-b2cb6512fccc@applied-asynchrony.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <46b2b70d-bf53-4b0a-a9f3-dfd8493295b9@jacekk.info>
 
-On 6/25/25 02:08, Holger Hoffstätte wrote:
-> On 2025-06-25 10:25, Greg Kroah-Hartman wrote:
->> On Wed, Jun 25, 2025 at 10:00:56AM +0200, Holger Hoffstätte wrote:
->>> (cc: Christian Brauner>
->>>
->>> Since 6.15.4-rc1 I noticed that some KDE apps (kded6, kate (the text 
->>> editor))
->>> started going into a tailspin with 100% per-process CPU.
->>>
->>> The symptom is 100% reproducible: open a new file with kate, save 
->>> empty file,
->>> make changes, save, watch CPU go 100%. perf top shows copy_to_user 
->>> running wild.
->>>
->>> First I tried to reproduce on 6.15.3 - no problem, everything works 
->>> fine.
->>>
->>> After checking the list of patches for 6.15.4 I reverted the 
->>> anon_inode series
->>> (all 3 for the first attempt) and the problem is gone.
->>>
->>> Will try to reduce further & can gladly try additional fixes, but for 
->>> now
->>> I'd say these patches are not yet suitable for stable.
->>
->> Does this same issue also happen for you on 6.16-rc3?
-> 
-> Curiously it does *not* happen on 6.16-rc3, so that's good.
-> I edited/saved several files and everything works as it should.
-> 
-> In 6.15.4-rc the problem occurs (as suspected) with:
-> anon_inode-use-a-proper-mode-internally.patch aka cfd86ef7e8e7 upstream.
-> 
-> thanks
-> Holger
+On Tue, Jun 24, 2025 at 09:29:43PM +0200, Jacek Kowalski wrote:
 
-For what it's worth, I can confirm this reproduces easily and 
-consistently on Debian trixie's KDE (6.3.5), with either Wayland or X11. 
-It reproduces with kernel 6.15.4-rc2, and with 
-6.15.3+anon_inode-use-a-proper-mode-internally.patch, but not with 
-vanilla 6.15.3 or with 6.16-rc3.
+Hi Jacek,
 
-By the way, my test VM has both GNOME and KDE installed. If I boot one 
-of the affected kernels and log into a GNOME session, I don't get any 
-GNOME processes chewing up CPU the way that some of the KDE processes 
-do. However, if I then start kate within the GNOME session and follow 
-the steps to reproduce (create a new file, save it immediately, type a 
-few characters, save again), kate still starts using 100% CPU.
+Thanks for the patchset.
+
+Some feedback at a high level:
+
+1. It's normal for patch-sets, to have a cover letter.
+   That provides a handy place for high level comments,
+   perhaps ironically, such as this one.
+
+2. Please provide some text in the patch description.
+   I know these changes are trivial. But we'd like to have something there.
+   E.g.
+
+   Remove unnecessary cast of constants to u16,
+   allowing the C type system to do it's thing.
+
+   No behavioural change intended.
+   Compile tested only.
+
+3. This patchset should probably be targeted at iwl-next, like this:
+
+	Subject: [PATCH iwl-next] ...
+
+4. Please make sure the patchset applies cleanly to it's target tree.
+   It seems that in it's current form the patchset doesn't
+   apply to iwl-next or net-next.
+
+5. It's up to you. But in general there is no need
+   to CC linux-kernel@vger.kernel.org on Networking patches
+
+> Signed-off-by: Jacek Kowalski <Jacek@jacekk.info>
+> Suggested-by: Simon Horman <horms@kernel.org>
+
+As for this patch itself, it looks good to me.
+But I think you missed two.
+
+diff --git a/drivers/net/ethernet/intel/e1000/e1000_hw.c b/drivers/net/ethernet/intel/e1000/e1000_hw.c
+index b5a31e8d84f4..0e5de52b1067 100644
+--- a/drivers/net/ethernet/intel/e1000/e1000_hw.c
++++ b/drivers/net/ethernet/intel/e1000/e1000_hw.c
+@@ -3997,7 +3997,7 @@ s32 e1000_update_eeprom_checksum(struct e1000_hw *hw)
+ 		}
+ 		checksum += eeprom_data;
+ 	}
+-	checksum = (u16)EEPROM_SUM - checksum;
++	checksum = EEPROM_SUM - checksum;
+ 	if (e1000_write_eeprom(hw, EEPROM_CHECKSUM_REG, 1, &checksum) < 0) {
+ 		e_dbg("EEPROM Write Error\n");
+ 		return -E1000_ERR_EEPROM;
+diff --git a/drivers/net/ethernet/intel/e1000e/nvm.c b/drivers/net/ethernet/intel/e1000e/nvm.c
+index 1c9071396b3c..556dbefdcef9 100644
+--- a/drivers/net/ethernet/intel/e1000e/nvm.c
++++ b/drivers/net/ethernet/intel/e1000e/nvm.c
+@@ -588,7 +588,7 @@ s32 e1000e_update_nvm_checksum_generic(struct e1000_hw *hw)
+ 		}
+ 		checksum += nvm_data;
+ 	}
+-	checksum = (u16)NVM_SUM - checksum;
++	checksum = NVM_SUM - checksum;
+ 	ret_val = e1000_write_nvm(hw, NVM_CHECKSUM_REG, 1, &checksum);
+ 	if (ret_val)
+ 		e_dbg("NVM Write Error while updating checksum.\n");
+
 -- 
--Barry K. Nathan  <barryn@pobox.com>
+pw-bot: changes-requested
 
