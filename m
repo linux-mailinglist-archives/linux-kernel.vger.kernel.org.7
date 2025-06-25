@@ -1,229 +1,149 @@
-Return-Path: <linux-kernel+bounces-701851-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-701844-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DE17BAE7A3D
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Jun 2025 10:32:04 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1C8F4AE7A12
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Jun 2025 10:29:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7CF0F3AB6AA
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Jun 2025 08:31:15 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6F065168731
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Jun 2025 08:29:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 93363271461;
-	Wed, 25 Jun 2025 08:29:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E7C5326B77E;
+	Wed, 25 Jun 2025 08:29:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="eZSQDx54"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="bpnhslPO"
+Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4AA3826CE39;
-	Wed, 25 Jun 2025 08:29:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E575D26B085
+	for <linux-kernel@vger.kernel.org>; Wed, 25 Jun 2025 08:29:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750840195; cv=none; b=FCTtP69XaKp9scrzXjiqhvZ3cCUgFr+8+KBPxsPullDkLTb+Bq1sLq1P5IpYr9420fFJsXZKveN/QH4osmb61FBxvChbnP4Z0SiPp0r7OnlHegJ7HVPv/0d2MG1MsM5cdWmz7VluRItf8VFm/ZRmDk5ucZ03wNNSgqFGcWMAdk0=
+	t=1750840189; cv=none; b=rCV7ea8XguQtWEjwKMVXlIPNX+RwWP9oj4Wm6dGs+0X1EgMPAWxZrMl2zaSPcrAdS8WtO5x1hKTgULacuTZXJlS9RHW18JGiqMrNmizFF7dDI5XoTsIvyaC5oRbbqoXdb1dYSxf143hWp0SM4ObrkDhh0qylfCRDm9fJnteob6Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750840195; c=relaxed/simple;
-	bh=Pn0IAq+EW3ZPpfC2bBtXNhslVya1++GpwORTqaNMocw=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=rN1YrVkFfBve6KEI4dRCWc79p4aA7hzWtzxG51C2Bo6Szu8Aw4Cp5dNUjC1itdBnAQziu6zHcWQN+m125pMtYIos7ot3BIm+IsgFjmGBzibE83fX/6qvIfcQFByW1jLE83M2XuZHIQOs3wCxrRHGxnSRthWfUsT3e2fQhW6N9Hk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=qualcomm.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=eZSQDx54; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=qualcomm.com
-Received: from pps.filterd (m0279865.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 55P3iWDM014481;
-	Wed, 25 Jun 2025 08:29:48 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:date:from:in-reply-to:message-id
-	:mime-version:references:subject:to; s=qcppdkim1; bh=Dal1OWBcSXu
-	ztEXKmLQhnv0TMe5eFbyOMUlSVoNQl1E=; b=eZSQDx54bIUwqyQN0WjukPDazGJ
-	ja9A18CV5nJBIz7I2G6pWxMs0MmkV4WC0TCkLbQZNmdzKtJwAjy5she8mdyCkApG
-	3VIEefccmshTFNkqloDtY9bxjNhBdYo9zcqZ57L5NRwvXSEl59BXVQlAz9kwK6uj
-	wfsChJLw0Tv4Z1vT8C9xW37DFYZmPQPli1yBV6BmW/DqhrNjZBwVnFG2GXSG7cFZ
-	fHRc4EebDtgVAfzEvIFXFN/r9x2hhDqmxO2T/29LOm/jBnOQFH6sJYrYBBE63c10
-	oQnmnZjG59LhD0D3N66opaUBKYF011OWT8TsW366GRlDZPVI87BT9c0tSnA==
-Received: from apblrppmta01.qualcomm.com (blr-bdr-fw-01_GlobalNAT_AllZones-Outside.qualcomm.com [103.229.18.19])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 47evc5r636-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 25 Jun 2025 08:29:47 +0000 (GMT)
-Received: from pps.filterd (APBLRPPMTA01.qualcomm.com [127.0.0.1])
-	by APBLRPPMTA01.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTP id 55P8ThPr032600;
-	Wed, 25 Jun 2025 08:29:44 GMT
-Received: from pps.reinject (localhost [127.0.0.1])
-	by APBLRPPMTA01.qualcomm.com (PPS) with ESMTPS id 47dntm2eq7-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 25 Jun 2025 08:29:44 +0000
-Received: from APBLRPPMTA01.qualcomm.com (APBLRPPMTA01.qualcomm.com [127.0.0.1])
-	by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 55P8ThBi032573;
-	Wed, 25 Jun 2025 08:29:44 GMT
-Received: from hu-devc-hyd-u22-c.qualcomm.com (hu-pkumpatl-hyd.qualcomm.com [10.147.245.204])
-	by APBLRPPMTA01.qualcomm.com (PPS) with ESMTPS id 55P8TiU4032615
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 25 Jun 2025 08:29:44 +0000
-Received: by hu-devc-hyd-u22-c.qualcomm.com (Postfix, from userid 3914174)
-	id C3C505D0; Wed, 25 Jun 2025 13:59:41 +0530 (+0530)
-From: Prasad Kumpatla <quic_pkumpatl@quicinc.com>
-To: Bjorn Andersson <andersson@kernel.org>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Rob Herring <robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>,
-        Srinivas Kandagatla <srini@kernel.org>,
-        Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>,
-        Konrad Dybcio <konradybcio@kernel.org>
-Cc: cros-qcom-dts-watchers@chromium.org, linux-arm-msm@vger.kernel.org,
-        linux-gpio@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-sound@vger.kernel.org,
-        quic_pkumpatl@quicinc.com, kernel@oss.qualcomm.com,
-        Mohammad Rafi Shaik <quic_mohs@quicinc.com>
-Subject: [PATCH v5 9/9] arm64: dts: qcom: qcm6490-idp: Add sound card
-Date: Wed, 25 Jun 2025 13:59:27 +0530
-Message-Id: <20250625082927.31038-10-quic_pkumpatl@quicinc.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20250625082927.31038-1-quic_pkumpatl@quicinc.com>
-References: <20250625082927.31038-1-quic_pkumpatl@quicinc.com>
+	s=arc-20240116; t=1750840189; c=relaxed/simple;
+	bh=f+o8iEPouqOHBWyxZ8dTxNmU58i6ENQXee19SBZ0B3s=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=qF/2Itt5uXiB4kmorO4nlAMENbKj1xXEB65IldX+XLrJfZwuweNNbfiRcYeiw03cTfniMvBVtF88sLYywlwq9YBs6ormLyWDO5nZ5qhh1N9BR5P9uwRMfBvLFNHridOhbUpO48IHW+maOF/s674UibHyN8unl3Xm2lDbJaRJhpc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=bpnhslPO; arc=none smtp.client-ip=90.155.50.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Transfer-Encoding:
+	Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:
+	Sender:Reply-To:Content-ID:Content-Description;
+	bh=fWPaB80+3HWu+QPjwcL43NRsxuq/i0mNSJil+VDDtCE=; b=bpnhslPOuwpAv5MIFbclSTE58N
+	VlQToVKxMVzWYNe4JgqmrVls+RsRyDCgNS/u99gI9xHeUQ2ryPxnfsNE+930VMvC0b+jSPLCANOFD
+	8NZaA/ebsYPHP3LWprw5kZNcCFeZ0Wj5bApNkD7eZOLR9r/wwWVWkN7RQQ/RRg9+U96cjeZ3vBLCf
+	i0TOGdJbRsJmTNBd3N6YyM6pxL368MBkqYkb9bAhd9ssq+z/rypi00eCiBRdFU40DT7dK/HnnJxWy
+	C0ljmhqrYcdo04xTHkbFoPPGk4iqFS1nZ0NXSIwjD0SSg08bAXmUfPofSgGSPbxby7a1cl4d1pN0h
+	MnXjq2qA==;
+Received: from 77-249-17-252.cable.dynamic.v4.ziggo.nl ([77.249.17.252] helo=noisy.programming.kicks-ass.net)
+	by casper.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
+	id 1uULVe-00000008tHl-0J2Y;
+	Wed, 25 Jun 2025 08:29:34 +0000
+Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
+	id C49BF308983; Wed, 25 Jun 2025 10:29:32 +0200 (CEST)
+Date: Wed, 25 Jun 2025 10:29:32 +0200
+From: Peter Zijlstra <peterz@infradead.org>
+To: Li Chen <me@linux.beauty>
+Cc: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
+	Borislav Petkov <bp@alien8.de>,
+	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
+	"H . Peter Anvin" <hpa@zytor.com>,
+	"Rafael J . Wysocki" <rafael.j.wysocki@intel.com>,
+	K Prateek Nayak <kprateek.nayak@amd.com>,
+	Sohil Mehta <sohil.mehta@intel.com>,
+	Brian Gerst <brgerst@gmail.com>,
+	Patryk Wlazlyn <patryk.wlazlyn@linux.intel.com>,
+	linux-kernel@vger.kernel.org,
+	"Gautham R. Shenoy" <gautham.shenoy@amd.com>,
+	Li Chen <chenl311@chinatelecom.cn>
+Subject: Re: [PATCH v3 2/2] x86/smpboot: avoid SMT domain attach/destroy if
+ SMT is not enabled
+Message-ID: <20250625082932.GA1613200@noisy.programming.kicks-ass.net>
+References: <20250625034552.42365-1-me@linux.beauty>
+ <20250625034552.42365-3-me@linux.beauty>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-X-QCInternal: smtphost
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: 35IMiFKRx-ag7QkZqdXt2xLPEYv0eCmB
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNjI1MDA2MiBTYWx0ZWRfX0+wg984PgDP+
- owJDQLskVF2NFEg//gJj65pCU5HtjXvbhZj5qevxzlnJ3Da6Ir/6cGSRboOq53dklK0nQbQLYtd
- aLCWM1Jfy34ekYu5tX+1z+LTid7yBGu1AwRRF4ZKjdF+A+1/ay8+640KcmkL5J//qHOf32hdNRM
- JoAjFHDv+v4N4HbJMEai2PwYs+ZG//lisdVgyGaUnl9/zFMgT1fUgsrrf8dgz3MCcUw87ucqeFn
- yWbZPyWMsTNTfUDUkYmjfwtRq7h0qurlbHOOEP/sYYIWcirLen+LXowwrdiQo0rwp5ORO4oCv+h
- 1Gw74+oCpKk8sMN3K+VqtrBKb7NCNDfKHWyjOBnBuArHP3EOILmB49tf734g1cuUIWKUrJEIRJh
- uTYKg+m3QmzoVPgugE6qz49JavIhHZqxAhO5pSOxI5voKSwYLUwvalw4aNgx+lSNsNOvHR9o
-X-Authority-Analysis: v=2.4 cv=caHSrmDM c=1 sm=1 tr=0 ts=685bb37c cx=c_pps
- a=Ou0eQOY4+eZoSc0qltEV5Q==:117 a=Ou0eQOY4+eZoSc0qltEV5Q==:17
- a=6IFa9wvqVegA:10 a=COk6AnOGAAAA:8 a=h_l79siUWkRGThfnGhIA:9
- a=TjNXssC_j7lpFel5tvFf:22
-X-Proofpoint-ORIG-GUID: 35IMiFKRx-ag7QkZqdXt2xLPEYv0eCmB
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.7,FMLib:17.12.80.40
- definitions=2025-06-25_01,2025-06-23_07,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- impostorscore=0 mlxlogscore=999 suspectscore=0 priorityscore=1501
- lowpriorityscore=0 bulkscore=0 adultscore=0 mlxscore=0 spamscore=0
- malwarescore=0 phishscore=0 clxscore=1015 classifier=spam authscore=0
- authtc=n/a authcc= route=outbound adjust=0 reason=mlx scancount=1
- engine=8.19.0-2505280000 definitions=main-2506250062
+In-Reply-To: <20250625034552.42365-3-me@linux.beauty>
 
-From: Mohammad Rafi Shaik <quic_mohs@quicinc.com>
+On Wed, Jun 25, 2025 at 11:45:50AM +0800, Li Chen wrote:
+> From: Li Chen <chenl311@chinatelecom.cn>
+> 
+> Currently, the SMT domain is added into sched_domain_topology by default.
+> 
+> If cpu_attach_domain() finds that the CPU SMT domain’s cpumask_weight
+> is just 1, it will destroy it.
+> 
+> On a large machine, such as one with 512 cores, this results in
+> 512 redundant domain attach/destroy operations.
+> 
+> Avoid these unnecessary operations by simply checking
+> cpu_smt_num_threads and remove SMT domain if the SMT domain is not
+> enabled, and adjust the PKG index accordingly if NUMA-in-package
+> invalidates that level as well.
+> 
+> Signed-off-by: Li Chen <chenl311@chinatelecom.cn>
+> ---
+> changelog:
+> v2: fix wording issue as suggested by Thomas [1]
+> v3: remove pointless memset and adjust PKG index accordingly,
+>     as suggested by Thomas [2] 
+> 
+> [1]: https://lore.kernel.org/all/87msa2r018.ffs@tglx/
+> [2]: https://lore.kernel.org/all/875xglntx1.ffs@tglx/
+> 
+>  arch/x86/kernel/smpboot.c | 18 +++++++++++++++++-
+>  1 file changed, 17 insertions(+), 1 deletion(-)
+> 
+> diff --git a/arch/x86/kernel/smpboot.c b/arch/x86/kernel/smpboot.c
+> index 7d202f9785362..4b6daa1545445 100644
+> --- a/arch/x86/kernel/smpboot.c
+> +++ b/arch/x86/kernel/smpboot.c
+> @@ -494,13 +494,29 @@ static struct sched_domain_topology_level x86_topology[] = {
+>  
+>  static void __init build_sched_topology(void)
+>  {
+> +	bool smt_dropped = false;
+> +
+> +	if (cpu_smt_num_threads <= 1) {
+> +		/*
+> +		 * SMT level is x86_topology[0].  Shift the array left by one,
+> +		 */
+> +		memmove(&x86_topology[0], &x86_topology[1],
+> +			sizeof(x86_topology) - sizeof(x86_topology[0]));
+> +		smt_dropped = true;
+> +	}
+> +
+>  	/*
+>  	 * When there is NUMA topology inside the package invalidate the
+>  	 * PKG domain since the NUMA domains will auto-magically create the
+>  	 * right spanning domains based on the SLIT.
+>  	 */
+>  	if (x86_has_numa_in_package) {
+> -		unsigned int pkgdom = ARRAY_SIZE(x86_topology) - 2;
+> +		unsigned int pkgdom;
+> +
+> +		if (smt_dropped)
+> +			pkgdom = ARRAY_SIZE(x86_topology) - 3;
+> +		else
+> +			pkgdom = ARRAY_SIZE(x86_topology) - 2;
+>  
+>  		memset(&x86_topology[pkgdom], 0, sizeof(x86_topology[pkgdom]));
+>  	}
 
-Add the sound card node with tested playback over WSA8835 speakers,
-digital on-board mics along with wcd9370 headset playabck and record.
+Oh gawd, and you all really think this is better than dynamically
+creating that array?
 
-Signed-off-by: Mohammad Rafi Shaik <quic_mohs@quicinc.com>
-Co-developed-by: Prasad Kumpatla <quic_pkumpatl@quicinc.com>
-Signed-off-by: Prasad Kumpatla <quic_pkumpatl@quicinc.com>
----
- arch/arm64/boot/dts/qcom/qcm6490-idp.dts | 84 ++++++++++++++++++++++++
- 1 file changed, 84 insertions(+)
-
-diff --git a/arch/arm64/boot/dts/qcom/qcm6490-idp.dts b/arch/arm64/boot/dts/qcom/qcm6490-idp.dts
-index 468f5f9c0779..acc338e9b60a 100644
---- a/arch/arm64/boot/dts/qcom/qcm6490-idp.dts
-+++ b/arch/arm64/boot/dts/qcom/qcm6490-idp.dts
-@@ -757,6 +757,90 @@ &sdhc_2 {
- 	cd-gpios = <&tlmm 91 GPIO_ACTIVE_LOW>;
- };
- 
-+&sound {
-+	compatible = "qcom,qcm6490-idp-sndcard";
-+	model = "qcm6490-idp-snd-card";
-+
-+	audio-routing = "SpkrLeft IN", "WSA_SPK1 OUT",
-+			"SpkrRight IN", "WSA_SPK2 OUT",
-+			"IN1_HPHL", "HPHL_OUT",
-+			"IN2_HPHR", "HPHR_OUT",
-+			"AMIC2", "MIC BIAS2",
-+			"TX DMIC0", "MIC BIAS1",
-+			"TX DMIC1", "MIC BIAS2",
-+			"TX DMIC2", "MIC BIAS3",
-+			"TX SWR_ADC1", "ADC2_OUTPUT",
-+			"VA DMIC0", "VA MIC BIAS3",
-+			"VA DMIC1", "VA MIC BIAS3",
-+			"VA DMIC2", "VA MIC BIAS1",
-+			"VA DMIC3", "VA MIC BIAS1";
-+
-+	wsa-dai-link {
-+		link-name = "WSA Playback";
-+
-+		codec {
-+			sound-dai = <&left_spkr>, <&right_spkr>,
-+				    <&swr2 0>, <&lpass_wsa_macro 0>;
-+		};
-+
-+		cpu {
-+			sound-dai = <&q6apmbedai WSA_CODEC_DMA_RX_0>;
-+		};
-+
-+		platform {
-+			sound-dai = <&q6apm>;
-+		};
-+	};
-+
-+	wcd-playback-dai-link {
-+		link-name = "WCD Playback";
-+
-+		codec {
-+			sound-dai = <&wcd9370 0>, <&swr0 0>, <&lpass_rx_macro 0>;
-+		};
-+
-+		cpu {
-+			sound-dai = <&q6apmbedai RX_CODEC_DMA_RX_0>;
-+		};
-+
-+		platform {
-+			sound-dai = <&q6apm>;
-+		};
-+	};
-+
-+	wcd-capture-dai-link {
-+		link-name = "WCD Capture";
-+
-+		codec {
-+			sound-dai = <&wcd9370 1>, <&swr1 0>, <&lpass_tx_macro 0>;
-+		};
-+
-+		cpu {
-+			sound-dai = <&q6apmbedai TX_CODEC_DMA_TX_3>;
-+		};
-+
-+		platform {
-+			sound-dai = <&q6apm>;
-+		};
-+	};
-+
-+	va-dai-link {
-+		link-name = "VA Capture";
-+
-+		codec {
-+			sound-dai = <&lpass_va_macro 0>;
-+		};
-+
-+		cpu {
-+			sound-dai = <&q6apmbedai VA_CODEC_DMA_TX_0>;
-+		};
-+
-+		platform {
-+			sound-dai = <&q6apm>;
-+		};
-+	};
-+};
-+
- &swr0 {
- 	status = "okay";
- 
--- 
-2.34.1
-
+This is quite terrible.
 
