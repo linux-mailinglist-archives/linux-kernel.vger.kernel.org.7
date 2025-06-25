@@ -1,205 +1,264 @@
-Return-Path: <linux-kernel+bounces-702458-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-702460-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id AB471AE82B1
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Jun 2025 14:27:51 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id D1DE0AE82B0
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Jun 2025 14:27:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C34D53BC512
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Jun 2025 12:26:41 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5E8401C20E17
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Jun 2025 12:27:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 963372620D2;
-	Wed, 25 Jun 2025 12:26:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 19CDF25F996;
+	Wed, 25 Jun 2025 12:26:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="UxzgGl28"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.21])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=9elements.com header.i=@9elements.com header.b="LKGkajmC"
+Received: from mail-wr1-f53.google.com (mail-wr1-f53.google.com [209.85.221.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2DCF92620C6;
-	Wed, 25 Jun 2025 12:25:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.21
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BD30425EF82
+	for <linux-kernel@vger.kernel.org>; Wed, 25 Jun 2025 12:26:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750854359; cv=none; b=sjJfe6fu563zjoaMnR56x9F8fTjJOt3znFdUkMBVdjwBqX0Toeb+wN09RBpMAjPIA9p5cnhUT+9aImMiPPQkWH/+7yq3Ua9BUIAL95dGp4wTUj6cUK4NpVWg7hbgysWnLQuae9myGludAPfYHu9X2tw32oNzIjCGLTSFasd9Dcc=
+	t=1750854378; cv=none; b=u9qReu9581oFy9naBrMkJF5K5f18YCwRnk1atzmw7/4UOnramO6QSsGi+4gY/OHhY3gushyCOY/pahrtWB0x12SkHp9KKlzAXYdo6lwTfa4fn/2bTq+JyfvH7MW11blq+48Q2c6srdo78esvX9wMqKz1tlw9GT0ycXPczEkjjrc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750854359; c=relaxed/simple;
-	bh=UelFFzS6oG348I5p+iwzQ7UsbLQUt8E4BBEkP+5q0xE=;
-	h=From:Date:To:cc:Subject:In-Reply-To:Message-ID:References:
-	 MIME-Version:Content-Type; b=bVVglwwRCNP+bfWUUAAAURIR305HMRAKyT55Eio53pc7pFiXndwWv92Kty22ig9gT3lzThXAZtZVG/foCLQfVc6L9tgo6LIS/XCbrmdsF9uNr7sLcyujxPjWZm9b2mLe78URGapUjxDdB1nLubYrsNdQeJFmokYsnk3ko+Nhb5U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=UxzgGl28; arc=none smtp.client-ip=198.175.65.21
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1750854358; x=1782390358;
-  h=from:date:to:cc:subject:in-reply-to:message-id:
-   references:mime-version;
-  bh=UelFFzS6oG348I5p+iwzQ7UsbLQUt8E4BBEkP+5q0xE=;
-  b=UxzgGl289mI74ztyE2fLmrW1ZUM/6b6qqF6NmPBJN9qMUugEA+J7EhUI
-   Ue2oPIqyhQQDK0G/AhsWdhHC3IbftHSZdPEAiZaehq7gN2KzKNrNp1edf
-   N/AjTifabSvAhpkFAGNs+zXfnqmiXfBFWFMqVJeovMshzmlU5uAKIR9o5
-   a+Irjb2CJp9pUsxlFbzCdGgCD9JY5hpl1FdLP5/bJssxvDDm+rubd1d7L
-   aMcAqHfh0LYQpZBYD4B9PhI9ZGGSh6YgjGs5nPJDmUrwwUnoF5GBx3zFz
-   1lby0iRRBSVQdsVNxd2FcliHtUuBeA5cxWFFAuzMdW8FlupxOObYwMLaf
-   w==;
-X-CSE-ConnectionGUID: zL2FNZxoSq+VmBNQU/n6Ag==
-X-CSE-MsgGUID: HvNEZM/iTwG0xKgqV/l1zg==
-X-IronPort-AV: E=McAfee;i="6800,10657,11474"; a="52986242"
-X-IronPort-AV: E=Sophos;i="6.16,264,1744095600"; 
-   d="scan'208";a="52986242"
-Received: from orviesa004.jf.intel.com ([10.64.159.144])
-  by orvoesa113.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 25 Jun 2025 05:25:58 -0700
-X-CSE-ConnectionGUID: WMV3rIyxTsCWayKt9r5iZQ==
-X-CSE-MsgGUID: +5mhL3uxRK24tvclepUM3w==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.16,264,1744095600"; 
-   d="scan'208";a="156776317"
-Received: from ijarvine-mobl1.ger.corp.intel.com (HELO localhost) ([10.245.244.13])
-  by orviesa004-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 25 Jun 2025 05:25:56 -0700
-From: =?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
-Date: Wed, 25 Jun 2025 15:25:52 +0300 (EEST)
-To: Xiang Shen <turyshen@gmail.com>
-cc: Hans de Goede <hansg@kernel.org>, acelan.kao@canonical.com, 
-    platform-driver-x86@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] platform/x86: intel-vbtn: Fix code style issues
-In-Reply-To: <rzzqmdogpedswwzdjutskz2ik5duik7c2u433csogl5g4rptdr@nrzck7xdvdcg>
-Message-ID: <2f19dda5-a814-8572-2d5f-e851d6a747d4@linux.intel.com>
-References: <20250620003849.54442-1-turyshen@gmail.com> <fdb9c21f-aada-498a-92ec-bc48aceeb76e@kernel.org> <hlsev7jydwejtdlyay6e6f53yorf2aguhxykscuukqfxugg7ff@hmmpcg7s4sx6> <83b27cc9-3544-4fd5-4ece-a46f422ec6fe@linux.intel.com>
- <rzzqmdogpedswwzdjutskz2ik5duik7c2u433csogl5g4rptdr@nrzck7xdvdcg>
+	s=arc-20240116; t=1750854378; c=relaxed/simple;
+	bh=RJylVnltnYi62l6fnhJri2c9ENd6bS6fxc04Feonn0c=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=AO3Nmjj4uo+RDoTg4KE5vY7WOE3xX2+qq3pcEnZOpvLjpZip9vn5uheG2XX3FyT+8Rl+GlH8IoPI0pr2nQLgmOtldgT7KCEzNoHtadn1nYCHFqnCT7YbWRb/K54o4Liho1u1UN5YGbA07w/HXkuWHfX1y0o64xbXJ2UbbhpaMlE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=9elements.com; spf=pass smtp.mailfrom=9elements.com; dkim=pass (2048-bit key) header.d=9elements.com header.i=@9elements.com header.b=LKGkajmC; arc=none smtp.client-ip=209.85.221.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=9elements.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=9elements.com
+Received: by mail-wr1-f53.google.com with SMTP id ffacd0b85a97d-3a54700a46eso999447f8f.1
+        for <linux-kernel@vger.kernel.org>; Wed, 25 Jun 2025 05:26:15 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=9elements.com; s=google; t=1750854374; x=1751459174; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=MK0Hj58r5vfZoNmYyXjSjcoja0uU5HmHWhKlrdtiqP4=;
+        b=LKGkajmCW/fwULw1ZQDjhfECiNC0U5PjRcuaMYSeSnD8jf+2cpo0m2AlJ1EwwNna+k
+         z9yBswGEZrUIi1EyM6gFzDl0P3TNg5qEuiso1tnveHzm5Hx4E0paIuyE9oWXfaVtcXAx
+         D/zrA4FGW/N3vuhUerU3vzzEJdFjlAaR9ORf9grj5+X5mx7msX7qgrHxc0/OjEwc4aDt
+         sVfGIzzUEmgX5ELs1sy8OOKVUw0lDHOhAZIWJ72R8XyX5bVr2WxSxauE95eT51dEfC7Y
+         OvTRf3dkd/6Ar78PFWjsP3/ozJJPP3rfPAmX3oBRJWAdsUOY34Csw7DJT2VT2d4hLfar
+         xGQA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1750854374; x=1751459174;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=MK0Hj58r5vfZoNmYyXjSjcoja0uU5HmHWhKlrdtiqP4=;
+        b=ZDFOkWg3x8kUwa0765PSGia35/LgbVW+wGYIOx0k4fHmSqPdVnrAHIfVRq28P+RUlf
+         /In9h7RYBvCDphtG/i0564ALe0vMEgFpZRvYJyvPuafeq0LeTz0zPWWJk+HGP+7eAVgj
+         cnDfbRA5GzYmMrHuj8lLkQ2iLVOszW+neTrKry1Jccmzq5pxxZq2eAD73jsnx0pBxjJK
+         61d7n0mFSot65LKyAfk3VZf+dvs/280gTjx7b1+fAYTaF2kGjEt9+C188BwN5NR2f86e
+         WjLlxPjTMvrWw3rnbqCLVpMBp5oP1t5VVL+u409zQ7zLmhf3SeVR1FzFksyYRSyl+SG9
+         KAqw==
+X-Forwarded-Encrypted: i=1; AJvYcCUB4kRJrW5eTY80rmk++kW93BZDU+ai5XL0xTo1qqiQi0V8aRfIMIdMcGirYhrXhGjwxVuFNtneyNAXtt8=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyiASrg4aOO86+rram65xgIieUNJvFp+TNmWeWuLsq1uc+t7Kju
+	T6+lu7/rKk9irwesJ9azhN9doxA8rvHl4yPmtW8uEhdfWWYzw8l9SrIDFuhlBdQbunJH96Kt4Gd
+	8xWw=
+X-Gm-Gg: ASbGncujfipeeo4tY56yRHipsS5qcnn8h4HMh8KORV+ny/csMWDaaFBHGfsjwBOXPiO
+	R8VrlXf8vvBrrfNZsamXYYNdYUjSJouZDdRkUQTtCnacYVj/MWBPC34grlw89t6TYWAvyMfwR1V
+	CTMDH4pH8Lu38iqFI/778KgP64586TFUCvr8CEWTaC24aec33uxf5aD+GGI6IJ4okCUlFtjp3rD
+	Ug0jHmq7GEJjW1+e2mwRSuMf1RUzL4T0esDeL1dvGponfYG1fB2nWLMcyNY2XEhDIJxPHBJsHNJ
+	Mwi6aLQ+iqOTr9ZNZBZG/AUWafgMRZDSXBRGCE7cdLm26OU4+ki0N30topYdUeFupGPqrOjcv59
+	rYkxBzsxm+gsH2dD2ChiOgkylP8yCR6Sj/J2Nebmzsg==
+X-Google-Smtp-Source: AGHT+IE0ZRp8hz87yz6pSXLfSGUZeMtxz5hwGB1i4LKMJooPymaYKx+TBLnM1kArAooUHdH2EKfAnw==
+X-Received: by 2002:a05:6000:4b1a:b0:3a3:621a:d3c5 with SMTP id ffacd0b85a97d-3a6ed62eb07mr2151898f8f.19.1750854373878;
+        Wed, 25 Jun 2025 05:26:13 -0700 (PDT)
+Received: from cyber-t14sg4 (ip-078-094-000-050.um19.pools.vodafone-ip.de. [78.94.0.50])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4537c3bf576sm24715685e9.0.2025.06.25.05.26.13
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 25 Jun 2025 05:26:13 -0700 (PDT)
+Date: Wed, 25 Jun 2025 14:26:11 +0200
+From: Michal Gorlas <michal.gorlas@9elements.com>
+To: Tzung-Bi Shih <tzungbi@kernel.org>
+Cc: Brian Norris <briannorris@chromium.org>,
+	Julius Werner <jwerner@chromium.org>, linux-kernel@vger.kernel.org,
+	chrome-platform@lists.linux.dev,
+	Marcello Sylvester Bauer <marcello.bauer@9elements.com>
+Subject: Re: [PATCH v2 2/3] firmware: coreboot: loader for Linux-owned SMI
+ handler
+Message-ID: <aFvq49ODR3XfcwZJ@cyber-t14sg4>
+References: <20250616-coreboot-payload-mm-v2-0-5d679b682e13@9elements.com>
+ <20250616-coreboot-payload-mm-v2-2-5d679b682e13@9elements.com>
+ <aFuQHqSd9kT87tsF@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/mixed; boundary="8323328-1185872638-1750854352=:944"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <aFuQHqSd9kT87tsF@google.com>
 
-  This message is in MIME format.  The first part should be readable text,
-  while the remaining parts are likely unreadable without MIME-aware tools.
+On Wed, Jun 25, 2025 at 05:58:54AM +0000, Tzung-Bi Shih wrote:
+> How about repharse the message to something like:
+> 
+>     Load Linux-owned SMI handler:
+>     - Place Linux-owned SMI handler in ...
+>     - Inform coreboot the location of Linux-owned SMI handler via SMI ...
+> 
+>     On success, the Linux-owned SMI handler takes over all upcoming SMIs.
+> 
 
---8323328-1185872638-1750854352=:944
-Content-Type: text/plain; charset=iso-8859-1
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+Yep, will do.
 
-On Wed, 25 Jun 2025, Xiang Shen wrote:
+> > diff --git a/drivers/firmware/google/Makefile b/drivers/firmware/google/Makefile
+> > [...]
+> > +
+> > +# LinuxBootSMM related.
+> > +payload-mm-$(CONFIG_COREBOOT_PAYLOAD_MM)	:= mm_loader.o mm_blob.o
+> > +
+> > +subdir-						:= mm_handler
+> 
+> subdir-$(CONFIG_COREBOOT_PAYLOAD_MM)?
+> 
+Right.
 
-> On Tue, Jun 24, 2025 at 01:35:57PM +1000, Ilpo J=E4rvinen wrote:
-> > On Sun, 22 Jun 2025, Xiang Shen wrote:
-> > > On Fri, Jun 20, 2025 at 12:00:03PM +1000, Hans de Goede wrote:
-> > > > On 20-Jun-25 2:38 AM, Xiang Shen wrote:
-> > > > > Fix checkpatch code style errors:
-> > > > >
-> > > > > ERROR: do not use assignment in if condition
-> > > > > +=09if ((ke =3D sparse_keymap_entry_from_scancode(priv->buttons_d=
-ev,
-> > > event))) {
-> > > > >
-> > > > > ERROR: do not use assignment in if condition
-> > > > > +=09} else if ((ke =3D
-> > > sparse_keymap_entry_from_scancode(priv->switches_dev, event))) {
-> > > > >
-> > > > > Signed-off-by: Xiang Shen <turyshen@gmail.com>
-> > > >
-> > > > Thank you for your patch, but this change really does not make
-> > > > the code more readable.
-> > > >
-> > > > The contrary the suggested changes are making the code harder
-> > > > to read, so NACK.
-> > > >
-> > > > Note checkpatch is just a tool, sometimes there are good reasons
-> > > > to deviate from the style checks done by checkpatch.
-> > > >
-> > > > Next time when submitting a patch to fix checkpatch issues please
-> > > > take a look at the resulting code after the patch and only submit
-> > > > the patch upstream if it actually is an improvement.
-> > > >
-> > > > Regards,
-> > > >
-> > > > Hans
-> > > >
-> > > Hi Hans,
-> > >=20
-> > > Thanks for the feedback.
-> > >=20
-> > > That's fine if breaking the "rule" is the only way to keep the file
-> > > readable.
-> > >=20
-> > > However, there are only three files (x86/sony-laptop.c and
-> > > x86/dell/dell_rbu.c) out of 273 files in the whole drivers/platform
-> > > folder that have such an error.
-> >=20
-> > Hi,
-> >=20
-> > Please don't call correct code "error" even if checkpatch may label it =
-as
-> > such. The goal is NOT and will never be to have zero checkpatch warning=
-s.
-> >=20
-> > The fact that the checkpatch "rule" is broken only a few times does not
-> > mean those 3 places have a problem, it just tells it's good rule for th=
-e
-> > general case. So I won't accept using such numbers as a leverage agains=
-t
-> > the few places just for the sake of silencing checkpatch.
-> >=20
->
-> I just thought there must be a reason that the checkpatch categories find=
-ings
-> as "ERROR", "WARNING" and "CHECK".
+> > +obj-$(CONFIG_COREBOOT_PAYLOAD_MM)		+= payload-mm.o
+> > +
+> > +$(obj)/mm_blob.o: $(obj)/mm_handler/handler.bin
+> > +
+> > +$(obj)/mm_handler/handler.bin: FORCE
+> > +	$(Q)$(MAKE) $(build)=$(obj)/mm_handler $@
+> 
+> mm_handler/ isn't visible to this patch. Separate them into the following
+> patch of series?
+> 
+> > diff --git a/drivers/firmware/google/mm_blob.S b/drivers/firmware/google/mm_blob.S
+> > [...]
+> > +SYM_DATA_START(mm_blob)
+> > +	.incbin	"drivers/firmware/google/mm_handler/handler.bin"
+> > +SYM_DATA_END_LABEL(mm_blob, SYM_L_GLOBAL, mm_blob_end)
+> > +
+> > +SYM_DATA_START(mm_relocs)
+> > +	.incbin	"drivers/firmware/google/mm_handler/handler.relocs"
+> > +SYM_DATA_END(mm_relocs)
+> 
+> mm_handler/ isn't visible to this patch. Separate them into the following
+> patch of series?
+> 
 
-The checkpatch change submitter just picked one of the levels. They're=20
-humans too. :-)
+Would it make sense then to merge patch 2/3 and 3/3 into one? mm_loader
+depends on mm_blob, and mm_blob depends on mm_handler/ being visible.
+I wanted to split these initially as the 3rd patch is already terrible
+to read because of all the assembly code in mm_handler/. But if it makes
+sense to have them as one patch, I'll do that.
 
-> Sometimes the number does make sense and means the vast majority
-> follow the widely accepted "rule".
->
-> Curiously, isn't it the contributor's due diligence to pass checkpatch
-> in the first place before sending?
+> > diff --git a/drivers/firmware/google/mm_loader.c b/drivers/firmware/google/mm_loader.c
+> > [...]
+> > +#include <linux/module.h>
+> > +#include <linux/init.h>
+> > +#include <linux/cpu.h>
+> > +#include <linux/delay.h>
+> > +#include <linux/gfp.h>
+> > +#include <linux/mm.h>
+> > +#include <linux/slab.h>
+> > +#include <linux/device.h>
+> 
+> Please review again if it really needs to include the headers. Does it need
+> to include cpu.h, mm.h, and slab.h?
+> 
+> Also sort them alphabetically.
+> 
 
-Hey, that code you're changing is not being submitted. We don't want to=20
-waste our time on "fixing" checkpatch warnings on existing code when the=20
-"fix" results in worse readability that before.
+Right, I forgot to clean these up, my bad.
 
-Also, if you would be submitting a patch and checkpatch suggest you=20
-to make the patch worse, please don't follow checkpatch's advice even in=20
-that case!
+> > +struct mm_header *mm_header;
+> > +static void *shared_buffer;
+> > +static size_t blob_size;
+> > +static struct lb_pld_mm_interface_info *mm_cbtable_info;
+> > +struct mm_info *mm_info;
+> 
+> No. Please allocate a driver specific struct and access it via
+> dev_set_drvdata() and dev_get_drvdata() if the context needs to be kept.
+> 
 
-Checker tools are there to help find potential issues, not rulebooks. This=
-=20
-is often overlooked by many checker tool focused developers and results in=
-=20
-low quality patches (there are exceptions too where they developer really=
-=20
-tries to understand all the related code to see if the change makes sense=
-=20
-/ improves things or not).
+Yep will do.
 
-> Should any objection, submit a patch to
-> checkpatch itself,
-> instead of sneaking into the upstream quietly for the sake of "readabilit=
-y".
->
-> > > Perhaps there are other approaches to make them more readable without
-> > > breaking the rule.
-> >=20
-> > Perhaps, but I'm not sure the effort spent to find one is worthwhile
-> > investment.
-> >=20
->=20
-> Indeed, that's precisely why it might be worth sacrificing a bit of
-> "readability".
+> > +static int trigger_smi(u64 cmd, u64 arg, u64 retry)
+> > +{
+> > +	u64 status;
+> > [...]
+> > +
+> > +	if (status == cmd || status == PAYLOAD_MM_RET_FAILURE)
+> > +		status = PAYLOAD_MM_RET_FAILURE;
+> > +	else
+> > +		status = PAYLOAD_MM_RET_SUCCESS;
+> 
+> No. Please use -errno in the kernel.
+> 
 
-Please stop trying to sneak your subpar change in.
+In which line here exactly? In the conditional statement I explicitly
+check for RAX (and hence status) being 1. Not sure if status == EPERM
+would make any sense here. I guess you meant specifically 
+status = PAYLOAD_MM_RET_FAILURE? Then what would be appropriate -errno?
+I think it could be -EREMOTEIO or -EIO, since the APMC SMI which
+trigger_smi does is an I/O write. But I am not sure if that's the
+appropriate errno.
 
-NO, this a hard NO from the acting maintainer. We'll not be accepting=20
-misguided changes that are to silence ANY checker that should have know=20
-better (those checkers will never learn enough to be relied 100% so=20
-please stop spreading such illusion).
+> > +static int get_mm_info(struct coreboot_device *dev)
+> > +{
+> > +	mm_cbtable_info = &dev->mm_info;
+> > +	if (mm_cbtable_info->tag != LB_TAG_PLD_MM_INTERFACE_INFO)
+> > +		return -ENXIO;
+> > +
+> > +	mm_info = devm_kzalloc(&dev->dev, sizeof(*mm_info), GFP_KERNEL);
+> > +	if (!mm_info)
+> > +		return -ENOMEM;
+> > +
+> > +	mm_info->revision = mm_cbtable_info->revision;
+> > +	mm_info->requires_long_mode_call =
+> > +		mm_cbtable_info->requires_long_mode_call;
+> > +	mm_info->register_mm_entry_command =
+> > +		mm_cbtable_info->register_mm_entry_command;
+> 
+> Does it really need to copy the data from `&dev->mm_info`?
+> 
 
+Not necessarily, the concept of copying the data made sense with v1
+patches where the "parser" was in separate module, and was exporting
+mm_info to mm_loader. I think it would be sufficient here to get rid of
+get_mm_info and just let mm_loader_probe check for the tag:
 
---=20
- i.
+	mm_cbtable_info = &dev->mm_info;
+	if (mm_cbtable_info->tag != LB_TAG_PLD_MM_INTERFACE_INFO)
+		return -ENXIO;	
 
---8323328-1185872638-1750854352=:944--
+> > +
+> > +	u32 entry_point;
+> > +
+> > +	entry_point = place_handler(&dev->dev);
+> > +
+> > +	if (register_entry_point(&dev->dev, mm_info, entry_point)) {
+> > +		dev_warn(&dev->dev, ": registering entry point for MM payload failed.\n");
+> > +		return -1;
+> 
+> Please use -errno in the kernel. -ENOENT or -ENOTSUPP?
+> 
+
+Yep. -ENOTSUPP fits here.
+
+> > +	}
+> > +
+> > +	/*
+> > +	 * Gives SMI some time in case it takes longer than expected.
+> > +	 * Only useful on real hardware (tested on RaptorLake), not needed on emulation.
+> > +	 */
+> > +	mdelay(100);
+> 
+> This looks weird. Are there some ways for Linux to be aware of the SMI has
+> completed?
+
+Not in a straight forward fashion. On Intel SoCs we could read MSR_SMI_COUNT
+[1] before and after sending an SMI, and wait till it increments. I am
+not aware about any unified way that works for AMD SoCs. However, so far
+none of the AMD boards supported by coreboot was tested with MM payload,
+so to make it Intel-only in v3 is not a bad idea.
+
+[1]: https://elixir.bootlin.com/linux/v6.16-rc3/source/arch/x86/include/asm/msr-index.h#L880
 
