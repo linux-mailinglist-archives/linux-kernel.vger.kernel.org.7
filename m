@@ -1,214 +1,124 @@
-Return-Path: <linux-kernel+bounces-702527-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-702529-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7E42AAE8376
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Jun 2025 14:58:45 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id AB89AAE8386
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Jun 2025 15:01:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4FC1D16CC57
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Jun 2025 12:58:43 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 86B186A3074
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Jun 2025 12:58:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E07132609EC;
-	Wed, 25 Jun 2025 12:58:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D15FB261586;
+	Wed, 25 Jun 2025 12:59:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="H0RQVztb"
-Received: from out-177.mta1.migadu.com (out-177.mta1.migadu.com [95.215.58.177])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="YgD2rISE"
+Received: from mail-pg1-f201.google.com (mail-pg1-f201.google.com [209.85.215.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5D2AD1E4AE
-	for <linux-kernel@vger.kernel.org>; Wed, 25 Jun 2025 12:58:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E0AD825E44D
+	for <linux-kernel@vger.kernel.org>; Wed, 25 Jun 2025 12:59:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750856316; cv=none; b=a2Z2GKUgf3NKZAxuPkH4qvWQ/17KYq0tNT2au71AkaXM3/vYpiTPUSAEOp2cdK+i6W7wBiVt+qCDibk5VHxUCCalRgo1U3VRVingzAW9LhsQpCPMylZHYN0snl5agwRll0SEF6S5OjFzg8eES67jnwLcOCi7PfkHARfthodL7RY=
+	t=1750856349; cv=none; b=ubsLk0KPLF+V8aJGvpTewErYpzztwnPbjVy1m6rmFrjDOq/qW0q78kbK/kQxniQ+jNn1F7nbBJiCFXnUwTgtZs15/xsifQlucuSz+sqPI4yiSRmIqFQM5wOvBUxd2dWIAv9gvNrmvL1q9LGDJ/ymoaLUvBYKYThjVNt4Q53+Zuk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750856316; c=relaxed/simple;
-	bh=2hoCCCvo0qokdy2neXBSaKGM9DPi8z7fbQliqN7ob/o=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=UDUsykw51nYTR8vD0Ul5C3nmt+yeK44RrjBR0fcaXvAcabvYNSPz72J4t35bcos8YNcNH79kVGeonM+N2UEo028OZClvtyF6oCwygdA62UtdtLHm4rZjsvG+wtI1okXZeIPA/NOQr4p4EG0MscKvwfTslucqxo0EnzVfXEI4LJQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=H0RQVztb; arc=none smtp.client-ip=95.215.58.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Message-ID: <f1ee8679-88b4-4712-b2ed-c3eec179b430@linux.dev>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1750856311;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=lY4C+H8rjCf0tB+LlRLUjdQXLKGrHdCeK+5aYVx8K34=;
-	b=H0RQVztbREsh2CeBNzfiHRG3ArsNptNh9e4vAD7piCsogyawFZAZ0h7oX5wxSxKudfeOx8
-	zmgi8lKBBJDJyX+yA3Bd/pjb8f4zMM6qXYyQr+ccBk4iLesagodds3gfB2bKoUezfMEyH5
-	9KebcsTF3oF2ez4v96G72qSVlbShipA=
-Date: Wed, 25 Jun 2025 20:58:12 +0800
+	s=arc-20240116; t=1750856349; c=relaxed/simple;
+	bh=omSb4qtffp8wKfjxeF+cs4XkxHLiftOc0485WaPmKr4=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=X15sU6ZZdvTZmdtCoj4eDLhZDZKUh0zZ7bl3d/W14aZ5jryaTjR38b43wLYY640jNtz9Bz4Yqn5/QtnTGZ2aWwEcr9NYcamJI4O9YTUwlMlEqgg2RNUGBDQHg3Yglr8NB+odjZqNTTCENc8ibFbvQiCc4wiihIoxJ1J12CMfo/w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=YgD2rISE; arc=none smtp.client-ip=209.85.215.201
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
+Received: by mail-pg1-f201.google.com with SMTP id 41be03b00d2f7-b3184712fd8so5148984a12.3
+        for <linux-kernel@vger.kernel.org>; Wed, 25 Jun 2025 05:59:06 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1750856346; x=1751461146; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:from:to:cc:subject:date:message-id:reply-to;
+        bh=qxIJ4aQC+IjPoRxmkOWSPu5mR2v1UrY8osqVxd/rWGo=;
+        b=YgD2rISEmIjCkeWL/GZXsDdayMEREwYQ72YwmK8Q7XiBgVMKgtr1mKgNy/agb5bljK
+         1bPr8VlnBGqZ3DtaHo3CB9JSTzgrfia6iZWyP0ssZ9+VFW04VKYN1z11Tu8mdnWTryZ3
+         cu7JgJX42jDoQoAGaOVcp/6Vc6/mcwh2lCNC1b+RD5ifEMeqR6+zVW5ShTCH6fzDrk9U
+         1LafOplOV0jW+STFin7QukSMGb/W9HCwRt900K+DpsAucaBDkmV77m+WegZmHvcAbMug
+         k/K1XjdTH0TI5GAh7gaZMEk0HR1eHW63xpxicPOm8aO9ot3lMI0vTOlN/7/ymsHSP9yM
+         M4VQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1750856346; x=1751461146;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=qxIJ4aQC+IjPoRxmkOWSPu5mR2v1UrY8osqVxd/rWGo=;
+        b=IZzojj3qxaCxo8+0hUFDveVy5r3Sg3/ue6ieQSYwbZl11v8+641kak2VazzVSfn3F/
+         Q0NyKV9dnMl3zJfaFm0iuznJ1nL2dARf08kMebumv3sgyd7bKlTLYQwv7hqTePo0eBAq
+         HAMbWxJc2HTwajRhk3J5YVCULKf65InISCQ4UCXSEGuUqZV8INbL3QFYRB2E/4aopBGl
+         cNc8Wgi9/P0MpFVyze9b+IYdQTGl1wA/4evia3onE5pVuESLC3XHHDr9F8lJELjh2SJR
+         IkolzOFEa2897nGhSTlXv/7j5kHl23ZLyUmqvPYRB1qQIX1gdPNVQKbUA69bECozXjK1
+         +yaQ==
+X-Forwarded-Encrypted: i=1; AJvYcCX2pJFDixjPHOSPh1Gq1f6Jf7BoWMwrZtPYqT6Jree5Bu+7bHoohaHB/Bbrnc9zM8u2zfOh2jtElzED6ys=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyOZfnPmFybArg0TQveFa9w9NdSIgIzzUZd2tU/KfQUrJpWLjyp
+	Tk7UxvhWipVhJShtdFnnHKpNkaIqI9JiyrDOa+/op5+x8u8FHwvS6wPN3qrmtW6Ujt/0WRmWKcu
+	1Z0CP6g==
+X-Google-Smtp-Source: AGHT+IEhIwcr6ikR86NXDpgfcAQublPKVJCRuEFifK28YdTxbvKmmfgddvnr2t043GixUvzzZ12CrvVkj/A=
+X-Received: from pjj15.prod.google.com ([2002:a17:90b:554f:b0:311:eb65:e269])
+ (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a17:90b:2f0c:b0:315:9ac2:8700
+ with SMTP id 98e67ed59e1d1-315f269caabmr4382059a91.24.1750856346092; Wed, 25
+ Jun 2025 05:59:06 -0700 (PDT)
+Date: Wed, 25 Jun 2025 05:59:04 -0700
+In-Reply-To: <24675ed2-e3ae-4473-9d8e-acd378da220c@amd.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Subject: Re: [PATCH v4 3/4] mm: Support batched unmap for lazyfree large
- folios during reclamation
-Content-Language: en-US
-To: David Hildenbrand <david@redhat.com>, Barry Song <21cnbao@gmail.com>
-Cc: akpm@linux-foundation.org, baolin.wang@linux.alibaba.com,
- chrisl@kernel.org, kasong@tencent.com, linux-arm-kernel@lists.infradead.org,
- linux-kernel@vger.kernel.org, linux-mm@kvack.org,
- linux-riscv@lists.infradead.org, lorenzo.stoakes@oracle.com,
- ryan.roberts@arm.com, v-songbaohua@oppo.com, x86@kernel.org,
- ying.huang@intel.com, zhengtangquan@oppo.com,
- Lance Yang <ioworker0@gmail.com>
-References: <2c19a6cf-0b42-477b-a672-ed8c1edd4267@redhat.com>
- <20250624162503.78957-1-ioworker0@gmail.com>
- <27d174e0-c209-4851-825a-0baeb56df86f@redhat.com>
- <938c4726-b93e-46df-bceb-65c7574714a6@linux.dev>
- <CAGsJ_4y1GObH-C7R=FQL=UWe3kF6qhKoRqPxNPYx0k7uwocc+g@mail.gmail.com>
- <5ba95609-302b-456a-a863-2bd5df51baf2@redhat.com>
- <CAGsJ_4zSGT05GjxM1H6JwSa5MhgtxaiYVa1Wtvm8+SmYkm=jmQ@mail.gmail.com>
- <6179dd30-5351-4a79-b0d6-f0e85650a926@redhat.com>
- <CAGsJ_4yTH5ngM++e=c+P7g0fXs-QQsOk2oxd1RWa3Qww97Knrw@mail.gmail.com>
- <5db6fb4c-079d-4237-80b3-637565457f39@redhat.com>
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Lance Yang <lance.yang@linux.dev>
-In-Reply-To: <5db6fb4c-079d-4237-80b3-637565457f39@redhat.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-Migadu-Flow: FLOW_OUT
+Mime-Version: 1.0
+References: <20250610175424.209796-1-Neeraj.Upadhyay@amd.com>
+ <20250610175424.209796-4-Neeraj.Upadhyay@amd.com> <20250623114910.GGaFk_NqzGmR81fG8f@fat_crate.local>
+ <24675ed2-e3ae-4473-9d8e-acd378da220c@amd.com>
+Message-ID: <aFvymAS-pXMwkmjX@google.com>
+Subject: Re: [RFC PATCH v7 03/37] x86/apic: KVM: Deduplicate APIC vector =>
+ register+bit math
+From: Sean Christopherson <seanjc@google.com>
+To: Neeraj Upadhyay <Neeraj.Upadhyay@amd.com>
+Cc: Borislav Petkov <bp@alien8.de>, linux-kernel@vger.kernel.org, tglx@linutronix.de, 
+	mingo@redhat.com, dave.hansen@linux.intel.com, Thomas.Lendacky@amd.com, 
+	nikunj@amd.com, Santosh.Shukla@amd.com, Vasant.Hegde@amd.com, 
+	Suravee.Suthikulpanit@amd.com, David.Kaplan@amd.com, x86@kernel.org, 
+	hpa@zytor.com, peterz@infradead.org, pbonzini@redhat.com, kvm@vger.kernel.org, 
+	kirill.shutemov@linux.intel.com, huibo.wang@amd.com, naveen.rao@amd.com, 
+	francescolavra.fl@gmail.com, tiala@microsoft.com
+Content-Type: text/plain; charset="us-ascii"
 
+On Wed, Jun 25, 2025, Neeraj Upadhyay wrote:
+> 
+> 
+> On 6/23/2025 5:19 PM, Borislav Petkov wrote:
+> > On Tue, Jun 10, 2025 at 11:23:50PM +0530, Neeraj Upadhyay wrote:
+> >> diff --git a/arch/x86/include/asm/apic.h b/arch/x86/include/asm/apic.h
+> >> index 23d86c9750b9..c84d4e86fe4e 100644
+> >> --- a/arch/x86/include/asm/apic.h
+> >> +++ b/arch/x86/include/asm/apic.h
+> >> @@ -488,11 +488,14 @@ static inline void apic_setup_apic_calls(void) { }
+> >>  
+> >>  extern void apic_ack_irq(struct irq_data *data);
+> >>  
+> >> +#define APIC_VECTOR_TO_BIT_NUMBER(v) ((unsigned int)(v) % 32)
+> >> +#define APIC_VECTOR_TO_REG_OFFSET(v) ((unsigned int)(v) / 32 * 0x10)
+> > 
+> > Dunno - I'd probably shorten those macro names:
+> > 
+> > APIC_VEC_TO_BITNUM()
+> > APIC_VEC_TO_REGOFF()
+> > 
+> > because this way of shortening those words is very common and is still very
+> > readable, even if not fully written out...
+> > 
+> 
+> Sounds good to me. Will change this in next version (will also wait for Sean's
+> comment on this).
 
-
-On 2025/6/25 20:09, David Hildenbrand wrote:
-> On 25.06.25 13:42, Barry Song wrote:
->> On Wed, Jun 25, 2025 at 11:27 PM David Hildenbrand <david@redhat.com> 
->> wrote:
->>>
->>> On 25.06.25 13:15, Barry Song wrote:
->>>> On Wed, Jun 25, 2025 at 11:01 PM David Hildenbrand 
->>>> <david@redhat.com> wrote:
->>>>>
->>>>> On 25.06.25 12:57, Barry Song wrote:
->>>>>>>>
->>>>>>>> Note that I don't quite understand why we have to batch the 
->>>>>>>> whole thing
->>>>>>>> or fallback to
->>>>>>>> individual pages. Why can't we perform other batches that span 
->>>>>>>> only some
->>>>>>>> PTEs? What's special
->>>>>>>> about 1 PTE vs. 2 PTEs vs. all PTEs?
->>>>>>>
->>>>>>> That's a good point about the "all-or-nothing" batching logic ;)
->>>>>>>
->>>>>>> It seems the "all-or-nothing" approach is specific to the 
->>>>>>> lazyfree use
->>>>>>> case, which needs to unmap the entire folio for reclamation. If 
->>>>>>> that's
->>>>>>> not possible, it falls back to the single-page slow path.
->>>>>>
->>>>>> Other cases advance the PTE themselves, while try_to_unmap_one() 
->>>>>> relies
->>>>>> on page_vma_mapped_walk() to advance the PTE. Unless we want to 
->>>>>> manually
->>>>>> modify pvmw.pte and pvmw.address outside of 
->>>>>> page_vma_mapped_walk(), which
->>>>>> to me seems like a violation of layers. :-)
->>>>>
->>>>> Please explain to me why the following is not clearer and better:
->>>>
->>>> This part is much clearer, but that doesn’t necessarily improve the 
->>>> overall
->>>> picture. The main challenge is how to exit the iteration of
->>>> while (page_vma_mapped_walk(&pvmw)).
->>>
->>> Okay, I get what you mean now.
->>>
->>>>
->>>> Right now, we have it laid out quite straightforwardly:
->>>>                   /* We have already batched the entire folio */
->>>>                   if (nr_pages > 1)
->>>>                           goto walk_done;
->>>
->>>
->>> Given that the comment is completely confusing whens seeing the 
->>> check ... :)
->>>
->>> /*
->>>    * If we are sure that we batched the entire folio and cleared all 
->>> PTEs,
->>>    * we can just optimize and stop right here.
->>>    */
->>> if (nr_pages == folio_nr_pages(folio))
->>>          goto walk_done;
->>>
->>> would make the comment match.
->>
->> Yes, that clarifies it.
->>
->>>
->>>>
->>>> with any nr between 1 and folio_nr_pages(), we have to consider two 
->>>> issues:
->>>> 1. How to skip PTE checks inside page_vma_mapped_walk for entries that
->>>> were already handled in the previous batch;
->>>
->>> They are cleared if we reach that point. So the pte_none() checks will
->>> simply skip them?
->>>
->>>> 2. How to break the iteration when this batch has arrived at the end.
->>>
->>> page_vma_mapped_walk() should be doing that?
->>
->> It seems you might have missed the part in my reply that says:
->> "Of course, we could avoid both, but that would mean performing 
->> unnecessary
->> checks inside page_vma_mapped_walk()."
->  > > That’s true for both. But I’m wondering why we’re still doing the 
-> check,
->> even when we’re fairly sure they’ve already been cleared or we’ve reached
->> the end :-)
-> 
-> :)
-> 
->>
->> Somehow, I feel we could combine your cleanup code—which handles a batch
->> size of "nr" between 1 and nr_pages—with the
->> "if (nr_pages == folio_nr_pages(folio)) goto walk_done" check.
-> 
-> Yeah, that's what I was suggesting. It would have to be part of the 
-> cleanup I think.
-> 
-> I'm still wondering if there is a case where
-> 
-> if (nr_pages == folio_nr_pages(folio))
->      goto walk_done;
-> 
-> would be wrong when dealing with small folios.
-
-We can make the check more explicit to avoid any future trouble ;)
-
-if (nr_pages > 1 && nr_pages == folio_nr_pages(folio))
-     goto walk_done;
-
-It should be safe for small folios.
-
-Thanks,
-Lance
-
-> 
->> In practice, this would let us skip almost all unnecessary checks,
->> except for a few rare corner cases.
->>
->> For those corner cases where "nr" truly falls between 1 and nr_pages,
->> we can just leave them as-is—performing the redundant check inside
->> page_vma_mapped_walk().
-> 
-> I mean, batching mapcount+refcount updates etc. is always a win. If we 
-> end up doing some unnecessary pte_none() checks, that might be 
-> suboptimal but mostly noise in contrast to the other stuff we will 
-> optimize out :)
-> 
-> Agreed that if we can easily avoid these pte_none() checks, we should do 
-> that. Optimizing that for "nr_pages == folio_nr_pages(folio)" makes sense.
-> 
-
+My vote is for the long names.  I find REG_OFFSET in particular to be much more
+self-documenting.  My brain gets there eventually with REGOFF, but I just don't
+see the point in shortening the names.  The only uses where line lengths get a
+bit too long are apic_set_isr() and apic_clear_isr(), and the lines are still
+quite long with the shorter names.
 
