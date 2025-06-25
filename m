@@ -1,270 +1,242 @@
-Return-Path: <linux-kernel+bounces-702178-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-702180-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id AE64FAE7EFA
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Jun 2025 12:21:01 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 82F94AE7F1D
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Jun 2025 12:24:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 76B373A22F1
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Jun 2025 10:20:36 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7405C7B44B2
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Jun 2025 10:22:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 86DFC27F170;
-	Wed, 25 Jun 2025 10:20:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 83C0129B233;
+	Wed, 25 Jun 2025 10:23:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="DkfXbFa+"
-Received: from mail-wr1-f53.google.com (mail-wr1-f53.google.com [209.85.221.53])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="xiGP9DgZ"
+Received: from mail-pj1-f44.google.com (mail-pj1-f44.google.com [209.85.216.44])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DCB1A27605A
-	for <linux-kernel@vger.kernel.org>; Wed, 25 Jun 2025 10:20:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 45F4E27FD74
+	for <linux-kernel@vger.kernel.org>; Wed, 25 Jun 2025 10:23:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750846852; cv=none; b=lttpMExz0OJtwVxVrI/N0YLjr5RUcmjIyFClznMynNI3j64uSO+lHVLJ2H+KDNU9y5CkOXVzRpATPkJCCInTMw8MT8ag7c1DNZhuDKGuBzxdstfOfpzcA8s2C7efCQkFNwLsJhXPCRK0r2E6Z51ltV81Ht50LiZBIZW+dN9DYic=
+	t=1750847000; cv=none; b=MD8EOQL5ePCCfCpnpmQKcIL1JbaxpZhLJjHV/hm6UEs7cn3GZfFBp9z7Ef21hyk70/bm5E/o2h6nuure0wxjd6dWUHD49xryLa8BuEwDoUPV8nhN12ewPHfUlycW01yM8cWQEgGLBj+JSWaVkITTb63scCOftj1XCZfw+0AjCjE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750846852; c=relaxed/simple;
-	bh=yb0VUisRFfpgJ9Ycv+uTDvja7eYb08VTPyrIam8ZUn0=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=BGCS9M/Mg/iH8mnTsBqv9gd9HqgRXqoTXf9OPqppp4oFAUTDjuZj4eURYL9de2wKlSlB/pvKuFazeRdx3yEV7hlcVI0pq4PP7j0dTLAr3S0nQ+48XTuSGr251VTI4OsC5MhlfJbx2g3atjdaj+nN2xIhsxuGH/3otFzGjSEg7KE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=DkfXbFa+; arc=none smtp.client-ip=209.85.221.53
+	s=arc-20240116; t=1750847000; c=relaxed/simple;
+	bh=sLOlO6Ct98dqJEhk/xCShrWRV5yesUPYrAQDpxALhR8=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=RXWVNVROnzpfLQnLm+Sc3ffD169nhR7Hqooc8g0Est4izdQARcasfApJaf/B5kTQjLZlew+y4ahhUaZSUqpkTCKmRY1bILiGsVk+TD44f2PY0Pp2xE+FKx9fcY7An1SZBQnvo9Mv6r+t8guzlD/YNwbVIoltXkltsT93zQeUVng=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=xiGP9DgZ; arc=none smtp.client-ip=209.85.216.44
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wr1-f53.google.com with SMTP id ffacd0b85a97d-3a582e09144so3941580f8f.1
-        for <linux-kernel@vger.kernel.org>; Wed, 25 Jun 2025 03:20:50 -0700 (PDT)
+Received: by mail-pj1-f44.google.com with SMTP id 98e67ed59e1d1-313bb9b2f5bso1709136a91.3
+        for <linux-kernel@vger.kernel.org>; Wed, 25 Jun 2025 03:23:19 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1750846849; x=1751451649; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=rhAAx8z9nS1zfmK+wzXrKni8X7LB0abogxyZPI/1F5Y=;
-        b=DkfXbFa+LmZgm5zZ+ucbCv90LZ7ENH1nbZgMSE3TM+k6EcvR1qHJN4zq5HJ/oRpoAG
-         cbXQYMW5Pfl01QPnyxwqxNu9Rx1LNIDzegb2he3NGiXCTvNmohvwxmD2z/4ur5G0Sf4S
-         qQAlmWE2WkIS1vjNxIL8kFju25M76NU6W/RGN10jWSuYAXTf22kIrVY76agi4pojqqnD
-         mOlcLe43qdJE3gHHv7tbnuc4b+9R+xaJN+jE3zLH/om1RW0niAVjV4RMkQCZnL4bBdmT
-         oAO1SX+oyIRtTF5/Fqfjc12I2Mc3R6a5VfZEgteRD9Om3rE/cGBIPGXOqv7OSCg3vFPy
-         aYlA==
+        d=linaro.org; s=google; t=1750846998; x=1751451798; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=lov9+Zjt7YEZlzXRaxLC1dZ0shHTHM8AduhB9Li5azE=;
+        b=xiGP9DgZC2SU9JfhZYywZ1eNvzpqic6ftLKPCEFNO7uTNt9K9BAD7j4vc90tOHjId0
+         g35L5FOgQyC1v67IbBTqcsDbmCrirG9/E55NrlJ9WhtDGps96sK8UcC2J0ydvSOWeYCD
+         TIs5XVJDjVA/DKX7ThZw4vqYKg0VdXMt1aDBhxG/vdDqcvRrG6/AOQjUpegPF1fc+U1w
+         fHr6C3vSBrDkWg702Xi4SIzNKVlTtYdqGyk23FVPOtLioOEd1cKnhHIOF9v8eQm2WaWi
+         q6Tk0/Lh158M60g7ULZheL2c7oHs3Zd9owEOV/lZ0EaWBBLXrkL5T9JTkk5wPgd8Fvb4
+         MH+w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1750846849; x=1751451649;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=rhAAx8z9nS1zfmK+wzXrKni8X7LB0abogxyZPI/1F5Y=;
-        b=Rije2bcUB8W3x/x/Yg0XWU7cY4gIfr0jtpO7efXy0hKeJU5jrSRsZVdKVQcf/mz0st
-         p1QfkROay1KM6pyLkPAFCxK4lh7gBsGaMBqVmMun/vV0+dKrMUvB1F91Mg1AjD7tvOyv
-         XefTC4gLgfukUKsSj/6TeY02eNS5B6oj+Fj9/QMu8QpTyhUW93kdbukiQP0MIonTlNNv
-         eqzLAodlrOxKhKqcT6N8YVVb4XtkwVgtQNc1OCIpzLxpU/vjm5Y4pO95sLivN5uHJVLt
-         GSNcEBknwSZYSISUtfqkPvW+K4QpvXsoIoXCu8Lkk3MJrSu5Oo6MPNAIRA4x7Ez6hy+k
-         eQlw==
-X-Gm-Message-State: AOJu0Yyh9dDRWNWudzukSvzUr5Yw9AujAliMkBSQVYRX74FPNagdAle8
-	Ureg67Ntp9Cvvt+bX1rYtONi1w5K1MTRt1hqkHSK9jQuvTlDh1vomIX9aT6R5WiON5Q=
-X-Gm-Gg: ASbGncuEg4d8qhDjQXkFOmrJc+Ep3JUdDy2KV/aRsuwrj8LcZkRsluGeTiovPuCSLd0
-	tB7eHryXcsNwvl+qwobakBCeM3YeXGeCwqKvN1GHeDb+F71xLaammcIKMIwGtGmO2qqLazQQsFe
-	XOGo7T5IxvpSIn62pN8RUe22NuwBQ+uHvUnoOmTtIOCMQa0qXTxsNoEr6yIegVpwP4jj2tUYoHz
-	WQxEJ+ehG6XD6kFWSE/I87kIOKSrFO+mYZ+k7xiVuzy299cvthActeka49+QLuSU3WebSmldozT
-	RSGic1Gpv09yN/m50MXXJ3o0JV4OaxXusIc9RIZ2SdxBF1UyE6qLCx1AfqsYDdbJABEcxCVhmRm
-	1Bnm6jiaaOjIXzzx1PNe7UXVYRPrqIJ0Kq0VcnA==
-X-Google-Smtp-Source: AGHT+IECzQ6BbuewhwMNZdgUhrWMpVTzcJ884zO545LKQnQJvupwU/uT7MOKUj4Yh9WaAvXLDontlA==
-X-Received: by 2002:a05:6000:26d2:b0:3a4:d0fe:42b2 with SMTP id ffacd0b85a97d-3a6ed631f38mr1748764f8f.19.1750846849091;
-        Wed, 25 Jun 2025 03:20:49 -0700 (PDT)
-Received: from [192.168.0.35] (188-141-3-146.dynamic.upc.ie. [188.141.3.146])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3a6e8050eb3sm4225374f8f.5.2025.06.25.03.20.48
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 25 Jun 2025 03:20:48 -0700 (PDT)
-Message-ID: <e557503b-ccd5-46e2-b0b6-e8db30ad0ac4@linaro.org>
-Date: Wed, 25 Jun 2025 11:20:47 +0100
+        d=1e100.net; s=20230601; t=1750846998; x=1751451798;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=lov9+Zjt7YEZlzXRaxLC1dZ0shHTHM8AduhB9Li5azE=;
+        b=MJxIOx6BsczeFwYp08yGc+SVeX9sCsRnZQaIxGuWvl+6+6lR++939S0WY7MQ2Zkgcz
+         9GBmr5Y0ObwobzILgxXWnVGJb0S/I8EbmpaS1cb7WllOf8yqkkfDV3eE/yhrncqJsOdx
+         oG/yLPA1ezeK/2EHo6Er0lEa4sZ37CGHubf3Rq7wRjnFU5/o1yB60Xnk8+8pThPaUupd
+         pZLtxB0HT6zo4U+VHaZ5cdjbZNYk1Wgn2yhWrMQgw6GIBqUHMB+ba1ox95h8yWP8CuQN
+         LMw2Q4PtxJzFCZCZsUVaVDsEA2Ql8AeSfrQt/woCe1+oIWq39o37wEGeNtyb+KbgLm+5
+         mDDw==
+X-Forwarded-Encrypted: i=1; AJvYcCWMbueEvHu3OBKQrKEE5uRqGwKMgIqvrL042x7k87/VKiA6mrAojULYuwltCQw4yYqrSWXuJE7RK3t9ON4=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxfyFoLfJPoiRdu+e01Ruh/Sd4aVxJJqWzahkD9MjhzxKlHNt7p
+	KKhm4i+4KiHmhPi5j7G3r0Gcjx7wDBFKbA3RL8shqI8/qstL2Mr1lPFZuMdWfExOdyGWCV+U4fa
+	NoDkmP38cBIzg+vNDOuEb8Nxg6IDSh72X9pkL/FZ1gw==
+X-Gm-Gg: ASbGncvBuQcj3OKMm5crd9xtJmUrpQ6IS/LvBClAiU0ulcCELzc3lh4+KgBAnmU/MhW
+	2nUoqexJ82EAdf8d0t3XckTf9/1nytHCf1+2oVSIjWPgLhSbus7XijU8Nodt72fxsC1jpeJeFgO
+	jcelVGvR1HOW2znCqmS0ShUr/5alwByI3FB1xv9XVyrLDnnRAGgqoh5dSnIUq/2j3J7Xypg6Uyl
+	KYL
+X-Google-Smtp-Source: AGHT+IH8cFi7RC794dO0rUm/Wn+Xr5iwFFDk6akyxaGbFcCJoypTD1oROTeezbQ4/XAXXAvVlHuTWvMZwirdDT+JzDc=
+X-Received: by 2002:a17:90b:2c85:b0:30e:8c5d:8ed with SMTP id
+ 98e67ed59e1d1-315f2671f79mr3611427a91.19.1750846998623; Wed, 25 Jun 2025
+ 03:23:18 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH RFC] timer: of: Create a platform_device before the
- framework is initialized
-To: Daniel Lezcano <daniel.lezcano@linaro.org>, gregkh@linuxfoundation.org
-Cc: linux-kernel@vger.kernel.org, lorenzo.pieralisi@linaro.org,
- Hans de Goede <hansg@kernel.org>,
- =?UTF-8?Q?Ilpo_J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>,
- Rob Herring <robh@kernel.org>, Thomas Gleixner <tglx@linutronix.de>,
- Arnd Bergmann <arnd@arndb.de>, John Stultz <jstultz@google.com>,
- Stephen Boyd <sboyd@kernel.org>, Saravana Kannan <saravanak@google.com>,
- "open list:GENERIC INCLUDE/ASM HEADER FILES" <linux-arch@vger.kernel.org>,
- "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE"
- <devicetree@vger.kernel.org>
-References: <20250625085715.889837-1-daniel.lezcano@linaro.org>
-Content-Language: en-US
-From: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
-In-Reply-To: <20250625085715.889837-1-daniel.lezcano@linaro.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+References: <20250624121426.466976226@linuxfoundation.org>
+In-Reply-To: <20250624121426.466976226@linuxfoundation.org>
+From: Naresh Kamboju <naresh.kamboju@linaro.org>
+Date: Wed, 25 Jun 2025 15:53:07 +0530
+X-Gm-Features: Ac12FXzbsG8H9f0gjBaNzcKx6GHqgVhEAS62P31OdpnQXr-HJ4E-WlndR7XAnXE
+Message-ID: <CA+G9fYuQBPF6C1oJLWrrcjvn6FNqjh0oxcJqJNxe85XtrDNSjA@mail.gmail.com>
+Subject: Re: [PATCH 6.12 000/413] 6.12.35-rc2 review
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: stable@vger.kernel.org, patches@lists.linux.dev, 
+	linux-kernel@vger.kernel.org, torvalds@linux-foundation.org, 
+	akpm@linux-foundation.org, linux@roeck-us.net, shuah@kernel.org, 
+	patches@kernelci.org, lkft-triage@lists.linaro.org, pavel@denx.de, 
+	jonathanh@nvidia.com, f.fainelli@gmail.com, sudipm.mukherjee@gmail.com, 
+	srw@sladewatkins.net, rwarsow@gmx.de, conor@kernel.org, hargar@microsoft.com, 
+	broonie@kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 25/06/2025 09:57, Daniel Lezcano wrote:
-> In the context of the time keeping and the timers, some platforms have
-> timers which need to be initialized very early. It is the case of the
-> ARM platform which do not have the architected timers.
-> 
-> The macro TIMER_OF_DECLARE adds an entry in the timer init functions
-> array at compile time and the function timer_probe is called from the
-> timer_init() function in kernel/time.c
-> 
-> This array contains a t-uple with the init function and the compatible
-> string.
+On Tue, 24 Jun 2025 at 18:00, Greg Kroah-Hartman
+<gregkh@linuxfoundation.org> wrote:
+>
+> This is the start of the stable review cycle for the 6.12.35 release.
+> There are 413 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
+>
+> Responses should be made by Thu, 26 Jun 2025 12:13:28 +0000.
+> Anything received after that time might be too late.
+>
+> The whole patch series can be found in one patch at:
+>         https://www.kernel.org/pub/linux/kernel/v6.x/stable-review/patch-=
+6.12.35-rc2.gz
+> or in the git tree and branch at:
+>         git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable=
+-rc.git linux-6.12.y
+> and the diffstat can be found below.
+>
+> thanks,
+>
+> greg k-h
 
-tuple
+Results from Linaro=E2=80=99s test farm.
+No regressions on arm64, arm, x86_64, and i386.
 
-> 
-> The init function has a device node pointer parameter.
-> 
-> The timer_probe() function browses the of nodes and find the ones
-> matching the compatible string given when using the TIMER_OF_DECLARE
-> macro. It then calls the init function with the device node as a
-> pointer.
-> 
-> But there are some platforms where there are multiple timers like the
+Tested-by: Linux Kernel Functional Testing <lkft@linaro.org>
 
-Don't start a sentence with But.
+## Build
+* kernel: 6.12.35-rc2
+* git: https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-=
+rc.git
+* git commit: 7ea56ae300ce5b67804c356ef4c7dbac6b00241b
+* git describe: v6.12.34-414-g7ea56ae300ce
+* test details:
+https://qa-reports.linaro.org/lkft/linux-stable-rc-linux-6.12.y/build/v6.12=
+.34-414-g7ea56ae300ce
 
-"There are some platforms", "There are platforms" or "Some platforms"
+## Test Regressions (compared to v6.12.32-538-g519e0647630e)
 
-> ARM64 with the architected timers. Those are always initialized very
-> early and the other timers can be initialized later.
-> 
-> For this reason we find timer drivers with the platform_driver
-> incarnation. Consequently their init functions are different, they
-> have a platform_device pointer parameter and rely on the devm_
-> function for rollbacking.
-> 
-> To summarize, we have:
->   - TIMER_OF_DECLARE with init function prototype:
->     int (*init)(struct device_node *np);
-> 
->   - module_platform_driver (and variant) with the probe function
->     prototype:
->     int (*init)(struct platform_device *pdev);
-> 
-> The current situation with the timers is the following:
-> 
->   - Two platforms can have the same timer hardware, hence the same
->     driver but one without alternate timers and the other with multiple
->     timers. For example, the Exynos platform has only the Exynos MCT on
->     ARM but has the architeched timers in addition on the ARM64.
+## Metric Regressions (compared to v6.12.32-538-g519e0647630e)
 
-architected
+## Test Fixes (compared to v6.12.32-538-g519e0647630e)
 
-> 
->   - The timer drivers can be modules now which was not the case until
->     recently. TIMER_OF_DECLARE do not allow the build as a module.
-> 
-> It results in duplicate init functions (one with rollback and one with
-> devm_) and different way to declare the driver (TIMER_OF_DECLARE and
-> module_platform_driver).
-> 
-> This proposed change is to unify the prototyping of the init functions
-> to receive a platform_device pointer as parameter. Consequently, it
-> will allow a smoother and nicer module conversion and a huge cleanup
-> of the init functions by removing all the rollback code from all the
-> timer drivers. It introduces a TIMER_OF_DECLARE_PDEV macro.
+## Metric Fixes (compared to v6.12.32-538-g519e0647630e)
 
-"It introduces" => "This change introduces"
+## Test result summary
+total: 218983, pass: 198252, fail: 5262, skip: 15116, xfail: 353
 
-I think, it would be nice to see an accompanying patch showing how this 
-change achieves that IRL.
+## Build Summary
+* arc: 5 total, 5 passed, 0 failed
+* arm: 139 total, 134 passed, 2 failed, 3 skipped
+* arm64: 57 total, 46 passed, 0 failed, 11 skipped
+* i386: 18 total, 18 passed, 0 failed
+* mips: 34 total, 33 passed, 1 failed
+* parisc: 4 total, 4 passed, 0 failed
+* powerpc: 40 total, 40 passed, 0 failed
+* riscv: 25 total, 21 passed, 2 failed, 2 skipped
+* s390: 22 total, 21 passed, 1 failed
+* sh: 5 total, 5 passed, 0 failed
+* sparc: 4 total, 3 passed, 1 failed
+* x86_64: 49 total, 49 passed, 0 failed
 
-> 
-> If the macro is used a platform_device is manually allocated and
-> initialized with the needed information for the probe
-> function. Otherwise module_platform_driver can be use instead with the
-> same probe function without the timer_probe() initialization.
-> 
-> I don't have an expert knowledge of the platform_device internal
-> subtilitie so I'm not sure if this approach is valid. However, it has
-> been tested on a Rockchip board with the "rockchip,rk3288-timer" and
-> verified the macro and the devm_ rollback work correctly.
-> 
-> Signed-off-by: Daniel Lezcano <daniel.lezcano@linaro.org>
-> Cc: Hans de Goede <hansg@kernel.org>
-> Cc: Ilpo Järvinen <ilpo.jarvinen@linux.intel.com>
-> Cc: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
-> Cc: Rob Herring <robh@kernel.org>
-> Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-> ---
->   drivers/clocksource/timer-probe.c | 61 ++++++++++++++++++++++++++++++-
->   include/asm-generic/vmlinux.lds.h |  2 +
->   include/linux/clocksource.h       |  3 ++
->   include/linux/of.h                |  5 +++
->   4 files changed, 70 insertions(+), 1 deletion(-)
-> 
-> diff --git a/drivers/clocksource/timer-probe.c b/drivers/clocksource/timer-probe.c
-> index b7860bc0db4b..6b2b341b8c95 100644
-> --- a/drivers/clocksource/timer-probe.c
-> +++ b/drivers/clocksource/timer-probe.c
-> @@ -7,13 +7,18 @@
->   #include <linux/init.h>
->   #include <linux/of.h>
->   #include <linux/clocksource.h>
-> +#include <linux/platform_device.h>
->   
->   extern struct of_device_id __timer_of_table[];
-> +extern struct of_device_id __timer_pdev_of_table[];
->   
->   static const struct of_device_id __timer_of_table_sentinel
->   	__used __section("__timer_of_table_end");
->   
-> -void __init timer_probe(void)
-> +static const struct of_device_id __timer_pdev_of_table_sentinel
-> +	__used __section("__timer_pdev_of_table_end");
-> +
-> +static int __init timer_of_probe(void)
->   {
->   	struct device_node *np;
->   	const struct of_device_id *match;
-> @@ -38,6 +43,60 @@ void __init timer_probe(void)
->   		timers++;
->   	}
->   
-> +	return timers;
-> +}
-> +
-> +static int __init timer_pdev_of_probe(void)
-> +{
-> +	struct device_node *np;
-> +	struct platform_device *pdev;
-> +	const struct of_device_id *match;
-> +	of_init_fn_pdev init_func;
-> +	unsigned int timers = 0;
-> +	int ret;
+## Test suites summary
+* boot
+* commands
+* kselftest-arm64
+* kselftest-breakpoints
+* kselftest-capabilities
+* kselftest-cgroup
+* kselftest-clone3
+* kselftest-core
+* kselftest-cpu-hotplug
+* kselftest-cpufreq
+* kselftest-efivarfs
+* kselftest-exec
+* kselftest-fpu
+* kselftest-futex
+* kselftest-gpio
+* kselftest-intel_pstate
+* kselftest-ipc
+* kselftest-kcmp
+* kselftest-kvm
+* kselftest-livepatch
+* kselftest-membarrier
+* kselftest-memfd
+* kselftest-mincore
+* kselftest-mm
+* kselftest-mqueue
+* kselftest-net
+* kselftest-net-mptcp
+* kselftest-openat2
+* kselftest-ptrace
+* kselftest-rseq
+* kselftest-rtc
+* kselftest-seccomp
+* kselftest-sigaltstack
+* kselftest-size
+* kselftest-tc-testing
+* kselftest-timers
+* kselftest-tmpfs
+* kselftest-tpm2
+* kselftest-user_events
+* kselftest-vDSO
+* kselftest-x86
+* kunit
+* kvm-unit-tests
+* lava
+* libgpiod
+* libhugetlbfs
+* log-parser-boot
+* log-parser-build-clang
+* log-parser-build-gcc
+* log-parser-test
+* ltp-capability
+* ltp-commands
+* ltp-containers
+* ltp-controllers
+* ltp-cpuhotplug
+* ltp-crypto
+* ltp-cve
+* ltp-dio
+* ltp-fcntl-locktests
+* ltp-fs
+* ltp-fs_bind
+* ltp-fs_perms_simple
+* ltp-hugetlb
+* ltp-math
+* ltp-mm
+* ltp-nptl
+* ltp-pty
+* ltp-sched
+* ltp-smoke
+* ltp-syscalls
+* ltp-tracing
+* modules
+* perf
+* rcutorture
+* rt-tests-cyclicdeadline
+* rt-tests-pi-stress
+* rt-tests-pmqtest
+* rt-tests-rt-migrate-test
+* rt-tests-signaltest
 
-Small nit.
-
-Reverse Christmas tree the declarations.
-
-> +
-> +	for_each_matching_node_and_match(np, __timer_pdev_of_table, &match) {
-> +		if (!of_device_is_available(np))
-> +			continue;
-> +
-> +		init_func = match->data;
-> +
-> +		pdev = platform_device_alloc(of_node_full_name(np), -1);
-> +		if (!pdev)
-> +			continue;
-
-Shouldn't this be return -ENOMEM;
-
-> +
-> +		ret = device_add_of_node(&pdev->dev, np);
-> +		if (ret) {
-> +			platform_device_put(pdev);
-> +			continue;
-
-Why is this a continue ? you can get -EINVAL and -EBUSY from 
-device_add_of_node() - can/should you really continue this loop after an 
--EINVAL ?
-
-Understood for architected you want to keep going and get the system up 
-at the very least I'd add a noisy message about it.
-
----
-bod
+--
+Linaro LKFT
+https://lkft.linaro.org
 
