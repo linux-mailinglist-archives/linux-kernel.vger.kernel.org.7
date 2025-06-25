@@ -1,96 +1,174 @@
-Return-Path: <linux-kernel+bounces-701607-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-701609-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 56F43AE76F7
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Jun 2025 08:31:02 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id C1497AE76FA
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Jun 2025 08:31:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 004E71BC1335
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Jun 2025 06:31:17 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B29011BC3018
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Jun 2025 06:31:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B28CE1F12E9;
-	Wed, 25 Jun 2025 06:30:54 +0000 (UTC)
-Received: from szxga04-in.huawei.com (szxga04-in.huawei.com [45.249.212.190])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BF3C01F428C;
+	Wed, 25 Jun 2025 06:31:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="kNkVBHV7"
+Received: from mail-pl1-f182.google.com (mail-pl1-f182.google.com [209.85.214.182])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 461F61E22E9;
-	Wed, 25 Jun 2025 06:30:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.190
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9624018A6C4;
+	Wed, 25 Jun 2025 06:31:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750833054; cv=none; b=c5ZNFdmuuCQO7ezdU0bkObfUpFHSyvznpxkr8GgMkDjWK7E3HIw0zRBy0qHzn/Ob8Q8pZQ/A8yhXzT4IexbdaEiosdixr9WsL4Bj95ZXa9j6D33wpVzVOgW2Aj/cIJti2C3TNN66Hte7vDofLIdB1pO9RcH5IEKCdhIMlndDQn4=
+	t=1750833072; cv=none; b=eSJ4ucWVzTxnmXCuYZR7IjTZ3suPDX2xxf7xxNITMIqtQzXhkVITHaGzIlkngrScy8hRAysxQ0KxhBYFVwQzwIQbip8QMbA+x/YDuH7u1FdpalyNpWTXPKT/RHQAqikX9c1vxq9GEL1d9Tm/7bHUt6mArAl4AFzHkHtuiAInmQo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750833054; c=relaxed/simple;
-	bh=0DmpiE86b3h6Tk6TDyy+aBf1mLPeANuLJfPvqq+zFXo=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=NpS5H2HpiuYPM4E7+OsyS9ojlAwoSE6KB/Etyqs6b5wleFqE+ywv0a+j6fSaMW88KXc5SNkwpcIlNKHn/4Q4lDHI0FiepvMkaXV/ajtMMTzIALhJbqEz17nJtPL96pI1RMIDRx61PoPIy/4Ms4KsUCmpElVfdjM4Ec9T0ewUsVs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.190
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.88.214])
-	by szxga04-in.huawei.com (SkyGuard) with ESMTP id 4bRsNS35Zjz2TSr7;
-	Wed, 25 Jun 2025 14:29:12 +0800 (CST)
-Received: from kwepemk100010.china.huawei.com (unknown [7.202.194.58])
-	by mail.maildlp.com (Postfix) with ESMTPS id 89E1C1A016C;
-	Wed, 25 Jun 2025 14:30:49 +0800 (CST)
-Received: from workspace-z00536909-5022804397323726849.huawei.com
- (7.151.123.135) by kwepemk100010.china.huawei.com (7.202.194.58) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Wed, 25 Jun
- 2025 14:30:48 +0800
-From: zhangjianrong <zhangjianrong5@huawei.com>
-To: <michael.jamet@intel.com>, <mika.westerberg@linux.intel.com>,
-	<YehezkelShB@gmail.com>, <andrew+netdev@lunn.ch>, <davem@davemloft.net>,
-	<edumazet@google.com>, <kuba@kernel.org>, <pabeni@redhat.com>,
-	<netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-CC: <guhengsheng@hisilicon.com>, <caiyadong@huawei.com>,
-	<xuetao09@huawei.com>, <lixinghang1@huawei.com>
-Subject: [PATCH] [net] net: thunderbolt: Use correct request type in login/logout request packets
-Date: Wed, 25 Jun 2025 14:30:48 +0800
-Message-ID: <20250625063048.1602018-1-zhangjianrong5@huawei.com>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1750833072; c=relaxed/simple;
+	bh=VWMmEK86o9waci3EB3HNOVJe90ev8J87isxmtuJcslU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ui6Ujfpgx9qEpNK9s3avh8lkgTreXASePLc2eShZb4RLRbUh+c13VPM5yKxDQmNyEjPKS/eCeAPoW7MdHo/nVsbHNlWnilW0YVrDFgLzxcdgJqmFdKMjlE93l9v0Je/Unqx/Vy8kl78EovrxhEsaxt41TkrDMOPBlyXgwMZ3gQg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=kNkVBHV7; arc=none smtp.client-ip=209.85.214.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f182.google.com with SMTP id d9443c01a7336-2352400344aso16349825ad.2;
+        Tue, 24 Jun 2025 23:31:10 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1750833070; x=1751437870; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=L/z9ngd8zFRAIK74RWBIMljq6rrIA5Qki7ArcxDVjgg=;
+        b=kNkVBHV73Kt3/IUIgGGbo7HOexZW9d2U2hLWENFAVSUcYudsKwk8Oeb2odW0ueai3J
+         IBPHKnewwiFmEstSWLPNlY+ULF/PDFoP/qzB9FOaJEAKjWgJGG+b4hzRdEp51+E1uf30
+         cRgEt5C4S3FT+UMjy3eR4tRhcoEKEKV0LwlI4tjPB4jMIM3srgR8hw2v115D5DeyZ+5u
+         JOj3ypfKWInp2QKoJHnQiJaw9/YcrXKKMo/y6C4gPkd+tX0a7e5vu4i+auD1WkX4uis2
+         V5vhhdoKVz117edtQF7HSz+LtLwNnjm5T/xSO/OFGx2P+4LmPyiMtJqqIJrFmvwExL6I
+         4zRA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1750833070; x=1751437870;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=L/z9ngd8zFRAIK74RWBIMljq6rrIA5Qki7ArcxDVjgg=;
+        b=ZovHEgsqnqzPHfKdKLjX6oUOeGV8gDS8rsz/VF2Y81Fjpax5jNyjW7LhgR31N+ntEs
+         lJpAb/sk4FKeqvQLgV5880Au7vhy/umauSglMHOigf+7tb47Vegwn60jMmTn1Q9VTb00
+         V0+21oNMJ9dHA1Nmpqjb6ackmmnSIcZVz2R72DjLw8FcofxtYDJlIX56d5rBd05s9iKL
+         4+98MEu0ytwHn8n9UUHvuiIsnEVcpIrA7PDSXQ/rtiPzWQ0E/wik26akNsFAbTLRfVEZ
+         sA9FWb/AkmoIecAaTZgJd4Cz/ufVE/mS/sWfifw4mOWNNe3Anh9maRZJNzb3Ty20D0KS
+         h48g==
+X-Forwarded-Encrypted: i=1; AJvYcCUd0KLWPvXBhszuVLDYlYdRxRGVw7zxBAcRq7DM8ZXp2UVcTZuUp45WlxpJWNkP4HYiIFI=@vger.kernel.org, AJvYcCWq5zvKqMs7eSPmOWamNLSFddN5JsBqpgr4EkoRJDiQt/1r7QdcysWJ4u4wJggtvbZh+DkN+KznvhCpNRHy@vger.kernel.org
+X-Gm-Message-State: AOJu0YwL5CzuOZH0zKzZwnNufwBLG5e2yvU4qKZlaxS172ctOhH7/ASj
+	usUImKQYN2MvV8Q1+r9hSNOKWCTvaWE1nKwEdVeGMKGeCpzHYMYnjT7II04vSQ==
+X-Gm-Gg: ASbGncuJkBgGKEC7gJib0CXr5PH2/mSTpM+IDybBuqAqahv4hicNfmDjInlwUJoqZaL
+	cmMOQnnBFFX73uTZZECUV0WUgZbOrSQ677a7aQfo9drNMhhrigFEowO/OQAknKOM2F1VzL2uhzn
+	YJoaIUTMHcf4VjaQw+YVCvBHgS1TUDSSiNjSvHgJOdK7aJ7LCvZwWv4LOLrDBsp8PSvnHBB3Ter
+	DB7LtbpBFMLrPlEsjJObKI7BKjDPxs0uJxzZBMgNCSk4lxCeHoJhHKTFtTsjhDSKj2NBOioKXvx
+	/AFaKOqmnrKMJaEOdBbWuys2BJtSgTVfSvf6H1RGFSMUvlpVenMJfNWBt4B+vg==
+X-Google-Smtp-Source: AGHT+IG244W/fN34/CD8bjiYs1J85Uc0mGYhzQ6XAiQJSMUMCZ12AC0ZO1+fbYsH+GVD3vutgE3G+w==
+X-Received: by 2002:a17:902:ec90:b0:235:e8da:8d6 with SMTP id d9443c01a7336-2382454566fmr34479815ad.2.1750833068214;
+        Tue, 24 Jun 2025 23:31:08 -0700 (PDT)
+Received: from archie.me ([103.124.138.155])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-237d86d563fsm126520685ad.207.2025.06.24.23.31.06
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 24 Jun 2025 23:31:07 -0700 (PDT)
+Received: by archie.me (Postfix, from userid 1000)
+	id 7C7DF4207D12; Wed, 25 Jun 2025 13:31:02 +0700 (WIB)
+Date: Wed, 25 Jun 2025 13:31:02 +0700
+From: Bagas Sanjaya <bagasdotme@gmail.com>
+To: Binbin Wu <binbin.wu@linux.intel.com>, pbonzini@redhat.com,
+	seanjc@google.com, kvm@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Cc: sfr@canb.auug.org.au, rick.p.edgecombe@intel.com, kai.huang@intel.com,
+	adrian.hunter@intel.com, reinette.chatre@intel.com,
+	xiaoyao.li@intel.com, tony.lindgren@intel.com,
+	isaku.yamahata@intel.com, yan.y.zhao@intel.com
+Subject: Re: [PATCH] Documentation: KVM: Fix unexpected unindent warnings
+Message-ID: <aFuXpoxMLa2Qj_S9@archie.me>
+References: <20250625014829.82289-1-binbin.wu@linux.intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: kwepems100001.china.huawei.com (7.221.188.238) To
- kwepemk100010.china.huawei.com (7.202.194.58)
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="KyriZ8LMcR1w2jqJ"
+Content-Disposition: inline
+In-Reply-To: <20250625014829.82289-1-binbin.wu@linux.intel.com>
 
-It doesn't make sense to use TB_CFG_PKG_XDOMAIN_RESP as the request
-type of xdomain request packets.
 
-Signed-off-by: zhangjianrong <zhangjianrong5@huawei.com>
----
- drivers/net/thunderbolt/main.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+--KyriZ8LMcR1w2jqJ
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-diff --git a/drivers/net/thunderbolt/main.c b/drivers/net/thunderbolt/main.c
-index 0a53ec293d04..439d1b21f3b7 100644
---- a/drivers/net/thunderbolt/main.c
-+++ b/drivers/net/thunderbolt/main.c
-@@ -269,7 +269,7 @@ static int tbnet_login_request(struct tbnet *net, u8 sequence)
- 	request.transmit_path = net->local_transmit_path;
- 
- 	return tb_xdomain_request(xd, &request, sizeof(request),
--				  TB_CFG_PKG_XDOMAIN_RESP, &reply,
-+				  TB_CFG_PKG_XDOMAIN_REQ, &reply,
- 				  sizeof(reply), TB_CFG_PKG_XDOMAIN_RESP,
- 				  TBNET_LOGIN_TIMEOUT);
- }
-@@ -300,7 +300,7 @@ static int tbnet_logout_request(struct tbnet *net)
- 			  atomic_inc_return(&net->command_id));
- 
- 	return tb_xdomain_request(xd, &request, sizeof(request),
--				  TB_CFG_PKG_XDOMAIN_RESP, &reply,
-+				  TB_CFG_PKG_XDOMAIN_REQ, &reply,
- 				  sizeof(reply), TB_CFG_PKG_XDOMAIN_RESP,
- 				  TBNET_LOGOUT_TIMEOUT);
- }
--- 
-2.34.1
+On Wed, Jun 25, 2025 at 09:48:29AM +0800, Binbin Wu wrote:
+> diff --git a/Documentation/virt/kvm/api.rst b/Documentation/virt/kvm/api.=
+rst
+> index 9abf93ee5f65..a7dbe08dc376 100644
+> --- a/Documentation/virt/kvm/api.rst
+> +++ b/Documentation/virt/kvm/api.rst
+> @@ -7210,21 +7210,21 @@ number from register R11.  The remaining field of=
+ the union provide the
+>  inputs and outputs of the TDVMCALL.  Currently the following values of
+>  ``nr`` are defined:
+> =20
+> -* ``TDVMCALL_GET_QUOTE``: the guest has requested to generate a TD-Quote
+> -signed by a service hosting TD-Quoting Enclave operating on the host.
+> -Parameters and return value are in the ``get_quote`` field of the union.
+> -The ``gpa`` field and ``size`` specify the guest physical address
+> -(without the shared bit set) and the size of a shared-memory buffer, in
+> -which the TDX guest passes a TD Report.  The ``ret`` field represents
+> -the return value of the GetQuote request.  When the request has been
+> -queued successfully, the TDX guest can poll the status field in the
+> -shared-memory area to check whether the Quote generation is completed or
+> -not. When completed, the generated Quote is returned via the same buffer.
+> -
+> -* ``TDVMCALL_GET_TD_VM_CALL_INFO``: the guest has requested the support
+> -status of TDVMCALLs.  The output values for the given leaf should be
+> -placed in fields from ``r11`` to ``r14`` of the ``get_tdvmcall_info``
+> -field of the union.
+> + * ``TDVMCALL_GET_QUOTE``: the guest has requested to generate a TD-Quote
+> +   signed by a service hosting TD-Quoting Enclave operating on the host.
+> +   Parameters and return value are in the ``get_quote`` field of the uni=
+on.
+> +   The ``gpa`` field and ``size`` specify the guest physical address
+> +   (without the shared bit set) and the size of a shared-memory buffer, =
+in
+> +   which the TDX guest passes a TD Report.  The ``ret`` field represents
+> +   the return value of the GetQuote request.  When the request has been
+> +   queued successfully, the TDX guest can poll the status field in the
+> +   shared-memory area to check whether the Quote generation is completed=
+ or
+> +   not. When completed, the generated Quote is returned via the same buf=
+fer.
+> +
+> + * ``TDVMCALL_GET_TD_VM_CALL_INFO``: the guest has requested the support
+> +   status of TDVMCALLs.  The output values for the given leaf should be
+> +   placed in fields from ``r11`` to ``r14`` of the ``get_tdvmcall_info``
+> +   field of the union.
+> =20
+>  KVM may add support for more values in the future that may cause a users=
+pace
+>  exit, even without calls to ``KVM_ENABLE_CAP`` or similar.  In this case,
+>=20
 
+LGTM, thanks!
+
+Reviewed-by: Bagas Sanjaya <bagasdotme@gmail.com>
+
+--=20
+An old man doll... just what I always wanted! - Clara
+
+--KyriZ8LMcR1w2jqJ
+Content-Type: application/pgp-signature; name=signature.asc
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYKAB0WIQSSYQ6Cy7oyFNCHrUH2uYlJVVFOowUCaFuXnwAKCRD2uYlJVVFO
+o/ZcAQDEmscUf690FtG11NjUGtksSU/l4/aDjLtqVkkjrjdEIwEAtPaKvUZIB0N0
+HiF6q3sjcMH9qCYR7TsgaW2yKKT1UQ4=
+=+B1+
+-----END PGP SIGNATURE-----
+
+--KyriZ8LMcR1w2jqJ--
 
