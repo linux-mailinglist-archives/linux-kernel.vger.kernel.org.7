@@ -1,219 +1,683 @@
-Return-Path: <linux-kernel+bounces-703464-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-703466-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 49181AE9082
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Jun 2025 23:53:20 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 92596AE9085
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Jun 2025 23:54:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A89434A6A35
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Jun 2025 21:53:20 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CFF304E0027
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Jun 2025 21:54:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 964BA26E6E0;
-	Wed, 25 Jun 2025 21:53:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AFE8C1C861D;
+	Wed, 25 Jun 2025 21:54:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b="BIhU+dtH"
-Received: from DU2PR03CU002.outbound.protection.outlook.com (mail-northeuropeazon11011022.outbound.protection.outlook.com [52.101.65.22])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="CBSzTQGm"
+Received: from out-182.mta1.migadu.com (out-182.mta1.migadu.com [95.215.58.182])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E28651E9B04;
-	Wed, 25 Jun 2025 21:53:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.65.22
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750888390; cv=fail; b=h2s/cH/L0A+x1vg1m227rARxix7Hr36C3J2okjvr69nUlTa/77FQmk6Qp+7ul1ZXfzef3kJSAkxYzHH53SuDbSfpGzAHuoxtwc4JDM8YFV1g9Ll06GwHg/SRlMAKqYYai0ozodoEyYXS+iscgM92SRBUXKflhZpM4f+FPJkJKXY=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750888390; c=relaxed/simple;
-	bh=PYK+aowzIzNOwRYEDvmRXs4MEeIftWPL+ZLZB8SdhOM=;
-	h=From:To:Cc:Subject:Date:Message-Id:Content-Type:MIME-Version; b=sq6NKqtinNM7fqJ+2MHf3fr/Qq1PwH2pODfcpuOzfDy+0MW6HSc/MW0Wu2le7mBNgUzE09SYIBMciTtct+ZZS0Sc/yxXjfikjgv6hEIYCVYfIU2IxzfNldHzDwHheJ6c5bQSWA+Ur+TRGVAkAPakgiteijyZMhE+gzuS6xEbXQM=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b=BIhU+dtH; arc=fail smtp.client-ip=52.101.65.22
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=ADwxC/NT2mzVGzlxvfarC9YrupnvbUkxKZjm9lrRxDnujNnmZOMkuvbF/wZQ8nl467dgHpCNXMhZizzsCk8zSrfZKfEWhxmFJGUaO4M5cDxnBLMYCVFWsY/8cmApUee8YO23Nr7eoYqu9qM3p45ssZc5RzR5iF2Q5qXAHyms73GgvESfPePrSNjwoiYtAMv6At+iQNpM8LbJjKb/uB6AqyuY2eRTEeq+0GZzcJBXfKDnhohE1MvgWra0HUs7qLwUu0SCqJFXdZ/w9aR5KgLK+kdleDsairzvJ4tff2zLrtqOPXdjLuh5tTNFTIkNeHItD44VhUFXgzX9d2Gh+ZY/0Q==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=cKrEM0v5UeYiPpwAwm6i9bN+E5Q94TGEfBo0U0OK9vM=;
- b=VCQ7HiHL4+0R84MZMUwxQiAUTeZhC/vTFdV7RFPbcSMESb5LNkwoCxmgc6jLIgk1AKOVV9whlm1dj9fDUSsOWJTItcWvhb01LzKn2NMK6hT2XwuMe2eb1OmSsmRNa+INp+OJVlBkb3CS4LlvCMOgz4tDOB2zfb/rMB+BM/JkQ74QH+5wDZKSVs+mmp8u1t5vI99rSeGc19aIHW8gFzdZuLphg46RM+g5jmc+9RXZdwyK2lXLxjs1Jm2A9K4I+iVJv0tefOz2UijUmwXWSRWBMQYa8EZWQgIWTksQAb88F6X3h84E6hbyTlN4N7Euwz34DU0V0tK9QUKzcu3zLg20Mw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
- header.d=nxp.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=cKrEM0v5UeYiPpwAwm6i9bN+E5Q94TGEfBo0U0OK9vM=;
- b=BIhU+dtHRc30QRuwGAvTVKDBnqv/lCHWadSwHoY2VTRQpli9m6jsxm82Psj5Bs7kytqf3TcjWI8hDd13TpfCfyK72HcK8B5MHVaVMQzPUH2LR8lB9/OzAz3OglbBc1K/2vCpr8mMfkvZSkbRyX7vD6yzv1acvYV4pXbcogOTr+5O3toWAGRHCMV1dideqtpah3sli9lQSEfTuGqvTVAeUExs+xbIRRm6Eeh//5v28eOocHXusCA1qx3WfrzFF5EvkAwN3+mrwqYm9AkeaBKzhnIUtUD1jMZ8+siLmWMGAASxE0IndzvbYVkaoUiPwwpFoPn45kH3r/U+iMbLxoZSRA==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nxp.com;
-Received: from PAXPR04MB9642.eurprd04.prod.outlook.com (2603:10a6:102:240::14)
- by DBBPR04MB7723.eurprd04.prod.outlook.com (2603:10a6:10:20a::6) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8857.27; Wed, 25 Jun
- 2025 21:53:05 +0000
-Received: from PAXPR04MB9642.eurprd04.prod.outlook.com
- ([fe80::9126:a61e:341d:4b06]) by PAXPR04MB9642.eurprd04.prod.outlook.com
- ([fe80::9126:a61e:341d:4b06%7]) with mapi id 15.20.8880.015; Wed, 25 Jun 2025
- 21:53:05 +0000
-From: Frank Li <Frank.Li@nxp.com>
-To: Mark Brown <broonie@kernel.org>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	linux-spi@vger.kernel.org (open list:SPI SUBSYSTEM),
-	devicetree@vger.kernel.org (open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS),
-	linux-kernel@vger.kernel.org (open list)
-Cc: imx@lists.linux.dev
-Subject: [PATCH 1/1] spi: dt-bindings: add nxp,lpc3220-spi.yaml
-Date: Wed, 25 Jun 2025 17:52:54 -0400
-Message-Id: <20250625215255.2640538-1-Frank.Li@nxp.com>
-X-Mailer: git-send-email 2.34.1
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: AS4P251CA0024.EURP251.PROD.OUTLOOK.COM
- (2603:10a6:20b:5d3::16) To PAXPR04MB9642.eurprd04.prod.outlook.com
- (2603:10a6:102:240::14)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1ED5126D4C7
+	for <linux-kernel@vger.kernel.org>; Wed, 25 Jun 2025 21:54:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.182
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1750888493; cv=none; b=HkkVLq4ATRRakPkSuFcWHhyOxHTcabN3tDC44PJ38P85NOhB5OJg1nMjOXdsOE88RA4SUgCiD3Zd1N4CspaIO1cHkuvWjZrHwos/uUt0Cz8y24Rz76tqElpaaySBier2HeZhioh74qjAm4+s8mfgMv9uEsELGCqm9/WCGcNSTjo=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1750888493; c=relaxed/simple;
+	bh=mZLlLFqVQLNfDTfOVPtYj6FeMZU6E6KfKQEmETe1/2w=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=KrZfV15IH0mKjQDI4WMFwygKDrlFSF3SKZNR8uCPvhu17//X0mSuwagIOfAP4Jvca5lpdde2ZqXjrw3u//st1AUmbiSk1Hg5wxBixmjFWPWkR5fN1wN+1aoOCVeVd45+nwt5u9QPNdYew4fiewyOZS5VC9crlcpRH/ZAZEZ27cE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=CBSzTQGm; arc=none smtp.client-ip=95.215.58.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Message-ID: <9b40cfa0-cce1-44d1-842c-ae2c2b064021@linux.dev>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1750888479;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=8Te7OVkXe3bD/fUomi580OZA+/8cnSLO1MsjMZpvul0=;
+	b=CBSzTQGmS7dhl8r8+VA/nx06gknSiyGiwl6Pp6mm56zKy6DR8bLlRWjN5TOPRSp0Pun8J8
+	B+dUXVyrX5MZW6d8pZ1TmwVmF4htMMeXNveHV2e+vjAtJzsYL7bR0o+1Dvi96M974AMpKt
+	pl6NG+16Ng/budPJZKPGdgMX4qpNkns=
+Date: Wed, 25 Jun 2025 22:54:33 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: PAXPR04MB9642:EE_|DBBPR04MB7723:EE_
-X-MS-Office365-Filtering-Correlation-Id: 19228463-ec12-4aa2-ad0d-08ddb432aa2d
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|376014|52116014|366016|1800799024|38350700014;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?lWeRo5EBNb7/cs41j3reS937ka+6RMJJgibptiVGncEbdUkADkznRyMj/dQk?=
- =?us-ascii?Q?thmFwkr9WssQf4n6xj/zsTJ8NhOCHCKM9lLApfBkgcdpAgWu4JkcnvB17Gpc?=
- =?us-ascii?Q?zsXndo6KobS5A82hEVYbblngtiJssxRG1kSRbgBbbHFvRZZ8ySJbWv0vxG03?=
- =?us-ascii?Q?zHdmQ1DE1E3MQ1WY5RMv665fbhxYtoVeLDWDIrGSGFrfwNtcC3cclkIvHLTh?=
- =?us-ascii?Q?8IdKp86T9bZbHMPzS4g4uA88DL8xHyCyJycf2BeZl0/+wXVs7r7FOOq0FESt?=
- =?us-ascii?Q?kqQv/zeBMIx9DgOQxjaQ7bZ3UBrT37JmTPZ/eZNCMimQ/GJZwFv0iEWdWsL5?=
- =?us-ascii?Q?pp9bbZULa22HV6HQ22DGiPGm1WNM0vKqS5kxY7AhcHJKcNaUN2373VOu4388?=
- =?us-ascii?Q?pum7E+izOyeqcRUxmP6tP9bxRAxaWKOv8eoX8642bl+UdGQK5bTczxzMbeiT?=
- =?us-ascii?Q?FScXwb3z4skly8Qg3UBI9fLfFNGr+ZXsBt/2wc68l4GpXfMaQ8yiOvEHY91G?=
- =?us-ascii?Q?9sfL0rlSH6ybknE2FgmJrfbRwrNNjQ/8a2WNIdQsJERaTFI2+3/x9wCFiUZ3?=
- =?us-ascii?Q?S1xuG2HNKl+X+U0zZVOBsf5G4JcX91kxfCP3BE8v8md7k1lRpaE6I9VZGub1?=
- =?us-ascii?Q?rwk3+XNliUnnIOTEm8SJrsiwijLEgVZd5xFTRnX11TWpcInny8QTORK/AGYB?=
- =?us-ascii?Q?a9wRPsdnKsMExOKGc7CKZ5M/J49RQsygWxSVLFOzp5+J8hW1RFteuvHQZasB?=
- =?us-ascii?Q?KcPskdpmFAY8caeba+eSvY36pZbX7IdHCe9wwhZS0MJWOWUYnDgeVFVo/OQ2?=
- =?us-ascii?Q?rhGcNQeqkHvQCDb5xIVN1xq0OJKU1q2a6d8P5uL0CAXoFSa3WekyVGRRtDwc?=
- =?us-ascii?Q?sV6Y5Iz+gMKvHvHsap+pK5r/F84UEvvfj0FfNufuTyzBzBWClXb+RfbT78H2?=
- =?us-ascii?Q?fXlLnUVzJjwGXu7jnr1zgoM/vo0yibYxaLbd5oP1HlTB75OXILNK4sFWWh38?=
- =?us-ascii?Q?tLG7sheCB9lDXR8Qg+5B2h5e4kIRswaWLTSE5ZygzqDZ9CShMYE+wJp9/FPp?=
- =?us-ascii?Q?J49SHpxJfRM8W9G41Uim/K6d/mSCOkU9cNElbBzIKbumda/Lb77QSoqxpmLV?=
- =?us-ascii?Q?PxychGaH9WakC4pu6Gg0tr7NPInRAu2Krxc1602qEWpjgLsbpkorCF1+z7+r?=
- =?us-ascii?Q?Lfu9YTpvXUyD4iDgkC7tsOyCNbXXsLbD3YyydyFt+tt3a8xB69o6TY5sTR1T?=
- =?us-ascii?Q?r0JdOzejB6auvIYjadD3HCBFDmSxOPuYFJVZNM3jbfpfssFPicitHpM6/Ywk?=
- =?us-ascii?Q?yJzpMp8zC+TxGPVDYHR9XvLIeUaTVh1ButoJy5ClYoTXgBPxj3F/TJlWOaRh?=
- =?us-ascii?Q?9/B5gs8VtBvFZcSLMpN6KAwX5vzbSwu5aiAY66Za2BIUw27vudC8FcaVT/gj?=
- =?us-ascii?Q?HtHGqltwgXdWoP5NcjNJUI2Fo4IXIVRp?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PAXPR04MB9642.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(52116014)(366016)(1800799024)(38350700014);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?5j/AgYW57n94s0THJF+u7MfeB+Xgdv5OMqjVm6v+/kVuIDefB1n5sjhd4WS1?=
- =?us-ascii?Q?VtLj/Ygclbt8VaTNT6VEoFJMQUE0+ZfM+uO39GafR9cBKzcxTj7uBGd6AjDS?=
- =?us-ascii?Q?dZHGiJ420l9Md80gPAm5VBadb8FK04iXHK2VmLeNfifWXLX7ixeHjanDFNfM?=
- =?us-ascii?Q?vadsiuuaHBdJSLqzmFC57OCk8g2IfNlWCdRhLYK4Ojm20hy4E92KhWByBlm/?=
- =?us-ascii?Q?s1StMqQJ/eIA5S4LGdzxeP6z9jgcPhR35ggrfDi88EST9xcfZbd7+e/Lnh17?=
- =?us-ascii?Q?EbSDQsmvJZ4eq09t1uc3w/h3Fm03SXUIMeDI0KIhgpytt8xD3EpYi0UN2Uix?=
- =?us-ascii?Q?EvW5uhvcn3Ck1KJGeOJ7p/ZOhqgF74kHKzoSd00/yv/BAxjqxnQkiFmBU0To?=
- =?us-ascii?Q?nLQ+kYHlSrrntUFh3PthbZLd+zLh1/4J6f8TO7vFDamLlpbmwGD4XMbj0OhC?=
- =?us-ascii?Q?O1/SWxrHYgfeoEAx9Jq+T9c72diX5u5nk4/zIJI8j+jStrcT5lNBuUmHJ4oN?=
- =?us-ascii?Q?gP+/deMBnVo9v6Dg/CsGiHglOFGyIMoRoYngDLROAO+tgHYHYcN5xU13x+Zf?=
- =?us-ascii?Q?df4geW17oBm1DqTrnBpB7sOGU0t0ZsNXlnaknuFbESPs8tNi+p7JKF7Vcd33?=
- =?us-ascii?Q?QOFPnlKb4Cr57DTw7xFDLftUgCmNxj/mTmoyhTY7T1z10/TK83NuLLh7+kSW?=
- =?us-ascii?Q?PdIN64bEi/sj9iDZPdtqcQKjwBWQNf+6hCO6U0jJ/LBtrp14mIAeDwEQ+heF?=
- =?us-ascii?Q?qQVDAK9lTpB0TWU3DksjQhIL+DNoJJ1OJdYZJHRy3hmincgFSJ+GTzfpE8Gi?=
- =?us-ascii?Q?AfGkXyYlDOlpZ4qq8nyXntnpdnIQT+9J6c7C/8EW6sp6U7zBUmiuv70kD0Hq?=
- =?us-ascii?Q?J+u9+MG/ywvtyLYajXPRU0AoMLQATwgVIjoKWL/qR4DynfhguiSrXctQpXB2?=
- =?us-ascii?Q?flkqVdNHMpa3dCAxnCfT1C6CBE9nUstQ0qRLVqVANOH73RU7Sv/B/m4m3v7x?=
- =?us-ascii?Q?NPAv9r7tEvGiKHBVexfCWwYED6yYhtXotpoIrEuEMdNJ4fLjEp5M/49ecNtW?=
- =?us-ascii?Q?LoyrZRPMyAX3fA6jzAlNtka0bhNaaieyB4A7jILZFnDj39i2jfV/mTbJIRT7?=
- =?us-ascii?Q?h0CHaOZmn5hoRJKbHHZDlx8GZRHg0x1ABmOftnlT4p7FWh+jMSL0qeJXxCiT?=
- =?us-ascii?Q?HQqiaf1RjiYi7nh4d0t815wIhbo0ttJmVwktSsiHJMcpn2YDNnfQnGDz3sAl?=
- =?us-ascii?Q?ffxDQGbjeyfWmTxMNzHqw3mAPAGIpiG4DMXASrWP1gTfPquJCpQ/qjw4FnJa?=
- =?us-ascii?Q?J9CSKRa3o4OLWWGyS6OhZE0MHK6MQswAsrextP4zwOlugYg9xFpIXrYae2Eo?=
- =?us-ascii?Q?oKnrNwCib949N/9ueO4DJBov5wQZWI8Fufp7rkfyAqFoFb4B8Y16vRPG/Xl8?=
- =?us-ascii?Q?Tif7kDah4tQr1E2f57xyKCeYnL3WWJ8yO2QTGN+SURBCUgGEH7qFX5zbRehI?=
- =?us-ascii?Q?y2oDjaAwY9+3NpWZBp1QhmGcMnsJa90jOISfc9gOr6MPA7mjf50TdiiD80q3?=
- =?us-ascii?Q?wFZ//5Eh2Db5inXpkyy6w9WtjUKKc2PHhU8/dnGo?=
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 19228463-ec12-4aa2-ad0d-08ddb432aa2d
-X-MS-Exchange-CrossTenant-AuthSource: PAXPR04MB9642.eurprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 25 Jun 2025 21:53:05.6119
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: 9pkx/GQdjLngE/6VQ5PlaSHnOUvS8zIWPVRCHc5Jri9MakB+UwOJbzRcgADs/csxvTyA26Um8bp3QCO6iPbsOQ==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DBBPR04MB7723
+Subject: Re: [PATCH net-next v05 4/8] hinic3: Command Queue interfaces
+To: Fan Gong <gongfan1@huawei.com>, Zhu Yikai <zhuyikai1@h-partners.com>
+Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+ "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
+ Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+ Simon Horman <horms@kernel.org>, Andrew Lunn <andrew+netdev@lunn.ch>,
+ linux-doc@vger.kernel.org, Jonathan Corbet <corbet@lwn.net>,
+ Bjorn Helgaas <helgaas@kernel.org>, luosifu <luosifu@huawei.com>,
+ Xin Guo <guoxin09@huawei.com>, Shen Chenyang <shenchenyang1@hisilicon.com>,
+ Zhou Shuai <zhoushuai28@huawei.com>, Wu Like <wulike1@huawei.com>,
+ Shi Jing <shijing34@huawei.com>, Meny Yossefi <meny.yossefi@huawei.com>,
+ Gur Stavi <gur.stavi@huawei.com>, Lee Trager <lee@trager.us>,
+ Michael Ellerman <mpe@ellerman.id.au>, Suman Ghosh <sumang@marvell.com>,
+ Przemek Kitszel <przemyslaw.kitszel@intel.com>,
+ Joe Damato <jdamato@fastly.com>,
+ Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+References: <cover.1750821322.git.zhuyikai1@h-partners.com>
+ <08a3ea4a38b3cf97b47b3606554627a0bf012e8f.1750821322.git.zhuyikai1@h-partners.com>
+Content-Language: en-US
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Vadim Fedorenko <vadim.fedorenko@linux.dev>
+In-Reply-To: <08a3ea4a38b3cf97b47b3606554627a0bf012e8f.1750821322.git.zhuyikai1@h-partners.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Migadu-Flow: FLOW_OUT
 
-Add lpc3220 spi controller binding doc to fix below CHECK_DTBS warning:
-  arch/arm/boot/dts/nxp/lpc/lpc3250-ea3250.dtb: /ahb/apb/spi@20088000: failed to match any schema with compatible: ['nxp,lpc3220-spi']
+On 25/06/2025 04:41, Fan Gong wrote:
+> Add Command Queue interfaces initialization.
+> It enables communictaion and operation with HW.
+> 
+> Co-developed-by: Xin Guo <guoxin09@huawei.com>
+> Signed-off-by: Xin Guo <guoxin09@huawei.com>
+> Co-developed-by: Zhu Yikai <zhuyikai1@h-partners.com>
+> Signed-off-by: Zhu Yikai <zhuyikai1@h-partners.com>
+> Signed-off-by: Fan Gong <gongfan1@huawei.com>
+> ---
+>   .../net/ethernet/huawei/hinic3/hinic3_cmdq.c  | 504 ++++++++++++++++++
+>   .../net/ethernet/huawei/hinic3/hinic3_cmdq.h  |   5 +
+>   .../ethernet/huawei/hinic3/hinic3_common.h    |   9 +
+>   3 files changed, 518 insertions(+)
+> 
+> diff --git a/drivers/net/ethernet/huawei/hinic3/hinic3_cmdq.c b/drivers/net/ethernet/huawei/hinic3/hinic3_cmdq.c
+> index 67bfd73aebb8..f2af187281e0 100644
+> --- a/drivers/net/ethernet/huawei/hinic3/hinic3_cmdq.c
+> +++ b/drivers/net/ethernet/huawei/hinic3/hinic3_cmdq.c
+> @@ -12,6 +12,9 @@
+>   #define CMDQ_BUF_SIZE             2048
+>   #define CMDQ_WQEBB_SIZE           64
+>   
+> +#define CMDQ_CMD_TIMEOUT          5000
+> +#define CMDQ_ENABLE_WAIT_TIMEOUT  300
+> +
+>   #define CMDQ_CTXT_CURR_WQE_PAGE_PFN_MASK  GENMASK_ULL(51, 0)
+>   #define CMDQ_CTXT_EQ_ID_MASK              GENMASK_ULL(60, 53)
+>   #define CMDQ_CTXT_CEQ_ARM_MASK            BIT_ULL(61)
+> @@ -23,6 +26,47 @@
+>   #define CMDQ_CTXT_SET(val, member)  \
+>   	FIELD_PREP(CMDQ_CTXT_##member##_MASK, val)
+>   
+> +#define CMDQ_WQE_HDR_BUFDESC_LEN_MASK        GENMASK(7, 0)
+> +#define CMDQ_WQE_HDR_COMPLETE_FMT_MASK       BIT(15)
+> +#define CMDQ_WQE_HDR_DATA_FMT_MASK           BIT(22)
+> +#define CMDQ_WQE_HDR_COMPLETE_REQ_MASK       BIT(23)
+> +#define CMDQ_WQE_HDR_COMPLETE_SECT_LEN_MASK  GENMASK(28, 27)
+> +#define CMDQ_WQE_HDR_CTRL_LEN_MASK           GENMASK(30, 29)
+> +#define CMDQ_WQE_HDR_HW_BUSY_BIT_MASK        BIT(31)
+> +#define CMDQ_WQE_HDR_SET(val, member)  \
+> +	FIELD_PREP(CMDQ_WQE_HDR_##member##_MASK, val)
+> +#define CMDQ_WQE_HDR_GET(val, member)  \
+> +	FIELD_GET(CMDQ_WQE_HDR_##member##_MASK, val)
+> +
+> +#define CMDQ_CTRL_PI_MASK              GENMASK(15, 0)
+> +#define CMDQ_CTRL_CMD_MASK             GENMASK(23, 16)
+> +#define CMDQ_CTRL_MOD_MASK             GENMASK(28, 24)
+> +#define CMDQ_CTRL_HW_BUSY_BIT_MASK     BIT(31)
+> +#define CMDQ_CTRL_SET(val, member)  \
+> +	FIELD_PREP(CMDQ_CTRL_##member##_MASK, val)
+> +#define CMDQ_CTRL_GET(val, member)  \
+> +	FIELD_GET(CMDQ_CTRL_##member##_MASK, val)
+> +
+> +#define CMDQ_WQE_ERRCODE_VAL_MASK      GENMASK(30, 0)
+> +#define CMDQ_WQE_ERRCODE_GET(val, member)  \
+> +	FIELD_GET(CMDQ_WQE_ERRCODE_##member##_MASK, val)
+> +
+> +#define CMDQ_DB_INFO_HI_PROD_IDX_MASK  GENMASK(7, 0)
+> +#define CMDQ_DB_INFO_SET(val, member)  \
+> +	FIELD_PREP(CMDQ_DB_INFO_##member##_MASK, val)
+> +
+> +#define CMDQ_DB_HEAD_QUEUE_TYPE_MASK   BIT(23)
+> +#define CMDQ_DB_HEAD_CMDQ_TYPE_MASK    GENMASK(26, 24)
+> +#define CMDQ_DB_HEAD_SET(val, member)  \
+> +	FIELD_PREP(CMDQ_DB_HEAD_##member##_MASK, val)
+> +
+> +#define CMDQ_CEQE_TYPE_MASK            GENMASK(2, 0)
+> +#define CMDQ_CEQE_GET(val, member)  \
+> +	FIELD_GET(CMDQ_CEQE_##member##_MASK, val)
+> +
+> +#define CMDQ_WQE_HEADER(wqe)           ((struct cmdq_header *)(wqe))
+> +#define CMDQ_WQE_COMPLETED(ctrl_info)  CMDQ_CTRL_GET(ctrl_info, HW_BUSY_BIT)
+> +
+>   #define CMDQ_PFN(addr)  ((addr) >> 12)
+>   
+>   /* cmdq work queue's chip logical address table is up to 512B */
+> @@ -33,6 +77,31 @@
+>   #define CMDQ_DIRECT_SYNC_CMPT_CODE  11
+>   #define CMDQ_FORCE_STOP_CMPT_CODE   12
+>   
+> +enum cmdq_data_format {
+> +	CMDQ_DATA_SGE    = 0,
+> +	CMDQ_DATA_DIRECT = 1,
+> +};
+> +
+> +enum cmdq_ctrl_sect_len {
+> +	CMDQ_CTRL_SECT_LEN        = 1,
+> +	CMDQ_CTRL_DIRECT_SECT_LEN = 2,
+> +};
+> +
+> +enum cmdq_bufdesc_len {
+> +	CMDQ_BUFDESC_LCMD_LEN = 2,
+> +	CMDQ_BUFDESC_SCMD_LEN = 3,
+> +};
+> +
+> +enum cmdq_completion_format {
+> +	CMDQ_COMPLETE_DIRECT = 0,
+> +	CMDQ_COMPLETE_SGE    = 1,
+> +};
+> +
+> +enum cmdq_cmd_type {
+> +	CMDQ_CMD_DIRECT_RESP,
+> +	CMDQ_CMD_SGE_RESP,
+> +};
+> +
+>   #define CMDQ_WQE_NUM_WQEBBS  1
+>   
+>   static struct cmdq_wqe *cmdq_read_wqe(struct hinic3_wq *wq, u16 *ci)
+> @@ -45,6 +114,35 @@ static struct cmdq_wqe *cmdq_read_wqe(struct hinic3_wq *wq, u16 *ci)
+>   	return get_q_element(&wq->qpages, wq->cons_idx, NULL);
+>   }
+>   
+> +struct hinic3_cmd_buf *hinic3_alloc_cmd_buf(struct hinic3_hwdev *hwdev)
+> +{
+> +	struct hinic3_cmd_buf *cmd_buf;
+> +	struct hinic3_cmdqs *cmdqs;
+> +
+> +	cmdqs = hwdev->cmdqs;
+> +
+> +	cmd_buf = kzalloc(sizeof(*cmd_buf), GFP_ATOMIC);
 
-Signed-off-by: Frank Li <Frank.Li@nxp.com>
----
- .../bindings/spi/nxp,lpc3220-spi.yaml         | 44 +++++++++++++++++++
- 1 file changed, 44 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/spi/nxp,lpc3220-spi.yaml
+No need to zero out this allocation - all fields of cmd_buf are
+unconditionally overwritten in later in the function.
 
-diff --git a/Documentation/devicetree/bindings/spi/nxp,lpc3220-spi.yaml b/Documentation/devicetree/bindings/spi/nxp,lpc3220-spi.yaml
-new file mode 100644
-index 0000000000000..d5f780912f21e
---- /dev/null
-+++ b/Documentation/devicetree/bindings/spi/nxp,lpc3220-spi.yaml
-@@ -0,0 +1,44 @@
-+# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-+%YAML 1.2
-+---
-+$id: http://devicetree.org/schemas/spi/nxp,lpc3220-spi.yaml#
-+$schema: http://devicetree.org/meta-schemas/core.yaml#
-+
-+title: NXP LPC3220 SPI controller
-+
-+maintainers:
-+  - Frank Li <Frank.Li@nxp.com>
-+
-+properties:
-+  compatible:
-+    enum:
-+      - nxp,lpc3220-spi
-+
-+  reg:
-+    maxItems: 1
-+
-+  clocks:
-+    maxItems: 1
-+
-+allOf:
-+  - $ref: spi-controller.yaml#
-+
-+unevaluatedProperties: false
-+
-+required:
-+  - compatible
-+  - reg
-+  - clocks
-+
-+examples:
-+  - |
-+    #include <dt-bindings/clock/lpc32xx-clock.h>
-+
-+    spi@20088000 {
-+        compatible = "nxp,lpc3220-spi";
-+        reg = <0x20088000 0x1000>;
-+        clocks = <&clk LPC32XX_CLK_SPI1>;
-+        #address-cells = <1>;
-+        #size-cells = <0>;
-+    };
-+
--- 
-2.34.1
+> +	if (!cmd_buf)
+> +		return NULL;
+> +
+> +	cmd_buf->buf = dma_pool_alloc(cmdqs->cmd_buf_pool, GFP_ATOMIC,
+> +				      &cmd_buf->dma_addr);
+> +	if (!cmd_buf->buf) {
+> +		dev_err(hwdev->dev, "Failed to allocate cmdq cmd buf from the pool\n");
+> +		goto err_free_cmd_buf;
+> +	}
+> +
+> +	cmd_buf->size = CMDQ_BUF_SIZE;
+> +	refcount_set(&cmd_buf->ref_cnt, 1);
+> +
+> +	return cmd_buf;
+> +
+> +err_free_cmd_buf:
+> +	kfree(cmd_buf);
+> +
+> +	return NULL;
+> +}
+> +
+>   void hinic3_free_cmd_buf(struct hinic3_hwdev *hwdev,
+>   			 struct hinic3_cmd_buf *cmd_buf)
+>   {
+> @@ -68,6 +166,412 @@ static void cmdq_clear_cmd_buf(struct hinic3_cmdq_cmd_info *cmd_info,
+>   	}
+>   }
+>   
+> +static void clear_wqe_complete_bit(struct hinic3_cmdq *cmdq,
+> +				   struct cmdq_wqe *wqe, u16 ci)
+> +{
+> +	struct cmdq_header *hdr = CMDQ_WQE_HEADER(wqe);
+> +	u32 header_info = hdr->header_info;
+> +	enum cmdq_data_format df;
+> +	struct cmdq_ctrl *ctrl;
+> +
+> +	df = CMDQ_WQE_HDR_GET(header_info, DATA_FMT);
+> +	if (df == CMDQ_DATA_SGE)
+> +		ctrl = &wqe->wqe_lcmd.ctrl;
+> +	else
+> +		ctrl = &wqe->wqe_scmd.ctrl;
+> +
+> +	/* clear HW busy bit */
+> +	ctrl->ctrl_info = 0;
+> +	cmdq->cmd_infos[ci].cmd_type = HINIC3_CMD_TYPE_NONE;
+> +	wmb(); /* verify wqe is clear */
+> +	hinic3_wq_put_wqebbs(&cmdq->wq, CMDQ_WQE_NUM_WQEBBS);
+> +}
+> +
+> +static void cmdq_update_cmd_status(struct hinic3_cmdq *cmdq, u16 prod_idx,
+> +				   struct cmdq_wqe *wqe)
+> +{
+> +	struct hinic3_cmdq_cmd_info *cmd_info;
+> +	struct cmdq_wqe_lcmd *wqe_lcmd;
+> +	u32 status_info;
+> +
+> +	wqe_lcmd = &wqe->wqe_lcmd;
+> +	cmd_info = &cmdq->cmd_infos[prod_idx];
+> +	if (cmd_info->errcode) {
+> +		status_info = wqe_lcmd->status.status_info;
+> +		*cmd_info->errcode = CMDQ_WQE_ERRCODE_GET(status_info, VAL);
+> +	}
+> +
+> +	if (cmd_info->direct_resp)
+> +		*cmd_info->direct_resp = wqe_lcmd->completion.resp.direct.val;
+> +}
+> +
+> +static void cmdq_sync_cmd_handler(struct hinic3_cmdq *cmdq,
+> +				  struct cmdq_wqe *wqe, u16 ci)
+> +{
+> +	spin_lock(&cmdq->cmdq_lock);
+> +	cmdq_update_cmd_status(cmdq, ci, wqe);
+> +	if (cmdq->cmd_infos[ci].cmpt_code) {
+> +		*cmdq->cmd_infos[ci].cmpt_code = CMDQ_DIRECT_SYNC_CMPT_CODE;
+> +		cmdq->cmd_infos[ci].cmpt_code = NULL;
+> +	}
+> +
+> +	/* Ensure that completion code has been updated before updating done */
+> +	smp_rmb();
+> +	if (cmdq->cmd_infos[ci].done) {
+> +		complete(cmdq->cmd_infos[ci].done);
+> +		cmdq->cmd_infos[ci].done = NULL;
+> +	}
+> +	spin_unlock(&cmdq->cmdq_lock);
+> +
+> +	cmdq_clear_cmd_buf(&cmdq->cmd_infos[ci], cmdq->hwdev);
+> +	clear_wqe_complete_bit(cmdq, wqe, ci);
+> +}
+> +
+> +void hinic3_cmdq_ceq_handler(struct hinic3_hwdev *hwdev, u32 ceqe_data)
+> +{
+> +	enum hinic3_cmdq_type cmdq_type = CMDQ_CEQE_GET(ceqe_data, TYPE);
+> +	struct hinic3_cmdqs *cmdqs = hwdev->cmdqs;
+> +	struct hinic3_cmdq_cmd_info *cmd_info;
+> +	struct cmdq_wqe_lcmd *wqe_lcmd;
+> +	struct hinic3_cmdq *cmdq;
+> +	struct cmdq_wqe *wqe;
+> +	u32 ctrl_info;
+> +	u16 ci;
+> +
+> +	if (unlikely(cmdq_type >= ARRAY_SIZE(cmdqs->cmdq)))
+> +		return;
+> +
+> +	cmdq = &cmdqs->cmdq[cmdq_type];
+> +	while ((wqe = cmdq_read_wqe(&cmdq->wq, &ci)) != NULL) {
+> +		cmd_info = &cmdq->cmd_infos[ci];
+> +		switch (cmd_info->cmd_type) {
+> +		case HINIC3_CMD_TYPE_NONE:
+> +			return;
+> +		case HINIC3_CMD_TYPE_TIMEOUT:
+> +			dev_warn(hwdev->dev, "Cmdq timeout, q_id: %u, ci: %u\n",
+> +				 cmdq_type, ci);
+> +			fallthrough;
+> +		case HINIC3_CMD_TYPE_FAKE_TIMEOUT:
+> +			cmdq_clear_cmd_buf(cmd_info, hwdev);
+> +			clear_wqe_complete_bit(cmdq, wqe, ci);
+> +			break;
+> +		default:
+> +			/* only arm bit is using scmd wqe,
+> +			 * the other wqe is lcmd
+> +			 */
+> +			wqe_lcmd = &wqe->wqe_lcmd;
+> +			ctrl_info = wqe_lcmd->ctrl.ctrl_info;
+> +			if (!CMDQ_WQE_COMPLETED(ctrl_info))
+> +				return;
+> +
+> +			dma_rmb();
+> +			/* For FORCE_STOP cmd_type, we also need to wait for
+> +			 * the firmware processing to complete to prevent the
+> +			 * firmware from accessing the released cmd_buf
+> +			 */
+> +			if (cmd_info->cmd_type == HINIC3_CMD_TYPE_FORCE_STOP) {
+> +				cmdq_clear_cmd_buf(cmd_info, hwdev);
+> +				clear_wqe_complete_bit(cmdq, wqe, ci);
+> +			} else {
+> +				cmdq_sync_cmd_handler(cmdq, wqe, ci);
+> +			}
+> +
+> +			break;
+> +		}
+> +	}
+> +}
+> +
+> +static int wait_cmdqs_enable(struct hinic3_cmdqs *cmdqs)
+> +{
+> +	unsigned long end;
+> +
+> +	end = jiffies + msecs_to_jiffies(CMDQ_ENABLE_WAIT_TIMEOUT);
+> +	do {
+> +		if (cmdqs->status & HINIC3_CMDQ_ENABLE)
+> +			return 0;
+> +	} while (time_before(jiffies, end) && !cmdqs->disable_flag);
+
+I'm not quite sure it's a good idea to busy poll for 300msec in the
+worst case scenario. As this code is not supposed to run in irq context
+it would be good idea to add some usleep_range() call to let the
+reschedule something while waiting instead of simply burning the CPU.
+> +
+> +	cmdqs->disable_flag = 1;
+> +
+> +	return -EBUSY;
+> +}
+> +
+> +static void cmdq_set_completion(struct cmdq_completion *complete,
+> +				struct hinic3_cmd_buf *buf_out)
+> +{
+> +	struct hinic3_sge *sge = &complete->resp.sge;
+> +
+> +	hinic3_set_sge(sge, buf_out->dma_addr, CMDQ_BUF_SIZE);
+> +}
+> +
+> +static struct cmdq_wqe *cmdq_get_wqe(struct hinic3_wq *wq, u16 *pi)
+> +{
+> +	if (!hinic3_wq_free_wqebbs(wq))
+> +		return NULL;
+> +
+> +	return hinic3_wq_get_one_wqebb(wq, pi);
+> +}
+> +
+> +static void cmdq_set_lcmd_bufdesc(struct cmdq_wqe_lcmd *wqe,
+> +				  struct hinic3_cmd_buf *buf_in)
+> +{
+> +	hinic3_set_sge(&wqe->buf_desc.sge, buf_in->dma_addr, buf_in->size);
+> +}
+> +
+> +static void cmdq_set_db(struct hinic3_cmdq *cmdq,
+> +			enum hinic3_cmdq_type cmdq_type, u16 prod_idx)
+> +{
+> +	u8 __iomem *db_base = cmdq->hwdev->cmdqs->cmdqs_db_base;
+> +	u16 db_ofs = (prod_idx & 0xFF) << 3;
+> +	struct cmdq_db db;
+> +
+> +	db.db_info = CMDQ_DB_INFO_SET(prod_idx >> 8, HI_PROD_IDX);
+> +	db.db_head = CMDQ_DB_HEAD_SET(1, QUEUE_TYPE) |
+> +		     CMDQ_DB_HEAD_SET(cmdq_type, CMDQ_TYPE);
+> +	writeq(*(u64 *)&db, db_base + db_ofs);
+> +}
+> +
+> +static void cmdq_wqe_fill(struct cmdq_wqe *hw_wqe,
+> +			  const struct cmdq_wqe *shadow_wqe)
+> +{
+> +	const struct cmdq_header *src = (struct cmdq_header *)shadow_wqe;
+> +	struct cmdq_header *dst = (struct cmdq_header *)hw_wqe;
+> +	size_t len;
+> +
+> +	len = sizeof(struct cmdq_wqe) - sizeof(struct cmdq_header);
+> +	memcpy(dst + 1, src + 1, len);
+> +	/* Header should be written last */
+> +	wmb();
+> +	WRITE_ONCE(*dst, *src);
+> +}
+> +
+> +static void cmdq_prepare_wqe_ctrl(struct cmdq_wqe *wqe, u8 wrapped,
+> +				  u8 mod, u8 cmd, u16 prod_idx,
+> +				  enum cmdq_completion_format complete_format,
+> +				  enum cmdq_data_format data_format,
+> +				  enum cmdq_bufdesc_len buf_len)
+> +{
+> +	struct cmdq_header *hdr = CMDQ_WQE_HEADER(wqe);
+> +	enum cmdq_ctrl_sect_len ctrl_len;
+> +	struct cmdq_wqe_lcmd *wqe_lcmd;
+> +	struct cmdq_wqe_scmd *wqe_scmd;
+> +	struct cmdq_ctrl *ctrl;
+> +
+> +	if (data_format == CMDQ_DATA_SGE) {
+> +		wqe_lcmd = &wqe->wqe_lcmd;
+> +		wqe_lcmd->status.status_info = 0;
+> +		ctrl = &wqe_lcmd->ctrl;
+> +		ctrl_len = CMDQ_CTRL_SECT_LEN;
+> +	} else {
+> +		wqe_scmd = &wqe->wqe_scmd;
+> +		wqe_scmd->status.status_info = 0;
+> +		ctrl = &wqe_scmd->ctrl;
+> +		ctrl_len = CMDQ_CTRL_DIRECT_SECT_LEN;
+> +	}
+> +
+> +	ctrl->ctrl_info =
+> +		CMDQ_CTRL_SET(prod_idx, PI) |
+> +		CMDQ_CTRL_SET(cmd, CMD) |
+> +		CMDQ_CTRL_SET(mod, MOD);
+> +
+> +	hdr->header_info =
+> +		CMDQ_WQE_HDR_SET(buf_len, BUFDESC_LEN) |
+> +		CMDQ_WQE_HDR_SET(complete_format, COMPLETE_FMT) |
+> +		CMDQ_WQE_HDR_SET(data_format, DATA_FMT) |
+> +		CMDQ_WQE_HDR_SET(1, COMPLETE_REQ) |
+> +		CMDQ_WQE_HDR_SET(3, COMPLETE_SECT_LEN) |
+> +		CMDQ_WQE_HDR_SET(ctrl_len, CTRL_LEN) |
+> +		CMDQ_WQE_HDR_SET(wrapped, HW_BUSY_BIT);
+> +}
+> +
+> +static void cmdq_set_lcmd_wqe(struct cmdq_wqe *wqe,
+> +			      enum cmdq_cmd_type cmd_type,
+> +			      struct hinic3_cmd_buf *buf_in,
+> +			      struct hinic3_cmd_buf *buf_out,
+> +			      u8 wrapped, u8 mod, u8 cmd, u16 prod_idx)
+> +{
+> +	enum cmdq_completion_format complete_format = CMDQ_COMPLETE_DIRECT;
+> +	struct cmdq_wqe_lcmd *wqe_lcmd = &wqe->wqe_lcmd;
+> +
+> +	switch (cmd_type) {
+> +	case CMDQ_CMD_DIRECT_RESP:
+> +		wqe_lcmd->completion.resp.direct.val = 0;
+> +		break;
+> +	case CMDQ_CMD_SGE_RESP:
+> +		if (buf_out) {
+> +			complete_format = CMDQ_COMPLETE_SGE;
+> +			cmdq_set_completion(&wqe_lcmd->completion, buf_out);
+> +		}
+> +		break;
+> +	}
+> +
+> +	cmdq_prepare_wqe_ctrl(wqe, wrapped, mod, cmd, prod_idx, complete_format,
+> +			      CMDQ_DATA_SGE, CMDQ_BUFDESC_LCMD_LEN);
+> +	cmdq_set_lcmd_bufdesc(wqe_lcmd, buf_in);
+> +}
+> +
+> +static int hinic3_cmdq_sync_timeout_check(struct hinic3_cmdq *cmdq,
+> +					  struct cmdq_wqe *wqe, u16 pi)
+> +{
+> +	struct cmdq_wqe_lcmd *wqe_lcmd;
+> +	struct cmdq_ctrl *ctrl;
+> +	u32 ctrl_info;
+> +
+> +	wqe_lcmd = &wqe->wqe_lcmd;
+> +	ctrl = &wqe_lcmd->ctrl;
+> +	ctrl_info = ctrl->ctrl_info;
+> +	if (!CMDQ_WQE_COMPLETED(ctrl_info)) {
+> +		dev_dbg(cmdq->hwdev->dev, "Cmdq sync command check busy bit not set\n");
+> +		return -EFAULT;
+> +	}
+> +	cmdq_update_cmd_status(cmdq, pi, wqe);
+> +
+> +	return 0;
+> +}
+> +
+> +static void clear_cmd_info(struct hinic3_cmdq_cmd_info *cmd_info,
+> +			   const struct hinic3_cmdq_cmd_info *saved_cmd_info)
+> +{
+> +	if (cmd_info->errcode == saved_cmd_info->errcode)
+> +		cmd_info->errcode = NULL;
+> +
+> +	if (cmd_info->done == saved_cmd_info->done)
+> +		cmd_info->done = NULL;
+> +
+> +	if (cmd_info->direct_resp == saved_cmd_info->direct_resp)
+> +		cmd_info->direct_resp = NULL;
+> +}
+> +
+> +static int wait_cmdq_sync_cmd_completion(struct hinic3_cmdq *cmdq,
+> +					 struct hinic3_cmdq_cmd_info *cmd_info,
+> +					 struct hinic3_cmdq_cmd_info *saved_cmd_info,
+> +					 u64 curr_msg_id, u16 curr_prod_idx,
+> +					 struct cmdq_wqe *curr_wqe,
+> +					 u32 timeout)
+> +{
+> +	ulong timeo = msecs_to_jiffies(timeout);
+> +	int err;
+> +
+> +	if (wait_for_completion_timeout(saved_cmd_info->done, timeo))
+> +		return 0;
+> +
+> +	spin_lock_bh(&cmdq->cmdq_lock);
+> +	if (cmd_info->cmpt_code == saved_cmd_info->cmpt_code)
+> +		cmd_info->cmpt_code = NULL;
+> +
+> +	if (*saved_cmd_info->cmpt_code == CMDQ_DIRECT_SYNC_CMPT_CODE) {
+> +		dev_dbg(cmdq->hwdev->dev, "Cmdq direct sync command has been completed\n");
+> +		spin_unlock_bh(&cmdq->cmdq_lock);
+> +		return 0;
+> +	}
+> +
+> +	if (curr_msg_id == cmd_info->cmdq_msg_id) {
+> +		err = hinic3_cmdq_sync_timeout_check(cmdq, curr_wqe,
+> +						     curr_prod_idx);
+> +		if (err)
+> +			cmd_info->cmd_type = HINIC3_CMD_TYPE_TIMEOUT;
+> +		else
+> +			cmd_info->cmd_type = HINIC3_CMD_TYPE_FAKE_TIMEOUT;
+> +	} else {
+> +		err = -ETIMEDOUT;
+> +		dev_err(cmdq->hwdev->dev,
+> +			"Cmdq sync command current msg id mismatch cmd_info msg id\n");
+> +	}
+> +
+> +	clear_cmd_info(cmd_info, saved_cmd_info);
+> +	spin_unlock_bh(&cmdq->cmdq_lock);
+> +
+> +	return err;
+> +}
+> +
+> +static int cmdq_sync_cmd_direct_resp(struct hinic3_cmdq *cmdq, u8 mod, u8 cmd,
+> +				     struct hinic3_cmd_buf *buf_in,
+> +				     u64 *out_param)
+> +{
+> +	struct hinic3_cmdq_cmd_info *cmd_info, saved_cmd_info;
+> +	int cmpt_code = CMDQ_SEND_CMPT_CODE;
+> +	struct cmdq_wqe *curr_wqe, wqe = {};
+> +	struct hinic3_wq *wq = &cmdq->wq;
+> +	u16 curr_prod_idx, next_prod_idx;
+> +	struct completion done;
+> +	u64 curr_msg_id;
+> +	int errcode;
+> +	u8 wrapped;
+> +	int err;
+> +
+> +	spin_lock_bh(&cmdq->cmdq_lock);
+> +	curr_wqe = jbdbrgidjukbvilhvddlfjfjnribiuuv(wq, &curr_prod_idx);
+> +	if (!curr_wqe) {
+> +		spin_unlock_bh(&cmdq->cmdq_lock);
+> +		return -EBUSY;
+> +	}
+> +
+> +	wrapped = cmdq->wrapped;
+> +	next_prod_idx = curr_prod_idx + CMDQ_WQE_NUM_WQEBBS;
+> +	if (next_prod_idx >= wq->q_depth) {
+> +		cmdq->wrapped ^= 1;
+> +		next_prod_idx -= wq->q_depth;
+> +	}
+> +
+> +	cmd_info = &cmdq->cmd_infos[curr_prod_idx];
+> +	init_completion(&done);
+> +	refcount_inc(&buf_in->ref_cnt);
+> +	cmd_info->cmd_type = HINIC3_CMD_TYPE_DIRECT_RESP;
+> +	cmd_info->done = &done;
+> +	cmd_info->errcode = &errcode;
+> +	cmd_info->direct_resp = out_param;
+> +	cmd_info->cmpt_code = &cmpt_code;
+> +	cmd_info->buf_in = buf_in;
+> +	saved_cmd_info = *cmd_info;
+> +	cmdq_set_lcmd_wqe(&wqe, CMDQ_CMD_DIRECT_RESP, buf_in, NULL,
+> +			  wrapped, mod, cmd, curr_prod_idx);
+> +
+> +	cmdq_wqe_fill(curr_wqe, &wqe);
+> +	(cmd_info->cmdq_msg_id)++;
+> +	curr_msg_id = cmd_info->cmdq_msg_id;
+> +	cmdq_set_db(cmdq, HINIC3_CMDQ_SYNC, next_prod_idx);
+> +	spin_unlock_bh(&cmdq->cmdq_lock);
+> +
+> +	err = wait_cmdq_sync_cmd_completion(cmdq, cmd_info, &saved_cmd_info,
+> +					    curr_msg_id, curr_prod_idx,
+> +					    curr_wqe, CMDQ_CMD_TIMEOUT);
+> +	if (err) {
+> +		dev_err(cmdq->hwdev->dev,
+> +			"Cmdq sync command timeout, mod: %u, cmd: %u, prod idx: 0x%x\n",
+> +			mod, cmd, curr_prod_idx);
+> +		err = -ETIMEDOUT;
+> +	}
+> +
+> +	if (cmpt_code == CMDQ_FORCE_STOP_CMPT_CODE) {
+> +		dev_dbg(cmdq->hwdev->dev,
+> +			"Force stop cmdq cmd, mod: %u, cmd: %u\n", mod, cmd);
+> +		err = -EAGAIN;
+> +	}
+> +
+> +	smp_rmb(); /* read error code after completion */
+> +
+> +	return err ? err : errcode;
+> +}
+> +
+> +int hinic3_cmdq_direct_resp(struct hinic3_hwdev *hwdev, u8 mod, u8 cmd,
+> +			    struct hinic3_cmd_buf *buf_in, u64 *out_param)
+> +{
+> +	struct hinic3_cmdqs *cmdqs;
+> +	int err;
+> +
+> +	cmdqs = hwdev->cmdqs;
+> +	err = wait_cmdqs_enable(cmdqs);
+> +	if (err) {
+> +		dev_err(hwdev->dev, "Cmdq is disabled\n");
+> +		return err;
+> +	}
+> +
+> +	err = cmdq_sync_cmd_direct_resp(&cmdqs->cmdq[HINIC3_CMDQ_SYNC],
+> +					mod, cmd, buf_in, out_param);
+> +
+> +	return err;
+> +}
+> +
+>   static void cmdq_init_queue_ctxt(struct hinic3_hwdev *hwdev, u8 cmdq_id,
+>   				 struct comm_cmdq_ctxt_info *ctxt_info)
+>   {
+> diff --git a/drivers/net/ethernet/huawei/hinic3/hinic3_cmdq.h b/drivers/net/ethernet/huawei/hinic3/hinic3_cmdq.h
+> index 80c9a108b5f5..c1d1c4e20ffe 100644
+> --- a/drivers/net/ethernet/huawei/hinic3/hinic3_cmdq.h
+> +++ b/drivers/net/ethernet/huawei/hinic3/hinic3_cmdq.h
+> @@ -141,8 +141,13 @@ struct hinic3_cmdqs {
+>   int hinic3_cmdqs_init(struct hinic3_hwdev *hwdev);
+>   void hinic3_cmdqs_free(struct hinic3_hwdev *hwdev);
+>   
+> +struct hinic3_cmd_buf *hinic3_alloc_cmd_buf(struct hinic3_hwdev *hwdev);
+>   void hinic3_free_cmd_buf(struct hinic3_hwdev *hwdev,
+>   			 struct hinic3_cmd_buf *cmd_buf);
+> +void hinic3_cmdq_ceq_handler(struct hinic3_hwdev *hwdev, u32 ceqe_data);
+> +
+> +int hinic3_cmdq_direct_resp(struct hinic3_hwdev *hwdev, u8 mod, u8 cmd,
+> +			    struct hinic3_cmd_buf *buf_in, u64 *out_param);
+>   
+>   void hinic3_cmdq_flush_sync_cmd(struct hinic3_hwdev *hwdev);
+>   int hinic3_reinit_cmdq_ctxts(struct hinic3_hwdev *hwdev);
+> diff --git a/drivers/net/ethernet/huawei/hinic3/hinic3_common.h b/drivers/net/ethernet/huawei/hinic3/hinic3_common.h
+> index 3e8875abb4e1..52d6cb2515c8 100644
+> --- a/drivers/net/ethernet/huawei/hinic3/hinic3_common.h
+> +++ b/drivers/net/ethernet/huawei/hinic3/hinic3_common.h
+> @@ -25,6 +25,15 @@ struct hinic3_sge {
+>   	u32 rsvd;
+>   };
+>   
+> +static inline void hinic3_set_sge(struct hinic3_sge *sge, dma_addr_t addr,
+> +				  int len)
+> +{
+> +	sge->hi_addr = upper_32_bits(addr);
+> +	sge->lo_addr = lower_32_bits(addr);
+> +	sge->len = len;
+> +	sge->rsvd = 0;
+> +}
+> +
+>   int hinic3_dma_zalloc_coherent_align(struct device *dev, u32 size, u32 align,
+>   				     gfp_t flag,
+>   				     struct hinic3_dma_addr_align *mem_align);
 
 
