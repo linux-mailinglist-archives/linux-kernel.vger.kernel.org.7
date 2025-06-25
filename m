@@ -1,137 +1,226 @@
-Return-Path: <linux-kernel+bounces-702081-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-702088-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9B990AE7DBF
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Jun 2025 11:46:08 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id DF927AE7DED
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Jun 2025 11:49:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 70A5F7AE2C2
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Jun 2025 09:44:44 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AAB6B3B7852
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Jun 2025 09:46:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6FDD729AB0F;
-	Wed, 25 Jun 2025 09:40:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1818C2D4B4E;
+	Wed, 25 Jun 2025 09:42:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=futuring-girl.com header.i=@futuring-girl.com header.b="GUHGt9bX"
-Received: from mail-pj1-f54.google.com (mail-pj1-f54.google.com [209.85.216.54])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b="8LPix1ti"
+Received: from mx08-00178001.pphosted.com (mx08-00178001.pphosted.com [91.207.212.93])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4DF33286888
-	for <linux-kernel@vger.kernel.org>; Wed, 25 Jun 2025 09:40:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4EF7C29E118;
+	Wed, 25 Jun 2025 09:42:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.207.212.93
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750844443; cv=none; b=qMcBWSouQMneSvSiFQ3McWBf4NLDmzUlZUaR8WS231dK8b5K/tspEDC8WTCbOjcKpNtIdTvx6q2m+g3n1Fc0b/hmuTKksXQMS5d7DkmkprkFjk62TgG+neWWuL9knnumVYVxJLn1EOXCyJMtFRNYrFm3GP6KgdtOC3GbPFyOnJQ=
+	t=1750844569; cv=none; b=jMLZqX5z285Wtoo3EIdgZY0ucttrjO+Nkk9n4XChnZZIwKGbfPKcgU9FP4oMmU9pbhJYrvRK3syhHW1q8wbVocdlJp2dxWqI+AAMTQaVy2ZbRxBG7YoYcsoQzR/CyRGC8DPz7XydHzbJKr8L61sNLmloc3KxRDaYBoYJJGS04WU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750844443; c=relaxed/simple;
-	bh=tke04Hr1GWdS7lu0c+9LoPBNgUtdJPK/syvMJuc6KGg=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=eCJyPXB3fq+RGwG9RnpojUE6KpyRWc9/OYbYCcISpHNWBoT3CMdEhph1qzSSxdg8AvWKjRwnAOPC6/IE7u57/NAzNzufSTTGrKqNXkSPuWmMaCgvMCcF8nGj9yk3MF49KWxRvp7tsTG4aSPVCmxpNdM3csQs1U2MP6htpYtrR3U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=futuring-girl.com; spf=pass smtp.mailfrom=futuring-girl.com; dkim=pass (2048-bit key) header.d=futuring-girl.com header.i=@futuring-girl.com header.b=GUHGt9bX; arc=none smtp.client-ip=209.85.216.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=futuring-girl.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=futuring-girl.com
-Received: by mail-pj1-f54.google.com with SMTP id 98e67ed59e1d1-3122368d7c4so1344765a91.1
-        for <linux-kernel@vger.kernel.org>; Wed, 25 Jun 2025 02:40:42 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=futuring-girl.com; s=google; t=1750844441; x=1751449241; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=1M0yLkQsKR0YiyFUjwpWUZCh7qwBerDpMZfoZtVAIXs=;
-        b=GUHGt9bXHaypfNmgOe/iJdQe22HewhbxGtO7V65BBbzbhxywqDpCaCFgHxwr8Ul7mk
-         5cdTxZjFcOyS3jCpOd0pixgubLze1Em3BE9nRDJs3L15HTr1NY5ivo8JjgK2RXy2mhlk
-         eIDQl9+HjgA/qca2DvVPQmsJQI7eGYOnyWwi16MeOD3fLupzx96G8CJeYKNL0zDCAfSk
-         sKj0IDV/Ik0y+3jNFHtAOOgQLz3vLEElQkwuh/nklrW8/o4nyy0yMUSbwGhrbkxTPmqi
-         xi3yB6hDisKgz2n72eIRpe/a9gnBdn79QSOeCx2u4dX207oJ4PxkE/6PgGmt9CsnGlcI
-         pXag==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1750844441; x=1751449241;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=1M0yLkQsKR0YiyFUjwpWUZCh7qwBerDpMZfoZtVAIXs=;
-        b=dTx9FHns8C+SYxUWYfSu222QfvM5Y4MFSM4Bhm/R4hS128aF1idVO4nDyELTdIg3SY
-         2J2sTXGb21CMGB52vbTimtAVoqv34uHCIxZdBp/CKHAEUYX4nbUx1j+duwRe1abscV2Q
-         QtsKGXJdGJFF2rs7gfekN69VprzDUV3s7zDLXJGcr31JpwJ9agli9VCudKpLbwpFzyBo
-         ms1R4nhyOZw2Xi4utdAgjHjtG8XxqPkdGQ3sD/pfwaPNtqcL/7BZ1cy1rP6im6BTZMlH
-         Csq7Nt9MQsbjAzPfaHDhO0eDczTT1FFn8AdsdIxGMRsm2wbzPobauqmjjVFbk4Ws+AYV
-         vVIg==
-X-Forwarded-Encrypted: i=1; AJvYcCU3W0zcB2sqdxYCVT1VUCJGNQnmJ1+yvECuZj8UKTrnmYqbrMSPIAWSzhon81wAEJhtm18DEcETaKS7Qnc=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzo9mq5+IDUDWXz2AtIdGmkfPcWJqqHTH92H1YdynsjmQ+Vu+dm
-	Bh3s/6k2CZPgqAU8pH08xumtmyk7tt+VJG1cOI8/Z8kjtHYsMIyAWWl0WdHIZgG+OHSNzkrZYB+
-	htVG5VmcP4R33U6dx+W7Dn3vlJbnuzcomC8/PJQeyNQ==
-X-Gm-Gg: ASbGncud+5ZlgQbgOKLsC2oKV6DaO9CSIFXH7nHEENsjrySGFZ9M+WajMj5ydnQZGet
-	haPgnyVSjeSweow7tHwYgNaO1C9FBEEWmjbuVqaZA0y1P5fTFmcAdMk8H77nMOHhiBVXmFgOL7h
-	en3tfb4/KFsHb5nOjnQ9yjIzuY7+33gqGSNEZXbLXAKWaJexQFmKVmgg==
-X-Google-Smtp-Source: AGHT+IG00K/kpm2hTa2fP8BKaxOCVSF0UfugUyd93dHVunRMl1Fz8O1C+j++doQt83NSid/RhkIlZIGfTM7Si0uMsa0=
-X-Received: by 2002:a17:90b:1c81:b0:2ee:6d08:7936 with SMTP id
- 98e67ed59e1d1-315f268a404mr3102280a91.20.1750844441510; Wed, 25 Jun 2025
- 02:40:41 -0700 (PDT)
+	s=arc-20240116; t=1750844569; c=relaxed/simple;
+	bh=La9eOSM7+OYSzG5Ov7Ay/TzOIDr77S7Jp4sDgKB46mA=;
+	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=R7RtYxVWh4hQ1kWs8SIGSHm4nJgshdzpMn2/UtYTeUR32nJaTVgUNpB5fM3QggXjeYjsPuYURUbf3NtwqVoAJ7yFCZkI/16LrOTpyB6G5ZrfaxJG1AahQlE7eDtAKtcfLJgFg0gXAEk1lzgzb+jN3pHbl3fs0WrV3L9VpZ7fZVY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com; spf=pass smtp.mailfrom=foss.st.com; dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b=8LPix1ti; arc=none smtp.client-ip=91.207.212.93
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=foss.st.com
+Received: from pps.filterd (m0369457.ppops.net [127.0.0.1])
+	by mx07-00178001.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 55P9Fied025188;
+	Wed, 25 Jun 2025 11:42:35 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foss.st.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=selector1; bh=
+	Jeq5JI4lCT6ZEy/eg01EjyjLaJrHnzpFREfAtoOf8ec=; b=8LPix1tie9Ub80Kv
+	dAeTSDgZlVWIbGoWN4C7i34zjVuiCNRA5se3JVDx9SRXrnsrRDrN2LLqvADKaWtd
+	eUvTKJFs9t8cyyfnaNouhZTfwFRJom3UuSrz06W8QmvhpsurE36OKsCGf4DQicy0
+	137jK25ktdSwLk7D+eN939JWpoy2Tk8Qjmjfwgzia7Rq4eC7YtkWL+wSI+79KlmY
+	l5W3WzMEY7UgztApNX1uY5JUfOuc94ArX807UvOy9qLdCs6KeaP6rgEMuuLqv8ou
+	x9Wb9Inp+e9VfdQH2fKpid3rGzhYskPgBS3RS4W80JJvGnob3bPq4KZdw1yiP7hZ
+	rCgi5w==
+Received: from beta.dmz-ap.st.com (beta.dmz-ap.st.com [138.198.100.35])
+	by mx07-00178001.pphosted.com (PPS) with ESMTPS id 47e7pped6k-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 25 Jun 2025 11:42:34 +0200 (MEST)
+Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
+	by beta.dmz-ap.st.com (STMicroelectronics) with ESMTP id 2E63B40045;
+	Wed, 25 Jun 2025 11:41:33 +0200 (CEST)
+Received: from Webmail-eu.st.com (eqndag1node6.st.com [10.75.129.135])
+	by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id 6D9DC64328B;
+	Wed, 25 Jun 2025 11:40:44 +0200 (CEST)
+Received: from SAFDAG1NODE1.st.com (10.75.90.17) by EQNDAG1NODE6.st.com
+ (10.75.129.135) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Wed, 25 Jun
+ 2025 11:40:44 +0200
+Received: from localhost (10.48.86.121) by SAFDAG1NODE1.st.com (10.75.90.17)
+ with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Wed, 25 Jun
+ 2025 11:40:43 +0200
+From: Arnaud Pouliquen <arnaud.pouliquen@foss.st.com>
+To: Bjorn Andersson <andersson@kernel.org>,
+        Mathieu Poirier
+	<mathieu.poirier@linaro.org>,
+        Jens Wiklander <jens.wiklander@linaro.org>,
+        "Rob Herring" <robh+dt@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        "Conor Dooley" <conor+dt@kernel.org>
+CC: <linux-stm32@st-md-mailman.stormreply.com>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-remoteproc@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <op-tee@lists.trustedfirmware.org>, <devicetree@vger.kernel.org>,
+        Arnaud Pouliquen <arnaud.pouliquen@foss.st.com>
+Subject: [PATCH v19 4/6] dt-bindings: remoteproc: Add compatibility for TEE support
+Date: Wed, 25 Jun 2025 11:40:26 +0200
+Message-ID: <20250625094028.758016-5-arnaud.pouliquen@foss.st.com>
+X-Mailer: git-send-email 2.25.1
+In-Reply-To: <20250625094028.758016-1-arnaud.pouliquen@foss.st.com>
+References: <20250625094028.758016-1-arnaud.pouliquen@foss.st.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250624121449.136416081@linuxfoundation.org>
-In-Reply-To: <20250624121449.136416081@linuxfoundation.org>
-From: Takeshi Ogasawara <takeshi.ogasawara@futuring-girl.com>
-Date: Wed, 25 Jun 2025 18:40:25 +0900
-X-Gm-Features: AX0GCFs0Ue24bpACExUeXXuPVoyD4JIFjJgBbT28iyUyE73zbAYOm3Ich6oFbxI
-Message-ID: <CAKL4bV7CD4udvk+-k9ia6GSKoWJB31Su3LbZG6k=9o7joTC4Pg@mail.gmail.com>
-Subject: Re: [PATCH 6.15 000/588] 6.15.4-rc2 review
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: stable@vger.kernel.org, patches@lists.linux.dev, 
-	linux-kernel@vger.kernel.org, torvalds@linux-foundation.org, 
-	akpm@linux-foundation.org, linux@roeck-us.net, shuah@kernel.org, 
-	patches@kernelci.org, lkft-triage@lists.linaro.org, pavel@denx.de, 
-	jonathanh@nvidia.com, f.fainelli@gmail.com, sudipm.mukherjee@gmail.com, 
-	srw@sladewatkins.net, rwarsow@gmx.de, conor@kernel.org, hargar@microsoft.com, 
-	broonie@kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: EQNCAS1NODE4.st.com (10.75.129.82) To SAFDAG1NODE1.st.com
+ (10.75.90.17)
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.7,FMLib:17.12.80.40
+ definitions=2025-06-25_02,2025-06-23_07,2025-03-28_01
 
-Hi Greg
+The "st,stm32mp1-m4-tee" compatible is utilized in a system configuration
+where the Cortex-M4 firmware is loaded by the Trusted Execution Environment
+(TEE).
 
-On Tue, Jun 24, 2025 at 9:31=E2=80=AFPM Greg Kroah-Hartman
-<gregkh@linuxfoundation.org> wrote:
->
-> This is the start of the stable review cycle for the 6.15.4 release.
-> There are 588 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
->
-> Responses should be made by Thu, 26 Jun 2025 12:13:28 +0000.
-> Anything received after that time might be too late.
->
-> The whole patch series can be found in one patch at:
->         https://www.kernel.org/pub/linux/kernel/v6.x/stable-review/patch-=
-6.15.4-rc2.gz
-> or in the git tree and branch at:
->         git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable=
--rc.git linux-6.15.y
-> and the diffstat can be found below.
->
-> thanks,
->
-> greg k-h
->
+For instance, this compatible is used in both the Linux and OP-TEE device
+trees:
+- In OP-TEE, a node is defined in the device tree with the
+  "st,stm32mp1-m4-tee" compatible to support signed remoteproc firmware.
+  Based on DT properties, the OP-TEE remoteproc framework is initiated to
+  expose a trusted application service to authenticate and load the remote
+  processor firmware provided by the Linux remoteproc framework, as well
+  as to start and stop the remote processor.
+- In Linux, when the compatibility is set, the Cortex-M resets should not
+  be declared in the device tree. In such a configuration, the reset is
+  managed by the OP-TEE remoteproc driver and is no longer accessible from
+  the Linux kernel.
 
-6.15.4-rc2 tested.
+Associated with this new compatible, add the "st,proc-id" property to
+identify the remote processor. This ID is used to define a unique ID,
+common between Linux, U-Boot, and OP-TEE, to identify a coprocessor.
+This ID will be used in requests to the OP-TEE remoteproc Trusted
+Application to specify the remote processor.
 
-Build successfully completed.
-Boot successfully completed.
-No dmesg regressions.
-Video output normal.
-Sound output normal.
+Signed-off-by: Arnaud Pouliquen <arnaud.pouliquen@foss.st.com>
+Reviewed-by: Rob Herring (Arm) <robh@kernel.org>
+---
+ .../bindings/remoteproc/st,stm32-rproc.yaml   | 58 ++++++++++++++++---
+ 1 file changed, 50 insertions(+), 8 deletions(-)
 
-Lenovo ThinkPad X1 Carbon Gen10(Intel i7-1260P(x86_64) arch linux)
+diff --git a/Documentation/devicetree/bindings/remoteproc/st,stm32-rproc.yaml b/Documentation/devicetree/bindings/remoteproc/st,stm32-rproc.yaml
+index 843679c557e7..58da07e536fc 100644
+--- a/Documentation/devicetree/bindings/remoteproc/st,stm32-rproc.yaml
++++ b/Documentation/devicetree/bindings/remoteproc/st,stm32-rproc.yaml
+@@ -16,7 +16,12 @@ maintainers:
+ 
+ properties:
+   compatible:
+-    const: st,stm32mp1-m4
++    enum:
++      - st,stm32mp1-m4
++      - st,stm32mp1-m4-tee
++    description:
++      Use "st,stm32mp1-m4" for the Cortex-M4 coprocessor management by non-secure context
++      Use "st,stm32mp1-m4-tee" for the Cortex-M4 coprocessor management by secure context
+ 
+   reg:
+     description:
+@@ -43,6 +48,10 @@ properties:
+           - description: The offset of the hold boot setting register
+           - description: The field mask of the hold boot
+ 
++  st,proc-id:
++    description: remote processor identifier
++    $ref: /schemas/types.yaml#/definitions/uint32
++
+   st,syscfg-tz:
+     deprecated: true
+     description:
+@@ -146,21 +155,43 @@ properties:
+ required:
+   - compatible
+   - reg
+-  - resets
+ 
+ allOf:
+   - if:
+       properties:
+-        reset-names:
+-          not:
+-            contains:
+-              const: hold_boot
++        compatible:
++          contains:
++            const: st,stm32mp1-m4
+     then:
++      if:
++        properties:
++          reset-names:
++            not:
++              contains:
++                const: hold_boot
++      then:
++        required:
++          - st,syscfg-holdboot
++      else:
++        properties:
++          st,syscfg-holdboot: false
++        required:
++          - reset-names
+       required:
+-        - st,syscfg-holdboot
+-    else:
++        - resets
++
++  - if:
++      properties:
++        compatible:
++          contains:
++            const: st,stm32mp1-m4-tee
++    then:
+       properties:
+         st,syscfg-holdboot: false
++        reset-names: false
++        resets: false
++      required:
++        - st,proc-id
+ 
+ additionalProperties: false
+ 
+@@ -192,5 +223,16 @@ examples:
+       st,syscfg-rsc-tbl = <&tamp 0x144 0xFFFFFFFF>;
+       st,syscfg-m4-state = <&tamp 0x148 0xFFFFFFFF>;
+     };
++  - |
++    #include <dt-bindings/reset/stm32mp1-resets.h>
++    m4@10000000 {
++      compatible = "st,stm32mp1-m4-tee";
++      reg = <0x10000000 0x40000>,
++            <0x30000000 0x40000>,
++            <0x38000000 0x10000>;
++      st,proc-id = <0>;
++      st,syscfg-rsc-tbl = <&tamp 0x144 0xFFFFFFFF>;
++      st,syscfg-m4-state = <&tamp 0x148 0xFFFFFFFF>;
++    };
+ 
+ ...
+-- 
+2.25.1
 
-[    0.000000] Linux version 6.15.4-rc2rv-g0e4c88a0cd37
-(takeshi@ThinkPadX1Gen10J0764) (gcc (GCC) 15.1.1 20250425, GNU ld (GNU
-Binutils) 2.44.0) #1 SMP PREEMPT_DYNAMIC Wed Jun 25 15:02:33 JST 2025
-
-Thanks
-
-Tested-by: Takeshi Ogasawara <takeshi.ogasawara@futuring-girl.com>
 
