@@ -1,314 +1,260 @@
-Return-Path: <linux-kernel+bounces-705177-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-705178-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 81BFBAEA646
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Jun 2025 21:19:17 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id BC69BAEA648
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Jun 2025 21:20:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AE3204A7454
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Jun 2025 19:19:17 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C20263ACA67
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Jun 2025 19:19:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4FF602EF9CE;
-	Thu, 26 Jun 2025 19:19:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D19272EF9D6;
+	Thu, 26 Jun 2025 19:20:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="MoV6kTQt"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="JOeJtynM"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.17])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 772F22EF66F;
-	Thu, 26 Jun 2025 19:19:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750965548; cv=none; b=ny3Gw04SsJ1X3qSj9Kw/34XZ0EMOtVoDmBP0ztT4cj71OvhAY5np3Xe9Krf8o5xNtgfNvoZQSKjOZDDV7BfpP2qIHf2Imnk0Tay64PfMwe9LOE8tNBjC54pUyu95OT6eG9zJSpiq4kiYt99GLig2FZFXY95bynV/VmASoTe3J8w=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750965548; c=relaxed/simple;
-	bh=VkX5ZuHS/bXV97AUrIGdGTgdrkQP8GvbiWckmjBNkIQ=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=qAzuMlqIpX0BHu6Kul3m2hWNubrOTxrjql0ajVIDOk1fq/blM//5rnMQDA7Lk/EsZyvVSY8WlpNsRUKl0LNTRA7XNtqY+WhDV5v9PztI46dlUd4g+cEIAc5M0M7ceCmXiHYBtZoC9xplAh84+IAJEdOIn1h+P9kTuyamo2M5Jt4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=MoV6kTQt; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id F0F7FC4AF0B;
-	Thu, 26 Jun 2025 19:19:07 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1750965548;
-	bh=VkX5ZuHS/bXV97AUrIGdGTgdrkQP8GvbiWckmjBNkIQ=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=MoV6kTQt/MIZrbtDjtfMdN8xlyvtKinhJDyXfVV3CAeKRQm7CvCUkxgM6yfF2vHc4
-	 G6gHwtMHXwu9xhJb6Olp6+cVu/kZY7W3WT+uxHDzDrEBg3kvJRfh/LmkG4k+HNkclc
-	 k93AmoLxs4cXsx19g45diS1Gb0lPnPcM8XwThAcTMgktUQ4Zh0aWlfJy9eib1E9Puu
-	 U/6kGtWY8yjygihVK3GunULdFqUAFPEnb7ROM4eWKbDEX6zIuBuG8x+KT5W54LtWCB
-	 vWY4NKMaMitYHk8Nzn3ktwlZmhP3FEkPzpRM9ptk7OdIVP5TPJmBkDCqhrx+zQbjt7
-	 PjGt/rhgUR4GQ==
-Received: by mail-oo1-f48.google.com with SMTP id 006d021491bc7-610db3f3f90so712319eaf.2;
-        Thu, 26 Jun 2025 12:19:07 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCV8UtJiXZK1+U2N0l7HvzbQMl3Y0JTskokhPCDBbTrAOnRgtw83lxEVsiTX+qUENp9daiPjceZX/f2I@vger.kernel.org, AJvYcCVesDujmLJGUeAGxYgP+HYqVhVo3aH5nIE7gV+Tz9B2OB7a/znrtcUQJXgj8q2aykzcIbCShuQG317RqRM=@vger.kernel.org, AJvYcCVoPuM2Ktc1HIbRdrwlRwwWQQ2TqRybCIp9e3tojTuhYbhdT7cVBEotHpXqonD+K1+E34auoZi9UgqoZd+u@vger.kernel.org, AJvYcCWdtICzJV1APDCyrvxvboee3N87OUR3BgP/LLFeouItquxrN7RBnnSHbktb+IZj3k919TzoUdb2y23nPA==@vger.kernel.org
-X-Gm-Message-State: AOJu0YwZlpw2LCOHT+DO6VkOFzKlRxS0Dl717fOFbxqWmIgVxeCdD0cu
-	DUWI5kRkdDZa35S/C80kXnRCN28WKhoK3megy8+ylGvI9UhZuG/S0kXd6nIe7i/X8+567wJNBDz
-	t2kyaO+iyR8hnLJplkD1xXcoIPZUuuAo=
-X-Google-Smtp-Source: AGHT+IEf8+Nk3mb1VVGmWBipvoc78JKfPHDCIcW4oYXWUF1PzlrpPecW83KkWJVeTPUxs5NdH3Wl2IBL5jwi24CoVCM=
-X-Received: by 2002:a05:6820:180c:b0:611:b85f:b159 with SMTP id
- 006d021491bc7-611b9015d61mr397663eaf.1.1750965547237; Thu, 26 Jun 2025
- 12:19:07 -0700 (PDT)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 37B3E2264D3;
+	Thu, 26 Jun 2025 19:20:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=198.175.65.17
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1750965603; cv=fail; b=HOTLAwCn9BK94yJ16/BRWaQh7panvhhxLbA0fNzTAp2p7Rg3oJywAh/CkoTPS2EAzJ5DAutxuI00gGh23YR3MPdF5fl4aeq3b13qCExDsnRDz/5XRJZuMawd15HLYq+2CF8vTnWxmiywxjUUGViGEsdKhLdJymZltUXF4eATcf4=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1750965603; c=relaxed/simple;
+	bh=WSaa1CTLMhWqfAajq5caUohdZYPx2JONazVZQn1NCAQ=;
+	h=Date:From:To:CC:Subject:Message-ID:References:Content-Type:
+	 Content-Disposition:In-Reply-To:MIME-Version; b=Cwt9Wjto8Eja6DrISBKVCK9RRHLp7OXjmrY9uVc/L5nTufqXubyjnsZiiuSGfnmrgcnV1jxXLz3pv8Tz7esdVzAuYsGE1fbdrWmzPSl+CUUBq/PidTi10lIQeqforAoTQ1xgzuX6uYQHYKxHsOlXvnZCAIXKDHnD0jhaw0HmG6w=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=JOeJtynM; arc=fail smtp.client-ip=198.175.65.17
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1750965602; x=1782501602;
+  h=date:from:to:cc:subject:message-id:references:
+   in-reply-to:mime-version;
+  bh=WSaa1CTLMhWqfAajq5caUohdZYPx2JONazVZQn1NCAQ=;
+  b=JOeJtynMha8VpoeyqPGnSRUDcZ0sdD0R170rsSyofBIa5IZTLTu8UlWm
+   Y6+8+V5XxHIJHrX9QjcmEIvD29DarlvkTQTUrVr06Xb0d/sM21OkVaUMT
+   5b00z5JBunmlhB/CLWKqXNQ7NDsrWKHX96uHTZpRniNZBfcbgtxyiWikE
+   cuYBgMQttRbkwNXuH4zZlMOCkR6pd6ix4RWFqcDgCiX3gZSY88IUBfl9V
+   Vs2wEOEX/R8ZPQsbmpCxvqF22zAzZZaIbyTICJFzaJ+jCqhE5oK/IZ+19
+   9I/SoL6Dq1ALkn4fThA8TPT4Zd+b72N05HniG2AEJJidFyz7gZy9X/p/B
+   Q==;
+X-CSE-ConnectionGUID: ys+Qb3a/Sj+blW/MiCJBzg==
+X-CSE-MsgGUID: JHHvuhGQR8S2fo4EVO+dlA==
+X-IronPort-AV: E=McAfee;i="6800,10657,11476"; a="53240041"
+X-IronPort-AV: E=Sophos;i="6.16,268,1744095600"; 
+   d="scan'208";a="53240041"
+Received: from fmviesa003.fm.intel.com ([10.60.135.143])
+  by orvoesa109.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 26 Jun 2025 12:20:01 -0700
+X-CSE-ConnectionGUID: C/SKGhg9Qd6w3Prn3XM1vA==
+X-CSE-MsgGUID: 5wgoqunxSB+qBZrtw1ANMA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.16,268,1744095600"; 
+   d="scan'208";a="156631098"
+Received: from orsmsx901.amr.corp.intel.com ([10.22.229.23])
+  by fmviesa003.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 26 Jun 2025 12:20:00 -0700
+Received: from ORSMSX901.amr.corp.intel.com (10.22.229.23) by
+ ORSMSX901.amr.corp.intel.com (10.22.229.23) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.25; Thu, 26 Jun 2025 12:19:59 -0700
+Received: from ORSEDG902.ED.cps.intel.com (10.7.248.12) by
+ ORSMSX901.amr.corp.intel.com (10.22.229.23) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.25 via Frontend Transport; Thu, 26 Jun 2025 12:19:59 -0700
+Received: from NAM02-DM3-obe.outbound.protection.outlook.com (40.107.95.42) by
+ edgegateway.intel.com (134.134.137.112) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.25; Thu, 26 Jun 2025 12:19:59 -0700
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=lQZ6neBbm70bgsSaHzj+c5R15ex/BSA6W3emiF1S80391WGtv3PGGRQItg7odGblY4EUf0Cs+bDaH5cPsKim5Uvw2r2Up+d4cBeUNOcsGwhHgzPPnCTzgYxSqXnxBRWlzxk0nf6epJpSjTJXNMd1iiALg3bu39Ridxvic93EzQ55TAlelZLPVsqfuuZ/LnjK7S69H+o5mI5bea+vuQwgKWfm+qqKzuGvhgw70le2xFfM85s3TDcwJahQH6LIMx29S6qEcpe4vm5vs3bkbU6v0olteXq/x6d0YQjxbU38WDmb8Z60IW5sx0CvqRp+aO+9CMHN3iPS+sVLnzReHrIBvw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=/IdORhHLBydu4ss2c32VIWGDIE1LoSHYeCMtz0m1vc4=;
+ b=fLBFJ7Yr0Nr7bqnoqwpINMkblqUBNQsImiGQfRsNCFQe44kgxIvq5A2bOMwR0rDa+H2MLzP8wjLwRl34tv0N8UEeMHSAYnBZp2PCSsX3FeCZRbSsPQWWGcZHidKzvbYR8XG7NB1v9HqSMaNYjVT9IGmVlYywDggXucWWlvGp9lRdMxGyPi9+WBeQnUn2Sl6PSw0Vdj+7obvus5UDIN4viLu+g9izp/YPysELFAfa9tGlxdLZQuRBKraKx9aBXw2cZaDJLmXyyNQaM68kJ8UWp4VWMXNftH79pjOMSjI6DcaN/ZyPknl6rtbeXJXfTjqQSmeVD/lbb9VF+Obtb/XdOQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
+ dkim=pass header.d=intel.com; arc=none
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=intel.com;
+Received: from DS4PPF0BAC23327.namprd11.prod.outlook.com (2603:10b6:f:fc02::9)
+ by DS4PPF7CCC4B437.namprd11.prod.outlook.com (2603:10b6:f:fc02::34) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8857.29; Thu, 26 Jun
+ 2025 19:19:55 +0000
+Received: from DS4PPF0BAC23327.namprd11.prod.outlook.com
+ ([fe80::8254:d7be:8a06:6efb]) by DS4PPF0BAC23327.namprd11.prod.outlook.com
+ ([fe80::8254:d7be:8a06:6efb%7]) with mapi id 15.20.8769.022; Thu, 26 Jun 2025
+ 19:19:55 +0000
+Date: Thu, 26 Jun 2025 12:19:46 -0700
+From: Alison Schofield <alison.schofield@intel.com>
+To: Neeraj Kumar <s.neeraj@samsung.com>
+CC: <dan.j.williams@intel.com>, <dave@stgolabs.net>,
+	<jonathan.cameron@huawei.com>, <dave.jiang@intel.com>,
+	<vishal.l.verma@intel.com>, <ira.weiny@intel.com>,
+	<a.manzanares@samsung.com>, <nifan.cxl@gmail.com>, <anisa.su@samsung.com>,
+	<vishak.g@samsung.com>, <krish.reddy@samsung.com>, <arun.george@samsung.com>,
+	<alok.rathore@samsung.com>, <neeraj.kernel@gmail.com>,
+	<linux-kernel@vger.kernel.org>, <linux-cxl@vger.kernel.org>,
+	<nvdimm@lists.linux.dev>, <gost.dev@samsung.com>, <cpgs@samsung.com>
+Subject: Re: [RFC PATCH 15/20] cxl: Add a routine to find cxl root decoder on
+ cxl bus
+Message-ID: <aF2dUqGKcu8-rwaV@aschofie-mobl2.lan>
+References: <20250617123944.78345-1-s.neeraj@samsung.com>
+ <CGME20250617124049epcas5p1de7eeee3b5ddd12ea221ca3ebf22f6e8@epcas5p1.samsung.com>
+ <1295226194.21750165382072.JavaMail.epsvc@epcpadp2new>
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+In-Reply-To: <1295226194.21750165382072.JavaMail.epsvc@epcpadp2new>
+X-ClientProxiedBy: MN2PR14CA0007.namprd14.prod.outlook.com
+ (2603:10b6:208:23e::12) To DS4PPF0BAC23327.namprd11.prod.outlook.com
+ (2603:10b6:f:fc02::9)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250625215813.3477840-1-superm1@kernel.org> <20250625215813.3477840-5-superm1@kernel.org>
- <710f7c04-0099-4611-b2ea-4dd4219ad5e2@kernel.org> <23f30094-68cc-47fe-86e0-5289cb41e940@kernel.org>
- <rn2kp5tog2agvswva2ipqq2ytiqdcgccnocudsg6ckwfh4roei@provk2g6dita>
- <363c2b92-4bfc-4537-9fca-025eef09526f@kernel.org> <nxticocp26r5mmpkttritw76h5igw7bdpus6zaf5krkso2h5xy@wna6m2quekfi>
- <cbbf0caf-82ce-4427-9844-b11e0f5cacdb@kernel.org> <obpakvzyludc4jskqzyxf65dhqds7ie3jkbfsqdve32ouuaili@xvogkmwvbmbf>
- <284ea5c0-dca5-4e9e-a3e7-705eca794010@kernel.org> <vkau25ybcx3bcoa2jmxlukumunzii5h6em43anh6mmzk2kyiv7@kyych4kxc4zo>
- <0d71a686-da67-4686-8976-a17d0d1ca923@kernel.org>
-In-Reply-To: <0d71a686-da67-4686-8976-a17d0d1ca923@kernel.org>
-From: "Rafael J. Wysocki" <rafael@kernel.org>
-Date: Thu, 26 Jun 2025 21:18:56 +0200
-X-Gmail-Original-Message-ID: <CAJZ5v0gKUN1OdqAHnXNcFUAOfhpdRfa_o=L6TA2GZTpe1bMaNQ@mail.gmail.com>
-X-Gm-Features: Ac12FXxSdOjDJ8hZfsVdmlh0vRBQMtPgyURvdzpvkVcVLQ-9eoMVTSQOIi6KsFI
-Message-ID: <CAJZ5v0gKUN1OdqAHnXNcFUAOfhpdRfa_o=L6TA2GZTpe1bMaNQ@mail.gmail.com>
-Subject: Re: [PATCH v3 4/4] Input: Don't send fake button presses to wake system
-To: Hans de Goede <hansg@kernel.org>
-Cc: Dmitry Torokhov <dmitry.torokhov@gmail.com>, Mario Limonciello <superm1@kernel.org>, 
-	Mika Westerberg <westeri@kernel.org>, Andy Shevchenko <andriy.shevchenko@linux.intel.com>, 
-	Linus Walleij <linus.walleij@linaro.org>, Bartosz Golaszewski <brgl@bgdev.pl>, 
-	"open list:GPIO ACPI SUPPORT" <linux-gpio@vger.kernel.org>, 
-	"open list:GPIO ACPI SUPPORT" <linux-acpi@vger.kernel.org>, open list <linux-kernel@vger.kernel.org>, 
-	"open list:INPUT (KEYBOARD, MOUSE, JOYSTICK, TOUCHSCREEN)..." <linux-input@vger.kernel.org>, Mario Limonciello <mario.limonciello@amd.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: DS4PPF0BAC23327:EE_|DS4PPF7CCC4B437:EE_
+X-MS-Office365-Filtering-Correlation-Id: 7b701e8b-2631-41b4-f872-08ddb4e66eeb
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|7416014|376014|1800799024|7053199007;
+X-Microsoft-Antispam-Message-Info: =?us-ascii?Q?ef+BRO82bL7/iQFA3R2bNp0gbJ6Rj9cnb4C5Wx2B7WKPeDbHVJIHqDUtpZTS?=
+ =?us-ascii?Q?+jUPNz3mh9dHVeR34F0axmv/wPZ3bpMGSIsHH5lr7p+1dJYOTQoBULnQPAu2?=
+ =?us-ascii?Q?hoxXQKmlbFPZXh4B0OBt3/bdTF9c+ip2Vh/4+xkVyUI3iH5ORiTnzrmtjxj9?=
+ =?us-ascii?Q?16G4YGjXSIYTDP2Otgk1615DnXQSqD44rkxdJLZ8bnq+onLIVbvjjTG6YuFJ?=
+ =?us-ascii?Q?EU2Y5CSjwgV5xZd9Qx7LYZlAO61NzhY2ZFcEjRC32gfVUvEHHS1oQpSCoYLH?=
+ =?us-ascii?Q?3u+QLb4d7TmoIZ7wrMTbUbDY7ELZmX9ocicwgfktid34fngEiXFOQ7Angc9C?=
+ =?us-ascii?Q?JKUUATq0/jBwSscCZkC1ffR43o+mPX5lDaRQZL+FvUYgq7dPiGYBd4nlZd/I?=
+ =?us-ascii?Q?pEGYqRrsdl3i18gnbgiuvLSWKifKBa87cSxbiKkdusooxiagorVBp4NqavOb?=
+ =?us-ascii?Q?R8MRw5ZoicPT3JsneAIseG4bxzMpKkTa1a+O9UQTvhl/2vBACaJWVBD398aa?=
+ =?us-ascii?Q?ZAXKRIlX25b0ZtvvKM4WPKZ6s59j6goe+Y5/nCHqzJNJOQlPUOMXYRKfaeev?=
+ =?us-ascii?Q?rFCZROl2rC9TzDgthIPB8WRqnFZAikmcobm17GQqtxxwoVd/6HqmLq2W6WAF?=
+ =?us-ascii?Q?jXhT3apmoQSMe4zBixIE+bVaQedKMtdMkUYJmeePyYCA5LJgqi7aFLZ7j+fH?=
+ =?us-ascii?Q?eSzOozbNX02fq0bhclE1Ga1C1kBfeHe4Ol+JHQFsIS4sIJmXAvBSijT+W5yJ?=
+ =?us-ascii?Q?CeO8oNysX6GgvauIiV8p0NitfawCQuAXVXrCLf+OGKI8PlY94EYT2GpZM6c/?=
+ =?us-ascii?Q?Zn1a81o+OWYcBMqQBjaLI4opE9wl0nj/vk6h3m3NTETS4TkFkQggWYrzG96O?=
+ =?us-ascii?Q?/krPUvCnOHKsn+amiNc8T8JsNR7CzctzKkFsMlKDQbUK4PvHQMYfkOX/9X2g?=
+ =?us-ascii?Q?Y7oQmho51J/OsR+ur/eoSBoLzTVlPLv9K0Ac3pReduZo2ZuunkqbLrNF+8kC?=
+ =?us-ascii?Q?Zb7ui+NPdOxJUaVJj1PSyAf8StOtoXdXP5ZzM1xf5dnVraNDFYkHfvpJ9Qyt?=
+ =?us-ascii?Q?QK4oeQVPB+HRnf/JEE4C2w9ji8qIk7BV5gPJH9rBgj/pwKTbNtRB9o/tXt+q?=
+ =?us-ascii?Q?iI4rB/dmpWWS+JJwXZsMw7QQFkZ8i+mEl3RvO14OYNdnEgFleGLlMFHCV6yF?=
+ =?us-ascii?Q?mSmgmGUoQj82G02BxrCiCU3fqLdDP0ilcUSo2fFtrIIeAXu/EY4tzUMYy+TD?=
+ =?us-ascii?Q?ms1D1QLTpf4ibQslJQw7EIaNfyWD1IVwpthBNE4dtcmodsmxUuMMIBt6Gxq/?=
+ =?us-ascii?Q?cDEVy1LU2i62dtuiNYYPDl9X6UjWb0IeCb6Bm2kM6gMS30cM7xtzERe+cnkw?=
+ =?us-ascii?Q?xYMMu+aTTRwSnoJXm9y2V70HT0tJxAq/knk42vaxFTKA/QBVBQ=3D=3D?=
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DS4PPF0BAC23327.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(7416014)(376014)(1800799024)(7053199007);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?Mk+DDpgpjBoifNffmj0/wNFgZt4opLvBxFow748x45kJm1xOZ9EfLPktAcjc?=
+ =?us-ascii?Q?N5Sp69ua4qPd9D1UJ2ms6O3GSJ+NWH3QUUE0gbve2pvFP3Z9rNp8LVLAACI4?=
+ =?us-ascii?Q?+JbbRFSsJbJmsMmkllLe8TUcfy/kZ98U9qJfElEAqEg0SvLM8tC5k/QpozxB?=
+ =?us-ascii?Q?8Ewu/b2dUPbdPNx7ZrZoTRpn75OAsj01pen4X4tuXFvYH0c/9iiFGm8TyFgF?=
+ =?us-ascii?Q?cTB7I4c9s6tHZatf0sadJ0F2OxF9f9Ccwt5yi0bvW+7e3kaj5RtShMaL1JEu?=
+ =?us-ascii?Q?+X0z0rFtcG0fY6sZtL2AyNWjOwuoLLlBo8fQE/nAAcIt+iCWAUEKihFuK6Zm?=
+ =?us-ascii?Q?7Z5GdtP0j8kf0e8B2nvtNMhJs+wtVMOuDGbhN3j63eiv4Ly6rzATs6c8RCVs?=
+ =?us-ascii?Q?AKbSBGopSWHkNEjstPrQ//c2UXzZkHNZ/vjuH8cHCeUndStdTtyRTLA30xT7?=
+ =?us-ascii?Q?6Tg+XbOv7/wkXs4i9c0LowbpKJY3UIqL/E/0lkPBlv8ngqrbAYTqimOKE9AE?=
+ =?us-ascii?Q?LoOmdbRWHl9NbAzamjxwORA9om5+wIR/kSS5MO1PxmZViHBPjkYylr5xHbZ4?=
+ =?us-ascii?Q?SxFjascCL5m7oTcvTvsAb6u7/DnuC0etXKMlRIFTEPwCDiU38JmzitZWXKaQ?=
+ =?us-ascii?Q?1cg5PAr+IqJO3AxKn5v6scJ2zHbyS87W7mnq/YLMTm0QPeFGw/VeftAd+yz3?=
+ =?us-ascii?Q?ftHPAy9yVTs2gTz2emcdu52AK2GDNpNLoysnIgvoHhV/cp+cqpbXqbT3nkG6?=
+ =?us-ascii?Q?A/zctvcjWa9uKqB7p25GaOTl2tviWa4H/pErtuWg4pyd+Th2C6oYMeSXVg+k?=
+ =?us-ascii?Q?5wDYAtH3evt5POhoFtuIC3V6tqzzxfa8gbNcQ8p41YMx6nCrUNRjHRqNSl3V?=
+ =?us-ascii?Q?YguezElUPwlvCcAl4Ls8ZoYC0i1hT4VP9eYAkVjSqg5d6p1C/lwSsO7VUkIy?=
+ =?us-ascii?Q?pdyj1r+D8mFQB+JGkrOd/1+I1Q0Xf/Yt31mxmCGGe6Iqc4NN8pIrMDvDPB83?=
+ =?us-ascii?Q?TxfXILL4s1clN44OAgwzL9nQn0hYZZIgI2TBpkbP/S3JtOWnOll9YqwNuDpu?=
+ =?us-ascii?Q?1FXn0d9gxFa+hu7Er7tQfSTNagRQc9Lz0IA/4c0Tiso3wGTtKTIl0epIViaU?=
+ =?us-ascii?Q?6Pbgyglu1Omd7rIe+t6qwvL4YaCInI5uVX1vXrxlplfhG8S91gLQvjilXpfv?=
+ =?us-ascii?Q?ny2cUG4gv7Lhz21n3MAIJICmx48wVT00Vl6F7MSWjf4q0GfFUfWWyr4FFVOT?=
+ =?us-ascii?Q?kGTaZ1dALAcyOZVoM0UejffG0jsnnlZIZKF/AMTLA+Fn0yv1zqpIrmxBnEUD?=
+ =?us-ascii?Q?CV2IdUHCHYbTKdts4EwD2fo1M2uO7AkHuu4vGC4kGZkTiRrFGdrD6ysg+PU+?=
+ =?us-ascii?Q?+xLyLdjzxei3JigQUSZl0vDmL+5BUNZB1Qxee1p80/e7KjqVLagViVYz742G?=
+ =?us-ascii?Q?mpTJSwM2yiRyrRVNu2ZaXhxBF12oL2sDcRZ4Ut/gPeDg+Oxy+o8qMakCOFPV?=
+ =?us-ascii?Q?rnUgMmsAIJa/udj8sc2fqsNXK5YqKOg1w+yrQhsAXfqcqrGb0XzxGsDLOMfv?=
+ =?us-ascii?Q?nwpFBzXJ8fgoNt8DJlQXVTE58X2UNzv3rHnVBfG99HH9CeVthgMWfXCz1FLQ?=
+ =?us-ascii?Q?5A=3D=3D?=
+X-MS-Exchange-CrossTenant-Network-Message-Id: 7b701e8b-2631-41b4-f872-08ddb4e66eeb
+X-MS-Exchange-CrossTenant-AuthSource: DS4PPF0BAC23327.namprd11.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 26 Jun 2025 19:19:55.5059
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: 94ysATHH3pWCt8pEeorP/qD7ReXtMuE+YXxQ9G7rfdvR6hQ/05fvo8PRj8uhuvNhvnu2RDSxWlX1NUmo4Ww3Eg1c/TfEYFhLPg5ICAYAb/4=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DS4PPF7CCC4B437
+X-OriginatorOrg: intel.com
 
-On Thu, Jun 26, 2025 at 9:16=E2=80=AFPM Hans de Goede <hansg@kernel.org> wr=
-ote:
->
-> Hi,
->
-> On 26-Jun-25 21:14, Dmitry Torokhov wrote:
-> > On Thu, Jun 26, 2025 at 08:57:30PM +0200, Hans de Goede wrote:
-> >> Hi,
-> >>
-> >> On 26-Jun-25 20:48, Dmitry Torokhov wrote:
-> >>> On Thu, Jun 26, 2025 at 01:20:54PM -0500, Mario Limonciello wrote:
-> >>>> On 6/26/2025 1:07 PM, Dmitry Torokhov wrote:
-> >>>>> On Thu, Jun 26, 2025 at 12:53:02PM -0500, Mario Limonciello wrote:
-> >>>>>>
-> >>>>>>
-> >>>>>> On 6/26/25 12:44 PM, Dmitry Torokhov wrote:
-> >>>>>>> Hi Mario,
-> >>>>>>>
-> >>>>>>> On Thu, Jun 26, 2025 at 06:33:08AM -0500, Mario Limonciello wrote=
-:
-> >>>>>>>>
-> >>>>>>>>
-> >>>>>>>> On 6/26/25 3:35 AM, Hans de Goede wrote:
-> >>>>>>>>> Hi Mario,
-> >>>>>>>>>
-> >>>>>>>>> On 25-Jun-25 23:58, Mario Limonciello wrote:
-> >>>>>>>>>> From: Mario Limonciello <mario.limonciello@amd.com>
-> >>>>>>>>>>
-> >>>>>>>>>> Sending an input event to wake a system does wake it, but user=
-space picks
-> >>>>>>>>>> up the keypress and processes it.  This isn't the intended beh=
-avior as it
-> >>>>>>>>>> causes a suspended system to wake up and then potentially turn=
- off if
-> >>>>>>>>>> userspace is configured to turn off on power button presses.
-> >>>>>>>>>>
-> >>>>>>>>>> Instead send a PM wakeup event for the PM core to handle wakin=
-g the system.
-> >>>>>>>>>>
-> >>>>>>>>>> Cc: Hans de Goede <hansg@kernel.org>
-> >>>>>>>>>> Fixes: 0f107573da417 ("Input: gpio_keys - handle the missing k=
-ey press event in resume phase")
-> >>>>>>>>>> Signed-off-by: Mario Limonciello <mario.limonciello@amd.com>
-> >>>>>>>>>> ---
-> >>>>>>>>>>     drivers/input/keyboard/gpio_keys.c | 7 +------
-> >>>>>>>>>>     1 file changed, 1 insertion(+), 6 deletions(-)
-> >>>>>>>>>>
-> >>>>>>>>>> diff --git a/drivers/input/keyboard/gpio_keys.c b/drivers/inpu=
-t/keyboard/gpio_keys.c
-> >>>>>>>>>> index 773aa5294d269..4c6876b099c43 100644
-> >>>>>>>>>> --- a/drivers/input/keyboard/gpio_keys.c
-> >>>>>>>>>> +++ b/drivers/input/keyboard/gpio_keys.c
-> >>>>>>>>>> @@ -420,12 +420,7 @@ static irqreturn_t gpio_keys_gpio_isr(int=
- irq, void *dev_id)
-> >>>>>>>>>>              pm_stay_awake(bdata->input->dev.parent);
-> >>>>>>>>>>              if (bdata->suspended  &&
-> >>>>>>>>>>                  (button->type =3D=3D 0 || button->type =3D=3D=
- EV_KEY)) {
-> >>>>>>>>>> -                    /*
-> >>>>>>>>>> -                     * Simulate wakeup key press in case the =
-key has
-> >>>>>>>>>> -                     * already released by the time we got in=
-terrupt
-> >>>>>>>>>> -                     * handler to run.
-> >>>>>>>>>> -                     */
-> >>>>>>>>>> -                    input_report_key(bdata->input, button->co=
-de, 1);
-> >>>>>>>>>> +                    pm_wakeup_event(bdata->input->dev.parent,=
- 0);
-> >>>>>>>
-> >>>>>>> There is already pm_stay_awake() above.
-> >>>>>>
-> >>>>>> But that doesn't help with the fact that userspace gets KEY_POWER =
-from this
-> >>>>>> and reacts to it.
-> >>>>>>
-> >>>>>>>
-> >>>>>>>>>>              }
-> >>>>>>>>>>      }
-> >>>>>>>>>
-> >>>>>>>>> Hmm, we have the same problem on many Bay Trail / Cherry Trail
-> >>>>>>>>> windows 8 / win10 tablets, so  this has been discussed before a=
-nd e.g.
-> >>>>>>>>> Android userspace actually needs the button-press (evdev) event=
- to not
-> >>>>>>>>> immediately go back to sleep, so a similar patch has been nacke=
-d in
-> >>>>>>>>> the past.
-> >>>>>>>>>
-> >>>>>>>>> At least for GNOME this has been fixed in userspace by ignoring
-> >>>>>>>>> power-button events the first few seconds after a resume from s=
-uspend.
-> >>>>>>>>>
-> >>>>>>>>
-> >>>>>>>> The default behavior for logind is:
-> >>>>>>>>
-> >>>>>>>> HandlePowerKey=3Dpoweroff
-> >>>>>>>>
-> >>>>>>>> Can you share more about what version of GNOME has a workaround?
-> >>>>>>>> This was actually GNOME (on Ubuntu 24.04) that I found this issu=
-e.
-> >>>>>>>>
-> >>>>>>>> Nonetheless if this is dependent on an Android userspace problem=
- could we
-> >>>>>>>> perhaps conditionalize it on CONFIG_ANDROID_BINDER_DEVICES?
-> >>>>>>>
-> >>>>>>> No it is not only Android, other userspace may want to distinguis=
-h
-> >>>>>>> between normal and "dark" resume based on keyboard or other user
-> >>>>>>> activity.
-> >>>>>>>
-> >>>>>>> Thanks.
-> >>>>>>>
-> >>>>>> In this specific case does the key passed up to satisfy this users=
-pace
-> >>>>>> requirement and keep it awake need to specifically be a fabricated
-> >>>>>> KEY_POWER?
-> >>>>>>
-> >>>>>> Or could we find a key that doesn't require some userspace to igno=
-re
-> >>>>>> KEY_POWER?
-> >>>>>>
-> >>>>>> Maybe something like KEY_RESERVED, KEY_FN, or KEY_POWER2?
-> >>>>>
-> >>>>> The code makes no distinction between KEY_POWER and KEY_A or KEY_B,=
- etc.
-> >>>>> It simply passes event to userspace for processing.
-> >>>>
-> >>>> Right.  I don't expect a problem with most keys, but my proposal is =
-to
-> >>>> special case KEY_POWER while suspended.  If a key press event must b=
-e sent
-> >>>> to keep Android and other userspace happy I suggest sending somethin=
-g
-> >>>> different just for that situation.
-> >>>
-> >>> I do not know if userspace specifically looks for KEY_POWER or if it
-> >>> looks for user input in general, and I'd rather be on safe side and n=
-ot
-> >>> mangle user input.
-> >>>
-> >>> As Hans mentioned, at least some userspace already prepared to deal w=
-ith
-> >>> this issue. And again, this only works if by the time ISR/debounce
-> >>> runs the key is already released. What if it is still pressed? You st=
-ill
-> >>> going to observe KEY_POWER and need to suppress turning off the scree=
-n.
-> >>>
-> >>>>
-> >>>> Like this:
-> >>>>
-> >>>> diff --git a/drivers/input/keyboard/gpio_keys.c
-> >>>> b/drivers/input/keyboard/gpio_keys.c
-> >>>> index 773aa5294d269..66e788d381956 100644
-> >>>> --- a/drivers/input/keyboard/gpio_keys.c
-> >>>> +++ b/drivers/input/keyboard/gpio_keys.c
-> >>>> @@ -425,7 +425,10 @@ static irqreturn_t gpio_keys_gpio_isr(int irq, =
-void
-> >>>> *dev_id)
-> >>>>                          * already released by the time we got inter=
-rupt
-> >>>>                          * handler to run.
-> >>>>                          */
-> >>>> -                       input_report_key(bdata->input, button->code,=
- 1);
-> >>>> +                       if (button->code =3D=3D KEY_POWER)
-> >>>> +                               input_report_key(bdata->input, KEY_W=
-AKEUP,
-> >>>> 1);
-> >>>
-> >>> Just FYI: Here your KEY_WAKEUP is stuck forever.
-> >>>
-> >>>> +                       else
-> >>>> +                               input_report_key(bdata->input, butto=
-n->code,
-> >>>> 1);
-> >>>>                 }
-> >>>>         }
-> >>>>
-> >>>>
-> >>>>
-> >>>>>
-> >>>>> You need to fix your userspace. Even with your tweak it is possible=
- for
-> >>>>> userspace to get a normal key event "too early" and turn off the sc=
-reen
-> >>>>> again, so you still need to handle this situation.
-> >>>>>
-> >>>>> Thanks.
-> >>>>>
-> >>>>
-> >>>> I want to note this driver works quite differently than how ACPI pow=
-er
-> >>>> button does.
-> >>>>
-> >>>> You can see in acpi_button_notify() that the "keypress" is only forw=
-arded
-> >>>> when not suspended [1].  Otherwise it's just wakeup event (which is =
-what my
-> >>>> patch was modeling).
-> >>>>
-> >>>> https://github.com/torvalds/linux/blob/v6.16-rc3/drivers/acpi/button=
-.c#L461
-> >>>> [1]
-> >>>
-> >>> If you check acpi_button_resume() you will see that the events are se=
-nt
-> >>> from there. Except that for some reason they chose to use KEY_WAKEUP =
-and
-> >>> not KEY_POWER, oh well. Unlike acpi button driver gpio_keys is used o=
-n
-> >>> multiple other platforms.
-> >>
-> >> Interesting, but the ACPI button code presumably only does this on res=
-ume
-> >> for a normal press while the system is awake it does use KEY_POWER, ri=
-ght ?
-> >
-> > Yes. It is unclear to me why they chose to mangle the event on wakeup,
-> > it does not seem to be captured in the email discussions or in the patc=
-h
-> > description.
->
-> I assume they did this to avoid the immediate re-suspend on wakeup by
-> power-button issue. GNOME has a workaround for this, but I assume that
-> some userspace desktop environments are still going to have a problem
-> with this.
+On Tue, Jun 17, 2025 at 06:09:39PM +0530, Neeraj Kumar wrote:
+> Add cxl_find_root_decoder to find root decoder on cxl bus. It is used to
+> find root decoder during region creation
 
-It was done for this reason IIRC, but it should have been documented
-more thoroughly.
+Does the existing to_cxl_root_decoder() provide what you need here?
+
+> 
+> Signed-off-by: Neeraj Kumar <s.neeraj@samsung.com>
+> ---
+>  drivers/cxl/core/port.c | 26 ++++++++++++++++++++++++++
+>  drivers/cxl/cxl.h       |  1 +
+>  2 files changed, 27 insertions(+)
+> 
+> diff --git a/drivers/cxl/core/port.c b/drivers/cxl/core/port.c
+> index 2452f7c15b2d..94d9322b8e38 100644
+> --- a/drivers/cxl/core/port.c
+> +++ b/drivers/cxl/core/port.c
+> @@ -513,6 +513,32 @@ struct cxl_switch_decoder *to_cxl_switch_decoder(struct device *dev)
+>  }
+>  EXPORT_SYMBOL_NS_GPL(to_cxl_switch_decoder, "CXL");
+>  
+> +static int match_root_decoder(struct device *dev, void *data)
+> +{
+> +	return is_root_decoder(dev);
+> +}
+> +
+> +/**
+> + * cxl_find_root_decoder() - find a cxl root decoder on cxl bus
+> + * @port: any descendant port in root-cxl-port topology
+> + */
+> +struct cxl_root_decoder *cxl_find_root_decoder(struct cxl_port *port)
+> +{
+> +	struct cxl_root *cxl_root __free(put_cxl_root) = find_cxl_root(port);
+> +	struct device *dev;
+> +
+> +	if (!cxl_root)
+> +		return NULL;
+> +
+> +	dev = device_find_child(&cxl_root->port.dev, NULL, match_root_decoder);
+> +
+> +	if (!dev)
+> +		return NULL;
+> +
+> +	return to_cxl_root_decoder(dev);
+> +}
+> +EXPORT_SYMBOL_NS_GPL(cxl_find_root_decoder, "CXL");
+> +
+>  static void cxl_ep_release(struct cxl_ep *ep)
+>  {
+>  	put_device(ep->ep);
+> diff --git a/drivers/cxl/cxl.h b/drivers/cxl/cxl.h
+> index 30c80e04cb27..2c6a782d0941 100644
+> --- a/drivers/cxl/cxl.h
+> +++ b/drivers/cxl/cxl.h
+> @@ -871,6 +871,7 @@ bool is_cxl_nvdimm_bridge(struct device *dev);
+>  int devm_cxl_add_nvdimm(struct cxl_port *parent_port, struct cxl_memdev *cxlmd);
+>  struct cxl_nvdimm_bridge *cxl_find_nvdimm_bridge(struct cxl_port *port);
+>  void cxl_region_discovery(struct cxl_port *port);
+> +struct cxl_root_decoder *cxl_find_root_decoder(struct cxl_port *port);
+>  
+>  #ifdef CONFIG_CXL_REGION
+>  bool is_cxl_pmem_region(struct device *dev);
+> -- 
+> 2.34.1
+> 
+> 
 
