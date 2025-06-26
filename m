@@ -1,106 +1,98 @@
-Return-Path: <linux-kernel+bounces-704857-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-704859-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id D9983AEA286
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Jun 2025 17:30:40 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 25C86AEA28A
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Jun 2025 17:31:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id BF84E188DC85
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Jun 2025 15:23:34 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 259701899797
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Jun 2025 15:24:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C2DF82E92D9;
-	Thu, 26 Jun 2025 15:23:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 728B82E8886;
+	Thu, 26 Jun 2025 15:23:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="VGjr12/6"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.17])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="PuUMdDzL"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A2AE32EB5CA
-	for <linux-kernel@vger.kernel.org>; Thu, 26 Jun 2025 15:23:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.17
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C78DB1C84A5;
+	Thu, 26 Jun 2025 15:23:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750951393; cv=none; b=koL8R83MbTVdY8Zj9ki75dsr8gTHgLL9gXXt9xW83B6fWUprUvsf2y5V6JjeHH8CBCzhWiu+VJ12GREdBYD/qadmMOoYGx5CyFQyOf5QAW746deva1kZirLJ88HvuZcB/q18lcPuzAghUjM1Gb+VxNlGgnQTfWUaqXdfGBdV6Ig=
+	t=1750951409; cv=none; b=ozxEQUxmERTddzWnF/+qzqHibY8wotsl3tZGx96RrDRdwVler+AYR9tz58m1wcHwbBaxunU0CPl2NpyRdi/RxbhmbzhE3qJ/2d5EVzkPWCz5U1vzMexmbyRNJDuMDVNkkynREe3BScXE84yV/ZdBSUNRoEtVqNS0GiGPMcUqEgQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750951393; c=relaxed/simple;
-	bh=i6XIwfrmqqyD44a9t3N13e4CHHC6SNOoZlcuVE+DCxo=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=QBKY90BrVijEC8GTSJE6M8TWEBd66J+dXninzCsqYlsp+r19z4euREK9a6wRyzIv5zDsU8kfBVBKc348Ow3ERIEFuwR/cUhFAgzEtDTMVdn70y948Eq9/mG36raPgLyUNnsoYlEQRPw7VWyFzIIw0SjpTjV7ihmjfquHmr6/wR4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=VGjr12/6; arc=none smtp.client-ip=192.198.163.17
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1750951392; x=1782487392;
-  h=from:to:cc:subject:date:message-id:mime-version:
-   content-transfer-encoding;
-  bh=i6XIwfrmqqyD44a9t3N13e4CHHC6SNOoZlcuVE+DCxo=;
-  b=VGjr12/6dPR+Hv2wPLqs8aQt1WHcyO4uIAjTg+uSNM8RaGh3fY3Wf2Io
-   EuVin58iNx+TJGAJpbSnlZ7QH7TpXWCupEVAg+l0T8HCiFlfWdedky3Bw
-   ThGoNPLdL2oQRcAhuWdha6TvIor6QOhLyJTaZFnpMhrupXS/S9wCL/W/f
-   Vcmg0n+5d4mP0czVC9MjyMt+2LyfJO2309wMzOUBQ40mUxUgN4s3U/ZZD
-   mJRj9yAouA5gi3ly8DR9GiGJ6lmjzA7xZx+zgigiYPZFbm8tIj3rQReiW
-   c5AXMR5iA9+rYoE1xsKzM04NBFGYZhe+R+SdFyTBlk7cDdeifnoOQTAch
-   Q==;
-X-CSE-ConnectionGUID: Mw8R3pFySj+GQ12XXJkG/A==
-X-CSE-MsgGUID: KWif+pxYQaiTRiATudQTSw==
-X-IronPort-AV: E=McAfee;i="6800,10657,11476"; a="53194155"
-X-IronPort-AV: E=Sophos;i="6.16,267,1744095600"; 
-   d="scan'208";a="53194155"
-Received: from fmviesa007.fm.intel.com ([10.60.135.147])
-  by fmvoesa111.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 26 Jun 2025 08:23:11 -0700
-X-CSE-ConnectionGUID: ztUFUrDURcCBnFsHryDMDQ==
-X-CSE-MsgGUID: 4/ntBjmaR7CnoOBrquX5EQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.16,267,1744095600"; 
-   d="scan'208";a="152169075"
-Received: from black.fi.intel.com ([10.237.72.28])
-  by fmviesa007.fm.intel.com with ESMTP; 26 Jun 2025 08:23:10 -0700
-Received: by black.fi.intel.com (Postfix, from userid 1003)
-	id 81DB42E2; Thu, 26 Jun 2025 18:23:08 +0300 (EEST)
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-	linux-kernel@vger.kernel.org
-Cc: Liam Girdwood <lgirdwood@gmail.com>,
-	Mark Brown <broonie@kernel.org>
-Subject: [PATCH v1 1/1] regulator: core: Don't use "proxy" headers
-Date: Thu, 26 Jun 2025 18:23:07 +0300
-Message-ID: <20250626152307.322627-1-andriy.shevchenko@linux.intel.com>
-X-Mailer: git-send-email 2.47.2
+	s=arc-20240116; t=1750951409; c=relaxed/simple;
+	bh=vEqq7SNHbKwDwRCpdljmiyEtoAVY0oQq3nQHD1jkexI=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=cqHuQp5ORrOmiOWZcQaA0tMR/uj6rYenqNZTFSTwBqvSLQwr/ebUmjlfBUIaGJhLxC/o/LzfYSePvsOQgrq2go2nzeBSn8RvXP5hW6JuuC0oMSmHoT2TqaEAb/p2JsGhI+NKM0NlxpaLKnuYVSpVHx3Ldz3zjYmXoy7NDgFo5e4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=PuUMdDzL; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id ADCE1C4CEEB;
+	Thu, 26 Jun 2025 15:23:28 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1750951409;
+	bh=vEqq7SNHbKwDwRCpdljmiyEtoAVY0oQq3nQHD1jkexI=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=PuUMdDzLr64AVJAKs03VHy3Vi5+oEh4cbkl1OFo8nyb2z4jjLWG+VX9vDwKLSh8fi
+	 FGEms3ioOVvNRk2oOmqlF/UQBap49c3rAowkPjrG8gCtgMrSNmIP9ak3OCudmixtTK
+	 4kXevH81AzrqT7JISRAcLV9PQGz2QyUdGFW3bcriO1KuW8kwBbBLIJ530ktsWJqQDk
+	 PsFsXqd/Md6Itb9vvf9/7uYUe95iOFD3mnsfkoLu3glevc3RM4/Pphjq4AV7Tcj0jG
+	 iaYo7p6thiv/vDYkPk6kv6GAlEw+kOC+JqPlqzX5bFSV8iGSoMXbPcBcnCSVCWqTHG
+	 r0d3BGHbMOLNg==
+Date: Thu, 26 Jun 2025 08:23:27 -0700
+From: Jakub Kicinski <kuba@kernel.org>
+To: Mina Almasry <almasrymina@google.com>
+Cc: patchwork-bot+netdevbpf@kernel.org, netdev@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org,
+ hawk@kernel.org, davem@davemloft.net, edumazet@google.com,
+ pabeni@redhat.com, horms@kernel.org, shuah@kernel.org,
+ ilias.apalodimas@linaro.org, toke@toke.dk
+Subject: Re: [PATCH net-next v5] page_pool: import Jesper's page_pool
+ benchmark
+Message-ID: <20250626082327.59888c1f@kernel.org>
+In-Reply-To: <CAHS8izO9=Q3W9zvq4Qtoi_NGTo6QShV7=rGOjxz3HiAB+6rZyw@mail.gmail.com>
+References: <20250619181519.3102426-1-almasrymina@google.com>
+	<175072801301.3355543.12713890018845780288.git-patchwork-notify@kernel.org>
+	<CAHS8izMPWjmxLWJr+BSqd5jamsFHDOm71NkG7fmm-78SkLxQTg@mail.gmail.com>
+	<20250625170305.40d8c27a@kernel.org>
+	<CAHS8izO9=Q3W9zvq4Qtoi_NGTo6QShV7=rGOjxz3HiAB+6rZyw@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-Update header inclusions to follow IWYU (Include What You Use)
-principle.
+On Wed, 25 Jun 2025 17:22:56 -0700 Mina Almasry wrote:
+> What I'm hoping to do is:
+> 
+> 1. Have nipa run the benchmark always (or at least on patches that
+> touch pp code, if that's possible), and always succeed.
+> 2. The pp reviewers can always check the contest results to manually
+> see if there is a regression. That's still great because it saves us
+> the time of cherry-pick series and running the tests ourselves (or
+> asking submitters to do that).
+> 3. If we notice that the results between runs are stable, then we can
+> change the test to actually fail/warn if it detects a regression (if
+> fast path is > # of instructions, fail).
 
-Note that kernel.h is discouraged to be included as it's written
-at the top of that file.
+That's fine. I don't think putting the data on a graphs would be much
+work, and clicking old results out of old runs will be a PITA. Just a
+little parsing in the runner to propagate it into JSON. And a fairly
+trivial bit of charts.js to fetch the runs and render UI.
 
-Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
----
- include/linux/regulator/coupler.h | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+> 4. If we notice that the results have too much noise, then we can
+> improve the now merged benchmark to somehow make it more consistent.
+> 
+> FWIW, when I run the benchmark, I get very repeatable results across
+> runs, especially when measuring the fast path, but nipa's mileage may
+> vary.
 
-diff --git a/include/linux/regulator/coupler.h b/include/linux/regulator/coupler.h
-index 73291f280a23..5e314a4294fb 100644
---- a/include/linux/regulator/coupler.h
-+++ b/include/linux/regulator/coupler.h
-@@ -8,7 +8,8 @@
- #ifndef __LINUX_REGULATOR_COUPLER_H_
- #define __LINUX_REGULATOR_COUPLER_H_
- 
--#include <linux/kernel.h>
-+#include <linux/errno.h>
-+#include <linux/types.h>
- #include <linux/suspend.h>
- 
- struct regulator_coupler;
--- 
-2.47.2
+100% on board. But someone with Meta credentials needs to add a runner
+and babysit it, I have enough CI wrangling as is.
 
+Or we wait a couple of months until we migrate to a more public setup.
 
