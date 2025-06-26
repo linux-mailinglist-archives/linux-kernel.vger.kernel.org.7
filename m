@@ -1,115 +1,129 @@
-Return-Path: <linux-kernel+bounces-704133-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-704136-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id C135DAE99DA
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Jun 2025 11:23:23 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7E581AE99E3
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Jun 2025 11:24:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 79E771C244D0
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Jun 2025 09:23:39 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EF1C416E6D9
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Jun 2025 09:24:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F2C3A29C35F;
-	Thu, 26 Jun 2025 09:23:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0908629B797;
+	Thu, 26 Jun 2025 09:24:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=dolcini.it header.i=@dolcini.it header.b="utUg7EZ6"
-Received: from mail11.truemail.it (mail11.truemail.it [217.194.8.81])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="DBHynQYO";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="F2PDavr/"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 470B118C332
-	for <linux-kernel@vger.kernel.org>; Thu, 26 Jun 2025 09:23:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.194.8.81
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0DC8918C332;
+	Thu, 26 Jun 2025 09:23:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750929796; cv=none; b=ST8kNL626OWo9FNNENWys15DZ19SczgbpQqpwVsmBlcg2u9e4qrncqMatnU5NdG31gXZnoTIEzPb5VYszLd2ADb08imhVaITbTOxyier0UujVCRITKlZDtzbWXCLPiiXWhEGFm/8LbGtkdgnAPnjA4deKz9f4tM0SYynFPKSt6I=
+	t=1750929839; cv=none; b=a3ZKyeXOXdKF1lXKBF+xDXH4EA9oF+Jalcg/3GkH6Wc2lUSpdjSD4RxgWzD38wU/O8E60HHcz1vXLNzYyIrsygTUzM7rDiL6G6AsUoN3ipR5nT3iuR3lzLUir7wGFiCbCZxp5cyJosqlCNE95XJu7UyGgoIYeW9nA1mzNlYkRHM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750929796; c=relaxed/simple;
-	bh=ylEfa4vUACuw8KIfRNg2KdZZX09VjtoRgwfxRGGV2XY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=C9dLjV6eEAZlvY8bWDPFSzQ00H6p5yaDSC1uHtIpdhRqWOeFHPxz0W6uXfY2BRTuYzlSOM32pez2jeAOOTKIUdLLzCe1uFpPkjGXDWjQWjQgek5h/WK2GqZHs5hoW2Ki3JLHigJWo22mVw7qg1jNOa8zOXc3mLuzKskjjwHkZ+A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=dolcini.it; spf=pass smtp.mailfrom=dolcini.it; dkim=pass (2048-bit key) header.d=dolcini.it header.i=@dolcini.it header.b=utUg7EZ6; arc=none smtp.client-ip=217.194.8.81
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=dolcini.it
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=dolcini.it
-Received: from gaggiata.pivistrello.it (93-49-2-63.ip317.fastwebnet.it [93.49.2.63])
-	by mail11.truemail.it (Postfix) with ESMTPA id ECC671F967;
-	Thu, 26 Jun 2025 11:23:11 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=dolcini.it;
-	s=default; t=1750929792;
-	bh=izAjhpsXTal8f3hm9SJLot604E5bhxsb/4OFueLGShY=;
-	h=Received:From:To:Subject;
-	b=utUg7EZ6/KmoskT8pK882I06qecDzO3j3zgPDifDO3S7FCfVo2D1q+LUGIaKeLJCv
-	 TZHqwBbvlESBfiLZAEWQNMv74de4YmEkSj5oSZ6V1s93DUfxaEwNk5e0k7hoeLwupR
-	 /Lrl3LWBbcoxIwep4gjUXPIKkkO1MX6W2HlgpZtEOy7/DUXLOKkBW+OyKoUZpdKlGj
-	 HVfxcaXhKQn36QYXxeoEGvnUicwlrUV5OwkzsSt0jOkYN+eNokpNVJaxmRTgL1YFGn
-	 BKgoGg9vuCEwrpfzhJEdqm1trRhSY284pG3YIWmolrPydpd9kRJQ4TQmRpzY76a2gk
-	 vv7pf9//pSzAA==
-Received: by gaggiata.pivistrello.it (Postfix, from userid 1000)
-	id A697D7F9CF; Thu, 26 Jun 2025 11:23:11 +0200 (CEST)
-Date: Thu, 26 Jun 2025 11:23:11 +0200
-From: Francesco Dolcini <francesco@dolcini.it>
-To: Anusha Srivatsa <asrivats@redhat.com>
-Cc: Neil Armstrong <neil.armstrong@linaro.org>,
-	Jessica Zhang <quic_jesszhan@quicinc.com>,
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	Maxime Ripard <mripard@kernel.org>,
-	Thomas Zimmermann <tzimmermann@suse.de>,
-	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
-	Luca Ceresoli <luca.ceresoli@bootlin.com>,
-	dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
-	Francesco Dolcini <francesco@dolcini.it>
-Subject: Re: [PATCH v2] panel/simple-simple: Identify simple DPI panels using
- .compatible field
-Message-ID: <aF0Rf8YiriLCN85V@gaggiata.pivistrello.it>
-References: <20250625-b4-simple-panel-regression-v2-1-9422d46917ac@redhat.com>
+	s=arc-20240116; t=1750929839; c=relaxed/simple;
+	bh=qefygG19a70dJv46vYC1EnTIxHXTAsx2nrgYvCYxMKw=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=rHKMmOK1tsSQwtet4FI4f3qUjk0tl/6qochdNI5/o0WIpu4aL3/N+Dmt6x7CrKTHgE9RL95c4UwrlFK9iL8BfoSenDeM4Ux5bXkuwau+1vEqJHTx1PdEDaJV1Qicvd4pUyxFaQYe5OCgZ1YL8MzYVxvf2/NgaoN/eTwroPAAJG8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=DBHynQYO; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=F2PDavr/; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+From: =?utf-8?q?Thomas_Wei=C3=9Fschuh?= <thomas.weissschuh@linutronix.de>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1750929836;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=i4K0WCp7W/aJOeJ11xc56lmM+3AvDScAzbW1dYGjQv4=;
+	b=DBHynQYOgmbyzFJw3/d0crd9G6Cppsucge9a7YDgcaK3PAHWheWDZJT40J5RHdih2BfGX/
+	4Fk2aMhWMcoWndnQ9j/WZqhxMVabbIx/+bBI8OCagM2Ur3bvHEvumPCmg/QMIuzR9FBVsy
+	w+s2lb+l7TJLTwPnaatOOg2+Zv2gyJKTVjFBhp4dqWpfW/YyWTTXZ+fOMUy+/x6V/oeGo7
+	9ysPbZkN5RXaI1coDXetX6AZcFStVxqbSKGDQwQ4otflfyvKAbuhIRmT5AnL2vOrkqCzV5
+	e55i2k0OE0ROoIb1h24fza2rfNLlj4nLAfGD2i+Ws4D2W/dX/v9vCahXrfrRsg==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1750929836;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=i4K0WCp7W/aJOeJ11xc56lmM+3AvDScAzbW1dYGjQv4=;
+	b=F2PDavr/2DO4WuKMtVrvoPzFllySlcGjC7XBKrOhveUAwBGQWQaGuVKKBncIYK/p1lWBvv
+	Y5RpWfRPKzhUzzBQ==
+Date: Thu, 26 Jun 2025 11:23:44 +0200
+Subject: [PATCH v2] sched: Fix preemption string of preempt_dynamic_none
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250625-b4-simple-panel-regression-v2-1-9422d46917ac@redhat.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+Message-Id: <20250626-preempt-str-none-v2-1-526213b70a89@linutronix.de>
+X-B4-Tracking: v=1; b=H4sIAJ8RXWgC/32NQQrCMBBFr1Jm7UgyrcW68h7ShSQTO6BJSWKol
+ N7d2AO4fJ//318hcRROcGlWiFwkSfAV6NCAme7+wSi2MpCik+pVi3Nkfs0ZU47og2e0pKnVxhC
+ 1Z6izWnCy7MrbWHmSlEP87A9F/9I/sqJRo1M8DLq3xnXd9Sn+nWPwshwtw7ht2xcTUv+jtAAAA
+ A==
+X-Change-ID: 20250603-preempt-str-none-d21231cc2238
+To: Ingo Molnar <mingo@redhat.com>, Peter Zijlstra <peterz@infradead.org>, 
+ Juri Lelli <juri.lelli@redhat.com>, 
+ Vincent Guittot <vincent.guittot@linaro.org>, 
+ Dietmar Eggemann <dietmar.eggemann@arm.com>, 
+ Steven Rostedt <rostedt@goodmis.org>, Ben Segall <bsegall@google.com>, 
+ Mel Gorman <mgorman@suse.de>, Valentin Schneider <vschneid@redhat.com>, 
+ Shrikanth Hegde <sshegde@linux.ibm.com>, 
+ Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+Cc: linux-kernel@vger.kernel.org, stable@vger.kernel.org, 
+ =?utf-8?q?Thomas_Wei=C3=9Fschuh?= <thomas.weissschuh@linutronix.de>
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1750929834; l=1533;
+ i=thomas.weissschuh@linutronix.de; s=20240209; h=from:subject:message-id;
+ bh=qefygG19a70dJv46vYC1EnTIxHXTAsx2nrgYvCYxMKw=;
+ b=vv12BvyU6bPTM7lClHQ5+r1baolvyX+1iC4MnCv7bmn0Rrkb1PNk1QB1TO9KfA/eCPDHjtJVZ
+ lxhIM5clwGIB6wdNYd6ZqGxhV3zIwvdZIeVrHqNSjWhvmPSDws7lK+B
+X-Developer-Key: i=thomas.weissschuh@linutronix.de; a=ed25519;
+ pk=pfvxvpFUDJV2h2nY0FidLUml22uGLSjByFbM6aqQQws=
 
-Hello Anusha,
-thanks for your patch
+Zero is a valid value for "preempt_dynamic_mode", namely
+"preempt_dynamic_none".
 
-On Wed, Jun 25, 2025 at 05:44:44PM -0500, Anusha Srivatsa wrote:
-> The panel allocation in panel_simple_probe() breaks due to not having
-> the panel desc for DPI panels. DPI panels gets probed much later.
-> 
-> Currently driver is checking for desc == &panel_dpi to do the DPI
-> specific panel desc allocations. This looks hacky.
-> 
-> This patch does the following:
-> 
-> - Rename panel_dpi_probe() to panel_dpi_get_desc() and call it before
-> panel allocation. panel_dpi_get_desc() returns a panel desc unlike
-> panel_dpi_probe() which returned an int. This way driver has a known
-> connector type while allocating the panel.
-> - panel_dpi_get_desc() returns a panel desc
-> - Add a simple helper is_panel_dpi() to identify a simple DPI panel from
-> a simple panel based on .compatible field
-> 
-> Fixes: de04bb0089a9 ("drm/panel/panel-simple: Use the new allocation in place of devm_kzalloc()")
-> Suggested-by: Luca Ceresoli <luca.ceresoli@bootlin.com>
-> Suggested-by: Maxime Ripard <mripard@kernel.org>
-> Cc: Francesco Dolcini <francesco@dolcini.it>
-> Cc: Luca Ceresoli <luca.ceresoli@bootlin.com>
-> Cc: Maxime Ripard <mripard@kernel.org>
-> Reported-by: Francesco Dolcini <francesco@dolcini.it>
-> Closes: https://lore.kernel.org/all/20250612081834.GA248237@francesco-nb/
-> Signed-off-by: Anusha Srivatsa <asrivats@redhat.com>
+Fix the off-by-one in preempt_model_str(), so that "preempty_dynamic_none"
+is correctly formatted as PREEMPT(none) instead of PREEMPT(undef).
 
-Not working for me.
+Fixes: 8bdc5daaa01e ("sched: Add a generic function to return the preemption string")
+Cc: stable@vger.kernel.org
+Signed-off-by: Thomas Weißschuh <thomas.weissschuh@linutronix.de>
+Tested-by: Shrikanth Hegde <sshegde@linux.ibm.com>
+Reviewed-by: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+---
+Changes in v2:
+- Pick up Reviewed-by and Tested-by
+- Rebase on v6.16-rc1
+- Link to v1: https://lore.kernel.org/r/20250603-preempt-str-none-v1-1-f0e9916dcf44@linutronix.de
+---
+ kernel/sched/core.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-I tested on top of current torvalds/master [1], and the result is display not working, no WARNING
-message and this `platform disp0: deferred probe pending: (reason unknown)`.
+diff --git a/kernel/sched/core.c b/kernel/sched/core.c
+index dce50fa57471dffc4311b9d393ae300a43d38d20..021b0a703d094b3386c5ba50e0e111e3a7c2b3df 100644
+--- a/kernel/sched/core.c
++++ b/kernel/sched/core.c
+@@ -7663,7 +7663,7 @@ const char *preempt_model_str(void)
+ 
+ 		if (IS_ENABLED(CONFIG_PREEMPT_DYNAMIC)) {
+ 			seq_buf_printf(&s, "(%s)%s",
+-				       preempt_dynamic_mode > 0 ?
++				       preempt_dynamic_mode >= 0 ?
+ 				       preempt_modes[preempt_dynamic_mode] : "undef",
+ 				       brace ? "}" : "");
+ 			return seq_buf_str(&s);
 
-reverting de04bb0089a9 on top of current master [1] fixes the issue.
+---
+base-commit: 19272b37aa4f83ca52bdf9c16d5d81bdd1354494
+change-id: 20250603-preempt-str-none-d21231cc2238
 
-[1] commit ee88bddf7f2f ("Merge tag 'bpf-fixes' of git://git.kernel.org/pub/scm/linux/kernel/git/bpf/bpf")
-
-Francesco
+Best regards,
+-- 
+Thomas Weißschuh <thomas.weissschuh@linutronix.de>
 
 
