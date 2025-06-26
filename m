@@ -1,58 +1,58 @@
-Return-Path: <linux-kernel+bounces-704751-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-704752-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E4416AEA150
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Jun 2025 16:53:00 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B02F5AEA15E
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Jun 2025 16:54:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 378CB16E556
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Jun 2025 14:48:56 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A6BF55A3A1E
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Jun 2025 14:48:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 03C2D2ECD24;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4653F2ECD3B;
 	Thu, 26 Jun 2025 14:48:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="qam1+IXN";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="hcAhdUCk"
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="obiaXYzL";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="4/SZI09w"
 Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C1B212EB5DF
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E43282EB5BD
 	for <linux-kernel@vger.kernel.org>; Thu, 26 Jun 2025 14:48:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750949288; cv=none; b=u1QQSmrLKI4qwkqEO3ApRoVUSQGEoCga/K81weO8sBTlqbYkC8i9aQkclYxp5zLktEOYShloZ3YhXy9CmQoi28Z6ZCKxZYg5gC280Dqoxd/5NQu9hEW31SOUBICK0ZSKiPGZU3nfJhRbtbTHDOY2OyMYqWbeh1nyusxyNxhdGT0=
+	t=1750949288; cv=none; b=o3SCpkGyINH1tmeXcZJZ0cRPTN/6whwDnuMjWx9aAE16zwQFd5RWO7sQ1qyqZB5WJpfUJXjmYx6ypJ2TguUmj+AYA4HLf+avoThimcq71ZLrDfeOatmrI84Vx9lxPyRGooBgAvBu12wO/LCJ56FMKGhX4X9myE5BcOMNs/AOMd0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1750949288; c=relaxed/simple;
-	bh=veFeNyurdqVW5JueLApZRHLes61kJL838ixVlBVx1jc=;
+	bh=TZCmv86ZMSwcvLFeJ+8Hg1bGobdGo2K61VEKF8J9GIs=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=etOMM0SzOFozVDSnvzf151WMGlO5SduIPpl66MAsrJvWbeAT+HCZVoFFaQE7OPKOCj4sWAz1tnS1ReKiXwRFmCjhTmTUJdkX2+2OBxpOeT/X/yXazzXAKj1E7/TpYyB73R3CvU9WgZNiPsq6CSsjMFiQibxRQ/buC2v6EXiDBAo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=qam1+IXN; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=hcAhdUCk; arc=none smtp.client-ip=193.142.43.55
+	 MIME-Version; b=bZLET30h5VZvpOQLOb1pvkXtGjA5lqttSRpzL6Lj6u+eFzI1huvD10wxKeNYmP7SHGtbuL347GJ/R4Cj7Dd2iWlxK1/UVupWgrB6IgNhwHPfYZZGq0HqZAT3zhYs8u4Ql0b8MmpwfXl+IDYub27dpyBcHohyXWRO8Cb1eszk+Tw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=obiaXYzL; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=4/SZI09w; arc=none smtp.client-ip=193.142.43.55
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
 From: Nam Cao <namcao@linutronix.de>
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1750949283;
+	s=2020; t=1750949285;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=3v/c6vuqeHoBrxs6oHRCTB1ZClC8Hd2O6Sdk/PzbbvM=;
-	b=qam1+IXNnXiKlEdeerzr2ZA4Baqy0zCmPCssgE1F1VhRiu4sK0y8u6RUZl81dZx8hDB5On
-	n4tLZMARFTIl6xVGj1tmPi2OwaI9g9D91A9ds24/cq7jdDOQ4oEv8yx3rf6dnz4ApepdDz
-	hBpHC3/AGzYYTD3vUR0RR2Ugto6qfIzh18FDx5DsHc9hjnue4WkMz8fUfiO5kApZ0J0JMt
-	UeIHaRaVGJfJKoD8114NZtBMIr+m2myXddWPHaGiKVhW08+auVtjCGFJXDKpyQlPyEfIQ2
-	VWR1v4K6a86Xbswu/nrIJHoCF0hX9rjzu9PHTX5r6RiGtg8aj+jQbv98Hyf0wg==
+	bh=LuXkt1+rIvwzDUp4FWqrW0ChG47m3fbaTKQUOS/L/zA=;
+	b=obiaXYzLtGHXEjiZsSEiI6dqhLAWhu2aWMmlL/3nUGPEad1fu+1ckyafNAlFv7ILW2qwDD
+	euDk1TA1Qh3ny7XPUYPGl2WMM+fLFn778hB1wYUPH+5pmY51fKJ+0Ha25shdcCWZKvVk1r
+	2pq/JcJ08j33tW5zUPNi7ar/fML7MpSg4KAJb6DANBlMLa094ewQwVpNcCOwwZJcxW3mye
+	fAONZyo+EEB+woMv52nirWp2uxrFIS+9EnO7XKpavLFFCES1F4YHP/xmepmc1hv45gdsDZ
+	Qz/4WHw12U+MNV3z/GCqFdiRxugYM0l+tGirJxfPFWIXfVjITe2Ds4FdzVbUew==
 DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1750949283;
+	s=2020e; t=1750949285;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=3v/c6vuqeHoBrxs6oHRCTB1ZClC8Hd2O6Sdk/PzbbvM=;
-	b=hcAhdUCk3OPsaaGvrBP0cedUHZgNMS01eGNbN+ZxyWSEGt3pFqBKHMkLy+rnx1AiZq1KeE
-	aU+uN3clCPtd/cCQ==
+	bh=LuXkt1+rIvwzDUp4FWqrW0ChG47m3fbaTKQUOS/L/zA=;
+	b=4/SZI09wvpef+i/nrdr7aofSp4Tps5XWwNnztPbw/pYLIToMwRzcA7gNda0Sj6671N6SeA
+	bl3CaKyQdZ4cgxDQ==
 To: Marc Zyngier <maz@kernel.org>,
 	Thomas Gleixner <tglx@linutronix.de>,
 	Madhavan Srinivasan <maddy@linux.ibm.com>,
@@ -62,9 +62,9 @@ To: Marc Zyngier <maz@kernel.org>,
 	linuxppc-dev@lists.ozlabs.org,
 	linux-kernel@vger.kernel.org
 Cc: Nam Cao <namcao@linutronix.de>
-Subject: [PATCH 2/3] powerpc/powernv/pci: Switch to use msi_create_parent_irq_domain()
-Date: Thu, 26 Jun 2025 16:47:41 +0200
-Message-Id: <5479dd3494826f7811582f6e7156dc2ee077c181.1750861319.git.namcao@linutronix.de>
+Subject: [PATCH 3/3] powerpc/pseries/msi: Switch to msi_create_parent_irq_domain()
+Date: Thu, 26 Jun 2025 16:47:42 +0200
+Message-Id: <b19193e6fb9135818409057fd63fbabb8ca399d5.1750861319.git.namcao@linutronix.de>
 In-Reply-To: <cover.1750861319.git.namcao@linutronix.de>
 References: <cover.1750861319.git.namcao@linutronix.de>
 Precedence: bulk
@@ -80,143 +80,225 @@ msi_create_parent_irq_domain().
 
 Signed-off-by: Nam Cao <namcao@linutronix.de>
 ---
- arch/powerpc/platforms/powernv/Kconfig    |  1 +
- arch/powerpc/platforms/powernv/pci-ioda.c | 75 ++++++++++-------------
- 2 files changed, 35 insertions(+), 41 deletions(-)
+ arch/powerpc/include/asm/pci-bridge.h  |   2 -
+ arch/powerpc/platforms/pseries/Kconfig |   1 +
+ arch/powerpc/platforms/pseries/msi.c   | 106 ++++++++++---------------
+ 3 files changed, 45 insertions(+), 64 deletions(-)
 
-diff --git a/arch/powerpc/platforms/powernv/Kconfig b/arch/powerpc/platform=
-s/powernv/Kconfig
-index 95d7ba73d43d0..b5ad7c173ef0c 100644
---- a/arch/powerpc/platforms/powernv/Kconfig
-+++ b/arch/powerpc/platforms/powernv/Kconfig
-@@ -9,6 +9,7 @@ config PPC_POWERNV
- 	select PPC_P7_NAP
+diff --git a/arch/powerpc/include/asm/pci-bridge.h b/arch/powerpc/include/a=
+sm/pci-bridge.h
+index 2aa3a091ef20e..1dae53130782a 100644
+--- a/arch/powerpc/include/asm/pci-bridge.h
++++ b/arch/powerpc/include/asm/pci-bridge.h
+@@ -133,8 +133,6 @@ struct pci_controller {
+=20
+ 	/* IRQ domain hierarchy */
+ 	struct irq_domain	*dev_domain;
+-	struct irq_domain	*msi_domain;
+-	struct fwnode_handle	*fwnode;
+=20
+ 	/* iommu_ops support */
+ 	struct iommu_device	iommu;
+diff --git a/arch/powerpc/platforms/pseries/Kconfig b/arch/powerpc/platform=
+s/pseries/Kconfig
+index fa3c2fff082a8..3e042218d6cd8 100644
+--- a/arch/powerpc/platforms/pseries/Kconfig
++++ b/arch/powerpc/platforms/pseries/Kconfig
+@@ -7,6 +7,7 @@ config PPC_PSERIES
+ 	select OF_DYNAMIC
  	select FORCE_PCI
  	select PCI_MSI
 +	select IRQ_MSI_LIB
- 	select EPAPR_BOOT
- 	select PPC_INDIRECT_PIO
- 	select PPC_UDBG_16550
-diff --git a/arch/powerpc/platforms/powernv/pci-ioda.c b/arch/powerpc/platf=
-orms/powernv/pci-ioda.c
-index fb37098d4d58c..c2a932c6e3040 100644
---- a/arch/powerpc/platforms/powernv/pci-ioda.c
-+++ b/arch/powerpc/platforms/powernv/pci-ioda.c
-@@ -15,6 +15,7 @@
- #include <linux/init.h>
- #include <linux/memblock.h>
+ 	select GENERIC_ALLOCATOR
+ 	select PPC_XICS
+ 	select PPC_XIVE_SPAPR
+diff --git a/arch/powerpc/platforms/pseries/msi.c b/arch/powerpc/platforms/=
+pseries/msi.c
+index 10712477938e4..70be6e24427da 100644
+--- a/arch/powerpc/platforms/pseries/msi.c
++++ b/arch/powerpc/platforms/pseries/msi.c
+@@ -7,6 +7,7 @@
+ #include <linux/crash_dump.h>
+ #include <linux/device.h>
  #include <linux/irq.h>
 +#include <linux/irqchip/irq-msi-lib.h>
- #include <linux/io.h>
+ #include <linux/irqdomain.h>
  #include <linux/msi.h>
- #include <linux/iommu.h>
-@@ -1713,30 +1714,33 @@ static void pnv_msi_shutdown(struct irq_data *d)
+ #include <linux/seq_file.h>
+@@ -429,8 +430,9 @@ static int rtas_prepare_msi_irqs(struct pci_dev *pdev, =
+int nvec_in, int type,
+ static int pseries_msi_ops_prepare(struct irq_domain *domain, struct devic=
+e *dev,
+ 				   int nvec, msi_alloc_info_t *arg)
+ {
++	struct msi_domain_info *info =3D domain->host_data;
+ 	struct pci_dev *pdev =3D to_pci_dev(dev);
+-	int type =3D pdev->msix_enabled ? PCI_CAP_ID_MSIX : PCI_CAP_ID_MSI;
++	int type =3D (info->flags & MSI_FLAG_PCI_MSIX) ? PCI_CAP_ID_MSIX : PCI_CA=
+P_ID_MSI;
+=20
+ 	return rtas_prepare_msi_irqs(pdev, nvec, type, arg);
+ }
+@@ -447,11 +449,6 @@ static void pseries_msi_post_free(struct irq_domain *d=
+omain, struct device *dev)
+ 	rtas_disable_msi(to_pci_dev(dev));
+ }
+=20
+-static struct msi_domain_ops pseries_pci_msi_domain_ops =3D {
+-	.msi_prepare	=3D pseries_msi_ops_prepare,
+-	.msi_post_free	=3D pseries_msi_post_free,
+-};
+-
+ static void pseries_msi_shutdown(struct irq_data *d)
+ {
+ 	d =3D d->parent_data;
+@@ -459,18 +456,6 @@ static void pseries_msi_shutdown(struct irq_data *d)
  		d->chip->irq_shutdown(d);
  }
 =20
--static void pnv_msi_mask(struct irq_data *d)
-+static bool pnv_init_dev_msi_info(struct device *dev, struct irq_domain *d=
-omain,
-+				  struct irq_domain *real_parent, struct msi_domain_info *info)
- {
+-static void pseries_msi_mask(struct irq_data *d)
+-{
 -	pci_msi_mask_irq(d);
 -	irq_chip_mask_parent(d);
 -}
-+	struct irq_chip *chip =3D info->chip;
-=20
--static void pnv_msi_unmask(struct irq_data *d)
+-
+-static void pseries_msi_unmask(struct irq_data *d)
 -{
 -	pci_msi_unmask_irq(d);
 -	irq_chip_unmask_parent(d);
 -}
+-
+ static void pseries_msi_write_msg(struct irq_data *data, struct msi_msg *m=
+sg)
+ {
+ 	struct msi_desc *entry =3D irq_data_get_msi_desc(data);
+@@ -485,27 +470,39 @@ static void pseries_msi_write_msg(struct irq_data *da=
+ta, struct msi_msg *msg)
+ 	entry->msg =3D *msg;
+ }
+=20
+-static struct irq_chip pseries_pci_msi_irq_chip =3D {
+-	.name		=3D "pSeries-PCI-MSI",
+-	.irq_shutdown	=3D pseries_msi_shutdown,
+-	.irq_mask	=3D pseries_msi_mask,
+-	.irq_unmask	=3D pseries_msi_unmask,
+-	.irq_eoi	=3D irq_chip_eoi_parent,
+-	.irq_write_msi_msg	=3D pseries_msi_write_msg,
+-};
++static bool pseries_init_dev_msi_info(struct device *dev, struct irq_domai=
+n *domain,
++				      struct irq_domain *real_parent, struct msi_domain_info *info)
++{
++	struct irq_chip *chip =3D info->chip;
+=20
 +	if (!msi_lib_init_dev_msi_info(dev, domain, real_parent, info))
 +		return false;
 =20
--static struct irq_chip pnv_pci_msi_irq_chip =3D {
--	.name		=3D "PNV-PCI-MSI",
--	.irq_shutdown	=3D pnv_msi_shutdown,
--	.irq_mask	=3D pnv_msi_mask,
--	.irq_unmask	=3D pnv_msi_unmask,
--	.irq_eoi	=3D irq_chip_eoi_parent,
--};
-+	chip->irq_shutdown =3D pnv_msi_shutdown;
+-/*
+- * Set MSI_FLAG_MSIX_CONTIGUOUS as there is no way to express to
+- * firmware to request a discontiguous or non-zero based range of
+- * MSI-X entries. Core code will reject such setup attempts.
+- */
+-static struct msi_domain_info pseries_msi_domain_info =3D {
+-	.flags =3D (MSI_FLAG_USE_DEF_DOM_OPS | MSI_FLAG_USE_DEF_CHIP_OPS |
+-		  MSI_FLAG_MULTI_PCI_MSI  | MSI_FLAG_PCI_MSIX |
+-		  MSI_FLAG_MSIX_CONTIGUOUS),
+-	.ops   =3D &pseries_pci_msi_domain_ops,
+-	.chip  =3D &pseries_pci_msi_irq_chip,
++	chip->irq_shutdown =3D pseries_msi_shutdown;
++	chip->irq_write_msi_msg	=3D pseries_msi_write_msg;
++
++	info->ops->msi_prepare =3D pseries_msi_ops_prepare;
++	info->ops->msi_post_free =3D pseries_msi_post_free;
++
 +	return true;
 +}
-=20
--static struct msi_domain_info pnv_msi_domain_info =3D {
--	.flags =3D (MSI_FLAG_USE_DEF_DOM_OPS | MSI_FLAG_USE_DEF_CHIP_OPS |
--		  MSI_FLAG_MULTI_PCI_MSI  | MSI_FLAG_PCI_MSIX),
--	.chip  =3D &pnv_pci_msi_irq_chip,
-+#define PNV_PCI_MSI_FLAGS_REQUIRED (MSI_FLAG_USE_DEF_DOM_OPS		| \
-+				    MSI_FLAG_USE_DEF_CHIP_OPS		| \
-+				    MSI_FLAG_PCI_MSI_MASK_PARENT)
-+#define PNV_PCI_MSI_FLAGS_SUPPORTED (MSI_GENERIC_FLAGS_MASK		| \
-+				     MSI_FLAG_PCI_MSIX			| \
-+				     MSI_FLAG_MULTI_PCI_MSI)
 +
-+static const struct msi_parent_ops pnv_msi_parent_ops =3D {
-+	.required_flags		=3D PNV_PCI_MSI_FLAGS_REQUIRED,
-+	.supported_flags	=3D PNV_PCI_MSI_FLAGS_SUPPORTED,
++#define PSERIES_PCI_MSI_FLAGS_REQUIRED (MSI_FLAG_USE_DEF_DOM_OPS	| \
++					MSI_FLAG_USE_DEF_CHIP_OPS	| \
++					MSI_FLAG_PCI_MSI_MASK_PARENT)
++#define PSERIES_PCI_MSI_FLAGS_SUPPORTED (MSI_GENERIC_FLAGS_MASK		| \
++					 MSI_FLAG_PCI_MSIX		| \
++					 MSI_FLAG_MSIX_CONTIGUOUS	| \
++					 MSI_FLAG_MULTI_PCI_MSI)
++
++static const struct msi_parent_ops pseries_msi_parent_ops =3D {
++	.required_flags		=3D PSERIES_PCI_MSI_FLAGS_REQUIRED,
++	.supported_flags	=3D PSERIES_PCI_MSI_FLAGS_SUPPORTED,
 +	.chip_flags		=3D MSI_CHIP_FLAG_SET_EOI,
 +	.bus_select_token	=3D DOMAIN_BUS_NEXUS,
 +	.bus_select_mask	=3D MATCH_PCI_MSI,
-+	.prefix			=3D "PNV-",
-+	.init_dev_msi_info	=3D pnv_init_dev_msi_info,
++	.prefix			=3D "pSeries-",
++	.init_dev_msi_info	=3D pseries_init_dev_msi_info,
  };
 =20
- static void pnv_msi_compose_msg(struct irq_data *d, struct msi_msg *msg)
-@@ -1855,37 +1859,26 @@ static void pnv_irq_domain_free(struct irq_domain *=
-domain, unsigned int virq,
+ static void pseries_msi_compose_msg(struct irq_data *data, struct msi_msg =
+*msg)
+@@ -593,6 +590,7 @@ static void pseries_irq_domain_free(struct irq_domain *=
+domain, unsigned int virq
  }
 =20
- static const struct irq_domain_ops pnv_irq_domain_ops =3D {
+ static const struct irq_domain_ops pseries_irq_domain_ops =3D {
 +	.select	=3D msi_lib_irq_domain_select,
- 	.alloc  =3D pnv_irq_domain_alloc,
- 	.free   =3D pnv_irq_domain_free,
+ 	.alloc  =3D pseries_irq_domain_alloc,
+ 	.free   =3D pseries_irq_domain_free,
  };
-=20
- static int __init pnv_msi_allocate_domains(struct pci_controller *hose, un=
-signed int count)
+@@ -601,30 +599,18 @@ static int __pseries_msi_allocate_domains(struct pci_=
+controller *phb,
+ 					  unsigned int count)
  {
--	struct pnv_phb *phb =3D hose->private_data;
  	struct irq_domain *parent =3D irq_get_default_domain();
 -
--	hose->fwnode =3D irq_domain_alloc_named_id_fwnode("PNV-MSI", phb->opal_id=
-);
--	if (!hose->fwnode)
+-	phb->fwnode =3D irq_domain_alloc_named_id_fwnode("pSeries-MSI",
+-						       phb->global_number);
+-	if (!phb->fwnode)
 -		return -ENOMEM;
 -
--	hose->dev_domain =3D irq_domain_create_hierarchy(parent, 0, count,
--						       hose->fwnode,
--						       &pnv_irq_domain_ops, hose);
+-	phb->dev_domain =3D irq_domain_create_hierarchy(parent, 0, count,
+-						      phb->fwnode,
+-						      &pseries_irq_domain_ops, phb);
 +	struct irq_domain_info info =3D {
-+		.fwnode		=3D of_fwnode_handle(hose->dn),
-+		.ops		=3D &pnv_irq_domain_ops,
-+		.host_data	=3D hose,
++		.fwnode		=3D of_fwnode_handle(phb->dn),
++		.ops		=3D &pseries_irq_domain_ops,
++		.host_data	=3D phb,
 +		.size		=3D count,
 +		.parent		=3D parent,
 +	};
 +
-+	hose->dev_domain =3D msi_create_parent_irq_domain(&info, &pnv_msi_parent_=
-ops);
- 	if (!hose->dev_domain) {
++	phb->dev_domain =3D msi_create_parent_irq_domain(&info, &pseries_msi_pare=
+nt_ops);
+ 	if (!phb->dev_domain) {
 -		pr_err("PCI: failed to create IRQ domain bridge %pOF (domain %d)\n",
--		       hose->dn, hose->global_number);
--		irq_domain_free_fwnode(hose->fwnode);
+-		       phb->dn, phb->global_number);
+-		irq_domain_free_fwnode(phb->fwnode);
 -		return -ENOMEM;
 -	}
 -
--	hose->msi_domain =3D pci_msi_create_irq_domain(of_fwnode_handle(hose->dn),
--						     &pnv_msi_domain_info,
--						     hose->dev_domain);
--	if (!hose->msi_domain) {
+-	phb->msi_domain =3D pci_msi_create_irq_domain(of_fwnode_handle(phb->dn),
+-						    &pseries_msi_domain_info,
+-						    phb->dev_domain);
+-	if (!phb->msi_domain) {
  		pr_err("PCI: failed to create MSI IRQ domain bridge %pOF (domain %d)\n",
- 		       hose->dn, hose->global_number);
--		irq_domain_free_fwnode(hose->fwnode);
--		irq_domain_remove(hose->dev_domain);
+ 		       phb->dn, phb->global_number);
+-		irq_domain_free_fwnode(phb->fwnode);
+-		irq_domain_remove(phb->dev_domain);
  		return -ENOMEM;
  	}
 =20
+@@ -646,12 +632,8 @@ int pseries_msi_allocate_domains(struct pci_controller=
+ *phb)
+=20
+ void pseries_msi_free_domains(struct pci_controller *phb)
+ {
+-	if (phb->msi_domain)
+-		irq_domain_remove(phb->msi_domain);
+ 	if (phb->dev_domain)
+ 		irq_domain_remove(phb->dev_domain);
+-	if (phb->fwnode)
+-		irq_domain_free_fwnode(phb->fwnode);
+ }
+=20
+ static void rtas_msi_pci_irq_fixup(struct pci_dev *pdev)
 --=20
 2.39.5
 
