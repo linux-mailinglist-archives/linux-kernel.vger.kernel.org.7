@@ -1,118 +1,107 @@
-Return-Path: <linux-kernel+bounces-704139-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-704137-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 83681AE99EB
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Jun 2025 11:26:19 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9B073AE99E5
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Jun 2025 11:25:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 821837A76A6
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Jun 2025 09:24:49 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id ADEBB166A3F
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Jun 2025 09:25:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 723D42C0327;
-	Thu, 26 Jun 2025 09:25:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5B1A3295D87;
+	Thu, 26 Jun 2025 09:25:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="eQEPzhgN"
-Received: from lelvem-ot02.ext.ti.com (lelvem-ot02.ext.ti.com [198.47.23.235])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=dolcini.it header.i=@dolcini.it header.b="HE9EmomO"
+Received: from mail11.truemail.it (mail11.truemail.it [217.194.8.81])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DB4262BCF6C;
-	Thu, 26 Jun 2025 09:25:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.23.235
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4CA1A18C332
+	for <linux-kernel@vger.kernel.org>; Thu, 26 Jun 2025 09:25:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.194.8.81
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750929946; cv=none; b=NwN94kt4XpzyY2jBJg4pI1kMN4JMjR1hfm0Ojdf02FIMw/QROAIid1rcSz/bODbMyzRYr5diURMFQjSNmJWn3esDE61v2IaAsrI4vRcyMUd8RH9F+fzzyPZ9mo7laovkf1YmKNzwJlvcgIBLE5wATwACDoPrFmJHGl5BrBOOgJE=
+	t=1750929929; cv=none; b=K08nU80+oZyOPSF1xc/Gyagpk4a5KkCgCRByFIgrw8q4gtzSn4ht9J67Bqfcx9qDmROr+Mp88Q1cB8LGuJvo+sZ+8uHgdyxAeED/caIjNBxnYOAbkPaeGBYQ+XJNMOUV5QmhNJ+QOFwrR2DSj3z2wbl8LUqS04rCfU4JR5QKPtw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750929946; c=relaxed/simple;
-	bh=gmtwgNmC0ct+DGWCQvjETu9hUvje8913IPDT8CmHbJY=;
-	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=TwGf1YP973yhtYDl4K+VExKymq4CkvqrPn+dNEBOhxcjsttfltjxYeuOcRzWblmJHSvBUu9jdAekf2JrBBllhsRE4OoZiyiG/U5TJgEJT3bW3ZDkY4WGZd9uHJlq/apfTrF8AFcpLq01VlWQj5ZGKBaGoGxwddckbryh10RLzCY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=eQEPzhgN; arc=none smtp.client-ip=198.47.23.235
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
-Received: from fllvem-sh03.itg.ti.com ([10.64.41.86])
-	by lelvem-ot02.ext.ti.com (8.15.2/8.15.2) with ESMTP id 55Q9PCtQ2377545;
-	Thu, 26 Jun 2025 04:25:12 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-	s=ti-com-17Q1; t=1750929912;
-	bh=SC24rkJhrOuvR4HR3GY1MEPqIDgsZohL/XcstsIANIc=;
-	h=Date:From:To:CC:Subject:References:In-Reply-To;
-	b=eQEPzhgNVP6/OZ2HPLvWacS+FyEV72T9MxM70/D1Fc0X279H5HCoO9gTn18n+YEKH
-	 wpJqiEO2c7tpQxZOgjPMDQ/P0ir51+l1Zva+yb7uBWWtYeV3aOtjD/sVqF3mTNe/Go
-	 Hx/+25BrJ5qo7U6Z0toWwuxTEYxWrnwa7WyuI4pA=
-Received: from DFLE102.ent.ti.com (dfle102.ent.ti.com [10.64.6.23])
-	by fllvem-sh03.itg.ti.com (8.18.1/8.18.1) with ESMTPS id 55Q9PCI11853260
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-SHA256 bits=128 verify=FAIL);
-	Thu, 26 Jun 2025 04:25:12 -0500
-Received: from DFLE111.ent.ti.com (10.64.6.32) by DFLE102.ent.ti.com
- (10.64.6.23) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.55; Thu, 26
- Jun 2025 04:25:11 -0500
-Received: from lelvem-mr06.itg.ti.com (10.180.75.8) by DFLE111.ent.ti.com
- (10.64.6.32) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.55 via
- Frontend Transport; Thu, 26 Jun 2025 04:25:11 -0500
-Received: from localhost (uda0492258.dhcp.ti.com [172.24.227.169])
-	by lelvem-mr06.itg.ti.com (8.18.1/8.18.1) with ESMTP id 55Q9PARl767875;
-	Thu, 26 Jun 2025 04:25:11 -0500
-Date: Thu, 26 Jun 2025 14:55:10 +0530
-From: Siddharth Vadapalli <s-vadapalli@ti.com>
-To: Matthias Schiffer <matthias.schiffer@ew.tq-group.com>
-CC: Andrew Lunn <andrew+netdev@lunn.ch>,
-        "David S. Miller"
-	<davem@davemloft.net>,
-        Eric Dumazet <edumazet@google.com>, Jakub Kicinski
-	<kuba@kernel.org>,
-        Paolo Abeni <pabeni@redhat.com>, Rob Herring
-	<robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley
-	<conor+dt@kernel.org>,
-        Andy Whitcroft <apw@canonical.com>,
-        Dwaipayan Ray
-	<dwaipayanray1@gmail.com>,
-        Lukas Bulwahn <lukas.bulwahn@gmail.com>,
-        Joe
- Perches <joe@perches.com>, Jonathan Corbet <corbet@lwn.net>,
-        Nishanth Menon
-	<nm@ti.com>, Vignesh Raghavendra <vigneshr@ti.com>,
-        Siddharth Vadapalli
-	<s-vadapalli@ti.com>,
-        Roger Quadros <rogerq@kernel.org>, Tero Kristo
-	<kristo@kernel.org>,
-        <linux-doc@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <netdev@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>, <linux@ew.tq-group.com>,
-        Maxime Chevallier <maxime.chevallier@bootlin.com>,
-        Andrew Lunn <andrew@lunn.ch>
-Subject: Re: [PATCH net-next v2 1/3] dt-bindings: net: ti:
- k3-am654-cpsw-nuss: update phy-mode in example
-Message-ID: <cca90cf2-9b9d-4186-b546-ff8968071ac2@ti.com>
-References: <cover.1750756583.git.matthias.schiffer@ew.tq-group.com>
- <f9b5e84fcaf565506ed86cf1838444c2bc47334f.1750756583.git.matthias.schiffer@ew.tq-group.com>
+	s=arc-20240116; t=1750929929; c=relaxed/simple;
+	bh=Erpy+GznfU3VNLbN8ho+JUSJoOvRCq/2b7GmnCXbbWE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=dzs6TDWY2426Gm4nLes/7zQi4JUMVhU2AvaCSx8tbTXfv4O8o+uEHwZ+Q6EYpYtn+krq5G8qV6RZVAYn7rUzUzpNa4Gcam8W333e3TEWQ20ypbTOMgZ8DQxO0oLn/xNoi5UgfGT07+dhBqUVy5OXQeN+mO1XBgnv/kN5IHr8NQg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=dolcini.it; spf=pass smtp.mailfrom=dolcini.it; dkim=pass (2048-bit key) header.d=dolcini.it header.i=@dolcini.it header.b=HE9EmomO; arc=none smtp.client-ip=217.194.8.81
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=dolcini.it
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=dolcini.it
+Received: from gaggiata.pivistrello.it (93-49-2-63.ip317.fastwebnet.it [93.49.2.63])
+	by mail11.truemail.it (Postfix) with ESMTPA id 640301F967;
+	Thu, 26 Jun 2025 11:25:25 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=dolcini.it;
+	s=default; t=1750929925;
+	bh=oQiL2nk762kw5hgZ/7yLoXi+yV+vsX0JHtdeUc0YXFY=;
+	h=Received:From:To:Subject;
+	b=HE9EmomOlz2739bN8MLQHMe8DK71hV/EWB3nf7vOcyRuATfWdfu9hsBvYqfS9lYtL
+	 2pip2Jrqz+es1fSzAjzqB4m3VfZmUDS3n/Dx6LCFuw+Kb9hlUlDU3B1leS1xEqJJjc
+	 9B7lfga9jODnJ6PLNanjpUR75gFAX/NLgnOM+2jHnNVJ5uKZGu+7k6FEBp6OwN0Gg1
+	 O1TTeHq33HMEIaenHxycMCz4Oa0gXRVX9O0sRA9qauH8j/CyCxLyD+UIbfIq2YMC7S
+	 sYzoN82zfMxVCqY2IWzTtBmP8dAUYeRzPgSemmVF9HmbypI9kS8151s3sfg9aWk7/E
+	 hC/qtLWxiwaJA==
+Received: by gaggiata.pivistrello.it (Postfix, from userid 1000)
+	id 08CEA7F9CF; Thu, 26 Jun 2025 11:25:25 +0200 (CEST)
+Date: Thu, 26 Jun 2025 11:25:24 +0200
+From: Francesco Dolcini <francesco@dolcini.it>
+To: Maxime Ripard <mripard@kernel.org>
+Cc: Neil Armstrong <neil.armstrong@linaro.org>,
+	Jessica Zhang <quic_jesszhan@quicinc.com>,
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+	Thomas Zimmermann <tzimmermann@suse.de>,
+	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+	Luca Ceresoli <luca.ceresoli@bootlin.com>,
+	Anusha Srivatsa <asrivats@redhat.com>,
+	Francesco Dolcini <francesco@dolcini.it>,
+	dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 0/5] drm/panel: panel-simple: Fix panel-dpi probe error
+Message-ID: <aF0SBNGmTpgtBTC3@gaggiata.pivistrello.it>
+References: <20250625-drm-panel-simple-fixes-v1-0-c428494a86b8@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <f9b5e84fcaf565506ed86cf1838444c2bc47334f.1750756583.git.matthias.schiffer@ew.tq-group.com>
-X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
+In-Reply-To: <20250625-drm-panel-simple-fixes-v1-0-c428494a86b8@kernel.org>
 
-On Tue, Jun 24, 2025 at 12:53:32PM +0200, Matthias Schiffer wrote:
-> k3-am65-cpsw-nuss controllers have a fixed internal TX delay, so RXID
-> mode is not actually possible and will result in a warning from the
-> driver going forward.
+Hello Maxime,
+thanks for the patch
+
+On Wed, Jun 25, 2025 at 08:48:37AM +0200, Maxime Ripard wrote:
+> Here's a series fixing (hopefully) the panel-simple regression for
+> panels with a panel-dpi compatible.
 > 
-> Signed-off-by: Matthias Schiffer <matthias.schiffer@ew.tq-group.com>
-> Reviewed-by: Maxime Chevallier <maxime.chevallier@bootlin.com>
-> Reviewed-by: Andrew Lunn <andrew@lunn.ch>
-> Acked-by: Rob Herring (Arm) <robh@kernel.org>
+> It's only build tested, so if you could give that series a try
+> Francesco, I'd really appreciate it.
 
-Reviewed-by: Siddharth Vadapalli <s-vadapalli@ti.com>
+It does not build for me, applied on top of commit ee88bddf7f2f ("Merge tag
+'bpf-fixes' of git://git.kernel.org/pub/scm/linux/kernel/git/bpf/bpf")
 
-Regards,
-Siddharth.
+  SYNC    include/config/auto.conf.cmd
+  CALL    scripts/checksyscalls.sh
+  CC      drivers/gpu/drm/drm_of.o
+  CC [M]  drivers/gpu/drm/panel/panel-simple.o
+  AR      drivers/gpu/drm/built-in.a
+  AR      drivers/gpu/built-in.a
+  AR      drivers/built-in.a
+  AR      built-in.a
+  AR      vmlinux.a
+  LD      vmlinux.o
+  OBJCOPY modules.builtin.modinfo
+  GEN     modules.builtin
+  GEN     .vmlinux.objs
+  MODPOST Module.symvers
+ERROR: modpost: "mipi_dsi_bus_type" [drivers/gpu/drm/panel/panel-simple.ko] undefined!
+make[2]: *** [scripts/Makefile.modpost:147: Module.symvers] Error 1
+make[1]: *** [/home/francesco/Toradex/sources/linux/Makefile:1953: modpost] Error 2
+make: *** [Makefile:248: __sub-make] Error 2
+[Exit 2]
+
+
 
