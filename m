@@ -1,126 +1,128 @@
-Return-Path: <linux-kernel+bounces-704436-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-704425-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id B7837AE9D77
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Jun 2025 14:30:40 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7BB25AE9D5A
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Jun 2025 14:20:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id EAF2E1C40379
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Jun 2025 12:30:40 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DC5675A03DA
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Jun 2025 12:20:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BB24829ACEE;
-	Thu, 26 Jun 2025 12:30:18 +0000 (UTC)
-Received: from szxga04-in.huawei.com (szxga04-in.huawei.com [45.249.212.190])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 05AFE2580F3;
+	Thu, 26 Jun 2025 12:20:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="jBu51d0W"
+Received: from out-182.mta0.migadu.com (out-182.mta0.migadu.com [91.218.175.182])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5DF56299A93
-	for <linux-kernel@vger.kernel.org>; Thu, 26 Jun 2025 12:30:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.190
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 82091216E1B
+	for <linux-kernel@vger.kernel.org>; Thu, 26 Jun 2025 12:20:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750941018; cv=none; b=KBYqpzGChfz56+DPXaqh9mD1u4JLPNkfzIdwKgzW4xHynDPOybzZPKU3wkjXO9fla5X/2exBnmfMomdUirMfKM8qd5Osc31R/HAn7uNzDScidhsc/5fwIQRpntCf++NivGE2lABG4L63Cnt5lCP5e0PYNEcPg3K9EQNxVTyx9gI=
+	t=1750940430; cv=none; b=B7RHZiy8UPu+jSNYTCPNBzC2QwITTbGeMQg4XhdePUFEZo76uEQ1BKbQdqKudTpVV4MZZXu6Sl9qfaqmTyVMtP309OEXiwRHX1LE2dy4N0jRicj/uZP9+ZnpGRWgWZwi/h7HoMPYq2jZcsumIPO0ooEu9bB8Qg5icxkQH29FAaE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750941018; c=relaxed/simple;
-	bh=L4oxkWCu4/xfQbL2VZPaOzO/8DvUUGQoe1XaKUL8Pw0=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=mN3ZMibxvKHcdFh/IdRyKJLxG0Zc1R02xGDZfLk1gpStq5VOxOr/XN+7W9HeG6DY1ckYXu2KKcxR7OmHXzN09b2f961HTtF4QOZBfya1NkQOaPvu4THP+fcO2m1QSZ9fH8Agzf2JxlyrObAdGz9eHLvfGvtwSlfQywiXyc2lOrU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.190
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.163.44])
-	by szxga04-in.huawei.com (SkyGuard) with ESMTP id 4bSdJc2345z2TSmn;
-	Thu, 26 Jun 2025 20:28:32 +0800 (CST)
-Received: from kwepemf500005.china.huawei.com (unknown [7.202.181.243])
-	by mail.maildlp.com (Postfix) with ESMTPS id 067661401E9;
-	Thu, 26 Jun 2025 20:30:11 +0800 (CST)
-Received: from huawei.com (10.67.174.161) by kwepemf500005.china.huawei.com
- (7.202.181.243) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Thu, 26 Jun
- 2025 20:30:10 +0800
-From: Cheng Yu <serein.chengyu@huawei.com>
-To: <yury.norov@gmail.com>, <linux@rasmusvillemoes.dk>,
-	<akpm@linux-foundation.org>, <travis@sgi.com>, <linux-kernel@vger.kernel.org>
-CC: <zhangqiao22@huawei.com>, <tanghui20@huawei.com>,
-	<chenweilong@huawei.com>, <judy.chenhui@huawei.com>, <chenjun102@huawei.com>
-Subject: [PATCH] bitmap-str: Limit the size of ulen in bitmap_parselist_user()
-Date: Thu, 26 Jun 2025 20:19:03 +0800
-Message-ID: <20250626121903.3086789-1-serein.chengyu@huawei.com>
-X-Mailer: git-send-email 2.25.1
+	s=arc-20240116; t=1750940430; c=relaxed/simple;
+	bh=qkXCd+Bbs8QNW+Fx/2Wzm1gDcAzwRQw/k1gMr+d9PHg=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=s4J2RfWw2G1mjCBHiaALCwgyDTI8FMaCMp32batmkIRdqGKAq2ZzK2nT8dvjHh8ofpLzothrLYItp+N9HHmfY8tg+kDMjTLQKf6+cBp0tOO42x4Bvf6ao7wh6p3eW/tz6/F01W07x8foufSc8Z7rHJSQHMWOgTPt5u3Oa2AM73M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=jBu51d0W; arc=none smtp.client-ip=91.218.175.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Message-ID: <f95f6777-7445-46dc-be53-b3ae5594bf39@linux.dev>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1750940426;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=9sABBcbcL1qfYZGfdc7T7gO/5yx4mDv09tlOoXIb1QU=;
+	b=jBu51d0WSApZ0RPmF9+mPKKzznqbNDKG0kwcAOOaoQs5nhl99f/cLxLukllRjP0zH2gyLV
+	3038LhaqIgRmGXdzHS1QqbEyPeFBPRzIrJIdyVG0tH481mJBrb88wTdKrUR0mVKCF/VcO8
+	cZmmYNAqrpoCIk9gBN155n96upldt54=
+Date: Thu, 26 Jun 2025 14:19:18 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: kwepems100001.china.huawei.com (7.221.188.238) To
- kwepemf500005.china.huawei.com (7.202.181.243)
+Subject: Re: [PATCH 00/15] ASoC/soundwire: Realtek codecs: wait codec init in
+ hw_params
+To: Bard Liao <yung-chuan.liao@linux.intel.com>, broonie@kernel.org,
+ tiwai@suse.de, linux-sound@vger.kernel.org, vkoul@kernel.org
+Cc: vinod.koul@linaro.org, linux-kernel@vger.kernel.org, bard.liao@intel.com
+References: <20250626115625.536423-1-yung-chuan.liao@linux.intel.com>
+Content-Language: en-US
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Pierre-Louis Bossart <pierre-louis.bossart@linux.dev>
+In-Reply-To: <20250626115625.536423-1-yung-chuan.liao@linux.intel.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Migadu-Flow: FLOW_OUT
 
-Wu randomly sets the smp_affinity_list of the specified irq through a
-code on the linux-5.10.y kernel:
-    ================================
-    ...
-    memcpy((void*)0x20000080, "/proc/irq/18/smp_affinity_list", 30);
-    res = syscall(__NR_openat, /*fd=*/0xffffffffffffff9cul,
-                  /*file=*/0x20000080ul, /*flags=*/1ul, /*mode=*/0ul);
-    r[0] = res;
-    ...
-    syscall(__NR_write, /*fd=*/r[0], /*arg=*/0x20002100ul,
-            /*len=*/0xfffffdfeul);
-    ...
-    ================================
+Hi Bard,
 
-Warning will be triggered and the call trace is as follows:
-[   69.732366] Call Trace:
-[   69.732373]  ? show_trace_log_lvl+0x1c1/0x2d9
-[   69.732374]  ? show_trace_log_lvl+0x1c1/0x2d9
-[   69.732379]  ? kmalloc_order+0x28/0xf0
-[   69.732389]  ? __alloc_pages_nodemask+0x287/0x300
-[   69.732393]  ? __warn+0x80/0x100
-[   69.732394]  ? __alloc_pages_nodemask+0x287/0x300
-[   69.732397]  ? report_bug+0x9e/0xc0
-[   69.732400]  ? handle_bug+0x41/0x90
-[   69.732402]  ? exc_invalid_op+0x14/0x70
-[   69.732403]  ? asm_exc_invalid_op+0x12/0x20
-[   69.732405]  ? __alloc_pages_nodemask+0x287/0x300
-[   69.732407]  ? bitmap_parselist+0x120/0x120
-[   69.732409]  kmalloc_order+0x28/0xf0
-[   69.732410]  kmalloc_order_trace+0x19/0x90
-[   69.732414]  memdup_user_nul+0x22/0xa0
-[   69.732415]  bitmap_parselist_user+0x35/0x80
-[   69.732419]  write_irq_affinity.constprop.0.isra.0+0xb9/0x110
-[   69.732422]  proc_reg_write+0x4e/0x90
-[   69.732425]  vfs_write+0xbf/0x290
-[   69.732426]  ksys_write+0x5f/0xe0
-[   69.732428]  do_syscall_64+0x30/0x40
-[   69.732430]  entry_SYSCALL_64_after_hwframe+0x67/0xd1
+> The current code waits for the codec initialization in the resume
+> callback. It could cause the resume takes a long time while waiting for
+> the codec being attached and initialized. Move the waiting to the
+> hw_params callback when the driver really needs it and shorten the
+> resume time.
+> The change is mainly on the ASoC tree. Let's go through the ASoC tree.
 
-It is due to the lack of a check for the maximum value of ulen in
-bitmap_parselist_user().
+While I certainly understand the desire to make the resume time lower, is this approach desirable in all cases?
 
-Fixes: 4b060420a596 ("bitmap, irq: add smp_affinity_list interface to /proc/irq")
-Signed-off-by: Cheng Yu <serein.chengyu@huawei.com>
-Signed-off-by: Wu Guanghao <wuguanghao3@huawei.com>
----
- lib/bitmap-str.c | 3 +++
- 1 file changed, 3 insertions(+)
+My main worry is this: not all functionality in a codec is related to the hw_params. One counter example would be register settings related to jack detection. You would want the regmap settings to be correctly applied in hardware registers even in the absence of any streaming request, no?
 
-diff --git a/lib/bitmap-str.c b/lib/bitmap-str.c
-index be745209507a..0b5d9ffe20c6 100644
---- a/lib/bitmap-str.c
-+++ b/lib/bitmap-str.c
-@@ -419,6 +419,9 @@ int bitmap_parselist_user(const char __user *ubuf,
- 	char *buf;
- 	int ret;
- 
-+	if (ulen > PAGE_SIZE)
-+		return -ENOMEM;
-+
- 	buf = memdup_user_nul(ubuf, ulen);
- 	if (IS_ERR(buf))
- 		return PTR_ERR(buf);
--- 
-2.25.1
+The other weird thing is that historically the codec initialization was never on the critical path, it was several orders of magnitude faster than the controller. It wouldn't hurt to provide broad-brush information on what a 'long' time means for a codec resume, so that we can really see the pros/cons of moving all the regmap initialization.
+
+Another open is that SDCA defines the notion of 'blind writes' which would typically be done during a resume if context was lost. If we start moving some parts of the initialization to the hw_params and others remain in the resume flow, that will quickly lead to complexity in managing configuration.
+
+The last point is that this is a change for Realtek codecs only, would other drivers for other vendors require this change? And if I may ask is there any merit in speeding-up resume times even for 'legacy' non-sdca parts?
+
+> Bard Liao (15):
+>   soundwire: add sdw_slave_wait_for_initialization helper
+>   ASoC: rt722: wait codec init in hw_params
+>   ASoC: rt712: wait codec init in hw_params
+>   ASoC: rt1320: wait codec init in hw_params
+>   ASoC: rt721: wait codec init in hw_params
+>   ASoC: rt715-sdca: wait codec init in hw_params
+>   ASoC: rt711-sdca: wait codec init in hw_params
+>   ASoC: rt711: wait codec init in hw_params
+>   ASoC: rt715: wait codec init in hw_params
+>   ASoC: rt700: wait codec init in hw_params
+>   ASoC: rt1316: wait codec init in hw_params
+>   ASoC: rt1318: wait codec init in hw_params
+>   ASoC: rt1308: wait codec init in hw_params
+>   ASoC: rt5682: wait codec init in hw_params
+>   ASoC: rt1017: wait codec init in hw_params
+> 
+>  drivers/soundwire/slave.c          | 17 ++++++++++++++
+>  include/linux/soundwire/sdw.h      |  1 +
+>  sound/soc/codecs/rt1017-sdca-sdw.c | 32 ++++++++++++++++----------
+>  sound/soc/codecs/rt1308-sdw.c      | 32 ++++++++++++++++----------
+>  sound/soc/codecs/rt1316-sdw.c      | 32 ++++++++++++++++----------
+>  sound/soc/codecs/rt1318-sdw.c      | 30 ++++++++++++++++--------
+>  sound/soc/codecs/rt1320-sdw.c      | 32 ++++++++++++++++++--------
+>  sound/soc/codecs/rt5682-sdw.c      | 29 +++++++++++++++--------
+>  sound/soc/codecs/rt700-sdw.c       | 27 ++++++++++++----------
+>  sound/soc/codecs/rt700.c           |  6 +++++
+>  sound/soc/codecs/rt711-sdca-sdw.c  | 28 ++++++++++++----------
+>  sound/soc/codecs/rt711-sdca.c      |  6 +++++
+>  sound/soc/codecs/rt711-sdw.c       | 26 +++++++++++++--------
+>  sound/soc/codecs/rt711.c           |  6 +++++
+>  sound/soc/codecs/rt712-sdca-sdw.c  | 28 ++++++++++++----------
+>  sound/soc/codecs/rt712-sdca.c      |  6 +++++
+>  sound/soc/codecs/rt715-sdca-sdw.c  | 37 ++++++++++++++++++++----------
+>  sound/soc/codecs/rt715-sdca.c      |  6 +++++
+>  sound/soc/codecs/rt715-sdw.c       | 27 ++++++++++++----------
+>  sound/soc/codecs/rt715.c           |  6 +++++
+>  sound/soc/codecs/rt721-sdca-sdw.c  | 29 ++++++++++++-----------
+>  sound/soc/codecs/rt721-sdca.c      |  6 +++++
+>  sound/soc/codecs/rt722-sdca-sdw.c  | 26 +++++++++++----------
+>  sound/soc/codecs/rt722-sdca.c      |  6 +++++
+>  24 files changed, 320 insertions(+), 161 deletions(-)
+> 
 
 
