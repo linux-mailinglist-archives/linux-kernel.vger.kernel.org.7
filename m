@@ -1,39 +1,87 @@
-Return-Path: <linux-kernel+bounces-703995-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-703997-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 984A3AE97FF
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Jun 2025 10:20:37 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9FC66AE9813
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Jun 2025 10:21:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 18AC76A4089
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Jun 2025 08:18:07 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id AEDFB1887907
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Jun 2025 08:19:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EA00925D1E3;
-	Thu, 26 Jun 2025 08:15:08 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 950FD206F23
-	for <linux-kernel@vger.kernel.org>; Thu, 26 Jun 2025 08:15:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D782E27A105;
+	Thu, 26 Jun 2025 08:16:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="dEGS2Xpo"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 532B226B768
+	for <linux-kernel@vger.kernel.org>; Thu, 26 Jun 2025 08:16:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750925708; cv=none; b=ec8Cxs7OZQ3zsk8TGsNznm07MzgCNvE+VbTzGz4sWOlBAF5rpSsSyqCicY215EFvJjK7+VRpI5DVjgksgDGFUzvxXpQ4mZiYoG+B00hx8uuqiu8BFPt3IhRKIQ50hHk73bkHQb2V2LJ96iW+6a6Lsm7pe4SA/BEBvvGAKrmkXJM=
+	t=1750925782; cv=none; b=l6Ly48ISHd7FYaAZ8HpB2hkilbSRxA1ocsBCVVBif1YMIskrDN6OrAwex1FR+RqZCHhcyLXvCOISbpQ47XbIXfOABWC4gaJz2rYAO1qRoG4tJcBFyxJIoU/MJdXCJGqKKQaQLjU4C9QY4tR1Vw7Z0pE0P2YhPPrBu2AMiimQX9E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750925708; c=relaxed/simple;
-	bh=Hak0h+hHjUBn9iZdQes8cwunourgR6ToM8t8s3LGr7w=;
+	s=arc-20240116; t=1750925782; c=relaxed/simple;
+	bh=2LaGHgeVxQQQMShe/h5KD7WE7trB8mcdOthVmXTBBMo=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=YWJYVjOXF9V+8ZzQfCZn6085oUUBnmdozSr7lxpnJUtMxmzrkmwOgO2uXKt+oWweUZprxUjj4ysmDoMXzUJ7SxwbNyrXeVmghuqKYlp5f2YnIW/MzydzDHn70Et6VsWpG9UcLHfBsbXp3kUS5ef0MFHTjqMmDP+11MogC/UEaP4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 143371063;
-	Thu, 26 Jun 2025 01:14:48 -0700 (PDT)
-Received: from [10.57.84.221] (unknown [10.57.84.221])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 97D7B3F58B;
-	Thu, 26 Jun 2025 01:15:02 -0700 (PDT)
-Message-ID: <48400a85-3f0f-4b4c-81aa-0e7d1dc14c9d@arm.com>
-Date: Thu, 26 Jun 2025 09:15:00 +0100
+	 In-Reply-To:Content-Type; b=Xo2Fv11Ts9ntuhy1WXixI6wCTKMVHmlgIte+64Di2QSZ5NYa69Q1o3r1J8LlLABgNuSEJ8lq7xzCZs9q78D+gAVVDpLiCPjwaqqwcdk3DksyEYKyyInDaEkkAmj5jjnR2CJDCKFYbYv1gw8WHf4mJhJBcbjaLeu0hmOTzvvMkrw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=dEGS2Xpo; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1750925777;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=qWPpr2CE+JfSG6/BLYsiDYGa2S9ML4EFd6pyLeDhF/g=;
+	b=dEGS2XpoadtKfdEKop+qQdwkgkUa21STAFVrAYxRtwiAO11UycQA7y+bXaCUma8EGkQCu9
+	uPuQbZvvNL+mLPwhBWsJROJ+br6zqXaMSDRrEn9OzMgp4ZkIGwrBs+4F4ZaQSfc1/C7pnW
+	j4pNkm+rOuMHqUydOPY0ZFTSBOG0XXM=
+Received: from mail-wm1-f72.google.com (mail-wm1-f72.google.com
+ [209.85.128.72]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-246-dMoxIvQNNzui3FlaH-p6Fw-1; Thu, 26 Jun 2025 04:16:15 -0400
+X-MC-Unique: dMoxIvQNNzui3FlaH-p6Fw-1
+X-Mimecast-MFC-AGG-ID: dMoxIvQNNzui3FlaH-p6Fw_1750925774
+Received: by mail-wm1-f72.google.com with SMTP id 5b1f17b1804b1-450d6768d4dso3850055e9.2
+        for <linux-kernel@vger.kernel.org>; Thu, 26 Jun 2025 01:16:15 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1750925774; x=1751530574;
+        h=content-transfer-encoding:in-reply-to:organization:autocrypt
+         :content-language:from:references:cc:to:subject:user-agent
+         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=qWPpr2CE+JfSG6/BLYsiDYGa2S9ML4EFd6pyLeDhF/g=;
+        b=SHg001yEWOIYDlBFIrTmaZt1XIevyVNQsVEunrgI8LsxWzKkn/uT7BECqvDs+gBK8d
+         KWOt3hJJXG5PkmUQr4r6ieIPiDI1c8l9boOMH7T01cpzXDUk8/nbVnDPkot125WiSJHj
+         iY8jKjT3cyndNlbC6eAQ/dGRmLu+r26FuFqT55B2WogYgB52f/QUorFRZQZJSwmU+Alo
+         Tq6Rr6+FN5x18NxjT9vgfq+eKrSwxQmG59o+kmIt2ot5jXfGNdYlzFserRObTRqS9j5m
+         qFBCD2OHvl3sqyEIjd5xqRgAEnE+uril00+YS3byMZGivxv//HinnUs08NW/ihPEAAn1
+         CmyQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWIzIwgV/tjOc1/e2D27judqz09ULqu81SVACpjHq/92Vel0hYLHA/nzXwM0kPGN/NKlgJGON3/lDH0hzo=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzBlg1kAqlAA/uCnj5QAnCnEF1v+wzgRavM9YqTZnX1y78FSqJP
+	IUZcHAbUzOe+m/YaX8aXIzdUBS7SKpghcJe/b9svPrh7um/EgTave4iy+35c0p8C8n6dJj1TfcO
+	jtQSXXQHmz+EkctXWhIlZgYzZ6uvvvPWWQ0BKeX2El+QSi8emjNkWXdpyHg8ow5yLNA==
+X-Gm-Gg: ASbGncu5ouf7+j3+MzheGQ4FMzsI+9P5TzoQNVM8DobEh+932+pMMCRhION/kaTJ9ox
+	UNPYNy7gVUkOH4OF+8FzunDLRqbnPeCuCZ+osWK455Sk2BlCglAe3w47QEaC3+puLKoFn71wSko
+	/OLbFcJ10XmKOhHZHpfLFetAbKCD8tkQDiG14GnVLmcu351lkf6t5j/XPlu/Nj7R/JwxEd6R7ms
+	RFnDd92D51nAh3jJHR08/IDeAyJSG+6DRSLGhU7XUjzPp6s6fBNR86KQxvTaQKnT9ddoui4HcZd
+	I24BNqzYAJjJzH01JtGch8LaWCU5QqyG6xQhNOwtiYsweSz3S0wPOhBYLVH+EJnzcnkPxL2o+k0
+	5QbVSLTrlnaj1cyOGVf6a5CJS9AP6Q5TksoTnOKx/gX1U9ZCP5g==
+X-Received: by 2002:a5d:64e1:0:b0:3a6:d92d:9f7c with SMTP id ffacd0b85a97d-3a6ed5e9c5bmr4874179f8f.9.1750925774104;
+        Thu, 26 Jun 2025 01:16:14 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IFr09EJOFj1LiA0nSuyZyXutey/xEu/VWRh+xl0GZg6IjKhv9F5hRjD5Tch3vMl1jREoIlygg==
+X-Received: by 2002:a5d:64e1:0:b0:3a6:d92d:9f7c with SMTP id ffacd0b85a97d-3a6ed5e9c5bmr4874148f8f.9.1750925773722;
+        Thu, 26 Jun 2025 01:16:13 -0700 (PDT)
+Received: from ?IPV6:2003:d8:2f3c:2f00:8afc:23fe:3813:776c? (p200300d82f3c2f008afc23fe3813776c.dip0.t-ipconnect.de. [2003:d8:2f3c:2f00:8afc:23fe:3813:776c])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4538a3fe043sm11573745e9.26.2025.06.26.01.16.11
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 26 Jun 2025 01:16:12 -0700 (PDT)
+Message-ID: <ff2421bc-fe91-42c8-af42-91b57824e312@redhat.com>
+Date: Thu, 26 Jun 2025 10:16:11 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -41,172 +89,93 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 1/2] arm64: pageattr: Use pagewalk API to change memory
- permissions
-Content-Language: en-GB
-To: Dev Jain <dev.jain@arm.com>, akpm@linux-foundation.org, david@redhat.com,
- catalin.marinas@arm.com, will@kernel.org
-Cc: lorenzo.stoakes@oracle.com, Liam.Howlett@oracle.com, vbabka@suse.cz,
- rppt@kernel.org, surenb@google.com, mhocko@suse.com, linux-mm@kvack.org,
- linux-kernel@vger.kernel.org, suzuki.poulose@arm.com, steven.price@arm.com,
- gshan@redhat.com, linux-arm-kernel@lists.infradead.org,
- yang@os.amperecomputing.com, anshuman.khandual@arm.com
-References: <20250613134352.65994-1-dev.jain@arm.com>
- <20250613134352.65994-2-dev.jain@arm.com>
- <1bb09534-56bd-4aba-b7e8-dad8bf6e9200@arm.com>
-From: Ryan Roberts <ryan.roberts@arm.com>
-In-Reply-To: <1bb09534-56bd-4aba-b7e8-dad8bf6e9200@arm.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Subject: Re: [PATCH] Fix do_pages_stat to use compat_uptr_t
+To: Andrew Morton <akpm@linux-foundation.org>,
+ Christoph Berg <myon@debian.org>
+Cc: Zi Yan <ziy@nvidia.com>, Matthew Brost <matthew.brost@intel.com>,
+ Joshua Hahn <joshua.hahnjy@gmail.com>, Rakie Kim <rakie.kim@sk.com>,
+ Byungchul Park <byungchul@sk.com>, Gregory Price <gourry@gourry.net>,
+ Ying Huang <ying.huang@linux.alibaba.com>,
+ Alistair Popple <apopple@nvidia.com>,
+ "open list:MEMORY MANAGEMENT - MEMORY POLICY AND MIGRATION"
+ <linux-mm@kvack.org>, open list <linux-kernel@vger.kernel.org>
+References: <aFrBhyHQFffJ4xgX@msg.df7cb.de>
+ <d42cc185-b774-4d5e-9a51-0581dd5f3962@arm.com>
+ <aFwUnu7ObizycCZ8@msg.df7cb.de>
+ <20250625133909.1a054c24d933cd97afd0027d@linux-foundation.org>
+ <aFxltX73iZLT2HGx@msg.df7cb.de>
+ <20250625141551.ca068f6bc901943559df6bdf@linux-foundation.org>
+From: David Hildenbrand <david@redhat.com>
+Content-Language: en-US
+Autocrypt: addr=david@redhat.com; keydata=
+ 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
+ WNyWQQ==
+Organization: Red Hat
+In-Reply-To: <20250625141551.ca068f6bc901943559df6bdf@linux-foundation.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On 26/06/2025 06:47, Dev Jain wrote:
+On 25.06.25 23:15, Andrew Morton wrote:
+> On Wed, 25 Jun 2025 23:10:13 +0200 Christoph Berg <myon@debian.org> wrote:
 > 
-> On 13/06/25 7:13 pm, Dev Jain wrote:
->> arm64 currently changes permissions on vmalloc objects locklessly, via
->> apply_to_page_range, whose limitation is to deny changing permissions for
->> block mappings. Therefore, we move away to use the generic pagewalk API,
->> thus paving the path for enabling huge mappings by default on kernel space
->> mappings, thus leading to more efficient TLB usage. However, the API
->> currently enforces the init_mm.mmap_lock to be held. To avoid the
->> unnecessary bottleneck of the mmap_lock for our usecase, this patch
->> extends this generic API to be used locklessly, so as to retain the
->> existing behaviour for changing permissions. Apart from this reason, it is
->> noted at [1] that KFENCE can manipulate kernel pgtable entries during
->> softirqs. It does this by calling set_memory_valid() -> __change_memory_common().
->> This being a non-sleepable context, we cannot take the init_mm mmap lock.
+>> Re: Andrew Morton
+>>> I'll update the Subject: as David suggests and I'll add a cc:stable,
+>>> thanks.  I'll also add a note that David suggested an alternative, so
+>>> please let's advance that option.
 >>
->> Add comments to highlight the conditions under which we can use the
->> lockless variant - no underlying VMA, and the user having exclusive control
->> over the range, thus guaranteeing no concurrent access.
->>
->> Since arm64 cannot handle kernel live mapping splitting without BBML2,
->> we require that the start and end of a given range lie on block mapping
->> boundaries. Return -EINVAL in case a partial block mapping is detected;
->> add a corresponding comment in ___change_memory_common() to warn that
->> eliminating such a condition is the responsibility of the caller.
->>
->> apply_to_page_range() currently performs all pte level callbacks while in
->> lazy mmu mode. Since arm64 can optimize performance by batching barriers
->> when modifying kernel pgtables in lazy mmu mode, we would like to continue
->> to benefit from this optimisation. Unfortunately walk_kernel_page_table_range()
->> does not use lazy mmu mode. However, since the pagewalk framework is not
->> allocating any memory, we can safely bracket the whole operation inside
->> lazy mmu mode ourselves. Therefore, wrap the call to
->> walk_kernel_page_table_range() with the lazy MMU helpers.
->>
->> [1] https://lore.kernel.org/linux-arm-kernel/89d0ad18-4772-4d8f-
->> ae8a-7c48d26a927e@arm.com/
->>
->> Signed-off-by: Dev Jain <dev.jain@arm.com>
->> ---
->>   arch/arm64/mm/pageattr.c | 157 +++++++++++++++++++++++++++++++--------
->>   include/linux/pagewalk.h |   3 +
->>   mm/pagewalk.c            |  26 +++++++
->>   3 files changed, 154 insertions(+), 32 deletions(-)
->>
->> diff --git a/arch/arm64/mm/pageattr.c b/arch/arm64/mm/pageattr.c
->> index 04d4a8f676db..cfc5279f27a2 100644
->> --- a/arch/arm64/mm/pageattr.c
->> +++ b/arch/arm64/mm/pageattr.c
->> @@ -8,6 +8,7 @@
->>   #include <linux/mem_encrypt.h>
->>   #include <linux/sched.h>
->>   #include <linux/vmalloc.h>
->> +#include <linux/pagewalk.h>
->>     #include <asm/cacheflush.h>
->>   #include <asm/pgtable-prot.h>
->> @@ -20,6 +21,99 @@ struct page_change_data {
->>       pgprot_t clear_mask;
->>   };
->>   +static ptdesc_t set_pageattr_masks(ptdesc_t val, struct mm_walk *walk)
->> +{
->> +    struct page_change_data *masks = walk->private;
->> +
->> +    val &= ~(pgprot_val(masks->clear_mask));
->> +    val |= (pgprot_val(masks->set_mask));
->> +
->> +    return val;
->> +}
->> +
->> +static int pageattr_pgd_entry(pgd_t *pgd, unsigned long addr,
->> +                  unsigned long next, struct mm_walk *walk)
->> +{
->> +    pgd_t val = pgdp_get(pgd);
->> +
->> +    if (pgd_leaf(val)) {
->> +        if (WARN_ON_ONCE((next - addr) != PGDIR_SIZE))
->> +            return -EINVAL;
->> +        val = __pgd(set_pageattr_masks(pgd_val(val), walk));
->> +        set_pgd(pgd, val);
->> +        walk->action = ACTION_CONTINUE;
->> +    }
->> +
->> +    return 0;
->> +}
->> +
->> +static int pageattr_p4d_entry(p4d_t *p4d, unsigned long addr,
->> +                  unsigned long next, struct mm_walk *walk)
->> +{
->> +    p4d_t val = p4dp_get(p4d);
->> +
->> +    if (p4d_leaf(val)) {
->> +        if (WARN_ON_ONCE((next - addr) != P4D_SIZE))
->> +            return -EINVAL;
->> +        val = __p4d(set_pageattr_masks(p4d_val(val), walk));
->> +        set_p4d(p4d, val);
->> +        walk->action = ACTION_CONTINUE;
->> +    }
->> +
->> +    return 0;
->> +}
->> +
->> +static int pageattr_pud_entry(pud_t *pud, unsigned long addr,
->> +                  unsigned long next, struct mm_walk *walk)
->> +{
->> +    pud_t val = pudp_get(pud);
->> +
->> +    if (pud_leaf(val)) {
->> +        if (WARN_ON_ONCE((next - addr) != PUD_SIZE))
->> +            return -EINVAL;
->> +        val = __pud(set_pageattr_masks(pud_val(val), walk));
->> +        set_pud(pud, val);
->> +        walk->action = ACTION_CONTINUE;
->> +    }
->> +
->> +    return 0;
->> +}
->> +
->> +static int pageattr_pmd_entry(pmd_t *pmd, unsigned long addr,
->> +                  unsigned long next, struct mm_walk *walk)
->> +{
->> +    pmd_t val = pmdp_get(pmd);
->> +
->> +    if (pmd_leaf(val)) {
->> +        if (WARN_ON_ONCE((next - addr) != PMD_SIZE))
->> +            return -EINVAL;
->> +        val = __pmd(set_pageattr_masks(pmd_val(val), walk));
->> +        set_pmd(pmd, val);
->> +        walk->action = ACTION_CONTINUE;
->> +    }
->> +
->> +    return 0;
->> +}
->> +
->> +static int pageattr_pte_entry(pte_t *pte, unsigned long addr,
->> +                  unsigned long next, struct mm_walk *walk)
->> +{
->> +    pte_t val = __ptep_get(pte);
->> +
->> +    val = __pte(set_pageattr_masks(pte_val(val), walk));
->> +    __set_pte(pte, val);
->> +
->> +    return 0;
->> +}
-> 
-> I was wondering, now that we have vmalloc contpte support,
-> do we need to ensure in this pte level callback that
-> we don't partially cover a contpte block?
+>> Sorry, I'm new here. Do I have to do anything now? The above sounds
+>> like the alternative coding by David would be preferred
 
-Yes good point!
+See if my proposal makes sense, and then incorporate+test it.
+
+You can feel free to add my
+
+Suggested-by: David Hildenbrand <david@redhat.com>
+
+-- 
+Cheers,
+
+David / dhildenb
 
 
