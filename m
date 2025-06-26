@@ -1,291 +1,126 @@
-Return-Path: <linux-kernel+bounces-704424-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-704436-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9B23BAE9D4E
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Jun 2025 14:15:58 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id B7837AE9D77
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Jun 2025 14:30:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6AFC44A23DF
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Jun 2025 12:15:58 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id EAF2E1C40379
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Jun 2025 12:30:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3581E2206AA;
-	Thu, 26 Jun 2025 12:15:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="MOn9Twm7"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BB24829ACEE;
+	Thu, 26 Jun 2025 12:30:18 +0000 (UTC)
+Received: from szxga04-in.huawei.com (szxga04-in.huawei.com [45.249.212.190])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 69CD42F1FE4;
-	Thu, 26 Jun 2025 12:15:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5DF56299A93
+	for <linux-kernel@vger.kernel.org>; Thu, 26 Jun 2025 12:30:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.190
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750940147; cv=none; b=fFofAXeYlkcfEurooQRVEry0IELfhThDr1yWsXmWqwGZD1pjkwLsPyhsmbZM4LDK7BRtZ5c4NnZklmuJ52DnDQtJKrz02Z/WOxley+1ESeKsB2T2lp8SBh+59JN6DF3QcXex429d7/jUWujByTg33Ui0ith66cHYjAbVPvTb2PY=
+	t=1750941018; cv=none; b=KBYqpzGChfz56+DPXaqh9mD1u4JLPNkfzIdwKgzW4xHynDPOybzZPKU3wkjXO9fla5X/2exBnmfMomdUirMfKM8qd5Osc31R/HAn7uNzDScidhsc/5fwIQRpntCf++NivGE2lABG4L63Cnt5lCP5e0PYNEcPg3K9EQNxVTyx9gI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750940147; c=relaxed/simple;
-	bh=rO317H3xuWCZdX9BLTv7dshWsqwwlUzyOMx4HJubyN8=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=JCpDzjec87+ImJd2/oFqqwjRnNFXLIayMy64o9ubsGcN1JxzacjDLenOPmaRF2sieWP0iZujWfK3+/Umf/4XowoVyfNuRZOLrAjEeepAegN4KkdFII9jMpLW1Q3A/RUwXzCMgJtxAT1fP669EzxPNxg4fB8EJ75Rcv4LiceNxa0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=MOn9Twm7; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B77FBC4CEED;
-	Thu, 26 Jun 2025 12:15:42 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1750940147;
-	bh=rO317H3xuWCZdX9BLTv7dshWsqwwlUzyOMx4HJubyN8=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
-	b=MOn9Twm7xNtUwkihn3JedqgUylRmDdJS4ZWJ3ph2oq9sEvwvDa7PynSBEjKqzGL2D
-	 rQ4YvvdGhLIP3v0dK0Wq2lhei49URaCog9hdaybvy/oEwUWGefAumQob7+s+kKp1Ni
-	 WP5BfnHy15gMOZJuqZJEyizdT59FgxEdWDVMWkxZ1HY8mJhW1gl2s1D4s8g9SKib+6
-	 W3X8q6csNhvnupBWQUjVhh2YT7O1Z3CpZQtm/m+e5qpVagwWwpz2jCcxIeWH9SkJ6Q
-	 aka9U70Nlgm8grn7xswEyLWIG1ije91x7ox2Te9+QLNR+OsoMky1kS+fMxnj4Vyj/4
-	 jOZzjTV2UbYLQ==
-From: Andreas Hindborg <a.hindborg@kernel.org>
-To: "Boqun Feng" <boqun.feng@gmail.com>
-Cc: <linux-kernel@vger.kernel.org>,  <rust-for-linux@vger.kernel.org>,
-  <lkmm@lists.linux.dev>,  <linux-arch@vger.kernel.org>,  "Miguel Ojeda"
- <ojeda@kernel.org>,  "Alex Gaynor" <alex.gaynor@gmail.com>,  "Gary Guo"
- <gary@garyguo.net>,  =?utf-8?Q?Bj=C3=B6rn?= Roy Baron
- <bjorn3_gh@protonmail.com>,  "Benno
- Lossin" <lossin@kernel.org>,  "Alice Ryhl" <aliceryhl@google.com>,
-  "Trevor Gross" <tmgross@umich.edu>,  "Danilo Krummrich"
- <dakr@kernel.org>,  "Will Deacon" <will@kernel.org>,  "Peter Zijlstra"
- <peterz@infradead.org>,  "Mark Rutland" <mark.rutland@arm.com>,  "Wedson
- Almeida Filho" <wedsonaf@gmail.com>,  "Viresh Kumar"
- <viresh.kumar@linaro.org>,  "Lyude Paul" <lyude@redhat.com>,  "Ingo
- Molnar" <mingo@kernel.org>,  "Mitchell Levy" <levymitchell0@gmail.com>,
-  "Paul E. McKenney" <paulmck@kernel.org>,  "Greg Kroah-Hartman"
- <gregkh@linuxfoundation.org>,  "Linus Torvalds"
- <torvalds@linux-foundation.org>,  "Thomas Gleixner" <tglx@linutronix.de>
-Subject: Re: [PATCH v5 04/10] rust: sync: atomic: Add generic atomics
-In-Reply-To: <20250618164934.19817-5-boqun.feng@gmail.com> (Boqun Feng's
-	message of "Wed, 18 Jun 2025 09:49:28 -0700")
-References: <20250618164934.19817-1-boqun.feng@gmail.com>
-	<8ISRnKRw28Na4so9GDfdv0gd40nmTGOwD7hFx507xGgJ64p9s8qECsOkboryQH02IQJ4ObvqAwcLUZCKt1QwZQ==@protonmail.internalid>
-	<20250618164934.19817-5-boqun.feng@gmail.com>
-User-Agent: mu4e 1.12.9; emacs 30.1
-Date: Thu, 26 Jun 2025 14:15:35 +0200
-Message-ID: <8734bm1yxk.fsf@kernel.org>
+	s=arc-20240116; t=1750941018; c=relaxed/simple;
+	bh=L4oxkWCu4/xfQbL2VZPaOzO/8DvUUGQoe1XaKUL8Pw0=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=mN3ZMibxvKHcdFh/IdRyKJLxG0Zc1R02xGDZfLk1gpStq5VOxOr/XN+7W9HeG6DY1ckYXu2KKcxR7OmHXzN09b2f961HTtF4QOZBfya1NkQOaPvu4THP+fcO2m1QSZ9fH8Agzf2JxlyrObAdGz9eHLvfGvtwSlfQywiXyc2lOrU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.190
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.163.44])
+	by szxga04-in.huawei.com (SkyGuard) with ESMTP id 4bSdJc2345z2TSmn;
+	Thu, 26 Jun 2025 20:28:32 +0800 (CST)
+Received: from kwepemf500005.china.huawei.com (unknown [7.202.181.243])
+	by mail.maildlp.com (Postfix) with ESMTPS id 067661401E9;
+	Thu, 26 Jun 2025 20:30:11 +0800 (CST)
+Received: from huawei.com (10.67.174.161) by kwepemf500005.china.huawei.com
+ (7.202.181.243) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Thu, 26 Jun
+ 2025 20:30:10 +0800
+From: Cheng Yu <serein.chengyu@huawei.com>
+To: <yury.norov@gmail.com>, <linux@rasmusvillemoes.dk>,
+	<akpm@linux-foundation.org>, <travis@sgi.com>, <linux-kernel@vger.kernel.org>
+CC: <zhangqiao22@huawei.com>, <tanghui20@huawei.com>,
+	<chenweilong@huawei.com>, <judy.chenhui@huawei.com>, <chenjun102@huawei.com>
+Subject: [PATCH] bitmap-str: Limit the size of ulen in bitmap_parselist_user()
+Date: Thu, 26 Jun 2025 20:19:03 +0800
+Message-ID: <20250626121903.3086789-1-serein.chengyu@huawei.com>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Content-Type: text/plain
+X-ClientProxiedBy: kwepems100001.china.huawei.com (7.221.188.238) To
+ kwepemf500005.china.huawei.com (7.202.181.243)
 
-"Boqun Feng" <boqun.feng@gmail.com> writes:
+Wu randomly sets the smp_affinity_list of the specified irq through a
+code on the linux-5.10.y kernel:
+    ================================
+    ...
+    memcpy((void*)0x20000080, "/proc/irq/18/smp_affinity_list", 30);
+    res = syscall(__NR_openat, /*fd=*/0xffffffffffffff9cul,
+                  /*file=*/0x20000080ul, /*flags=*/1ul, /*mode=*/0ul);
+    r[0] = res;
+    ...
+    syscall(__NR_write, /*fd=*/r[0], /*arg=*/0x20002100ul,
+            /*len=*/0xfffffdfeul);
+    ...
+    ================================
 
-[...]
+Warning will be triggered and the call trace is as follows:
+[   69.732366] Call Trace:
+[   69.732373]  ? show_trace_log_lvl+0x1c1/0x2d9
+[   69.732374]  ? show_trace_log_lvl+0x1c1/0x2d9
+[   69.732379]  ? kmalloc_order+0x28/0xf0
+[   69.732389]  ? __alloc_pages_nodemask+0x287/0x300
+[   69.732393]  ? __warn+0x80/0x100
+[   69.732394]  ? __alloc_pages_nodemask+0x287/0x300
+[   69.732397]  ? report_bug+0x9e/0xc0
+[   69.732400]  ? handle_bug+0x41/0x90
+[   69.732402]  ? exc_invalid_op+0x14/0x70
+[   69.732403]  ? asm_exc_invalid_op+0x12/0x20
+[   69.732405]  ? __alloc_pages_nodemask+0x287/0x300
+[   69.732407]  ? bitmap_parselist+0x120/0x120
+[   69.732409]  kmalloc_order+0x28/0xf0
+[   69.732410]  kmalloc_order_trace+0x19/0x90
+[   69.732414]  memdup_user_nul+0x22/0xa0
+[   69.732415]  bitmap_parselist_user+0x35/0x80
+[   69.732419]  write_irq_affinity.constprop.0.isra.0+0xb9/0x110
+[   69.732422]  proc_reg_write+0x4e/0x90
+[   69.732425]  vfs_write+0xbf/0x290
+[   69.732426]  ksys_write+0x5f/0xe0
+[   69.732428]  do_syscall_64+0x30/0x40
+[   69.732430]  entry_SYSCALL_64_after_hwframe+0x67/0xd1
 
-> +
-> +impl<T: AllowAtomic> Atomic<T> {
-> +    /// Creates a new atomic.
-> +    pub const fn new(v: T) -> Self {
-> +        Self(Opaque::new(v))
-> +    }
-> +
-> +    /// Creates a reference to [`Self`] from a pointer.
-> +    ///
-> +    /// # Safety
-> +    ///
-> +    /// - `ptr` has to be a valid pointer.
-> +    /// - `ptr` has to be valid for both reads and writes for the whole lifetime `'a`.
-> +    /// - For the whole lifetime of '`a`, other accesses to the object cannot cause data races
-> +    ///   (defined by [`LKMM`]) against atomic operations on the returned reference.
+It is due to the lack of a check for the maximum value of ulen in
+bitmap_parselist_user().
 
-I feel the wording is a bit tangled here. How about something along the
-lines of
+Fixes: 4b060420a596 ("bitmap, irq: add smp_affinity_list interface to /proc/irq")
+Signed-off-by: Cheng Yu <serein.chengyu@huawei.com>
+Signed-off-by: Wu Guanghao <wuguanghao3@huawei.com>
+---
+ lib/bitmap-str.c | 3 +++
+ 1 file changed, 3 insertions(+)
 
-  For the duration of `'a`, all accesses to the object must be atomic.
-
-> +    ///
-> +    /// [`LKMM`]: srctree/tools/memory-model
-> +    ///
-> +    /// # Examples
-> +    ///
-> +    /// Using [`Atomic::from_ptr()`] combined with [`Atomic::load()`] or [`Atomic::store()`] can
-> +    /// achieve the same functionality as `READ_ONCE()`/`smp_load_acquire()` or
-> +    /// `WRITE_ONCE()`/`smp_store_release()` in C side:
-> +    ///
-> +    /// ```rust
-> +    /// # use kernel::types::Opaque;
-> +    /// use kernel::sync::atomic::{Atomic, Relaxed, Release};
-> +    ///
-> +    /// // Assume there is a C struct `Foo`.
-> +    /// mod cbindings {
-> +    ///     #[repr(C)]
-> +    ///     pub(crate) struct foo { pub(crate) a: i32, pub(crate) b: i32 }
-> +    /// }
-> +    ///
-> +    /// let tmp = Opaque::new(cbindings::foo { a: 1, b: 2});
-> +    ///
-> +    /// // struct foo *foo_ptr = ..;
-> +    /// let foo_ptr = tmp.get();
-> +    ///
-> +    /// // SAFETY: `foo_ptr` is a valid pointer, and `.a` is inbound.
-
-Did you mean to say "in bounds"? Or what is "inbound"?
-
-> +    /// let foo_a_ptr = unsafe { core::ptr::addr_of_mut!((*foo_ptr).a) };
-
-This should be `&raw mut` by now, right?
-
-> +    ///
-> +    /// // a = READ_ONCE(foo_ptr->a);
-> +    /// //
-> +    /// // SAFETY: `foo_a_ptr` is a valid pointer for read, and all accesses on it is atomic, so no
-> +    /// // data race.
-> +    /// let a = unsafe { Atomic::from_ptr(foo_a_ptr) }.load(Relaxed);
-> +    /// # assert_eq!(a, 1);
-> +    ///
-> +    /// // smp_store_release(&foo_ptr->a, 2);
-> +    /// //
-> +    /// // SAFETY: `foo_a_ptr` is a valid pointer for write, and all accesses on it is atomic, so no
-> +    /// // data race.
-> +    /// unsafe { Atomic::from_ptr(foo_a_ptr) }.store(2, Release);
-> +    /// ```
-> +    ///
-> +    /// However, this should be only used when communicating with C side or manipulating a C struct.
-> +    pub unsafe fn from_ptr<'a>(ptr: *mut T) -> &'a Self
-> +    where
-> +        T: Sync,
-> +    {
-> +        // CAST: `T` is transparent to `Atomic<T>`.
-> +        // SAFETY: Per function safety requirement, `ptr` is a valid pointer and the object will
-> +        // live long enough. It's safe to return a `&Atomic<T>` because function safety requirement
-> +        // guarantees other accesses won't cause data races.
-> +        unsafe { &*ptr.cast::<Self>() }
-> +    }
-> +
-> +    /// Returns a pointer to the underlying atomic variable.
-> +    ///
-> +    /// Extra safety requirement on using the return pointer: the operations done via the pointer
-> +    /// cannot cause data races defined by [`LKMM`].
-> +    ///
-> +    /// [`LKMM`]: srctree/tools/memory-model
-> +    pub const fn as_ptr(&self) -> *mut T {
-> +        self.0.get()
-> +    }
-> +
-> +    /// Returns a mutable reference to the underlying atomic variable.
-> +    ///
-> +    /// This is safe because the mutable reference of the atomic variable guarantees the exclusive
-> +    /// access.
-> +    pub fn get_mut(&mut self) -> &mut T {
-> +        // SAFETY: `self.as_ptr()` is a valid pointer to `T`, and the object has already been
-> +        // initialized. `&mut self` guarantees the exclusive access, so it's safe to reborrow
-> +        // mutably.
-> +        unsafe { &mut *self.as_ptr() }
-> +    }
-> +}
-> +
-> +impl<T: AllowAtomic> Atomic<T>
-> +where
-> +    T::Repr: AtomicHasBasicOps,
-> +{
-> +    /// Loads the value from the atomic variable.
-> +    ///
-> +    /// # Examples
-> +    ///
-> +    /// Simple usages:
-> +    ///
-> +    /// ```rust
-> +    /// use kernel::sync::atomic::{Atomic, Relaxed};
-> +    ///
-> +    /// let x = Atomic::new(42i32);
-> +    ///
-> +    /// assert_eq!(42, x.load(Relaxed));
-> +    ///
-> +    /// let x = Atomic::new(42i64);
-> +    ///
-> +    /// assert_eq!(42, x.load(Relaxed));
-> +    /// ```
-> +    ///
-> +    /// Customized new types in [`Atomic`]:
-> +    ///
-> +    /// ```rust
-> +    /// use kernel::sync::atomic::{generic::AllowAtomic, Atomic, Relaxed};
-> +    ///
-> +    /// #[derive(Clone, Copy)]
-> +    /// #[repr(transparent)]
-> +    /// struct NewType(u32);
-> +    ///
-> +    /// // SAFETY: `NewType` is transparent to `u32`, which has the same size and alignment as
-> +    /// // `i32`.
-> +    /// unsafe impl AllowAtomic for NewType {
-> +    ///     type Repr = i32;
-> +    ///
-> +    ///     fn into_repr(self) -> Self::Repr {
-> +    ///         self.0 as i32
-> +    ///     }
-> +    ///
-> +    ///     fn from_repr(repr: Self::Repr) -> Self {
-> +    ///         NewType(repr as u32)
-> +    ///     }
-> +    /// }
-> +    ///
-> +    /// let n = Atomic::new(NewType(0));
-> +    ///
-> +    /// assert_eq!(0, n.load(Relaxed).0);
-> +    /// ```
-> +    #[doc(alias("atomic_read", "atomic64_read"))]
-> +    #[inline(always)]
-> +    pub fn load<Ordering: AcquireOrRelaxed>(&self, _: Ordering) -> T {
-> +        let a = self.as_ptr().cast::<T::Repr>();
-> +
-> +        // SAFETY:
-> +        // - For calling the atomic_read*() function:
-> +        //   - `self.as_ptr()` is a valid pointer, and per the safety requirement of `AllocAtomic`,
-
-Typo `AllocAtomic`.
-
-> +        //      a `*mut T` is a valid `*mut T::Repr`. Therefore `a` is a valid pointer,
-> +        //   - per the type invariants, the following atomic operation won't cause data races.
-> +        // - For extra safety requirement of usage on pointers returned by `self.as_ptr():
-> +        //   - atomic operations are used here.
-> +        let v = unsafe {
-> +            if Ordering::IS_RELAXED {
-> +                T::Repr::atomic_read(a)
-> +            } else {
-> +                T::Repr::atomic_read_acquire(a)
-> +            }
-> +        };
-> +
-> +        T::from_repr(v)
-> +    }
-> +
-> +    /// Stores a value to the atomic variable.
-> +    ///
-> +    /// # Examples
-> +    ///
-> +    /// ```rust
-> +    /// use kernel::sync::atomic::{Atomic, Relaxed};
-> +    ///
-> +    /// let x = Atomic::new(42i32);
-> +    ///
-> +    /// assert_eq!(42, x.load(Relaxed));
-> +    ///
-> +    /// x.store(43, Relaxed);
-> +    ///
-> +    /// assert_eq!(43, x.load(Relaxed));
-> +    /// ```
-> +    ///
-> +    #[doc(alias("atomic_set", "atomic64_set"))]
-> +    #[inline(always)]
-> +    pub fn store<Ordering: ReleaseOrRelaxed>(&self, v: T, _: Ordering) {
-> +        let v = T::into_repr(v);
-> +        let a = self.as_ptr().cast::<T::Repr>();
-> +
-> +        // SAFETY:
-> +        // - For calling the atomic_set*() function:
-> +        //   - `self.as_ptr()` is a valid pointer, and per the safety requirement of `AllocAtomic`,
-
-Typo `AllocAtomic`.
-
-
-Best regards,
-Andreas Hindborg
-
+diff --git a/lib/bitmap-str.c b/lib/bitmap-str.c
+index be745209507a..0b5d9ffe20c6 100644
+--- a/lib/bitmap-str.c
++++ b/lib/bitmap-str.c
+@@ -419,6 +419,9 @@ int bitmap_parselist_user(const char __user *ubuf,
+ 	char *buf;
+ 	int ret;
+ 
++	if (ulen > PAGE_SIZE)
++		return -ENOMEM;
++
+ 	buf = memdup_user_nul(ubuf, ulen);
+ 	if (IS_ERR(buf))
+ 		return PTR_ERR(buf);
+-- 
+2.25.1
 
 
