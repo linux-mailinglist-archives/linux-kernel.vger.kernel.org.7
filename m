@@ -1,158 +1,83 @@
-Return-Path: <linux-kernel+bounces-705460-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-705466-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id A8B61AEA9D8
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Jun 2025 00:45:47 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 499E8AEA9DC
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Jun 2025 00:46:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 802921C25D1B
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Jun 2025 22:45:13 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4B5C23A2596
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Jun 2025 22:45:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DFB4D28504D;
-	Thu, 26 Jun 2025 22:43:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 08A6D283FC4;
+	Thu, 26 Jun 2025 22:44:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ziepe.ca header.i=@ziepe.ca header.b="De2fRppS"
-Received: from mail-qt1-f171.google.com (mail-qt1-f171.google.com [209.85.160.171])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="oF71iFGU"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9E358283124
-	for <linux-kernel@vger.kernel.org>; Thu, 26 Jun 2025 22:43:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 54D1F221DB9;
+	Thu, 26 Jun 2025 22:44:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750977839; cv=none; b=dIwbEuGKO94qbCHAWkJvWhf1JU84MJGDhB68fdf6hU2nISZaCkIP7yr1af+gYVFb/PqDDuR4Ek5s1gZM0KNPPjTrJsqkoYuetITfRy6OegFQ4TV5m4sYOiGMtAzuJesh5sLm8a8hF0jhChBnRkzmOzPpusM/CMXQEkAzgmU5hBE=
+	t=1750977897; cv=none; b=Xz59XZeoTqg/kKkoRxk4E8Kj/hMSxxhnSqi8QlmheTQzQ8tmdzWB8i8ifvfJzgoKXAoAbhsD175seLMOzfDCVqpi2NJD+8B63eedns9QUaE07Pm7/cbabDDscK4mrKpkupEcekTcl9G+NxVu2C5E/MEmn05frl8022zDDYGTvZ0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750977839; c=relaxed/simple;
-	bh=VfoblnNBGqtqqaCDzhQ9efnYRcPTy5UeogBREfnrevs=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=pR6TlLVJTRHmzdqbKDuDjyMUSb9KyJG2Yi4S7AheCD5aVwKtlncWPDGMBYdJ2GQNQRzmwZcAp3UU3LBrQBLZipiIn3by7IXFxabXiDWxh4j2i/C3R+xvu10tw1G+JtcnV5jn/wI7M+hXy8pohudgD8N3c+KPNj+ioG/o64UjKYE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ziepe.ca; spf=pass smtp.mailfrom=ziepe.ca; dkim=pass (2048-bit key) header.d=ziepe.ca header.i=@ziepe.ca header.b=De2fRppS; arc=none smtp.client-ip=209.85.160.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ziepe.ca
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ziepe.ca
-Received: by mail-qt1-f171.google.com with SMTP id d75a77b69052e-4a6f3f88613so18478481cf.1
-        for <linux-kernel@vger.kernel.org>; Thu, 26 Jun 2025 15:43:57 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ziepe.ca; s=google; t=1750977836; x=1751582636; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=If95dr5h6255AmUKlhN6F3DaBJnLFhLX776luHKpLCQ=;
-        b=De2fRppSkMJa3X9ckgBgi0ZyoiUpyun72He4022hS6robKdoPCtUcSJxRZ4uApBd+m
-         wOnltqJMQcIpKaiv0OjKc8k344MHghRFHUWk0aeKHC33ZEftub/qgOhuub45ScDogUg1
-         ivXxUaZ0tnW36xKfP3Krk/JRl+CT8BNRKhy0UJAH2eTr7+9B5xXdw/EIALrMRHH6ULjx
-         nimljvz/oj0lEJ3KoRDe1wbq5Ta32n3wpF1LZiIpEaRAq5DnwF97s+VgnYDN76x3rYp5
-         VPshWOfNromr6BEQ193jK8lfwkCHZhpv973PbB3q8UXap7a5c9Wa6ZUubzXA4+AvjDkI
-         Np5w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1750977836; x=1751582636;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=If95dr5h6255AmUKlhN6F3DaBJnLFhLX776luHKpLCQ=;
-        b=REq9ntSXOmITkCFLzQ6Y3bxD5GAeTWJOYPRPzGwWbkFupjAnmq5uyIQ2+I+gw0/klM
-         ig8TrxlVvLL7t8hEh+a5a08AggYMwDkl8sl3dh80W9NLr8jVX8ipLzJ77Sa/VllHeJ/2
-         Ap8bQvVpycMkHvwC/CqfAWnLhJbT3QFsCuyL8zZ5kyeGWTm7KO2iwsD5DVC7hFmHGIen
-         TUfyK+KjJjKSN17qkU8po8d+Sz1i9e28YV8bsHuTwCHyJse5SmfmsU5GX/umHbqSM0OM
-         jwREMMAy5DiHk46Oeldu5H6HXU/l2hfh48et5T7+GHXd2hLu+MMSS9MLS/HUOouHf4eF
-         hE6w==
-X-Forwarded-Encrypted: i=1; AJvYcCU0AtuJTpQAkhQuUYuyOU5Z2ujQb28tRnXR1x1x44F5fDPYxBYG0C2AYKh4qgQAFAaMxhj5KE8evhdQcmc=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzxoRCxYZ/dhk6eMMG5WGbDxBjJawrr+tZs0KyRARMnb5OwO4Cu
-	KKYlck8nJ3UZuRLf3eyvwXULcQh3jmJgJ2DkIvzjGtz5qy0TF2ZjF3SsU8ZD7hLs5tM=
-X-Gm-Gg: ASbGncv9+FMXOMKHlGrznOoV2bJHNQyaGDLAOCMVYxMytbZLVHDaQdxn0zQ4+cBjYl5
-	+VuTahWlr9uKZqHuzHtqw936Fzo5kDQG8A+GHRRUJvpaQsbi5zRVekep873Uzwbqd/PVBDZMPyg
-	64PjEZZKrqupFzBjWfRcK/sM+fRzL9eXeyT3KC+Pot49pjC9C2/YawbplpbQf3GS5P2of6EVvu5
-	5M6NpnzowsBDZAgN+pNAjPduJmhYGwVKnI1aRels0dKPNFqaaAuiMje48Gwcfq7iJ3Z8s7HjZ8m
-	VuLjUd2Q6YBTo4UvQlWKigjB5V5kcLLjRhLb
-X-Google-Smtp-Source: AGHT+IFZ3zSfjYQzxyz1yM8Fepo5JqoekfbsnijfBYQsXPZ/Ajozpgkhms1b0mgB5wFz5VVdckjdGw==
-X-Received: by 2002:a05:620a:6188:b0:7d4:3af3:8ef9 with SMTP id af79cd13be357-7d44394f4b7mr170906885a.19.1750977836523;
-        Thu, 26 Jun 2025 15:43:56 -0700 (PDT)
-Received: from ziepe.ca ([130.41.10.202])
-        by smtp.gmail.com with ESMTPSA id d75a77b69052e-4a7fc57c537sm4265211cf.57.2025.06.26.15.43.55
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 26 Jun 2025 15:43:55 -0700 (PDT)
-Received: from jgg by wakko with local (Exim 4.97)
-	(envelope-from <jgg@ziepe.ca>)
-	id 1uUvJz-00000001h7a-0mlm;
-	Thu, 26 Jun 2025 19:43:55 -0300
-Date: Thu, 26 Jun 2025 19:43:55 -0300
-From: Jason Gunthorpe <jgg@ziepe.ca>
-To: Abdiel Janulgue <abdiel.janulgue@gmail.com>
-Cc: Alexandre Courbot <acourbot@nvidia.com>, Lyude Paul <lyude@redhat.com>,
-	dakr@kernel.org, Miguel Ojeda <ojeda@kernel.org>,
-	Alex Gaynor <alex.gaynor@gmail.com>,
-	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>,
-	=?utf-8?B?QmrDtnJu?= Roy Baron <bjorn3_gh@protonmail.com>,
-	Benno Lossin <benno.lossin@proton.me>,
-	Andreas Hindborg <a.hindborg@kernel.org>,
-	Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>,
-	Valentin Obst <kernel@valentinobst.de>,
-	open list <linux-kernel@vger.kernel.org>,
-	Marek Szyprowski <m.szyprowski@samsung.com>,
-	Robin Murphy <robin.murphy@arm.com>, airlied@redhat.com,
-	rust-for-linux@vger.kernel.org,
-	"open list:DMA MAPPING HELPERS" <iommu@lists.linux.dev>,
-	Petr Tesarik <petr@tesarici.cz>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Herbert Xu <herbert@gondor.apana.org.au>,
-	Sui Jingfeng <sui.jingfeng@linux.dev>,
-	Randy Dunlap <rdunlap@infradead.org>,
-	Michael Kelley <mhklinux@outlook.com>
-Subject: Re: [PATCH 1/2] rust: add initial scatterlist bindings
-Message-ID: <20250626224355.GE213144@ziepe.ca>
-References: <20250528221525.1705117-2-abdiel.janulgue@gmail.com>
- <20250529004550.GB192517@ziepe.ca>
- <DA9JTYA0EQU8.26M0ZX80FOBWY@nvidia.com>
- <95ff963ddabf7c3cd2cfd07d0231a0073ff6847e.camel@redhat.com>
- <DAED5BUK7TUQ.4JRHFMWZ99W3@nvidia.com>
- <27e17dbf-df6a-48fc-a652-ad48a776f668@gmail.com>
- <DAENGORNRVZH.2KIGKFV5C5G3L@nvidia.com>
- <f787046921fd608c385dc5c559883c5d70839507.camel@redhat.com>
- <DAP96FEJ0XWT.PWYMIE8IJAVQ@nvidia.com>
- <e2677c26-1c25-4a34-b666-9dcfa9642fd1@gmail.com>
+	s=arc-20240116; t=1750977897; c=relaxed/simple;
+	bh=iIVxK75n9yifPDH8xfQqAE4cWRG5nMYGTwZryyQ4vxI=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
+	 MIME-Version:Content-Type; b=coTFEJeUbB6blUzI4IOoVsZnn/8JYInfl4iC2WodOtMU9rcv6hQU8pYIslSEzljCDbpoW2BGYDmSkXpgTAPS+MvzQqCo05WANpwGqtHa4I25NBwvdFSQg66D6wlElUuAmxAK19eWY1PaOXRbMfU1mPM/xJE5gPjRHwA1cdmIZe8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=oF71iFGU; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6D903C4CEEB;
+	Thu, 26 Jun 2025 22:44:56 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1750977896;
+	bh=iIVxK75n9yifPDH8xfQqAE4cWRG5nMYGTwZryyQ4vxI=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
+	b=oF71iFGUJtNGLoUJckRGl4g6TBbZB6rRaYacVDiaeV+RJuIdIun5xbEGgLq6owLoZ
+	 TPrmGyojuS3ZO95jLuPwmJVwsceBa9jXH4SHOpXyAy9e5EXbpy6GQzoGndU4cou+3z
+	 3CbOlOzGg62A+oEYfq7ZQOS4w8y+mxniEAiSEArs6YDh6BFP4N5tWiOZu57ihil281
+	 e9HosDW8+Mu27iNNbUBSxg0xDL4f45m5ALWSEbDVl/Ty3KojXZqujnXxTeH6/NeyUV
+	 NaQgdFV6yFyjA0qnzqeEulDsfjr3P2gQwvPi+6B5yatq5f5Wkf5EaX7pGDEEyOccE7
+	 ugIJe5IsQ+3Og==
+From: Vinod Koul <vkoul@kernel.org>
+To: sean.wang@mediatek.com, matthias.bgg@gmail.com, 
+ angelogioacchino.delregno@collabora.com, eugen.hristev@linaro.org, 
+ Qiu-ji Chen <chenqiuji666@gmail.com>
+Cc: dmaengine@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+ linux-mediatek@lists.infradead.org, linux-kernel@vger.kernel.org, 
+ baijiaju1990@gmail.com, stable@vger.kernel.org, 
+ kernel test robot <lkp@intel.com>
+In-Reply-To: <20250606090017.5436-1-chenqiuji666@gmail.com>
+References: <20250606090017.5436-1-chenqiuji666@gmail.com>
+Subject: Re: [PATCH v2] dmaengine: mediatek: Fix a flag reuse error in
+ mtk_cqdma_tx_status()
+Message-Id: <175097789639.71042.9318764811054484272.b4-ty@kernel.org>
+Date: Thu, 26 Jun 2025 15:44:56 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <e2677c26-1c25-4a34-b666-9dcfa9642fd1@gmail.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-Mailer: b4 0.13.0
 
-On Thu, Jun 26, 2025 at 11:31:15PM +0300, Abdiel Janulgue wrote:
-> Just commenting on this bit. From what I've seen, we don't actually leak
-> anything. The cast only creates a reference to the original C `struct
-> sg_table` object which was allocated and owned by whichever kernel subsystem
-> called sg_alloc_table(). Rust doesn't even allow us to take ownership or to
-> dereference the value, so this one is safe. Destructors are not called on
-> those "casted" objects.
 
-This does not seem the right kind of philosophy.
+On Fri, 06 Jun 2025 17:00:17 +0800, Qiu-ji Chen wrote:
+> Fixed a flag reuse bug in the mtk_cqdma_tx_status() function.
+> 
+> 
 
-Every pointer out of the kernel APIs has some kind of implicit
-lifetime contract.
+Applied, thanks!
 
-Eg if you have
-  b = get_b(a);
+[1/1] dmaengine: mediatek: Fix a flag reuse error in mtk_cqdma_tx_status()
+      commit: 8eba2187391e5ab49940cd02d6bd45a5617f4daf
 
-Then the lifetime of b might well be 'alive so long as a is alive'
+Best regards,
+-- 
+~Vinod
 
-Or if you have some function pointer callback
-  void op_foo(a) {}
 
-The lifetime of a might well be 'alive only within the function'
-
-AFAICT rust needs to figure out these implicit rules and the compiler
-needs to enforce them.
-
-Eg
-
- a = make_a()
- b = get_b(a)
- destroy_a()
- do_something(b)
-
-Should be something impossible.
-
-Jason
 
