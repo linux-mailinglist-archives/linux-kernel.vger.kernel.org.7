@@ -1,93 +1,107 @@
-Return-Path: <linux-kernel+bounces-704352-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-704354-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 00273AE9C89
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Jun 2025 13:32:26 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6090EAE9C8D
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Jun 2025 13:32:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B64A23BD412
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Jun 2025 11:32:00 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1EE141C26D3F
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Jun 2025 11:33:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5A46225A33F;
-	Thu, 26 Jun 2025 11:32:18 +0000 (UTC)
-Received: from dggsgout11.his.huawei.com (dggsgout11.his.huawei.com [45.249.212.51])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 414FE27510B;
+	Thu, 26 Jun 2025 11:32:45 +0000 (UTC)
+Received: from mout-p-201.mailbox.org (mout-p-201.mailbox.org [80.241.56.171])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 25E6F17BA5;
-	Thu, 26 Jun 2025 11:32:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DF1101DE2DC;
+	Thu, 26 Jun 2025 11:32:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750937538; cv=none; b=gArNt+khwtlG18K+JZ7BhqZ0LTWKF89Q553X60fIrUbglWu6sgbRqdphxqzWAO8bm9qzgx/c5dxybcgNX2jAwgU+CzW7G77EvVfdjQAOUa/CmUoqDF/yeiQYo9DowDRAdRJyExqrB5LceGx1ESum5AJSQ1/mPAl4Nykgh3LUZFU=
+	t=1750937564; cv=none; b=gTpXyNhjPv/r+uz0TEbVmit7sKif940w/t+hXvSqRK3O7ryO8Kxvqlnhd5Z6xj2G8fKjku844Hy2zw7A7Kt3oiFcef4g5LEh4Kac3m+D+4W1Mhy5ydu4fR7Wh/Fy/Z9u01/G/aBTJ3icjD2xcZdsdKEAg2vCUefxLyMcVoeeCm8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750937538; c=relaxed/simple;
-	bh=4lRYK29TYeLqqY7lMO7yv7T9NuQptYhpLNwm4028BKs=;
-	h=Subject:To:Cc:References:From:Message-ID:Date:MIME-Version:
-	 In-Reply-To:Content-Type; b=oJD3qTZWUJYFQHFCPQiE/cLu9jXsXKh0kPqzdSaBSR1yAwtEneLTl4mVeKgmwMcHlW+IopuufKIhxno3Oc54utbRRtpB8z7oLu9FqR6hwweMb9NsKfSQDa1n8dJbW4OH60TLN3JC9ohrz+5BNkMEg2Jy2DnYYQOqryOIVrWaNbg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.19.163.235])
-	by dggsgout11.his.huawei.com (SkyGuard) with ESMTPS id 4bSc3c1LBSzYQtt5;
-	Thu, 26 Jun 2025 19:32:12 +0800 (CST)
-Received: from mail02.huawei.com (unknown [10.116.40.128])
-	by mail.maildlp.com (Postfix) with ESMTP id 172CD1A0C1C;
-	Thu, 26 Jun 2025 19:32:11 +0800 (CST)
-Received: from [10.174.179.143] (unknown [10.174.179.143])
-	by APP4 (Coremail) with SMTP id gCh0CgB321+5L11o+5TZQg--.49631S3;
-	Thu, 26 Jun 2025 19:32:10 +0800 (CST)
-Subject: Re: [PATCH] block: fix false warning in bdev_count_inflight_rw()
-To: Damien Le Moal <dlemoal@kernel.org>, Yu Kuai <yukuai1@huaweicloud.com>,
- axboe@kernel.dk, hare@suse.de, hch@infradead.org, john.g.garry@oracle.com
-Cc: linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
- yi.zhang@redhat.com, calvin@wbinvd.org, david@fromorbit.com,
- yi.zhang@huawei.com, yangerkun@huawei.com, johnny.chenyi@huawei.com,
- "yukuai (C)" <yukuai3@huawei.com>
-References: <20250626083927.576207-1-yukuai1@huaweicloud.com>
- <2350a34d-2f7b-49c0-b286-2856c088131a@kernel.org>
-From: Yu Kuai <yukuai1@huaweicloud.com>
-Message-ID: <3da33719-886d-0e39-d79a-6bb10c50c770@huaweicloud.com>
-Date: Thu, 26 Jun 2025 19:32:08 +0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.9.1
+	s=arc-20240116; t=1750937564; c=relaxed/simple;
+	bh=cDQe/RO/gOW6Up5JUtL30QugNGUwFodfimvzdFGHspU=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=I45X9oq1pD8xqp8feGs5GDIgWrnAdXnQcAj18nn4MhgT1GYmgCFYEyhFNx1bKefA/rLsLxujYmuPk6ahTmRfXbW5STQbfupPSK2MscHY+Jh2tqfzRosCcp7ezj1W8JKReOIQCkqe7MdrrVJCkU+dp4l1r/frTUbla0j4ke0jDb0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=pankajraghav.com; arc=none smtp.client-ip=80.241.56.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=samsung.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pankajraghav.com
+Received: from smtp2.mailbox.org (smtp2.mailbox.org [10.196.197.2])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mout-p-201.mailbox.org (Postfix) with ESMTPS id 4bSc410RZSz9tc3;
+	Thu, 26 Jun 2025 13:32:33 +0200 (CEST)
+From: Pankaj Raghav <p.raghav@samsung.com>
+To: Alexander Viro <viro@zeniv.linux.org.uk>,
+	Jan Kara <jack@suse.cz>,
+	mcgrof@kernel.org,
+	Christian Brauner <brauner@kernel.org>
+Cc: linux-kernel@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org,
+	kernel@pankajraghav.com,
+	gost.dev@samsung.com,
+	Pankaj Raghav <p.raghav@samsung.com>,
+	Matthew Wilcox <willy@infradead.org>
+Subject: [PATCH v4] fs/buffer: remove the min and max limit checks in __getblk_slow()
+Date: Thu, 26 Jun 2025 13:32:23 +0200
+Message-ID: <20250626113223.181399-1-p.raghav@samsung.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <2350a34d-2f7b-49c0-b286-2856c088131a@kernel.org>
-Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:gCh0CgB321+5L11o+5TZQg--.49631S3
-X-Coremail-Antispam: 1UD129KBjDUn29KB7ZKAUJUUUUU529EdanIXcx71UUUUU7v73
-	VFW2AGmfu7bjvjm3AaLaJ3UjIYCTnIWjp_UUUYK7AC8VAFwI0_Gr0_Xr1l1xkIjI8I6I8E
-	6xAIw20EY4v20xvaj40_Wr0E3s1l1IIY67AEw4v_Jr0_Jr4l8cAvFVAK0II2c7xJM28Cjx
-	kF64kEwVA0rcxSw2x7M28EF7xvwVC0I7IYx2IY67AKxVWDJVCq3wA2z4x0Y4vE2Ix0cI8I
-	cVCY1x0267AKxVW8Jr0_Cr1UM28EF7xvwVC2z280aVAFwI0_GcCE3s1l84ACjcxK6I8E87
-	Iv6xkF7I0E14v26rxl6s0DM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI64kE
-	6c02F40Ex7xfMcIj6xIIjxv20xvE14v26r1j6r18McIj6I8E87Iv67AKxVWUJVW8JwAm72
-	CE4IkC6x0Yz7v_Jr0_Gr1lF7xvr2IY64vIr41lF7I21c0EjII2zVCS5cI20VAGYxC7M4II
-	rI8v6xkF7I0E8cxan2IY04v7Mxk0xIA0c2IEe2xFo4CEbIxvr21l42xK82IYc2Ij64vIr4
-	1l4c8EcI0Ec7CjxVAaw2AFwI0_Jw0_GFyl4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1lx2IqxVAq
-	x4xG67AKxVWUJVWUGwC20s026x8GjcxK67AKxVWUGVWUWwC2zVAF1VAY17CE14v26r1q6r
-	43MIIYrxkI7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_Jr0_JF4lIxAIcVC0I7IYx2IY6xkF
-	7I0E14v26r4j6F4UMIIF0xvE42xK8VAvwI8IcIk0rVWUJVWUCwCI42IY6I8E87Iv67AKxV
-	WUJVW8JwCI42IY6I8E87Iv6xkF7I0E14v26r4j6r4UJbIYCTnIWIevJa73UjIFyTuYvjfU
-	oOJ5UUUUU
-X-CM-SenderInfo: 51xn3trlr6x35dzhxuhorxvhhfrp/
 
-Hi,
+All filesystems will already check the max and min value of their block
+size during their initialization. __getblk_slow() is a very low-level
+function to have these checks. Remove them and only check for logical
+block size alignment.
 
-在 2025/06/26 16:54, Damien Le Moal 写道:
-> Nit (grammar):
-> 
-> 	 * While iterating all CPUs, some IOs may be issued from a CPU already
-> 	 * traversed and complete on a CPU that has not yet been traversed,
-> 	 * causing the inflight number to be negative.
+As this check with logical block size alignment might never trigger, add
+WARN_ON_ONCE() to the check. As WARN_ON_ONCE() will already print the
+stack, remove the call to dump_stack().
 
-Thanks, will change to this in v2.
-Kuai
+Suggested-by: Matthew Wilcox <willy@infradead.org>
+Reviewed-by: Jan Kara <jack@suse.cz>
+Signed-off-by: Pankaj Raghav <p.raghav@samsung.com>
+---
+Changes since v3:
+- Use WARN_ON_ONCE on the logical block size check and remove the call
+  to dump_stack.
+- Use IS_ALIGNED() to check for aligned instead of open coding the
+  check.
+
+ fs/buffer.c | 11 +++--------
+ 1 file changed, 3 insertions(+), 8 deletions(-)
+
+diff --git a/fs/buffer.c b/fs/buffer.c
+index d61073143127..565fe88773c2 100644
+--- a/fs/buffer.c
++++ b/fs/buffer.c
+@@ -1122,14 +1122,9 @@ __getblk_slow(struct block_device *bdev, sector_t block,
+ {
+ 	bool blocking = gfpflags_allow_blocking(gfp);
+ 
+-	if (unlikely(size & (bdev_logical_block_size(bdev) - 1) ||
+-		     (size < 512 || size > PAGE_SIZE))) {
+-		printk(KERN_ERR "getblk(): invalid block size %d requested\n",
+-					size);
+-		printk(KERN_ERR "logical block size: %d\n",
+-					bdev_logical_block_size(bdev));
+-
+-		dump_stack();
++	if (WARN_ON_ONCE(!IS_ALIGNED(size, bdev_logical_block_size(bdev)))) {
++		printk(KERN_ERR "getblk(): block size %d not aligned to logical block size %d\n",
++		       size, bdev_logical_block_size(bdev));
+ 		return NULL;
+ 	}
+ 
+
+base-commit: b39f7d75dc41b5f5d028192cd5d66cff71179f35
+-- 
+2.49.0
 
 
