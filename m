@@ -1,178 +1,143 @@
-Return-Path: <linux-kernel+bounces-704505-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-704508-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1C2E8AE9E53
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Jun 2025 15:12:49 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0191CAE9E56
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Jun 2025 15:13:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 63082560F16
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Jun 2025 13:11:58 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id CB89A7B1A3D
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Jun 2025 13:11:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 64EE72E5412;
-	Thu, 26 Jun 2025 13:12:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="NOElbKXY"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5EEC62E5435;
+	Thu, 26 Jun 2025 13:12:57 +0000 (UTC)
+Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B6CB72E427A;
-	Thu, 26 Jun 2025 13:12:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F1F8E2E5418
+	for <linux-kernel@vger.kernel.org>; Thu, 26 Jun 2025 13:12:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750943539; cv=none; b=CU0rCYSQx+/zMYRHtsJGWZrQGMz0sr/cZbidGJVU/+WQUM+viYRooYc/BnuLvTwsfK7T6vTIMOo+qrQNLXkMYYJr8d6lVBg4bb13Ws2iroXdAHZrYWTDim13DckjUN3BZhTOujt7OV40xZC2IuSMZzM7/IYrmToWvEihpKnEJaY=
+	t=1750943577; cv=none; b=UoZgjfrJS2y021GIlok1pjpvTCt6s9HFu3Vib44SHTjNoXB/zasccJmSMnj+o8e3RkrG+EJu4LrQH+12ttFbsrPP/innr3giwqK+s4lEO/EKs1AAcXiEzBU24Y0UG9SdPi5hHHVujD9ceY84zLoPffvF8LlYRQ26WIwkUzLv2HU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750943539; c=relaxed/simple;
-	bh=hgnNwmNHQIaHTRV7by3eS6rJbwsUw32zvUf2T8ZhwYs=;
+	s=arc-20240116; t=1750943577; c=relaxed/simple;
+	bh=UakOI/WvFkgeH35/JbanD0jEC3cwT/gOCqsa2NorhOo=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=jaNJe939CFNZSbB4mUbuMnlafQB6TR0wSuVJ+E6hQO9l1YXEyFXV72l5vrippA1szat4jWULBl2Eg8p606V9oAZwrK0SGGAuiMU7XGpfdrcFVNfjMMgtrRKnBpyxq2OKrby7jwD0kSysr2frzKLeX9dGOusv087fJ70oeLR+6eA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=NOElbKXY; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 780F7C4CEEB;
-	Thu, 26 Jun 2025 13:12:16 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1750943539;
-	bh=hgnNwmNHQIaHTRV7by3eS6rJbwsUw32zvUf2T8ZhwYs=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=NOElbKXY02VgrNiUrX1G/CcXLwzVfADp9KoK5skUSphltZI3P73cgUEtUXAMBGo/u
-	 ixImxf7cXZRPS5KU1ivVi4KzG8HICGYn2MGL9v2RFIXcIjMJOUwzE8jhqL7cHSW1bD
-	 rmdb6hLTdQvoSQI6kEeUGpNW6fj2hTjo3VIkIzHpu7hTUPVg29f2yBjwFKygytBFo/
-	 HU/W3V3hkgnjSh/dyeYkByQBU1a64SlDNz6/GvGyqoeta8oZDxIYMeYSQqQOlu4oAy
-	 ScfKU5DiHBQoOEd2zHamINSZJKEq2WqjAFhMA3+rbw7I9CKAr5+Nh0k+y/4JgvHLRN
-	 ldBCrWUtWU9tA==
-Date: Thu, 26 Jun 2025 14:12:13 +0100
-From: Lee Jones <lee@kernel.org>
-To: Quentin Schulz <foss+kernel@0leil.net>
-Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Heiko Stuebner <heiko@sntech.de>,
-	Sebastian Reichel <sebastian.reichel@collabora.com>,
-	Lukasz Czechowski <lukasz.czechowski@thaumatec.com>,
-	Daniel Semkowicz <dse@thaumatec.com>,
-	Nicolas Frattaroli <nicolas.frattaroli@collabora.com>,
-	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org,
-	Quentin Schulz <quentin.schulz@cherry.de>
-Subject: Re: [PATCH v3 2/5] mfd: rk8xx-core: allow to customize RK806 reset
- mode
-Message-ID: <20250626131213.GD10134@google.com>
-References: <20250618-rk8xx-rst-fun-v3-0-081f02d3d348@cherry.de>
- <20250618-rk8xx-rst-fun-v3-2-081f02d3d348@cherry.de>
+	 Content-Type:Content-Disposition:In-Reply-To; b=E9OE1EKLk3XJpdy/z5ao8Dp+1uViqq3SN47bbN33ILqZJWyrHIe/g4wWXL0CDdg4xxfPsT5diqM4AMAnOIuJ5qyq0YnS24T3Nfo5JZtZ1kXQp+p1BDWYl80ZV/d2BdrioxSc9NebJKMfVtKntu2CfqN2n44cdEIDsgqPLnpobaI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
+Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
+	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+	(Exim 4.92)
+	(envelope-from <mkl@pengutronix.de>)
+	id 1uUmPI-00079D-S2; Thu, 26 Jun 2025 15:12:48 +0200
+Received: from moin.white.stw.pengutronix.de ([2a0a:edc0:0:b01:1d::7b] helo=bjornoya.blackshift.org)
+	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.96)
+	(envelope-from <mkl@pengutronix.de>)
+	id 1uUmPI-005SFg-0h;
+	Thu, 26 Jun 2025 15:12:48 +0200
+Received: from pengutronix.de (p5b1645f7.dip0.t-ipconnect.de [91.22.69.247])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange x25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(Client did not present a certificate)
+	(Authenticated sender: mkl-all@blackshift.org)
+	by smtp.blackshift.org (Postfix) with ESMTPSA id DE551431176;
+	Thu, 26 Jun 2025 13:12:47 +0000 (UTC)
+Date: Thu, 26 Jun 2025 15:12:47 +0200
+From: Marc Kleine-Budde <mkl@pengutronix.de>
+To: Mark Brown <broonie@kernel.org>
+Cc: Amit Kumar Mahapatra <amit.kumar-mahapatra@amd.com>, 
+	Guenter Roeck <linux@roeck-us.net>, linux-spi@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	kernel@pengutronix.de
+Subject: Re: [PATCH v2] spi: Raise limit on number of chip selects
+Message-ID: <20250626-practical-heavenly-pony-af7296-mkl@pengutronix.de>
+References: <20240124-spi-multi-cs-max-v2-1-df6fc5ab1abc@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="exd2capfccwaslk5"
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20250618-rk8xx-rst-fun-v3-2-081f02d3d348@cherry.de>
+In-Reply-To: <20240124-spi-multi-cs-max-v2-1-df6fc5ab1abc@kernel.org>
+X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
+X-SA-Exim-Mail-From: mkl@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 
-On Wed, 18 Jun 2025, Quentin Schulz wrote:
 
-> From: Quentin Schulz <quentin.schulz@cherry.de>
-> 
-> The RK806 PMIC has a bitfield for configuring the restart/reset behavior
-> (which I assume Rockchip calls "function") whenever the PMIC is reset
-> either programmatically (c.f. DEV_RST in the datasheet) or via PWRCTRL
-> or RESETB pins.
-> 
-> For RK806, the following values are possible for RST_FUN:
-> 
-> 0b00 means "restart PMU"
+--exd2capfccwaslk5
+Content-Type: text/plain; protected-headers=v1; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+Subject: Re: [PATCH v2] spi: Raise limit on number of chip selects
+MIME-Version: 1.0
 
-"Restart PMU"
+(sorry my mail setup had a glitch in my previous mail)
 
-> 0b01 means "Reset all the power off reset registers, forcing
-> 	the state to switch to ACTIVE mode"
-> 0b10 means "Reset all the power off reset registers, forcing
-> 	the state to switch to ACTIVE mode, and simultaneously
-> 	pull down the RESETB PIN for 5mS before releasing"
-> 0b11 means the same as for 0b10 just above.
-> 
-> This adds the appropriate logic in the driver to parse the new
-> rockchip,reset-mode DT property to pass this information. It just
-> happens that the values in the binding match the values to write in the
-> bitfield so no mapping is necessary.
-> 
-> If it is missing, the register is left untouched and relies either on
-> the silicon default or on whatever was set earlier in the boot stages
-> (e.g. the bootloader).
-> 
-> Signed-off-by: Quentin Schulz <quentin.schulz@cherry.de>
+On 24.01.2024 13:24:24, Mark Brown wrote:
+> As reported by Guenter the limit we've got on the number of chip selects =
+is
+> set too low for some systems, raise the limit. We should really remove the
+> hard coded limit but this is needed as a fix so let's do the simple thing
+> and raise the limit for now.
+
+We currently have a use case for 24 chip selects.
+
+> Fixes: 4d8ff6b0991d ("spi: Add multi-cs memories support in SPI core")
+> Reported-by: Guenter Roeck <linux@roeck-us.net>
+> Suggested-by: Guenter Roeck <linux@roeck-us.net>
+> Signed-off-by: Mark Brown <broonie@kernel.org>
 > ---
->  drivers/mfd/rk8xx-core.c  | 15 +++++++++++++++
->  include/linux/mfd/rk808.h |  2 ++
->  2 files changed, 17 insertions(+)
-> 
-> diff --git a/drivers/mfd/rk8xx-core.c b/drivers/mfd/rk8xx-core.c
-> index 71c2b80a4678d627e86cfbec8135f08e262559d3..23ff92f89f3357e3f47c5dd0e9f80cca453f22c0 100644
-> --- a/drivers/mfd/rk8xx-core.c
-> +++ b/drivers/mfd/rk8xx-core.c
-> @@ -10,6 +10,7 @@
->   * Author: Wadim Egorov <w.egorov@phytec.de>
->   */
->  
-> +#include <linux/bitfield.h>
->  #include <linux/interrupt.h>
->  #include <linux/mfd/rk808.h>
->  #include <linux/mfd/core.h>
-> @@ -699,6 +700,7 @@ int rk8xx_probe(struct device *dev, int variant, unsigned int irq, struct regmap
->  	const struct mfd_cell *cells;
->  	int dual_support = 0;
->  	int nr_pre_init_regs;
-> +	u32 rst_fun = 0;
->  	int nr_cells;
->  	int ret;
->  	int i;
-> @@ -726,6 +728,19 @@ int rk8xx_probe(struct device *dev, int variant, unsigned int irq, struct regmap
->  		cells = rk806s;
->  		nr_cells = ARRAY_SIZE(rk806s);
->  		dual_support = IRQF_SHARED;
-> +
-> +		ret = device_property_read_u32(dev, "rockchip,reset-mode", &rst_fun);
-> +		if (ret) {
-> +			dev_dbg(dev,
-> +				"rockchip,reset-mode property missing, not setting RST_FUN\n");
+> Changes in v2:
+> - Raise the limit further, the highest I've seen thus far is 12.
+> - Link to v1: https://lore.kernel.org/r/20240122-spi-multi-cs-max-v1-1-a7=
+e98cd5f6c7@kernel.org
+> ---
+>  include/linux/spi/spi.h | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+>=20
+> diff --git a/include/linux/spi/spi.h b/include/linux/spi/spi.h
+> index 471fe2ff9066..600fbd5daf68 100644
+> --- a/include/linux/spi/spi.h
+> +++ b/include/linux/spi/spi.h
+> @@ -21,7 +21,7 @@
+>  #include <uapi/linux/spi/spi.h>
+> =20
+>  /* Max no. of CS supported per spi device */
+> -#define SPI_CS_CNT_MAX 4
+> +#define SPI_CS_CNT_MAX 16
 
-I suggest that this debug message is not that useful and can be removed.
+Just further increase the limit to 24? Add a Kconfig symbol?
 
-> +			break;
-> +		}
-> +
-> +		ret = regmap_update_bits(rk808->regmap, RK806_SYS_CFG3,
-> +					 RK806_RST_FUN_MSK,
+regards,
+Marc
 
-Place on the line above?
+--=20
+Pengutronix e.K.                 | Marc Kleine-Budde          |
+Embedded Linux                   | https://www.pengutronix.de |
+Vertretung N=C3=BCrnberg              | Phone: +49-5121-206917-129 |
+Amtsgericht Hildesheim, HRA 2686 | Fax:   +49-5121-206917-9   |
 
-> +					 FIELD_PREP(RK806_RST_FUN_MSK, rst_fun));
-> +		if (ret)
-> +			return dev_err_probe(dev, ret, "RST_FUN write err\n");
+--exd2capfccwaslk5
+Content-Type: application/pgp-signature; name="signature.asc"
 
-Failed to configure requested restart/reset behavior"
+-----BEGIN PGP SIGNATURE-----
 
->  		break;
->  	case RK808_ID:
->  		rk808->regmap_irq_chip = &rk808_irq_chip;
-> diff --git a/include/linux/mfd/rk808.h b/include/linux/mfd/rk808.h
-> index 69cbea78b430b562a23d995263369d475daa6287..28170ee08898ca59c76a741a1d42763a42b72380 100644
-> --- a/include/linux/mfd/rk808.h
-> +++ b/include/linux/mfd/rk808.h
-> @@ -812,6 +812,8 @@ enum rk806_pin_dr_sel {
->  #define RK806_INT_POL_H			BIT(1)
->  #define RK806_INT_POL_L			0
->  
-> +/* SYS_CFG3 */
-> +#define RK806_RST_FUN_MSK		GENMASK(7, 6)
->  #define RK806_SLAVE_RESTART_FUN_MSK	BIT(1)
->  #define RK806_SLAVE_RESTART_FUN_EN	BIT(1)
->  #define RK806_SLAVE_RESTART_FUN_OFF	0
-> 
-> -- 
-> 2.49.0
-> 
+iQEzBAABCgAdFiEEn/sM2K9nqF/8FWzzDHRl3/mQkZwFAmhdR0wACgkQDHRl3/mQ
+kZy41Af9HwbbqTmrPAMa/9ziw5fz9I7Hw8XSOK6Mm/qDudl/8K+aqecCP8zL2j6a
+P/YjPQFYFh/HLUTL8XXbDI7bcn1vMZwSTM/1cHD0hkBEaLSeiXRvqkNasePuW8ia
+kwnX5TuBWUFQEqAxfPiJ8TsGLVsyDTEgeSFGxj4ha0eQfNWlXSnYQoCNbasrwXRe
+dioG4QY7Y8PJIk77PcvA1HWFCfSPhEe3r+ryweOSGELsq42nlVOMO0uhMyenkF4O
+pVV5WliQEQ2egocNvKLzuJGH9hKH3GJrOqrO99IJYpNRDdlxgGAJ9c/vm5MR6Z0S
+fvCuWaZ/o6Wjn47rVHIj8fLH6/BDmQ==
+=3Xka
+-----END PGP SIGNATURE-----
 
--- 
-Lee Jones [李琼斯]
+--exd2capfccwaslk5--
 
