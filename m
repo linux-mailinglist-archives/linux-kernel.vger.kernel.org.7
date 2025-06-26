@@ -1,152 +1,110 @@
-Return-Path: <linux-kernel+bounces-704827-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-704797-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B0A52AEA233
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Jun 2025 17:15:56 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id E0D56AEA1DF
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Jun 2025 17:05:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 91543501D6E
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Jun 2025 15:07:33 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2256F4A2AB4
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Jun 2025 14:59:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D5CB72EE60F;
-	Thu, 26 Jun 2025 15:00:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 51CD52EFD85;
+	Thu, 26 Jun 2025 14:52:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="jY6WFcOd"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4083B274FED;
-	Thu, 26 Jun 2025 15:00:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="DcFilojf"
+Received: from m16.mail.163.com (m16.mail.163.com [220.197.31.4])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0FDA62EB5B2;
+	Thu, 26 Jun 2025 14:51:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.197.31.4
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750950020; cv=none; b=ddyGLdgX3kqmRZzsA3Z3JG4maTucAhjcOS3JHaqCdJtNPgkCDH1SYdmMew5ya6bnOCpHM3N/X//AkcTX5Dowp9xEk3Lom3UyCqLmi4ged1Zo1VNbcXZah+FRdgkMyO6ZwbBKLJPsyVqloIEr/npbNT8kYDmml5leK0y59FET6zs=
+	t=1750949521; cv=none; b=rXwa+D/vvXk0QSR+/r3BSwT+skCX6PzarvealhWwXvU73pcLo+7mM/1XkJ4GgapB19RC3MZp/h6Oq0qdQiI8ELnC++I/J4fYAyGe+yRK5QnirDGfufI3/Es4INB4hm0NNDSGiQOs4cLm+JSX/ytvAeS7OycQ8U8u6MxVTw9MYJQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750950020; c=relaxed/simple;
-	bh=NCW1/aOIcerxFsXM9RKk0cIz5hyj78/lxy0fK07wt7U=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=DKwpARzI708w2fMw469If5hQZ1BhqoDUgmLAZdjUXxnE0NVoRtVqkWsI/pvzFZxEHQkP/BpsaEVPWt54GKHcNiO7iK8ja+8/DX3eA4V3za7hQJEjfpkdT1j1QX4Pf1ltwOpdFam0ZQa9WaHZLKAfTnxGFdrcZbldIerPmzZMP6g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=jY6WFcOd; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6497BC4CEEB;
-	Thu, 26 Jun 2025 15:00:19 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1750950019;
-	bh=NCW1/aOIcerxFsXM9RKk0cIz5hyj78/lxy0fK07wt7U=;
-	h=From:To:Cc:Subject:Date:From;
-	b=jY6WFcOd1SGKGpGDrERjXC29gPUIPrTazpGKNCvI1U2hS6aC6UCUWA4CHC4AUp/K0
-	 cb/rAlF5yM0g7vlYXFrQfkrVnTz0ZfuKZH5eUcnTisj1nTuDU4ZNq8jM8K7UrFc+D8
-	 omjNMO0uJTdIJzDNPshyXS3AwgYRhXSGAYUSctH+0ncoS5EIsmcED122FfdUd4rf2u
-	 KN2QZTQghyPHBhwVcfTKWU4JLRgzXgM8wHbU6jySSpe7x/elurMAd474kJziO/rPp1
-	 6weQwqZwzYO7ApU/aGQaHb/24sRQxNHeqgMvDzGOLTq4LBsjFSqpQ1YOmpdKs84I1S
-	 MPtVLzhyi//9w==
-From: "Naveen N Rao (AMD)" <naveen@kernel.org>
-To: Sean Christopherson <seanjc@google.com>,
-	Paolo Bonzini <pbonzini@redhat.com>,
-	Maxim Levitsky <mlevitsk@redhat.com>
-Cc: <kvm@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>,
-	Vasant Hegde <vasant.hegde@amd.com>,
-	Suravee Suthikulpanit <suravee.suthikulpanit@amd.com>
-Subject: [EARLY RFC] KVM: SVM: Enable AVIC by default from Zen 4
-Date: Thu, 26 Jun 2025 20:21:22 +0530
-Message-ID: <20250626145122.2228258-1-naveen@kernel.org>
-X-Mailer: git-send-email 2.49.0
+	s=arc-20240116; t=1750949521; c=relaxed/simple;
+	bh=ESYTevXc/oepA5McDn6MnktgxmqOjOapOIogKMzUnIo=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=l1+KSpAEtZb3y0V5wUxcexW9Ugtoc+dwIDwOhOVUWbaiSJepl4jPIV6TxnylgwNqjRxGizjmF45nP7Do1FprDsBpw9YBBlM+/NOLjSw7uXPsXfTEUdg9FakvRh8xf/mxHtOjeWIC7wc6n6OSNVAB5+Vqq3d2ykRWRCN861Etslw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=DcFilojf; arc=none smtp.client-ip=220.197.31.4
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
+	s=s110527; h=Message-ID:Date:MIME-Version:Subject:To:From:
+	Content-Type; bh=3xpPx2kOCad2hpMzOvAwCwU2e5kTTO83LTiQgpExVbg=;
+	b=DcFilojfZDnOzsgdWezISQW+YDKOWn5VH6YdYQe/IngdfGqnywABuZkIahAW9G
+	ZfhXzysK1+3YUvLdYBcB+aBolkdlxBIYUcetJi/xjGzyTfc1KZg8plmXySyaQxQp
+	omi3884oiADPhZBd1UVCBBIMgv38MoSaJOtIbjIMZ118c=
+Received: from [IPV6:240e:b8f:919b:3100:5951:e2f3:d3e5:8d13] (unknown [])
+	by gzga-smtp-mtada-g1-2 (Coremail) with SMTP id _____wD3H2Z1Xl1ovuUDAw--.19485S2;
+	Thu, 26 Jun 2025 22:51:34 +0800 (CST)
+Message-ID: <a2f02857-34b9-4abd-8315-9279f31f6e91@163.com>
+Date: Thu, 26 Jun 2025 22:51:33 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 00/13] PCI: dwc: Refactor register access with
+ dw_pcie_clear_and_set_dword helper
+To: Manivannan Sadhasivam <mani@kernel.org>
+Cc: lpieralisi@kernel.org, bhelgaas@google.com, kwilczynski@kernel.org,
+ robh@kernel.org, jingoohan1@gmail.com, linux-pci@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+References: <20250618152112.1010147-1-18255117159@163.com>
+ <yw5ex3su7gjepctaqwkz3u5orcau55hibb2oozdlc2bkdopd3i@ftd34glarexm>
+Content-Language: en-US
+From: Hans Zhang <18255117159@163.com>
+In-Reply-To: <yw5ex3su7gjepctaqwkz3u5orcau55hibb2oozdlc2bkdopd3i@ftd34glarexm>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-CM-TRANSID:_____wD3H2Z1Xl1ovuUDAw--.19485S2
+X-Coremail-Antispam: 1Uf129KBjvJXoW7WF4DGrWrXF4DKF1xWFy7Awb_yoW8Gw4xpF
+	WUWayYkayUJa92va4xXa1xX34F93s5JwsxGF95J348XFsIyFn2vFyFqry5GasrWrWUtF12
+	qr42qrWkuw1DAFJanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x07UaJPiUUUUU=
+X-CM-SenderInfo: rpryjkyvrrlimvzbiqqrwthudrp/1tbiOgR4o2hdWexmjAAAsP
 
-This is early RFC to understand if there are any concerns with enabling
-AVIC by default from Zen 4. There are a few issues related to irq window
-inhibits (*) that will need to be addressed before we can enable AVIC,
-but I wanted to understand if there are other issues that I may not be
-aware of. I will split up the changes and turn this into a proper patch
-series once there is agreement on how to proceed.
 
-AVIC (and x2AVIC) is fully functional since Zen 4, and has so far been
-working well in our tests across various workloads. So, enable AVIC by
-default from Zen 4.
 
-CPUs prior to Zen 4 are affected by hardware errata related to AVIC and
-workaround for those (erratum #1235) is only just landing upstream. So,
-it is unlikely that anyone was using AVIC on those CPUs. Start requiring
-users on those CPUs to pass force_avic=1 to explicitly enable AVIC going
-forward. This helps convey that AVIC isn't fully enabled (so users are
-aware of what they are signing up for), while allowing us to make
-kvm_amd module parameter 'avic' as an alias for 'enable_apicv'
-simplifying the code.  The only downside is that force_avic taints the
-kernel, but if this is otherwise agreeable, the taint can be restricted
-to the AVIC feature bit not being enabled.
+On 2025/6/26 05:00, Manivannan Sadhasivam wrote:
+> On Wed, Jun 18, 2025 at 11:20:59PM +0800, Hans Zhang wrote:
+>> Register bit manipulation in DesignWare PCIe controllers currently
+>> uses repetitive read-modify-write sequences across multiple drivers.
+>> This pattern leads to code duplication and increases maintenance
+>> complexity as each driver implements similar logic with minor variations.
+>>
+>> This series introduces dw_pcie_clear_and_set_dword() to centralize atomic
+>> register modification. The helper performs read-clear-set-write operations
+>> in a single function, replacing open-coded implementations. Subsequent
+>> patches refactor individual drivers to use this helper, eliminating
+>> redundant code and ensuring consistent bit handling.
+>>
+>> The change reduces overall code size by ~350 lines while improving
+>> maintainability. Each controller driver is updated in a separate
+>> patch to preserve bisectability and simplify review.
+>>
+> 
+> Thanks for the cleanup! I spotted a typo in patch 13/13. Apart from that, I only
+> have one comment. You are initializing the temp variable like 'val' to 0 and
+> then ORing it with some fields. Here the initialization part is not necessary.
+> You could just write the first field directly instead of ORing with a 0
+> initialized variable.
+> 
+> Rest LGTM!
 
-Finally, stop complaining that x2AVIC CPUID feature bit is present
-without basic AVIC feature bit, since that looks to be the way AVIC is
-being disabled on certain systems and enabling AVIC by default will
-start printing this warning on systems that have AVIC disabled.
+Dear Mani,
 
-(*) http://lkml.kernel.org/r/Z6JoInXNntIoHLQ8@google.com
+Thank you very much for your reply and reminder.
 
-Signed-off-by: Naveen N Rao (AMD) <naveen@kernel.org>
----
- arch/x86/kvm/svm/avic.c | 11 +++++------
- arch/x86/kvm/svm/svm.c  | 10 +++-------
- 2 files changed, 8 insertions(+), 13 deletions(-)
+Will fix.
 
-diff --git a/arch/x86/kvm/svm/avic.c b/arch/x86/kvm/svm/avic.c
-index a34c5c3b164e..bf7f91f41a6e 100644
---- a/arch/x86/kvm/svm/avic.c
-+++ b/arch/x86/kvm/svm/avic.c
-@@ -1101,12 +1101,11 @@ bool avic_hardware_setup(void)
- 	if (!npt_enabled)
- 		return false;
- 
--	/* AVIC is a prerequisite for x2AVIC. */
--	if (!boot_cpu_has(X86_FEATURE_AVIC) && !force_avic) {
--		if (boot_cpu_has(X86_FEATURE_X2AVIC)) {
--			pr_warn(FW_BUG "Cannot support x2AVIC due to AVIC is disabled");
--			pr_warn(FW_BUG "Try enable AVIC using force_avic option");
--		}
-+	if (!boot_cpu_has(X86_FEATURE_AVIC) && !force_avic)
-+		return false;
-+
-+	if (!force_avic && (boot_cpu_data.x86 < 0x19 || boot_cpu_has(X86_FEATURE_ZEN3))) {
-+		pr_warn("AVIC disabled due to hardware errata. Use force_avic=1 if you really want to enable AVIC.\n");
- 		return false;
- 	}
- 
-diff --git a/arch/x86/kvm/svm/svm.c b/arch/x86/kvm/svm/svm.c
-index ab11d1d0ec51..9b5356e74384 100644
---- a/arch/x86/kvm/svm/svm.c
-+++ b/arch/x86/kvm/svm/svm.c
-@@ -158,12 +158,7 @@ module_param(lbrv, int, 0444);
- static int tsc_scaling = true;
- module_param(tsc_scaling, int, 0444);
- 
--/*
-- * enable / disable AVIC.  Because the defaults differ for APICv
-- * support between VMX and SVM we cannot use module_param_named.
-- */
--static bool avic;
--module_param(avic, bool, 0444);
-+module_param_named(avic, enable_apicv, bool, 0444);
- module_param(enable_ipiv, bool, 0444);
- 
- module_param(enable_device_posted_irqs, bool, 0444);
-@@ -5404,7 +5399,8 @@ static __init int svm_hardware_setup(void)
- 			goto err;
- 	}
- 
--	enable_apicv = avic = avic && avic_hardware_setup();
-+	if (enable_apicv)
-+		enable_apicv = avic_hardware_setup();
- 
- 	if (!enable_apicv) {
- 		enable_ipiv = false;
+Best regards,
+Hans
 
-base-commit: 7ee45fdd644b138e7a213c6936474161b28d0e1a
--- 
-2.49.0
+> 
+> - Mani
+> 
 
 
