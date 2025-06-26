@@ -1,226 +1,119 @@
-Return-Path: <linux-kernel+bounces-704596-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-704562-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9862CAE9F70
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Jun 2025 15:53:37 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5F767AE9F01
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Jun 2025 15:38:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7AC283BCB1A
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Jun 2025 13:53:08 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 79D361C442DD
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Jun 2025 13:37:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 871C22E7198;
-	Thu, 26 Jun 2025 13:53:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="q3Rv2EQw"
-Received: from out-178.mta0.migadu.com (out-178.mta0.migadu.com [91.218.175.178])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 66B6D2E6D24;
+	Thu, 26 Jun 2025 13:37:31 +0000 (UTC)
+Received: from dggsgout12.his.huawei.com (dggsgout12.his.huawei.com [45.249.212.56])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2567E2E1C7E
-	for <linux-kernel@vger.kernel.org>; Thu, 26 Jun 2025 13:53:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4D4EE2E62D9;
+	Thu, 26 Jun 2025 13:37:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750946006; cv=none; b=iukg3H9oK6cXzm23y8Lex92x2XOP2SyGuZuOc08PCVXPKRv5oZW8BOmRXuw282wzqcyX0Ivy6YSRnNQ2bxI2xf5FscxcXfvnSqIf2o09w1tAX4WexjOKuUWsqjB66rwCrRW+MVMWMmYSN1NeUKceCrAEOnUkVISPDFHIQ8BK9f4=
+	t=1750945051; cv=none; b=TvaE2ASjMIzjcz8MuFAavHLw+gcBC23XlIspngWHGAv68b8o7MRCtOQmCJJaeT0hLUCjAkGi6xuIS5bCNSrs9/t4gDFVqyNIe4jBr5/8J3CufzWkhCc+6QMdY7LvD86UTnecsHJkzTD6VQfKf6eujxfgvWB7aiwd7Edqy5Sastk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750946006; c=relaxed/simple;
-	bh=LlYcHhhOG/0FJHMeiGgwvZN+L/7vCreg0CAoStg7Dec=;
-	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:References:
-	 In-Reply-To:Content-Type; b=b1iSYEmgVoIt0i2hKoU89GM1e4KPFjCCvHL1WutgTCR0mdUh3RqCJemcgj7IGYI534ptWRwld2RH+4SRIu0l08+chB5pD8ew+PMjesOXwdZrgucJ5VGjiI9t/9MfiQ3NaMNzQ1kwMDyAzxg/UWRVPGCHlEmFpD2m/7yiRwDJ+wM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=q3Rv2EQw; arc=none smtp.client-ip=91.218.175.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Message-ID: <ce78181f-b8f0-4710-be22-eff123760a51@linux.dev>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1750946001;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=jxJ/+GIT8i2T2VJ1n6tfW4Ns7LsKzLgWRa8bu373EG0=;
-	b=q3Rv2EQwghbWQOo1XaSDbcFu49quE13kRIvVREM0PKjnsNVV1rc3AS10a0Mx3LudcEXvHs
-	sDaC2vuB+PvgI3l8Q1InsFKXX5w4xajOJHTVvZnsY2a+Aa4C7FzZrtH3nn7i95qwN2ot5Z
-	QHjYdgduBbJf/3HTfvAdwv0zsn5hlAM=
-Date: Thu, 26 Jun 2025 21:52:58 +0800
+	s=arc-20240116; t=1750945051; c=relaxed/simple;
+	bh=EDqkWAsPHJhPn0akvoePYwUq4YKPq78Au74sO3OhtC8=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=tvSh9cJHJbWRm3QkSHm1WEAM54XKXF7/fHS40LYtLRhHEfYgV5y3tTMG/S5T7A4fdaWq+eu3QgBuQtBlJtV794ROwUiJE0FvFaGUMmN84AN4ToJg2qDE76snsF4VziracHeQbfoCiSPeV2FLjqgKTyGsBj2i+/995Ep7tvNJ6Hg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
+Received: from mail.maildlp.com (unknown [172.19.163.235])
+	by dggsgout12.his.huawei.com (SkyGuard) with ESMTPS id 4bSfr73tF6zKHLtf;
+	Thu, 26 Jun 2025 21:37:27 +0800 (CST)
+Received: from mail02.huawei.com (unknown [10.116.40.128])
+	by mail.maildlp.com (Postfix) with ESMTP id E156A1A084D;
+	Thu, 26 Jun 2025 21:37:25 +0800 (CST)
+Received: from huaweicloud.com (unknown [10.67.174.193])
+	by APP4 (Coremail) with SMTP id gCh0CgD3Wl8UTV1omo7iQg--.26859S4;
+	Thu, 26 Jun 2025 21:37:25 +0800 (CST)
+From: Luo Gengkun <luogengkun@huaweicloud.com>
+To: peterz@infradead.org
+Cc: mingo@redhat.com,
+	acme@kernel.org,
+	namhyung@kernel.org,
+	mark.rutland@arm.com,
+	alexander.shishkin@linux.intel.com,
+	jolsa@kernel.org,
+	irogers@google.com,
+	adrian.hunter@intel.com,
+	kan.liang@linux.intel.com,
+	linux-perf-users@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	luogengkun@huaweicloud.com
+Subject: [PATCH] perf/core: Fix the WARN_ON_ONCE is out of lock protected region
+Date: Thu, 26 Jun 2025 13:54:03 +0000
+Message-Id: <20250626135403.2454105-1-luogengkun@huaweicloud.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Lance Yang <lance.yang@linux.dev>
-Subject: Re: [PATCH v4 3/4] mm: Support batched unmap for lazyfree large
- folios during reclamation
-To: David Hildenbrand <david@redhat.com>
-Cc: 21cnbao@gmail.com, akpm@linux-foundation.org,
- baolin.wang@linux.alibaba.com, chrisl@kernel.org, kasong@tencent.com,
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
- linux-mm@kvack.org, linux-riscv@lists.infradead.org,
- lorenzo.stoakes@oracle.com, ryan.roberts@arm.com, v-songbaohua@oppo.com,
- x86@kernel.org, ying.huang@intel.com, zhengtangquan@oppo.com,
- Lance Yang <ioworker0@gmail.com>
-References: <20250626092905.31305-1-ioworker0@gmail.com>
- <20250626124445.77865-1-ioworker0@gmail.com>
- <1a55f9f3-f5b1-4761-97ba-423756c707fe@redhat.com>
-Content-Language: en-US
-In-Reply-To: <1a55f9f3-f5b1-4761-97ba-423756c707fe@redhat.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
-X-Migadu-Flow: FLOW_OUT
+X-CM-TRANSID:gCh0CgD3Wl8UTV1omo7iQg--.26859S4
+X-Coremail-Antispam: 1UD129KBjvJXoWrtFWDKr4rur17Wr1xZr4UXFb_yoW8JrW5pa
+	4kCFy7tws5ua42vay5G348Z342va10qan5WF12gw4SyF45Jw1rXFW7Gw13XF1UAwn7tFy3
+	JFZ0vr1Ykw4UtaUanT9S1TB71UUUUUJqnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUU9E14x267AKxVW8JVW5JwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
+	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
+	1l84ACjcxK6xIIjxv20xvE14v26F1j6w1UM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26r4U
+	JVWxJr1l84ACjcxK6I8E87Iv67AKxVW0oVCq3wA2z4x0Y4vEx4A2jsIEc7CjxVAFwI0_Gc
+	CE3s1ln4kS14v26r1Y6r17M2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI64kE
+	6c02F40Ex7xfMcIj6xIIjxv20xvE14v26r1Y6r17McIj6I8E87Iv67AKxVWUJVW8JwAm72
+	CE4IkC6x0Yz7v_Jr0_Gr1lF7xvr2IYc2Ij64vIr41lF7I21c0EjII2zVCS5cI20VAGYxC7
+	M4IIrI8v6xkF7I0E8cxan2IY04v7MxkF7I0En4kS14v26r4a6rW5MxAIw28IcxkI7VAKI4
+	8JMxC20s026xCaFVCjc4AY6r1j6r4UMI8I3I0E5I8CrVAFwI0_Jr0_Jr4lx2IqxVCjr7xv
+	wVAFwI0_JrI_JrWlx4CE17CEb7AF67AKxVWUtVW8ZwCIc40Y0x0EwIxGrwCI42IY6xIIjx
+	v20xvE14v26r1j6r1xMIIF0xvE2Ix0cI8IcVCY1x0267AKxVW8JVWxJwCI42IY6xAIw20E
+	Y4v20xvaj40_Jr0_JF4lIxAIcVC2z280aVAFwI0_Jr0_Gr1lIxAIcVC2z280aVCY1x0267
+	AKxVW8JVW8JrUvcSsGvfC2KfnxnUUI43ZEXa7sRixwI3UUUUU==
+X-CM-SenderInfo: 5oxrwvpqjn3046kxt4xhlfz01xgou0bp/
 
+commit 3172fb986666 ("perf/core: Fix WARN in perf_cgroup_switch()") try to
+fix a concurrency problem between perf_cgroup_switch and
+perf_cgroup_event_disable. But it does not to move the WARN_ON_ONCE into
+lock-protected region, so the warning is still be triggered.
 
+Fixes: 3172fb986666 ("perf/core: Fix WARN in perf_cgroup_switch()")
+Signed-off-by: Luo Gengkun <luogengkun@huaweicloud.com>
+---
+ kernel/events/core.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-On 2025/6/26 21:16, David Hildenbrand wrote:
-> On 26.06.25 14:44, Lance Yang wrote:
->>
->> On 2025/6/26 17:29, Lance Yang wrote:
->>> Before I send out the real patch, I'd like to get some quick feedback to
->>> ensure I've understood the discussion correctly ;)
->>>
->>> Does this look like the right direction?
->>>
->>> diff --git a/mm/rmap.c b/mm/rmap.c
->>> index fb63d9256f09..5ebffe2137e4 100644
->>> --- a/mm/rmap.c
->>> +++ b/mm/rmap.c
->>> @@ -1845,23 +1845,37 @@ void folio_remove_rmap_pud(struct folio 
->>> *folio, struct page *page,
->>>    #endif
->>>    }
->>> -/* We support batch unmapping of PTEs for lazyfree large folios */
->>> -static inline bool can_batch_unmap_folio_ptes(unsigned long addr,
->>> -            struct folio *folio, pte_t *ptep)
->>> +static inline unsigned int folio_unmap_pte_batch(struct folio *folio,
->>> +            struct page_vma_mapped_walk *pvmw,
->>> +            enum ttu_flags flags, pte_t pte)
->>>    {
->>>        const fpb_t fpb_flags = FPB_IGNORE_DIRTY | FPB_IGNORE_SOFT_DIRTY;
->>> -    int max_nr = folio_nr_pages(folio);
->>> -    pte_t pte = ptep_get(ptep);
->>> +    unsigned long end_addr, addr = pvmw->address;
->>> +    struct vm_area_struct *vma = pvmw->vma;
->>> +    unsigned int max_nr;
->>> +
->>> +    if (flags & TTU_HWPOISON)
->>> +        return 1;
->>> +    if (!folio_test_large(folio))
->>> +        return 1;
->>> +    /* We may only batch within a single VMA and a single page 
->>> table. */
->>> +    end_addr = pmd_addr_end(addr, vma->vm_end);
->>> +    max_nr = (end_addr - addr) >> PAGE_SHIFT;
->>> +
->>> +    /* We only support lazyfree batching for now ... */
->>>        if (!folio_test_anon(folio) || folio_test_swapbacked(folio))
->>> -        return false;
->>> +        return 1;
->>>        if (pte_unused(pte))
->>> -        return false;
->>> -    if (pte_pfn(pte) != folio_pfn(folio))
->>> -        return false;
->>> +        return 1;
->>> +
->>> +    /* ... where we must be able to batch the whole folio. */
->>> +    if (pte_pfn(pte) != folio_pfn(folio) || max_nr != 
->>> folio_nr_pages(folio))
->>> +        return 1;
->>> +    max_nr = folio_pte_batch(folio, addr, pvmw->pte, pte, max_nr, 
->>> fpb_flags,
->>> +                 NULL, NULL, NULL);
->>> -    return folio_pte_batch(folio, addr, ptep, pte, max_nr, 
->>> fpb_flags, NULL,
->>> -                   NULL, NULL) == max_nr;
->>> +    return (max_nr != folio_nr_pages(folio)) ? 1 : max_nr;
->>>    }
->>>    /*
->>> @@ -2024,9 +2038,7 @@ static bool try_to_unmap_one(struct folio 
->>> *folio, struct vm_area_struct *vma,
->>>                if (pte_dirty(pteval))
->>>                    folio_mark_dirty(folio);
->>>            } else if (likely(pte_present(pteval))) {
->>> -            if (folio_test_large(folio) && !(flags & TTU_HWPOISON) &&
->>> -                can_batch_unmap_folio_ptes(address, folio, pvmw.pte))
->>> -                nr_pages = folio_nr_pages(folio);
->>> +            nr_pages = folio_unmap_pte_batch(folio, &pvmw, flags, 
->>> pteval);
->>>                end_addr = address + nr_pages * PAGE_SIZE;
->>>                flush_cache_range(vma, address, end_addr);
->>> @@ -2206,13 +2218,16 @@ static bool try_to_unmap_one(struct folio 
->>> *folio, struct vm_area_struct *vma,
->>>                hugetlb_remove_rmap(folio);
->>>            } else {
->>>                folio_remove_rmap_ptes(folio, subpage, nr_pages, vma);
->>> -            folio_ref_sub(folio, nr_pages - 1);
->>>            }
->>>            if (vma->vm_flags & VM_LOCKED)
->>>                mlock_drain_local();
->>> -        folio_put(folio);
->>> -        /* We have already batched the entire folio */
->>> -        if (nr_pages > 1)
->>> +        folio_put_refs(folio, nr_pages);
->>> +
->>> +        /*
->>> +         * If we are sure that we batched the entire folio and cleared
->>> +         * all PTEs, we can just optimize and stop right here.
->>> +         */
->>> +        if (nr_pages == folio_nr_pages(folio))
->>>                goto walk_done;
->>>            continue;
->>>    walk_abort:
->>> -- 
->>
->> Oops ... Through testing on my machine, I found that the logic doesn't
->> behave as expected because I messed up the meaning of max_nr (the 
->> available
->> scan room in the page table) with folio_nr_pages(folio) :(
->>
->> With the following change:
->>
->> diff --git a/mm/rmap.c b/mm/rmap.c
->> index 5ebffe2137e4..b1407348e14e 100644
->> --- a/mm/rmap.c
->> +++ b/mm/rmap.c
->> @@ -1850,9 +1850,9 @@ static inline unsigned int 
->> folio_unmap_pte_batch(struct folio *folio,
->>               enum ttu_flags flags, pte_t pte)
->>   {
->>       const fpb_t fpb_flags = FPB_IGNORE_DIRTY | FPB_IGNORE_SOFT_DIRTY;
->> +    unsigned int max_nr, nr_pages = folio_nr_pages(folio);
->>       unsigned long end_addr, addr = pvmw->address;
->>       struct vm_area_struct *vma = pvmw->vma;
->> -    unsigned int max_nr;
->>       if (flags & TTU_HWPOISON)
->>           return 1;
->> @@ -1870,12 +1870,13 @@ static inline unsigned int 
->> folio_unmap_pte_batch(struct folio *folio,
->>           return 1;
->>       /* ... where we must be able to batch the whole folio. */
-> 
-> Why is that still required? :)
+diff --git a/kernel/events/core.c b/kernel/events/core.c
+index 1f746469fda5..a35784d42c66 100644
+--- a/kernel/events/core.c
++++ b/kernel/events/core.c
+@@ -951,8 +951,6 @@ static void perf_cgroup_switch(struct task_struct *task)
+ 	if (READ_ONCE(cpuctx->cgrp) == NULL)
+ 		return;
+ 
+-	WARN_ON_ONCE(cpuctx->ctx.nr_cgroups == 0);
+-
+ 	cgrp = perf_cgroup_from_task(task, NULL);
+ 	if (READ_ONCE(cpuctx->cgrp) == cgrp)
+ 		return;
+@@ -964,6 +962,8 @@ static void perf_cgroup_switch(struct task_struct *task)
+ 	if (READ_ONCE(cpuctx->cgrp) == NULL)
+ 		return;
+ 
++	WARN_ON_ONCE(cpuctx->ctx.nr_cgroups == 0);
++
+ 	perf_ctx_disable(&cpuctx->ctx, true);
+ 
+ 	ctx_sched_out(&cpuctx->ctx, NULL, EVENT_ALL|EVENT_CGROUP);
+-- 
+2.34.1
 
-Sorry ... I was still stuck in the "all-or-nothing" mindset ...
-
-So, IIUC, you mean we should completely remove the "max_nr < nr_pages"
-check and just let folio_pte_batch handle whatever partial batch it
-safely can.
-
-> 
->> -    if (pte_pfn(pte) != folio_pfn(folio) || max_nr != 
->> folio_nr_pages(folio))
->> +    if (pte_pfn(pte) != folio_pfn(folio) || max_nr < nr_pages)
->>           return 1;
->> -    max_nr = folio_pte_batch(folio, addr, pvmw->pte, pte, max_nr, 
->> fpb_flags,
->> -                 NULL, NULL, NULL);
->> -    return (max_nr != folio_nr_pages(folio)) ? 1 : max_nr;
->> +    max_nr = folio_pte_batch(folio, addr, pvmw->pte, pte, nr_pages,
->> +                 fpb_flags, NULL, NULL, NULL);
->> +
->> +    return (max_nr != nr_pages) ? 1 : max_nr;
-> 
-> Why is that still required? :)
-
-Then simply return the number of PTEs that consecutively map to the
-large folio. Right?
 
