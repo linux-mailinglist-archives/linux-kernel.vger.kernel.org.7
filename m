@@ -1,143 +1,101 @@
-Return-Path: <linux-kernel+bounces-703677-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-703679-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id C1256AE938B
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Jun 2025 02:55:24 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 65949AE938E
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Jun 2025 03:00:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 27B2A1899DE5
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Jun 2025 00:55:40 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A4FDA1C253BC
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Jun 2025 01:00:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2F1F719343B;
-	Thu, 26 Jun 2025 00:55:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 39AF678F2F;
+	Thu, 26 Jun 2025 00:59:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Xz6UF0D0"
-Received: from mail-pf1-f178.google.com (mail-pf1-f178.google.com [209.85.210.178])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="h2mDlk84"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.13])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 338171494A9;
-	Thu, 26 Jun 2025 00:55:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1FD0E2F1FDE
+	for <linux-kernel@vger.kernel.org>; Thu, 26 Jun 2025 00:59:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.13
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750899319; cv=none; b=qwWYUWxXGZt4qeQ0WGf/TaOJZsQpkm2NKnhXji9a11ipuDmtd/xmQkG98cMnxJ0oFEXUBGUv+TfuIKDRlJD0aOkXKFo5eNli4+ZvCODbIMiH1mf/2CjFwgwN1a6MoXzvuiZuScoZm65M4FPt/4tUAww8p5Yjx6iiFh8nI2OHffQ=
+	t=1750899593; cv=none; b=J5Fi7NucjhCqQCpjFmfLsUJsaRUE6oBXRY8JbIh7BQIsf/cG/KweAAsahkwT68IjOuVvwRV9+KsDdgJsClOTItF9DouiVAJel9KIF5TgK6XSbgvTbZVs3LMS8voAXqRJWKuABioRttI392nXtVXKAaW9QQQjqC6k8kGdoNepHXg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750899319; c=relaxed/simple;
-	bh=zFqd3/bjLRPp+NI2rL3/KcSshFSOhdj8iHHpRSps3Mc=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=eSPCvrSGOQ+eX4cNFYvOqz3MORalSUybmxJSNFh0r8mZXdB6ICmxmqzD8K5c8P7j2sDlMFVcEjlkI9C1L2pWbfVh+QrLVx8MJDQwKVIfUVzRG0HAwpOCTkdyPV9psJc6oBkMESFWsGlhO4+sBjqr50yYM0XkW485PtVVspP/6os=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Xz6UF0D0; arc=none smtp.client-ip=209.85.210.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f178.google.com with SMTP id d2e1a72fcca58-742c7a52e97so562893b3a.3;
-        Wed, 25 Jun 2025 17:55:16 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1750899316; x=1751504116; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=FKP9uNgbOA7UG3M4PzocnFVU56S59A2JUS0TA3YuX7c=;
-        b=Xz6UF0D0oCb1oO89q5T6Zj52TOGpouq5Bd5vtbJpOKP0DJ5Yv/r/9urp2U6ddwVLKY
-         T45b2G8TxLZmJDzbi18gN6JOSXRVt5W4zrt2qBvzgk7ilKqTkzL88bvOOfaN4S7wM+AO
-         RtLL6VfDkR/hWlvaK3TWItTKh5U6g+F0FIr7pon2rYOzNfVBojSD6kn2JQPPIppSOF7V
-         uKzftlU/iGvOl5raQIG4Geac2HjawAy6KwAP/4ZtieiN1jqF1MrsA2uAAfS75jRmpYz2
-         PS3j8FOriBIoBLmV5uvB9zxhPVTkVm7Qc0HpXM7P5FjSV7HAk8nkcQJxtK6lM667EcES
-         XyCw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1750899316; x=1751504116;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=FKP9uNgbOA7UG3M4PzocnFVU56S59A2JUS0TA3YuX7c=;
-        b=aCHqs/O7IvQAEMay5WZbd05oBPdE+EwqzCctYaLQk1r2GJeahYZb3Axu+YhMDt5YOy
-         Qg8dOVHdprADWckD7Q6cYReGtQN/o3LcVI1UAXNkJsW3BZ973cR0/qqDGTGBGRZdiZMU
-         3W6sj0uusYMl1oye6WDkKRTBaQOPErSsIgy63yzHwL3SWk/4KIqpikgohoq9jsDtUKay
-         UpG0KNoUNaHWkZwwFCJm/frSV0EihclmeGRmNOVZTTVtKnbrnPkTSnhdK0NTy/T2KXNp
-         fQ/l8JmC/yxYMn8rrREtDKBVA7KeKylTRu1Us7NgbtADuPcKOA6nUBqTDJUlE/6+DhEy
-         lWiQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUEkbksvQF/amLDPIfrKcAx6phpcj7uUlYIX3Z5E9YLGqbPA82omKUHs9EBVDFQ4SNSv6qInGeZiVm3X3Kx@vger.kernel.org, AJvYcCWhdFU2p9FD5Sb8lR8Ma4nGMrmlOltR1qwtsAePvReQYnE13xPPEtjHfA6DiaVFKJkXsya2zLGTFX5O@vger.kernel.org
-X-Gm-Message-State: AOJu0YwJJTfmGza3RlWn4bIigdFzKD6/NikE+4589I3dL6T6DN6myMWD
-	9KzqshNLMMcM0gd855VQGOiHBoZIgVzYdHcJn9FeEayxW+GpA83SlM7q
-X-Gm-Gg: ASbGnctlzy2WrJ2fdy8H5dvF2IYuIbXoKVdKBOpcfsOF4jWU63Qg8d0/rCWbXgWJGOC
-	lutMhB54lO7o/CiiU9R6LzGj+aow0HWeBpPJ/lQOg7kqtZiA9MR2dYAgR4na76rTSpXbLSaEyA6
-	Z08g35l1VjOiTs+e8V3LGaHB+wTzlDAuyy4bFYDRBhbpQOOIZzOgQ4MklNsvx/cOz9AxvVrWNuf
-	lpxUww3DUz1rlZ7/fNqU5zfc7OMt3uq3ZfOXcDz3UbYwRK0z1W0LmicldDg4uGz2NlqMFB+eEU3
-	A/Mvu5hZPugsthPyAg0aW+f71ehaDe8HbEm3QJiOj9Dc/Mix7WIK3zSCrOIm/A==
-X-Google-Smtp-Source: AGHT+IEQdAUYETW/gFl9/oAcelA7lj1OlgJJckAOnjGK9HyiGax3+ORLzbkl8qg66/CLNj/A5zHCVA==
-X-Received: by 2002:a05:6a00:3e23:b0:736:9f20:a175 with SMTP id d2e1a72fcca58-74ad4462133mr7446024b3a.2.1750899316199;
-        Wed, 25 Jun 2025 17:55:16 -0700 (PDT)
-Received: from localhost ([2001:19f0:ac00:4eb8:5400:5ff:fe30:7df3])
-        by smtp.gmail.com with UTF8SMTPSA id d2e1a72fcca58-749c882cd8fsm5330612b3a.77.2025.06.25.17.55.15
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 25 Jun 2025 17:55:15 -0700 (PDT)
-From: Inochi Amaoto <inochiama@gmail.com>
-To: sophgo@lists.linux.dev,
-	soc@lists.linux.dev,
-	Alexander Sverdlin <alexander.sverdlin@gmail.com>
-Cc: Inochi Amaoto <inochiama@gmail.com>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Chen Wang <unicorn_wang@outlook.com>,
-	Paul Walmsley <paul.walmsley@sifive.com>,
-	Palmer Dabbelt <palmer@dabbelt.com>,
-	Albert Ou <aou@eecs.berkeley.edu>,
-	Alexandre Ghiti <alex@ghiti.fr>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Will Deacon <will@kernel.org>,
-	Arnd Bergmann <arnd@arndb.de>,
-	Jisheng Zhang <jszhang@kernel.org>,
-	Haylen Chu <heylenay@outlook.com>,
-	Chao Wei <chao.wei@sophgo.com>,
-	devicetree@vger.kernel.org,
-	linux-riscv@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH v8 0/6] arm64 support for Milk-V Duo Module 01 EVB
-Date: Thu, 26 Jun 2025 08:55:03 +0800
-Message-ID: <175089922824.136282.4248920975036123392.b4-ty@gmail.com>
-X-Mailer: git-send-email 2.50.0
-In-Reply-To: <20250612132844.767216-1-alexander.sverdlin@gmail.com>
-References: <20250612132844.767216-1-alexander.sverdlin@gmail.com>
+	s=arc-20240116; t=1750899593; c=relaxed/simple;
+	bh=1g6viRrj9kcWFZzmaCX5ijC1e4JJFvw7EVRPQMaIY6Y=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=t8TRPQ+2A07SpRJhpKDeqtNSpJJMyhUFoVE8M4dONjxU7tEQu8kF5i9vW6SIy9RXhlI5EqSHlzXhXQMNrUBpHwNRsGgzkNDC3Em5b4gVFlwVyojRYkxAKQFl2GySXCbEccH/QmdNTCaPlLrchk9qLWg1XkHwZS6G1E8UNs3yxS0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=h2mDlk84; arc=none smtp.client-ip=192.198.163.13
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1750899592; x=1782435592;
+  h=date:from:to:cc:subject:message-id:mime-version;
+  bh=1g6viRrj9kcWFZzmaCX5ijC1e4JJFvw7EVRPQMaIY6Y=;
+  b=h2mDlk84oweZkJ8WgtwTzxUkUHMne8gofD7EWIkXqewvaqtzQIiY8luS
+   WcxBNKCU8ioC7QF6eicSPyobuLAy5rUNLcN2RGgukBBsw6NU6cv5nTov0
+   3BkaRovwRDNiAVBLf/rE3/gNzbBD+ssv7xILUxcOlYjHeF5l2oMvwe6pC
+   RVoFbsMF1HF97iITcZHQAAv1/ZHewj8pOUNw5VAAu2Rm6pSKj5Ix05H0o
+   vmnEWqwY8qmQ9dcK91qLHpZ/7ni21HSRGzyIWWDppzNvI3QE35LL/sKwh
+   ht6WxmgKVSsLvOcDeZFzHEXZJnSD2yuQaD3ZheeoKnSGh6zfVAZ75jy7O
+   A==;
+X-CSE-ConnectionGUID: 9i7CYKUXQEC3rFaQ1Wdi4g==
+X-CSE-MsgGUID: 9r/layYgSpWJjxfbnajSkQ==
+X-IronPort-AV: E=McAfee;i="6800,10657,11475"; a="55811854"
+X-IronPort-AV: E=Sophos;i="6.16,266,1744095600"; 
+   d="scan'208";a="55811854"
+Received: from fmviesa007.fm.intel.com ([10.60.135.147])
+  by fmvoesa107.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 25 Jun 2025 17:59:51 -0700
+X-CSE-ConnectionGUID: wStyQmh3QfeCPKR9xCo90Q==
+X-CSE-MsgGUID: cmNs/mbfSDKJxwcdoRlxAQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.16,266,1744095600"; 
+   d="scan'208";a="151985787"
+Received: from lkp-server01.sh.intel.com (HELO e8142ee1dce2) ([10.239.97.150])
+  by fmviesa007.fm.intel.com with ESMTP; 25 Jun 2025 17:59:50 -0700
+Received: from kbuild by e8142ee1dce2 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1uUaxv-000TaY-2r;
+	Thu, 26 Jun 2025 00:59:47 +0000
+Date: Thu, 26 Jun 2025 08:59:29 +0800
+From: kernel test robot <lkp@intel.com>
+To: "Gustavo A. R. Silva" <gustavoars@kernel.org>
+Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
+	"Gustavo A. R. Silva" <gustavo@embeddedor.com>,
+	LKML <linux-kernel@vger.kernel.org>
+Subject: [gustavoars:testing/wfamnae-next20250616 19/19] Warning:
+ drivers/gpu/drm/xlnx/zynqmp_disp.c:103 Excess struct member 'xt' description
+ in 'zynqmp_disp_layer_dma'
+Message-ID: <202506260858.2DTGYCvK-lkp@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-On Thu, 12 Jun 2025 15:28:08 +0200, Alexander Sverdlin wrote:
-> This series adds very basic support for Milk-V Duo Module 01 EVB [1] in
-> arm64 mode. The SoC (SG2000) is dual-arch, RiscV and ARM64, the latter has
-> been chosen because the upstream toolchain can be utilized.
-> 
-> Sophgo SG2000 seems to be a continuation of the Cvitek CV18xx series, same
-> peripherals with an addition of ARM64 core. Therefore it would be
-> beneficial not to copy-paste the peripherals' device-tree, but rather split
-> the most suitable riscv DT into ARCH-specific and peripherals parts and
-> just include the latter on the arm64 side.
-> 
-> [...]
+tree:   https://git.kernel.org/pub/scm/linux/kernel/git/gustavoars/linux.git testing/wfamnae-next20250616
+head:   78f053980ba50a0becae798ab7d07527d97e790d
+commit: 78f053980ba50a0becae798ab7d07527d97e790d [19/19] treewide: Avoid -Wflex-array-member-not-at-end warnings
+config: arm64-randconfig-004-20250626 (https://download.01.org/0day-ci/archive/20250626/202506260858.2DTGYCvK-lkp@intel.com/config)
+compiler: clang version 21.0.0git (https://github.com/llvm/llvm-project e04c938cc08a90ae60440ce22d072ebc69d67ee8)
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250626/202506260858.2DTGYCvK-lkp@intel.com/reproduce)
 
-Applied to for-next, thanks!
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202506260858.2DTGYCvK-lkp@intel.com/
 
-[1/6] dt-bindings: soc: sophgo: Move SoCs/boards from riscv into soc, add SG2000
-      https://github.com/sophgo/linux/commit/f71cc64dde536e1e805e5b38855d8d3a01eec845
-[2/6] arm64: dts: sophgo: Add initial SG2000 SoC device tree
-      https://github.com/sophgo/linux/commit/7846621ce517375537ae2772e54f033a241fe382
-[3/6] arm64: dts: sophgo: Add Duo Module 01
-      https://github.com/sophgo/linux/commit/7a2f4a250a1129e9d92ed8c43c02f528181df679
-[4/6] arm64: dts: sophgo: Add Duo Module 01 Evaluation Board
-      https://github.com/sophgo/linux/commit/29f4eab1d97c89a0a72793823db287ea6649baf6
-[5/6] arm64: Add SOPHGO SOC family Kconfig support
-      https://github.com/sophgo/linux/commit/af00cebfbb31190dd0124c431d1baabae456c313
-[6/6] arm64: defconfig: Enable rudimentary Sophgo SG2000 support
-      https://github.com/sophgo/linux/commit/1793a187e20257c260f520d42611966d6d249f22
+All warnings (new ones prefixed by >>):
 
-Thanks,
-Inochi
+>> Warning: drivers/gpu/drm/xlnx/zynqmp_disp.c:103 Excess struct member 'xt' description in 'zynqmp_disp_layer_dma'
 
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
