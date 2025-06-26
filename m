@@ -1,155 +1,263 @@
-Return-Path: <linux-kernel+bounces-704268-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-704271-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 96898AE9B7E
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Jun 2025 12:35:12 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 49B1BAE9B98
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Jun 2025 12:37:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2379A165DC0
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Jun 2025 10:34:58 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 788705A1900
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Jun 2025 10:35:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A1E5E2E1C41;
-	Thu, 26 Jun 2025 10:29:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0B0E720E031;
+	Thu, 26 Jun 2025 10:30:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="oi7VIXxn"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="A5AGOYYL"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E380B2E06EA;
-	Thu, 26 Jun 2025 10:29:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3A0F924A049;
+	Thu, 26 Jun 2025 10:30:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750933745; cv=none; b=u/tj6ZIYcMHcbBtLJI3LMZL6SssydfT92J4cji15mS8OX1hF6Sc0CebPhoZKz241Q3tZFzOJNXWKTAOtWwZZGSo+RLcc5T6GbpvByvuDEzbBSBEsKcHukCxD7zLs0mM+oC4wC2SqemNMozff7gvLL2MJuNrXHCFOchukFT/hXYc=
+	t=1750933836; cv=none; b=a+zqRojV7YOWEp1iRn0AvaEcilFLY+8Xl1KNainA5aUoCwSaSfyCEBIpOSzI51mUPLJ7ajgHW/5Jc4gvFyjgEAgzGFFXzY+UcULDGNFFFIIGQwPUEX/JD7OuPjhOMRxaDKaKRXgPQTeqi6GtoaHYKUNUsNMqlbZDONhjuagFQg0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750933745; c=relaxed/simple;
-	bh=G5ybaN75pAel1FxnSt/1K7ti6SyLbaLmGmBlE6NQkY4=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=f8ebPY2KoYUfXMPSFYc9+9HAMTjDv/cYkC2g1nelv9malyiuzdoobYQO0AufCFGr8l7zS6IEc7pUOK97+2AO6vmi6vuVP48f/3shN/7M2YHzAQA2HKS7hu+6P21PMcnWPJ8sMdQmsFD3H9T2d0yAus20cVDsXW7+1b6njqVto3s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=oi7VIXxn; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4BF55C4CEEB;
-	Thu, 26 Jun 2025 10:28:58 +0000 (UTC)
+	s=arc-20240116; t=1750933836; c=relaxed/simple;
+	bh=8kyXYKJiS/ce5WIua8WcuOSLKA7ody3HqT7dIqUof0g=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=fr+SoF8yUcwwFyYKqCrJ19SabrnQPGJbSWXi6xFkrjFoDfR+3ayJhk4vgHLtjDVkOsjW95SILG3GJJGMozNj18ZBZPsOCZlqQADW0jY1I0egitGwO7aN+QuZUo7T+4JzgdoogkrAx5B3DE+GXLNv2z+GXb+BGLN6XcS5qeqGbxs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=A5AGOYYL; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 76E67C4CEEB;
+	Thu, 26 Jun 2025 10:30:33 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1750933744;
-	bh=G5ybaN75pAel1FxnSt/1K7ti6SyLbaLmGmBlE6NQkY4=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=oi7VIXxn29z7R8O8P8c9fQZnkn5IDAMaBnv8A0nbr4CLZlfHsf3gDQ2BzBmPN6HCT
-	 Z1EBjkyAw2UicwTc9q/WzN03EQPEZyP7Xm21/eINdIlByYbHKbQoRo7SJTsHWqLqI/
-	 Q+PKXAp8KLYBwTI3rgWQ8EZSyWMcGGwSdjJ+KTx+UoqW7Xfm+ewsxenLGuooSforAT
-	 qtQ2xU8C7apJslZEGMFqfyCekIOafvgNGwuAW6a9SjIP2aq3VjeP9VLgIFBZFg3O3r
-	 2EKUQiV+j5oIYpfXGG4mRw+OxjYJFDM2H4il8Cr8wcNNsbVtExmGL3gQMmoGpFFUUP
-	 Ar0xBVDZvD9AQ==
-Message-ID: <0e030c09-0a89-4883-b958-85ddd6831407@kernel.org>
-Date: Thu, 26 Jun 2025 12:28:56 +0200
+	s=k20201202; t=1750933835;
+	bh=8kyXYKJiS/ce5WIua8WcuOSLKA7ody3HqT7dIqUof0g=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=A5AGOYYLv6GPhxjKe8Sl7aiwp4/lGEjmq+6mJqvH02Nf0fG/xD29v8eIC2T0+bfBy
+	 Rl0nzLtY1PN+AzmGPa/f1ge6I6l0bPjaIP2S7KGEUEI+XMDFHck8t92TErpW1Pt0ax
+	 QV2kb8N991mtVtm61s4m0WdzvMpwBGJwl7mcV60nJX7S0KaEJZGX3QLdOR47LH0BJM
+	 LBq0Xw6+xRZ+Sg7zmacqsqa2UZ8e8b87keZ/Eg0Ql0zlT04x0W9XBiFp92DzuOWD9Z
+	 8cJraH0Q0kODrFOhd2F8X2rGx6TtIEk4YP+WHXFYBOl7G4g+NYby8aiHqL2zSh6xgr
+	 u9/rl3A0uWV1w==
+Date: Thu, 26 Jun 2025 11:30:30 +0100
+From: Lee Jones <lee@kernel.org>
+To: Jarkko Sakkinen <jarkko@kernel.org>
+Cc: Qunqin Zhao <zhaoqunqin@loongson.cn>, herbert@gondor.apana.org.au,
+	linux-kernel@vger.kernel.org, loongarch@lists.linux.dev,
+	davem@davemloft.net, linux-crypto@vger.kernel.org,
+	peterhuewe@gmx.de, jgg@ziepe.ca, linux-integrity@vger.kernel.org,
+	Yinggang Gu <guyinggang@loongson.cn>,
+	Huacai Chen <chenhuacai@loongson.cn>
+Subject: Re: [PATCH v11 3/4] tpm: Add a driver for Loongson TPM device
+Message-ID: <20250626103030.GA10134@google.com>
+References: <20250619025138.2854-1-zhaoqunqin@loongson.cn>
+ <20250619025138.2854-4-zhaoqunqin@loongson.cn>
+ <aFs2RDOeOKvWUN2L@kernel.org>
+ <20250625080527.GN795775@google.com>
+ <aFvhorr3kZSuzVpv@kernel.org>
+ <20250625134047.GX795775@google.com>
+ <aFwsIs6ri3HZictC@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v5 3/4] media: dt-bindings: Add qcom,msm8939-camss
-To: Bryan O'Donoghue <bryan.odonoghue@linaro.org>, vincent.knecht@mailoo.org,
- Robert Foss <rfoss@kernel.org>, Todor Tomov <todor.too@gmail.com>,
- Mauro Carvalho Chehab <mchehab@kernel.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Bjorn Andersson <andersson@kernel.org>,
- Konrad Dybcio <konradybcio@kernel.org>
-Cc: linux-kernel@vger.kernel.org, linux-media@vger.kernel.org,
- linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
- =?UTF-8?Q?Andr=C3=A9_Apitzsch?= <git@apitzsch.eu>,
- phone-devel@vger.kernel.org, ~postmarketos/upstreaming@lists.sr.ht,
- Vladimir Zapolskiy <vladimir.zapolskiy@linaro.org>,
- Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-References: <20250613-camss-8x39-vbif-v5-0-a002301a7730@mailoo.org>
- <20250613-camss-8x39-vbif-v5-3-a002301a7730@mailoo.org>
- <50fa344c-d683-420c-a3b5-837ec6d8e93e@kernel.org>
- <e928a7c5-56d5-4f2b-b667-bdbefb506d1f@linaro.org>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 a/A=
-In-Reply-To: <e928a7c5-56d5-4f2b-b667-bdbefb506d1f@linaro.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <aFwsIs6ri3HZictC@kernel.org>
 
-On 26/06/2025 12:19, Bryan O'Donoghue wrote:
-> On 26/06/2025 11:00, Krzysztof Kozlowski wrote:
->>> +  reg-names:
->>> +    items:
->>> +      - const: csi_clk_mux
->> No, I already provided arguments in two lengthy discussions - this is
->> not sorted by name.
->>
->> Keep the same order as in previous device, so msm8916 for example. Or
->> any other, but listen to some requests to sort it by some arbitrary rule
->> which was never communicated by DT maintainers.
+On Wed, 25 Jun 2025, Jarkko Sakkinen wrote:
+
+> On Wed, Jun 25, 2025 at 02:40:47PM +0100, Lee Jones wrote:
+> > On Wed, 25 Jun 2025, Jarkko Sakkinen wrote:
+> > 
+> > > On Wed, Jun 25, 2025 at 09:05:27AM +0100, Lee Jones wrote:
+> > > > On Wed, 25 Jun 2025, Jarkko Sakkinen wrote:
+> > > > 
+> > > > > On Thu, Jun 19, 2025 at 10:51:37AM +0800, Qunqin Zhao wrote:
+> > > > > > Loongson Security Engine supports random number generation, hash,
+> > > > > > symmetric encryption and asymmetric encryption. Based on these
+> > > > > > encryption functions, TPM2 have been implemented in the Loongson
+> > > > > > Security Engine firmware. This driver is responsible for copying data
+> > > > > > into the memory visible to the firmware and receiving data from the
+> > > > > > firmware.
+> > > > > > 
+> > > > > > Co-developed-by: Yinggang Gu <guyinggang@loongson.cn>
+> > > > > > Signed-off-by: Yinggang Gu <guyinggang@loongson.cn>
+> > > > > > Signed-off-by: Qunqin Zhao <zhaoqunqin@loongson.cn>
+> > > > > > Reviewed-by: Huacai Chen <chenhuacai@loongson.cn>
+> > > > > > ---
+> > > > > >  drivers/char/tpm/Kconfig        |  9 ++++
+> > > > > >  drivers/char/tpm/Makefile       |  1 +
+> > > > > >  drivers/char/tpm/tpm_loongson.c | 84 +++++++++++++++++++++++++++++++++
+> > > > > >  3 files changed, 94 insertions(+)
+> > > > > >  create mode 100644 drivers/char/tpm/tpm_loongson.c
+> > > > > > 
+> > > > > > diff --git a/drivers/char/tpm/Kconfig b/drivers/char/tpm/Kconfig
+> > > > > > index dddd702b2..ba3924eb1 100644
+> > > > > > --- a/drivers/char/tpm/Kconfig
+> > > > > > +++ b/drivers/char/tpm/Kconfig
+> > > > > > @@ -189,6 +189,15 @@ config TCG_IBMVTPM
+> > > > > >  	  will be accessible from within Linux.  To compile this driver
+> > > > > >  	  as a module, choose M here; the module will be called tpm_ibmvtpm.
+> > > > > >  
+> > > > > > +config TCG_LOONGSON
+> > > > > > +	tristate "Loongson TPM Interface"
+> > > > > > +	depends on MFD_LOONGSON_SE
+> > > > > > +	help
+> > > > > > +	  If you want to make Loongson TPM support available, say Yes and
+> > > > > > +	  it will be accessible from within Linux. To compile this
+> > > > > > +	  driver as a module, choose M here; the module will be called
+> > > > > > +	  tpm_loongson.
+> > > > > > +
+> > > > > >  config TCG_XEN
+> > > > > >  	tristate "XEN TPM Interface"
+> > > > > >  	depends on TCG_TPM && XEN
+> > > > > > diff --git a/drivers/char/tpm/Makefile b/drivers/char/tpm/Makefile
+> > > > > > index 9de1b3ea3..5b5cdc0d3 100644
+> > > > > > --- a/drivers/char/tpm/Makefile
+> > > > > > +++ b/drivers/char/tpm/Makefile
+> > > > > > @@ -46,3 +46,4 @@ obj-$(CONFIG_TCG_ARM_CRB_FFA) += tpm_crb_ffa.o
+> > > > > >  obj-$(CONFIG_TCG_VTPM_PROXY) += tpm_vtpm_proxy.o
+> > > > > >  obj-$(CONFIG_TCG_FTPM_TEE) += tpm_ftpm_tee.o
+> > > > > >  obj-$(CONFIG_TCG_SVSM) += tpm_svsm.o
+> > > > > > +obj-$(CONFIG_TCG_LOONGSON) += tpm_loongson.o
+> > > > > > diff --git a/drivers/char/tpm/tpm_loongson.c b/drivers/char/tpm/tpm_loongson.c
+> > > > > > new file mode 100644
+> > > > > > index 000000000..5cbdb37f8
+> > > > > > --- /dev/null
+> > > > > > +++ b/drivers/char/tpm/tpm_loongson.c
+> > > > > > @@ -0,0 +1,84 @@
+> > > > > > +// SPDX-License-Identifier: GPL-2.0
+> > > > > > +/* Copyright (c) 2025 Loongson Technology Corporation Limited. */
+> > > > > > +
+> > > > > > +#include <linux/device.h>
+> > > > > > +#include <linux/mfd/loongson-se.h>
+> > > > > > +#include <linux/platform_device.h>
+> > > > > > +#include <linux/wait.h>
+> > > > > > +
+> > > > > > +#include "tpm.h"
+> > > > > > +
+> > > > > > +struct tpm_loongson_cmd {
+> > > > > > +	u32 cmd_id;
+> > > > > > +	u32 data_off;
+> > > > > > +	u32 data_len;
+> > > > > > +	u32 pad[5];
+> > > > > > +};
+> > > > > > +
+> > > > > > +static int tpm_loongson_recv(struct tpm_chip *chip, u8 *buf, size_t count)
+> > > > > > +{
+> > > > > > +	struct loongson_se_engine *tpm_engine = dev_get_drvdata(&chip->dev);
+> > > > > > +	struct tpm_loongson_cmd *cmd_ret = tpm_engine->command_ret;
+> > > > > > +
+> > > > > > +	if (cmd_ret->data_len > count)
+> > > > > > +		return -EIO;
+> > > > > > +
+> > > > > > +	memcpy(buf, tpm_engine->data_buffer, cmd_ret->data_len);
+> > > > > > +
+> > > > > > +	return cmd_ret->data_len;
+> > > > > > +}
+> > > > > > +
+> > > > > > +static int tpm_loongson_send(struct tpm_chip *chip, u8 *buf, size_t count)
+> > > > > > +{
+> > > > > > +	struct loongson_se_engine *tpm_engine = dev_get_drvdata(&chip->dev);
+> > > > > > +	struct tpm_loongson_cmd *cmd = tpm_engine->command;
+> > > > > > +
+> > > > > > +	if (count > tpm_engine->buffer_size)
+> > > > > > +		return -E2BIG;
+> > > > > > +
+> > > > > > +	cmd->data_len = count;
+> > > > > > +	memcpy(tpm_engine->data_buffer, buf, count);
+> > > > > > +
+> > > > > > +	return loongson_se_send_engine_cmd(tpm_engine);
+> > > > > > +}
+> > > > > > +
+> > > > > > +static const struct tpm_class_ops tpm_loongson_ops = {
+> > > > > > +	.flags = TPM_OPS_AUTO_STARTUP,
+> > > > > > +	.recv = tpm_loongson_recv,
+> > > > > > +	.send = tpm_loongson_send,
+> > > > > > +};
+> > > > > > +
+> > > > > > +static int tpm_loongson_probe(struct platform_device *pdev)
+> > > > > > +{
+> > > > > > +	struct loongson_se_engine *tpm_engine;
+> > > > > > +	struct device *dev = &pdev->dev;
+> > > > > > +	struct tpm_loongson_cmd *cmd;
+> > > > > > +	struct tpm_chip *chip;
+> > > > > > +
+> > > > > > +	tpm_engine = loongson_se_init_engine(dev->parent, SE_ENGINE_TPM);
+> > > > > > +	if (!tpm_engine)
+> > > > > > +		return -ENODEV;
+> > > > > > +	cmd = tpm_engine->command;
+> > > > > > +	cmd->cmd_id = SE_CMD_TPM;
+> > > > > > +	cmd->data_off = tpm_engine->buffer_off;
+> > > > > > +
+> > > > > > +	chip = tpmm_chip_alloc(dev, &tpm_loongson_ops);
+> > > > > > +	if (IS_ERR(chip))
+> > > > > > +		return PTR_ERR(chip);
+> > > > > > +	chip->flags = TPM_CHIP_FLAG_TPM2 | TPM_CHIP_FLAG_IRQ;
+> > > > > > +	dev_set_drvdata(&chip->dev, tpm_engine);
+> > > > > > +
+> > > > > > +	return tpm_chip_register(chip);
+> > > > > > +}
+> > > > > > +
+> > > > > > +static struct platform_driver tpm_loongson = {
+> > > > > > +	.probe   = tpm_loongson_probe,
+> > > > > > +	.driver  = {
+> > > > > > +		.name  = "loongson-tpm",
+> > > > > 
+> > > > > This patch looks otherwise great but I'd prefer here tho use
+> > > > > "tpm_loongson_probe" for the value of the name field.
+> > > > 
+> > > > Where does this stipulation come from?  No other driver does this [0].
+> > > > driver.name should be a nicely formatted, human readable string
+> > > > describing the name of the device.  Not a function name.
+> > > 
+> > > What defines "human-readable" here? I see both as somewhat the
+> > > same level of "readability" ;-)
+> > > 
+> > > > 
+> > > > [0] git grep -A15 "static struct platform_driver" | grep ".name = .*probe"
+> > > 
+> > > What I'm getting:
+> > > 
+> > > $ git grep -l -e platform_driver_register --or -e module_platform_driver
+> > > drivers/char/tpm | xargs git grep "\.name"
+> > > drivers/char/tpm/tpm_atmel.c:           .name = "tpm_atmel",
+> > > drivers/char/tpm/tpm_ftpm_tee.c:                .name = "ftpm-tee",
+> > > drivers/char/tpm/tpm_ftpm_tee.c:                .name           =
+> > > "optee-ftpm",
+> > > drivers/char/tpm/tpm_nsc.c:             .name    = "tpm_nsc",
+> > > drivers/char/tpm/tpm_svsm.c:            .name = "tpm-svsm",
+> > > drivers/char/tpm/tpm_tis.c:     .name = "tpm_tis",
+> > > drivers/char/tpm/tpm_tis.c:             .name           = "tpm_tis",
+> > > drivers/char/tpm/tpm_tis_synquacer.c:           .name           =
+> > > "tpm_tis_synquacer",
+> > > 
+> > > Do you consider e.g, "tpm_tis" as "less human-readable".
+> > > 
+> > > I don't necessarily fight against the name chosen. Your arguments
+> > > just plain no make sense, so I just merely want to understand this.
+> > > That's all.
+> > 
+> > In 64% of cases '-' is preferred to '_' for device names.
+> > 
+> > Human readable is probably a bit of a stretch in this context, so I'll
+> > retract that part of the statement.  However, we should be using device
+> > names, not names of functions which remain meaningless (which is what I
+> > really meant by 'readable') to the user.  Where else do you see the
+> > .probe() function name being used as a device name?
 > 
-> I don't think if you look through the history that you can find a 
-> consistent rule that was used to arrange the registers.
-> 
-> So we are trying to have a consistent way of doing that. Thats why the 
-> last number of additions have been sort by name, because it seemed to be 
-> the most consistent.
+> Oops now I see what you mean. I meant to write "tpm_loongson", i.e.
+> matching tpm_tis, tpm_crb etc. Sorry my bad.
 
+Ah, gotcha.  No worries.
 
-Why are we discussing it again? You asked me the same here:
-https://lore.kernel.org/all/8f11c99b-f3ca-4501-aec4-0795643fc3a9@kernel.org/
+"tpm_loongson" wouldn't be my preference, but is acceptable.
 
-and I already said - not sorting by name. You take the same order as
-previous.
-
-If you ever want to sort by name, answer to yourself:
-NO. Take the same order as other existing device.
-
-If you ever want to sort by value, answer to yourself:
-NO.
-
-You both came with some new, invented rules of sorting, applied it, and
-now you claim that "existing devices were sorted like that". What? NO!
-
-Best regards,
-Krzysztof
+-- 
+Lee Jones [李琼斯]
 
