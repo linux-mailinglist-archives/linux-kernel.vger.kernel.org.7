@@ -1,213 +1,271 @@
-Return-Path: <linux-kernel+bounces-704707-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-704715-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E3F8EAEA0D4
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Jun 2025 16:38:28 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id DF1F1AEA0F1
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Jun 2025 16:41:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 938863AFF93
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Jun 2025 14:35:11 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4AE1C3BD3DC
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Jun 2025 14:37:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 51EC72EF9CC;
-	Thu, 26 Jun 2025 14:32:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9E8F12ED152;
+	Thu, 26 Jun 2025 14:33:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="FQzYbB+F"
-Received: from mail-lf1-f52.google.com (mail-lf1-f52.google.com [209.85.167.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="REF5nKXu"
+Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F35142EF9A4;
-	Thu, 26 Jun 2025 14:32:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 249F619DFB4
+	for <linux-kernel@vger.kernel.org>; Thu, 26 Jun 2025 14:33:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750948346; cv=none; b=BiHcX107Nc6MGqGz+FdIJ0/ZGJ0z9x9qg2W2emFNETVqvWF+8NcqFcVouSWBx7u6wRIiWYAuXfnd9ZNVcKGmApQaReWlSMCAlHOhVgiCuyuJ7frPgBkFMu8utvJ6fSWTuaPKMj1BH/FTdoTxlQn77Zx/Uqz415Svun6EXz2uU0c=
+	t=1750948416; cv=none; b=n/V422A6G9YhqdpoukAzFN9yYjVcOVpVvIjop/BCHPjftqd59SFqWl2PpJT61oBoF92zQ7cVXRbkilxLjYd9sz9xkF5ZU5aXNOKsBUGMEAgVaoiBCPUZ6KOa7pIG1+Bq5myDl3k3VWPAHDo5Gj5fyuCr0RkpDhIOu5+61aZXdiE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750948346; c=relaxed/simple;
-	bh=1jC/tGnvYZqIX1z6MW25LhIXH6ubgU5rEfdthqI9T7w=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=H/m4rUt2gowkL9stVfgNSSkcfuVNx+MFxyYQcayDHa/IVEUwrH57PgszOka5L+J/BEMzdjYkz9qQguldYRtiVY2SRpzmko11PMDaEWhTIX8sP6V7E029UtB1tvgID0VhWqOnAe1hv/HEY+W1yZNH9XZVU4EVG8Z8Vz9ublxBxFY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=FQzYbB+F; arc=none smtp.client-ip=209.85.167.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lf1-f52.google.com with SMTP id 2adb3069b0e04-553b6a349ccso1184028e87.0;
-        Thu, 26 Jun 2025 07:32:23 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1750948342; x=1751553142; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=F4ep8LpzklDdJ/PRT38YsBKJnMGg/9nUE3qJ238rNuc=;
-        b=FQzYbB+FEWv41LK3BZZWc9xBmXjSrBI20FIISTS5xlN4nu+GHu6Pyixf1sLGHR31DT
-         73AQj4CqEXq/sxBhNJJMofELAL7y88Y1Tuoj5tVgU8aGkiFBmv6xaekkTKRzd1NYJDBv
-         5ancmOy8PReBzVSCJkEXEg4cirEk1KTs/u2s3Z01FqMaysG4+nbvb5+mFxbeninJU1vy
-         SsJtSPFNdAMDEvH2Ua6Qcza5T8V0dtWh96bcBXqfrzVEniVf7+u5miyItV93EH0cj6Z1
-         q0wQY8t+36XKh0/jRccMwgmjsWTY5okb4ZOt6SJ9sANZ3Zuat4xBrkVTNRkxRkigPbr4
-         +8cQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1750948342; x=1751553142;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=F4ep8LpzklDdJ/PRT38YsBKJnMGg/9nUE3qJ238rNuc=;
-        b=vo5fh6DIkDJSnpulmSQlPNrLT5JIUUlR44K20pxFkmep38w+hp49RxBbstVRESyVS4
-         564tv2i9Vk8vpaOOp3avLWt3QSEtuP/HN6zwSu0isslGHwJoo8cBxYPjxPC7emgUrMPi
-         0qKYuhNyEhOu6NjBjfSIaY9tvtqo39vxYyhBDyIAwWmG2kANl1H/oZ32fr9GKaaFZJOG
-         rvZywNawWxj5z8rmiWBT3GCWO/zKuQ8wRyyLa9Kydunu7bFFZsemBB0zrKs2iPEtAx0Y
-         eDdNqhW4wBwM6nogod5qb/wRIQHy9+A4yeSR3ZjiAXkizg9z8ut1tlxilK7SgyfH9tED
-         alwg==
-X-Forwarded-Encrypted: i=1; AJvYcCWifAWErc4fsBadzqUrWTasM+tlD+g+kOK4FbGUpo6j+vO4OCb19kjSIgLFv0X/9xzK1GoHQCaHzAY+Zwkn@vger.kernel.org, AJvYcCXyJ4P0FNPMQcMAYdhMZZVEheh1kiD+4n3KVTBvg0QXAg07+XAx2P0xbCOCCEBfx+CXP3Nz5rMEteY=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy5SqSm/jg5PUI/MsJQWQXqtRJBnBvhQjftHci/ZSiUNdME03lm
-	PhgiPrvGckBv2g9XqfxIabFO8Tzn4IBq9/nvaUxYcT9vokuAPzFRkoRjG3/wHtUuA5EK3+0iF0E
-	X+hn1H33xlwfG/olTv/Z5HXR1ROnY31Y=
-X-Gm-Gg: ASbGnctnZ7F+u5xP5RMcxIOnosA3RcPPXIPmyAKxXAKBD5rYOX6GiVzr1ri6J7Ttkm0
-	e+pFHIj+Oij3HF3cjbdcsCAMjVUs4kQMxoNJgwWOa75rS3AIEraT5q1wO6xmz46p+WdhSMs842X
-	3xV+CFsq/zdpthV+oY6nU/vDF4VRfVWJXVBs/u+9C0dRppGvS9wGp5bqL70Q7FdalbpTn7n5BFN
-	XhwLg==
-X-Google-Smtp-Source: AGHT+IFx4sduEJGCHwL3U+pSB2Tg8LNQZ44ZqhdKUQhPbzhrEtPy2s8ZWPFPfbdHNZSYNd8FSRJALxpHY5AcPjo/atk=
-X-Received: by 2002:ac2:568e:0:b0:553:2e0f:96c with SMTP id
- 2adb3069b0e04-554fdd0e51fmr2690042e87.23.1750948341966; Thu, 26 Jun 2025
- 07:32:21 -0700 (PDT)
+	s=arc-20240116; t=1750948416; c=relaxed/simple;
+	bh=DD08WU4Kw9DfpxgmFjakh5Yngnsu6IH/5Lx9gvgVFWU=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=nxx+2vEEOUtbCTpaEGIasbAhLvSkC/AGof6NGCfJSfRJxxCwYVxkTBg4H3shr2w1/fqgTuI5mm506QUVhTBQi51XcBjO5NLjR5ofYNmpiDQ5xIjNE4L+Jrr05H1cjw9PrQr+5ZL9WObYWlIXKS3zoJdmmMljO0uCzcmExZj6SiM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=REF5nKXu; arc=none smtp.client-ip=148.163.156.1
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0360083.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 55QCpoJU015795;
+	Thu, 26 Jun 2025 14:33:15 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
+	:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=pp1; bh=gl7lOn
+	997NWw20ZLbk9RgTdcxAX+Ipfh+MLsmOI9QKs=; b=REF5nKXuX/qsrM1Dmh3laH
+	IIIW8xMonU2Uo3TzHOSpwveuDvpzAVCHSd9VJoQgcq8BFexrdYUBrMRgDampBAwn
+	V81jGXdT/UatFCCLMe0Ojt01ciLHYfy7fiTTWACnyu1GQH/N9WFihLx0nsWM9tZ0
+	uYOs5SbB2j4Z8wjRM9/eh7WshZIDyoaGIvpE1LC8zqGCkhkvebY3zfxh/3DZ57Vn
+	19uyKIj6mV/mivzYkHziF9Lw/x1uLu3HFLgIbT5BiNWH9TjF2kMUrTcsJqMvBmWZ
+	G4q+ZNHle8wpImS54SBgos1v2DwtLex03EyxyZ+AborE74Y2jPty7KwacoUMdnuw
+	==
+Received: from pps.reinject (localhost [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 47dm8jq9ck-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 26 Jun 2025 14:33:14 +0000 (GMT)
+Received: from m0360083.ppops.net (m0360083.ppops.net [127.0.0.1])
+	by pps.reinject (8.18.0.8/8.18.0.8) with ESMTP id 55QE7mjK028180;
+	Thu, 26 Jun 2025 14:33:14 GMT
+Received: from ppma22.wdc07v.mail.ibm.com (5c.69.3da9.ip4.static.sl-reverse.com [169.61.105.92])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 47dm8jq9ce-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 26 Jun 2025 14:33:13 +0000 (GMT)
+Received: from pps.filterd (ppma22.wdc07v.mail.ibm.com [127.0.0.1])
+	by ppma22.wdc07v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 55QCScU1030552;
+	Thu, 26 Jun 2025 14:33:12 GMT
+Received: from smtprelay01.fra02v.mail.ibm.com ([9.218.2.227])
+	by ppma22.wdc07v.mail.ibm.com (PPS) with ESMTPS id 47e7f07g1t-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 26 Jun 2025 14:33:12 +0000
+Received: from smtpav02.fra02v.mail.ibm.com (smtpav02.fra02v.mail.ibm.com [10.20.54.101])
+	by smtprelay01.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 55QEX8nK59048412
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Thu, 26 Jun 2025 14:33:08 GMT
+Received: from smtpav02.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 6245220043;
+	Thu, 26 Jun 2025 14:33:08 +0000 (GMT)
+Received: from smtpav02.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 2456720040;
+	Thu, 26 Jun 2025 14:33:05 +0000 (GMT)
+Received: from [9.39.23.153] (unknown [9.39.23.153])
+	by smtpav02.fra02v.mail.ibm.com (Postfix) with ESMTP;
+	Thu, 26 Jun 2025 14:33:04 +0000 (GMT)
+Message-ID: <b941d8f2-9df1-4b1a-9519-6076cd36ce9d@linux.ibm.com>
+Date: Thu, 26 Jun 2025 20:03:04 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250623083841.364002-1-pranav.tyagi03@gmail.com> <aFrBeCn-j_AB1yzv@rric.localdomain>
-In-Reply-To: <aFrBeCn-j_AB1yzv@rric.localdomain>
-From: Pranav Tyagi <pranav.tyagi03@gmail.com>
-Date: Thu, 26 Jun 2025 20:02:10 +0530
-X-Gm-Features: Ac12FXysQiC9JCtpThr23nOptpbU1SVBPAIAYLzmUaBViKaSpsg8hiX7ofi6dBg
-Message-ID: <CAH4c4jLAfMTn6wN3wJSOQZ3mAoYC3uhswDu6c+c6v-wv8mSifQ@mail.gmail.com>
-Subject: Re: [PATCH v2] cxl/memdev: automate cleanup with __free()
-To: Robert Richter <rrichter@amd.com>
-Cc: dave@stgolabs.net, jonathan.cameron@huawei.com, dave.jiang@intel.com, 
-	alison.schofield@intel.com, vishal.l.verma@intel.com, ira.weiny@intel.com, 
-	dan.j.williams@intel.com, linux-cxl@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, ming.li@zohomail.com, peterz@infradead.org, 
-	skhan@linuxfoundation.org, linux-kernel-mentees@lists.linux.dev
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [RFC v2 0/9] cpu avoid state and push task mechanism
+To: Yury Norov <yury.norov@gmail.com>
+Cc: mingo@redhat.com, peterz@infradead.org, juri.lelli@redhat.com,
+        vincent.guittot@linaro.org, tglx@linutronix.de, maddy@linux.ibm.com,
+        vschneid@redhat.com, dietmar.eggemann@arm.com, rostedt@goodmis.org,
+        kprateek.nayak@amd.com, huschle@linux.ibm.com, srikar@linux.ibm.com,
+        linux-kernel@vger.kernel.org, christophe.leroy@csgroup.eu,
+        linuxppc-dev@lists.ozlabs.org, gregkh@linuxfoundation.org
+References: <20250625191108.1646208-1-sshegde@linux.ibm.com>
+ <aFxwaKwBykv5shN4@yury>
+From: Shrikanth Hegde <sshegde@linux.ibm.com>
+Content-Language: en-US
+In-Reply-To: <aFxwaKwBykv5shN4@yury>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-TM-AS-GCONF: 00
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNjI2MDEyMSBTYWx0ZWRfX69UbiPpDfrja 1CNOCzBG5s3icGgwv0v1Uef1dWfoZIVzjvRK86YHGU+fudRpQHvJboLsnUlcAwUtOLYLRI1wFPy 70MpfK09ciZQWLeg6GNvx/iJSjyxFebp/t9clnDvIs+Y4bQeA8zElCLId8WwvjbbpkSOjfvxqI+
+ yAK3zIM2nA/i3ABKzDJdgHSDAEdO4iQxYXfmN8i4YRBQGFawzjsE+XZ94STsKzd9L23fLsoXsdm jxVQIzlA0VUw+zHlgQ9tJ5u7WLC2mxT8EdWZNqykwJeFLGjG/kxrcUx7n1Cya6x38tPY7k1gtRR iLzbaDQCtW8egyEF7odd0Kn7SAVRVzmOdJKoxX+ZXF4+Wx/NlyvD9xO2yCinVd/MRp7A3JrAxV/
+ x5KQYIamwfTnisJ0pRdH7FW/FTKNrP4Ev1BsvZQuTtgam9ZEAL452n6cqUGscdflHmAZI8RT
+X-Proofpoint-GUID: WflfNwVc5Gioxw0ubxil642ynRdApN32
+X-Proofpoint-ORIG-GUID: TiIUGEzwDeNoQQbmaupyPA_FO17d0KPq
+X-Authority-Analysis: v=2.4 cv=combk04i c=1 sm=1 tr=0 ts=685d5a2a cx=c_pps a=5BHTudwdYE3Te8bg5FgnPg==:117 a=5BHTudwdYE3Te8bg5FgnPg==:17 a=IkcTkHD0fZMA:10 a=6IFa9wvqVegA:10 a=VwQbUJbxAAAA:8 a=VnNF1IyMAAAA:8 a=9Ng4NLojh00e9vYZGIoA:9 a=QEXdDO2ut3YA:10
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.7,FMLib:17.12.80.40
+ definitions=2025-06-26_06,2025-06-26_04,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 spamscore=0 adultscore=0 mlxlogscore=999 clxscore=1015
+ impostorscore=0 suspectscore=0 mlxscore=0 phishscore=0 lowpriorityscore=0
+ bulkscore=0 classifier=spam authscore=0 authtc=n/a authcc= route=outbound
+ adjust=0 reason=mlx scancount=1 engine=8.19.0-2505280000
+ definitions=main-2506260121
 
-On Tue, Jun 24, 2025 at 8:47=E2=80=AFPM Robert Richter <rrichter@amd.com> w=
-rote:
->
-> On 23.06.25 14:08:41, Pranav Tyagi wrote:
-> > Use the scope based resource management (defined in linux/cleanup.h) to
-> > automate the lifetime control of struct cxl_mbox_transfer_fw. This
-> > eliminates explicit kfree() calls and makes the code more robust and
-> > maintainable in presence of early returns.
-> >
-> > Signed-off-by: Pranav Tyagi <pranav.tyagi03@gmail.com>
-> > ---
-> >  drivers/cxl/core/memdev.c | 21 ++++++++-------------
-> >  1 file changed, 8 insertions(+), 13 deletions(-)
-> >
-> > diff --git a/drivers/cxl/core/memdev.c b/drivers/cxl/core/memdev.c
-> > index f88a13adf7fa..38f4449f9740 100644
-> > --- a/drivers/cxl/core/memdev.c
-> > +++ b/drivers/cxl/core/memdev.c
-> > @@ -7,6 +7,7 @@
-> >  #include <linux/slab.h>
-> >  #include <linux/idr.h>
-> >  #include <linux/pci.h>
-> > +#include <linux/cleanup.h>
-> >  #include <cxlmem.h>
-> >  #include "trace.h"
-> >  #include "core.h"
-> > @@ -802,11 +803,10 @@ static int cxl_mem_activate_fw(struct cxl_memdev_=
-state *mds, int slot)
-> >  static int cxl_mem_abort_fw_xfer(struct cxl_memdev_state *mds)
-> >  {
-> >       struct cxl_mailbox *cxl_mbox =3D &mds->cxlds.cxl_mbox;
-> > -     struct cxl_mbox_transfer_fw *transfer;
-> >       struct cxl_mbox_cmd mbox_cmd;
-> > -     int rc;
-> > -
-> > -     transfer =3D kzalloc(struct_size(transfer, data, 0), GFP_KERNEL);
-> > +
-> > +     struct cxl_mbox_transfer_fw *transfer __free(kfree) =3D
-> > +             kzalloc(struct_size(transfer, data, 0), GFP_KERNEL);
->
-> I don't see a reason for __free() here as there are no early exits.
->
-> >       if (!transfer)
-> >               return -ENOMEM;
-> >
-> > @@ -821,9 +821,7 @@ static int cxl_mem_abort_fw_xfer(struct cxl_memdev_=
-state *mds)
-> >
-> >       transfer->action =3D CXL_FW_TRANSFER_ACTION_ABORT;
-> >
-> > -     rc =3D cxl_internal_send_cmd(cxl_mbox, &mbox_cmd);
-> > -     kfree(transfer);
-> > -     return rc;
-> > +     return cxl_internal_send_cmd(cxl_mbox, &mbox_cmd);
-> >  }
-> >
-> >  static void cxl_fw_cleanup(struct fw_upload *fwl)
-> > @@ -880,7 +878,7 @@ static enum fw_upload_err cxl_fw_write(struct fw_up=
-load *fwl, const u8 *data,
-> >       struct cxl_dev_state *cxlds =3D &mds->cxlds;
-> >       struct cxl_mailbox *cxl_mbox =3D &cxlds->cxl_mbox;
-> >       struct cxl_memdev *cxlmd =3D cxlds->cxlmd;
-> > -     struct cxl_mbox_transfer_fw *transfer;
-> > +     struct cxl_mbox_transfer_fw *transfer __free(kfree);
->
-> Jonathan already catched this.
->
-> >       struct cxl_mbox_cmd mbox_cmd;
-> >       u32 cur_size, remaining;
-> >       size_t size_in;
-> > @@ -949,7 +947,7 @@ static enum fw_upload_err cxl_fw_write(struct fw_up=
-load *fwl, const u8 *data,
-> >       rc =3D cxl_internal_send_cmd(cxl_mbox, &mbox_cmd);
-> >       if (rc < 0) {
-> >               rc =3D FW_UPLOAD_ERR_RW_ERROR;
-> > -             goto out_free;
-> > +             return rc;
->
-> If you want to remove the goto here, just free transfer right after
-> calling cxl_internal_send_cmd(). It is no longer used then.
->
-> I only want those cleanup helpers where they are actually useful and
-> do not just add complexity.
->
-> Thanks,
->
-> -Robert
->
-> >       }
-> >
-> >       *written =3D cur_size;
-> > @@ -963,14 +961,11 @@ static enum fw_upload_err cxl_fw_write(struct fw_=
-upload *fwl, const u8 *data,
-> >                       dev_err(&cxlmd->dev, "Error activating firmware: =
-%d\n",
-> >                               rc);
-> >                       rc =3D FW_UPLOAD_ERR_HW_ERROR;
-> > -                     goto out_free;
-> > +                     return rc;
-> >               }
-> >       }
-> >
-> >       rc =3D FW_UPLOAD_ERR_NONE;
-> > -
-> > -out_free:
-> > -     kfree(transfer);
-> >       return rc;
-> >  }
-> >
-> > --
-> > 2.49.0
-> >
 
-Thank you for the feedback. I understand your concerns and completely
-agree with your reasoning. Please pardon my misjudgment in sending this
-patch. I am still a beginner with kernel development and learning to
-better assess what makes a meaningful contribution.
 
-Regards
-Pranav Tyagi
+On 6/26/25 03:25, Yury Norov wrote:
+> On Thu, Jun 26, 2025 at 12:40:59AM +0530, Shrikanth Hegde wrote:
+>> This is a followup version if [1] with few additions. This is still an RFC
+>> and would like get feedback on the idea and suggestions on improvement.
+>>
+>> v1->v2:
+>> - Renamed to cpu_avoid_mask in place of cpu_parked_mask.
+> 
+> This one is not any better to the previous. Why avoid? When avoid?
+> I already said that: for objects, having positive self-explaining
+> noun names is much better than negative and/or function-style verb
+> names. I suggested cpu_paravirt_mask, and I still believe it's a much
+> better option.
+> 
+
+ok. only reason is CPU is always para virtualized in those environment right?
+When there is contention for pCPU, only then we want set this mask.
+So i thought it might have to reflect that.
+
+
+I can keep cpu_paravirt_mask. Could you please suggest set/get names which could
+go with it? cpu_paravirt(cpu)?
+
+>> - Used a static key such that no impact to regular case.
+> 
+> Static keys are not free and designed for different purpose. You have
+> CONFIG_PARAVIRT, and I don't understand why you're trying to avoid
+> using it.
+> 
+> I don't mind about static keys, if you prefer them, I just want to
+> have feature-specific code under corresponding config.
+> 
+> Can you please print bloat-o-meter report for CONFIG_PARAVIRT=n?
+> Have you any perf numbers to advocate static keys here?
+> 
+
+I wanted to see if there could be any other use cases apart from paravirt case.
+
+One I thought was, in SMT systems under low utilization, it could help higher IPC by keeping the tasks on
+only 1 thread.. if base_slice is kept low, latency could be relatively low.
+
+Other was, workloads or system usage can be dynamic in nature with peaks and troughs. when it is in trough, one may not want to use all
+the cores(instead use SMT siblings), thereby saving some power.
+
+
+Using CONFIG_PARAVIRT could end up sprinkling a bit of ifdefs. Need to see how I could minimize it.
+Let me get back with bloat-o-meter numbers and performance numbers.
+
+>> - add sysfs file to show avoid CPUs.
+>> - Make RT understand avoid CPUs.
+>> - Add documentation patch
+>> - Took care of reported compile error in [1] when NR_CPUS=1
+>>
+>> -----------------
+>> Problem statement
+>> -----------------
+>> vCPU - Virtual CPUs - CPU in VM world.
+>> pCPU - Physical CPUs - CPU in baremetal world.
+>>
+>> A hypervisor is managing these vCPUs from different VMs. When a vCPU
+>> requests for CPU, hypervisor does the job of scheduling them on a pCPU.
+>>
+>> So this issue occurs when there are more vCPUs(combined across all VMs)
+>> than the pCPU. So when *all* vCPUs are requesting for CPUs, hypervisor
+>> can only run a few of them and remaining will be preempted(waiting for pCPU).
+>>
+>> If we take two VM's, When hypervisor preempts vCPU from VM1 to run vCPU from
+>> VM2, it has to do save/restore VM context.Instead if VM's can co-ordinate among
+>> each other and request for *limited*  vCPUs, it avoids the above overhead and
+>                                         ^
+> Did this extra whitespace escaped from the previous line, or the following?
+>
+
+Thanks for noticing it.
+                                           v
+>> there is context switching within vCPU(less expensive). Even if hypervisor
+>> is preempting one vCPU to run another within the same VM, it is still more
+>> expensive than the task preemption within the vCPU. So *basic* aim to avoid
+>> vCPU preemption.
+>>
+>> So to achieve this, use "CPU Avoid" concept, where it is better
+>> if workload avoids these vCPUs at this moment.
+>> (vCPUs stays online, we don't want the overhead of sched domain rebuild).
+>>
+>> Contention is dynamic in nature. When there is contention for pCPU is to be
+>> detected and determined by architecture. Archs needs to update the mask
+>> accordingly.
+>>
+>> When there is contention, use limited vCPUs as indicated by arch.
+>> When there is no contention, use all vCPUs.
+>>
+>> -------------------------
+>> To be done and Questions:
+>> -------------------------
+>> 1. IRQ - still don't understand this cpu_avoid_mask. Maybe irqbalance
+>> code could be modified to do the same. Ran stress-ng --hrtimers, irq
+>> moved out of avoid cpu though. So need to see if changes to irqbalance is
+>> required or not.
+>>
+>> 2. If a task is spawned by affining to only avoid CPUs. Should that fail
+>> or throw a warning to user.
+> 
+> I think it's possible that existing codebase will do that. And because
+> you don't want to break userspace, you should not restrict.
+
+ok got it. currently it is allowed.
+
+> 
+>> 3. Other classes such as SCHED_EXT, SCHED_DL won't understand this infra
+>> yet.
+>>
+>> 4. Performance testing yet to be done. RFC only verified the functional
+>> aspects of whether task move out of avoid CPUs or not. Move happens quite
+>> fast (around 1-2 seconds even on large systems with very high utilization)
+>>
+>> 5. Haven't come up an infra which could combine all push task related
+>> changes. It is currently spread across rt, dl, fair. Maybe some
+>> consolidation can be done. but which tasks to push/pull still remains in
+>> the class.
+>>
+>> 6. cpu_avoid_mask may need some sort of locking to ensure read/write is
+>> correct.
+>>
+>> [1]: https://lore.kernel.org/all/20250523181448.3777233-1-sshegde@linux.ibm.com/
+>>
+>> Shrikanth Hegde (9):
+>>    sched/docs: Document avoid_cpu_mask and avoid CPU concept
+>>    cpumask: Introduce cpu_avoid_mask
+>>    sched/core: Don't allow to use CPU marked as avoid
+>>    sched/fair: Don't use CPU marked as avoid for wakeup and load balance
+>>    sched/rt: Don't select CPU marked as avoid for wakeup and push/pull rt task
+>>    sched/core: Push current task out if CPU is marked as avoid
+>>    sched: Add static key check for cpu_avoid
+>>    sysfs: Add cpu_avoid file
+>>    powerpc: add debug file for set/unset cpu avoid
+>>
+>>   Documentation/scheduler/sched-arch.rst | 25 +++++++++++++
+>>   arch/powerpc/include/asm/paravirt.h    |  2 ++
+>>   arch/powerpc/kernel/smp.c              | 50 ++++++++++++++++++++++++++
+>>   drivers/base/cpu.c                     |  8 +++++
+>>   include/linux/cpumask.h                | 17 +++++++++
+>>   kernel/cpu.c                           |  3 ++
+>>   kernel/sched/core.c                    | 50 +++++++++++++++++++++++++-
+>>   kernel/sched/fair.c                    | 11 +++++-
+>>   kernel/sched/rt.c                      |  9 +++--
+>>   kernel/sched/sched.h                   | 10 ++++++
+>>   10 files changed, 181 insertions(+), 4 deletions(-)
+>>
+>> -- 
+>> 2.43.0
+
 
