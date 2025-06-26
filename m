@@ -1,139 +1,85 @@
-Return-Path: <linux-kernel+bounces-704774-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-704770-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 638DEAEA1A8
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Jun 2025 17:00:10 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id A0EF6AEA1A9
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Jun 2025 17:00:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6EC7C6A28C2
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Jun 2025 14:54:17 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2A4A818995E8
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Jun 2025 14:54:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DCCD62ED14C;
-	Thu, 26 Jun 2025 14:49:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ziepe.ca header.i=@ziepe.ca header.b="OoE0pHQk"
-Received: from mail-oi1-f181.google.com (mail-oi1-f181.google.com [209.85.167.181])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D9DB92EB5C7;
+	Thu, 26 Jun 2025 14:49:07 +0000 (UTC)
+Received: from relay.hostedemail.com (smtprelay0010.hostedemail.com [216.40.44.10])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4A5B22F362D
-	for <linux-kernel@vger.kernel.org>; Thu, 26 Jun 2025 14:49:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3975D2ECE81;
+	Thu, 26 Jun 2025 14:49:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=216.40.44.10
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750949361; cv=none; b=M/JCg7231zdn/pIXr5GPbgv7ZUB1F4rRc4J11sSLotgQayRohHpMdiWqI+sWFBa/6r51k/NUyIr6sKifPKg0oa/D0kTFq7JhC/EqhL0Z9+OTDPQq7Jc14iJ5AOuiEngWHUpMYDa+w6dg547npAx8Xx8zQ8gqWDyT01n6RJnq+cU=
+	t=1750949347; cv=none; b=PPd/WwtjfL+fcTKmhGlWm15tVpl0PRUI36TulMwcZiye7JnDOeQtlB0VBRk+3NQJvlpHN/aQZ7s460VpjDt+aJFe0hFiW9RncwTMc3h+HKyRHcvgmrZTd59/+mYLuov6o8AIoHvhc2v9REPXn99NVHl78FK95PIbyvaoHySSdqo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750949361; c=relaxed/simple;
-	bh=e+p1u3bjk72DZ4xXV4yRymVTRZjUSFmGtt4UT1KJy4w=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=p8u+qVqq/8HBjFAuTIHOtl8z5k3a6eKYjvW554bcpi28LwzRcNwYF7KZtLoIoNjAIwNeoe2Q7z8dp7w9UpXjksgNCM6BkMwYwRuTgImi16FfsAKBfMZL31/d86HzYqCT6Mnci/MMteDA4OBkizsNKPixAS9h31r8Qxc2lK89Bi4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ziepe.ca; spf=pass smtp.mailfrom=ziepe.ca; dkim=pass (2048-bit key) header.d=ziepe.ca header.i=@ziepe.ca header.b=OoE0pHQk; arc=none smtp.client-ip=209.85.167.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ziepe.ca
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ziepe.ca
-Received: by mail-oi1-f181.google.com with SMTP id 5614622812f47-40b31468da3so38619b6e.0
-        for <linux-kernel@vger.kernel.org>; Thu, 26 Jun 2025 07:49:18 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ziepe.ca; s=google; t=1750949357; x=1751554157; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=eDTHGKJ7PRnQtifJssL8JUIIPtKYbrBYEt3PvsupNKg=;
-        b=OoE0pHQkKhw4hvO00e7lyvZUJjgpBMreXb6Jk35+vlUH2IE5UYZqaqLSQHU/nibg6v
-         ruXqxLbVMqM1vytrKhJtNrqEDD6h6rXPgBiryqmNYLC3IQnZIhuOS7TcPwGr5R7ygKs1
-         lWTtvGDk6W0KewJgH+hGGwveddIggSzeYH22jvTTUIxPsmaKjGdaoU/MlO0VHJ95ibm8
-         knVzbKenulkmq7F+9uZ5iBaho2oUTnB1Fx9YeiEBCInT5w6yq1OERaErbJt1TU1W9RXL
-         JVbdr/2nbDQR2i1Zix/oN3aQ7XelMgfOCuorezM/K2rl/XlBSx5xdT0WppNl72JmrNT7
-         FlqA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1750949357; x=1751554157;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=eDTHGKJ7PRnQtifJssL8JUIIPtKYbrBYEt3PvsupNKg=;
-        b=sx1wnVerxz+OcWXaFMzLuFfVxupdEj4/VzaRD+fbjUOrgrRZoDB+rsYpNyAR4weUos
-         Sy19i2d/vzN2vc55G3TfdQhcKnH7nEy1KTzzKMQyi0HheaYVrUgBZmzyrN8ppY9mOIc8
-         OH09X0sZ7FyaUw0q8quu/R9nwcTmRiAbx2qVI8v1JQjq6CNIacbqe6fjTVp1jafBOey4
-         KGrviKuo0KHoCFX4unx3o7YIENgLa77xeDwxNjE1xBxN5oe/ZNQDzUw4vU823a//iCt1
-         89o+FGDUs40B8PsllpYZGjPmOZq767rFWvFMXLquq5qjD/eibt3fWQWAB40DvmiazfWr
-         Z0hQ==
-X-Gm-Message-State: AOJu0Yx/NyLUqPk5VxHgD9JBJP4sK0YJOJoKTk7rsDG4iahoDTUvAc54
-	fmddbwCinsVO71xbjoUxfz79skYKcEqpc/ahACgvWr5BQFl25Eh3kCZtyFZMiCp0xR0=
-X-Gm-Gg: ASbGncutxeTcKCnsezMW+GTexyW3AX8H5NR5YTWxb/i1MObL3hNIw9Xwrn819HItuhQ
-	p0lvvTzg3L184NbprfL8Nru9IM3nlgUJQQq2Xx1Tdk5kHkhhIBDK0HCaRLEFNh/xbhE+0yrs0QI
-	6zVms5cS0FJZYK6FKN95OJ8zZC+O6SVjGtx35HQdqZ+E3jXNxXvjT6aK5ybbnQff+4Nqu7ZjRcL
-	Ke3LFEKz9qqpNW00AAwESYRjf72aCQ18SgM2H1zJjNiOvGAG65BT6PeJSE8WMM4CXGXV7sLD9mF
-	4lOgs8f46xJWQ9UX0L4ZY5nBlczaeuHrCcrTp0q/B0cBSkI=
-X-Google-Smtp-Source: AGHT+IEk1fuPkxL2WLgf9P7Tgn7/Q5tUITHrfb7oE7/rJ7NBa+jsmVtdMJzdRWUlmWV91MQIQpsO/Q==
-X-Received: by 2002:a05:6808:50ac:b0:406:7186:5114 with SMTP id 5614622812f47-40b05c73cf1mr5460261b6e.36.1750949357253;
-        Thu, 26 Jun 2025 07:49:17 -0700 (PDT)
-Received: from ziepe.ca ([130.41.10.202])
-        by smtp.gmail.com with ESMTPSA id 5614622812f47-40ac6c136ecsm2593994b6e.6.2025.06.26.07.49.16
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 26 Jun 2025 07:49:16 -0700 (PDT)
-Received: from jgg by wakko with local (Exim 4.97)
-	(envelope-from <jgg@ziepe.ca>)
-	id 1uUnud-00000001WeQ-0wX2;
-	Thu, 26 Jun 2025 11:49:15 -0300
-Date: Thu, 26 Jun 2025 11:49:15 -0300
-From: Jason Gunthorpe <jgg@ziepe.ca>
-To: Jarkko Sakkinen <jarkko@kernel.org>
-Cc: linux-kernel@vger.kernel.org, keyrings@vger.kernel.org,
-	Jarkko Sakkinen <jarkko.sakkinen@opinsys.com>,
-	Peter Huewe <peterhuewe@gmx.de>,
-	James Bottomley <James.Bottomley@hansenpartnership.com>,
-	Mimi Zohar <zohar@linux.ibm.com>,
-	David Howells <dhowells@redhat.com>,
-	Paul Moore <paul@paul-moore.com>, James Morris <jmorris@namei.org>,
-	"Serge E. Hallyn" <serge@hallyn.com>,
-	"open list:TPM DEVICE DRIVER" <linux-integrity@vger.kernel.org>,
-	"open list:SECURITY SUBSYSTEM" <linux-security-module@vger.kernel.org>
-Subject: Re: [PATCH] tpm: Create cleanup class for tpm_buf
-Message-ID: <20250626144915.GD213144@ziepe.ca>
-References: <20250625213757.1236570-1-jarkko@kernel.org>
+	s=arc-20240116; t=1750949347; c=relaxed/simple;
+	bh=ALLIIAA++rbzUWCk9xIGTTo6bFs8gHSw2AvD9wAHFDk=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=VfQPDD4AnvB/h7B/LPDnIkS9wK4/qHKO4+9sS1bb4zEtMhdeLQDRjdHGZS9PgA2rjFV18Lcl80duJmKK7ambqdXmspNoIp4cqF+rNksh3YhsMISvxIdv8PZ+bXQIN3mTscGFCOH+huJ8UXj5dla7OsjosCViuzBAhzSejHoOFhA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org; spf=pass smtp.mailfrom=goodmis.org; arc=none smtp.client-ip=216.40.44.10
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=goodmis.org
+Received: from omf09.hostedemail.com (a10.router.float.18 [10.200.18.1])
+	by unirelay09.hostedemail.com (Postfix) with ESMTP id 1F96E80265;
+	Thu, 26 Jun 2025 14:49:02 +0000 (UTC)
+Received: from [HIDDEN] (Authenticated sender: rostedt@goodmis.org) by omf09.hostedemail.com (Postfix) with ESMTPA id 154C820028;
+	Thu, 26 Jun 2025 14:48:57 +0000 (UTC)
+Date: Thu, 26 Jun 2025 10:49:19 -0400
+From: Steven Rostedt <rostedt@goodmis.org>
+To: linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org,
+ bpf@vger.kernel.org, x86@kernel.org
+Cc: Masami Hiramatsu <mhiramat@kernel.org>, Mathieu Desnoyers
+ <mathieu.desnoyers@efficios.com>, Josh Poimboeuf <jpoimboe@kernel.org>,
+ Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@kernel.org>, Jiri
+ Olsa <jolsa@kernel.org>, Namhyung Kim <namhyung@kernel.org>, Thomas
+ Gleixner <tglx@linutronix.de>, Andrii Nakryiko <andrii@kernel.org>, Indu
+ Bhagat <indu.bhagat@oracle.com>, "Jose E. Marchesi" <jemarch@gnu.org>, Beau
+ Belgrave <beaub@linux.microsoft.com>, Jens Remus <jremus@linux.ibm.com>,
+ Linus Torvalds <torvalds@linux-foundation.org>, Andrew Morton
+ <akpm@linux-foundation.org>, Jens Axboe <axboe@kernel.dk>
+Subject: Re: [PATCH v11 00/11] perf: Support the deferred unwinding
+ infrastructure
+Message-ID: <20250626104919.6591c2b9@gandalf.local.home>
+In-Reply-To: <20250625231541.584226205@goodmis.org>
+References: <20250625231541.584226205@goodmis.org>
+X-Mailer: Claws Mail 3.20.0git84 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250625213757.1236570-1-jarkko@kernel.org>
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+X-Stat-Signature: 5mfy4rbrug9wco81dhw73a8hmxt1ozgt
+X-Rspamd-Server: rspamout01
+X-Rspamd-Queue-Id: 154C820028
+X-Session-Marker: 726F737465647440676F6F646D69732E6F7267
+X-Session-ID: U2FsdGVkX1/m+Nr0XPIxU/L+9sJu4DhD9Lf9WaHGuCg=
+X-HE-Tag: 1750949337-214274
+X-HE-Meta: U2FsdGVkX19FnPyiZUCeDf4tox13wQA/4MuEEERmjaxMRF2fxYTjZBpAlIYUfigWaE7cZtZwfKmwcL2NoHGZ4joH/QI67TAdUeVczRJCIc/Dhhj+9hMorn278r/qJ/uxtJK3V0KvOU2GcLeVefBgZf9mN4lDOSbBh1HczVAtA7NHsjhwgROvYU2DyQlbkEx6cyYzJR5U57fUFuUzh59q+Sq+WAYmJy5uRM6kIN7Vij2Pt9WGitr0Pki+t10w3tAmqGjqimfTOMoPyKgyaVEDIUMTbbug7xzov2ERSxU/n0A4pwKsKpx48ORKqr9ZLM/71MVjD8nfAzc5tXNnPCk/X/rBCD8/41J6rRPodXD26umoJt+N/KLxDqdUt/aoEs5U
 
-On Thu, Jun 26, 2025 at 12:37:56AM +0300, Jarkko Sakkinen wrote:
-> @@ -323,7 +323,7 @@ unsigned long tpm1_calc_ordinal_duration(struct tpm_chip *chip, u32 ordinal)
->   */
->  static int tpm1_startup(struct tpm_chip *chip)
->  {
-> -	struct tpm_buf buf;
-> +	CLASS(tpm_buf, buf)();
->  	int rc;
->  
->  	dev_info(&chip->dev, "starting up the TPM manually\n");
-> @@ -335,7 +335,6 @@ static int tpm1_startup(struct tpm_chip *chip)
->  	tpm_buf_append_u16(&buf, TPM_ST_CLEAR);
->  
->  	rc = tpm_transmit_cmd(chip, &buf, 0, "attempting to start the TPM");
-> -	tpm_buf_destroy(&buf);
->  	return rc;
->  }
+On Wed, 25 Jun 2025 19:15:41 -0400
+Steven Rostedt <rostedt@goodmis.org> wrote:
 
-So, Linus has spoken negatively about just converting existing code to
-use cleanup.h, fearful it would introduce more bugs.
+> Namhyung Kim (4):
+>       perf tools: Minimal CALLCHAIN_DEFERRED support
+>       perf record: Enable defer_callchain for user callchains
+>       perf script: Display PERF_RECORD_CALLCHAIN_DEFERRED
+>       perf tools: Merge deferred user callchains
 
-I would certainly split this into more patches, and it would be nice
-if something mechanical like coccinelle could do the change.
+For some reason, quilt send mail dropped the last two patches.
 
-At least I would add the class and drop the tpm_buf_destroy() as one
-patch, and another would be to cleanup any empty gotos.
+I'll send them manually.
 
-Also, I think the style guide for cleanup.h is to not use the
-variable block, so it should be more like:
-
-CLASS(tpm_buf, buf)();
-if (!tpm_buf)
-   return -ENOMEM;
-
-AFAICT, but that seems to be some kind of tribal knowledge.
-
-Jason
+-- Steve
 
