@@ -1,184 +1,102 @@
-Return-Path: <linux-kernel+bounces-704342-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-704297-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 65BF2AE9C6F
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Jun 2025 13:20:50 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 905ECAE9BE3
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Jun 2025 12:54:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A02401617B8
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Jun 2025 11:20:50 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5193E1C2055D
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Jun 2025 10:54:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 48664275110;
-	Thu, 26 Jun 2025 11:20:45 +0000 (UTC)
-Received: from pegase1.c-s.fr (pegase1.c-s.fr [93.17.236.30])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 968A01DE2DC;
-	Thu, 26 Jun 2025 11:20:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=93.17.236.30
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AED9B26A08E;
+	Thu, 26 Jun 2025 10:54:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="kENJSi+D"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1672526A1A8;
+	Thu, 26 Jun 2025 10:54:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750936844; cv=none; b=GhwZaooK4TRUjw9wqiP+eyV8OXoMzjH1/u73gEgMfjBjOOFR713/Sk51miYYaitdAfdtdr7xpfsYOcdp2+exjfWAWkMswBHmyFRIc8aLmGD1EajMOJTHEkuVjQu9ifAwd84DLmuoWnapt8FvwAjB4L9B3/qj47VDSOL5mFifm+0=
+	t=1750935250; cv=none; b=a9wjE2MRsXl354B19yn5nBL1xpTXcfkQ0j2vKRmyaEJKLPxXXqrV0Vh4tpgMV6y7CpSCE4IEpxTldVlAoOAZKpS2u5vxFehQqprLeA2Oiz6swgzUNejGOSku8H+NhUunutwEbIiTELyHdgKhRjtBJ4Zx3rh9x04xmTaG3XiyKt8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750936844; c=relaxed/simple;
-	bh=C4f7VtU2IxWUn/+6CtPz+hcR/TxIpvkTdAdow77mhkk=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=UsF4wNNwOQGUwacVgxHLQQp7h1K/+1JYCjckRW50m6ornAh2O7621y0tgIbkV9wNob4zD/N9epX5eSZt/K48R1/TG1OohxGu/JU6I1LnazCiiRDu/PweEzC2VzOw+ZZx+fuphXBJD5rfz6/tpOdl9jVLLWYIizFR1yIb739M3P0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=csgroup.eu; spf=pass smtp.mailfrom=csgroup.eu; arc=none smtp.client-ip=93.17.236.30
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=csgroup.eu
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=csgroup.eu
-Received: from localhost (mailhub3.si.c-s.fr [192.168.12.233])
-	by localhost (Postfix) with ESMTP id 4bSbB02K49z9vGJ;
-	Thu, 26 Jun 2025 12:52:40 +0200 (CEST)
-X-Virus-Scanned: amavisd-new at c-s.fr
-Received: from pegase1.c-s.fr ([192.168.12.234])
-	by localhost (pegase1.c-s.fr [127.0.0.1]) (amavisd-new, port 10024)
-	with ESMTP id uDQegORpF3hS; Thu, 26 Jun 2025 12:52:40 +0200 (CEST)
-Received: from messagerie.si.c-s.fr (messagerie.si.c-s.fr [192.168.25.192])
-	by pegase1.c-s.fr (Postfix) with ESMTP id 4bSbB017ZFz9vGH;
-	Thu, 26 Jun 2025 12:52:40 +0200 (CEST)
-Received: from localhost (localhost [127.0.0.1])
-	by messagerie.si.c-s.fr (Postfix) with ESMTP id 1B36F8B7B7;
-	Thu, 26 Jun 2025 12:52:40 +0200 (CEST)
-X-Virus-Scanned: amavisd-new at c-s.fr
-Received: from messagerie.si.c-s.fr ([127.0.0.1])
-	by localhost (messagerie.si.c-s.fr [127.0.0.1]) (amavisd-new, port 10023)
-	with ESMTP id 1FFBuvr_5nqx; Thu, 26 Jun 2025 12:52:39 +0200 (CEST)
-Received: from [192.168.235.99] (unknown [192.168.235.99])
-	by messagerie.si.c-s.fr (Postfix) with ESMTP id 8F3C38B7A7;
-	Thu, 26 Jun 2025 12:52:37 +0200 (CEST)
-Message-ID: <3b6ff3a9-6b88-4a28-a0fd-31f31ae3e84b@csgroup.eu>
-Date: Thu, 26 Jun 2025 12:52:37 +0200
+	s=arc-20240116; t=1750935250; c=relaxed/simple;
+	bh=2alW063fqcncvoGsWJi8mp6fYnWIf8n8jT9pOQvyy7M=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=NQuPgHnybj3E+mKov7QCpUNxEb4dQ3ACiIvB/wuUSUTrYthG1J0jo+4xqFJvT2HvRZwAcdq5mFHZ45u1i/SZ6cLQ8dKjBiCwVhAYg8UuFISdDN/H0m/mi7A5UR9bYs/8c1JNLNzxTTSaNIj6iPYfDKumHMtWpcOgDLaVzC/ArrY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=kENJSi+D; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 86CCDC4CEEB;
+	Thu, 26 Jun 2025 10:54:09 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1750935249;
+	bh=2alW063fqcncvoGsWJi8mp6fYnWIf8n8jT9pOQvyy7M=;
+	h=Date:From:To:Cc:Subject:Reply-To:References:In-Reply-To:From;
+	b=kENJSi+DyWexL7G/srvmIQIGrzXjmH1qt4UWKh11Cp2TYw5GEVRF9p1Zo1MZ4qhT4
+	 9mvnfzkkd9EG68mpZ4SvhAowkGnGezH0OK0ufJrTIdPi5youZ22Belx1ml4W9aD4Tq
+	 a3+oHXR2VbK7ZTx4N+RI/wWFOAL4z1ritp5vS9h9RqzM4xkVkJ4QYRLgckZmMNzuRK
+	 SoLVvsQolZ+xWmCH/CV+RifkQ6BGT30uwegcF4BZ2o96qvIw9axLSh8+Lav978u8fm
+	 2kkWQ57XgfZt4RLSbX3n97xL4TXJgPLgVeXHhHG+uxnAsYfHLPfgMRMzt9wx6MQPx1
+	 +BMsMyH5kefPA==
+Received: by paulmck-ThinkPad-P17-Gen-1.home (Postfix, from userid 1000)
+	id 6DD30CE0B76; Thu, 26 Jun 2025 03:54:06 -0700 (PDT)
+Date: Thu, 26 Jun 2025 03:54:06 -0700
+From: "Paul E. McKenney" <paulmck@kernel.org>
+To: Christoph Hellwig <hch@infradead.org>
+Cc: rcu@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-team@meta.com,
+	rostedt@goodmis.org
+Subject: Re: [PATCH 1/5] torture: Remove support for SRCU-lite
+Message-ID: <167ab1f0-ea85-4a0f-8a19-1d74e2fa7439@paulmck-laptop>
+Reply-To: paulmck@kernel.org
+References: <e5dd6af2-fdbf-4773-9732-13b84ca13a12@paulmck-laptop>
+ <20250624161400.867880-1-paulmck@kernel.org>
+ <aFvmG2lT65Ido1fq@infradead.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 9/9] kasan/powerpc: call kasan_init_generic in kasan_init
-To: Sabyrzhan Tasbolatov <snovitoll@gmail.com>, ryabinin.a.a@gmail.com,
- glider@google.com, andreyknvl@gmail.com, dvyukov@google.com,
- vincenzo.frascino@arm.com, catalin.marinas@arm.com, will@kernel.org,
- chenhuacai@kernel.org, kernel@xen0n.name, maddy@linux.ibm.com,
- mpe@ellerman.id.au, npiggin@gmail.com, hca@linux.ibm.com, gor@linux.ibm.com,
- agordeev@linux.ibm.com, borntraeger@linux.ibm.com, svens@linux.ibm.com,
- richard@nod.at, anton.ivanov@cambridgegreys.com, johannes@sipsolutions.net,
- dave.hansen@linux.intel.com, luto@kernel.org, peterz@infradead.org,
- tglx@linutronix.de, mingo@redhat.com, bp@alien8.de, x86@kernel.org,
- hpa@zytor.com, chris@zankel.net, jcmvbkbc@gmail.com,
- akpm@linux-foundation.org
-Cc: guoweikang.kernel@gmail.com, geert@linux-m68k.org, rppt@kernel.org,
- tiwei.btw@antgroup.com, richard.weiyang@gmail.com, benjamin.berg@intel.com,
- kevin.brodsky@arm.com, kasan-dev@googlegroups.com,
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
- loongarch@lists.linux.dev, linuxppc-dev@lists.ozlabs.org,
- linux-s390@vger.kernel.org, linux-um@lists.infradead.org, linux-mm@kvack.org
-References: <20250625095224.118679-1-snovitoll@gmail.com>
- <20250625095224.118679-10-snovitoll@gmail.com>
-Content-Language: fr-FR
-From: Christophe Leroy <christophe.leroy@csgroup.eu>
-In-Reply-To: <20250625095224.118679-10-snovitoll@gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <aFvmG2lT65Ido1fq@infradead.org>
 
-
-
-Le 25/06/2025 à 11:52, Sabyrzhan Tasbolatov a écrit :
-> Call kasan_init_generic() which enables the static flag
-> to mark generic KASAN initialized, otherwise it's an inline stub.
-> Also prints the banner from the single place.
+On Wed, Jun 25, 2025 at 05:05:47AM -0700, Christoph Hellwig wrote:
+> On Tue, Jun 24, 2025 at 09:13:56AM -0700, Paul E. McKenney wrote:
+> > Because SRCU-lite is being replaced by SRCU-fast, this commit removes
+> > support for SRCU-lite from refscale.c.
 > 
-> Closes: https://bugzilla.kernel.org/show_bug.cgi?id=218315
-> Fixes: 55d77bae7342 ("kasan: fix Oops due to missing calls to kasan_arch_is_ready()")
-> Signed-off-by: Sabyrzhan Tasbolatov <snovitoll@gmail.com>
-> ---
->   arch/powerpc/include/asm/kasan.h       | 14 --------------
->   arch/powerpc/mm/kasan/init_book3s_64.c |  6 +-----
->   2 files changed, 1 insertion(+), 19 deletions(-)
-> 
-> diff --git a/arch/powerpc/include/asm/kasan.h b/arch/powerpc/include/asm/kasan.h
-> index b5bbb94c51f..23a06fbec72 100644
-> --- a/arch/powerpc/include/asm/kasan.h
-> +++ b/arch/powerpc/include/asm/kasan.h
-> @@ -52,20 +52,6 @@
->   
->   #endif
->   
-> -#ifdef CONFIG_KASAN
+> Please explain how they different and why one is a good enough (or
+> even better?) replacement for the other.
 
-The above #ifdef must remain, at the moment I get:
+Ah, good point, thank you!
 
-   CC      arch/powerpc/kernel/asm-offsets.s
-In file included from ./arch/powerpc/include/asm/nohash/32/pgtable.h:65,
-                  from ./arch/powerpc/include/asm/nohash/pgtable.h:13,
-                  from ./arch/powerpc/include/asm/pgtable.h:20,
-                  from ./include/linux/pgtable.h:6,
-                  from ./arch/powerpc/include/asm/kup.h:43,
-                  from ./arch/powerpc/include/asm/uaccess.h:8,
-                  from ./include/linux/uaccess.h:12,
-                  from ./include/linux/sched/task.h:13,
-                  from ./include/linux/sched/signal.h:9,
-                  from ./include/linux/rcuwait.h:6,
-                  from ./include/linux/percpu-rwsem.h:7,
-                  from ./include/linux/fs.h:34,
-                  from ./include/linux/compat.h:17,
-                  from arch/powerpc/kernel/asm-offsets.c:12:
-./arch/powerpc/include/asm/kasan.h:70:2: error: #endif without #if
-  #endif
-   ^~~~~
-In file included from ./include/linux/kasan.h:21,
-                  from ./include/linux/slab.h:260,
-                  from ./include/linux/fs.h:46,
-                  from ./include/linux/compat.h:17,
-                  from arch/powerpc/kernel/asm-offsets.c:12:
-./arch/powerpc/include/asm/kasan.h:70:2: error: #endif without #if
-  #endif
-   ^~~~~
-make[2]: *** [scripts/Makefile.build:182: 
-arch/powerpc/kernel/asm-offsets.s] Error 1
+How about if I add this to the cover letter?
 
+	Both SRCU-lite and SRCU-fast provide faster readers by dropping
+	the smp_mb() call from their lock and unlock primitives.
+	The price of this is a pair of added RCU grace periods during
+	the SRCU grace period.
 
-> -#ifdef CONFIG_PPC_BOOK3S_64
-> -DECLARE_STATIC_KEY_FALSE(powerpc_kasan_enabled_key);
-> -
-> -static __always_inline bool kasan_arch_is_ready(void)
-> -{
-> -	if (static_branch_likely(&powerpc_kasan_enabled_key))
-> -		return true;
-> -	return false;
-> -}
-> -
-> -#define kasan_arch_is_ready kasan_arch_is_ready
-> -#endif
-> -
->   void kasan_early_init(void);
->   void kasan_mmu_init(void);
->   void kasan_init(void);
-> diff --git a/arch/powerpc/mm/kasan/init_book3s_64.c b/arch/powerpc/mm/kasan/init_book3s_64.c
-> index 7d959544c07..dcafa641804 100644
-> --- a/arch/powerpc/mm/kasan/init_book3s_64.c
-> +++ b/arch/powerpc/mm/kasan/init_book3s_64.c
-> @@ -19,8 +19,6 @@
->   #include <linux/memblock.h>
->   #include <asm/pgalloc.h>
->   
-> -DEFINE_STATIC_KEY_FALSE(powerpc_kasan_enabled_key);
-> -
->   static void __init kasan_init_phys_region(void *start, void *end)
->   {
->   	unsigned long k_start, k_end, k_cur;
-> @@ -92,11 +90,9 @@ void __init kasan_init(void)
->   	 */
->   	memset(kasan_early_shadow_page, 0, PAGE_SIZE);
->   
-> -	static_branch_inc(&powerpc_kasan_enabled_key);
-> -
->   	/* Enable error messages */
->   	init_task.kasan_depth = 0;
-> -	pr_info("KASAN init done\n");
-> +	kasan_init_generic();
->   }
->   
->   void __init kasan_early_init(void) { }
+	SRCU-fast also adds NMI safety for architectures that have
+	NMIs but do not have NMI-safe per-CPU operations.  In addition,
+	srcu_read_lock_fast() returns a per-CPU pointer rather than an
+	integer, which provides a further speedup compared to SRCU-lite
+	by getting rid of array-index calculations.
 
+	There is a trivial mapping from the SRCU-lite API to that
+	of SRCU-fast, so we do not expect any transition issues.
+	In addition, while SRCU-lite remains in the kernel, checkpatch.pl
+	will warn about added SRCU-lite use cases.
+
+	Further read-side speedups are possible, but they amount to only
+	about half a nanosecond out of about two nanoseconds (measured on
+	my x86 laptop), and they might require some changes to existing
+	SRCU code.  These changes are trivial, but we need to see a
+	solid need for the additional performance before inconveniencing
+	existing users.
+
+							Thanx, Paul
 
