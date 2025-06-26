@@ -1,244 +1,196 @@
-Return-Path: <linux-kernel+bounces-703853-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-703885-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id C165DAE9599
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Jun 2025 08:04:26 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4700EAE960F
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Jun 2025 08:20:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 077BF1C27F0A
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Jun 2025 06:04:35 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5E2FE1C2445B
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Jun 2025 06:21:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 123FD224B0E;
-	Thu, 26 Jun 2025 06:04:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="Z1/tsqGK";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="oK6oB5jU";
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="OrAm86fV";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="y7yjTydW"
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7C3A0204F73
-	for <linux-kernel@vger.kernel.org>; Thu, 26 Jun 2025 06:04:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B470322F76C;
+	Thu, 26 Jun 2025 06:20:42 +0000 (UTC)
+Received: from pegase1.c-s.fr (pegase1.c-s.fr [93.17.236.30])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 65171218599;
+	Thu, 26 Jun 2025 06:20:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=93.17.236.30
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750917851; cv=none; b=rGOiHjvbMoYxJuhrvorlnb9WxBd2SYTO/Laenb9dsKBXDOtbEphwOA95VADPGfvOrmapuqH1gc86KgvC0zo89RYPdsqIej2Na4gTrlyqcl4wCe7KynitAoHgHGL+21K/lIFXj2FW9LYCqpLh47Z4tYogdxRoDrtn8EzecfxyodA=
+	t=1750918842; cv=none; b=LyMNtIqXkD1URTwnEanUvhQTrgavtahRD+Gx8C4n97L4fI9FOVxxyVENg13bdd34RET/k+Z+kNJx7jsiVZuf1gqnIQEp/eE/9ifrb2oiaJYLpQATm+cM5DQc3lD2tnQ99RfiSyTrTnESvGQZ7awQllbibXViH3YOoGahEzNwIXE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750917851; c=relaxed/simple;
-	bh=TZ30w1P6Na99hERk8OGwZ82lYzSmnHWBxcJKkFO9zuc=;
-	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=P9CNUdn/yUAOD16cxkIv+6Y95lCM4pELLCHjKon7HYjYkDNZfzeixRHteD8RLV+Y1LOLRj7+boHkb8j4LJWJi877QdW2PQXWzuutItRV4OqvCImEml/LBtR0oMUDhPlebq+uiObXSvGxmV0A1DdhbRx4G+P0NzHwPcX0sE+cCZQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=Z1/tsqGK; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=oK6oB5jU; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=OrAm86fV; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=y7yjTydW; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id 7E2012116A;
-	Thu, 26 Jun 2025 06:04:06 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1750917847; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=EuAtZS2bTBWp4kitLMk7kBSEiydumYzBNuegsS4wWEs=;
-	b=Z1/tsqGKRLzDE288WiYEPjSME/AK1RCSkZh3v15vS4nkAyIfkKj9OZp+FhkQqQI6njMHdo
-	SdYad6gsjv3V6UXu2eUTnQvboI5gtVmVi3yahiAaz9KZLut93yQNCfHCKiEym4MNjU0ffv
-	UPQ173ROaPPjbCTZg5iPKC2n40pwHxA=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1750917847;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=EuAtZS2bTBWp4kitLMk7kBSEiydumYzBNuegsS4wWEs=;
-	b=oK6oB5jUg82Pp8WZPkJxx6D7RKxAY2trfpFPHV6/ruRXpdRjc6jUcWja4Yqxw1E8v5Mabg
-	KZm5VT64/neJvZAQ==
-Authentication-Results: smtp-out1.suse.de;
-	dkim=pass header.d=suse.de header.s=susede2_rsa header.b=OrAm86fV;
-	dkim=pass header.d=suse.de header.s=susede2_ed25519 header.b=y7yjTydW
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1750917846; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=EuAtZS2bTBWp4kitLMk7kBSEiydumYzBNuegsS4wWEs=;
-	b=OrAm86fVc3XlVHPHsSKpsNTClxeuX0jb7TggePs+q7n2Ok/CYze+RVTN7NFN8+tDsFBgFA
-	Fum5rNNUzAQx2QamzNqFoE7C++oTpynV5y4LTSPUjrIVbArgWZgFXBlOWrFD/iI6t0jrI6
-	DFvll07lWwbJ5VU8932AtMkok9DlteU=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1750917846;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=EuAtZS2bTBWp4kitLMk7kBSEiydumYzBNuegsS4wWEs=;
-	b=y7yjTydWgzB/94zQaFKH7mrz/mNEadYCvJ26Ll24AUR0v2VQvRc11vbyR9H7klWCFkl8wD
-	PJPPW5q10qOByXAw==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 40714138A7;
-	Thu, 26 Jun 2025 06:04:06 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id NCpMDtbiXGgFEgAAD6G6ig
-	(envelope-from <tiwai@suse.de>); Thu, 26 Jun 2025 06:04:06 +0000
-Date: Thu, 26 Jun 2025 08:04:05 +0200
-Message-ID: <87zfdvght6.wl-tiwai@suse.de>
-From: Takashi Iwai <tiwai@suse.de>
-To: Salvatore Bonaccorso <carnil@debian.org>
-Cc: Igor =?ISO-8859-1?Q?T=E1mara?= <igor.tamara@gmail.com>,	Takashi Iwai
- <tiwai@suse.de>,	1108069@bugs.debian.org,	stable@vger.kernel.org,	Kuan-Wei
- Chiu <visitorckw@gmail.com>,	linux-sound@vger.kernel.org,
-	linux-kernel@vger.kernel.org,	regressions@lists.linux.dev
-Subject: Re: [regression] Builtin recognized microphone Asus X507UA does not record
-In-Reply-To: <aFzLTJg8MN5evbYL@eldamar.lan>
-References: <175038697334.5297.17990232291668400728.reportbug@donsam>
-	<aFxETAn3YKNZqpXL@eldamar.lan>
-	<CADdHDco7_o=4h_epjEAb92Dj-vUz_PoTC2-W9g5ncT2E0NzfeQ@mail.gmail.com>
-	<aFzLTJg8MN5evbYL@eldamar.lan>
-User-Agent: Wanderlust/2.15.9 (Almost Unreal) Emacs/27.2 Mule/6.0
+	s=arc-20240116; t=1750918842; c=relaxed/simple;
+	bh=kmajPGloApxRKFaKW/UmyqYJ+75L1kgD7xbg9kNYje8=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=eP6Q2QAqqHi55ktRZmVSitmrsNs1JhtIOc5s+AnUUaVA+QL2ax88BnudWfb0K0Mi3lFGzrWD8pmWkXh6laO+MiYL/Geeyqq+qMIP0CayOiWPd/AIk1EHLHGJMozHSprOlXVKsIAPeBsAY+YjjiaCahHG0P2bUmtfika2r3gSmYI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=csgroup.eu; spf=pass smtp.mailfrom=csgroup.eu; arc=none smtp.client-ip=93.17.236.30
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=csgroup.eu
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=csgroup.eu
+Received: from localhost (mailhub3.si.c-s.fr [192.168.12.233])
+	by localhost (Postfix) with ESMTP id 4bSSbw1jqdz9vG4;
+	Thu, 26 Jun 2025 07:56:12 +0200 (CEST)
+X-Virus-Scanned: amavisd-new at c-s.fr
+Received: from pegase1.c-s.fr ([192.168.12.234])
+	by localhost (pegase1.c-s.fr [127.0.0.1]) (amavisd-new, port 10024)
+	with ESMTP id q0xrpHJGhTt6; Thu, 26 Jun 2025 07:56:12 +0200 (CEST)
+Received: from messagerie.si.c-s.fr (messagerie.si.c-s.fr [192.168.25.192])
+	by pegase1.c-s.fr (Postfix) with ESMTP id 4bSSbw0vypz9vFr;
+	Thu, 26 Jun 2025 07:56:12 +0200 (CEST)
+Received: from localhost (localhost [127.0.0.1])
+	by messagerie.si.c-s.fr (Postfix) with ESMTP id 157358B7B7;
+	Thu, 26 Jun 2025 07:56:12 +0200 (CEST)
+X-Virus-Scanned: amavisd-new at c-s.fr
+Received: from messagerie.si.c-s.fr ([127.0.0.1])
+	by localhost (messagerie.si.c-s.fr [127.0.0.1]) (amavisd-new, port 10023)
+	with ESMTP id KbYfiNafM5QK; Thu, 26 Jun 2025 07:56:11 +0200 (CEST)
+Received: from [192.168.235.99] (unknown [192.168.235.99])
+	by messagerie.si.c-s.fr (Postfix) with ESMTP id 13B658B7A7;
+	Thu, 26 Jun 2025 07:56:11 +0200 (CEST)
+Message-ID: <83fb5685-a206-477c-bff3-03e0ebf4c40c@csgroup.eu>
+Date: Thu, 26 Jun 2025 07:56:10 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
-Content-Type: text/plain; charset=ISO-8859-1
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 0/5] powerpc: Implement masked user access
+To: David Laight <david.laight.linux@gmail.com>,
+ Segher Boessenkool <segher@kernel.crashing.org>
+Cc: Michael Ellerman <mpe@ellerman.id.au>, Nicholas Piggin
+ <npiggin@gmail.com>, Naveen N Rao <naveen@kernel.org>,
+ Madhavan Srinivasan <maddy@linux.ibm.com>,
+ Alexander Viro <viro@zeniv.linux.org.uk>,
+ Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
+ Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
+ Peter Zijlstra <peterz@infradead.org>, Darren Hart <dvhart@infradead.org>,
+ Davidlohr Bueso <dave@stgolabs.net>, Andre Almeida <andrealmeid@igalia.com>,
+ Andrew Morton <akpm@linux-foundation.org>,
+ Dave Hansen <dave.hansen@linux.intel.com>,
+ Linus Torvalds <torvalds@linux-foundation.org>,
+ linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
+ linux-fsdevel@vger.kernel.org, linux-mm@kvack.org
+References: <cover.1750585239.git.christophe.leroy@csgroup.eu>
+ <20250622172043.3fb0e54c@pumpkin>
+ <ff2662ca-3b86-425b-97f8-3883f1018e83@csgroup.eu>
+ <20250624131714.GG17294@gate.crashing.org> <20250624175001.148a768f@pumpkin>
+ <20250624182505.GH17294@gate.crashing.org> <20250624220816.078f960d@pumpkin>
+Content-Language: fr-FR
+From: Christophe Leroy <christophe.leroy@csgroup.eu>
+In-Reply-To: <20250624220816.078f960d@pumpkin>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
-X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
-X-Rspamd-Queue-Id: 7E2012116A
-X-Rspamd-Action: no action
-X-Spam-Flag: NO
-X-Spamd-Result: default: False [-2.01 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	SUSPICIOUS_RECIPS(1.50)[];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	MID_CONTAINS_FROM(1.00)[];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	R_DKIM_ALLOW(-0.20)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	MIME_GOOD(-0.10)[text/plain];
-	MX_GOOD(-0.01)[];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	TO_DN_SOME(0.00)[];
-	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	MIME_TRACE(0.00)[0:+];
-	ARC_NA(0.00)[];
-	FREEMAIL_ENVRCPT(0.00)[gmail.com];
-	FREEMAIL_CC(0.00)[gmail.com,suse.de,bugs.debian.org,vger.kernel.org,lists.linux.dev];
-	RCVD_TLS_ALL(0.00)[];
-	RCVD_COUNT_TWO(0.00)[2];
-	FROM_EQ_ENVFROM(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	RCPT_COUNT_SEVEN(0.00)[9];
-	TAGGED_RCPT(0.00)[];
-	RECEIVED_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:106:10:150:64:167:received];
-	DKIM_TRACE(0.00)[suse.de:+];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[alsa-info_alsa-info.sh:url,linuxfoundation.org:email,msgid.link:url,imap1.dmz-prg2.suse.org:rdns,imap1.dmz-prg2.suse.org:helo,suse.de:mid,suse.de:dkim,suse.de:email]
-X-Spam-Score: -2.01
-X-Spam-Level: 
 
-On Thu, 26 Jun 2025 06:23:40 +0200,
-Salvatore Bonaccorso wrote:
+
+
+Le 24/06/2025 Ã  23:08, David Laight a Ã©critÂ :
+> On Tue, 24 Jun 2025 13:25:05 -0500
+> Segher Boessenkool <segher@kernel.crashing.org> wrote:
 > 
-> Hi Igor,
+>>>> isel (which is base PowerPC, not something "e500" only) is a
+>>>> computational instruction, it copies one of two registers to a third,
+>>>> which of the two is decided by any bit in the condition register.
+>>>
+>>> Does that mean it could be used for all the ppc cpu variants?
+>>
+>> No, only things that implement architecture version of 2.03 or later.
+>> That is from 2006, so essentially everything that is still made
+>> implements it :-)
+>>
+>> But ancient things do not.  Both 970 (Apple G5) and Cell BE do not yet
+>> have it (they are ISA 2.01 and 2.02 respectively).  And the older p5's
+>> do not have it yet either, but the newer ones do.
+
+For book3s64, GCC only use isel with -mcpu=power9 or -mcpu=power10
+
+>>
+>> And all classic PowerPC is ISA 1.xx of course.  Medieval CPUs :-)
 > 
-> On Wed, Jun 25, 2025 at 07:54:42PM -0500, Igor Támara wrote:
-> > Hi Salvatore,
-> > 
-> > 
-> > El mié, 25 jun 2025 a las 13:47, Salvatore Bonaccorso
-> > (<carnil@debian.org>) escribió:
-> > >
-> > > Hi Igor,
-> > >
-> > > [For context, there was a regression report in Debian at
-> > > https://bugs.debian.org/1108069]
-> > >
-> > > On Thu, Jun 19, 2025 at 09:36:13PM -0500, Igor Tamara wrote:
-> > > > Package: src:linux
-> > > > Version: 6.12.32-1
-> > > > Severity: normal
-> > > > Tags: a11y
-> > > >
-> > > > Dear Maintainer,
-> > > >
-> > > > The builtin microphone on my Asus X507UA does not record, is
-> > > > recognized and some time ago it worked on Bookworm with image-6.1.0-31,
-> > > > newer images are able to record when appending snd_hda_intel.model=1043:1271
-> > > > to the boot as a workaround.
-> > > >
-> > > > The images that work with the boot option appended are, but not without
-> > > > it are:
-> > > >
-> > > > linux-image-6.15-amd64
-> > > > linux-image-6.12.32-amd64
-> > > > linux-image-6.1.0-37-amd64
-> > > > linux-image-6.1.0-0.a.test-amd64-unsigned_6.1.129-1a~test_amd64.deb
-> > > > referenced by https://bugs.debian.org/cgi-bin/bugreport.cgi?bug=1100928
-> > > > Also compiled from upstream 6.12.22 and 6.1.133 with the same result
-> > > >
-> > > > The image linux-image-6.1.0-31-amd64 worked properly, the problem was
-> > > > introduced in 129 and the result of the bisect was
-> > > >
-> > > > d26408df0e25f2bd2808d235232ab776e4dd08b9 is the first bad commit
-> > > > commit d26408df0e25f2bd2808d235232ab776e4dd08b9
-> > > > Author: Kuan-Wei Chiu <visitorckw@gmail.com>
-> > > > Date:   Wed Jan 29 00:54:15 2025 +0800
-> > > >
-> > > >     ALSA: hda: Fix headset detection failure due to unstable sort
-> > > >
-> > > >     commit 3b4309546b48fc167aa615a2d881a09c0a97971f upstream.
-> > > >
-> > > >     The auto_parser assumed sort() was stable, but the kernel's sort() uses
-> > > >     heapsort, which has never been stable. After commit 0e02ca29a563
-> > > >     ("lib/sort: optimize heapsort with double-pop variation"), the order of
-> > > >     equal elements changed, causing the headset to fail to work.
-> > > >
-> > > >     Fix the issue by recording the original order of elements before
-> > > >     sorting and using it as a tiebreaker for equal elements in the
-> > > >     comparison function.
-> > > >
-> > > >     Fixes: b9030a005d58 ("ALSA: hda - Use standard sort function in hda_auto_parser.c")
-> > > >     Reported-by: Austrum <austrum.lab@gmail.com>
-> > > >     Closes: https://bugzilla.kernel.org/show_bug.cgi?id=219158
-> > > >     Tested-by: Austrum <austrum.lab@gmail.com>
-> > > >     Cc: stable@vger.kernel.org
-> > > >     Signed-off-by: Kuan-Wei Chiu <visitorckw@gmail.com>
-> > > >     Link: https://patch.msgid.link/20250128165415.643223-1-visitorckw@gmail.com
-> > > >     Signed-off-by: Takashi Iwai <tiwai@suse.de>
-> > > >     Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-> > > >
-> > > >  sound/pci/hda/hda_auto_parser.c | 8 +++++++-
-> > > >  sound/pci/hda/hda_auto_parser.h | 1 +
-> > > >  2 files changed, 8 insertions(+), 1 deletion(-)
-> > > >
-> > > > I'm attaching the output of alsa-info_alsa-info.sh script
-> > > >
-> > > > Please let me know if I can provide more information.
-> > >
-> > > Might you be able to try please the attached patch to see if it fixes
-> > > the issue?
-> > >
-> > 
-> > I recompiled and the mic is recording without issues when running on
-> > 6.1.133 and 6.12.32
+> That make more sense than the list in patch 5/5.
+
+Sorry for the ambiguity. In patch 5/5 I was addressing only powerpc/32, 
+and as far as I know the only powerpc/32 supported by Linux that has 
+isel is the 85xx which has an e500 core.
+
+For powerpc/64 we have less constraint than on powerpc32:
+- Kernel memory starts at 0xc000000000000000
+- User memory stops at 0x0010000000000000
+
+So we can easily use 0x8000000000000000 as demarcation line, which 
+allows a 3 instructions sequence:
+
+	sradi	r9,r3,63   => shirt right algebric: r9 = 0 when r3 >= 0; r9 = -1 
+when r3 < 0
+	andc	r3,r3,r9   => and with complement: r3 unchanged when r9 = 0, r3 = 
+0 when r9 = -1
+	rldimi	r3,r9,0,1  => Rotate left and mask insert: Insert highest bit of 
+r9 into r3
+
+Whereas using isel requires a 4 instructions sequence:
+
+	li	r9, 1		=> load immediate: r9 = 1
+	rotldi	r9, r9, 63	=> rotate left: r9 = 0x8000000000000000
+	cmpld	r3, r9		=> compare logically
+	iselgt	r3, r9, r3	=> integer select greater than: select r3 when result 
+of above compare is <= ; select r9 when result of compare is >
+
 > 
-> Thanks for the confirmation! Takashi, can you apply the proposed
-> change (slightly improved in attached variant to add Reported-by and
-> Closes tags), hopefully getting it into required stable series?
+>>
+>>>> But sure, seen from very far off both isel and cmove can be used to
+>>>> implement the ternary operator ("?:"), are similar in that way :-)
+>>>
+>>> Which is exactly what you want to avoid speculation.
+>>
+>> There are cheaper / simpler / more effective / better ways to get that,
+>> but sure, everything is better than a conditional branch, always :-)
+> 
+> Everything except a TLB miss :-)
+> 
+> And for access_ok() avoiding the conditional is a good enough reason
+> to use a 'conditional move' instruction.
+> Avoiding speculation is actually free.
+> 
 
-Thanks, applied now.
+And on CPUs that are not affected by Spectre and Meltdown like powerpc 
+8xx or powerpc 603, masking the pointer is still worth it as it 
+generates better code, even if the masking involves branching.
+
+That's the reason why I did:
+- e500 (affected by Spectre v1) ==> Use isel ==> 3 instructions sequence:
+
+	lis	r9, TASK_SIZE@h	=> load immediate shifted => r9 = (TASK_SIZE >> 16) 
+<< 16
+	cmplw	r3, r9		=> compare addr with TASK_SIZE
+	iselgt	r3, r9, r3	=> addr = TASK_SIZE when addr > TASK_SIZE; addr = 
+addr when <= TASK_SIZE
+
+For others:
+- If TASK_SIZE <= 0x80000000 and kernel >= 0x80000000 ==> 3 instructions 
+sequence similar to the 64 bits one above:
+
+	srawi	r9,r3,63
+	andc	r3,r3,r9
+	rlwimi	r3,r9,0,0,0
+
+- Otherwise, if speculation mitigation is required (e600), use the 
+6-instructions masking sequence (r3 contains the address to mask)
+
+	srwi	r9,r3,17	=> shift right: shift r3 by 17 to keep 15 bits (positive 
+16 bits)
+	subfic	r9,r9,22527	=> sub from immediate: r9 = (TASK_SIZE >> 17) - r9 
+=> r9 < 0 when r3 is greater
+	srawi	r9,r9,31	=> shift right algebric: r9 = 0 when r9 >= 0; r9 = -1 
+when r9 < 0
+	andis.	r10,r9,45056	=> and immediat shifted: r10 = r9 and upper part of 
+TASK_SIZE => r10 = TASK_SIZE when r3 > TASK_SIZE, r10 = 0 otherwise
+	andc	r3,r3,r9	=> and with complement: r3 is unchanged when r9 = 0 so 
+when r3 <= TASK_SIZE, r3 is cleared when r9 = -1 so when r3 > TASK_SIZE
+	or	r3,r3,r10	=> r3 = r3 | r10
 
 
-Takashi
+- If no speculation mitigation is required, let GCC do as it wants
+
+List of affected CPUs is available here: 
+https://docs.nxp.com/bundle/GUID-805CC0EA-4001-47AD-86CD-4F340751F6B7/page/GUID-17B5D04F-6471-4EC6-BEB9-DE4D0AFA034A.html
 
