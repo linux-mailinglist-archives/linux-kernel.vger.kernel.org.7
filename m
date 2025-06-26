@@ -1,107 +1,130 @@
-Return-Path: <linux-kernel+bounces-704537-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-704542-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 31A2BAE9EA5
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Jun 2025 15:25:47 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 16474AE9EB1
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Jun 2025 15:26:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0EF741C43EC3
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Jun 2025 13:25:25 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9EB731C44111
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Jun 2025 13:26:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A289028B7CC;
-	Thu, 26 Jun 2025 13:24:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3596228F534;
+	Thu, 26 Jun 2025 13:25:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="K4zMmK/P"
-Received: from mail-oa1-f47.google.com (mail-oa1-f47.google.com [209.85.160.47])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="rycJ7FKl"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5358E28CF56
-	for <linux-kernel@vger.kernel.org>; Thu, 26 Jun 2025 13:24:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8F99C28BAB1;
+	Thu, 26 Jun 2025 13:25:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750944288; cv=none; b=pQrCKPLZVLYxU7L1GnTjYRZmzUiVyJCTN2VFXIdPkhZf7ALfXY848BN/wqmUOLa47/4q5+hUAhjzgFXkMh9svPn4NyiPL3HA6mCRvfVMsckwZQqrwDlDSh/MsY6DWesOqOE7LlRGXh5XZV4w+LGow1clCP0QQr2COKmaisDV5OY=
+	t=1750944350; cv=none; b=ozQz6aeSF7YgO7ycswFLuZhoMmHa6mQ5ZH5IWKGSWkF1rkJ+/xsk/fWwVT9Ngd6Q3z6Z83LfzQNUzigW1uOCqnt+G5KcyKqmWmrRR21yEATPCSwHsgdyA2/DYj5eoYzMfECjtfCDpIpGiTLA4Rh5Pmy7+f33PzcyZ8rBmIaJEik=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750944288; c=relaxed/simple;
-	bh=10uMTxglxknsiw2t3ZQh4FroAAiQNW+3m4lfHYqa4NE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ZzIJ9dRNtfA5RaDYayOokIKNxU124+C+K2/swKiLk9P9bPdaoxP5MHQPhGgJtvJ2ZErlTvYvGDJ83T7mzaqjCPHgbJ0gLATVBX2j7aGnPr83rg/Zq1UVhWzmaA0oqO7/k+K/nKFCtja+Gw9RWT6U4VBluE6bSvuaN6cwOwndyAE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=K4zMmK/P; arc=none smtp.client-ip=209.85.160.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-oa1-f47.google.com with SMTP id 586e51a60fabf-2ea58f008e9so875969fac.0
-        for <linux-kernel@vger.kernel.org>; Thu, 26 Jun 2025 06:24:46 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1750944285; x=1751549085; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=QZlXkSD04zlKolE5r+OxRCc3dIBq/n6l6fhQYaRGqmU=;
-        b=K4zMmK/PpZJ4azhGeAaQBhjgVEqJqamRoMRpcyeRytdXTenaRYYzv3MYjqNjcr9AkG
-         NRY9t97mD2jozLp+7XfaliZhhNdEvrA+zncMd/AM/6SrUrUIuJLS00ttSIa08WUv2wLE
-         FbdXpDWZ+g4qdLQtoYmot1LKdMCbG2raltHnUnfQ9cEPSFA9m3+CXLdGdq5pCj5k6BsV
-         qr9u2//c4d0CtnnmI5ZQnCNMdkXj/ZDoHuHbGyxPxTnvHFI6u77a/0kTk9I90C49Ok1X
-         v3ZmzulW/dpXsYoOlI87JX7J7mfT23QqxYjdxJPyfxhYi9go1YIjg+sn03Z2TIUd3XJf
-         AWZg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1750944285; x=1751549085;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=QZlXkSD04zlKolE5r+OxRCc3dIBq/n6l6fhQYaRGqmU=;
-        b=PbIZXOilVvNDS+Xc1q9+4o8fLTM4jJaz7DRwC2AEbTMcdSY9c02RXmJd0xYTpydPJ7
-         n+UBhPvvhQ2+USln4FiagVCNwmA2SqxTY4oTJI0jNQBqrK1Yfx7LbpwQYI0YV3tLFIct
-         Mjo0crdrMbpvufwpGX7cqrcuz91kesK6exSINM3q/eN1gE3um9+IxGK2QpiFpIepFPS7
-         SIDeCJFIsrpq04doVAeTSnBvVfRFboifLFZjv8NvJyIiSjupWrtCmwk5IL673PhC7wuN
-         5fRvASF2vftcOm05tyERtrXOtozmHjHnYo/cEMVBiws6RHV0wkkow5m9ZaIqmpkT5azQ
-         M+EA==
-X-Forwarded-Encrypted: i=1; AJvYcCXMJXTKaRFyvwJHODPGHK60j6lSFz/CDdeRp3Py6ugEHZnZMmw+2paW2oOA17lS4MkmNkFjzkHCcfSnLnQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxbdoG6fk2OKSaRFJK0LKNeMXCD0QbLWBZzFOppFFcnWLgiHdlj
-	jlSfp4nyfVApL1l+XDjSqOKdh+zxXLXMtb+P2udJpxm1WYnD6hYPtX1T0xcoy2mINbA=
-X-Gm-Gg: ASbGncvngC7EJovKosZ6l3DMIAl+0mHjwAlvopQ2pxwUJNqhRZFNULHqiwxJ1yfFUx8
-	UqLrSs7oM8sdR0QS5baTyXZQ6xtnRqK+rg3nTq+dg16RRS90NzSbbRkue4kUKG8uu62VsbLRM2D
-	EpiibmsUqbD3SR0BrlDFvMVSGBWVOOl8QUIrCwSL0IcQgV113jFfJlkeCvUMXrjUPJkRsHCbsuM
-	79g1K/WxlO2Zcp4RBLxM+hsbnTHmuEI0PLx+qYNSsFal3QZ9DdF5Q6W1YbEQx2v/CYf2kmA/JHE
-	c1lWFk04zMq1XlHrQ+g8+aftUdhnL/hdlr3Rafc0fMTltovKPx9we5H1btF7kd+H//4=
-X-Google-Smtp-Source: AGHT+IGHmrXQmGgiM1O4FMJI4ioJnomDeQhk1q4uAMvdGJQNa+bA3kRfvZeSRk6fLbxwCVrLnDbVRA==
-X-Received: by 2002:a05:6870:898e:b0:2e9:11c9:1093 with SMTP id 586e51a60fabf-2efb27ce26dmr4871522fac.31.1750944285390;
-        Thu, 26 Jun 2025 06:24:45 -0700 (PDT)
-Received: from localhost ([2603:8080:b800:f700:3ee4:904:206f:ad8])
-        by smtp.gmail.com with ESMTPSA id 46e09a7af769-73a90c92150sm2575206a34.39.2025.06.26.06.24.44
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 26 Jun 2025 06:24:44 -0700 (PDT)
-Date: Thu, 26 Jun 2025 16:24:43 +0300
-From: Dan Carpenter <dan.carpenter@linaro.org>
-To: Su Hui <suhui@nfschina.com>
-Cc: akpm@linux-foundation.org, bhe@redhat.com, vgoyal@redhat.com,
-	dyoung@redhat.com, kexec@lists.infradead.org,
-	linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-	kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH v2] fs/proc/vmcore: a few cleanups for
- vmcore_add_device_dump
-Message-ID: <e891bba8-9f67-47c6-8f84-a62abe35f837@suswa.mountain>
-References: <20250626105440.1053139-1-suhui@nfschina.com>
+	s=arc-20240116; t=1750944350; c=relaxed/simple;
+	bh=X8oqV9/hrJLm7FxNpugISZbe6ORT3aK7Xh1y/oYOuEk=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=DYET2xS/gNhCsiflA6b5HnUt6P5JIeKXQHOj++jVDq7BRmUofczPRGgKfhNUfKQbHmJMMN/TrSIJJs/utUaRvW0t0s/xeVrcUmL+XYSdx+WNfYcP/Plz6FJBENj3mIDpvNjrTssbjCniAAw5Bao04CnTSku3vfUN7Ld+kbrgEcU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=rycJ7FKl; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5077BC4CEEB;
+	Thu, 26 Jun 2025 13:25:47 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1750944350;
+	bh=X8oqV9/hrJLm7FxNpugISZbe6ORT3aK7Xh1y/oYOuEk=;
+	h=From:To:Cc:Subject:Date:From;
+	b=rycJ7FKl8OUvefVTh9Q5Y6nkQPQaDzp0iy1GGqKaxV0gHJqTRfRb9IjumxKRgP6d+
+	 OZG4/rQQXlDfR4KrhYsUy+a1NS/vEAt5N78btw5XgOlsQB/ugilvUmNyRvjPV4ngeU
+	 aGXhRT4kx3vffTtygk7OUO+/Le+c9Yg46zCle7FRBgwX5+iptLLiBpPMIxVGU0IJzB
+	 Z1zRUiOrs7B+WRpnZQNUnQwfolHHIsacUvB1KlMO4rp4MX8dTQ/A7yssnblN7e+Sqw
+	 3DQjk73tzA++u1YDbk+tGJzxf47ZT2x9yEJa7Yu0StFd8qi7XFuKM9srNRYdvWPV69
+	 6MHHN1ON/n4jQ==
+From: Danilo Krummrich <dakr@kernel.org>
+To: gregkh@linuxfoundation.org,
+	rafael@kernel.org,
+	ojeda@kernel.org,
+	alex.gaynor@gmail.com,
+	boqun.feng@gmail.com,
+	gary@garyguo.net,
+	bjorn3_gh@protonmail.com,
+	lossin@kernel.org,
+	a.hindborg@kernel.org,
+	aliceryhl@google.com,
+	tmgross@umich.edu
+Cc: rust-for-linux@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Danilo Krummrich <dakr@kernel.org>
+Subject: [PATCH] rust: devres: require T: Send for Devres
+Date: Thu, 26 Jun 2025 15:24:46 +0200
+Message-ID: <20250626132544.72866-1-dakr@kernel.org>
+X-Mailer: git-send-email 2.49.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250626105440.1053139-1-suhui@nfschina.com>
+Content-Transfer-Encoding: 8bit
 
-On Thu, Jun 26, 2025 at 06:54:41PM +0800, Su Hui wrote:
-> There are two cleanups for vmcore_add_device_dump(). Return -ENOMEM
-> directly rather than goto the label to simplify the code. Using
-> scoped_guard() to simplify the lock/unlock code.
-> 
-> Signed-off-by: Su Hui <suhui@nfschina.com>
-> ---
+Due to calling Revocable::revoke() from Devres::devres_callback() T may
+be dropped from Devres::devres_callback() and hence must be Send.
 
-Reviewed-by: Dan Carpenter <dan.carpenter@linaro.org>
+Fix this by adding the corresponding bound to Devres and DevresInner.
 
-regards,
-dan carpenter
+Reported-by: Boqun Feng <boqun.feng@gmail.com>
+Closes: https://lore.kernel.org/lkml/aFzI5L__OcB9hqdG@Mac.home/
+Fixes: 76c01ded724b ("rust: add devres abstraction")
+Signed-off-by: Danilo Krummrich <dakr@kernel.org>
+---
+ rust/kernel/devres.rs | 10 +++++-----
+ 1 file changed, 5 insertions(+), 5 deletions(-)
+
+diff --git a/rust/kernel/devres.rs b/rust/kernel/devres.rs
+index 57502534d985..8ede607414fd 100644
+--- a/rust/kernel/devres.rs
++++ b/rust/kernel/devres.rs
+@@ -18,7 +18,7 @@
+ };
+ 
+ #[pin_data]
+-struct DevresInner<T> {
++struct DevresInner<T: Send> {
+     dev: ARef<Device>,
+     callback: unsafe extern "C" fn(*mut c_void),
+     #[pin]
+@@ -95,9 +95,9 @@ struct DevresInner<T> {
+ /// # Ok(())
+ /// # }
+ /// ```
+-pub struct Devres<T>(Arc<DevresInner<T>>);
++pub struct Devres<T: Send>(Arc<DevresInner<T>>);
+ 
+-impl<T> DevresInner<T> {
++impl<T: Send> DevresInner<T> {
+     fn new(dev: &Device<Bound>, data: T, flags: Flags) -> Result<Arc<DevresInner<T>>> {
+         let inner = Arc::pin_init(
+             pin_init!( DevresInner {
+@@ -175,7 +175,7 @@ fn remove_action(this: &Arc<Self>) -> bool {
+     }
+ }
+ 
+-impl<T> Devres<T> {
++impl<T: Send> Devres<T> {
+     /// Creates a new [`Devres`] instance of the given `data`. The `data` encapsulated within the
+     /// returned `Devres` instance' `data` will be revoked once the device is detached.
+     pub fn new(dev: &Device<Bound>, data: T, flags: Flags) -> Result<Self> {
+@@ -247,7 +247,7 @@ pub fn try_access_with_guard<'a>(&'a self, guard: &'a rcu::Guard) -> Option<&'a
+     }
+ }
+ 
+-impl<T> Drop for Devres<T> {
++impl<T: Send> Drop for Devres<T> {
+     fn drop(&mut self) {
+         // SAFETY: When `drop` runs, it is guaranteed that nobody is accessing the revocable data
+         // anymore, hence it is safe not to wait for the grace period to finish.
+
+base-commit: 86731a2a651e58953fc949573895f2fa6d456841
+-- 
+2.49.0
 
 
