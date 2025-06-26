@@ -1,123 +1,192 @@
-Return-Path: <linux-kernel+bounces-704210-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-704203-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 932ADAE9AD0
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Jun 2025 12:08:28 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E04B0AE9AC0
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Jun 2025 12:06:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B321B3BFF28
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Jun 2025 10:06:45 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AE5DB6A0E18
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Jun 2025 10:05:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 93A52223316;
-	Thu, 26 Jun 2025 10:06:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 997F0217716;
+	Thu, 26 Jun 2025 10:05:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=onurozkan.dev header.i=@onurozkan.dev header.b="Z4gyJwgj"
-Received: from forward103b.mail.yandex.net (forward103b.mail.yandex.net [178.154.239.150])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="rCZcRh8p"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 768D8221FD2;
-	Thu, 26 Jun 2025 10:06:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.154.239.150
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E263D221FB2
+	for <linux-kernel@vger.kernel.org>; Thu, 26 Jun 2025 10:05:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750932367; cv=none; b=odzwAFGp3uj0KSKTZcjAihp7hDMMB0dbE8pX52D41sqpJef/sPogipCdzGIdUMtqAqPhiEOB6NLmgzP8IYE2LQkE8Jr5zelP0SsdBdBipUx8Lu0RpdZ/0XuI844KgyykVARBn7L9I1WPjt/dg8yIC3vjB06VghY1Wp0woDbTfEE=
+	t=1750932315; cv=none; b=upBVTUucVYRG/LjNySHFHv1E9qZ/v2Iunhi95mOXZnwNFrmZipQWfqDHDJGWMDiPaBvVO1EI1QvqVthDtMJbmH73u4+1eR2Nc9+DAcybojG3o134ePPo+f3ur+IXJZKt821s/BYROxNY+Z7Gx7espA9lJbvVunz01LqkzA9nGt4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750932367; c=relaxed/simple;
-	bh=GJyOYBeBxAOaaQMlngdo/qAS2pBRzdCbDeXsTknGx4w=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=GDbkNaaR6dqAKZ+omX5Y55jA8Lakx3/aXpEO+C5M0ZQUPP7wyDjz0wJzgtMWFcWGJG0vMrGtyg3tXPiMqtiCTfmSbM7mpXUsjpFQDPWKWZeuVlSfGdnH/uQa/a32qfR32zPYsAMFSUY+6/KHshuZYaHjxae+gs6GnT9IK54ghqk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=onurozkan.dev; spf=pass smtp.mailfrom=onurozkan.dev; dkim=pass (1024-bit key) header.d=onurozkan.dev header.i=@onurozkan.dev header.b=Z4gyJwgj; arc=none smtp.client-ip=178.154.239.150
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=onurozkan.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=onurozkan.dev
-Received: from mail-nwsmtp-smtp-production-main-74.sas.yp-c.yandex.net (mail-nwsmtp-smtp-production-main-74.sas.yp-c.yandex.net [IPv6:2a02:6b8:c1e:299f:0:640:8fbe:0])
-	by forward103b.mail.yandex.net (Yandex) with ESMTPS id 9157D60B26;
-	Thu, 26 Jun 2025 13:06:03 +0300 (MSK)
-Received: by mail-nwsmtp-smtp-production-main-74.sas.yp-c.yandex.net (smtp/Yandex) with ESMTPSA id R5SeXwKLg8c0-J9H8A4Mi;
-	Thu, 26 Jun 2025 13:06:02 +0300
-X-Yandex-Fwd: 1
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=onurozkan.dev;
-	s=mail; t=1750932362;
-	bh=kqMshCxPmW4F8K7H4VL6x56CsNX+GRFgU1LhbTWjh9M=;
-	h=Message-ID:Date:In-Reply-To:Cc:Subject:References:To:From;
-	b=Z4gyJwgjYAUli756zmvo2jRbrLkMVpzwlLO7EhKLDKm4EPGXCW7SAWDPk9sB4TpbY
-	 S9bPtm1/3Lk7qF1ki07xwwwuuD15gNobC/mMxYK6+IPlXQ/lsq7ONnHJrweIpQZfP8
-	 GI5g9qcCityQTziF7DjFoRc83njKOK3q71+cIasI=
-Authentication-Results: mail-nwsmtp-smtp-production-main-74.sas.yp-c.yandex.net; dkim=pass header.i=@onurozkan.dev
-From: =?UTF-8?q?Onur=20=C3=96zkan?= <work@onurozkan.dev>
-To: linux-kernel@vger.kernel.org,
-	linux-pm@vger.kernel.org,
-	linux-kselftest@vger.kernel.org,
-	kunit-dev@googlegroups.com
-Cc: airlied@gmail.com,
-	simona@ffwll.ch,
-	ojeda@kernel.org,
-	alex.gaynor@gmail.com,
-	boqun.feng@gmail.com,
-	gary@garyguo.net,
-	bjorn3_gh@protonmail.com,
-	lossin@kernel.org,
-	a.hindborg@kernel.org,
-	aliceryhl@google.com,
-	tmgross@umich.edu,
-	rafael@kernel.org,
-	viresh.kumar@linaro.org,
-	gregkh@linuxfoundation.org,
-	maarten.lankhorst@linux.intel.com,
-	mripard@kernel.org,
-	tzimmermann@suse.de,
-	davidgow@google.com,
-	nm@ti.com,
-	onur-ozkan <work@onurozkan.dev>
-Subject: [PATCH 2/2] rust: drop unnecessary lints caught by `#[expect(...)]`
-Date: Thu, 26 Jun 2025 13:04:48 +0300
-Message-ID: <20250626100448.27921-3-work@onurozkan.dev>
-X-Mailer: git-send-email 2.50.0
-In-Reply-To: <20250626100448.27921-1-work@onurozkan.dev>
-References: <20250626100448.27921-1-work@onurozkan.dev>
+	s=arc-20240116; t=1750932315; c=relaxed/simple;
+	bh=I0Wn0v0oJ34lZSaquWxq7quZ9zp2CkhUtsLyYrYJvuQ=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
+	 In-Reply-To:To:Cc; b=ZdDuviGoqRGtFHX9c2BqsHOickOzhiRTDhUkjvvuzGb7YOxX7OP0qPGEAA/as2LJpEohTVH8aaA6YVRO21iyTXCwuVTJ0Pr+UelufSjJF67OynJfn6/79nnqkxZ2S2sH0PL+lPsecqdxbKNJdJViSDGDluG1+AiaJnfFcNlAz2g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=rCZcRh8p; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2FE79C4CEEE;
+	Thu, 26 Jun 2025 10:05:14 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1750932314;
+	bh=I0Wn0v0oJ34lZSaquWxq7quZ9zp2CkhUtsLyYrYJvuQ=;
+	h=From:Date:Subject:References:In-Reply-To:To:Cc:From;
+	b=rCZcRh8pdYPUUj21mdLOejy1OaEe2xTSf8FD5SYN3cNtxJe30EkeEGzyZrV2YJjjV
+	 UkA7kdUulfbFocNm6PYg0inAowfWM7238iDceto7Y4e6jWaX4RA7UzS9w3yW8/oU+x
+	 BUUHHAmbutv6Q9zm2+fiMYkviRICI/VA9jFeKi7zls+U7q7+nQplht7Byficl8W3y3
+	 E5hEdDYCsr6GXef+vxPogBilVh1Li4EqE9EZCPkIUmrVoHMVUyhG3kPWd1BcKXo4rd
+	 Unoiq7Fpb845YoGYZmWybNtoJPXN14HCPsH+VEKmaut8SDXGNO/xAkhrOv6qhe8JiN
+	 ufdlSMxLbX38A==
+From: Maxime Ripard <mripard@kernel.org>
+Date: Thu, 26 Jun 2025 12:05:00 +0200
+Subject: [PATCH v2 2/5] drm/panel: panel-simple: make panel_dpi_probe
+ return a panel_desc
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20250626-drm-panel-simple-fixes-v2-2-5afcaa608bdc@kernel.org>
+References: <20250626-drm-panel-simple-fixes-v2-0-5afcaa608bdc@kernel.org>
+In-Reply-To: <20250626-drm-panel-simple-fixes-v2-0-5afcaa608bdc@kernel.org>
+To: Neil Armstrong <neil.armstrong@linaro.org>, 
+ Jessica Zhang <quic_jesszhan@quicinc.com>, 
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
+ Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, 
+ Simona Vetter <simona@ffwll.ch>, Luca Ceresoli <luca.ceresoli@bootlin.com>, 
+ Anusha Srivatsa <asrivats@redhat.com>, 
+ Francesco Dolcini <francesco@dolcini.it>
+Cc: dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org, 
+ Maxime Ripard <mripard@kernel.org>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=openpgp-sha256; l=3848; i=mripard@kernel.org;
+ h=from:subject:message-id; bh=I0Wn0v0oJ34lZSaquWxq7quZ9zp2CkhUtsLyYrYJvuQ=;
+ b=owGbwMvMwCmsHn9OcpHtvjLG02pJDBmx0gHxty7bMOUVOtoyrzh4L4lf7AfX8dfTmYwL5uUah
+ T+dlOjSMZWFQZiTQVZMkeWJTNjp5e2LqxzsV/6AmcPKBDKEgYtTACZSbMVYH557eK9F68KJzR+r
+ VZMe/PC3WL+s8lKzwY/pChqstllLOh/qJMxTEpvA/L0j2MahXjCNsT7iwPMVwS1fdY9wfrjwkz3
+ kzT6LnB1qk6Pvfa5+f3TRO8l1bS+En0+4foLpy9IbPp5+q7sB
+X-Developer-Key: i=mripard@kernel.org; a=openpgp;
+ fpr=BE5675C37E818C8B5764241C254BCFC56BF6CE8D
 
-From: onur-ozkan <work@onurozkan.dev>
+If the panel-simple driver is probed from a panel-dpi compatible, the
+driver will use an empty panel_desc structure as a descriminant. It
+will then allocate and fill another panel_desc as part of its probe.
 
-They are no longer needed.
+However, that allocation needs to happen after the panel_simple
+structure has been allocated, since panel_dpi_probe(), the function
+doing the panel_desc allocation and initialization, takes a panel_simple
+pointer as an argument.
 
-Signed-off-by: onur-ozkan <work@onurozkan.dev>
+This pointer is used to fill the panel_simple->desc pointer that is
+still initialized with the empty panel_desc when panel_dpi_probe() is
+called.
+
+Since commit de04bb0089a9 ("drm/panel/panel-simple: Use the new
+allocation in place of devm_kzalloc()"), we will need the panel
+connector type found in panel_desc to allocate panel_simple. This
+creates a circular dependency where we need panel_desc to create
+panel_simple, and need panel_simple to create panel_desc.
+
+Let's break that dependency by making panel_dpi_probe simply return the
+panel_desc it initialized and move the panel_simple->desc assignment to
+the caller.
+
+This will not fix the breaking commit entirely, but will move us towards
+the right direction.
+
+Fixes: de04bb0089a9 ("drm/panel/panel-simple: Use the new allocation in place of devm_kzalloc()")
+Signed-off-by: Maxime Ripard <mripard@kernel.org>
 ---
- rust/kernel/cpufreq.rs | 1 -
- rust/kernel/error.rs   | 1 -
- 2 files changed, 2 deletions(-)
+ drivers/gpu/drm/panel/panel-simple.c | 22 +++++++++++-----------
+ 1 file changed, 11 insertions(+), 11 deletions(-)
 
-diff --git a/rust/kernel/cpufreq.rs b/rust/kernel/cpufreq.rs
-index 7b20dff23a68..97de9b0573da 100644
---- a/rust/kernel/cpufreq.rs
-+++ b/rust/kernel/cpufreq.rs
-@@ -907,7 +907,6 @@ fn register_em(_policy: &mut Policy) {
- /// or CPUs, so it is safe to share it.
- unsafe impl<T: Driver> Sync for Registration<T> {}
+diff --git a/drivers/gpu/drm/panel/panel-simple.c b/drivers/gpu/drm/panel/panel-simple.c
+index 0a3b26bb4d731c54614e24e38018c308acd5367a..89188e683822f9202ec580c9a294e42083b9704a 100644
+--- a/drivers/gpu/drm/panel/panel-simple.c
++++ b/drivers/gpu/drm/panel/panel-simple.c
+@@ -430,12 +430,11 @@ static const struct drm_panel_funcs panel_simple_funcs = {
+ 	.get_timings = panel_simple_get_timings,
+ };
  
--#[expect(clippy::non_send_fields_in_send_ty)]
- /// SAFETY: Registration with and unregistration from the cpufreq subsystem can happen from any
- /// thread.
- unsafe impl<T: Driver> Send for Registration<T> {}
-diff --git a/rust/kernel/error.rs b/rust/kernel/error.rs
-index 1ff2d57c2f14..05c6e71c0afb 100644
---- a/rust/kernel/error.rs
-+++ b/rust/kernel/error.rs
-@@ -413,7 +413,6 @@ pub fn from_err_ptr<T>(ptr: *mut T) -> Result<*mut T> {
-         // SAFETY: The FFI function does not deref the pointer.
-         let err = unsafe { bindings::PTR_ERR(const_ptr) };
+ static struct panel_desc panel_dpi;
  
--        #[expect(clippy::unnecessary_cast)]
-         // CAST: If `IS_ERR()` returns `true`,
-         // then `PTR_ERR()` is guaranteed to return a
-         // negative value greater-or-equal to `-bindings::MAX_ERRNO`,
+-static int panel_dpi_probe(struct device *dev,
+-			   struct panel_simple *panel)
++static struct panel_desc *panel_dpi_probe(struct device *dev)
+ {
+ 	struct display_timing *timing;
+ 	const struct device_node *np;
+ 	struct panel_desc *desc;
+ 	unsigned int bus_flags;
+@@ -443,21 +442,21 @@ static int panel_dpi_probe(struct device *dev,
+ 	int ret;
+ 
+ 	np = dev->of_node;
+ 	desc = devm_kzalloc(dev, sizeof(*desc), GFP_KERNEL);
+ 	if (!desc)
+-		return -ENOMEM;
++		return ERR_PTR(-ENOMEM);
+ 
+ 	timing = devm_kzalloc(dev, sizeof(*timing), GFP_KERNEL);
+ 	if (!timing)
+-		return -ENOMEM;
++		return ERR_PTR(-ENOMEM);
+ 
+ 	ret = of_get_display_timing(np, "panel-timing", timing);
+ 	if (ret < 0) {
+ 		dev_err(dev, "%pOF: no panel-timing node found for \"panel-dpi\" binding\n",
+ 			np);
+-		return ret;
++		return ERR_PTR(ret);
+ 	}
+ 
+ 	desc->timings = timing;
+ 	desc->num_timings = 1;
+ 
+@@ -471,13 +470,11 @@ static int panel_dpi_probe(struct device *dev,
+ 	desc->bus_flags = bus_flags;
+ 
+ 	/* We do not know the connector for the DT node, so guess it */
+ 	desc->connector_type = DRM_MODE_CONNECTOR_DPI;
+ 
+-	panel->desc = desc;
+-
+-	return 0;
++	return desc;
+ }
+ 
+ #define PANEL_SIMPLE_BOUNDS_CHECK(to_check, bounds, field) \
+ 	(to_check->field.typ >= bounds->field.min && \
+ 	 to_check->field.typ <= bounds->field.max)
+@@ -611,14 +608,17 @@ static int panel_simple_probe(struct device *dev, const struct panel_desc *desc)
+ 			return -EPROBE_DEFER;
+ 	}
+ 
+ 	if (desc == &panel_dpi) {
+ 		/* Handle the generic panel-dpi binding */
+-		err = panel_dpi_probe(dev, panel);
+-		if (err)
++		desc = panel_dpi_probe(dev);
++		if (IS_ERR(desc)) {
++			err = PTR_ERR(desc);
+ 			goto free_ddc;
+-		desc = panel->desc;
++		}
++
++		panel->desc = desc;
+ 	} else {
+ 		if (!of_get_display_timing(dev->of_node, "panel-timing", &dt))
+ 			panel_simple_parse_panel_timing_node(dev, panel, &dt);
+ 	}
+ 
+
 -- 
-2.50.0
+2.49.0
 
 
