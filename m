@@ -1,104 +1,81 @@
-Return-Path: <linux-kernel+bounces-705588-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-705555-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1FFD3AEAB40
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Jun 2025 02:01:51 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E6581AEAAFD
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Jun 2025 01:55:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 859854E41C4
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Jun 2025 00:01:51 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 48E5C4E28F4
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Jun 2025 23:55:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 52A61273D6D;
-	Thu, 26 Jun 2025 23:56:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 277A22288D5;
+	Thu, 26 Jun 2025 23:55:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="bqd+umBd"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="DwXT7Fbk"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9EDAA273808;
-	Thu, 26 Jun 2025 23:56:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7EFB81F8724;
+	Thu, 26 Jun 2025 23:55:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750982192; cv=none; b=kxUp7+ypeYeqk7P/M3S0V0NT6//vH9xrftMIa5Kz8/ACfTb+/Aih8+w0m/NdgPg/zU/TK1HE7DHCO477uxNhe6K+2fc6tg0/599X2Dg+qWg9rrrjK2aKsZA6L/8FDak/YGTuOodLBKeYjc2R3C5KEMo41Gmh68RIEOyF4VFkzcU=
+	t=1750982121; cv=none; b=W65/rZDleVuHjHc2lBaYtLo1oaH4kQNgifhmJSgk3NJltKs6eiKUqzAR5TkPKu3l79v3b3t8OoGnYe59XH8yadv36qlGhRSsF82fRBSAyPfrRuIPLBN8zCQBlxB9VTzTPM86LlyAoHHVg8s5eY9+pYhVD7PU311emctPOtp9Jn0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750982192; c=relaxed/simple;
-	bh=/dfMmZtag0A54opwP96KSw4jAI0xUbayHj6ESsEwguo=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=d8anIKb0yKj7yimnJJq7uSXfatxQlpU56kI6P+pY/14bSMtOxGbMrQDDnTwPGiV+DvihHQjzgH+d/sVTf+MazfRXAhHD/SCcT8D9VnADSsjRM2zrpVOJmHSkoDmX55brbrrxRCbL0kUE9agWduI+n1HvbvScHSlcYNqeyihfx+8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=bqd+umBd; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id EB990C4CEF3;
-	Thu, 26 Jun 2025 23:56:31 +0000 (UTC)
+	s=arc-20240116; t=1750982121; c=relaxed/simple;
+	bh=IQ4gPjgm+BlfQlfBkH4V119fWEcuJOoQY3dYUFLsEvs=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=CKCC+O3XCVkqbzx6WHYwQubbbT6E3oTsZQRC0vQzdyRc3/bCsqdysMsWrGX5dtg6fIL83NQt1h1U4Iqi01Tuwk1fEP6zuN5miqNpEnkH2P6FuvyYKGEfWGJDw6SMKdq5n9+w6/dY/9WmIVHz7ndCZMyV1qrQdCzjVS2D+vWMCeE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=DwXT7Fbk; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id F369BC4CEEB;
+	Thu, 26 Jun 2025 23:55:17 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1750982192;
-	bh=/dfMmZtag0A54opwP96KSw4jAI0xUbayHj6ESsEwguo=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=bqd+umBdA8XSMD+BFUE/aYo++Wq4b/omYiv0zwWBEMZYbKsHUWbCyChNyQzS6ZDQY
-	 VCG038H/COutCjublnAZyh8BhRiEzuzcmNm5Y+oiqT1NH8oafD9H0WO1UmM7ue4W1u
-	 hDiNDykOswmWeWaWYi91iz4zhB4qwkN8UqARz2FlG0y1d7Vh33SFoUpOCR34jjF8sE
-	 Oagi44DaSYsaY4KBB8dI9x3zJfVFiILIthQXX/5qTgA5z9VE1nP7bXyHuijStXEdue
-	 vYRcGyliEJ00BMTlGZGFE13Cc7LWmOrKMOqHbyCdG1qfosJi2VPUzlYuwd+uA7ybch
-	 0AlSGNq/vjMeg==
-From: Josh Poimboeuf <jpoimboe@kernel.org>
-To: x86@kernel.org
-Cc: linux-kernel@vger.kernel.org,
-	Petr Mladek <pmladek@suse.com>,
-	Miroslav Benes <mbenes@suse.cz>,
-	Joe Lawrence <joe.lawrence@redhat.com>,
-	live-patching@vger.kernel.org,
-	Song Liu <song@kernel.org>,
-	laokz <laokz@foxmail.com>,
-	Jiri Kosina <jikos@kernel.org>,
-	Marcos Paulo de Souza <mpdesouza@suse.com>,
-	Weinan Liu <wnliu@google.com>,
-	Fazla Mehrab <a.mehrab@bytedance.com>,
-	Chen Zhongjin <chenzhongjin@huawei.com>,
-	Puranjay Mohan <puranjay@kernel.org>,
-	Dylan Hatch <dylanbhatch@google.com>
-Subject: [PATCH v3 30/64] objtool: Simplify reloc offset calculation in unwind_read_hints()
-Date: Thu, 26 Jun 2025 16:55:17 -0700
-Message-ID: <81f34e12846bc8a7cda1ec54d5dfc012c0314587.1750980517.git.jpoimboe@kernel.org>
-X-Mailer: git-send-email 2.49.0
-In-Reply-To: <cover.1750980516.git.jpoimboe@kernel.org>
-References: <cover.1750980516.git.jpoimboe@kernel.org>
+	s=k20201202; t=1750982118;
+	bh=IQ4gPjgm+BlfQlfBkH4V119fWEcuJOoQY3dYUFLsEvs=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=DwXT7FbkOMuUr58MgAdbvcMAXsnJVO8rVetWPfdmnSIuwRVonJWbZzTHrl5oEJZF1
+	 NetH/ep/H0hyjgc4L/aAri/y2RO3eW1+cv0ys8teVRlvFhD1gwH/BXpcTv1thrQzjR
+	 Z887RJFvWtpARAKfjFesq+nB+wL9l1AOXN61kjjbC37FX3XAutNAmVvbac1/lyzmuW
+	 ErCI+S45xw6j52JPppF+q4x5lh4qzTQ3zPAG6UyZolXzDD7im4OSld++Xgst2jmFk6
+	 Vcc7bSSt5lWFTFL+K+OdMgcnTkXIXBCg1Vh+Qjksvj4o57l0wVxOmrhE/TKb1Pc2bx
+	 3Ch7dS8KHUq8Q==
+Date: Thu, 26 Jun 2025 18:55:17 -0500
+From: "Rob Herring (Arm)" <robh@kernel.org>
+To: Luca Weiss <luca.weiss@fairphone.com>
+Cc: Konrad Dybcio <konradybcio@kernel.org>, linux-arm-msm@vger.kernel.org,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Vinod Koul <vkoul@kernel.org>,
+	Kishon Vijay Abraham I <kishon@kernel.org>,
+	Abel Vesa <abel.vesa@linaro.org>, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-phy@lists.infradead.org,
+	Conor Dooley <conor+dt@kernel.org>
+Subject: Re: [PATCH v2 1/2] dt-bindings: phy: qcom,snps-eusb2-repeater:
+ Remove default tuning values
+Message-ID: <175098211658.1434134.8830216383938971952.robh@kernel.org>
+References: <20250617-eusb2-repeater-tuning-v2-0-ed6c484f18ee@fairphone.com>
+ <20250617-eusb2-repeater-tuning-v2-1-ed6c484f18ee@fairphone.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250617-eusb2-repeater-tuning-v2-1-ed6c484f18ee@fairphone.com>
 
-Simplify the relocation offset calculation in unwind_read_hints(),
-similar to other conversions which have already been done.
 
-Signed-off-by: Josh Poimboeuf <jpoimboe@kernel.org>
----
- tools/objtool/check.c | 9 +--------
- 1 file changed, 1 insertion(+), 8 deletions(-)
+On Tue, 17 Jun 2025 10:26:35 +0200, Luca Weiss wrote:
+> The reset default tuning value depends on the PMIC, so remove them from
+> the doc since they're not accurate for all PMICs.
+> 
+> Signed-off-by: Luca Weiss <luca.weiss@fairphone.com>
+> ---
+>  Documentation/devicetree/bindings/phy/qcom,snps-eusb2-repeater.yaml | 3 ---
+>  1 file changed, 3 deletions(-)
+> 
 
-diff --git a/tools/objtool/check.c b/tools/objtool/check.c
-index 55cc3a2a21c9..9ffde9389c53 100644
---- a/tools/objtool/check.c
-+++ b/tools/objtool/check.c
-@@ -2199,14 +2199,7 @@ static int read_unwind_hints(struct objtool_file *file)
- 			return -1;
- 		}
- 
--		if (is_sec_sym(reloc->sym)) {
--			offset = reloc_addend(reloc);
--		} else if (reloc->sym->local_label) {
--			offset = reloc->sym->offset;
--		} else {
--			ERROR("unexpected relocation symbol type in %s", sec->rsec->name);
--			return -1;
--		}
-+		offset = reloc->sym->offset + reloc_addend(reloc);
- 
- 		insn = find_insn(file, reloc->sym->sec, offset);
- 		if (!insn) {
--- 
-2.49.0
+Acked-by: Rob Herring (Arm) <robh@kernel.org>
 
 
