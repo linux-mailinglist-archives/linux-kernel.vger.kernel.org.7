@@ -1,144 +1,112 @@
-Return-Path: <linux-kernel+bounces-704092-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-704100-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 95DB0AE994C
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Jun 2025 10:59:17 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 934BAAE9958
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Jun 2025 11:00:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 547337B8F57
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Jun 2025 08:55:53 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 702096A56F4
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Jun 2025 09:00:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D8E4B29B778;
-	Thu, 26 Jun 2025 08:54:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BC865298270;
+	Thu, 26 Jun 2025 09:00:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="EhDTPZwF"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="t4xrwAPD"
+Received: from out30-97.freemail.mail.aliyun.com (out30-97.freemail.mail.aliyun.com [115.124.30.97])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3F1C829617A;
-	Thu, 26 Jun 2025 08:54:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7B3701B85FD
+	for <linux-kernel@vger.kernel.org>; Thu, 26 Jun 2025 09:00:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.97
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750928084; cv=none; b=U5YUpphbjFG+QQyuhJs4tQJdVhxSWqhtHiR7o+XvwiDcscW3TY1DYdq0a4Y/Yf5UMn1VGDGqhZRFkY58szLx87ilECEgWFD3Peuq6AymWwEKLuexbLzqh3STkq5CRkhnGTazNyW7LpgUU52t1k+DFpPSon8oh0Gp7E8lRMr4m4Y=
+	t=1750928434; cv=none; b=Tfm6UjhQSF4qFixxsrNB/JVt0YxmZZiKG6ZONUK1tSt/6r/oltyQ3vcg6yTOJXbl9gZXDQCyEEBKPLGU5fSalHmQyjAokeDaZ8sgHAeT8tGNJVSUuNzNOMIFJ4jYoIobNh+F9jTvb7PDlcHHcH0VT5I6crn1lPYs6rvuRrAWR7k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750928084; c=relaxed/simple;
-	bh=0TH71Dhds5dtLv4EikA0QKrDx9Iy9bKdIp2ZGs2Ak/s=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=MAUd4YLeBIzYQn12UdkZlTYF55vke5lIFIm50i+F+5Zom1sgK8ByF0pZu04wsvCK1pQikIb2EhweWNgpZr8jiDPI+3Z/nk7c9IvsRgg3ARkiGb9DPKPsRCsfUznoB+z1e79aqrYg6YfgVOJesySHGzKQKBVVlJZHQT+C4AEjAlw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=EhDTPZwF; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1113FC4CEEB;
-	Thu, 26 Jun 2025 08:54:41 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1750928083;
-	bh=0TH71Dhds5dtLv4EikA0QKrDx9Iy9bKdIp2ZGs2Ak/s=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=EhDTPZwFbQ+12IG9Do0UP3kDYNFDPmM7uBuCFjBR5kEUcMiKw65/QdNOEYccu8ovn
-	 CppZZZmRnsUgBAd3No2t9DD/30wnxxK+M7NiB3GqzGr1pOp3/YBmg76gQzlxCuzzBM
-	 spIxuqR6VXakFYox3e/F68aResjV6SdGqtpJ+zml+YRXI2BNP25ywbGEsa46UEL4Z6
-	 1e1AYWMh9QyRZbv1COCgVX6xUzfwkxAoTJfzkiqI9J9EJTeTDY1TJMrD9b18gTCSQv
-	 2c7d+JmcZ6V91PHWKmnMEZex2bymoM1yIg3ffAMs9XYNBnl/e7K0zRQpI+gkqJBANc
-	 z2P+NTfRqwSdQ==
-Message-ID: <2350a34d-2f7b-49c0-b286-2856c088131a@kernel.org>
-Date: Thu, 26 Jun 2025 17:54:40 +0900
+	s=arc-20240116; t=1750928434; c=relaxed/simple;
+	bh=X80pBlcgAaHgql6dEaf1a0a5dI7sZMhhCboDE95iysc=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=dVWlNz+95rPDlgg6INCDKxKCL7Uhc0fgpqugE/DmCZIpSN5fblgdTC95dqxu1KXiRul/rjWsZy5B+9B9KYNf1PjJA/54AQqRpMDme1zzCYMEKMPo+xinWAvnGcbF9bTOxOPKrdaLgw1jVAuLtPprmqOWo4T9/wa4M1JX9Ky+5FM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=t4xrwAPD; arc=none smtp.client-ip=115.124.30.97
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
+DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
+	d=linux.alibaba.com; s=default;
+	t=1750928423; h=From:To:Subject:Date:Message-ID:MIME-Version;
+	bh=rqPrmNEJ3dusfEAN0LnjIzSUm4cuAkh0p1L4y60E3qk=;
+	b=t4xrwAPDPNPCqDH1qFkTXvxwR2eexQdEzOvUx56jIXDX2qhyCY7DaTgZvMigqOGvNSbMiLDMXfxDQYWCAU5ziKBgssuW4E7QJrKKUGbpki1lXtWFTA1m3tWvykptJ4ckJS3/D/pKy1r7goh7tSe0BGEQjnckpHrz0qgeUP7bdHg=
+Received: from x31i01179.sqa.na131.tbsite.net(mailfrom:hsiangkao@linux.alibaba.com fp:SMTPD_---0Wf9zk5V_1750928100 cluster:ay36)
+          by smtp.aliyun-inc.com;
+          Thu, 26 Jun 2025 16:55:05 +0800
+From: Gao Xiang <hsiangkao@linux.alibaba.com>
+To: linux-erofs@lists.ozlabs.org
+Cc: LKML <linux-kernel@vger.kernel.org>,
+	Gao Xiang <hsiangkao@linux.alibaba.com>
+Subject: [PATCH] erofs: get rid of {get,put}_page() for ztailpacking data
+Date: Thu, 26 Jun 2025 16:54:59 +0800
+Message-ID: <20250626085459.339830-1-hsiangkao@linux.alibaba.com>
+X-Mailer: git-send-email 2.43.5
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] block: fix false warning in bdev_count_inflight_rw()
-To: Yu Kuai <yukuai1@huaweicloud.com>, axboe@kernel.dk, hare@suse.de,
- hch@infradead.org, yukuai3@huawei.com, john.g.garry@oracle.com
-Cc: linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
- yi.zhang@redhat.com, calvin@wbinvd.org, david@fromorbit.com,
- yi.zhang@huawei.com, yangerkun@huawei.com, johnny.chenyi@huawei.com
-References: <20250626083927.576207-1-yukuai1@huaweicloud.com>
-Content-Language: en-US
-From: Damien Le Moal <dlemoal@kernel.org>
-Organization: Western Digital Research
-In-Reply-To: <20250626083927.576207-1-yukuai1@huaweicloud.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-On 6/26/25 17:39, Yu Kuai wrote:
-> From: Yu Kuai <yukuai3@huawei.com>
-> 
-> While bdev_count_inflight is interating all cpus, if some IOs are issued
-> from traversed cpu and then completed from the cpu that is not traversed
-> yet:
-> 
-> cpu0
-> 		cpu1
-> 		bdev_count_inflight
-> 		 //for_each_possible_cpu
-> 		 // cpu0 is 0
-> 		 infliht += 0
-> // issue a io
-> blk_account_io_start
-> // cpu0 inflight ++
-> 
-> 				cpu2
-> 				// the io is done
-> 				blk_account_io_done
-> 				// cpu2 inflight --
-> 		 // cpu 1 is 0
-> 		 inflight += 0
-> 		 // cpu2 is -1
-> 		 inflight += -1
-> 		 ...
-> 
-> In this case, the total inflight will be -1, causing lots of false
-> warning. Fix the problem by removing the warning.
-> 
-> Noted there is still a valid warning for nvme-mpath(From Yi) that is not
-> fixed yet.
-> 
-> Fixes: f5482ee5edb9 ("block: WARN if bdev inflight counter is negative")
-> Reported-by: Yi Zhang <yi.zhang@redhat.com>
-> Closes: https://lore.kernel.org/linux-block/aFtUXy-lct0WxY2w@mozart.vkv.me/T/#mae89155a5006463d0a21a4a2c35ae0034b26a339
-> Reported-and-tested-by: Calvin Owens <calvin@wbinvd.org>
-> Closes: https://lore.kernel.org/linux-block/aFtUXy-lct0WxY2w@mozart.vkv.me/T/#m1d935a00070bf95055d0ac84e6075158b08acaef
-> Reported-by: Dave Chinner <david@fromorbit.com>
-> Closes: https://lore.kernel.org/linux-block/aFuypjqCXo9-5_En@dread.disaster.area/
-> Signed-off-by: Yu Kuai <yukuai3@huawei.com>
-> ---
->  block/genhd.c | 9 +++++++--
->  1 file changed, 7 insertions(+), 2 deletions(-)
-> 
-> diff --git a/block/genhd.c b/block/genhd.c
-> index 8171a6bc3210..680fa717082f 100644
-> --- a/block/genhd.c
-> +++ b/block/genhd.c
-> @@ -141,9 +141,14 @@ static void bdev_count_inflight_rw(struct block_device *part,
->  		}
->  	}
->  
-> -	if (WARN_ON_ONCE((int)inflight[READ] < 0))
-> +	/*
-> +	 * While iterating all cpus, some IOs might issued from traversed cpu
-> +	 * and then completed from the cpu that is not traversed yet, causing
-> +	 * the inflight number to be negative.
+The compressed data for the ztailpacking feature is fetched from
+the metadata inode (e.g., bd_inode), which is folio-based.
 
-Nit (grammar):
+Therefore, the folio interface should be used instead.
 
-	 * While iterating all CPUs, some IOs may be issued from a CPU already
-	 * traversed and complete on a CPU that has not yet been traversed,
-	 * causing the inflight number to be negative.
+Signed-off-by: Gao Xiang <hsiangkao@linux.alibaba.com>
+---
+ fs/erofs/zdata.c | 14 ++++++--------
+ 1 file changed, 6 insertions(+), 8 deletions(-)
 
-> +	 */
-> +	if ((int)inflight[READ] < 0)
->  		inflight[READ] = 0;
-> -	if (WARN_ON_ONCE((int)inflight[WRITE] < 0))
-> +	if ((int)inflight[WRITE] < 0)
->  		inflight[WRITE] = 0;
->  }
->  
-
-
+diff --git a/fs/erofs/zdata.c b/fs/erofs/zdata.c
+index fe8071844724..d80e3bf4fa79 100644
+--- a/fs/erofs/zdata.c
++++ b/fs/erofs/zdata.c
+@@ -805,6 +805,7 @@ static int z_erofs_pcluster_begin(struct z_erofs_frontend *fe)
+ 	struct erofs_map_blocks *map = &fe->map;
+ 	struct super_block *sb = fe->inode->i_sb;
+ 	struct z_erofs_pcluster *pcl = NULL;
++	void *ptr;
+ 	int ret;
+ 
+ 	DBG_BUGON(fe->pcl);
+@@ -854,15 +855,13 @@ static int z_erofs_pcluster_begin(struct z_erofs_frontend *fe)
+ 		/* bind cache first when cached decompression is preferred */
+ 		z_erofs_bind_cache(fe);
+ 	} else {
+-		void *mptr;
+-
+-		mptr = erofs_read_metabuf(&map->buf, sb, map->m_pa, false);
+-		if (IS_ERR(mptr)) {
+-			ret = PTR_ERR(mptr);
++		ptr = erofs_read_metabuf(&map->buf, sb, map->m_pa, false);
++		if (IS_ERR(ptr)) {
++			ret = PTR_ERR(ptr);
+ 			erofs_err(sb, "failed to get inline data %d", ret);
+ 			return ret;
+ 		}
+-		get_page(map->buf.page);
++		folio_get(page_folio(map->buf.page));
+ 		WRITE_ONCE(fe->pcl->compressed_bvecs[0].page, map->buf.page);
+ 		fe->pcl->pageofs_in = map->m_pa & ~PAGE_MASK;
+ 		fe->mode = Z_EROFS_PCLUSTER_FOLLOWED_NOINPLACE;
+@@ -1325,9 +1324,8 @@ static int z_erofs_decompress_pcluster(struct z_erofs_backend *be, int err)
+ 
+ 	/* must handle all compressed pages before actual file pages */
+ 	if (pcl->from_meta) {
+-		page = pcl->compressed_bvecs[0].page;
++		folio_put(page_folio(pcl->compressed_bvecs[0].page));
+ 		WRITE_ONCE(pcl->compressed_bvecs[0].page, NULL);
+-		put_page(page);
+ 	} else {
+ 		/* managed folios are still left in compressed_bvecs[] */
+ 		for (i = 0; i < pclusterpages; ++i) {
 -- 
-Damien Le Moal
-Western Digital Research
+2.43.5
+
 
