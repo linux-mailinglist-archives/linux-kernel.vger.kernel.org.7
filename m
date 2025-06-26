@@ -1,188 +1,174 @@
-Return-Path: <linux-kernel+bounces-705361-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-705385-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6993DAEA893
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Jun 2025 23:12:45 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id CD2D1AEA8D9
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Jun 2025 23:28:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 75E3F4E27F2
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Jun 2025 21:12:38 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 649337B5307
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Jun 2025 21:26:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E5CEB25E461;
-	Thu, 26 Jun 2025 21:12:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7E82E25FA1D;
+	Thu, 26 Jun 2025 21:27:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="NdEtFuxl"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="blMbvF+F"
+Received: from mail-pl1-f170.google.com (mail-pl1-f170.google.com [209.85.214.170])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 37E7E1D7984;
-	Thu, 26 Jun 2025 21:12:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7A717202990;
+	Thu, 26 Jun 2025 21:27:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750972345; cv=none; b=N06qdniNT2jKBIra+4M2PPthSkVJ0cRYYqAHkT4ADSRuyoOHXTG++7iD+fkPEKCp4Ty1Rfs3L5DxWljKNmmCHon7dSpA67eFTPdiIY1d9k9kUiAiZdCzBtbZ87GqZqMFDe0X7gWhlQZhQLSDf73IkSPPD2jRDNOYNW7CPT0XqRo=
+	t=1750973272; cv=none; b=JbqHbhQFp29DHS5tR1o36N7kLUV4WUfkldNCz8N7YLn3o6GA+CoJLBf7g18vBwCC9Xw0SKvTcEpllz9pYSiJUPZAHBWL+SOn+eb2sojsiffVXQDm0GEl4ybNqwYfjzRFNURnAO/yO4GvnBDLZkNCJp6PHE9hsawHFqvth1untC0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750972345; c=relaxed/simple;
-	bh=1HGJ3l6ikdw5NCSll50pAw9X5BjsMp1eQTlXjZQSkac=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=utohfPTG4d3AhTs/LEVwcbjvkRCxgTYqqos8tVE2Y6iw7jBczDKwam9opmlFt5c6NdfkVX6jfPIcnoAot7WWR/rnFW/unEG85ykl2tlSLUv2o7BBFb1UuRYQInAaDcz/sF+hd2MdURT9dQK5QH6AMpwDtJM9JMhzs185mscmWFA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=NdEtFuxl; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 432F4C4CEEB;
-	Thu, 26 Jun 2025 21:12:22 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1750972344;
-	bh=1HGJ3l6ikdw5NCSll50pAw9X5BjsMp1eQTlXjZQSkac=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=NdEtFuxltw0oevgdXEQ5cl0fDHM2QHdYqsqqW3HNosUK/GcSDLIPpUaM5kKYBHCV5
-	 b7tRWS/EqxZHvlaO6XqF5zSrPTtNLxEIWaJh+oAyZNgT8or6xhUmXL2Omj456tIZ1u
-	 71RnxnZ22zI0pGFx8RfNJWfrVuB60YkTbsiIxVXaJcj8U1QgUkql01/UNMQJtlH+vk
-	 8A5sKrunL/G9C0wPJJ8FZxO4MKWXS9tQ2VG3UgHcglHz6MN+WHFIs8yGB9a076ccY4
-	 79wJ9jH8bHDWhhzFflge/EV30PGMgQPDHu2TQlVLKMU8xTUQG1ZAaGB8NN8/jn6pus
-	 ynlk/bA0OHrMA==
-Message-ID: <58625a35-4a3e-4c91-939d-9f0d6635f8c0@kernel.org>
-Date: Thu, 26 Jun 2025 16:12:21 -0500
+	s=arc-20240116; t=1750973272; c=relaxed/simple;
+	bh=ykeXd6ls3tnEV82l6ImWU/KsrXMtWOeQGKe8+LIKueQ=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=uU/+zP+7tARCY9RQ58f0YG86S/zt1SSOcJmjX3qrhOzSqmauWP4xkHbJwEt5VYDXHPaudYirowYhpEHq1RuQYTcgS82XoaS9sN/rafuzPOuAu04VX2BhznwCBkfW8OTQXlDpTsM/2R+6Sh47Nk2+1mxuk7MqtCc0nHyN5IAWjAw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=blMbvF+F; arc=none smtp.client-ip=209.85.214.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f170.google.com with SMTP id d9443c01a7336-2353a2bc210so15498275ad.2;
+        Thu, 26 Jun 2025 14:27:51 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1750973271; x=1751578071; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=m0s7KK7JU2bDuLIyFJ/GkGSEJsjX5YQL6lW6EbLOBJQ=;
+        b=blMbvF+F6MLk5gd0jHFoSWq0eiijKVXonYQ1Y/e2HFtGxJRYw+X0hOlCxKKyDhkOiP
+         WogOQUXUpk8OrpeN+X8cr3T7jgT/l3Ypd00CRDobrTvLGCaZZHMJCaj5ZObWGXDOWspI
+         euqW6UGyox3gCqfZS4ROEFX8Fb3GmlkrxhG0pXLIPsgSktfe+DVDf43d9zke7piYgz3G
+         1qkOTnMW13K0Q4lkwSjmN0apx2lc6CJLsGMvWXSvz2Q7scG5p7iFYbCSVeAz3jqDfGbb
+         1R6poLdqo13+aFH6yqoubKyn/qB8n2xjM3ylhihDgoVn56NjvdU5ahFeoBTJvYOJmzQ9
+         lY0w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1750973271; x=1751578071;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=m0s7KK7JU2bDuLIyFJ/GkGSEJsjX5YQL6lW6EbLOBJQ=;
+        b=aKYaV/OZd3Sb+73QpsewAzs6KcffYyuVCE6zr7DCuj8ujHv0iJglPpUWQEUCD0XN8F
+         qUq6HU65xC86AV12kVW13426F2cVmSd+NhqDkDN69Qobmgj/eNStkmMrpKuganCbKCSg
+         eUxwudoCQ3qxccAmCutQ34xFzjUN3rGugLwk4JwXuLWcrPt3mcPvAzd6HbNCRZxtfmKk
+         H2elzrIbexUFGucWTmpOEe90AEwb4eCDd4zskr8NvAlR9osu5+Z7Nibum5BjwE/xc7tZ
+         TfFeulW1kn4+lrM/4N5g7/Ey6ax5v1Yu9BV5pKWzRB6JrlTEdOU14rePFwB8GrlGtI5I
+         oACA==
+X-Forwarded-Encrypted: i=1; AJvYcCURFva6kSDIEDwCi3vNc/Z32SMcGpapjpLaM5gumvVCTcqSe/bYZO46rg6m3SBYWZ4vEGrMWrKMqUI=@vger.kernel.org, AJvYcCWIVZ+gYrepOKLQKpV3lv8GhCaIhkM3n+oSA9iwUHOKsjgd03l+AZmh36M8judIHrqzYGxdESH6sTJgY45U@vger.kernel.org
+X-Gm-Message-State: AOJu0YxBLcRDkYpfy9jJu5dMtg88Q3HENAMuLJHVJTNtr+8p25c49rpv
+	mC7vScZqI5P8C8F7dUJ3UPQc26XMX3ZC0S4b9lEb13tWH1VfDVm9o58E
+X-Gm-Gg: ASbGncs5SYg8dElxuTlvl20zL2IIXOgOMvhZVYFNzPaDS4nA3hs3w9MbPcwtXPgTdbk
+	qDeWw9FO46lqtfi3EQucdZnDfhTaNjt8jcVfCMa5jDsAsstZ7GLPgJQrTSNU6B3u2kigK2ztf/c
+	+X4fl6fpvwV7XhrMaawVfH/eghJokxbHtpFgs50wEfwMGRGBlPNWenGU3aDIMuO66sIHwgdddiK
+	qqvWeNu+cDh1JFIMZ54+zddgj3yBKk3A8fBrQM0b5FSSX7+fwYt/8/PLLzzOA680A3B7Kf1BRtX
+	GlZi6rjovS2nZPufJHyT6INqlyr1qbrZnvXjA61yfVkVjexL8myxUbG1DbN9bz6g4+VLXcOt1sK
+	swkqrSv74
+X-Google-Smtp-Source: AGHT+IFt22B8S/w/uHxF+/JhLbCBWrfUJv5NGtM9va65TQ9tCmxr7/6SqJzztotgo2sb+buNtWsiTw==
+X-Received: by 2002:a17:903:60e:b0:234:c2e7:a103 with SMTP id d9443c01a7336-23ac4605976mr6973195ad.33.1750973270670;
+        Thu, 26 Jun 2025 14:27:50 -0700 (PDT)
+Received: from localhost.localdomain ([2804:14d:4c64:81ec:4ff:1626:32b1:712a])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-23acb3c4b2esm153615ad.211.2025.06.26.14.27.47
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 26 Jun 2025 14:27:50 -0700 (PDT)
+From: Rodrigo Gobbi <rodrigo.gobbi.7@gmail.com>
+To: jic23@kernel.org,
+	dlechner@baylibre.com,
+	nuno.sa@analog.com,
+	andy@kernel.org,
+	jmaneyrol@invensense.com
+Cc: ~lkcamp/patches@lists.sr.ht,
+	linux-iio@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH] dt-bindings: iio: pressure: invensense,icp101xx: add binding
+Date: Thu, 26 Jun 2025 18:12:25 -0300
+Message-ID: <20250626212742.7986-1-rodrigo.gobbi.7@gmail.com>
+X-Mailer: git-send-email 2.49.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v5 9/9] PCI: Add a new 'boot_display' attribute
-To: Bjorn Helgaas <helgaas@kernel.org>
-Cc: Bjorn Helgaas <bhelgaas@google.com>,
- Alex Deucher <alexander.deucher@amd.com>,
- =?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>,
- David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
- Lukas Wunner <lukas@wunner.de>,
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
- Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
- David Woodhouse <dwmw2@infradead.org>, Lu Baolu <baolu.lu@linux.intel.com>,
- Joerg Roedel <joro@8bytes.org>, Will Deacon <will@kernel.org>,
- Robin Murphy <robin.murphy@arm.com>,
- Alex Williamson <alex.williamson@redhat.com>,
- Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>,
- "open list:DRM DRIVERS" <dri-devel@lists.freedesktop.org>,
- open list <linux-kernel@vger.kernel.org>,
- "open list:INTEL IOMMU (VT-d)" <iommu@lists.linux.dev>,
- "open list:PCI SUBSYSTEM" <linux-pci@vger.kernel.org>,
- "open list:VFIO DRIVER" <kvm@vger.kernel.org>,
- "open list:SOUND" <linux-sound@vger.kernel.org>,
- Daniel Dadap <ddadap@nvidia.com>,
- Mario Limonciello <mario.limonciello@amd.com>
-References: <20250626204508.GA1639269@bhelgaas>
-Content-Language: en-US
-From: Mario Limonciello <superm1@kernel.org>
-In-Reply-To: <20250626204508.GA1639269@bhelgaas>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-On 6/26/2025 3:45 PM, Bjorn Helgaas wrote:
-> On Tue, Jun 24, 2025 at 03:30:42PM -0500, Mario Limonciello wrote:
->> From: Mario Limonciello <mario.limonciello@amd.com>
->>
->> On systems with multiple GPUs there can be uncertainty which GPU is the
->> primary one used to drive the display at bootup. In order to disambiguate
->> this add a new sysfs attribute 'boot_display' that uses the output of
->> video_is_primary_device() to populate whether a PCI device was used for
->> driving the display.
->>
->> Signed-off-by: Mario Limonciello <mario.limonciello@amd.com>
-> 
-> Acked-by: Bjorn Helgaas <bhelgaas@google.com>
-> 
-> Question below.
-> 
->> ---
->> v4:
->>   * new patch
->> ---
->>   Documentation/ABI/testing/sysfs-bus-pci |  9 +++++++++
->>   drivers/pci/pci-sysfs.c                 | 14 ++++++++++++++
->>   2 files changed, 23 insertions(+)
->>
->> diff --git a/Documentation/ABI/testing/sysfs-bus-pci b/Documentation/ABI/testing/sysfs-bus-pci
->> index 69f952fffec72..897cfc1b0de0f 100644
->> --- a/Documentation/ABI/testing/sysfs-bus-pci
->> +++ b/Documentation/ABI/testing/sysfs-bus-pci
->> @@ -612,3 +612,12 @@ Description:
->>   
->>   		  # ls doe_features
->>   		  0001:01        0001:02        doe_discovery
->> +
->> +What:		/sys/bus/pci/devices/.../boot_display
->> +Date:		October 2025
->> +Contact:	Linux PCI developers <linux-pci@vger.kernel.org>
->> +Description:
->> +		This file indicates whether the device was used as a boot
->> +		display. If the device was used as the boot display, the file
->> +		will contain "1". If the device is a display device but wasn't
->> +		used as a boot display, the file will contain "0".
-> 
-> Is there a reason to expose this file if it wasn't a boot display
-> device?  Maybe it doesn't need to exist at all unless it contains "1"?
+There is no txt file for it, add yaml for invensense,icp101xx family
+which is already used in the driver.
 
-I was mostly thinking that it's a handy way for userspace to know 
-whether the kernel even supports this feature.  If userspace sees that 
-file on any GPU as it walks a list then it knows it can use that for a hint.
+Signed-off-by: Rodrigo Gobbi <rodrigo.gobbi.7@gmail.com>
+---
+Very simple yaml for a i2c device with psu. The pin out for the rest of
+the family (the other PNs) doesn`t change anything here, since the diff
+were RESV pins (unused).
 
-But if you would rather it only shows up for the boot display yes it's 
-possible to do I think.  It's just more complexity to the visibility 
-lookup to also call video_is_primary_device().
+This yaml file falls in the same `category` as others that I`ve submitted, the
+driver author, which might be still interested at this hardware, is no long contributing
+(at least for what I`ve looked). Also, it`s email is still "at invensense", not "at tdk", either
+way I`ll ping him here due the mention at the "maintainers" field:
 
-LMK which way you want to go and I'll respin the series with your tags 
-and the robot fix.
+Dear @Jean-Baptiste Maneyrol, I`ve noticed that since the driver was added,
+there was no binding doc for it and this is what this patch is addressing.
+In this case, a maintainer ref is required inside the .yaml file and I would
+like to ask if I can add you in this case.
+I would appreciate your comment or suggestion over this topic.
 
-> 
->> diff --git a/drivers/pci/pci-sysfs.c b/drivers/pci/pci-sysfs.c
->> index 268c69daa4d57..5bbf79b1b953d 100644
->> --- a/drivers/pci/pci-sysfs.c
->> +++ b/drivers/pci/pci-sysfs.c
->> @@ -30,6 +30,7 @@
->>   #include <linux/msi.h>
->>   #include <linux/of.h>
->>   #include <linux/aperture.h>
->> +#include <asm/video.h>
->>   #include "pci.h"
->>   
->>   #ifndef ARCH_PCI_DEV_GROUPS
->> @@ -679,6 +680,13 @@ const struct attribute_group *pcibus_groups[] = {
->>   	NULL,
->>   };
->>   
->> +static ssize_t boot_display_show(struct device *dev, struct device_attribute *attr,
->> +				 char *buf)
->> +{
->> +	return sysfs_emit(buf, "%u\n", video_is_primary_device(dev));
->> +}
->> +static DEVICE_ATTR_RO(boot_display);
->> +
->>   static ssize_t boot_vga_show(struct device *dev, struct device_attribute *attr,
->>   			     char *buf)
->>   {
->> @@ -1698,6 +1706,7 @@ late_initcall(pci_sysfs_init);
->>   
->>   static struct attribute *pci_dev_dev_attrs[] = {
->>   	&dev_attr_boot_vga.attr,
->> +	&dev_attr_boot_display.attr,
->>   	NULL,
->>   };
->>   
->> @@ -1710,6 +1719,11 @@ static umode_t pci_dev_attrs_are_visible(struct kobject *kobj,
->>   	if (a == &dev_attr_boot_vga.attr && pci_is_vga(pdev))
->>   		return a->mode;
->>   
->> +#ifdef CONFIG_VIDEO
->> +	if (a == &dev_attr_boot_display.attr && pci_is_display(pdev))
->> +		return a->mode;
->> +#endif
->> +
->>   	return 0;
->>   }
->>   
->> -- 
->> 2.43.0
->>
+Tks all and regards.
+---
+ .../iio/pressure/invensense,icp101xx.yaml     | 45 +++++++++++++++++++
+ 1 file changed, 45 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/iio/pressure/invensense,icp101xx.yaml
+
+diff --git a/Documentation/devicetree/bindings/iio/pressure/invensense,icp101xx.yaml b/Documentation/devicetree/bindings/iio/pressure/invensense,icp101xx.yaml
+new file mode 100644
+index 000000000000..439f8aaafbd2
+--- /dev/null
++++ b/Documentation/devicetree/bindings/iio/pressure/invensense,icp101xx.yaml
+@@ -0,0 +1,45 @@
++# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
++%YAML 1.2
++---
++$id: http://devicetree.org/schemas/iio/pressure/invensense,icp101xx.yaml#
++$schema: http://devicetree.org/meta-schemas/core.yaml#
++
++title: InvenSense ICP-101xx Barometric Pressure Sensors
++
++maintainers:
++  - Jean-Baptiste Maneyrol <jmaneyrol@invensense.com>
++
++description: |
++  Support for ICP-101xx family: ICP-10100, ICP-10101, ICP-10110, ICP-10111.
++  Those devices uses a simple I2C communication bus, measuring the pressure
++  in a ultra-low noise at the lowest power.
++  Datasheet: https://product.tdk.com/system/files/dam/doc/product/sensor/pressure/capacitive-pressure/data_sheet/ds-000186-icp-101xx.pdf
++
++properties:
++  compatible:
++    const: invensense,icp10100
++
++  reg:
++    maxItems: 1
++
++  vdd-supply: true
++
++required:
++  - compatible
++  - reg
++  - vdd-supply
++
++additionalProperties: false
++
++examples:
++  - |
++    i2c {
++        #address-cells = <1>;
++        #size-cells = <0>;
++        pressure@63 {
++            compatible = "invensense,icp10100";
++            reg = <0x63>;
++            vdd-supply = <&vdd_1v8>;
++        };
++    };
++...
+-- 
+2.49.0
 
 
