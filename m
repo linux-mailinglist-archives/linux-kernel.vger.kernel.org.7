@@ -1,109 +1,74 @@
-Return-Path: <linux-kernel+bounces-704387-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-704393-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 35473AE9CE6
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Jun 2025 13:53:54 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 66120AE9CF9
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Jun 2025 13:58:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6F0CA16A25D
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Jun 2025 11:53:51 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B40D316D661
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Jun 2025 11:58:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AEAD28F5E;
-	Thu, 26 Jun 2025 11:52:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0AADC27602E;
+	Thu, 26 Jun 2025 11:56:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=arunraghavan.net header.i=@arunraghavan.net header.b="QkH2ScQe";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="n4jF9ECf"
-Received: from fout-b4-smtp.messagingengine.com (fout-b4-smtp.messagingengine.com [202.12.124.147])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="DckGpYfb"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.14])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B7B0C79FE;
-	Thu, 26 Jun 2025 11:52:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.12.124.147
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 671C6275B08;
+	Thu, 26 Jun 2025 11:56:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.14
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750938759; cv=none; b=qhw9nLtjk7CW5rRka9XONvPHEA1xQ4IuBHOgONVdCcQ3hWZm+5xq7GCcaZCKFYYaLPBk10drnDOYgpvYoEO7kV8w42tlmT9XaUe1jB8kckrSLY89EP/269Jyfor4ywpMU5YWISlpF00cab98J3AsTr8Tf0SnXLALyXp7GbI3DU0=
+	t=1750939007; cv=none; b=NKy/cwHVIrP3Tu5Xs1SdH3GL7RB83WA+5JRN2q/M7pwm2QRt1OMwDV/X3oVwbqLPx74zwZhsCv6/F29TC1P3DsUPWu6Chwafov3Iuki7VuChjcQCtC2y6NXP3OcJqcAa46gc3qpj/G4hIG+2NQG67CZshfgZfFcDtCtdNhHJjN4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750938759; c=relaxed/simple;
-	bh=2Qh2Zd3dzsgYDm5txrfwRiPP+X34/1hlDIJLd3js8GQ=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=bQ7P4zuqFtzpO/YNY+YsxIoX0h//wt4+aT6/earbNnaSl7rbZeoMl/5DEL9KQDSKqtG9jbP/nKuOWp+SYHgLbSuCen3l3/5HlcB+joQXjDVvGKorNYAM89mnxsCYwArx/6T4U/O4HP9f9jej73P79eN3fURH0QNPmosTl+8Nvrc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=arunraghavan.net; spf=pass smtp.mailfrom=arunraghavan.net; dkim=pass (2048-bit key) header.d=arunraghavan.net header.i=@arunraghavan.net header.b=QkH2ScQe; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=n4jF9ECf; arc=none smtp.client-ip=202.12.124.147
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=arunraghavan.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arunraghavan.net
-Received: from phl-compute-06.internal (phl-compute-06.phl.internal [10.202.2.46])
-	by mailfout.stl.internal (Postfix) with ESMTP id 7206F1D001A7;
-	Thu, 26 Jun 2025 07:52:36 -0400 (EDT)
-Received: from phl-mailfrontend-01 ([10.202.2.162])
-  by phl-compute-06.internal (MEProxy); Thu, 26 Jun 2025 07:52:36 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	arunraghavan.net; h=cc:cc:content-transfer-encoding:content-type
-	:date:date:from:from:in-reply-to:message-id:mime-version
-	:reply-to:subject:subject:to:to; s=fm1; t=1750938756; x=
-	1751025156; bh=D76ucE6r4U6GishIFwF0qlrah5XVDlhRiq5O7CVmMK4=; b=Q
-	kH2ScQeY9TemKvzA4WHpb1jJ8BG2dseCerHmx31zFgB3yEedFEgZPqdql6j5U4It
-	mlR0fVAwqNHylO/IBV7eYs6tGt2wcB8QvnqDNSofJtW3VSBe+jLIEeLWfPl40Dlw
-	WXhvpebiW3VfzplDFppykeBISJBxJn2BN/1tabKZn0QCHVuv10UEGxB9NqwiFTcr
-	8pnyxYUcYWFotsojwAl3b1cIaA72LHWuxhP9SlsFwAuiwhDrwALkIDsvGkGhAx4/
-	5K4Pe5YB1Ta1DZXHZ6U7875R+gqJMboMLXP3w3pnurKbFnFQ3/4vyGxTYd1BrQ0N
-	cwr2ckQtNIYXXW8JUG1ag==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:date:date:feedback-id:feedback-id:from:from
-	:in-reply-to:message-id:mime-version:reply-to:subject:subject:to
-	:to:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm2; t=
-	1750938756; x=1751025156; bh=D76ucE6r4U6GishIFwF0qlrah5XVDlhRiq5
-	O7CVmMK4=; b=n4jF9ECf6EkTSqo/wddtNtU3q6w2R3G/Hw5WJgg0WsAx4B3fp//
-	CZ/Z5nndXscxYpMMqbl7TXOt38uCJ2R6AUG19YlNZBos+wIPCKvvWs1Ot7z6H0MM
-	H9wkarbyBSPvA13lh6aiS/YxEibl1+IwLoUEd0F+Cx2h9L3chfh3rdTMEstfAoML
-	Z8J4WY1HFhJ0NcIeEMgFSMTiAcf+pQaJIAhrAlKfPwdg/zai/bnIr4SjJwOFoXtk
-	PC3dWweRE+8q5IMCBk6sHHfRtyTLDgjQeyqPc+HZOeHpYR5N7CaJf4rRv8jMSz8S
-	yvb3ubfzikDg3NS36FzxSsBaq/sJ/n1yW4Q==
-X-ME-Sender: <xms:gzRdaFxoc4Kt8em8TEOF9SBgQVUcFEcW3_lh4prOv47W7LGE0aRZuQ>
-    <xme:gzRdaFQzrH_uuiH-XBEB8U_uj8uK6VqPDY4WkEPHI_DG2NPOPUz8oFA679OYqyT8z
-    HW7hYWiEJw-g56Q6g>
-X-ME-Received: <xmr:gzRdaPWqPzO7IyyzIAj13qZEPVkxKIkCv7ZjyRg2lqCI3G8_v6b312E_6POXDAvk>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdefgdduudcutefuodetggdotefrodftvf
-    curfhrohhfihhlvgemucfhrghsthforghilhdpuffrtefokffrpgfnqfghnecuuegrihhl
-    ohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjughrpe
-    fhvfevufffkffoggfgsedtkeertdertddtnecuhfhrohhmpeetrhhunhcutfgrghhhrghv
-    rghnuceorghruhhnsegrrhhunhhrrghghhgrvhgrnhdrnhgvtheqnecuggftrfgrthhtvg
-    hrnhepteduheelvedvledvudfhudevkefhhfeifefggeevkedvudfgueelvdehtdetvdef
-    necuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomheprghruh
-    hnsegrrhhunhhrrghghhgrvhgrnhdrnhgvthdpnhgspghrtghpthhtohepudefpdhmohgu
-    vgepshhmthhpohhuthdprhgtphhtthhopehshhgvnhhgjhhiuhdrfigrnhhgsehgmhgrih
-    hlrdgtohhmpdhrtghpthhtohepgihiuhgsohdrlhgvvgesghhmrghilhdrtghomhdprhgt
-    phhtthhopehfvghsthgvvhgrmhesghhmrghilhdrtghomhdprhgtphhtthhopehnihgtoh
-    hlvghothhsuhhkrgesghhmrghilhdrtghomhdprhgtphhtthhopehlghhirhgufihoohgu
-    sehgmhgrihhlrdgtohhmpdhrtghpthhtohepsghrohhonhhivgeskhgvrhhnvghlrdhorh
-    hgpdhrtghpthhtohepphgvrhgvgiesphgvrhgvgidrtgiipdhrtghpthhtohepthhifigr
-    ihesshhushgvrdgtohhmpdhrtghpthhtohepphdrtggrmhgvrhhlhihntghksehtvghlvg
-    hvihgtrdgtohhm
-X-ME-Proxy: <xmx:hDRdaHhUc1pAZjHaW9ixReOptq3kk6Ay4dDv0pAr14hmefVThJvq0g>
-    <xmx:hDRdaHCL4ktOslRU0PokGQgLvbqPe3mzY5g7rkgJuz-uHLSzbUrHFA>
-    <xmx:hDRdaAKb4gTiWcmTRgmAD-nvWdU1UYkXRwHmmpn_VM7fUGi1IpHNqQ>
-    <xmx:hDRdaGBdNcBnGbR0Q4htHNFosMSMadeCVXpUO43mXd2n0Vmhxb_0KA>
-    <xmx:hDRdaFS3yrc7xiYB0oLUqf7AgIvf1k__38E-Xw3zK1E0_dbjPCF09HYC>
-Feedback-ID: i42c0435e:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Thu,
- 26 Jun 2025 07:52:35 -0400 (EDT)
-From: Arun Raghavan <arun@arunraghavan.net>
-To: Shengjiu Wang <shengjiu.wang@gmail.com>,
-	Xiubo Li <Xiubo.Lee@gmail.com>
-Cc: Fabio Estevam <festevam@gmail.com>,
-	Nicolin Chen <nicoleotsuka@gmail.com>,
-	Liam Girdwood <lgirdwood@gmail.com>,
-	Mark Brown <broonie@kernel.org>,
-	Jaroslav Kysela <perex@perex.cz>,
-	Takashi Iwai <tiwai@suse.com>,
-	Pieterjan Camerlynck <p.camerlynck@televic.com>,
+	s=arc-20240116; t=1750939007; c=relaxed/simple;
+	bh=Yfr0P0vg7a2fWi2QizXPf/WipE7iGQ1sFhE5LDo3Jkk=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=QswuJaveXcadzKr12fpO0DW6H2rQ9uS4/B3ychgpO9Ez7kk5pmXO+IKQYg9OTzOu3Oq32+USXzstjjL6c3OPs/yhNg/MocfdEhpEGliTudnxftM/2uZxZ/Bp4qiqhcrmkr0BeBWSqwWTtJl+5hZLfUajSuYPPRBtSABhkESJTFc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=DckGpYfb; arc=none smtp.client-ip=192.198.163.14
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1750939005; x=1782475005;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=Yfr0P0vg7a2fWi2QizXPf/WipE7iGQ1sFhE5LDo3Jkk=;
+  b=DckGpYfbji7JCgO7aMqbuZOToXpDJ8PA6VQTq6I8pA2hVwKjLyyI4K4z
+   GDp/q6ESGzng558/jfDSuREaRhXr4+iaK+4yXe5yYdmHvZ3cKSOCgRY5g
+   Aunq/Pj+om3NpTCtQhoWWUSaE9EgbdFeRrDb1ao5pIOCX40GhdB/Vb1tQ
+   TjcAO5AhIqhi9Ww5OArLpFTHvCs2uKXqFPmrjIgw1hV0qEi8s0/rFh4gf
+   ev4YTBaDqtNzzbzmzGSsWX6VOnuXVktrmGi5L0yifNXiOYsyvI+yJQykx
+   XGBmAA08uasD6kTug5UZ7b7zXRQH8ifjGKr4UmeCGNrqZlnu+ZPHIKfZr
+   Q==;
+X-CSE-ConnectionGUID: 14XVvgXKSqmio0Whm9iLYw==
+X-CSE-MsgGUID: 2PMr7nH9QZeSqwuzVtjFRQ==
+X-IronPort-AV: E=McAfee;i="6800,10657,11475"; a="53304520"
+X-IronPort-AV: E=Sophos;i="6.16,267,1744095600"; 
+   d="scan'208";a="53304520"
+Received: from fmviesa009.fm.intel.com ([10.60.135.149])
+  by fmvoesa108.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 26 Jun 2025 04:56:44 -0700
+X-CSE-ConnectionGUID: 9r4Zx2t7Sbensz7JUsccsg==
+X-CSE-MsgGUID: THIUErPGT+yHvyseXkv4bg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.16,267,1744095600"; 
+   d="scan'208";a="152800551"
+Received: from yungchua-desk.itwn.intel.com ([10.227.8.136])
+  by fmviesa009-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 26 Jun 2025 04:56:42 -0700
+From: Bard Liao <yung-chuan.liao@linux.intel.com>
+To: broonie@kernel.org,
+	tiwai@suse.de,
 	linux-sound@vger.kernel.org,
-	linuxppc-dev@lists.ozlabs.org,
+	vkoul@kernel.org
+Cc: vinod.koul@linaro.org,
 	linux-kernel@vger.kernel.org,
-	Arun Raghavan <arun@asymptotic.io>
-Subject: [PATCH v3] ASoC: fsl_sai: Force a software reset when starting in consumer mode
-Date: Thu, 26 Jun 2025 07:52:18 -0400
-Message-ID: <20250626115218.141874-1-arun@arunraghavan.net>
-X-Mailer: git-send-email 2.49.0
+	pierre-louis.bossart@linux.dev,
+	bard.liao@intel.com
+Subject: [PATCH 00/15] ASoC/soundwire: Realtek codecs: wait codec init in hw_params
+Date: Thu, 26 Jun 2025 19:56:10 +0800
+Message-ID: <20250626115625.536423-1-yung-chuan.liao@linux.intel.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -112,60 +77,57 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-From: Arun Raghavan <arun@asymptotic.io>
+The current code waits for the codec initialization in the resume
+callback. It could cause the resume takes a long time while waiting for
+the codec being attached and initialized. Move the waiting to the
+hw_params callback when the driver really needs it and shorten the
+resume time.
+The change is mainly on the ASoC tree. Let's go through the ASoC tree.
 
-On an imx8mm platform with an external clock provider, when running the
-receiver (arecord) and triggering an xrun with xrun_injection, we see a
-channel swap/offset. This happens sometimes when running only the
-receiver, but occurs reliably if a transmitter (aplay) is also
-concurrently running.
+Bard Liao (15):
+  soundwire: add sdw_slave_wait_for_initialization helper
+  ASoC: rt722: wait codec init in hw_params
+  ASoC: rt712: wait codec init in hw_params
+  ASoC: rt1320: wait codec init in hw_params
+  ASoC: rt721: wait codec init in hw_params
+  ASoC: rt715-sdca: wait codec init in hw_params
+  ASoC: rt711-sdca: wait codec init in hw_params
+  ASoC: rt711: wait codec init in hw_params
+  ASoC: rt715: wait codec init in hw_params
+  ASoC: rt700: wait codec init in hw_params
+  ASoC: rt1316: wait codec init in hw_params
+  ASoC: rt1318: wait codec init in hw_params
+  ASoC: rt1308: wait codec init in hw_params
+  ASoC: rt5682: wait codec init in hw_params
+  ASoC: rt1017: wait codec init in hw_params
 
-It seems that the SAI loses track of frame sync during the trigger stop
--> trigger start cycle that occurs during an xrun. Doing just a FIFO
-reset in this case does not suffice, and only a software reset seems to
-get it back on track.
+ drivers/soundwire/slave.c          | 17 ++++++++++++++
+ include/linux/soundwire/sdw.h      |  1 +
+ sound/soc/codecs/rt1017-sdca-sdw.c | 32 ++++++++++++++++----------
+ sound/soc/codecs/rt1308-sdw.c      | 32 ++++++++++++++++----------
+ sound/soc/codecs/rt1316-sdw.c      | 32 ++++++++++++++++----------
+ sound/soc/codecs/rt1318-sdw.c      | 30 ++++++++++++++++--------
+ sound/soc/codecs/rt1320-sdw.c      | 32 ++++++++++++++++++--------
+ sound/soc/codecs/rt5682-sdw.c      | 29 +++++++++++++++--------
+ sound/soc/codecs/rt700-sdw.c       | 27 ++++++++++++----------
+ sound/soc/codecs/rt700.c           |  6 +++++
+ sound/soc/codecs/rt711-sdca-sdw.c  | 28 ++++++++++++----------
+ sound/soc/codecs/rt711-sdca.c      |  6 +++++
+ sound/soc/codecs/rt711-sdw.c       | 26 +++++++++++++--------
+ sound/soc/codecs/rt711.c           |  6 +++++
+ sound/soc/codecs/rt712-sdca-sdw.c  | 28 ++++++++++++----------
+ sound/soc/codecs/rt712-sdca.c      |  6 +++++
+ sound/soc/codecs/rt715-sdca-sdw.c  | 37 ++++++++++++++++++++----------
+ sound/soc/codecs/rt715-sdca.c      |  6 +++++
+ sound/soc/codecs/rt715-sdw.c       | 27 ++++++++++++----------
+ sound/soc/codecs/rt715.c           |  6 +++++
+ sound/soc/codecs/rt721-sdca-sdw.c  | 29 ++++++++++++-----------
+ sound/soc/codecs/rt721-sdca.c      |  6 +++++
+ sound/soc/codecs/rt722-sdca-sdw.c  | 26 +++++++++++----------
+ sound/soc/codecs/rt722-sdca.c      |  6 +++++
+ 24 files changed, 320 insertions(+), 161 deletions(-)
 
-This looks like the same h/w bug that is already handled for the
-producer case, so we now do the reset unconditionally on config disable.
-
-Signed-off-by: Arun Raghavan <arun@asymptotic.io>
-Reported-by: Pieterjan Camerlynck <p.camerlynck@televic.com>
----
-
-v3
-- Incorporate feedback from Shengjiu Wang to consolidate with the
-  existing handling of this issue in producer mode
-
- sound/soc/fsl/fsl_sai.c | 14 ++++++++------
- 1 file changed, 8 insertions(+), 6 deletions(-)
-
-diff --git a/sound/soc/fsl/fsl_sai.c b/sound/soc/fsl/fsl_sai.c
-index af1a168d35e3..50af6b725670 100644
---- a/sound/soc/fsl/fsl_sai.c
-+++ b/sound/soc/fsl/fsl_sai.c
-@@ -803,13 +803,15 @@ static void fsl_sai_config_disable(struct fsl_sai *sai, int dir)
- 	 * anymore. Add software reset to fix this issue.
- 	 * This is a hardware bug, and will be fix in the
- 	 * next sai version.
-+	 *
-+	 * In consumer mode, this can happen even after a
-+	 * single open/close, especially if both tx and rx
-+	 * are running concurrently.
- 	 */
--	if (!sai->is_consumer_mode[tx]) {
--		/* Software Reset */
--		regmap_write(sai->regmap, FSL_SAI_xCSR(tx, ofs), FSL_SAI_CSR_SR);
--		/* Clear SR bit to finish the reset */
--		regmap_write(sai->regmap, FSL_SAI_xCSR(tx, ofs), 0);
--	}
-+	/* Software Reset */
-+	regmap_write(sai->regmap, FSL_SAI_xCSR(tx, ofs), FSL_SAI_CSR_SR);
-+	/* Clear SR bit to finish the reset */
-+	regmap_write(sai->regmap, FSL_SAI_xCSR(tx, ofs), 0);
- }
- 
- static int fsl_sai_trigger(struct snd_pcm_substream *substream, int cmd,
 -- 
-2.49.0
+2.43.0
 
 
