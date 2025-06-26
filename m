@@ -1,194 +1,110 @@
-Return-Path: <linux-kernel+bounces-705097-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-705101-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 92C7CAEA52D
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Jun 2025 20:19:15 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B24DCAEA539
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Jun 2025 20:20:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id ACEC73BC01C
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Jun 2025 18:18:21 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7819C7A653F
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Jun 2025 18:19:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9489D2EF298;
-	Thu, 26 Jun 2025 18:17:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 21C24238166;
+	Thu, 26 Jun 2025 18:20:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="PiQgVJUk"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="j1TSmmKa"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1A49F2EE610
-	for <linux-kernel@vger.kernel.org>; Thu, 26 Jun 2025 18:17:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7F7591A316C;
+	Thu, 26 Jun 2025 18:20:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750961845; cv=none; b=EqzJfq60PWHA7Sr4n6nHC4rjWhiPwWoBPmMnFfuBektmzXEyP2kGjs5MmqynNDsb50zZ+zZBuKb/fCJ6dzbPktTsyIDo9YaVayHNXUdqKbUTSHXM7tMro6WBeR2WcpvzSr/vtirB5l5KzUmhDlXQv8f8nkW9tHOfDLmjgKuTM8g=
+	t=1750962022; cv=none; b=ASBT+wm+ot827MARCtV/k8St6wz96+3LnOwHs1tGDRTwz4NTJe6LJbiuAxKp5EleRahLbrCqF14cvSeuIKFJhK0lKANnBurzHf0Vje22nSN3nn2IwVqGzcoAzsxYnLBlnSC75sVm9zj91dcu/ZDeB5Nr99m0i6kup88QGN0aBVc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750961845; c=relaxed/simple;
-	bh=6oGoKMyXjxgzqrisONTm1WSrJ7oucpkiGgq39C3HYBI=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=N9PAIWLUok0tu4TbGN6dUNjqErL4C9ZQ3O8Jonmv88UfLtwuAz6wP+TydI9VU7oWBfbL1xrc/2TZFM8X8d0cGUzsKqCLDOz+KzSmKa9exh3CsVPdXJpqLs8hEXkJO8ZBlTsy4ycV7wvp6HmceTZ4fNqMIATe9Wt5eNyWtAYwt3U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=PiQgVJUk; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1750961843;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=8FvEh9KPwU2FPVYiAUQ819UI09czGQfx0V/ZDJLQtEw=;
-	b=PiQgVJUkp7nwjPtLx6DyxF+5PsabVOheG37VeG+HJRIOeHBECwhU2l370s0BBIXVlGOi8h
-	OFNOzUQA6K01QUZGUyT7dCMEDbRjWFIXPCgHwTksw2N2yRc1c5wLq9gtBrNtNaIi46BKF5
-	1DK2BA3p4z80BjLZGnyE611SnBUXkMQ=
-Received: from mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-513-7UNU5ohPMiy7mflE6UnpEg-1; Thu,
- 26 Jun 2025 14:17:19 -0400
-X-MC-Unique: 7UNU5ohPMiy7mflE6UnpEg-1
-X-Mimecast-MFC-AGG-ID: 7UNU5ohPMiy7mflE6UnpEg_1750961838
-Received: from mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.93])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id A1DEE180028A;
-	Thu, 26 Jun 2025 18:17:18 +0000 (UTC)
-Received: from fedora.redhat.com (unknown [10.22.64.64])
-	by mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 4C6B718003FC;
-	Thu, 26 Jun 2025 18:17:17 +0000 (UTC)
-From: Luiz Capitulino <luizcap@redhat.com>
-To: david@redhat.com,
-	willy@infradead.org
-Cc: akpm@linux-foundation.org,
-	linux-kernel@vger.kernel.org,
-	linux-mm@kvack.org,
-	lcapitulino@gmail.com,
-	shivankg@amd.com
-Subject: [PATCH 3/3] fs: stable_page_flags(): use snapshot_page()
-Date: Thu, 26 Jun 2025 14:16:53 -0400
-Message-ID: <ede227784078c4c619582c2c69aee1d8450edf12.1750961812.git.luizcap@redhat.com>
-In-Reply-To: <cover.1750961812.git.luizcap@redhat.com>
-References: <cover.1750961812.git.luizcap@redhat.com>
+	s=arc-20240116; t=1750962022; c=relaxed/simple;
+	bh=ojxtrCSlAxBab3aqEdaoBxwo2pv44yPWbPAbxh2oCzM=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=BbuTJ8MuVY5Zczb1ZEEBCZ9Y98lSP9Hl2ZbYJOiNWh0rTBtwcZQ6FWXRoENiyZAbhaRRb5e60SO1InGGagKoUe/wVe++ZONT0wULeGR47eFI3CwofpNDtxNCB6TU4HcQoDEDgJxmGrJ6uZLCAtJQK/KmdAdFLrXiPsYiGjo7Kus=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=j1TSmmKa; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C0FEEC4CEEB;
+	Thu, 26 Jun 2025 18:20:18 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1750962022;
+	bh=ojxtrCSlAxBab3aqEdaoBxwo2pv44yPWbPAbxh2oCzM=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=j1TSmmKawOFir+mO9EHc15u/sZGKkncgNtQ8/BsyXg7aASmkemxG/soApRH+/F3TB
+	 Vi+b2MKNLlOKBVjirUwCIIQ7QvP3+RGS0nd9qVZjCCIa1+/rM5fR9C1u1aKG5MSEsC
+	 5m3TEWvQaabaq6PPJ78q9V/IACAkhY7lNIwnk9j6kqZw4ODJEdk0AjP6PaR/3gCGwI
+	 8i7iopo5xBVjKxj22Xp/6BQvEqDcO9qbO0F7WXE+wgPpPSVklI5m72zvnZbL/YNCdG
+	 zqyEeHCqx+cyKweWXFt8eXYpXEOVGquszGNn9s7TqcFSD4IJDdOi/xjGS8/hYcy/1v
+	 S3daq7Em6oQfA==
+Date: Thu, 26 Jun 2025 19:20:14 +0100
+From: Jonathan Cameron <jic23@kernel.org>
+To: Matti Vaittinen <mazziesaccount@gmail.com>
+Cc: Lothar Rubusch <l.rubusch@gmail.com>, dlechner@baylibre.com,
+ nuno.sa@analog.com, andy@kernel.org, linux-iio@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v1 2/2] iio: adc: ti-adc128s052: replace literal by unit
+ expression
+Message-ID: <20250626192014.4dd4a270@jic23-huawei>
+In-Reply-To: <c97e840e-fe8e-40e9-baef-0a18103848fd@gmail.com>
+References: <20250625170218.545654-1-l.rubusch@gmail.com>
+	<20250625170218.545654-3-l.rubusch@gmail.com>
+	<c97e840e-fe8e-40e9-baef-0a18103848fd@gmail.com>
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.48; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.93
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-A race condition is possible in stable_page_flags() where user-space is
-reading /proc/kpageflags concurrently to a folio split. This may lead to
-oopses or BUG_ON()s being triggered.
+On Thu, 26 Jun 2025 08:07:19 +0300
+Matti Vaittinen <mazziesaccount@gmail.com> wrote:
 
-To fix this, this commit uses snapshot_page() in stable_page_flags() so
-that stable_page_flags() works with a stable page and folio snapshots
-instead.
+> On 25/06/2025 20:02, Lothar Rubusch wrote:
+> > Replace the literal number 1000 by MILLI from linux/units.h
+> > 
+> > Signed-off-by: Lothar Rubusch <l.rubusch@gmail.com>
+> > ---
+> >   drivers/iio/adc/ti-adc128s052.c | 3 ++-
+> >   1 file changed, 2 insertions(+), 1 deletion(-)
+> > 
+> > diff --git a/drivers/iio/adc/ti-adc128s052.c b/drivers/iio/adc/ti-adc128s052.c
+> > index cf271c39e663..67bc7fbd52bc 100644
+> > --- a/drivers/iio/adc/ti-adc128s052.c
+> > +++ b/drivers/iio/adc/ti-adc128s052.c
+> > @@ -18,6 +18,7 @@
+> >   #include <linux/property.h>
+> >   #include <linux/regulator/consumer.h>
+> >   #include <linux/spi/spi.h>
+> > +#include <linux/units.h>
+> >   
+> >   struct adc128_configuration {
+> >   	const struct iio_chan_spec	*channels;
+> > @@ -189,7 +190,7 @@ static int adc128_probe(struct spi_device *spi)
+> >   				     "failed to read '%s' voltage",
+> >   				     config->refname);
+> >   
+> > -	adc->vref_mv = ret / 1000;
+> > +	adc->vref_mv = ret / MILLI;  
+> 
+> This makes no sense to me. What does it mean we divide the micro volts 
+> by 'milli'? It is clear when we divide micro volts by 1000 that we get 
+> milli volts. Also, the mv suffix in variable makes units clear already, 
+> division by MILLI just obfuscates things. I'd keep it as 1000.
+> 
 
-Note that stable_page_flags() makes use of some functions that require
-the original page or folio pointer to work properly (eg.
-is_free_budy_page() and folio_test_idle()). Since those functions can't
-be used on the page snapshot, we replace their usage with flags that
-were set by snapshot_page() for this purpose.
-
-Signed-off-by: Luiz Capitulino <luizcap@redhat.com>
----
- fs/proc/page.c | 25 ++++++++++++++-----------
- 1 file changed, 14 insertions(+), 11 deletions(-)
-
-diff --git a/fs/proc/page.c b/fs/proc/page.c
-index 936f8bbe5a6f..a2ee95f727f0 100644
---- a/fs/proc/page.c
-+++ b/fs/proc/page.c
-@@ -147,6 +147,7 @@ static inline u64 kpf_copy_bit(u64 kflags, int ubit, int kbit)
- u64 stable_page_flags(const struct page *page)
- {
- 	const struct folio *folio;
-+	struct page_snapshot ps;
- 	unsigned long k;
- 	unsigned long mapping;
- 	bool is_anon;
-@@ -158,7 +159,9 @@ u64 stable_page_flags(const struct page *page)
- 	 */
- 	if (!page)
- 		return 1 << KPF_NOPAGE;
--	folio = page_folio(page);
-+
-+	snapshot_page(&ps, page);
-+	folio = &ps.folio_snapshot;
+ret / (MICRO / MILLI) would be more descriptive as indicates
+we are converting form microvolts to milivolts.
  
- 	k = folio->flags;
- 	mapping = (unsigned long)folio->mapping;
-@@ -167,7 +170,7 @@ u64 stable_page_flags(const struct page *page)
- 	/*
- 	 * pseudo flags for the well known (anonymous) memory mapped pages
- 	 */
--	if (page_mapped(page))
-+	if (folio_mapped(folio))
- 		u |= 1 << KPF_MMAP;
- 	if (is_anon) {
- 		u |= 1 << KPF_ANON;
-@@ -179,7 +182,7 @@ u64 stable_page_flags(const struct page *page)
- 	 * compound pages: export both head/tail info
- 	 * they together define a compound page's start/end pos and order
- 	 */
--	if (page == &folio->page)
-+	if (ps.idx == 0)
- 		u |= kpf_copy_bit(k, KPF_COMPOUND_HEAD, PG_head);
- 	else
- 		u |= 1 << KPF_COMPOUND_TAIL;
-@@ -189,10 +192,10 @@ u64 stable_page_flags(const struct page *page)
- 	         folio_test_large_rmappable(folio)) {
- 		/* Note: we indicate any THPs here, not just PMD-sized ones */
- 		u |= 1 << KPF_THP;
--	} else if (is_huge_zero_folio(folio)) {
-+	} else if (ps.flags & PAGE_SNAPSHOT_PG_HUGE_ZERO) {
- 		u |= 1 << KPF_ZERO_PAGE;
- 		u |= 1 << KPF_THP;
--	} else if (is_zero_folio(folio)) {
-+	} else if (is_zero_pfn(ps.pfn)) {
- 		u |= 1 << KPF_ZERO_PAGE;
- 	}
- 
-@@ -200,14 +203,14 @@ u64 stable_page_flags(const struct page *page)
- 	 * Caveats on high order pages: PG_buddy and PG_slab will only be set
- 	 * on the head page.
- 	 */
--	if (PageBuddy(page))
-+	if (PageBuddy(&ps.page_snapshot))
- 		u |= 1 << KPF_BUDDY;
--	else if (page_count(page) == 0 && is_free_buddy_page(page))
-+	else if (ps.flags & PAGE_SNAPSHOT_PG_FREE)
- 		u |= 1 << KPF_BUDDY;
- 
--	if (PageOffline(page))
-+	if (folio_test_offline(folio))
- 		u |= 1 << KPF_OFFLINE;
--	if (PageTable(page))
-+	if (folio_test_pgtable(folio))
- 		u |= 1 << KPF_PGTABLE;
- 	if (folio_test_slab(folio))
- 		u |= 1 << KPF_SLAB;
-@@ -215,7 +218,7 @@ u64 stable_page_flags(const struct page *page)
- #if defined(CONFIG_PAGE_IDLE_FLAG) && defined(CONFIG_64BIT)
- 	u |= kpf_copy_bit(k, KPF_IDLE,          PG_idle);
- #else
--	if (folio_test_idle(folio))
-+	if (ps.flags & PAGE_SNAPSHOT_PG_IDLE)
- 		u |= 1 << KPF_IDLE;
- #endif
- 
-@@ -241,7 +244,7 @@ u64 stable_page_flags(const struct page *page)
- 	if (u & (1 << KPF_HUGE))
- 		u |= kpf_copy_bit(k, KPF_HWPOISON,	PG_hwpoison);
- 	else
--		u |= kpf_copy_bit(page->flags, KPF_HWPOISON,	PG_hwpoison);
-+		u |= kpf_copy_bit(ps.page_snapshot.flags, KPF_HWPOISON, PG_hwpoison);
- #endif
- 
- 	u |= kpf_copy_bit(k, KPF_RESERVED,	PG_reserved);
--- 
-2.49.0
+> I would just drop this unless Jonathan disagrees.
+> 
+> Yours,
+> 	-- Matti
 
 
