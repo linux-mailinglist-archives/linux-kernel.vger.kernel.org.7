@@ -1,155 +1,89 @@
-Return-Path: <linux-kernel+bounces-705052-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-705046-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1C92AAEA494
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Jun 2025 19:42:55 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id EEF62AEA489
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Jun 2025 19:41:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 37D914A0953
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Jun 2025 17:42:55 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 47FAA4A02E5
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Jun 2025 17:41:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B3A052EE26B;
-	Thu, 26 Jun 2025 17:42:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3E3B32EB5A6;
+	Thu, 26 Jun 2025 17:41:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ZIBBs1PB"
-Received: from mail-wr1-f54.google.com (mail-wr1-f54.google.com [209.85.221.54])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="f+wvCNnD"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6D195202C50;
-	Thu, 26 Jun 2025 17:42:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9B59320D4F2;
+	Thu, 26 Jun 2025 17:41:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750959747; cv=none; b=nv6yDgWgjORShhWRF0nayMc6uQrc9pCJqUCP0gMNQ+6jbkkHEYXRFe+yHdOp/o191cnPSqX29bVhIbTnRisUKt25DdqwgkWENHh38K58SHPTawa59K/ZXm5lMb2UQVTJWGyjaMWYqzCW1YEz3cduyxJUr2x6y3M+J4cCNMWLPJw=
+	t=1750959684; cv=none; b=COHh3hXKVAcJn8McIPGH4QobCPQ3lF/jdtpSKPxzL+D00AteYfeSrCLthlfXkMp8Y5FSVYQApNNtdAK98nnAljJHUMnn0B6uF5vkLRoe/PxVoanuRTlke8m69ik8sw9MP7xflKQLA77L7AeMf6knCNfzXuEbnLx8xhRYVb+mM70=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750959747; c=relaxed/simple;
-	bh=d/uFaFpLqxiJWZje950XRpP9HEjDy0svn2RVhXaZP6w=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=WQGjZ/0Dd4WJ3OO0HaurlrTPdpanp1qwQGjJmi284VlNLX6UHuuaOwZNHENcFB2SqBYRg7WuWem1g0e7KitRAPPqJ3pyUmxyqXoUHIAbUmoePXtyCdZuYUm+E951DzXdAc7S+I+y0VwCwFmWCgrlhI8G2+jf354kfYAVaYfQCQ4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ZIBBs1PB; arc=none smtp.client-ip=209.85.221.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f54.google.com with SMTP id ffacd0b85a97d-3a536ecbf6fso765258f8f.2;
-        Thu, 26 Jun 2025 10:42:25 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1750959744; x=1751564544; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=9it6V+UE5SX4dDhUGK283b/ucph+OC15b+uAeGnEJBc=;
-        b=ZIBBs1PBblxWhuOkkVY84zVzw+nDZXUNniuDYQJrzSs87JGWyf38MmJKRMJi+4ibMg
-         lJ97AGpaiwQtd6A41uD7hS2Y7KOtTHc/266lRKvEiOaHhw+Ttm0aJhA99t2r0Ydv5/5T
-         gK+/lo4ILYWIZYDWxSYYc3J87Se1jSD7dmnihwMiBy7SFLmxO/EQtJ1q/+fnqCmGEnCv
-         SD5FbiGEy9T5SlkJkTtUMEJrGqtjfPds8zz9ftCfHP4gFwad00KTPTSHspm5GdgrpLYk
-         eKe7RYvOa1DYR3qdPLfuwwl1azOlsWHtZ80tPmCZhiBzQa35ksU6o4oo8MW71LxTzFqB
-         1HnQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1750959744; x=1751564544;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=9it6V+UE5SX4dDhUGK283b/ucph+OC15b+uAeGnEJBc=;
-        b=uNAesVnoZuko4vb/M73twto/y090a/c8TDn2/l2a8LYAV8rQHMv7lFzBVui3WGzcnw
-         At4tneR7Xv8BuR+JENHtyII98/8BvoIxrz89na1xKqSoNlI54/bKDTR2b7pkDURxSjBE
-         ktqdA53ExHzcjS/1QApuOWSvV35i5i+xgx7xxQRW56iAXM6DDFzGlstTkFc4iceMvFv9
-         l+j7TePq6h3sowqcr8AQyWz41XDtjVyoN/al0e5fpAX8E40PG8avC5cWZCBfj/P/L84e
-         JYtpXeK5GOJrXJe8inmr0eZ2Cj5f8Nqjv54AHRWlWaGQx2mIqS/R7ibW9ng/v1mUJKdx
-         YR1w==
-X-Forwarded-Encrypted: i=1; AJvYcCUPWTQUVFe8x8U+x4iVpwa0LMugiqFDU/ln52bYoPct5/V0ZkX/p35WFibUG9AQyfyfo0BNahSH5c1P@vger.kernel.org, AJvYcCVejSgnGeESX6WBOJ4qUEHK8aVcBr95/tr0Z29mXVc99Cyl0eBN7Za395DUmdoFoNWy/0uY+CM9/TIvh7X5@vger.kernel.org, AJvYcCWWvErnrz0tBlDz+BVeqkIucAUA8SlfhgbIsXzDVYxULGSr6ta6fY2VhROlu4mroOLF77mVje4Ic/BrRA==@vger.kernel.org, AJvYcCXKcC/CwnU4JsIzSybjBRnusWdO7F2P7FMy6DxG2IG3QL3LRpdy5pE8ygiVBVP9pM1ZpglG0A0fFUM24qTjnwE=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyQbjJ0dKqWWY3B6jAy3iyuAiIDhgrtWzzt0KnGDaX0Dz6xRSOi
-	sJ60ZbdpQEFGPI91zBMXtp47JvGhNF2AF01W/1OusebBuWBXjr0DjMkP
-X-Gm-Gg: ASbGncs2VTMqLbhLVxWs5xE9QU92vub5t8FZIvyAmwnoLTrRaMDs8FkGxMz3o8zuGTh
-	yyGNNoICDb/UztkzEUI4uXb1CCsM53PfZnCxRz/zlzLcMuXjMP8wCgUPHPXha3JCQXv+CjbfxvT
-	g0v3SFKshhaYlN/tPtNCsxzhjGNZKO31LwRX62H6qBzP91d6AlsfiUlYvT7CZo1xi4PMMTxn1a9
-	A0RxyBsO1YidlmV9eeKuA9eYWeu1bGZw/kxzGHpjxegkwX0bveOBV0f7rQEtFgta84rGwZ/d3Ml
-	56hHnrk4O0Nsi5Q6dfdma1rn5EzSHZhWXVt5v6OHK2iGMe/trCBHfoMBf6sqEsgeg2KkOLU=
-X-Google-Smtp-Source: AGHT+IGr2M9MxH/JfMsZ07lpE1ikbaPFCtQUD7frnfdUMbPRMyzGWfcYKWrr5HHz3Nw1g/Fqcy5Sag==
-X-Received: by 2002:a05:6000:2082:b0:3a3:7ba5:93a5 with SMTP id ffacd0b85a97d-3a8feb85191mr466394f8f.26.1750959743398;
-        Thu, 26 Jun 2025 10:42:23 -0700 (PDT)
-Received: from [10.38.1.85] ([188.39.32.4])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-453823b6c21sm56282555e9.29.2025.06.26.10.42.22
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 26 Jun 2025 10:42:23 -0700 (PDT)
-Message-ID: <31804bbf-1a0b-4312-8db6-532a008528a2@gmail.com>
-Date: Thu, 26 Jun 2025 18:40:06 +0100
+	s=arc-20240116; t=1750959684; c=relaxed/simple;
+	bh=S6yftzTqRreb6fAcsiDFpqgkyKzzCrY4x9xkT5qRdAE=;
+	h=From:To:In-Reply-To:References:Subject:Message-Id:Date:
+	 MIME-Version:Content-Type; b=WzyLOSp0lHGiSMVxWHz8aPa44Xa1CsSl4ux0ZwW82sVs1blBK92rnGpFT4RCoGq+otKwzqeCRz6x43P2hsWGrF7Zo27fvji5xm1tsCEwVZlVde4JYH8Bn0YR5/+dEamvRlqgUYZ2aomBOyMkP9A+nAynUh4bgJhmgrBqbt7epBs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=f+wvCNnD; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B8C58C4CEEB;
+	Thu, 26 Jun 2025 17:41:23 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1750959684;
+	bh=S6yftzTqRreb6fAcsiDFpqgkyKzzCrY4x9xkT5qRdAE=;
+	h=From:To:In-Reply-To:References:Subject:Date:From;
+	b=f+wvCNnDxZnMfL4t5xJrhaHFIFXkT3kpv0KYndklYVer3aGfR6xE3EpRZ/w0+i/Ul
+	 lA2pWMoSp5cxy3iX47Gdi71d3+QQ3eEWNTUKEpb7JKbvASIBEchLwmzW/Pe7D+WZeS
+	 3fF7tn/+QugOAL25vISKeqVudoaLnNIuM72FRCluyK2VwwO6SHd6+BEieSbdrLp1w5
+	 dACCXN8o6/QXJ9g/mHQUI3jTyvnOEg8MXfLBmiMnxRfk3eP1hD5hkpsxUnlIJvdgsA
+	 LqyDPHxjMy/zKqIIy2LabC7sL517UbRFMNNthx9/d51zmVI5ASmKuTRNaD6E5pb0gx
+	 J2HbJPKuISeIQ==
+From: Namhyung Kim <namhyung@kernel.org>
+To: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, 
+ Arnaldo Carvalho de Melo <acme@kernel.org>, 
+ Mark Rutland <mark.rutland@arm.com>, 
+ Alexander Shishkin <alexander.shishkin@linux.intel.com>, 
+ Jiri Olsa <jolsa@kernel.org>, Adrian Hunter <adrian.hunter@intel.com>, 
+ Kan Liang <kan.liang@linux.intel.com>, 
+ "Masami Hiramatsu (Google)" <mhiramat@kernel.org>, 
+ James Clark <james.clark@linaro.org>, Weilin Wang <weilin.wang@intel.com>, 
+ Dominique Martinet <asmadeus@codewreck.org>, 
+ Thomas Richter <tmricht@linux.ibm.com>, Junhao He <hejunhao3@huawei.com>, 
+ Jean-Philippe Romain <jean-philippe.romain@foss.st.com>, 
+ matthew.olson@intel.com, linux-kernel@vger.kernel.org, 
+ linux-perf-users@vger.kernel.org, dri-devel@lists.freedesktop.org, 
+ Ian Rogers <irogers@google.com>
+In-Reply-To: <20250624231837.179536-1-irogers@google.com>
+References: <20250624231837.179536-1-irogers@google.com>
+Subject: Re: [PATCH v4 0/3] Add support for a DRM tool like PMU
+Message-Id: <175095968371.2045399.16176878639226540053.b4-ty@kernel.org>
+Date: Thu, 26 Jun 2025 10:41:23 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v8 4/9] rust: acpi: add `acpi::DeviceId` abstraction
-To: Danilo Krummrich <dakr@kernel.org>
-Cc: "Rafael J . Wysocki" <rafael@kernel.org>,
- Alex Gaynor <alex.gaynor@gmail.com>,
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- Miguel Ojeda <ojeda@kernel.org>, Rob Herring <robh@kernel.org>,
- Saravana Kannan <saravanak@google.com>, Alex Hung <alex.hung@amd.com>,
- Andrew Morton <akpm@linux-foundation.org>, Jakub Kicinski <kuba@kernel.org>,
- Jonathan Cameron <Jonathan.Cameron@huawei.com>,
- Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
- Mauro Carvalho Chehab <mchehab+huawei@kernel.org>,
- Remo Senekowitsch <remo@buenzli.dev>, Tamir Duberstein <tamird@gmail.com>,
- Viresh Kumar <viresh.kumar@linaro.org>,
- Wedson Almeida Filho <wedsonaf@gmail.com>,
- Xiangfei Ding <dingxiangfei2009@gmail.com>, devicetree@vger.kernel.org,
- linux-acpi@vger.kernel.org, linux-kernel@vger.kernel.org,
- rust-for-linux@vger.kernel.org, =?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?=
- <bjorn3_gh@protonmail.com>, Alice Ryhl <aliceryhl@google.com>,
- Andreas Hindborg <a.hindborg@kernel.org>, Benno Lossin <lossin@kernel.org>,
- Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>,
- Len Brown <lenb@kernel.org>, Trevor Gross <tmgross@umich.edu>
-References: <20250620150914.276272-1-igor.korotin.linux@gmail.com>
- <20250620152425.285683-1-igor.korotin.linux@gmail.com>
- <c5d750fd-ffcf-4d07-bfff-ebe206faa41a@kernel.org>
-Content-Language: en-US
-From: Igor Korotin <igor.korotin.linux@gmail.com>
-In-Reply-To: <c5d750fd-ffcf-4d07-bfff-ebe206faa41a@kernel.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-Mailer: b4 0.15-dev-c04d2
 
-
-
-On 6/26/25 16:25, Danilo Krummrich wrote:
-> On 6/20/25 5:24 PM, Igor Korotin wrote:
->> +impl DeviceId {
->> +    const ACPI_ID_LEN: usize = 16;
->> +
->> +    /// Create a new device id from an ACPI 'id' string.
->> +    pub const fn new<const N: usize>(id: &[u8; N]) -> Self {
+On Tue, 24 Jun 2025 16:18:34 -0700, Ian Rogers wrote:
+> DRM clients expose information through usage stats as documented in
+> Documentation/gpu/drm-usage-stats.rst (available online at
+> https://docs.kernel.org/gpu/drm-usage-stats.html). Add a tool like
+> PMU, similar to the hwmon PMU, that exposes DRM information.
 > 
-> Didn't notice before, but why was this silently changed from &CStr to
-> &[u8; N]
-> from v6 to v7?
+> v4: Rebase over changes like the auto merge stat to first wildcard PMU
+>     change and the clean up of tool PMU initialization.
 > 
->> +        build_assert!(N <= Self::ACPI_ID_LEN, "ID exceeds 16 bytes");
->> +        // Replace with `bindings::acpi_device_id::default()` once
->> stabilized for `const`.
->> +        // SAFETY: FFI type is valid to be zero-initialized.
->> +        let mut acpi: bindings::acpi_device_id = unsafe
->> { core::mem::zeroed() };
->> +        let mut i = 0;
->> +        while i < N {
->> +            acpi.id[i] = id[i];
->> +            i += 1;
->> +        }
->> +
->> +        Self(acpi)
->> +    }
->> +}
+> [...]
+Applied to perf-tools-next, thanks!
 
-In v6 I was asked to change assert! (runtime) to build_assert! (build time)
-It was as follows:
+Best regards,
+Namhyung
 
-> +    pub const fn new(id: &'static CStr) -> Self {
-> +        assert!(id.len() <= Self::ACPI_ID_LEN, "ID exceeds 16 bytes");
 
-but id.len() breaks const context and so build_assert! triggers
-assertion. If I needed to explicitly describe change from CStr to
-[u8;20], then it's my bad.
-
-Thanks,
-Igor
 
