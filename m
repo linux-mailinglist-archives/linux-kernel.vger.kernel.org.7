@@ -1,76 +1,70 @@
-Return-Path: <linux-kernel+bounces-705098-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-705094-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9B30CAEA531
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Jun 2025 20:19:43 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id DFB4BAEA528
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Jun 2025 20:18:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9FC1316DB63
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Jun 2025 18:19:43 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E40E1179133
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Jun 2025 18:18:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A666A21421A;
-	Thu, 26 Jun 2025 18:19:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B2D821E3DC8;
+	Thu, 26 Jun 2025 18:17:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b="l2nsoshp"
-Received: from mx08-00178001.pphosted.com (mx08-00178001.pphosted.com [91.207.212.93])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="JOg2h26J"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5B7AC194AD5;
-	Thu, 26 Jun 2025 18:19:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.207.212.93
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 538E6194AD5
+	for <linux-kernel@vger.kernel.org>; Thu, 26 Jun 2025 18:17:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750961975; cv=none; b=i2oCe6Sc2PKrKiUew3YhVOMJhXDiGW6CwxMQAn3FzWCnwaZx7r+abG9DFOghOMGK/npwoJSuiVU8XMGW71aQQidz+feh24+YF34yAOco6K0+8brk8U5B2MrcmG4s1kjJ4ylUPw2eD3eABYve02aFUAP/2M2rDl+O7f3TzbnMQNo=
+	t=1750961841; cv=none; b=mPEzHRzkA8zeyV8NydiJiOzEjDcmp63kytlp91XwlhQo50cGUVqQGXxfoa/i/9t8nOF7MfJ02RBuOLPpSpjpKs1G3O9kLMfrtQYrvEJlyNJogDAwkwEWfDYaFxRNjz2vDvc+64eeOxTmgy1qJkwx0OhTYpWY1iL4niLgn7K3FSI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750961975; c=relaxed/simple;
-	bh=zNeemGdU/vctglRfI3f7S+/H+wa5hlrBWbirOXcwPL0=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=LTZDL6duwytJ5dXp3DznjDuNa1Vf4aqSq4ZIMxE6OBXxYv6s6PNko5THY5kQtTnfkOTGzy4/yQeLHoRQgiiqpuN4MljKd2Ejad6I9m2GuGraO19r/xwiKFWomYRe751N+rbrGZgPFQ3lDfk+k1JVQr+y05cx4WfiS5aXeSnFs1M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com; spf=pass smtp.mailfrom=foss.st.com; dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b=l2nsoshp; arc=none smtp.client-ip=91.207.212.93
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=foss.st.com
-Received: from pps.filterd (m0369457.ppops.net [127.0.0.1])
-	by mx07-00178001.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 55QEfP7w009706;
-	Thu, 26 Jun 2025 20:19:05 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foss.st.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=selector1; bh=
-	dwwi92ajr3Hx7+OnqQ/c83G/3mwouq+VJfJgJebS2Lg=; b=l2nsoshpGQzKnfk2
-	5EJJstithUE9ie/HPh8xhyHxqoo4BdiwOjbZ4AJZns45OgXcqBt6O6uwUjx0OKw8
-	DhmTMviM0SokrBSW1gae/wKfBoi9MbbjdENTfzfTPdoWnTEHmzRSE3rD+vzqxw40
-	bMfrrjb22OrGvFFQzun3HcXLK2wpPdki9GOgPIZbrYDhktnEuye3zRbUkErMbrjK
-	GzVCn+zoOFhCdSRMWQxjq4H6QmJsRNsLfvrTi5A/NatrX4XP+Z1h/0gEh3H4cZUA
-	jivIs7+7mqV7xx8CTWms/OQ3smU6Ub7zZt1/cAZQzU+ZB6s6cNTovHaMyx/2hvmO
-	nnV/xQ==
-Received: from beta.dmz-ap.st.com (beta.dmz-ap.st.com [138.198.100.35])
-	by mx07-00178001.pphosted.com (PPS) with ESMTPS id 47e7ppn921-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 26 Jun 2025 20:19:05 +0200 (MEST)
-Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
-	by beta.dmz-ap.st.com (STMicroelectronics) with ESMTP id DD4BE40054;
-	Thu, 26 Jun 2025 20:18:10 +0200 (CEST)
-Received: from Webmail-eu.st.com (shfdag1node3.st.com [10.75.129.71])
-	by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id 53327BAE27C;
-	Thu, 26 Jun 2025 20:15:46 +0200 (CEST)
-Received: from localhost (10.130.77.120) by SHFDAG1NODE3.st.com (10.75.129.71)
- with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Thu, 26 Jun
- 2025 20:15:46 +0200
-From: Christian Bruel <christian.bruel@foss.st.com>
-To: <christian.bruel@foss.st.com>, <lpieralisi@kernel.org>,
-        <kwilczynski@kernel.org>, <mani@kernel.org>, <robh@kernel.org>,
-        <bhelgaas@google.com>, <mcoquelin.stm32@gmail.com>,
-        <alexandre.torgue@foss.st.com>, <linus.walleij@linaro.org>
-CC: <linux-pci@vger.kernel.org>, <linux-stm32@st-md-mailman.stormreply.com>,
-        <linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
-        <linux-gpio@vger.kernel.org>, kernel test robot <lkp@intel.com>
-Subject: [PATCH 2/2] PCI: stm32: use pinctrl_pm_select_init_state() in stm32_pcie_resume_noirq()
-Date: Thu, 26 Jun 2025 20:15:37 +0200
-Message-ID: <20250626181537.1872159-3-christian.bruel@foss.st.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20250626181537.1872159-1-christian.bruel@foss.st.com>
-References: <20250626181537.1872159-1-christian.bruel@foss.st.com>
+	s=arc-20240116; t=1750961841; c=relaxed/simple;
+	bh=iOmxvFnEFFGhlD+5wY32EGkkPUSZLlM06+79Svozo3o=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=EaeHu5KMlMW6LdGaI+Yx38TguheCAmVjEHTVbvVzVDU9swNbfoWEpGt9koM1DmHw+dJgodjl3rpzpcV2Z7LN2zyeb/sVeAmgceQp++zXHqZFhgeMHaSE4sZHUZJ3J1Shlef68R1jgRBfEGsP7iyO/F+jWhFcsnkD8W/YTeN9RVs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=JOg2h26J; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1750961838;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=jniFdNQO494F+zvVO/jVUG0YDZpnfkeojlpbeN+g9xU=;
+	b=JOg2h26JAJlGwyLvxFEryEKA1a3Ohsgv8S+aVa2qCW+LI2Wj4tCBK9Au4dg7AAo2E3+EAK
+	H19+zR/2QHLR7UwN1+M3YhgrlPp3k0faneHsQjmNiKMUk5EDQVhsaWY3H8FDcxyk4ni26o
+	0i1LXswGPQBfSLCQIpTmmfY4PNMAPIw=
+Received: from mx-prod-mc-04.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-44-4EhFUjdSMAOaRkKT-_rf4g-1; Thu,
+ 26 Jun 2025 14:17:14 -0400
+X-MC-Unique: 4EhFUjdSMAOaRkKT-_rf4g-1
+X-Mimecast-MFC-AGG-ID: 4EhFUjdSMAOaRkKT-_rf4g_1750961833
+Received: from mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.93])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-04.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id A1D7F19560B9;
+	Thu, 26 Jun 2025 18:17:12 +0000 (UTC)
+Received: from fedora.redhat.com (unknown [10.22.64.64])
+	by mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id C2DC218003FC;
+	Thu, 26 Jun 2025 18:17:10 +0000 (UTC)
+From: Luiz Capitulino <luizcap@redhat.com>
+To: david@redhat.com,
+	willy@infradead.org
+Cc: akpm@linux-foundation.org,
+	linux-kernel@vger.kernel.org,
+	linux-mm@kvack.org,
+	lcapitulino@gmail.com,
+	shivankg@amd.com
+Subject: [PATCH 0/3] mm: introduce snapshot_page()
+Date: Thu, 26 Jun 2025 14:16:50 -0400
+Message-ID: <cover.1750961812.git.luizcap@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -78,63 +72,38 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: EQNCAS1NODE4.st.com (10.75.129.82) To SHFDAG1NODE3.st.com
- (10.75.129.71)
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.7,FMLib:17.12.80.40
- definitions=2025-06-26_06,2025-06-26_05,2025-03-28_01
+X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.93
 
-Replace direct access to dev->pins->init_state with the new helper
-pinctrl_pm_select_init_state() to select the init pinctrl state.
-This fixes build issues when CONFIG_PINCTRL is not defined.
+Hi,
 
-Signed-off-by: Christian Bruel <christian.bruel@foss.st.com>
-Reported-by: Bjorn Helgaas <bhelgaas@google.com>  
-Reported-by: kernel test robot <lkp@intel.com>
-Closes: https://lore.kernel.org/oe-kbuild-all/202506260920.bmQ9hQ9s-lkp@intel.com/
-Fixes: 633f42f48af5 ("PCI: stm32: Add PCIe host support for STM32MP25")
----
- drivers/pci/controller/dwc/pcie-stm32.c | 10 +++++++---
- 1 file changed, 7 insertions(+), 3 deletions(-)
+This series introduces snapshot_page(), a helper function that can be used
+to create a snapshot of a struct page and its associated struct folio.
 
-diff --git a/drivers/pci/controller/dwc/pcie-stm32.c b/drivers/pci/controller/dwc/pcie-stm32.c
-index 50fae5f5ced2..c1d803dc3778 100644
---- a/drivers/pci/controller/dwc/pcie-stm32.c
-+++ b/drivers/pci/controller/dwc/pcie-stm32.c
-@@ -28,6 +28,7 @@ struct stm32_pcie {
- 	struct clk *clk;
- 	struct gpio_desc *perst_gpio;
- 	struct gpio_desc *wake_gpio;
-+	bool   have_pinctrl_init;
- };
- 
- static void stm32_pcie_deassert_perst(struct stm32_pcie *stm32_pcie)
-@@ -91,10 +92,10 @@ static int stm32_pcie_resume_noirq(struct device *dev)
- 	/*
- 	 * The core clock is gated with CLKREQ# from the COMBOPHY REFCLK,
- 	 * thus if no device is present, must force it low with an init pinmux
--	 * to be able to access the DBI registers.
-+	 * if present to be able to access the DBI registers.
- 	 */
--	if (!IS_ERR(dev->pins->init_state))
--		ret = pinctrl_select_state(dev->pins->p, dev->pins->init_state);
-+	if (stm32_pcie->have_pinctrl_init)
-+		ret = pinctrl_pm_select_init_state(dev);
- 	else
- 		ret = pinctrl_pm_select_default_state(dev);
- 
-@@ -274,6 +275,9 @@ static int stm32_pcie_probe(struct platform_device *pdev)
- 		return dev_err_probe(dev, PTR_ERR(stm32_pcie->rst),
- 				     "Failed to get PCIe reset\n");
- 
-+	if (device_property_match_string(dev, "pinctrl-names", PINCTRL_STATE_INIT) >= 0)
-+		stm32_pcie->have_pinctrl_init = true;
-+
- 	ret = stm32_pcie_parse_port(stm32_pcie);
- 	if (ret)
- 		return ret;
+This function is intended to help callers with a consistent view of a
+a folio while reducing the chance of encountering partially updated or
+inconsistent state, such as during folio splitting which could lead to
+crashes and BUG_ON()s being triggered.
+
+This series is on top of latest Linus tree (c4dce0c094a8).
+
+Changelog
+=========
+
+RFC -> v1
+  - Include <linux/page_idle.h> to avoid build error on sh arch
+
+Luiz Capitulino (3):
+  mm: introduce snapshot_page()
+  proc: kpagecount: use snapshot_page()
+  fs: stable_page_flags(): use snapshot_page()
+
+ fs/proc/page.c     | 46 +++++++++++++++++++----------
+ include/linux/mm.h | 20 +++++++++++++
+ mm/debug.c         | 42 +++------------------------
+ mm/util.c          | 72 ++++++++++++++++++++++++++++++++++++++++++++++
+ 4 files changed, 127 insertions(+), 53 deletions(-)
+
 -- 
-2.34.1
+2.49.0
 
 
