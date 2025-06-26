@@ -1,116 +1,209 @@
-Return-Path: <linux-kernel+bounces-704198-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-704201-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id F247BAE9AAF
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Jun 2025 12:04:43 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 227B1AE9ABC
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Jun 2025 12:05:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A39991C20C7F
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Jun 2025 10:04:55 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8C5BB7A8873
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Jun 2025 10:04:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 662EF21A92F;
-	Thu, 26 Jun 2025 10:04:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6917221CC4D;
+	Thu, 26 Jun 2025 10:05:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="aBYx7pDJ"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="zGz7Le59"
+Received: from mail-yb1-f173.google.com (mail-yb1-f173.google.com [209.85.219.173])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BA07C16A94A;
-	Thu, 26 Jun 2025 10:04:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F1426217716
+	for <linux-kernel@vger.kernel.org>; Thu, 26 Jun 2025 10:05:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750932271; cv=none; b=ApsiUOLtPW+3IPmmHe/G33NJx4LSuTDFntezzFFSWSwuWwu9wck86OWTJF6PzrgBoVOfBlyjfmHZ12056mhehXNuN4cltpFi3/IQLOWhusXZHLrNvlMEHwqZJB1Kn0LNPT3lApPVV9dQ9cfp0xIuxT4wTMuRu1G7ZF3mJV6gNcQ=
+	t=1750932311; cv=none; b=P1zWExK7OFWr3QJRr7EoGNAuJlaq1xufdzDKJM5C0Owit/9lWA1BPs9UCqXr6AbLTRuu66TNd3VoVGn2Q7c5U9PkiLsAx1F2GTKhWjcVtH+D2JpGfk9xFwLHhj9E7whas5dRkLviMUMPQHOyYyBzhs+099s+DYnUHSW6U9tm9ZE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750932271; c=relaxed/simple;
-	bh=j3ClOqqsBFvAvHSWSgDWUNz0vIVgAMLhB/5Jvn9F5CI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=NJ63pNJcYmU1gsvW64KURUHnA3ViRoEvrN8WLyiM33SpAJ0293ZG82xCR0jIdu0JmuZvqrw5k9TqsksAdjXla1HkGF5mNtuoc/btk7zcMcOfViAIoxh9wofJyCHdYmILm2zVzsqDmTVuX+Pb4oZnxWxzQNVHogc26dFhOF9VXVg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=aBYx7pDJ; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 555E9C4CEEB;
-	Thu, 26 Jun 2025 10:04:31 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1750932271;
-	bh=j3ClOqqsBFvAvHSWSgDWUNz0vIVgAMLhB/5Jvn9F5CI=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=aBYx7pDJuz4HhzKdOi/VJQB+dwkfOqCJ65aU5xCToT75uUA0mW6f7noRWQ2kRPaz2
-	 09ZFrjQiYFprAyQRZ/z4lLMC/b5IMhsHbUrybowxO+FTJ4LtEA7/HZqJOy5Y7K8x2n
-	 ppRJF+Nb2TpB6sZglvfeQ/ZjJTnrAhOf9UkhhG3gl8q695QAoJiFgawDMlJJdrRCS9
-	 jquNF6rai3o4zGJD9NqmPUGjjJNWAfEMmYJ2CjprIHCHv8OTE/efMOqBqRiQs/KfLG
-	 00mpm3C2XGyvifTubVrnrgKuuipIclwgb0EYi954PhV9yeev3jOxv+1GX76fd32Dgl
-	 0TnkbVhmnsryw==
-Received: from johan by xi.lan with local (Exim 4.97.1)
-	(envelope-from <johan@kernel.org>)
-	id 1uUjT5-000000007f2-00K4;
-	Thu, 26 Jun 2025 12:04:31 +0200
-Date: Thu, 26 Jun 2025 12:04:30 +0200
-From: Johan Hovold <johan@kernel.org>
-To: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
-Cc: Bjorn Andersson <andersson@kernel.org>,
-	Maximilian Luz <luzmaximilian@gmail.com>,
-	Konrad Dybcio <konradybcio@kernel.org>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Ard Biesheuvel <ardb@kernel.org>,
-	Steev Klimaszewski <steev@kali.org>, linux-arm-msm@vger.kernel.org,
-	linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-efi@vger.kernel.org
-Subject: Re: [PATCH v4 1/8] efi: efivars: don't crash in
- efivar_set_variable{,_locked} in r/o case
-Message-ID: <aF0bLtnABcGTi0wM@hovoldconsulting.com>
-References: <20250625-more-qseecom-v4-0-aacca9306cee@oss.qualcomm.com>
- <20250625-more-qseecom-v4-1-aacca9306cee@oss.qualcomm.com>
+	s=arc-20240116; t=1750932311; c=relaxed/simple;
+	bh=dqhmiv/jrw4EXl4UG21c/emO5d4PlM9K6RNlISK2dIU=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=PKNqzSDjFw9S+ncSQGfPv1ZZF74Vje+V6eoN3I8h5+CsmqL9aG6Bld2MAXUUH8Sxy1R6f9BHQ9tqfggX/j8jJs72tVdWeo1B2Q/+Xx4corN5JqzrRGSeMSd2h4d+MBqY4VWssTxD4KlAsw4dqwGcUvU7oEKLPp6XP1gfjJPS1vg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=zGz7Le59; arc=none smtp.client-ip=209.85.219.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-yb1-f173.google.com with SMTP id 3f1490d57ef6-e82278e3889so486068276.2
+        for <linux-kernel@vger.kernel.org>; Thu, 26 Jun 2025 03:05:09 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1750932309; x=1751537109; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Ef52RvSy9XhGGhE8oWCY3Xw5VEy2HnHxn8942Y4DhVA=;
+        b=zGz7Le59KlLp8uhVP4c8kwKnCfxyfnVL7Tm7MrDqe7zF+LGtaw/xaFo75A1kdtkDf4
+         Bf/OPvT70sGzZ1fT4+nCIYIlcfH0ib3GZyvRfNwDSoEtpxws5AxtLoqe9Sw1y/oXCevw
+         FGzSDx8viD/zCLj3BM5eCM63dtl3EzstzyLwn3zRuT20eMnLyJmM04bB3eYI8W/CrzTm
+         NSF2FrY3FtGPtp+YlCgeccZEsazKPDhyZ++WTYlTUO+cYtlgYX2AZUdvU5WGhahwJZ4U
+         VLjKJ4ZlDaOEZqZCAhh83PjCJuFNAdf5whbpR3Wph/Iyj8e0+NxP7+lIo0/ov9y7wRr8
+         Htpw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1750932309; x=1751537109;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=Ef52RvSy9XhGGhE8oWCY3Xw5VEy2HnHxn8942Y4DhVA=;
+        b=tAfQ+6Y2k+dsC250Xi43+xxiG+TQ01ZBNYr0eb145TWv+4x4GAbynTehgBv0KdJ1CS
+         /XQF0h1ghxZALxXyh6Ji2XQvvjjFnvGHZuh9CLkc+q21xQaqQMGP6FKlJ3D9PFFtOVe8
+         x40Bl5v7DWwHbdA7tdi/QHKlOfjqV2Ha2QhTPGtZgIyJ2m/7SbX4GF0MXTJfQCJu4ZT4
+         AxCu7DVd5aIRvSEJLmt1m7gRqbCpcLY9GhYDI1HuvDHq/OshhEVXXTsYaAQlr8nSF/4O
+         mQocZAZI0caYbmG52ThQufIH7BQGm5P57V5KcwojVhQMtadyoeBOzusv3gExnkkYqq9l
+         CmAg==
+X-Forwarded-Encrypted: i=1; AJvYcCWYVpI7lr4yq7cyH4ermiNF1rZOulpyBEXe4vvf6WrnXDIZuFpC2wEZoE0/DTYn0wdxCqzBh6dUrOzbVds=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyQ56ErP/l0MoSTyax84Bt9pvEIjzsGW3LxEP3ijJZsIxboNwQ3
+	N38Y6fUpuIPM+bjzDr0wvf5w+CSjeAy0lxgKD5I23u0i377Mna5YY8tDueMuGIsahgJBvwoKVf6
+	Yc4KVUG4jbK/cKelacnfvlW4PkXn8J7GMEl3KRNUvOQ==
+X-Gm-Gg: ASbGncsiyT5XOLWZyjEa/w8qAR4dQQNIQOMJNY2eVn9L+3ATezJmqP3DvBD68wZkXGx
+	n70JPNhoLlGQCJmGqOYn2u8gE5yOGhdI0U6ze1zz02tvWxLllRWv74DPdvwwSszESKD/PvOR5qB
+	HOgMjJxOVOB9ecJLn6uOPLZnB++L2hjsEGPVKK3uGOffeU
+X-Google-Smtp-Source: AGHT+IF7NPAj4Z0CZFURC7bo9oEf2t9Aj4FR2LgmBRt7AfszBVvGJ/ZF2nnBKEqjrDtJWKPfIQqisqh3ixSWLzu82bc=
+X-Received: by 2002:a05:6902:1386:b0:e81:28d6:ed5 with SMTP id
+ 3f1490d57ef6-e879b88783fmr4524514276.8.1750932308884; Thu, 26 Jun 2025
+ 03:05:08 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250625-more-qseecom-v4-1-aacca9306cee@oss.qualcomm.com>
+References: <22759968.EfDdHjke4D@rjwysocki.net> <2045419.usQuhbGJ8B@rjwysocki.net>
+ <CAPDyKFq8ea+YogkAExUOBc2TEqi1z9WZswqgP29bLbursFUApg@mail.gmail.com> <CAJZ5v0h-9UnvhrQ7YaaYPG5CktwV-i+ZeqAri8OhJQb4TVp82w@mail.gmail.com>
+In-Reply-To: <CAJZ5v0h-9UnvhrQ7YaaYPG5CktwV-i+ZeqAri8OhJQb4TVp82w@mail.gmail.com>
+From: Ulf Hansson <ulf.hansson@linaro.org>
+Date: Thu, 26 Jun 2025 12:04:33 +0200
+X-Gm-Features: Ac12FXyAJDJvyhpucU5vdfApDbdiWQJG4l_jYuOIpSNd9YClkqba7MNA8LQyvF4
+Message-ID: <CAPDyKFoW5ag69LBnxvP5oGH1VAErBn17CAOzh=MX2toxAHwLxA@mail.gmail.com>
+Subject: Re: [PATCH v1 4/9] PM: Move pm_runtime_force_suspend/resume() under CONFIG_PM_SLEEP
+To: "Rafael J. Wysocki" <rafael@kernel.org>
+Cc: "Rafael J. Wysocki" <rjw@rjwysocki.net>, Linux PM <linux-pm@vger.kernel.org>, 
+	LKML <linux-kernel@vger.kernel.org>, Linux ACPI <linux-acpi@vger.kernel.org>, 
+	Linux PCI <linux-pci@vger.kernel.org>, 
+	Mika Westerberg <mika.westerberg@linux.intel.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Wed, Jun 25, 2025 at 01:53:20AM +0300, Dmitry Baryshkov wrote:
-> If efivar implementation doesn't provide write support, then calling
-> efivar_set_variable() (e.g. when PM8xxx RTC driver tries to update the
-> RTC offset) will crash the system. Prevent that by checking that
-> set_variable callback is actually provided and fail with an
-> EFI_WRITE_PROTECTED if it is not.
-> 
-> Fixes: 472831d4c4b2 ("efi: vars: Add thin wrapper around EFI get/set variable interface")
+On Thu, 26 Jun 2025 at 11:41, Rafael J. Wysocki <rafael@kernel.org> wrote:
+>
+> On Thu, Jun 26, 2025 at 11:38=E2=80=AFAM Ulf Hansson <ulf.hansson@linaro.=
+org> wrote:
+> >
+> > On Wed, 25 Jun 2025 at 21:25, Rafael J. Wysocki <rjw@rjwysocki.net> wro=
+te:
+> > >
+> > > From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+> > >
+> > > Since pm_runtime_force_suspend/resume() and pm_runtime_need_not_resum=
+e()
+> > > are only used during system-wide PM transitions, there is no reason t=
+o
+> > > compile them in if CONFIG_PM_SLEEP is unset.
+> > >
+> > > Accordingly, move them all under CONFIG_PM_SLEEP and make the static
+> > > inline stubs for pm_runtime_force_suspend/resume() return an error
+> > > to indicate that they should not be used outside CONFIG_PM_SLEEP.
+> > >
+> >
+> > Just realized that there seems to be some drivers that actually make
+> > use of pm_runtime_force_suspend() from their ->remove() callbacks.
+> >
+> > To not break them, we probably need to leave this code to stay under CO=
+NFIG_PM.
+>
+> OK, pm_runtime_force_suspend() need not be under CONFIG_PM_SLEEP.
+> That's not the case for the other two functions though AFAICS.
 
-I don't think a fixes tag is warranted here as it currently appears to
-be expected that the callers check if setvar is supported before calling
-this helper (e.g. by calling efivar_supports_writes() as efivarfs does).
+Right, but maybe better to keep them to avoid confusion? At least the
+corresponding flag is needed.
 
-So should perhaps be fixed in the RTC driver if we agree that supporting
-read-only offsets is indeed something we want.
+Kind regards
+Uffe
 
-Are there any other current user that may possibly benefit from
-something like this?
-
-> Reported-by: Johan Hovold <johan@kernel.org>
-> Closes: https://lore.kernel.org/r/aFlps9iUcD42vN4w@hovoldconsulting.com
-> Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
-> ---
->  drivers/firmware/efi/vars.c | 2 ++
->  1 file changed, 2 insertions(+)
-> 
-> diff --git a/drivers/firmware/efi/vars.c b/drivers/firmware/efi/vars.c
-> index 3700e98697676d8e6f04f061f447391503f9abba..11c5f785c09364f61642d82416822cb2e1a027fd 100644
-> --- a/drivers/firmware/efi/vars.c
-> +++ b/drivers/firmware/efi/vars.c
-> @@ -227,6 +227,8 @@ efi_status_t efivar_set_variable_locked(efi_char16_t *name, efi_guid_t *vendor,
->  	setvar = __efivars->ops->set_variable_nonblocking;
->  	if (!setvar || !nonblocking)
->  		 setvar = __efivars->ops->set_variable;
-> +	if (!setvar)
-> +		return EFI_WRITE_PROTECTED;
->  
->  	return setvar(name, vendor, attr, data_size, data);
->  }
-
-Johan
+>
+> > > Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+> > > ---
+> > >  drivers/base/power/runtime.c |    4 ++++
+> > >  include/linux/pm_runtime.h   |   20 ++++++++++++++------
+> > >  2 files changed, 18 insertions(+), 6 deletions(-)
+> > >
+> > > --- a/drivers/base/power/runtime.c
+> > > +++ b/drivers/base/power/runtime.c
+> > > @@ -1941,6 +1941,8 @@
+> > >         pm_request_idle(link->supplier);
+> > >  }
+> > >
+> > > +#ifdef CONFIG_PM_SLEEP
+> > > +
+> > >  bool pm_runtime_need_not_resume(struct device *dev)
+> > >  {
+> > >         return atomic_read(&dev->power.usage_count) <=3D 1 &&
+> > > @@ -2063,3 +2065,5 @@
+> > >         return ret;
+> > >  }
+> > >  EXPORT_SYMBOL_GPL(pm_runtime_force_resume);
+> > > +
+> > > +#endif /* CONFIG_PM_SLEEP */
+> > > --- a/include/linux/pm_runtime.h
+> > > +++ b/include/linux/pm_runtime.h
+> > > @@ -66,9 +66,6 @@
+> > >
+> > >  extern int pm_generic_runtime_suspend(struct device *dev);
+> > >  extern int pm_generic_runtime_resume(struct device *dev);
+> > > -extern bool pm_runtime_need_not_resume(struct device *dev);
+> > > -extern int pm_runtime_force_suspend(struct device *dev);
+> > > -extern int pm_runtime_force_resume(struct device *dev);
+> > >
+> > >  extern int __pm_runtime_idle(struct device *dev, int rpmflags);
+> > >  extern int __pm_runtime_suspend(struct device *dev, int rpmflags);
+> > > @@ -257,9 +254,6 @@
+> > >
+> > >  static inline int pm_generic_runtime_suspend(struct device *dev) { r=
+eturn 0; }
+> > >  static inline int pm_generic_runtime_resume(struct device *dev) { re=
+turn 0; }
+> > > -static inline bool pm_runtime_need_not_resume(struct device *dev) {r=
+eturn true; }
+> > > -static inline int pm_runtime_force_suspend(struct device *dev) { ret=
+urn 0; }
+> > > -static inline int pm_runtime_force_resume(struct device *dev) { retu=
+rn 0; }
+> > >
+> > >  static inline int __pm_runtime_idle(struct device *dev, int rpmflags=
+)
+> > >  {
+> > > @@ -330,6 +324,20 @@
+> > >
+> > >  #endif /* !CONFIG_PM */
+> > >
+> > > +#ifdef CONFIG_PM_SLEEP
+> > > +
+> > > +extern bool pm_runtime_need_not_resume(struct device *dev);
+> > > +extern int pm_runtime_force_suspend(struct device *dev);
+> > > +extern int pm_runtime_force_resume(struct device *dev);
+> > > +
+> > > +#else /* !CONFIG_PM_SLEEP */
+> > > +
+> > > +static inline bool pm_runtime_need_not_resume(struct device *dev) {r=
+eturn true; }
+> > > +static inline int pm_runtime_force_suspend(struct device *dev) { ret=
+urn -ENXIO; }
+> > > +static inline int pm_runtime_force_resume(struct device *dev) { retu=
+rn -ENXIO; }
+> > > +
+> > > +#endif /* CONFIG_PM_SLEEP */
+> > > +
+> > >  /**
+> > >   * pm_runtime_idle - Conditionally set up autosuspend of a device or=
+ suspend it.
+> > >   * @dev: Target device.
+> > >
+> > >
+> > >
+> >
 
