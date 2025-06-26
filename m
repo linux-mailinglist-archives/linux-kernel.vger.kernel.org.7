@@ -1,54 +1,56 @@
-Return-Path: <linux-kernel+bounces-705482-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-705485-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id D9916AEAA10
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Jun 2025 00:51:31 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 30846AEAA13
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Jun 2025 00:52:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 44EC2189742B
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Jun 2025 22:50:15 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2E2F41C2581D
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Jun 2025 22:50:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5AEFD25C809;
-	Thu, 26 Jun 2025 22:48:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1227425F97E;
+	Thu, 26 Jun 2025 22:48:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="jYksLS88"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="A5XK5TNF"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8FD5123505E;
-	Thu, 26 Jun 2025 22:48:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 67A7225C838;
+	Thu, 26 Jun 2025 22:48:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750978091; cv=none; b=P9yveNaNqzKrd6DyRW36BWWxScJHRiT94ogT7mYAaKi9gnhXX+qOQx/PU462ZmjDEAxwDnugcmzL8SmIs1g3DSbu9AAuj2ibi90fQsfQ5nYc6xtALvBoWDij9StcUc4wAvfMnpEkzW0drlIZPaZVT+eMvuZOal3hzG3+NiDEfdo=
+	t=1750978092; cv=none; b=KxosWkDkANycH+RhrZBtOAagW347BnnScc7s2ukV7HYhT4qjyZyL6c4ibVWmnaaobznDGF2DS5ZmtSjYwjCFmN2VIfgWIeGlFzYP2jBb2FqpZY1FVp53gJ+Ajsqj9enHCo+RNG9m3aeUxc32xpG3+r6qswZGwDspI171tTDEjq0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750978091; c=relaxed/simple;
-	bh=hSygeHkDhS+YkJFMpecHyCBgLpOxEv9yB8zO6lSVNG8=;
+	s=arc-20240116; t=1750978092; c=relaxed/simple;
+	bh=J12J5XfeZXyV18Vt+aK65OFuYooc+35vw7qinUAIPwc=;
 	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=AOwzXp0SrtNkFd0yw1kukL9iBkTHl+6YmxCPLYvlWxHGAi5eH66Iiq/fVCLoT9dKooySYbhcyb6b2dvo7ByauopHHUTFzneNVNVM3vJvMEimy4iqENZhGXH4zqw07DwkTeaMzOkX26AleoAtRNsv3zJaDSuFTATAhcVhifFSg0M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=jYksLS88; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E5C47C4CEEF;
-	Thu, 26 Jun 2025 22:48:10 +0000 (UTC)
+	 MIME-Version:Content-Type; b=Co7bXe3RalvxWz1xKbZsqvP37rsratkA9UogCAJfcUaNcrq5TlvoW8ag/XTR1BfhVS56n+QMUJb5TYAtBj+5cs8G/RS/ApN26NBODZmir0k5WY/+FV1anY+1CPUOcOZBIkpYK8kc76FpQjFKUq0M4NaG1aR0Dik+lz6Hyv3wOx4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=A5XK5TNF; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 984F4C4CEF8;
+	Thu, 26 Jun 2025 22:48:11 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
 	s=k20201202; t=1750978091;
-	bh=hSygeHkDhS+YkJFMpecHyCBgLpOxEv9yB8zO6lSVNG8=;
+	bh=J12J5XfeZXyV18Vt+aK65OFuYooc+35vw7qinUAIPwc=;
 	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
-	b=jYksLS88uoW5ZfxZ8y0tPu47NMYfPfULNP4b0L19nolyKzHxwuHVf0T43PhlKI1az
-	 QqSFU/9HiGg1YJX5EDjy8CNvhS+/6gr6NL35JniUooivJI0MOiA+44dJFp7UY0zX85
-	 DiIF40YnSD0+4odO2tt4F4zfp+fegfxKwaJ5mIEBz+yr6LfoRQDVrnVex4DAUiyOdZ
-	 +7WIEj8UbsnuYAi6GucZLcVVZ0drTWV1xGGPfh5q5B+4Wxwo0JOt6jss8rSF/W55sz
-	 aJq7I+ZaLdQ4VpK1AYLBWhR2AATtLxATdWFQ2T5/UU5mfJLXhpUUArFOTBtjXknSx3
-	 BS8cMDzCWsxNg==
+	b=A5XK5TNF7nG2MJrvWRBzheNSwEwPbME4cVUgiMnWY9TMn6qOxDnwLM7Sh0SAG8XFJ
+	 xxzT58xL+vcAopSxKMO+WNArOTdT9cI1pJZlK+dZOo5acDmVBlayKaUUnXDWLKpsJ4
+	 nhgYl5yJeCtDv6CpXxdv1CGPYmwhEefg1nkVQixU3ltuyS2i8mlchweNm0u63M9j/Q
+	 qGQSV7n9U6XnWE//Vl6x954+CaAgcyIaGV3VyY7cL17pHdr9G7bDrbbgI1snJKDZ71
+	 bXjLR49bH9G4xNmEYNzUjl+wlGkQ05T5nQkgWOkIKmelEc2AFVA9dttAgESaRjD1lb
+	 sVWQBd2KnErPQ==
 From: Vinod Koul <vkoul@kernel.org>
-To: dave.jiang@intel.com, vinicius.gomes@intel.com, fenghuay@nvidia.com, 
- Anil S Keshavamurthy <anil.s.keshavamurthy@intel.com>
-Cc: dmaengine@vger.kernel.org, linux-kernel@vger.kernel.org
-In-Reply-To: <20250521231331.889204-1-anil.s.keshavamurthy@intel.com>
-References: <20250521231331.889204-1-anil.s.keshavamurthy@intel.com>
-Subject: Re: [PATCH] dmaengine: idxd: Fix warning for deadcode.deadstore
-Message-Id: <175097809088.79884.9986625120938692414.b4-ty@kernel.org>
-Date: Thu, 26 Jun 2025 15:48:10 -0700
+To: dmaengine@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ Yi Sun <yi.sun@intel.com>
+Cc: gordon.jin@intel.com, yi.sun@linux.intel.com, 
+ Andy Shevchenko <andriy.shevchenko@linux.intel.com>, 
+ Dave Jiang <dave.jiang@intel.com>, Fenghua Yu <fenghuay@nvidia.com>
+In-Reply-To: <20250404053614.3096769-1-yi.sun@intel.com>
+References: <20250404053614.3096769-1-yi.sun@intel.com>
+Subject: Re: [PATCH v2] dmaengine: idxd: Remove __packed from structures
+Message-Id: <175097809157.79884.15067500318866840512.b4-ty@kernel.org>
+Date: Thu, 26 Jun 2025 15:48:11 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -60,22 +62,22 @@ Content-Transfer-Encoding: 7bit
 X-Mailer: b4 0.13.0
 
 
-On Wed, 21 May 2025 19:13:31 -0400, Anil S Keshavamurthy wrote:
-> Deletes the  second initialization as the value stored to 'dev' during
-> its initialization (struct device *dev = &idxd->pdev->dev;) is
-> sufficient.
+On Fri, 04 Apr 2025 13:36:14 +0800, Yi Sun wrote:
+> The __packed attribute introduces potential unaligned memory accesses
+> and endianness portability issues. Instead of relying on compiler-specific
+> packing, it's much better to explicitly fill structure gaps using padding
+> fields, ensuring natural alignment.
 > 
-> ../drivers/dma/idxd/init.c:988:17: warning: Value stored to 'dev' during
-> its initialization is never read [deadcode.DeadStores]
->   988 |         struct device *dev = &idxd->pdev->dev;
->       |                        ^~~   ~~~~~~~~~~~~~~~~
+> Since all previously __packed structures already enforce proper alignment
+> through manual padding, the __packed qualifiers are unnecessary and can be
+> safely removed.
 > 
 > [...]
 
 Applied, thanks!
 
-[1/1] dmaengine: idxd: Fix warning for deadcode.deadstore
-      commit: 8c2442663f683f4fabadb3c491821169da6c89a8
+[1/1] dmaengine: idxd: Remove __packed from structures
+      commit: 671a654aecc710a278bdd30cfd2afef2d4e0828f
 
 Best regards,
 -- 
