@@ -1,136 +1,89 @@
-Return-Path: <linux-kernel+bounces-703757-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-703753-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 220C2AE9499
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Jun 2025 05:38:56 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 93BC3AE948F
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Jun 2025 05:33:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8E7F04A337E
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Jun 2025 03:38:56 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 14AEC6A2672
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Jun 2025 03:32:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 814C31F12E9;
-	Thu, 26 Jun 2025 03:38:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 556AE15B0EC;
+	Thu, 26 Jun 2025 03:33:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="h8s4+H5p"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.9])
+	dkim=pass (2048-bit key) header.d=listout.xyz header.i=@listout.xyz header.b="Zdn17Nmf"
+Received: from mout-p-101.mailbox.org (mout-p-101.mailbox.org [80.241.56.151])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7A1533597E
-	for <linux-kernel@vger.kernel.org>; Thu, 26 Jun 2025 03:38:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.9
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7A42E143C61;
+	Thu, 26 Jun 2025 03:33:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.151
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750909130; cv=none; b=K6dHwdcv3TLUDnOitv6F3WdrWnmWXDcgIEXHIv/Z2tof18mTBMm5IFB3OCEgyBZeIS50sk06i6vIccpjGWnkbNsEOY5L75LoJKeVUT4G/O4TNF+mdpLiFecYBuBRth1ci/w4zSHKBeMb9SEVglpPFeDFtgRfycuagww7eyPQjl4=
+	t=1750908796; cv=none; b=R/j6sH5JamUVZGg/TYp4E01IWt9aHV4VNxh39SaNifZ+eWqk5of5ILgyb7P1MzFXaqabivI8b/jrTABYsCeCRDujhcNIuqKwNhEqHwre6+Bvgm/Rxg2FNqzg8xL3oNwxN9vrkh1CNXZ9GKDa38xD4afQBwrW5C3O58OgRBhNvrM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750909130; c=relaxed/simple;
-	bh=qsb+gqnjKhUuAhN7Z7oyO9sPPXSOXU/jB3r2Fqw2FHU=;
+	s=arc-20240116; t=1750908796; c=relaxed/simple;
+	bh=Bc2g+Qu3c72u4kqoqbEKhlGpqe+fDkexOaK2Un4tJzo=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=dZS4hi54d/iiHLCc2fFAV1Hbg/WOBq6DHQ0KERsOxC/qHGnGygwWfqomE7b8jjPgrYdsd71qwSInWqEWcfFtSG0ExqnRx7HYcKgURVtgKdOQmuVB9tDYfoY7sft3dArCiNW/7V7ZP18PE51kXKKdBHR2nnbcTIh75DTGl44sidM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=h8s4+H5p; arc=none smtp.client-ip=198.175.65.9
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1750909129; x=1782445129;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=qsb+gqnjKhUuAhN7Z7oyO9sPPXSOXU/jB3r2Fqw2FHU=;
-  b=h8s4+H5pdwJbPSqBhAKNYNrF/zOyHw1NYA+3WdfmL0oppLayqVJJ7Bvt
-   /SsBo3QlpzaScxVp02QBEnWqR9pEPd1NaUeqfwasCZaqjPI5lYjuLcynT
-   TkcvkLx++PUomw3dN+nfcgqpLzqGmLM58wY40M9fbpry+vdv6qxd0yQXi
-   8uwoI9qMW3TjO1rwKkSjm+XQE3/04P9dEKODPkTX5tv2iX62KW5f9aQus
-   M0KBO+IdAfly0KnIGAUWEoHBsctkIJfJ0R2Jf+CCDU8mjvBe+t1PMQejG
-   FfYwpBM0nXT2CreG1+TTsjzeLBQivTohmVi0hfJTYWcyyP6N9dTQVt+Mp
-   w==;
-X-CSE-ConnectionGUID: BFs0WdpsTLCFmAzq3UEnXw==
-X-CSE-MsgGUID: AZnjPRAUT6O0U/m7zFrvnA==
-X-IronPort-AV: E=McAfee;i="6800,10657,11475"; a="75735520"
-X-IronPort-AV: E=Sophos;i="6.16,266,1744095600"; 
-   d="scan'208";a="75735520"
-Received: from fmviesa003.fm.intel.com ([10.60.135.143])
-  by orvoesa101.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 25 Jun 2025 20:38:48 -0700
-X-CSE-ConnectionGUID: 7VMGBjGrQFCQzhMD7SVYgA==
-X-CSE-MsgGUID: ElzvkcQWTgWMxRDG1dks8Q==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.16,266,1744095600"; 
-   d="scan'208";a="156431983"
-Received: from yilunxu-optiplex-7050.sh.intel.com (HELO localhost) ([10.239.159.165])
-  by fmviesa003.fm.intel.com with ESMTP; 25 Jun 2025 20:38:45 -0700
-Date: Thu, 26 Jun 2025 11:31:06 +0800
-From: Xu Yilun <yilun.xu@linux.intel.com>
-To: Jason Gunthorpe <jgg@nvidia.com>
-Cc: kevin.tian@intel.com, will@kernel.org, aneesh.kumar@kernel.org,
-	iommu@lists.linux.dev, linux-kernel@vger.kernel.org,
-	joro@8bytes.org, robin.murphy@arm.com, shuah@kernel.org,
-	nicolinc@nvidia.com, aik@amd.com, dan.j.williams@intel.com,
-	baolu.lu@linux.intel.com, yilun.xu@intel.com
-Subject: Re: [PATCH v2 3/4] iommufd: Destroy vdevice on idevice destroy
-Message-ID: <aFy++lne6X+1bFlM@yilunxu-OptiPlex-7050>
-References: <20250623094946.1714996-1-yilun.xu@linux.intel.com>
- <20250623094946.1714996-4-yilun.xu@linux.intel.com>
- <20250624145346.GC150753@nvidia.com>
- <aFvKCEt6FadGtYr+@yilunxu-OptiPlex-7050>
- <20250625123832.GF167785@nvidia.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=Fde8CXzjdkJX8i/IztNNmi0y/Uzpw19rDGy4ZPuQuRObNwfmPM3mIrkFa1ZWElHH7KASQ7oivlxE5sYRFzkLy2Cybk0/FK0vx1k4Rc2YjN3YIydrA4BYnf55kHxZDEGndtQuWFGQEycLUzQxRvz0rhGlBuAGCiiBwPWLj0y+mwA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=listout.xyz; spf=pass smtp.mailfrom=listout.xyz; dkim=pass (2048-bit key) header.d=listout.xyz header.i=@listout.xyz header.b=Zdn17Nmf; arc=none smtp.client-ip=80.241.56.151
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=listout.xyz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=listout.xyz
+Received: from smtp202.mailbox.org (smtp202.mailbox.org [10.196.197.202])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mout-p-101.mailbox.org (Postfix) with ESMTPS id 4bSPQt4NNWz9tn2;
+	Thu, 26 Jun 2025 05:33:10 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=listout.xyz; s=MBO0001;
+	t=1750908790;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=7Umn1ROjvUXlv/wGvRDtBfHo7v/yJB8VRm6XCMCTobg=;
+	b=Zdn17Nmf0RDg7J2Sudpz+52US2tzglAcsLPXE+tbezdAo84N0hOM5kOtNQntgiY7IU2Hsp
+	mSH4vRJJHe++YGwSj6XCXx621G8muD+/DFjxr7wQo53MnafeieH1C4UqSO+CLiJtuNYWbu
+	K8QXTY7afEkZ5B7YQfqPtpSKV2XO+hEzDBks2WNagCF4wcQBPkcldre6+hP8B3odD8KsXL
+	gOFTaZ7VhmQueUKkO2bBuIbaTKEXVkBbL3lulP4/WSVBLmxs3YNIOBY+EYhZjV2xA3MlqW
+	suZM0Pi6u1S16D0OEhKK0NnzFyq0vJnStZ4y/sxOADmneu9L+uu+sCkbC1ZJ2w==
+Date: Thu, 26 Jun 2025 09:03:01 +0530
+From: Brahmajit Das <listout@listout.xyz>
+To: kernel test robot <oliver.sang@intel.com>
+Cc: oe-lkp@lists.linux.dev, lkp@intel.com, linux-acpi@vger.kernel.org, 
+	linux-hardening@vger.kernel.org, linux-kernel@vger.kernel.org, rafael@kernel.org, lenb@kernel.org, 
+	lv.zheng@intel.com, kees@kernel.org, rui.zhang@intel.com, len.brown@intel.com
+Subject: Re: [PATCH] ACPI / sysfs: Replace deprecated and unsafe functions
+ with sysfs_emit
+Message-ID: <z7agzq4gie7no2k4qevpt6j2xkefq3xzoi42sy52zger5jazjs@lbwp4qusghgi>
+References: <20250624133739.25215-1-listout@listout.xyz>
+ <202506261036.895ef959-lkp@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20250625123832.GF167785@nvidia.com>
+In-Reply-To: <202506261036.895ef959-lkp@intel.com>
 
-On Wed, Jun 25, 2025 at 09:38:32AM -0300, Jason Gunthorpe wrote:
-> On Wed, Jun 25, 2025 at 06:06:00PM +0800, Xu Yilun wrote:
-> > > 	/*
-> > > 	 * We don't know what thread is actually going to destroy the vdev, but
-> > > 	 * once the vdev is destroyed the pointer is NULL'd. At this
-> > > 	 * point idev->users is 0 so no other thread can set a new vdev.
-> > > 	 */
-> > > 	if (!wait_event_timeout(idev->ictx->destroy_wait,
-> > > 				!READ_ONCE(idev->vdev),
-> > > 				msecs_to_jiffies(60000)))
-> > > 		pr_crit("Time out waiting for iommufd vdevice removed\n");
-> > > }
-> > > 
-> > > Though there is a cleaner option here, you could do:
-> > > 
-> > > 	mutex_lock(&idev->igroup->lock);
-> > > 	if (idev->vdev)
-> > > 		iommufd_vdevice_abort(&idev->vdev->obj);
-> > > 	mutex_unlock(&idev->igroup->lock);
-> > > 
-> > > And make it safe to call abort twice, eg by setting dev to NULL and
-> > > checking for that. First thread to get to the igroup lock, either via
-> > > iommufd_vdevice_destroy() or via the above will do the actual abort
-> > > synchronously without any wait_event_timeout. That seems better??
-> > 
-> > I'm good to both options, but slightly tend not to make vdevice so
-> > special from other objects, so still prefer the wait_event option.
+On 26.06.2025 10:51, kernel test robot wrote:
 > 
-> The wait_event is a ugly hack though, even in its existing code. The
-> above version is better because it doesn't have any failure mode and
-> doesn't introduce any unlocked use of the idev->vdev which is easier
-> to reason about, no READ_ONCE/WRITE_ONCE/etc
 > 
-> It sounds like you should largely leave the existing other parts the
-> same as this v2, though can you try reorganize it to look a little
-> more like the version I shared?
-
-Sure. But may I confirm that your only want reentrant
-iommufd_vdevice_abort() but not your iommufd_object_remove_tombstone()
-changes?
-
-To me, grab a shortterm_users but not a user is a new operation model. I
-hesitate to add it when the existing refcount_inc(&obj->user) works for
-this case.
-
-Thanks,
-Yilun
-
+> Hello,
 > 
-> Jason
+> kernel test robot noticed "WARNING:at_fs/sysfs/file.c:#sysfs_emit" on:
 > 
+> commit: 74191212ddb1a82ed54ddd75fcd820f3df79abef ("[PATCH] ACPI / sysfs: Replace deprecated and unsafe functions with sysfs_emit")
+> url: https://github.com/intel-lab-lkp/linux/commits/Brahmajit-Das/ACPI-sysfs-Replace-deprecated-and-unsafe-functions-with-sysfs_emit/20250624-213919
+> base: https://git.kernel.org/cgit/linux/kernel/git/rafael/linux-pm.git linux-next
+> patch link: https://lore.kernel.org/all/20250624133739.25215-1-listout@listout.xyz/
+> patch subject: [PATCH] ACPI / sysfs: Replace deprecated and unsafe functions with sysfs_emit
+> 
+
+Please do not use this patch.
+-- 
+Regards,
+listout
 
