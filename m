@@ -1,217 +1,137 @@
-Return-Path: <linux-kernel+bounces-704499-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-704502-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9746BAE9E3B
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Jun 2025 15:08:58 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 1D10CAE9E42
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Jun 2025 15:10:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8C434560082
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Jun 2025 13:08:32 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AC9A5560858
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Jun 2025 13:09:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 07D062E5407;
-	Thu, 26 Jun 2025 13:08:50 +0000 (UTC)
-Received: from dggsgout11.his.huawei.com (dggsgout11.his.huawei.com [45.249.212.51])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 762662E540B;
+	Thu, 26 Jun 2025 13:09:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="LC2zYPaS"
+Received: from mx0b-00069f02.pphosted.com (mx0b-00069f02.pphosted.com [205.220.177.32])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B7ECB2AD11;
-	Thu, 26 Jun 2025 13:08:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3A90A2E427B
+	for <linux-kernel@vger.kernel.org>; Thu, 26 Jun 2025 13:09:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.177.32
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750943329; cv=none; b=Mw4LxIlZN3FOAp7DlI5lyaOna0LEywA7zmyYszCz8uTd6cJ4sJSOISmcs/sG1QFWuPQ3Xm9txvGlc98f/uU78mwFOmDLxkPfgOKhsuFpO59YLHBk4VjzdLcI7kfVlMNtAU6zSi8PRRer6bVbJsbRBeIkddcE6pVT78mOrzukjKc=
+	t=1750943383; cv=none; b=A6dtBPAjuCK3LloY4lLimFj5lJYWKpLXkV72RehRQ2N5RyOuFAohVQxFVL0QTEJmni18Z/MIp+N1+pEXAvm15h9TiOKbnyLwyrNaUM5K+u/F46zluWP/GShCpGGbTnIpSH6wuRB/r5H9d7vdWqOFfrTllUUsfUTgbIrdHi93PjA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750943329; c=relaxed/simple;
-	bh=M3+W48GBr7ps/RTDpEQhEjapukwGJfycaI+PsS00OH4=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=KT+atmrg/ChS6527FbFWCVLv+pQ/eEkUMUdPMashx+oIQKiAp5RQXy/dYLBzWBuiDTGX8ZyMnpOQBAc5+MV0Ij1ipowZMT3eFg+P9JxhjRj2YslO3MGVAN302tNVTJOxzTxIXS/DSUzQD2Gxh6WffPp27egSxWO8IAaZmbMOFoY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.19.93.142])
-	by dggsgout11.his.huawei.com (SkyGuard) with ESMTPS id 4bSfC116tMzYQvCR;
-	Thu, 26 Jun 2025 21:08:45 +0800 (CST)
-Received: from mail02.huawei.com (unknown [10.116.40.128])
-	by mail.maildlp.com (Postfix) with ESMTP id 0F7551A11DE;
-	Thu, 26 Jun 2025 21:08:44 +0800 (CST)
-Received: from [10.67.108.244] (unknown [10.67.108.244])
-	by APP4 (Coremail) with SMTP id gCh0CgBHq19WRl1oAoPgQg--.29022S3;
-	Thu, 26 Jun 2025 21:08:40 +0800 (CST)
-Message-ID: <3dfe387c-d1db-4cbe-b41d-8f9f27fe3a1f@huaweicloud.com>
-Date: Thu, 26 Jun 2025 21:08:38 +0800
+	s=arc-20240116; t=1750943383; c=relaxed/simple;
+	bh=WwkYMB2zZ9yX2Tkk8lFoELVwvL+EOjMVlpZO+CYoShk=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=IK/85Tbq7O2OYnqhME5W4+s1MHWGxRt4cl7JZtl3hX5RiSps5kcTH/HGI9p3ZxnMvSRt8mUvy0lYRAjl1BrMgyU5id7cOtEfPSrNE4tLIW/1UFuh8xy5rsI3qjRsS9KLSO040+HFjTpsizwVleW4rTN+LH1Y+oUk0g1juwHGI38=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=LC2zYPaS; arc=none smtp.client-ip=205.220.177.32
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oracle.com
+Received: from pps.filterd (m0333520.ppops.net [127.0.0.1])
+	by mx0b-00069f02.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 55QCaWlZ027580;
+	Thu, 26 Jun 2025 13:09:22 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=cc
+	:content-transfer-encoding:date:from:message-id:mime-version
+	:subject:to; s=corp-2025-04-25; bh=sALiUtyxcN1wQ6o0j5MGblPljhcbJ
+	5JqrksgOESEDdQ=; b=LC2zYPaSNf8z5AiEEiZShPR8K6QCvFIjGMnPFU61yPNLS
+	uoWOYAudy5fQUV3jv7Z2bFb3SprGSXu0ZC4DCnQvD9zx7ypcshTBrAGUyRyzdT+4
+	UUXqIj4/enJihRD/dFH05+93ShkPxeAbh5iR7ng26EDCUs+g//RwffX4xDEXqg0A
+	EnYfLxTTYLpP1Li9/zz7vXaABs7uPTo5BKblDFg/VJr7kVJ/N9KtVYDAO90Aip7u
+	6xiPhHVGzzNqxga73xQvZIo57iitgEaCEQGkplZBS1flHtQToQuSH9oYJ/TCshGY
+	W+QDF7qyPj6Yy7CVaP9hwxJcLo4tz75S30y4pX/SQ==
+Received: from iadpaimrmta03.imrmtpd1.prodappiadaev1.oraclevcn.com (iadpaimrmta03.appoci.oracle.com [130.35.103.27])
+	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 47egumrrcv-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Thu, 26 Jun 2025 13:09:22 +0000 (GMT)
+Received: from pps.filterd (iadpaimrmta03.imrmtpd1.prodappiadaev1.oraclevcn.com [127.0.0.1])
+	by iadpaimrmta03.imrmtpd1.prodappiadaev1.oraclevcn.com (8.18.1.2/8.18.1.2) with ESMTP id 55QBePCk034324;
+	Thu, 26 Jun 2025 13:09:21 GMT
+Received: from aruramak-dev.osdevelopmeniad.oraclevcn.com (aruramak-dev.allregionaliads.osdevelopmeniad.oraclevcn.com [100.100.253.155])
+	by iadpaimrmta03.imrmtpd1.prodappiadaev1.oraclevcn.com (PPS) with ESMTP id 47ehktfjua-1;
+	Thu, 26 Jun 2025 13:09:21 +0000
+From: Aruna Ramakrishna <aruna.ramakrishna@oracle.com>
+To: linux-kernel@vger.kernel.org
+Cc: mingo@redhat.com, peterz@infradead.org, juri.lelli@redhat.com,
+        vincent.guittot@linaro.org, dietmar.eggemann@arm.com,
+        rostedt@goodmis.org, bsegall@google.com, mgorman@suse.de,
+        vschneid@redhat.com
+Subject: [PATCH] sched: Change nr_uninterruptible type to unsigned long
+Date: Thu, 26 Jun 2025 13:09:20 +0000
+Message-ID: <20250626130920.4019152-1-aruna.ramakrishna@oracle.com>
+X-Mailer: git-send-email 2.43.5
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [tip: perf/urgent] perf/core: Fix WARN in perf_cgroup_switch()
-Content-Language: en-US
-To: linux-kernel@vger.kernel.org, linux-tip-commits@vger.kernel.org
-Cc: "Peter Zijlstra (Intel)" <peterz@infradead.org>, x86@kernel.org
-References: <20250604033924.3914647-3-luogengkun@huaweicloud.com>
- <174963417198.406.3332177110975635135.tip-bot2@tip-bot2>
-From: Luo Gengkun <luogengkun@huaweicloud.com>
-In-Reply-To: <174963417198.406.3332177110975635135.tip-bot2@tip-bot2>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-CM-TRANSID:gCh0CgBHq19WRl1oAoPgQg--.29022S3
-X-Coremail-Antispam: 1UD129KBjvJXoW3Jw48WFy7Ar1DCrW5Zr1UWrg_yoW7GF43pa
-	97CrWag398XFy2qay3tw1vva4Svw4FqaykWr13Kw4ayFW5Xrn8JF47Gw45XFn8Zwn7tFyf
-	JrZ09r1ak34Uta7anT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUUgvb4IE77IF4wAFF20E14v26r1j6r4UM7CY07I20VC2zVCF04k2
-	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
-	vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Ar0_tr1l84ACjcxK6xIIjxv20xvEc7Cj
-	xVAFwI0_Gr1j6F4UJwA2z4x0Y4vEx4A2jsIE14v26rxl6s0DM28EF7xvwVC2z280aVCY1x
-	0267AKxVW0oVCq3wAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG
-	6I80ewAv7VC0I7IYx2IY67AKxVWUJVWUGwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFV
-	Cjc4AY6r1j6r4UM4x0Y48IcVAKI48JMxAIw28IcxkI7VAKI48JMxC20s026xCaFVCjc4AY
-	6r1j6r4UMI8I3I0E5I8CrVAFwI0_Jr0_Jr4lx2IqxVCjr7xvwVAFwI0_JrI_JrWlx4CE17
-	CEb7AF67AKxVWUAVWUtwCIc40Y0x0EwIxGrwCI42IY6xIIjxv20xvE14v26r1j6r1xMIIF
-	0xvE2Ix0cI8IcVCY1x0267AKxVWUJVW8JwCI42IY6xAIw20EY4v20xvaj40_Jr0_JF4lIx
-	AIcVC2z280aVAFwI0_Jr0_Gr1lIxAIcVC2z280aVCY1x0267AKxVWUJVW8JbIYCTnIWIev
-	Ja73UjIFyTuYvjxUzsqWUUUUU
-X-CM-SenderInfo: 5oxrwvpqjn3046kxt4xhlfz01xgou0bp/
+Content-Transfer-Encoding: 8bit
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.7,FMLib:17.12.80.40
+ definitions=2025-06-26_05,2025-06-26_02,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 mlxlogscore=999 bulkscore=0
+ suspectscore=0 adultscore=0 malwarescore=0 mlxscore=0 phishscore=0
+ spamscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2505160000 definitions=main-2506260110
+X-Proofpoint-ORIG-GUID: jt5Q9_r0VfzdH_qC-CF7FBkjG-Zz51SS
+X-Proofpoint-GUID: jt5Q9_r0VfzdH_qC-CF7FBkjG-Zz51SS
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNjI2MDExMSBTYWx0ZWRfX+2pYL63MTaFA neRdc90/WAs+lzTp54pMLrLXcE0CEhcqzVirT64zoEM9nYDrT79PRRWf33CA1KDX4vI7To+RPF6 sRYLj5pPtLpj8fz2wxDuLxi21rJqo+zlz4YCzZ33PL+ZOeK4u2gICg+i5XluFpCiTce/gBt0jaN
+ WJThrPOI37P39P2IXEjqM4P0UVifjyPX83w/Qh8KoDSsX6TyoVO968Pwop3JsfnzxVwj2nA8Sfg o7qo7O+2r4CIGQKD0ZL/eBgZZSw8ZiMsxn5xI1Bhvj0lwcyYSG1+QNvWbXxUw07myAcxSRXsrR5 NZcbuEY9staps9vdKIkeC43H7Rus9hIgWyE41Y3xbWym98BKKenFO8oExJnpmJQ0rcD02b/Mf/U
+ Ursw9aSlC+8EjYmrYXAbGZg65xwrTI9i3yGZEaeqTYBDQcfxnsoGthssfXaZ1+VDrivWBitf
+X-Authority-Analysis: v=2.4 cv=S5rZwJsP c=1 sm=1 tr=0 ts=685d4682 b=1 cx=c_pps a=qoll8+KPOyaMroiJ2sR5sw==:117 a=qoll8+KPOyaMroiJ2sR5sw==:17 a=6IFa9wvqVegA:10 a=yPCof4ZbAAAA:8 a=3hMAoP2lnyBJ8C0jIBMA:9 cc=ntf awl=host:13216
 
+The commit e6fe3f422be1 ("sched: Make multiple runqueue task counters
+32-bit") changed nr_uninterruptible to an unsigned int. But the
+nr_uninterruptible values for each of the CPU runqueues can grow to
+large numbers, sometimes exceeding INT_MAX. This is valid, if, over
+time, a large number of tasks are migrated off of one CPU after going
+into an uninterruptible state. Only the sum of all nr_interruptible
+values across all CPUs yields the correct result, as explained in a
+comment in kernel/sched/loadavg.c.
 
-On 2025/6/11 17:29, tip-bot2 for Luo Gengkun wrote:
-> The following commit has been merged into the perf/urgent branch of tip:
->
-> Commit-ID:     3172fb986666dfb71bf483b6d3539e1e587fa197
-> Gitweb:        https://git.kernel.org/tip/3172fb986666dfb71bf483b6d3539e1e587fa197
-> Author:        Luo Gengkun <luogengkun@huaweicloud.com>
-> AuthorDate:    Wed, 04 Jun 2025 03:39:24
-> Committer:     Peter Zijlstra <peterz@infradead.org>
-> CommitterDate: Thu, 05 Jun 2025 14:37:52 +02:00
->
-> perf/core: Fix WARN in perf_cgroup_switch()
->
-> There may be concurrency between perf_cgroup_switch and
-> perf_cgroup_event_disable. Consider the following scenario: after a new
-> perf cgroup event is created on CPU0, the new event may not trigger
-> a reprogramming, causing ctx->is_active to be 0. In this case, when CPU1
-> disables this perf event, it executes __perf_remove_from_context->
-> list _del_event->perf_cgroup_event_disable on CPU1, which causes a race
-> with perf_cgroup_switch running on CPU0.
->
-> The following describes the details of this concurrency scenario:
->
-> CPU0						CPU1
->
-> perf_cgroup_switch:
->     ...
->     # cpuctx->cgrp is not NULL here
->     if (READ_ONCE(cpuctx->cgrp) == NULL)
->     	return;
->
-> 						perf_remove_from_context:
-> 						   ...
-> 						   raw_spin_lock_irq(&ctx->lock);
-> 						   ...
-> 						   # ctx->is_active == 0 because reprogramm is not
-> 						   # tigger, so CPU1 can do __perf_remove_from_context
-> 						   # for CPU0
-> 						   __perf_remove_from_context:
-> 						         perf_cgroup_event_disable:
-> 							    ...
-> 							    if (--ctx->nr_cgroups)
-> 							    ...
->
->     # this warning will happened because CPU1 changed
->     # ctx.nr_cgroups to 0.
->     WARN_ON_ONCE(cpuctx->ctx.nr_cgroups == 0);
->
-> [peterz: use guard instead of goto unlock]
-> Fixes: db4a835601b7 ("perf/core: Set cgroup in CPU contexts for new cgroup events")
-> Signed-off-by: Luo Gengkun <luogengkun@huaweicloud.com>
-> Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
-> Link: https://lkml.kernel.org/r/20250604033924.3914647-3-luogengkun@huaweicloud.com
+Change the type of nr_uninterruptible back to unsigned long to prevent
+overflows, and thus the miscalculation of load average.
 
-Sorry for the late reply, I found that the link is v2 instead of v3.
-This v3 link is:
+Fixes: e6fe3f422be1 ("sched: Make multiple runqueue task counters 32-bit")
 
-https://lore.kernel.org/all/20250609035316.250557-1-luogengkun@huaweicloud.com/
+Signed-off-by: Aruna Ramakrishna <aruna.ramakrishna@oracle.com>
+---
+ kernel/sched/loadavg.c | 2 +-
+ kernel/sched/sched.h   | 2 +-
+ 2 files changed, 2 insertions(+), 2 deletions(-)
 
-v2 attempts to fix a concurrency problem between perf_cgroup_switch
-and perf_cgroup_event_disable. But it does not to move WARN_ON_ONCE
-into lock-protected region, so the warning is still triggered.
+diff --git a/kernel/sched/loadavg.c b/kernel/sched/loadavg.c
+index c48900b856a2..52ca8e268cfc 100644
+--- a/kernel/sched/loadavg.c
++++ b/kernel/sched/loadavg.c
+@@ -80,7 +80,7 @@ long calc_load_fold_active(struct rq *this_rq, long adjust)
+ 	long nr_active, delta = 0;
+ 
+ 	nr_active = this_rq->nr_running - adjust;
+-	nr_active += (int)this_rq->nr_uninterruptible;
++	nr_active += (long)this_rq->nr_uninterruptible;
+ 
+ 	if (nr_active != this_rq->calc_load_active) {
+ 		delta = nr_active - this_rq->calc_load_active;
+diff --git a/kernel/sched/sched.h b/kernel/sched/sched.h
+index 475bb5998295..83e3aa917142 100644
+--- a/kernel/sched/sched.h
++++ b/kernel/sched/sched.h
+@@ -1149,7 +1149,7 @@ struct rq {
+ 	 * one CPU and if it got migrated afterwards it may decrease
+ 	 * it on another CPU. Always updated under the runqueue lock:
+ 	 */
+-	unsigned int		nr_uninterruptible;
++	unsigned long 		nr_uninterruptible;
+ 
+ 	union {
+ 		struct task_struct __rcu *donor; /* Scheduler context */
 
-The following patches have been tested and fix this issue.
-
-diff --git a/kernel/events/core.c b/kernel/events/core.c
-index 1f746469fda5..a35784d42c66 100644
---- a/kernel/events/core.c
-+++ b/kernel/events/core.c
-@@ -951,8 +951,6 @@ static void perf_cgroup_switch(struct task_struct *task)
-         if (READ_ONCE(cpuctx->cgrp) == NULL)
-                 return;
-
--       WARN_ON_ONCE(cpuctx->ctx.nr_cgroups == 0);
--
-         cgrp = perf_cgroup_from_task(task, NULL);
-         if (READ_ONCE(cpuctx->cgrp) == cgrp)
-                 return;
-@@ -964,6 +962,8 @@ static void perf_cgroup_switch(struct task_struct *task)
-         if (READ_ONCE(cpuctx->cgrp) == NULL)
-                 return;
-
-+       WARN_ON_ONCE(cpuctx->ctx.nr_cgroups == 0);
-+
-         perf_ctx_disable(&cpuctx->ctx, true);
-
-         ctx_sched_out(&cpuctx->ctx, NULL, EVENT_ALL|EVENT_CGROUP);
-
-> ---
->   kernel/events/core.c | 22 ++++++++++++++++++++--
->   1 file changed, 20 insertions(+), 2 deletions(-)
->
-> diff --git a/kernel/events/core.c b/kernel/events/core.c
-> index d786083..d7cf008 100644
-> --- a/kernel/events/core.c
-> +++ b/kernel/events/core.c
-> @@ -207,6 +207,19 @@ static void perf_ctx_unlock(struct perf_cpu_context *cpuctx,
->   	__perf_ctx_unlock(&cpuctx->ctx);
->   }
->   
-> +typedef struct {
-> +	struct perf_cpu_context *cpuctx;
-> +	struct perf_event_context *ctx;
-> +} class_perf_ctx_lock_t;
-> +
-> +static inline void class_perf_ctx_lock_destructor(class_perf_ctx_lock_t *_T)
-> +{ perf_ctx_unlock(_T->cpuctx, _T->ctx); }
-> +
-> +static inline class_perf_ctx_lock_t
-> +class_perf_ctx_lock_constructor(struct perf_cpu_context *cpuctx,
-> +				struct perf_event_context *ctx)
-> +{ perf_ctx_lock(cpuctx, ctx); return (class_perf_ctx_lock_t){ cpuctx, ctx }; }
-> +
->   #define TASK_TOMBSTONE ((void *)-1L)
->   
->   static bool is_kernel_event(struct perf_event *event)
-> @@ -944,7 +957,13 @@ static void perf_cgroup_switch(struct task_struct *task)
->   	if (READ_ONCE(cpuctx->cgrp) == cgrp)
->   		return;
->   
-> -	perf_ctx_lock(cpuctx, cpuctx->task_ctx);
-> +	guard(perf_ctx_lock)(cpuctx, cpuctx->task_ctx);
-> +	/*
-> +	 * Re-check, could've raced vs perf_remove_from_context().
-> +	 */
-> +	if (READ_ONCE(cpuctx->cgrp) == NULL)
-> +		return;
-> +
->   	perf_ctx_disable(&cpuctx->ctx, true);
->   
->   	ctx_sched_out(&cpuctx->ctx, NULL, EVENT_ALL|EVENT_CGROUP);
-> @@ -962,7 +981,6 @@ static void perf_cgroup_switch(struct task_struct *task)
->   	ctx_sched_in(&cpuctx->ctx, NULL, EVENT_ALL|EVENT_CGROUP);
->   
->   	perf_ctx_enable(&cpuctx->ctx, true);
-> -	perf_ctx_unlock(cpuctx, cpuctx->task_ctx);
->   }
->   
->   static int perf_cgroup_ensure_storage(struct perf_event *event,
+base-commit: 86731a2a651e58953fc949573895f2fa6d456841
+prerequisite-patch-id: dd6db7012c5094dec89e689ba56fd3551d2b4a40
+-- 
+2.43.5
 
 
