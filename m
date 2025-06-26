@@ -1,122 +1,105 @@
-Return-Path: <linux-kernel+bounces-704009-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-704011-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id A8EEFAE9833
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Jun 2025 10:25:21 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 62561AE9837
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Jun 2025 10:25:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B339D1886438
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Jun 2025 08:25:31 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 878045A4540
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Jun 2025 08:25:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 99F8727464F;
-	Thu, 26 Jun 2025 08:25:08 +0000 (UTC)
-Received: from relmlie5.idc.renesas.com (relmlor1.renesas.com [210.160.252.171])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 83DC325D546
-	for <linux-kernel@vger.kernel.org>; Thu, 26 Jun 2025 08:25:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.160.252.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9149128A405;
+	Thu, 26 Jun 2025 08:25:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ZSW8sGjU"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CC30428935A;
+	Thu, 26 Jun 2025 08:25:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750926308; cv=none; b=gXB1qQUTL2hcpzyKZCfIY0zm8NZr1AR4kj6g7rEP17PFePbY3EIlzhbNAZ4v47MpuxzUlnhBrh+pwEqBTTdaxrONuI7XJSCexHdr7byzpVqrG3qSgM+WlHTOVzZeKAFegWbOkS/8DnM6tgkg3/6KWvUW+DtSPdeDjkPlSOPBqkg=
+	t=1750926310; cv=none; b=TRqKQ7v9cxThUfgumNC9T9Ni2FVrYZjyONqPp40lRZz/oO7luDHBaw07QFXSQ7lkOX8Thi82eDIi6xds3NZY9722VwOC4InKj+PDPU39ALkU3jpj7S4ky3XZYlAhuXv03uOV3+36HjFPNl5MWNYgbSbcyQAQatlEr6gKxvaKc0E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750926308; c=relaxed/simple;
-	bh=XqIcxV9tYYGK5WIxG83oeOFYBxW9iRFFIB/DMui79tA=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=WBurVJmX7BAcxoGXyAGuV5e6FjfRccPnf0HZNkNfYsauSaccFi7EpiMdLcK45cIXJFUhezsiZkiwcR+WMuxncSbOzu+tqApIQPtFaA23PJrROUbfydSPuwZtjI1F9FFsMNZh9xhawVeLyli3XN5fTWpuoSCklO90zXo0cKrAAi8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=renesas.com; spf=pass smtp.mailfrom=renesas.com; arc=none smtp.client-ip=210.160.252.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=renesas.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=renesas.com
-X-CSE-ConnectionGUID: YDYd6LfnSrqTllZvGck8bA==
-X-CSE-MsgGUID: iA0jCodIRSaBS1iwnv6SnQ==
-Received: from unknown (HELO relmlir5.idc.renesas.com) ([10.200.68.151])
-  by relmlie5.idc.renesas.com with ESMTP; 26 Jun 2025 17:25:05 +0900
-Received: from REE-DUD04480.adwin.renesas.com (unknown [10.226.78.19])
-	by relmlir5.idc.renesas.com (Postfix) with ESMTP id 00C57401F9E5;
-	Thu, 26 Jun 2025 17:25:02 +0900 (JST)
-From: Michael Dege <michael.dege@renesas.com>
-To: Vinod Koul <vkoul@kernel.org>,
-	Kishon Vijay Abraham I <kishon@kernel.org>,
-	Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-Cc: Michael Dege <michael.dege@renesas.com>,
-	Uwe Kleine-Koenig <u.kleine-koenig@baylibre.com>,
-	linux-phy@lists.infradead.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH v3 2/2 RESEND] phy: renesas: r8a779f0-ether-serdes: add new step added to latest datasheet
-Date: Thu, 26 Jun 2025 10:24:59 +0200
-Message-Id: <20250626082459.1926055-1-michael.dege@renesas.com>
-X-Mailer: git-send-email 2.25.1
+	s=arc-20240116; t=1750926310; c=relaxed/simple;
+	bh=wi9NQ1zK0mlzZz//nHGzE0m6JGhSd7qTB251BohJYxo=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=LnSEGw1lxB7eZaEHXuJvRKEz8ZQoEJsWGXqVUCMLKjli8u3QVsjzrKjG7f+oMMCK8jBZFJCJcT9RvwBYuwYC3nZS8qIa5cUuw2pgb+YrqUWbHQNVYyVyx9qekKq5kmM7a9p4ix+45wBoDI0UN6/Fy7py0vclnyHLoGxfTHzeyc4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ZSW8sGjU; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id DDF96C4CEEE;
+	Thu, 26 Jun 2025 08:25:07 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1750926310;
+	bh=wi9NQ1zK0mlzZz//nHGzE0m6JGhSd7qTB251BohJYxo=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=ZSW8sGjUfmwY6wSFjUi1W4iVVxZ93dCeSSogoVWh4om7huAMJZuccw/7Xdu5y+P27
+	 +6/QOU1lfBinekZgWSvj1lLd3APT1MJXegdBhpSd8n6fUzLz/VCiByYZW0Qb3nfUBk
+	 liBn4EmPzxwyy3JgvSU43AKFSQN1wV2Kb2pmVl9db2fzFHTfEXhxfTJScKx03i3tj0
+	 poMh3/oUzFonnoes2kqDDwyUkODM4XoO+O66d3lgzPK6FqB6glDTrdx1umx89oWvri
+	 dtP5dFKMGVsHWmrxHKqRVIpI3Ec3WlyclRDd7wxGehYMm02R/maaLS18zqbMS4xPOl
+	 91dbCnu5RqDAQ==
+Date: Thu, 26 Jun 2025 09:25:05 +0100
+From: Simon Horman <horms@kernel.org>
+To: Breno Leitao <leitao@debian.org>
+Cc: Andrew Lunn <andrew+netdev@lunn.ch>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Shuah Khan <shuah@kernel.org>, linux-kernel@vger.kernel.org,
+	netdev@vger.kernel.org, linux-kselftest@vger.kernel.org,
+	Willem de Bruijn <willemdebruijn.kernel@gmail.com>,
+	bpf@vger.kernel.org, gustavold@gmail.com
+Subject: Re: [PATCH net-next v2 4/4] selftests: net: add netpoll basic
+ functionality test
+Message-ID: <20250626082505.GA183673@horms.kernel.org>
+References: <20250625-netpoll_test-v2-0-47d27775222c@debian.org>
+ <20250625-netpoll_test-v2-4-47d27775222c@debian.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250625-netpoll_test-v2-4-47d27775222c@debian.org>
 
-R-Car S4-8 datasheet Rev.1.20 describes some additional register
-settings at the end of the initialization.
+On Wed, Jun 25, 2025 at 04:39:49AM -0700, Breno Leitao wrote:
+> Add a basic selftest for the netpoll polling mechanism, specifically
+> targeting the netpoll poll() side.
+> 
+> The test creates a scenario where network transmission is running at
+> maximum speed, and netpoll needs to poll the NIC. This is achieved by:
+> 
+>   1. Configuring a single RX/TX queue to create contention
+>   2. Generating background traffic to saturate the interface
+>   3. Sending netconsole messages to trigger netpoll polling
+>   4. Using dynamic netconsole targets via configfs
+>   5. Delete and create new netconsole targets after some messages
+>   6. Start a bpftrace in parallel to make sure netpoll_poll_dev() is
+>      called
+>   7. If bpftrace exists and netpoll_poll_dev() was called, stop.
+> 
+> The test validates a critical netpoll code path by monitoring traffic
+> flow and ensuring netpoll_poll_dev() is called when the normal TX path
+> is blocked.
+> 
+> This addresses a gap in netpoll test coverage for a path that is
+> tricky for the network stack.
+> 
+> Signed-off-by: Breno Leitao <leitao@debian.org>
 
-- update after failed CI test:
-  Replace wrong macro with R8A779F0_ETH_SERDES_BANK_SELECT
+Hi Breno,
 
-Signed-off-by: Michael Dege <michael.dege@renesas.com>
----
- drivers/phy/renesas/r8a779f0-ether-serdes.c | 28 +++++++++++++++++++++
- 1 file changed, 28 insertions(+)
+As it looks like there will be another version,
+could you run pylint over this. The NIPA invocation says:
 
-diff --git a/drivers/phy/renesas/r8a779f0-ether-serdes.c b/drivers/phy/renesas/r8a779f0-ether-serdes.c
-index ed83c46f6d00..8a6b6f366fe3 100644
---- a/drivers/phy/renesas/r8a779f0-ether-serdes.c
-+++ b/drivers/phy/renesas/r8a779f0-ether-serdes.c
-@@ -49,6 +49,13 @@ static void r8a779f0_eth_serdes_write32(void __iomem *addr, u32 offs, u32 bank,
- 	iowrite32(data, addr + offs);
- }
- 
-+static u32 r8a779f0_eth_serdes_read32(void __iomem *addr, u32 offs,  u32 bank)
-+{
-+	iowrite32(bank, addr + R8A779F0_ETH_SERDES_BANK_SELECT);
-+
-+	return ioread32(addr + offs);
-+}
-+
- static int
- r8a779f0_eth_serdes_reg_wait(struct r8a779f0_eth_serdes_channel *channel,
- 			     u32 offs, u32 bank, u32 mask, u32 expected)
-@@ -319,6 +326,7 @@ static int r8a779f0_eth_serdes_hw_init_late(struct r8a779f0_eth_serdes_channel
- *channel)
- {
- 	int ret;
-+	u32 val;
- 
- 	ret = r8a779f0_eth_serdes_chan_setting(channel);
- 	if (ret)
-@@ -332,6 +340,26 @@ static int r8a779f0_eth_serdes_hw_init_late(struct r8a779f0_eth_serdes_channel
- 
- 	r8a779f0_eth_serdes_write32(channel->addr, 0x03d0, 0x380, 0x0000);
- 
-+	val = r8a779f0_eth_serdes_read32(channel->addr, 0x00c0, 0x180);
-+	r8a779f0_eth_serdes_write32(channel->addr, 0x00c0, 0x180, val | BIT(8));
-+	ret = r8a779f0_eth_serdes_reg_wait(channel, 0x0100, 0x180, BIT(0), 1);
-+	if (ret)
-+		return ret;
-+	r8a779f0_eth_serdes_write32(channel->addr, 0x00c0, 0x180, val & ~BIT(8));
-+	ret = r8a779f0_eth_serdes_reg_wait(channel, 0x0100, 0x180, BIT(0), 0);
-+	if (ret)
-+		return ret;
-+
-+	val = r8a779f0_eth_serdes_read32(channel->addr, 0x0144, 0x180);
-+	r8a779f0_eth_serdes_write32(channel->addr, 0x0144, 0x180, val | BIT(4));
-+	ret = r8a779f0_eth_serdes_reg_wait(channel, 0x0180, 0x180, BIT(0), 1);
-+	if (ret)
-+		return ret;
-+	r8a779f0_eth_serdes_write32(channel->addr, 0x0144, 0x180, val & ~BIT(4));
-+	ret = r8a779f0_eth_serdes_reg_wait(channel, 0x0180, 0x180, BIT(0), 0);
-+	if (ret)
-+		return ret;
-+
- 	return r8a779f0_eth_serdes_monitor_linkup(channel);
- }
- 
--- 
-2.25.1
-
+  ************* Module netpoll_basic
+  .../netpoll_basic.py:323:0: C0301: Line too long (111/100) (line-too-long)
+  .../netpoll_basic.py:27:0: E0611: No name 'bpftrace' in module 'lib.py' (no-name-in-module)
+  .../netpoll_basic.py:79:11: E0606: Possibly using variable 'rx_queue' before assignment (possibly-used-before-assignment)
+  .../netpoll_basic.py:79:21: E0606: Possibly using variable 'tx_queue' before assignment (possibly-used-before-assignment)
+  .../netpoll_basic.py:253:22: W0613: Unused argument 'netdevnl' (unused-argument)
 
