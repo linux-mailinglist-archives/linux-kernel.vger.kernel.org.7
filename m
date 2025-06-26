@@ -1,115 +1,87 @@
-Return-Path: <linux-kernel+bounces-704345-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-704311-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5F5F3AE9C76
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Jun 2025 13:21:39 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id A88F4AE9C12
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Jun 2025 13:00:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 96A041C209C1
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Jun 2025 11:21:52 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id CFAEB189C2F7
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Jun 2025 11:01:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EDDB427510B;
-	Thu, 26 Jun 2025 11:21:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4A4AA2750EE;
+	Thu, 26 Jun 2025 11:00:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=codethink.co.uk header.i=@codethink.co.uk header.b="wFTtvdfm"
-Received: from imap5.colo.codethink.co.uk (imap5.colo.codethink.co.uk [78.40.148.171])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="SiVTXsf1"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B0369215191
-	for <linux-kernel@vger.kernel.org>; Thu, 26 Jun 2025 11:21:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=78.40.148.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9C2E82750EA;
+	Thu, 26 Jun 2025 11:00:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750936890; cv=none; b=hLIEAdD5bJJoqhpG+LlcQJoJ6K5AR+h8rf1zxFunwYkYlW5QPzY6kCNfeBIBAn3SznDFskNoFAW5Oc/s0xBfHbUlFDMIoNo7fC1FXikH3nuqw5jAh7Nn25PBdSvB7aYE6LIH+DyXf1l9dT1agqkUXqxLlYB4tRJiEpC50Np6bIY=
+	t=1750935638; cv=none; b=dpB8hms51bZxJJHYl/x38kRdZDnc63TmlL0Mez78yHcdN1rN7xOiE+ZCYdqXmKyJkcXgXDnp5Zrlf1fCL1NjmdM+jqZLJx/vcfBlL8mo40YX0Ju8vpbM2D9LgFC5hGw5ajn5PhU2SPjSErPZ6Ye4weq4Fbgwwow34tU3c3BCSI4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750936890; c=relaxed/simple;
-	bh=T0hg/2f3YladCEeXyEtbG/jrwuhpaYdML079caAhTXQ=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=q3O32Q/8NdnutsJ8GT52Y63fCNCeIiuBwNIecdoBuONi9CB2YVR1subWfeYLQRonOiEighJkeul5CqshQx9tFJbGmQac5tfBmDqd9xoGNmt+emoWX90lO7A8HyidIxWG1tUu7KTvoBu406iA/bDJBnyQUXr18Cn7JDzGQz+mKSE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=codethink.co.uk; spf=pass smtp.mailfrom=codethink.co.uk; dkim=pass (2048-bit key) header.d=codethink.co.uk header.i=@codethink.co.uk header.b=wFTtvdfm; arc=none smtp.client-ip=78.40.148.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=codethink.co.uk
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=codethink.co.uk
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=codethink.co.uk; s=imap5-20230908; h=Sender:MIME-Version:
-	Content-Transfer-Encoding:Content-Type:References:In-Reply-To:Date:Cc:To:From
-	:Subject:Message-ID:Reply-To:Content-ID:Content-Description:Resent-Date:
-	Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-	List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=JkV6nWj9/Rf6olHfEfof9XppjVlrgOl4uhsIJ7HRk00=; b=wFTtvdfmU/VzRSQhn4RXTnGi2a
-	B3FZ4yKLrMe5rCSnaT2Ip5EH+wrgCBmQJFWLk1Bf6QaJ+nzP+jsBrxvQaW3gbUHEm274lgZGhoXE+
-	i9zBk4PrPYhbidtnyl14NryJdbBvYzfeosNrnxekFmsdjyDk4m0BnQmuSBStYZTYSdLXHf7bC0blc
-	2r8kqm4URqXgP8oyUuKQcIN5TemFdMZQA2UoB4ekDe9rvGbD9rnSKb4CUMhBokXbKVtgUN3D+FWn9
-	3agN5gCqcn9nz6DTgLDUQCzaN22nLqCQxW0VonWg9qhXZpuHMrygRMpOKy50udw4lhXaiilkhUoM8
-	1FHc27yw==;
-Received: from [50.200.95.59] (helo=[10.11.1.91])
-	by imap5.colo.codethink.co.uk with esmtpsa  (Exim 4.94.2 #2 (Debian))
-	id 1uUkKW-005QnH-EO; Thu, 26 Jun 2025 11:59:44 +0100
-Message-ID: <d70bdffe973d1d4b951af3f12d3a5a1e77c879c6.camel@codethink.co.uk>
-Subject: Re: SCHED_DEADLINE tasks missing their deadline with
- SCHED_FLAG_RECLAIM jobs in the mix (using GRUB)
-From: Marcel Ziswiler <marcel.ziswiler@codethink.co.uk>
-To: luca abeni <luca.abeni@santannapisa.it>, Juri Lelli
- <juri.lelli@redhat.com>
-Cc: linux-kernel@vger.kernel.org, Ingo Molnar <mingo@redhat.com>, Peter
- Zijlstra <peterz@infradead.org>, Vineeth Pillai <vineeth@bitbyteword.org>
-Date: Thu, 26 Jun 2025 04:59:42 -0600
-In-Reply-To: <20250625145001.7709b647@nowhere>
-References: <880890e699117e02d984ba2bb391c63be5fd71e8.camel@codethink.co.uk>
-		<aFUqELdqM8VcyNCh@jlelli-thinkpadt14gen4.remote.csb>
-		<20250620113745.6833bccb@luca64>	<20250620161606.2ff81fb1@nowhere>
-		<aFV-HEwOTq0a37ax@jlelli-thinkpadt14gen4.remote.csb>
-		<20250620185248.634101cc@nowhere>
-		<aFpYl53ZMThWjQai@jlelli-thinkpadt14gen4.remote.csb>
-		<aFqhId-qMFNyPD1s@jlelli-thinkpadt14gen4.remote.csb>
-		<20250624170030.4e5b440a@nowhere>
-		<aFvBvxhw6ubpBefm@jlelli-thinkpadt14gen4.remote.csb>
-		<aFvLYv0xSXxoyZZ8@jlelli-thinkpadt14gen4.remote.csb>
-	 <20250625145001.7709b647@nowhere>
-Organization: Codethink
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.56.1 (by Flathub.org) 
+	s=arc-20240116; t=1750935638; c=relaxed/simple;
+	bh=ddNRVKo8K0tfenXyApgTa21tpAnD59RnOxpMdupRAxg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=MiHeZy0GXbxpfT+mLyXyH01voy1eShdxoOfqJ/kMHz+XbRxHGmyg5RNnWtFos/i4sTjWL6VMpP+So5tdOkeRYu+k2+B6yd9Zepc6PCG93Mszvo2nbwigrkFZU3BK6oJXcshqAjo+m3TVYifDTVYFrnJU8JYVZ4jEv439y0HYOS4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=SiVTXsf1; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D3AFCC4CEEB;
+	Thu, 26 Jun 2025 11:00:37 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1750935638;
+	bh=ddNRVKo8K0tfenXyApgTa21tpAnD59RnOxpMdupRAxg=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=SiVTXsf1FIH/BpKrflB7q9chXI1l7A434+C25VnLr3aj+2QSmJtxziSIpI/CapoZT
+	 eG1hU0n1odgZzGlmn1OEPfp0ncwoxX5u+1rDjuj4v4R1sWaFh5vVGY0RH4l4msiMGG
+	 oDjjsIS967tTVZvlkHjTbnvg5tEcUHzG+w0eQvkX+bZ2u90O2NGrx7+WsL8of7SXKZ
+	 0pzrCC3c9Q8i64Yw+v5mrIaPSCevMBgsCCoCPVHQ4kO2nVsM4DFIqTAB8Jjw9D4xSk
+	 jiuYMdeFXlY9MG4lLRN+nBuzqHMOIvx3MhAdOuHfuXDvTRniln6GLMomlzjQuTDw+g
+	 PVcIbeAVzSrlg==
+Date: Thu, 26 Jun 2025 14:00:34 +0300
+From: Jarkko Sakkinen <jarkko@kernel.org>
+To: Greg KH <gregkh@linuxfoundation.org>
+Cc: linux-kernel@vger.kernel.org, keyrings@vger.kernel.org,
+	Jarkko Sakkinen <jarkko.sakkinen@opinsys.com>,
+	stable@vger.kernel.org, Peter Huewe <peterhuewe@gmx.de>,
+	Jason Gunthorpe <jgg@ziepe.ca>, Sudeep Holla <sudeep.holla@arm.com>,
+	Stuart Yoder <stuart.yoder@arm.com>,
+	"open list:TPM DEVICE DRIVER" <linux-integrity@vger.kernel.org>
+Subject: Re: [PATCH] tpm_crb_ffa: Remove unused export
+Message-ID: <aF0oUnrb3t5ZVo1q@kernel.org>
+References: <20250626105423.1043485-1-jarkko@kernel.org>
+ <2025062651-distress-bagel-3718@gregkh>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Sender: marcel.ziswiler@codethink.co.uk
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <2025062651-distress-bagel-3718@gregkh>
 
-Hi Luca and Juri
+On Thu, Jun 26, 2025 at 11:58:26AM +0100, Greg KH wrote:
+> On Thu, Jun 26, 2025 at 01:54:23PM +0300, Jarkko Sakkinen wrote:
+> > From: Jarkko Sakkinen <jarkko.sakkinen@opinsys.com>
+> > 
+> > Remove the export of tpm_crb_ffa_get_interface_version() as it has no
+> > callers outside tpm_crb_ffa.
+> > 
+> > Cc: stable@vger.kernel.org # v6.15+
+> 
+> Why is this marked for stable trees as a fix?  Seems to just be a normal
+> cleanup patch to me, what am I missing?
 
-On Wed, 2025-06-25 at 14:50 +0200, luca abeni wrote:
-> Hi Juri,
->=20
-> On Wed, 25 Jun 2025 12:11:46 +0200
-> Juri Lelli <juri.lelli@redhat.com> wrote:
-> [...]
-> > I pushed another fixup adding a check for dl_server_active in
-> > dl_server_stop(). It seems to cure the WARN here.
-> >=20
-> > Could you please pull and re-test?
->=20
-> I added your last 2 commits, and tested again; it seems to me that
-> everything looks fine, now... Marcel, can you confirm?
+unintentional, i added it as a reflex (was going to add the fixes tag
+for bookmark/reference)
 
-Indeed, our CI run now close to 220 mio. tests on NUCs and 190 mio. on ROCK=
- 5B and so far it didn't miss any
-single beat! Also the statistics around those tests look very good. With re=
-claim enabled one can now truly get
-very good real-time performance. Thank you very much!
+> 
+> thanks,
+> 
+> greg k-h
 
-We will continue to exercise the Linux kernel scheduler to the fullest and =
-report any inconsistencies we are
-seeing.
-
-Just let me know if there is anything else we may help you with. Thanks aga=
-in!
-
-> 			Luca
-
-Cheers
-
-Marcel
+BR, Jarkko
 
