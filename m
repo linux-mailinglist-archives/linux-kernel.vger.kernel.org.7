@@ -1,119 +1,178 @@
-Return-Path: <linux-kernel+bounces-704562-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-704597-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5F767AE9F01
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Jun 2025 15:38:05 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 808B0AE9F72
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Jun 2025 15:54:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 79D361C442DD
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Jun 2025 13:37:58 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C18233A669F
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Jun 2025 13:54:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 66B6D2E6D24;
-	Thu, 26 Jun 2025 13:37:31 +0000 (UTC)
-Received: from dggsgout12.his.huawei.com (dggsgout12.his.huawei.com [45.249.212.56])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AC3B12E762A;
+	Thu, 26 Jun 2025 13:54:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="aZVtjbxY"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4D4EE2E62D9;
-	Thu, 26 Jun 2025 13:37:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 036611922F6;
+	Thu, 26 Jun 2025 13:54:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750945051; cv=none; b=TvaE2ASjMIzjcz8MuFAavHLw+gcBC23XlIspngWHGAv68b8o7MRCtOQmCJJaeT0hLUCjAkGi6xuIS5bCNSrs9/t4gDFVqyNIe4jBr5/8J3CufzWkhCc+6QMdY7LvD86UTnecsHJkzTD6VQfKf6eujxfgvWB7aiwd7Edqy5Sastk=
+	t=1750946073; cv=none; b=VmssgL4lRIj04Jfo8UB2Do2TAPnx4vQeLeON838heUZxpqTQRscCmvym9eiiKhKdYuTFY87wfrFTNUP/1fZ0MScjPcoRdFgpyfM4VHFCRSlTbYJqKXCFymsqWMfgThKI/eUa1/1X3lx1F7jiMsBXtE4YrkYJTI//D+pFKtKdH5Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750945051; c=relaxed/simple;
-	bh=EDqkWAsPHJhPn0akvoePYwUq4YKPq78Au74sO3OhtC8=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=tvSh9cJHJbWRm3QkSHm1WEAM54XKXF7/fHS40LYtLRhHEfYgV5y3tTMG/S5T7A4fdaWq+eu3QgBuQtBlJtV794ROwUiJE0FvFaGUMmN84AN4ToJg2qDE76snsF4VziracHeQbfoCiSPeV2FLjqgKTyGsBj2i+/995Ep7tvNJ6Hg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.19.163.235])
-	by dggsgout12.his.huawei.com (SkyGuard) with ESMTPS id 4bSfr73tF6zKHLtf;
-	Thu, 26 Jun 2025 21:37:27 +0800 (CST)
-Received: from mail02.huawei.com (unknown [10.116.40.128])
-	by mail.maildlp.com (Postfix) with ESMTP id E156A1A084D;
-	Thu, 26 Jun 2025 21:37:25 +0800 (CST)
-Received: from huaweicloud.com (unknown [10.67.174.193])
-	by APP4 (Coremail) with SMTP id gCh0CgD3Wl8UTV1omo7iQg--.26859S4;
-	Thu, 26 Jun 2025 21:37:25 +0800 (CST)
-From: Luo Gengkun <luogengkun@huaweicloud.com>
-To: peterz@infradead.org
-Cc: mingo@redhat.com,
-	acme@kernel.org,
-	namhyung@kernel.org,
-	mark.rutland@arm.com,
-	alexander.shishkin@linux.intel.com,
-	jolsa@kernel.org,
-	irogers@google.com,
-	adrian.hunter@intel.com,
-	kan.liang@linux.intel.com,
-	linux-perf-users@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	luogengkun@huaweicloud.com
-Subject: [PATCH] perf/core: Fix the WARN_ON_ONCE is out of lock protected region
-Date: Thu, 26 Jun 2025 13:54:03 +0000
-Message-Id: <20250626135403.2454105-1-luogengkun@huaweicloud.com>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1750946073; c=relaxed/simple;
+	bh=vGdG2KgJYgg71pcFHeAXtJsfxhvB+yb6bY/1UFHNcP0=;
+	h=Mime-Version:Content-Type:Date:Message-Id:Cc:Subject:From:To:
+	 References:In-Reply-To; b=up1QpF//ceIvJRmv5CQHBdGQFmUkujMLCsLih9aplS0rERV+iP6Mqni625YfTKSahzZCBPJaHIJUsyP95k4jW3fHi1Izp93T9AkvE+MCsc8+6tArM4jyPsF3Bt8fICkxpjuxxzyagKUqE+cTqSHSS/ol0SwbyvRMP6pzea2A4XU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=aZVtjbxY; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E5A5DC4CEEB;
+	Thu, 26 Jun 2025 13:54:26 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1750946071;
+	bh=vGdG2KgJYgg71pcFHeAXtJsfxhvB+yb6bY/1UFHNcP0=;
+	h=Date:Cc:Subject:From:To:References:In-Reply-To:From;
+	b=aZVtjbxYUppazWi1Kl594qJXtIKAnKuxBWJ2ttOrO9rnEChu7QJl6OOOn8JbpISGD
+	 Pe4wkh6UlZLXWeXcgC7EaUdmZR5JMcWiUqCS9gjqPn6QhqD0uRcH3IjKXuZvu68rUx
+	 EF3gyLORB9Guw5UGEBBymx/sOZ7IAYOTgncWrNey7SLvhGSxFalRWdfukConx1xeva
+	 Slnhow1Tq5YGBV7Mj3Q6GyL2c8T0Za1V6wvifA3V9yx+v4fAWHR1+luRN3LRosukVx
+	 YX5q/7xRK2LWSbnmNbl947p94BnyPxEtPWm17y11aQIPHWKDaA/TDthtD4LjlXLhf6
+	 MMWENojMgUqhg==
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:gCh0CgD3Wl8UTV1omo7iQg--.26859S4
-X-Coremail-Antispam: 1UD129KBjvJXoWrtFWDKr4rur17Wr1xZr4UXFb_yoW8JrW5pa
-	4kCFy7tws5ua42vay5G348Z342va10qan5WF12gw4SyF45Jw1rXFW7Gw13XF1UAwn7tFy3
-	JFZ0vr1Ykw4UtaUanT9S1TB71UUUUUJqnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUU9E14x267AKxVW8JVW5JwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
-	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
-	1l84ACjcxK6xIIjxv20xvE14v26F1j6w1UM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26r4U
-	JVWxJr1l84ACjcxK6I8E87Iv67AKxVW0oVCq3wA2z4x0Y4vEx4A2jsIEc7CjxVAFwI0_Gc
-	CE3s1ln4kS14v26r1Y6r17M2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI64kE
-	6c02F40Ex7xfMcIj6xIIjxv20xvE14v26r1Y6r17McIj6I8E87Iv67AKxVWUJVW8JwAm72
-	CE4IkC6x0Yz7v_Jr0_Gr1lF7xvr2IYc2Ij64vIr41lF7I21c0EjII2zVCS5cI20VAGYxC7
-	M4IIrI8v6xkF7I0E8cxan2IY04v7MxkF7I0En4kS14v26r4a6rW5MxAIw28IcxkI7VAKI4
-	8JMxC20s026xCaFVCjc4AY6r1j6r4UMI8I3I0E5I8CrVAFwI0_Jr0_Jr4lx2IqxVCjr7xv
-	wVAFwI0_JrI_JrWlx4CE17CEb7AF67AKxVWUtVW8ZwCIc40Y0x0EwIxGrwCI42IY6xIIjx
-	v20xvE14v26r1j6r1xMIIF0xvE2Ix0cI8IcVCY1x0267AKxVW8JVWxJwCI42IY6xAIw20E
-	Y4v20xvaj40_Jr0_JF4lIxAIcVC2z280aVAFwI0_Jr0_Gr1lIxAIcVC2z280aVCY1x0267
-	AKxVW8JVW8JrUvcSsGvfC2KfnxnUUI43ZEXa7sRixwI3UUUUU==
-X-CM-SenderInfo: 5oxrwvpqjn3046kxt4xhlfz01xgou0bp/
+Mime-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Date: Thu, 26 Jun 2025 15:54:24 +0200
+Message-Id: <DAWIKTODZ3FT.2LGX1H8ZFDONN@kernel.org>
+Cc: "Gary Guo" <gary@garyguo.net>, <linux-kernel@vger.kernel.org>,
+ <rust-for-linux@vger.kernel.org>, <lkmm@lists.linux.dev>,
+ <linux-arch@vger.kernel.org>, "Miguel Ojeda" <ojeda@kernel.org>, "Alex
+ Gaynor" <alex.gaynor@gmail.com>, =?utf-8?q?Bj=C3=B6rn_Roy_Baron?=
+ <bjorn3_gh@protonmail.com>, "Andreas Hindborg" <a.hindborg@kernel.org>,
+ "Alice Ryhl" <aliceryhl@google.com>, "Trevor Gross" <tmgross@umich.edu>,
+ "Danilo Krummrich" <dakr@kernel.org>, "Will Deacon" <will@kernel.org>,
+ "Peter Zijlstra" <peterz@infradead.org>, "Mark Rutland"
+ <mark.rutland@arm.com>, "Wedson Almeida Filho" <wedsonaf@gmail.com>,
+ "Viresh Kumar" <viresh.kumar@linaro.org>, "Lyude Paul" <lyude@redhat.com>,
+ "Ingo Molnar" <mingo@kernel.org>, "Mitchell Levy"
+ <levymitchell0@gmail.com>, "Paul E. McKenney" <paulmck@kernel.org>, "Greg
+ Kroah-Hartman" <gregkh@linuxfoundation.org>, "Linus Torvalds"
+ <torvalds@linux-foundation.org>, "Thomas Gleixner" <tglx@linutronix.de>
+Subject: Re: [PATCH v5 04/10] rust: sync: atomic: Add generic atomics
+From: "Benno Lossin" <lossin@kernel.org>
+To: "Boqun Feng" <boqun.feng@gmail.com>
+X-Mailer: aerc 0.20.1
+References: <20250618164934.19817-1-boqun.feng@gmail.com>
+ <20250618164934.19817-5-boqun.feng@gmail.com>
+ <20250621123212.66fb016b.gary@garyguo.net> <aFjj8AV668pl9jLN@Mac.home>
+ <20250623193019.6c425467.gary@garyguo.net> <aFmmYSAyvxotYfo7@tardis.local>
+ <DAUAW2Y0HYLY.3CDC9ZW0BUKI4@kernel.org> <aFrTyXcFVOjWa2o-@Mac.home>
+In-Reply-To: <aFrTyXcFVOjWa2o-@Mac.home>
 
-commit 3172fb986666 ("perf/core: Fix WARN in perf_cgroup_switch()") try to
-fix a concurrency problem between perf_cgroup_switch and
-perf_cgroup_event_disable. But it does not to move the WARN_ON_ONCE into
-lock-protected region, so the warning is still be triggered.
+On Tue Jun 24, 2025 at 6:35 PM CEST, Boqun Feng wrote:
+> On Tue, Jun 24, 2025 at 01:27:38AM +0200, Benno Lossin wrote:
+>> On Mon Jun 23, 2025 at 9:09 PM CEST, Boqun Feng wrote:
+>> > On Mon, Jun 23, 2025 at 07:30:19PM +0100, Gary Guo wrote:
+>> >> cannot just transmute between from pointers to usize (which is its
+>> >> Repr):
+>> >> * Transmuting from pointer to usize discards provenance
+>> >> * Transmuting from usize to pointer gives invalid provenance
+>> >>=20
+>> >> We want neither behaviour, so we must store `usize` directly and
+>> >> always call into repr functions.
+>> >>=20
+>> >
+>> > If we store `usize`, how can we support the `get_mut()` then? E.g.
+>> >
+>> >     static V: i32 =3D 32;
+>> >
+>> >     let mut x =3D Atomic::new(&V as *const i32 as *mut i32);
+>> >     // ^ assume we expose_provenance() in new().
+>> >
+>> >     let ptr: &mut *mut i32 =3D x.get_mut(); // which is `&mut self.0.g=
+et()`.
+>> >
+>> >     let ptr_val =3D *ptr; // Does `ptr_val` have the proper provenance=
+?
+>>=20
+>> If `get_mut` transmutes the integer into a pointer, then it will have
+>> the wrong provenance (it will just have plain invalid provenance).
+>>=20
+>
+> The key topic Gary and I have been discussing is whether we should
+> define Atomic<T> as:
+>
+> (my current implementation)
+>
+>     pub struct Atomic<T: AllowAtomic>(Opaque<T>);
+>
+> or
+>
+> (Gary's suggestion)
+>
+>     pub struct Atomic<T: AllowAtomic>(Opaque<T::Repr>);
+>
+> `T::Repr` is guaranteed to be the same size and alignment of `T`, and
+> per our discussion, it makes sense to further require that `transmute<T,
+> T::Repr>()` should also be safe (as the safety requirement of
+> `AllowAtomic`), or we can say `T` bit validity can be preserved by
+> `T::Repr`: a valid bit combination `T` can be transumated to `T::Repr`,
+> and if transumated back, it's the same bit combination.
+>
+> Now as I pointed out, if we use `Opaque<T::Repr>`, then `.get_mut()`
+> would be unsound for `Atomic<*mut T>`. And Gary's concern is that in
+> the current implementation, we directly cast a `*mut T` (from
+> `Opaque::get()`) into a `*mut T::Repr`, and pass it directly into C/asm
+> atomic primitives. However, I think with the additional safety
+> requirement above, this shouldn't be a problem: because the C/asm atomic
+> primitives would just pass the address to an asm block, and that'll be
+> out of Rust abstract machine, and as long as the C/primitives atomic
+> primitives are implemented correctly, the bit representation of `T`
+> remains valid after asm blocks.
+>
+> So I think the current implementation still works and is better.
 
-Fixes: 3172fb986666 ("perf/core: Fix WARN in perf_cgroup_switch()")
-Signed-off-by: Luo Gengkun <luogengkun@huaweicloud.com>
+I don't think there is a big difference between=C2=A0`Opaque<T>`=C2=A0and
+`Opaque<T::Repr>`=C2=A0if we have the transmute equivalence between the two=
+.
+From a safety perspective, you don't gain or lose anything by using the
+first over the second one. They both require the invariant that they are
+valid (as=C2=A0`Opaque`=C2=A0removes that... we should really be using
+`UnsafeCell`=C2=A0here instead... why aren't we doing that?).
+
+Where their differences do play a role is in the implementation of the
+various operations on the atomic. If you need to pass=C2=A0`*mut T::Repr`=
+=C2=A0to
+the C side, it's better if you store=C2=A0`Opaque<T::Repr>`=C2=A0and if you=
+ want
+to give=C2=A0`&mut T`=C2=A0back to the user, then it's better to
+store=C2=A0`Opaque<T>`.
+
+I would choose the one that results in overall less code. It's probably
+going to be=C2=A0`Opaque<T::Repr>`, since we will have more operations that
+need=C2=A0`*mut T::Repr`=C2=A0than=C2=A0`*mut T`.
+
+Now I don't understand why you value=C2=A0`Opaque<T>`=C2=A0over=C2=A0`Opaqu=
+e<T::Repr>`,
+they are (up to transmute-equivalence) the same.
+
+I think that you said at one point that=C2=A0`Opaque<T>`=C2=A0makes more se=
+nse
+from a conceptual view, since we're building=C2=A0`Atomic<T>`. I think that
+doesn't really matter, since it's implementation detail. The same
+argument could be made about casing=C2=A0`u64`=C2=A0to=C2=A0`i64`=C2=A0for =
+implementing the
+atomics: just implement atomics in C also for=C2=A0`u64`=C2=A0and then use =
+that
+instead...
+
 ---
- kernel/events/core.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
-
-diff --git a/kernel/events/core.c b/kernel/events/core.c
-index 1f746469fda5..a35784d42c66 100644
---- a/kernel/events/core.c
-+++ b/kernel/events/core.c
-@@ -951,8 +951,6 @@ static void perf_cgroup_switch(struct task_struct *task)
- 	if (READ_ONCE(cpuctx->cgrp) == NULL)
- 		return;
- 
--	WARN_ON_ONCE(cpuctx->ctx.nr_cgroups == 0);
--
- 	cgrp = perf_cgroup_from_task(task, NULL);
- 	if (READ_ONCE(cpuctx->cgrp) == cgrp)
- 		return;
-@@ -964,6 +962,8 @@ static void perf_cgroup_switch(struct task_struct *task)
- 	if (READ_ONCE(cpuctx->cgrp) == NULL)
- 		return;
- 
-+	WARN_ON_ONCE(cpuctx->ctx.nr_cgroups == 0);
-+
- 	perf_ctx_disable(&cpuctx->ctx, true);
- 
- 	ctx_sched_out(&cpuctx->ctx, NULL, EVENT_ALL|EVENT_CGROUP);
--- 
-2.34.1
-
+Cheers,
+Benno
 
