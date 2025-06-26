@@ -1,312 +1,209 @@
-Return-Path: <linux-kernel+bounces-704385-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-704375-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 43F3FAE9CE1
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Jun 2025 13:53:32 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 66174AE9CCD
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Jun 2025 13:49:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 63E537AF8EE
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Jun 2025 11:52:02 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 987C04A72EF
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Jun 2025 11:49:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7B5F6275AED;
-	Thu, 26 Jun 2025 11:52:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 69C188F5E;
+	Thu, 26 Jun 2025 11:49:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="YK6XLa7U"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="HSZj1CDr"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 171BD275AF0
-	for <linux-kernel@vger.kernel.org>; Thu, 26 Jun 2025 11:52:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4854A524F
+	for <linux-kernel@vger.kernel.org>; Thu, 26 Jun 2025 11:49:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750938736; cv=none; b=ELRtki57/SU1lxtZmKA0Az7vbTNyeBBPFeOyaFlTUC2XtCo7+T89nKF9LBx0dKhc9aCvMwrUJE3haxn4xk+r6ZScSM5Gh4FE2Ra3VIAy2HT9vkZATZqJfB0fkWvx3ywCpl2ovW3rFpwrXDIVy8+wn4HuqB2GFN4S12Dzr16OJs0=
+	t=1750938582; cv=none; b=nBqh7P/NpqKiM2fzYdPvKhYpjxap8B5bWuvcR/lMARiVXyyvRBawJgMa8gjXGBOG5NaIpqAGw3seUANDcoKkkhB3QHxuWSYSpBahVL5XfAium81K1IJIiJfOaSOWzL87a76z0dgeE+7ycR+yEsq5eq0Pwz952o3U9kGMnO1s6lM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750938736; c=relaxed/simple;
-	bh=dCwo9dQ+Vr20/e1KAsSbtEmLD13qNZhteBWJeJeYPoU=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=UKX37vcGZ65InwAgTjnse/4423lwlJKx6JJ0/dQPXNF/pxiCC9/71rLIWwV66MQyrYN3kcmMs5C/31igbug0cNwjLVgH//xMRMcoebrITsLchNH2e3ImMthRoQlSwoyIl3gj7sSLw+Nj0Gj1vHQAvBvYgDwuB7doEuN1sGwphJE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=YK6XLa7U; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1750938734;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=YxW6jSTb/V87JFd4N+HT8acceFkg7nuwQOVqiGyMICA=;
-	b=YK6XLa7UuKx5xu8sN1ELAKjiCXy/PG5vIEdXSnbErINm7eClHyuaw7cLUlQmPk27Fh/wXX
-	NYH/ikkZ/qS2nMvNsisIE5cAFQuMxvTRVRjchQvWiTA4obux1gJmiBDw0ZVn5lGNoFUP7P
-	YaH35NR0NlpZgxReIwzO50Zx8Ow3sPM=
-Received: from mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-223-mBAs2qz8NaKID1fM14R3Hw-1; Thu,
- 26 Jun 2025 07:52:12 -0400
-X-MC-Unique: mBAs2qz8NaKID1fM14R3Hw-1
-X-Mimecast-MFC-AGG-ID: mBAs2qz8NaKID1fM14R3Hw_1750938731
-Received: from mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.4])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id B4DD21809C85;
-	Thu, 26 Jun 2025 11:52:11 +0000 (UTC)
-Received: from gmonaco-thinkpadt14gen3.rmtit.com (unknown [10.45.226.174])
-	by mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 4125730002C0;
-	Thu, 26 Jun 2025 11:52:08 +0000 (UTC)
-From: Gabriele Monaco <gmonaco@redhat.com>
-To: linux-kernel@vger.kernel.org,
-	Anna-Maria Behnsen <anna-maria@linutronix.de>,
-	Frederic Weisbecker <frederic@kernel.org>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Waiman Long <longman@redhat.com>
-Cc: Gabriele Monaco <gmonaco@redhat.com>
-Subject: [PATCH v7 7/7] timers: Exclude isolated cpus from timer migration
-Date: Thu, 26 Jun 2025 13:49:00 +0200
-Message-ID: <20250626114900.106061-8-gmonaco@redhat.com>
-In-Reply-To: <20250626114900.106061-1-gmonaco@redhat.com>
-References: <20250626114900.106061-1-gmonaco@redhat.com>
+	s=arc-20240116; t=1750938582; c=relaxed/simple;
+	bh=9Ulf7o72U8DcrYow+1z4SBJCw3hIkvgPS6ofzKA4wPs=;
+	h=From:Date:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=dgjkpXhHN+d9RSWTgPmWOeyDmBCXUqwL54m/1KFZfRpRa1NpGBm5yGMhPpkzgMU0s0P4r8Z5NjJXf9dKqjw3rXqmFpuS+2x6FQ+vjZGkRFiJ8k3TVLSMzkiodyHiA5v4+Klsx+W6aswYE938B4X2j4aQurDudsLyIjw89o1dQgs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=HSZj1CDr; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279873.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 55Q9UxN3000444
+	for <linux-kernel@vger.kernel.org>; Thu, 26 Jun 2025 11:49:40 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-type:date:from:in-reply-to:message-id:mime-version
+	:references:subject:to; s=qcppdkim1; bh=GBwtiHKIyvgYyIKMG2QKXSaH
+	zLS1UsXkLrpjRQkC6aU=; b=HSZj1CDrgaiRKXmxTbBm88pkg3ZX4/CYj5DlrNPO
+	RjpSDGXrPIrIvxw3z86xR0cLOpZaU1Dak7mEy/CxUnxGrEzOEW+M4Pdncgd7VTjk
+	ULF+66puebVsltx5Errzugvcim+J211SuoTGGGXWvoGQ3tq3PEHK84afxJFj4scE
+	bXdunVWZnZYktx80HQxI8v/Ue1ZyceGPp4OO1DfTycjMjMZb3OK1F2JtQY4QJE3e
+	loZsUiCXaKV+Gfp+PMPBV7QVdk8IBRSAFpspimllajI8o0dtfaLrxt9Yo+0gvgqN
+	H6F7fugrdS3RwVHqMtbb5TlmCMGFNT7UDa2Yjh9gKNtTvw==
+Received: from mail-qk1-f199.google.com (mail-qk1-f199.google.com [209.85.222.199])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 47f2rq3d0d-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Thu, 26 Jun 2025 11:49:40 +0000 (GMT)
+Received: by mail-qk1-f199.google.com with SMTP id af79cd13be357-7d399070cecso143833785a.3
+        for <linux-kernel@vger.kernel.org>; Thu, 26 Jun 2025 04:49:39 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1750938579; x=1751543379;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:date:from:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=GBwtiHKIyvgYyIKMG2QKXSaHzLS1UsXkLrpjRQkC6aU=;
+        b=pxFyxjYy6eutPmDyzn8q1bzZh+AtAememQP4qwIHb9Oover8uef7lbgcUVq/unU+tu
+         VnjYWRPIlY3cyynVFFIVzJYSoqsvUtxqn1SWFTwUfm70qmHLLjiu7+bCFfqwrVM+DtBH
+         HWDRzByZqy3uPa/Nv7q6IBt7adKBK+L65iHy8VJ+NXTFZD+EC1eozzlhwHeqhcxkhttP
+         NdHuLIWhT1aR4ug0yfnRaGR7ndWo0CCNFttsMlvKDk/ZLLWmO7LiLnPO1sHNzxrSMfal
+         ICrc9JCH/4P0kTnZ3Vm0AdY9W/SSn9IGwG5S6Ybv1qnzbnD3RhdKFjBmq5GtlaF3438B
+         v4Zg==
+X-Forwarded-Encrypted: i=1; AJvYcCWvgRG/3SejHoA1FTaCg30qUEJ14nSfjytwuNn4q35Oqqgjfu8y11c3UfPPbVrZcbewdowgO6Uis2wcGc0=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzUQR3a2oebmayCAt+LvHCT14IyI6sUs2oOVia/CMIfO+inCf5b
+	NS3+4Enw48Wn4GddBTAdNErIfBtucwOqwsGtTfShbBXGD1wKHkMhg9Ngn7EX3wrliiNyMhO1aDO
+	mmf2awWYJM/rAmd9fpTq9lCLPnm1/qLD4YsTWBgrSEopouHHvzz/VRQhG2F3GcB32UsM=
+X-Gm-Gg: ASbGncv7Tc4G7MpUboBl83SwQQFkP+cjD7e611KaPE7AMkoesUP+uhTaeaRTKB//5Y4
+	Cx8EEnpUV+nrYeOsthuQql99/gKblgJW4JdFIrbAXyPFBXDWcZnNwlC13puoeXaxNxfDi5VdCU/
+	knnd08/Qk8RH6WmAJ0ylcAo+3AQgJGc7D9VaomGxqGBlTKEOJJM5vSL68p48/BCa0Dc8UrhZPot
+	Qh/6YwRJoUHnSHTdC0HEsefbnPzaR+jblCCvaJ7mvhE4zjvxLV9worWU+GhTqpCA7luBsFjK/M6
+	eq+K1e1H3D5kQqhfeJRIEZeW9SSubT62CHMSiq4hnqISmgumpEbUjbkQ4A==
+X-Received: by 2002:a05:620a:4087:b0:7d3:8e3d:da92 with SMTP id af79cd13be357-7d42976b8ffmr880326585a.50.1750938579246;
+        Thu, 26 Jun 2025 04:49:39 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IHEZLJex3QT9MiFpQxhLoKdZ4j1Cu8HP2gRnN7PwYTuwEzqabvzfKKTsfgs0N8lf/Fd99BcDg==
+X-Received: by 2002:a05:620a:4087:b0:7d3:8e3d:da92 with SMTP id af79cd13be357-7d42976b8ffmr880323485a.50.1750938578872;
+        Thu, 26 Jun 2025 04:49:38 -0700 (PDT)
+Received: from trex (132.red-79-144-190.dynamicip.rima-tde.net. [79.144.190.132])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4538233c523sm47428985e9.6.2025.06.26.04.49.37
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 26 Jun 2025 04:49:38 -0700 (PDT)
+From: Jorge Ramirez <jorge.ramirez@oss.qualcomm.com>
+X-Google-Original-From: Jorge Ramirez <JorgeRamirez-Ortiz>
+Date: Thu, 26 Jun 2025 13:49:36 +0200
+To: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+Cc: Jorge Ramirez-Ortiz <jorge.ramirez@oss.qualcomm.com>,
+        quic_vgarodia@quicinc.com, quic_dikshita@quicinc.com,
+        bryan.odonoghue@linaro.org, mchehab@kernel.org, robh@kernel.org,
+        krzk+dt@kernel.org, conor+dt@kernel.org, andersson@kernel.org,
+        konradybcio@kernel.org, linux-arm-msm@vger.kernel.org,
+        linux-media@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v4 5/5] arm64: dts: qcom: qcm2290: Add venus video node
+Message-ID: <aF0z0NiuL+Cg38kC@trex>
+References: <20250623105107.3461661-1-jorge.ramirez@oss.qualcomm.com>
+ <20250623105107.3461661-6-jorge.ramirez@oss.qualcomm.com>
+ <8997eb52-788b-4264-a302-0fd10008e4e6@oss.qualcomm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.4
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <8997eb52-788b-4264-a302-0fd10008e4e6@oss.qualcomm.com>
+X-Authority-Analysis: v=2.4 cv=NdDm13D4 c=1 sm=1 tr=0 ts=685d33d4 cx=c_pps
+ a=HLyN3IcIa5EE8TELMZ618Q==:117 a=wjE3nLva0YkvARyJ+Gfmxg==:17
+ a=kj9zAlcOel0A:10 a=6IFa9wvqVegA:10 a=EUspDBNiAAAA:8 a=Llyb1ICWO3Llu68erG4A:9
+ a=CjuIK1q_8ugA:10 a=bTQJ7kPSJx9SKPbeHEYW:22
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNjI2MDA5OSBTYWx0ZWRfX7dgTgVDSEQFF
+ bSr7B2Boe4TdDSNeILeAfZ0ZRoyJvpHQMMXcqItrZK/nMIYwmzQYmRv7oN1ORh2Rr8F3KW9Y94f
+ i+/8ZjgtFImUeSFuEI8OBz1RoMtgVeLVlHB10bQYu1PE/69/QMR+ESlrk8Sg3ZwDat8Za3DjBTT
+ vgpUnR6KSYQhk9yguDoB+zUX8Vtn03S0/DWwhTOEZg6S44KmZvlYCrHTwVVh5vuJqZH1g2uLPGK
+ DJuJGVcUrUGi1euB1tgqKbytikGHEArhcsbGc9AT/Mk8QoRbXhQMTf6y740b5UCeyYXR219NK/y
+ X7dsgH16ubVFwNpTNin4KqNLkuCli/lIKYxbpuk9D5iAPAw4BTAfkrE3gs4HZdFF1lfgKSWsQFy
+ jxdodtjXQORXB8NNKg6Htp2/h/BORIPD67AtjO9Y5jIq0E7uYvK5GSwL2nXH7CQQJnnrcsOQ
+X-Proofpoint-ORIG-GUID: bBHOG7jw-g66EpZabC-dYuNAfb9LEZ3Z
+X-Proofpoint-GUID: bBHOG7jw-g66EpZabC-dYuNAfb9LEZ3Z
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.7,FMLib:17.12.80.40
+ definitions=2025-06-26_05,2025-06-26_02,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ bulkscore=0 mlxscore=0 spamscore=0 malwarescore=0 lowpriorityscore=0
+ phishscore=0 priorityscore=1501 suspectscore=0 mlxlogscore=999 adultscore=0
+ clxscore=1015 impostorscore=0 classifier=spam authscore=0 authtc=n/a authcc=
+ route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2505280000
+ definitions=main-2506260099
 
-The timer migration mechanism allows active CPUs to pull timers from
-idle ones to improve the overall idle time. This is however undesired
-when CPU intensive workloads run on isolated cores, as the algorithm
-would move the timers from housekeeping to isolated cores, negatively
-affecting the isolation.
+On 23/06/25 13:16:30, Konrad Dybcio wrote:
+> On 6/23/25 12:51 PM, Jorge Ramirez-Ortiz wrote:
+> > Add DT entries for the qcm2290 venus encoder/decoder.
+> > 
+> > Signed-off-by: Jorge Ramirez-Ortiz <jorge.ramirez@oss.qualcomm.com>
+> > Co-developed-by: Loic Poulain <loic.poulain@oss.qualcomm.com>
+> > Signed-off-by: Loic Poulain <loic.poulain@oss.qualcomm.com>
+> > ---
+> 
+> [...]
+> 
+> > +		venus: video-codec@5a00000 {
+> > +			compatible = "qcom,qcm2290-venus";
+> > +			reg = <0 0x5a00000 0 0xff000>;
+> 
+> the size seems to be 0xf0000 instead
 
-Exclude isolated cores from the timer migration algorithm, extend the
-concept of unavailable cores, currently used for offline ones, to
-isolated ones:
-* A core is unavailable if isolated or offline;
-* A core is available if isolated and offline;
+you are right
 
-A core is considered unavailable as isolated if it belongs to:
-* the isolcpus (domain) list
-* an isolated cpuset
-Except if it is:
-* in the nohz_full list (already idle for the hierarchy)
-* the nohz timekeeper core (must be available to handle global timers)
+> 
+> > +			interrupts = <GIC_SPI 225 IRQ_TYPE_LEVEL_HIGH>;
+> > +
+> > +			power-domains = <&gcc GCC_VENUS_GDSC>,
+> > +					<&gcc GCC_VCODEC0_GDSC>,
+> > +					<&rpmpd QCM2290_VDDCX>;
+> > +			power-domain-names = "venus", "vcodec0", "cx";
+> 
+> one per line, please, also below
 
-All online CPUs are added to the hierarchy during early boot, isolated
-CPUs are removed during late boot if configured or whenever the cpuset
-isolation changes.
+ok
 
-Due to how the timer migration algorithm works, any CPU part of the
-hierarchy can have their global timers pulled by remote CPUs and have to
-pull remote timers, only skipping pulling remote timers would break the
-logic.
-For this reason, prevent isolated CPUs from pulling remote global
-timers, but also the other way around: any global timer started on an
-isolated CPU will run there. This does not break the concept of
-isolation (global timers don't come from outside the CPU) and, if
-considered inappropriate, can usually be mitigated with other isolation
-techniques (e.g. IRQ pinning).
+> 
+> > +			operating-points-v2 = <&venus_opp_table>;
+> > +
+> > +			clocks = <&gcc GCC_VIDEO_VENUS_CTL_CLK>,
+> > +				 <&gcc GCC_VIDEO_AHB_CLK>,
+> 
+> On other platforms, this clock is consumed by videocc
+> 
+> > +				 <&gcc GCC_VENUS_CTL_AXI_CLK>,
+> > +				 <&gcc GCC_VIDEO_THROTTLE_CORE_CLK>,
+> > +				 <&gcc GCC_VIDEO_VCODEC0_SYS_CLK>,
+> > +				 <&gcc GCC_VCODEC0_AXI_CLK>;
+> > +			clock-names = "core", "iface", "bus", "throttle",
+> > +				      "vcodec0_core", "vcodec0_bus";
+> > +
+> > +			memory-region = <&pil_video_mem>;
+> > +			iommus = <&apps_smmu 0x860 0x0>,
+> > +				 <&apps_smmu 0x880 0x0>,
+> > +				 <&apps_smmu 0x861 0x04>,
+> > +				 <&apps_smmu 0x863 0x0>,
+> > +				 <&apps_smmu 0x804 0xE0>;
+> 
+> lowercase hex is preferred
 
-This effect was noticed on a 128 cores machine running oslat on the
-isolated cores (1-31,33-63,65-95,97-127). The tool monopolises CPUs,
-and the CPU with lowest count in a timer migration hierarchy (here 1
-and 65) appears as always active and continuously pulls global timers,
-from the housekeeping CPUs. This ends up moving driver work (e.g.
-delayed work) to isolated CPUs and causes latency spikes:
+yep
 
-before the change:
+> 
+> > +
+> > +			interconnects = <&mmnrt_virt MASTER_VIDEO_P0 0 &bimc SLAVE_EBI1 0>,
+> 
+> for this path: RPM_ALWAYS_TAG> +					<&bimc MASTER_APPSS_PROC 0 &config_noc SLAVE_VENUS_CFG 0>;
+> 
+> for this one: RPM_ACTIVE_TAG
+>
 
- # oslat -c 1-31,33-63,65-95,97-127 -D 62s
- ...
-  Maximum:     1203 10 3 4 ... 5 (us)
+ok
 
-after the change:
+> > +			interconnect-names = "video-mem", "cpu-cfg";
+> > +
+> > +			venus_opp_table: opp-table {
+> > +				compatible = "operating-points-v2";
+> > +				opp-133000000 {
+> 
+> please add a newline before the subnode
 
- # oslat -c 1-31,33-63,65-95,97-127 -D 62s
- ...
-  Maximum:      10 4 3 4 3 ... 5 (us)
+ok
 
-Signed-off-by: Gabriele Monaco <gmonaco@redhat.com>
----
- include/linux/timer.h         |  9 ++++
- kernel/cgroup/cpuset.c        |  3 ++
- kernel/time/timer_migration.c | 86 +++++++++++++++++++++++++++++++++++
- 3 files changed, 98 insertions(+)
-
-diff --git a/include/linux/timer.h b/include/linux/timer.h
-index 0414d9e6b4fcd..62e1cea711257 100644
---- a/include/linux/timer.h
-+++ b/include/linux/timer.h
-@@ -188,4 +188,13 @@ int timers_dead_cpu(unsigned int cpu);
- #define timers_dead_cpu		NULL
- #endif
- 
-+#if defined(CONFIG_SMP) && defined(CONFIG_NO_HZ_COMMON)
-+extern int tmigr_isolated_exclude_cpumask(struct cpumask *exclude_cpumask);
-+#else
-+static inline int tmigr_isolated_exclude_cpumask(struct cpumask *exclude_cpumask)
-+{
-+	return 0;
-+}
-+#endif
-+
- #endif
-diff --git a/kernel/cgroup/cpuset.c b/kernel/cgroup/cpuset.c
-index a946d85ce954a..ff5b66abd0474 100644
---- a/kernel/cgroup/cpuset.c
-+++ b/kernel/cgroup/cpuset.c
-@@ -1392,6 +1392,9 @@ static void update_exclusion_cpumasks(bool isolcpus_updated)
- 
- 	ret = workqueue_unbound_exclude_cpumask(isolated_cpus);
- 	WARN_ON_ONCE(ret < 0);
-+
-+	ret = tmigr_isolated_exclude_cpumask(isolated_cpus);
-+	WARN_ON_ONCE(ret < 0);
- }
- 
- /**
-diff --git a/kernel/time/timer_migration.c b/kernel/time/timer_migration.c
-index a51af4acc5e3c..2bae64a34f05f 100644
---- a/kernel/time/timer_migration.c
-+++ b/kernel/time/timer_migration.c
-@@ -10,6 +10,7 @@
- #include <linux/spinlock.h>
- #include <linux/timerqueue.h>
- #include <trace/events/ipi.h>
-+#include <linux/sched/isolation.h>
- 
- #include "timer_migration.h"
- #include "tick-internal.h"
-@@ -425,6 +426,9 @@ static DEFINE_PER_CPU(struct tmigr_cpu, tmigr_cpu);
- /* CPUs available for timer migration */
- static cpumask_var_t tmigr_available_cpumask;
- 
-+/* Enabled during late initcall */
-+static bool tmigr_exclude_isolated __read_mostly;
-+
- #define TMIGR_NONE	0xFF
- #define BIT_CNT		8
- 
-@@ -433,6 +437,24 @@ static inline bool tmigr_is_not_available(struct tmigr_cpu *tmc)
- 	return !(tmc->tmgroup && tmc->available);
- }
- 
-+/*
-+ * Returns true if @cpu should be excluded from the hierarchy as isolated.
-+ * Domain isolated CPUs don't participate in timer migration, nohz_full
-+ * CPUs are still part of the hierarchy but are always considered idle.
-+ * This behaviour depends on the value of tmigr_exclude_isolated, which is
-+ * normally disabled during early boot.
-+ * This check is necessary, for instance, to prevent offline isolated CPU from
-+ * being incorrectly marked as available once getting back online.
-+ */
-+static inline bool tmigr_is_isolated(int cpu)
-+{
-+	if (!tmigr_exclude_isolated)
-+		return false;
-+	return (!housekeeping_cpu(cpu, HK_TYPE_DOMAIN) ||
-+		cpuset_cpu_is_isolated(cpu)) &&
-+	       housekeeping_cpu(cpu, HK_TYPE_KERNEL_NOISE);
-+}
-+
- /*
-  * Returns true, when @childmask corresponds to the group migrator or when the
-  * group is not active - so no migrator is set.
-@@ -1450,6 +1472,8 @@ static int tmigr_clear_cpu_available(unsigned int cpu)
- 	u64 firstexp;
- 
- 	scoped_guard(raw_spinlock_irq, &tmc->lock) {
-+		if (!tmc->available)
-+			return 0;
- 		tmc->available = false;
- 		WRITE_ONCE(tmc->wakeup, KTIME_MAX);
- 		cpumask_clear_cpu(cpu, tmigr_available_cpumask);
-@@ -1478,7 +1502,11 @@ static int tmigr_set_cpu_available(unsigned int cpu)
- 	if (WARN_ON_ONCE(!tmc->tmgroup))
- 		return -EINVAL;
- 
-+	if (tmigr_is_isolated(cpu))
-+		return 0;
- 	scoped_guard(raw_spinlock_irq, &tmc->lock) {
-+		if (tmc->available)
-+			return 0;
- 		trace_tmigr_cpu_available(tmc);
- 		tmc->idle = timer_base_is_idle();
- 		if (!tmc->idle)
-@@ -1489,6 +1517,63 @@ static int tmigr_set_cpu_available(unsigned int cpu)
- 	return 0;
- }
- 
-+static void tmigr_cpu_isolate(void *ignored)
-+{
-+	/*
-+	 * The tick CPU can be marked as isolated by the cpuset code, however
-+	 * we cannot mark it as unavailable to avoid having no global migrator
-+	 * for the nohz_full CPUs.
-+	 */
-+	if (!tick_nohz_cpu_hotpluggable(smp_processor_id()))
-+		return;
-+	tmigr_clear_cpu_available(smp_processor_id());
-+}
-+
-+static void tmigr_cpu_unisolate(void *ignored)
-+{
-+	tmigr_set_cpu_available(smp_processor_id());
-+}
-+
-+int tmigr_isolated_exclude_cpumask(struct cpumask *exclude_cpumask)
-+{
-+	cpumask_var_t cpumask;
-+
-+	lockdep_assert_cpus_held();
-+
-+	if (!alloc_cpumask_var(&cpumask, GFP_KERNEL))
-+		return -ENOMEM;
-+
-+	cpumask_and(cpumask, exclude_cpumask, tmigr_available_cpumask);
-+	cpumask_and(cpumask, cpumask, housekeeping_cpumask(HK_TYPE_KERNEL_NOISE));
-+	on_each_cpu_mask(cpumask, tmigr_cpu_isolate, NULL, 1);
-+
-+	cpumask_andnot(cpumask, cpu_online_mask, exclude_cpumask);
-+	cpumask_andnot(cpumask, cpumask, tmigr_available_cpumask);
-+	on_each_cpu_mask(cpumask, tmigr_cpu_unisolate, NULL, 1);
-+
-+	free_cpumask_var(cpumask);
-+	return 0;
-+}
-+
-+static int __init tmigr_init_isolation(void)
-+{
-+	cpumask_var_t cpumask;
-+
-+	if (!housekeeping_enabled(HK_TYPE_DOMAIN))
-+		return 0;
-+	if (!alloc_cpumask_var(&cpumask, GFP_KERNEL))
-+		return -ENOMEM;
-+	cpumask_andnot(cpumask, tmigr_available_cpumask,
-+		       housekeeping_cpumask(HK_TYPE_DOMAIN));
-+	cpumask_and(cpumask, cpumask, housekeeping_cpumask(HK_TYPE_KERNEL_NOISE));
-+	on_each_cpu_mask(cpumask, tmigr_cpu_isolate, NULL, 1);
-+
-+	tmigr_exclude_isolated = true;
-+
-+	free_cpumask_var(cpumask);
-+	return 0;
-+}
-+
- static void tmigr_init_group(struct tmigr_group *group, unsigned int lvl,
- 			     int node)
- {
-@@ -1871,3 +1956,4 @@ static int __init tmigr_init(void)
- 	return ret;
- }
- early_initcall(tmigr_init);
-+late_initcall(tmigr_init_isolation);
--- 
-2.49.0
-
+> 
+> Konrad
 
