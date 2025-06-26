@@ -1,87 +1,77 @@
-Return-Path: <linux-kernel+bounces-703705-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-703710-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 37A45AE93E2
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Jun 2025 04:08:11 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id C32EAAE93EF
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Jun 2025 04:15:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E7B6C1C41DE9
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Jun 2025 02:08:26 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B5A321899DE5
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Jun 2025 02:15:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3E67F13D503;
-	Thu, 26 Jun 2025 02:08:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ED3911F3BAB;
+	Thu, 26 Jun 2025 02:15:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ddwrAKAv"
-Received: from mail-pg1-f178.google.com (mail-pg1-f178.google.com [209.85.215.178])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="b6VMFsyF"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5449E126C17;
-	Thu, 26 Jun 2025 02:08:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3911B1C84D6
+	for <linux-kernel@vger.kernel.org>; Thu, 26 Jun 2025 02:14:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750903682; cv=none; b=mnyIijm9MfAkeECLcZ7QUrLUhrifLO9F5FZFOZaZdSSv8mpq+pw/K7yxYtpEkoDL8t7XZRczFF66aVmuRfE9aI5BkPQ4NOOGo9qU8j6M2a9bPTy59QSIhd7tNVUsYa6E9fwmlWILyU5Ha+aiA9DlANjEybmjqsy7BxVA/SH08vM=
+	t=1750904104; cv=none; b=YQwuUJB7CnkQ2qBQLDwnRClA0+jxwTONN+cO/LshYGtBjLCY5JysPlv0LCBIhVI2eJB+qxx4Z7Z93XjysASuqENP3+qlq2Rj8lrdixn9xT7G3d2cbdtPK+O51wK1DIXvkb39nbmHUdsGAA70O3DfAXV5yG+yqisKqhpUI45ZsLg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750903682; c=relaxed/simple;
-	bh=fGBdLx43ZNKtIbzyx9QYwr/HXAxnuOX+RmyAX3dJ02Q=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=UaQZg0FQk5eE8XNqtyXS0IFwDYLwFkogo2w7EctrvKOdJA72mTd+byX9OdoIxCAcohmG0TSGMqSSfl9skhKWWbsEIHzX+9AOVTTlIdchw/5fQO/4kqvyiy7IVOQuQ8JZTEw83uLIkhcMhb6zxzhWXlKbs7JRidsmOzTKNCv7d5w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ddwrAKAv; arc=none smtp.client-ip=209.85.215.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pg1-f178.google.com with SMTP id 41be03b00d2f7-b34c068faf8so506333a12.2;
-        Wed, 25 Jun 2025 19:08:01 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1750903680; x=1751508480; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=2QqGYjD8NV1Lz9h53E/xb2YOnYvPPC++UyYL3ZPC24Q=;
-        b=ddwrAKAvdzYtRaE6wP6cG1rdAJbNTymqS4v80hSHcX5wY7Tt+3PsVLGjTNb6Pspsnq
-         LJS2zbSVvhxav3Aoof1J+AUs+VWBUH2Z12UbyYc7txbZz3501u7g7REjYDMVIBp1p7TJ
-         PJuqyeYOaQpmkQSPYNivVgT5hENHEjJofhpvua7EfcmDwewejWCK/zTunxDKnGZXmt9H
-         AEWpcGZx0RoZZLMcAvd7z+qPuAzONOdJ4OeUI84U13FZR4W60p+XTgPynjwQCWBEg9/V
-         LjH0oYGN1o8kiCXy21uyN1lO9mjYdl5rpycxpFSFTm5CmLc0I09Ztgt3hRXUOaOK+C/h
-         HUNQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1750903680; x=1751508480;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=2QqGYjD8NV1Lz9h53E/xb2YOnYvPPC++UyYL3ZPC24Q=;
-        b=bMYlFMwq5btE1PrixT1S2BrCkv68ABUKJeG51800e66O11NsFdyzOMMl1+e1PwqJPH
-         GDZJhWEOuOg2gxI2b4Cx8DMQ+iqrOwW6pXKOGdNJNj+rAGd5aU0QbHvrb2UJa8FsJBwG
-         yGLc2+ku8TfgnbGKkiUKK2RdcuNlDd4ZLgrsJDYADQMO5VS75yH6tXI6riIptIYICTtu
-         usQqp5oKWN5yj0mpFqXBtMRvR3fm8OXlRG3NMD8eG6/350OJtE/sHb1sG873Q3uMaeke
-         EOdzFFWFCEJqy2LZ2DvN4AahPi3X06daNLh8AiKiZJt4hpVEZ6BS0UL9BLOG9ldIEnCp
-         Hjdg==
-X-Forwarded-Encrypted: i=1; AJvYcCW06jcdlw5MG2O9C2w/6HEqgkVzritDErMqLZ1JKWcyveWBU/OSKzeYn7ZtSW8CMCqSKNbrHvw66gQTc/A=@vger.kernel.org, AJvYcCXjNM3snd3+9/qIDxoatnbg92NDzt7oALp3vV6NOc+7as5DEj8i/rviAVjAYbCNvfP2o3qr+u57J6ZKjqbSFgZa@vger.kernel.org
-X-Gm-Message-State: AOJu0YzXXT6i5Z8GnKFG+iyy/H2wMEGxCjZxBhS3SXq/DkhaOYP20c8F
-	CaLYhjCD89hCc/7k3luWn1ooFDlwozNQJUB+7asMjlr1ZTddTOqnV37K
-X-Gm-Gg: ASbGncu6Cv3nRh7wcXqFs+stf/R53U9DyQ5BaXSLnrQkgPpH+M3LpojVqv0RgSE493/
-	t73pN/k7uz7fHvUO1TGgS75zh9e2rGIZDH8fXtZza+jjwOczExnTdv8xzVKtbdPHeCc3Jzgh2EL
-	dr9ewKAbpVaajiqA8kNoj3GBX3yqX7WLTFsyoG31XRjcEW6bgKsxBOYxIhBjZRGUuOWDC4Tiz/G
-	BJiNUgWZYu22yz74DnrSLQTUNsWNv/aFWZ4ksRho+L7J8aGXmonlOlOj24U8iPs2opM5CTUihdw
-	nULd52tBefAR/fY5pGiXNznbFz9U/H04DxX/rCRu493SGtkpyDk2cI34C0fLr1d1jzJIld5uBLY
-	=
-X-Google-Smtp-Source: AGHT+IFw3FQlZnA+EvUsNN1IOB3BlWRZTtCRZlRlVSj2VO/QZ0xMVRH5KO8rzFZ0phgpRnx8AufnAQ==
-X-Received: by 2002:a17:903:2bcc:b0:235:5a9:976f with SMTP id d9443c01a7336-23824030ccdmr110775315ad.24.1750903680502;
-        Wed, 25 Jun 2025 19:08:00 -0700 (PDT)
-Received: from p920.. ([2001:569:799a:1600:cc0b:584a:7d31:4a04])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-b34c4318a27sm388110a12.28.2025.06.25.19.08.00
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 25 Jun 2025 19:08:00 -0700 (PDT)
-From: Moon Hee Lee <moonhee.lee.ca@gmail.com>
-To: akpm@linux-foundation.org,
-	shuah@kernel.org
-Cc: linux-mm@kvack.org,
-	linux-kselftest@vger.kernel.org,
+	s=arc-20240116; t=1750904104; c=relaxed/simple;
+	bh=6iYqwF9X96MHxRdDZpSpOo/+4Mc6oLjjuGizrHod4WA=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=M+cF0Cla6NNO1dEHaEsoGjTm3D6C5rovo2JmwqVew8sKUlxMrwWTyGBnQf7KygeTGUEGHeg6+jtqRQ6JRW30SuIQzvf4N4HStfaisP+DiQ010W771y1VjXWX03djtJXL7BYBtYTFwLVzrqjQzTBKHz0fY4/3MDBB1JzoS/5ePO0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=b6VMFsyF; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1750904099;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=/2NKQ3CqFIITeYZPqoYmcZLIRzlMcydotc+VS4n7FN8=;
+	b=b6VMFsyF1Sk4pwXEVMxp3bqJlQBy2i57UrPM3cMv6wB2IJRr2PbvsyHeLGB5x1jBBEak5F
+	XQ0Q925ly8mgDJaSwg0A5Jks3cp+2xg7lENCKX+wl7ATwkw6/9b1YeGg/AUis/orLctJhq
+	b3uZxbaMzAO8WH8gPnY/nCPvaUOmY5U=
+Received: from mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-602-RfRaDFI3PqiHCWK7QSfebg-1; Wed,
+ 25 Jun 2025 22:14:57 -0400
+X-MC-Unique: RfRaDFI3PqiHCWK7QSfebg-1
+X-Mimecast-MFC-AGG-ID: RfRaDFI3PqiHCWK7QSfebg_1750904096
+Received: from mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.12])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id AF87519560AA;
+	Thu, 26 Jun 2025 02:14:55 +0000 (UTC)
+Received: from localhost.localdomain (unknown [10.72.112.68])
+	by mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id F306B19560A3;
+	Thu, 26 Jun 2025 02:14:48 +0000 (UTC)
+From: Jason Wang <jasowang@redhat.com>
+To: willemdebruijn.kernel@gmail.com,
+	jasowang@redhat.com,
+	andrew+netdev@lunn.ch,
+	davem@davemloft.net,
+	edumazet@google.com,
+	kuba@kernel.org,
+	pabeni@redhat.com
+Cc: mst@redhat.com,
+	eperezma@redhat.com,
+	netdev@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
-	linux-kernel-mentees@lists.linux.dev,
-	Moon Hee Lee <moonhee.lee.ca@gmail.com>
-Subject: [PATCH] selftests/mm: remove duplicate .gitignore entries
-Date: Wed, 25 Jun 2025 19:07:58 -0700
-Message-ID: <20250626020758.163243-1-moonhee.lee.ca@gmail.com>
-X-Mailer: git-send-email 2.43.0
+	kvm@vger.kernel.org,
+	virtualization@lists.linux.dev,
+	Willem de Bruijn <willemb@google.com>
+Subject: [PATCH V2 net-next 1/2] tun: remove unnecessary tun_xdp_hdr structure
+Date: Thu, 26 Jun 2025 10:14:44 +0800
+Message-ID: <20250626021445.49068-1-jasowang@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -89,39 +79,113 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.12
 
-Remove redundant entries in .gitignore confirmed by:
+With f95f0f95cfb7("net, xdp: Introduce xdp_init_buff utility routine"),
+buffer length could be stored as frame size so there's no need to have
+a dedicated tun_xdp_hdr structure. We can simply store virtio net
+header instead.
 
-$ sort tools/testing/selftests/mm/.gitignore | uniq -d
-hugetlb_dio
-pkey_sighandler_tests_32
-pkey_sighandler_tests_64
-
-These entries were originally added by [1], and later duplicated by [2].
-
-[1] https://lore.kernel.org/all/20240924185911.117937-1-lorenzo.stoakes@oracle.com/
-[2] https://lore.kernel.org/all/20241125064036.413536-1-lizhijian@fujitsu.com/
-
-Signed-off-by: Moon Hee Lee <moonhee.lee.ca@gmail.com>
+Acked-by: Willem de Bruijn <willemb@google.com>
+Signed-off-by: Jason Wang <jasowang@redhat.com>
 ---
- tools/testing/selftests/mm/.gitignore | 3 ---
- 1 file changed, 3 deletions(-)
+ drivers/net/tap.c      | 5 ++---
+ drivers/net/tun.c      | 5 ++---
+ drivers/vhost/net.c    | 8 ++------
+ include/linux/if_tun.h | 5 -----
+ 4 files changed, 6 insertions(+), 17 deletions(-)
 
-diff --git a/tools/testing/selftests/mm/.gitignore b/tools/testing/selftests/mm/.gitignore
-index 824266982aa3..f2dafa0b700b 100644
---- a/tools/testing/selftests/mm/.gitignore
-+++ b/tools/testing/selftests/mm/.gitignore
-@@ -38,9 +38,6 @@ map_fixed_noreplace
- write_to_hugetlbfs
- hmm-tests
- memfd_secret
--hugetlb_dio
--pkey_sighandler_tests_32
--pkey_sighandler_tests_64
- soft-dirty
- split_huge_page_test
- ksm_tests
+diff --git a/drivers/net/tap.c b/drivers/net/tap.c
+index bdf0788d8e66..d82eb7276a8b 100644
+--- a/drivers/net/tap.c
++++ b/drivers/net/tap.c
+@@ -1044,9 +1044,8 @@ static const struct file_operations tap_fops = {
+ 
+ static int tap_get_user_xdp(struct tap_queue *q, struct xdp_buff *xdp)
+ {
+-	struct tun_xdp_hdr *hdr = xdp->data_hard_start;
+-	struct virtio_net_hdr *gso = &hdr->gso;
+-	int buflen = hdr->buflen;
++	struct virtio_net_hdr *gso = xdp->data_hard_start;
++	int buflen = xdp->frame_sz;
+ 	int vnet_hdr_len = 0;
+ 	struct tap_dev *tap;
+ 	struct sk_buff *skb;
+diff --git a/drivers/net/tun.c b/drivers/net/tun.c
+index f8c5e2fd04df..447c37959504 100644
+--- a/drivers/net/tun.c
++++ b/drivers/net/tun.c
+@@ -2356,13 +2356,12 @@ static int tun_xdp_one(struct tun_struct *tun,
+ 		       struct tun_page *tpage)
+ {
+ 	unsigned int datasize = xdp->data_end - xdp->data;
+-	struct tun_xdp_hdr *hdr = xdp->data_hard_start;
+-	struct virtio_net_hdr *gso = &hdr->gso;
++	struct virtio_net_hdr *gso = xdp->data_hard_start;
+ 	struct bpf_prog *xdp_prog;
+ 	struct sk_buff *skb = NULL;
+ 	struct sk_buff_head *queue;
+ 	u32 rxhash = 0, act;
+-	int buflen = hdr->buflen;
++	int buflen = xdp->frame_sz;
+ 	int metasize = 0;
+ 	int ret = 0;
+ 	bool skb_xdp = false;
+diff --git a/drivers/vhost/net.c b/drivers/vhost/net.c
+index 7cbfc7d718b3..777eb6193985 100644
+--- a/drivers/vhost/net.c
++++ b/drivers/vhost/net.c
+@@ -668,7 +668,6 @@ static int vhost_net_build_xdp(struct vhost_net_virtqueue *nvq,
+ 	struct socket *sock = vhost_vq_get_backend(vq);
+ 	struct virtio_net_hdr *gso;
+ 	struct xdp_buff *xdp = &nvq->xdp[nvq->batched_xdp];
+-	struct tun_xdp_hdr *hdr;
+ 	size_t len = iov_iter_count(from);
+ 	int headroom = vhost_sock_xdp(sock) ? XDP_PACKET_HEADROOM : 0;
+ 	int buflen = SKB_DATA_ALIGN(sizeof(struct skb_shared_info));
+@@ -691,15 +690,13 @@ static int vhost_net_build_xdp(struct vhost_net_virtqueue *nvq,
+ 	if (unlikely(!buf))
+ 		return -ENOMEM;
+ 
+-	copied = copy_from_iter(buf + offsetof(struct tun_xdp_hdr, gso),
+-				sock_hlen, from);
++	copied = copy_from_iter(buf, sock_hlen, from);
+ 	if (copied != sock_hlen) {
+ 		ret = -EFAULT;
+ 		goto err;
+ 	}
+ 
+-	hdr = buf;
+-	gso = &hdr->gso;
++	gso = buf;
+ 
+ 	if (!sock_hlen)
+ 		memset(buf, 0, pad);
+@@ -727,7 +724,6 @@ static int vhost_net_build_xdp(struct vhost_net_virtqueue *nvq,
+ 
+ 	xdp_init_buff(xdp, buflen, NULL);
+ 	xdp_prepare_buff(xdp, buf, pad, len, true);
+-	hdr->buflen = buflen;
+ 
+ 	++nvq->batched_xdp;
+ 
+diff --git a/include/linux/if_tun.h b/include/linux/if_tun.h
+index 043d442994b0..80166eb62f41 100644
+--- a/include/linux/if_tun.h
++++ b/include/linux/if_tun.h
+@@ -19,11 +19,6 @@ struct tun_msg_ctl {
+ 	void *ptr;
+ };
+ 
+-struct tun_xdp_hdr {
+-	int buflen;
+-	struct virtio_net_hdr gso;
+-};
+-
+ #if defined(CONFIG_TUN) || defined(CONFIG_TUN_MODULE)
+ struct socket *tun_get_socket(struct file *);
+ struct ptr_ring *tun_get_tx_ring(struct file *file);
 -- 
-2.43.0
+2.34.1
 
 
