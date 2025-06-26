@@ -1,142 +1,115 @@
-Return-Path: <linux-kernel+bounces-704809-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-704792-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 161E2AEA21D
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Jun 2025 17:14:00 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 350FAAEA1D1
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Jun 2025 17:03:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 443771C61536
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Jun 2025 15:02:40 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 616DB4E42DA
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Jun 2025 14:58:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E249A30204F;
-	Thu, 26 Jun 2025 14:52:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 532D82EE5F2;
+	Thu, 26 Jun 2025 14:50:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="OkWGD2FD"
-Received: from m16.mail.163.com (m16.mail.163.com [220.197.31.4])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EF7FC2FE393;
-	Thu, 26 Jun 2025 14:52:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.197.31.4
+	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="CnB+jpkD"
+Received: from out.smtpout.orange.fr (out-67.smtpout.orange.fr [193.252.22.67])
+	(using TLSv1.2 with cipher AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7CC532E6133;
+	Thu, 26 Jun 2025 14:50:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.252.22.67
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750949554; cv=none; b=M5EPaAOdCRs5BJzNB60TDknCRoyYDkahDZfJnR58eIJKoXXrbWDMCNMlhPNjANZ8f8Ww6nOFlE/Vx5+GyLQJBQDnWcKsAEOHAfrHxJ/p3voDMHq7uVenJ7u065XduA81U6VCaStBa8Kfxx9QyA177MD/tHUFeUNpKthWnzOK7EU=
+	t=1750949456; cv=none; b=mEnZX9KiZsZEs3pcfZEzOGfctfip2elcHbf043zq0VXnAtqM6A4gAFlQBiudyyUC0fyCyGYy1WTNAQdBrumrHsDiKBRetLw3FKP4dBAT1kp8cPp54de7hFUDMbIsEtO8HsS/u/MM4xLDALVX2GOUeAJE5aiBh6Imqbo2B5Eoi9s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750949554; c=relaxed/simple;
-	bh=nE6bKO5dP5cXC6LWtFFk7yFnzldnKqo5QJozk1Lv45Y=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=O2B0fD4J+qTOpaAthdCfN4PbiN5TEolN1hMDaXqitKrqEILZtZqJxQCnLiT7zM5E1l4ilB2MPyZ/qi7VWk/cOKLAgVclZQaFgzYiITv1OzmBGd0NxR6ePUT/Fs/3ZNkwJyOB2dRm4STYahsFQg2Nuxd+hNYKwlx5ZjMacnZjI0I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=OkWGD2FD; arc=none smtp.client-ip=220.197.31.4
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
-	s=s110527; h=From:To:Subject:Date:Message-Id:MIME-Version; bh=Ae
-	9kCteaIREimUk/syr6kEJ201xf2z63OTJWk7zi+T4=; b=OkWGD2FDLhSx0NwLKw
-	5oqE27dvvnEXS8MPd/eJIAKKceRgGod7ouw2BHvdCJmh8wFp/npuOZOJxlslYKNC
-	kD0zkFhwmioVj/Ho4+ftUBDDNDFg5ck4bGynb/O2aRIrg10lnJaHywBqei+MdxZ+
-	LlibFdyX5VFqY/KnhEO13nEEE=
-Received: from localhost.localdomain (unknown [])
-	by gzsmtp5 (Coremail) with SMTP id QCgvCgCnboqkXl1oRfOTAA--.15779S4;
-	Thu, 26 Jun 2025 22:52:21 +0800 (CST)
-From: Hans Zhang <18255117159@163.com>
-To: lpieralisi@kernel.org,
-	bhelgaas@google.com,
-	mani@kernel.org,
-	kwilczynski@kernel.org
-Cc: robh@kernel.org,
-	jingoohan1@gmail.com,
-	linux-pci@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Hans Zhang <18255117159@163.com>
-Subject: [PATCH v3 12/13] PCI: rcar-gen4: Refactor code by using dw_pcie_clear_and_set_dword()
-Date: Thu, 26 Jun 2025 22:50:39 +0800
-Message-Id: <20250626145040.14180-13-18255117159@163.com>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20250626145040.14180-1-18255117159@163.com>
-References: <20250626145040.14180-1-18255117159@163.com>
+	s=arc-20240116; t=1750949456; c=relaxed/simple;
+	bh=0MP0tnHu6fQzXUoVEVy0aE8NoUMK5QMnnmNk1hZfbuQ=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=uXqioOZXN2D+AFt2xaPkm4ef4sx7xVe257M+uO128Qxxcv7I0TnXi0KbfHiXGpWYD9unHSeAJfqpfNvXtND1AYFqRLRK01aXpYyTi8wvgy4H7KtHp3ngARKi0a14iJfB1vv++LbAAED0OGnhQ6UX+kqlIhlwkncnWT/sp+aOCwY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=CnB+jpkD; arc=none smtp.client-ip=193.252.22.67
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wanadoo.fr
+Received: from [172.16.82.72] ([124.33.176.97])
+	by smtp.orange.fr with ESMTPA
+	id Unw1uePibyDfnUnw2uCBbf; Thu, 26 Jun 2025 16:50:46 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
+	s=t20230301; t=1750949446;
+	bh=CK8v7DCERysOk/Rvq1+fguI+gY89l+aE5AQv4JbT6Ps=;
+	h=Message-ID:Date:MIME-Version:Subject:To:From;
+	b=CnB+jpkDINyf3UqSzYPPQJB+Qvb2iXDfs+CitNx9wZRVzbBWVk72ORRI4sfdsVmdx
+	 Pkw9w2hYRmAFxspd8ZaxIn5N9EkZgc4qZMBsDFEvmkuDxvegoItYANif1yL+It/RwM
+	 9tkQaxA3AxV6egyd2A5pUnssifsF/P/4dxwMlMij1jKpQ1/MMb/SrZdxwgdwv496LL
+	 GAB7lreuVvY0kuVaBMq1QLmToBHCXa3lfaNwgPawj5Lf1vOOTD7AHaIvxFJ1I7YQld
+	 tzU9ZnJQ2oO3wZJi0xTQHIHFWX6GQK4rw+8tt/SZpBJvWHz3tOeBjq4bNgYpo0OEuD
+	 BezRNYqa16niQ==
+X-ME-Helo: [172.16.82.72]
+X-ME-Auth: bWFpbGhvbC52aW5jZW50QHdhbmFkb28uZnI=
+X-ME-Date: Thu, 26 Jun 2025 16:50:46 +0200
+X-ME-IP: 124.33.176.97
+Message-ID: <4af1102c-a5b6-4d9b-af8d-2c5f721b845e@wanadoo.fr>
+Date: Thu, 26 Jun 2025 23:50:40 +0900
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:QCgvCgCnboqkXl1oRfOTAA--.15779S4
-X-Coremail-Antispam: 1Uf129KBjvJXoWxWFy3GF4Dtw48tF4DXr17GFg_yoW5Cry5pa
-	y7CFySkF1jyws09F4UXaykur15uan3Ca1jg3Z7Gw1I9ay7ArZxWay0y3y7tFWxGFZ2qr45
-	Cw1UtFWUWF15ZFUanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x0z_F4ifUUUUU=
-X-CM-SenderInfo: rpryjkyvrrlimvzbiqqrwthudrp/1tbiWxR4o2hdWY1zdQAAsz
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2] can: ucan: Use two USB endpoint API functions rather
+ than duplicating their implementations
+To: Markus Elfring <Markus.Elfring@web.de>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org,
+ Chen Ni <nichen@iscas.ac.cn>, linux-can@vger.kernel.org,
+ Marc Kleine-Budde <mkl@pengutronix.de>
+References: <48e217a7-b90e-4af3-b535-812c449dd3ba@web.de>
+ <bf5442d1-34e0-495f-8a56-4e47f53ca4ad@wanadoo.fr>
+ <a7a00125-b393-4283-a7dc-6c80ced8e7e6@web.de>
+ <c96a5d2c-0ee1-4e3e-a95d-d38a8f668feb@wanadoo.fr>
+ <0768a008-d4a9-41ec-bc47-1e7c63362296@web.de>
+ <c04376f2-6ab7-4256-8bdc-aa6ff3ea88b4@wanadoo.fr>
+ <7e6f8929-6665-45af-b01b-167a1aa80305@web.de>
+ <CAMZ6Rq+PEZWzxNYDODq-Rz_Y8T_XEihyZKoY-MYo6bn5ATaGLQ@mail.gmail.com>
+ <1e64bcef-33f1-4295-b91f-d4598b32b866@web.de>
+ <57815326-740d-4053-8b85-c5e57d7cec90@wanadoo.fr>
+ <e70a929f-a5c5-487e-9231-61b5423115db@web.de>
+Content-Language: en-US
+From: Vincent Mailhol <mailhol.vincent@wanadoo.fr>
+Autocrypt: addr=mailhol.vincent@wanadoo.fr; keydata=
+ xjMEZluomRYJKwYBBAHaRw8BAQdAf+/PnQvy9LCWNSJLbhc+AOUsR2cNVonvxhDk/KcW7FvN
+ LFZpbmNlbnQgTWFpbGhvbCA8bWFpbGhvbC52aW5jZW50QHdhbmFkb28uZnI+wrIEExYKAFoC
+ GwMFCQp/CJcFCwkIBwICIgIGFQoJCAsCBBYCAwECHgcCF4AWIQTtj3AFdOZ/IOV06OKrX+uI
+ bbuZwgUCZx41XhgYaGtwczovL2tleXMub3BlbnBncC5vcmcACgkQq1/riG27mcIYiwEAkgKK
+ BJ+ANKwhTAAvL1XeApQ+2NNNEwFWzipVAGvTRigA+wUeyB3UQwZrwb7jsQuBXxhk3lL45HF5
+ 8+y4bQCUCqYGzjgEZx4y8xIKKwYBBAGXVQEFAQEHQJrbYZzu0JG5w8gxE6EtQe6LmxKMqP6E
+ yR33sA+BR9pLAwEIB8J+BBgWCgAmFiEE7Y9wBXTmfyDldOjiq1/riG27mcIFAmceMvMCGwwF
+ CQPCZwAACgkQq1/riG27mcJU7QEA+LmpFhfQ1aij/L8VzsZwr/S44HCzcz5+jkxnVVQ5LZ4B
+ ANOCpYEY+CYrld5XZvM8h2EntNnzxHHuhjfDOQ3MAkEK
+In-Reply-To: <e70a929f-a5c5-487e-9231-61b5423115db@web.de>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-R-Car Gen4 PCIe driver contains multiple read-modify-write sequences for
-speed change control and lane configuration. The driver manually handles
-speed change initiation through bit set/clear operations and configures
-lane skew with explicit bit masking.
+Hi Markus,
 
-Refactor speed change handling and lane skew configuration using
-dw_pcie_clear_and_set_dword(). For speed change operations, replace
-manual bit toggling with clear-and-set sequences. For lane skew, use
-the helper to conditionally set bits based on lane count.
+Thanks for the v2.
 
-Adopting the standard interface simplifies link training logic and
-reduces code complexity. The change also ensures consistent handling
-of control register bits and provides better documentation of intent
-through declarative bit masks.
+On 26/06/2025 at 23:46, Markus Elfring wrote:
+> From: Markus Elfring <elfring@users.sourceforge.net>
+> Date: Thu, 26 Jun 2025 16:34:26 +0200
+> 
+> * Reuse existing functionality from usb_endpoint_is_bulk_in()
+>   and usb_endpoint_is_bulk_out() instead of keeping duplicate source code.
+> 
+> * Omit two comment lines which became redundant with this refactoring.
+> 
+> The source code was transformed by using the Coccinelle software.
+> 
+> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 
-Signed-off-by: Hans Zhang <18255117159@163.com>
----
- drivers/pci/controller/dwc/pcie-rcar-gen4.c | 23 ++++++++-------------
- 1 file changed, 9 insertions(+), 14 deletions(-)
+Reviewed-by: Vincent Mailhol <mailhol.vincent@wanadoo.fr>
 
-diff --git a/drivers/pci/controller/dwc/pcie-rcar-gen4.c b/drivers/pci/controller/dwc/pcie-rcar-gen4.c
-index 18055807a4f5..20a6c88252d6 100644
---- a/drivers/pci/controller/dwc/pcie-rcar-gen4.c
-+++ b/drivers/pci/controller/dwc/pcie-rcar-gen4.c
-@@ -107,13 +107,11 @@ static int rcar_gen4_pcie_speed_change(struct dw_pcie *dw)
- 	u32 val;
- 	int i;
- 
--	val = dw_pcie_readl_dbi(dw, PCIE_LINK_WIDTH_SPEED_CONTROL);
--	val &= ~PORT_LOGIC_SPEED_CHANGE;
--	dw_pcie_writel_dbi(dw, PCIE_LINK_WIDTH_SPEED_CONTROL, val);
-+	dw_pcie_clear_and_set_dword(dw, PCIE_LINK_WIDTH_SPEED_CONTROL,
-+				    PORT_LOGIC_SPEED_CHANGE, 0);
- 
--	val = dw_pcie_readl_dbi(dw, PCIE_LINK_WIDTH_SPEED_CONTROL);
--	val |= PORT_LOGIC_SPEED_CHANGE;
--	dw_pcie_writel_dbi(dw, PCIE_LINK_WIDTH_SPEED_CONTROL, val);
-+	dw_pcie_clear_and_set_dword(dw, PCIE_LINK_WIDTH_SPEED_CONTROL,
-+				    0, PORT_LOGIC_SPEED_CHANGE);
- 
- 	for (i = 0; i < RCAR_NUM_SPEED_CHANGE_RETRIES; i++) {
- 		val = dw_pcie_readl_dbi(dw, PCIE_LINK_WIDTH_SPEED_CONTROL);
-@@ -565,11 +563,9 @@ static void rcar_gen4_pcie_additional_common_init(struct rcar_gen4_pcie *rcar)
- 	struct dw_pcie *dw = &rcar->dw;
- 	u32 val;
- 
--	val = dw_pcie_readl_dbi(dw, PCIE_PORT_LANE_SKEW);
--	val &= ~PORT_LANE_SKEW_INSERT_MASK;
--	if (dw->num_lanes < 4)
--		val |= BIT(6);
--	dw_pcie_writel_dbi(dw, PCIE_PORT_LANE_SKEW, val);
-+	dw_pcie_clear_and_set_dword(dw, PCIE_PORT_LANE_SKEW,
-+				    PORT_LANE_SKEW_INSERT_MASK,
-+				    (dw->num_lanes < 4) ? BIT(6) : 0);
- 
- 	val = readl(rcar->base + PCIEPWRMNGCTRL);
- 	val |= APP_CLK_REQ_N | APP_CLK_PM_EN;
-@@ -680,9 +676,8 @@ static int rcar_gen4_pcie_ltssm_control(struct rcar_gen4_pcie *rcar, bool enable
- 		return 0;
- 	}
- 
--	val = dw_pcie_readl_dbi(dw, PCIE_PORT_FORCE);
--	val |= PORT_FORCE_DO_DESKEW_FOR_SRIS;
--	dw_pcie_writel_dbi(dw, PCIE_PORT_FORCE, val);
-+	dw_pcie_clear_and_set_dword(dw, PCIE_PORT_FORCE,
-+				    0, PORT_FORCE_DO_DESKEW_FOR_SRIS);
- 
- 	val = readl(rcar->base + PCIEMSR0);
- 	val |= APP_SRIS_MODE;
--- 
-2.25.1
+
+Yours sincerely,
+Vincent Mailhol
 
 
