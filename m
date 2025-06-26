@@ -1,60 +1,60 @@
-Return-Path: <linux-kernel+bounces-704975-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-704976-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2E8DCAEA3CF
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Jun 2025 18:52:21 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E43F9AEA3D0
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Jun 2025 18:52:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D8C87188243D
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Jun 2025 16:52:36 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1D49E178706
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Jun 2025 16:52:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 21A122EFDA2;
-	Thu, 26 Jun 2025 16:50:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0BA782F0050;
+	Thu, 26 Jun 2025 16:50:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="jEFaweKt"
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Gh2zL2IF"
 Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.19])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7A0022EF656
-	for <linux-kernel@vger.kernel.org>; Thu, 26 Jun 2025 16:50:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 32EA42E5423
+	for <linux-kernel@vger.kernel.org>; Thu, 26 Jun 2025 16:50:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.19
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750956604; cv=none; b=iS5UMTHZ7AxncqgUS1Oeq17ezl/HHEJFKW5ThIwXzcYgqx+8XlSh4cTbSC3uMh3gUZqYhmHwhBsz/ivx8dx4+Cx0Im6tOchu6i6v//sJIzCtBo5bQDgQMpuHMyeHI1TIrS/DFT4+vtcQIVuiRbUHvP1V3ypiz3ZdQpZvynV09wY=
+	t=1750956605; cv=none; b=Vb9SFa81+5nTjlFP3zX2wU2DuDITWvBGZs3JVGbscnb6LSA1rj091k2JKDdhpCCtN+MoMoiXCQ0U66Zvn8cTNrnYMo2UTkc5PoYVj2eO5GnMCKidB8hz8168mtpLt51REziqkxE/wnyRHJIdY00aCGSS2fI/k2r4lfxg3WS8dqY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750956604; c=relaxed/simple;
-	bh=A+84H7qMiaJDlRP4pKwCfRgA6C9VaLkHrvJnhcPosTw=;
+	s=arc-20240116; t=1750956605; c=relaxed/simple;
+	bh=ixo7bJsQmnGV+5RozZo8jcxCPZZ7U9d0UgkIM6AZykU=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=gzg8Tg+FQWwjmZp7JMEka3quWkn/LzU7kiHHriNlBXS3hTVGaZ1+LjW05Ztmb4hxEkYsTp7LYg2JLpiWufvhfVAugKNaRlQiiTpUBKmbBth9TziAAig+UTzuONeGCm9Rj7L+6Ml+o3Y//zLT46IPiskUXdOOt9jMdBJmFvyrHAM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=jEFaweKt; arc=none smtp.client-ip=198.175.65.19
+	 MIME-Version; b=f8hgbW1pV0P4mk3vVl0Ht+l8tFEZvteEJJkUPHWe5fQk2ERncQfQ9CE+dDKEu3R/p4V2hI3i9H75Ff520JROR+tdJlJGHMzNzMU43iYC7LAtTtchXgJDOG9CxC67UGBhqNl9UER3E+tRfTIGGfEFKO0q7iDgSLCMb7sFHZHAGRs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Gh2zL2IF; arc=none smtp.client-ip=198.175.65.19
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1750956603; x=1782492603;
+  t=1750956604; x=1782492604;
   h=from:to:cc:subject:date:message-id:in-reply-to:
    references:mime-version:content-transfer-encoding;
-  bh=A+84H7qMiaJDlRP4pKwCfRgA6C9VaLkHrvJnhcPosTw=;
-  b=jEFaweKtQG1FfjJca7kHyjuupNG63smGkzna+n4B4R+fgjwUESN1WM5D
-   cVhcoHP/vEDW1LHhfbKIE1hyp2HBT9HYywkGUJOgZF8wmgV4xG7AFn+g2
-   rwnRN94VQ666hW70Pgs9O7Gv+F/nBDhH8/QtXh5BZqlvawILLBYo+7BJq
-   X+QvxxEO+Ikmgn0WKUfraCjRLcldbdLd7MyOiw8PACpJ68REq5k9m5a7A
-   2zz/UXDcclCuonCmzH1VBILBtNuX/0Mk9RoZeeiTIGGQqdcncMuvdtlzG
-   3UdyXSNGravOs1sLg00IDvbJoV2Nw6CjD6pr1SeiG5RBnPMGIo8HuGcv6
-   w==;
-X-CSE-ConnectionGUID: 7v3pX9K/QoaTMlotwKaa3Q==
-X-CSE-MsgGUID: 4RDy3wXSQCSYCT79x/P/GA==
-X-IronPort-AV: E=McAfee;i="6800,10657,11476"; a="53136437"
+  bh=ixo7bJsQmnGV+5RozZo8jcxCPZZ7U9d0UgkIM6AZykU=;
+  b=Gh2zL2IFFzpCqMIxdMYpiUUPmShqLAMel7xv06RJsGWfXA2M36LC3YZ2
+   27yJdVAlrR/F9NRXXmB25vbY1oCY+2CYssIIQ5QHcH+bbuxYIjL/wa7nA
+   AS7VXkeq3ianYBjLSQ2TObnZ/O5iLmSTa4cSDQTgL/D0Tk4wrmo8IIy9X
+   9EnRyubvkOzPZ+85KbXmh+Sc10CpHmhsLCnKvIRdGpxQZi6zlG91i3X41
+   AO5CWE3FlP284AlgvCLO49KppWYhDHAqq4TJN1E9x7zk9EOqqyH21UceS
+   i8Nsso2eSHKQd/oSEQ2wG1ehdEb1RP6BflpNyOohgY3BnxH4iDxGZpFMT
+   A==;
+X-CSE-ConnectionGUID: /qXXWounRDOQlbXNPTDFiA==
+X-CSE-MsgGUID: 6TQVmczcT/GMDjUXHgDKzw==
+X-IronPort-AV: E=McAfee;i="6800,10657,11476"; a="53136445"
 X-IronPort-AV: E=Sophos;i="6.16,268,1744095600"; 
-   d="scan'208";a="53136437"
+   d="scan'208";a="53136445"
 Received: from orviesa008.jf.intel.com ([10.64.159.148])
   by orvoesa111.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 26 Jun 2025 09:49:58 -0700
-X-CSE-ConnectionGUID: NEcVaPI+RL6abibx6kNfkQ==
-X-CSE-MsgGUID: lO2SRBZPSha9W/MnvK0r5Q==
+X-CSE-ConnectionGUID: hmM+XgG0RrC7Lqmu2KtvNQ==
+X-CSE-MsgGUID: +lXwONQGRwieTaitsKZ9xA==
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="6.16,268,1744095600"; 
-   d="scan'208";a="153069242"
+   d="scan'208";a="153069250"
 Received: from agluck-desk3.sc.intel.com ([172.25.103.51])
   by orviesa008-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 26 Jun 2025 09:49:57 -0700
 From: Tony Luck <tony.luck@intel.com>
@@ -72,9 +72,9 @@ Cc: x86@kernel.org,
 	linux-kernel@vger.kernel.org,
 	patches@lists.linux.dev,
 	Tony Luck <tony.luck@intel.com>
-Subject: [PATCH v6 15/30] x86,fs/resctrl: Add an architectural hook called for each mount
-Date: Thu, 26 Jun 2025 09:49:24 -0700
-Message-ID: <20250626164941.106341-16-tony.luck@intel.com>
+Subject: [PATCH v6 16/30] x86,fs/resctrl: Add and initialize rdt_resource for package scope core monitor
+Date: Thu, 26 Jun 2025 09:49:25 -0700
+Message-ID: <20250626164941.106341-17-tony.luck@intel.com>
 X-Mailer: git-send-email 2.49.0
 In-Reply-To: <20250626164941.106341-1-tony.luck@intel.com>
 References: <20250626164941.106341-1-tony.luck@intel.com>
@@ -86,76 +86,95 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Enumeration of Intel telemetry events is not complete when the
-resctrl "late_init" code is executed.
+Counts for each Intel telemetry event are periodically sent to one or
+more aggregators on each package where accumulated totals are made
+available in MMIO registers.
 
-Add a hook at the beginning of the mount code that will be used
-to check for telemetry events and initialize if any are found.
-
-The hook is called on every attempted mount. But expectations are that
-most actions (like enumeration) will only need to be performed
-on the first call.
-
-The call is made with no locks held. Architecture code is responsible
-for any required locking.
+Add a new resource for monitoring these events so that CPU hotplug
+notifiers will build domains at the package granularity.
 
 Signed-off-by: Tony Luck <tony.luck@intel.com>
 ---
- include/linux/resctrl.h            | 6 ++++++
- arch/x86/kernel/cpu/resctrl/core.c | 9 +++++++++
- fs/resctrl/rdtgroup.c              | 2 ++
- 3 files changed, 17 insertions(+)
+ include/linux/resctrl.h            |  2 ++
+ fs/resctrl/internal.h              |  2 ++
+ arch/x86/kernel/cpu/resctrl/core.c | 10 ++++++++++
+ fs/resctrl/rdtgroup.c              |  2 ++
+ 4 files changed, 16 insertions(+)
 
 diff --git a/include/linux/resctrl.h b/include/linux/resctrl.h
-index 1060a54cc9fa..23e2874105e3 100644
+index 23e2874105e3..76c54b81e426 100644
 --- a/include/linux/resctrl.h
 +++ b/include/linux/resctrl.h
-@@ -460,6 +460,12 @@ void resctrl_offline_mon_domain(struct rdt_resource *r, struct rdt_domain_hdr *h
- void resctrl_online_cpu(unsigned int cpu);
- void resctrl_offline_cpu(unsigned int cpu);
+@@ -53,6 +53,7 @@ enum resctrl_res_level {
+ 	RDT_RESOURCE_L2,
+ 	RDT_RESOURCE_MBA,
+ 	RDT_RESOURCE_SMBA,
++	RDT_RESOURCE_PERF_PKG,
  
-+/*
-+ * Architecture hook called for each attempted file system mount.
-+ * No locks are held.
-+ */
-+void resctrl_arch_pre_mount(void);
-+
+ 	/* Must be the last */
+ 	RDT_NUM_RESOURCES,
+@@ -252,6 +253,7 @@ enum resctrl_scope {
+ 	RESCTRL_L2_CACHE = 2,
+ 	RESCTRL_L3_CACHE = 3,
+ 	RESCTRL_L3_NODE,
++	RESCTRL_PACKAGE,
+ };
+ 
  /**
-  * resctrl_arch_rmid_read() - Read the eventid counter corresponding to rmid
-  *			      for this resource and domain.
+diff --git a/fs/resctrl/internal.h b/fs/resctrl/internal.h
+index 4dc678af005c..53ced959a27d 100644
+--- a/fs/resctrl/internal.h
++++ b/fs/resctrl/internal.h
+@@ -239,6 +239,8 @@ struct rdtgroup {
+ 
+ #define RFTYPE_DEBUG			BIT(10)
+ 
++#define RFTYPE_RES_PERF_PKG		BIT(11)
++
+ #define RFTYPE_CTRL_INFO		(RFTYPE_INFO | RFTYPE_CTRL)
+ 
+ #define RFTYPE_MON_INFO			(RFTYPE_INFO | RFTYPE_MON)
 diff --git a/arch/x86/kernel/cpu/resctrl/core.c b/arch/x86/kernel/cpu/resctrl/core.c
-index 2b6c6b61707d..03c481725fdb 100644
+index 03c481725fdb..a5f01cac2363 100644
 --- a/arch/x86/kernel/cpu/resctrl/core.c
 +++ b/arch/x86/kernel/cpu/resctrl/core.c
-@@ -717,6 +717,15 @@ static int resctrl_arch_offline_cpu(unsigned int cpu)
- 	return 0;
- }
+@@ -100,6 +100,14 @@ struct rdt_hw_resource rdt_resources_all[RDT_NUM_RESOURCES] = {
+ 			.schema_fmt		= RESCTRL_SCHEMA_RANGE,
+ 		},
+ 	},
++	[RDT_RESOURCE_PERF_PKG] =
++	{
++		.r_resctrl = {
++			.name			= "PERF_PKG",
++			.mon_scope		= RESCTRL_PACKAGE,
++			.mon_domains		= mon_domain_init(RDT_RESOURCE_PERF_PKG),
++		},
++	},
+ };
  
-+void resctrl_arch_pre_mount(void)
-+{
-+	static atomic_t only_once = ATOMIC_INIT(0);
-+	int old = 0;
-+
-+	if (!atomic_try_cmpxchg(&only_once, &old, 1))
-+		return;
-+}
-+
- enum {
- 	RDT_FLAG_CMT,
- 	RDT_FLAG_MBM_TOTAL,
+ u32 resctrl_arch_system_num_rmid_idx(void)
+@@ -433,6 +441,8 @@ static int get_domain_id_from_scope(int cpu, enum resctrl_scope scope)
+ 		return get_cpu_cacheinfo_id(cpu, scope);
+ 	case RESCTRL_L3_NODE:
+ 		return cpu_to_node(cpu);
++	case RESCTRL_PACKAGE:
++		return topology_physical_package_id(cpu);
+ 	default:
+ 		break;
+ 	}
 diff --git a/fs/resctrl/rdtgroup.c b/fs/resctrl/rdtgroup.c
-index a10f2f6825fc..9dac8017a2f8 100644
+index 9dac8017a2f8..d9bb01edd582 100644
 --- a/fs/resctrl/rdtgroup.c
 +++ b/fs/resctrl/rdtgroup.c
-@@ -2585,6 +2585,8 @@ static int rdt_get_tree(struct fs_context *fc)
- 	struct rdt_resource *r;
- 	int ret;
+@@ -2195,6 +2195,8 @@ static unsigned long fflags_from_resource(struct rdt_resource *r)
+ 	case RDT_RESOURCE_MBA:
+ 	case RDT_RESOURCE_SMBA:
+ 		return RFTYPE_RES_MB;
++	case RDT_RESOURCE_PERF_PKG:
++		return RFTYPE_RES_PERF_PKG;
+ 	}
  
-+	resctrl_arch_pre_mount();
-+
- 	cpus_read_lock();
- 	mutex_lock(&rdtgroup_mutex);
- 	/*
+ 	return WARN_ON_ONCE(1);
 -- 
 2.49.0
 
