@@ -1,112 +1,112 @@
-Return-Path: <linux-kernel+bounces-704849-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-704846-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4984FAEA24F
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Jun 2025 17:21:06 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C8080AEA24B
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Jun 2025 17:20:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 86AC83B49C4
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Jun 2025 15:18:00 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C36963AACF1
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Jun 2025 15:17:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D57922EBDC4;
-	Thu, 26 Jun 2025 15:18:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BC84C2EBB88;
+	Thu, 26 Jun 2025 15:17:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=collabora.com header.i=nicolas.frattaroli@collabora.com header.b="ZYdfM9BP"
-Received: from sender4-pp-f112.zoho.com (sender4-pp-f112.zoho.com [136.143.188.112])
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="bUyxzEho"
+Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8B5862EB5B4
-	for <linux-kernel@vger.kernel.org>; Thu, 26 Jun 2025 15:18:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.112
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750951090; cv=pass; b=u8q4w6uL1Wj5OD++oYZv5ShG5jxhKetXu1TvhcEiN43aUoiFeq8Ww64ZGewxLa8n3bUVeIW74veyYDYo6ycUl4HljiD7hvvfmcliYfVui1sNLD81G1QyIwPS8S57b1kEP04H4P3stC0POvW/m4hJG0l5F6NlO4tIPSmvtwh0xHQ=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750951090; c=relaxed/simple;
-	bh=X7Q+9YMrBKMmMa3dSOm/Sr602ckt24Mw/XdVfKpVW+I=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=kajURjr/MOQGSEkoPjaf0BmHJ8IKTbkb7ZgqlJbtFM9I6OaP/LRF5Yw3HJPAkjhTWrgy58V2NcTyQ9wYQtd3D3U6DlRl0BgI8Jq64PoXvp3zCjpN59MNUkcrIS6bgCIm0y5TvbLvIwN9ggOGo4xtXnNcostSSoGKHfaJv6c3Q88=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=nicolas.frattaroli@collabora.com header.b=ZYdfM9BP; arc=pass smtp.client-ip=136.143.188.112
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-ARC-Seal: i=1; a=rsa-sha256; t=1750951060; cv=none; 
-	d=zohomail.com; s=zohoarc; 
-	b=KdSQNg44XY0aDBvJpvwXJ7hZnCNtm34c2MB+E5W50MAJcF15A5lW5tN0yLKUY4dmZ2hd7FBA8Wpq4zxs6C2QhOiv2UdiD2NMWACJVvae0vAdODDYmWZBRFNK/3vUso0LJLfoj5mQ38H3yK21dGM99BnFPKR0merCQtCf8Ln6vzA=
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
-	t=1750951060; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:MIME-Version:Message-ID:Subject:Subject:To:To:Message-Id:Reply-To; 
-	bh=Mp0Gioriq+Cm97moLnLwRbcOGGhJvQyXKdRIuZwi4PY=; 
-	b=E/O9TBewgZI2hhCliPHlup/Fk9aG+rWNhf4zGhfN1J4arLvGktzO1syiexEMAqfqti5smuv9j7zgN56ZDiqe6EDMZ3SeTTbhjaeMClSuY4B6zPJZMN55IVQ2iz5jJewf7AR5HlJyvwTqV73cjXVrUSQtl0PWhqcksyDl9kzfewY=
-ARC-Authentication-Results: i=1; mx.zohomail.com;
-	dkim=pass  header.i=collabora.com;
-	spf=pass  smtp.mailfrom=nicolas.frattaroli@collabora.com;
-	dmarc=pass header.from=<nicolas.frattaroli@collabora.com>
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1750951060;
-	s=zohomail; d=collabora.com; i=nicolas.frattaroli@collabora.com;
-	h=From:From:Date:Date:Subject:Subject:MIME-Version:Content-Type:Content-Transfer-Encoding:Message-Id:Message-Id:To:To:Cc:Cc:Reply-To;
-	bh=Mp0Gioriq+Cm97moLnLwRbcOGGhJvQyXKdRIuZwi4PY=;
-	b=ZYdfM9BPepva/BjM/XIknPqiog0Qholkn1PB6/NVAawm0j21pgk8/tUelTxG5GHP
-	bHzBMPgrE/wVmBuBJMHy1Q2xWwNs4GVKCW7Z31rgzmlWmpUk0nV+RgPUkVsGxhGV9vb
-	welB1E4xpdwqNvOD8sa0NtTdM+0T1P9h8L97Rh7g=
-Received: by mx.zohomail.com with SMTPS id 1750951058759577.5834453049853;
-	Thu, 26 Jun 2025 08:17:38 -0700 (PDT)
-From: Nicolas Frattaroli <nicolas.frattaroli@collabora.com>
-Date: Thu, 26 Jun 2025 17:16:49 +0200
-Subject: [PATCH] arm64: defconfig: enable further Rockchip platform drivers
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BEF3B2EB5A4;
+	Thu, 26 Jun 2025 15:17:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1750951040; cv=none; b=qaL313vQy7ThEXtQw59sjn4QlMYvXY4qhtpc2/UcSLgcPdU/SRH/Rl87Z5CnLhBwVa0kstoUDnJX77W+4KfnJ/Jz2Q9b36mT7Yh8m9jb/aBMwBUREkfhInh5oEA39oNRmghUNBzlpO7DKzpb4Dtlf494NIJqMSCABrtaROWRTrA=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1750951040; c=relaxed/simple;
+	bh=/H8MMQsDD8gwCIoOmfc5kCh+IrmGPsSl8LrXtfr7thU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=UtG0IPJlGCb4tUrnkNhJ1wFr4xw0TzJ3FZnmWNBl6oCLvjxmnA/n/TgmFS1JUPGvP68FcEnTs9YFtITf32mnlc6V8sB980LpNtWFiM2nBOUZIXVeE8A4CD3Fwuv4R7tlK41tVrWzrwjDwa8NAokAea6xhrbjh9gzxfv2ZgBoJ5k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=bUyxzEho; arc=none smtp.client-ip=90.155.50.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Transfer-Encoding:
+	Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:
+	Sender:Reply-To:Content-ID:Content-Description;
+	bh=jJl/2zla9+BwzcplCJO6oNzMjTRhWJE5a6dcK6IqAGw=; b=bUyxzEhoitzgs7vO2XSUaYzfiK
+	9QAoMnF7ssPqFPPH/pkULQ5OII6GSIGWSi3/5CjcHa2dLGp6+31mCID5Oynw9v3QJFzbGL1Jc1Fxi
+	Nyn5a8iMewMYnZXV8eawYYK5qGz5IpnAZx6Pt51XHY4mIK3B77NJW2CKNlfURa7c2AIUhZtaD9Jz/
+	KceEaKbcqSc3rUAWxbZ2Dd+J4g7+T0Q12Mz3dZ6uml3klANvHL/Qy0pDHbWvvqN2V0Mi9pF5KtFmD
+	sU5uTrKGz/mXdywy/KCWPJR4ul4g2EYu0rRaNUplvyVXUmUv+sO1KK7/bnVIwKDOENhYI2lGryGrA
+	6QqwFEAw==;
+Received: from willy by casper.infradead.org with local (Exim 4.98.2 #2 (Red Hat Linux))
+	id 1uUoLd-0000000Btis-31mA;
+	Thu, 26 Jun 2025 15:17:09 +0000
+Date: Thu, 26 Jun 2025 16:17:09 +0100
+From: Matthew Wilcox <willy@infradead.org>
+To: =?iso-8859-1?Q?H=E5kon?= Bugge <haakon.bugge@oracle.com>
+Cc: Alan Stern <stern@rowland.harvard.edu>,
+	Andrea Parri <parri.andrea@gmail.com>,
+	Will Deacon <will@kernel.org>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Boqun Feng <boqun.feng@gmail.com>,
+	Nicholas Piggin <npiggin@gmail.com>,
+	David Howells <dhowells@redhat.com>,
+	Jade Alglave <j.alglave@ucl.ac.uk>,
+	Luc Maranget <luc.maranget@inria.fr>,
+	"Paul E. McKenney" <paulmck@kernel.org>,
+	Akira Yokosawa <akiyks@gmail.com>,
+	Daniel Lustig <dlustig@nvidia.com>,
+	Joel Fernandes <joelagnelf@nvidia.com>,
+	Jonathan Corbet <corbet@lwn.net>, linux-kernel@vger.kernel.org,
+	linux-arch@vger.kernel.org, lkmm@lists.linux.dev,
+	linux-doc@vger.kernel.org
+Subject: Re: [PATCH 1/1] docs/memory-barriers.txt: Add wait_event_cmd() and
+ wait_event_exclusive_cmd()
+Message-ID: <aF1kdYvCQQdIttoC@casper.infradead.org>
+References: <20250626143707.1533808-1-haakon.bugge@oracle.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-Message-Id: <20250626-rk3588-defconfig-v1-1-39a19a41c181@collabora.com>
-X-B4-Tracking: v=1; b=H4sIAGBkXWgC/zXMQQqDMBCF4auEWXdAY6PiVYoLm0zsUEzaSSyCe
- PeGSpf/g/ftkEiYEgxqB6EPJ46hRH1RYB9TmAnZlQZdaVO1ukV5Nqbv0ZG3MXiesasNNZ13xlw
- tlNtLyPP2I2/j2ULvtcj5HOE+JUIbl4XzoAJtGf86jMfxBfiKZT2TAAAA
-X-Change-ID: 20250626-rk3588-defconfig-715e37fd554c
-To: Heiko Stuebner <heiko@sntech.de>, 
- Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>
-Cc: kernel@collabora.com, linux-rockchip@lists.infradead.org, 
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
- =?utf-8?q?N=C3=ADcolas_F=2E_R=2E_A=2E_Prado?= <nfraprado@collabora.com>, 
- Nicolas Frattaroli <nicolas.frattaroli@collabora.com>
-X-Mailer: b4 0.14.2
+In-Reply-To: <20250626143707.1533808-1-haakon.bugge@oracle.com>
 
-The RK3588 SoC, and its sibling, the RK3588S, are supported by mainline
-Linux. However, some of its SoC drivers are currently not enabled in the
-arm64 defconfig.
+On Thu, Jun 26, 2025 at 04:37:05PM +0200, Håkon Bugge wrote:
+> Add said functions to the documentation and relate them to userspace's
+> pthread_cond_wait(). The latter because when searching for
+> functionality comparable to pthread_cond_wait(), it is very hard to
+> find wait_event_cmd().
 
-Enable rockchip-dfi, rockchip-rga, and the Rockchip specific extensions
-to Hantro as modules.
+Would it not go better in the kernel-doc for wait_event_cmd() in
+include/linux/wait.h?
 
-These drivers are also used on other Rockchip SoCs that mainline
-supports, notably RK3566/RK3568, as well as RK3399.
+>  
+> +Note that the wait_event_cmd() and wait_event_exclusive_cmd() are the
+> +kernel's polymorphic implementation of userspace's
+> +pthread_cond_wait().
 
-Suggested-by: NÃ­colas F. R. A. Prado <nfraprado@collabora.com>
-Signed-off-by: Nicolas Frattaroli <nicolas.frattaroli@collabora.com>
----
- arch/arm64/configs/defconfig | 3 +++
- 1 file changed, 3 insertions(+)
+Pet peeve: "Note that" adds nothing to this sentence.  You can just
+write:
 
-diff --git a/arch/arm64/configs/defconfig b/arch/arm64/configs/defconfig
-index e071f8f45607dbfd8e00b915b27999949ee0fc88..8b5ecb20ed6450faa0da14a6fdb4cb227a1f735f 100644
---- a/arch/arm64/configs/defconfig
-+++ b/arch/arm64/configs/defconfig
-@@ -1789,3 +1789,6 @@ CONFIG_CORESIGHT_STM=m
- CONFIG_CORESIGHT_CPU_DEBUG=m
- CONFIG_CORESIGHT_CTI=m
- CONFIG_MEMTEST=y
-+CONFIG_DEVFREQ_EVENT_ROCKCHIP_DFI=m
-+CONFIG_VIDEO_ROCKCHIP_RGA=m
-+CONFIG_VIDEO_HANTRO_ROCKCHIP=m
+The wait_event_cmd() and wait_event_exclusive_cmd() functions are the
+kernel's polymorphic implementation of userspace's pthread_cond_wait().
 
----
-base-commit: 7e5ee158886bb7c244a34623de6a410b62023d60
-change-id: 20250626-rk3588-defconfig-715e37fd554c
-
-Best regards,
--- 
-Nicolas Frattaroli <nicolas.frattaroli@collabora.com>
-
+> +Using wait_event_cmd() or wait_event_exclusive_cmd(), cmd1 is
+> +typically a lock-release call and cmd2 a lock-acquire call. The
+> +locking primitive can be chosen, contrary to pthread_cond_wait(),
+> +where the locking type is cast in stone and is a pthread_mutex_t.
+> +
+>  
+>  MISCELLANEOUS FUNCTIONS
+>  -----------------------
+> -- 
+> 2.43.5
+> 
+> 
 
