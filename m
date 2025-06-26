@@ -1,157 +1,190 @@
-Return-Path: <linux-kernel+bounces-704851-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-704855-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 497F4AEA259
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Jun 2025 17:21:53 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id CD121AEA26F
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Jun 2025 17:26:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EE2563BA52D
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Jun 2025 15:19:28 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5C49F17E3D9
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Jun 2025 15:20:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EAB002EB5C8;
-	Thu, 26 Jun 2025 15:19:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 215082EBDEB;
+	Thu, 26 Jun 2025 15:20:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="hf8qa8VF"
-Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="iNv+64YD";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="9wFEbSWt"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4F6842EB5A4;
-	Thu, 26 Jun 2025 15:19:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F34ED2EB5B9;
+	Thu, 26 Jun 2025 15:20:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750951187; cv=none; b=Bd6QMANLklSEigt4U9QaP9mHLFw1ZGlovF63l67lGDhrthKglRj5kv/QpfR/J7X3kPqmrj0glPAQf3WxGXBeCD4R/6Fpw/GrPZxCJ/WuMZmW5m9LHFsO5V5QjzQORFU9gr//Jaapq929SFgqeqTKodV7U+gv667Q69+k0bYuq84=
+	t=1750951216; cv=none; b=I5bukDETv4NHk/AubVeoU8VkgDhThstoX3H21SXidDs91NFCfjqyHHBfvhkRbsXurdbQRH/GAqKa2/1py0U9WG8Q9yyp8mogzB3zBXcuW2V2JValaoZp5v2BKEg0C+DN29TqMcXG54ujiK+6qgrhuBmpw5F+csTq20aUGNX3P5E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750951187; c=relaxed/simple;
-	bh=o51B7iNjd+U5WK/gVXXyYCMg+WKgROXXkbE4f+qmvug=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=MKdgO//VFoW+kuVdeJnKJ7Wn81EM6YSfGQ8vq8FeKXONNBeEwzSLq//TBYB9S0r4oI/eEBW85aOMOTlCaKR/h9QazZfQ7TASVnB+F8QDaczLErL6rMCxwO90e1y8r2NtqWI6XltV35ZifkovGGuKRdNPXK4yKb/xYfrHykAGpy8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=hf8qa8VF; arc=none smtp.client-ip=65.109.113.108
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
-Received: from localhost (localhost.localdomain [127.0.0.1])
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id 462C940E0198;
-	Thu, 26 Jun 2025 15:19:41 +0000 (UTC)
-X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
-Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
-	header.d=alien8.de
-Received: from mail.alien8.de ([127.0.0.1])
-	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
-	with ESMTP id PqW44RiQH6Jz; Thu, 26 Jun 2025 15:19:36 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
-	t=1750951175; bh=aEy0xE6/1EEIexhyZkFY9aUxJdMhziDSaDkTlnv5w6g=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=hf8qa8VF8orYwOKOUtgJkEYmsjkfQbalTSkc7wTAYA2jJ/CzAYCPQlNROgWOEUfMw
-	 VoeBHB5cEOMQDXEeKlqlakJFcsF8PK+GVoXJ0V7783kMDwKpbmq16/OFswms2stkHY
-	 UpWy6FuRtYdBacDNGp3lNp+ddT5PqRkYVrX4nbhXbQ3gOvG1hoKC5tlw2mFZfhtvsH
-	 NzZIW58fmTp/A0AmCkZnv66tlzfUNR+bhj7hErzYxRbs/IIOt8aDey6Klcr+AaEC8t
-	 qAGQ40bce3WW/qTrPFphAV1ohLkxc13JTAT5pGZrj3E+TNdmn5PbgmNw79tv/qcTO8
-	 miE8es+ZbHY1nsfYEFJHgk9v24neXCjLlg0ceLMxWIUnrBgeYRdnTSUM0/oW92tArv
-	 kSJvVYarRjwBM6zS8jooty0pw0N845TGyAB0F0l8J/Yq0Vo0hox3/dE8WiH2JQ80JT
-	 fmARjkYr+ofaimfaXPYo2VPZ4haf+Gg9y08Y45QhyJnHH9085m/BN2a1KzNAgkbjY+
-	 80SGmS9MENlf+p0WZ4MNdEicxFGxV88gidcNae0lvaCoPtfVDC5GiAMURROJEmkfsW
-	 p7K3WRFb8W1qGEZOoM8CusnNriv0PQWtyqixF67QK4Pi0AyZdp7VxZvR0spEk05bVC
-	 O2Vl1I4mvMThn66Ll3gWP0a8=
-Received: from zn.tnic (p57969c58.dip0.t-ipconnect.de [87.150.156.88])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
-	(No client certificate requested)
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 2E57C40E0169;
-	Thu, 26 Jun 2025 15:18:43 +0000 (UTC)
-Date: Thu, 26 Jun 2025 17:18:37 +0200
-From: Borislav Petkov <bp@alien8.de>
-To: "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>
-Cc: Andy Lutomirski <luto@kernel.org>, Thomas Gleixner <tglx@linutronix.de>,
-	Ingo Molnar <mingo@redhat.com>,
-	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
-	"H. Peter Anvin" <hpa@zytor.com>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Ard Biesheuvel <ardb@kernel.org>,
-	"Paul E. McKenney" <paulmck@kernel.org>,
-	Josh Poimboeuf <jpoimboe@kernel.org>,
-	Xiongwei Song <xiongwei.song@windriver.com>,
-	Xin Li <xin3.li@intel.com>, "Mike Rapoport (IBM)" <rppt@kernel.org>,
-	Brijesh Singh <brijesh.singh@amd.com>,
-	Michael Roth <michael.roth@amd.com>,
-	Tony Luck <tony.luck@intel.com>, Alexey Kardashevskiy <aik@amd.com>,
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-	Jonathan Corbet <corbet@lwn.net>,
-	Sohil Mehta <sohil.mehta@intel.com>, Ingo Molnar <mingo@kernel.org>,
-	Pawan Gupta <pawan.kumar.gupta@linux.intel.com>,
-	Daniel Sneddon <daniel.sneddon@linux.intel.com>,
-	Kai Huang <kai.huang@intel.com>,
-	Sandipan Das <sandipan.das@amd.com>,
-	Breno Leitao <leitao@debian.org>,
-	Rick Edgecombe <rick.p.edgecombe@intel.com>,
-	Alexei Starovoitov <ast@kernel.org>, Hou Tao <houtao1@huawei.com>,
-	Juergen Gross <jgross@suse.com>,
-	Vegard Nossum <vegard.nossum@oracle.com>,
-	Kees Cook <kees@kernel.org>, Eric Biggers <ebiggers@google.com>,
-	Jason Gunthorpe <jgg@ziepe.ca>,
-	"Masami Hiramatsu (Google)" <mhiramat@kernel.org>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Luis Chamberlain <mcgrof@kernel.org>,
-	Yuntao Wang <ytcoode@gmail.com>,
-	Rasmus Villemoes <linux@rasmusvillemoes.dk>,
-	Christophe Leroy <christophe.leroy@csgroup.eu>,
-	Tejun Heo <tj@kernel.org>, Changbin Du <changbin.du@huawei.com>,
-	Huang Shijie <shijie@os.amperecomputing.com>,
-	Geert Uytterhoeven <geert+renesas@glider.be>,
-	Namhyung Kim <namhyung@kernel.org>,
-	Arnaldo Carvalho de Melo <acme@redhat.com>,
-	linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-efi@vger.kernel.org, linux-mm@kvack.org,
-	Yian Chen <yian.chen@intel.com>
-Subject: Re: [PATCHv6 01/16] x86/cpu: Enumerate the LASS feature bits
-Message-ID: <20250626151837.GFaF1kzfLtesXLqaAQ@fat_crate.local>
-References: <20250620135325.3300848-1-kirill.shutemov@linux.intel.com>
- <20250620135325.3300848-2-kirill.shutemov@linux.intel.com>
- <20250620163504.GCaFWNuI-8QFqAM0yI@fat_crate.local>
- <6y2iqv6c2idn7yebaec7tyhzl5zcsrwqq4lcsokumlqeophzaf@ljnmxorblgcj>
- <20250620182943.GDaFWolxhwogB2tTxb@fat_crate.local>
- <tmd5llufitosphzhiik2tlemjuwyi7xkcjlhbqhibrgjjhsqcj@b3xtgub42p45>
- <20250623102105.GCaFkqkatFSbyl1YeN@fat_crate.local>
- <ztkgdk72p2z3q6z4hslfg4gj6pejirh7cnssxhd7u72mo4enn4@viqrwrycderf>
+	s=arc-20240116; t=1750951216; c=relaxed/simple;
+	bh=Z4d+7h8BA44y+DQYpqJgetAGHe0PE65fDfDUAVKH6ZI=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=itExTqpzjkiGYGaJa1990ijLqH8TLy+PyWziDLXM+u4Ym/NvRHXif/6M0F921cdIeCpU8VidY33cbwjBkdIwXAugVNGD41zeTyzgiJUv63CoCyLAuwn6r2dGSyLttJKdv9uBwPfokEZIpdXmaabudewyLUY9QV26pJZmSLDy6IY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=iNv+64YD; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=9wFEbSWt; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+From: Nam Cao <namcao@linutronix.de>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1750951212;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=6gV2YmB3UnV/4qllskTxPTv0rjuHdA9qt4FDUhrbvWA=;
+	b=iNv+64YD0tyVmJ7rJhnT/GEtReEUtANmm+38Xq8bYt/XgcINpduPhcGyAUIOcFvKvxmFxF
+	OHxcQH9wD8E8zac9bZJ3Sw2Pg5gN28w4zT6Rb+LyYnuJZBVr0jYlQLpoZ9wnd5q/pY/tBG
+	OQAIwL00S/rG+OCMJZ9jGyibZAK/2aARrZK68T4parh55DWC32jC0zqRncoVv3gi6Qsjq/
+	gu81481I85tKHKFIOeLLQS4/RP7dyHf4KFc6KcZ5NQxf/BPoIB5Xd+P6mNO/M5xHuBPBR0
+	lSQZQrHx2PjDWrYPT9aieSz23Qi9SoY06CEGnGgDw6MvaE0uR9e7j+TOudvMUA==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1750951213;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=6gV2YmB3UnV/4qllskTxPTv0rjuHdA9qt4FDUhrbvWA=;
+	b=9wFEbSWtffWSD3WHs8AbQm+ItOQqoUgDrmODvIMlkN2joDKFqvhGgKE5RrUO8zUCRV2tJ6
+	uJgGBEGTskhK5SBQ==
+To: Steven Rostedt <rostedt@goodmis.org>,
+	Masami Hiramatsu <mhiramat@kernel.org>,
+	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+	linux-trace-kernel@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Cc: Gabriele Monaco <gmonaco@redhat.com>,
+	john.ogness@linutronix.de,
+	Nam Cao <namcao@linutronix.de>
+Subject: [PATCH] tracing: Remove pointless memory barriers
+Date: Thu, 26 Jun 2025 17:19:40 +0200
+Message-Id: <20250626151940.1756398-1-namcao@linutronix.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <ztkgdk72p2z3q6z4hslfg4gj6pejirh7cnssxhd7u72mo4enn4@viqrwrycderf>
+Content-Transfer-Encoding: quoted-printable
 
-On Mon, Jun 23, 2025 at 04:42:41PM +0300, Kirill A. Shutemov wrote:
-> Due to SLAM, we decided to postpone LAM enabling, until LASS is landed.
-> 
-> I am not sure if we want to add static
-> /sys/devices/system/cpu/vulnerabilities/slam with "Mitigation: LASS".
-> 
-> There might be other yet-to-be-discovered speculative attacks that LASS
-> mitigates. Security features have to visible to userspace independently of
-> known vulnerabilities.
+Memory barriers are useful to ensure memory accesses from one CPU appear in
+the original order as seen by other CPUs.
 
-... and the fact that a vuln is being mitigated by stating that in
-/sys/devices/system/cpu/vulnerabilities/ needs to happen too.
+Some smp_rmb() and smp_wmb() are used, but they are not ordering multiple
+memory accesses.
 
-I'm not talking about LAM enablement - I'm talking about adding a
+Remove them.
 
-SPECTRE_V1_MITIGATION_LASS
+Signed-off-by: Nam Cao <namcao@linutronix.de>
+---
+This is something I noticed while staring at RV code. And I couldn't
+understand them. It seems RV code copied this from trace core, and it also
+doesn't make sense to me there.
 
-and setting that when X86_FEATURE_LASS is set so that luserspace gets told
-that
+Memory barriers are useful if we have something like:
 
-"Spectre V1 : Mitigation: LASS"
+CPU1:              CPU2
+write A            read B
+write B            read A
 
-or so.
+From this code, if CPU2 reads the new B, then it "should" also read the new
+A.
 
-Makes more sense?
+But CPU1 could reorder the writes, and CPU2 sees the new B, but still the
+old A.
 
--- 
-Regards/Gruss,
-    Boris.
+Memory barrier is useful here:
 
-https://people.kernel.org/tglx/notes-about-netiquette
+CPU1:              CPU2
+write A            read B
+smp_wb()           smp_rb()
+write B            read A
+
+Then if CPU2 sees the new B, and it will also see the new A.
+
+However, the memory barriers I see in kernel/trace/ do not resemble the
+above pattern. Therefore I think they are redundant.
+
+Please let me know if there is an unobvious reason for them.
+
+ kernel/trace/rv/rv.c | 6 ------
+ kernel/trace/trace.c | 7 -------
+ 2 files changed, 13 deletions(-)
+
+diff --git a/kernel/trace/rv/rv.c b/kernel/trace/rv/rv.c
+index e4077500a91db..c04a49da43286 100644
+--- a/kernel/trace/rv/rv.c
++++ b/kernel/trace/rv/rv.c
+@@ -675,8 +675,6 @@ static bool __read_mostly monitoring_on;
+  */
+ bool rv_monitoring_on(void)
+ {
+-	/* Ensures that concurrent monitors read consistent monitoring_on */
+-	smp_rmb();
+ 	return READ_ONCE(monitoring_on);
+ }
+=20
+@@ -696,8 +694,6 @@ static ssize_t monitoring_on_read_data(struct file *fil=
+p, char __user *user_buf,
+ static void turn_monitoring_off(void)
+ {
+ 	WRITE_ONCE(monitoring_on, false);
+-	/* Ensures that concurrent monitors read consistent monitoring_on */
+-	smp_wmb();
+ }
+=20
+ static void reset_all_monitors(void)
+@@ -713,8 +709,6 @@ static void reset_all_monitors(void)
+ static void turn_monitoring_on(void)
+ {
+ 	WRITE_ONCE(monitoring_on, true);
+-	/* Ensures that concurrent monitors read consistent monitoring_on */
+-	smp_wmb();
+ }
+=20
+ static void turn_monitoring_on_with_reset(void)
+diff --git a/kernel/trace/trace.c b/kernel/trace/trace.c
+index 95ae7c4e58357..0dff4298fc0e5 100644
+--- a/kernel/trace/trace.c
++++ b/kernel/trace/trace.c
+@@ -936,7 +936,6 @@ int tracing_is_enabled(void)
+ 	 * return the mirror variable of the state of the ring buffer.
+ 	 * It's a little racy, but we don't really care.
+ 	 */
+-	smp_rmb();
+ 	return !global_trace.buffer_disabled;
+ }
+=20
+@@ -1107,8 +1106,6 @@ void tracer_tracing_on(struct trace_array *tr)
+ 	 * important to be fast than accurate.
+ 	 */
+ 	tr->buffer_disabled =3D 0;
+-	/* Make the flag seen by readers */
+-	smp_wmb();
+ }
+=20
+ /**
+@@ -1640,8 +1637,6 @@ void tracer_tracing_off(struct trace_array *tr)
+ 	 * important to be fast than accurate.
+ 	 */
+ 	tr->buffer_disabled =3D 1;
+-	/* Make the flag seen by readers */
+-	smp_wmb();
+ }
+=20
+ /**
+@@ -2710,8 +2705,6 @@ void trace_buffered_event_enable(void)
+=20
+ static void enable_trace_buffered_event(void *data)
+ {
+-	/* Probably not needed, but do it anyway */
+-	smp_rmb();
+ 	this_cpu_dec(trace_buffered_event_cnt);
+ }
+=20
+--=20
+2.39.5
+
 
