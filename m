@@ -1,104 +1,124 @@
-Return-Path: <linux-kernel+bounces-703946-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-703948-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9177FAE9741
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Jun 2025 09:53:27 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 21A95AE9744
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Jun 2025 09:54:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E076717798A
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Jun 2025 07:53:27 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id EDCCC7A311F
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Jun 2025 07:52:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3C1E423F271;
-	Thu, 26 Jun 2025 07:53:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2EF12241695;
+	Thu, 26 Jun 2025 07:53:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="MnQ6LWlM"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="fHJFEsEF"
+Received: from mail-wr1-f46.google.com (mail-wr1-f46.google.com [209.85.221.46])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8C784236453;
-	Thu, 26 Jun 2025 07:53:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0D8A638FB9;
+	Thu, 26 Jun 2025 07:53:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750924400; cv=none; b=hyF80aQny5LZuv0kdqfgT1zyXugC4NLvkKiVe7Rs0iQ2F+aWknl71EV1HmCsrMa35ohxt7OH81IOYRuhsohe8RgL0acUmYOhMqXo3msdA1rQ3LfDzbCTT/q2elEUhpZ3AGOWuOUc7P9JhIqHpQo/VotTyXKur7HuBpLxDS5Ykgg=
+	t=1750924434; cv=none; b=tKLjW8xPU2A5eKOf8CaqZuNqXQHcy8AMkP8sZffWZiGbW2YaatO3+HmJxAkrder/8fWn4m9kTba1/F05HXgrBNuDIicRDDea6siRxL24nwEWToGD1nFEjHEWD+LmesDn44f12BjpiXDXn+VWllySCOGGwEmGGfoOjNnbA1yalwI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750924400; c=relaxed/simple;
-	bh=pjppoiz7ViHXJGvWqCdSU9HQ/aOIYap1jzl8DIHCo8E=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=nZ6us2MyyVdYX04BP1MP89niY11zN60PMkcM5ljhcYu//ekIZV4v6GUUepT66akBKlvaBbIcmZAL88aK8MGM81eIIy4BxHXrY69AsCvA7RJXTqIJv8nzTnQXwOs+C/SebhhiJY2gwh2NOqcgTG5y7tVtkI9qRSMWxIq5ijeHcCU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=MnQ6LWlM; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 23DFCC4CEEB;
-	Thu, 26 Jun 2025 07:53:20 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1750924400;
-	bh=pjppoiz7ViHXJGvWqCdSU9HQ/aOIYap1jzl8DIHCo8E=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=MnQ6LWlMe+2wYiBCFcn5tjJreD/T2jgmXmwxz6lFsBp+jZfpsJbIL9OSOl3wJf0k3
-	 SonfgF0kuenpryOVQIOB+G7DJuR+SO4yGzMfoQ9NJM2tRlmhOwGguqU1h+X7IVilHZ
-	 KK5I1rR9GARclkdcEytAw9oArcVKtvmV9w5yWnuRD4Ga4ahThvoD10GlKojMhfmgJh
-	 Kuh8D1hy2OX/6Pnd0g0G1P2x6ckQR9SAQ6WUtEe0jKOQbDA7H9M8eBsqXuSrwpg221
-	 Kugd+O+0esiXPGIs63/14oJVc+QuR6c+GfmgrfcsC5M0dAVnSxU+3x9DGMxW4H7qjq
-	 IOz5VWGUSncaw==
-Received: from sofa.misterjones.org ([185.219.108.64] helo=valley-girl.lan)
-	by disco-boy.misterjones.org with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.95)
-	(envelope-from <maz@kernel.org>)
-	id 1uUhQ6-00A8hJ-0Y;
-	Thu, 26 Jun 2025 08:53:18 +0100
-From: Marc Zyngier <maz@kernel.org>
-To: Oliver Upton <oliver.upton@linux.dev>,
-	Joey Gouly <joey.gouly@arm.com>,
-	Suzuki K Poulose <suzuki.poulose@arm.com>,
-	Zenghui Yu <yuzenghui@huawei.com>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Will Deacon <will@kernel.org>,
-	Quentin Perret <qperret@google.com>
-Cc: linux-arm-kernel@lists.infradead.org,
-	kvmarm@lists.linux.dev,
+	s=arc-20240116; t=1750924434; c=relaxed/simple;
+	bh=FnqrHBDnkXYFDp1T4K5G7I3G/5qKZlHts3NFEuwPA4o=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=jCvJ+nk8F8NjBy39Ow2KijFdlhhjeqOPQLt9NOPP+SKm3TK7rNsv4F86/K5NqlYt4is2vvIKuFY5ugEopDlCYTpfMDHMFXQWcF5lTQiWAcTUlwatci/RMTMbt41thalebHozs084VBT3bK4EznI1hVmAKEq7kmx9HIcWFKzwvj4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=fHJFEsEF; arc=none smtp.client-ip=209.85.221.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wr1-f46.google.com with SMTP id ffacd0b85a97d-3a577f164c8so93950f8f.2;
+        Thu, 26 Jun 2025 00:53:52 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1750924431; x=1751529231; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=pd6bT6wJQiLnyABIdP4QbPF8bfvDog3aiJF+bv347cs=;
+        b=fHJFEsEFFC+WWElH7KiCxzgZCZHRgbtu1n18f8kXJj0LmQ5LZmWxxGo7LTyxMCpdu7
+         wUvuzHxkAHLTQ6j/jmzkj4gAf7Yzjqeh4P10TOBv82HAlp3mAK5TEIUBwh2iaOrqwDA0
+         NFJtFhw3axw58lgxCJ7zESG7buhRbZRR8XS877EYIZsQxivy8jvs8fGe1aomJeAq7Uju
+         /p7/Z7QDMKt4tBNi+3k40A8oIj3jMe11Xqd4i/fBggPEJLW9YIq49hXqDeYlgktiLgnF
+         OZyf4jRK5NTjooK8HAYLYI91AwRDTt3Opl7PqFDOvSPdnISAuO5FGnqJe8j6gdfsbnA1
+         DZVA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1750924431; x=1751529231;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=pd6bT6wJQiLnyABIdP4QbPF8bfvDog3aiJF+bv347cs=;
+        b=BXJMX9aT3bbs97uUk7rVEJ3n8g7qo7IMjUAcrvKY9fDtSxRNukgsdQr8n9UXxFJemY
+         ci1MCHehHG/4afUjinZtGNb9mVezxhpyfSw7Bmoa9OagcSm6C0jhp9NT4IwgU6WltT4f
+         S06FgjiijFQOsJZjmMmR32Is7JpeO1xvzroxvtkBSDLwEsNU4MYl4SPAkjXwT2vm3aAn
+         /uUkQ0WSRvJmruv26AUOAATcpzLxF2Jq/WZviL8GeAU59NkVwnA4p4N3m0uJTWqLPLhZ
+         XaGDUG/aMNSbNumtldGp9KpyBCEgrxCh+f2YP+BvnAywgrPxNnk1gL3evlkxhUx2c45l
+         RCSA==
+X-Forwarded-Encrypted: i=1; AJvYcCUVolTqRuSSkItf/w+QVnhU1WUQfH6cn0rmcHwyBp7llFbBMzU4l5850Gbc19bEjPqa3578+Y8u@vger.kernel.org, AJvYcCVf0XNqZu2p0eOtXJozNWu4C1g4j15BZ97QKy0l0g4FOQe0InewGkPkemN6DxKnWjtqX9RHFIrH0G53ygI=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyJhRUG+fSZ6mT4QuM/VhtlNzGzAFENYh0FkDyrtNFLPJcVyqMH
+	4QObyOOpTVTeSHjTQCuUrztQAETLyNsk7f2tfnVPmJxB0LYy8uzBtbkf
+X-Gm-Gg: ASbGncuF+zL8z8KLDwnEXUF54cnLgpTt/6fz8uv3ZeNsFpgCYrESAE/7M0oqs528W7k
+	8gI87kR+lsCd3sZeCP9j2YC2+CHivNh2c4+HFNgiZ+1fRRFMeM7pYL0EInoSZjSg/SpJyE3p+Z4
+	EWBiayp240qJ7IfNxyraHr3DllyrbWVR+iuw4YRPjTH8x1X7ihHbNz3W9qOXhSKBSC+e/eGHP1i
+	0FRibC5Kcrg6OeLxylXQ5MBjumzvkL32ndFR7LFD0kFFOpW/vIC04IJoRYnQmH68cLYczhu1kdo
+	WG9sE5BIwj6qdAAHTKxC38QExt1ok1252WBxuYSLJUD5J3vhvCzU1MBzNeGDCm/pXtZ2/5ziE+w
+	zJ6YcwkxrT/V8jyo=
+X-Google-Smtp-Source: AGHT+IExWdPqbFfwV9gpo2qljF1loSdxR22c3Gl0rBYYoDqlQzmcfWSR38d7RykfD2ZdKlURvIuP0w==
+X-Received: by 2002:a05:6000:2d86:b0:3a6:d191:a834 with SMTP id ffacd0b85a97d-3a6ed650665mr1152721f8f.9.1750924431077;
+        Thu, 26 Jun 2025 00:53:51 -0700 (PDT)
+Received: from thomas-precision3591.imag.fr ([2001:660:5301:24:cd14:15b8:23de:109b])
+        by smtp.googlemail.com with ESMTPSA id ffacd0b85a97d-3a6e8114697sm6742220f8f.98.2025.06.26.00.53.50
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 26 Jun 2025 00:53:50 -0700 (PDT)
+From: Thomas Fourier <fourier.thomas@gmail.com>
+To: 
+Cc: Thomas Fourier <fourier.thomas@gmail.com>,
+	Chas Williams <3chas3@gmail.com>,
+	linux-atm-general@lists.sourceforge.net,
+	netdev@vger.kernel.org,
 	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] KVM: arm64: Adjust range correctly during host stage-2 faults
-Date: Thu, 26 Jun 2025 08:53:15 +0100
-Message-Id: <175092438911.7995.9528618735352034955.b4-ty@kernel.org>
-X-Mailer: git-send-email 2.39.2
-In-Reply-To: <20250625105548.984572-1-qperret@google.com>
-References: <20250625105548.984572-1-qperret@google.com>
+Subject: [PATCH] atm: idt77252: Use sb_pool_remove()
+Date: Thu, 26 Jun 2025 09:53:16 +0200
+Message-ID: <20250626075317.191931-2-fourier.thomas@gmail.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
-X-SA-Exim-Connect-IP: 185.219.108.64
-X-SA-Exim-Rcpt-To: oliver.upton@linux.dev, joey.gouly@arm.com, suzuki.poulose@arm.com, yuzenghui@huawei.com, catalin.marinas@arm.com, will@kernel.org, qperret@google.com, linux-arm-kernel@lists.infradead.org, kvmarm@lists.linux.dev, linux-kernel@vger.kernel.org
-X-SA-Exim-Mail-From: maz@kernel.org
-X-SA-Exim-Scanned: No (on disco-boy.misterjones.org); SAEximRunCond expanded to false
 
-On Wed, 25 Jun 2025 10:55:48 +0000, Quentin Perret wrote:
-> host_stage2_adjust_range() tries to find the largest block mapping that
-> fits within a memory or mmio region (represented by a kvm_mem_range in
-> this function) during host stage-2 faults under pKVM. To do so, it walks
-> the host stage-2 page-table, finds the faulting PTE and its level, and
-> then progressively increments the level until it finds a granule of the
-> appropriate size. However, the condition in the loop implementing the
-> above is broken as it checks kvm_level_supports_block_mapping() for the
-> next level instead of the current, so pKVM may attempt to map a region
-> larger than can be covered with a single block.
-> 
-> [...]
+Replacing the manual pool remove with the dedicated function.
 
-Applied to fixes, thanks!
+Signed-off-by: Thomas Fourier <fourier.thomas@gmail.com>
+---
+ drivers/atm/idt77252.c | 4 +---
+ 1 file changed, 1 insertion(+), 3 deletions(-)
 
-[1/1] KVM: arm64: Adjust range correctly during host stage-2 faults
-      commit: e728e705802fec20f65d974a5d5eb91217ac618d
-
-Cheers,
-
-	M.
+diff --git a/drivers/atm/idt77252.c b/drivers/atm/idt77252.c
+index f2e91b7d79f0..888695ccc2a7 100644
+--- a/drivers/atm/idt77252.c
++++ b/drivers/atm/idt77252.c
+@@ -1844,7 +1844,6 @@ add_rx_skb(struct idt77252_dev *card, int queue,
+ {
+ 	struct sk_buff *skb;
+ 	dma_addr_t paddr;
+-	u32 handle;
+ 
+ 	while (count--) {
+ 		skb = dev_alloc_skb(size);
+@@ -1876,8 +1875,7 @@ add_rx_skb(struct idt77252_dev *card, int queue,
+ 			 skb_end_pointer(skb) - skb->data, DMA_FROM_DEVICE);
+ 
+ outpoolrm:
+-	handle = IDT77252_PRV_POOL(skb);
+-	card->sbpool[POOL_QUEUE(handle)].skb[POOL_INDEX(handle)] = NULL;
++	sb_pool_remove(card, skb);
+ 
+ outfree:
+ 	dev_kfree_skb(skb);
 -- 
-Without deviation from the norm, progress is not possible.
-
+2.43.0
 
 
