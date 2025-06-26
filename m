@@ -1,74 +1,87 @@
-Return-Path: <linux-kernel+bounces-705073-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-705075-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id B86DFAEA4DB
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Jun 2025 20:02:37 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 30862AEA4DF
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Jun 2025 20:03:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 91EE81C4066E
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Jun 2025 18:02:53 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C3AF91C43BBF
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Jun 2025 18:03:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 03FAA215175;
-	Thu, 26 Jun 2025 18:02:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4035D2EE285;
+	Thu, 26 Jun 2025 18:02:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="eamId/hC"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.10])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="qS6LrOFc"
+Received: from mail-oa1-f44.google.com (mail-oa1-f44.google.com [209.85.160.44])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1553613AA2F;
-	Thu, 26 Jun 2025 18:02:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.10
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 16C76201278
+	for <linux-kernel@vger.kernel.org>; Thu, 26 Jun 2025 18:02:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750960949; cv=none; b=fD1aO+GW+QVjV6jWVAlA7eRdI4TIzNHMniR3J1ol5kTcC0a4IS7kZyUO/t/Ixh7BROwsRdcZgwSp3YsF89mJZiJQCboA1j/oy/3KsQs+BqlsKHTTRdYeJ0NPtIml8Q0+ncmPc/sdL0c2n0olLjBPhaZ3fl/XZEQh8yYXKVwUYlg=
+	t=1750960959; cv=none; b=R6Rsguugru9GlXsevavCKxZ9yoplaoL4PO+j/DYeGQPohHN8wFO4WiMR7kE0od1kAbmdDdYt0TQkBvotiSDfhJhG1iHHyI4jTZcIwzJxif7uiSXsT1S0LKHVHu7xtJcPneenFeSyYvKF4ae6bW6APvB0YJmEUNLZ5kuNmlc8J8U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750960949; c=relaxed/simple;
-	bh=4mUQnmWHCNRtbu/Vo04OslewYf0LZGGay8MPrdq2cvM=;
+	s=arc-20240116; t=1750960959; c=relaxed/simple;
+	bh=cK/F/XRWVdGgsrv0imtZS1Am8/D8n9MBxKdjORBtKh4=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=B/Rl/KzOwcZvs6mAJ3iSJvrB6nyVFBDMUvXHT0uEDDGWxZqaLpCxDyxietcBpqw+P3wfvrTa6E9zlE99xug2irshMoE6Ah5xgsR2Aw5jNJlWlCZ4/QODxesiacPMsIOuKESMA+xvMcX9FboXb+pwv84r+qmWX3YVqsf0EJraRxU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=eamId/hC; arc=none smtp.client-ip=198.175.65.10
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1750960949; x=1782496949;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=4mUQnmWHCNRtbu/Vo04OslewYf0LZGGay8MPrdq2cvM=;
-  b=eamId/hCdxZUYLdwq1mxOyeGMO+4G4hcbai/95yiDCnhm/ciBp4o2Ats
-   OyRHY5vIvtmFCBAwE+CK/LpgBYzIYu7k3r/tiiXpGHWwaEr5r8DO+Z87o
-   ERiX6GKvrRaG7fTHqvUWtelQH/Y5Z4vbEW0A10wP0oPsTOO9puKEyZuGd
-   rmAHUe/wdQD+S9UkOmyTckGbjF1v60ENGqM1CCgQqHNsNVYoKkZx8nApa
-   Z0ubHRddIYJZ0ju1f5tZGiKE0nhp2HW1XUsvSY8i3AOwvRHf98fSnBRzj
-   qoyB5APxGzobGxkdAzCHCk5jrE7yjSFRU2fPH+2It5JMndgzbmBZ0Z67a
-   Q==;
-X-CSE-ConnectionGUID: VQke99H3TJiTSL6rZ/ndGA==
-X-CSE-MsgGUID: l0DqGE8HRLeO8FgNzjOoZw==
-X-IronPort-AV: E=McAfee;i="6800,10657,11476"; a="70699192"
-X-IronPort-AV: E=Sophos;i="6.16,268,1744095600"; 
-   d="scan'208";a="70699192"
-Received: from orviesa004.jf.intel.com ([10.64.159.144])
-  by orvoesa102.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 26 Jun 2025 11:02:28 -0700
-X-CSE-ConnectionGUID: iZEH1N8/TEiDULFDKgTnXw==
-X-CSE-MsgGUID: 3UhGoHwPQCOT1G4XkiX9Fw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.16,268,1744095600"; 
-   d="scan'208";a="157156818"
-Received: from smile.fi.intel.com ([10.237.72.52])
-  by orviesa004.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 26 Jun 2025 11:02:25 -0700
-Received: from andy by smile.fi.intel.com with local (Exim 4.98.2)
-	(envelope-from <andriy.shevchenko@linux.intel.com>)
-	id 1uUqvX-0000000AFMP-1TT6;
-	Thu, 26 Jun 2025 21:02:23 +0300
-Date: Thu, 26 Jun 2025 21:02:23 +0300
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To: linux-watchdog@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc: Wim Van Sebroeck <wim@linux-watchdog.org>,
-	Guenter Roeck <linux@roeck-us.net>
-Subject: Re: [PATCH v1 1/1] watchdog: Don't use "proxy" headers
-Message-ID: <aF2LLzOIOKUfKPs4@smile.fi.intel.com>
-References: <20250626165145.327685-1-andriy.shevchenko@linux.intel.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=eOtSo54kt1VBete+Kcne5j4U68n14IkqTtG7rkonu9LhsXuFMU4sUrhsgAaqJNSlJS696lnPEODTANybhMkpa1fMTEAWxrw5Z+rDD2lnsQZJ8Q/N9nuU7WSu2nPknDXdvmA30FbSrBp9LbvEP8gTfeWmrbyVczN+qMzaE0TX9Mw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=qS6LrOFc; arc=none smtp.client-ip=209.85.160.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-oa1-f44.google.com with SMTP id 586e51a60fabf-2ea58f008e9so1084377fac.0
+        for <linux-kernel@vger.kernel.org>; Thu, 26 Jun 2025 11:02:37 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1750960957; x=1751565757; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=FuBXeZYcaGZJ+A3VKNOAHUUuR6YcnbhEEbsYOpI28oY=;
+        b=qS6LrOFcoGJPol36dCkR06Sd3/5yY48D85PoxmviiUjfbenRFsTQB/C9kQvoEfX6Su
+         5b67XJ7u1abs6mlgQTjKdFkqzaYjgQ2B9SfShNebj8Q8uTy1bVcg7jbpVXvtGvW5wZjL
+         DjeDMfb/S9w6yK5TvYcLd0Kw8AaxTuJ8xpezxztzhTOt07lsF/y+DPTbhm0KSPjL0wet
+         rIajgtL5uYgXkBV6XFW7tqndBgk7ht70gAbWag1YAG3jPRNiCzxEpFlRaUbQ8eNoMUvE
+         iQU9H36Z+RhlNzVl8VZbKVcFK/dXqCWZfg5KqaV+nPVuwl9yUnR1vgNBdZ+t16UuvQap
+         uQyg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1750960957; x=1751565757;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=FuBXeZYcaGZJ+A3VKNOAHUUuR6YcnbhEEbsYOpI28oY=;
+        b=Ne2i4cWhHhlXOXSoIMGmRk+qgRWJfGjmcVm5yD+rIDwC9Bx7EntbrNBww8rgxBVy0F
+         HhPNcU6TIFWgJPIsyaTP4W95ZI6iZlsLP+9DqyaGAskkNp2L9hMB06wqd8JW09NEVsTl
+         IWd07eZpkft00S4uiEDPBP8/N5ClfLASWYPo02Zla+nlFGcXLDL0EymTZw+zXrg5rxi1
+         uOf8j7UK7jSKXQc/j3NaNrme+UMzP8NYjPlcSYc3Bt2y34SEb+2/zpRBeOA6eEelu8mC
+         HIQvuRsrJi1CyPoO8JhM3fTgc8xQoljBJJe1FAarafVT0576SS8+YFymrBPyvYujwQu0
+         YExA==
+X-Forwarded-Encrypted: i=1; AJvYcCXfZ+wGcZDcF/cM7LkQI0Iwf4q3aABavixizpT5ItrQWVVAVqTdxyzSHJN/LZ4BpC1vt85fcLXlB/r1iB0=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyZfsYUlooq6AU9TzQIOWCru6nuK1BjjDpcJ2s8TTtsKEv7iz/8
+	nLmwSe7PoDZGQutgBmHtf6U8YlyuFETI+BAvEwPxh0O8bRIK/owHkWONVwgsYHeWiWQ=
+X-Gm-Gg: ASbGncs2bQuEX5cNKajQcUmdkfJpEa8wBuQhlyMgIXhVzfoKaHGO9AfxVLStUXqTZI3
+	OyEmWVoGo2c1xreIpX25IbdunEmOYuRiQ82Ia8E52o5c+dY3pfAJ5+FWHp1DlJ3UEUYNSvk/aeI
+	HWx4pofoISu/F47LFXk69h6B1yZ8MywVmtJo8N8Sk2Fx1G7B22P2rUpTJNpesdjtRLgTtJLIgZ/
+	snH0vi+SRnKPHr2YKC1+BNS7UxBP6DnSiwUj5nEIXvEpdWqyCdKqXypVoSF80R+tZEhoWveYKgM
+	kP9wMf3cJ3yre1QidBAI9f51fZUtvzYHIpTT+h6/+Dyi9kQyzEbl8BCud+HgzwkLeAoa
+X-Google-Smtp-Source: AGHT+IE0Wq2OGy/UBABihaj30tjkXqQd3OF/6SvLXaubvLuwAxvs/RkGqwkr/Rqy+NYKM/SPFesEow==
+X-Received: by 2002:a05:6870:f721:b0:2c3:1651:ca78 with SMTP id 586e51a60fabf-2efed4b5be6mr15093fac.14.1750960957043;
+        Thu, 26 Jun 2025 11:02:37 -0700 (PDT)
+Received: from localhost ([2603:8080:b800:f700:154:5a01:d5a1:16d6])
+        by smtp.gmail.com with ESMTPSA id 586e51a60fabf-2efd50b0cf0sm453080fac.29.2025.06.26.11.02.34
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 26 Jun 2025 11:02:35 -0700 (PDT)
+Date: Thu, 26 Jun 2025 21:02:33 +0300
+From: Dan Carpenter <dan.carpenter@linaro.org>
+To: Abdun Nihaal <abdun.nihaal@gmail.com>
+Cc: andy@kernel.org, gregkh@linuxfoundation.org, lorenzo.stoakes@oracle.com,
+	tzimmermann@suse.de, riyandhiman14@gmail.com, willy@infradead.org,
+	notro@tronnes.org, thomas.petazzoni@free-electrons.com,
+	dri-devel@lists.freedesktop.org, linux-fbdev@vger.kernel.org,
+	linux-staging@lists.linux.dev, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] staging: fbtft: fix potential memory leak in
+ fbtft_framebuffer_alloc()
+Message-ID: <407addf1-4cda-485a-83a6-5eb2f6d5f7a9@suswa.mountain>
+References: <20250626172412.18355-1-abdun.nihaal@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -77,23 +90,20 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250626165145.327685-1-andriy.shevchenko@linux.intel.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - c/o Alberga Business Park, 6
- krs, Bertel Jungin Aukio 5, 02600 Espoo
+In-Reply-To: <20250626172412.18355-1-abdun.nihaal@gmail.com>
 
-On Thu, Jun 26, 2025 at 07:51:45PM +0300, Andy Shevchenko wrote:
-> Update header inclusions to follow IWYU (Include What You Use)
-> principle.
+On Thu, Jun 26, 2025 at 10:54:10PM +0530, Abdun Nihaal wrote:
+> In the error paths after fb_info structure is successfully allocated,
+> the memory allocated in fb_deferred_io_init() for info->pagerefs is not
+> freed. Fix that by adding the cleanup function on the error path.
 > 
-> Note that kernel.h is discouraged to be included as it's written
-> at the top of that file.
+> Fixes: c296d5f9957c ("staging: fbtft: core support")
+> Signed-off-by: Abdun Nihaal <abdun.nihaal@gmail.com>
+> ---
 
-This doesn't compile in some cases, please ignore. I will send a v2 shortly
-after additional testing.
+Reviewed-by: Dan Carpenter <dan.carpenter@linaro.org>
 
--- 
-With Best Regards,
-Andy Shevchenko
-
+regards,
+dan carpenter
 
 
