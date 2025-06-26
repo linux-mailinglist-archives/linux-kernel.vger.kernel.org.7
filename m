@@ -1,147 +1,112 @@
-Return-Path: <linux-kernel+bounces-703821-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-703823-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7830CAE952F
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Jun 2025 07:31:56 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 63684AE9534
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Jun 2025 07:36:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 079AD1C271A3
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Jun 2025 05:32:11 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3DA607B49BB
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Jun 2025 05:35:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AC7F0219A9E;
-	Thu, 26 Jun 2025 05:31:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="xQp1igqh"
-Received: from fllvem-ot04.ext.ti.com (fllvem-ot04.ext.ti.com [198.47.19.246])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 54E7E21930B;
+	Thu, 26 Jun 2025 05:36:32 +0000 (UTC)
+Received: from mail-il1-f198.google.com (mail-il1-f198.google.com [209.85.166.198])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4D7E04C83;
-	Thu, 26 Jun 2025 05:31:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.246
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 838AB14A09C
+	for <linux-kernel@vger.kernel.org>; Thu, 26 Jun 2025 05:36:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.198
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750915907; cv=none; b=tf9SMx7tTCR/Wv5XpUHy7/SN5mmwIAg3hJzjabm0J1xXEN2IiyiRn8SpoPKf2gOuSl9tqZvgGcvsAje/3vVnZBe6U36r1c+c84wCOVBqgDW20DxHdRn2Z3KYKM2/WQc292Co/For1Wi+srA8brcw/h59eu2ySVUBkAepFs12kaA=
+	t=1750916192; cv=none; b=ehJYBq08jc/MxaHcoEGlFXYw4XQpLHap9189vuApi5MwPYth76sFmVVAwf0Vp14NMTWdVQk0P5r4sv37TVhCNsyOKKAOYAzgD8aXGD4q1WgtDwdDJ8OAqrBLOekm8rGtS911jK7OzvRrtbpbaedUZZ4rdPPfdpymbpTKdeoETwk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750915907; c=relaxed/simple;
-	bh=rIxvj9U2Es+PgGq1Z2rbceyIUBWUq3F6wlfrLINQunk=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=efT4Z66RjRSp+woEN+/Ld1iWx02a/rRI3zLsUK/QLhsCQLNKatbRV44OMjkMjnjZEUCGI8rEbzrvk6yW+GEE3Y/WQ6DKyGpS30xx0ZC0f4yth97y6MsS0gfWYEzvzMgZ3zDBAqsOXEIwHomLkm0ghuEQii+pDWyZg8WtKbHY/i0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=xQp1igqh; arc=none smtp.client-ip=198.47.19.246
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
-Received: from fllvem-sh03.itg.ti.com ([10.64.41.86])
-	by fllvem-ot04.ext.ti.com (8.15.2/8.15.2) with ESMTP id 55Q5VUqn2359289;
-	Thu, 26 Jun 2025 00:31:30 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-	s=ti-com-17Q1; t=1750915890;
-	bh=6bpepEW9f+DsBh8JOFLsFyO4rOle2MVrTGXFq+4Uh+c=;
-	h=Date:Subject:To:CC:References:From:In-Reply-To;
-	b=xQp1igqhRCiAkthNQeimNbfBSeRvpAbq+1iAOvszWnKVhVmrG6Q6coWlul2+PuKLP
-	 0F6Gguc7y4mxRRGqydIXGTV+VHYVr+IF5hgDb6i4RwisYL/K8WIIrJBobTpv7Aw6N7
-	 AVVY8JBZdgLhBwofFq41mRpAVJSvbjHkY4Xy8Yqs=
-Received: from DLEE104.ent.ti.com (dlee104.ent.ti.com [157.170.170.34])
-	by fllvem-sh03.itg.ti.com (8.18.1/8.18.1) with ESMTPS id 55Q5VUjd1684200
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-SHA256 bits=128 verify=FAIL);
-	Thu, 26 Jun 2025 00:31:30 -0500
-Received: from DLEE100.ent.ti.com (157.170.170.30) by DLEE104.ent.ti.com
- (157.170.170.34) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.55; Thu, 26
- Jun 2025 00:31:29 -0500
-Received: from lelvem-mr06.itg.ti.com (10.180.75.8) by DLEE100.ent.ti.com
- (157.170.170.30) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.55 via
- Frontend Transport; Thu, 26 Jun 2025 00:31:29 -0500
-Received: from [172.24.227.220] (chintan-thinkstation-p360-tower.dhcp.ti.com [172.24.227.220])
-	by lelvem-mr06.itg.ti.com (8.18.1/8.18.1) with ESMTP id 55Q5VP6e444546;
-	Thu, 26 Jun 2025 00:31:25 -0500
-Message-ID: <a57e0de4-3d54-4626-a6ae-a661fd36d130@ti.com>
-Date: Thu, 26 Jun 2025 11:01:24 +0530
+	s=arc-20240116; t=1750916192; c=relaxed/simple;
+	bh=SB0aCxZEkQPQMxy0FYNQie/P1fKIEqVxMwPo3lSHFQ8=;
+	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=UTKgDGu+LgSqtTELUzhTbroHZ+ZQMqeYu7PO9Frm9YufVhVWOy+do5AZB8fh2+cbZ5d1uzUQvL6Qu/3wgMCIy7vEL58YKgG6YYmfBom4DU/eJ+Vp56PdK3dfHiPB+rcm+PH/1mgVcBR/lcofui8GD+a5Ags8kby0XRA4A7iNrME=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.198
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f198.google.com with SMTP id e9e14a558f8ab-3df3b71b987so5528205ab.0
+        for <linux-kernel@vger.kernel.org>; Wed, 25 Jun 2025 22:36:29 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1750916189; x=1751520989;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=7hgiMPVVOUz8NHgqcS3EA5gzhtzDKtqRYZI0hl7KfCs=;
+        b=cBMkg+o5lCryghsTDijc15Q/niEwr2c2nvsBvjUgivsrcebA5BGMaIrsiMWrQRokC9
+         tevQjQXv6+e+n/YVO+1/+Q4fdrfkHGGYG14II/TXiI7ZGpMFPKeKjWVfXFYYzjkmhy97
+         fL5pkoPU8asSYsH7yOjVOim7IoJb/Gd1cBXXFnmLSW8Ntcpeo4UgZu2uiUDtHATf0w1s
+         fEmqam875EmyZSHaabtP4Fdv/AL5pyOsJS3hwiAy3EP7/Jlrbd1RjOJxhUft06JrG5/v
+         QjqkG9uLct7ExTifkFES1YTHV6nr+a8cT91maK5CvyW6o9xAudNgELl3AkhnWA8mBFSk
+         tEfg==
+X-Forwarded-Encrypted: i=1; AJvYcCXZvOYXr+dEcCmZU4kp7NdYZgZUbjxVHiTlFx1uswIQ2Be6xu8ph+1NYtvFDm23DXWB1vn9gHF76uUJJgA=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwiCOKu4BEv6F9xbh2OIb3oO+qBTO7bBt9erf1TU9m2KGKcVkTr
+	WNSlEXCiArKs/tJ86nJn8+Mm5sE6il7PCV419qTGyVWesEKurns7BSomKYe++gKW0jaHBJeMs4v
+	D5yYyDyRjB6UmN05NeXtmUnJx1pJyKrVwbtCNBI7qIMJ49AKHFbQbPhDgtNA=
+X-Google-Smtp-Source: AGHT+IF3eFIQQ2sokjQq+A9vuimSTEeE3t/M/PknQL6c76xatSFgPs7ClR/j8Y8BF7xQRoB2n6v3aSr4LZuGpmspKSO8w/ujKTF9
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH net] net: ethernet: ti: am65-cpsw-nuss: Fix skb size by
- accounting for skb_shared_info
-To: Siddharth Vadapalli <s-vadapalli@ti.com>
-CC: <andrew+netdev@lunn.ch>, <davem@davemloft.net>, <edumazet@google.com>,
-        <kuba@kernel.org>, <pabeni@redhat.com>, <rogerq@kernel.org>,
-        <horms@kernel.org>, <mwalle@kernel.org>, <jacob.e.keller@intel.com>,
-        <jpanis@baylibre.com>, <danishanwar@ti.com>, <netdev@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>
-References: <20250625112725.1096550-1-c-vankar@ti.com>
- <598f9e77-8212-426b-97ab-427cb8bd4910@ti.com>
-Content-Language: en-US
-From: Chintan Vankar <c-vankar@ti.com>
-In-Reply-To: <598f9e77-8212-426b-97ab-427cb8bd4910@ti.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
+X-Received: by 2002:a05:6e02:3cc4:b0:3df:154d:aa60 with SMTP id
+ e9e14a558f8ab-3df32a14860mr77589685ab.22.1750916188849; Wed, 25 Jun 2025
+ 22:36:28 -0700 (PDT)
+Date: Wed, 25 Jun 2025 22:36:28 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <685cdc5c.a00a0220.34b642.00ed.GAE@google.com>
+Subject: [syzbot] Monthly block report (Jun 2025)
+From: syzbot <syzbot+list43aba7164f4c62811792@syzkaller.appspotmail.com>
+To: linux-block@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-Hello Siddharth,
+Hello block maintainers/developers,
 
-On 25/06/25 19:07, Siddharth Vadapalli wrote:
-> On Wed, Jun 25, 2025 at 04:57:25PM +0530, Chintan Vankar wrote:
-> 
-> Hello Chintan,
-> 
->> While transitioning from netdev_alloc_ip_align to build_skb, memory for
-> 
-> nitpick: Add parantheses when referring to functions:
-> netdev_alloc_ip_align()
-> build_skb()
-> 
->> skb_shared_info was not allocated. Fix this by including
-> 
-> Enclose structures within double quotes and preferably refer to them
-> in the context of an "skb":
-> 
-> ...memory for the "skb_shared_info" member of an "skb" was not allocated...
-> 
->> sizeof(skb_shared_info) in the packet length during allocation.
->>
->> Fixes: 8acacc40f733 ("net: ethernet: ti: am65-cpsw: Add minimal XDP support")
-> 
->> Signed-off-by: Chintan Vankar <c-vankar@ti.com>
->> ---
->>
->> This patch is based on the commit '9caca6ac0e26' of origin/main branch of
->> Linux-net repository.
->>
->>   drivers/net/ethernet/ti/am65-cpsw-nuss.c | 1 +
->>   1 file changed, 1 insertion(+)
->>
->> diff --git a/drivers/net/ethernet/ti/am65-cpsw-nuss.c b/drivers/net/ethernet/ti/am65-cpsw-nuss.c
->> index f20d1ff192ef..3905eec0b11e 100644
->> --- a/drivers/net/ethernet/ti/am65-cpsw-nuss.c
->> +++ b/drivers/net/ethernet/ti/am65-cpsw-nuss.c
->> @@ -857,6 +857,7 @@ static struct sk_buff *am65_cpsw_build_skb(void *page_addr,
->>   	struct sk_buff *skb;
->>   
->>   	len += AM65_CPSW_HEADROOM;
->> +	len += SKB_DATA_ALIGN(sizeof(struct skb_shared_info));
-> 
-> This could be added to the previous line itself:
-> 
-> 	len += AM65_CPSW_HEADROOM + SKB_DATA_ALIGN(sizeof(struct skb_shared_info));
-> 
->>   
->>   	skb = build_skb(page_addr, len);
->>   	if (unlikely(!skb))
-> 
-> Thank you for finding the bug and fixing it.
-> 
+This is a 31-day syzbot report for the block subsystem.
+All related reports/information can be found at:
+https://syzkaller.appspot.com/upstream/s/block
 
-Thank you for reviewing patch. I have posted v2 by addressing your
-comments at:
-https://lore.kernel.org/r/20250626051226.2418638-1-c-vankar@ti.com/
+During the period, 3 new issues were detected and 1 were fixed.
+In total, 37 issues are still open and 98 have already been fixed.
 
-Regards,
-Chintan.
+Some of the still happening issues:
 
-> Regards,
-> Siddharth.
+Ref  Crashes Repro Title
+<1>  22870   Yes   possible deadlock in blk_mq_update_nr_hw_queues
+                   https://syzkaller.appspot.com/bug?extid=6279b273d888c2017726
+<2>  20143   Yes   possible deadlock in loop_set_status
+                   https://syzkaller.appspot.com/bug?extid=9b145229d11aa73e4571
+<3>  6151    Yes   KMSAN: kernel-infoleak in filemap_read
+                   https://syzkaller.appspot.com/bug?extid=905d785c4923bea2c1db
+<4>  2574    Yes   INFO: task hung in bdev_release
+                   https://syzkaller.appspot.com/bug?extid=4da851837827326a7cd4
+<5>  1680    Yes   INFO: task hung in blkdev_fallocate
+                   https://syzkaller.appspot.com/bug?extid=39b75c02b8be0a061bfc
+<6>  706     Yes   INFO: task hung in bdev_open
+                   https://syzkaller.appspot.com/bug?extid=5c6179f2c4f1e111df11
+<7>  594     No    INFO: task hung in read_part_sector (2)
+                   https://syzkaller.appspot.com/bug?extid=82de77d3f217960f087d
+<8>  380     Yes   possible deadlock in queue_requests_store
+                   https://syzkaller.appspot.com/bug?extid=48928935f5008dde0a41
+<9>  257     Yes   possible deadlock in pcpu_alloc_noprof (2)
+                   https://syzkaller.appspot.com/bug?extid=91771b3fb86ec2dd7227
+<10> 157     Yes   possible deadlock in elevator_change
+                   https://syzkaller.appspot.com/bug?extid=ccae337393ac17091c34
+
+---
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
+
+To disable reminders for individual bugs, reply with the following command:
+#syz set <Ref> no-reminders
+
+To change bug's subsystems, reply with:
+#syz set <Ref> subsystems: new-subsystem
+
+You may send multiple commands in a single email message.
 
