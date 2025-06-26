@@ -1,183 +1,218 @@
-Return-Path: <linux-kernel+bounces-704488-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-704490-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 00729AE9E15
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Jun 2025 15:02:21 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 397F1AE9E1D
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Jun 2025 15:03:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 120183B7707
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Jun 2025 13:01:20 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A19C017CFD6
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Jun 2025 13:02:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B68082E5432;
-	Thu, 26 Jun 2025 13:01:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 868E92E5429;
+	Thu, 26 Jun 2025 13:02:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="o+ZMS2of";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="XqNMV6hD"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b="L50wm7zX"
+Received: from pandora.armlinux.org.uk (pandora.armlinux.org.uk [78.32.30.218])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 370A82E336E;
-	Thu, 26 Jun 2025 13:01:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E61EA2E336E;
+	Thu, 26 Jun 2025 13:02:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=78.32.30.218
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750942883; cv=none; b=QXC0kWaDzbMg74yNujXxIpQJfvR7C0kBERp76nPB+LEtv1lhlN56nY8KiSl8/iUc/SGcmhGPTrYBgCjSix4ol1CrcZUKsoIPGItUSePb1wGBsF93VwVHlixCKP57pxdjO088A7BZnCuPvLGSUu/CjmqpdkUY+E2G7ZSL1GyNo5Y=
+	t=1750942956; cv=none; b=bnptRUl/3esDsnxuNSe7GYr4uKi8bDeXLOcdoUfPX2m5PO2FdZVS9R2A1J9PundHRIpNfWpGwytYUHRGFuE/LCtcrHsaGwhYFGElJYdF958zXgNTMY5LXICfl4bwIsEtQYvefohwV+WGiwMfdkuEoYDQYdyMuZqcM+BAwW888DQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750942883; c=relaxed/simple;
-	bh=8E+3n1QtwchzZWQx5O5Q/cKJIfNTzXwQQ9R2UsIGlOo=;
-	h=Date:From:To:Subject:Cc:In-Reply-To:References:MIME-Version:
-	 Message-ID:Content-Type; b=I97fkkWK1KxdiWL0oD5o/PNHsd1I7XFwpvI3ON5Yo1a/7xh6hn2wNzrvM7oM5OoIuORNehdnriG5uXEstg2eGcJ6U0XQRjJ5r9DGPq1cfQJPXlRABwI3+iLjOuKi1eDzDJvM/bX+ZZVP6uM5aZn80LR1yH2zWhslKWeUKfLqHDk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=o+ZMS2of; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=XqNMV6hD; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Date: Thu, 26 Jun 2025 13:01:17 -0000
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1750942879;
-	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=f41wVf+xOCYKXJ2qv7Qx7MXNwZzykuwtDlgdJhUhcCY=;
-	b=o+ZMS2ofRvZ/WX9R3I1kS+Xsuds3yZiAjVYwP/pHASQgZcbbCFtlURyheGXMxOQL+joeap
-	ENlWGQluCJuKPTuzs4x9Gd2aRl6zsDYy2pSqF05Z9CJANlDc4fLdhCojVPT2mUdTSJFpGM
-	LZz8Nhrp9Iz48kwf2FY3VJIxgqzptpOj3yAoZCQI8nUOW3QNIFYGwhGP16Dk/+2F6u0Q82
-	gFPsiz9pxkTMNq76d/JwW6bV2zalFB+H69mSNWpSc5lP/hWVeVoo7ZJdcwYi+mmRuo387L
-	G8i8jFSgaNF8CsJ+kxXizZ7s0lrTZSRcd7EBf4gce8zzL4cUlr6pA9iPJUVk6w==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1750942879;
-	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=f41wVf+xOCYKXJ2qv7Qx7MXNwZzykuwtDlgdJhUhcCY=;
-	b=XqNMV6hDREXnuOI/FIbB1izUJdxAOlJ0d1gKy25CoqffHBficgFNssme/N6Y9J1/P9WcXY
-	wNgzIHceuxrMvSAg==
-From: "tip-bot2 for David Kaplan" <tip-bot2@linutronix.de>
-Sender: tip-bot2@linutronix.de
-Reply-to: linux-kernel@vger.kernel.org
-To: linux-tip-commits@vger.kernel.org
-Subject: [tip: x86/bugs] x86/bugs: Clean up SRSO microcode handling
-Cc: David Kaplan <david.kaplan@amd.com>,
- "Borislav Petkov (AMD)" <bp@alien8.de>, x86@kernel.org,
- linux-kernel@vger.kernel.org
-In-Reply-To: <20250625155805.600376-4-david.kaplan@amd.com>
-References: <20250625155805.600376-4-david.kaplan@amd.com>
+	s=arc-20240116; t=1750942956; c=relaxed/simple;
+	bh=jlmLk4NgCnLxwPz3TcSBRO0owp1iKVp62VJIE1enHnY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=lfxhJzjCRN3LtWn6wc88ClLrJSrTs3pq3tyZk9WkIQit40Njc3DR+BsiN4r4Ln4Rn6khpfTzxV0Ei0Sgwwq1+ezsc4hCMr6HavwJrU4U5wsM9ajjkOO89zngZ6tn4etzIYBurcILRqOOuYCAfnrRGGEltIOcx9c5C1VQFL3F4zQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk; spf=none smtp.mailfrom=armlinux.org.uk; dkim=pass (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b=L50wm7zX; arc=none smtp.client-ip=78.32.30.218
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=armlinux.org.uk
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=armlinux.org.uk; s=pandora-2019; h=Sender:In-Reply-To:
+	Content-Transfer-Encoding:Content-Type:MIME-Version:References:Message-ID:
+	Subject:Cc:To:From:Date:Reply-To:Content-ID:Content-Description:Resent-Date:
+	Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+	List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=cVDiaBAprrueH4nbsn+vuEhFoeflTwQpyVt/8cXAMBI=; b=L50wm7zXljmfRKbZ95Yuv/YTsS
+	QtdHJtaK6uLZf/BFV6sN8Lvll54CPnK5mh6IfUe+3SzbWihBi/5D5Y/nzA2/df0Yi1iHtMD1DYer0
+	llkpyd3BILIH0/TDGw3q3hJulaB2HFpdcYpaWFwho9Ada+8ejgcvL9uO3JpChitS0IrAfqa2APXW2
+	OUXeNU9W3lAOVtbQKNOwlksq51OXA+/nDLRcFj91M6eOtTHkXDt5bTpe8CbynUa0mNsjVHSjOnRY2
+	wT+qCD7d+BH8Ynh/Sym/s+XWkw3yN0UzcuxNsc3GFf/0m/WYVuNNiDQ5wUgd10thnNAg6Cq1IJ/Mn
+	tED7xW0w==;
+Received: from shell.armlinux.org.uk ([fd8f:7570:feb6:1:5054:ff:fe00:4ec]:46316)
+	by pandora.armlinux.org.uk with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.96)
+	(envelope-from <linux@armlinux.org.uk>)
+	id 1uUmFA-0008UZ-0e;
+	Thu, 26 Jun 2025 14:02:20 +0100
+Received: from linux by shell.armlinux.org.uk with local (Exim 4.96)
+	(envelope-from <linux@shell.armlinux.org.uk>)
+	id 1uUmF6-0006Wy-1e;
+	Thu, 26 Jun 2025 14:02:16 +0100
+Date: Thu, 26 Jun 2025 14:02:16 +0100
+From: "Russell King (Oracle)" <linux@armlinux.org.uk>
+To: Kamil =?iso-8859-1?Q?Hor=E1k?= - 2N <kamilh@axis.com>
+Cc: florian.fainelli@broadcom.com, bcm-kernel-feedback-list@broadcom.com,
+	andrew@lunn.ch, hkallweit1@gmail.com, davem@davemloft.net,
+	edumazet@google.com, kuba@kernel.org, pabeni@redhat.com,
+	krzk+dt@kernel.org, conor+dt@kernel.org, netdev@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	f.fainelli@gmail.com, robh@kernel.org, andrew+netdev@lunn.ch
+Subject: Re: [PATCH 1/3] net: phy: MII-Lite PHY interface mode
+Message-ID: <aF1E2G69T4IlkCl9@shell.armlinux.org.uk>
+References: <20250626115619.3659443-1-kamilh@axis.com>
+ <20250626115619.3659443-2-kamilh@axis.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Message-ID: <175094287763.406.9381570505281070631.tip-bot2@tip-bot2>
-Robot-ID: <tip-bot2@linutronix.de>
-Robot-Unsubscribe:
- Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
-Precedence: bulk
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20250626115619.3659443-2-kamilh@axis.com>
+Sender: Russell King (Oracle) <linux@armlinux.org.uk>
 
-The following commit has been merged into the x86/bugs branch of tip:
+On Thu, Jun 26, 2025 at 01:56:17PM +0200, Kamil Horák - 2N wrote:
+> diff --git a/drivers/net/phy/broadcom.c b/drivers/net/phy/broadcom.c
+> index 9b1de54fd483..7d3b85a07b8c 100644
+> --- a/drivers/net/phy/broadcom.c
+> +++ b/drivers/net/phy/broadcom.c
+> @@ -423,6 +423,13 @@ static int bcm54811_config_init(struct phy_device *phydev)
+>  	/* With BCM54811, BroadR-Reach implies no autoneg */
+>  	if (priv->brr_mode)
+>  		phydev->autoneg = 0;
 
-Commit-ID:     98b5dab4d22181c931f2bf63c060416badbb49ab
-Gitweb:        https://git.kernel.org/tip/98b5dab4d22181c931f2bf63c060416badbb49ab
-Author:        David Kaplan <david.kaplan@amd.com>
-AuthorDate:    Wed, 25 Jun 2025 10:58:05 -05:00
-Committer:     Borislav Petkov (AMD) <bp@alien8.de>
-CommitterDate: Thu, 26 Jun 2025 13:32:31 +02:00
+Blank line here to aid readability please.
 
-x86/bugs: Clean up SRSO microcode handling
+> +	/* Enable MII Lite (No TXER, RXER, CRS, COL) if configured */
+> +	err = bcm_phy_modify_exp(phydev, BCM_EXP_SYNC_ETHERNET,
+> +				 BCM_EXP_SYNC_ETHERNET_MII_LITE,
+> +				 phydev->interface == PHY_INTERFACE_MODE_MIILITE ?
+> +				 BCM_EXP_SYNC_ETHERNET_MII_LITE : 0);
 
-SRSO microcode only exists for Zen3/Zen4 CPUs.  For those CPUs, the microcode
-is required for any mitigation other than Safe-RET to be effective.  Safe-RET
-can still protect user->kernel and guest->host attacks without microcode.
+In cases like this, where the ternary op leads to less readable code,
+it's better to do:
 
-Clarify this in the code and ensure that SRSO_MITIGATION_UCODE_NEEDED is
-selected for any mitigation besides Safe-RET if the required microcode isn't
-present.
+	if (phydev->interface == PHY_INTERFACE_MODE_MIILITE)
+		exp_sync_ethernet = BCM_EXP_SYNC_ETHERNET_MII_LITE;
+	else
+		exp_sync_ethernet = 0;
 
-Signed-off-by: David Kaplan <david.kaplan@amd.com>
-Signed-off-by: Borislav Petkov (AMD) <bp@alien8.de>
-Link: https://lore.kernel.org/20250625155805.600376-4-david.kaplan@amd.com
----
- arch/x86/kernel/cpu/bugs.c | 37 ++++++++++++++++++-------------------
- 1 file changed, 18 insertions(+), 19 deletions(-)
+	err = bcm_phy_modify_exp(phydev, BCM_EXP_SYNC_ETHERNET,
+				 BCM_EXP_SYNC_ETHERNET_MII_LITE,
+				 exp_sync_ethernet);
 
-diff --git a/arch/x86/kernel/cpu/bugs.c b/arch/x86/kernel/cpu/bugs.c
-index b263419..e2a8a21 100644
---- a/arch/x86/kernel/cpu/bugs.c
-+++ b/arch/x86/kernel/cpu/bugs.c
-@@ -2902,8 +2902,6 @@ early_param("spec_rstack_overflow", srso_parse_cmdline);
- 
- static void __init srso_select_mitigation(void)
- {
--	bool has_microcode;
--
- 	if (!boot_cpu_has_bug(X86_BUG_SRSO) || cpu_mitigations_off())
- 		srso_mitigation = SRSO_MITIGATION_NONE;
- 
-@@ -2913,23 +2911,30 @@ static void __init srso_select_mitigation(void)
- 	if (srso_mitigation == SRSO_MITIGATION_AUTO)
- 		srso_mitigation = SRSO_MITIGATION_SAFE_RET;
- 
--	has_microcode = boot_cpu_has(X86_FEATURE_IBPB_BRTYPE);
--	if (has_microcode) {
--		/*
--		 * Zen1/2 with SMT off aren't vulnerable after the right
--		 * IBPB microcode has been applied.
--		 */
--		if (boot_cpu_data.x86 < 0x19 && !cpu_smt_possible()) {
--			srso_mitigation = SRSO_MITIGATION_NOSMT;
--			return;
--		}
--	} else {
-+	/* Zen1/2 with SMT off aren't vulnerable to SRSO. */
-+	if (boot_cpu_data.x86 < 0x19 && !cpu_smt_possible()) {
-+		srso_mitigation = SRSO_MITIGATION_NOSMT;
-+		return;
-+	}
-+
-+	if (!boot_cpu_has(X86_FEATURE_IBPB_BRTYPE)) {
- 		pr_warn("IBPB-extending microcode not applied!\n");
- 		pr_warn(SRSO_NOTICE);
-+
-+		/*
-+		 * Safe-RET provides partial mitigation without microcode, but
-+		 * other mitigations require microcode to provide any
-+		 * mitigations.
-+		 */
-+		if (srso_mitigation == SRSO_MITIGATION_SAFE_RET)
-+			srso_mitigation = SRSO_MITIGATION_SAFE_RET_UCODE_NEEDED;
-+		else
-+			srso_mitigation = SRSO_MITIGATION_UCODE_NEEDED;
- 	}
- 
- 	switch (srso_mitigation) {
- 	case SRSO_MITIGATION_SAFE_RET:
-+	case SRSO_MITIGATION_SAFE_RET_UCODE_NEEDED:
- 		if (boot_cpu_has(X86_FEATURE_SRSO_USER_KERNEL_NO)) {
- 			srso_mitigation = SRSO_MITIGATION_IBPB_ON_VMEXIT;
- 			goto ibpb_on_vmexit;
-@@ -2939,9 +2944,6 @@ static void __init srso_select_mitigation(void)
- 			pr_err("WARNING: kernel not compiled with MITIGATION_SRSO.\n");
- 			srso_mitigation = SRSO_MITIGATION_NONE;
- 		}
--
--		if (!has_microcode)
--			srso_mitigation = SRSO_MITIGATION_SAFE_RET_UCODE_NEEDED;
- 		break;
- ibpb_on_vmexit:
- 	case SRSO_MITIGATION_IBPB_ON_VMEXIT:
-@@ -2956,9 +2958,6 @@ ibpb_on_vmexit:
- 			pr_err("WARNING: kernel not compiled with MITIGATION_IBPB_ENTRY.\n");
- 			srso_mitigation = SRSO_MITIGATION_NONE;
- 		}
--
--		if (!has_microcode)
--			srso_mitigation = SRSO_MITIGATION_UCODE_NEEDED;
- 		break;
- 	default:
- 		break;
+> +	if (err < 0)
+> +		return err;
+>  
+>  	return bcm5481x_set_brrmode(phydev, priv->brr_mode);
+>  }
+
+I'd include this with the above change:
+
+> diff --git a/include/linux/brcmphy.h b/include/linux/brcmphy.h
+> index 028b3e00378e..15c35655f482 100644
+> --- a/include/linux/brcmphy.h
+> +++ b/include/linux/brcmphy.h
+> @@ -182,6 +182,12 @@
+>  #define BCM_LED_MULTICOLOR_ACT		0x9
+>  #define BCM_LED_MULTICOLOR_PROGRAM	0xa
+>  
+> +/*
+> + * Broadcom Synchronous Ethernet Controls (expansion register 0x0E)
+> + */
+> +#define BCM_EXP_SYNC_ETHERNET		(MII_BCM54XX_EXP_SEL_ER + 0x0E)
+> +#define BCM_EXP_SYNC_ETHERNET_MII_LITE	BIT(11)
+> +
+>  /*
+>   * BCM5482: Shadow registers
+>   * Shadow values go into bits [14:10] of register 0x1c to select a shadow
+
+... and send the changes below as a separate patch as these changes
+below are modifying generic code.
+
+> diff --git a/drivers/net/phy/phy-core.c b/drivers/net/phy/phy-core.c
+> index e177037f9110..b2df06343b7e 100644
+> --- a/drivers/net/phy/phy-core.c
+> +++ b/drivers/net/phy/phy-core.c
+> @@ -115,6 +115,7 @@ int phy_interface_num_ports(phy_interface_t interface)
+>  		return 0;
+>  	case PHY_INTERFACE_MODE_INTERNAL:
+>  	case PHY_INTERFACE_MODE_MII:
+> +	case PHY_INTERFACE_MODE_MIILITE:
+>  	case PHY_INTERFACE_MODE_GMII:
+>  	case PHY_INTERFACE_MODE_TBI:
+>  	case PHY_INTERFACE_MODE_REVMII:
+> diff --git a/drivers/net/phy/phy_caps.c b/drivers/net/phy/phy_caps.c
+> index 38417e288611..b4a4dea3e756 100644
+> --- a/drivers/net/phy/phy_caps.c
+> +++ b/drivers/net/phy/phy_caps.c
+> @@ -316,6 +316,10 @@ unsigned long phy_caps_from_interface(phy_interface_t interface)
+>  		link_caps |= BIT(LINK_CAPA_100HD) | BIT(LINK_CAPA_100FD);
+>  		break;
+>  
+> +	case PHY_INTERFACE_MODE_MIILITE:
+> +		link_caps |= BIT(LINK_CAPA_10FD) | BIT(LINK_CAPA_100FD);
+> +		break;
+> +
+>  	case PHY_INTERFACE_MODE_TBI:
+>  	case PHY_INTERFACE_MODE_MOCA:
+>  	case PHY_INTERFACE_MODE_RTBI:
+> diff --git a/drivers/net/phy/phylink.c b/drivers/net/phy/phylink.c
+> index 0faa3d97e06b..766cad40f1b8 100644
+> --- a/drivers/net/phy/phylink.c
+> +++ b/drivers/net/phy/phylink.c
+> @@ -234,6 +234,7 @@ static int phylink_interface_max_speed(phy_interface_t interface)
+>  	case PHY_INTERFACE_MODE_SMII:
+>  	case PHY_INTERFACE_MODE_REVMII:
+>  	case PHY_INTERFACE_MODE_MII:
+> +	case PHY_INTERFACE_MODE_MIILITE:
+>  		return SPEED_100;
+>  
+>  	case PHY_INTERFACE_MODE_TBI:
+> diff --git a/include/linux/phy.h b/include/linux/phy.h
+> index e194dad1623d..6aad4b741c01 100644
+> --- a/include/linux/phy.h
+> +++ b/include/linux/phy.h
+> @@ -103,6 +103,7 @@ extern const int phy_basic_ports_array[3];
+>   * @PHY_INTERFACE_MODE_QUSGMII: Quad Universal SGMII
+>   * @PHY_INTERFACE_MODE_1000BASEKX: 1000Base-KX - with Clause 73 AN
+>   * @PHY_INTERFACE_MODE_10G_QXGMII: 10G-QXGMII - 4 ports over 10G USXGMII
+> + * @PHY_INTERFACE_MODE_MIILITE: MII-Lite - MII without RXER TXER CRS COL
+>   * @PHY_INTERFACE_MODE_MAX: Book keeping
+>   *
+>   * Describes the interface between the MAC and PHY.
+> @@ -144,6 +145,7 @@ typedef enum {
+>  	PHY_INTERFACE_MODE_QUSGMII,
+>  	PHY_INTERFACE_MODE_1000BASEKX,
+>  	PHY_INTERFACE_MODE_10G_QXGMII,
+> +	PHY_INTERFACE_MODE_MIILITE,
+>  	PHY_INTERFACE_MODE_MAX,
+>  } phy_interface_t;
+>  
+> @@ -260,6 +262,8 @@ static inline const char *phy_modes(phy_interface_t interface)
+>  		return "qusgmii";
+>  	case PHY_INTERFACE_MODE_10G_QXGMII:
+>  		return "10g-qxgmii";
+> +	case PHY_INTERFACE_MODE_MIILITE:
+> +		return "mii-lite";
+>  	default:
+>  		return "unknown";
+>  	}
+
+Otherwise, I think this is fine.
+
+Please remember netdev's rules, which can be found in the tl;dr on:
+https://www.kernel.org/doc/html/v6.1/process/maintainer-netdev.html
+
+(There's probably an updated version, but I can never remember the URL.)
+
+-- 
+RMK's Patch system: https://www.armlinux.org.uk/developer/patches/
+FTTP is here! 80Mbps down 10Mbps up. Decent connectivity at last!
 
