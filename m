@@ -1,180 +1,156 @@
-Return-Path: <linux-kernel+bounces-704409-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-704397-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 973BFAE9D0D
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Jun 2025 14:01:58 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 77E2AAE9D05
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Jun 2025 14:00:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B25D44E0070
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Jun 2025 12:01:37 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 787F5188A7A8
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Jun 2025 11:59:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4E51127B4E4;
-	Thu, 26 Jun 2025 11:57:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5C15E1CFBA;
+	Thu, 26 Jun 2025 11:56:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Mm5CUn+4"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.14])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="gwtb8FUF"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3724E27A907;
-	Thu, 26 Jun 2025 11:57:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.14
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A9F55277C87;
+	Thu, 26 Jun 2025 11:56:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750939036; cv=none; b=dKL1TU/Sph+RJAdmSWCBNgLDkCGugeTJG/u04mW8o7eBFss1DFKgRask9QVApJb50vAyB4nidN7cenKsuRA/S4jgM9SEmOQspcEFPzdEw3F45ztXHo74k7yNX5h7vOClH7K6Xz7Trj9GC3v83GOBUUyZQH2495DHKeIn3CknVuM=
+	t=1750939013; cv=none; b=eTSOm7vREmlBqJd+8FQFnAg4YTtkB0Ets8CA04Skai4ENGTXDlVDFj8UZmrl/eF2WNcWtaT1vGaa4X7ZguwFRGQf52Lrif0NTn+SXOZnR8Q5MTx8jMzcYoGs8AyHKl7fSq0ptxMUIZGpMr+ZKGom0/UyE769P5/geD5bIIn1aZc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750939036; c=relaxed/simple;
-	bh=0g7jBut0nG453ouvreWCxKiKGtz6IISQ1QPJOEG8E4w=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=XykW4zmkFtiHhytnyipq1w2fE+yjjpK2HIkjOJmdWNhyoLfjnbSQqej18Y94SQfXkgX9luddMrZMfdRPdjPQolR83oRe7IIUEhkUQdUurA3cyG7xOFc8Vo5HXSeXTtPuHRCKb/GTZOcNvyVyLmcrcnWNQBkafpG0wdFp1CeSkxc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Mm5CUn+4; arc=none smtp.client-ip=192.198.163.14
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1750939035; x=1782475035;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=0g7jBut0nG453ouvreWCxKiKGtz6IISQ1QPJOEG8E4w=;
-  b=Mm5CUn+44LplNnHza7GeKZy21WQ7VyyPI0VnzPzIkKdId7aKYbU9wJwr
-   tcDjNup7jOUE/vLN02RB6LREsKkm6JTXSWhGSONrRlSKjtXGkvf1aXiyp
-   pE6IWiahXC+kmFWCZVs4EeVpBBd+rX/Aox9mC+e7V+ed3Mm12sPsWPZod
-   4z8oWR5jdO7l+bykNkyTMe9pHFEcK524zDw3emc2vfuR9u4Sv9hXpnOSO
-   S0IPs1bNvnnEqL/tMRmI1gNVKM0065uqScOWabV3aN6l87o60j3NGuvOs
-   0LVA5iEWnkaFCZiUVyt0IfuvpceqrqmYEdZnR6Po4qZsspYJiKuttBlql
-   Q==;
-X-CSE-ConnectionGUID: /o8XktcHStSF1ooMrtMZAw==
-X-CSE-MsgGUID: pAukafH9TfivmTN2RdOPog==
-X-IronPort-AV: E=McAfee;i="6800,10657,11475"; a="53304617"
-X-IronPort-AV: E=Sophos;i="6.16,267,1744095600"; 
-   d="scan'208";a="53304617"
-Received: from fmviesa009.fm.intel.com ([10.60.135.149])
-  by fmvoesa108.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 26 Jun 2025 04:57:15 -0700
-X-CSE-ConnectionGUID: 87vwFAgURaiSTyTbdWGM0Q==
-X-CSE-MsgGUID: X9Mx4DxOSiyLCOtVoycZsA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.16,267,1744095600"; 
-   d="scan'208";a="152800626"
-Received: from yungchua-desk.itwn.intel.com ([10.227.8.136])
-  by fmviesa009-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 26 Jun 2025 04:57:13 -0700
-From: Bard Liao <yung-chuan.liao@linux.intel.com>
-To: broonie@kernel.org,
-	tiwai@suse.de,
-	linux-sound@vger.kernel.org,
-	vkoul@kernel.org
-Cc: vinod.koul@linaro.org,
+	s=arc-20240116; t=1750939013; c=relaxed/simple;
+	bh=2cRA5Ews7AECae0hutCZ8TsFpfNmeytIVE/Jq/tTjEU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=b1k/JCCwZqHrhZBmPTBHlrl4A5vY/aaZmG3BUweShvcTd2ox+lEFnKJaN18xMBpgdcRZrw5M/7NvwOMdnU+HanGC/nSq4MWrmlBNcmmiNGMCeDSdE4dazIEIrf9XCPaVIgrh11LvVyZ3xA6J0K/uCPQuBI4HLh39Kqk0LCWWeB4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=gwtb8FUF; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 704BAC4CEEE;
+	Thu, 26 Jun 2025 11:56:52 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1750939013;
+	bh=2cRA5Ews7AECae0hutCZ8TsFpfNmeytIVE/Jq/tTjEU=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=gwtb8FUFoGPOS2KoSj1v0brWpY9gOEDgifWy77vb6DGnhGdT0RdZThLNFWgQpywGw
+	 s2BCgbOoub8Bb22XvWQ9nXm2V79SQSPdyAO6aHyXEzgGTBQ/zH5fS01unA71RAiBYL
+	 ZjWGjCXPO7x1B4HpMP53MrGR7L47w/XbrFqxF7kw4qE9+VQO74fvo2gmaCLfxMPBYp
+	 8CPs3tIxe7esgQrjF2y2Kj4FM303Cs3Jv7wcn4WwhmXp5AxrVdnUeaacBf5ghDSQ8J
+	 eae4EzMOFE4wOQ85lrP1ZnqHKeThCHDeuA7ixrIR6Drf2aNX4CdD7oJEjnn2eR1imZ
+	 6W+5G/uy8HaOg==
+Date: Thu, 26 Jun 2025 12:56:49 +0100
+From: Mark Brown <broonie@kernel.org>
+To: Alexey Klimov <alexey.klimov@linaro.org>
+Cc: Srinivas Kandagatla <srini@kernel.org>,
+	Liam Girdwood <lgirdwood@gmail.com>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>, Stephen Boyd <sboyd@kernel.org>,
+	Lee Jones <lee@kernel.org>, Jaroslav Kysela <perex@perex.cz>,
+	Takashi Iwai <tiwai@suse.com>, linux-arm-msm@vger.kernel.org,
+	linux-sound@vger.kernel.org, devicetree@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
-	pierre-louis.bossart@linux.dev,
-	bard.liao@intel.com
-Subject: [PATCH 15/15] ASoC: rt1017: wait codec init in hw_params
-Date: Thu, 26 Jun 2025 19:56:25 +0800
-Message-ID: <20250626115625.536423-16-yung-chuan.liao@linux.intel.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20250626115625.536423-1-yung-chuan.liao@linux.intel.com>
-References: <20250626115625.536423-1-yung-chuan.liao@linux.intel.com>
+	Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>,
+	Srinivas Kandagatla <srinivas.kandagatla@oss.qualcomm.com>
+Subject: Re: [PATCH 3/3] ASoC: codecs: add new pm4125 audio codec driver
+Message-ID: <aF01gRFjsKgy6j4V@finisterre.sirena.org.uk>
+References: <20250626-pm4125_audio_codec_v1-v1-0-e52933c429a0@linaro.org>
+ <20250626-pm4125_audio_codec_v1-v1-3-e52933c429a0@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="PuAiEYJCFXajbSr9"
+Content-Disposition: inline
+In-Reply-To: <20250626-pm4125_audio_codec_v1-v1-3-e52933c429a0@linaro.org>
+X-Cookie: Do not cut switchbacks.
 
-Move regmap sync to rt1017_sdca_update_status() when unattach_request
-is set, and only do regmap sync in resume when no reattach needed.
-And move waiting codec init to hw_params when the codec really need to
-be initialized. The change can shorten the resume time.
 
-Signed-off-by: Bard Liao <yung-chuan.liao@linux.intel.com>
-Reviewed-by: Shuming Fan <shumingf@realtek.com>
-Reviewed-by: Charles Keepax <ckeepax@opensource.cirrus.com>
----
- sound/soc/codecs/rt1017-sdca-sdw.c | 32 +++++++++++++++++++-----------
- 1 file changed, 20 insertions(+), 12 deletions(-)
+--PuAiEYJCFXajbSr9
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-diff --git a/sound/soc/codecs/rt1017-sdca-sdw.c b/sound/soc/codecs/rt1017-sdca-sdw.c
-index 88fc23a4999f..bd9eb1854aa5 100644
---- a/sound/soc/codecs/rt1017-sdca-sdw.c
-+++ b/sound/soc/codecs/rt1017-sdca-sdw.c
-@@ -373,6 +373,7 @@ static int rt1017_sdca_update_status(struct sdw_slave *slave,
- 				enum sdw_slave_status status)
- {
- 	struct  rt1017_sdca_priv *rt1017 = dev_get_drvdata(&slave->dev);
-+	int ret;
- 
- 	if (status == SDW_SLAVE_UNATTACHED)
- 		rt1017->hw_init = false;
-@@ -385,7 +386,18 @@ static int rt1017_sdca_update_status(struct sdw_slave *slave,
- 		return 0;
- 
- 	/* perform I/O transfers required for Slave initialization */
--	return rt1017_sdca_io_init(&slave->dev, slave);
-+	ret = rt1017_sdca_io_init(&slave->dev, slave);
-+	if (ret < 0) {
-+		dev_err(&slave->dev, "IO init failed: %d\n", ret);
-+		return ret;
-+	}
-+
-+	if (slave->unattach_request) {
-+		regcache_cache_only(rt1017->regmap, false);
-+		regcache_sync(rt1017->regmap);
-+	}
-+
-+	return ret;
- }
- 
- static const char * const rt1017_rx_data_ch_select[] = {
-@@ -569,6 +581,8 @@ static void rt1017_sdca_shutdown(struct snd_pcm_substream *substream,
- 	snd_soc_dai_set_dma_data(dai, substream, NULL);
- }
- 
-+#define RT1017_PROBE_TIMEOUT 5000
-+
- static int rt1017_sdca_pcm_hw_params(struct snd_pcm_substream *substream,
- 				struct snd_pcm_hw_params *params,
- 				struct snd_soc_dai *dai)
-@@ -616,6 +630,10 @@ static int rt1017_sdca_pcm_hw_params(struct snd_pcm_substream *substream,
- 		params_rate(params), num_channels, snd_pcm_format_width(params_format(params)),
- 		direction, ch_mask, port);
- 
-+	retval = sdw_slave_wait_for_initialization(rt1017->sdw_slave, RT1017_PROBE_TIMEOUT);
-+	if (retval < 0)
-+		return retval;
-+
- 	retval = sdw_stream_add_slave(rt1017->sdw_slave, &stream_config,
- 				&port_config, 1, sdw_stream);
- 	if (retval) {
-@@ -770,13 +788,10 @@ static int rt1017_sdca_dev_suspend(struct device *dev)
- 	return 0;
- }
- 
--#define RT1017_PROBE_TIMEOUT 5000
--
- static int rt1017_sdca_dev_resume(struct device *dev)
- {
- 	struct sdw_slave *slave = dev_to_sdw_dev(dev);
- 	struct rt1017_sdca_priv *rt1017 = dev_get_drvdata(dev);
--	unsigned long time;
- 
- 	if (!rt1017->first_hw_init)
- 		return 0;
-@@ -784,14 +799,7 @@ static int rt1017_sdca_dev_resume(struct device *dev)
- 	if (!slave->unattach_request)
- 		goto regmap_sync;
- 
--	time = wait_for_completion_timeout(&slave->initialization_complete,
--				msecs_to_jiffies(RT1017_PROBE_TIMEOUT));
--	if (!time) {
--		dev_err(&slave->dev, "Initialization not complete, timed out\n");
--		sdw_show_ping_status(slave->bus, true);
--
--		return -ETIMEDOUT;
--	}
-+	return 0;
- 
- regmap_sync:
- 	slave->unattach_request = 0;
--- 
-2.43.0
+On Thu, Jun 26, 2025 at 12:50:31AM +0100, Alexey Klimov wrote:
 
+> --- a/sound/soc/codecs/Kconfig
+> +++ b/sound/soc/codecs/Kconfig
+> @@ -297,6 +297,7 @@ config SND_SOC_ALL_CODECS
+>  	imply SND_SOC_WCD937X_SDW
+>  	imply SND_SOC_WCD938X_SDW
+>  	imply SND_SOC_WCD939X_SDW
+> +	imply SND_SOC_PM4125_SDW
+>  	imply SND_SOC_LPASS_MACRO_COMMON
+>  	imply SND_SOC_LPASS_RX_MACRO
+>  	imply SND_SOC_LPASS_TX_MACRO
+
+Please keep this file sorted, there's obviously been some things missed
+but please don't make it worse.
+
+> +obj-$(CONFIG_SND_SOC_PM4125_SDW) += snd-soc-pm4125-sdw.o
+> +obj-$(CONFIG_SND_SOC_PM4125)   += snd-soc-pm4125.o
+> +ifdef CONFIG_SND_SOC_PM4125_SDW
+> +# avoid link failure by forcing sdw code built-in when needed
+> +obj-$(CONFIG_SND_SOC_PM4125) += snd-soc-pm4125-sdw.o
+> +endif
+
+Other drivers sort this out in Kconfig, do as they do.
+
+> +static int pm4125_micbias_control(struct snd_soc_component *component,
+> +				  int micb_num, int req, bool is_dapm)
+> +{
+> +	return 0;
+> +}
+
+Why have this empty function which is only called from within the
+driver?  At best it's making the callers look like they do something.
+
+> +static irqreturn_t pm4125_wd_handle_irq(int irq, void *data)
+> +{
+> +	return IRQ_HANDLED;
+> +}
+
+Why bother regisering for the interrupt at all if you're just going to
+ignore it?
+
+> +#if defined(CONFIG_OF)
+> +static const struct of_device_id pm4125_of_match[] = {
+> +	{ .compatible = "qcom,pm4125-codec" },
+> +	{ }
+> +};
+> +MODULE_DEVICE_TABLE(of, pm4125_of_match);
+> +#endif
+
+Why does this compatible exist?  If the driver is instantiated from a
+as a Linux software contruct it shouldn't appear in the DT.
+
+> +const u8 pm4125_reg_access_digital[
+> +	PM4125_REG(PM4125_DIGITAL_REGISTERS_MAX_SIZE)] = {
+> +		[PM4125_REG(PM4125_DIG_SWR_CHIP_ID0)] = RD_REG,
+> +		[PM4125_REG(PM4125_DIG_SWR_CHIP_ID1)] = RD_REG,
+> +		[PM4125_REG(PM4125_DIG_SWR_CHIP_ID2)] = RD_REG,
+
+Data tables like this shouldn't be in headers, they should be in C
+files.  At worst you might end up with duplicate copies in the object
+code.
+
+--PuAiEYJCFXajbSr9
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmhdNVcACgkQJNaLcl1U
+h9D5CAf/RRC2a5uS/BLF6xNL01DzPx9aCXjnyAgTQG80np8rHi7O6vg7gMm/lmI7
+jTORay2DZAyHk1HJeu0CV/i871LFG7SStgwmuV2oXLvyrp5Xiix6vfi8f/WzTOaW
+pGBaicThLjbIIeGw3Tj0G04GbwapGWrH4MgPkZ3fnahQ2SfLxrc9p57DBHGqjVRE
+unTE0dXexH4anhDgcUZ+UAjdcYeKY18v1q425oezGKSQfGYuV8x9QRxfdshHlSPk
+/uyEQw/Z1ZXh1Cal9nac1aOPUdiU9RpdHemAolIFOXXM33Jxpizk6s2H97fkHfdn
+MjML1c79uWqgSL/QutPiQ3wYRW9FwA==
+=Hwsm
+-----END PGP SIGNATURE-----
+
+--PuAiEYJCFXajbSr9--
 
