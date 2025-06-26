@@ -1,354 +1,94 @@
-Return-Path: <linux-kernel+bounces-703717-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-703721-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3CF60AE9409
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Jun 2025 04:24:40 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id C7C6EAE941A
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Jun 2025 04:37:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 058367A72DA
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Jun 2025 02:23:15 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 364663B78D6
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Jun 2025 02:37:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 83D6C1E8322;
-	Thu, 26 Jun 2025 02:24:28 +0000 (UTC)
-Received: from szxga05-in.huawei.com (szxga05-in.huawei.com [45.249.212.191])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B42C5202C45;
+	Thu, 26 Jun 2025 02:37:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Q5khl0MZ"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DB65415ADB4;
-	Thu, 26 Jun 2025 02:24:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.191
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0A62F1F5828;
+	Thu, 26 Jun 2025 02:37:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750904668; cv=none; b=hD/i94CV1jaIcGnslr6yHuL7TEBvpfTb6RKFGfvnF6BpFBKx6AyNDQgJhTHa1hqZLVaCOsALY8RMagVxsQpAxx4DGJLVlrDq+vDPdZ5HGBxjHIt6H33CZ61XRpA+56ijRqF7cHs2HRbDvHcST8CrOVO3ie2VExdQK7imfr0gChY=
+	t=1750905425; cv=none; b=cfu47cwqjP6mBj/Yj8PGL9nPbxPeBYy8LHdzssAWKkUsF02mnUbPkHzKwE481DEc7KFbJ+p85TPUwwldtoQ/9TfNl67xo1je3bYqseQO+2J9mXloHFM1WpI/D0FGNX1cjlLFffBy7HU9gPS8B9cKClVRNk4pPRZWM+z451DTrHI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750904668; c=relaxed/simple;
-	bh=OZQ3H/JIEn8bCjBlXw94lDCSHn31RGiofhuJjyb66Fc=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=hRshQ+IhSBJKAI7dhYn61e2TV/knaFlQAMtst9Ld4hInIKHtfeK16eCnTXoiVJdhhMLE8kB+IJge/t5i/OsixcO3bapcvG6ZEsGASoNJs6yietP9T8d3h3fc3qVTPogDuEdLGxxOKAb6gWNcAeRfDlU+0R3QLa+ew88+PzBOAjA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.191
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.163.44])
-	by szxga05-in.huawei.com (SkyGuard) with ESMTP id 4bSMrf0sY6z1W3Vj;
-	Thu, 26 Jun 2025 10:21:54 +0800 (CST)
-Received: from kwepemg100016.china.huawei.com (unknown [7.202.181.57])
-	by mail.maildlp.com (Postfix) with ESMTPS id 4C4471400E8;
-	Thu, 26 Jun 2025 10:24:22 +0800 (CST)
-Received: from huawei.com (10.67.174.33) by kwepemg100016.china.huawei.com
- (7.202.181.57) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Thu, 26 Jun
- 2025 10:24:21 +0800
-From: GONG Ruiqi <gongruiqi1@huawei.com>
-To: Mimi Zohar <zohar@linux.ibm.com>, Roberto Sassu
-	<roberto.sassu@huawei.com>, Dmitry Kasatkin <dmitry.kasatkin@gmail.com>,
-	Jarkko Sakkinen <jarkko@kernel.org>, Madhavan Srinivasan
-	<maddy@linux.ibm.com>, Michael Ellerman <mpe@ellerman.id.au>, Heiko Carstens
-	<hca@linux.ibm.com>, Vasily Gorbik <gor@linux.ibm.com>, Alexander Gordeev
-	<agordeev@linux.ibm.com>
-CC: Eric Snowberg <eric.snowberg@oracle.com>, Christophe Leroy
-	<christophe.leroy@csgroup.eu>, Nicholas Piggin <npiggin@gmail.com>, Christian
- Borntraeger <borntraeger@linux.ibm.com>, Sven Schnelle <svens@linux.ibm.com>,
-	"Lee, Chun-Yi" <jlee@suse.com>, <linuxppc-dev@lists.ozlabs.org>,
-	<linux-kernel@vger.kernel.org>, <linux-s390@vger.kernel.org>,
-	<linux-integrity@vger.kernel.org>, <keyrings@vger.kernel.org>, Lu Jialin
-	<lujialin4@huawei.com>, <gongruiqi1@huawei.com>
-Subject: [PATCH RESEND] integrity: Extract secure boot enquiry function out of IMA
-Date: Thu, 26 Jun 2025 10:36:17 +0800
-Message-ID: <20250626023617.3885806-1-gongruiqi1@huawei.com>
-X-Mailer: git-send-email 2.25.1
+	s=arc-20240116; t=1750905425; c=relaxed/simple;
+	bh=3JMG6iB8TJvIJcGTwj3LS7AOTxOpDIfMUVTPuJlJB1k=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=tkiMFP23rCTekDqivtAGhR6huFQn4fscOv0sbu6lyEsrrqyZK9JYHZ5n2aHarjHetEp37VE6XsZ8CM9XzyXkdLFyJAPsQ7w7VkjIODYxeRnf78onDqCJnRYAufevfq6Qtqs/wGkmHCqFgU2u8RrMH/jThjV8QFWdtfI/8Wsk7jo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Q5khl0MZ; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 54BE1C4CEEA;
+	Thu, 26 Jun 2025 02:37:04 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1750905424;
+	bh=3JMG6iB8TJvIJcGTwj3LS7AOTxOpDIfMUVTPuJlJB1k=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=Q5khl0MZs0YrWvdZchwUX1U8I1eBplhj+0tYpxr8rentRjTAoVs7bPlp+FAbfTRvL
+	 JhCVPANA5DFDFgLXppQGBuXsjHW7Xz7xWcK709Ocg2i1mh1rJyUgd601mvbHuidnOs
+	 J988JDLYvhXyk48jfkHfr9MRohCkHot3o8lP0zemiipe4KzF9cFFy42mBjU+DsGfHq
+	 O69fJjbacyWap17eWJ+Grp8TQ/miRrSE6LaMds95gGAynho5fbgUfqKzSvfhd6EExi
+	 uvpSKAP/X3v6eXj9pxZTQA2xDOoqO19oLIYkdNjy7/Ij3KwUmEdHlwUSHVxEc19mOf
+	 p7iABbX9Eblrw==
+Date: Wed, 25 Jun 2025 19:36:29 -0700
+From: Eric Biggers <ebiggers@kernel.org>
+To: Maxime MERE <maxime.mere@foss.st.com>
+Cc: linux-fscrypt@vger.kernel.org, linux-crypto@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-mtd@lists.infradead.org,
+	linux-ext4@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net,
+	ceph-devel@vger.kernel.org
+Subject: Re: [PATCH] fscrypt: don't use hardware offload Crypto API drivers
+Message-ID: <20250626023629.GA4797@sol>
+References: <20250611205859.80819-1-ebiggers@kernel.org>
+ <8f4c2f36-71af-4c84-bcee-2554cea991d0@foss.st.com>
+ <20250613144239.GA1287@sol>
+ <c1671c5e-d824-4131-861e-470d09371e05@foss.st.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: kwepems500002.china.huawei.com (7.221.188.17) To
- kwepemg100016.china.huawei.com (7.202.181.57)
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <c1671c5e-d824-4131-861e-470d09371e05@foss.st.com>
 
-Commit 92ad19559ea9 ("integrity: Do not load MOK and MOKx when secure
-boot be disabled") utilizes arch_ima_get_secureboot() to perform a
-secure boot status check before loading the Machine Owner Key (MOK).
-However, only when CONFIG_IMA_SECURE_AND_OR_TRUSTED_BOOT=y can this
-function be functional, while this config has nothing to do with secure
-boot or MOK loading.
+On Wed, Jun 25, 2025 at 06:29:17PM +0200, Maxime MERE wrote:
+> Regarding robustness and maintenance, ST ensures regular updates of its
+> drivers and can fix any reported bugs. We have conducted internal tests with
+> dm-crypt that demonstrate the proper functioning of these drivers for this
+> type of application.
 
-Given that arch_ima_get_secureboot() is just a helper to retrieve info
-about secure boot via EFI and doesn't necessarily be a part of IMA,
-rename it to arch_integrity_get_secureboot(), decouple its functionality
-from IMA and extract it to be a integrity subsystem helper, so that both
-certificate loading and IMA can make use of it.
+In addition to the bug I mentioned earlier where the STM32 crypto driver
+produced incorrect ciphertext (https://github.com/google/fscryptctl/issues/32),
+the following fix shows that the STM32 crypto driver computed incorrect hash
+values for years (2017 through 2023):
 
-Compile-tested for powerpc, s390 and x86, all with allmodconfig.
+    https://git.kernel.org/linus/e6af5c0c4d32a27e
 
-Signed-off-by: GONG Ruiqi <gongruiqi1@huawei.com>
----
+While these bugs may be fixed now, they show a serious lack of testing.  They
+also show that these sorts of drivers are really hard to get right.
 
-RESEND: Remove duplicated paragraph in commit message. Apology for the
-mistake.
+I absolutely do not want fscrypt using anything like this.  I want the crypto to
+be done correctly.
 
- arch/powerpc/kernel/ima_arch.c                |  3 +-
- arch/s390/kernel/ima_arch.c                   |  3 +-
- include/linux/ima.h                           |  6 ---
- include/linux/integrity.h                     |  1 +
- security/integrity/Makefile                   |  3 +-
- security/integrity/ima/Makefile               |  2 +-
- security/integrity/ima/ima_appraise.c         |  2 +-
- security/integrity/ima/ima_efi.c              | 47 +-----------------
- security/integrity/ima/ima_main.c             |  2 +-
- security/integrity/platform_certs/load_uefi.c |  2 +-
- security/integrity/secureboot.c               | 48 +++++++++++++++++++
- 11 files changed, 61 insertions(+), 58 deletions(-)
- create mode 100644 security/integrity/secureboot.c
+(And also efficiently, which clearly these offloads don't actually do either.)
 
-diff --git a/arch/powerpc/kernel/ima_arch.c b/arch/powerpc/kernel/ima_arch.c
-index b7029beed847..4ceda3f534bd 100644
---- a/arch/powerpc/kernel/ima_arch.c
-+++ b/arch/powerpc/kernel/ima_arch.c
-@@ -5,9 +5,10 @@
-  */
- 
- #include <linux/ima.h>
-+#include <linux/integrity.h>
- #include <asm/secure_boot.h>
- 
--bool arch_ima_get_secureboot(void)
-+bool arch_integrity_get_secureboot(void)
- {
- 	return is_ppc_secureboot_enabled();
- }
-diff --git a/arch/s390/kernel/ima_arch.c b/arch/s390/kernel/ima_arch.c
-index f3c3e6e1c5d3..6fb2d551e2c2 100644
---- a/arch/s390/kernel/ima_arch.c
-+++ b/arch/s390/kernel/ima_arch.c
-@@ -1,9 +1,10 @@
- // SPDX-License-Identifier: GPL-2.0
- 
- #include <linux/ima.h>
-+#include <linux/integrity.h>
- #include <asm/boot_data.h>
- 
--bool arch_ima_get_secureboot(void)
-+bool arch_integrity_get_secureboot(void)
- {
- 	return ipl_secure_flag;
- }
-diff --git a/include/linux/ima.h b/include/linux/ima.h
-index 8e29cb4e6a01..9faf3b964314 100644
---- a/include/linux/ima.h
-+++ b/include/linux/ima.h
-@@ -72,14 +72,8 @@ int __init ima_get_kexec_buffer(void **addr, size_t *size);
- #endif
- 
- #ifdef CONFIG_IMA_SECURE_AND_OR_TRUSTED_BOOT
--extern bool arch_ima_get_secureboot(void);
- extern const char * const *arch_get_ima_policy(void);
- #else
--static inline bool arch_ima_get_secureboot(void)
--{
--	return false;
--}
--
- static inline const char * const *arch_get_ima_policy(void)
- {
- 	return NULL;
-diff --git a/include/linux/integrity.h b/include/linux/integrity.h
-index f5842372359b..4bc81fe4253e 100644
---- a/include/linux/integrity.h
-+++ b/include/linux/integrity.h
-@@ -61,5 +61,6 @@ integrity_inode_attrs_changed(const struct integrity_inode_attributes *attrs,
- 		!inode_eq_iversion(inode, attrs->version));
- }
- 
-+extern bool arch_integrity_get_secureboot(void);
- 
- #endif /* _LINUX_INTEGRITY_H */
-diff --git a/security/integrity/Makefile b/security/integrity/Makefile
-index 92b63039c654..0770c6554a8f 100644
---- a/security/integrity/Makefile
-+++ b/security/integrity/Makefile
-@@ -11,7 +11,8 @@ integrity-$(CONFIG_INTEGRITY_SIGNATURE) += digsig.o
- integrity-$(CONFIG_INTEGRITY_ASYMMETRIC_KEYS) += digsig_asymmetric.o
- integrity-$(CONFIG_INTEGRITY_PLATFORM_KEYRING) += platform_certs/platform_keyring.o
- integrity-$(CONFIG_INTEGRITY_MACHINE_KEYRING) += platform_certs/machine_keyring.o
--integrity-$(CONFIG_LOAD_UEFI_KEYS) += platform_certs/efi_parser.o \
-+integrity-$(CONFIG_LOAD_UEFI_KEYS) += secureboot.o \
-+				      platform_certs/efi_parser.o \
- 				      platform_certs/load_uefi.o \
- 				      platform_certs/keyring_handler.o
- integrity-$(CONFIG_LOAD_IPL_KEYS) += platform_certs/load_ipl_s390.o
-diff --git a/security/integrity/ima/Makefile b/security/integrity/ima/Makefile
-index b376d38b4ee6..f81be17e25a8 100644
---- a/security/integrity/ima/Makefile
-+++ b/security/integrity/ima/Makefile
-@@ -16,5 +16,5 @@ ima-$(CONFIG_IMA_MEASURE_ASYMMETRIC_KEYS) += ima_asymmetric_keys.o
- ima-$(CONFIG_IMA_QUEUE_EARLY_BOOT_KEYS) += ima_queue_keys.o
- 
- ifeq ($(CONFIG_EFI),y)
--ima-$(CONFIG_IMA_SECURE_AND_OR_TRUSTED_BOOT) += ima_efi.o
-+ima-$(CONFIG_IMA_SECURE_AND_OR_TRUSTED_BOOT) += ima_efi.o ../secureboot.o
- endif
-diff --git a/security/integrity/ima/ima_appraise.c b/security/integrity/ima/ima_appraise.c
-index f435eff4667f..41bece645348 100644
---- a/security/integrity/ima/ima_appraise.c
-+++ b/security/integrity/ima/ima_appraise.c
-@@ -27,7 +27,7 @@ core_param(ima_appraise, ima_appraise_cmdline_default, charp, 0);
- void __init ima_appraise_parse_cmdline(void)
- {
- 	const char *str = ima_appraise_cmdline_default;
--	bool sb_state = arch_ima_get_secureboot();
-+	bool sb_state = arch_integrity_get_secureboot();
- 	int appraisal_state = ima_appraise;
- 
- 	if (!str)
-diff --git a/security/integrity/ima/ima_efi.c b/security/integrity/ima/ima_efi.c
-index 138029bfcce1..fcbc0727469e 100644
---- a/security/integrity/ima/ima_efi.c
-+++ b/security/integrity/ima/ima_efi.c
-@@ -2,52 +2,9 @@
- /*
-  * Copyright (C) 2018 IBM Corporation
-  */
--#include <linux/efi.h>
- #include <linux/module.h>
- #include <linux/ima.h>
--#include <asm/efi.h>
--
--#ifndef arch_ima_efi_boot_mode
--#define arch_ima_efi_boot_mode efi_secureboot_mode_unset
--#endif
--
--static enum efi_secureboot_mode get_sb_mode(void)
--{
--	enum efi_secureboot_mode mode;
--
--	if (!efi_rt_services_supported(EFI_RT_SUPPORTED_GET_VARIABLE)) {
--		pr_info("ima: secureboot mode unknown, no efi\n");
--		return efi_secureboot_mode_unknown;
--	}
--
--	mode = efi_get_secureboot_mode(efi.get_variable);
--	if (mode == efi_secureboot_mode_disabled)
--		pr_info("ima: secureboot mode disabled\n");
--	else if (mode == efi_secureboot_mode_unknown)
--		pr_info("ima: secureboot mode unknown\n");
--	else
--		pr_info("ima: secureboot mode enabled\n");
--	return mode;
--}
--
--bool arch_ima_get_secureboot(void)
--{
--	static enum efi_secureboot_mode sb_mode;
--	static bool initialized;
--
--	if (!initialized && efi_enabled(EFI_BOOT)) {
--		sb_mode = arch_ima_efi_boot_mode;
--
--		if (sb_mode == efi_secureboot_mode_unset)
--			sb_mode = get_sb_mode();
--		initialized = true;
--	}
--
--	if (sb_mode == efi_secureboot_mode_enabled)
--		return true;
--	else
--		return false;
--}
-+#include <linux/integrity.h>
- 
- /* secureboot arch rules */
- static const char * const sb_arch_rules[] = {
-@@ -67,7 +24,7 @@ static const char * const sb_arch_rules[] = {
- 
- const char * const *arch_get_ima_policy(void)
- {
--	if (IS_ENABLED(CONFIG_IMA_ARCH_POLICY) && arch_ima_get_secureboot()) {
-+	if (IS_ENABLED(CONFIG_IMA_ARCH_POLICY) && arch_integrity_get_secureboot()) {
- 		if (IS_ENABLED(CONFIG_MODULE_SIG))
- 			set_module_sig_enforced();
- 		if (IS_ENABLED(CONFIG_KEXEC_SIG))
-diff --git a/security/integrity/ima/ima_main.c b/security/integrity/ima/ima_main.c
-index f99ab1a3b0f0..9974d89f3eca 100644
---- a/security/integrity/ima/ima_main.c
-+++ b/security/integrity/ima/ima_main.c
-@@ -899,7 +899,7 @@ static int ima_load_data(enum kernel_load_data_id id, bool contents)
- 	switch (id) {
- 	case LOADING_KEXEC_IMAGE:
- 		if (IS_ENABLED(CONFIG_KEXEC_SIG)
--		    && arch_ima_get_secureboot()) {
-+		    && arch_integrity_get_secureboot()) {
- 			pr_err("impossible to appraise a kernel image without a file descriptor; try using kexec_file_load syscall.\n");
- 			return -EACCES;
- 		}
-diff --git a/security/integrity/platform_certs/load_uefi.c b/security/integrity/platform_certs/load_uefi.c
-index d1fdd113450a..3042a0c536d6 100644
---- a/security/integrity/platform_certs/load_uefi.c
-+++ b/security/integrity/platform_certs/load_uefi.c
-@@ -212,7 +212,7 @@ static int __init load_uefi_certs(void)
- 	}
- 
- 	/* the MOK/MOKx can not be trusted when secure boot is disabled */
--	if (!arch_ima_get_secureboot())
-+	if (!arch_integrity_get_secureboot())
- 		return 0;
- 
- 	mokx = get_cert_list(L"MokListXRT", &mok_var, &mokxsize, &status);
-diff --git a/security/integrity/secureboot.c b/security/integrity/secureboot.c
-new file mode 100644
-index 000000000000..5c50f8be6053
---- /dev/null
-+++ b/security/integrity/secureboot.c
-@@ -0,0 +1,48 @@
-+// SPDX-License-Identifier: GPL-2.0+
-+/*
-+ * Copyright (C) 2025 Huawei Technologies Co., Ltd
-+ */
-+#include <linux/module.h>
-+#include <linux/efi.h>
-+#include <linux/integrity.h>
-+
-+#include <asm/efi.h>
-+
-+#ifndef arch_integrity_efi_boot_mode
-+#define arch_integrity_efi_boot_mode efi_secureboot_mode_unset
-+#endif
-+
-+static enum efi_secureboot_mode get_sb_mode(void)
-+{
-+	enum efi_secureboot_mode mode;
-+
-+	if (!efi_rt_services_supported(EFI_RT_SUPPORTED_GET_VARIABLE)) {
-+		pr_info("integrity: secureboot mode unknown, no efi\n");
-+		return efi_secureboot_mode_unknown;
-+	}
-+
-+	mode = efi_get_secureboot_mode(efi.get_variable);
-+	if (mode == efi_secureboot_mode_disabled)
-+		pr_info("integrity: secureboot mode disabled\n");
-+	else if (mode == efi_secureboot_mode_unknown)
-+		pr_info("integrity: secureboot mode unknown\n");
-+	else
-+		pr_info("integrity: secureboot mode enabled\n");
-+	return mode;
-+}
-+
-+bool __weak arch_integrity_get_secureboot(void)
-+{
-+	static enum efi_secureboot_mode sb_mode;
-+	static bool initialized;
-+
-+	if (!initialized && efi_enabled(EFI_BOOT)) {
-+		sb_mode = arch_integrity_efi_boot_mode;
-+
-+		if (sb_mode == efi_secureboot_mode_unset)
-+			sb_mode = get_sb_mode();
-+		initialized = true;
-+	}
-+
-+	return sb_mode == efi_secureboot_mode_enabled;
-+}
--- 
-2.25.1
+BTW, it seems all the hardware offload crypto drivers have quality issues like
+this.  I gave other examples in the thread, for example the Intel QAT driver
+causing data corruption.  So my intent isn't to single out the STM32 driver per
+se.  (And of course this patch applies to all drivers.)  I'm just responding to
+STM32 because of the people pushing it in this thread for some reason.
 
+- Eric
 
