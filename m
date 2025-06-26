@@ -1,189 +1,268 @@
-Return-Path: <linux-kernel+bounces-703884-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-703886-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4D903AE960C
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Jun 2025 08:20:24 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0FB67AE9611
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Jun 2025 08:22:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6B4FB4A4A69
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Jun 2025 06:20:24 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1D80C1C24AEE
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Jun 2025 06:22:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D99DE22D790;
-	Thu, 26 Jun 2025 06:20:16 +0000 (UTC)
-Received: from mxct.zte.com.cn (mxct.zte.com.cn [183.62.165.209])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 822FB227E8A;
+	Thu, 26 Jun 2025 06:22:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="M2WqySIx"
+Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 62D7A84D08;
-	Thu, 26 Jun 2025 06:20:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=183.62.165.209
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0AC7E84D08;
+	Thu, 26 Jun 2025 06:22:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750918816; cv=none; b=JNh0DnImmmvOuZvP/V32LF0zkXs1mpLiTD2G6qbg0KLJ5Qbg+sSQM4mzGU8G7ut77UD5e9mv6Xa3SQAnFMRbYcFfs+WiV7LSAlY0sGyKnXyo9jDSLmzHh3YnzVcdqrbuSnepsVd90hxUaQB/Jel9N+Hvre38SxOYtFeFUrgJevg=
+	t=1750918950; cv=none; b=hfv/xOaZr4duHbRLXbhV0OE56A9ari6exGNv3q582p3A++ocDeVy1U2nB3zlBPA02cmSIOIfu+blqDw07V/eSemFd11y5/BPbkQOO5ihOY3mC11sABhXsd9bi8hTkRp77aVoPX2N3zi/hL2+QDE3NYXHuh7GKYogyJNxWocCNUM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750918816; c=relaxed/simple;
-	bh=KnM6er54bHfD4X2upb/uVRwqsSdEHhnUqCtBq+J5Wi4=;
-	h=Date:Message-ID:Mime-Version:From:To:Cc:Subject:Content-Type; b=BVD74SS5ARwSq7keqdtKcQgmqxnsNftpsxG5qFhJc5OWhFGWR0tmi23myv1suutszGdXj+pDFbQlmHKpXnYyJ75oo90RbTJz4WNPbmA38O/AY/QpGdQfC7VxtOM8MLHvzAd9PBjig8mno/7U0gw1FJxVBbQ+AI4QjNvEo4BdGsQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zte.com.cn; spf=pass smtp.mailfrom=zte.com.cn; arc=none smtp.client-ip=183.62.165.209
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zte.com.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zte.com.cn
-Received: from mse-fl1.zte.com.cn (unknown [10.5.228.132])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by mxct.zte.com.cn (FangMail) with ESMTPS id 4bST7Q3Vl7z4xPSS;
-	Thu, 26 Jun 2025 14:20:02 +0800 (CST)
-Received: from xaxapp02.zte.com.cn ([10.88.97.241])
-	by mse-fl1.zte.com.cn with SMTP id 55Q6JgPM016081;
-	Thu, 26 Jun 2025 14:19:42 +0800 (+08)
-	(envelope-from liu.xuemei1@zte.com.cn)
-Received: from mapi (xaxapp05[null])
-	by mapi (Zmail) with MAPI id mid32;
-	Thu, 26 Jun 2025 14:19:44 +0800 (CST)
-Date: Thu, 26 Jun 2025 14:19:44 +0800 (CST)
-X-Zmail-TransId: 2afc685ce680ffffffffa0f-dfcd2
-X-Mailer: Zmail v1.0
-Message-ID: <202506261419447422wtZgdMsDQuN-09S7w3Ae@zte.com.cn>
+	s=arc-20240116; t=1750918950; c=relaxed/simple;
+	bh=WkPZPo3daUaXRErnYhHy9ValI38EN3AVQHNhMtFZnbY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Um3tAI4YrKIzrhhKIlo+SCRaVKFf6zAcEhaXvLv6zt/8qCsqldGXmTPy+RAf8K2msEUMMzhl/I0OVmKmQR7oTbsYEqPjMFd9bNsma56QXTeRE+9pjMIldM33d9O/Cttm/PoITZE7vXgDiujTjXoQL0wNOaNnFssHezCvOVOcsg8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=M2WqySIx; arc=none smtp.client-ip=148.163.158.5
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0353725.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 55Q4B5bm031140;
+	Thu, 26 Jun 2025 06:22:15 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
+	:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=pp1; bh=Wdfnoc
+	0htXViaYtOXgTxlOPt/zSW2VKAxS55sMD+Oc8=; b=M2WqySIxQCyN+8AM1iOsir
+	rmiQYCH+MBdOD0lQmIiNwope5LukSXncFje/ej0GeL2TWK+QkG7Ajh9dZVnikJSF
+	D06iSH5jZiYjUEfB9RYIckGEWdY9VfiuTIvc2zYOxrihlNNFM3XXIyWHl6S3cDYq
+	0Iw1mBbXcq3vX2Mf7D5mQ+xQ2eKwbQjxkaQ2fw1Mi5IOE0VQP6e/AnFs/62hPZpS
+	DQzIhUUIeORWKPN7lSj6IepB9nkkKD4zXnFQ5UxSfuP1Wp6HTcVmRW9eICuCDCWW
+	D2p8PAJw3VakiBCnu2A8cuPERpyUrUPilixWQGIA+lO6GARcIRWD9FA1SL7YK8hg
+	==
+Received: from pps.reinject (localhost [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 47dk6446ph-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 26 Jun 2025 06:22:15 +0000 (GMT)
+Received: from m0353725.ppops.net (m0353725.ppops.net [127.0.0.1])
+	by pps.reinject (8.18.0.8/8.18.0.8) with ESMTP id 55Q6LDOm025786;
+	Thu, 26 Jun 2025 06:22:15 GMT
+Received: from ppma12.dal12v.mail.ibm.com (dc.9e.1632.ip4.static.sl-reverse.com [50.22.158.220])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 47dk6446pd-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 26 Jun 2025 06:22:14 +0000 (GMT)
+Received: from pps.filterd (ppma12.dal12v.mail.ibm.com [127.0.0.1])
+	by ppma12.dal12v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 55Q3Z0v2014988;
+	Thu, 26 Jun 2025 06:22:14 GMT
+Received: from smtprelay07.wdc07v.mail.ibm.com ([172.16.1.74])
+	by ppma12.dal12v.mail.ibm.com (PPS) with ESMTPS id 47e72twpc0-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 26 Jun 2025 06:22:14 +0000
+Received: from smtpav06.dal12v.mail.ibm.com (smtpav06.dal12v.mail.ibm.com [10.241.53.105])
+	by smtprelay07.wdc07v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 55Q6MD5Q29360894
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Thu, 26 Jun 2025 06:22:13 GMT
+Received: from smtpav06.dal12v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id E76935820B;
+	Thu, 26 Jun 2025 06:22:12 +0000 (GMT)
+Received: from smtpav06.dal12v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 1360F581FE;
+	Thu, 26 Jun 2025 06:22:09 +0000 (GMT)
+Received: from [9.204.205.94] (unknown [9.204.205.94])
+	by smtpav06.dal12v.mail.ibm.com (Postfix) with ESMTP;
+	Thu, 26 Jun 2025 06:22:08 +0000 (GMT)
+Message-ID: <cb93bc0a-5412-46fd-8fe1-3e13b5b08cca@linux.ibm.com>
+Date: Thu, 26 Jun 2025 11:52:07 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-From: <liu.xuemei1@zte.com.cn>
-To: <mani@kernel.org>, <kwilczynski@kernel.org>, <kishon@kernel.org>,
-        <bhelgaas@google.com>, <lpieralisi@kernel.org>
-Cc: <liu.song13@zte.com.cn>, <linux-pci@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>
-Subject: =?UTF-8?B?W1BBVENIXSBQQ0k6IGVuZHBvaW50OiBBdm9pZCBjcmVhdGluZyBzdWItZ3JvdXBzIGFzeW5jaHJvbm91c2x5?=
-Content-Type: text/plain;
-	charset="UTF-8"
-X-MAIL:mse-fl1.zte.com.cn 55Q6JgPM016081
-X-Fangmail-Anti-Spam-Filtered: true
-X-Fangmail-MID-QID: 685CE692.001/4bST7Q3Vl7z4xPSS
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] coredump: reduce stack usage in vfs_coredump()
+Content-Language: en-GB
+To: Arnd Bergmann <arnd@arndb.de>,
+        Marek Szyprowski
+ <m.szyprowski@samsung.com>,
+        Arnd Bergmann <arnd@kernel.org>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Christian Brauner <brauner@kernel.org>
+Cc: Jan Kara <jack@suse.cz>, Alexander Mikhalitsyn <alexander@mihalicyn.com>,
+        Jann Horn <jannh@google.com>, Luca Boccassi <luca.boccassi@gmail.com>,
+        Jeff Layton <jlayton@kernel.org>,
+        Roman Kisel <romank@linux.microsoft.com>,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20250620112105.3396149-1-arnd@kernel.org>
+ <404dfe9a-1f4f-4776-863a-d8bbe08335e2@samsung.com>
+ <CGME20250625115426eucas1p17398cfcd215befcd3eafe0cac44b33a7@eucas1p1.samsung.com>
+ <8f080dc3-ef13-4d9a-8964-0c2b3395072e@samsung.com>
+ <cb0c926f-15be-4400-a9b9-0122a6238fea@app.fastmail.com>
+From: Venkat Rao Bagalkote <venkat88@linux.ibm.com>
+In-Reply-To: <cb0c926f-15be-4400-a9b9-0122a6238fea@app.fastmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-TM-AS-GCONF: 00
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNjI2MDA0OSBTYWx0ZWRfX2FZfc54LZBce 4XnnaQHK19tgKjD6W6SVblrKemCIEZN4C5gp0h4TfntSUxD2Tq9H2Bnt95BNvpUiKvQ+ycdfyVZ yO/ro61tqytKs1ZOHVKBe0xadcrUxQWlNj8WzlP4LCmybY7PJ7WTAHpZ40yeAGye9kQUbtZMGsR
+ QIxurCSs3rF2bq13qK1JSuNtrGg2agQp3Pjs+0AOJfi+cUo6CysJaQ0lAVZIggmftwTTg6f42Fn x6jAWu3BbS2Jb9gpfGjQyX/Mg5/olqxF4mSU5rNFRj/aspJMlE8nCccqo6+cao3ZSuttSAZiUw/ FL8Z6/Y/1XU8hxwx7KoXcqLr5SAavoiuNYHUEwkDWkyvSLcxsKs+0zzg4ecNsUD39QVHFDTI1kY
+ YWWOiTRA2hhuT6Daf9bFxGPnU/QExJJzvy+tNjc2Y3aTs3nNI4sykPSHK1T9vVW9koglkEWN
+X-Proofpoint-ORIG-GUID: bUcB70Q8gqodglWC38c8gomlNFJWYJrW
+X-Proofpoint-GUID: t9d9wTEmMFnHZVLxTPySLD3U5-kjZE5u
+X-Authority-Analysis: v=2.4 cv=BfvY0qt2 c=1 sm=1 tr=0 ts=685ce717 cx=c_pps a=bLidbwmWQ0KltjZqbj+ezA==:117 a=bLidbwmWQ0KltjZqbj+ezA==:17 a=IkcTkHD0fZMA:10 a=6IFa9wvqVegA:10 a=VnNF1IyMAAAA:8 a=oBfdlqT_uavYyDoXnq8A:9 a=3ZKOabzyN94A:10 a=QEXdDO2ut3YA:10
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.7,FMLib:17.12.80.40
+ definitions=2025-06-26_03,2025-06-25_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxscore=0 priorityscore=1501
+ lowpriorityscore=0 clxscore=1011 suspectscore=0 adultscore=0 spamscore=0
+ impostorscore=0 mlxlogscore=585 malwarescore=0 phishscore=0 bulkscore=0
+ classifier=spam authscore=0 authtc=n/a authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.19.0-2505280000
+ definitions=main-2506260049
 
-From: Liu Song <liu.song13@zte.com.cn>
 
-The asynchronous creation of sub-groups by a delayed work could lead to an
-null-pointer-dereference exception when the driver directory gets
-removed before the work completes.
+On 25/06/25 6:59 pm, Arnd Bergmann wrote:
+> On Wed, Jun 25, 2025, at 13:54, Marek Szyprowski wrote:
+>> On 25.06.2025 13:41, Marek Szyprowski wrote:
+>>> This change appears in today's linux-next (next-20250625) as commit
+>>> fb82645d3f72 ("coredump: reduce stack usage in vfs_coredump()"). In my
+>>> tests I found that it causes a kernel oops on some of my ARM 32bit
+>>> Exynos based boards. This is really strange, because I don't see any
+>>> obvious problem in this patch. Reverting $subject on top of linux-next
+>>> hides/fixes the oops. I suspect some kind of use-after-free issue, but
+>>> I cannot point anything related. Here is the kernel log from one of
+>>> the affected boards (I've intentionally kept the register and stack
+>>> dumps):
+>> I've just checked once again and found the source of the issue.
+>> vfs_coredump() calls coredump_cleanup(), which calls coredump_finish(),
+>> which performs the following dereference:
+>>
+>> next = current->signal->core_state->dumper.next
+>>
+>> of the core_state assigned in zap_threads() called from coredump_wait().
+>> It looks that core_state cannot be moved into coredump_wait() without
+>> refactoring/cleaning this first.
 
-The crash can be easily reproduced with the following commands.
 
- # mkdir test && rmdir test
+IBM CI has also reported the similar crash, while running ./check 
+tests/generic/228 from xfstests. This issue is observed on both xfs and 
+ext4.
 
-Fixes this by using configfs_add_default_group() which does not have the
-deadlock problem as configfs_register_group().
 
-Backtraces of the crash:
- BUG: kernel NULL pointer dereference, address: 0000000000000088
- #PF: supervisor write access in kernel mode
- #PF: error_code(0x0002) - not-present page
- PGD 0
- Oops: Oops: 0002 [#1] SMP NOPTI
- CPU: 4 UID: 0 PID: 371 Comm: kworker/4:1 Kdump: loaded Tainted: G            E       6.16.0-rc3 #2 PREEMPT(lazy)
- Tainted: [E]=UNSIGNED_MODULE
- Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 0.0.0 02/06/2015
- Workqueue: events pci_epf_cfs_work
- RIP: 0010:mutex_lock+0x1c/0x30
- Code: 90 90 90 90 90 90 90 90 90 90 90 90 90 90 f3 0f 1e fa 0f 1f 44 00 00 53 48 89 fb 2e 2e 2e 31 c0 65 48 8b 15 5e 4c 29 02 31 c0 <f0> 48 0f b1 13 75 06 5b e9 97 8a 00 00 48 89 df 5b eb b1 90 90 90
- RSP: 0018:ff64babb4111fdf0 EFLAGS: 00010246
- RAX: 0000000000000000 RBX: 0000000000000088 RCX: 0000000000000000
- RDX: ff2de9c80f5d3080 RSI: ffffffffb9e58559 RDI: 0000000000000088
- RBP: ff2de9c8269df9c0 R08: 0000000000000040 R09: 0000000000000000
- R10: ff64babb4111fdf0 R11: 00000000ffffffff R12: ff2de9c80f753e88
- R13: ff2de9c80f753e00 R14: 0000000000000000 R15: ff2de9c80f753f98
- FS:  0000000000000000(0000) GS:ff2de9d78069f000(0000) knlGS:0000000000000000
- CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
- CR2: 0000000000000088 CR3: 0000000ac782c003 CR4: 0000000000773ef0
- DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
- DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
- PKRU: 55555554
- Call Trace:
-  <TASK>
-  configfs_register_group+0x3d/0x190
-  pci_epf_cfs_work+0x41/0x110
-  process_one_work+0x18f/0x350
-  worker_thread+0x25a/0x3a0
-  ? __pfx_worker_thread+0x10/0x10
-  kthread+0xfc/0x240
-  ? __pfx_kthread+0x10/0x10
-  ? __pfx_kthread+0x10/0x10
-  ret_from_fork+0x14f/0x180
-  ? __pfx_kthread+0x10/0x10
-  ret_from_fork_asm+0x1a/0x30
-  </TASK>
- Modules linked in: pci_epf_test(E) nft_fib_inet(E) nft_fib_ipv4(E) nft_fib_ipv6(E) nft_fib(E) nft_reject_inet(E) nf_reject_ipv4(E) nf_reject_ipv6(E) nft_reject(E) nft_ct(E) nft_chain_nat(E) nf_nat(E) nf_conntrack(E) nf_defrag_ipv6(E) nf_defrag_ipv4(E) rfkill(E) ip_set(E) nf_tables(E) intel_rapl_msr(E) intel_rapl_common(E) intel_uncore_frequency_common(E) qrtr(E) isst_if_common(E) skx_edac_common(E) nfit(E) libnvdimm(E) sunrpc(E) kvm_intel(E) vfat(E) fat(E) kvm(E) irqbypass(E) rapl(E) iTCO_wdt(E) 8139too(E) intel_pmc_bxt(E) iTCO_vendor_support(E) 8139cp(E) virtio_gpu(E) mii(E) virtio_input(E) virtio_dma_buf(E) i2c_i801(E) pcspkr(E) lpc_ich(E) i2c_smbus(E) virtio_balloon(E) joydev(E) loop(E) dm_multipath(E) nfnetlink(E) vsock_loopback(E) vmw_vsock_virtio_transport_common(E) vmw_vsock_vmci_transport(E) vsock(E) zram(E) lz4hc_compress(E) vmw_vmci(E) lz4_compress(E) xfs(E) polyval_clmulni(E) ghash_clmulni_intel(E) sha512_ssse3(E) sha1_ssse3(E) serio_raw(E) scsi_dh_rdac(E) scsi_dh_emc(E) 
- scsi_dh_alua(E) fuse(E)
-  qemu_fw_cfg(E)
- Unloaded tainted modules: intel_uncore_frequency(E):1 i10nm_edac(E):1 intel_cstate(E):1 intel_uncore(E):1 hv_vmbus(E):1
- CR2: 0000000000000088
- ---[ end trace 0000000000000000 ]---
+Traces:
 
-Fixes: e85a2d783762 ("PCI: endpoint: Add support in configfs to associate two EPCs with EPF")
-Signed-off-by: Liu Song <liu.song13@zte.com.cn>
----
- drivers/pci/endpoint/pci-ep-cfs.c | 15 +++++----------
- 1 file changed, 5 insertions(+), 10 deletions(-)
 
-diff --git a/drivers/pci/endpoint/pci-ep-cfs.c b/drivers/pci/endpoint/pci-ep-cfs.c
-index d712c7a866d2..e6f25f9f5c64 100644
---- a/drivers/pci/endpoint/pci-ep-cfs.c
-+++ b/drivers/pci/endpoint/pci-ep-cfs.c
-@@ -23,7 +23,6 @@ struct pci_epf_group {
- 	struct config_group group;
- 	struct config_group primary_epc_group;
- 	struct config_group secondary_epc_group;
--	struct delayed_work cfs_work;
- 	struct pci_epf *epf;
- 	int index;
- };
-@@ -103,7 +102,7 @@ static struct config_group
- 	secondary_epc_group = &epf_group->secondary_epc_group;
- 	config_group_init_type_name(secondary_epc_group, "secondary",
- 				    &pci_secondary_epc_type);
--	configfs_register_group(&epf_group->group, secondary_epc_group);
-+	configfs_add_default_group(secondary_epc_group, &epf_group->group);
+[28956.438544] run fstests generic/228 at 2025-06-26 01:02:28
+[28956.806452] coredump: 4746(sysctl): Unsafe core_pattern used with 
+fs.suid_dumpable=2: pipe handler or fully qualified core dump path 
+required. Set kernel.core_pattern before fs.suid_dumpable.
+[28956.809279] BUG: Unable to handle kernel data access at 
+0x3437342e65727d2f
+[28956.809287] Faulting instruction address: 0xc0000000010fe718
+[28956.809292] Oops: Kernel access of bad area, sig: 11 [#1]
+[28956.809297] LE PAGE_SIZE=64K MMU=Hash  SMP NR_CPUS=8192 NUMA pSeries
+[28956.809303] Modules linked in: loop nft_fib_inet nft_fib_ipv4 
+nft_fib_ipv6 nft_fib nft_reject_inet nf_reject_ipv4 nf_reject_ipv6 
+nft_reject nft_ct nft_chain_nat nf_nat bonding nf_conntrack 
+nf_defrag_ipv6 tls nf_defrag_ipv4 rfkill ip_set nf_tables nfnetlink 
+pseries_rng vmx_crypto xfs sr_mod cdrom sd_mod sg ibmvscsi ibmveth 
+scsi_transport_srp fuse
+[28956.809347] CPU: 25 UID: 0 PID: 4748 Comm: xfs_io Kdump: loaded Not 
+tainted 6.16.0-rc3-next-20250625 #1 VOLUNTARY
+[28956.809355] Hardware name: IBM,8375-42A POWER9 (architected) 0x4e0202 
+0xf000005 of:IBM,FW950.80 (VL950_131) hv:phyp pSeries
+[28956.809360] NIP:  c0000000010fe718 LR: c0000000001d0d20 CTR: 
+0000000000000000
+[28956.809365] REGS: c00000009a80f720 TRAP: 0380   Not tainted 
+(6.16.0-rc3-next-20250625)
+[28956.809370] MSR:  800000000280b033 <SF,VEC,VSX,EE,FP,ME,IR,DR,RI,LE>  
+CR: 88008844  XER: 20040000
+[28956.809385] CFAR: c0000000001d0d1c IRQMASK: 1
+[28956.809385] GPR00: c0000000001d0d20 c00000009a80f9c0 c000000001648100 
+3437342e65727d2f
+[28956.809385] GPR04: 0000000000000003 0000000000000000 0000000000000000 
+fffffffffffe0000
+[28956.809385] GPR08: c0000000c97baa00 0000000000000033 c0000000b9039000 
+0000000000008000
+[28956.809385] GPR12: c0000000001dd158 c000000017f91300 0000000000000000 
+0000000000000000
+[28956.809385] GPR16: 0000000000000000 0000000000000018 c0000000b9039000 
+c0000000b9039d60
+[28956.809385] GPR20: c0000000b9039080 c0000000b9039d48 0000000000040100 
+0000000000000001
+[28956.809385] GPR24: 0000000008430000 c00000009a80fd30 c0000000c97baa00 
+c000000002baf820
+[28956.809385] GPR28: 3437342e65727d2f 0000000000000000 0000000000000003 
+0000000000000000
+[28956.809444] NIP [c0000000010fe718] _raw_spin_lock_irqsave+0x34/0xb0
+[28956.809452] LR [c0000000001d0d20] try_to_wake_up+0x6c/0x828
+[28956.809459] Call Trace:
+[28956.809462] [c00000009a80f9c0] [c00000009a80fa10] 0xc00000009a80fa10 
+(unreliable)
+[28956.809469] [c00000009a80f9f0] [0000000000000000] 0x0
+[28956.809474] [c00000009a80fa80] [c0000000006f1958] 
+vfs_coredump+0x254/0x5c8
+[28956.809481] [c00000009a80fbf0] [c00000000018cf3c] get_signal+0x454/0xb64
+[28956.809488] [c00000009a80fcf0] [c00000000002188c] do_signal+0x7c/0x324
+[28956.809496] [c00000009a80fd90] [c000000000022a00] 
+do_notify_resume+0xb0/0x13c
+[28956.809502] [c00000009a80fdc0] [c000000000032508] 
+interrupt_exit_user_prepare_main+0x1ac/0x264
+[28956.809510] [c00000009a80fe20] [c000000000032710] 
+syscall_exit_prepare+0x150/0x178
+[28956.809516] [c00000009a80fe50] [c00000000000d068] 
+system_call_vectored_common+0x168/0x2ec
+[28956.809525] ---- interrupt: 3000 at 0x7fff82b24bf4
+[28956.809529] NIP:  00007fff82b24bf4 LR: 00007fff82b24bf4 CTR: 
+0000000000000000
+[28956.809534] REGS: c00000009a80fe80 TRAP: 3000   Not tainted 
+(6.16.0-rc3-next-20250625)
+[28956.809538] MSR:  800000000280f033 
+<SF,VEC,VSX,EE,PR,FP,ME,IR,DR,RI,LE>  CR: 48004802  XER: 00000000
+[28956.809554] IRQMASK: 0
+[28956.809554] GPR00: 0000000000000135 00007ffffe2ecf50 00007fff82c37200 
+ffffffffffffffe5
+[28956.809554] GPR04: 0000000000000000 0000000000000000 0000000006500000 
+00007fff82e3e120
+[28956.809554] GPR08: 00007fff82e369e8 0000000000000000 0000000000000000 
+0000000000000000
+[28956.809554] GPR12: 0000000000000000 00007fff82e3e120 0000000000000000 
+0000000000000000
+[28956.809554] GPR16: 0000000000000000 0000000000000000 0000000000000000 
+0000000000000000
+[28956.809554] GPR20: 0000000000000000 0000000000000000 0000000000000000 
+0000000000000001
+[28956.809554] GPR24: 0000010009812f10 0000000000000000 0000000000000001 
+0000000123099fe8
+[28956.809554] GPR28: 0000000000000000 0000000000000003 0000000000000000 
+0000000006500000
+[28956.809610] NIP [00007fff82b24bf4] 0x7fff82b24bf4
+[28956.809614] LR [00007fff82b24bf4] 0x7fff82b24bf4
+[28956.809618] ---- interrupt: 3000
+[28956.809621] Code: 38429a1c 7c0802a6 60000000 fbe1fff8 f821ffd1 
+8bed0932 63e90001 992d0932 a12d0008 3ce0fffe 5529083c 61290001 
+<7d001829> 7d063879 40c20018 7d063838
+[28956.809641] ---[ end trace 0000000000000000 ]---
+[28956.812734] pstore: backend (nvram) writing error (-1)
 
- 	return secondary_epc_group;
- }
-@@ -166,7 +165,7 @@ static struct config_group
 
- 	config_group_init_type_name(primary_epc_group, "primary",
- 				    &pci_primary_epc_type);
--	configfs_register_group(&epf_group->group, primary_epc_group);
-+	configfs_add_default_group(primary_epc_group, &epf_group->group);
+If you happen to fix this, please add below tag.
 
- 	return primary_epc_group;
- }
-@@ -570,15 +569,13 @@ static void pci_ep_cfs_add_type_group(struct pci_epf_group *epf_group)
- 		return;
- 	}
 
--	configfs_register_group(&epf_group->group, group);
-+	configfs_add_default_group(group, &epf_group->group);
- }
+Reported-by: Venkat Rao Bagalkote <venkat88@linux.ibm.com>
 
--static void pci_epf_cfs_work(struct work_struct *work)
-+static void pci_epf_cfs_add_sub_groups(struct pci_epf_group *epf_group)
- {
--	struct pci_epf_group *epf_group;
- 	struct config_group *group;
 
--	epf_group = container_of(work, struct pci_epf_group, cfs_work.work);
- 	group = pci_ep_cfs_add_primary_group(epf_group);
- 	if (IS_ERR(group)) {
- 		pr_err("failed to create 'primary' EPC interface\n");
-@@ -637,9 +634,7 @@ static struct config_group *pci_epf_make(struct config_group *group,
+Regards,
 
- 	kfree(epf_name);
+Venkat.
 
--	INIT_DELAYED_WORK(&epf_group->cfs_work, pci_epf_cfs_work);
--	queue_delayed_work(system_wq, &epf_group->cfs_work,
--			   msecs_to_jiffies(1));
-+	pci_epf_cfs_add_sub_groups(epf_group);
-
- 	return &epf_group->group;
-
--- 
-2.27.0
+> Thanks for the analysis, I agree that this can't work and my patch
+> just needs to be dropped. The 'noinline_for_stack' change on
+> its own is probably sufficient to avoid the warning, and I can
+> respin a new version after more build testing.
+>
+>       Arnd
+>
 
