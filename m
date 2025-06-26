@@ -1,39 +1,47 @@
-Return-Path: <linux-kernel+bounces-704073-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-704075-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 90484AE98EE
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Jun 2025 10:50:32 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 82A75AE98EF
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Jun 2025 10:50:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 996A21C229BD
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Jun 2025 08:49:58 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 652111764DB
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Jun 2025 08:50:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 71F74296159;
-	Thu, 26 Jun 2025 08:47:32 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 06503295D95
-	for <linux-kernel@vger.kernel.org>; Thu, 26 Jun 2025 08:47:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5C950218AB0;
+	Thu, 26 Jun 2025 08:48:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="QfVPpkIX"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 97F3825B30F;
+	Thu, 26 Jun 2025 08:48:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750927652; cv=none; b=nTTemGhTUZnoAg55WiAO7n555B6MP4VoI0j4SgCKV9ro/eVTFkUsv3hwbTRL8pzvmH+Ir3FsZHsfBpXtWmHiRBZYNF2nyjy2dz/IG7CjipNge/rLaGYsB/DPgJsD6HCT3WwxFjURIYA1g+B8EYQXIyqgkfsK7moIqyAEELdJAH8=
+	t=1750927736; cv=none; b=OuyUKYxsf7rh8fnJWVw9fIC6LvU5hREOCYiJDqyN3GMnf2q2qPbwrpVYFe3akNxbFKFHaM4P/C7rDVuz7EZ/sXLuvqzlCc6SHV5L/1y9KJSw+P7nsjrICrpIo9v9VgHCP6ampNKjb6em5z/WJf2+K/JHko8TCKgjzWoWZmLPJ5c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750927652; c=relaxed/simple;
-	bh=/mG2RUIJTlGVUACA5bit1D4qVSoQZZxNKk5ol9i5l1Q=;
+	s=arc-20240116; t=1750927736; c=relaxed/simple;
+	bh=Uwt3NsX0GNfYi5o7KvMJmNAuuFirfChPcaC6V4I9kis=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=IOjhJVXfZnMi1rq+FqnF/YR7AcxH2WNB0Go2V50c9Ag6MubAfFIotHUqYlivmwhFz5kVDFj46ymHonQYHH3UB3ieZ/ofTrs81+tZgAUQjAIoDrE3OoD/DdsTKdTUWw7kTUIUSskL//l3QU5UKUXkxJOoCp+9g/1xiM7Ke8vrYa8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 5AA101758;
-	Thu, 26 Jun 2025 01:47:11 -0700 (PDT)
-Received: from [10.57.84.221] (unknown [10.57.84.221])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id E19A03F58B;
-	Thu, 26 Jun 2025 01:47:25 -0700 (PDT)
-Message-ID: <b0ef3756-2cd2-41d7-b757-0518332e1b54@arm.com>
-Date: Thu, 26 Jun 2025 09:47:24 +0100
+	 In-Reply-To:Content-Type; b=EeU9RsgnQ58VDD+n7O6tv0UUTYh7LMEVrxRWzmVa3Urea7InjoxFl4O64l3NevmQpnBs9f8111day2YMmtq+sgAETLM/FsokfxkAuAmfUpjrN/XdKaSzT57hmM3TocsCgvLzz+EPXSufmZLwmrdXgroEqHY2WEyy3V34LJ13xys=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=QfVPpkIX; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id CE2C3C4CEF1;
+	Thu, 26 Jun 2025 08:48:50 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1750927736;
+	bh=Uwt3NsX0GNfYi5o7KvMJmNAuuFirfChPcaC6V4I9kis=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=QfVPpkIX+jWUbuSczOWZ9NquDlgSzicGyHu84P5TiIWRYK43fK2fCiQ0YD/8dchij
+	 2RG4mqh3aUQVg571PhDWOQD/Ct7Mdw3MxJagG0/wzVlzOjxc+3gcMIpOv4u2m0qjRC
+	 E/IH4GtjIRSHHmzyC/CxOpJTzHkr+NrdCP/boNCsIs4qlx66SvO7Fp3U98/u3kEahA
+	 u6I0VE/78chhSv3zqKB2ftZcUwW9pykj/BkeUeQBhNgr38j4LwDYeqq2fakt10pisc
+	 s6i+mEW49MAiRZVVwfm0ioQTVWqOS1um15eHVqcddUtqoDOr/aQpAI/NXjOpYy2ju3
+	 0rFy1oDVdoZmA==
+Message-ID: <eb5cdcb6-7e40-4ed2-9cc6-6eff43da353d@kernel.org>
+Date: Thu, 26 Jun 2025 10:48:48 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -41,154 +49,80 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 1/2] arm64: pageattr: Use pagewalk API to change memory
- permissions
-Content-Language: en-GB
-To: Yang Shi <yang@os.amperecomputing.com>, Mike Rapoport <rppt@kernel.org>,
- Dev Jain <dev.jain@arm.com>
-Cc: akpm@linux-foundation.org, david@redhat.com, catalin.marinas@arm.com,
- will@kernel.org, lorenzo.stoakes@oracle.com, Liam.Howlett@oracle.com,
- vbabka@suse.cz, surenb@google.com, mhocko@suse.com, linux-mm@kvack.org,
- linux-kernel@vger.kernel.org, suzuki.poulose@arm.com, steven.price@arm.com,
- gshan@redhat.com, linux-arm-kernel@lists.infradead.org,
- anshuman.khandual@arm.com
-References: <20250613134352.65994-1-dev.jain@arm.com>
- <20250613134352.65994-2-dev.jain@arm.com> <aE53Jp7ZGgTxtxwG@kernel.org>
- <956f6ebe-606f-4575-a0a5-7841c95b5371@arm.com>
- <cab45bd6-8108-4a6f-816a-3f7b70a2902f@os.amperecomputing.com>
-From: Ryan Roberts <ryan.roberts@arm.com>
-In-Reply-To: <cab45bd6-8108-4a6f-816a-3f7b70a2902f@os.amperecomputing.com>
+Subject: Re: [PATCH 2/3] dt-bindings: mfd: qcom,spmi-pmic: add pm4125 audio
+ codec
+To: Alexey Klimov <alexey.klimov@linaro.org>,
+ Srinivas Kandagatla <srini@kernel.org>, Liam Girdwood <lgirdwood@gmail.com>,
+ Mark Brown <broonie@kernel.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Stephen Boyd <sboyd@kernel.org>
+Cc: Lee Jones <lee@kernel.org>, Jaroslav Kysela <perex@perex.cz>,
+ Takashi Iwai <tiwai@suse.com>, linux-arm-msm@vger.kernel.org,
+ linux-sound@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org,
+ Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>,
+ Srinivas Kandagatla <srinivas.kandagatla@oss.qualcomm.com>
+References: <20250626-pm4125_audio_codec_v1-v1-0-e52933c429a0@linaro.org>
+ <20250626-pm4125_audio_codec_v1-v1-2-e52933c429a0@linaro.org>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 a/A=
+In-Reply-To: <20250626-pm4125_audio_codec_v1-v1-2-e52933c429a0@linaro.org>
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
 
-On 25/06/2025 21:40, Yang Shi wrote:
+On 26/06/2025 01:50, Alexey Klimov wrote:
+> PM4125 has audio codec hardware block. Add pattern for respecive node
+> so the devicetree for those blocks can be validated properly.
 > 
-> 
-> On 6/25/25 4:04 AM, Ryan Roberts wrote:
->> On 15/06/2025 08:32, Mike Rapoport wrote:
->>> On Fri, Jun 13, 2025 at 07:13:51PM +0530, Dev Jain wrote:
->>>> -/*
->>>> - * This function assumes that the range is mapped with PAGE_SIZE pages.
->>>> - */
->>>> -static int __change_memory_common(unsigned long start, unsigned long size,
->>>> +static int ___change_memory_common(unsigned long start, unsigned long size,
->>>>                   pgprot_t set_mask, pgprot_t clear_mask)
->>>>   {
->>>>       struct page_change_data data;
->>>> @@ -61,9 +140,28 @@ static int __change_memory_common(unsigned long start,
->>>> unsigned long size,
->>>>       data.set_mask = set_mask;
->>>>       data.clear_mask = clear_mask;
->>>>   -    ret = apply_to_page_range(&init_mm, start, size, change_page_range,
->>>> -                    &data);
->>>> +    arch_enter_lazy_mmu_mode();
->>>> +
->>>> +    /*
->>>> +     * The caller must ensure that the range we are operating on does not
->>>> +     * partially overlap a block mapping. Any such case should either not
->>>> +     * exist, or must be eliminated by splitting the mapping - which for
->>>> +     * kernel mappings can be done only on BBML2 systems.
->>>> +     *
->>>> +     */
->>>> +    ret = walk_kernel_page_table_range_lockless(start, start + size,
->>>> +                            &pageattr_ops, NULL, &data);
->>> x86 has a cpa_lock for set_memory/set_direct_map to ensure that there's on
->>> concurrency in kernel page table updates. I think arm64 has to have such
->>> lock as well.
->> We don't have a lock today, using apply_to_page_range(); we are expecting that
->> the caller has exclusive ownership of the portion of virtual memory - i.e. the
->> vmalloc region or linear map. So I don't think this patch changes that
->> requirement?
->>
->> Where it does get a bit more hairy is when we introduce the support for
->> splitting. In that case, 2 non-overlapping areas of virtual memory may share a
->> large leaf mapping that needs to be split. But I've been discussing that with
->> Yang Shi at [1] and I think we can handle that locklessly too.
-> 
-> If the split is serialized by a lock, changing permission can be lockless. But
-> if split is lockless, changing permission may be a little bit tricky,
-> particularly for CONT mappings. The implementation in my split patch assumes the
-> whole range has cont bit cleared if the first PTE in the range has cont bit
-> cleared because the lock guarantees two concurrent splits are serialized.
-> 
-> But lockless split may trigger the below race:
-> 
-> CPU A is splitting the page table, CPU B is changing the permission for one PTE
-> entry in the same table. Clearing cont bit is RMW, changing permission is RMW
-> too, but neither of them is atomic.
-> 
->                CPU A                                      CPU B
-> read the PTE read the PTE
-> clear the cont bit for the PTE
->                                    change the PTE permission from RW to RO
->                                    store the new PTE
-> 
-> store the new PTE <- it will overwrite the PTE value stored by CPU B and result
-> in misprogrammed cont PTEs
+> Signed-off-by: Alexey Klimov <alexey.klimov@linaro.org>
 
-Ahh yes, good point! I missed that. When I was thinking about this, I had
-assumed that *both* CPUs racing to split would (non-atomically) RMW to remove
-the cont bit on the whole block. That is safe as long as nothing else in the PTE
-changes. But of course you're right that the first one to complete that may then
-go on to modify the permissions in their portion of the now-split VA space. So
-there is definitely a problem.
+Remember to ALWAYS explain the dependencies between patches (merging
+strategy), because this now creates impression is independent patch. It
+is not and should be squashed into previous.
 
-> 
-> 
-> We should need do one the of the follows to avoid the race off the top of my head:
-> 1. Serialize the split with a lock
-
-I guess this is certainly the simplest as per your original proposal.
-
-> 2. Make page table RMW atomic in both split and permission change
-
-I don't think we would need atomic RMW for the permission change - we would only
-need it for removing the cont bit? My reasoning is that by the time a thread is
-doing the permission change it must have already finished splitting the cont
-block. The permission change will only be for PTEs that we know we have
-exclusive access too. The other CPU may still be "splitting" the cont block, but
-since we already won, it will just be reading the PTEs and noticing that cont is
-already clear? I guess split_contpte()/split_contpmd() becomes a loop doing
-READ_ONCE() to test if the bit is set, followed by atomic bit clear if it was
-set (avoid the atomic where we can)?
-
-> 3. Check whether PTE is cont or not for every PTEs in the range instead of the
-> first PTE, before clearing cont bit if they are
-
-Ahh perhaps this is what I'm actually describing above?
-
-> 4. Retry if cont bit is not cleared in permission change, but we need
-> distinguish this from changing permission for the whole CONT PTE range because
-> we keep cont bit for this case
-
-I'd prefer to keep the splitting decoupled from the permission change if we can.
-
-
-Personally, I'd prefer to take the lockless approach. I think it has the least
-chance of contention issues. But if you prefer to use a lock, then I'm ok with
-that as a starting point. I'd prefer to use a new separate lock though (like x86
-does) rather than risking extra contention with the init_mm PTL.
-
-Thanks,
-Ryan
-
-
-> 
-> Thanks,
-> Yang
-> 
->>
->> Perhaps I'm misunderstanding something?
->>
->> [1] https://lore.kernel.org/all/f036acea-1bd1-48a7-8600-75ddd504b8db@arm.com/
->>
->> Thanks,
->> Ryan
->>
->>>> +    arch_leave_lazy_mmu_mode();
->>>> +
->>>> +    return ret;
->>>> +}
-> 
-
+Best regards,
+Krzysztof
 
