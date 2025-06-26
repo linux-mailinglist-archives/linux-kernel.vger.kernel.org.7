@@ -1,97 +1,134 @@
-Return-Path: <linux-kernel+bounces-704842-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-704844-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 06B0CAEA23D
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Jun 2025 17:17:46 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2FD0FAEA26E
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Jun 2025 17:26:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5E50E3B16AF
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Jun 2025 15:12:41 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8CD7B18892A5
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Jun 2025 15:16:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8CC472EAD1A;
-	Thu, 26 Jun 2025 15:12:59 +0000 (UTC)
-Received: from relay.hostedemail.com (smtprelay0010.hostedemail.com [216.40.44.10])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 420CD2EBB87;
+	Thu, 26 Jun 2025 15:16:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="kPpnDvKy"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.9])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C49FF2E7179;
-	Thu, 26 Jun 2025 15:12:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=216.40.44.10
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4CD372EB5C0;
+	Thu, 26 Jun 2025 15:16:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.9
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750950779; cv=none; b=JyZp+NCQb5eiE0H/Xuz6/9BkuJN080+B73qBSfGFIzhrXweZqkPSWxR3C/BWGu06xDZXNvHrrtMDuj45CFRMGpNFcRPd6/beagK7w+3ssN0bQKIRNv4j9vSp66FBZVe4gYOrC9iU7Mwt1B0OOMqSayDJLb2gl0D875W/UqV6LuA=
+	t=1750950983; cv=none; b=gCXjbyFib2ViJIy1KsyaU8EEuj/JU11m/+dcBKUsAauZcQ7kY8+3zsQe4N0WP5c7QmRrtBlGRJ/rJ8B/V/H3HM9rbFulX6RTw7GuBoAKlqXNd57wTVYLHSiEPOX+A7CIkdonvBG2y7sy2r0u5ibGz/32VEBtoNesorov1gWMyqw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750950779; c=relaxed/simple;
-	bh=kjP7uV4m2t7heIe5+bDyCCiI6ZdG5nj7J/pYmxeikak=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=Yyk5oskUw03+iPmMdY4cL3wEAd4sxhCEnbKcvaG0g0ucsB0owG8UqWnXu/aotnEBtleS9Uv49MZf0sIw1f/Iz7JT/w0aIIAa+uBnXbk7Ym9bWymU2quUHTGlWv/QjVmlLN1DXLq0D7lP0M9hCzubj8zGZHdaPeJ3UuHl/UlOgHY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org; spf=pass smtp.mailfrom=goodmis.org; arc=none smtp.client-ip=216.40.44.10
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=goodmis.org
-Received: from omf10.hostedemail.com (a10.router.float.18 [10.200.18.1])
-	by unirelay01.hostedemail.com (Postfix) with ESMTP id 1F5E61CFADA;
-	Thu, 26 Jun 2025 15:12:54 +0000 (UTC)
-Received: from [HIDDEN] (Authenticated sender: rostedt@goodmis.org) by omf10.hostedemail.com (Postfix) with ESMTPA id 1798235;
-	Thu, 26 Jun 2025 15:12:50 +0000 (UTC)
-Date: Thu, 26 Jun 2025 11:13:16 -0400
-From: Steven Rostedt <rostedt@goodmis.org>
-To: Peter Zijlstra <peterz@infradead.org>
-Cc: linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org,
- bpf@vger.kernel.org, x86@kernel.org, Masami Hiramatsu
- <mhiramat@kernel.org>, Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
- Josh Poimboeuf <jpoimboe@kernel.org>, Ingo Molnar <mingo@kernel.org>, Jiri
- Olsa <jolsa@kernel.org>, Namhyung Kim <namhyung@kernel.org>, Thomas
- Gleixner <tglx@linutronix.de>, Andrii Nakryiko <andrii@kernel.org>, Indu
- Bhagat <indu.bhagat@oracle.com>, "Jose E. Marchesi" <jemarch@gnu.org>, Beau
- Belgrave <beaub@linux.microsoft.com>, Jens Remus <jremus@linux.ibm.com>,
- Linus Torvalds <torvalds@linux-foundation.org>, Andrew Morton
- <akpm@linux-foundation.org>, Jens Axboe <axboe@kernel.dk>
-Subject: Re: [PATCH v11 13/14] perf/x86: Rename and move get_segment_base()
- and make it global
-Message-ID: <20250626111316.5a783695@gandalf.local.home>
-In-Reply-To: <20250626130705.GG1613200@noisy.programming.kicks-ass.net>
-References: <20250625225600.555017347@goodmis.org>
-	<20250625225717.016385736@goodmis.org>
-	<20250626130705.GG1613200@noisy.programming.kicks-ass.net>
-X-Mailer: Claws Mail 3.20.0git84 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1750950983; c=relaxed/simple;
+	bh=lqI8pD0+c/MWdmXxoqGaSXV4hXF1azOl9AOSOyUxWwg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=nvbDxY3PNtABnV3gTDtIxz5HSJ2rwdFLI7n9NLn5krtXSHS0Je/Zkc5qkogr7TT/+snMbALPktKON6rHNV0lMTKlYudFThEFQeYRofCGJOAnlJeKUfhko2tIVTG0lilUPBchPD8drvl7RZwOO55GOWquWfcwB5a8zVNJGrW1DSM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=kPpnDvKy; arc=none smtp.client-ip=192.198.163.9
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1750950982; x=1782486982;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=lqI8pD0+c/MWdmXxoqGaSXV4hXF1azOl9AOSOyUxWwg=;
+  b=kPpnDvKyO9H6K4RShJo0OPc0AeLSJ5vH92ADSn+58ieNRFHggD1ylvw3
+   dO27ZvfMhGg2t+8kV/1TGiDTCz2Wl9u9RMdN1eg+6+BQanXusqcKblaCZ
+   CvReZcFpVDHJc6knkRAuoIvGNQZYv1xrTFFBw43WfTdOHyhOHLxlT+ffz
+   GEfIWAyLXhb/Ruwsw5uMrouqq9UJBIAHgY8LH7Edgx5pifrO23CV5z207
+   YgGbW2H7tK9YjvReQt0WZDzxo4WXRk1QKd2eN/xhXUxsKrvinR/0CNxEn
+   Y5w58fcFdfJYgyujpUNA+eK8pyT++EiIUI6R3eLsb0IU+WFQ2v9Y6HAKo
+   w==;
+X-CSE-ConnectionGUID: QowX8NwpQkCmJ9w3gz371w==
+X-CSE-MsgGUID: LGkTOnJbTWq0lnZWI1pAIg==
+X-IronPort-AV: E=McAfee;i="6800,10657,11476"; a="63941012"
+X-IronPort-AV: E=Sophos;i="6.16,267,1744095600"; 
+   d="scan'208";a="63941012"
+Received: from orviesa009.jf.intel.com ([10.64.159.149])
+  by fmvoesa103.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 26 Jun 2025 08:16:21 -0700
+X-CSE-ConnectionGUID: SCa4oxn5S2S4n7Q6JQlhBw==
+X-CSE-MsgGUID: KJHAXsf4QcObKmd0B9hfMg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.16,267,1744095600"; 
+   d="scan'208";a="152299473"
+Received: from black.fi.intel.com ([10.237.72.28])
+  by orviesa009.jf.intel.com with ESMTP; 26 Jun 2025 08:16:15 -0700
+Received: by black.fi.intel.com (Postfix, from userid 1000)
+	id 3D25C2E2; Thu, 26 Jun 2025 18:16:14 +0300 (EEST)
+Date: Thu, 26 Jun 2025 18:16:14 +0300
+From: "Shutemov, Kirill" <kirill.shutemov@intel.com>
+To: "Edgecombe, Rick P" <rick.p.edgecombe@intel.com>
+Cc: "ackerleytng@google.com" <ackerleytng@google.com>, 
+	"Zhao, Yan Y" <yan.y.zhao@intel.com>, "quic_eberman@quicinc.com" <quic_eberman@quicinc.com>, 
+	"Li, Xiaoyao" <xiaoyao.li@intel.com>, "Du, Fan" <fan.du@intel.com>, 
+	"Hansen, Dave" <dave.hansen@intel.com>, "david@redhat.com" <david@redhat.com>, 
+	"thomas.lendacky@amd.com" <thomas.lendacky@amd.com>, "tabba@google.com" <tabba@google.com>, 
+	"vbabka@suse.cz" <vbabka@suse.cz>, "michael.roth@amd.com" <michael.roth@amd.com>, 
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "seanjc@google.com" <seanjc@google.com>, 
+	"Peng, Chao P" <chao.p.peng@intel.com>, "pbonzini@redhat.com" <pbonzini@redhat.com>, 
+	"Yamahata, Isaku" <isaku.yamahata@intel.com>, "binbin.wu@linux.intel.com" <binbin.wu@linux.intel.com>, 
+	"Weiny, Ira" <ira.weiny@intel.com>, "kvm@vger.kernel.org" <kvm@vger.kernel.org>, 
+	"Annapurve, Vishal" <vannapurve@google.com>, "jroedel@suse.de" <jroedel@suse.de>, 
+	"Miao, Jun" <jun.miao@intel.com>, "Li, Zhiquan1" <zhiquan1.li@intel.com>, 
+	"pgonda@google.com" <pgonda@google.com>, "x86@kernel.org" <x86@kernel.org>
+Subject: Re: [RFC PATCH 08/21] KVM: TDX: Increase/decrease folio ref for huge
+ pages
+Message-ID: <zlxgzuoqwrbuf54wfqycnuxzxz2yduqtsjinr5uq4ss7iuk2rt@qaaolzwsy6ki>
+References: <aFIGFesluhuh2xAS@yzhao56-desk.sh.intel.com>
+ <0072a5c0cf289b3ba4d209c9c36f54728041e12d.camel@intel.com>
+ <aFkeBtuNBN1RrDAJ@yzhao56-desk.sh.intel.com>
+ <draft-diqzh606mcz0.fsf@ackerleytng-ctop.c.googlers.com>
+ <diqzy0tikran.fsf@ackerleytng-ctop.c.googlers.com>
+ <c69ed125c25cd3b7f7400ed3ef9206cd56ebe3c9.camel@intel.com>
+ <diqz34bolnta.fsf@ackerleytng-ctop.c.googlers.com>
+ <a3cace55ee878fefc50c68bb2b1fa38851a67dd8.camel@intel.com>
+ <diqzms9vju5j.fsf@ackerleytng-ctop.c.googlers.com>
+ <447bae3b7f5f2439b0cb4eb77976d9be843f689b.camel@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-X-Rspamd-Queue-Id: 1798235
-X-Stat-Signature: edt3eijep336mifp7prug3xos45x95ef
-X-Rspamd-Server: rspamout04
-X-Session-Marker: 726F737465647440676F6F646D69732E6F7267
-X-Session-ID: U2FsdGVkX1+bn/ih2YZ8YJqiejKRF1XUzEdJygscgZQ=
-X-HE-Tag: 1750950770-886151
-X-HE-Meta: U2FsdGVkX191LKE7dxzPM0MGzqIrJqCDp3BxRWT/5VP7sCr/B0/MnbgyK/rdULcwuD1pdQj5pc//ZUJKP3oDPc0uAgs/hijvc0TNoajduRATo6j/dAQwEXDvNVuExYNVqEzyWoTnaPbec/WM2COi8IG7WvktPOX8l48fFJjA31iZ4rYHhS1gFKJuL8GYAxiTfY61xv846QoYWgcm6Zuubv4dvPqovT5YtiHuO3C1uWNqDh7vfVUqBHEQlWOiKGSiiAo8yu4lzdVDb/I+1Ap/6ARloOqG5fQ8azxUmXXdkMPi+0jYz23HnhOzmKY52NXHXRTgEu8J46Ei7LTtc0huAGJdEbA1zvLWENSXJR2uTv/avMYbnPGmnrcu8smS8E5L
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <447bae3b7f5f2439b0cb4eb77976d9be843f689b.camel@intel.com>
 
-On Thu, 26 Jun 2025 15:07:05 +0200
-Peter Zijlstra <peterz@infradead.org> wrote:
-
-> FWIW, I recently found we have a second 'copy' of all this in
-> insn_get_seg_base() / get_desc().
+On Thu, Jun 26, 2025 at 02:19:36AM +0300, Edgecombe, Rick P wrote:
+> On Wed, 2025-06-25 at 16:09 -0700, Ackerley Tng wrote:
+> > > I do think that these threads have gone on far too long. It's probably about
+> > > time to move forward with something even if it's just to have something to
+> > > discuss that doesn't require footnoting so many lore links. So how about we
+> > > move
+> > > forward with option e as a next step. Does that sound good Yan?
+> > > 
+> > 
+> > Please see my reply to Yan, I'm hoping y'all will agree to something
+> > between option f/g instead.
 > 
-> Its all subtly different, but largely the same.
+> I'm not sure about the HWPoison approach, but I'm not totally against it. My
+> bias is that all the MM concepts are tightly interlinked. If may fit perfectly,
+> but every new use needs to be checked for how fits in with the other MM users of
+> it. Every time I've decided a page flag was the perfect solution to my problem,
+> I got informed otherwise. Let me try to flag Kirill to this discussion. He might
+> have some insights.
 
-Should I just use that then?
+We chatted with Rick about this.
 
-Instead of:
+If I understand correctly, we are discussing the situation where the TDX
+module failed to return a page to the kernel.
 
-		cs_base = segment_base_address(regs->cs);
-		ss_base = segment_base_address(regs->ss);
+I think it is reasonable to use HWPoison for this case. We cannot
+guarantee that we will read back whatever we write to the page. TDX module
+has creative ways to corrupt it. 
 
-Use:
+The memory is no longer functioning as memory. It matches the definition
+of HWPoison quite closely.
 
-		cs_base = insn_get_seg_base(regs, INAT_SEG_REG_CS);
-		ss_base = insn_get_seg_base(regs, INAT_SEG_REG_SS);
-
-As it is used in a few places in the x86 code already. Then I could get rid
-of this patch.
-
--- Steve
+-- 
+  Kiryl Shutsemau / Kirill A. Shutemov
 
