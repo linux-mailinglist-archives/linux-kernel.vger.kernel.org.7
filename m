@@ -1,190 +1,133 @@
-Return-Path: <linux-kernel+bounces-704855-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-704852-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CD121AEA26F
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Jun 2025 17:26:35 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 92BF4AEA25B
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Jun 2025 17:22:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5C49F17E3D9
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Jun 2025 15:20:56 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 407923BC38F
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Jun 2025 15:19:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 215082EBDEB;
-	Thu, 26 Jun 2025 15:20:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F33112EBDC8;
+	Thu, 26 Jun 2025 15:19:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="iNv+64YD";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="9wFEbSWt"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="TW4qFg3n"
+Received: from mail-yw1-f172.google.com (mail-yw1-f172.google.com [209.85.128.172])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F34ED2EB5B9;
-	Thu, 26 Jun 2025 15:20:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D73A428934F;
+	Thu, 26 Jun 2025 15:19:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750951216; cv=none; b=I5bukDETv4NHk/AubVeoU8VkgDhThstoX3H21SXidDs91NFCfjqyHHBfvhkRbsXurdbQRH/GAqKa2/1py0U9WG8Q9yyp8mogzB3zBXcuW2V2JValaoZp5v2BKEg0C+DN29TqMcXG54ujiK+6qgrhuBmpw5F+csTq20aUGNX3P5E=
+	t=1750951194; cv=none; b=a3b433ckQVchAu/L9PD7Y6pPe/pJFR2rSiAV2EaSNNjwI6OvpDMbV/GgAorE70S0pkHiBGbqDxtivsqlc/rw+xR2o4V7Wjugwc4qxvprCE9LnMTkR2fJq3FZMgwV6YZlh19Seo/3p5Pew9RXdTTQQV9VxhHrklMUSOP1qR/ZbyA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750951216; c=relaxed/simple;
-	bh=Z4d+7h8BA44y+DQYpqJgetAGHe0PE65fDfDUAVKH6ZI=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=itExTqpzjkiGYGaJa1990ijLqH8TLy+PyWziDLXM+u4Ym/NvRHXif/6M0F921cdIeCpU8VidY33cbwjBkdIwXAugVNGD41zeTyzgiJUv63CoCyLAuwn6r2dGSyLttJKdv9uBwPfokEZIpdXmaabudewyLUY9QV26pJZmSLDy6IY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=iNv+64YD; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=9wFEbSWt; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-From: Nam Cao <namcao@linutronix.de>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1750951212;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=6gV2YmB3UnV/4qllskTxPTv0rjuHdA9qt4FDUhrbvWA=;
-	b=iNv+64YD0tyVmJ7rJhnT/GEtReEUtANmm+38Xq8bYt/XgcINpduPhcGyAUIOcFvKvxmFxF
-	OHxcQH9wD8E8zac9bZJ3Sw2Pg5gN28w4zT6Rb+LyYnuJZBVr0jYlQLpoZ9wnd5q/pY/tBG
-	OQAIwL00S/rG+OCMJZ9jGyibZAK/2aARrZK68T4parh55DWC32jC0zqRncoVv3gi6Qsjq/
-	gu81481I85tKHKFIOeLLQS4/RP7dyHf4KFc6KcZ5NQxf/BPoIB5Xd+P6mNO/M5xHuBPBR0
-	lSQZQrHx2PjDWrYPT9aieSz23Qi9SoY06CEGnGgDw6MvaE0uR9e7j+TOudvMUA==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1750951213;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=6gV2YmB3UnV/4qllskTxPTv0rjuHdA9qt4FDUhrbvWA=;
-	b=9wFEbSWtffWSD3WHs8AbQm+ItOQqoUgDrmODvIMlkN2joDKFqvhGgKE5RrUO8zUCRV2tJ6
-	uJgGBEGTskhK5SBQ==
-To: Steven Rostedt <rostedt@goodmis.org>,
-	Masami Hiramatsu <mhiramat@kernel.org>,
-	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-	linux-trace-kernel@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Cc: Gabriele Monaco <gmonaco@redhat.com>,
-	john.ogness@linutronix.de,
-	Nam Cao <namcao@linutronix.de>
-Subject: [PATCH] tracing: Remove pointless memory barriers
-Date: Thu, 26 Jun 2025 17:19:40 +0200
-Message-Id: <20250626151940.1756398-1-namcao@linutronix.de>
+	s=arc-20240116; t=1750951194; c=relaxed/simple;
+	bh=R+c2qSbTSKIC0tT9gkvNPds08WjRbxM6PibZWtchYDQ=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=bTr/HIRSqtuYhk4cm9izajXqKwi2DntmLHcFBhs7SviWUp4BkcxwxotlAVKl0idsTQ7wh1D5aeqhs++xa1Ls5JIHnw77rsCTPTXpwTCIkC8D+6zOMFaGvn5EJ2RAdt7dlHh3n93DTZKxQTpxj+4/dI2TlXWmmCYzGPGR8sC6Pk8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=TW4qFg3n; arc=none smtp.client-ip=209.85.128.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-yw1-f172.google.com with SMTP id 00721157ae682-70cb9ae5479so1059627b3.2;
+        Thu, 26 Jun 2025 08:19:52 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1750951192; x=1751555992; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=1JJKqMrEaML+dwFM/EI98+cWAy1tTBYyBi2gNj/iDEY=;
+        b=TW4qFg3nmfLHuwAup57tF9TA1VkJVIjV0M+jCX0dB+A+BCvrhsRDivMDoecAWL2Onb
+         69UL6I6LN4c4Np4KEdcMgwBQOqil3ACAbhFFplU1TkVy1Wa7xW4jElxJpwcAassV0xet
+         XVa2LnXI0U7BwI2YKmlxJD+gZohpQxdTelaIZDN8jiyqN7wGI9PwovZr9An7ZjRbQqCR
+         aRXZhxibXpoTfXQFjlT1qCNBPFGoRCbY9i5Cr75tRCg2rwyp+Ke71blLGIR1hpU9Bu9q
+         77JaSQzYe3EsoChbtklwRy+BCRjl5qKxX3eGaAWwIHpqk/O7izHuZRjwSDkY3dKM+6kn
+         EJGA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1750951192; x=1751555992;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=1JJKqMrEaML+dwFM/EI98+cWAy1tTBYyBi2gNj/iDEY=;
+        b=c9x2G30cp7AzAM9l9Thr9Xi0IWSHoxrMrdtqPui40N5LyJT0b8I6iSPAucn7oDoBV9
+         XQG3j6R/r40WK+Inaqm7culul/Q5EIBxdtSRcpAJE8Joq71nmh4nlhjO9fsmNSYE4bkd
+         1bU55PXQwn+0qKPIXICmT9eb6qxHRbgu6oBrBXRTGX+oh5THFhcrJo2Pjg+1ihkCbHus
+         oUJLgY5NsfjVbMRSJ56GKcLFoRPjp0t2ZzwduSbL8xTQjQBjWXSdIXBOzrzRv8KvoP35
+         GJuEpUFHWc6PxgxFp0a+s9ObwbPvwCyUyMIEi5g15WadtPy8RkBys5TFKk+/E5qFMEXt
+         2wtw==
+X-Forwarded-Encrypted: i=1; AJvYcCUfAorICBgkGlJdbisrTFqJejMZmqpEozAizupOCg8ElDMJnITRZcdMvoQsIXTp961HulGnd94iq+onqQw=@vger.kernel.org, AJvYcCXyZEwsfCRgJ1sLbvPCV2ogPUWcj46uPjKa20tDEmaWcMZLID9+l6hLw1wc6wQCGR052xrIuS3FnUJ1fY4=@vger.kernel.org
+X-Gm-Message-State: AOJu0YypVUaq6IhlkQGPlInCmQKKnfc/ucdcew2Eeu2X9ed/Z2mcikyi
+	//MMJQ6HJWeTW6D95gnotKa35sBztT4s9C7PDjJRIDlGNb39vdhqzzOHI0QTBCsK8ugWz1WiHxc
+	dFN+NQfwPF9TDG+oLXu8ib3sRudrwfBM=
+X-Gm-Gg: ASbGncu9DAN9NPQa2HzMn1R8tfi1XV21fB7jvgVn6DWsE718Neq5c5YX2mFX/DKT9Wg
+	vqYBYTxv6Tss7pG+T5f73gbP/YiuXvfgz79w1OzUyjEY/TI7Fv99Y+zLtkfR0Zsst0fWb5qudhm
+	GbjsWCcsdkrdgIXIOu7/CO3O9Y0KKBDONexlIAKDgYQrzw279R/vPp
+X-Google-Smtp-Source: AGHT+IFOnJmKn+JJ2frYecHk4EE6Fmul0pWhubm7itDVDM5Ubw/30TpmRooTP07goDGc31er/cpoSSsTxEwrFRlC4XA=
+X-Received: by 2002:a05:690c:6f84:b0:70f:7bea:5dd with SMTP id
+ 00721157ae682-71406e1368emr44684307b3.9.1750951191557; Thu, 26 Jun 2025
+ 08:19:51 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+References: <20250624144943.39297-1-abdelrahmanfekry375@gmail.com>
+ <cef03d37-715c-47a8-81d4-0872d505c39b@suswa.mountain> <CAGn2d8ML8eTcN2G18B7FYkapROnOeAKJir5fJvOXDdXTLY43aQ@mail.gmail.com>
+ <5ce9dac3-0b7a-45d1-8313-2f65165b50e7@suswa.mountain> <CAGn2d8N8GrRR0FnaB7S2BsPs0HXHhwHfg+q55HbfkMqy1kMGTw@mail.gmail.com>
+ <5d579b8c-0676-46d8-a020-77ee91e1e7d3@suswa.mountain>
+In-Reply-To: <5d579b8c-0676-46d8-a020-77ee91e1e7d3@suswa.mountain>
+From: Abdelrahman Fekry <abdelrahmanfekry375@gmail.com>
+Date: Thu, 26 Jun 2025 18:19:40 +0300
+X-Gm-Features: Ac12FXwpty1WwCsHouZ9sWJvvTacKyf47jvNYTt5mDohhxxtLmxfkIn5JlmFx3U
+Message-ID: <CAGn2d8PdiBRN09L__XEsH=cNYz4rDR2A-GnSqCM6Y5TmtT+wcw@mail.gmail.com>
+Subject: Re: [PATCH v2] staging: media: atomisp: remove debug sysfs attributes
+ active_bo and free_bo
+To: Dan Carpenter <dan.carpenter@linaro.org>
+Cc: andy@kernel.org, hdegoede@redhat.com, mchehab@kernel.org, 
+	sakari.ailus@linux.intel.com, gregkh@linuxfoundation.org, 
+	linux-kernel@vger.kernel.org, linux-media@vger.kernel.org, 
+	linux-staging@lists.linux.dev, skhan@linuxfoundation.org, 
+	linux-kernel-mentees@lists.linux.dev
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-Memory barriers are useful to ensure memory accesses from one CPU appear in
-the original order as seen by other CPUs.
+Hello Dan , Thanks for your review
 
-Some smp_rmb() and smp_wmb() are used, but they are not ordering multiple
-memory accesses.
+On Tue, Jun 24, 2025 at 9:31=E2=80=AFPM Dan Carpenter <dan.carpenter@linaro=
+.org> wrote:
+> Yes.  Nothing is checking for if hmm_init() fails.  Step through the
+> code and verify that nothing crashes or bad happens as a result.
+>
+> For example, I think hmm_bo_alloc() will print "hmm_bo_device not inited
+> yet." and return.  So that's kind of annoying but it's not a crash.
+> Search through the rest of the driver and verify how it will behave.
+>
 
-Remove them.
+So, I have been searching through the code as you suggested,
+and found a couple of interesting things to look at.
 
-Signed-off-by: Nam Cao <namcao@linutronix.de>
----
-This is something I noticed while staring at RV code. And I couldn't
-understand them. It seems RV code copied this from trace core, and it also
-doesn't make sense to me there.
+Firstly, no function that calls hmm_init() checks its return code,
+and it doesn=E2=80=99t crash anywhere because of this, so it's not a proble=
+m.
+But the thing is, the hmm_initialized flag inside the hmm_init() function
+is set even if hmm_bo_device_init() fails, and this can be misleading for
+functions like __hm_alloc() that check this flag later.
 
-Memory barriers are useful if we have something like:
+Secondly, the function hmm_bo_alloc() and others don=E2=80=99t check
+the return code of hmm_init(). Instead, they check the flag
+HMM_BO_DEVICE_INITED inside bdev, which is set by the function
+hmm_bo_device_init(). The problem is, if we inspect hmm_bo_device_init(),
+we find that the HMM_BO_DEVICE_INITED flag is set before the calls to
+kmem_cache_create(), kmem_cache_alloc(), and __bo_init().
+This means that if any of these functions fail, the flag will still be set,
+which can lead to misbehavior in functions that rely on it, like hmm_bo_all=
+oc().
 
-CPU1:              CPU2
-write A            read B
-write B            read A
+Should I tackle these problems after submitting the original patch of
+removing the debug sysfs attr. ?
 
-From this code, if CPU2 reads the new B, then it "should" also read the new
-A.
-
-But CPU1 could reorder the writes, and CPU2 sees the new B, but still the
-old A.
-
-Memory barrier is useful here:
-
-CPU1:              CPU2
-write A            read B
-smp_wb()           smp_rb()
-write B            read A
-
-Then if CPU2 sees the new B, and it will also see the new A.
-
-However, the memory barriers I see in kernel/trace/ do not resemble the
-above pattern. Therefore I think they are redundant.
-
-Please let me know if there is an unobvious reason for them.
-
- kernel/trace/rv/rv.c | 6 ------
- kernel/trace/trace.c | 7 -------
- 2 files changed, 13 deletions(-)
-
-diff --git a/kernel/trace/rv/rv.c b/kernel/trace/rv/rv.c
-index e4077500a91db..c04a49da43286 100644
---- a/kernel/trace/rv/rv.c
-+++ b/kernel/trace/rv/rv.c
-@@ -675,8 +675,6 @@ static bool __read_mostly monitoring_on;
-  */
- bool rv_monitoring_on(void)
- {
--	/* Ensures that concurrent monitors read consistent monitoring_on */
--	smp_rmb();
- 	return READ_ONCE(monitoring_on);
- }
-=20
-@@ -696,8 +694,6 @@ static ssize_t monitoring_on_read_data(struct file *fil=
-p, char __user *user_buf,
- static void turn_monitoring_off(void)
- {
- 	WRITE_ONCE(monitoring_on, false);
--	/* Ensures that concurrent monitors read consistent monitoring_on */
--	smp_wmb();
- }
-=20
- static void reset_all_monitors(void)
-@@ -713,8 +709,6 @@ static void reset_all_monitors(void)
- static void turn_monitoring_on(void)
- {
- 	WRITE_ONCE(monitoring_on, true);
--	/* Ensures that concurrent monitors read consistent monitoring_on */
--	smp_wmb();
- }
-=20
- static void turn_monitoring_on_with_reset(void)
-diff --git a/kernel/trace/trace.c b/kernel/trace/trace.c
-index 95ae7c4e58357..0dff4298fc0e5 100644
---- a/kernel/trace/trace.c
-+++ b/kernel/trace/trace.c
-@@ -936,7 +936,6 @@ int tracing_is_enabled(void)
- 	 * return the mirror variable of the state of the ring buffer.
- 	 * It's a little racy, but we don't really care.
- 	 */
--	smp_rmb();
- 	return !global_trace.buffer_disabled;
- }
-=20
-@@ -1107,8 +1106,6 @@ void tracer_tracing_on(struct trace_array *tr)
- 	 * important to be fast than accurate.
- 	 */
- 	tr->buffer_disabled =3D 0;
--	/* Make the flag seen by readers */
--	smp_wmb();
- }
-=20
- /**
-@@ -1640,8 +1637,6 @@ void tracer_tracing_off(struct trace_array *tr)
- 	 * important to be fast than accurate.
- 	 */
- 	tr->buffer_disabled =3D 1;
--	/* Make the flag seen by readers */
--	smp_wmb();
- }
-=20
- /**
-@@ -2710,8 +2705,6 @@ void trace_buffered_event_enable(void)
-=20
- static void enable_trace_buffered_event(void *data)
- {
--	/* Probably not needed, but do it anyway */
--	smp_rmb();
- 	this_cpu_dec(trace_buffered_event_cnt);
- }
-=20
---=20
-2.39.5
-
+Best Regards,
+Abdelrahman Fekry
 
