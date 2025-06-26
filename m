@@ -1,180 +1,143 @@
-Return-Path: <linux-kernel+bounces-704500-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-704498-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 96B1CAE9E3F
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Jun 2025 15:09:12 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 62DD7AE9E3A
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Jun 2025 15:08:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8A7B6168B8C
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Jun 2025 13:09:10 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0244A5601CE
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Jun 2025 13:08:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0C1882E5415;
-	Thu, 26 Jun 2025 13:09:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2F10C2E5405;
+	Thu, 26 Jun 2025 13:08:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=arunraghavan.net header.i=@arunraghavan.net header.b="PtNmuljE";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="OgUgAiwO"
-Received: from fout-a6-smtp.messagingengine.com (fout-a6-smtp.messagingengine.com [103.168.172.149])
+	dkim=pass (2048-bit key) header.d=shutemov.name header.i=@shutemov.name header.b="ZRxRqdrB";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="HKdu5GV1"
+Received: from fout-b5-smtp.messagingengine.com (fout-b5-smtp.messagingengine.com [202.12.124.148])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EC69B2AD11;
-	Thu, 26 Jun 2025 13:09:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.149
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D36892AD11
+	for <linux-kernel@vger.kernel.org>; Thu, 26 Jun 2025 13:08:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.12.124.148
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750943345; cv=none; b=EGHU2WB6GqKG76ZaJqe44xnr9QARS6M9SyMDD4idqok5sdvtOmY5YbT4iSawr+y7RI0kPdRapUyco141zmOjKWXce6IdhRmjJGOnR4IOjHF+cLNznlaSbx9jcRf+bIvzTZxZrJsxOLCSzH6QcDL1ItY91T4M4wIQjOd5TmSC+pg=
+	t=1750943321; cv=none; b=YNxYDCfj/F3/EYTxhuwHbJbg0W1LFtbklDmrhmWsgrqh3ci28VPIJDMhv61SZqFpvd7K0hi3G9pMzaP5tPxr70/Nhvv5qbUAmSDidfxBXf6kRv/M74ZLLxNeYb2Aaf0uHUki6kADqyaxVKWlH0CaaqGgDVuf8S7cvffpXZSXrow=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750943345; c=relaxed/simple;
-	bh=oOQgk5plAXC3cHkBFuuDTyF/8Mxjc15JcHehSvv9EQ8=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=ZI5IiBSH/8z+s9MrSIUT2x34U/pQf3BgzZQByK+EWto1BBro7UT5amKFUedho3nv84aaQjkX0jeiQKnggpJX2YYx9R0aBJ9z59B81npNTKcfH1MoSFxsQExJGJuPIgCg2Pge2Y4dIpuOdjKoqXKabUn+D4/OExtMCJfUqxTShX8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=arunraghavan.net; spf=pass smtp.mailfrom=arunraghavan.net; dkim=pass (2048-bit key) header.d=arunraghavan.net header.i=@arunraghavan.net header.b=PtNmuljE; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=OgUgAiwO; arc=none smtp.client-ip=103.168.172.149
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=arunraghavan.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arunraghavan.net
-Received: from phl-compute-06.internal (phl-compute-06.phl.internal [10.202.2.46])
-	by mailfout.phl.internal (Postfix) with ESMTP id 05540EC01D1;
-	Thu, 26 Jun 2025 09:09:02 -0400 (EDT)
+	s=arc-20240116; t=1750943321; c=relaxed/simple;
+	bh=wz4cMmpq1EicNyKcRE7LUubrXH3iHzmxXirobDrt1o8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=edDG8tVCux+zgfjEgfXGlz0xAV+I5i+H4cFlwqAVI+AlyD+55GV6GUqkYHIi1kiCwedhVNCQStgNP7doGRmSWoJDe9HxJyjnuSRVd9r/pXrk9GHSuUWK3PTt/jQaKjKyZHotXIKh5JdlX+voavxZVX7FAR/9YuXzZJrgPryKk0Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=shutemov.name; spf=pass smtp.mailfrom=shutemov.name; dkim=pass (2048-bit key) header.d=shutemov.name header.i=@shutemov.name header.b=ZRxRqdrB; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=HKdu5GV1; arc=none smtp.client-ip=202.12.124.148
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=shutemov.name
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=shutemov.name
+Received: from phl-compute-01.internal (phl-compute-01.phl.internal [10.202.2.41])
+	by mailfout.stl.internal (Postfix) with ESMTP id 9D59F1D00117;
+	Thu, 26 Jun 2025 09:08:36 -0400 (EDT)
 Received: from phl-mailfrontend-01 ([10.202.2.162])
-  by phl-compute-06.internal (MEProxy); Thu, 26 Jun 2025 09:09:02 -0400
+  by phl-compute-01.internal (MEProxy); Thu, 26 Jun 2025 09:08:36 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=shutemov.name;
+	 h=cc:cc:content-type:content-type:date:date:from:from
+	:in-reply-to:in-reply-to:message-id:mime-version:references
+	:reply-to:subject:subject:to:to; s=fm3; t=1750943316; x=
+	1751029716; bh=GC6wCjzLugQpyX/JBZD8Gf0/3VKgEjS+1r1sT/9UcTQ=; b=Z
+	RxRqdrBIzMFB/nfo2MICSgPW+I4748DUSsxFtYunsjIWxcEJXB4ea/SDFnsT1B6f
+	xaRp0mFVOJH+93VWutLwanAHmJz+jOBRybt1CxbZSeTUxMNGT+6gg+5kOd1zzmGB
+	NNO8N1YELC87DfmswBnlTZ0FLkbsinRh/k37TW0fOTpe3ZcW3/69o4+GbkU0Ang3
+	0vSyLIckZ88FxovGg40EOqcg6mt58fLpG4tUZewILBs01G+/NwlwYfKmxJHJxdmm
+	IC7lbnOLQ8TvaEvQR3EpURaxzLmbRXX1vEGLGFeep2TQnH8Xo76sX980XUUQtjFd
+	ibPTb8FzMPQR6qjIaDaVw==
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	arunraghavan.net; h=cc:cc:content-transfer-encoding:content-type
-	:date:date:from:from:in-reply-to:message-id:mime-version
-	:reply-to:subject:subject:to:to; s=fm1; t=1750943342; x=
-	1751029742; bh=3TR8c1XlSAHzq5ql4c7mGOadV5LanrZWk1R0NaowOXw=; b=P
-	tNmuljElytKPpwQz2xCaNZXiDrB2v+MUCcyu4EOq+nvkgcUyiOH18XhQbZent4dc
-	mIQpNliglBAWiM79yhhbQwmeyzqj/ZuFmui8i3MM1hbOHTDEwzlM5rHo0w0zsgtj
-	1yXJ6ick3qlMTadVmoFCtZx8jdVTiainoddnZmImk9wu1mPwVVqrOKxJ/+Kb8MOU
-	hZhDcatHzawvRfZjJ40rRKEjV9T+qJ6SLqTEzD9yEuk51xXFoto3acnZfZO6bDP+
-	d9GBYP/e1EcIkT9zibyQbDduqdXFisWM31H4VdXsRkhEm0Vm6odJvR5qSetNzSBb
-	DtPWqAeU/n3wKb6LEsVqg==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:date:date:feedback-id:feedback-id:from:from
-	:in-reply-to:message-id:mime-version:reply-to:subject:subject:to
+	messagingengine.com; h=cc:cc:content-type:content-type:date:date
+	:feedback-id:feedback-id:from:from:in-reply-to:in-reply-to
+	:message-id:mime-version:references:reply-to:subject:subject:to
 	:to:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm2; t=
-	1750943342; x=1751029742; bh=3TR8c1XlSAHzq5ql4c7mGOadV5LanrZWk1R
-	0NaowOXw=; b=OgUgAiwOR+NljDySxtWkacQflqePd6AVC7W1eXEjYtm0AZLzCiN
-	0cx8EvvL+J9TYWEnOB1gNxhOierzdYC8rMFNLLFiPZLQLppa3ABJUUCG9xiTCdgt
-	CKvyDH5MJLfO/oit9BfH21YlNxvkyWCyYHAufnd2yvzndB1Ls8c5aXoq3VPLuihx
-	ACYak+2cke2D6RZ3Xz1827UYmZIrFiaQ+vc0rNdLInY6IHH4EjW8jNwHS2lbU7UJ
-	GmzVz1twBAWNGp+vu8gwb40A+p2V2xLugVT6BrnlrbVZjHXOTOCD4i40GQ4uYX9n
-	BT9BfjTNdQ4Fc9+gU1WJVLjWu4sW7rMvf/A==
-X-ME-Sender: <xms:bUZdaCobQOs-jdUnkj5hgNMqXWq5ubSYk3YQL8uQw0wKLpjcSSINOA>
-    <xme:bUZdaAppYYFqbQqI5YUyUFG9M83YNERiHj4g8Bxxsdsa--HRFH73uqKQ2V9pcYsRm
-    EavPXnHvqK4WIyZXg>
-X-ME-Received: <xmr:bUZdaHMNcRNZjIIoM4K_rYEgD6bBA5tgG7dHJ-FFuBjwzWYJjl9hQFImdgp1QmdS>
+	1750943316; x=1751029716; bh=GC6wCjzLugQpyX/JBZD8Gf0/3VKgEjS+1r1
+	sT/9UcTQ=; b=HKdu5GV1Ccx8ZvdYFKwW6wo9lsliMK/n85ZXJqILqq83lnsEJIm
+	yxIi9ZCa7ue7is+ixbWXZGe8vQAxu14HUMm69fTXcFnR+/mMCL2iusaF8dBY8kRH
+	QcCL1Sd7AWMRjXXwCNVF0dXQTPTY+N/NKTgPfg+RVde6Dkcx+yha4HRQn46i4ZwL
+	I5Y/6JRCF1/8Znqc9er3LQ0yzanP5EYjr/d3zQVZoqaibiiO58rW47VUEZjtwDf7
+	UEjqHRtYtXIjr34nQkC8gJeNeQSqJ/bJYCU26CF1b7++z7D3lfEIDzIk9YWOPDOM
+	iIH608JpjyPvERdgDf8xu03Toq7YO9qVDOw==
+X-ME-Sender: <xms:U0ZdaCElqvLsG6GYYzxmHOyVTFca7V3eSSQLptwK25GwznvpIkct5w>
+    <xme:U0ZdaDWRL1Be1AqBMZlJwkR7nKCtXKFL1PM7KZKsGiSdcLXnNuRK8MM_t87VgOysb
+    rIq8kxC6zgZ3eKXoLw>
+X-ME-Received: <xmr:U0ZdaMLJ8qo2vCOSYYe5vkgaB9T_2_DSUWx7GoeVnivNHJRGMjyFAkLCOWC64UBZ-Zqr_g>
 X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdefgddviecutefuodetggdotefrodftvf
     curfhrohhfihhlvgemucfhrghsthforghilhdpuffrtefokffrpgfnqfghnecuuegrihhl
     ohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjughrpe
-    fhvfevufffkffoggfgsedtkeertdertddtnecuhfhrohhmpeetrhhunhcutfgrghhhrghv
-    rghnuceorghruhhnsegrrhhunhhrrghghhgrvhgrnhdrnhgvtheqnecuggftrfgrthhtvg
-    hrnhepteduheelvedvledvudfhudevkefhhfeifefggeevkedvudfgueelvdehtdetvdef
-    necuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomheprghruh
-    hnsegrrhhunhhrrghghhgrvhgrnhdrnhgvthdpnhgspghrtghpthhtohepudegpdhmohgu
-    vgepshhmthhpohhuthdprhgtphhtthhopehshhgvnhhgjhhiuhdrfigrnhhgsehgmhgrih
-    hlrdgtohhmpdhrtghpthhtohepgihiuhgsohdrlhgvvgesghhmrghilhdrtghomhdprhgt
-    phhtthhopehfvghsthgvvhgrmhesghhmrghilhdrtghomhdprhgtphhtthhopehnihgtoh
-    hlvghothhsuhhkrgesghhmrghilhdrtghomhdprhgtphhtthhopehlghhirhgufihoohgu
-    sehgmhgrihhlrdgtohhmpdhrtghpthhtohepsghrohhonhhivgeskhgvrhhnvghlrdhorh
-    hgpdhrtghpthhtohepphgvrhgvgiesphgvrhgvgidrtgiipdhrtghpthhtohepthhifigr
-    ihesshhushgvrdgtohhmpdhrtghpthhtohepphdrtggrmhgvrhhlhihntghksehtvghlvg
-    hvihgtrdgtohhm
-X-ME-Proxy: <xmx:bUZdaB54Hz6UhUVeDLG3l_ZwEUttpvdcpg1T5EsH99vDQPKzVTJTAg>
-    <xmx:bUZdaB7dPLXisgzE6x7ObluNUnAkDoKb8nFuVrH2WW8-jdav1B2htw>
-    <xmx:bUZdaBi2ITaqNxZIk6IqQvI_Y3DJAfLp9WeiX7noVe3XwalDn9mCGQ>
-    <xmx:bUZdaL6psXbo9zJBPJ_3Ybzg4-di_hvQl0sm6ETIqBojIV2YSUwHlg>
-    <xmx:bUZdaNpGehd9MBJzwrMUl8LVtfQNs4jACysufrmqmU4sldkB8Q23KAd_>
-Feedback-ID: i42c0435e:Fastmail
+    ffhffvvefukfhfgggtuggjsehttdfstddttddvnecuhfhrohhmpedfmfhirhhilhhlucet
+    rdcuufhhuhhtvghmohhvfdcuoehkihhrihhllhesshhhuhhtvghmohhvrdhnrghmvgeqne
+    cuggftrfgrthhtvghrnhepffdvveeuteduhffhffevlefhteefveevkeelveejudduvedv
+    uddvleetudevhfeknecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilh
+    hfrhhomhepkhhirhhilhhlsehshhhuthgvmhhovhdrnhgrmhgvpdhnsggprhgtphhtthho
+    pedufedpmhhouggvpehsmhhtphhouhhtpdhrtghpthhtoheprhhivghlsehsuhhrrhhivg
+    hlrdgtohhmpdhrtghpthhtoheplhhinhhugidqkhgvrhhnvghlsehvghgvrhdrkhgvrhhn
+    vghlrdhorhhgpdhrtghpthhtohepkhgvrhhnvghlqdhtvggrmhesmhgvthgrrdgtohhmpd
+    hrtghpthhtohepuggrvhgvrdhhrghnshgvnheslhhinhhugidrihhnthgvlhdrtghomhdp
+    rhgtphhtthhopehluhhtoheskhgvrhhnvghlrdhorhhgpdhrtghpthhtohepphgvthgvrh
+    iisehinhhfrhgruggvrggurdhorhhgpdhrtghpthhtohepsghpsegrlhhivghnkedruggv
+    pdhrtghpthhtohepgiekieeskhgvrhhnvghlrdhorhhgpdhrtghpthhtohepnhgruggrvh
+    drrghmihhtsehgmhgrihhlrdgtohhm
+X-ME-Proxy: <xmx:U0ZdaMGfX2ruENJCB6xKynzG8EfXs1Jo8SrWy6Q87uPe1g8sgtVUsA>
+    <xmx:U0ZdaIUvbhR5T-VZlP_VABC0tMNZXVq8GJjnNhf797wGllEW2eM4Og>
+    <xmx:U0ZdaPNVHlc5ueEgzFNtfHvCz9CMwzU25_HkvBviBsD5UYB1OR2lkQ>
+    <xmx:U0ZdaP17xME3nlU2y65wNuqk3QDtSx92oV85DMEtqdzlc4IzZ9kupw>
+    <xmx:VEZdaLEs8OCX1bh_R8lm0mKwFIxCrHgV2X8qjDv6_D2qjFawrLkjEK80>
+Feedback-ID: ie3994620:Fastmail
 Received: by mail.messagingengine.com (Postfix) with ESMTPA; Thu,
- 26 Jun 2025 09:09:00 -0400 (EDT)
-From: Arun Raghavan <arun@arunraghavan.net>
-To: Shengjiu Wang <shengjiu.wang@gmail.com>,
-	Xiubo Li <Xiubo.Lee@gmail.com>
-Cc: Fabio Estevam <festevam@gmail.com>,
-	Nicolin Chen <nicoleotsuka@gmail.com>,
-	Liam Girdwood <lgirdwood@gmail.com>,
-	Mark Brown <broonie@kernel.org>,
-	Jaroslav Kysela <perex@perex.cz>,
-	Takashi Iwai <tiwai@suse.com>,
-	Pieterjan Camerlynck <p.camerlynck@televic.com>,
-	linux-sound@vger.kernel.org,
-	linuxppc-dev@lists.ozlabs.org,
-	linux-kernel@vger.kernel.org,
-	Arun Raghavan <arun@asymptotic.io>,
-	stable@vger.kernel.org
-Subject: [PATCH v4] ASoC: fsl_sai: Force a software reset when starting in consumer mode
-Date: Thu, 26 Jun 2025 09:08:25 -0400
-Message-ID: <20250626130858.163825-1-arun@arunraghavan.net>
-X-Mailer: git-send-email 2.49.0
+ 26 Jun 2025 09:08:30 -0400 (EDT)
+Date: Thu, 26 Jun 2025 16:08:27 +0300
+From: "Kirill A. Shutemov" <kirill@shutemov.name>
+To: Rik van Riel <riel@surriel.com>
+Cc: linux-kernel@vger.kernel.org, kernel-team@meta.com, 
+	dave.hansen@linux.intel.com, luto@kernel.org, peterz@infradead.org, bp@alien8.de, 
+	x86@kernel.org, nadav.amit@gmail.com, seanjc@google.com, tglx@linutronix.de, 
+	mingo@kernel.org, Rik van Riel <riel@fb.com>
+Subject: Re: [RFC PATCH v4 2/8] x86/mm: enable BROADCAST_TLB_FLUSH on Intel,
+ too
+Message-ID: <5otrbzjvvz7zvqtfdoulm455jj4ut5fzjmsfzjyjkljcc2jp2s@2ealtckhzxow>
+References: <20250619200442.1694583-1-riel@surriel.com>
+ <20250619200442.1694583-3-riel@surriel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250619200442.1694583-3-riel@surriel.com>
 
-From: Arun Raghavan <arun@asymptotic.io>
+On Thu, Jun 19, 2025 at 04:03:54PM -0400, Rik van Riel wrote:
+> From: Rik van Riel <riel@fb.com>
+> 
+> Much of the code for Intel RAR and AMD INVLPGB is shared.
+> 
+> Place both under the same config option.
+> 
+> Signed-off-by: Rik van Riel <riel@surriel.com>
+> ---
+>  arch/x86/Kconfig.cpu | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/arch/x86/Kconfig.cpu b/arch/x86/Kconfig.cpu
+> index f928cf6e3252..ab763f69f54d 100644
+> --- a/arch/x86/Kconfig.cpu
+> +++ b/arch/x86/Kconfig.cpu
+> @@ -360,7 +360,7 @@ menuconfig PROCESSOR_SELECT
+>  
+>  config BROADCAST_TLB_FLUSH
+>  	def_bool y
+> -	depends on CPU_SUP_AMD && 64BIT
+> +	depends on (CPU_SUP_AMD || CPU_SUP_INTEL) && 64BIT && SMP
 
-On an imx8mm platform with an external clock provider, when running the
-receiver (arecord) and triggering an xrun with xrun_injection, we see a
-channel swap/offset. This happens sometimes when running only the
-receiver, but occurs reliably if a transmitter (aplay) is also
-concurrently running.
+Maybe split it into few "depends on"?
 
-It seems that the SAI loses track of frame sync during the trigger stop
--> trigger start cycle that occurs during an xrun. Doing just a FIFO
-reset in this case does not suffice, and only a software reset seems to
-get it back on track.
+	depends on 64BIT
+	depends on SMP
+	depends on CPU_SUP_AMD || CPU_SUP_INTEL
 
-This looks like the same h/w bug that is already handled for the
-producer case, so we now do the reset unconditionally on config disable.
-
-Signed-off-by: Arun Raghavan <arun@asymptotic.io>
-Reported-by: Pieterjan Camerlynck <p.camerlynck@televic.com>
-Fixes: 3e3f8bd56955 ("ASoC: fsl_sai: fix no frame clk in master mode")
-Cc: stable@vger.kernel.org
----
-
-v4
-- Add Fixes and cc stable
-
-v3
-- Incorporate feedback from Shengjiu Wang to consolidate with the
-  existing handling of this issue in producer mode
-
-v2 (no longer relevant)
-- Address build warning from kernel test robot
-
- sound/soc/fsl/fsl_sai.c | 14 ++++++++------
- 1 file changed, 8 insertions(+), 6 deletions(-)
-
-diff --git a/sound/soc/fsl/fsl_sai.c b/sound/soc/fsl/fsl_sai.c
-index af1a168d35e3..50af6b725670 100644
---- a/sound/soc/fsl/fsl_sai.c
-+++ b/sound/soc/fsl/fsl_sai.c
-@@ -803,13 +803,15 @@ static void fsl_sai_config_disable(struct fsl_sai *sai, int dir)
- 	 * anymore. Add software reset to fix this issue.
- 	 * This is a hardware bug, and will be fix in the
- 	 * next sai version.
-+	 *
-+	 * In consumer mode, this can happen even after a
-+	 * single open/close, especially if both tx and rx
-+	 * are running concurrently.
- 	 */
--	if (!sai->is_consumer_mode[tx]) {
--		/* Software Reset */
--		regmap_write(sai->regmap, FSL_SAI_xCSR(tx, ofs), FSL_SAI_CSR_SR);
--		/* Clear SR bit to finish the reset */
--		regmap_write(sai->regmap, FSL_SAI_xCSR(tx, ofs), 0);
--	}
-+	/* Software Reset */
-+	regmap_write(sai->regmap, FSL_SAI_xCSR(tx, ofs), FSL_SAI_CSR_SR);
-+	/* Clear SR bit to finish the reset */
-+	regmap_write(sai->regmap, FSL_SAI_xCSR(tx, ofs), 0);
- }
- 
- static int fsl_sai_trigger(struct snd_pcm_substream *substream, int cmd,
 -- 
-2.49.0
-
+  Kiryl Shutsemau / Kirill A. Shutemov
 
