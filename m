@@ -1,99 +1,122 @@
-Return-Path: <linux-kernel+bounces-704002-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-704004-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1CA24AE9819
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Jun 2025 10:21:30 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4E3D8AE9826
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Jun 2025 10:23:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7C0041777BB
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Jun 2025 08:20:11 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1F2596A30D2
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Jun 2025 08:20:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9A573265288;
-	Thu, 26 Jun 2025 08:19:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="A5EZ9zEU"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0276F25BF1F;
-	Thu, 26 Jun 2025 08:19:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9D49F25FA1D;
+	Thu, 26 Jun 2025 08:20:19 +0000 (UTC)
+Received: from relmlie6.idc.renesas.com (relmlor2.renesas.com [210.160.252.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6525425C712
+	for <linux-kernel@vger.kernel.org>; Thu, 26 Jun 2025 08:20:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.160.252.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750925988; cv=none; b=rsGb14VzPefvFxuQUW1EhHHFgL7bPIsi39zZckJ42//y5hKXovl0LNVwOt0otEZ7wFge2vqFVFgKT/Q+hr6f7tJvgHA5kJf2JhbAfN8g+X5/iMFosiB7PmYdAceIdSD6Kf1JOGzgycnj42PwVPrGNf3HQD2Ds+umep7rE7iTGLM=
+	t=1750926019; cv=none; b=J0fUgoms9QkOU336MLU3qx/K5V1qa3OwaAp6VbWU+b0Z6yLAbC0xp5oY6OXM12yvGOcbR7yawQ5UEEhpR8is5WzHjSjJOvhmWEHWawHPeMlSSvdHxOvrYJGNOcn5PGKzd2oJCCXqOKu6V4tn/Kyvj0dV15SOi9nBAOu/EDQCZBg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750925988; c=relaxed/simple;
-	bh=A8+cYAkypY9eWevvSYqveVJzX5vxPUojuCmHq0PmdRY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=KQRssAJoaxmeb6g8lvm9RKrD8yVdjEeD2glvCvEalPT6Pw18e+4MNGBw2UbYmC6jLeekG86jEP2bL3egPuyw7//V0RL+LY4+D13GCh3UlZMadfnSPZ49giMxUSTnfVeoaRvim3fVERmB75tDvcv9N5axg4gsSVie3ltjP9vM2tA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=A5EZ9zEU; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C8289C4CEEB;
-	Thu, 26 Jun 2025 08:19:44 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1750925987;
-	bh=A8+cYAkypY9eWevvSYqveVJzX5vxPUojuCmHq0PmdRY=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=A5EZ9zEUyZlcP/Dw6+aQ+/8LrpRyAMv7CPTS6uBCJafcUx4PGemq/XGmU4teDOw2X
-	 ONAMeKQv6orf+pVI9PNB2liyMGk+ms5DQW0U/DpvinSm+s42Kww13Hy2rgcKWNVVJh
-	 J7xkwBo+jw8332cwhe/qphNlzia5qFd3dfVCn/crmMitZIy4xNvhzWJ+NwgDcXBFlG
-	 iOeMSgFai11lVjjwelgEm8LwpzUkrID/0SLT7ouz9I5gC/WFTsCo8cNaw3EXNJYsDQ
-	 iZj6d//ExvyK3PrulzLBjEDabhKJvuo9a0noyckSRbb3MyTqdEu0g1tkVV5rQxmVRZ
-	 s9M2Qd4aVDJIA==
-Date: Thu, 26 Jun 2025 10:19:41 +0200
-From: Christian Brauner <brauner@kernel.org>
-To: Arnd Bergmann <arnd@arndb.de>
-Cc: Marek Szyprowski <m.szyprowski@samsung.com>, 
-	Arnd Bergmann <arnd@kernel.org>, Alexander Viro <viro@zeniv.linux.org.uk>, 
-	Jan Kara <jack@suse.cz>, Alexander Mikhalitsyn <alexander@mihalicyn.com>, 
-	Jann Horn <jannh@google.com>, Luca Boccassi <luca.boccassi@gmail.com>, 
-	Jeff Layton <jlayton@kernel.org>, Roman Kisel <romank@linux.microsoft.com>, 
-	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] coredump: reduce stack usage in vfs_coredump()
-Message-ID: <20250626-hinhalten-behaarten-43b8f306fee0@brauner>
-References: <20250620112105.3396149-1-arnd@kernel.org>
- <404dfe9a-1f4f-4776-863a-d8bbe08335e2@samsung.com>
- <CGME20250625115426eucas1p17398cfcd215befcd3eafe0cac44b33a7@eucas1p1.samsung.com>
- <8f080dc3-ef13-4d9a-8964-0c2b3395072e@samsung.com>
- <cb0c926f-15be-4400-a9b9-0122a6238fea@app.fastmail.com>
+	s=arc-20240116; t=1750926019; c=relaxed/simple;
+	bh=XqIcxV9tYYGK5WIxG83oeOFYBxW9iRFFIB/DMui79tA=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=XM+cUUd4qA0JEqs20xts4C0V8pJeJMRyoGQwtHggT6FZq7IGsq0Me9tkmVq0iyvvJbDrkIl/lslVveF6S33TkzaltPGqUFg3iK4gkrJ9auuIRSErK3u97xtNDgAd+BGSXu87VtV8SiwPOzkhyZW88CKiWKF3wlZ2cjV9I0RQzqM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=renesas.com; spf=pass smtp.mailfrom=renesas.com; arc=none smtp.client-ip=210.160.252.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=renesas.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=renesas.com
+X-CSE-ConnectionGUID: 6ZYuhy3MSd+Ep4z1BFAuLA==
+X-CSE-MsgGUID: Wwn/6KNFTY+z1Bqzxt6wNA==
+Received: from unknown (HELO relmlir6.idc.renesas.com) ([10.200.68.152])
+  by relmlie6.idc.renesas.com with ESMTP; 26 Jun 2025 17:20:16 +0900
+Received: from REE-DUD04480.adwin.renesas.com (unknown [10.226.78.19])
+	by relmlir6.idc.renesas.com (Postfix) with ESMTP id 61CC241A0D72;
+	Thu, 26 Jun 2025 17:20:14 +0900 (JST)
+From: Michael Dege <michael.dege@renesas.com>
+To: Vinod Koul <vkoul@kernel.org>,
+	Kishon Vijay Abraham I <kishon@kernel.org>,
+	Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+Cc: Michael Dege <michael.dege@renesas.com>,
+	Uwe Kleine-Koenig <u.kleine-koenig@baylibre.com>,
+	linux-phy@lists.infradead.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH 2/2] phy: renesas: r8a779f0-ether-serdes: add new step added to latest datasheet
+Date: Thu, 26 Jun 2025 10:19:55 +0200
+Message-Id: <20250626081955.1924861-1-michael.dege@renesas.com>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <cb0c926f-15be-4400-a9b9-0122a6238fea@app.fastmail.com>
+Content-Transfer-Encoding: 8bit
 
-On Wed, Jun 25, 2025 at 03:29:50PM +0200, Arnd Bergmann wrote:
-> On Wed, Jun 25, 2025, at 13:54, Marek Szyprowski wrote:
-> > On 25.06.2025 13:41, Marek Szyprowski wrote:
-> >>
-> >> This change appears in today's linux-next (next-20250625) as commit 
-> >> fb82645d3f72 ("coredump: reduce stack usage in vfs_coredump()"). In my 
-> >> tests I found that it causes a kernel oops on some of my ARM 32bit 
-> >> Exynos based boards. This is really strange, because I don't see any 
-> >> obvious problem in this patch. Reverting $subject on top of linux-next 
-> >> hides/fixes the oops. I suspect some kind of use-after-free issue, but 
-> >> I cannot point anything related. Here is the kernel log from one of 
-> >> the affected boards (I've intentionally kept the register and stack 
-> >> dumps):
-> >
-> > I've just checked once again and found the source of the issue. 
-> > vfs_coredump() calls coredump_cleanup(), which calls coredump_finish(), 
-> > which performs the following dereference:
-> >
-> > next = current->signal->core_state->dumper.next
-> >
-> > of the core_state assigned in zap_threads() called from coredump_wait(). 
-> > It looks that core_state cannot be moved into coredump_wait() without 
-> > refactoring/cleaning this first.
-> 
-> Thanks for the analysis, I agree that this can't work and my patch
-> just needs to be dropped. The 'noinline_for_stack' change on
-> its own is probably sufficient to avoid the warning, and I can
-> respin a new version after more build testing.
+R-Car S4-8 datasheet Rev.1.20 describes some additional register
+settings at the end of the initialization.
 
-@Arnd, I've dropped the previous patch. I'll wait for you to respin.
+- update after failed CI test:
+  Replace wrong macro with R8A779F0_ETH_SERDES_BANK_SELECT
+
+Signed-off-by: Michael Dege <michael.dege@renesas.com>
+---
+ drivers/phy/renesas/r8a779f0-ether-serdes.c | 28 +++++++++++++++++++++
+ 1 file changed, 28 insertions(+)
+
+diff --git a/drivers/phy/renesas/r8a779f0-ether-serdes.c b/drivers/phy/renesas/r8a779f0-ether-serdes.c
+index ed83c46f6d00..8a6b6f366fe3 100644
+--- a/drivers/phy/renesas/r8a779f0-ether-serdes.c
++++ b/drivers/phy/renesas/r8a779f0-ether-serdes.c
+@@ -49,6 +49,13 @@ static void r8a779f0_eth_serdes_write32(void __iomem *addr, u32 offs, u32 bank,
+ 	iowrite32(data, addr + offs);
+ }
+ 
++static u32 r8a779f0_eth_serdes_read32(void __iomem *addr, u32 offs,  u32 bank)
++{
++	iowrite32(bank, addr + R8A779F0_ETH_SERDES_BANK_SELECT);
++
++	return ioread32(addr + offs);
++}
++
+ static int
+ r8a779f0_eth_serdes_reg_wait(struct r8a779f0_eth_serdes_channel *channel,
+ 			     u32 offs, u32 bank, u32 mask, u32 expected)
+@@ -319,6 +326,7 @@ static int r8a779f0_eth_serdes_hw_init_late(struct r8a779f0_eth_serdes_channel
+ *channel)
+ {
+ 	int ret;
++	u32 val;
+ 
+ 	ret = r8a779f0_eth_serdes_chan_setting(channel);
+ 	if (ret)
+@@ -332,6 +340,26 @@ static int r8a779f0_eth_serdes_hw_init_late(struct r8a779f0_eth_serdes_channel
+ 
+ 	r8a779f0_eth_serdes_write32(channel->addr, 0x03d0, 0x380, 0x0000);
+ 
++	val = r8a779f0_eth_serdes_read32(channel->addr, 0x00c0, 0x180);
++	r8a779f0_eth_serdes_write32(channel->addr, 0x00c0, 0x180, val | BIT(8));
++	ret = r8a779f0_eth_serdes_reg_wait(channel, 0x0100, 0x180, BIT(0), 1);
++	if (ret)
++		return ret;
++	r8a779f0_eth_serdes_write32(channel->addr, 0x00c0, 0x180, val & ~BIT(8));
++	ret = r8a779f0_eth_serdes_reg_wait(channel, 0x0100, 0x180, BIT(0), 0);
++	if (ret)
++		return ret;
++
++	val = r8a779f0_eth_serdes_read32(channel->addr, 0x0144, 0x180);
++	r8a779f0_eth_serdes_write32(channel->addr, 0x0144, 0x180, val | BIT(4));
++	ret = r8a779f0_eth_serdes_reg_wait(channel, 0x0180, 0x180, BIT(0), 1);
++	if (ret)
++		return ret;
++	r8a779f0_eth_serdes_write32(channel->addr, 0x0144, 0x180, val & ~BIT(4));
++	ret = r8a779f0_eth_serdes_reg_wait(channel, 0x0180, 0x180, BIT(0), 0);
++	if (ret)
++		return ret;
++
+ 	return r8a779f0_eth_serdes_monitor_linkup(channel);
+ }
+ 
+-- 
+2.25.1
+
 
