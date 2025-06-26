@@ -1,157 +1,97 @@
-Return-Path: <linux-kernel+bounces-704581-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-704583-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5F84AAE9F4C
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Jun 2025 15:46:26 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 18E7AAE9F50
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Jun 2025 15:47:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7A37218939E9
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Jun 2025 13:45:34 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8EEAF5A3A60
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Jun 2025 13:45:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1AA452E765A;
-	Thu, 26 Jun 2025 13:45:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5ABFE2E764D;
+	Thu, 26 Jun 2025 13:45:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="JwNa5DVP"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=geanix.com header.i=@geanix.com header.b="JMlikKow"
+Received: from mail-4323.protonmail.ch (mail-4323.protonmail.ch [185.70.43.23])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 520B32E762B;
-	Thu, 26 Jun 2025 13:45:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5557C2E764B;
+	Thu, 26 Jun 2025 13:45:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.70.43.23
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750945509; cv=none; b=EZYl3w3lrksLYqVuvH9i5S9bNisbn7V499aMB2p5rNMyzqFiw+ino5dzo9fcTzA0YrQahiEEO7D2rgmeNTW6ATxAF+SwUidgDHkl9V/GZ5ekP6bj8HKT+YDdfZHHQhubpBjzJUpQjAEemj7WhHcHtrCOmv2f2w4VtJZ40SE6e+s=
+	t=1750945527; cv=none; b=MimzyQd6PiFS4t0Lws2GUoGyn+DKf0g2bCAYjf2ZV7a/5cADBmSWaKFud6sFutzUd4M/iDt1ZpQclexv4U8GiV7e1jsC1+Q0YnOik+u/n1C5PtZVS6DAfFQSPdR5CKBdiyWwMvDg6C1kCGrK/Mbr86/K08ot8BDeNb2H6zIjPhw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750945509; c=relaxed/simple;
-	bh=G279dACHtQvr3AjwMIYy7wmCNZM5C1w9YX3eXJKhFSs=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=dIZXHkjLI01hyFtIBqj9Q5GR1iU280dvDPiT1uE9BPX0k6rVw3DDHz307NOtRigadumgZ0Vsd+jmwzxWO9FvW+yBRx3gsX2AjiYN+m6kTXQcMaolJ0ysxAMWZYmgch3/xmt/bj1GOLOVghChvN4rUzjMlpKoubYbVGxnvXVbdUY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=JwNa5DVP; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 65A88C4CEEB;
-	Thu, 26 Jun 2025 13:45:08 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1750945508;
-	bh=G279dACHtQvr3AjwMIYy7wmCNZM5C1w9YX3eXJKhFSs=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=JwNa5DVPovInvWtSyNR5k6Xt3oecX3INIfSI0xRQvnUup7AabTSxuAI7zvQRJKPDs
-	 FvbtobTvPIXqRM0Ct4N+WEYpGkXc8sFPMGuOvPfQ6Shj0oASPfzYRmoLpltIe5eJtC
-	 oyqnp80GFfqM2nJhrCvChKs/BdoDzfXq+cNxqgOBj3P9LA7G6aYUx3xxViPKQTNGvu
-	 SNAJ5SxHLYkCp5VSOdp73j0BGDtXgb5nkVs5gUXSxy9OMQL+cBMjghENAX+Vlk+eoK
-	 N6rGDBjryfheyn5rQAuXuE7LZofUTw1ZluFnUdzeORoGriYB6SDwoklM0KphSvpUiq
-	 Fi8rdbImiwtGg==
-Date: Thu, 26 Jun 2025 15:45:05 +0200
-From: Frederic Weisbecker <frederic@kernel.org>
-To: Boqun Feng <boqun.feng@gmail.com>
-Cc: linux-kernel@vger.kernel.org, rcu@vger.kernel.org, lkmm@lists.linux.dev,
-	Peter Zijlstra <peterz@infradead.org>,
-	Ingo Molnar <mingo@kernel.org>, Will Deacon <will@kernel.org>,
-	Waiman Long <longman@redhat.com>,
-	Davidlohr Bueso <dave@stgolabs.net>,
-	"Paul E. McKenney" <paulmck@kernel.org>,
-	Josh Triplett <josh@joshtriplett.org>,
-	Neeraj Upadhyay <neeraj.upadhyay@kernel.org>,
-	Joel Fernandes <joelagnelf@nvidia.com>,
-	Uladzislau Rezki <urezki@gmail.com>,
-	Steven Rostedt <rostedt@goodmis.org>,
-	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-	Lai Jiangshan <jiangshanlai@gmail.com>,
-	Zqiang <qiang.zhang@linux.dev>, Breno Leitao <leitao@debian.org>,
-	aeh@meta.com, netdev@vger.kernel.org, edumazet@google.com,
-	jhs@mojatatu.com, kernel-team@meta.com,
-	Erik Lundgren <elundgren@meta.com>
-Subject: Re: [PATCH 4/8] shazptr: Avoid synchronize_shaptr() busy waiting
-Message-ID: <aF1O4aH7m43xAbCZ@localhost.localdomain>
-References: <20250625031101.12555-1-boqun.feng@gmail.com>
- <20250625031101.12555-5-boqun.feng@gmail.com>
- <aFv_9f9w_HdTj9Xj@localhost.localdomain>
- <aFwUxblhRjh24JF1@Mac.home>
+	s=arc-20240116; t=1750945527; c=relaxed/simple;
+	bh=cAHj2gjaMwzRztjmDjs69yqAc2m3Ews7p2bnvtbAT9s=;
+	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=ZChc3qI0aeyOHEg2c3fF80vPcnG/nu4PCrt9mZZU18cMaK8t0JJwQ2l8KkV4vWTUKvNldSvysIMR+i4KXgLUYSxW6Fa4IMSTlzq3OeS8e/0WArrRr6R2apnAlbrULgSUBqB5rMQrqzCwFtsTro3liRquryNGVbUCqYDY7mYL9GU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=geanix.com; spf=pass smtp.mailfrom=geanix.com; dkim=pass (2048-bit key) header.d=geanix.com header.i=@geanix.com header.b=JMlikKow; arc=none smtp.client-ip=185.70.43.23
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=geanix.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=geanix.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=geanix.com;
+	s=protonmail; t=1750945512; x=1751204712;
+	bh=cAHj2gjaMwzRztjmDjs69yqAc2m3Ews7p2bnvtbAT9s=;
+	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
+	 Feedback-ID:From:To:Cc:Date:Subject:Reply-To:Feedback-ID:
+	 Message-ID:BIMI-Selector;
+	b=JMlikKowl+lKWQcHw7nyAEJZiWixewtoGtrWaTi+Bx4sb/lraXNylA1/Pb5HM1B+q
+	 a4jqvxnX6AU/ZRkCLQW7qdURSpFSnmqLRbNC6zQj8iNd1IkPYAxdNyMYGLaSY/Mj7l
+	 nX/akAkgDxJJN2JlQAtA5z/XjD2KfQajV71zwpWHIMyE/kW6i0S5JzBNvjPhxEsITx
+	 D/14hXzyJ4hm1ITol643oIIr41hv9D5ekT3YUBil9SeKUtT5paKfiURWEmXH0NHADn
+	 ZEkJTrUHm9ZJvO3iMhRuqMujZs0+Toq+9qe8iQFLpGxTCU6OiuTb9GfrVROApyDnE/
+	 2DxYR83spo4AA==
+Date: Thu, 26 Jun 2025 13:45:09 +0000
+To: Vincent Mailhol <mailhol.vincent@wanadoo.fr>
+From: Sean Nyekjaer <sean@geanix.com>
+Cc: linux-can@vger.kernel.org, linux-kernel@vger.kernel.org, Chandrasekar Ramakrishnan <rcsekar@samsung.com>, Marc Kleine-Budde <mkl@pengutronix.de>, Fengguang Wu <fengguang.wu@intel.com>, Varka Bhadram <varkabhadram@gmail.com>, Dong Aisheng <b29396@freescale.com>
+Subject: Re: [PATCH] can: m_can: apply rate-limiting to lost msg in rx
+Message-ID: <wldhiihvxg42yqaccizms4xfupfv2c7w7jec7jy6iht6dbnr7k@os6f2gyrr45m>
+In-Reply-To: <d855c26a-1982-4fc6-9333-93df4a5a98d9@wanadoo.fr>
+References: <20250620-mcan_ratelimit-v1-1-e747ee30f71f@geanix.com> <d855c26a-1982-4fc6-9333-93df4a5a98d9@wanadoo.fr>
+Feedback-ID: 134068486:user:proton
+X-Pm-Message-ID: dc07e5f8eaa3e05c8410cb20b04564dbc2257281
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <aFwUxblhRjh24JF1@Mac.home>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 
-Le Wed, Jun 25, 2025 at 08:24:53AM -0700, Boqun Feng a écrit :
-> On Wed, Jun 25, 2025 at 03:56:05PM +0200, Frederic Weisbecker wrote:
-> > Le Tue, Jun 24, 2025 at 08:10:57PM -0700, Boqun Feng a écrit :
-> > > +static void synchronize_shazptr_normal(void *ptr)
-> > > +{
-> > > +	int cpu;
-> > > +	unsigned long blocking_grp_mask = 0;
-> > > +
-> > > +	smp_mb(); /* Synchronize with the smp_mb() in shazptr_acquire(). */
-> > > +
-> > > +	for_each_possible_cpu(cpu) {
-> > > +		void **slot = per_cpu_ptr(&shazptr_slots, cpu);
-> > > +		void *val;
-> > > +
-> > > +		/* Pair with smp_store_release() in shazptr_clear(). */
-> > > +		val = smp_load_acquire(slot);
-> > > +
-> > > +		if (val == ptr || val == SHAZPTR_WILDCARD)
-> > > +			blocking_grp_mask |= 1UL << (cpu / shazptr_scan.cpu_grp_size);
-> > > +	}
-> > > +
-> > > +	/* Found blocking slots, prepare to wait. */
-> > > +	if (blocking_grp_mask) {
-> > 
-> > synchronize_rcu() here would be enough since all users have preemption disabled.
-> > But I guess this defeats the performance purpose? (If so this might need a
-> > comment somewhere).
-> > 
-> 
-> synchronize_shazptr_normal() cannot wait for a whole grace period,
-> because the point of hazard pointers is to avoid waiting for unrelated
-> readers.
+Hi,
 
-Fair enough!
+On Sat, Jun 21, 2025 at 11:13:33AM +0100, Vincent Mailhol wrote:
+> On 20/06/2025 at 19:00, Sean Nyekjaer wrote:
+> > Wrap the "msg lost in rxf0" error in m_can_handle_lost_msg() with
+> > a call to net_ratelimit() to prevent flooding the kernel log
+> > with repeated error messages.
+>=20
+> Note that another solution is to simply remove the error message. The use=
+rs can
+> use the CAN error frames or the netstasts instead to see if lost messages=
+ occurred.
+>=20
+> That said, I am OK with your proposed patch. See above comment as a simpl=
+e FYI.
 
-> 
-> > I guess blocking_grp_mask is to avoid allocating a cpumask (again for
-> > performance purpose? So I guess synchronize_shazptr_normal() has some perf
-> 
-> If we are talking about {k,v}malloc allocation:
-> synchronize_shazptr_normal() would mostly be used in cleanup/free path
-> similar to synchronize_rcu(), therefor I would like to avoid "allocating
-> memory to free memory".
+I'm up for both solutions :)
 
-Good point!
+@Marc what would you prefer?
 
-> 
-> > expectations?)
-> > 
-> > One possibility is to have the ptr contained in:
-> > 
-> > struct hazptr {
-> >        void *ptr;
-> >        struct cpumask scan_mask
-> > };
-> > 
-> 
-> You mean updaters passing a `struct hazptr *` into
-> synchronize_shazptr_normal()? That may be a good idea, if multiple
-> updaters can share the same `struct hazptr *`, we can add that later,
-> but...
-> 
-> > And then the caller could simply scan itself those remaining CPUs without
-> > relying on the kthread.
-> 
-> .. this is a bad idea, sure, we can always burn some CPU time to scan,
-> but local optimization doesn't mean global optimization, if in the
-> future, we have a lots of synchronize_shazptr_normal()s happening at
-> the same time, the self busy-waiting scan would become problematic.
+>=20
+> > Fixes: e0d1f4816f2a ("can: m_can: add Bosch M_CAN controller support")
+> > Signed-off-by: Sean Nyekjaer <sean@geanix.com>
+>=20
+> Reviewed-by: Vincent Mailhol <mailhol.vincent@wanadoo.fr>
+>=20
+>=20
+> Yours sincerely,
+> Vincent Mailhol
+>=20
 
-Ok.
+/Sean
 
-Thanks.
-
--- 
-Frederic Weisbecker
-SUSE Labs
 
