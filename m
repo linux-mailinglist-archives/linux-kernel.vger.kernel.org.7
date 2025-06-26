@@ -1,152 +1,110 @@
-Return-Path: <linux-kernel+bounces-704067-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-704047-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2E95DAE98DE
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Jun 2025 10:48:06 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5D72AAE98A9
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Jun 2025 10:41:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6D6891C20BF5
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Jun 2025 08:48:19 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 04D657B2144
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Jun 2025 08:39:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 513A32D3EEA;
-	Thu, 26 Jun 2025 08:46:24 +0000 (UTC)
-Received: from dggsgout11.his.huawei.com (dggsgout11.his.huawei.com [45.249.212.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ED60729616D;
+	Thu, 26 Jun 2025 08:39:51 +0000 (UTC)
+Received: from mail-ua1-f51.google.com (mail-ua1-f51.google.com [209.85.222.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3EE732D3EC2;
-	Thu, 26 Jun 2025 08:46:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 179CA293C7C
+	for <linux-kernel@vger.kernel.org>; Thu, 26 Jun 2025 08:39:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750927583; cv=none; b=qiXCmojySQgcilso6kVa0dVx830ev17Pf2Hxj7+MCAPh8G0k4QYYKJ5yMhsikDamjZxM2I3XXjOoZ7prPnvh108UVQK1GrKhGFXdCAhjBFifBcF+6O/wlvmiemNHOPOl525wqEOVirtJhnJWkFoynp6J6cfbMlgMmaKgX0dQeqk=
+	t=1750927191; cv=none; b=plIsTG5Ht+Agbn94g8s0KHQyz6YVUMLZfxhkG2EHBm6aGR/mapvlyy2NhbAHq9C0a/3dWyeynLu0GeVaco/+NSR10eFE2ZI+VtSsQL4dGubaeWCdO5Ailc5n6Gid0FAX7RyD7EUp4ybcAW2Ez5qwP4pS1vFp0QWGy8TMAps/cvg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750927583; c=relaxed/simple;
-	bh=EBIMriXYLknyxbuxf7NSXkhKwNDOPZ5by7UkqYR9Al4=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=sDkz3QwKRRK3vKUuVP6Z1XT0deFO7x09GF1DMKIneriaW3wNoztSC0PU25YRY/Ae32k/wDqxQoxwAdhkKf3aYKutVbRTfEMtDelUBQEqXhrpzA169Fqjap2D/yVA3VfBEmj4dwdI9n5a6fTSiH4jqgpEq4U6/imqDeoqHf5RygE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.19.163.235])
-	by dggsgout11.his.huawei.com (SkyGuard) with ESMTPS id 4bSXNB4JLyzYQvMC;
-	Thu, 26 Jun 2025 16:46:18 +0800 (CST)
-Received: from mail02.huawei.com (unknown [10.116.40.128])
-	by mail.maildlp.com (Postfix) with ESMTP id 7AAF71A0A0F;
-	Thu, 26 Jun 2025 16:46:17 +0800 (CST)
-Received: from huaweicloud.com (unknown [10.175.104.67])
-	by APP4 (Coremail) with SMTP id gCh0CgD3Wl_WCF1oD6HNQg--.23903S4;
-	Thu, 26 Jun 2025 16:46:16 +0800 (CST)
-From: Yu Kuai <yukuai1@huaweicloud.com>
-To: axboe@kernel.dk,
-	hare@suse.de,
-	hch@infradead.org,
-	yukuai3@huawei.com,
-	john.g.garry@oracle.com
-Cc: linux-block@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	yi.zhang@redhat.com,
-	calvin@wbinvd.org,
-	david@fromorbit.com,
-	yukuai1@huaweicloud.com,
-	yi.zhang@huawei.com,
-	yangerkun@huawei.com,
-	johnny.chenyi@huawei.com
-Subject: [PATCH] block: fix false warning in bdev_count_inflight_rw()
-Date: Thu, 26 Jun 2025 16:39:27 +0800
-Message-Id: <20250626083927.576207-1-yukuai1@huaweicloud.com>
-X-Mailer: git-send-email 2.39.2
+	s=arc-20240116; t=1750927191; c=relaxed/simple;
+	bh=WUU7H5N5bg4FTysBPqopoztkT9yebyoBSgc2tc9QetA=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=IHQVffrfomHsTwP662rlmlaPonXwMV0pLdm6Nubaet27/6ZSkgiSO8upF/3D2KXkxedjd9X6urBv8eRCHDAYK62CdyvlzzrbAchHsikXDFwgfM+66uhslHh/lp+8rkw8HAtkPHt8bgmj1kRkjZ6GNyXn/pGRdFXAeL4ANhQiTog=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.222.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ua1-f51.google.com with SMTP id a1e0cc1a2514c-87f234ba1abso161134241.1
+        for <linux-kernel@vger.kernel.org>; Thu, 26 Jun 2025 01:39:49 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1750927188; x=1751531988;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=4CXXrh6q12709fq3ouPkXeXw0fUYo3PeMNTc+UDJCbM=;
+        b=oq8JYHyN9EyOTbgCeavG4AFWaiVh3DnKFNStl9VVbvz0H6JX/963sgugH9eqoyhOGI
+         Iqn72Zd5nzBqli5LjZdR9ImqkaQFAHconccd2VxgbzBTj9MKk5JIdIa/bhIa1NSuHueu
+         nt+LSAi44iPMxoR5p8cPyX4K49J4t17OHgAAJT0w4lm5XS9IcA6IyQu9OP9rU51sE3+H
+         8lgeFpHvQuDpPRAaepEb63ULnycpc3OlfnMCKII4TLypyNYG7WbNLhw0OOlscj69Esij
+         bqMP4KFO/usW/9qchSOpkB+ij1aSoZN+fGYf/2PqgxwDCIXlu7n0/lSxR70VHCjJ7deM
+         WTvw==
+X-Forwarded-Encrypted: i=1; AJvYcCXINX/0zlU7k0a4RoXK9WiYLu+lGwgMKS3ABRZI8Gs7QDhxQLx+vOgqWQm18QlQoLAmMQ0ckgZFMO151hA=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz4P8p9hhTYHPHOBNIzvEmfSAcO2DNv5sJ3h83g/6mh4zZVtWWd
+	E1nTY3I5GW9wQhnftmlurzj9wmSLVqBd5Uzo/Lb2MA2hTFDgoZX7ipEiH+0x7B6d
+X-Gm-Gg: ASbGncsbFeS4T7C1CNGtNSC87FFZokCkSv5PZgnWJIFPU87fTK0stAm4EqgyoAC2jVE
+	YoOZ2KujzWLoNv6j9RXNgRaGcbUMC/AS28FO636fi7v6Tk/xJ7FUzSLPWMLhovqHZJO2H/7LeNa
+	5Dn9k5KsA4I8jEuUSgRZ9X5PXk4LNMOv21xOwsaaKCumKDNKbFi+G8MdzfI6/DXFeefRms0Hp3R
+	z9SBvSRPRWi7z5dss1vsUxcR9hQ3JfjvNx/yW5hXgkWNpgn1WxW504KZJPU7d0L4ffbDnWCtHex
+	iF0BRey98I0QVsNXscXKV+LPdRAVOm/3pT5vp/Y1ZK5mrbV1vTb+xJzys55agqAGZB+0rnPAokC
+	4FWGAIBQOY8PGt0ZOfcc5SMivzaflz1oe5i0=
+X-Google-Smtp-Source: AGHT+IEk+8SjDZrzRSSvyBR5L13poPAnInqZkwDw0RDQjlCzfu6N6e+qJ25vZpWJp4KM64Sa8P4KNQ==
+X-Received: by 2002:a05:6102:e0b:b0:4e5:a316:6ee6 with SMTP id ada2fe7eead31-4ecc769c5d5mr4217039137.18.1750927188183;
+        Thu, 26 Jun 2025 01:39:48 -0700 (PDT)
+Received: from mail-vs1-f49.google.com (mail-vs1-f49.google.com. [209.85.217.49])
+        by smtp.gmail.com with ESMTPSA id ada2fe7eead31-4e9c3047a5csm2400592137.23.2025.06.26.01.39.47
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 26 Jun 2025 01:39:47 -0700 (PDT)
+Received: by mail-vs1-f49.google.com with SMTP id ada2fe7eead31-4e7ef5d6bffso193612137.3
+        for <linux-kernel@vger.kernel.org>; Thu, 26 Jun 2025 01:39:47 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCWsysJ+xVRML8Wku4SHH1J5Di1u6B9Q8RlzKBW7EgrlSpjW6aA4O1/8v/HquLW8jiSmYQZ1TmNREkijCx8=@vger.kernel.org
+X-Received: by 2002:a05:6102:1610:b0:4e9:a2bd:b422 with SMTP id
+ ada2fe7eead31-4ecc7682529mr4585520137.15.1750927187429; Thu, 26 Jun 2025
+ 01:39:47 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:gCh0CgD3Wl_WCF1oD6HNQg--.23903S4
-X-Coremail-Antispam: 1UD129KBjvJXoW7Cw4rJFWUAFWrXFykWFyUZFb_yoW8ZFWfpF
-	4UGws8JFyUWr93ta1jgwn7XFy3ta1kJryxur17Zw13AFWkAr1Uu34vvr4Dtr9Fq393Gry0
-	9F1akFyxKa4v937anT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUU9Y14x267AKxVW8JVW5JwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
-	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
-	1l84ACjcxK6xIIjxv20xvE14v26w1j6s0DM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26r4U
-	JVWxJr1l84ACjcxK6I8E87Iv67AKxVW0oVCq3wA2z4x0Y4vEx4A2jsIEc7CjxVAFwI0_Gc
-	CE3s1le2I262IYc4CY6c8Ij28IcVAaY2xG8wAqx4xG64xvF2IEw4CE5I8CrVC2j2WlYx0E
-	2Ix0cI8IcVAFwI0_Jr0_Jr4lYx0Ex4A2jsIE14v26r1j6r4UMcvjeVCFs4IE7xkEbVWUJV
-	W8JwACjcxG0xvY0x0EwIxGrwACjI8F5VA0II8E6IAqYI8I648v4I1lFIxGxcIEc7CjxVA2
-	Y2ka0xkIwI1lc7CjxVAaw2AFwI0_Jw0_GFyl42xK82IYc2Ij64vIr41l4I8I3I0E4IkC6x
-	0Yz7v_Jr0_Gr1lx2IqxVAqx4xG67AKxVWUJVWUGwC20s026x8GjcxK67AKxVWUGVWUWwC2
-	zVAF1VAY17CE14v26r1q6r43MIIYrxkI7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_Jr0_JF
-	4lIxAIcVC0I7IYx2IY6xkF7I0E14v26r4j6F4UMIIF0xvE42xK8VAvwI8IcIk0rVWUJVWU
-	CwCI42IY6I8E87Iv67AKxVWUJVW8JwCI42IY6I8E87Iv6xkF7I0E14v26r4j6r4UJbIYCT
-	nIWIevJa73UjIFyTuYvjfUonmRUUUUU
-X-CM-SenderInfo: 51xn3trlr6x35dzhxuhorxvhhfrp/
+References: <20250611001255.527952-1-vishal.moola@gmail.com> <20250611001255.527952-4-vishal.moola@gmail.com>
+In-Reply-To: <20250611001255.527952-4-vishal.moola@gmail.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Thu, 26 Jun 2025 10:39:35 +0200
+X-Gmail-Original-Message-ID: <CAMuHMdX0ERhb8KTmEJ-QQdix-yt6iP3SPvvc0hhRj4kjTCVJmw@mail.gmail.com>
+X-Gm-Features: Ac12FXx11KF5_uv-y_hIKWSdWLzp2qstbKTBUYUc-2CxFIYYvesDwIAbfVm6Hi4
+Message-ID: <CAMuHMdX0ERhb8KTmEJ-QQdix-yt6iP3SPvvc0hhRj4kjTCVJmw@mail.gmail.com>
+Subject: Re: [PATCH 3/4] m68k: mm: Convert init_pointer_table() to use ptdescs
+To: "Vishal Moola (Oracle)" <vishal.moola@gmail.com>
+Cc: linux-m68k@lists.linux-m68k.org, linux-kernel@vger.kernel.org, 
+	Andrew Morton <akpm@linux-foundation.org>
+Content-Type: text/plain; charset="UTF-8"
 
-From: Yu Kuai <yukuai3@huawei.com>
+On Wed, 11 Jun 2025 at 02:13, Vishal Moola (Oracle)
+<vishal.moola@gmail.com> wrote:
+> Motorola uses init_pointer_table() for page tables, so it should be using
+> struct ptdesc, not struct page.
+>
+> This helps us prepare to allocate ptdescs as their own memory
+> descriptor, and prepares to remove a user of page->lru.
+>
+> Signed-off-by: Vishal Moola (Oracle) <vishal.moola@gmail.com>
 
-While bdev_count_inflight is interating all cpus, if some IOs are issued
-from traversed cpu and then completed from the cpu that is not traversed
-yet:
+Reviewed-by: Geert Uytterhoeven <geert@linux-m68k.org>
+i.e. will queue in the m68k tree for v6.17.
 
-cpu0
-		cpu1
-		bdev_count_inflight
-		 //for_each_possible_cpu
-		 // cpu0 is 0
-		 infliht += 0
-// issue a io
-blk_account_io_start
-// cpu0 inflight ++
+Gr{oetje,eeting}s,
 
-				cpu2
-				// the io is done
-				blk_account_io_done
-				// cpu2 inflight --
-		 // cpu 1 is 0
-		 inflight += 0
-		 // cpu2 is -1
-		 inflight += -1
-		 ...
+                        Geert
 
-In this case, the total inflight will be -1, causing lots of false
-warning. Fix the problem by removing the warning.
-
-Noted there is still a valid warning for nvme-mpath(From Yi) that is not
-fixed yet.
-
-Fixes: f5482ee5edb9 ("block: WARN if bdev inflight counter is negative")
-Reported-by: Yi Zhang <yi.zhang@redhat.com>
-Closes: https://lore.kernel.org/linux-block/aFtUXy-lct0WxY2w@mozart.vkv.me/T/#mae89155a5006463d0a21a4a2c35ae0034b26a339
-Reported-and-tested-by: Calvin Owens <calvin@wbinvd.org>
-Closes: https://lore.kernel.org/linux-block/aFtUXy-lct0WxY2w@mozart.vkv.me/T/#m1d935a00070bf95055d0ac84e6075158b08acaef
-Reported-by: Dave Chinner <david@fromorbit.com>
-Closes: https://lore.kernel.org/linux-block/aFuypjqCXo9-5_En@dread.disaster.area/
-Signed-off-by: Yu Kuai <yukuai3@huawei.com>
----
- block/genhd.c | 9 +++++++--
- 1 file changed, 7 insertions(+), 2 deletions(-)
-
-diff --git a/block/genhd.c b/block/genhd.c
-index 8171a6bc3210..680fa717082f 100644
---- a/block/genhd.c
-+++ b/block/genhd.c
-@@ -141,9 +141,14 @@ static void bdev_count_inflight_rw(struct block_device *part,
- 		}
- 	}
- 
--	if (WARN_ON_ONCE((int)inflight[READ] < 0))
-+	/*
-+	 * While iterating all cpus, some IOs might issued from traversed cpu
-+	 * and then completed from the cpu that is not traversed yet, causing
-+	 * the inflight number to be negative.
-+	 */
-+	if ((int)inflight[READ] < 0)
- 		inflight[READ] = 0;
--	if (WARN_ON_ONCE((int)inflight[WRITE] < 0))
-+	if ((int)inflight[WRITE] < 0)
- 		inflight[WRITE] = 0;
- }
- 
 -- 
-2.39.2
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
 
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
 
