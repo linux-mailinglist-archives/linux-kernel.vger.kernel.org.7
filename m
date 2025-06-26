@@ -1,160 +1,114 @@
-Return-Path: <linux-kernel+bounces-704072-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-704057-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id F1E4EAE98ED
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Jun 2025 10:50:21 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 211B6AE98C0
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Jun 2025 10:44:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 06236189686F
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Jun 2025 08:49:48 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3BCF616B3F6
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Jun 2025 08:44:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8CB872BEFFE;
-	Thu, 26 Jun 2025 08:47:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 19B08294A03;
+	Thu, 26 Jun 2025 08:44:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b="ROmOa28C"
-Received: from mx08-00178001.pphosted.com (mx08-00178001.pphosted.com [91.207.212.93])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="eDWWOlop"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3E0B129DB96;
-	Thu, 26 Jun 2025 08:47:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.207.212.93
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6CEDD221FDA;
+	Thu, 26 Jun 2025 08:44:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750927624; cv=none; b=IibbAs11BY4Rsj3ujzUKh2R3FR7sMr3I4lwqT1Ya3ltF4HvuPx2BnaS4Iu8wMvu0Cz2O5+VplcV+/q8YD4kg7dA0QmIojXbUXFXXhq7xCDdh6wTRqk7UsGWfmiE0Yvut9q7VNtYRX+3UF/vpW+d2lS/gP/EbWwMzTh9mWQtC/BU=
+	t=1750927464; cv=none; b=qfvjTZFnJ+Wuib+FcooSkbWO5w9/2vSzVfwnnkZhKOlkRgCKozDcb8B1DwKIlP3oJvB2/fkdsaDz5Z23wgWKtCnp5TUhG6SD8sEf72vonZlhDZHtIHP8d1w7QEf6akteAxUSo36B9jdW8fTKCYdfsSGR95REvqNmGO8KjWvcopk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750927624; c=relaxed/simple;
-	bh=q9plMTdhw6acpCoJZ9CS/5jT1tK48pPSc3vO1SlO1vQ=;
-	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=BFL9NCF80G3Ng0UHhlTpnmrZoSWsJwCaMcPvEkgH+4modQwXBF0PWHAlOYTGDuVhMyy56DiC7zwdnVx1XWtmABJFIPsvZRHFgIFbOiti0FaKYvtycOI+ir3m1CCupsergemthq1i3ShCYac+qcuMRhCkAij4BJFaKo67yzUZ4Bs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com; spf=pass smtp.mailfrom=foss.st.com; dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b=ROmOa28C; arc=none smtp.client-ip=91.207.212.93
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=foss.st.com
-Received: from pps.filterd (m0369457.ppops.net [127.0.0.1])
-	by mx07-00178001.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 55Q8QZdB017581;
-	Thu, 26 Jun 2025 10:46:43 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foss.st.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=selector1; bh=
-	Z+WFXiMHrbFi5myLnpSlkgNB4wfedeybYq3HvVadoNA=; b=ROmOa28CQ7QT6T4H
-	yPb/toDBTMiHFUjR2+NHvFgYqxbMb4ItBsUhGpA160WrKh5Imb6EsR3pdlGHFqS5
-	rGr5q5tf/+OmXSkGai+RNE4CoY3jSGZbuto/YWLTBLmDeBUrWQfdPHdHrZ7gEovO
-	hdeopXmpdQ0I7ZUUL8pHhBRRMcl6YEIavXVeB+m29jLjO2dx5IhN+nK2g0g8SqUW
-	8n0fsBVvGlf3RlnPFeGohawRwglMHedkzO2L5w2QAUdEncQidvHH8dAdi+9Lgmz/
-	sPeSXpqTxr0LKVcgJZc7uuGFWPbOpd0nRst8hImbh3tihedqUAW1aOFluWLA1M+7
-	I+olow==
-Received: from beta.dmz-ap.st.com (beta.dmz-ap.st.com [138.198.100.35])
-	by mx07-00178001.pphosted.com (PPS) with ESMTPS id 47e7ppjvwu-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 26 Jun 2025 10:46:43 +0200 (MEST)
-Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
-	by beta.dmz-ap.st.com (STMicroelectronics) with ESMTP id 460384002D;
-	Thu, 26 Jun 2025 10:44:51 +0200 (CEST)
-Received: from Webmail-eu.st.com (shfdag1node1.st.com [10.75.129.69])
-	by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id 8048DB288A0;
-	Thu, 26 Jun 2025 10:43:58 +0200 (CEST)
-Received: from gnbcxd0016.gnb.st.com (10.130.77.119) by SHFDAG1NODE1.st.com
- (10.75.129.69) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Thu, 26 Jun
- 2025 10:43:57 +0200
-Date: Thu, 26 Jun 2025 10:43:56 +0200
-From: Alain Volmat <alain.volmat@foss.st.com>
-To: =?iso-8859-1?Q?Cl=E9ment?= Le Goffic <clement.legoffic@foss.st.com>
-CC: Pierre-Yves MORDRET <pierre-yves.mordret@foss.st.com>,
-        Andi Shyti
-	<andi.shyti@kernel.org>,
-        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-        Alexandre Torgue <alexandre.torgue@foss.st.com>,
-        Sumit Semwal
-	<sumit.semwal@linaro.org>,
-        Christian =?iso-8859-1?Q?K=F6nig?=
-	<christian.koenig@amd.com>,
-        M'boumba Cedric Madianga
-	<cedric.madianga@gmail.com>,
-        Wolfram Sang <wsa@kernel.org>,
-        "Pierre-Yves
- MORDRET" <pierre-yves.mordret@st.com>,
-        <linux-i2c@vger.kernel.org>,
-        <linux-stm32@st-md-mailman.stormreply.com>,
-        <linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
-        <linux-media@vger.kernel.org>, <dri-devel@lists.freedesktop.org>,
-        <linaro-mm-sig@lists.linaro.org>
-Subject: Re: [PATCH 1/3] i2c: stm32: fix the device used for the DMA map
-Message-ID: <20250626084356.GB348766@gnbcxd0016.gnb.st.com>
-References: <20250616-i2c-upstream-v1-0-42d3d5374e65@foss.st.com>
- <20250616-i2c-upstream-v1-1-42d3d5374e65@foss.st.com>
- <20250626083744.GA348766@gnbcxd0016.gnb.st.com>
+	s=arc-20240116; t=1750927464; c=relaxed/simple;
+	bh=qJllYfkWSydOQyAUEgySBOwOR32Vk67l9y6tXzeF9BA=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=M7WQOdp78eMLkg/oTIKjlgfWWzwFIh7pvBxZyKFuG/K7AOuqUHziMqsF+B33IhHfvBE01Of4ePp00gqV/kXyvXbL4n0medsE3bE8/V55fPHjipuHArfbvFusXbmoAa0K1qJQZ/rBafB6Px5mCdjGjra2c2aPIPykRwbNpy7KGtA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=eDWWOlop; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7F058C4CEEB;
+	Thu, 26 Jun 2025 08:44:19 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1750927464;
+	bh=qJllYfkWSydOQyAUEgySBOwOR32Vk67l9y6tXzeF9BA=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
+	b=eDWWOlopEX0odwWU7aX6iYDKgBgsKIyIc2cGgnxhF5C3ZOTe7dTJPuL3onhs0n9Wp
+	 jTX5HTxvGzTrjrq4qgF/KPe9imTHLGSs7O3Hr4NLyErCbw3DUe3gaNG3NppZWI43fn
+	 9OCzDJhCwtfXFFJ26qbgEuM1nHgK5pXuVFRGpzWtI6ItbLNYlqjUxjrBOmn90E2fAQ
+	 juiT6UloxUa0110XWprVzaQsCFmEFqbO44L+B/BGhBsREpiZkS5ZFqVdJpxpOuW9Gg
+	 wGEhllF5ZkVSZXYD+hX94lOvGYZ3lcg1SrAVl2Y8/g0LhlMA/goKDJb8vD7MzCbxI7
+	 ZqoQmph3L8bmQ==
+From: Andreas Hindborg <a.hindborg@kernel.org>
+To: "Boqun Feng" <boqun.feng@gmail.com>
+Cc: <linux-kernel@vger.kernel.org>,  <rust-for-linux@vger.kernel.org>,
+  <lkmm@lists.linux.dev>,  <linux-arch@vger.kernel.org>,  "Miguel Ojeda"
+ <ojeda@kernel.org>,  "Alex Gaynor" <alex.gaynor@gmail.com>,  "Gary Guo"
+ <gary@garyguo.net>,  =?utf-8?Q?Bj=C3=B6rn?= Roy Baron
+ <bjorn3_gh@protonmail.com>,  "Benno
+ Lossin" <lossin@kernel.org>,  "Alice Ryhl" <aliceryhl@google.com>,
+  "Trevor Gross" <tmgross@umich.edu>,  "Danilo Krummrich"
+ <dakr@kernel.org>,  "Will Deacon" <will@kernel.org>,  "Peter Zijlstra"
+ <peterz@infradead.org>,  "Mark Rutland" <mark.rutland@arm.com>,  "Wedson
+ Almeida Filho" <wedsonaf@gmail.com>,  "Viresh Kumar"
+ <viresh.kumar@linaro.org>,  "Lyude Paul" <lyude@redhat.com>,  "Ingo
+ Molnar" <mingo@kernel.org>,  "Mitchell Levy" <levymitchell0@gmail.com>,
+  "Paul E. McKenney" <paulmck@kernel.org>,  "Greg Kroah-Hartman"
+ <gregkh@linuxfoundation.org>,  "Linus Torvalds"
+ <torvalds@linux-foundation.org>,  "Thomas Gleixner" <tglx@linutronix.de>
+Subject: Re: [PATCH v5 01/10] rust: Introduce atomic API helpers
+In-Reply-To: <20250618164934.19817-2-boqun.feng@gmail.com> (Boqun Feng's
+	message of "Wed, 18 Jun 2025 09:49:25 -0700")
+References: <20250618164934.19817-1-boqun.feng@gmail.com>
+	<Uqju6u2xO_vCzY1ykGKU72OTQDzH6QgCbUFbq2e4ibAiXgKNzQRBv5IMVNEaCg9zFQpebc65KefA6rzhLNQ9xA==@protonmail.internalid>
+	<20250618164934.19817-2-boqun.feng@gmail.com>
+User-Agent: mu4e 1.12.9; emacs 30.1
+Date: Thu, 26 Jun 2025 10:44:13 +0200
+Message-ID: <87jz4y28pu.fsf@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20250626083744.GA348766@gnbcxd0016.gnb.st.com>
-X-Disclaimer: ce message est personnel / this message is private
-X-ClientProxiedBy: EQNCAS1NODE3.st.com (10.75.129.80) To SHFDAG1NODE1.st.com
- (10.75.129.69)
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.7,FMLib:17.12.80.40
- definitions=2025-06-26_04,2025-06-25_01,2025-03-28_01
+Content-Type: text/plain
 
-Hi Clément,
+"Boqun Feng" <boqun.feng@gmail.com> writes:
 
-Oups, I was too fast.
+> In order to support LKMM atomics in Rust, add rust_helper_* for atomic
+> APIs. These helpers ensure the implementation of LKMM atomics in Rust is
+> the same as in C. This could save the maintenance burden of having two
+> similar atomic implementations in asm.
+>
+> Originally-by: Mark Rutland <mark.rutland@arm.com>
+> Signed-off-by: Boqun Feng <boqun.feng@gmail.com>
+> ---
+>  rust/helpers/atomic.c                     | 1038 +++++++++++++++++++++
+>  rust/helpers/helpers.c                    |    1 +
+>  scripts/atomic/gen-atomics.sh             |    1 +
+>  scripts/atomic/gen-rust-atomic-helpers.sh |   65 ++
+>  4 files changed, 1105 insertions(+)
+>  create mode 100644 rust/helpers/atomic.c
+>  create mode 100755 scripts/atomic/gen-rust-atomic-helpers.sh
+>
+> diff --git a/rust/helpers/atomic.c b/rust/helpers/atomic.c
+> new file mode 100644
+> index 000000000000..00bf10887928
+> --- /dev/null
+> +++ b/rust/helpers/atomic.c
+> @@ -0,0 +1,1038 @@
+> +// SPDX-License-Identifier: GPL-2.0
+> +
+> +// Generated by scripts/atomic/gen-rust-atomic-helpers.sh
+> +// DO NOT MODIFY THIS FILE DIRECTLY
 
-there might be another place to correct in the driver, dma_unmap_single
-within the error handling of the function stm32_i2c_prep_dma_xfer.
-
-   err:
-            dma_unmap_single(chan_dev, dma->dma_buf, dma->dma_len,
-                             dma->dma_data_dir);
-
-Could you also correct this one as well ?
-
-Alain
+If this file is generated, why check it in? Can't we run the generator
+at build time?
 
 
-On Thu, Jun 26, 2025 at 10:37:51AM +0200, Alain Volmat wrote:
-> Hi Clément,
-> 
-> On Mon, Jun 16, 2025 at 10:53:54AM +0200, Clément Le Goffic wrote:
-> > If the DMA mapping failed, it produced an error log with the wrong
-> > device name:
-> > "stm32-dma3 40400000.dma-controller: rejecting DMA map of vmalloc memory"
-> > Fix this issue by replacing the dev with the I2C dev.
-> 
-> Indeed, nice catch ! Thanks a lot !
-> 
-> > 
-> > Fixes: bb8822cbbc53 ("i2c: i2c-stm32: Add generic DMA API")
-> > Signed-off-by: Clément Le Goffic <clement.legoffic@foss.st.com>
-> > ---
-> >  drivers/i2c/busses/i2c-stm32.c | 2 +-
-> >  1 file changed, 1 insertion(+), 1 deletion(-)
-> > 
-> > diff --git a/drivers/i2c/busses/i2c-stm32.c b/drivers/i2c/busses/i2c-stm32.c
-> > index 157c64e27d0b..5e0b31aed774 100644
-> > --- a/drivers/i2c/busses/i2c-stm32.c
-> > +++ b/drivers/i2c/busses/i2c-stm32.c
-> > @@ -118,7 +118,7 @@ int stm32_i2c_prep_dma_xfer(struct device *dev, struct stm32_i2c_dma *dma,
-> >  	dma->dma_len = len;
-> >  	chan_dev = dma->chan_using->device->dev;
-> >  
-> > -	dma->dma_buf = dma_map_single(chan_dev, buf, dma->dma_len,
-> > +	dma->dma_buf = dma_map_single(dev, buf, dma->dma_len,
-> >  				      dma->dma_data_dir);
-> >  	if (dma_mapping_error(chan_dev, dma->dma_buf)) {
-> >  		dev_err(dev, "DMA mapping failed\n");
-> > 
-> > -- 
-> > 2.43.0
-> >
-> 
-> Acked-by: Alain Volmat <alain.volmat@foss.st.com>
-> 
-> Regards,
-> Alain
+Best regards,
+Andreas Hindborg
+
+
 
