@@ -1,53 +1,55 @@
-Return-Path: <linux-kernel+bounces-703885-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-703855-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4700EAE960F
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Jun 2025 08:20:51 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 82CB4AE95A1
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Jun 2025 08:06:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5E2FE1C2445B
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Jun 2025 06:21:06 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 92BA04A2CB3
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Jun 2025 06:06:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B470322F76C;
-	Thu, 26 Jun 2025 06:20:42 +0000 (UTC)
-Received: from pegase1.c-s.fr (pegase1.c-s.fr [93.17.236.30])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 65171218599;
-	Thu, 26 Jun 2025 06:20:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=93.17.236.30
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ACF772264A9;
+	Thu, 26 Jun 2025 06:05:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmx.com header.i=quwenruo.btrfs@gmx.com header.b="FtNpDmN4"
+Received: from mout.gmx.net (mout.gmx.net [212.227.17.20])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DC18354F81;
+	Thu, 26 Jun 2025 06:05:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.17.20
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750918842; cv=none; b=LyMNtIqXkD1URTwnEanUvhQTrgavtahRD+Gx8C4n97L4fI9FOVxxyVENg13bdd34RET/k+Z+kNJx7jsiVZuf1gqnIQEp/eE/9ifrb2oiaJYLpQATm+cM5DQc3lD2tnQ99RfiSyTrTnESvGQZ7awQllbibXViH3YOoGahEzNwIXE=
+	t=1750917955; cv=none; b=hBH2gJjb2rmlmsxThYqYTip0krWGCkNTF/TsC9EtjATGHFlW95qjuN/P7IS0YpsM3nlFoQLDdkGbh9aJvCvS5mdXC5OSwnC7unbde576GcL4SyhdA8YA5/ExLvaNg2Wnta5GfPnDPFC7i5CXqWx9t6JnxqDGRzciea9najalnB4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750918842; c=relaxed/simple;
-	bh=kmajPGloApxRKFaKW/UmyqYJ+75L1kgD7xbg9kNYje8=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=eP6Q2QAqqHi55ktRZmVSitmrsNs1JhtIOc5s+AnUUaVA+QL2ax88BnudWfb0K0Mi3lFGzrWD8pmWkXh6laO+MiYL/Geeyqq+qMIP0CayOiWPd/AIk1EHLHGJMozHSprOlXVKsIAPeBsAY+YjjiaCahHG0P2bUmtfika2r3gSmYI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=csgroup.eu; spf=pass smtp.mailfrom=csgroup.eu; arc=none smtp.client-ip=93.17.236.30
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=csgroup.eu
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=csgroup.eu
-Received: from localhost (mailhub3.si.c-s.fr [192.168.12.233])
-	by localhost (Postfix) with ESMTP id 4bSSbw1jqdz9vG4;
-	Thu, 26 Jun 2025 07:56:12 +0200 (CEST)
-X-Virus-Scanned: amavisd-new at c-s.fr
-Received: from pegase1.c-s.fr ([192.168.12.234])
-	by localhost (pegase1.c-s.fr [127.0.0.1]) (amavisd-new, port 10024)
-	with ESMTP id q0xrpHJGhTt6; Thu, 26 Jun 2025 07:56:12 +0200 (CEST)
-Received: from messagerie.si.c-s.fr (messagerie.si.c-s.fr [192.168.25.192])
-	by pegase1.c-s.fr (Postfix) with ESMTP id 4bSSbw0vypz9vFr;
-	Thu, 26 Jun 2025 07:56:12 +0200 (CEST)
-Received: from localhost (localhost [127.0.0.1])
-	by messagerie.si.c-s.fr (Postfix) with ESMTP id 157358B7B7;
-	Thu, 26 Jun 2025 07:56:12 +0200 (CEST)
-X-Virus-Scanned: amavisd-new at c-s.fr
-Received: from messagerie.si.c-s.fr ([127.0.0.1])
-	by localhost (messagerie.si.c-s.fr [127.0.0.1]) (amavisd-new, port 10023)
-	with ESMTP id KbYfiNafM5QK; Thu, 26 Jun 2025 07:56:11 +0200 (CEST)
-Received: from [192.168.235.99] (unknown [192.168.235.99])
-	by messagerie.si.c-s.fr (Postfix) with ESMTP id 13B658B7A7;
-	Thu, 26 Jun 2025 07:56:11 +0200 (CEST)
-Message-ID: <83fb5685-a206-477c-bff3-03e0ebf4c40c@csgroup.eu>
-Date: Thu, 26 Jun 2025 07:56:10 +0200
+	s=arc-20240116; t=1750917955; c=relaxed/simple;
+	bh=cOP0vEXs6frp58gEOwvRBFGbJUTxK+G9kPArRnNV0pM=;
+	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=AEMFKZENx3qIqnKYwlJ7wCWYJZTM6LKlZI2H6iag0lfI04E5n7svj6gyTy+SPbGTzbt87Zei1GajFdd3OzgXkHAGdZoke8PmKjX4DBAj88LBxYh5CtjWQlrcYixH94UoeF9OoSuYH57MkTbq6fEutakCGUYUYSvAtidFjp4WRT4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.com; spf=pass smtp.mailfrom=gmx.com; dkim=pass (2048-bit key) header.d=gmx.com header.i=quwenruo.btrfs@gmx.com header.b=FtNpDmN4; arc=none smtp.client-ip=212.227.17.20
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmx.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=gmx.com;
+	s=s31663417; t=1750917945; x=1751522745; i=quwenruo.btrfs@gmx.com;
+	bh=rX5dxIHYFeKx4FfT5CWqJwkHBK1gC1KDismkqgLAQnE=;
+	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:Subject:To:
+	 References:From:In-Reply-To:Content-Type:
+	 Content-Transfer-Encoding:cc:content-transfer-encoding:
+	 content-type:date:from:message-id:mime-version:reply-to:subject:
+	 to;
+	b=FtNpDmN4c6lrbdrpLvwWHsJ61uLDjvDlrS53nC5YGyaVMtxRtkbetu5lZHX0uQXV
+	 sZ0U/uFD4rV2NQouYUxTOwpOdzZmzWz8t4r40MmWkQE2xJwYn007FVU7JDY/aNTFc
+	 nz3ZpdUr6za0Aje5cow2OholGGX9Q8SReUe51KSJhomCth9GDpJNVCk2I/4GqmGnJ
+	 ZvSEJMgn4wVCv5BmGaOG65fhjciYVRshFrPyH2reQtOFGl5s17R1d4Nb/uY0m8+43
+	 vNvwnfUPiph45sMqH09d01u+JGpkP6aGz0CCksZ4VlAhZ5jdznqO+5iMM2G+VZB6c
+	 L5hjGdy3T8k3Ke4R6Q==
+X-UI-Sender-Class: 724b4f7f-cbec-4199-ad4e-598c01a50d3a
+Received: from [172.16.0.229] ([159.196.52.54]) by mail.gmx.net (mrgmx104
+ [212.227.17.174]) with ESMTPSA (Nemesis) id 1MXGr8-1uEeFK2dSg-00Oybv; Thu, 26
+ Jun 2025 08:05:45 +0200
+Message-ID: <197c44ef-aa46-466e-9381-a0edff657762@gmx.com>
+Date: Thu, 26 Jun 2025 15:35:40 +0930
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -55,142 +57,309 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 0/5] powerpc: Implement masked user access
-To: David Laight <david.laight.linux@gmail.com>,
- Segher Boessenkool <segher@kernel.crashing.org>
-Cc: Michael Ellerman <mpe@ellerman.id.au>, Nicholas Piggin
- <npiggin@gmail.com>, Naveen N Rao <naveen@kernel.org>,
- Madhavan Srinivasan <maddy@linux.ibm.com>,
- Alexander Viro <viro@zeniv.linux.org.uk>,
- Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
- Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
- Peter Zijlstra <peterz@infradead.org>, Darren Hart <dvhart@infradead.org>,
- Davidlohr Bueso <dave@stgolabs.net>, Andre Almeida <andrealmeid@igalia.com>,
- Andrew Morton <akpm@linux-foundation.org>,
- Dave Hansen <dave.hansen@linux.intel.com>,
- Linus Torvalds <torvalds@linux-foundation.org>,
- linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
- linux-fsdevel@vger.kernel.org, linux-mm@kvack.org
-References: <cover.1750585239.git.christophe.leroy@csgroup.eu>
- <20250622172043.3fb0e54c@pumpkin>
- <ff2662ca-3b86-425b-97f8-3883f1018e83@csgroup.eu>
- <20250624131714.GG17294@gate.crashing.org> <20250624175001.148a768f@pumpkin>
- <20250624182505.GH17294@gate.crashing.org> <20250624220816.078f960d@pumpkin>
-Content-Language: fr-FR
-From: Christophe Leroy <christophe.leroy@csgroup.eu>
-In-Reply-To: <20250624220816.078f960d@pumpkin>
+Subject: Re: [syzbot] [btrfs?] possible deadlock in btrfs_read_chunk_tree
+To: syzbot <syzbot+fa90fcaa28f5cd4b1fc1@syzkaller.appspotmail.com>,
+ clm@fb.com, dsterba@suse.com, josef@toxicpanda.com,
+ linux-btrfs@vger.kernel.org, linux-kernel@vger.kernel.org,
+ syzkaller-bugs@googlegroups.com, wqu@suse.com
+References: <685aa401.050a0220.2303ee.0009.GAE@google.com>
+Content-Language: en-US
+From: Qu Wenruo <quwenruo.btrfs@gmx.com>
+Autocrypt: addr=quwenruo.btrfs@gmx.com; keydata=
+ xsBNBFnVga8BCACyhFP3ExcTIuB73jDIBA/vSoYcTyysFQzPvez64TUSCv1SgXEByR7fju3o
+ 8RfaWuHCnkkea5luuTZMqfgTXrun2dqNVYDNOV6RIVrc4YuG20yhC1epnV55fJCThqij0MRL
+ 1NxPKXIlEdHvN0Kov3CtWA+R1iNN0RCeVun7rmOrrjBK573aWC5sgP7YsBOLK79H3tmUtz6b
+ 9Imuj0ZyEsa76Xg9PX9Hn2myKj1hfWGS+5og9Va4hrwQC8ipjXik6NKR5GDV+hOZkktU81G5
+ gkQtGB9jOAYRs86QG/b7PtIlbd3+pppT0gaS+wvwMs8cuNG+Pu6KO1oC4jgdseFLu7NpABEB
+ AAHNIlF1IFdlbnJ1byA8cXV3ZW5ydW8uYnRyZnNAZ214LmNvbT7CwJQEEwEIAD4CGwMFCwkI
+ BwIGFQgJCgsCBBYCAwECHgECF4AWIQQt33LlpaVbqJ2qQuHCPZHzoSX+qAUCZxF1YAUJEP5a
+ sQAKCRDCPZHzoSX+qF+mB/9gXu9C3BV0omDZBDWevJHxpWpOwQ8DxZEbk9b9LcrQlWdhFhyn
+ xi+l5lRziV9ZGyYXp7N35a9t7GQJndMCFUWYoEa+1NCuxDs6bslfrCaGEGG/+wd6oIPb85xo
+ naxnQ+SQtYLUFbU77WkUPaaIU8hH2BAfn9ZSDX9lIxheQE8ZYGGmo4wYpnN7/hSXALD7+oun
+ tZljjGNT1o+/B8WVZtw/YZuCuHgZeaFdhcV2jsz7+iGb+LsqzHuznrXqbyUQgQT9kn8ZYFNW
+ 7tf+LNxXuwedzRag4fxtR+5GVvJ41Oh/eygp8VqiMAtnFYaSlb9sjia1Mh+m+OBFeuXjgGlG
+ VvQFzsBNBFnVga8BCACqU+th4Esy/c8BnvliFAjAfpzhI1wH76FD1MJPmAhA3DnX5JDORcga
+ CbPEwhLj1xlwTgpeT+QfDmGJ5B5BlrrQFZVE1fChEjiJvyiSAO4yQPkrPVYTI7Xj34FnscPj
+ /IrRUUka68MlHxPtFnAHr25VIuOS41lmYKYNwPNLRz9Ik6DmeTG3WJO2BQRNvXA0pXrJH1fN
+ GSsRb+pKEKHKtL1803x71zQxCwLh+zLP1iXHVM5j8gX9zqupigQR/Cel2XPS44zWcDW8r7B0
+ q1eW4Jrv0x19p4P923voqn+joIAostyNTUjCeSrUdKth9jcdlam9X2DziA/DHDFfS5eq4fEv
+ ABEBAAHCwHwEGAEIACYCGwwWIQQt33LlpaVbqJ2qQuHCPZHzoSX+qAUCZxF1gQUJEP5a0gAK
+ CRDCPZHzoSX+qHGpB/kB8A7M7KGL5qzat+jBRoLwB0Y3Zax0QWuANVdZM3eJDlKJKJ4HKzjo
+ B2Pcn4JXL2apSan2uJftaMbNQbwotvabLXkE7cPpnppnBq7iovmBw++/d8zQjLQLWInQ5kNq
+ Vmi36kmq8o5c0f97QVjMryHlmSlEZ2Wwc1kURAe4lsRG2dNeAd4CAqmTw0cMIrR6R/Dpt3ma
+ +8oGXJOmwWuDFKNV4G2XLKcghqrtcRf2zAGNogg3KulCykHHripG3kPKsb7fYVcSQtlt5R6v
+ HZStaZBzw4PcDiaAF3pPDBd+0fIKS6BlpeNRSFG94RYrt84Qw77JWDOAZsyNfEIEE0J6LSR/
+In-Reply-To: <685aa401.050a0220.2303ee.0009.GAE@google.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:Tj2BwBo5eT/KJPzsyiaiGZqfGfGuOHUULA8Mfo+Vz2/Qcb54kPB
+ ewQJZzB7qA929wMH78hS8aN/MY6cj/sn49+9rKl93TwdV25LSU/AS4fUU7KGYoshoOc+Xu1
+ orXNarg1UStRftEmj/VimlEYPWKYhXA5BxizbcST8jL5saZOoS98oDzl4UecfoUo5/L/YO6
+ hCjNsJhGsFzZ0zFg9ZvTw==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:6N3HAn0CSIk=;C8xEfnOjj2D+JzbiJQkqADix8kS
+ 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
+ F7pNhbEi97Q==
 
+#syz test: https://github.com/adam900710/linux.git shutdown
 
+=E5=9C=A8 2025/6/24 22:41, syzbot =E5=86=99=E9=81=93:
+> Hello,
+>=20
+> syzbot found the following issue on:
+>=20
+> HEAD commit:    5d4809e25903 Add linux-next specific files for 20250620
+> git tree:       linux-next
+> console+strace: https://syzkaller.appspot.com/x/log.txt?x=3D1421b3705800=
+00
+> kernel config:  https://syzkaller.appspot.com/x/.config?x=3D58afc4b78b52=
+b7e3
+> dashboard link: https://syzkaller.appspot.com/bug?extid=3Dfa90fcaa28f5cd=
+4b1fc1
+> compiler:       Debian clang version 20.1.6 (++20250514063057+1e4d39e077=
+57-1~exp1~20250514183223.118), Debian LLD 20.1.6
+> syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=3D11f1cb0c58=
+0000
+> C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=3D14aff30c5800=
+00
+>=20
+> Downloadable assets:
+> disk image: https://storage.googleapis.com/syzbot-assets/16492bf6b788/di=
+sk-5d4809e2.raw.xz
+> vmlinux: https://storage.googleapis.com/syzbot-assets/7be284ded1de/vmlin=
+ux-5d4809e2.xz
+> kernel image: https://storage.googleapis.com/syzbot-assets/467d717f0d9c/=
+bzImage-5d4809e2.xz
+> mounted in repro: https://storage.googleapis.com/syzbot-assets/4a74fbfa0=
+b0f/mount_0.gz
+>    fsck result: OK (log: https://syzkaller.appspot.com/x/fsck.log?x=3D10=
+30cdd4580000)
+>=20
+> The issue was bisected to:
+>=20
+> commit 7aacdf6feed1ca882339ebd3895a233373b40a1e
+> Author: Qu Wenruo <wqu@suse.com>
+> Date:   Tue Jun 17 05:19:38 2025 +0000
+>=20
+>      btrfs: delay btrfs_open_devices() until super block is created
+>=20
+> bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=3D14d29b0c5=
+80000
+> final oops:     https://syzkaller.appspot.com/x/report.txt?x=3D16d29b0c5=
+80000
+> console output: https://syzkaller.appspot.com/x/log.txt?x=3D12d29b0c5800=
+00
+>=20
+> IMPORTANT: if you fix the issue, please add the following tag to the com=
+mit:
+> Reported-by: syzbot+fa90fcaa28f5cd4b1fc1@syzkaller.appspotmail.com
+> Fixes: 7aacdf6feed1 ("btrfs: delay btrfs_open_devices() until super bloc=
+k is created")
+>=20
+> BTRFS info (device loop0): using sha256 (sha256-x86_64) checksum algorit=
+hm
+> BTRFS info (device loop0): disk space caching is enabled
+> BTRFS warning (device loop0): space cache v1 is being deprecated and wil=
+l be removed in a future release, please use -o space_cache=3Dv2
+> =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D
+> WARNING: possible circular locking dependency detected
+> 6.16.0-rc2-next-20250620-syzkaller #0 Not tainted
+> ------------------------------------------------------
+> syz-executor123/5843 is trying to acquire lock:
+> ffffffff8e6e9fe8 (uuid_mutex){+.+.}-{4:4}, at: btrfs_read_chunk_tree+0xe=
+f/0x2170 fs/btrfs/volumes.c:7462
+>=20
+> but task is already holding lock:
+> ffff8880328ea0e0 (&type->s_umount_key#41/1){+.+.}-{4:4}, at: alloc_super=
++0x204/0x970 fs/super.c:345
+>=20
+> which lock already depends on the new lock.
+>=20
+>=20
+> the existing dependency chain (in reverse order) is:
+>=20
+> -> #1 (&type->s_umount_key#41/1){+.+.}-{4:4}:
+>         lock_acquire+0x120/0x360 kernel/locking/lockdep.c:5871
+>         down_write_nested+0x9d/0x200 kernel/locking/rwsem.c:1693
+>         alloc_super+0x204/0x970 fs/super.c:345
+>         sget_fc+0x329/0xa40 fs/super.c:761
+>         btrfs_get_tree_super fs/btrfs/super.c:1867 [inline]
+>         btrfs_get_tree_subvol fs/btrfs/super.c:2059 [inline]
+>         btrfs_get_tree+0x4c6/0x12d0 fs/btrfs/super.c:2093
+>         vfs_get_tree+0x8f/0x2b0 fs/super.c:1804
+>         do_new_mount+0x24a/0xa40 fs/namespace.c:3902
+>         do_mount fs/namespace.c:4239 [inline]
+>         __do_sys_mount fs/namespace.c:4450 [inline]
+>         __se_sys_mount+0x317/0x410 fs/namespace.c:4427
+>         do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
+>         do_syscall_64+0xfa/0x3b0 arch/x86/entry/syscall_64.c:94
+>         entry_SYSCALL_64_after_hwframe+0x77/0x7f
+>=20
+> -> #0 (uuid_mutex){+.+.}-{4:4}:
+>         check_prev_add kernel/locking/lockdep.c:3168 [inline]
+>         check_prevs_add kernel/locking/lockdep.c:3287 [inline]
+>         validate_chain+0xb9b/0x2140 kernel/locking/lockdep.c:3911
+>         __lock_acquire+0xab9/0xd20 kernel/locking/lockdep.c:5240
+>         lock_acquire+0x120/0x360 kernel/locking/lockdep.c:5871
+>         __mutex_lock_common kernel/locking/mutex.c:602 [inline]
+>         __mutex_lock+0x182/0xe80 kernel/locking/mutex.c:747
+>         btrfs_read_chunk_tree+0xef/0x2170 fs/btrfs/volumes.c:7462
+>         open_ctree+0x17f2/0x3a10 fs/btrfs/disk-io.c:3458
+>         btrfs_fill_super fs/btrfs/super.c:984 [inline]
+>         btrfs_get_tree_super fs/btrfs/super.c:1922 [inline]
+>         btrfs_get_tree_subvol fs/btrfs/super.c:2059 [inline]
+>         btrfs_get_tree+0xc6f/0x12d0 fs/btrfs/super.c:2093
+>         vfs_get_tree+0x8f/0x2b0 fs/super.c:1804
+>         do_new_mount+0x24a/0xa40 fs/namespace.c:3902
+>         do_mount fs/namespace.c:4239 [inline]
+>         __do_sys_mount fs/namespace.c:4450 [inline]
+>         __se_sys_mount+0x317/0x410 fs/namespace.c:4427
+>         do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
+>         do_syscall_64+0xfa/0x3b0 arch/x86/entry/syscall_64.c:94
+>         entry_SYSCALL_64_after_hwframe+0x77/0x7f
+>=20
+> other info that might help us debug this:
+>=20
+>   Possible unsafe locking scenario:
+>=20
+>         CPU0                    CPU1
+>         ----                    ----
+>    lock(&type->s_umount_key#41/1);
+>                                 lock(uuid_mutex);
+>                                 lock(&type->s_umount_key#41/1);
+>    lock(uuid_mutex);
+>=20
+>   *** DEADLOCK ***
+>=20
+> 1 lock held by syz-executor123/5843:
+>   #0: ffff8880328ea0e0 (&type->s_umount_key#41/1){+.+.}-{4:4}, at: alloc=
+_super+0x204/0x970 fs/super.c:345
+>=20
+> stack backtrace:
+> CPU: 1 UID: 0 PID: 5843 Comm: syz-executor123 Not tainted 6.16.0-rc2-nex=
+t-20250620-syzkaller #0 PREEMPT(full)
+> Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS =
+Google 05/07/2025
+> Call Trace:
+>   <TASK>
+>   dump_stack_lvl+0x189/0x250 lib/dump_stack.c:120
+>   print_circular_bug+0x2ee/0x310 kernel/locking/lockdep.c:2046
+>   check_noncircular+0x134/0x160 kernel/locking/lockdep.c:2178
+>   check_prev_add kernel/locking/lockdep.c:3168 [inline]
+>   check_prevs_add kernel/locking/lockdep.c:3287 [inline]
+>   validate_chain+0xb9b/0x2140 kernel/locking/lockdep.c:3911
+>   __lock_acquire+0xab9/0xd20 kernel/locking/lockdep.c:5240
+>   lock_acquire+0x120/0x360 kernel/locking/lockdep.c:5871
+>   __mutex_lock_common kernel/locking/mutex.c:602 [inline]
+>   __mutex_lock+0x182/0xe80 kernel/locking/mutex.c:747
+>   btrfs_read_chunk_tree+0xef/0x2170 fs/btrfs/volumes.c:7462
+>   open_ctree+0x17f2/0x3a10 fs/btrfs/disk-io.c:3458
+>   btrfs_fill_super fs/btrfs/super.c:984 [inline]
+>   btrfs_get_tree_super fs/btrfs/super.c:1922 [inline]
+>   btrfs_get_tree_subvol fs/btrfs/super.c:2059 [inline]
+>   btrfs_get_tree+0xc6f/0x12d0 fs/btrfs/super.c:2093
+>   vfs_get_tree+0x8f/0x2b0 fs/super.c:1804
+>   do_new_mount+0x24a/0xa40 fs/namespace.c:3902
+>   do_mount fs/namespace.c:4239 [inline]
+>   __do_sys_mount fs/namespace.c:4450 [inline]
+>   __se_sys_mount+0x317/0x410 fs/namespace.c:4427
+>   do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
+>   do_syscall_64+0xfa/0x3b0 arch/x86/entry/syscall_64.c:94
+>   entry_SYSCALL_64_after_hwframe+0x77/0x7f
+> RIP: 0033:0x7fda63124f3a
+> Code: d8 64 89 02 48 c7 c0 ff ff ff ff eb a6 e8 5e 04 00 00 66 2e 0f 1f =
+84 00 00 00 00 00 0f 1f 40 00 49 89 ca b8 a5 00 00 00 0f 05 <48> 3d 01 f0 =
+ff ff 73 01 c3 48 c7 c1 b8 ff ff ff f7 d8 64 89 01 48
+> RSP: 002b:00007ffd76f19cb8 EFLAGS: 00000282 ORIG_RAX: 00000000000000a5
+> RAX: ffffffffffffffda RBX: 00007ffd76f19cd0 RCX: 00007fda63124f3a
+> RDX: 00002000000004c0 RSI: 00002000000015c0 RDI: 00007ffd76f19cd0
+> RBP: 00002000000004c0 R08: 00007ffd76f19d10 R09: 0000000000005598
+> R10: 0000000002000000 R11: 0000000000000282 R12: 00002000000015c0
+> R13: 00007ffd76f19d10 R14: 0000000000000003 R15: 0000000002000000
+>   </TASK>
+> BTRFS info (device loop0): rebuilding free space tree
+> BTRFS info (device loop0): disabling free space tree
+> BTRFS info (device loop0): clearing compat-ro feature flag for FREE_SPAC=
+E_TREE (0x1)
+> BTRFS info (device loop0): clearing compat-ro feature flag for FREE_SPAC=
+E_TREE_VALID (0x2)
+>=20
+>=20
+> ---
+> This report is generated by a bot. It may contain errors.
+> See https://goo.gl/tpsmEJ for more information about syzbot.
+> syzbot engineers can be reached at syzkaller@googlegroups.com.
+>=20
+> syzbot will keep track of this issue. See:
+> https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+> For information about bisection process see: https://goo.gl/tpsmEJ#bisec=
+tion
+>=20
+> If the report is already addressed, let syzbot know by replying with:
+> #syz fix: exact-commit-title
+>=20
+> If you want syzbot to run the reproducer, reply with:
+> #syz test: git://repo/address.git branch-or-commit-hash
+> If you attach or paste a git patch, syzbot will apply it before testing.
+>=20
+> If you want to overwrite report's subsystems, reply with:
+> #syz set subsystems: new-subsystem
+> (See the list of subsystem names on the web dashboard)
+>=20
+> If the report is a duplicate of another one, reply with:
+> #syz dup: exact-subject-of-another-report
+>=20
+> If you want to undo deduplication, reply with:
+> #syz undup
+>=20
 
-Le 24/06/2025 à 23:08, David Laight a écrit :
-> On Tue, 24 Jun 2025 13:25:05 -0500
-> Segher Boessenkool <segher@kernel.crashing.org> wrote:
-> 
->>>> isel (which is base PowerPC, not something "e500" only) is a
->>>> computational instruction, it copies one of two registers to a third,
->>>> which of the two is decided by any bit in the condition register.
->>>
->>> Does that mean it could be used for all the ppc cpu variants?
->>
->> No, only things that implement architecture version of 2.03 or later.
->> That is from 2006, so essentially everything that is still made
->> implements it :-)
->>
->> But ancient things do not.  Both 970 (Apple G5) and Cell BE do not yet
->> have it (they are ISA 2.01 and 2.02 respectively).  And the older p5's
->> do not have it yet either, but the newer ones do.
-
-For book3s64, GCC only use isel with -mcpu=power9 or -mcpu=power10
-
->>
->> And all classic PowerPC is ISA 1.xx of course.  Medieval CPUs :-)
-> 
-> That make more sense than the list in patch 5/5.
-
-Sorry for the ambiguity. In patch 5/5 I was addressing only powerpc/32, 
-and as far as I know the only powerpc/32 supported by Linux that has 
-isel is the 85xx which has an e500 core.
-
-For powerpc/64 we have less constraint than on powerpc32:
-- Kernel memory starts at 0xc000000000000000
-- User memory stops at 0x0010000000000000
-
-So we can easily use 0x8000000000000000 as demarcation line, which 
-allows a 3 instructions sequence:
-
-	sradi	r9,r3,63   => shirt right algebric: r9 = 0 when r3 >= 0; r9 = -1 
-when r3 < 0
-	andc	r3,r3,r9   => and with complement: r3 unchanged when r9 = 0, r3 = 
-0 when r9 = -1
-	rldimi	r3,r9,0,1  => Rotate left and mask insert: Insert highest bit of 
-r9 into r3
-
-Whereas using isel requires a 4 instructions sequence:
-
-	li	r9, 1		=> load immediate: r9 = 1
-	rotldi	r9, r9, 63	=> rotate left: r9 = 0x8000000000000000
-	cmpld	r3, r9		=> compare logically
-	iselgt	r3, r9, r3	=> integer select greater than: select r3 when result 
-of above compare is <= ; select r9 when result of compare is >
-
-> 
->>
->>>> But sure, seen from very far off both isel and cmove can be used to
->>>> implement the ternary operator ("?:"), are similar in that way :-)
->>>
->>> Which is exactly what you want to avoid speculation.
->>
->> There are cheaper / simpler / more effective / better ways to get that,
->> but sure, everything is better than a conditional branch, always :-)
-> 
-> Everything except a TLB miss :-)
-> 
-> And for access_ok() avoiding the conditional is a good enough reason
-> to use a 'conditional move' instruction.
-> Avoiding speculation is actually free.
-> 
-
-And on CPUs that are not affected by Spectre and Meltdown like powerpc 
-8xx or powerpc 603, masking the pointer is still worth it as it 
-generates better code, even if the masking involves branching.
-
-That's the reason why I did:
-- e500 (affected by Spectre v1) ==> Use isel ==> 3 instructions sequence:
-
-	lis	r9, TASK_SIZE@h	=> load immediate shifted => r9 = (TASK_SIZE >> 16) 
-<< 16
-	cmplw	r3, r9		=> compare addr with TASK_SIZE
-	iselgt	r3, r9, r3	=> addr = TASK_SIZE when addr > TASK_SIZE; addr = 
-addr when <= TASK_SIZE
-
-For others:
-- If TASK_SIZE <= 0x80000000 and kernel >= 0x80000000 ==> 3 instructions 
-sequence similar to the 64 bits one above:
-
-	srawi	r9,r3,63
-	andc	r3,r3,r9
-	rlwimi	r3,r9,0,0,0
-
-- Otherwise, if speculation mitigation is required (e600), use the 
-6-instructions masking sequence (r3 contains the address to mask)
-
-	srwi	r9,r3,17	=> shift right: shift r3 by 17 to keep 15 bits (positive 
-16 bits)
-	subfic	r9,r9,22527	=> sub from immediate: r9 = (TASK_SIZE >> 17) - r9 
-=> r9 < 0 when r3 is greater
-	srawi	r9,r9,31	=> shift right algebric: r9 = 0 when r9 >= 0; r9 = -1 
-when r9 < 0
-	andis.	r10,r9,45056	=> and immediat shifted: r10 = r9 and upper part of 
-TASK_SIZE => r10 = TASK_SIZE when r3 > TASK_SIZE, r10 = 0 otherwise
-	andc	r3,r3,r9	=> and with complement: r3 is unchanged when r9 = 0 so 
-when r3 <= TASK_SIZE, r3 is cleared when r9 = -1 so when r3 > TASK_SIZE
-	or	r3,r3,r10	=> r3 = r3 | r10
-
-
-- If no speculation mitigation is required, let GCC do as it wants
-
-List of affected CPUs is available here: 
-https://docs.nxp.com/bundle/GUID-805CC0EA-4001-47AD-86CD-4F340751F6B7/page/GUID-17B5D04F-6471-4EC6-BEB9-DE4D0AFA034A.html
 
