@@ -1,110 +1,155 @@
-Return-Path: <linux-kernel+bounces-703892-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-703890-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 39285AE9645
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Jun 2025 08:28:44 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 97517AE9641
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Jun 2025 08:28:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8A64C174F2B
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Jun 2025 06:28:44 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2614D5A6161
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Jun 2025 06:27:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7D2882356C9;
-	Thu, 26 Jun 2025 06:28:21 +0000 (UTC)
-Received: from smtp153-168.sina.com.cn (smtp153-168.sina.com.cn [61.135.153.168])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7FD7E232367;
+	Thu, 26 Jun 2025 06:28:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="tR/E59jX"
+Received: from lelvem-ot01.ext.ti.com (lelvem-ot01.ext.ti.com [198.47.23.234])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9E07722F74A
-	for <linux-kernel@vger.kernel.org>; Thu, 26 Jun 2025 06:28:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=61.135.153.168
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D613422DA1F;
+	Thu, 26 Jun 2025 06:28:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.23.234
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750919301; cv=none; b=o+5zKtlGJfUIogIuxzEqsW62bmaEhVP4SoNS94H0Q8DYyYeSPGv7TWdoa5jPFg87YM92OZFBUYigl3hkE25bdikEj4RNAC9IrnohO+Q8MGkTVZEDYMuXKL6vZ6KyRxqBjkiEtoUwQMOAW2DZi87MQTp7QIWICg2bCeoxC5E7wgA=
+	t=1750919284; cv=none; b=WGo1rtm9jUEdxGdn7skVqLwgGtVz3QT6eLw/2MbexetEIaVSW3V/RRfCTO9fzhKQqTJFjUSSbgbm0K+yRAWK3tdH0SLKWEJpXVIXSSJf16SUFEZOk2FQTUtk0rA9AZS7+QJrdTMEQKCSBpAKBS8ulHDVWn1i8GVWVQ1uZyk7FOY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750919301; c=relaxed/simple;
-	bh=2Z/Em1Y4whxorjWO+GN30U2VbwgQirIi+tFcGvqGmKM=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=CIF9UApCFLyV/FyUCsfK+HIKLemZSN/Z9bFBNJ1kMrsxSELfugSBV3heaW26XF8/94fo4bNHr1/255OOpjozDAmyamDWTfhY0R6iDNdxXg51iH+yhBCbjBU7lhhfBWbBtC4Y//YTFOXKF+Hm+LlRwBgVwLFat2jrQWXWGRxi2Yc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sina.com; spf=pass smtp.mailfrom=sina.com; arc=none smtp.client-ip=61.135.153.168
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sina.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sina.com
-X-SMAIL-HELO: localhost.localdomain
-Received: from unknown (HELO localhost.localdomain)([114.249.58.236])
-	by sina.com (10.54.253.33) with ESMTP
-	id 685CE8700000199A; Thu, 26 Jun 2025 14:28:01 +0800 (CST)
-X-Sender: hdanton@sina.com
-X-Auth-ID: hdanton@sina.com
-Authentication-Results: sina.com;
-	 spf=none smtp.mailfrom=hdanton@sina.com;
-	 dkim=none header.i=none;
-	 dmarc=none action=none header.from=hdanton@sina.com
-X-SMAIL-MID: 9124786685332
-X-SMAIL-UIID: 13828CA596954EBC9EC5EAEA50D56982-20250626-142801-1
-From: Hillf Danton <hdanton@sina.com>
-To: Shrikanth Hegde <sshegde@linux.ibm.com>
-Cc: peterz@infradead.org,
-	kprateek.nayak@amd.com,
-	linux-kernel@vger.kernel.org
-Subject: Re: [RFC v2 1/9] sched/docs: Document avoid_cpu_mask and avoid CPU concept
-Date: Thu, 26 Jun 2025 14:27:40 +0800
-Message-ID: <20250626062749.1854-1-hdanton@sina.com>
-In-Reply-To: <20250625191108.1646208-2-sshegde@linux.ibm.com>
-References: <20250625191108.1646208-1-sshegde@linux.ibm.com>
+	s=arc-20240116; t=1750919284; c=relaxed/simple;
+	bh=/PCeusqfJJty0TGQN+muWHUI9Rd+Wus1EVo/E+R5IJ8=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=MSXheZsDc0Kyl3q7yYNhf9K37fkOH2mUi8p8hbCJwr7hEQT12m7WSJWIzH2jovUi8IUwGbRI5rkqMAQDANcgl8RbZKaQkgTSdT1kOw4joRJ2itzTNkEFK7wSROEUhKtlRfzIvFdvyhCTEIgrEq2JNLXaiUT12urhPptZ+sw3WRo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=tR/E59jX; arc=none smtp.client-ip=198.47.23.234
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
+Received: from lelvem-sh02.itg.ti.com ([10.180.78.226])
+	by lelvem-ot01.ext.ti.com (8.15.2/8.15.2) with ESMTP id 55Q6RvsK1660212;
+	Thu, 26 Jun 2025 01:27:57 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+	s=ti-com-17Q1; t=1750919278;
+	bh=3EDX4H5WxxN56BaDRD3fEcV20AEstU4Q3AaPPTiQsak=;
+	h=Date:Subject:To:CC:References:From:In-Reply-To;
+	b=tR/E59jXh1lZmQ+On0WGiCRCCxtMqCLw0C8kCZQiXrIyPx11l8s0XtKVFwEPQsEd6
+	 lYUT6HaF6OkB9UtLqfIisM4MM5W86k5gKp47+R6fdl4OAevdDfBlkDlq4d+phdkIDI
+	 fuqWg1H0MaWDn88+jVmd2goZ5luI3NXeJ9KaMb9g=
+Received: from DLEE102.ent.ti.com (dlee102.ent.ti.com [157.170.170.32])
+	by lelvem-sh02.itg.ti.com (8.18.1/8.18.1) with ESMTPS id 55Q6RvJV3375310
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-SHA256 bits=128 verify=FAIL);
+	Thu, 26 Jun 2025 01:27:57 -0500
+Received: from DLEE115.ent.ti.com (157.170.170.26) by DLEE102.ent.ti.com
+ (157.170.170.32) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.55; Thu, 26
+ Jun 2025 01:27:57 -0500
+Received: from lelvem-mr06.itg.ti.com (10.180.75.8) by DLEE115.ent.ti.com
+ (157.170.170.26) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.55 via
+ Frontend Transport; Thu, 26 Jun 2025 01:27:57 -0500
+Received: from [172.24.227.245] (uda0132425.dhcp.ti.com [172.24.227.245])
+	by lelvem-mr06.itg.ti.com (8.18.1/8.18.1) with ESMTP id 55Q6RrJb521448;
+	Thu, 26 Jun 2025 01:27:54 -0500
+Message-ID: <8c7f70eb-b64c-408d-816f-9adc997e42ec@ti.com>
+Date: Thu, 26 Jun 2025 11:57:54 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 3/7] arm64: dts: ti: k3-j721s2-main: add DSI & DSI PHY
+To: Jayesh Choudhary <j-choudhary@ti.com>, <nm@ti.com>,
+        <devicetree@vger.kernel.org>
+CC: <kristo@kernel.org>, <robh@kernel.org>, <krzk+dt@kernel.org>,
+        <conor+dt@kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>, <devarsht@ti.com>, <u-kumar1@ti.com>
+References: <20250624082619.324851-1-j-choudhary@ti.com>
+ <20250624082619.324851-4-j-choudhary@ti.com>
+From: Vignesh Raghavendra <vigneshr@ti.com>
+Content-Language: en-US
+In-Reply-To: <20250624082619.324851-4-j-choudhary@ti.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
 
-On Thu, 26 Jun 2025 00:41:00 +0530 Shrikanth Hegde wrote
-> This describes what avoid CPU means and what scheduler aims to do 
-> when a CPU is marked as avoid. 
+
+
+On 24/06/25 13:56, Jayesh Choudhary wrote:
+> From: Rahul T R <r-ravikumar@ti.com>
 > 
-> Signed-off-by: Shrikanth Hegde <sshegde@linux.ibm.com>
+> Add DT nodes for DPI to DSI Bridge and DSI Phy.
+> The DSI bridge is Cadence DSI and the PHY is a
+> Cadence DPHY with TI wrapper.
+> 
+> Signed-off-by: Rahul T R <r-ravikumar@ti.com>
+> [j-choudhary@ti.com: disable dsi and dphy nodes, rename dphy node]
+> Signed-off-by: Jayesh Choudhary <j-choudhary@ti.com>
 > ---
->  Documentation/scheduler/sched-arch.rst | 25 +++++++++++++++++++++++++
->  1 file changed, 25 insertions(+)
+>  arch/arm64/boot/dts/ti/k3-j721s2-main.dtsi | 37 ++++++++++++++++++++++
+>  1 file changed, 37 insertions(+)
 > 
-> diff --git a/Documentation/scheduler/sched-arch.rst b/Documentation/scheduler/sched-arch.rst
-> index ed07efea7d02..d32755298fca 100644
-> --- a/Documentation/scheduler/sched-arch.rst
-> +++ b/Documentation/scheduler/sched-arch.rst
-> @@ -62,6 +62,31 @@ Your cpu_idle routines need to obey the following rules:
->  arch/x86/kernel/process.c has examples of both polling and
->  sleeping idle functions.
+> diff --git a/arch/arm64/boot/dts/ti/k3-j721s2-main.dtsi b/arch/arm64/boot/dts/ti/k3-j721s2-main.dtsi
+> index 83cf0adb2cb7..e17fffc36248 100644
+> --- a/arch/arm64/boot/dts/ti/k3-j721s2-main.dtsi
+> +++ b/arch/arm64/boot/dts/ti/k3-j721s2-main.dtsi
+> @@ -1795,6 +1795,43 @@ main_spi7: spi@2170000 {
+>  		status = "disabled";
+>  	};
 >  
-> +CPU Avoid
-> +=========
+> +	dphy_tx0: phy@4480000 {
+> +		compatible = "ti,j721e-dphy";
+> +		reg = <0x0 0x04480000 0x0 0x1000>;
+> +		clocks = <&k3_clks 363 8>, <&k3_clks 363 14>;
+> +		clock-names = "psm", "pll_ref";
+> +		#phy-cells = <0>;
+> +		power-domains = <&k3_pds 363 TI_SCI_PD_EXCLUSIVE>;
+> +		assigned-clocks = <&k3_clks 363 14>;
+> +		assigned-clock-parents = <&k3_clks 363 15>;
+> +		assigned-clock-rates = <19200000>;
+> +		status = "disabled";
+> +	};
 > +
-> +Under paravirt conditions it is possible to overcommit CPU resources.
-> +i.e sum of virtual CPU(vCPU) of all VM is greater than number of physical
-> +CPUs(pCPU). Under such conditions when all or many VM have high utilization,
-> +hypervisor won't be able to satisfy the requirement and has to context switch
-> +within or across VM. VM level context switch is more expensive compared to
-> +task context switch within the VM.
+> +	dsi0: dsi@4800000 {
+> +		compatible = "ti,j721e-dsi";
+> +		reg = <0x0 0x04800000 0x0 0x100000>, <0x0 0x04710000 0x0 0x100>;
+> +		clocks = <&k3_clks 154 4>, <&k3_clks 154 1>;
+> +		clock-names = "dsi_p_clk", "dsi_sys_clk";
+> +		power-domains = <&k3_pds 154 TI_SCI_PD_EXCLUSIVE>;
+> +		interrupt-parent = <&gic500>;
+> +		interrupts = <GIC_SPI 600 IRQ_TYPE_LEVEL_HIGH>;
+> +		phys = <&dphy_tx0>;
+> +		phy-names = "dphy";
+> +		status = "disabled";
 > +
-Sounds like VMs not well configured (or pCPUs not well partationed).
+> +		dsi0_ports: ports {
+> +			#address-cells = <1>;
+> +			#size-cells = <0>;
+> +			port@0 {
+> +				reg = <0>;
+> +			};
+> +			port@1 {
+> +				reg = <1>;
+> +			};
 
-> +In such cases it is better that VM's co-ordinate among themselves and ask for
-> +less CPU request by not using some of the vCPUs. Such vCPUs where workload
-> +can be avoided at the moment are called as "Avoid CPUs". Note that when the
-> +pCPU contention goes away, these vCPUs can be used again by the workload.
-> +
-In the car cockpit scenario for example with type1 hypervisor, there is app
-kicking watchdog bound to every vCPU, so no vCPU should be avoided.
+Messed up indentation
 
-> +Arch need to set/unset the vCPU as avoid in cpu_avoid_mask. When set, avoid
-> +the CPU and when unset, use it as usual.
+> +		};
+> +	};
 > +
-> +Scheduler will try to avoid those CPUs as much as it can.
-> +This is achived by
-> +1. Not selecting those CPU at wakeup.
-> +2. Push the task away from avoid CPU at tick.
-> +3. Not selecting avoid CPU at load balance.
-> +
-> +This works only for SCHED_RT and SCHED_NORMAL.
->  
-Sounds like forcing a pill down through Peter's throat because Steve's headache.
+>  	dss: dss@4a00000 {
+>  		compatible = "ti,j721e-dss";
+>  		reg = <0x00 0x04a00000 0x00 0x10000>, /* common_m */
+
+-- 
+Regards
+Vignesh
+https://ti.com/opensource
+
 
