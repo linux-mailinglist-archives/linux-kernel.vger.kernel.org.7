@@ -1,159 +1,120 @@
-Return-Path: <linux-kernel+bounces-705180-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-705182-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2E91EAEA64E
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Jun 2025 21:20:45 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 450F7AEA657
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Jun 2025 21:21:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B093B1C27BC1
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Jun 2025 19:21:00 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B93634A81CE
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Jun 2025 19:21:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B2CE12EFD88;
-	Thu, 26 Jun 2025 19:20:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 63BF12EFD8B;
+	Thu, 26 Jun 2025 19:21:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="WRwBVy/B"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=disroot.org header.i=@disroot.org header.b="LufkMeHJ"
+Received: from layka.disroot.org (layka.disroot.org [178.21.23.139])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E5FB72EF9BB
-	for <linux-kernel@vger.kernel.org>; Thu, 26 Jun 2025 19:20:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2A9272EF9C5;
+	Thu, 26 Jun 2025 19:20:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.21.23.139
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750965636; cv=none; b=p6dFI9JhmbsYtj/TZHgQHZ1u3GBQF3gfSYN1qFdSrAhLPZjWZOIIjfGyhshjgyU54otBMGHsXLT1htMNkFfjsap/mJWPMsVgTOVXGReru2vhjC+EA9tJWCIZrtPlSNQUKrDWgqnIL+O8oStHp7EcGk6hPZiefMhMRII3fNHNQX8=
+	t=1750965659; cv=none; b=fKtLmQMKrqPcYwpL6ddiNoItIAQfnY78tPc/m6jsBWmSyqiHKaVHtDwPMV7v72uk1AKCp0mgTWkLaDYy7vD9oTXMCfsMvg9bcAzt4wsj3NJXTbAybeL8aOWNPsW3J/7VzlrHm6yS7zoRP2VLgNU0MHCTvLcq+gQosY9v4kb1V2o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750965636; c=relaxed/simple;
-	bh=5r6q7+0wAzu943Z2jyQlPtPeKr7oOGYM95kHKprWAYg=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=aEqwXTRFO/gIkyWHi33hJ5e+gNkOFkV4L1NDIq5bOrkKg4lxp4c9wDqWyhvW5M2vmWBTghqMJww99RI3M6khEdGzzRrjYT7AByQ9KdVbreDKl4iOlozySb67tkgc/yjwtk0erdkyrYYcWuTo0mGP/0BrZGTSj+SauV8yk93Ednw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=WRwBVy/B; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279864.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 55QIJIYI029561
-	for <linux-kernel@vger.kernel.org>; Thu, 26 Jun 2025 19:20:33 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	0zOww6azj3OZ8n4+GX4w7Xx36kLdO3U5ZZUI4FQRwdg=; b=WRwBVy/BtSis8QCO
-	+/YTVUH4/AFeUJ6+bhVkZHelz1uZGyqE4xdOZPVNtH8jZmnVxa5jGJcxnCWamE+7
-	HBd++lNOOkubJ+YLzLbZcMWIdzkPpq7QPqFRvvPJVwh6BYgZrNuM2xle0Z8tun1C
-	yvsn+g5n3fjdpFdpQPTHsxFXBNTsVLhq08jQCrcsrpUjc8vFIWlDVP2arWcJZpBK
-	pptfx20PTEbhP45gUMvi6QsCL+wT7YrhHLesFWt3+MJpaGZIb54m1Qe4WmD05oRS
-	doqv2ikFoLKbJMvDoRnPaxogFK3s/yDNGGZPAZ3ZcdSOMdOtOv/mivXnwLy4Fb6v
-	11zcVQ==
-Received: from mail-qt1-f199.google.com (mail-qt1-f199.google.com [209.85.160.199])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 47esa4wpbj-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Thu, 26 Jun 2025 19:20:33 +0000 (GMT)
-Received: by mail-qt1-f199.google.com with SMTP id d75a77b69052e-4a58580a76eso611621cf.0
-        for <linux-kernel@vger.kernel.org>; Thu, 26 Jun 2025 12:20:32 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1750965632; x=1751570432;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=0zOww6azj3OZ8n4+GX4w7Xx36kLdO3U5ZZUI4FQRwdg=;
-        b=JbXACXEmdRZsWiXHwH2iUqlOK67VgSIPb/pHODqXtiJJqTbJl7GAyz3BIsRpk3CKig
-         0S+tZrlBs4g71l2VztJx8w9NY+SHJtU4KfdCLy6koVh+tWNyTGdwisNK7vwmOqMWFQNe
-         5qP2rKyZGudpZ9yRzKm+dvDlRuMaZCYqfsoeU+eZvxaOH2Vi4HwFq8TWWwA0NslXT8XD
-         SoBspgscNyQqbAgrYb+KqKD3EuCMcGTJK3VveP7YRUWiPBlBFz/fweVFQVJC9V7VlibF
-         fbhajrNz2oH6uzBukLUVBY2/nxf8YTwAFidQOPMtXeGyilUhcAMtR3rObXKi/rn6OB5T
-         sadw==
-X-Forwarded-Encrypted: i=1; AJvYcCVbjnX2guzEdC54TlifuGzkzP2REaqlliOoW2EqaV3Tt35M/tmXT4YYpUV0CqLcyDJzDeE3nmUZFmeFOR0=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzPxDRvtDVWiARV8uLma2GWznBrRH7c9jpjBU0/A8kVhBYQmZDO
-	kvv3M281NBXR7s2+Q2ESCb0PrwHvobnMFyELy4lQ+/EK0gYFtuFlybOCGepbzPESjmTIjI/kw2H
-	OtB4TSvjReLATPs21PMZmM3EXfN8VsznBYTOQG1lCCg7CK5T9rlGt6cbJdeeKf62QUDQ=
-X-Gm-Gg: ASbGnctXQDT3NLU+kr2zztPHm5twvIF+1BM1OfAj+kESYbBB51iPlGHBpNfw3GPUCLG
-	Stb4J4sB8Q4M83+jf3e5RSMxA0Va8syTnSTOK9vVUsLptbDaDFoRhGJ0AiT5cEoJyI4ILIQxfoc
-	kgHmSWx/S7abaPMoGp7f1mhcoQo0GRFsxJ5X5s5pFf0vNAj+b9Enb00sQBXNxSfUcLPKOrh3vBI
-	t6V+IhIiDZvl57ccGoc9PPeI4SnnxzCw7HguwuRKpz+dmqv3nYLDEoR4OjiGNser0wYBjSMBeOv
-	QmsuFiDNuwAdD4jv1J7VNtvi2KU2sGiMQQYKk/+zVNWTpp1hNl6SxY6SpNx89Yeow/Kdo462QC/
-	PGL8=
-X-Received: by 2002:a05:622a:178d:b0:475:820:9f6f with SMTP id d75a77b69052e-4a7fcab375amr4100631cf.9.1750965631707;
-        Thu, 26 Jun 2025 12:20:31 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IFpEZc+VDoThophGjf8eCV3b76cou4xRyhNwgBBJqRGzQLg/M6WUxJq4j+uB+jHeRoCTB1C6Q==
-X-Received: by 2002:a05:622a:178d:b0:475:820:9f6f with SMTP id d75a77b69052e-4a7fcab375amr4100491cf.9.1750965631159;
-        Thu, 26 Jun 2025 12:20:31 -0700 (PDT)
-Received: from [192.168.143.225] (078088045245.garwolin.vectranet.pl. [78.88.45.245])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ae2140d91aasm44338966b.64.2025.06.26.12.20.29
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 26 Jun 2025 12:20:30 -0700 (PDT)
-Message-ID: <3dd39700-4fa7-44e6-8893-b46c601d772c@oss.qualcomm.com>
-Date: Thu, 26 Jun 2025 21:20:28 +0200
+	s=arc-20240116; t=1750965659; c=relaxed/simple;
+	bh=NWDPKseR7FgqJe1BUa7IKDcIuriaLO9oc++4NoGT7So=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
+	 In-Reply-To:To:Cc; b=YiU0hPPrHAMIenE8j1LjQPLe3ORdwdeyO/GudZpmSp596oTJMAjPrcOEhWTcM2U12t8FkHRqejqA+Aq3ezZsJqMzI51owXfGTzZyTA5+6XwcrxLPn4dbpCTg6bVHj2oVdyUHuKTsmxPaCiDWcDYhfFklA7XCaV0IiEV8QZ5GENY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=disroot.org; spf=pass smtp.mailfrom=disroot.org; dkim=pass (2048-bit key) header.d=disroot.org header.i=@disroot.org header.b=LufkMeHJ; arc=none smtp.client-ip=178.21.23.139
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=disroot.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=disroot.org
+Received: from mail01.disroot.lan (localhost [127.0.0.1])
+	by disroot.org (Postfix) with ESMTP id A711D2600B;
+	Thu, 26 Jun 2025 21:20:56 +0200 (CEST)
+X-Virus-Scanned: SPAM Filter at disroot.org
+Received: from layka.disroot.org ([127.0.0.1])
+ by localhost (disroot.org [127.0.0.1]) (amavis, port 10024) with ESMTP
+ id oCsJiwgKFbxM; Thu, 26 Jun 2025 21:20:56 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=disroot.org; s=mail;
+	t=1750965656; bh=NWDPKseR7FgqJe1BUa7IKDcIuriaLO9oc++4NoGT7So=;
+	h=From:Date:Subject:References:In-Reply-To:To:Cc;
+	b=LufkMeHJflu/2/hw6zQgWML1OwQT3aV93y1CJyVkN0xr8SlPhI1BueFfFavVqRMLl
+	 kql4TcXR0IT+00S+pg/ffp+NlKzPs3MHdQW2z/maueuhEonk8vSF95O55s0xUOCpwb
+	 TQ98HFTy5N1tad/phEppHUnCrOfarzsTybh6OSwrd9Bre3im2VGRDbCdHCk2kkQilj
+	 3/8Ebfu06NP/Sm+nXAePoDOKpZ7HcCKIG9qs/gVjRVRtgtR+R+8PMgH47XkAifbGO6
+	 TkATHF5Q2rp83O4pPhEzIoGt6B+WKROMEoCu+cHZ0lhUPxylADl9X1tLh5gP395/09
+	 a+8QRrrOH5ViQ==
+From: Kaustabh Chakraborty <kauschluss@disroot.org>
+Date: Fri, 27 Jun 2025 00:50:28 +0530
+Subject: [PATCH v3 1/3] dt-bindings: display: samsung,exynos7-decon: add
+ properties for iommus and ports
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 3/3] remoteproc: qcom: pas: Add SM7635 remoteproc support
-To: Luca Weiss <luca.weiss@fairphone.com>,
-        Bjorn Andersson <andersson@kernel.org>,
-        Mathieu Poirier <mathieu.poirier@linaro.org>,
-        Rob Herring <robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley
- <conor+dt@kernel.org>,
-        Manivannan Sadhasivam <mani@kernel.org>
-Cc: ~postmarketos/upstreaming@lists.sr.ht, phone-devel@vger.kernel.org,
-        linux-arm-msm@vger.kernel.org, linux-remoteproc@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20250625-sm7635-remoteprocs-v1-0-730d6b5171ee@fairphone.com>
- <20250625-sm7635-remoteprocs-v1-3-730d6b5171ee@fairphone.com>
-Content-Language: en-US
-From: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-In-Reply-To: <20250625-sm7635-remoteprocs-v1-3-730d6b5171ee@fairphone.com>
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-X-Authority-Analysis: v=2.4 cv=eLYTjGp1 c=1 sm=1 tr=0 ts=685d9d81 cx=c_pps
- a=WeENfcodrlLV9YRTxbY/uA==:117 a=FpWmc02/iXfjRdCD7H54yg==:17
- a=IkcTkHD0fZMA:10 a=6IFa9wvqVegA:10 a=6H0WHjuAAAAA:8 a=qm_u-Z9MdHEKZBNG23gA:9
- a=QEXdDO2ut3YA:10 a=kacYvNCVWA4VmyqE58fU:22 a=Soq9LBFxuPC4vsCAQt-j:22
-X-Proofpoint-GUID: SXN9sZ2o3WehAf5r94_6K1Y7J2qRWZsn
-X-Proofpoint-ORIG-GUID: SXN9sZ2o3WehAf5r94_6K1Y7J2qRWZsn
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNjI2MDE2NSBTYWx0ZWRfX2YRRI/pRQKln
- NuNwfCjeJqgExbX7yhgKfcEE50FwLtFRTUHaddZ9bCfhfjNdqbQ0/J3vCZFyQBxZpwf8Xb/9t2D
- xiGt3f9JGcpy1Nldu+oR99ktJ54xM0Xld6zIs/flUAdU2N+txttMhmEGX6miFiiPhtFWvH6e9wj
- 74PdXaudM4YeHRWtzOOrIFFxNX+KMy4YUe3HXPCT1M4oGxmSY95TDLOw7sSqOZXZEcTNGnkbmxz
- d8USz/pIedhJA6xbQXwuDPWTPevodzP+x1OSlVMz/Keziw2pOEm8CqD7/lvxuSFqZ0BuyuUCkg9
- 4d0dfx5fZmHxwoOj4fpcwW9QwQEi071TYLuIKkKD2n1Y1o5uIEpS/oXfoQ6nUicR0FUSLqaC/L+
- WjLmRuKYwsyuJRWIq4HzGJrjmMHx74rHwb82RiWOWOyDjAxuUcLOfCkEWtnbThjK+fr5SUfD
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.7,FMLib:17.12.80.40
- definitions=2025-06-26_06,2025-06-26_05,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- phishscore=0 priorityscore=1501 mlxscore=0 clxscore=1015 mlxlogscore=999
- suspectscore=0 bulkscore=0 impostorscore=0 lowpriorityscore=0 malwarescore=0
- adultscore=0 spamscore=0 classifier=spam authscore=0 authtc=n/a authcc=
- route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2505280000
- definitions=main-2506260165
+Message-Id: <20250627-exynosdrm-decon-v3-1-5b456f88cfea@disroot.org>
+References: <20250627-exynosdrm-decon-v3-0-5b456f88cfea@disroot.org>
+In-Reply-To: <20250627-exynosdrm-decon-v3-0-5b456f88cfea@disroot.org>
+To: Inki Dae <inki.dae@samsung.com>, Seung-Woo Kim <sw0312.kim@samsung.com>, 
+ Kyungmin Park <kyungmin.park@samsung.com>, David Airlie <airlied@gmail.com>, 
+ Simona Vetter <simona@ffwll.ch>, Krzysztof Kozlowski <krzk@kernel.org>, 
+ Alim Akhtar <alim.akhtar@samsung.com>, 
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
+ Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, 
+ Rob Herring <robh@kernel.org>, Conor Dooley <conor@kernel.org>, 
+ Ajay Kumar <ajaykumar.rs@samsung.com>, Akshu Agrawal <akshua@gmail.com>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>
+Cc: dri-devel@lists.freedesktop.org, linux-arm-kernel@lists.infradead.org, 
+ linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ devicetree@vger.kernel.org, Kaustabh Chakraborty <kauschluss@disroot.org>
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1750965633; l=1210;
+ i=kauschluss@disroot.org; s=20250202; h=from:subject:message-id;
+ bh=NWDPKseR7FgqJe1BUa7IKDcIuriaLO9oc++4NoGT7So=;
+ b=m+aG9N+L2Gn97HTnVn7EGvna1RTNUGO5iN00NlXhBtqiDuUyW3bfmzBBGQ3fbayDX3yMBnGjK
+ unsnSIaDQQDCHNl3dSJ3MC4Dc7iKGm+P7/kjxGc0dUVLCuFxpJXC7LF
+X-Developer-Key: i=kauschluss@disroot.org; a=ed25519;
+ pk=h2xeR+V2I1+GrfDPAhZa3M+NWA0Cnbdkkq1bH3ct1hE=
 
-On 6/25/25 11:15 AM, Luca Weiss wrote:
-> Add the different remoteprocs found on SM7635: ADSP, CDSP, MPSS and
-> WPSS.
-> 
-> Signed-off-by: Luca Weiss <luca.weiss@fairphone.com>
-> ---
->  drivers/remoteproc/qcom_q6v5_pas.c | 24 ++++++++++++++++++++++++
->  1 file changed, 24 insertions(+)
-> 
-> diff --git a/drivers/remoteproc/qcom_q6v5_pas.c b/drivers/remoteproc/qcom_q6v5_pas.c
-> index b306f223127c452f8f2d85aa0fc98db2d684feae..6aae61dea8d0dbb9cf3ce84b9dbebb77b5aa1d52 100644
-> --- a/drivers/remoteproc/qcom_q6v5_pas.c
-> +++ b/drivers/remoteproc/qcom_q6v5_pas.c
-> @@ -1261,6 +1261,26 @@ static const struct adsp_data sdx55_mpss_resource = {
->  	.ssctl_id = 0x22,
->  };
->  
-> +static const struct adsp_data sm7635_cdsp_resource = {
-> +	.crash_reason_smem = 601,
-> +	.firmware_name = "cdsp.mdt",
-> +	.dtb_firmware_name = "cdsp_dtb.mdt",
+Similar to FIMD and Exynos5433's DECON, the Exynos7 DECON hardware:
+- May optionally require an IOMMU to initialize a display region.
+- May require a port connection to another block, say an MIC or a DSI
+  master.
 
-I wonder why we're not putting MBNs in here..
+Document these bindings in the devicetree schema.
 
-Konrad
+Signed-off-by: Kaustabh Chakraborty <kauschluss@disroot.org>
+---
+ .../bindings/display/samsung/samsung,exynos7-decon.yaml           | 8 ++++++++
+ 1 file changed, 8 insertions(+)
+
+diff --git a/Documentation/devicetree/bindings/display/samsung/samsung,exynos7-decon.yaml b/Documentation/devicetree/bindings/display/samsung/samsung,exynos7-decon.yaml
+index 53916e4c95d8c0369138941a556c23f5d42fbd39..1e9500c86590d555cfa6f04790e2b64da291b78b 100644
+--- a/Documentation/devicetree/bindings/display/samsung/samsung,exynos7-decon.yaml
++++ b/Documentation/devicetree/bindings/display/samsung/samsung,exynos7-decon.yaml
+@@ -80,6 +80,14 @@ properties:
+       - const: vsync
+       - const: lcd_sys
+ 
++  iommus:
++    maxItems: 1
++
++  ports:
++    $ref: /schemas/graph.yaml#/properties/ports
++    description:
++      Contains a port which is connected to mic or dsim node.
++
+   power-domains:
+     maxItems: 1
+ 
+
+-- 
+2.49.0
+
 
