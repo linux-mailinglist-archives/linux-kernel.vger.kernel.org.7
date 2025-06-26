@@ -1,153 +1,144 @@
-Return-Path: <linux-kernel+bounces-705089-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-705077-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 47449AEA519
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Jun 2025 20:17:09 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 368F7AEA4E5
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Jun 2025 20:05:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 897B51C42B2E
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Jun 2025 18:17:11 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 72E8D5604F0
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Jun 2025 18:05:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CBBA42EF9CE;
-	Thu, 26 Jun 2025 18:15:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9078E2EE26F;
+	Thu, 26 Jun 2025 18:05:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=rjwysocki.net header.i=@rjwysocki.net header.b="e0ui7HXk"
-Received: from cloudserver094114.home.pl (cloudserver094114.home.pl [79.96.170.134])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="cjSKrhN9"
+Received: from mail-qv1-f48.google.com (mail-qv1-f48.google.com [209.85.219.48])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6970F2EE964;
-	Thu, 26 Jun 2025 18:15:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=79.96.170.134
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 80D5B2ED853
+	for <linux-kernel@vger.kernel.org>; Thu, 26 Jun 2025 18:05:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750961751; cv=none; b=X8908UrS5YxyXgN0IrDcMKz5uzll/7UFVtQoqrqgfKY7/Lp72nhiqFgG+qWsJnII7jn/aJ5mnN8wlGpAFbtdhMJrzPJHWfQmNguXmgpv4KPF/370ze/6ZweT33fuCOOZednHaZ3dMPDAvYqJ6x5Gi2cJfWLXcSgXRi/jOeGWF0I=
+	t=1750961115; cv=none; b=S+xIR+GEqQGs1djiNS0dwy2zRmmZz0xBC5J904SVDiB0ilr8LzrIIL33KRzOhtXpecloHUYpMt5oyW89MWU+ailu+oW0hJUgWpx+HLpIsbDoPqjVqaQBAH2DfxemlYw9kjMS9T4qNuogemrdsEYo7kWMyZD0jeYbkcQ333xBa9M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750961751; c=relaxed/simple;
-	bh=jrR0QwX50YgjBD7ux5m2fHwyJQcVwogX3B7uX59GpJA=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=Pm52FYEVwC2u1IRfPcD1RRdSWy4gWAa7OyJdm5dg2ANB2Nb+zMUnwiZfA3j1UGvMDTEMAuCjAFIVtv2R2PApFE5J49ZZXlFGqub7HJ+FEmBHWEYg5UbrlBEbfpJ7be/r/j+jUj6VTOCtStMGSg3bmAj+36MXFH/P4iM+3rR7O7c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rjwysocki.net; spf=pass smtp.mailfrom=rjwysocki.net; dkim=pass (2048-bit key) header.d=rjwysocki.net header.i=@rjwysocki.net header.b=e0ui7HXk; arc=none smtp.client-ip=79.96.170.134
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rjwysocki.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rjwysocki.net
-Received: from kreacher.localnet (unknown [5.63.189.50])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by cloudserver094114.home.pl (Postfix) with ESMTPSA id 1921F66E9BF;
-	Thu, 26 Jun 2025 20:15:47 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=rjwysocki.net;
-	s=dkim; t=1750961747;
-	bh=jrR0QwX50YgjBD7ux5m2fHwyJQcVwogX3B7uX59GpJA=;
-	h=From:Subject:Date;
-	b=e0ui7HXkn2P3CZNlgxE8z8VfneRlp++O6ov6ah96Pcedj8I9iMRQAsKuPyx1zxMYX
-	 S/cFWt2b3BLxfbbPCbCXuk/S75dFFGKDbqm92VAasCa9uCaZXuw2HlSR09selrImgf
-	 tZpkjB2lGb83QKYMZ2O28dAgOOg6bB0hUgeXgyOwfvWm6MU7sOnDFz4Odx7u2vgQoO
-	 XK9wYktwDSRhH34/VmbYxOKwMWcjjbNHXuLzDdpitvIFZt6itIqkwqDSk3bzXE1XcR
-	 htgs7ZqLxYenmz2brYKGGs/YSxAaXEDLhpP++83i+1tbdMD+RNXtcKxmmUFjJjcdn1
-	 f0QnKnSt3zrIw==
-From: "Rafael J. Wysocki" <rjw@rjwysocki.net>
-To: Linux PM <linux-pm@vger.kernel.org>
-Cc: LKML <linux-kernel@vger.kernel.org>,
- Linux ACPI <linux-acpi@vger.kernel.org>,
- Linux PCI <linux-pci@vger.kernel.org>, Ulf Hansson <ulf.hansson@linaro.org>,
- Mika Westerberg <mika.westerberg@linux.intel.com>
-Subject:
- [PATCH v2 4/9] PM: Check power.needs_force_resume in
- pm_runtime_force_suspend()
-Date: Thu, 26 Jun 2025 20:03:23 +0200
-Message-ID: <2336655.iZASKD2KPV@rjwysocki.net>
-In-Reply-To: <5015172.GXAFRqVoOG@rjwysocki.net>
-References: <5015172.GXAFRqVoOG@rjwysocki.net>
+	s=arc-20240116; t=1750961115; c=relaxed/simple;
+	bh=HT1PZrDkhp6DI0bsi07qe2ZDkBoSKcXmqoFHOkEVHss=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=hh9D5CS9TcJ3y/I3sU9CWZ+r6f/BDzg9uIzOLbbyANhHFqbB7WABWaJNtu/pbRizyAV8ytFXV9+QIHnLBNVqZ+ZEG2a3T0AHborUAG0PwDLUsgluKKTthhOZpcGyJ9D6zlwXryyNNvpafrNXDwiW3bSYT+iQvG9z3UAxCgrFHVs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=cjSKrhN9; arc=none smtp.client-ip=209.85.219.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-qv1-f48.google.com with SMTP id 6a1803df08f44-6fadb9a0325so12650896d6.2
+        for <linux-kernel@vger.kernel.org>; Thu, 26 Jun 2025 11:05:13 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1750961112; x=1751565912; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=QiZwuPd0AoWibuQALk3DmH+qz68nVTZ0UFoYX05f/uk=;
+        b=cjSKrhN9i55CUBkiyawY16YeZ32z1ZbKIEHysAUDgdG3OjTTQxNoh7nV/xgWHZToPh
+         q4mljyeq9MvIzCuymj3ZaNmLS+2lE4yxDGEyzQNGzRa6PZ4hReiB/FohTTjLZ7qCT/5C
+         NWxyd62SMS2oLgqfGKw2UczbCIbdbRMKdLpjE9v7sy9Fx97OcUmYZWY4C8yAG9QqonNL
+         5LUqTepr/sjwDt31BtF5Mfb+uTkA8FqPdscZP/NEbmhUlj27XeNBH+aN9rbPa1TRNjSV
+         W0vSf914mBLeP9Qagn3NLxwwNQfjXkdGEg2XpR2NbtahWFCsCWPXgYjjII+JC2ALZ9Mv
+         mRew==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1750961112; x=1751565912;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=QiZwuPd0AoWibuQALk3DmH+qz68nVTZ0UFoYX05f/uk=;
+        b=eNskp7w4j/ZB8edo7IC8WYYl/FVhu7FuFRr4QgNYDDpBwqaCHV0sHB5lRz1D6kMhku
+         EVfBHOJJMnN0ZWIeg7U1LDsvMg1QvDK6OZ6QC4zSQqQ9v55IPQS4JAdDWLqkVpyJT3QM
+         ZuJmmkT6sWpR8As5Qwt8DJA8CH0B50ymnvhlNDlUIE6oVuBx1VslcNAfPSeXvyrx+5nw
+         wQpQQ5b3e7BoeUPfee7wJvaVDZjCM7gLhEYAtNhswuoZKdJj51CBr1CGWD9LVxXIv+z3
+         bYI6nT3b5bNpce+UkRn74a+TvpoA9OSMjJiWffcR0leFhESqr7GdkYnpV0qnG+xTC4K4
+         YgDQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUuxTy74ueq36NDCrL04Fr6Ij0zWWQyRkqt42cVPwfUYAJ4HTfrJr5AqJNDAkH0befRSXFqF9DN/7xKPEo=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyVGgHiJ1BTwXPu4heDnHGO9vdt8pK/89GII15NrcRQxMDi3Biz
+	mR0EYRQxPpHrGk26nPHglT6zQvMhjpR4yCautY5G67qfqLo6z1F/jlW/GM5Q4w==
+X-Gm-Gg: ASbGncttbrOU1S3EKiu2sbtFQDMWmNtGx9Z9c4X+D+/E/VEzLG3soHpGlZ2DnciPvWr
+	lCUoSpUQn/hyLDZcZ0jX+b4O9cYEZrMOxZe8yE5y9FWwcov3sGM2mM9aj2fPc8YJd1XTVENCDDv
+	MJpLgnJLIoyycT2Wu6Dhh5dJhCTACa9AaP986fEGcXAAhqdmarXAeqBoKYE5qNHIOWHS5RZ9/7q
+	XCfnlD7VKMODAFL95VkNysOnXHqzwcGPSE4kkG8IZPUuTYCY0Yu8vVQNs5W93sOyr3nkZxo+nKG
+	vv75PwJFmFaP6lVKLInWVGTKQVqNhvKrjmcfqbIyQPPpwthx6LxR
+X-Google-Smtp-Source: AGHT+IFgwg9byY7wnJjSTsjkRMLnfpRN05Qu3TUP7ur9Y/iw0TPz2j48zy3H+eunzSHMiSdxwVpIsA==
+X-Received: by 2002:a05:6214:460a:b0:6fb:23:4812 with SMTP id 6a1803df08f44-700037a5989mr7609226d6.26.1750961112038;
+        Thu, 26 Jun 2025 11:05:12 -0700 (PDT)
+Received: from fushigibana ([2601:405:4a00:186f::50e])
+        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6fd7718d340sm10275906d6.4.2025.06.26.11.05.10
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 26 Jun 2025 11:05:11 -0700 (PDT)
+Received: from pnariyoshi (uid 1000)
+	(envelope-from pedro.nariyoshi@gmail.com)
+	id c5e35
+	by fushigibana (DragonFly Mail Agent v0.14 on fushigibana);
+	Thu, 26 Jun 2025 14:05:10 -0400
+From: Pedro Nariyoshi <pedro.nariyoshi@gmail.com>
+To: Hans Verkuil <hverkuil@xs4all.nl>,
+	Mauro Carvalho Chehab <mchehab@kernel.org>,
+	Benson Leung <bleung@chromium.org>,
+	Guenter Roeck <groeck@chromium.org>,
+	linux-media@vger.kernel.org,
+	chrome-platform@lists.linux.dev,
+	linux-kernel@vger.kernel.org,
+	MrChromebox <mrchromebox@gmail.com>
+Cc: Pedro Nariyoshi <pedro.nariyoshi@gmail.com>
+Subject: [PATCH] media : cros-ec-cec: Add Fizz board variants, so driver can detect them
+Date: Thu, 26 Jun 2025 14:03:41 -0400
+Message-ID: <20250626180429.463420-1-pedro.nariyoshi@gmail.com>
+X-Mailer: git-send-email 2.49.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="UTF-8"
-X-CLIENT-IP: 5.63.189.50
-X-CLIENT-HOSTNAME: 5.63.189.50
-X-VADE-SPAMSTATE: clean
-X-VADE-SPAMCAUSE: dmFkZTELtlwpycCpv0Vcuy8QanEK65EXpXLDYHJklsvPFyrHxl+avjRHDMJ7Pn1w8r8jjwxdARbdK2l6HvrQpU6gOIgHwqnc6mWfuAcVkm0fjKgXKtQhSdxCxnuVXrmGsTXIoZNtqbmO2vNuBJTcPUJZcz8R30PgE7bGEL3PWfdNzVLoVYs7Qoda0OTfmBJ3NatDBgLvJuvPlRG2dcl26WhHZbi4RyoYzmp2r7+bO7YpOn26wkYi1BZUkbAIVk0I3hYwmbSrEOMnYl/hve4oRCJ1F8R5clMEE2pVXAf8o49/YUaNEHtTh2A9QXrvEf9flQXInm5SNV3s2dtsBWqHjVykY5tzbAURry+mnTgEbzMYulTzFYmMfT3Ht0p/UEeVRXiVgdjWmXHQ0wg2Jb69HGOGx2dhGH6YcNpYKYIJezhcCx2hWobFrI4NT1K/h2w1DgYOdk/SajLhyPsH4dKO710wBiohhMffcD4mOO0V5Id7IELJrmGJByPFQzpKFE7+HZVDt2Y867XVGiVwH3V4Beub0fj5C+wGYkrD7vxaQuRM99iqyb7IdcMvnDCOYTG4X7ckk2R6VkaAwcQcqo6pRj75VlVIn63LotfJ6NN9qlKFDxjgcmod7PENgDb2ojcVThRcGUm3xgEVhr0NuRTkQEWGQizRIzfNWBBB5xGQ4KtqTvRkyw
-X-DCC--Metrics: v370.home.net.pl 1024; Body=6 Fuz1=6 Fuz2=6
+Content-Transfer-Encoding: 8bit
 
-From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+I recently reflashed a Chromebox (Wukong variant of the Fizz board) with
+coreboot and I noticed that the cec driver refused to load with a bit of
+tinkering, I realized that the dmi_match_table was expecting the product
+name to be Fizz, but `dmidecode` reports `Wukong` as the product name. I
+am not sure if this is the best approach, but adding this patch lets me
+load the driver and it works properly.
 
-Add a power.needs_force_resume check to pm_runtime_force_suspend() so
-it need not rely on the runtime PM status of the device when deciding
-whether or not to return early.
+Alternatively, we could instead match the DMI_PRODUCT_FAMILY, instead of
+DMI_SYS_VENDOR and DMI_PRODUCT_NAME. In my board at least, that says
+"Google_Fizz".
 
-With the new check in place, pm_runtime_force_suspend() will also skip
-devices with the runtime PM status equal to RPM_ACTIVE if they have
-power.needs_force_resume set, so it won't need to change the RPM
-status of the device to RPM_SUSPENDED in addition to setting
-power.needs_force_resume in the case when pm_runtime_need_not_resume()
-return false.
+I am open to suggestions for alternative solutions and I hope I did't
+break any rules (this is my first kernel patch). (And sorry for the
+previous error in the subject line)
 
-This allows the runtime PM status update to be removed from
-pm_runtime_force_resume(), so the runtime PM status remains unchanged
-between the pm_runtime_force_suspend() and pm_runtime_force_resume()
-calls.
-
-Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+Signed-off-by: Pedro Nariyoshi <pedro.nariyoshi@gmail.com>
 ---
+ drivers/media/cec/platform/cros-ec/cros-ec-cec.c | 9 ++++++++-
+ 1 file changed, 8 insertions(+), 1 deletion(-)
 
-v1 -> v2: Corresponds to patch [2/9] (that was posted as [0/9] by mistake) in v1.
-
----
- drivers/base/power/runtime.c |   21 ++++++++-------------
- 1 file changed, 8 insertions(+), 13 deletions(-)
-
---- a/drivers/base/power/runtime.c
-+++ b/drivers/base/power/runtime.c
-@@ -1973,7 +1973,7 @@
- 	int ret;
+diff --git a/drivers/media/cec/platform/cros-ec/cros-ec-cec.c b/drivers/media/cec/platform/cros-ec/cros-ec-cec.c
+index 419b9a7abcce..a26473c3cd84 100644
+--- a/drivers/media/cec/platform/cros-ec/cros-ec-cec.c
++++ b/drivers/media/cec/platform/cros-ec/cros-ec-cec.c
+@@ -302,8 +302,15 @@ static const char *const port_ab_conns[] = { "Port A", "Port B", NULL };
+ static const char *const port_d_conns[] = { "Port D", NULL };
  
- 	pm_runtime_disable(dev);
--	if (pm_runtime_status_suspended(dev))
-+	if (pm_runtime_status_suspended(dev) || dev->power.needs_force_resume)
- 		return 0;
- 
- 	callback = RPM_GET_CALLBACK(dev, runtime_suspend);
-@@ -1988,15 +1988,16 @@
- 	/*
- 	 * If the device can stay in suspend after the system-wide transition
- 	 * to the working state that will follow, drop the children counter of
--	 * its parent, but set its status to RPM_SUSPENDED anyway in case this
--	 * function will be called again for it in the meantime.
-+	 * its parent and the usage counters of its suppliers.  Otherwise, set
-+	 * power.needs_force_resume to let pm_runtime_force_resume() know that
-+	 * the device needs to be taken care of and to prevent this function
-+	 * from handling the device again in case the device is passed to it
-+	 * once more subsequently.
- 	 */
--	if (pm_runtime_need_not_resume(dev)) {
-+	if (pm_runtime_need_not_resume(dev))
- 		pm_runtime_set_suspended(dev);
--	} else {
--		__update_runtime_status(dev, RPM_SUSPENDED);
-+	else
- 		dev->power.needs_force_resume = true;
--	}
- 
- 	return 0;
- 
-@@ -2029,12 +2030,6 @@
- 	if (!dev->power.needs_force_resume)
- 		goto out;
- 
--	/*
--	 * The value of the parent's children counter is correct already, so
--	 * just update the status of the device.
--	 */
--	__update_runtime_status(dev, RPM_ACTIVE);
--
- 	callback = RPM_GET_CALLBACK(dev, runtime_resume);
- 
- 	dev_pm_disable_wake_irq_check(dev, false);
-
-
+ static const struct cec_dmi_match cec_dmi_match_table[] = {
+-	/* Google Fizz */
++	/* Google Fizz and variants*/
+ 	{ "Google", "Fizz", "0000:00:02.0", port_b_conns },
++	{ "Google", "Bleemo", "0000:00:02.0", port_b_conns },
++	{ "Google", "Excelsior", "0000:00:02.0", port_b_conns },
++	{ "Google", "Jax", "0000:00:02.0", port_b_conns },
++	{ "Google", "Kench", "0000:00:02.0", port_b_conns },
++	{ "Google", "Sion", "0000:00:02.0", port_b_conns },
++	{ "Google", "Teemo", "0000:00:02.0", port_b_conns },
++	{ "Google", "Wukong", "0000:00:02.0", port_b_conns },
+ 	/* Google Brask */
+ 	{ "Google", "Brask", "0000:00:02.0", port_b_conns },
+ 	/* Google Moli */
+-- 
+2.49.0
 
 
