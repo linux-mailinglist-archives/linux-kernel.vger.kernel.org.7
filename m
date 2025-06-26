@@ -1,109 +1,125 @@
-Return-Path: <linux-kernel+bounces-704922-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-704925-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 77C60AEA33E
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Jun 2025 18:09:23 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0CFCCAEA344
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Jun 2025 18:10:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3FDE41881271
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Jun 2025 16:09:11 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5DCF456578B
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Jun 2025 16:10:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DAFD41FDA9E;
-	Thu, 26 Jun 2025 16:08:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 674F720296C;
+	Thu, 26 Jun 2025 16:10:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="n3eEgvsE"
-Received: from mail-ed1-f45.google.com (mail-ed1-f45.google.com [209.85.208.45])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="entpwaOy"
+Received: from mail-pf1-f169.google.com (mail-pf1-f169.google.com [209.85.210.169])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9F3928632C
-	for <linux-kernel@vger.kernel.org>; Thu, 26 Jun 2025 16:08:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 74A911E7C03;
+	Thu, 26 Jun 2025 16:10:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750954127; cv=none; b=RM2GLLRmG/ulP2eGxTOpBr3UH1ASTUccirgjMI/9cowml/g8zJxc/ACmsQbLCif/UTu4iyyWTagTj/7+ZfnBWc2VNCi+j4wBqv8autyki4Z3eEgs9atvCVtDdRbsBZOsDCdkBB0oRB8fwLijmHMrAGDpIiEsTN4ROQsg9xHnd8I=
+	t=1750954224; cv=none; b=GJ07VYLfmw7aWqn9ruzFwI77t65ERm8lWbWqqfrIhsnvfe+eJ0GbytJ7/4L1tzEa2kaA37PSVmPCx1SSb52sYff+CXllzxrXrWdTvHFXv0jl5ntkHxsKxIGbR2ysvKcreq4iPOoWuRF6QpSeus1uVtpHTLaKo3KJQEeOjEAvOAc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750954127; c=relaxed/simple;
-	bh=25rcnHrGAd6jyBjad9VkriANs0eN1jgdnIwuMPPx2Z4=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=p4KTUIeb+x3VwN3KIstdnC/IbSMkyJPzLn3GFNmYKD9SfbAC0eb8Rp14ioNNuZRnAvfryb7zLcxajoH9qcO2IU6u1Jd4BWKUxc8At8KO4ltOVIBstcljPOqlgH7Brpo6pPp70tewx0n4l1nZtG3OWH0ueR1fsnz4LsTJ/rtYzTU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=n3eEgvsE; arc=none smtp.client-ip=209.85.208.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-ed1-f45.google.com with SMTP id 4fb4d7f45d1cf-609b169834cso13576a12.0
-        for <linux-kernel@vger.kernel.org>; Thu, 26 Jun 2025 09:08:45 -0700 (PDT)
+	s=arc-20240116; t=1750954224; c=relaxed/simple;
+	bh=AQiq4z0xA88o3HSFvbhcfQRTGqMXtRqE6hPl7TrS0QA=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=GqnO4I/liU0shZv9mg4Rt1ao1ZSWi+PgwsWpSk3DBCBhG24k8u/fsqvlplY3GYNllj7rPgQI8aVv/dqCjdploM13Kgb9WfW6mxssWWmpzadkB7MrV0EWbJ57FsrnJi7N7xIY4ezGnVLyN0vLL3brXG3FvjC9TQs+poOO12eUhpQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=entpwaOy; arc=none smtp.client-ip=209.85.210.169
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f169.google.com with SMTP id d2e1a72fcca58-748ece799bdso917686b3a.1;
+        Thu, 26 Jun 2025 09:10:23 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1750954124; x=1751558924; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=DfDY3q/RuaDFoPam7Snloe52g2QKGAUoB/zqQm94AJI=;
-        b=n3eEgvsE7Yz33h1QXbsNYrqnFNlozC/Clb6jvOh137n5K4Z+9OchtITg7QdPz6ByOu
-         YsR0wnFe5wfq2aWSob8A8NkPRLe3ajBA/38ECzgtyN6Fyx1plYn6BRXdEk25N9HQ0LLH
-         QiuMlgGVKpso3uJnXOVxROCny8i5U2UVwK0KF3lfyFKsI4dzG/3Ve3YlANO60gSWHk2X
-         9/9M8PFa8YdvwhDZ0unwAKrL2iGmwjg+FgltDTIlqrYHpeXqC7Y1N0IO6dLrx5db8LtX
-         OjDpRrA82fOTaEQiO3NWNe4YHdYIWzkP3l21Rw2CMMQSm2x6GaB3trPo2kaRSTA2tTYS
-         jBUA==
+        d=gmail.com; s=20230601; t=1750954223; x=1751559023; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=RO2tN+aSoxvaSEMRq7XEvMbHrJsjG9xLguEP52powFc=;
+        b=entpwaOy+Brf64flOPLBp1+MRfOfxAlCA7AiKaRoha2FXM21NyCV21E6GkPIKSY0Li
+         jPPPTV/AarleDeD7mcbNQRXZMYlKrFSqycsvt5waiFjpQuS9FgWKuS66/1+KWnJoBTVx
+         UxfTdDFjMIZX9EzG78A+8zvvqcSNItKIgtFIgwfWH9zBoAAdJCaho7ZGgZMen+GSLlYe
+         xy4wtE8sYXGw091kThakEBP9VB8EavFnH1FBj60wRPs3W/W2OD772UsVThT0ndEg3fMT
+         oDR1G7XiR8Qrz2ZSRqqzqBPe3YVYTQl5XiT/CKJu6+IdFHoZm0IfG1yMmb1rOghirrX/
+         hGPg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1750954124; x=1751558924;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=DfDY3q/RuaDFoPam7Snloe52g2QKGAUoB/zqQm94AJI=;
-        b=O18uL3fNoXllV43NG5eIaGu1D3Fj87E+s4DyqLsdzv+oKNWqt11sFAni6kKjUoOs5O
-         fGl+51b1PZTXpXbuLDluFEa5zFcx2lKEQug1FEYcKT2CoJIHM2IbnuOpDRey8C22vNcl
-         uTT5zk1xoSSLKaNdJPD58NT/v1MtnvQY/Z8W5LA8MsiQZ0su+PyNXClHqBV75nyzYASB
-         LR2aCrn9txgv6sj0Wfcg2ujj6O9Pg5sqvlXCj1aHJvoEqz/7kMkQPPISmbFhAeNYOLFT
-         sNOuLLxyiqWdlF1ONMKpEX1Tt+F8mOt/UmYcP6MVAq+zJGP/0QWNBHk2NEjlr2jliJKL
-         Ft2g==
-X-Forwarded-Encrypted: i=1; AJvYcCUtxYmFk4511k+U+lvYglGpQqdMilSuTydul6H3noEoERktO2GhT4uqdZSREjUXOFuu4mf1P6lchYUPukA=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxhVmWEP19qY40wT5T+8gkZXNjXhbdG0Ab88LIcv0PmTYrwT0tI
-	/7IPnko3yGHHzt+A9tX/yaxB5DNFRKrKW4XH+4JlRnnYcYhj+WIfP2FQq174o34TxwdgluUE3zY
-	fHJYCqaiVVst7O2kUY/dOim2j3FLoxs/GPEvxG6Sh
-X-Gm-Gg: ASbGncuY8ascfFz7ijIZ1M+MGFlLEjtLFlyZpWwk5MI7EMyVWDb4U31ChFukQgNK4W4
-	Yc0e0JUzowClF+ExeVtwurX136i4U2Ct9zsmvj7KiS4pT7F074rvLfQtTeM6cNZeLiNeBmBjEUr
-	r6gd9Am4g0Di28JVhQ8uoEVwoSHPbOjjSUlpPcM43hyY0=
-X-Google-Smtp-Source: AGHT+IE720RjzTvcYQIe5ayorOJ+4B+pX+uR5Q71uQgifMD5UGWiBsgqrg4xzUqgd96gIG4zVplUEEf/vAhAr1oDEas=
-X-Received: by 2002:a05:6402:2888:b0:609:b4b1:514b with SMTP id
- 4fb4d7f45d1cf-60c865db901mr295a12.3.1750954123712; Thu, 26 Jun 2025 09:08:43
- -0700 (PDT)
+        d=1e100.net; s=20230601; t=1750954223; x=1751559023;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=RO2tN+aSoxvaSEMRq7XEvMbHrJsjG9xLguEP52powFc=;
+        b=HopQIPOdimiduEPVfhm3IBRfEJxY8Za5nRzuqCLlLDgy/cLebcTmZvll12gGA0nM0t
+         gt6SKfEK2aZ7Y+o8x/iRy7IrN4sTA955uzkEeO4oHk3Brg9GgvtimJjL0qv3Mo4/tY0I
+         u96ro24r2LT0NU1hOFqwX/gbbafj7RMi/yLxny3Y2PGF08xLrX7tFZgj27hMsrv3+rQX
+         t3Tt1oO6EQ750g4wS/+OC32V/gIk/hgd2EbiKb1EmvqKhrGuhkBN3grEnnrs6GgqV/AZ
+         gXSEv5mfAYX3HfavRpeqCzlQ+8Sz6v2eqPVMZ6V909h2Zvd5Nw5FPqAe0HgzfeWOXdQs
+         hsdg==
+X-Forwarded-Encrypted: i=1; AJvYcCWA2rA584RrelwGIKKdko5FkJksenaBIvpUkHB054d0z/giduf8pu6Y7j2ZI6C/Ek61KWIagCqhSolPq5U=@vger.kernel.org, AJvYcCWcmnqCgSmO6nspYqfTrLg+Lp5V/8BHMK0VAiEgOrx7eA7QaSS4nSM+iauxsXiGAMdIxpbbLSB9qQ7D9Mc=@vger.kernel.org
+X-Gm-Message-State: AOJu0YynI44GD0fmivr7J3Ocrs6Yn0y8ydChqSFZitLdusz7/DSWtDcI
+	0zc8FzmtLveAYMh/fqyKhc2jam7PmQ0v94yO8qWtVyiBEefiJGaPlOIS
+X-Gm-Gg: ASbGnctQxv6Nf4UYwlXjJfOnkKd7Aq1YnWcDozKOWS+X/ggMDOZWj5mROyVS7IGmEO+
+	EDxChl0ofFyVTm1C0+RH5Q7EiSJ1iAdru+tQpmQHwMJLAVGy5PItP/KgGRZKTJfx3yiMDTEoKko
+	yB1lrOJh1rSjelNaUFE2Zmcq++Sagx3R6Ua76+hyWS/+K5SE9e7aKRqQ4s+R65AWVEVGr9OACw6
+	0lfOU156zM8LAT/n2CG7yIcthtQk3YBAbwfiMXC2cOo3U+fJb7Ub95DPlX2Plk+OQO6BJLy9Ciw
+	pJWh2JAhZ9I5jkhoHGK6eJVxMyYWjfmW9TBtjdxjGS+vvzuD9FVAMGBYx5CF6y50RA==
+X-Google-Smtp-Source: AGHT+IF9+/ylR0X0zs3Ub5Nxn8yMQupY0tyd0iZN0NmSeaDh2qSacydKHfMjG6bR6+uLmMbB2VYVHw==
+X-Received: by 2002:a05:6a00:3c90:b0:748:3485:b99d with SMTP id d2e1a72fcca58-74ad45abe59mr11562215b3a.18.1750954222499;
+        Thu, 26 Jun 2025 09:10:22 -0700 (PDT)
+Received: from icarus.. ([45.64.160.138])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-74af540ae36sm114168b3a.14.2025.06.26.09.10.09
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 26 Jun 2025 09:10:22 -0700 (PDT)
+From: Pratibimba Khadka <pratibimbakhadka@gmail.com>
+To: mchehab@kernel.org
+Cc: Pratibimba Khadka <pratibimbakhadka@gmail.com>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Al Viro <viro@zeniv.linux.org.uk>,
+	linux-media@vger.kernel.org (open list:MEDIA INPUT INFRASTRUCTURE (V4L/DVB)),
+	linux-staging@lists.linux.dev (open list:STAGING SUBSYSTEM),
+	linux-kernel@vger.kernel.org (open list)
+Subject: [PATCH] staging: av7110: Replace msleep() with usleep_range() in tuner function
+Date: Thu, 26 Jun 2025 21:53:50 +0545
+Message-ID: <20250626160853.8772-1-pratibimbakhadka@gmail.com>
+X-Mailer: git-send-email 2.49.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250626125720.3132623-1-alexandre.chartre@oracle.com> <aF1S2EIJWN47zLDG@google.com>
-In-Reply-To: <aF1S2EIJWN47zLDG@google.com>
-From: Jim Mattson <jmattson@google.com>
-Date: Thu, 26 Jun 2025 09:08:32 -0700
-X-Gm-Features: Ac12FXxI4E7VzrdrXP4rTj-hWh_ZYuicrnJPU7mpg7k0GFjNvJZ8JcRsUVG1DUM
-Message-ID: <CALMp9eRjDczhSirSismObZnzimxq4m+3s6Ka7OxwPj5Qj6X=BA@mail.gmail.com>
-Subject: Re: [PATCH] kvm/x86: ARCH_CAPABILITIES should not be advertised on AMD
-To: Sean Christopherson <seanjc@google.com>
-Cc: Alexandre Chartre <alexandre.chartre@oracle.com>, linux-kernel@vger.kernel.org, 
-	kvm@vger.kernel.org, pbonzini@redhat.com, xiaoyao.li@intel.com, 
-	x86@kernel.org, konrad.wilk@oracle.com, boris.ostrovsky@oracle.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-On Thu, Jun 26, 2025 at 7:02=E2=80=AFAM Sean Christopherson <seanjc@google.=
-com> wrote:
->
-> I don't necessarily disagree about emulating ARCH_CAPABILITIES being poin=
-tless,
-> but Paolo's point about not changing ABI for existing setups still stands=
-.  This
-> has been KVM's behavior for 6 years (since commit 0cf9135b773b ("KVM: x86=
-: Emulate
-> MSR_IA32_ARCH_CAPABILITIES on AMD hosts"); 7 years, if we go back to when=
- KVM
-> enumerated support without emulating the MSR (commit 1eaafe91a0df ("kvm: =
-x86:
-> IA32_ARCH_CAPABILITIES is always supported").
+Replace msleep(10) with usleep_range(10000, 12000) in the PLL lock
+waiting loop of nexusca_stv0297_tuner_set_params().
 
-FWIW, commit 1eaafe91a0df ("kvm: x86: IA32_ARCH_CAPABILITIES is always
-supported") was intended to deal with live migration issues across
-Intel microarchitectures. I probably just forgot about AMD at the
-time, since it wasn't on my radar. I blew it. :(
+usleep_range() is preferred over msleep() for short delays (< 20ms) as
+it provides better accuracy and allows the scheduler flexibility for
+power management optimizations. The 10-12ms range maintains the same
+timing behavior while giving the kernel scheduler room to optimize.
+
+This change improves timing precision during the PLL lock detection
+phase without affecting the overall functionality of the tuner
+configuration process.
+
+Signed-off-by: Pratibimba Khadka <pratibimbakhadka@gmail.com>
+---
+ drivers/staging/media/av7110/av7110.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/staging/media/av7110/av7110.c b/drivers/staging/media/av7110/av7110.c
+index bc9a2a40afcb..7f6c610579c8 100644
+--- a/drivers/staging/media/av7110/av7110.c
++++ b/drivers/staging/media/av7110/av7110.c
+@@ -1827,7 +1827,7 @@ static int nexusca_stv0297_tuner_set_params(struct dvb_frontend *fe)
+ 		if (i2c_transfer(&av7110->i2c_adap, &readmsg, 1) == 1)
+ 			if (data[0] & 0x40)
+ 				break;
+-		msleep(10);
++		usleep_range(10000, 12000);
+ 	}
+ 
+ 	return 0;
+-- 
+2.49.0
+
 
