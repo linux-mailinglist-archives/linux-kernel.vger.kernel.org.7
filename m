@@ -1,205 +1,256 @@
-Return-Path: <linux-kernel+bounces-704278-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-704275-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1A05FAE9BA5
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Jun 2025 12:39:36 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7E5AEAE9BC5
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Jun 2025 12:49:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7A1845A0373
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Jun 2025 10:37:10 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 50A667B6E3C
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Jun 2025 10:35:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CB7A6237162;
-	Thu, 26 Jun 2025 10:35:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A053E264609;
+	Thu, 26 Jun 2025 10:33:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b="CXa2JDHB"
-Received: from mx07-00178001.pphosted.com (mx08-00178001.pphosted.com [91.207.212.93])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="J8Xl2KU+"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5E4481FF7C8;
-	Thu, 26 Jun 2025 10:35:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.207.212.93
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C5C13239E88
+	for <linux-kernel@vger.kernel.org>; Thu, 26 Jun 2025 10:33:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750934158; cv=none; b=Xv9XlZUjUVywIPqHlyLJAwFeZKMS/dbuzGNmi1FL6VxngFo3yrzuv3h2Sa6+oCWwduvYZ0lx+Znftd7kX5p3iWY732gBV4RkF2/bS8aRzpZTWJS6fU0n1DpLHgHbm5zP26kjlc/eKkvqLDfv/YlSmsBTz893dDOkOWTVebi9d7k=
+	t=1750934007; cv=none; b=pvdzhf2LVga3U4Ohi6YRxHsqKfblfptpmt48xCBxSPiLptOEnx6povmrDuH777II4UNvIOo+GphnOcMX47swlUJ1bTQkJxEIGQj761WEk1jgcvGptzSGZ2W1XYaRUkok3SpTdSSlKCX+IM9lOGOJ7qOmG6HsjY8dXh0UfKL6pD4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750934158; c=relaxed/simple;
-	bh=wctAJxLB4oheSszXnRLwa7JcjgrvlkawrXhZWDSFB98=;
-	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=UYsiyIBu1P1RSBf3+vXb9U0ji0++XVRbN0vnbPQfUpy49FT4RhaH+oyvP+bB/CrsUg/3WN2EE2f4uWKUHtGaqUoLVFWMbBlzxIeCGfTWGOtAJW5RdiFiEnKCeaU8MIU8TETl/22AfCq7fUckNv712JmxJ6y6hG4mYXL+Nr6mx/c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com; spf=pass smtp.mailfrom=foss.st.com; dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b=CXa2JDHB; arc=none smtp.client-ip=91.207.212.93
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=foss.st.com
-Received: from pps.filterd (m0046660.ppops.net [127.0.0.1])
-	by mx07-00178001.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 55QA9QY8025602;
-	Thu, 26 Jun 2025 12:35:33 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foss.st.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=selector1; bh=
-	NV4+KoQwrrIsbeLEb3se8T07/pyaJ/I/7ykprHiqctM=; b=CXa2JDHB4uTNEMai
-	2f9NWHp3xztyJ3Y6ituNRm8BfaNOHQDmcwn1mnLUaoppY3rpexlzw5toG7Yzc9Ci
-	JKp9PsrWevNASEoRdbIBLdiOMsFJDxfmn0VOZOelEX57qfqL/YTOVrrSQo7TqpOp
-	XFQULhMnRqcIJxyRqxAagjgJLDICpsnsdxnqBKpzhekKrxCHVoqgelkfI7OSfqh4
-	U9rIhzGVL75BA+IScVOGJS3qirFCX0VVC2gBnnmLwS0h0j54WJv8vIX3I1OKfBmj
-	CHPz1w0S+YKt+JKt67MkWXnKCu3uI7YwBnWLZ/dDXhh5JKuFkXjjgNYRjh+mHfVN
-	u8Prkw==
-Received: from beta.dmz-ap.st.com (beta.dmz-ap.st.com [138.198.100.35])
-	by mx07-00178001.pphosted.com (PPS) with ESMTPS id 47dhvbx1rh-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 26 Jun 2025 12:35:33 +0200 (MEST)
-Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
-	by beta.dmz-ap.st.com (STMicroelectronics) with ESMTP id 1B0064002D;
-	Thu, 26 Jun 2025 12:33:57 +0200 (CEST)
-Received: from Webmail-eu.st.com (shfdag1node1.st.com [10.75.129.69])
-	by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id 8967DB63201;
-	Thu, 26 Jun 2025 12:33:03 +0200 (CEST)
-Received: from gnbcxd0016.gnb.st.com (10.130.77.119) by SHFDAG1NODE1.st.com
- (10.75.129.69) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Thu, 26 Jun
- 2025 12:33:02 +0200
-Date: Thu, 26 Jun 2025 12:32:57 +0200
-From: Alain Volmat <alain.volmat@foss.st.com>
-To: =?iso-8859-1?Q?Cl=E9ment?= Le Goffic <clement.legoffic@foss.st.com>
-CC: Pierre-Yves MORDRET <pierre-yves.mordret@foss.st.com>,
-        Andi Shyti
-	<andi.shyti@kernel.org>,
-        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-        Alexandre Torgue <alexandre.torgue@foss.st.com>,
-        Sumit Semwal
-	<sumit.semwal@linaro.org>,
-        Christian =?iso-8859-1?Q?K=F6nig?=
-	<christian.koenig@amd.com>,
-        M'boumba Cedric Madianga
-	<cedric.madianga@gmail.com>,
-        Wolfram Sang <wsa@kernel.org>,
-        "Pierre-Yves
- MORDRET" <pierre-yves.mordret@st.com>,
-        <linux-i2c@vger.kernel.org>,
-        <linux-stm32@st-md-mailman.stormreply.com>,
-        <linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
-        <linux-media@vger.kernel.org>, <dri-devel@lists.freedesktop.org>,
-        <linaro-mm-sig@lists.linaro.org>
-Subject: Re: [PATCH 3/3] i2c: stm32f7: support i2c_*_dma_safe_msg_buf APIs
-Message-ID: <20250626103257.GA349896@gnbcxd0016.gnb.st.com>
-References: <20250616-i2c-upstream-v1-0-42d3d5374e65@foss.st.com>
- <20250616-i2c-upstream-v1-3-42d3d5374e65@foss.st.com>
+	s=arc-20240116; t=1750934007; c=relaxed/simple;
+	bh=xKtsGgpfYQFfhIZi3MjRFhPG5N7rtYzmk6pZhFtUwI4=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=GGKQ2x25E2oDcFFXMQDQHTmocMGyttw1Pnqnk0VAy3D3SN7uoCugdppORH1nYL56Uz4bbcZRUtAfoqvhuw550yRkvrPPuRZ4sVT9o8C+AS9XBenZaIj6Bsb+cYef8G9ycj543WLba7Xy39Nm0L2kxBqyCDHrKAJwyaZPMkiELFc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=J8Xl2KU+; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1750934003;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=O6gBQsT5UkWJkcWaEI3s9eNYubAhl1ADsukjZ0FPhXo=;
+	b=J8Xl2KU+30PMsUBUpe4/hpFTofKcgSETbE3/fWot2zFHZeY3aLJjS3V/3S+vXKDyoBvkCt
+	WvkmS8Lh3CRGXGyHgxZyqUxCQMInQOKX8xTw8cuu0z2NTgNyjYhV17psDn6RHkEedN1sOS
+	ckObrVaC2jMw0LKfvsFdPhRtrTRKo4U=
+Received: from mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-78-diXXN65iOZOQHYz15U4psQ-1; Thu,
+ 26 Jun 2025 06:33:20 -0400
+X-MC-Unique: diXXN65iOZOQHYz15U4psQ-1
+X-Mimecast-MFC-AGG-ID: diXXN65iOZOQHYz15U4psQ_1750933999
+Received: from mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.40])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 256F2195F175;
+	Thu, 26 Jun 2025 10:33:19 +0000 (UTC)
+Received: from gerbillo.redhat.com (unknown [10.45.224.225])
+	by mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id B24FE196BAD8;
+	Thu, 26 Jun 2025 10:33:16 +0000 (UTC)
+From: Paolo Abeni <pabeni@redhat.com>
+To: torvalds@linux-foundation.org
+Cc: kuba@kernel.org,
+	davem@davemloft.net,
+	netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [GIT PULL] Networking for v6.16-rc4
+Date: Thu, 26 Jun 2025 12:33:02 +0200
+Message-ID: <20250626103302.22358-1-pabeni@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Disposition: inline
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <20250616-i2c-upstream-v1-3-42d3d5374e65@foss.st.com>
-X-Disclaimer: ce message est personnel / this message is private
-X-ClientProxiedBy: EQNCAS1NODE3.st.com (10.75.129.80) To SHFDAG1NODE1.st.com
- (10.75.129.69)
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.7,FMLib:17.12.80.40
- definitions=2025-06-26_05,2025-06-25_01,2025-03-28_01
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.40
 
-Hi ClÈment,
+Hi Linus!
 
-thanks for the patch.
+The following changes since commit 5c8013ae2e86ec36b07500ba4cacb14ab4d6f728:
 
-On Mon, Jun 16, 2025 at 10:53:56AM +0200, ClÈment Le Goffic wrote:
-> Use the i2c-core-base APIs to allocate a DMA safe buffer when needed.
-> 
-> Signed-off-by: ClÈment Le Goffic <clement.legoffic@foss.st.com>
-> ---
->  drivers/i2c/busses/i2c-stm32f7.c | 36 +++++++++++++++++++++++++-----------
->  1 file changed, 25 insertions(+), 11 deletions(-)
-> 
-> diff --git a/drivers/i2c/busses/i2c-stm32f7.c b/drivers/i2c/busses/i2c-stm32f7.c
-> index a05cac5ee9db..5be14c8a2af4 100644
-> --- a/drivers/i2c/busses/i2c-stm32f7.c
-> +++ b/drivers/i2c/busses/i2c-stm32f7.c
-> @@ -742,9 +742,12 @@ static void stm32f7_i2c_dma_callback(void *arg)
->  	struct stm32f7_i2c_dev *i2c_dev = (struct stm32f7_i2c_dev *)arg;
->  	struct stm32_i2c_dma *dma = i2c_dev->dma;
->  	struct device *dev = dma->chan_using->device->dev;
-> +	struct stm32f7_i2c_msg *f7_msg = &i2c_dev->f7_msg;
->  
->  	stm32f7_i2c_disable_dma_req(i2c_dev);
->  	dma_unmap_single(dev, dma->dma_buf, dma->dma_len, dma->dma_data_dir);
-> +	if (!f7_msg->smbus)
-> +		i2c_put_dma_safe_msg_buf(f7_msg->buf, i2c_dev->msg, true);
->  	complete(&dma->dma_complete);
->  }
->  
-> @@ -880,6 +883,7 @@ static void stm32f7_i2c_xfer_msg(struct stm32f7_i2c_dev *i2c_dev,
->  {
->  	struct stm32f7_i2c_msg *f7_msg = &i2c_dev->f7_msg;
->  	void __iomem *base = i2c_dev->base;
-> +	u8 *dma_buf;
->  	u32 cr1, cr2;
->  	int ret;
->  
-> @@ -929,17 +933,23 @@ static void stm32f7_i2c_xfer_msg(struct stm32f7_i2c_dev *i2c_dev,
->  
->  	/* Configure DMA or enable RX/TX interrupt */
->  	i2c_dev->use_dma = false;
-> -	if (i2c_dev->dma && f7_msg->count >= STM32F7_I2C_DMA_LEN_MIN
-> -	    && !i2c_dev->atomic) {
-> -		ret = stm32_i2c_prep_dma_xfer(i2c_dev->dev, i2c_dev->dma,
-> -					      msg->flags & I2C_M_RD,
-> -					      f7_msg->count, f7_msg->buf,
-> -					      stm32f7_i2c_dma_callback,
-> -					      i2c_dev);
-> -		if (!ret)
-> -			i2c_dev->use_dma = true;
-> -		else
-> -			dev_warn(i2c_dev->dev, "can't use DMA\n");
-> +	if (i2c_dev->dma && !i2c_dev->atomic) {
-> +		dma_buf = i2c_get_dma_safe_msg_buf(msg, STM32F7_I2C_DMA_LEN_MIN);
-> +		if (dma_buf) {
-> +			f7_msg->buf = dma_buf;
-> +			ret = stm32_i2c_prep_dma_xfer(i2c_dev->dev, i2c_dev->dma,
-> +						      msg->flags & I2C_M_RD,
-> +						      f7_msg->count, f7_msg->buf,
-> +						      stm32f7_i2c_dma_callback,
-> +						      i2c_dev);
-> +			if (ret) {
-> +				dev_warn(i2c_dev->dev, "can't use DMA\n");
-> +				i2c_put_dma_safe_msg_buf(f7_msg->buf, msg, false);
-> +				f7_msg->buf = msg->buf;
-> +			} else {
-> +				i2c_dev->use_dma = true;
-> +			}
-> +		}
->  	}
->  
->  	if (!i2c_dev->use_dma) {
-> @@ -1624,6 +1634,8 @@ static irqreturn_t stm32f7_i2c_isr_event_thread(int irq, void *data)
->  			dmaengine_terminate_async(dma->chan_using);
->  			dma_unmap_single(i2c_dev->dev, dma->dma_buf, dma->dma_len,
->  					 dma->dma_data_dir);
-> +			if (!f7_msg->smbus)
-> +				i2c_put_dma_safe_msg_buf(f7_msg->buf, i2c_dev->msg, false);
->  		}
->  		f7_msg->result = -ENXIO;
->  	}
-> @@ -1646,6 +1658,8 @@ static irqreturn_t stm32f7_i2c_isr_event_thread(int irq, void *data)
->  				dmaengine_terminate_async(dma->chan_using);
->  				dma_unmap_single(i2c_dev->dev, dma->dma_buf, dma->dma_len,
->  						 dma->dma_data_dir);
-> +				if (!f7_msg->smbus)
-> +					i2c_put_dma_safe_msg_buf(f7_msg->buf, i2c_dev->msg, false);
->  				f7_msg->result = -ETIMEDOUT;
->  			}
->  		}
-> 
+  Merge tag 'net-6.16-rc3' of git://git.kernel.org/pub/scm/linux/kernel/git/netdev/net (2025-06-19 10:21:32 -0700)
 
-Looks good to me.
+are available in the Git repository at:
 
-Acked-by: Alain Volmat <alain.volmat@foss.st.com>
+  git://git.kernel.org/pub/scm/linux/kernel/git/netdev/net.git net-6.16-rc4
 
-Regards,
-Alain
+for you to fetch changes up to 85720e04d9af0b77f8092b12a06661a8d459d4a0:
 
-> -- 
-> 2.43.0
-> 
+  net: libwx: fix the creation of page_pool (2025-06-26 11:02:23 +0200)
+
+----------------------------------------------------------------
+Including fixes from bluetooth and wireless.
+
+Current release - regressions:
+
+  - bridge: fix use-after-free during router port configuration
+
+Current release - new code bugs:
+
+  - eth: wangxun: fix the creation of page_pool
+
+Previous releases - regressions:
+
+  - netpoll: initialize UDP checksum field before checksumming
+
+  - wifi: mac80211: finish link init before RCU publish
+
+  - bluetooth: fix use-after-free in vhci_flush()
+
+  - eth: ionic: fix DMA mapping test
+
+  - eth: bnxt: properly flush XDP redirect lists
+
+Previous releases - always broken:
+
+  - netlink: specs: enforce strict naming of properties
+
+  - unix: don't leave consecutive consumed OOB skbs.
+
+  - vsock: fix linux/vm_sockets.h userspace compilation errors
+
+  - selftests: fix TCP packet checksum
+
+Signed-off-by: Paolo Abeni <pabeni@redhat.com>
+
+----------------------------------------------------------------
+Arnd Bergmann (2):
+      net: qed: reduce stack usage for TLV processing
+      wifi: iwlegacy: work around excessive stack usage on clang/kasan
+
+Breno Leitao (1):
+      net: netpoll: Initialize UDP checksum field before checksumming
+
+Eric Dumazet (1):
+      atm: clip: prevent NULL deref in clip_push()
+
+Faisal Bukhari (1):
+      Fix typo in marvell octeontx2 documentation
+
+Fr√©d√©ric Danis (1):
+      Bluetooth: L2CAP: Fix L2CAP MTU negotiation
+
+Ido Schimmel (1):
+      bridge: mcast: Fix use-after-free during router port configuration
+
+Jakub Kicinski (13):
+      Merge tag 'wireless-2025-06-25' of https://git.kernel.org/pub/scm/linux/kernel/git/wireless/wireless
+      netlink: specs: nfsd: replace underscores with dashes in names
+      netlink: specs: fou: replace underscores with dashes in names
+      netlink: specs: ethtool: replace underscores with dashes in names
+      netlink: specs: dpll: replace underscores with dashes in names
+      netlink: specs: devlink: replace underscores with dashes in names
+      netlink: specs: ovs_flow: replace underscores with dashes in names
+      netlink: specs: mptcp: replace underscores with dashes in names
+      netlink: specs: rt-link: replace underscores with dashes in names
+      netlink: specs: tc: replace underscores with dashes in names
+      netlink: specs: enforce strict naming of properties
+      Merge branch 'netlink-specs-enforce-strict-naming-of-properties'
+      net: selftests: fix TCP packet checksum
+
+Jiawen Wu (1):
+      net: libwx: fix the creation of page_pool
+
+Johannes Berg (2):
+      wifi: mac80211: finish link init before RCU publish
+      Merge tag 'iwlwifi-fixes-2025-06-25' of https://git.kernel.org/pub/scm/linux/kernel/git/iwlwifi/iwlwifi-next
+
+Kiran K (1):
+      Bluetooth: btintel_pcie: Fix potential race condition in firmware download
+
+Kuniyuki Iwashima (6):
+      Bluetooth: hci_core: Fix use-after-free in vhci_flush()
+      af_unix: Don't leave consecutive consumed OOB skbs.
+      af_unix: Add test for consecutive consumed OOB.
+      af_unix: Don't set -ECONNRESET for consumed OOB skb.
+      selftest: af_unix: Add tests for -ECONNRESET.
+      atm: Release atm_dev_mutex after removing procfs in atm_dev_deregister().
+
+Lachlan Hodges (1):
+      wifi: mac80211: fix beacon interval calculation overflow
+
+Long Li (1):
+      net: mana: Record doorbell physical address in PF mode
+
+Miri Korenblit (1):
+      wifi: iwlwifi: mvm: assume '1' as the default mac_config_cmd version
+
+Paolo Abeni (2):
+      Merge branch 'af_unix-fix-two-oob-issues'
+      Merge tag 'for-net-2025-06-23' of git://git.kernel.org/pub/scm/linux/kernel/git/bluetooth/bluetooth
+
+Shannon Nelson (1):
+      CREDITS: Add entry for Shannon Nelson
+
+Shuai Zhang (1):
+      driver: bluetooth: hci_qca:fix unable to load the BT driver
+
+Simon Horman (1):
+      net: enetc: Correct endianness handling in _enetc_rd_reg64
+
+Stefano Garzarella (1):
+      vsock/uapi: fix linux/vm_sockets.h userspace compilation errors
+
+Thomas Fourier (2):
+      ethernet: ionic: Fix DMA mapping tests
+      atm: idt77252: Add missing `dma_map_error()`
+
+Xiaowei Li (1):
+      net: usb: qmi_wwan: add SIMCom 8230C composition
+
+Yan Zhai (1):
+      bnxt: properly flush XDP redirect lists
+
+ CREDITS                                            |   5 +
+ Documentation/netlink/genetlink-legacy.yaml        |  15 ++-
+ Documentation/netlink/genetlink.yaml               |  17 ++-
+ Documentation/netlink/netlink-raw.yaml             |  18 ++-
+ Documentation/netlink/specs/devlink.yaml           |   8 +-
+ Documentation/netlink/specs/dpll.yaml              |   2 +-
+ Documentation/netlink/specs/ethtool.yaml           |   6 +-
+ Documentation/netlink/specs/fou.yaml               |  36 +++---
+ Documentation/netlink/specs/mptcp_pm.yaml          |   8 +-
+ Documentation/netlink/specs/nfsd.yaml              |   4 +-
+ Documentation/netlink/specs/ovs_flow.yaml          |   6 +-
+ Documentation/netlink/specs/rt-link.yaml           |   4 +-
+ Documentation/netlink/specs/tc.yaml                |   4 +-
+ .../device_drivers/ethernet/marvell/octeontx2.rst  |   2 +-
+ drivers/atm/idt77252.c                             |   5 +
+ drivers/bluetooth/btintel_pcie.c                   |  33 ++++-
+ drivers/bluetooth/hci_qca.c                        |  13 +-
+ drivers/net/ethernet/broadcom/bnxt/bnxt.c          |   5 +-
+ drivers/net/ethernet/freescale/enetc/enetc_hw.h    |   2 +-
+ drivers/net/ethernet/microsoft/mana/gdma_main.c    |   3 +
+ drivers/net/ethernet/pensando/ionic/ionic_txrx.c   |  12 +-
+ drivers/net/ethernet/qlogic/qed/qed_mng_tlv.c      |   8 +-
+ drivers/net/ethernet/wangxun/libwx/wx_lib.c        |   2 +-
+ drivers/net/usb/qmi_wwan.c                         |   1 +
+ drivers/net/wireless/intel/iwlegacy/4965-rs.c      |   3 +-
+ drivers/net/wireless/intel/iwlwifi/mvm/mld-mac.c   |   4 +-
+ include/net/bluetooth/hci_core.h                   |   2 +
+ include/uapi/linux/mptcp_pm.h                      |   6 +-
+ include/uapi/linux/vm_sockets.h                    |   4 +
+ net/atm/clip.c                                     |  11 +-
+ net/atm/resources.c                                |   3 +-
+ net/bluetooth/hci_core.c                           |  34 ++++-
+ net/bluetooth/l2cap_core.c                         |   9 +-
+ net/bridge/br_multicast.c                          |   9 ++
+ net/core/netpoll.c                                 |   2 +-
+ net/core/selftests.c                               |   5 +-
+ net/mac80211/link.c                                |   6 +-
+ net/mac80211/util.c                                |   2 +-
+ net/unix/af_unix.c                                 |  31 +++--
+ .../selftests/drivers/net/hw/rss_input_xfrm.py     |   2 +-
+ tools/testing/selftests/net/af_unix/msg_oob.c      | 142 ++++++++++++++++++++-
+ 41 files changed, 378 insertions(+), 116 deletions(-)
+
 
