@@ -1,132 +1,257 @@
-Return-Path: <linux-kernel+bounces-704495-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-704485-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id AE4A9AE9E30
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Jun 2025 15:06:19 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id D9803AE9E08
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Jun 2025 15:00:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0C9C93B717D
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Jun 2025 13:05:52 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3CA01189D83B
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Jun 2025 13:00:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A3A222E5408;
-	Thu, 26 Jun 2025 13:06:00 +0000 (UTC)
-Received: from glittertind.blackshift.org (glittertind.blackshift.org [116.203.23.228])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9C4322E4276;
+	Thu, 26 Jun 2025 13:00:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="P0bqP2cC"
+Received: from mail-yb1-f171.google.com (mail-yb1-f171.google.com [209.85.219.171])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 680FE2AD11
-	for <linux-kernel@vger.kernel.org>; Thu, 26 Jun 2025 13:05:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=116.203.23.228
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 326EF2E336E;
+	Thu, 26 Jun 2025 13:00:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750943160; cv=none; b=DQHZTuKegjHFHQRs4OLAEdO3jicLEB2PCFPIgsZMLLXAkJg9hYzmxWJ3pYwHY1goinv9PcJFXthinrrDgL6ZMuSqw7yIXk0PN1AsN3oEZyZS/8CeB2ZIyRpGpJeZYyf1ncON+CgYBGEwpccXwWZBKn0B0X77uAWl15tjiLzMqlo=
+	t=1750942813; cv=none; b=S1IzHo+k2azHq1H4lD0f3/bTzMSp0LgE8XDA11rHYunIybWHI83A5Ay2vpUOkrCEDXtLlR/WGQNfH13m1/9S1vo6iJaIFTBT1Jq3SVB2ZzhOu3xI7vAS6zU6muSsRJvAgHR7kypYp062PJQ/5ypO8FeFIRQs4X/NLRIrVxvAU6k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750943160; c=relaxed/simple;
-	bh=mg4SwQNbvzeE2sj3wCDg1tjz/VjheXExlZOnS8rGJFM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=gAuelUT1lDcfBTlGsxkrk5KpNkF1DCkmIumHEPCFXtEtC2q5hQcuy6q3eGemkR39fDnMynyyoPqEyLN3sXAB5+97qLUi2Nebqyhaf4PUXgUTTGIVOklWcPRmJxeWs9nSTIsZnlp9nftaTzvc5INBDaGbU24jlEOtqi/3RybkzNU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=hardanger.blackshift.org; spf=none smtp.mailfrom=hardanger.blackshift.org; arc=none smtp.client-ip=116.203.23.228
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=hardanger.blackshift.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=hardanger.blackshift.org
-Received: from bjornoya.blackshift.org (unknown [IPv6:2003:e3:7f3d:bb00:dea6:32ff:feb1:177a])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature ECDSA (secp384r1)
-	 client-signature RSA-PSS (4096 bits))
-	(Client CN "bjornoya.blackshift.org", Issuer "R10" (verified OK))
-	by glittertind.blackshift.org (Postfix) with ESMTPS id 31A52678AD0
-	for <linux-kernel@vger.kernel.org>; Thu, 26 Jun 2025 12:59:37 +0000 (UTC)
-Received: from dspam.blackshift.org (localhost [127.0.0.1])
-	by bjornoya.blackshift.org (Postfix) with SMTP id DDC0443114B
-	for <linux-kernel@vger.kernel.org>; Thu, 26 Jun 2025 12:59:36 +0000 (UTC)
-Received: from hardanger.blackshift.org (unknown [172.20.34.65])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange x25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(Client did not present a certificate)
-	by bjornoya.blackshift.org (Postfix) with ESMTPS id 05D47431147;
-	Thu, 26 Jun 2025 12:59:36 +0000 (UTC)
-Received: from localhost (hardanger.blackshift.org [local])
-	by hardanger.blackshift.org (OpenSMTPD) with ESMTPA id 42c87de3;
-	Thu, 26 Jun 2025 12:59:35 +0000 (UTC)
-Date: Thu, 26 Jun 2025 14:59:35 +0200
-From: Marc Kleine-Budde <frogger@hardanger.blackshift.org>
-To: Mark Brown <broonie@kernel.org>
-Cc: Amit Kumar Mahapatra <amit.kumar-mahapatra@amd.com>, 
-	Guenter Roeck <linux@roeck-us.net>, linux-spi@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2] spi: Raise limit on number of chip selects
-Message-ID: <pulc4xhdpqfseyugxloid6vvjeducuxghfuh7qre67k5v2zie3@wfpiyoyzalmf>
-References: <20240124-spi-multi-cs-max-v2-1-df6fc5ab1abc@kernel.org>
+	s=arc-20240116; t=1750942813; c=relaxed/simple;
+	bh=l59Q2IYzQjDwEuvddBhgYTuAAdI9DL0W+F7dsJFT5NA=;
+	h=MIME-Version:From:Date:Message-ID:Subject:To:Cc:Content-Type; b=XfazbgqRRdNix8JM+PPINrADOo4DGLbxBBMW/Lzc0MldM2xi2YOdheBPb8CjFu5A5BfpQbVae4CiVjHp6j6E0YGE7JsMZLEnYJYao/8vysLHHuXtW9fG7crafPaJkRZCAemyu6MlgUVpupkwnmVwxJUyKPaP0OTHxIoaJUG60gs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=P0bqP2cC; arc=none smtp.client-ip=209.85.219.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-yb1-f171.google.com with SMTP id 3f1490d57ef6-e733e25bfc7so795290276.3;
+        Thu, 26 Jun 2025 06:00:11 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1750942811; x=1751547611; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:mime-version:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=l59Q2IYzQjDwEuvddBhgYTuAAdI9DL0W+F7dsJFT5NA=;
+        b=P0bqP2cC7CVTBuqCv8+w+DSAosdpuUQRs0g7wrKrdQlXUHkN0Mn0glhJEWOv99qMMi
+         ot5TIVJL/o3z/7OJlZE2d6WqtqrLybcBt6vXGi6DMs1VqbObqDmwZYqHunSeyQYG1lwP
+         jgJY5sOJHAaW53B4+EEDR1CgG7a1Hh6bzfprLfo1zzJTHIwTjoYE3dVjQ4uVhke1648j
+         SpM17LcfcPN1I79q/irQ3WYTKJ8GJtuhNyEYzzc18CFPrAM8g0ic8utwZL61VkP33TEu
+         UrMbU3fwtqdPer0Pg50c1BBaWmZo8TBBXWN8ZUQpmzOHlQSO84E1vL2RBdE1PeBI6JbR
+         LcDQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1750942811; x=1751547611;
+        h=cc:to:subject:message-id:date:from:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=l59Q2IYzQjDwEuvddBhgYTuAAdI9DL0W+F7dsJFT5NA=;
+        b=H+mNmiOop8UMQH9Lg/Qfq4WJIPYwxjUvOXz9gJU9YgCXtH8xvxCjUd1I339nFL6kdL
+         pNVkpbcSUc+0ge5qFLm1rM8FLlkAZov3SKkNz4KPxw+6zgCV/q3vjcpW/2lwd42XtyxF
+         Lu0SmkelUBZU99jPOGE8FRghJd07eavU8vwa4mX0GC1bRlJYsfZW4z6ASDd0Vq1lunMb
+         Z8ofrZ0/CXHMN1b7PHdTG0iw8xvT0N8q6owwEZyX47BNdbF+sZOAWM4wh2xMOM9QFpmC
+         gfnJGHjNw+MYTLwdMlImrsB5Y+8BxUst5F+0eySLBBPTgxouws7G+iCuwlQVwmFhEB+K
+         /5ZA==
+X-Forwarded-Encrypted: i=1; AJvYcCUpVTkWPV4oSZ83y7yeK6j+HzNpX+JfGsJ/y5EdcCk22kA/8UUUuFfaI+FwyPDYfVl8CdxXwDpm1JeXVhE=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw2oWVnSEX0gSBe2rA3hPV6l5x3PE5nAmwaL5Jgg6US+P730rXW
+	7oYnHfOLZTTxT2hcJpJCB4WCaLMf5gcIvt7Q7hiIuvE8NsMH45oytkEprs3GXojrVC8X/td60Qn
+	qc6dg0YmOINMtwJU59+nBvuABBmHYW4w=
+X-Gm-Gg: ASbGncs3AyG8cghP4qqSXzxTDuRTK0A48E7kyfgahYaEGO+CAq1CAdUfGefJCSMcT6U
+	6eBZn49gaWV9g0LANR83yxeBeMgc04rO42J7SgjWodLVpcJ8uKT8tJHmiO2uLyaLQbsiz2nqRnU
+	kVLnHBT4PasuTUilyXDgnG5XskCC4kAIrTXVzuV3hTLA==
+X-Google-Smtp-Source: AGHT+IHX/V7BJDRjogcwcgoxwe/caxTF1FobH7YTTtUH61VqShQLBLZ+SuP6JaZgNIKj7lJqe1L2x+T+8vOf87tnMzE=
+X-Received: by 2002:a05:6902:6b0c:b0:e87:9bab:25d with SMTP id
+ 3f1490d57ef6-e879bab064dmr4262028276.39.1750942810614; Thu, 26 Jun 2025
+ 06:00:10 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="wqkdkixsemn3jz2k"
-Content-Disposition: inline
-In-Reply-To: <20240124-spi-multi-cs-max-v2-1-df6fc5ab1abc@kernel.org>
+From: cen zhang <zzzccc427@gmail.com>
+Date: Thu, 26 Jun 2025 20:59:58 +0800
+X-Gm-Features: Ac12FXzsG6MwkdNo-vfAOMfc9FQGmKEA_XcUaFyaxvJywwqyFAHjaDhqNFO2D9U
+Message-ID: <CAFRLqsV+cMDETFuzqdKSHk_FDm6tneea45krsHqPD6B3FetLpQ@mail.gmail.com>
+Subject: [BUG] btrfs: Data race between btrfs_quota_disable and
+ btrfs_qgroup_rescan leads to a UAF
+To: clm@fb.com, josef@toxicpanda.com, dsterba@suse.com
+Cc: linux-btrfs@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	baijiaju1990@gmail.com, zhenghaoran154@gmail.com
+Content-Type: text/plain; charset="UTF-8"
 
+Hello maintainers,
 
---wqkdkixsemn3jz2k
-Content-Type: text/plain; protected-headers=v1; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-Subject: Re: [PATCH v2] spi: Raise limit on number of chip selects
-MIME-Version: 1.0
+I've encountered a kernel panic while using Btrfs. The issue appears
+to be a use-after-free (UAF) caused by a data race between the
+btrfs_quota_disable operation and a background btrfs_qgroup_rescan
+task.
 
-On 24.01.2024 13:24:24, Mark Brown wrote:
-> As reported by Guenter the limit we've got on the number of chip selects =
-is
-> set too low for some systems, raise the limit. We should really remove the
-> hard coded limit but this is needed as a fix so let's do the simple thing
-> and raise the limit for now.
+Kernel Version: 6.16.0-rc1-g7f6432600434-dirty
+Environment: QEMU Virtual Machine
 
-We currently have a use case for 24 chip selects.
+Problem Description & Root Cause Analysis:
 
-> Fixes: 4d8ff6b0991d ("spi: Add multi-cs memories support in SPI core")
-> Reported-by: Guenter Roeck <linux@roeck-us.net>
-> Suggested-by: Guenter Roeck <linux@roeck-us.net>
-> Signed-off-by: Mark Brown <broonie@kernel.org>
-> ---
-> Changes in v2:
-> - Raise the limit further, the highest I've seen thus far is 12.
-> - Link to v1: https://lore.kernel.org/r/20240122-spi-multi-cs-max-v1-1-a7=
-e98cd5f6c7@kernel.org
-> ---
->  include/linux/spi/spi.h | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->=20
-> diff --git a/include/linux/spi/spi.h b/include/linux/spi/spi.h
-> index 471fe2ff9066..600fbd5daf68 100644
-> --- a/include/linux/spi/spi.h
-> +++ b/include/linux/spi/spi.h
-> @@ -21,7 +21,7 @@
->  #include <uapi/linux/spi/spi.h>
-> =20
->  /* Max no. of CS supported per spi device */
-> -#define SPI_CS_CNT_MAX 4
-> +#define SPI_CS_CNT_MAX 16
+The issue is triggered by the concurrent execution of the
+btrfs_quota_disable function and the background btrfs_qgroup_rescan
+worker.
 
-Just further increase the limit to 24? Add a Kconfig symbol?
+When quotas are disabled via an ioctl call, the btrfs_quota_disable ->
+btrfs_free_qgroup_config path iterates through the qgroup tree and
+frees the memory for each btrfs_qgroup object using kfree.
 
-regards,
-Marc
+Simultaneously, a background qgroup rescan task (btrfs_qgroup_rescan
+-> qgroup_rescan_zero_tracking) may be running, which iterates over
+and accesses the very same qgroup tree.
 
---wqkdkixsemn3jz2k
-Content-Type: application/pgp-signature; name="signature.asc"
+Due to a lack of proper locking to synchronize these two operations,
+the qgroup_rescan_zero_tracking function can access a btrfs_qgroup
+object that has just been freed by btrfs_free_qgroup_config.
 
------BEGIN PGP SIGNATURE-----
+When it then attempts to modify a member of this dangling pointer
+(e.g., calling list_add in qgroup_dirty), it triggers a
+use-after-free, which ultimately leads to the kernel panic.
 
-iQEzBAABCgAdFiEEn/sM2K9nqF/8FWzzDHRl3/mQkZwFAmhdRDQACgkQDHRl3/mQ
-kZyyOwf+OXLwobSDwvA5qRpH1KP1AEORA/RtlDzudGtBpnaxtppG+/nc5YI1+icd
-/pozE0gF+623mhD2iA/IeNc74OHUHNnDdsHSa6LzHUZfdFjCkcs/lJWBPlMgoyGB
-U9Ewsf9Zu/4oCHYRLyxNWQKBwCfQ7EAkxYqryKvDeFh5+jiqFiQecKuv77EnH9c+
-Ffa7qk3bWX3Cn4zypT8a0Huih8kNygUP9/MMKylY3gKIMD5bXjsZX96uaXSylllu
-Nw8m0NbvkedOpLILA5crJm21gXWZV8IXALy2dvCKq7/9ArHtFgl668G78GDSJ4xb
-KdmZ+QRQS2HWOtdZZQYVmG3AGgJMNA==
-=TG5b
------END PGP SIGNATURE-----
+We found this bug using our proprietary data-race detector in
+conjunction with syzkaller. Our tool first detected a race condition
+and then actively intervened by swapping the execution order of the
+conflicting operations. This controlled reordering directly exposed a
+latent use-after-free (UAF) vulnerability, which was subsequently
+caught and reported by KASAN.
 
---wqkdkixsemn3jz2k--
+I believe this issue could be fixed by adding an appropriate
+synchronization mechanism (e.g., a mutex) between the
+btrfs_quota_disable path and the background qgroup scanning tasks.
 
+Full kernel panic log is attached below:
+
+var addr ffff888168296888, addr masked 888168296888
+Kernel panic: ============ DATARACE ============
+VarName 2268446652518064666, BlockLineNumber 9, IrLineNumber 1, is write 1
+Function: found_watchpoint kernel/kccwf/wp_checker.c:75 [inline]
+Function: watchpoints_monitor+0x1237/0x19a0 kernel/kccwf/wp_checker.c:155
+Function: kccwf_rec_mem_access+0x7d0/0xae0 kernel/kccwf/core.c:582
+Function: list_del include/linux/list.h:230 [inline]
+Function: __del_qgroup_rb+0x2c2/0x17c0 fs/btrfs/qgroup.c:233
+Function: btrfs_free_qgroup_config+0xa1/0x2b0 fs/btrfs/qgroup.c:645
+Function: btrfs_quota_disable+0x826/0x25e0 fs/btrfs/qgroup.c:1393
+Function: btrfs_ioctl_quota_ctl+0x3b3/0x4e0 fs/btrfs/ioctl.c:3703
+Function: btrfs_ioctl+0xb3f/0x1480 fs/btrfs/ioctl.c:5323
+Function: vfs_ioctl fs/ioctl.c:51 [inline]
+Function: __do_sys_ioctl fs/ioctl.c:907 [inline]
+Function: __se_sys_ioctl+0xd1/0x130 fs/ioctl.c:893
+Function: do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
+Function: do_syscall_64+0xcf/0x240 arch/x86/entry/syscall_64.c:94
+Function: entry_SYSCALL_64_after_hwframe+0x77/0x7f
+Function: 0x0
+============OTHER_INFO============
+VarName 18129403906671370250, BlockLineNumber 22, IrLineNumber 1,
+watchpoint index 19991
+Function: set_report_info+0xa6/0x1f0 kernel/kccwf/report.c:49
+Function: setup_watchpoint kernel/kccwf/wp_checker.c:102 [inline]
+Function: watchpoints_monitor+0x7eb/0x19a0 kernel/kccwf/wp_checker.c:167
+Function: kccwf_rec_mem_access+0x7d0/0xae0 kernel/kccwf/core.c:582
+Function: __list_add include/linux/list.h:155 [inline]
+Function: list_add include/linux/list.h:169 [inline]
+Function: qgroup_dirty fs/btrfs/qgroup.c:1434 [inline]
+Function: qgroup_rescan_zero_tracking fs/btrfs/qgroup.c:4005 [inline]
+Function: btrfs_qgroup_rescan+0x4dc/0xa30 fs/btrfs/qgroup.c:4036
+Function: btrfs_ioctl_quota_rescan+0x42a/0x530 fs/btrfs/ioctl.c:3943
+Function: btrfs_ioctl+0x1187/0x1480 fs/btrfs/ioctl.c:5331
+Function: vfs_ioctl fs/ioctl.c:51 [inline]
+Function: __do_sys_ioctl fs/ioctl.c:907 [inline]
+Function: __se_sys_ioctl+0xd1/0x130 fs/ioctl.c:893
+Function: do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
+Function: do_syscall_64+0xcf/0x240 arch/x86/entry/syscall_64.c:94
+Function: entry_SYSCALL_64_after_hwframe+0x77/0x7f
+=================END==============
+Found watch_point 19991
+BTRFS info (device sdb): balance: start -s
+BTRFS info (device sdb): balance: ended with status: 0
+BTRFS warning (device sdb): get dev_stats failed, device not found
+[...]
+==================================================================
+BUG: KASAN: slab-use-after-free in __list_del_entry
+include/linux/list.h:218 [inline]
+BUG: KASAN: slab-use-after-free in list_del_init
+include/linux/list.h:287 [inline]
+BUG: KASAN: slab-use-after-free in btrfs_run_qgroups+0x3cd/0x1ec0
+fs/btrfs/qgroup.c:3132
+Read of size 8 at addr ffff888168296890 by task btrfs-transacti/228
+
+CPU: 0 UID: 0 PID: 228 Comm: btrfs-transacti Not tainted
+6.16.0-rc1-g7f6432600434-dirty #52 PREEMPT(voluntary)
+Hardware name: QEMU Ubuntu 24.04 PC (i440FX + PIIX, 1996), BIOS
+1.16.3-debian-1.16.3-2 04/01/2014
+Call Trace:
+ <TASK>
+ __dump_stack lib/dump_stack.c:94 [inline]
+ dump_stack_lvl+0x108/0x150 lib/dump_stack.c:120
+ print_address_description mm/kasan/report.c:408 [inline]
+ print_report+0x191/0x5b0 mm/kasan/report.c:521
+ kasan_report+0x139/0x170 mm/kasan/report.c:634
+ __list_del_entry include/linux/list.h:218 [inline]
+ list_del_init include/linux/list.h:287 [inline]
+ btrfs_run_qgroups+0x3cd/0x1ec0 fs/btrfs/qgroup.c:3132
+ commit_cowonly_roots+0x67c/0x1c10 fs/btrfs/transaction.c:1354
+ btrfs_commit_transaction+0x2a5b/0xc800 fs/btrfs/transaction.c:2457
+ transaction_kthread+0x5b7/0xcc0 fs/btrfs/disk-io.c:1590
+ kthread+0x351/0x780 kernel/kthread.c:464
+ ret_from_fork+0x10e/0x1c0 arch/x86/kernel/process.c:148
+ ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:245
+ </TASK>
+
+Allocated by task 127769:
+ kasan_save_stack mm/kasan/common.c:47 [inline]
+ kasan_save_track+0x3f/0x80 mm/kasan/common.c:68
+ poison_kmalloc_redzone mm/kasan/common.c:377 [inline]
+ __kasan_kmalloc+0x82/0x90 mm/kasan/common.c:394
+ kmalloc_noprof include/linux/slab.h:905 [inline]
+ kzalloc_noprof include/linux/slab.h:1039 [inline]
+ btrfs_quota_enable+0x2d07/0x5d10 fs/btrfs/qgroup.c:1201
+ btrfs_ioctl_quota_ctl+0x36c/0x4e0 fs/btrfs/ioctl.c:3673
+ btrfs_ioctl+0xb3f/0x1480 fs/btrfs/ioctl.c:5323
+ vfs_ioctl fs/ioctl.c:51 [inline]
+ __do_sys_ioctl fs/ioctl.c:907 [inline]
+ __se_sys_ioctl+0xd1/0x130 fs/ioctl.c:893
+ do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
+ do_syscall_64+0xcf/0x240 arch/x86/entry/syscall_64.c:94
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+
+Freed by task 127948:
+ kasan_save_stack mm/kasan/common.c:47 [inline]
+ kasan_save_track+0x3f/0x80 mm/kasan/common.c:68
+ kasan_save_free_info+0x40/0x50 mm/kasan/generic.c:576
+ poison_slab_object mm/kasan/common.c:247 [inline]
+ __kasan_slab_free+0x36/0x50 mm/kasan/common.c:264
+ kasan_slab_free include/linux/kasan.h:233 [inline]
+ slab_free_hook mm/slub.c:2388 [inline]
+ slab_free mm/slub.c:4670 [inline]
+ kfree+0xfd/0x340 mm/slub.c:4869
+ btrfs_free_qgroup_config+0xcd/0x2b0 fs/btrfs/qgroup.c:647
+ btrfs_quota_disable+0x826/0x25e0 fs/btrfs/qgroup.c:1393
+ btrfs_ioctl_quota_ctl+0x3b3/0x4e0 fs/btrfs/ioctl.c:3703
+ btrfs_ioctl+0xb3f/0x1480 fs/btrfs/ioctl.c:5323
+ vfs_ioctl fs/ioctl.c:51 [inline]
+ __do_sys_ioctl fs/ioctl.c:907 [inline]
+ __se_sys_ioctl+0xd1/0x130 fs/ioctl.c:893
+ do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
+ do_syscall_64+0xcf/0x240 arch/x86/entry/syscall_64.c:94
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+
+The buggy address belongs to the object at ffff888168296800
+ which belongs to the cache kmalloc-512 of size 512
+The buggy address is located 144 bytes inside of
+ freed 512-byte region [ffff888168296800, ffff888168296a00)
+[...]
+==================================================================
+Hope this helps in tracking down and fixing the issue.
+
+Here is the detail:
+
+Thank you for your attention to this matter.
+
+Best regards,
+Cen Zhang
 
