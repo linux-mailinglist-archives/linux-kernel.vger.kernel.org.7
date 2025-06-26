@@ -1,245 +1,147 @@
-Return-Path: <linux-kernel+bounces-704882-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-704884-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 613D5AEA2C4
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Jun 2025 17:36:37 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E021FAEA2CC
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Jun 2025 17:37:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5157D7AA2E0
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Jun 2025 15:34:31 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 536FD4E0359
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Jun 2025 15:36:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E10552ED851;
-	Thu, 26 Jun 2025 15:34:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6216C2EE5E1;
+	Thu, 26 Jun 2025 15:35:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="cHKj+7o7"
-Received: from mail-pl1-f179.google.com (mail-pl1-f179.google.com [209.85.214.179])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Mq+k1Do2"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.13])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A38D22EB5CA;
-	Thu, 26 Jun 2025 15:34:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EF5DE2EE260;
+	Thu, 26 Jun 2025 15:35:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.13
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750952087; cv=none; b=SKcOLbs9vXUwB57qzA736zGOAU1Nk4I644/uW9FDYn1j0Zk2uNiQsNItPmFRHE2ULTQEwkP1+DhIkyIh85EyLhqV9EZjV6x5KTBMjDlz5q66/7rvAp3Li+4iWfTijEC3/W/EozpRbIqkjUZfBrLTbO0GPT5ZWthJ+PF1maYjoOc=
+	t=1750952109; cv=none; b=bc+mPqNu2BeCU5xSJ5K5QRUSVfNESsORXiwdvqzriV5L3HwXdTp4CIkEiDQAp6GJXaxjFCu8W+lLDnIywSOxdEJmnyav5WnszNZnoipLnVGnA/HfaBiUN5VrTSsIfHBxCWVWZNhwNX2FdSYzcdWyOQIHyVwPLYvRwHua7yw892Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750952087; c=relaxed/simple;
-	bh=z64R6tLwT/igY0srnTmDc4NO29MbjXUBGb8NdSHwt+0=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=OpyKZ4m9kCCQjW9QNEai78niOwjhDBT6PpeUk1IGkO81IVoTqN7NrsLFcnDIjdyXy1kO1J2ZKNVxbjp147gd3WsGWPoYbtBvObTrEz9yrDeGE7/OT3mbC1SN1OOxVhT35ITeRQB4awzYfjRtM1XvpadlI7R5BbrHcKDwNdeG6gU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=cHKj+7o7; arc=none smtp.client-ip=209.85.214.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f179.google.com with SMTP id d9443c01a7336-23602481460so13886435ad.0;
-        Thu, 26 Jun 2025 08:34:45 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1750952085; x=1751556885; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=Kmmnms/Q/5n/J94E9RpKr+/e7+IT4/vH9W0izU+rtE0=;
-        b=cHKj+7o714uR+A4Xfb3oUb8F5PVMBUmgMMb8FZvXL+3m5gQb2uXq9b5DVE2EzwewGc
-         AgeXv/OmA49W8QwhsSxiEmJZfxIHSuY73QoQ0thOSRTIAJO+NmOiZO3S7fmY0G5kpTVs
-         HeejmfNtyh81YHUS/Ac0D6YZoAM1xT7DzCFUnTpNb+HgkX6+CSA/CLkdDseG65WDCcs2
-         SRL8TtNUWUHW1AnruXj7YqyUd/u4/2zQnfakAhnqm5TW2CUQm76RYgxkUFunoi5OmEb8
-         w7NgcghbVsJmeP+WdVzJDRu5mpDAMX4djOQyWO3v5kE1WZplaYwu3e4xO+LRFT1JPPp1
-         7Vlw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1750952085; x=1751556885;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=Kmmnms/Q/5n/J94E9RpKr+/e7+IT4/vH9W0izU+rtE0=;
-        b=Am2gTxoBr2ERWXb5PrEvM/1aZQUVAWZBAJdOPoSb713qzsC5IurSOZxHklhmOzbf+p
-         biPxjDT0J9NLq6+Tg8rJAcfU0m/7FDCxQ7mbugIdUmxmpB2Bk4KexUWYTfg5EQdi8cWn
-         YaNCGMnCvnCUxdNLU+G0lxgcJK/Y2Jf3pRFPKjfGjNRFbNLFlrG/Wmz7wQND4W7NE6JY
-         kKx3nazrOykZrIUzHuzqtJW2bOuBO9uCoLaoFX14yWiGvNJY9rBvChuS4Zr9VeL+9p/R
-         RKfYIlJRP+OcYSypDDdXZa8NzG2Ss+TVsnsGoSEODsxxR6CwRPJXwES8f6yn11RZz+rS
-         lE/w==
-X-Forwarded-Encrypted: i=1; AJvYcCVOlZQyxGnCryYoXlmbEz808PCaZ1DedSLElPQcSUlp3IqDa2XLOtwbFitKVftClshyzsMbjWwt5jxJkvAu@vger.kernel.org, AJvYcCVhyPbQp5Vxqokd0SnlzJkl+NmoDaO51Nr2ouqeSK2LqrR9wK0IMiJR9NuowvUK5dGPNkg=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwO2bopZNCfrdQfEjQG0IupfRyRKD1FBIJa3ib0MkzN7uroD9W7
-	E8ca40xR4+zipto+C6vsTfzN3tc1wXQ+g7YT/CvhCT2DiP9tT2qwTlsO
-X-Gm-Gg: ASbGncvqhAJ4u1AAJ8SR7BZkBYN++hCwBj60FOf1T+4xnuSkJ5zmEibyv2V2fFps1Jp
-	Au0N40JbdkGjwIr7NG5duBGwbP8WNUtCF50swod8DuIq5eXtzklVI+EtjlIPPor5a/QIfev7X9W
-	V0mj55mkkO2rVlMk3J5ZP9tjJdPr3OqqLMhtJ+KkiNC7n50hTjuOOZfJEJKBAbSBmYLDSDq6eOc
-	U3Px7iAmbycd8DUGJ27ef0Z7wSUIYAWZ24meeIlTF9EgD4FnBhqhG51wZjT0dqRqsR2OohPMykm
-	hj4RqPwf+FcO/IisoxSlcMMtZWEx1iCXjW8SlXu2cdfJIjaGu30SYwXmF7QyRxYUNZiRaYAYMsk
-	3cr6M2NOf2yZ3I2vclwKpazu7WxCA/W/zL/35CF+I
-X-Google-Smtp-Source: AGHT+IEBro7NaKKN1SAi+5I/Ua/Xx0H51iguRiKyeGlRJfzrEBuaCq+4+1hrclw+rac7IKJnr/e9og==
-X-Received: by 2002:a17:903:1986:b0:235:f49f:479d with SMTP id d9443c01a7336-238c86ee14amr53330745ad.3.1750952084612;
-        Thu, 26 Jun 2025 08:34:44 -0700 (PDT)
-Received: from ?IPV6:2001:ee0:4f0e:fb30:2b9f:aa14:497d:25f1? ([2001:ee0:4f0e:fb30:2b9f:aa14:497d:25f1])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-23abe440a69sm799565ad.242.2025.06.26.08.34.37
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 26 Jun 2025 08:34:44 -0700 (PDT)
-Message-ID: <0bf0811e-cdb8-4410-9b69-1c38b06bbadf@gmail.com>
-Date: Thu, 26 Jun 2025 22:34:35 +0700
+	s=arc-20240116; t=1750952109; c=relaxed/simple;
+	bh=O0L8FVvB///Na6bAs2bAIq/uTQnDv1eoHSfh3JhHjGE=;
+	h=From:Date:To:cc:Subject:In-Reply-To:Message-ID:References:
+	 MIME-Version:Content-Type; b=Sh/bcowNEVsJe2wgALq8MQUbTlH2JtZPsEhaZiqxC70/KRC09F2qEWOP8539l13xyiKLFPdVF3L5ybj2Wxbe55FEkIdH7HSg9Yuaun3PjxTQV3iFTtVl+EqXwuKv/aTNDT5bWEP7fpxwRgyjbYIjJ0GAv4hVVwLVtXoLI3GYXec=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Mq+k1Do2; arc=none smtp.client-ip=192.198.163.13
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1750952108; x=1782488108;
+  h=from:date:to:cc:subject:in-reply-to:message-id:
+   references:mime-version;
+  bh=O0L8FVvB///Na6bAs2bAIq/uTQnDv1eoHSfh3JhHjGE=;
+  b=Mq+k1Do2oGWJTUxevyvQziyhSen9IwvB88JPjpQJF5rrtRKr9rMTIE2+
+   8agrcyHTXaLGSXx9dZ6gwLnmP/YzkDi1OhLw9cgkTdfK0LKq+eyjPu4Zl
+   7jXsKfuwp6+owtx3UsaQpiKY/LYFKVc0/IrvEyjw+OLsZXjulJsrVZPN0
+   tgLKIJx46BhAg6FrI275suNo9Rq/7FevTsluEqfVOJLdSrYavbH4JTg2U
+   SMMNhB6UMB06xo3hDn6lXyhdII/unTHzra+jNOoFAl+iQv8paACVGbNJS
+   4FcG6MHtreZFxUvuiNiXWcRQnjntsoUcO55PYxRCqNZ/OI9Rf4pwcTfyq
+   Q==;
+X-CSE-ConnectionGUID: QEB3xeQpR1iCCyzpiaN9PA==
+X-CSE-MsgGUID: xKBKwQ9+QBW1gRsNflwgNg==
+X-IronPort-AV: E=McAfee;i="6800,10657,11476"; a="55879163"
+X-IronPort-AV: E=Sophos;i="6.16,267,1744095600"; 
+   d="scan'208";a="55879163"
+Received: from fmviesa003.fm.intel.com ([10.60.135.143])
+  by fmvoesa107.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 26 Jun 2025 08:35:07 -0700
+X-CSE-ConnectionGUID: da1akKF+TPKt+KsLuRnorA==
+X-CSE-MsgGUID: eSf8IE2iRhyFFzHiXvif7A==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.16,267,1744095600"; 
+   d="scan'208";a="156587108"
+Received: from ijarvine-mobl1.ger.corp.intel.com (HELO localhost) ([10.245.244.144])
+  by fmviesa003-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 26 Jun 2025 08:35:05 -0700
+From: =?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
+Date: Thu, 26 Jun 2025 18:35:02 +0300 (EEST)
+To: Shravan Kumar Ramani <shravankr@nvidia.com>
+cc: Vadim Pasternak <vadimp@nvidia.com>, 
+    David Thompson <davthompson@nvidia.com>, 
+    platform-driver-x86@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v2 2/2] platform/mellanox: mlxbf-pmc: Validate event/enable
+ input
+In-Reply-To: <7936743cf4d6b20c4ed25dc03722e3a7277aed70.1750245955.git.shravankr@nvidia.com>
+Message-ID: <d9c09ceb-1492-f323-352d-4e8899e30ea2@linux.intel.com>
+References: <cover.1750245955.git.shravankr@nvidia.com> <7936743cf4d6b20c4ed25dc03722e3a7277aed70.1750245955.git.shravankr@nvidia.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH net 1/4] virtio-net: ensure the received length does not
- exceed allocated size
-To: Jason Wang <jasowang@redhat.com>
-Cc: netdev@vger.kernel.org, "Michael S. Tsirkin" <mst@redhat.com>,
- Xuan Zhuo <xuanzhuo@linux.alibaba.com>, =?UTF-8?Q?Eugenio_P=C3=A9rez?=
- <eperezma@redhat.com>, Andrew Lunn <andrew+netdev@lunn.ch>,
- "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
- Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
- Alexei Starovoitov <ast@kernel.org>, Daniel Borkmann <daniel@iogearbox.net>,
- Jesper Dangaard Brouer <hawk@kernel.org>,
- John Fastabend <john.fastabend@gmail.com>,
- Stanislav Fomichev <sdf@fomichev.me>, virtualization@lists.linux.dev,
- linux-kernel@vger.kernel.org, bpf@vger.kernel.org
-References: <20250625160849.61344-1-minhquangbui99@gmail.com>
- <20250625160849.61344-2-minhquangbui99@gmail.com>
- <CACGkMEvioXkt3_zB-KijwhoUx5NS5xa0Jvd=w2fhBZFf3un1Ww@mail.gmail.com>
-Content-Language: en-US
-From: Bui Quang Minh <minhquangbui99@gmail.com>
-In-Reply-To: <CACGkMEvioXkt3_zB-KijwhoUx5NS5xa0Jvd=w2fhBZFf3un1Ww@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=US-ASCII
 
-On 6/26/25 09:34, Jason Wang wrote:
-> On Thu, Jun 26, 2025 at 12:10 AM Bui Quang Minh
-> <minhquangbui99@gmail.com> wrote:
->> In xdp_linearize_page, when reading the following buffers from the ring,
->> we forget to check the received length with the true allocate size. This
->> can lead to an out-of-bound read. This commit adds that missing check.
->>
->> Fixes: 4941d472bf95 ("virtio-net: do not reset during XDP set")
-> I think we should cc stable.
+On Wed, 18 Jun 2025, Shravan Kumar Ramani wrote:
 
-Okay, I'll do that in next version.
+> Before programming the event info, validate the event number received as input
+> by checking if it exists in the event_list. Also fix a typo in the comment for
+> the mlxbf_pmc_get_event_name routine to correctly mention that it returns the
+> event name when taking the event number as input, and not the other way round.
+> For the enable setting, the value should be only 0 or 1. Make this check common
+> for all scenarios in enable store.
+> 
+> Fixes: 423c3361855c ("platform/mellanox: mlxbf-pmc: Add support for BlueField-3")
+> Signed-off-by: Shravan Kumar Ramani <shravankr@nvidia.com>
+> Reviewed-by: David Thompson <davthompson@nvidia.com>
+> ---
+>  drivers/platform/mellanox/mlxbf-pmc.c | 11 +++++++----
+>  1 file changed, 7 insertions(+), 4 deletions(-)
+> 
+> diff --git a/drivers/platform/mellanox/mlxbf-pmc.c b/drivers/platform/mellanox/mlxbf-pmc.c
+> index 366c0cba447f..fcc3392ff150 100644
+> --- a/drivers/platform/mellanox/mlxbf-pmc.c
+> +++ b/drivers/platform/mellanox/mlxbf-pmc.c
+> @@ -1222,7 +1222,7 @@ static int mlxbf_pmc_get_event_num(const char *blk, const char *evt)
+>  	return -ENODEV;
+>  }
+>  
+> -/* Get the event number given the name */
+> +/* Get the event name given the number */
+>  static char *mlxbf_pmc_get_event_name(const char *blk, u32 evt)
+>  {
+>  	const struct mlxbf_pmc_events *events;
+> @@ -1799,6 +1799,9 @@ static ssize_t mlxbf_pmc_event_store(struct device *dev,
+>  		err = kstrtouint(buf, 0, &evt_num);
+>  		if (err < 0)
+>  			return err;
+> +
+> +		if (!mlxbf_pmc_get_event_name(pmc->block_name[blk_num], evt_num))
+> +			return -EINVAL;
+>  	}
+>  
+>  	if (strstr(pmc->block_name[blk_num], "l3cache"))
+> @@ -1889,6 +1892,9 @@ static ssize_t mlxbf_pmc_enable_store(struct device *dev,
+>  	if (err < 0)
+>  		return err;
+>  
+> +	if (en != 0 && en != 1)
+> +		return -EINVAL;
 
->
->> Signed-off-by: Bui Quang Minh <minhquangbui99@gmail.com>
->> ---
->>   drivers/net/virtio_net.c | 27 ++++++++++++++++++++++-----
->>   1 file changed, 22 insertions(+), 5 deletions(-)
->>
->> diff --git a/drivers/net/virtio_net.c b/drivers/net/virtio_net.c
->> index e53ba600605a..2a130a3e50ac 100644
->> --- a/drivers/net/virtio_net.c
->> +++ b/drivers/net/virtio_net.c
->> @@ -1797,7 +1797,8 @@ static unsigned int virtnet_get_headroom(struct virtnet_info *vi)
->>    * across multiple buffers (num_buf > 1), and we make sure buffers
->>    * have enough headroom.
->>    */
->> -static struct page *xdp_linearize_page(struct receive_queue *rq,
->> +static struct page *xdp_linearize_page(struct net_device *dev,
->> +                                      struct receive_queue *rq,
->>                                         int *num_buf,
->>                                         struct page *p,
->>                                         int offset,
->> @@ -1818,17 +1819,33 @@ static struct page *xdp_linearize_page(struct receive_queue *rq,
->>          page_off += *len;
->>
->>          while (--*num_buf) {
->> -               unsigned int buflen;
->> +               unsigned int headroom, tailroom, room;
->> +               unsigned int truesize, buflen;
->>                  void *buf;
->> +               void *ctx;
->>                  int off;
->>
->> -               buf = virtnet_rq_get_buf(rq, &buflen, NULL);
->> +               buf = virtnet_rq_get_buf(rq, &buflen, &ctx);
->>                  if (unlikely(!buf))
->>                          goto err_buf;
->>
->>                  p = virt_to_head_page(buf);
->>                  off = buf - page_address(p);
->>
->> +               truesize = mergeable_ctx_to_truesize(ctx);
-> This won't work for receive_small_xdp().
+This is using kstrtouint() but there's also kstrtobool() which would do 
+this check for you.
 
-If it is small mode, the num_buf == 1 and we don't get into the while loop.
+> +
+>  	if (pmc->block[blk_num].type == MLXBF_PMC_TYPE_CRSPACE) {
+>  		err = mlxbf_pmc_readl(pmc->block[blk_num].mmio_base +
+>  			MLXBF_PMC_CRSPACE_PERFMON_CTL(pmc->block[blk_num].counters),
+> @@ -1905,9 +1911,6 @@ static ssize_t mlxbf_pmc_enable_store(struct device *dev,
+>  			MLXBF_PMC_CRSPACE_PERFMON_CTL(pmc->block[blk_num].counters),
+>  			MLXBF_PMC_WRITE_REG_32, word);
+>  	} else {
+> -		if (en && en != 1)
+> -			return -EINVAL;
+> -
+>  		err = mlxbf_pmc_config_l3_counters(blk_num, false, !!en);
+>  		if (err)
+>  			return err;
+> 
 
->
->> +               headroom = mergeable_ctx_to_headroom(ctx);
->> +               tailroom = headroom ? sizeof(struct skb_shared_info) : 0;
->> +               room = SKB_DATA_ALIGN(headroom + tailroom);
->> +
->> +               if (unlikely(buflen > truesize - room)) {
->> +                       put_page(p);
->> +                       pr_debug("%s: rx error: len %u exceeds truesize %lu\n",
->> +                                dev->name, buflen,
->> +                                (unsigned long)(truesize - room));
->> +                       DEV_STATS_INC(dev, rx_length_errors);
->> +                       goto err_buf;
->> +               }
-> I wonder if this issue only affect XDP should we check other places?
-
-In small mode, we check the len with GOOD_PACKET_LEN in receive_small. 
-In mergeable mode, we have some checks over the place and this is the 
-only one I see we miss. In xsk, we check inside buf_to_xdp. However, in 
-the big mode, I feel like there is a bug.
-
-In add_recvbuf_big, 1 first page + vi->big_packets_num_skbfrags pages. 
-The pages are managed by a linked list. The vi->big_packets_num_skbfrags 
-is set in virtnet_set_big_packets
-
-     vi->big_packets_num_skbfrags = guest_gso ? MAX_SKB_FRAGS : 
-DIV_ROUND_UP(mtu, PAGE_SIZE);
-
-So the vi->big_packets_num_skbfrags can be fewer than MAX_SKB_FRAGS.
-
-In receive_big, we call to page_to_skb, there is a check
-
-     if (unlikely(len > MAX_SKB_FRAGS * PAGE_SIZE)) {
-         /* error case */
-     }
-
-But because the number of allocated buffer is 
-vi->big_packets_num_skbfrags + 1 and vi->big_packets_num_skbfrags can be 
-fewer than MAX_SKB_FRAGS, the check seems not enough
-
-     while (len) {
-         unsigned int frag_size = min((unsigned)PAGE_SIZE - offset, len);
-         skb_add_rx_frag(skb, skb_shinfo(skb)->nr_frags, page, offset,
-                 frag_size, truesize);
-         len -= frag_size;
-         page = (struct page *)page->private;
-         offset = 0;
-     }
-
-In the following while loop, we keep running based on len without NULL 
-check the pages linked list, so it may result into NULL pointer dereference.
-
-What do you think?
-
-Thanks,
-Quang Minh.
-
->
->> +
->>                  /* guard against a misconfigured or uncooperative backend that
->>                   * is sending packet larger than the MTU.
->>                   */
->> @@ -1917,7 +1934,7 @@ static struct sk_buff *receive_small_xdp(struct net_device *dev,
->>                  headroom = vi->hdr_len + header_offset;
->>                  buflen = SKB_DATA_ALIGN(GOOD_PACKET_LEN + headroom) +
->>                          SKB_DATA_ALIGN(sizeof(struct skb_shared_info));
->> -               xdp_page = xdp_linearize_page(rq, &num_buf, page,
->> +               xdp_page = xdp_linearize_page(dev, rq, &num_buf, page,
->>                                                offset, header_offset,
->>                                                &tlen);
->>                  if (!xdp_page)
->> @@ -2252,7 +2269,7 @@ static void *mergeable_xdp_get_buf(struct virtnet_info *vi,
->>           */
->>          if (!xdp_prog->aux->xdp_has_frags) {
->>                  /* linearize data for XDP */
->> -               xdp_page = xdp_linearize_page(rq, num_buf,
->> +               xdp_page = xdp_linearize_page(vi->dev, rq, num_buf,
->>                                                *page, offset,
->>                                                XDP_PACKET_HEADROOM,
->>                                                len);
->> --
->> 2.43.0
->>
+-- 
+ i.
 
 
