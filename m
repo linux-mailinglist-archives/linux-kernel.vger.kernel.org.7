@@ -1,57 +1,78 @@
-Return-Path: <linux-kernel+bounces-705045-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-705052-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 26040AEA487
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Jun 2025 19:40:38 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1C92AAEA494
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Jun 2025 19:42:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 459521C25077
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Jun 2025 17:40:53 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 37D914A0953
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Jun 2025 17:42:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6BBA52ECD16;
-	Thu, 26 Jun 2025 17:40:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B3A052EE26B;
+	Thu, 26 Jun 2025 17:42:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=collabora.com header.i=usama.anjum@collabora.com header.b="AX6ZuC3D"
-Received: from sender4-pp-f112.zoho.com (sender4-pp-f112.zoho.com [136.143.188.112])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ZIBBs1PB"
+Received: from mail-wr1-f54.google.com (mail-wr1-f54.google.com [209.85.221.54])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D49631F5828;
-	Thu, 26 Jun 2025 17:40:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.112
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750959626; cv=pass; b=cGbJZCib+ZI3lADW10euarzztp5Qz7uPLTefYdnwPXP6f6k/j2AhkLr1uwO9yONyP8NwczQU3uwZKPID0tu8Iw6PbMGKGgA17QUDrF0c5sWavDPU6jUvHHnc+A8en1j98RVgVGol1+N28KfaU67xJAmsiUJS76Q5+kRcj8srByk=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750959626; c=relaxed/simple;
-	bh=D+OrFF0y2Fir+Ix0NvFJdJwyQB6g9qXrFBDGSEHHH90=;
-	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
-	 In-Reply-To:Content-Type; b=cKU0nP17n0OG2TbMzab7Ej7FjCthMOiqOlPbvbRBWdyWChsEjus58Q2cw7omU73/+NXjb356u4tnx6lV0R8VVsDdPaKXFsbsHLxOGoWOmiihphJp4F7Q/nAqPz02lrDvaDHMeNgKNcM+8NV1GYotLM02v6g9PWrjRXNIOUgbSgs=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=usama.anjum@collabora.com header.b=AX6ZuC3D; arc=pass smtp.client-ip=136.143.188.112
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-ARC-Seal: i=1; a=rsa-sha256; t=1750959595; cv=none; 
-	d=zohomail.com; s=zohoarc; 
-	b=Mmb+f4ZWCUo9GBSmRldzmeJLMUdYDwzTZhy2HScX/XjewpqkPiL02caw56hcIiETnOBZLx6FOzC9T1vID61RI4AqMHVhtYDJ3P8XjZCDKl9EUBj4HUcYGSNgrsCNkgPhcA4Mia42ZYtrNcy/6cDihYuAAKS1MVdoQ+HNTwYNmfc=
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
-	t=1750959595; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
-	bh=ecYgXEsH7M5ZozoPfYHUQqxlKMweMDt5KaU45qVQwDM=; 
-	b=jZdljkBNAfewjMdXoSWqevLj/i6uKXJSK54w03Tg4EeFaJKeqFi3X/6Z+zJmhJ82LrvigWBOq484OzwVscMPhY34NLkjcMM0UCwEgCYPKhkCctNp0h/LSJC7xZwSuqFAhd+MDluIK9XqxaDlu25geR6vFEsVKDyy1HYVTmPe02c=
-ARC-Authentication-Results: i=1; mx.zohomail.com;
-	dkim=pass  header.i=collabora.com;
-	spf=pass  smtp.mailfrom=usama.anjum@collabora.com;
-	dmarc=pass header.from=<usama.anjum@collabora.com>
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1750959595;
-	s=zohomail; d=collabora.com; i=usama.anjum@collabora.com;
-	h=Message-ID:Date:Date:MIME-Version:Subject:Subject:From:From:To:To:Cc:Cc:References:In-Reply-To:Content-Type:Content-Transfer-Encoding:Message-Id:Reply-To;
-	bh=ecYgXEsH7M5ZozoPfYHUQqxlKMweMDt5KaU45qVQwDM=;
-	b=AX6ZuC3DutekJ1wSPD0J63Ol97yR27H6irJ3YO2TxLQA7WAlj3H1AuLOHfNnz6s8
-	pF/dXI3D+2iH9X19XUZfs72AyIKOjEciS1IX2Kc9We4oCrC2cOC9ej4lwG3mZTJDRYr
-	Bd2FjheyVRpD8uB/pdbfNNUU2ganW23lBaGui3Ic=
-Received: by mx.zohomail.com with SMTPS id 1750959592998994.6843598636191;
-	Thu, 26 Jun 2025 10:39:52 -0700 (PDT)
-Message-ID: <63fee713-34f0-4c76-bd38-8f2fc095849f@collabora.com>
-Date: Thu, 26 Jun 2025 22:39:45 +0500
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6D195202C50;
+	Thu, 26 Jun 2025 17:42:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.54
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1750959747; cv=none; b=nv6yDgWgjORShhWRF0nayMc6uQrc9pCJqUCP0gMNQ+6jbkkHEYXRFe+yHdOp/o191cnPSqX29bVhIbTnRisUKt25DdqwgkWENHh38K58SHPTawa59K/ZXm5lMb2UQVTJWGyjaMWYqzCW1YEz3cduyxJUr2x6y3M+J4cCNMWLPJw=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1750959747; c=relaxed/simple;
+	bh=d/uFaFpLqxiJWZje950XRpP9HEjDy0svn2RVhXaZP6w=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=WQGjZ/0Dd4WJ3OO0HaurlrTPdpanp1qwQGjJmi284VlNLX6UHuuaOwZNHENcFB2SqBYRg7WuWem1g0e7KitRAPPqJ3pyUmxyqXoUHIAbUmoePXtyCdZuYUm+E951DzXdAc7S+I+y0VwCwFmWCgrlhI8G2+jf354kfYAVaYfQCQ4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ZIBBs1PB; arc=none smtp.client-ip=209.85.221.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wr1-f54.google.com with SMTP id ffacd0b85a97d-3a536ecbf6fso765258f8f.2;
+        Thu, 26 Jun 2025 10:42:25 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1750959744; x=1751564544; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=9it6V+UE5SX4dDhUGK283b/ucph+OC15b+uAeGnEJBc=;
+        b=ZIBBs1PBblxWhuOkkVY84zVzw+nDZXUNniuDYQJrzSs87JGWyf38MmJKRMJi+4ibMg
+         lJ97AGpaiwQtd6A41uD7hS2Y7KOtTHc/266lRKvEiOaHhw+Ttm0aJhA99t2r0Ydv5/5T
+         gK+/lo4ILYWIZYDWxSYYc3J87Se1jSD7dmnihwMiBy7SFLmxO/EQtJ1q/+fnqCmGEnCv
+         SD5FbiGEy9T5SlkJkTtUMEJrGqtjfPds8zz9ftCfHP4gFwad00KTPTSHspm5GdgrpLYk
+         eKe7RYvOa1DYR3qdPLfuwwl1azOlsWHtZ80tPmCZhiBzQa35ksU6o4oo8MW71LxTzFqB
+         1HnQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1750959744; x=1751564544;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=9it6V+UE5SX4dDhUGK283b/ucph+OC15b+uAeGnEJBc=;
+        b=uNAesVnoZuko4vb/M73twto/y090a/c8TDn2/l2a8LYAV8rQHMv7lFzBVui3WGzcnw
+         At4tneR7Xv8BuR+JENHtyII98/8BvoIxrz89na1xKqSoNlI54/bKDTR2b7pkDURxSjBE
+         ktqdA53ExHzcjS/1QApuOWSvV35i5i+xgx7xxQRW56iAXM6DDFzGlstTkFc4iceMvFv9
+         l+j7TePq6h3sowqcr8AQyWz41XDtjVyoN/al0e5fpAX8E40PG8avC5cWZCBfj/P/L84e
+         JYtpXeK5GOJrXJe8inmr0eZ2Cj5f8Nqjv54AHRWlWaGQx2mIqS/R7ibW9ng/v1mUJKdx
+         YR1w==
+X-Forwarded-Encrypted: i=1; AJvYcCUPWTQUVFe8x8U+x4iVpwa0LMugiqFDU/ln52bYoPct5/V0ZkX/p35WFibUG9AQyfyfo0BNahSH5c1P@vger.kernel.org, AJvYcCVejSgnGeESX6WBOJ4qUEHK8aVcBr95/tr0Z29mXVc99Cyl0eBN7Za395DUmdoFoNWy/0uY+CM9/TIvh7X5@vger.kernel.org, AJvYcCWWvErnrz0tBlDz+BVeqkIucAUA8SlfhgbIsXzDVYxULGSr6ta6fY2VhROlu4mroOLF77mVje4Ic/BrRA==@vger.kernel.org, AJvYcCXKcC/CwnU4JsIzSybjBRnusWdO7F2P7FMy6DxG2IG3QL3LRpdy5pE8ygiVBVP9pM1ZpglG0A0fFUM24qTjnwE=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyQbjJ0dKqWWY3B6jAy3iyuAiIDhgrtWzzt0KnGDaX0Dz6xRSOi
+	sJ60ZbdpQEFGPI91zBMXtp47JvGhNF2AF01W/1OusebBuWBXjr0DjMkP
+X-Gm-Gg: ASbGncs2VTMqLbhLVxWs5xE9QU92vub5t8FZIvyAmwnoLTrRaMDs8FkGxMz3o8zuGTh
+	yyGNNoICDb/UztkzEUI4uXb1CCsM53PfZnCxRz/zlzLcMuXjMP8wCgUPHPXha3JCQXv+CjbfxvT
+	g0v3SFKshhaYlN/tPtNCsxzhjGNZKO31LwRX62H6qBzP91d6AlsfiUlYvT7CZo1xi4PMMTxn1a9
+	A0RxyBsO1YidlmV9eeKuA9eYWeu1bGZw/kxzGHpjxegkwX0bveOBV0f7rQEtFgta84rGwZ/d3Ml
+	56hHnrk4O0Nsi5Q6dfdma1rn5EzSHZhWXVt5v6OHK2iGMe/trCBHfoMBf6sqEsgeg2KkOLU=
+X-Google-Smtp-Source: AGHT+IGr2M9MxH/JfMsZ07lpE1ikbaPFCtQUD7frnfdUMbPRMyzGWfcYKWrr5HHz3Nw1g/Fqcy5Sag==
+X-Received: by 2002:a05:6000:2082:b0:3a3:7ba5:93a5 with SMTP id ffacd0b85a97d-3a8feb85191mr466394f8f.26.1750959743398;
+        Thu, 26 Jun 2025 10:42:23 -0700 (PDT)
+Received: from [10.38.1.85] ([188.39.32.4])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-453823b6c21sm56282555e9.29.2025.06.26.10.42.22
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 26 Jun 2025 10:42:23 -0700 (PDT)
+Message-ID: <31804bbf-1a0b-4312-8db6-532a008528a2@gmail.com>
+Date: Thu, 26 Jun 2025 18:40:06 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -59,102 +80,76 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [Bug Report] mhi: ath11k: dma_alloc_coherent() failures during
- resume
-From: Muhammad Usama Anjum <usama.anjum@collabora.com>
-To: Manivannan Sadhasivam <mani@kernel.org>,
- Jeff Johnson <jjohnson@kernel.org>, quic_bqiang@quicinc.com,
- jeff.hugo@oss.qualcomm.com
-Cc: mhi@lists.linux.dev, linux-arm-msm@vger.kernel.org,
- linux-kernel@vger.kernel.org, ath11k@lists.infradead.org,
- linux-wireless@vger.kernel.org, ath12k@lists.infradead.org,
- sumit.garg@kernel.org
-References: <ead32f5b-730a-4b81-b38f-93d822f990c6@collabora.com>
+Subject: Re: [PATCH v8 4/9] rust: acpi: add `acpi::DeviceId` abstraction
+To: Danilo Krummrich <dakr@kernel.org>
+Cc: "Rafael J . Wysocki" <rafael@kernel.org>,
+ Alex Gaynor <alex.gaynor@gmail.com>,
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ Miguel Ojeda <ojeda@kernel.org>, Rob Herring <robh@kernel.org>,
+ Saravana Kannan <saravanak@google.com>, Alex Hung <alex.hung@amd.com>,
+ Andrew Morton <akpm@linux-foundation.org>, Jakub Kicinski <kuba@kernel.org>,
+ Jonathan Cameron <Jonathan.Cameron@huawei.com>,
+ Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+ Mauro Carvalho Chehab <mchehab+huawei@kernel.org>,
+ Remo Senekowitsch <remo@buenzli.dev>, Tamir Duberstein <tamird@gmail.com>,
+ Viresh Kumar <viresh.kumar@linaro.org>,
+ Wedson Almeida Filho <wedsonaf@gmail.com>,
+ Xiangfei Ding <dingxiangfei2009@gmail.com>, devicetree@vger.kernel.org,
+ linux-acpi@vger.kernel.org, linux-kernel@vger.kernel.org,
+ rust-for-linux@vger.kernel.org, =?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?=
+ <bjorn3_gh@protonmail.com>, Alice Ryhl <aliceryhl@google.com>,
+ Andreas Hindborg <a.hindborg@kernel.org>, Benno Lossin <lossin@kernel.org>,
+ Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>,
+ Len Brown <lenb@kernel.org>, Trevor Gross <tmgross@umich.edu>
+References: <20250620150914.276272-1-igor.korotin.linux@gmail.com>
+ <20250620152425.285683-1-igor.korotin.linux@gmail.com>
+ <c5d750fd-ffcf-4d07-bfff-ebe206faa41a@kernel.org>
 Content-Language: en-US
-In-Reply-To: <ead32f5b-730a-4b81-b38f-93d822f990c6@collabora.com>
+From: Igor Korotin <igor.korotin.linux@gmail.com>
+In-Reply-To: <c5d750fd-ffcf-4d07-bfff-ebe206faa41a@kernel.org>
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-ZohoMailClient: External
+Content-Transfer-Encoding: 8bit
 
-Hi,
 
-I'm trying to understand ath11k_core_reconfigure_on_crash(). It seems after
-every suspend/hibernate cycle, the hal and dp specifically are de-initialized
-and initialized again to have clean state again to start working with firmware.
-When there's memory pressure, driver isn't able to get the free-ed dma memory
-area again.
 
-The name of the function, ath11k_core_reconfigure_on_crash() suggests that we
-are recovering from crash and that's why all of the states of different
-components are being allocated cleanly from the start. But we aren't resuming
-from crash, instead we are resuming from suspend which was handled by the driver
-itself. So this state cleanup must have been done by the suspend handler.
+On 6/26/25 16:25, Danilo Krummrich wrote:
+> On 6/20/25 5:24 PM, Igor Korotin wrote:
+>> +impl DeviceId {
+>> +    const ACPI_ID_LEN: usize = 16;
+>> +
+>> +    /// Create a new device id from an ACPI 'id' string.
+>> +    pub const fn new<const N: usize>(id: &[u8; N]) -> Self {
+> 
+> Didn't notice before, but why was this silently changed from &CStr to
+> &[u8; N]
+> from v6 to v7?
+> 
+>> +        build_assert!(N <= Self::ACPI_ID_LEN, "ID exceeds 16 bytes");
+>> +        // Replace with `bindings::acpi_device_id::default()` once
+>> stabilized for `const`.
+>> +        // SAFETY: FFI type is valid to be zero-initialized.
+>> +        let mut acpi: bindings::acpi_device_id = unsafe
+>> { core::mem::zeroed() };
+>> +        let mut i = 0;
+>> +        while i < N {
+>> +            acpi.id[i] = id[i];
+>> +            i += 1;
+>> +        }
+>> +
+>> +        Self(acpi)
+>> +    }
+>> +}
 
-Any pointers on how to avoid going through deinit-init cycle of whole objects
-every time?
+In v6 I was asked to change assert! (runtime) to build_assert! (build time)
+It was as follows:
+
+> +    pub const fn new(id: &'static CStr) -> Self {
+> +        assert!(id.len() <= Self::ACPI_ID_LEN, "ID exceeds 16 bytes");
+
+but id.len() breaks const context and so build_assert! triggers
+assertion. If I needed to explicitly describe change from CStr to
+[u8;20], then it's my bad.
 
 Thanks,
-Usama
-
-On 6/19/25 3:27 PM, Muhammad Usama Anjum wrote:
-> Hi,
-> 
-> When there is memory pressure during resume and no DMA memory is available,
-> the ath11k driver fails to resume. The driver currently frees its DMA memory
-> during suspend or hibernate, and attempts to re-allocate it during resume.
-> However, if the DMA memory has been consumed by other software in the
-> meantime, these allocations can fail, leading to critical failures in the WiFi
-> driver.
-> 
-> Although I have recently fixed several instances to ensure DMA memory is not
-> freed once allocated, we continue to receive reports of failures. I was
-> preparing to submit a patch for the another case, but this issue cannot be
-> fully resolved as long as even one DMA allocation remains in the resume path.
-> 
-> The following functions are allocating dma memory in resume path:
-> 
-> <function> <size> <index>
-> mhi_init_dev_ctxt dma_alloc_coherent(5632)
-> mhi_init_dev_ctxt dma_alloc_coherent(88)
-> mhi_alloc_aligned_ring dma_alloc_coherent(1023)
-> mhi_alloc_aligned_ring dma_alloc_coherent(8191)
-> mhi_init_dev_ctxt dma_alloc_coherent(44)
-> mhi_alloc_aligned_ring dma_alloc_coherent(4095)
-> mhi_alloc_aligned_ring dma_alloc_coherent(2047)
-> mhi_alloc_aligned_ring dma_alloc_coherent(2047)
-> ath11k_hal_alloc_cont_rdp dma_alloc_coherent(688)
-> [ath11k_hal_alloc_cont_wrp dma_alloc_coherent(180)
-> ath11k_dp_srng_setup dma_alloc_coherent(262143)
-> ath11k_dp_link_desc_bank_alloc dma_alloc_coherent(2097152) 0
-> ath11k_dp_link_desc_bank_alloc dma_alloc_coherent(2097152) 1
-> ath11k_dp_link_desc_bank_alloc dma_alloc_coherent(384) 2
-> ath11k_dp_srng_setup dma_alloc_coherent(2055)
-> ath11k_dp_srng_setup dma_alloc_coherent(1031)
-> ath11k_dp_srng_setup dma_alloc_coherent(1159)
-> ath11k_dp_srng_setup dma_alloc_coherent(16391)
-> ath11k_dp_srng_setup dma_alloc_coherent(1048583)
-> ath11k_dp_srng_setup dma_alloc_coherent(1031)
-> ath11k_dp_srng_setup dma_alloc_coherent(32775)
-> ath11k_dp_srng_setup dma_alloc_coherent(8199)
-> ath11k_dp_srng_setup dma_alloc_coherent(10247)
-> ath11k_dp_srng_setup dma_alloc_coherent(212999)
-> ath11k_dp_srng_setup dma_alloc_coherent(131079)
-> ath11k_dp_srng_setup dma_alloc_coherent(131079)
-> ath11k_dp_srng_setup dma_alloc_coherent(131079)
-> ath11k_dp_srng_setup dma_alloc_coherent(131079)
-> ath11k_dp_srng_setup dma_alloc_coherent(32775)
-> ath11k_dp_srng_setup dma_alloc_coherent(8199)
-> ath11k_dp_srng_setup dma_alloc_coherent(8199)
-> ath11k_dp_srng_setup dma_alloc_coherent(32775)
-> ath11k_dp_srng_setup dma_alloc_coherent(32775)
-> ath11k_dp_srng_setup dma_alloc_coherent(8199)
-> ath11k_dp_srng_setup dma_alloc_coherent(8199)
-> 
-> Let's discuss the general possible solution for this. I'm sure a lot
-> of other drivers would be facing the same kind of issues. What can be
-> general approach to solve this problem.
-> 
-> Regards,
-> Muhammad Usama Anjum
-
+Igor
 
