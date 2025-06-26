@@ -1,93 +1,170 @@
-Return-Path: <linux-kernel+bounces-704247-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-704263-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 23FC2AE9B5E
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Jun 2025 12:31:49 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 04757AE9B7B
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Jun 2025 12:35:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id AE6EB7B60C9
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Jun 2025 10:28:21 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 905FD6A4D7A
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Jun 2025 10:33:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 97CC226E146;
-	Thu, 26 Jun 2025 10:27:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F213325B30D;
+	Thu, 26 Jun 2025 10:28:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="pmOV8x9j"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="n1r/ohTW"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DE89325CC7C;
-	Thu, 26 Jun 2025 10:27:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 755012DD60C;
+	Thu, 26 Jun 2025 10:28:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750933644; cv=none; b=fa4QLAr1nAUvyTzrrgob+VvlboSnpHkscnk3Fwy3D7Zs7iCkQhr1ZbR29oSu7q4h9vKrfGbC07dDi1ndpaCB3DjroeUsCLHCY899L7tTHu0ZmUIZ7So7lWZThvMaD5xQ8y0I4K8G4QXFow57Le5QG39T9U1vjktZA6OWI6KeP6E=
+	t=1750933720; cv=none; b=l0FHZVVibPpZBENFlqD3AUCRhHZt71VcY3DogVewRDvZsjRzHpogoB+Ejl6yOCYVDKlvIm8+Ta3Vp4c20mkpVcw/5zKoVlkIQ9iTU6mONmkYJOQ21EecP3B/f4qvMR5tMIdWqg4UuPQtlidTQZaXY01xmbGT+/EWIpMQj1KaZkI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750933644; c=relaxed/simple;
-	bh=p8rBo1Y5Lr+NfYKS+dwWCGs6na8FSui3ve5k7KPDi08=;
-	h=Mime-Version:Content-Type:Date:Message-Id:Cc:Subject:From:To:
-	 References:In-Reply-To; b=Mwi+semrzjtQVgQzI0Rscl0b25Aj+zPoXolDMkAnXBKq9905g7MqCqqvnDMzAQsRP58NAP7vUUZlidg+LL80jFA0Wp+yVrq0Zl/RPnjtOARxFSke4hTsaSwY/NSliTGJN4lSzQtrrn4VMhvO4/Lk4JaJmU0y2DYoBIZaSfAk1s8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=pmOV8x9j; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1B035C4CEF4;
-	Thu, 26 Jun 2025 10:27:19 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1750933643;
-	bh=p8rBo1Y5Lr+NfYKS+dwWCGs6na8FSui3ve5k7KPDi08=;
-	h=Date:Cc:Subject:From:To:References:In-Reply-To:From;
-	b=pmOV8x9jxpQmesCFhUrzfIZ9xHdzYhnUDhm1qETxFu4Zq2qvZtqrpt4z6KlyJsldZ
-	 JGUBnmF4bBGXN0zXTz67Jwb/T/qV9D7w7hfzaohTms6x5GgNqXQhHeHt1fU9FuwZtO
-	 xEB6JB8JBIeb/F/D0BDP6nEVKpBpeg2BVWXVP8C1Z5nURvkeqtguzLBLrJlGLW77s2
-	 T9W/nxOx1cpYbxI1TTL2wWYid9DFC+JTsqGtBibu887+o0Tp3GX/gIhPtRFJmQY8g2
-	 dR8uBamPizT/ZgCcAZsRDoMedJ6wajSCwFiXDMqVK3OTXINRXEK4iyEzaBq2lpYI6U
-	 P5YAsSDdOH1tg==
+	s=arc-20240116; t=1750933720; c=relaxed/simple;
+	bh=bvpOkAMpzHS8oh7L3wWFi/ltw7jkDSBZk8sItDcmbAY=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=awt366ahcSwBDBUuXD8IzsvQ5zlErhxcS4cSaS4v3WbCBb0So4e5FjcDJub3qRwI063e5mRrA9pHEH2WmEQQxm7ksTxtq1xpk96bmIaG7ZblTbiXlpnunrv/wdyrQ6h2WHWZ1qbKTED58OeTgpp0uzmAwc6bPn2sMV4gfFcXKFM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=n1r/ohTW; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=qualcomm.com
+Received: from pps.filterd (m0279871.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 55Q9jU0N008621;
+	Thu, 26 Jun 2025 10:28:35 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:date:from:message-id:mime-version
+	:subject:to; s=qcppdkim1; bh=P9H9I0Zid2ElxZzG9nHIoJCCkbfatFdEgx7
+	axb/TZ/w=; b=n1r/ohTW4bo6LGt0tyiUCdJ0/iZN1FW5OHz1hT3yF7WoYfAmJdc
+	FUXRxFPnuZm3TMXAYp5akc0/dzCs4JmIbZE9lZIsqzInWKsvsktIQ5SvCZ4Jrntk
+	0vD4qY02xvJC8qflS7Mw+TINfACfxgibtMPxnaIv3QYUJh+qgHLMZn9YFuFasWPP
+	eNot2umQIGcZjzDJX2vULiVGCGT53JSxqAiQOS6fU9X8NH8kNVJt2phpu4S7KWb0
+	wB4lQTGWtqbpRqb2XzRyAwTN+K5su686yClLHREcgEYF4qrHby5WJzwO1Sc2L+0x
+	zvTarX7HkY/F1xKvCMAb8IL21YcJI1bKxMA==
+Received: from apblrppmta02.qualcomm.com (blr-bdr-fw-01_GlobalNAT_AllZones-Outside.qualcomm.com [103.229.18.19])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 47fbhqsd7q-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 26 Jun 2025 10:28:34 +0000 (GMT)
+Received: from pps.filterd (APBLRPPMTA02.qualcomm.com [127.0.0.1])
+	by APBLRPPMTA02.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTP id 55QASTGG024436;
+	Thu, 26 Jun 2025 10:28:29 GMT
+Received: from pps.reinject (localhost [127.0.0.1])
+	by APBLRPPMTA02.qualcomm.com (PPS) with ESMTPS id 47gph7tebp-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 26 Jun 2025 10:28:29 +0000
+Received: from APBLRPPMTA02.qualcomm.com (APBLRPPMTA02.qualcomm.com [127.0.0.1])
+	by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 55QASScs024431;
+	Thu, 26 Jun 2025 10:28:28 GMT
+Received: from hu-devc-hyd-u22-c.qualcomm.com ([10.213.97.252])
+	by APBLRPPMTA02.qualcomm.com (PPS) with ESMTPS id 55QASSr6024429
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 26 Jun 2025 10:28:28 +0000
+Received: by hu-devc-hyd-u22-c.qualcomm.com (Postfix, from userid 4047106)
+	id 764EE513; Thu, 26 Jun 2025 15:58:27 +0530 (+0530)
+From: Viken Dadhaniya <viken.dadhaniya@oss.qualcomm.com>
+To: andersson@kernel.org, konradybcio@kernel.org, robh@kernel.org,
+        krzk+dt@kernel.org, conor+dt@kernel.org, linux-arm-msm@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc: quic_msavaliy@quicinc.com, quic_anupkulk@quicinc.com,
+        Viken Dadhaniya <viken.dadhaniya@oss.qualcomm.com>
+Subject: [PATCH 1/1] arm64: dts: qcom: qcs615: add missing dt property in QUP SEs
+Date: Thu, 26 Jun 2025 15:58:26 +0530
+Message-Id: <20250626102826.3422984-1-viken.dadhaniya@oss.qualcomm.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
-Date: Thu, 26 Jun 2025 12:27:18 +0200
-Message-Id: <DAWE690DWP9A.10I5FIJSZDSR6@kernel.org>
-Cc: <gregkh@linuxfoundation.org>, <rafael@kernel.org>, <ojeda@kernel.org>,
- <alex.gaynor@gmail.com>, <gary@garyguo.net>, <bjorn3_gh@protonmail.com>,
- <a.hindborg@kernel.org>, <aliceryhl@google.com>, <tmgross@umich.edu>,
- <david.m.ertman@intel.com>, <ira.weiny@intel.com>, <leon@kernel.org>,
- <kwilczynski@kernel.org>, <bhelgaas@google.com>,
- <rust-for-linux@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
- <linux-pci@vger.kernel.org>
-Subject: Re: [PATCH v3 3/4] rust: devres: get rid of Devres' inner Arc
-From: "Benno Lossin" <lossin@kernel.org>
-To: "Danilo Krummrich" <dakr@kernel.org>, "Boqun Feng"
- <boqun.feng@gmail.com>
-X-Mailer: aerc 0.20.1
-References: <20250624215600.221167-1-dakr@kernel.org>
- <20250624215600.221167-4-dakr@kernel.org> <aFzI5L__OcB9hqdG@Mac.home>
- <aF0aiHhCuHjLFIij@pollux>
-In-Reply-To: <aF0aiHhCuHjLFIij@pollux>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
+X-QCInternal: smtphost
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: gQXf_YexrHdA1x2wpDeQWhWqMIzYxZSG
+X-Authority-Analysis: v=2.4 cv=Id+HWXqa c=1 sm=1 tr=0 ts=685d20d2 cx=c_pps
+ a=Ou0eQOY4+eZoSc0qltEV5Q==:117 a=Ou0eQOY4+eZoSc0qltEV5Q==:17
+ a=6IFa9wvqVegA:10 a=EUspDBNiAAAA:8 a=606z3SnXk7aKuM2rapkA:9
+X-Proofpoint-GUID: gQXf_YexrHdA1x2wpDeQWhWqMIzYxZSG
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNjI2MDA4NyBTYWx0ZWRfX8tnHkpHTgZjb
+ snah0ShFoqw9yHNiI5F4pKuCwYFShwsKhnPv8AZ2Uj847kKQG0rM4+1YwT1HDfTa9AlObMkrzbv
+ QyXoxsDKxh5VzS2jb7YzXUJV2F5KYHpIlVlX6VwPqmpsKkxUl3ijK8yQpS5iTZKhVwn0fJ6Q5aY
+ lfDg8VSEmm7ZWZ3RSSkvHiEiniYjfD9xc23lSE89pFEtkxNEYumkMKdeSHZ/Zf2Hw02FpvkusaL
+ F5mqNqDkEGN+anUz9ML/LER/VQl7an29CcB2YoNmcqb4Pe+tpTF/i9f2m9kL+KgFCcePFfiKsSI
+ 8GdNh3j//Tayxc7NFy7m3wjh91lZ2MIdUXNm2w6Gda0YpjTYtjucgQRWOdp8CCuechim1DxbZDh
+ 4n+42WWzTGWizBLqEdoNB8WB3x4zeP2FNDmggQ0hmS8X6OzfwMaaTRApJOPKCwz2/IM8QnEJ
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.7,FMLib:17.12.80.40
+ definitions=2025-06-26_05,2025-06-25_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ spamscore=0 priorityscore=1501 mlxlogscore=932 phishscore=0 bulkscore=0
+ clxscore=1015 impostorscore=0 mlxscore=0 lowpriorityscore=0 malwarescore=0
+ suspectscore=0 adultscore=0 classifier=spam authscore=0 authtc=n/a authcc=
+ route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2505280000
+ definitions=main-2506260087
 
-On Thu Jun 26, 2025 at 12:01 PM CEST, Danilo Krummrich wrote:
-> On Wed, Jun 25, 2025 at 09:13:24PM -0700, Boqun Feng wrote:
->> On Tue, Jun 24, 2025 at 11:54:01PM +0200, Danilo Krummrich wrote:
->> [...]
->> > +#[pin_data(PinnedDrop)]
->> > +pub struct Devres<T> {
->>=20
->> It makes me realize: I think we need to make `T` being `Send`? Because
->> the devm callback can happen on a different thread other than
->> `Devres::new()` and the callback may drop `T` because of revoke(), so we
->> are essientially sending `T`. Alternatively we can make `Devres::new()`
->> and its friend require `T` being `Send`.
->>=20
->> If it's true, we need a separate patch that "Fixes" this.
->
-> Indeed, that needs a fix.
+Add the missing required-opps and operating-points-v2 properties to
+several I2C, SPI, and UART nodes in the QUP SEs.
 
-Oh and we have no `'static` bound on `T` either... We should require
-that as well.
-
+Signed-off-by: Viken Dadhaniya <viken.dadhaniya@oss.qualcomm.com>
 ---
-Cheers,
-Benno
+ arch/arm64/boot/dts/qcom/qcs615.dtsi | 6 ++++++
+ 1 file changed, 6 insertions(+)
+
+diff --git a/arch/arm64/boot/dts/qcom/qcs615.dtsi b/arch/arm64/boot/dts/qcom/qcs615.dtsi
+index bfbb21035492..e033b53f0f0f 100644
+--- a/arch/arm64/boot/dts/qcom/qcs615.dtsi
++++ b/arch/arm64/boot/dts/qcom/qcs615.dtsi
+@@ -631,6 +631,7 @@ &mc_virt SLAVE_EBI1 QCOM_ICC_TAG_ALWAYS>,
+ 				interconnect-names = "qup-core",
+ 						     "qup-config";
+ 				power-domains = <&rpmhpd RPMHPD_CX>;
++				operating-points-v2 = <&qup_opp_table>;
+ 				status = "disabled";
+ 			};
+ 
+@@ -654,6 +655,7 @@ &config_noc SLAVE_QUP_0 QCOM_ICC_TAG_ALWAYS>,
+ 						     "qup-config",
+ 						     "qup-memory";
+ 				power-domains = <&rpmhpd RPMHPD_CX>;
++				required-opps = <&rpmhpd_opp_low_svs>;
+ 				dmas = <&gpi_dma0 0 1 QCOM_GPI_I2C>,
+ 				       <&gpi_dma0 1 1 QCOM_GPI_I2C>;
+ 				dma-names = "tx",
+@@ -681,6 +683,7 @@ &config_noc SLAVE_QUP_0 QCOM_ICC_TAG_ALWAYS>,
+ 						     "qup-config",
+ 						     "qup-memory";
+ 				power-domains = <&rpmhpd RPMHPD_CX>;
++				required-opps = <&rpmhpd_opp_low_svs>;
+ 				dmas = <&gpi_dma0 0 2 QCOM_GPI_I2C>,
+ 				       <&gpi_dma0 1 2 QCOM_GPI_I2C>;
+ 				dma-names = "tx",
+@@ -703,6 +706,7 @@ &mc_virt SLAVE_EBI1 QCOM_ICC_TAG_ALWAYS>,
+ 				interconnect-names = "qup-core",
+ 						     "qup-config";
+ 				power-domains = <&rpmhpd RPMHPD_CX>;
++				operating-points-v2 = <&qup_opp_table>;
+ 				dmas = <&gpi_dma0 0 2 QCOM_GPI_SPI>,
+ 				       <&gpi_dma0 1 2 QCOM_GPI_SPI>;
+ 				dma-names = "tx",
+@@ -728,6 +732,7 @@ &mc_virt SLAVE_EBI1 QCOM_ICC_TAG_ALWAYS>,
+ 				interconnect-names = "qup-core",
+ 						     "qup-config";
+ 				power-domains = <&rpmhpd RPMHPD_CX>;
++				operating-points-v2 = <&qup_opp_table>;
+ 				status = "disabled";
+ 			};
+ 
+@@ -751,6 +756,7 @@ &config_noc SLAVE_QUP_0 QCOM_ICC_TAG_ALWAYS>,
+ 						     "qup-config",
+ 						     "qup-memory";
+ 				power-domains = <&rpmhpd RPMHPD_CX>;
++				required-opps = <&rpmhpd_opp_low_svs>;
+ 				dmas = <&gpi_dma0 0 3 QCOM_GPI_I2C>,
+ 				       <&gpi_dma0 1 3 QCOM_GPI_I2C>;
+ 				dma-names = "tx",
+-- 
+2.34.1
+
 
