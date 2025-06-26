@@ -1,91 +1,129 @@
-Return-Path: <linux-kernel+bounces-705429-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-705431-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3869AAEA96F
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Jun 2025 00:14:28 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0EC74AEA973
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Jun 2025 00:15:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6B8674E1C87
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Jun 2025 22:14:28 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id F2A781C434F7
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Jun 2025 22:15:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5C17B261594;
-	Thu, 26 Jun 2025 22:14:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C3202202C46;
+	Thu, 26 Jun 2025 22:15:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="tLYfMXdC"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="YfVfAT8S"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AEB1323B634;
-	Thu, 26 Jun 2025 22:14:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 308A515278E
+	for <linux-kernel@vger.kernel.org>; Thu, 26 Jun 2025 22:15:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750976060; cv=none; b=kdLOHwTyYlPvWO4qal3RieKCBgO0BcRjw1C99Whz73bLzS4i31kJSbDRdkMdcHy4AbWqtU+CuMsDSYWMn6pB1islcULw51/v7rjaV7R57flWIZz/jLO8AcvukYJf1TQD7TSleTajNNWGxcTJgGtVdAH9o4+82OCJVvscMIdZlNw=
+	t=1750976136; cv=none; b=DXLMZs4kl45HpJyv/e1TDVtrWCj0k4LKGPr6dU5amhyhBWJKOuYDIbjdeKcPk7F+29z9WQrGXWGt3A+5/Bl92L5b5OTr+OVVFnXFp3fY2BbmWRHZs6zVbjixr1iNhJFrTISECKTYDg3wVCQQor9/b3XfAyB6Ppaht/QHYmkVkKI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750976060; c=relaxed/simple;
-	bh=NdFw2ADpTfpWgA0EQty53QwutKobBhj7JUQ3fk3v3jc=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=ppROY71+Jwe1I1KEhxEVi7ikzwqYly2tMpdY5TAn6TSCIy8eBrUbIKEQ6z27gCVq+KK+tf6UMY5JPMqWR7yLDWNn6ABfudNUe/na2VED89M7rNKvKLa+NpNbd7J0y14U6PawtKe9Q7EZf/TTrJWdBi0uHzwqJOukw29L2letQjc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=tLYfMXdC; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id DABFEC4CEEB;
-	Thu, 26 Jun 2025 22:14:19 +0000 (UTC)
+	s=arc-20240116; t=1750976136; c=relaxed/simple;
+	bh=9/WMYwYLlEeqFuoZQ4J4Yd1XfADAN6Jxe9RxIhwAQPo=;
+	h=Date:From:To:cc:Subject:Message-ID:MIME-Version:Content-Type; b=iqP2phyifGxlIY8uSKzEtB7kgGAuh+3dOA4jsiWZlmG2g1GgOGR3TFaW4Lph6ImqSHE/3WESXPqavx5UF1oeYF4vzjGTbgvoC8lA2lfoUxpYW4fZbAwhB0xnuJSsSY34zQ0rKY7pGBrURyvxp9kQdYaKUqtFjpYIEv387ZnQKU0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=YfVfAT8S; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6B2F6C4CEEB;
+	Thu, 26 Jun 2025 22:15:35 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1750976060;
-	bh=NdFw2ADpTfpWgA0EQty53QwutKobBhj7JUQ3fk3v3jc=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
-	b=tLYfMXdCW6YGCUJHyniUaCmkNb0lqs7cdAY65UBz4bkI5WMCtUqTCK4qqcdTnXtyw
-	 kpsW0gE81tmoVoxhxuCCDDE2oUQL6IFSUUFJM1nZI+QeEQrmkkGzoSeCvinzRrme7l
-	 4dT/KhxsSUkbqz7GWorCOGv3hSjPplJDbNF1V4cE09akN8IlG3jMaKE+ijUDziSRVa
-	 iJmGaEz4jZ7/wmgH/w263OrbDqTuSGQz5+p7BaP9dTvSm2C+HtfMM6ykN7wxoVOAIU
-	 99e9KHEAvHV9baLK1Ea39f0tuZ9oeChnjjFJXnVF+OqXBzQV6EBCxmwMpWIQm6xZCQ
-	 CIIlddlDGQ/EA==
-From: Vinod Koul <vkoul@kernel.org>
-To: dmaengine@vger.kernel.org, linux-kernel@vger.kernel.org, 
- linux-spi@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
- =?utf-8?q?Bence_Cs=C3=B3k=C3=A1s?= <csokas.bence@prolan.hu>
-Cc: Mark Brown <broonie@kernel.org>, 
- Nicolas Ferre <nicolas.ferre@microchip.com>, 
- Alexandre Belloni <alexandre.belloni@bootlin.com>, 
- Claudiu Beznea <claudiu.beznea@tuxon.dev>, 
- "Rafael J. Wysocki" <rafael@kernel.org>, 
- Tudor Ambarus <tudor.ambarus@linaro.org>
-In-Reply-To: <20250610082256.400492-1-csokas.bence@prolan.hu>
-References: <20250610082256.400492-1-csokas.bence@prolan.hu>
-Subject: Re: (subset) [PATCH v7 0/2] Add `devm_dma_request_chan()` to
- simplify probe path in atmel-quadspi.c
-Message-Id: <175097605979.58944.6982488308454095610.b4-ty@kernel.org>
-Date: Thu, 26 Jun 2025 15:14:19 -0700
+	s=k20201202; t=1750976135;
+	bh=9/WMYwYLlEeqFuoZQ4J4Yd1XfADAN6Jxe9RxIhwAQPo=;
+	h=Date:From:To:cc:Subject:From;
+	b=YfVfAT8SZZ31vkSXUmja/2Yqzs772fpFs+qpn3ZsH5Ye9Ln0QZ22d1La8pIXvV65C
+	 L7QcTSrKFf5Js12ggia03zmuIC7PWpLhJmxXHg68UC7LGfxT7vPvHx54Q3Crm3fSGE
+	 BqA1jSEBCT8pngaYh/WN/qkK3Xvjxxmq6P+ht/qMsEwLlbATiAbVagjmA/cb4O+v8o
+	 qC05le+G1jabutTls7exIf3IDUugdg9Uvj27Q8j99ePgBziyUVS0e56xKndLmrDcDU
+	 FxhVpBA6gX8+8w7rpWIIH9mWhKfBGMy3JHxSHmKogNN5/jVY86uV+hfQf8syYe315t
+	 8La3euSKgLwpw==
+Date: Fri, 27 Jun 2025 00:15:30 +0200 (CEST)
+From: Jiri Kosina <jikos@kernel.org>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+cc: linux-kernel@vger.kernel.org, Benjamin Tissoires <bentiss@kernel.org>
+Subject: [GIT PULL] HID fixes
+Message-ID: <87p88249-s198-rq33-77p1-17qnr911436o@xreary.bet>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-X-Mailer: b4 0.13.0
+Content-Type: text/plain; charset=US-ASCII
 
+Linus,
 
-On Tue, 10 Jun 2025 10:22:52 +0200, Bence Csókás wrote:
-> The probe function of the atmel-quadspi driver got quite convoluted,
-> especially since the addition of SAMA7G5 support, that was forward-ported
-> from an older vendor kernel. To alleivate this - and similar problems in
-> the future - an effort was made to migrate as many functions as possible,
-> to their devm_ managed counterparts. Patch 1/2 adds the new
-> `devm_dma_request_chan()` function. Patch 2/2 then uses this APIs to
-> simplify the probe() function.
-> 
-> [...]
+please pull from
 
-Applied, thanks!
+  git://git.kernel.org/pub/scm/linux/kernel/git/hid/hid.git tags/hid-for-linus-2025062701
 
-[1/2] dma: Add devm_dma_request_chan()
-      commit: 56137a53f8ebb400f4098ca26ef18934e9a4de45
+to receive fixes for HID subsystem; namely:
 
-Best regards,
+=====
+- fix for stalls during suspend/resume cycles with hid-nintendo (Daniel 
+  J. Ogorchock)
+- memory leak and reference count fixes in hid-wacom and in-appletb-kdb 
+  (Qasim Ijaz)
+- race condition (leading to kernel crash) fix during device removal in 
+  hid-wacom (Thomas Zeitlhofer)
+- fix for missed interrupt in intel-thc-hid (Intel-thc-hid:)
+- support for a bunch of new device IDs
+=====
+
+Thanks.
+
+----------------------------------------------------------------
+Akira Inoue (1):
+      HID: lenovo: Add support for ThinkPad X1 Tablet Thin Keyboard Gen2
+
+Chia-Lin Kao (AceLan) (1):
+      HID: quirks: Add quirk for 2 Chicony Electronics HP 5MP Cameras
+
+Daniel J. Ogorchock (1):
+      HID: nintendo: avoid bluetooth suspend/resume stalls
+
+Even Xu (1):
+      HID: Intel-thc-hid: Intel-quicki2c: Enhance QuickI2C reset flow
+
+Iusico Maxim (1):
+      HID: lenovo: Restrict F7/9/11 mode to compact keyboards only
+
+Mario Limonciello (1):
+      HID: input: lower message severity of 'No inputs registered, leaving' to debug
+
+Qasim Ijaz (4):
+      HID: wacom: fix memory leak on kobject creation failure
+      HID: wacom: fix memory leak on sysfs attribute creation failure
+      HID: wacom: fix kobject reference count leak
+      HID: appletb-kbd: fix "appletb_backlight" backlight device reference counting
+
+Thomas Zeitlhofer (1):
+      HID: wacom: fix crash in wacom_aes_battery_handler()
+
+Zhang Heng (1):
+      HID: Add IGNORE quirk for SMARTLINKTECHNOLOGY
+
+Zhang Lixu (2):
+      hid: intel-ish-hid: Use PCI_DEVICE_DATA() macro for ISH device table
+      HID: intel-ish-hid: ipc: Add Wildcat Lake PCI device ID
+
+ drivers/hid/hid-appletb-kbd.c                      |  5 +++
+ drivers/hid/hid-ids.h                              |  6 ++++
+ drivers/hid/hid-input.c                            |  2 +-
+ drivers/hid/hid-lenovo.c                           | 19 ++++++++---
+ drivers/hid/hid-multitouch.c                       |  8 ++++-
+ drivers/hid/hid-nintendo.c                         | 38 ++++++++++++++++++++--
+ drivers/hid/hid-quirks.c                           |  3 ++
+ drivers/hid/intel-ish-hid/ipc/hw-ish.h             |  1 +
+ drivers/hid/intel-ish-hid/ipc/pci-ish.c            | 12 +++++--
+ .../intel-quicki2c/quicki2c-protocol.c             | 26 ++++++++++++++-
+ drivers/hid/wacom_sys.c                            |  7 +++-
+ 11 files changed, 114 insertions(+), 13 deletions(-)
+
 -- 
-~Vinod
-
+Jiri Kosina
+SUSE Labs
 
 
