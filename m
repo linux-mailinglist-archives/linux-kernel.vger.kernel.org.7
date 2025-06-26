@@ -1,207 +1,147 @@
-Return-Path: <linux-kernel+bounces-704277-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-704279-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1D249AE9BA2
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Jun 2025 12:39:18 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 19D84AE9BA8
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Jun 2025 12:40:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 820F23BE658
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Jun 2025 10:36:55 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7C59D5A267A
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Jun 2025 10:37:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 97CB826B2D6;
-	Thu, 26 Jun 2025 10:35:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B02EF4204E;
+	Thu, 26 Jun 2025 10:36:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="EZ2oMctZ"
-Received: from lelvem-ot02.ext.ti.com (lelvem-ot02.ext.ti.com [198.47.23.235])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="UIimtl2L"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 69A51237162;
-	Thu, 26 Jun 2025 10:34:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.23.235
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 10C81222590;
+	Thu, 26 Jun 2025 10:36:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750934100; cv=none; b=Vm8EtgUHXtXObxW6EFQutH98bERiym+Cl8d8j0VUpJ5eu6RYyQPS6mu/VcrlL3gVUOR+Q8X5285wazX2W9J9/ohHXAi/1rSs0aYc5mqTHS0UREkrm99jDxMZfAnQ3dWUHimF4EONGD2ktjSpGtXh9jcNitppweDx0CTQmo/Ojg0=
+	t=1750934189; cv=none; b=dDO47fhPrOokNTKtjsg7maHX4Wzh8bx/AN9NcrXBF4vESNCjSpNRro4uyGa4Sf/L6EcEjE4LUMDtDnqKBdWk/hZ1ADcWxfU/6NGlRWekNt7HXZbLcnI98m6wkpaDGMP7wlG0h9DidbGb1hzdpj74oZMzxTObDo1gKwpvmM38Mlg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750934100; c=relaxed/simple;
-	bh=dQ2Zex+ov2PCncLQ7U1GbKR7W8qycO6k0YuiZMLpeH4=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=qXZ6WG4Yd6pzXjRM0Wu/y+qvii2RqfOagY6Sv18U42lW7hBx1EySh0KiLzqK0oriS6nOZmHzxRW80oq0BvzdZFUWHlvNhhfL6KSWwGPKRdM01zH79EbkIpQhyhqAdbmVKexsXLZMW0O5Jy0evpZyf/x20r5u7gYPRE3+sQwyjQE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=EZ2oMctZ; arc=none smtp.client-ip=198.47.23.235
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
-Received: from fllvem-sh04.itg.ti.com ([10.64.41.54])
-	by lelvem-ot02.ext.ti.com (8.15.2/8.15.2) with ESMTP id 55QAYql52391124;
-	Thu, 26 Jun 2025 05:34:52 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-	s=ti-com-17Q1; t=1750934092;
-	bh=pdqJ3/ldB4zuQCaDnWbImn2eySoaM0afbT1+2XUy9J0=;
-	h=Date:Subject:To:CC:References:From:In-Reply-To;
-	b=EZ2oMctZVZApUtrJijsJRvVhgoS3zGvOLgr3frisLx+HD6anG1y1/JvK8IEsxcJ7q
-	 IKwBbW4ZZ0C2Fk//YO80M0uKb22hQc6p09zjtKjJc6g4A36bptnXSOyrcO+qvCRMEe
-	 zpE+5rUUJmsvoHNGfnmbifxpfWycSPTsS+L798GE=
-Received: from DLEE109.ent.ti.com (dlee109.ent.ti.com [157.170.170.41])
-	by fllvem-sh04.itg.ti.com (8.18.1/8.18.1) with ESMTPS id 55QAYqan2165138
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-SHA256 bits=128 verify=FAIL);
-	Thu, 26 Jun 2025 05:34:52 -0500
-Received: from DLEE108.ent.ti.com (157.170.170.38) by DLEE109.ent.ti.com
- (157.170.170.41) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.55; Thu, 26
- Jun 2025 05:34:51 -0500
-Received: from lelvem-mr06.itg.ti.com (10.180.75.8) by DLEE108.ent.ti.com
- (157.170.170.38) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.55 via
- Frontend Transport; Thu, 26 Jun 2025 05:34:51 -0500
-Received: from [172.24.31.248] (lt5cd2489kgj.dhcp.ti.com [172.24.31.248])
-	by lelvem-mr06.itg.ti.com (8.18.1/8.18.1) with ESMTP id 55QAYl0f855804;
-	Thu, 26 Jun 2025 05:34:48 -0500
-Message-ID: <b37efc4e-0959-47a0-8fae-6cb35899752e@ti.com>
-Date: Thu, 26 Jun 2025 16:04:46 +0530
+	s=arc-20240116; t=1750934189; c=relaxed/simple;
+	bh=awgx4GCv+DU9O391SVRk/D4EEDX+wR3EWr3gJ0RVJZ4=;
+	h=Mime-Version:Content-Type:Date:Message-Id:From:To:Cc:Subject:
+	 References:In-Reply-To; b=AsChr+hJ+18U0OO9FQ6ZSpUqswoZaRIvKa7aZJ6z4iYoABkWO75N6bTHvyzYPUaqA010EQFV1DtxkzYceuvi/7Kv70HRNroTChKHsFZaPJjCpKJL3/IgFtvL4vb9/PNFTMr1IXYZHqNI529XZAJgj3gSIwGoYLgZidKNyq7RP3Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=UIimtl2L; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id F2FF4C4CEEB;
+	Thu, 26 Jun 2025 10:36:24 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1750934188;
+	bh=awgx4GCv+DU9O391SVRk/D4EEDX+wR3EWr3gJ0RVJZ4=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=UIimtl2LFIMtv61BMJTLnOiyklJzr5y1r/gaLDPPDy+hHVsUj825W7EO1MpTh98KO
+	 Bfyys9ZRcY85iIqA4qvdHGYDdwwTtvocxo5GxYiUTuQ0MJHGxUZ3i6+ZEo+ip679gh
+	 I+5xTGkWfvVweJIaE7SkDYjnw0G5xI8evVeI6ErRSUeYMEgpLUU2jlyhg8iBek3GOP
+	 ya+du6Mw+aelhuVjgctRiT70B9Y5lfLkndKtGWm0ylBUJEWDsDMTs/Sqe8QvcSCIQm
+	 qzxDUiW3Gw3FBD4ZzpEK9xjNa3Yywu54oNlU5KvdNDYGj4ayDtY2lH9mEIplohJp53
+	 WLAbq0M+3A10g==
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 6/7] arm64: dts: ti: k3-j721s2-common-proc-board:
- Enable DisplayPort-1
-To: Jayesh Choudhary <j-choudhary@ti.com>, <nm@ti.com>, <vigneshr@ti.com>,
-        <devicetree@vger.kernel.org>
-CC: <kristo@kernel.org>, <robh@kernel.org>, <krzk+dt@kernel.org>,
-        <conor+dt@kernel.org>, <linux-arm-kernel@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>, <devarsht@ti.com>, <u-kumar1@ti.com>
-References: <20250624082619.324851-1-j-choudhary@ti.com>
- <20250624082619.324851-7-j-choudhary@ti.com>
-Content-Language: en-US
-From: "Kumar, Udit" <u-kumar1@ti.com>
-In-Reply-To: <20250624082619.324851-7-j-choudhary@ti.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
+Mime-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Date: Thu, 26 Jun 2025 12:36:23 +0200
+Message-Id: <DAWED7BIC32G.338MXRHK4NSJG@kernel.org>
+From: "Benno Lossin" <lossin@kernel.org>
+To: "Danilo Krummrich" <dakr@kernel.org>, <gregkh@linuxfoundation.org>,
+ <rafael@kernel.org>, <ojeda@kernel.org>, <alex.gaynor@gmail.com>,
+ <boqun.feng@gmail.com>, <gary@garyguo.net>, <bjorn3_gh@protonmail.com>,
+ <a.hindborg@kernel.org>, <aliceryhl@google.com>, <tmgross@umich.edu>,
+ <david.m.ertman@intel.com>, <ira.weiny@intel.com>, <leon@kernel.org>,
+ <kwilczynski@kernel.org>, <bhelgaas@google.com>
+Cc: <rust-for-linux@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+ <linux-pci@vger.kernel.org>
+Subject: Re: [PATCH v3 4/4] rust: devres: implement register_release()
+X-Mailer: aerc 0.20.1
+References: <20250624215600.221167-1-dakr@kernel.org>
+ <20250624215600.221167-5-dakr@kernel.org>
+In-Reply-To: <20250624215600.221167-5-dakr@kernel.org>
 
+On Tue Jun 24, 2025 at 11:54 PM CEST, Danilo Krummrich wrote:
+> +pub fn register_release<P>(dev: &Device<Bound>, data: P) -> Result
+> +where
+> +    P: ForeignOwnable + 'static,
+> +    for<'a> P::Borrowed<'a>: Release,
+> +{
+> +    let ptr =3D data.into_foreign();
+> +
+> +    #[allow(clippy::missing_safety_doc)]
+> +    unsafe extern "C" fn callback<P>(ptr: *mut kernel::ffi::c_void)
+> +    where
+> +        P: ForeignOwnable,
+> +        for<'a> P::Borrowed<'a>: Release,
+> +    {
+> +        // SAFETY: `ptr` is the pointer to the `ForeignOwnable` leaked a=
+bove and hence valid.
+> +        unsafe { P::borrow(ptr.cast()) }.release();
+> +
+> +        // SAFETY: `ptr` is the pointer to the `ForeignOwnable` leaked a=
+bove and hence valid.
+> +        drop(unsafe { P::from_foreign(ptr.cast()) });
 
-On 6/24/2025 1:56 PM, Jayesh Choudhary wrote:
-> Enable DSI display for J721S2 EVM.
->
-> Add the endpoint nodes to describe connection from:
-> DSS => DSI Bridge => DSI to eDP bridge => DisplayPort-1
->
-> Set status for all required nodes for DisplayPort-1 as 'okay'.
->
-> Signed-off-by: Jayesh Choudhary <j-choudhary@ti.com>
-> ---
->   .../dts/ti/k3-j721s2-common-proc-board.dts    | 89 +++++++++++++++++++
->   1 file changed, 89 insertions(+)
->
-> diff --git a/arch/arm64/boot/dts/ti/k3-j721s2-common-proc-board.dts b/arch/arm64/boot/dts/ti/k3-j721s2-common-proc-board.dts
-> index 793d50344fad..efe857a50bb1 100644
-> --- a/arch/arm64/boot/dts/ti/k3-j721s2-common-proc-board.dts
-> +++ b/arch/arm64/boot/dts/ti/k3-j721s2-common-proc-board.dts
-> @@ -93,6 +93,29 @@ vdd_sd_dv: gpio-regulator-TLV71033 {
->   			 <3300000 0x1>;
->   	};
->   
-> +	dp1_pwr_3v3: regulator-dp1-prw {
-> +		compatible = "regulator-fixed";
-> +		regulator-name = "dp1-pwr";
-> +		regulator-min-microvolt = <3300000>;
-> +		regulator-max-microvolt = <3300000>;
-> +		gpio = <&exp4 1 GPIO_ACTIVE_HIGH>; /* P1 - DP1_PWR_SW_EN */
-> +		enable-active-high;
-> +		regulator-always-on;
+Maybe this function should just be:
 
-Please check once, if this regulator falls under regulator-always-on case,
+    let p =3D unsafe { P::from_foreign(ptr.cast()) };
+    p.release();
 
-I can imagine a case, where DP1 is not used and still regulator is kept on
+And we require `P: ForeignOwnable + Release + 'static`?
 
+We then need these impls instead:
 
-> +	};
+    impl<T: Release, A: Allocator> Release for Pin<Box<T, A>>;
+    impl<T: Release, A: Allocator> Release for Box<T, A>;
+    impl<T: Release> Release for Arc<T>;
+
+Or, we could change `Release` to be:
+
+    pub trait Release {
+        type Ptr: ForeignOwnable;
+
+        fn release(this: Self::Ptr);
+    }
+
+and then `register_release` is:
+
+    pub fn register_release<T: Release>(dev: &Device<Bound>, data: T::Ptr) =
+-> Result
+
+This way, one can store a `Box<T>` and get access to the `T` at the end.
+Or if they store the value in an `Arc<T>`, they have the option to clone
+it and give it to somewhere else.
+
+Related questions:
+
+* should we implement `ForeignOwnable` for `&'static T`?
+* should we require `'static` in `ForeignOwnable`? At the moment we only
+  have those kinds supported and it only makes sense, a foreign owned
+  object can be owned for any amount of time (so it must stay valid
+  indefinitely).
+
+---
+Cheers,
+Benno
+
+> +    }
 > +
-> +	dp1: connector-dp1 {
-> +		compatible = "dp-connector";
-> +		label = "DP1";
-> +		type = "full-size";
-> +		dp-pwr-supply = <&dp1_pwr_3v3>;
-> +
-> +		port {
-> +			dp1_connector_in: endpoint {
-> +				remote-endpoint = <&dp1_out>;
-> +			};
-> +		};
-> +	};
-> +
->   	transceiver1: can-phy1 {
->   		compatible = "ti,tcan1043";
->   		#phy-cells = <0>;
-> @@ -563,3 +586,69 @@ &main_mcan5 {
->   	pinctrl-0 = <&main_mcan5_pins_default>;
->   	phys = <&transceiver4>;
->   };
-> +
-> +&dss {
-> +	/*
-> +	 * DSS on J721S2-EVM supports DP on VP0 and DSI on VP2.
-> +	 * These clock assignments are chosen to enable the following outputs:
-> +	 * VP0 - DisplayPort SST
-> +	 * VP2 - DSI
-> +	 */
-> +	status = "okay";
-> +	assigned-clocks = <&k3_clks 158 2>,
-> +			  <&k3_clks 158 14>;
-> +	assigned-clock-parents = <&k3_clks 158 3>,
-> +				 <&k3_clks 158 16>;
-> +};
-> +
-> +&dss_ports {
-> +	#address-cells = <1>;
-> +	#size-cells = <0>;
-> +
-> +	port@2 {
-> +		reg = <2>;
-> +		dpi2_out: endpoint {
-> +			remote-endpoint = <&dsi0_in>;
-> +		};
-> +	};
-> +};
-> +
-> +&dsi0_ports {
-> +	port@0 {
-> +		reg = <0>;
-> +		dsi0_out: endpoint {
-> +			remote-endpoint = <&dp1_in>;
-> +		};
-> +	};
-> +
-> +	port@1 {
-> +		reg = <1>;
-> +		dsi0_in: endpoint {
-> +			remote-endpoint = <&dpi2_out>;
-> +		};
-> +	};
-> +};
-> +
-> +&dsi_edp_bridge_ports {
-> +	port@0 {
-> +		reg = <0>;
-> +		dp1_in: endpoint {
-> +			remote-endpoint = <&dsi0_out>;
-> +		};
-> +	};
-> +
-> +	port@1 {
-> +		reg = <1>;
-> +		dp1_out: endpoint {
-> +			remote-endpoint = <&dp1_connector_in>;
-> +		};
-> +	};
-> +};
-> +
-> +&dphy_tx0 {
-> +	status = "okay";
-> +};
-> +
-> +&dsi0 {
-> +	status = "okay";
-> +};
+> +    // SAFETY:
+> +    // - `dev.as_raw()` is a pointer to a valid and bound device.
+> +    // - `ptr` is a valid pointer the `ForeignOwnable` devres takes owne=
+rship of.
+> +    to_result(unsafe {
+> +        // `devm_add_action_or_reset()` also calls `callback` on failure=
+, such that the
+> +        // `ForeignOwnable` is released eventually.
+> +        bindings::devm_add_action_or_reset(dev.as_raw(), Some(callback::=
+<P>), ptr.cast())
+> +    })
+> +}
+
 
