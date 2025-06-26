@@ -1,156 +1,154 @@
-Return-Path: <linux-kernel+bounces-704397-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-704420-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 77E2AAE9D05
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Jun 2025 14:00:07 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1D221AE9D2B
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Jun 2025 14:06:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 787F5188A7A8
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Jun 2025 11:59:22 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4A5FB5A4CAB
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Jun 2025 12:04:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5C15E1CFBA;
-	Thu, 26 Jun 2025 11:56:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="gwtb8FUF"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 58EAE217709;
+	Thu, 26 Jun 2025 12:04:45 +0000 (UTC)
+Received: from szxga01-in.huawei.com (szxga01-in.huawei.com [45.249.212.187])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A9F55277C87;
-	Thu, 26 Jun 2025 11:56:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E37BD1AAE28;
+	Thu, 26 Jun 2025 12:04:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.187
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750939013; cv=none; b=eTSOm7vREmlBqJd+8FQFnAg4YTtkB0Ets8CA04Skai4ENGTXDlVDFj8UZmrl/eF2WNcWtaT1vGaa4X7ZguwFRGQf52Lrif0NTn+SXOZnR8Q5MTx8jMzcYoGs8AyHKl7fSq0ptxMUIZGpMr+ZKGom0/UyE769P5/geD5bIIn1aZc=
+	t=1750939485; cv=none; b=hgaue+tzJGSAwJ2mAP/P/HBlktUTl9AgNWudvEYzqDcREgDbwyvDQfjuxKAULM1BedgQo0081mTU/q5TIVbCOcM0cHYXCKXB8p5LYPWIFqJ07Au67KruZRywpRqPlJQ9wf9Vrf+FTXqY2qpWsEmxwlal5+jgpRw9RKvj+u11K0Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750939013; c=relaxed/simple;
-	bh=2cRA5Ews7AECae0hutCZ8TsFpfNmeytIVE/Jq/tTjEU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=b1k/JCCwZqHrhZBmPTBHlrl4A5vY/aaZmG3BUweShvcTd2ox+lEFnKJaN18xMBpgdcRZrw5M/7NvwOMdnU+HanGC/nSq4MWrmlBNcmmiNGMCeDSdE4dazIEIrf9XCPaVIgrh11LvVyZ3xA6J0K/uCPQuBI4HLh39Kqk0LCWWeB4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=gwtb8FUF; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 704BAC4CEEE;
-	Thu, 26 Jun 2025 11:56:52 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1750939013;
-	bh=2cRA5Ews7AECae0hutCZ8TsFpfNmeytIVE/Jq/tTjEU=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=gwtb8FUFoGPOS2KoSj1v0brWpY9gOEDgifWy77vb6DGnhGdT0RdZThLNFWgQpywGw
-	 s2BCgbOoub8Bb22XvWQ9nXm2V79SQSPdyAO6aHyXEzgGTBQ/zH5fS01unA71RAiBYL
-	 ZjWGjCXPO7x1B4HpMP53MrGR7L47w/XbrFqxF7kw4qE9+VQO74fvo2gmaCLfxMPBYp
-	 8CPs3tIxe7esgQrjF2y2Kj4FM303Cs3Jv7wcn4WwhmXp5AxrVdnUeaacBf5ghDSQ8J
-	 eae4EzMOFE4wOQ85lrP1ZnqHKeThCHDeuA7ixrIR6Drf2aNX4CdD7oJEjnn2eR1imZ
-	 6W+5G/uy8HaOg==
-Date: Thu, 26 Jun 2025 12:56:49 +0100
-From: Mark Brown <broonie@kernel.org>
-To: Alexey Klimov <alexey.klimov@linaro.org>
-Cc: Srinivas Kandagatla <srini@kernel.org>,
-	Liam Girdwood <lgirdwood@gmail.com>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>, Stephen Boyd <sboyd@kernel.org>,
-	Lee Jones <lee@kernel.org>, Jaroslav Kysela <perex@perex.cz>,
-	Takashi Iwai <tiwai@suse.com>, linux-arm-msm@vger.kernel.org,
-	linux-sound@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>,
-	Srinivas Kandagatla <srinivas.kandagatla@oss.qualcomm.com>
-Subject: Re: [PATCH 3/3] ASoC: codecs: add new pm4125 audio codec driver
-Message-ID: <aF01gRFjsKgy6j4V@finisterre.sirena.org.uk>
-References: <20250626-pm4125_audio_codec_v1-v1-0-e52933c429a0@linaro.org>
- <20250626-pm4125_audio_codec_v1-v1-3-e52933c429a0@linaro.org>
+	s=arc-20240116; t=1750939485; c=relaxed/simple;
+	bh=NX5QkGsObuNd/W50D8W9CoOzLMwdieS+6zPOd+QbUdI=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=AL0LHtbw5Llu6KByibUlheGY6k2fPF+9qN66b7qOGRqi8YZIdrPvDgeLuHu1zxaO2s175uI+ws88nL8A7ekvLVQAT/avKjlnUt5m/ElC4Dq7p972ra+GQe2aDF9m1JYznn3nbTqnqoWDRTo3mkbjMNF3Gx4hHuCspHRUNfn69NQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.187
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.88.194])
+	by szxga01-in.huawei.com (SkyGuard) with ESMTP id 4bScgZ3q7lz10XTj;
+	Thu, 26 Jun 2025 19:59:54 +0800 (CST)
+Received: from kwepemk500007.china.huawei.com (unknown [7.202.194.92])
+	by mail.maildlp.com (Postfix) with ESMTPS id 561F51401F4;
+	Thu, 26 Jun 2025 20:04:32 +0800 (CST)
+Received: from huawei.com (10.175.104.67) by kwepemk500007.china.huawei.com
+ (7.202.194.92) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Thu, 26 Jun
+ 2025 20:04:31 +0800
+From: Yu Kuai <yukuai3@huawei.com>
+To: <axboe@kernel.dk>, <hare@suse.de>, <hch@infradead.org>,
+	<john.g.garry@oracle.com>, <yukuai3@huawei.com>
+CC: <linux-block@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+	<yi.zhang@redhat.com>, <calvin@wbinvd.org>, <david@fromorbit.com>,
+	<yukuai1@huaweicloud.com>, <yi.zhang@huawei.com>, <yangerkun@huawei.com>,
+	<johnny.chenyi@huawei.com>
+Subject: [PATCH v2] block: fix false warning in bdev_count_inflight_rw()
+Date: Thu, 26 Jun 2025 19:57:43 +0800
+Message-ID: <20250626115743.1641443-1-yukuai3@huawei.com>
+X-Mailer: git-send-email 2.39.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="PuAiEYJCFXajbSr9"
-Content-Disposition: inline
-In-Reply-To: <20250626-pm4125_audio_codec_v1-v1-3-e52933c429a0@linaro.org>
-X-Cookie: Do not cut switchbacks.
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: dggems701-chm.china.huawei.com (10.3.19.178) To
+ kwepemk500007.china.huawei.com (7.202.194.92)
 
+While bdev_count_inflight is interating all cpus, if some IOs are issued
+from traversed cpu and then completed from the cpu that is not traversed
+yet:
 
---PuAiEYJCFXajbSr9
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+cpu0
+		cpu1
+		bdev_count_inflight
+		 //for_each_possible_cpu
+		 // cpu0 is 0
+		 infliht += 0
+// issue a io
+blk_account_io_start
+// cpu0 inflight ++
 
-On Thu, Jun 26, 2025 at 12:50:31AM +0100, Alexey Klimov wrote:
+				cpu2
+				// the io is done
+				blk_account_io_done
+				// cpu2 inflight --
+		 // cpu 1 is 0
+		 inflight += 0
+		 // cpu2 is -1
+		 inflight += -1
+		 ...
 
-> --- a/sound/soc/codecs/Kconfig
-> +++ b/sound/soc/codecs/Kconfig
-> @@ -297,6 +297,7 @@ config SND_SOC_ALL_CODECS
->  	imply SND_SOC_WCD937X_SDW
->  	imply SND_SOC_WCD938X_SDW
->  	imply SND_SOC_WCD939X_SDW
-> +	imply SND_SOC_PM4125_SDW
->  	imply SND_SOC_LPASS_MACRO_COMMON
->  	imply SND_SOC_LPASS_RX_MACRO
->  	imply SND_SOC_LPASS_TX_MACRO
+In this case, the total inflight will be -1, causing lots of false
+warning. Fix the problem by removing the warning.
 
-Please keep this file sorted, there's obviously been some things missed
-but please don't make it worse.
+Noted there is still a valid warning for nvme-mpath(From Yi) that is not
+fixed yet.
 
-> +obj-$(CONFIG_SND_SOC_PM4125_SDW) += snd-soc-pm4125-sdw.o
-> +obj-$(CONFIG_SND_SOC_PM4125)   += snd-soc-pm4125.o
-> +ifdef CONFIG_SND_SOC_PM4125_SDW
-> +# avoid link failure by forcing sdw code built-in when needed
-> +obj-$(CONFIG_SND_SOC_PM4125) += snd-soc-pm4125-sdw.o
-> +endif
+Fixes: f5482ee5edb9 ("block: WARN if bdev inflight counter is negative")
+Reported-by: Yi Zhang <yi.zhang@redhat.com>
+Closes: https://lore.kernel.org/linux-block/aFtUXy-lct0WxY2w@mozart.vkv.me/T/#mae89155a5006463d0a21a4a2c35ae0034b26a339
+Reported-and-tested-by: Calvin Owens <calvin@wbinvd.org>
+Closes: https://lore.kernel.org/linux-block/aFtUXy-lct0WxY2w@mozart.vkv.me/T/#m1d935a00070bf95055d0ac84e6075158b08acaef
+Reported-by: Dave Chinner <david@fromorbit.com>
+Closes: https://lore.kernel.org/linux-block/aFuypjqCXo9-5_En@dread.disaster.area/
+Signed-off-by: Yu Kuai <yukuai3@huawei.com>
+---
+Changes in v2:
+ - fix comments grammar;
+ - add signed int for percpu summation to prevent overflow;
 
-Other drivers sort this out in Kconfig, do as they do.
+ block/genhd.c | 26 +++++++++++++++-----------
+ 1 file changed, 15 insertions(+), 11 deletions(-)
 
-> +static int pm4125_micbias_control(struct snd_soc_component *component,
-> +				  int micb_num, int req, bool is_dapm)
-> +{
-> +	return 0;
-> +}
+diff --git a/block/genhd.c b/block/genhd.c
+index 8171a6bc3210..c26733f6324b 100644
+--- a/block/genhd.c
++++ b/block/genhd.c
+@@ -128,23 +128,27 @@ static void part_stat_read_all(struct block_device *part,
+ static void bdev_count_inflight_rw(struct block_device *part,
+ 		unsigned int inflight[2], bool mq_driver)
+ {
++	int write = 0;
++	int read = 0;
+ 	int cpu;
+ 
+ 	if (mq_driver) {
+ 		blk_mq_in_driver_rw(part, inflight);
+-	} else {
+-		for_each_possible_cpu(cpu) {
+-			inflight[READ] += part_stat_local_read_cpu(
+-						part, in_flight[READ], cpu);
+-			inflight[WRITE] += part_stat_local_read_cpu(
+-						part, in_flight[WRITE], cpu);
+-		}
++		return;
++	}
++
++	for_each_possible_cpu(cpu) {
++		read += part_stat_local_read_cpu(part, in_flight[READ], cpu);
++		write += part_stat_local_read_cpu(part, in_flight[WRITE], cpu);
+ 	}
+ 
+-	if (WARN_ON_ONCE((int)inflight[READ] < 0))
+-		inflight[READ] = 0;
+-	if (WARN_ON_ONCE((int)inflight[WRITE] < 0))
+-		inflight[WRITE] = 0;
++	/*
++	 * While iterating all CPUs, some IOs may be issued from a CPU already
++	 * traversed and complete on a CPU that has not yet been traversed,
++	 * causing the inflight number to be negative.
++	 */
++	inflight[READ] = read > 0 ? read : 0;
++	inflight[WRITE] = write > 0 ? write : 0;
+ }
+ 
+ /**
+-- 
+2.39.2
 
-Why have this empty function which is only called from within the
-driver?  At best it's making the callers look like they do something.
-
-> +static irqreturn_t pm4125_wd_handle_irq(int irq, void *data)
-> +{
-> +	return IRQ_HANDLED;
-> +}
-
-Why bother regisering for the interrupt at all if you're just going to
-ignore it?
-
-> +#if defined(CONFIG_OF)
-> +static const struct of_device_id pm4125_of_match[] = {
-> +	{ .compatible = "qcom,pm4125-codec" },
-> +	{ }
-> +};
-> +MODULE_DEVICE_TABLE(of, pm4125_of_match);
-> +#endif
-
-Why does this compatible exist?  If the driver is instantiated from a
-as a Linux software contruct it shouldn't appear in the DT.
-
-> +const u8 pm4125_reg_access_digital[
-> +	PM4125_REG(PM4125_DIGITAL_REGISTERS_MAX_SIZE)] = {
-> +		[PM4125_REG(PM4125_DIG_SWR_CHIP_ID0)] = RD_REG,
-> +		[PM4125_REG(PM4125_DIG_SWR_CHIP_ID1)] = RD_REG,
-> +		[PM4125_REG(PM4125_DIG_SWR_CHIP_ID2)] = RD_REG,
-
-Data tables like this shouldn't be in headers, they should be in C
-files.  At worst you might end up with duplicate copies in the object
-code.
-
---PuAiEYJCFXajbSr9
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmhdNVcACgkQJNaLcl1U
-h9D5CAf/RRC2a5uS/BLF6xNL01DzPx9aCXjnyAgTQG80np8rHi7O6vg7gMm/lmI7
-jTORay2DZAyHk1HJeu0CV/i871LFG7SStgwmuV2oXLvyrp5Xiix6vfi8f/WzTOaW
-pGBaicThLjbIIeGw3Tj0G04GbwapGWrH4MgPkZ3fnahQ2SfLxrc9p57DBHGqjVRE
-unTE0dXexH4anhDgcUZ+UAjdcYeKY18v1q425oezGKSQfGYuV8x9QRxfdshHlSPk
-/uyEQw/Z1ZXh1Cal9nac1aOPUdiU9RpdHemAolIFOXXM33Jxpizk6s2H97fkHfdn
-MjML1c79uWqgSL/QutPiQ3wYRW9FwA==
-=Hwsm
------END PGP SIGNATURE-----
-
---PuAiEYJCFXajbSr9--
 
