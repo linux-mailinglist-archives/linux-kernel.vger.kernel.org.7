@@ -1,110 +1,182 @@
-Return-Path: <linux-kernel+bounces-704854-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-704858-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1544EAEA27B
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Jun 2025 17:29:17 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B1B9EAEA264
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Jun 2025 17:24:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 809F91C47549
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Jun 2025 15:20:59 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4B3F33A9FB5
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Jun 2025 15:23:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AF6682EBDC4;
-	Thu, 26 Jun 2025 15:20:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3170C2EBDED;
+	Thu, 26 Jun 2025 15:23:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="m2qCX4A6"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.8])
+	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="BKoLX4+/"
+Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BB10F2ECE84;
-	Thu, 26 Jun 2025 15:20:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.8
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C89B52EBDD9;
+	Thu, 26 Jun 2025 15:23:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750951208; cv=none; b=tbTrZkbQ4IUQt6OcL1yXOgYdNaK5xPolFbhjqy8SLkk68Uz4X1EPVI0y2CrCZqyA2dv+4bfagHOVsDDZdxSZSxAT8aykdbxDhkhVIbzj3+g7qewISzLeF2GHaiubnL5AYsl2AmYb+l+pccwK/Ln2PCXBpSGS2X9pRtw5CRFj5gE=
+	t=1750951398; cv=none; b=fLdPk4PKv9ZRRhJL+5qHr00DjfZy+/1lSCC9CmMSYzwHfF7NRLiaYecPNEQERQXJm81fLLkh42EyVaOuMVA8bRUHhZsqU4VlBRULxOUZlqvz1sPUhXJ1JNf64b9DP3qvU6J1uVtQ0a3tvyxdQm91ePOB4uVyE2Tp7jTjzmQte80=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750951208; c=relaxed/simple;
-	bh=xiHqNaryMZY1Vlue3/o9IeJwX5wVDhvDE9lWmpGK+bM=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=GDDILhauLfbjc7DM4hfCSuB44y6+2lB1l2Z2S5NEHgag7+BOEoY0ZzRsUmeZdzLnDxgws5US9nbKd3Jl1eewjcRtkzSz97AWtbCADnFP297ZGlkhwIoQ7EVTfz94rjz5O4Rr3UCOONzArCDeW53qsaifFhiZ3YwX8/htRHYPO/w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=m2qCX4A6; arc=none smtp.client-ip=192.198.163.8
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1750951207; x=1782487207;
-  h=from:to:cc:in-reply-to:references:subject:message-id:
-   date:mime-version:content-transfer-encoding;
-  bh=xiHqNaryMZY1Vlue3/o9IeJwX5wVDhvDE9lWmpGK+bM=;
-  b=m2qCX4A6iPi/zbcbwlAK/6N7WaKSvTXxmECcp/GyWTvB0GZR3dBa3evs
-   7wszUMSlKNqKoNAuPYyVt7hBZzfm6cKC2LNoEDDVqdRpBiCpORnq812US
-   QCIpHry54liGKtkbhdo7tr8fH1cCnN0AAb9Yui9E2m86myF/XTyMzBzPB
-   p93Xz+gs7+1ogj676DR4ZjCjeML8IjLt/mQQFhLAA+WFhn05EeWNQ3KsE
-   WdPBczeU9n9b/CrgK1E0niofQ/aR9Sl+OzhiAYT5lb5y/TWdgIk8FyZYV
-   einGuIysdT52eBuWsbC1zpRHkjArRBxr/wVv9xhe3+8h4dQdNHBAEwGOH
-   Q==;
-X-CSE-ConnectionGUID: ScYuf/5JSqy6SsJuCMbnwg==
-X-CSE-MsgGUID: 9ysKEQLoTgKLGCqQG2hMaA==
-X-IronPort-AV: E=McAfee;i="6800,10657,11476"; a="70823168"
-X-IronPort-AV: E=Sophos;i="6.16,267,1744095600"; 
-   d="scan'208";a="70823168"
-Received: from orviesa008.jf.intel.com ([10.64.159.148])
-  by fmvoesa102.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 26 Jun 2025 08:20:06 -0700
-X-CSE-ConnectionGUID: /TET1BU0R56Lp243fcqujA==
-X-CSE-MsgGUID: HsLu0ATiTMGEPCIHFzotDQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.16,267,1744095600"; 
-   d="scan'208";a="153044475"
-Received: from ijarvine-mobl1.ger.corp.intel.com (HELO localhost) ([10.245.244.144])
-  by orviesa008-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 26 Jun 2025 08:20:04 -0700
-From: =?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
-To: dimich.dmb@gmail.com, kuurtb@gmail.com, 
- Hans de Goede <hansg@kernel.org>, Armin Wolf <W_Armin@gmx.de>
-Cc: corbet@lwn.net, platform-driver-x86@vger.kernel.org, 
- linux-kernel@vger.kernel.org
-In-Reply-To: <20250619221440.6737-1-W_Armin@gmx.de>
-References: <20250619221440.6737-1-W_Armin@gmx.de>
-Subject: Re: [PATCH 1/2] platform/x86: wmi: Fix WMI event enablement
-Message-Id: <175095119881.2233.10447558196456889460.b4-ty@linux.intel.com>
-Date: Thu, 26 Jun 2025 18:19:58 +0300
+	s=arc-20240116; t=1750951398; c=relaxed/simple;
+	bh=1meFbmguIrrQcXTuIPMPgEl7aNZYw1TFw2buecn9sg8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=KssYi0NTKpS8NKs9lndWhW9ol+KwHCtbjKshwAqxk5ZKJm4RSEsE38oCTbCcQM0+18bD8u+HDCaU5UIjmZRltP3tRZCv7s8NEzMnHcD59UJYKTbG1cdaOGURKRo58K+k1tb3nGcxBUkslRihLdXlJDw9EjMHNlIM+D+QI8Hqjyk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=BKoLX4+/; arc=none smtp.client-ip=65.109.113.108
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
+Received: from localhost (localhost.localdomain [127.0.0.1])
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id E637840E00CE;
+	Thu, 26 Jun 2025 15:23:12 +0000 (UTC)
+X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
+Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
+	header.d=alien8.de
+Received: from mail.alien8.de ([127.0.0.1])
+	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
+	with ESMTP id 3T_HP8Mpcpq7; Thu, 26 Jun 2025 15:23:07 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
+	t=1750951386; bh=A7hao13YYOHGpLHDV+xaJPrzcOSgKVbDGnSsEtxU0hA=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=BKoLX4+/fxMkEUVDSfj5OUUjdINqhyteEYa5Os8ve0ZB3p8J+l7hJ1Ws/zoLLJkiN
+	 rYA/ARGVja21Kkv37IzLbx4h60cQaOUwbtJZyjMHSl87kyPhbvwKd03qQSFD4tois7
+	 oqy4bRxbP3qpXNkFhC+ZepnFDZid0d2U9LS0DCiG2MvYqzq+i3ybzQ89WYNMd/sm7E
+	 7Y5rJYgCm5rqLufKCfaNThotZWNbAzII+HZc1FeAUL/Ifc71h4kaTEYG8tKHeJMQ4o
+	 Lce4z9I6lFNAquQWddl3pcX0nwc1L8oRUrs9L88LdaENKemne/ZCUY+6g43KBVWIE3
+	 6XyIDj3ur19YNByGBUx4JjtLODwjdYybJZaNYNsbGCltX5yN5CEM8lgLnQx2svvkUx
+	 cxCrxFY18jAXDX2UFUelN5gtWiH5+Rds8tR5boM1eaLIhx9aY82oF4ftwnq7Fc5eAQ
+	 hlDlxwe7fMmuNOmSxU/Pt8ZV+poTMbeZGldBPB7NVenlXGSj5VyfqZ9+66V1gKwyfL
+	 pKJKim6Cdu4x+47daJTsWMGhx19pqyfyDBpjVZCgOt1ULwde/7Czi+bnYR5AFrlrEy
+	 PMxTIvt3zN/xrn8Uyp4r6CL/65ELuZWaHoq3pVb0967dC4Q2bINRoeZ1xCiffyzp2E
+	 SxKNnDTGBGD5mkT9i9hpKQSw=
+Received: from zn.tnic (p57969c58.dip0.t-ipconnect.de [87.150.156.88])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
+	(No client certificate requested)
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 95EA440E015E;
+	Thu, 26 Jun 2025 15:22:14 +0000 (UTC)
+Date: Thu, 26 Jun 2025 17:22:13 +0200
+From: Borislav Petkov <bp@alien8.de>
+To: "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>
+Cc: Andy Lutomirski <luto@kernel.org>, Thomas Gleixner <tglx@linutronix.de>,
+	Ingo Molnar <mingo@redhat.com>,
+	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
+	"H. Peter Anvin" <hpa@zytor.com>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Ard Biesheuvel <ardb@kernel.org>,
+	"Paul E. McKenney" <paulmck@kernel.org>,
+	Josh Poimboeuf <jpoimboe@kernel.org>,
+	Xiongwei Song <xiongwei.song@windriver.com>,
+	Xin Li <xin3.li@intel.com>, "Mike Rapoport (IBM)" <rppt@kernel.org>,
+	Brijesh Singh <brijesh.singh@amd.com>,
+	Michael Roth <michael.roth@amd.com>,
+	Tony Luck <tony.luck@intel.com>, Alexey Kardashevskiy <aik@amd.com>,
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+	Jonathan Corbet <corbet@lwn.net>,
+	Sohil Mehta <sohil.mehta@intel.com>, Ingo Molnar <mingo@kernel.org>,
+	Pawan Gupta <pawan.kumar.gupta@linux.intel.com>,
+	Daniel Sneddon <daniel.sneddon@linux.intel.com>,
+	Kai Huang <kai.huang@intel.com>,
+	Sandipan Das <sandipan.das@amd.com>,
+	Breno Leitao <leitao@debian.org>,
+	Rick Edgecombe <rick.p.edgecombe@intel.com>,
+	Alexei Starovoitov <ast@kernel.org>, Hou Tao <houtao1@huawei.com>,
+	Juergen Gross <jgross@suse.com>,
+	Vegard Nossum <vegard.nossum@oracle.com>,
+	Kees Cook <kees@kernel.org>, Eric Biggers <ebiggers@google.com>,
+	Jason Gunthorpe <jgg@ziepe.ca>,
+	"Masami Hiramatsu (Google)" <mhiramat@kernel.org>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Luis Chamberlain <mcgrof@kernel.org>,
+	Yuntao Wang <ytcoode@gmail.com>,
+	Rasmus Villemoes <linux@rasmusvillemoes.dk>,
+	Christophe Leroy <christophe.leroy@csgroup.eu>,
+	Tejun Heo <tj@kernel.org>, Changbin Du <changbin.du@huawei.com>,
+	Huang Shijie <shijie@os.amperecomputing.com>,
+	Geert Uytterhoeven <geert+renesas@glider.be>,
+	Namhyung Kim <namhyung@kernel.org>,
+	Arnaldo Carvalho de Melo <acme@redhat.com>,
+	linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-efi@vger.kernel.org, linux-mm@kvack.org
+Subject: Re: [PATCHv7 01/16] x86/cpu: Enumerate the LASS feature bits
+Message-ID: <20250626152213.GCaF1lpfzIcrKsOwRr@fat_crate.local>
+References: <20250625125112.3943745-1-kirill.shutemov@linux.intel.com>
+ <20250625125112.3943745-2-kirill.shutemov@linux.intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Mailer: b4 0.13.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20250625125112.3943745-2-kirill.shutemov@linux.intel.com>
 
-On Fri, 20 Jun 2025 00:14:39 +0200, Armin Wolf wrote:
-
-> It turns out that the Windows WMI-ACPI driver always enables/disables
-> WMI events regardless of whether they are marked as expensive or not.
-> This finding is further reinforced when reading the documentation of
-> the WMI_FUNCTION_CONTROL_CALLBACK callback used by Windows drivers
-> for enabling/disabling WMI devices:
+On Wed, Jun 25, 2025 at 03:50:53PM +0300, Kirill A. Shutemov wrote:
+> From: Sohil Mehta <sohil.mehta@intel.com>
 > 
-> 	The DpWmiFunctionControl routine enables or disables
-> 	notification of events, and enables or disables data
-> 	collection for data blocks that the driver registered
-> 	as expensive to collect.
+> Linear Address Space Separation (LASS) is a security feature that
+> intends to prevent malicious virtual address space accesses across
+> user/kernel mode.
 > 
-> [...]
+> Such mode based access protection already exists today with paging and
+> features such as SMEP and SMAP. However, to enforce these protections,
+> the processor must traverse the paging structures in memory.  Malicious
+> software can use timing information resulting from this traversal to
+> determine details about the paging structures, and these details may
+> also be used to determine the layout of the kernel memory.
+> 
+> The LASS mechanism provides the same mode-based protections as paging
+> but without traversing the paging structures. Because the protections
+> enforced by LASS are applied before paging, software will not be able to
+> derive paging-based timing information from the various caching
+> structures such as the TLBs, mid-level caches, page walker, data caches,
+> etc.
+> 
+> LASS enforcement relies on the typical kernel implementation to divide
+> the 64-bit virtual address space into two halves:
+>   Addr[63]=0 -> User address space
+>   Addr[63]=1 -> Kernel address space
+> 
+> Any data access or code execution across address spaces typically
+> results in a #GP fault.
+> 
+> The LASS enforcement for kernel data access is dependent on CR4.SMAP
+> being set. The enforcement can be disabled by toggling the RFLAGS.AC bit
+> similar to SMAP.
+> 
+> Define the CPU feature bits to enumerate this feature and include
+> feature dependencies to reflect the same.
+> 
+> LASS provides protection against a class of speculative attacks, such as
+> SLAM[1]. Add the "lass" flag to /proc/cpuinfo to indicate that the feature
+> is supported by hardware and enabled by the kernel. This allows userspace
+> to determine if the setup is secure against such attacks.
+> 
+> [1] https://download.vusec.net/papers/slam_sp24.pdf
+> 
+> Co-developed-by: Yian Chen <yian.chen@intel.com>
+> Signed-off-by: Yian Chen <yian.chen@intel.com>
+> Signed-off-by: Sohil Mehta <sohil.mehta@intel.com>
+> Signed-off-by: Alexander Shishkin <alexander.shishkin@linux.intel.com>
+> Signed-off-by: Kirill A. Shutemov <kirill.shutemov@linux.intel.com>
+> ---
+>  arch/x86/Kconfig.cpufeatures                | 4 ++++
+>  arch/x86/include/asm/cpufeatures.h          | 1 +
+>  arch/x86/include/uapi/asm/processor-flags.h | 2 ++
+>  arch/x86/kernel/cpu/cpuid-deps.c            | 1 +
+>  tools/arch/x86/include/asm/cpufeatures.h    | 1 +
+>  5 files changed, 9 insertions(+)
 
+Reviewed-by: Borislav Petkov (AMD) <bp@alien8.de>
 
-Thank you for your contribution, it has been applied to my local
-review-ilpo-fixes branch. Note it will show up in the public
-platform-drivers-x86/review-ilpo-fixes branch only once I've pushed my
-local branch there, which might take a while.
+-- 
+Regards/Gruss,
+    Boris.
 
-The list of commits applied:
-[1/2] platform/x86: wmi: Fix WMI event enablement
-      commit: cf0b812500e64a7d5e2957abed38c3a97917b34f
-[2/2] platform/x86: wmi: Update documentation of WCxx/WExx ACPI methods
-      commit: 50b6914fc53c718c5426fb6e9cd9484f9ae967c2
-
---
- i.
-
+https://people.kernel.org/tglx/notes-about-netiquette
 
