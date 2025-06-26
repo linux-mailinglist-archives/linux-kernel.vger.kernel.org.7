@@ -1,212 +1,126 @@
-Return-Path: <linux-kernel+bounces-704020-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-704022-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 165A2AE9859
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Jun 2025 10:31:27 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id A8E89AE985E
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Jun 2025 10:33:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4A24B189F97C
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Jun 2025 08:31:41 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6414C189F948
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Jun 2025 08:33:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 86DC8290BAB;
-	Thu, 26 Jun 2025 08:31:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B4C0628FFD0;
+	Thu, 26 Jun 2025 08:33:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="YJAn7RwU"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="FJLM/NFG"
+Received: from mail-lj1-f178.google.com (mail-lj1-f178.google.com [209.85.208.178])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4728428F51A
-	for <linux-kernel@vger.kernel.org>; Thu, 26 Jun 2025 08:31:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 44726218AB0
+	for <linux-kernel@vger.kernel.org>; Thu, 26 Jun 2025 08:32:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750926678; cv=none; b=f4Gs1PzyACgm8R3EWhpsKcqIcreBY/mG1GW3yVao9p0V736DAhaLJFU525LnQ3G7/173+eAQI7ZV7yRP0zctn73EZAzuVub2ClCUBeYR4Y9jTSfNfmcDEvEv8xamCawwb+RfHFnBpDmBBoQb55vBMyNuPqNfFt0ihldZxztDMR0=
+	t=1750926781; cv=none; b=GJPmISXMm/mQV0bLm2OiAYfQDQjJbElouXnjc3akfxIp+yB0vaznvczbyeAcgezAgMFEKK4n45XjygocYqaTPBSEVyxg1vaFSmZ1rYMhlp5siZN9/e+sJZrYyJmsmzgsMD0YAxdhqPG1dyf8wJ2T4y6VeugV4twJx07vlGUn+TA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750926678; c=relaxed/simple;
-	bh=jxjuQ9wgPEOgZ1M4BpcWDWVPCxKkyebFqlHE07IaLhw=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=k6oy0tLRW/vZNhTtnWKu/EQVGdFWogXtM5PisUVmj39mzktQP7ip8PCjD4Ku2qj0ZHIyLjvdlJtQ/ZqF3ywWshTxLshI9FIvAlOB87U3ETLToUX6pbDV/Y3aRpC71YQOhdb7x3sfjXgS5jijkdR1uSQIBo2QggqL2OYjgWDsXY4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=YJAn7RwU; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1750926676;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=95+TH5zf3VfxYXqoppEfBpCyY5Bbh7o5fHE1mPx0EIk=;
-	b=YJAn7RwUfNuUr+Q4C5U7IgRihaFyyy2Svr5Nlej20sTvlY5Pei+QDFNBp/6TVoNZEOGp/+
-	3nvDgZ5pW7ixiAzE3wMOo0dgaBg3n4Y6dobluMuY3eKMWGb5JqYG1/76/c84yhdwU4FF8g
-	U6l50pgmY5IYasK1lTJvonPd+jPCTDQ=
-Received: from mail-wm1-f69.google.com (mail-wm1-f69.google.com
- [209.85.128.69]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-347-0ta0VIH2MLWWjEDACkzzjg-1; Thu, 26 Jun 2025 04:31:13 -0400
-X-MC-Unique: 0ta0VIH2MLWWjEDACkzzjg-1
-X-Mimecast-MFC-AGG-ID: 0ta0VIH2MLWWjEDACkzzjg_1750926673
-Received: by mail-wm1-f69.google.com with SMTP id 5b1f17b1804b1-45320bfc18dso3955405e9.1
-        for <linux-kernel@vger.kernel.org>; Thu, 26 Jun 2025 01:31:13 -0700 (PDT)
+	s=arc-20240116; t=1750926781; c=relaxed/simple;
+	bh=/EXnmyDqhgwhNubqEJ+Z7XqtbTMhvh+9M0BZvcE+S0c=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=g5ENq5BAd4nK3f3OF0ct0UwTRvFryPsy52esQb3K52VV6eFL1jJCc1ynKbsFZJ4lze30psDlsn4ldk27Dt8HmkwxSmZZcHVv6znM/WnAIPryH4dBZRQac52fgU/3AG/DOB3FQ6vyA256xc1VdRNbm7oBJmpA0JPtKkAYx4R86Ss=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=FJLM/NFG; arc=none smtp.client-ip=209.85.208.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-lj1-f178.google.com with SMTP id 38308e7fff4ca-32b561a861fso6110731fa.0
+        for <linux-kernel@vger.kernel.org>; Thu, 26 Jun 2025 01:32:58 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1750926776; x=1751531576; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=tZyqW6LTgx3qQCdMf7DVmwLH6L5ZjexEcMKkRJNzkQg=;
+        b=FJLM/NFGEiPONX4FrdSZ0hI/cQk82eO+Lo5YVkchHl8WweUn2tSD6hRktRnJ8QG3vo
+         vTJolU3CiS6Cy/pbdjy14FvlPP2Kli+M+DptWSEI/w0U4sem0vUwh1eUvq5kGAYIYvzX
+         O8JseJRSOyvj4mqXPvxoSv31hO8QB7HK0gWaImazyNXVnceVZd4E1fYedMkLj1srp10I
+         0pej8WZrfLXOJ2fMKlViXyXGNXbe8Lf9ViRgjzppBCSI14J/f+hJxdgsrInoUvTnYufR
+         kFVgkbqHWPIgD7tBdjSK0WMLLhnE7YBhuGjSKfnqUnRCf/DC/GT/tGNf9yo/pdRwoy3h
+         vqCw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1750926672; x=1751531472;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=95+TH5zf3VfxYXqoppEfBpCyY5Bbh7o5fHE1mPx0EIk=;
-        b=JLWjr8r0ihsAaFoPQ3ITPgsG1F8+fwkcFxN+QJOcaRb9PxOYHrZTJ4rygmYFdeuSCP
-         EuAQmfhkcp8Cbd2TNrmn8NMQJ+1HgL+qnAXeO9a/zSIvGr1F+M8bbyFBTLM2P5yOIvJW
-         EnFxNMHmgcJX/h5N47Mam+AqywBl5+DGJOnn/lRoJ2uQwrtMPjwS8k8BaKW5obldB5U1
-         eWF0aR+tDkfS69K1dRl4GIiJFONzTz51XYewQYyxZQPbdtQPWTrgOKeSCd1JegM680lF
-         2fff7W+o7u++FgfAt0w0VHo0lsyWUg3OmhSx4jTmdazCl3m+rAtw9WhGbh0yP5aYoK7K
-         7AgA==
-X-Forwarded-Encrypted: i=1; AJvYcCWg1QnAdmrSRBYKcDEhF9gpLev7a7WcWMjKAcxJ+b57Fn0wEWEcS2pzbHCqwz3rRWCt2DvmbnsLx8ulQeg=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy7o3orKtDjhpRmgJHZ86FSAVzRJmA99sIuhdNNpu4NBlHHetDN
-	6ARiEcdviDLqf32oXjdTawMZsj2aex+y3xrfdgcHSTc7O+FfoOxt4iV24IhLKmq8ZKZbnOXf6CM
-	TtqHmmU2dFzsJhsTEpQtXmxKutJNMDkxJGb7O7LTeK1aNWE/JUwqWK27+Lb+puDh7Pw==
-X-Gm-Gg: ASbGncuyTrjipzWkOpWcM/JVSqrirfpb50kp72YGh1LZkF//+7V/dg5gI00QDnjMlbg
-	IQD9EyOeZqw1H8VUeUc7VYI71pha+zK4YeJoHsJrl+JtqgP0wu2pTVKePCzl91GZ0EL+wXwujzU
-	nRzMCOTNHNGSsX3m8Lb9oMJ2wq2I+qSO24JopcRDxqWXgz5OBRbEXTmnDQX5i3aQtBP/1GnLUzc
-	9Xd6YMOwtloovecZCOiS+9V9Pux9ifHwPXSQ/LSxjG655m3YgYvoDoYsH+6zr9R/RWuHxM2EgOC
-	HLjiWH7mqCZf7NNtoGwKtNEt+BPyTYmBUPJuWORH/pwS7k12iss8/vXiAed1SghhLAuntg==
-X-Received: by 2002:a05:600c:35c9:b0:453:79cb:7c86 with SMTP id 5b1f17b1804b1-4538896ba75mr26452305e9.3.1750926672429;
-        Thu, 26 Jun 2025 01:31:12 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IHEkC6c3JzfgvdMBJsS8pD8FyDFy1HXtwXXY+jE56VYXru2VqYtKfWZqQhK2VhFj+bzWxrwqA==
-X-Received: by 2002:a05:600c:35c9:b0:453:79cb:7c86 with SMTP id 5b1f17b1804b1-4538896ba75mr26451485e9.3.1750926671693;
-        Thu, 26 Jun 2025 01:31:11 -0700 (PDT)
-Received: from ?IPV6:2a0d:3344:244f:bd10:2bd0:124a:622c:badb? ([2a0d:3344:244f:bd10:2bd0:124a:622c:badb])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-453823c57d7sm44307735e9.40.2025.06.26.01.31.10
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 26 Jun 2025 01:31:11 -0700 (PDT)
-Message-ID: <a21e5d42-5718-4633-b812-be47ec6acf65@redhat.com>
-Date: Thu, 26 Jun 2025 10:31:09 +0200
+        d=1e100.net; s=20230601; t=1750926776; x=1751531576;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=tZyqW6LTgx3qQCdMf7DVmwLH6L5ZjexEcMKkRJNzkQg=;
+        b=X2ix9sT1Topl8mEEIPLp43MLYsF/dSa3olg4ChPsOpA8lu43BICDCqFIyg7s5VgiFj
+         J7HlC+7pZCV0BUxCavW4EsQDsT0/4fxbnBJAN/9+pkvIlkeQuXPzQ0SFU7ppCwh/ch4u
+         Y7xGRDva3YirpLCT/oSRcYJHWLdej9FYRkTPr0piVprRuA7o+zepCAtUYHzNxyVJkoNv
+         ECZW7emz5N/nuLJSOQIweM8cs+jMwrXdTdS+j/4kEnlSWRbHXC+/qjjBhe3QveMz79cr
+         mfwzUsWJ3nCEtLyoLNHLPEw8i+jZhT3znMnLduP3tERescLqycu3ca7kd9PwpejnCYhj
+         8fGg==
+X-Forwarded-Encrypted: i=1; AJvYcCXqJhsR4QPJoQKYXLwF40aImL5Q41010Hf5BcVBlbmKWkDGl0doBahUZ7JkDy57wFqjaNSVtfDYGZgbO5U=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzlB+w81IHQ0IuoPBOrZQwnKuItO5yPdD/g6rsAgsWhV+Su5Aol
+	ewqD11tr0/vwt7LdxqDSt2ecJzfIOD1UnRjPZxcXzHktanlReYeHXrHTRRUwAcI6AMB2ah+GTlH
+	vKWYVaUqF7wh3ys9Hzhz/spclIw5eBHtqULPVtVTM
+X-Gm-Gg: ASbGncsjdzUbuyhKC/at/EcZLuodaSdrDssqVyQB1X22rsxPPZUIpgDs5XKx3Wzwblq
+	CPFVk2AUOk3Mv0BWPvXzXl8UYPjoK5gptkWy0tAldtWTr3KUv5gcKCG8P3eEFtMIhF5rSUnSudq
+	bmQ/2QzG6DSBRtzqGX4gQgMOWP2ApG6oD76FHvqlHrswhljN2VU9lCkvDXtDAnG1TxZCc1pYd0w
+	Q+F
+X-Google-Smtp-Source: AGHT+IETo+L/oV+R/tmnVYW2Qg4rA4aBv5GWRJ/qPp97+u4UznXO8eCK5nvO+CRrEHedFW1CDFl6j9Mm6w/bd2AvpQI=
+X-Received: by 2002:a2e:9059:0:b0:32b:5eb3:280 with SMTP id
+ 38308e7fff4ca-32ccfa91d8emr7830071fa.29.1750926776245; Thu, 26 Jun 2025
+ 01:32:56 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] skbuff: Improve the sending efficiency of __skb_send_sock
-To: Feng Yang <yangfeng59949@163.com>, stfomichev@gmail.com
-Cc: aleksander.lobakin@intel.com, almasrymina@google.com,
- asml.silence@gmail.com, davem@davemloft.net, ebiggers@google.com,
- edumazet@google.com, horms@kernel.org, kerneljasonxing@gmail.com,
- kuba@kernel.org, linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
- willemb@google.com, yangfeng@kylinos.cn
-References: <aFxBi55GlhVdHzE4@mini-arch>
- <20250626075020.95425-1-yangfeng59949@163.com>
-Content-Language: en-US
-From: Paolo Abeni <pabeni@redhat.com>
-In-Reply-To: <20250626075020.95425-1-yangfeng59949@163.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+References: <aFNYQkbEctT6N0Hb@lappy> <20250623132803.26760-1-dvyukov@google.com>
+ <aFsE0ogdbKupvt7o@lappy> <CACT4Y+Y04JC359J3DnLzLzhMRPNLem11oj+u04GoEazhpmzWTw@mail.gmail.com>
+ <aFwb_3EE2VMEV_tf@lappy>
+In-Reply-To: <aFwb_3EE2VMEV_tf@lappy>
+From: Dmitry Vyukov <dvyukov@google.com>
+Date: Thu, 26 Jun 2025 10:32:45 +0200
+X-Gm-Features: Ac12FXwPRCYLCXOzZA2k06HmxFcMR3fWIsqQHlWuGEU7Sh27__v25jmGtwOdH6Q
+Message-ID: <CACT4Y+b9u6_wx9BU0hH0L6ogGKN_+R5T7OsgJVFAWm8yeD0E7Q@mail.gmail.com>
+Subject: Re: [RFC 00/19] Kernel API Specification Framework
+To: Sasha Levin <sashal@kernel.org>
+Cc: kees@kernel.org, elver@google.com, linux-api@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, tools@kernel.org, workflows@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-On 6/26/25 9:50 AM, Feng Yang wrote:
-> On Wed, 25 Jun 2025 11:35:55 -0700, Stanislav Fomichev <stfomichev@gmail.com> wrote:
->> On 06/23, Feng Yang wrote:
->>> From: Feng Yang <yangfeng@kylinos.cn>
->>>
->>> By aggregating skb data into a bvec array for transmission, when using sockmap to forward large packets,
->>> what previously required multiple transmissions now only needs a single transmission, which significantly enhances performance.
->>> For small packets, the performance remains comparable to the original level.
->>>
->>> When using sockmap for forwarding, the average latency for different packet sizes
->>> after sending 10,000 packets is as follows:
->>> size	old(us)		new(us)
->>> 512	56		55
->>> 1472	58		58
->>> 1600	106		79
->>> 3000	145		108
->>> 5000	182		123
->>>
->>> Signed-off-by: Feng Yang <yangfeng@kylinos.cn>
->>> ---
->>>  net/core/skbuff.c | 112 +++++++++++++++++++++-------------------------
->>>  1 file changed, 52 insertions(+), 60 deletions(-)
->>>
->>> diff --git a/net/core/skbuff.c b/net/core/skbuff.c
->>> index 85fc82f72d26..664443fc9baf 100644
->>> --- a/net/core/skbuff.c
->>> +++ b/net/core/skbuff.c
->>> @@ -3235,84 +3235,75 @@ typedef int (*sendmsg_func)(struct sock *sk, struct msghdr *msg);
->>>  static int __skb_send_sock(struct sock *sk, struct sk_buff *skb, int offset,
->>>  			   int len, sendmsg_func sendmsg, int flags)
->>>  {
->>> -	unsigned int orig_len = len;
->>>  	struct sk_buff *head = skb;
->>>  	unsigned short fragidx;
->>> -	int slen, ret;
->>> +	struct msghdr msg;
->>> +	struct bio_vec *bvec;
->>> +	int max_vecs, ret, slen;
->>> +	int bvec_count = 0;
->>> +	unsigned int copied = 0;
->>>  
->>> -do_frag_list:
->>> -
->>> -	/* Deal with head data */
->>> -	while (offset < skb_headlen(skb) && len) {
->>> -		struct kvec kv;
->>> -		struct msghdr msg;
->>> -
->>> -		slen = min_t(int, len, skb_headlen(skb) - offset);
->>> -		kv.iov_base = skb->data + offset;
->>> -		kv.iov_len = slen;
->>> -		memset(&msg, 0, sizeof(msg));
->>> -		msg.msg_flags = MSG_DONTWAIT | flags;
->>> -
->>> -		iov_iter_kvec(&msg.msg_iter, ITER_SOURCE, &kv, 1, slen);
->>> -		ret = INDIRECT_CALL_2(sendmsg, sendmsg_locked,
->>> -				      sendmsg_unlocked, sk, &msg);
->>> -		if (ret <= 0)
->>> -			goto error;
->>> +	max_vecs = skb_shinfo(skb)->nr_frags + 1; // +1 for linear data
->>> +	if (skb_has_frag_list(skb)) {
->>> +		struct sk_buff *frag_skb = skb_shinfo(skb)->frag_list;
->>>  
->>> -		offset += ret;
->>> -		len -= ret;
->>> +		while (frag_skb) {
->>> +			max_vecs += skb_shinfo(frag_skb)->nr_frags + 1; // +1 for linear data
->>> +			frag_skb = frag_skb->next;
->>> +		}
->>>  	}
->>>  
->>> -	/* All the data was skb head? */
->>> -	if (!len)
->>> -		goto out;
->>> +	bvec = kcalloc(max_vecs, sizeof(struct bio_vec), GFP_KERNEL);
->>> +	if (!bvec)
->>> +		return -ENOMEM;
->>
->> Not sure allocating memory here is a good idea. From what I can tell
->> this function is used by non-sockmap callers as well..
+On Wed, 25 Jun 2025 at 17:55, Sasha Levin <sashal@kernel.org> wrote:
+>
+> On Wed, Jun 25, 2025 at 10:52:46AM +0200, Dmitry Vyukov wrote:
+> >On Tue, 24 Jun 2025 at 22:04, Sasha Levin <sashal@kernel.org> wrote:
+> >
+> >> >6. What's the goal of validation of the input arguments?
+> >> >Kernel code must do this validation anyway, right.
+> >> >Any non-trivial validation is hard, e.g. even for open the validation function
+> >> >for file name would need to have access to flags and check file precense for
+> >> >some flags combinations. That may add significant amount of non-trivial code
+> >> >that duplicates main syscall logic, and that logic may also have bugs and
+> >> >memory leaks.
+> >>
+> >> Mostly to catch divergence from the spec: think of a scenario where
+> >> someone added a new param/flag/etc but forgot to update the spec - this
+> >> will help catch it.
+> >
+> >How exactly is this supposed to work?
+> >Even if we run with a unit test suite, a test suite may include some
+> >incorrect inputs to check for error conditions. The framework will
+> >report violations on these incorrect inputs. These are not bugs in the
+> >API specifications, nor in the test suite (read false positives).
+>
+> Right now it would be something along the lines of the test checking for
+> an expected failure message in dmesg, something along the lines of:
+>
+>         https://github.com/linux-test-project/ltp/blob/0c99c7915f029d32de893b15b0a213ff3de210af/testcases/commands/sysctl/sysctl02.sh#L67
+>
+> I'm not opposed to coming up with a better story...
 
-Adding a per packet allocation and a free is IMHO a no-go for a patch
-intended to improve performances.
-
-> Alternatively, we can use struct bio_vec bvec[size] to avoid memory allocation.
-
-If you mean using a fixed size bio vec allocated on the stack, that
-could work...
-
-> Even if the "size" is insufficient, the unsent portion will be transmitted in the next call to `__skb_send_sock`.
-
-... but I think this part is not acceptable, the callers may/should
-already assume that partial transmissions are due to errors.
-
-Instead I think you should loop, batching bio_vec_size tx each loop.
-
-Side note: the patch has a few style issues:
-- it should not use // for comments
-- variable declaration should respect the reverse christmas tree order
-
-and possibly you could use this refactoring to avoid the use backward
-goto statement.
-
-Thanks,
-
-Paolo
-
+Oh, you mean special tests for this framework (rather than existing tests).
+I don't think this is going to work in practice. Besides writing all
+these specifications, we will also need to write dozens of tests per
+each specification (e.g. for each fd arg one needs at least 3 tests:
+-1, valid fd, inclid fd; an enum may need 5 various inputs of
+something; let alone netlink specifications).
 
