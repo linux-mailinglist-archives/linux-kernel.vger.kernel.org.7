@@ -1,77 +1,77 @@
-Return-Path: <linux-kernel+bounces-704626-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-704627-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6B105AE9FCE
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Jun 2025 16:06:11 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id C5133AE9FD5
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Jun 2025 16:06:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0BBDF7B0B7F
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Jun 2025 14:04:32 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2DA617B0CAF
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Jun 2025 14:04:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C00BF2E9750;
-	Thu, 26 Jun 2025 14:05:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8C7D42E7F27;
+	Thu, 26 Jun 2025 14:05:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="V+a9YW4b"
-Received: from mail-ej1-f51.google.com (mail-ej1-f51.google.com [209.85.218.51])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Wsa2U+pd"
+Received: from mail-ej1-f46.google.com (mail-ej1-f46.google.com [209.85.218.46])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 51A172E92DD;
-	Thu, 26 Jun 2025 14:05:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5CE502E9EBA;
+	Thu, 26 Jun 2025 14:05:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750946705; cv=none; b=ECzpgDGKplB8fFY89BoTMd3zNvSCMJuSsep1Kyj6WZk/v2/9Je8quw+e819bqq4vDw3+d4yd6wbyzAE774FB9XZw4BpLAfo+3BFjG9/hMY4cpGdiNnacaxAv4X1n4KcdCRwFK8KIhIhond0eHHeuoFIGvoBd+1IWeo96cOi9hu4=
+	t=1750946708; cv=none; b=mFPT/yy88zOD+13Bl/ONqtWrF0oP0PNbtgoillF+jtuKu2uc7/z4mVkXYTnSBE/ikI3KuqHFzP20jj18ncAEpU8OAt1IeSpx4rgMFo7xOMqNC7yn/wYb6hma6sDKguwHos1C0H1WMkuaK7X33mlF65AOSnqSNie1vwCMeBEaWEM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750946705; c=relaxed/simple;
-	bh=r/bYQUwPKhlXrOwPUT8HwFDzwISFoCDFKs+oeDei2qE=;
+	s=arc-20240116; t=1750946708; c=relaxed/simple;
+	bh=5glfHsLODiLO/3oY+r7Ho/WvBwzsT7tvBipgzjRr/7Q=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=WmXLcWRGrs599DgvJeTh1+WloP/YDbh6FjWAcTpJAYYSqyr2c9uk9qmshSNwVDLnZxurj4puw3q0NrfsHtIRz/fDtr6LnBryzOo4zUwGbzAZPEIUPsJBy4uGXIloULevS+ZEMS8i73ybGJk5VdvbNqqbw9BwKVxdX6KHekPt+hk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=V+a9YW4b; arc=none smtp.client-ip=209.85.218.51
+	 MIME-Version; b=KzfSlqlxn58vYcunxK2k1qbLEBcwWL336rHOW/p7oZIg5hQQASIS+eY2sCt4C+a2wmk+ErQXXR5BmXHyNpTpn0pXk40kD6HNV7z2LpsUNkYWly2geCiMZXRPurQfGbtCl+Kv7+C5rCSYgEUOzL+X5Zgx4qbR86QGxNRGKSiwNDM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Wsa2U+pd; arc=none smtp.client-ip=209.85.218.46
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f51.google.com with SMTP id a640c23a62f3a-ae0df6f5758so70638966b.0;
-        Thu, 26 Jun 2025 07:05:03 -0700 (PDT)
+Received: by mail-ej1-f46.google.com with SMTP id a640c23a62f3a-ade5a0442dfso196751466b.1;
+        Thu, 26 Jun 2025 07:05:07 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1750946702; x=1751551502; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1750946706; x=1751551506; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=1B9UQTA0XO+RGIXXW8DAfCHZQQ8vv/QjGxfsmB/2GQk=;
-        b=V+a9YW4bUODsprBmkb16Ww7gDQisPvmLYdwGy1XZ6Fm4+0qKrgDsvk4IFv7z94KuHK
-         5Oy1/o65vs7TX4ChZeeEzDq80hHlSh80ZLfYzewk4G+3zFK74ChlCt2ESVYOpLGiu5nd
-         M2uS161CH79u6w4nUaZb42UaARvPjbVl/JxMEqrv3+87DedHoxubecdGg3vHTC3AYbzN
-         y8RuwqboslCQKYAXhEUspTjUjBDZ1GtU/KMcxkGZCCjzy2/j8EZZmsX2EIOmMm8uIIxV
-         ADvLZc7GFgBftZUKxnaJomnTt+8daifnEmAT4JbohZZP5rE43Amie/g+JGJ1pN3OqvS/
-         Hjmg==
+        bh=gBJ7OED84IgzfwVu3bE+rwCJsn8ySsLoxBG0PUK666c=;
+        b=Wsa2U+pdSWqlJfkQgDNV7dp72nGddnariP8IIb1LWMPkYn5tB3KCOZw0lX8ZIFFv6+
+         LEVNfrFTRQ5/V5N/WE4ssKTPG99UlulHtjczxbjGaWzPxgfRE7OEPn81g0fIx5NTLaOy
+         Ox+Z/Q18nPi7jJBJaSkXixAnu81gZpR2av1Oiz20QkMnAC5myafvbhA6/Vv9s+5w7Fr1
+         4vTFy58MmGR/PWaT6STMGHgKBePNQa0OMJ5RH0+DLpm+Ro4/oCqb6JdVNmaLKPmeAei5
+         SqEBk/GyudPLVit25DsosKo6VEvzHyqWB2cLF6EescBvjyh28UvVIQb1qFLFcKm+o2nb
+         nbHg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1750946702; x=1751551502;
+        d=1e100.net; s=20230601; t=1750946706; x=1751551506;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=1B9UQTA0XO+RGIXXW8DAfCHZQQ8vv/QjGxfsmB/2GQk=;
-        b=H+UqjVaPu2Qn+TuwK36x6n7jsKSHJZzcE/yk99y7J+8FIlKW9I/C0f6C11F/QAMvJ3
-         PP0pGplrH/aQW0x7/FayBVX/rJqVX9/DJNfftcgJC21Z3jzj7NywuYgIw9GyJe0PMCp1
-         ehIFU9SD9YU2j7ZbVLaeBjICMXPZr/HVnIl7VJ8CYUSQMkfpT1SXRFBS9+CQPlUNNk0Q
-         bfARFnV9gz18JAok+7E3e7hHTTWGWxj8nHn1Ph/mgX5MpX2oWyAWBpHxYQGTWSkpSInJ
-         R1nhcHbWsmNye2N6tdOWwdIVHYmnRcJgNUSpzGKyD79bl7lfgXJtNGj9y2QW81lQwRNU
-         DcxA==
-X-Forwarded-Encrypted: i=1; AJvYcCV0vPJ/5AFeb3CBBGguVXo1MiwhNd0rfVKuREh7LrByQ3nizCDYP9VN5kHt/7/uK8ngpVXJJgORE5u/7fE=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwyQahY38ynftjpKka74AOD8Su+0y5+wwBqLr/eY6F0LIc+vLgg
-	L9k/sI2Fej0RFJNMeOPyKjbhZZULnWqDuLsjSr7mKRlOCq6mCEPtnyk43bkrVRRCo+Je0g==
-X-Gm-Gg: ASbGnct0ngyDKYvqpD7xmdh7pvgjXraZS7icrozys/LkwryV8Tmol4g7qZS60gyEx/y
-	yOnAQv1pFLAjQD4BdGdhSWB/e6E4b9wiodlGmm/9sW7jcaZalRy9cXr+EJAL8ZAh0TVN06gtCYp
-	NYKjEG19gr2C3SOjSJMNY4bFXGXmfVXTGJ950gHO/wAOuSgBIDR2L09dCOYUuSlUeoLIUUDG7U1
-	ey8IXkoLUVYBaFh76KceLbSGQqL0sgZxMyPWYkB4zqtygUa1+nuOsuqEURbXdEvDzuXw/4SH+aN
-	O4gF7w+fm9jrA2xH+yyrs2IsniKbn3Bnz0upluMnNM8WqO6UprzpEpAbcPlUEFKngBhD7kCe5Lv
-	VVyTS/eZH22Q=
-X-Google-Smtp-Source: AGHT+IE07fXK7KUi/Kcs82M8/c4AI6q7J6d/VrAbZNafj4SS/HHhE/zXHJGl4LKHd9oOEFh9xlCkuA==
-X-Received: by 2002:a17:906:c10a:b0:ae0:628a:5093 with SMTP id a640c23a62f3a-ae0be7fdd39mr844096766b.3.1750946701083;
-        Thu, 26 Jun 2025 07:05:01 -0700 (PDT)
+        bh=gBJ7OED84IgzfwVu3bE+rwCJsn8ySsLoxBG0PUK666c=;
+        b=w+xdLd09hvRjLBig8VTa1BDhif/ND5LzLncJHXkdfi6pxbl3Au19+dbadeCauvLXSD
+         W607rueT0HzEGPBMB7jGZ3ZHE+t+WqQYy9NCiwKaBgcSZIRa9z7wTl/rRrKK2t6JNRlV
+         skrDMGxCZ83ZGKW42X8rP+DSRV5s1mrP+vO6VkdTB+KnS6THTAn/c8ulzvTpG9wmL0F2
+         8zhuQkg9I7ac9Dj6AZFjdyNAGSUgxbN8tdiaXnoSJt+EgCEn8d9UOwsRqndslgtmkt00
+         0KV7kVPnJvydm8CFjNtiT45q7+a7pRfs/0673z1PY0EdJqia32GPWYiQ4foEs+puDVcO
+         dSeg==
+X-Forwarded-Encrypted: i=1; AJvYcCXWUPf/kmZaJS7R8VA2zy/Bf6AoOHFF9atpSyqPYZaNS9Qr3wJCiVeqWVX2VyCAz4FrUf8dWdr5gbndjaU=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxDpaUjIc/ecVIlTzOfzPC6ovouM51vV2i6cZZNMzECs7Zs0J6B
+	1hIGEhNOY0RvHPYtxuw5EWjh6/YJf/rHDVrTJM17/bLV1x/1GqcM7Tsx8PXOnYmymN3baQ==
+X-Gm-Gg: ASbGncukF8sGq4QkZ/PxInCwduV1DEKPi1/7OzQwwKZ1eWps35UJi7Gw+vA+YamSsUg
+	7KgvncUooKG/3s7185DvN96TwaOk0O75JmkC8hllhaWX05xMZmPrAIs2LePhFMM6YEdP0GAumJC
+	HuMF5xkIKCLk5BK7pCgREzCvihG0SDWWjutZ/tJOGdNz19QgGQFUicIeMXcyKjvHluqNsEsJxEM
+	SP/1lSOFtLvfAeM3T2NntxR5T8mQW87KTxp933eoMkkbvhYdvUj0RB8I3Pd8GiGVr6z1KWafmiK
+	+2IwXFYH1TmdXZOHN+og+XKHhZMyovlpAcKz8AU16ykQJgl53w1qKd2/525ewSi/PgxL7QxotfD
+	0A86o6cL4HDffvXcd4D5hVA==
+X-Google-Smtp-Source: AGHT+IFd80UBJ9vtN/l6OUaJDHUD3BJNY6g8XS2+oodfwuAVCEg0kkWD1KQ9A4HIdysep3bsRoIuoA==
+X-Received: by 2002:a17:907:724f:b0:ae0:b7c8:d735 with SMTP id a640c23a62f3a-ae0d0d15a2dmr422647466b.42.1750946703732;
+        Thu, 26 Jun 2025 07:05:03 -0700 (PDT)
 Received: from localhost.localdomain ([176.227.88.86])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ae2143d928dsm3958266b.107.2025.06.26.07.04.59
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ae2143d928dsm3958266b.107.2025.06.26.07.05.02
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 26 Jun 2025 07:05:00 -0700 (PDT)
+        Thu, 26 Jun 2025 07:05:03 -0700 (PDT)
 From: muhammed.efecetin.67@gmail.com
 X-Google-Original-From: muhammed.efecetin67@gmail.com
 To: linux-rockchip@lists.infradead.org
@@ -86,9 +86,9 @@ Cc: devicetree@vger.kernel.org,
 	rafael@kernel.org,
 	efectn@protonmail.com,
 	daniel.lezcano@linaro.org
-Subject: [PATCH 4/5] thermal: khadas_mcu_fan: add support for Khadas Edge 2
-Date: Thu, 26 Jun 2025 17:04:31 +0300
-Message-ID: <d8596aeea72b2acab614277372f15b773ef3d008.1746518265.git.efectn@protonmail.com>
+Subject: [PATCH 5/5] arm64: dts: rockchip: add Khadas MCU and fan control nodes
+Date: Thu, 26 Jun 2025 17:04:32 +0300
+Message-ID: <27d9dccb3eb8723a524950f9dc6e78b7f99d46c5.1746518265.git.efectn@protonmail.com>
 X-Mailer: git-send-email 2.49.0
 In-Reply-To: <cover.1746518265.git.efectn@protonmail.com>
 References: <cover.1746518265.git.efectn@protonmail.com>
@@ -102,144 +102,89 @@ Content-Transfer-Encoding: 8bit
 
 From: Muhammed Efe Cetin <efectn@protonmail.com>
 
-Fan control on the Khadas Edge 2 is controlled with the 0x8A register,
-using percentage values from 0 to 100, whereas there are only 3 constant steps in previous Khadas boards.
-Therefore, i added a new cooling-levels property, similar to the one used in the pwm-fan driver.
-The original behavior can still be used when the cooling-levels property is not specified,
-ensuring that the new functionality does not break old boards.
+Add Khadas MCU fan control to Khadas Edge 2 with 4 fan control levels.
 
 Signed-off-by: Muhammed Efe Cetin <efectn@protonmail.com>
 ---
- drivers/thermal/khadas_mcu_fan.c | 76 ++++++++++++++++++++++++++++++--
- 1 file changed, 72 insertions(+), 4 deletions(-)
+ .../dts/rockchip/rk3588s-khadas-edge2.dts     | 59 +++++++++++++++++++
+ 1 file changed, 59 insertions(+)
 
-diff --git a/drivers/thermal/khadas_mcu_fan.c b/drivers/thermal/khadas_mcu_fan.c
-index d35e5313b..504e7d254 100644
---- a/drivers/thermal/khadas_mcu_fan.c
-+++ b/drivers/thermal/khadas_mcu_fan.c
-@@ -15,10 +15,16 @@
- #include <linux/thermal.h>
- 
- #define MAX_LEVEL 3
-+#define MAX_SPEED 0x64
- 
- struct khadas_mcu_fan_ctx {
- 	struct khadas_mcu *mcu;
- 	unsigned int level;
+diff --git a/arch/arm64/boot/dts/rockchip/rk3588s-khadas-edge2.dts b/arch/arm64/boot/dts/rockchip/rk3588s-khadas-edge2.dts
+index 2c22abaf4..60766c896 100644
+--- a/arch/arm64/boot/dts/rockchip/rk3588s-khadas-edge2.dts
++++ b/arch/arm64/boot/dts/rockchip/rk3588s-khadas-edge2.dts
+@@ -271,12 +271,71 @@ hym8563: rtc@51 {
+ 		clock-output-names = "hym8563";
+ 		wakeup-source;
+ 	};
 +
-+	unsigned int fan_max_level;
-+	unsigned int fan_register;
-+	unsigned int *fan_cooling_levels;
-+
- 	struct thermal_cooling_device *cdev;
++	khadas_mcu: system-controller@18 {
++		compatible = "khadas,mcu";
++		reg = <0x18>;
++		cooling-levels = <0 50 72 100>;
++		#cooling-cells = <2>;
++	};
  };
  
-@@ -26,9 +32,21 @@ static int khadas_mcu_fan_set_level(struct khadas_mcu_fan_ctx *ctx,
- 				    unsigned int level)
- {
- 	int ret;
-+	unsigned int write_level = level;
-+
-+	if (level > ctx->fan_max_level)
-+		return -EINVAL;
-+
-+	if (ctx->fan_cooling_levels != NULL) {
-+		write_level = ctx->fan_cooling_levels[level];
-+
-+		if (write_level > MAX_SPEED)
-+			return -EINVAL;
-+	}
-+
-+	ret = regmap_write(ctx->mcu->regmap, ctx->fan_register,
-+			   write_level);
- 
--	ret = regmap_write(ctx->mcu->regmap, KHADAS_MCU_CMD_FAN_STATUS_CTRL_REG,
--			   level);
- 	if (ret)
- 		return ret;
- 
-@@ -40,7 +58,9 @@ static int khadas_mcu_fan_set_level(struct khadas_mcu_fan_ctx *ctx,
- static int khadas_mcu_fan_get_max_state(struct thermal_cooling_device *cdev,
- 					unsigned long *state)
- {
--	*state = MAX_LEVEL;
-+	struct khadas_mcu_fan_ctx *ctx = cdev->devdata;
-+
-+	*state = ctx->fan_max_level;
- 
- 	return 0;
- }
-@@ -61,7 +81,7 @@ khadas_mcu_fan_set_cur_state(struct thermal_cooling_device *cdev,
- {
- 	struct khadas_mcu_fan_ctx *ctx = cdev->devdata;
- 
--	if (state > MAX_LEVEL)
-+	if (state > ctx->fan_max_level)
- 		return -EINVAL;
- 
- 	if (state == ctx->level)
-@@ -76,6 +96,47 @@ static const struct thermal_cooling_device_ops khadas_mcu_fan_cooling_ops = {
- 	.set_cur_state = khadas_mcu_fan_set_cur_state,
+ &i2s5_8ch {
+ 	status = "okay";
  };
  
-+static int khadas_mcu_fan_get_cooling_data_edge2(struct khadas_mcu_fan_ctx *ctx, struct device *dev)
-+{
-+	struct device_node *np = ctx->mcu->dev->of_node;
-+	int num, i, ret;
++&package_thermal {
++	polling-delay = <2000>;
 +
-+	if (!of_property_present(np, "cooling-levels"))
-+		return 0;
++	trips {
++		package_fan0: package-fan0 {
++			temperature = <50000>;
++			hysteresis = <5000>;
++			type = "active";
++		};
 +
-+	ret = of_property_count_u32_elems(np, "cooling-levels");
-+	if (ret <= 0) {
-+		dev_err(dev, "Wrong data!\n");
-+		return ret ? : -EINVAL;
-+	}
++		package_fan1: package-fan1 {
++			temperature = <60000>;
++			hysteresis = <5000>;
++			type = "active";
++		};
 +
-+	num = ret;
-+	ctx->fan_cooling_levels = devm_kcalloc(dev, num, sizeof(u32),
-+						   GFP_KERNEL);
-+	if (!ctx->fan_cooling_levels)
-+		return -ENOMEM;
++		package_fan2: package-fan2 {
++			temperature = <65000>;
++			hysteresis = <5000>;
++			type = "active";
++		};
 +
-+	ret = of_property_read_u32_array(np, "cooling-levels",
-+					 ctx->fan_cooling_levels, num);
-+	if (ret) {
-+		dev_err(dev, "Property 'cooling-levels' cannot be read!\n");
-+		return ret;
-+	}
++		package_fan3: package-fan3 {
++			temperature = <75000>;
++			hysteresis = <5000>;
++			type = "active";
++		};
++	};
 +
-+	for (i = 0; i < num; i++) {
-+		if (ctx->fan_cooling_levels[i] > MAX_SPEED) {
-+			dev_err(dev, "MCU fan state[%d]:%d > %d\n", i,
-+				ctx->fan_cooling_levels[i], MAX_SPEED);
-+			return -EINVAL;
-+		}
-+	}
++	cooling-maps {
++		map0 {
++			trip = <&package_fan0>;
++			cooling-device = <&khadas_mcu THERMAL_NO_LIMIT 1>;
++		};
 +
-+	ctx->fan_max_level = num - 1;
-+	ctx->fan_register = KHADAS_MCU_CMD_FAN_STATUS_CTRL_REG_V2;
++		map1 {
++			trip = <&package_fan1>;
++			cooling-device = <&khadas_mcu 1 2>;
++		};
 +
-+	return 0;
-+}
++		map2 {
++			trip = <&package_fan2>;
++			cooling-device = <&khadas_mcu 2 3>;
++		};
 +
- static int khadas_mcu_fan_probe(struct platform_device *pdev)
- {
- 	struct khadas_mcu *mcu = dev_get_drvdata(pdev->dev.parent);
-@@ -90,6 +151,13 @@ static int khadas_mcu_fan_probe(struct platform_device *pdev)
- 	ctx->mcu = mcu;
- 	platform_set_drvdata(pdev, ctx);
- 
-+	ctx->fan_max_level = MAX_LEVEL;
-+	ctx->fan_register = KHADAS_MCU_CMD_FAN_STATUS_CTRL_REG;
++		map3 {
++			trip = <&package_fan3>;
++			cooling-device = <&khadas_mcu 3 THERMAL_NO_LIMIT>;
++		};
++	};
++};
 +
-+	ret = khadas_mcu_fan_get_cooling_data_edge2(ctx, dev);
-+	if (ret)
-+		return ret;
-+
- 	cdev = devm_thermal_of_cooling_device_register(dev->parent,
- 			dev->parent->of_node, "khadas-mcu-fan", ctx,
- 			&khadas_mcu_fan_cooling_ops);
+ &pd_gpu {
+ 	domain-supply = <&vdd_gpu_s0>;
+ };
 -- 
 2.49.0
 
