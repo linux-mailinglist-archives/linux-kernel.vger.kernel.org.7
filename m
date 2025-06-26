@@ -1,55 +1,59 @@
-Return-Path: <linux-kernel+bounces-704822-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-704824-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id A1106AEA21F
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 066CEAEA21E
 	for <lists+linux-kernel@lfdr.de>; Thu, 26 Jun 2025 17:14:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 71291188A63B
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Jun 2025 15:06:18 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4ADB44E5C20
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Jun 2025 15:06:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BBF042F430A;
-	Thu, 26 Jun 2025 14:57:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CFDA72F4A06;
+	Thu, 26 Jun 2025 14:57:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="h/yjG2dW"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="NO9uKOtt"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 09AB22EBDC8;
-	Thu, 26 Jun 2025 14:57:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3D3352ECD22
+	for <linux-kernel@vger.kernel.org>; Thu, 26 Jun 2025 14:57:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750949846; cv=none; b=YsoGTW8NYPouongvolmjDmLaqiRUB8GP7B03nqnShafhf48pSlsc494DaI+jdyB6NAa8cLxIN7mMVHG2bmXDgMmL5WZpwsleSJVaha21xg9Cr9zkEzwXB8tWAqVTDOze+LNrbOX+m+79rOiQBST0jLvMmhgFJ02KlzejJq4/f18=
+	t=1750949872; cv=none; b=dwLJMRcdPYOIWUn/bW/Oy8ToBr+4OvdH5rtTuTzhQqseT0P80DXGBQ+r3TQp5+esTOEf7LMx5uyt/DHnYxUMnl9hqP4F3aaLAtwKH1HWs6YMBv9RdYEh1yk0KsRW2OywRdCZiR335iJ4SmRTAe5am/e1veQcwEofPQUqMh56vNY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750949846; c=relaxed/simple;
-	bh=DpQu293QtnkVCjW/dcgcoz5uwg7vQNBKK1Jw3JgSQ40=;
+	s=arc-20240116; t=1750949872; c=relaxed/simple;
+	bh=waAzfhSPPgiKKjNY60AGgeGRs4IxNy8v7C7OpSqOHIg=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=RzpBN+s0YtiXfhdS+QGcSIGjE+JTp9Sji5Zk2RHNRQ3yh2qd9TyKxdR+eu9I6hcqTMUz0JQp5aMNc7mNsVq8WYv9wld6c3AT8NZyJ3b5Wvp6X2qb7ylcByUiAfo+5dwLeukXpBvdAQGn9mvc8pv5kXGjZ5OdgRhB0vtdu+KP8Y0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=h/yjG2dW; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 43249C4CEEB;
-	Thu, 26 Jun 2025 14:57:25 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1750949845;
-	bh=DpQu293QtnkVCjW/dcgcoz5uwg7vQNBKK1Jw3JgSQ40=;
+	 Content-Type:Content-Disposition:In-Reply-To; b=GWV8unA/bCZZ/bS6yN4xJHGwiwL6Rhu1/O4axXaeWAlikb9kb0Y1e3jpYR4J5Y7TVoA9PrJYp+CAusGfb3Je7NqJcWR4HN/xTCZrjJSzmbknEL5F9dtFi0/zVBvILkWLrVZmIjf5Ol5bOQB6ZEEuH0Ea5gdyAU99OqWsPxWHVqs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=NO9uKOtt; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 71A94C4CEED;
+	Thu, 26 Jun 2025 14:57:51 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1750949871;
+	bh=waAzfhSPPgiKKjNY60AGgeGRs4IxNy8v7C7OpSqOHIg=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=h/yjG2dWFn9WJLfhtEMNsY4uEfjYEayQAJL4nbfuLyf0IEfVA+bsMr2naPrff9YRz
-	 Qz0s6K8uKmFpUpVU0AmSQoOFAeH27b6xFGkUTBMAvZK21AdAQSCnNa2CWGoYWKyz+L
-	 LamXjn3K8rm15iHh60tz+sPTgTVcYHzezZVx0GFA=
-Date: Thu, 26 Jun 2025 15:57:21 +0100
-From: Greg KH <gregkh@linuxfoundation.org>
-To: Pranav Tyagi <pranav.tyagi03@gmail.com>
-Cc: linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org,
-	rodrigosiqueiramelo@gmail.com, melissa.srw@gmail.com,
-	hamohammed.sa@gmail.com, daniel@ffwll.ch, airlied@linux.ie,
-	mcanal@igalia.com, arthurgrillo@riseup.net, mairacanal@riseup.net,
-	skhan@linuxfoundation.org, linux-kernel-mentees@lists.linux.dev,
-	stable@vger.kernel.org, sashal@kernel.org
-Subject: Re: [PATCH] drm/vkms: Fix race-condition between the hrtimer and the
- atomic commit
-Message-ID: <2025062607-hardener-splotchy-1e70@gregkh>
-References: <20250626142243.19071-1-pranav.tyagi03@gmail.com>
+	b=NO9uKOtt6sMCYoYTXoGQpqBh/nAlDOrbMErluIN9jtHeN5hmOCdtI7Gk1kc0/Qp5K
+	 QXrC2Hfn4eC16tnB5nD0z0zr68jgwlcd0Ev/kkWZ9vDzIdj0hUqm2k05UxGygugPzP
+	 6nmZu3MNvUS2BX1oxbQKz3Ake1wa6wjMOkIKLphHOGtMmM6buKojNKA3fTkmY3I0FK
+	 Pj/QZRu2DLHtBdgmVjlG+Wdk7SLF9nacf3T5dAUinj1qdK5mb+pwQVxNRvFh10kOJf
+	 skmhl25nOpnOO6KIfMDymA2R8feriSFj9ejZ0pTw4Vf1FGuvTD07eLuMwixaCYpa94
+	 EwZYvBUGH35+Q==
+Date: Thu, 26 Jun 2025 16:57:49 +0200
+From: Frederic Weisbecker <frederic@kernel.org>
+To: Bjorn Helgaas <helgaas@kernel.org>
+Cc: LKML <linux-kernel@vger.kernel.org>,
+	Marco Crivellari <marco.crivellari@suse.com>,
+	Michal Hocko <mhocko@suse.com>,
+	Peter Zijlstra <peterz@infradead.org>, Tejun Heo <tj@kernel.org>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Vlastimil Babka <vbabka@suse.cz>, Waiman Long <longman@redhat.com>
+Subject: Re: [PATCH 00/27] cpuset/isolation: Honour kthreads preferred
+ affinity
+Message-ID: <aF1f7aBSzyk7vJty@localhost.localdomain>
+References: <20250620152308.27492-1-frederic@kernel.org>
+ <20250620160847.GA1295810@bhelgaas>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -59,39 +63,41 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <20250626142243.19071-1-pranav.tyagi03@gmail.com>
+In-Reply-To: <20250620160847.GA1295810@bhelgaas>
 
-On Thu, Jun 26, 2025 at 07:52:43PM +0530, Pranav Tyagi wrote:
-> From: Maíra Canal <mcanal@igalia.com>
+Le Fri, Jun 20, 2025 at 11:08:47AM -0500, Bjorn Helgaas a écrit :
+> On Fri, Jun 20, 2025 at 05:22:41PM +0200, Frederic Weisbecker wrote:
+> > The kthread code was enhanced lately to provide an infrastructure which
+> > manages the preferred affinity of unbound kthreads (node or custom
+> > cpumask) against housekeeping constraints and CPU hotplug events.
+> > 
+> > One crucial missing piece is cpuset: when an isolated partition is
+> > created, deleted, or its CPUs updated, all the unbound kthreads in the
+> > top cpuset are affine to _all_ the non-isolated CPUs, possibly breaking
+> > their preferred affinity along the way
+> > 
+> > Solve this with performing the kthreads affinity update from cpuset to
+> > the kthreads consolidated relevant code instead so that preferred
+> > affinities are honoured.
+> > 
+> > The dispatch of the new cpumasks to workqueues and kthreads is performed
+> > by housekeeping, as per the nice Tejun's suggestion.
+> > 
+> > As a welcome side effect, HK_TYPE_DOMAIN then integrates both the set
+> > from isolcpus= and cpuset isolated partitions. Housekeeping cpumasks are
+> > now modifyable with specific synchronization. A big step toward making
+> > nohz_full= also mutable through cpuset in the future.
 > 
-> [ Upstream commit a0e6a017ab56936c0405fe914a793b241ed25ee0 ]
-> 
-> Currently, it is possible for the composer to be set as enabled and then
-> as disabled without a proper call for the vkms_vblank_simulate(). This
-> is problematic, because the driver would skip one CRC output, causing CRC
-> tests to fail. Therefore, we need to make sure that, for each time the
-> composer is set as enabled, a composer job is added to the queue.
-> 
-> In order to provide this guarantee, add a mutex that will lock before
-> the composer is set as enabled and will unlock only after the composer
-> job is added to the queue. This way, we can have a guarantee that the
-> driver won't skip a CRC entry.
-> 
-> This race-condition is affecting the IGT test "writeback-check-output",
-> making the test fail and also, leaking writeback framebuffers, as the
-> writeback job is queued, but it is not signaled. This patch avoids both
-> problems.
-> 
-> [v2]:
->     * Create a new mutex and keep the spinlock across the atomic commit in
->       order to avoid interrupts that could result in deadlocks.
-> 
-> [ Backport to 5.15: context cleanly applied with no semantic changes.
-> Build-tested. ]
+> Is there anything in Documentation/ that covers the "housekeeping"
+> feature (and isolation in general) and how to use it?  I see a few
+> mentions in kernel-parameters.txt and kernel-per-CPU-kthreads.rst, but
+> they are only incidental.
 
-Did you forget about 6.1.y?
+Not yet, I'll try that for the next take.
 
-confused,
+Thanks.
 
-greg k-h
+-- 
+Frederic Weisbecker
+SUSE Labs
 
