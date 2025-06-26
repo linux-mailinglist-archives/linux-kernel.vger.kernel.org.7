@@ -1,140 +1,169 @@
-Return-Path: <linux-kernel+bounces-704236-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-704261-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id A8CA4AE9B2E
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Jun 2025 12:27:01 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C82FBAE9B77
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Jun 2025 12:34:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 549AB1C40DE5
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Jun 2025 10:27:17 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D6E676A2EBE
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Jun 2025 10:32:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 71E2C25B1D8;
-	Thu, 26 Jun 2025 10:26:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EE21426AABA;
+	Thu, 26 Jun 2025 10:28:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="Dqr/FcpZ"
-Received: from lelvem-ot01.ext.ti.com (lelvem-ot01.ext.ti.com [198.47.23.234])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="AaSTU0ON"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E03A023815D;
-	Thu, 26 Jun 2025 10:26:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.23.234
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 51A9825B2E8;
+	Thu, 26 Jun 2025 10:28:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750933594; cv=none; b=qECox5xJkL+Bp2a/O0fIMzdfwKkeqB66uRP4PPdYrLD9WZyYXKsFJKpa0FvqPo5RiP/7McvTJ+WnjQCT6uivwSs7uXfSYR5bRmeJQu+3kOj3aQM53YTBlmD13f5cYf1uwx7eL8VxlnTU5iAjTBOhN27JZ9IS7088sCYycxZDsSA=
+	t=1750933714; cv=none; b=Mgf0NzVhYQG1BuRkohgj86yy5UiVupsFay96z/0fYq3PxaEWTEhQaBLZ1e9Cc4uqIRItqNrWSiONNSWpi9/I/hKLvj98Aya7xx7N6PX4hApA5tGG1ShqUrV8L2oC3eJGIIjF34gLYK6G8qS1S+ICAwj4sU1J0pAxaRw/eCXTpfM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750933594; c=relaxed/simple;
-	bh=f4iGf7Q64J4LhrP3NYzSeEC4LwixPUQ+3cb4kLHOtGY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=p+IhrDNYlIt1Enmlr8Gzt4CjFAtHl1rUIwPLk//y6AG8YrfxpUwfdISooEnrgAxIj7Nn0WplFSf5suq86jrLy0v7gqI4IU0yI3K/FeunIjJQxhn/enRj5a7wdkHlgSGLU1S6M8+FdJWdXtO19zMwl0kh0ELi4e1twm/z7vUqgK4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=Dqr/FcpZ; arc=none smtp.client-ip=198.47.23.234
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
-Received: from fllvem-sh03.itg.ti.com ([10.64.41.86])
-	by lelvem-ot01.ext.ti.com (8.15.2/8.15.2) with ESMTP id 55QAQKgr1717299;
-	Thu, 26 Jun 2025 05:26:20 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-	s=ti-com-17Q1; t=1750933580;
-	bh=kRolmEIKli9p4hwGQbbTqvQScgVEcFqSWTOIe6ZE1zk=;
-	h=Date:Subject:To:CC:References:From:In-Reply-To;
-	b=Dqr/FcpZtcob14n36+suv1WrtLyCFM7my+SoTgaYneC/rWMNHD0nx4t74xxVlCBBG
-	 Yi4lAvl/CXg4E3v1FMPLCOJFlccduD9LdmFLkHm1td6mVCaZW9IhhPIo26z2QT6a2H
-	 h1TNPpXsYCyB+c5YjclgVOdMfaQZuzuSPjN3ckuw=
-Received: from DLEE109.ent.ti.com (dlee109.ent.ti.com [157.170.170.41])
-	by fllvem-sh03.itg.ti.com (8.18.1/8.18.1) with ESMTPS id 55QAQKaf1892556
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-SHA256 bits=128 verify=FAIL);
-	Thu, 26 Jun 2025 05:26:20 -0500
-Received: from DLEE106.ent.ti.com (157.170.170.36) by DLEE109.ent.ti.com
- (157.170.170.41) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.55; Thu, 26
- Jun 2025 05:26:19 -0500
-Received: from lelvem-mr05.itg.ti.com (10.180.75.9) by DLEE106.ent.ti.com
- (157.170.170.36) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.55 via
- Frontend Transport; Thu, 26 Jun 2025 05:26:19 -0500
-Received: from [172.24.31.248] (lt5cd2489kgj.dhcp.ti.com [172.24.31.248])
-	by lelvem-mr05.itg.ti.com (8.18.1/8.18.1) with ESMTP id 55QAQFXk1106020;
-	Thu, 26 Jun 2025 05:26:16 -0500
-Message-ID: <a5b61958-98fa-48a7-9499-b6e238c5945a@ti.com>
-Date: Thu, 26 Jun 2025 15:56:14 +0530
+	s=arc-20240116; t=1750933714; c=relaxed/simple;
+	bh=eRi7cgKtm7Hi83Dms6X9G6hUMNMcr8aq7kDLX+cs8k0=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
+	 In-Reply-To:To:Cc; b=tMYQysQLBHr8EaoH2ntsyE9sHh5lsAZmT8+WixK4jpV+3+V+zDkweKJunp7IHeZuZa0ju34UjOfYwqrmU+whM8OlXDVQMUPUAdpulCnauSmQcuID/Yvo3kDsmkrt8N5g9c20lF66WE3XrjLBPFssu7Pu3dYy2v85Y8iQ5xIUGk4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=AaSTU0ON; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3A67CC4CEEE;
+	Thu, 26 Jun 2025 10:28:29 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1750933714;
+	bh=eRi7cgKtm7Hi83Dms6X9G6hUMNMcr8aq7kDLX+cs8k0=;
+	h=From:Date:Subject:References:In-Reply-To:To:Cc:From;
+	b=AaSTU0ON63d9u0kaKt7uvaiiDvjwqzapfYhPLgKPC4AW8OUwqHD142e6btpx8cWh4
+	 71fhZ+yEiNG0Ok3FtJ3fkQCq2lX3h4e9KH+kyTqoymEffcgIbSBc4YvydG95JPgaKN
+	 OEwHvBYhS8HA2OJFVnya4sOqznGBiif6OKuwBXQmEU/ffjn7udFVpq6CDq+vOVgnaM
+	 NZ5vTSH33BI6QdCPZAbBGnUhPkq1Bwntzh1iLD4/epMPj2yKD7hmI+34LSyrlFW4HM
+	 GjZKx3uMmdPo3N9RLO7VFwL/2GK6ZIaqeSWiKFXly9YzjxR4rgz7/gTcI+x5u4Hsj+
+	 CWSdRLAmXbXlA==
+From: Lorenzo Pieralisi <lpieralisi@kernel.org>
+Date: Thu, 26 Jun 2025 12:26:15 +0200
+Subject: [PATCH v6 24/31] of/irq: Add of_msi_xlate() helper function
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 4/7] arm64: dts: ti: k3-j721s2-common-proc-board: Add
- main_i2c4 instance
-To: Jayesh Choudhary <j-choudhary@ti.com>, <nm@ti.com>, <vigneshr@ti.com>,
-        <devicetree@vger.kernel.org>
-CC: <kristo@kernel.org>, <robh@kernel.org>, <krzk+dt@kernel.org>,
-        <conor+dt@kernel.org>, <linux-arm-kernel@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>, <devarsht@ti.com>, <u-kumar1@ti.com>
-References: <20250624082619.324851-1-j-choudhary@ti.com>
- <20250624082619.324851-5-j-choudhary@ti.com>
-Content-Language: en-US
-From: "Kumar, Udit" <u-kumar1@ti.com>
-In-Reply-To: <20250624082619.324851-5-j-choudhary@ti.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
+Message-Id: <20250626-gicv5-host-v6-24-48e046af4642@kernel.org>
+References: <20250626-gicv5-host-v6-0-48e046af4642@kernel.org>
+In-Reply-To: <20250626-gicv5-host-v6-0-48e046af4642@kernel.org>
+To: Marc Zyngier <maz@kernel.org>, Thomas Gleixner <tglx@linutronix.de>, 
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, 
+ Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>
+Cc: Arnd Bergmann <arnd@arndb.de>, 
+ Sascha Bischoff <sascha.bischoff@arm.com>, 
+ Jonathan Cameron <Jonathan.Cameron@huawei.com>, 
+ Timothy Hayes <timothy.hayes@arm.com>, Bjorn Helgaas <bhelgaas@google.com>, 
+ "Liam R. Howlett" <Liam.Howlett@oracle.com>, 
+ Peter Maydell <peter.maydell@linaro.org>, 
+ Mark Rutland <mark.rutland@arm.com>, Jiri Slaby <jirislaby@kernel.org>, 
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
+ devicetree@vger.kernel.org, linux-pci@vger.kernel.org, 
+ Lorenzo Pieralisi <lpieralisi@kernel.org>
+X-Mailer: b4 0.15-dev-6f78e
 
+Add an of_msi_xlate() helper that maps a device ID and returns
+the device node of the MSI controller the device ID is mapped to.
 
-On 6/24/2025 1:56 PM, Jayesh Choudhary wrote:
-> Add dt node for main_i2c4 instance along with required pinmuxing.
-> Also add the gpio expander 'exp4' required by display connector.
->
-> Signed-off-by: Jayesh Choudhary <j-choudhary@ti.com>
-> ---
->   .../dts/ti/k3-j721s2-common-proc-board.dts    | 24 +++++++++++++++++++
->   1 file changed, 24 insertions(+)
->
-> diff --git a/arch/arm64/boot/dts/ti/k3-j721s2-common-proc-board.dts b/arch/arm64/boot/dts/ti/k3-j721s2-common-proc-board.dts
-> index e2fc1288ed07..793d50344fad 100644
-> --- a/arch/arm64/boot/dts/ti/k3-j721s2-common-proc-board.dts
-> +++ b/arch/arm64/boot/dts/ti/k3-j721s2-common-proc-board.dts
-> @@ -148,6 +148,13 @@ J721S2_IOPAD(0x060, PIN_INPUT_PULLUP, 13) /* (AC27) MCASP2_AXR1.I2C3_SDA */
->   		>;
->   	};
->   
-> +	main_i2c4_pins_default: main-i2c4-default-pins {
-> +		pinctrl-single,pins = <
-> +			J721S2_IOPAD(0x014, PIN_INPUT_PULLUP, 8) /* (AD25) I2C4_SCL */
+Required by core functions that need an MSI controller device node
+pointer at the same time as a mapped device ID, of_msi_map_id() is not
+sufficient for that purpose.
 
-Please check once for i2c clock, pin should be in input or output pull 
-up mode.
+Signed-off-by: Lorenzo Pieralisi <lpieralisi@kernel.org>
+Cc: Rob Herring <robh@kernel.org>
+Cc: Marc Zyngier <maz@kernel.org>
+---
+ drivers/of/irq.c       | 22 +++++++++++++++++-----
+ include/linux/of_irq.h |  5 +++++
+ 2 files changed, 22 insertions(+), 5 deletions(-)
 
+diff --git a/drivers/of/irq.c b/drivers/of/irq.c
+index f8ad79b9b1c9..74aaea61de13 100644
+--- a/drivers/of/irq.c
++++ b/drivers/of/irq.c
+@@ -670,8 +670,20 @@ void __init of_irq_init(const struct of_device_id *matches)
+ 	}
+ }
+ 
+-static u32 __of_msi_map_id(struct device *dev, struct device_node **np,
+-			    u32 id_in)
++/**
++ * of_msi_xlate - map a MSI ID and find relevant MSI controller node
++ * @dev: device for which the mapping is to be done.
++ * @msi_np: Pointer to store the MSI controller node
++ * @id_in: Device ID.
++ *
++ * Walk up the device hierarchy looking for devices with a "msi-map"
++ * property. If found, apply the mapping to @id_in. @msi_np pointed
++ * value must be NULL on entry, if an MSI controller is found @msi_np is
++ * initialized to the MSI controller node with a reference held.
++ *
++ * Returns: The mapped MSI id.
++ */
++u32 of_msi_xlate(struct device *dev, struct device_node **msi_np, u32 id_in)
+ {
+ 	struct device *parent_dev;
+ 	u32 id_out = id_in;
+@@ -682,7 +694,7 @@ static u32 __of_msi_map_id(struct device *dev, struct device_node **np,
+ 	 */
+ 	for (parent_dev = dev; parent_dev; parent_dev = parent_dev->parent)
+ 		if (!of_map_id(parent_dev->of_node, id_in, "msi-map",
+-				"msi-map-mask", np, &id_out))
++				"msi-map-mask", msi_np, &id_out))
+ 			break;
+ 	return id_out;
+ }
+@@ -700,7 +712,7 @@ static u32 __of_msi_map_id(struct device *dev, struct device_node **np,
+  */
+ u32 of_msi_map_id(struct device *dev, struct device_node *msi_np, u32 id_in)
+ {
+-	return __of_msi_map_id(dev, &msi_np, id_in);
++	return of_msi_xlate(dev, &msi_np, id_in);
+ }
+ 
+ /**
+@@ -719,7 +731,7 @@ struct irq_domain *of_msi_map_get_device_domain(struct device *dev, u32 id,
+ {
+ 	struct device_node *np = NULL;
+ 
+-	__of_msi_map_id(dev, &np, id);
++	of_msi_xlate(dev, &np, id);
+ 	return irq_find_matching_host(np, bus_token);
+ }
+ 
+diff --git a/include/linux/of_irq.h b/include/linux/of_irq.h
+index 6337ad4e5fe8..a480063c9cb1 100644
+--- a/include/linux/of_irq.h
++++ b/include/linux/of_irq.h
+@@ -54,6 +54,7 @@ extern struct irq_domain *of_msi_map_get_device_domain(struct device *dev,
+ 							u32 id,
+ 							u32 bus_token);
+ extern void of_msi_configure(struct device *dev, const struct device_node *np);
++extern u32 of_msi_xlate(struct device *dev, struct device_node **msi_np, u32 id_in);
+ u32 of_msi_map_id(struct device *dev, struct device_node *msi_np, u32 id_in);
+ #else
+ static inline void of_irq_init(const struct of_device_id *matches)
+@@ -100,6 +101,10 @@ static inline struct irq_domain *of_msi_map_get_device_domain(struct device *dev
+ static inline void of_msi_configure(struct device *dev, struct device_node *np)
+ {
+ }
++static inline u32 of_msi_xlate(struct device *dev, struct device_node **msi_np, u32 id_in)
++{
++	return id_in;
++}
+ static inline u32 of_msi_map_id(struct device *dev,
+ 				 struct device_node *msi_np, u32 id_in)
+ {
 
-> +			J721S2_IOPAD(0x010, PIN_INPUT_PULLUP, 8) /* (AF28) I2C4_SDA */
-> +		>;
-> +	};
-> +
->   	main_i2c5_pins_default: main-i2c5-default-pins {
->   		pinctrl-single,pins = <
->   			J721S2_IOPAD(0x01c, PIN_INPUT, 8) /* (Y24) MCAN15_TX.I2C5_SCL */
-> @@ -370,6 +377,23 @@ exp2: gpio@22 {
->   	};
->   };
->   
-> +&main_i2c4 {
-> +	status = "okay";
-> +	pinctrl-names = "default";
-> +	pinctrl-0 = <&main_i2c4_pins_default>;
-> +	clock-frequency = <400000>;
-> +
-> +	exp4: gpio@20 {
-> +		compatible = "ti,tca6408";
-> +		reg = <0x20>;
-> +		gpio-controller;
-> +		#gpio-cells = <2>;
-> +		gpio-line-names = "DP0_PWR_SW_EN", "DP1_PWR_SW_EN", "UB981_PDB",
-> +				  "UB981_GPIO0", "UB981_GPIO1", "UB981_GPIO2",
-> +				  "UB981_GPIO3", "PWR_SW_CNTL_DSI0#";
-> +	};
-> +};
-> +
->   &main_i2c5 {
->   	pinctrl-names = "default";
->   	pinctrl-0 = <&main_i2c5_pins_default>;
+-- 
+2.48.0
+
 
