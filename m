@@ -1,80 +1,179 @@
-Return-Path: <linux-kernel+bounces-704119-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-704121-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 486EEAE99A1
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Jun 2025 11:08:08 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id DF5E7AE99AB
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Jun 2025 11:10:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B59B43A7A35
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Jun 2025 09:07:42 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5D95A3A6A4D
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Jun 2025 09:09:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9BC3F29ACED;
-	Thu, 26 Jun 2025 09:07:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E166E29ACF3;
+	Thu, 26 Jun 2025 09:10:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="sDSYdLmE"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="vGmyXDEO";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="YNsgfzbZ"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F2BFD1DF99C;
-	Thu, 26 Jun 2025 09:07:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 929E61A8F94;
+	Thu, 26 Jun 2025 09:10:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750928878; cv=none; b=kU4ibmKTOZTleavoJIeDPaKwuhkkkjhUWf1VHSb4Gxni51BrXTcOL8jxcaUxABk0PZolRvwgskRd7L3mon18IA8VoO3oL5f41sox4RjpdAlo23G658+EsJj9FvlQAjbR2Py8qTJOYbqkuWCn7RU5A3/3XOe2UE0Sdd2nU/CyP20=
+	t=1750929004; cv=none; b=lNdcFrgO2AVPdRATaIAQccpj2rtx/xnO3ad5b3hrrib4qC4oaCy0us0RWt+YnQuYXBGHVLrDdVDK9Zjvkhn4d1naaVbNG4Iy57iji/rC0Ot4DZd2dzJR0Yg+Wa5bUaLpGnp7Jgx3s4ijgmEUvkq/U6hCbmA1wuVlxFoIs/Q/ckc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750928878; c=relaxed/simple;
-	bh=cMWzftq2K/LlrUV3h0r8T99wGbmF4Fb85mw7RkXt0vw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=THYtvFL8rmPDN9OzjfYInXdnOA3wVkhFdUlPc/1H/pci7++XoFYahEUbMaVhxKeJBbduUoL0tXLqjHsC0RJxwCD2806P2bfSpq+ui4xLfuEod4BJCmdtCBGz7Smp0Rnh86hBPWydnra9YZ83rmmO8mcXwzg3qYDyKD3EayDDoVw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=sDSYdLmE; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3770DC4CEEB;
-	Thu, 26 Jun 2025 09:07:55 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1750928877;
-	bh=cMWzftq2K/LlrUV3h0r8T99wGbmF4Fb85mw7RkXt0vw=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=sDSYdLmEptJrfoQcOx/lqGIKc0ntZ9ZIyGHxOVOEZikIHNAQvC5UebB2f0C8eiFyp
-	 9lnP3lKWcG6yno50gX9t/DMcvnJMpWLpoDRKRFcgjTZdbo/agniDrU6zOXXB+EJQlg
-	 3HZ4EU+T43P1D2KeP5n5xQjsVlGLly0KNMZYD4iRGSYiNN+LBeqQWdBsd0kjMA41G4
-	 /Is3DJ4jzQ0n2wF/QJh9U4Zwab9kaL3tfPFagcDI5VO4X6SoZyRaOlv+TDtrlm4XL2
-	 skKQHL7yigDlapSgjg3I8tI3/T3nzpvafC28WlzD0VpV8dXbR1OedHFkpH9o0U6uEW
-	 k2XGo6ZcBbLQg==
-Date: Thu, 26 Jun 2025 10:07:53 +0100
-From: Simon Horman <horms@kernel.org>
-To: Fushuai Wang <wangfushuai@baidu.com>
-Cc: saeedm@nvidia.com, tariqt@nvidia.com, leon@kernel.org,
-	andrew+netdev@lunn.ch, davem@davemloft.net, edumazet@google.com,
-	kuba@kernel.org, pabeni@redhat.com, netdev@vger.kernel.org,
-	linux-rdma@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Zhu Yanjun <yanjun.zhu@linux.dev>,
-	Dragos Tatulea <dtatulea@nvidia.com>
-Subject: Re: [PATCH net-next v2] net/mlx5e: Fix error handling in RQ memory
- model registration
-Message-ID: <20250626090753.GU1562@horms.kernel.org>
-References: <20250626053003.45807-1-wangfushuai@baidu.com>
+	s=arc-20240116; t=1750929004; c=relaxed/simple;
+	bh=eHcQbvdP1tsbsy9rUU2nU0v69r0DHH5Cjv0cpzXEJHI=;
+	h=Date:From:To:Subject:Cc:In-Reply-To:References:MIME-Version:
+	 Message-ID:Content-Type; b=iemU+UIoZ0GMpHauolzwcvG1WhTbSxLSAn6bQoEwTwlCJQkaboD8Wwj+ElvmKjxIBsjpUQ0x5QhAAyB25zZzXn5sSmK5FhpxtMkyEt+BGgJvzS+iLxam1nmZ7kd9hHIDCL7t/hZ1uoo307HSJ8LuQ4BhfJX6Xfe6+5pik86TyPs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=vGmyXDEO; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=YNsgfzbZ; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+Date: Thu, 26 Jun 2025 09:09:59 -0000
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1750929000;
+	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
+	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+	 content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=dPN0jWReGrNbE2ue0+ZV0QVPGtNZ6PIlpBrMVw7PQJc=;
+	b=vGmyXDEOp2X2xhP3Q3Pj4eyvl7Kqumqq8T36AUjp5u2546UmAsGp4z6hRCEfCGNUL1mjv8
+	xkQ97cYZs5Ykx3zciLUY28jviPNHVnYughslRKOiNSqXoz9k4msz+xb3znYXwr0Bx/hU7j
+	jZOpd0qwWAhosy1jdCZkGWKQJWbhFVpBBabXm5bDj3e8Wj8M46i22HYvA0aV7qcDUXypay
+	OVNlAOyG5IfBlREfmjJWX80EKeFHdAN9nxfeWAcDBTr/gXrWCTlgetEN4gxu/Bmrf5SmqF
+	eUxDc6Y3dsM2WwP8SZbuuJkdhYQDwC17Shn9Psxtg3/B8oyzca55rpiicUbnmw==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1750929000;
+	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
+	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+	 content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=dPN0jWReGrNbE2ue0+ZV0QVPGtNZ6PIlpBrMVw7PQJc=;
+	b=YNsgfzbZkN0ehyzZWQ8fQH5EZR1JSd4ytTZbmk5v4xmwg4J/he5tSphw8PXsmV1LxpmESF
+	+GqQzMUrsvGJKJBA==
+From: "tip-bot2 for David Kaplan" <tip-bot2@linutronix.de>
+Sender: tip-bot2@linutronix.de
+Reply-to: linux-kernel@vger.kernel.org
+To: linux-tip-commits@vger.kernel.org
+Subject: [tip: x86/bugs] x86/bugs: Use IBPB for retbleed if used by SRSO
+Cc: David Kaplan <david.kaplan@amd.com>, Ingo Molnar <mingo@kernel.org>,
+ "Borislav Petkov (AMD)" <bp@alien8.de>, "H . Peter Anvin" <hpa@zytor.com>,
+ Dave Hansen <dave.hansen@linux.intel.com>,
+ Josh Poimboeuf <jpoimboe@kernel.org>,
+ Pawan Gupta <pawan.kumar.gupta@linux.intel.com>,
+ Peter Zijlstra <peterz@infradead.org>, x86@kernel.org,
+ linux-kernel@vger.kernel.org
+In-Reply-To: <20250625155805.600376-3-david.kaplan@amd.com>
+References: <20250625155805.600376-3-david.kaplan@amd.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250626053003.45807-1-wangfushuai@baidu.com>
+Message-ID: <175092899935.406.14417210191129837726.tip-bot2@tip-bot2>
+Robot-ID: <tip-bot2@linutronix.de>
+Robot-Unsubscribe:
+ Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
+Precedence: bulk
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
 
-On Thu, Jun 26, 2025 at 01:30:03PM +0800, Fushuai Wang wrote:
-> Currently when xdp_rxq_info_reg_mem_model() fails in the XSK path, the
-> error handling incorrectly jumps to err_destroy_page_pool. While this
-> may not cause errors, we should make it jump to the correct location.
-> 
-> Signed-off-by: Fushuai Wang <wangfushuai@baidu.com>
-> Reviewed-by: Zhu Yanjun <yanjun.zhu@linux.dev>
-> Acked-by: Dragos Tatulea <dtatulea@nvidia.com>
-> ---
->  drivers/net/ethernet/mellanox/mlx5/core/en_main.c | 9 ++++++---
->  1 file changed, 6 insertions(+), 3 deletions(-)
+The following commit has been merged into the x86/bugs branch of tip:
 
-Thanks for rebasing.
-This version applies cleanly and otherwise LGTM.
+Commit-ID:     ff54ae7314962699749869a3475da7a702ae991a
+Gitweb:        https://git.kernel.org/tip/ff54ae7314962699749869a3475da7a702ae991a
+Author:        David Kaplan <david.kaplan@amd.com>
+AuthorDate:    Wed, 25 Jun 2025 10:58:04 -05:00
+Committer:     Ingo Molnar <mingo@kernel.org>
+CommitterDate: Thu, 26 Jun 2025 10:56:39 +02:00
+
+x86/bugs: Use IBPB for retbleed if used by SRSO
+
+If spec_rstack_overflow=ibpb then this mitigates retbleed as well.  This
+is relevant for AMD Zen1 and Zen2 CPUs which are vulnerable to both bugs.
+
+Signed-off-by: David Kaplan <david.kaplan@amd.com>
+Signed-off-by: Ingo Molnar <mingo@kernel.org>
+Reviewed-by: Borislav Petkov (AMD) <bp@alien8.de>
+Cc: H . Peter Anvin <hpa@zytor.com>
+Cc: Dave Hansen <dave.hansen@linux.intel.com>
+Cc: Josh Poimboeuf <jpoimboe@kernel.org>
+Cc: Pawan Gupta <pawan.kumar.gupta@linux.intel.com>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Link: https://lore.kernel.org/r/20250625155805.600376-3-david.kaplan@amd.com
+---
+ arch/x86/kernel/cpu/bugs.c | 34 +++++++++++++++++++---------------
+ 1 file changed, 19 insertions(+), 15 deletions(-)
+
+diff --git a/arch/x86/kernel/cpu/bugs.c b/arch/x86/kernel/cpu/bugs.c
+index 6c991af..b263419 100644
+--- a/arch/x86/kernel/cpu/bugs.c
++++ b/arch/x86/kernel/cpu/bugs.c
+@@ -1171,6 +1171,21 @@ static enum retbleed_mitigation retbleed_mitigation __ro_after_init =
+ 
+ static int __ro_after_init retbleed_nosmt = false;
+ 
++enum srso_mitigation {
++	SRSO_MITIGATION_NONE,
++	SRSO_MITIGATION_AUTO,
++	SRSO_MITIGATION_UCODE_NEEDED,
++	SRSO_MITIGATION_SAFE_RET_UCODE_NEEDED,
++	SRSO_MITIGATION_MICROCODE,
++	SRSO_MITIGATION_NOSMT,
++	SRSO_MITIGATION_SAFE_RET,
++	SRSO_MITIGATION_IBPB,
++	SRSO_MITIGATION_IBPB_ON_VMEXIT,
++	SRSO_MITIGATION_BP_SPEC_REDUCE,
++};
++
++static enum srso_mitigation srso_mitigation __ro_after_init = SRSO_MITIGATION_AUTO;
++
+ static int __init retbleed_parse_cmdline(char *str)
+ {
+ 	if (!str)
+@@ -1280,6 +1295,10 @@ static void __init retbleed_update_mitigation(void)
+ 	if (its_mitigation == ITS_MITIGATION_RETPOLINE_STUFF)
+ 		retbleed_mitigation = RETBLEED_MITIGATION_STUFF;
+ 
++	/* If SRSO is using IBPB, that works for retbleed too */
++	if (srso_mitigation == SRSO_MITIGATION_IBPB)
++		retbleed_mitigation = RETBLEED_MITIGATION_IBPB;
++
+ 	if (retbleed_mitigation == RETBLEED_MITIGATION_STUFF &&
+ 	    !cdt_possible(spectre_v2_enabled)) {
+ 		pr_err("WARNING: retbleed=stuff depends on retpoline\n");
+@@ -2845,19 +2864,6 @@ early_param("l1tf", l1tf_cmdline);
+ #undef pr_fmt
+ #define pr_fmt(fmt)	"Speculative Return Stack Overflow: " fmt
+ 
+-enum srso_mitigation {
+-	SRSO_MITIGATION_NONE,
+-	SRSO_MITIGATION_AUTO,
+-	SRSO_MITIGATION_UCODE_NEEDED,
+-	SRSO_MITIGATION_SAFE_RET_UCODE_NEEDED,
+-	SRSO_MITIGATION_MICROCODE,
+-	SRSO_MITIGATION_NOSMT,
+-	SRSO_MITIGATION_SAFE_RET,
+-	SRSO_MITIGATION_IBPB,
+-	SRSO_MITIGATION_IBPB_ON_VMEXIT,
+-	SRSO_MITIGATION_BP_SPEC_REDUCE,
+-};
+-
+ static const char * const srso_strings[] = {
+ 	[SRSO_MITIGATION_NONE]			= "Vulnerable",
+ 	[SRSO_MITIGATION_UCODE_NEEDED]		= "Vulnerable: No microcode",
+@@ -2870,8 +2876,6 @@ static const char * const srso_strings[] = {
+ 	[SRSO_MITIGATION_BP_SPEC_REDUCE]	= "Mitigation: Reduced Speculation"
+ };
+ 
+-static enum srso_mitigation srso_mitigation __ro_after_init = SRSO_MITIGATION_AUTO;
+-
+ static int __init srso_parse_cmdline(char *str)
+ {
+ 	if (!str)
 
