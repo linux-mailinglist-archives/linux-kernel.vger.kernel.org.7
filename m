@@ -1,122 +1,185 @@
-Return-Path: <linux-kernel+bounces-703646-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-703649-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C1567AE9334
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Jun 2025 02:07:06 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3AD44AE933C
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Jun 2025 02:08:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7D0C53B210A
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Jun 2025 00:06:41 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 150577A6D7B
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Jun 2025 00:06:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 69D263FBB3;
-	Thu, 26 Jun 2025 00:06:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 621081428E7;
+	Thu, 26 Jun 2025 00:07:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="kihzCd+/"
-Received: from desiato.infradead.org (desiato.infradead.org [90.155.92.199])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="PnfROHME"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.20])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7A78D2F1FFE;
-	Thu, 26 Jun 2025 00:06:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.92.199
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4011F73451;
+	Thu, 26 Jun 2025 00:07:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.20
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750896416; cv=none; b=Z05PnjYgjfF7s2hotQWuMZ8ulm6bg0eCCVscR8jbmHWTVh0AmBZYv+Rx7wHpA5WCIq4pUzgzaIT+zuNJ31tzc0KDDU9xyKD9QbUhg6udzQiuxSWyldVD9/AVQyu/SGGW+2pl+Rhq9Zcy8Wna+bdkcyAbfjSVRWTb9/b1zHDF17I=
+	t=1750896471; cv=none; b=tXdifgbu2JlOzGu8rLmyI8IqcGMUA3RwtOIkXtKmmJjyNUkqCzwsOYZzax15DxNX0fAJHc7VSuBpBUb+7vSWSvoF9ZxBW/ie8vkUabWgLiGrliwFg4L+yl8S+vmj5WfkUolXrv/roFq2fZAF9yt5hsbfuZCb/5eNBJ31FZTQJD4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750896416; c=relaxed/simple;
-	bh=eEqjGbSoovShjbdge3UkJFXT/FMIpos5T8CvZNZ0BeQ=;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=I94sSQBP/dS2RyLQjXzicRlyheW+qmH9SM11pHUt1gl2+PlxyZHtLj9KD/T9htqDRI8mdrxGWpSXn5PYKNC0+LpCgIQ647ZGA5MmYcRiF7n0LxcoXpm6hu7J3jphOogimxbu7sIAZH1LYuiELJaFXG23bQTJr9bz7Z/CsU71y7A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=kihzCd+/; arc=none smtp.client-ip=90.155.92.199
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=desiato.20200630; h=Content-Transfer-Encoding:Content-Type
-	:In-Reply-To:From:References:To:Subject:MIME-Version:Date:Message-ID:Sender:
-	Reply-To:Cc:Content-ID:Content-Description;
-	bh=7OPjKGEprNsfxcHZCkamjZBCKBHpBSWh2A3k0lKJL0U=; b=kihzCd+/9fHsdU52PCGaMUBLbY
-	XbAOIB8miBJwza4l37/4KJOYSlo3CQmsPNF3xvZszakrH2z6nANGWvmTWtSQokEOPhin2Q1St5sqE
-	KXjhMcNY3f9tXR+PCuIcqxnSEO23ka6c+vvsuFiDoPvEwwZGkf5b+T63u19GnkRk+ERwtVss4O9xb
-	983h5xjcElMrq86eYGPKb5muxoW1J8ShPXCZm1FSlypwx9rBA9DzjlxTBvwhi2URktnaykkm2pVo1
-	ULoDoXtJPwLVTyL3bD+kLnJ8ceDF9aw2S2JImmryv1bFQjsXUB+ILfLb/jCH5JP51savgmVSD55ON
-	qfQ/BHTw==;
-Received: from [50.53.25.54] (helo=[192.168.254.17])
-	by desiato.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
-	id 1uUa8K-000000060eN-285a;
-	Thu, 26 Jun 2025 00:06:29 +0000
-Message-ID: <829fa3b2-58be-493f-b26c-8d68063b96ed@infradead.org>
-Date: Wed, 25 Jun 2025 17:06:10 -0700
+	s=arc-20240116; t=1750896471; c=relaxed/simple;
+	bh=C3hz+TTEceJ65LIM6563d2BqKNpBHkLD6nboo3kPOXo=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=eDtRI8n7wDKYKzq9Lv4BoU91b0xGajmaU82Urj+DAJwL6xvJ0VSKBCtlpCRw+kM3wDrjVvqplNLvvIeacNEiEk/RY9cmZAA3pYulMzrBXTu97vctylik9fsRuaokiR4tarSXUAgXt+c/j8U96ZCyx+kwZNb72/g2aSK7cMcVv8c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=PnfROHME; arc=none smtp.client-ip=198.175.65.20
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1750896470; x=1782432470;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:content-transfer-encoding:in-reply-to;
+  bh=C3hz+TTEceJ65LIM6563d2BqKNpBHkLD6nboo3kPOXo=;
+  b=PnfROHMEoGlNKTRBddhXL2L1fgI5f//IX/vHvQxJc8PVXYkDHz3l3S+l
+   pnN1xDNR2x9QSQBq2mDz7QKojQwKgF0PhP3TSVGcTgGqyr0ceYgVSIsfl
+   5WkJQftCEwnn81C0sMn/TL6tLfORwwZDm6NCiAWtmaztm/A58XuSstQyk
+   sZD8hfldMK5KY6xboAoXysCoOCRFC9m1XdT/3Ustpt7fVSb3wRFJk70ci
+   UOCYhfV71ZIWiq8YkSDvtnbJXxT72fsFUY/Zmc++5yKWYtNaMjSQ/MN1w
+   RFmv/o3H1Dulk3m3m0emO1kYKMJdg0IPLwAh6ldAvefG0Q9Efy4CN2qWJ
+   Q==;
+X-CSE-ConnectionGUID: lzf7WiPSRSGi6xQWZ+/dag==
+X-CSE-MsgGUID: kzJia0nLQYiv8+3wu4ps0A==
+X-IronPort-AV: E=McAfee;i="6800,10657,11475"; a="52904175"
+X-IronPort-AV: E=Sophos;i="6.16,266,1744095600"; 
+   d="scan'208";a="52904175"
+Received: from fmviesa004.fm.intel.com ([10.60.135.144])
+  by orvoesa112.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 25 Jun 2025 17:07:50 -0700
+X-CSE-ConnectionGUID: plp4ybH+QhCL0Ta6GYKqGQ==
+X-CSE-MsgGUID: fg5ZsG4xT0WtUFO3hx3AFA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.16,266,1744095600"; 
+   d="scan'208";a="157858423"
+Received: from lkp-server01.sh.intel.com (HELO e8142ee1dce2) ([10.239.97.150])
+  by fmviesa004.fm.intel.com with ESMTP; 25 Jun 2025 17:07:46 -0700
+Received: from kbuild by e8142ee1dce2 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1uUa9Y-000TYc-09;
+	Thu, 26 Jun 2025 00:07:44 +0000
+Date: Thu, 26 Jun 2025 08:07:02 +0800
+From: kernel test robot <lkp@intel.com>
+To: Oleksij Rempel <o.rempel@pengutronix.de>, Andrew Lunn <andrew@lunn.ch>,
+	Heiner Kallweit <hkallweit1@gmail.com>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>
+Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
+	netdev@vger.kernel.org, Oleksij Rempel <o.rempel@pengutronix.de>,
+	kernel@pengutronix.de, linux-kernel@vger.kernel.org,
+	Russell King <linux@armlinux.org.uk>
+Subject: Re: [PATCH net-next v2 1/1] phy: micrel: add Signal Quality
+ Indicator (SQI) support for KSZ9477 switch PHYs
+Message-ID: <202506260756.KhOdmLCy-lkp@intel.com>
+References: <20250625124127.4176960-1-o.rempel@pengutronix.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v1 21/32] liveupdate: add selftests for subsystems
- un/registration
-To: Pasha Tatashin <pasha.tatashin@soleen.com>, pratyush@kernel.org,
- jasonmiu@google.com, graf@amazon.com, changyuanl@google.com,
- rppt@kernel.org, dmatlack@google.com, rientjes@google.com, corbet@lwn.net,
- ilpo.jarvinen@linux.intel.com, kanie@linux.alibaba.com, ojeda@kernel.org,
- aliceryhl@google.com, masahiroy@kernel.org, akpm@linux-foundation.org,
- tj@kernel.org, yoann.congal@smile.fr, mmaurer@google.com,
- roman.gushchin@linux.dev, chenridong@huawei.com, axboe@kernel.dk,
- mark.rutland@arm.com, jannh@google.com, vincent.guittot@linaro.org,
- hannes@cmpxchg.org, dan.j.williams@intel.com, david@redhat.com,
- joel.granados@kernel.org, rostedt@goodmis.org, anna.schumaker@oracle.com,
- song@kernel.org, zhangguopeng@kylinos.cn, linux@weissschuh.net,
- linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org, linux-mm@kvack.org,
- gregkh@linuxfoundation.org, tglx@linutronix.de, mingo@redhat.com,
- bp@alien8.de, dave.hansen@linux.intel.com, x86@kernel.org, hpa@zytor.com,
- rafael@kernel.org, dakr@kernel.org, bartosz.golaszewski@linaro.org,
- cw00.choi@samsung.com, myungjoo.ham@samsung.com, yesanishhere@gmail.com,
- Jonathan.Cameron@huawei.com, quic_zijuhu@quicinc.com,
- aleksander.lobakin@intel.com, ira.weiny@intel.com,
- andriy.shevchenko@linux.intel.com, leon@kernel.org, lukas@wunner.de,
- bhelgaas@google.com, wagi@kernel.org, djeffery@redhat.com,
- stuart.w.hayes@gmail.com, ptyadav@amazon.de, lennart@poettering.net,
- brauner@kernel.org, linux-api@vger.kernel.org, linux-fsdevel@vger.kernel.org
-References: <20250625231838.1897085-1-pasha.tatashin@soleen.com>
- <20250625231838.1897085-22-pasha.tatashin@soleen.com>
-Content-Language: en-US
-From: Randy Dunlap <rdunlap@infradead.org>
-In-Reply-To: <20250625231838.1897085-22-pasha.tatashin@soleen.com>
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <20250625124127.4176960-1-o.rempel@pengutronix.de>
+
+Hi Oleksij,
+
+kernel test robot noticed the following build warnings:
+
+[auto build test WARNING on net-next/main]
+
+url:    https://github.com/intel-lab-lkp/linux/commits/Oleksij-Rempel/phy-micrel-add-Signal-Quality-Indicator-SQI-support-for-KSZ9477-switch-PHYs/20250625-204330
+base:   net-next/main
+patch link:    https://lore.kernel.org/r/20250625124127.4176960-1-o.rempel%40pengutronix.de
+patch subject: [PATCH net-next v2 1/1] phy: micrel: add Signal Quality Indicator (SQI) support for KSZ9477 switch PHYs
+config: i386-buildonly-randconfig-004-20250626 (https://download.01.org/0day-ci/archive/20250626/202506260756.KhOdmLCy-lkp@intel.com/config)
+compiler: clang version 20.1.7 (https://github.com/llvm/llvm-project 6146a88f60492b520a36f8f8f3231e15f3cc6082)
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250626/202506260756.KhOdmLCy-lkp@intel.com/reproduce)
+
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202506260756.KhOdmLCy-lkp@intel.com/
+
+All warnings (new ones prefixed by >>):
+
+>> drivers/net/phy/micrel.c:2247:5: warning: variable 'channels' set but not used [-Wunused-but-set-variable]
+    2247 |         u8 channels;
+         |            ^
+   1 warning generated.
 
 
+vim +/channels +2247 drivers/net/phy/micrel.c
 
-On 6/25/25 4:18 PM, Pasha Tatashin wrote:
-> diff --git a/kernel/liveupdate/Kconfig b/kernel/liveupdate/Kconfig
-> index 75a17ca8a592..db7bbff3edec 100644
-> --- a/kernel/liveupdate/Kconfig
-> +++ b/kernel/liveupdate/Kconfig
-> @@ -47,6 +47,21 @@ config LIVEUPDATE_SYSFS_API
->  
->  	  If unsure, say N.
->  
-> +config LIVEUPDATE_SELFTESTS
-> +	bool "Live Update Orchestrator - self tests"
-
-	                                 self-tests"
-
-as below...
-
-> +	depends on LIVEUPDATE
-> +	help
-> +	  Say Y here to build self-tests for the LUO framework. When enabled,
-> +	  these tests can be initiated via the ioctl interface to help verify
-> +	  the core live update functionality.
-> +
-> +	  This option is primarily intended for developers working on the
-> +	  live update feature or for validation purposes during system
-> +	  integration.
-> +
-> +	  If you are unsure or are building a production kernel where size
-> +	  or attack surface is a concern, say N.
+  2231	
+  2232	/**
+  2233	 * kszphy_get_sqi - Read, average, and map Signal Quality Index (SQI)
+  2234	 * @phydev: the PHY device
+  2235	 *
+  2236	 * This function reads and processes the raw Signal Quality Index from the
+  2237	 * PHY. Based on empirical testing, a raw value of 8 or higher indicates a
+  2238	 * pre-failure state and is mapped to SQI 0. Raw values from 0-7 are
+  2239	 * mapped to the standard 0-7 SQI scale via a lookup table.
+  2240	 *
+  2241	 * Return: SQI value (0–7), or a negative errno on failure.
+  2242	 */
+  2243	static int kszphy_get_sqi(struct phy_device *phydev)
+  2244	{
+  2245		int sum = 0;
+  2246		int i, val, raw_sqi, avg_raw_sqi;
+> 2247		u8 channels;
+  2248	
+  2249		/* Determine applicable channels based on link speed */
+  2250		if (phydev->speed == SPEED_1000)
+  2251			/* TODO: current SQI API only supports 1 channel. */
+  2252			channels = 1;
+  2253		else if (phydev->speed == SPEED_100)
+  2254			channels = 1;
+  2255		else
+  2256			return -EOPNOTSUPP;
+  2257	
+  2258		/*
+  2259		 * Sample and accumulate SQI readings for each pair (currently only one).
+  2260		 *
+  2261		 * Reference: KSZ9477S Datasheet DS00002392C, Section 4.1.11 (page 26)
+  2262		 * - The SQI register is updated every 2 µs.
+  2263		 * - Values may fluctuate significantly, even in low-noise environments.
+  2264		 * - For reliable estimation, average a minimum of 30–50 samples
+  2265		 *   (recommended for noisy environments)
+  2266		 * - In noisy environments, individual readings are highly unreliable.
+  2267		 *
+  2268		 * We use 40 samples per pair with a delay of 3 µs between each
+  2269		 * read to ensure new values are captured (2 µs update interval).
+  2270		 */
+  2271		for (i = 0; i < KSZ9477_SQI_SAMPLE_COUNT; i++) {
+  2272			val = phy_read_mmd(phydev, MDIO_MMD_PMAPMD,
+  2273					   KSZ9477_MMD_SIGNAL_QUALITY_CHAN_A);
+  2274			if (val < 0)
+  2275				return val;
+  2276	
+  2277			raw_sqi = FIELD_GET(KSZ9477_MMD_SQI_MASK, val);
+  2278			sum += raw_sqi;
+  2279	
+  2280			udelay(KSZ9477_MMD_SQI_READ_DELAY_US);
+  2281		}
+  2282	
+  2283		avg_raw_sqi = sum / KSZ9477_SQI_SAMPLE_COUNT;
+  2284	
+  2285		/* Handle the pre-fail/failed state first. */
+  2286		if (avg_raw_sqi >= ARRAY_SIZE(ksz_sqi_mapping))
+  2287			return 0;
+  2288	
+  2289		/* Use the lookup table for the good signal range. */
+  2290		return ksz_sqi_mapping[avg_raw_sqi];
+  2291	}
+  2292	
 
 -- 
-~Randy
-
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
