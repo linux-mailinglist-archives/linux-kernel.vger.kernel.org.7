@@ -1,251 +1,236 @@
-Return-Path: <linux-kernel+bounces-703851-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-703849-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7BAA8AE9595
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Jun 2025 08:03:27 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id DAF8DAE9590
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Jun 2025 08:02:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D0E2C6A0730
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Jun 2025 06:03:01 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 71FC91C27A02
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Jun 2025 06:03:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5BE00221D92;
-	Thu, 26 Jun 2025 06:03:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 58A66224B0E;
+	Thu, 26 Jun 2025 06:02:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="UPbuRMVE"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="YDUWdzJA"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.17])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D375021FF44
-	for <linux-kernel@vger.kernel.org>; Thu, 26 Jun 2025 06:03:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2362B1A0BF1;
+	Thu, 26 Jun 2025 06:02:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.17
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750917798; cv=none; b=RtYqAQ9NWqZH/9bJmnRBjF5gUfuKgzkySulPEa2cKTcsrWV7Xxxp4CaZQRuRVpcO7klW3fepDvsFnhRsnTf9pX+o1TqnPQEW2UlBzrNGGUxc3SqjurDZnVGpMVJ3Zcy1ufU8dQVmDVX4TSwrH3q9D/8eS+8pIrj+FL8oI3o5wBA=
+	t=1750917768; cv=none; b=bAIsQsMnR5N4jbxcoCmMdG3aqGbVpVOe/4MERk/FWFOLQZcvQ+6lAkawsUNQZAwxI+vHjySnE8rKaKTcG/2QA/hrD71U9+0WkCfyDlk1S7UNVZchwFcbnZ0n7v4LTMsgPvEBFgYcUiZuN7NfhXyjPPKjmvIibLiimKSy2l9Q2eo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750917798; c=relaxed/simple;
-	bh=ux/mTJ8E+wX+kajs9XBKrd9beBovgB6YKCu98nQUhUo=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-ID:To:CC; b=YvJUF1txvJDnL4plOwenrbSayxNTtFIPivIO/pwWu+tCwWGH39MeJkoCFIegLqhmFx2aQ6rjGH9bReUqlmuKVMgPnKxZFdDFjYypbpaqPt4e1X1setQPIykrVGe+aDSCsIW8siIKgpSFrJcFYi4OM64hbYX9pX5X2hdOjl9VOJU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=UPbuRMVE; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279868.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 55Q4WonY010573;
-	Thu, 26 Jun 2025 06:02:36 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:message-id
-	:mime-version:subject:to; s=qcppdkim1; bh=MpPYhArlXmWCgYgW4qeCuw
-	s8Mpxw0BvsnQQWeZhvzM0=; b=UPbuRMVERhUxDEZzGrapMCXznkNIzr7w0yT8hW
-	svXcbwZ+1vjukeeO55jUVfUuJ3S3sZ5aJV5kIHMmUBNl7I44nKfeE8ksB2anT1pa
-	NCTO7jfz/So9qR72yn42knhuDxaNJcQ8xKKCmcGLqJsOnLFindpIrHCq+sLBNjuz
-	FxbISy0eI+60M7rR9JUdX3GhLc4mjgis/JtbeXkNqxJzL3NdJtqGdAPWLVfCZLOU
-	OrOtYzHpt8BjqVNRDmijQxhWSCM0JmV7kb67d91IxF/ZfTRi2QzOslZN6Cc+HCKP
-	T3vPIgAWjKLwxAh1fZNUbr7MsfTjBk5VG0dhuF7FS37H+IPQ==
-Received: from nasanppmta05.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 47g88fbw4c-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 26 Jun 2025 06:02:36 +0000 (GMT)
-Received: from nasanex01b.na.qualcomm.com (nasanex01b.na.qualcomm.com [10.46.141.250])
-	by NASANPPMTA05.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 55Q62ZbK014364
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 26 Jun 2025 06:02:35 GMT
-Received: from nsssdc-sh01-lnx.ap.qualcomm.com (10.80.80.8) by
- nasanex01b.na.qualcomm.com (10.46.141.250) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.9; Wed, 25 Jun 2025 23:02:30 -0700
-From: Luo Jie <quic_luoj@quicinc.com>
-Date: Thu, 26 Jun 2025 14:02:20 +0800
-Subject: [PATCH v6] coccinelle: misc: Add field_modify script
+	s=arc-20240116; t=1750917768; c=relaxed/simple;
+	bh=CsenkKlokXJTud0BpIjQPSJm8Cd41IelU7DxRhuZOh0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ejX9D8TCidX7Ny+UTdXJk3kSUZngYBruqwE0b1ZIyla6pWTu8ugSm9tKsmqXjPZ2qbZkk0R9mUr48+61GIv4AT6uoYh5yoj4aJAtE7UKraX7C/yDmBx0/jwzfNQA2Mp22YTRu3jgBqQG2HXKTWqjvHSrJhEuLsnpMPZZil1E69s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=YDUWdzJA; arc=none smtp.client-ip=192.198.163.17
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1750917767; x=1782453767;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=CsenkKlokXJTud0BpIjQPSJm8Cd41IelU7DxRhuZOh0=;
+  b=YDUWdzJASJ0dSosvaX6mOI+ipXpMhyqhzmn/tsqpfhAT6NqRVi99NQgV
+   pTuesMwtNcDmaJ3xlTV4mrHAmy5IGGuxxlf7XFVsXK+XxZwBcFT6ZahKc
+   ZYwL1OoK7Y2sBG2Nez/18MPd+zN7okLTCjG9JxpslDWHlzW7VY+ZDgICC
+   UUjGuFPtOp6PocKZo5K/ALyVwaZ/VaB6jTPHdgVxVwx57awqr2BIHHM4M
+   MNF7Ez2rexf0VRcE0fn9L9+zdkwKt/bfKdzmShnZjIR7i0iO7kPRikY6N
+   Ccm6SOrpGb1Ov2wUdjGkFm4IA9jSi9EdQQHWMB2ADZ+cx1wshKcr86JJt
+   g==;
+X-CSE-ConnectionGUID: P/wwox4rTt2UZ0BH8LYR1w==
+X-CSE-MsgGUID: bKlKQpTwRLKwV2b0jKHfzw==
+X-IronPort-AV: E=McAfee;i="6800,10657,11475"; a="53138908"
+X-IronPort-AV: E=Sophos;i="6.16,266,1744095600"; 
+   d="scan'208";a="53138908"
+Received: from fmviesa009.fm.intel.com ([10.60.135.149])
+  by fmvoesa111.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 25 Jun 2025 23:02:45 -0700
+X-CSE-ConnectionGUID: 3hv6Xl6XR3qLyx6aGfr4zw==
+X-CSE-MsgGUID: ideqBmC+SxOBU4THttvNCg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.16,266,1744095600"; 
+   d="scan'208";a="152720171"
+Received: from dhhellew-desk2.ger.corp.intel.com (HELO kekkonen.fi.intel.com) ([10.245.244.122])
+  by fmviesa009-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 25 Jun 2025 23:02:43 -0700
+Received: from kekkonen.localdomain (localhost [127.0.0.1])
+	by kekkonen.fi.intel.com (Postfix) with SMTP id 04B8011FB5F;
+	Thu, 26 Jun 2025 09:02:40 +0300 (EEST)
+Date: Thu, 26 Jun 2025 06:02:39 +0000
+Organization: Intel Finland Oy - BIC 0357606-4 - c/o Alberga Business Park, 6 krs, Bertel Jungin Aukio 5, 02600 Espoo
+From: Sakari Ailus <sakari.ailus@linux.intel.com>
+To: Jai Luthra <jai.luthra@ideasonboard.com>
+Cc: Mauro Carvalho Chehab <mchehab@kernel.org>,
+	Hans Verkuil <hverkuil@xs4all.nl>,
+	Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>,
+	Maxime Ripard <mripard@kernel.org>,
+	Devarsh Thakkar <devarsht@ti.com>,
+	Rishikesh Donadkar <r-donadkar@ti.com>,
+	Vaishnav Achath <vaishnav.a@ti.com>,
+	Changhuang Liang <changhuang.liang@starfivetech.com>,
+	linux-media@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 6/6] media: ti: j721e-csi2rx: Support multiple pixels
+ per clock
+Message-ID: <aFzif59lHvNz-p-0@kekkonen.localdomain>
+References: <20250410-probe_fixes-v2-0-801bc6eebdea@ideasonboard.com>
+ <20250410-probe_fixes-v2-6-801bc6eebdea@ideasonboard.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-ID: <20250626-field_modify-v6-1-200dffa38a07@quicinc.com>
-X-B4-Tracking: v=1; b=H4sIAGviXGgC/2XOSw6CMBSF4a2Qjq3pixYcuQ9jTO1DbiKgVBsJY
- e8WHCgyPDf5/twBBdeBC2iXDahzEQK0TRpykyFT6ebiMNi0ESMsJ5Iy7MFd7aluLfgeM0V56aX
- iRUFRIrfOeXjNucMx7QrCo+36uR7pdP2EBFXLUOSYYOlVWTKtvTmr/f0JBhqzNW2NplQUX776I
- 4rEtRNeCatFruWa5z+ciT+eY4qNlYoyRThxYsnHcXwDlLj04SgBAAA=
-To: Yury Norov <yury.norov@gmail.com>,
-        Rasmus Villemoes
-	<linux@rasmusvillemoes.dk>,
-        Julia Lawall <Julia.Lawall@inria.fr>,
-        "Nicolas
- Palix" <nicolas.palix@imag.fr>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will@kernel.org>, Marc Zyngier <maz@kernel.org>,
-        Oliver Upton
-	<oliver.upton@linux.dev>,
-        Joey Gouly <joey.gouly@arm.com>,
-        Suzuki K Poulose
-	<suzuki.poulose@arm.com>,
-        Zenghui Yu <yuzenghui@huawei.com>
-CC: <linux-kernel@vger.kernel.org>, <cocci@inria.fr>,
-        <linux-arm-kernel@lists.infradead.org>, <kvmarm@lists.linux.dev>,
-        <andrew@lunn.ch>, <quic_kkumarcs@quicinc.com>,
-        <quic_linchen@quicinc.com>, <quic_leiwei@quicinc.com>,
-        <quic_suruchia@quicinc.com>, <quic_pavir@quicinc.com>,
-        <Markus.Elfring@web.de>, Luo Jie
-	<quic_luoj@quicinc.com>
-X-Mailer: b4 0.14.1
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1750917750; l=3872;
- i=quic_luoj@quicinc.com; s=20250209; h=from:subject:message-id;
- bh=ux/mTJ8E+wX+kajs9XBKrd9beBovgB6YKCu98nQUhUo=;
- b=SeVIF7MxdkxmO2LE2JP0k/HUfsPK/T+wakKidgrx0NOm7aKMlpXxE9R7z5KxWkTvp24OxHmh6
- Qiyxud6avYeB9BngiBtHC1UwyTw3mxEhuf/qSKDCTlhD5eA/Iu23k0Q
-X-Developer-Key: i=quic_luoj@quicinc.com; a=ed25519;
- pk=pzwy8bU5tJZ5UKGTv28n+QOuktaWuriznGmriA9Qkfc=
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nasanex01b.na.qualcomm.com (10.46.141.250)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNjI2MDA0NiBTYWx0ZWRfX/msli3c7dzzA
- pQfUlU6zJZDj6mqYCP5F3geXzxrFBwq+d/e1m6IGN017415Pn2T+OywwLY/ZtXJ0a4hBFLqN63K
- uo2Q2erLY99EF8jwveTACksI+K+i3HwgaCjSPO5xCpaQ8MWVfRcwyKzvi7zFaC9ElTKO7A/sdmz
- WELOZfjuJucj6vnl73EyfTS7yN3SlwbLfcSpj8ycF/tkeRHRtsuJUeXBuN5Lu3FNg56rQbspAS6
- Vv85XUTy6TmuU5DdmK/o/8pUmyPap4/QGhPmzglIis6l8hfFIRyoJuHPYV3AlVDfduLA7dsgGJU
- lUX0wdZ0iQTK0odQSfDWIbsEI94OsSavOfGUbIzYyXAfbk4gUta/rdtW3HlSmstkWjnjT8H1qxa
- vG0mUe0pk5gJpE35ckH2YzOzBXfsMrYWxG/JwqVCnDr9/lXMT4muAtX2aZHupt/KbTbXKZuj
-X-Proofpoint-ORIG-GUID: zaYYXVueZahctmNJ9GD006cERxboO3-t
-X-Proofpoint-GUID: zaYYXVueZahctmNJ9GD006cERxboO3-t
-X-Authority-Analysis: v=2.4 cv=LNNmQIW9 c=1 sm=1 tr=0 ts=685ce27c cx=c_pps
- a=JYp8KDb2vCoCEuGobkYCKw==:117 a=JYp8KDb2vCoCEuGobkYCKw==:17
- a=GEpy-HfZoHoA:10 a=IkcTkHD0fZMA:10 a=6IFa9wvqVegA:10 a=VwQbUJbxAAAA:8
- a=COk6AnOGAAAA:8 a=05oQ047nAAAA:8 a=S47agHus8KO1I0bcMDsA:9 a=QEXdDO2ut3YA:10
- a=TjNXssC_j7lpFel5tvFf:22 a=vNAg3JWiabyzeNEprMgK:22
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.7,FMLib:17.12.80.40
- definitions=2025-06-26_03,2025-06-25_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- malwarescore=0 suspectscore=0 spamscore=0 bulkscore=0 mlxlogscore=999
- impostorscore=0 mlxscore=0 clxscore=1015 adultscore=0 priorityscore=1501
- lowpriorityscore=0 phishscore=0 classifier=spam authscore=0 authtc=n/a
- authcc= route=outbound adjust=0 reason=mlx scancount=1
- engine=8.19.0-2505280000 definitions=main-2506260046
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250410-probe_fixes-v2-6-801bc6eebdea@ideasonboard.com>
 
-Find and suggest conversions of opencoded field modify patterns with
-the wrapper FIELD_MODIFY() API defined in include/linux/bitfield.h
-for catching the possible parameter type error in the compile time.
+Hi Jai,
 
-Signed-off-by: Luo Jie <quic_luoj@quicinc.com>
----
-Add the helper FIELD_MODIFY() to the FIELD_XXX family of bitfield
-macros. It is functionally similar as xxx_replace_bits(), but adds
-the compile time checking to catch incorrect parameter type errors.
+On Thu, Apr 10, 2025 at 12:19:04PM +0530, Jai Luthra wrote:
+> Add support for negotiating the highest possible pixel mode (from
+> single, dual, quad) with the Cadence CSI2RX bridge. This is required to
+> drain the Cadence stream FIFOs without overflowing when the source is
+> operating at a high link-frequency [1].
+> 
+> Also, update the Kconfig as this introduces a hard build-time dependency
+> on the Cadence CSI2RX driver, even for a COMPILE_TEST.
+> 
+> [1] Section 12.6.1.4.8.14 CSI_RX_IF Programming Restrictions of AM62 TRM
+> 
+> Link: https://www.ti.com/lit/pdf/spruj16
+> Signed-off-by: Jai Luthra <jai.luthra@ideasonboard.com>
 
-This series also converts the four instances of opencoded FIELD_MODIFY()
-that are found in the core kernel files, to instead use the new
-FIELD_MODIFY() macro. This is achieved with Coccinelle, by adding
-the script field_modify.cocci.
+This creates a dependency between the two drivers.
 
-The changes are validated on IPQ9574 SoC which uses ARM64 architecture.
----
-Changes in v6:
-- Adopt the suggested code variant for the org mode.
-- Link to v5: https://lore.kernel.org/r/20250624-field_modify-v5-1-cd67127030e4@quicinc.com
+Can you confirm that the TI device only exists in conjunction with the
+cadence HW block?
 
-Changes in v5:
-- Remove ARM64 patches based on the discussion in v3 and v4 versions of
-  this series.
-- Simplify the condition selections in coccinelle script.
-- Link to v4: https://lore.kernel.org/r/20250612-field_modify-v4-0-ae4f74da45a6@quicinc.com
+> ---
+>  drivers/media/platform/ti/Kconfig                  |  3 +-
+>  .../media/platform/ti/j721e-csi2rx/j721e-csi2rx.c  | 38 ++++++++++++++++++++--
+>  2 files changed, 37 insertions(+), 4 deletions(-)
+> 
+> diff --git a/drivers/media/platform/ti/Kconfig b/drivers/media/platform/ti/Kconfig
+> index bab998c4179aca3b07372782b9be7de340cb8d45..3bc4aa35887e6edc9fa8749d9956a67714c59001 100644
+> --- a/drivers/media/platform/ti/Kconfig
+> +++ b/drivers/media/platform/ti/Kconfig
+> @@ -67,7 +67,8 @@ config VIDEO_TI_J721E_CSI2RX
+>  	tristate "TI J721E CSI2RX wrapper layer driver"
+>  	depends on VIDEO_DEV && VIDEO_V4L2_SUBDEV_API
+>  	depends on MEDIA_SUPPORT && MEDIA_CONTROLLER
+> -	depends on (PHY_CADENCE_DPHY_RX && VIDEO_CADENCE_CSI2RX) || COMPILE_TEST
+> +	depends on VIDEO_CADENCE_CSI2RX
+> +	depends on PHY_CADENCE_DPHY_RX || COMPILE_TEST
+>  	depends on ARCH_K3 || COMPILE_TEST
+>  	select VIDEOBUF2_DMA_CONTIG
+>  	select V4L2_FWNODE
+> diff --git a/drivers/media/platform/ti/j721e-csi2rx/j721e-csi2rx.c b/drivers/media/platform/ti/j721e-csi2rx/j721e-csi2rx.c
+> index ad51d033b6725426550578bdac1bae8443458f13..425324c3d6802cfda79d116d3967b61a2e7a015a 100644
+> --- a/drivers/media/platform/ti/j721e-csi2rx/j721e-csi2rx.c
+> +++ b/drivers/media/platform/ti/j721e-csi2rx/j721e-csi2rx.c
+> @@ -21,6 +21,8 @@
+>  #include <media/v4l2-mc.h>
+>  #include <media/videobuf2-dma-contig.h>
+>  
+> +#include "../../cadence/cdns-csi2rx.h"
+> +
+>  #define TI_CSI2RX_MODULE_NAME		"j721e-csi2rx"
+>  
+>  #define SHIM_CNTL			0x10
+> @@ -29,6 +31,7 @@
+>  #define SHIM_DMACNTX			0x20
+>  #define SHIM_DMACNTX_EN			BIT(31)
+>  #define SHIM_DMACNTX_YUV422		GENMASK(27, 26)
+> +#define SHIM_DMACNTX_DUAL_PCK_CFG	BIT(24)
+>  #define SHIM_DMACNTX_SIZE		GENMASK(21, 20)
+>  #define SHIM_DMACNTX_FMT		GENMASK(5, 0)
+>  #define SHIM_DMACNTX_YUV422_MODE_11	3
+> @@ -40,6 +43,7 @@
+>  #define SHIM_PSI_CFG0_SRC_TAG		GENMASK(15, 0)
+>  #define SHIM_PSI_CFG0_DST_TAG		GENMASK(31, 16)
+>  
+> +#define TI_CSI2RX_MAX_PIX_PER_CLK	4
+>  #define PSIL_WORD_SIZE_BYTES		16
+>  /*
+>   * There are no hard limits on the width or height. The DMA engine can handle
+> @@ -110,6 +114,7 @@ struct ti_csi2rx_dev {
+>  	struct v4l2_format		v_fmt;
+>  	struct ti_csi2rx_dma		dma;
+>  	u32				sequence;
+> +	u8				pix_per_clk;
+>  };
+>  
+>  static const struct ti_csi2rx_fmt ti_csi2rx_formats[] = {
+> @@ -485,6 +490,26 @@ static int ti_csi2rx_notifier_register(struct ti_csi2rx_dev *csi)
+>  	return 0;
+>  }
+>  
+> +/* Request maximum possible pixels per clock from the bridge */
+> +static void ti_csi2rx_request_max_ppc(struct ti_csi2rx_dev *csi)
+> +{
+> +	struct media_pad *pad;
+> +	int ret;
+> +	u8 ppc = TI_CSI2RX_MAX_PIX_PER_CLK;
 
-Changes in v4:
-- Add org, report and context mode for coccinelle script.
-- Fix other comments on coccinelle script patch.
-- Remove the FIELD_MODIFY patch as it is merged.
-- Link to v3: https://lore.kernel.org/r/20250417-field_modify-v3-0-6f7992aafcb7@quicinc.com
+Could you make this look like a reverse Christmas tree?
 
-Changes in v3:
-- Correct the order of header files included.
-- Add the Coccinelle script field_modify.cocci..
-- Convert the opencoded FIELD_MODIFY() variants inside arm64 directory,
-  identified by field_modify.cocci.
-- Link to v2: https://lore.kernel.org/all/20250410131048.2054791-1-quic_luoj@quicinc.com/
+> +
+> +	pad = media_entity_remote_source_pad_unique(&csi->vdev.entity);
+> +	if (!pad)
+> +		return;
+> +
+> +	ret = cdns_csi2rx_negotiate_ppc(csi->source, pad->index, &ppc);
+> +	if (ret) {
+> +		dev_warn(csi->dev, "NUM_PIXELS negotiation failed: %d\n", ret);
+> +		csi->pix_per_clk = 1;
+> +	} else {
+> +		csi->pix_per_clk = ppc;
+> +	}
+> +}
+> +
+>  static void ti_csi2rx_setup_shim(struct ti_csi2rx_dev *csi)
+>  {
+>  	const struct ti_csi2rx_fmt *fmt;
+> @@ -496,6 +521,9 @@ static void ti_csi2rx_setup_shim(struct ti_csi2rx_dev *csi)
+>  	reg = SHIM_CNTL_PIX_RST;
+>  	writel(reg, csi->shim + SHIM_CNTL);
+>  
+> +	/* Negotiate pixel count from the source */
+> +	ti_csi2rx_request_max_ppc(csi);
+> +
+>  	reg = SHIM_DMACNTX_EN;
+>  	reg |= FIELD_PREP(SHIM_DMACNTX_FMT, fmt->csi_dt);
+>  
+> @@ -524,14 +552,18 @@ static void ti_csi2rx_setup_shim(struct ti_csi2rx_dev *csi)
+>  	case V4L2_PIX_FMT_YVYU:
+>  		reg |= FIELD_PREP(SHIM_DMACNTX_YUV422,
+>  				  SHIM_DMACNTX_YUV422_MODE_11);
+> +		/* Multiple pixels are handled differently for packed YUV */
+> +		if (csi->pix_per_clk == 2)
+> +			reg |= SHIM_DMACNTX_DUAL_PCK_CFG;
+> +		reg |= FIELD_PREP(SHIM_DMACNTX_SIZE, fmt->size);
+>  		break;
+>  	default:
+> -		/* Ignore if not YUV 4:2:2 */
+> +		/* By default we change the shift size for multiple pixels */
+> +		reg |= FIELD_PREP(SHIM_DMACNTX_SIZE,
+> +				  fmt->size + (csi->pix_per_clk >> 1));
+>  		break;
+>  	}
+>  
+> -	reg |= FIELD_PREP(SHIM_DMACNTX_SIZE, fmt->size);
+> -
+>  	writel(reg, csi->shim + SHIM_DMACNTX);
+>  
+>  	reg = FIELD_PREP(SHIM_PSI_CFG0_SRC_TAG, 0) |
+> 
 
-Changes in v2:
-- Update the documented example for FIELD_MODIFY().
-- Improve the commit message to describe the need for the change.
-- Link to v1: https://lore.kernel.org/all/20250318071526.1836194-1-quic_luoj@quicinc.com/
----
- scripts/coccinelle/misc/field_modify.cocci | 59 ++++++++++++++++++++++++++++++
- 1 file changed, 59 insertions(+)
-
-diff --git a/scripts/coccinelle/misc/field_modify.cocci b/scripts/coccinelle/misc/field_modify.cocci
-new file mode 100644
-index 000000000000..bdc5a65a1b53
---- /dev/null
-+++ b/scripts/coccinelle/misc/field_modify.cocci
-@@ -0,0 +1,59 @@
-+// SPDX-License-Identifier: GPL-2.0-only
-+/// Replace below code with the wrapper FIELD_MODIFY(MASK, &reg, val)
-+/// - reg &= ~MASK;
-+/// - reg |= FIELD_PREP(MASK, val);
-+//
-+// Confidence: High
-+// Author: Luo Jie <quic_luoj@quicinc.com>
-+// Copyright: (C) 2025 Qualcomm Innovation Center, Inc.
-+// Keywords: FIELD_PREP, FIELD_MODIFY
-+// Options: --include-headers
-+
-+virtual context
-+virtual patch
-+virtual org
-+virtual report
-+
-+@depends on context@
-+identifier reg, val;
-+constant mask;
-+symbol FIELD_PREP;
-+@@
-+
-+*reg &= ~mask;
-+*reg |= FIELD_PREP(mask, val);
-+
-+@depends on patch@
-+identifier reg, val;
-+constant mask;
-+symbol FIELD_PREP, FIELD_MODIFY;
-+@@
-+
-+-reg &= ~mask;
-+-reg |= FIELD_PREP(mask, val);
-++FIELD_MODIFY(mask, &reg, val);
-+
-+@r depends on org || report@
-+identifier reg, val;
-+constant mask;
-+symbol FIELD_PREP;
-+position p;
-+@@
-+
-+reg &= ~mask;
-+reg |= FIELD_PREP@p(mask, val);
-+
-+@script:python depends on report@
-+p << r.p;
-+x << r.reg;
-+@@
-+
-+coccilib.report.print_report(p[0], "WARNING: Consider using FIELD_MODIFY helper on %s" % (x))
-+
-+@script:python depends on org@
-+p << r.p;
-+x << r.reg;
-+@@
-+
-+msg = f"WARNING: Consider using FIELD_MODIFY helper on {x}"
-+coccilib.org.print_todo(p[0], msg.replace("[","@(").replace("]",")"))
-
----
-base-commit: 0bb71d301869446810a0b13d3da290bd455d7c78
-change-id: 20250612-field_modify-27139f673881
-
-Best regards,
 -- 
-Luo Jie <quic_luoj@quicinc.com>
+Regards,
 
+Sakari Ailus
 
