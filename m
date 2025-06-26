@@ -1,160 +1,197 @@
-Return-Path: <linux-kernel+bounces-703723-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-703734-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 406D1AE9421
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Jun 2025 04:37:59 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id B4608AE944E
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Jun 2025 04:40:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E49F81C277F1
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Jun 2025 02:38:14 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 932B94E1233
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Jun 2025 02:40:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8F46020E313;
-	Thu, 26 Jun 2025 02:37:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0C00620469E;
+	Thu, 26 Jun 2025 02:39:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="L+0itSvi"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="XZB90I1e"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.9])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0F3AE1F9F7A
-	for <linux-kernel@vger.kernel.org>; Thu, 26 Jun 2025 02:37:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3ACB21F9F7A
+	for <linux-kernel@vger.kernel.org>; Thu, 26 Jun 2025 02:38:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.9
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750905439; cv=none; b=dHLa+U9w1TND2syZsASR22Q2DqX1JG45NOPddQm7D6lH5hfNpSYbnfWyyqUg2Y2LN0JRPyZrBAnbsa14iLpjeyA+l4iydwDwa8noIfhcdWkrbIvCJTdwYzXYYNyJB/cGKE0OjkWI4y8g7FsYI0plR3sMNtj0EC14gmI0V6srUuw=
+	t=1750905541; cv=none; b=mQnYxOevslT72zYGt9wvE+izUuPNmNSLrAOJjM08fClsrhmdsRUKCrh+1VK6vxFX52S58wNVYoPfZObbpsdQH2KXqw8NL0NJbwVLKUWFiO/bqvKXK0WjJ6Omoa/4RGDWwCC2Ek5fh8wpDqQ7UynFXRQAk42WblQoF8EM5mqZqFc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750905439; c=relaxed/simple;
-	bh=e5C9qrU3fsOpfaDgADgkrynMWd5GzhKtqGQzdriNJ3U=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=pasT++0yFHxCcnTZzkFQ7fPzYZQIKomixAHy89OjXE+WqqxuGqILpY9uiMkLCgYGO00JETSRJ5He8UqiGcGTDjbX83K7zn7gAda5C369RtGA5XScleEpH3JyV4mEZ4sLak5TLRbo776SM7WBfKgQJK7FrDNQQbfuRnnEAfVb6dw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=L+0itSvi; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1750905437;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=EW+I1QQIKlTT7W9a4yuMAmimMoHXfs6dlaepoS7uBM4=;
-	b=L+0itSvi7S7RE2UyumHfj9k9c+e6ns43ANlRJb43K9G8m7BWEbPa0KNkk5Mky63WrEfNO6
-	p7hc/i10cJJY3C9hhNAN5qnrA/ftV6J6yBkmw5CUsfwGnjCSP1aitRTFktHpHGWSVXEeTj
-	YsdLNYMAA2yoAWIZyBsAA+cyorm1svU=
-Received: from mail-pj1-f71.google.com (mail-pj1-f71.google.com
- [209.85.216.71]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-596-HwcXpC30PJKdG6V0urrNCQ-1; Wed, 25 Jun 2025 22:37:15 -0400
-X-MC-Unique: HwcXpC30PJKdG6V0urrNCQ-1
-X-Mimecast-MFC-AGG-ID: HwcXpC30PJKdG6V0urrNCQ_1750905434
-Received: by mail-pj1-f71.google.com with SMTP id 98e67ed59e1d1-313fab41f4bso616439a91.0
-        for <linux-kernel@vger.kernel.org>; Wed, 25 Jun 2025 19:37:14 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1750905434; x=1751510234;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=EW+I1QQIKlTT7W9a4yuMAmimMoHXfs6dlaepoS7uBM4=;
-        b=uQBsMbhkXFh9yv4BJVgGEH/plcA3MY4wZpi7jCfz7r/xL/8manN4JQnUW0Kq76i1D5
-         c5MXMd5j8GsPOJJeWEBl97Y4qj9aIdakpOtfvxfRaNa3y0h6IDLiaZbLzb0FTpIHpXJZ
-         Uo6aG/3FpRZFsN7xw84cx2b8sL4fs3VGz3Zm0NAL1TtgFM9vPIdPHyMDCOTO3NdOb5EY
-         2C1HRq4QZbjai4JItZ0pxYbgeU7s7cDi7+5CQQRPeCBVVSZj9gRTnupluaq2GWyiGBS4
-         cBCPphU4x4sVduCzRFMW+JXwkFWRBBYhQlEY/2ryAtg1nThy8Sk+J1KB7+CNRnItwdWe
-         szLw==
-X-Forwarded-Encrypted: i=1; AJvYcCXNrXQv5uN/KsrJ0JuyV6zZ6ZoeZNxD7EK2fPi95TxDqhTtgAzE3EDAp9FvWQZtG76nawLK0fxCHee0ExY=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyGSlOqXnv8xZWu1l71wO5BnvUUc8xRnls22sJ2NNs4NzUaf0ku
-	ixhZ9HEnPiqlzgUcldPVPCiVHtKTTNMTkmOEdFSR8SBsau5qN1Dc/FHG7pdhV00uTFfD7tisg4x
-	HAMvWa79kBMRX4ZOB8xIWL7Zp61eBJdvaOgnZNayajMPxnVaZb2m43sgZMIRgPn4EtIH8JMAzqI
-	qI/+Ng4JcqAHceF+STTY+xVq0kp6dnm1OGNU3aKWsS
-X-Gm-Gg: ASbGncu85YLkz983asOIlfGNpMleCIZTGWO/V07osz7OpzqIaqv0WsElxPuJG3IJL0H
-	eKsi6e0RTC79P33fVMWEqyIs/gWOFqbNoGWlpnQvEySBPtaRGj7olZ9z3ydoIEXiY7GXmS6J8Ve
-	ncc6c/
-X-Received: by 2002:a17:90b:2b4c:b0:313:fb08:4261 with SMTP id 98e67ed59e1d1-315f269fa56mr6541975a91.32.1750905433997;
-        Wed, 25 Jun 2025 19:37:13 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IGnFq27uptoJBVoGMseNGObxmjNsAzQWtsl9oanE1SD186q54jLA9zURCaRw/XaQvClcZpVeAk2VlfUN6l6Dn8=
-X-Received: by 2002:a17:90b:2b4c:b0:313:fb08:4261 with SMTP id
- 98e67ed59e1d1-315f269fa56mr6541958a91.32.1750905433553; Wed, 25 Jun 2025
- 19:37:13 -0700 (PDT)
+	s=arc-20240116; t=1750905541; c=relaxed/simple;
+	bh=do47xzcy33UsbN6+HD0FZJjYyxkHa5m5Y4fOAmpbuvU=;
+	h=Date:From:To:Cc:Subject:Message-ID; b=Rn2mqKMvAW2qlSqkbbnL72AW0Xf1r+Or+p0l3X5A7V3JLZ0ArQLcLtX6AsI6CUJh98UnutIJJ8unjGSKJtUz1XT7XaPrRf1L4N1sVN514AjDAq9wwHhzsq6j6BDz5ZCxLSAcPcsy/45vTtLPPm7cCmOVESsxu6Msx0w4LRmKjH0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=XZB90I1e; arc=none smtp.client-ip=192.198.163.9
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1750905539; x=1782441539;
+  h=date:from:to:cc:subject:message-id;
+  bh=do47xzcy33UsbN6+HD0FZJjYyxkHa5m5Y4fOAmpbuvU=;
+  b=XZB90I1eGo6dbfJhWcP4OX1kExYr6m78QPkl1cNsyFWJFW/aLIHl1VH7
+   kXPVPnhMDPzdKOj0ww/36wzwtKgHIHJu+7B1IS3byBMRV4Vgy0R9qd5DK
+   mPL/OcerICxH1/nX2LzTwe7EdB/UGCFPi5lOqsvF2fNYcYLqZpl+10HkY
+   eCXRPq8eIeRsOsFRsLjAFQXevY2mGxUaPwmgNKK7Z97yum14fqQEb88Mn
+   cVkuRvXkjS/9DDyzgn94ZhdV8OlQ3LrrnGSQBZNJ8jMUqZG47Wn2Y0Grk
+   gXwHaB5nJ1PriLoSG+TCb+teZzS3+RIoJxNSP2epEFbvGCbkrRJHC6UaB
+   Q==;
+X-CSE-ConnectionGUID: MsjQn4ktR02SrM3VApYe4g==
+X-CSE-MsgGUID: zjcrPLarRDOddU85KYxhbA==
+X-IronPort-AV: E=McAfee;i="6800,10657,11475"; a="63880946"
+X-IronPort-AV: E=Sophos;i="6.16,266,1744095600"; 
+   d="scan'208";a="63880946"
+Received: from fmviesa008.fm.intel.com ([10.60.135.148])
+  by fmvoesa103.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 25 Jun 2025 19:38:59 -0700
+X-CSE-ConnectionGUID: v7WqOeYIRHyV0jNqHQIO+Q==
+X-CSE-MsgGUID: lIJYO6/dS7igP1sToltP6w==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.16,266,1744095600"; 
+   d="scan'208";a="152909928"
+Received: from lkp-server01.sh.intel.com (HELO e8142ee1dce2) ([10.239.97.150])
+  by fmviesa008.fm.intel.com with ESMTP; 25 Jun 2025 19:38:57 -0700
+Received: from kbuild by e8142ee1dce2 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1uUcVr-000Tda-2J;
+	Thu, 26 Jun 2025 02:38:55 +0000
+Date: Thu, 26 Jun 2025 10:38:43 +0800
+From: kernel test robot <lkp@intel.com>
+To: "x86-ml" <x86@kernel.org>
+Cc: linux-kernel@vger.kernel.org
+Subject: [tip:master] BUILD SUCCESS
+ 49151ac6671fe0372261054daf5e4da3567b8271
+Message-ID: <202506261033.Q8z87zR8-lkp@intel.com>
+User-Agent: s-nail v14.9.24
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-References: <20250625160849.61344-1-minhquangbui99@gmail.com> <20250625160849.61344-3-minhquangbui99@gmail.com>
-In-Reply-To: <20250625160849.61344-3-minhquangbui99@gmail.com>
-From: Jason Wang <jasowang@redhat.com>
-Date: Thu, 26 Jun 2025 10:37:01 +0800
-X-Gm-Features: Ac12FXzafcvLIIRlWLmpr_5VBnu8UJoZzPPLlWXuQNGXda7Uc4uun2EikZbgBz8
-Message-ID: <CACGkMEuZTP+xPCWuSGwiApWEj_PuOxb5yOeR3t-Bga1t+svawQ@mail.gmail.com>
-Subject: Re: [PATCH net 2/4] virtio-net: remove redundant truesize check with PAGE_SIZE
-To: Bui Quang Minh <minhquangbui99@gmail.com>
-Cc: netdev@vger.kernel.org, "Michael S. Tsirkin" <mst@redhat.com>, 
-	Xuan Zhuo <xuanzhuo@linux.alibaba.com>, =?UTF-8?Q?Eugenio_P=C3=A9rez?= <eperezma@redhat.com>, 
-	Andrew Lunn <andrew+netdev@lunn.ch>, "David S. Miller" <davem@davemloft.net>, 
-	Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, 
-	Alexei Starovoitov <ast@kernel.org>, Daniel Borkmann <daniel@iogearbox.net>, 
-	Jesper Dangaard Brouer <hawk@kernel.org>, John Fastabend <john.fastabend@gmail.com>, 
-	Stanislav Fomichev <sdf@fomichev.me>, virtualization@lists.linux.dev, 
-	linux-kernel@vger.kernel.org, bpf@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 
-On Thu, Jun 26, 2025 at 12:10=E2=80=AFAM Bui Quang Minh
-<minhquangbui99@gmail.com> wrote:
->
-> The truesize is guaranteed not to exceed PAGE_SIZE in
-> get_mergeable_buf_len(). It is saved in mergeable context, which is not
-> changeable by the host side,
+tree/branch: https://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git master
+branch HEAD: 49151ac6671fe0372261054daf5e4da3567b8271  Merge branch into tip/master: 'x86/sev'
 
-This really depends on the security model.
+elapsed time: 1003m
 
-> so the check in receive path is quite
-> redundant.
->
-> Signed-off-by: Bui Quang Minh <minhquangbui99@gmail.com>
-> ---
->  drivers/net/virtio_net.c | 7 +++----
->  1 file changed, 3 insertions(+), 4 deletions(-)
->
-> diff --git a/drivers/net/virtio_net.c b/drivers/net/virtio_net.c
-> index 2a130a3e50ac..6f9fedad4a5e 100644
-> --- a/drivers/net/virtio_net.c
-> +++ b/drivers/net/virtio_net.c
-> @@ -2144,9 +2144,9 @@ static int virtnet_build_xdp_buff_mrg(struct net_de=
-vice *dev,
->  {
->         struct virtio_net_hdr_mrg_rxbuf *hdr =3D buf;
->         unsigned int headroom, tailroom, room;
-> -       unsigned int truesize, cur_frag_size;
->         struct skb_shared_info *shinfo;
->         unsigned int xdp_frags_truesz =3D 0;
-> +       unsigned int truesize;
->         struct page *page;
->         skb_frag_t *frag;
->         int offset;
-> @@ -2194,9 +2194,8 @@ static int virtnet_build_xdp_buff_mrg(struct net_de=
-vice *dev,
->                 tailroom =3D headroom ? sizeof(struct skb_shared_info) : =
-0;
->                 room =3D SKB_DATA_ALIGN(headroom + tailroom);
->
-> -               cur_frag_size =3D truesize;
-> -               xdp_frags_truesz +=3D cur_frag_size;
-> -               if (unlikely(len > truesize - room || cur_frag_size > PAG=
-E_SIZE)) {
-> +               xdp_frags_truesz +=3D truesize;
-> +               if (unlikely(len > truesize - room)) {
->                         put_page(page);
->                         pr_debug("%s: rx error: len %u exceeds truesize %=
-lu\n",
->                                  dev->name, len, (unsigned long)(truesize=
- - room));
-> --
-> 2.43.0
->
+configs tested: 105
+configs skipped: 2
 
-Acked-by: Jason Wang <jasowang@redhat.com>
+The following configs have been built successfully.
+More configs may be tested in the coming days.
 
-Thanks
+tested configs:
+alpha                             allnoconfig    gcc-15.1.0
+alpha                            allyesconfig    clang-19
+alpha                            allyesconfig    gcc-15.1.0
+arc                              allmodconfig    clang-19
+arc                               allnoconfig    gcc-15.1.0
+arc                              allyesconfig    clang-19
+arc                   randconfig-001-20250625    gcc-11.5.0
+arc                   randconfig-001-20250626    clang-20
+arc                   randconfig-002-20250625    gcc-12.4.0
+arc                   randconfig-002-20250626    clang-20
+arm                              allmodconfig    clang-19
+arm                               allnoconfig    clang-21
+arm                               allnoconfig    gcc-15.1.0
+arm                              allyesconfig    clang-19
+arm                   randconfig-001-20250625    clang-21
+arm                   randconfig-001-20250626    clang-20
+arm                   randconfig-002-20250625    gcc-11.5.0
+arm                   randconfig-002-20250626    clang-20
+arm                   randconfig-003-20250625    gcc-13.3.0
+arm                   randconfig-003-20250626    clang-20
+arm                   randconfig-004-20250625    gcc-15.1.0
+arm                   randconfig-004-20250626    clang-20
+arm64                            allmodconfig    clang-19
+arm64                             allnoconfig    gcc-15.1.0
+arm64                 randconfig-001-20250625    gcc-11.5.0
+arm64                 randconfig-001-20250626    clang-20
+arm64                 randconfig-002-20250625    clang-20
+arm64                 randconfig-002-20250626    clang-20
+arm64                 randconfig-003-20250625    gcc-12.3.0
+arm64                 randconfig-003-20250626    clang-20
+arm64                 randconfig-004-20250625    clang-20
+arm64                 randconfig-004-20250626    clang-20
+csky                              allnoconfig    gcc-15.1.0
+hexagon                          allmodconfig    clang-17
+hexagon                          allmodconfig    clang-19
+hexagon                           allnoconfig    clang-21
+hexagon                           allnoconfig    gcc-15.1.0
+hexagon                          allyesconfig    clang-19
+hexagon                          allyesconfig    clang-21
+i386                             allmodconfig    clang-20
+i386                              allnoconfig    clang-20
+i386                             allyesconfig    clang-20
+i386        buildonly-randconfig-001-20250625    clang-20
+i386        buildonly-randconfig-002-20250625    gcc-12
+i386        buildonly-randconfig-003-20250625    gcc-12
+i386        buildonly-randconfig-004-20250625    gcc-12
+i386        buildonly-randconfig-005-20250625    clang-20
+i386        buildonly-randconfig-006-20250625    clang-20
+i386                                defconfig    clang-20
+loongarch                        allmodconfig    gcc-15.1.0
+loongarch                         allnoconfig    gcc-15.1.0
+m68k                             allmodconfig    gcc-15.1.0
+m68k                              allnoconfig    gcc-15.1.0
+m68k                             allyesconfig    gcc-15.1.0
+microblaze                       allmodconfig    gcc-15.1.0
+microblaze                        allnoconfig    gcc-15.1.0
+microblaze                       allyesconfig    gcc-15.1.0
+mips                              allnoconfig    gcc-15.1.0
+nios2                             allnoconfig    gcc-14.2.0
+openrisc                          allnoconfig    gcc-15.1.0
+openrisc                         allyesconfig    gcc-15.1.0
+parisc                           allmodconfig    gcc-15.1.0
+parisc                            allnoconfig    gcc-15.1.0
+parisc                           allyesconfig    gcc-15.1.0
+powerpc                          allmodconfig    gcc-15.1.0
+powerpc                           allnoconfig    gcc-15.1.0
+powerpc                          allyesconfig    gcc-15.1.0
+riscv                            allmodconfig    gcc-15.1.0
+riscv                             allnoconfig    gcc-15.1.0
+riscv                            allyesconfig    gcc-15.1.0
+s390                             allmodconfig    clang-18
+s390                             allmodconfig    gcc-15.1.0
+s390                              allnoconfig    clang-21
+s390                             allyesconfig    gcc-15.1.0
+sh                               allmodconfig    gcc-15.1.0
+sh                                allnoconfig    gcc-15.1.0
+sh                               allyesconfig    gcc-15.1.0
+sparc                            allmodconfig    gcc-15.1.0
+sparc                             allnoconfig    gcc-15.1.0
+um                               allmodconfig    clang-19
+um                                allnoconfig    clang-21
+um                               allyesconfig    clang-19
+um                               allyesconfig    gcc-12
+x86_64                            allnoconfig    clang-20
+x86_64                           allyesconfig    clang-20
+x86_64      buildonly-randconfig-001-20250625    gcc-12
+x86_64      buildonly-randconfig-001-20250626    clang-20
+x86_64      buildonly-randconfig-002-20250625    clang-20
+x86_64      buildonly-randconfig-002-20250626    clang-20
+x86_64      buildonly-randconfig-003-20250625    clang-20
+x86_64      buildonly-randconfig-003-20250626    clang-20
+x86_64      buildonly-randconfig-004-20250625    clang-20
+x86_64      buildonly-randconfig-004-20250626    clang-20
+x86_64      buildonly-randconfig-005-20250625    clang-20
+x86_64      buildonly-randconfig-005-20250626    clang-20
+x86_64      buildonly-randconfig-006-20250625    clang-20
+x86_64      buildonly-randconfig-006-20250626    clang-20
+x86_64                              defconfig    clang-20
+x86_64                                  kexec    clang-20
+x86_64                               rhel-9.4    clang-20
+x86_64                           rhel-9.4-bpf    gcc-12
+x86_64                         rhel-9.4-kunit    gcc-12
+x86_64                           rhel-9.4-ltp    gcc-12
+x86_64                          rhel-9.4-rust    clang-20
+xtensa                            allnoconfig    gcc-15.1.0
 
+--
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
