@@ -1,180 +1,144 @@
-Return-Path: <linux-kernel+bounces-704089-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-704092-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1A2B2AE993D
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Jun 2025 10:56:07 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 95DB0AE994C
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Jun 2025 10:59:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7E7BC3A8AC3
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Jun 2025 08:55:41 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 547337B8F57
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Jun 2025 08:55:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4F5872D9EFE;
-	Thu, 26 Jun 2025 08:54:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D8E4B29B778;
+	Thu, 26 Jun 2025 08:54:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="bNf0qHuz"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="EhDTPZwF"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A9ECB2BF012;
-	Thu, 26 Jun 2025 08:53:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3F1C829617A;
+	Thu, 26 Jun 2025 08:54:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750928038; cv=none; b=dwUIb5kKQZovqQWv46hadGl/3SZ54m6iy2o/fVtYp6l7LAvA+yRZnmOzaeyKq/PjRxus084IdNPno2gdl8//Lt6YYwzIP7tHV9WFYAxyE04tg2DBix5fBcAH/C/4jFF4W5B6y72em/ni20P/OZCtSAOWUJ0fFGpZwHqqyLroMQk=
+	t=1750928084; cv=none; b=U5YUpphbjFG+QQyuhJs4tQJdVhxSWqhtHiR7o+XvwiDcscW3TY1DYdq0a4Y/Yf5UMn1VGDGqhZRFkY58szLx87ilECEgWFD3Peuq6AymWwEKLuexbLzqh3STkq5CRkhnGTazNyW7LpgUU52t1k+DFpPSon8oh0Gp7E8lRMr4m4Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750928038; c=relaxed/simple;
-	bh=AUPv/TDoKd6ieMqlLaY3QqCSEU6AU3dk77+aCznD0MM=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=V3GjfvD3OH5VIWgO7Mi8ZVS58+3KsEJtBMnkaos0E8CZ3vpxmR0p5rpu8K1Fe7ymXEO8q+JbU4MyyiEncSOURxJo83VPvMVbiBDsFJkGNUQkeW+2jhhzfeTniJq0wQqHJOaxlhwrQWpZCgbJwAO/AP4eItdoHW64ujtcPvb2wU8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=bNf0qHuz; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPS id 8559CC4CEEF;
-	Thu, 26 Jun 2025 08:53:58 +0000 (UTC)
+	s=arc-20240116; t=1750928084; c=relaxed/simple;
+	bh=0TH71Dhds5dtLv4EikA0QKrDx9Iy9bKdIp2ZGs2Ak/s=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=MAUd4YLeBIzYQn12UdkZlTYF55vke5lIFIm50i+F+5Zom1sgK8ByF0pZu04wsvCK1pQikIb2EhweWNgpZr8jiDPI+3Z/nk7c9IvsRgg3ARkiGb9DPKPsRCsfUznoB+z1e79aqrYg6YfgVOJesySHGzKQKBVVlJZHQT+C4AEjAlw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=EhDTPZwF; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1113FC4CEEB;
+	Thu, 26 Jun 2025 08:54:41 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1750928038;
-	bh=AUPv/TDoKd6ieMqlLaY3QqCSEU6AU3dk77+aCznD0MM=;
-	h=From:Date:Subject:References:In-Reply-To:To:Cc:Reply-To:From;
-	b=bNf0qHuzlOTME1/ZyXjCOKVbVbEwW4ZIxWyH8XRH0GWib2bAXYlKHU+YBlLhbJl/y
-	 mCxaoHpN8Dc0D4V0LHXvD2WCQnZ3GTGsAsNQtOgOtpxw0fq/jXSvRdbe1KHGg7VNXL
-	 6O7UXVAKO5zqNgxzq1uzXG2V5S2v6vdIfA6IzWVSk3qlqWZH/5xd/9deWSBriK8/QP
-	 Kyp+F4Qqv2hHE/6i0YXZYX1V9HyTn8rQV/y30L+JsHkT6bWDkUJb+0K54qeQ+XRSYj
-	 208RgUMlWa9NovWKRI/6hCWm871a5uPO4CfQKqg45b/aH+fwm2Vto+jbDfxLYKaIcS
-	 5U7cle6hlq90g==
-Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7B4B2C7EE32;
-	Thu, 26 Jun 2025 08:53:58 +0000 (UTC)
-From: Max Shevchenko via B4 Relay <devnull+wctrl.proton.me@kernel.org>
-Date: Thu, 26 Jun 2025 11:54:04 +0300
-Subject: [PATCH v2 11/11] ARM: dts: mediatek: add basic support for Lenovo
- A369i board
+	s=k20201202; t=1750928083;
+	bh=0TH71Dhds5dtLv4EikA0QKrDx9Iy9bKdIp2ZGs2Ak/s=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=EhDTPZwFbQ+12IG9Do0UP3kDYNFDPmM7uBuCFjBR5kEUcMiKw65/QdNOEYccu8ovn
+	 CppZZZmRnsUgBAd3No2t9DD/30wnxxK+M7NiB3GqzGr1pOp3/YBmg76gQzlxCuzzBM
+	 spIxuqR6VXakFYox3e/F68aResjV6SdGqtpJ+zml+YRXI2BNP25ywbGEsa46UEL4Z6
+	 1e1AYWMh9QyRZbv1COCgVX6xUzfwkxAoTJfzkiqI9J9EJTeTDY1TJMrD9b18gTCSQv
+	 2c7d+JmcZ6V91PHWKmnMEZex2bymoM1yIg3ffAMs9XYNBnl/e7K0zRQpI+gkqJBANc
+	 z2P+NTfRqwSdQ==
+Message-ID: <2350a34d-2f7b-49c0-b286-2856c088131a@kernel.org>
+Date: Thu, 26 Jun 2025 17:54:40 +0900
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] block: fix false warning in bdev_count_inflight_rw()
+To: Yu Kuai <yukuai1@huaweicloud.com>, axboe@kernel.dk, hare@suse.de,
+ hch@infradead.org, yukuai3@huawei.com, john.g.garry@oracle.com
+Cc: linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
+ yi.zhang@redhat.com, calvin@wbinvd.org, david@fromorbit.com,
+ yi.zhang@huawei.com, yangerkun@huawei.com, johnny.chenyi@huawei.com
+References: <20250626083927.576207-1-yukuai1@huaweicloud.com>
+Content-Language: en-US
+From: Damien Le Moal <dlemoal@kernel.org>
+Organization: Western Digital Research
+In-Reply-To: <20250626083927.576207-1-yukuai1@huaweicloud.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
-Message-Id: <20250626-mt6572-v2-11-f7f842196986@proton.me>
-References: <20250626-mt6572-v2-0-f7f842196986@proton.me>
-In-Reply-To: <20250626-mt6572-v2-0-f7f842196986@proton.me>
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
- Jiri Slaby <jirislaby@kernel.org>, Rob Herring <robh@kernel.org>, 
- Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, 
- Matthias Brugger <matthias.bgg@gmail.com>, 
- AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, 
- Thomas Gleixner <tglx@linutronix.de>, 
- Daniel Lezcano <daniel.lezcano@linaro.org>, 
- Wim Van Sebroeck <wim@linux-watchdog.org>, 
- Guenter Roeck <linux@roeck-us.net>, Sean Wang <sean.wang@mediatek.com>, 
- Russell King <linux@armlinux.org.uk>
-Cc: linux-kernel@vger.kernel.org, linux-serial@vger.kernel.org, 
- devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
- linux-mediatek@lists.infradead.org, linux-watchdog@vger.kernel.org, 
- Max Shevchenko <wctrl@proton.me>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1750928035; l=2277;
- i=wctrl@proton.me; s=20250603; h=from:subject:message-id;
- bh=4u8PvwUsCoKzaBq7UBptniJ7BDz8n6fIUr+Q5q3mwbA=;
- b=6BJCGc3Gmadj8FKTlSidHgR6LDm1JQJ/jIN9Jxg9QoZsRESehd/TP2FEDngEU+/DeEuAB1dAR
- Jo7d1iH5euHDHqA9HYXYhU+TtU9YnbApJ0MU+NUKwkWHPiiOyPDWo5A
-X-Developer-Key: i=wctrl@proton.me; a=ed25519;
- pk=JXUx3mL/OrnRvbK57HXgugBjEBKq4QgDKJqp7BALm74=
-X-Endpoint-Received: by B4 Relay for wctrl@proton.me/20250603 with
- auth_id=421
-X-Original-From: Max Shevchenko <wctrl@proton.me>
-Reply-To: wctrl@proton.me
 
-From: Max Shevchenko <wctrl@proton.me>
+On 6/26/25 17:39, Yu Kuai wrote:
+> From: Yu Kuai <yukuai3@huawei.com>
+> 
+> While bdev_count_inflight is interating all cpus, if some IOs are issued
+> from traversed cpu and then completed from the cpu that is not traversed
+> yet:
+> 
+> cpu0
+> 		cpu1
+> 		bdev_count_inflight
+> 		 //for_each_possible_cpu
+> 		 // cpu0 is 0
+> 		 infliht += 0
+> // issue a io
+> blk_account_io_start
+> // cpu0 inflight ++
+> 
+> 				cpu2
+> 				// the io is done
+> 				blk_account_io_done
+> 				// cpu2 inflight --
+> 		 // cpu 1 is 0
+> 		 inflight += 0
+> 		 // cpu2 is -1
+> 		 inflight += -1
+> 		 ...
+> 
+> In this case, the total inflight will be -1, causing lots of false
+> warning. Fix the problem by removing the warning.
+> 
+> Noted there is still a valid warning for nvme-mpath(From Yi) that is not
+> fixed yet.
+> 
+> Fixes: f5482ee5edb9 ("block: WARN if bdev inflight counter is negative")
+> Reported-by: Yi Zhang <yi.zhang@redhat.com>
+> Closes: https://lore.kernel.org/linux-block/aFtUXy-lct0WxY2w@mozart.vkv.me/T/#mae89155a5006463d0a21a4a2c35ae0034b26a339
+> Reported-and-tested-by: Calvin Owens <calvin@wbinvd.org>
+> Closes: https://lore.kernel.org/linux-block/aFtUXy-lct0WxY2w@mozart.vkv.me/T/#m1d935a00070bf95055d0ac84e6075158b08acaef
+> Reported-by: Dave Chinner <david@fromorbit.com>
+> Closes: https://lore.kernel.org/linux-block/aFuypjqCXo9-5_En@dread.disaster.area/
+> Signed-off-by: Yu Kuai <yukuai3@huawei.com>
+> ---
+>  block/genhd.c | 9 +++++++--
+>  1 file changed, 7 insertions(+), 2 deletions(-)
+> 
+> diff --git a/block/genhd.c b/block/genhd.c
+> index 8171a6bc3210..680fa717082f 100644
+> --- a/block/genhd.c
+> +++ b/block/genhd.c
+> @@ -141,9 +141,14 @@ static void bdev_count_inflight_rw(struct block_device *part,
+>  		}
+>  	}
+>  
+> -	if (WARN_ON_ONCE((int)inflight[READ] < 0))
+> +	/*
+> +	 * While iterating all cpus, some IOs might issued from traversed cpu
+> +	 * and then completed from the cpu that is not traversed yet, causing
+> +	 * the inflight number to be negative.
 
-This smartphone uses a MediaTek MT6572 system-on-chip with 512MB of RAM.
-It can currently boot into initramfs with a working UART and
-Simple Framebuffer using already initialized panel by the bootloader.
+Nit (grammar):
 
-Signed-off-by: Max Shevchenko <wctrl@proton.me>
----
- arch/arm/boot/dts/mediatek/Makefile                |  1 +
- arch/arm/boot/dts/mediatek/mt6572-lenovo-a369i.dts | 56 ++++++++++++++++++++++
- 2 files changed, 57 insertions(+)
+	 * While iterating all CPUs, some IOs may be issued from a CPU already
+	 * traversed and complete on a CPU that has not yet been traversed,
+	 * causing the inflight number to be negative.
 
-diff --git a/arch/arm/boot/dts/mediatek/Makefile b/arch/arm/boot/dts/mediatek/Makefile
-index cb869a1aaec21a1d99f7f2a829b84672a3f52726..e48de3efeb3b9ab00108cc28afa8da525d0ec14a 100644
---- a/arch/arm/boot/dts/mediatek/Makefile
-+++ b/arch/arm/boot/dts/mediatek/Makefile
-@@ -2,6 +2,7 @@
- dtb-$(CONFIG_ARCH_MEDIATEK) += \
- 	mt2701-evb.dtb \
- 	mt6572-jty-d101.dtb \
-+	mt6572-lenovo-a369i.dtb \
- 	mt6580-evbp1.dtb \
- 	mt6582-prestigio-pmt5008-3g.dtb \
- 	mt6589-aquaris5.dtb \
-diff --git a/arch/arm/boot/dts/mediatek/mt6572-lenovo-a369i.dts b/arch/arm/boot/dts/mediatek/mt6572-lenovo-a369i.dts
-new file mode 100644
-index 0000000000000000000000000000000000000000..523e93647fdcf564404b720abe35ec7322cffa1e
---- /dev/null
-+++ b/arch/arm/boot/dts/mediatek/mt6572-lenovo-a369i.dts
-@@ -0,0 +1,56 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/*
-+ * Copyright (c) 2025 Max Shevchenko <wctrl@proton.me>
-+ */
-+
-+/dts-v1/;
-+#include "mt6572.dtsi"
-+
-+/ {
-+	model = "Lenovo A369i";
-+	compatible = "lenovo,a369i", "mediatek,mt6572";
-+
-+	aliases {
-+		serial0 = &uart0;
-+	};
-+
-+	chosen {
-+		#address-cells = <1>;
-+		#size-cells = <1>;
-+		stdout-path = "serial0:921600n8";
-+
-+		framebuffer: framebuffer@9fa00000 {
-+			compatible = "simple-framebuffer";
-+			memory-region = <&framebuffer_reserved>;
-+			width = <480>;
-+			height = <800>;
-+			stride = <(480 * 2)>;
-+			format = "r5g6b5";
-+		};
-+	};
-+
-+	memory {
-+		device_type = "memory";
-+		reg = <0x80000000 0x20000000>;
-+	};
-+
-+	reserved-memory {
-+		#address-cells = <1>;
-+		#size-cells = <1>;
-+		ranges;
-+
-+		connsys@80000000 {
-+			reg = <0x80000000 0x100000>;
-+			no-map;
-+		};
-+
-+		framebuffer_reserved: framebuffer@9fa00000 {
-+			reg = <0x9fa00000 0x600000>;
-+			no-map;
-+		};
-+	};
-+};
-+
-+&uart0 {
-+	status = "okay";
-+};
+> +	 */
+> +	if ((int)inflight[READ] < 0)
+>  		inflight[READ] = 0;
+> -	if (WARN_ON_ONCE((int)inflight[WRITE] < 0))
+> +	if ((int)inflight[WRITE] < 0)
+>  		inflight[WRITE] = 0;
+>  }
+>  
+
 
 -- 
-2.50.0
-
-
+Damien Le Moal
+Western Digital Research
 
