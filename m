@@ -1,133 +1,153 @@
-Return-Path: <linux-kernel+bounces-704883-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-704885-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id C6C71AEA2C8
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Jun 2025 17:36:48 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id B8808AEA2E0
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Jun 2025 17:42:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 584B256126C
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Jun 2025 15:35:42 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 034C11885C7A
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Jun 2025 15:36:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8D5A32ED165;
-	Thu, 26 Jun 2025 15:35:05 +0000 (UTC)
-Received: from relay.hostedemail.com (smtprelay0015.hostedemail.com [216.40.44.15])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3B9E52ECE8F;
+	Thu, 26 Jun 2025 15:35:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="G+Iq6z4L"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.12])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 18DC32EB5B4;
-	Thu, 26 Jun 2025 15:35:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=216.40.44.15
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9B3EB2ECE8C
+	for <linux-kernel@vger.kernel.org>; Thu, 26 Jun 2025 15:35:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.12
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750952105; cv=none; b=MQizZPjKxBU3bEftJp4/kv2VeRZ93U+Q7Q3NbtmD7Jh+hjoIaAhvffm2w5TKCbz1LEb/Jo68nugXcz4jshRjs0sZHm3wDntQUdW75eA+Zq4JOUibm9HhDVKAB1ipQTQPMS4tVGT6ZrQq8/zUYnVwwvfjKhquTRDfFE3alvmeF7g=
+	t=1750952136; cv=none; b=sRgD0xf03/cwUdKqkonnldcGVsI5d+ZwIBwVLs37/9U7fnCCYPdNIpZXa6FjrvnmtlrwC4vXt4ak/l6ju2dJ7yQM5bRFv8EHsPMF5wVlhqpqVjEote3qh29mKS1QA/2WlujlEyJ9jh3XbTz9YBktREBphpL3LigOfGHVQB/BfaY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750952105; c=relaxed/simple;
-	bh=Mm62k2XasOS+s2Wom0/lDqlqaISmC/ws1fOPSwt/rAg=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=ReqGAjZJMcZC1tPZWe713UNeAl52qW6bH/PT8JIU39p8AE6HZvI59otDMtJI733hRoQaBXaEm2wD5T3ltzs2uIF1OQ6UYZHHoG8TFrbrMF6590fPNEIo/YHbmC8TJXjfhQlIcHlVdISmLbWsAJ7Rd6VLPJTthja+lcSrlPDdmDQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org; spf=pass smtp.mailfrom=goodmis.org; arc=none smtp.client-ip=216.40.44.15
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=goodmis.org
-Received: from omf13.hostedemail.com (a10.router.float.18 [10.200.18.1])
-	by unirelay09.hostedemail.com (Postfix) with ESMTP id 69B4380286;
-	Thu, 26 Jun 2025 15:35:01 +0000 (UTC)
-Received: from [HIDDEN] (Authenticated sender: rostedt@goodmis.org) by omf13.hostedemail.com (Postfix) with ESMTPA id 730E820016;
-	Thu, 26 Jun 2025 15:34:59 +0000 (UTC)
-Date: Thu, 26 Jun 2025 11:35:20 -0400
-From: Steven Rostedt <rostedt@goodmis.org>
-To: Nam Cao <namcao@linutronix.de>
-Cc: Masami Hiramatsu <mhiramat@kernel.org>, Mathieu Desnoyers
- <mathieu.desnoyers@efficios.com>, linux-trace-kernel@vger.kernel.org,
- linux-kernel@vger.kernel.org, Gabriele Monaco <gmonaco@redhat.com>,
- john.ogness@linutronix.de
-Subject: Re: [PATCH] tracing: Remove pointless memory barriers
-Message-ID: <20250626113520.315db641@gandalf.local.home>
-In-Reply-To: <20250626151940.1756398-1-namcao@linutronix.de>
-References: <20250626151940.1756398-1-namcao@linutronix.de>
-X-Mailer: Claws Mail 3.20.0git84 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1750952136; c=relaxed/simple;
+	bh=DVxGAOB+z9HgOV6c2p86HhKpJK+II0e+oGR0iJDzZLU=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=EueZ4k1UXoJ7azexh0EVDyPNr2iokktg9cXAV/ce0UeQ8ccWqtrcCddxCd3/KiHNO02UQ8MHF8JKoe1vNfTIokr19ALo2ecXB3Z+c0L3FNL8XUMZk8/hhQmYXnQ1c3Dvga1CxpK3yrfS3HLBReCa4FkkHKMMD9YVpogHSzo67tc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=G+Iq6z4L; arc=none smtp.client-ip=192.198.163.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1750952135; x=1782488135;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=DVxGAOB+z9HgOV6c2p86HhKpJK+II0e+oGR0iJDzZLU=;
+  b=G+Iq6z4LkoyYdYUsC5utfV6zSP5zkHR+Pem9TRngIDv5/9znBGd4+707
+   uuMt2coMCTkwcXJMDSwX4wwUkELKrGRGsnMFQougTVFVx4oultuhF7Pyi
+   VjGoghvgoy1LHxibxr5A/eFTQcwExITUJD5DQbwXlVIJjtWGEv7R8pnjh
+   +Ilzexg7fMrIA2413jNiJHzoNne7Gw0HQP03tr7h04wPMQ/UQUQ8tEhvA
+   Id0ZVer/8hNi2HknBLbqlQU1Zh1FX9kF762Z8XFPHtEqmH0HjG1/AnDhQ
+   QTdrh/qKjEb74spQqBz49N41+YWb7xP94ScvXqapOB3HGNGSKwS6i+5kg
+   g==;
+X-CSE-ConnectionGUID: yjz1Sig5R32pCn7LupAJ6Q==
+X-CSE-MsgGUID: B8vqatL6SvO24GbmruiZTQ==
+X-IronPort-AV: E=McAfee;i="6800,10657,11476"; a="57063444"
+X-IronPort-AV: E=Sophos;i="6.16,267,1744095600"; 
+   d="scan'208";a="57063444"
+Received: from orviesa004.jf.intel.com ([10.64.159.144])
+  by fmvoesa106.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 26 Jun 2025 08:35:28 -0700
+X-CSE-ConnectionGUID: 7vwt+UJtR1CWF13eHODhjw==
+X-CSE-MsgGUID: BMHf2IvGREyl0k2RoQSt7A==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.16,267,1744095600"; 
+   d="scan'208";a="157111055"
+Received: from black.fi.intel.com ([10.237.72.28])
+  by orviesa004.jf.intel.com with ESMTP; 26 Jun 2025 08:35:26 -0700
+Received: by black.fi.intel.com (Postfix, from userid 1003)
+	id DFF3F2AD; Thu, 26 Jun 2025 18:35:24 +0300 (EEST)
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+	nvdimm@lists.linux.dev,
+	linux-kernel@vger.kernel.org
+Cc: Dan Williams <dan.j.williams@intel.com>,
+	Vishal Verma <vishal.l.verma@intel.com>,
+	Dave Jiang <dave.jiang@intel.com>,
+	Ira Weiny <ira.weiny@intel.com>
+Subject: [PATCH v1 1/1] libnvdimm: Don't use "proxy" headers
+Date: Thu, 26 Jun 2025 18:35:23 +0300
+Message-ID: <20250626153523.323447-1-andriy.shevchenko@linux.intel.com>
+X-Mailer: git-send-email 2.47.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-X-Stat-Signature: r3f3kb31c494bit8r9mpjnc6989ha1yz
-X-Rspamd-Server: rspamout03
-X-Rspamd-Queue-Id: 730E820016
-X-Session-Marker: 726F737465647440676F6F646D69732E6F7267
-X-Session-ID: U2FsdGVkX1/E56kneddSyxlwBYewPNePiT05QtFmRJE=
-X-HE-Tag: 1750952099-920767
-X-HE-Meta: U2FsdGVkX1+l/0Ie1xFcwA/qm4MKjh5VyaeKDkQGZAMEPRuxtjHIsBA6BA2d0UXzW1XG+BySH5rSinJuyTAj+53s5LwQ/Q19wlkJlFwhHMETqQ3+qpPXSILY18OLswUtGywed+m90HNOBYCJHwSISYPXVu5HDueHz2i8JNSwkbn6WfxhcijbmYrU6pG4s5kWMRPMIJUDmUEPEtTrWZzGgxQUkQvqamg9iyHzJrmrixlGoHt5aoavAX5ueCChuZUIQu1snpl6br9G3ByIO/NycdiyO3cS/ln1UJAN5+xO775ASwEwiXFjiwZUvArCkpov
+Content-Transfer-Encoding: 8bit
 
-On Thu, 26 Jun 2025 17:19:40 +0200
-Nam Cao <namcao@linutronix.de> wrote:
+Update header inclusions to follow IWYU (Include What You Use)
+principle.
 
+Note that kernel.h is discouraged to be included as it's written
+at the top of that file.
 
-> However, the memory barriers I see in kernel/trace/ do not resemble the
-> above pattern. Therefore I think they are redundant.
+While doing that, sort headers alphabetically.
 
-I'll focus my comments on the trace code as that's what I understand more.
+Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+---
+ include/linux/libnvdimm.h | 13 ++++++++-----
+ 1 file changed, 8 insertions(+), 5 deletions(-)
 
-> 
-> Please let me know if there is an unobvious reason for them.
-
-Sure!
-
-
->  static void turn_monitoring_on_with_reset(void)
-> diff --git a/kernel/trace/trace.c b/kernel/trace/trace.c
-> index 95ae7c4e58357..0dff4298fc0e5 100644
-> --- a/kernel/trace/trace.c
-> +++ b/kernel/trace/trace.c
-> @@ -936,7 +936,6 @@ int tracing_is_enabled(void)
->  	 * return the mirror variable of the state of the ring buffer.
->  	 * It's a little racy, but we don't really care.
->  	 */
-> -	smp_rmb();
->  	return !global_trace.buffer_disabled;
->  }
->  
-> @@ -1107,8 +1106,6 @@ void tracer_tracing_on(struct trace_array *tr)
->  	 * important to be fast than accurate.
->  	 */
->  	tr->buffer_disabled = 0;
-> -	/* Make the flag seen by readers */
-> -	smp_wmb();
->  }
->  
->  /**
-> @@ -1640,8 +1637,6 @@ void tracer_tracing_off(struct trace_array *tr)
->  	 * important to be fast than accurate.
->  	 */
->  	tr->buffer_disabled = 1;
-> -	/* Make the flag seen by readers */
-> -	smp_wmb();
->  }
-
-The above three interact with each other. Without the barriers, the
-tr->buffer_disabled = 0, can be set on one CPU, and the other CPU can think
-the buffer is still enabled and do work that will end up doing nothing. Or
-it can be set to 1, and the other CPU still sees it disabled and will not
-do work when it can.
-
->  
->  /**
-> @@ -2710,8 +2705,6 @@ void trace_buffered_event_enable(void)
->  
->  static void enable_trace_buffered_event(void *data)
->  {
-> -	/* Probably not needed, but do it anyway */
-> -	smp_rmb();
-
-As the comment says, this one actually isn't needed, and yes, it can be
-removed.
-
--- Steve
-
->  	this_cpu_dec(trace_buffered_event_cnt);
->  }
->  
+diff --git a/include/linux/libnvdimm.h b/include/linux/libnvdimm.h
+index e772aae71843..dce8787fba53 100644
+--- a/include/linux/libnvdimm.h
++++ b/include/linux/libnvdimm.h
+@@ -6,12 +6,12 @@
+  */
+ #ifndef __LIBNVDIMM_H__
+ #define __LIBNVDIMM_H__
+-#include <linux/kernel.h>
++
++#include <linux/ioport.h>
+ #include <linux/sizes.h>
++#include <linux/spinlock.h>
+ #include <linux/types.h>
+ #include <linux/uuid.h>
+-#include <linux/spinlock.h>
+-#include <linux/bio.h>
+ 
+ struct badrange_entry {
+ 	u64 start;
+@@ -80,7 +80,9 @@ typedef int (*ndctl_fn)(struct nvdimm_bus_descriptor *nd_desc,
+ 		struct nvdimm *nvdimm, unsigned int cmd, void *buf,
+ 		unsigned int buf_len, int *cmd_rc);
+ 
++struct attribute_group;
+ struct device_node;
++struct module;
+ struct nvdimm_bus_descriptor {
+ 	const struct attribute_group **attr_groups;
+ 	unsigned long cmd_mask;
+@@ -121,6 +123,7 @@ struct nd_mapping_desc {
+ 	int position;
+ };
+ 
++struct bio;
+ struct nd_region;
+ struct nd_region_desc {
+ 	struct resource *res;
+@@ -147,8 +150,6 @@ static inline void __iomem *devm_nvdimm_ioremap(struct device *dev,
+ 	return (void __iomem *) devm_nvdimm_memremap(dev, offset, size, 0);
+ }
+ 
+-struct nvdimm_bus;
+-
+ /*
+  * Note that separate bits for locked + unlocked are defined so that
+  * 'flags == 0' corresponds to an error / not-supported state.
+@@ -238,6 +239,8 @@ struct nvdimm_fw_ops {
+ 	int (*arm)(struct nvdimm *nvdimm, enum nvdimm_fwa_trigger arg);
+ };
+ 
++struct nvdimm_bus;
++
+ void badrange_init(struct badrange *badrange);
+ int badrange_add(struct badrange *badrange, u64 addr, u64 length);
+ void badrange_forget(struct badrange *badrange, phys_addr_t start,
+-- 
+2.47.2
 
 
