@@ -1,127 +1,128 @@
-Return-Path: <linux-kernel+bounces-704689-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-704692-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id AF87EAEA082
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Jun 2025 16:28:59 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4D7D1AEA089
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Jun 2025 16:30:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 493863AFB7D
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Jun 2025 14:27:45 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A0E2E4E3030
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Jun 2025 14:29:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9297728FFEE;
-	Thu, 26 Jun 2025 14:28:05 +0000 (UTC)
-Received: from mail-il1-f200.google.com (mail-il1-f200.google.com [209.85.166.200])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E7D952EAB7F;
+	Thu, 26 Jun 2025 14:28:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="RQ4iumFl"
+Received: from mail-lj1-f177.google.com (mail-lj1-f177.google.com [209.85.208.177])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B5810189F56
-	for <linux-kernel@vger.kernel.org>; Thu, 26 Jun 2025 14:28:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.200
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 857FD2EAB7D;
+	Thu, 26 Jun 2025 14:28:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750948085; cv=none; b=ojE1wieLsBz+jk00T5kwrWhhxOQyN8077E4IVET8XmufdIHqquRKLuwXF3vtMNjFdOd1NmZNeg6nBwVLeBBwdv6kdsRdNtUdQd/NBzM4KYrf1EriPrj131tVod8tvBhWdONdot3IE5+/O1T4JoJ4F9oBwT4Rmid4ByIl7/7HIq8=
+	t=1750948129; cv=none; b=NL3b5JprQDKxGugWPk4J+f3k76fZq11zdjGnIHZ8gppVCWU86vvxBsFwSrla6Uty8Obkt3kzI0Zph8ETaFNfNRLZMqgamIISPI5TLqW50gj/ViNrw5pJReiZVK4m54VX5ZBLr6PSxu609Nq+028Wm8/iLm0ln6A/6jaEp6jBI40=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750948085; c=relaxed/simple;
-	bh=ktzW2OhkXnYljKjLdNLNOdVGTFmZPmWeSJDJY+2l0/Y=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=pCooUsv8/K096fwQuk6tTs+ZSCHiWDNAPZqqOS+iLoNB6RIwZ1psXWBCFX1Jq9DosHH5N3tnlBBYgdqQf2Y7XNcP66NPrmY4rbBXjW9rOQzZCVouida+fMa/QMAA56HFDbPVU32dJw3biGiHTqFhRt2K7S68r57oUcPskwCx1W0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.200
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f200.google.com with SMTP id e9e14a558f8ab-3df33f39384so5457365ab.1
-        for <linux-kernel@vger.kernel.org>; Thu, 26 Jun 2025 07:28:03 -0700 (PDT)
+	s=arc-20240116; t=1750948129; c=relaxed/simple;
+	bh=cO0dIqHpbTc6DvsuyXubTVueJiquRK7Muf6WQvl1NBM=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=F5sApm5+V+M5gHyJCUi4iXWU8DxgZ4ppQ22rO8TfrqZ5Yv4rgB1e71R/nv9Vr9kAo+axYfueBo/ko1iF8VOCEnE9Y/7Fh7xWDHxchaUZtVc/+wV1VkpiF2RWTBst2FRxsbNzW+I9hZLHC5p63kWN3KbQXRiYsDpiBEROkgaV0qc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=RQ4iumFl; arc=none smtp.client-ip=209.85.208.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lj1-f177.google.com with SMTP id 38308e7fff4ca-32b8134ef6aso10671481fa.0;
+        Thu, 26 Jun 2025 07:28:47 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1750948126; x=1751552926; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=cO0dIqHpbTc6DvsuyXubTVueJiquRK7Muf6WQvl1NBM=;
+        b=RQ4iumFlAebnPamXBq+PEscEcS2pEJL1IlQA/hAtERspSff9fVmAxTzeWKo6ztuTjF
+         w26aU7eweVQ7ZKstdKSkl8RB61t7doZCOdGfWO3oiECokk2scZKNwuMFjGXQuZWR4+uY
+         Eeh2F8Qxc22UAgP3hLeaevH1zU2bsSpvDOIUixfCeux1QPustWAWNhHQc888hlBdS54h
+         +bX36YXS424t1MueYdWk9MNh1tJh9W3//hU5MEzyJ0/eqQ/TZ1zGC/XYuaGo/VD2q600
+         w5n5sOi6sf2BuTUJJBK3VvDhpRON2qKgoIjMxOHQhnX3yatSgzj5ljyZzmeivDOEFL4x
+         JvtQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1750948083; x=1751552883;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=gO38/4M06l5OKkUA2reeIgi0o0RwwUe+Rrp/9eUtlKE=;
-        b=aPv0YQ0EI63I1a2XnVDmT/lAHmapbomOKQHc9hO2okE6WeiepfLOnjZHfngdWKQjoj
-         m7GvwJT9pBzTxzsBz0AGwSrGpMJXYCy+GxOTdk/r6sYOzvGgCH0ZzGZfXKUVibiTWn8N
-         a50Fqh5B80ZD4r3F08Jti76hV2V9QDpBvp4mcAOnP4hElGCGCwaOO0mQ9Iy+aXUyuZXI
-         IkKpK3hUtNq/ul6rUHCew0UIpjKeVRo3rd2MVqJq6Nfof4fkv63EBXVaEl+oVonUSKXK
-         u+awfyiL0uSH2YdjC6PLDSisecJEym6i6xPPH1tgbid7PjIDcrZH4vPtEyCETJUoh99o
-         3bLQ==
-X-Forwarded-Encrypted: i=1; AJvYcCV51lWtA3oaAZfIBhfu9MSMexahkzq3sduX1FB3EoVIAUB+gsNI5cbL2TDpkfDlxbpYT9GZ0zdIZDOMj38=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyXvJrCiLqcM/jj6U0pqiaQbtuStvoOeYD3sFEhgWNY/TobezTq
-	MscKpZfui2DooHHbrWjgKt2RZQCiMjjFMvHrblei6XF5AQv8I+kD8b092jZn8hfqxJAd4p0HJA8
-	t/n03kX4oSA+gUu6pCjJKlgIe4WhPy6Ffo9dj+Jn+lqokXauVp31eF4tHGbQ=
-X-Google-Smtp-Source: AGHT+IGdo+TlcpnMqEleSm+ikDun13c/8HBGvo1Sw6ciGGLXHawtIDl28GZsukwkiYQdptRPLatY5Ze27xrXjtxaveI6zTxRITc+
+        d=1e100.net; s=20230601; t=1750948126; x=1751552926;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=cO0dIqHpbTc6DvsuyXubTVueJiquRK7Muf6WQvl1NBM=;
+        b=BXyq7PPMH4mF24yvmgOkzUdnv/WDBkWFtHIrbMQDmFdADO4D2z4gZyxjGlNtbM+gte
+         xQUMl6K+AdUsCmM6Q2G4H9y8CCUdOH/+oT3v0tv7eR31hTgYL4aPKctvvax6s4iQgwX8
+         iTMuWeqjGNW+3RtCHZI/i7QBH0jUa+Raws/XaweXULQHtuZxKIHAV76sfuvFqlPgCImL
+         PIAfF/5ROX3hcDTqbW/FLlPk5C2Toz/FL4ydN+yzl74HDIi9Vzyqdue8atauqNsKMt76
+         Kv+McjqnCFUUYtG5AZ/ktJ/3977j1p030UlaZvco4PH0EYzSeNI6SlyAq6iYvROCRoT1
+         JNoQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVqsBSIG8jxdfh8mY1oTOI//+I6tKxFrFI35DogwFr8XkgKKtjPC1VaQ0JSLXWB46RNpOzwxiu4cuw=@vger.kernel.org, AJvYcCX+3dqCXo4duz14/XxeFPch6UN8VPD0lEVvK5e+mw0ppMac0tBcMxOg6P/RFVIa4mEOVbnFPxVqLde01Yf3@vger.kernel.org
+X-Gm-Message-State: AOJu0YyB8peOvduV/lmzFa5vFQmbvPhFo5hEdvtTiEVX9Hph9dGk3RWE
+	B6+UqmH3wjNYa2OgRCMdalNBxPP40naGqrvQnApYyv063FGvbYkZ6Pe/7HGbVE3q98I2+cqdmbX
+	s7CksAuifbm55nOFqkNGeesSqVI4N9zY=
+X-Gm-Gg: ASbGnct5/icBFyq+jEQGyVCiXjwyDM9BdybOmsS+YQeojyYam08VHGWhNBkBxgW1nv8
+	jpqn4mVIc28XrX8ulgJMyYa2ZlgGvy8rNYIHEtKIQcmqHa5vgcnFt999+1sA7JyiSyCrsKadzF9
+	cs4Q2inFAFLVpwOxqZnSQwJ33KCBHA8hjcI9Us+f8G0Iwr9okx4kp+e1MYIxH6iH1IIZiIM3xg6
+	+WxWg==
+X-Google-Smtp-Source: AGHT+IHwWc9v0nriRWmfxkaR6ErrKPjoGINPW/jmv4lNFaYYTGCtUBrIKjRtDfii7JIle46/WTToulmBo+DV+GFcw9o=
+X-Received: by 2002:a05:6512:1256:b0:553:349c:6465 with SMTP id
+ 2adb3069b0e04-5550b4da73fmr6523e87.33.1750948125353; Thu, 26 Jun 2025
+ 07:28:45 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:16cb:b0:3df:3be7:59d1 with SMTP id
- e9e14a558f8ab-3df3be7658cmr60854735ab.11.1750948082845; Thu, 26 Jun 2025
- 07:28:02 -0700 (PDT)
-Date: Thu, 26 Jun 2025 07:28:02 -0700
-In-Reply-To: <tencent_26A1A453D76CD76066C3D37FE3604966C305@qq.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <685d58f2.a00a0220.34b642.0110.GAE@google.com>
-Subject: Re: [syzbot] [hams?] possible deadlock in nr_rt_ioctl (2)
-From: syzbot <syzbot+14afda08dc3484d5db82@syzkaller.appspotmail.com>
-To: eadavis@qq.com, linux-kernel@vger.kernel.org, 
-	syzkaller-bugs@googlegroups.com
+References: <20250623091929.366357-1-pranav.tyagi03@gmail.com> <685adc4d1487b_1608bd1009b@dwillia2-xfh.jf.intel.com.notmuch>
+In-Reply-To: <685adc4d1487b_1608bd1009b@dwillia2-xfh.jf.intel.com.notmuch>
+From: Pranav Tyagi <pranav.tyagi03@gmail.com>
+Date: Thu, 26 Jun 2025 19:58:33 +0530
+X-Gm-Features: Ac12FXwMes5vqgDVPQbqpvCV1-G1XfDIGUvHwA0zRSSmnY8QkXO5IKPoZKr4VsM
+Message-ID: <CAH4c4jLH2XoqfVOx-7JxTw-fX8Xbc2zhGmCh31e4v2gQc7xMoA@mail.gmail.com>
+Subject: Re: [PATCH] cxl/port: automate cleanup with __free()
+To: Dan Williams <dan.j.williams@intel.com>
+Cc: dave@stgolabs.net, jonathan.cameron@huawei.com, dave.jiang@intel.com, 
+	alison.schofield@intel.com, vishal.l.verma@intel.com, ira.weiny@intel.com, 
+	ming.li@zohomail.com, rrichter@amd.com, jeff.johnson@oss.qualcomm.com, 
+	peterz@infradead.org, linux-cxl@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	skhan@linuxfoundation.org, linux-kernel-mentees@lists.linux.dev
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hello,
+On Tue, Jun 24, 2025 at 10:42=E2=80=AFPM Dan Williams <dan.j.williams@intel=
+.com> wrote:
+>
+> Pranav Tyagi wrote:
+> > Use the scope based resource management (defined in linux/cleanup.h) to
+> > automate the lifetime control of struct cxl_endpoint_decoder. This
+> > eliminates the explicit kfree() call and makes the code more robust and
+> > maintainable in presence of early returns.
+>
+> I do not want to review small standalone conversions of individual
+> functions for no other reason than vague claims of improvement. The
+> reasons to convert an existing function to cleanup.h helpers are:
+>
+> 1/ to fix an actual bug
+>
+> 2/ in the course of refactoring the code for other reasons
+>
+> 3/ to eliminate goto trickiness and bulk
+>
+> This patch does not make the code "more robust and maintainable", it is
+> just churn given how easy it is to verify that the kfree() is correctly
+> paired.
+>
+> One quick way to identify code churn is when the diffstat does not
+> result in a net reduction in code lines:
+>
+> This patch is "3 insertions(+), 3 deletions(-)" =3D=3D "churn".
 
-syzbot has tested the proposed patch but the reproducer is still triggering an issue:
-WARNING in nr_remove_node_locked
+Thank you for the feedback. I understand your concerns and completely
+agree with your reasoning. Please pardon my misjudgment in sending this
+patch. I am still a beginner with kernel development and learning to
+better assess what makes a meaningful contribution.
 
-------------[ cut here ]------------
-WARNING: CPU: 2 PID: 6679 at net/netrom/nr_route.c:290 nr_remove_node_locked+0x1b3/0x200 net/netrom/nr_route.c:290
-Modules linked in:
-CPU: 2 UID: 0 PID: 6679 Comm: syz.0.45 Not tainted 6.16.0-rc3-syzkaller-gee88bddf7f2f-dirty #0 PREEMPT(full) 
-Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 1.16.3-debian-1.16.3-2~bpo12+1 04/01/2014
-RIP: 0010:nr_remove_node_locked+0x1b3/0x200 net/netrom/nr_route.c:290
-Code: be ff ff ff ff 48 c7 c7 58 50 59 90 e8 46 dc 10 01 31 ff 89 c5 89 c6 e8 6b 65 4f f7 85 ed 0f 85 a4 fe ff ff e8 1e 6a 4f f7 90 <0f> 0b 90 e9 96 fe ff ff 48 c7 c7 44 2d a7 90 e8 e9 47 b6 f7 e9 6e
-RSP: 0018:ffffc90003b47ab0 EFLAGS: 00010293
-RAX: 0000000000000000 RBX: ffff888025854f00 RCX: ffffffff8a6cb3d5
-RDX: ffff8880442a0000 RSI: ffffffff8a6cb3e2 RDI: 0000000000000005
-RBP: 0000000000000000 R08: 0000000000000005 R09: 0000000000000000
-R10: 0000000000000000 R11: 0000000000000001 R12: 0000000000000000
-R13: ffff88803c362000 R14: ffff888026762c00 R15: 0000000000000000
-FS:  00007f21787756c0(0000) GS:ffff8880d6974000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 0000001b2e55ffff CR3: 000000004f9b7000 CR4: 0000000000352ef0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-Call Trace:
- <TASK>
- nr_del_node net/netrom/nr_route.c:347 [inline]
- nr_rt_ioctl+0x1fc7/0x26f0 net/netrom/nr_route.c:675
- nr_ioctl+0x19a/0x2e0 net/netrom/af_netrom.c:1254
- sock_do_ioctl+0x115/0x280 net/socket.c:1190
- sock_ioctl+0x227/0x6b0 net/socket.c:1311
- vfs_ioctl fs/ioctl.c:51 [inline]
- __do_sys_ioctl fs/ioctl.c:907 [inline]
- __se_sys_ioctl fs/ioctl.c:893 [inline]
- __x64_sys_ioctl+0x18e/0x210 fs/ioctl.c:893
- do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
- do_syscall_64+0xcd/0x4c0 arch/x86/entry/syscall_64.c:94
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-RIP: 0033:0x7f2177985d29
-Code: ff ff c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 40 00 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 a8 ff ff ff f7 d8 64 89 01 48
-RSP: 002b:00007f2178775038 EFLAGS: 00000246 ORIG_RAX: 0000000000000010
-RAX: ffffffffffffffda RBX: 00007f2177b75fa0 RCX: 00007f2177985d29
-RDX: 0000000020000180 RSI: 000000000000890c RDI: 0000000000000005
-RBP: 00007f2177a01b08 R08: 0000000000000000 R09: 0000000000000000
-R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000000
-R13: 0000000000000000 R14: 00007f2177b75fa0 R15: 00007fff2cb7c2d8
- </TASK>
-
-
-Tested on:
-
-commit:         ee88bddf Merge tag 'bpf-fixes' of git://git.kernel.org..
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=170adb70580000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=644a0493ff5118b1
-dashboard link: https://syzkaller.appspot.com/bug?extid=14afda08dc3484d5db82
-compiler:       gcc (Debian 12.2.0-14) 12.2.0, GNU ld (GNU Binutils for Debian) 2.40
-patch:          https://syzkaller.appspot.com/x/patch.diff?x=116bb182580000
-
+Regards
+Pranav Tyagi
 
