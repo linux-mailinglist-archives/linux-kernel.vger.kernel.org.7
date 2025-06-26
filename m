@@ -1,168 +1,179 @@
-Return-Path: <linux-kernel+bounces-705521-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-705523-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4E39EAEAA7F
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Jun 2025 01:21:44 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 78AAFAEAA86
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Jun 2025 01:23:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7737C4E2B9A
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Jun 2025 23:21:44 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 464D61C27609
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Jun 2025 23:23:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4CC6F2264AE;
-	Thu, 26 Jun 2025 23:21:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 26B95225388;
+	Thu, 26 Jun 2025 23:23:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="E5Humiyy"
-Received: from mail-qt1-f171.google.com (mail-qt1-f171.google.com [209.85.160.171])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="Q9rqQSRh"
+Received: from fllvem-ot04.ext.ti.com (fllvem-ot04.ext.ti.com [198.47.19.246])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 369522253EE;
-	Thu, 26 Jun 2025 23:21:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AD26921FF47;
+	Thu, 26 Jun 2025 23:23:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.246
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750980090; cv=none; b=MkOYgIDjQH8h1hsMs8fzb9YFwqXh3WnundtTzoghs9WJwVhgZa1OzmUtRApCkHi/QMHVrzMkEHuXdcHsR8lqJiL8NwSlYF0y4O7T+1cgF3VKqVSaT83M9MiWLWYQyQdIoN9RK+ovVCBfEoek1AvK0ul93yYQNLFYhETt3h60LeY=
+	t=1750980186; cv=none; b=Z8SaWjPafU1TCVFcMWPiW7tlRiB8jexIgrXUKxoxYOSEsWI5dJy0A+0pNWSBGRioBIQGhbqzVHw32HjRynNCNrpbp+fgNmcFciNPB61Qsbb16cU43RdT/la0pf2UmT/cQMZuTkg83k53dkXhxYchMhYh8ZL3TmWO7H6aVUoA4TI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750980090; c=relaxed/simple;
-	bh=MUQuxc+UR436Ky0F8krnASl8Mtb6lTMYurVT5poi8Uk=;
-	h=MIME-Version:Date:From:To:Cc:Message-Id:In-Reply-To:References:
-	 Subject:Content-Type; b=IBVSzE8ql+nPuMK8akImxeUrnONzavLqNy1ZchBK+Bc1HDkjjzAiou7/km8veSHu7ZohrZ46PknKNW/rHnPVcWhboVpFx399IELRFruvZ9SbbjLGDUBv4ayOasn1v+qSF9AfrIYRuMimLA9R837/CnMHkdRoqqG4Vf+loWUX2hk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=E5Humiyy; arc=none smtp.client-ip=209.85.160.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qt1-f171.google.com with SMTP id d75a77b69052e-4a43972dcd7so21189001cf.3;
-        Thu, 26 Jun 2025 16:21:29 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1750980088; x=1751584888; darn=vger.kernel.org;
-        h=content-transfer-encoding:subject:references:in-reply-to:message-id
-         :cc:to:from:date:mime-version:feedback-id:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=pYsFIPhXPnoltKwvWFJRYtiFcpuddCIPVvkRInsQYn4=;
-        b=E5HumiyyvmyAtA+FsG8U345Mu+0Bnt9mAuCNoHY5Q7J9PQ2ViDz8veCTqGuhQd7PuY
-         CR/mcXVb2TgXk9X1Sen2Yf6myb1ZDLxCWm6PXIb59UXx9KUld0R/+qx42zAqNDP3fhd3
-         yfw4vfcQJOsoi15v6/mMTmn8ztVCm4rGzhSDS6jNeyyuFWOli/3Ry+70LBVcXdRUEHl8
-         LT2uFOQ/HlxYVZAsArIKDuDlXwj/SUb2uIroyVx41lH1QhIqqZ1rYi1cGuaYlrhrRXuM
-         ukGhlddxJVD8lMnYI8tdF7ZXqvMKVsul+EzqsIg5Dnh88v/rsm0TDJLFOWDi0pLm4V0h
-         r4OA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1750980088; x=1751584888;
-        h=content-transfer-encoding:subject:references:in-reply-to:message-id
-         :cc:to:from:date:mime-version:feedback-id:x-gm-message-state:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=pYsFIPhXPnoltKwvWFJRYtiFcpuddCIPVvkRInsQYn4=;
-        b=uWwX6VdETm1wIajQTzHGZemtQVpYAP290PVz03oUcEAcO2a3INV/0V2vOoTpQRYRnk
-         HIX2BD8HU9IWtNleuJoOvCoSBulsrtnFJPjtd7rzdqkkRAcVrW/USfLHQLx2XzlhK/WQ
-         MEWQrNE3UNPQQv3YtnjJgEgr56t5UOVEmFsX2o0Ri5dcRPqjwjQ2c3YVsocfJJ4d+UFs
-         z2zyroMttA9Pqu82xhpBlINpKI9mYJe7v8Ym/UE5ZQPkXAFJhbtq2M8qUe5iSAeXcFNk
-         04uALPoDUpa5JU568H8QPyTaWlG285X9b4FV1GcN/SsoImZlSquGQBpq+4395kcZpM07
-         sw2g==
-X-Forwarded-Encrypted: i=1; AJvYcCUJCnF/npb+TZrrz6IJgzveoS2VuiDS/84AxOEZFCqb8X8kBMhlhKo6AbJqSDlmDuweNVp3RplS6S66R3Y=@vger.kernel.org, AJvYcCVCdXfBm3UjafZdko/b6psiJPz8aEDz6l/Z9g5XoE4nHP+BSsCC+vvYczwIymPkej+q8wk1qKJE0i2A@vger.kernel.org, AJvYcCW8DuvJMTsZdBjz7EU/aGhROixWDwLo56zOin3QUbyFUH23Lk7lbkeQSd93c2GJwbIdOvlegRaFOhoDD1iZMnQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyFZEi2j5fFKacOF4+tmqZBEvFfWD0XvBd1lv+YYsdQpvew52d+
-	ELH9xNQIwNH0OkREUMynYwZ1c1RsPp2TtSzTdjQ9jokWhZ6dOXCvLfn9
-X-Gm-Gg: ASbGncvNATGWfs5dUPKE3jZ2bX0F5xHhFlljudYSFrjtIMGWFqd/w85yv8O6sw67KGy
-	eKuVa047AuppVO/i17Ha83xWBEvneCB/rbKKUoAZqGISp59yEX3JDDSzv6PpFOyVJf5CAg8Unil
-	FdVrYMNkTMs44rtwvd/HY9JG4RK19914uuXR3w+hR7JTiJJzBy+eCYK9e7Z/3R+UY9fjEbuZwCH
-	+btPoXTyzp3APutJ0yUcyBO/eKl/On8EnuYu0HlSg5DWYxDd3/kUfAbclLj4zvHuRVG2GmjmZ/L
-	1k27Xs/1VMLcFIwr7LLYiDcA04Tjlg9gNXF6Q1Dx3/HFtdjIgv/vG/T6k+u0vmm7P3idFmyW0Lg
-	inewrGZSG3VlH5uy/levHmJuHnV2Z+ip8WEp0cC5Th9whbps19Rql
-X-Google-Smtp-Source: AGHT+IEOxDn+OPKzlzICpXuNvIhC8lx2kx9VF0Em1sA2dl52YtaECjSzi/NXzxO3qK+z+2GJY1HCxw==
-X-Received: by 2002:a05:6214:c48:b0:6fa:a724:8769 with SMTP id 6a1803df08f44-7000291853fmr23603726d6.35.1750980088000;
-        Thu, 26 Jun 2025 16:21:28 -0700 (PDT)
-Received: from fauth-a1-smtp.messagingengine.com (fauth-a1-smtp.messagingengine.com. [103.168.172.200])
-        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6fd77313b17sm12554236d6.118.2025.06.26.16.21.27
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 26 Jun 2025 16:21:27 -0700 (PDT)
-Received: from phl-compute-01.internal (phl-compute-01.phl.internal [10.202.2.41])
-	by mailfauth.phl.internal (Postfix) with ESMTP id 0D9E8F40067;
-	Thu, 26 Jun 2025 19:21:27 -0400 (EDT)
-Received: from phl-imap-16 ([10.202.2.88])
-  by phl-compute-01.internal (MEProxy); Thu, 26 Jun 2025 19:21:27 -0400
-X-ME-Sender: <xms:9tVdaJxqfimweDHzK2NKKcsFvy8f6XXAtigol5ojAVn6HzPGahTE1w>
-    <xme:9tVdaJSoYRYfYvfBaDICEFaFMiocfsUcdDKoJGxGdtIsMVjog72yiW-j_ZRdNAYZj
-    R1jup8uMPeGvaFnBw>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdefgddugeelucetufdoteggodetrfdotf
-    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfurfetoffkrfgpnffqhgenuceurghi
-    lhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujfgurh
-    epofggfffhvfevkfgjfhfutgfgsehtjeertdertddtnecuhfhrohhmpedfuehoqhhunhcu
-    hfgvnhhgfdcuoegsohhquhhnrdhfvghnghesghhmrghilhdrtghomheqnecuggftrfgrth
-    htvghrnhephedufeelfffghefgveejteekvedtleegfedtkedvieekgfffleelkeefhfef
-    hfejnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomhepsg
-    hoqhhunhdomhgvshhmthhprghuthhhphgvrhhsohhnrghlihhthidqieelvdeghedtieeg
-    qddujeejkeehheehvddqsghoqhhunhdrfhgvnhhgpeepghhmrghilhdrtghomhesfhhigi
-    hmvgdrnhgrmhgvpdhnsggprhgtphhtthhopeduledpmhhouggvpehsmhhtphhouhhtpdhr
-    tghpthhtohepghgrrhihsehgrghrhihguhhordhnvghtpdhrtghpthhtoheprghlvgigrd
-    hgrgihnhhorhesghhmrghilhdrtghomhdprhgtphhtthhopegrlhhitggvrhihhhhlsehg
-    ohhoghhlvgdrtghomhdprhgtphhtthhopegshhgvlhhgrggrshesghhoohhglhgvrdgtoh
-    hmpdhrtghpthhtohepuggrvhhiugdrmhdrvghrthhmrghnsehinhhtvghlrdgtohhmpdhr
-    tghpthhtohepihhrrgdrfigvihhnhiesihhnthgvlhdrtghomhdprhgtphhtthhopegrrd
-    hhihhnuggsohhrgheskhgvrhhnvghlrdhorhhgpdhrtghpthhtohepuggrkhhrsehkvghr
-    nhgvlhdrohhrghdprhgtphhtthhopehkfihilhgtiiihnhhskhhisehkvghrnhgvlhdroh
-    hrgh
-X-ME-Proxy: <xmx:9tVdaDUX2vx94-SE50Zd2Gx5UTgUZANuRllkfF7t7jx2YZjfoq1vSw>
-    <xmx:9tVdaLjrdDk_5X0Ca2gmJaf_iu7oLS9up1Tn2snZIqMcl1NX3tldEg>
-    <xmx:9tVdaLBxc5xL2HXBHUd0RwSahhK1vS78ear6B4tgPR4Pmup6EghhDQ>
-    <xmx:9tVdaEIkckTjblJ9KaKIoxkQJPyFRVvjLw7I61szs40zZzzr8fIz-A>
-    <xmx:99VdaKBNosySiQiicLmujObICC5sCqRgUhlyhCzip4LGdZs6DkKi6v4t>
-Feedback-ID: iad51458e:Fastmail
-Received: by mailuser.phl.internal (Postfix, from userid 501)
-	id D544D2CC0081; Thu, 26 Jun 2025 19:21:26 -0400 (EDT)
-X-Mailer: MessagingEngine.com Webmail Interface
+	s=arc-20240116; t=1750980186; c=relaxed/simple;
+	bh=dM3fad0aYF7xhw5qhluTNSyTBUUZhxy+O6kv065vpZs=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=UYu6MI/QrSOpcUQBDhXkfDLOxyW0R8+jPOjCRu+0xnEN77zP9mRwEpyddF/Xa8XgxDMlkFdNLAjqJX8uiKmEXIJP0Sdf9ME5Mb1YLm6vI8bY5G3RCv2aDKUJl7K5oUJKMy/SaNJvlN/tg/RPAf4cGA15j4eKoEYoXbGS2v3UsC8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=Q9rqQSRh; arc=none smtp.client-ip=198.47.19.246
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
+Received: from fllvem-sh03.itg.ti.com ([10.64.41.86])
+	by fllvem-ot04.ext.ti.com (8.15.2/8.15.2) with ESMTP id 55QNMJug2580697;
+	Thu, 26 Jun 2025 18:22:19 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+	s=ti-com-17Q1; t=1750980139;
+	bh=/LQM2y0c1hypruTZ0kUlI64jy128/WyN5WOrBAa7oaU=;
+	h=Date:Subject:To:CC:References:From:In-Reply-To;
+	b=Q9rqQSRhDPnDsODGwL4CGAzbDJ7RnHulNsnAq1BepY5QqUb7TQCGXWV+YFPW8OE8u
+	 SzweOksJp2+vpInqroBecKAIll/JhqJXSpt7OD49WPbqYQq9jT5/XljLK20TkdGi66
+	 n5+/eNLZSI2PFOguDirq5pGbntdao2ee5C5vsgI0=
+Received: from DLEE112.ent.ti.com (dlee112.ent.ti.com [157.170.170.23])
+	by fllvem-sh03.itg.ti.com (8.18.1/8.18.1) with ESMTPS id 55QNMIun2412991
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-SHA256 bits=128 verify=FAIL);
+	Thu, 26 Jun 2025 18:22:18 -0500
+Received: from DLEE105.ent.ti.com (157.170.170.35) by DLEE112.ent.ti.com
+ (157.170.170.23) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.55; Thu, 26
+ Jun 2025 18:22:18 -0500
+Received: from lelvem-mr06.itg.ti.com (10.180.75.8) by DLEE105.ent.ti.com
+ (157.170.170.35) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.55 via
+ Frontend Transport; Thu, 26 Jun 2025 18:22:18 -0500
+Received: from [128.247.81.105] (judy-hp.dhcp.ti.com [128.247.81.105])
+	by lelvem-mr06.itg.ti.com (8.18.1/8.18.1) with ESMTP id 55QNMINR1805323;
+	Thu, 26 Jun 2025 18:22:18 -0500
+Message-ID: <e49a3fff-8a50-44aa-aa0c-1ba1bf478eb6@ti.com>
+Date: Thu, 26 Jun 2025 18:22:18 -0500
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-ThreadId: T383afef5f8ca9bad
-Date: Thu, 26 Jun 2025 16:21:06 -0700
-From: "Boqun Feng" <boqun.feng@gmail.com>
-To: "Benno Lossin" <lossin@kernel.org>, "Danilo Krummrich" <dakr@kernel.org>
-Cc: "Greg Kroah-Hartman" <gregkh@linuxfoundation.org>, rafael@kernel.org,
- "Miguel Ojeda" <ojeda@kernel.org>, alex.gaynor@gmail.com,
- "Gary Guo" <gary@garyguo.net>, bjorn3_gh@protonmail.com,
- "Andreas Hindborg" <a.hindborg@kernel.org>,
- "Alice Ryhl" <aliceryhl@google.com>, "Trevor Gross" <tmgross@umich.edu>,
- david.m.ertman@intel.com, ira.weiny@intel.com, leon@kernel.org,
- kwilczynski@kernel.org, bhelgaas@google.com, rust-for-linux@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org
-Message-Id: <45a2bd65-ec77-4ce7-bd8e-553880d85bdf@app.fastmail.com>
-In-Reply-To: <DAWUKB7PAZG1.2K2W9VCATZ3O0@kernel.org>
-References: <20250626200054.243480-1-dakr@kernel.org>
- <20250626200054.243480-5-dakr@kernel.org> <aF2rpzSccqgoVvn0@tardis.local>
- <DAWUKB7PAZG1.2K2W9VCATZ3O0@kernel.org>
-Subject: Re: [PATCH v4 4/5] rust: types: ForeignOwnable: Add type Target
-Content-Type: text/plain
-Content-Transfer-Encoding: 7bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v5 0/5] Add support for BeagleBone Green Eco board
+To: Kory Maincent <kory.maincent@bootlin.com>,
+        Tony Lindgren
+	<tony@atomide.com>, Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski
+	<krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>,
+        Aaro Koskinen
+	<aaro.koskinen@iki.fi>,
+        Andreas Kemnade <andreas@kemnade.info>,
+        Kevin Hilman
+	<khilman@baylibre.com>,
+        Roger Quadros <rogerq@kernel.org>,
+        Russell King
+	<linux@armlinux.org.uk>,
+        Paul Barker <paul.barker@sancloud.com>,
+        Marc Murphy
+	<marc.murphy@sancloud.com>
+CC: Jason Kridner <jkridner@gmail.com>, Andrew Davis <afd@ti.com>,
+        Bajjuri
+ Praneeth <praneeth@ti.com>,
+        Liam Girdwood <lgirdwood@gmail.com>, Mark Brown
+	<broonie@kernel.org>,
+        Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+        <linux-omap@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+        Thomas Bonnefille <thomas.bonnefille@bootlin.com>,
+        Romain Gantois
+	<romain.gantois@bootlin.com>,
+        Conor Dooley <conor.dooley@microchip.com>
+References: <20250620-bbg-v5-0-84f9b9a2e3a8@bootlin.com>
+Content-Language: en-US
+From: Judith Mendez <jm@ti.com>
+In-Reply-To: <20250620-bbg-v5-0-84f9b9a2e3a8@bootlin.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 8bit
+X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
 
+Hi Kory,
 
+On 6/20/25 3:15 AM, Kory Maincent wrote:
+> SeeedStudio BeagleBone Green Eco (BBGE) is a clone of the BeagleBone Green
+> (BBG). It has minor differences from the BBG, such as a different PMIC,
+> a different Ethernet PHY, and a larger eMMC.
 
-On Thu, Jun 26, 2025, at 4:17 PM, Benno Lossin wrote:
-> On Thu Jun 26, 2025 at 10:20 PM CEST, Boqun Feng wrote:
->> On Thu, Jun 26, 2025 at 10:00:42PM +0200, Danilo Krummrich wrote:
->>> diff --git a/rust/kernel/types.rs b/rust/kernel/types.rs
->>> index 3958a5f44d56..74c787b352a9 100644
->>> --- a/rust/kernel/types.rs
->>> +++ b/rust/kernel/types.rs
->>> @@ -27,6 +27,9 @@
->>>  /// [`into_foreign`]: Self::into_foreign
->>>  /// [`PointedTo`]: Self::PointedTo
->>>  pub unsafe trait ForeignOwnable: Sized {
->>> +    /// The payload type of the foreign-owned value.
->>> +    type Target;
->>
->> I think `ForeignOwnable` also implies a `T` maybe get dropped via a
->> pointer from `into_foreign()`. Not sure it's worth mentioning though.
->
-> What? How would that happen?
->
+Thanks for the patches.
+I was testing against next and noticed a kernel paging request error:
+https://gist.github.com/jmenti/d861528f98035b07259c29e76e5fae8b
 
-The owner of the pointer can do from_foreign() and eventually drop
-the ForeignOwnable, hence dropping T.
+Did you see this by chance?
 
-Regards,
-Boqun
+I will double check that I tested correctly and come back, but was just
+curious to see if this is expected.
 
+~ Judith
+
+> 
+> Signed-off-by: Kory Maincent <kory.maincent@bootlin.com>
 > ---
-> Cheers,
-> Benno
+> Changes in v5:
+> - Split the patch series. As the cleaning process faced some pushback,
+>    I prefer to first get this support accepted and separately work on the
+>    devicetree and binding cleaning process.
+> - Link to v4: https://lore.kernel.org/r/20250617-bbg-v4-0-827cbd606db6@bootlin.com
+> 
+> Changes in v4:
+> - Drop model value change to avoid conflict with script based on this
+>    value like:
+>    https://salsa.debian.org/installer-team/flash-kernel/-/blob/master/db/all.db?ref_type=heads
+> - Rename ti,am335x-shc to bosch,am335x-shc
+> - Forgot to change to "Seeed" in BeagleBone Green Eco model description.
+> - Link to v3: https://lore.kernel.org/r/20250613-bbg-v3-0-514cdc768448@bootlin.com
+> 
+> Changes in v3:
+> - Update multi_v7_defconfig with TPS65219 config.
+> - Remove extraneous compatible strings.
+> - Replace BeagleBone compatible board name vendor to use "beagle" instead
+>    of "ti".
+> - Link to v2: https://lore.kernel.org/r/20250609-bbg-v2-0-5278026b7498@bootlin.com
+> 
+> Changes in v2:
+> - Add patch 1 to 3 to fix binding and devicetree inconsistencies.
+> - Rename tps node name to generic pmic node name in am335x-bone-common.
+> - Link to v1: https://lore.kernel.org/r/20250523-bbg-v1-0-ef4a9e57eeee@bootlin.com
+> 
+> ---
+> Kory Maincent (5):
+>        arm: dts: omap: am335x-bone-common: Rename tps to generic pmic node
+>        dt-bindings: omap: Add Seeed BeagleBone Green Eco
+>        arm: dts: omap: Add support for BeagleBone Green Eco board
+>        arm: omap2plus_defconfig: Enable TPS65219 regulator
+>        arm: multi_v7_defconfig: Enable TPS65219 regulator
+> 
+>   Documentation/devicetree/bindings/arm/ti/omap.yaml |   1 +
+>   arch/arm/boot/dts/ti/omap/Makefile                 |   1 +
+>   arch/arm/boot/dts/ti/omap/am335x-bone-common.dtsi  |   2 +-
+>   arch/arm/boot/dts/ti/omap/am335x-bonegreen-eco.dts | 169 +++++++++++++++++++++
+>   arch/arm/configs/multi_v7_defconfig                |   3 +
+>   arch/arm/configs/omap2plus_defconfig               |   3 +
+>   6 files changed, 178 insertions(+), 1 deletion(-)
+> ---
+> base-commit: e22b9ddaf3afd031abc350c303c7c07a51c569d8
+> change-id: 20250523-bbg-769018d1f2a7
+> 
+> Best regards,
+> --
+> Köry Maincent, Bootlin
+> Embedded Linux and kernel engineering
+> https://bootlin.com
+> 
+> 
+
 
