@@ -1,140 +1,188 @@
-Return-Path: <linux-kernel+bounces-704144-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-704149-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 96031AE99FB
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Jun 2025 11:30:47 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 08714AE9A0C
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Jun 2025 11:32:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1B5BD6A2B14
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Jun 2025 09:30:21 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7E7714A7A12
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Jun 2025 09:32:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 746DC29E115;
-	Thu, 26 Jun 2025 09:30:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7DABB2C08C4;
+	Thu, 26 Jun 2025 09:31:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Y3EUADHD"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.17])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="LgoUIGxh"
+Received: from mail-lf1-f48.google.com (mail-lf1-f48.google.com [209.85.167.48])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3C94411713;
-	Thu, 26 Jun 2025 09:30:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.17
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 202C52BF3F8;
+	Thu, 26 Jun 2025 09:31:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750930232; cv=none; b=gyQlle2x+L9+sD3H920JikoOw50TkBWCZYGjPMUMboXfO83nxG8xZhbjlHdWe4d+mEPAVlcECCOH0XVo+8pkLUNZ4lLOq0ltgLM0XbhJhfgSoQcJ0xgTAOO1iHZ9DJab3D9JjbNT/aOAfecocXbLtlPDRCAWaZ3h6+axQ0ZRFNA=
+	t=1750930286; cv=none; b=IV1rO0ZPrzsbwnFD4M3WGv3jSL/X2MxNGupxmK+YnP3ZizE8LNRlTSvsSkmBo+opeLwbT1loMfRawRAbDkCVm5NmbsZOQ9e3ZBNzgFlXzxZnleyYKOgHPIUEGUe2bzksSvYA7TRbhqwz12ZfTH2cgtag0D1LWl+fmwmrZ2aps7I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750930232; c=relaxed/simple;
-	bh=jSVIUjU+J/poTSdUN23GXuGpiPjk1GcoOf3OqnRCH00=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=PF9JJ9ziqNEtk5AvE87avx3b4w44eTlGh6OzbNwvCQaoiXycyoxHBuFKOELKhNgpxC/DwZh0upCMbJ/IiUgKkaEn4XONBsMRFNRSVwgjb/0YAqiKm8uHD8yluaX9/GKQ4ZBNeypBt7OLs/5uQW7d9PpO/V1JGSNWd3IGt3s3QHc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Y3EUADHD; arc=none smtp.client-ip=198.175.65.17
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1750930232; x=1782466232;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=jSVIUjU+J/poTSdUN23GXuGpiPjk1GcoOf3OqnRCH00=;
-  b=Y3EUADHD7OcDKizfhmZ6Vwg0RY0OhIAMVVgGftYN1IDUII4yo/YoEi0B
-   FgGBDq5t15crXfQAYhv6Xb+uofRG+NIhLKfmiVFbp/2qoF2zlNgz0P+d7
-   5saGtIlTTxY3q7O/NtqleqUGm5m+qGe1OUxdch1TNN69IVxvJUqpE+B44
-   4NQxF52ESgbfgotdo6oMTrGTKHwERByDIUwEB1kaeU1L60MJs74IIeajO
-   22AUgEt333IjcfYe6nEwXVWgd5jaBcqNgqyAGvo4eqCCIDWasUpaxESE7
-   i1ls+e9JUos/Q6ytwhx0hDvM9xATbtgNz8oX/Wpo48JdvKkWxTA1vBr88
-   g==;
-X-CSE-ConnectionGUID: 7L/UJJXjRPuLqo7vujSqxA==
-X-CSE-MsgGUID: Skvm+pN4T5Sf5Ii//KV6Jg==
-X-IronPort-AV: E=McAfee;i="6800,10657,11475"; a="53184571"
-X-IronPort-AV: E=Sophos;i="6.16,267,1744095600"; 
-   d="scan'208";a="53184571"
-Received: from orviesa008.jf.intel.com ([10.64.159.148])
-  by orvoesa109.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 26 Jun 2025 02:30:31 -0700
-X-CSE-ConnectionGUID: zM8mGyeLSOS3E8LKta81zg==
-X-CSE-MsgGUID: kIhc50xCQ36WGZItsSLfvQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.16,267,1744095600"; 
-   d="scan'208";a="152970913"
-Received: from black.fi.intel.com ([10.237.72.28])
-  by orviesa008.jf.intel.com with ESMTP; 26 Jun 2025 02:30:28 -0700
-Received: by black.fi.intel.com (Postfix, from userid 1001)
-	id C252421E; Thu, 26 Jun 2025 12:30:26 +0300 (EEST)
-Date: Thu, 26 Jun 2025 12:30:26 +0300
-From: Mika Westerberg <mika.westerberg@linux.intel.com>
-To: zhangjianrong <zhangjianrong5@huawei.com>
-Cc: andreas.noever@gmail.com, michael.jamet@intel.com,
-	YehezkelShB@gmail.com, linux-usb@vger.kernel.org,
-	linux-kernel@vger.kernel.org, guhengsheng@hisilicon.com,
-	caiyadong@huawei.com, xuetao09@huawei.com, lixinghang1@huawei.com
-Subject: Re: [PATCH] thunderbolt: Confirm the necessity to configure asym
- link first
-Message-ID: <20250626093026.GJ2824380@black.fi.intel.com>
-References: <20250626084107.2710306-1-zhangjianrong5@huawei.com>
+	s=arc-20240116; t=1750930286; c=relaxed/simple;
+	bh=ekv2eO6oe4yBEEcGx/v664SW1vBsIAVNXe/2ysde03Q=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=n40brPWjCbmlvthR+07wZ1fQqX5wT81ZpzahNi53JzA6zhrXjKblFIImEjIxflhyNdFZdfOEdtwv1DmYkJnkEDMmnGOwLli2UpKfvbU3MEScuJ7SOGlmFnSadEL4OrVpp8WrfIvV69NXwFQ3R/q9mRis/KMJQGn1wIejWKinSwE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=LgoUIGxh; arc=none smtp.client-ip=209.85.167.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lf1-f48.google.com with SMTP id 2adb3069b0e04-553bcf41440so805577e87.3;
+        Thu, 26 Jun 2025 02:31:24 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1750930283; x=1751535083; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=iuFmqpRengejqXGMt8z0krXQLsPU94kcoziX8PACH+I=;
+        b=LgoUIGxhPNV4WNEaGU0tVQDsGfdHOraRR7tnGFcPlXDVtYFujOYiyUTJQEdrvr/hph
+         DI/2DA6Nh8/La+q1oKW8LO4dNDxuu5k3GI8VudtdQJ3BNJ5M1cnbi7NkQYNh1yXT9NSc
+         m0LloyQ6QYeSSVOUIQYYfETIdfoNSh7luAt5x6NOr9TT3Kmn5oNIqlNrflR8ZiNTIuG4
+         K4BHOanK3+s3ak8h4imzAcNVr7k6ZeCnmISIt/tjgsgFJ7cDG0AFOcSlQsAUkOKWUqcm
+         xc/mFl8Nj+AGF+J/H+OoAOD0s1JOW2uPOHzzQQnWRtL3IzCO8TBdeqkpDXJfBWVdl+zk
+         r1RA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1750930283; x=1751535083;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=iuFmqpRengejqXGMt8z0krXQLsPU94kcoziX8PACH+I=;
+        b=GK+tJmn1Sja9J6ytrrdw0Mna3Ixmk2FyFyIRJ5hf2aNH/zhGJ2yB+js3GjS9vCoH2V
+         M1HHRpITZxKLdBc+GC62QUZcrBpc14w/3xutPU7c8ZbmAM521YHvAT4bdVubhP01xgDe
+         Sot3J7Ray0GeaQCWbDPm5bcuKUluYbPFp1iY/agTRZ7avKimnXwSPM9oXpc0UYmujRl8
+         QgdGOx9rGkmGivSg8ft88Hq3K32AT5E9TOicHiy0fViHIRf8xgreGPnzECi0iFpT+4qE
+         HoWDSOztV9ebzb0NmU2Xgn9r59PbXMbwaFwJsQGvLRta+Exlh0sRe8OupPOwH7QcUPcQ
+         G4Hw==
+X-Forwarded-Encrypted: i=1; AJvYcCU1pp4EXb+uWH33HEMBu3v9rvG6Hk8KdrtcDOQNzyx7LblKrzMh3tRYtbU7HQxg/LoEHiH9ZZMhk61ZuvI=@vger.kernel.org, AJvYcCVs/oIilUo37E2VFGGGFwK1DqEjbjRgi+igyCgJ96mJDskvepE5Ha9HYWc5goGI1SlRCKbCrPr5VOVHmQ==@vger.kernel.org
+X-Gm-Message-State: AOJu0YxqSZooKgPFfIEbrtJp0Vimh7uHh1VyZQ927AzNBa8d2iBt+DuH
+	nEFJbW1/Xm9GeT4cnQ+f7+o0WYrlMHO7xExINQLRN/LdvCDAF3rm55WVZMwUq3apNtQIbTLTCIx
+	yl/Gl2U+el6QMgQGiNvXQTlXDCyLMMDk=
+X-Gm-Gg: ASbGncunmaqP8OKhOkHZe6QXmyveZiCS8CJOjHzAONNnAEouz4j8I5k+Dio+cz7KYDz
+	RFw/zBh6IfHlFuoV6YeCmdK1VwEmfUr0B0h7rYpWjpuZztNwnp5uqxwAh9zS8Oj+fdZ0H5cs/N1
+	hsm6ISI49dAMYCFSweXQrMrLJtPSw1zwkOBgc5kAEo9bjsYuzuLvWx
+X-Google-Smtp-Source: AGHT+IHKD9vv7E6n80MsMeNjpJwBWGKsDmTjk3A0J3+cAywyuJ59mQfEiaL2YVTpTIc2tcdraTY+Dh5qWDg83RmXaIY=
+X-Received: by 2002:a05:6512:1150:b0:553:36b7:7b14 with SMTP id
+ 2adb3069b0e04-554fdf96ec2mr2102615e87.37.1750930282937; Thu, 26 Jun 2025
+ 02:31:22 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20250626084107.2710306-1-zhangjianrong5@huawei.com>
+References: <20250625095224.118679-1-snovitoll@gmail.com> <20250625095224.118679-2-snovitoll@gmail.com>
+ <db30beb6-a331-46b7-92a3-1ee7782e317a@csgroup.eu>
+In-Reply-To: <db30beb6-a331-46b7-92a3-1ee7782e317a@csgroup.eu>
+From: Sabyrzhan Tasbolatov <snovitoll@gmail.com>
+Date: Thu, 26 Jun 2025 14:31:05 +0500
+X-Gm-Features: Ac12FXyxTyp0b2hD3uhdVzbeUTYpXnyKRANJYa2mQoNch15i1MQX1xBLZECmC3k
+Message-ID: <CACzwLxj3KWdy-mBu-te1OFf2FZ8eTp5CieYswF5NVY4qPWD93Q@mail.gmail.com>
+Subject: Re: [PATCH 1/9] kasan: unify static kasan_flag_enabled across modes
+To: Christophe Leroy <christophe.leroy@csgroup.eu>
+Cc: ryabinin.a.a@gmail.com, glider@google.com, andreyknvl@gmail.com, 
+	dvyukov@google.com, vincenzo.frascino@arm.com, catalin.marinas@arm.com, 
+	will@kernel.org, chenhuacai@kernel.org, kernel@xen0n.name, 
+	maddy@linux.ibm.com, mpe@ellerman.id.au, npiggin@gmail.com, hca@linux.ibm.com, 
+	gor@linux.ibm.com, agordeev@linux.ibm.com, borntraeger@linux.ibm.com, 
+	svens@linux.ibm.com, richard@nod.at, anton.ivanov@cambridgegreys.com, 
+	johannes@sipsolutions.net, dave.hansen@linux.intel.com, luto@kernel.org, 
+	peterz@infradead.org, tglx@linutronix.de, mingo@redhat.com, bp@alien8.de, 
+	x86@kernel.org, hpa@zytor.com, chris@zankel.net, jcmvbkbc@gmail.com, 
+	akpm@linux-foundation.org, guoweikang.kernel@gmail.com, geert@linux-m68k.org, 
+	rppt@kernel.org, tiwei.btw@antgroup.com, richard.weiyang@gmail.com, 
+	benjamin.berg@intel.com, kevin.brodsky@arm.com, kasan-dev@googlegroups.com, 
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
+	loongarch@lists.linux.dev, linuxppc-dev@lists.ozlabs.org, 
+	linux-s390@vger.kernel.org, linux-um@lists.infradead.org, linux-mm@kvack.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hi,
+On Wed, Jun 25, 2025 at 3:35=E2=80=AFPM Christophe Leroy
+<christophe.leroy@csgroup.eu> wrote:
+>
+>
+>
+> Le 25/06/2025 =C3=A0 11:52, Sabyrzhan Tasbolatov a =C3=A9crit :
+> > Historically the fast-path static key `kasan_flag_enabled` existed
+> > only for `CONFIG_KASAN_HW_TAGS`. Generic and SW_TAGS either relied on
+> > `kasan_arch_is_ready()` or evaluated KASAN checks unconditionally.
+> > As a result every architecture had to toggle a private flag
+> > in its `kasan_init()`.
+> >
+> > This patch turns the flag into a single global runtime predicate that
+> > is built for every `CONFIG_KASAN` mode and adds a helper that flips
+> > the key once KASAN is ready.
+>
+> Shouldn't kasan_init_generic() also perform the following line to reduce
+> even more code duplication between architectures ?
+>
+>         init_task.kasan_depth =3D 0;
 
-On Thu, Jun 26, 2025 at 04:41:07PM +0800, zhangjianrong wrote:
-> Current implementation can cause allocation failures in
-> tb_alloc_dp_bandwidth() in some cases. For example:
-> allocated_down(30Gbps), allocated_up(50Gbps),
-> requested_down(10Gbps).
+I've tried to introduce a new function kasan_mark_ready() to gather
+all arch duplicated code in one place:
 
-I'm not sure I understand the above.
+In mm/kasan/common.c:
 
-Can you describe in which real life situation this can happen?
+void __init kasan_mark_ready(void)
+{
+        /* Enable error reporting */
+        init_task.kasan_depth =3D 0;
+        /* Mark KASAN as ready */
+        static_branch_enable(&kasan_flag_enabled);
+}
 
-> 
-> Signed-off-by: zhangjianrong <zhangjianrong5@huawei.com>
-> ---
->  drivers/thunderbolt/tb.c | 10 +++++-----
->  1 file changed, 5 insertions(+), 5 deletions(-)
-> 
-> diff --git a/drivers/thunderbolt/tb.c b/drivers/thunderbolt/tb.c
-> index a7c6919fbf97..558455d9716b 100644
-> --- a/drivers/thunderbolt/tb.c
-> +++ b/drivers/thunderbolt/tb.c
-> @@ -1039,6 +1039,9 @@ static int tb_configure_asym(struct tb *tb, struct tb_port *src_port,
->  			break;
->  
->  		if (downstream) {
-> +			/* Does consumed + requested exceed the threshold */
-> +			if (consumed_down + requested_down < asym_threshold)
-> +				continue;
->  			/*
->  			 * Downstream so make sure upstream is within the 36G
->  			 * (40G - guard band 10%), and the requested is above
-> @@ -1048,20 +1051,17 @@ static int tb_configure_asym(struct tb *tb, struct tb_port *src_port,
->  				ret = -ENOBUFS;
->  				break;
->  			}
-> -			/* Does consumed + requested exceed the threshold */
-> -			if (consumed_down + requested_down < asym_threshold)
-> -				continue;
->  
->  			width_up = TB_LINK_WIDTH_ASYM_RX;
->  			width_down = TB_LINK_WIDTH_ASYM_TX;
->  		} else {
->  			/* Upstream, the opposite of above */
-> +			if (consumed_up + requested_up < asym_threshold)
-> +				continue;
->  			if (consumed_down + requested_down >= TB_ASYM_MIN) {
->  				ret = -ENOBUFS;
->  				break;
->  			}
-> -			if (consumed_up + requested_up < asym_threshold)
-> -				continue;
->  
->  			width_up = TB_LINK_WIDTH_ASYM_TX;
->  			width_down = TB_LINK_WIDTH_ASYM_RX;
-> -- 
-> 2.34.1
+So we could've called it
+in mm/kasan/generic.c:
+void __init kasan_init_generic(void)
+{
+        kasan_mark_ready();
+        pr_info("KernelAddressSanitizer initialized (generic)\n");
+}
+
+in mm/kasan/sw_tags.c:
+void __init kasan_init_sw_tags(void)
+{
+...
+        kasan_mark_ready();
+        pr_info("KernelAddressSanitizer initialized ..");
+}
+
+in mm/kasan/hw_tags.c:
+void __init kasan_init_hw_tags(void)
+{
+...
+        kasan_mark_ready();
+        pr_info("KernelAddressSanitizer initialized ..");
+}
+
+But it works only for CONFIG_KASAN_GENERIC mode,
+when arch code calls kasan_init(), for example, arm64:
+
+void __init kasan_init(void)
+{
+        kasan_init_shadow();
+        kasan_init_generic();
+}
+
+And for HW_TAGS, SW_TAGS it won't work.
+Fails during compiling:
+mm/kasan/common.c:45:12: error: no member named 'kasan_depth' in
+'struct task_struct'
+   45 |         init_task.kasan_depth =3D 0;
+
+because kasan_init_sw_tags(), kasan_init_hw_tags() are called
+once on CPU boot. For arm64, where these KASAN modes are supported,
+both functions are called in smp_prepare_boot_cpu().
+
+So I guess, every arch kasan_init() has to set in kasan_init()
+       init_task.kasan_depth =3D 0;
+to enable error messages before switching KASAN readiness
+via enabling kasan_flag_enabled key.
+
+>
+> Christophe
+>
 
