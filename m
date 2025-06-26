@@ -1,120 +1,209 @@
-Return-Path: <linux-kernel+bounces-705085-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-705083-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 04A78AEA507
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Jun 2025 20:16:07 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id E15E4AEA4FD
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Jun 2025 20:14:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 74A54562DEB
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Jun 2025 18:15:39 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 31E62562A6E
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Jun 2025 18:14:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0684C2EE280;
-	Thu, 26 Jun 2025 18:15:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D9A622EE26B;
+	Thu, 26 Jun 2025 18:14:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=rjwysocki.net header.i=@rjwysocki.net header.b="cg+euGfT"
-Received: from cloudserver094114.home.pl (cloudserver094114.home.pl [79.96.170.134])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="dXW/YJs7"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.14])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6C00C1B0416;
-	Thu, 26 Jun 2025 18:15:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=79.96.170.134
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5FAA42ECE80
+	for <linux-kernel@vger.kernel.org>; Thu, 26 Jun 2025 18:14:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.14
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750961748; cv=none; b=hXQFyRGA3+o9R4FmrFcLlAuE5nOXb1YI5xOtxhd9pXL0pQJDO5sg+Ia/x4MREUM+nVYTwbiganaCWoHJJxpt9POoLBce2uUKwYHs4J/NN2sIiVVrTSL+jKkQYhm5qgOSU6T6H6tXvq3uKzfn4FQPrHFWm3yx2rmBBXDH3I8jNqM=
+	t=1750961676; cv=none; b=J3Xva23RxFlQBhIB2COy2Bd8hWB56gZFt4hReP9neIID+4UckGn3BEWodIaoWGomceLf+yO5DwPBT9/plHnjwu9hPD+7ToahenTXIVf7RoTwj2Y2O2AH0u+TdN+LPR5rBqvKT3UrX7PK+EuiKU5yZVFJs1gQN1OdF6rRsfQhybg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750961748; c=relaxed/simple;
-	bh=0XdUY00XXilqMp4xm15/3+Vzfk9D595eI9rqaslHETA=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=A3UGbf68qARErqBzaqt1MhJQJQs2r3uCrTIFWoH62IlJxrt0YAlvDIDRgxpvSZcmYYVWZ9kGz8djYekjEWEXQzHr1cRO8NfZS3fm7EVOgxuMQEJOluKff7s2iE3NG3F7sUF4gjOJsTwtqXIqeTJqEHQTOtQDTefAuiNXsb54KMo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rjwysocki.net; spf=pass smtp.mailfrom=rjwysocki.net; dkim=pass (2048-bit key) header.d=rjwysocki.net header.i=@rjwysocki.net header.b=cg+euGfT; arc=none smtp.client-ip=79.96.170.134
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rjwysocki.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rjwysocki.net
-Received: from kreacher.localnet (unknown [5.63.189.50])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by cloudserver094114.home.pl (Postfix) with ESMTPSA id 03BD866E999;
-	Thu, 26 Jun 2025 20:15:43 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=rjwysocki.net;
-	s=dkim; t=1750961743;
-	bh=0XdUY00XXilqMp4xm15/3+Vzfk9D595eI9rqaslHETA=;
-	h=From:Subject:Date;
-	b=cg+euGfTZRYoslNudGwMs0Zn2+C7vWQRqavHakEwQ8qRsxRlwcNawUSoa42GrDbC3
-	 4MZP7RoJRMjtgM5/y0JGCyKcFbKd56j5Un3+sCKmoHwvmBtelop1WqKeOkAoLCV+0X
-	 TQ2U+eaqKg9/UjnIK4s2+6hPFSfdlNkiuxH8kpDHZv91wyHs9ssj6Bq0HHb/Yd8pdu
-	 dXROqX3LSUvBsIBIXu9J1IPPcx89Rxzc2w3aq3RTIEd2FR8gpxoa8xAxCRUyaZnMZN
-	 ZXbI/e2boOHfvMTO17QFc7WH5DcggdVfX6u1GKVVn/DuzbVhhznsDziHL3bpBO133M
-	 TL8Luw7wgRkfw==
-From: "Rafael J. Wysocki" <rjw@rjwysocki.net>
-To: Linux PM <linux-pm@vger.kernel.org>
-Cc: LKML <linux-kernel@vger.kernel.org>,
- Linux ACPI <linux-acpi@vger.kernel.org>,
- Linux PCI <linux-pci@vger.kernel.org>, Ulf Hansson <ulf.hansson@linaro.org>,
- Mika Westerberg <mika.westerberg@linux.intel.com>
-Subject:
- [PATCH v2 8/9] ACPI: PM: Set/clear power.strict_midlayer in prepare/complete
-Date: Thu, 26 Jun 2025 20:12:25 +0200
-Message-ID: <8609825.NyiUUSuA9g@rjwysocki.net>
-In-Reply-To: <5015172.GXAFRqVoOG@rjwysocki.net>
-References: <5015172.GXAFRqVoOG@rjwysocki.net>
+	s=arc-20240116; t=1750961676; c=relaxed/simple;
+	bh=Wypp5r6nB0NDGvG/zFS4NFbxzbafwEncAhIhaI6bOJk=;
+	h=Date:From:To:Cc:Subject:Message-ID; b=kThKAXb1ezbgSYy6I92a2/iZoZzUZnZp+11jaBq7OJUk0DZ5GX8ciwpQYla5p7SlFRGMvh/sfr6tD7qFk+RuONtyAuS2ze6c6S/5TWz91UOlW2bydLnPM48kMFGrTVLQohCOLAs317UVPtui7+q/w7DyywxTIAUPT5muwDiMnns=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=dXW/YJs7; arc=none smtp.client-ip=192.198.163.14
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1750961674; x=1782497674;
+  h=date:from:to:cc:subject:message-id;
+  bh=Wypp5r6nB0NDGvG/zFS4NFbxzbafwEncAhIhaI6bOJk=;
+  b=dXW/YJs7E7kKf244u/OgI++OeF7AqTKbDRRE5DbOB8CqDdmMY0Ypi3KC
+   byuHmxlWmU7Proy8pC2UKffTYaTvGnQv9f3YKy52lhGqOBvnudev2alPX
+   iHoCAU/Ykdx3MfonylMQcy3U9fPgZbCMgWQCLA9mglDKv3Sm1DQYXJ4jO
+   9BnxQkT3nVx+8+VsZP0gQ7fgmkcVWA36FV3+urumKFeoLSa/gclHnOIwY
+   2B18LFEnP90pMaST7kMGrctMZwEeWJ4fNPtm+8Fn+2qQnrReeUsYIRdx8
+   JucC8DFRa5RAOeOFNfdH++KuxhVHZhVo4+KGrfZ8FqwL9L1BArh8JDemh
+   w==;
+X-CSE-ConnectionGUID: VMrkCgn5R5arv2XdwKPxOQ==
+X-CSE-MsgGUID: ycmgA6jXSQamJIJDteHMJw==
+X-IronPort-AV: E=McAfee;i="6800,10657,11476"; a="53344836"
+X-IronPort-AV: E=Sophos;i="6.16,268,1744095600"; 
+   d="scan'208";a="53344836"
+Received: from orviesa010.jf.intel.com ([10.64.159.150])
+  by fmvoesa108.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 26 Jun 2025 11:14:34 -0700
+X-CSE-ConnectionGUID: jM33DZR5QwGRoalpkp714Q==
+X-CSE-MsgGUID: 3f3OsVUQRWWZaujz4bil5Q==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.16,268,1744095600"; 
+   d="scan'208";a="151997838"
+Received: from lkp-server01.sh.intel.com (HELO e8142ee1dce2) ([10.239.97.150])
+  by orviesa010.jf.intel.com with ESMTP; 26 Jun 2025 11:14:32 -0700
+Received: from kbuild by e8142ee1dce2 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1uUr7G-000VPc-0k;
+	Thu, 26 Jun 2025 18:14:30 +0000
+Date: Fri, 27 Jun 2025 02:13:52 +0800
+From: kernel test robot <lkp@intel.com>
+To: "Gustavo A. R. Silva" <gustavoars@kernel.org>
+Cc: LKML <linux-kernel@vger.kernel.org>
+Subject: [gustavoars:testing/wfamnae-next20250616] BUILD REGRESSION
+ 78f053980ba50a0becae798ab7d07527d97e790d
+Message-ID: <202506270238.Ia9msE6v-lkp@intel.com>
+User-Agent: s-nail v14.9.24
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="UTF-8"
-X-CLIENT-IP: 5.63.189.50
-X-CLIENT-HOSTNAME: 5.63.189.50
-X-VADE-SPAMSTATE: clean
-X-VADE-SPAMCAUSE: dmFkZTF716g97GLxl5r0PfOIWPAhDchnkSWDAqwBHc32sD+HpU8yKJB8xV8olL9lC0SzkWwWofqH3VgYdVRji5cIw9ZbUY7WKZiWjf3xKrF5n/kFXPdAEOzPBCDRv7/dwAHJIQ0XttMc6iSOqO8REJ6/sQbblDgpzZ3yfiPesShmkNx66bo1AYj8VcmdJw/BBHB050Zj303Yb/wm5mvAwXKjtlQwzCdkCdX+5402uydNZLICOp4E4D8MElAkMJkSAvvY8Q7l6VyWrFK73NizhJc5WdxP07GoEdKSjFDXh87nwem3gX8mTgRruroBzE94AJIHpV56uBgDMbkYtmhRhrGWknT+UUwxneTHO3/zeqpaau2gLrXfogGojBOc7L9hAUX0LG8Oj0LMQC1PamxCkdOdQYAdrYli+cva424A8EniF6Pj5N+fQT5S1KIyV28ZCqhYAmMWRc5fJlEzWKA1DoWSbo0XGqhKn/u9p+YMHybb4GrXkuAuYZxpubdA/IL74BWo6VhCztSvLtG/RqSBsSfxZG7yQw56SKz8M0dfpy0S6XcNuAWJE6z7sqQ1W19INBC0ehQ6nPrpAPg5+T5U8FKPnY/uWjMr0q+5e4TO2P7xNelWZZbepJ9wEFGkbRwwHsJRfchK9q377c4fyI+ejbxLL1xUWe5QkV834i5OdDtuW+alyA
-X-DCC--Metrics: v370.home.net.pl 1024; Body=6 Fuz1=6 Fuz2=6
 
-From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+tree/branch: https://git.kernel.org/pub/scm/linux/kernel/git/gustavoars/linux.git testing/wfamnae-next20250616
+branch HEAD: 78f053980ba50a0becae798ab7d07527d97e790d  treewide: Avoid -Wflex-array-member-not-at-end warnings
 
-The ACPI general PM domain and the LPSS PM domain do not expect their
-mid-layer runtime PM callbacks to be invoked at any point during
-system-wide suspend and resume, so make acpi_subsys_prepare() set
-power.strict_midlayer for the given device to express that expectation
-and make acpi_subsys_complete() clear it.
+Error/Warning (recently discovered and may have been fixed):
 
-Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
----
+    https://lore.kernel.org/oe-kbuild-all/202506260845.3py4BoAJ-lkp@intel.com
+    https://lore.kernel.org/oe-kbuild-all/202506260858.2DTGYCvK-lkp@intel.com
+    https://lore.kernel.org/oe-kbuild-all/202506261829.It6MPDTn-lkp@intel.com
 
-v1 -> v2:
-   * Set and clear the new flag in "prepare" and "complete" instead of
-     "attach" and "detach", respectively, to (1) cover the LPSS PM domain as
-     well as the general ACPI PM domain and (2) allow pm_runtime_force_suspend()
-     invoked from driver remove callbacks to work.
-   * Update subject and changelog.
+    Warning: drivers/gpu/drm/xlnx/zynqmp_disp.c:103 Excess struct member 'xt' description in 'zynqmp_disp_layer_dma'
+    include/asm-generic/tlb.h:367:28: error: expected ';' at end of declaration list
+    include/asm-generic/tlb.h:378:2: error: expected member name or ';' after declaration specifiers
+    include/asm-generic/tlb.h:378:2: error: type name requires a specifier or qualifier
+    kernel/sched/ext.c:3712:10: error: incompatible pointer types returning 'struct cgroup_hdr *' from a function with result type 'struct cgroup *' [-Werror,-Wincompatible-pointer-types]
+    kernel/sched/ext.c:7407:17: error: incompatible pointer types initializing 'struct cgroup *' with an expression of type 'struct cgroup_hdr *' [-Werror,-Wincompatible-pointer-types]
 
----
- drivers/acpi/device_pm.c |    4 ++++
- 1 file changed, 4 insertions(+)
+Error/Warning ids grouped by kconfigs:
 
---- a/drivers/acpi/device_pm.c
-+++ b/drivers/acpi/device_pm.c
-@@ -1119,6 +1119,8 @@
- {
- 	struct acpi_device *adev = ACPI_COMPANION(dev);
- 
-+	dev_pm_set_strict_midlayer(dev, true);
-+
- 	if (dev->driver && dev->driver->pm && dev->driver->pm->prepare) {
- 		int ret = dev->driver->pm->prepare(dev);
- 
-@@ -1147,6 +1149,8 @@
- 	 */
- 	if (pm_runtime_suspended(dev) && pm_resume_via_firmware())
- 		pm_request_resume(dev);
-+
-+	dev_pm_set_strict_midlayer(dev, false);
- }
- EXPORT_SYMBOL_GPL(acpi_subsys_complete);
- 
+recent_errors
+|-- alpha-allmodconfig
+|   `-- Warning:drivers-gpu-drm-xlnx-zynqmp_disp.c-Excess-struct-member-xt-description-in-zynqmp_disp_layer_dma
+|-- alpha-allyesconfig
+|   `-- Warning:drivers-gpu-drm-xlnx-zynqmp_disp.c-Excess-struct-member-xt-description-in-zynqmp_disp_layer_dma
+|-- arm64-randconfig-004-20250626
+|   `-- Warning:drivers-gpu-drm-xlnx-zynqmp_disp.c-Excess-struct-member-xt-description-in-zynqmp_disp_layer_dma
+|-- hexagon-allmodconfig
+|   `-- Warning:drivers-gpu-drm-xlnx-zynqmp_disp.c-Excess-struct-member-xt-description-in-zynqmp_disp_layer_dma
+|-- hexagon-allyesconfig
+|   `-- Warning:drivers-gpu-drm-xlnx-zynqmp_disp.c-Excess-struct-member-xt-description-in-zynqmp_disp_layer_dma
+|-- loongarch-allmodconfig
+|   `-- Warning:drivers-gpu-drm-xlnx-zynqmp_disp.c-Excess-struct-member-xt-description-in-zynqmp_disp_layer_dma
+|-- m68k-allmodconfig
+|   `-- Warning:drivers-gpu-drm-xlnx-zynqmp_disp.c-Excess-struct-member-xt-description-in-zynqmp_disp_layer_dma
+|-- m68k-allyesconfig
+|   `-- Warning:drivers-gpu-drm-xlnx-zynqmp_disp.c-Excess-struct-member-xt-description-in-zynqmp_disp_layer_dma
+|-- microblaze-allmodconfig
+|   `-- Warning:drivers-gpu-drm-xlnx-zynqmp_disp.c-Excess-struct-member-xt-description-in-zynqmp_disp_layer_dma
+|-- microblaze-allyesconfig
+|   `-- Warning:drivers-gpu-drm-xlnx-zynqmp_disp.c-Excess-struct-member-xt-description-in-zynqmp_disp_layer_dma
+|-- s390-allmodconfig
+|   |-- Warning:drivers-gpu-drm-xlnx-zynqmp_disp.c-Excess-struct-member-xt-description-in-zynqmp_disp_layer_dma
+|   |-- include-asm-generic-tlb.h:error:expected-at-end-of-declaration-list
+|   |-- include-asm-generic-tlb.h:error:expected-member-name-or-after-declaration-specifiers
+|   `-- include-asm-generic-tlb.h:error:type-name-requires-a-specifier-or-qualifier
+|-- s390-allnoconfig
+|   |-- include-asm-generic-tlb.h:error:expected-at-end-of-declaration-list
+|   |-- include-asm-generic-tlb.h:error:expected-member-name-or-after-declaration-specifiers
+|   `-- include-asm-generic-tlb.h:error:type-name-requires-a-specifier-or-qualifier
+|-- s390-allyesconfig
+|   `-- Warning:drivers-gpu-drm-xlnx-zynqmp_disp.c-Excess-struct-member-xt-description-in-zynqmp_disp_layer_dma
+|-- sparc-allmodconfig
+|   `-- Warning:drivers-gpu-drm-xlnx-zynqmp_disp.c-Excess-struct-member-xt-description-in-zynqmp_disp_layer_dma
+|-- um-allmodconfig
+|   `-- Warning:drivers-gpu-drm-xlnx-zynqmp_disp.c-Excess-struct-member-xt-description-in-zynqmp_disp_layer_dma
+|-- um-allyesconfig
+|   `-- Warning:drivers-gpu-drm-xlnx-zynqmp_disp.c-Excess-struct-member-xt-description-in-zynqmp_disp_layer_dma
+|-- x86_64-allmodconfig
+|   `-- Warning:drivers-gpu-drm-xlnx-zynqmp_disp.c-Excess-struct-member-xt-description-in-zynqmp_disp_layer_dma
+|-- x86_64-allyesconfig
+|   `-- Warning:drivers-gpu-drm-xlnx-zynqmp_disp.c-Excess-struct-member-xt-description-in-zynqmp_disp_layer_dma
+`-- x86_64-buildonly-randconfig-005-20250626
+    |-- kernel-sched-ext.c:error:incompatible-pointer-types-initializing-struct-cgroup-with-an-expression-of-type-struct-cgroup_hdr-Werror-Wincompatible-pointer-types
+    `-- kernel-sched-ext.c:error:incompatible-pointer-types-returning-struct-cgroup_hdr-from-a-function-with-result-type-struct-cgroup-Werror-Wincompatible-pointer-types
 
+elapsed time: 1458m
 
+configs tested: 59
+configs skipped: 1
 
+tested configs:
+alpha                             allnoconfig    gcc-15.1.0
+alpha                            allyesconfig    gcc-15.1.0
+arc                               allnoconfig    gcc-15.1.0
+arc                   randconfig-001-20250626    gcc-12.4.0
+arc                   randconfig-002-20250626    gcc-13.3.0
+arm                               allnoconfig    clang-21
+arm                   randconfig-001-20250626    clang-21
+arm                   randconfig-002-20250626    clang-20
+arm                   randconfig-003-20250626    gcc-10.5.0
+arm                   randconfig-004-20250626    clang-21
+arm64                             allnoconfig    gcc-15.1.0
+arm64                 randconfig-001-20250626    clang-21
+arm64                 randconfig-002-20250626    clang-17
+arm64                 randconfig-003-20250626    gcc-8.5.0
+arm64                 randconfig-004-20250626    clang-21
+csky                              allnoconfig    gcc-15.1.0
+hexagon                          allmodconfig    clang-17
+hexagon                           allnoconfig    clang-21
+hexagon                          allyesconfig    clang-21
+i386        buildonly-randconfig-001-20250626    clang-20
+i386        buildonly-randconfig-002-20250626    clang-20
+i386        buildonly-randconfig-003-20250626    clang-20
+i386        buildonly-randconfig-004-20250626    clang-20
+i386        buildonly-randconfig-005-20250626    clang-20
+i386        buildonly-randconfig-006-20250626    clang-20
+loongarch                        allmodconfig    gcc-15.1.0
+loongarch                         allnoconfig    gcc-15.1.0
+m68k                             allmodconfig    gcc-15.1.0
+m68k                              allnoconfig    gcc-15.1.0
+m68k                             allyesconfig    gcc-15.1.0
+microblaze                       allmodconfig    gcc-15.1.0
+microblaze                        allnoconfig    gcc-15.1.0
+microblaze                       allyesconfig    gcc-15.1.0
+mips                              allnoconfig    gcc-15.1.0
+nios2                             allnoconfig    gcc-14.2.0
+openrisc                          allnoconfig    gcc-15.1.0
+parisc                            allnoconfig    gcc-15.1.0
+powerpc                           allnoconfig    gcc-15.1.0
+riscv                             allnoconfig    gcc-15.1.0
+s390                             allmodconfig    clang-18
+s390                              allnoconfig    clang-21
+s390                             allyesconfig    gcc-15.1.0
+sh                               allmodconfig    gcc-15.1.0
+sh                                allnoconfig    gcc-15.1.0
+sh                               allyesconfig    gcc-15.1.0
+sparc                            allmodconfig    gcc-15.1.0
+sparc                             allnoconfig    gcc-15.1.0
+um                               allmodconfig    clang-19
+um                                allnoconfig    clang-21
+um                               allyesconfig    gcc-12
+x86_64                            allnoconfig    clang-20
+x86_64      buildonly-randconfig-001-20250626    clang-20
+x86_64      buildonly-randconfig-002-20250626    clang-20
+x86_64      buildonly-randconfig-003-20250626    clang-20
+x86_64      buildonly-randconfig-004-20250626    clang-20
+x86_64      buildonly-randconfig-005-20250626    clang-20
+x86_64      buildonly-randconfig-006-20250626    clang-20
+x86_64                              defconfig    gcc-11
+xtensa                            allnoconfig    gcc-15.1.0
+
+--
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
