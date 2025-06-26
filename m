@@ -1,228 +1,242 @@
-Return-Path: <linux-kernel+bounces-704283-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-704286-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 19AC4AE9BC1
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Jun 2025 12:48:31 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 62275AE9BD3
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Jun 2025 12:52:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 928D95A1BB9
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Jun 2025 10:48:05 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E07D37BA826
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Jun 2025 10:48:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7A23C1EE032;
-	Thu, 26 Jun 2025 10:48:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F11E925B66A;
+	Thu, 26 Jun 2025 10:49:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Z6YsGLt/"
-Received: from mail-wm1-f67.google.com (mail-wm1-f67.google.com [209.85.128.67])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="IKPABNvr"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.10])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 188B5218AD2
-	for <linux-kernel@vger.kernel.org>; Thu, 26 Jun 2025 10:48:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.67
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 05CC3237162;
+	Thu, 26 Jun 2025 10:49:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.10
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750934897; cv=none; b=Pe1BcELxAY9GULk3I+6NzkhXkst+WGMQ8PdP7TnuN92LK0VMIK67vdltrPo6sCPCpGT/HhGpfRPXgLv3kfbIvDyUzDN+6rE/5DUbOz5AdRHzD1FIDgBHY90Zv+rbe5WoxmfYUbwNmUOE07nMrvI/sC7OaeVr97NXq/FItVP4QZk=
+	t=1750934968; cv=none; b=XlxxtEnWBNYLBgWG3D/y44rML51l74ALGRhwBwaUo1HbKcjZ5NcJXg6g7s1CmndPqFT95Ab+C/V4u2IDobJAbz7J0ZXNogpQi3DPkIerWPyc9t5yZKlJHOeNn6xj6tXV8mGg68UN+Wk8EXirJGZAHPn7aRoDECSZrHZ9jGNzzJ8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750934897; c=relaxed/simple;
-	bh=iDPYcXFSHqv1aXfl8/YJ053KuD2moVV4g3YDzQAcxtc=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=EGtW9LFNK+RPt4oa58OZRLmgy50TzAwgaRFZgioQyrPt8+UwnofijHf1Pt+TLlsHq+EKrTG7TEjuS44heecrvmpHTtI+aj7xOgS0/N5NOLlBVy4+5w4HfhpNdAbEjaCFinjCm+JKtydW3KBsrPjAncie7vAA0JRj85RRaEAwusg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=Z6YsGLt/; arc=none smtp.client-ip=209.85.128.67
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wm1-f67.google.com with SMTP id 5b1f17b1804b1-4538bc1cffdso3343975e9.0
-        for <linux-kernel@vger.kernel.org>; Thu, 26 Jun 2025 03:48:15 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1750934894; x=1751539694; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=HUjw7qBE83HsX3Aeqbgt73oRkerz87TNCfkEGmj2ZvU=;
-        b=Z6YsGLt/8q+q8W5vV82LSVtbDK5gha9W0hqjDhIcqeSh5Dh8k1Gh4R/hqRSdw94aHe
-         euJPuorv3vsF/0ZJBbE2Tt4whDpaKAyRZcR6NM+IxTHUk9+BOlJALFNlhcXi/xU2G5XG
-         VbHz8E7yjx7RRf/nO/mlB5Ulkgn7L+Ppa5wqmUSzYA/4YhI0DEMJIl52eSBL5e1S4ZlZ
-         1VjDRIv2HS7twWHKqsgt1EXFl8q4XP/m91MhVyEFPuPAF3Gk65SQcjW9//8k1nXIUeE0
-         2p+JkYglpuFS7IC2K7f8YQTWDfqIatptlsSMA8p0nO3WndzbOfFOfqOMX0phQ8s0GNvC
-         gzmg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1750934894; x=1751539694;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=HUjw7qBE83HsX3Aeqbgt73oRkerz87TNCfkEGmj2ZvU=;
-        b=hHpMdGVDw4Yx/3pFtEyuGqYtK0klpD9nlsX/aX+SBLmIaDVzNojyhayanRD5JiP88y
-         +oW5PLf0hrLSN9M2u9Eg+8y4H9Z5bYt49Xk3RRLQ549Y9w4jCMwGPMQysRXoRrM1y4+D
-         IY7uObfMlOtMVQJJuw2Wlgxi5XOK7LxT9HUr62cSs8NvcITNOMjTALOLDD6iADDQ2rls
-         9/g1RQMTvII2NRcYjS/R78S5+PnWhDhjWPJ/IgFcwNX39TtsIyMMySYkSRin4USPv/Ai
-         RPoqXUUFb4vM7Fsv8vq9dCFTBUOSJ4zzI89mJqf3mLAuCTaBj3Z8t7kxJG+6cjs0is1p
-         BLAA==
-X-Gm-Message-State: AOJu0YyF3khYhyxrnHVnf0XfDBus2m32luJQYJvALwweTmLDCJ8/y5kz
-	LWJ1EoEACKm9lG0N36DVPJiaxQ0dFnewo6Ku3Y4Hwf4c5Cf/C2sfYhsmjVOEasrSLsY=
-X-Gm-Gg: ASbGncvPid0lzASng87oJRb8j6Gvs4RpeU569yCX5BYjUcOBQ3a63dhnFJWJXmpgAUp
-	gZ/ePK/NcywM5tvEIb+nLjQ+TVA8RGvWsrBTMh8xBx6kMu32Xqj3Xnp3qhPBUMh7c9Mz2rlQjNh
-	IfARPFKhdShF6p59DnOe6eGZoOO2CkJ8m46ad3ccTBGruRfiXHpymjly70q9Bi0rit/l+eY/ZTP
-	5NGIgnIaes4+ic85Rn+HXFNtNGAKdnQ0BvleBeN957YvBliPqdsRhwsP4GpOZ0W1oT3uAfRvh4c
-	VvORIUCFKrL7odveX8hClGy2aj2Iyyu0xRgRk6EFWOeN0vSvTNbxU6t7Ti3VprcLJrDHA7BA+Tv
-	n3fEwcJwCvD8gIH7i7sQG3f6XDhM=
-X-Google-Smtp-Source: AGHT+IGsQdj4iGv9FBGfoAWi9XRLBBqhbfDylK0ITEXpt4PSByT7nYhuvCMByEIesH6nO5RpBBlepQ==
-X-Received: by 2002:a05:600c:5490:b0:453:81a:2f3f with SMTP id 5b1f17b1804b1-45381afa899mr71269575e9.30.1750934894357;
-        Thu, 26 Jun 2025 03:48:14 -0700 (PDT)
-Received: from [192.168.0.35] (188-141-3-146.dynamic.upc.ie. [188.141.3.146])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3a6e8114774sm7141630f8f.94.2025.06.26.03.48.13
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 26 Jun 2025 03:48:13 -0700 (PDT)
-Message-ID: <d1b0b5c1-a031-4429-bb4b-ad8bc914c971@linaro.org>
-Date: Thu, 26 Jun 2025 11:48:12 +0100
+	s=arc-20240116; t=1750934968; c=relaxed/simple;
+	bh=CUpVLg2gAOKwYuLI1/+EPfNPPOJA5j6p7Mx8UWpHhfo=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=tWYNRDg5Pv5o+gv9wOIL0T0cb6DSBB5YfW/PFYjCdHJv/UI7mTUPvZRwdLQpqSu5i4DmNt46q5oXeZZiIk7LvSZH0hkxZ2ZW5R4c+ggzzi+h3X5p28P5F2bz3wtlDd95x5kTjlPPOyBLX8edzzvj8BZSuUf0OMM7tsvFIz42dYo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=IKPABNvr; arc=none smtp.client-ip=198.175.65.10
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1750934966; x=1782470966;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=CUpVLg2gAOKwYuLI1/+EPfNPPOJA5j6p7Mx8UWpHhfo=;
+  b=IKPABNvrptO2wbiODh/vl2OIONzu2gYg4fOOgkyEkZviwFb2vA/23FUs
+   bYurS4V2ebrvqjPj04yJmWALs+CY5sqzFBU2yGH5CyxxirxdNWiZJjWhN
+   20m/LP2sVUSO7ATcEiMnrMBDxQZ8pLmClwRF6+hMYBagNzlbOJtyqGavL
+   kkTf3S12kWwQ/EkzURgoN/7JUeQ+T12MArGZ4+vYu0roMu4kZrfQTThFV
+   WY0fH5zV0pBl/CR4tKI6akGnxnxIuIRKPudOXcSBFS/CsDeoMtvcnYkhH
+   HrrywlFPtR8NO84SYbrbl6tXiajHFzD2+HL+1QuqgXSC820qnEssArM7Y
+   Q==;
+X-CSE-ConnectionGUID: 1Ep7WJ6wTamJ/FioxiI2sg==
+X-CSE-MsgGUID: gxbrqd9WTxiZnqZJV+/QUw==
+X-IronPort-AV: E=McAfee;i="6800,10657,11475"; a="70655743"
+X-IronPort-AV: E=Sophos;i="6.16,267,1744095600"; 
+   d="scan'208";a="70655743"
+Received: from fmviesa009.fm.intel.com ([10.60.135.149])
+  by orvoesa102.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 26 Jun 2025 03:49:26 -0700
+X-CSE-ConnectionGUID: pMnHmCfBTFqrBAdsvRx4mQ==
+X-CSE-MsgGUID: h+L3NT6TRj6oy3xgIjfM1w==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.16,267,1744095600"; 
+   d="scan'208";a="152784296"
+Received: from jairdeje-mobl1.amr.corp.intel.com (HELO khuang2-desk.gar.corp.intel.com) ([10.124.220.86])
+  by fmviesa009-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 26 Jun 2025 03:49:20 -0700
+From: Kai Huang <kai.huang@intel.com>
+To: dave.hansen@intel.com,
+	bp@alien8.de,
+	tglx@linutronix.de,
+	peterz@infradead.org,
+	mingo@redhat.com,
+	hpa@zytor.com,
+	thomas.lendacky@amd.com
+Cc: x86@kernel.org,
+	kirill.shutemov@linux.intel.com,
+	rick.p.edgecombe@intel.com,
+	linux-kernel@vger.kernel.org,
+	pbonzini@redhat.com,
+	seanjc@google.com,
+	kvm@vger.kernel.org,
+	reinette.chatre@intel.com,
+	isaku.yamahata@intel.com,
+	dan.j.williams@intel.com,
+	ashish.kalra@amd.com,
+	nik.borisov@suse.com,
+	sagis@google.com
+Subject: [PATCH v3 0/6] TDX host: kexec/kdump support
+Date: Thu, 26 Jun 2025 22:48:46 +1200
+Message-ID: <cover.1750934177.git.kai.huang@intel.com>
+X-Mailer: git-send-email 2.49.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v5 3/4] media: dt-bindings: Add qcom,msm8939-camss
-To: Krzysztof Kozlowski <krzk@kernel.org>, vincent.knecht@mailoo.org,
- Robert Foss <rfoss@kernel.org>, Todor Tomov <todor.too@gmail.com>,
- Mauro Carvalho Chehab <mchehab@kernel.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Bjorn Andersson <andersson@kernel.org>,
- Konrad Dybcio <konradybcio@kernel.org>
-Cc: linux-kernel@vger.kernel.org, linux-media@vger.kernel.org,
- linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
- =?UTF-8?Q?Andr=C3=A9_Apitzsch?= <git@apitzsch.eu>,
- phone-devel@vger.kernel.org, ~postmarketos/upstreaming@lists.sr.ht,
- Vladimir Zapolskiy <vladimir.zapolskiy@linaro.org>,
- Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-References: <20250613-camss-8x39-vbif-v5-0-a002301a7730@mailoo.org>
- <20250613-camss-8x39-vbif-v5-3-a002301a7730@mailoo.org>
- <50fa344c-d683-420c-a3b5-837ec6d8e93e@kernel.org>
- <e928a7c5-56d5-4f2b-b667-bdbefb506d1f@linaro.org>
- <0e030c09-0a89-4883-b958-85ddd6831407@kernel.org>
-Content-Language: en-US
-From: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
-In-Reply-To: <0e030c09-0a89-4883-b958-85ddd6831407@kernel.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-On 26/06/2025 11:28, Krzysztof Kozlowski wrote:
-> On 26/06/2025 12:19, Bryan O'Donoghue wrote:
->> On 26/06/2025 11:00, Krzysztof Kozlowski wrote:
->>>> +  reg-names:
->>>> +    items:
->>>> +      - const: csi_clk_mux
->>> No, I already provided arguments in two lengthy discussions - this is
->>> not sorted by name.
->>>
->>> Keep the same order as in previous device, so msm8916 for example. Or
->>> any other, but listen to some requests to sort it by some arbitrary rule
->>> which was never communicated by DT maintainers.
->>
->> I don't think if you look through the history that you can find a
->> consistent rule that was used to arrange the registers.
->>
->> So we are trying to have a consistent way of doing that. Thats why the
->> last number of additions have been sort by name, because it seemed to be
->> the most consistent.
-> 
-> 
-> Why are we discussing it again? You asked me the same here:
-> https://lore.kernel.org/all/8f11c99b-f3ca-4501-aec4-0795643fc3a9@kernel.org/
-> 
-> and I already said - not sorting by name. You take the same order as
-> previous.
-> 
-> If you ever want to sort by name, answer to yourself:
-> NO. Take the same order as other existing device.
-> 
-> If you ever want to sort by value, answer to yourself:
-> NO.
-> 
-> You both came with some new, invented rules of sorting, applied it, and
-> now you claim that "existing devices were sorted like that". What? NO!
-> 
-> Best regards,
-> Krzysztof
+This series is the latest attempt to support kexec on TDX host following
+Dave's suggestion to use a percpu boolean to control WBINVD during
+kexec.
 
-OK.
+Hi Tom,
 
-Discussed this on Slack with Krzysztof.
+The first patch touches AMD SME code.  I appreciate if you can help to
+review and test.  Please let me know if there's anything I can help in
+return. :-)
 
-8939 should be like 8916 because these are devices of a similar class.
+I've tested on TDX system and it worked as expected.
 
-x1e has a particular order if a new device x1e+1 comes along with a new 
-register then
+v2 -> v3 (all trivial changes):
 
-reg-names:
-  23     items:
-  24       - const: csid0
-  25       - const: csid1
-  26       - const: csid2
-  27       - const: csid_lite0
-  28       - const: csid_lite1
-  29       - const: csid_wrapper
-  30       - const: csiphy0
-  31       - const: csiphy1
-  32       - const: csiphy2
-  33       - const: csiphy4
-  34       - const: csitpg0
-  35       - const: csitpg1
-  36       - const: csitpg2
-  37       - const: vfe0
-  38       - const: vfe1
-  39       - const: vfe_lite0
-  40       - const: vfe_lite1
+ - Rebase on latest tip/master
+   - change to use __always_inline for do_seamcall() in patch 2
+ - Update patch 2 (changelog and code comment) to remove the sentence
+   which says "not all SEAMCALLs generate dirty cachelines of TDX
+   private memory but just treat all of them do."  -- Dave.
+ - Add Farrah's Tested-by for all TDX patches.
 
-reg-names:
-  23     items:
-  24       - const: csid0
-  25       - const: csid1
-  26       - const: csid2
-  27       - const: csid_lite0
-  28       - const: csid_lite1
-  29       - const: csid_wrapper
-  30       - const: csiphy0
-  31       - const: csiphy1
-  32       - const: csiphy2
-  33       - const: csiphy4
-  34       - const: csitpg0
-  35       - const: csitpg1
-  36       - const: csitpg2
-  37       - const: vfe0
-  38       - const: vfe1
-  39       - const: vfe_lite0
-  40       - const: vfe_lite1
-           - NEW ENTRY GOES HERE csid3
+The v2 had one informal RFC patch appended to show "some optimization"
+which can move WBINVD from the kexec phase to an early stage in KVM.
+Paolo commented and Acked that patch (thanks!), so this v3 made that
+patch as a formal one (patch 6).  But technically it is not absolutely
+needed in this series but can be done in the future.
 
-A new SoC with a significantly different architecture could have 
-different ordering of regs.
+More history info can be found in v2:
 
-The main block should go first which means the above should look like:
+ https://lore.kernel.org/lkml/cover.1746874095.git.kai.huang@intel.com/
 
-reg-names:
-  23     items:
-  24       - const: csid_wrapper
-  25       - const: csid0
-  26       - const: csid1
-  27       - const: csid2
-  28       - const: csid_lite0
-  29       - const: csid_lite1
-  30       - const: csiphy0
-  31       - const: csiphy1
-  32       - const: csiphy2
-  33       - const: csiphy4
-  34       - const: csitpg0
-  35       - const: csitpg1
-  36       - const: csitpg2
-  37       - const: vfe0
-  38       - const: vfe1
-  39       - const: vfe_lite0
-  40       - const: vfe_lite1
+=== More information ===
 
-I think I personally haven't understood what was meant by "devices of a 
-class" but its clearer now.
+TDX private memory is memory that is encrypted with private Host Key IDs
+(HKID).  If the kernel has ever enabled TDX, part of system memory
+remains TDX private memory when kexec happens.  E.g., the PAMT (Physical
+Address Metadata Table) pages used by the TDX module to track each TDX
+memory page's state are never freed once the TDX module is initialized.
+TDX guests also have guest private memory and secure-EPT pages.
 
-Appreciate the explanation.
+After kexec, the new kernel will have no knowledge of which memory page
+was used as TDX private page and can use all memory as regular memory.
 
----
-bod
+1) Cache flush
+
+Per TDX 1.5 base spec "8.6.1.Platforms not Using ACT: Required Cache
+Flush and Initialization by the Host VMM", to support kexec for TDX, the
+kernel needs to flush cache to make sure there's no dirty cachelines of
+TDX private memory left over to the new kernel (when the TDX module
+reports TDX_FEATURES.CLFLUSH_BEFORE_ALLOC as 1 in the global metadata for
+the platform).  The kernel also needs to make sure there's no more TDX
+activity (no SEAMCALL) after cache flush so that no new dirty cachelines
+of TDX private memory are generated.
+
+SME has similar requirement.  SME kexec support uses WBINVD to do the
+cache flush.  WBINVD is able to flush cachelines associated with any
+HKID.  Reuse the WBINVD introduced by SME to flush cache for TDX.
+
+Currently the kernel explicitly checks whether the hardware supports SME
+and only does WBINVD if true.  Instead of adding yet another TDX
+specific check, this series uses a percpu boolean to indicate whether
+WBINVD is needed on that CPU during kexec.
+
+2) Reset TDX private memory using MOVDIR64B
+
+The TDX spec (the aforementioned section) also suggests the kernel
+*should* use MOVDIR64B to clear TDX private page before the kernel
+reuses it as regular one.
+
+However, in reality the situation can be more flexible.  Per TDX 1.5
+base spec ("Table 16.2: Non-ACT Platforms Checks on Memory Reads in Ci
+Mode" and "Table 16.3: Non-ACT Platforms Checks on Memory Reads in Li
+Mode"), the read/write to TDX private memory using shared KeyID without
+integrity check enabled will not poison the memory and cause machine
+check.
+
+Note on the platforms with ACT (Access Control Table), there's no
+integrity check involved thus no machine check is possible to happen due
+to memory read/write using different KeyIDs.
+
+KeyID 0 (TME key) doesn't support integrity check.  This series chooses
+to NOT reset TDX private memory but leave TDX private memory as-is to the
+new kernel.  As mentioned above, in practice it is safe to do so.
+
+3) One limitation
+
+If the kernel has ever enabled TDX, after kexec the new kernel won't be
+able to use TDX anymore.  This is because when the new kernel tries to
+initialize TDX module it will fail on the first SEAMCALL due to the
+module has already been initialized by the old kernel.
+
+More (non-trivial) work will be needed for the new kernel to use TDX,
+e.g., one solution is to just reload the TDX module from the location
+where BIOS loads the TDX module (/boot/efi/EFI/TDX/).  This series
+doesn't cover this, but leave this as future work.
+
+4) Kdump support
+
+This series also enables kdump with TDX, but no special handling is
+needed for crash kexec (except turning on the Kconfig option):
+
+ - kdump kernel uses reserved memory from the old kernel as system ram,
+   and the old kernel will never use the reserved memory as TDX memory.
+ - /proc/vmcore contains TDX private memory pages.  It's meaningless to
+   read them, but it doesn't do any harm either.
+
+5) TDX "partial write machine check" erratum
+
+On the platform with TDX erratum, a partial write (a write transaction
+of less than a cacheline lands at memory controller) to TDX private
+memory poisons that memory, and a subsequent read triggers machine
+check.  On those platforms, the kernel needs to reset TDX private memory
+before jumping to the new kernel otherwise the new kernel may see
+unexpected machine check.
+
+The kernel currently doesn't track which page is TDX private memory.
+It's not trivial to reset TDX private memory.  For simplicity, this
+series simply disables kexec/kdump for such platforms.  This can be
+enhanced in the future.
+
+
+*** BLURB HERE ***
+
+Kai Huang (6):
+  x86/sme: Use percpu boolean to control wbinvd during kexec
+  x86/virt/tdx: Mark memory cache state incoherent when making SEAMCALL
+  x86/kexec: Disable kexec/kdump on platforms with TDX partial write
+    erratum
+  x86/virt/tdx: Remove the !KEXEC_CORE dependency
+  x86/virt/tdx: Update the kexec section in the TDX documentation
+  KVM: TDX: Explicitly do WBINVD upon reboot notifier
+
+ Documentation/arch/x86/tdx.rst       | 14 ++++-----
+ arch/x86/Kconfig                     |  1 -
+ arch/x86/include/asm/kexec.h         |  2 +-
+ arch/x86/include/asm/processor.h     |  2 ++
+ arch/x86/include/asm/tdx.h           | 32 +++++++++++++++++++-
+ arch/x86/kernel/cpu/amd.c            | 16 ++++++++++
+ arch/x86/kernel/machine_kexec_64.c   | 31 +++++++++++++++----
+ arch/x86/kernel/process.c            | 16 ++--------
+ arch/x86/kernel/relocate_kernel_64.S | 15 +++++++---
+ arch/x86/kvm/vmx/tdx.c               | 45 ++++++++++++++++++++++++++++
+ arch/x86/virt/vmx/tdx/tdx.c          |  9 ++++++
+ 11 files changed, 151 insertions(+), 32 deletions(-)
+
+
+base-commit: bda8bfc862a1bc1cb2de38145d99ae50ad90b667
+-- 
+2.49.0
+
 
