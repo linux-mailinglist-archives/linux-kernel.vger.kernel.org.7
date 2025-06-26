@@ -1,157 +1,201 @@
-Return-Path: <linux-kernel+bounces-705079-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-705086-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id B4D12AEA4ED
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Jun 2025 20:08:37 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1679DAEA50F
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Jun 2025 20:16:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7D0DF7A2E3B
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Jun 2025 18:07:13 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 227081C4242C
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Jun 2025 18:16:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A51A22ECE80;
-	Thu, 26 Jun 2025 18:08:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AE6262EE989;
+	Thu, 26 Jun 2025 18:15:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="RHzHK54Y"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.17])
+	dkim=pass (2048-bit key) header.d=rjwysocki.net header.i=@rjwysocki.net header.b="M3LQNQS0"
+Received: from cloudserver094114.home.pl (cloudserver094114.home.pl [79.96.170.134])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 835782BB17
-	for <linux-kernel@vger.kernel.org>; Thu, 26 Jun 2025 18:08:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.17
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3511A1E3DC8;
+	Thu, 26 Jun 2025 18:15:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=79.96.170.134
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750961309; cv=none; b=rkjq3uwnfLfoDCeou2U7ga3nLQDXRdHLIyQunmVug3QPUeuOYADHxerrhO8ry5pb7W4kDFwdV1BO59/WiPG6Cvcl8qpezmdJ+q/9PmO9Rrse7kbEwdjePbjhjO0bZq0MN2gRyK7h5EhDW0bztlLZMm+7i943v0b9jbCd5/atPzg=
+	t=1750961748; cv=none; b=uSETGi3QkSx4UjbhQ2xz2guleUVmde2p68nloo/99qcKqJVlpSjlav49AfKMrZqrDsFFuPpR4F5jHyRs+SwCAM+antswtLaaU6gKJMZQkLQnohB8EFd2Vxnss7JoE93RXTxyhrPEzBGh35i6/oLYNs2LyHnbG5X1cWXntCP8J6I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750961309; c=relaxed/simple;
-	bh=PtdDERpkoNM+2CqcYAzOv4kAOMFWZGUiBdK3c4DBFho=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=NOLq7wj+K44Xc/65TFT3Yo2Sd8OVnfBwzLR8n6AzR9Ty5ESGo/18Lfgn0ovEm5HXABtut7DZeL++bjuQvLkOlncotJBnYEh/yD3SwhNcMaM1q+X2j4i677jyD0fTaBt/pev43ZXkVkP/w6bgkljo4ytfT0tnVNrhaEOrNQ8Giog=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=RHzHK54Y; arc=none smtp.client-ip=198.175.65.17
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1750961308; x=1782497308;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=PtdDERpkoNM+2CqcYAzOv4kAOMFWZGUiBdK3c4DBFho=;
-  b=RHzHK54YpL9pBKwNSb7rsO2Ag9YrUlXSNCkeiUc23/nEDLq4sLhjqnjN
-   2hiyFck3GISIdKbRqtHPEAIYQqLuAtfFppPbTILanSg9/PKgd/mzNyeHd
-   GZFH2GbjOga4B774lj3Imhe8Nu/7yIqzxTKg5Ftap1iMsNQKfFvB6geFU
-   ZCYyNprJtMWeZ4GQdHZj88br+erNxUivGTOGxkWNL3KVneBzH1ANHCeG6
-   rHn04CTx9V7RNbIEwlExGx6/yHDt+i9z1fLR0bR6hUkT/YwjWAH8RXFVw
-   FusCUv9xfSBB3dQChIvE/ueZWpNJHQe+SyblOhE9eqOrUXIGtvwQRF12R
-   Q==;
-X-CSE-ConnectionGUID: H0SpQXIDReWqJ+orwdj3bA==
-X-CSE-MsgGUID: 63+RNJ1fSKqwqK9h3IfqsA==
-X-IronPort-AV: E=McAfee;i="6800,10657,11476"; a="53234609"
-X-IronPort-AV: E=Sophos;i="6.16,268,1744095600"; 
-   d="scan'208";a="53234609"
-Received: from fmviesa003.fm.intel.com ([10.60.135.143])
-  by orvoesa109.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 26 Jun 2025 11:08:27 -0700
-X-CSE-ConnectionGUID: xX3lA2rST1ajHc3zwyYJGA==
-X-CSE-MsgGUID: FY36xo+9TcKGaWkzDPBmKg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.16,268,1744095600"; 
-   d="scan'208";a="156616493"
-Received: from aschofie-mobl2.amr.corp.intel.com (HELO [10.125.109.44]) ([10.125.109.44])
-  by fmviesa003-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 26 Jun 2025 11:08:26 -0700
-Message-ID: <de53f740-c662-45d4-9e00-66e06937f4c6@intel.com>
-Date: Thu, 26 Jun 2025 11:08:25 -0700
+	s=arc-20240116; t=1750961748; c=relaxed/simple;
+	bh=AhhL2gmRuY3bgkIz7Ee8tcllJ7eztJMY82zcN8jbQpo=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=Oza1+4AqvJSMKns89tYq8L/c/7R3te5/WXmELEXniof4y7ioSuNAMGaLTtd6zBhxOYbYXYW33MhCHQXgU3U6B6OG6j4xWGUww+1uL7soEbsvoNBzfMVjnUYbmRaO4E3UXYdK1JSs0M+XkUUi8rcSR2mb33pI0xYlgCAm8QLD/jk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rjwysocki.net; spf=pass smtp.mailfrom=rjwysocki.net; dkim=pass (2048-bit key) header.d=rjwysocki.net header.i=@rjwysocki.net header.b=M3LQNQS0; arc=none smtp.client-ip=79.96.170.134
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rjwysocki.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rjwysocki.net
+Received: from kreacher.localnet (unknown [5.63.189.50])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by cloudserver094114.home.pl (Postfix) with ESMTPSA id EAF0C66E9A9;
+	Thu, 26 Jun 2025 20:15:43 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=rjwysocki.net;
+	s=dkim; t=1750961744;
+	bh=AhhL2gmRuY3bgkIz7Ee8tcllJ7eztJMY82zcN8jbQpo=;
+	h=From:Subject:Date;
+	b=M3LQNQS040EY8gwEZDQOVnWqDselx9If+KAl7xXbv14FkpZCQ7yBsaCsDf/lDEVOd
+	 82STbqZiAlT/oPxS0xbha9cfupOr9fSnGToSCdg239WjmMGXvDHCAHuXIMnO6KClzG
+	 mm/t6h5DhKZgEo/123EFEod6pbfV9+JKefvZda3UttgUdfsr5stu8sThBOfosuzD2K
+	 m6QXZL/k78uTt7MQNft/AkFfAYVHT2yoOTzIiG+evZP07vn/eD5ToJJ3PWCcp9ilzb
+	 JQI+21Nq2f6cZ3kkiuYp8mfTZBKbprU45hNk93AdVKH+18eJcl4oTO4xskb5J6ub5D
+	 QaxKaAZRvxQ/Q==
+From: "Rafael J. Wysocki" <rjw@rjwysocki.net>
+To: Linux PM <linux-pm@vger.kernel.org>
+Cc: LKML <linux-kernel@vger.kernel.org>,
+ Linux ACPI <linux-acpi@vger.kernel.org>,
+ Linux PCI <linux-pci@vger.kernel.org>, Ulf Hansson <ulf.hansson@linaro.org>,
+ Mika Westerberg <mika.westerberg@linux.intel.com>
+Subject:
+ [PATCH v2 7/9] PM: sleep: Add strict_midlayer flag to struct dev_pm_info
+Date: Thu, 26 Jun 2025 20:09:19 +0200
+Message-ID: <3311786.5fSG56mABF@rjwysocki.net>
+In-Reply-To: <5015172.GXAFRqVoOG@rjwysocki.net>
+References: <5015172.GXAFRqVoOG@rjwysocki.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [RFC PATCH v4 0/8] Intel RAR TLB invalidation
-To: Rik van Riel <riel@surriel.com>, linux-kernel@vger.kernel.org
-Cc: kernel-team@meta.com, dave.hansen@linux.intel.com, luto@kernel.org,
- peterz@infradead.org, bp@alien8.de, x86@kernel.org, nadav.amit@gmail.com,
- seanjc@google.com, tglx@linutronix.de, mingo@kernel.org
-References: <20250619200442.1694583-1-riel@surriel.com>
-Content-Language: en-US
-From: Dave Jiang <dave.jiang@intel.com>
-In-Reply-To: <20250619200442.1694583-1-riel@surriel.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="UTF-8"
+X-CLIENT-IP: 5.63.189.50
+X-CLIENT-HOSTNAME: 5.63.189.50
+X-VADE-SPAMSTATE: clean
+X-VADE-SPAMCAUSE: dmFkZTF716g97GLxl5r0PfOIWPAhDchnkSWDAqwBHc32sD+HpU8yKJB8xV8olL9lC0SzkWwWofqH3VgYdVRji5cIw9ZbUY7WKZiWjf3xKrF5n/kFXPdAEOzPBCDRv7/dwAHJIQ0XttMc6iSOqO8REJ6/sQbblDgpzZ3yfiPesShmkNx66bo1AYj8VcmdJw/BBHB050Zj303Yb/wm5mvAwXKjtlQwzCdkCdX+5402uydNZLICOp4E4D8MElAkMJkSAvvY8Q7l6VyWrFK73NizhJc5WdxP07GoEdKSjFDXh87nwem3gX8mTgRruroBzE94AJIHpV56uBgDMbkYtmhRhrGWknT+j/NtoaFRlOHuvfsGf6CS2qMl0YsF55MO4JvU11TjTu2RpDWD2KF6ryS6iCNEEtF2XumFUGFbnJkTWoxm0DiEFLhJ0L+HOcZNx04Fhb2dljDLJ3y5Hn1y5nTKvTrDBmdtCxRJn+1/3q3b6zEx6mGR0TXqNjHylPTFs00VZGXD7OgzcVjVnOj4MoujQaPjFL906kOXwKp2wmanJgyL4v1jAK+APHcX92hQj7+cbcQcvtTwX0rjs3wWBO+Yl5dEuGnyV2lzFjQLFixz/4SHCP4vFtHyZpjJ7yjK1OXiYNm9cxdDi8+dXcb90qZmuGMu0b+nyiypALUQHdxgK3zX2HtGMw
+X-DCC--Metrics: v370.home.net.pl 1024; Body=6 Fuz1=6 Fuz2=6
+
+From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+
+Add a new flag, called strict_midlayer, to struct dev_pm_info, along
+with a helper function for changing its value, to allow middle layer
+code that provides proper callbacks for device suspend/resume during
+system-wide PM transitions to let pm_runtime_force_suspend() and
+and pm_runtime_force_resume() know that they should only invoke runtime
+PM callbacks coming from the device's driver.
+
+Namely, if this flag is set, pm_runtime_force_suspend() and
+and pm_runtime_force_resume() will invoke runtime PM callbacks
+provided by the device's driver directly with the assumption that
+they have been called via a middle layer callback for device suspend
+or resume, respectively.
+
+For instance, acpi_general_pm_domain provides specific
+callback functions for system suspend, acpi_subsys_suspend(),
+acpi_subsys_suspend_late() and acpi_subsys_suspend_noirq(), and
+it does not expect its runtime suspend callback function,
+acpi_subsys_runtime_suspend(), to be invoked at any point during
+system suspend. In particular, it does not expect that function
+to be called from within any of the system suspend callback functions
+mentioned above which would happen if a device driver collaborating
+with acpi_general_pm_domain used pm_runtime_force_suspend() as its
+callback function for any system suspend phase later than "prepare".
+
+The new flag allows this expectation of acpi_general_pm_domain to
+be formally expressed, which is going to be done subsequently.
+
+Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+---
+
+v1 -> v2:
+   * Rename dev_pm_strict_midlayer() to dev_pm_set_strict_midlayer().
+   * Add dev_pm_strict_midlayer_is_set() and use it in get_callback()
+     because pm_runtime_force_suspend() can be used in driver remove
+     callbacks and so it needs to work with CONFIG_PM_SLEEP unset.
+
+---
+ drivers/base/power/runtime.c |   21 +++++++++++++++++++--
+ include/linux/device.h       |   16 ++++++++++++++++
+ include/linux/pm.h           |    1 +
+ 3 files changed, 36 insertions(+), 2 deletions(-)
+
+--- a/drivers/base/power/runtime.c
++++ b/drivers/base/power/runtime.c
+@@ -1958,6 +1958,23 @@
+ 	pm_request_idle(link->supplier);
+ }
+ 
++static pm_callback_t get_callback(struct device *dev, size_t cb_offset)
++{
++	/*
++	 * Setting power.strict_midlayer means that the middle layer
++	 * code does not want its runtime PM callbacks to be invoked via
++	 * pm_runtime_force_suspend() and pm_runtime_force_resume(), so
++	 * return a direct pointer to the driver callback in that case.
++	 */
++	if (dev_pm_strict_midlayer_is_set(dev))
++		return __rpm_get_driver_callback(dev, cb_offset);
++
++	return __rpm_get_callback(dev, cb_offset);
++}
++
++#define GET_CALLBACK(dev, callback) \
++		get_callback(dev, offsetof(struct dev_pm_ops, callback))
++
+ /**
+  * pm_runtime_force_suspend - Force a device into suspend state if needed.
+  * @dev: Device to suspend.
+@@ -1984,7 +2001,7 @@
+ 	if (pm_runtime_status_suspended(dev) || dev->power.needs_force_resume)
+ 		return 0;
+ 
+-	callback = RPM_GET_CALLBACK(dev, runtime_suspend);
++	callback = GET_CALLBACK(dev, runtime_suspend);
+ 
+ 	dev_pm_enable_wake_irq_check(dev, true);
+ 	ret = callback ? callback(dev) : 0;
+@@ -2046,7 +2063,7 @@
+ 	    pm_runtime_status_suspended(dev)))
+ 		goto out;
+ 
+-	callback = RPM_GET_CALLBACK(dev, runtime_resume);
++	callback = GET_CALLBACK(dev, runtime_resume);
+ 
+ 	dev_pm_disable_wake_irq_check(dev, false);
+ 	ret = callback ? callback(dev) : 0;
+--- a/include/linux/device.h
++++ b/include/linux/device.h
+@@ -879,6 +879,22 @@
+ #endif
+ }
+ 
++static inline void dev_pm_set_strict_midlayer(struct device *dev, bool val)
++{
++#ifdef CONFIG_PM_SLEEP
++	dev->power.strict_midlayer = val;
++#endif
++}
++
++static inline bool dev_pm_strict_midlayer_is_set(struct device *dev)
++{
++#ifdef CONFIG_PM_SLEEP
++	return dev->power.strict_midlayer;
++#else
++	return false;
++#endif
++}
++
+ static inline void device_lock(struct device *dev)
+ {
+ 	mutex_lock(&dev->mutex);
+--- a/include/linux/pm.h
++++ b/include/linux/pm.h
+@@ -683,6 +683,7 @@
+ 	bool			smart_suspend:1;	/* Owned by the PM core */
+ 	bool			must_resume:1;		/* Owned by the PM core */
+ 	bool			may_skip_resume:1;	/* Set by subsystems */
++	bool			strict_midlayer:1;
+ #else
+ 	bool			should_wakeup:1;
+ #endif
 
 
-
-On 6/19/25 1:03 PM, Rik van Riel wrote:
-> This patch series adds support for IPI-less TLB invalidation
-> using Intel RAR technology.
-> 
-> Intel RAR differs from AMD INVLPGB in a few ways:
-> - RAR goes through (emulated?) APIC writes, not instructions
-> - RAR flushes go through a memory table with 64 entries
-> - RAR flushes can be targeted to a cpumask
-> - The RAR functionality must be set up at boot time before it can be used
-> 
-> The cpumask targeting has resulted in Intel RAR and AMD INVLPGB having
-> slightly different rules:
-> - Processes with dynamic ASIDs use IPI based shootdowns
-> - INVLPGB: processes with a global ASID 
->    - always have the TLB up to date, on every CPU
->    - never need to flush the TLB at context switch time
-> - RAR: processes with global ASIDs
->    - have the TLB up to date on CPUs in the mm_cpumask
->    - can skip a TLB flush at context switch time if the CPU is in the mm_cpumask
->    - need to flush the TLB when scheduled on a cpu not in the mm_cpumask,
->      in case it used to run there before and the TLB has stale entries
-> 
-> RAR functionality is present on Sapphire Rapids and newer CPUs.
-> 
-> Information about Intel RAR can be found in this whitepaper.
-> 
-> https://www.intel.com/content/dam/develop/external/us/en/documents/341431-remote-action-request-white-paper.pdf
-> 
-> This patch series is based off a 2019 patch series created by
-> Intel, with patches later in the series modified to fit into
-> the TLB flush code structure we have after AMD INVLPGB functionality
-> was integrated.
-> 
-> TODO:
-> - some sort of optimization to avoid sending RARs to CPUs in deeper
->   idle states when they have init_mm loaded (flush when switching to init_mm?)
-> 
-> v4:
-> - remove chicken/egg problem that made it impossible to use RAR early
->   in bootup, now RAR can be used to flush the local TLB (but it's broken?)
-> - always flush other CPUs with RAR, no more periodic flush_tlb_func
-> - separate, simplified cpumask trimming code
-> - attempt to use RAR to flush the local TLB, which should work
->   according to the documentation
-> - add a DEBUG patch to flush the local TLB with RAR and again locally,
->   may need some help from Intel to figure out why this makes a difference
-> - memory dumps of rar_payload[] suggest we are sending valid RARs
-> - receiving CPUs set the status from RAR_PENDING to RAR_SUCCESS
-> - unclear whether the TLB is actually flushed correctly :(
-
-Hi Rik,
-Dave Hansen has asked me to reproduce this locally. Trying to replicate your test setup. What are the steps you are using to do testing of this patch series? Thanks!
-
-DJ
-
-> v3:
-> - move cpa_flush() change out of this patch series
-> - use MSR_IA32_CORE_CAPS definition, merge first two patches together
-> - move RAR initialization to early_init_intel()
-> - remove single-CPU "fast path" from smp_call_rar_many
-> - remove smp call table RAR entries, just do a direct call
-> - cleanups suggested (Ingo, Nadav, Dave, Thomas, Borislav, Sean)
-> - fix !CONFIG_SMP compile in Kconfig
-> - match RAR definitions to the names & numbers in the documentation
-> - the code seems to work now
-> v2:
-> - Cleanups suggested by Ingo and Nadav (thank you)
-> - Basic RAR code seems to actually work now.
-> - Kernel TLB flushes with RAR seem to work correctly.
-> - User TLB flushes with RAR are still broken, with two symptoms:
->   - The !is_lazy WARN_ON in leave_mm() is tripped
->   - Random segfaults.
-> 
 
 
