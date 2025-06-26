@@ -1,157 +1,234 @@
-Return-Path: <linux-kernel+bounces-705067-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-705069-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id F1CEEAEA4CB
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Jun 2025 19:57:48 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B372DAEA4CF
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Jun 2025 19:59:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6BF681C23A95
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Jun 2025 17:58:04 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DD538173B2F
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Jun 2025 17:59:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0B41C2ED164;
-	Thu, 26 Jun 2025 17:57:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2BA252ED14F;
+	Thu, 26 Jun 2025 17:59:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="lN52fw08"
-Received: from mail-wm1-f46.google.com (mail-wm1-f46.google.com [209.85.128.46])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=zytor.com header.i=@zytor.com header.b="AOTYz6Mf"
+Received: from mail.zytor.com (terminus.zytor.com [198.137.202.136])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CF6C24A33;
-	Thu, 26 Jun 2025 17:57:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CF32513A86C;
+	Thu, 26 Jun 2025 17:59:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.136
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750960658; cv=none; b=GzZdpuurolmTMCafaqY2VFX1tp/kiYx5EZT4Tfel/2gGFmk1yyzWAMdOSzgYUukL3lyYo3DRcGIR4cAbxxv3RylH57XEi8F5mVhYz0fOZGCNSC3U2M7D7NshazhllwkGkzozoTsmLZMiP0OAGNORJLC+BZtKJ9Y5IwWT7AnVysc=
+	t=1750960743; cv=none; b=CO9GYnFEaW9kyn1OU542NOoyZ7yv4ixBuzT5t0xvWXJA+IsBTykPw5o+ow/OhPDUwFobHSzlQlNJWo9snxedu8UK4UkHSRY/4IojtoEoAxgZymYEhklIblmeeQ03JU7WhbEA+U65FD3L4+i30Gq5HEl39vLVAfJREullWLLjyRA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750960658; c=relaxed/simple;
-	bh=nAsTYlNlsKoQoRIBxmtqCsE8i3UtjyaiMo3nR3fH1kY=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=nrKx5qcsYtIsCCx+xmRfi0XOkZhE4TTMQylIXzUsDgAns0hw/g5SLrwmGYyAPbWwFU7ul5aBjHItqcKvkBrDjegHP4rr5A81zLH9SIIFzXDSHnSbVSCp7Vlq+pOD94pc9y0dvH0bw4M9B7M3FgxAz3fIAusIE+OuOLAZnc4wDTI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=lN52fw08; arc=none smtp.client-ip=209.85.128.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f46.google.com with SMTP id 5b1f17b1804b1-453398e90e9so9327865e9.1;
-        Thu, 26 Jun 2025 10:57:36 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1750960655; x=1751565455; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:sender:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=A/JMMKJYJJnaalmSUe6TK9/m1Tf4VynpgQ2NjLenDxQ=;
-        b=lN52fw08dhj42h8qKvJO91vxnJSTy0RnXJryfL1HI7iUtaxoYSP1lHCicWxlIQgrf2
-         q9fBXt0uPY8SoM9QxSsg790hgNtt1mAjCw5Di6Y/wD6ikpTGk2lyNxiQk43CzIR5UpX1
-         EJ+bY+q2m5Oh+lRB32viB7d7h8sD3hZIJS2+cIbBfBL5CdHBTwBs2e9RuxvATFZHSEEU
-         ivxugxXEoC6D0cbbuozfqJNuguz4udgYuVvw/F54wbpRDXhdA2ZB++B2jQwU5WONrIdQ
-         JW/7hhndmqMZUd1VRS9Pr0ZMeyLzQsjUxNDPyjj2ivre5ZXb+ZPH9cthJkdpL+bU/lLK
-         kJDA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1750960655; x=1751565455;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:sender:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=A/JMMKJYJJnaalmSUe6TK9/m1Tf4VynpgQ2NjLenDxQ=;
-        b=UTGv5FaAJNByQTxJoAZrZB8v8S1C37W40D3Qg7A6WycrkYCMDuufQZpXqbdpnF2Jw5
-         SBenm/rlFnq+RYwc/RypKzvKjIoyPgPOcdatIZl3VcSuPwIJrtPg0N99SSpFe22ZcufJ
-         gwoNJYX5LMGtYfS2V1qydzqDhg3S5jcOwXOnTbAWUeEpGGHluU6sJ7wIWHVQXvbQPzbP
-         Zfu+MvLXDM3n+vpKydysnowWjcdwS0JgnFguUbOig0p42RWuIz14sOHLMcYqtF7x+if4
-         YlgtkJJI9BwM7zkBYekPABwxnkW7JQxq2ggW4HkD5Z16J63VHKOb6mtPz7G7c0NKAThX
-         /O5Q==
-X-Forwarded-Encrypted: i=1; AJvYcCV+PyblhOoknqoo0xa/S9qCeaTHnz8HszKlT9f3Yk+7fIxw4/fUYFZ0o50Ll5k1AQN4p/5xC0hbN8BhebOce/Q=@vger.kernel.org, AJvYcCXDaI2T7fBgoHgw4M9ooeaBX11IsCT25DSqgr4q8dXZliQjmsGjK7COqCptwulG3ubF3DqKpfh2sIeyfByS@vger.kernel.org, AJvYcCXv+dy//4K7pp4Vy1OW3teOz/T1sPimDMKeJLuE3dxx1lk/tb5QNpPAKKqVPgnl+p887InQeoTd8/g=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy6pa4DW2ygoTvDReGMEgoRBA+Ja+2htyweSrEBDmqW0Jiu3PSG
-	sPHVDtcoZVHK7JHUgCXnWAY/ZNy4kMLDJLEw78QmFlCCuRB8gYWNafa1
-X-Gm-Gg: ASbGnctnatFmZ3KXY+5J0T0Sij6amEJPvwQqNlXuwPXp72MMARrNGhxMojNs1lbI1hs
-	f/t9LT9Nufri5mmHxqm55R08HTi7ZsfDS3VJfCe0/um6ZEsYMTqp4Nhm6LKsWSUVwYYrwqolsps
-	QvDG2po2scqcUnaEiUd67Zh2sejngGbBD/pw907nEvxhA82a3jWbzqMjy6eIfmx4ftUK6zwNFB4
-	c8kNvelvCcHsj9898djK0jN43bBViTUk6+AsrkOlWahre6b4sQJqa4Q/G9VuuBdo6vmUYDt51n5
-	DR/bNaocMsSKL35CAxsnj+9arZp2apy6IlmgEUMp8Htqu01OkOFeSIk4GyHhGJ/LbljQa2+9j1E
-	aEajiUkF86+3MASBeEWum1g0IiC53vhvh+0/TiqP5QguzbxU=
-X-Google-Smtp-Source: AGHT+IF+L5+lFftiKxjMEYMZ+2kfG8sBKVLw/AlWLt7CRtqKdtY0gU2Rq1RqhRFd2kLjCo44YjAIlg==
-X-Received: by 2002:a05:600c:6745:b0:43c:f513:9591 with SMTP id 5b1f17b1804b1-4538ee41d76mr2736045e9.14.1750960654976;
-        Thu, 26 Jun 2025 10:57:34 -0700 (PDT)
-Received: from igor-korotin-Precision-Tower-3620.airspan.com ([188.39.32.4])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-453823ba553sm55198365e9.31.2025.06.26.10.57.33
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 26 Jun 2025 10:57:34 -0700 (PDT)
-Sender: Igor Korotin <igorkor.3vium@gmail.com>
-From: Igor Korotin <igor.korotin.linux@gmail.com>
-To: Miguel Ojeda <ojeda@kernel.org>,
-	Alex Gaynor <alex.gaynor@gmail.com>,
-	Wolfram Sang <wsa+renesas@sang-engineering.com>
-Cc: Boqun Feng <boqun.feng@gmail.com>,
-	Gary Guo <gary@garyguo.net>,
-	=?UTF-8?q?Bj=C3=B6rn=20Roy=20Baron?= <bjorn3_gh@protonmail.com>,
-	Benno Lossin <lossin@kernel.org>,
-	Andreas Hindborg <a.hindborg@kernel.org>,
-	Alice Ryhl <aliceryhl@google.com>,
-	Trevor Gross <tmgross@umich.edu>,
-	Danilo Krummrich <dakr@kernel.org>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Viresh Kumar <viresh.kumar@linaro.org>,
-	Asahi Lina <lina+kernel@asahilina.net>,
-	Wedson Almeida Filho <wedsonaf@gmail.com>,
-	Alex Hung <alex.hung@amd.com>,
-	Tamir Duberstein <tamird@gmail.com>,
-	Xiangfei Ding <dingxiangfei2009@gmail.com>,
-	linux-kernel@vger.kernel.org,
-	rust-for-linux@vger.kernel.org,
-	linux-i2c@vger.kernel.org
-Subject: [PATCH v1 4/4] samples: rust: show ACPI ID-table in I2C sample driver
-Date: Thu, 26 Jun 2025 18:55:32 +0100
-Message-ID: <20250626175532.909732-1-igor.korotin.linux@gmail.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20250626174623.904917-1-igor.korotin.linux@gmail.com>
-References: <20250626174623.904917-1-igor.korotin.linux@gmail.com>
+	s=arc-20240116; t=1750960743; c=relaxed/simple;
+	bh=fCZz9Gt4SX1+H+Ie5jTqf8LW9SqmaBzQSsdnhByCvlM=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=GYX3UYNhrMN+IHo2tIUTHqtGRqLEoszvQP4UfYTNRWIG9HRGn/RxDh4Zk+2ZfndHa5/la8DUQkOD0OCodbLBSAYMtvXZ1vesMnC6rXMPKUOdoBlcbYUyBGFttGciY7YZNOV+7ixLQ7VEoD1py5IFiIpptxxiR0EzCIdNc/bMblo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zytor.com; spf=pass smtp.mailfrom=zytor.com; dkim=pass (2048-bit key) header.d=zytor.com header.i=@zytor.com header.b=AOTYz6Mf; arc=none smtp.client-ip=198.137.202.136
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zytor.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zytor.com
+Received: from [192.168.7.202] ([71.202.166.45])
+	(authenticated bits=0)
+	by mail.zytor.com (8.18.1/8.17.1) with ESMTPSA id 55QHvmvU2307866
+	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NO);
+	Thu, 26 Jun 2025 10:57:49 -0700
+DKIM-Filter: OpenDKIM Filter v2.11.0 mail.zytor.com 55QHvmvU2307866
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zytor.com;
+	s=2025062101; t=1750960675;
+	bh=BMeNFTdjV+yNnMcij/TqO/5U2NmxhXLfNUC6LvsGyIw=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=AOTYz6MfWghBzEoibmGfI7laRAlY7menpK8b7jO9lWYFXBby2etwb289pFF7tim7h
+	 3LqeGLIL9v49XFI5vok9c5IgkoDwAFSouUThYZwimemKnrGLlC5OeISJV7kJUHwpR3
+	 nX52rDXhaBlpxT7lCF283gGvA2cSJxr0cjnBmV6Ozo+iLCYkWH6Bj6iHGHmowvk6WN
+	 yVCipOn7tepFsUc9/2v0Qr7EC8Wa9sQzOavAUqXMCKvi0APWm4y6LeimQPUOYC+bE/
+	 x2NdCGle2s14Uyfmxn8sjvyYYRIGO3oVryMa/oP0nF9q0fHHDOLqNmGwN3NNw7OuNR
+	 Wo5k6NyEjVuHA==
+Message-ID: <c704ea9a-8c73-46c2-80d1-f7b93a221908@zytor.com>
+Date: Thu, 26 Jun 2025 10:57:47 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCHv7 13/16] x86/traps: Handle LASS thrown #SS
+To: "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
+        Andy Lutomirski <luto@kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
+        Borislav Petkov <bp@alien8.de>,
+        Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Ard Biesheuvel <ardb@kernel.org>,
+        "Paul E. McKenney" <paulmck@kernel.org>,
+        Josh Poimboeuf <jpoimboe@kernel.org>,
+        Xiongwei Song <xiongwei.song@windriver.com>,
+        Xin Li <xin3.li@intel.com>, "Mike Rapoport (IBM)" <rppt@kernel.org>,
+        Brijesh Singh <brijesh.singh@amd.com>,
+        Michael Roth <michael.roth@amd.com>, Tony Luck <tony.luck@intel.com>,
+        Alexey Kardashevskiy <aik@amd.com>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>
+Cc: Jonathan Corbet <corbet@lwn.net>, Sohil Mehta <sohil.mehta@intel.com>,
+        Ingo Molnar <mingo@kernel.org>,
+        Pawan Gupta <pawan.kumar.gupta@linux.intel.com>,
+        Daniel Sneddon <daniel.sneddon@linux.intel.com>,
+        Kai Huang <kai.huang@intel.com>, Sandipan Das <sandipan.das@amd.com>,
+        Breno Leitao <leitao@debian.org>,
+        Rick Edgecombe
+ <rick.p.edgecombe@intel.com>,
+        Alexei Starovoitov <ast@kernel.org>, Hou Tao <houtao1@huawei.com>,
+        Juergen Gross <jgross@suse.com>,
+        Vegard Nossum <vegard.nossum@oracle.com>, Kees Cook <kees@kernel.org>,
+        Eric Biggers <ebiggers@google.com>, Jason Gunthorpe <jgg@ziepe.ca>,
+        "Masami Hiramatsu (Google)" <mhiramat@kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Luis Chamberlain <mcgrof@kernel.org>, Yuntao Wang <ytcoode@gmail.com>,
+        Rasmus Villemoes <linux@rasmusvillemoes.dk>,
+        Christophe Leroy <christophe.leroy@csgroup.eu>,
+        Tejun Heo <tj@kernel.org>, Changbin Du <changbin.du@huawei.com>,
+        Huang Shijie <shijie@os.amperecomputing.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Namhyung Kim <namhyung@kernel.org>,
+        Arnaldo Carvalho de Melo <acme@redhat.com>, linux-doc@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-efi@vger.kernel.org,
+        linux-mm@kvack.org
+References: <20250625125112.3943745-1-kirill.shutemov@linux.intel.com>
+ <20250625125112.3943745-15-kirill.shutemov@linux.intel.com>
+Content-Language: en-US
+From: Xin Li <xin@zytor.com>
+Autocrypt: addr=xin@zytor.com; keydata=
+ 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
+ l75w1xInsg==
+In-Reply-To: <20250625125112.3943745-15-kirill.shutemov@linux.intel.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-Add an `acpi_device_table!` example and set
-`SampleDriver::ACPI_ID_TABLE` to demonstrate ACPI usage.
+On 6/25/2025 5:51 AM, Kirill A. Shutemov wrote:
+> LASS throws a #GP for any violations except for stack register accesses,
+> in which case it throws a #SS instead. Handle this similarly to how other
+> LASS violations are handled.
+> 
+> In case of FRED, before handling #SS as LASS violation, kernel has to
+> check if there's a fixup for the exception. It can address #SS due to
+> invalid user context on ERETU[1]. See 5105e7687ad3 ("x86/fred: Fixup
 
-Depends-on: <20250620152425.285683-1-igor.korotin.linux@gmail.com>
-Signed-off-by: Igor Korotin <igor.korotin.linux@gmail.com>
----
- samples/rust/rust_driver_i2c.rs | 10 +++++++++-
- 1 file changed, 9 insertions(+), 1 deletion(-)
+Forgot to put the link to [1]?  Maybe just remove "[1]"?
 
-diff --git a/samples/rust/rust_driver_i2c.rs b/samples/rust/rust_driver_i2c.rs
-index 7c5def930fe0..98bda18fd098 100644
---- a/samples/rust/rust_driver_i2c.rs
-+++ b/samples/rust/rust_driver_i2c.rs
-@@ -2,12 +2,19 @@
- 
- //! Rust I2C driver sample.
- 
--use kernel::{c_str, device::Core, i2c, of, prelude::*, types::ARef};
-+use kernel::{acpi, c_str, device::Core, i2c, of, prelude::*, types::ARef};
- 
- struct SampleDriver {
-     pdev: ARef<i2c::Device>,
- }
- 
-+kernel::acpi_device_table! {
-+    ACPI_TABLE,
-+    MODULE_ACPI_TABLE,
-+    <SampleDriver as i2c::Driver>::IdInfo,
-+    [(acpi::DeviceId::new(b"TST0001"), 0)]
-+}
-+
- kernel::i2c_device_table! {
-     I2C_TABLE,
-     MODULE_I2C_TABLE,
-@@ -25,6 +32,7 @@ struct SampleDriver {
- impl i2c::Driver for SampleDriver {
-     type IdInfo = u32;
- 
-+    const ACPI_ID_TABLE: Option<acpi::IdTable<Self::IdInfo>> = Some(&ACPI_TABLE);
-     const I2C_ID_TABLE: Option<i2c::IdTable<Self::IdInfo>> = Some(&I2C_TABLE);
-     const OF_ID_TABLE: Option<of::IdTable<Self::IdInfo>> = Some(&OF_TABLE);
- 
--- 
-2.43.0
+> fault on ERETU by jumping to fred_entrypoint_user") for more details.
+> 
+> Co-developed-by: Alexander Shishkin <alexander.shishkin@linux.intel.com>
+> Signed-off-by: Alexander Shishkin <alexander.shishkin@linux.intel.com>
+> Signed-off-by: Kirill A. Shutemov <kirill.shutemov@linux.intel.com>
+> ---
+>   arch/x86/kernel/traps.c | 39 +++++++++++++++++++++++++++++++++------
+>   1 file changed, 33 insertions(+), 6 deletions(-)
+> 
+> diff --git a/arch/x86/kernel/traps.c b/arch/x86/kernel/traps.c
+> index e2ad760b17ea..f1f92e1ba524 100644
+> --- a/arch/x86/kernel/traps.c
+> +++ b/arch/x86/kernel/traps.c
+> @@ -418,12 +418,6 @@ DEFINE_IDTENTRY_ERRORCODE(exc_segment_not_present)
+>   		      SIGBUS, 0, NULL);
+>   }
+>   
+> -DEFINE_IDTENTRY_ERRORCODE(exc_stack_segment)
+> -{
+> -	do_error_trap(regs, error_code, "stack segment", X86_TRAP_SS, SIGBUS,
+> -		      0, NULL);
+> -}
+> -
+>   DEFINE_IDTENTRY_ERRORCODE(exc_alignment_check)
+>   {
+>   	char *str = "alignment check";
+> @@ -866,6 +860,39 @@ DEFINE_IDTENTRY_ERRORCODE(exc_general_protection)
+>   	cond_local_irq_disable(regs);
+>   }
+>   
+> +#define SSFSTR "stack segment fault"
+> +
+> +DEFINE_IDTENTRY_ERRORCODE(exc_stack_segment)
+> +{
+> +	if (user_mode(regs))
+> +		goto error_trap;
+> +
+> +	if (cpu_feature_enabled(X86_FEATURE_FRED) &&
+> +	    fixup_exception(regs, X86_TRAP_SS, error_code, 0))
+> +		return;
+> +
 
+Thanks for making the change for FRED.
+
+> +	if (cpu_feature_enabled(X86_FEATURE_LASS)) {
+> +		enum kernel_gp_hint hint;
+> +		unsigned long gp_addr;
+> +
+> +		hint = get_kernel_gp_address(regs, &gp_addr);
+> +		if (hint != GP_NO_HINT) {
+> +			printk(SSFSTR ", %s 0x%lx", kernel_gp_hint_help[hint],
+> +			       gp_addr);
+> +		}
+> +
+> +		if (hint != GP_NON_CANONICAL)
+> +			gp_addr = 0;
+
+Nit: GP/gp don't seem fit here, maybe we need a more generic name?
+
+Sorry I don't have a recommendation.
+
+> +
+> +		die_addr(SSFSTR, regs, error_code, gp_addr);
+> +		return;
+> +	}
+> +
+> +error_trap:
+> +	do_error_trap(regs, error_code, "stack segment", X86_TRAP_SS, SIGBUS,
+> +		0, NULL);
+
+The indentation has changed; I believe the original formatting is
+preferable.
+
+> +}
+> +
+>   static bool do_int3(struct pt_regs *regs)
+>   {
+>   	int res;
+
+Just minor comments, so
+
+Reviewed-by: Xin Li (Intel) <xin@zytor.com>
 
