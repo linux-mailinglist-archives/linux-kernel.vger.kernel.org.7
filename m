@@ -1,85 +1,171 @@
-Return-Path: <linux-kernel+bounces-705488-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-705491-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 20FA4AEAA0F
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Jun 2025 00:51:27 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 61908AEAA1D
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Jun 2025 00:53:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4B1F8174A7A
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Jun 2025 22:51:27 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E7CE71C247F8
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Jun 2025 22:52:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5CA0222173C;
-	Thu, 26 Jun 2025 22:51:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="UpFxX38W"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F16772206AF;
+	Thu, 26 Jun 2025 22:52:18 +0000 (UTC)
+Received: from neil.brown.name (neil.brown.name [103.29.64.221])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BB4BC15990C;
-	Thu, 26 Jun 2025 22:51:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F1F101FC0F0;
+	Thu, 26 Jun 2025 22:52:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.29.64.221
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750978277; cv=none; b=bfiVUj0WXq6mFZEA9w7UtcoJPHsA1XOrISRf4THJeqIaNtEeulN0QVAPUOxhnLxhQ5XNJXER3IuHwubCeck39yii1l6OUxSIppjZC0/MAT9ct2b0U+hjLT+qpyyQnA/JYZNC+iF+NNJnHdt9hrqyv8njeaQ4lTwb98++x1ceRh4=
+	t=1750978338; cv=none; b=ebhwKnTWbzTtwGwKxr6MVWFdivWGKnRsbarclzV2o1sZHtNhumfnFWBxxWNybwagteu1RiWe5KfPZ1kXJcObV0JtFymbXdc0YuArJgxiQPnheW3mQ2+fZYO7DEHy8OdMt2Fmoh7c2t9gjLo65Cz9tBXmDi+YZi23fqs4F0T2jLE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750978277; c=relaxed/simple;
-	bh=7lR4jrwIVKNUIl4wWbH0nomW/DQAgMzUvo+9Vdj2R2Y=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=P6kwTpYH+MeNXnFaf6V6uUVAeM5s9KojG3x+sb6NhJ8eqpcLUjMs8mWqjkCkh4+5hHOcyhb5yf2sCfo1JFFJF70iepypZRaMxhqaX3BuNM/YpsPlPrZr8GazhtfZWKUExa5NZvCQW4bZ042VD8+yFtRGmUksOXzNEhoUspxbmVQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=UpFxX38W; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5BB58C4CEEB;
-	Thu, 26 Jun 2025 22:51:17 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1750978277;
-	bh=7lR4jrwIVKNUIl4wWbH0nomW/DQAgMzUvo+9Vdj2R2Y=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
-	b=UpFxX38W4zFQgKL2MfAUPom5KZKt8zogSlKQQN3744fiUdldagEePz3rGopxM5Hdb
-	 600jnUygl3vwtH562k876cJSC0bsYqYu6+UVihWiGdjFpadtjmen0K2TLAWXslKBtQ
-	 o7miv04uugQnfuhC2AIL4L8wv6m2XMhUidvpbRmm3dEdhv3EJSb1EVNoCKtcWCbWSj
-	 A5fUv7fyh2jsJEa3BPdkQ64H/D60FlJW1FKkv9KDgfUz5hKu8UbgsRs0GfWm9QQ1NQ
-	 Vg+gL5RXS+wVyA+ODMzOyRxw5YRwconIZEzoCI2EUugnpIlMfsarDy4erR2bMSkxVC
-	 e0W5UhYucyMeQ==
-From: Vinod Koul <vkoul@kernel.org>
-To: yung-chuan.liao@linux.intel.com, pierre-louis.bossart@linux.dev, 
- sanyog.r.kale@intel.com, Rodrigo Gobbi <rodrigo.gobbi.7@gmail.com>
-Cc: ~lkcamp/patches@lists.sr.ht, linux-sound@vger.kernel.org, 
- linux-kernel@vger.kernel.org
-In-Reply-To: <20250626213628.9575-1-rodrigo.gobbi.7@gmail.com>
-References: <20250626213628.9575-1-rodrigo.gobbi.7@gmail.com>
-Subject: Re: [PATCH v3] soundwire: debugfs: move debug statement outside of
- error handling
-Message-Id: <175097827732.85045.8539937079296009855.b4-ty@kernel.org>
-Date: Thu, 26 Jun 2025 15:51:17 -0700
+	s=arc-20240116; t=1750978338; c=relaxed/simple;
+	bh=b8e3eSlYm0Iki0C04qxFWFSGgpEYimw2Aeh8yUtp/sc=;
+	h=Content-Type:MIME-Version:From:To:Cc:Subject:In-reply-to:
+	 References:Date:Message-id; b=hSeljsAUpwBopLb3uGhjCZ+cUCi+kkFKVP6keWhgZxPFkT7LE02NaBeaUr+KW95EMlBh/QOLuBIR++zouPUT2GqduwngCO5HRYK/pw+g9jb6Ab/JtQiYE7R+mLqRA15DUdLjf8IzztClvZCoRKsik0GVVCrDoDhMluIrbJbVR4o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=brown.name; spf=pass smtp.mailfrom=neil.brown.name; arc=none smtp.client-ip=103.29.64.221
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=brown.name
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=neil.brown.name
+Received: from 196.186.233.220.static.exetel.com.au ([220.233.186.196] helo=home.neil.brown.name)
+	by neil.brown.name with esmtp (Exim 4.95)
+	(envelope-from <mr@neil.brown.name>)
+	id 1uUvRO-006HqN-Es;
+	Thu, 26 Jun 2025 22:51:34 +0000
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Mailer: b4 0.13.0
+From: "NeilBrown" <neil@brown.name>
+To: "Song Liu" <songliubraving@meta.com>
+Cc: "Tingmao Wang" <m@maowtm.org>,
+ =?utf-8?q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>,
+ "Song Liu" <song@kernel.org>, "bpf@vger.kernel.org" <bpf@vger.kernel.org>,
+ "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
+ "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+ "linux-security-module@vger.kernel.org"
+ <linux-security-module@vger.kernel.org>,
+ "brauner@kernel.org" <brauner@kernel.org>,
+ "Kernel Team" <kernel-team@meta.com>, "andrii@kernel.org" <andrii@kernel.org>,
+ "eddyz87@gmail.com" <eddyz87@gmail.com>, "ast@kernel.org" <ast@kernel.org>,
+ "daniel@iogearbox.net" <daniel@iogearbox.net>,
+ "martin.lau@linux.dev" <martin.lau@linux.dev>,
+ "viro@zeniv.linux.org.uk" <viro@zeniv.linux.org.uk>,
+ "jack@suse.cz" <jack@suse.cz>, "kpsingh@kernel.org" <kpsingh@kernel.org>,
+ "mattbobrowski@google.com" <mattbobrowski@google.com>,
+ =?utf-8?q?G=C3=BCnther?= Noack <gnoack@google.com>
+Subject: Re: [PATCH v5 bpf-next 0/5] bpf path iterator
+In-reply-to: <127D7BC6-1643-403B-B019-D442A89BADAB@meta.com>
+References: <>, <127D7BC6-1643-403B-B019-D442A89BADAB@meta.com>
+Date: Fri, 27 Jun 2025 08:51:21 +1000
+Message-id: <175097828167.2280845.5635569182786599451@noble.neil.brown.name>
 
-
-On Thu, 26 Jun 2025 18:33:14 -0300, Rodrigo Gobbi wrote:
-> The start_t and finish_t variables are not properly initialized
-> if errors happens over request_firmware actions.
-> This was also detected by smatch:
+On Fri, 27 Jun 2025, Song Liu wrote:
 > 
-> drivers/soundwire/debugfs.c:301 cmd_go() error: uninitialized symbol 'finish_t'.
-> drivers/soundwire/debugfs.c:301 cmd_go() error: uninitialized symbol 'start_t'.
+> 
+> > On Jun 26, 2025, at 3:22 AM, NeilBrown <neil@brown.name> wrote:
 > 
 > [...]
+> 
+> >> I guess I misunderstood the proposal of vfs_walk_ancestors() 
+> >> initially, so some clarification:
+> >> 
+> >> I think vfs_walk_ancestors() is good for the rcu-walk, and some 
+> >> rcu-then-ref-walk. However, I don’t think it fits all use cases. 
+> >> A reliable step-by-step ref-walk, like this set, works well with 
+> >> BPF, and we want to keep it.
+> > 
+> > The distinction between rcu-walk and ref-walk is an internal
+> > implementation detail.  You as a caller shouldn't need to think about
+> > the difference.  You just want to walk.  Note that LOOKUP_RCU is
+> > documented in namei.h as "semi-internal".  The only uses outside of
+> > core-VFS code is in individual filesystem's d_revalidate handler - they
+> > are checking if they are allowed to sleep or not.  You should never
+> > expect to pass LOOKUP_RCU to an VFS API - no other code does.
+> > 
+> > It might be reasonable for you as a caller to have some control over
+> > whether the call can sleep or not.  LOOKUP_CACHED is a bit like that.
+> > But for dotdot lookup the code will never sleep - so that is not
+> > relevant.
+> 
+> Unfortunately, the BPF use case is more complicated. In some cases, 
+> the callback function cannot be call in rcu critical sections. For 
+> example, the callback may need to read xatter. For these cases, we
+> we cannot use RCU walk at all. 
 
-Applied, thanks!
+I really think you should stop using the terms RCU walk and ref-walk.  I
+think they might be focusing your thinking in an unhelpful direction.
 
-[1/1] soundwire: debugfs: move debug statement outside of error handling
-      commit: 06f77ff9d852c9f2764659ea81489364d8a69a9c
+The key issue about reading xattrs is that it might need to sleep.
+Focusing on what might need to sleep and what will never need to sleep
+is a useful approach - the distinction is wide spread in the kernel and
+several function take a flag indicating if they are permitted to sleep,
+or if failure when sleeping would be required.
 
-Best regards,
--- 
-~Vinod
+So your above observation is better described as 
 
+   The vfs_walk_ancestors() API has an (implicit) requirement that the
+   callback mustn't sleep.  This is a problem for some use-cases
+   where the call back might need to sleep - e.g. for accessing xattrs.
+
+That is a good and useful observation.  I can see three possibly
+responses:
+
+1/ Add a vfs_walk_ancestors_maysleep() API for which the callback is
+   always allowed to sleep.  I don't particularly like this approach.
+
+2/ Use repeated calls to vfs_walk_parent() when the handling of each
+   ancestor might need to sleep.  I see no problem with supporting both
+   vfs_walk_ancestors() and vfs_walk_parent().  There is plenty of
+   precedent for having different  interfaces for different use cases.
+
+3/ Extend vfs_walk_ancestors() to pass a "may sleep" flag to the callback.
+   If the callback finds that it needs to sleep but that "may sleep"
+   isn't set, it returns some well known status, like -EWOULDBLOCK (or
+   -ECHILD).  It can expect to be called again but with "may sleep" set.
+   This is my preferred approach. There is precedent with the
+   d_revalidate callbacks which works like this.
+   I suspect that accessing xattrs might often be possible without
+   sleeping.  It is conceivable that we could add a "may sleep" argument
+   to vfs_getxattr() so that it could still often be used without
+   requiring vfs_walk_ancestors() to permit sleeping.
+   This would almost certainly require a clear demonstration that 
+   there was a performance cost in not having the option of non-sleeping
+   vfs_getxattr().
+
+> 
+> > I strongly suggest you stop thinking about rcu-walk vs ref-walk.  Think
+> > about the needs of your code.  If you need a high-performance API, then
+> > ask for a high-performance API, don't assume what form it will take or
+> > what the internal implementation details will be.
+> 
+> At the moment, we need a ref-walk API on the BPF side. The RCU walk
+> is a totally separate topic. 
+
+Do you mean "we need step-by-step walking" or do you mean "we need to
+potentially sleep for each ancestor"?  These are conceptually different
+requirements, but I cannot tell which you mean when you talk about "RCU
+walk".
+
+Thanks,
+NeilBrown
+
+> 
+> > I think you already have a clear answer that a step-by-step API will not
+> > be read-only on the dcache (i.e.  it will adjust refcounts) and so will
+> > not be high performance.  If you want high performance, you need to
+> > accept a different style of API.
+> 
+> Agreed. 
+> 
+> Thanks,
+> Song
+> 
+> 
 
 
