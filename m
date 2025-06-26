@@ -1,176 +1,148 @@
-Return-Path: <linux-kernel+bounces-704045-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-704043-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id E96D8AE98A6
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Jun 2025 10:41:22 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id D0F69AE98A4
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Jun 2025 10:40:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id AB30A1C4114D
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Jun 2025 08:40:32 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 335B81891755
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Jun 2025 08:40:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D791F294A03;
-	Thu, 26 Jun 2025 08:39:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=analog.com header.i=@analog.com header.b="ylEFn3fM"
-Received: from mx0a-00128a01.pphosted.com (mx0a-00128a01.pphosted.com [148.163.135.77])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DF941295525;
+	Thu, 26 Jun 2025 08:39:05 +0000 (UTC)
+Received: from mail-vs1-f42.google.com (mail-vs1-f42.google.com [209.85.217.42])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 819A3293C73;
-	Thu, 26 Jun 2025 08:39:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.135.77
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 589ED23B61F
+	for <linux-kernel@vger.kernel.org>; Thu, 26 Jun 2025 08:39:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.217.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750927169; cv=none; b=HzU1WFymtXBFh+39aWiBgoP+JnFbe/SQi12dkTBHYRozerFJtxrr6UktSWM4mhw2kFMnMciGn0zPuLzU1az8UJCtk3+3ErUEYPQ48oxVFsB7ruJc+rgoz0uaSPB3fNfTl5Li/f1teslt111nhV2ZuIT+oALtjRxetwGjoGHfP/g=
+	t=1750927145; cv=none; b=Rdgd8ioGsdtbdxK1DjqJaTAPWWYB9MO6M1x5oPGmkvpsXEpaDH0ZpZ/uAH3AirhymL0ZK3Ft3966TkjFZZ5HajyhDBU6eGICIXcIbvqtSdAoctM8m5nwE05ZHfk5OozNbdBqx6zLTlr8iU53WrevjPVcUV4Op7TVoth/1T55dkg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750927169; c=relaxed/simple;
-	bh=A7+RksWCosDMfXa3WiqReDwm8+2xScSeYiyA7SzMcp4=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-ID:To:CC; b=ezQzap803TdGyDN+Ui9N2CGeSvb17vKDhiP1VHS5k8pgDUAzgMrQPLYsFGBVFf1afSVsuC0ASFVxKjj1XIE98WoeKRQQ6dYl0CURwk7e8sjYeLW3FTAAexvZgC6oQwRpAc9t03ySW+EgY0UWkWFR6qGVToKiI9GRScBvSjoms3E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=analog.com; spf=pass smtp.mailfrom=analog.com; dkim=pass (2048-bit key) header.d=analog.com header.i=@analog.com header.b=ylEFn3fM; arc=none smtp.client-ip=148.163.135.77
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=analog.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=analog.com
-Received: from pps.filterd (m0167089.ppops.net [127.0.0.1])
-	by mx0a-00128a01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 55Q7aVm5017387;
-	Thu, 26 Jun 2025 04:39:02 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=analog.com; h=cc
-	:content-transfer-encoding:content-type:date:from:message-id
-	:mime-version:subject:to; s=DKIM; bh=mHSl8lm99QbLWH5GwPP2ClA5GqL
-	3D+s4iFS1autRTqg=; b=ylEFn3fMPXc9KmNGriOVnGAX/fn7oaM3v9qHoZPikzu
-	ndBOv5/W/6pYFcTu5ioMGYZSV6EkNqsZdsp3e8YKD690jphk4cI7Lhjx+hEDXEjb
-	rwZR4fgv3Nvm32v0HxbellJEeRMIIu/biUNSUw9YZ/AuaZXhCLtoKSmLbyuBOULH
-	xGor5xflnZNHzOTaC6CInxLE2bp3Jn1vl4+jzZYCyBrB6hVe3oe5IkIBxNVKRWyK
-	jKWk2pJVjJH23nNVQyzc8b/smadI55CfAkvh7yNLkbfi1WQH76Fc/fVihMp0mBuM
-	JykxdOjZqwYtFtSS5xi2zgOJ40X5XKhL8FaBPU2+EtA==
-Received: from pps.reinject (localhost [127.0.0.1])
-	by mx0a-00128a01.pphosted.com (PPS) with ESMTPS id 47f43ajv2f-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 26 Jun 2025 04:39:02 -0400 (EDT)
-Received: from m0167089.ppops.net (m0167089.ppops.net [127.0.0.1])
-	by pps.reinject (8.18.0.8/8.18.0.8) with ESMTP id 55Q8YVG8020390;
-	Thu, 26 Jun 2025 04:39:02 -0400
-Received: from nwd2mta3.analog.com ([137.71.173.56])
-	by mx0a-00128a01.pphosted.com (PPS) with ESMTPS id 47f43ajv2c-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 26 Jun 2025 04:39:02 -0400 (EDT)
-Received: from ASHBMBX9.ad.analog.com (ASHBMBX9.ad.analog.com [10.64.17.10])
-	by nwd2mta3.analog.com (8.14.7/8.14.7) with ESMTP id 55Q8d1jP051108
-	(version=TLSv1/SSLv3 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-	Thu, 26 Jun 2025 04:39:01 -0400
-Received: from ASHBCASHYB5.ad.analog.com (10.64.17.133) by
- ASHBMBX9.ad.analog.com (10.64.17.10) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1748.10; Thu, 26 Jun 2025 04:39:01 -0400
-Received: from ASHBMBX8.ad.analog.com (10.64.17.5) by
- ASHBCASHYB5.ad.analog.com (10.64.17.133) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1748.10; Thu, 26 Jun 2025 04:39:00 -0400
-Received: from zeus.spd.analog.com (10.66.68.11) by ashbmbx8.ad.analog.com
- (10.64.17.5) with Microsoft SMTP Server id 15.2.1748.10 via Frontend
- Transport; Thu, 26 Jun 2025 04:39:00 -0400
-Received: from [10.0.2.15] (CAV-LOANB-L32.ad.analog.com [10.117.223.37])
-	by zeus.spd.analog.com (8.15.1/8.15.1) with ESMTP id 55Q8ckwN026701;
-	Thu, 26 Jun 2025 04:38:49 -0400
-From: Kim Seer Paller <kimseer.paller@analog.com>
-Date: Thu, 26 Jun 2025 16:38:12 +0800
-Subject: [PATCH] iio: dac: ad3530r: Fix incorrect masking for channels 4-7
- in powerdown mode
+	s=arc-20240116; t=1750927145; c=relaxed/simple;
+	bh=07vUsEyMksdmohfakBhz4xlamEj3Jb2m/86V7iG/J7s=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=pA5grof92yK4QOsnMDUJsj3OyDXI4aQmC1/aW0C7fzDo43TsjQ3pNHdvNJfdW2NoV5gJJv2Pels3l7vxukDz2WrVU2cN0y5b7xtkCKh8bZnrdx5A/gqA3nri8g1dCpMEfUqp+oTVYjxmWvQ8F2GgTB1juuejsHdmWdqTM62MfB8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.217.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-vs1-f42.google.com with SMTP id ada2fe7eead31-4e9b26a5e45so244832137.1
+        for <linux-kernel@vger.kernel.org>; Thu, 26 Jun 2025 01:39:03 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1750927141; x=1751531941;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=3FKr6SOJmsMSyWxgl87rxUfaSgqLues1OApSM1lNIyA=;
+        b=lbHNPWqRGANg+P/YcYQt9TxhEbGeTpl4VBrt6BOWSftyIfNmdjePGa7J00d0HkKf3e
+         xjuCRKykzkU4isXK/RfuOH4Mzna09gOiS0x+GWVPnZYFwkLbwTVK9ZkqOPGWfMED/jPT
+         qDBaRgg+nAOKyN9Buh1KFv725iQFeqI8H1Y6FMisseKLbTfD9fMV+ukkM+QSfYyCLPPu
+         eJS2G4UAQi8vnOTuguETYZpfUkYxM531Liv7dEtVi2ozAQ+POfTc8gSndgyemYx8lh3p
+         MiAQLA+4YhJ2MxJfQ9/rSutM9zJapaH6pN6aIQPAR5X5v3JlrSuCGHq4QWov2MPFI/Bu
+         uVrA==
+X-Forwarded-Encrypted: i=1; AJvYcCUeikUpdOkG0Ne4ueWyDNXFcrc9K4DsVSaCw0fJA/yrzUAAqvIWVrtCucbDfyFeFJ0mp8qWvl8XcNJ/KSk=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzuwSGILCuUVByiSMN1ajRXsYFfBzaTYr5y0Ui5tjvl5vCWYLqb
+	UrgaRQonTEWa54p4sUZr31Ky/RcyjO5UybRFM6CbljN/Ri5TvBBFrelcJNaCia8L
+X-Gm-Gg: ASbGncvN+gKo//Vmwng9drze8mUG3jWC6Y+XVuXBcOCk3awx+wHBlAdrRkhXa6XIThw
+	JapArGvLIM640menx2EzsbDkD51mm0i+DkwoO7cEX0BczAlLvF7Cs6djmredboY/bNuKsVmMJ5c
+	zrDa+W6oS167ZRRIDHYATee7jd5WrUzZTtNsxDx5dgSmaGBqfbbSjnxCwGA0rfjfFkH3h//oDlj
+	w5bNKbGNBxXgWCQfQ0JV/nAzIU15vpE0OFOydrZiUzfGELxhTiV+qE8mZC7zsCEHIZIjrhnZAUX
+	v1mcQ4SB8wjTmMk3Ucs4Fsd8Fz9d6JJGO4YetfbHhxNUFnDfeOGXSXzLa7V99/sKpT221o9niW9
+	GdFWUqr3/fWz/3BVazlPqzVE0
+X-Google-Smtp-Source: AGHT+IEOp4bpEnsUP1xgDR/NgaY/Xh+kONaiI1+8VE/NW/5hT2IKsPoRrZ1b/wpTiJioZR8qlD81aA==
+X-Received: by 2002:a05:6102:b0f:b0:4e7:3efd:ac76 with SMTP id ada2fe7eead31-4ecc6a77133mr4593951137.8.1750927141388;
+        Thu, 26 Jun 2025 01:39:01 -0700 (PDT)
+Received: from mail-ua1-f48.google.com (mail-ua1-f48.google.com. [209.85.222.48])
+        by smtp.gmail.com with ESMTPSA id ada2fe7eead31-4e9c302136esm2350314137.14.2025.06.26.01.39.00
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 26 Jun 2025 01:39:00 -0700 (PDT)
+Received: by mail-ua1-f48.google.com with SMTP id a1e0cc1a2514c-87f0efa51c0so216872241.1
+        for <linux-kernel@vger.kernel.org>; Thu, 26 Jun 2025 01:39:00 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCUTzrZnVBZhmAa2QWMgkQOiTWb4iixo0QCADSe066tPgAsb9UaAnP3q0IlMCIIaDwSOoUhaL5+iG8uwpFY=@vger.kernel.org
+X-Received: by 2002:a05:6102:c8d:b0:4e5:9628:9e39 with SMTP id
+ ada2fe7eead31-4ecc6a7750bmr4213230137.6.1750927139785; Thu, 26 Jun 2025
+ 01:38:59 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-ID: <20250626-bug_fix-v1-1-eb3c2b370f10@analog.com>
-X-B4-Tracking: v=1; b=H4sIAPMGXWgC/6tWKk4tykwtVrJSqFYqSi3LLM7MzwNyDHUUlJIzE
- vPSU3UzU4B8JSMDI1MDMyMz3aTS9Pi0zApdEwMTYzPDNKM0Q0sDJaDqgqJUoDDYpOjY2loAu36
- hYFkAAAA=
-X-Change-ID: 20250626-bug_fix-404361f2f190
-To: Lars-Peter Clausen <lars@metafoo.de>,
-        Michael Hennerich
-	<Michael.Hennerich@analog.com>,
-        Jonathan Cameron <jic23@kernel.org>,
-        "David
- Lechner" <dlechner@baylibre.com>,
-        =?utf-8?q?Nuno_S=C3=A1?=
-	<nuno.sa@analog.com>,
-        Andy Shevchenko <andy@kernel.org>
-CC: Jonathan Cameron <Jonathan.Cameron@huawei.com>,
-        <linux-iio@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        Kim Seer Paller
-	<kimseer.paller@analog.com>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1750927126; l=1852;
- i=kimseer.paller@analog.com; s=20250213; h=from:subject:message-id;
- bh=A7+RksWCosDMfXa3WiqReDwm8+2xScSeYiyA7SzMcp4=;
- b=RqpsHAxz9+C/m9/zFXgi887exYwjoDLcXy0RKOTGTzjvB/xWNXxnjKeId3Nqn0btoNHY+1out
- QVKDBelBgWGC+SrsMgUElmhbCiz0ILUkvAe/D9pQ9xtRIXTMEcbLXI0
-X-Developer-Key: i=kimseer.paller@analog.com; a=ed25519;
- pk=SPXIwGLg4GFKUNfuAavY+YhSDsx+Q+NwGLceiKwm8Ac=
-X-ADIRuleOP-NewSCL: Rule Triggered
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNjI2MDA3MSBTYWx0ZWRfXzI+Wqh8Sqq5J
- KYwOHqmrfO3HrYFiflMNogLK5oeszuxhDARTtlai5hCSCrT8iHakKttI8ww9kIsamQSL8r5jUv8
- OGL29MmQxmxmOjLc/mq1sANQ5oFGcWF9AZtqKRjtHrkSxXBpVYSePku8lHs6EooBFWSXJWkT4eG
- 5D4OFNnPp28xXK/opznLcxTUmJ/TCq3w3ITlOh2j1HLRnffzbeBfQJIjk+I19Jjbp7qaDniepi2
- XUuaPR83Xp4PHqbhxmnwmwR9TQqrvUIrRinaSk8MQVNhbafKZV+erglSAUQXTJR4zpnih4jbn5p
- 58t08Mz9NAPgy6Zrv9i94mu2M6xnqhdRnpm/E6r84wVqvH+iq+bqdwzd0YdEVbr8AAI/pcnsRbo
- XJw+1ecXWA/NoQaUO8VRwu+/NeqpaHnFwuU3lHgkS60cBl1OYtqtuR87FUdAinloAD0XdcOh
-X-Authority-Analysis: v=2.4 cv=PuGTbxM3 c=1 sm=1 tr=0 ts=685d0726 cx=c_pps
- a=PpDZqlmH/M8setHirZLBMw==:117 a=PpDZqlmH/M8setHirZLBMw==:17
- a=IkcTkHD0fZMA:10 a=6IFa9wvqVegA:10 a=gAnH3GRIAAAA:8 a=xb4M3_QqpVQfOyvDw98A:9
- a=QEXdDO2ut3YA:10
-X-Proofpoint-ORIG-GUID: 8T0QoJZ8m3RLRSsyeLNoBQHaiYEkIRD6
-X-Proofpoint-GUID: tJrZDpLiWFvZF0WrAFKrEj_UC6642lpv
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.7,FMLib:17.12.80.40
- definitions=2025-06-26_04,2025-06-25_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- clxscore=1015 priorityscore=1501 phishscore=0 mlxscore=0 mlxlogscore=999
- malwarescore=0 adultscore=0 spamscore=0 bulkscore=0 lowpriorityscore=0
- suspectscore=0 impostorscore=0 classifier=spam authscore=0 authtc=n/a authcc=
- route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2505280000
- definitions=main-2506260071
+References: <20250611001255.527952-1-vishal.moola@gmail.com> <20250611001255.527952-2-vishal.moola@gmail.com>
+In-Reply-To: <20250611001255.527952-2-vishal.moola@gmail.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Thu, 26 Jun 2025 10:38:48 +0200
+X-Gmail-Original-Message-ID: <CAMuHMdXd=eha_pRNGCFHN7sS2OOh60cj=c=yPUyg_-J0S8V8yQ@mail.gmail.com>
+X-Gm-Features: Ac12FXzbd6ICmeY6_N3sDigtBp9r-6oclQKShUI06FUTJz5bv9x-2knTpcY-Rxo
+Message-ID: <CAMuHMdXd=eha_pRNGCFHN7sS2OOh60cj=c=yPUyg_-J0S8V8yQ@mail.gmail.com>
+Subject: Re: [PATCH 1/4] m68k: mm: Convert get_pointer_table() to use ptdescs
+To: "Vishal Moola (Oracle)" <vishal.moola@gmail.com>
+Cc: linux-m68k@lists.linux-m68k.org, linux-kernel@vger.kernel.org, 
+	Andrew Morton <akpm@linux-foundation.org>
+Content-Type: text/plain; charset="UTF-8"
 
-In the current implementation of ad3530r_set_dac_powerdown() function,
-the macro AD3530R_OP_MODE_CHAN_MSK(chan->channel) is used to generate
-the bitmask for the operating mode of a specific channel. However, this
-macro does not account for channels 4-7, which map to the second
-register AD3530R_OUTPUT_OPERATING_MODE_1 for the 8 channeled device. As
-a result, the bitmask is incorrectly calculated for these channels,
-leading to improper configuration of the powerdown mode. Resolve this
-issue by adjusting the channel index for channels 4-7 by subtracting 4
-before applying the macro. This ensures that the correct bitmask is
-generated for the second register.
+Hi Vishal,
 
-Fixes: 93583174a3df ("iio: dac: ad3530r: Add driver for AD3530R and AD3531R")
-Signed-off-by: Kim Seer Paller <kimseer.paller@analog.com>
----
- drivers/iio/dac/ad3530r.c | 4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+On Wed, 11 Jun 2025 at 02:13, Vishal Moola (Oracle)
+<vishal.moola@gmail.com> wrote:
+> Motorola uses get_pointer_table() for page tables, so it should be using
+> struct ptdesc, not struct page.
+>
+> This helps us prepare to allocate ptdescs as their own memory
+> descriptor, and prepares to remove a user of page->lru.
+>
+> Signed-off-by: Vishal Moola (Oracle) <vishal.moola@gmail.com>
 
-diff --git a/drivers/iio/dac/ad3530r.c b/drivers/iio/dac/ad3530r.c
-index f9752a571aa53ca0d7e199ed6a78550358185bf9..6134613777b8e1d4516109b74e0b3b79edb1ae75 100644
---- a/drivers/iio/dac/ad3530r.c
-+++ b/drivers/iio/dac/ad3530r.c
-@@ -166,7 +166,9 @@ static ssize_t ad3530r_set_dac_powerdown(struct iio_dev *indio_dev,
- 	      AD3530R_OUTPUT_OPERATING_MODE_0 :
- 	      AD3530R_OUTPUT_OPERATING_MODE_1;
- 	pdmode = powerdown ? st->chan[chan->channel].powerdown_mode : 0;
--	mask = AD3530R_OP_MODE_CHAN_MSK(chan->channel);
-+	mask = chan->channel < AD3531R_MAX_CHANNELS ?
-+	       AD3530R_OP_MODE_CHAN_MSK(chan->channel) :
-+	       AD3530R_OP_MODE_CHAN_MSK(chan->channel - 4);
- 	val = field_prep(mask, pdmode);
- 
- 	ret = regmap_update_bits(st->regmap, reg, mask, val);
+Thanks for your patch!
 
----
-base-commit: 0a2857e778599c2794dc89c40dc79ead631b34df
-change-id: 20250626-bug_fix-404361f2f190
+Reviewed-by: Geert Uytterhoeven <geert@linux-m68k.org>
+i.e. will queue in the m68k tree for v6.17, with the small changes
+described below.
 
-Best regards,
--- 
-Kim Seer Paller <kimseer.paller@analog.com>
+> --- a/arch/m68k/mm/motorola.c
+> +++ b/arch/m68k/mm/motorola.c
+> @@ -148,16 +148,18 @@ void *get_pointer_table(struct mm_struct *mm, int type)
+>
+>         /*
+>          * For a pointer table for a user process address space, a
+> -        * table is taken from a page allocated for the purpose.  Each
+> -        * page can hold 8 pointer tables.  The page is remapped in
+> +        * table is taken from a ptdesc allocated for the purpose.  Each
+> +        * ptdesc can hold 8 pointer tables.  The ptdesc is remapped in
+>          * virtual address space to be noncacheable.
+>          */
+>         if (mask == 0) {
+> -               void *page;
+> +               struct ptdesc *ptdesc = pagetable_alloc(GFP_KERNEL | __GFP_ZERO, 0);
 
+I will move the assignment just before the NULL-check below, to ease
+applying the WIP preempt patches on top.
+
+> +               void *pt_addr;
+
+I will move this one line down, to follow the reverse Xmas rule.
+
+>                 ptable_desc *new;
+>
+> -               if (!(page = (void *)get_zeroed_page(GFP_KERNEL)))
+> +               if (!ptdesc)
+>                         return NULL;
+> +               pt_addr = ptdesc_address(ptdesc);
+>
+>                 switch (type) {
+>                 case TABLE_PTE:
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
 
