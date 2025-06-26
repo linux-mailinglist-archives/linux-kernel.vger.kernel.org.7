@@ -1,105 +1,90 @@
-Return-Path: <linux-kernel+bounces-705528-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-705529-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E51CBAEAA97
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Jun 2025 01:27:50 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 371C8AEAA9E
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Jun 2025 01:32:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1CBDA4E3DDF
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Jun 2025 23:27:51 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B2C4F4E1BB0
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Jun 2025 23:32:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C99122288D5;
-	Thu, 26 Jun 2025 23:27:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8783F223322;
+	Thu, 26 Jun 2025 23:32:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Ho8C3Pi0"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="rHIlbWpC"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2F1F22253EE;
-	Thu, 26 Jun 2025 23:27:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E9E1712DDA1
+	for <linux-kernel@vger.kernel.org>; Thu, 26 Jun 2025 23:32:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750980452; cv=none; b=B1NJ96QoQWkSCesP88bjHy0VJtbq7Fsr9uxGSapMwS8ECzgKxUHXhs7hV0VM9xk4vifrX1rbkYByRRcRLesYTuZAeetcpZyNKAH5PHfYjmJdteMpzDR6seG6c43mqJuGNKFPIAhxcFPhnFME9szxc6EwiklHQttNDNZSQK3Bzts=
+	t=1750980723; cv=none; b=qYJkq1OG0wioTrAjbT+Hp5IhduYr/rEA8jMMizEVQFrSss44XwbSbOfbwZ0mR1QF31+AIZG4lC70VaMtMST9pSGj5VVd1QMG76vV3JjjLyHQsThYBHVn8cwCmkLax+hEnCQO3X9MYAGXc8RHJzl1VFD+h0gbqv7FoqCA3Cx29S0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750980452; c=relaxed/simple;
-	bh=V9ZFFu06Gx4VRv5ACITTag+DK1If3ZV6TP8DupOmiEo=;
+	s=arc-20240116; t=1750980723; c=relaxed/simple;
+	bh=ckM1z62+dzERRsA8njW/QMC1vRSg8enjDPrdmoz/Lmo=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=uY66Hzkq6cf2XOUPvnFnDLLM7SNrk3kzPyb/J7WtMiIMuRRPm1UlJj4gJVKEZ+2uFa66GVQdit38+DqHJSNhTXIHFyxPUUsQESbOrYrxJzLxxa0bHmhuuKXfNB8LdQGPxdGLaokmv7glxPRxB0oNGnyJrvwrrb1nCTaMokj2vBw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Ho8C3Pi0; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 71324C4CEF2;
-	Thu, 26 Jun 2025 23:27:29 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=FVB1D5qlRxffKfNuf1Nz/jtbtlnwDQqIVW3Yqm2tbcS5jxB+N72RCUn/4yLKA38Fkn4MdELT1g04XMafloG36zD86HY0bSxDMIx1LNpSZK6Nv93/yHfFzjwI6sMvaw9AQqjKvQ1czaVZscX4HqSprGpypVirfVZFRMRYYdQrnj0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=rHIlbWpC; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 55037C4CEEB;
+	Thu, 26 Jun 2025 23:32:02 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1750980450;
-	bh=V9ZFFu06Gx4VRv5ACITTag+DK1If3ZV6TP8DupOmiEo=;
+	s=k20201202; t=1750980722;
+	bh=ckM1z62+dzERRsA8njW/QMC1vRSg8enjDPrdmoz/Lmo=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=Ho8C3Pi0O7kC1H8wV1QxFR0tOrczbsCZp8A0KOeSJBbQfwjkS7BhjkId5iYIb4PsM
-	 g4Mk7cWhskKUxxadlb7qR2urk3bSG33wLoRJncPN5X4RIWMKqk6TTD+F7C3d285oHU
-	 vgwdwElSXI58ypWIZRWS5kGotrZSKPgnfZCzwnm7x8tKktTS/9A2HYqWqRYh/ebAN/
-	 zzUcLBWA9M3geCRxWLs9fI3zp/aVf3H1QMKxPd4ITXi5z3xI2MKHKF5Q5ym6bgotjE
-	 +pb689FXMnoZIa2h6wIqnfebMZyIUUZsBXBCgi8NmxTTbIL68yo3vvZFFlLgGrrQBf
-	 OiIlSSuyDMJ3A==
-Date: Thu, 26 Jun 2025 16:27:27 -0700
-From: Josh Poimboeuf <jpoimboe@kernel.org>
-To: Dylan Hatch <dylanbhatch@google.com>
-Cc: x86@kernel.org, linux-kernel@vger.kernel.org, 
-	Petr Mladek <pmladek@suse.com>, Miroslav Benes <mbenes@suse.cz>, 
-	Joe Lawrence <joe.lawrence@redhat.com>, live-patching@vger.kernel.org, Song Liu <song@kernel.org>, 
-	laokz <laokz@foxmail.com>, Jiri Kosina <jikos@kernel.org>, 
-	Marcos Paulo de Souza <mpdesouza@suse.com>, Weinan Liu <wnliu@google.com>, 
-	Fazla Mehrab <a.mehrab@bytedance.com>, Chen Zhongjin <chenzhongjin@huawei.com>, 
-	Puranjay Mohan <puranjay@kernel.org>
-Subject: Re: [PATCH v2 59/62] livepatch/klp-build: Introduce klp-build script
- for generating livepatch modules
-Message-ID: <2pwptog6wdwbpz7jzu4ftiwu33aehmgrsh5oqou36jgfqlqrqk@bvezulebykbn>
-References: <cover.1746821544.git.jpoimboe@kernel.org>
- <10ccbeb0f4bcd7d0a10cc9b9bd12fdc4894f83ee.1746821544.git.jpoimboe@kernel.org>
- <CADBMgpxP31YyRMXkHnCvjbb7D8OaUuGKbR9_66pRjGsBd57m8A@mail.gmail.com>
+	b=rHIlbWpCPNwmNcL0HYK9yTLEIH5uOmpr090lt3qNIXx6tVE8EA61pGmhTQCt/H0eY
+	 UwFVgz/MDPsX2y3lVhHsJSWuA7LYJ4SqKB+EQluFhxP8YxaTk23J0vYc6aacoF1Wfp
+	 5j+ZCxFhZ38o0LZDsw21Ck6GNtVVcdnZTID6ArKUaB7SiyHkNi/uM5iJZkxc1plqG0
+	 jrn0dUpbD7fLllsOdKjNSojE1a5kmwLZdPaTfj3w5Cm1x1ydHGrSThA4+voXH/ZGgv
+	 tDSv8NasuyOyH6bFxSKDkjUCKc3L16JFMCH054gUlY1IksSRu/TqlHPTmGbQ7rUGxt
+	 6bd4N0d6PzSrA==
+Date: Thu, 26 Jun 2025 16:32:01 -0700
+From: Vinod Koul <vkoul@kernel.org>
+To: Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>
+Cc: Jyri Sarha <jyri.sarha@iki.fi>,
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+	Maxime Ripard <mripard@kernel.org>,
+	Thomas Zimmermann <tzimmermann@suse.de>,
+	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+	Kishon Vijay Abraham I <kishon@kernel.org>,
+	Andrzej Hajda <andrzej.hajda@intel.com>,
+	Neil Armstrong <neil.armstrong@linaro.org>,
+	Robert Foss <rfoss@kernel.org>,
+	Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
+	Jonas Karlman <jonas@kwiboo.se>,
+	Jernej Skrabec <jernej.skrabec@gmail.com>,
+	Jayesh Choudhary <j-choudhary@ti.com>,
+	Dmitry Baryshkov <lumag@kernel.org>,
+	dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
+	linux-phy@lists.infradead.org,
+	Francesco Dolcini <francesco@dolcini.it>,
+	Aradhya Bhatia <aradhya.bhatia@linux.dev>,
+	Devarsh Thakkar <devarsht@ti.com>,
+	Parth Pancholi <parth.pancholi@toradex.com>
+Subject: Re: [PATCH v4 04/17] phy: cdns-dphy: Store hs_clk_rate and return it
+Message-ID: <aF3YcUfnagD9rHvR@vaman>
+References: <20250618-cdns-dsi-impro-v4-0-862c841dbe02@ideasonboard.com>
+ <20250618-cdns-dsi-impro-v4-4-862c841dbe02@ideasonboard.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CADBMgpxP31YyRMXkHnCvjbb7D8OaUuGKbR9_66pRjGsBd57m8A@mail.gmail.com>
+In-Reply-To: <20250618-cdns-dsi-impro-v4-4-862c841dbe02@ideasonboard.com>
 
-On Wed, Jun 18, 2025 at 05:38:07PM -0500, Dylan Hatch wrote:
-> On Fri, May 9, 2025 at 1:30 PM Josh Poimboeuf <jpoimboe@kernel.org> wrote:
-> >
-> > +
-> > +# Make sure git re-stats the changed files
-> > +git_refresh() {
-> > +       local patch="$1"
-> > +       local files=()
-> > +
-> > +       [[ ! -d "$SRC/.git" ]] && return
-> 
-> As a user of git worktrees, my $SRC/.git is a file containing a key:
-> value pair "gitdir: <path>", causing this script to fail on a [[ ! -d
-> "$SRC/.git" ]] check. Can this be handled, perhaps with a check if
-> .git is a file?
-> 
-> It seems like the check is just to confirm the $SRC directory is still
-> a git tree, in which case maybe adding a -f check would fix this:
-> 
-> [[ ! -d "$SRC/.git" ]] && [[ ! -f "$SRC/.git" ]] && return
-> 
-> Or if the actual git directory is needed for something, maybe it can
-> be located ahead of time:
-> 
-> GITDIR="$SRC/.git"
-> [[ -f $GITDIR ]] && GITDIR=$(sed -n
-> 's/^gitdir[[:space:]]*:[[:space:]]*//p' $GITDIR)
+On 18-06-25, 12:59, Tomi Valkeinen wrote:
+> The DPHY driver does not return the actual hs_clk_rate, so the DSI
+> driver has no idea what clock was actually achieved. Set the realized
+> hs_clk_rate to the opts struct, so that the DSI driver gets it back.
 
-I believe the subsequent "git update-index" operation should work on git
-worktrees as well, so I changed that to use '-e':
+Acked-by: Vinod Koul <vkoul@kernel.org>
 
-	[[ ! -e "$SRC/.git" ]] && return
 
 -- 
-Josh
+~Vinod
 
