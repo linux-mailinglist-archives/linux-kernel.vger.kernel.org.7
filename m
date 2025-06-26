@@ -1,81 +1,121 @@
-Return-Path: <linux-kernel+bounces-705555-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-705589-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E6581AEAAFD
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Jun 2025 01:55:29 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id A14A2AEAB43
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Jun 2025 02:02:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 48E5C4E28F4
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Jun 2025 23:55:30 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id AA2C51889C78
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Jun 2025 00:02:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 277A22288D5;
-	Thu, 26 Jun 2025 23:55:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 52D2F2741A3;
+	Thu, 26 Jun 2025 23:56:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="DwXT7Fbk"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="P2W/S0iq"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7EFB81F8724;
-	Thu, 26 Jun 2025 23:55:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AD4B3273D86;
+	Thu, 26 Jun 2025 23:56:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750982121; cv=none; b=W65/rZDleVuHjHc2lBaYtLo1oaH4kQNgifhmJSgk3NJltKs6eiKUqzAR5TkPKu3l79v3b3t8OoGnYe59XH8yadv36qlGhRSsF82fRBSAyPfrRuIPLBN8zCQBlxB9VTzTPM86LlyAoHHVg8s5eY9+pYhVD7PU311emctPOtp9Jn0=
+	t=1750982193; cv=none; b=YlAbK6+T8k/ooVz/WcLz9EP1Anwqn4x8u+dLJdt/HFZAJsds3KG5ueUfYh48T5aJj6ziCbKRUQGxgj11ZAIuCvX+2e9xmpZpU/qomGrXNkJzmW9OIj8zuLhdoa9JI2a6uadLkqGu2xJlfBy3fvflgHcdtep9b+fvTB3gABYzC4E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750982121; c=relaxed/simple;
-	bh=IQ4gPjgm+BlfQlfBkH4V119fWEcuJOoQY3dYUFLsEvs=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=CKCC+O3XCVkqbzx6WHYwQubbbT6E3oTsZQRC0vQzdyRc3/bCsqdysMsWrGX5dtg6fIL83NQt1h1U4Iqi01Tuwk1fEP6zuN5miqNpEnkH2P6FuvyYKGEfWGJDw6SMKdq5n9+w6/dY/9WmIVHz7ndCZMyV1qrQdCzjVS2D+vWMCeE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=DwXT7Fbk; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id F369BC4CEEB;
-	Thu, 26 Jun 2025 23:55:17 +0000 (UTC)
+	s=arc-20240116; t=1750982193; c=relaxed/simple;
+	bh=4SZwZ/7aFNERBoTGQkqoQOjlFFRUHY91U+y9sTDfXU8=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=S8C5ncsVLOV/1mG0U6TCk8s9BG84hxl5i465RGeffNCT+RSacM+qydMGqD4B3+4Kc7y+c7d0LmKqTlteAHd7yWdDiRXYqilJIErTukUEXmwFsmKoq2R3HKgx7rMfiKKu/cgNxAfc6lf6FXwBMFX3yJb0EliKsowqKpEEEWkOplI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=P2W/S0iq; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A2DFEC4CEEF;
+	Thu, 26 Jun 2025 23:56:32 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1750982118;
-	bh=IQ4gPjgm+BlfQlfBkH4V119fWEcuJOoQY3dYUFLsEvs=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=DwXT7FbkOMuUr58MgAdbvcMAXsnJVO8rVetWPfdmnSIuwRVonJWbZzTHrl5oEJZF1
-	 NetH/ep/H0hyjgc4L/aAri/y2RO3eW1+cv0ys8teVRlvFhD1gwH/BXpcTv1thrQzjR
-	 Z887RJFvWtpARAKfjFesq+nB+wL9l1AOXN61kjjbC37FX3XAutNAmVvbac1/lyzmuW
-	 ErCI+S45xw6j52JPppF+q4x5lh4qzTQ3zPAG6UyZolXzDD7im4OSld++Xgst2jmFk6
-	 Vcc7bSSt5lWFTFL+K+OdMgcnTkXIXBCg1Vh+Qjksvj4o57l0wVxOmrhE/TKb1Pc2bx
-	 3Ch7dS8KHUq8Q==
-Date: Thu, 26 Jun 2025 18:55:17 -0500
-From: "Rob Herring (Arm)" <robh@kernel.org>
-To: Luca Weiss <luca.weiss@fairphone.com>
-Cc: Konrad Dybcio <konradybcio@kernel.org>, linux-arm-msm@vger.kernel.org,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Vinod Koul <vkoul@kernel.org>,
-	Kishon Vijay Abraham I <kishon@kernel.org>,
-	Abel Vesa <abel.vesa@linaro.org>, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-phy@lists.infradead.org,
-	Conor Dooley <conor+dt@kernel.org>
-Subject: Re: [PATCH v2 1/2] dt-bindings: phy: qcom,snps-eusb2-repeater:
- Remove default tuning values
-Message-ID: <175098211658.1434134.8830216383938971952.robh@kernel.org>
-References: <20250617-eusb2-repeater-tuning-v2-0-ed6c484f18ee@fairphone.com>
- <20250617-eusb2-repeater-tuning-v2-1-ed6c484f18ee@fairphone.com>
+	s=k20201202; t=1750982193;
+	bh=4SZwZ/7aFNERBoTGQkqoQOjlFFRUHY91U+y9sTDfXU8=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=P2W/S0iqH9Vnz/1prL41p8/gNHbaaGplYVR85T035+2RJE6Mce94w9C2bdXcP1uhm
+	 M4azDbQ58Na8anJuHQo49yErVeiCHLyFtgK82TD2X9I6zq9KvQ87opdAXWXEbykI9K
+	 tS0XrCU1DjsB4PECIVi1WIIzp4C0pMxnoXDewfolcYnL7XMDogZ7+CIsbhbRTB9Spw
+	 3RI+72fhzSihS20OZi5ISLhPmD8mM2B6cwqzcLo5d4n0cx5qTNd3fxAmlQWWuEB6eF
+	 VrasXFpDzGV16qzLKk+hRu/kg1eML71h8EAbPb/pCOIWX0kjxIcN622CKdNtcuG6EV
+	 uUWU6ApSA6OCA==
+From: Josh Poimboeuf <jpoimboe@kernel.org>
+To: x86@kernel.org
+Cc: linux-kernel@vger.kernel.org,
+	Petr Mladek <pmladek@suse.com>,
+	Miroslav Benes <mbenes@suse.cz>,
+	Joe Lawrence <joe.lawrence@redhat.com>,
+	live-patching@vger.kernel.org,
+	Song Liu <song@kernel.org>,
+	laokz <laokz@foxmail.com>,
+	Jiri Kosina <jikos@kernel.org>,
+	Marcos Paulo de Souza <mpdesouza@suse.com>,
+	Weinan Liu <wnliu@google.com>,
+	Fazla Mehrab <a.mehrab@bytedance.com>,
+	Chen Zhongjin <chenzhongjin@huawei.com>,
+	Puranjay Mohan <puranjay@kernel.org>,
+	Dylan Hatch <dylanbhatch@google.com>
+Subject: [PATCH v3 31/64] objtool: Avoid emptying lists for duplicate sections
+Date: Thu, 26 Jun 2025 16:55:18 -0700
+Message-ID: <ee0570241895ca7fba2b31f094a66b1af45adafa.1750980517.git.jpoimboe@kernel.org>
+X-Mailer: git-send-email 2.49.0
+In-Reply-To: <cover.1750980516.git.jpoimboe@kernel.org>
+References: <cover.1750980516.git.jpoimboe@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250617-eusb2-repeater-tuning-v2-1-ed6c484f18ee@fairphone.com>
+Content-Transfer-Encoding: 8bit
 
+When a to-be-created section already exists, there's no point in
+emptying the various lists if their respective sections already exist.
+In fact it's better to leave them intact as they might get used later.
 
-On Tue, 17 Jun 2025 10:26:35 +0200, Luca Weiss wrote:
-> The reset default tuning value depends on the PMIC, so remove them from
-> the doc since they're not accurate for all PMICs.
-> 
-> Signed-off-by: Luca Weiss <luca.weiss@fairphone.com>
-> ---
->  Documentation/devicetree/bindings/phy/qcom,snps-eusb2-repeater.yaml | 3 ---
->  1 file changed, 3 deletions(-)
-> 
+Signed-off-by: Josh Poimboeuf <jpoimboe@kernel.org>
+---
+ tools/objtool/check.c | 4 ----
+ 1 file changed, 4 deletions(-)
 
-Acked-by: Rob Herring (Arm) <robh@kernel.org>
+diff --git a/tools/objtool/check.c b/tools/objtool/check.c
+index 9ffde9389c53..87d2ba7739d5 100644
+--- a/tools/objtool/check.c
++++ b/tools/objtool/check.c
+@@ -634,7 +634,6 @@ static int create_static_call_sections(struct objtool_file *file)
+ 
+ 	sec = find_section_by_name(file->elf, ".static_call_sites");
+ 	if (sec) {
+-		INIT_LIST_HEAD(&file->static_call_list);
+ 		WARN("file already has .static_call_sites section, skipping");
+ 		return 0;
+ 	}
+@@ -850,7 +849,6 @@ static int create_cfi_sections(struct objtool_file *file)
+ 
+ 	sec = find_section_by_name(file->elf, ".cfi_sites");
+ 	if (sec) {
+-		INIT_LIST_HEAD(&file->call_list);
+ 		WARN("file already has .cfi_sites section, skipping");
+ 		return 0;
+ 	}
+@@ -899,7 +897,6 @@ static int create_mcount_loc_sections(struct objtool_file *file)
+ 
+ 	sec = find_section_by_name(file->elf, "__mcount_loc");
+ 	if (sec) {
+-		INIT_LIST_HEAD(&file->mcount_loc_list);
+ 		WARN("file already has __mcount_loc section, skipping");
+ 		return 0;
+ 	}
+@@ -944,7 +941,6 @@ static int create_direct_call_sections(struct objtool_file *file)
+ 
+ 	sec = find_section_by_name(file->elf, ".call_sites");
+ 	if (sec) {
+-		INIT_LIST_HEAD(&file->call_list);
+ 		WARN("file already has .call_sites section, skipping");
+ 		return 0;
+ 	}
+-- 
+2.49.0
 
 
