@@ -1,146 +1,364 @@
-Return-Path: <linux-kernel+bounces-705384-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-705371-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 09870AEA8D4
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Jun 2025 23:27:30 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id E095CAEA8B2
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Jun 2025 23:23:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A64717B4DD6
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Jun 2025 21:26:05 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 756915680F8
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Jun 2025 21:23:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5A7EC28DEEE;
-	Thu, 26 Jun 2025 21:24:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A381325E471;
+	Thu, 26 Jun 2025 21:23:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="PpSZrbtI"
-Received: from mail-wm1-f42.google.com (mail-wm1-f42.google.com [209.85.128.42])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="oRkppwFN"
+Received: from mail-pl1-f173.google.com (mail-pl1-f173.google.com [209.85.214.173])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CB9D5260577;
-	Thu, 26 Jun 2025 21:24:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2B6D425179A
+	for <linux-kernel@vger.kernel.org>; Thu, 26 Jun 2025 21:23:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750973054; cv=none; b=QzrrSBoByzAk8F/JYEPwbbz1GEd5caiv8EsLIFmeBxpLrRIg/YiA6Pe/HJlCt00hqx/enD4WP7yOop2R7hIjBeKfpu6FOs+qt/JTaAgYDkiUCIdMANakpdw0tPOsBEaQ8mltxxpzmEbQYc+O1Fy2Lm8W8ocKQ88xWY++nDB505s=
+	t=1750973021; cv=none; b=WzYgMiHTl8/jwf44WgB+LVyimto2w6neAeN/ScgZkfdZ2RZNA3edYf1kEMZCeTez7E1X6hjmqA/DUGSVHsvKhJg4FVphfALiY19dJQfl+hwF4SMcy/9segtWFGtrBBP9dv8IOVQW81os1rlAp2WBrZYV2RiQjcfpzU+lWkDj7VY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750973054; c=relaxed/simple;
-	bh=EQzUDFfnxMaPCgzvLAWUznL40gFuxneWacKGexy4pOs=;
-	h=From:To:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=jLP+QidceskUKS7qS9UHQBT5oFMnnMrg4jXigRpwkeg7DXST3UsbJN2bguwaS4Xr12xWDTVV01w9yWlHnYEwcjJF4MIxvzCMpSO3FRy58wm0vZW7H42EG7JvNoqMjUK7zC851A7Ke6gzN13ZH7MkO2wPa3hJoOsLiD7MgjQO8P0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=PpSZrbtI; arc=none smtp.client-ip=209.85.128.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f42.google.com with SMTP id 5b1f17b1804b1-453398e90e9so10655805e9.1;
-        Thu, 26 Jun 2025 14:24:12 -0700 (PDT)
+	s=arc-20240116; t=1750973021; c=relaxed/simple;
+	bh=J2QPahIuPiJ1fmxBiT8+zyc142Q+es2dGMywjLrLYvU=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=IZWGqa7iB0M4su5q6Exjl+bSImamN+xzDFdYp6C92uGRGvjvQk8/sJzCK9Gztv2YoyVwj6Zg57HOroajr/WkxqroEwJvpOMIlJrfwFCt0R4QCwd3w1+h25TQ+gLx6gx5owvE2TQ3yjCd7cs6f3Kd/3dPK3J38cxAcwuaE6aZPLs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=oRkppwFN; arc=none smtp.client-ip=209.85.214.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-pl1-f173.google.com with SMTP id d9443c01a7336-237f18108d2so56785ad.0
+        for <linux-kernel@vger.kernel.org>; Thu, 26 Jun 2025 14:23:37 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1750973051; x=1751577851; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:to:from:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=Q/W0x52D15NfB+BOP8T/m/ZC7owLNeVqs+BHfnihvT0=;
-        b=PpSZrbtI+glez34OxYMIJQZEuIjC+Fvm40mLVsCuNTe7hI39CwPczCNZzMGqnhiDzG
-         sPlPKhBdjh3ZU/MuyC/XfrTfMa2lZCY+4jYI6qkbov33RqrRf2wS7/no7fYf/zPsAAjk
-         foB2fYwI6Dov7luXsCC0PvFg4lTosTEWPQ0I5G00JrZMgLfqxDdIget3d4l+lflYt1mt
-         xbzj7orABmYq3w49FlyWSBZ6khg8FdkMJ98hAb8pugz1pJnoeKAQos2yfa1Enft0aklY
-         gyT7vcPcqD0h5BmREuGLoGkHVbxCnS1+tp7tOGsTJLkJiNyaNU86S1vn2HYV8C0xOyL5
-         13Mg==
+        d=google.com; s=20230601; t=1750973017; x=1751577817; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=sjor7lmqlWF20HvW9eupaN+ipbvUAegprpf6x6rXwJc=;
+        b=oRkppwFNR6V+rtezh8Dq94p49SKPxX27iiO8nAaI0yZBxnxk7alFy3csTJEYmdtXqS
+         uuOVDVsti418LzM3WIixf7xKVLE6g71rc56PKyiE9jvRC2NHlh1CIFuxeAfVOyIXg0Nn
+         0xzPZZvkqW9bdkN4TNBBV7kY1TrT4c7lm0neK40MBvAPFiZuC904thryVRpi19fTjsys
+         ata1qayzKz7EGANp8bIZ0qoCVvRpwjBzOAqPVCc406wUUYdriM91o+rJg3QEiy8C0sUp
+         N9VehcyT0I6vtY1lsOzAZKlTCQsVWekD7PeUuCAemdw+CKAXv7OwcZEjVz/sxot5fojl
+         9/LQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1750973051; x=1751577851;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:to:from:x-gm-message-state:from:to:cc
+        d=1e100.net; s=20230601; t=1750973017; x=1751577817;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=Q/W0x52D15NfB+BOP8T/m/ZC7owLNeVqs+BHfnihvT0=;
-        b=kRyXD1NFiKBCls5GpCVkxq5FEY3rmAQNE/fm6MLjtBGcYsYarAvckgcBNE+LIGT4+u
-         JIgPMVux4oFaNiksc4+MenQUZX1FiHnfdExGHNX//DNOKjbgAiEgkEQqOJo4NPIX0ce2
-         C6eQ+PM2wU/pFICcvBYx6IXMQVkzFq72yyKwufUBmCRY/D6SCB5DsVFM79JBtxgDfphA
-         /Yuew6kJWxfstKBnoJu+KZYfgeDNBo3ItWjt6yGi2sYUKsGMykd8dUxbXBW4I0skqShH
-         6XEKzKsUPEIGnODpqCXdNY8k25RKdHcrI7D8ZKItx9FkdV/XVQ2KpLY4BoDBXE5wW0x+
-         SOrQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVX+JvBQ86DjiRGTpJIaNuUT4AJUuRl0b++7P0szyMDCvYySxATtAuk9sBBRE1pb5lUiCBQOmQP@vger.kernel.org, AJvYcCVjeIOkGXLEZgzkD+RgevF9SUOslr2hp0T+fwgZRLPkzwA/xuYUleLK+vxfUymgO1PkgajA9GxCiuVUmzXV@vger.kernel.org, AJvYcCWkP2mB4QMuRlm5IMHfY9zGEBlcq7WGRS1jn654qHI5tDIscfWArOV/c6R5V28JtHfxp3Ky3uJPD+v2@vger.kernel.org
-X-Gm-Message-State: AOJu0YzMrgqJnVT4weLFvTmFSaOo2b3HEbHPLA4b1oVB3YJhWwYZF5dt
-	cv9k204L7LBXXsrbxElZ2ZWmlTFBePHTp4LDgLzY/fS/YVL171KZaijc
-X-Gm-Gg: ASbGncs2ZEeBmCUEC+jkophRoWWMJ4fIKq3iwOuA9mkoZ8bAh7l63SrjJ3f8A73c47p
-	5UtXScQY08pd98Oh8xu7M+HCpK1lDpNb2lBruqlVlXVHQIgl3bU7EtxBBDMs1F76S5jvX+YiRH1
-	zW4e7q1Jot0Jk5zg1RUizi4EzK7qBASijbZUZW68BK7ckwGg9xSwU5ItqgS05fGtcL/gOS+bsvg
-	vTpFxXbnNtAHZlxq0AZXEwWW5lub0ioim3sJW0/gYO3kSsQMbSKxfsS3VxI8fJ1JjOgWYnuKHa9
-	IQ+CIfzzYT3OO3dqOjsCHPUXxc5Zj0U36IuIpXXtBPkdCMjWerQUeA263J9h08l6782c7N03Wjt
-	RfDFG48+F7t5V606jhZIPr+XcRS9JCgc=
-X-Google-Smtp-Source: AGHT+IHVLPfvW6O1oNCC2LT9oj+Qg1mkz0+DDsJBKHwZ+LBvaK0h+vlqLp0ai9AzKkbhD2TEc+EdQA==
-X-Received: by 2002:a05:600c:4750:b0:43b:ca39:6c7d with SMTP id 5b1f17b1804b1-4538ee30effmr9653155e9.3.1750973051054;
-        Thu, 26 Jun 2025 14:24:11 -0700 (PDT)
-Received: from localhost.localdomain (93-34-88-225.ip49.fastwebnet.it. [93.34.88.225])
-        by smtp.googlemail.com with ESMTPSA id 5b1f17b1804b1-453835798acsm57186475e9.10.2025.06.26.14.24.09
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 26 Jun 2025 14:24:10 -0700 (PDT)
-From: Christian Marangi <ansuelsmth@gmail.com>
-To: Christian Marangi <ansuelsmth@gmail.com>,
-	Lee Jones <lee@kernel.org>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Andrew Lunn <andrew+netdev@lunn.ch>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>,
-	Paolo Abeni <pabeni@redhat.com>,
-	Vladimir Oltean <olteanv@gmail.com>,
-	Srinivas Kandagatla <srini@kernel.org>,
-	Heiner Kallweit <hkallweit1@gmail.com>,
-	Russell King <linux@armlinux.org.uk>,
-	"Chester A. Unal" <chester.a.unal@arinc9.com>,
-	Daniel Golle <daniel@makrotopia.org>,
-	DENG Qingfang <dqfext@gmail.com>,
-	Sean Wang <sean.wang@mediatek.com>,
-	Simon Horman <horms@kernel.org>,
-	Matthias Brugger <matthias.bgg@gmail.com>,
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
-	linux-arm-kernel@lists.infradead.org,
-	linux-mediatek@lists.infradead.org,
-	netdev@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [net-next PATCH v15 12/12] net: dsa: tag_mtk: add comments about Airoha usage of this TAG
-Date: Thu, 26 Jun 2025 23:23:11 +0200
-Message-ID: <20250626212321.28114-13-ansuelsmth@gmail.com>
-X-Mailer: git-send-email 2.48.1
-In-Reply-To: <20250626212321.28114-1-ansuelsmth@gmail.com>
-References: <20250626212321.28114-1-ansuelsmth@gmail.com>
+        bh=sjor7lmqlWF20HvW9eupaN+ipbvUAegprpf6x6rXwJc=;
+        b=YLsnHf6YNLkaWcE4AOmVBmUXRrkuli0Fujw1qpTDhozMeNCsGvgYui/b+0lehrdzYg
+         Jt5w9CA5Spa3lA3V0qoae1RjuN50ulOrPmQtyi7Yqt8+o5o1QslAzyRkAbJJKt7LXE7e
+         4Y4wD8jMxBEksFVnzfbMxW3BrHktVXi6xl8ALZYGbKsXIOzIcxiQr0OL5NsBEuPxaubO
+         g3Bu3QP6V1bz8YZXo+OJKFGu0Ta1YOTur+RZnqVCZ/IUWhzrXbuXD6VXVQ84f/2SaqeS
+         bsrulMbErWvDC4t09YeFRyXwn4gK1MxS5i7vFo6ZT510DTRM0R8w2IwcLPdis4sJItfa
+         eMSQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWCseRsRx9E6h8gfJ84IHWVTUUU4Ld6fNLuAJLxoCvdV7VeJY2/EvJ1EPT5Zdjxd/Gijjqu/8akdz8+T4g=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyTsWAecFCOTgJu3ZzFh8oFXy+P8d5BShfP5YmtZ3IhT00ASH1K
+	ewVBzebTreQ2nORYeHGje0cT21mKG/GhYIKph8ZDgKUXc90J/YPjkaDkueIQBNlwcO55y92TJbt
+	th5Hi/7+6KxVdY3xB5g5CmIslV8v2z9tnFYbvEZw9
+X-Gm-Gg: ASbGncuwlzdHJExfiDeprXesCTG+Q77i7sPo0UMqew8JwciXq1SPJR6l9hndKOa7Mho
+	jjfQYkAImBPUh8lXgHOvOfDQjH5YN+Lj2R41yUkSnvCWzfR47POJDlVozELzm58N5f0Rqz7NsC5
+	1QCTz7cXChpjDCj0gwuav+qbMxCso1i+lkly/vJBNxQslQXM3oVeh8NKXrFhNB8YmclilvOJ8h
+X-Google-Smtp-Source: AGHT+IErFpg6qe7vg1DfOTQm1g3N76FLBBQyW+hspzXsVoVpMLpdCObFFOWjC4q0vAkCsDbE2rboagahOcp4qDdA8bU=
+X-Received: by 2002:a17:903:228b:b0:223:2630:6b86 with SMTP id
+ d9443c01a7336-23aca807140mr212005ad.7.1750973016981; Thu, 26 Jun 2025
+ 14:23:36 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20250625230339.702610-1-namhyung@kernel.org> <CAP-5=fUUOT4-1DU=Lx7OTayLssUq_ZT-bdGuqRzj_2jMqBx_FQ@mail.gmail.com>
+ <aF2IbcebglJOP1LG@google.com>
+In-Reply-To: <aF2IbcebglJOP1LG@google.com>
+From: Ian Rogers <irogers@google.com>
+Date: Thu, 26 Jun 2025 14:23:24 -0700
+X-Gm-Features: Ac12FXziebvYoUFGXZY422Cuv1y1_LTlTEewUFsG6EDrdAza0Z7oWAGq6AUAYf8
+Message-ID: <CAP-5=fX6=e2Vd6LUZtu-cvnswjYcsV3Oj59n4mB1jB7RW627qQ@mail.gmail.com>
+Subject: Re: [PATCH v3] perf annotate: Fix source code annotate with objdump
+To: Namhyung Kim <namhyung@kernel.org>
+Cc: Arnaldo Carvalho de Melo <acme@kernel.org>, Kan Liang <kan.liang@linux.intel.com>, 
+	Jiri Olsa <jolsa@kernel.org>, Adrian Hunter <adrian.hunter@intel.com>, 
+	Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@kernel.org>, 
+	LKML <linux-kernel@vger.kernel.org>, linux-perf-users@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Add comments about difference between Airoha AN8855 and Mediatek tag
-bitmap.
+On Thu, Jun 26, 2025 at 10:50=E2=80=AFAM Namhyung Kim <namhyung@kernel.org>=
+ wrote:
+>
+> Hi Ian,
+>
+> On Thu, Jun 26, 2025 at 08:23:30AM -0700, Ian Rogers wrote:
+> > On Wed, Jun 25, 2025 at 4:03=E2=80=AFPM Namhyung Kim <namhyung@kernel.o=
+rg> wrote:
+> > >
+> > > Recently it uses llvm and capstone to speed up annotation or disassem=
+bly
+> > > of instructions.  But they don't support source code view yet.  Until=
+ it
+> > > fixed, we can force to use objdump for source code annotation.
+> > >
+> > > To prevent performance loss, it's disabled by default and turned it o=
+n
+> > > when user requests it in TUI by pressing 's' key.
+> > >
+> > > Link: https://lore.kernel.org/r/20250608004613.238291-1-namhyung@kern=
+el.org
+> > > Reported-by: Ingo Molnar <mingo@kernel.org>
+> > > Signed-off-by: Namhyung Kim <namhyung@kernel.org>
+> >
+> > Can we move this series forward:
+> > https://lore.kernel.org/lkml/20250417230740.86048-1-irogers@google.com/
+> > There was some build testing by Arnaldo but then things became
+> > stalled. I'm guessing I'll need to send a rebase.
+>
+> I'll take a look.  Is there any thing related to this patchset?
+> It'd be nice if we can land this first.
 
-Airoha AN88555 doesn't support controlling SA learning and Leaky VLAN
-from tag. Although these bits are not used (and even not defined for
-Leaky VLAN), it's worth to add comments for these difference to prevent
-any kind of regression in the future if ever these bits will be used.
+Ok, I'll rebase those changes after this lands.
 
-Signed-off-by: Christian Marangi <ansuelsmth@gmail.com>
----
- net/dsa/tag_mtk.c | 3 +++
- 1 file changed, 3 insertions(+)
+Acked-by: Ian Rogers <irogers@google.com>
 
-diff --git a/net/dsa/tag_mtk.c b/net/dsa/tag_mtk.c
-index b670e3c53e91..ac3f956abe39 100644
---- a/net/dsa/tag_mtk.c
-+++ b/net/dsa/tag_mtk.c
-@@ -18,6 +18,9 @@
- #define MTK_HDR_XMIT_TAGGED_TPID_88A8	2
- #define MTK_HDR_RECV_SOURCE_PORT_MASK	GENMASK(2, 0)
- #define MTK_HDR_XMIT_DP_BIT_MASK	GENMASK(5, 0)
-+/* AN8855 doesn't support SA_DIS and Leaky VLAN
-+ * control in tag as these bits doesn't exist.
-+ */
- #define MTK_HDR_XMIT_SA_DIS		BIT(6)
- 
- static struct sk_buff *mtk_tag_xmit(struct sk_buff *skb,
--- 
-2.48.1
+Thanks,
+Ian
 
+> Thanks,
+> Namhyung
+>
+> >
+> > > ---
+> > > v3)
+> > >  * show warning when there's no source code
+> > >
+> > >  tools/perf/ui/browsers/annotate.c | 86 +++++++++++++++++++++++++++++=
+--
+> > >  tools/perf/util/annotate.c        |  2 +
+> > >  tools/perf/util/annotate.h        |  1 +
+> > >  tools/perf/util/disasm.c          |  7 +++
+> > >  4 files changed, 93 insertions(+), 3 deletions(-)
+> > >
+> > > diff --git a/tools/perf/ui/browsers/annotate.c b/tools/perf/ui/browse=
+rs/annotate.c
+> > > index ab776b1ed2d5b4ba..183902dac042ecb0 100644
+> > > --- a/tools/perf/ui/browsers/annotate.c
+> > > +++ b/tools/perf/ui/browsers/annotate.c
+> > > @@ -345,6 +345,23 @@ static void annotate_browser__calc_percent(struc=
+t annotate_browser *browser,
+> > >         browser->curr_hot =3D rb_last(&browser->entries);
+> > >  }
+> > >
+> > > +static struct annotation_line *annotate_browser__find_new_asm_line(
+> > > +                                       struct annotate_browser *brow=
+ser,
+> > > +                                       int idx_asm)
+> > > +{
+> > > +       struct annotation_line *al;
+> > > +       struct list_head *head =3D browser->b.entries;
+> > > +
+> > > +       /* find an annotation line in the new list with the same idx_=
+asm */
+> > > +       list_for_each_entry(al, head, node) {
+> > > +               if (al->idx_asm =3D=3D idx_asm)
+> > > +                       return al;
+> > > +       }
+> > > +
+> > > +       /* There are no asm lines */
+> > > +       return NULL;
+> > > +}
+> > > +
+> > >  static struct annotation_line *annotate_browser__find_next_asm_line(
+> > >                                         struct annotate_browser *brow=
+ser,
+> > >                                         struct annotation_line *al)
+> > > @@ -368,7 +385,31 @@ static struct annotation_line *annotate_browser_=
+_find_next_asm_line(
+> > >         return NULL;
+> > >  }
+> > >
+> > > -static bool annotate_browser__toggle_source(struct annotate_browser =
+*browser)
+> > > +static bool annotation__has_source(struct annotation *notes)
+> > > +{
+> > > +       struct annotation_line *al;
+> > > +       bool found_asm =3D false;
+> > > +
+> > > +       /* Let's skip the first non-asm lines which present regardles=
+s of source. */
+> > > +       list_for_each_entry(al, &notes->src->source, node) {
+> > > +               if (al->offset >=3D 0) {
+> > > +                       found_asm =3D true;
+> > > +                       break;
+> > > +               }
+> > > +       }
+> > > +
+> > > +       if (found_asm) {
+> > > +               /* After assembly lines, any line without offset mean=
+s source. */
+> > > +               list_for_each_entry_continue(al, &notes->src->source,=
+ node) {
+> > > +                       if (al->offset =3D=3D -1)
+> > > +                               return true;
+> > > +               }
+> > > +       }
+> > > +       return false;
+> > > +}
+> > > +
+> > > +static bool annotate_browser__toggle_source(struct annotate_browser =
+*browser,
+> > > +                                           struct evsel *evsel)
+> > >  {
+> > >         struct annotation *notes =3D browser__annotation(&browser->b)=
+;
+> > >         struct annotation_line *al;
+> > > @@ -377,6 +418,39 @@ static bool annotate_browser__toggle_source(stru=
+ct annotate_browser *browser)
+> > >         browser->b.seek(&browser->b, offset, SEEK_CUR);
+> > >         al =3D list_entry(browser->b.top, struct annotation_line, nod=
+e);
+> > >
+> > > +       if (!annotate_opts.annotate_src)
+> > > +               annotate_opts.annotate_src =3D true;
+> > > +
+> > > +       /*
+> > > +        * It's about to get source code annotation for the first tim=
+e.
+> > > +        * Drop the existing annotation_lines and get the new one wit=
+h source.
+> > > +        * And then move to the original line at the same asm index.
+> > > +        */
+> > > +       if (annotate_opts.hide_src_code && !notes->src->tried_source)=
+ {
+> > > +               struct map_symbol *ms =3D browser->b.priv;
+> > > +               int orig_idx_asm =3D al->idx_asm;
+> > > +
+> > > +               /* annotate again with source code info */
+> > > +               annotate_opts.hide_src_code =3D false;
+> > > +               annotated_source__purge(notes->src);
+> > > +               symbol__annotate2(ms, evsel, &browser->arch);
+> > > +               annotate_opts.hide_src_code =3D true;
+> > > +
+> > > +               /* should be after annotated_source__purge() */
+> > > +               notes->src->tried_source =3D true;
+> > > +
+> > > +               if (!annotation__has_source(notes))
+> > > +                       ui__warning("Annotation has no source code.")=
+;
+> > > +
+> > > +               browser->b.entries =3D &notes->src->source;
+> > > +               al =3D annotate_browser__find_new_asm_line(browser, o=
+rig_idx_asm);
+> > > +               if (unlikely(al =3D=3D NULL)) {
+> > > +                       al =3D list_first_entry(&notes->src->source,
+> > > +                                             struct annotation_line,=
+ node);
+> > > +               }
+> > > +               browser->b.seek(&browser->b, al->idx_asm, SEEK_SET);
+> > > +       }
+> > > +
+> > >         if (annotate_opts.hide_src_code) {
+> > >                 if (al->idx_asm < offset)
+> > >                         offset =3D al->idx;
+> > > @@ -833,7 +907,7 @@ static int annotate_browser__run(struct annotate_=
+browser *browser,
+> > >                         nd =3D browser->curr_hot;
+> > >                         break;
+> > >                 case 's':
+> > > -                       if (annotate_browser__toggle_source(browser))
+> > > +                       if (annotate_browser__toggle_source(browser, =
+evsel))
+> > >                                 ui_helpline__puts(help);
+> > >                         annotate__scnprintf_title(hists, title, sizeo=
+f(title));
+> > >                         annotate_browser__show(&browser->b, title, he=
+lp);
+> > > @@ -1011,6 +1085,12 @@ int symbol__tui_annotate(struct map_symbol *ms=
+, struct evsel *evsel,
+> > >                         ui__error("Couldn't annotate %s:\n%s", sym->n=
+ame, msg);
+> > >                         return -1;
+> > >                 }
+> > > +
+> > > +               if (!annotate_opts.hide_src_code) {
+> > > +                       notes->src->tried_source =3D true;
+> > > +                       if (!annotation__has_source(notes))
+> > > +                               ui__warning("Annotation has no source=
+ code.");
+> > > +               }
+> > >         }
+> > >
+> > >         ui_helpline__push("Press ESC to exit");
+> > > @@ -1025,7 +1105,7 @@ int symbol__tui_annotate(struct map_symbol *ms,=
+ struct evsel *evsel,
+> > >
+> > >         ret =3D annotate_browser__run(&browser, evsel, hbt);
+> > >
+> > > -       if(not_annotated)
+> > > +       if (not_annotated && !notes->src->tried_source)
+> > >                 annotated_source__purge(notes->src);
+> > >
+> > >         return ret;
+> > > diff --git a/tools/perf/util/annotate.c b/tools/perf/util/annotate.c
+> > > index 264a212b47df850c..0dd475a744b6dfac 100644
+> > > --- a/tools/perf/util/annotate.c
+> > > +++ b/tools/perf/util/annotate.c
+> > > @@ -1451,6 +1451,7 @@ void annotated_source__purge(struct annotated_s=
+ource *as)
+> > >                 list_del_init(&al->node);
+> > >                 disasm_line__free(disasm_line(al));
+> > >         }
+> > > +       as->tried_source =3D false;
+> > >  }
+> > >
+> > >  static size_t disasm_line__fprintf(struct disasm_line *dl, FILE *fp)
+> > > @@ -2280,6 +2281,7 @@ void annotation_options__init(void)
+> > >         opt->annotate_src =3D true;
+> > >         opt->offset_level =3D ANNOTATION__OFFSET_JUMP_TARGETS;
+> > >         opt->percent_type =3D PERCENT_PERIOD_LOCAL;
+> > > +       opt->hide_src_code =3D true;
+> > >         opt->hide_src_code_on_title =3D true;
+> > >  }
+> > >
+> > > diff --git a/tools/perf/util/annotate.h b/tools/perf/util/annotate.h
+> > > index bbb89b32f398b3c9..8b5131d257b01e3e 100644
+> > > --- a/tools/perf/util/annotate.h
+> > > +++ b/tools/perf/util/annotate.h
+> > > @@ -294,6 +294,7 @@ struct annotated_source {
+> > >         int                     nr_entries;
+> > >         int                     nr_asm_entries;
+> > >         int                     max_jump_sources;
+> > > +       bool                    tried_source;
+> > >         u64                     start;
+> > >         struct {
+> > >                 u8              addr;
+> > > diff --git a/tools/perf/util/disasm.c b/tools/perf/util/disasm.c
+> > > index 8f0eb56c6fc66a96..ff475a239f4b0db4 100644
+> > > --- a/tools/perf/util/disasm.c
+> > > +++ b/tools/perf/util/disasm.c
+> > > @@ -2284,6 +2284,13 @@ int symbol__disassemble(struct symbol *sym, st=
+ruct annotate_args *args)
+> > >                 }
+> > >         }
+> > >
+> > > +       /* FIXME: LLVM and CAPSTONE should support source code */
+> > > +       if (options->annotate_src && !options->hide_src_code) {
+> > > +               err =3D symbol__disassemble_objdump(symfs_filename, s=
+ym, args);
+> > > +               if (err =3D=3D 0)
+> > > +                       goto out_remove_tmp;
+> > > +       }
+> > > +
+> > >         err =3D -1;
+> > >         for (u8 i =3D 0; i < ARRAY_SIZE(options->disassemblers) && er=
+r !=3D 0; i++) {
+> > >                 enum perf_disassembler dis =3D options->disassemblers=
+[i];
+> > > --
+> > > 2.50.0.727.gbf7dc18ff4-goog
+> > >
 
