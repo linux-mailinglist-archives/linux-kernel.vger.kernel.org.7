@@ -1,133 +1,86 @@
-Return-Path: <linux-kernel+bounces-704214-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-704224-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id A8EBFAE9AD9
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Jun 2025 12:10:07 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0E89AAE9B08
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Jun 2025 12:17:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 63EB51C2647F
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Jun 2025 10:10:23 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D53A91C4154B
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Jun 2025 10:17:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 27C2921CC59;
-	Thu, 26 Jun 2025 10:10:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EB03F2222B6;
+	Thu, 26 Jun 2025 10:17:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="QnlPQB0V"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.18])
+	dkim=pass (1024-bit key) header.d=onurozkan.dev header.i=@onurozkan.dev header.b="AqlIhmXM"
+Received: from forward502a.mail.yandex.net (forward502a.mail.yandex.net [178.154.239.82])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DAC7621B9F1
-	for <linux-kernel@vger.kernel.org>; Thu, 26 Jun 2025 10:09:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EAE0C221FA8;
+	Thu, 26 Jun 2025 10:17:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.154.239.82
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750932601; cv=none; b=XE+6KMNWwkF4vw79t8d+BtJ7WTtQSyYwlKW+JB7mbpfuQLiBQRPZUpQqzJcDjKYSFIz3uCeVsC0fWQbOhzzCxZJg3pUDCZiY+l8igkcHIblcm7NjU2sFBvDJSmZqkJx43r04e9LvLied4UcAkliKvpFz1sqbl86ebgMKP+98gz4=
+	t=1750933033; cv=none; b=AZwRxLFcAVNWlBvokR9X6Vl8ytLaQiyiF+evScmMu1NOeEZc7AIDgkNGdiHSNE7ULBL+mJv4iiG9BvPX6loi5C0hGvHtNjM631BQi9IZmpeX7iiFmXXgUdRm1doQinNEITEGAwM3SeNb19O4vWRvMbhJ+bontLQ1PsflUpeVyJ0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750932601; c=relaxed/simple;
-	bh=GjPeJtHKOXQwQBGGikOX9UYAW2VR/QOiOlM1WMfrLYU=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=FCW1JUh+CuwHIyaLD3SraTuIL9nhabrChK0rA1W+SNTICw3hkFoHEaO8kxqN2ma06ZyIo3XdXdHuo9HnV1TGLzJKMLURwj8sQrw5D/K8w9vV710CLrfIMHtV4y3K8fNWaUgq0cKSbbXxChTQaeft133ACI1QaVMSFu47cayeEg8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=QnlPQB0V; arc=none smtp.client-ip=192.198.163.18
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1750932600; x=1782468600;
-  h=date:from:to:cc:subject:message-id:mime-version;
-  bh=GjPeJtHKOXQwQBGGikOX9UYAW2VR/QOiOlM1WMfrLYU=;
-  b=QnlPQB0VfcS3w63NZt6/8dKpKCjQ33fm+NgtkZBo/AEoyCnNfpeTqDNq
-   Qc6ArVrr3pz96QdNmaB0oEmhArwR9KIIVcmy1I+G5+MTu3fUtFAplbwK7
-   QcjqkIDcbEadGZLYw7whl9V71EVNofGO5ER4wLm1KmJAIUQyLc5i8vOng
-   jJWKg48Z9aHEmiWMXzD3nHvDZ39gQz9SNs3BGTUaApaSqi6rOYng+m+Ag
-   XVFoY9Tf39ole0xW6nBfU78ccoiEGUjT2AI7MwYLF+bJB9BvH3FGmV59w
-   cHahh+DJIVZY8sLIAsSPQjrFyD1MWdIxH6W/g1ip7Dgi+8fy8DD2a7VkS
-   g==;
-X-CSE-ConnectionGUID: DMikMsEPQGOaMXGVOUtC1A==
-X-CSE-MsgGUID: heJf5ynpT7yvIsefpYuwog==
-X-IronPort-AV: E=McAfee;i="6800,10657,11475"; a="52449908"
-X-IronPort-AV: E=Sophos;i="6.16,267,1744095600"; 
-   d="scan'208";a="52449908"
-Received: from orviesa004.jf.intel.com ([10.64.159.144])
-  by fmvoesa112.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 26 Jun 2025 03:09:59 -0700
-X-CSE-ConnectionGUID: DM3dLgcDTuqjzwasTmx+6Q==
-X-CSE-MsgGUID: dpx6FarjQW6hGDGrQhFUOA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.16,267,1744095600"; 
-   d="scan'208";a="157039982"
-Received: from lkp-server01.sh.intel.com (HELO e8142ee1dce2) ([10.239.97.150])
-  by orviesa004.jf.intel.com with ESMTP; 26 Jun 2025 03:09:57 -0700
-Received: from kbuild by e8142ee1dce2 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1uUjYJ-000Two-1k;
-	Thu, 26 Jun 2025 10:09:55 +0000
-Date: Thu, 26 Jun 2025 18:09:09 +0800
-From: kernel test robot <lkp@intel.com>
-To: "Gustavo A. R. Silva" <gustavoars@kernel.org>
-Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
-	"Gustavo A. R. Silva" <gustavo@embeddedor.com>,
-	LKML <linux-kernel@vger.kernel.org>
-Subject: [gustavoars:testing/wfamnae-next20250616 14/19]
- kernel/sched/ext.c:3712:10: error: incompatible pointer types returning
- 'struct cgroup_hdr *' from a function with result type 'struct cgroup *'
-Message-ID: <202506261829.It6MPDTn-lkp@intel.com>
+	s=arc-20240116; t=1750933033; c=relaxed/simple;
+	bh=LW0ekEF132zirr3/C0iPKEdjIqOsqdj1sSpsqbrp2ng=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=o6wZiBnn92kA+9s0e4Kl+Ks+ldeeoCQpEWE/Rk75EqNXXrJbM+wMnZjq0pgk8hI4yrx6H3cYqov5bHhnawg24JdFTMAlRHxQsmM4/mX9+srkZ9zztJK2qOqINyl5RjtNBoTQV2h+JGw49L0/O9sQgS5viBCtq7+w4Jf3r2elD0E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=onurozkan.dev; spf=pass smtp.mailfrom=onurozkan.dev; dkim=pass (1024-bit key) header.d=onurozkan.dev header.i=@onurozkan.dev header.b=AqlIhmXM; arc=none smtp.client-ip=178.154.239.82
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=onurozkan.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=onurozkan.dev
+Received: from mail-nwsmtp-smtp-production-main-91.iva.yp-c.yandex.net (mail-nwsmtp-smtp-production-main-91.iva.yp-c.yandex.net [IPv6:2a02:6b8:c0c:3b23:0:640:a115:0])
+	by forward502a.mail.yandex.net (Yandex) with ESMTPS id 07922620DB;
+	Thu, 26 Jun 2025 13:09:50 +0300 (MSK)
+Received: by mail-nwsmtp-smtp-production-main-91.iva.yp-c.yandex.net (smtp/Yandex) with ESMTPSA id a9SiQLjLaGk0-QaEKKLEt;
+	Thu, 26 Jun 2025 13:09:49 +0300
+X-Yandex-Fwd: 1
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=onurozkan.dev;
+	s=mail; t=1750932589;
+	bh=LW0ekEF132zirr3/C0iPKEdjIqOsqdj1sSpsqbrp2ng=;
+	h=Cc:Message-ID:Subject:Date:References:To:From:In-Reply-To;
+	b=AqlIhmXMu1HgwANBpx1gwlwJSdK2mFxNBgcLe+XjtbneZPYgMay/fVYeeo+s26nPJ
+	 svmn6k/mORV0xESmCEZ/Tj7807Mbiz/7+no8e+O6h0JNq/Jpb1tnoIlhaBhLIlKnNv
+	 BDm8/sEIgXcritMKpV/XG8thJ+TlOLfvDkAPnOUw=
+Authentication-Results: mail-nwsmtp-smtp-production-main-91.iva.yp-c.yandex.net; dkim=pass header.i=@onurozkan.dev
+Date: Thu, 26 Jun 2025 13:09:36 +0300
+From: Onur <work@onurozkan.dev>
+To: linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
+ linux-kselftest@vger.kernel.org, kunit-dev@googlegroups.com
+Cc: airlied@gmail.com, simona@ffwll.ch, ojeda@kernel.org,
+ alex.gaynor@gmail.com, boqun.feng@gmail.com, gary@garyguo.net,
+ bjorn3_gh@protonmail.com, lossin@kernel.org, a.hindborg@kernel.org,
+ aliceryhl@google.com, tmgross@umich.edu, rafael@kernel.org,
+ viresh.kumar@linaro.org, gregkh@linuxfoundation.org,
+ maarten.lankhorst@linux.intel.com, mripard@kernel.org, tzimmermann@suse.de,
+ davidgow@google.com, nm@ti.com
+Subject: Re: [PATCH 2/2] rust: drop unnecessary lints caught by
+ `#[expect(...)]`
+Message-ID: <20250626130936.3c8b25dc@nimda>
+In-Reply-To: <20250626100448.27921-3-work@onurozkan.dev>
+References: <20250626100448.27921-1-work@onurozkan.dev>
+	<20250626100448.27921-3-work@onurozkan.dev>
+X-Mailer: Claws Mail 4.3.1 (GTK 3.24.49; x86_64-unknown-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
 
-tree:   https://git.kernel.org/pub/scm/linux/kernel/git/gustavoars/linux.git testing/wfamnae-next20250616
-head:   78f053980ba50a0becae798ab7d07527d97e790d
-commit: 803cca907129bd7f15b4d9e16fe9585d1f69782c [14/19] cgroup: Avoid -Wflex-array-member-not-at-end warnings
-config: x86_64-buildonly-randconfig-005-20250626 (https://download.01.org/0day-ci/archive/20250626/202506261829.It6MPDTn-lkp@intel.com/config)
-compiler: clang version 20.1.7 (https://github.com/llvm/llvm-project 6146a88f60492b520a36f8f8f3231e15f3cc6082)
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250626/202506261829.It6MPDTn-lkp@intel.com/reproduce)
+On Thu, 26 Jun 2025 13:04:48 +0300
+Onur =C3=96zkan <work@onurozkan.dev> wrote:
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202506261829.It6MPDTn-lkp@intel.com/
+> From: onur-ozkan <work@onurozkan.dev>
+>=20
+> They are no longer needed.
+>=20
+> Signed-off-by: onur-ozkan <work@onurozkan.dev>
 
-All errors (new ones prefixed by >>):
-
-   In file included from kernel/sched/build_policy.c:61:
->> kernel/sched/ext.c:3712:10: error: incompatible pointer types returning 'struct cgroup_hdr *' from a function with result type 'struct cgroup *' [-Werror,-Wincompatible-pointer-types]
-    3712 |                 return &cgrp_dfl_root.cgrp;
-         |                        ^~~~~~~~~~~~~~~~~~~
->> kernel/sched/ext.c:7407:17: error: incompatible pointer types initializing 'struct cgroup *' with an expression of type 'struct cgroup_hdr *' [-Werror,-Wincompatible-pointer-types]
-    7407 |         struct cgroup *cgrp = &cgrp_dfl_root.cgrp;
-         |                        ^      ~~~~~~~~~~~~~~~~~~~
-   2 errors generated.
-
-
-vim +3712 kernel/sched/ext.c
-
-f0e1a0643a59bf Tejun Heo 2024-06-18  3700  
-8195136669661f Tejun Heo 2024-09-04  3701  #ifdef CONFIG_EXT_GROUP_SCHED
-8195136669661f Tejun Heo 2024-09-04  3702  static struct cgroup *tg_cgrp(struct task_group *tg)
-8195136669661f Tejun Heo 2024-09-04  3703  {
-8195136669661f Tejun Heo 2024-09-04  3704  	/*
-8195136669661f Tejun Heo 2024-09-04  3705  	 * If CGROUP_SCHED is disabled, @tg is NULL. If @tg is an autogroup,
-8195136669661f Tejun Heo 2024-09-04  3706  	 * @tg->css.cgroup is NULL. In both cases, @tg can be treated as the
-8195136669661f Tejun Heo 2024-09-04  3707  	 * root cgroup.
-8195136669661f Tejun Heo 2024-09-04  3708  	 */
-8195136669661f Tejun Heo 2024-09-04  3709  	if (tg && tg->css.cgroup)
-8195136669661f Tejun Heo 2024-09-04  3710  		return tg->css.cgroup;
-8195136669661f Tejun Heo 2024-09-04  3711  	else
-8195136669661f Tejun Heo 2024-09-04 @3712  		return &cgrp_dfl_root.cgrp;
-8195136669661f Tejun Heo 2024-09-04  3713  }
-8195136669661f Tejun Heo 2024-09-04  3714  
-
-:::::: The code at line 3712 was first introduced by commit
-:::::: 8195136669661fdfe54e9a8923c33b31c92fc1da sched_ext: Add cgroup support
-
-:::::: TO: Tejun Heo <tj@kernel.org>
-:::::: CC: Tejun Heo <tj@kernel.org>
-
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+Oh crap... This should be "Onur =C3=96zkan" not "onur-ozkan".
+I forgot to update that in my 2nd computer, which was used
+to send this patch.
 
