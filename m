@@ -1,45 +1,45 @@
-Return-Path: <linux-kernel+bounces-705603-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-705605-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8660BAEAB64
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Jun 2025 02:05:07 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 37CC4AEAB62
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Jun 2025 02:04:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id AFFFD7AADCB
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Jun 2025 00:03:13 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9CF8616A68A
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Jun 2025 00:04:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D4BE428C02C;
-	Thu, 26 Jun 2025 23:56:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3B2BF28D8CF;
+	Thu, 26 Jun 2025 23:56:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="lKQ2sGuG"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="OmQs3x7z"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2C0A328A70A;
-	Thu, 26 Jun 2025 23:56:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8924E28C5D7;
+	Thu, 26 Jun 2025 23:56:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750982203; cv=none; b=XYZzESdr62e2OvPqLeWtu9JCez/t1t0VFM0fVNbXjeuZQ9fXiOrTTmQ3bJCvw2RWCNnEGwTri7/rF1I2ONoQRlvawHCx6nUQF0hxaEhLG/DIN5cUmjVqDCKFg74gpvoAUFwqqpgCp/HvqgIuW7LuB07NBN1NHpo9CczIIfmaM6g=
+	t=1750982204; cv=none; b=EISCvYhu/jPdzo0iY614JO5WVmVpB7cRB8tTEOziZlcz3X6pkE6K92+Ur0cPnHq7s8pA21KO0T8V9o7I38hd5TeX/rmU+A3o0xoo6LFPN7wqpbT/WtmkiAMgBbxBaE/9TNE5NT/lE/FE30qfd5qSfkiOqDx/qV4ip7ZH2jSDnAA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750982203; c=relaxed/simple;
-	bh=lKP9pcf5JLNshoXCNIFr0bPP37w/NqZ72Fam2hwYVs4=;
+	s=arc-20240116; t=1750982204; c=relaxed/simple;
+	bh=zJHQbwVSxvJMsp/vDOml8Q/LO+Frd6VrJctV0yXjZco=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=jpQ4KNK7vh19RvwFgBfTLzPVyu2ZaJ0aZ5VT3qQm8xmT/PfLRkYKxTJLGC4RrZAGcBhJDias15LBzUUKuPSL/zPJdFY5SLTJ4v9bJkG6LE5juY/YrU0f2BdIzSra9EeDm/rQRMVejtvl/QaoULAeKYqVY6VA2/zJ0pCVQCwGbv4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=lKQ2sGuG; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 826F2C4CEF0;
-	Thu, 26 Jun 2025 23:56:42 +0000 (UTC)
+	 MIME-Version; b=FKQox1dA/THwfM6w08Vpowq7b+v4RS2vfCE3QBtjYeg9qalxUrriz9OoRHayrKqqR0T0sHVp7B+r/vxhZcl48X7myNspvRqLYsJ2TBoW+ua5++b4qjRVCCxpwRcK4/KO1X6spA0lml3jS5a2/8D2GOUxm35/YghmoNQOCr03+64=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=OmQs3x7z; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id DCE64C4CEEB;
+	Thu, 26 Jun 2025 23:56:43 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1750982203;
-	bh=lKP9pcf5JLNshoXCNIFr0bPP37w/NqZ72Fam2hwYVs4=;
+	s=k20201202; t=1750982204;
+	bh=zJHQbwVSxvJMsp/vDOml8Q/LO+Frd6VrJctV0yXjZco=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=lKQ2sGuGrghTKHtsfpLr/vxsDlmjDoFMB9DkfpsWrhJxyGqXC7JJEuQmBsrdyLJTX
-	 oYM02TQngxOm19Ri4AbZP1oB4qa967m5CuHEheAeedKYaywUJneQh/ViaakHoTBuTI
-	 8zyOZBqXIk3VPclEDzsyWpCSxjXo1lxbL3fMznrUB4ZrW6p4bXvwNw0ltXfbBVG9Eh
-	 tM9lKYksWSE9DOjMRKsYcchaAxKHRw3Nk6zOA6/QDGMtj53N2Qbb5FhYQpJ2b67Ajv
-	 9+wNb3R7W568Z4BR/hZ0cDGLRekEdrw9vaxH9a4GA/cLQoGgbA/hJ8KjJDbhN9bwch
-	 8lfQFEfdIHVpA==
+	b=OmQs3x7zAfKtfZ0wh+YKnZVV4ckZ4DVRFB5PjYFRbOOhgAi98il9VAyri6UX4Kaho
+	 BVprSwtmpFiwldzxb3/vlAMng1gZ4b2e2inHhZeiHK/7Azw5F7rJPtm9TY1qeyRIas
+	 u2/cZwlKLLfsxTXdCndp3+sJWXogDrRoXnvP1fPKxUheH1hLVyjJdXr2Jyi8aySEsl
+	 tW+eOSm9P+4A9/BPgfojbhkk/oJ5aAtmvMiA9CRHyDD5EYRdfFkpj9IBs/HOaxxzvb
+	 Jlh0pS28h/N4s6qxMcWntVrm0az9qEoo06tKjdb6ebYSgOoDdXWgLgEXrEGLvvp+My
+	 PN/TDm2p+rRlg==
 From: Josh Poimboeuf <jpoimboe@kernel.org>
 To: x86@kernel.org
 Cc: linux-kernel@vger.kernel.org,
@@ -56,9 +56,9 @@ Cc: linux-kernel@vger.kernel.org,
 	Chen Zhongjin <chenzhongjin@huawei.com>,
 	Puranjay Mohan <puranjay@kernel.org>,
 	Dylan Hatch <dylanbhatch@google.com>
-Subject: [PATCH v3 45/64] x86/static_call: Define ELF section entry size of static calls
-Date: Thu, 26 Jun 2025 16:55:32 -0700
-Message-ID: <6c3466449d8c721af903ccc5e16251e36f678236.1750980517.git.jpoimboe@kernel.org>
+Subject: [PATCH v3 47/64] x86/bug: Define ELF section entry size for bug table
+Date: Thu, 26 Jun 2025 16:55:34 -0700
+Message-ID: <43b5d27827075a3418edd0fad621c78070e4f444.1750980517.git.jpoimboe@kernel.org>
 X-Mailer: git-send-email 2.49.0
 In-Reply-To: <cover.1750980516.git.jpoimboe@kernel.org>
 References: <cover.1750980516.git.jpoimboe@kernel.org>
@@ -71,128 +71,76 @@ MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
 In preparation for the objtool klp diff subcommand, define the entry
-size for the .static_call_sites section in its ELF header.  This will
-allow tooling to extract individual entries.
+size for the __bug_table section in its ELF header.  This will allow
+tooling to extract individual entries.
 
 Signed-off-by: Josh Poimboeuf <jpoimboe@kernel.org>
 ---
- arch/x86/include/asm/static_call.h      |  3 ++-
- include/linux/static_call.h             |  6 ------
- include/linux/static_call_types.h       |  6 ++++++
- kernel/bounds.c                         |  4 ++++
- tools/include/linux/static_call_types.h |  6 ++++++
- tools/objtool/check.c                   | 11 +++++++++--
- 6 files changed, 27 insertions(+), 9 deletions(-)
+ arch/x86/include/asm/bug.h | 45 ++++++++++++++++++++------------------
+ 1 file changed, 24 insertions(+), 21 deletions(-)
 
-diff --git a/arch/x86/include/asm/static_call.h b/arch/x86/include/asm/static_call.h
-index 41502bd2afd6..e03ad9bbbf59 100644
---- a/arch/x86/include/asm/static_call.h
-+++ b/arch/x86/include/asm/static_call.h
-@@ -58,7 +58,8 @@
- 	ARCH_DEFINE_STATIC_CALL_TRAMP(name, __static_call_return0)
+diff --git a/arch/x86/include/asm/bug.h b/arch/x86/include/asm/bug.h
+index 59e155ee3c76..3aa28c687696 100644
+--- a/arch/x86/include/asm/bug.h
++++ b/arch/x86/include/asm/bug.h
+@@ -41,33 +41,36 @@
  
- #define ARCH_ADD_TRAMP_KEY(name)					\
--	asm(".pushsection .static_call_tramp_key, \"a\"		\n"	\
-+	asm(".pushsection .static_call_tramp_key, \"aM\", @progbits, "	\
-+	    __stringify(STATIC_CALL_TRAMP_KEY_SIZE) "\n"		\
- 	    ".long " STATIC_CALL_TRAMP_STR(name) " - .		\n"	\
- 	    ".long " STATIC_CALL_KEY_STR(name) " - .		\n"	\
- 	    ".popsection					\n")
-diff --git a/include/linux/static_call.h b/include/linux/static_call.h
-index 78a77a4ae0ea..5210612817f2 100644
---- a/include/linux/static_call.h
-+++ b/include/linux/static_call.h
-@@ -172,12 +172,6 @@ struct static_call_mod {
- 	struct static_call_site *sites;
- };
+ #define _BUG_FLAGS(cond_str, ins, flags, extra)				\
+ do {									\
+-	asm_inline volatile("1:\t" ins "\n"				\
+-		     ".pushsection __bug_table,\"a\"\n"			\
+-		     "2:\t" __BUG_REL(1b) "\t# bug_entry::bug_addr\n"	\
+-		     "\t"  __BUG_REL(%c0) "\t# bug_entry::file\n"	\
+-		     "\t.word %c1"        "\t# bug_entry::line\n"	\
+-		     "\t.word %c2"        "\t# bug_entry::flags\n"	\
+-		     "\t.org 2b+%c3\n"					\
+-		     ".popsection\n"					\
+-		     extra						\
+-		     : : "i" (WARN_CONDITION_STR(cond_str) __FILE__), "i" (__LINE__),		\
+-			 "i" (flags),					\
+-			 "i" (sizeof(struct bug_entry)));		\
++	asm_inline volatile(						\
++		"1:\t" ins "\n"						\
++		".pushsection __bug_table, \"aM\", @progbits, %c3\n"	\
++		"2:\t" __BUG_REL(1b) "\t# bug_entry::bug_addr\n"	\
++		"\t"  __BUG_REL(%c0) "\t# bug_entry::file\n"		\
++		"\t.word %c1"        "\t# bug_entry::line\n"		\
++		"\t.word %c2"        "\t# bug_entry::flags\n"		\
++		"\t.org 2b+%c3\n"					\
++		".popsection\n"						\
++		extra							\
++		: : "i" (WARN_CONDITION_STR(cond_str) __FILE__),	\
++		    "i" (__LINE__),					\
++		    "i" (flags),					\
++		    "i" (sizeof(struct bug_entry)));			\
+ } while (0)
  
--/* For finding the key associated with a trampoline */
--struct static_call_tramp_key {
--	s32 tramp;
--	s32 key;
--};
--
- extern void __static_call_update(struct static_call_key *key, void *tramp, void *func);
- extern int static_call_mod_init(struct module *mod);
- extern int static_call_text_reserved(void *start, void *end);
-diff --git a/include/linux/static_call_types.h b/include/linux/static_call_types.h
-index 5a00b8b2cf9f..eb772df625d4 100644
---- a/include/linux/static_call_types.h
-+++ b/include/linux/static_call_types.h
-@@ -34,6 +34,12 @@ struct static_call_site {
- 	s32 key;
- };
+ #else /* !CONFIG_DEBUG_BUGVERBOSE */
  
-+/* For finding the key associated with a trampoline */
-+struct static_call_tramp_key {
-+	s32 tramp;
-+	s32 key;
-+};
-+
- #define DECLARE_STATIC_CALL(name, func)					\
- 	extern struct static_call_key STATIC_CALL_KEY(name);		\
- 	extern typeof(func) STATIC_CALL_TRAMP(name);
-diff --git a/kernel/bounds.c b/kernel/bounds.c
-index e4c7ded3dc48..21c37e3ea629 100644
---- a/kernel/bounds.c
-+++ b/kernel/bounds.c
-@@ -14,6 +14,7 @@
- #include <linux/log2.h>
- #include <linux/spinlock_types.h>
- #include <linux/jump_label.h>
-+#include <linux/static_call_types.h>
+ #define _BUG_FLAGS(cond_str, ins, flags, extra)				\
+ do {									\
+-	asm_inline volatile("1:\t" ins "\n"				\
+-		     ".pushsection __bug_table,\"a\"\n"			\
+-		     "2:\t" __BUG_REL(1b) "\t# bug_entry::bug_addr\n"	\
+-		     "\t.word %c0"        "\t# bug_entry::flags\n"	\
+-		     "\t.org 2b+%c1\n"					\
+-		     ".popsection\n"					\
+-		     extra						\
+-		     : : "i" (flags),					\
+-			 "i" (sizeof(struct bug_entry)));		\
++	asm_inline volatile(						\
++		"1:\t" ins "\n"						\
++		".pushsection __bug_table, \"aM\", @progbits, %c1\n"	\
++		"2:\t" __BUG_REL(1b) "\t# bug_entry::bug_addr\n"	\
++		"\t.word %c0"        "\t# bug_entry::flags\n"		\
++		"\t.org 2b+%c1\n"					\
++		".popsection\n"						\
++		extra							\
++		: : "i" (flags),					\
++		    "i" (sizeof(struct bug_entry)));			\
+ } while (0)
  
- int main(void)
- {
-@@ -33,6 +34,9 @@ int main(void)
- #endif
- #if defined(CONFIG_HAVE_ARCH_JUMP_LABEL_RELATIVE) && defined(CONFIG_JUMP_LABEL)
- 	DEFINE(JUMP_ENTRY_SIZE, sizeof(struct jump_entry));
-+#endif
-+#ifdef CONFIG_HAVE_STATIC_CALL_INLINE
-+	DEFINE(STATIC_CALL_TRAMP_KEY_SIZE, sizeof(struct static_call_tramp_key));
- #endif
- 	/* End of constants */
- 
-diff --git a/tools/include/linux/static_call_types.h b/tools/include/linux/static_call_types.h
-index 5a00b8b2cf9f..eb772df625d4 100644
---- a/tools/include/linux/static_call_types.h
-+++ b/tools/include/linux/static_call_types.h
-@@ -34,6 +34,12 @@ struct static_call_site {
- 	s32 key;
- };
- 
-+/* For finding the key associated with a trampoline */
-+struct static_call_tramp_key {
-+	s32 tramp;
-+	s32 key;
-+};
-+
- #define DECLARE_STATIC_CALL(name, func)					\
- 	extern struct static_call_key STATIC_CALL_KEY(name);		\
- 	extern typeof(func) STATIC_CALL_TRAMP(name);
-diff --git a/tools/objtool/check.c b/tools/objtool/check.c
-index 3afc748ba516..c3e1ca3dba06 100644
---- a/tools/objtool/check.c
-+++ b/tools/objtool/check.c
-@@ -650,8 +650,15 @@ static int create_static_call_sections(struct objtool_file *file)
- 	if (!sec)
- 		return -1;
- 
--	/* Allow modules to modify the low bits of static_call_site::key */
--	sec->sh.sh_flags |= SHF_WRITE;
-+	/*
-+	 * Set SHF_MERGE to prevent tooling from stripping entsize.
-+	 *
-+	 * SHF_WRITE would also get set here to allow modules to modify the low
-+	 * bits of static_call_site::key, but the LLVM linker doesn't allow
-+	 * SHF_MERGE+SHF_WRITE for whatever reason.  That gets fixed up by the
-+	 * makefiles with CONFIG_NEED_MODULE_PERMISSIONS_FIX.
-+	 */
-+	sec->sh.sh_flags |= SHF_MERGE;
- 
- 	idx = 0;
- 	list_for_each_entry(insn, &file->static_call_list, call_node) {
+ #endif /* CONFIG_DEBUG_BUGVERBOSE */
 -- 
 2.49.0
 
