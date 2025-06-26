@@ -1,45 +1,45 @@
-Return-Path: <linux-kernel+bounces-705604-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-705607-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 65E72AEAB67
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Jun 2025 02:05:20 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id B60C2AEAB68
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Jun 2025 02:05:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 691AE6A0FC0
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Jun 2025 00:04:24 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 037E7170F95
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Jun 2025 00:05:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AF87528C84F;
-	Thu, 26 Jun 2025 23:56:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2FBEC28FA83;
+	Thu, 26 Jun 2025 23:56:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="W+RA9wEu"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="g6u3gQTT"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D03C628C01A;
-	Thu, 26 Jun 2025 23:56:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7564B28EA53;
+	Thu, 26 Jun 2025 23:56:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750982203; cv=none; b=L7BFVsjIIfFbxwp7h1eBumCTOmwF8jAXiJ/NlPGhE1pJRqCsSmzP2rjxrAqXTUK6PqxlOt0kX0dHBUeFHxbqFTHl9ZX0kFBbXxVb3VhkEgIcpkmdX8NIEjGutntHFm3cZbXC9viQIPdIuD5u+l7EQfv/y8HbnC3nXMvL7VNlEWw=
+	t=1750982206; cv=none; b=JrT199QtenA6cy4QLaEc5aE8a7ZD4bCk5ka0nFWtTfbmhL/w6ENZvQZf+1mAenwEKWcmB0FfKXfky5WLHT2isdeu3cfcI9hC6ekGrw5qP/6Ox8pyRLwL924dViDG9kPMvV++WTyfs7lU/jv3FyX68YJizRMDVfDCy/L3HS51STw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750982203; c=relaxed/simple;
-	bh=PBM/iTiwWZaioDN0pY0/oaH5NWCKZ6CmHlpih2f76eA=;
+	s=arc-20240116; t=1750982206; c=relaxed/simple;
+	bh=DfYbyyq6pedYFcxfgyY6J9FfqZ28OdxeeJQZ0L8Mf8Q=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=Ggtzzs/FWA6JnUyxDGj65Dq/teZK96vzdCp1OzGlRExdDU0gHWZ0Sr9QNP13pQ99wx/PaaS8Dr/2bFMTBQvgLg+jRo9A1r+HSoc0788Qvd4wWa7ZXf+RyNIPz0EA8YddRPg59Fz3+u8ZX/z0g3ZsRfpsZeruTVEPgqpzLIoqNfo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=W+RA9wEu; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 34430C4CEF1;
-	Thu, 26 Jun 2025 23:56:43 +0000 (UTC)
+	 MIME-Version; b=as4kSla5ofLkjMHAK3KU3a+uvQBPLNSOTxpXJhZ9PppjEma0sOUL7mqAOcVH699LZvv/j+jQNnwS+EWY8LjsW9IyLDkJYzOGgsKUggu6ftsaBhBYdmCxq17dZq+X8+Q0b9Pk6wMAC7N9KgOK29VKwEJBVSaO8+MUBgtwQHjtAiY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=g6u3gQTT; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4AD4CC4CEF2;
+	Thu, 26 Jun 2025 23:56:45 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1750982203;
-	bh=PBM/iTiwWZaioDN0pY0/oaH5NWCKZ6CmHlpih2f76eA=;
+	s=k20201202; t=1750982205;
+	bh=DfYbyyq6pedYFcxfgyY6J9FfqZ28OdxeeJQZ0L8Mf8Q=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=W+RA9wEuKsa4XOvMIGZhtd5xeGH37+B6bsrcfH9A4LjbYvd98Ect8C168u3xvl6R5
-	 tZyQvhDseTxUly3T8gH2T1Vv8T2dhmYr9M9mSqUj/kqzIWh0GLpJOzCr7+vTPAwbcN
-	 hIUGtITxHhULqk8bHrPxUEPcBGIcO97m85ZkbxHkT4L5OoKyRSYAa5z5wIvg0aQXA2
-	 nz0uTz3/S8DbEAD5V+HJSkG1wsT6zYGXuCjc9FLzCGCejQhV+naCjH+476Fc2/vzwS
-	 Nkt7ni+wJCHmmlch3hyFu73azjxheeLaLLUB0nxpEN/Sn+aZ9m/2T45cOZqlrQKiZS
-	 n3Ai6TTk+W/wA==
+	b=g6u3gQTT8cHzfUvR4/mYgH+dhrTYB3K/yCeMLsYBAmVpX0GdbZ+gXxKz8wvngBJ9T
+	 YsZB5HF+NtK7FxS8owVX2PlvoX0Gr+QC93jbP8btD9gWzkvRjbR+lZdFpJ1T47xDLx
+	 TuSR/wNM+xMmwr0OHffbmknzrJ67oKzd3vCwbJYiV3BjAQH1fJV1cGzgeKKt3Pq30C
+	 hnhAEJv388JYsP1iH02hHrQgpUBOlV3GXa0/Mtf2demkQoUeTnIimjosA4xgPXrGoh
+	 HZFzzmg1GQ7990S41z5sFaC5w77ntI5UZG2Ac7GCFPhRqVP8ins2l1E/H0o4KwpfIF
+	 eczS2m3D5Najw==
 From: Josh Poimboeuf <jpoimboe@kernel.org>
 To: x86@kernel.org
 Cc: linux-kernel@vger.kernel.org,
@@ -56,9 +56,9 @@ Cc: linux-kernel@vger.kernel.org,
 	Chen Zhongjin <chenzhongjin@huawei.com>,
 	Puranjay Mohan <puranjay@kernel.org>,
 	Dylan Hatch <dylanbhatch@google.com>
-Subject: [PATCH v3 46/64] x86/extable: Define ELF section entry size for exception table
-Date: Thu, 26 Jun 2025 16:55:33 -0700
-Message-ID: <1a53b6dcf236ce1fe0f0cd0d4441fc2bd9022cb3.1750980517.git.jpoimboe@kernel.org>
+Subject: [PATCH v3 49/64] objtool: Unify STACK_FRAME_NON_STANDARD entry sizes
+Date: Thu, 26 Jun 2025 16:55:36 -0700
+Message-ID: <113d5ea267328c65a2220dbb94eb51a2084d3a27.1750980517.git.jpoimboe@kernel.org>
 X-Mailer: git-send-email 2.49.0
 In-Reply-To: <cover.1750980516.git.jpoimboe@kernel.org>
 References: <cover.1750980516.git.jpoimboe@kernel.org>
@@ -70,105 +70,33 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-In preparation for the objtool klp diff subcommand, define the entry
-size for the __ex_table section in its ELF header.  This will allow
-tooling to extract individual entries.
+The C implementation of STACK_FRAME_NON_STANDARD emits 8-byte entries,
+whereas the asm version's entries are only 4 bytes.
+
+Make them consistent by converting the asm version to 8-byte entries.
+
+This is much easier than converting the C version to 4-bytes, which
+would require awkwardly putting inline asm in a dummy function in order
+to pass the 'func' pointer to the asm.
 
 Signed-off-by: Josh Poimboeuf <jpoimboe@kernel.org>
 ---
- arch/um/include/asm/Kbuild                 |  1 -
- arch/um/include/shared/common-offsets.h    |  1 +
- arch/x86/include/asm/asm.h                 | 18 ++++++++++--------
- arch/x86/kernel/asm-offsets.c              |  1 +
- arch/x86/um/shared/sysdep/kernel-offsets.h |  1 +
- 5 files changed, 13 insertions(+), 9 deletions(-)
+ include/linux/objtool.h | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/arch/um/include/asm/Kbuild b/arch/um/include/asm/Kbuild
-index 04ab3b653a48..1934fa0df888 100644
---- a/arch/um/include/asm/Kbuild
-+++ b/arch/um/include/asm/Kbuild
-@@ -5,7 +5,6 @@ generic-y += device.h
- generic-y += dma-mapping.h
- generic-y += emergency-restart.h
- generic-y += exec.h
--generic-y += extable.h
- generic-y += ftrace.h
- generic-y += hw_irq.h
- generic-y += irq_regs.h
-diff --git a/arch/um/include/shared/common-offsets.h b/arch/um/include/shared/common-offsets.h
-index 4e19103afd71..a6f77cb6aa7e 100644
---- a/arch/um/include/shared/common-offsets.h
-+++ b/arch/um/include/shared/common-offsets.h
-@@ -20,3 +20,4 @@ DEFINE(UM_KERN_GDT_ENTRY_TLS_ENTRIES, GDT_ENTRY_TLS_ENTRIES);
- DEFINE(UM_SECCOMP_ARCH_NATIVE, SECCOMP_ARCH_NATIVE);
+diff --git a/include/linux/objtool.h b/include/linux/objtool.h
+index c7a3851ae4ae..7d7bb7f1af69 100644
+--- a/include/linux/objtool.h
++++ b/include/linux/objtool.h
+@@ -106,7 +106,7 @@
  
- DEFINE(ALT_INSTR_SIZE, sizeof(struct alt_instr));
-+DEFINE(EXTABLE_SIZE,   sizeof(struct exception_table_entry));
-diff --git a/arch/x86/include/asm/asm.h b/arch/x86/include/asm/asm.h
-index 1f26f90a57ce..e9b6d2d006c6 100644
---- a/arch/x86/include/asm/asm.h
-+++ b/arch/x86/include/asm/asm.h
-@@ -145,12 +145,12 @@ static __always_inline __pure void *rip_rel_ptr(void *p)
- /* Exception table entry */
- #ifdef __ASSEMBLER__
- 
--# define _ASM_EXTABLE_TYPE(from, to, type)			\
--	.pushsection "__ex_table","a" ;				\
--	.balign 4 ;						\
--	.long (from) - . ;					\
--	.long (to) - . ;					\
--	.long type ;						\
-+# define _ASM_EXTABLE_TYPE(from, to, type)				\
-+	.pushsection "__ex_table", "aM", @progbits, EXTABLE_SIZE;	\
-+	.balign 4 ;							\
-+	.long (from) - . ;						\
-+	.long (to) - . ;						\
-+	.long type ;							\
+ .macro STACK_FRAME_NON_STANDARD func:req
+ 	.pushsection .discard.func_stack_frame_non_standard, "aw"
+-	.long \func - .
++	.quad \func
  	.popsection
+ .endm
  
- # ifdef CONFIG_KPROBES
-@@ -193,7 +193,8 @@ static __always_inline __pure void *rip_rel_ptr(void *p)
- 	".purgem extable_type_reg\n"
- 
- # define _ASM_EXTABLE_TYPE(from, to, type)			\
--	" .pushsection \"__ex_table\",\"a\"\n"			\
-+	" .pushsection __ex_table, \"aM\", @progbits, "		\
-+		       __stringify(EXTABLE_SIZE) "\n"		\
- 	" .balign 4\n"						\
- 	" .long (" #from ") - .\n"				\
- 	" .long (" #to ") - .\n"				\
-@@ -201,7 +202,8 @@ static __always_inline __pure void *rip_rel_ptr(void *p)
- 	" .popsection\n"
- 
- # define _ASM_EXTABLE_TYPE_REG(from, to, type, reg)				\
--	" .pushsection \"__ex_table\",\"a\"\n"					\
-+	" .pushsection __ex_table, \"aM\", @progbits, "				\
-+		       __stringify(EXTABLE_SIZE) "\n"				\
- 	" .balign 4\n"								\
- 	" .long (" #from ") - .\n"						\
- 	" .long (" #to ") - .\n"						\
-diff --git a/arch/x86/kernel/asm-offsets.c b/arch/x86/kernel/asm-offsets.c
-index b51625c3f64c..3d3eef7fae32 100644
---- a/arch/x86/kernel/asm-offsets.c
-+++ b/arch/x86/kernel/asm-offsets.c
-@@ -125,4 +125,5 @@ static void __used common(void)
- 
- 	BLANK();
- 	DEFINE(ALT_INSTR_SIZE,	 sizeof(struct alt_instr));
-+	DEFINE(EXTABLE_SIZE,	 sizeof(struct exception_table_entry));
- }
-diff --git a/arch/x86/um/shared/sysdep/kernel-offsets.h b/arch/x86/um/shared/sysdep/kernel-offsets.h
-index 9f6d3d1a248c..8215a0200ddd 100644
---- a/arch/x86/um/shared/sysdep/kernel-offsets.h
-+++ b/arch/x86/um/shared/sysdep/kernel-offsets.h
-@@ -8,6 +8,7 @@
- #include <linux/audit.h>
- #include <asm/mman.h>
- #include <asm/seccomp.h>
-+#include <asm/extable.h>
- 
- /* workaround for a warning with -Wmissing-prototypes */
- void foo(void);
 -- 
 2.49.0
 
