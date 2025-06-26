@@ -1,109 +1,157 @@
-Return-Path: <linux-kernel+bounces-705075-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-705093-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 30862AEA4DF
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Jun 2025 20:03:08 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6A12EAEA527
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Jun 2025 20:18:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C3AF91C43BBF
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Jun 2025 18:03:20 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BB7F91653B7
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Jun 2025 18:18:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4035D2EE285;
-	Thu, 26 Jun 2025 18:02:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 852E22F1982;
+	Thu, 26 Jun 2025 18:15:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="qS6LrOFc"
-Received: from mail-oa1-f44.google.com (mail-oa1-f44.google.com [209.85.160.44])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=rjwysocki.net header.i=@rjwysocki.net header.b="T0n6IXdY"
+Received: from cloudserver094114.home.pl (cloudserver094114.home.pl [79.96.170.134])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 16C76201278
-	for <linux-kernel@vger.kernel.org>; Thu, 26 Jun 2025 18:02:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 400A92F0C47;
+	Thu, 26 Jun 2025 18:15:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=79.96.170.134
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750960959; cv=none; b=R6Rsguugru9GlXsevavCKxZ9yoplaoL4PO+j/DYeGQPohHN8wFO4WiMR7kE0od1kAbmdDdYt0TQkBvotiSDfhJhG1iHHyI4jTZcIwzJxif7uiSXsT1S0LKHVHu7xtJcPneenFeSyYvKF4ae6bW6APvB0YJmEUNLZ5kuNmlc8J8U=
+	t=1750961754; cv=none; b=YLpjBMj3eVznpnKLyOoIB0yqh//9BiRSjGinPKSytp7qk3vP5gncA7RF+FhRf2m9Ujsie01pG+BfrdPXvWN/svHfVmZCfYyTs/KJ6tOXsqrAVGf9NDpKQzabfSPBQKfVz1I01djf65JPbHd+yAsiExz6nTLYrNTRjyaQ0K6s+uk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750960959; c=relaxed/simple;
-	bh=cK/F/XRWVdGgsrv0imtZS1Am8/D8n9MBxKdjORBtKh4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=eOtSo54kt1VBete+Kcne5j4U68n14IkqTtG7rkonu9LhsXuFMU4sUrhsgAaqJNSlJS696lnPEODTANybhMkpa1fMTEAWxrw5Z+rDD2lnsQZJ8Q/N9nuU7WSu2nPknDXdvmA30FbSrBp9LbvEP8gTfeWmrbyVczN+qMzaE0TX9Mw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=qS6LrOFc; arc=none smtp.client-ip=209.85.160.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-oa1-f44.google.com with SMTP id 586e51a60fabf-2ea58f008e9so1084377fac.0
-        for <linux-kernel@vger.kernel.org>; Thu, 26 Jun 2025 11:02:37 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1750960957; x=1751565757; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=FuBXeZYcaGZJ+A3VKNOAHUUuR6YcnbhEEbsYOpI28oY=;
-        b=qS6LrOFcoGJPol36dCkR06Sd3/5yY48D85PoxmviiUjfbenRFsTQB/C9kQvoEfX6Su
-         5b67XJ7u1abs6mlgQTjKdFkqzaYjgQ2B9SfShNebj8Q8uTy1bVcg7jbpVXvtGvW5wZjL
-         DjeDMfb/S9w6yK5TvYcLd0Kw8AaxTuJ8xpezxztzhTOt07lsF/y+DPTbhm0KSPjL0wet
-         rIajgtL5uYgXkBV6XFW7tqndBgk7ht70gAbWag1YAG3jPRNiCzxEpFlRaUbQ8eNoMUvE
-         iQU9H36Z+RhlNzVl8VZbKVcFK/dXqCWZfg5KqaV+nPVuwl9yUnR1vgNBdZ+t16UuvQap
-         uQyg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1750960957; x=1751565757;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=FuBXeZYcaGZJ+A3VKNOAHUUuR6YcnbhEEbsYOpI28oY=;
-        b=Ne2i4cWhHhlXOXSoIMGmRk+qgRWJfGjmcVm5yD+rIDwC9Bx7EntbrNBww8rgxBVy0F
-         HhPNcU6TIFWgJPIsyaTP4W95ZI6iZlsLP+9DqyaGAskkNp2L9hMB06wqd8JW09NEVsTl
-         IWd07eZpkft00S4uiEDPBP8/N5ClfLASWYPo02Zla+nlFGcXLDL0EymTZw+zXrg5rxi1
-         uOf8j7UK7jSKXQc/j3NaNrme+UMzP8NYjPlcSYc3Bt2y34SEb+2/zpRBeOA6eEelu8mC
-         HIQvuRsrJi1CyPoO8JhM3fTgc8xQoljBJJe1FAarafVT0576SS8+YFymrBPyvYujwQu0
-         YExA==
-X-Forwarded-Encrypted: i=1; AJvYcCXfZ+wGcZDcF/cM7LkQI0Iwf4q3aABavixizpT5ItrQWVVAVqTdxyzSHJN/LZ4BpC1vt85fcLXlB/r1iB0=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyZfsYUlooq6AU9TzQIOWCru6nuK1BjjDpcJ2s8TTtsKEv7iz/8
-	nLmwSe7PoDZGQutgBmHtf6U8YlyuFETI+BAvEwPxh0O8bRIK/owHkWONVwgsYHeWiWQ=
-X-Gm-Gg: ASbGncs2bQuEX5cNKajQcUmdkfJpEa8wBuQhlyMgIXhVzfoKaHGO9AfxVLStUXqTZI3
-	OyEmWVoGo2c1xreIpX25IbdunEmOYuRiQ82Ia8E52o5c+dY3pfAJ5+FWHp1DlJ3UEUYNSvk/aeI
-	HWx4pofoISu/F47LFXk69h6B1yZ8MywVmtJo8N8Sk2Fx1G7B22P2rUpTJNpesdjtRLgTtJLIgZ/
-	snH0vi+SRnKPHr2YKC1+BNS7UxBP6DnSiwUj5nEIXvEpdWqyCdKqXypVoSF80R+tZEhoWveYKgM
-	kP9wMf3cJ3yre1QidBAI9f51fZUtvzYHIpTT+h6/+Dyi9kQyzEbl8BCud+HgzwkLeAoa
-X-Google-Smtp-Source: AGHT+IE0Wq2OGy/UBABihaj30tjkXqQd3OF/6SvLXaubvLuwAxvs/RkGqwkr/Rqy+NYKM/SPFesEow==
-X-Received: by 2002:a05:6870:f721:b0:2c3:1651:ca78 with SMTP id 586e51a60fabf-2efed4b5be6mr15093fac.14.1750960957043;
-        Thu, 26 Jun 2025 11:02:37 -0700 (PDT)
-Received: from localhost ([2603:8080:b800:f700:154:5a01:d5a1:16d6])
-        by smtp.gmail.com with ESMTPSA id 586e51a60fabf-2efd50b0cf0sm453080fac.29.2025.06.26.11.02.34
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 26 Jun 2025 11:02:35 -0700 (PDT)
-Date: Thu, 26 Jun 2025 21:02:33 +0300
-From: Dan Carpenter <dan.carpenter@linaro.org>
-To: Abdun Nihaal <abdun.nihaal@gmail.com>
-Cc: andy@kernel.org, gregkh@linuxfoundation.org, lorenzo.stoakes@oracle.com,
-	tzimmermann@suse.de, riyandhiman14@gmail.com, willy@infradead.org,
-	notro@tronnes.org, thomas.petazzoni@free-electrons.com,
-	dri-devel@lists.freedesktop.org, linux-fbdev@vger.kernel.org,
-	linux-staging@lists.linux.dev, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] staging: fbtft: fix potential memory leak in
- fbtft_framebuffer_alloc()
-Message-ID: <407addf1-4cda-485a-83a6-5eb2f6d5f7a9@suswa.mountain>
-References: <20250626172412.18355-1-abdun.nihaal@gmail.com>
+	s=arc-20240116; t=1750961754; c=relaxed/simple;
+	bh=wINTbjSgE4hGTShU/WIi/YnLh3esbBO5/BZuSV/Ss6M=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=QUzSbuMImzY9aJIwa1baPvyuD2W2g61u7GTVpCk7cqDyRcoyg9GIFtsu0ZahkIspxXf/AgPgLiMEd5TMqs2iSq6fVVLh0id06X4ikkwzO1jsEx4z4snZhyEDQ6Yq/q2NciEdlsOXMT98nNBynKdUPI2LybJ1M8NgD3T/S8U9Exg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rjwysocki.net; spf=pass smtp.mailfrom=rjwysocki.net; dkim=pass (2048-bit key) header.d=rjwysocki.net header.i=@rjwysocki.net header.b=T0n6IXdY; arc=none smtp.client-ip=79.96.170.134
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rjwysocki.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rjwysocki.net
+Received: from kreacher.localnet (unknown [5.63.189.50])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by cloudserver094114.home.pl (Postfix) with ESMTPSA id 0363066E9B3;
+	Thu, 26 Jun 2025 20:15:51 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=rjwysocki.net;
+	s=dkim; t=1750961751;
+	bh=wINTbjSgE4hGTShU/WIi/YnLh3esbBO5/BZuSV/Ss6M=;
+	h=From:Subject:Date;
+	b=T0n6IXdYhMe/hcTSZCIsnX40sD0W5OiXNCgZZ3WP7anD3JaJnT7P8A7fg3t8zHNlL
+	 zzsXVKEEPTNdsLeqAKOBVY+0EN05ZNFevW4aSSBFsqMq0FdW4ieCobGpJWrlnfVtW0
+	 aac/f8la00px9KphVgclu3zU6DbOctwb6nTA0uDcYHF6F8RlVqJlKif5UR8xpjH26i
+	 R5ic7GUgFAi2xNoZBqMcYcYvRu8gkkZRzKULalW4oCioRDZ1RWf5yeJZxqoU47tJNu
+	 4aBGpxz1d2J+m8WFfu6yfl444zmDzjWp69NjGlPqt+tNh+iJBK9n/2b+s9KI284ElG
+	 9pzG2ePCwDRRA==
+From: "Rafael J. Wysocki" <rjw@rjwysocki.net>
+To: Linux PM <linux-pm@vger.kernel.org>
+Cc: LKML <linux-kernel@vger.kernel.org>,
+ Linux ACPI <linux-acpi@vger.kernel.org>,
+ Linux PCI <linux-pci@vger.kernel.org>, Ulf Hansson <ulf.hansson@linaro.org>,
+ Mika Westerberg <mika.westerberg@linux.intel.com>
+Subject:
+ [PATCH v2 0/9] PM: Reconcile different driver options for runtime PM
+ integration with system sleep
+Date: Thu, 26 Jun 2025 19:56:15 +0200
+Message-ID: <5015172.GXAFRqVoOG@rjwysocki.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250626172412.18355-1-abdun.nihaal@gmail.com>
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="UTF-8"
+X-CLIENT-IP: 5.63.189.50
+X-CLIENT-HOSTNAME: 5.63.189.50
+X-VADE-SPAMSTATE: clean
+X-VADE-SPAMCAUSE: dmFkZTERS9BO6oFQrrKZvnjMLMhdxIjD6XTwY2np/2vb7rNOSSHXNNt9K8uhYOcu0GDQLMt+XBrMOqWs4K95ZBhlK8LjOX4FCYPC9tKINH38R6K+WTYb2AiWSb5pM4nk++djRgOCEoUDu5vU2Nt+trUEnM0akRY0i33LV3dxLykM/H0odvvgRjjlgeNZPkA1LEPZexEERpLMGCoqxV/VJx4JxSR7Vg80JzNeL2yXO0Mmf0et8u9bNy55ikrF8ic0eAo2pKFhaxz3IWgZYTdsTxlR3iEnQk4YYNSBE+MHpyS/+ATIWG1EqnktUYq0D3wtjTcsLEQCgMyhr/gN0TdAb/7/JLuTYTZULX/yzzRqEGd4iAn1bkDUw7W4Q/vy4BBLKp4rMPIxo+QqNnAsrLAgytIhhLs92YCVsx/aU8EpVN0sY4cTBeFJRRMUxK1F1a+gxCpkMrq+OqnD2YiR0oZEozpP4c1FFtxpR9aelDojZIsJ0uy+1l3sjqLgQS2doExld/C1Dp0ulMbAK9qw7QfOoNkVeVrjSUFiNtPjg8ZUoqIaOyEoRVkUCq3LdwaHbvizvqsoSuJ5oHOxnVemfWVibLeqL9HfUp3jpe3acOz+rpimarciXk5IozFrh+JTvXypls7ks5WdOJ5tGJYUhS/xib1wVgS2CCzDZqeCBavwsiUphwiNsQ
+X-DCC--Metrics: v370.home.net.pl 1024; Body=6 Fuz1=6 Fuz2=6
 
-On Thu, Jun 26, 2025 at 10:54:10PM +0530, Abdun Nihaal wrote:
-> In the error paths after fb_info structure is successfully allocated,
-> the memory allocated in fb_deferred_io_init() for info->pagerefs is not
-> freed. Fix that by adding the cleanup function on the error path.
-> 
-> Fixes: c296d5f9957c ("staging: fbtft: core support")
-> Signed-off-by: Abdun Nihaal <abdun.nihaal@gmail.com>
-> ---
+Hi Everyone,
 
-Reviewed-by: Dan Carpenter <dan.carpenter@linaro.org>
+This is an update of the series posted yesterday:
 
-regards,
-dan carpenter
+https://lore.kernel.org/linux-pm/22759968.EfDdHjke4D@rjwysocki.net/
+
+which first of all fixes the patch numbering and makes some changes
+resulting from the following discussion.
+
+This part of the cover letter still applies:
+
+"This series addresses a couple of issues related to the integration of runtime
+PM with system sleep I was talking about at the OSMP-summit 2025:
+
+https://lwn.net/Articles/1021332/
+
+Most importantly, DPM_FLAG_SMART_SUSPEND cannot be used along with
+pm_runtime_force_suspend/resume() due to some conflicting expectations
+about the handling of device runtime PM status between these functions
+and the PM core.
+
+Also pm_runtime_force_suspend/resume() currently cannot be used in PCI
+drivers and in drivers that collaborate with the general ACPI PM domain
+because they both don't expect their mid-layer runtime PM callbacks to
+be invoked during system-wide suspend and resume.
+
+Patch [1/9] is a preparatory cleanup changing the code to use 'true' and
+'false' as needs_force_resume flag values for consistency."
+
+Patch [2/9], new in this version, makes pm_runtime_reinit() clear
+needs_force_resume in case it was set during driver remove.
+
+Patch [3/9] (which was [4/9] in v1) puts pm_runtime_force_resume() and one
+other function that is only used during system sleep transitions under
+CONFIG_PM_SLEEP.
+
+Patch [4/9] (which was [2/9] in v1) makes pm_runtime_force_suspend() check
+needs_force_resume along with the device's runtime PM status upfront, and bail
+out if it is set, which allows runtime PM status updates to be eliminated from
+both that function and pm_runtime_force_resume().
+
+Patch [5/9] (which was [3/9] in v1) causes the smart_suspend flag to be taken
+into account by pm_runtime_force_resume() which allows it to resume devices
+with smart_suspend set whose runtime PM status has been changed to RPM_ACTIVE
+by the PM core at the beginning of system resume.  After this patch, drivers
+that use pm_runtime_force_suspend/resume() can also set DPM_FLAG_SMART_SUSPEND
+which may be useful, for example, if devices handled by them are involved in
+dependency chains with other devices setting DPM_FLAG_SMART_SUSPEND.
+
+Patch [6/9] (which effectively is new in v2 because it was not submitted
+previously by mistake) makes the code for getting a runtime PM callback for a
+device a bit more straightforward in preparation for the subsequent changes.
+
+Patch [7/9] introduces a new device PM flag called strict_midlayer that
+can be set by middle layer code which doesn't want its runtime PM
+callbacks to be used during system-wide PM transitions, like the PCI bus
+type and the ACPI PM domain, and updates pm_runtime_force_suspend/resume()
+to take that flag into account.
+
+Patch [8/9] modifies the ACPI PM "prepare" and "complete" callback functions,
+used by the general ACPI PM domain and by the ACPI LPSS PM domain, to set and
+clear strict_midlayer, respectively, which allows drivers collaborating with it
+to use pm_runtime_force_suspend/resume().
+
+That may be useful if such a driver wants to be able to work with different
+PM domains on different systems.  It may want to work with the general ACPI PM
+domain on systems using ACPI, or with another PM domain (or even multiple PM
+domains at the same time) on systems without ACPI, and it may want to use
+pm_runtime_force_suspend/resume() as its system-wide PM callbacks.
+
+Patch [9/9] updates the PCI bus type to set and clear, respectively, strict_midlayer
+for all PCI devices in its "prepare" and "complete" PM callbacks, in case some
+PCI drivers want to use pm_runtime_force_suspend/resume() in the future.  They
+will still need to set DPM_FLAG_SMART_SUSPEND to avoid resuming their devices during
+system suspend, but now they may also use pm_runtime_force_suspend/resume() as
+suspend callbacks for the "regular suspend" phase of device suspend (or invoke
+these functions from their suspend callbacks).
+
+As usual, please refer to individual patch changelogs for more details.
+
+Thanks!
+
+
 
 
