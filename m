@@ -1,167 +1,145 @@
-Return-Path: <linux-kernel+bounces-704455-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-704444-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 624C2AE9DAA
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Jun 2025 14:39:00 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 87943AE9D96
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Jun 2025 14:35:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 483DE3A8519
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Jun 2025 12:37:34 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 450701C26D8D
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Jun 2025 12:34:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D1A152E54B3;
-	Thu, 26 Jun 2025 12:36:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BBD6E2E11CB;
+	Thu, 26 Jun 2025 12:34:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="I8A+iu+2"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="P3qKMOTo"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A67E42E542F
-	for <linux-kernel@vger.kernel.org>; Thu, 26 Jun 2025 12:36:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1DC672E11B3;
+	Thu, 26 Jun 2025 12:34:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750941401; cv=none; b=PG17W4244mTeWHDpLZjVNxMTJp0qLuaQnGJx0M8fDFJuUDXBSvhHa/Q6WlFBr+QfvdsrKm0VKHJJJ/y2t8BAr1cFbV3F7j4fFfXPY+a8NXzgFZROxhElXLjuQfq57Uoxl5YNxXQwMMANyDIAbJ4wHslyydzJTOm0KewnQPvXmmo=
+	t=1750941275; cv=none; b=WhJS0Yks4ea6T241Mm3IDPHLY3MGM0NvLFaJWsxMrR2qvGUC4R2HHDl18PbjS6BBSuMHemQKkWuw5IMqjhU8vBvB5UOFO2/svffdID5oucxLF/gkthz4NBuCRrHblY6gsDMYbTJLG9/+MsOA6w9vYXQslMT/hpm3hh3jNhZwiKc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750941401; c=relaxed/simple;
-	bh=M3hdx2skcWoqfn5nBTo8ujRdHVpFUS3GEfGFgitw2iM=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=QlIIvncpDPt5ZTcxY+EtcgHA4lulQNpymA3rXtx4nn5Hw4TDz6ky3KEwb8EkYi97NOVazwCnWywhX80Cg5IOYWJbDXMolqwefKmvSplm6P/HHZ1ztevU8q6ypEE8tCRdWQ/r5M+CggmTaMPY+NsoV0BD6KlbIuDLw6OuTome3vM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=I8A+iu+2; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1750941398;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=M92KV+ly5nxnIVd6n/jgRKgpirFRCSP8wIHHelv0nmQ=;
-	b=I8A+iu+25ae6OZobViB2/82nClalf9+v2awl3HZqFW+znjAV98bCfqvPsj+vacO3JPUU0V
-	ahF4kA+n7I6DOEjHErUgD/0i1iiREVWqYWWroe1M2j/DaO8L5FWjSosugh9t3YmDE1AHJQ
-	HxK/yU3tZukLSQK6LdGdYSlBrS8yKCw=
-Received: from mx-prod-mc-04.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-313-ZcDS_bLPN1iw_IT1Y43BWg-1; Thu,
- 26 Jun 2025 08:36:37 -0400
-X-MC-Unique: ZcDS_bLPN1iw_IT1Y43BWg-1
-X-Mimecast-MFC-AGG-ID: ZcDS_bLPN1iw_IT1Y43BWg_1750941396
-Received: from mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.111])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-04.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 7B2241978C9A;
-	Thu, 26 Jun 2025 12:36:36 +0000 (UTC)
-Received: from fedora.brq.redhat.com (unknown [10.43.17.241])
-	by mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 9B6E7180045C;
-	Thu, 26 Jun 2025 12:36:33 +0000 (UTC)
-From: Tomas Glozar <tglozar@redhat.com>
-To: Steven Rostedt <rostedt@goodmis.org>
-Cc: linux-trace-kernel@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	John Kacur <jkacur@redhat.com>,
-	Luis Goncalves <lgoncalv@redhat.com>,
-	Arnaldo Carvalho de Melo <acme@kernel.org>,
-	Chang Yin <cyin@redhat.com>,
-	Costa Shulyupin <costa.shul@redhat.com>,
-	Crystal Wood <crwood@redhat.com>,
-	Gabriele Monaco <gmonaco@redhat.com>,
-	Tomas Glozar <tglozar@redhat.com>
-Subject: [PATCH v2 9/9] Documentation/rtla: Add actions feature
-Date: Thu, 26 Jun 2025 14:34:05 +0200
-Message-ID: <20250626123405.1496931-10-tglozar@redhat.com>
-In-Reply-To: <20250626123405.1496931-1-tglozar@redhat.com>
-References: <20250626123405.1496931-1-tglozar@redhat.com>
+	s=arc-20240116; t=1750941275; c=relaxed/simple;
+	bh=hcQ6uyRoZdEeGK6Ue+aMRUyXS514RKes3MWuq/gg04A=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=dV9pSHZ0Hq0F6AF6MsrfpIOCKbPU+rab5wGT6Vu3XWkRBQjcjyrkKjRqglaAfG9pvoImgnQZr+pavHWDcqNETxs8+aROooxyexY0BeDRyDZE2VcCRZ5hQinjrJev0prtJxElhckXCPFSbPdUE/ct/6XOVAsYtVMIHK/Lajb/KyA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=P3qKMOTo; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id BD90DC4CEEB;
+	Thu, 26 Jun 2025 12:34:34 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1750941274;
+	bh=hcQ6uyRoZdEeGK6Ue+aMRUyXS514RKes3MWuq/gg04A=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=P3qKMOToBvXmZ18EDXVLHHbD8r9WYfa9DQyIULHWBxyCGqq+gp6LmU3bJVgbPVHYy
+	 ACyskFizMsRsnOeAEq8Lq6avpvQ7GptTWTYwlZun1KTg0kzLjueVIePmLuGx6AzoIW
+	 0J+vq1kRjkh7ShIBmTcOjS7/jeymDKE48rZrNJFtBAJsIm0+wiSMRjeUnDzpdGAUMA
+	 EgSaycyxf0PJ6us6EoylKTGidAGvQPKYvYOiIyAt2cCT+y02qZUyNZxu/bQ5q8Tsw+
+	 LypZ/mZIDNfd2VpxsBZbDCThvWPoLGji6TKbnF9ZoPIjzSp8fIyluGRBhPdz+PHK05
+	 TBzFjvsvItlKg==
+Received: by mail-ed1-f45.google.com with SMTP id 4fb4d7f45d1cf-60bf5a08729so1808236a12.0;
+        Thu, 26 Jun 2025 05:34:34 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCUs/e7kziYCIEEY03kVYuUqhmA8ygWV17JximH575wk0OIsCUFWlnTSyTDEJDFwdjdOuofJYa0qMvX7gd4D@vger.kernel.org, AJvYcCV0MAE/eWMbkxQIp6l7LBZNduRWOUlo+VoxHbjdldyL3tDfhtBo7266C02nAZ1JZ65iLZz+kTtz+n8=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwTMAdbFAMexEnNKRcaMKoaE5JagexqZz0Q4h1pGlnuiqggTLRf
+	a6MGOcqzbLhgjDwgITLH4XkIn3Up4d28+dZskPI/M2TxspeixKfTC89qrrx7U0c088Tr7vXGTX1
+	H3mXreA4OODuLJltISRWA3K8XK0v3WR8=
+X-Google-Smtp-Source: AGHT+IHWYEFD7FhNFKe3vMe2MLiQzW6HtnNAGBb2VkYvPZzV8A//gU2qepXD36L8XdzwuDTZK3mZkCULBCl9iXk/ViI=
+X-Received: by 2002:a05:6402:26c3:b0:606:eb8e:d975 with SMTP id
+ 4fb4d7f45d1cf-60c4d10f679mr6018333a12.0.1750941273373; Thu, 26 Jun 2025
+ 05:34:33 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.111
+References: <20250624081852.1563985-1-wangming01@loongson.cn>
+In-Reply-To: <20250624081852.1563985-1-wangming01@loongson.cn>
+From: Huacai Chen <chenhuacai@kernel.org>
+Date: Thu, 26 Jun 2025 20:34:21 +0800
+X-Gmail-Original-Message-ID: <CAAhV-H5xc_Lp2=71goHF1nT4gHoavVKHPLuXRykU=7EMPS_QfQ@mail.gmail.com>
+X-Gm-Features: Ac12FXwYs6C6bmyJVDxgUYr-kMO9to9KHAfTEDDKscaPoHTt09w5r3dn5a7lmCg
+Message-ID: <CAAhV-H5xc_Lp2=71goHF1nT4gHoavVKHPLuXRykU=7EMPS_QfQ@mail.gmail.com>
+Subject: Re: [PATCH] efi/loongarch: Reserve EFI memory map region
+To: Ming Wang <wangming01@loongson.cn>
+Cc: Ard Biesheuvel <ardb@kernel.org>, WANG Xuerui <kernel@xen0n.name>, linux-efi@vger.kernel.org, 
+	loongarch@lists.linux.dev, linux-kernel@vger.kernel.org, 
+	lixuefeng@loongson.cn, chenhuacai@loongson.cn, gaojuxin@loongson.cn
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Document both --on-threshold and --on-end, with examples.
+Applied with some modifications, thanks.
 
-Signed-off-by: Tomas Glozar <tglozar@redhat.com>
----
- .../tools/rtla/common_timerlat_options.rst    | 64 +++++++++++++++++++
- 1 file changed, 64 insertions(+)
+https://git.kernel.org/pub/scm/linux/kernel/git/chenhuacai/linux-loongson.g=
+it/commit/?h=3Dloongarch-next&id=3D39503fc84b4ea94f2bedca481de5e225e0df729d
 
-diff --git a/Documentation/tools/rtla/common_timerlat_options.rst b/Documentation/tools/rtla/common_timerlat_options.rst
-index 10dc802f8d65..7854368f1827 100644
---- a/Documentation/tools/rtla/common_timerlat_options.rst
-+++ b/Documentation/tools/rtla/common_timerlat_options.rst
-@@ -55,3 +55,67 @@
-         Set timerlat to run without workload, waiting for the user to dispatch a per-cpu
-         task that waits for a new period on the tracing/osnoise/per_cpu/cpu$ID/timerlat_fd.
-         See linux/tools/rtla/sample/timerlat_load.py for an example of user-load code.
-+
-+**--on-threshold** *action*
-+
-+        Defines an action to be executed when tracing is stopped on a latency threshold
-+        specified by **-i/--irq** or **-T/--thread**.
-+
-+        Multiple --on-threshold actions may be specified, and they will be executed in
-+        the order they are provided. If any action fails, subsequent actions in the list
-+        will not be executed.
-+
-+        Supported actions are:
-+
-+        - *trace[,file=<filename>]*
-+
-+          Saves trace output, optionally taking a filename. Alternative to -t/--trace.
-+          Note that nlike -t/--trace, specifying this multiple times will result in
-+          the trace being saved multiple times.
-+
-+        - *signal,num=<sig>,pid=<pid>*
-+
-+          Sends signal to process. "parent" might be specified in place of pid to target
-+          the parent process of rtla.
-+
-+        - *shell,command=<command>*
-+
-+          Execute shell command.
-+
-+        - *continue*
-+
-+          Continue tracing after actions are executed instead of stopping.
-+
-+        Example:
-+
-+        $ rtla timerlat -T 20 --on-threshold trace
-+        --on-threshold shell,command="grep ipi_send timerlat_trace.txt"
-+        --on-threshold signal,num=2,pid=parent
-+
-+        This will save a trace with the default filename "timerlat_trace.txt", print its
-+        lines that contain the text "ipi_send" on standard output, and send signal 2
-+        (SIGINT) to the parent process.
-+
-+        Performance Considerations:
-+
-+        For time-sensitive actions, it is recommended to run **rtla timerlat** with BPF
-+        support and RT priority. Note that due to implementational limitations, actions
-+        might be delayed up to one second after tracing is stopped if BPF mode is not
-+        available or disabled.
-+
-+**--on-end** *action*
-+
-+        Defines an action to be executed at the end of **rtla timerlat** tracing.
-+
-+        Multiple --on-end actions can be specified, and they will be executed in the order
-+        they are provided. If any action fails, subsequent actions in the list will not be
-+        executed.
-+
-+        See the documentation for **--on-threshold** for the list of supported actions, with
-+        the exception that *continue* has no effect.
-+
-+        Example:
-+
-+        $ rtla timerlat -d 5s --on-end trace
-+
-+        This runs rtla timerlat with default options and save trace output at the end.
--- 
-2.49.0
+Huacai
 
+On Tue, Jun 24, 2025 at 4:19=E2=80=AFPM Ming Wang <wangming01@loongson.cn> =
+wrote:
+>
+> The EFI memory map at 'boot_memmap' is crucial for kdump to understand
+> the primary kernel's memory layout. This memory region, typically part
+> of EFI Boot Services (BS) data, can be overwritten after ExitBootServices
+> if not explicitly preserved by the kernel.
+>
+> This commit addresses this by:
+> 1. Calling memblock_reserve() to reserve the entire physical region
+>    occupied by the EFI memory map (header + descriptors). This prevents
+>    the primary kernel from reallocating and corrupting this area.
+> 2. Setting the EFI_PRESERVE_BS_REGIONS flag in efi.flags. This indicates
+>    that efforts have been made to preserve critical BS data regions,
+>    which can be useful for other kernel subsystems or debugging.
+>
+> These changes ensure the original EFI memory map data remains intact,
+> improving kdump reliability and potentially aiding other EFI-related
+> functionalities that might rely on preserved BS data.
+>
+> Signed-off-by: Ming Wang <wangming01@loongson.cn>
+> ---
+>  arch/loongarch/kernel/efi.c | 13 +++++++++++++
+>  1 file changed, 13 insertions(+)
+>
+> diff --git a/arch/loongarch/kernel/efi.c b/arch/loongarch/kernel/efi.c
+> index de21e72759ee..98b1f0c030fc 100644
+> --- a/arch/loongarch/kernel/efi.c
+> +++ b/arch/loongarch/kernel/efi.c
+> @@ -135,6 +135,7 @@ void __init efi_init(void)
+>         tbl =3D early_memremap_ro(boot_memmap, sizeof(*tbl));
+>         if (tbl) {
+>                 struct efi_memory_map_data data;
+> +               phys_addr_t reserve_size =3D sizeof(*tbl) + tbl->map_size=
+;
+>
+>                 data.phys_map           =3D boot_memmap + sizeof(*tbl);
+>                 data.size               =3D tbl->map_size;
+> @@ -144,6 +145,18 @@ void __init efi_init(void)
+>                 if (efi_memmap_init_early(&data) < 0)
+>                         panic("Unable to map EFI memory map.\n");
+>
+> +               /*
+> +                * Reserve the physical memory region occupied by the EFI
+> +                * memory map table (header + descriptors). This is cruci=
+al
+> +                * for kdump, as the kdump kernel relies on this original
+> +                * memmap passed by the bootloader. Without reservation,
+> +                * this region could be overwritten by the primary kernel=
+.
+> +                * Also, set the EFI_PRESERVE_BS_REGIONS flag to indicate=
+ that
+> +                * critical boot services data regions like this are pres=
+erved.
+> +                */
+> +               memblock_reserve((phys_addr_t)boot_memmap, reserve_size);
+> +               set_bit(EFI_PRESERVE_BS_REGIONS, &efi.flags);
+> +
+>                 early_memunmap(tbl, sizeof(*tbl));
+>         }
+>
+> --
+> 2.43.0
+>
 
