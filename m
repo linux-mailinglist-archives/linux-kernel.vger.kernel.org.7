@@ -1,353 +1,219 @@
-Return-Path: <linux-kernel+bounces-704207-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-704211-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DC023AE9ACA
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Jun 2025 12:07:32 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 83C9AAE9AD2
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Jun 2025 12:08:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EDAA23AE55E
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Jun 2025 10:06:16 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7727C163820
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Jun 2025 10:08:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C57EB220F21;
-	Thu, 26 Jun 2025 10:05:37 +0000 (UTC)
-Received: from mail-il1-f208.google.com (mail-il1-f208.google.com [209.85.166.208])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4EB8F21B185;
+	Thu, 26 Jun 2025 10:08:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=analog.com header.i=@analog.com header.b="I5GTs5hD"
+Received: from mx0b-00128a01.pphosted.com (mx0a-00128a01.pphosted.com [148.163.135.77])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2AF8C2192E4
-	for <linux-kernel@vger.kernel.org>; Thu, 26 Jun 2025 10:05:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.208
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EBED1219315;
+	Thu, 26 Jun 2025 10:08:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.135.77
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750932337; cv=none; b=qJhRcIqSADFU21l6xgTHYDNY3IeC7AQUynPYzBOoM2E+htRC4ECNmm3LP5gEpLgSY1kTj/wrXUnew51Z/DkYOdR30PAQ7+6ggs8zcbGFTOq7EXHf5KTo48Us4wZf/R4JHeIZkC1+01egy2L7qMtBo/vmFUdXhRO9roPyzaNP00c=
+	t=1750932489; cv=none; b=JrgXFzysOvJINq8Nc2Qq8YkUZhG9i21aNdMfSrLwJhg2kW6jaAijD5ZAzz1u9jmTStFOdbgTRWqzj2YbYxjthzPbUqOO0pszGacGfPlhaTv65PCVYqzfS0h90KyG4BhvreM5CDEhxGJTyrnY4MnNIrfPJnEbNyPUjERam2m5nWY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750932337; c=relaxed/simple;
-	bh=hqp5iWXg7QS0Zu8cF4dv50I19ymXxkRKzOhSmGn++Vw=;
-	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=BhkDOKZH+klvo0HZfpj5O2PkClKTpPqgkCSwzPrPnBdAKPme9YeNN7+qP9KU/bDxy/m6NUcxUoFgbTm3oQ1kljpbeSD6YLf4ZoilcAzH/DVyqdLF7i8awkO//xn2YtGQRjAN2gVJwLIF+3ViOaUJD0iY0wIa4D+s+1FCHc+HkkE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.208
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f208.google.com with SMTP id e9e14a558f8ab-3ddbd339f3dso8281145ab.0
-        for <linux-kernel@vger.kernel.org>; Thu, 26 Jun 2025 03:05:34 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1750932334; x=1751537134;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=8SWlKXcbGfVq1bqP6GES795wTDd3bwzL3k0lB8D4I5A=;
-        b=itxieR8IiG2Y9fmUUz9g/6pNZ0pOq+q0tvs8jXZ8DRVIZuODey0GDglP+XiBQYzK6s
-         lLiZrqiZHkDPpQkVw1gqJpdBNVSB4Iu+VHyz65m18sNQigKQCCJAu1kev54Vqw/rTUms
-         SqkZM9zQOaKc9O4G4p5NR1wI9camM2LiylBIZSukXbDfbxRhesXmdvoATdNlFnh28qog
-         vC77KO7GGHw7XMOiOn3rdQys0zzHyFXBxvTjdhTizzVWISLIFCnA8TjsqylvrESebWqb
-         SuZIMfqGAr50ejfzLoE0IJ6Fxnr0dTqiUrr2zx8Yi8uuUxvRxPXkFWNHAxCvz1+jhVEl
-         aJ5w==
-X-Forwarded-Encrypted: i=1; AJvYcCU6GF9k1NQb9YsOGcEksBxrQUPW9Fe04b4CWNd6+NlC8qHBR7gmIeEWyFSS9WRB4FhuXd7LlMYO5rruS94=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzwDhxLo2PL0MLywTLaOOm2tuQ/R/cRoYWx0ckw8sypGlC1WL0I
-	N6g0YRyGhnvQEPudqEcBdosiZTUBKd+cx1/0hPRo44JQQk5yvzIt3tiQJ7cs5RPfwNeT9gtXFCb
-	D+aug2czfYs+1QO6Hvy7VLmDAk3BSnmCBbZNCksww6/7JmXR7tTlvZhqVZTs=
-X-Google-Smtp-Source: AGHT+IEC95MJBpOXmV0BZyyx3ets/sDykji5f1j958LFYCebNq95JTvE97nWMRpKRTGK1Us2OkmBPqvkw7VMiozqLd29WQLkIl41
+	s=arc-20240116; t=1750932489; c=relaxed/simple;
+	bh=KCVIqY/H6Cb3+9qGeATZvAcECB2AadW5bP6m//H60NI=;
+	h=From:Subject:Date:Message-ID:MIME-Version:Content-Type:To:CC; b=OCtCqgOYcuy420Ci0wCCXLjmrdrypM74BoZF3jocBnlBexVws2LJjL69xdKat58C1/mW2/IVHVRxRZiQrM0sNQA8D6yh7zVK+mIT7jdZkG261T912Y9055Yd9g6hwsV6zkme+8CweQEGsDXXnYXVVJgPtbX77H6B8PYBaRIrjkI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=analog.com; spf=pass smtp.mailfrom=analog.com; dkim=pass (2048-bit key) header.d=analog.com header.i=@analog.com header.b=I5GTs5hD; arc=none smtp.client-ip=148.163.135.77
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=analog.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=analog.com
+Received: from pps.filterd (m0375855.ppops.net [127.0.0.1])
+	by mx0b-00128a01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 55Q8geKM015146;
+	Thu, 26 Jun 2025 06:07:57 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=analog.com; h=cc
+	:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=DKIM; bh=FsB7C9gg/y1ZuOesLehJ9Kdgf1q
+	iTPF5AHHNJL80PDQ=; b=I5GTs5hDz8t/7JJ1oQMu2U0P8ZNrKYy4uEyqCFB5qVr
+	O9yhBDAububKRu2lEqlVB72mWGQRVNhaH4/D++gMBrVbRhV3oAnUyEQ1bJWzsK9H
+	WUsiEU6N3ckpmDybLHQh74wt6ExgbYyjJunCyT741lLU20TRnEKej2/oGKe6czsD
+	aL5TtBSnxyLrQHxv2wgVxVDsBFdOr7QCw/dAUZsSIpGBheRkKS6UP9MchfGxfNyw
+	ivITP/j9NGRmbRKK/EbfnisnrwfPPCxrrVgKoC1kGBSLKzwvf9vsn/3B8ucRRXB6
+	tS6JdefTJGy0hDi1Z038CqTOLHPAqHrNaefwefxNoGg==
+Received: from nwd2mta4.analog.com ([137.71.173.58])
+	by mx0b-00128a01.pphosted.com (PPS) with ESMTPS id 47h2xcgcne-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 26 Jun 2025 06:07:56 -0400 (EDT)
+Received: from ASHBMBX9.ad.analog.com (ASHBMBX9.ad.analog.com [10.64.17.10])
+	by nwd2mta4.analog.com (8.14.7/8.14.7) with ESMTP id 55QA7txb043550
+	(version=TLSv1/SSLv3 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+	Thu, 26 Jun 2025 06:07:55 -0400
+Received: from ASHBMBX8.ad.analog.com (10.64.17.5) by ASHBMBX9.ad.analog.com
+ (10.64.17.10) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1748.10; Thu, 26 Jun
+ 2025 06:07:55 -0400
+Received: from zeus.spd.analog.com (10.66.68.11) by ashbmbx8.ad.analog.com
+ (10.64.17.5) with Microsoft SMTP Server id 15.2.1748.10 via Frontend
+ Transport; Thu, 26 Jun 2025 06:07:55 -0400
+Received: from HYB-DlYm71t3hSl.ad.analog.com (HYB-DlYm71t3hSl.ad.analog.com [10.44.3.62])
+	by zeus.spd.analog.com (8.15.1/8.15.1) with ESMTP id 55QA7huv031419;
+	Thu, 26 Jun 2025 06:07:45 -0400
+From: Jorge Marques <jorge.marques@analog.com>
+Subject: [PATCH v4 0/2] Add ADI I3C Controller
+Date: Thu, 26 Jun 2025 12:07:35 +0200
+Message-ID: <20250626-adi-i3c-master-v4-0-3846a1f66d5e@analog.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:2703:b0:3dd:8663:d182 with SMTP id
- e9e14a558f8ab-3df329373fbmr58891975ab.13.1750932333860; Thu, 26 Jun 2025
- 03:05:33 -0700 (PDT)
-Date: Thu, 26 Jun 2025 03:05:33 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <685d1b6d.a00a0220.34b642.00fd.GAE@google.com>
-Subject: [syzbot] [btrfs?] possible deadlock in btrfs_join_transaction (2)
-From: syzbot <syzbot+872fc61967352fcc3535@syzkaller.appspotmail.com>
-To: clm@fb.com, dsterba@suse.com, josef@toxicpanda.com, 
-	linux-btrfs@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAOgbXWgC/3WQ3U7EIBBGX6XhWgx/pdAY43sYLwaY7pJsW4VaN
+ Zt9dym9qdl4RT4y52Tmu5KMKWImfXMlCdeY4zyVoB4a4s8wnZDGUDIRTLRMM0UhRBqlpyPkBRM
+ V0HJlfGu86kiB3hMO8bsKX99KPse8zOmn+le+/f6rWjlllClj0LAAg3cvMMFlPj36eSSbaxVHX
+ t/xovCojbMAQWjJ7nh54Lm542XlNe8YaO9s+4e/7ccl/PgsJS37hWTEnKGW1DdPu1iIKv1K29C
+ FJoRQnrqcgCFIhb7spg/y5604BxlpCWNc+qblVsvOSGc6DWJQVoJE8AzBogPRce+0YRbKWrdfs
+ z6MPsMBAAA=
+X-Change-ID: 20250604-adi-i3c-master-2a5148c58c47
+To: Alexandre Belloni <alexandre.belloni@bootlin.com>,
+        Frank Li
+	<Frank.Li@nxp.com>, Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski
+	<krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>
+CC: <linux-i3c@lists.infradead.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <gastmaier@gmail.com>,
+        Jorge Marques
+	<jorge.marques@analog.com>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1750932463; l=3728;
+ i=jorge.marques@analog.com; s=20250303; h=from:subject:message-id;
+ bh=KCVIqY/H6Cb3+9qGeATZvAcECB2AadW5bP6m//H60NI=;
+ b=1eDjg0WpXtAeE2MoSeLX5hrrhrwidDK1tYey/DxjbyACxCvU/88wpnpNxjyiscLQSNgfnfiTs
+ CW1uemvjk2bAMHr9nkHqPPs5YpYFRCLv1SWfTH19M2W3wAEuw+SgoJI
+X-Developer-Key: i=jorge.marques@analog.com; a=ed25519;
+ pk=NUR1IZZMH0Da3QbJ2tBSznSPVfRpuoWdhBzKGSpAdbg=
+X-ADIRuleOP-NewSCL: Rule Triggered
+X-Proofpoint-ORIG-GUID: 379QYbKZW9SL1SOFMkD6aHT6LBgLTEuX
+X-Proofpoint-GUID: 379QYbKZW9SL1SOFMkD6aHT6LBgLTEuX
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNjI2MDA4NCBTYWx0ZWRfXw83gK7AGFbmU
+ CpJ1Q+pANwgrKwGTZ9LXzSpcHfdt/5XG4yLW9ZdcxT1fkd3FP72wvQplOSr6aHBhBQZwusVcP26
+ 1pP8+dVRL8BSPSpEN3PYCoyJDPbnfW5BTqUjoY7llpKyL4pMvmhyXjC2vyX2sRNalhIc2xyphHT
+ JrdtTsHW9Ku8GASidp6er1g2GceUcBL9Ppe3lrKvq8W4b3yZIWejf5Ea10GvtHfxS4voGzXg+bD
+ DSeVkWeC86X5x+dMLaR9OlGUB7AxLgGW6bvBl/Fb7TAprZu01o4EVjL1VkFuV8oUw6h8dP5kcgs
+ mspLN6KK/nLehZjs7POfz8zLLrQmc18uPPNEBM/FQJ2ckWtFI4WrN98NpokyW9orJgK0adj2Uyv
+ 2H3lPV58Rt5TS6sAGblBxEcxLjt4Azi3qEs6gsB7iGVV/jBv0yR5GTzAiaDiUUOR1q9s17d/
+X-Authority-Analysis: v=2.4 cv=OoRPyz/t c=1 sm=1 tr=0 ts=685d1bfc cx=c_pps
+ a=3WNzaoukacrqR9RwcOSAdA==:117 a=3WNzaoukacrqR9RwcOSAdA==:17
+ a=IkcTkHD0fZMA:10 a=6IFa9wvqVegA:10 a=wI1k2SEZAAAA:8 a=VwQbUJbxAAAA:8
+ a=gAnH3GRIAAAA:8 a=WdL4MNNltIHT4c5TAFEA:9 a=QEXdDO2ut3YA:10
+ a=6HWbV-4b7c7AdzY24d_u:22
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.7,FMLib:17.12.80.40
+ definitions=2025-06-26_04,2025-06-25_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ spamscore=0 impostorscore=0 clxscore=1015 priorityscore=1501 mlxscore=0
+ mlxlogscore=999 bulkscore=0 suspectscore=0 malwarescore=0 adultscore=0
+ lowpriorityscore=0 phishscore=0 classifier=spam authscore=0 authtc=n/a
+ authcc= route=outbound adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2505280000 definitions=main-2506260084
 
-Hello,
+I3C Controller is subset of the I3C-basic specification to interface
+peripherals through I3C and I2C. The controller RTL is FPGA
+synthesizable and documentation is provided at
+https://analogdevicesinc.github.io/hdl/library/i3c_controller
 
-syzbot found the following issue on:
+The main target for the I3C Controller IP is low-cost FPGAs.
+In this version the driver supports IBI (only the MDB), I3C and I2C
+transfers.
 
-HEAD commit:    9aa9b43d689e Merge branch 'for-next/core' into for-kernelci
-git tree:       git://git.kernel.org/pub/scm/linux/kernel/git/arm64/linux.git for-kernelci
-console output: https://syzkaller.appspot.com/x/log.txt?x=1796cdd4580000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=27f179c74d5c35cd
-dashboard link: https://syzkaller.appspot.com/bug?extid=872fc61967352fcc3535
-compiler:       Debian clang version 20.1.6 (++20250514063057+1e4d39e07757-1~exp1~20250514183223.118), Debian LLD 20.1.6
-userspace arch: arm64
+Signed-off-by: Jorge Marques <jorge.marques@analog.com>
+---
+Changes in v4:
+Documentation/devicetree/bindings/i3c/adi,i3c-master.yaml:
+- Add -1.00.a suffix where missing
+- Extend clocks descriptions
+- Add minItems to clock-names, to match clocks
+- Use header in example
+- 
 
-Unfortunately, I don't have any reproducer for this issue yet.
+adi-i3c-master.c:
+- Regmap:
+  - Add new controller info registers (dyn_addr, dcr, bcr, pid)
+  - Always decreasing fields
+  - Add line break between registers
+  - Reformat REG_DEV_CHAR_BSCR_IBI to use easier to read FIELD_GET,
+    FIELD_PREP
+- Read controller info from regmap with explanation comment
+- Use linux/fpga/adi-axi-common.h macros
+- Use __counter_by macro on ncmds
+- Use __free macro
+- Use new i3c_writel_fifo and i3c_readl_fifo macros
+- Rename bytes to buf when nbytes is present
+- Use scoped_guard instead of spin_lock, spin_unlock
+- Reformat loops to read fifo status, use while single line alternative
+- Drop adi_i3c_master.max_devs, use MAX_DEVS directly
+- Use devm_clk_bulk_get_all_enabled, dropping clock name match (CHECK_DTB does it)
+- Init spin_lock
+- Init list head
+- Link to v3: https://lore.kernel.org/r/20250618-adi-i3c-master-v3-0-e66170a6cb95@analog.com
 
-Downloadable assets:
-disk image: https://storage.googleapis.com/syzbot-assets/974f3ac1c6a5/disk-9aa9b43d.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/a5b5075d317f/vmlinux-9aa9b43d.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/2f0ba7fec19b/Image-9aa9b43d.gz.xz
+Changes in v3:
+Documentation/devicetree/bindings/i3c/adi,i3c-master.yaml:
+- Small reworking of the description
+- Add -1.00.a suffix to compatible
 
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+872fc61967352fcc3535@syzkaller.appspotmail.com
+adi-i3c-master.c:
+- Misspelling
+- Remove REG_CMD_FIFO_0_LEN_MAX since it is a HDL parameter
+- Use adapter timeout value for I2C transfers, as in
+  https://lore.kernel.org/linux-i3c/aEBd%2FFIKADYr%2F631@lizhi-Precision-Tower-5810/T/#t
 
-======================================================
-WARNING: possible circular locking dependency detected
-6.16.0-rc2-syzkaller-g9aa9b43d689e #0 Not tainted
-------------------------------------------------------
-syz.2.224/7634 is trying to acquire lock:
-ffff0000c6b20618 (sb_internal#3){.+.+}-{0:0}, at: btrfs_join_transaction+0x30/0x40 fs/btrfs/transaction.c:830
+- Link to v2: https://lore.kernel.org/r/20250606-adi-i3c-master-v2-0-e68b9aad2630@analog.com
 
-but task is already holding lock:
-ffff0000d0c2b7d0 (&mm->mmap_lock){++++}-{4:4}, at: mmap_write_lock_killable include/linux/mmap_lock.h:374 [inline]
-ffff0000d0c2b7d0 (&mm->mmap_lock){++++}-{4:4}, at: vm_mmap_pgoff+0x180/0x43c mm/util.c:577
+Changes in v2:
+Documentation/devicetree/bindings/i3c/adi,i3c-master.yaml:
+- Move allof
+- Rename clocks to axi, i3c
 
-which lock already depends on the new lock.
+adi-i3c-master.c:
+- Update license year
+- Rework regmap to use FIELD_GET, FIELD_PREP
+- Reformat regmap to have FIELDS after REG, prefixed by reg name.
+- Add overflow safeguards to cmd, tx fifos
+- Fix macro related macros (mostly erroneous `| ~BITMASK`
+- Use guard macros, remove goto.
+- Simplify daa logic
+- Replace devm_clk_get with devm_clk_get_enabled
+- Solve 64bit->32bit warnings on x86_64 systems by casting to u32
+- Immediate clear irq request flags, then handle it.
 
-
-the existing dependency chain (in reverse order) is:
-
--> #5 (&mm->mmap_lock){++++}-{4:4}:
-       down_read_killable+0x60/0x32c kernel/locking/rwsem.c:1547
-       mmap_read_lock_killable+0x28/0x8c include/linux/mmap_lock.h:421
-       get_mmap_lock_carefully mm/mmap_lock.c:197 [inline]
-       lock_mm_and_find_vma+0x2a4/0x2d8 mm/mmap_lock.c:248
-       do_page_fault+0x51c/0x1554 arch/arm64/mm/fault.c:668
-       do_translation_fault+0xc4/0x114 arch/arm64/mm/fault.c:783
-       do_mem_abort+0x70/0x194 arch/arm64/mm/fault.c:919
-       el1_abort+0x3c/0x5c arch/arm64/kernel/entry-common.c:455
-       el1h_64_sync_handler+0x50/0xcc arch/arm64/kernel/entry-common.c:533
-       el1h_64_sync+0x6c/0x70 arch/arm64/kernel/entry.S:595
-       __uaccess_mask_ptr arch/arm64/include/asm/uaccess.h:169 [inline]
-       filldir64+0x2ec/0x6bc fs/readdir.c:379
-       dir_emit include/linux/fs.h:3917 [inline]
-       kernfs_fop_readdir+0x498/0x79c fs/kernfs/dir.c:1910
-       iterate_dir+0x458/0x5e0 fs/readdir.c:108
-       __do_sys_getdents64 fs/readdir.c:410 [inline]
-       __se_sys_getdents64 fs/readdir.c:396 [inline]
-       __arm64_sys_getdents64+0x110/0x2fc fs/readdir.c:396
-       __invoke_syscall arch/arm64/kernel/syscall.c:35 [inline]
-       invoke_syscall+0x98/0x2b8 arch/arm64/kernel/syscall.c:49
-       el0_svc_common+0x130/0x23c arch/arm64/kernel/syscall.c:132
-       do_el0_svc+0x48/0x58 arch/arm64/kernel/syscall.c:151
-       el0_svc+0x58/0x17c arch/arm64/kernel/entry-common.c:767
-       el0t_64_sync_handler+0x78/0x108 arch/arm64/kernel/entry-common.c:786
-       el0t_64_sync+0x198/0x19c arch/arm64/kernel/entry.S:600
-
--> #4 (&root->kernfs_rwsem){++++}-{4:4}:
-       down_write+0x50/0xc0 kernel/locking/rwsem.c:1577
-       kernfs_add_one+0x48/0x60c fs/kernfs/dir.c:791
-       kernfs_create_dir_ns+0xd4/0x12c fs/kernfs/dir.c:1093
-       sysfs_create_dir_ns+0x114/0x24c fs/sysfs/dir.c:59
-       create_dir lib/kobject.c:73 [inline]
-       kobject_add_internal+0x5a8/0xb20 lib/kobject.c:240
-       kobject_add_varg lib/kobject.c:374 [inline]
-       kobject_init_and_add+0x118/0x17c lib/kobject.c:457
-       btrfs_sysfs_add_qgroups+0x110/0x268 fs/btrfs/sysfs.c:2635
-       btrfs_quota_enable+0x224/0x1c70 fs/btrfs/qgroup.c:1030
-       btrfs_ioctl_quota_ctl+0x178/0x1bc fs/btrfs/ioctl.c:3673
-       btrfs_ioctl+0x86c/0xc3c fs/btrfs/ioctl.c:5323
-       vfs_ioctl fs/ioctl.c:51 [inline]
-       __do_sys_ioctl fs/ioctl.c:907 [inline]
-       __se_sys_ioctl fs/ioctl.c:893 [inline]
-       __arm64_sys_ioctl+0x14c/0x1c4 fs/ioctl.c:893
-       __invoke_syscall arch/arm64/kernel/syscall.c:35 [inline]
-       invoke_syscall+0x98/0x2b8 arch/arm64/kernel/syscall.c:49
-       el0_svc_common+0x130/0x23c arch/arm64/kernel/syscall.c:132
-       do_el0_svc+0x48/0x58 arch/arm64/kernel/syscall.c:151
-       el0_svc+0x58/0x17c arch/arm64/kernel/entry-common.c:767
-       el0t_64_sync_handler+0x78/0x108 arch/arm64/kernel/entry-common.c:786
-       el0t_64_sync+0x198/0x19c arch/arm64/kernel/entry.S:600
-
--> #3 (&fs_info->qgroup_ioctl_lock){+.+.}-{4:4}:
-       __mutex_lock_common+0x1d0/0x2190 kernel/locking/mutex.c:602
-       __mutex_lock kernel/locking/mutex.c:747 [inline]
-       mutex_lock_nested+0x2c/0x38 kernel/locking/mutex.c:799
-       btrfs_quota_enable+0x270/0x1c70 fs/btrfs/qgroup.c:1059
-       btrfs_ioctl_quota_ctl+0x178/0x1bc fs/btrfs/ioctl.c:3673
-       btrfs_ioctl+0x86c/0xc3c fs/btrfs/ioctl.c:5323
-       vfs_ioctl fs/ioctl.c:51 [inline]
-       __do_sys_ioctl fs/ioctl.c:907 [inline]
-       __se_sys_ioctl fs/ioctl.c:893 [inline]
-       __arm64_sys_ioctl+0x14c/0x1c4 fs/ioctl.c:893
-       __invoke_syscall arch/arm64/kernel/syscall.c:35 [inline]
-       invoke_syscall+0x98/0x2b8 arch/arm64/kernel/syscall.c:49
-       el0_svc_common+0x130/0x23c arch/arm64/kernel/syscall.c:132
-       do_el0_svc+0x48/0x58 arch/arm64/kernel/syscall.c:151
-       el0_svc+0x58/0x17c arch/arm64/kernel/entry-common.c:767
-       el0t_64_sync_handler+0x78/0x108 arch/arm64/kernel/entry-common.c:786
-       el0t_64_sync+0x198/0x19c arch/arm64/kernel/entry.S:600
-
--> #2 (btrfs_trans_num_extwriters){++++}-{0:0}:
-       join_transaction+0x190/0xb5c fs/btrfs/transaction.c:321
-       start_transaction+0x778/0x155c fs/btrfs/transaction.c:705
-       btrfs_join_transaction+0x30/0x40 fs/btrfs/transaction.c:830
-       __cow_file_range_inline+0x140/0xf14 fs/btrfs/inode.c:618
-       cow_file_range_inline+0x27c/0x338 fs/btrfs/inode.c:690
-       cow_file_range+0x324/0xc70 fs/btrfs/inode.c:1293
-       btrfs_run_delalloc_range+0x33c/0xd7c fs/btrfs/inode.c:2348
-       writepage_delalloc+0x8f0/0x103c fs/btrfs/extent_io.c:1386
-       extent_writepage fs/btrfs/extent_io.c:1717 [inline]
-       extent_write_cache_pages fs/btrfs/extent_io.c:2403 [inline]
-       btrfs_writepages+0x115c/0x20dc fs/btrfs/extent_io.c:2536
-       do_writepages+0x270/0x468 mm/page-writeback.c:2636
-       __writeback_single_inode+0x15c/0x13e8 fs/fs-writeback.c:1680
-       writeback_sb_inodes+0x558/0xe38 fs/fs-writeback.c:1976
-       wb_writeback+0x3cc/0xd70 fs/fs-writeback.c:2156
-       wb_do_writeback fs/fs-writeback.c:2303 [inline]
-       wb_workfn+0x338/0xdc0 fs/fs-writeback.c:2343
-       process_one_work+0x7e8/0x155c kernel/workqueue.c:3238
-       process_scheduled_works kernel/workqueue.c:3321 [inline]
-       worker_thread+0x958/0xed8 kernel/workqueue.c:3402
-       kthread+0x5fc/0x75c kernel/kthread.c:464
-       ret_from_fork+0x10/0x20 arch/arm64/kernel/entry.S:847
-
--> #1 (btrfs_trans_num_writers){++++}-{0:0}:
-       join_transaction+0x164/0xb5c fs/btrfs/transaction.c:320
-       start_transaction+0x778/0x155c fs/btrfs/transaction.c:705
-       btrfs_join_transaction+0x30/0x40 fs/btrfs/transaction.c:830
-       __cow_file_range_inline+0x140/0xf14 fs/btrfs/inode.c:618
-       cow_file_range_inline+0x27c/0x338 fs/btrfs/inode.c:690
-       cow_file_range+0x324/0xc70 fs/btrfs/inode.c:1293
-       btrfs_run_delalloc_range+0x33c/0xd7c fs/btrfs/inode.c:2348
-       writepage_delalloc+0x8f0/0x103c fs/btrfs/extent_io.c:1386
-       extent_writepage fs/btrfs/extent_io.c:1717 [inline]
-       extent_write_cache_pages fs/btrfs/extent_io.c:2403 [inline]
-       btrfs_writepages+0x115c/0x20dc fs/btrfs/extent_io.c:2536
-       do_writepages+0x270/0x468 mm/page-writeback.c:2636
-       __writeback_single_inode+0x15c/0x13e8 fs/fs-writeback.c:1680
-       writeback_sb_inodes+0x558/0xe38 fs/fs-writeback.c:1976
-       wb_writeback+0x3cc/0xd70 fs/fs-writeback.c:2156
-       wb_do_writeback fs/fs-writeback.c:2303 [inline]
-       wb_workfn+0x338/0xdc0 fs/fs-writeback.c:2343
-       process_one_work+0x7e8/0x155c kernel/workqueue.c:3238
-       process_scheduled_works kernel/workqueue.c:3321 [inline]
-       worker_thread+0x958/0xed8 kernel/workqueue.c:3402
-       kthread+0x5fc/0x75c kernel/kthread.c:464
-       ret_from_fork+0x10/0x20 arch/arm64/kernel/entry.S:847
-
--> #0 (sb_internal#3){.+.+}-{0:0}:
-       check_prev_add kernel/locking/lockdep.c:3168 [inline]
-       check_prevs_add kernel/locking/lockdep.c:3287 [inline]
-       validate_chain kernel/locking/lockdep.c:3911 [inline]
-       __lock_acquire+0x1774/0x30a4 kernel/locking/lockdep.c:5240
-       lock_acquire+0x14c/0x2e0 kernel/locking/lockdep.c:5871
-       percpu_down_read_internal include/linux/percpu-rwsem.h:53 [inline]
-       percpu_down_read_freezable include/linux/percpu-rwsem.h:83 [inline]
-       __sb_start_write include/linux/fs.h:1793 [inline]
-       sb_start_intwrite include/linux/fs.h:1976 [inline]
-       start_transaction+0x5bc/0x155c fs/btrfs/transaction.c:699
-       btrfs_join_transaction+0x30/0x40 fs/btrfs/transaction.c:830
-       btrfs_dirty_inode+0x90/0x190 fs/btrfs/inode.c:6225
-       btrfs_update_time+0xa0/0xd0 fs/btrfs/inode.c:6259
-       inode_update_time fs/inode.c:2076 [inline]
-       touch_atime+0x2e4/0x818 fs/inode.c:2149
-       file_accessed include/linux/fs.h:2650 [inline]
-       btrfs_file_mmap+0xac/0x118 fs/btrfs/file.c:1988
-       call_mmap include/linux/fs.h:2284 [inline]
-       mmap_file mm/internal.h:167 [inline]
-       __mmap_new_file_vma mm/vma.c:2405 [inline]
-       __mmap_new_vma mm/vma.c:2467 [inline]
-       __mmap_region mm/vma.c:2622 [inline]
-       mmap_region+0xe9c/0x1c0c mm/vma.c:2692
-       do_mmap+0x968/0xfac mm/mmap.c:561
-       vm_mmap_pgoff+0x2b8/0x43c mm/util.c:579
-       ksys_mmap_pgoff+0x394/0x5b8 mm/mmap.c:607
-       __do_sys_mmap arch/arm64/kernel/sys.c:28 [inline]
-       __se_sys_mmap arch/arm64/kernel/sys.c:21 [inline]
-       __arm64_sys_mmap+0xf8/0x110 arch/arm64/kernel/sys.c:21
-       __invoke_syscall arch/arm64/kernel/syscall.c:35 [inline]
-       invoke_syscall+0x98/0x2b8 arch/arm64/kernel/syscall.c:49
-       el0_svc_common+0x130/0x23c arch/arm64/kernel/syscall.c:132
-       do_el0_svc+0x48/0x58 arch/arm64/kernel/syscall.c:151
-       el0_svc+0x58/0x17c arch/arm64/kernel/entry-common.c:767
-       el0t_64_sync_handler+0x78/0x108 arch/arm64/kernel/entry-common.c:786
-       el0t_64_sync+0x198/0x19c arch/arm64/kernel/entry.S:600
-
-other info that might help us debug this:
-
-Chain exists of:
-  sb_internal#3 --> &root->kernfs_rwsem --> &mm->mmap_lock
-
- Possible unsafe locking scenario:
-
-       CPU0                    CPU1
-       ----                    ----
-  lock(&mm->mmap_lock);
-                               lock(&root->kernfs_rwsem);
-                               lock(&mm->mmap_lock);
-  rlock(sb_internal#3);
-
- *** DEADLOCK ***
-
-2 locks held by syz.2.224/7634:
- #0: ffff0000d0c2b7d0 (&mm->mmap_lock){++++}-{4:4}, at: mmap_write_lock_killable include/linux/mmap_lock.h:374 [inline]
- #0: ffff0000d0c2b7d0 (&mm->mmap_lock){++++}-{4:4}, at: vm_mmap_pgoff+0x180/0x43c mm/util.c:577
- #1: ffff0000c6b20428 (sb_writers#23){.+.+}-{0:0}, at: file_accessed include/linux/fs.h:2650 [inline]
- #1: ffff0000c6b20428 (sb_writers#23){.+.+}-{0:0}, at: btrfs_file_mmap+0xac/0x118 fs/btrfs/file.c:1988
-
-stack backtrace:
-CPU: 1 UID: 0 PID: 7634 Comm: syz.2.224 Not tainted 6.16.0-rc2-syzkaller-g9aa9b43d689e #0 PREEMPT 
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 05/07/2025
-Call trace:
- show_stack+0x2c/0x3c arch/arm64/kernel/stacktrace.c:501 (C)
- __dump_stack+0x30/0x40 lib/dump_stack.c:94
- dump_stack_lvl+0xd8/0x12c lib/dump_stack.c:120
- dump_stack+0x1c/0x28 lib/dump_stack.c:129
- print_circular_bug+0x324/0x32c kernel/locking/lockdep.c:2046
- check_noncircular+0x154/0x174 kernel/locking/lockdep.c:2178
- check_prev_add kernel/locking/lockdep.c:3168 [inline]
- check_prevs_add kernel/locking/lockdep.c:3287 [inline]
- validate_chain kernel/locking/lockdep.c:3911 [inline]
- __lock_acquire+0x1774/0x30a4 kernel/locking/lockdep.c:5240
- lock_acquire+0x14c/0x2e0 kernel/locking/lockdep.c:5871
- percpu_down_read_internal include/linux/percpu-rwsem.h:53 [inline]
- percpu_down_read_freezable include/linux/percpu-rwsem.h:83 [inline]
- __sb_start_write include/linux/fs.h:1793 [inline]
- sb_start_intwrite include/linux/fs.h:1976 [inline]
- start_transaction+0x5bc/0x155c fs/btrfs/transaction.c:699
- btrfs_join_transaction+0x30/0x40 fs/btrfs/transaction.c:830
- btrfs_dirty_inode+0x90/0x190 fs/btrfs/inode.c:6225
- btrfs_update_time+0xa0/0xd0 fs/btrfs/inode.c:6259
- inode_update_time fs/inode.c:2076 [inline]
- touch_atime+0x2e4/0x818 fs/inode.c:2149
- file_accessed include/linux/fs.h:2650 [inline]
- btrfs_file_mmap+0xac/0x118 fs/btrfs/file.c:1988
- call_mmap include/linux/fs.h:2284 [inline]
- mmap_file mm/internal.h:167 [inline]
- __mmap_new_file_vma mm/vma.c:2405 [inline]
- __mmap_new_vma mm/vma.c:2467 [inline]
- __mmap_region mm/vma.c:2622 [inline]
- mmap_region+0xe9c/0x1c0c mm/vma.c:2692
- do_mmap+0x968/0xfac mm/mmap.c:561
- vm_mmap_pgoff+0x2b8/0x43c mm/util.c:579
- ksys_mmap_pgoff+0x394/0x5b8 mm/mmap.c:607
- __do_sys_mmap arch/arm64/kernel/sys.c:28 [inline]
- __se_sys_mmap arch/arm64/kernel/sys.c:21 [inline]
- __arm64_sys_mmap+0xf8/0x110 arch/arm64/kernel/sys.c:21
- __invoke_syscall arch/arm64/kernel/syscall.c:35 [inline]
- invoke_syscall+0x98/0x2b8 arch/arm64/kernel/syscall.c:49
- el0_svc_common+0x130/0x23c arch/arm64/kernel/syscall.c:132
- do_el0_svc+0x48/0x58 arch/arm64/kernel/syscall.c:151
- el0_svc+0x58/0x17c arch/arm64/kernel/entry-common.c:767
- el0t_64_sync_handler+0x78/0x108 arch/arm64/kernel/entry-common.c:786
- el0t_64_sync+0x198/0x19c arch/arm64/kernel/entry.S:600
-
+- Link to v1: https://lore.kernel.org/r/20250604-adi-i3c-master-v1-0-0488e80dafcb@analog.com
 
 ---
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
+Jorge Marques (2):
+      dt-bindings: i3c: Add adi-i3c-master
+      i3c: master: Add driver for Analog Devices I3C Controller IP
 
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+ .../bindings/i3c/adi,i3c-master-1.00.a.yaml        |   66 ++
+ MAINTAINERS                                        |    6 +
+ drivers/i3c/master/Kconfig                         |   11 +
+ drivers/i3c/master/Makefile                        |    1 +
+ drivers/i3c/master/adi-i3c-master.c                | 1017 ++++++++++++++++++++
+ 5 files changed, 1101 insertions(+)
+---
+base-commit: 51963783b876a2f493a3eac0ea9eba271cb6809a
+change-id: 20250604-adi-i3c-master-2a5148c58c47
+prerequisite-message-id: <20250622-i3c-writesl-readsl-v2-0-2afd34ec6306@analog.com>
+prerequisite-patch-id: 5443f14ca82fc08593960fafdb43488cce56f7d9
+prerequisite-patch-id: 647084f5fe09f4887f633b0b02b306912a156672
+prerequisite-patch-id: 6f582bb2ef1aafb66f26c515a19d5efa06ab8968
 
-If the report is already addressed, let syzbot know by replying with:
-#syz fix: exact-commit-title
+Best regards,
+-- 
+Jorge Marques <jorge.marques@analog.com>
 
-If you want to overwrite report's subsystems, reply with:
-#syz set subsystems: new-subsystem
-(See the list of subsystem names on the web dashboard)
-
-If the report is a duplicate of another one, reply with:
-#syz dup: exact-subject-of-another-report
-
-If you want to undo deduplication, reply with:
-#syz undup
 
