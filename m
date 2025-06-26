@@ -1,161 +1,125 @@
-Return-Path: <linux-kernel+bounces-705179-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-705181-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 20C32AEA64A
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Jun 2025 21:20:18 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 190CBAEA653
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Jun 2025 21:20:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5BCFD1C27BA2
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8C3E13B11F2
 	for <lists+linux-kernel@lfdr.de>; Thu, 26 Jun 2025 19:20:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8457B2EFD98;
-	Thu, 26 Jun 2025 19:20:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4F8132EFD85;
+	Thu, 26 Jun 2025 19:20:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="iIuVPbbW"
-Received: from mail-oi1-f176.google.com (mail-oi1-f176.google.com [209.85.167.176])
+	dkim=pass (2048-bit key) header.d=disroot.org header.i=@disroot.org header.b="cfgEGIK5"
+Received: from layka.disroot.org (layka.disroot.org [178.21.23.139])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 485192EF9B4
-	for <linux-kernel@vger.kernel.org>; Thu, 26 Jun 2025 19:20:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D25ED2EF9B1;
+	Thu, 26 Jun 2025 19:20:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.21.23.139
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750965603; cv=none; b=NM2gHlLXX3y0hmgKQmOjWYpcQJxV433P8t+kgkCU6zKWX8gnWqI2Tw5U+hUhFL8UDTXud5Zunt0Z6bBP7NHP7kjc1ZZ31cfnmZUp2voPHfj0q5PIsdewNmXd8TK+2RIdj7zi5ve+zwo0abgnlw6naZvdqOdZXoQ/65sq4rLn6XI=
+	t=1750965652; cv=none; b=rCjs6iNjn16rsnMC8+kLCXJgfyLi9cHvXyAPK+kmTGOBRlAasNtCEYe7/WxQjG13ERzB4O4PBAskU6726Q2VC+agwUw3bgiu0GSvgPa0Ic731klkhSPZskrgm4hUxaRGyesvhIlww1gepoUywN3nZWcreftzdSYQky645vhVpLI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750965603; c=relaxed/simple;
-	bh=NXZiagHgTh4ICA7Z9PcDT/eyqyxuGCGLWpxNSBxlOw4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=P6KYTm6YsSBmTDnqt4Gv1TYOKkyiCDOLsf0DJSiHSTQ5JJZzVqRIQaZEZ0UyEzAQw8t5QgNYb6oYRl5MR1uRGie+NBGQTVFYmyVdXASnfKpuMYmRtqEEdkydkUd7cEem5h0hwOOp2mHPeqmBuo2w0KyVw9EVx5OOZ7cZiwBSFFY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=iIuVPbbW; arc=none smtp.client-ip=209.85.167.176
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-oi1-f176.google.com with SMTP id 5614622812f47-408d7e2b040so874634b6e.2
-        for <linux-kernel@vger.kernel.org>; Thu, 26 Jun 2025 12:20:02 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1750965601; x=1751570401; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=Jw2OSuwMAy9W3gBCyzotqn/e/diunkHgHz26UnXH3Nw=;
-        b=iIuVPbbWVInQpHTSprJ00+lT6wWh02neX7BbaD18PF04kpXUOkt4kUymkIB0Xz03wN
-         5ApOnyonMmn7fTP1R755abBMy5NjYxXxK+qQvgJV0cVIwJPEQweuVpfOXjikt8/29n3f
-         PHVls6a6qTSBmKHm0XO9XR4HnDE9209W2RDmpmHET+SKdOVdgkztFnZieK0fgFxHm4pP
-         q2I+BLpz6tjjarb5iPzkeakbBBUNeqiXNEf+ajj6IUnH3G43Z3y+liiiEseAj5918JZ2
-         nUExCTIgacmxWn/0GBPeNquKMb+9BD8Zce4oQj7yVvs8CfZA9akn/LwpVKv+F37x900Y
-         R7Lw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1750965601; x=1751570401;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=Jw2OSuwMAy9W3gBCyzotqn/e/diunkHgHz26UnXH3Nw=;
-        b=Mt+dSHVJ0SjNP6pESOaLMZREGHCkJ054D8dG5tVFcLx7t0XwZ9jHIt9c4n/enEDosr
-         NWD0AFFZf4Y3WLfURV77Zql9CETq47L/uKTCOA0jGx5T40g/fICWz19J/ia17vP9OiFJ
-         8oRZs38jARlbg+ubMGdFaezoTwejsdOKWM3633v3WqD6zh3D7Eil8BXQGV8ZmQKGil7S
-         0Jw8XrFBvuxlIVsmqkT3yn0bTMn6OBoCVX1ceABVTeyRZ5OJM4vQXhm3Q/+Xufi/GbW2
-         H1oFZb3f9xGrGG15v8IwSZQU9Gz2Lu+YUE56v3/tOT23lTD4oscTXQG+RcKL28jw9T51
-         j+vw==
-X-Forwarded-Encrypted: i=1; AJvYcCVWDxPm82VmU1bCmNcTp+gu9szUb2C8DyzUvBqFjhzqK6SA8eWcgJUPTdA+r89sbCsiWjwNbxlz/Yvoso4=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyoEKvp0yC+hiUclIEuDrOrd/mi+RO87CHlmlqfiBvOG3rS9FTh
-	rf1pTimYSvQK5DuJvANHo43j6mtdt1uDpA6L9eh8dAsr1uY3a0bRD33AVzdoYliCYkR4OpU1+ke
-	5NIe8
-X-Gm-Gg: ASbGncs+mkiBaunplzCs7KaFvByp/CkohkYgNs32SxYetz3rLVWWvd4Ui+aK/CJw5Qp
-	nuFqDJwDAu1Sd2Uvt+soPMJbxdPs+4K3H/m0bO08UdF68G+48mkJsk7lALVqWcOQ6u+kuPmDZz5
-	X6zR+wqwzVjXas+Q3nFyhekpa5ZglBPPv7H05sVWvvOek5RM02NVss5MBJ3HPgg8a6cBYfeHXhM
-	uXqqb0WAIQ7ni1a2j4vqY60tpYPyZG8E6NBnPs6x8tpOrrj7x+oxqfHfFFKSfprp3KPfUDvJSlV
-	rEycdtvl3vVLRdUAKeC5tDAjetGYw0aJ3WrKi1YDJlBvkwbvF7k/5M/LN455U6/UtmlB
-X-Google-Smtp-Source: AGHT+IFY7CJ7QeQO5lGm3SZuq1NkH2K1MhQoLCsDuDsQ1TcbQSnB0KYdrUkAGt1PGEgX5gAvdU6Ntw==
-X-Received: by 2002:a05:6808:1592:b0:401:e67c:b3be with SMTP id 5614622812f47-40b33c495a1mr285207b6e.4.1750965601252;
-        Thu, 26 Jun 2025 12:20:01 -0700 (PDT)
-Received: from localhost ([2603:8080:b800:f700:154:5a01:d5a1:16d6])
-        by smtp.gmail.com with ESMTPSA id 5614622812f47-40b322b1d89sm75889b6e.19.2025.06.26.12.20.00
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 26 Jun 2025 12:20:00 -0700 (PDT)
-Date: Thu, 26 Jun 2025 22:19:59 +0300
-From: Dan Carpenter <dan.carpenter@linaro.org>
-To: Abdelrahman Fekry <abdelrahmanfekry375@gmail.com>
-Cc: andy@kernel.org, hdegoede@redhat.com, mchehab@kernel.org,
-	sakari.ailus@linux.intel.com, gregkh@linuxfoundation.org,
-	linux-kernel@vger.kernel.org, linux-media@vger.kernel.org,
-	linux-staging@lists.linux.dev, skhan@linuxfoundation.org,
-	linux-kernel-mentees@lists.linux.dev
-Subject: Re: [PATCH v2] staging: media: atomisp: remove debug sysfs
- attributes active_bo and free_bo
-Message-ID: <8b08f2a3-8219-49b8-be47-fc33a95a3953@suswa.mountain>
-References: <20250624144943.39297-1-abdelrahmanfekry375@gmail.com>
- <cef03d37-715c-47a8-81d4-0872d505c39b@suswa.mountain>
- <CAGn2d8ML8eTcN2G18B7FYkapROnOeAKJir5fJvOXDdXTLY43aQ@mail.gmail.com>
- <5ce9dac3-0b7a-45d1-8313-2f65165b50e7@suswa.mountain>
- <CAGn2d8N8GrRR0FnaB7S2BsPs0HXHhwHfg+q55HbfkMqy1kMGTw@mail.gmail.com>
- <5d579b8c-0676-46d8-a020-77ee91e1e7d3@suswa.mountain>
- <CAGn2d8PdiBRN09L__XEsH=cNYz4rDR2A-GnSqCM6Y5TmtT+wcw@mail.gmail.com>
+	s=arc-20240116; t=1750965652; c=relaxed/simple;
+	bh=F5drME/H2x0yXDYGBijt8T+fC00BBnPVtIbKK7Wla90=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=gEtrMQ1BWugEVmyvDr2nokJlJXOVBSVyEUjozawk0o3vYXp9KgO/RinrNRUxJ9yoOTlIytsNSGgL9oatmjIAHuam0riJEaZsFQhgKXHCAFzuNHqRYGGikjDVQg/+PIV/xbNS4KJuZIZ5aPnpFyrPKfu3bddHNt0btB6bpDy5sUQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=disroot.org; spf=pass smtp.mailfrom=disroot.org; dkim=pass (2048-bit key) header.d=disroot.org header.i=@disroot.org header.b=cfgEGIK5; arc=none smtp.client-ip=178.21.23.139
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=disroot.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=disroot.org
+Received: from mail01.disroot.lan (localhost [127.0.0.1])
+	by disroot.org (Postfix) with ESMTP id 43249260B3;
+	Thu, 26 Jun 2025 21:20:46 +0200 (CEST)
+X-Virus-Scanned: SPAM Filter at disroot.org
+Received: from layka.disroot.org ([127.0.0.1])
+ by localhost (disroot.org [127.0.0.1]) (amavis, port 10024) with ESMTP
+ id FrQBf9LbrxWq; Thu, 26 Jun 2025 21:20:45 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=disroot.org; s=mail;
+	t=1750965645; bh=F5drME/H2x0yXDYGBijt8T+fC00BBnPVtIbKK7Wla90=;
+	h=From:Subject:Date:To:Cc;
+	b=cfgEGIK5oLeB3XE1aJRZiOc/topaDddu3H+5KwtYmrpCELXS+o9lcEtdVkU6YMAqw
+	 jwdsTKis6jw+tuuMRZtX4YWEww9nbuuLr9pq/fEGTysVxfkiDFcJj6bU3uNcG+H1uy
+	 zqhehyxyYkreANKoQgePjWbulMaPTN3/lKsYblC/M7W14OybtZpQymq/si99jNYFc3
+	 mepd4mnR+W4qQFnKDY59ZpuEDP6dRdW502NUBg0aariog0pccrZCMc2/M8LtJZkfuL
+	 zexhf8751JoCiJ5a4O4EXRPTFJQxKpHqSsC+qfhX9cXhle8EGSdZug2YiH9KVMq9Re
+	 Y5eBgvwPzzO6Q==
+From: Kaustabh Chakraborty <kauschluss@disroot.org>
+Subject: [PATCH v3 0/3] Samsung Exynos 7870 DECON driver support
+Date: Fri, 27 Jun 2025 00:50:27 +0530
+Message-Id: <20250627-exynosdrm-decon-v3-0-5b456f88cfea@disroot.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAGn2d8PdiBRN09L__XEsH=cNYz4rDR2A-GnSqCM6Y5TmtT+wcw@mail.gmail.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAHudXWgC/2XOwQqDMAyA4VeRntfRZFp1p73H2GEmVXuYHa0UR
+ Xz3VcHD8PgH8iWLCMZbE8Q9W4Q30QbrhhS3Syaofw+dkZZTC1SYqxpKaaZ5cIH9R7IhN8icECt
+ mYGxakba+3rR22sXnK3Vvw+j8vB+IsE0Pqz5ZEaSSmopKAwE1Kn+wDd658ep8JzYt4iEUSgOeB
+ UwCa0rvAFWqKP+FdV1/pr3Nw/IAAAA=
+X-Change-ID: 20240917-exynosdrm-decon-4c228dd1d2bf
+To: Inki Dae <inki.dae@samsung.com>, Seung-Woo Kim <sw0312.kim@samsung.com>, 
+ Kyungmin Park <kyungmin.park@samsung.com>, David Airlie <airlied@gmail.com>, 
+ Simona Vetter <simona@ffwll.ch>, Krzysztof Kozlowski <krzk@kernel.org>, 
+ Alim Akhtar <alim.akhtar@samsung.com>, 
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
+ Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, 
+ Rob Herring <robh@kernel.org>, Conor Dooley <conor@kernel.org>, 
+ Ajay Kumar <ajaykumar.rs@samsung.com>, Akshu Agrawal <akshua@gmail.com>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>
+Cc: dri-devel@lists.freedesktop.org, linux-arm-kernel@lists.infradead.org, 
+ linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ devicetree@vger.kernel.org, Kaustabh Chakraborty <kauschluss@disroot.org>, 
+ stable@vger.kernel.org
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1750965633; l=1575;
+ i=kauschluss@disroot.org; s=20250202; h=from:subject:message-id;
+ bh=F5drME/H2x0yXDYGBijt8T+fC00BBnPVtIbKK7Wla90=;
+ b=P19wZTZkJiUTW4xG+909e0UrW1ziOcHgEQAG5ZPLLi/lYtIXzLuRKoE+HKtBa5MAXUQqHSErB
+ WKc/kO+8Q4uBXCdO9UHxPatIed3cuAkjsV/5rglvVwj2qEQmt9ZORY1
+X-Developer-Key: i=kauschluss@disroot.org; a=ed25519;
+ pk=h2xeR+V2I1+GrfDPAhZa3M+NWA0Cnbdkkq1bH3ct1hE=
 
-Thank you.  This is good analysis.
+This patch series aims at adding support for Exynos7870's DECON in the
+Exynos7 DECON driver. It introduces a driver data struct so that support
+for DECON on other SoCs can be added to it in the future.
 
-On Thu, Jun 26, 2025 at 06:19:40PM +0300, Abdelrahman Fekry wrote:
-> Hello Dan , Thanks for your review
-> 
-> On Tue, Jun 24, 2025 at 9:31 PM Dan Carpenter <dan.carpenter@linaro.org> wrote:
-> > Yes.  Nothing is checking for if hmm_init() fails.  Step through the
-> > code and verify that nothing crashes or bad happens as a result.
-> >
-> > For example, I think hmm_bo_alloc() will print "hmm_bo_device not inited
-> > yet." and return.  So that's kind of annoying but it's not a crash.
-> > Search through the rest of the driver and verify how it will behave.
-> >
-> 
-> So, I have been searching through the code as you suggested,
-> and found a couple of interesting things to look at.
-> 
-> Firstly, no function that calls hmm_init() checks its return code,
-> and it doesn’t crash anywhere because of this, so it's not a problem.
-> But the thing is, the hmm_initialized flag inside the hmm_init() function
-> is set even if hmm_bo_device_init() fails, and this can be misleading for
-> functions like __hm_alloc() that check this flag later.
+It also fixes a few bugs in the driver, such as functions receiving bad
+pointers.
 
-Yeah.
+Tested on Samsung Galaxy J7 Prime (samsung-on7xelte), Samsung Galaxy A2
+Core (samsung-a2corelte), and Samsung Galaxy J6 (samsung-j6lte).
 
-> 
-> Secondly, the function hmm_bo_alloc() and others don’t check
-> the return code of hmm_init().
+Signed-off-by: Kaustabh Chakraborty <kauschluss@disroot.org>
+---
+Changes in v3:
+- Add a new commit documenting iommus and ports dt properties.
+- Link to v2: https://lore.kernel.org/r/20250612-exynosdrm-decon-v2-0-d6c1d21c8057@disroot.org
 
-hmm_init() is called from two places, atomisp_pci_probe() and
-__hmm_alloc().  Is it really possible to call __hmm_alloc() before
-atomisp_pci_probe() has succeeded?  That's an important question.
-Please try to read the code and find the answer.
+Changes in v2:
+- Add a new commit to prevent an occasional panic under circumstances.
+- Rewrite and redo [v1 2/6] to be a more sensible commit.
+- Link to v1: https://lore.kernel.org/r/20240919-exynosdrm-decon-v1-0-6c5861c1cb04@disroot.org
 
-It would be better to only call hmm_init() from the probe function
-and delete the call in __hmm_alloc() but I don't know if that's
-possible.
+---
+Kaustabh Chakraborty (3):
+      dt-bindings: display: samsung,exynos7-decon: add properties for iommus and ports
+      drm/exynos: exynos7_drm_decon: fix call of decon_commit()
+      drm/exynos: exynos7_drm_decon: add vblank check in IRQ handling
 
-> Instead, they check the flag
-> HMM_BO_DEVICE_INITED inside bdev, which is set by the function
-> hmm_bo_device_init(). The problem is, if we inspect hmm_bo_device_init(),
-> we find that the HMM_BO_DEVICE_INITED flag is set before the calls to
-> kmem_cache_create(), kmem_cache_alloc(), and __bo_init().
-> This means that if any of these functions fail, the flag will still be set,
-> which can lead to misbehavior in functions that rely on it, like hmm_bo_alloc().
-> 
+ .../bindings/display/samsung/samsung,exynos7-decon.yaml           | 8 ++++++++
+ drivers/gpu/drm/exynos/exynos7_drm_decon.c                        | 8 ++++++--
+ 2 files changed, 14 insertions(+), 2 deletions(-)
+---
+base-commit: 1b152eeca84a02bdb648f16b82ef3394007a9dcf
+change-id: 20240917-exynosdrm-decon-4c228dd1d2bf
 
-Yeah.  That seems correct to me too.
-
-> Should I tackle these problems after submitting the original patch of
-> removing the debug sysfs attr. ?
-
-Perfect.  Sounds good.
-
-regards,
-dan carpenter
+Best regards,
+-- 
+Kaustabh Chakraborty <kauschluss@disroot.org>
 
 
