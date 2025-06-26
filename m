@@ -1,110 +1,244 @@
-Return-Path: <linux-kernel+bounces-705041-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-705043-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id D977AAEA47D
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Jun 2025 19:36:21 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1D3C6AEA482
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Jun 2025 19:39:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B41741894E8B
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Jun 2025 17:36:32 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 937881C23E7F
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Jun 2025 17:39:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A46522EACF5;
-	Thu, 26 Jun 2025 17:35:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8105D2EAB75;
+	Thu, 26 Jun 2025 17:39:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=zetier.com header.i=@zetier.com header.b="XOprbVTK"
-Received: from mail-qt1-f174.google.com (mail-qt1-f174.google.com [209.85.160.174])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="tIjwuvKp"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8467F2135D7
-	for <linux-kernel@vger.kernel.org>; Thu, 26 Jun 2025 17:35:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C98431F5828;
+	Thu, 26 Jun 2025 17:39:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750959349; cv=none; b=hMqSblVUU707wqSGo50EW+z565x5Z9Qf9QUmG1FYUWGnAHlL7eHSq+H2XfRkJd0pIlwMFcjEGx1Q9vMqryeAY+0i50kboWtQ0fal2rPsWQ5oLX2/mmPujLeFYAAspoD8hz1XVpdEDvk27PRORwhQ2nfmygt4XSRUcehebL6oDpo=
+	t=1750959561; cv=none; b=ozt57KNhBcUx+yaqRZSHcS5ai9HVhQp3DgzsJWaDj+0DVhqCgnLMxVQwpAEYq3cX4eIfCUE17Hole1Ui5cTAXay55GYvx4nktu08BhJDpUlqOX6h4BmowKy+2KIMEHYud7A+JTcRqKGG5LAs3UuLQCLs/pRgbYbVu0dvQxb0hwI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750959349; c=relaxed/simple;
-	bh=owqT5Dg+crvKyuGwL4S60bIfz9jQaJ4PE7SMHfA70y4=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=mx+fHWK2zU/AU8Pr0uYuPebMMSFlZkP/vnuxFAc1NVGaoasXza8wI0y/YdlqOhXe90+jJSZ0cyUekvT0EyLoseP82pcDup+xaWw9mtSKo51qBa/Ubi8EFFaqHzvTqSAwJboIoD9Jrk4Yo8wV1cU+2NSGylxC+g+wb8Juf2DAc64=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zetier.com; spf=pass smtp.mailfrom=zetier.com; dkim=pass (2048-bit key) header.d=zetier.com header.i=@zetier.com header.b=XOprbVTK; arc=none smtp.client-ip=209.85.160.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zetier.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zetier.com
-Received: by mail-qt1-f174.google.com with SMTP id d75a77b69052e-4a774209cf0so14938001cf.0
-        for <linux-kernel@vger.kernel.org>; Thu, 26 Jun 2025 10:35:47 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=zetier.com; s=gm; t=1750959346; x=1751564146; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=Kq5YiwCJOc6rM6hfYT6kDVkrdlebVMFigkkEqCw26Wg=;
-        b=XOprbVTKM7S4P3uS7aFLIGwt02Gxazu12VJqK/hs/aAlMwcz/XlBFkXBaUWZ7eeazi
-         iPPcfGDhCTLN53TvkfuGGjEd88j6fsDs9cwpK6jTARXjfzNBnKIrgc27eLgLY1EReLT4
-         Xs13L8mKdW05bwu3/WGFc70RY6/xTy3AHs4uuLfOEWBvmLt0uFVFSUAAhG98uTN+x1BM
-         c0Hww22d0GocyUShHhtj+wU+LhloJfcJg/Bc8fB4nnKU4GaQB4QE/bh21rp9/Q+ApYgG
-         gPGOFBWDaUTGUIcI86U+WgkUnjA0KKRkQRMrCJHJ1lUS4cedfe/rgR3LXGZat1+BIDig
-         W+HA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1750959346; x=1751564146;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=Kq5YiwCJOc6rM6hfYT6kDVkrdlebVMFigkkEqCw26Wg=;
-        b=ZZCVBQIUKFRQdDIooYGaKqv4G7Sj+rlBv5KQwtVkyH0tyJ0zeZb7rleonRsWZNnc5X
-         SWlHHHZ5byupbXFNZoVn+9T0s4dLrGCN2ztYOberi4UtVDvZTYmD+G768+d8Gq/ho4cl
-         y/571YiQmz01ui1lHkNgZSvcAuY3jhKhDqqdKfT0DX7LCcXim4wE3390Hj+bOlnAATR6
-         qyZ8AwILgvcO3ayZArspdmqdXQ2q7Sr0XX+cQ1HbFdpE7jiW5yRLMR5Ji7/LawhkvE/C
-         J8XPSxlsCbNTeCIGl/qMetXgX6UZSfs/SnfizMdob2OjnykBmkaR6TMHzsYSJp8RiA5L
-         5dww==
-X-Forwarded-Encrypted: i=1; AJvYcCWn1K6IbQ4SJ53CvQFxMokXtbGGLgPTVG24NQ3ecNWahjEPma8nImxFb44yQkLeJgrrt/bX2gf1X7Cu/cU=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx+cwbS/yQ6WehOBTPMjGPinEFqSlOBJGPVVmjLRf+8ISLcxFS+
-	9LqB/+SJJsKl3BJOCO7/Pd7P+HNFJ8qXsf+BJOdNQS16vXB0vQnWcJNy4PCWyBDTFg==
-X-Gm-Gg: ASbGncseRfuyqlOzUWgBCNquJPgWkd4ut0PDv6CKrlfPyz3NIUBIEClIn1CyYzQvQyC
-	2a2/zLKbbuFcr8sBvTG6lF6/wPWeGjxcWMUc+GUnm9YMcDYJudMA/X50prtV7SVYLuq6tMAVn1M
-	XfYt6xPNoxfDaVbd0yQ6sCm2YlTKQ5LfxY6H6YGbxsukvi5PC58EUPLLNaFI29f5TUxzy80deQn
-	xJgz9D+MOsGKWJXqhdLD1X0F2vQZjzFG0404JFBxr26m0Vqa6qRmVkE2F2ZMSQWSH4VIAWXk0yx
-	L19Dq8fHKm8hmpqm8X6Zr6Ef3bh/O1tjZpAKSFor6XpEMo8u4utF+34nM7RGq0k2JtoWJHw=
-X-Google-Smtp-Source: AGHT+IF4aBQ7fvxJXfKi7QHAZH93XBf4dITeJb2LNxUlqLidVkaBB1/OMarQUabX97CPuzGxK0Hq3Q==
-X-Received: by 2002:ac8:5a4b:0:b0:4a4:2cb0:2b29 with SMTP id d75a77b69052e-4a7fcbd4724mr6757961cf.35.1750959346392;
-        Thu, 26 Jun 2025 10:35:46 -0700 (PDT)
-Received: from [172.24.25.40] ([65.222.209.234])
-        by smtp.gmail.com with ESMTPSA id af79cd13be357-7d44316d85esm27760785a.35.2025.06.26.10.35.40
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 26 Jun 2025 10:35:45 -0700 (PDT)
-Message-ID: <f8988d47-d84b-4cff-ba20-9b3341879354@zetier.com>
-Date: Thu, 26 Jun 2025 13:35:39 -0400
+	s=arc-20240116; t=1750959561; c=relaxed/simple;
+	bh=4KWMnpDiHiL5PRJqhB2qQEqywpZCJEWlv6miNsOm83M=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=soVZfIzx0ocn+k91Xqd6H0K4Aepegk0nGAO5Ihbce4+d713sHROlV+nq/gH/EFWkLlVhu9TPnK0WhB4xSkM0qXciHwvBg3NR+XWB94S8UGgT6qhr6HSu+1dY8W960TxmkYoXrTFagxeAJjA3okAKC2mtsRxnlYeUPFX1nE4b7Rs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=tIjwuvKp; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D12E5C4CEEB;
+	Thu, 26 Jun 2025 17:39:20 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1750959561;
+	bh=4KWMnpDiHiL5PRJqhB2qQEqywpZCJEWlv6miNsOm83M=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=tIjwuvKpYV0r8ExMwKFrWMTyFmyfun0DeAy/TEBMM/QYyeSdk8PzOdnSmVG39nnfy
+	 ssISvo4U6Gs/lUjl3wfxydvia3nOJtyCWKmYRPOxOdu4c2IQ2vbnAs3DcsRv1xhDcS
+	 NIzfF3KCnjDCoouaEemwLjMdUqaZTd6zA0JAysdUKp2MrzWfvzsF8otTdv8q7KTbdz
+	 EsYEYaxRTUyhm5iNFwUbcqGTJ/92odbvlKW4Bh5U6CdF/BoLMjbBU9bfmrcbHvCTS4
+	 Kwogyg0ZKzFnzwKhO8U+A4CgvLIMVCA0Q88ht3y87VsUqmsgKQ9MPqv44h3B8hNwdC
+	 yMoNpnEeU7EXw==
+Date: Thu, 26 Jun 2025 10:39:19 -0700
+From: Namhyung Kim <namhyung@kernel.org>
+To: Collin Funk <collin.funk1@gmail.com>
+Cc: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
+	Arnaldo Carvalho de Melo <acme@kernel.org>,
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+	Jiri Olsa <jolsa@kernel.org>, Ian Rogers <irogers@google.com>,
+	Adrian Hunter <adrian.hunter@intel.com>,
+	"Liang, Kan" <kan.liang@linux.intel.com>,
+	James Clark <james.clark@linaro.org>,
+	Charlie Jenkins <charlie@rivosinc.com>,
+	Ravi Bangoria <ravi.bangoria@amd.com>,
+	"Masami Hiramatsu (Google)" <mhiramat@kernel.org>,
+	linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v3] perf build: Specify that shellcheck should use the
+ bash dialect.
+Message-ID: <aF2Fx-cYy6B69d4S@google.com>
+References: <e3751a74be34bbf3781c4644f518702a7270220b.1749785642.git.collin.funk1@gmail.com>
+ <f8415e57c938482668717d918ab566ff5082f281.1750743784.git.collin.funk1@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] usb: musb: fix gadget state on disconnect
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: Bin Liu <b-liu@ti.com>, linux-usb@vger.kernel.org,
- linux-kernel@vger.kernel.org,
- Yehowshua Immanuel <yehowshua.immanuel@twosixtech.com>
-References: <20250624140930.25887-1-drew.hamilton@zetier.com>
- <2025062456-cameo-directly-fc66@gregkh>
-Content-Language: en-US
-From: Drew Hamilton <drew.hamilton@zetier.com>
-In-Reply-To: <2025062456-cameo-directly-fc66@gregkh>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <f8415e57c938482668717d918ab566ff5082f281.1750743784.git.collin.funk1@gmail.com>
 
-On Tue, Jun 24, 2025 at 10:16:30AM -0400, Greg Kroah-Hartman wrote:
- > What it does show is you missed the many thousands of changes that have
- > gone into the tree since -rc6, is this still an issue in 6.16-rc3?
+Hello,
 
-Retested against v6.16-rc3 and confirmed both that without the patch the 
-issue is still present, as well as that the patch still resolves the issue.
+On Mon, Jun 23, 2025 at 10:44:59PM -0700, Collin Funk wrote:
+> When someone has a global shellcheckrc file, for example at
+> ~/.config/shellcheckrc, with the directive 'shell=sh', building perf
+> will fail with many shellcheck errors like:
+> 
+>     In tests/shell/base_probe/test_adding_kernel.sh line 294:
+>     (( TEST_RESULT += $? ))
+>     ^---------------------^ SC3006 (warning): In POSIX sh, standalone ((..)) is undefined.
+> 
+>     For more information:
+>       https://www.shellcheck.net/wiki/SC3006 -- In POSIX sh, standalone ((..)) is...
+>     make[5]: *** [tests/Build:91: tests/shell/base_probe/test_adding_kernel.sh.shellcheck_log] Error 1
+> 
+> Passing the '-s bash' option ensures that it runs correctly regardless
+> of a developers global configuration.
+> 
+> This patch adds '-s bash' and other options to the SHELLCHECK variable
+> in Makefile.perf and makes use of the variable consistently.
+> 
+> Signed-off-by: Collin Funk <collin.funk1@gmail.com>
+> ---
+>  tools/perf/Build                | 2 +-
+>  tools/perf/Makefile.perf        | 2 +-
+>  tools/perf/arch/x86/Build       | 2 +-
+>  tools/perf/arch/x86/tests/Build | 2 +-
+>  tools/perf/tests/Build          | 2 +-
+>  tools/perf/trace/beauty/Build   | 2 +-
+>  tools/perf/util/Build           | 2 +-
+>  7 files changed, 7 insertions(+), 7 deletions(-)
+> 
+> diff --git a/tools/perf/Build b/tools/perf/Build
+> index 06107f1e1d42..b03cc59dabf8 100644
+> --- a/tools/perf/Build
+> +++ b/tools/perf/Build
+> @@ -73,7 +73,7 @@ endif
+>  
+>  $(OUTPUT)%.shellcheck_log: %
+>  	$(call rule_mkdir)
+> -	$(Q)$(call echo-cmd,test)shellcheck -s bash -a -S warning "$<" > $@ || (cat $@ && rm $@ && false)
+> +	$(Q)$(call echo-cmd,test)$(SHELLCHECK) "$<" > $@ || (cat $@ && rm $@ && false)
+>  
+>  perf-y += $(SHELL_TEST_LOGS)
+>  
+> diff --git a/tools/perf/Makefile.perf b/tools/perf/Makefile.perf
+> index d4c7031b01a7..e0cf8db5462b 100644
+> --- a/tools/perf/Makefile.perf
+> +++ b/tools/perf/Makefile.perf
+> @@ -252,7 +252,7 @@ endif
+>  ifeq ($(NO_SHELLCHECK),1)
+>    SHELLCHECK :=
+>  else
+> -  SHELLCHECK := $(shell which shellcheck 2> /dev/null)
+> +  SHELLCHECK := $(shell which shellcheck 2> /dev/null) -s bash -a -S warning
 
- > What commit id does this fix?
+This caused a trouble on a test environment where 'which' (and
+'shellcheck' as well) is not available.  Now it makes SHELLCHECK
+non-empty unconditionally.
 
-It seems like this issue has existed for the MUSB driver since the UDC
-'state' sysfs attribute was defined in v3.1.
+So the version check below failed like below:
+
+  make[1]: which: No such file or directory
+  /bin/sh: - : invalid option
+  Usage:	/bin/sh [GNU long option] [option] ...
+  	/bin/sh [GNU long option] [option] script-file ...
+  GNU long options:
+  	--debug
+  	--debugger
+  	--dump-po-strings
+  	--dump-strings
+  	--help
+  	--init-file
+  	--login
+  	--noediting
+  	--noprofile
+  	--norc
+  	--posix
+  	--pretty-print
+  	--rcfile
+  	--rpm-requires
+  	--restricted
+  	--verbose
+  	--version
+  Shell options:
+  	-ilrsD or -c command or -O shopt_option		(invocation only)
+  	-abefhkmnptuvxBCEHPT or -o option
+  expr: syntax error: unexpected argument ‘060’
+
+And it failed to build later on shellchecks.
+
+    TEST    /build/arch/x86/tests/gen-insn-x86-dat.sh.shellcheck_log
+  /bin/sh: line 1: -s: command not found
+  make[6]: *** [arch/x86/tests/Build:25: /build/arch/x86/tests/gen-insn-x86-dat.sh.shellcheck_log] Error 1
+  make[6]: *** Waiting for unfinished jobs....
+
+I think it's better to convert 'which' to 'command -v' (in other places
+too) and add the options after the version check.
 
 Thanks,
-Drew
+Namhyung
+
+
+>  endif
+>  
+>  # shellcheck is using in tools/perf/tests/Build with option -a/--check-sourced (
+> diff --git a/tools/perf/arch/x86/Build b/tools/perf/arch/x86/Build
+> index afae7b8f6bd6..d31a1168757c 100644
+> --- a/tools/perf/arch/x86/Build
+> +++ b/tools/perf/arch/x86/Build
+> @@ -10,6 +10,6 @@ endif
+>  
+>  $(OUTPUT)%.shellcheck_log: %
+>  	$(call rule_mkdir)
+> -	$(Q)$(call echo-cmd,test)shellcheck -a -S warning "$<" > $@ || (cat $@ && rm $@ && false)
+> +	$(Q)$(call echo-cmd,test)$(SHELLCHECK) "$<" > $@ || (cat $@ && rm $@ && false)
+>  
+>  perf-test-y += $(SHELL_TEST_LOGS)
+> diff --git a/tools/perf/arch/x86/tests/Build b/tools/perf/arch/x86/tests/Build
+> index 5e00cbfd2d56..01d5527f38c7 100644
+> --- a/tools/perf/arch/x86/tests/Build
+> +++ b/tools/perf/arch/x86/tests/Build
+> @@ -22,6 +22,6 @@ endif
+>  
+>  $(OUTPUT)%.shellcheck_log: %
+>  	$(call rule_mkdir)
+> -	$(Q)$(call echo-cmd,test)shellcheck -a -S warning "$<" > $@ || (cat $@ && rm $@ && false)
+> +	$(Q)$(call echo-cmd,test)$(SHELLCHECK) "$<" > $@ || (cat $@ && rm $@ && false)
+>  
+>  perf-test-y += $(SHELL_TEST_LOGS)
+> diff --git a/tools/perf/tests/Build b/tools/perf/tests/Build
+> index 2181f5a92148..d6c35dd0de3b 100644
+> --- a/tools/perf/tests/Build
+> +++ b/tools/perf/tests/Build
+> @@ -89,7 +89,7 @@ endif
+>  
+>  $(OUTPUT)%.shellcheck_log: %
+>  	$(call rule_mkdir)
+> -	$(Q)$(call echo-cmd,test)shellcheck -a -S warning "$<" > $@ || (cat $@ && rm $@ && false)
+> +	$(Q)$(call echo-cmd,test)$(SHELLCHECK) "$<" > $@ || (cat $@ && rm $@ && false)
+>  
+>  perf-test-y += $(SHELL_TEST_LOGS)
+>  
+> diff --git a/tools/perf/trace/beauty/Build b/tools/perf/trace/beauty/Build
+> index f50ebdc445b8..561590ee8cda 100644
+> --- a/tools/perf/trace/beauty/Build
+> +++ b/tools/perf/trace/beauty/Build
+> @@ -31,6 +31,6 @@ endif
+>  
+>  $(OUTPUT)%.shellcheck_log: %
+>  	$(call rule_mkdir)
+> -	$(Q)$(call echo-cmd,test)shellcheck -s bash -a -S warning "$<" > $@ || (cat $@ && rm $@ && false)
+> +	$(Q)$(call echo-cmd,test)$(SHELLCHECK) "$<" > $@ || (cat $@ && rm $@ && false)
+>  
+>  perf-y += $(SHELL_TEST_LOGS)
+> diff --git a/tools/perf/util/Build b/tools/perf/util/Build
+> index 7910d908c814..2dfa09a6f27d 100644
+> --- a/tools/perf/util/Build
+> +++ b/tools/perf/util/Build
+> @@ -421,7 +421,7 @@ endif
+>  
+>  $(OUTPUT)%.shellcheck_log: %
+>  	$(call rule_mkdir)
+> -	$(Q)$(call echo-cmd,test)shellcheck -a -S warning "$<" > $@ || (cat $@ && rm $@ && false)
+> +	$(Q)$(call echo-cmd,test)$(SHELLCHECK) "$<" > $@ || (cat $@ && rm $@ && false)
+>  
+>  perf-util-y += $(SHELL_TEST_LOGS)
+>  
+> -- 
+> 2.49.0
+> 
 
