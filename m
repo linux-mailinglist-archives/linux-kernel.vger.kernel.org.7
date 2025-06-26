@@ -1,197 +1,118 @@
-Return-Path: <linux-kernel+bounces-704099-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-704101-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 04CACAE9955
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Jun 2025 11:00:11 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9B0F0AE995A
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Jun 2025 11:01:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F22E83A2515
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Jun 2025 08:59:44 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DE0BB1707BD
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Jun 2025 09:01:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D872D29E0F4;
-	Thu, 26 Jun 2025 08:59:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B6E7429C344;
+	Thu, 26 Jun 2025 09:01:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="4kpqqG7o";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="lvTaFlHB"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Ycbsa5/A"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A145026B76D;
-	Thu, 26 Jun 2025 08:59:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 02D451B85FD
+	for <linux-kernel@vger.kernel.org>; Thu, 26 Jun 2025 09:01:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750928388; cv=none; b=E3cT8E5acInzpnBA+ZUtaGwq4ytv1RPcxIDnWnlF/gsKVWFCHLKwn9ZIDnYlikJPSQOUjAZmNl9Ye/dX8YQ9tz2uJVmK8dw6VrgyN+rTtBVA4WZhTnCet0Bu6uMB3Ux2iNJx1ehopvAnHvi6DQaEtsKGYs08RyXi8/P0mu/w16A=
+	t=1750928495; cv=none; b=YOBNIYlM/6rjDkSp9OLiPO+spkqBWj6Yg6hzLAJVIxIktp+BD5w/afhjQQ5ENiNDEDtNKNa27rSVq3DMVkoqDnLR4uN3P6oB1ArVpKJWrcsE0HefR1jQrg/aHXwbD4Yv+n/tsv2qbp0mt76nNdDh1bz+Ntjb1zxW+YuE5XZSW5g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750928388; c=relaxed/simple;
-	bh=YZeTdplEFjKWkNAT3oKIZ/KV32S6JL60kCYy7TB+ar8=;
-	h=Date:From:To:Subject:Cc:In-Reply-To:References:MIME-Version:
-	 Message-ID:Content-Type; b=mU4+ouI8fLJzt+JYR5pgPcmjUF4WHAmDSSu4nY+EYjSPJLxwXSl4d9ThS6KQjBP+6KO4frlbo7pYaU00wk1Cv9UKLshc6qoL4rjLx6MZpCMEeAqIR5z4DYpPeZ79ZguhY92GgNoexeO4abKIpgS5nxufsyYQ4KrAxe/wqD8l2tk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=4kpqqG7o; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=lvTaFlHB; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Date: Thu, 26 Jun 2025 08:59:43 -0000
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1750928384;
-	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:
+	s=arc-20240116; t=1750928495; c=relaxed/simple;
+	bh=V/+xd8na3ScrW6dHL2oOP22RCpzGwcknKLxV8kskNz8=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Gsz2XgDqTQoL4/nYAPrNEhXYzDIwmSslvvcdHDTkngPpmMW6lQrJI3zXKDLWox2kvfBnRSJEyp2p6qDfkStd5Zrd+vkJRO1l30CeRlanyhweRZgSoXT/Q4ahHQTc+mTICNIfZTQ8e7WBBrWMg1xEa9kxYUypR5yunhHvYLy32X4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Ycbsa5/A; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1750928490;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=rXcm48g55NG0qwnxjRI7N+tlNvL13RoYy6cviIT+ATc=;
-	b=4kpqqG7o9/RPkgDf5x0de4uYkiDOUmXtCIznjLwPS0Vsykot7bi+L+i5toX1wgChw3YpPv
-	JsrTXKp0XDv05h2gda1sw/ksnpVXTfnwVEN9zr7Dsivol6Fzcpyihn/jgcgh1IaZfKTgku
-	ZJu8JxIYVM8SyZ9IDK/65q2N2kQi0WLsQkKkl2PA+JFgU4sssvX+Bh9TdVH/WeU+ipPgIo
-	zY70Ljw/c7U9WcIBF2/OATWKFkL6pglwrToABd/N6wGX102ZRHfsDnfrwWydRX22/ifJeP
-	k5V6E48bPISDPCoas4FxjoGQzwi72h2hSYsmza5W0rydAv9w8c/u6FdfSWFW3Q==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1750928384;
-	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=rXcm48g55NG0qwnxjRI7N+tlNvL13RoYy6cviIT+ATc=;
-	b=lvTaFlHBsj4UCVVPQf1SQvW9nGpNsufvoKkuyOJ275TIDFGRTJSkImsWjUxjz1/M8fTtBu
-	NvPYNRMIV5mCcoAw==
-From: "tip-bot2 for Leo Yan" <tip-bot2@linutronix.de>
-Sender: tip-bot2@linutronix.de
-Reply-to: linux-kernel@vger.kernel.org
-To: linux-tip-commits@vger.kernel.org
-Subject: [tip: perf/urgent] perf/aux: Fix pending disable flow when the AUX
- ring buffer overruns
-Cc: Leo Yan <leo.yan@arm.com>, Ingo Molnar <mingo@kernel.org>,
- James Clark <james.clark@linaro.org>, Yeoreum Yun <yeoreum.yun@arm.com>,
- Adrian Hunter <adrian.hunter@intel.com>,
- Alexander Shishkin <alexander.shishkin@linux.intel.com>,
- Arnaldo Carvalho de Melo <acme@kernel.org>, Ian Rogers <irogers@google.com>,
- Jiri Olsa <jolsa@redhat.com>, Liang Kan <kan.liang@linux.intel.com>,
- Marco Elver <elver@google.com>, Mark Rutland <mark.rutland@arm.com>,
- Namhyung Kim <namhyung@kernel.org>, Peter Zijlstra <peterz@infradead.org>,
- Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
- linux-perf-users@vger.kernel.org, x86@kernel.org,
- linux-kernel@vger.kernel.org
-In-Reply-To: <20250625170737.2918295-1-leo.yan@arm.com>
-References: <20250625170737.2918295-1-leo.yan@arm.com>
+	bh=S7C/XYnvTlg+p4+wGljKwIY953bj6tkUufxSfXORvgI=;
+	b=Ycbsa5/AKdgS1Dnck3q8AT81qFhyPzj8H63xGphVIcf2B5RKC16m/iboPWR3dCvUWGp42L
+	RDzdp+j0G6Pmuhui8CsaCZAJ85q/GIWzzUx5vG0pbbDVp0rPPHXw/Iy8hsx7zOOlSswE50
+	bC1fi0vnev+ndYQjCiHdatFMeEaGbHs=
+Received: from mail-wm1-f70.google.com (mail-wm1-f70.google.com
+ [209.85.128.70]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-146-hr0xdEYkPjyzhoyGGhGaWA-1; Thu, 26 Jun 2025 05:01:29 -0400
+X-MC-Unique: hr0xdEYkPjyzhoyGGhGaWA-1
+X-Mimecast-MFC-AGG-ID: hr0xdEYkPjyzhoyGGhGaWA_1750928488
+Received: by mail-wm1-f70.google.com with SMTP id 5b1f17b1804b1-451d7de4ae3so3727305e9.2
+        for <linux-kernel@vger.kernel.org>; Thu, 26 Jun 2025 02:01:29 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1750928488; x=1751533288;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=S7C/XYnvTlg+p4+wGljKwIY953bj6tkUufxSfXORvgI=;
+        b=wtqh9MldG0Z81EFSaF5l9JSEzvNWJgVvZswMo6yAPXWjj5lYN03QlVRp9DkGvqld6I
+         S1RRtu01WcmA2u/grk+PTZBmYT6qQ10YJpgwHdW38ZjcxCKo9a43GmIdqBRr/FhS3ulj
+         PVd5Q+nb8sRnLmAT2Be5mQlt+CGRuAgkmPzE23JBr3V5IcgKv2hNibkS2J3x/xdrTB/X
+         QT2Tcyb4WWAa9+W0FwdOC37Dl6e8NRppSRoY2OHH+bFMa3xCZlGCNu4Oz9Ejj2w7FUvX
+         dlSDNl1V3ofEi+KNirolrtxicP11oypfS7oybR/YsCGLCWMflnAKy++HFhq4L4HXmDF7
+         5lhw==
+X-Forwarded-Encrypted: i=1; AJvYcCVlft6zPYaeIkjAPH4E4lG8oqiNzWih+yCj7QDmWwfoOWqrNKP0qyMtUaLz7s0kscjZthUEFNVcRV6cvfQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzkDQrNW0wMl+3mX6c3mndhYUb8i6yvzY53D+2cSPuk5fTaaRug
+	QlSDhZbiqFOgQgtKeJLHzLTM2yNGMJdyjdgicbINMDZ3fiGLb/8WKKWNlBU5p/uu/85T5EY3/LB
+	JlzIP9a5tNWnzHT0Q0Edlzcv7nPyqgt4NWY8qJaouDyFumodHjJK9ZtDmWzn7RatMKg==
+X-Gm-Gg: ASbGncs6b3VZLhH2eddJrt7cVMFA0+K6IYQqF+d9AZdKlpeL4GEc9u2Wzlodo3EKl3k
+	tOpQ2xd/vVV/Q9vamzQL92OYCs0V/v2DiMfYsKHdqdtATo9EQnk/KAlusjQgA0wC4KJIM03H4Os
+	koBw2Dcu5Ux7rCX4nPGK2TyMRP0Okr71WWNXBTql42XSrHPBPU4QNOYi2D60BQUAvp1+W+NbAVZ
+	XTuCDNCQWLVHzBrwMjkma1/DYMSoNOnruXdFQCcj4mQplg+CUDT5hoJ/Ir7Y0CR4sdho9olhMrl
+	2CODfaiPdLAtHnbVYo48yqV/Y0zZouBL/r3y52f3nNhpaBKCZh6AjM26GjtvM+ILM1pJ7g==
+X-Received: by 2002:a05:6000:1acd:b0:3a0:aed9:e34 with SMTP id ffacd0b85a97d-3a6ed66e377mr5900010f8f.48.1750928488043;
+        Thu, 26 Jun 2025 02:01:28 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IFRnNgtEu/IRO6+46Z+WOGFPBJefKUBFyzqv8DKDS3z9R6AGvf9Dr0B1zMMndjl1+awYL8WVg==
+X-Received: by 2002:a05:6000:1acd:b0:3a0:aed9:e34 with SMTP id ffacd0b85a97d-3a6ed66e377mr5899964f8f.48.1750928487558;
+        Thu, 26 Jun 2025 02:01:27 -0700 (PDT)
+Received: from ?IPV6:2a0d:3344:244f:bd10:2bd0:124a:622c:badb? ([2a0d:3344:244f:bd10:2bd0:124a:622c:badb])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3a6e8117187sm6593325f8f.101.2025.06.26.02.01.25
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 26 Jun 2025 02:01:26 -0700 (PDT)
+Message-ID: <637bf12b-44e0-470f-b86c-43667fcb7e7f@redhat.com>
+Date: Thu, 26 Jun 2025 11:01:25 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Message-ID: <175092838323.406.18028759665594118727.tip-bot2@tip-bot2>
-Robot-ID: <tip-bot2@linutronix.de>
-Robot-Unsubscribe:
- Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
-Precedence: bulk
-Content-Type: text/plain; charset="utf-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] [net] net: thunderbolt: Fix the parameter passing of
+ tb_xdomain_enable_paths()/tb_xdomain_disable_paths()
+To: zhangjianrong <zhangjianrong5@huawei.com>, michael.jamet@intel.com,
+ mika.westerberg@linux.intel.com, YehezkelShB@gmail.com,
+ andrew+netdev@lunn.ch, davem@davemloft.net, edumazet@google.com,
+ kuba@kernel.org, netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc: guhengsheng@hisilicon.com, caiyadong@huawei.com, xuetao09@huawei.com,
+ lixinghang1@huawei.com
+References: <20250625020448.1407142-1-zhangjianrong5@huawei.com>
+Content-Language: en-US
+From: Paolo Abeni <pabeni@redhat.com>
+In-Reply-To: <20250625020448.1407142-1-zhangjianrong5@huawei.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-The following commit has been merged into the perf/urgent branch of tip:
+On 6/25/25 4:04 AM, zhangjianrong wrote:
+> According to the description of tb_xdomain_enable_paths(), the third
+> parameter represents the transmit ring and the fifth parameter represents
+> the receive ring. tb_xdomain_disable_paths() is the same case.
+> 
+> Signed-off-by: zhangjianrong <zhangjianrong5@huawei.com>
 
-Commit-ID:     1476b218327b89bbb64c14619a2d34f0c320f2c3
-Gitweb:        https://git.kernel.org/tip/1476b218327b89bbb64c14619a2d34f0c320f2c3
-Author:        Leo Yan <leo.yan@arm.com>
-AuthorDate:    Wed, 25 Jun 2025 18:07:37 +01:00
-Committer:     Ingo Molnar <mingo@kernel.org>
-CommitterDate: Thu, 26 Jun 2025 10:50:37 +02:00
+Please add a suitable fixes tag and repost. You can retain Mika's ack.
 
-perf/aux: Fix pending disable flow when the AUX ring buffer overruns
+Thanks,
 
-If an AUX event overruns, the event core layer intends to disable the
-event by setting the 'pending_disable' flag. Unfortunately, the event
-is not actually disabled afterwards.
+Paolo
 
-In commit:
-
-  ca6c21327c6a ("perf: Fix missing SIGTRAPs")
-
-the 'pending_disable' flag was changed to a boolean. However, the
-AUX event code was not updated accordingly. The flag ends up holding a
-CPU number. If this number is zero, the flag is taken as false and the
-IRQ work is never triggered.
-
-Later, with commit:
-
-  2b84def990d3 ("perf: Split __perf_pending_irq() out of perf_pending_irq()")
-
-a new IRQ work 'pending_disable_irq' was introduced to handle event
-disabling. The AUX event path was not updated to kick off the work queue.
-
-To fix this bug, when an AUX ring buffer overrun is detected, call
-perf_event_disable_inatomic() to initiate the pending disable flow.
-
-Also update the outdated comment for setting the flag, to reflect the
-boolean values (0 or 1).
-
-Fixes: 2b84def990d3 ("perf: Split __perf_pending_irq() out of perf_pending_irq()")
-Fixes: ca6c21327c6a ("perf: Fix missing SIGTRAPs")
-Signed-off-by: Leo Yan <leo.yan@arm.com>
-Signed-off-by: Ingo Molnar <mingo@kernel.org>
-Reviewed-by: James Clark <james.clark@linaro.org>
-Reviewed-by: Yeoreum Yun <yeoreum.yun@arm.com>
-Cc: Adrian Hunter <adrian.hunter@intel.com>
-Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
-Cc: Arnaldo Carvalho de Melo <acme@kernel.org>
-Cc: Ian Rogers <irogers@google.com>
-Cc: Jiri Olsa <jolsa@redhat.com>
-Cc: Liang Kan <kan.liang@linux.intel.com>
-Cc: Marco Elver <elver@google.com>
-Cc: Mark Rutland <mark.rutland@arm.com>
-Cc: Namhyung Kim <namhyung@kernel.org>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-Cc: linux-perf-users@vger.kernel.org
-Link: https://lore.kernel.org/r/20250625170737.2918295-1-leo.yan@arm.com
----
- kernel/events/core.c        | 6 +++---
- kernel/events/ring_buffer.c | 4 ++--
- 2 files changed, 5 insertions(+), 5 deletions(-)
-
-diff --git a/kernel/events/core.c b/kernel/events/core.c
-index 1f74646..7281230 100644
---- a/kernel/events/core.c
-+++ b/kernel/events/core.c
-@@ -7251,15 +7251,15 @@ static void __perf_pending_disable(struct perf_event *event)
- 	 *  CPU-A			CPU-B
- 	 *
- 	 *  perf_event_disable_inatomic()
--	 *    @pending_disable = CPU-A;
-+	 *    @pending_disable = 1;
- 	 *    irq_work_queue();
- 	 *
- 	 *  sched-out
--	 *    @pending_disable = -1;
-+	 *    @pending_disable = 0;
- 	 *
- 	 *				sched-in
- 	 *				perf_event_disable_inatomic()
--	 *				  @pending_disable = CPU-B;
-+	 *				  @pending_disable = 1;
- 	 *				  irq_work_queue(); // FAILS
- 	 *
- 	 *  irq_work_run()
-diff --git a/kernel/events/ring_buffer.c b/kernel/events/ring_buffer.c
-index d2aef87..aa9a759 100644
---- a/kernel/events/ring_buffer.c
-+++ b/kernel/events/ring_buffer.c
-@@ -441,7 +441,7 @@ void *perf_aux_output_begin(struct perf_output_handle *handle,
- 		 * store that will be enabled on successful return
- 		 */
- 		if (!handle->size) { /* A, matches D */
--			event->pending_disable = smp_processor_id();
-+			perf_event_disable_inatomic(handle->event);
- 			perf_output_wakeup(handle);
- 			WRITE_ONCE(rb->aux_nest, 0);
- 			goto err_put;
-@@ -526,7 +526,7 @@ void perf_aux_output_end(struct perf_output_handle *handle, unsigned long size)
- 
- 	if (wakeup) {
- 		if (handle->aux_flags & PERF_AUX_FLAG_TRUNCATED)
--			handle->event->pending_disable = smp_processor_id();
-+			perf_event_disable_inatomic(handle->event);
- 		perf_output_wakeup(handle);
- 	}
- 
 
