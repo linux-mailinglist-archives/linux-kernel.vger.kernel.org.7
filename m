@@ -1,120 +1,111 @@
-Return-Path: <linux-kernel+bounces-705416-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-705418-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C79F6AEA93A
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Jun 2025 00:00:18 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id D9D5FAEA950
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Jun 2025 00:03:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 42CDE4E1465
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Jun 2025 22:00:18 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A02001C41413
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Jun 2025 22:03:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9AE9626E6E6;
-	Thu, 26 Jun 2025 21:59:46 +0000 (UTC)
-Received: from fgw20-7.mail.saunalahti.fi (fgw20-7.mail.saunalahti.fi [62.142.5.81])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BD9AB262D14;
+	Thu, 26 Jun 2025 22:03:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="X6Rh22Wo"
+Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9EBB52609E5
-	for <linux-kernel@vger.kernel.org>; Thu, 26 Jun 2025 21:59:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.142.5.81
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9B5861DEFE9;
+	Thu, 26 Jun 2025 22:03:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750975186; cv=none; b=V2K02Sy7vooKsotJGqpC/zlBn8o1xX3t9tHnaDSgao3fuEIuaMr8vrPSZl9nx/Rg/1f+xRgLehO0EP6l/S6b/Y0SaEfguHtIJN1vqXKesIY/AeooEZGAGg0SLiJ2KvrEWVLe4Ixm3beSqWzKDUJS0S/HOCfdhvTl3zF0zDqtPwg=
+	t=1750975389; cv=none; b=ZE6X4V4CM2C2ruP2Xjc59OfCdm1su1s8lK23xSEz+NiAtfDLjv/pk/gI7AZk/ORDFHf062X4A5xTD/UAsRRI6AT73pFPekJqWMMJv4af1mQBo1XLJDZqs22G2iZCU8HKXWt/J/UeVy68QWSHS7NMfEt1HOszpw+4vHAw4fTCkZY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750975186; c=relaxed/simple;
-	bh=W4UO3HjXnhwlsoocybFNQKYOaf64K89DJ1Due3lreUM=;
-	h=From:Date:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=MrLOOsNLMgXvZHKGANv5ooptNMLD0KZUDm/u3aKDZHjMZftfgzfTPydTXkEC8bxTEEXyFrVBLeBWBh0vr95zpkUB2lbt+HmuTb0yvUNKvRqRSN9rAb9hSguKxDM+iHxyU7YO14rkV6NG6jPGFVrGaKLmeGsVCpt4rfNHiBPqMyc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com; spf=fail smtp.mailfrom=gmail.com; arc=none smtp.client-ip=62.142.5.81
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=gmail.com
-Received: from localhost (88-113-26-232.elisa-laajakaista.fi [88.113.26.232])
-	by fgw20.mail.saunalahti.fi (Halon) with ESMTP
-	id d64cf432-52d8-11f0-a011-005056bd6ce9;
-	Fri, 27 Jun 2025 00:59:31 +0300 (EEST)
-From: Andy Shevchenko <andy.shevchenko@gmail.com>
-Date: Fri, 27 Jun 2025 00:59:30 +0300
-To: Dan Carpenter <dan.carpenter@linaro.org>
-Cc: Andy Shevchenko <andriy.shevchenko@intel.com>,
-	Abdun Nihaal <abdun.nihaal@gmail.com>, andy@kernel.org,
-	gregkh@linuxfoundation.org, lorenzo.stoakes@oracle.com,
-	tzimmermann@suse.de, riyandhiman14@gmail.com, willy@infradead.org,
-	notro@tronnes.org, thomas.petazzoni@free-electrons.com,
-	dri-devel@lists.freedesktop.org, linux-fbdev@vger.kernel.org,
-	linux-staging@lists.linux.dev, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] staging: fbtft: fix potential memory leak in
- fbtft_framebuffer_alloc()
-Message-ID: <aF3CwnHyW5HHzDSG@surfacebook.localdomain>
-References: <20250626172412.18355-1-abdun.nihaal@gmail.com>
- <aF2Ic8BP0zWS6R19@smile.fi.intel.com>
- <0327da98-8a7c-4db8-8bcd-4179b87a9486@suswa.mountain>
+	s=arc-20240116; t=1750975389; c=relaxed/simple;
+	bh=Zz3TomaGnvO04qN3clsGVUtRn6+iXAtAnZgaeVNMRbE=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Ol+ex3+NP/CqJcXVUzIhMv4hY6+qjt9GPfA7tEmayEvqC/Qpi12Jvzc+uTrbdulD+N2skResv7TrJwBMmzEdt5peiRYdwOaDOhwCmNnURLfGv3OBe6SCUy4FIK6jez16PyYv0kOkxw5em3jlevK9dxR+pSc/HVTSP1h1JIpndFs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=X6Rh22Wo; arc=none smtp.client-ip=90.155.50.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=casper.20170209; h=Content-Transfer-Encoding:Content-Type:
+	In-Reply-To:From:References:Cc:To:Subject:MIME-Version:Date:Message-ID:Sender
+	:Reply-To:Content-ID:Content-Description;
+	bh=WFlQDU+VohmHIo9h8FaKE3p3VB4fZz3wWW+SCs2CefQ=; b=X6Rh22WouTtz+wX0RaCmLzXTK9
+	EhvrrSmKL4GG8o1zLrSR7zhwz9q2Ow4J1XPCgE8DYP4vggAtbAqIPFlaKG0sY/Aj6oDU+9mPregrb
+	AXwQipEcAnBpKDHotH9U911o1JMYFJv6RhVYA/hq+Uh+dGj2Z01MsohdKgW9JxYSywXG9h5XKeIIM
+	B2KAGxSu2EhTOGaykyOO/J3TIp0doK7iD6fjcgJICT3cYmT+6DCuDpsBU9F+Il1RjTwa39w0fwFpk
+	lSogVLqxPZiUriVCHZHOCCCJ3FIoTCnGP7hj/uZ5GMw7yeJUG9+E7H9tA3e5e33HxVtD08jr3Qu/j
+	wHUR3jWg==;
+Received: from [50.53.25.54] (helo=[192.168.254.17])
+	by casper.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
+	id 1uUugG-0000000Cbf7-4Bro;
+	Thu, 26 Jun 2025 22:02:53 +0000
+Message-ID: <7553d675-622a-4eb6-a216-2eff2f5fe3b0@infradead.org>
+Date: Thu, 26 Jun 2025 15:02:46 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <0327da98-8a7c-4db8-8bcd-4179b87a9486@suswa.mountain>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH net-next v5 02/14] docs: networking: Add PPE driver
+ documentation for Qualcomm IPQ9574 SoC
+To: Luo Jie <quic_luoj@quicinc.com>, Andrew Lunn <andrew+netdev@lunn.ch>,
+ "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
+ Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, Lei Wei <quic_leiwei@quicinc.com>,
+ Suruchi Agarwal <quic_suruchia@quicinc.com>,
+ Pavithra R <quic_pavir@quicinc.com>, Simon Horman <horms@kernel.org>,
+ Jonathan Corbet <corbet@lwn.net>, Kees Cook <kees@kernel.org>,
+ "Gustavo A. R. Silva" <gustavoars@kernel.org>,
+ Philipp Zabel <p.zabel@pengutronix.de>
+Cc: linux-arm-msm@vger.kernel.org, netdev@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-doc@vger.kernel.org, linux-hardening@vger.kernel.org,
+ quic_kkumarcs@quicinc.com, quic_linchen@quicinc.com
+References: <20250626-qcom_ipq_ppe-v5-0-95bdc6b8f6ff@quicinc.com>
+ <20250626-qcom_ipq_ppe-v5-2-95bdc6b8f6ff@quicinc.com>
+Content-Language: en-US
+From: Randy Dunlap <rdunlap@infradead.org>
+In-Reply-To: <20250626-qcom_ipq_ppe-v5-2-95bdc6b8f6ff@quicinc.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Thu, Jun 26, 2025 at 11:11:39PM +0300, Dan Carpenter kirjoitti:
-> On Thu, Jun 26, 2025 at 08:50:43PM +0300, Andy Shevchenko wrote:
-> > On Thu, Jun 26, 2025 at 10:54:10PM +0530, Abdun Nihaal wrote:
+Hi--
 
-...
+On 6/26/25 7:31 AM, Luo Jie wrote:
+> +Below is a simplified hardware diagram of IPQ9574 SoC which includes the PPE engine and
+> +other blocks which are in the SoC but outside the PPE engine. These blocks work together
+> +to enable the Ethernet for the IPQ SoC::
+> +
 
-> > >  release_framebuf:
-> > > +	fb_deferred_io_cleanup(info);
-> > >  	framebuffer_release(info);
-> > 
-> > While the fix sounds good, there are still problems in the driver in this area:
-> > 
-> > 1) managed resources allocation is mixed up with plain allocations
-> > (as you discovery hints);
-> > 
-> > 2) the order in fbtft_framebuffer_release() is asymmetrical to what
-> > we have in fbtft_framebuffer_alloc().
-> > 
-> > I would recommend to study this code a bit more and provide the following
-> > patches as a result:
-> > 
-> > 1) fixing the order in fbtft_framebuffer_release();
-> > 
-> > 2) moving vmem allocation closer to when it's needed, i.e. just after
-> > successful allocation of the info; at the same time move txbuf allocation
-> > from managed to unmanaged (drop devm, add respective kfree() calls where
-> > it's required);
-> 
-> Symetrical in this sense means that the cleanup in
-> fbtft_framebuffer_release() and in fbtft_framebuffer_alloc() are
-> similar:
-> 
-> 	fb_deferred_io_cleanup();
-> 	vfree();
->  	framebuffer_release();
-> 
-> I feel like number 1 and 2 are sort of opposite approaches to making the
-> order symmetrical.  #1 is changing fbtft_framebuffer_release() and #2 is
-> changing fbtft_framebuffer_alloc().  #2 is the less awkward approach.
-> 
-> > 3) this patch.
-> > 
-> > All three should have the respective Fixes tags and hence may be backported.
-> 
-> Changing the order isn't a bug fix so it wouldn't get a Fixes tag.
-> I agree with Andy that the code isn't beautiful.  But I think it's
-> easier to just fix the bug, and do the cleanup later as an optional
-> patch 2/2.  I would also have been fine with a larger patch that does
-> the cleanup and the bug fix in one patch but I think other people
-> won't like that.
+[snip]
 
-Ah, you have a point. Yes, the moving vmem allocation will solve the ordering
-issue.
+> + | |              +-------------------------+ +---------+ +---------+         | |
+> + | |125/312.5M clk|       (PCS0)            | | (PCS1)  | | (PCS2)  | pcs ops | |
+> + | +--------------+       UNIPHY0           | | UNIPHY1 | | UNIPHY2 |<--------+ |
+> + +--------------->|                         | |         | |         |           |
+> + | 31.25M ref clk +-------------------------+ +---------+ +---------+           |
+> + |                   |     |      |      |          |          |                |
+> + |              +-----------------------------------------------------+         |
+> + |25/50M ref clk| +-------------------------+    +------+   +------+  | link    |
+> + +------------->| |      QUAD PHY           |    | PHY4 |   | PHY5 |  |---------+
+> +                | +-------------------------+    +------+   +------+  | change
+> +                |                                                     |
+> +                |                       MDIO bus                      |
+> +                +-----------------------------------------------------+
 
+Does the 'M' on the clk signals on the left side mean megahertz (MHz)?
+I guess that it does, but it was a little confusing when I first saw it.
+
+Thanks.
 -- 
-With Best Regards,
-Andy Shevchenko
-
+~Randy
 
 
