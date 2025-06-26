@@ -1,77 +1,48 @@
-Return-Path: <linux-kernel+bounces-705023-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-705021-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 51F17AEA455
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Jun 2025 19:20:54 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1DEEDAEA451
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Jun 2025 19:19:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A51DB177296
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Jun 2025 17:20:54 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A86F6563DFE
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Jun 2025 17:19:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 859C925A2CF;
-	Thu, 26 Jun 2025 17:20:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="haKBfUFg"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.13])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2580078F2F
-	for <linux-kernel@vger.kernel.org>; Thu, 26 Jun 2025 17:20:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.13
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 69D9A2E763F;
+	Thu, 26 Jun 2025 17:19:30 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B85051E008B
+	for <linux-kernel@vger.kernel.org>; Thu, 26 Jun 2025 17:19:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750958448; cv=none; b=Kwb4MGLHd1ZprhfYwPRWLkrTi97/qddNibVxb4lWFlk6jKWw4g90Mfp6y79jHSjfwGxt7n3YJ3Z5lOH/KAa5ZDiXHt5fELTD/bPBBECfQOxdKTDuINUzwXBy06VCi2N8gQPWXxhDoW+77DoOF2+/TPHKini0EDBwP2eD7Ru/p2s=
+	t=1750958370; cv=none; b=IoNVPwPX2lCro3FZsWWjqObVuFpFDS0ujat91YjxsNN5g8x6thQB6rPZGA7fxzDPzVlpt+vFHrlU7Id+6hb0YOuUVsVBgmm2WudueTa0iqXDWU77Bgi5to9CFJDxt4VEuqvc2je8LgYx5UnR5wkpaN0Gzf2pc1KgQAhwUOChnQE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750958448; c=relaxed/simple;
-	bh=FwSp1hIralzZz9Gl3ECBPbfrrWrGPsrVZIMRNQJ9Bgs=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=oW21K9cRMaHCdDlzO9fhK7Iao8Ce+I6+xmMnXJ5tBfPcP7ML32N9tLSMC+cE9jTpMCjLaaLv79ghnug96y0u3fm+bfvzRgsnNQkY4zV+Yy24Dbz/qK4RCKZitUopgrd5equPcPpjjIhkmwKKPXUSjOjUnuu5rbQ4brb7gs43WW4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=haKBfUFg; arc=none smtp.client-ip=192.198.163.13
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1750958447; x=1782494447;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=FwSp1hIralzZz9Gl3ECBPbfrrWrGPsrVZIMRNQJ9Bgs=;
-  b=haKBfUFgXEQeLSwUQIc7ZJYAlxsDzJCFIp+zBTotc+jbWZYLMhzpsXgv
-   MXwehibeNK2dhKDeCLXxTSKje8Yy+Yti5Zht6dCEgFlFOyneyqgR/1ucJ
-   Id+6INjuhIxdHKy5+1l0xhchK1WiF4IW6UQj4Hu0YIYFlK8ABlRkB8xkh
-   eCnm0CncApkk/mHIa/ue8Xa/Rrx2uxbBipuSJ//OZWOub7Hn4yvBtvytL
-   q5Knv5H+ES7QBqqWfT2pPT56hpbu6n16n4OKwp3xf3BjokghquFUdy6w6
-   RG6GQ3MJldPQAbe0hbGqcYn6yXEI8XDW+PDAiWpWOk7JFW4ETxUeif2QK
-   Q==;
-X-CSE-ConnectionGUID: Rt32/QIjSNKDztngWKAJtw==
-X-CSE-MsgGUID: HyG0s6QoS3a8n3adsTQTMw==
-X-IronPort-AV: E=McAfee;i="6800,10657,11476"; a="55890573"
-X-IronPort-AV: E=Sophos;i="6.16,268,1744095600"; 
-   d="scan'208";a="55890573"
-Received: from fmviesa004.fm.intel.com ([10.60.135.144])
-  by fmvoesa107.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 26 Jun 2025 10:20:45 -0700
-X-CSE-ConnectionGUID: 1ThpD108RYCdf3M6h7aR8g==
-X-CSE-MsgGUID: qC/D7bpaSyi07P5n7yDAsA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.16,268,1744095600"; 
-   d="scan'208";a="158068525"
-Received: from black.fi.intel.com ([10.237.72.28])
-  by fmviesa004.fm.intel.com with ESMTP; 26 Jun 2025 10:20:43 -0700
-Received: by black.fi.intel.com (Postfix, from userid 1003)
-	id 5850C345; Thu, 26 Jun 2025 20:20:42 +0300 (EEST)
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To: linux-kernel@vger.kernel.org
-Cc: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	Maxime Ripard <mripard@kernel.org>,
-	Thomas Zimmermann <tzimmermann@suse.de>,
-	Javier Martinez Canillas <javierm@redhat.com>,
-	Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Subject: [PATCH v1 2/2] firmware: sysfb: Don't use "proxy" headers
-Date: Thu, 26 Jun 2025 20:19:01 +0300
-Message-ID: <20250626172039.329052-3-andriy.shevchenko@linux.intel.com>
-X-Mailer: git-send-email 2.47.2
-In-Reply-To: <20250626172039.329052-1-andriy.shevchenko@linux.intel.com>
-References: <20250626172039.329052-1-andriy.shevchenko@linux.intel.com>
+	s=arc-20240116; t=1750958370; c=relaxed/simple;
+	bh=FAWdpHh66YPBy3TNpTouNHaXnCuZ/8+AOfEefVhG8+I=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=JTAiOPaZkL/E5AalIYyIVkmALUc5uTJl8N7S3PTGNnnRcrlKuCJjSLTxngNSJoKauKbn4jLBnubqtEGInGBASe/PN86anYmfVdxivQSrwKZ9q4B8qVIPvCxPaNIm5parDvrraNb8KYrF8Z4ID7FvV7SZzbCnL1C1oOd5+S/1ZVY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 5328D1758;
+	Thu, 26 Jun 2025 10:19:10 -0700 (PDT)
+Received: from localhost.localdomain (unknown [10.163.88.58])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id 2D5063F762;
+	Thu, 26 Jun 2025 10:19:24 -0700 (PDT)
+From: Dev Jain <dev.jain@arm.com>
+To: akpm@linux-foundation.org,
+	Liam.Howlett@oracle.com
+Cc: richard.weiyang@gmail.com,
+	maple-tree@lists.infradead.org,
+	linux-mm@kvack.org,
+	linux-kernel@vger.kernel.org,
+	Dev Jain <dev.jain@arm.com>
+Subject: [PATCH 1/2] maple tree: Clean up mtree_range_walk()
+Date: Thu, 26 Jun 2025 22:49:17 +0530
+Message-Id: <20250626171918.17261-1-dev.jain@arm.com>
+X-Mailer: git-send-email 2.39.3 (Apple Git-146)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -80,37 +51,48 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Update header inclusions to follow IWYU (Include What You Use)
-principle.
+The special casing for offset == 0 is being done because min will stay
+mas->min in this case. So refactor the code to use the while loop for
+setting the max and getting the corresponding offset, and only set the
+min for offset > 0.
 
-Note that kernel.h is discouraged to be included as it's written
-at the top of that file.
-
-Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Signed-off-by: Dev Jain <dev.jain@arm.com>
 ---
- include/linux/sysfb.h | 6 +++++-
- 1 file changed, 5 insertions(+), 1 deletion(-)
+ lib/maple_tree.c | 11 +++--------
+ 1 file changed, 3 insertions(+), 8 deletions(-)
 
-diff --git a/include/linux/sysfb.h b/include/linux/sysfb.h
-index 07cbab516942..b449665c686a 100644
---- a/include/linux/sysfb.h
-+++ b/include/linux/sysfb.h
-@@ -7,9 +7,13 @@
-  * Copyright (c) 2012-2013 David Herrmann <dh.herrmann@gmail.com>
-  */
+diff --git a/lib/maple_tree.c b/lib/maple_tree.c
+index 0e85e92c5375..6c89e6790fb5 100644
+--- a/lib/maple_tree.c
++++ b/lib/maple_tree.c
+@@ -2770,13 +2770,8 @@ static inline void *mtree_range_walk(struct ma_state *mas)
+ 		end = ma_data_end(node, type, pivots, max);
+ 		prev_min = min;
+ 		prev_max = max;
+-		if (pivots[0] >= mas->index) {
+-			offset = 0;
+-			max = pivots[0];
+-			goto next;
+-		}
  
--#include <linux/kernel.h>
-+#include <linux/err.h>
-+#include <linux/types.h>
-+
- #include <linux/platform_data/simplefb.h>
+-		offset = 1;
++		offset = 0;
+ 		while (offset < end) {
+ 			if (pivots[offset] >= mas->index) {
+ 				max = pivots[offset];
+@@ -2784,9 +2779,9 @@ static inline void *mtree_range_walk(struct ma_state *mas)
+ 			}
+ 			offset++;
+ 		}
++		if (likely(offset))
++			min = pivots[offset - 1] + 1;
  
-+struct device;
-+struct platform_device;
- struct screen_info;
- 
- enum {
+-		min = pivots[offset - 1] + 1;
+-next:
+ 		slots = ma_slots(node, type);
+ 		next = mt_slot(mas->tree, slots, offset);
+ 		if (unlikely(ma_dead_node(node)))
 -- 
-2.47.2
+2.30.2
 
 
